@@ -25,7 +25,7 @@
 
 #include <vector>
 
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Fuzzy_sphere.h>

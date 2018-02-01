@@ -40,7 +40,7 @@
 #include <iostream>
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/mpl/if.hpp>
 #include <CGAL/Flattening_iterator.h>
 

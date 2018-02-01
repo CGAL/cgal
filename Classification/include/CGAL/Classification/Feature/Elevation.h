@@ -99,43 +99,43 @@ public:
 
     for (std::size_t j = 0; j < grid.height(); ++ j)
       for (std::size_t i = 0; i < grid.width(); ++ i)
-      {
-        float mean = 0.;
-        std::size_t nb = 0;
-        typename Grid::iterator end = grid.indices_end(i,j);
-        for (typename Grid::iterator it = grid.indices_begin(i,j); it != end; ++ it)
+        if (grid.has_points(i,j))
         {
-          mean += float(get(point_map, *(input.begin()+(*it))).z());
-          ++ nb;
+          float mean = 0.;
+          std::size_t nb = 0;
+          typename Grid::iterator end = grid.indices_end(i,j);
+          for (typename Grid::iterator it = grid.indices_begin(i,j); it != end; ++ it)
+          {
+            mean += float(get(point_map, *(input.begin()+(*it))).z());
+            ++ nb;
+          }
+          if (nb == 0)
+            continue;
+          mean /= nb;
+          dem(i,j) = mean;
         }
-        if (nb == 0)
-          continue;
-        mean /= nb;
-        dem(i,j) = mean;
-      }
 
     std::size_t square = (std::size_t)(0.5 * radius_dtm / grid.resolution()) + 1;
     
     Image_float dtm_x(grid.width(),grid.height());
     
     for (std::size_t j = 0; j < grid.height(); ++ j)
-    {
       for (std::size_t i = 0; i < grid.width(); ++ i)
-      {
-        std::size_t squareXmin = (i < square ? 0 : i - square);
-        std::size_t squareXmax = (std::min)(grid.width() - 1, i + square);
+        if (grid.has_points(i,j))
+        {
+          std::size_t squareXmin = (i < square ? 0 : i - square);
+          std::size_t squareXmax = (std::min)(grid.width() - 1, i + square);
 
-        std::vector<float> z;
-        z.reserve(squareXmax - squareXmin +1 );
-        for(std::size_t k = squareXmin; k <= squareXmax; k++)
-          if (dem(k,j) != 0.)
-            z.push_back (dem(k,j));
-        if (z.empty())
-          continue;
-        std::nth_element (z.begin(), z.begin() + (z.size() / 10), z.end());
-        dtm_x(i,j) = z[z.size() / 10];
-      }
-    }
+          std::vector<float> z;
+          z.reserve(squareXmax - squareXmin +1 );
+          for(std::size_t k = squareXmin; k <= squareXmax; k++)
+            if (dem(k,j) != 0.)
+              z.push_back (dem(k,j));
+          if (z.empty())
+            continue;
+          std::nth_element (z.begin(), z.begin() + (z.size() / 10), z.end());
+          dtm_x(i,j) = z[z.size() / 10];
+        }
     dem.free();
 
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
@@ -145,22 +145,21 @@ public:
 #endif
     
     for (std::size_t i = 0; i < grid.width(); ++ i)
-    {
       for (std::size_t j = 0; j < grid.height(); ++ j)
-      {
-        std::size_t squareYmin = (j < square ? 0 : j - square);
-        std::size_t squareYmax = (std::min)(grid.height() - 1, j + square);
-        std::vector<float> z;
-        z.reserve(squareYmax - squareYmin +1 );
-        for(std::size_t l = squareYmin; l <= squareYmax; l++)
-          if (dtm_x(i,l) != 0.)
-            z.push_back (dtm_x(i,l));
-        if (z.empty())
-          continue;
-        std::nth_element (z.begin(), z.begin() + (z.size() / 10), z.end());
-        dtm(i,j) = z[z.size() / 10];
-      }
-    }
+        if (grid.has_points(i,j))
+        {
+          std::size_t squareYmin = (j < square ? 0 : j - square);
+          std::size_t squareYmax = (std::min)(grid.height() - 1, j + square);
+          std::vector<float> z;
+          z.reserve(squareYmax - squareYmin +1 );
+          for(std::size_t l = squareYmin; l <= squareYmax; l++)
+            if (dtm_x(i,l) != 0.)
+              z.push_back (dtm_x(i,l));
+          if (z.empty())
+            continue;
+          std::nth_element (z.begin(), z.begin() + (z.size() / 10), z.end());
+          dtm(i,j) = z[z.size() / 10];
+        }
     dtm_x.free();
 
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES

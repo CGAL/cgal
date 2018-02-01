@@ -29,13 +29,35 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
   boost::tie (m_training, training_found) = m_points->point_set()->add_property_map<int>("training", -1);
   bool classif_found = false;
   boost::tie (m_classif, classif_found) = m_points->point_set()->add_property_map<int>("label", -1);
-  
+
   training_found = !training_found; // add_property_map returns false if 
   classif_found = !classif_found;   // property was already there
-  
+
+  bool las_found = false;
+
+  if (!classif_found)
+  {
+    Point_set::Property_map<unsigned char> las_classif;
+    boost::tie (las_classif, las_found) = m_points->point_set()->property_map<unsigned char>("classification");
+    if (las_found)
+    {
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->first_selected(); ++ it)
+      {
+        unsigned char uc = las_classif[*it];
+        m_classif[*it] = int(uc);
+        if (!training_found)
+          m_training[*it] = int(uc);
+      }
+      m_points->point_set()->remove_property_map (las_classif);
+      classif_found = true;
+      training_found = true;
+    }
+  }
+    
   if (training_found || classif_found)
   {
-    int lmax = 0;
+    std::vector<int> used_indices;
     
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->first_selected(); ++ it)
@@ -43,52 +65,165 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
       if (training_found)
       {
         int l = m_training[*it];
-        lmax = (std::max)(l, lmax);
+        if (l >= 0)
+        {
+          if (std::size_t(l) >= used_indices.size())
+            used_indices.resize(std::size_t(l + 1), -1);
+          used_indices[std::size_t(l)] = 0;
+        }
       }
       if (classif_found)
       {
         int l = m_classif[*it];
-        lmax = (std::max)(l, lmax);
+        if (l >= 0)
+        {
+          if (std::size_t(l) >= used_indices.size())
+            used_indices.resize(std::size_t(l + 1), -1);
+          used_indices[std::size_t(l)] = 0;
+        }
       }
     }
 
-    // Try to recover label names from PLY comments
-    std::map<int, std::string> label_names;
-    const std::string& comments = m_points->comments();
-    std::istringstream stream (comments);
-    std::string line;
-    while (getline(stream, line))
+    // map indices to filtered indices
+    int current_idx = 0;
+    for (std::size_t i = 0; i < used_indices.size(); ++ i)
     {
-      std::stringstream iss (line);
-      std::string tag;
-      if (iss >> tag && tag == "label")
+      if (las_found && (i < 2))
       {
-        int idx;
-        std::string name;
-        if (iss >> idx >> name)
-          label_names.insert (std::make_pair (idx, name));
+        used_indices[i] = -1;
+        continue;
+      }
+      if (used_indices[i] == -1)
+        continue;
+
+      used_indices[i] = current_idx;
+      ++ current_idx;
+    }
+
+    if (std::size_t(current_idx) != used_indices.size()) // Empty indices -> reorder indices in point set
+    {
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->first_selected(); ++ it)
+      {
+        if (training_found)
+        {
+          if (las_found && (m_training[*it] == 0 || m_training[*it] == 1)) // Unclassified class in LAS
+            m_training[*it] = -1;
+          else if (m_training[*it] != -1)
+            m_training[*it] = used_indices[std::size_t(m_training[*it])];
+        }
+        if (classif_found)
+        {
+          if (las_found && (m_classif[*it] == 0 || m_classif[*it] == 1)) // Unclassified class in LAS
+            m_classif[*it] = -1;
+          else if (m_classif[*it] != -1)
+            m_classif[*it] = used_indices[std::size_t(m_classif[*it])];
+        }
       }
     }
     
-    for (int i = 0; i <= lmax; ++ i)
+    std::map<int, std::string> label_names;
+    if (las_found) // Use LAS standard
     {
+      // label_names.insert (std::make_pair (0, std::string("never_clfied")));
+      // label_names.insert (std::make_pair (1, std::string("unclassified")));
+      label_names.insert (std::make_pair (2, std::string("ground")));
+      label_names.insert (std::make_pair (3, std::string("low_veget")));
+      label_names.insert (std::make_pair (4, std::string("med_veget")));
+      label_names.insert (std::make_pair (5, std::string("high_veget")));
+      label_names.insert (std::make_pair (6, std::string("building")));
+      label_names.insert (std::make_pair (7, std::string("noise")));
+      label_names.insert (std::make_pair (8, std::string("reserved")));
+      label_names.insert (std::make_pair (9, std::string("water")));
+      label_names.insert (std::make_pair (10, std::string("rail")));
+      label_names.insert (std::make_pair (11, std::string("road_surface")));
+      label_names.insert (std::make_pair (12, std::string("reserved_2")));
+      label_names.insert (std::make_pair (13, std::string("wire_guard")));
+      label_names.insert (std::make_pair (14, std::string("wire_conduct")));
+      label_names.insert (std::make_pair (15, std::string("trans_tower")));
+      label_names.insert (std::make_pair (16, std::string("wire_connect")));
+      label_names.insert (std::make_pair (17, std::string("bridge_deck")));
+      label_names.insert (std::make_pair (18, std::string("high_noise")));
+    }
+    else // Try to recover label names from PLY comments
+    {
+
+      const std::string& comments = m_points->comments();
+      std::istringstream stream (comments);
+      std::string line;
+      while (getline(stream, line))
+      {
+        std::stringstream iss (line);
+        std::string tag;
+        if (iss >> tag && tag == "label")
+        {
+          int idx;
+          std::string name;
+          if (iss >> idx >> name)
+            label_names.insert (std::make_pair (idx, name));
+        }
+      }
+    }
+    
+    for (std::size_t i = 0; i < used_indices.size(); ++ i)
+    {
+      if (used_indices[i] == -1)
+        continue;
+
+      Label_handle new_label;
       std::map<int, std::string>::iterator found
-        = label_names.find (i);
+        = label_names.find (int(i));
       if (found != label_names.end())
-        m_labels.add(found->second.c_str());
+        new_label = m_labels.add(found->second.c_str());
       else
       {
         std::ostringstream oss;
         oss << "label_" << i;
-        m_labels.add(oss.str().c_str());
+        new_label = m_labels.add(oss.str().c_str());
       }
+
+      QColor color (64 + rand() % 192,
+                    64 + rand() % 192,
+                    64 + rand() % 192);
       
-      CGAL::Classification::HSV_Color hsv;
-      hsv[0] = 360. * (i / double(lmax + 1));
-      hsv[1] = 76.;
-      hsv[2] = 85.;
-      Color rgb = CGAL::Classification::hsv_to_rgb(hsv);
-      m_label_colors.push_back (QColor(rgb[0], rgb[1], rgb[2]));
+      if (new_label->name() == "ground")
+        color = QColor (186, 189, 182);
+      else if (new_label->name() == "low_veget")
+        color = QColor (78, 154, 6);
+      else if (new_label->name() == "med_veget"
+               || new_label->name() == "vegetation")
+        color = QColor (138, 226, 52);
+      else if (new_label->name() == "high_veget")
+        color = QColor (204, 255, 201);
+      else if (new_label->name() == "building"
+               || new_label->name() == "roof")
+        color = QColor (245, 121, 0);
+      else if (new_label->name() == "noise")
+        color = QColor (0, 0, 0);
+      else if (new_label->name() == "reserved")
+        color = QColor (233, 185, 110);
+      else if (new_label->name() == "water")
+        color = QColor (114, 159, 207);
+      else if (new_label->name() == "rail")
+        color = QColor (136, 46, 25);
+      else if (new_label->name() == "road_surface")
+        color = QColor (56, 56, 56);
+      else if (new_label->name() == "reserved_2")
+        color = QColor (193, 138, 51);
+      else if (new_label->name() == "wire_guard")
+        color = QColor (37, 61, 136);
+      else if (new_label->name() == "wire_conduct")
+        color = QColor (173, 127, 168);
+      else if (new_label->name() == "trans_tower")
+        color = QColor (136, 138, 133);
+      else if (new_label->name() == "wire_connect")
+        color = QColor (145, 64, 236);
+      else if (new_label->name() == "bridge_deck")
+        color = QColor (213, 93, 93);
+      else if (new_label->name() == "high_noise")
+        color = QColor (255, 0, 0);
+      
+      m_label_colors.push_back (color);
     }
   }
   else
@@ -98,15 +233,16 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
     m_labels.add("roof");
     m_labels.add("facade");
 
-    m_label_colors.push_back (QColor(245, 180, 0));
-    m_label_colors.push_back (QColor(0, 255, 27));
-    m_label_colors.push_back (QColor(255, 0, 170));
-    m_label_colors.push_back (QColor(100, 0, 255));
+    m_label_colors.push_back (QColor(186, 189, 182));
+    m_label_colors.push_back (QColor(138, 226, 52));
+    m_label_colors.push_back (QColor(245, 121, 0));
+    m_label_colors.push_back (QColor(233, 185, 110));
   }
   
   update_comments_of_point_set_item();
 
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
+  m_ethz = new ETHZ_random_forest (m_labels, m_features);
 #ifdef CGAL_LINKED_WITH_OPENCV
   m_random_forest = new Random_forest (m_labels, m_features);
 #endif
@@ -117,6 +253,8 @@ Point_set_item_classification::~Point_set_item_classification()
 {
   if (m_sowf != NULL)
     delete m_sowf;
+  if (m_ethz != NULL)
+    delete m_ethz;
 #ifdef CGAL_LINKED_WITH_OPENCV
   if (m_random_forest != NULL)
     delete m_random_forest;
@@ -335,6 +473,10 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales)
   Point_set::Property_map<boost::uint8_t> echo_map;
   bool echo;
   boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("echo");
+  if (!echo)
+    boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("number_of_returns");
+
+  add_remaining_point_set_properties_as_features();
 
   if (!normals && !colors && !echo)
     m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales);
@@ -362,6 +504,8 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales)
 
   delete m_sowf;
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
+  delete m_ethz;
+  m_ethz = new ETHZ_random_forest (m_labels, m_features);
 #ifdef CGAL_LINKED_WITH_OPENCV
   delete m_random_forest;
   m_random_forest = new Random_forest (m_labels, m_features);
@@ -369,9 +513,96 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales)
   std::cerr << "Features = " << m_features.size() << std::endl;
 }
 
+void Point_set_item_classification::select_random_region()
+{
+  m_points->point_set()->reset_indices();
+  
+  std::size_t scale = (rand() % m_generator->number_of_scales());
 
+  bool use_grid = (rand() % 2);
 
-void Point_set_item_classification::train(int classifier, unsigned int nb_trials)
+  std::vector<std::size_t> selected;
+  
+  if (use_grid)
+  {
+    std::size_t x = (rand() % m_generator->grid(scale).width());
+    std::size_t y = (rand() % m_generator->grid(scale).height());
+    std::copy (m_generator->grid(scale).indices_begin(x,y),
+               m_generator->grid(scale).indices_end(x,y),
+               std::back_inserter (selected));
+  }
+  else
+  {
+    m_generator->neighborhood(0).sphere_neighbor_query (m_generator->radius_neighbors(scale))
+      (*(m_points->point_set()->points().begin() + (rand() % m_points->point_set()->size())),
+       std::back_inserter (selected));
+  }
+
+  if (selected.empty())
+    return;
+
+  std::sort (selected.begin(), selected.end());
+  std::size_t current_idx = 0;
+
+  std::vector<std::size_t> unselected;
+
+  for (Point_set::const_iterator it = m_points->point_set()->begin();
+       it != m_points->point_set()->end(); ++ it)
+    if (std::size_t(*it) == selected[current_idx])
+      current_idx ++;
+    else
+      unselected.push_back (*it);
+  
+  for (std::size_t i = 0; i < unselected.size(); ++ i)
+    *(m_points->point_set()->begin() + i) = unselected[i];
+  for (std::size_t i = 0; i < selected.size(); ++ i)
+    *(m_points->point_set()->begin() + (unselected.size() + i)) = selected[i];
+
+  m_points->point_set()->set_first_selected
+    (m_points->point_set()->begin() + unselected.size());
+
+}
+
+void Point_set_item_classification::add_remaining_point_set_properties_as_features()
+{
+  const std::vector<std::string>& prop = m_points->point_set()->base().properties();
+  
+  for (std::size_t i = 0; i < prop.size(); ++ i)
+  {
+    if (prop[i] == "index" ||
+        prop[i] == "point" ||
+        prop[i] == "normal" ||
+        prop[i] == "echo" ||
+        prop[i] == "number_of_returns" ||
+        prop[i] == "training" ||
+        prop[i] == "label" ||
+        prop[i] == "classification" ||
+        prop[i] == "real_color" ||
+        prop[i] == "red" || prop[i] == "green" || prop[i] == "blue" ||
+        prop[i] == "r" || prop[i] == "g" || prop[i] == "b")
+      continue;
+
+    if (try_adding_simple_feature<boost::int8_t>(prop[i]))
+      continue;
+    if (try_adding_simple_feature<boost::uint8_t>(prop[i]))
+      continue;
+    if (try_adding_simple_feature<boost::int16_t>(prop[i]))
+      continue;
+    if (try_adding_simple_feature<boost::uint16_t>(prop[i]))
+      continue;
+    if (try_adding_simple_feature<boost::int32_t>(prop[i]))
+      continue;
+    if (try_adding_simple_feature<boost::uint32_t>(prop[i]))
+      continue;
+    if (try_adding_simple_feature<float>(prop[i]))
+      continue;
+    if (try_adding_simple_feature<double>(prop[i]))
+      continue;
+  }
+}
+
+void Point_set_item_classification::train(int classifier, unsigned int nb_trials,
+                                          std::size_t num_trees, std::size_t max_depth)
 {
   if (m_features.size() == 0)
     {
@@ -394,9 +625,21 @@ void Point_set_item_classification::train(int classifier, unsigned int nb_trials
                                                        m_labels, *m_sowf,
                                                        indices);
     }
+  else if (classifier == 1)
+  {
+    m_ethz->train(training, true, num_trees, max_depth);
+    CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
+                                                     m_labels, *m_ethz,
+                                                     indices);
+  }
   else
     {
 #ifdef CGAL_LINKED_WITH_OPENCV
+      if (m_random_forest != NULL)
+        delete m_random_forest;
+      m_random_forest = new Random_forest (m_labels, m_features,
+                                           int(max_depth), 5, 15,
+                                           int(num_trees));
       m_random_forest->train (training);
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                        m_labels, *m_random_forest,
@@ -424,6 +667,8 @@ bool Point_set_item_classification::run (int method, int classifier,
 
   if (classifier == 0)
     run (method, *m_sowf, subdivisions, smoothing);
+  else if (classifier == 1)
+    run (method, *m_ethz, subdivisions, smoothing);
 #ifdef CGAL_LINKED_WITH_OPENCV
   else
     run (method, *m_random_forest, subdivisions, smoothing);

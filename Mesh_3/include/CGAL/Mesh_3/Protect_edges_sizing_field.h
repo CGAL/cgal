@@ -78,7 +78,7 @@ namespace internal {
 #include <vector>
 #include <stack>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/optional.hpp>
 
 #include <CGAL/Mesh_3/utilities.h>

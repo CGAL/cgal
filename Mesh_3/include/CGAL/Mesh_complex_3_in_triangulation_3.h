@@ -39,7 +39,7 @@
 #include <map>
 #include <boost/bimap/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/mpl/if.hpp>
 #include <CGAL/internal/Mesh_3/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>

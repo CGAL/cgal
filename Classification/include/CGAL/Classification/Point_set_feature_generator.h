@@ -343,6 +343,8 @@ public:
                             get_parameter<Vmap>(normal_map),
                             get_parameter<Cmap>(color_map),
                             get_parameter<Emap>(echo_map));
+
+    m_features->sort_features_by_name();
   }
 
   

@@ -30,7 +30,7 @@
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/foreach.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/dynamic_bitset.hpp>

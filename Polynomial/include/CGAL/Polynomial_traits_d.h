@@ -43,7 +43,7 @@
 #include <CGAL/Polynomial/subresultants.h>
 #include <CGAL/Polynomial/sturm_habicht_sequence.h>
 
-#include <boost/iterator/transform_iterator.hpp> 
+#include <CGAL/boost/iterator/transform_iterator.hpp> 
 
 
 #define CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS                          \

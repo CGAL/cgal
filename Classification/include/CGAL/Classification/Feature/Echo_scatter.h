@@ -81,14 +81,15 @@ public:
     Image_float Scatter(grid.width(), grid.height());
     for (std::size_t j = 0; j < grid.height(); j++)
       for (std::size_t i = 0; i < grid.width(); i++)
-        Scatter(i,j)=0;
+        if (grid.has_points(i,j))
+          Scatter(i,j)=0;
 
     std::size_t square = (std::size_t)(0.5 * radius_neighbors / grid.resolution()) + 1;
 
-    for (std::size_t j = 0; j < grid.height(); j++){	
-      for (std::size_t i = 0; i < grid.width(); i++){
-						
-        if(grid.has_points(i,j)){
+    for (std::size_t j = 0; j < grid.height(); j++)
+      for (std::size_t i = 0; i < grid.width(); i++)
+        if(grid.has_points(i,j))
+        {
 
           std::size_t squareXmin = (i < square ? 0 : i - square);
           std::size_t squareXmax = (std::min) (grid.width()-1, i + square);
@@ -121,12 +122,8 @@ public:
           }
 					
           Scatter(i,j)=(float)NB_echo_sup/NB_echo_total;
-				
         }
-			
-      }
-		
-    }
+  
     for(std::size_t i = 0; i < input.size(); i++){
       std::size_t I= grid.x(i);
       std::size_t J= grid.y(i);

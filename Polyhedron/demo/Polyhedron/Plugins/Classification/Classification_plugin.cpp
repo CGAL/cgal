@@ -15,6 +15,9 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 
 #include <CGAL/Random.h>
+#include <CGAL/Real_timer.h>
+
+#include <QMultipleInputDialog.h>
 
 #include "ui_Classification_widget.h"
 
@@ -24,10 +27,8 @@
 #include <QCheckBox>
 #include <QInputDialog>
 #include <QMessageBox>
-#include <QFormLayout>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
-#include <QDialogButtonBox>
 #include <QSlider>
 
 #include <map>
@@ -140,8 +141,12 @@ public:
     ui_widget.setupUi(dock_widget);
     addDockWidget(dock_widget);
 
-#ifndef CGAL_LINKED_WITH_OPENCV
-    ui_widget.classifier->removeItem(1);
+    ui_widget.classifier->addItem (tr("Random Forest (ETHZ)"));
+    
+#ifdef CGAL_LINKED_WITH_OPENCV
+    ui_widget.classifier->addItem (tr("Random Forest (OpenCV %1.%2)")
+                                   .arg(CV_MAJOR_VERSION)
+                                   .arg(CV_MINOR_VERSION));
 #endif
 
     color_att = QColor (75, 75, 77);
@@ -157,7 +162,7 @@ public:
     action_train = ui_widget.menu->menu()->addAction ("Train classifier");
     connect(action_train,  SIGNAL(triggered()), this,
             SLOT(on_train_clicked()));
-
+    
     action_reset = ui_widget.menu->menu()->addAction ("Reset all training sets");
     connect(action_reset,  SIGNAL(triggered()), this,
             SLOT(on_reset_training_sets_clicked()));
@@ -448,10 +453,31 @@ public Q_SLOTS:
         return; 
       }
 
-    QString filename = QFileDialog::getSaveFileName(mw,
-                                                    tr("Save classification configuration"),
-                                                    QString("config.xml"),
-                                                    "Config file (*.xml);;");
+    QString filename;
+
+    if (ui_widget.classifier->currentIndex() == 0)
+      filename = QFileDialog::getSaveFileName(mw,
+                                              tr("Save classification configuration"),
+                                              tr("%1 (CGAL classif config).xml").arg(classif->item()->name()),
+                                              "CGAL classification configuration (*.xml);;");
+    else if (ui_widget.classifier->currentIndex() == 1)
+      filename = QFileDialog::getSaveFileName(mw,
+                                              tr("Save classification configuration"),
+                                              tr("%1 (ETHZ random forest config).gz").arg(classif->item()->name()),
+                                              "Compressed ETHZ random forest configuration (*.gz);;");
+#ifdef CGAL_LINKED_WITH_OPENCV
+    else if (ui_widget.classifier->currentIndex() == 2)
+      filename = QFileDialog::getSaveFileName(mw,
+                                              tr("Save classification configuration"),
+                                              tr("%1 (OpenCV %2.%3 random forest config).xml")
+                                              .arg(classif->item()->name())
+                                              .arg(CV_MAJOR_VERSION)
+                                              .arg(CV_MINOR_VERSION),
+                                              tr("OpenCV %2.%3 random forest configuration (*.xml);;")
+                                              .arg(CV_MAJOR_VERSION)
+                                              .arg(CV_MINOR_VERSION));
+#endif
+    
     if (filename == QString())
       return;
 
@@ -474,10 +500,29 @@ public Q_SLOTS:
         print_message("Error: there is no point set classification item!");
         return; 
       }
-    QString filename = QFileDialog::getOpenFileName(mw,
-                                                    tr("Open classification configuration"),
-                                                    ".",
-                                                    "Config file (*.xml);;All Files (*)");
+    QString filename;
+
+    if (ui_widget.classifier->currentIndex() == 0)
+      filename = QFileDialog::getOpenFileName(mw,
+                                              tr("Open CGAL classification configuration"),
+                                              ".",
+                                              "CGAL classification configuration (*.xml);;All Files (*)");
+    else if (ui_widget.classifier->currentIndex() == 1)
+      filename = QFileDialog::getOpenFileName(mw,
+                                              tr("Open ETHZ random forest configuration"),
+                                              ".",
+                                              "Compressed ETHZ random forest configuration (*.gz);;All Files (*)");
+#ifdef CGAL_LINKED_WITH_OPENCV
+    else if (ui_widget.classifier->currentIndex() == 2)
+      filename = QFileDialog::getOpenFileName(mw,
+                                              tr("Open OpenCV %2.%3 random forest configuration")
+                                              .arg(CV_MAJOR_VERSION)
+                                              .arg(CV_MINOR_VERSION),
+                                              ".",
+                                              tr("OpenCV %2.%3 random forest configuration (*.xml);;All Files (*)")
+                                              .arg(CV_MAJOR_VERSION)
+                                              .arg(CV_MINOR_VERSION));
+#endif
 
     if (filename == QString())
       return;
@@ -515,7 +560,11 @@ public Q_SLOTS:
         return; 
       }
     QApplication::setOverrideCursor(Qt::WaitCursor);
+    CGAL::Real_timer t;
+    t.start();
     run (classif, 0);
+    t.stop();
+    std::cerr << "Raw classification computed in " << t.time() << " second(s)" << std::endl;
     QApplication::restoreOverrideCursor();
     item_changed(classif->item());
   }
@@ -531,10 +580,11 @@ public Q_SLOTS:
       }
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    QTime time;
-    time.start();
+    CGAL::Real_timer t;
+    t.start();
     run (classif, 1);
-    std::cerr << "Smoothed classification computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
+    t.stop();
+    std::cerr << "Smoothed classification computed in " << t.time() << " second(s)" << std::endl;
     QApplication::restoreOverrideCursor();
     item_changed(classif->item());
   }
@@ -549,36 +599,25 @@ public Q_SLOTS:
         return; 
       }
 
-    QDialog dialog(mw);
-    dialog.setWindowTitle ("Classify with Graph Cut");
-    QFormLayout form (&dialog);
-    QString label_sub = QString("Number of subdivisions: ");
-    QSpinBox subdivisions (&dialog);
-    subdivisions.setRange (1, 9999);
-    subdivisions.setValue (16);
-    form.addRow(label_sub, &subdivisions);
+    QMultipleInputDialog dialog ("Classify with Graph Cut", mw);
+    QSpinBox* subdivisions = dialog.add<QSpinBox> ("Number of subdivisons: ");
+    subdivisions->setRange (1, 9999);
+    subdivisions->setValue (16);
 
-    QString label_smooth = QString("Regularization weight: ");
-    QDoubleSpinBox smoothing (&dialog);
-    smoothing.setRange (0.0, 100.0);
-    smoothing.setValue (0.5);
-    smoothing.setSingleStep (0.1);
-    form.addRow(label_smooth, &smoothing);
-
-    QDialogButtonBox oknotok (QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-                              Qt::Horizontal, &dialog);
-    form.addRow (&oknotok);
-    QObject::connect (&oknotok, SIGNAL(accepted()), &dialog, SLOT(accept()));
-    QObject::connect (&oknotok, SIGNAL(rejected()), &dialog, SLOT(reject()));
+    QDoubleSpinBox* smoothing = dialog.add<QDoubleSpinBox> ("Regularization weight: ");
+    smoothing->setRange (0.0, 100.0);
+    smoothing->setValue (0.5);
+    smoothing->setSingleStep (0.1);
 
     if (dialog.exec() != QDialog::Accepted)
       return;
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    QTime time;
-    time.start();
-    run (classif, 2, std::size_t(subdivisions.value()), smoothing.value());
-    std::cerr << "Graphcut classification computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
+    CGAL::Real_timer t;
+    t.start();
+    run (classif, 2, std::size_t(subdivisions->value()), smoothing->value());
+    t.stop();
+    std::cerr << "Graph Cut classification computed in " << t.time() << " second(s)" << std::endl;
     QApplication::restoreOverrideCursor();
     item_changed(classif->item());
   }
@@ -742,6 +781,20 @@ public Q_SLOTS:
     classif->validate_selection();
   }
 
+  void on_select_random_region_clicked()
+  {
+    Item_classification_base* classif
+      = get_classification();
+    if(!classif)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+
+    classif->select_random_region();
+    item_changed(classif->item());
+  }
+
   void on_train_clicked()
   {
     Item_classification_base* classif
@@ -762,6 +815,8 @@ public Q_SLOTS:
       }
 
     int nb_trials = 0;
+    int num_trees = 0;
+    int max_depth = 0;
 
     if (ui_widget.classifier->currentIndex() == 0)
     {
@@ -773,9 +828,29 @@ public Q_SLOTS:
       if (!ok)
         return;
     }
+    else
+    {
+      QMultipleInputDialog dialog ("Train Random Forest Classifier", mw);
+      QSpinBox* trees = dialog.add<QSpinBox> ("Number of trees: ");
+      trees->setRange (1, 9999);
+      trees->setValue (25);
+      QSpinBox* depth = dialog.add<QSpinBox> ("Maximum depth of tree: ");
+      depth->setRange (1, 9999);
+      depth->setValue (20);
+
+      if (dialog.exec() != QDialog::Accepted)
+        return;
+      num_trees = trees->value();
+      max_depth = depth->value();
+    }
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    classif->train(ui_widget.classifier->currentIndex(), nb_trials);
+    CGAL::Real_timer t;
+    t.start();
+    classif->train(ui_widget.classifier->currentIndex(), nb_trials,
+                   num_trees, max_depth);
+    t.stop();
+    std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
     QApplication::restoreOverrideCursor();
     update_plugin_from_item(classif);
   }

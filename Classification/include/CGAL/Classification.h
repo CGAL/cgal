@@ -25,9 +25,10 @@
 
 #include <CGAL/Classification/classify.h>
 #include <CGAL/Classification/Sum_of_weighted_features_classifier.h>
+#include <CGAL/Classification/ETHZ_random_forest_classifier.h>
 
 #ifdef CGAL_LINKED_WITH_OPENCV
-#include <CGAL/Classification/Random_forest_classifier.h>
+#include <CGAL/Classification/OpenCV_random_forest_classifier.h>
 #endif
 
 #include <CGAL/Classification/Color.h>
@@ -46,6 +47,7 @@
 #include <CGAL/Classification/Feature/Eigen.h>
 #include <CGAL/Classification/Feature/Elevation.h>
 #include <CGAL/Classification/Feature/Hsv.h>
+#include <CGAL/Classification/Feature/Simple_feature.h>
 #include <CGAL/Classification/Feature/Vertical_dispersion.h>
 #include <CGAL/Classification/Feature/Verticality.h>
 

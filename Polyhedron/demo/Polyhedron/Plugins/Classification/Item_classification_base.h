@@ -8,9 +8,10 @@
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
 #include <CGAL/Classification/Sum_of_weighted_features_classifier.h>
+#include <CGAL/Classification/ETHZ_random_forest_classifier.h>
 
 #ifdef CGAL_LINKED_WITH_OPENCV
-#include <CGAL/Classification/Random_forest_classifier.h>
+#include <CGAL/Classification/OpenCV_random_forest_classifier.h>
 #endif
 
 class Item_classification_base
@@ -21,9 +22,10 @@ public:
   typedef CGAL::Classification::Label_set   Label_set;
   typedef CGAL::Classification::Feature_set Feature_set;
   typedef CGAL::Classification::Sum_of_weighted_features_classifier Sum_of_weighted_features;
+  typedef CGAL::Classification::ETHZ_random_forest_classifier ETHZ_random_forest;
 
 #ifdef CGAL_LINKED_WITH_OPENCV
-  typedef CGAL::Classification::Random_forest_classifier Random_forest;
+  typedef CGAL::Classification::OpenCV_random_forest_classifier Random_forest;
 #endif
   
 public:
@@ -40,8 +42,10 @@ public:
   virtual void reset_training_set (const char* name) = 0;
   virtual void reset_training_sets() = 0;
 
+  virtual void select_random_region() = 0;
   virtual void validate_selection () = 0;
-  virtual void train(int classifier, unsigned int nb_trials) = 0;
+  virtual void train(int classifier, unsigned int nb_trials,
+                     std::size_t num_trees, std::size_t max_depth) = 0;
   virtual bool run (int method, int classifier, std::size_t subdivisions, double smoothing) = 0;
   
   virtual void update_color () = 0;
@@ -66,9 +70,13 @@ public:
   {
     m_labels.add(name);
     m_label_colors.push_back (color);
+    
     delete m_sowf;
     m_sowf = new Sum_of_weighted_features (m_labels, m_features);
-    
+
+    delete m_ethz;
+    m_ethz = new ETHZ_random_forest (m_labels, m_features);
+
 #ifdef CGAL_LINKED_WITH_OPENCV
     delete m_random_forest;
     m_random_forest = new Random_forest (m_labels, m_features);
@@ -85,6 +93,9 @@ public:
         }
     delete m_sowf;
     m_sowf = new Sum_of_weighted_features (m_labels, m_features);
+
+    delete m_ethz;
+    m_ethz = new ETHZ_random_forest (m_labels, m_features);
 
 #ifdef CGAL_LINKED_WITH_OPENCV
     delete m_random_forest;
@@ -118,6 +129,11 @@ public:
       std::ofstream f (filename);
       m_sowf->save_configuration (f);
     }
+    else if (classifier == 1)
+    {
+      std::ofstream f (filename, std::ios_base::out | std::ios_base::binary);
+      m_ethz->save_configuration (f);
+    }
     else
     {
 #ifdef CGAL_LINKED_WITH_OPENCV
@@ -137,6 +153,11 @@ public:
     {
       std::ifstream f (filename);
       m_sowf->load_configuration (f, true);
+    }
+    else if (classifier == 1)
+    {
+      std::ifstream f (filename, std::ios_base::in | std::ios_base::binary);
+      m_ethz->load_configuration (f);
     }
     else
     {
@@ -165,6 +186,7 @@ protected:
   Feature_set m_features;
   std::vector<QColor> m_label_colors;
   Sum_of_weighted_features* m_sowf;
+  ETHZ_random_forest* m_ethz;
 #ifdef CGAL_LINKED_WITH_OPENCV
   Random_forest* m_random_forest;
 #endif

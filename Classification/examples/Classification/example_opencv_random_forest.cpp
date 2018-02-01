@@ -10,7 +10,6 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Classification.h>
-#include <CGAL/Classification/Random_forest_classifier.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 
@@ -32,14 +31,16 @@ typedef Classification::Feature_handle                                          
 typedef Classification::Label_set                                               Label_set;
 typedef Classification::Feature_set                                             Feature_set;
 
-typedef Classification::Random_forest_classifier Classifier;
-
 typedef Classification::Point_set_feature_generator<Kernel, Point_set, Pmap>    Feature_generator;
 
 
 int main (int argc, char** argv)
 {
-  std::string filename (argc > 1 ? argv[1] : "data/b9_training.ply");
+  std::string filename = "data/b9_training.ply";
+  
+  if (argc > 1)
+    filename = argv[1];
+
   std::ifstream in (filename.c_str(), std::ios::binary);
   Point_set pts;
 
@@ -76,7 +77,10 @@ int main (int argc, char** argv)
   Label_handle vegetation = labels.add ("vegetation");
   Label_handle roof = labels.add ("roof");
 
-  Classifier classifier (labels, features);
+  std::vector<int> label_indices(pts.size(), -1);
+  
+  std::cerr << "Using OpenCV Random Forest Classifier" << std::endl;
+  Classification::OpenCV_random_forest_classifier classifier (labels, features);
   
   std::cerr << "Training" << std::endl;
   t.reset();
@@ -87,12 +91,12 @@ int main (int argc, char** argv)
 
   t.reset();
   t.start();
-  std::vector<int> label_indices(pts.size(), -1);
   Classification::classify_with_graphcut<CGAL::Sequential_tag>
     (pts, pts.point_map(), labels, classifier,
      generator.neighborhood().k_neighbor_query(12),
      0.2f, 1, label_indices);
   t.stop();
+  
   std::cerr << "Classification with graphcut done in " << t.time() << " second(s)" << std::endl;
 
   std::cerr << "Precision, recall, F1 scores and IoU:" << std::endl;

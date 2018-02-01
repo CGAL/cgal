@@ -105,11 +105,6 @@
           <string>Sum of Weighted Features</string>
          </property>
         </item>
-        <item>
-         <property name="text">
-          <string>Random Forest</string>
-         </property>
-        </item>
        </widget>
       </item>
      </layout>
