@@ -53,6 +53,9 @@ namespace CGAL {
   template <class K>
   class Iso_cuboid_3;
 
+  template <class K>
+  class Point_3;
+
 // the special plane_3 function
 template <class K>
 inline 
@@ -149,6 +152,54 @@ inline typename
 cpp11::result_of<typename K::Intersect_3(typename K::Segment_3, Bbox_3)>::type
 intersection(const Bbox_3 &a,
              const Segment_3<K> &b) {
+  return K().intersect_3_object()(a, b);
+}
+
+template <class K>
+inline typename
+cpp11::result_of<typename K::Intersect_3(typename K::Point_3, typename K::Iso_cuboid_3)>::type
+intersection(const typename K::Point_3 &a,
+             const typename K::Iso_cuboid_3 &b) {
+  return K().intersect_3_object()(a, b);
+}
+
+template <class K>
+inline typename
+cpp11::result_of<typename K::Intersect_3(typename K::Point_3, typename K::Line_3)>::type
+intersection(const typename K::Point_3 &a,
+             const typename K::Line_3 &b) {
+  return K().intersect_3_object()(a, b);
+}
+
+template <class K>
+inline typename
+cpp11::result_of<typename K::Intersect_3(typename K::Point_3, typename K::Ray_3)>::type
+intersection(const typename K::Point_3 &a,
+             const typename K::Ray_3 &b) {
+  return K().intersect_3_object()(a, b);
+}
+
+template <class K>
+inline typename
+cpp11::result_of<typename K::Intersect_3(typename K::Point_3, typename K::Segment_3)>::type
+intersection(const typename K::Point_3 &a,
+             const typename K::Segment_3 &b) {
+  return K().intersect_3_object()(a, b);
+}
+
+template <class K>
+inline typename
+cpp11::result_of<typename K::Intersect_3(typename K::Point_3, typename K::Point_3)>::type
+intersection(const typename K::Point_3 &a,
+             const typename K::Point_3 &b) {
+  return K().intersect_3_object()(a, b);
+}
+
+template <class K>
+inline typename
+cpp11::result_of<typename K::Intersect_3(typename K::Point_3, typename K::Plane_3)>::type
+intersection(const typename K::Point_3 &a,
+             const typename K::Plane_3 &b) {
   return K().intersect_3_object()(a, b);
 }
 
