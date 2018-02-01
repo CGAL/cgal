@@ -5,8 +5,6 @@
 
 DO_IGNORE=FALSE
 cd $1
-old_IFS=$IFS
-IFS=$'\n'
 
 LIST_OF_FILES=$(git diff --name-only origin/master |cut -d/ -f1 |uniq |sort)
 LIST_OF_DEPS=$(cat "$2/dependencies")
@@ -17,5 +15,4 @@ do
 done
 echo "Package ignored because none of its dependencies has been modified."
 DO_IGNORE=TRUE
-IFS=$old_IFS
 

@@ -143,13 +143,8 @@ addons:
       - qt55svg
       - qt55tools
       - qt55graphicaleffects
-<<<<<<< HEAD
-      - libopencv-dev       
-=======
       - libopencv-dev
-      - bibtex2html
-       
->>>>>>> ac52f483a8... finishing integration of dependencies check
+
       - mesa-common-dev
       - libglu1-mesa-dev
       # Not allowed (yet) 

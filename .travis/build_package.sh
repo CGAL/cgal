@@ -47,7 +47,7 @@ function build_demo {
   cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" ..
   make -j2
 }
-
+old_IFS=$IFS
 IFS=$' '
 ROOT="$PWD/.."
 NEED_3D=0
@@ -55,13 +55,14 @@ for ARG in $(echo "$@")
 do
   if [ "$ARG" = "CHECK" ]
 	then
+    IFS=$old_IFS
     zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
     #test dependencies 
     cd $ROOT
     bash Scripts/developer_scripts/cgal_check_dependencies.sh /usr/bin/doxygen
     cd .travis
   	#parse current matrix and check that no package has been forgotten
-	  old_IFS=$IFS
+
 	  IFS=$'\n'
 	  COPY=0
 	  MATRIX=()
@@ -81,7 +82,7 @@ do
 	  done	
 	
 	  DIFFERENCE=$(echo ${MATRIX[@]} ${PACKAGES[@]} | tr ' ' '\n' | sort | uniq -u)
-	  IFS=$old_IFS
+	  IFS=$' '
 	  if [ "${DIFFERENCE[0]}" != "" ]
 	  then
 	        echo "The matrix and the actual package list differ : ."
@@ -115,16 +116,17 @@ do
     cd ..
     exit 0
   fi
-   
+
+  IFS=$old_IFS
   if [ -n "$TRAVIS_PULL_REQUEST" ]; then
     DO_IGNORE=FALSE
-    . test_package.sh "$ROOT" "$ARG"
+    . $ROOT/.travis/test_package.sh "$ROOT" "$ARG"
     echo "DO_IGNORE is $DO_IGNORE"
-    if [ "$DO_IGNOE" = "TRUE" ]; then
-      exit 0
+    if [ "$DO_IGNORE" = "TRUE" ]; then
+      continue
     fi
   fi
-  
+  IFS=$' '
   EXAMPLES="$ARG/examples/$ARG"
   TEST="$ARG/test/$ARG" 
   DEMOS=$ROOT/$ARG/demo/*
@@ -135,21 +137,21 @@ do
     NEED_3D=1
   fi
 
-	if [ -d "$ROOT/$EXAMPLES" ]
-	then
+  if [ -d "$ROOT/$EXAMPLES" ]
+  then
 	  cd $ROOT/$EXAMPLES
 	  build_examples
   elif [ "$ARG" != Polyhedron_demo ]; then
     echo "No example found for $ARG"
-	fi
+  fi
 
-	if [ -d "$ROOT/$TEST" ]
-	then
+  if [ -d "$ROOT/$TEST" ]
+  then
     cd $ROOT/$TEST
     build_tests
   elif [ "$ARG" != Polyhedron_demo ]; then
     echo "No test found for $ARG"
-	fi
+  fi
   #Packages like Periodic_3_triangulation_3 contain multiple demos
   for DEMO in $DEMOS; do
     DEMO=${DEMO#"$ROOT"}
@@ -173,7 +175,7 @@ do
     build_demo
   fi  
 done
-
+IFS=$old_IFS
 # Local Variables:
 # tab-width: 2
 # sh-basic-offset: 2

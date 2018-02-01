@@ -18,7 +18,7 @@ before_script:
 - sudo make install &>/dev/null
 - cd ..
 - sudo bash ./.travis/install_openmesh.sh
-script:
+script: 
 - cd ./.travis
 - bash -x -e ./build_package.sh $PACKAGE
 addons: 
@@ -49,7 +49,7 @@ addons:
       - qt55tools
       - qt55graphicaleffects
       - libopencv-dev
-       
+
       - mesa-common-dev
       - libglu1-mesa-dev
       # Not allowed (yet) 
