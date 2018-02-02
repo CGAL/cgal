@@ -24,6 +24,7 @@
 #define CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_PLANE_3_DO_INTERSECT_H
 
 #include <CGAL/Plane_3.h>
+#include <CGAL/Iso_cuboid_3.h>
 #include <CGAL/Bbox_3.h>
 
 // Opcode like
@@ -32,9 +33,9 @@ namespace CGAL {
 
 namespace internal {
 
-  template <class K>
+  template <class K, class Box3>
   Uncertain<bool> get_min_max(const typename K::Vector_3& p,
-    const CGAL::Bbox_3& bbox,
+    Box3& bbox,
     typename K::Point_3& p_min,
     typename K::Point_3& p_max)
   {
@@ -89,10 +90,10 @@ namespace internal {
     return  Uncertain<bool>::indeterminate();
   }
 
-  template <class K>
+  template <class K, class Box3>
   bool do_intersect(const typename K::Plane_3& plane,
-    const CGAL::Bbox_3& bbox,
-    const K&)
+                    const Box3& bbox,
+                    const K&)
   {
     typedef typename K::Point_3 Point_3;
     Point_3 p_max, p_min;
@@ -120,8 +121,8 @@ namespace internal {
     return false;
   }
   
-  template <class K>
-  bool do_intersect(const CGAL::Bbox_3& bbox, const typename K::Plane_3& plane,
+  template <class K, class Box3>
+  bool do_intersect(const Box3& bbox, const typename K::Plane_3& plane,
                     const K&) {
     return do_intersect(plane, bbox, K());
   }
@@ -141,6 +142,17 @@ bool do_intersect(const Plane_3<K>& a,
   return K().do_intersect_3_object()(a, b);
 }
 
+template<typename K>
+bool do_intersect(const Iso_cuboid_3<K>& a,
+                  const Plane_3<K>& b) {
+  return K().do_intersect_3_object()(a, b);
+}
+
+template<typename K>
+bool do_intersect(const Plane_3<K>& a,
+                  const Iso_cuboid_3<K>& b) {
+  return K().do_intersect_3_object()(a, b);
+}
 
 } //namespace CGAL
 

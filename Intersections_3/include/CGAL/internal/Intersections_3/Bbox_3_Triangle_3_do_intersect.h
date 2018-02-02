@@ -39,10 +39,10 @@ namespace CGAL {
 
 namespace internal {
 
-  template <class K>
+  template <class K, class Box3>
   inline
   bool do_bbox_intersect(const typename K::Triangle_3& triangle,
-                         const CGAL::Bbox_3& bbox)
+                         const Box3& bbox)
   {
     const typename K::Point_3& p = triangle.vertex(0);
     const typename K::Point_3& q = triangle.vertex(1);
@@ -51,32 +51,32 @@ namespace internal {
     for(int i = 0; i < 3; ++i) {
       if(p[i] <= q[i]) {
         if(q[i] <= r[i]) { // pqr
-          if(((bbox.max)(i) < p[i]) || ((bbox.min)(i) > r[i]))
+          if((bbox.max_coord(i) < p[i]) || (bbox.min_coord(i) > r[i]))
             return false;
         }
         else {
           if(p[i] <= r[i]) { // prq
-            if((bbox.max)(i) < p[i] || (bbox.min)(i) > q[i])
+            if(bbox.max_coord(i) < p[i] || bbox.min_coord(i) > q[i])
               return false;
           }
           else { // rpq
-            if((bbox.max)(i) < r[i] || (bbox.min)(i) > q[i])
+            if(bbox.max_coord(i) < r[i] || bbox.min_coord(i) > q[i])
               return false;
           }
         }
       }
       else {
         if(p[i] <= r[i]) { // qpr
-          if((bbox.max)(i) < q[i] || (bbox.min)(i) > r[i])
+          if(bbox.max_coord(i) < q[i] || bbox.min_coord(i) > r[i])
             return false;
         }
         else {
           if(q[i] <= r[i]) { // qrp
-            if((bbox.max)(i) < q[i] || (bbox.min)(i) > p[i])
+            if(bbox.max_coord(i) < q[i] || bbox.min_coord(i) > p[i])
               return false;
           }
           else { // rqp
-            if((bbox.max)(i) < r[i] || (bbox.min)(i) > p[i])
+            if(bbox.max_coord(i) < r[i] || bbox.min_coord(i) > p[i])
               return false;
           }
         }
@@ -89,12 +89,12 @@ namespace internal {
   // if you do not know it, or if it does not exist,
   // use get_min_max without the AXE template parameter
   // available in _plane_is_cuboid_do_intersect.h
-  template <class K, int AXE>
+  template <class K, class Box3, int AXE>
   inline
     void get_min_max(const typename K::FT& px,
     const typename K::FT& py,
     const typename K::FT& pz,
-    const CGAL::Bbox_3& c,
+    const Box3& c,
     typename K::Point_3& p_min,
     typename K::Point_3& p_max)
   {
@@ -186,20 +186,20 @@ namespace internal {
     return -1;
   }
 
-  template <class K, int AXE, int SIDE>
+  template <class K, class Box3, int AXE, int SIDE>
   inline
   Uncertain<bool> do_axis_intersect(const typename K::Triangle_3& triangle,
                                     const typename K::Vector_3* sides,
-                                    const CGAL::Bbox_3& bbox)
+                                    const Box3& bbox)
   {
     const typename K::Point_3* j = & triangle.vertex(SIDE);
     const typename K::Point_3* k = & triangle.vertex((SIDE+2)%3);
 
     typename K::Point_3 p_min, p_max;
-    get_min_max<K, AXE>(AXE==0? 0: AXE==1? sides[SIDE].z(): -sides[SIDE].y(),
-                        AXE==0? -sides[SIDE].z(): AXE==1? 0: sides[SIDE].x(),
-                        AXE==0? sides[SIDE].y(): AXE==1? -sides[SIDE].x():
-			typename K::FT(0), bbox, p_min, p_max);
+    get_min_max<K,Box3, AXE>(AXE==0? 0: AXE==1? sides[SIDE].z(): -sides[SIDE].y(),
+                             AXE==0? -sides[SIDE].z(): AXE==1? 0: sides[SIDE].x(),
+                             AXE==0? sides[SIDE].y(): AXE==1? -sides[SIDE].x():
+                             typename K::FT(0), bbox, p_min, p_max);
 
     switch ( AXE )
     {
@@ -238,10 +238,10 @@ namespace internal {
     }
   }
 
-  template <class K>
-  bool do_intersect(const typename K::Triangle_3& a_triangle,
-    const CGAL::Bbox_3& a_bbox,
-    const K& k)
+  template <class K, class Box3>
+  bool do_intersect_bbox_or_iso_cuboid(const typename K::Triangle_3& a_triangle,
+                                      const Box3& a_bbox,
+                                      const K& k)
   {
 
     if(certainly_not( do_bbox_intersect<K>(a_triangle, a_bbox) ))
@@ -286,11 +286,11 @@ namespace internal {
     
     typename K::Triangle_3 triangle(a_triangle[0]-v, a_triangle[1]-v, a_triangle[2]-v);
   
-    Bbox_3 bbox( (p-v).bbox() + (q-v).bbox());
+    Box3 bbox( (p-v).bbox() + (q-v).bbox());
 
 #else 
     const typename K::Triangle_3&  triangle = a_triangle;
-    const Bbox_3& bbox = a_bbox;
+    const Box3& bbox = a_bbox;
 #endif    
     
     // Create a "certainly true"
@@ -298,7 +298,7 @@ namespace internal {
     
     if (forbidden_axis!=0){
       if (forbidden_size!=0){
-        Uncertain<bool> b = do_axis_intersect<K,0,0>(triangle, sides, bbox);
+        Uncertain<bool> b = do_axis_intersect<K,Box3,0,0>(triangle, sides, bbox);
         if(is_indeterminate(b)){
           ind_or_true = b;
         } else if(! b){
@@ -306,7 +306,7 @@ namespace internal {
         }
       }
       if (forbidden_size!=1){
-        Uncertain<bool> b = do_axis_intersect<K,0,1>(triangle, sides, bbox);
+        Uncertain<bool> b = do_axis_intersect<K,Box3,0,1>(triangle, sides, bbox);
         if(is_indeterminate(b)){
           ind_or_true = b;
         } else if(! b){
@@ -314,7 +314,7 @@ namespace internal {
         }
       }
       if (forbidden_size!=2){
-        Uncertain<bool> b = do_axis_intersect<K,0,2>(triangle, sides, bbox);
+        Uncertain<bool> b = do_axis_intersect<K,Box3,0,2>(triangle, sides, bbox);
         if(is_indeterminate(b)){
           ind_or_true = b;
         } else if(! b){
@@ -325,7 +325,7 @@ namespace internal {
     
     if (forbidden_axis!=1){
       if (forbidden_size!=0){
-        Uncertain<bool> b = do_axis_intersect<K,1,0>(triangle, sides, bbox);
+        Uncertain<bool> b = do_axis_intersect<K,Box3,1,0>(triangle, sides, bbox);
         if(is_indeterminate(b)){
           ind_or_true = b;
         } else if(! b){
@@ -333,7 +333,7 @@ namespace internal {
         }
       }
       if (forbidden_size!=1){
-        Uncertain<bool> b = do_axis_intersect<K,1,1>(triangle, sides, bbox);
+        Uncertain<bool> b = do_axis_intersect<K,Box3,1,1>(triangle, sides, bbox);
         if(is_indeterminate(b)){
           ind_or_true = b;
         } else if(! b){
@@ -341,7 +341,7 @@ namespace internal {
         }
       }
       if (forbidden_size!=2){
-        Uncertain<bool> b = do_axis_intersect<K,1,2>(triangle, sides, bbox);
+        Uncertain<bool> b = do_axis_intersect<K,Box3,1,2>(triangle, sides, bbox);
         if(is_indeterminate(b)){
           ind_or_true = b;
         } else if(! b){
@@ -352,7 +352,7 @@ namespace internal {
     
     if (forbidden_axis!=2){
       if (forbidden_size!=0){
-        Uncertain<bool> b = do_axis_intersect<K,2,0>(triangle, sides, bbox);
+        Uncertain<bool> b = do_axis_intersect<K,Box3,2,0>(triangle, sides, bbox);
         if(is_indeterminate(b)){
           ind_or_true = b;
         } else if(! b){
@@ -360,7 +360,7 @@ namespace internal {
         }
       }
       if (forbidden_size!=1){
-        Uncertain<bool> b = do_axis_intersect<K,2,1>(triangle, sides, bbox);
+        Uncertain<bool> b = do_axis_intersect<K,Box3,2,1>(triangle, sides, bbox);
         if(is_indeterminate(b)){
           ind_or_true = b;
         } else if(! b){
@@ -368,7 +368,7 @@ namespace internal {
         }
       }
       if (forbidden_size!=2){
-        Uncertain<bool> b = do_axis_intersect<K,2,2>(triangle, sides, bbox);
+        Uncertain<bool> b = do_axis_intersect<K,Box3,2,2>(triangle, sides, bbox);
         if(is_indeterminate(b)){
           ind_or_true = b;
         } else if(! b){
@@ -380,13 +380,36 @@ namespace internal {
   }
 
   template <class K>
+  bool do_intersect(const typename K::Triangle_3& triangle,
+                    const CGAL::Bbox_3& bbox,
+                    const K& k)
+  {
+    return do_intersect_bbox_or_iso_cuboid(triangle, bbox, k);
+  }
+
+  template <class K>
   bool do_intersect(const CGAL::Bbox_3& bbox,
                     const typename K::Triangle_3& triangle,
                     const K& k)
   {
-    return do_intersect(triangle, bbox, k);
+    return do_intersect_bbox_or_iso_cuboid(triangle, bbox, k);
   }
 
+  template <class K>
+  bool do_intersect(const typename K::Triangle_3& triangle,
+                    const typename K::Iso_cuboid_3& bbox,
+                    const K& k)
+  {
+    return do_intersect_bbox_or_iso_cuboid(triangle, bbox, k);
+  }
+
+  template <class K>
+  bool do_intersect(const typename K::Iso_cuboid_3& bbox,
+                    const typename K::Triangle_3& triangle,
+                    const K& k)
+  {
+    return do_intersect_bbox_or_iso_cuboid(triangle, bbox, k);
+  }
 } // namespace internal
 
 template<typename K>
@@ -398,6 +421,18 @@ bool do_intersect(const CGAL::Bbox_3 a,
 template<typename K>
 bool do_intersect(const Triangle_3<K>& a,
                   const CGAL::Bbox_3& b) {
+  return K().do_intersect_3_object()(a, b);
+}
+
+template<typename K>
+bool do_intersect(const Iso_cuboid_3<K>& a,
+                  const Triangle_3<K>& b) {
+  return K().do_intersect_3_object()(a, b);
+}
+
+template<typename K>
+bool do_intersect(const Triangle_3<K>& a,
+                  const Iso_cuboid_3<K>& b) {
   return K().do_intersect_3_object()(a, b);
 }
 

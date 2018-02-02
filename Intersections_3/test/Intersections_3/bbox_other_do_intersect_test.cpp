@@ -62,10 +62,10 @@ typename K::Point_3 random_point_in(const CGAL::Bbox_3& bbox)
 }
 
 
-template <class T>
+template <class T, class Box3>
 bool test_aux(const T& t,
               const std::string& name,
-              const CGAL::Bbox_3& bbox,
+              const Box3& bbox,
               bool expected, bool /*exact_predicates*/ = false)
 {
   bool b = CGAL::do_intersect(t,bbox);
@@ -550,6 +550,11 @@ bool test(bool exact_kernel = false)
   b &= test_aux(Pl3,"Pl3",bbox,true);
   b &= test_aux(Pl4,"Pl4",bbox,false);
   
+  b &= test_aux(Pl1,"Pl1",CGAL::Iso_cuboid_3<K>(bbox),true);
+  b &= test_aux(Pl2,"Pl2",CGAL::Iso_cuboid_3<K>(bbox),true);
+  b &= test_aux(Pl3,"Pl3",CGAL::Iso_cuboid_3<K>(bbox),true);
+  b &= test_aux(Pl4,"Pl4",CGAL::Iso_cuboid_3<K>(bbox),false);
+  
   Triangle t123(p1,p2,p3);
   Triangle t124(p1,p2,p4);
   Triangle t126(p1,p2,p6);
@@ -568,6 +573,14 @@ bool test(bool exact_kernel = false)
   b &= test_aux(t2,"t2",bbox,true);
   b &= test_aux(t3,"t3",bbox,false);
   
+  b &= test_aux(t123,"t123",CGAL::Iso_cuboid_3<K>(bbox),true);
+  b &= test_aux(t124,"t124",CGAL::Iso_cuboid_3<K>(bbox),true);
+  b &= test_aux(t126,"t126",CGAL::Iso_cuboid_3<K>(bbox),true);
+  b &= test_aux(t136,"t136",CGAL::Iso_cuboid_3<K>(bbox),true);
+  b &= test_aux(tABC,"tABC",CGAL::Iso_cuboid_3<K>(bbox),true);
+  b &= test_aux(t1,"t1",CGAL::Iso_cuboid_3<K>(bbox),true);
+  b &= test_aux(t2,"t2",CGAL::Iso_cuboid_3<K>(bbox),true);
+  b &= test_aux(t3,"t3",CGAL::Iso_cuboid_3<K>(bbox),false);
   
   // Test more bboxes
   CGAL::Bbox_3 bbox2(-0.248143,-0.49325,0.0747943,-0.107021,-0.406955,0.151042);
