@@ -573,7 +573,8 @@ public Q_SLOTS:
       BOOST_FOREACH(Scene_polyhedron_selection_item::fg_edge_descriptor ed, selection_item->selected_edges)
       {
         selection_item->selected_facets.insert(face(halfedge(ed, poly), poly));
-        selection_item->selected_facets.insert(face(opposite(halfedge(ed, poly), poly), poly));
+        if(!is_border_edge(halfedge(ed,poly), poly))
+          selection_item->selected_facets.insert(face(opposite(halfedge(ed, poly), poly), poly));
       }
       selection_item->invalidateOpenGLBuffers();
       selection_item->itemChanged();
