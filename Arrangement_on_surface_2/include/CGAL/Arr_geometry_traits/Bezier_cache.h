@@ -738,7 +738,7 @@ _Bezier_cache<NtTraits>::_compute_resultant
   std::size_t              i, j, k;
 
   std::vector<std::vector<Polynomial> >  mat (dim);
-  std::vector <int>                      exp_fact (dim);
+  std::vector <std::size_t>                      exp_fact (dim);
   
   for (i = 0; i < dim; i++)
   {
