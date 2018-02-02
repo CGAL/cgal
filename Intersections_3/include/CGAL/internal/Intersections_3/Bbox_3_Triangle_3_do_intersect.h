@@ -413,7 +413,7 @@ namespace internal {
 } // namespace internal
 
 template<typename K>
-bool do_intersect(const CGAL::Bbox_3 a,
+bool do_intersect(const CGAL::Bbox_3& a,
                   const Triangle_3<K>& b) {
   return K().do_intersect_3_object()(a, b);
 }
