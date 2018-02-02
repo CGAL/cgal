@@ -105,8 +105,7 @@ public:
   };
 
 
-  //! Exception thrown for `intersect()` when called with the tag `Throw_on_intersection_tag`.
-  class Is_intersecting_exception : public std::exception
+  class To_be_renamed_exception : public std::exception
   {
     const char* what() const throw ()
     {
@@ -897,7 +896,7 @@ intersect(Face_handle , int ,
           Throw_on_intersection_tag)
 {
 
-  throw Is_intersecting_exception();
+  throw To_be_renamed_exception();
   return Vertex_handle() ;
 }
 
