@@ -139,9 +139,8 @@ private:
   is >> n;
   CGAL_assertion(n == 40);
   is >> iformat(r);
-  FT rft(r);
-
-  circ = CGAL::make_array(cx,cy,rft);
+  FT sqr_ft(r*r);
+  circ = CGAL::make_array(cx,cy,sqr_ft);
 }
 
 
