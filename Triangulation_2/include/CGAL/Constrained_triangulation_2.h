@@ -28,6 +28,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <set>
+#include <exception>
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_2.h> 
@@ -42,6 +43,7 @@
 namespace CGAL {
 
 struct No_intersection_tag{};
+struct Throw_on_intersection_tag{};
 struct Exact_intersections_tag{}; // to be used with an exact number type
 struct Exact_predicates_tag{}; // to be used with filtered exact number
 
@@ -99,6 +101,16 @@ public:
     bool operator()(const E& e) const
     {
       return ct.is_constrained(e);
+    }
+  };
+
+
+  //! Exception thrown for `intersect()` when called with the tag `Throw_on_intersection_tag`.
+  class Is_intersecting_exception : public std::exception
+  {
+    const char* what() const throw ()
+    {
+      return "the constraint and subconstraint edge are intersecting.";
     }
   };
 
@@ -442,6 +454,10 @@ protected:
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
 			  No_intersection_tag);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb,
+                          Throw_on_intersection_tag);
   Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
@@ -855,9 +871,9 @@ intersect(Face_handle f, int i,
 template <class Gt, class Tds, class Itag >
 typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle 
 Constrained_triangulation_2<Gt,Tds,Itag>::
-intersect(Face_handle , int , 
-	  Vertex_handle ,
-	  Vertex_handle ,
+intersect(Face_handle , int ,
+          Vertex_handle ,
+          Vertex_handle ,
 	  No_intersection_tag)
 {
   //SL: I added that to be able to throw while we find a better solution
@@ -865,10 +881,23 @@ intersect(Face_handle , int ,
   CGAL_CDT2_EXTRA_ACTION_FOR_INTERSECTING_CONSTRAINTS
   #endif
   
-  std::cerr << " sorry, this triangulation does not deal with" 
-	    <<    std::endl
-	    << " intersecting constraints" << std::endl;
+  std::cerr << " sorry, this triangulation does not deal with"
+            <<    std::endl
+            << " intersecting constraints" << std::endl;
   CGAL_triangulation_assertion(false);
+  return Vertex_handle() ;
+}
+
+template <class Gt, class Tds, class Itag >
+typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle
+Constrained_triangulation_2<Gt,Tds,Itag>::
+intersect(Face_handle , int ,
+          Vertex_handle ,
+          Vertex_handle ,
+          Throw_on_intersection_tag)
+{
+
+  throw Is_intersecting_exception();
   return Vertex_handle() ;
 }
 
@@ -885,10 +914,12 @@ intersect(Face_handle f, int i,
 // split constraint edge (f,i) 
 // and return the Vertex_handle of the new Vertex
 { 
-  std::cerr << "You are using an exact number types" << std::endl;
-  std::cerr << "using a Constrained_triangulation_plus_2 class" << std::endl;
-  std::cerr << "would avoid cascading intersection computation" << std::endl;
-  std::cerr << " and be much more efficient" << std::endl;
+  CGAL_warning_msg(false,
+  "You are using an exact number types\n"
+  "using a Constrained_triangulation_plus_2 class\n"
+  "would avoid cascading intersection computation\n"
+  " and be much more efficient\n");
+
   const Point& pa = vaa->point();
   const Point& pb = vbb->point();
   const Point& pc = f->vertex(cw(i))->point();
