@@ -794,6 +794,8 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
   
             candidates.resize(end);
           }
+        else if (!keep_searching)
+          ++ generated_candidates;
 
         if (callback && !callback(num_invalid / double(m_num_total_points)))
           return false;
