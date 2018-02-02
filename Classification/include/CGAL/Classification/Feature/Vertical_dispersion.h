@@ -31,7 +31,7 @@
 #include <boost/algorithm/minmax_element.hpp>
 #include <CGAL/Classification/Feature_base.h>
 #include <CGAL/int.h>
-#include "boost/tuple/tuple.hpp"
+#include <boost/tuple/tuple.hpp>
 
 namespace CGAL {
 
