@@ -40,9 +40,11 @@
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/parameter/name.hpp>
-#include <boost/variant.hpp>
-#include <boost/format.hpp>
+#ifdef CGAL_MESH_3_VERBOSE
+#  include <boost/format.hpp>
+#endif
 #include <boost/optional.hpp>
+#include <boost/noncopyable.hpp>
 #include <CGAL/tuple.h>
 #include <CGAL/Origin.h>
 
@@ -71,7 +73,7 @@ struct Construct_pair_from_subdomain_indices {
 template <typename Geom_traits,
           typename Subdomain_index,
           typename Surface_patch_index_>
-class Labeled_mesh_domain_3_impl_details {
+class Labeled_mesh_domain_3_impl_details : private boost::noncopyable {
 protected:
   typedef Surface_patch_index_ Surface_patch_index;
   typedef typename Geom_traits::Point_3 Point_3;
@@ -627,12 +629,6 @@ private:
 protected:
   /// Returns bounding box
   const Iso_cuboid_3& bounding_box() const { return this->bbox_; }
-
-private:
-  // Disabled copy constructor & assignment operator
-  typedef Labeled_mesh_domain_3<Function,BGT> Self;
-  Labeled_mesh_domain_3(const Self& src);
-  Self& operator=(const Self& src);
 
 };  // end class Labeled_mesh_domain_3
 
