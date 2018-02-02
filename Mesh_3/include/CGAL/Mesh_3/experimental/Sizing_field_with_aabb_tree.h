@@ -295,9 +295,8 @@ struct Sizing_field_with_aabb_tree
     else { // dim == 1
       const typename MeshDomain::Curve_index& curve_id = 
         domain.curve_index(id);
+      const Patches_ids& ids = curves_incident_patches[curve_id];
       if(!aabb_tree.empty()) {
-        const Patches_ids& ids = curves_incident_patches[curve_id];
-
         CGAL_assertion(! ids.empty());
 
         //Compute distance to surface patches
