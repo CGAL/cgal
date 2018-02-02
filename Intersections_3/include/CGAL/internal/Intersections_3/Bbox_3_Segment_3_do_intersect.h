@@ -120,7 +120,10 @@ namespace internal {
 
   }; // end specialization Do_intersect_bbox_segment_aux_is_greater<FT, true>
 
+
+  
   template <typename FT,
+            typename BFT,
             bool bounded_0,
             bool bounded_1,
             bool use_static_filters>
@@ -134,16 +137,9 @@ namespace internal {
   do_intersect_bbox_segment_aux(
                           const FT& px, const FT& py, const FT& pz,
                           const FT& qx, const FT& qy, const FT& qz,
-                          const Bbox_3& bbox)
+                          const BFT& bxmin, const BFT& bymin, const BFT& bzmin,
+                          const BFT& bxmax, const BFT& bymax, const BFT& bzmax)
   {
-    const double& bxmin = bbox.xmin();
-    const double& bymin = bbox.ymin();
-    const double& bzmin = bbox.zmin();
-    const double& bxmax = bbox.xmax();
-    const double& bymax = bbox.ymax();
-    const double& bzmax = bbox.zmax();
-
-
     if( ( (px >= bxmin) && (px <= bxmax) &&
           (py >= bymin) && (py <= bymax) &&
           (pz >= bzmin) && (pz <= bzmax) ) ||
@@ -409,6 +405,33 @@ namespace internal {
     return true;
   }
 
+  
+  template <typename FT,
+            bool bounded_0,
+            bool bounded_1,
+            bool use_static_filters>
+  inline
+  typename Do_intersect_bbox_segment_aux_is_greater
+  <
+    FT,
+    bounded_0,
+    use_static_filters
+  >::result_type
+  do_intersect_bbox_segment_aux(
+                          const FT& px, const FT& py, const FT& pz,
+                          const FT& qx, const FT& qy, const FT& qz,
+                          const Bbox_3& bb)
+
+  {
+    return do_intersect_bbox_segment_aux<FT,double,bounded_0,bounded_1,use_static_filters>(px, py, pz,
+                                                                                           qx, qy, qz,
+                                                                                           bb.xmin(), bb.ymin(), bb.zmin(),
+                                                                                           bb.xmax(), bb.ymax(), bb.zmax());
+  }
+
+
+
+  
   template <class K>
   bool do_intersect(const typename K::Segment_3& segment,
     const CGAL::Bbox_3& bbox,

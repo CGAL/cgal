@@ -222,8 +222,7 @@ do_intersect(const Plane_3<R> &plane1, const Plane_3<R> &plane2,
 
 CGAL_DO_INTERSECT_FUNCTION_SELF(Iso_cuboid_3, 3)
 CGAL_DO_INTERSECT_FUNCTION(Iso_cuboid_3, Line_3, 3)
-CGAL_DO_INTERSECT_FUNCTION(Iso_cuboid_3, Ray_3, 3)
-CGAL_DO_INTERSECT_FUNCTION(Iso_cuboid_3, Segment_3, 3)
+
 
 namespace internal {
 
@@ -1748,34 +1747,6 @@ inline bool
 do_intersect(const Iso_cuboid_3<R> &j, const Line_3<R> &l, const R&)
 {
   return bool(CGAL::intersection(l, j));
-}
-
-template <class R>
-inline bool
-do_intersect(const Ray_3<R> &r, const Iso_cuboid_3<R> &j, const R&)
-{
-  return bool(CGAL::intersection(r, j));
-}
-
-template <class R>
-inline bool
-do_intersect(const Iso_cuboid_3<R> &j, const Ray_3<R> &r, const R&)
-{
-  return bool(CGAL::intersection(r, j));
-}
-
-template <class R>
-inline bool
-do_intersect(const Segment_3<R> &s, const Iso_cuboid_3<R> &j, const R&)
-{
-  return bool(CGAL::intersection(s, j));
-}
-
-template <class R>
-inline bool
-do_intersect(const Iso_cuboid_3<R> &j, const Segment_3<R> &s, const R&)
-{
-  return bool(CGAL::intersection(s, j));
 }
 
 } // namespace internal
