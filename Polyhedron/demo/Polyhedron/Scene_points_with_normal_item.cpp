@@ -168,8 +168,11 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
         setRenderingMode(Points);
         is_selected = true;
     }
-
-    invalidateOpenGLBuffers();
+  if(d->m_points->number_of_points() < 30 )
+    d->point_Slider->setValue(5);
+  else
+    d->point_Slider->setValue(2);
+  invalidateOpenGLBuffers();
 }
 
 // Converts polyhedron to point set
@@ -182,6 +185,10 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const SMesh& input_
   d = new Scene_points_with_normal_item_priv(input_mesh, this);
   setRenderingMode(PointsPlusNormals);
   is_selected = true;
+  if(d->m_points->number_of_points() < 30 )
+    d->point_Slider->setValue(5);
+  else
+    d->point_Slider->setValue(2);
   invalidateOpenGLBuffers();
 }
 
@@ -193,6 +200,10 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& i
   d = new Scene_points_with_normal_item_priv(input_mesh, this);
   setRenderingMode(PointsPlusNormals);
   is_selected = true;
+  if(d->m_points->number_of_points() < 30 )
+    d->point_Slider->setValue(5);
+  else
+    d->point_Slider->setValue(2);
   invalidateOpenGLBuffers();
 }
 
@@ -369,10 +380,6 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
     normals.resize(0);
     colors_points.resize(0);
 
-    if(item->point_set()->number_of_points() < 30 )
-      point_Slider->setValue(5);
-    else
-      point_Slider->setValue(2);
     //Shuffle container to allow quick display random points
     std::random_shuffle (m_points->begin(), m_points->first_selected());
     if (m_points->nb_selected_points() != 0)
@@ -594,7 +601,10 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
   bool ok = stream &&
     CGAL::read_ply_point_set (stream, *(d->m_points), &(d->m_comments)) &&
             !isEmpty();
-
+  if(d->m_points->number_of_points() < 30 )
+    d->point_Slider->setValue(5);
+  else
+    d->point_Slider->setValue(2);
   std::cerr << d->m_points->info();
 
   if (d->m_points->has_normal_map())
@@ -637,6 +647,10 @@ bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
   bool ok = stream &&
     CGAL::read_off_point_set(stream, *(d->m_points)) &&
             !isEmpty();
+  if(d->m_points->number_of_points() < 30 )
+    d->point_Slider->setValue(5);
+  else
+    d->point_Slider->setValue(2);
   invalidateOpenGLBuffers();
   return ok;
 }
@@ -662,7 +676,10 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
   bool ok = stream &&
     CGAL::read_xyz_point_set (stream, *(d->m_points)) &&
     !isEmpty();
-
+  if(d->m_points->number_of_points() < 30 )
+    d->point_Slider->setValue(5);
+  else
+    d->point_Slider->setValue(2);
   invalidateOpenGLBuffers();
   return ok;
 }
@@ -1004,7 +1021,8 @@ void Scene_points_with_normal_item::copyProperties(Scene_item *item)
   Scene_points_with_normal_item* point_item = qobject_cast<Scene_points_with_normal_item*>(item);
   if(!point_item)
     return;
-  d->point_Slider->setValue(point_item->getPointSliderValue());
+  int value = point_item->getPointSliderValue();
+  setPointSize(value);
   if(has_normals())
     d->normal_Slider->setValue(point_item->getNormalSliderValue());
 }

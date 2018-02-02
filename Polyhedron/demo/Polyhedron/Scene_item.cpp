@@ -123,10 +123,6 @@ QMenu* CGAL::Three::Scene_item::contextMenu()
     }
 
     defaultContextMenu = new QMenu(name());
-    // defaultContextMenu->addAction(name());
-    // defaultContextMenu->addSeparator();
-    // QMenu* modeMenu = new QMenu(QObject::tr("Rendering mode"),
-    //                             defaultContextMenu);
     for(unsigned int mode = 0; mode < NumberOfRenderingMode;
         ++mode)
     {
@@ -136,8 +132,8 @@ QMenu* CGAL::Three::Scene_item::contextMenu()
                                       .arg(mName),
                                       this,
                                       slotName(RenderingMode(mode)));
+        defaultContextMenu->actions().last()->setProperty("is_groupable", true);
     }
-    // defaultContextMenu->addAction(modeMenu->menuAction());
     return defaultContextMenu;
 }
 

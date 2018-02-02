@@ -47,6 +47,7 @@ public :
   {
     setParent(parent);
   }
+  bool isFinite() const { return false; }
   void init_vectors(
       std::vector<float> *p_vertices,
       std::vector<float> *p_normals,
@@ -298,7 +299,6 @@ struct Scene_c3t3_item_priv {
     tree.clear();
     if(frame)
     {
-      static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->setManipulatedFrame(0);
       delete frame;
       frame = NULL;
       delete tet_Slider;
@@ -317,7 +317,7 @@ struct Scene_c3t3_item_priv {
     intersection = NULL;
     spheres_are_shown = false;
     cnc_are_shown = false;
-    show_tetrahedra = false;
+    show_tetrahedra = true;
     is_aabb_tree_built = false;
     are_intersection_buffers_filled = false;
     is_grid_shown = true;
@@ -915,6 +915,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   vaos[Scene_c3t3_item_priv::Facets]->release();
 
   if(d->show_tetrahedra){
+    ncthis->show_intersection(true);
     if(!d->frame->isManipulated())
       d->intersection->setFast(false);
     else
@@ -925,6 +926,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
       ncthis->d->computeIntersections();
       d->intersection->initialize_buffers(viewer);
       d->are_intersection_buffers_filled = true;
+      ncthis->show_intersection(true);
     }
   }
 
@@ -1829,7 +1831,7 @@ bool Scene_c3t3_item::keyPressEvent(QKeyEvent *event)
    d->tet_Slider->setValue(d->tet_Slider->value() -5);
    itemChanged();
  }
- return true;
+ return false;
 }
 
 QString Scene_c3t3_item::computeStats(int type)

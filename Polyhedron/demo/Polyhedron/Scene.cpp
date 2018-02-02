@@ -217,6 +217,15 @@ Scene::erase(QList<int> indices)
        && item->parentGroup()->isChildLocked(item))
       if(!indices.contains(item_id(item->parentGroup())))
         continue;
+    Scene_group_item* group = qobject_cast<Scene_group_item*>(item);
+    if(group)
+    {
+      Q_FOREACH(Scene_item* child, group->getChildren())
+      {
+        if(!to_be_removed.contains(child))
+          to_be_removed.push_back(child);
+      }
+    }
     if(!to_be_removed.contains(item))
       to_be_removed.push_back(item);
   }
@@ -781,6 +790,10 @@ Scene::setData(const QModelIndex &index,
         return true;
         break;
     case ColorColumn:
+      if(!selectionIndices().empty())
+        Q_FOREACH(Item_id item_index, selectionIndices())
+          this->item(item_index)->setColor(value.value<QColor>());
+      else
         item->setColor(value.value<QColor>());
     Q_EMIT dataChanged(index, index);
         return true;

@@ -995,6 +995,8 @@ void Scene_edit_box_item_priv::reset_selection()
 //intercept events for picking
 bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
 {
+  if(!visible())
+    return false;
   QGLViewer* viewer = qobject_cast<QGLViewer*>(obj);
   if(!viewer)
     return false;

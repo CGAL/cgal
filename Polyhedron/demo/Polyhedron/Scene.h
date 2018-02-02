@@ -191,7 +191,7 @@ public Q_SLOTS:
        if(group)
        {
          QList<int> list;
-         Q_FOREACH(CGAL::Three::Scene_item* child, group->getChildren())
+         Q_FOREACH(CGAL::Three::Scene_item* child, group->getChildrenForSelection())
            list<<m_entries.indexOf(child);
          l << setSelectedItemsList(list);
        }
