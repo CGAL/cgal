@@ -541,6 +541,12 @@ bool test(bool exact_kernel = false)
   b &= test_aux(sphE_1,"sphE_1",bbox,true);
   b &= test_aux(sph1_3,"sph1_3",bbox,true);
   
+  b &= test_aux(sphA_1,"sphA_1",Iso_cuboid_3(bbox),false);
+  b &= test_aux(sphB_1,"sphB_1",Iso_cuboid_3(bbox),true);
+  b &= test_aux(sphC_1,"sphC_1",Iso_cuboid_3(bbox),false);
+  b &= test_aux(sphE_1,"sphE_1",Iso_cuboid_3(bbox),true);
+  b &= test_aux(sph1_3,"sph1_3",Iso_cuboid_3(bbox),true);
+  
   Plane Pl1(Point(1,1,1),Vector(0,0,1));
   Plane Pl2(Point(1,1,1),Vector(1,1,1));
   Plane Pl3(Point(5,5,5),Vector(1,2,-5));
