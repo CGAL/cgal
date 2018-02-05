@@ -197,9 +197,9 @@ Error_code read_cones(const TriangleMesh& tm, const char* filename, ConeOutputIt
 ///
 /// \attention The cones must be ordered: the first and last cones are the extremities of the seam.
 ///
-/// \tparam SeamMesh is the same class `CGAL::Seam_mesh` that is passed to the parameterizer.
-///                  It is a template parameter of this function for convenience, to avoid
-///                  having to pass the various template parameters of the class `CGAL::Seam_mesh`.
+/// \tparam SeamMesh is the same mesh that is passed to the parameterizer. It is an object of type`CGAL::Seam_mesh`,
+///                  but is passed here as a template parameter for convenience, to avoid
+///                  having to pass the multiple template parameters of the class `CGAL::Seam_mesh`.
 /// \tparam ConeInputBidirectionalIterator must be a model of `BidirectionalIterator`
 ///                  with value type `boost::graph_traits<SeamMesh::TriangleMesh>::%vertex_descriptor`.
 /// \tparam ConeMap must be a model of <a href="http://en.cppreference.com/w/cpp/concept/AssociativeContainer"><tt>AssociativeContainer</tt></a>
