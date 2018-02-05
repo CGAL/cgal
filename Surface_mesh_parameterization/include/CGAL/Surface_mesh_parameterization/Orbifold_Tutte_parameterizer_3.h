@@ -195,7 +195,7 @@ Error_code read_cones(const TriangleMesh& tm, const char* filename, ConeOutputIt
 /// `vertex_descriptor`) and mark them with a tag to indicate whether the cone is a
 /// simple cone or a duplicated cone (see \link PkgSurfaceParameterizationEnums Cone_type \endlink).
 ///
-/// \attention The cones must be ordered: the first and last cones are the extremetities of the seam.
+/// \attention The cones must be ordered: the first and last cones are the extremities of the seam.
 ///
 /// \tparam SeamMesh is the same class `CGAL::Seam_mesh` that is passed to the parameterizer.
 ///                  It is a template parameter of this function for convenience, to avoid
