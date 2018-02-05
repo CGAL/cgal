@@ -1,6 +1,4 @@
-#ifndef CGAL_POINT_3_SEGMENT_3_INTERSECTION_H
-#define CGAL_POINT_3_SEGMENT_3_INTERSECTION_H
-// Copyright (c) 2003  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2018  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -20,6 +18,10 @@
 //
 //
 // Author(s)     : Maxime Gimeno
+
+#ifndef CGAL_POINT_3_SEGMENT_3_INTERSECTION_H
+#define CGAL_POINT_3_SEGMENT_3_INTERSECTION_H
+
 #include <CGAL/Segment_3.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Intersection_traits_3.h>
