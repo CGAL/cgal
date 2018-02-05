@@ -395,21 +395,6 @@ namespace internal {
     return do_intersect_bbox_or_iso_cuboid(triangle, bbox, k);
   }
 
-  template <class K>
-  bool do_intersect(const typename K::Triangle_3& triangle,
-                    const typename K::Iso_cuboid_3& bbox,
-                    const K& k)
-  {
-    return do_intersect_bbox_or_iso_cuboid(triangle, bbox, k);
-  }
-
-  template <class K>
-  bool do_intersect(const typename K::Iso_cuboid_3& bbox,
-                    const typename K::Triangle_3& triangle,
-                    const K& k)
-  {
-    return do_intersect_bbox_or_iso_cuboid(triangle, bbox, k);
-  }
 } // namespace internal
 
 template<typename K>
@@ -421,18 +406,6 @@ bool do_intersect(const CGAL::Bbox_3& a,
 template<typename K>
 bool do_intersect(const Triangle_3<K>& a,
                   const CGAL::Bbox_3& b) {
-  return K().do_intersect_3_object()(a, b);
-}
-
-template<typename K>
-bool do_intersect(const Iso_cuboid_3<K>& a,
-                  const Triangle_3<K>& b) {
-  return K().do_intersect_3_object()(a, b);
-}
-
-template<typename K>
-bool do_intersect(const Triangle_3<K>& a,
-                  const Iso_cuboid_3<K>& b) {
   return K().do_intersect_3_object()(a, b);
 }
 
