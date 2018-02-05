@@ -27,6 +27,7 @@
 #define CGAL_TRIANGLE_3_TETRAHEDRON_3_DO_INTERSECT_H
 
 #include <CGAL/Triangle_3_Triangle_3_do_intersect.h>
+#include <CGAL/internal/Intersections_3/Iso_cuboid_3_Triangle_3_do_intersect.h>
 
 namespace CGAL {
 
@@ -36,11 +37,12 @@ namespace CGAL {
 namespace internal {
 
 // This code is not optimized:
-template <class K>
+  template <class K, class Bounded>
 typename K::Boolean
-do_intersect(const typename K::Triangle_3 &tr,
-             const typename K::Tetrahedron_3 &tet,
-             const K & k)
+do_intersect_tetrahedron_bounded(const typename Bounded &tr,
+                                 const typename K::Tetrahedron_3 &tet,
+                                 const typename K::Point_3 p,
+                                 const K & k)
 {
     typedef typename K::Triangle_3 Triangle;
 
@@ -52,12 +54,7 @@ do_intersect(const typename K::Triangle_3 &tr,
     if (do_intersect(tr, Triangle(tet[0], tet[2], tet[3]), k)) return true;
     if (do_intersect(tr, Triangle(tet[1], tet[2], tet[3]), k)) return true;
 
-    CGAL_kernel_assertion(k.bounded_side_3_object()(tet, tr[0]) ==
-                          k.bounded_side_3_object()(tet, tr[1]));
-    CGAL_kernel_assertion(k.bounded_side_3_object()(tet, tr[0]) ==
-                          k.bounded_side_3_object()(tet, tr[2]));
-
-    return k.has_on_bounded_side_3_object()(tet, tr[0]);
+    return k.has_on_bounded_side_3_object()(tet, p);
 }
 
 
@@ -68,12 +65,134 @@ do_intersect(const typename K::Tetrahedron_3 &tet,
 	     const typename K::Triangle_3 &tr,
 	     const K & k)
 {
-  return do_intersect(tr, tet, k);
+  return do_intersect_tetrahedron_bounded(tr, tet, tr[0], k);
 }
 
+template <class K>
+inline
+typename K::Boolean
+do_intersect(const typename K::Triangle_3 &tr,
+             const typename K::Tetrahedron_3 &tet,
+	     const K & k)
+{
+  return do_intersect_tetrahedron_bounded(tr, tet, tr[0], k);
+}
+
+  
+template <class K>
+inline
+typename K::Boolean
+do_intersect(const typename K::Tetrahedron_3 &tet,
+	     const typename K::Segment_3 &seg,
+	     const K & k)
+{
+  return do_intersect_tetrahedron_bounded(seg, tet, seg.source(), k);
+}
+    
+template <class K>
+inline
+typename K::Boolean
+do_intersect(const typename K::Segment_3 &seg,
+             const typename K::Tetrahedron_3 &tet,
+	     const K & k)
+{
+  return do_intersect_tetrahedron_bounded(seg, tet, seg.source(), k);
+}
+  
+
+template <class K>
+inline
+typename K::Boolean
+do_intersect(const typename K::Tetrahedron_3 &tet,
+             const typename K::Iso_cuboid_3 &ic,
+	     const K & k)
+{
+  return do_intersect_tetrahedron_bounded(ic, tet, ic[0], k);
+}
+
+template <class K>
+inline
+typename K::Boolean
+do_intersect(const typename K::Iso_cuboid_3 &ic,
+             const typename K::Tetrahedron_3 &tet,
+	     const K & k)
+{
+  return do_intersect_tetrahedron_bounded(ic, tet, ic[0], k);
+}
+
+  
+template <class K>
+inline
+typename K::Boolean
+do_intersect(const typename K::Tetrahedron_3 &tet,
+             const typename K::Sphere_3 &sp,
+	     const K & k)
+{
+  return do_intersect_tetrahedron_bounded(sp, tet, sp.center(), k);
+}
+
+template <class K>
+inline
+typename K::Boolean
+do_intersect(const typename K::Sphere_3 &sp,
+             const typename K::Tetrahedron_3 &tet,
+	     const K & k)
+{
+  return do_intersect_tetrahedron_bounded(sp, tet, sp.center(), k);
+}
+
+  
+template <class K>
+inline
+typename K::Boolean
+do_intersect(const typename K::Tetrahedron_3 &tet,
+	     const typename K::Tetrahedron_3 &sp,
+	     const K & k)
+{
+  return do_intersect_tetrahedron_bounded(sp, tet, tet[0], k);
+}
+
+template <class K>
+inline
+typename K::Boolean
+do_intersect(const typename K::Tetrahedron_3 &tet,
+	     const typename Bbox_3 &bb,
+	     const K & k)
+{
+  return do_intersect_tetrahedron_bounded(bb, tet, typename K::Point_3(bb.xmin(), bb.ymin(), bb.zmin()), k);
+}
+
+  template <class K>
+inline
+typename K::Boolean
+do_intersect(const typename Bbox_3 &bb,
+             const typename K::Tetrahedron_3 &tet,
+	     const K & k)
+{
+  return do_intersect_tetrahedron_bounded(bb, tet, typename K::Point_3(bb.xmin(), bb.ymin(), bb.zmin()), k);
+}
+  
 } // namespace internal
 
 CGAL_DO_INTERSECT_FUNCTION(Triangle_3, Tetrahedron_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Segment_3, Tetrahedron_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Iso_cuboid_3, Tetrahedron_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Sphere_3, Tetrahedron_3, 3)
+CGAL_DO_INTERSECT_FUNCTION_SELF(Tetrahedron_3, 3)
+
+
+template<typename K>
+bool do_intersect(const CGAL::Tetrahedron_3<K>& a,
+                  const CGAL::Bbox_3& b) {
+  return K().do_intersect_3_object()(a, b);
+}
+
+  
+template<typename K>
+bool do_intersect(const CGAL::Bbox_3& b,
+                  const CGAL::Tetrahedron_3<K>& a) {
+  return K().do_intersect_3_object()(a, b);
+}
 
 } //namespace CGAL
 

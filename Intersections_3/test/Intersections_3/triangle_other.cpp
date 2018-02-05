@@ -1,7 +1,5 @@
 #include <cassert>
 
-
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Triangle_2_Triangle_2_do_intersect.h>
 #include <CGAL/Triangle_3_Line_3_do_intersect.h>

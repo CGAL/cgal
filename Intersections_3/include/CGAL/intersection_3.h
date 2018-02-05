@@ -64,6 +64,8 @@
 #include <CGAL/internal/Intersections_3/Iso_cuboid_3_Ray_3_do_intersect.h>
 #include <CGAL/internal/Intersections_3/Iso_cuboid_3_Sphere_3_do_intersect.h>
 #include <CGAL/internal/Intersections_3/Iso_cuboid_3_Triangle_3_do_intersect.h>
+#include <CGAL/internal/Intersections_3/Tetrahedron_3_do_intersect.h>
+#include <CGAL/internal/Intersections_3/Triangle_3_Sphere_3_do_intersect.h>
 
 #include <CGAL/enable_warnings.h>
 
