@@ -24,6 +24,7 @@
 #include <CGAL/license/Classification.h>
 
 #include <boost/shared_ptr.hpp>
+#include <map>
 
 #define CGAL_CLASSIFICATION_IMAGE_SIZE_LIMIT 100000000
 
