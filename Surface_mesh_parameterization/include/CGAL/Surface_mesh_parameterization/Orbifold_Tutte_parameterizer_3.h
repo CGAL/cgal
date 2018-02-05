@@ -72,7 +72,7 @@ namespace Surface_mesh_parameterization {
 /// integer value that is the index of a vertex handle in the mesh tm`, using
 /// the vertex index property map `vpmap` for correspondency.
 ///
-/// \attention The mesh is here `tm`, it is the base mesh of the CGAL::Seam_mesh
+/// \attention The mesh is here `tm`, it is the base mesh of the `CGAL::Seam_mesh`
 ///            that is passed in input, <i>not</i> the seam mesh itself.
 ///
 /// \tparam TriangleMesh A triangle mesh, model of `FaceListGraph` and `HalfedgeListGraph`.
@@ -192,14 +192,14 @@ Error_code read_cones(const TriangleMesh& tm, const char* filename, ConeOutputIt
 /// \ingroup PkgSurfaceParameterizationOrbifoldHelperFunctions
 ///
 /// Locate the cones on the seam mesh (that is, find the corresponding seam mesh
-/// vertex_descriptor) and mark them with a tag to indicate whether the cone is a
+/// `vertex_descriptor`) and mark them with a tag to indicate whether the cone is a
 /// simple cone or a duplicated cone (see \link PkgSurfaceParameterizationEnums Cone_type \endlink).
 ///
 /// \attention The cones must be ordered: the first and last cones are the extremetities of the seam.
 ///
-/// \tparam SeamMesh is the same class CGAL::Seam_mesh that is passed to the parameterized.
-///                  It is a template parameter for convenience (not having to rewrite the template
-///                  parameters of the class CGAL::Seam_mesh).
+/// \tparam SeamMesh is the same class `CGAL::Seam_mesh` that is passed to the parameterizer.
+///                  It is a template parameter of this function for convenience, to avoid
+///                  having to pass the various template parameters of the class `CGAL::Seam_mesh`.
 /// \tparam ConeInputBidirectionalIterator must be a model of `BidirectionalIterator`
 ///                  with value type `boost::graph_traits<SeamMesh::TriangleMesh>::%vertex_descriptor`.
 /// \tparam ConeMap must be a model of <a href="http://en.cppreference.com/w/cpp/concept/AssociativeContainer"><tt>AssociativeContainer</tt></a>
@@ -208,8 +208,8 @@ Error_code read_cones(const TriangleMesh& tm, const char* filename, ConeOutputIt
 ///
 /// \param mesh the seam mesh
 /// \param first, beyond the range of cones, as vertex descriptors of the base mesh.
-/// \param cones a writable property map that will store the cones as vertex descriptors
-///              of the seam mesh and associate their respective cone types.
+/// \param cones an object of type `ConeMap`. Cones will be stored in this container
+///              as vertex descriptors of the seam mesh, along with their associated cone types.
 template<typename SeamMesh, typename ConeInputBidirectionalIterator, typename ConeMap>
 bool locate_cones(const SeamMesh& mesh,
                   ConeInputBidirectionalIterator first, ConeInputBidirectionalIterator beyond,
