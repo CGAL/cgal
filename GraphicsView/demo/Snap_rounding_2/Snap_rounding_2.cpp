@@ -245,7 +245,9 @@ MainWindow::on_actionLoadSegments_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open segment file"),
-						  ".");
+                                                  ".",
+                                                  tr("Edge files (*.edg);;"
+                                                     "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
   }
@@ -277,7 +279,9 @@ MainWindow::on_actionSaveSegments_triggered()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
 						  tr("Save points"),
-						  ".");
+                                                  ".",
+                                                  tr("Edge files (*.edg);;"
+                                                     "All files (*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
     ofs.precision(12);
