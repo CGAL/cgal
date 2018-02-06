@@ -32,6 +32,7 @@
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
+#include <CGAL/Union_find.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Default.h>
 
@@ -366,6 +367,14 @@ public:
     boost::dynamic_bitset<> coplanar_patches(nb_patches,false);
     patches_to_keep.set();
     patch_status_not_set.set();
+    // use a union-find on patches to track the incidence between patches kept
+    typedef Union_find<std::size_t> UF;
+    UF uf;
+    std::vector<typename UF::handle> patch_handles(nb_patches);
+    for (std::size_t p=0; p<nb_patches; ++p)
+    {
+      patch_handles[p]=uf.make_set(p);
+    }
 
     for (typename An_edge_per_polyline_map::iterator
             it=an_edge_per_polyline.begin(),
@@ -378,6 +387,9 @@ public:
       //get the two halfedges incident to the edge [ids.first,ids.second]
       halfedge_descriptor h1 = it->second.h1;
       halfedge_descriptor h2 = it->second.h2;
+
+      CGAL_assertion(h1!=boost::graph_traits<TriangleMesh>::null_halfedge());
+      CGAL_assertion(h2!=boost::graph_traits<TriangleMesh>::null_halfedge());
 
       CGAL_assertion(ids.first==vertex_to_node_id[source(h1,tm)]);
       CGAL_assertion(ids.second==vertex_to_node_id[target(h1,tm)]);
@@ -400,13 +412,19 @@ public:
           {
             if ( is_border(h1,tm) )
             {
-              patch_status_not_set.reset(patch_ids[ get(fids, face(opposite(h1,tm),tm)) ]);
-              patch_status_not_set.reset(patch_ids[ get(fids, face(h2,tm)) ]);
+              std::size_t pid1=patch_ids[ get(fids, face(opposite(h1,tm),tm)) ],
+                          pid2=patch_ids[ get(fids, face(h2,tm)) ];
+              uf.unify_sets(patch_handles[pid1], patch_handles[pid2]);
+              patch_status_not_set.reset(pid1);
+              patch_status_not_set.reset(pid2);
             }
             else
             {
-              patch_status_not_set.reset(patch_ids[ get(fids, face(h1,tm)) ]);
-              patch_status_not_set.reset(patch_ids[ get(fids, face(opposite(h2,tm),tm)) ]);
+              std::size_t pid1=patch_ids[ get(fids, face(h1,tm)) ],
+                          pid2=patch_ids[ get(fids, face(opposite(h2,tm),tm)) ];
+              uf.unify_sets(patch_handles[pid1], patch_handles[pid2]);
+              patch_status_not_set.reset(pid1);
+              patch_status_not_set.reset(pid2);
             }
           }
         }
@@ -441,8 +459,10 @@ public:
             nodes);
 
           if (p_is_between_q1q2)
+          {
+            uf.unify_sets(patch_handles[patch_id_q1], patch_handles[patch_id_q2]);
             patches_to_keep.reset(patch_id_p); // even if badly oriented we can
-                                               // simply discard the patch
+          }                                     // simply discard the patch
           else
           {
             if (h==h1)
@@ -451,7 +471,10 @@ public:
               all_fixed = false;
             }
             else
+            {
+              uf.unify_sets(patch_handles[patch_id_p], patch_handles[patch_id_q2]);
               patches_to_keep.reset(patch_id_q1);
+            }
           }
         }
       }
@@ -487,8 +510,10 @@ public:
             nodes);
 
           if (q_is_between_p1p2)
+          {
+            uf.unify_sets(patch_handles[patch_id_p1], patch_handles[patch_id_p2]);
             patches_to_keep.reset(patch_id_q); // even if badly oriented we can
-                                               // simply discard the patch
+          }                                     // simply discard the patch
           else
           {
             if (h==h2)
@@ -497,7 +522,10 @@ public:
               all_fixed = false;
             }
             else
+            {
+              uf.unify_sets(patch_handles[patch_id_q], patch_handles[patch_id_p2]);
               patches_to_keep.reset(patch_id_p1);
+            }
           }
         }
         else
@@ -567,11 +595,13 @@ public:
               nodes);
             if ( q2_is_between_p1p2 ){
              //case 1
+             uf.unify_sets(patch_handles[patch_id_p1], patch_handles[patch_id_p2]);
              patches_to_keep.reset(patch_id_q2);
              patches_to_keep.reset(patch_id_q1);
             }
             else{
               //case 2
+              uf.unify_sets(patch_handles[patch_id_q1], patch_handles[patch_id_q2]);
               patches_to_keep.reset(patch_id_p1);
               patches_to_keep.reset(patch_id_p2);
             }
@@ -596,11 +626,13 @@ public:
                 nodes);
               if ( q1_is_between_p1p2 ){
                 // case 3
+                uf.unify_sets(patch_handles[patch_id_q1], patch_handles[patch_id_q2]);
                 patches_to_keep.reset(patch_id_p1);
                 patches_to_keep.reset(patch_id_p2);
               }
               else{
                 // case 4
+                uf.unify_sets(patch_handles[patch_id_p2], patch_handles[patch_id_q1]);
                 patches_to_keep.reset(patch_id_q2);
                 patches_to_keep.reset(patch_id_p1);
               }
@@ -625,10 +657,12 @@ public:
                   nodes);
                 if ( q2_is_between_p1p2 )
                 {  //case 5
+                  uf.unify_sets(patch_handles[patch_id_p1], patch_handles[patch_id_p2]);
                   patches_to_keep.reset(patch_id_q1);
                   patches_to_keep.reset(patch_id_q2);
                 }else{
                   //case 6
+                  uf.unify_sets(patch_handles[patch_id_p1], patch_handles[patch_id_q2]);
                   patches_to_keep.reset(patch_id_p2);
                   patches_to_keep.reset(patch_id_q1);
                 }
@@ -652,11 +686,13 @@ public:
                     nodes);
                   if ( q1_is_between_p1p2 ){
                     //case 7
+                    uf.unify_sets(patch_handles[patch_id_p1], patch_handles[patch_id_p2]);
                     patches_to_keep.reset(patch_id_q1);
                     patches_to_keep.reset(patch_id_q2);
                   }
                   else{
                     //case 8
+                    uf.unify_sets(patch_handles[patch_id_p1], patch_handles[patch_id_q1]);
                     patches_to_keep.reset(patch_id_p2);
                     patches_to_keep.reset(patch_id_q2);
                   }
@@ -665,9 +701,6 @@ public:
               }
             }
           }
-#ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
-          #warning At some point we should have a check if a patch status is already set, what we do is consistant otherwise --> ambiguous
-#endif //CGAL_COREFINEMENT_POLYHEDRA_DEBUG
 
           CGAL_assertion(
               ( index_p1 == Node_id(-1) ? nodes.to_exact(get(vpm,p1)): nodes.exact_node(index_p1) ) !=
@@ -707,6 +740,7 @@ public:
                 nodes);
               if (!p1_is_between_q1q2){
                 // case (a4)
+                uf.unify_sets(patch_handles[patch_id_p1], patch_handles[patch_id_p2]);
                 patches_to_keep.reset(patch_id_q1);
                 patches_to_keep.reset(patch_id_q2);
               }
@@ -727,6 +761,7 @@ public:
                 all_fixed = false;
                 continue;
               }
+              uf.unify_sets(patch_handles[patch_id_p1], patch_handles[patch_id_q2]);
               patches_to_keep.reset(patch_id_p2);
               patches_to_keep.reset(patch_id_q1);
             }
@@ -742,6 +777,7 @@ public:
                 all_fixed = false;
                 continue;
               }
+              uf.unify_sets(patch_handles[patch_id_p2], patch_handles[patch_id_q1]);
               patches_to_keep.reset(patch_id_q2);
               patches_to_keep.reset(patch_id_p1);
             }
@@ -760,6 +796,7 @@ public:
               }
               else{
                 //case (f4)
+                uf.unify_sets(patch_handles[patch_id_q1], patch_handles[patch_id_q2]);
                 patches_to_keep.reset(patch_id_p1);
                 patches_to_keep.reset(patch_id_p2);
               }
@@ -771,6 +808,23 @@ public:
     // the goal here is to remove surface self-intersections. If there are
     // some nested surfaces, they will not be fixed by this function.
     // As a consequence, patch_status_not_set.none() might not be true.
+
+    // use the union-find of incident patches to update the status of patches
+    // to keep. If one of the patches in the component is marked as to remove
+    // the whole component gets marked.
+
+    // first pass to mark the master patches
+    for (typename UF::iterator it=uf.begin(), it_end=uf.end();it!=it_end; ++it)
+    {
+      if (!patches_to_keep.test(*it))
+        patches_to_keep.reset( *uf.find(it) );
+    }
+    // mark the patch as to be removed if the master is (and not already marked)
+    for (typename UF::iterator it=uf.begin(), it_end=uf.end();it!=it_end; ++it)
+    {
+      if (patches_to_keep.test(*it) && !patches_to_keep.test(*uf.find(it)))
+        patches_to_keep.reset( *it );
+    }
 
 #ifdef CGAL_COREFINEMENT_DEBUG
     std::cout << "patches_to_keep " <<  patches_to_keep << "\n";
