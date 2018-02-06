@@ -348,7 +348,9 @@ MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open Points file"),
-						  ".");
+                                                  ".",
+                                                  tr("CGAL files (*.pts.cgal);;"
+                                                     "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
   }
@@ -383,7 +385,9 @@ MainWindow::on_actionSavePoints_triggered()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
 						  tr("Save points"),
-						  ".");
+                                                  ".",
+                                                  tr("CGAL files (*.pts.cgal);;"
+                                                     "All files (*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
     for(Periodic_DT::Unique_vertex_iterator 
