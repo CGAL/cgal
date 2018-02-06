@@ -158,7 +158,6 @@ def rearrange_icon(i, dir_name):
             links=parser(link_class)
             if links.size()>0 and is_concept_file(path.join(dir_name, pq(links[0]).attr("href"))):
                 icon.attr("class","icon-concept")
-    srcpath=icon.attr("class")
 
 ###############################################################################
 ############################## Figure Numbering ###############################
@@ -261,7 +260,6 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     shutil.copy(path.join(resources_absdir,"ftv2cpt.png"),path.join("Manual", "ftv2cpt.png"))
 
     annotated_files=package_glob('./*/annotated.html')
-    print "beginning"
     for fn in annotated_files:
       re_replace_in_file("<span class=\"icon\">N</span>", "<span class=\"icon-namespace\">N</span>", fn)
       re_replace_in_file("<span class=\"icon\">C</span>", "<span class=\"icon-class\">C</span>", fn)
@@ -272,7 +270,6 @@ removes some unneeded files, and performs minor repair on some glitches.''')
       span_tags = d('table.directory tr span')
       span_tags.each(lambda i: rearrange_icon(i, dir_name))
       write_out_html(d,fn)
-    print "end"
     class_files=list(package_glob('./*/class*.html'))
     class_files.extend(package_glob('./*/struct*.html'))
     for fn in class_files:
