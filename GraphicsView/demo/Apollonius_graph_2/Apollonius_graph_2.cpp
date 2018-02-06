@@ -35,7 +35,7 @@ typedef K::Iso_rectangle_2 Iso_rectangle_2;
 typedef CGAL::Apollonius_graph_filtered_traits_2<K,CGAL::Integral_domain_without_division_tag>  Gt;
 
 typedef Gt::Point_2                           Point_2;
-typedef K::Circle_2                         Circle_2;
+typedef K::Circle_2                           Circle_2;
 typedef Gt::Site_2                            Apollonius_site_2;
 typedef Gt::Site_2::Weight                    Weight;
 
@@ -214,7 +214,9 @@ MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open Points file"),
-						  ".");
+                                                  ".",
+                                                  tr("CGAL files (*.wpts.cgal);;"
+                                                     "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
   }
@@ -224,43 +226,42 @@ MainWindow::on_actionLoadPoints_triggered()
 void
 MainWindow::open(QString fileName)
 {
-  // wait cursor
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  std::ifstream ifs(qPrintable(fileName));
-  
-  K::Point_2 p;
-  std::vector<K::Point_2> points;
-  while(ifs >> p) {
-    points.push_back(p);
-  }
-  //  ag.insert(points.begin(), points.end());
 
-  // default cursor
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  if(! fileName.isEmpty()){
+    std::ifstream ifs(qPrintable(fileName));
+
+    K::Weighted_point_2 p;
+    std::vector<Apollonius_site_2> points;
+    while(ifs >> p) {
+      points.push_back(Apollonius_site_2(p.point(),p.weight()));
+    }
+    ag.insert(points.begin(), points.end());
+    this->addToRecentFiles(fileName);
+    actionRecenter->trigger();
+    Q_EMIT( changed());
+  }
   QApplication::restoreOverrideCursor();
-  this->addToRecentFiles(fileName);
-  actionRecenter->trigger();
-  Q_EMIT( changed());
-    
 }
 
 void
 MainWindow::on_actionSavePoints_triggered()
 {
-  /*
   QString fileName = QFileDialog::getSaveFileName(this,
-						  tr("Save points"),
-						  ".");
+                                                  tr("Save points"),
+                                                  ".reg.cgal",
+                                                  tr("Weighted Points (*.wpts.cgal);;"
+                                                     "All (*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
-    for(Delaunay::Finite_vertices_iterator 
-          vit = ag.finite_vertices_begin(),
-          end = ag.finite_vertices_end();
+    for(Apollonius::Sites_iterator
+        vit = ag.sites_begin(),
+        end = ag.sites_end();
         vit!= end; ++vit)
     {
-      ofs << vit->point() << std::endl;
+      ofs << vit->point()<<" "<<vit->weight()<<std::endl;
     }
   }
-  */
 }
 
 
