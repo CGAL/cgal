@@ -187,7 +187,7 @@ MainWindow::open(QString fileName)
   ifs >> x_samples;
   ifs >> y_samples;
   regular_grid = new Regular_grid(x_samples, y_samples, iXSize, iYSize);
-  /*fill the grid with the appropreate values*/
+  /*fill the grid with the appropriate values*/
   for (unsigned int i=0;i<x_samples;i++)
     for (unsigned int j=0;j<y_samples;j++)
       {
@@ -200,7 +200,6 @@ MainWindow::open(QString fileName)
   // default cursor
   QApplication::restoreOverrideCursor();
   this->addToRecentFiles(fileName);
-  //  actionRecenter->trigger();
   generate();
   Q_EMIT( changed());
     

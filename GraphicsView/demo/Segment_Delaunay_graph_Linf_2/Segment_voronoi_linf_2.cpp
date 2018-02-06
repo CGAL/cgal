@@ -281,7 +281,7 @@ MainWindow::on_actionLoadSegments_triggered()
                                     "Pin  files (*.pin)\n" 
                                     "Pts  files (*.pts)\n"
                                     "Edge files (*.edg)\n"
-                                    "Poly files (*.plg)"
+                                    "Polygon files (*.polygon.cgal)"
                                                           ));
   open(fileName);
 }

@@ -253,7 +253,7 @@ MainWindow::on_actionLoadSegments_triggered()
 						  tr("Open Constraint File"),
 						  ".",
 						  tr("Edge files (*.edg)\n"
-						     "Poly files (*.plg)"));
+                                                     "Polygon files (*.polygon.cgal)"));
   open(fileName);
 }
 
