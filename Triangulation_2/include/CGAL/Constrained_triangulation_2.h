@@ -913,12 +913,15 @@ intersect(Face_handle f, int i,
 // split constraint edge (f,i) 
 // and return the Vertex_handle of the new Vertex
 { 
+#ifndef CGAL_NO_WARNING_WHEN_USING_CDT_PLUS_WHILE_INTERSECTING_CONSTRAINTS
   CGAL_warning_msg(false,
-  "You are using an exact number types\n"
+  "You are using an exact number type\n"
   "using a Constrained_triangulation_plus_2 class\n"
   "would avoid cascading intersection computation\n"
-  " and be much more efficient\n");
-
+  " and be much more efficient\n"
+  "define CGAL_NO_WARNING_WHEN_USING_CDT_PLUS_WHILE_INTERSECTING_CONSTRAINTS "
+  "to disable this warning.\n");
+#endif
   const Point& pa = vaa->point();
   const Point& pb = vbb->point();
   const Point& pc = f->vertex(cw(i))->point();
