@@ -538,7 +538,9 @@ MainWindow::on_actionLoadConstraints_triggered()
 						  ".",
 						  tr("Edge files (*.edg);;"
                                                      "Plg files (*.plg);;"
-						     "Poly files (*.poly)"));
+                                                     "Poly files (*.poly);;"
+                                                     "CGAL files (*.cpts.cgal);;"
+                                                     "All (*)"));
   open(fileName);
 }
 
@@ -657,8 +659,8 @@ MainWindow::on_actionSaveConstraints_triggered()
   QString fileName = QFileDialog::getSaveFileName(this,
 						  tr("Save Constraints"),
 						  ".",
-						  tr("Poly files (*.poly)\n"
-						     "Edge files (*.edg)"));
+                                                  tr("CGAL files (*.cpts.cgal);;"
+                                                     "All (*)"));
   if(! fileName.isEmpty()){
     saveConstraints(fileName);
   }
