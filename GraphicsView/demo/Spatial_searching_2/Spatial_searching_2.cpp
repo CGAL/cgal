@@ -242,7 +242,9 @@ MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open Points file"),
-						  ".");
+                                                  ".",
+                                                  tr("CGAL files (*.pts.cgal);;"
+                                                     "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
   }
