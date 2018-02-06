@@ -227,7 +227,9 @@ MainWindow::on_actionLoadPolygon_triggered()
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open Polygon File"),
 						  ".",
-						  tr( "Any file (*.*)"));
+                                                  tr( "Poly files (*.poly);;"
+                                                      "WSL files (*.wsl);;"
+                                                      "All file (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
   }
@@ -253,7 +255,8 @@ MainWindow::on_actionSavePolygon_triggered()
   QString fileName = QFileDialog::getSaveFileName(this,
 						  tr("Save Polygon"),
 						  ".",
-						  tr("Any files (*.*)"));
+                                                  tr( "Poly files (*.poly);;"
+                                                      "All file (*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
     ofs << poly;
