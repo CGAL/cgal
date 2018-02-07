@@ -219,9 +219,12 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                            pfunction->bbox().xmax(),
                            pfunction->bbox().ymax(),
                            pfunction->bbox().zmax());
-
+  namespace p = CGAL::parameters;
   Function_mesh_domain* p_domain =
-    new Function_mesh_domain(Function_wrapper(*pfunction), domain_bbox, 1e-7);
+    new Function_mesh_domain(Function_wrapper(*pfunction), domain_bbox, 1e-7,
+                             p::construct_surface_patch_index =
+                               [](int i, int j) { return (i * 1000 + j); }
+                             );
 
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
   p_new_item->setScene(scene);
@@ -246,10 +249,9 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
 
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
-#include <CGAL/Gray_image_mesh_domain_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 
-typedef CGAL::Gray_image_mesh_domain_3<CGAL::Image_3, Kernel, float, CGAL::Compare_to_isovalue > Gray_image_domain1;
-typedef CGAL::Polyhedron_demo_labeled_mesh_domain_3<Gray_image_domain1> Gray_image_domain;
+typedef CGAL::Labeled_mesh_domain_3<Kernel, int, int> Gray_image_domain;
 typedef CGAL::Mesh_domain_with_polyline_features_3<Gray_image_domain> Gray_Image_mesh_domain;
 
 Meshing_thread* cgal_code_mesh_3(const Image* pImage,
@@ -307,10 +309,17 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
 
     if(protect_features && polylines.empty()){
       std::vector<std::vector<Bare_point> > polylines_on_bbox;
-      CGAL::polylines_to_protect<
-        Bare_point,
-        Image_mesh_domain::Image_word_type>(*pImage, polylines_on_bbox);
-      p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
+
+      CGAL_IMAGE_IO_CASE(pImage->image(),
+                         {
+                           typedef Word Image_word_type;
+                           (CGAL::polylines_to_protect<
+                              Bare_point,
+                              Image_word_type>(*pImage, polylines_on_bbox));
+                           p_domain->add_features(polylines_on_bbox.begin(),
+                                                  polylines_on_bbox.end());
+                         }
+                         );
     }
     if(! polylines.empty()){
       // Insert edge in domain
@@ -331,30 +340,44 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
       inside_is_less = !inside_is_less;
     }
     CGAL::Compare_to_isovalue domain_functor(iso_value, inside_is_less);
-    Gray_Image_mesh_domain* p_domain =
-      new Gray_Image_mesh_domain(*pImage, domain_functor, value_outside);
+    namespace p = CGAL::parameters;
+    Gray_Image_mesh_domain* p_domain = new Gray_Image_mesh_domain
+      (Gray_Image_mesh_domain::create_gray_image_mesh_domain
+       (p::image = *pImage,
+        p::image_values_to_subdomain_indices = domain_functor,
+        p::value_outside = value_outside,
+        p::construct_surface_patch_index =
+          [](int i, int j) { return (i * 1000 + j); }
+        )
+       );
     if(protect_features && polylines.empty())
     {
       using CGAL::internal::Mesh_3::Linear_interpolator;
-      typedef Gray_Image_mesh_domain::Image_word_type Image_word_type;
       std::vector<std::vector<Bare_point> > polylines_on_bbox;
-      CGAL::polylines_to_protect<
-        Bare_point, Image_word_type>(*pImage,
-                                     pImage->vx(),
-                                     pImage->vy(),
-                                     pImage->vz(),
-                                     polylines_on_bbox,
-                                     (Image_word_type*)0,
-                                     CGAL::Null_subdomain_index(),
-                                     domain_functor,
-                                     Linear_interpolator<Kernel, Image_word_type>(),
-                                     0,
-                                     0,
-                                     iso_value,
-                                     (std::max)(10, int(10 * (std::min)((std::min)(pImage->vx(),
-                                                                                   pImage->vy()),
-                                                                        pImage->vz())
-                                                        / edge_size)));
+
+      CGAL_IMAGE_IO_CASE(pImage->image(),
+
+      typedef Word Image_word_type;
+      (CGAL::polylines_to_protect<Bare_point, Image_word_type>
+        ( *pImage,
+          pImage->vx(),
+          pImage->vy(),
+          pImage->vz(),
+          polylines_on_bbox,
+          (Image_word_type*)0,
+          CGAL::Null_subdomain_index(),
+          domain_functor,
+          Linear_interpolator<Kernel, Image_word_type>(),
+          0,
+          0,
+          iso_value,
+          (std::max)(10, int(10 * (std::min)((std::min)(pImage->vx(),
+                                                        pImage->vy()),
+                                             pImage->vz())
+                             / edge_size))));
+
+       );
+
       p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
     }
     if(! polylines.empty()){

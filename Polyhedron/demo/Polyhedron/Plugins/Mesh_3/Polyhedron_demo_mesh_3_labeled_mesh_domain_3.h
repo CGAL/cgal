@@ -37,13 +37,13 @@ namespace CGAL {
 
 struct Compare_to_isovalue {
   typedef bool result_type;
-  float iso_value;
+  double iso_value;
   bool less;
 
-  Compare_to_isovalue(float iso_value, bool less)
+  Compare_to_isovalue(double iso_value, bool less)
     : iso_value(iso_value), less(less) {}
 
-  bool operator()(float x) const {
+  bool operator()(double x) const {
     return (x < iso_value) == less;
   }
 };
