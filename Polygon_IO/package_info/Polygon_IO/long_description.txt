@@ -1,0 +1,7 @@
+Polygon_IO Package
+---------------------------------------------------------------------
+IO files for 2D CGAL Data Structures.
+
+
+
+Maxime Gimeno
