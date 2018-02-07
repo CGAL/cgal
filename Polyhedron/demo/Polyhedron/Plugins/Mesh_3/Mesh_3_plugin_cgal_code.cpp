@@ -273,21 +273,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
 {
   if (NULL == pImage) { return NULL; }
 
-  Image_mesh_domain* p_domain = new Image_mesh_domain(*pImage, 1e-6);
-
-  if(protect_features && polylines.empty())
-  {
-    std::vector<std::vector<Bare_point> > polylines_on_bbox;
-    if(pImage->image()->wordKind == WK_FLOAT)
-      CGAL::polylines_to_protect<Bare_point, float>(*pImage, polylines_on_bbox);
-    else //WK_FIXED
-      CGAL::polylines_to_protect<Bare_point, unsigned char>(*pImage, polylines_on_bbox);
-
-    p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
-  }
   if(! polylines.empty()){
-    // Insert edge in domain
-    p_domain->add_features(polylines.begin(), polylines.end());
     protect_features = true; // so that it will be passed in make_mesh_3
   }
   Mesh_parameters param;
@@ -305,7 +291,16 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   p_new_item->setScene(scene);
   if(!is_gray)
   {
-    Image_mesh_domain* p_domain = new Image_mesh_domain(*pImage, 1e-6);
+    namespace p = CGAL::parameters;
+
+    Image_mesh_domain* p_domain = new Image_mesh_domain
+      (Image_mesh_domain::create_labeled_image_mesh_domain
+       (p::image = *pImage,
+        p::relative_error_bound = 1e-6,
+        p::construct_surface_patch_index =
+          [](int i, int j) { return (i * 1000 + j); }
+        )
+       );
 
     if(protect_features && polylines.empty()){
       std::vector<std::vector<Bare_point> > polylines_on_bbox;
@@ -344,6 +339,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
     Gray_Image_mesh_domain* p_domain = new Gray_Image_mesh_domain
       (Gray_Image_mesh_domain::create_gray_image_mesh_domain
        (p::image = *pImage,
+        p::relative_error_bound = 1e-6,
         p::image_values_to_subdomain_indices = domain_functor,
         p::value_outside = value_outside,
         p::construct_surface_patch_index =

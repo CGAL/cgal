@@ -47,6 +47,10 @@
 #include <boost/next_prior.hpp> // for boost::prior and boost::next
 #include <boost/variant.hpp>
 #include <boost/foreach.hpp>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/utility/enable_if.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 
 namespace CGAL {
 
@@ -538,6 +542,7 @@ template < typename MeshDomain_3 >
 class Mesh_domain_with_polyline_features_3
   : public MeshDomain_3
 {
+  typedef Mesh_domain_with_polyline_features_3<MeshDomain_3> Self;
 public:
 /// \name Types
 /// @{
@@ -563,17 +568,30 @@ public:
   typedef typename MeshDomain_3::Point_3   Point_3;
 #endif // DOXYGEN_RUNNING
 
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 /// \name Creation
+/// Constructors. Forwards the arguments to the constructor
+/// of the base class.
 /// @{
 
-/*!
-Constructor. Forwards the arguments to the constructor
-of the base class.
-*/
-  template <typename ... T>
-  Mesh_domain_with_polyline_features_3(const T& ...t)
-    : MeshDomain_3(t...)
+  Mesh_domain_with_polyline_features_3()
+    : MeshDomain_3()
+    , current_corner_index_(1)
+    , current_curve_index_(1)
+    , curves_aabb_tree_is_built(false) {}
+
+  template <typename T1,
+            typename boost::disable_if<boost::is_same<T1,Self>, int>::type = 0
+            >
+  Mesh_domain_with_polyline_features_3(const T1& o1)
+    : MeshDomain_3(o1)
+    , current_corner_index_(1)
+    , current_curve_index_(1)
+    , curves_aabb_tree_is_built(false) {}
+
+#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+  template <typename T1, typename T2, typename ... T>
+  Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2, const T& ...o)
+    : MeshDomain_3(o1, o2, o...)
     , current_corner_index_(1)
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
@@ -581,19 +599,6 @@ of the base class.
 #else
   /// Constructors
   /// Call the base class constructor
-  Mesh_domain_with_polyline_features_3()
-    : MeshDomain_3()
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
-
-  template <typename T1>
-  Mesh_domain_with_polyline_features_3(const T1& o1)
-    : MeshDomain_3(o1)
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
-
   template <typename T1, typename T2>
   Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2)
     : MeshDomain_3(o1, o2)
@@ -848,7 +853,7 @@ public:
 
 private:
   Corners_incidence_map corners_incidence_map_;
-  mutable Curves_AABB_tree curves_aabb_tree_;
+  mutable boost::shared_ptr<Curves_AABB_tree> curves_aabb_tree_ptr_;
   mutable bool curves_aabb_tree_is_built;
 
 public:
@@ -857,7 +862,7 @@ public:
 
   const Curves_AABB_tree& curves_aabb_tree() const {
     if(!curves_aabb_tree_is_built) build_curves_aabb_tree();
-    return curves_aabb_tree_;
+    return *curves_aabb_tree_ptr_;
   }
   Curve_index maximal_curve_index() const {
     if(edges_incidences_.empty()) return Curve_index();
@@ -870,7 +875,11 @@ public:
     CGAL::Real_timer timer;
     timer.start();
 #endif
-    curves_aabb_tree_.clear();
+    if(curves_aabb_tree_ptr_) {
+      curves_aabb_tree_ptr_->clear();
+    } else {
+      curves_aabb_tree_ptr_ = boost::make_shared<Curves_AABB_tree>();
+    }
     for(typename Edges::const_iterator
           edges_it = edges_.begin(),
           edges_end = edges_.end();
@@ -882,10 +891,10 @@ public:
             end = polyline.points_.end() - 1;
           pit != end; ++pit)
       {
-        curves_aabb_tree_.insert(std::make_pair(edges_it, pit));
+        curves_aabb_tree_ptr_->insert(std::make_pair(edges_it, pit));
       }
     }
-    curves_aabb_tree_.build();
+    curves_aabb_tree_ptr_->build();
     curves_aabb_tree_is_built = true;
 #if CGAL_MESH_3_VERBOSE
     timer.stop();
@@ -893,12 +902,6 @@ public:
 #endif
   } // end build_curves_aabb_tree()
   /// @endcond
-private:
-  // Disabled copy constructor & assignment operator
-  typedef Mesh_domain_with_polyline_features_3 Self;
-  Mesh_domain_with_polyline_features_3(const Self& src);
-  Self& operator=(const Self& src);
-
 };  // end class Mesh_domain_with_polyline_features_3
 
 

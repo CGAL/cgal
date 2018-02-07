@@ -46,9 +46,10 @@ template<class Image,
          typename Transform = internal::Mesh_3::Greater_than<double>,
          typename Subdomain_index = int>
 class
-CGAL_DEPRECATED_MSG("The class template `CGAL::Gray_image_mesh_domain_3` is "
-                    "now deprecated. Use the function template `CGAL::"
-                    "gray_image_mesh_domain_3` instead.")
+CGAL_DEPRECATED_MSG
+( "The class template `CGAL::Gray_image_mesh_domain_3` is now deprecated. "
+  "Use the member function template "
+  "`Labeled_mesh_domain_3<K>::create_gray_image_mesh_domain` instead.")
 Gray_image_mesh_domain_3
   : public Labeled_mesh_domain_3<BGT, Subdomain_index>
 {

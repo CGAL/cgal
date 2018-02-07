@@ -65,6 +65,11 @@ namespace internal {
 
 namespace Mesh_3 {
 
+  struct Identity {
+    template <typename T>
+    const T& operator()(const T& x) { return x; }
+  };
+
   template<typename T>
   struct Greater_than {
     typedef T argument_type;
@@ -104,6 +109,23 @@ namespace Mesh_3 {
     template <typename FT>
     type operator()(Null_functor, const FT& iso_value) const {
       return type(iso_value);
+    }
+  };
+
+  template <typename Image_values_to_subdom_indices>
+  struct Create_labeled_image_values_to_subdomain_indices {
+    typedef Image_values_to_subdom_indices type;
+    type operator()(Image_values_to_subdom_indices functor) const {
+      return functor;
+    }
+  };
+
+  // specialization for `Null_functor`: create the default functor
+  template <>
+  struct Create_labeled_image_values_to_subdomain_indices<Null_functor> {
+    typedef Identity type;
+    type operator()(Null_functor) const {
+      return type();
     }
   };
 
@@ -167,6 +189,7 @@ protected:
   construct_pair_functor() {
     return Construct_pair_from_subdomain_indices<Subdomain_index>();
   }
+
   template <class ArgumentPack>
   Labeled_mesh_domain_3_impl_details(ArgumentPack const& args)
     : function_(args[parameters::function])
@@ -380,6 +403,41 @@ public:
       (create_gray_image_wrapper
        (image_,
         iso_value_,
+        image_values_to_subdomain_indices_,
+        value_outside_),
+       internal::Mesh_3::compute_bounding_box(image_),
+       p::relative_error_bound = relative_error_bound_,
+       p::p_rng = p_rng_,
+       p::null_subdomain_index =
+         create_null_subdomain_index(null_subdomain_index_),
+       p::construct_surface_patch_index =
+       create_construct_surface_patch_index(construct_surface_patch_index_));
+  }
+
+  BOOST_PARAMETER_MEMBER_FUNCTION(
+                                  (Labeled_mesh_domain_3),
+                                  static create_labeled_image_mesh_domain,
+                                  parameters::tag,
+                                  (required
+                                   (image_, (const CGAL::Image_3&))
+                                   )
+                                  (optional
+                                   (relative_error_bound_, (const FT&),
+                                    FT(1e-3))
+                                   (value_outside_, *, 0)
+                                   (p_rng_, (CGAL::Random*), (CGAL::Random*)(0))
+                                   (image_values_to_subdomain_indices_, *,
+                                    Null_functor())
+                                   (null_subdomain_index_,*,Null_functor())
+                                   (construct_surface_patch_index_, *,
+                                    Null_functor())
+                                   )
+                                  )
+  {
+    namespace p = CGAL::parameters;
+    return Labeled_mesh_domain_3
+      (create_labeled_image_wrapper
+       (image_,
         image_values_to_subdomain_indices_,
         value_outside_),
        internal::Mesh_3::compute_bounding_box(image_),
@@ -763,6 +821,48 @@ protected:
        return create_gray_image_wrapper_with_known_word_type<Word>
                        (image,
                         iso_value,
+                        image_values_to_subdomain_indices,
+                        value_outside);
+                       );
+    CGAL_error_msg("This place should never be reached, because it would mean "
+                   "the image word type is a type that is not handled by "
+                   "CGAL_ImageIO.");
+    return Function();
+  }
+
+  template <typename Image_word_type,
+            typename FT, typename Functor>
+  static
+  Function
+  create_labeled_image_wrapper_with_known_word_type
+  (const CGAL::Image_3& image,
+   const Functor& image_values_to_subdomain_indices,
+   const FT& value_outside)
+  {
+    using internal::Mesh_3::Create_labeled_image_values_to_subdomain_indices;
+    typedef Create_labeled_image_values_to_subdomain_indices<Functor> C_i_v_t_s_i;
+    typedef typename C_i_v_t_s_i::type Image_values_to_subdomain_indices;
+    Image_values_to_subdomain_indices transform_fct =
+      C_i_v_t_s_i()(image_values_to_subdomain_indices);
+
+    typedef Mesh_3::Image_to_labeled_function_wrapper<Image_word_type,
+                                                      int,
+                                                      Subdomain_index> Wrapper;
+    return Wrapper(image,
+                   transform_fct,
+                   transform_fct(value_outside));
+  }
+
+  template <typename FT, typename Functor>
+  static
+  Function
+  create_labeled_image_wrapper(const CGAL::Image_3& image,
+                               const Functor& image_values_to_subdomain_indices,
+                               const FT& value_outside)
+  {
+    CGAL_IMAGE_IO_CASE(image.image(),
+       return create_labeled_image_wrapper_with_known_word_type<Word>
+                       (image,
                         image_values_to_subdomain_indices,
                         value_outside);
                        );

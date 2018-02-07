@@ -51,7 +51,12 @@ template<class Image,
          typename Subdomain_index = int,
          class Null_subdomain_index = Default,
          class Wrapper_ = Default >
-class Labeled_image_mesh_domain_3
+class
+CGAL_DEPRECATED_MSG
+( "The class template `CGAL::Labeled_image_mesh_domain_3` is now deprecated. "
+  "Use the member function template "
+  "`Labeled_mesh_domain_3<K>::create_labeled_image_mesh_domain` instead.")
+Labeled_image_mesh_domain_3
   : public Labeled_mesh_domain_3<BGT, Subdomain_index>
 {
 public:
@@ -87,33 +92,10 @@ public:
   {}
 
   Labeled_image_mesh_domain_3(const Image& image,
-                              const CGAL::Bbox_3& bbox,
-                              const FT& error_bound = FT(1e-3),
-                              Subdomain_index value_outside = 0,
-                              Null null = Null(),
-                              CGAL::Random* p_rng = NULL)
-    : Base(Wrapper(image, Identity(), value_outside),
-           bbox,
-           error_bound,
-           p_rng,
-           parameters::null_subdomain_index = null)
-  {}
-
-  Labeled_image_mesh_domain_3(const Image& image,
                               const FT error_bound,
                               CGAL::Random* p_rng)
     : Base(Wrapper(image),
            compute_bounding_box(image),
-           error_bound,
-           p_rng)
-  {}
-
-  Labeled_image_mesh_domain_3(const Image& image,
-                              const CGAL::Bbox_3& bbox,
-                              const FT error_bound,
-                              CGAL::Random* p_rng)
-    : Base(Wrapper(image),
-           bbox,
            error_bound,
            p_rng)
   {}
@@ -134,13 +116,6 @@ private:
                   double(im.ydim()+1)*im.vy(),
                   double(im.zdim()+1)*im.vz());
   }
-
-private:
-  // Disabled copy constructor & assignment operator
-  typedef Labeled_image_mesh_domain_3<Image, BGT> Self;
-  Labeled_image_mesh_domain_3(const Self& src);
-  Self& operator=(const Self& src);
-
 };  // end class Labeled_image_mesh_domain_3
 
 
