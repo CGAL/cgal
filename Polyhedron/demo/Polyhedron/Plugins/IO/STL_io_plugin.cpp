@@ -55,7 +55,7 @@ public:
 };
 
 QString Polyhedron_demo_stl_plugin::nameFilters() const {
-  return "STL files (*.stl *STL)";
+  return "STL files (*.stl)";
 }
 
 bool Polyhedron_demo_stl_plugin::canLoad() const {
