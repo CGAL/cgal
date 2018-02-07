@@ -203,7 +203,7 @@ namespace CGAL {
 
 template <typename T, typename G>
 typename boost::property_map<G, dynamic_vertex_property_t<T> >::const_type
-get(CGAL::dynamic_vertex_property_t<T> prop, const G&)
+get(const CGAL::dynamic_vertex_property_t<T>&, const G&)
 {
   typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
   return internal::Dynamic_property_map<vertex_descriptor,T>();
@@ -211,7 +211,7 @@ get(CGAL::dynamic_vertex_property_t<T> prop, const G&)
 
 template <typename T, typename G>
 typename boost::property_map<G, dynamic_halfedge_property_t<T> >::const_type
-get(CGAL::dynamic_halfedge_property_t<T> prop, const G&)
+get(const CGAL::dynamic_halfedge_property_t<T>&, const G&)
 {
   typedef typename boost::graph_traits<G>::halfedge_descriptor halfedge_descriptor;
   return internal::Dynamic_property_map<halfedge_descriptor,T>();
@@ -219,7 +219,7 @@ get(CGAL::dynamic_halfedge_property_t<T> prop, const G&)
 
 template <typename T, typename G>
 typename boost::property_map<G, dynamic_edge_property_t<T> >::const_type
-get(CGAL::dynamic_edge_property_t<T> prop, const G&)
+get(const CGAL::dynamic_edge_property_t<T>&, const G&)
 {
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
   return internal::Dynamic_property_map<edge_descriptor,T>();
@@ -227,7 +227,7 @@ get(CGAL::dynamic_edge_property_t<T> prop, const G&)
 
 template <typename T, typename G>
 typename boost::property_map<G, dynamic_face_property_t<T> >::const_type
-get(CGAL::dynamic_face_property_t<T> prop, const G&)
+get(const CGAL::dynamic_face_property_t<T>&, const G&)
 {
   typedef typename boost::graph_traits<G>::face_descriptor face_descriptor;
   return internal::Dynamic_property_map<face_descriptor,T>();
