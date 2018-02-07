@@ -262,6 +262,8 @@ public:
     this->build();
   }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
   CGAL_DEPRECATED
   Polyhedral_mesh_domain_with_features_3(const std::string& filename,
                                          CGAL::Random* p_rng = NULL)
@@ -280,6 +282,7 @@ public:
   {
     load_from_file(filename);
   }
+#endif // not CGAL_NO_DEPRECATED_CODE
 
   Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
                                          const Polyhedron& bounding_p,
