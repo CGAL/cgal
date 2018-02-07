@@ -23,9 +23,7 @@ typedef short Image_word_type;
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Gray_image_mesh_domain_3<CGAL::Image_3,K, 
-                                       Image_word_type,
-                                       boost::binder1st< std::less<Image_word_type> > > Mesh_domain;
+typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
@@ -33,6 +31,17 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+
+class Greater {
+  double iso;
+public:
+  Greater(double iso): iso(iso) {}
+
+  template <typename T>
+  int operator()(T v) const {
+    return int(v < iso);
+  }
+};
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
@@ -73,8 +82,11 @@ int main(int argc, char* argv[])
     return 0;
   }
   // Domain
-  Mesh_domain domain(image, boost::bind1st(std::less<Image_word_type>(), iso), 0);
-  
+  Mesh_domain domain = Mesh_domain::create_gray_image_mesh_domain
+    (image,
+     image_values_to_subdomain_indices = Greater(iso),
+     value_outside = 0);
+
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_size=fs, facet_distance=fd,
                          cell_radius_edge_ratio=3, cell_size=cs);
