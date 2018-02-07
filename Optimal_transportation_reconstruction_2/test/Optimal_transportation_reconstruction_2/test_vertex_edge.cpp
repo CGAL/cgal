@@ -67,14 +67,16 @@ void test_edge_collapse()
   CGAL::Optimal_transportation_reconstruction_2<K, Point_property_map, Mass_property_map>
     otr2(points, point_pmap, mass_pmap);
 
-  Rt_2 rt2;
-  otr2.extract_tds_output(rt2);
+  const Rt_2& rt2 = otr2.tds();
 
   FT min_priority = 1000;
   R_edge_2 contract_edge;
   for (Finite_edges_iterator ei = rt2.finite_edges_begin();
        ei != rt2.finite_edges_end(); ++ei) 
   {
+    if (rt2.is_pinned(*ei) || rt2.is_target_cyclic(*ei))
+      continue;
+    
     R_edge_2 cur_r_edge;
     if(!otr2.create_pedge(*ei, cur_r_edge))
       continue;
