@@ -885,7 +885,7 @@ CGAL_GMPFR_ARITHMETIC_FUNCTION(cbrt,mpfr_cbrt)
 inline
 Gmpfr Gmpfr::kthroot(int k,std::float_round_style r)const{
         Gmpfr result(0,CGAL_GMPFR_MEMBER_PREC());
-        mpfr_root(result.fr(),fr(),k,_gmp_rnd(r));
+        mpfr_rootn_ui(result.fr(),fr(),k,_gmp_rnd(r));
         return result;
 }
 
@@ -895,7 +895,7 @@ Gmpfr Gmpfr::kthroot(int k,
                      std::float_round_style r)const{
         CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
         Gmpfr result(0,p);
-        mpfr_root(result.fr(),fr(),k,_gmp_rnd(r));
+        mpfr_rootn_ui(result.fr(),fr(),k,_gmp_rnd(r));
         return result;
 }
 
