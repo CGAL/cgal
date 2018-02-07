@@ -236,7 +236,7 @@ void
 MainWindow::open(QString fileName)
 {
   if(! fileName.isEmpty()){
-    if(fileName.endsWith(".plg")){
+    if(fileName.endsWith(".polygon.cgal")){
       loadPolygonConstraints(fileName);
       this->addToRecentFiles(fileName);
     } else if(fileName.endsWith(".edg")){
@@ -253,7 +253,7 @@ MainWindow::on_actionLoadSegments_triggered()
 						  tr("Open Constraint File"),
 						  ".",
 						  tr("Edge files (*.edg)\n"
-                                                     "Polygon files (*.polygon.cgal)"));
+                                                     "Polyline files (*.polygon.cgal)"));
   open(fileName);
 }
 

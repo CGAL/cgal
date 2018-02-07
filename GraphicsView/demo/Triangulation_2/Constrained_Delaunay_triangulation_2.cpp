@@ -512,11 +512,11 @@ MainWindow::open(QString fileName)
       else
         return;
     }
-    if(fileName.endsWith(".cgal")){
-      loadFile(fileName);
-      this->addToRecentFiles(fileName);
-    } else if(fileName.endsWith(".plg")){
+    if(fileName.endsWith(".polygon.cgal")){
       loadPolygonConstraints(fileName);
+      this->addToRecentFiles(fileName);
+    } else if(fileName.endsWith(".cgal")){
+      loadFile(fileName);
       this->addToRecentFiles(fileName);
     } else if(fileName.endsWith(".edg")){
       loadEdgConstraints(fileName);
@@ -537,7 +537,7 @@ MainWindow::on_actionLoadConstraints_triggered()
 						  tr("Open Constraint File"),
 						  ".",
 						  tr("Edge files (*.edg);;"
-                                                     "Plg files (*.plg);;"
+                                                     "Polyline files (*.polygon.cgal);;"
                                                      "Poly files (*.poly);;"
                                                      "CGAL files (*.cpts.cgal);;"
                                                      "All (*)"));

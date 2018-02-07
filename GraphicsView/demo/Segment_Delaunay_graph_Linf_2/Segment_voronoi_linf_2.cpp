@@ -250,7 +250,7 @@ void
 MainWindow::open(QString fileName)
 {
   if(! fileName.isEmpty()){
-    if(fileName.endsWith(".plg")){
+    if(fileName.endsWith(".polygon.cgal")){
       loadPolygonConstraints(fileName);
       this->addToRecentFiles(fileName);
     } else if(fileName.endsWith(".edg")){
@@ -281,7 +281,7 @@ MainWindow::on_actionLoadSegments_triggered()
                                     "Pin  files (*.pin)\n" 
                                     "Pts  files (*.pts)\n"
                                     "Edge files (*.edg)\n"
-                                    "Polygon files (*.polygon.cgal)"
+                                    "Polylines files (*.polygon.cgal)"
                                                           ));
   open(fileName);
 }
