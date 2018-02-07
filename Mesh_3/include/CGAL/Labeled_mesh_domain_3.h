@@ -160,7 +160,7 @@ protected:
   }
 
   static Construct_pair_from_subdomain_indices<Subdomain_index>
-  construct_pair_functor(std::pair<Subdomain_index, Subdomain_index> const*) {
+  construct_pair_functor() {
     return Construct_pair_from_subdomain_indices<Subdomain_index>();
   }
   template <class ArgumentPack>
@@ -168,7 +168,7 @@ protected:
     : function_(args[parameters::function])
     , bbox_(iso_cuboid(args[parameters::bounding_object]))
     , cstr_s_p_index(args[parameters::construct_surface_patch_index |
-                          construct_pair_functor((Surface_patch_index*)(0))])
+                          construct_pair_functor()])
     , null(args[parameters::null_subdomain_index | Null_subdomain_index()])
     , p_rng_(args[parameters::p_rng|0] == 0 ?
              new CGAL::Random(0) :
@@ -327,7 +327,7 @@ public:
                         CGAL::Random* p_rng = NULL)
     : Impl_details(f, bounding_sphere,
                    error_bound,
-                   construct_pair_functor((Surface_patch_index*)(0)),
+                   construct_pair_functor(),
                    null, p_rng) {}
 
   Labeled_mesh_domain_3(const Function& f,
@@ -337,7 +337,7 @@ public:
                         CGAL::Random* p_rng = NULL)
     : Impl_details(f, bbox,
                    error_bound,
-                   construct_pair_functor((Surface_patch_index*)(0)),
+                   construct_pair_functor(),
                    null, p_rng) {}
 
   Labeled_mesh_domain_3(const Function& f,
@@ -346,7 +346,7 @@ public:
                         Null null = Null_subdomain_index(),
                         CGAL::Random* p_rng = NULL)
     : Impl_details(f, bbox, error_bound,
-                   construct_pair_functor((Surface_patch_index*)(0)),
+                   construct_pair_functor(),
                    null, p_rng)
   {}
   /**
@@ -714,8 +714,10 @@ protected:
   Surface_patch_index make_surface_index(const Subdomain_index i,
                                          const Subdomain_index j) const
   {
-    if ( i < j ) return Surface_patch_index(i,j);
-    else return Surface_patch_index(j,i);
+    if(i < j)
+      return this->cstr_s_p_index(i, j);
+    else
+      return this->cstr_s_p_index(j, i);
   }
 
   /// Returns the bounding sphere of an Iso_cuboid_3
@@ -774,7 +776,7 @@ protected:
   static
   Construct_surface_patch_index
   create_construct_surface_patch_index(const Null_functor&) {
-    return Impl_details::construct_pair_functor((Surface_patch_index*)(0));
+    return Impl_details::construct_pair_functor();
   }
 
   template <typename Functor>
