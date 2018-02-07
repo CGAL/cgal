@@ -31,24 +31,9 @@
 #include <CGAL/Random.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_3/Image_to_labeled_function_wrapper.h>
-
-#include <functional>
+#include <CGAL/Bbox_3.h>
 
 namespace CGAL {
-
-namespace internal {
-
-  template<typename T>
-  struct Greater_than {
-    typedef T argument_type;
-    Greater_than(const T& second) : second(second) {}
-    bool operator()(const T& first) const {
-      return std::greater<T>()(first, second);
-    }
-    T second;
-  };
-
-}
 
 /**
  * @class Gray_image_mesh_domain_3
@@ -58,9 +43,13 @@ namespace internal {
 template<class Image,
          class BGT,
          typename Image_word_type_ = float,
-         typename Transform = internal::Greater_than<double>,
+         typename Transform = internal::Mesh_3::Greater_than<double>,
          typename Subdomain_index = int>
-class Gray_image_mesh_domain_3
+class
+CGAL_DEPRECATED_MSG("The class template `CGAL::Gray_image_mesh_domain_3` is "
+                    "now deprecated. Use the function template `CGAL::"
+                    "gray_image_mesh_domain_3` instead.")
+Gray_image_mesh_domain_3
   : public Labeled_mesh_domain_3<BGT, Subdomain_index>
 {
 public:
@@ -86,7 +75,7 @@ public:
     : Base(Wrapper(image, 
                    Transform(iso_value),
                    Transform(iso_value)(value_outside)),
-           compute_bounding_box(image),
+           internal::Mesh_3::compute_bounding_box(image),
            error_bound,
            p_rng)
   {
@@ -99,7 +88,7 @@ public:
                            const FT& error_bound = FT(1e-3),
                            CGAL::Random* p_rng = NULL)
     : Base(Wrapper(image, transform, transform(value_outside)),
-           compute_bounding_box(image),
+           internal::Mesh_3::compute_bounding_box(image),
            error_bound,
            p_rng)
   {
@@ -108,30 +97,11 @@ public:
 
   /// Destructor
   virtual ~Gray_image_mesh_domain_3() {}
-
-
-private:
-  /// Returns a box enclosing image \c im
-  Bbox_3 compute_bounding_box(const Image& im) const
-  {
-    return Bbox_3(-1,-1,-1,
-                  double(im.xdim())*im.vx()+1,
-                  double(im.ydim())*im.vy()+1,
-                  double(im.zdim())*im.vz()+1);
-  }
-
-private:
-  // Disabled copy constructor & assignment operator
-  typedef Gray_image_mesh_domain_3<Image, BGT> Self;
-  Gray_image_mesh_domain_3(const Self& src);
-  Self& operator=(const Self& src);
-
 };  // end class Gray_image_mesh_domain_3
-
-
 
 }  // end namespace CGAL
 
 #include <CGAL/enable_warnings.h>
+
 
 #endif // CGAL_GRAY_IMAGE_MESH_DOMAIN_3_H

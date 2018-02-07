@@ -23,6 +23,9 @@
 // File Description :
 //***************************************************************************
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+#define CGAL_NO_DEPRECATION_WARNINGS 1
+
 #include "test_meshing_utilities.h"
 #include <CGAL/Image_3.h>
 #include <CGAL/Gray_image_mesh_domain_3.h>
@@ -49,8 +52,13 @@ struct Image_tester : public Tester<K_e_i>
 public:
   void image() const
   {
+    typedef float                                       Image_word_type;
     typedef CGAL::Image_3                               Image;
-    typedef CGAL::Labeled_mesh_domain_3<K_e_i>          Mesh_domain;
+    typedef CGAL::Gray_image_mesh_domain_3<
+      Image,
+      K_e_i,
+      Image_word_type,
+      Greater_than<double> >                            Mesh_domain;
 
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,
@@ -73,15 +81,13 @@ public:
 
     std::cout << "\tSeed is\t"
               << CGAL::get_default_random().get_seed() << std::endl;
-    namespace p = CGAL::parameters;
+
     // Domain
-    Mesh_domain domain =
-      Mesh_domain::create_gray_image_mesh_domain(image,
-                                                 p::iso_value = 2.9f,
-                                                 p::value_outside = 0.f,
-                                                 p::relative_error_bound = 1e-3,
-                                                 p::p_rng =
-                                                 &CGAL::get_default_random());
+    Mesh_domain domain(image,
+      2.9f, //isovalue
+      0.f,  //value_outside
+      1e-3, //error_bound
+      &CGAL::get_default_random());//random generator for determinism
 
     // Mesh criteria
     Mesh_criteria criteria(facet_angle = 30,
@@ -120,3 +126,11 @@ int main()
 
   return EXIT_SUCCESS;
 }
+
+#else // CGAL_NO_DEPRECATED_CODE
+#include <iostream>
+int main() { 
+  std::cerr << "CGAL_NO_DEPRECATED_CODE is defined. Nothing to test.\n";
+  return 0; 
+}
+#endif // CGAL_NO_DEPRECATED_CODE

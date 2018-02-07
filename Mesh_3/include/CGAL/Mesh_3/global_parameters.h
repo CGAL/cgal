@@ -96,13 +96,19 @@ BOOST_PARAMETER_NAME( (number_of_initial_points, tag) number_of_initial_points_)
 BOOST_PARAMETER_NAME( (maximal_number_of_vertices, tag ) maximal_number_of_vertices_)
 BOOST_PARAMETER_NAME( (pointer_to_error_code, tag ) pointer_to_error_code_)
 
-// Used in <CGAL/Labeled_mesh_domain_3.h>
+// First used in <CGAL/Labeled_mesh_domain_3.h>
 BOOST_PARAMETER_NAME( (function, tag ) function_)
 BOOST_PARAMETER_NAME( (bounding_object, tag ) bounding_object_)
 BOOST_PARAMETER_NAME( (relative_error_bound, tag ) relative_error_bound_)
 BOOST_PARAMETER_NAME( (p_rng, tag ) p_rng_)
 BOOST_PARAMETER_NAME( (null_subdomain_index, tag ) null_subdomain_index_)
 BOOST_PARAMETER_NAME( (construct_surface_patch_index, tag ) construct_surface_patch_index_)
+
+// First used in <CGAL/Gray_image_mesh_domain_3.h>
+BOOST_PARAMETER_NAME( (image, tag ) image_)
+BOOST_PARAMETER_NAME( (iso_value, tag) iso_value_)
+BOOST_PARAMETER_NAME( (value_outside, tag) value_outside_)
+BOOST_PARAMETER_NAME( (image_values_to_subdomain_indices, tag ) image_values_to_subdomain_indices_)
 
 CGAL_PRAGMA_DIAG_POP
 } // end namespace parameters
