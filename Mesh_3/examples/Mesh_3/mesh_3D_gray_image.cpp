@@ -14,8 +14,7 @@ typedef float Image_word_type;
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Gray_image_mesh_domain_3<CGAL::Image_3, K,
-                                       Image_word_type> Mesh_domain;
+typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
@@ -37,7 +36,8 @@ int main(int argc, char*argv[])
     return EXIT_FAILURE;
   }
   // Domain
-  Mesh_domain domain(image, 2.9f, 0.f);
+  Mesh_domain domain =
+    Mesh_domain::create_gray_image_mesh_domain(image, 2.9f, 0.f);
 
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_size=6, facet_distance=2,
