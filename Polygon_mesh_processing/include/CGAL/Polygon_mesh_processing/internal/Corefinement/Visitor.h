@@ -651,7 +651,7 @@ public:
     std::map<TriangleMesh*,Face_boundaries> mesh_to_face_boundaries;
 
     //0) For each triangle mesh, collect original vertices that belongs to the intersection.
-    //   From the graph of constaints, extract intersection edges that are incident to such vertices. In case
+    //   From the graph of constraints, extract intersection edges that are incident to such vertices. In case
     //   there exists another original vertex adjacent to the first one found, this halfedge must be
     //   marked on the boundary (and possibly update an_edge_per_polyline).
     //   This is done first to avoid halfedges stored to be modified in the steps following.
@@ -685,13 +685,22 @@ public:
               //get the corresponding halfedge with vertex corresponding to node_id_of_first
               halfedge_descriptor hedge=it_node_2_hedge->second;
               halfedge_descriptor start=hedge;
+              bool did_break=false;
               while ( source(hedge,tm) !=
                       target(it_node_2_hedge_two->second,tm) )
               {
                 hedge=opposite(next(hedge,tm),tm);
                 if (tm1_ptr==tm2_ptr && hedge==start)
                 {
-                  ++it_node_2_hedge_two;
+                  ++it_node_2_hedge_two; // we are using a multimap and
+                                         // the halfedge we are looking for
+                                         // might be on another sheet
+                  if (it_node_2_hedge_two==nodes_to_hedge.end() ||
+                      node_id!=it_node_2_hedge_two->first)
+                  {
+                    did_break=true;
+                    break;
+                  }
                   CGAL_assertion(it_node_2_hedge_two!=nodes_to_hedge.end());
                   CGAL_assertion(it_node_2_hedge->first==node_id_of_first);
                 }
@@ -700,6 +709,7 @@ public:
                   CGAL_assertion(hedge!=start);
                 }
               }
+              if (did_break) continue;
               std::pair<Node_id,Node_id> edge_pair(node_id,node_id_of_first);
               call_put(marks_on_edges,tm,edge(hedge,tm),true);
               output_builder.set_edge_per_polyline(tm,edge_pair,hedge);
