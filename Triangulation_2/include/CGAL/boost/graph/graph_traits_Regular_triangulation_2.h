@@ -72,6 +72,8 @@ namespace boost {
     typedef typename Regular_triangulation::size_type size_type;
     typedef size_type vertices_size_type;
     typedef size_type edges_size_type;
+    typedef size_type halfedges_size_type;
+    typedef size_type faces_size_type;
     typedef size_type degree_size_type;
 
     // nulls
