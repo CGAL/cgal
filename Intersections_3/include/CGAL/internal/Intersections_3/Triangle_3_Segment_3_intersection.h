@@ -257,7 +257,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
             case NEGATIVE:
               // c is isolated on the negative side
               return t3s3_intersection_coplanar_aux(a,b,c,p,q,true,k);
-            dafault:
+            default:
               if ( collinear_ordered(p,c,q) ) // c is inside [p,q]
                 return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>(c);
               else
