@@ -595,15 +595,31 @@ public:
               nodes);
             if ( q2_is_between_p1p2 ){
              //case 1
-             uf.unify_sets(patch_handles[patch_id_p1], patch_handles[patch_id_p2]);
              patches_to_keep.reset(patch_id_q2);
-             patches_to_keep.reset(patch_id_q1);
+             if (patch_id_p1<patch_id_q1)
+             {
+               uf.unify_sets(patch_handles[patch_id_p1], patch_handles[patch_id_p2]);
+               patches_to_keep.reset(patch_id_q1);
+             }
+             else
+             {
+               uf.unify_sets(patch_handles[patch_id_q1], patch_handles[patch_id_p2]);
+               patches_to_keep.reset(patch_id_p1);
+             }
             }
             else{
               //case 2
-              uf.unify_sets(patch_handles[patch_id_q1], patch_handles[patch_id_q2]);
-              patches_to_keep.reset(patch_id_p1);
               patches_to_keep.reset(patch_id_p2);
+              if (patch_id_p1<patch_id_q1)
+              {
+                uf.unify_sets(patch_handles[patch_id_p1], patch_handles[patch_id_q2]);
+                patches_to_keep.reset(patch_id_q1);
+              }
+              else
+              {
+                uf.unify_sets(patch_handles[patch_id_q1], patch_handles[patch_id_q2]);
+                patches_to_keep.reset(patch_id_p1);
+              }
             }
             continue;
           }
@@ -626,15 +642,16 @@ public:
                 nodes);
               if ( q1_is_between_p1p2 ){
                 // case 3
-                uf.unify_sets(patch_handles[patch_id_q1], patch_handles[patch_id_q2]);
                 patches_to_keep.reset(patch_id_p1);
                 patches_to_keep.reset(patch_id_p2);
+                patches_to_keep.reset(patch_id_q1);
+                patches_to_keep.reset(patch_id_q2);
               }
               else{
                 // case 4
-                uf.unify_sets(patch_handles[patch_id_p2], patch_handles[patch_id_q1]);
-                patches_to_keep.reset(patch_id_q2);
+                uf.unify_sets(patch_handles[patch_id_q1], patch_handles[patch_id_p2]);
                 patches_to_keep.reset(patch_id_p1);
+                patches_to_keep.reset(patch_id_q2);
               }
               continue;
             }
@@ -657,14 +674,15 @@ public:
                   nodes);
                 if ( q2_is_between_p1p2 )
                 {  //case 5
-                  uf.unify_sets(patch_handles[patch_id_p1], patch_handles[patch_id_p2]);
+                  patches_to_keep.reset(patch_id_p1);
+                  patches_to_keep.reset(patch_id_p2);
                   patches_to_keep.reset(patch_id_q1);
                   patches_to_keep.reset(patch_id_q2);
                 }else{
                   //case 6
-                  uf.unify_sets(patch_handles[patch_id_p1], patch_handles[patch_id_q2]);
-                  patches_to_keep.reset(patch_id_p2);
+                  uf.unify_sets(patch_handles[patch_id_q2], patch_handles[patch_id_p1]);
                   patches_to_keep.reset(patch_id_q1);
+                  patches_to_keep.reset(patch_id_p2);
                 }
                 continue;
               }
@@ -686,15 +704,31 @@ public:
                     nodes);
                   if ( q1_is_between_p1p2 ){
                     //case 7
-                    uf.unify_sets(patch_handles[patch_id_p1], patch_handles[patch_id_p2]);
                     patches_to_keep.reset(patch_id_q1);
-                    patches_to_keep.reset(patch_id_q2);
+                    if(patch_id_p2<patch_id_q2)
+                    {
+                      uf.unify_sets(patch_handles[patch_id_p1], patch_handles[patch_id_p2]);
+                      patches_to_keep.reset(patch_id_q2);
+                    }
+                    else
+                    {
+                      uf.unify_sets(patch_handles[patch_id_p1], patch_handles[patch_id_q2]);
+                      patches_to_keep.reset(patch_id_p2);
+                    }
                   }
                   else{
                     //case 8
-                    uf.unify_sets(patch_handles[patch_id_p1], patch_handles[patch_id_q1]);
-                    patches_to_keep.reset(patch_id_p2);
-                    patches_to_keep.reset(patch_id_q2);
+                    patches_to_keep.reset(patch_id_p1);
+                    if(patch_id_p2<patch_id_q2)
+                    {
+                      uf.unify_sets(patch_handles[patch_id_p2], patch_handles[patch_id_q1]);
+                      patches_to_keep.reset(patch_id_q2);
+                    }
+                    else
+                    {
+                      uf.unify_sets(patch_handles[patch_id_q2], patch_handles[patch_id_q1]);
+                      patches_to_keep.reset(patch_id_p2);
+                    }
                   }
                   continue;
                 }
