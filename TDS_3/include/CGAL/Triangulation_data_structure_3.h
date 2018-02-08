@@ -41,6 +41,7 @@
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
 #include <CGAL/callback.h>
+#include <CGAL/function.h>
 
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/triangulation_assertions.h>
@@ -341,10 +342,9 @@ public:
   // not documented
   void read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
                   std::size_t & m, std::vector< Cell_handle > &C,
-                  CGAL_CALLBACK_PARAM
-                  (std::function<void(std::istream&,
-                                      const Tds&,
-                                      const char*)> call_back = nullptr));
+                  cpp11::function<void(std::istream&,
+                                       const Tds&,
+                                       const char*)> call_back = nullptr);
   // not documented
   void print_cells(std::ostream& os,
                    const Unique_hash_map<Vertex_handle, std::size_t> &V ) const;
@@ -2278,9 +2278,9 @@ void
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
            std::size_t & m, std::vector< Cell_handle > &C,
-           CGAL_CALLBACK_PARAM(std::function<void(std::istream&,
-                                                  const Tds&,
-                                                  const char*)> call_back))
+           cpp11::function<void(std::istream&,
+                                const Tds&,
+                                const char*)> call_back)
 {
   // creation of the cells and neighbors
   switch (dimension()) {

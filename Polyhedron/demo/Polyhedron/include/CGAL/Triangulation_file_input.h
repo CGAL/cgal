@@ -25,6 +25,7 @@
 #define CGAL_TRIANGULATION_FILE_INPUT_3_H
 
 #include <iostream>
+#include <CGAL/function.h>
 #include <CGAL/callback.h>
 
 namespace CGAL {
@@ -36,10 +37,10 @@ template <typename Tr1,
 std::istream& file_input(std::istream& is, Tr2 &tr,
                          Update_vertex update_vertex = Update_vertex(),
                          Update_cell update_cell = Update_cell(),
-                         CGAL_CALLBACK_PARAM(std::function<void(std::istream&,
-                                                                const typename Tr2::Triangulation_data_structure&,
-                                                                const char*)> call_back = nullptr))
-  // reads
+                         CGAL_CALLBACK_PARAM(cpp11::function<void(std::istream&,
+                                                                  const typename Tr2::Triangulation_data_structure&,
+                                                                  const char*)> call_back = nullptr))
+// reads
   // the dimension
   // the number of finite vertices
   // the non combinatorial information on vertices (point, etc)

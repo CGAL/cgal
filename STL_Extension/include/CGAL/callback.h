@@ -22,21 +22,9 @@
 #define CGAL_CALLBACK_H
 
 #include <CGAL/config.h>
-
-#ifdef CGAL_CXX11
 #  include <functional>
 #  define CGAL_CALLBACK_PARAM(x) x
 #  define CGAL_CALLBACK(f, ...) if(f) f(__VA_ARGS__);
 #  define CGAL_CALLBACK_VAR(x) x
-#else
-#  define CGAL_CALLBACK_PARAM(x) void* = 0
-#  define CGAL_CALLBACK(f)
-#  define CGAL_CALLBACK(f, p1)
-#  define CGAL_CALLBACK(f, p1, p2)
-#  define CGAL_CALLBACK(f, p1, p2, p3)
-#  define CGAL_CALLBACK(f, p1, p2, p3, p4)
-#  define CGAL_CALLBACK(f, p1, p2, p3, p4, p5)
-#  define CGAL_CALLBACK_VAR(x) 0
-#endif
 
 #endif // CGAL_CALLBACK_H
