@@ -263,7 +263,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
               else
                 return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
           }
-
+          CGAL_FALLTHROUGH;
         case NEGATIVE:
           if ( POSITIVE == pqc )
             // b is isolated on the negative side
@@ -271,7 +271,6 @@ intersection_coplanar(const typename K::Triangle_3 &t,
           else
             // a is isolated on the positive side
             return t3s3_intersection_coplanar_aux(b,c,a,q,p,false,k);
-
         case COLLINEAR:
           switch ( pqc ) {
             case POSITIVE:
@@ -286,7 +285,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
               // b,c,p,q are aligned, [p,q]&[b,c] have the same direction
               return t3s3_intersection_collinear_aux(b,c,p,q,k);
           }
-
+          CGAL_FALLTHROUGH;
         default: // should not happen.
           CGAL_error();
           return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
@@ -320,6 +319,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
               else
                 return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
           }
+          CGAL_FALLTHROUGH;
 
         case COLLINEAR:
           switch ( pqc ) {
@@ -335,6 +335,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
               // b,c,p,q are aligned, [p,q]&[c,b] have the same direction
               return t3s3_intersection_collinear_aux(c,b,p,q,k);
           }
+          CGAL_FALLTHROUGH;
 
         default: // should not happen.
           CGAL_error();
@@ -360,6 +361,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
               // a,c,p,q are aligned, [p,q]&[c,a] have the same direction
               return t3s3_intersection_collinear_aux(c,a,p,q,k);
           }
+          CGAL_FALLTHROUGH;
 
         case NEGATIVE:
           switch ( pqc ) {
@@ -375,6 +377,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
               // a,c,p,q are aligned, [p,q]&[a,c] have the same direction
               return t3s3_intersection_collinear_aux(a,c,p,q,k);
           }
+          CGAL_FALLTHROUGH;
 
         case COLLINEAR:
           switch ( pqc ) {
@@ -390,6 +393,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
               CGAL_error();
               return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Triangle_3>();
           }
+          CGAL_FALLTHROUGH;
 
         default: // should not happen.
           CGAL_error();
