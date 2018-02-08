@@ -247,6 +247,9 @@ public:
     arr_access (const_cast<Arrangement_on_surface_2&> (arr))
   {}
 
+  /*! Nulls */
+  static vertex_descriptor null_vertex() { return vertex_descriptor(); }
+
   /*! Traverse the vertices. */
   vertices_size_type number_of_vertices()
   {
