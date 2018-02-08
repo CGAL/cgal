@@ -36,7 +36,7 @@ digraph example {
  <dl>
  <dt>`G`</dt> 	<dd>A type that is a model of a graph concept.</dd>
  <dt>`g`</dt> 	<dd>An object of type `G`.</dd>
- <dt>`u`, `v`</dt> 	<dd>An object of type `boost::graph_traits<G>::%vertex_descriptor`.</dd>
+ <dt>`u`, `v`</dt> 	<dd>Objects of type `boost::graph_traits<G>::%vertex_descriptor`.</dd>
  <dt>`h`</dt> 	<dd>An object of type `boost::graph_traits<G>::%halfedge_descriptor`.</dd>
  <dt>`e`</dt> 	<dd>An object of type `boost::graph_traits<G>::%edge_descriptor`.</dd>
  <dt>`f`</dt> 	<dd>An object of type `boost::graph_traits<G>::%face_descriptor`.</dd>
@@ -44,57 +44,172 @@ digraph example {
 
 \cgalHeading{%VertexListGraph}
 
-The concept `VertexListGraph` refines the concept `Graph` and adds
-the requirement for traversal of all vertices in a graph.
+The concept `VertexListGraph` refines the concept
+<a href="http://www.boost.org/libs/graph/doc/Graph.html">`Graph`</a>
+and adds the requirement for traversal of all vertices in a graph.
 
-Associated Type                               | Description
------------------                             | -----------
-`boost::graph_traits<G>::%vertex_iterator`    | %Iterator over all vertices.
-`boost::graph_traits<G>::%vertices_size_type` | Unsigned integer type for number of vertices.
+<center>
+<table>
+ <tr>
+  <th width="800">Associated Type</th>
+  <th width="800">Description</th>
+ </tr>
+ <tr>
+  <td>`boost::graph_traits<G>::%vertex_iterator`</td>
+  <td>%Iterator over all vertices</td>
+ </tr>
+ <tr>
+  <td>`boost::graph_traits<G>::%vertices_size_type`</td>
+  <td>Unsigned integer type for number of vertices</td>
+ </tr>
+</table>
 
-Valid Expression     |  returns                                       | Description
------------------    | ---------------                                | -----------------------
-`vertices(g)`        |  `std::pair<vertex_iterator, vertex_iterator>` | An iterator range over all vertices. 
-`num_vertices(g)`    |  `vertices_size_type`                          | An upper bound of the number of vertices of the graph.
+<table>
+ <tr>
+  <th width="392">Valid Expression</th>
+  <th width="392">Return Type</th>
+  <th width="800">Description</th>
+ </tr>
+ <tr>
+  <td>`vertices(g)`</td>
+  <td>`std::pair<vertex_iterator, vertex_iterator>`</td>
+  <td>An iterator range over all vertices</td>
+ </tr>
+ <tr>
+  <td>`num_vertices(g)`</td>
+  <td>`vertices_size_type`</td>
+  <td>An upper bound of the number of vertices of the graph</td>
+ </tr>
+</table>
+</center>
 
 \cgalHeading{%EdgeListGraph}
 
-The concept `EdgeListGraph` refines the concept `Graph` and adds
-the requirement for traversal of all edges in a graph.
+The concept `EdgeListGraph` refines the concept
+<a href="http://www.boost.org/libs/graph/doc/Graph.html">`Graph`</a>
+and adds the requirement for traversal of all edges in a graph.
 
-Associated Type                               | Description
------------------                             | -----------
-`boost::graph_traits<G>::%edge_iterator`      | %Iterator over all edges.
-`boost::graph_traits<G>::%edges_size_type`    | Unsigned integer type for number of edges.
+<center>
+<table>
+ <tr>
+  <th width="800">Associated Type</th>
+  <th width="800">Description</th>
+ </tr>
+ <tr>
+  <td>`boost::graph_traits<G>::%edge_iterator`</td>
+  <td>%Iterator over all edges</td>
+ </tr>
+ <tr>
+  <td>`boost::graph_traits<G>::%edges_size_type`</td>
+  <td>Unsigned integer type for number of edges</td>
+ </tr>
+</table>
 
-Valid Expression  |  returns                                    | Description
------------------ | ---------------                             | -----------------------
-`edges(g)`        |  `std::pair<edge_iterator, edge_iterator>`  | An iterator range over all edges. 
-`num_edges(g)`    |  `edges_size_type`                          | An upper bound of the number of edges of the graph.
-`source(e,g)`     | `vertex_descriptor`                         | The source vertex of `e`.
-`target(e,g)`     | `vertex_descriptor`                         | The target vertex of `e`.
+<table>
+ <tr>
+  <th width="392">Valid Expression</th>
+  <th width="392">Return Type</th>
+  <th width="800">Description</th>
+ </tr>
+ <tr>
+  <td>`edges(g)`</td>
+  <td>`std::pair<edge_iterator, edge_iterator>`</td>
+  <td>An iterator range over all edges</td>
+ </tr>
+ <tr>
+  <td>`num_edges(g)`</td>
+  <td>`edges_size_type`</td>
+  <td>An upper bound of the number of edges of the graph</td>
+ </tr>
+ <tr>
+  <td>`source(g)`</td>
+  <td>`vertex_descriptor`</td>
+  <td>The source vertex of `e`</td>
+ </tr>
+ <tr>
+  <td>`target(g)`</td>
+  <td>`vertex_descriptor`</td>
+  <td>The target vertex of `e`</td>
+ </tr>
+</table>
+</center>
 
 \cgalHeading{%HalfedgeGraph}
 
-The concept `HalfedgeGraph` refines the concept `Graph` and adds
-the notion of halfedges, where each edge corresponds to two opposite halfedges.
+The concept `HalfedgeGraph` refines the concept
+<a href="http://www.boost.org/libs/graph/doc/Graph.html">`Graph`</a>
+and adds the notion of halfedges, where each edge corresponds to two opposite halfedges.
 
-Associated Type                                           | Description
---------------------------------------------------------- | ------------
-`boost::graph_traits<G>::%halfedge_descriptor`            | A `halfedge_descriptor` corresponds to a halfedge in a graph. Must be `DefaultConstructible`, `Assignable`, `EqualityComparable` and `LessThanComparable`.
+<center>
+<table>
+ <tr>
+  <th width="800">Associated Type</th>
+  <th width="800">Description</th>
+ </tr>
+ <tr>
+  <td>`boost::graph_traits<G>::%halfedge_descriptor`</td>
+  <td>A `halfedge_descriptor` corresponds to a halfedge in a graph. Must be `DefaultConstructible`, `Assignable`, `EqualityComparable` and `LessThanComparable`</td>
+ </tr>
+</table>
 
-Valid Expression                        | Returns                                     | Description  
---------------------------------------- | --------------------------------------------| -----------
-`edge(h, g)`                            | `edge_descriptor`                           | The edge corresponding to halfedges `h` and `opposite(h)`.
-`halfedge(e, g)`                        | `halfedge_descriptor`                       | One of the halfedges corresponding to `e`.
-`halfedge(v, g)`                        | `halfedge_descriptor`                       | A halfedge with target `v`. 
-`halfedge(u, v, g)`                     | `std::pair<halfedge_descriptor,bool>`       | The halfedge with source `u` and target `v`. The Boolean is `true`, iff this halfedge exists.
-`opposite(h, g)`                        | `halfedge_descriptor`                       | The halfedge with source and target swapped.
-`source(h,g)`                           | `vertex_descriptor`                         | The source vertex of `h`.
-`target(h,g)`                           | `vertex_descriptor`                         | The target vertex of `h`.
-`next(h, g)`                            | `halfedge_descriptor`                       | The next halfedge around its face.
-`prev(h, g)`                            | `halfedge_descriptor`                       | The previous halfedge around its face.
-`boost::graph_traits<G>::%null_halfedge()` | `halfedge_descriptor`                    | Returns a special halfedge that is not equal to any other halfedge.
+<table>
+ <tr>
+  <th width="392">Valid Expression</th>
+  <th width="392">Return Type</th>
+  <th width="800">Description</th>
+ </tr>
+ <tr>
+  <td>`edge(h, g)`</td>
+  <td>`edge_descriptor`</td>
+  <td>The edge corresponding to the halfedges `h` and `opposite(h)`</td>
+ </tr>
+ <tr>
+  <td>`halfedge(e, g)`</td>
+  <td>`halfedge_descriptor`</td>
+  <td>One of the halfedges corresponding to the edge `e`</td>
+ </tr>
+ <tr>
+  <td>`halfedge(v, g)`</td>
+  <td>`halfedge_descriptor`</td>
+  <td>A halfedge with target the vertex `v`</td>
+ </tr>
+ <tr>
+  <td>`halfedge(u, v, g)`</td>
+  <td>`std::pair<halfedge_descriptor, bool>`</td>
+  <td>The halfedge with source `u` and target `v`. The Boolean is `true`, iff this halfedge exists</td>
+ </tr>
+ <tr>
+  <td>`opposite(h, g)`</td>
+  <td>`halfedge_descriptor`</td>
+  <td>The halfedge with source and target swapped</td>
+ </tr>
+ <tr>
+  <td>`source(h, g)`</td>
+  <td>`vertex_descriptor`</td>
+  <td>The source vertex of `h`</td>
+ </tr>
+ <tr>
+  <td>`target(h, g)`</td>
+  <td>`vertex_descriptor`</td>
+  <td>The target vertex of `h`</td>
+ </tr>
+ <tr>
+  <td>`next(h, g)`</td>
+  <td>`halfedge_descriptor`</td>
+  <td>The next halfedge around its face</td>
+ </tr>
+ <tr>
+  <td>`prev(h, g)`</td>
+  <td>`halfedge_descriptor`</td>
+  <td>The previous halfedge around its face</td>
+ </tr>
+ <tr>
+  <td>`boost::graph_traits<G>::%null_halfedge()`</td>
+  <td>`halfedge_descriptor`</td>
+  <td>Returns a special halfedge that is not equal to any other halfedge</td>
+ </tr>
+</table>
+</center>
 
 The `HalfedgeGraph` has the invariant  `halfedge(edge(h,g))==h`.
 
@@ -104,78 +219,219 @@ The concept `MutableHalfedgeGraph` refines the concept `HalfedgeGraph`
 and adds the requirements for operations to add vertices and edges, and to
 update the incidence information between vertices and halfedges.
 
-Valid Expression          | returns             | Description                           
-------------------------- | ------------        | -----------
-`add_vertex(g)`           | `vertex_descriptor` | Adds a new vertex to the graph without initializing the connectivity.
-`remove_vertex(v, g)`     | `void`              | Removes `v` from the graph.
-`add_edge(g)`             | `edge_descriptor`   | Adds two opposite halfedges to the graph without initializing the connectivity.
-`remove_edge(e, g)`       | `void`              | Removes the two halfedges corresponding to `e` from the graph.
-`set_target(h, v, g)`     | `void`              | Sets the target vertex of `h` and the source of `opposite(h)` to `v`.
-`set_halfedge(v, h, g)`   | `void`              | Sets the halfedge of `v` to `h`. The target vertex of `h` must be `v`. 
-`set_next(h1, h2, g)`     | `void`              | Sets the successor of `h1` around a face to `h2`, and the prededecessor of `h2` to `h1`.
-
+<center>
+<table>
+ <tr>
+  <th width="392">Valid Expression</th>
+  <th width="392">Return Type</th>
+  <th width="800">Description</th>
+ </tr>
+ <tr>
+  <td>`add_vertex(g)`</td>
+  <td>`vertex_descriptor`</td>
+  <td>Adds a new vertex to the graph without initializing the connectivity</td>
+ </tr>
+ <tr>
+  <td>`remove_vertex(v, g)`</td>
+  <td>`void`</td>
+  <td>Removes the vertex `v` from the graph</td>
+ </tr>
+ <tr>
+  <td>`add_edge(g)`</td>
+  <td>`edge_descriptor`</td>
+  <td>Adds two opposite halfedges to the graph without initializing their connectivity</td>
+ </tr>
+ <tr>
+  <td>`remove_edge(e, g)`</td>
+  <td>`void`</td>
+  <td>Removes the two halfedges corresponding to the edge `e` from the graph</td>
+ </tr>
+ <tr>
+  <td>`set_target(h, v, g)`</td>
+  <td>`void`</td>
+  <td>Sets the target vertex of the halfedge `h` and the source of `opposite(h)` to the vertex `v`</td>
+ </tr>
+ <tr>
+  <td>`set_halfedge(v, h, g)`</td>
+  <td>`void`</td>
+  <td>Sets the halfedge of the vertex `v` to `h`. The target vertex of `h` must be `v`</td>
+ </tr>
+ <tr>
+  <td>`set_next(h1, h2, g)`</td>
+  <td>`void`</td>
+  <td>Sets the successor of `h1` around a face to `h2`, and the prededecessor of `h2` to `h1`</td>
+ </tr>
+</table>
+</center>
 
 \cgalHeading{%HalfedgeListGraph}
 
 The concept `HalfedgeListGraph` refines the concept `HalfedgeGraph`
 and adds the requirements for traversal of all halfedges in the graph.
 
-Associated Type                                   | Description
---------------------                              | ------------
-`boost::graph_traits<G>::%halfedge_iterator`      | A `BidirectionalIterator` over all halfedges in a graph. Must be `DefaultConstructible`, `Assignable`, `EqualityComparable`.
-`boost::graph_traits<G>::%halfedges_size_type`    | A size type.
+<center>
+<table>
+ <tr>
+  <th width="800">Associated Type</th>
+  <th width="800">Description</th>
+ </tr>
+ <tr>
+  <td>`boost::graph_traits<G>::%halfedge_iterator`</td>
+  <td>A `BidirectionalIterator` over all halfedges in a graph. Must be `DefaultConstructible`, `Assignable`, `EqualityComparable`</td>
+ </tr>
+ <tr>
+  <td>`boost::graph_traits<G>::%halfedges_size_type`</td>
+  <td>Unsigned integer type for number of halfedges</td>
+ </tr>
+</table>
 
-Valid Expression                      | Returns                                   | Description  
-------------------------------------- | ------------------------------------------| -----------
-`num_halfedges(g)`                    | `halfedges_size_type`                     | An upper bound of the number of halfedges of the graph.
-`halfedges(g)`                        | `std::pair<halfedge_iterator,halfedge_iterator>` | An iterator range over the halfedges of the graph.
+<table>
+ <tr>
+  <th width="392">Valid Expression</th>
+  <th width="392">Return Type</th>
+  <th width="800">Description</th>
+ </tr>
+ <tr>
+  <td>`halfedges(g)`</td>
+  <td>`std::pair<halfedge_iterator, halfedge_iterator>`</td>
+  <td>An iterator range over all halfedges</td>
+ </tr>
+ <tr>
+  <td>`num_halfedges(g)`</td>
+  <td>`halfedges_size_type`</td>
+  <td>An upper bound of the number of halfedges of the graph</td>
+ </tr>
+</table>
+</center>
 
 \cgalHeading{%FaceGraph}
 
-The concept `FaceGraph` refines the concept `HalfedgeGraph`. 
+The concept `FaceGraph` refines the concept `HalfedgeGraph`.
 It adds the requirements for a graph to explicitly
 maintain faces described by halfedges, to provide access from a face to
 an incident halfedge, and to provide access from a halfedge to its incident
-face. 
+face.
 
-Associated Type                              | Description
--------------------------------------------- | ------------
-`boost::graph_traits<G>::%face_descriptor`   | A `face_descriptor` corresponds to a unique face in a graph. Must be `DefaultConstructible`, `Assignable`, `EqualityComparable` and `LessThanComparable`.
+<center>
+<table>
+ <tr>
+  <th width="800">Associated Type</th>
+  <th width="800">Description</th>
+ </tr>
+ <tr>
+  <td>`boost::graph_traits<G>::%face_descriptor`</td>
+  <td>A `face_descriptor` corresponds to a unique face in a graph. Must be `DefaultConstructible`, `Assignable`, `EqualityComparable` and `LessThanComparable`</td>
+ </tr>
+</table>
 
-Valid Expression                       | Returns                                                                  | Description  
--------------------------------------- | ------------------------------------------------------------------------ | ------------------------
-`face(h, g)`                           | `face_descriptor`                                                        | The face incident to halfedge `h`.
-`halfedge(f, g)`                       | `halfedge_descriptor`                                                    | A halfedge incident to face `f`.
-`degree(f,g)`                          | `degree_size_type`                                                       | The number of halfedges incident to face `f`.
-`boost::graph_traits<G>::%null_face()` | `face_descriptor`                                                        | A special face that is not equal to any other face.
+<table>
+ <tr>
+  <th width="392">Valid Expression</th>
+  <th width="392">Return Type</th>
+  <th width="800">Description</th>
+ </tr>
+ <tr>
+  <td>`face(h, g)`</td>
+  <td>`face_descriptor`</td>
+  <td>The face incident to halfedge `h`</td>
+ </tr>
+ <tr>
+  <td>`halfedge(f, g)`</td>
+  <td>`halfedge_descriptor`</td>
+  <td>A halfedge incident to face `f`</td>
+ </tr>
+ <tr>
+  <td>`degree(f, g)`</td>
+  <td>`degree_size_type`</td>
+  <td>The number of halfedges incident to face `f`</td>
+ </tr>
+ <tr>
+  <td>`boost::graph_traits<G>::%null_face()`</td>
+  <td>`face_descriptor`</td>
+  <td>A special face that is not equal to any other face</td>
+ </tr>
+</table>
+</center>
 
 \cgalHeading{%MutableFaceGraph}
 
 The concept `MutableFaceGraph` refines the concepts `FaceGraph` and `MutableHalfedgeGraph` and adds
 the requirement for operations to add faces and to modify face-halfedge relations.
 
-Valid Expression              | returns           | Description                           
------------------------ | ------------      | -----------
-`add_face(g)`           | `face_descriptor` | Adds a new face to the graph without initializing the connectivity.
-`remove_face(f, g)`     | `void`            | Removes `f` from the graph.
-`set_face(h, f, g)`     | `void`            | Sets the corresponding face of `h` to `f`.
-`set_halfedge(f, h, g)` | `void`            | Sets the corresponding halfedge of `f` to `h`.
-`reserve(g, nv, ne, nf)`| `void`            | Called to indicate the expected size of vertices (`nv`), edges (`ed`) and faces (`nf`)
+<center>
+<table>
+ <tr>
+  <th width="392">Valid Expression</th>
+  <th width="392">Return Type</th>
+  <th width="800">Description</th>
+ </tr>
+ <tr>
+  <td>`add_face(g)`</td>
+  <td>`face_descriptor`</td>
+  <td>Adds a new face to the graph without initializing the connectivity</td>
+ </tr>
+ <tr>
+  <td>`remove_face(f, g)`</td>
+  <td>`void`</td>
+  <td>Removes `f` from the graph</td>
+ </tr>
+ <tr>
+  <td>`set_face(h, f, g)`</td>
+  <td>`void`</td>
+  <td>Sets the corresponding face of `h` to `f`</td>
+ </tr>
+ <tr>
+  <td>`set_halfedge(f, h, g)`</td>
+  <td>`void`</td>
+  <td>Sets the corresponding halfedge of `f` to `h`</td>
+ </tr>
+ <tr>
+  <td>`reserve(g, nv, ne, nf)`</td>
+  <td>`void`</td>
+  <td>Called to indicate the expected size of vertices (`nv`), edges (`ed`) and faces (`nf`)</td>
+ </tr>
+</table>
+</center>
 
 \cgalHeading{%FaceListGraph}
 
 The concept `FaceListGraph` refines the concept `FaceGraph` and adds
 the requirement for traversal of all faces in a graph.
 
-Associated Type                             | Description
------------------------------------------- | -----------
-`boost::graph_traits<G>::%face_iterator`   | %Iterator over all faces.
-`boost::graph_traits<G>::%faces_size_type` | Unsigned integer type for number of faces.
+<center>
+<table>
+ <tr>
+  <th width="800">Associated Type</th>
+  <th width="800">Description</th>
+ </tr>
+ <tr>
+  <td>`boost::graph_traits<G>::%face_iterator`</td>
+  <td>%Iterator over all faces</td>
+ </tr>
+ <tr>
+  <td>`boost::graph_traits<G>::%faces_size_type`</td>
+  <td>Unsigned integer type for number of faces</td>
+ </tr>
+</table>
 
-Valid Expression  |  returns                                   | Description
------------------ | ---------------                            | -----------------------
-`faces(g)`        |  `std::pair<face_iterator, face_iterator>` | An iterator range over all faces. 
-`num_faces(g)`    |  `faces_size_type`                         | An upper bound of the number of faces of the graph.
+<table>
+ <tr>
+  <th width="392">Valid Expression</th>
+  <th width="392">Return Type</th>
+  <th width="800">Description</th>
+ </tr>
+ <tr>
+  <td>`faces(g)`</td>
+  <td>`std::pair<face_iterator, face_iterator>`</td>
+  <td>An iterator range over all faces</td>
+ </tr>
+ <tr>
+  <td>`num_faces(g)`</td>
+  <td>`faces_size_type`</td>
+  <td>An upper bound of the number of faces of the graph</td>
+ </tr>
+</table>
+</center>
 
 */
 
@@ -208,6 +464,9 @@ Valid Expression  |  returns                                   | Description
 /// \defgroup PkgBGLPartition Partitioning Operations
 /// \ingroup PkgBGL
 
+/// \defgroup PkgBGLIOFct I/O Functions
+/// \ingroup PkgBGL
+
 /*!
 \addtogroup PkgBGLPropertiesDynamic
 The dynamic property tags enable to associate information to simplices of a `FaceGraph` on the fly.
@@ -225,9 +484,6 @@ for conversion between models of different `FaceGraph` concepts, etc.
 
 Most functions are in the header file `<CGAL/boost/graph/helpers.h>`
 */
-
-/// \defgroup PkgBGLIOFct I/O Functions
-/// \ingroup PkgBGL
 
 /*!
 \addtogroup PkgBGLIterators
@@ -276,6 +532,13 @@ both in term of time and memory.
 Methods to split a mesh into subdomains, using the library
 <a href="http://glaros.dtc.umn.edu/gkhome/metis/metis/overview">METIS</a>.
 */
+
+/*!
+\addtogroup PkgBGLIOFct
+
+Methods to read and write graphs.
+*/
+
 
 /*!
 \addtogroup PkgBGL
@@ -337,10 +600,6 @@ user might encounter.
 - `CGAL::HalfedgeDS_face_max_base_with_id`
 - `CGAL::Polyhedron_items_with_id_3`
 - `CGAL::set_halfedgeds_items_id()`
-- `CGAL::Dual`
-- `CGAL::Graph_with_descriptor_with_graph`
-- `CGAL::Graph_with_descriptor_with_graph_property_map`
-- `CGAL::Face_filtered_graph`
 - `CGAL::Linear_cell_complex_bgl_min_items`
 - `CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper`
 
@@ -445,8 +704,8 @@ user might encounter.
 - `CGAL::METIS::partition_dual_graph()`
 
 ## I/O Functions ##
-- `CGAL::read_off()`
-- `CGAL::write_off()`
+- \link PkgBGLIOFct CGAL::read_off() \endlink
+- \link PkgBGLIOFct CGAL::write_off() \endlink
 
 */
 
