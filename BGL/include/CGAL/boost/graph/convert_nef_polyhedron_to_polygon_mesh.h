@@ -95,7 +95,6 @@ struct Shell_polygons_visitor
 
   std::size_t get_cycle_length( typename Nef_polyhedron::Halffacet_cycle_const_iterator hfc) const
   {
-    typename Nef_polyhedron::SHalfedge_const_handle h(hfc);
     typename Nef_polyhedron::SHalfedge_around_facet_const_circulator hc_start(hfc), hc_end(hc_start);
     std::size_t i=0;
     CGAL_For_all(hc_start,hc_end)
