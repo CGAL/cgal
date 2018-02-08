@@ -28,11 +28,6 @@ typedef CGAL::Constrained_triangulation_plus_2<THCDT2>                THCDTP2;
 template<typename T>
 void concept_check_triangulation()
 {
-  typedef typename boost::graph_traits<T>::vertex_descriptor         vertex_descriptor;
-  typedef typename boost::graph_traits<T>::halfedge_descriptor       halfedge_descriptor;
-  typedef typename boost::graph_traits<T>::edge_descriptor           edge_descriptor;
-  typedef typename boost::graph_traits<T>::face_descriptor           face_descriptor;
-
   boost::function_requires< boost::GraphConcept<T> >();
   boost::function_requires< boost::IncidenceGraphConcept<T> >();
   boost::function_requires< boost::VertexListGraphConcept<T> >();
