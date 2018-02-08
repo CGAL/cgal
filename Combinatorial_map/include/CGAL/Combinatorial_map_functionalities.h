@@ -260,6 +260,9 @@ protected:
       return uftrees.find(mapdhtouf.find(dh)->second);
     }
 
+    // Transform the 2-map into an equivalent surface having only one vertex.
+    // All edges removed during this step belong to the spanning tree L
+    // (spanning tree of the dual 2-map).
     void surface_simplification_in_one_face()
     {
       UFTree uftrees; // uftree of faces; one tree for each face, contains one dart of the face
@@ -308,7 +311,9 @@ protected:
       m_map.set_automatic_attributes_management(true);
       m_map.free_mark(treated);
     }
-    
+
+    // Transform the 2-map into an equivalent surface having only one vertex.
+    // All edges contracted during this step belong to the spanning tree T.
     void surface_simplification_in_one_vertex()
     {
       UFTree uftrees; // uftree of vertices; one tree for each vertex, contains one dart of the vertex
@@ -330,6 +335,11 @@ protected:
       }
 
       m_map.set_automatic_attributes_management(true);
+
+      
+      // Now we compute each length two path associated with each edge that does
+      // not belong to the spanning tree (which are thus all the survival edges).
+      compute_length_two_paths();
     }
     
     void surface_quadrangulate()
