@@ -155,8 +155,8 @@ public:
     typename Map::template Dart_of_cell_range<0>::const_iterator
         it=m_map.template darts_of_cell<0>(pend).begin();
 
-     unsigned int index=random.get_int((allow_half_turn?0:1), m_map.template darts_of_cell<0>
-                                       (pend).size());
+     unsigned int index=random.get_int
+         ((allow_half_turn?0:1), m_map.template darts_of_cell<0>(pend).size());
      for(unsigned int i=0; i<index; ++i)
      { ++it; }
 
@@ -188,47 +188,97 @@ protected:
     {
       if (!m_map.is_without_boundary(1))
       {
-        std::cerr<<"ERROR: the given amap has 1-boundaries; such a surface is not possible to process here."
+        std::cerr<<"ERROR: the given amap has 1-boundaries; "
+                 <<"such a surface is not possible to process here."
                  <<std::endl;
       }
       if (!m_map.is_without_boundary(2))
       {
-        std::cerr<<"ERROR: the given amap has 2-boundaries; which are not yet considered (but this will be done later)."
+        std::cerr<<"ERROR: the given amap has 2-boundaries; "
+                 <<"which are not yet considered (but this will be done later)."
                  <<std::endl;
       }
-
  
-      // A mapping between darts of the original map into the transformed map.
-      boost::unordered_map<Dart_const_handle, Dart_handle> dart_mapping;
+      // The mapping between darts of the original map into the copied map.
+      boost::unordered_map<Dart_const_handle, Dart_handle> origin_to_copy;
 
       // We copy the original map, while keeping a mapping between darts.
-      m_map.copy(m_original_map, &dart_mapping);
+      m_map.copy(m_original_map, &origin_to_copy);
 
-      // We simplify m_map in a surface with only one vertex
-      surface_simplification_in_one_vertex();
+      // The mapping between darts of the copy into darts of the original map.
+      boost::unordered_map<Dart_handle, Dart_const_handle> copy_to_origin;
+      for (auto it=origin_to_copy.begin(); it!=origin_to_copy.end(); ++it)
+      { copy_to_origin[it->second]=it->first; }
+
+      // We reserve the two marks (used to mark darts in m_original_map that
+      // belong to T or to L)
+      m_mark_T=m_original_map.get_new_mark();
+      m_mark_L=m_original_map.get_new_mark();
+
+      /* std::cout<<"Number of darts in m_map: "<<m_map.number_of_darts()
+              <<"; number of darts in origin_to_copy: "<<origin_to_copy.size()
+             <<"; number of darts in copy_to_origin: "<<copy_to_origin.size()
+            <<std::endl; */
+
+      // 1) We simplify m_map in a surface with only one vertex
+      surface_simplification_in_one_vertex(origin_to_copy, copy_to_origin);
       std::cout<<"All non loop contracted: ";
       m_map.display_characteristics(std::cout) << ", valid=" 
-                                               << m_map.is_valid() << std::endl;      
-      
-      // Now we compute each length two path associated with each edge that does
-      // not belong to the spanning tree (which are thus all the survival edges).
-      compute_length_two_paths(dart_mapping);
+                                               << m_map.is_valid() << std::endl;
 
-      // We simplify m_map in a surface with only one face
-      surface_simplification_in_one_face();
+      /* std::cout<<"Number of darts in m_map: "<<m_map.number_of_darts()
+              <<"; number of darts in origin_to_copy: "<<origin_to_copy.size()
+             <<"; number of darts in copy_to_origin: "<<copy_to_origin.size()
+            <<std::endl; */
+
+      // 2) Now we compute each length two path associated with each edge that does
+      // not belong to the spanning tree (which are thus all the survival edges).
+      compute_length_two_paths(origin_to_copy);
+
+      /* std::cout<<"Number of darts in m_map: "<<m_map.number_of_darts()
+              <<"; number of darts in origin_to_copy: "<<origin_to_copy.size()
+             <<"; number of darts in copy_to_origin: "<<copy_to_origin.size()
+            <<std::endl; */
+
+      /* std::cout<<"Paths are all valid 1 ? "<<(are_paths_valid()?"YES":"NO")
+               <<std::endl; */
+
+      // 3) We simplify m_map in a surface with only one face
+      surface_simplification_in_one_face(origin_to_copy, copy_to_origin);
       std::cout<<"All faces merges: ";
       m_map.display_characteristics(std::cout) << ", valid=" 
                                                << m_map.is_valid() << std::endl;
 
-      // And we quadrangulate the face 
+     /* std::cout<<"Paths are all valid 2 ? "<<(are_paths_valid()?"YES":"NO")
+               <<std::endl;*/
+
+      /*      std::cout<<"Number of darts in m_map: "<<m_map.number_of_darts()
+              <<"; number of darts in origin_to_copy: "<<origin_to_copy.size()
+             <<"; number of darts in copy_to_origin: "<<copy_to_origin.size()
+            <<std::endl; */
+
+      // 4) And we quadrangulate the face
       surface_quadrangulate();
       std::cout<<"After quadrangulation: ";
       m_map.display_characteristics(std::cout) << ", valid=" 
                                                << m_map.is_valid() << std::endl;
+
+#ifndef NDEBUG
+      std::cout<<"Paths are all valid ? "<<(are_paths_valid()?"YES":"NO")
+               <<std::endl;
+#endif // NDEBUG
     }
     
+    ~Combinatorial_map_tools()
+    {
+      m_original_map.free_mark(m_mark_T);
+      m_original_map.free_mark(m_mark_L);
+    }
+
+  protected:
     void initialize_vertices(UFTree& uftrees,
-                             boost::unordered_map<Dart_const_handle, UFTree_handle>& vertices)
+                             boost::unordered_map<Dart_const_handle, UFTree_handle>&
+                             vertices)
     {
       uftrees.clear();
       vertices.clear();
@@ -254,13 +304,15 @@ protected:
     }
 
     void initialize_faces(UFTree& uftrees,
-                          boost::unordered_map<Dart_const_handle, UFTree_handle>& faces)
+                          boost::unordered_map<Dart_const_handle, UFTree_handle>&
+                          faces)
     {
       uftrees.clear();
       faces.clear();
 
       typename Map::size_type treated=m_map.get_new_mark();
-      for (typename Map::Dart_range::iterator it=m_map.darts().begin(), itend=m_map.darts().end();
+      for (typename Map::Dart_range::iterator it=m_map.darts().begin(),
+           itend=m_map.darts().end();
            it!=itend; ++it)
       {
         if (!m_map.is_marked(it, treated))
@@ -289,70 +341,37 @@ protected:
       return uftrees.find(mapdhtouf.find(dh)->second);
     }
 
-    // Transform the 2-map into an equivalent surface having only one vertex.
-    // All edges removed during this step belong to the spanning tree L
-    // (spanning tree of the dual 2-map).
-    void surface_simplification_in_one_face()
+    // Mark the edge containing adart in the given map.
+    void mark_edge(const Map& amap, Dart_const_handle adart, std::size_t amark)
     {
-      UFTree uftrees; // uftree of faces; one tree for each face, contains one dart of the face
-      boost::unordered_map<Dart_const_handle, UFTree_handle> faces;
-      initialize_faces(uftrees, faces);
-
-      m_map.set_automatic_attributes_management(false);
-
-      typename Map::size_type treated=m_map.get_new_mark();
-      Dart_handle currentdart=NULL, oppositedart=NULL;
-      
-      for (typename Map::Dart_range::iterator it=m_map.darts().begin(),
-           itend=m_map.darts().end(); it!=itend;)
-      {
-        currentdart=it++;
-        if (!m_map.is_marked(currentdart, treated))
-        {
-          if (m_map.template is_free<2>(currentdart))
-          { m_map.mark(currentdart, treated); }
-          else
-          {
-            oppositedart=m_map.template beta<2>(currentdart);
-            m_map.mark(currentdart, treated);
-            m_map.mark(oppositedart, treated);
-            
-            // We remove dangling edges and degree two edges.
-            // The two first tests allow to keep isolated edges (case of spheres)
-            if ((m_map.template beta<0>(currentdart)!=oppositedart ||
-                 m_map.template beta<1>(currentdart)!=oppositedart) &&
-                get_uftree(uftrees, faces, currentdart)!=
-                get_uftree(uftrees, faces, oppositedart))
-            {
-              uftrees.unify_sets(get_uftree(uftrees, faces, currentdart),
-                                 get_uftree(uftrees, faces, oppositedart));
-
-              if (m_map.is_marked(it, treated))
-              { ++it; }
-              
-              // 
-              std::pair<Dart_const_handle, Dart_const_handle>&
-                p=(paths.find((currentdart<oppositedart)?currentdart:oppositedart))->second;
-              p.first=m_map.template beta<0,2>(p.first);
-              p.second=m_map.template beta<0,2>(p.second);
-              
-              // TODO LATER (?) OPTIMIZE AND REPLACE THE REMOVE_CELL CALL BY THE MODIFICATION BY HAND
-              // OR DEVELOP A SPECIALIZED VERSION OF REMOVE_CELL
-              m_map.template remove_cell<1>(currentdart);
-            }
-          }
-        }
-      }
-      
-      m_map.set_automatic_attributes_management(true);
-      m_map.free_mark(treated);
+      amap.mark(amap.template beta<2>(adart), amark);
+      amap.mark(adart, amark);
     }
 
-    // Transform the 2-map into an equivalent surface having only one vertex.
-    // All edges contracted during this step belong to the spanning tree T.
-    void surface_simplification_in_one_vertex()
+    // Erase the edge given by adart (which belongs to the map m_map) from the
+    // associative array copy_to_origin, and erase the corresponding edge
+    // (which belongs to the map m_original_map) from the array origin_to_copy
+    void erase_edge_from_associative_arrays
+    (Dart_handle adart,
+     boost::unordered_map<Dart_const_handle, Dart_handle>& origin_to_copy,
+     boost::unordered_map<Dart_handle, Dart_const_handle>& copy_to_origin)
     {
-      UFTree uftrees; // uftree of vertices; one tree for each vertex, contains one dart of the vertex
+      origin_to_copy.erase(m_original_map.template beta<2>(copy_to_origin[adart]));
+      origin_to_copy.erase(copy_to_origin[adart]);
+
+      copy_to_origin.erase(m_map.template beta<2>(adart));
+      copy_to_origin.erase(adart);
+    }
+
+    // Step 1) Transform m_map into an equivalent surface having only one
+    // vertex. All edges contracted during this step belong to the spanning
+    // tree T, and thus corresponding edges in m_original_map are marked.
+    void surface_simplification_in_one_vertex
+    (boost::unordered_map<Dart_const_handle, Dart_handle>& origin_to_copy,
+     boost::unordered_map<Dart_handle, Dart_const_handle>& copy_to_origin)
+    {
+      UFTree uftrees; // uftree of vertices; one tree for each vertex,
+                      // contains one dart of the vertex
       boost::unordered_map<Dart_const_handle, UFTree_handle> vertices;
       initialize_vertices(uftrees, vertices);
 
@@ -364,6 +383,9 @@ protected:
         if (get_uftree(uftrees, vertices, it)!=
             get_uftree(uftrees, vertices, m_map.template beta<2>(it)))
         {
+          mark_edge(m_original_map, copy_to_origin[it], m_mark_T);
+          erase_edge_from_associative_arrays(it, origin_to_copy, copy_to_origin);
+
           uftrees.unify_sets(get_uftree(uftrees, vertices, it),
                              get_uftree(uftrees, vertices, m_map.template beta<2>(it)));
           m_map.template contract_cell<1>(it);
@@ -372,19 +394,145 @@ protected:
 
       m_map.set_automatic_attributes_management(true);
     }
-    
+
+    // Step 2) Compute, for each edge of m_original_map not in the spanning
+    // tree T, the pair of darts of the edge in m_copy. This pair of edges
+    // will be updated later (in surface_simplification_in_one_face() and in
+    // surface_quadrangulate() )
+    void compute_length_two_paths
+    (const boost::unordered_map<Dart_const_handle, Dart_handle>& origin_to_copy)
+    {
+      paths.clear();
+
+      for (typename Map::Dart_range::const_iterator
+           it=m_original_map.darts().begin(),
+           itend=m_original_map.darts().end(); it!=itend; ++it)
+      {
+        if (!m_original_map.is_marked(it, m_mark_T))
+        {
+          if (m_original_map.template is_free<2>(it) ||
+              it<m_original_map.template beta<2>(it))
+          {
+            paths[it]=std::make_pair
+                (origin_to_copy.at(it),
+                 m_map.template beta<2>(origin_to_copy.at(it)));
+          }
+        }
+      }
+
+      std::cout<<"Number of darts in paths: "<<paths.size()
+               <<"; number of darts in m_map: "<<m_map.number_of_darts()<<std::endl;
+    }
+
+    // Step 3) Transform the 2-map into an equivalent surface having only
+    // one vertex. All edges removed during this step belong to the
+    // dual spanning tree L (spanning tree of the dual 2-map).
+    void surface_simplification_in_one_face
+    (boost::unordered_map<Dart_const_handle, Dart_handle>& origin_to_copy,
+     boost::unordered_map<Dart_handle, Dart_const_handle>& copy_to_origin)
+    {
+      UFTree uftrees; // uftree of faces; one tree for each face,
+                      // contains one dart of the face
+      boost::unordered_map<Dart_const_handle, UFTree_handle> faces;
+      initialize_faces(uftrees, faces);
+
+      m_map.set_automatic_attributes_management(false);
+
+      typename Map::size_type toremove=m_map.get_new_mark();
+      Dart_handle currentdart=NULL, oppositedart=NULL;
+      
+      for (typename Map::Dart_range::iterator it=m_map.darts().begin(),
+           itend=m_map.darts().end(); it!=itend; ++it)
+      {
+        currentdart=it;
+        assert (!m_map.template is_free<2>(currentdart)); // TODO later
+        oppositedart=m_map.template beta<2>(currentdart);
+
+        if (currentdart<oppositedart && !m_map.is_marked(currentdart, toremove))
+        {
+          // We remove degree two edges (we cannot have dangling edges
+          // because we had previously contracted all the non loop and thus
+          // we have only one vertex).
+          if (get_uftree(uftrees, faces, currentdart)!=
+              get_uftree(uftrees, faces, oppositedart))
+          {
+            // We cannot have a dangling edge
+            assert(m_map.template beta<0>(currentdart)!=oppositedart);
+            assert(m_map.template beta<1>(currentdart)!=oppositedart);
+
+            uftrees.unify_sets(get_uftree(uftrees, faces, currentdart),
+                               get_uftree(uftrees, faces, oppositedart));
+
+            m_map.mark(currentdart, toremove);
+            m_map.mark(oppositedart, toremove);
+            mark_edge(m_original_map, copy_to_origin[currentdart], m_mark_L);
+          }
+        }
+      }
+      
+      if (m_map.number_of_marked_darts(toremove)==m_map.number_of_darts())
+      {
+        // Case of sphere; all darts are removed.
+        paths.clear();
+      }
+      else
+      {
+        // We update the pair of darts
+        for (typename TPaths::iterator itp=paths.begin(), itpend=paths.end();
+             itp!=itpend; ++itp)
+        {
+          std::pair<Dart_const_handle, Dart_const_handle>& p=itp->second;
+          Dart_const_handle initdart=p.first;
+          //std::cout<<m_map.darts().index(p.first)<<"; "<<std::flush;
+          while (m_map.is_marked(p.first, toremove))
+          {
+            p.first=m_map.template beta<0, 2>(p.first);
+            // std::cout<<m_map.darts().index(p.first)<<"; "<<std::flush;
+            assert(p.first!=initdart);
+          }
+          // std::cout<<std::endl;
+          initdart=p.second;
+          while (m_map.is_marked(p.second, toremove))
+          {
+            p.second=m_map.template beta<0, 2>(p.second);
+            assert(p.second!=initdart);
+          }
+        }
+      }
+
+      // We remove all the edges to remove.
+      for (typename Map::Dart_range::iterator it=m_map.darts().begin(),
+           itend=m_map.darts().end();
+           it!=itend; ++it)
+      {
+        if (m_map.is_dart_used(it) && m_map.is_marked(it, toremove))
+        {
+          erase_edge_from_associative_arrays(it, origin_to_copy, copy_to_origin);
+          // TODO LATER (?) OPTIMIZE AND REPLACE THE REMOVE_CELL CALL BY THE MODIFICATION BY HAND
+          // OR DEVELOP A SPECIALIZED VERSION OF REMOVE_CELL
+          m_map.template remove_cell<1>(it);
+        }
+      }
+
+      m_map.set_automatic_attributes_management(true);
+      m_map.free_mark(toremove);
+    }
+
+    // Step 4) quadrangulate the surface.
     void surface_quadrangulate()
     {
       // Here the map has only one face and one vertex.
       typename Map::size_type oldedges=m_map.get_new_mark();
       m_map.negate_mark(oldedges); // now all edges are marked
       
-      // 1) We insert a vertex in the face (note that all points have the same geometry).
-      //    New edges created by the operation are not marked.
-      m_map.insert_point_in_cell_2(m_map.darts().begin(), m_map.point(m_map.darts().begin()));
+      // 1) We insert a vertex in the face (note that all points have the
+      //    same geometry). New edges created by the operation are not marked.
+      m_map.insert_point_in_cell_2(m_map.darts().begin(),
+                                   m_map.point(m_map.darts().begin()));
 
       // 2) We update the pair of darts
-      for (typename TPaths::iterator itp=paths.begin(), itpend=paths.end(); itp!=itpend; ++itp)
+      for (typename TPaths::iterator itp=paths.begin(), itpend=paths.end();
+           itp!=itpend; ++itp)
       {
         std::pair<Dart_const_handle, Dart_const_handle>& p=itp->second;
         p.first=m_map.template beta<0, 2>(p.first);
@@ -392,47 +540,179 @@ protected:
       }
 
       // 3) We remove all the old edges.
-      for (typename Map::Dart_range::iterator it=m_map.darts().begin(), itend=m_map.darts().end();
+      for (typename Map::Dart_range::iterator it=m_map.darts().begin(),
+           itend=m_map.darts().end();
            it!=itend; ++it)
       {
-        if (m_map.is_marked(it, oldedges))
+        if (m_map.is_dart_used(it) && m_map.is_marked(it, oldedges))
         { m_map.template remove_cell<1>(it); }
       }
 
       m_map.free_mark(oldedges);
     }
 
-    // Compute, for each edge not in the spanning tree, the pair of darts adjacent
-    // to it
-    // dart_mapping is a mapping between darts of m_original_map and darts in m_map
-    void compute_length_two_paths(boost::unordered_map<Dart_const_handle, Dart_handle>& dart_mapping)
+    /// @return true iff the edge containing adart is associated with a path.
+    ///         (used for debug purpose because we are suppose to be able to
+    ///          test this by using directly the mark m_mark_T).
+    bool is_edge_has_path(Dart_const_handle adart) const
     {
-      paths.clear();
+      Dart_const_handle opposite=m_original_map.template beta<2>(adart);
+      if (adart<opposite)
+      {
+        return paths.find(adart)!=paths.end();
+      }
+      return paths.find(opposite)!=paths.end();
+    }
 
-      for (typename Map::Dart_range::const_iterator it=m_original_map.darts().begin(),
+    /// @return the pair of darts associated with the edge containing adart
+    ///         in m_original_map.
+    /// @pre the edge containing adart must not belong to T.
+    std::pair<Dart_const_handle, Dart_const_handle>& get_pair_of_darts
+    (Dart_const_handle adart)
+    {
+      assert(!m_original_map.is_marked(adart, m_mark_T));
+      assert(is_edge_has_path(adart));
+
+      Dart_const_handle opposite=m_original_map.template beta<2>(adart);
+      if (adart<opposite)
+      { return paths.find(adart)->second; }
+
+      return paths.find(opposite)->second;
+    }
+
+    Dart_const_handle get_first_dart_of_the_path(Dart_const_handle adart) const
+    {
+      assert(!m_original_map.is_marked(adart, m_mark_T));
+      assert(is_edge_has_path(adart));
+
+      Dart_const_handle opposite=m_original_map.template beta<2>(adart);
+      if (adart<opposite)
+      {
+        const std::pair<Dart_const_handle, Dart_const_handle>&
+            p=paths.find(adart)->second;
+        return p.first;
+      }
+
+      const std::pair<Dart_const_handle, Dart_const_handle>&
+          p=paths.find(opposite)->second;
+      return m_map.template beta<2>(p.second);
+    }
+
+    Dart_const_handle get_second_dart_of_the_path(Dart_const_handle adart) const
+    {
+      assert(!m_original_map.is_marked(adart, m_mark_T));
+      assert(is_edge_has_path(adart));
+
+      Dart_const_handle opposite=m_original_map.template beta<2>(adart);
+      if (adart<opposite)
+      {
+        const std::pair<Dart_const_handle, Dart_const_handle>&
+            p=paths.find(adart)->second;
+        return p.second;
+      }
+
+      const std::pair<Dart_const_handle, Dart_const_handle>&
+          p=paths.find(opposite)->second;
+      return m_map.template beta<2>(p.first);
+    }
+
+    /// Test if paths are valid, i.e.:
+    /// 1) all the darts of m_original_map that do not belong to T are
+    ///    associated with a pair of darts;
+    /// 2) all the darts of the paths belong to m_map;
+    /// 3) the origin of the second dart of the pair is the extremity of the
+    ///    first dart.
+    bool are_paths_valid() const
+    {
+      bool res=true;
+      for (auto it=m_original_map.darts().begin(),
            itend=m_original_map.darts().end(); it!=itend; ++it)
       {
-        if (!m_map.is_dart_used(dart_mapping[it]))
-        {  // This dart was removed during surface_simplification_in_one_vertex()
-          dart_mapping.erase(dart_mapping[it]);
+        if (!m_original_map.is_marked(it, m_mark_T))
+        {
+          if (!is_edge_has_path(it))
+          {
+            std::cout<<"ERROR: an edge that does not belong to the spanning tree"
+                    <<" T has no associated path."<<std::endl;
+            res=false;
+          }
         }
         else
         {
-          if (m_map.template is_free<2>(it) ||
-              it<m_map.template beta<2>(it))
+          if (is_edge_has_path(it))
           {
-            paths[it]=std::make_pair(it, m_map.template beta<2>(it));
-            //          paths[it]=std::make_pair(m_map.template beta<0>(it),
-            //                                   m_map.template beta<2,0>(it));
+            std::cout<<"ERROR: an edge that belongs to the spanning tree"
+                    <<" T has an associated path."<<std::endl;
+            res=false;
           }
         }
       }
+
+      for (auto it=paths.begin(); it!=paths.end(); ++it)
+      {
+        if (!m_map.is_dart_used(it->second.first))
+        {
+          std::cout<<"ERROR: first dart in paths does not exist anymore in m_map."
+                   <<std::endl;
+          res=false;
+        }
+        else if (!m_map.darts().owns(it->second.first))
+        {
+          std::cout<<"ERROR: first dart in paths does not belong to m_map."
+                  <<std::endl;
+          res=false;
+        }
+        if (!m_map.is_dart_used(it->second.second))
+        {
+          std::cout<<"ERROR: second dart in paths does not exist anymore in m_map."
+                   <<std::endl;
+          res=false;
+        }
+        else if (!m_map.darts().owns(it->second.second))
+        {
+          std::cout<<"ERROR: second dart in paths does not belong to m_map."
+                  <<std::endl;
+          res=false;
+        }
+      }
+
+      for (auto it=m_original_map.darts().begin(),
+           itend=m_original_map.darts().end(); it!=itend; ++it)
+      {
+        if (!m_original_map.is_marked(it, m_mark_T))
+        {
+          Dart_const_handle d1=get_first_dart_of_the_path(it);
+          Dart_const_handle d2=get_second_dart_of_the_path(it);
+          if (d1==NULL || d2==NULL)
+          {
+            std::cout<<"ERROR: an edge is associated with a null dart in paths."
+                    <<std::endl;
+            res=false;
+          }
+          else
+          {
+            Dart_const_handle dd1=m_map.other_extremity(d1);
+            assert(dd1!=NULL);
+            if (m_map.vertex_attribute(dd1)!=m_map.vertex_attribute(d2))
+            {
+              std::cout<<"ERROR: the two darts in a path are not consecutive."
+                      <<std::endl;
+              res=false;
+            }
+          }
+        }
+      }
+
+      return res;
     }
 
   protected:
     const Map& m_original_map; // The original surface; not modified
     Map m_map; // the transformed map
-    TPaths paths;
+    TPaths paths; // Pair of edges associated with each edge of m_original_map
+                  // (except the edges that belong to the spanning tree T).
+    std::size_t m_mark_T; // mark each edge of m_original_map that belong to the spanning tree T
+    std::size_t m_mark_L; // mark each edge of m_original_map that belong to the dual spanning tree L
   };
   
 } // namespace CGAL
