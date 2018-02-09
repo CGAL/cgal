@@ -185,8 +185,8 @@ refine(pmesh,
 
 \section BGLHeader Header Files, Namespaces, and Naming Conventions
 
-This package provides the necessary classes and functions that enable using the
-some \cgal data structures as models of the \sc{Bgl} graph concepts.
+This package provides the necessary classes and functions that enable using
+\cgal data structures as models of the \sc{Bgl} graph concepts.
 To this end, we offer partial specializations of the `boost::graph_traits<Graph>` for various \cgal packages.
 For each such package, denoted `PACKAGE`, the partial specializations live in
 the namespace `boost` and are located in the header file `CGAL/boost/graph/graph_traits_PACKAGE.h`.
@@ -198,7 +198,7 @@ as to fulfill the requirements of the concepts defined in the \sc{Bgl}.
 
 Note that these partial specializations are often providing more than
 is required, making these classes not only models of the graph concepts
-of the \sc{Bgl}, but also models of the CGAL graph concepts, that will
+of the \sc{Bgl}, but also models of the CGAL graph concepts, that will be
 described in detail in Section \ref BGLExtensions. Correspondence tables
 between the types of a \cgal data structure and their \sc{Bgl} equivalents
 can be found in the \ref PkgBGLTraits documentation page.
