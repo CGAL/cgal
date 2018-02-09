@@ -130,7 +130,7 @@ struct Less_along_ray{
   bool operator()( const typename Traits::Point_3& p1,
                    const typename Traits::Point_3& p2) const
   {
-    return m_traits.collinear_are_ordered_along_line_3_object()(m_source, p1, p2);
+    return m_traits.compare_distance_3_object()(m_source, p1, p2) == CGAL::SMALLER;
   }
 };
 
@@ -694,6 +694,8 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
   Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
 
+  typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
+
 // First remove edges of length 0
   std::size_t nb_deg_faces = remove_null_edges(edges(tmesh), tmesh, np);
 
@@ -719,13 +721,12 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
   if (!degenerate_face_set.empty())
   {
     std::set<vertex_descriptor> vertices_to_remove;
-    typename std::set<face_descriptor>::iterator fit=degenerate_face_set.begin();
-    while(fit!=degenerate_face_set.end())
+    BOOST_FOREACH(face_descriptor fd, degenerate_face_set)
     {
-      halfedge_descriptor hd=halfedge(*fit, tmesh);
-      const typename Traits::Point_3& p1 = get(vpmap, target(hd, tmesh) );
-      const typename Traits::Point_3& p2 = get(vpmap, target(next(hd, tmesh), tmesh) );
-      const typename Traits::Point_3& p3 = get(vpmap, source(hd, tmesh) );
+      halfedge_descriptor hd=halfedge(fd, tmesh);
+      Point_ref p1 = get(vpmap, target(hd, tmesh) );
+      Point_ref p2 = get(vpmap, target(next(hd, tmesh), tmesh) );
+      Point_ref p3 = get(vpmap, source(hd, tmesh) );
 
       CGAL_assertion(p1!=p2 && p1!=p3 && p2!=p3);
 
@@ -751,8 +752,6 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 
       if (degree(vd, tmesh) == 3)
         vertices_to_remove.insert(vd);
-
-      ++fit;
     }
 
     BOOST_FOREACH(vertex_descriptor vd, vertices_to_remove)
@@ -816,9 +815,9 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
       #endif
       degenerate_face_set.erase(degenerate_face_set.begin());
     // flip the longest edge of the triangle
-      const typename Traits::Point_3& p1 = get(vpmap, target( halfedge(fd, tmesh), tmesh) );
-      const typename Traits::Point_3& p2 = get(vpmap, target(next(halfedge(fd, tmesh), tmesh), tmesh) );
-      const typename Traits::Point_3& p3 = get(vpmap, source( halfedge(fd, tmesh), tmesh) );
+      Point_ref p1 = get(vpmap, target( halfedge(fd, tmesh), tmesh) );
+      Point_ref p2 = get(vpmap, target(next(halfedge(fd, tmesh), tmesh), tmesh) );
+      Point_ref p3 = get(vpmap, source( halfedge(fd, tmesh), tmesh) );
 
       CGAL_assertion(p1!=p2 && p1!=p3 && p2!=p3);
 
@@ -856,8 +855,13 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
           Euler::flip_edge(edge_to_flip, tmesh);
         }
         #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
-        else
+        else{
           std::cout << "  WARNING: flip is not possible\n";
+          // \todo Let p and q be the vertices opposite to `edge_to_flip`, and let
+          //       r be the vertex of `edge_to_flip` that is the furthest away from
+          //       the edge `pq`. In that case I think we should remove all the triangles
+          //       so that the triangle pqr is in the mesh.
+        }
         #endif
       }
     }
@@ -909,7 +913,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
         if ( vids.insert( std::make_pair( target(next(next(halfedge(f, tmesh), tmesh), tmesh), tmesh), id) ).second ) ++id;
       }
       std::ofstream output("/tmp/cc_faces.off");
-      output << std::setprecision(44);
+      output << std::setprecision(17);
       output << "OFF\n" << vids.size() << " " << cc_faces.size() << " 0\n";
       std::vector<typename Traits::Point_3> points(vids.size());
       typedef std::pair<const vertex_descriptor, int> Pair_type;
@@ -945,6 +949,19 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
           inside_vertices.insert( source(hd, tmesh) );
       }
 
+      // v-e+f = 1 for a topological disk and e = (3f+#boundary_edges)/2
+      if (boundary_vertices.size()+inside_vertices.size() -
+          (cc_faces.size()+boundary_hedges.size())/2 != 1)
+      {
+        //cc_faces does not define a topological disk
+        /// \todo Find to way to handle that case
+        #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
+        std::cout << "  WARNING: Cannot remove the component of degenerate faces: not a topological disk.\n";
+        #endif
+        BOOST_FOREACH(face_descriptor f, cc_faces)
+          degenerate_face_set.erase(f);
+        continue;
+      }
     // preliminary step to check if the operation is possible
       // sort the boundary points along the common supporting line
       //    we first need a reference point
@@ -962,6 +979,10 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
       Sorted_point_set sorted_points( Less_point( traits, get(vpmap, *ref_vertices.first) ) );
       BOOST_FOREACH(vertex_descriptor v, boundary_vertices)
         sorted_points.insert( get(vpmap,v) );
+
+      CGAL_assertion(sorted_points.size()==
+                     std::set<typename Traits::Point_3>(sorted_points.begin(),
+                                                        sorted_points.end()).size());
 
       CGAL_assertion( get( vpmap, *ref_vertices.first)==*sorted_points.begin() );
       CGAL_assertion( get( vpmap, *ref_vertices.second)==*cpp11::prev(sorted_points.end()) );
@@ -1025,49 +1046,46 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
       CGAL_assertion( target(side_one.back(), tmesh) == *ref_vertices.second );
       CGAL_assertion( target(side_two.back(), tmesh) == *ref_vertices.second );
 
-      // sort halfedges to make binary_search calls in the container
-      std::sort(boundary_hedges.begin(), boundary_hedges.end());
-
       typename Sorted_point_set::iterator it_pt = cpp11::next(sorted_points.begin()),
-                                                               it_pt_end = cpp11::prev(sorted_points.begin());
+                                          it_pt_end = cpp11::prev(sorted_points.end());
 
       bool non_collapsable = false;
       typename std::vector<halfedge_descriptor>::iterator side_one_it = side_one.begin();
       typename std::vector<halfedge_descriptor>::iterator side_two_it = side_two.begin();
-
       for(;it_pt!=it_pt_end;++it_pt)
       {
-        vertex_descriptor v2 = target(next(opposite(*side_two_it, tmesh), tmesh), tmesh);
+        // check if it_pt is the point of the target of one or two halfedges
+        bool target_of_side_one = get(vpmap, target(*side_one_it, tmesh))==*it_pt;
+        bool target_of_side_two = get(vpmap, target(*side_two_it, tmesh))==*it_pt;
 
-        halfedge_descriptor h1 = next(*side_one_it, tmesh);
-        while( !std::binary_search(boundary_hedges.begin(), boundary_hedges.end(), h1) )
+        if (target_of_side_one && target_of_side_two)
         {
-          BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_face(h1, tmesh))
+          BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(*side_one_it, tmesh))
           {
-            CGAL_assertion (!std::binary_search(boundary_hedges.begin(), boundary_hedges.end(), h2));
-
-            if (source(h2, tmesh) == v2)
+            if (source(h, tmesh)==target(*side_two_it, tmesh))
             {
-              non_collapsable = true;
+              non_collapsable=true;
               break;
             }
           }
-          if (non_collapsable) break;
-
-          h1=next(opposite(h1, tmesh), tmesh);
         }
-
-        if (non_collapsable) break;
-
-        CGAL_assertion( get(vpmap, target(*side_one_it, tmesh)) == *it_pt ||
-                        get(vpmap, target(*side_two_it, tmesh)) == *it_pt );
-
-        if ( get(vpmap, target(*side_one_it, tmesh)) == *it_pt )
-          ++side_one_it;
-        if ( get(vpmap, target(*side_two_it, tmesh)) == *it_pt )
-          ++side_two_it;
+        else{
+          CGAL_assertion(target_of_side_one || target_of_side_two);
+          vertex_descriptor v1 = target_of_side_one ? target(*side_one_it, tmesh)
+                                                    : target(*side_two_it, tmesh);
+          vertex_descriptor v2 = target_of_side_two ? target(next(opposite(*side_one_it, tmesh), tmesh), tmesh)
+                                                    : target(next(*side_two_it, tmesh), tmesh);
+          BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v1, tmesh))
+            if (source(h, tmesh)==v2)
+            {
+              non_collapsable=true;
+              break;
+            }
+        }
+        if(non_collapsable) break;
+        if (target_of_side_one) ++side_one_it;
+        if (target_of_side_two) ++side_two_it;
       }
-
       if (non_collapsable){
         BOOST_FOREACH(face_descriptor f, cc_faces)
           degenerate_face_set.erase(f);
