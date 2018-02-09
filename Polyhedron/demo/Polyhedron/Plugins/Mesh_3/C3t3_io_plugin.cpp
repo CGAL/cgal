@@ -72,11 +72,9 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
         item->setName(fileinfo.baseName());
         item->setScene(scene);
 
-
         if(item->load_binary(in)) {
           return item;
         }
-
         item->c3t3().clear();
         in.seekg(0);
         if(try_load_other_binary_format(in, item->c3t3())) {
@@ -85,7 +83,6 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
           item->resetCutPlane();
           return item;
         }
-
         item->c3t3().clear();
         in.seekg(0);
         if(try_load_a_cdt_3(in, item->c3t3())) {
@@ -481,9 +478,8 @@ try_load_other_binary_format(std::istream& is, C3t3& c3t3)
     C3t3::Triangulation,
       Update_vertex<Fake_c3t3::Triangulation, C3t3::Triangulation>,
     Update_cell>(is, c3t3.triangulation(),
-                 Update_vertex(),
+                 Update_vertex<Fake_c3t3::Triangulation, C3t3::Triangulation>(),
                  Update_cell()
-#ifdef CGAL_CXX11
                  ,
                  /* call_back: a C++11 lambda */
                  [](std::istream& is,
@@ -526,7 +522,6 @@ try_load_other_binary_format(std::istream& is, C3t3& c3t3)
                      last_pos = curr;
                    }
                  }
-#endif // CGAL_CXX11
                  );
   std::cerr << "DONE.\n";
 
