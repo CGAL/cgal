@@ -57,18 +57,16 @@ read_WKT( std::istream& in,
   return in.good();  
 }
 
-template<typename K,
-         typename OutputPolygonIterator>
-bool
-read_polygons_WKT( std::istream& in,
-          OutputPolygonIterator out_polygons
+template<typename Polygon>
+std::istream&
+read_polygon_WKT( std::istream& in,
+          Polygon& polygon
           )
 {
-  typedef CGAL::Polygon_with_holes_2<K> Polygon;
   if(!in)
   {
     std::cerr << "Error: cannot open file" << std::endl;
-    return false;
+    return in;  
   }
   
   std::string line;
@@ -80,18 +78,17 @@ read_polygons_WKT( std::istream& in,
     
     if(type.compare("POLYGON")==0)
     {
-      Polygon p;
-      boost::geometry::read_wkt(line, p);
-      *out_polygons++ = p;
+      boost::geometry::read_wkt(line, polygon);
+      break;
     }
   }
-  return in.good();  
+  return in;  
 }
 
 template<typename PolygonRange>
 bool
 write_polygons_WKT( std::ostream& out,
-          PolygonRange polygons
+          const PolygonRange& polygons
           )
 {
   typedef typename boost::range_value<PolygonRange>::type Polygon;
@@ -100,11 +97,26 @@ write_polygons_WKT( std::ostream& out,
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
   }
-  for(typename PolygonRange::iterator it = polygons.begin();
+  for(typename PolygonRange::const_iterator it = polygons.begin();
       it != polygons.end();
       ++it)
   out<<boost::geometry::wkt(*it)<<std::endl;
   return out.good();
+}
+
+template<typename Polygon>
+std::ostream&
+write_polygon_WKT( std::ostream& out,
+          const Polygon& polygon
+          )
+{
+  if(!out)
+  {
+    std::cerr << "Error: cannot open file" << std::endl;
+    return out;
+  }
+  out<<boost::geometry::wkt(polygon)<<std::endl;
+  return out;
 }
 
 }//end CGAL
