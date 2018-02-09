@@ -19,6 +19,19 @@ using namespace CGAL::Three;
 
 typedef Tr::Bare_point Bare_point;
 
+struct Compare_to_isovalue {
+  double iso_value;
+  bool less;
+  typedef bool result_type;
+
+  Compare_to_isovalue(double iso_value, bool less)
+    : iso_value(iso_value), less(less) {}
+
+  bool operator()(double x) const {
+    return (x < iso_value) == less;
+  }
+};
+
 template<typename Mesh>
 struct Polyhedral_mesh_domain_selector
 {
@@ -328,13 +341,13 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   }
   else
   {
-    if(CGAL::Compare_to_isovalue(iso_value, inside_is_less)(value_outside) !=0)
+    if(Compare_to_isovalue(iso_value, inside_is_less)(value_outside) !=0)
     {
       std::cerr << "Warning : \"Value inside is less than iso value\"'s value has been inverted to avoid crash.  "
                 << " " << std::endl;
       inside_is_less = !inside_is_less;
     }
-    CGAL::Compare_to_isovalue domain_functor(iso_value, inside_is_less);
+    Compare_to_isovalue domain_functor(iso_value, inside_is_less);
     namespace p = CGAL::parameters;
     Gray_Image_mesh_domain* p_domain = new Gray_Image_mesh_domain
       (Gray_Image_mesh_domain::create_gray_image_mesh_domain

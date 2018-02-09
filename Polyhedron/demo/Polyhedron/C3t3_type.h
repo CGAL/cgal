@@ -12,7 +12,6 @@
 #include "Image_type.h"
 #include <CGAL/Labeled_image_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
-#include "Polyhedron_demo_mesh_3_labeled_mesh_domain_3.h"
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 #include "implicit_functions/Implicit_function_interface.h"
