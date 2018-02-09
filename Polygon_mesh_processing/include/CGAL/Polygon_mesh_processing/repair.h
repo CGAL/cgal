@@ -1387,7 +1387,7 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
     // try to avoid non-manifold vertices (morpho-math)
     reduce_face_selection(faces_to_remove, tm, 1, is_selected, Emptyset_iterator());
 
-    // now expand holes than were not filled
+    // now expand holes that were not filled
     std::vector<halfedge_descriptor> boundary_hedges; // this container will contain the halfedges of
                                                      // all created holes
     std::set<halfedge_descriptor> border_created; // track border halfedges that were previously created
@@ -1464,6 +1464,14 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
     }
     while(non_manifold_vertex_removed);
 
+    if(!is_selection_disk(faces_to_remove, tm))
+    {
+      if(verbose)
+          std::cout << "DEBUG: Step aborted because selection does not "
+                       "have the topology of a disk."<<std::endl;
+      return true;
+      
+    }
   /// remove the selection
     if (border_edges_found){
       // When at least one face incident to the mesh border is set
@@ -1608,12 +1616,17 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
       triangulate_hole(tm, h, out);
       if (!nb_new_triangles)
       {
-        if (verbose)
-          std::cout << "  DEBUG: Failed to fill a hole!!!" << std::endl;
-        non_filled_hole.push_back(h);
+        //retry without delaunay, sometimes it works.
+        triangulate_hole(tm, h, out, CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(false));
+        if (!nb_new_triangles)
+        {
+          if (verbose)
+            std::cout << "  DEBUG: Failed to fill a hole!!!" << std::endl;
+          non_filled_hole.push_back(h);
+        }
+        else
+          no_hole_was_filled=false;
       }
-      else
-        no_hole_was_filled=false;
     }
     if (verbose)
       std::cout << "  DEBUG: Number of holes " << one_halfedge_per_border.size() << std::endl;
