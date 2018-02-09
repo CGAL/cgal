@@ -184,7 +184,7 @@ protected:
     typedef boost::unordered_map<Dart_const_handle,
                       std::pair<Dart_const_handle, Dart_const_handle> > TPaths;
 
-    Combinatorial_map_tools(Map& amap) : m_map(amap)
+    Combinatorial_map_tools(Map& amap) : m_original_map(amap)
     {
       if (!m_map.is_without_boundary(1))
       {
@@ -196,6 +196,35 @@ protected:
         std::cerr<<"ERROR: the given amap has 2-boundaries; which are not yet considered (but this will be done later)."
                  <<std::endl;
       }
+
+ 
+      // A mapping between darts of the original map into the transformed map.
+      boost::unordered_map<Dart_const_handle, Dart_handle> dart_mapping;
+
+      // We copy the original map, while keeping a mapping between darts.
+      m_map.copy(m_original_map, &dart_mapping);
+
+      // We simplify m_map in a surface with only one vertex
+      surface_simplification_in_one_vertex();
+      std::cout<<"All non loop contracted: ";
+      m_map.display_characteristics(std::cout) << ", valid=" 
+                                               << m_map.is_valid() << std::endl;      
+      
+      // Now we compute each length two path associated with each edge that does
+      // not belong to the spanning tree (which are thus all the survival edges).
+      compute_length_two_paths(dart_mapping);
+
+      // We simplify m_map in a surface with only one face
+      surface_simplification_in_one_face();
+      std::cout<<"All faces merges: ";
+      m_map.display_characteristics(std::cout) << ", valid=" 
+                                               << m_map.is_valid() << std::endl;
+
+      // And we quadrangulate the face 
+      surface_quadrangulate();
+      std::cout<<"After quadrangulation: ";
+      m_map.display_characteristics(std::cout) << ", valid=" 
+                                               << m_map.is_valid() << std::endl;
     }
     
     void initialize_vertices(UFTree& uftrees,
@@ -272,7 +301,7 @@ protected:
       m_map.set_automatic_attributes_management(false);
 
       typename Map::size_type treated=m_map.get_new_mark();
-      Dart_handle currentdart=NULL;
+      Dart_handle currentdart=NULL, oppositedart=NULL;
       
       for (typename Map::Dart_range::iterator it=m_map.darts().begin(),
            itend=m_map.darts().end(); it!=itend;)
@@ -284,25 +313,32 @@ protected:
           { m_map.mark(currentdart, treated); }
           else
           {
+            oppositedart=m_map.template beta<2>(currentdart);
             m_map.mark(currentdart, treated);
-            m_map.mark(m_map.template beta<2>(currentdart), treated);
+            m_map.mark(oppositedart, treated);
             
             // We remove dangling edges and degree two edges.
             // The two first tests allow to keep isolated edges (case of spheres)
-            if ((m_map.template beta<0>(currentdart)!=m_map.template beta<2>(currentdart) ||
-                 m_map.template beta<1>(currentdart)!=m_map.template beta<2>(currentdart)) &&
+            if ((m_map.template beta<0>(currentdart)!=oppositedart ||
+                 m_map.template beta<1>(currentdart)!=oppositedart) &&
                 get_uftree(uftrees, faces, currentdart)!=
-                get_uftree(uftrees, faces, m_map.template beta<2>(currentdart)))
+                get_uftree(uftrees, faces, oppositedart))
             {
               uftrees.unify_sets(get_uftree(uftrees, faces, currentdart),
-                                 get_uftree(uftrees, faces,
-                                            m_map.template beta<2>(currentdart)));
+                                 get_uftree(uftrees, faces, oppositedart));
 
-              // TODO LATER (?) OPTIMIZE AND REPLACE THE REMOVE_CELL CALL BY THE MODIFICATION BY HAND
-              // OR DEVELOP A SPECIALIZED VERSION OF REMOVE_CELL
               if (m_map.is_marked(it, treated))
               { ++it; }
-              m_map.remove_cell<1>(currentdart);
+              
+              // 
+              std::pair<Dart_const_handle, Dart_const_handle>&
+                p=(paths.find((currentdart<oppositedart)?currentdart:oppositedart))->second;
+              p.first=m_map.template beta<0,2>(p.first);
+              p.second=m_map.template beta<0,2>(p.second);
+              
+              // TODO LATER (?) OPTIMIZE AND REPLACE THE REMOVE_CELL CALL BY THE MODIFICATION BY HAND
+              // OR DEVELOP A SPECIALIZED VERSION OF REMOVE_CELL
+              m_map.template remove_cell<1>(currentdart);
             }
           }
         }
@@ -330,16 +366,11 @@ protected:
         {
           uftrees.unify_sets(get_uftree(uftrees, vertices, it),
                              get_uftree(uftrees, vertices, m_map.template beta<2>(it)));
-          m_map.contract_cell<1>(it);
+          m_map.template contract_cell<1>(it);
         }
       }
 
       m_map.set_automatic_attributes_management(true);
-
-      
-      // Now we compute each length two path associated with each edge that does
-      // not belong to the spanning tree (which are thus all the survival edges).
-      compute_length_two_paths();
     }
     
     void surface_quadrangulate()
@@ -356,8 +387,8 @@ protected:
       for (typename TPaths::iterator itp=paths.begin(), itpend=paths.end(); itp!=itpend; ++itp)
       {
         std::pair<Dart_const_handle, Dart_const_handle>& p=itp->second;
-        p.first=m_map.template beta<1>(p.first);
-        p.second=m_map.template beta<1>(p.second);
+        p.first=m_map.template beta<0, 2>(p.first);
+        p.second=m_map.template beta<0>(p.second);
       }
 
       // 3) We remove all the old edges.
@@ -365,7 +396,7 @@ protected:
            it!=itend; ++it)
       {
         if (m_map.is_marked(it, oldedges))
-        { m_map.remove_cell<1>(it); }
+        { m_map.template remove_cell<1>(it); }
       }
 
       m_map.free_mark(oldedges);
@@ -373,24 +404,34 @@ protected:
 
     // Compute, for each edge not in the spanning tree, the pair of darts adjacent
     // to it
-    void compute_length_two_paths()
+    // dart_mapping is a mapping between darts of m_original_map and darts in m_map
+    void compute_length_two_paths(boost::unordered_map<Dart_const_handle, Dart_handle>& dart_mapping)
     {
       paths.clear();
 
-      for (typename Map::Dart_range::iterator it=m_map.darts().begin(),
-           itend=m_map.darts().end(); it!=itend; ++it)
+      for (typename Map::Dart_range::const_iterator it=m_original_map.darts().begin(),
+           itend=m_original_map.darts().end(); it!=itend; ++it)
       {
-        if (m_map.template is_free<2>(it) ||
-            it<m_map.template beta<2>(it))
+        if (!m_map.is_dart_used(dart_mapping[it]))
+        {  // This dart was removed during surface_simplification_in_one_vertex()
+          dart_mapping.erase(dart_mapping[it]);
+        }
+        else
         {
-          paths[it]=std::make_pair(m_map.template beta<0>(it),
-                                   m_map.template beta<2,0>(it));
+          if (m_map.template is_free<2>(it) ||
+              it<m_map.template beta<2>(it))
+          {
+            paths[it]=std::make_pair(it, m_map.template beta<2>(it));
+            //          paths[it]=std::make_pair(m_map.template beta<0>(it),
+            //                                   m_map.template beta<2,0>(it));
+          }
         }
       }
     }
 
   protected:
-    Map& m_map;
+    const Map& m_original_map; // The original surface; not modified
+    Map m_map; // the transformed map
     TPaths paths;
   };
   

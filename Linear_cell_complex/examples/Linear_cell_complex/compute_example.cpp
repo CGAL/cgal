@@ -51,21 +51,6 @@ int main(int argc, char** argv)
 #endif // CGAL_USE_BASIC_VIEWER
     
   CGAL::Combinatorial_map_tools<LCC_3_cmap> cmt(lcc);
-  
-  cmt.surface_simplification_in_one_vertex();
-  std::cout<<"All non loop contracted: ";
-  lcc.display_characteristics(std::cout) << ", valid=" 
-                                         << lcc.is_valid() << std::endl;
-
-  cmt.surface_simplification_in_one_face();
-  std::cout<<"All faces merges: ";
-  lcc.display_characteristics(std::cout) << ", valid=" 
-                                         << lcc.is_valid() << std::endl;
-  
-  cmt.surface_quadrangulate();
-  std::cout<<"After quadrangulation: ";
-  lcc.display_characteristics(std::cout) << ", valid=" 
-                                         << lcc.is_valid() << std::endl;
 
   return EXIT_SUCCESS;
 }
