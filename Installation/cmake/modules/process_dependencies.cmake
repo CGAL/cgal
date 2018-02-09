@@ -7,13 +7,10 @@ if(NOT CGAL_PACKAGES_PREFIX)
     "The variable `CGAL_PACKAGES_PREFIX` should be defined to the prefix of CGAL packages!")
 endif()
 
-#message("regexp: \\. ${CGAL_PACKAGES_PREFIX}/[^/]*/include/CGAL/.*h")
-#TO BE CHECKED
 get_filename_component(INSTALLATION "${CMAKE_BINARY_DIR}" DIRECTORY)
 get_filename_component(BUILD_DIR "${INSTALLATION}" NAME)
 foreach(INPUT_FILE ${INPUT_FILES})
   file(STRINGS ${INPUT_FILE} input)
-  #message("input is : ${input}")
   foreach(line ${input})
     string(REGEX MATCHALL "^\\.* ${CGAL_PACKAGES_PREFIX}/[A-Za-z0-9_.-]*/include/CGAL/[A-Za-z0-9_/.-]*\\.h" header ${line})
     string(REGEX REPLACE "\\.* ${CGAL_PACKAGES_PREFIX}/" "" header "${header}")
