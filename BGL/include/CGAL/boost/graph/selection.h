@@ -26,6 +26,7 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <boost/unordered_set.hpp>
 
+
 namespace CGAL {
 
 
@@ -619,6 +620,28 @@ void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
     }
   }
 }
+
+template<class PolygonMesh, class FaceRange>
+bool is_selection_disk(const FaceRange& face_selection,
+                       PolygonMesh& pm)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
+  boost::unordered_set<vertex_descriptor> sel_vertices;
+  boost::unordered_set<edge_descriptor> sel_edges;
+  BOOST_FOREACH(face_descriptor f, face_selection)
+  {
+    BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f, pm), pm))
+    {
+      sel_vertices.insert(target(h, pm));
+      sel_edges.insert(edge(h,pm));
+    }
+  }
+  return (sel_vertices.size() - sel_edges.size() + face_selection.size() == 1);  
+}
 } //end of namespace CGAL
 
 #endif //CGAL_BOOST_GRAPH_KTH_SIMPLICIAL_NEIGHBORHOOD_H
+
