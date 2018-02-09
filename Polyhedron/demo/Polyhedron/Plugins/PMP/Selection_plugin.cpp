@@ -27,6 +27,7 @@
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/boost/graph/selection.h>
 #include <Scene.h>
 
 #ifdef USE_SURFACE_MESH
@@ -122,6 +123,7 @@ public:
     connect(ui_widget.Select_all_button,  SIGNAL(clicked()), this, SLOT(on_Select_all_button_clicked()));
     connect(ui_widget.Select_all_NTButton,  SIGNAL(clicked()), this, SLOT(on_Select_all_NTButton_clicked()));
     connect(ui_widget.Select_boundaryButton,  SIGNAL(clicked()), this, SLOT(on_Select_boundaryButton_clicked()));
+    connect(ui_widget.is_diskButton,  SIGNAL(clicked()), this, SLOT(on_is_diskButton_clicked()));
     connect(ui_widget.Add_to_selection_button,  SIGNAL(clicked()), this, SLOT(on_Add_to_selection_button_clicked()));
     connect(ui_widget.Clear_button,  SIGNAL(clicked()), this, SLOT(on_Clear_button_clicked()));
     connect(ui_widget.Clear_all_button,  SIGNAL(clicked()), this, SLOT(on_Clear_all_button_clicked()));
@@ -143,6 +145,7 @@ public:
 
     ui_widget.Add_to_selection_button->hide();
     ui_widget.Select_all_NTButton->hide();
+    ui_widget.is_diskButton->hide();
     QObject* scene = dynamic_cast<QObject*>(scene_interface);
     if(scene) { 
       connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this, SLOT(item_about_to_be_destroyed(CGAL::Three::Scene_item*)));
@@ -229,7 +232,22 @@ public Q_SLOTS:
 
     selection_item->select_all();
   }
-
+  
+  void on_is_diskButton_clicked()
+  {
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+    if(!selection_item)
+      selection_item = onTheFlyItem();
+    if(!selection_item)
+    {
+      print_message("Error: there is no selected polyhedron selection item!");
+      return;
+    }
+    if(CGAL::is_selection_disk(selection_item->selected_facets, *selection_item->polyhedron()))
+       QMessageBox::information(mw, "Are selected faces topologically equivalent to a disk ?", "YES");
+    else
+      QMessageBox::information(mw, "Are selected faces topologically equivalent to a disk ?", "NO");
+  }
   void on_Select_all_NTButton_clicked()
   {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
@@ -373,6 +391,7 @@ public Q_SLOTS:
       if(index == 1)
       {
         ui_widget.Select_all_NTButton->show();
+        ui_widget.is_diskButton->show();
         ui_widget.Add_to_selection_button->hide();
         ui_widget.Select_boundaryButton->hide();
         Q_EMIT set_operation_mode(-1);
@@ -390,6 +409,7 @@ public Q_SLOTS:
         ui_widget.Select_all_NTButton->hide();
         ui_widget.Add_to_selection_button->show();
         ui_widget.Select_boundaryButton->show();
+        ui_widget.is_diskButton->hide();
         Q_EMIT set_operation_mode(-2);
       }
       else
@@ -397,6 +417,7 @@ public Q_SLOTS:
         ui_widget.Add_to_selection_button->hide();
         ui_widget.Select_all_NTButton->hide();
         ui_widget.Select_boundaryButton->hide();
+        ui_widget.is_diskButton->hide();
         it->second->setPathSelection(false);
         Q_EMIT set_operation_mode(-1);
       }
