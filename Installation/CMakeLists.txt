@@ -454,7 +454,7 @@ message( STATUS "System: ${CMAKE_SYSTEM_NAME}" )
 
 if( MSVC )
   
-  uniquely_add_flags ( CGAL_CXX_FLAGS "-D_CRT_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_DEPRECATE;-D_CRT_SECURE_NO_WARNINGS;-D_SCL_SECURE_NO_WARNINGS" )
+  uniquely_add_flags ( CGAL_CXX_FLAGS "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS" )
   uniquely_add_flags ( CGAL_CXX_FLAGS "/fp:strict" )
   uniquely_add_flags ( CGAL_CXX_FLAGS "/fp:except-" )
   uniquely_add_flags ( CGAL_CXX_FLAGS "/wd4503" ) # Suppress warnings C4503 about "decorated name length exceeded"

@@ -176,8 +176,7 @@ public:
 	break;
       }
     }while(true);
-
-    if(sscanf(buffer.c_str(), "%lf", &t) != 1) {
+    if(sscanf_s(buffer.c_str(), "%lf", &t) != 1) {
       // if a 'buffer' does not contain a double, set the fail bit.
       is.setstate(std::ios_base::failbit);
     }
@@ -229,8 +228,7 @@ public:
 	break;
       }
     }while(true);
-
-    if(sscanf(buffer.c_str(), "%f", &t) != 1) {
+    if(sscanf_s(buffer.c_str(), "%f", &t) != 1) {
       // if a 'buffer' does not contain a double, set the fail bit.
       is.setstate(std::ios_base::failbit);
     }
