@@ -44,7 +44,7 @@
 #  include <boost/format.hpp>
 #endif
 #include <boost/optional.hpp>
-#include <boost/noncopyable.hpp>
+#include <boost/shared_ptr.hpp>
 #include <CGAL/tuple.h>
 #include <CGAL/Origin.h>
 
@@ -73,6 +73,10 @@ namespace Mesh_3 {
       return std::greater<T>()(first, second);
     }
     T second;
+  };
+
+  struct Do_not_delete {
+    template <typename T> void operator()(T*) const { }
   };
 
   /// Returns a box enclosing image \c im
@@ -129,7 +133,7 @@ protected:
   typedef typename Geom_traits::Point_3 Point_3;
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
   typedef typename Geom_traits::FT FT;
-
+  typedef boost::shared_ptr<CGAL::Random> CGAL_Random_share_ptr_t;
   /// Returns squared error bound from \c bbox and \c error
   FT squared_error_bound(const Iso_cuboid_3& bbox, const FT& error) const
   {
@@ -171,9 +175,9 @@ protected:
                           construct_pair_functor()])
     , null(args[parameters::null_subdomain_index | Null_subdomain_index()])
     , p_rng_(args[parameters::p_rng|0] == 0 ?
-             new CGAL::Random(0) :
-             args[parameters::p_rng|(CGAL::Random*)(0)])
-    , delete_rng_(args[parameters::p_rng|0] == 0)
+             CGAL_Random_share_ptr_t(new CGAL::Random(0)) :
+             CGAL_Random_share_ptr_t(args[parameters::p_rng|(CGAL::Random*)(0)],
+                                     internal::Mesh_3::Do_not_delete()))
     , squared_error_bound_
       ( squared_error_bound(bbox_,
                             args[parameters::relative_error_bound|FT(1e-3)]))
@@ -194,15 +198,11 @@ protected:
     , bbox_(iso_cuboid(bounding))
     , cstr_s_p_index(cstr_s_p_i)
     , null(null)
-    , p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
-    , delete_rng_(p_rng == 0)
+    , p_rng_(p_rng == 0 ?
+             CGAL_Random_share_ptr_t(new CGAL::Random(0)) :
+             CGAL_Random_share_ptr_t(p_rng, internal::Mesh_3::Do_not_delete()))
     , squared_error_bound_(squared_error_bound(bbox_,error_bound))
   {}
-
-  virtual ~Labeled_mesh_domain_3_impl_details() {
-    if(delete_rng_)
-      delete p_rng_;
-  }
 
   /// The function which answers subdomain queries
   typedef CGAL::cpp11::function<Subdomain_index(const Point_3&)> Function;
@@ -219,8 +219,7 @@ protected:
   typedef CGAL::cpp11::function<bool(Subdomain_index)> Null;
   Null null;
   /// The random number generator used by Construct_initial_points
-  CGAL::Random* p_rng_;
-  bool delete_rng_;
+  CGAL_Random_share_ptr_t p_rng_;
   /// Error bound relative to sphere radius
   FT squared_error_bound_;
 }; // Labeled_mesh_domain_3_impl_details
