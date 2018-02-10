@@ -44,13 +44,18 @@ int main(int argc, char** argv)
   v.push_back(&p1);
   v.push_back(&p2);
   v.push_back(&p3);
-  v.push_back(&p4);
-  
+  v.push_back(&p4);  
+
 #ifdef CGAL_USE_BASIC_VIEWER
   display(lcc, v);
 #endif // CGAL_USE_BASIC_VIEWER
     
   CGAL::Combinatorial_map_tools<LCC_3_cmap> cmt(lcc);
+
+  CGAL::Path_on_surface<LCC_3_cmap>
+      pp1=cmt.transform_original_path_into_quad_surface(p1);
+
+  pp1.bracket_flattening();
 
   return EXIT_SUCCESS;
 }

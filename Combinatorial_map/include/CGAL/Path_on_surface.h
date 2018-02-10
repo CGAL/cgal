@@ -41,12 +41,21 @@ public:
   unsigned int length() const
   { return m_path.size(); }
 
-  Dart_const_handle get_ith_dart(unsigned int i) const
+  Dart_const_handle get_ith_dart(std::size_t i) const
   {
-    assert(i<m_path.size());
-    return m_path[i];
+    assert(i<=m_path.size());
+    return m_path[(i==m_path.size()?0:i)];
   }
   
+  Dart_const_handle operator[] (std::size_t i) const
+  {
+    assert(i<=m_path.size());
+    return m_path[(i==m_path.size()?0:i)];
+  }
+
+  void push_back(Dart_const_handle dh)
+  { m_path.push_back(dh); }
+
   // @return true iff the path is valid; i.e. a sequence of edges two by
   //              two adjacent.
   bool is_valid() const
@@ -164,6 +173,93 @@ public:
      
      m_path.push_back(it);
      return true;
+  }
+
+  /// @return the turn between dart number i and dart number i+1.
+  ///         (turn is position of the second edge in the cyclic ordering of
+  ///          edges starting from the first edge around the second extremity
+  ///          of the first dart)
+  std::size_t next_turn(std::size_t i) const
+  {
+    assert(is_valid());
+    assert(i<m_path.size());
+
+    Dart_const_handle d1=m_path[i];
+    Dart_const_handle d2=m_path[i+1]; // Work also for the last dart.
+    assert(d1!=d2);
+
+    std::size_t res=1;
+    while (m_map.template beta<1>(d1)!=d2)
+    {
+      ++res;
+      d1=m_map.template beta<1, 2>(d1);
+    }
+    // std::cout<<"next_turn="<<res<<std::endl;
+    return res;
+  }
+
+  /// Same than nex_turn but turning in reverse orientation around vertex.
+  std::size_t next_negative_turn(std::size_t i) const
+  {
+    assert(is_valid());
+    assert(i<m_path.size());
+
+    Dart_const_handle d1=m_map.template beta<2>(m_path[i]);
+    Dart_const_handle d2=m_map.template beta<2>(m_path[i+1]); // Work also for the last dart.
+    assert(d1!=d2);
+
+    std::size_t res=1;
+    while (m_map.template beta<0>(d1)!=d2)
+    {
+      ++res;
+      d1=m_map.template beta<0, 2>(d1);
+    }
+    // std::cout<<"next_negative_turn="<<res<<std::endl;
+    return res;
+  }
+
+
+  std::size_t find_end_of_braket(std::size_t begin) const
+  {
+    assert(next_turn(begin)==1 || next_negative_turn(begin)==1);
+    std::size_t end=begin+1;
+    bool positive=(next_turn(begin)==1);
+
+    while ((positive && next_turn(end)==2) ||
+           (!positive && next_negative_turn(end)==2))
+    {
+      ++end;
+      if (end==m_path.size()) { end=0; }
+    }
+    ++end;
+    if (end==m_path.size()) { end=0; }
+    return end;
+  }
+
+  void bracket_flattening()
+  {
+    std::vector<Dart_const_handle> new_path;
+
+    for (std::size_t i=0; i<m_path.size()-1; )
+    {
+      if (next_turn(i)!=1 && next_negative_turn(i)!=1)
+      {
+        new_path.push_back(m_path[i]); // We copy this dart
+        ++i;
+      }
+      else
+      {
+        // i is maybe the beginning of a bracket
+        std::size_t begin=i;
+        std::size_t end=find_end_of_braket(begin);
+        std::cout<<"Bracket: ["<<begin<<"; "<<end<<"]"<<std::endl;
+        if (end<begin)
+        { i=m_path.size(); }
+        else
+        { i=end; }
+      }
+    }
+    // new_path.swap(m_path);
   }
 
 protected:

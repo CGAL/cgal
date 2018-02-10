@@ -132,6 +132,22 @@ namespace CGAL {
       m_original_map.free_mark(m_mark_L);
     }
 
+    Path_on_surface<Map> transform_original_path_into_quad_surface
+    (const Path_on_surface<Map>& path)
+    {
+      Path_on_surface<Map> res(m_map);
+      for (std::size_t i=0; i<path.length(); ++i)
+      {
+        if (!m_original_map.is_marked(path[i], m_mark_T))
+        {
+          res.push_back(get_first_dart_of_the_path(path[i]));
+          res.push_back(get_second_dart_of_the_path(path[i]));
+        }
+      }
+      assert(res.is_valid());
+      return res;
+    }
+
   protected:
     void initialize_vertices(UFTree& uftrees,
                              boost::unordered_map<Dart_const_handle, UFTree_handle>&
