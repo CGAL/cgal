@@ -55,7 +55,9 @@ int main(int argc, char** argv)
   CGAL::Path_on_surface<LCC_3_cmap>
       pp1=cmt.transform_original_path_into_quad_surface(p1);
 
+  std::cout<<"Original path has "<<pp1.length()<<" darts."<<std::endl;
   pp1.bracket_flattening();
+  std::cout<<"After bracket flattening, the path has "<<pp1.length()<<" darts."<<std::endl;
 
   return EXIT_SUCCESS;
 }

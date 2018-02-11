@@ -236,13 +236,26 @@ public:
     return end;
   }
 
+  void transform_brancket(std::size_t begin, std::size_t end,
+                          std::vector<Dart_const_handle>& new_path)
+  {
+    Dart_const_handle d1=m_map.template beta<0>(get_ith_dart(begin));
+    Dart_const_handle d2=m_map.template beta<2,0>(get_ith_dart(end));
+    do
+    {
+      new_path.push_back(m_map.template beta<2>(d1));
+      d1=m_map.template beta<0,2,0>(d1);
+    }
+    while(d1!=d2);
+  }
+
   void bracket_flattening()
   {
     std::vector<Dart_const_handle> new_path;
 
     for (std::size_t i=0; i<m_path.size()-1; )
     {
-      if (next_turn(i)!=1 && next_negative_turn(i)!=1)
+      if (next_turn(i)!=1 /* && next_negative_turn(i)!=1 */)
       {
         new_path.push_back(m_path[i]); // We copy this dart
         ++i;
@@ -257,9 +270,10 @@ public:
         { i=m_path.size(); }
         else
         { i=end; }
+        transform_brancket(begin, end, new_path);
       }
     }
-    // new_path.swap(m_path);
+    new_path.swap(m_path);
   }
 
 protected:
