@@ -41,6 +41,8 @@
 #define CGAL_INLINE_FUNCTION
 #endif
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/CORE/Expr.h>
 #include <cmath>
 #include <sstream> 
@@ -1248,3 +1250,5 @@ template class Realbase_for<BigFloat>;
  template class ConstPolyRep<BigInt>;
  template class ConstPolyRep<BigRat>;
 } //namespace CORE
+
+#include <CGAL/enable_warnings.h>

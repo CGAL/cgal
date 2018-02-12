@@ -52,6 +52,7 @@
 
 template <typename Geom_traits_T>
 class Traits_base_test : public IO_test<Geom_traits_T> {
+  Traits_base_test<Geom_traits_T>&  operator=(const Traits_base_test<Geom_traits_T>&);
 protected:
   typedef Geom_traits_T                                 Traits;
   typedef IO_test<Traits>                               Base;

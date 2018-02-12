@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * Definition of the Arr_landmarks_point_location<Arrangement> template.
@@ -317,5 +318,7 @@ protected:
 
 // The member-function definitions can be found under:
 #include <CGAL/Arr_point_location/Arr_landmarks_pl_impl.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif

@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/Euler_operations.h>
@@ -433,5 +434,7 @@ bool triangulate_faces(PolygonMesh& pmesh)
 } // end namespace Polygon_mesh_processing
 
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_FACES_H

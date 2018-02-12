@@ -21,8 +21,8 @@
 
 
 #ifndef CGAL_HEADER_ONLY
-
+#include <CGAL/disable_warnings.h>
 #include <CGAL/Polynomial/internal/numeric_solvers_support.h>
 #include <CGAL/Polynomial/internal/numeric_solvers_support_impl.h>
-
+#include <CGAL/enable_warnings.h>
 #endif

@@ -24,6 +24,8 @@
 #ifndef CGAL_NEEDS_PARENTHESES_AS_PRODUCT_H
 #define CGAL_NEEDS_PARENTHESES_AS_PRODUCT_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/IO/io.h>
  
 namespace CGAL {
@@ -99,5 +101,7 @@ template <> struct Needs_parens_as_product<long double>{
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif  //CGAL_NEEDS_PARENTHESES_AS_PRODUCT_H

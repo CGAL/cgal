@@ -26,6 +26,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * Definition of the Arr_walk_along_line_point_location<Arrangement> template.
@@ -205,5 +206,7 @@ protected:
 
 // The member-function definitions can be found under:
 #include <CGAL/Arr_point_location/Arr_walk_along_line_pl_impl.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif

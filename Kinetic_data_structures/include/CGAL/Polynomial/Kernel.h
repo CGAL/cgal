@@ -21,6 +21,9 @@
 
 #ifndef CGAL_POLYNOMIAL_POLYNOMIAL_KERNEL_H
 #define CGAL_POLYNOMIAL_POLYNOMIAL_KERNEL_H
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Polynomial/basic.h>
 
 #include <CGAL/Polynomial/internal/Kernel/Multiplicity.h>
@@ -197,4 +200,7 @@ protected:
 };
 
 } } //namespace CGAL::POLYNOMIAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif

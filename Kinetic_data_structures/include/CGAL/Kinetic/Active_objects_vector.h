@@ -21,6 +21,9 @@
 
 #ifndef CGAL_KINETIC_NOTIFYING_TABLE_BASE_3_H
 #define CGAL_KINETIC_NOTIFYING_TABLE_BASE_3_H
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Tools/Label.h>
 #include <CGAL/Kinetic/Ref_counted.h>
@@ -373,5 +376,7 @@ inline std::istream &operator>>(std::istream &in, Active_objects_vector<V> &v) {
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
+
+#include <CGAL/enable_warnings.h>
 
 #endif

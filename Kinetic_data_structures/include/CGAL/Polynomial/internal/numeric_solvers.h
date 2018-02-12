@@ -21,6 +21,9 @@
 
 #ifndef CGAL_POLYNOMIAL_INTERNAL_NUMERIC_SOLVERS_H
 #define CGAL_POLYNOMIAL_INTERNAL_NUMERIC_SOLVERS_H
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Polynomial/basic.h>
 #include <vector>
 
@@ -115,5 +118,7 @@ struct Turkowski_cleaned_numeric_solver
 #include <CGAL/Polynomial/internal/JAMA_numeric_solvers_impl.h>
 #include <CGAL/Polynomial/internal/Turkowski_numeric_solvers_impl.h>
 #endif // CGAL_HEADER_ONLY
+
+#include <CGAL/enable_warnings.h>
 
 #endif

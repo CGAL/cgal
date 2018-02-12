@@ -22,6 +22,8 @@
 #ifndef CGAL_POLYNOMIAL_ROOT_ENUMERATOR_DEFAULT_TRAITS_H
 #define CGAL_POLYNOMIAL_ROOT_ENUMERATOR_DEFAULT_TRAITS_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/internal/Root_stack_traits_base.h>
 
@@ -37,4 +39,7 @@ class Root_stack_default_traits: public internal::Root_stack_traits_base<Polynom
 };
 
 } } //namespace CGAL::POLYNOMIAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif

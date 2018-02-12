@@ -12,6 +12,7 @@ int main()
 //#define BOOST_RESULT_OF_USE_DECLTYPE 1
 #include <CGAL/Epick_d.h>
 #include <typeinfo>
+
 #include <CGAL/NewKernel_d/Cartesian_base.h>
 #include <CGAL/NewKernel_d/Cartesian_static_filters.h>
 #include <CGAL/NewKernel_d/Cartesian_filter_NT.h>
@@ -25,6 +26,7 @@ int main()
 #include <iostream>
 #include <sstream>
 #include <CGAL/NewKernel_d/Types/Weighted_point.h>
+
 #include <cmath>
 
 //typedef CGAL::Cartesian_base_d<double,CGAL::Dimension_tag<2> > K0;
@@ -411,6 +413,11 @@ void test2(){
   D un10; CGAL_USE(un10);
 }
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable: 4512)
+#endif
+
 template<class CP> struct Construct_point3_helper {
   CP const& cp;
   Construct_point3_helper(CP const& x) : cp(x) {}
@@ -425,6 +432,10 @@ template<class CP> struct Construct_point3_helper {
     return cp(tab+0,tab+3,t4);
   }
 };
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 template<class Ker>
 void test3(){

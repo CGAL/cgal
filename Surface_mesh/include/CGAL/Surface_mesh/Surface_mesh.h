@@ -26,6 +26,7 @@
 
 #include <CGAL/license/Surface_mesh.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <iterator>
 #include <algorithm>
@@ -73,17 +74,17 @@ namespace CGAL {
         /// We write -1, which is <a href="http://en.cppreference.com/w/cpp/concept/numeric_limits">
         /// <tt>std::numeric_limits<size_type>::max()</tt></a>
         /// as `size_type` is an unsigned type. 
-        explicit SM_Index(size_type _idx=-1) : idx_(_idx) {}
+        explicit SM_Index(size_type _idx=(std::numeric_limits<size_type>::max)()) : idx_(_idx) {}
 
         /// Get the underlying index of this index
         operator size_type() const { return idx_; }
 
-        /// reset index to be invalid (index=-1)
-        void reset() { idx_=-1; }
+        /// reset index to be invalid (index=std::numeric_limits<size_type>::max())
+        void reset() { idx_=(std::numeric_limits<size_type>::max)(); }
 
-        /// return whether the index is valid, i.e., the index is not equal to -1.
+        /// return whether the index is valid, i.e., the index is not equal to `%std::numeric_limits<size_type>::max()`.
         bool is_valid() const { 
-          size_type inf = -1;
+          size_type inf = (std::numeric_limits<size_type>::max)();
           return idx_ != inf;
         }
 
@@ -142,7 +143,7 @@ namespace CGAL {
     {
     public:
 
-        SM_Vertex_index() : SM_Index<SM_Vertex_index>(-1) {}
+        SM_Vertex_index() : SM_Index<SM_Vertex_index>((std::numeric_limits<size_type>::max)()) {}
 
         explicit SM_Vertex_index(size_type _idx) : SM_Index<SM_Vertex_index>(_idx) {}
 
@@ -168,7 +169,7 @@ namespace CGAL {
         typedef void pointer;
         typedef void reference;
 
-        SM_Halfedge_index() : SM_Index<SM_Halfedge_index>(-1) {}
+        SM_Halfedge_index() : SM_Index<SM_Halfedge_index>((std::numeric_limits<size_type>::max)()) {}
 
         explicit SM_Halfedge_index(size_type _idx) : SM_Index<SM_Halfedge_index>(_idx) {}
 
@@ -184,7 +185,7 @@ namespace CGAL {
     {
     public:
 
-        SM_Face_index() : SM_Index<SM_Face_index>(-1) {}
+        SM_Face_index() : SM_Index<SM_Face_index>((std::numeric_limits<size_type>::max)()) {}
 
         explicit SM_Face_index(size_type _idx) : SM_Index<SM_Face_index>(_idx) {}
 
@@ -201,7 +202,7 @@ namespace CGAL {
     public:
         typedef boost::uint32_t size_type;
 
-        SM_Edge_index() : halfedge_(-1) { }
+        SM_Edge_index() : halfedge_((std::numeric_limits<size_type>::max)()) { }
 
         explicit SM_Edge_index(size_type idx) : halfedge_(idx * 2) { }
 
@@ -213,10 +214,10 @@ namespace CGAL {
         // returns the underlying index of this index.
         operator size_type() const { return (size_type)halfedge_ / 2; }
 
-        // resets index to be invalid (index=-1)
+        // resets index to be invalid (index=std::numeric_limits<size_type>::max())
         void reset() { halfedge_.reset(); }
 
-        // returns whether the index is valid, i.e., the index is not equal to -1.
+        // returns whether the index is valid, i.e., the index is not equal to std::numeric_limits<size_type>::max().
         bool is_valid() const { return halfedge_.is_valid(); }
 
         // Are two indices equal?
@@ -839,7 +840,7 @@ public:
    /// adds a new vertex, and resizes vertex properties if necessary.
     Vertex_index add_vertex()
     {
-      size_type inf = -1;
+      size_type inf = (std::numeric_limits<size_type>::max)();
       if(vertices_freelist_ != inf){
         size_type idx = vertices_freelist_;
         vertices_freelist_ = (size_type)vconn_[Vertex_index(vertices_freelist_)].halfedge_;
@@ -871,7 +872,7 @@ public:
     Halfedge_index add_edge()
     {
       Halfedge_index h0, h1;
-      size_type inf = -1;
+      size_type inf = (std::numeric_limits<size_type>::max)();
       if(edges_freelist_ != inf){
         size_type idx = edges_freelist_;
         edges_freelist_ = (size_type)hconn_[Halfedge_index(edges_freelist_)].next_halfedge_;
@@ -908,7 +909,7 @@ public:
     /// adds a new face, and resizes face properties if necessary.
     Face_index add_face()
     {
-      size_type inf = -1;
+      size_type inf = (std::numeric_limits<size_type>::max)();
       if(faces_freelist_ != inf){
         size_type idx = faces_freelist_;
         faces_freelist_ = (size_type)fconn_[Face_index(faces_freelist_)].halfedge_;
@@ -1103,11 +1104,11 @@ public:
         hconn_[hi].prev_halfedge_ = Halfedge_index(size_type(hconn_[hi].prev_halfedge_)+nh);
       }
     }
-    size_type inf_value = -1;
+    size_type inf_value = (std::numeric_limits<size_type>::max)();
     if(other.vertices_freelist_ != inf_value){
       if(vertices_freelist_ != inf_value){
         Vertex_index vi(nv+other.vertices_freelist_);
-        Halfedge_index inf(-1);
+        Halfedge_index inf((std::numeric_limits<size_type>::max)());
         while(vconn_[vi].halfedge_ != inf){
           vi = Vertex_index(size_type(vconn_[vi].halfedge_));
         }
@@ -1118,7 +1119,7 @@ public:
     if(other.faces_freelist_ != inf_value){
       if(faces_freelist_ != inf_value){
         Face_index fi(nf+other.faces_freelist_);
-        Halfedge_index inf(-1);
+        Halfedge_index inf((std::numeric_limits<size_type>::max)());
         while(fconn_[fi].halfedge_ != inf){
           fi = Face_index(size_type(fconn_[fi].halfedge_));
         }
@@ -1129,7 +1130,7 @@ public:
     if(other.edges_freelist_ != inf_value){
       if(edges_freelist_ != inf_value){
         Halfedge_index hi((nh>>1)+other.edges_freelist_);
-        Halfedge_index inf(-1);
+        Halfedge_index inf((std::numeric_limits<size_type>::max)());
         while(hconn_[hi].next_halfedge_ != inf){
           hi = hconn_[hi].next_halfedge_;
         }
@@ -1893,26 +1894,26 @@ private: //--------------------------------------------------- property handling
  /// \name Null Elements
     ///@{
 
-  /// returns `Vertex_index(-1)`.
+  /// returns `Vertex_index(std::numeric_limits<size_type>::%max())`.
   static Vertex_index null_vertex()
   {
-    return vertex_index(-1);
+    return vertex_index((std::numeric_limits<size_type>::max)());
   }
 
-  /// returns `Edge_index(-1)`.
+  /// returns `Edge_index(std::numeric_limits<size_type>::%max())`.
   static Edge_index null_edge()
   {
-    return edge_index(-1);
+    return edge_index((std::numeric_limits<size_type>::max)());
   }
-  /// returns `Halfedge_index(-1)`.
+  /// returns `Halfedge_index(std::numeric_limits<size_type>::%max())`.
   static Halfedge_index null_halfedge()
   {
-    return halfedge_index(-1);
+    return halfedge_index((std::numeric_limits<size_type>::max)());
   }
-  /// returns `Face_index(-1)`.
+  /// returns `Face_index(std::numeric_limits<size_type>::%max())`.
   static Face_index null_face()
   {
-    return face_index(-1);
+    return face_index((std::numeric_limits<size_type>::max)());
   }
   /// @}
 
@@ -2195,7 +2196,7 @@ Surface_mesh()
     fremoved_ = add_property_map<Face_index, bool>("f:removed", false).first;
 
     removed_vertices_ = removed_edges_ = removed_faces_ = 0;
-    vertices_freelist_ = edges_freelist_ = faces_freelist_ = -1;
+    vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
     garbage_ = false;
     anonymous_property_ = 0;
 }
@@ -2308,7 +2309,7 @@ clear()
     fprops_.shrink_to_fit();
 
     removed_vertices_ = removed_edges_ = removed_faces_ = 0;
-    vertices_freelist_ = edges_freelist_ = faces_freelist_ = -1;
+    vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
     garbage_ = false;
     anonymous_property_ = 0;
 }
@@ -2709,6 +2710,8 @@ namespace boost {
 } // namespace boost
 
 #endif // DOXYGEN_RUNNING
+
+#include <CGAL/enable_warnings.h>
 
 #endif /* CGAL_SURFACE_MESH_H */
 

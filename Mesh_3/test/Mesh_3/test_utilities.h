@@ -32,7 +32,8 @@
 
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
-#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+
+#include <CGAL/disable_warnings.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K_e_i;
 typedef CGAL::Exact_predicates_exact_constructions_kernel K_e_e;
@@ -53,5 +54,7 @@ public:
 
 } // end namespace details
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_TEST_TEST_UTILITIES_H

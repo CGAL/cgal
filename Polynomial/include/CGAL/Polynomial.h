@@ -34,6 +34,8 @@
 #ifndef CGAL_POLYNOMIAL_H
 #define CGAL_POLYNOMIAL_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <cstdarg>
 #include <cctype>
 #include <vector>
@@ -70,6 +72,8 @@
 
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/polynomial_utils.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif  // CGAL_POLYNOMIAL_H
 

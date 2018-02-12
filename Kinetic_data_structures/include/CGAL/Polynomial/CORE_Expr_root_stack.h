@@ -21,6 +21,9 @@
 
 #ifndef CGAL_POLYNOMIAL_CORE_SOLVER_H
 #define CGAL_POLYNOMIAL_CORE_SOLVER_H
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Polynomial/internal/CORE_polynomial.h>
@@ -266,4 +269,7 @@ inline std::ostream &operator<<(std::ostream &out, const CORE_Expr_root_stack &o
 }
 
 } } //namespace CGAL::POLYNOMIAL;
+
+#include <CGAL/enable_warnings.h>
+
 #endif

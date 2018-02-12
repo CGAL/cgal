@@ -20,6 +20,9 @@
 
 #ifndef CGAL_KINETIC_KINETIC_REGULAR_TRIANGULATION_3_H
 #define CGAL_KINETIC_KINETIC_REGULAR_TRIANGULATION_3_H
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
 
 #include <CGAL/Regular_triangulation_3.h>
@@ -35,10 +38,6 @@
 #include <CGAL/use.h>
 #include <CGAL/assertions.h>
 
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4355) // complaint about using 'this' to
-#endif                          // initialize a member
 
 namespace CGAL { namespace Kinetic { namespace internal {
 
@@ -1188,8 +1187,6 @@ std::ostream &operator<<(std::ostream &out, const Regular_triangulation_3<Traits
 
 } } //namespace CGAL::Kinetic
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_KINETIC_KINETIC_REGULAR_TRIANGULATION_3_H

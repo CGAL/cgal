@@ -26,6 +26,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
@@ -1874,5 +1875,6 @@ check_ratios(const Sliver_values& criterion_values,
 
 } // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // end CGAL_MESH_3_SLIVERS_EXUDER_H

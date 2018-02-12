@@ -154,11 +154,11 @@ public:
     std::cerr << "\n"
               << "Now for underflow/overflows...\n"
               << "       min_double/eps  = " 
-              << std::numeric_limits<double>::min() / err << std::endl
+              << (std::numeric_limits<double>::min)() / err << std::endl
               << "  sqrt(min_double/eps) = "
-              << CGAL::sqrt(std::numeric_limits<double>::min() / err) << std::endl
+              << CGAL::sqrt((std::numeric_limits<double>::min)() / err) << std::endl
               << "    sqrt(max_double/3) = "
-              << CGAL::sqrt(std::numeric_limits<double>::max() / 3) << std::endl;
+              << CGAL::sqrt((std::numeric_limits<double>::max)() / 3) << std::endl;
     return err;
   }
 

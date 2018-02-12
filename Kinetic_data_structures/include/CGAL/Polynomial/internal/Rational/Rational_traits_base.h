@@ -22,6 +22,8 @@
 #ifndef CGAL_POLYNOMIAL_INTERNAL_RATIONAL_TRAITS_BASE_H
 #define CGAL_POLYNOMIAL_INTERNAL_RATIONAL_TRAITS_BASE_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Polynomial/basic.h>
 
 #include <CGAL/Polynomial/internal/Rational/Sign_at_rational.h>
@@ -215,4 +217,7 @@ struct Rational_traits_base
 };
 
 } } } //namespace CGAL::POLYNOMIAL::internal
+
+#include <CGAL/enable_warnings.h>
+
 #endif

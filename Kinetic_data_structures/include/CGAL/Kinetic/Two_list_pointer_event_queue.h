@@ -21,6 +21,9 @@
 
 #ifndef CGAL_KINETIC_BIN_QUEUE_H
 #define CGAL_KINETIC_BIN_QUEUE_H
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Kinetic/basic.h>
 #include <iostream>
 #include <CGAL/Kinetic/internal/debug_counters.h>
@@ -1021,6 +1024,7 @@ std::ostream &operator<<(std::ostream &out, const Two_list_pointer_event_queue<D
   return out;
 }
 
+#include <CGAL/enable_warnings.h>
 
 } } //namespace CGAL::Kinetic
 #endif

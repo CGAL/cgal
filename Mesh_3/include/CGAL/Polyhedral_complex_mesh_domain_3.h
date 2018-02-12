@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -1169,5 +1170,6 @@ reindex_patches(const std::vector<Surf_p_index>& map)
 
 } //namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYHEDRAL_COMPLEX_MESH_DOMAIN_3_H

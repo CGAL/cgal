@@ -25,6 +25,8 @@
 
 #include <CGAL/license/AABB_tree.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Default.h>
 #include <CGAL/intersections.h>
@@ -540,5 +542,7 @@ private:
 /// @}
 
 }  // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_AABB_TRAITS_H_

@@ -3,6 +3,7 @@
 
 template <typename GeomTraits_>
 class IO_base_test {
+  IO_base_test<GeomTraits_>& operator=(const IO_base_test<GeomTraits_>&);
 public:
   typedef GeomTraits_                                   Geom_traits;
   typedef typename Geom_traits::Point_2                 Point_2;

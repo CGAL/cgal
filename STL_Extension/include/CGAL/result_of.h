@@ -27,6 +27,8 @@
 #ifndef CGAL_RESULT_OF_H
 #define CGAL_RESULT_OF_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <boost/utility/result_of.hpp>
 #include <boost/version.hpp>
 
@@ -51,5 +53,7 @@ struct result_of
 }
 
 }
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_RESULT_OF_H
