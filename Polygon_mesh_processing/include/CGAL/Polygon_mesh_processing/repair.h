@@ -718,40 +718,20 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
   // first remove degree 3 vertices that are part of a cap
   // (only the vertex in the middle of the opposite edge)
   // This removal does not change the shape of the mesh.
-  if (!degenerate_face_set.empty())
+  while (!degenerate_face_set.empty())
   {
     std::set<vertex_descriptor> vertices_to_remove;
     BOOST_FOREACH(face_descriptor fd, degenerate_face_set)
     {
-      halfedge_descriptor hd=halfedge(fd, tmesh);
-      Point_ref p1 = get(vpmap, target(hd, tmesh) );
-      Point_ref p2 = get(vpmap, target(next(hd, tmesh), tmesh) );
-      Point_ref p3 = get(vpmap, source(hd, tmesh) );
-
-      CGAL_assertion(p1!=p2 && p1!=p3 && p2!=p3);
-
-      typename Traits::Compare_distance_3 compare_distance = traits.compare_distance_3_object();
-
-      vertex_descriptor vd = boost::graph_traits<TriangleMesh>::null_vertex();
-      if (compare_distance(p1,p2, p1,p3) != CGAL::SMALLER) // p1p2 > p1p3
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, tmesh), tmesh))
       {
-        if (compare_distance(p1,p2, p2,p3) != CGAL::SMALLER) // p1p2 > p2p3
-          // p1p2 is the longest edge, pick p3
-          vd = source(hd, tmesh);
-        else
-          // p2p3 is the longest edge, pick p1
-          vd = target(hd, tmesh);
+        vertex_descriptor vd = target(hd, tmesh);
+        if (degree(vd, tmesh) == 3)
+        {
+          vertices_to_remove.insert(vd);
+          break;
+        }
       }
-      else
-        if (compare_distance(p1,p3, p2,p3) != CGAL::SMALLER) // p1p3>p2p3
-          // p1p3 is the longest edge, pick p2
-          vd = target(next(hd, tmesh), tmesh);
-        else
-          // p2p3 is the longest edge, pick p1
-          vd = target(hd, tmesh);
-
-      if (degree(vd, tmesh) == 3)
-        vertices_to_remove.insert(vd);
     }
 
     BOOST_FOREACH(vertex_descriptor vd, vertices_to_remove)
@@ -765,9 +745,9 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
       if (is_degenerate_triangle_face(face(hd, tmesh), tmesh, vpmap, traits))
       {
         degenerate_face_set.insert( face(hd, tmesh) );
-        /// \todo shall we retest the degree of these vertices?
       }
     }
+    if (vertices_to_remove.empty()) break;
   }
 
   while (!degenerate_face_set.empty())
