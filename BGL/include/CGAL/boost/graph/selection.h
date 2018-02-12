@@ -18,8 +18,8 @@
 // Author(s)     : Sebastien Loriot
 //
 
-#ifndef CGAL_BOOST_GRAPH_KTH_SIMPLICIAL_NEIGHBORHOOD_H
-#define CGAL_BOOST_GRAPH_KTH_SIMPLICIAL_NEIGHBORHOOD_H
+#ifndef CGAL_BOOST_GRAPH_SELECTION_H
+#define CGAL_BOOST_GRAPH_SELECTION_H
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
@@ -639,9 +639,9 @@ bool is_selection_disk(const FaceRange& face_selection,
       sel_edges.insert(edge(h,pm));
     }
   }
-  return (sel_vertices.size() - sel_edges.size() + face_selection.size() == 1);  
+  return (sel_vertices.size() - sel_edges.size() + face_selection.size() == 1); 
 }
 } //end of namespace CGAL
 
-#endif //CGAL_BOOST_GRAPH_KTH_SIMPLICIAL_NEIGHBORHOOD_H
+#endif //CGAL_BOOST_GRAPH_SELECTION_H
 
