@@ -39,7 +39,7 @@ namespace internal {
 // This code is not optimized:
   template <class K, class Bounded>
 typename K::Boolean
-do_intersect_tetrahedron_bounded(const typename Bounded &tr,
+do_intersect_tetrahedron_bounded(const Bounded &tr,
                                  const typename K::Tetrahedron_3 &tet,
                                  const typename K::Point_3 p,
                                  const K & k)
