@@ -352,6 +352,12 @@ public:
   void detect_borders(std::vector<Polyhedron>& p);
   void detect_borders() { detect_borders(stored_polyhedra); };
 
+  // non-documented, provided to the FEniCS project
+  const std::vector<Polyhedron>& polyhedra()const
+  {
+    return stored_polyhedra;
+  }
+  
 private:
   void load_from_file(const char* filename) {
     // Create input polyhedron
