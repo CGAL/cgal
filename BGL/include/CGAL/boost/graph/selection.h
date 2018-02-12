@@ -572,14 +572,14 @@ void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
     // set hd to the last selected face of a connected component
     // of selected faces around a vertex
     halfedge_descriptor hd = halfedge(vd, tm);
-    while( !get(is_selected, face(hd, tm)) )
+    while(is_border(hd,tm) || ( !get(is_selected, face(hd, tm))) )
     {
       hd = opposite( next(hd, tm), tm);
       CGAL_assertion( hd != halfedge(vd, tm) );
     }
     halfedge_descriptor start = hd;
     halfedge_descriptor next_around_vertex = opposite( next(hd, tm), tm);
-    while( get(is_selected, face(next_around_vertex, tm) ) )
+    while(is_border(next_around_vertex,tm) || get(is_selected, face(next_around_vertex, tm) ) )
     {
       hd = next_around_vertex;
       next_around_vertex = opposite( next(hd, tm), tm);
