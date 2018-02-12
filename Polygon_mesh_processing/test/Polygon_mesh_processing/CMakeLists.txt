@@ -97,7 +97,7 @@ endif()
   create_single_source_cgal_program("triangulate_hole_polyline_test.cpp")
   create_single_source_cgal_program("surface_intersection_sm_poly.cpp" )
   create_single_source_cgal_program("test_orient_cc.cpp")
-
+create_single_source_cgal_program("test_repair.cpp")
   if( TBB_FOUND )
     CGAL_target_use_TBB(test_pmp_distance)
   else()

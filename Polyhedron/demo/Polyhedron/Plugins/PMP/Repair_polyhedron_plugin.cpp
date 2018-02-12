@@ -160,9 +160,12 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_
     qobject_cast<Item*>(scene->item(index));
   if (poly_item)
   {
+    std::cout<<"start"<<std::endl;
     bool solved =
       CGAL::Polygon_mesh_processing::remove_self_intersections(
-      *poly_item->polyhedron());
+      *poly_item->polyhedron(),CGAL::Polygon_mesh_processing::parameters::all_default(), 7, true);
+    std::cout<<"end"<<std::endl;
+    std::cout<<"is solved? "<<solved<<std::endl;
     if (!solved)
     messages->information(tr("Some self-intersection could not be fixed"));
     poly_item->invalidateOpenGLBuffers();

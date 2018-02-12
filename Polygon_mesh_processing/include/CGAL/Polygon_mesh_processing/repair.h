@@ -36,6 +36,9 @@
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/boost/graph/selection.h>
+#include <CGAL/boost/graph/Face_filtered_graph.h>
+
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -695,7 +698,6 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
   Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
 
   typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
-
 // First remove edges of length 0
   std::size_t nb_deg_faces = remove_null_edges(edges(tmesh), tmesh, np);
 
@@ -1361,6 +1363,7 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
                                         std::set<face_descriptor>& faces_to_remove,
                                         std::vector<halfedge_descriptor>& non_filled_hole,
                                         int step,
+                                        bool need_disk,
                                         bool verbose)
 {
   typedef boost::graph_traits<TriangleMesh> graph_traits;
@@ -1461,14 +1464,38 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
       }
     }
     while(non_manifold_vertex_removed);
-
-    if(!is_selection_disk(faces_to_remove, tm))
+    
+    if(need_disk)
     {
-      if(verbose)
-          std::cout << "DEBUG: Step aborted because selection does not "
-                       "have the topology of a disk."<<std::endl;
-      return true;
+      std::map<face_descriptor, std::size_t> fcm;
+      CGAL::Face_filtered_graph<TriangleMesh> filter(tm,
+                                       faces_to_remove);
+      std::map<face_descriptor, std::size_t> fid_map;
+      std::size_t index = 0;
+      BOOST_FOREACH(face_descriptor f, faces(filter))
+          fid_map[f]=index++;
+      std::size_t nb_components = 
+      connected_components(filter, boost::make_assoc_property_map(fcm),
+                           parameters::face_index_map(boost::make_assoc_property_map(fid_map)));
       
+      for(std::size_t i = 0;
+          i < nb_components;
+          ++i)
+      {
+        std::vector<face_descriptor> test_faces;
+        BOOST_FOREACH(face_descriptor f, faces(filter))
+        {
+          if(fcm[f] == i)
+            test_faces.push_back(f);
+        }
+        if(!is_selection_disk(test_faces, filter))
+        {
+          if(verbose)
+            std::cout << "DEBUG: Step aborted because selection does not "
+                         "have the topology of a disk."<<std::endl;
+          return false; //technically no hole was filled but we shall need to re-compute the self-inter as we did not treat them.
+        }
+      }
     }
   /// remove the selection
     if (border_edges_found){
@@ -1612,18 +1639,24 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
       std::size_t nb_new_triangles = 0;
       Counting_output_iterator out(&nb_new_triangles);
       triangulate_hole(tm, h, out);
-      if (!nb_new_triangles)
+      if (nb_new_triangles == 0)
       {
         //retry without delaunay, sometimes it works.
         triangulate_hole(tm, h, out, CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(false));
-        if (!nb_new_triangles)
+        if (nb_new_triangles == 0)
         {
           if (verbose)
             std::cout << "  DEBUG: Failed to fill a hole!!!" << std::endl;
           non_filled_hole.push_back(h);
         }
         else
+        {
           no_hole_was_filled=false;
+        }
+      }
+      else
+      {
+        no_hole_was_filled=false;
       }
     }
     if (verbose)
@@ -1636,34 +1669,31 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
   return no_hole_was_filled;
 }
 
-template <class TriangleMesh>
-bool remove_self_intersections(TriangleMesh& tm, const int max_steps = 7, bool verbose=false)
+template <class TriangleMesh, class NamedParameters>
+bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np,
+                               const int max_steps = 7, bool verbose=false)
 {
   typedef boost::graph_traits<TriangleMesh> graph_traits;
   typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename graph_traits::face_descriptor face_descriptor;
-
+  
   std::vector<halfedge_descriptor> non_filled_hole;
-
-// first handle the removal of degenerate faces
-  std::set<face_descriptor> deg_faces;
-  degenerate_faces(tm, std::inserter(deg_faces, deg_faces.begin()));
-  remove_self_intersections_one_step(tm, deg_faces, non_filled_hole, 2, verbose);
-
-// Look for self-intersections in the polyhedron and remove them
+  
+  // first handle the removal of degenerate faces
+  remove_degenerate_faces(tm, np);
+  // Look for self-intersections in the polyhedron and remove them
   int step=-1;
   bool no_hole_was_filled=false; // indicates if the filling of all previously
-                                 // created holes failed. If true then no new
-                                 // self-intersection have been created and
-                                 // checking for it is useless.
+  // created holes failed. If true then no new
+  // self-intersection have been created and
+  // checking for it is useless.
   while( ++step<max_steps )
   {
     if (verbose)
       std::cout << "DEBUG: is_valid(tm)? " << is_valid(tm) << "\n";
-
+    
     typedef std::pair<face_descriptor, face_descriptor> Face_pair;
     std::vector<Face_pair> self_inter;
-    std::vector<halfedge_descriptor> one_halfedge_per_border;
     if (!no_hole_was_filled)
       self_intersections(tm, std::back_inserter(self_inter));
 
@@ -1683,11 +1713,12 @@ bool remove_self_intersections(TriangleMesh& tm, const int max_steps = 7, bool v
                 << " - non_filled_hole.size() = " << non_filled_hole.size()
                 << " - is_valid(tm) = " << is_valid(tm) << std::endl;
 
-    if ( faces_to_remove.empty() && non_filled_hole.empty() )
-      break;
+    if ( faces_to_remove.empty() && non_filled_hole.empty() ){
+      std::cout<<"DEBUG: There is no more faces to remove."<<std::endl;
+      break;}
 
     no_hole_was_filled =
-      remove_self_intersections_one_step(tm, faces_to_remove, non_filled_hole,step, verbose);
+      remove_self_intersections_one_step(tm, faces_to_remove, non_filled_hole,step,true, verbose);
   }
 
   return step<max_steps;
