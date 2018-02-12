@@ -1363,7 +1363,6 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
                                         std::set<face_descriptor>& faces_to_remove,
                                         std::vector<halfedge_descriptor>& non_filled_hole,
                                         int step,
-                                        bool need_disk,
                                         bool verbose)
 {
   typedef boost::graph_traits<TriangleMesh> graph_traits;
@@ -1464,39 +1463,39 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
       }
     }
     while(non_manifold_vertex_removed);
-    
-    if(need_disk)
+
+    typedef CGAL::dynamic_face_property_t<std::size_t> Fid_tag;
+    typedef CGAL::Face_filtered_graph<TriangleMesh> Filtered_graph;
+    Filtered_graph filtered(tm, faces_to_remove);
+
+    // face cc map and face index map required by connected_components
+    typename boost::property_map<Filtered_graph, Fid_tag>::type
+      fcm = get(Fid_tag(), filtered), fid = get(Fid_tag(), filtered);
+
+    std::size_t index = 0;
+    BOOST_FOREACH(face_descriptor f, faces(filtered))
+        put(fid, f, index++);
+    std::size_t nb_components =
+      connected_components(filtered, fcm, parameters::face_index_map(fid));
+
+    for(std::size_t i = 0; i < nb_components; ++i)
     {
-      std::map<face_descriptor, std::size_t> fcm;
-      CGAL::Face_filtered_graph<TriangleMesh> filter(tm,
-                                       faces_to_remove);
-      std::map<face_descriptor, std::size_t> fid_map;
-      std::size_t index = 0;
-      BOOST_FOREACH(face_descriptor f, faces(filter))
-          fid_map[f]=index++;
-      std::size_t nb_components = 
-      connected_components(filter, boost::make_assoc_property_map(fcm),
-                           parameters::face_index_map(boost::make_assoc_property_map(fid_map)));
-      
-      for(std::size_t i = 0;
-          i < nb_components;
-          ++i)
+      std::vector<face_descriptor> test_faces;
+      BOOST_FOREACH(face_descriptor f, faces(filtered))
       {
-        std::vector<face_descriptor> test_faces;
-        BOOST_FOREACH(face_descriptor f, faces(filter))
-        {
-          if(fcm[f] == i)
-            test_faces.push_back(f);
-        }
-        if(!is_selection_disk(test_faces, filter))
-        {
-          if(verbose)
-            std::cout << "DEBUG: Step aborted because selection does not "
-                         "have the topology of a disk."<<std::endl;
-          return false; //technically no hole was filled but we shall need to re-compute the self-inter as we did not treat them.
-        }
+        if(get(fcm, f) == i)
+          test_faces.push_back(f);
+      }
+      if(!is_selection_disk(test_faces, filtered))
+      {
+        if(verbose)
+          std::cout << "DEBUG: Step aborted because selection does not "
+                       "have the topology of a disk.\n";
+        /// TODO shall we try to make the selection a disk?
+        return false; //technically no hole was filled but we shall need to re-compute the self-inter as we did not treat them.
       }
     }
+
   /// remove the selection
     if (border_edges_found){
       // When at least one face incident to the mesh border is set
@@ -1676,9 +1675,9 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np,
   typedef boost::graph_traits<TriangleMesh> graph_traits;
   typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename graph_traits::face_descriptor face_descriptor;
-  
+
   std::vector<halfedge_descriptor> non_filled_hole;
-  
+
   // first handle the removal of degenerate faces
   remove_degenerate_faces(tm, np);
   // Look for self-intersections in the polyhedron and remove them
@@ -1691,7 +1690,7 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np,
   {
     if (verbose)
       std::cout << "DEBUG: is_valid(tm)? " << is_valid(tm) << "\n";
-    
+
     typedef std::pair<face_descriptor, face_descriptor> Face_pair;
     std::vector<Face_pair> self_inter;
     if (!no_hole_was_filled)
@@ -1714,11 +1713,13 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np,
                 << " - is_valid(tm) = " << is_valid(tm) << std::endl;
 
     if ( faces_to_remove.empty() && non_filled_hole.empty() ){
-      std::cout<<"DEBUG: There is no more faces to remove."<<std::endl;
-      break;}
+      if (verbose)
+        std::cout<<"DEBUG: There is no more faces to remove."<<std::endl;
+      break;
+    }
 
     no_hole_was_filled =
-      remove_self_intersections_one_step(tm, faces_to_remove, non_filled_hole,step,true, verbose);
+      remove_self_intersections_one_step(tm, faces_to_remove, non_filled_hole, step, verbose);
   }
 
   return step<max_steps;
