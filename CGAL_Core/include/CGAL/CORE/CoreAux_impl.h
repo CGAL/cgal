@@ -40,6 +40,7 @@
 #define CGAL_INLINE_FUNCTION
 #endif
 
+#include <CGAL/use.h>
 #include <CGAL/CORE/CoreAux.h>
 #include <gmp.h>
 
