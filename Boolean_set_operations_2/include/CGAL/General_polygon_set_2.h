@@ -118,6 +118,6 @@ public:
 
 } //namespace CGAL
 
-#include <CGAL/disable_warnings.h>
+#include <CGAL/enable_warnings.h>
 
 #endif

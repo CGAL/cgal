@@ -1509,7 +1509,7 @@ long Fujiwara_root_bound_log(
     RandomAccessIterator first, RandomAccessIterator beyond,
     LowerBoundLog2Abs lblog2, UpperBoundLog2AbsApproximator ublog2apx
 ) {
-  std::ptrdiff_t n = beyond - first - 1; // degree
+    std::ptrdiff_t n = beyond - first - 1; // degree
     if (n < 1) return 0;
     long lblog2_lcoeff = lblog2(*(beyond - 1));
 
