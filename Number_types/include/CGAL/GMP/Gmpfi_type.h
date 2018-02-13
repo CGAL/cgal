@@ -619,7 +619,7 @@ Gmpfi Gmpfi::kthroot(int k,Gmpfi::Precision_type p)const{
         CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
         Gmpfi result (0, p);
         #if(MPFR_VERSION_MAJOR < 4)
-            mpfr_root(&(result.mpfi())->left, left_mpfr(), k,GMP_RNDD)
+            mpfr_root(&(result.mpfi())->left, left_mpfr(), k,GMP_RNDD);
             mpfr_root(&(result.mpfi())->right,right_mpfr(),k,GMP_RNDU);
         #else
             mpfr_rootn_ui(&(result.mpfi())->left, left_mpfr(), k,GMP_RNDD);
