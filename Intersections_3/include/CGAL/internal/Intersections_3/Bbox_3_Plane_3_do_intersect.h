@@ -91,9 +91,9 @@ namespace internal {
   }
 
   template <class K, class Box3>
-  bool do_intersect(const typename K::Plane_3& plane,
-                    const Box3& bbox,
-                    const K&)
+  bool do_intersect_plane_box(const typename K::Plane_3& plane,
+                              const Box3& bbox,
+                              const K&)
   {
     typedef typename K::Point_3 Point_3;
     Point_3 p_max, p_min;
@@ -121,19 +121,40 @@ namespace internal {
     return false;
   }
   
-  template <class K, class Box3>
-  bool do_intersect(const Box3& bbox, const typename K::Plane_3& plane,
+  template <class K>
+  bool do_intersect(const typename K::Plane_3& plane,
+                    const Bbox_3& bbox,
                     const K&) {
-    return do_intersect(plane, bbox, K());
+    return do_intersect_plane_box(plane, bbox, K());
   }
 
+  template <class K>
+  bool do_intersect(const typename K::Plane_3& plane,
+                    const typename K::Iso_cuboid_3& bbox,
+                    const K&) {
+    return do_intersect_plane_box(plane, bbox, K());
+  }
+  
+  template <class K>
+  bool do_intersect(const Bbox_3& bbox,
+                    const typename K::Plane_3& plane,
+                    const K&) {
+    return do_intersect_plane_box(plane, bbox, K());
+  }
+
+  template <class K>
+  bool do_intersect(const typename K::Iso_cuboid_3& bbox,
+                    const typename K::Plane_3& plane,
+                    const K&) {
+    return do_intersect_plane_box(plane, bbox, K());
+  }
 
 } // namespace internal
 
 template<typename K>
 bool do_intersect(const CGAL::Bbox_3 a,
                   const Plane_3<K>& b) {
-  return K().do_intersect_3_object()(a, b);
+  return K().do_intersect_3_object()(b, a);
 }
 
 template<typename K>
@@ -145,7 +166,7 @@ bool do_intersect(const Plane_3<K>& a,
 template<typename K>
 bool do_intersect(const Iso_cuboid_3<K>& a,
                   const Plane_3<K>& b) {
-  return K().do_intersect_3_object()(a, b);
+  return K().do_intersect_3_object()(b, a);
 }
 
 template<typename K>

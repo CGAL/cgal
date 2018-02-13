@@ -26,6 +26,7 @@
 #include <CGAL/Plane_3.h>
 #include <CGAL/Line_3.h>
 #include <CGAL/Ray_3.h>
+#include <CGAL/internal/Intersections_3/Triangle_3_Sphere_3_do_intersect.h>
 
 namespace CGAL {
 
@@ -35,11 +36,12 @@ template<typename K, class Unbounded>
 bool do_intersect_tetrahedron_unbounded(const typename K::Tetrahedron_3& tet,
                                         const Unbounded& unb,
                                         const K& k) {
-    if (do_intersect(unb, Triangle(tet[0], tet[1], tet[2]), k)) return true;
-    if (do_intersect(unb, Triangle(tet[0], tet[1], tet[3]), k)) return true;
-    if (do_intersect(unb, Triangle(tet[0], tet[2], tet[3]), k)) return true;
-    if (do_intersect(unb, Triangle(tet[1], tet[2], tet[3]), k)) return true;
-    return false;
+  typedef typename K::Triangle_3 Triangle;
+  if (do_intersect(unb,Triangle(tet[0], tet[1], tet[2]), k)) return true;
+  if (do_intersect(unb, Triangle(tet[0], tet[1], tet[3]), k)) return true;
+  if (do_intersect(unb, Triangle(tet[0], tet[2], tet[3]), k)) return true;
+  if (do_intersect(unb, Triangle(tet[1], tet[2], tet[3]), k)) return true;
+  return false;
 }
 
 

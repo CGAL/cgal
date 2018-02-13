@@ -28,6 +28,7 @@
 
 #include <CGAL/Triangle_3_Triangle_3_do_intersect.h>
 #include <CGAL/internal/Intersections_3/Iso_cuboid_3_Triangle_3_do_intersect.h>
+#include <CGAL/internal/Intersections_3/Triangle_3_Sphere_3_do_intersect.h>
 
 namespace CGAL {
 
@@ -36,6 +37,12 @@ namespace CGAL {
 
 namespace internal {
 
+template <class K>
+typename K::Boolean
+do_intersect(const typename K::Tetrahedron_3 &tet,
+	     const typename K::Triangle_3 &tr,
+	     const K & k);
+  
 // This code is not optimized:
   template <class K, class Bounded>
 typename K::Boolean
@@ -49,6 +56,7 @@ do_intersect_tetrahedron_bounded(const Bounded &tr,
     CGAL_kernel_precondition( ! k.is_degenerate_3_object() (tr) );
     CGAL_kernel_precondition( ! k.is_degenerate_3_object() (tet) );
 
+    typedef typename K::Triangle_3 Triangle;
     if (do_intersect(tr, Triangle(tet[0], tet[1], tet[2]), k)) return true;
     if (do_intersect(tr, Triangle(tet[0], tet[1], tet[3]), k)) return true;
     if (do_intersect(tr, Triangle(tet[0], tet[2], tet[3]), k)) return true;
@@ -156,7 +164,7 @@ template <class K>
 inline
 typename K::Boolean
 do_intersect(const typename K::Tetrahedron_3 &tet,
-	     const typename Bbox_3 &bb,
+	     const CGAL::Bbox_3 &bb,
 	     const K & k)
 {
   return do_intersect_tetrahedron_bounded(bb, tet, typename K::Point_3(bb.xmin(), bb.ymin(), bb.zmin()), k);
@@ -165,7 +173,7 @@ do_intersect(const typename K::Tetrahedron_3 &tet,
   template <class K>
 inline
 typename K::Boolean
-do_intersect(const typename Bbox_3 &bb,
+  do_intersect(const CGAL::Bbox_3 &bb,
              const typename K::Tetrahedron_3 &tet,
 	     const K & k)
 {
