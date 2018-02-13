@@ -157,7 +157,7 @@ template<class T3>
 void draw(const T3& at3,
           const char* title="t3_viewer",
           bool nofill=false)
-{ return display<T3, DefaultColorFunctor>(at3, title, nofill); }
+{ draw<T3, DefaultColorFunctorT3>(at3, title, nofill); }
 
 } // End namespace CGAL
 

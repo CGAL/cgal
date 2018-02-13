@@ -213,7 +213,7 @@ void draw(const Polyhedron& apoly,
           const char* title="Polyhedron Viewer",
           bool nofill=false)
 {
-  return display<Polyhedron, DefaultColorFunctorPolyhedron>
+  return draw<Polyhedron, DefaultColorFunctorPolyhedron>
     (apoly, title, nofill);
 }
 

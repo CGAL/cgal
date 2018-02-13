@@ -5,10 +5,6 @@
 
 #include <boost/foreach.hpp>
 
-#ifdef CGAL_USE_BASIC_VIEWER
-#include <CGAL/Surface_mesh_viewer_qt.h>
-#endif
-
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
 typedef CGAL::Surface_mesh<Point>                            Mesh;
@@ -40,9 +36,4 @@ int main(int argc, char* argv[])
   
   
   std::cout << sm1 << std::endl;
-
-#ifdef CGAL_USE_BASIC_VIEWER
-  display(sm1);
-#endif // CGAL_USE_BASIC_VIEWER
-
 }

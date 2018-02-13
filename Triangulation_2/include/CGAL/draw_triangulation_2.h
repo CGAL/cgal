@@ -153,7 +153,7 @@ template<class T2>
 void draw(const T2& at2,
           const char* title="T2 Viewer",
           bool nofill=false)
-{ return display<T2, DefaultColorFunctorT2>(at2, title, nofill); }
+{ draw<T2, DefaultColorFunctorT2>(at2, title, nofill); }
 
 } // End namespace CGAL
 

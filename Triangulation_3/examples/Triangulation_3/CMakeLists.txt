@@ -3,7 +3,11 @@ project( Triangulation_3_Examples )
 cmake_minimum_required(VERSION 2.8.12)
 
 
-find_package(CGAL QUIET)
+find_package(CGAL COMPONENTS Qt5)
+
+if(CGAL_Qt5_FOUND)
+    add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
+endif()
 
 if ( CGAL_FOUND )
   create_single_source_cgal_program( "adding_handles_3.cpp" )
@@ -20,19 +24,9 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "simple_triangulation_3.cpp" )
   create_single_source_cgal_program( "simplex.cpp" )
 
-  find_package( TBB QUIET )
-
-  if( TBB_FOUND )
-    include( CGAL_target_use_TBB )
-
-    create_single_source_cgal_program( "parallel_insertion_and_removal_in_regular_3.cpp" )
-    create_single_source_cgal_program( "parallel_insertion_in_delaunay_3.cpp" )
-    create_single_source_cgal_program( "sequential_parallel.cpp" )
-    CGAL_target_use_TBB( parallel_insertion_and_removal_in_regular_3 )
-    CGAL_target_use_TBB( parallel_insertion_in_delaunay_3 )
-    CGAL_target_use_TBB( sequential_parallel )
-  else()
-    message(STATUS "NOTICE: a few examples require TBB and will not be compiled.")
+  create_single_source_cgal_program("draw_triangulation_3.cpp")
+  if(CGAL_Qt5_FOUND)
+    target_link_libraries(draw_triangulation_3 CGAL::CGAL_Qt5)
   endif()
 
 else()
