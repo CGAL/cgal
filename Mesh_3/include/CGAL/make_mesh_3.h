@@ -119,7 +119,7 @@ namespace parameters {
   
   // -----------------------------------
   // Parameters
-  //  
+  // -----------------------------------
 
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
