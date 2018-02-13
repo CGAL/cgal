@@ -8,15 +8,24 @@ typedef CGAL::Surface_mesh<CGAL::Exact_predicates_inexact_constructions_kernel::
 
 int main()
 {
+  namespace PMP = CGAL::Polygon_mesh_processing;
   SM sm;
-  std::ifstream is("data/self-intersection.off");
+  std::ifstream is("data/self_intersection.off");
   is>>sm;
   
   bool is_ok =
-  CGAL::Polygon_mesh_processing::remove_self_intersections(sm, 
-                                                           CGAL::Polygon_mesh_processing::parameters::all_default(), 
+  PMP::remove_self_intersections(sm, 
+                                                           PMP::parameters::all_default(), 
                                                            7,
-                                                           true);
+                                                           false);
   assert(is_ok);
+  std::ofstream os("/home/gimeno/Data/tmp/debug.off");
+     os << sm;
+  std::vector< std::pair<boost::graph_traits<SM>::face_descriptor,
+      boost::graph_traits<SM>::face_descriptor> > sis;
+  PMP::self_intersections(sm,
+                          std::back_inserter(sis),
+                          PMP::parameters::all_default());
+  assert(sis.empty());
   return 0;
 }

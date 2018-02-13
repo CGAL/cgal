@@ -167,7 +167,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_
     std::cout<<"end"<<std::endl;
     std::cout<<"is solved? "<<solved<<std::endl;
     if (!solved)
-    messages->information(tr("Some self-intersection could not be fixed"));
+      messages->information(tr("Some self-intersection could not be fixed"));
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
   }
