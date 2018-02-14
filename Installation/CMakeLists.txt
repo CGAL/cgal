@@ -1049,7 +1049,6 @@ Note that this option will modify the source directory!"
     FALSE)
 
   if(CGAL_ENABLE_CHECK_HEADERS OR CGAL_COMPUTE_DEPENDENCIES)
-    set(CGAL_PROFILE ON)
     if(NOT CMAKE_MAJOR_VERSION GREATER 2)
       message(FATAL_ERROR "Your version of CMake is too old.
 You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
@@ -1067,7 +1066,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
     find_package(OpenMesh)
 
     set(compile_options "\
-${CMAKE_CXX_FLAGS} -DCGAL_EIGEN3_ENABLED \
+${CMAKE_CXX_FLAGS} -DCGAL_EIGEN3_ENABLED -DCGAL_PROFILE \
 ${Qt5Widgets_DEFINITIONS} ${Qt5Xml_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS} \
 ${Qt5OpenGL_EXECUTABLE_COMPILE_FLAGS} -fPIC \
 ${Qt5Gui_EXECUTABLE_COMPILE_FLAGS} \
@@ -1075,6 +1074,7 @@ ${Qt5Xml_EXECUTABLE_COMPILE_FLAGS} \
 ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt5_3RD_PARTY_DEFINITIONS} \
 ${CGAL_DEFINITIONS}"
       )
+    message("COMPILATION OPTIONS ARE :  ${compile_options}")
 
     if(NOT RS_FOUND AND NOT RS3_FOUND)
       set(compile_options "${compile_options} \
