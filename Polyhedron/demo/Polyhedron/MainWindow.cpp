@@ -1606,12 +1606,19 @@ void MainWindow::on_actionSaveAs_triggered()
       continue;
     }
     QString caption = tr("Save %1 to File...").arg(item->name());
+    QString dir = item->property("source filename").toString();
+    if(dir.isEmpty())
+      dir = QString("%1/%2").arg(last_saved_dir).arg(item->name());
+    if(dir.isEmpty())
+      dir = item->name();
     QString filename =
         QFileDialog::getSaveFileName(this,
                                      caption,
-                                     QString("%1").arg(item->name()),
+                                     dir,
                                      filters.join(";;"),
                                      &sf);
+    
+    last_saved_dir = QFileInfo(dir).absoluteDir().path();
     extensions.indexIn(sf.split(";;").first());
     ext1 = extensions.cap();
     //remove `)`
