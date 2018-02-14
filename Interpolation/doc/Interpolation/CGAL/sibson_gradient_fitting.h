@@ -32,25 +32,20 @@ which use the same mechanism to allow flexible output.
 /// @{
 
 /*!
-estimates the gradient of a function at a query point, given neighbor
-coordinates of this point.
-
-in the range `[first, beyond)` and the function values of the neighbors
-provided by the functor `f`. `norm` is the normalization
-factor of the barycentric coordinates.
+Estimates the gradient of a function at a query point.
 
 \tparam CoordinateInputIterator must be a model of `ForwardIterator` and must have as
 value type a pair associating an entity to a (non-normalized) barycentric coordinate.
-More precisely, `std::iterator_traits<CoordinateIterator>::%value_type::first_type`
+More precisely, `std::iterator_traits<CoordinateInputIterator>::%value_type::first_type`
 can be of the following types:
 <ul>
   <li> a type equivalent to `Traits::Point_d` or `Traits::Weighted_point_d` </li>
   <li> an iterator type providing a `point()` function returning a type equivalent to `Traits::Point_d` or `Traits::Weighted_point_d`; </li>
 </ul>
- and `std::iterator_traits<CoordinateIterator>::%value_type::second_type` must be equivalent to
+ and `std::iterator_traits<CoordinateInputIterator>::%value_type::second_type` must be equivalent to
 `Traits::FT`.
 \tparam ValueFunctor must be a functor where `ValueFunctor::argument_type` must be equivalent to
-`std::iterator_traits<CoordinateIterator>::%value_type::first_type` and
+`std::iterator_traits<CoordinateInputIterator>::%value_type::first_type` and
 `ValueFunctor::result_type` is a pair of the function value type and a Boolean.
 The function value type must provide a multiplication and addition operation with the type
 `Traits::FT` as well as a constructor with argument `0`.
@@ -80,15 +75,16 @@ sibson_gradient_fitting(CoordinateInputIterator first, CoordinateInputIterator b
                         const Traits& traits);
 
 /*!
-estimates the function gradients at all vertices of the Delaunay triangulation `dt`
+Estimates the function gradients at all vertices of the Delaunay triangulation `dt`
 that lie inside the convex hull, using the coordinates computed by the
 function `PkgInterpolationNaturalNeighborCoordinates2`.
 
-\tparam Dt must be of type `Delaunay_triangulation_2<Traits, Tds>`.
-        `Traits` must be a model of the concepts `DelaunayTriangulationTraits_2` and `PolygonTraits_2`.
+\tparam Dt must be of type `Delaunay_triangulation_2<Dt_Traits, Tds>`.
+        `Dt_Traits` must be a model of the concepts `DelaunayTriangulationTraits_2` and `PolygonTraits_2`.
 \tparam GradientOutputIterator must be a model of `OutputIterator` with value type
-        OutputFunctor::result_type.
+        `OutputFunctor::result_type`.
 \tparam OutputFunctor must be a functor with argument type `std::pair<Dt::Vertex_handle, Traits::Vector_d>`.
+        Note that the result type of the functor is not specified and is chosen by users to fit their needs.
 \tparam ValueFunctor must be a functor where:
 - `ValueFunctor::argument_type` must be either `std::pair<Dt::Vertex_handle, Dt::Geom_traits::FT>`
 or `std::pair<Dt::Point, Dt::Geom_traits::FT>`.
@@ -98,7 +94,7 @@ The function value type must provide a multiplication and addition operation wit
 \tparam Traits must be a model of `GradientFittingTraits`.
 
 \param dt is the Delaunay triangulation.
-\param out is an object of type `CoordinateOutputIterator`.
+\param out is an object of type `GradientOutputIterator`.
 \param fct is an object of type `OutputFunctor`.
 \param value_function is a functor of type `ValueFunctor` that gives access to
 the values of the function at points of the triangulation.
@@ -117,15 +113,16 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
                              const Traits& traits);
 
 /*!
-estimates the function gradients at all vertices of `rt` that lie
+Estimates the function gradients at all vertices of `rt` that lie
 inside the convex hull using the coordinates computed by the
 functions `PkgInterpolationRegularNeighborCoordinates2`.
 
-\tparam Rt must be of type `Regular_triangulation_2<Traits, Tds>`.
-        `Traits` must be a model of the concepts `RegularTriangulationTraits_2` and `PolygonTraits_2`.
+\tparam Rt must be of type `Regular_triangulation_2<Rt_Traits, Tds>`.
+        `Rt_Traits` must be a model of the concepts `RegularTriangulationTraits_2` and `PolygonTraits_2`.
 \tparam GradientOutputIterator must be a model of `OutputIterator` with value type
-        OutputFunctor::result_type.
+        `OutputFunctor::result_type`.
 \tparam OutputFunctor must be a functor with argument type `std::pair<Rt::Vertex_handle, Traits::Vector_d>`.
+        Note that the result type of the functor is not specified and is chosen by users to fit their needs.
 \tparam ValueFunctor must be a functor where:
 - `ValueFunctor::argument_type` must be either `std::pair<Rt::Vertex_handle, Rt::Geom_traits::FT>`
 or `std::pair<Rt::Weighted_point, Rt::Geom_traits::FT>`.
@@ -135,7 +132,7 @@ The function value type must provide a multiplication and addition operation wit
 \tparam Traits must be a model of `GradientFittingTraits`.
 
 \param rt is the regular triangulation.
-\param out is an object of type `CoordinateOutputIterator`.
+\param out is an object of type `GradientOutputIterator`.
 \param fct is an object of type `OutputFunctor`.
 \param value_function is a functor of type `ValueFunctor` that gives access to
 the values of the function at points of the triangulation.

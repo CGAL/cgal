@@ -66,26 +66,27 @@ std::pair<Data_type, bool> operator()(const Key_type& p);
 The function `linear_interpolation()` computes the weighted sum of the function
 values which must be provided via a functor.
 
-\tparam CoordinateIterator must be a model of `ForwardIterator` and
+\tparam CoordinateInputIterator must be a model of `ForwardIterator` and
 must have as value type a pair associating an entity, e.g. the `Vertex_handle` or `Point`
 types of a triangulation, to a (non-normalized) barycentric coordinate.
-\tparam ValueFunctor must be a functor such that `ValueFunctor::result_type`
-is a pair of the function value type and a Boolean value.
-The function value type must provide a multiplication and addition operation with the field number type
-`std::iterator_traits<CoordinateIterator>::%value_type::second_type` and a constructor
-with argument `0`. <br>
-A model of this functor is provided by the struct `CGAL::Data_access` instantiated
+\tparam ValueFunctor must be a functor where `ValueFunctor::argument_type` must be equivalent to
+`std::iterator_traits<CoordinateInputIterator>::%value_type::first_type` and
+`ValueFunctor::result_type` is a pair of the function value type and a Boolean.
+The function value type must provide a multiplication and addition operation with the type
+`Traits::FT` as well as a constructor with argument `0`.
+
+A model of the functor `ValueFunctor` is provided by the struct `CGAL::Data_access` instantiated
 with an associative container (e.g. `std::map`) and having:
-- `std::iterator_traits<CoordinateIterator>::%value_type::first_type` (the entity type) as `key_type`
-- `std::iterator_traits<CoordinateIterator>::%value_type::second_type` (the coordinate type) as `mapped_type`.
+- `std::iterator_traits<CoordinateInputIterator>::%value_type::first_type` (the entity type) as `key_type`
+- `std::iterator_traits<CoordinateInputIterator>::%value_type::second_type` (the coordinate type) as `mapped_type`.
 
 The two template parameters must satisfy the following conditions:
-- `std::iterator_traits<CoordinateIterator>::%value_type::first_type` (the entity type) is equivalent to a
+- `std::iterator_traits<CoordinateInputIterator>::%value_type::first_type` (the entity type) is equivalent to a
 `ValueFunctor::argument_type`.
-- `std::iterator_traits<CoordinateIterator>::%value_type::second_type` (the coordinate type) is a field number type
+- `std::iterator_traits<CoordinateInputIterator>::%value_type::second_type` (the coordinate type) is a field number type
 that is equivalent to `ValueFunctor::result_type::first_type`.
 
-For example, if `CoordinateIterator` is an output iterator with value type
+For example, if `CoordinateInputIterator` is an iterator with value type
 `std::pair<Vertex_handle, double>`, then the `ValueFunctor` must have argument
 type `Vertex_handle` (or convertible to) and return type `std::pair<double, bool>`.
 
@@ -105,10 +106,10 @@ corresponding to each entry of the entity/coordinate pairs in the range `[first,
 \sa `PkgInterpolationRegularNeighborCoordinates2`
 \sa `PkgInterpolationSurfaceNeighborCoordinates3`
 */
-template < class CoordinateIterator, class ValueFunctor >
+template < class CoordinateInputIterator, class ValueFunctor >
 typename ValueFunctor::result_type::first_type
-linear_interpolation(CoordinateIterator first, CoordinateIterator beyond,
-                     const typename std::iterator_traits<CoordinateIterator>::value_type::second_type& norm,
+linear_interpolation(CoordinateInputIterator first, CoordinateInputIterator beyond,
+                     const typename std::iterator_traits<CoordinateInputIterator>::value_type::second_type& norm,
                      ValueFunctor value_function);
 
 /*!
@@ -126,30 +127,30 @@ Otherwise, the second value will be `false`.
 \tparam Traits must be a model of `InterpolationTraits`.
 Note that, contrary to some other interpolation methods, the number type `FT` provided
 by `Traits` does not need to provide the square root operation.
-\tparam CoordinateIterator must be a model of `ForwardIterator` and must have as
+\tparam CoordinateInputIterator must be a model of `ForwardIterator` and must have as
 value type a pair associating an entity to a (non-normalized) barycentric coordinate.
-More precisely, `std::iterator_traits<CoordinateIterator>::%value_type::first_type`
+More precisely, `std::iterator_traits<CoordinateInputIterator>::%value_type::first_type`
 can be of the following types:
 <ul>
   <li> a type equivalent to `Traits::Point_d` or `Traits::Weighted_point_d` </li>
   <li> an iterator type providing a `point()` function returning a type equivalent to `Traits::Point_d` or `Traits::Weighted_point_d`; </li>
 </ul>
- and `std::iterator_traits<CoordinateIterator>::%value_type::second_type` must be equivalent to
+ and `std::iterator_traits<CoordinateInputIterator>::%value_type::second_type` must be equivalent to
 `Traits::FT`.
 \tparam ValueFunctor must be a functor where `ValueFunctor::argument_type` must be equivalent to
-`std::iterator_traits<CoordinateIterator>::%value_type::first_type` and
+`std::iterator_traits<CoordinateInputIterator>::%value_type::first_type` and
 `ValueFunctor::result_type` is a pair of the function value type and a Boolean.
 The function value type must provide a multiplication and addition operation with the type
 `Traits::FT` as well as a constructor with argument `0`.
 \tparam GradFunctor must be a functor where `GradFunctor::argument_type` must be equivalent to
-`std::iterator_traits<CoordinateIterator>::%value_type::first_type` and
+`std::iterator_traits<CoordinateInputIterator>::%value_type::first_type` and
 `Functor::result_type` is a pair of the function's gradient type and a Boolean.
 The function gradient type must provide a multiplication operation with `Traits::Vector_d`.
 \tparam Point must be equivalent to `Traits::Point_d` or `Traits::Weighted_point_d`.
 
 A model of the functor types `ValueFunctor` (resp. `GradFunctor`) is provided
 by the struct `CGAL::Data_access`. It must be instantiated accordingly with an associative container
-(e.g. `std::map`) having `std::iterator_traits<CoordinateIterator>::%value_type::first_type` as `key_type`
+(e.g. `std::map`) having `std::iterator_traits<CoordinateInputIterator>::%value_type::first_type` as `key_type`
 and the function value type (resp. the function gradient type) as `mapped_type`.
 
 \param first, beyond is the iterator range of the barycentric coordinates for the query point `p`.
@@ -170,10 +171,10 @@ the function returns a pair where the Boolean is set to `false`.
 \sa `PkgInterpolationRegularNeighborCoordinates2`
 \sa `PkgInterpolationSurfaceNeighborCoordinates3`
 */
-template < class CoordinateIterator, class ValueFunctor, class GradFunctor, class Traits, class Point >
+template < class CoordinateInputIterator, class ValueFunctor, class GradFunctor, class Traits, class Point >
 typename ValueFunctor::result_type
-quadratic_interpolation(CoordinateIterator first, CoordinateIterator beyond,
-                        const typename std::iterator_traits<CoordinateIterator>::value_type::second_type& norm,
+quadratic_interpolation(CoordinateInputIterator first, CoordinateInputIterator beyond,
+                        const typename std::iterator_traits<CoordinateInputIterator>::value_type::second_type& norm,
                         const Point& p,
                         ValueFunctor value_function,
                         GradFunctor gradient_function,
@@ -192,30 +193,30 @@ Otherwise, `false` is returned as second value.
 
 \tparam Traits must be a model of `InterpolationTraits`.
 The number type `FT` provided by `Traits` must support the square root operation `sqrt()`.
-\tparam CoordinateIterator must be a model of `ForwardIterator` and must have as
+\tparam CoordinateInputIterator must be a model of `ForwardIterator` and must have as
 value type a pair associating an entity to a (non-normalized) barycentric coordinate.
-More precisely, `std::iterator_traits<CoordinateIterator>::%value_type::first_type`
+More precisely, `std::iterator_traits<CoordinateInputIterator>::%value_type::first_type`
 can be of the following types:
 <ul>
   <li> a type equivalent to `Traits::Point_d` or `Traits::Weighted_point_d` </li>
   <li> an iterator type providing a `point()` function returning a type equivalent to `Traits::Point_d` or `Traits::Weighted_point_d`; </li>
 </ul>
- and `std::iterator_traits<CoordinateIterator>::%value_type::second_type` must be equivalent to
+ and `std::iterator_traits<CoordinateInputIterator>::%value_type::second_type` must be equivalent to
 `Traits::FT`.
 \tparam ValueFunctor must be a functor where `ValueFunctor::argument_type` must be equivalent to
-`std::iterator_traits<CoordinateIterator>::%value_type::first_type` and
+`std::iterator_traits<CoordinateInputIterator>::%value_type::first_type` and
 `ValueFunctor::result_type` is a pair of the function value type and a Boolean.
 The function value type must provide a multiplication and addition operation with the type
 `Traits::FT` as well as a constructor with argument `0`.
 \tparam GradFunctor must be a functor where `GradFunctor::argument_type` must be equivalent to
-`std::iterator_traits<CoordinateIterator>::%value_type::first_type` and
+`std::iterator_traits<CoordinatetCoordinateInputIteratorIterator>::%value_type::first_type` and
 `Functor::result_type` is a pair of the function's gradient type and a Boolean.
 The function gradient type must provide a multiplication operation with `Traits::Vector_d`.
 \tparam Point must be equivalent to `Traits::Point_d` or `Traits::Weighted_point_d`.
 
 A model of the functor types `ValueFunctor` (resp. `GradFunctor`) is provided
 by the struct `CGAL::Data_access`. It must be instantiated accordingly with an associative container
-(e.g. `std::map`) having `std::iterator_traits<CoordinateIterator>::%value_type::first_type` as `key_type`
+(e.g. `std::map`) having `std::iterator_traits<CoordinateInputIterator>::%value_type::first_type` as `key_type`
 and the function value type (resp. the function gradient type) as `mapped_type`.
 
 \param first, beyond is the iterator range of the barycentric coordinates for the query point `p`.
@@ -236,10 +237,10 @@ the function returns a pair where the Boolean is set to `false`.
 \sa `PkgInterpolationRegularNeighborCoordinates2`
 \sa PkgInterpolationSurfaceNeighborCoordinates3
 */
-template < class ForwardIterator, class ValueFunctor, class GradFunctor, class Traits, class Point >
+template < class CoordinateInputIterator, class ValueFunctor, class GradFunctor, class Traits, class Point >
 std::pair<typename ValueFunctor::result_type, bool>
-sibson_c1_interpolation(CoordinateIterator first, CoordinateIterator beyond,
-                        const typename std::iterator_traits<CoordinateIterator>::value_type::second_type& norm,
+sibson_c1_interpolation(CoordinateInputIterator first, CoordinateInputIterator beyond,
+                        const typename std::iterator_traits<CoordinateInputIterator>::value_type::second_type& norm,
                         const Point& p,
                         ValueFunctor value_function,
                         GradFunctor gradient_function,
@@ -248,15 +249,15 @@ sibson_c1_interpolation(CoordinateIterator first, CoordinateIterator beyond,
 /*!
 \ingroup PkgInterpolation2Interpolation
 
-The same as `sibson_c1_interpolation()`, except that no square root operation is required
+Same as `sibson_c1_interpolation()`, except that no square root operation is required
 for the number type `Traits::FT`.
 
 \sa `CGAL::sibson_c1_interpolation()`
 */
-template < class CoordinateIterator, class ValueFunctor, class GradFunctor, class Traits, class Point >
+template < class CoordinateInputIterator, class ValueFunctor, class GradFunctor, class Traits, class Point >
 typename ValueFunctor::result_type
-sibson_c1_interpolation_square(CoordinateIterator first, CoordinateIterator beyond,
-                               const typename std::iterator_traits<CoordinateIterator>::value_type::second_type& norm,
+sibson_c1_interpolation_square(CoordinateInputIterator first, CoordinateInputIterator beyond,
+                               const typename std::iterator_traits<CoordinateInputIterator>::value_type::second_type& norm,
                                const Point& p,
                                ValueFunctor value_function,
                                GradFunctor gradient_function,
@@ -265,7 +266,7 @@ sibson_c1_interpolation_square(CoordinateIterator first, CoordinateIterator beyo
 /*!
 \ingroup PkgInterpolation2Interpolation
 
-generates the interpolated function value computed by Farin's interpolant.
+Generates the interpolated function value computed by Farin's interpolant.
 
 \cgalHeading{Requirements}
 
@@ -279,10 +280,10 @@ gradients that are provided by functors using the method described in \cgalCite{
 
 \sa `CGAL::sibson_c1_interpolation()`
 */
-template < class CoordinateIterator, class ValueFunctor, class GradFunctor, class Traits, class Point>
+template < class CoordinateInputIterator, class ValueFunctor, class GradFunctor, class Traits, class Point>
 typename ValueFunctor::result_type
-farin_c1_interpolation(CoordinateIterator first, CoordinateIterator beyond,
-                       const typename std::iterator_traits<CoordinateIterator>::value_type::second_type& norm,
+farin_c1_interpolation(CoordinateInputIterator first, CoordinateInputIterator beyond,
+                       const typename std::iterator_traits<CoordinateInputIterator>::value_type::second_type& norm,
                        const Point& p,
                        ValueFunctor value_function,
                        GradFunctor gradient_function,

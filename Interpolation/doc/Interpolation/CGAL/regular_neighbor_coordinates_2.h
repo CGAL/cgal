@@ -21,7 +21,7 @@ computed and the third value of the result triple is set to `false`.
 \cgalHeading{Output Format}
 
 The return type is identical for all overloads of `CGAL::regular_neighbor_coordinates_2()`:
-it is `CGAL::Triple<CoordinateIterator, Rt::Geom_traits::FT, bool >`
+it is `CGAL::Triple<CoordinateOutputIterator, Rt::Geom_traits::FT, bool >`
 
 Regular neighbor coordinates are output in the first value of the triple,
 using an output iterator (see the concept `OutputIterator`).
@@ -51,12 +51,12 @@ must then have value type `std::pair<Rt::Weighted_point, Rt::Geom_traits::FT>`.
 /// @{
 
 /*!
-computes the regular neighbor coordinates for `p` with respect
+Computes the regular neighbor coordinates for `p` with respect
 to the weighted points in the two-dimensional regular triangulation `rt`.
 
 \tparam Rt must be a `Regular_triangulation_2<Traits, Tds>`.
         `Traits` must be a model of the concepts `RegularTriangulationTraits_2` and `PolygonTraits_2`.
-\tparam CoordinateOutputIterator must be a model of `OutputIterator` and have the value type OutputFunctor::result_type.
+\tparam CoordinateOutputIterator must be a model of `OutputIterator` and have the value type `OutputFunctor::result_type`.
         The output computed by the function is placed starting at `out`.
 \tparam OutputFunctor must be a functor with argument type `std::pair<Rt::Vertex_handle, Rt::Geom_traits::FT>`.
 
@@ -70,7 +70,7 @@ for a detailed explanation on the usage of `OutputFunctor`.
 \param start is an optional argument that is used as a hint of where the locate process has to start its search.
 
 \return A triple consisting of:
-- a sequence of object of types OutputFunctor::result_type, starting at `out`.
+- a sequence of objects of types `OutputFunctor::result_type`, starting at `out`.
 - the normalization factor of the coordinates.
 - a Boolean value which is set to `true` if the coordinate computation was successful,
 and `false` otherwise.
@@ -89,7 +89,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                typename Rt::Face_handle start = typename Rt::Face_handle());
 
 /*!
-computes the regular neighbor coordinates for `p` with respect
+Computes the regular neighbor coordinates for `p` with respect
 to the weighted points in the two-dimensional regular triangulation `rt`.
 
 The iterator range `[hole_begin, hole_end)` determines the boundary edges
@@ -115,7 +115,7 @@ regular_neighbor_coordinates_2(const Rt& rt,
                                VertexIterator hidden_vertices_begin, VertexIterator hidden_vertices_end);
 
 /*!
-computes the regular neighbor coordinates of the point `vh->point()` with respect
+Computes the regular neighbor coordinates of the point `vh->point()` with respect
 to the vertices of `rt` excluding `vh->point()`.
 
 \cgalHeading{Requirements}

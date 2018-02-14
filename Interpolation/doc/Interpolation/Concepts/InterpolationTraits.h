@@ -37,7 +37,7 @@ typedef unspecified_type Point_d;
 /*!
 The weighted point type.
 */
-typedef unspecified_type Point_d;
+typedef unspecified_type Weighted_point_d;
 
 /*!
 The corresponding vector type.

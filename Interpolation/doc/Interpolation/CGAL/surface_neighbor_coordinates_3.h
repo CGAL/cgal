@@ -81,9 +81,8 @@ surface_neighbor_coordinates_3(InputIterator first, InputIterator beyond,
                                const Kernel& K);
 
 /*!
-the same as above only that the traits class
-must be instantiated by the user. `ITraits` must be equivalent
-to `Voronoi_intersection_2_traits_3<K>`.
+Same as above only that the traits class must be instantiated by the user.
+`ITraits` must be equivalent to `Voronoi_intersection_2_traits_3<K>`.
 */
 template < class OutputIterator, class InputIterator, class ITraits >
 CGAL::Triple< OutputIterator, typename ITraits::FT, bool >
@@ -110,7 +109,7 @@ surface_neighbor_coordinates_certified_3(InputIterator first, InputIterator beyo
                                          const Kernel& K);
 
 /*!
-The same as above except that this function takes the
+Same as above except that this function takes the
 maximal distance from p to the points in the range
 `[first, beyond)` as additional parameter.
 */
@@ -123,8 +122,7 @@ surface_neighbor_coordinates_certified_3(InputIterator first, InputIterator beyo
                                          const Kernel& kernel);
 
 /*!
-The same as above only
-that the traits class must be instantiated by the user and without
+Same as above only that the traits class must be instantiated by the user and without
 the parameter `max_distance`. `ITraits` must be equivalent
 to `Voronoi_intersection_2_traits_3<K>`.
 */
@@ -136,8 +134,7 @@ surface_neighbor_coordinates_certified_3(InputIterator first, InputIterator beyo
                                          const ITraits& traits);
 
 /*!
-The same as above with the parameter
-`max_distance`.
+Same as above with the parameter `max_distance`.
 */
 template <class OutputIterator, class InputIterator, class ITraits>
 CGAL::Quadruple< OutputIterator, typename ITraits::FT, bool, bool >
@@ -148,7 +145,7 @@ surface_neighbor_coordinates_certified_3(InputIterator first, InputIterator beyo
                                          const ITraits& traits);
 
 /*!
-computes the surface neighbor coordinates with respect to the points
+Computes the surface neighbor coordinates with respect to the points
 that are vertices of the Delaunay triangulation `dt`. The type `Dt`
 must be equivalent to `Delaunay_triangulation_3<Gt, Tds>`. The
 optional parameter `start` is used as a starting place for the search
@@ -171,7 +168,7 @@ surface_neighbor_coordinates_3(const Dt& dt,
                                typename Dt::Cell_handle start = typename Dt::Cell_handle());
 
 /*!
-The same as above only that the parameter traits instantiates
+Same as above only that the parameter traits instantiates
 the geometric traits class. Its type `ITraits` must be
 equivalent to `Voronoi_intersection_2_traits_3<K>`.
 */

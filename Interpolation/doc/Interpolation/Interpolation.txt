@@ -107,7 +107,7 @@ square root of the weight of the point.
 \warning Contrary to Voronoi diagrams, a weighted point \f$ p_i\f$ does not necessarily
 possess a non-empty cell in the power diagram of \f$ \mathcal{P}\f$ (with
 \f$ p_i\in\mathcal{P}\f$). When this is the case, that point is then said to be <em>hidden</em>
-and all of its regular neighboring coordinates are null.
+and all of its regular neighbor coordinates are null.
 
 \subsection InterpolationImplementation Implementation
 
@@ -125,7 +125,7 @@ Section \ref secsurface and the reference page
 Given a Delaunay triangulation or a regular triangulation, our implementation
 computes natural and regular neighbor coordinates in two steps.
 Firstly, the vertices in conflict with the query point (that is, the vertices
-from which the query point will "steal") are first determined. Then, the areas
+from which the query point will "steal") are determined. Then, the areas
 \f$ \pi_i(\mathbf{x})\f$ are computed by triangulating the Voronoi
 sub-cells. The output is threefold:
 - points (or vertices) with a non-null coordinate along with these coordinates \f$ \pi_i(\mathbf{x})\f$,
@@ -135,7 +135,7 @@ sub-cells. The output is threefold:
 convex hull or not).
 
 Note that if the query point has already been located in the triangulation (for example using
-functions such as \link Triangulation_2::locate() locate() \endlink) and/or the boundary
+functions such as \link Triangulation_2::locate() locate()\endlink) and/or the boundary
 edges of the conflict zone are already determined, alternative functions
 allow to avoid the re-computation (see \ref PkgInterpolationNaturalNeighborCoordinates2
 and \ref PkgInterpolationRegularNeighborCoordinates2).
@@ -172,11 +172,12 @@ By default and for backward compatibility reasons, this output is converted
 into objects of type `std::pair<Point, Coord_type>`, where `Point` is a bare
 (weightless) point.
 
-It is however possible to collect the output as objects of type
-`std::pair<Vertex_handle, Coord_type>` or any other type provided
-that a functor with argument type `std::pair<Vertex_handle, Coord_type>`
-is passed to the coordinate computation function.
-Usage of this parameter is shown in the example below, where the output is
+It is however possible to collect the output as objects of any desired
+type, for example the simple `Point` type, by passing a functor as extra parameter
+of the coordinates computation function.
+The argument type of this functor must be `std::pair<Vertex_handle, Coord_type>`
+and the result type is chosen by the user, but must be consistent with the output iterator.
+Usage of this parameter is demonstrated in the example below, where the output is
 kept as objects of type `std::pair<Vertex_handle, Coord_type>`, which allows
 us to then store the coordinate in the vertex, using the class
 `CGAL::Triangulation_vertex_base_with_info_2`.
@@ -357,7 +358,7 @@ computation needed to compute the distance \f$ \|\mathbf{x} -
 \mathbf{p_i}\|\f$. The theoretical guarantees are the same (see
 \cgalCite{cgal:f-csapc-03}). Simply, the smaller the slope of \f$ f\f$
 around \f$ f(0)\f$, the faster the interpolant approaches \f$ \xi_i\f$ as
-\f$ \mathbf{x} \rightarrow \mathbf{p_i}\f$.
+\f$ \mathbf{x} \f$ goes to \f$ \mathbf{p_i}\f$.
 
 \subsubsection InterpolationFarin Farin's C^1 Continuous Interpolant
 
@@ -419,14 +420,14 @@ compatible with the function.
 
 \cgalExample{Interpolation/sibson_interpolation_2.cpp}
 
-Additional examples compare numerically the errors of the different
-interpolation functions with respect to a known function.
-They can be found in the `examples` directory of the distribution.
+The example \link Interpolation/interpolation_2.cpp interpolation_2.cpp \endlink
+compares numerically the errors of the different interpolation functions
+with respect to a known function.
 
 \subsection InterpolationExampleVertices Example for Storing Values and Gradients in Vertices
 
-In the previous examples, we stored the values and gradients in a `std::map` and wrapped them in
-a `CGAL::Data_access` object. We can avoid this "external" storage by
+In the previous examples, we have stored the values and gradients in a `std::map`
+and wrapped them in a `CGAL::Data_access` object. We can avoid this "external" storage by
 using the class `Triangulation_vertex_base_with_info_2` provided by the triangulation package:
 values and gradients can be stored directly in the vertices of the triangulation.
 Functors and output iterators requested by the gradient fitting and interpolation functions

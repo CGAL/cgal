@@ -73,7 +73,7 @@ surface_neighbors_3(InputIterator first, InputIterator beyond,
                     const Kernel& K);
 
 /*!
-The same as above only that the traits class must be instantiated by
+Same as above only that the traits class must be instantiated by
 the user. `ITraits` must be equivalent to
 `Voronoi_intersection_2_traits_3<K>`.
 */
@@ -101,7 +101,7 @@ surface_neighbors_certified_3(InputIterator first, InputIterator beyond,
                               const Kernel& K);
 
 /*!
-The same as above except that this function
+Same as above except that this function
 takes the maximal distance from `p` to the points in the range
 `[first, beyond)` as additional parameter.
 */
@@ -115,9 +115,8 @@ surface_neighbors_certified_3(InputIterator first, InputIterator beyond,
                               const Kernel& kernel);
 
 /*!
-The same as above only that the traits
-class must be instantiated by the user. `ITraits` must be
-equivalent to `Voronoi_intersection_2_traits_3<K>`. There is no
+Same as above only that the traits class must be instantiated by the user.
+`ITraits` must be equivalent to `Voronoi_intersection_2_traits_3<K>`. There is no
 parameter `max_distance`.
 */
 template <class OutputIterator, class InputIterator, class ITraits>
@@ -128,8 +127,7 @@ surface_neighbors_certified_3(InputIterator first, InputIterator beyond,
                               const ITraits& traits);
 
 /*!
-The same as above with the parameter
-`max_distance`.
+Same as above with the parameter `max_distance`.
 */
 template <class OutputIterator, class InputIterator, class ITraits>
 std::pair< OutputIterator, bool >
@@ -140,7 +138,7 @@ surface_neighbors_certified_3(InputIterator first, InputIterator beyond,
                               const ITraits& traits);
 
 /*!
-computes the surface neighbor coordinates with respect to the points
+Computes the surface neighbor coordinates with respect to the points
 that are vertices of the Delaunay triangulation `dt`. The type `Dt`
 must be equivalent to `Delaunay_triangulation_3<Gt, Tds>`. The
 optional parameter `start` is used for the used as a starting place
@@ -163,7 +161,7 @@ surface_neighbors_3(const Dt& dt,
                     typename Dt::Cell_handle start = typename Dt::Cell_handle());
 
 /*!
-The same as above only that the parameter `traits` instantiates
+Same as above only that the parameter `traits` instantiates
 the geometric traits class. Its type `ITraits` must be
 equivalent to `Voronoi_intersection_2_traits_3<K>`.
 */

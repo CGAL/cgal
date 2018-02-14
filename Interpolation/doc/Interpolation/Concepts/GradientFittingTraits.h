@@ -86,7 +86,7 @@ typedef unspecified_type Construct_scaled_vector_d;
 /*!
 Constructor object for `FT`. Provides the operator:
 
-`FT operator() (Point_d p, Point_d q)`, which the squared distance between `p` and `q`.
+`FT operator() (Point_d p, Point_d q)`, which returns the squared distance between `p` and `q`.
 */
 typedef unspecified_type Compute_squared_distance_d;
 

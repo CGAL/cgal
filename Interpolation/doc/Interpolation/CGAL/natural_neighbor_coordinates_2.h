@@ -51,17 +51,15 @@ must then have value type `std::pair<Dt::Point, Dt::Geom_traits::FT>`.
 /// @{
 
 /*!
-computes the natural neighbor coordinates for `p` with respect to the points
+Computes the natural neighbor coordinates for `p` with respect to the points
 in the two-dimensional Delaunay triangulation `dt`.
 
 \tparam Dt must be of type `Delaunay_triangulation_2<Traits, Tds>`.
         `Traits` must be a model of the concepts `DelaunayTriangulationTraits_2` and `PolygonTraits_2`.
-\tparam CoordinateOutputIterator must be a model of `OutputIterator` and have the value type OutputFunctor::result_type.
+\tparam CoordinateOutputIterator must be a model of `OutputIterator` and have the value type `OutputFunctor::result_type`.
         The output computed by the function is placed starting at `out`.
 \tparam OutputFunctor must be a functor with argument type `std::pair<Dt::Vertex_handle, Dt::Geom_traits::FT>`.
-
-See \link PkgInterpolationNaturalNeighborCoordinates2 above \endlink
-for a detailed explanation on the usage of `OutputFunctor`.
+        See \link PkgInterpolationNaturalNeighborCoordinates2 above \endlink for a detailed explanation on the usage of `OutputFunctor`.
 
 \param dt is the Delaunay triangulation.
 \param p is the query point.
@@ -70,7 +68,7 @@ for a detailed explanation on the usage of `OutputFunctor`.
 \param start is an optional argument that is used as a hint of where the locate process has to start its search.
 
 \return A triple consisting of:
-- a sequence of object of types OutputFunctor::result_type, starting at `out`.
+- a sequence of objects of types `OutputFunctor::result_type`, starting at `out`.
 - the normalization factor of the coordinates.
 - a Boolean value which is set to `true` if the coordinate computation was successful,
 and `false` otherwise.
@@ -84,7 +82,7 @@ natural_neighbor_coordinates_2(const Dt& dt,
                                typename Dt::Face_handle start = typename Dt::Face_handle());
 
 /*!
-computes the natural neighbor coordinates for `p` with respect to the points
+Computes the natural neighbor coordinates for `p` with respect to the points
 in the two-dimensional Delaunay triangulation `dt`.
 
 The iterator range `[hole_begin, hole_end)` determines the boundary edges
@@ -104,7 +102,7 @@ natural_neighbor_coordinates_2(const Dt& dt,
                                EdgeIterator hole_begin, EdgeIterator hole_end);
 
 /*!
-computes the natural neighbor coordinates of the point `vh->point()`
+Computes the natural neighbor coordinates of the point `vh->point()`
 with respect to the vertices of `dt` excluding `vh->point()`.
 
 \cgalHeading{Requirements}

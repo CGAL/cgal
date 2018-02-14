@@ -1,4 +1,5 @@
 /*!
+\example Interpolation/interpolation_2.cpp
 \example Interpolation/nn_coordinates_2.cpp
 \example Interpolation/nn_coordinates_with_info_2.cpp
 \example Interpolation/rn_coordinates_2.cpp
