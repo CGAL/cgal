@@ -1151,7 +1151,8 @@ void Polyhedron_demo_surface_reconstruction_plugin::scale_space_reconstruction
                                           dialog.neighborhood_size (), dialog.samples(),
                                           dialog.scalespace_af(),
                                           dialog.generate_smoothed (),
-                                          dialog.longest_edge_2(), dialog.radius_ratio_bound_2(), dialog.beta_angle_2(),
+                                          dialog.longest_edge_2(), dialog.radius_ratio_bound_2(),
+                                          CGAL_PI * dialog.beta_angle_2 () / 180.,
                                           dialog.separate_shells (), dialog.force_manifold ());
 
       for (std::size_t i = 0; i < reco_items.size (); ++ i)
