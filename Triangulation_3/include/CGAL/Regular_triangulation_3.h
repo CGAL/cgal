@@ -2180,8 +2180,16 @@ namespace CGAL {
     Regular_triangulation_3<Gt,Tds,Lds>::
     is_Gabriel(Vertex_handle v) const
   {
-    return nearest_power_vertex(
-             geom_traits().construct_point_3_object()(v->point()), v->cell()) == v;
+    typename Geom_traits::Power_side_of_bounded_power_sphere_3
+      side_of_bounded_orthogonal_sphere =
+      geom_traits().power_side_of_bounded_power_sphere_3_object();
+
+    Vertex_handle nearest_v =
+      nearest_power_vertex(geom_traits().construct_point_3_object()(v->point()),
+                           v->cell());
+
+    return (side_of_bounded_orthogonal_sphere(v->point(), nearest_v->point())
+              != CGAL::ON_BOUNDED_SIDE);
   }
 
   // Returns
