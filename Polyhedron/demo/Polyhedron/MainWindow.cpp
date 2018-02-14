@@ -1588,6 +1588,14 @@ void MainWindow::on_actionSaveAs_triggered()
     QString ext1, ext2;
     QRegExp extensions("\\(\\*\\..+\\)");
     QStringList filter_ext;
+    if(filters.empty())
+    {
+      QMessageBox::warning(this,
+                           tr("Cannot save"),
+                           tr("The selected object %1 cannot be saved.")
+                           .arg(item->name()));
+      return;
+    }
     Q_FOREACH(QString s, filters.first().split(";;"))
     {
       int pos = extensions.indexIn(s);
