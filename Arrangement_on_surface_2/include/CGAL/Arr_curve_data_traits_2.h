@@ -415,7 +415,7 @@ public:
     template <typename GeomeTraits_2>
     typename boost::enable_if_c<!has_construct_opposite_2<GeomeTraits_2>::value,
                                 X_monotone_curve_2>::type
-    construct_opposite(const X_monotone_curve_2& cv) const
+    construct_opposite(const X_monotone_curve_2&) const
     {
       CGAL_error_msg("Construct opposite curve is not supported!");
       return X_monotone_curve_2();
