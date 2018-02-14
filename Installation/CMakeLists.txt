@@ -1049,6 +1049,7 @@ Note that this option will modify the source directory!"
     FALSE)
 
   if(CGAL_ENABLE_CHECK_HEADERS OR CGAL_COMPUTE_DEPENDENCIES)
+    set(CGAL_PROFILE ON)
     if(NOT CMAKE_MAJOR_VERSION GREATER 2)
       message(FATAL_ERROR "Your version of CMake is too old.
 You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
