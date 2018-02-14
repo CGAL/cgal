@@ -213,7 +213,6 @@ public:
     const boost::dynamic_bitset<>& is_node_of_degree_one,
     const Mesh_to_map_node&)
   {
-
     // this will initialize face indices if the face index map is writable.
     helpers::init_face_indices(tm, fids);
 
@@ -792,8 +791,22 @@ public:
               if ( is_dangling_edge(ids.first, ids.second, h1, tm, is_node_of_degree_one) ||
                    is_dangling_edge(ids.first, ids.second, h2, tm, is_node_of_degree_one) )
               {
-                all_fixed = false;
-                continue;
+                // in case of a surface folding, it might happen that we have a
+                // dangling edge that is separating the faces into 2 disjoint
+                // patches (think of a sheet twisted at a vertex of the mesh,
+                // the degree 1 node being that vertex in the intersection polyline
+                // graph).
+                // TODO: the condition below is here to avoid removing too many
+                //       parts of a mesh (ex: a square in crossing the interior
+                //       of a larger). In practice, we could say this is not an
+                //       issue if anyway the whole patch would be dropped.
+                //       Note that this remark is value for all cases where
+                //       all_fixed is set to false.
+                if (patch_id_p1!=patch_id_p2 && patch_id_q1==patch_id_q2)
+                {
+                  all_fixed = false;
+                  continue;
+                }
               }
               uf.unify_sets(patch_handles[patch_id_p1], patch_handles[patch_id_q2]);
               patches_to_keep.reset(patch_id_p2);
@@ -808,8 +821,12 @@ public:
               if ( is_dangling_edge(ids.first, ids.second, h1, tm, is_node_of_degree_one) ||
                    is_dangling_edge(ids.first, ids.second, h2, tm, is_node_of_degree_one) )
               {
-                all_fixed = false;
-                continue;
+                // save reason as above
+                if (patch_id_p1!=patch_id_p2 && patch_id_q1==patch_id_q2)
+                {
+                  all_fixed = false;
+                  continue;
+                }
               }
               uf.unify_sets(patch_handles[patch_id_p2], patch_handles[patch_id_q1]);
               patches_to_keep.reset(patch_id_q2);
@@ -825,6 +842,8 @@ public:
                 nodes);
               if (!p1_is_between_q1q2){
                 //case (e4)
+                //TODO: This is a "tangency" along an edge here, there is
+                //      not much we can do but if on of the two sheets is dropped
                 all_fixed = false;
                 continue;
               }
