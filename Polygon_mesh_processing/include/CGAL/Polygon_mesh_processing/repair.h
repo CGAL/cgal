@@ -123,24 +123,6 @@ struct Less_vertex_point{
   }
 };
 
-template <class Traits>
-struct Less_along_ray{
-  const Traits& m_traits;
-  typename Traits::Point_3 m_source;
-  Less_along_ray(const Traits& traits,
-                 const typename Traits::Point_3& s)
-    : m_traits(traits)
-    , m_source(s)
-  {};
-  bool operator()( const typename Traits::Point_3& p1,
-                   const typename Traits::Point_3& p2) const
-  {
-    return m_traits.compare_distance_3_object()(m_source, p1, p2) == CGAL::SMALLER;
-  }
-};
-
-
-
 ///\cond SKIP_IN_MANUAL
 
 template <class Traits, class TriangleMesh, class VertexPointMap, class OutputIterator>
@@ -957,9 +939,8 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
                                Less_vertex(traits, vpmap) );
 
       //    and then we sort the vertices using this reference point
-      typedef Less_along_ray<Traits> Less_point;
-      typedef std::set<typename Traits::Point_3, Less_point> Sorted_point_set;
-      Sorted_point_set sorted_points( Less_point( traits, get(vpmap, *ref_vertices.first) ) );
+      typedef std::set<typename Traits::Point_3> Sorted_point_set;
+      Sorted_point_set sorted_points;
       BOOST_FOREACH(vertex_descriptor v, boundary_vertices)
         sorted_points.insert( get(vpmap,v) );
 
