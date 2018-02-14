@@ -1456,7 +1456,6 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
     BOOST_FOREACH(face_descriptor f, faces(filtered))
     {
         put(fid, f, index++);
-//        std::cout<<f<<std::endl;
     }
     std::size_t nb_components =
       connected_components(filtered, fcm, parameters::face_index_map(fid));
@@ -1502,7 +1501,7 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
           }
         }
       }
-      if(!is_selection_disk(cc_to_remove, tm))
+      if(!is_selection_a_topologial_disk(cc_to_remove, tm))
       {
         if(verbose)
           std::cout << "DEBUG: Step aborted beca"
@@ -1666,10 +1665,6 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
         face_descriptor new_fh = CGAL::Euler::add_face(face, tm);
         if(new_fh  == boost::graph_traits<TriangleMesh>::null_face())
         {
-          if(new_fh == boost::graph_traits<TriangleMesh>::null_face())
-          {
-            std::cout<<"PHOQUE !"<<std::endl;
-          }
           CGAL_assertion( new_fh != boost::graph_traits<TriangleMesh>::null_face());
         }
       }
@@ -1731,6 +1726,13 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np,
   }
 
   return step<max_steps;
+}
+
+template <class TriangleMesh>
+bool remove_self_intersections(TriangleMesh& tm, 
+                               const int max_steps = 7, bool verbose=false)
+{
+  return remove_self_intersections(tm, parameters::all_default(), max_steps, verbose);
 }
 /// \endcond
 

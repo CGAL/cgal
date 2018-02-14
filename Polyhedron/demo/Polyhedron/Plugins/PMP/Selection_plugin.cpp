@@ -243,7 +243,7 @@ public Q_SLOTS:
       print_message("Error: there is no selected polyhedron selection item!");
       return;
     }
-    if(CGAL::is_selection_disk(selection_item->selected_facets, *selection_item->polyhedron()))
+    if(CGAL::is_selection_a_topologial_disk(selection_item->selected_facets, *selection_item->polyhedron()))
        QMessageBox::information(mw, "Are selected faces topologically equivalent to a disk ?", "YES");
     else
       QMessageBox::information(mw, "Are selected faces topologically equivalent to a disk ?", "NO");

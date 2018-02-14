@@ -622,7 +622,7 @@ void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
 }
 
 template<class PolygonMesh, class FaceRange>
-bool is_selection_disk(const FaceRange& face_selection,
+bool is_selection_a_topologial_disk(const FaceRange& face_selection,
                        PolygonMesh& pm)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
