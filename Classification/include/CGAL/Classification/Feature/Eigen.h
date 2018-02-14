@@ -24,7 +24,7 @@
 #include <CGAL/license/Classification.h>
 
 #include <vector>
-
+#include <CGAL/Classification/Feature_base.h>
 #include <CGAL/Classification/Local_eigen_analysis.h>
 
 namespace CGAL {

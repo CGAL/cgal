@@ -21,6 +21,8 @@
 //
 
 #include <CGAL/license/Point_set_shape_detection_3.h>
+#include <CGAL/Shape_detection_3/Shape_base.h>
+#include <CGAL/Shape_detection_3.h>
 
 #ifndef CGAL_SHAPE_DETECTION_3_PROPERTY_MAPS_H
 #define CGAL_SHAPE_DETECTION_3_PROPERTY_MAPS_H

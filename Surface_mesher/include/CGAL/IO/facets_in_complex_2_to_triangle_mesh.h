@@ -26,6 +26,7 @@
 #include <CGAL/license/Surface_mesher.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <map>
+#include <stack>
 
 namespace CGAL{
 /*!

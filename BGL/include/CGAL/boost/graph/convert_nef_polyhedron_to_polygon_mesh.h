@@ -32,6 +32,7 @@
 #include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/Kernel/global_functions_3.h>
 
 
 namespace CGAL{
