@@ -699,6 +699,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
   Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
 
+  typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
 // First remove edges of length 0
   std::size_t nb_deg_faces = remove_null_edges(edges(tmesh), tmesh, np);
@@ -854,8 +855,6 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
     // Process a connected component of degenerate faces
       // get all the faces from the connected component
       // and the boundary edges
-      /// \todo the code below is only working if the set of degenerate faces is a topological disk!
-
       std::set<face_descriptor> cc_faces;
       std::vector<face_descriptor> queue;
       std::vector<halfedge_descriptor> boundary_hedges;
@@ -997,16 +996,16 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
           }
       }
 
-      // look for the outgoing border halfedge of the first extreme point
+      // look for the outgoing border halfedge of second extreme vertex
       BOOST_FOREACH(halfedge_descriptor hd, boundary_hedges)
-        if ( get(vpmap, source(hd, tmesh)) == xtrm2 )
+        if ( source(hd, tmesh) == target(side_one.back(), tmesh) )
         {
           side_two.push_back(hd);
           break;
         }
       CGAL_assertion(side_two.size()==1);
 
-      while( get(vpmap, target(side_two.back(), tmesh)) != xtrm1 )
+      while( target(side_two.back(), tmesh) != source(side_one.front(), tmesh) )
       {
         vertex_descriptor prev_vertex = target(side_two.back(), tmesh);
         BOOST_FOREACH(halfedge_descriptor hd, boundary_hedges)
@@ -1024,6 +1023,35 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
       std::reverse(side_two.begin(), side_two.end());
       BOOST_FOREACH(halfedge_descriptor& h, side_two)
         h=opposite(h, tmesh);
+
+      //make sure the points of the vertices along side_one are correctly sorted
+      std::vector<Point_3> side_points;
+      side_points.reserve(side_one.size()+1);
+      side_points.push_back(get(vpmap,source(side_one.front(), tmesh)));
+      BOOST_FOREACH(halfedge_descriptor h, side_one)
+        side_points.push_back(get(vpmap,target(h, tmesh)));
+      CGAL_assertion(get(vpmap,source(side_one.front(), tmesh))==side_points.front());
+      CGAL_assertion(get(vpmap,target(side_one.back(), tmesh))==side_points.back());
+      std::sort(side_points.begin(), side_points.end());
+      //\todo the reordering could lead to the apparition of null edges.
+      CGAL_assertion(std::unique(side_points.begin(), side_points.end())==side_points.end());
+      for(std::size_t i=0;i<side_one.size()-1;++i)
+        put(vpmap,target(side_one[i], tmesh), side_points[i+1]);
+
+      //same thing for side_two
+      side_points.clear();
+      side_points.reserve(side_two.size()+1);
+      side_points.push_back(get(vpmap,source(side_two.front(), tmesh)));
+      BOOST_FOREACH(halfedge_descriptor h, side_two)
+        side_points.push_back(get(vpmap,target(h, tmesh)));
+      CGAL_assertion(get(vpmap,source(side_two.front(), tmesh))==side_points.front());
+      CGAL_assertion(get(vpmap,target(side_two.back(), tmesh))==side_points.back());
+      std::sort(side_points.begin(), side_points.end());
+      //\todo the reordering could lead to the apparition of null edges.
+      CGAL_assertion(std::unique(side_points.begin(), side_points.end())==side_points.end());
+      for(std::size_t i=0;i<side_two.size()-1;++i)
+        put(vpmap,target(side_two[i], tmesh), side_points[i+1]);
+
 
       CGAL_assertion( source(side_one.front(), tmesh) == *ref_vertices.first );
       CGAL_assertion( source(side_two.front(), tmesh) == *ref_vertices.first );
