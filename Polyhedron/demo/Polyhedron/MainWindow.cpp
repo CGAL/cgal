@@ -1579,10 +1579,13 @@ void MainWindow::on_actionSaveAs_triggered()
     item = scene->item(id);
     QVector<CGAL::Three::Polyhedron_demo_io_plugin_interface*> canSavePlugins;
     QStringList filters;
+      QString sf;
     Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
       if(plugin->canSave(item)) {
         canSavePlugins << plugin;
         filters += plugin->saveNameFilters();
+        if(plugin->isDefaultLoader(item))
+          sf = plugin->saveNameFilters().split(";;").first();
       }
     }
     QString ext1, ext2;
@@ -1603,7 +1606,6 @@ void MainWindow::on_actionSaveAs_triggered()
       continue;
     }
     QString caption = tr("Save %1 to File...").arg(item->name());
-    QString sf;
     QString filename =
         QFileDialog::getSaveFileName(this,
                                      caption,
