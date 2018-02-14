@@ -220,6 +220,8 @@ CMAKE_RC_FLAGS:STRING=' '
 
 //Flags used by the linker during the creation of dll's.
 CMAKE_SHARED_LINKER_FLAGS:STRING=' /STACK:10000000 /machine:X86 /DEBUG:NONE /INCREMENTAL:NO'
+
+//Flags used by the linker during the creation of static libs.
 CMAKE_STATIC_LINKER_FLAGS:STRING=' /STACK:10000000 /machine:X86 /DEBUG:NONE /INCREMENTAL:NO'
 
 //Flags used by the linker during debug builds.
