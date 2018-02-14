@@ -99,9 +99,14 @@ inline bool possibly(Uncertain<bool> c);
 #else // no CGAL_NO_ASSERTIONS
 #  define CGAL_assertion(EX) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
-#  define CGAL_destructor_assertion(EX) \
-   (CGAL::possibly(EX)||std::uncaught_exception()?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
-#  define CGAL_assertion_msg(EX,MSG) \
+#  if __cpp_lib_uncaught_exceptions // C++17
+#    define CGAL_destructor_assertion(EX) \
+     (CGAL::possibly(EX)||(std::uncaught_exceptions() > 0)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
+#  else // use C++03 `std::uncaught_exception()`
+#    define CGAL_destructor_assertion(EX) \
+     (CGAL::possibly(EX)||std::uncaught_exception()?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
+#  endif // use C++03 `std::uncaught_exception()`
+#  define CGAL_assertion_msg(EX,MSG)                                    \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_assertion_code(CODE) CODE
 #  define CGAL_assume(EX) CGAL_assertion(EX)
