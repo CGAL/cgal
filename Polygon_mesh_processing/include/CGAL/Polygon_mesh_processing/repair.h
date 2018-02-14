@@ -1473,7 +1473,7 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
       bool border_edges_found=false; // indicates at least one face incident to
                                      // the mesh border will be removed. In that
                                      // case, border halfedges should not be removed.
-      
+
       std::vector<face_descriptor> cc_to_remove;
       std::vector<halfedge_descriptor> cc_border_he;
       BOOST_FOREACH(face_descriptor f, faces(filtered))
@@ -1492,7 +1492,7 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
           cc_to_remove.push_back(f);
         }
       }
-      
+
       border_halfedges(cc_to_remove,
                        filtered ,
                        std::back_inserter(cc_border_he),
@@ -1520,14 +1520,14 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
         all_fixed = false; //technically no hole was filled but we shall need to re-compute the self-inter as we did not treat them.
         continue;
       }
-      
+
       /// remove the selection
       std::set<vertex_descriptor> vertices_to_remove;
       std::set<edge_descriptor>  edges_to_remove;
       // When at least one face incident to the mesh border is set
       // to be removed, we should pay attention not to remove
       // the border halfedge that is part of the mesh.
-      
+
       // first collect all vertices and edges incident to the faces to remove
       BOOST_FOREACH(face_descriptor fh, cc_to_remove)
       {
@@ -1538,7 +1538,7 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
           edges_to_remove.insert(edge(h,tm));
         }
       }
-      
+
       if (border_edges_found){
         // detect cycles of input border halfedges:
         // if such a cycle is found input border halfedges are removed to
@@ -1552,7 +1552,7 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
           if ( is_border(opposite(h, tm), tm) )
             boundary_set.insert(opposite(h, tm));
         }
-        
+
         BOOST_FOREACH(halfedge_descriptor hd, boundary_set)
         {
           CGAL_assertion(is_border(hd,tm));
@@ -1573,7 +1573,7 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
                 cycles.insert(h);
           }
         }
-        
+
         //remove cycle edges
         if (!cycles.empty())
         {
@@ -1587,7 +1587,7 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
           tmp.swap(cc_border_he);
         }
       }
-      
+
       // do not remove edges on the boundary of the selection of faces,
       // nor its vertices
       BOOST_FOREACH(halfedge_descriptor h, cc_border_he)
@@ -1600,18 +1600,17 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
         std::cout << "DEBUG: is_valid(tm) in one_step, before mesh changes? ";
         std::cout << is_valid(tm) << std::endl;
       }
-      
-      
+
       //try hole_filling.
       typedef typename boost::property_traits<VertexPointMap>::value_type Point;
       std::vector<Point> hole_border;
       std::vector<Point> third_points;
       std::vector<vertex_descriptor> border_vertices;
-      for(int id = static_cast<int>(cc_border_he.size())-1; 
+      for(int id = static_cast<int>(cc_border_he.size())-1;
           id >=0; --id)
       {
         halfedge_descriptor h = cc_border_he[id];
-        vertex_descriptor v = target(h, tm); 
+        vertex_descriptor v = target(h, tm);
         Point p = get(vpmap, v);
         hole_border.push_back(p);
         border_vertices.push_back(v);
@@ -1628,7 +1627,7 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
         triangulate_hole_polyline(hole_border,
                                   third_points,
                                   std::back_inserter(patch),
-                                  parameters::use_delaunay_triangulation(false)); 
+                                  parameters::use_delaunay_triangulation(false));
 #endif
         if (patch.size() == 0)
         {
@@ -1638,7 +1637,7 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
           continue;
         }
       }
-      
+
       // now remove edges,
       BOOST_FOREACH(edge_descriptor e, edges_to_remove)
           remove_edge(e, tm);
@@ -1656,12 +1655,12 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
         halfedge_descriptor he = cc_border_he[h];
         set_face(opposite(he, tm),graph_traits::null_face(), tm);
         set_halfedge(target(opposite(he,tm), tm), opposite(he, tm), tm);
-        set_next(opposite(cc_border_he[(h+1)%cc_border_he.size()], tm), opposite(he ,tm), tm); 
+        set_next(opposite(cc_border_he[(h+1)%cc_border_he.size()], tm), opposite(he ,tm), tm);
       }
 
       if (verbose)
         std::cout << "  DEBUG: " << cc_to_remove.size() << " triangles removed" << std::endl;
-      
+
       //reconnect patch in hole
       for(std::size_t p=0; p<patch.size(); ++p)
       {
@@ -1705,7 +1704,7 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np,
 
     typedef std::pair<face_descriptor, face_descriptor> Face_pair;
     std::vector<Face_pair> self_inter;
-    // TODO : possible optimization to reduce the range to check with the bbox 
+    // TODO : possible optimization to reduce the range to check with the bbox
     // of the previous patches or something.
     self_intersections(tm, std::back_inserter(self_inter));
 
@@ -1738,7 +1737,7 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np,
 }
 
 template <class TriangleMesh>
-bool remove_self_intersections(TriangleMesh& tm, 
+bool remove_self_intersections(TriangleMesh& tm,
                                const int max_steps = 7, bool verbose=false)
 {
   return remove_self_intersections(tm, parameters::all_default(), max_steps, verbose);
