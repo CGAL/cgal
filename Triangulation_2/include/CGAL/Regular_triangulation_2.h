@@ -56,6 +56,7 @@ class Regular_triangulation_2
 
 public:
   typedef Self                                 Triangulation;
+  typedef Triangulation_2<Gt, Tds>             Triangulation_base;
   typedef Tds                                  Triangulation_data_structure;
   typedef Gt                                   Geom_traits;
 
