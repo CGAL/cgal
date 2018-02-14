@@ -62,7 +62,8 @@ public:
   SimplePolyhedronViewerQt(const Polyhedron& apoly, const char* title="",
                            bool anofaces=false,
                            const ColorFunctor& fcolor=ColorFunctor()) :
-    Base(title),
+    // First draw: no vertex; edges, faces; mono-color; inverse normal
+    Base(title, false, true, true, true, false),
     poly(apoly),
     m_nofaces(anofaces),
     m_fcolor(fcolor)

@@ -20,6 +20,22 @@
 #ifndef CGAL_DRAW_SURFACE_MESH_H
 #define CGAL_DRAW_SURFACE_MESH_H
 
+#ifdef DOXYGEN_RUNNING
+
+/*!
+\ingroup PkgDrawSurfaceMesh
+
+Open a new window and draw `asm`, an instance of the `CGAL::Surface_mesh` class. The function is blocking, that is the program continues as soon as the user closes the window. This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
+\tparam SM an instance of the `CGAL::Surface_mesh` class.
+\param asm the surface mesh to draw.
+
+\cgalModifEnd 
+*/
+template<class SM>
+void draw(const SM& asm);
+
+#else // DOXYGEN_RUNNING
+  
 #ifdef CGAL_USE_BASIC_VIEWER
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
@@ -27,7 +43,7 @@
 
 namespace CGAL
 {
-  
+
 // Default color functor; user can change it to have its own face color
 struct DefaultColorFunctorSM
 {
@@ -63,7 +79,8 @@ public:
   SimpleSurfaceMeshViewerQt(const SM& amesh, const char* title="",
                             bool anofaces=false,
                             const ColorFunctor& fcolor=ColorFunctor()) :
-    Base(title),
+    // First draw: no vertex; edges, faces; mono-color; inverse normal
+    Base(title, false, true, true, true, false),
     sm(amesh),
     m_nofaces(anofaces),
     m_fcolor(fcolor)
@@ -235,5 +252,7 @@ void draw(const SM&,
 } // End namespace CGAL
 
 #endif // CGAL_USE_BASIC_VIEWER
+
+#endif // DOXYGEN_RUNNING
 
 #endif // CGAL_DRAW_SURFACE_MESH_H

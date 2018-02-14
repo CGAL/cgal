@@ -60,7 +60,8 @@ public:
   SimpleTriangulation2ViewerQt(const T2& at2, const char* title="",
                                bool anofaces=false,
                                const ColorFunctor& fcolor=ColorFunctor()) :
-    Base(title),
+    // First draw: vertices; edges, faces; multi-color; no inverse normal
+    Base(title, true, true, true, false, false), 
     t2(at2),
     m_nofaces(anofaces),
     m_fcolor(fcolor)
@@ -94,10 +95,13 @@ protected:
   {
     clear();
 
-    for (typename T2::Finite_faces_iterator it=t2.finite_faces_begin();
-         it!=t2.finite_faces_end(); ++it)
-    { compute_face(it); } 
-
+    if (!m_nofaces)
+    {
+      for (typename T2::Finite_faces_iterator it=t2.finite_faces_begin();
+           it!=t2.finite_faces_end(); ++it)
+      { compute_face(it); } 
+    }
+    
     for (typename T2::Finite_edges_iterator it=t2.finite_edges_begin();
          it!=t2.finite_edges_end(); ++it)
     { compute_edge(it); } 

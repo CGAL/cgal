@@ -138,14 +138,19 @@ class Basic_viewer_qt : public QGLViewer, public QOpenGLFunctions_2_1
 
 public:
   // Constructor/Destructor
-  Basic_viewer_qt(const char* title="") :
+  Basic_viewer_qt(const char* title="",
+                  bool draw_vertices=false,
+                  bool draw_edges=true,
+                  bool draw_faces=true,
+                  bool use_mono_color=false,
+                  bool inverse_normal=false) :
     QGLViewer(CGAL::Qt::createOpenGLContext()),
-    m_draw_vertices(true),
-    m_draw_edges(true),
-    m_draw_faces(true),
+    m_draw_vertices(draw_vertices),
+    m_draw_edges(draw_edges),
+    m_draw_faces(draw_faces),
     m_flatShading(true),
-    m_use_mono_color(false),
-    m_inverse_normal(false),
+    m_use_mono_color(use_mono_color),
+    m_inverse_normal(inverse_normal),
     m_size_points(7.),
     m_size_edges(3.1),    
     m_vertices_mono_color(200, 60, 60),
@@ -800,8 +805,7 @@ protected:
         displayMessage("Flat shading.");
       else
         displayMessage("Gouraud shading.");
-      initialize_buffers();
-      update();
+      redraw();
     }
     else if ((e->key()==::Qt::Key_M) && (modifiers==::Qt::NoButton))
     {
@@ -814,8 +818,7 @@ protected:
       m_inverse_normal=!m_inverse_normal;
       displayMessage(QString("Inverse normal=%1.").arg(m_inverse_normal?"true":"false"));
       negate_all_normals();
-      initialize_buffers();
-      update();
+      redraw();
     }
     else if ((e->key()==::Qt::Key_V) && (modifiers==::Qt::NoButton))
     {

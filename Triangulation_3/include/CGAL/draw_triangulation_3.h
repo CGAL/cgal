@@ -64,7 +64,8 @@ public:
   SimpleTriangulation3ViewerQt(const T3& at3, const char* title="",
                                bool anofaces=false,
                                const ColorFunctor& fcolor=ColorFunctor()) :
-    Base(title),
+    // First draw: vertices; edges, faces; multi-color; no inverse normal
+    Base(title, true, true, true, false, false), 
     t3(at3),
     m_nofaces(anofaces),
     m_fcolor(fcolor)
@@ -98,10 +99,13 @@ protected:
   {
     clear();
 
-    for (typename T3::Finite_facets_iterator it=t3.finite_facets_begin();
-         it!=t3.finite_facets_end(); ++it)
-    { compute_face(it); } 
-
+    if (!m_nofaces)
+    {
+      for (typename T3::Finite_facets_iterator it=t3.finite_facets_begin();
+           it!=t3.finite_facets_end(); ++it)
+      { compute_face(it); } 
+    }
+    
     for (typename T3::Finite_edges_iterator it=t3.finite_edges_begin();
          it!=t3.finite_edges_end(); ++it)
     { compute_edge(it); } 
@@ -155,7 +159,7 @@ void draw(const T3& at3,
 
 template<class T3>
 void draw(const T3& at3,
-          const char* title="t3_viewer",
+          const char* title="T3 Viewer",
           bool nofill=false)
 { draw<T3, DefaultColorFunctorT3>(at3, title, nofill); }
 
@@ -178,7 +182,7 @@ void draw(const T3&,
   
 template<class T3>
 void draw(const T3&,
-          const char* ="t3_viewer",
+          const char* ="T3 Viewer",
           bool=false)
 {
   std::cerr<<"Impossible to draw a Triangulation_3 because CGAL_USE_BASIC_VIEWER is not defined."

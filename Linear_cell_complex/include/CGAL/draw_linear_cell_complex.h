@@ -88,7 +88,8 @@ public:
   ///        usefull for very big object where this time could be long)
   SimpleLCCViewerQt(const LCC& alcc, const char* title="", bool anofaces=false,
                     const ColorFunctor& fcolor=ColorFunctor()) :
-    Base(title),
+    // First draw: vertices; edges, faces; multi-color; inverse normal
+    Base(title, true, true, true, false, true), 
     lcc(alcc),
     m_nofaces(anofaces),
     m_fcolor(fcolor)
