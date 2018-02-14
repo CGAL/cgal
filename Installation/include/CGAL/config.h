@@ -527,9 +527,12 @@ using std::max;
 // Macro to specify a 'noreturn' attribute.
 #if defined(__GNUG__) || __has_attribute(__noreturn__)
 #  define CGAL_NORETURN  __attribute__ ((__noreturn__))
-#else
+#elif defined (_MSC_VER)
+#  define CGAL_NORETURN __declspec(noreturn)
+#else  
 #  define CGAL_NORETURN
 #endif
+
 
 // Macro CGAL_ASSUME
 // Call a builtin of the compiler to pass a hint to the compiler
