@@ -29,7 +29,6 @@ Open a new window and draw `asm`, an instance of the `CGAL::Surface_mesh` class.
 \tparam SM an instance of the `CGAL::Surface_mesh` class.
 \param asm the surface mesh to draw.
 
-\cgalModifEnd 
 */
 template<class SM>
 void draw(const SM& asm);
