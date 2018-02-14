@@ -1,8 +1,7 @@
 include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Macros.cmake)
 
-option(CGAL_DEV_MODE "
-Activate the CGAL developers mode. \
-See https://github.com/CGAL/cgal/wiki/CGAL_DEV_MODE"
+option(CGAL_DEV_MODE
+  "Activate the CGAL developers mode. See https://github.com/CGAL/cgal/wiki/CGAL_DEV_MODE"
   FALSE)
 
 if(RUNNING_CGAL_AUTO_TEST)
