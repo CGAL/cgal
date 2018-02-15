@@ -371,9 +371,6 @@ bool is_valid_polygon_mesh(const PolygonMesh& g, bool verb = false)
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor     vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor       face_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_iterator       vertex_const_iterator;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_iterator     halfedge_const_iterator;
-  typedef typename boost::graph_traits<PolygonMesh>::face_iterator         face_const_iterator;
   typedef typename boost::graph_traits<PolygonMesh>::vertices_size_type    vertex_size_type;
   typedef typename boost::graph_traits<PolygonMesh>::halfedges_size_type   halfedges_size_type;
   typedef typename boost::graph_traits<PolygonMesh>::faces_size_type       faces_size_type;
