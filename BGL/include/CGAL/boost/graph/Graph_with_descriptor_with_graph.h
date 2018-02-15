@@ -691,7 +691,7 @@ template <class Graph>
 bool
 is_valid(const Graph_with_descriptor_with_graph<Graph> & w, bool verbose = false)
 {
-  return is_valid(*w.graph,verbose);
+  return is_valid_polygon_mesh(*w.graph,verbose);
 }
 
 

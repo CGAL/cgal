@@ -557,7 +557,7 @@ valid = valid && (n == num_h);
 if ( n != num_h)
   verr << "counting halfedges failed." << std::endl;
 
-verr << "end of CGAL::Polyhedron_3<...>::is_valid(): structure is "
+verr << "end of CGAL::is_valid_polygon_mesh(): structure is "
    << ( valid ? "valid." : "NOT VALID.") << std::endl;
 return valid;
 }

@@ -54,7 +54,7 @@ void test_surface_mesh(const char* fname)
   CGAL::Polygon_mesh_processing::stitch_borders(m);
   //todo : add a validity test
 
-  assert(is_valid(m));
+  assert(is_valid_polygon_mesh(m));
 
   std::cout << "OK\n";
 }

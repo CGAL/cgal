@@ -257,6 +257,7 @@ void test_read(const G& g)
   assert(CGAL::is_valid_polygon_mesh(g));
 }
 
+
 template <typename Graph>
 void
 test(const std::vector<Graph>& graphs)

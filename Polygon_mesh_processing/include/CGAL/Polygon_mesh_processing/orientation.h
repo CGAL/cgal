@@ -480,7 +480,7 @@ void orient(TriangleMesh& tm, const NamedParameters& np)
       NamedParameters>::const_type Fid_map;
 
   CGAL_assertion(is_triangle_mesh(tm));
-  CGAL_assertion(is_valid(tm));
+  CGAL_assertion(is_valid_polygon_mesh(tm));
   CGAL_assertion(is_closed(tm));
 
   using boost::choose_param;

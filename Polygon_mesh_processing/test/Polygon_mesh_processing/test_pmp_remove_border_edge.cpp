@@ -32,7 +32,7 @@ void test_middle_edge()
   CGAL_assertion( h!=GT::null_halfedge() );
   CGAL::Polygon_mesh_processing::remove_a_border_edge(edge(h,tm), tm);
   
-  CGAL_assertion(is_valid(tm));
+  CGAL_assertion(is_valid(is_valid_polygon_mesh));
   CGAL_assertion(is_triangle_mesh(tm));
   std::ofstream out("edge_middle_out.off");
   out << tm;
@@ -58,7 +58,7 @@ void test_edge_border_case1()
   CGAL_assertion( h!=GT::null_halfedge() );
   CGAL::Polygon_mesh_processing::remove_a_border_edge(edge(h,tm), tm);
   
-  CGAL_assertion(is_valid(tm));
+  CGAL_assertion(is_valid_polygon_mesh(tm));
   CGAL_assertion(is_triangle_mesh(tm));
   std::ofstream out("edge_border_case1_out.off");
   out << tm;
@@ -84,7 +84,7 @@ void test_edge_border_case2()
   CGAL_assertion( h!=GT::null_halfedge() );
   CGAL::Polygon_mesh_processing::remove_a_border_edge(edge(h,tm), tm);
   
-  CGAL_assertion(is_valid(tm));
+  CGAL_assertion(is_valid_polygon_mesh(tm));
   CGAL_assertion(is_triangle_mesh(tm));
   std::ofstream out("edge_border_case2_out.off");
   out << tm;

@@ -622,12 +622,6 @@ add_face(OPEN_MESH_CLASS& sm)
   return sm.new_face();
 }
 
-template<typename K>
-bool is_valid(OPEN_MESH_CLASS& sm, bool /* verbose */ = false)
-{
-  return CGAL::is_valid_polygon_mesh(sm);
-}
-
 } // namespace OpenMesh
 
 namespace CGAL {
