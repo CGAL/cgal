@@ -303,7 +303,7 @@ public:
 };
 
 template < class I,
-           class Val = typename CGAL::iterator_traits<I>::value_type >
+           class Val = typename std::iterator_traits<I>::value_type >
 class Counting_iterator {
 protected:
   I            nt;    // The internal iterator.
