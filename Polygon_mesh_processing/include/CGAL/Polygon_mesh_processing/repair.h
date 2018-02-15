@@ -37,7 +37,6 @@
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/boost/graph/selection.h>
-#include <CGAL/boost/graph/Face_filtered_graph.h>
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
@@ -1454,56 +1453,79 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
     while(non_manifold_vertex_removed);
 
     typedef CGAL::dynamic_face_property_t<std::size_t> Fid_tag;
-    typedef CGAL::Face_filtered_graph<TriangleMesh> Filtered_graph;
-    Filtered_graph filtered(tm, faces_to_remove);
-
-    // face cc map and face index map required by connected_components
-    typename boost::property_map<Filtered_graph, Fid_tag>::type
-      fcm = get(Fid_tag(), filtered), fid = get(Fid_tag(), filtered);
-
-    std::size_t index = 0;
-    BOOST_FOREACH(face_descriptor f, faces(filtered))
+    std::vector<std::set<face_descriptor> > ccs_to_remove;
+    while(!faces_to_remove.empty())
     {
-        put(fid, f, index++);
+      // Process a connected component of degenerate faces
+      // get all the faces from the connected component
+      // and the boundary edges
+      std::set<face_descriptor> cc_faces;
+      std::vector<face_descriptor> queue;
+      queue.push_back(*faces_to_remove.begin());
+      cc_faces.insert(*faces_to_remove.begin());
+      while(!queue.empty())
+      {
+        face_descriptor top=queue.back();
+        queue.pop_back();
+        BOOST_FOREACH(halfedge_descriptor hd,
+                      halfedges_around_face(halfedge(top, tm), tm) )
+        {
+          face_descriptor adjacent_face = face( opposite(hd, tm), tm );
+          if ( adjacent_face!=boost::graph_traits<TriangleMesh>::null_face()
+               && faces_to_remove.count(adjacent_face) !=0
+               && cc_faces.insert(adjacent_face).second)
+            queue.push_back(adjacent_face);
+          
+        }
+        faces_to_remove.erase(top);
+      }
+      ccs_to_remove.push_back(cc_faces);
     }
     std::size_t nb_components =
-      connected_components(filtered, fcm, parameters::face_index_map(fid));
+      ccs_to_remove.size();
     for(std::size_t i = 0; i < nb_components; ++i)
     {
+      std::set<face_descriptor> cc_to_remove = 
+          ccs_to_remove[i];
       bool border_edges_found=false; // indicates at least one face incident to
                                      // the mesh border will be removed. In that
                                      // case, border halfedges should not be removed.
 
-      std::vector<face_descriptor> cc_to_remove;
       std::vector<halfedge_descriptor> cc_border_he;
-      BOOST_FOREACH(face_descriptor f, faces(filtered))
+      BOOST_FOREACH(face_descriptor f, cc_to_remove)
       {
-        if(get(fcm, f) == i)
-        {
           if(!border_edges_found)
           {
             halfedge_descriptor h = halfedge(f,tm);
-            for (int i=0;i<3; ++i)
+            for (int j=0;j<3; ++j)
             {
               if ( is_border( opposite(h, tm), tm) )
                 border_edges_found = true;
             }
           }
-          cc_to_remove.push_back(f);
-        }
+      }
+        typedef CGAL::dynamic_face_property_t<std::size_t> Fid_tag;
+      typename boost::property_map<TriangleMesh, Fid_tag>::type
+          fid = get(Fid_tag(), tm);
+      std::size_t index = 0;
+      //todo: not good at all. Maybe we shouldn't use border_halfedges so we don't need fid.
+      BOOST_FOREACH(face_descriptor f, faces(tm))
+      {
+        put(fid, f, index++);
       }
 
       border_halfedges(cc_to_remove,
-                       filtered ,
+                       tm,
                        std::back_inserter(cc_border_he),
                        parameters::face_index_map(fid));
+      
       //sort halfedges
       for(std::size_t h=0; h<cc_border_he.size()-2; ++h)
       {
-        vertex_descriptor tgt = target(cc_border_he[h], filtered);
+        vertex_descriptor tgt = target(cc_border_he[h], tm);
         for(std::size_t j=h; j<cc_border_he.size(); ++j)
         {
-          if(tgt == source(cc_border_he[j], filtered))
+          if(tgt == source(cc_border_he[j], tm))
           {
             std::swap(cc_border_he[h+1], cc_border_he[j]);
             break;
