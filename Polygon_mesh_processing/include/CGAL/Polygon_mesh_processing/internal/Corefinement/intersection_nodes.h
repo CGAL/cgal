@@ -234,6 +234,35 @@ public:
         to_exact( get(vpm_a, target(h_a,tm_a)) ) ) );
   }
 
+  // use to resolve intersection of 3 faces in autorefinement only
+  void add_new_node(halfedge_descriptor h1,
+                    halfedge_descriptor h2,
+                    halfedge_descriptor h3,
+                    const TriangleMesh& tm,
+                    const VertexPointMap& vpm)
+  {
+    // TODO Far from optimal!
+    typedef Exact_kernel::Plane_3 Plane_3;
+    Plane_3 p1(to_exact( get(vpm, source(h1,tm)) ),
+               to_exact( get(vpm, target(h1,tm)) ),
+               to_exact( get(vpm, target(next(h1,tm),tm)))),
+            p2(to_exact( get(vpm, source(h2,tm)) ),
+               to_exact( get(vpm, target(h2,tm)) ),
+               to_exact( get(vpm, target(next(h2,tm),tm)))),
+            p3(to_exact( get(vpm, source(h3,tm)) ),
+               to_exact( get(vpm, target(h3,tm)) ),
+               to_exact( get(vpm, target(next(h3,tm),tm))));
+    typename cpp11::result_of<
+      Exact_kernel::Intersect_3(Plane_3, Plane_3, Plane_3)
+    >::type inter_res = intersection(p1, p2, p3);
+
+    CGAL_assertion(inter_res != boost::none);
+    const Exact_kernel::Point_3* pt =
+      boost::get<Exact_kernel::Point_3>(&(*inter_res));
+    CGAL_assertion(pt!=NULL);
+    add_new_node(*pt);
+  }
+
   void add_new_node(halfedge_descriptor edge_1, face_descriptor face_2)
   {
     add_new_node(edge_1, face_2, tm1, tm2, vpm1, vpm2);
