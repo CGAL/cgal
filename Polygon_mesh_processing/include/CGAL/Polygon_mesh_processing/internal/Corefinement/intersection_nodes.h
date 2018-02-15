@@ -165,6 +165,7 @@ private:
   Double_to_exact double_to_exact;
   Exact_to_double exact_to_double;
   Exact_kernel        ek;
+  Exact_kernel::Intersect_3 exact_intersection;
   std::vector<vertex_descriptor> tm1_vertices, tm2_vertices;
 
 public:
@@ -254,7 +255,7 @@ public:
                to_exact( get(vpm, target(next(h3,tm),tm))));
     typename cpp11::result_of<
       Exact_kernel::Intersect_3(Plane_3, Plane_3, Plane_3)
-    >::type inter_res = intersection(p1, p2, p3);
+    >::type inter_res = exact_intersection(p1, p2, p3);
 
     CGAL_assertion(inter_res != boost::none);
     const Exact_kernel::Point_3* pt =
