@@ -127,14 +127,22 @@ if (CGAL_VERSION_NR)
 endif()
 file(WRITE ${release_dir}/include/CGAL/version.h "${file_content}")
 
-
-#make an additional copy for demos and examples for the testsuite
+# make an extra copy of examples and demos for the testsuite and generate
+# create_cgal_test_with_cmake for tests, demos, and examples
 if (TESTSUITE)
   file(GLOB tests RELATIVE "${release_dir}/test" "${release_dir}/test/*")
   foreach(d ${tests})
     if(IS_DIRECTORY "${release_dir}/test/${d}")
       if(NOT EXISTS "${release_dir}/test/${d}/cgal_test_with_cmake")
-        file(COPY "${release_dir}/developer_scripts/cgal_test_with_cmake" DESTINATION "${release_dir}/test/${d}")
+        execute_process(
+          COMMAND ${CMAKE_BINARY_DIR}/Scripts/developer_scripts/create_cgal_test_with_cmake
+          WORKING_DIRECTORY "${release_dir}/test/${d}"
+          RESULT_VARIABLE RESULT_VAR
+          OUTPUT_VARIABLE OUT_VAR
+        )
+        if(NOT "${RESULT_VAR}" STREQUAL "0")
+          message(FATAL_ERROR "Error while running create_cgal_test_with_cmake in ${release_dir}/test/${d}")
+        endif()
       endif()
     endif()
   endforeach()
@@ -152,7 +160,15 @@ if (TESTSUITE)
         file(COPY "${release_dir}/demo/${d}" DESTINATION "${release_dir}/tmp")
         file(RENAME "${release_dir}/tmp/${d}" "${release_dir}/test/${d}_Demo")
         if(NOT EXISTS "${release_dir}/test/${d}_Demo/cgal_test_with_cmake")
-          file(COPY "${release_dir}/developer_scripts/cgal_test_with_cmake" DESTINATION "${release_dir}/test/${d}_Demo")
+          execute_process(
+            COMMAND ${CMAKE_BINARY_DIR}/Scripts/developer_scripts/create_cgal_test_with_cmake --no-run
+            WORKING_DIRECTORY "${release_dir}/test/${d}_Demo"
+            RESULT_VARIABLE RESULT_VAR
+            OUTPUT_VARIABLE OUT_VAR
+          )
+          if(NOT "${RESULT_VAR}" STREQUAL "0")
+            message(FATAL_ERROR "Error while running create_cgal_test_with_cmake in ${release_dir}/test/${d}_Demo")
+          endif()
         endif()
       endif()
     endif()
@@ -165,7 +181,15 @@ if (TESTSUITE)
       file(COPY "${release_dir}/examples/${d}" DESTINATION "${release_dir}/tmp")
       file(RENAME "${release_dir}/tmp/${d}" "${release_dir}/test/${d}_Examples")
       if(NOT EXISTS "${release_dir}/test/${d}_Examples/cgal_test_with_cmake")
-        file(COPY "${release_dir}/developer_scripts/cgal_test_with_cmake" DESTINATION "${release_dir}/test/${d}_Examples")
+        execute_process(
+          COMMAND ${CMAKE_BINARY_DIR}/Scripts/developer_scripts/create_cgal_test_with_cmake
+          WORKING_DIRECTORY "${release_dir}/test/${d}_Examples"
+          RESULT_VARIABLE RESULT_VAR
+          OUTPUT_VARIABLE OUT_VAR
+        )
+        if(NOT "${RESULT_VAR}" STREQUAL "0")
+          message(FATAL_ERROR "Error while running create_cgal_test_with_cmake in ${release_dir}/test/${d}_Examples")
+        endif()
       endif()
     endif()
   endforeach()
