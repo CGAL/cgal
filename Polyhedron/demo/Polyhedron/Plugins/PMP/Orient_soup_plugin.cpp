@@ -7,6 +7,7 @@
 
 #include "Scene_polygon_soup_item.h"
 #include "Scene_polyhedron_item.h"
+#include "Scene_polylines_item.h"
 #include "Scene_surface_mesh_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
@@ -45,6 +46,7 @@ public Q_SLOTS:
   void orientSM();
   void shuffle();
   void displayNonManifoldEdges();
+  void createPolyline();
 
 private:
   template<class Item>
@@ -56,6 +58,7 @@ private:
   QAction* actionOrientPoly;
   QAction* actionOrientSM;
   QAction* actionShuffle;
+  QAction* actionNMToPolyline;
   QAction* actionDisplayNonManifoldEdges;
 
 }; // end Polyhedron_demo_orient_soup_plugin
@@ -88,6 +91,10 @@ void Polyhedron_demo_orient_soup_plugin::init(QMainWindow* mainWindow,
   actionDisplayNonManifoldEdges->setProperty("subMenuName", "View");
   connect(actionDisplayNonManifoldEdges, SIGNAL(triggered()),
           this, SLOT(displayNonManifoldEdges()));
+  actionNMToPolyline = new QAction(tr("Non Manifold Edges to Polyline"), mainWindow);
+  actionNMToPolyline->setProperty("subMenuName", "Polygon Mesh Processing");
+  connect(actionNMToPolyline, &QAction::triggered,
+          this, &Polyhedron_demo_orient_soup_plugin::createPolyline);
 }
 
 QList<QAction*> Polyhedron_demo_orient_soup_plugin::actions() const {
@@ -95,6 +102,7 @@ QList<QAction*> Polyhedron_demo_orient_soup_plugin::actions() const {
       << actionOrientPoly
       << actionOrientSM
       << actionShuffle
+      << actionNMToPolyline
       << actionDisplayNonManifoldEdges;
 }
 
@@ -271,5 +279,34 @@ void Polyhedron_demo_orient_soup_plugin::displayNonManifoldEdges()
     QApplication::restoreOverrideCursor();
   }
 }
+void Polyhedron_demo_orient_soup_plugin::createPolyline()
+{
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
+  
+  Scene_polygon_soup_item* item =
+    qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
+
+  if(item)
+  {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    Scene_polylines_item* poly = 
+        new Scene_polylines_item();
+    Polygon_soup::Edges nm_edges = item->non_manifold_edges();
+    BOOST_FOREACH(Polygon_soup::Edge edge, nm_edges)
+    {
+      Point_3 a(item->points()[edge[0]]), b(item->points()[edge[1]]);
+      Scene_polylines_item::Polyline new_edge;
+      new_edge.push_back(a);
+      new_edge.push_back(b);
+      poly->polylines.push_back(new_edge);
+    }
+    poly->setName(QString("Non Manifold Edges of %1").arg(item->name()));
+    poly->setColor(QColor(Qt::red));
+    
+    scene->addItem(poly);
+    QApplication::restoreOverrideCursor();
+  }  
+}
 
 #include "Orient_soup_plugin.moc"
+

@@ -920,3 +920,9 @@ void Scene_polygon_soup_item::itemAboutToBeDestroyed(Scene_item *item)
     }
   }
 }
+
+const Polygon_soup::Edges& 
+Scene_polygon_soup_item::non_manifold_edges() const
+{
+  return d->soup->non_manifold_edges;
+}
