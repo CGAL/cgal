@@ -870,7 +870,7 @@ public:
         typename EK::Point_3 p = nodes.to_exact(get(vpm,f_vertices[0])),
                              q = nodes.to_exact(get(vpm,f_vertices[1])),
                              r = nodes.to_exact(get(vpm,f_vertices[2]));
-
+///TODO use a positive normal and remove all work around to guarantee that triangulation of coplanar patches are compatible
         CDT_traits traits(typename EK::Construct_normal_3()(p,q,r));
         CDT cdt(traits);
 
