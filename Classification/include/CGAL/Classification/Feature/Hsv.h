@@ -26,6 +26,7 @@
 #include <vector>
 
 #include <CGAL/Classification/Color.h>
+#include <CGAL/Classification/Feature_base.h>
 
 namespace CGAL {
 

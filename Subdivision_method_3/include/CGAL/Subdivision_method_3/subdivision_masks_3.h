@@ -30,6 +30,7 @@
 
 #include <CGAL/circulator.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/property_maps.h>
 
 namespace CGAL {
 

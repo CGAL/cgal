@@ -26,6 +26,8 @@
 
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Iterator_range.h>
 
 #include <iostream>
 #include <iterator>

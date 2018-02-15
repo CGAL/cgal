@@ -1015,7 +1015,7 @@ void MainWindow::open(QString filename)
     Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
       if ( !io_plugin->canLoad() ) continue;
       all_items << io_plugin->name();
-      if ( file_matches_filter(io_plugin->loadNameFilters(), filename) )
+      if ( file_matches_filter(io_plugin->loadNameFilters(), filename.toLower()) )
         selected_items << io_plugin->name();
     }
   }
@@ -1588,6 +1588,14 @@ void MainWindow::on_actionSaveAs_triggered()
     QString ext1, ext2;
     QRegExp extensions("\\(\\*\\..+\\)");
     QStringList filter_ext;
+    if(filters.empty())
+    {
+      QMessageBox::warning(this,
+                           tr("Cannot save"),
+                           tr("The selected object %1 cannot be saved.")
+                           .arg(item->name()));
+      return;
+    }
     Q_FOREACH(QString s, filters.first().split(";;"))
     {
       int pos = extensions.indexIn(s);
@@ -1642,7 +1650,7 @@ void MainWindow::save(QString filename, CGAL::Three::Scene_item* item) {
   bool saved = false;
   Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
     if(  plugin->canSave(item) &&
-        file_matches_filter(plugin->saveNameFilters(),filename) )
+        file_matches_filter(plugin->saveNameFilters(),filename.toLower()) )
     {
       if(plugin->save(item, fileinfo))
       {

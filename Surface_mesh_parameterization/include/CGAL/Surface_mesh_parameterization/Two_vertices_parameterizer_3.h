@@ -27,7 +27,9 @@
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <boost/foreach.hpp>
+#include <boost/function_output_iterator.hpp>
 
 #include <cfloat>
 #include <climits>

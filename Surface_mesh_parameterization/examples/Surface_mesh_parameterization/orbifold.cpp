@@ -3,8 +3,6 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/Seam_mesh.h>
 
-#include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
-#include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/internal/shortest_path.h>
 
 #include <CGAL/Surface_mesh_parameterization/Orbifold_Tutte_parameterizer_3.h>

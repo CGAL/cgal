@@ -23,8 +23,11 @@
 #define CGAL_CLASSIFICATION_FEATURE_ECHO_SCATTER_H
 
 #include <CGAL/license/Classification.h>
-
+#include <CGAL/Classification/Feature_base.h>
+#include <CGAL/Classification/Planimetric_grid.h>
+#include <CGAL/number_utils.h>
 #include <vector>
+#include <cmath>
 
 
 namespace CGAL {

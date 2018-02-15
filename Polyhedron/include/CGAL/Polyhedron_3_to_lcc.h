@@ -25,6 +25,7 @@
 #include <CGAL/assertions.h>
 #include <iostream>
 #include <map>
+#include <CGAL/Polyhedron_3.h>
 
 namespace CGAL {
 

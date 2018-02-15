@@ -790,7 +790,7 @@ Scene::setData(const QModelIndex &index,
         return true;
         break;
     case ColorColumn:
-      if(!selectionIndices().empty())
+      if(selectionIndices().contains(item_id(item)))
         Q_FOREACH(Item_id item_index, selectionIndices())
           this->item(item_index)->setColor(value.value<QColor>());
       else

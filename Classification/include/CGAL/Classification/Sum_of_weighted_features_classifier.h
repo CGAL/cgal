@@ -27,6 +27,7 @@
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
 #include <CGAL/Classification/internal/verbosity.h>
+#include <CGAL/tags.h>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -34,6 +35,8 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+#include <map>
+#include <iostream>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
