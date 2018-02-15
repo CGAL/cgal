@@ -84,6 +84,7 @@ public:
   }
 
 
+
   template <typename IntType>
   IntType
   uniform_smallint(IntType lower, IntType upper)
@@ -93,6 +94,16 @@ public:
     boost::variate_generator<boost::rand48&, boost::uniform_smallint<IntType> > generator(rng,dist);
     
     return generator();
+  }
+
+  // Overload to avoid a warning with VC++
+  template <>
+  inline
+  std::size_t
+  uniform_smallint(std::size_t lower, std::size_t upper)
+  {
+    return uniform_smallint(static_cast<boost::rand48::result_type>(lower),
+                            static_cast<boost::rand48::result_type>(upper));
   }
 
   template <typename IntType>
