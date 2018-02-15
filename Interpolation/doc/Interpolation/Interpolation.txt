@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor chapinterpolation
 \cgalAutoToc
 
-\authors Julia Fl&ouml;totto, Mael Rouxel-Labb&eacute;
+\authors Julia Fl&ouml;totto
 
 This package implements various neighbor coordinate computation functions
 as well as different methods for scattered data interpolation.
