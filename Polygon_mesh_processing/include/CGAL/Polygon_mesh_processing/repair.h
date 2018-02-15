@@ -1492,17 +1492,18 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
                                      // case, border halfedges should not be removed.
 
       std::vector<halfedge_descriptor> cc_border_he;
+      std::vector<halfedge_descriptor> cc_boundary_hedges;
       BOOST_FOREACH(face_descriptor f, cc_to_remove)
       {
-          if(!border_edges_found)
+        halfedge_descriptor h = halfedge(f,tm);
+        for (int j=0;j<3; ++j)
+        {
+          if ( is_border( opposite(h, tm), tm) )
           {
-            halfedge_descriptor h = halfedge(f,tm);
-            for (int j=0;j<3; ++j)
-            {
-              if ( is_border( opposite(h, tm), tm) )
-                border_edges_found = true;
-            }
+            border_edges_found = true;
+            cc_boundary_hedges.push_back(h);
           }
+        }
       }
         typedef CGAL::dynamic_face_property_t<std::size_t> Fid_tag;
       typename boost::property_map<TriangleMesh, Fid_tag>::type
@@ -1518,9 +1519,9 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
                        tm,
                        std::back_inserter(cc_border_he),
                        parameters::face_index_map(fid));
-      
+
       //sort halfedges
-      for(std::size_t h=0; h<cc_border_he.size()-2; ++h)
+      for(int h=0; h<static_cast<int>(cc_border_he.size())-2; ++h)
       {
         vertex_descriptor tgt = target(cc_border_he[h], tm);
         for(std::size_t j=h; j<cc_border_he.size(); ++j)
@@ -1569,7 +1570,7 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
         // if a small hole is incident to the faces to be removed).
         std::set<halfedge_descriptor> cycles;
         std::set<halfedge_descriptor>  boundary_set;
-        BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+        BOOST_FOREACH(halfedge_descriptor h, cc_boundary_hedges)
         {
           if ( is_border(opposite(h, tm), tm) )
             boundary_set.insert(opposite(h, tm));
