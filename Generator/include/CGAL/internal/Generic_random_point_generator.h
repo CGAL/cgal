@@ -21,12 +21,15 @@
 #ifndef CGAL_INTERNAL_GENERIC_RANDOM_POINT_GENERATOR_H
 #define CGAL_INTERNAL_GENERIC_RANDOM_POINT_GENERATOR_H
 
+#include <CGAL/assertions.h>
+#include <CGAL/Iterator_range.h>
 #include <CGAL/generators.h>
 #include <CGAL/Random.h>
 #include <CGAL/property_map.h>
-#include <vector>
+
 #include <boost/foreach.hpp>
-#include <CGAL/Iterator_range.h>
+
+#include <vector>
 
 namespace CGAL {
 
@@ -56,6 +59,8 @@ public:
     , random(rnd)
   {
     std::size_t input_size = input.size();
+    CGAL_precondition(input_size > 0);
+
     ids.reserve(input_size);
     weights.reserve(input_size);
 
@@ -70,9 +75,11 @@ public:
       total_weight += to_double( compute_weight(object) );
       weights.push_back(total_weight);
     }
+
     //generate the first point
     generate_point();
   }
+
   This& operator++()
   {
     generate_point();
@@ -84,6 +91,7 @@ public:
     ++(*this);
     return tmp;
   }
+
   double sum_of_weights() const
   {
     if (weights.empty())
