@@ -1369,11 +1369,12 @@ struct Is_selected{
 } // end of namespace internal
 
 template <class TriangleMesh,  class face_descriptor, class NamedParameters>
-bool remove_self_intersections_one_step(TriangleMesh& tm,
-                                        std::set<face_descriptor>& faces_to_remove,
-                                        int step,
-                                        bool verbose,
-                                        NamedParameters np)
+std::pair< bool, bool >
+remove_self_intersections_one_step(TriangleMesh& tm,
+                                   std::set<face_descriptor>& faces_to_remove,
+                                   int step,
+                                   bool verbose,
+                                   NamedParameters np)
 {
   CGAL_assertion(tm.is_valid());
 
@@ -1386,6 +1387,9 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
                                       get_property_map(vertex_point, tm));
 
   bool all_fixed = true; // indicates if all removal went well
+  // indicates if a removal was not possible because the region handle has
+  // some boundary cycle of halfedges
+  bool topology_issue = false;
   if (verbose)
   {
     std::cout << "DEBUG: is_valid in one_step(tm)? ";
@@ -1416,7 +1420,7 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
           if ( is_border( opposite(h, tm), tm) ||
                faces_to_remove.count( face( opposite(h, tm), tm) ) == 0)
           {
-              boundary_hedges.push_back(h);
+            boundary_hedges.push_back(h);
           }
           h=next(h, tm);
         }
@@ -1483,14 +1487,55 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
 
       if(!is_selection_a_topologial_disk(cc_faces, tm))
       {
-        if(verbose)
-          std::cout << "DEBUG: Step aborted because the selection"
-                       "does not have the topology of a disk.\n";
-        /// TODO shall we try to make the selection a disk?
-        // TODO this is not a very good choice in case the hole is not a disk because
-        //      of some boundary cycle edges. Indeed we will run the hole step without being
-        //      able to do anything.
-        all_fixed = false; //technically no hole was filled but we shall need to re-compute the self-inter as we did not treat them.
+        // check if the selection contains cycles of border halfedges
+        bool only_border_edges = true;
+        std::set<halfedge_descriptor> mesh_border_hedge;
+
+        BOOST_FOREACH(halfedge_descriptor h, cc_border_hedges)
+        {
+          if ( !is_border(opposite(h, tm), tm) )
+            only_border_edges = false;
+          else
+            mesh_border_hedge.insert( opposite(h, tm) );
+        }
+        int nb_cycles=0;
+        while(!mesh_border_hedge.empty())
+        {
+          // we must count the number of cycle of boundary edges
+          halfedge_descriptor h_b = *mesh_border_hedge.begin(), h=h_b;
+          mesh_border_hedge.erase( mesh_border_hedge.begin() );
+          do{
+            h=next(h, tm);
+            if (h==h_b)
+            {
+              // found a cycle
+              ++nb_cycles;
+              break;
+            }
+            else
+            {
+              typename std::set<halfedge_descriptor>::iterator it =
+                mesh_border_hedge.find(h);
+              if ( it == mesh_border_hedge.end() )
+                break; // not a cycle
+              mesh_border_hedge.erase(it);
+            }
+          }while(true);
+        }
+
+        if(nb_cycles > only_border_edges ? 1 : 0 )
+        {
+          if(verbose)
+            std::cout << "DEBUG: CC not handled due to the presence of  "
+                      << nb_cycles << " of boundary edges\n";
+          topology_issue = true;
+        }
+        else
+        {
+          if(verbose)
+            std::cout << "DEBUG: CC not handled because it is not a topological disk\n";
+          all_fixed = false;
+        }
         continue;
       }
 
@@ -1623,7 +1668,7 @@ bool remove_self_intersections_one_step(TriangleMesh& tm,
       }
     }
   }
-  return all_fixed;
+  return std::make_pair(all_fixed, topology_issue);
 }
 
 template <class TriangleMesh, class NamedParameters>
@@ -1638,10 +1683,8 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np,
   remove_degenerate_faces(tm, np);
   // Look for self-intersections in the polyhedron and remove them
   int step=-1;
-  bool all_fixed=false; // indicates if the filling of all previously
-  // created holes failed. If true then no new
-  // self-intersection have been created and
-  // checking for it is useless.
+  bool all_fixed = true; // indicates if the filling of all created holes went fine
+  bool topology_issue = false; // indicates if some boundary cycles of edges are blocking the fixing
   while( ++step<max_steps )
   {
     if (verbose)
@@ -1674,8 +1717,14 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np,
       break;
     }
 
-    all_fixed =
+    cpp11::tie(all_fixed, topology_issue) =
       remove_self_intersections_one_step(tm, faces_to_remove, step, verbose, np);
+    if (all_fixed && topology_issue)
+    {
+      if (verbose)
+        std::cout<< "DEBUG: Process stopped because of boundary cycles of boundary edges involved in self-intersections.\n";
+      return false;
+    }
   }
 
   return step<max_steps;
