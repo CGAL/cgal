@@ -13,6 +13,7 @@ typedef CGAL::Simple_cartesian<double>                                Kernel;
 
 typedef CGAL::Triangulation_2<Kernel>                                 Triangulation;
 typedef CGAL::Delaunay_triangulation_2<Kernel>                        DT2;
+typedef CGAL::Regular_triangulation_2<Kernel>                         RT2;
 typedef CGAL::Constrained_triangulation_2<Kernel>                     CT2;
 typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel>            CDT2;
 typedef CGAL::Constrained_triangulation_plus_2<CDT2>                  CDTP2;
