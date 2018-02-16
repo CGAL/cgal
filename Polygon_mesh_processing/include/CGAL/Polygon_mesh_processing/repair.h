@@ -1676,7 +1676,6 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np,
                                const int max_steps = 7, bool verbose=false)
 {
   typedef boost::graph_traits<TriangleMesh> graph_traits;
-  typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename graph_traits::face_descriptor face_descriptor;
 
   // first handle the removal of degenerate faces
