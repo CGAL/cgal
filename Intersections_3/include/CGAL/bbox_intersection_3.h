@@ -32,6 +32,9 @@
 
 namespace CGAL {
 
+namespace Intersections {
+
+  namespace internal {
 // This function intersects a bbox with a ray, line or segment 
 // Its essentially a copy of the function that was in Bbox_3_intersections.cpp
 // But it must be a template function since the original kernel must be 
@@ -187,6 +190,8 @@ intersection_bl(const Bbox_3 &box,
 #endif
 }
 
+} // namespace internal
+} // namespace Intersections
 
 } //namespace CGAL
 

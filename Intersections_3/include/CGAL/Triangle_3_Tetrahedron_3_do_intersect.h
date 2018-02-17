@@ -35,6 +35,8 @@ namespace CGAL {
   template <class K>
   class Tetrahedron_3;
 
+namespace Intersections {
+  
 namespace internal {
 
 template <class K>
@@ -181,7 +183,8 @@ typename K::Boolean
 }
   
 } // namespace internal
-
+} // namespace Intersections
+  
 CGAL_DO_INTERSECT_FUNCTION(Triangle_3, Tetrahedron_3, 3)
 CGAL_DO_INTERSECT_FUNCTION(Segment_3, Tetrahedron_3, 3)
 CGAL_DO_INTERSECT_FUNCTION(Iso_cuboid_3, Tetrahedron_3, 3)

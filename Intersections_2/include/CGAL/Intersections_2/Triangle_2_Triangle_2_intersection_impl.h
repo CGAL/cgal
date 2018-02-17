@@ -34,6 +34,8 @@
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -349,6 +351,7 @@ intersection(const typename K::Triangle_2 &tr1,
 }
 
 } // namespace internal
+} // namespace Intersections
 
 CGAL_INTERSECTION_FUNCTION_SELF(Triangle_2, 2)
 

@@ -36,6 +36,8 @@
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -159,6 +161,7 @@ Segment_2_Line_2_pair<K>::intersection_segment() const
 }
 
 } // namespace internal
+} // namespace Intersections
 
 CGAL_INTERSECTION_FUNCTION(Segment_2, Line_2, 2)
 CGAL_DO_INTERSECT_FUNCTION(Segment_2, Line_2, 2)

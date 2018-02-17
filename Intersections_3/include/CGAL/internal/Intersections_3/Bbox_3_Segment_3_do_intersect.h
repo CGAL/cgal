@@ -44,6 +44,8 @@
 //    [t1, t2] intersects [0, 1].
 
 namespace CGAL {
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -458,7 +460,8 @@ namespace internal {
   }
 
 } // namespace internal
-
+} // namespace Intersections
+  
 template<typename K>
 bool do_intersect(const CGAL::Bbox_3 a,
                   const Segment_3<K>& b) {

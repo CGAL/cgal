@@ -32,6 +32,8 @@
 // inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
 
 namespace CGAL {
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -65,7 +67,9 @@ namespace internal {
                     const K&) {
     return do_intersect(ray, ic, K());
   }
+
 } // namespace internal
+} // namespace Intersections
 
 template<typename K>
 bool do_intersect(const Iso_cuboid_3<K> a,

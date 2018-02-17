@@ -26,8 +26,8 @@
 #include <CGAL/Triangle_2.h>
 
 namespace CGAL {
-
-
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -172,6 +172,7 @@ bool do_intersect(const typename K::Triangle_2 &t1,
 }
 
 } // namespace internal
+} // namespace Intersections
 
 CGAL_DO_INTERSECT_FUNCTION_SELF(Triangle_2, 2)
 

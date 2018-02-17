@@ -38,6 +38,8 @@
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -206,6 +208,7 @@ Ray_2_Iso_rectangle_2_pair<K>::intersection_point() const
 }
 
 } // namespace internal
+} // namespace Intersections
 
 CGAL_INTERSECTION_FUNCTION(Ray_2, Iso_rectangle_2, 2)
 CGAL_DO_INTERSECT_FUNCTION(Ray_2, Iso_rectangle_2, 2)

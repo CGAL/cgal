@@ -36,6 +36,8 @@
 #include <CGAL/internal/Intersections_3/Bbox_3_Plane_3_do_intersect.h>
 
 namespace CGAL {
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -396,7 +398,8 @@ namespace internal {
   }
 
 } // namespace internal
-
+} // namespace Intersections
+  
 template<typename K>
 bool do_intersect(const CGAL::Bbox_3& a,
                   const Triangle_3<K>& b) {

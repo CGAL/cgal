@@ -27,7 +27,7 @@
 #include <CGAL/Intersection_traits_3.h>
 
 namespace CGAL {
-
+namespace Intersections {
 namespace internal {
 
 template <class K>
@@ -74,7 +74,8 @@ intersection(const typename K::Iso_cuboid_3 &iso,
 }
 
 } // namespace internal
-
+} // namespace Intersections
+  
 CGAL_INTERSECTION_FUNCTION(Point_3, Iso_cuboid_3, 3)
 CGAL_DO_INTERSECT_FUNCTION(Point_3, Iso_cuboid_3, 3)
 

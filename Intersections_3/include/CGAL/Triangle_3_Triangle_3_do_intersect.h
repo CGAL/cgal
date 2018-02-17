@@ -31,6 +31,8 @@ namespace CGAL {
 
   template <class K>
   class Triangle_3;
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -450,7 +452,8 @@ do_intersect(const typename K::Triangle_3 &t1,
 }
 
 } // namespace internal
-
+} // namespace Intersections
+  
 CGAL_DO_INTERSECT_FUNCTION_SELF(Triangle_3, 3)
 
 } //namespace CGAL

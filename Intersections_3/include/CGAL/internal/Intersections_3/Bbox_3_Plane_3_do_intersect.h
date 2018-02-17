@@ -30,6 +30,8 @@
 // Opcode like
 
 namespace CGAL {
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -150,7 +152,8 @@ namespace internal {
   }
 
 } // namespace internal
-
+} // namespace Intersections
+  
 template<typename K>
 bool do_intersect(const CGAL::Bbox_3 a,
                   const Plane_3<K>& b) {

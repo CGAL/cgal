@@ -30,6 +30,8 @@
 
 
 namespace CGAL {
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -115,7 +117,8 @@ namespace internal {
     }
 
 } // namespace internal
-
+} // namespace Intersections
+  
 template<typename K>
 bool do_intersect(const CGAL::Bbox_3& a,
                   const Sphere_3<K>& b) {

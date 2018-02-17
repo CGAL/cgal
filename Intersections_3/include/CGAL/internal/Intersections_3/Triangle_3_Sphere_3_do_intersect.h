@@ -36,6 +36,8 @@ namespace CGAL {
   template <class K>
   class Line_3;
   
+namespace Intersections {
+  
 namespace internal {
   
 template <class K>
@@ -112,8 +114,10 @@ do_intersect(const typename K::Segment_3 &lin,
 {
   return squared_distance(sp.center(), lin) <= sp.squared_radius();
 }
+  
 } // namespace internal
-
+} // namespace Intersections
+  
 CGAL_DO_INTERSECT_FUNCTION(Triangle_3, Sphere_3, 3)
 CGAL_DO_INTERSECT_FUNCTION(Line_3, Sphere_3, 3)
 CGAL_DO_INTERSECT_FUNCTION(Ray_3, Sphere_3, 3)

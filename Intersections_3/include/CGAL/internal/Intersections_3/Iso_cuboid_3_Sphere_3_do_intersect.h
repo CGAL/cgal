@@ -28,6 +28,8 @@
 #include <CGAL/internal/Intersections_3/Bbox_3_Sphere_3_do_intersect.h>
 
 namespace CGAL {
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -46,10 +48,10 @@ namespace internal {
     {
       return do_intersect_sphere_box_3(sphere, ic, K());
     }
-
-
+  
 } // namespace internal
-
+} // namespace Intersections
+  
 template<typename K>
 bool do_intersect(const Iso_cuboid_3<K>& a,
                   const Sphere_3<K>& b) {

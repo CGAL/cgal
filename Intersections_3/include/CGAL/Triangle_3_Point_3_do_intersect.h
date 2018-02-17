@@ -35,6 +35,8 @@ namespace CGAL {
   template <class K>
   class Point_3;
 
+namespace Intersections {
+  
 namespace internal {
 
 template <class K>
@@ -103,7 +105,7 @@ bool do_intersect(const typename K::Point_3    &p,
 
 
 } // namespace internal
-
+} // namespace Intersections
  
 CGAL_DO_INTERSECT_FUNCTION(Triangle_3, Point_3, 3)
 

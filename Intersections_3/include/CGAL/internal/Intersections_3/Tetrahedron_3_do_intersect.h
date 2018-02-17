@@ -29,6 +29,8 @@
 #include <CGAL/internal/Intersections_3/Triangle_3_Sphere_3_do_intersect.h>
 
 namespace CGAL {
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -70,7 +72,7 @@ bool do_intersect(const typename K::Tetrahedron_3& tet,
 }
   
 } // namespace internal
-
+} // namespace Intersections
     
 template<typename K>
 bool do_intersect(const CGAL::Tetrahedron_3<K>& a,

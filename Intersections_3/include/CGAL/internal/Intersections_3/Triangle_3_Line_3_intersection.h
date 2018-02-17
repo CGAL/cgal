@@ -28,6 +28,9 @@
 #include <CGAL/intersections.h>
 
 namespace CGAL {
+  
+namespace Intersections {
+  
 namespace internal {
 
 template <class K>
@@ -420,7 +423,8 @@ intersection(const typename K::Line_3 &l,
 
 
 } // end namespace internal
-
+} // namespace Intersections
+  
 CGAL_INTERSECTION_FUNCTION(Triangle_3, Line_3, 3)
 
 

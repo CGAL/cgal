@@ -38,6 +38,8 @@
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -453,6 +455,7 @@ intersection(const typename K::Segment_2 &seg1,
 }
 
 } // namespace internal
+} // namespace Intersections
 
 CGAL_INTERSECTION_FUNCTION_SELF(Segment_2, 2)
 CGAL_DO_INTERSECT_FUNCTION_SELF(Segment_2, 2)

@@ -31,6 +31,8 @@
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -89,6 +91,7 @@ do_intersect(const typename K::Iso_rectangle_2 &irect1,
 }
 
 } // namespace internal
+} // namespace Intersections
 
 
 CGAL_INTERSECTION_FUNCTION_SELF(Iso_rectangle_2, 2)

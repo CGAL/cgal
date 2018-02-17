@@ -34,6 +34,8 @@ namespace CGAL {
   template <class K>
   class Ray_3;
 
+  
+namespace Intersections {
 namespace internal {
 
 namespace R3T3_intersection{
@@ -380,7 +382,8 @@ do_intersect_coplanar(const typename K::Triangle_3 &t,
 
 
 } // namespace internal
-
+} // namespace Intersections
+  
 CGAL_DO_INTERSECT_FUNCTION(Triangle_3, Ray_3, 3)
 
 } //namespace CGAL

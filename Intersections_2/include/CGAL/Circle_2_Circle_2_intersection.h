@@ -31,6 +31,8 @@
 #include <CGAL/squared_distance_2_1.h>
 
 namespace CGAL {
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -49,6 +51,7 @@ do_intersect(const typename K::Circle_2 & circ1,
 }
 
 } // namespace internal
+} // namespace Intersections
 
 template <class K>
 inline

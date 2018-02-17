@@ -34,7 +34,11 @@
 #include <list>
 
 
-namespace CGAL{ namespace internal {
+namespace CGAL{ 
+  
+namespace Intersections {
+
+namespace internal {
 
   template <class K>
   typename Intersection_traits<K, typename K::Triangle_2, typename K::Iso_rectangle_2>::result_type
@@ -331,6 +335,7 @@ namespace CGAL{ namespace internal {
   }
   
 } //namespace internal
+} // namespace Intersections
 
 CGAL_INTERSECTION_FUNCTION(Triangle_2, Iso_rectangle_2, 2)
 CGAL_DO_INTERSECT_FUNCTION(Triangle_2, Iso_rectangle_2, 2)

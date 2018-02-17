@@ -48,7 +48,8 @@ intersection(const A <K> &c1, const B <K> &c2, OutputIterator res) \
 { \
   return typename K::Intersect_2()(c1, c2, res); \
 } \
-namespace internal { \
+namespace Intersections { \
+  namespace internal { \
   template <class K> \
   inline \
   bool \
@@ -59,6 +60,7 @@ namespace internal { \
 		return !res.empty(); \
   } \
 } \
+  } \
 template <class K> \
 inline \
 bool \

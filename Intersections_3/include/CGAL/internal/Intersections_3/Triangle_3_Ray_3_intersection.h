@@ -28,6 +28,9 @@
 #include <CGAL/intersections.h>
 
 namespace CGAL {
+  
+namespace Intersections {
+  
 namespace internal {
 
 template <class K>
@@ -577,11 +580,12 @@ typename Intersection_traits<K, typename K::Ray_3, typename K::Triangle_3>::resu
 intersection(const typename K::Ray_3 &r,
              const typename K::Triangle_3  &t,
              const K& k) {
-  return CGAL::internal::intersection(t, r, k);
+  return Intersections::internal::intersection(t, r, k);
 }
 
 } // end namespace internal
-
+} // namespace Intersections
+  
 CGAL_INTERSECTION_FUNCTION(Triangle_3, Ray_3, 3)
 
 } // end namespace CGAL

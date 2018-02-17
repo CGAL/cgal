@@ -32,6 +32,8 @@
 #include <CGAL/Kernel/global_functions_internal_2.h>
 
 namespace CGAL {
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -267,8 +269,8 @@ sign_of_cross(typename K::Direction_2 const &dir1,
 	      typename K::Direction_2 const &dir2,
 	      const K&)
 {
-    return static_cast<int>(internal::orientation(dir1.to_vector(),
-                                               dir2.to_vector(), K()));
+  return static_cast<int>(CGAL::internal::orientation(dir1.to_vector(),
+                                                      dir2.to_vector(), K()));
 }
 
 template <class K>
@@ -351,6 +353,7 @@ collinear_order(typename K::Point_2 const &pt1, typename K::Point_2 const & pt2)
 }
 
 } // namespace internal
+} // namespace Intersections
 
 } //namespace CGAL
 

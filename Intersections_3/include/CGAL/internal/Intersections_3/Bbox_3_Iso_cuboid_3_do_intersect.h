@@ -27,6 +27,8 @@
 #include <CGAL/Bbox_3.h>
 
 namespace CGAL {
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -45,7 +47,7 @@ namespace internal {
   }
 
 } // namespace internal
-
+} // namespace Intersections
 
 
 template<typename K>

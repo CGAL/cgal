@@ -89,13 +89,13 @@ public:
   result_type 
   operator()(const Segment_3 &s, const Triangle_3& t) const
   {
-    return internal::do_intersect(t,s, SFK());
+    return Intersections::internal::do_intersect(t,s, SFK());
   }
 
   result_type 
   operator()(const Triangle_3& t, const Segment_3 &s) const
   {
-    return internal::do_intersect(t,s, SFK());
+    return Intersections::internal::do_intersect(t,s, SFK());
   }
 
   result_type 
@@ -124,7 +124,7 @@ public:
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
       const Uncertain<result_type> ub = 
-        do_intersect_bbox_segment_aux
+        Intersections::internal::do_intersect_bbox_segment_aux
         <double,
          true, // bounded at t=0 
          true, // bounded at t=1 
@@ -167,7 +167,7 @@ public:
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
       const Uncertain<result_type> ub = 
-        do_intersect_bbox_segment_aux
+        Intersections::internal::do_intersect_bbox_segment_aux
         <double,
          true, // bounded at t=0 
          false,// not bounded at t=1 

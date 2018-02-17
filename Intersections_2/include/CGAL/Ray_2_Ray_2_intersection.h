@@ -38,6 +38,8 @@
 
 
 namespace CGAL {
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -257,6 +259,7 @@ intersection(const typename K::Ray_2 &ray1,
 }
 
 } // namespace internal
+} // namespace Intersections
 
 CGAL_INTERSECTION_FUNCTION_SELF(Ray_2, 2)
 CGAL_DO_INTERSECT_FUNCTION_SELF(Ray_2, 2)

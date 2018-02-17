@@ -34,6 +34,8 @@
 #include <CGAL/internal/Intersections_3/Bbox_3_Triangle_3_do_intersect.h>
 
 namespace CGAL {
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -52,7 +54,9 @@ namespace internal {
   {
     return do_intersect_bbox_or_iso_cuboid(triangle, bbox, k);
   }
+
 } // namespace internal
+} // namespace Intersections
 
 
 template<typename K>

@@ -336,7 +336,7 @@ namespace CGAL {
          typename Intersection_traits<SK, Sphere_3, Sphere_3>::result_type v = 
            SK().intersect_3_object()(s1, s2);
          if(!v) return res;
-         if(const Point_3* p = CGAL::internal::intersect_get<Point_3>(v)) {
+         if(const Point_3* p = CGAL::Intersections::internal::intersect_get<Point_3>(v)) {
             if(SK().has_on_3_object()(s3, *p)) {
               #if CGAL_INTERSECTION_VERSION < 2
               *res++ = make_object(std::make_pair(Circular_arc_point_3(*p),2u));
@@ -346,7 +346,7 @@ namespace CGAL {
             }
              return res;
          }
-         if(const Circle_3* c = CGAL::internal::intersect_get<Circle_3>(v)) {
+         if(const Circle_3* c = CGAL::Intersections::internal::intersect_get<Circle_3>(v)) {
             if(SK().has_on_3_object()(s3, *c)) {
               #if CGAL_INTERSECTION_VERSION < 2
               *res++ = make_object(*c);

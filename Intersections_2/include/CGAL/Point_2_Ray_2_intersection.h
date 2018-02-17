@@ -32,6 +32,8 @@
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
+  
+namespace Intersections {
 
 namespace internal {
 
@@ -81,6 +83,7 @@ intersection(const typename K::Ray_2 &ray,
 }
 
 } // namespace internal
+} // namespace Intersections
 
 CGAL_INTERSECTION_FUNCTION(Point_2, Ray_2, 2)
 CGAL_DO_INTERSECT_FUNCTION(Point_2, Ray_2, 2)

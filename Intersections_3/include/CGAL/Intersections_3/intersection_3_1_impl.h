@@ -224,6 +224,7 @@ CGAL_DO_INTERSECT_FUNCTION_SELF(Iso_cuboid_3, 3)
 CGAL_DO_INTERSECT_FUNCTION(Iso_cuboid_3, Line_3, 3)
 
 
+namespace Intersections {
 namespace internal {
 
 template <class K>
@@ -1750,5 +1751,5 @@ do_intersect(const Iso_cuboid_3<R> &j, const Line_3<R> &l, const R&)
 }
 
 } // namespace internal
-
-} //namespace CGAL
+} // namespace Intersections
+} // namespace CGAL
