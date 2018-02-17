@@ -97,7 +97,6 @@ public:
   }
 
   // Overload to avoid a warning with VC++
-  template <>
   inline
   std::size_t
   uniform_smallint(std::size_t lower, std::size_t upper)
