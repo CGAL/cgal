@@ -155,54 +155,6 @@ intersection(const Bbox_3 &a,
   return K().intersect_3_object()(a, b);
 }
 
-template <class K>
-inline typename
-cpp11::result_of<typename K::Intersect_3(typename K::Point_3, typename K::Iso_cuboid_3)>::type
-intersection(const typename K::Point_3 &a,
-             const typename K::Iso_cuboid_3 &b) {
-  return K().intersect_3_object()(a, b);
-}
-
-template <class K>
-inline typename
-cpp11::result_of<typename K::Intersect_3(typename K::Point_3, typename K::Line_3)>::type
-intersection(const typename K::Point_3 &a,
-             const typename K::Line_3 &b) {
-  return K().intersect_3_object()(a, b);
-}
-
-template <class K>
-inline typename
-cpp11::result_of<typename K::Intersect_3(typename K::Point_3, typename K::Ray_3)>::type
-intersection(const typename K::Point_3 &a,
-             const typename K::Ray_3 &b) {
-  return K().intersect_3_object()(a, b);
-}
-
-template <class K>
-inline typename
-cpp11::result_of<typename K::Intersect_3(typename K::Point_3, typename K::Segment_3)>::type
-intersection(const typename K::Point_3 &a,
-             const typename K::Segment_3 &b) {
-  return K().intersect_3_object()(a, b);
-}
-
-template <class K>
-inline typename
-cpp11::result_of<typename K::Intersect_3(typename K::Point_3, typename K::Point_3)>::type
-intersection(const typename K::Point_3 &a,
-             const typename K::Point_3 &b) {
-  return K().intersect_3_object()(a, b);
-}
-
-template <class K>
-inline typename
-cpp11::result_of<typename K::Intersect_3(typename K::Point_3, typename K::Plane_3)>::type
-intersection(const typename K::Point_3 &a,
-             const typename K::Plane_3 &b) {
-  return K().intersect_3_object()(a, b);
-}
-
 CGAL_INTERSECTION_FUNCTION(Line_3, Iso_cuboid_3, 3)
 
 CGAL_INTERSECTION_FUNCTION(Ray_3, Iso_cuboid_3, 3)
