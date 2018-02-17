@@ -31,7 +31,7 @@
 #include <CGAL/Segment_2.h>
 #include <CGAL/Triangle_2.h>
 #include <CGAL/Point_2.h>
-#include <CGAL/Straight_2.h>
+#include <CGAL/Intersections_2/Straight_2.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Intersection_traits_2.h>

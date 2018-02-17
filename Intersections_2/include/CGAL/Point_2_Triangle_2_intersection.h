@@ -32,7 +32,7 @@
 #include <CGAL/Line_2.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/Straight_2.h>
+#include <CGAL/Intersections_2/Straight_2.h>
 
 namespace CGAL {
 
