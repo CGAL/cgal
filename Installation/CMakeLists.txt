@@ -551,7 +551,7 @@ message( "== Generate version files (DONE) ==\n")
 #
 #--------------------------------------------------------------------------------------------------
 
-if( RUNNING_CGAL_AUTO_TEST )
+if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST )
   message("== Set up flags ==")
 
   # Ugly hack to be compatible with current CGAL testsuite process (as of
