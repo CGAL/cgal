@@ -22,6 +22,7 @@
 #ifndef CGAL_MP_FLOAT_H
 #define CGAL_MP_FLOAT_H
 
+#include <CGAL/disable_warnings.h>
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/Real_embeddable_traits.h>
@@ -911,4 +912,5 @@ namespace Eigen {
 //specialization for Get_arithmetic_kernel
 #include <CGAL/MP_Float_arithmetic_kernel.h>
 
+#include <CGAL/enable_warnings.h>
 #endif // CGAL_MP_FLOAT_H

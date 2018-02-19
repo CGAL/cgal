@@ -26,6 +26,8 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
+
 /*! \file
  *
  * Definition of the Arr_bounded_planar_topology_traits_2<GeomTraits> class.
@@ -550,5 +552,7 @@ public:
 } // namespace CGAL
 
 #include <CGAL/Arr_topology_traits/Arr_bounded_planar_topology_traits_2_impl.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif

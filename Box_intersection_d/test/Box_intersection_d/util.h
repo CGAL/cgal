@@ -9,6 +9,8 @@
 
 #include <CGAL/Random.h>
 
+#include <CGAL/disable_warnings.h>
+
 template< class NT, int DIM, bool CLOSED = true >
 struct Util {
     typedef NT Number_type;
@@ -128,5 +130,6 @@ struct Util {
 
 };
 
+#include <CGAL/enable_warnings.h>
 
 #endif

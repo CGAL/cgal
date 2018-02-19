@@ -28,6 +28,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/predicate.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/intersections.h>
@@ -484,5 +485,7 @@ bool does_self_intersect(const FaceRange& face_range,
 }// end namespace Polygon_mesh_processing
 
 }// namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_SELF_INTERSECTIONS

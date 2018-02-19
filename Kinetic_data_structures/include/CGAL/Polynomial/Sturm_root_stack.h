@@ -22,6 +22,8 @@
 #ifndef CGAL_STURM_LAZY_SOLVER_H
 #define CGAL_STURM_LAZY_SOLVER_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/internal/Simple_interval_root.h>
 #include <CGAL/Polynomial/internal/Sturm_isolating_interval.h>
@@ -392,4 +394,7 @@ std::ostream& operator<<(std::ostream& os,
 
 
 } } //namespace CGAL::POLYNOMIAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif                                            // CGAL_STURM_LAZY_SOLVER_H

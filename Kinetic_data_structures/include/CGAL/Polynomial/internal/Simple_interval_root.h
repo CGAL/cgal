@@ -21,6 +21,9 @@
 
 #ifndef CGAL_POLYNOMIAL_SIMPLE_INTERVAL_ROOT_H
 #define CGAL_POLYNOMIAL_SIMPLE_INTERVAL_ROOT_H
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Real_embeddable_traits.h>
 #include <vector>
@@ -739,4 +742,7 @@ namespace std
     static const float_round_style round_stype = round_toward_zero;
   };
 }
+
+#include <CGAL/enable_warnings.h>
+
 #endif

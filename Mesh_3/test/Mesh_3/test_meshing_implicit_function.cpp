@@ -26,6 +26,8 @@
 #include "test_meshing_utilities.h"
 #include <CGAL/Implicit_mesh_domain_3.h>
 
+#include <CGAL/disable_warnings.h>
+
 template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Implicit_tester : public Tester<K>
 {

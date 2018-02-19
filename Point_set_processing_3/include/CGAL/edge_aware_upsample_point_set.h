@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
@@ -712,5 +713,7 @@ edge_aware_upsample_point_set(
 /// \endcond
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_UPSAMPLE_POINT_SET_H

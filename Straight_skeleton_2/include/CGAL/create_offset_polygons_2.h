@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/create_straight_skeleton_2.h>
 #include <CGAL/Polygon_offset_builder_2.h>
@@ -340,6 +341,7 @@ create_exterior_skeleton_and_offset_polygons_2 ( FT const& aOffset, Polygon cons
 
 } // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif
 // EOF //

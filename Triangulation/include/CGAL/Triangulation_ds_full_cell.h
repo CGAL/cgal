@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Triangulation.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/TDS_full_cell_default_storage_policy.h>
 #include <CGAL/TDS_full_cell_mirror_storage_policy.h>
@@ -311,5 +312,7 @@ public:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TRIANGULATION_DS_FULL_CELL_H

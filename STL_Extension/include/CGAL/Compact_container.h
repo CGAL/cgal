@@ -22,6 +22,8 @@
 #ifndef CGAL_COMPACT_CONTAINER_H
 #define CGAL_COMPACT_CONTAINER_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/config.h>
 #include <CGAL/Default.h>
 
@@ -1282,11 +1284,6 @@ namespace internal {
 
 namespace std {
 
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4099) // For VC10 it is class hash
-#endif
-
 #ifndef CGAL_CFG_NO_STD_HASH
 
   template < class DSC, bool Const >
@@ -1300,10 +1297,9 @@ namespace std {
   };
 #endif // CGAL_CFG_NO_STD_HASH
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
 
 } // namespace std
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_COMPACT_CONTAINER_H

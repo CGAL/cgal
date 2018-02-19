@@ -28,6 +28,7 @@
 
 #include <CGAL/license/TDS_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 
@@ -4010,5 +4011,7 @@ count_cells(size_type & i, bool verbose, int level) const
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TRIANGULATION_DATA_STRUCTURE_3_H

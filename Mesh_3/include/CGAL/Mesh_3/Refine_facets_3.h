@@ -29,6 +29,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/Mesher_level.h>
 #include <CGAL/Mesh_3/Mesher_level_default_implementations.h>
@@ -108,10 +109,12 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
       Facet, unsigned int, Facet, unsigned int> &f) const
     {
 #ifdef _DEBUG
+      /*
       int f1_current_erase_counter = CGAL::cpp11::get<0>(f).first->erase_counter();
       int f1_saved_erase_counter = CGAL::cpp11::get<1>(f);
       int f2_current_erase_counter = CGAL::cpp11::get<2>(f).first->erase_counter();
       int f2_saved_erase_counter = CGAL::cpp11::get<3>(f);
+      */
       //f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1
 
       /*if (f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1)
@@ -1860,5 +1863,7 @@ after_insertion_handle_incident_facet(Facet& facet)
 
 
 }  // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_REFINE_FACETS_3_H

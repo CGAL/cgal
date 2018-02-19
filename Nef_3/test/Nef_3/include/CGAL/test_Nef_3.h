@@ -35,6 +35,8 @@
 #include <fstream>
 #include <cassert>
 
+#include <CGAL/disable_warnings.h>
+
 namespace CGAL {
 
 template<typename Kernel>

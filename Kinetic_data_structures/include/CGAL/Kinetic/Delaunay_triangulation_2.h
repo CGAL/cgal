@@ -23,6 +23,8 @@
 #define CGAL_KINETIC_KINETIC_DELAUNAY_2_H
 #include <CGAL/Kinetic/basic.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_face_base_2.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_vertex_base_2.h>
@@ -528,7 +530,7 @@ public:
    
 
       if (!was_2d && del_.dimension()==2) {
-	vh->set_neighbors(del_.degree(vh));
+	vh->set_neighbors(static_cast<int>(del_.degree(vh)));
 	has_certificates_=false;
 	set_has_certificates(true, 0); 
       } else if (del_.dimension() == 2) {
@@ -570,7 +572,7 @@ public:
 	}
       }
     } else {
-      vertex_handle(k)->set_neighbors(del_.degree(vh));
+      vertex_handle(k)->set_neighbors(static_cast<int>(del_.degree(vh)));
     }
     watcher_.post_insert_vertex(vh);
     //write(std::cout);
@@ -804,7 +806,7 @@ protected:
   }
 
   void update_neighbors(Vertex_handle vh) {
-    unsigned int deg= del_.degree(vh);
+    unsigned int deg = static_cast<unsigned int>(del_.degree(vh));
     if (deg == vh->neighbors()) return;
     if (deg ==3) {
       vh->set_neighbors(3);
@@ -1183,4 +1185,7 @@ void Delaunay_triangulation_2<Sim, Del, W, T>::audit() const
   }
 
 } } //namespace CGAL::Kinetic
+
+#include <CGAL/enable_warnings.h>
+
 #endif

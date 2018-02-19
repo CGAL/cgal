@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Convex_hull_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Convex_hull_3/dual/Convex_hull_traits_dual_3.h>
@@ -294,6 +295,8 @@ namespace CGAL
   }
   #endif
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_HALFSPACE_INTERSECTION_3_H
 

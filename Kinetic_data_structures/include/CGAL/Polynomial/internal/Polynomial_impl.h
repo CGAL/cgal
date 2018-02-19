@@ -388,7 +388,7 @@ public:
       coefs_[pow]=coef;
       //std::cout << "Read " << coefs_[pow] << std::endl;
 
-      char n= in.peek();
+      char n= static_cast<char>(in.peek());
       if (n=='+' || n=='-') {
 	pos= (n!='-');
 	char e;

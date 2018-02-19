@@ -24,6 +24,8 @@
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
@@ -230,6 +232,8 @@ void random_perturbation(TriangleMesh& tmesh
 
 } //end namespace Polygon_mesh_processing
 } //end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_RANDOM_PERTURBATION_H
 

@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_impl.h>
 #include <boost/type_traits/is_same.hpp>
@@ -1769,5 +1770,7 @@ surface_self_intersection(const TriangleMesh& tm,
 } //end of namespace experimental
 
 } } //end of namespace CGAL::Polygon_mesh_processing
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_INTERSECTION_H

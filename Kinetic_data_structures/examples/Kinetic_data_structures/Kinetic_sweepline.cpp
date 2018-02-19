@@ -14,7 +14,7 @@
 #include <map>
 
 #ifdef _MSC_VER
-#pragma warning(disable:4355) // complaint about using 'this' to
+#pragma warning(disable: 4127 4355) // complaint about using 'this' to
                                 // initialize a member
 #endif
 

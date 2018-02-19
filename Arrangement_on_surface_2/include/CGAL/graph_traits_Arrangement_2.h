@@ -25,6 +25,8 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
+
 
 /*! \file
  * Definition of the specialized boost::graph_traits<Arrangement_2> class.
@@ -609,5 +611,7 @@ edges (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

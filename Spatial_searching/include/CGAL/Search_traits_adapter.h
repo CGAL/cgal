@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Spatial_searching.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Euclidean_distance.h> //for default distance specialization
@@ -192,5 +193,7 @@ public:
 };
 
 }//namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_SEARCH_TRAITS_WITH_INFO

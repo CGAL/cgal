@@ -30,6 +30,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -757,5 +758,6 @@ Mesher_3<C3T3,MC,MD>::debug_info_header() const
 
 }  // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_MESHER_3_H

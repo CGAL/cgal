@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/face_graph_utils.h>
 
@@ -167,7 +168,7 @@ public:
     , ecm(ecm)
     , is_tm_closed( is_closed(tm))
     , is_tm_inside_out( is_tm_closed && !PMP::is_outward_oriented(tm) )
-    , NID(-1)
+    , NID((std::numeric_limits<Node_id>::max)())
     , all_fixed(true)
   {}
 
@@ -905,5 +906,7 @@ public:
 
 
 } } // CGAL::Corefinement
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_INTERNAL_OUTPUT_BUILDER_FOR_AUTOREFINEMENT_H

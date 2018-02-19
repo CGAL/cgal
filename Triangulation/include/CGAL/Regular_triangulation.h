@@ -23,6 +23,8 @@
 
 #include <CGAL/license/Triangulation.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Triangulation.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
@@ -1165,5 +1167,7 @@ Regular_triangulation<Traits, TDS>
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_REGULAR_TRIANGULATION_H

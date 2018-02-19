@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 // #define CGAL_FULL_X_MONOTONE_GEODESIC_ARC_ON_SPHERE_IS_SUPPORTED 1
 
@@ -3255,4 +3256,5 @@ operator>>(InputStream& is,
 
 } //namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 #endif

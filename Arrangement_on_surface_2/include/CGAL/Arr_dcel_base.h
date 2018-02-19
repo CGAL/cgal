@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The definition of the base DCEL class for planar arrangements and its
@@ -1458,5 +1459,7 @@ protected:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

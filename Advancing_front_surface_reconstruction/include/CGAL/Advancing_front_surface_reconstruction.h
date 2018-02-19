@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Advancing_front_surface_reconstruction.h>
 
+#include <CGAL/disable_warnings.h>
 
 // In order to activate lazy evaluation:
 // #define LAZY
@@ -2649,5 +2650,7 @@ namespace CGAL {
 
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_H

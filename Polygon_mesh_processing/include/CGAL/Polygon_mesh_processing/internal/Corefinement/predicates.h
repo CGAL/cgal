@@ -141,7 +141,7 @@ bool are_triangles_coplanar_same_side(Node_id o_prime_index,
                                       const Vpm& vpm_q,
                                       const Node_vector& nodes)
 {
-  const Node_id NID(-1);
+  const Node_id NID((std::numeric_limits<Node_id>::max)());
     return are_triangles_coplanar_same_side<typename Node_vector::Exact_kernel>(
       nodes.exact_node(o_prime_index),
       nodes.exact_node(o_index),
@@ -163,7 +163,7 @@ bool sorted_around_edge( Node_id o_prime_index,
                          const Vpm& vpm_q,
                          const Node_vector& nodes)
 {
-  const Node_id NID(-1);
+  const Node_id NID((std::numeric_limits<Node_id>::max)());
   return sorted_around_edge<typename Node_vector::Exact_kernel>(
            nodes.exact_node(o_prime_index),
            nodes.exact_node(o_index),

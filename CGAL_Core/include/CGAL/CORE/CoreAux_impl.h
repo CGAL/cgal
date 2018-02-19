@@ -42,7 +42,7 @@
 
 #include <CGAL/use.h>
 #include <CGAL/CORE/CoreAux.h>
-#include <gmp.h>
+#include <CGAL/gmp.h>
 
 namespace CORE { 
 

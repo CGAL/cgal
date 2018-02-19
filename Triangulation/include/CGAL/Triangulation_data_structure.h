@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Triangulation.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Default.h>
@@ -1603,5 +1604,7 @@ operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Fcb>
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TRIANGULATION_DATA_STRUCTURE_H

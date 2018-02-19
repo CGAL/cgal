@@ -20,6 +20,9 @@
 
 #ifndef CGAL_EPECK_D_H
 #define CGAL_EPECK_D_H
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/NewKernel_d/Cartesian_base.h>
 #include <CGAL/NewKernel_d/Wrapper/Cartesian_wrap.h>
 #include <CGAL/NewKernel_d/Kernel_d_interface.h>
@@ -51,4 +54,7 @@ struct Epeck_d
 };
 #undef CGAL_BASE
 }
+
+#include <CGAL/enable_warnings.h>
+
 #endif

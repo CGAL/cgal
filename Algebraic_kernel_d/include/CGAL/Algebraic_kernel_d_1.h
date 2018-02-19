@@ -26,6 +26,8 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_D_1_H
 #define CGAL_ALGEBRAIC_KERNEL_D_1_H
 
+#include <CGAL/disable_warnings.h>
+
 #ifndef CGAL_AK_ENABLE_DEPRECATED_INTERFACE 
 #define CGAL_AK_ENABLE_DEPRECATED_INTERFACE 0
 #endif 
@@ -343,7 +345,7 @@ public:
 
 	std::vector<std::pair<Algebraic_real_1,Multiplicity_type> > roots;
 	Solve_1()(p,std::back_inserter(roots));
-	return roots.size(); 
+	return static_cast<size_type>(roots.size()); 
       }
 
   };
@@ -671,6 +673,6 @@ class Algebraic_kernel_d_1
 
 } //namespace CGAL
 
-
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_ALGEBRAIC_KERNEL_D_1_H

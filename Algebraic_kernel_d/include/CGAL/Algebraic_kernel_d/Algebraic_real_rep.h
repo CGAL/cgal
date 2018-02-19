@@ -27,6 +27,8 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_D_ALGEBRAIC_REAL_REP_H
 #define CGAL_ALGEBRAIC_KERNEL_D_ALGEBRAIC_REAL_REP_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial_type_generator.h>
 #include <CGAL/Polynomial_traits_d.h>
@@ -523,5 +525,7 @@ public:
 } // namespace internal
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_ALGEBRAIC_KERNEL_D_ALGEBRAIC_REAL_REP_H
