@@ -968,12 +968,8 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       Parameterizer parameterizer(orb);
 
       // mark cones in the seam mesh
-      typedef boost::unordered_map<s_vertex_descriptor, SMP::Cone_type>  Cones;
-      Cones cmap;
-
-      if(!SMP::internal::locate_unordered_cones<Seam_mesh,
-                                                boost::unordered_set<T_vertex_descriptor>,
-                                                Cones>(sMesh, unordered_cones, cmap))
+      boost::unordered_map<s_vertex_descriptor, SMP::Cone_type> cmap;
+      if(!SMP::locate_unordered_cones(sMesh, unordered_cones.begin(), unordered_cones.end(), cmap))
         return;
 
       // vimap and uvmap
