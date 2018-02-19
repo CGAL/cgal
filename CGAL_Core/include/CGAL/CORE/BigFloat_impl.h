@@ -52,6 +52,7 @@
 #include <CGAL/CORE/BigFloat.h>
 #include <CGAL/CORE/Expr.h>
 #include <CGAL/tss.h>
+#include <sstream> 
 
 namespace CORE { 
 
@@ -919,16 +920,9 @@ BigFloatRep::toDecimal(unsigned int width, bool Scientific) const {
       } else { // L10 < 0
         decRep += '-';
       }
-      char eBuf[48]; // enought to hold long number L10
-      int ne = 0;
-      if ((ne = sprintf(eBuf, "%ld", labs(L10))) >= 0) {
-        eBuf[ne] = '\0';
-      } else {
-        //perror("BigFloat.cpp: Problem in outputing the exponent!");
-        core_error("BigFloat error: Problem in outputing the exponent",
-			__FILE__, __LINE__, true);
-      }
-      decRep += eBuf;
+      std::ostringstream oss;
+      oss << labs(L10);
+      decRep += oss.str();
       decOut.isScientific = true;
     }
   } else {

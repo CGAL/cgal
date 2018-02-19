@@ -112,7 +112,7 @@ function(CGAL_setup_CGAL_dependencies target)
   # Now setup compilation flags
   if(MSVC)
     target_compile_options(${target} ${keyword}
-      "-D_CRT_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_DEPRECATE;-D_CRT_SECURE_NO_WARNINGS;-D_SCL_SECURE_NO_WARNINGS"
+      "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS"
       "/fp:strict"
       "/fp:except-"
       "/wd4503"  # Suppress warnings C4503 about "decorated name length exceeded"
