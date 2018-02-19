@@ -51,6 +51,7 @@ old_IFS=$IFS
 IFS=$' '
 ROOT="$PWD/.."
 NEED_3D=0
+cd $ROOT
 for ARG in $(echo "$@")
 do
   if [ "$ARG" = "CHECK" ]
