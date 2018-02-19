@@ -845,7 +845,7 @@ class Intersection_of_triangle_meshes
         std::map<face_descriptor, std::vector< face_descriptor> > triple_intersections;
         for(std::size_t j=i+1; j<nb_faces;++j)
         {
-          if (p.second[j] < p.second[i]) continue;
+          if (p.second[j] <= p.second[i]) continue;
           typename Faces_to_nodes_map::iterator find_it =
             f_to_node.find(std::make_pair(make_sorted_pair(p.second[i],
                                            p.second[j]),0));// TODO 0 is the value in case there are no coplanar intersection point
