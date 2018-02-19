@@ -46,6 +46,7 @@
 #include <CGAL/Polynomial/sturm_habicht_sequence.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp> 
+#include <CGAL/tss.h>
 
 
 #define CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS                          \
@@ -703,7 +704,7 @@ public:
     : public CGAL::binary_function<Polynomial_d, int, Coefficient_type > {
         
     const Coefficient_type& operator()( const Polynomial_d& p, int i) const {
-      static const Coefficient_type zero =  Coefficient_type(0);
+      CGAL_STATIC_THREAD_LOCAL_VARIABLE(Coefficient_type, zero, 0);
       CGAL_precondition( i >= 0 );
       typename PT::Degree degree;
       if( i >  degree(p) )

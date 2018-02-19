@@ -102,7 +102,7 @@ protected:
    */
   inline static const Direction_3& neg_pole()
   {
-    static const Direction_3 d(0, 0, -1);
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_3(Direction_3, d, 0, 0, -1);
     return d;
   }
 
@@ -114,11 +114,13 @@ protected:
   inline static const Direction_2& identification_xy()
   {
 #if (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_1_Y_0)
-    static const Direction_2 d(-1, 0);
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(Direction_2, d, -1, 0);
+
 #elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_8_Y_6)
-    static const Direction_2 d(-8, 6);
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(Direction_2, d, -8, 6);
+    
 #elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_11_Y_7)
-    static const Direction_2 d(-11, 7);
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(Direction_2, d, -11, 7);
 #else
 #error CGAL_IDENTIFICATION_XY is not defined
 #endif
