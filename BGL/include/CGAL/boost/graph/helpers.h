@@ -383,20 +383,20 @@ bool is_valid_face_descriptor( typename boost::graph_traits<FaceGraph>::face_des
   - target(h,g) != null_vertex()
   - target(h,g) == target(opposite(next(h,g),g),g)
   - face(h,g) == face(next(h,g),g)
-- std::distance(halfedges(g).first, halfeges(g).second)) is the number of halfedges of `g`
+- std::distance(halfedges(g).first, halfedges(g).second)) is the number of halfedges of `g`
 - for each vertex `v` of `g`:
   - halfedge(v,g) != null_halfedge()
   - target(halfedge(v,g),g) == v
 
 - the sum of the halfedges around all the vertices of `g` is 
-std::distance(halfedges(g).first, halfeges(g).second))
+std::distance(halfedges(g).first, halfedges(g).second))
 - std::distance(vertices(g).first, vertices(g).second)) is the number of vertices of `g`
 - for each face `f` of `g`:
-  - halfedge(f,g) != null_face()
+  - halfedge(f,g) != null_halfedge()
   - face(halfedge(f,g),g) == f
 
 - the sum of halfedges around all the faces of `g` + the border halfedges of `g` is 
-std::distance(halfedges(g).first, halfeges(g).second))
+std::distance(halfedges(g).first, halfedges(g).second))
 - The faces of `g` are at least triangles.
 - `g` has distinct faces on each side of an edge.
  */
