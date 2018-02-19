@@ -362,8 +362,43 @@ bool is_valid_face_descriptor( typename boost::graph_traits<FaceGraph>::face_des
  * \param g the `PolygonMesh` to test.
  * \param verb : if `true`, the details of the check will be written in the standard output.
  *
- * \tparam PolygonMesh a model of `FaceListGraph` and `HalfedgeListGraph`
+ * \tparam PolygonMesh a model of `FaceListGraph`, `HalfedgeListGraph` and `VertexListGraph`
  * \return `true` if the `PolygonMesh` is valid, `false` otherwise.
+ * 
+ * A `PolygonMesh` `g` is valid if:
+ 
+- it has an even number of halfedges 
+- for each halfedge `h` of `g`:
+  - halfedge(edge(h,g),g)==h
+  - next(h,g) != null_halfedge()
+  - opposite(h,g) != null_halfedge()
+  - opposite(h,g) != h
+  - opposite(opposite(h,g)) == h
+  - next(h, g) != h
+  - next(next(h,g),g) != h;
+  - target(h,g) != target(opposite(h,g),g)
+  - target(h,g) != target(next(h,g),g)
+  - target(h,g) != target(next(next(h,g),g),g)
+  - prev(next(h,g),g) == next(prev(h,g),g) == h
+  - target(h,g) != null_vertex()
+  - target(h,g) == target(opposite(next(h,g),g),g)
+  - face(h,g) == face(next(h,g),g)
+- std::distance(halfedges(g).first, halfeges(g).second)) is the number of halfedges of `g`
+- for each vertex `v` of `g`:
+  - halfedge(v,g) != null_halfedge()
+  - target(halfedge(v,g),g) == v
+
+- the sum of the halfedges around all the vertices of `g` is 
+std::distance(halfedges(g).first, halfeges(g).second))
+- std::distance(vertices(g).first, vertices(g).second)) is the number of vertices of `g`
+- for each face `f` of `g`:
+  - halfedge(f,g) != null_face()
+  - face(halfedge(f,g),g) == f
+
+- the sum of halfedges around all the faces of `g` + the border halfedges of `g` is 
+std::distance(halfedges(g).first, halfeges(g).second))
+- The faces of `g` are at least triangles.
+- `g` has distinct faces on each side of an edge.
  */
 template <typename PolygonMesh>
 bool is_valid_polygon_mesh(const PolygonMesh& g, bool verb = false)
@@ -400,6 +435,8 @@ bool is_valid_polygon_mesh(const PolygonMesh& g, bool verb = false)
            << std::endl;
       break;
     }
+    //edge integrity
+    valid = valid && ( halfedge(edge(begin, g), g) == begin);
     // opposite integrity.
     valid = valid && ( opposite(begin, g) != begin);
     valid = valid && ( opposite(opposite(begin, g), g) == begin);
@@ -542,7 +579,7 @@ bool is_valid_polygon_mesh(const PolygonMesh& g, bool verb = false)
            << std::endl;
       break;
   }
-  // Distinct facets on each side of an halfegde.
+  // Distinct facets on each side of an halfedge.
   valid = valid && (face(i, g) != face(opposite(i, g), g));
   if ( ! valid) {
       verr << "    both incident facets are equal." << std::endl;
