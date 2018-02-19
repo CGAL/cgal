@@ -28,6 +28,8 @@
 #ifndef CGAL_ITERATOR_H
 #define CGAL_ITERATOR_H 1
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/circulator.h>
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
@@ -40,15 +42,7 @@
 
 #include <CGAL/Iterator_range.h>
 
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4396)
 
-#  pragma warning(disable:4522)  // multiple assignment operators specified
-// The warning, with VC12, was:
-// include\CGAL/iterator.h(1251) : warning C4522: 'CGAL::internal::Derivator<D,std::tuple<double,char>,std::tuple<std::back_insert_iterator<std::vector<double,std::allocator<_Ty>>>,std::back_insert_iterator<std::vector<char,std::allocator<char>>>>>' : multiple assignment operators specified
-
-#endif
 namespace CGAL {
 
 template<typename I>
@@ -2545,8 +2539,6 @@ dispatch_or_drop_output(O1 out1,O2 out2,O3 out3,O4 out4,O5 out5,O6 out6,O7 out7)
 
 } //namespace CGAL
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_ITERATOR_H

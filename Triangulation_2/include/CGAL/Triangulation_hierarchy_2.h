@@ -25,6 +25,8 @@
 
 #include <CGAL/license/Triangulation_2.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_2.h>
@@ -778,5 +780,7 @@ random_level()
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TRIANGULATION_HIERARCHY_2_H

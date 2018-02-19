@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The segment traits-class for the arrangement package.
@@ -1175,5 +1176,6 @@ InputStream& operator>>(InputStream& is, Arr_segment_2<Kernel>& seg)
 
 } //namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif

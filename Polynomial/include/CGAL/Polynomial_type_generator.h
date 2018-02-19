@@ -25,6 +25,8 @@
 #ifndef CGAL_POLYNOMIAL_TYPE_GENERATOR_H
 #define CGAL_POLYNOMIAL_TYPE_GENERATOR_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Polynomial_traits_d.h>
 
 namespace CGAL {
@@ -42,5 +44,7 @@ template <class T>
 struct Polynomial_type_generator<T,0>{ typedef T Type; };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYNOMIAL_GENERATOR_H

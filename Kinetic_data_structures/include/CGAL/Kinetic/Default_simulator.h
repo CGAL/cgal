@@ -21,6 +21,9 @@
 
 #ifndef CGAL_KINETIC_SIMULATOR_BASE_H_
 #define CGAL_KINETIC_SIMULATOR_BASE_H_
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/Heap_pointer_event_queue.h>
 #include <vector>
@@ -735,4 +738,7 @@ CGAL_OUTPUT2(Default_simulator)
 
 
 } } //namespace CGAL::Kinetic
+
+#include <CGAL/enable_warnings.h>
+
 #endif

@@ -991,7 +991,7 @@ public:
     filter_intersections(tm1, tm2, vpm1, vpm2, throw_on_self_intersection);
     filter_intersections(tm2, tm1, vpm2, vpm1, throw_on_self_intersection);
 
-    Node_id current_node(-1);
+    Node_id current_node((std::numeric_limits<Node_id>::max)());
     CGAL_assertion(current_node+1==0);
 
     #ifndef DO_NOT_HANDLE_COPLANAR_FACES
@@ -1057,7 +1057,7 @@ public:
 
     filter_intersections(tm, vpm);
 
-    Node_id current_node(-1);
+    Node_id current_node((std::numeric_limits<Node_id>::max)());
     CGAL_assertion(current_node+1==0);
 
     //first handle coplanar triangles

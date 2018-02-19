@@ -21,6 +21,9 @@
 
 #ifndef CGAL_POLYNOMIAL_INTERVAL_POLYNOMIAL_H
 #define CGAL_POLYNOMIAL_INTERVAL_POLYNOMIAL_H
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/internal/interval_arithmetic.h>
 #include <CGAL/Polynomial/internal/Polynomial_impl.h>
@@ -85,4 +88,7 @@ inline std::ostream &operator<<(std::ostream &out, const Interval_polynomial& ip
 
 
 } } //namespace CGAL::POLYNOMIAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif

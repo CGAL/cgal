@@ -41,6 +41,8 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <limits>
 #include <vector>
 #include <boost/optional/optional_io.hpp>
@@ -421,5 +423,7 @@ struct Tester
   { //nothing to do
   }
 };
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_TEST_TEST_MESHING_UTILITIES

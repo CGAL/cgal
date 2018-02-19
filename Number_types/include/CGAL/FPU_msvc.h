@@ -30,7 +30,7 @@ namespace CGAL {
 // replacement for C99 functions
 
 inline int
-feclearexcept(int exceptions) {
+feclearexcept(int /* exceptions */ ) {
   _clearfp();
   return 0;
 }

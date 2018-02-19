@@ -284,28 +284,29 @@ put(CGAL::vertex_point_t p, const CGAL::Surface_mesh<Point>& g,
   prop[x] = point;
 }
 
+template<typename Point>
+struct graph_has_property<CGAL::Surface_mesh<Point>, boost::vertex_index_t>
+  : CGAL::Tag_true {};
+template<typename Point>
+struct graph_has_property<CGAL::Surface_mesh<Point>, boost::edge_index_t>
+  : CGAL::Tag_true {};
+template<typename Point>
+struct graph_has_property<CGAL::Surface_mesh<Point>, boost::halfedge_index_t>
+  : CGAL::Tag_true {};
+template<typename Point>
+struct graph_has_property<CGAL::Surface_mesh<Point>, boost::face_index_t>
+  : CGAL::Tag_true {};
+template<typename Point>
+struct graph_has_property<CGAL::Surface_mesh<Point>, CGAL::vertex_point_t>
+  : CGAL::Tag_true {};
+template<typename Point>
+struct graph_has_property<CGAL::Surface_mesh<Point>, boost::edge_weight_t>
+  : CGAL::Tag_true {};
 } // CGAL
 
 namespace boost
 {
-  template<typename Point>
-  struct graph_has_property<CGAL::Surface_mesh<Point>, vertex_index_t>
-    : CGAL::Tag_true {};
-  template<typename Point>
-  struct graph_has_property<CGAL::Surface_mesh<Point>, edge_index_t>
-    : CGAL::Tag_true {};
-  template<typename Point>
-  struct graph_has_property<CGAL::Surface_mesh<Point>, halfedge_index_t>
-    : CGAL::Tag_true {};
-  template<typename Point>
-  struct graph_has_property<CGAL::Surface_mesh<Point>, face_index_t>
-    : CGAL::Tag_true {};
-  template<typename Point>
-  struct graph_has_property<CGAL::Surface_mesh<Point>, CGAL::vertex_point_t>
-    : CGAL::Tag_true {};
-  template<typename Point>
-  struct graph_has_property<CGAL::Surface_mesh<Point>, edge_weight_t>
-    : CGAL::Tag_true {};
+
 
 
 template <typename Point, typename T>

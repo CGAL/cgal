@@ -117,7 +117,7 @@ private:
         std::vector<float> v;
         m_classifier (m_training_set[k], v);
 
-        float min = std::numeric_limits<float>::max();
+        float min = (std::numeric_limits<float>::max)();
         for(std::size_t l = 0; l < v.size(); ++ l)
           if (v[l] < min)
           {
@@ -926,7 +926,7 @@ private:
           std::vector<float> v;
           (*this) (training_sets[j][k], v);
 
-          float min = std::numeric_limits<float>::max();
+          float min = (std::numeric_limits<float>::max)();
           for(std::size_t l = 0; l < m_labels.size(); ++ l)
             if (v[l] < min)
             {

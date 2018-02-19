@@ -26,6 +26,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The header file for the Arrangement_on_surface_with_history_2 class.
@@ -994,5 +995,7 @@ overlay (const Arrangement_on_surface_with_history_2<GeomTraits, TopTraits1>&
 
 // The function definitions can be found under:
 #include <CGAL/Arrangement_2/Arr_on_surface_with_history_2_impl.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif

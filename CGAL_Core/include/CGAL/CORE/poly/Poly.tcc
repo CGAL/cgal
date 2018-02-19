@@ -92,7 +92,7 @@ Polynomial<NT>::Polynomial(int n, const NT * c) {
 ///////////////////////////////////////
 template <class NT>
 Polynomial<NT>::Polynomial(const VecNT & vN) {
-  degree = vN.size()-1;
+  degree = static_cast<int>(vN.size())-1;
   if (degree >= 0) {
     coeff = new NT[degree+1];
     for (int i = 0; i <= degree; i++)

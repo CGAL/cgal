@@ -351,7 +351,7 @@ public:
     , is_tm2_closed( is_closed(tm2))
     , is_tm1_inside_out( is_tm1_closed && !PMP::is_outward_oriented(tm1) )
     , is_tm2_inside_out( is_tm2_closed && !PMP::is_outward_oriented(tm2) )
-    , NID(-1)
+    , NID((std::numeric_limits<Node_id>::max)())
     , mesh_to_intersection_edges(tm1, tm2)
   {}
 
@@ -729,7 +729,7 @@ public:
                    vpm1, vpm2,
                    nodes) ) //p1==q2
             {
-              CGAL_assertion( index_p1!=index_p2 || index_p1==Node_id(-1) );
+              CGAL_assertion( index_p1!=index_p2 || index_p1==Node_id((std::numeric_limits<Node_id>::max)()) );
               coplanar_patches_of_tm1.set(patch_id_p1);
               coplanar_patches_of_tm2.set(patch_id_q2);
               bool q1_is_between_p1p2 = sorted_around_edge(
@@ -799,17 +799,17 @@ public:
 #endif //CGAL_COREFINEMENT_POLYHEDRA_DEBUG
 
           CGAL_assertion(
-              ( index_p1 == Node_id(-1) ? nodes.to_exact(get(vpm1,p1)): nodes.exact_node(index_p1) ) !=
-              ( index_q1 == Node_id(-1) ? nodes.to_exact(get(vpm2,q1)): nodes.exact_node(index_q1) )
+              ( index_p1 == Node_id((std::numeric_limits<Node_id>::max)()) ? nodes.to_exact(get(vpm1,p1)): nodes.exact_node(index_p1) ) !=
+              ( index_q1 == Node_id((std::numeric_limits<Node_id>::max)()) ? nodes.to_exact(get(vpm2,q1)): nodes.exact_node(index_q1) )
           &&
-              ( index_p2 == Node_id(-1) ? nodes.to_exact(get(vpm1,p2)): nodes.exact_node(index_p2) ) !=
-              ( index_q1 == Node_id(-1) ? nodes.to_exact(get(vpm2,q1)): nodes.exact_node(index_q1) )
+              ( index_p2 == Node_id((std::numeric_limits<Node_id>::max)()) ? nodes.to_exact(get(vpm1,p2)): nodes.exact_node(index_p2) ) !=
+              ( index_q1 == Node_id((std::numeric_limits<Node_id>::max)()) ? nodes.to_exact(get(vpm2,q1)): nodes.exact_node(index_q1) )
           &&
-              ( index_p1 == Node_id(-1) ? nodes.to_exact(get(vpm1,p1)): nodes.exact_node(index_p1) ) !=
-              ( index_q2 == Node_id(-1) ? nodes.to_exact(get(vpm2,q2)): nodes.exact_node(index_q2) )
+              ( index_p1 == Node_id((std::numeric_limits<Node_id>::max)()) ? nodes.to_exact(get(vpm1,p1)): nodes.exact_node(index_p1) ) !=
+              ( index_q2 == Node_id((std::numeric_limits<Node_id>::max)()) ? nodes.to_exact(get(vpm2,q2)): nodes.exact_node(index_q2) )
           &&
-              ( index_p2 == Node_id(-1) ? nodes.to_exact(get(vpm1,p2)): nodes.exact_node(index_p2) ) !=
-              ( index_q2 == Node_id(-1) ? nodes.to_exact(get(vpm2,q2)): nodes.exact_node(index_q2) )
+              ( index_p2 == Node_id((std::numeric_limits<Node_id>::max)()) ? nodes.to_exact(get(vpm1,p2)): nodes.exact_node(index_p2) ) !=
+              ( index_q2 == Node_id((std::numeric_limits<Node_id>::max)()) ? nodes.to_exact(get(vpm2,q2)): nodes.exact_node(index_q2) )
           );
 
           bool q1_is_between_p1p2 = sorted_around_edge(

@@ -32,16 +32,7 @@ include(GNUInstallDirs)
 #                                    -= HEADER ONLY =-
 #
 #--------------------------------------------------------------------------------------------------
-if(CMAKE_MAJOR_VERSION GREATER 2)
-  # In header only mode, we use INTERFACE libraries, which was introduced in cmake 3.0.
-  # Thus this option is only enabled for cmake >= 3.0.
-
-  if (CGAL_HEADER_ONLY)
-    set(CGAL_HEADER_ONLY TRUE CACHE BOOL "Enable cgal header only" FORCE)
-    add_definitions(-DCGAL_HEADER_ONLY)
-  endif()
-
-endif()
+option(CGAL_HEADER_ONLY "Enable header-only mode of CGAL (no compilation of CGAL libraries)" FALSE)
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -454,7 +445,7 @@ message( STATUS "System: ${CMAKE_SYSTEM_NAME}" )
 
 if( MSVC )
   
-  uniquely_add_flags ( CGAL_CXX_FLAGS "-D_CRT_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_DEPRECATE;-D_CRT_SECURE_NO_WARNINGS;-D_SCL_SECURE_NO_WARNINGS" )
+  uniquely_add_flags ( CGAL_CXX_FLAGS "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS" )
   uniquely_add_flags ( CGAL_CXX_FLAGS "/fp:strict" )
   uniquely_add_flags ( CGAL_CXX_FLAGS "/fp:except-" )
   uniquely_add_flags ( CGAL_CXX_FLAGS "/wd4503" ) # Suppress warnings C4503 about "decorated name length exceeded"
@@ -551,7 +542,7 @@ message( "== Generate version files (DONE) ==\n")
 #
 #--------------------------------------------------------------------------------------------------
 
-if( RUNNING_CGAL_AUTO_TEST )
+if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST )
   message("== Set up flags ==")
 
   # Ugly hack to be compatible with current CGAL testsuite process (as of

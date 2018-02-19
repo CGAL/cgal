@@ -17,6 +17,8 @@
 #include <CGAL/Arr_point_location_result.h>
 #include <CGAL/Arr_triangulation_point_location.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include "IO_test.h"
 
 /*! Point location test */
@@ -926,5 +928,7 @@ verify(Variants_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
   }
   return result;
 }
+
+#include <CGAL/enable_warnings.h>
 
 #endif

@@ -27,6 +27,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The traits-class for the linear piece-wiese(polyline) type of curves of the
@@ -607,5 +608,7 @@ public:
 };
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

@@ -20,6 +20,9 @@
 
 #ifndef CGAL_POLYNOMIAL_POLYNOMIAL_CORE_KERNEL_H
 #define CGAL_POLYNOMIAL_POLYNOMIAL_CORE_KERNEL_H
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Polynomial/Kernel.h>
@@ -44,4 +47,7 @@ public:
 };
 
 } } //namespace CGAL::POLYNOMIAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif

@@ -27,6 +27,7 @@
 #ifndef CGAL_IO_H
 #define CGAL_IO_H
 
+#include <CGAL/disable_warnings.h>
 
 #include <cstdio>
 #include <cctype>
@@ -176,8 +177,7 @@ public:
 	break;
       }
     }while(true);
-
-    if(sscanf(buffer.c_str(), "%lf", &t) != 1) {
+    if(sscanf_s(buffer.c_str(), "%lf", &t) != 1) {
       // if a 'buffer' does not contain a double, set the fail bit.
       is.setstate(std::ios_base::failbit);
     }
@@ -229,8 +229,7 @@ public:
 	break;
       }
     }while(true);
-
-    if(sscanf(buffer.c_str(), "%f", &t) != 1) {
+    if(sscanf_s(buffer.c_str(), "%f", &t) != 1) {
       // if a 'buffer' does not contain a double, set the fail bit.
       is.setstate(std::ios_base::failbit);
     }
@@ -615,5 +614,7 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/IO/io_impl.h>
 #endif // CGAL_HEADER_ONLY
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_IO_H

@@ -21,6 +21,8 @@
 #ifndef CGAL_BGL_DUAL_H
 #define CGAL_BGL_DUAL_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/boost/graph/properties.h>
 #include <boost/range/distance.hpp>
 #include <CGAL/boost/graph/iterator.h>
@@ -487,5 +489,7 @@ in_degree(typename boost::graph_traits<Dual<P> >::vertex_descriptor v,
          
         
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

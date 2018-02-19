@@ -23,6 +23,8 @@
 #ifndef CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_SEGMENT_3_DO_INTERSECT_H
 #define CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_SEGMENT_3_DO_INTERSECT_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Segment_3.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Kernel/Same_uncertainty.h>
@@ -448,5 +450,7 @@ bool do_intersect(const Segment_3<K>& a,
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif  // CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_SEGMENT_3_DO_INTERSECT_H

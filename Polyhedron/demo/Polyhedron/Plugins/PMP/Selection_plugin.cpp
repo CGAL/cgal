@@ -121,6 +121,7 @@ public:
 
     connect(ui_widget.Select_all_button,  SIGNAL(clicked()), this, SLOT(on_Select_all_button_clicked()));
     connect(ui_widget.Select_all_NTButton,  SIGNAL(clicked()), this, SLOT(on_Select_all_NTButton_clicked()));
+    connect(ui_widget.Select_boundaryButton,  SIGNAL(clicked()), this, SLOT(on_Select_boundaryButton_clicked()));
     connect(ui_widget.Add_to_selection_button,  SIGNAL(clicked()), this, SLOT(on_Add_to_selection_button_clicked()));
     connect(ui_widget.Clear_button,  SIGNAL(clicked()), this, SLOT(on_Clear_button_clicked()));
     connect(ui_widget.Clear_all_button,  SIGNAL(clicked()), this, SLOT(on_Clear_all_button_clicked()));
@@ -242,6 +243,20 @@ public Q_SLOTS:
     selection_item->select_all_NT();
   }
 
+  // Select Boundary
+  void on_Select_boundaryButton_clicked() {
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+    if(!selection_item)
+      selection_item = onTheFlyItem();
+    if(!selection_item)
+    {
+      print_message("Error: there is no selected polyhedron selection item!");
+      return;
+    }
+
+    selection_item->select_boundary();
+  }
+
   void on_Add_to_selection_button_clicked()
   {
 
@@ -359,19 +374,29 @@ public Q_SLOTS:
       {
         ui_widget.Select_all_NTButton->show();
         ui_widget.Add_to_selection_button->hide();
+        ui_widget.Select_boundaryButton->hide();
+        Q_EMIT set_operation_mode(-1);
+      }
+      else if(index == 2)
+      {
+        ui_widget.Select_all_NTButton->hide();
+        ui_widget.Add_to_selection_button->hide();
+        ui_widget.Select_boundaryButton->show();
         Q_EMIT set_operation_mode(-1);
       }
       else if(index == 4)
       {
         it->second->setPathSelection(true);
-        ui_widget.Add_to_selection_button->show();
         ui_widget.Select_all_NTButton->hide();
+        ui_widget.Add_to_selection_button->show();
+        ui_widget.Select_boundaryButton->show();
         Q_EMIT set_operation_mode(-2);
       }
       else
       {
         ui_widget.Add_to_selection_button->hide();
         ui_widget.Select_all_NTButton->hide();
+        ui_widget.Select_boundaryButton->hide();
         it->second->setPathSelection(false);
         Q_EMIT set_operation_mode(-1);
       }
@@ -573,7 +598,8 @@ public Q_SLOTS:
       BOOST_FOREACH(Scene_polyhedron_selection_item::fg_edge_descriptor ed, selection_item->selected_edges)
       {
         selection_item->selected_facets.insert(face(halfedge(ed, poly), poly));
-        selection_item->selected_facets.insert(face(opposite(halfedge(ed, poly), poly), poly));
+        if(!is_border_edge(halfedge(ed,poly), poly))
+          selection_item->selected_facets.insert(face(opposite(halfedge(ed, poly), poly), poly));
       }
       selection_item->invalidateOpenGLBuffers();
       selection_item->itemChanged();

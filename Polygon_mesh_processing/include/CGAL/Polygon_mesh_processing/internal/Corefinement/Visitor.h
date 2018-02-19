@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/predicates.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/face_graph_utils.h>
@@ -1042,5 +1043,7 @@ public:
 };
 
 } } //end of namespace CGAL::Corefinement
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_INTERNAL_COREFINEMENT_VISITOR_H

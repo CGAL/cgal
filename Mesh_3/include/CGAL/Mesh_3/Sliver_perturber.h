@@ -28,6 +28,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -1667,5 +1668,7 @@ enqueue_task(const PVertex &pv,
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_SLIVERS_PERTURBER_H

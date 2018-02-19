@@ -21,6 +21,8 @@
 #ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_ARAP_PARAMETERIZER_3_H
 #define CGAL_SURFACE_MESH_PARAMETERIZATION_ARAP_PARAMETERIZER_3_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
 #include <CGAL/Surface_mesh_parameterization/internal/Bool_property_map.h>
@@ -159,12 +161,6 @@ namespace Surface_mesh_parameterization {
 /// \endcode
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer>`
-/// \sa `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
-/// \sa `CGAL::Surface_mesh_parameterization::Orbifold_Tutte_parameterizer_3<SeamMesh, SolverTraits>`
 ///
 template < class TriangleMesh_,
            class BorderParameterizer_ = Default,
@@ -1417,5 +1413,7 @@ public:
 } // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_PARAMETERIZATION_ARAP_PARAMETERIZER_3_H

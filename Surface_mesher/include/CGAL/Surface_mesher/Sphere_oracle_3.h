@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Surface_mesher/Null_oracle_visitor.h>
 #include <CGAL/point_generators_3.h>
@@ -460,5 +461,6 @@ namespace CGAL {
 
 } // namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif  // CGAL_SURFACE_MESHER_SPHERE_ORACLE_3_H

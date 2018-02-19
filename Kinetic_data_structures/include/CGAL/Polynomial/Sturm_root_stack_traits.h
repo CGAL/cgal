@@ -22,6 +22,8 @@
 #ifndef CGAL_POLYNOMIAL_STURM_ROOT_ENUMERATOR_TRAITS_H
 #define CGAL_POLYNOMIAL_STURM_ROOT_ENUMERATOR_TRAITS_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/Root_stack_default_traits.h>
 #include <CGAL/Polynomial/internal/Rational/Euclidean_Sturm_sequence.h>
@@ -75,4 +77,7 @@ public:
 };
 
 } } //namespace CGAL::POLYNOMIAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif                                            // CGAL_POLYNOMIAL_STURM_ROOT_ENUMERATOR_TRAITS_H

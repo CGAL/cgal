@@ -24,6 +24,8 @@
 #ifndef CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS
 #define CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/config.h>
 
 #include <CGAL/Algebraic_kernel_d/flags.h>
@@ -656,5 +658,7 @@ public:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS

@@ -24,6 +24,7 @@
 
 #include <CGAL/license/QP_solver.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/iterator.h>
@@ -1551,5 +1552,7 @@ private:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_QP_MODELS_H

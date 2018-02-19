@@ -315,7 +315,7 @@ public:
     
     //! \brief default constructor
     LRU_hashed_map_with_kernel(Algebraic_kernel_with_analysis_2* kernel,
-                               unsigned max_size = -1u) : 
+                               unsigned max_size = (std::numeric_limits<unsigned>::max)()) : 
         Base(max_size),
         _m_kernel(kernel)
     {  }

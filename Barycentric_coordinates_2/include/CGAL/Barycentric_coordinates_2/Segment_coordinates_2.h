@@ -27,6 +27,7 @@
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 // STL headers.  
 #include <vector>
@@ -236,5 +237,7 @@ template<class Traits>
 } // namespace Barycentric_coordinates
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SEGMENT_COORDINATES_2_H

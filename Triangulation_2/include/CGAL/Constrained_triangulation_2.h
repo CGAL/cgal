@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Triangulation_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <set>
 
@@ -493,6 +494,9 @@ public:
     std::ptrdiff_t insert(InputIterator first, InputIterator last) 
 #endif
     {
+#if defined(_MSC_VER)
+      CGAL_USE(i);
+#endif      
       size_type n = number_of_vertices(); 
 
       std::vector<Point> points (first, last);
@@ -1502,5 +1506,7 @@ limit_intersection(const Gt& gt,
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_CONSTRAINED_TRIANGULATION_2_H

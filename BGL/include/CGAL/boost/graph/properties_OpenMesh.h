@@ -245,8 +245,6 @@ public:
   private:
   const OpenMesh* sm_;
 };
-
-
 } // CGAL
 #endif // CGAL_BOOST_GRAPH_PROPERTIES_OPENMESH_H
 
@@ -326,27 +324,29 @@ struct property_map<OPEN_MESH_CLASS, boost::vertex_point_t >
   typedef CGAL::OM_point_pmap<Mesh, P> type;
   typedef type const_type;
 };
-
-template<typename K>
-struct graph_has_property<OPEN_MESH_CLASS, edge_weight_t>
-  : CGAL::Tag_true{};
-template<typename K>
-struct graph_has_property<OPEN_MESH_CLASS, vertex_index_t>
-  : CGAL::Tag_true{};
-template<typename K>
-struct graph_has_property<OPEN_MESH_CLASS, face_index_t>
-  : CGAL::Tag_true{};
-template<typename K>
-struct graph_has_property<OPEN_MESH_CLASS, edge_index_t>
-  : CGAL::Tag_true{};
-template<typename K>
-struct graph_has_property<OPEN_MESH_CLASS, halfedge_index_t>
-  : CGAL::Tag_true{};
-template<typename K>
-struct graph_has_property<OPEN_MESH_CLASS, vertex_point_t>
-  : CGAL::Tag_true{};
-
 } // namespace boost
+
+namespace CGAL{
+
+template<typename K>
+struct graph_has_property<OPEN_MESH_CLASS, boost::edge_weight_t>
+  : CGAL::Tag_true{};
+template<typename K>
+struct graph_has_property<OPEN_MESH_CLASS, boost::vertex_index_t>
+  : CGAL::Tag_true{};
+template<typename K>
+struct graph_has_property<OPEN_MESH_CLASS, boost::face_index_t>
+  : CGAL::Tag_true{};
+template<typename K>
+struct graph_has_property<OPEN_MESH_CLASS, boost::edge_index_t>
+  : CGAL::Tag_true{};
+template<typename K>
+struct graph_has_property<OPEN_MESH_CLASS, boost::halfedge_index_t>
+  : CGAL::Tag_true{};
+template<typename K>
+struct graph_has_property<OPEN_MESH_CLASS, boost::vertex_point_t>
+  : CGAL::Tag_true{};
+} //end CGAL
 
 namespace OpenMesh {
 

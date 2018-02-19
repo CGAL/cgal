@@ -28,6 +28,8 @@
 #ifndef CGAL_IN_PLACE_LIST_H
 #define CGAL_IN_PLACE_LIST_H 1
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
 #include <cstddef>
 #include <iterator>
@@ -809,5 +811,7 @@ namespace std {
 #endif
 
 } // namespace std
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_IN_PLACE_LIST_H

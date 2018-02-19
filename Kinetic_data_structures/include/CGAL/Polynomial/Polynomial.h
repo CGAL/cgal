@@ -21,6 +21,9 @@
 
 #ifndef CGAL_POLYNOMIAL_POLYNOMIAL_H_
 #define CGAL_POLYNOMIAL_POLYNOMIAL_H_
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Polynomial/basic.h>
 
 #include <CGAL/Polynomial/internal/interval_arithmetic.h>
@@ -134,4 +137,7 @@ class Polynomial: public internal::Polynomial_impl<Polynomial<NTT>, NTT>
 };
 
 } } //namespace CGAL::POLYNOMIAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif

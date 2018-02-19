@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The header file for the Arr_circle_segment_traits_2<Kenrel> class.
@@ -748,5 +749,7 @@ public:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

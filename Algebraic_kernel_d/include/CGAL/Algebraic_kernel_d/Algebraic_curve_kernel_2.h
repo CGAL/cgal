@@ -549,7 +549,7 @@ public:
             	  typename std::vector< Algebraic_real_1>::iterator>
 	  it_pair = std::equal_range(roots.begin(),roots.end(),y);
 	CGAL_assertion(std::distance(it_pair.first,it_pair.second)==1);
-	int index = std::distance(roots.begin(),it_pair.first);
+	int index = static_cast<int>(std::distance(roots.begin(),it_pair.first));
 	
 	int degree = CGAL::degree(y_pol);
 	std::vector<std::pair<CGAL::Exponent_vector,Coefficient> > coeffs;
@@ -2504,7 +2504,7 @@ public:
 
 	std::vector<std::pair<Algebraic_real_2,Multiplicity_type> > roots;
 	_m_kernel->solve_2_object()(f,g,std::back_inserter(roots));
-	return roots.size(); 
+	return static_cast<size_type>(roots.size()); 
       }
 
     protected:

@@ -22,6 +22,8 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_RS_GMPQ_D_1
 #define CGAL_ALGEBRAIC_KERNEL_RS_GMPQ_D_1
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gmpfr.h>
 #include <CGAL/Polynomial.h>
@@ -117,5 +119,7 @@ typedef CGAL::RS_AK1::Algebraic_kernel_z_1<
 #endif
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif  // CGAL_ALGEBRAIC_KERNEL_RS_GMPQ_D_1

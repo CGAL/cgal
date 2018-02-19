@@ -24,6 +24,8 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
+
 /*! \file
  * Definition of the Arr_curve_data_traits_2<> class template.
  */
@@ -440,5 +442,7 @@ public:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

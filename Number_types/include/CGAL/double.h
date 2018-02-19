@@ -169,10 +169,13 @@ template <> class Real_embeddable_traits< double >
       : public CGAL::unary_function< Type, bool > {
       public :
         bool operator()( const Type& x ) const {
-#ifdef CGAL_CFG_IEEE_754_BUG
+
+#if defined CGAL_CFG_IEEE_754_BUG
           Type d = x;
           IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
           return is_finite_by_mask_double( p->c.H );
+#elif !defined CGAL_CFG_NO_CPP0X_ISFINITE
+          return std::isfinite(x);
 #elif defined CGAL_CFG_NUMERIC_LIMITS_BUG
           return (x == x) && (is_valid(x-x));
 #else

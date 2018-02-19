@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
@@ -552,5 +553,6 @@ void stitch_borders(PolygonMesh& pmesh,
 
 } //end of namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_STITCH_POLYGON_MESH_H

@@ -22,6 +22,8 @@
 #ifndef CGAL_POLYNOMIAL_CONVERTERS_H
 #define CGAL_POLYNOMIAL_CONVERTERS_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/internal/nt_converters.h>
 #include <iterator>
@@ -138,4 +140,7 @@ public:
 };
 
 } } //namespace CGAL::POLYNOMIAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif                                            // CGAL_POLYNOMIAL_CONVERTER_H

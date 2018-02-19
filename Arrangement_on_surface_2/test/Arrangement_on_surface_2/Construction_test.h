@@ -14,6 +14,8 @@
 #include "utils.h"
 #include "IO_base_test.h"
 
+#include <CGAL/disable_warnings.h>
+
 /*! Construction test */
 template <typename T_Geom_traits, typename T_Topol_traits>
 class Construction_test :
@@ -674,5 +676,7 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::perform()
   if (! test9()) return false;
   return true;
 }
+
+#include <CGAL/enable_warnings.h>
 
 #endif

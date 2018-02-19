@@ -27,6 +27,7 @@
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 // CGAL headers.
 #include <CGAL/assertions.h>
@@ -440,5 +441,7 @@ private:
 } // namespace Barycentric_coordinates
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_DISCRETE_HARMONIC_2_H

@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Polyhedron.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Random_access_adaptor.h>
@@ -914,6 +915,8 @@ remove_unconnected_vertices( Tag_true) {
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYHEDRON_INCREMENTAL_BUILDER_3_H //
 // EOF //
