@@ -85,7 +85,7 @@ int test_triangles_2(const FT eps)
                    p.y() > -eps && p.y() < 0.5 + eps;
     if(!on_quad)
     {
-      std::cerr << "ERROR : Generated point (" << p << ") is not on a the square." << std::endl;
+      std::cerr << "ERROR : Generated point (" << p << ") is not on the square." << std::endl;
       return 0;
     }
   }
