@@ -1523,7 +1523,7 @@ remove_self_intersections_one_step(TriangleMesh& tm,
           }while(true);
         }
 
-        if(nb_cycles > only_border_edges ? 1 : 0 )
+        if(nb_cycles > (only_border_edges ? 1 : 0) )
         {
           if(verbose)
             std::cout << "DEBUG: CC not handled due to the presence of  "
