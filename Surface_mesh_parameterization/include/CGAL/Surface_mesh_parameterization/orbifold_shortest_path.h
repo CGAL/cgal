@@ -12,10 +12,14 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Mael Rouxel-Labbé
 
-#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_SHORTEST_PATH_H
-#define CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_SHORTEST_PATH_H
+#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_SHORTEST_PATH_H
+#define CGAL_SURFACE_MESH_PARAMETERIZATION_SHORTEST_PATH_H
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
@@ -97,11 +101,29 @@ public:
   }
 };
 
-template<typename TriangleMesh, typename OutputIterator>
+} // namespace internal
+
+/// \ingroup PkgSurfaceParameterizationOrbifoldHelperFunctions
+///
+/// Compute the shortest path between `source` and `target` over `mesh`, using
+/// <a href="http://www.boost.org/doc/libs/release/libs/graph/doc/dijkstra_shortest_paths.html">
+/// boost::dijkstra_shortest_paths()</a>.
+///
+/// \tparam TriangleMesh A triangle mesh, model of `FaceListGraph` and `HalfedgeListGraph`.
+/// \tparam EdgeOutputIterator A model of `OutputIterator` with value type
+///                            `boost::graph_traits<TriangleMesh>::%edge_descriptor`.
+///
+/// \param mesh the triangular mesh to be parameterized
+/// \param source, target the extremities of the path to be computed
+/// \param oi the output iterator
+///
+/// \pre `source` and `target` are vertices of `mesh`.
+/// \pre `source != target`
+template<typename TriangleMesh, typename EdgeOutputIterator>
 void compute_shortest_paths_between_two_cones(const TriangleMesh& mesh,
-           typename boost::graph_traits<TriangleMesh>::vertex_descriptor source,
-           typename boost::graph_traits<TriangleMesh>::vertex_descriptor target,
-           OutputIterator oi)
+                                              typename boost::graph_traits<TriangleMesh>::vertex_descriptor source,
+                                              typename boost::graph_traits<TriangleMesh>::vertex_descriptor target,
+                                              EdgeOutputIterator oi)
 {
   if(source == target) {
     std::cout << "Warning: the source and target are identical in 'shortest_path' " << std::endl;
@@ -111,7 +133,7 @@ void compute_shortest_paths_between_two_cones(const TriangleMesh& mesh,
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor    edge_descriptor;
 
-  typedef Stop_at_target_Dijkstra_visitor<TriangleMesh>                  Stop_visitor;
+  typedef internal::Stop_at_target_Dijkstra_visitor<TriangleMesh>        Stop_visitor;
 
   typedef boost::unordered_map<vertex_descriptor, vertex_descriptor>     Pred_umap;
   typedef boost::associative_property_map<Pred_umap>                     Pred_pmap;
@@ -140,25 +162,42 @@ void compute_shortest_paths_between_two_cones(const TriangleMesh& mesh,
   } while (s != source);
 }
 
-template<typename TriangleMesh, typename Cones_vector, typename Seam_container>
+/// \ingroup PkgSurfaceParameterizationOrbifoldHelperFunctions
+///
+/// Given a range `[first; beyond[` of cones (described as vertex descriptors),
+/// compute the shortest path for all pairs of consecutive entries in the range
+/// and add them to the container `seams`.
+///
+/// \tparam TriangleMesh A triangle mesh, model of `FaceListGraph` and `HalfedgeListGraph`.
+/// \tparam InputConesForwardIterator A model of `ForwardIterator` with value type
+///                                   `boost::graph_traits<TriangleMesh>::%vertex_descriptor`.
+/// \tparam SeamContainer A model of <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer"><tt>SequenceContainer</tt></a>
+///                       with value type `boost::graph_traits<TriangleMesh>::%edge_descriptor`.
+///
+/// \param mesh the triangular mesh on which paths are computed
+/// \param first, beyond a range of cones
+/// \param seams a container that will store the paths, as a sequence of edges of the mesh.
+///
+/// \pre `std::distance(first,beyond) > 1`
+template<typename TriangleMesh, typename InputConesForwardIterator, typename SeamContainer>
 void compute_shortest_paths_between_cones(const TriangleMesh& mesh,
-                                          const Cones_vector& cones,
-                                          Seam_container& seams)
+                                          InputConesForwardIterator first, InputConesForwardIterator beyond,
+                                          SeamContainer& seams)
 {
-  CGAL_precondition(cones.size() == 3 || cones.size() == 4);
-  for(std::size_t i=0; i<cones.size() - 1; ++i) {
-    compute_shortest_paths_between_two_cones(mesh, cones[i], cones[i+1],
-        std::back_inserter(seams));
+  CGAL_precondition(std::distance(first, beyond) == 3 || std::distance(first, beyond) == 4);
+  InputConesForwardIterator last = --beyond;
+  for(; first!=last; ++first) {
+    InputConesForwardIterator next = first;
+    ++next;
+    compute_shortest_paths_between_two_cones(mesh, *first, *next, std::back_inserter(seams));
   }
 
   std::ofstream out("shortest_path.selection.txt");
-  output_shortest_paths_to_selection_file(mesh, seams, out);
+  internal::output_shortest_paths_to_selection_file(mesh, seams, out);
 }
-
-} // namespace internal
 
 } // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
 
-#endif // CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_SHORTEST_PATH_H
+#endif // CGAL_SURFACE_MESH_PARAMETERIZATION_SHORTEST_PATH_H

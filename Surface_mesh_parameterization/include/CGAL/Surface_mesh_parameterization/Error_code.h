@@ -41,9 +41,10 @@ enum Error_code
   ERROR_WRONG_PARAMETER           ///< A method received an unexpected parameter
 };
 
-/// Get message corresponding to an error code
+/// \ingroup PkgSurfaceParameterizationEnums
+/// \brief Get the message corresponding to an error code.
 /// \param error_code The code returned by `parameterize()`
-/// \return           The string describing the error code
+/// \return The string describing the error code.
 const char* get_error_message(int error_code)
 {
   // Messages corresponding to Error_code list above. Must be kept in sync!

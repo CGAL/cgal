@@ -21,6 +21,7 @@
 
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
+#include <CGAL/Surface_mesh_parameterization/orbifold_enums.h>
 
 #include <CGAL/boost/graph/properties.h>
 
@@ -41,49 +42,7 @@ namespace CGAL {
 
 namespace Surface_mesh_parameterization {
 
-/// \ingroup PkgSurfaceParameterizationEnums
-///
-/// The types of cones used in Orbifold Tutte parameterization.
-///
-/// `Unique_cones` are found at the beginning and the end of the seam. All other
-/// cones are duplicated in the sense that when the seam is `opened`, the vertex
-/// is duplicated at two different positions.
-enum Cone_type
-{
-  First_unique_cone = 0,
-  Second_unique_cone,
-  Duplicated_cone
-};
-
-/// \ingroup PkgSurfaceParameterizationEnums
-///
-/// The four Orbifold types available in the Orbifold Tutte parameterization.
-enum Orbifold_type
-{
-  Square = 0,
-  Diamond,
-  Triangle,
-  Parallelogram
-};
-
-/// Get message corresponding to an error code
-/// \param orb_type The integer value in the enum
-/// \return         The string describing the Orbifold type
-const char* get_orbifold_type(int orb_type)
-{
-  // Messages corresponding to Error_code list above. Must be kept in sync!
-  static const char* type[Parallelogram+1] = {
-    "Square",
-    "Diamond",
-    "Triangle",
-    "Parallelogram"
-  };
-
-  if(orb_type > Parallelogram || orb_type < 0)
-    return "Unknown orbifold type";
-  else
-    return type[orb_type];
-}
+namespace internal {
 
 // Orbifold type functions
 template<typename Point_container>
@@ -129,8 +88,6 @@ NT_container get_angles_at_cones(const Orbifold_type orb_type)
 
   return angs;
 }
-
-namespace internal {
 
 template<typename Cone_container>
 bool are_cones_unique(const Cone_container& cones)
@@ -198,21 +155,24 @@ void find_start_cone(const ConeMap& cmap,
 
 /// Check the validity of the input cones in the `Seam_mesh` mesh.
 template<typename SeamMesh,
-         typename Cones_in_Seam_mesh_map,
-         typename Cones_in_Base_mesh_container>
-bool check_input_validity(const SeamMesh& mesh,
-                          const Cones_in_Seam_mesh_map& cones,
-                          const Cones_in_Base_mesh_container& cone_tm_vds)
+         typename ConeInputBidirectionalIterator,
+         typename Cones_in_Seam_mesh_map>
+bool check_cone_validity(const SeamMesh& mesh,
+                         ConeInputBidirectionalIterator first, ConeInputBidirectionalIterator beyond,
+                         const Cones_in_Seam_mesh_map& cones)
 {
   typedef typename boost::graph_traits<SeamMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<SeamMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<typename SeamMesh::TriangleMesh>::vertex_descriptor TM_vertex_descriptor;
 
+  typename std::iterator_traits<
+    ConeInputBidirectionalIterator>::difference_type number_of_cones_in_tm = std::distance(first, beyond);
+
   // check cone numbers
-  if((cone_tm_vds.size() == 3 && cones.size() != 4) ||
-     (cone_tm_vds.size() == 4 && cones.size() != 6)) {
+  if((number_of_cones_in_tm == 3 && cones.size() != 4) ||
+     (number_of_cones_in_tm == 4 && cones.size() != 6)) {
     std::cerr << "Error: Problem in number of cones: " << std::endl;
-    std::cerr << cone_tm_vds.size() << " cones in the base mesh" << std::endl;
+    std::cerr << number_of_cones_in_tm << " cones in the base mesh" << std::endl;
     std::cerr << cones.size() << " cones in the seam mesh" << std::endl;
     return false;
   }
@@ -251,8 +211,8 @@ bool check_input_validity(const SeamMesh& mesh,
     return false;
   }
 
-  if((cone_tm_vds.size() == 3 && duplicated_cone_counter != 2) ||
-     (cone_tm_vds.size() == 4 && duplicated_cone_counter != 4)) {
+  if((number_of_cones_in_tm == 3 && duplicated_cone_counter != 2) ||
+     (number_of_cones_in_tm == 4 && duplicated_cone_counter != 4)) {
     std::cerr << "Error: Wrong number of duplicated cones" << std::endl;
     return false;
   }
@@ -330,207 +290,6 @@ bool check_input_validity(const SeamMesh& mesh,
   }
 
   return true;
-}
-
-/// Read the cones from an input stream.
-template<typename TriangleMesh>
-Error_code read_cones(const TriangleMesh& pm, std::ifstream& in,
-  std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor>& cone_vds_in_tm)
-{
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor TM_vertex_descriptor;
-
-  std::vector<int> cones;
-  cones.reserve(4);
-  int cone_index;
-  while(in >> cone_index) {
-    cones.push_back(cone_index);
-  }
-
-  std::cout << "Input cones: ";
-  for(std::size_t i=0; i<cones.size(); ++i)
-    std::cout << cones[i] << " ";
-  std::cout << std::endl;
-
-  if(cones.size() < 3 || cones.size() > 4) {
-    std::cerr << "Error: Not enough or too many input cones" << std::endl;
-    return ERROR_WRONG_PARAMETER;
-  }
-
-  if(!are_cones_unique(cones)) {
-    std::cerr << "Error: The input cones are not unique" << std::endl;
-    return ERROR_WRONG_PARAMETER;
-  }
-
-  // Locate the cones in the underlying mesh 'pm'
-  CGAL_assertion(cone_vds_in_tm.empty());
-  cone_vds_in_tm.resize(cones.size());
-
-  for(std::size_t i=0; i<cones.size(); ++i) {
-    int counter = 0;
-    BOOST_FOREACH(TM_vertex_descriptor vd, vertices(pm)) {
-      if(counter == cones[i]) {
-        cone_vds_in_tm[i] = vd;
-        break;
-      }
-      ++counter;
-    }
-    CGAL_postcondition(cone_vds_in_tm[i] != TM_vertex_descriptor());
-  }
-
-  return OK;
-}
-
-/// Read the cones from an input file.
-template<typename TriangleMesh>
-Error_code read_cones(const TriangleMesh& pm, const char* filename,
-  std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor>& cone_vds_in_tm)
-{
-  std::ifstream in(filename);
-  return read_cones(pm, in, cone_vds_in_tm);
-}
-
-
-/// Locate the cones on the seam mesh (find the corresponding seam mesh
-/// vertex_descriptor) and mark them with a tag that indicates whether it is a
-/// simple cone or a duplicated cone.
-///
-/// The cones are ordered: the first and last cones are the extremetities of the seam.
-///
-/// \tparam SeamMesh is a seam mesh
-/// \tparam ConeMap a map vertex_descriptor --> Cone_type
-template<typename SeamMesh,
-         typename Cones_in_pmesh_vector,
-         typename ConeMap>
-bool locate_cones(const SeamMesh& mesh,
-                  const Cones_in_pmesh_vector& cone_tm_vds,
-                  ConeMap& cones)
-{
-  CGAL_precondition(cones.empty());
-
-  typedef typename SeamMesh::TriangleMesh                                  TriangleMesh;
-
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    TM_vertex_descriptor;
-  typedef typename boost::graph_traits<SeamMesh>::vertex_descriptor        vertex_descriptor;
-
-  // property map to go from TM_vertex_descriptor to Point_3
-  typedef typename Kernel_traits<TriangleMesh>::PPM                        PM_PPM;
-  const PM_PPM pm_ppmap = get(boost::vertex_point, mesh.mesh());
-
-  // property map to go from vertex_descriptor to Point_3
-  typedef typename Kernel_traits<SeamMesh>::PPM                            PPM;
-  const PPM ppmap = get(boost::vertex_point, mesh);
-
-  // the cones in the underlying mesh
-  std::size_t cvdss = cone_tm_vds.size();
-
-  for(std::size_t i=0; i<cvdss; ++i) {
-    TM_vertex_descriptor smvd = cone_tm_vds[i];
-    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
-      if(get(ppmap, vd) == get(pm_ppmap, smvd)) {
-        Cone_type ct;
-        if(i == 0)
-          ct = First_unique_cone;
-        else if(i == (cvdss - 1))
-          ct = Second_unique_cone;
-        else
-          ct = Duplicated_cone;
-
-        cones.insert(std::make_pair(vd, ct));
-      }
-    }
-  }
-
-  return check_input_validity(mesh, cones, cone_tm_vds);
-}
-
-/// Same as above, but the cones are NOT ordered and we thus use seam mesh
-/// information to determine which cones are Duplicate_cones and which cones
-/// are unique
-///
-/// \tparam SeamMesh is a seam mesh
-/// \tparam Cones_in_pmesh_set is a set of cones (vertex_descriptor of SeamMesh)
-/// \tparam ConeMap a map vertex_descriptor of SeamMesh  --> Cone_type
-template<typename SeamMesh,
-         typename Cones_in_pmesh_set,
-         typename ConeMap>
-bool locate_unordered_cones(const SeamMesh& mesh,
-                            const Cones_in_pmesh_set& cone_tm_vds,
-                            ConeMap& cones)
-{
-  CGAL_precondition(cones.empty());
-  CGAL_precondition(cone_tm_vds.size() == 3 || cone_tm_vds.size() == 4);
-
-  typedef typename SeamMesh::TriangleMesh                                  TriangleMesh;
-
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    TM_vertex_descriptor;
-  typedef typename boost::graph_traits<SeamMesh>::vertex_descriptor        vertex_descriptor;
-  typedef typename boost::graph_traits<SeamMesh>::halfedge_descriptor      halfedge_descriptor;
-
-  // find a vertex on the seam
-  vertex_descriptor vertex_on_seam;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
-    if(mesh.has_on_seam(vd)) {
-      vertex_on_seam = vd;
-      break;
-    }
-  }
-
-  CGAL_assertion(vertex_on_seam != vertex_descriptor());
-
-  // property map to go from TM_vertex_descriptor to Point_3
-  typedef typename Kernel_traits<TriangleMesh>::PPM          PM_PPM;
-  const PM_PPM pm_ppmap = get(boost::vertex_point, mesh.mesh());
-
-  // property map to go from vertex_descriptor to Point_3
-  typedef typename Kernel_traits<SeamMesh>::PPM              PPM;
-  const PPM ppmap = get(boost::vertex_point, mesh);
-
-  bool first_cone_met = false;
-
-  // walk on the seam and mark if we encounter a cone
-  vertex_descriptor end = vertex_on_seam;
-  do {
-    BOOST_FOREACH(TM_vertex_descriptor smvd, cone_tm_vds) {
-      if(get(ppmap, vertex_on_seam) == get(pm_ppmap, smvd)) { // the seam mesh vertex is a cone
-
-        // we have encountered a cone. Must check if the cone is a Unique_cone
-        // or a Duplicated_cone.
-
-        // a check is to look at the sources of two halfedges with the same direction
-        // on either side of the seam. If the sources are the same, it's a Unique_cone;
-        // if they differ, it's a duplicated_cone.
-
-        halfedge_descriptor hd = halfedge(vertex_on_seam, mesh);
-        halfedge_descriptor other_hd = opposite(hd, mesh);
-
-        // little trick to go from border halfedge on one side of the seam to
-        // interior halfedge on the other side of the seam
-        CGAL_assertion(other_hd.seam);
-        other_hd.seam = false;
-
-        Cone_type ct;
-        if(target(hd, mesh) == source(other_hd, mesh)) {
-          if(first_cone_met)
-            ct = Second_unique_cone;
-          else {
-            ct = First_unique_cone;
-            first_cone_met = true;
-          }
-        } else {
-          ct = Duplicated_cone;
-        }
-
-        cones.insert(std::make_pair(vertex_on_seam, ct));
-      }
-    }
-
-    // move to the next vertex_descriptor on the seam
-    vertex_on_seam = source(halfedge(vertex_on_seam, mesh), mesh);
-    CGAL_assertion(mesh.has_on_seam(vertex_on_seam));
-
-  } while(vertex_on_seam != end);
-
-  return check_input_validity(mesh, cones, cone_tm_vds);
 }
 
 } // namespace internal

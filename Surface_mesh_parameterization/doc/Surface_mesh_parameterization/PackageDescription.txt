@@ -112,20 +112,32 @@ The package performs the next checks:
     - the input mesh is a surface with one connected component.
 */
 
-/// \defgroup PkgSurfaceParameterizationMainFunction Main Function
-/// \ingroup PkgSurfaceParameterization
+/*!
+ \defgroup PkgSurfaceParameterizationMainFunction Main Functions
+ \ingroup PkgSurfaceParameterization
 
-/// \defgroup PkgSurfaceParameterizationEnums Enums
-/// \ingroup PkgSurfaceParameterization
+ The central functions, main entry point of the package.
+*/
 
-/// \defgroup PkgSurfaceParameterizationConcepts Concepts
-/// \ingroup PkgSurfaceParameterization
+/*!
+ \defgroup PkgSurfaceParameterizationEnums Enums
+ \ingroup PkgSurfaceParameterization
+
+ The enum classes defined and used in this package.
+*/
+
+/*!
+ \defgroup PkgSurfaceParameterizationConcepts Concepts
+ \ingroup PkgSurfaceParameterization
+
+ The concepts of this package.
+*/
 
 /*!
  \defgroup PkgSurfaceParameterizationMethods Surface Parameterization Methods
  \ingroup PkgSurfaceParameterization
 
-This \cgal package implements several parameterization methods:
+ This \cgal package implements several parameterization methods:
 
  - Fixed border:
   - Tutte Barycentric Mapping \cgalCite{t-hdg-63}.
@@ -161,6 +173,11 @@ This package implements common border parameterization methods:
  - For free border methods: at least two constraints (the pinned
 vertices).
 */
+
+/*!
+ \defgroup PkgSurfaceParameterizationOrbifoldHelperFunctions Orbifold Helper Functions
+ \ingroup PkgSurfaceParameterizationMethods
+
 
 */
 
