@@ -9,8 +9,11 @@
 #include "Scene_polyhedron_item.h"
 #include "Scene_polylines_item.h"
 #include "Scene_surface_mesh_item.h"
+#include "Scene_points_with_normal_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/array.h>
 #include "Messages_interface.h"
 using namespace CGAL::Three;
 class Polyhedron_demo_orient_soup_plugin : 
@@ -46,12 +49,15 @@ public Q_SLOTS:
   void orientSM();
   void shuffle();
   void displayNonManifoldEdges();
-  void createPolyline();
+  void createPointsAndPolyline();
 
 private:
   template<class Item>
   void apply_shuffle(Item* item,
                      const CGAL::Three::Scene_interface::Item_id& index);
+  void getNMPoints(std::vector<std::size_t> &vertices_to_duplicate,
+      Scene_polygon_soup_item* item);
+  
   CGAL::Three::Scene_interface* scene;
   Messages_interface* messages;
   QMainWindow* mw;
@@ -91,10 +97,10 @@ void Polyhedron_demo_orient_soup_plugin::init(QMainWindow* mainWindow,
   actionDisplayNonManifoldEdges->setProperty("subMenuName", "View");
   connect(actionDisplayNonManifoldEdges, SIGNAL(triggered()),
           this, SLOT(displayNonManifoldEdges()));
-  actionNMToPolyline = new QAction(tr("Non Manifold Edges to Polyline"), mainWindow);
+  actionNMToPolyline = new QAction(tr("Make Items from Non Manifold Simplices"), mainWindow);
   actionNMToPolyline->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionNMToPolyline, &QAction::triggered,
-          this, &Polyhedron_demo_orient_soup_plugin::createPolyline);
+          this, &Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline);
 }
 
 QList<QAction*> Polyhedron_demo_orient_soup_plugin::actions() const {
@@ -279,8 +285,11 @@ void Polyhedron_demo_orient_soup_plugin::displayNonManifoldEdges()
     QApplication::restoreOverrideCursor();
   }
 }
-void Polyhedron_demo_orient_soup_plugin::createPolyline()
+void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
 {
+  
+  typedef std::pair<std::size_t, std::vector<std::size_t> > V_ID_and_P_IDs;
+  
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   
   Scene_polygon_soup_item* item =
@@ -289,6 +298,26 @@ void Polyhedron_demo_orient_soup_plugin::createPolyline()
   if(item)
   {
     QApplication::setOverrideCursor(Qt::WaitCursor);
+    Scene_points_with_normal_item* points = new Scene_points_with_normal_item();
+    std::vector<std::size_t> nm_vertices;
+    getNMPoints(nm_vertices, item);
+    if(nm_vertices.empty())
+    {
+      delete points;
+      messages->information(tr("There is no non-manifold vertex in this soup."));
+    }
+    else
+    {
+      
+      BOOST_FOREACH(std::size_t id, nm_vertices)
+      {
+        points->point_set()->insert(item->points()[id]);
+      }
+      points->setName(QString("Non Manifold Vertices of %1").arg(item->name()));
+          points->setColor(QColor(Qt::red));
+          
+          scene->addItem(points);
+    }
     Scene_polylines_item* poly = 
         new Scene_polylines_item();
     Polygon_soup::Edges nm_edges = item->non_manifold_edges();
@@ -308,5 +337,82 @@ void Polyhedron_demo_orient_soup_plugin::createPolyline()
   }  
 }
 
+void Polyhedron_demo_orient_soup_plugin::getNMPoints(
+    std::vector<std::size_t > &vertices_to_duplicate,
+    Scene_polygon_soup_item* item)
+{
+  typedef std::pair<std::size_t, std::size_t>                              V_ID_pair;
+  typedef std::map<V_ID_pair, boost::container::flat_set<std::size_t> >    Edge_map;
+  typedef std::set<V_ID_pair>                                              Marked_edges;
+  typedef CGAL::Polygon_mesh_processing::internal::Polygon_soup_orienter<Polygon_soup::Points, 
+      Polygon_soup::Polygons> PSO;
+      
+  Edge_map edges;
+  Marked_edges m_edges;
+  PSO::fill_edge_map(edges, m_edges, item->polygons());
+  
+  // for each vertex, indicates the list of polygon containing it
+  std::vector< std::vector<std::size_t> > incident_polygons_per_vertex(item->points().size());
+  std::size_t nb_polygons=item->polygons().size();
+  for(std::size_t ip=0; ip<nb_polygons; ++ip)
+  {
+    BOOST_FOREACH(std::size_t iv, item->polygons()[ip])
+      incident_polygons_per_vertex[iv].push_back(ip);
+  }
+
+  std::size_t nbv = item->points().size();
+  
+  for (std::size_t v_id = 0; v_id < nbv; ++v_id)
+  {
+    const std::vector< std::size_t >& incident_polygons = incident_polygons_per_vertex[v_id];
+
+    if ( incident_polygons.empty() ) continue; //isolated vertex
+    std::set<std::size_t> visited_polygons;
+
+    bool first_pass = true;
+    BOOST_FOREACH(std::size_t p_id, incident_polygons)
+    {
+      if ( !visited_polygons.insert(p_id).second ) continue; // already visited
+
+      if (!first_pass)
+      {
+        vertices_to_duplicate.push_back(v_id);
+      }
+
+      
+      std::size_t nbv = item->polygons()[p_id].size(), pvid=0;
+      for (; pvid!=nbv; ++pvid)
+        if (v_id==item->polygons()[p_id][pvid]) break;
+      CGAL_assertion( pvid!=nbv );
+      std::size_t p = item->polygons()[p_id][ (pvid+nbv-1)%nbv ];
+      std::size_t n = item->polygons()[p_id][ (pvid+1)%nbv ];
+      const CGAL::cpp11::array<std::size_t,3>& neighbors = CGAL::make_array(p,v_id,n);
+
+      std::size_t next = neighbors[2];
+
+      do{
+        std::size_t other_p_id;
+        CGAL::cpp11::tie(next, other_p_id) = PSO::next_cw_vertex_around_source(v_id, next, item->polygons(), edges, m_edges);
+        if (next==v_id) break;
+        visited_polygons.insert(other_p_id);
+      }
+      while(next!=neighbors[0]);
+
+      if (next==v_id){
+        /// turn the otherway round
+        next = neighbors[0];
+        do{
+          std::size_t other_p_id;
+          CGAL::cpp11::tie(next, other_p_id) = PSO::next_ccw_vertex_around_target(next, v_id, item->polygons(), edges, m_edges);
+          if (next==v_id) break;
+          visited_polygons.insert(other_p_id);
+        }
+        while(true);
+      }
+      first_pass=false;
+    }
+  }
+  
+}
 #include "Orient_soup_plugin.moc"
 
