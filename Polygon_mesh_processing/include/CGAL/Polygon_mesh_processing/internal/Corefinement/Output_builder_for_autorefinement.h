@@ -802,7 +802,7 @@ public:
                 //       issue if anyway the whole patch would be dropped.
                 //       Note that this remark is value for all cases where
                 //       all_fixed is set to false.
-                if (patch_id_p1!=patch_id_p2 && patch_id_q1==patch_id_q2)
+                if (patch_id_p1==patch_id_p2 || patch_id_q1==patch_id_q2)
                 {
                   all_fixed = false;
                   continue;
@@ -821,8 +821,8 @@ public:
               if ( is_dangling_edge(ids.first, ids.second, h1, tm, is_node_of_degree_one) ||
                    is_dangling_edge(ids.first, ids.second, h2, tm, is_node_of_degree_one) )
               {
-                // save reason as above
-                if (patch_id_p1!=patch_id_p2 && patch_id_q1==patch_id_q2)
+                // same reason as above
+                if (patch_id_p1==patch_id_p2 || patch_id_q1==patch_id_q2)
                 {
                   all_fixed = false;
                   continue;
@@ -843,7 +843,7 @@ public:
               if (!p1_is_between_q1q2){
                 //case (e4)
                 //TODO: This is a "tangency" along an edge here, there is
-                //      not much we can do but if on of the two sheets is dropped
+                //      not much we can do but if one of the two sheets is dropped
                 all_fixed = false;
                 continue;
               }
