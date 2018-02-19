@@ -66,7 +66,7 @@ public:
 
     // Allows construction of const_iterator from iterator
     template < class A, class B, class C>
-    vector_iterator( const vector_iterator<A,B,C>& i) : ptr( &*i) {}
+    vector_iterator( const vector_iterator<A,B,C>& i) : ptr(i.operator->()) {}
 
     // OPERATIONS Forward Category
     // ---------------------------
