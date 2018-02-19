@@ -8,6 +8,8 @@ maintain faces described by halfedges, to provide access from a face to
 an incident halfedge, and to provide access from a halfedge to its incident
 face. 
 
+Two faces incident to a same edge must be different.
+
 \cgalAssociatedTypesBegin
 
 \cgalAssociatedTypeBegin{boost::graph_traits<FaceGraph>::%face_descriptor} A face descriptor corresponds to a unique face in an abstract graph instance.
