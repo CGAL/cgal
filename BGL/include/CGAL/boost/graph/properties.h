@@ -31,7 +31,29 @@
 #include <CGAL/basic.h>
 #include <string>
 
- 
+namespace CGAL{
+/// \ingroup PkgBGLProperties
+/// \brief graph_has_property is used to indicate if
+/// a model of `HalfedgeGraph` or `FaceGraph`
+/// has an internal property associated with the
+/// given `PropertyTag`.
+///
+/// It inherits from `CGAL::Tag_true` if there is a
+/// default internal property map for the
+/// corresponding property tag and from
+/// `CGAL::Tag_false` otherwise.
+///
+/// \tparam Graph a model of `HalfedgeGraph` or `FaceGraph`
+/// \tparam PropertyTag the type of a property tag
+/// referring to the property of interest.
+///
+template<typename Graph, typename PropertyTag>
+struct graph_has_property
+#ifndef DOXYGEN_RUNNING
+    : CGAL::Tag_false
+#endif
+{};
+}
 /// Boost Namespace
 namespace boost {
 
@@ -57,10 +79,6 @@ enum halfedge_external_index_t   { halfedge_external_index   } ;
 enum face_index_t            { face_index            };
 enum face_external_index_t   { face_external_index   } ;
 
-
-
-template<typename Graph, typename PropertyTag>
-struct graph_has_property : CGAL::Tag_false {};
   
 struct cgal_no_property
 {

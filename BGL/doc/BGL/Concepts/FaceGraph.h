@@ -8,6 +8,8 @@ maintain faces described by halfedges, to provide access from a face to
 an incident halfedge, and to provide access from a halfedge to its incident
 face. 
 
+A partial specialization must be provided for `CGAL::graph_has_property`
+for each internal property map available.
 \cgalAssociatedTypesBegin
 
 \cgalAssociatedTypeBegin{boost::graph_traits<FaceGraph>::%face_descriptor} A face descriptor corresponds to a unique face in an abstract graph instance.
