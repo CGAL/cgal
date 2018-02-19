@@ -29,12 +29,15 @@
 #include <CGAL/Surface_mesher/Implicit_surface_oracle_3.h>
 
 #include <functional>
+#include <CGAL/function.h>
 
 namespace CGAL {
 
   template<
     typename GT,
-    typename Function_
+    typename Function_ = cpp11::function<typename GT::FT(typename GT::Point_3)>
+    // The type of the argument `Function` will be ignored anyway.
+    // The parameter is here only for backward-compatibility.
     >
   class Implicit_surface_3 
   {
@@ -43,8 +46,8 @@ namespace CGAL {
     typedef typename Geom_traits::Sphere_3 Sphere_3;
     typedef typename Geom_traits::FT FT;
     typedef typename Geom_traits::Point_3 Point;
-    typedef Function_ Function;
-    typedef Implicit_surface_3<Geom_traits, Function> Self;
+    typedef cpp11::function<FT(Point)> Function;
+    typedef Implicit_surface_3<Geom_traits, Function_> Self;
 
     Function& function() { return func; }
 
@@ -114,7 +117,7 @@ namespace CGAL {
 			  typename GT::Sphere_3 sphere,
 			  typename GT::FT error_bound)
   {
-    typedef Implicit_surface_3<GT, Function> surface;
+    typedef Implicit_surface_3<GT> surface;
     return surface(f, sphere, error_bound);
   }
 
