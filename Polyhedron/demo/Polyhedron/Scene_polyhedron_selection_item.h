@@ -440,6 +440,8 @@ public:
       break;
     }
   }
+
+  void select_boundary();
   void select_all_NT();
   // select all of vertex, facet or edge (use fg_vertex_descriptor, fg_face_descriptor, fg_edge_descriptor as template argument)
   template<class HandleType>

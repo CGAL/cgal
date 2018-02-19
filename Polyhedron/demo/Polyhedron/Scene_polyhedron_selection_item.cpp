@@ -2249,3 +2249,17 @@ bool Scene_polyhedron_selection_item::shouldDisplayIds(CGAL::Three::Scene_item *
   return d->item->polyhedron_item() == current_item;
   return false;
 }
+
+void Scene_polyhedron_selection_item::select_boundary()
+{
+  Face_graph* fg = polyhedron_item()->face_graph();
+  BOOST_FOREACH(fg_halfedge_descriptor hd, halfedges(*fg))
+  {
+    if(is_border_edge(hd, *fg))
+    {
+      selected_edges.insert(edge(hd, *fg));
+    }
+  }
+  invalidateOpenGLBuffers();
+  redraw();
+}
