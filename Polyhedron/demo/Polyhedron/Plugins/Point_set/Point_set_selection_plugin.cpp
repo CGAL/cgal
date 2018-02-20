@@ -5,6 +5,10 @@
 #include <QGLViewer/manipulatedCameraFrame.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Search_traits_3.h>
+#include <CGAL/Search_traits_adapter.h>
+#include <CGAL/Fuzzy_sphere.h>
+#include <CGAL/linear_least_squares_fitting_3.h>
 #include "opengl_tools.h"
 
 #include "Messages_interface.h"
@@ -26,8 +30,21 @@
 #include <QMouseEvent>
 #include <QMessageBox>
 
+#include <QMultipleInputDialog.h>
+#include <QDoubleSpinBox>
+
 #include <map>
 #include <fstream>
+#include <boost/make_shared.hpp>
+
+
+//#undef  CGAL_LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_for.h>
+#include <tbb/mutex.h>
+#include <tbb/blocked_range.h>
+#include <tbb/scalable_allocator.h>  
+#endif // CGAL_LINKED_WITH_TBB
 
 // Class for visualizing selection 
 // provides mouse selection functionality
@@ -180,6 +197,359 @@ public:
 }; // end class Scene_point_set_selection_visualizer
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+class Selection_test {
+
+  Point_set* point_set;
+  bool* selected;
+  qglviewer::Camera* camera;
+  const qglviewer::Vec offset;
+  Scene_edit_box_item* edit_box;
+  Scene_point_set_selection_visualizer* visualizer;
+  const Ui::PointSetSelection& ui_widget;
+
+  
+public:
+  
+  Selection_test(Point_set* point_set,
+                 bool* selected,
+                 qglviewer::Camera* camera,
+                 const qglviewer::Vec offset,
+                 Scene_edit_box_item* edit_box,
+                 Scene_point_set_selection_visualizer* visualizer,
+                 const Ui::PointSetSelection& ui_widget)
+    : point_set (point_set)
+    , selected (selected)
+    , camera (camera)
+    , offset (offset)
+    , edit_box (edit_box)
+    , visualizer (visualizer)
+    , ui_widget (ui_widget)
+  {
+  }
+
+#ifdef CGAL_LINKED_WITH_TBB
+  void operator()(const tbb::blocked_range<std::size_t>& r) const
+  {
+    for( std::size_t i = r.begin(); i != r.end(); ++i)
+      apply (i);
+  }
+#endif // CGAL_LINKED_WITH_TBB
+
+  void apply (std::size_t i) const
+  {
+    Point_set::const_iterator it = point_set->begin() + i;
+    bool already_selected = point_set->is_selected (it);
+
+    const Kernel::Point_3& p = point_set->point (*it);
+    qglviewer::Vec vp (p.x (), p.y (), p.z ());
+    qglviewer::Vec vsp = camera->projectedCoordinatesOf (vp + offset);
+    bool now_selected = false;
+    if(!ui_widget.box->isChecked())
+      now_selected = visualizer->is_selected (vsp);
+    else if(edit_box)
+    {
+      if(p.x() >= edit_box->point(0,0) - offset.x &&
+         p.y() >= edit_box->point(0,1) - offset.y &&
+         p.z() <= edit_box->point(0,2) - offset.z &&
+         p.x() <= edit_box->point(6,0) - offset.x &&
+         p.y() <= edit_box->point(6,1) - offset.y &&
+         p.z() >= edit_box->point(6,2) - offset.z
+        )
+      {
+        now_selected = true;
+      }
+    }
+
+    if (ui_widget.new_selection->isChecked())
+      selected[i] = now_selected;
+    else if (ui_widget.union_selection->isChecked())
+      selected[i] = (already_selected || now_selected);
+    else if (ui_widget.intersection->isChecked())
+      selected[i] = (already_selected && now_selected);
+    else if (ui_widget.diff->isChecked())
+      selected[i] = (already_selected && !now_selected);
+  }
+};
+
+
+class Neighborhood
+{
+  typedef Kernel Geom_traits;
+
+  typedef CGAL::Search_traits_3<Geom_traits> SearchTraits_3;
+  typedef CGAL::Search_traits_adapter <Point_set::Index, Point_set::Point_map, SearchTraits_3> Search_traits;
+  typedef CGAL::Orthogonal_k_neighbor_search<Search_traits> Neighbor_search;
+  typedef Neighbor_search::Tree Tree;
+  typedef Neighbor_search::Distance Distance;
+  typedef CGAL::Fuzzy_sphere<Search_traits> Sphere;
+
+  Scene_points_with_normal_item* points_item;
+  boost::shared_ptr<Tree> tree;
+  
+public:
+
+  Neighborhood () : points_item (NULL)
+  {
+  }
+
+  ~Neighborhood ()
+  {
+
+  }
+
+  Neighborhood& point_set (Scene_points_with_normal_item* points_item)
+  {
+    if (this->points_item != points_item)
+    {
+      this->points_item = points_item;
+      
+      tree = boost::make_shared<Tree> (points_item->point_set()->begin(),
+                                       points_item->point_set()->end(),
+                                       Tree::Splitter(),
+                                       Search_traits (points_item->point_set()->point_map()));
+
+    }
+    return *this;
+  }
+
+  void expand()
+  {
+    if (points_item->point_set()->nb_selected_points() == 0)
+      return;
+
+    Distance tr_dist(points_item->point_set()->point_map());
+    
+    std::vector<bool> selected_bitmap (points_item->point_set()->size(), false);
+
+    for (Point_set::iterator it = points_item->point_set()->first_selected();
+         it != points_item->point_set()->end(); ++ it)
+    {
+      Neighbor_search search(*tree, points_item->point_set()->point(*it), 6, 0, true, tr_dist);
+      for (Neighbor_search::iterator nit = search.begin(); nit != search.end(); ++ nit)
+        selected_bitmap[nit->first] = true;
+    }
+
+    std::vector<Point_set::Index> unselected, selected;
+    
+    for(Point_set::iterator it = points_item->point_set()->begin ();
+	it != points_item->point_set()->end(); ++ it)
+      if (points_item->point_set()->is_selected(it) || selected_bitmap[*it])
+        selected.push_back (*it);
+      else
+        unselected.push_back (*it);
+
+    for (std::size_t i = 0; i < unselected.size(); ++ i)
+      *(points_item->point_set()->begin() + i) = unselected[i];
+    for (std::size_t i = 0; i < selected.size(); ++ i)
+      *(points_item->point_set()->begin() + (unselected.size() + i)) = selected[i];
+
+    if (selected.empty ())
+      points_item->point_set()->unselect_all();
+    else
+    {
+      points_item->point_set()->set_first_selected
+        (points_item->point_set()->begin() + unselected.size());
+    }
+
+    points_item->invalidateOpenGLBuffers();
+    points_item->itemChanged();
+  }
+
+  void reduce()
+  {
+    if (points_item->point_set()->nb_selected_points() == 0)
+      return;
+
+    Distance tr_dist(points_item->point_set()->point_map());
+    
+    std::set<Point_set::Index> selection;
+    for (Point_set::iterator it = points_item->point_set()->first_selected();
+         it != points_item->point_set()->end(); ++ it)
+      selection.insert (*it);
+
+    std::vector<bool> selected_bitmap (points_item->point_set()->size(), true);
+      
+    for (Point_set::iterator it = points_item->point_set()->first_selected();
+         it != points_item->point_set()->end(); ++ it)
+    {
+      Neighbor_search search(*tree, points_item->point_set()->point(*it), 6, 0, true, tr_dist);
+      for (Neighbor_search::iterator nit = search.begin(); nit != search.end(); ++ nit)
+        if (selection.find(nit->first) == selection.end())
+        {
+          selected_bitmap[*it] = false;
+          break;
+        }
+    }
+
+    std::vector<Point_set::Index> unselected, selected;
+
+    for(Point_set::iterator it = points_item->point_set()->begin ();
+	it != points_item->point_set()->end(); ++ it)
+      if (points_item->point_set()->is_selected(it) && selected_bitmap[*it])
+        selected.push_back (*it);
+      else
+        unselected.push_back (*it);
+
+    for (std::size_t i = 0; i < unselected.size(); ++ i)
+      *(points_item->point_set()->begin() + i) = unselected[i];
+    for (std::size_t i = 0; i < selected.size(); ++ i)
+      *(points_item->point_set()->begin() + (unselected.size() + i)) = selected[i];
+
+    if (selected.empty ())
+      {
+	points_item->point_set()->unselect_all();
+      }
+    else
+      {
+	points_item->point_set()->set_first_selected
+	  (points_item->point_set()->begin() + unselected.size());
+      }
+
+    points_item->invalidateOpenGLBuffers();
+    points_item->itemChanged();
+  }
+
+  void grow_region (const Kernel::Point_3& query, double epsilon, double cluster_epsilon,
+                    unsigned int normal_threshold)
+  {
+    double cos_threshold = std::cos (CGAL_PI * normal_threshold / 180.);
+
+    Distance tr_dist(points_item->point_set()->point_map());
+ 
+    std::set<Point_set::Index> index_container;
+    std::vector<Point_set::Index> index_container_former_ring;
+    std::set<Point_set::Index> index_container_current_ring;
+    
+    int conti = 0; 	//for accelerate least_square fitting 
+
+    std::vector<Kernel::Point_3> init_points;
+    init_points.reserve (6);
+          
+    Neighbor_search search(*tree, query, 6, 0, true, tr_dist);
+    for (Neighbor_search::iterator nit = search.begin(); nit != search.end(); ++ nit)
+    {
+      index_container.insert (nit->first);
+      index_container_former_ring.push_back (nit->first);
+      init_points.push_back (points_item->point_set()->point (nit->first));
+    }
+
+    Kernel::Plane_3 optimal_plane;
+    CGAL::linear_least_squares_fitting_3(init_points.begin(),
+                                         init_points.end(),
+                                         optimal_plane,
+                                         CGAL::Dimension_tag<0>());
+    
+    Kernel::Vector_3 plane_normal = optimal_plane.orthogonal_vector();
+    plane_normal = plane_normal / std::sqrt(plane_normal * plane_normal);
+
+    std::vector<Point_set::Index> neighbors;
+    
+    bool propagation = false;
+    do
+    {
+      propagation = false;
+
+      for (typename std::vector<Point_set::Index>::iterator icfrit
+             = index_container_former_ring.begin();
+           icfrit != index_container_former_ring.end(); ++ icfrit)
+      {
+        Point_set::Index point_index = *icfrit;
+
+        neighbors.clear();
+        Sphere fs (points_item->point_set()->point(point_index),
+                   cluster_epsilon, 0, tree->traits());
+        tree->search (std::back_inserter (neighbors), fs);
+                
+        for (std::size_t nb = 0; nb < neighbors.size(); ++ nb)
+        {
+          Point_set::Index neighbor_index = neighbors[nb];
+                    
+          if (index_container.find(neighbor_index) != index_container.end())
+            continue;
+
+          const Kernel::Point_3& neighbor = points_item->point_set()->point(neighbor_index);
+          double distance = CGAL::squared_distance(neighbor, optimal_plane);
+
+          if (distance > epsilon * epsilon)
+            continue;
+
+          if (points_item->point_set()->has_normal_map())
+          {
+            Kernel::Vector_3 normal = points_item->point_set()->normal (neighbor_index);
+            normal = normal / std::sqrt (normal * normal);
+            if (std::fabs (normal * plane_normal) < cos_threshold)
+              continue;
+          }
+          
+          index_container.insert (neighbor_index);
+          propagation = true;
+          index_container_current_ring.insert(neighbor_index);
+        }
+      }
+
+      //update containers
+      index_container_former_ring.clear();
+      index_container_former_ring.reserve (index_container_current_ring.size());
+
+      for (typename std::set<Point_set::Index>::iterator lit = index_container_current_ring.begin();
+           lit != index_container_current_ring.end(); ++lit)
+        index_container_former_ring.push_back(*lit);
+
+      index_container_current_ring.clear();
+
+      conti++;
+      if (index_container.size() < 5)
+        continue;
+          
+      if ((conti < 10) || (conti<50 && conti % 10 == 0) || (conti>50 && conti % 500 == 0))
+      {
+        std::list<Kernel::Point_3> listp;
+        for (typename std::set<Point_set::Index>::iterator icit = index_container.begin();
+             icit != index_container.end(); ++ icit)
+          listp.push_back(points_item->point_set()->point (*icit));
+
+        Kernel::Plane_3 reajusted_plane;
+        CGAL::linear_least_squares_fitting_3(listp.begin(),
+                                             listp.end(),
+                                             reajusted_plane,
+                                             CGAL::Dimension_tag<0>());
+        optimal_plane = reajusted_plane;
+        plane_normal = optimal_plane.orthogonal_vector();
+        plane_normal = plane_normal / std::sqrt(plane_normal * plane_normal);
+      }
+    }
+    while (propagation);
+
+    std::vector<Point_set::Index> unselected, selected;
+
+    for(Point_set::iterator it = points_item->point_set()->begin ();
+	it != points_item->point_set()->end(); ++ it)
+      if (index_container.find (*it) != index_container.end())
+        selected.push_back (*it);
+      else
+        unselected.push_back (*it);
+
+    for (std::size_t i = 0; i < unselected.size(); ++ i)
+      *(points_item->point_set()->begin() + i) = unselected[i];
+    for (std::size_t i = 0; i < selected.size(); ++ i)
+      *(points_item->point_set()->begin() + (unselected.size() + i)) = selected[i];
+
+    if (selected.empty ())
+      {
+	points_item->point_set()->unselect_all();
+      }
+    else
+      {
+	points_item->point_set()->set_first_selected
+	  (points_item->point_set()->begin() + unselected.size());
+      }
+    points_item->invalidateOpenGLBuffers();
+    points_item->itemChanged();
+  }
+
+};
+
 using namespace CGAL::Three;
 class Polyhedron_demo_point_set_selection_plugin :
   public QObject,
@@ -199,6 +569,9 @@ public:
     mw = mainWindow;
     scene = scene_interface;
     messages = m;
+    rg_epsilon = -1;
+    rg_cluster_epsilon = -1;
+    rg_normal_threshold = 20;
     actionPointSetSelection = new QAction(tr("Selection"), mw);
     connect(actionPointSetSelection, SIGNAL(triggered()), this, SLOT(selection_action()));
 
@@ -208,6 +581,8 @@ public:
     ui_widget.setupUi(dock_widget);
     addDockWidget(dock_widget);
 
+    connect(ui_widget.region, SIGNAL(toggled(bool)), this, SLOT(set_region_parameters(bool)));
+    
     // Fill actions of menu
     ui_widget.menu->setMenu (new QMenu("Point Set Selection Menu", ui_widget.menu));
     QAction* select_all = ui_widget.menu->menu()->addAction ("Select all points");
@@ -285,19 +660,48 @@ protected:
       {
 	QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
 	// Start selection
-	if (mouseEvent->button() == Qt::LeftButton && !visualizer)
-	  {
+	if (mouseEvent->button() == Qt::LeftButton)
+        {
+          // Region growing
+          if (ui_widget.region->isChecked())
+          {
+            QApplication::setOverrideCursor(Qt::WaitCursor);
+
+            QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+            bool found = false;
+            QPoint pixel(mouseEvent->pos().x(),
+                         viewer->camera()->screenHeight() - 1 - mouseEvent->pos().y());
+            
+            qglviewer::Vec point = viewer->camera()->pointUnderPixel(mouseEvent->pos(),
+                                                                     found);
+            if(!found)
+            {
+              QApplication::restoreOverrideCursor();
+              return false;
+            }
+
+            neighborhood.point_set (point_set_item).grow_region
+              (Kernel::Point_3 (point.x, point.y, point.z),
+               rg_epsilon, rg_cluster_epsilon, rg_normal_threshold);
+            
+            QApplication::restoreOverrideCursor();
+            return true;
+          }
+          // Start standard selection
+          else if (!visualizer)
+          {
 	    QApplication::setOverrideCursor(Qt::CrossCursor);
-	    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-	    if (viewer->camera()->frame()->isSpinning())
-	      viewer->camera()->frame()->stopSpinning();
+            QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+            if (viewer->camera()->frame()->isSpinning())
+              viewer->camera()->frame()->stopSpinning();
 	
-	    visualizer = new Scene_point_set_selection_visualizer(ui_widget.rectangle->isChecked(),
-								  point_set_item->bbox());
+            visualizer = new Scene_point_set_selection_visualizer(ui_widget.rectangle->isChecked(),
+                                                                  point_set_item->bbox());
 
             visualizer->sample_mouse_path(background);
             return true;
-	  }
+          }
+        }
 	// Cancel selection
 	else if (mouseEvent->button() == Qt::RightButton && visualizer)
 	  {
@@ -305,7 +709,18 @@ protected:
 	    QApplication::restoreOverrideCursor();
             return true;
 	  }
-
+      }
+      // Expand/reduce selection
+    else if (shift_pressing && event->type() == QEvent::Wheel)
+      {
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+        QWheelEvent *mouseEvent = static_cast<QWheelEvent*>(event);
+        int steps = mouseEvent->delta() / 120;
+        if (steps > 0)
+          neighborhood.point_set (point_set_item).expand();
+        else
+          neighborhood.point_set (point_set_item).reduce();
+        QApplication::restoreOverrideCursor();
       }
     // End selection
     else if (event->type() == QEvent::MouseButtonRelease && visualizer)
@@ -371,63 +786,29 @@ protected Q_SLOTS:
 
     qglviewer::Camera* camera = viewer->camera();
 
+    bool* selected_bitmap = new bool[points->size()]; // std::vector<bool> is not thread safe
+
+    Selection_test selection_test (points, selected_bitmap,
+                                   camera, offset, edit_box, visualizer, ui_widget);
+#ifdef CGAL_LINKED_WITH_TBB
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, points->size()),
+                      selection_test);
+#else
+    for (std::size_t i = 0; i < points->size(); ++ i)
+      selection_test.apply(i);
+#endif
+
     std::vector<Point_set::Index> unselected, selected;
-    for(Point_set::iterator it = points->begin ();
-	it != points->end(); ++ it)
-      {
-	bool already_selected = points->is_selected (it);
-
-        const Kernel::Point_3 p = points->point (*it);
-        qglviewer::Vec vp (p.x (), p.y (), p.z ());
-        qglviewer::Vec vsp = camera->projectedCoordinatesOf (vp + offset);
-        bool now_selected = false;
-        if(!ui_widget.box->isChecked())
-          now_selected = visualizer->is_selected (vsp);
-        else if(edit_box)
-        {
-         if(p.x() >= edit_box->point(0,0) - offset.x &&
-            p.y() >= edit_box->point(0,1) - offset.y &&
-            p.z() <= edit_box->point(0,2) - offset.z &&
-            p.x() <= edit_box->point(6,0) - offset.x &&
-            p.y() <= edit_box->point(6,1) - offset.y &&
-            p.z() >= edit_box->point(6,2) - offset.z
-            )
-         {
-           now_selected = true;
-         }
-        }
-
-	if (ui_widget.new_selection->isChecked())
-        {
-          if (now_selected)
-            selected.push_back (*it);
-          else
-            unselected.push_back (*it);
-        }
-	else if (ui_widget.union_selection->isChecked())
-        {
-          if (already_selected || now_selected)
-            selected.push_back (*it);
-          else
-            unselected.push_back (*it);
-        }
-	else if (ui_widget.intersection->isChecked())
-        {
-          if (already_selected && now_selected)
-            selected.push_back (*it);
-          else
-            unselected.push_back (*it);
-        }
-        else if (ui_widget.diff->isChecked())
-        {
-          if (already_selected && !now_selected)
-            selected.push_back (*it);
-          else
-            unselected.push_back (*it);
-        }
-
-      }
-
+    for (std::size_t i = 0; i < points->size(); ++ i)
+    {
+      Point_set::Index idx = *(points->begin() + i);
+      if (selected_bitmap[i])
+        selected.push_back (idx);
+      else
+        unselected.push_back (idx);
+    }
+    delete[] selected_bitmap;
+    
     for (std::size_t i = 0; i < unselected.size(); ++ i)
       *(points->begin() + i) = unselected[i];
     for (std::size_t i = 0; i < selected.size(); ++ i)
@@ -441,11 +822,44 @@ protected Q_SLOTS:
       {
 	points->set_first_selected
 	  (points->begin() + unselected.size());
-      } 
+      }
+    
     point_set_item->invalidateOpenGLBuffers();
     point_set_item->itemChanged();
   }
 
+  void set_region_parameters(bool toggled)
+  {
+    if (!toggled)
+      return;
+
+    QMultipleInputDialog dialog ("Region Selection Parameters", mw);
+    QDoubleSpinBox* epsilon = dialog.add<QDoubleSpinBox> ("Epsilon: ");
+    epsilon->setRange (0.00001, 1000000.);
+    epsilon->setDecimals (5);
+    if (rg_epsilon < 0.)
+      rg_epsilon = (std::max)(0.00001, 0.005 * scene->len_diagonal());
+    epsilon->setValue (rg_epsilon);
+    
+    QDoubleSpinBox* cluster_epsilon = dialog.add<QDoubleSpinBox> ("Cluster epsilon: ");
+    cluster_epsilon->setRange (0.00001, 1000000.);
+    cluster_epsilon->setDecimals (5);
+    if (rg_cluster_epsilon < 0.)
+      rg_cluster_epsilon = (std::max)(0.00001, 0.03 * scene->len_diagonal());
+    cluster_epsilon->setValue (rg_cluster_epsilon);
+
+    QSpinBox* normal_threshold = dialog.add<QSpinBox> ("Normal threshold: ");
+    normal_threshold->setRange (0, 90);
+    normal_threshold->setSuffix (QString("°"));
+    normal_threshold->setValue (rg_normal_threshold);
+    
+    if (dialog.exec())
+    {
+      rg_epsilon = epsilon->value();
+      rg_cluster_epsilon = cluster_epsilon->value();
+      rg_normal_threshold = normal_threshold->value();
+    }
+  }
   
 
 
@@ -615,10 +1029,15 @@ private:
   
   Ui::PointSetSelection ui_widget;
   Scene_point_set_selection_visualizer* visualizer;
+  Neighborhood neighborhood;
   bool shift_pressing;
   bool ctrl_pressing;
   Scene_edit_box_item* edit_box;
 
+  // Region growing selection
+  double rg_epsilon;
+  double rg_cluster_epsilon;
+  unsigned int rg_normal_threshold;
 }; // end Polyhedron_demo_point_set_selection_plugin
 
 //Q_EXPORT_PLUGIN2(Polyhedron_demo_point_set_selection_plugin, Polyhedron_demo_point_set_selection_plugin)
