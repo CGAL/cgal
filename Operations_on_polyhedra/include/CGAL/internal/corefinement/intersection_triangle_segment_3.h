@@ -27,7 +27,7 @@
 
 //TODO rename this file when doing proper integration
 #include <CGAL/internal/corefinement/Polyhedron_constness_types.h>
-#include <CGAL/internal/Intersections_3/Triangle_3_Segment_3_intersection.h>
+#include <CGAL/Intersections_3/Segment_3_Triangle_3.h>
 namespace CGAL{
 namespace internal_IOP{
 
@@ -153,7 +153,7 @@ do_intersect(typename Polyhedron_types<Polyhedron,Is_const>::Halfedge_handle hh,
       // the segment is coplanar with the triangle's supporting plane
       // we test whether the segment intersects the triangle in the common 
       // supporting plane
-      if ( ::CGAL::internal::do_intersect_coplanar(a,b,c,p,q,Kernel()) )
+      if ( ::CGAL::Intersections::internal::do_intersect_coplanar(a,b,c,p,q,Kernel()) )
         return Intersection_result(COPLNR,Intersection_info(),true,true);
       return Intersection_result(EMPTY,Intersection_info(),true,true);
       
