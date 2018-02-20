@@ -1,5 +1,5 @@
 #include <CGAL/Cartesian.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
@@ -7,8 +7,7 @@
 #include <CGAL/boost/graph/graph_traits_Arrangement_2.h>
 #include <CGAL/boost/graph/graph_concepts.h>
 
-typedef CGAL::Gmpq                                    Number_type;
-typedef CGAL::Cartesian<Number_type>                  Kernel;
+typedef CGAL::Cartesian<CGAL::Exact_rational>         Kernel;
 
 typedef CGAL::Arr_segment_traits_2<Kernel>            Traits_2;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
