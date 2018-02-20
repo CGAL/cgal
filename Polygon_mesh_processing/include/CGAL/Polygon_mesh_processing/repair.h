@@ -1630,6 +1630,39 @@ remove_self_intersections_one_step(TriangleMesh& tm,
         }
       }
 
+      // make sure that the hole filling is valid, we check that no
+      // edge already in the mesh is present in patch.
+      bool non_manifold_edge_found = false;
+      BOOST_FOREACH(const Face_indices& triangle, patch)
+      {
+        cpp11::array<int, 6> edges =
+          make_array(triangle.first, triangle.second,
+                     triangle.second, triangle.third,
+                     triangle.third, triangle.first);
+        for (int k=0; k<3; ++k)
+        {
+          int vi=edges[2*k], vj=edges[2*k+1];
+          // ignore boundary edges
+          if (vi+1==vj || (vj==0 && static_cast<std::size_t>(vi)==border_vertices.size()-1) )
+            continue;
+          halfedge_descriptor h = halfedge(border_vertices[vi], border_vertices[vj], tm).first;
+          if (h!=boost::graph_traits<TriangleMesh>::null_halfedge() &&
+              cc_interior_edges.count(edge(h, tm))==0)
+          {
+            non_manifold_edge_found=true;
+            break;
+          }
+        }
+        if (non_manifold_edge_found) break;
+      }
+      if (non_manifold_edge_found)
+      {
+        if (verbose)
+          std::cout << "  DEBUG: Triangulation produced is non-manifold when plugged into the mesh.\n";
+        all_fixed = false;
+        continue;
+      }
+
       // now remove edges,
       BOOST_FOREACH(edge_descriptor e, cc_interior_edges)
         remove_edge(e, tm);
