@@ -30,7 +30,7 @@
 #include <CGAL/internal/Static_filters/Static_filter_error.h>
 #include <CGAL/internal/Static_filters/tools.h>
 
-#include <CGAL/internal/Intersections_3/Bbox_3_Segment_3_do_intersect.h>
+#include <CGAL/Intersections_3/Bbox_3_Segment_3.h>
 // for CGAL::internal::do_intersect_bbox_segment_aux
 
 #include <iostream>

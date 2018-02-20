@@ -68,6 +68,16 @@
 
 #endif
 
+#define CGAL_NO_INTERSECTION_FUNCTION_SELF(A, DIM)                        \
+template <typename K>                                                   \
+inline void intersection(const A<K>&, const A<K>&) {}
+
+#define CGAL_NO_INTERSECTION_FUNCTION(A, B, DIM)                        \
+template <typename K>                                                   \
+inline void intersection(const A<K>&, const B<K>&) {}               \
+template <typename K>                                                   \
+inline void intersection(const B<K>&, const A<K>&) {}
+
 #define CGAL_INTERSECTION_FUNCTION(A, B, DIM)                           \
   template<typename K>                                                  \
   inline                                                                \

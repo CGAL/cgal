@@ -22,6 +22,17 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "${cppfile}" )
   endforeach()
 
+foreach(VAL RANGE 1 55)
+     message(STATUS "NOTICE: Compiling one_${VAL}")
+    add_executable(one_${VAL} one.cpp)
+    target_compile_definitions(one_${VAL} PRIVATE -DSEL=${VAL})
+
+    target_link_libraries(one_${VAL} PRIVATE CGAL::CGAL)
+    if(CGAL_3RD_PARTY_LIBRARIES)
+      target_link_libraries(one_${VAL} PRIVATE ${CGAL_3RD_PARTY_LIBRARIES})
+    endif()    
+  endforeach()
+  
 else()
   
     message(STATUS "This program requires the CGAL library, and will not be compiled.")

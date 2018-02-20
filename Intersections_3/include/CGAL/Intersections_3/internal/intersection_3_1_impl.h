@@ -24,12 +24,17 @@
 // Author(s)     : Geert-Jan Giezeman <geert@cs.uu.nl>
 //                 Sebastien Loriot <Sebastien.Loriot@geometryfactory.com>
 
+#ifndef CGAL_INTERSECTIONS_3_INTERNAL_INTERSECTION_3_1_IMPL_H
+#define CGAL_INTERSECTIONS_3_INTERNAL_INTERSECTION_3_1_IMPL_H
 
 #include <CGAL/wmult.h>
 #include <boost/next_prior.hpp>
 #include <CGAL/Intersection_traits_3.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Intersections_3/Iso_cuboid_3_Iso_cuboid_3.h>
+#include <CGAL/Intersections_3/Iso_cuboid_3_Line_3.h>
 
+#include <CGAL/Intersections_3/internal/bbox_intersection_3.h>
 namespace CGAL {
 
   template <class K>
@@ -70,100 +75,7 @@ intersection(const Plane_3<K> &plane1, const Plane_3<K> &plane2,
   return K().intersect_3_object()(plane1, plane2, plane3);
 }
 
-CGAL_INTERSECTION_FUNCTION(Plane_3, Line_3, 3)
-CGAL_DO_INTERSECT_FUNCTION(Plane_3, Line_3, 3)
 
-CGAL_INTERSECTION_FUNCTION_SELF(Plane_3, 3)
-
-CGAL_INTERSECTION_FUNCTION_SELF(Line_3, 3)
-CGAL_DO_INTERSECT_FUNCTION_SELF(Line_3, 3)
-
-CGAL_INTERSECTION_FUNCTION_SELF(Segment_3, 3)
-CGAL_DO_INTERSECT_FUNCTION_SELF(Segment_3, 3)
-
-CGAL_INTERSECTION_FUNCTION(Line_3, Segment_3, 3)
-CGAL_DO_INTERSECT_FUNCTION(Line_3, Segment_3, 3)
-
-CGAL_INTERSECTION_FUNCTION(Line_3, Ray_3, 3)
-CGAL_DO_INTERSECT_FUNCTION(Line_3, Ray_3, 3)
-
-CGAL_INTERSECTION_FUNCTION(Segment_3, Ray_3, 3)
-CGAL_DO_INTERSECT_FUNCTION(Segment_3, Ray_3, 3)
-
-CGAL_INTERSECTION_FUNCTION_SELF(Ray_3, 3)
-CGAL_DO_INTERSECT_FUNCTION_SELF(Ray_3, 3)
-
-CGAL_INTERSECTION_FUNCTION(Plane_3, Sphere_3, 3)
-CGAL_DO_INTERSECT_FUNCTION(Plane_3, Sphere_3, 3)
-
-CGAL_INTERSECTION_FUNCTION_SELF(Sphere_3, 3)
-CGAL_DO_INTERSECT_FUNCTION_SELF(Sphere_3, 3)
-
-CGAL_INTERSECTION_FUNCTION(Plane_3, Ray_3, 3)
-CGAL_DO_INTERSECT_FUNCTION(Plane_3, Ray_3, 3)
-
-CGAL_INTERSECTION_FUNCTION(Plane_3, Segment_3, 3)
-CGAL_DO_INTERSECT_FUNCTION(Plane_3, Segment_3, 3)
-
-CGAL_INTERSECTION_FUNCTION(Plane_3, Triangle_3, 3)
-
-template <class K>
-inline typename
-cpp11::result_of<typename K::Intersect_3(typename K::Line_3, Bbox_3)>::type
-intersection(const Line_3<K> &a,
-	     const Bbox_3 &b) {
-  return K().intersect_3_object()(a, b);
-}
-
-template <class K>
-inline typename
-cpp11::result_of<typename K::Intersect_3(typename K::Line_3, Bbox_3)>::type
-intersection(const Bbox_3 &a,
-             const Line_3<K> &b) {
-  return K().intersect_3_object()(a, b);
-}
-
-template <class K>
-inline typename
-cpp11::result_of<typename K::Intersect_3(typename K::Ray_3, Bbox_3)>::type
-intersection(const Ray_3<K> &a,
-	     const Bbox_3 &b) {
-  return K().intersect_3_object()(a, b);
-}
-
-template <class K>
-inline typename
-cpp11::result_of<typename K::Intersect_3(typename K::Ray_3, Bbox_3)>::type
-intersection(const Bbox_3 &a,
-             const Ray_3<K> &b) {
-  return K().intersect_3_object()(a, b);
-}
-
-template <class K>
-inline typename
-cpp11::result_of<typename K::Intersect_3(typename K::Segment_3, Bbox_3)>::type
-intersection(const Segment_3<K> &a,
-	     const Bbox_3 &b) {
-  return K().intersect_3_object()(a, b);
-}
-
-template <class K>
-inline typename
-cpp11::result_of<typename K::Intersect_3(typename K::Segment_3, Bbox_3)>::type
-intersection(const Bbox_3 &a,
-             const Segment_3<K> &b) {
-  return K().intersect_3_object()(a, b);
-}
-
-CGAL_INTERSECTION_FUNCTION(Line_3, Iso_cuboid_3, 3)
-
-CGAL_INTERSECTION_FUNCTION(Ray_3, Iso_cuboid_3, 3)
-
-CGAL_INTERSECTION_FUNCTION(Segment_3, Iso_cuboid_3, 3)
-
-CGAL_INTERSECTION_FUNCTION_SELF(Iso_cuboid_3, 3)
-
-CGAL_DO_INTERSECT_FUNCTION_SELF(Plane_3, 3)
 
 template <class R>
 inline bool
@@ -172,8 +84,7 @@ do_intersect(const Plane_3<R> &plane1, const Plane_3<R> &plane2,
   return R().do_intersect_3_object()(plane1, plane2, plane3);
 }
 
-CGAL_DO_INTERSECT_FUNCTION_SELF(Iso_cuboid_3, 3)
-CGAL_DO_INTERSECT_FUNCTION(Iso_cuboid_3, Line_3, 3)
+
 
 
 namespace Intersections {
@@ -1705,3 +1616,5 @@ do_intersect(const Iso_cuboid_3<R> &j, const Line_3<R> &l, const R&)
 } // namespace internal
 } // namespace Intersections
 } // namespace CGAL
+
+#endif CGAL_INTERSECTIONS_3_INTERNAL_INTERSECTION_3_1_IMPL_H
