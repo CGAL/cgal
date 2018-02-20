@@ -1,6 +1,15 @@
 #ifndef CGAL_BOX_INTERSECTION_D_UTIL_H
 #define CGAL_BOX_INTERSECTION_D_UTIL_H
 
+
+#ifndef _CRT_SECURE_NO_DEPRECATE
+#define _CRT_SECURE_NO_DEPRECATE
+#endif
+
+#ifndef _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <vector>
 #include <algorithm> // for pair
 #include <cmath>
