@@ -150,17 +150,18 @@ public:
     } 
     
     //Fill operations combo box.
-    operations_strings.reserve(10);
-    operations_strings.push_back(QString("Create Point Set Item from Selected Vertices")           );
-    operations_strings.push_back(QString("Create Polyline Item from Selected Edges")               );
-    operations_strings.push_back(QString("Create Polyhedron Item from Selected Facets")            );
-    operations_strings.push_back(QString("Erase Selected Facets from Polyhedron Item")             );
-    operations_strings.push_back(QString("Keep Connected Components of Selected Facets")           );
-    operations_strings.push_back(QString("Expand Face Selection to Stay Manifold After Removal")   );
-    operations_strings.push_back(QString("Convert from Edge Selection to Facets Selection")        );
-    operations_strings.push_back(QString("Convert from Edge Selection to Point Selection")         );
-    operations_strings.push_back(QString("Convert from Facet Selection to Boundary Edge Selection"));
-    operations_strings.push_back(QString("Convert from Facet Selection to Point Selection")        );
+    operations_strings = {
+      "Create Point Set Item from Selected Vertices"           ,
+      "Create Polyline Item from Selected Edges"               ,
+      "Create Polyhedron Item from Selected Facets"            ,
+      "Erase Selected Facets from Polyhedron Item"             ,
+      "Keep Connected Components of Selected Facets"           ,
+      "Expand Face Selection to Stay Manifold After Removal"   ,
+      "Convert from Edge Selection to Facets Selection"        ,
+      "Convert from Edge Selection to Point Selection"         ,
+      "Convert from Facet Selection to Boundary Edge Selection",
+      "Convert from Facet Selection to Point Selection"        
+    };
     
     operations_map[operations_strings[0]] = 0;
     operations_map[operations_strings[1]] = 1;
