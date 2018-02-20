@@ -1,4 +1,3 @@
- 
 Algebraic_foundations
 BGL
 Circulator
@@ -6,6 +5,8 @@ Distance_2
 HalfedgeDS
 Hash_map
 Installation
+Intersections_2
+Intersections_3
 Interval_support
 Kernel_23
 Modifier
