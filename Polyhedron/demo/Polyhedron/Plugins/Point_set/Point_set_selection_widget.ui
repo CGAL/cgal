@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>514</width>
-    <height>281</height>
+    <width>465</width>
+    <height>101</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -78,6 +78,29 @@
            <property name="icon">
             <iconset resource="../../Polyhedron_3.qrc">
              <normaloff>:/cgal/icons/resources/pss_freeform.png</normaloff>:/cgal/icons/resources/pss_freeform.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="autoExclusive">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="region">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Region selection</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../Polyhedron_3.qrc">
+             <normaloff>:/cgal/icons/resources/pss_region.png</normaloff>:/cgal/icons/resources/pss_region.png</iconset>
            </property>
            <property name="checkable">
             <bool>true</bool>
