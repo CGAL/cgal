@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>696</width>
-    <height>334</height>
+    <width>613</width>
+    <height>342</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -131,7 +131,7 @@
                </spacer>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,1,0,1,0">
+               <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,1,0,1">
                 <item>
                  <widget class="QCheckBox" name="lassoCheckBox">
                   <property name="text">
@@ -180,13 +180,6 @@
                   </property>
                   <property name="text">
                    <string>Add to Selection</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="is_diskButton">
-                  <property name="text">
-                   <string>Is selection a Disk ?</string>
                   </property>
                  </widget>
                 </item>
