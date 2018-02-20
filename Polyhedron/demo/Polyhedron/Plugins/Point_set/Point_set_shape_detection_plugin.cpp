@@ -17,7 +17,7 @@
 #include <CGAL/linear_least_squares_fitting_3.h>
 
 #include <CGAL/Random.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 #include <CGAL/Shape_detection_3.h>
 #include <CGAL/regularize_planes.h>
@@ -55,6 +55,50 @@ struct build_from_pair
 
 };
 
+struct Progress_bar_callback
+{
+  mutable int nb;
+  mutable CGAL::Real_timer timer;
+  int bar_size;
+  
+  Progress_bar_callback() : nb(0), bar_size (70)
+  {
+    timer.start();
+  }
+  
+  bool operator()(double advancement) const
+  {
+    // Avoid calling time() at every single iteration, which could
+    // impact performances very badly
+    ++ nb;
+    if (advancement != 1 && nb % 1000 != 0)
+      return true;
+
+    // If the limit is reach, interrupt the algorithm
+    if (advancement == 1 && timer.time() > 1)
+    {
+      std::cerr << "\r[";
+      int adv = int(advancement * bar_size);
+      for (int i = 0; i < adv; ++ i)
+        std::cerr << "=";
+      if (adv != bar_size)
+        std::cerr << ">";
+      for (int i = adv; i < bar_size; ++ i)
+        std::cerr << " ";
+      std::cerr << "] " << int(advancement * 100) << "%";
+      if (advancement == 1)
+        std::cerr << std::endl;
+      
+      timer.stop();
+      timer.reset();
+      timer.start();
+    }
+
+    return true;
+  }
+};
+
+
 class Point_set_demo_point_set_shape_detection_dialog : public QDialog, private Ui::PointSetShapeDetectionDialog
 {
   Q_OBJECT
@@ -76,6 +120,7 @@ public:
   bool detect_cylinder() const { return cylinderCB->isChecked(); } 
   bool detect_torus() const { return torusCB->isChecked(); } 
   bool detect_cone() const { return coneCB->isChecked(); }
+  bool add_property() const { return m_add_property->isChecked(); }
   bool generate_colored_point_set() const { return m_one_colored_point_set->isChecked(); }
   bool generate_subset() const { return m_point_subsets->isChecked(); }
   bool generate_alpha() const { return m_alpha_shapes->isChecked(); }
@@ -184,6 +229,19 @@ private:
       colored_item->point_set()->check_colors();
       scene->addItem(colored_item);
     }
+
+    Point_set::Property_map<int> cluster_id;
+    if (dialog.add_property())
+    {
+      std::cerr << "Adding cluster_id property" << std::endl;
+      bool added = false;
+      boost::tie (cluster_id, added) = points->template add_property_map<int> ("cluster_id", -1);
+      if (!added)
+      {
+        for (Point_set::iterator it = points->begin(); it != points->end(); ++ it)
+          cluster_id[*it] = -1;
+      }
+    }
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -220,9 +278,10 @@ private:
     }
 
     // The actual shape detection.
-    CGAL::Timer t;
+    CGAL::Real_timer t;
     t.start();
-    shape_detection.detect(op);
+    Progress_bar_callback callback;
+    shape_detection.detect(op, callback);
     t.stop();
     
     std::cout << shape_detection.shapes().size() << " shapes found in "
@@ -259,7 +318,11 @@ private:
       Scene_points_with_normal_item *point_item = new Scene_points_with_normal_item;
       
       BOOST_FOREACH(std::size_t i, shape->indices_of_assigned_points())
+      {
         point_item->point_set()->insert(points->point(*(points->begin()+i)));
+        if (dialog.add_property())
+          cluster_id[*(points->begin()+i)] = index;
+      }
       
       unsigned char r, g, b;
 
