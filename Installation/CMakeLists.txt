@@ -1089,11 +1089,22 @@ and \"CGAL/Algebraic_kernel_rs_gmpz_d_1.h\" because RS_FOUND is false.")
       set(compile_options "${compile_options} \
 -DCGAL_BOOST_GRAPH_GRAPH_TRAITS_POLYMESH_ARRAYKERNELT_H \
 -DCGAL_BOOST_GRAPH_GRAPH_TRAITS_TRIMESH_ARRAYKERNELT_H \
--DCGAL_HASH_OPENMESH_H \
 -DCGAL_PROPERTIES_POLYMESH_ARRAYKERNELT_H \
 -DCGAL_PROPERTIES_TRIMESH_ARRAYKERNELT_H")
+      message(STATUS "Skip headers \
+\"CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h\", \
+\"CGAL/boost/graph/graph_traits_TriMesh_ArrayKernelT.h\", \
+\"CGAL/boost/graph/properties_PolyMesh_ArrayKernelT.h\", and \
+\"CGAL/boost/graph/properties_TriMesh_ArrayKernelT.h\", \
+because OpenMesh_FOUND is false.")
     endif()
-
+    if(NOT OpenCV_FOUND)
+      set(compile_options "${compile_options} \
+-DCGAL_CLASSIFICATION_OPENCV_RANDOM_FOREST_CLASSIFIER_H")
+      message(STATUS "Skip header \
+\"CGAL/Classification/OpenCV_random_forest_classifier.h\" \
+because OpenCV_FOUND is false")
+    endif()
     if(LEDA_FOUND)
       set(compile_options "${compile_options} -DCGAL_USE_LEDA")
     endif()

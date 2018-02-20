@@ -35,6 +35,8 @@
 #include <exception>
 #include <list>
 #include <utility>
+#include <iostream>
+#include <fstream>
 
 namespace CGAL {
 
