@@ -60,10 +60,10 @@ Assuming a clustering partition of \f$n\f$ regions with errors \f$ \{E_k\}_{k=1\
 - <b>Hierarchical</b>. \f$m\f$ seed facets are dispatched within the current partition, where each partition is refined with a number of proxies chosen in accordance to their fitting error:
   - calculate total error \f$ E_{total} \f$, then average error \f$ E_{avg} = E_{total} / m \f$ (assuming that each new proxy shares the same amount of error)
   - sort errors \f$ \{E_{min},\cdots,E_{max}\} \f$
-  - from \f$ E_{min} \f$ to \f$ E_{max} \f$, we diffuse the error <em>hierarchically</em> one after another. More specifically, the number of proxies added to the \f$k\f$th region is proportional to its error given by the formula:
-\f[ nb\_to\_add\_k = rounded\_to\_nearest\_integer(E_k / E_{avg}), \f]
+  - from \f$ E_{min} \f$ to \f$ E_{max} \f$, we diffuse the error <em>hierarchically</em> one after another. More specifically, the number of proxies \f$N_k\f$ added to the \f$k\f$th region is proportional to its error:
+\f[ N_k = \lfloor E_k / E_{avg} + 0.5 \rfloor, \f]
 and the remaining error is added to the next proxy error in order to keep the total error unchanged:
-\f[ E'_{k+1} = (E_k - nb\_to\_add\_k * E_{avg}) + E_{k+1}. \f]
+\f[ E'_{k+1} = (E_k - N_k * E_{avg}) + E_{k+1}. \f]
 
 \cgalFigureBegin{seeding_method, seeding_method.png}
 Comparison of seeding methods on the sphere-cube model. From left to right: initial partition (\f$ \mathcal{L}^{2,1} \f$ metrics and 20 proxies), add 5 proxy seeds (red facets) with random, incremental and hierarchical methods respectively.

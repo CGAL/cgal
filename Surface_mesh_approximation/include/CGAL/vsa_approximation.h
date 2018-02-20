@@ -545,59 +545,54 @@ public:
     std::cerr << "#px " << m_proxies.size() << std::endl;
 #endif
 
-    const FT sum_error = compute_total_error();
-    const FT avg_error = sum_error / FT(static_cast<double>(num_proxies));
-
-    std::vector<Proxy_error> px_error;
-    for (std::size_t i = 0; i < m_proxies.size(); ++i)
-      px_error.push_back(Proxy_error(i, m_proxies[i].err));
-    // sort partition by error
-    std::sort(px_error.begin(), px_error.end());
+    const double sum_error = CGAL::to_double(compute_total_error());
+    const double avg_error = sum_error / static_cast<double>(num_proxies);
 
     // number of proxies to be added to each region
     std::vector<std::size_t> num_to_add(m_proxies.size(), 0);
-    if (avg_error == FT(0.0)) {
+    if (avg_error <= 0.0) {
       // rare case on extremely regular geometry like a cube
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
       std::cerr << "zero error, diffuse w.r.t. number of facets" << std::endl;
 #endif
-      const FT avg_facet = FT(
-        static_cast<double>(num_faces(*m_ptm)) / static_cast<double>(num_proxies));
-      std::vector<FT> px_size(m_proxies.size(), FT(0.0));
+      const double avg_facet =
+        static_cast<double>(num_faces(*m_ptm)) / static_cast<double>(num_proxies);
+      std::vector<double> px_size(m_proxies.size(), 0.0);
       BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
-        px_size[get(m_fproxy_map, f)] += FT(1.0);
-      FT residual(0.0);
+        px_size[get(m_fproxy_map, f)] += 1.0;
+      double residual = 0.0;
       for (std::size_t i = 0; i < m_proxies.size(); ++i) {
-        FT to_add = (residual + px_size[i]) / avg_facet;
-        FT floor_to_add = FT(std::floor(CGAL::to_double(to_add)));
-        FT q_to_add = FT(CGAL::to_double(
-          ((to_add - floor_to_add) > FT(0.5)) ? (floor_to_add + FT(1.0)) : floor_to_add));
-        residual = (to_add - q_to_add) * avg_facet;
-        num_to_add[i] = static_cast<std::size_t>(CGAL::to_double(q_to_add));
+        const double to_add = (residual + px_size[i]) / avg_facet;
+        const double to_add_round_up = std::floor(to_add + 0.5);
+        residual = (to_add - to_add_round_up) * avg_facet;
+        num_to_add[i] = static_cast<std::size_t>(to_add_round_up);
       }
     }
     else {
+      std::vector<Proxy_error> px_error;
+      for (std::size_t i = 0; i < m_proxies.size(); ++i)
+        px_error.push_back(Proxy_error(i, m_proxies[i].err));
+      // sort partition by error
+      std::sort(px_error.begin(), px_error.end());
+
       // residual from previous proxy in range (-0.5, 0.5] * avg_error
-      FT residual(0.0);
-      BOOST_FOREACH(const Proxy_error &pxe, px_error) {
+      double residual = 0.0;
+      for (std::size_t i = 0; i < m_proxies.size(); ++i) {
         // add error residual from previous proxy
         // to_add maybe negative but greater than -0.5
-        FT to_add = (residual + pxe.err) / avg_error;
-        // floor_to_add maybe negative but no less than -1
-        FT floor_to_add = FT(std::floor(CGAL::to_double(to_add)));
-        FT q_to_add = FT(CGAL::to_double(
-          ((to_add - floor_to_add) > FT(0.5)) ? (floor_to_add + FT(1.0)) : floor_to_add));
-        residual = (to_add - q_to_add) * avg_error;
-        num_to_add[pxe.px] = static_cast<std::size_t>(CGAL::to_double(q_to_add));
+        const double to_add = (residual + CGAL::to_double(px_error[i].err)) / avg_error;
+        const double to_add_round_up = std::floor(to_add + 0.5);
+        residual = (to_add - to_add_round_up) * avg_error;
+        num_to_add[i] = static_cast<std::size_t>(to_add_round_up);
       }
-    }
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-    for (std::size_t i = 0; i < px_error.size(); ++i)
-      std::cerr << "#px " << px_error[i].px
-        << ", #error " << px_error[i].err
-        << ", #num_to_add " << num_to_add[px_error[i].px] << std::endl;
+      for (std::size_t i = 0; i < px_error.size(); ++i)
+        std::cerr << "#px " << px_error[i].px
+          << ", #error " << px_error[i].err
+          << ", #num_to_add " << num_to_add[px_error[i].px] << std::endl;
 #endif
+    }
 
     std::size_t num_added = 0;
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
