@@ -257,7 +257,7 @@ private:
         new_comment += line + "\n";
       }
       comments = new_comment;
-      std::cerr << comments;
+      comments += "shape -1 no assigned shape\n";
     }
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
