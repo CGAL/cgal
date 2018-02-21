@@ -51,8 +51,6 @@ Inventor
 Jet_fitting_3 
 Kernel_23 
 Kernel_d 
-Kinetic_data_structures 
-Kinetic_framework 
 LEDA 
 Linear_cell_complex 
 MacOSX 
