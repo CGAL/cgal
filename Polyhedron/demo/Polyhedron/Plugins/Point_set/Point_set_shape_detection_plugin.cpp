@@ -230,17 +230,34 @@ private:
       scene->addItem(colored_item);
     }
 
-    Point_set::Property_map<int> cluster_id;
+    std::string& comments = item->comments();
+    
+    Point_set::Property_map<int> shape_id;
     if (dialog.add_property())
     {
-      std::cerr << "Adding cluster_id property" << std::endl;
       bool added = false;
-      boost::tie (cluster_id, added) = points->template add_property_map<int> ("cluster_id", -1);
+      boost::tie (shape_id, added) = points->template add_property_map<int> ("shape", -1);
       if (!added)
       {
         for (Point_set::iterator it = points->begin(); it != points->end(); ++ it)
-          cluster_id[*it] = -1;
+          shape_id[*it] = -1;
       }
+
+      // Remove previously detected shapes from comments
+      std::string new_comment;
+      
+      std::istringstream stream (comments);
+      std::string line;
+      while (getline(stream, line))
+      {
+        std::stringstream iss (line);
+        std::string tag;
+        if (iss >> tag && tag == "shape")
+          continue;
+        new_comment += line + "\n";
+      }
+      comments = new_comment;
+      std::cerr << comments;
     }
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -314,6 +331,31 @@ private:
           continue;
         }
       }
+
+      if (dialog.add_property())
+      {
+        std::ostringstream oss;
+        oss << "shape " << index;
+        if (CGAL::Shape_detection_3::Plane<Traits>* s
+            = dynamic_cast<CGAL::Shape_detection_3::Plane<Traits> *>(shape.get()))
+          oss << " plane " << Kernel::Plane_3(*s) << std::endl;
+        else if (CGAL::Shape_detection_3::Cylinder<Traits>* s
+            = dynamic_cast<CGAL::Shape_detection_3::Cylinder<Traits> *>(shape.get()))
+          oss << " cylinder axis = [" << s->axis() << "] radius = " << s->radius() << std::endl;
+        else if (CGAL::Shape_detection_3::Cone<Traits>* s
+            = dynamic_cast<CGAL::Shape_detection_3::Cone<Traits> *>(shape.get()))
+          oss << " cone apex = [" << s->apex() << "] axis = [" << s->axis()
+              << "] angle = " << s->angle() << std::endl;
+        else if (CGAL::Shape_detection_3::Torus<Traits>* s
+            = dynamic_cast<CGAL::Shape_detection_3::Torus<Traits> *>(shape.get()))
+          oss << " torus center = [" << s->center() << "] axis = [" << s->axis()
+              << "] R = " << s->major_radius() << " r = " << s->minor_radius() << std::endl;
+        else if (CGAL::Shape_detection_3::Sphere<Traits>* s
+            = dynamic_cast<CGAL::Shape_detection_3::Sphere<Traits> *>(shape.get()))
+          oss << " sphere center = [" << s->center() << "] radius = " << s->radius() << std::endl;
+
+        comments += oss.str();
+      }
         
       Scene_points_with_normal_item *point_item = new Scene_points_with_normal_item;
       
@@ -321,7 +363,7 @@ private:
       {
         point_item->point_set()->insert(points->point(*(points->begin()+i)));
         if (dialog.add_property())
-          cluster_id[*(points->begin()+i)] = index;
+          shape_id[*(points->begin()+i)] = index;
       }
       
       unsigned char r, g, b;
