@@ -38,8 +38,8 @@ public:
 
   virtual void compute_features (std::size_t nb_scales) = 0;
 
-  virtual void add_selection_to_training_set (const char* name) = 0;
-  virtual void reset_training_set (const char* name) = 0;
+  virtual void add_selection_to_training_set (std::size_t label) = 0;
+  virtual void reset_training_set (std::size_t label) = 0;
   virtual void reset_training_sets() = 0;
 
   virtual void select_random_region() = 0;
@@ -81,16 +81,14 @@ public:
     delete m_random_forest;
     m_random_forest = new Random_forest (m_labels, m_features);
 #endif
+    
+    return m_label_colors.back();
   }
-  virtual void remove_label (const char* name)
+  virtual void remove_label (std::size_t position)
   {
-    for (std::size_t i = 0; i < m_labels.size(); ++ i)
-      if (m_labels[i]->name() == name)
-        {
-          m_labels.remove(m_labels[i]);
-          m_label_colors.erase (m_label_colors.begin() + i);
-          break;
-        }
+    m_labels.remove(m_labels[position]);
+    m_label_colors.erase (m_label_colors.begin() + position);
+
     delete m_sowf;
     m_sowf = new Sum_of_weighted_features (m_labels, m_features);
 

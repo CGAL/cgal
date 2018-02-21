@@ -762,7 +762,7 @@ public Q_SLOTS:
       int position = row_index * 3 + column_index;
       
       classif->reset_training_set
-        (label_buttons[position].color_button->text().toStdString().c_str());
+        (position);
     }
     
     item_changed(classif->item());
@@ -803,15 +803,6 @@ public Q_SLOTS:
       {
         print_message("Error: there is no point set classification item!");
         return; 
-      }
-
-    std::vector<std::string> classes;
-    std::vector<QColor> colors;
-    
-    for (std::size_t i = 0; i < label_buttons.size(); ++ i)
-      {
-        classes.push_back (label_buttons[i].color_button->text().toStdString());
-        colors.push_back (label_buttons[i].color);
       }
 
     int nb_trials = 0;
@@ -927,11 +918,12 @@ public Q_SLOTS:
 
       int position = row_index * 3 + column_index;
 
-      classif->remove_label (label_buttons[position].color_button->text().toStdString().c_str());
+      classif->remove_label (position);
     
       ui_widget.labelGrid->removeWidget (label_buttons[position].color_button);
       label_buttons[position].color_button->deleteLater();
-
+      label_buttons[position].menu->deleteLater();
+            
       ui_widget.gridLayout->removeWidget (label_buttons[position].label2);
       delete label_buttons[position].label2;
       ui_widget.gridLayout->removeWidget (label_buttons[position].effect);
@@ -980,7 +972,7 @@ public Q_SLOTS:
       QColor color = label_buttons[position].color;
       color = QColorDialog::getColor(color, (QWidget*)mw, "Change of color of label");
       label_buttons[position].change_color (color);
-      classif->change_label_color (label_buttons[position].color_button->text().toStdString().c_str(),
+      classif->change_label_color (position,
                                    color);
     }
     classif->update_color ();
@@ -1008,7 +1000,7 @@ public Q_SLOTS:
 
       int position = row_index * 3 + column_index;
       classif->add_selection_to_training_set
-        (label_buttons[position].color_button->text().toStdString().c_str());
+        (position);
     }
     
     item_changed(classif->item());
