@@ -572,9 +572,24 @@ void Point_set_item_classification::train(int classifier, unsigned int nb_trials
   std::vector<int> training (m_points->point_set()->size(), -1);
   std::vector<std::size_t> indices (m_points->point_set()->size(), std::size_t(-1));
 
+  std::vector<std::size_t> nb_label (m_labels.size(), 0);
+  std::size_t nb_total = 0;
+  
   for (Point_set::const_iterator it = m_points->point_set()->begin();
        it != m_points->point_set()->first_selected(); ++ it)
+  {
     training[*it] = m_training[*it];
+    if (training[*it] != -1)
+    {
+      nb_label[std::size_t(training[*it])] ++;
+      ++ nb_total;
+    }
+  }
+
+  std::cerr << nb_total << " point(s) used for training ("
+            << 100. * (nb_total / double(m_points->point_set()->size())) << "% of the total):" << std::endl;
+  for (std::size_t i = 0; i < m_labels.size(); ++ i)
+    std::cerr << " * " << m_labels[i]->name() << ": " << nb_label[i] << " point(s)" << std::endl;
 
   if (classifier == 0)
     {

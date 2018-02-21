@@ -646,10 +646,25 @@ void Cluster_classification::train(int classifier, unsigned int nb_trials,
   }
   reset_indices();
 
+  std::vector<std::size_t> nb_label (m_labels.size(), 0);
+  std::size_t nb_total = 0;
+  
   std::vector<int> training;
   training.reserve (m_clusters.size());
   for (std::size_t i = 0; i < m_clusters.size(); ++ i)
+  {
     training.push_back (m_clusters[i].training);
+    if (training.back() != -1)
+    {
+      nb_label[std::size_t(training.back())] ++;
+      ++ nb_total;
+    }
+  }
+  
+  std::cerr << nb_total << " cluster(s) used for training ("
+            << 100. * (nb_total / double(m_clusters.size())) << "% of the total):" << std::endl;
+  for (std::size_t i = 0; i < m_labels.size(); ++ i)
+    std::cerr << " * " << m_labels[i]->name() << ": " << nb_label[i] << " clusters(s)" << std::endl;
   
   std::vector<std::size_t> indices (m_clusters.size(), -1);
 
