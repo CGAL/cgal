@@ -36,6 +36,8 @@ public:
   virtual CGAL::Three::Scene_item* item() = 0;
   virtual void erase_item() = 0;
 
+  virtual CGAL::Bbox_3 bbox() { return item()->bbox(); }
+
   virtual void compute_features (std::size_t nb_scales) = 0;
 
   virtual void add_selection_to_training_set (std::size_t label) = 0;

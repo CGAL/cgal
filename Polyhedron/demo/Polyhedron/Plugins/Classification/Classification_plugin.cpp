@@ -1,6 +1,9 @@
 #include <QtCore/qglobal.h>
 #include <QFileDialog>
 #include <QColorDialog> 
+#include <QGLViewer/manipulatedCameraFrame.h>
+#include <QGLViewer/manipulatedFrame.h>
+
 #include <fstream>
 #include "opengl_tools.h"
 
@@ -168,6 +171,11 @@ public:
     connect(action_reset,  SIGNAL(triggered()), this,
             SLOT(on_reset_training_sets_clicked()));
 
+    action_random_region = ui_widget.menu->menu()->addAction ("Select random region");
+    action_random_region->setShortcut(Qt::SHIFT | Qt::Key_S);
+    connect(action_random_region,  SIGNAL(triggered()), this,
+            SLOT(on_select_random_region_clicked()));
+
     action_validate = ui_widget.menu->menu()->addAction ("Validate labels of current selection as training sets");
     connect(action_validate,  SIGNAL(triggered()), this,
             SLOT(on_validate_selection_clicked()));
@@ -301,6 +309,7 @@ public Q_SLOTS:
     ui_widget.menu->setEnabled(true);
     action_train->setEnabled(false);
     action_reset->setEnabled(false);
+    action_random_region->setEnabled(false);
     action_validate->setEnabled(false);
     action_save_config->setEnabled(false);
     action_load_config->setEnabled(false);
@@ -316,6 +325,7 @@ public Q_SLOTS:
   {
     action_train->setEnabled(true);
     action_reset->setEnabled(true);
+    action_random_region->setEnabled(true);
     action_validate->setEnabled(true);
     action_save_config->setEnabled(true);
     action_load_config->setEnabled(true);
@@ -812,6 +822,29 @@ public Q_SLOTS:
 
     classif->select_random_region();
     item_changed(classif->item());
+
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    CGAL::Bbox_3 bbox = classif->bbox();
+    
+    viewer->camera()->fitBoundingBox(qglviewer::Vec (bbox.xmin(), bbox.ymin(), bbox.zmin()),
+                                     qglviewer::Vec (bbox.xmax(), bbox.ymax(), bbox.zmax()));
+    
+    // viewer->camera()->showEntireScene();
+    
+    // bbox = scene->bbox();
+    // viewer->setSceneBoundingBox(qglviewer::Vec (bbox.xmin(), bbox.ymin(), bbox.zmin()),
+    //                             qglviewer::Vec (bbox.xmax(), bbox.ymax(), bbox.zmax()));
+
+#if QGLVIEWER_VERSION >= 0x020502
+    viewer->camera()->setPivotPoint (qglviewer::Vec ((bbox.xmin() + bbox.xmax()) / 2.,
+                                                     (bbox.ymin() + bbox.ymax()) / 2.,
+                                                     (bbox.zmin() + bbox.zmax()) / 2.));
+#else
+    viewer->camera()->setRevolveAroundPoint (qglviewer::Vec ((bbox.xmin() + bbox.xmax()) / 2.,
+                                                             (bbox.ymin() + bbox.ymax()) / 2.,
+                                                             (bbox.zmin() + bbox.zmax()) / 2.));
+#endif
+
   }
 
   void on_train_clicked()
@@ -1127,6 +1160,7 @@ private:
   QDockWidget* dock_widget;
   QAction* action_train;
   QAction* action_reset;
+  QAction* action_random_region;
   QAction* action_validate;
   QAction* action_save_config;
   QAction* action_load_config;
