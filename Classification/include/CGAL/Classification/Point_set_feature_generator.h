@@ -35,6 +35,7 @@
 #include <CGAL/Classification/Feature/Vertical_dispersion.h>
 #include <CGAL/Classification/Feature/Verticality.h>
 #include <CGAL/Classification/Feature/Eigen.h>
+#include <CGAL/Classification/Feature/Gradient_of_feature.h>
 #include <CGAL/Classification/Label.h>
 #include <CGAL/Classification/internal/verbosity.h>
 #include <CGAL/Classification/Feature_set.h>
@@ -139,6 +140,10 @@ public:
   <GeomTraits, PointRange, PointMap>                    Dispersion;
   typedef Classification::Feature::Verticality
   <GeomTraits>                                          Verticality;
+  
+  typedef typename Neighborhood::K_neighbor_query       Neighbor_query;
+  typedef Classification::Feature::Gradient_of_feature
+  <PointRange, PointMap, Neighbor_query>                Gradient_of_feature;
   
   typedef typename Classification::RGB_Color RGB_Color;
   /// \endcond
@@ -571,6 +576,26 @@ private:
   {
   }
 
+  void generate_gradient_features()
+  {
+    std::size_t size = m_features->size();
+
+    for (std::size_t i = 0; i < size; ++ i)
+    {
+      for (int j = m_scales.size() - 1; j >= 0; -- j)
+      {
+        std::ostringstream oss;
+        oss << "_" << j;
+        if ((*m_features)[i]->name().find (oss.str()))
+        {
+          const Neighbor_query& neighbor_query = neighborhood(std::size_t(j)).k_neighbor_query(6);
+          m_features->template add<Gradient_of_feature> (m_input, m_point_map, (*m_features)[i], neighbor_query);
+          break;
+        }
+      }
+    }
+  }
+
 
   template <typename T>
   const T& get_parameter (const T& t)
@@ -625,6 +650,8 @@ private:
     m_tasks->wait();
     delete m_tasks;
 #endif
+
+//    generate_gradient_features();
     
     t.stop();
     CGAL_CLASSIFICATION_CERR << "Features computed in " << t.time() << " second(s)" << std::endl;
