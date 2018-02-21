@@ -68,10 +68,10 @@ public:
   void set_effect (Label_handle l, Feature_handle f, Sum_of_weighted_features::Effect e)
   { m_sowf->set_effect (l, f, e); }
   
-  virtual void add_new_label (const char* name, const QColor& color)
+  virtual QColor add_new_label (const char* name)
   {
     m_labels.add(name);
-    m_label_colors.push_back (color);
+    m_label_colors.push_back (get_new_label_color (name));
     
     delete m_sowf;
     m_sowf = new Sum_of_weighted_features (m_labels, m_features);
@@ -105,7 +105,7 @@ public:
   std::size_t number_of_labels() const { return m_labels.size(); }
   Label_handle label(std::size_t i) { return m_labels[i]; }
 
-  void fill_display_combo_box (QComboBox* cb, QComboBox* cb1) const
+  virtual void fill_display_combo_box (QComboBox* cb, QComboBox* cb1) const
   {
     for (std::size_t i = 0; i < m_features.size(); ++ i)
       {
@@ -168,16 +168,57 @@ public:
   }
 
   const QColor& label_color(std::size_t i) const { return m_label_colors[i]; }
-  std::size_t get_label (const char* name)
+  void change_label_color (std::size_t position, const QColor& color)
   {
-    for (std::size_t i = 0; i < m_labels.size(); ++ i)
-      if (m_labels[i]->name() == name)
-        return i;
-    return std::size_t(-1);
+    m_label_colors[position] = color;
   }
-  void change_label_color (const char* name, const QColor& color)
+
+  QColor get_new_label_color (const std::string& name)
   {
-    m_label_colors[get_label(name)] = color;
+    QColor color (64 + rand() % 192,
+                  64 + rand() % 192,
+                  64 + rand() % 192);
+      
+    if (name == "ground")
+      color = QColor (186, 189, 182);
+    else if (name == "low_veget")
+      color = QColor (78, 154, 6);
+    else if (name == "med_veget"
+             || name == "vegetation")
+      color = QColor (138, 226, 52);
+    else if (name == "high_veget")
+      color = QColor (204, 255, 201);
+    else if (name == "building"
+             || name == "roof")
+      color = QColor (245, 121, 0);
+    else if (name == "noise")
+      color = QColor (0, 0, 0);
+    else if (name == "reserved")
+      color = QColor (233, 185, 110);
+    else if (name == "water")
+      color = QColor (114, 159, 207);
+    else if (name == "rail")
+      color = QColor (136, 46, 25);
+    else if (name == "road_surface")
+      color = QColor (56, 56, 56);
+    else if (name == "reserved_2")
+      color = QColor (193, 138, 51);
+    else if (name == "wire_guard")
+      color = QColor (37, 61, 136);
+    else if (name == "wire_conduct")
+      color = QColor (173, 127, 168);
+    else if (name == "trans_tower")
+      color = QColor (136, 138, 133);
+    else if (name == "wire_connect")
+      color = QColor (145, 64, 236);
+    else if (name == "bridge_deck")
+      color = QColor (213, 93, 93);
+    else if (name == "high_noise")
+      color = QColor (255, 0, 0);
+    else if (name == "facade")
+      color = QColor (77, 131, 186);
+    
+    return color;
   }
 
 protected:

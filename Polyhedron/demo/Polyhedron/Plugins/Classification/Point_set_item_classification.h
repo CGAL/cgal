@@ -151,10 +151,11 @@ class Point_set_item_classification : public Item_classification_base
   
   bool write_output(std::ostream& out);
 
-  void add_new_label (const char* name, const QColor& color)
+  QColor add_new_label (const char* name)
   {
-    Item_classification_base::add_new_label (name, color);
+    QColor out = Item_classification_base::add_new_label (name);
     update_comments_of_point_set_item();
+    return out;
   }
 
   void remove_label (std::size_t position)

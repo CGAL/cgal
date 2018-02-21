@@ -969,6 +969,10 @@ public Q_SLOTS:
 
     label_buttons.back().menu->addSeparator();
     
+    QAction* change_color = label_buttons.back().menu->addAction ("Change color");
+    connect(change_color,  SIGNAL(triggered()), this,
+            SLOT(on_color_changed_clicked()));
+
     QAction* remove_label = label_buttons.back().menu->addAction ("Remove label");
     connect(remove_label,  SIGNAL(triggered()), this,
             SLOT(on_remove_label_clicked()));
