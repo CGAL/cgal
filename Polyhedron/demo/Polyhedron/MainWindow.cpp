@@ -1628,7 +1628,13 @@ void MainWindow::on_actionSaveAs_triggered()
     if(filename.isEmpty())
       continue;
 
-    ext2 = filename.split(".").last();
+    QStringList filename_split = filename.split(".");
+    int fs_size = filename_split.size();
+    ext2 = filename_split.last();
+    
+    if(fs_size > 2 &&
+       ext2 == filename_split[filename.split(".").size()-2])
+      filename.chop(ext2.size()+1);
     QStringList final_extensions;
     Q_FOREACH(QString s, filter_ext)
     {
