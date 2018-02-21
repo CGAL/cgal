@@ -28,8 +28,8 @@
 
 #include <CGAL/Intersections_3/Triangle_3_Triangle_3.h>
 #include <CGAL/Intersections_3/Segment_3_Triangle_3.h>
-#include <CGAL/Intersections_3/internal/Iso_cuboid_3_Triangle_3_do_intersect.h>
-#include <CGAL/Intersections_3/internal/Triangle_3_Sphere_3_do_intersect.h>
+#include <CGAL/Intersections_3/Iso_cuboid_3_Triangle_3.h>
+#include <CGAL/Intersections_3/Sphere_3_Triangle_3.h>
 
 namespace CGAL {
 

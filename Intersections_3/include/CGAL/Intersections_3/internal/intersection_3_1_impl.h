@@ -1617,4 +1617,4 @@ do_intersect(const Iso_cuboid_3<R> &j, const Line_3<R> &l, const R&)
 } // namespace Intersections
 } // namespace CGAL
 
-#endif CGAL_INTERSECTIONS_3_INTERNAL_INTERSECTION_3_1_IMPL_H
+#endif // CGAL_INTERSECTIONS_3_INTERNAL_INTERSECTION_3_1_IMPL_H

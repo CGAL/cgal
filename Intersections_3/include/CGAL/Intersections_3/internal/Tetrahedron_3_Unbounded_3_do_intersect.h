@@ -22,10 +22,7 @@
 #ifndef CGAL_INTERNAL_INTERSECTIONS_3_TETRAHEDRON_3_DO_INTERSECT_H
 #define CGAL_INTERNAL_INTERSECTIONS_3_TETRAHEDRON_3_DO_INTERSECT_H
 
-#include <CGAL/Tetrahedron_3.h>
-#include <CGAL/Plane_3.h>
-#include <CGAL/Line_3.h>
-#include <CGAL/Ray_3.h>
+#include <CGAL/Intersections_3/Ray_3_Triangle_3.h>
 #include <CGAL/Intersections_3/Sphere_3_Triangle_3.h>
 #include <CGAL/Intersections_3/Plane_3_Triangle_3.h>
 
