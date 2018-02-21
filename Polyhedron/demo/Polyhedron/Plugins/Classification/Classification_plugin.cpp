@@ -8,6 +8,7 @@
 #include "Scene_points_with_normal_item.h"
 #include "Item_classification_base.h"
 #include "Point_set_item_classification.h"
+#include "Cluster_classification.h"
 #include "Scene_polylines_item.h"
 #include "Scene_polygon_soup_item.h"
 
@@ -400,10 +401,28 @@ public Q_SLOTS:
     if (item_map.find(points_item) != item_map.end())
       return item_map[points_item];
 
+    bool use_clusters = false;
+    
+    if (points_item->point_set()->has_property_map<int> ("shape"))
+    {
+      QMessageBox::StandardButton reply
+        = QMessageBox::question(NULL, "Point Set Classification",
+                                "This point set is divided in clusters. Do you want to classify clusters instead of points?",
+                                QMessageBox::Yes|QMessageBox::No);
+      
+      use_clusters = (reply == QMessageBox::Yes);
+    }
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    Item_classification_base* classif
-      = new Point_set_item_classification (points_item);
+
+    Item_classification_base* classif;
+    if (use_clusters)
+      classif = new Cluster_classification (points_item);
+    else
+      classif = new Point_set_item_classification (points_item);
+
     item_map.insert (std::make_pair (points_item, classif));
+    
     QApplication::restoreOverrideCursor();
     update_plugin_from_item(classif);
     return classif;
