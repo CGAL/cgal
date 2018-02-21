@@ -54,16 +54,21 @@ class Polyhedron_demo_classification_plugin :
   {
     QPushButton* color_button;
     QMenu* menu;
+    char shortcut;
     
     QColor color;
 
     QLabel* label2;
     QComboBox* effect;
 
-    LabelButton (QWidget* parent, const char* name, const QColor& color)
-      : color (color)
+    LabelButton (QWidget* parent,
+                 const char* name,
+                 std::size_t idx,
+                 const QColor& color,
+                 const char shortcut)
+      : color (color), shortcut (shortcut)
     {
-      color_button = new QPushButton (name, parent);
+      color_button = new QPushButton (tr("%1 (%2)").arg(name).arg((char)(std::toupper(shortcut))), parent);
       
       menu = new QMenu("Label Menu", color_button);
 
@@ -164,6 +169,7 @@ public:
     ui_widget.menu->menu()->addSection ("Training");
 
     action_train = ui_widget.menu->menu()->addAction ("Train classifier");
+    action_train->setShortcut(Qt::SHIFT | Qt::Key_T);
     connect(action_train,  SIGNAL(triggered()), this,
             SLOT(on_train_clicked()));
     
@@ -350,6 +356,7 @@ public Q_SLOTS:
           {
             ui_widget.labelGrid->removeWidget (label_buttons[i].color_button);
             label_buttons[i].color_button->deleteLater();
+            label_buttons[i].menu->deleteLater();
             ui_widget.gridLayout->removeWidget (label_buttons[i].label2);
             delete label_buttons[i].label2;
             ui_widget.gridLayout->removeWidget (label_buttons[i].effect);
@@ -361,7 +368,9 @@ public Q_SLOTS:
         for (std::size_t i = 0; i < classif->number_of_labels(); ++ i)
           add_new_label (LabelButton (dock_widget,
                                       classif->label(i)->name().c_str(),
-                                      classif->label_color(i)));
+                                      i,
+                                      classif->label_color(i),
+                                      get_shortcut (i, classif->label(i)->name().c_str())));
 
         add_new_label_button();
 
@@ -906,6 +915,32 @@ public Q_SLOTS:
     update_plugin_from_item(classif);
   }
 
+  char get_shortcut (std::size_t position, const char* name)
+  {
+    std::set<char> used_letters;
+    
+    used_letters.insert('t'); // used for "train"
+    used_letters.insert('s'); // used for "random select"
+    for (std::size_t i = 0; i < label_buttons.size(); ++ i)
+      if (i != position)
+        used_letters.insert (label_buttons[i].shortcut);
+
+    std::size_t idx = 0;
+    while (name[idx] != '\0')
+    {
+      if (std::isalpha(name[idx]) &&
+          used_letters.find (std::tolower(name[idx])) == used_letters.end())
+        return std::tolower(name[idx]);
+      ++ idx;
+    }
+
+    char fallback = 'a';
+    while (used_letters.find (fallback) != used_letters.end())
+      ++ fallback;
+
+    return fallback;
+  }
+  
   void add_new_label (const LabelButton& label_button)
   {
     label_buttons.push_back (label_button);
@@ -916,11 +951,11 @@ public Q_SLOTS:
 
     ui_widget.labelGrid->addWidget (label_buttons.back().color_button, x, y);
 
-    QAction* change_color = label_buttons.back().menu->addAction ("Change color");
-    connect(change_color,  SIGNAL(triggered()), this,
-            SLOT(on_color_changed_clicked()));
+    QAction* add_selection = label_buttons.back().menu->addAction ("Add selection to training action"); 
 
-    QAction* add_selection = label_buttons.back().menu->addAction ("Add selection to training set");
+    add_selection->setShortcut(Qt::SHIFT | Qt::Key_A + (label_button.shortcut - 'a'));
+//    add_selection->setShortcut(Qt::Key_0 + label_buttons.size() - 1);
+    
     connect(add_selection,  SIGNAL(triggered()), this,
             SLOT(on_add_selection_to_training_set_clicked()));
     
@@ -1176,7 +1211,6 @@ private:
   QAction* action_run_smoothed;
   QAction* action_run_graphcut;
   QAction* action_generate;
-
   
   std::vector<LabelButton> label_buttons;
   QPushButton* new_label_button;
@@ -1187,6 +1221,7 @@ private:
 
   typedef std::map<Scene_item*, Item_classification_base*> Item_map;
   Item_map item_map;
+
 
 }; // end Polyhedron_demo_classification_plugin
 
