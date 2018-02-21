@@ -30,6 +30,12 @@ Release date: April 2018
     type of data, compute their own local features on the input data
     set, and define their own labels.
 
+### Kinetic Data Structures (removed package)
+
+-   This package has been removed from CGAL-4.12. Users of the package
+    will have to keep using the source code available in CGAL-4.11 or
+    earlier.
+
 ### 2D Alpha Shapes
 
 -   It is now possible to use `CGAL::Periodic_2_triangulation_2` as
