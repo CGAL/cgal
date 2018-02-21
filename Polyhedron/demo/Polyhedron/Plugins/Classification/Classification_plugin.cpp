@@ -735,23 +735,31 @@ public Q_SLOTS:
     bool ok;
     QString name =
       QInputDialog::getText((QWidget*)mw,
-                            tr("Add new label"), // dialog title
-                            tr("Name:"), // field label
+                            tr("Add new labels"), // dialog title
+                            tr("Names (separated by spaces):"), // field label
                             QLineEdit::Normal,
-                            tr("label%1").arg(label_buttons.size() + 1),
+                            tr("label_%1").arg(label_buttons.size()),
                             &ok);
     if (!ok)
       return;
 
-    add_new_label (LabelButton (dock_widget,
-                                name.toStdString().c_str(),
-                                QColor (64 + rand() % 192,
-                                        64 + rand() % 192,
-                                        64 + rand() % 192)));
-    classif->add_new_label (label_buttons.back().color_button->text().toStdString().c_str(),
-                                        label_buttons.back().color);
+    std::istringstream iss (name.toStdString());
+
+    std::string n;
+    while (iss >> n)
+    {
+      add_new_label (LabelButton (dock_widget,
+                                  n.c_str(),
+                                  label_buttons.size(),
+                                  QColor (64 + rand() % 192,
+                                          64 + rand() % 192,
+                                          64 + rand() % 192),
+                                  get_shortcut (label_buttons.size(), n.c_str())));
+      QColor color = classif->add_new_label (n.c_str());
+      label_buttons.back().change_color (color);
     
-    add_new_label_button();
+      add_new_label_button();
+    }
   }
 
   void on_reset_training_sets_clicked()
