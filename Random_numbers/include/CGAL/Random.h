@@ -90,21 +90,15 @@ public:
   uniform_smallint(IntType lower, IntType upper)
   {
     // uniform_smallint has a closed interval, CGAL a halfopen
-    boost::uniform_smallint<IntType> dist(lower,upper-1);
-    boost::variate_generator<boost::rand48&, boost::uniform_smallint<IntType> > generator(rng,dist);
+    typedef boost::rand48::result_type result_type;
+    boost::uniform_smallint<result_type> dist(static_cast<result_type>(lower),
+                                              static_cast<result_type>(upper-1));
+    boost::variate_generator<boost::rand48&, boost::uniform_smallint<result_type> > generator(rng,dist);
     
     return generator();
   }
 
-  // Overload to avoid a warning with VC++
-  inline
-  std::size_t
-  uniform_smallint(std::size_t lower, std::size_t upper)
-  {
-    return uniform_smallint(static_cast<boost::rand48::result_type>(lower),
-                            static_cast<boost::rand48::result_type>(upper));
-  }
-
+  
   template <typename IntType>
   IntType
   uniform_smallint(IntType lower)
