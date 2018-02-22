@@ -35,7 +35,7 @@ inline
 const T&
 constant()
 {
-  CGAL_STATIC_THREAD_LOCAL_VARIABLE(const T, t,i);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(T, t,i);
   return t;
 }
 
