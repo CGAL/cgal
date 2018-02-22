@@ -58,12 +58,17 @@ struct build_from_pair
 struct Progress_bar_callback
 {
   mutable int nb;
-  mutable CGAL::Real_timer timer;
+  CGAL::Real_timer timer;
+  double t_start;
+  mutable double t_latest;
   int bar_size;
+  mutable std::size_t string_size;
   
-  Progress_bar_callback() : nb(0), bar_size (70)
+  Progress_bar_callback() : nb(0), bar_size (30), string_size(0)
   {
     timer.start();
+    t_start = timer.time();
+    t_latest = t_start;
   }
   
   bool operator()(double advancement) const
@@ -75,26 +80,64 @@ struct Progress_bar_callback
       return true;
 
     // If the limit is reach, interrupt the algorithm
-    if (advancement == 1 && timer.time() > 1)
+    double t = timer.time();
+    if (advancement == 1 || (t - t_latest) > 1.)
     {
-      std::cerr << "\r[";
+      std::ostringstream oss;
+      oss << "[";
       int adv = int(advancement * bar_size);
       for (int i = 0; i < adv; ++ i)
-        std::cerr << "=";
+        oss << "=";
       if (adv != bar_size)
-        std::cerr << ">";
+        oss << ">";
       for (int i = adv; i < bar_size; ++ i)
+        oss << " ";
+      
+      oss << "] " << int(advancement * 100) << "% (";
+
+      display_time (oss, t);
+
+      oss << " elapsed, ";
+
+      display_time (oss, estimate_remaining(t, advancement));
+      
+      oss << " remaining)";
+      
+      std::string bar_string = oss.str();
+      std::cerr << "\r" << bar_string;
+      for (std::size_t i = bar_string.size(); i < string_size; ++ i)
         std::cerr << " ";
-      std::cerr << "] " << int(advancement * 100) << "%";
+      string_size = (std::max) (string_size, bar_string.size());
+      
       if (advancement == 1)
         std::cerr << std::endl;
       
-      timer.stop();
-      timer.reset();
-      timer.start();
+      t_latest = t;
     }
 
     return true;
+  }
+
+  void display_time (std::ostringstream& oss, double seconds) const
+  {
+    if (seconds > 3600.)
+      {
+	int hours = int(seconds / 3600.);
+	oss << hours << "h";
+	seconds -= hours * 3600.;
+      }
+    if (seconds > 60.)
+      {
+	int minutes = (int)(seconds / 60.);
+	oss << minutes << "min";
+	seconds -= minutes * 60.;
+      }
+    oss << int(seconds) << "sec";
+  }
+
+  double estimate_remaining (double seconds, double advancement) const
+  {
+    return ((1. - advancement) * (seconds - t_start) / advancement);
   }
 };
 
