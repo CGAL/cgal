@@ -62,9 +62,8 @@
 
 
 namespace CGAL {
-
-namespace internal {
 namespace Mesh_3 {
+namespace internal {
 
 template <typename Kernel>
 struct Angle_tester
@@ -186,8 +185,8 @@ struct Extract_polyline_with_context_visitor
 };
 
 
-} // end CGAL::internal::Mesh_3
-} // end CGAL::internal
+} // end namespace internal
+} // end namespace Mesh_3
 
 /**
  * @class Polyhedral_mesh_domain_with_features_3
@@ -358,7 +357,7 @@ public:
   {
     return stored_polyhedra;
   }
-  
+
 private:
   void load_from_file(const char* filename) {
     // Create input polyhedron
@@ -471,7 +470,7 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
     typedef typename boost::property_map<Polyhedron,CGAL::vertex_incident_patches_t<P_id> >::type VIPMap;
     typedef typename boost::property_map<Polyhedron, CGAL::edge_is_feature_t>::type EIFMap;
 
-    using internal::Mesh_3::Get_face_index_pmap;
+    using Mesh_3::internal::Get_face_index_pmap;
     Get_face_index_pmap<Polyhedron> get_face_index_pmap(p);
 
     PIDMap pid_map = get(face_patch_id_t<Tag_>(), p);
@@ -486,7 +485,7 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
       .face_index_map(get_face_index_pmap(p))
       .vertex_incident_patches_map(vip_map));
 
-    internal::Mesh_3::Is_featured_edge<Polyhedron> is_featured_edge(p);
+    Mesh_3::internal::Is_featured_edge<Polyhedron> is_featured_edge(p);
 
     add_featured_edges_to_graph(p, is_featured_edge, g_copy, p2vmap);
   }
@@ -516,12 +515,12 @@ add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
 {
   std::vector<Polyline_with_context> polylines;
 
-  internal::Mesh_3::Extract_polyline_with_context_visitor<
+  Mesh_3::internal::Extract_polyline_with_context_visitor<
     Polyhedral_mesh_domain_with_features_3,
     Polyline_with_context,
     Featured_edges_copy_graph
     > visitor(g_copy, polylines);
-  internal::Mesh_3::Angle_tester<GT_> angle_tester;
+  Mesh_3::internal::Angle_tester<GT_> angle_tester;
   split_graph_into_polylines(g_copy, visitor, angle_tester);
 
   this->add_features_with_context(polylines.begin(),

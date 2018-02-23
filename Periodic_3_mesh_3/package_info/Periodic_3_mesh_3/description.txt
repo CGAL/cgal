@@ -1,0 +1,2 @@
+The Periodic_3_mesh_3 package is a mesh generator used to build
+isotropic simplicial meshes of periodic 3D domains.

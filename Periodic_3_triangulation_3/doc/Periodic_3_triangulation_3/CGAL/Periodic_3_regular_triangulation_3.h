@@ -87,9 +87,9 @@ size_type number_of_hidden_points() const;
 /*! \name Insertion
 
 The following methods insert points in the triangulation ensuring the
-property that all power spheres are regular. The inserted weighted points need
-to lie in the original domain (see Section \ref
-P3Triangulation3secspace of the user manual). Note that insertion of a
+property that all power spheres are regular. The inserted weighted points must
+lie in the original domain (see Section \ref
+P3Triangulation3secspace of the user manual). Note that the insertion of a
 new point can cause a switch from computing in the 27-sheeted covering
 space to computing in the 1-sheeted covering space, which invalidates
 some `Vertex_handle`s and `Cell_handle`s.
@@ -99,7 +99,7 @@ some `Vertex_handle`s and `Cell_handle`s.
 /// @{
 
 /*!
-Inserts point `p` in the triangulation and returns the corresponding
+Inserts the point `p` in the triangulation and returns the corresponding
 vertex. The optional argument `start` is used as a starting place
 for the point location.
 
@@ -114,11 +114,12 @@ If `p` coincides with an already existing vertex (both point and
 weights being equal), then this vertex is returned and the triangulation
 remains unchanged.
 
-Otherwise if `p` does not appear as a vertex of the triangulation,
+Otherwise, if `p` does not appear as a vertex of the triangulation,
 then it is stored as a hidden point and this method returns the default
 constructed handle.
 
-\pre `p` lies in the original domain `domain`. Its weight is non-negative and smaller than 1/64 times the squared cube edge length.
+\pre `p` lies in the original domain. Its weight is non-negative
+and smaller than 1/64 times the squared cube edge length.
 */
 Vertex_handle insert(const Weighted_point & p,
 Cell_handle start = Cell_handle() );
@@ -128,7 +129,8 @@ Inserts point `p` in the triangulation and returns the corresponding
 vertex. Similar to the above `insert()` function, but takes as additional
 parameter the return values of a previous location query. See description of
 `Periodic_3_triangulation_3::locate()`.
-\pre `p` lies in the original domain `domain`. Its weight is non-negative and smaller than 1/64 times the squared cube edge length.
+\pre `p` lies in the original domain. Its weight is non-negative
+and smaller than 1/64 times the squared cube edge length.
 */
 Vertex_handle insert(const Weighted_point & p, Locate_type lt,
 Cell_handle loc, int li, int lj);
@@ -148,10 +150,10 @@ Inserts the points in the iterator range \f$ \left[\right.\f$`first`,
 This function uses spatial sorting (cf. chapter \ref secspatial_sorting)
 and therefore is not guaranteed to insert the points following the
 order of `InputIterator`. If the third argument
-`is_large_point_set` is set to `true` a heuristic for
+`is_large_point_set` is set to `true`, a heuristic for
 optimizing the insertion of large point sets is applied.
 \pre The `value_type` of `first` and `last` are `Weighted_point`s
-lying inside `domain`.
+lying inside the original domain.
 Their weights are non-negative and smaller than 1/64 times the
 squared cube edge length.
 */
@@ -194,8 +196,7 @@ std::ptrdiff_t remove(InputIterator first, InputIterator beyond);
 
 /*!
 Returns a value indicating the position of the (weighted point, offset) pair (`p`,`off`)
-with respect to the power sphere of `c`. More
-precisely, it returns:
+with respect to the power sphere of `c`. More precisely, it returns:
 
 - `ON_BOUNDED_SIDE` if the angle between the weighted point (`p`,`off`)
 and the power sphere of `c` is larger than \f$ \pi/2\f$ or if the ball of
@@ -337,21 +338,27 @@ The following member functions test the Gabriel property of the faces of the reg
 Returns the representative of the weighted circumcenter of the four vertices
 of c that lies in the original domain `domain`.
 */
+Bare_point canonical_dual(Cell_handle c) const;
+
+/*!
+Returns the circumcenter of the four vertices of c.
+
+*/
 Bare_point dual(Cell_handle c) const;
 
 /*!
-Returns the dual of facet `f`, which is a periodic segment.
+Returns the dual of the facet `f`, which is a periodic segment.
 */
 Periodic_segment_3 dual(Facet f) const;
 
 /*!
-same as the previous method for facet `(c,i)`.
+same as the previous method for the facet `(c,i)`.
 \pre \f$ i\in\{0,1,2,3\}\f$
 */
 Periodic_segment_3 dual(Cell_handle c, int i) const;
 
 /*!
-Returns in the output iterator the points of the dual polygon of
+Returns in the output iterator the points of the dual polygon of the
 edge `e` in the same order as the `Facet_circulator` returns
 facets incident to the edge `e`. The points form the dual polygon
 in \f$ \mathbb R^3\f$, so they do not necessarily all lie inside the
@@ -362,7 +369,7 @@ OutputIterator
 dual(Edge e, OutputIterator pts) const;
 
 /*!
-same as the previous method for edge `(c,i,j)`.
+same as the previous method for the edge `(c,i,j)`.
 \pre \f$ i,j\in\{0,1,2,3\}, i\neq j\f$
 */
 template <class OutputIterator>
@@ -370,7 +377,7 @@ OutputIterator
 dual(Cell_handle c, int i, int j, OutputIterator pts) const;
 
 /*!
-Returns in the output iterator the points of the dual polyhedron of
+Returns in the output iterator the points of the dual polyhedron of the
 vertex `v` in no particular order. The points form the dual
 polyhedron in \f$ \mathbb R^3\f$, so they do not necessarily lie all
 inside the original domain.
@@ -407,7 +414,7 @@ Section \ref P3Triangulation3secintro). Also checks that the power
 spheres of all cells are regular.
 
 When `verbose` is set to true, messages describing the first
-invalidity encountered are printed.
+invalidity encountered (if any) are printed.
 */
 bool
 is_valid(bool verbose = false) const;
@@ -418,7 +425,7 @@ Section \ref P3Triangulation3secintro). Also checks that its power
 sphere is regular.
 
 When `verbose` is set to true, messages are printed to give
-a precise indication of the kind of invalidity encountered.
+a precise indication of the kind of invalidity encountered (if any).
 */
 bool
 is_valid(Cell_handle c, bool verbose = false) const;

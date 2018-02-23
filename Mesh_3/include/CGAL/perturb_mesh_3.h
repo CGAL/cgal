@@ -116,7 +116,7 @@ perturb_mesh_3_impl(C3T3& c3t3,
                     const PPerturbationVector& perturbation_vector)
 {
   CGAL_precondition(
-    !internal::Mesh_3::has_non_protecting_weights(c3t3.triangulation(), domain));
+    !Mesh_3::internal::has_non_protecting_weights(c3t3.triangulation(), domain));
 
   typedef MeshDomain Md;
   typedef SliverCriterion Sc;
