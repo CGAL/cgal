@@ -177,7 +177,22 @@ class Point_set_item_classification : public Item_classification_base
   void update_comments_of_point_set_item()
   {
     std::string& comments = m_points->comments();
-    comments.clear();
+    
+    // Remove previously registered labels from comments
+    std::string new_comment;
+      
+    std::istringstream stream (comments);
+    std::string line;
+    while (getline(stream, line))
+    {
+      std::stringstream iss (line);
+      std::string tag;
+      if (iss >> tag && tag == "label")
+        continue;
+      new_comment += line + "\n";
+    }
+    comments = new_comment;
+
     comments += "label -1 unclassified\n";
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
     {
