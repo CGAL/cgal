@@ -1731,7 +1731,9 @@ surface_self_intersection(const TriangleMesh& tm,
                               vertex_point);
 
 // surface intersection algorithm call
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm>
+  typedef Corefinement::Default_surface_intersection_visitor<TriangleMesh,
+                                                             true>      Visitor;
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm, Visitor>
     functor(tm, vpm);
 
   polyline_output=functor(polyline_output, true);
