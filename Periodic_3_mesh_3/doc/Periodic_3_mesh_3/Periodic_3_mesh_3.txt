@@ -123,7 +123,7 @@ and to find in which subdomain it lies in the affirmative case.
 The domain class also provides predicates and constructors to test the intersection of a query line segment
 with the boundary surface patches and to construct intersection points, if any.
 
-\subsubsection Periodic_3_mesh_3InputDomainPeriodicity Implicit Domains
+\subsubsection Periodic_3_mesh_3ImplicitInputDomain Implicit Domains
 
 An implicit domain is a domain described by an implicit function. The bounding surface
 is described implicitly as the zero level set of a function defined
@@ -144,13 +144,13 @@ The mesh is only constructed over the canonical cube and periodicity
 is handled internally: oracles described above evaluate queries at a point
 by instead evaluating at the representative that belongs in the canonical cube.
 More precisely, if `f` is a real function defined either over \f$ \mathbb R^3\f$
-or over the canonical cube, we define the periodic real function `f*` defined over
+or over the canonical cube, we define the periodic real function `f^{\ast}` defined over
 \f$ \mathbb R^3\f$ as follows:
-- For any point \f$(x,y,z)\f$ in the canonical cube, \f$f*(x,y,z) = f(x,y,z)\f$
+- For any point \f$(x,y,z)\f$ in the canonical cube, \f$ f^{\ast}(x,y,z) = f(x,y,z)\f$
 - For any point \f$(x,y,z)\f$ outside the canonical cube, there is a unique canonical representative
-\f$(x0,y0,z0)\f$ of \f$(x,y,z)\f$ in the canonical cube, i.e.,
-\f$(x,y,z)=(x0 + k_x c, y0 + k_y c, z0 + k_z c)\f$ with \f$(k_x,k_y,k_z)\f$ in \f$ \mathbb Z^3\f$,
-and \f$f*(x,y,z) = f(x0,y0,z0)\f$.
+\f$(x_0,y_0,z_0)\f$ of \f$(x,y,z)\f$ in the canonical cube, i.e.,
+\f$(x,y,z)=(x_0 + k_x c, y_0 + k_y c, z_0 + k_z c)\f$ with \f$(k_x,k_y,k_z)\f$ in \f$ \mathbb Z^3\f$,
+and \f$ f^{\ast}(x,y,z) = f(x_0,y_0,z_0) \f$.
 
 For example, if considering the unit cube as canonical cube, an oracle answering a
 query such as <I>"what is the value of the implicit function at this point?"</I>
