@@ -63,9 +63,10 @@ public:
 /// @{
 
 /*!
-\brief Construction from a function, a fundamental domain, and a relative error bound.
+\brief Construction from a function, a cube, and a relative error bound.
+
 \param f is the function.
-\param cuboid is the fundamental domain in which we construct the mesh.
+\param cuboid is the canonical cube in which we construct the mesh.
 \param relative_error_bound is the relative error bound used to compute intersection points between the implicit surface and query segments. The
        bisection is stopped when the length of the intersected segment is less
        than the product of `relative_error_bound` by the diagonal of `cuboid`.

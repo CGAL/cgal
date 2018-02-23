@@ -24,7 +24,7 @@ This class is a model of the concept `Periodic_3MeshDomain_3`.
         `BisectionGeometricTraits_3`.
 
 The constructor of `Implicit_periodic_3_mesh_domain_3` takes as argument
-a cuboid (the canonical representative of the fundamental domain) in which
+a cuboid (the canonical cube) in which
 we construct the mesh (see \ref PkgPeriodic_3_mesh_3).
 This domain constructs intersection points between the surface and
 segments (duals of a facet) by bisection. It requires an `error_bound`
@@ -51,7 +51,7 @@ public:
 
 /*!
 \param f is the object of type `Function` that represents the implicit surface
-\param cuboid is the fundamental domain
+\param cuboid is the canonical cube
 \param error_bound  is the relative error bound used to compute intersection
        points between the implicit surface and query segments. The bisection
        is stopped when the length of the intersected segment is less than

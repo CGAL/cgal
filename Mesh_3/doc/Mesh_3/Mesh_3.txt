@@ -15,8 +15,8 @@ Cut-view of a multi-domain 3D mesh generated from a segmented image.
 
 This package is devoted to the generation of isotropic simplicial
 meshes discretizing 3D domains.
-The domain to be meshed is a region of 3D space, required to be bounded.
-The region may be connected or composed of multiple components
+The domain to be meshed is a subset of 3D space, required to be bounded.
+The domain may be connected or composed of multiple components
 and/or subdivided in several subdomains.
 
 Boundary and subdivision surfaces are either

@@ -82,7 +82,7 @@ The following classes are models of the periodic domain concept:
 - `CGAL::Implicit_periodic_3_mesh_domain_3<Function,BGT>`
 - `CGAL::Labeled_periodic_3_mesh_domain_3<LabelingFunction,BGT>`
 
-The following class allows to split the fundamental domain in two subdomains,
+The following class allows to split the canonical cube in two subdomains,
 separated by the zero-level of an implicit function:
 - `CGAL::Implicit_to_labeled_subdomains_function_wrapper<Function,BGT>`
 

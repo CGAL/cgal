@@ -19,9 +19,9 @@ A cut view of a periodic mesh.
 
 This package is devoted to the generation of isotropic simplicial
 meshes discretizing periodic 3D domains.
-The domain to be meshed is a region of the three-dimensional flat torus
+The domain to be meshed is a subset of the three-dimensional flat torus
 (see Section \ref P3Triangulation3secspace of the package \ref PkgPeriodic3Triangulation3Summary).
-The region may be connected or composed of multiple components
+The domain may be connected or composed of multiple components
 and/or subdivided in several subdomains.
 The current implementation provides classes to represent
 domains bounded by isosurfaces of implicit functions defined over a cube.
@@ -65,20 +65,19 @@ which is devoted to the generation of isotropic simplicial
 meshes discretizing (non-periodic) 3D domains and %CGAL's \ref PkgPeriodic3Triangulation3Summary,
 which are used as underlying triangulation structures of the mesh.
 
-A periodic mesh extends, by definition, infinitely in space. To avoid storing and
-manipulating duplicate points, well-chosen "dummy" points are inserted
-at the beginning of the meshing process, thus ensuring that the underlying periodic
-triangulation forms at all times a simplicial complex within a single copy of the periodic space \f$ \mathbb T_c^3\f$
+A periodic mesh extends, by definition, infinitely in space. We consider the flat torus \f$ \mathbb T_c^3\f$,
+whose <I>canonical cube</I> has side length `c` (this canonical cube is named <I>original domain</I>
+in Chapter \ref PkgPeriodic3Triangulation3Summary; we rename it here to avoid the confusion
+with the domain defined in Chapter \ref PkgMesh_3Summary). Well-chosen "dummy" points
+are inserted at the beginning of the meshing process, ensuring that the projection
+of the periodic triangulation into the flat torus \f$ \mathbb T_c^3\f$ forms at all times a simplicial complex
 (see Sections \ref P3Triangulation3secspace and \ref P3Triangulation3secintro
-of the package \ref PkgPeriodic3Triangulation3Summary).
-By identifying a single copy of the flat torus \f$ \mathbb T_c^3\f$ (where `c`
-denotes the period) with a cube of side `c` in \f$ \mathbb R^3\f$, the meshing process
-can be exclusively conducted within this cube.
-The mesh within a single copy is created using %CGAL's \ref PkgMesh_3Summary package, but
-because %CGAL's \ref PkgMesh_3Summary package aims to mesh traditional (non-periodic)
-domains, an interface is necessary between %CGAL's \ref PkgMesh_3Summary package
-and %CGAL's \ref PkgPeriodic3Triangulation3Summary.
-This package offers these interfaces.
+of the manual of 3D periodic triangulations).
+The meshing process can be exclusively conducted within the canonical cube.
+The mesh is created using the \ref PkgMesh_3Summary package of %CGAL,
+which originally aims to mesh non-periodic domains of \f$ \mathbb R^3\f$, and so, an interface
+is necessary between the packages \ref PkgMesh_3Summary and \ref PkgPeriodic3Triangulation3Summary.
+This package provides this interface.
 
 \subsection Periodic_3_mesh_3InputDomain Input Domain
 
@@ -124,31 +123,41 @@ and to find in which subdomain it lies in the affirmative case.
 The domain class also provides predicates and constructors to test the intersection of a query line segment
 with the boundary surface patches and to construct intersection points, if any.
 
+\subsubsection Periodic_3_mesh_3InputDomainPeriodicity Implicit Domains
+
+An implicit domain is a domain described by an implicit function. The bounding surface
+is described implicitly as the zero level set of a function defined
+over the three dimensional flat torus.
+The domain to be discretized is assumed to be the domain where
+the function has negative values.
+
 \subsubsection Periodic_3_mesh_3InputDomainPeriodicity Periodicity of the Input Domain
 
 As described in Section \ref Periodic_3_mesh_3Mesh_3, the periodic mesh is in fact
-constructed over a single copy of the periodic space. This instance of the flat torus
-\f$ \mathbb T_c^3\f$ (`c` being the period) is identified with a cube of side `c`
-in \f$ \mathbb R^3\f$. The origin (given by three coordinates \f$ \alpha\f$, \f$ \beta\f$,
+constructed over a single cube of side `c` in \f$ \mathbb R^3\f$, the <I>canonical cube</I>
+of the flat torus \f$ \mathbb T_c^3\f$. The origin (given by three coordinates \f$ \alpha\f$, \f$ \beta\f$,
 and \f$ \gamma\f$) of this cube and the period `c` are input parameters chosen
 by the user. The cube \f$ [\alpha,\alpha+c)\times[\beta,\beta+c)\times[\gamma,\gamma+c)\f$
-contains exactly one representative of each element in \f$ \mathbb T_c^3\f$
-and is called the <I>canonical</I> or <I>fundamental instance</I> of the periodic space.
-Note that this is defined as <I>original domain</I> in the package \ref PkgPeriodic3Triangulation3Summary,
-but this name will not be used in this package to avoid creating confusion between
-the different types of "domains".
+contains exactly one representative of each element in \f$ \mathbb T_c^3\f$.
 
-The mesh is only constructed over the canonical instance and periodicity
+The mesh is only constructed over the canonical cube and periodicity
 is handled internally: oracles described above evaluate queries at a point
-by instead evaluating at the representative that belongs in the canonical instance.
-For example, if considering the unit cube as canonical instance, an oracle answering
-a query such as <I>"what is the value of the implicit function at this point?"</I>
+by instead evaluating at the representative that belongs in the canonical cube.
+More precisely, if `f` is a real function defined either over \f$ \mathbb R^3\f$
+or over the canonical cube, we define the periodic real function `f*` defined over
+\f$ \mathbb R^3\f$ as follows:
+- For any point \f$(x,y,z)\f$ in the canonical cube, \f$f*(x,y,z) = f(x,y,z)\f$
+- For any point \f$(x,y,z)\f$ outside the canonical cube, there is a unique canonical representative
+\f$(x0,y0,z0)\f$ of \f$(x,y,z)\f$ in the canonical cube, i.e.,
+\f$(x,y,z)=(x0 + k_x c, y0 + k_y c, z0 + k_z c)\f$ with \f$(k_x,k_y,k_z)\f$ in \f$ \mathbb Z^3\f$,
+and \f$f*(x,y,z) = f(x0,y0,z0)\f$.
+For example, if considering the unit cube as canonical cube, an oracle answering a
+query such as <I>"what is the value of the implicit function at this point?"</I>
 at the point `(2.5, 2.5, 2.5)` will be in fact evaluated at the canonical position,
 `(0.5, 0.5, 0.5)`.
-
 Consequently It is thus not required to provide an input domain that is periodic over the
 whole space or oracles that can answer queries for all points of \f$ \mathbb R^3\f$, but only
-over the chosen canonical instance (the input cube).
+for points in the canonical cube.
 
 This approach allows to construct periodic meshes of domains that are not intrinsically
 periodic, for example a sphere (see
@@ -158,17 +167,16 @@ and \cgalFigureRef{Periodic_3_mesh_3Periodic_implicit_sphere}) or a cone
 
 \cgalFigureBegin{Periodic_3_mesh_3FromCanonicalToWhole, periodicity_base.svg}
 Illustration in 2D (cut view) of a domain defined by an implicit function.
-Only the subdomain of the input domain that is within the canonical instance matters:
-the values of the implicit functions at `P` and `Q` are obtained by evaluating
-instead at `P'` and `Q'`. On the right, the input domain is drawn on all instances,
-showing the (periodic) domain over the whole space.
+Only the values of the implicit function that are in the canonical cube matter:
+the values of the implicit function at `P` and `Q` are obtained by evaluating
+instead at `P'` and `Q'`, as shown on the right.
 \cgalFigureEnd
 
-In practice, the domain of definition of an implicit function provided by the user
-is likely larger than the canonical instance (in general, it is even \f$ \mathbb R^3\f$).
+In practice, the implicit function provided by the user is likely defined
+over a larger domain than the canonical cube (in general, it is even \f$ \mathbb R^3\f$).
 Note that since queries are always answered by looking at the canonical
-position, all information provided by the input domain that is outside of this
-canonical instance is unused. \cgalFigureRef{Periodic_3_mesh_3FromCanonicalToWhole}
+position, all information provided by the input domain that is outside this
+canonical cube is unused. \cgalFigureRef{Periodic_3_mesh_3FromCanonicalToWholeDiscard}
 gives an example of such domain where some information is discarded.
 
 \cgalFigureBegin{Periodic_3_mesh_3FromCanonicalToWholeDiscard, periodicity.svg}
@@ -177,14 +185,12 @@ Any value outside of the canonical cube is unused.
 \cgalFigureEnd
 
 For the resulting mesh to make sense, the input domain should behave
-nicely at the border of the canonical instance. For example, the isovalues of an
+"nicely" at the border of the canonical cube. For example, the isovalues of an
 implicit function should be continuous and without intersections.
 \cgalFigureRef{Periodic_3_mesh_3ContinuityIssue}
 
 \cgalFigureBegin{Periodic_3_mesh_3ContinuityIssue, periodicity_issue.svg}
 Illustration in 2D (cut view) of a domain defined by an implicit function.
-Good continuity at the border of the domain is marked with green segments,
-and bad continuity is marked in red.
 \cgalFigureEnd
 
 \subsection Periodic_3_mesh_3OutputMesh Output Mesh
@@ -276,7 +282,7 @@ to one of the two following functions:
 
 \code{.cpp}
 template <class C3T3, class PeriodicMeshDomain, class MeshCriteria>
-C3T3 make_periodic_3_mesh_3(MeshDomain domain,
+C3T3 make_periodic_3_mesh_3(PeriodicMeshDomain domain,
                             MeshCriteria criteria,
                             parameters::internal::Features_options features = parameters::features(domain),
                             parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
@@ -432,7 +438,7 @@ with `medit`. The function \link PkgPeriodic_3_mesh_3IOFunctions `CGAL::output_t
 takes a stream, a mesh complex, and - optionally - the number of periodic copies that should be drawn,
 making it easier to observe the periodicity of the result.
 \cgalFigureRef{Periodic_3_mesh_3Periodic_copies} illustrates the different output
-for the three possible number of copies: `1`, `2`, `4`, and `8`.
+for the three possible number of copies: `1`, `4`, and `8`.
 
 \cgalFigureAnchor{Periodic_3_mesh_3Periodic_copies}
 <center>
@@ -445,13 +451,13 @@ Example of a periodic mesh output in `1`, `4`, or `8` copies.
 In the following examples (except on \cgalFigureRef{Periodic_3_mesh_3Periodic_multi_domain}),
 each copy of a periodic mesh will be attributed a unique color.
 
-\attention A single copy of the periodic mesh does not necessarily form a visually-pleasing mesh:
-there can be uninteded holes, disconnected elements, non-manifold locations, etc.
+\warning A single copy of the periodic mesh does not necessarily form a visually-pleasing mesh:
+there can be unexpected holes, disconnected elements, non-manifold locations, etc.
 This is because each copy is only made of unique elements and the periodic mesh
-only has meaning when considered with other neighboring instances:
+only has meaning when considered with other neighboring periodic copies:
 a strange hole on the "left" of a copy is filled by a tetrahedron on its "right".
 \cgalFigureRef{Periodic_3_mesh_3Periodic_protection} is an example of such phenomenon:
-These (purely visual) issues disappear when considering multiple copiess together.
+These (purely visual) issues disappear when considering multiple copies together.
 
 \subsection Periodic_3_mesh_33DDomainsImplicitIsosurfaces 3D Periodic Domains Bounded by Implicit Isosurfaces
 The following code produces a 3D periodic mesh for a domain whose boundary surface
@@ -473,7 +479,7 @@ Cut view (middle). Another cut is shown, with 7 copies (right).
 
 While the implicit function used in the previous example is defined and periodic
 over the complete space, it is also possible to consider an implicit function
-defined entirely within the canonical periodic domain. It will then be periodically
+defined entirely within the canonical cube. It will then be periodically
 duplicated. For example, replacing the previous domain and with the following
 implicit function (a sphere):
 
@@ -598,9 +604,9 @@ and corners that are specified by the user:
 
 \warning For conveniency, curves and corners do not need to be restricted
 to the input cube, but users should be mindful that curves and corners will exist
-in all periodic instances and the requirements described above must be satisfied.
+in all periodic copies and the requirements described above must be satisfied.
 For example, if considering the unit cube, it is not a valid input
-to prescribe a corner at the point `(1.5, 1.5, 1.5)` and the curve `(2,2,2)--(3,3,3)`
+to prescribe a corner at the point `(1.5, 1.5, 1.5)` and the segment `(2,2,2)--(3,3,3)`
 because the corner intersects the curve in the middle.
 
 \subsubsection Periodic_3_mesh_3ConeWithSharpFeatures Example of a Cone-like Periodic Domain
@@ -629,15 +635,16 @@ a single copy of the mesh does not necessarily form a visually pleasing mesh by 
 see Section \ref Periodic_3_mesh_3SubMultipleCopies for more details.)
 \cgalFigureCaptionEnd
 
-\subsubsection Periodic_3_mesh_3InfiniteFeatures Example of Infinite Protecting Curves
+\subsubsection Periodic_3_mesh_3InfiniteFeatures Example of Protecting Curves Extending Continuously Over Multiple Periodic Copies
 
-It is possible to prescribe features that will, due to periodicity, extend indefinitely
-in space. A simple example of such occurrence is the segment `(0,0,0) -- (1,1,1)` when
-considering the unit cube as canonical periodic domain.
+It is possible to prescribe features that will, due to periodicity, form a
+continuous polyline that extends infinitely in space.
+A simple example of such occurrence is the segment `(0,0,0) -- (1,1,1)` when
+considering the unit cube as canonical cube.
 \cgalFigureRef{Periodic_3_mesh_3Periodic_protection} shows an implicit function
 describing a square-based prism such that the axis of the prism is the (Oz) axis.
-(The prism is thus 'cut' into 4 pieces when considered within a single instance of the periodic space.)
-The fundamental domain is the unit cube and the following polylines have been specified to protect edges:
+(The prism is thus 'cut' into 4 pieces when considered within a single copy of the periodic space.)
+The canonical cube is the unit cube and the following polylines have been specified to protect edges:
 \code
   // These are four vertical edges (orthogonal to xOy), strictly in the domain.
   // They correspond to the four sharp edges of the prism.
@@ -648,7 +655,7 @@ The fundamental domain is the unit cube and the following polylines have been sp
 
   // These are four vertical edges (orthogonal to xOy) on the border of the domain.
   // The prism does not intrinsically possess a sharp feature at these locations;
-  // rather, these edges are protected to artifically create features on the border of the domain.
+  // rather, these edges are protected to artificially create features on the border of the domain.
   LV4: (0.3, 0,   0) -- (0.3, 0,   1)
   LV5: (0,   1.3, 0) -- (0,   1.3, 1) // canonically, (0.,  0.3, 0) -- (0.,  0.3, 1)
   LV6: (0,   0.7, 0) -- (0,   0.7, 1)
