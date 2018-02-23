@@ -175,7 +175,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
             case NEGATIVE:
               // c is isolated on the negative side
               return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Line_3>(t3l3_intersection_coplanar_aux(a,b,c,l,true,k));
-          default: // COLLINEAR
+            default: // COLLINEAR
               return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Line_3>(c);
           }
 
