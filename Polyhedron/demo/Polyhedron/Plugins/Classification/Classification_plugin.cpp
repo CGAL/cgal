@@ -173,6 +173,10 @@ public:
     connect(action_train,  SIGNAL(triggered()), this,
             SLOT(on_train_clicked()));
     
+    action_reset_local = ui_widget.menu->menu()->addAction ("Reset training set of selection");
+    connect(action_reset_local,  SIGNAL(triggered()), this,
+            SLOT(on_reset_training_set_of_selection_clicked()));
+    
     action_reset = ui_widget.menu->menu()->addAction ("Reset all training sets");
     connect(action_reset,  SIGNAL(triggered()), this,
             SLOT(on_reset_training_sets_clicked()));
@@ -314,6 +318,7 @@ public Q_SLOTS:
   {
     ui_widget.menu->setEnabled(true);
     action_train->setEnabled(false);
+    action_reset_local->setEnabled(false);
     action_reset->setEnabled(false);
     action_random_region->setEnabled(false);
     action_validate->setEnabled(false);
@@ -330,6 +335,7 @@ public Q_SLOTS:
   void enable_classif()
   {
     action_train->setEnabled(true);
+    action_reset_local->setEnabled(true);
     action_reset->setEnabled(true);
     action_random_region->setEnabled(true);
     action_validate->setEnabled(true);
@@ -786,6 +792,21 @@ public Q_SLOTS:
     item_changed(classif->item());
   }
 
+  void on_reset_training_set_of_selection_clicked()
+  {
+    Item_classification_base* classif
+      = get_classification();
+    if(!classif)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+
+    classif->reset_training_set_of_selection();
+
+    item_changed(classif->item());
+  }
+
   void on_reset_training_set_clicked()
   {
     Item_classification_base* classif
@@ -842,9 +863,10 @@ public Q_SLOTS:
 
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     CGAL::Bbox_3 bbox = classif->bbox();
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
     
-    viewer->camera()->fitBoundingBox(qglviewer::Vec (bbox.xmin(), bbox.ymin(), bbox.zmin()),
-                                     qglviewer::Vec (bbox.xmax(), bbox.ymax(), bbox.zmax()));
+    viewer->camera()->fitBoundingBox(qglviewer::Vec (bbox.xmin(), bbox.ymin(), bbox.zmin()) + offset,
+                                     qglviewer::Vec (bbox.xmax(), bbox.ymax(), bbox.zmax()) + offset);
     
     // viewer->camera()->showEntireScene();
     
@@ -855,11 +877,11 @@ public Q_SLOTS:
 #if QGLVIEWER_VERSION >= 0x020502
     viewer->camera()->setPivotPoint (qglviewer::Vec ((bbox.xmin() + bbox.xmax()) / 2.,
                                                      (bbox.ymin() + bbox.ymax()) / 2.,
-                                                     (bbox.zmin() + bbox.zmax()) / 2.));
+                                                     (bbox.zmin() + bbox.zmax()) / 2.) + offset);
 #else
     viewer->camera()->setRevolveAroundPoint (qglviewer::Vec ((bbox.xmin() + bbox.xmax()) / 2.,
                                                              (bbox.ymin() + bbox.ymax()) / 2.,
-                                                             (bbox.zmin() + bbox.zmax()) / 2.));
+                                                             (bbox.zmin() + bbox.zmax()) / 2.) + offset);
 #endif
 
   }
@@ -963,15 +985,15 @@ public Q_SLOTS:
     connect(reset,  SIGNAL(triggered()), this,
             SLOT(on_reset_training_set_clicked()));
 
-    QAction* create = label_buttons.back().menu->addAction ("Create point set item from labeled points");
-    connect(create,  SIGNAL(triggered()), this,
-            SLOT(on_create_point_set_item()));
-
     label_buttons.back().menu->addSeparator();
     
     QAction* change_color = label_buttons.back().menu->addAction ("Change color");
     connect(change_color,  SIGNAL(triggered()), this,
             SLOT(on_color_changed_clicked()));
+
+    QAction* create = label_buttons.back().menu->addAction ("Create point set item from labeled points");
+    connect(create,  SIGNAL(triggered()), this,
+            SLOT(on_create_point_set_item()));
 
     QAction* remove_label = label_buttons.back().menu->addAction ("Remove label");
     connect(remove_label,  SIGNAL(triggered()), this,
@@ -1206,6 +1228,7 @@ private:
 
   QDockWidget* dock_widget;
   QAction* action_train;
+  QAction* action_reset_local;
   QAction* action_reset;
   QAction* action_random_region;
   QAction* action_validate;

@@ -86,6 +86,17 @@ class Point_set_item_classification : public Item_classification_base
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
   }
+  void reset_training_set_of_selection()
+  {
+    for (Point_set::const_iterator it = m_points->point_set()->first_selected();
+         it != m_points->point_set()->end(); ++ it)
+    {
+      m_training[*it] = -1;
+      m_classif[*it] = -1;
+    }
+    if (m_index_color == 1 || m_index_color == 2)
+      change_color (m_index_color);
+  }
   void reset_training_sets()
   {
     for (Point_set::const_iterator it = m_points->point_set()->begin();
@@ -161,6 +172,20 @@ class Point_set_item_classification : public Item_classification_base
   void remove_label (std::size_t position)
   {
     Item_classification_base::remove_label (position);
+
+    for (Point_set::const_iterator it = m_points->point_set()->begin();
+         it != m_points->point_set()->end(); ++ it)
+    {
+      if (m_training[*it] == position)
+        m_training[*it] = -1;
+      else if (m_training[*it] > position)
+        m_training[*it] --;
+      
+      if (m_classif[*it] == position)
+        m_classif[*it] = -1;
+      else if (m_classif[*it] > position)
+        m_classif[*it] --;
+    }
     update_comments_of_point_set_item();
   }
   

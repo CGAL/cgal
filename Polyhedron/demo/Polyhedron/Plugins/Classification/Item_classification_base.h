@@ -42,6 +42,7 @@ public:
 
   virtual void add_selection_to_training_set (std::size_t label) = 0;
   virtual void reset_training_set (std::size_t label) = 0;
+  virtual void reset_training_set_of_selection() = 0;
   virtual void reset_training_sets() = 0;
 
   virtual void select_random_region() = 0;

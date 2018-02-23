@@ -318,6 +318,22 @@ class Cluster_classification : public Item_classification_base
     for (std::size_t i = 0; i < m_clusters.size(); ++ i)
       if (m_clusters[i].training == label)
         m_clusters[i].training = -1;
+
+    if (m_index_color == 1 || m_index_color == 2)
+      change_color (m_index_color);
+  }
+  void reset_training_set_of_selection()
+  {
+    for (Point_set::const_iterator it = m_points->point_set()->first_selected();
+         it != m_points->point_set()->end(); ++ it)
+    {
+      int cid = m_cluster_id[*it];
+      if (cid != -1)
+      {
+        m_clusters[cid].training = -1;
+        m_clusters[cid].label = -1;
+      }
+    }
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
   }
@@ -405,6 +421,20 @@ class Cluster_classification : public Item_classification_base
   void remove_label (std::size_t position)
   {
     Item_classification_base::remove_label (position);
+    
+    for (std::size_t i = 0; i < m_clusters.size(); ++ i)
+    {
+      if (m_clusters[i].training == position)
+        m_clusters[i].training = -1;
+      else if (m_clusters[i].training > position)
+        m_clusters[i].training --;
+          
+      if (m_clusters[i].label == position)
+        m_clusters[i].label = -1;
+      else if (m_clusters[i].label > position)
+        m_clusters[i].label --;
+    }
+
     update_comments_of_point_set_item();
   }
   
