@@ -3,6 +3,7 @@
 #ifndef CGAL_USE_CORE
 
 #include <iostream>
+#include <sstream>
 
 int main ()
 {
@@ -22,15 +23,6 @@ int main ()
 #include <CGAL/Boolean_set_operations_2.h>
 #include "read_polygon.h"
 #include <list>
-
-
-#ifndef _CRT_SECURE_NO_DEPRECATE
-#define _CRT_SECURE_NO_DEPRECATE 1
-#endif
-
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS 1
-#endif
 
 
 typedef CGAL::CORE_algebraic_number_traits              Nt_traits;
@@ -91,8 +83,10 @@ int main (int argc, char **argv)
     
     // Read the offset radius.
     int         numer, denom;
-    
-    if (sscanf (argv[i+1], "%d/%d", &numer, &denom) != 2)
+    char c;
+    std::istringstream iss(argv[i+1]);
+    iss >> numer >> c >> denom;
+    if (! iss.good())
     {
       std::cerr << "Invalid radius: " << argv[i+1] << std::endl;
       return (1);
