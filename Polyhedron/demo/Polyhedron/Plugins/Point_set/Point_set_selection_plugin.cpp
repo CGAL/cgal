@@ -450,7 +450,7 @@ public:
     {
       propagation = false;
 
-      for (typename std::vector<Point_set::Index>::iterator icfrit
+      for (std::vector<Point_set::Index>::iterator icfrit
              = index_container_former_ring.begin();
            icfrit != index_container_former_ring.end(); ++ icfrit)
       {
@@ -492,7 +492,7 @@ public:
       index_container_former_ring.clear();
       index_container_former_ring.reserve (index_container_current_ring.size());
 
-      for (typename std::set<Point_set::Index>::iterator lit = index_container_current_ring.begin();
+      for (std::set<Point_set::Index>::iterator lit = index_container_current_ring.begin();
            lit != index_container_current_ring.end(); ++lit)
         index_container_former_ring.push_back(*lit);
 
@@ -505,7 +505,7 @@ public:
       if ((conti < 10) || (conti<50 && conti % 10 == 0) || (conti>50 && conti % 500 == 0))
       {
         std::list<Kernel::Point_3> listp;
-        for (typename std::set<Point_set::Index>::iterator icit = index_container.begin();
+        for (std::set<Point_set::Index>::iterator icit = index_container.begin();
              icit != index_container.end(); ++ icit)
           listp.push_back(points_item->point_set()->point (*icit));
 
