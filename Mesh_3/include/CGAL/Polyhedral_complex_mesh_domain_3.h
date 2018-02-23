@@ -60,8 +60,8 @@
 
 namespace CGAL {
 /// @cond DEVELOPERS
-namespace internal {
 namespace Mesh_3 {
+namespace internal {
 
 template <typename Graph>
 void dump_graph_edges(std::ostream& out, const Graph& g)
@@ -205,8 +205,8 @@ struct Extract_polyline_with_context_visitor
 };
 
 
-} // end CGAL::internal::Mesh_3
-} // end CGAL::internal
+} // end namespace internal
+} // end namespace Mesh_3
 
 /// @endcond
 
@@ -311,7 +311,7 @@ public:
 
   /// The polyhedron type
   typedef Polyhedron Polyhedron_type;
-  
+
   /// \name Index types
   /// @{
   /// The types are `int` or types compatible with `int`.
@@ -430,7 +430,7 @@ public:
   For an edge of the polyhedron, if the angle between the two normal vectors of its
   incident facets is bigger than the given bound, then the edge is considered as
   a feature edge, and inserted as a feature of the domain.
-  */ 
+  */
   void detect_features(FT angle_bound = FT(60)) {
     detect_features(angle_bound, stored_polyhedra, false/*do protect*/);
   }
@@ -510,7 +510,7 @@ public:
   /// @cond DEVELOPERS
   template <typename C3t3>
   void add_vertices_to_c3t3_on_patch_without_feature_edges(C3t3& c3t3) const {
-#if CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_VERBOSE
     std::cout << "add_vertices_to_c3t3_on_patch_without_feature_edges...";
     std::cout.flush();
 #endif
@@ -635,7 +635,7 @@ public:
         }
       }
     }
-#if CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_VERBOSE
     std::cout << "\badd_vertices_to_c3t3_on_patch_without_feature_edges done.";
     std::cout << std::endl;
 #endif
@@ -690,7 +690,7 @@ public:
       {
         return Subdomain();
       }
-  
+
       // Shoot ray
       typename IGT::Construct_ray_3 ray = IGT().construct_ray_3_object();
       typename IGT::Construct_vector_3 vector = IGT().construct_vector_3_object();
@@ -879,9 +879,9 @@ detect_features(FT angle_in_degree,
   BOOST_FOREACH(Polyhedron_type& p, poly)
   {
     initialize_ts(p);
-    using internal::Mesh_3::Get_face_index_pmap;
+    using Mesh_3::internal::Get_face_index_pmap;
     Get_face_index_pmap<Polyhedron_type> get_face_index_pmap(p);
-#if CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_VERBOSE
     std::size_t poly_id = &p-&poly[0];
     std::cerr << "Polyhedron #" << poly_id << " :\n";
     std::cerr << "  material #" << patch_indices[poly_id].first << "\n";
@@ -901,13 +901,13 @@ detect_features(FT angle_in_degree,
       .vertex_incident_patches_map(vip_map)
       .vertex_feature_degree_map(vertex_feature_degree_map));
 
-    internal::Mesh_3::Is_featured_edge<Polyhedron_type> is_featured_edge(p);
+    Mesh_3::internal::Is_featured_edge<Polyhedron_type> is_featured_edge(p);
 
     add_featured_edges_to_graph(p, is_featured_edge, g_copy, p2vmap);
   }
   this->patch_id_to_polyhedron_id.resize(nb_of_patch_plus_one);
   this->patch_has_featured_edges.resize(nb_of_patch_plus_one);
-#if CGAL_MESH_3_VERBOSE
+#ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "Number of patches: " << (nb_of_patch_plus_one - 1) << std::endl;
 #endif
   BOOST_FOREACH(Polyhedron_type& p, poly)
@@ -919,7 +919,7 @@ detect_features(FT angle_in_degree,
     {
       patch_id_to_polyhedron_id[get(pid_map, f)] = polyhedron_id;
     }
-    BOOST_FOREACH(halfedge_descriptor he, halfedges(p)) 
+    BOOST_FOREACH(halfedge_descriptor he, halfedges(p))
     {
       if(is_border(he, p) || !get(eif, edge(he, p))) continue;
       patch_has_featured_edges.set(get(pid_map, face(he, p)));
@@ -1036,12 +1036,12 @@ add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
 {
   std::vector<Polyline_with_context> polylines;
 
-  internal::Mesh_3::Extract_polyline_with_context_visitor<
+  Mesh_3::internal::Extract_polyline_with_context_visitor<
     Polyhedral_complex_mesh_domain_3,
     Polyline_with_context,
     Featured_edges_copy_graph
     > visitor(g_copy, polylines);
-  internal::Mesh_3::Angle_tester<GT_> angle_tester;
+  Mesh_3::internal::Angle_tester<GT_> angle_tester;
   split_graph_into_polylines(g_copy, visitor, angle_tester);
 
   this->add_features_with_context(polylines.begin(),
@@ -1122,7 +1122,7 @@ add_featured_edges_to_graph(const Polyhedron_type& p,
 
 #if CGAL_MESH_3_PROTECTION_DEBUG > 1
   {// DEBUG
-    internal::Mesh_3::dump_graph_edges("edges-graph.polylines.txt", g_copy);
+    Mesh_3::internal::dump_graph_edges("edges-graph.polylines.txt", g_copy);
   }
 #endif
 }

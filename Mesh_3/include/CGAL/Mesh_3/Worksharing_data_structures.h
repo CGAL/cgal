@@ -272,6 +272,8 @@ class WorkItem
 {
 public:
   WorkItem() {}
+  virtual ~WorkItem() { }
+
   // Derived class defines the actual work.
   virtual void run() = 0;
   virtual bool less_than(const WorkItem &) const = 0;
@@ -305,7 +307,7 @@ public:
     m_func();
     tbb::scalable_allocator<MeshRefinementWorkItem<Func, Quality> >().deallocate(this, 1);
   }
-  
+
   bool less_than (const WorkItem &other) const
   {
     /*try
@@ -349,12 +351,12 @@ public:
     m_func();
     tbb::scalable_allocator<SimpleFunctorWorkItem<Func> >().deallocate(this, 1);
   }
-  
+
   // Irrelevant here
-  bool less_than (const WorkItem &other) const 
-  { 
+  bool less_than (const WorkItem &other) const
+  {
     // Just compare addresses
-    return this < &other; 
+    return this < &other;
   }
 
 private:
@@ -449,14 +451,14 @@ public:
   template <typename Func>
   void enqueue_work(Func f, tbb::task &parent_task) const
   {
-    WorkItem *p_item = 
+    WorkItem *p_item =
       tbb::scalable_allocator<SimpleFunctorWorkItem<Func> >().allocate(1);
     new (p_item) SimpleFunctorWorkItem<Func>(f);
     enqueue_task(create_task(p_item, parent_task));
   }
-  
+
 protected:
-  
+
   WorkItemTask *create_task(WorkItem *pwi, tbb::task &parent_task) const
   {
     return new(tbb::task::allocate_additional_child_of(parent_task)) WorkItemTask(pwi);
@@ -732,12 +734,12 @@ public:
   {
     // We don't need it.
   }
-  
+
   template <typename Func>
   void enqueue_work(Func f, tbb::task &parent_task)
   {
     //WorkItem *p_item = new SimpleFunctorWorkItem<Func>(f);
-    WorkItem *p_item = 
+    WorkItem *p_item =
       tbb::scalable_allocator<SimpleFunctorWorkItem<Func> >().allocate(1);
     new (p_item) SimpleFunctorWorkItem<Func>(f);
     WorkBatch &workbuffer = m_tls_work_buffers.local();
@@ -752,7 +754,7 @@ public:
   template <typename Func, typename Quality>
   void enqueue_work(Func f, const Quality &quality, tbb::task &parent_task)
   {
-    WorkItem *p_item = 
+    WorkItem *p_item =
       tbb::scalable_allocator<MeshRefinementWorkItem<Func, Quality> >()
       .allocate(1);
     new (p_item) MeshRefinementWorkItem<Func, Quality>(f, quality);

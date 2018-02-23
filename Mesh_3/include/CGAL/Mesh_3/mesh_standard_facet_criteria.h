@@ -69,7 +69,7 @@ private:
 
   typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
   typedef typename Base::Quality Quality;
-  typedef typename Base::Badness Badness;
+  typedef typename Base::Is_bad  Is_bad;
 
   typedef Aspect_ratio_criterion<Tr,Visitor_> Self;
 
@@ -106,26 +106,31 @@ protected:
     }
   }
 
-  virtual Badness do_is_bad (const Facet& f) const
+  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
   {
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
     CGAL_assertion (B_ != 0);
 
-    typedef typename Tr::Geom_traits    Gt;
-    typedef typename Tr::Bare_point     Bare_point;
+    typedef typename Tr::Geom_traits      Gt;
+    typedef typename Tr::Bare_point       Bare_point;
+    typedef typename Tr::Weighted_point   Weighted_point;
 
-    const typename Gt::Construct_triangle_3 triangle =
-        Gt().construct_triangle_3_object();
-    const typename Gt::Compute_squared_distance_3 distance =
-        Gt().compute_squared_distance_3_object();
-    const typename Gt::Compute_squared_area_3 area =
-        Gt().compute_squared_area_3_object();
-    const typename Gt::Construct_point_3 wp2p =
-        Gt().construct_point_3_object();
+    typedef typename Gt::Compute_squared_area_3     Area;
+    typedef typename Gt::Compute_squared_distance_3 Distance;
+    typedef typename Gt::Construct_point_3          Construct_point_3;
+    typedef typename Gt::Construct_triangle_3       Construct_triangle_3;
 
-    const Bare_point& p1 = wp2p(f.first->vertex((f.second+1)&3)->point());
-    const Bare_point& p2 = wp2p(f.first->vertex((f.second+2)&3)->point());
-    const Bare_point& p3 = wp2p(f.first->vertex((f.second+3)&3)->point());
+    Area area = tr.geom_traits().compute_squared_area_3_object();
+    Distance distance = tr.geom_traits().compute_squared_distance_3_object();
+    Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+    Construct_triangle_3 triangle = tr.geom_traits().construct_triangle_3_object();
+
+    const Weighted_point& wp1 = tr.point(f.first, (f.second+1)&3);
+    const Weighted_point& wp2 = tr.point(f.first, (f.second+2)&3);
+    const Weighted_point& wp3 = tr.point(f.first, (f.second+3)&3);
+    const Bare_point& p1 = cp(wp1);
+    const Bare_point& p2 = cp(wp2);
+    const Bare_point& p3 = cp(wp3);
 
     const FT triangle_area = area(triangle(p1,p2,p3));
     const FT d12 = distance(p1,p2);
@@ -143,10 +148,10 @@ protected:
       std::cerr << "Bad facet (angle criterion): aspect_ratio[" << aspect_ratio
                 << "] bound[" << B_ << "]" << std::endl;
 #endif
-      return Badness(Quality(aspect_ratio));
+      return Is_bad(Quality(aspect_ratio));
     }
     else
-      return Badness();
+      return Is_bad();
   }
 
 private:
@@ -171,7 +176,7 @@ private:
 
   typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
   typedef typename Base::Quality Quality;
-  typedef typename Base::Badness Badness;
+  typedef typename Base::Is_bad  Is_bad;
 
   typedef Uniform_curvature_size_criterion<Tr,Visitor_> Self;
 
@@ -192,7 +197,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Badness do_is_bad (const Facet& f) const
+  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
   {
     CGAL_assertion(f.first->is_facet_on_surface(f.second));
     CGAL_assertion (B_ != 0);
@@ -201,18 +206,17 @@ protected:
     typedef typename Tr::Weighted_point Weighted_point;
     typedef typename Tr::Bare_point Bare_point;
 
-    typename Gt::Compute_squared_distance_3 distance =
-        Gt().compute_squared_distance_3_object();
-    typename Gt::Construct_weighted_circumcenter_3 circumcenter =
-        Gt().construct_weighted_circumcenter_3_object();
+    typename Gt::Construct_weighted_circumcenter_3 weighted_circumcenter =
+        tr.geom_traits().construct_weighted_circumcenter_3_object();
 
-    const Weighted_point& p1 = f.first->vertex((f.second+1)&3)->point();
-    const Weighted_point& p2 = f.first->vertex((f.second+2)&3)->point();
-    const Weighted_point& p3 = f.first->vertex((f.second+3)&3)->point();
+    const Weighted_point& p1 = tr.point(f.first, (f.second+1)&3);
+    const Weighted_point& p2 = tr.point(f.first, (f.second+2)&3);
+    const Weighted_point& p3 = tr.point(f.first, (f.second+3)&3);
 
-    const Bare_point c = circumcenter(p1,p2,p3);
+    const Bare_point c = weighted_circumcenter(p1,p2,p3);
+    const Bare_point& center = f.first->get_facet_surface_center(f.second);
 
-    const FT sq_dist = distance(c, f.first->get_facet_surface_center(f.second));
+    const FT sq_dist = tr.min_squared_distance(c, center);
 
     if ( sq_dist > B_ )
     {
@@ -220,10 +224,10 @@ protected:
       std::cerr << "Bad facet (curvature size): sq_dist[" << sq_dist
                 << "] bound[" << B_ << "]\n";
 #endif
-      return Badness(Quality(B_/sq_dist));
+      return Is_bad(Quality(B_/sq_dist));
     }
     else
-      return Badness();
+      return Is_bad();
   }
 
 private:
@@ -243,7 +247,7 @@ private:
 
   typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
   typedef typename Base::Quality Quality;
-  typedef typename Base::Badness Badness;
+  typedef typename Base::Is_bad  Is_bad;
 
   typedef Variable_curvature_size_criterion<Tr,Visitor_,SizingField> Self;
   typedef SizingField Sizing_field;
@@ -265,7 +269,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Badness do_is_bad (const Facet& f) const
+  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
   {
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
 
@@ -273,23 +277,20 @@ protected:
     typedef typename Tr::Weighted_point Weighted_point;
     typedef typename Tr::Bare_point Bare_point;
 
-    typename Gt::Compute_squared_distance_3 distance =
-        Gt().compute_squared_distance_3_object();
-    typename Gt::Construct_weighted_circumcenter_3 circumcenter =
-        Gt().construct_weighted_circumcenter_3_object();
+    typename Gt::Construct_weighted_circumcenter_3 weighted_circumcenter =
+      tr.geom_traits().construct_weighted_circumcenter_3_object();
 
-    const Weighted_point& p1 = f.first->vertex((f.second+1)&3)->point();
-    const Weighted_point& p2 = f.first->vertex((f.second+2)&3)->point();
-    const Weighted_point& p3 = f.first->vertex((f.second+3)&3)->point();
+    const Weighted_point& p1 = tr.point(f.first, (f.second+1)&3);
+    const Weighted_point& p2 = tr.point(f.first, (f.second+2)&3);
+    const Weighted_point& p3 = tr.point(f.first, (f.second+3)&3);
 
-    const Bare_point c = circumcenter(p1,p2,p3);
+    const Bare_point c = weighted_circumcenter(p1,p2,p3);
     const Bare_point& ball_center = f.first->get_facet_surface_center(f.second);
-
-    const FT sq_dist = distance(c, ball_center);
-
     const Index& index = f.first->get_facet_surface_center_index(f.second);
 
+    const FT sq_dist = tr.min_squared_distance(c, ball_center);
     const FT sq_bound = CGAL::square(size_(ball_center, 2, index));
+
     CGAL_assertion(sq_bound > FT(0));
 
     if ( sq_dist > sq_bound )
@@ -298,10 +299,10 @@ protected:
       std::cerr << "Bad facet (curvature size): sq_dist[" << sq_dist
       << "] bound[" << sq_bound << "]\n";
 #endif
-      return Badness(Quality(sq_bound/sq_dist));
+      return Is_bad(Quality(sq_bound/sq_dist));
     }
     else
-      return Badness();
+      return Is_bad();
   }
 
 private:
@@ -328,7 +329,7 @@ private:
   
   typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
   typedef typename Base::Quality Quality;
-  typedef typename Base::Badness Badness;
+  typedef typename Base::Is_bad  Is_bad;
   
   typedef Variable_size_criterion<Tr,Visitor_,SizingField> Self;
   typedef SizingField Sizing_field;
@@ -349,24 +350,23 @@ protected:
     // Call copy ctor on this
     return new Self(*this);
   }
-  
-  virtual Badness do_is_bad (const Facet& f) const
+
+  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
   {
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
     
     typedef typename Tr::Geom_traits    Gt;
-    typedef typename Tr::Bare_point Bare_point;
-    
-    typename Gt::Compute_squared_distance_3 distance =
-      Gt().compute_squared_distance_3_object();
+    typedef typename Tr::Bare_point     Bare_point;
+    typedef typename Tr::Weighted_point Weighted_point;
 
-    typename Gt::Construct_point_3 wp2p = Gt().construct_point_3_object();
-    
-    const Bare_point& p1 = wp2p(f.first->vertex((f.second+1)&3)->point());
+    typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+
+    const Weighted_point& wp1 = tr.point(f.first, (f.second+1)&3);
+    const Bare_point& p1 = cp(wp1);
     const Bare_point& ball_center = f.first->get_facet_surface_center(f.second);
     const Index& index = f.first->get_facet_surface_center_index(f.second);
-    
-    const FT sq_radius = distance(p1,ball_center);
+
+    const FT sq_radius = tr.min_squared_distance(p1, ball_center);
     const FT sq_bound = CGAL::square(size_(ball_center, 2, index));
     CGAL_assertion(sq_bound > FT(0));
     
@@ -376,10 +376,10 @@ protected:
       std::cerr << "Bad facet (uniform size): sq_radius[" << sq_radius
       << "] bound[" << sq_bound << "]\n";
 #endif
-      return Badness(Quality(sq_bound/sq_radius));
+      return Is_bad(Quality(sq_bound/sq_radius));
     }
     else
-      return Badness();
+      return Is_bad();
   }
   
 private:
@@ -400,7 +400,7 @@ private:
 
   typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
   typedef typename Base::Quality Quality;
-  typedef typename Base::Badness Badness;
+  typedef typename Base::Is_bad  Is_bad;
 
   typedef Uniform_size_criterion<Tr,Visitor_> Self;
   
@@ -421,23 +421,22 @@ protected:
     return new Self(*this);
   }
 
-  virtual Badness do_is_bad (const Facet& f) const
+  virtual Is_bad do_is_bad(const Tr& tr, const Facet& f) const
   {
     CGAL_assertion (f.first->is_facet_on_surface(f.second));
     CGAL_assertion (B_ != 0);
 
-    typedef typename Tr::Geom_traits    Gt;
-    typedef typename Tr::Bare_point     Bare_point;
+    typedef typename Tr::Geom_traits        Gt;
+    typedef typename Tr::Bare_point         Bare_point;
+    typedef typename Tr::Weighted_point     Weighted_point;
 
-    typename Gt::Compute_squared_distance_3 distance =
-        Gt().compute_squared_distance_3_object();
-    typename Gt::Construct_point_3 wp2p =
-        Gt().construct_point_3_object();
+    typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
-    const Bare_point p1 = wp2p(f.first->vertex((f.second+1)&3)->point());
+    const Weighted_point& wp1 = tr.point(f.first, (f.second+1)&3);
+    const Bare_point p1 = cp(wp1);
+    const Bare_point& ball_center = f.first->get_facet_surface_center(f.second);
 
-    const FT sq_radius = distance(
-        p1, f.first->get_facet_surface_center(f.second));
+    const FT sq_radius = tr.min_squared_distance(p1, ball_center);
 
     if ( sq_radius > B_ )
     {
@@ -445,10 +444,10 @@ protected:
       std::cerr << "Bad facet (uniform size): sq_radius[" << sq_radius
                 << "] bound[" << B_ << "]\n";
 #endif
-      return Badness(Quality(B_/sq_radius));
+      return Is_bad(Quality(B_/sq_radius));
     }
     else
-      return Badness();
+      return Is_bad();
   }
 
 private:
@@ -467,7 +466,7 @@ private:
 
   typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
   typedef typename Base::Quality Quality;
-  typedef typename Base::Badness Badness;
+  typedef typename Base::Is_bad  Is_bad;
 
   typedef Facet_on_surface_criterion<Tr,Visitor_> Self;
 
@@ -489,7 +488,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Badness do_is_bad (const Facet& f) const
+  virtual Is_bad do_is_bad(const Tr& /* tr */, const Facet& f) const
   {
     typedef typename Tr::Vertex_handle Vertex_handle;
     typedef typename Tr::Cell_handle Cell_handle;
@@ -508,10 +507,10 @@ protected:
 #ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
       std::cerr << "Bad facet (on surface criterion)" << std::endl;
 #endif
-      return Badness(Quality(1));
+      return Is_bad(Quality(1));
     }
     else
-      return Badness();
+      return Is_bad();
   }
 }; // end class Facet_on_surface_criterion
 
@@ -525,7 +524,7 @@ private:
   
   typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
   typedef typename Base::Quality Quality;
-  typedef typename Base::Badness Badness;
+  typedef typename Base::Is_bad  Is_bad;
   
   typedef Facet_on_same_surface_criterion<Tr,Visitor_> Self;
   
@@ -546,8 +545,8 @@ protected:
     // Call copy ctor on this
     return new Self(*this);
   }
-  
-  virtual Badness do_is_bad (const Facet& f) const
+
+  virtual Is_bad do_is_bad(const Tr& /* tr */, const Facet& f) const
   {
     typedef typename Tr::Vertex_handle  Vertex_handle;
     typedef typename Tr::Cell_handle    Cell_handle;
@@ -575,7 +574,7 @@ protected:
       {
         if ( !(v2->index() == index) )
         {
-          return Badness(Quality(1));
+          return Is_bad(Quality(1));
         }
       }
       else
@@ -589,11 +588,11 @@ protected:
     {
       if ( is_index_initialized && !(v3->index() == index) )
       {
-        return Badness(Quality(1));
+        return Is_bad(Quality(1));
       } 
     }
     
-    return  Badness();			
+    return Is_bad();
   }
   
 }; // end class Facet_on_same_surface_criterion
@@ -610,7 +609,7 @@ class Facet_criterion_visitor
 public:
   typedef Mesh_3::Abstract_criterion<Tr, Self> Criterion;
   typedef typename Base::Quality Facet_quality;
-  typedef typename Base::Badness Facet_badness;
+  typedef typename Base::Is_bad  Is_facet_bad;
   typedef typename Base::Handle Handle;
   typedef Handle Facet;
 
@@ -649,13 +648,13 @@ class Facet_criterion_visitor_with_features
 
 public:  
   typedef typename Base::Quality  Facet_quality;
-  typedef typename Base::Badness  Facet_badness;
+  typedef typename Base::Is_bad   Is_facet_bad;
   typedef typename Base::Handle   Handle;
   typedef Handle                  Facet;
   
   // Constructor
-  Facet_criterion_visitor_with_features(const Facet& fh)
-    : Base(fh)
+  Facet_criterion_visitor_with_features(const Tr& tr, const Facet& fh)
+    : Base(tr, fh)
     , wp_nb_(0)
     , do_spheres_intersect_(false)
     , ratio_(0.)
@@ -666,12 +665,13 @@ public:
     typedef typename Tr::Geom_traits    Gt;
     typedef typename Tr::Weighted_point Weighted_point;
     typedef typename Tr::Cell_handle    Cell_handle;
-    
-    typename Gt::Compare_weighted_squared_radius_3 compare =
-      Gt().compare_weighted_squared_radius_3_object();
-    
+
     typename Gt::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
-      Gt().compute_squared_radius_smallest_orthogonal_sphere_3_object();
+      tr.geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
+    typename Gt::Compute_weight_3 cw =
+      tr.geom_traits().compute_weight_3_object();
+    typename Gt::Compare_weighted_squared_radius_3 compare =
+      tr.geom_traits().compare_weighted_squared_radius_3_object();
 
     const Cell_handle& c = fh.first;
     const int& k = fh.second;
@@ -682,42 +682,45 @@ public:
     
     // Get number of weighted points, and ensure that they will be accessible
     // using k1...ki, if i is the number of weighted points.
-    if(c->vertex(k1)->point().weight() > FT(0))
-    { 
+    const Weighted_point& wpk1 = tr.point(c, k1);
+    if(compare(wpk1, FT(0)) == CGAL::SMALLER)
+    {
       ++wp_nb_;
     }
-    
-    if(c->vertex(k2)->point().weight() > FT(0))
-    { 
+
+    const Weighted_point& wpk2 = tr.point(c, k2);
+    if(compare(wpk2, FT(0)) == CGAL::SMALLER)
+    {
       if ( 0 == wp_nb_ ) { std::swap(k1,k2); }
       ++wp_nb_;
     }
-    
-    if(c->vertex(k3)->point().weight() > FT(0))
-    { 
+
+    const Weighted_point& wpk3 = tr.point(c, k3);
+    if(compare(wpk3, FT(0)) == CGAL::SMALLER)
+    {
       if ( 0 == wp_nb_ ) { std::swap(k1,k3); }
       if ( 1 == wp_nb_ ) { std::swap(k2,k3); }
       ++wp_nb_;
     }
-    
-    const Weighted_point& p1 = c->vertex(k1)->point();
-    const Weighted_point& p2 = c->vertex(k2)->point();
-    const Weighted_point& p3 = c->vertex(k3)->point();
-    
+
+    const Weighted_point& p1 = tr.point(c, k1);
+    const Weighted_point& p2 = tr.point(c, k2);
+    const Weighted_point& p3 = tr.point(c, k3);
+
     // Compute ratio
     switch ( wp_nb_ )
     {
       case 1:
       {
         FT r = (std::max)(sq_radius(p1,p2),sq_radius(p1,p3));
-        ratio_ = r / p1.weight();
+        ratio_ = r / cw(p1);
         break;
       }
         
       case 2:
       {
-        FT r13 = sq_radius(p1,p3) / p1.weight();
-        FT r23 = sq_radius(p2,p3) / p2.weight();
+        FT r13 = sq_radius(p1,p3) / cw(p1);
+        FT r23 = sq_radius(p2,p3) / cw(p2);
         ratio_ = (std::max)(r13, r23);
         
         do_spheres_intersect_ = (compare(p1,p2,FT(0)) != CGAL::LARGER);

@@ -467,6 +467,8 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "Total refining surface time: " << timer.time() << "s" << std::endl;
   std::cerr << std::endl;
 
+  CGAL_triangulation_postcondition(r_tr.is_valid());
+
   elapsed_time += timer.time();
   timer.stop(); timer.reset(); timer.start();
   nbsteps = 0;
@@ -506,6 +508,8 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "Total refining volume time: " << timer.time() << "s" << std::endl;
   std::cerr << "Total refining time: " << timer.time()+elapsed_time << "s" << std::endl;
   std::cerr << std::endl;
+
+  CGAL_triangulation_postcondition(r_tr.is_valid());
 #endif
 
   if(maximal_number_of_vertices_ != 0 &&

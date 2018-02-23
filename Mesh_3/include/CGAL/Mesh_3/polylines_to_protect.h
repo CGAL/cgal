@@ -42,8 +42,8 @@
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
 
 namespace CGAL {
-
-namespace internal { namespace Mesh_3 {
+namespace Mesh_3 {
+namespace internal {
 
 template <typename K, typename NT>
 struct Returns_midpoint {
@@ -70,9 +70,8 @@ struct Enriched_pixel {
   Domain_type domain;
   Image_word_type word;
 }; // end struct template Enriched_pixel<Pix,P,D,C>
-}} // namespaces: end Mesh_3, end internal
 
-namespace Mesh_3{
+} // end namespace internal
 
 template<typename P, typename G>
 struct Polyline_visitor
@@ -249,7 +248,7 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
   const int image_dims[3] = { xdim, ydim, zdim };
 
   Graph graph;
-  internal::Mesh_3::Graph_manipulations<Graph,
+  Mesh_3::internal::Graph_manipulations<Graph,
                                         Point_3,
                                         Image_word_type,
                                         InterpolationFunctor> g_manip(graph, interpolate);
@@ -293,7 +292,7 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
             // we have gone too far
             continue;
           }
-          typedef internal::Mesh_3::Enriched_pixel<Pixel,
+          typedef Mesh_3::internal::Enriched_pixel<Pixel,
                                                    Point_3,
                                                    Domain_type,
                                                    Image_word_type
@@ -711,8 +710,8 @@ polylines_to_protect(std::vector<std::vector<P> >& polylines,
   typedef typename std::iterator_traits<PolylineInputIterator>::value_type Polyline;
 
   Graph graph;
-  typedef internal::Mesh_3::Returns_midpoint<K, int> Midpoint_fct;
-  internal::Mesh_3::Graph_manipulations<Graph,
+  typedef Mesh_3::internal::Returns_midpoint<K, int> Midpoint_fct;
+  Mesh_3::internal::Graph_manipulations<Graph,
                                         Point_3,
                                         int,
                                         Midpoint_fct> g_manip(graph);
@@ -786,7 +785,7 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
      word_type,
      null,
      CGAL::Identity<Image_word_type>(),
-     internal::Mesh_3::Returns_midpoint<K, Image_word_type>(),
+     Mesh_3::internal::Returns_midpoint<K, Image_word_type>(),
      existing_polylines_begin,
      existing_polylines_end);
 }

@@ -34,8 +34,8 @@
 #include <map>
 
 namespace CGAL {
-namespace internal {
 namespace Mesh_3 {
+namespace internal {
 
 template <typename Graph, typename Point_3, typename NT,
           typename InterpolationFunctor>
@@ -121,8 +121,8 @@ struct Graph_manipulations
   }
 }; // struct template Graph_manipulations
 
-} // namespace Mesh_3
 } // namespace internal
+} // namespace Mesh_3
 } // namespace CGAL
 
 #endif //CGAL_INTERNAL_MESH_3_INTERNAL_GRAPH_MANIPULATIONS

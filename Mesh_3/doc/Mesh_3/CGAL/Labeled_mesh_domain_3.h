@@ -7,12 +7,12 @@ namespace CGAL {
 
 This class is a model of concept `MeshDomain_3`.
 
-Any boundary facet is labeled <a,b>, a<b, where a and b are the
-tags of its incident subdomain.
+Any boundary facet is labeled <a,b>, with a<b, where a and b are the
+tags of its incident subdomains.
 Thus, a boundary facet of the domain is labeled <0,b>, where b!=0.
 
-This class includes a function that provides, the subdomain index of any
-query point. An intersection between a segment and bounding
+This class includes a function that provides the index of the subdomain in which any
+query point lies. An intersection between a segment and bounding
 surfaces is detected when both segment endpoints are associated with different
 values of subdomain indices. The intersection is then constructed by bisection.
 The bisection stops when the query segment is shorter than an error bound
@@ -20,7 +20,7 @@ The bisection stops when the query segment is shorter than an error bound
 length of the diagonal of the bounding box (in world coordinates), or the radius of the bounding sphere, and
 a relative error bound passed as argument to the constructor of `Labeled_mesh_domain_3`.
 
-Implicit_mesh_domain_3 is a heir of Labeled_mesh_domain_3. It uses a satisfying labeling function if there is only one component to mesh.
+Implicit_mesh_domain_3 is a heir of Labeled_mesh_domain_3. It uses a satisfactory labeling function if there is only one component to mesh.
 
 \tparam LabelingFunction is the type of the input function.<br />
 This parameter stands for a model of the concept ImplicitFunction described in the surface mesh generation package.<br />
@@ -51,7 +51,7 @@ class Labeled_mesh_domain_3
 {
 public:
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
@@ -61,7 +61,7 @@ public:
 \param relative_error_bound is the relative error bound used to compute intersection points between the implicit surface and query segments. The
 bisection is stopped when the length of the intersected segment is less than the product of `relative_error_bound` by the radius of
 `bounding_sphere`.
-*/ 
+*/
 Labeled_mesh_domain_3(const LabelingFunction& f,
                        const Sphere_3& bounding_sphere,
                        const FT& relative_error_bound = FT(1e-3));
