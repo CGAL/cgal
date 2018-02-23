@@ -158,9 +158,10 @@ and \cgalFigureRef{Periodic_3_mesh_3Periodic_implicit_sphere}) or a cone
 
 \cgalFigureBegin{Periodic_3_mesh_3FromCanonicalToWhole, periodicity_base.svg}
 Illustration in 2D (cut view) of a domain defined by an implicit function.
-Only the values of the input domain that are in the canonical instance matter:
-the values of the implicit functions at `P` and `P'` are obtained by evaluating
-instead at `Q` and `Q'`, yielding the periodic domain on the right.
+Only the subdomain of the input domain that is within the canonical instance matters:
+the values of the implicit functions at `P` and `Q` are obtained by evaluating
+instead at `P'` and `Q'`. On the right, the input domain is drawn on all instances,
+showing the (periodic) domain over the whole space.
 \cgalFigureEnd
 
 In practice, the domain of definition of an implicit function provided by the user
@@ -623,9 +624,9 @@ A periodic mesh obtained with a cone-like periodic implicit function (8 copies
 are drawn). The base and the apex of the cone
 are badly approximated when protection is unused (left).
 Using protection, we obtain a faithful approximation.
-Facets seemingly disconnected from other facets of the same color are due to the fact that
-a single copy of the mesh does not necessarily form a visually pleasing mesh by itself
-(see Section \ref Periodic_3_mesh_3SubMultipleCopies for more details).
+(Facets seemingly disconnected from other facets of the same color are due to the fact that
+a single copy of the mesh does not necessarily form a visually pleasing mesh by itself;
+see Section \ref Periodic_3_mesh_3SubMultipleCopies for more details.)
 \cgalFigureCaptionEnd
 
 \subsubsection Periodic_3_mesh_3InfiniteFeatures Example of Infinite Protecting Curves
@@ -683,8 +684,7 @@ of the package \ref PkgMesh_3Summary.
 \subsection Periodic_3_mesh_3TheoreticalFoundations Theoretical Foundations
 
 Theoretical foundations of periodic meshes are explained in detail in the package
-\ref PkgPeriodic3Triangulation3Summary, and in particular
-in Section \ref P3Triangulation3secspace.
+\ref PkgPeriodic3Triangulation3Summary.
 For the theoretical foundations of the mesh generation process, see Section
 \ref Mesh_3TheoreticalFoundations of the package \ref PkgMesh_3Summary.
 

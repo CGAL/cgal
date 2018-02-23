@@ -52,7 +52,7 @@ triangulation forms at all times a simplicial complex within a single copy of th
 of the package \ref PkgPeriodic3Triangulation3Summary).
 By identifying a single copy of the flat torus \f$ \mathbb T_c^3\f$ (where `c`
 denotes the period) with a cube of side `c` in \f$ \mathbb R^3\f$, the meshing process
-can be exclusively conducted within this cube.
+can be exclusively conducted within a cube of side `c`.
 The mesh within a single copy is created using %CGAL's \ref PkgMesh_3Summary package, but
 because %CGAL's \ref PkgMesh_3Summary package aims to mesh traditional (non-periodic)
 domains, an interface is necessary between %CGAL's \ref PkgMesh_3Summary package
