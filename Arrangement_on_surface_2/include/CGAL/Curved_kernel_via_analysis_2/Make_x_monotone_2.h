@@ -31,6 +31,7 @@
  */
 
 #include <CGAL/config.h>
+#include <CGAL/iterator.h>
 #include <CGAL/Handle_with_policy.h>
 
 // TODO remove polynomial_traits
@@ -57,8 +58,8 @@ template < class CurvedKernelViaAnalysis_2,
            typename CurvedKernelViaAnalysis_2::Construct_arc_2 >
 struct Make_x_monotone_2 :
     public CGAL::binary_function< typename CurvedKernelViaAnalysis_2::Curve_2,
-            std::iterator<std::output_iterator_tag, CGAL::Object>,
-            std::iterator<std::output_iterator_tag, CGAL::Object> > {
+            CGAL::iterator<std::output_iterator_tag, CGAL::Object>,
+            CGAL::iterator<std::output_iterator_tag, CGAL::Object> > {
 
     //!\name Public types
     //!@{

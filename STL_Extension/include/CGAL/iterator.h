@@ -87,6 +87,23 @@ Iterator_range<Prevent_deref<I> > make_prevent_deref_range(const I& begin, const
   return Iterator_range<Prevent_deref<I> >(make_prevent_deref(begin), make_prevent_deref(end));
 }
 
+template<typename Category, typename Tp, typename Distance = std::ptrdiff_t,
+         typename Pointer = Tp*, typename Reference = Tp&>
+struct iterator
+{
+  /// One of the iterator_tags tag types.
+  typedef Category  iterator_category;
+  /// The type "pointed to" by the iterator.
+  typedef Tp        value_type;
+  /// Distance between iterators is represented as this type.
+  typedef Distance  difference_type;
+  /// This type represents a pointer-to-value_type.
+  typedef Pointer   pointer;
+  /// This type represents a reference-to-value_type.
+  typedef Reference reference;
+};
+
+  
 // +----------------------------------------------------------------+
 // | Emptyset_iterator
 // +----------------------------------------------------------------+
@@ -94,7 +111,7 @@ Iterator_range<Prevent_deref<I> > make_prevent_deref_range(const I& begin, const
 // +----------------------------------------------------------------+
 
 struct Emptyset_iterator
-  : public std::iterator< std::output_iterator_tag, void, void, void, void >
+  : public CGAL::iterator< std::output_iterator_tag, void, void, void, void >
 {
   template< class T >
   Emptyset_iterator& operator=(const T&) { return *this; }
@@ -114,7 +131,7 @@ struct Emptyset_iterator
 
 template < class Container >
 class Insert_iterator
-  : public std::iterator< std::output_iterator_tag, void, void, void, void >
+  : public CGAL::iterator< std::output_iterator_tag, void, void, void, void >
 {
 protected:
   Container *container;
@@ -155,7 +172,7 @@ inserter(Container &x)
 
 template < class T >
 class Oneset_iterator
-  : public std::iterator< std::bidirectional_iterator_tag,
+  : public CGAL::iterator< std::bidirectional_iterator_tag,
 			  void, void, void, void >
 {
   T* t;
@@ -262,7 +279,7 @@ private:
 
 // Undocumented, because there is some hope to merge it into Counting_iterator
 class Counting_output_iterator
-  : public std::iterator< std::output_iterator_tag, void, void, void, void >
+  : public CGAL::iterator< std::output_iterator_tag, void, void, void, void >
 {
   std::size_t *c;
 public:
@@ -640,7 +657,7 @@ bool operator!=(const Filter_iterator<I,P>& it1,
 
 template <class I1,class Op>
 class Join_input_iterator_1 : public 
-std::iterator<typename std::iterator_traits<I1>::iterator_category, 
+CGAL::iterator<typename std::iterator_traits<I1>::iterator_category, 
 	      typename Op::result_type, 
 	      typename std::iterator_traits<I1>::difference_type, 
 	      typename Op::result_type*,
@@ -726,7 +743,7 @@ public:
 
 template <class I1,class I2,class Op>
 class Join_input_iterator_2 : public 
-std::iterator<typename std::iterator_traits<I1>::iterator_category, 
+CGAL::iterator<typename std::iterator_traits<I1>::iterator_category, 
 	      typename Op::result_type, 
 	      typename std::iterator_traits<I1>::difference_type, 
 	      typename Op::result_type*,
@@ -819,7 +836,7 @@ public:
 
 template <class I1,class I2,class I3,class Op>
 class Join_input_iterator_3 : public 
-std::iterator<typename std::iterator_traits<I1>::iterator_category, 
+CGAL::iterator<typename std::iterator_traits<I1>::iterator_category, 
 	      typename Op::result_type, 
 	      typename std::iterator_traits<I1>::difference_type, 
 	      typename Op::result_type*,
@@ -1197,7 +1214,7 @@ public:
 
 template<typename _Iterator, typename Predicate>
     class Filter_output_iterator
-    : public std::iterator<std::output_iterator_tag, void, void, void, void>
+    : public CGAL::iterator<std::output_iterator_tag, void, void, void, void>
     {
     protected:
       _Iterator iterator;

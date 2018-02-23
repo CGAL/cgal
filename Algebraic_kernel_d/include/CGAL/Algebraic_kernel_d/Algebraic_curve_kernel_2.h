@@ -33,7 +33,7 @@
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_D_2_H
 
 #include <limits>
-
+#include <CGAL/iterator.h>
 #include <CGAL/assertions.h>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/optional.hpp>
@@ -1802,8 +1802,8 @@ public:
      */
     class X_critical_points_2 : 
         public CGAL::binary_function< Curve_analysis_2,
-            std::iterator<std::output_iterator_tag, Algebraic_real_2>,
-            std::iterator<std::output_iterator_tag, Algebraic_real_2> > {
+            CGAL::iterator<std::output_iterator_tag, Algebraic_real_2>,
+            CGAL::iterator<std::output_iterator_tag, Algebraic_real_2> > {
        
     public:
         
@@ -1881,8 +1881,8 @@ public:
      */
     class Y_critical_points_2 :
         public CGAL::binary_function< Curve_analysis_2,
-            std::iterator<std::output_iterator_tag, Algebraic_real_2>,
-            std::iterator<std::output_iterator_tag, Algebraic_real_2> > {
+            CGAL::iterator<std::output_iterator_tag, Algebraic_real_2>,
+            CGAL::iterator<std::output_iterator_tag, Algebraic_real_2> > {
         
 
     public:
