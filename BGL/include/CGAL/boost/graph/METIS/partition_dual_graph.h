@@ -104,12 +104,13 @@ void partition_dual_graph(const TriangleMesh& tm, int nparts,
   CGAL_assertion((*options)[METIS_OPTION_NUMBERING] == -1 || // default initialization is '-1'
                  (*options)[METIS_OPTION_NUMBERING] == 0);
 
-  int ret = METIS_PartMeshDual(&ne, &nn, eptr, eind,
-                               NULL /* elements weights*/, NULL /*elements sizes*/,
-                               &ncommon, &nparts,
-                               NULL /* partitions weights */,
-                               *options,
-                               &objval, epart, npart);
+  CGAL_assertion_code(int ret =)
+    METIS_PartMeshDual(&ne, &nn, eptr, eind,
+                       NULL /* elements weights*/, NULL /*elements sizes*/,
+                       &ncommon, &nparts,
+                       NULL /* partitions weights */,
+                       *options,
+                       &objval, epart, npart);
 
   CGAL_assertion(ret == METIS_OK);
 

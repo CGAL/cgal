@@ -87,7 +87,6 @@ void partition_graph(const TriangleMesh& tm, int nparts,
   using boost::get_param;
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor   vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator     vertex_iterator;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_iterator       face_iterator;
 
@@ -137,12 +136,13 @@ void partition_graph(const TriangleMesh& tm, int nparts,
   CGAL_assertion((*options)[METIS_OPTION_NUMBERING] == -1 || // default initialization is '-1'
                  (*options)[METIS_OPTION_NUMBERING] == 0);
 
-  int ret = METIS_PartMeshNodal(&ne, &nn, eptr, eind,
-                                NULL /* nodes weights */, NULL /* nodes sizes */,
-                                &nparts,
-                                NULL /* partitions weights */,
-                                *options,
-                                &objval, epart, npart);
+  CGAL_assertion_code(int ret =)
+    METIS_PartMeshNodal(&ne, &nn, eptr, eind,
+                        NULL /* nodes weights */, NULL /* nodes sizes */,
+                        &nparts,
+                        NULL /* partitions weights */,
+                        *options,
+                        &objval, epart, npart);
 
   CGAL_assertion(ret == METIS_OK);
 
