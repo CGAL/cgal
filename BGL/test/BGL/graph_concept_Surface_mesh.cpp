@@ -43,6 +43,7 @@ void concept_check_surface_mesh()
 
   // null
   boost::graph_traits<Surface_mesh>::null_vertex();
+  boost::graph_traits<Surface_mesh>::null_halfedge();
   boost::graph_traits<Surface_mesh>::null_face();
 }
 

@@ -33,7 +33,7 @@ Here is the list of the named parameters available in this package:
 is the property map with the points associated to the vertices of the polygon mesh.\n
 <b>Type:</b> a class model of `ReadablePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
-`GeomTraits::Point_3` as value type. \n
+a \cgal point type as value type. \n
 <b>Default:</b> \code boost::get(CGAL::vertex_point, pmesh) \endcode
 \cgalNPEnd
 

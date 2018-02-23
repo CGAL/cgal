@@ -8,11 +8,11 @@ concept `TriangulationVertexBase_2`, the base vertex of a
 2D-triangulation.  It provides an integer field that can be used to
 index vertices for \sc{Bgl} algorithms.
 
-Note that the user is in charge to set the index correctly before 
-running a graph algorithm. 
+Note that the user is in charge of setting indices correctly before
+running a graph algorithm.
 
 \tparam TriangulationTraits_2 is the geometric traits class
-and must be a model of `TriangulationTraits_2` which provides the `Point_2`.
+and must be a model of `TriangulationTraits_2`.
 
 \tparam TriangulationVertexBase_2 must be a vertex base class from which 
 `Triangulation_vertex_base_with_id_2` derives. It has the default 

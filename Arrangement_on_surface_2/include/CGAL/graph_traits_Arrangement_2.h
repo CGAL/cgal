@@ -249,6 +249,9 @@ public:
     arr_access (const_cast<Arrangement_on_surface_2&> (arr))
   {}
 
+  /*! Nulls */
+  static vertex_descriptor null_vertex() { return vertex_descriptor(); }
+
   /*! Traverse the vertices. */
   vertices_size_type number_of_vertices()
   {
@@ -311,7 +314,7 @@ public:
     if (v->is_isolated())
       return out_edge_iterator ();
 
-    const int  deg = static_cast<int>(v->degree());
+    const int deg = static_cast<int>(v->degree());
     return out_edge_iterator (v->incident_halfedges(), true, deg, deg);
   }
 
@@ -321,7 +324,8 @@ public:
     if (v->is_isolated())
       return in_edge_iterator();
 
-    return in_edge_iterator (v->incident_halfedges(), false, 0, v->degree());
+    const int deg = static_cast<int>(v->degree());
+    return in_edge_iterator (v->incident_halfedges(), false, 0, deg);
   }
 
   in_edge_iterator in_edges_end (vertex_descriptor v)
@@ -329,7 +333,7 @@ public:
     if (v->is_isolated())
       return in_edge_iterator ();
 
-    const int  deg = v->degree();
+    const int deg = static_cast<int>(v->degree());
     return in_edge_iterator (v->incident_halfedges(), false, deg, deg);
   }
 };

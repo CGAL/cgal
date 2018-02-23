@@ -5,7 +5,6 @@
 The concept `HalfedgeListGraph` refines the concept `HalfedgeGraph`
 and adds the requirements for traversal of all halfedges in the graph.
 
-
 \cgalAssociatedTypesBegin
 
 \cgalAssociatedTypeBegin{boost::graph_traits<HalfedgeListGraph>::%halfedge_iterator} A halfedge iterator (obtained via `halfedges(g)`) provides access to all of the halfedges in a graph. 
@@ -15,11 +14,11 @@ halfedge iterator must be the same as the halfedge descriptor of the graph.
 
 \cgalAssociatedTypesEnd
 
-
 \cgalRefines `HalfedgeGraph`
-\cgalHasModel `CGAL::Polyhedron_3`
-\cgalHasModel `CGAL::Surface_mesh`
 
+\cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
+
+\sa \link PkgBGLConcepts Graph Concepts \endlink
 */
 
 class HalfedgeListGraph {};
