@@ -137,7 +137,7 @@ struct Hot_pixel_dir_cmp {
 
   Traits_ m_gt;
 
-  bool operator()(const Hot_pixel * h1, const Hot_pixel * h2);
+  bool operator()(const Hot_pixel * h1, const Hot_pixel * h2) const;
 };
 
 #ifdef CGAL_SR_DEBUG
@@ -502,7 +502,7 @@ operator()(const Hot_pixel * h1, const Hot_pixel * h2) const
 // segment intersect
 template<class Traits_>
 bool Hot_pixel_dir_cmp<Traits_>::operator ()(const Hot_pixel * h1,
-                                             const Hot_pixel * h2)
+                                             const Hot_pixel * h2) const
 {
   typedef typename Traits_::Compare_x_2         Compare_x_2;
   typedef typename Traits_::Compare_y_2         Compare_y_2;
