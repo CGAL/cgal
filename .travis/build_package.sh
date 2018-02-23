@@ -51,10 +51,14 @@ old_IFS=$IFS
 IFS=$' '
 ROOT="$PWD/.."
 NEED_3D=0
+cd $ROOT
 for ARG in $(echo "$@")
 do
   if [ "$ARG" = "CHECK" ]
-	then
+  then
+    cd .travis
+    ./generate_travis.sh --check
+    cd ..
     IFS=$old_IFS
     zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
     #test dependencies 
@@ -91,9 +95,6 @@ do
 	        exit 1
 	  fi
 	  echo "Matrix is up to date."
-    cd .travis
-    ./generate_travis.sh -c
-    cd ..
     #check if non standard cgal installation works
     cd $ROOT
     mkdir build_test
