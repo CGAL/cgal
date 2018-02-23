@@ -323,7 +323,7 @@
       <item>
        <widget class="QCheckBox" name="m_add_property">
         <property name="text">
-         <string>Add a &quot;cluster_id&quot; property to the input item</string>
+         <string>Add a &quot;shape&quot; property to the input item</string>
         </property>
         <property name="checked">
          <bool>true</bool>
