@@ -116,7 +116,6 @@ do
     cd ..
     exit 0
   fi
-
   IFS=$old_IFS
   if [ -n "$TRAVIS_PULL_REQUEST" ] && [ "$ARG" != Polyhedron_demo ]; then
     DO_IGNORE=FALSE
@@ -139,8 +138,18 @@ do
 
   if [ -d "$ROOT/$EXAMPLES" ]
   then
-	  cd $ROOT/$EXAMPLES
-	  build_examples
+    cd $ROOT/$EXAMPLES
+    if [ -f ./CMakeLists.txt ]; then
+      build_examples
+    else
+      for dir in ./*
+      do
+        if [ -f $dir/CMakeLists.txt ]; then
+          cd $ROOT/$EXAMPLES/$dir
+          build_examples
+        fi
+      done
+    fi
   elif [ "$ARG" != Polyhedron_demo ]; then
     echo "No example found for $ARG"
   fi
@@ -148,7 +157,17 @@ do
   if [ -d "$ROOT/$TEST" ]
   then
     cd $ROOT/$TEST
-    build_tests
+    if [ -f ./CMakeLists.txt ]; then
+      build_tests
+    else
+      for dir in ./*
+      do
+        if [ -f $dir/CMakeLists.txt ]; then
+          cd $ROOT/$TEST/$dir
+          build_tests
+        fi
+      done
+    fi
   elif [ "$ARG" != Polyhedron_demo ]; then
     echo "No test found for $ARG"
   fi
