@@ -25,10 +25,7 @@ namespace CGAL {
  * or a proxy-id (in [0, number_of_proxies - 1]) to each facet.
  * A segment is a set of connected facets which are placed under the same proxy patch (see \cgalFigureRef{iterations}).
  *
- * @tparam TriangleMesh model of `FaceGraph`.
- *         The descriptor types `boost::graph_traits<TriangleMesh>::%face_descriptor`
- *         and `boost::graph_traits<TriangleMesh>::%halfedge_descriptor` must be
- *         models of `Hashable`.
+ * @tparam TriangleMesh model of `FaceListGraph`.
  *         If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
  *         and no `face_index_map` is given
  *         as a named parameter, then the internal one should be initialized
@@ -36,7 +33,7 @@ namespace CGAL {
  * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
- * @param tm_in a triangulated surface mesh to be segmented
+ * @param tm a triangle surface mesh to be segmented
  * @param[out] segment_ids the segment or proxy id of each facet
  * @param np optional sequence of \ref namedparameters among the ones listed below
  *
@@ -45,7 +42,7 @@ namespace CGAL {
  *    Exact constructions kernels are not supported by this function.
  *  \cgalParamEnd
  *  \cgalParamBegin{vertex_point_map} property map with the points associated
- *    to the vertices of `tm_in`. Instance of a class model of `ReadWritePropertyMap`.
+ *    to the vertices of `tm`. Instance of a class model of `ReadWritePropertyMap`.
  *  \cgalParamEnd
  *  \cgalParamBegin{seeding_method} selection of seeding method.
  *  \cgalParamEnd
@@ -64,7 +61,7 @@ namespace CGAL {
 template <typename TriangleMesh,
   typename SegmentPropertyMap,
   typename NamedParameters>
-void vsa_mesh_segmentation(const TriangleMesh &tm_in,
+void vsa_mesh_segmentation(const TriangleMesh &tm,
   const SegmentPropertyMap segment_ids, const NamedParameters &np)
 {
   using boost::get_param;
@@ -75,15 +72,15 @@ void vsa_mesh_segmentation(const TriangleMesh &tm_in,
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type Vertex_point_map;
   Vertex_point_map point_pmap = choose_param(get_param(np, internal_np::vertex_point),
-    get_property_map(vertex_point, const_cast<TriangleMesh &>(tm_in)));
+    get_property_map(vertex_point, const_cast<TriangleMesh &>(tm)));
 
   typedef CGAL::VSA::Mesh_approximation<TriangleMesh, Vertex_point_map> L21_approx;
   typedef typename L21_approx::Error_metric L21_metric;
   typedef typename L21_approx::Proxy_fitting L21_proxy_fitting;
 
-  L21_approx approx(tm_in, point_pmap);
-  L21_metric l21_metric(tm_in);
-  L21_proxy_fitting l21_fitting(tm_in);
+  L21_approx approx(tm, point_pmap);
+  L21_metric l21_metric(tm);
+  L21_proxy_fitting l21_fitting(tm);
   approx.set_metric(l21_metric, l21_fitting);
 
   // default hierarchical seeding
@@ -97,7 +94,7 @@ void vsa_mesh_segmentation(const TriangleMesh &tm_in,
   approx.seeding(method, max_nb_proxies, min_error_drop, nb_of_relaxations);
 
   // reasonable default number of iterations
-  std::size_t nb_of_iterations_default = max_nb_proxies ? num_faces(tm_in) / *max_nb_proxies : 30;
+  std::size_t nb_of_iterations_default = max_nb_proxies ? num_faces(tm) / *max_nb_proxies : 30;
   nb_of_iterations_default = (std::min)((std::max)(
     nb_of_iterations_default, static_cast<std::size_t>(20)), static_cast<std::size_t>(60));
   const std::size_t nb_of_iterations = choose_param(

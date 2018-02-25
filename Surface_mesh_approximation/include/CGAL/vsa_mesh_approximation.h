@@ -23,17 +23,14 @@ namespace CGAL {
  * This function use the Variational Shape Approximation algorithm to approximate the shape of a triangle surface mesh.
  * With indexed triangles as output.
  *
- * @tparam TriangleMesh model of `FaceGraph`.
- *         The descriptor types `boost::graph_traits<TriangleMesh>::%face_descriptor`
- *         and `boost::graph_traits<TriangleMesh>::%halfedge_descriptor` must be
- *         models of `Hashable`.
+ * @tparam TriangleMesh model of `FaceListGraph`.
  *         If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
  *         and no `face_index_map` is given as a named parameter, then the internal one should be initialized.
  * @tparam AnchorPointOutputIterator a class model of `OutputIterator` with `GeomTraits::Point_3` value type
  * @tparam IndexedTriangleOutputIterator a class model of `OutputIterator` with `std::vector<std::size_t>` value type
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
- * @param tm_in a triangle surface mesh to be approximated
+ * @param tm a triangle surface mesh to be approximated
  * @param[out] apts_out_itr output iterator over anchor points 
  * @param[out] tris_out_itr output iterator over indexed triangles (triplets of integers referring to anchor points)
  * @param np optional sequence of \ref namedparameters among the ones listed below
@@ -44,7 +41,7 @@ namespace CGAL {
  *    Exact constructions kernels are not supported by this function.
  *  \cgalParamEnd
  *  \cgalParamBegin{vertex_point_map} the property map with the points associated
- *    to the vertices of `tm_in`. Instance of a class model of `ReadWritePropertyMap`.
+ *    to the vertices of `tm`. Instance of a class model of `ReadWritePropertyMap`.
  *  \cgalParamEnd
  *  \cgalParamBegin{seeding_method} selection of seeding method.
  *  \cgalParamEnd
@@ -58,11 +55,11 @@ namespace CGAL {
  *  \cgalParamEnd
  *  \cgalParamBegin{mesh_chord_error} maximum chord approximation error used for meshing.
  *  \cgalParamEnd
- *  \cgalParamBegin{face_proxy_map} property map containing the assigned proxy index of each face of input mesh `tm_in`.
+ *  \cgalParamBegin{face_proxy_map} property map containing the assigned proxy index of each face of input mesh `tm`.
  *  \cgalParamEnd
  *  \cgalParamBegin{proxies} output iterator over proxies.
  *  \cgalParamEnd
- *  \cgalParamBegin{anchor_vertices} output iterator over anchor vertices, defined on the input mesh `tm_in`. 
+ *  \cgalParamBegin{anchor_vertices} output iterator over anchor vertices, defined on the input mesh `tm`. 
  *  \cgalParamEnd
  *  \cgalParamBegin{output_mesh} polyhedral surface mesh derived from the indexed facet set. The polyhedron is not empty only 
  *  when the indexed face set represents a 2-manifold, oriented surface triangle mesh.
@@ -73,7 +70,7 @@ template <typename TriangleMesh,
   typename AnchorPointOutputIterator,
   typename IndexedTriangleOutputIterator,
   typename NamedParameters>
-bool vsa_mesh_approximation(const TriangleMesh &tm_in,
+bool vsa_mesh_approximation(const TriangleMesh &tm,
   AnchorPointOutputIterator apts_out_itr,
   IndexedTriangleOutputIterator tris_out_itr,
   const NamedParameters &np)
@@ -86,15 +83,15 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type Vertex_point_map;
   Vertex_point_map point_pmap = choose_param(get_param(np, internal_np::vertex_point),
-    get_property_map(vertex_point, const_cast<TriangleMesh &>(tm_in)));
+    get_property_map(vertex_point, const_cast<TriangleMesh &>(tm)));
 
   typedef CGAL::VSA::Mesh_approximation<TriangleMesh, Vertex_point_map> L21_approx;
   typedef typename L21_approx::Error_metric L21_metric;
   typedef typename L21_approx::Proxy_fitting L21_proxy_fitting;
 
-  L21_approx approx(tm_in, point_pmap);
-  L21_metric l21_metric(tm_in);
-  L21_proxy_fitting l21_fitting(tm_in);
+  L21_approx approx(tm, point_pmap);
+  L21_metric l21_metric(tm);
+  L21_proxy_fitting l21_fitting(tm);
   approx.set_metric(l21_metric, l21_fitting);
 
   // default hierarchical seeding
@@ -108,7 +105,7 @@ bool vsa_mesh_approximation(const TriangleMesh &tm_in,
   approx.seeding(method, max_nb_proxies, min_error_drop, nb_of_relaxations);
 
 // reasonable default number of iterations
-  std::size_t nb_of_iterations_default = max_nb_proxies ? num_faces(tm_in) / *max_nb_proxies : 30;
+  std::size_t nb_of_iterations_default = max_nb_proxies ? num_faces(tm) / *max_nb_proxies : 30;
   nb_of_iterations_default = (std::min)((std::max)(
     nb_of_iterations_default, static_cast<std::size_t>(20)), static_cast<std::size_t>(60));
   const std::size_t nb_of_iterations = choose_param(
