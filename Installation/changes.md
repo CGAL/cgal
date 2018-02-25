@@ -56,15 +56,15 @@ Release date: April 2018
 
 ### 3D Surface Mesh Generation
 
--   Add the function facets\_in\_complex\_2\_to\_triangle\_mesh() that
-    exports Surface\_mesh\_complex\_2\_in\_triangulation\_3 facets into
-    a MutableFaceGraph.
+-   Add the function `facets_in_complex_2_to_triangle_mesh()` that
+    exports `Surface_mesh_complex_2_in_triangulation_3` facets into
+    a `MutableFaceGraph`.
 
 ### 3D Mesh Generation
 
--   Add the function facets\_in\_complex\_3\_to\_triangle\_mesh() that
-    exports Mesh\_complex\_3\_in\_triangulation\_3 facets into a
-    MutableFaceGraph.
+-   Add the function `facets_in_complex_3_to_triangle_mesh()` that
+    exports `Mesh_complex_3_in_triangulation_3` facets into a
+    `MutableFaceGraph`.
 -   **Breaking change:** The concept `MeshDomainWithFeatures_3` has been
     modified, to improve the performance and the reliability of the
     sampling of 1D curves of the domain.
@@ -86,8 +86,9 @@ Release date: April 2018
     -   `CGAL::Polygon_mesh_processing::orient()`
     -   `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()`
 
--   Added a new function for intersection tests between triangle meshes and/or polylines or range of polylines, and another one to report all the
-    pairs of meshes intersecting from a range of meshes:
+-   Added a new function for intersection tests between triangle meshes
+    and/or polylines or range of polylines, and another one to report
+    all the pairs of meshes intersecting from a range of meshes:
     -   `CGAL::Polygon_mesh_processing::do_intersect()`
     -   `CGAL::Polygon_mesh_processing::intersecting_meshes()`
 
@@ -123,10 +124,12 @@ Release date: April 2018
 
 -   Added support for dynamic property maps.
 
--   Added an interface to the [METIS library](http://glaros.dtc.umn.edu/gkhome/metis/metis/overview),
-    which allows to partition any mesh that is a model of `FaceListGraph`.
-    Wrappers to the METIS functions `METIS_PartMeshNodal` and `METIS_PartMeshDual`
-    are offered.
+-   Added an interface to the [METIS library], which allows to partition
+    any mesh that is a model of `FaceListGraph`.  Wrappers to the
+    METIS functions `METIS_PartMeshNodal` and `METIS_PartMeshDual` are
+    offered.
+
+    [METIS library]: http://glaros.dtc.umn.edu/gkhome/metis/metis/overview
 
 ### 2D Arrangements
 
@@ -139,6 +142,7 @@ Release date: April 2018
     The user can restore old (non-symmetric) behaviour by defining the macro:
 
     `CGAL_NON_SYMETRICAL_OBSERVER_EDGE_REMOVAL_BACKWARD_COMPATIBILITY`
+
 
 Release 4.11
 ------------
