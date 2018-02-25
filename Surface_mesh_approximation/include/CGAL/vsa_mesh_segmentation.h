@@ -16,12 +16,11 @@
 #include <boost/optional.hpp>
 
 namespace CGAL {
-namespace VSA {
 
 /*!
  * \ingroup PkgTSMA
  * @brief Function segments the input mesh into planar parts.
- * This function segments the input triangulated mesh by the Variational Shape Approximation algorithm.
+ * This function segments the input triangle surface mesh by the Variational Shape Approximation algorithm.
  * It fills a property map which associates a segment-id (in [0, number_of_segments -1])
  * or a proxy-id (in [0, number_of_proxies - 1]) to each facet.
  * A segment is a set of connected facets which are placed under the same proxy patch (see \cgalFigureRef{iterations}).
@@ -65,7 +64,7 @@ namespace VSA {
 template <typename TriangleMesh,
   typename SegmentPropertyMap,
   typename NamedParameters>
-void mesh_segmentation(const TriangleMesh &tm_in,
+void vsa_mesh_segmentation(const TriangleMesh &tm_in,
   const SegmentPropertyMap segment_ids, const NamedParameters &np)
 {
   using boost::get_param;
@@ -123,7 +122,6 @@ void mesh_segmentation(const TriangleMesh &tm_in,
   get_proxies(approx, pxies_out_itr);
 }
 
-} // end namespace VSA
 } // end namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_APPROXIMATION_VSA_MESH_SEGMENTATION_H

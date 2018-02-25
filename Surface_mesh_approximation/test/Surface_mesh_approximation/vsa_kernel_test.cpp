@@ -29,7 +29,7 @@ int test() {
   std::vector<typename K::Point_3> points;
   std::vector<std::vector<std::size_t> > triangles;
 
-  CGAL::VSA::mesh_approximation(tm,
+  CGAL::vsa_mesh_approximation(tm,
     std::back_inserter(points),
     std::back_inserter(triangles),
     CGAL::VSA::parameters::max_nb_proxies(6).

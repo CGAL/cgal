@@ -7,10 +7,9 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
-typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type VertexPointMap;
 
-
-typedef CGAL::VSA::Mesh_approximation<Polyhedron, VertexPointMap> Mesh_approximation;
+typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
+typedef CGAL::VSA::Mesh_approximation<Polyhedron, Vertex_point_map> Mesh_approximation;
 
 // L21 error metric 
 typedef Mesh_approximation::Error_metric Metric;

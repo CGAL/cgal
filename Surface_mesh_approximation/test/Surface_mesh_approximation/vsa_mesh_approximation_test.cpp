@@ -11,7 +11,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 /**
- * This file tests the free function CGAL::VSA::mesh_approximation.
+ * This file tests the free function CGAL::vsa_mesh_approximation.
  */
 int main()
 {
@@ -30,7 +30,7 @@ int main()
   std::map<Polyhedron::Facet_handle, std::size_t> fidxmap;
   boost::associative_property_map<std::map<Polyhedron::Facet_handle, std::size_t> > fpxmap(fidxmap);
 
-  CGAL::VSA::mesh_approximation(mesh,
+  CGAL::vsa_mesh_approximation(mesh,
     std::back_inserter(points),
     std::back_inserter(triangles),
     CGAL::VSA::parameters::seeding_method(CGAL::VSA::Incremental).

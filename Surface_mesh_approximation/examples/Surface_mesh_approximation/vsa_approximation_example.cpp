@@ -24,7 +24,7 @@ int main()
   std::vector<std::vector<std::size_t> > triangles; // triplets of indices
 
   // free function interface with named parameters
-  bool valid_polyhedron = CGAL::VSA::mesh_approximation(input,
+  bool valid_polyhedron = CGAL::vsa_mesh_approximation(input,
     std::back_inserter(points),
     std::back_inserter(triangles),
     CGAL::VSA::parameters::seeding_method(CGAL::VSA::Hierarchical). // hierarchical seeding

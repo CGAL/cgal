@@ -29,7 +29,7 @@ int main()
   Facet_proxy_pmap fpxmap(fidx_map);
 
   // free function interface with named parameters
-  CGAL::VSA::mesh_segmentation(input,
+  CGAL::vsa_mesh_segmentation(input,
     fpxmap, // output segmentation
     CGAL::VSA::parameters::seeding_method(CGAL::VSA::Hierarchical). // hierarchical seeding
     max_nb_proxies(200). // first stop criterion

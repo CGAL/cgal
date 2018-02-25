@@ -36,7 +36,7 @@ int main()
   std::vector<Plane_proxy> proxies;
 
   // free function interface with named parameters
-  CGAL::VSA::mesh_approximation(input,
+  CGAL::vsa_mesh_approximation(input,
     std::back_inserter(points),
     std::back_inserter(triangles),
     CGAL::VSA::parameters::min_error_drop(0.05). // seeding with minimum error drop

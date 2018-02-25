@@ -13,7 +13,7 @@ typedef boost::unordered_map<face_descriptor, std::size_t> Facet_index_map;
 typedef boost::associative_property_map<Facet_index_map> Facet_proxy_pmap;
 
 /**
- * This file tests the free function CGAL::VSA::mesh_segmentation.
+ * This file tests the free function CGAL::vsa_mesh_segmentation.
  */
 int main()
 {
@@ -32,7 +32,7 @@ int main()
   std::vector<Plane_proxy> proxies;
 
   // free function interface with named parameters
-  CGAL::VSA::mesh_segmentation(input,
+  CGAL::vsa_mesh_segmentation(input,
     fpxmap, // output indexed face set
     CGAL::VSA::parameters::seeding_method(CGAL::VSA::Hierarchical). // hierarchical seeding
     max_nb_proxies(200). // both maximum number of proxies stop criterion,

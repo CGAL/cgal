@@ -16,7 +16,6 @@
 #include <boost/optional.hpp>
 
 namespace CGAL {
-namespace VSA {
 
 /*!
  * \ingroup PkgTSMA
@@ -74,7 +73,7 @@ template <typename TriangleMesh,
   typename AnchorPointOutputIterator,
   typename IndexedTriangleOutputIterator,
   typename NamedParameters>
-bool mesh_approximation(const TriangleMesh &tm_in,
+bool vsa_mesh_approximation(const TriangleMesh &tm_in,
   AnchorPointOutputIterator apts_out_itr,
   IndexedTriangleOutputIterator tris_out_itr,
   const NamedParameters &np)
@@ -162,7 +161,6 @@ bool mesh_approximation(const TriangleMesh &tm_in,
   return is_manifold;
 }
 
-} // end namespace VSA
 } // end namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_APPROXIMATION_VSA_MESH_APPROXIMATION_H
