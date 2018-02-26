@@ -5,7 +5,7 @@
 
 
 #include <CGAL/vsa_metrics.h>
-#include <CGAL/vsa_approximation.h>
+#include <CGAL/VSA_approximation.h>
 #include <CGAL/internal/Surface_mesh_approximation/named_function_params.h>
 #include <CGAL/internal/Surface_mesh_approximation/named_params_helper.h>
 
@@ -85,7 +85,7 @@ bool vsa_mesh_approximation(const TriangleMesh &tm,
   Vertex_point_map point_pmap = choose_param(get_param(np, internal_np::vertex_point),
     get_property_map(vertex_point, const_cast<TriangleMesh &>(tm)));
 
-  typedef CGAL::VSA::Mesh_approximation<TriangleMesh, Vertex_point_map> L21_approx;
+  typedef CGAL::VSA_approximation<TriangleMesh, Vertex_point_map> L21_approx;
   typedef typename L21_approx::Error_metric L21_metric;
   typedef typename L21_approx::Proxy_fitting L21_proxy_fitting;
 
@@ -95,8 +95,8 @@ bool vsa_mesh_approximation(const TriangleMesh &tm,
   approx.set_metric(l21_metric, l21_fitting);
 
   // default hierarchical seeding
-  CGAL::VSA::Seeding method = choose_param(
-    get_param(np, internal_np::seeding_method), CGAL::VSA::Hierarchical);
+  CGAL::Approximation_seeding_tag method = choose_param(
+    get_param(np, internal_np::seeding_method), CGAL::Hierarchical);
   boost::optional<std::size_t> max_nb_proxies = choose_param(
     get_param(np, internal_np::max_nb_proxies), boost::optional<std::size_t>());
   boost::optional<FT> min_error_drop = choose_param(

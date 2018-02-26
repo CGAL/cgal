@@ -6,7 +6,7 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/vsa_approximation.h>
+#include <CGAL/VSA_approximation.h>
 #include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -14,7 +14,7 @@ typedef Kernel::FT FT;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
 
-typedef CGAL::VSA::Mesh_approximation<Polyhedron, Vertex_point_map> L21_approx;
+typedef CGAL::VSA_approximation<Polyhedron, Vertex_point_map> L21_approx;
 typedef L21_approx::Error_metric L21_metric;
 typedef L21_approx::Proxy_fitting L21_proxy_fitting;
 
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
   std::cerr << "start seeding" << std::endl;
   t.start();
   approx.seeding(
-    static_cast<CGAL::VSA::Seeding>(method), boost::none, error_drop, nb_relaxations);
+    static_cast<CGAL::Approximation_seeding_tag>(method), boost::none, error_drop, nb_relaxations);
   t.stop();
   std::cerr << "seeding time " << t.time() << " sec." << std::endl;
   std::cerr << "#proxies " << approx.proxies_size() << std::endl;

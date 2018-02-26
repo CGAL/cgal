@@ -6,7 +6,7 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/vsa_approximation.h>
+#include <CGAL/VSA_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
@@ -19,7 +19,7 @@ typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_poin
 
 typedef CGAL::VSA::L2_metric<Polyhedron> L2_metric;
 typedef CGAL::VSA::L2_proxy_fitting<Polyhedron> L2_proxy_fitting;
-typedef CGAL::VSA::Mesh_approximation<Polyhedron, Vertex_point_map,
+typedef CGAL::VSA_approximation<Polyhedron, Vertex_point_map,
   L2_metric, L2_proxy_fitting> L2_approx;
 typedef L2_approx::Proxy Plane_proxy;
 
@@ -53,7 +53,7 @@ int main()
 
   // random seeding and run
   std::cout << "random seeding and run" << std::endl;
-  approx.seeding(CGAL::VSA::Random, 10);
+  approx.seeding(CGAL::Random, 10);
   approx.run(10);
   if (approx.proxies_size() != 10)
     return EXIT_FAILURE;
@@ -125,7 +125,7 @@ int main()
   approx.rebuild();
   if (approx.proxies_size() != 0)
     return EXIT_FAILURE;
-  approx.seeding(CGAL::VSA::Hierarchical, boost::none, drop, iterations);
+  approx.seeding(CGAL::Hierarchical, boost::none, drop, iterations);
   approx.run(10);
   std::cout << "#proxies " << approx.proxies_size() << std::endl;
 
@@ -133,7 +133,7 @@ int main()
   approx.rebuild();
   if (approx.proxies_size() != 0)
     return EXIT_FAILURE;
-  approx.seeding(CGAL::VSA::Incremental, boost::none, drop, iterations);
+  approx.seeding(CGAL::Incremental, boost::none, drop, iterations);
   approx.run(10);
   std::cout << "#proxies " << approx.proxies_size() << std::endl;
 

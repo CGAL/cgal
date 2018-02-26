@@ -1,5 +1,5 @@
-#ifndef CGAL_SURFACE_MESH_APPROXIMATION_VSA_APPROXIMATION_H
-#define CGAL_SURFACE_MESH_APPROXIMATION_VSA_APPROXIMATION_H
+#ifndef CGAL_VSA_APPROXIMATION_H
+#define CGAL_VSA_APPROXIMATION_H
 
 #include <CGAL/license/Surface_mesh_approximation.h>
 
@@ -41,13 +41,12 @@
 #define CGAL_VSA_INVALID_TAG std::numeric_limits<std::size_t>::max()
 
 namespace CGAL {
-namespace VSA {
 
 /*!
  * \ingroup PkgTSMA
  * @brief Seeding method enumeration for Variational Shape Approximation algorithm.
  */
-  enum Seeding {
+  enum Approximation_seeding_tag {
     /// Random seeding
     Random,
     /// Incremental seeding
@@ -71,7 +70,7 @@ template <typename TriangleMesh,
   typename ProxyFitting = CGAL::Default,
   typename GeomTraits = CGAL::Default,
   typename Concurrency_tag = CGAL::Sequential_tag>
-class Mesh_approximation {
+class VSA_approximation {
 // public typedefs
 public:
   // Default typedefs
@@ -270,7 +269,7 @@ public:
   /*!
    * %Default constructor.
    */
-  Mesh_approximation() :
+  VSA_approximation() :
     m_ptm(NULL),
     m_perror_metric(NULL),
     m_pproxy_fitting(NULL),
@@ -290,7 +289,7 @@ public:
    * @param tm `CGAL TriangleMesh` on which approximation operates.
    * @param vpoint_map vertex point map of the mesh
    */
-  Mesh_approximation(const TriangleMesh &tm, const VertexPointMap &vpoint_map) :
+  VSA_approximation(const TriangleMesh &tm, const VertexPointMap &vpoint_map) :
     m_ptm(&tm),
     m_vpoint_map(vpoint_map),
     m_perror_metric(NULL),
@@ -313,7 +312,7 @@ public:
   }
 
   
-  ~Mesh_approximation() {
+  ~VSA_approximation() {
     if (m_ptm) {
       CGAL::internal::remove_property(m_vanchor_map, *(const_cast<TriangleMesh *>(m_ptm)));
       CGAL::internal::remove_property(m_fproxy_map, *(const_cast<TriangleMesh *>(m_ptm)));
@@ -385,7 +384,7 @@ public:
    * in incremental and hierarchical seeding
    * @return number of proxies initialized
    */
-  std::size_t seeding(const Seeding method = Hierarchical,
+  std::size_t seeding(const Approximation_seeding_tag method = Hierarchical,
     const boost::optional<std::size_t> max_nb_proxies = boost::optional<std::size_t>(),
     const boost::optional<FT> min_error_drop = boost::optional<FT>(),
     const std::size_t nb_relaxations = 5) {
@@ -2076,9 +2075,8 @@ private:
   }
 };
 
-} // end namespace VSA
 } // end namespace CGAL
 
 #undef CGAL_VSA_INVALID_TAG
 
-#endif // CGAL_SURFACE_MESH_APPROXIMATION_VSA_APPROXIMATION_H
+#endif // CGAL_VSA_APPROXIMATION_H

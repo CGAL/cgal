@@ -8,7 +8,7 @@
 #include <CGAL/Bbox_3.h>
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/vsa_approximation.h>
+#include <CGAL/VSA_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
@@ -23,7 +23,7 @@ typedef Polyhedron::Halfedge_handle Halfedge_handle;
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
 typedef boost::associative_property_map<std::map<Facet_handle, std::size_t> > Facet_proxy_map;
 
-typedef CGAL::VSA::Mesh_approximation<Polyhedron, Vertex_point_map> L21_approx;
+typedef CGAL::VSA_approximation<Polyhedron, Vertex_point_map> L21_approx;
 typedef L21_approx::Error_metric L21_metric;
 typedef L21_approx::Proxy_fitting L21_proxy_fitting;
 typedef L21_approx::Proxy Plane_proxies;
@@ -68,7 +68,7 @@ int main()
 
   std::cout << "Random seeding by number." << std::endl;
   std::srand(static_cast<unsigned int>(std::time(0)));
-  approx.seeding(CGAL::VSA::Random, 50);
+  approx.seeding(CGAL::Random, 50);
   if (approx.proxies_size() != 50)
     return EXIT_FAILURE;
   approx.run(10);

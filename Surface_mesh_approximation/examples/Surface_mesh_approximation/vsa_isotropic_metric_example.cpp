@@ -5,7 +5,7 @@
 #include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/property_map.h>
-#include <CGAL/vsa_approximation.h>
+#include <CGAL/VSA_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
@@ -70,7 +70,7 @@ struct Point_proxy_fitting {
   const Facet_area_map area_pmap;
 };
 
-typedef CGAL::VSA::Mesh_approximation<Polyhedron, Vertex_point_map,
+typedef CGAL::VSA_approximation<Polyhedron, Vertex_point_map,
   Compact_metric, Point_proxy_fitting> Approximation;
 
 int main()
@@ -109,7 +109,7 @@ int main()
   approx.set_metric(metric, proxy_fitting);
 
   // approximation via 200 proxies and 30 iterations
-  approx.seeding(CGAL::VSA::Hierarchical, 200);
+  approx.seeding(CGAL::Hierarchical, 200);
   approx.run(30);
 
   return EXIT_SUCCESS;

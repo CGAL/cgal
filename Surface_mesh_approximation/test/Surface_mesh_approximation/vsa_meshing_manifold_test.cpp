@@ -6,14 +6,14 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/vsa_approximation.h>
+#include <CGAL/VSA_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
 
-typedef CGAL::VSA::Mesh_approximation<Polyhedron, Vertex_point_map> L21_approx;
+typedef CGAL::VSA_approximation<Polyhedron, Vertex_point_map> L21_approx;
 typedef L21_approx::Error_metric L21_metric;
 typedef L21_approx::Proxy_fitting L21_proxy_fitting;
 
@@ -38,7 +38,7 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
   // approximation, seeding from error, drop to the target error incrementally
   const std::size_t num_iterations = 20;
   const std::size_t inner_iterations = 5;
-  approx.seeding(CGAL::VSA::Incremental, boost::none, drop, inner_iterations);
+  approx.seeding(CGAL::Incremental, boost::none, drop, inner_iterations);
   approx.run(num_iterations);
   std::cout << "#proxies " << approx.proxies_size() << std::endl;
 

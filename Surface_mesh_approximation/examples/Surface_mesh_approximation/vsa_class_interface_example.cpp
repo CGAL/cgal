@@ -3,13 +3,13 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/vsa_approximation.h>
+#include <CGAL/VSA_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
-typedef CGAL::VSA::Mesh_approximation<Polyhedron, Vertex_point_map> Mesh_approximation;
+typedef CGAL::VSA_approximation<Polyhedron, Vertex_point_map> Mesh_approximation;
 
 // L21 error metric 
 typedef Mesh_approximation::Error_metric Metric;
@@ -35,7 +35,7 @@ int main()
   approx.set_metric(metric, proxy_fitting);
 
   // seeding 100 random proxies
-  approx.seeding(CGAL::VSA::Random, 100);
+  approx.seeding(CGAL::Random, 100);
   
   // run 30 iterations 
   approx.run(30);

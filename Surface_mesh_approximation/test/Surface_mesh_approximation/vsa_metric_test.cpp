@@ -7,7 +7,7 @@
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/property_map.h>
-#include <CGAL/vsa_approximation.h>
+#include <CGAL/VSA_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
@@ -59,7 +59,7 @@ struct Point_proxy_fitting {
   const Facet_center_map center_pmap;
   const Facet_area_map area_pmap;
 };
-typedef CGAL::VSA::Mesh_approximation<Polyhedron, Vertex_point_map,
+typedef CGAL::VSA_approximation<Polyhedron, Vertex_point_map,
   Compact_metric, Point_proxy_fitting> Compact_approx;
 
 /**
@@ -99,7 +99,7 @@ int main()
   approx.set_metric(error_metric, proxy_fitting);
 
   std::cout << "random seeding and run" << std::endl;
-  approx.seeding(CGAL::VSA::Random, 20);
+  approx.seeding(CGAL::Random, 20);
   approx.run(20);
   if (approx.proxies_size() != 20)
     return EXIT_FAILURE;

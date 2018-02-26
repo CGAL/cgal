@@ -33,7 +33,7 @@ int main()
   CGAL::vsa_mesh_approximation(mesh,
     std::back_inserter(points),
     std::back_inserter(triangles),
-    CGAL::VSA::parameters::seeding_method(CGAL::VSA::Incremental).
+    CGAL::VSA::parameters::seeding_method(CGAL::Incremental).
       max_nb_proxies(6).
       nb_of_iterations(30).
       nb_of_relaxations(5).
