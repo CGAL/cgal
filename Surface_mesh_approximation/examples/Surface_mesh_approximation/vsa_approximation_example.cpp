@@ -27,7 +27,7 @@ int main()
   bool valid_polyhedron = CGAL::vsa_mesh_approximation(input,
     std::back_inserter(points),
     std::back_inserter(triangles),
-    CGAL::VSA::parameters::seeding_method(CGAL::Hierarchical). // hierarchical seeding
+    CGAL::Surface_mesh_approximation::parameters::seeding_method(CGAL::Hierarchical). // hierarchical seeding
     max_nb_proxies(200). // seeding with maximum number of proxies
     nb_of_iterations(30). // number of clustering iterations after seeding
     // output to polyhedron

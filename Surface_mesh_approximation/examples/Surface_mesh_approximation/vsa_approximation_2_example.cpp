@@ -6,7 +6,7 @@
 #include <CGAL/vsa_mesh_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::VSA::Plane_proxy<Kernel> Plane_proxy;
+typedef CGAL::Plane_proxy<Kernel> Plane_proxy;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 typedef std::map<face_descriptor, std::size_t> Facet_index_map;
@@ -39,7 +39,7 @@ int main()
   CGAL::vsa_mesh_approximation(input,
     std::back_inserter(points),
     std::back_inserter(triangles),
-    CGAL::VSA::parameters::min_error_drop(0.05). // seeding with minimum error drop
+    CGAL::Surface_mesh_approximation::parameters::min_error_drop(0.05). // seeding with minimum error drop
     nb_of_iterations(40). // set number of clustering iterations after seeding
     mesh_chord_error(0.3). // set chord approximation error threshold when meshing
     facet_proxy_map(fpxmap). // get facet partition map

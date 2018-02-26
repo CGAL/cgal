@@ -82,10 +82,10 @@ public:
     >::Kernel >::type Geom_traits;
   /// ErrorMetric type
   typedef typename CGAL::Default::Get<ErrorMetric,
-    CGAL::VSA::L21_metric<TriangleMesh, VertexPointMap, false, Geom_traits> >::type Error_metric;
+    CGAL::L21_metric<TriangleMesh, VertexPointMap, false, Geom_traits> >::type Error_metric;
   /// ProxyFitting type
   typedef typename CGAL::Default::Get<ProxyFitting,
-    CGAL::VSA::L21_proxy_fitting<TriangleMesh, VertexPointMap, Geom_traits> >::type Proxy_fitting;
+    CGAL::L21_proxy_fitting<TriangleMesh, VertexPointMap, Geom_traits> >::type Proxy_fitting;
   /// Proxy type
   typedef typename Error_metric::Proxy Proxy;
 

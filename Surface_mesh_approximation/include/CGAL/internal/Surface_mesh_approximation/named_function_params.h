@@ -45,7 +45,7 @@ namespace internal_np{
 #undef CGAL_add_named_parameter
   };
 
-namespace VSA{
+namespace Surface_mesh_approximation{
 
 namespace parameters{
 
@@ -63,7 +63,7 @@ namespace parameters{
 #include <CGAL/internal/Surface_mesh_approximation/parameters_interface.h>
 #undef CGAL_add_named_parameter
 } //namespace parameters
-} //namespace VSA
+} //namespace Surface_mesh_approximation
 
 } //namespace CGAL
 

@@ -32,7 +32,7 @@ int test() {
   CGAL::vsa_mesh_approximation(tm,
     std::back_inserter(points),
     std::back_inserter(triangles),
-    CGAL::VSA::parameters::max_nb_proxies(6).
+    CGAL::Surface_mesh_approximation::parameters::max_nb_proxies(6).
       nb_of_iterations(30).
       nb_of_relaxations(5).
       mesh_chord_error(0.5).

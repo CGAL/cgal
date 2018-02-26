@@ -26,14 +26,14 @@ int main()
   std::vector<std::vector<std::size_t> > triangles;
   std::vector<Kernel::Point_3> points;
   std::list<Polyhedron::Vertex_handle> anchors;
-  std::vector<CGAL::VSA::Plane_proxy<Kernel> > proxies;
+  std::vector<CGAL::Plane_proxy<Kernel> > proxies;
   std::map<Polyhedron::Facet_handle, std::size_t> fidxmap;
   boost::associative_property_map<std::map<Polyhedron::Facet_handle, std::size_t> > fpxmap(fidxmap);
 
   CGAL::vsa_mesh_approximation(mesh,
     std::back_inserter(points),
     std::back_inserter(triangles),
-    CGAL::VSA::parameters::seeding_method(CGAL::Incremental).
+    CGAL::Surface_mesh_approximation::parameters::seeding_method(CGAL::Incremental).
       max_nb_proxies(6).
       nb_of_iterations(30).
       nb_of_relaxations(5).

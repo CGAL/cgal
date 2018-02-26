@@ -1,5 +1,5 @@
-#ifndef CGAL_SURFACE_MESH_APPROXIMATION_VSA_METRICS_H
-#define CGAL_SURFACE_MESH_APPROXIMATION_VSA_METRICS_H
+#ifndef CGAL_VSA_METRICS_H
+#define CGAL_VSA_METRICS_H
 
 #include <CGAL/license/Surface_mesh_approximation.h>
 
@@ -13,7 +13,6 @@
 #include <list>
 
 namespace CGAL {
-namespace VSA {
 
 /*!
  * \ingroup PkgTSMA
@@ -59,7 +58,7 @@ template <typename TriangleMesh,
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   bool with_area_weighing = true,
   typename GeomTraits = typename TriangleMesh::Traits,
-  typename PlaneProxy = CGAL::VSA::Plane_proxy<GeomTraits> >
+  typename PlaneProxy = CGAL::Plane_proxy<GeomTraits> >
 class L21_metric
 {
   typedef typename GeomTraits::FT FT;
@@ -329,7 +328,7 @@ template <typename TriangleMesh,
   typename VertexPointMap
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits = typename TriangleMesh::Traits,
-  typename PlaneProxy = CGAL::VSA::Plane_proxy<GeomTraits> >
+  typename PlaneProxy = CGAL::Plane_proxy<GeomTraits> >
 class L21_proxy_fitting
 {
   typedef typename GeomTraits::FT FT;
@@ -498,7 +497,7 @@ template <typename TriangleMesh,
   typename VertexPointMap
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits = typename TriangleMesh::Traits,
-  typename PlaneProxy = CGAL::VSA::Plane_proxy<GeomTraits> >
+  typename PlaneProxy = CGAL::Plane_proxy<GeomTraits> >
 class L2_metric
 {
   typedef typename GeomTraits::FT FT;
@@ -631,7 +630,7 @@ template <typename TriangleMesh,
   typename VertexPointMap
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits = typename TriangleMesh::Traits,
-  typename PlaneProxy = CGAL::VSA::Plane_proxy<GeomTraits> >
+  typename PlaneProxy = CGAL::Plane_proxy<GeomTraits> >
 class L2_proxy_fitting
 {
   typedef typename GeomTraits::Point_3 Point_3;
@@ -730,7 +729,6 @@ private:
   const VertexPointMap vpoint_map;
 };
 
-} // end namespace VSA
 } // end namespace CGAL
 
-#endif // CGAL_SURFACE_MESH_APPROXIMATION_VSA_METRICS_H
+#endif // CGAL_VSA_METRICS_H

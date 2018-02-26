@@ -23,7 +23,7 @@ int main()
   CGAL::vsa_mesh_approximation(input,
                                 std::back_inserter(points),
                                 std::back_inserter(triangles),
-                                CGAL::VSA::parameters::max_nb_proxies(200));
+                                CGAL::Surface_mesh_approximation::parameters::max_nb_proxies(200));
 
   std::cout << "#vertices: " << points.size() << std::endl;
   std::cout << "#triangles: " << triangles.size() << std::endl;

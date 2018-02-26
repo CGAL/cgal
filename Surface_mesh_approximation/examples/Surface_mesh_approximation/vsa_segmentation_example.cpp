@@ -31,7 +31,7 @@ int main()
   // free function interface with named parameters
   CGAL::vsa_mesh_segmentation(input,
     fpxmap, // output segmentation
-    CGAL::VSA::parameters::seeding_method(CGAL::Hierarchical). // hierarchical seeding
+    CGAL::Surface_mesh_approximation::parameters::seeding_method(CGAL::Hierarchical). // hierarchical seeding
     max_nb_proxies(200). // first stop criterion
     min_error_drop(0.05). // second stop criterion
     nb_of_iterations(30)); // number of iterations after seeding
