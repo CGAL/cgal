@@ -2,7 +2,7 @@
 
 // CGAL headers
 #include <CGAL/Exact_circular_kernel_2.h>
-#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>
 
@@ -55,7 +55,7 @@
 
 
 typedef CGAL::Exact_circular_kernel_2 R;
-typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<R> K;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<R> K;
 
 typedef K::Point_2 Point_2;
 typedef Point_2 Point;

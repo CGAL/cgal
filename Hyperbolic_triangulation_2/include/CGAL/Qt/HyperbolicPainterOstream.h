@@ -29,13 +29,13 @@ namespace CGAL{
 namespace Qt {
   
   template <typename K>
-  class PainterOstream<Hyperbolic_Delaunay_triangulation_traits_2<K> > 
+  class PainterOstream<Hyperbolic_Delaunay_triangulation_CK_traits_2<K> > 
     : public PainterOstream<K> 
   {
   public:
     typedef PainterOstream<K> Base;
     
-    typedef Hyperbolic_Delaunay_triangulation_traits_2<K> Gt;
+    typedef Hyperbolic_Delaunay_triangulation_CK_traits_2<K> Gt;
     typedef PainterOstream<Gt> Self;
         
     typedef typename Gt::Hyperbolic_segment_2      Hyperbolic_segment_2;
