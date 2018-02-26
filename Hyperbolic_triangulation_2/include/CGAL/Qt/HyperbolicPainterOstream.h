@@ -1,10 +1,9 @@
-// Copyright (c) 2011-2016   INRIA Sophia Antipolis, INRIA Nancy (France).
+// Copyright (c) 2011   INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -12,77 +11,111 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: 
-// $Id: 
+// $URL: svn+ssh://mbogdanov@scm.gforge.inria.fr/svn/cgal/trunk/Triangulation_2/include/CGAL/Triangulation_hyperbolic_traits_2.h $
+// $Id: Triangulation_hyperbolic_traits_2.h 57323 2010-07-05 10:07:39Z sloriot $
 // 
 //
-// Author(s)     :  Monique Teillaud <Monique.Teillaud@inria.fr>
-//                  Mikhail Bogdanov
+// Author(s)     : Mikhail Bogdanov
 
 #ifndef CGAL_HYPERBOLIC_PAINTER_OSTREAM_H
 #define CGAL_HYPERBOLIC_PAINTER_OSTREAM_H
 
 #include <CGAL/Qt/PainterOstream.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 
 namespace CGAL{
 
 namespace Qt {
   
   template <typename K>
-  class PainterOstream<Hyperbolic_Delaunay_triangulation_CK_traits_2<K> > 
-    : public PainterOstream<K> 
-  {
-  public:
-    typedef PainterOstream<K> Base;
-    
-    typedef Hyperbolic_Delaunay_triangulation_CK_traits_2<K> Gt;
-    typedef PainterOstream<Gt> Self;
-        
-    typedef typename Gt::Hyperbolic_segment_2      Hyperbolic_segment_2;
+  class PainterOstream< Hyperbolic_Delaunay_triangulation_traits_2<K> > : public PainterOstream<K> {
 
-    typedef typename Gt::Point_2    Point_2;
-    typedef Line_arc_2<K>           Line_arc_2;
-    typedef Circular_arc_2<K>       Circular_arc_2;
-    typedef Circular_arc_point_2<K> Circular_arc_point_2;
-    
-    PainterOstream(QPainter* p, QRectF rect = QRectF())
-      : Base(p, rect), qp(p), convert(rect) 
-    {}
-    
-    using Base::operator <<;
-    
-    PainterOstream& operator << (Hyperbolic_segment_2 s)
-      {
-	if (const Line_arc_2* seg = boost::get<Line_arc_2>(&s)) {
-	  operator << (*seg);
+  	typedef PainterOstream<K> 															Base;
+	typedef PainterOstream< Hyperbolic_Delaunay_triangulation_traits_2<K> > 	Self;
+	typedef Hyperbolic_Delaunay_triangulation_traits_2<K> 					Gt;
+	
+	typedef typename Gt::Hyperbolic_segment_2       									Hyperbolic_segment_2;    
+	typedef typename Gt::Circular_arc_2             									Circular_arc_2;
+	typedef typename Gt::Euclidean_segment_2        									Euclidean_segment_2;    
+	typedef typename Gt::Point_2                    									Point_2;
+
+private:  	
+  	PainterOstream& operator<<(const Circular_arc_2& arc) {
+		const typename K::Circle_2 & circ  = arc.circle();
+		const typename K::Point_2 & center = circ.center();
+		const typename K::Point_2 & source = arc.source();
+		const typename K::Point_2 & target = arc.target();
+
+		double ds = CGAL::to_double(sqrt(source.x()*source.x() + source.y()*source.y()));
+		double dt = CGAL::to_double(sqrt(target.x()*target.x() + target.y()*target.y()));
+		
+		double asource = std::atan2( -to_double(source.y() - center.y()),
+		                              to_double(source.x() - center.x())); 
+		double atarget = std::atan2( -to_double(target.y() - center.y()),
+		                              to_double(target.x() - center.x()));
+
+		std::swap(asource, atarget);
+		double aspan = atarget - asource;
+
+		if(aspan < 0.)
+		aspan += 2 * CGAL_PI;
+
+		const double coeff = 180*16/CGAL_PI;
+		qp->drawArc(convert(circ.bbox()), 
+		(int)(asource * coeff), 
+			 (int)(aspan * coeff));
+	
+		return *this;
+	}
+	
+
+	PainterOstream& operator<<(const Euclidean_segment_2& seg) {
+
+		const typename K::Point_2 & source = seg.source();
+		const typename K::Point_2 & target = seg.target();
+
+		double ds = CGAL::to_double(sqrt(source.x()*source.x() + source.y()*source.y()));
+		double dt = CGAL::to_double(sqrt(target.x()*target.x() + target.y()*target.y()));
+		
+		QPointF src(to_double(source.x()), to_double(source.y()));
+		QPointF tgt(to_double(target.x()), to_double(target.y()));
+
+		qp->drawLine(src, tgt);
+	
+		return *this;
+	}
+	
+public:
+	PainterOstream(QPainter* p, QRectF rect = QRectF())
+	: Base(p, rect), qp(p), convert(rect) {}
+	
+	using Base::operator <<;
+	
+	PainterOstream& operator << (Hyperbolic_segment_2 s) {
+	  if (const Euclidean_segment_2* seg = boost::get<Euclidean_segment_2>(&s)) {
+		operator << (*seg);
+		return *this;
+	  }
+	  
+	  Circular_arc_2* arc = boost::get<Circular_arc_2>(&s);
+
+	  if (arc->squared_radius() > 100) {
+	  	Euclidean_segment_2 seg(arc->source(), arc->target());
+	  	operator << (seg);
+	  	return *this;
+	  }
+
+	  operator << (*arc);
 	  return *this;
 	}
-      
-	Circular_arc_2* arc = boost::get<Circular_arc_2>(&s);
-
-	if (arc->squared_radius() > 10 )
-	  // due to rounding, the arc drawn does not look like it 
-	  // passes through the endpoints
-	  // so we replace the arc by a line segment
-	  {
-	    Point_2 source(to_double(arc->source().x()),to_double(arc->source().y()));
-	    Point_2 target(to_double(arc->target().x()),to_double(arc->target().y()));	    
-	    const Line_arc_2 seg(source,target);
-	    operator << (seg);
-	    return *this;
-	  }
-      
-	operator << (*arc);
-	return *this;
-      }
-    
+	
   private:
-    // ToDo: These objects must be deleted
-    // Copies of these objects are in the base class.
-    // We need access to the copies in the base class.
-    QPainter* qp;
-    Converter<K> convert;      
-  };
+	// ToDo: These objects must be deleted
+	// Copies of these objects are in the base class.
+	// We need access to the copies in the base class.
+	QPainter* qp;
+	Converter<K> convert;      
+};
   
 } //namespace Qt
   
