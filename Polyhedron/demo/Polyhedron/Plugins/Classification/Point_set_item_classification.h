@@ -48,6 +48,37 @@ class Point_set_item_classification : public Item_classification_base
     const Point_set::Index& operator[] (std::size_t i) const { return inliers[i]; }
   };
   
+  struct Cluster_neighborhood
+  {
+    Point_set* point_set;
+    Point_set::Property_map<int> cluster_id;
+    std::vector<Cluster>* clusters;
+    
+    Cluster_neighborhood (Point_set* point_set,
+                          std::vector<Cluster>& clusters)
+      : point_set (point_set)
+      , clusters (&clusters)
+    {
+      cluster_id = point_set->property_map<int>("shape").first;
+    }
+    
+    template <typename OutputIterator>
+    OutputIterator operator() (const Point_set::Index& idx,
+                               OutputIterator output) const
+    {
+      int c = cluster_id[idx];
+      if (c == -1)
+        *(output ++) = idx;
+      else
+      {
+        std::copy ((*clusters)[c].inliers.begin(),
+                   (*clusters)[c].inliers.end(),
+                   output);
+      }
+      return output;
+    }
+  };
+  
  public:
   
   Point_set_item_classification(Scene_points_with_normal_item* points);
@@ -276,10 +307,24 @@ class Point_set_item_classification : public Item_classification_base
                                                        m_labels, classifier,
                                                        indices);
     else if (method == 1)
-      CGAL::Classification::classify_with_local_smoothing<Concurrency_tag>
-        (*(m_points->point_set()), m_points->point_set()->point_map(), m_labels, classifier,
-         m_generator->neighborhood().sphere_neighbor_query(m_generator->radius_neighbors()),
-         indices);
+    {
+      if (m_clusters.empty()) // Use real local smoothing
+        CGAL::Classification::classify_with_local_smoothing<Concurrency_tag>
+          (*(m_points->point_set()), m_points->point_set()->point_map(), m_labels, classifier,
+           m_generator->neighborhood().sphere_neighbor_query(m_generator->radius_neighbors()),
+           indices);
+      else // Smooth on clusters
+      {
+        std::cerr << "Smoothing on clusters" << std::endl;
+        CGAL::Classification::classify_with_local_smoothing<Concurrency_tag>
+          (*(m_points->point_set()),
+           CGAL::Identity_property_map<Point_set::Index>(),
+           m_labels, classifier,
+           Cluster_neighborhood(m_points->point_set(),
+                                m_clusters),
+           indices);
+      }
+    }
     else if (method == 2)
       CGAL::Classification::classify_with_graphcut<Concurrency_tag>
         (*(m_points->point_set()), m_points->point_set()->point_map(),
