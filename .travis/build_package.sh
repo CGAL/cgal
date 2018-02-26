@@ -2,12 +2,18 @@
 set -e
 
 CXX_FLAGS="-DCGAL_NDEBUG"
+IS_WINDOWS=$APPVEYOR
 
 function build_examples {
   mkdir -p build-travis
   cd build-travis
+if [ $IS_WINDOWS ]; then
+  cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS}" -G "Visual Studio 12 2013 Win64" ..
+  cmake --build .
+else
   cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS}" ..
   make -j2
+fi
 }
 
 function build_tests {
@@ -24,7 +30,11 @@ function build_demo {
     #use qt5 instead of qt4
 #    export QT_SELECT=5
     qmake NO_QT_VERSION_SUFFIX=yes
-    make -j2
+    if [ $IS_WINDOWS ]; then
+      nmake
+    else
+      make -j2
+    fi
     if [ ! -f libQGLViewer.so ]; then
         echo "libQGLViewer.so not made"
         exit 1
@@ -44,8 +54,13 @@ function build_demo {
     QGLVIEWERROOT=$PWD/qglviewer
     export QGLVIEWERROOT
   fi
-  cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" ..
-  make -j2
+  if [ $IS_WINDOWS ]; then
+    cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" -G "Visual Studio 12 2013 Win64" ..
+    cmake --build .
+  else
+    cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" ..
+    make -j2
+  fi
 }
 old_IFS=$IFS
 IFS=$' '
@@ -63,38 +78,40 @@ do
     zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
     #test dependencies 
     cd $ROOT
-    bash Scripts/developer_scripts/cgal_check_dependencies.sh /usr/bin/doxygen
+    if [ ! $IS_WINDOWS ]
+    then
+      bash Scripts/developer_scripts/cgal_check_dependencies.sh /usr/bin/doxygen
+    fi
     cd .travis
   	#parse current matrix and check that no package has been forgotten
 
-	  IFS=$'\n'
-	  COPY=0
-	  MATRIX=()
-	  for LINE in $(cat "$PWD/packages.txt")
-	  do
-	        MATRIX+="$LINE "
-	  done
+	IFS=$'\n'
+	COPY=0
+	MATRIX=()
+	for LINE in $(cat "$PWD/packages.txt")
+	do
+	  MATRIX+="$LINE "
+	done
 	
-	  PACKAGES=()
-	  cd ..
+	PACKAGES=()
+	cd ..
   	for f in *
-	  do
-	    if [ -d  "$f/package_info/$f" ]
-	        then
-	                PACKAGES+="$f "
-	        fi
-	  done	
-	
-	  DIFFERENCE=$(echo ${MATRIX[@]} ${PACKAGES[@]} | tr ' ' '\n' | sort | uniq -u)
-	  IFS=$' '
-	  if [ "${DIFFERENCE[0]}" != "" ]
+	do
+	  if [ -d  "$f/package_info/$f" ]
 	  then
-	        echo "The matrix and the actual package list differ : ."
-					echo ${DIFFERENCE[*]}
-            echo "You should run generate_travis.sh."
-	        exit 1
+	    PACKAGES+="$f "
 	  fi
-	  echo "Matrix is up to date."
+	done	
+    DIFFERENCE=$(echo ${MATRIX[@]} ${PACKAGES[@]} | tr ' ' '\n' | sort | uniq -u)
+	IFS=$' '
+	if [ "${DIFFERENCE[0]}" != "" ]
+	then
+	  echo "The matrix and the actual package list differ : ."
+	  echo ${DIFFERENCE[*]}
+      echo "You should run generate_travis.sh."
+	  exit 1
+	fi
+	echo "Matrix is up to date."
     #check if non standard cgal installation works
     cd $ROOT
     mkdir build_test
@@ -173,27 +190,29 @@ do
     echo "No test found for $ARG"
   fi
   #Packages like Periodic_3_triangulation_3 contain multiple demos
-  for DEMO in $DEMOS; do
-    DEMO=${DEMO#"$ROOT"}
-    echo $DEMO
-  	#If there is no demo subdir, try in GraphicsView
-    if [ ! -d "$ROOT/$DEMO" ] || [ ! -f "$ROOT/$DEMO/CMakeLists.txt" ]; then
-     DEMO="GraphicsView/demo/$ARG"
-    fi
-	  if [ "$ARG" != Polyhedron ] && [ -d "$ROOT/$DEMO" ]
-  	then
-      cd $ROOT/$DEMO
-      build_demo
-    elif [ "$ARG" != Polyhedron_demo ]; then
+  if [ ! $IS_WINDOWS ]; then
+    for DEMO in $DEMOS; do
+      DEMO=${DEMO#"$ROOT"}
+      echo $DEMO
+    	#If there is no demo subdir, try in GraphicsView
+      if [ ! -d "$ROOT/$DEMO" ] || [ ! -f "$ROOT/$DEMO/CMakeLists.txt" ]; then
+       DEMO="GraphicsView/demo/$ARG"
+      fi
+      if [ "$ARG" != Polyhedron ] && [ -d "$ROOT/$DEMO" ]
+      then
+        cd $ROOT/$DEMO
+        build_demo
+      elif [ "$ARG" != Polyhedron_demo ]; then
       echo "No demo found for $ARG"
 	  fi
-  done
-  if [ "$ARG" = Polyhedron_demo ]; then
-    DEMO=Polyhedron/demo/Polyhedron
-    NEED_3D=1
-    cd "$ROOT/$DEMO"
-    build_demo
-  fi  
+    done
+    if [ "$ARG" = Polyhedron_demo ]; then
+      DEMO=Polyhedron/demo/Polyhedron
+      NEED_3D=1
+      cd "$ROOT/$DEMO"
+      build_demo
+    fi  
+  fi
 done
 IFS=$old_IFS
 # Local Variables:

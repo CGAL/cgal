@@ -1,0 +1,64 @@
+version: 1.0.{build}
+image: Visual Studio 2013
+platform: x64
+configuration: Release
+clone_depth: 1
+environment:
+ matrix: 
+  - PACKAGE='AABB_tree Advancing_front_surface_reconstruction Algebraic_foundations ' 
+  - PACKAGE='Algebraic_kernel_d Algebraic_kernel_for_circles Algebraic_kernel_for_spheres ' 
+  - PACKAGE='Alpha_shapes_2 Alpha_shapes_3 Apollonius_graph_2 ' 
+  - PACKAGE='Arithmetic_kernel Arrangement_on_surface_2 Barycentric_coordinates_2 ' 
+  - PACKAGE='BGL Boolean_set_operations_2 Bounding_volumes ' 
+  - PACKAGE='Box_intersection_d Cartesian_kernel CGAL_Core ' 
+  - PACKAGE='CGAL_ImageIO CGAL_ipelets Circular_kernel_2 ' 
+  - PACKAGE='Circular_kernel_3 Circulator Classification ' 
+  - PACKAGE='Combinatorial_map Cone_spanners_2 Convex_decomposition_3 ' 
+  - PACKAGE='Convex_hull_2 Convex_hull_3 Convex_hull_d ' 
+  - PACKAGE='Distance_2 Distance_3 Envelope_2 ' 
+  - PACKAGE='Envelope_3 Filtered_kernel Generalized_map ' 
+  - PACKAGE='Generator Geomview GraphicsView ' 
+  - PACKAGE='HalfedgeDS Hash_map Homogeneous_kernel ' 
+  - PACKAGE='Inscribed_areas Installation Interpolation ' 
+  - PACKAGE='Intersections_2 Intersections_3 Interval_skip_list ' 
+  - PACKAGE='Interval_support Inventor Jet_fitting_3 ' 
+  - PACKAGE='Kernel_23 Kernel_d LEDA ' 
+  - PACKAGE='Linear_cell_complex MacOSX Maintenance ' 
+  - PACKAGE='Matrix_search Mesh_2 Mesh_3 ' 
+  - PACKAGE='Mesher_level Minkowski_sum_2 Minkowski_sum_3 ' 
+  - PACKAGE='Modifier Modular_arithmetic Nef_2 ' 
+  - PACKAGE='Nef_3 Nef_S2 NewKernel_d ' 
+  - PACKAGE='Number_types OpenNL Operations_on_polyhedra ' 
+  - PACKAGE='Optimal_transportation_reconstruction_2 Optimisation_basic Partition_2 ' 
+  - PACKAGE='Periodic_2_triangulation_2 Periodic_3_triangulation_3 Point_set_2 ' 
+  - PACKAGE='Point_set_3 Point_set_processing_3 Point_set_shape_detection_3 ' 
+  - PACKAGE='Poisson_surface_reconstruction_3 Polygon Polygon_mesh_processing ' 
+  - PACKAGE='Polyhedron Polyhedron_IO Polyline_simplification_2 ' 
+  - PACKAGE='Polynomial Polytope_distance_d Principal_component_analysis ' 
+  - PACKAGE='Principal_component_analysis_LGPL Profiling_tools Property_map ' 
+  - PACKAGE='QP_solver Random_numbers Ridges_3 ' 
+  - PACKAGE='Scale_space_reconstruction_3 Scripts SearchStructures ' 
+  - PACKAGE='Segment_Delaunay_graph_2 Segment_Delaunay_graph_Linf_2 Set_movable_separability_2 ' 
+  - PACKAGE='Skin_surface_3 Snap_rounding_2 Solver_interface ' 
+  - PACKAGE='Spatial_searching Spatial_sorting STL_Extension ' 
+  - PACKAGE='Straight_skeleton_2 Stream_lines_2 Stream_support ' 
+  - PACKAGE='Subdivision_method_3 Surface_mesh Surface_mesh_deformation ' 
+  - PACKAGE='Surface_mesher Surface_mesh_parameterization Surface_mesh_segmentation ' 
+  - PACKAGE='Surface_mesh_shortest_path Surface_mesh_simplification Surface_mesh_skeletonization ' 
+  - PACKAGE='Surface_sweep_2 TDS_2 TDS_3 ' 
+  - PACKAGE='Testsuite Three Triangulation ' 
+  - PACKAGE='Triangulation_2 Triangulation_3 Union_find ' 
+  - PACKAGE='Visibility_2 Voronoi_diagram_2 wininst ' 
+  - PACKAGE='Polyhedron_demo' 
+install:
+    -  set "CONDA_ROOT=C:\Miniconda36-x64"
+    -  set "PATH=%CONDA_ROOT%;%CONDA_ROOT%\Scripts;%CONDA_ROOT%\Library\bin;;C:\Qt\5.6\msvc2013_64\bin;%PATH%"
+    -  set "BOOST_ROOT=C:\Libraries/boost"
+    -  conda install -y -c conda-forge cmake mpfr zlib eigen
+    -  conda install -y -c anaconda-nb-extensions gmp
+before_build:
+- cmd:
+- cd C:\projects\cgal\ && mkdir build && cd build && cmake -DCGAL_HEADER_ONLY=ON -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG .. && cmake --build . && cmake --build . --target install
+build_script:
+- cd C:\projects\cgal\.travis
+- C:\Cygwin\bin\bash.exe -x -e build_package.sh %PACKAGE%
