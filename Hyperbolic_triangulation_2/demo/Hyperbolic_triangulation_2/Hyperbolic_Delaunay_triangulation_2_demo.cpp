@@ -2,12 +2,20 @@
 
 // CGAL headers
 
-#include <CGAL/Exact_circular_kernel_2.h>
-#include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
+#define USE_CORE_EXPR_KERNEL
+
+#ifndef USE_CORE_EXPR_KERNEL
+  #include <CGAL/Exact_circular_kernel_2.h>
+  #include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
+  #include <CGAL/Qt/HyperbolicPainterOstreamCK.h>
+#else
+  #include <CGAL/Cartesian.h>
+  #include <CGAL/CORE_Expr.h>
+  #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
+  #include <CGAL/Qt/HyperbolicPainterOstream.h>
+#endif
+
 #include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>
-
-#include <CGAL/Qt/HyperbolicPainterOstream.h>
-
 #include <CGAL/point_generators_2.h>
 
 // Qt headers
@@ -37,9 +45,15 @@
 #include "ui_Hyperbolic_triangulation_2_demo.h"
 
 
-//typedef CGAL::Exact_predicates_exact_constructions_kernel R;
-typedef CGAL::Exact_circular_kernel_2             R;
-typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<R> K;
+#ifndef USE_CORE_EXPR_KERNEL
+  typedef CGAL::Exact_circular_kernel_2 R;
+  typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<R> K;
+#else
+  typedef CORE::Expr                                          NT;
+  typedef CGAL::Cartesian<NT>                                 R;
+  typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<R> K;
+#endif
+
 
 typedef K::Point_2 Point_2;
 typedef K::Iso_rectangle_2 Iso_rectangle_2;

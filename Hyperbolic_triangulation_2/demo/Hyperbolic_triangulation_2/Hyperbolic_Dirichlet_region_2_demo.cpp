@@ -1,12 +1,20 @@
 #include <fstream>
 
-// CGAL headers
-#include <CGAL/Exact_circular_kernel_2.h>
-#include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
+#define USE_CORE_EXPR_KERNEL
+
+#ifndef USE_CORE_EXPR_KERNEL
+  #include <CGAL/Exact_circular_kernel_2.h>
+  #include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
+  #include <CGAL/Qt/HyperbolicPainterOstreamCK.h>
+#else
+  #include <CGAL/Cartesian.h>
+  #include <CGAL/CORE_Expr.h>
+  #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
+  #include <CGAL/Qt/HyperbolicPainterOstream.h>
+#endif
+
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>
-
-#include <CGAL/Qt/HyperbolicPainterOstream.h>
 
 #include <CGAL/point_generators_2.h>
 
@@ -54,8 +62,15 @@
 #include "ui_Hyperbolic_triangulation_2_demo.h"
 
 
-typedef CGAL::Exact_circular_kernel_2 R;
-typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<R> K;
+#ifndef USE_CORE_EXPR_KERNEL
+  typedef CGAL::Exact_circular_kernel_2 R;
+  typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<R> K;
+#else
+  typedef CORE::Expr                                          NT;
+  typedef CGAL::Cartesian<NT>                                 R;
+  typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<R> K;
+#endif
+
 
 typedef K::Point_2 Point_2;
 typedef Point_2 Point;
@@ -105,7 +120,7 @@ void apply_unique_words(std::vector<Point>& points, Point input = Point(0, 0), d
   pair<double, double> res;
   for(size_t i = 0; i < unique_words.size(); i++) {
     pair<double, double> res;
-    res = unique_words[i].apply(to_double(input.x()), to_double(input.y()));
+    res = unique_words[i].apply(CGAL::to_double(input.x()), CGAL::to_double(input.y()));
 
     double dist = res.first*res.first + res.second*res.second;
     if(dist < d) {
@@ -148,7 +163,7 @@ void apply_unique_words_G(std::vector<Point>& points, Point input = Point(0, 0),
   for(size_t i = 0; i < indices.size(); i++) {
     pair<double, double> res;
     if(indices[i] < unique_words.size() /*&& unique_words[indices[i]].length() <  13.*/) {
-      res = unique_words[indices[i]].apply(to_double(input.x()), to_double(input.y()));
+      res = unique_words[indices[i]].apply(CGAL::to_double(input.x()), CGAL::to_double(input.y()));
       points.push_back(Point(res.first, res.second));
     }
   }
