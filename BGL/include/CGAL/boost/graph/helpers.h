@@ -397,7 +397,6 @@ std::distance(halfedges(g).first, halfedges(g).second))
 
 - the sum of halfedges around all the faces of `g` + the border halfedges of `g` is 
 std::distance(halfedges(g).first, halfedges(g).second))
-- The faces of `g` are at least triangles.
 - `g` has distinct faces on each side of an edge.
  */
 template <typename PolygonMesh>
