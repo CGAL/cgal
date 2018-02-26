@@ -3,6 +3,7 @@
 #include <QList>
 #include <QMainWindow>
 #include <QMessageBox>
+#include <QInputDialog>
 #include <QtDebug>
 
 #include "Scene_polygon_soup_item.h"
@@ -97,7 +98,7 @@ void Polyhedron_demo_orient_soup_plugin::init(QMainWindow* mainWindow,
   actionDisplayNonManifoldEdges->setProperty("subMenuName", "View");
   connect(actionDisplayNonManifoldEdges, SIGNAL(triggered()),
           this, SLOT(displayNonManifoldEdges()));
-  actionNMToPolyline = new QAction(tr("Make Items from Non Manifold Simplices"), mainWindow);
+  actionNMToPolyline = new QAction(tr("Extract Non Manifold Simplices"), mainWindow);
   actionNMToPolyline->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionNMToPolyline, &QAction::triggered,
           this, &Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline);
@@ -149,6 +150,11 @@ void Polyhedron_demo_orient_soup_plugin::orientPoly()
 
     if(item)
     {
+      int create_items = QMessageBox::question(mw, "Orient Mesh", "Do you wish to extract the eventual non manifold simplicies ?");
+      if(create_items == QMessageBox::Yes)
+      {
+        createPointsAndPolyline();
+      }
       if(!item->orient()) {
          QMessageBox::information(mw, tr("Not orientable without self-intersections"),
                                       tr("The polygon soup \"%1\" is not directly orientable."
@@ -189,7 +195,11 @@ void Polyhedron_demo_orient_soup_plugin::orientSM()
 
     if(item)
     {
-      //     qDebug()  << tr("I have the item %1\n").arg(item->name());
+      int create_items = QMessageBox::question(mw, "Orient Mesh", "Do you wish to extract the eventual non manifold simplicies ?");
+      if(create_items == QMessageBox::Yes)
+      {
+        createPointsAndPolyline();
+      }
       if(!item->orient()) {
          QMessageBox::information(mw, tr("Not orientable without self-intersections"),
                                       tr("The polygon soup \"%1\" is not directly orientable."
@@ -318,21 +328,28 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
           
           scene->addItem(points);
     }
-    Scene_polylines_item* poly = 
-        new Scene_polylines_item();
     Polygon_soup::Edges nm_edges = item->non_manifold_edges();
-    BOOST_FOREACH(Polygon_soup::Edge edge, nm_edges)
+    if(!nm_edges.empty())
     {
-      Point_3 a(item->points()[edge[0]]), b(item->points()[edge[1]]);
-      Scene_polylines_item::Polyline new_edge;
-      new_edge.push_back(a);
-      new_edge.push_back(b);
-      poly->polylines.push_back(new_edge);
+      Scene_polylines_item* poly = 
+          new Scene_polylines_item();
+      BOOST_FOREACH(Polygon_soup::Edge edge, nm_edges)
+      {
+        Point_3 a(item->points()[edge[0]]), b(item->points()[edge[1]]);
+        Scene_polylines_item::Polyline new_edge;
+        new_edge.push_back(a);
+        new_edge.push_back(b);
+        poly->polylines.push_back(new_edge);
+      }
+      poly->setName(QString("Non Manifold Edges of %1").arg(item->name()));
+      poly->setColor(QColor(Qt::red));
+      
+      scene->addItem(poly);
     }
-    poly->setName(QString("Non Manifold Edges of %1").arg(item->name()));
-    poly->setColor(QColor(Qt::red));
-    
-    scene->addItem(poly);
+    else
+    {
+      messages->information("Non non-manifold edges were found.");
+    }
     QApplication::restoreOverrideCursor();
   }  
 }
