@@ -6,6 +6,8 @@
 #include "Cluster_classification.h"
 #include "Color_ramp.h"
 
+#include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 
@@ -42,6 +44,19 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
     if (c >= m_clusters.size())
       m_clusters.resize (c + 1);
     m_clusters[c].inliers.push_back (*it);
+  }
+
+  for (std::size_t i = 0; i < m_clusters.size(); ++ i)
+  {
+    m_clusters[i].bounding_box
+      = CGAL::bbox_3 (boost::make_transform_iterator
+                      (m_clusters[i].inliers.begin(),
+                       CGAL::Property_map_to_unary_function<Point_set::Point_map>
+                       (m_points->point_set()->point_map())),
+                      boost::make_transform_iterator
+                      (m_clusters[i].inliers.end(),
+                       CGAL::Property_map_to_unary_function<Point_set::Point_map>
+                       (m_points->point_set()->point_map())));
   }
 
   std::cerr << m_clusters.size() << " cluster(s) found" << std::endl;
@@ -228,6 +243,47 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
 #ifdef CGAL_LINKED_WITH_OPENCV
   m_random_forest = new Random_forest (m_labels, m_features);
 #endif
+
+  // Compute neighborhood
+  typedef CGAL::Triangulation_vertex_base_with_info_3<int, Kernel> Vb;
+  typedef CGAL::Triangulation_data_structure_3<Vb>                    Tds;
+  typedef CGAL::Delaunay_triangulation_3<Kernel, Tds>                      Delaunay;
+
+  Delaunay dt (boost::make_transform_iterator
+               (m_points->point_set()->begin(),
+                Point_set_with_cluster_info (m_points->point_set(),
+                                             m_cluster_id)),
+                boost::make_transform_iterator
+               (m_points->point_set()->end(),
+                Point_set_with_cluster_info (m_points->point_set(),
+                                             m_cluster_id)));
+
+  std::set<std::pair<int, int> > adjacencies;
+  
+  for (typename Delaunay::Finite_edges_iterator it = dt.finite_edges_begin();
+       it != dt.finite_edges_end(); ++ it)
+  {
+    typename Delaunay::Vertex_handle v0 = it->first->vertex (it->second);
+    typename Delaunay::Vertex_handle v1 = it->first->vertex (it->third);
+    int a = v0->info();
+    int b = v1->info();
+
+    if (a == -1 || b == -1)
+      continue;
+
+    if (a > b)
+      std::swap (a, b);
+
+    adjacencies.insert (std::make_pair (a, b));
+  }
+
+  for (typename std::set<std::pair<int, int> >::iterator it = adjacencies.begin();
+       it != adjacencies.end(); ++ it)
+  {
+    m_clusters[std::size_t(it->first)].neighbors.push_back (std::size_t(it->second));
+    m_clusters[std::size_t(it->second)].neighbors.push_back (std::size_t(it->first));
+  }
+
 }
 
 

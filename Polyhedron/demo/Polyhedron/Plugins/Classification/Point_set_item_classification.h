@@ -37,6 +37,17 @@ class Point_set_item_classification : public Item_classification_base
 
   typedef CGAL::Classification::Point_set_feature_generator<Kernel, Point_set, Point_map>               Generator;
   
+  struct Cluster
+  {
+    std::vector<Point_set::Index> inliers;
+    int training;
+    int label;
+    Cluster() : training (-1), label (-1) { }
+
+    std::size_t size() const { return inliers.size(); }
+    const Point_set::Index& operator[] (std::size_t i) const { return inliers[i]; }
+  };
+  
  public:
   
   Point_set_item_classification(Scene_points_with_normal_item* points);
@@ -44,6 +55,36 @@ class Point_set_item_classification : public Item_classification_base
 
   CGAL::Three::Scene_item* item() { return m_points; }
   void erase_item() { m_points = NULL; }
+
+  CGAL::Bbox_3 bbox()
+  {
+    if (m_points->point_set()->nb_selected_points() == 0)
+      return m_points->bbox();
+
+    CGAL::Bbox_3 bb = CGAL::bbox_3 (boost::make_transform_iterator
+                                    (m_points->point_set()->first_selected(),
+                                     CGAL::Property_map_to_unary_function<Point_set::Point_map>
+                                     (m_points->point_set()->point_map())),
+                                    boost::make_transform_iterator
+                                    (m_points->point_set()->end(),
+                                     CGAL::Property_map_to_unary_function<Point_set::Point_map>
+                                     (m_points->point_set()->point_map())));
+
+    double xcenter = (bb.xmax() + bb.xmin()) / 2.;
+    double ycenter = (bb.ymax() + bb.ymin()) / 2.;
+    double zcenter = (bb.zmax() + bb.zmin()) / 2.;
+
+    double dx = bb.xmax() - bb.xmin();
+    double dy = bb.ymax() - bb.ymin();
+    double dz = bb.zmax() - bb.zmin();
+    
+    dx *= 10.;
+    dy *= 10.;
+    dz *= 10.;
+
+    return CGAL::Bbox_3 (xcenter - dx, ycenter - dy, zcenter - dz,
+                         xcenter + dx, ycenter + dy, zcenter + dz);
+  }
 
   void compute_features (std::size_t nb_scales);
   void add_remaining_point_set_properties_as_features();
@@ -279,6 +320,8 @@ class Point_set_item_classification : public Item_classification_base
   }
 
   Scene_points_with_normal_item* m_points;
+
+  std::vector<Cluster> m_clusters;
 
   Point_set::Property_map<unsigned char> m_red;
   Point_set::Property_map<unsigned char> m_green;

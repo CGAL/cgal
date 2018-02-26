@@ -39,12 +39,48 @@ class Cluster_classification : public Item_classification_base
   struct Cluster
   {
     std::vector<Point_set::Index> inliers;
+    std::vector<std::size_t> neighbors;
+    CGAL::Bbox_3 bounding_box;
     int training;
     int label;
     Cluster() : training (-1), label (-1) { }
 
     std::size_t size() const { return inliers.size(); }
     const Point_set::Index& operator[] (std::size_t i) const { return inliers[i]; }
+
+    CGAL::Bbox_3 bbox() const
+    {
+      return bounding_box;
+    }
+  };
+
+  struct Point_set_with_cluster_info
+    : public CGAL::unary_function<const Point_set::Index&,
+                                  std::pair<Kernel::Point_3, int> >
+  {
+    Point_set* point_set;
+    Point_set::Property_map<int>* cluster_id;
+
+    Point_set_with_cluster_info (Point_set* point_set,
+                                 Point_set::Property_map<int>& cluster_id)
+      : point_set (point_set)
+      , cluster_id (&cluster_id)
+    { }
+
+    std::pair<Kernel::Point_3, int> operator() (const Point_set::Index& idx) const
+    {
+      return std::make_pair (point_set->point(idx), (*cluster_id)[idx]);
+    }
+    
+  };
+
+  struct Neighbor_query
+  {
+    template <typename OutputIterator>
+    OutputIterator operator() (const Cluster& cluster, OutputIterator output) const
+    {
+      return std::copy (cluster.neighbors.begin(), cluster.neighbors.end(), output);
+    }
   };
   
   class Mean_feature : public CGAL::Classification::Feature_base
@@ -132,8 +168,19 @@ class Cluster_classification : public Item_classification_base
     {
       this->set_name ("cluster_size");
       m_values.reserve (input.size());
+
       for (std::size_t i = 0; i < input.size(); ++ i)
         m_values.push_back (float(input[i].size()));
+
+      std::vector<float> c = m_values;
+      std::sort (c.begin(), c.end());
+      std::cerr << " * Min cluster size = " << c.front() << std::endl
+                << " * 10% cluster size = " << c[c.size() / 10] << std::endl
+                << " * 25% cluster size = " << c[c.size() / 4] << std::endl
+                << " * Median cluster size = " << c[c.size() / 2] << std::endl
+                << " * 75% cluster size = " << c[3 * c.size() / 4] << std::endl
+                << " * 90% cluster size = " << c[9 * c.size() / 10] << std::endl
+                << " * Max cluster size = " << c.back() << std::endl;
     }
 
     virtual float value (std::size_t cluster_index) { return m_values[cluster_index]; }
@@ -492,14 +539,23 @@ class Cluster_classification : public Item_classification_base
     std::vector<int> indices (m_clusters.size(), -1);
 
     if (method == 0)
-      CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
+      CGAL::Classification::classify<Concurrency_tag> (m_clusters,
                                                        m_labels, classifier,
                                                        indices);
-    else
-    {
-      std::cerr << "Unhandled method." << std::endl;
-      return false;
-    }
+    else if (method == 1)
+      CGAL::Classification::classify_with_local_smoothing<Concurrency_tag>
+        (m_clusters,
+         CGAL::Identity_property_map<Cluster>(),
+         m_labels, classifier,
+         Neighbor_query(),
+         indices);
+    else if (method == 2)
+      CGAL::Classification::classify_with_graphcut<Concurrency_tag>
+        (m_clusters,
+         CGAL::Identity_property_map<Cluster>(),
+         m_labels, classifier,
+         Neighbor_query(),
+         smoothing, subdivisions, indices);
 
     std::vector<int> ground_truth(m_clusters.size(), -1);
     for (std::size_t i = 0; i < m_clusters.size(); ++ i)

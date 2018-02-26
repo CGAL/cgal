@@ -24,6 +24,23 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
 
   reset_indices();
 
+  Point_set::Property_map<int> cluster_id;
+  bool cluster_found = false;
+  boost::tie (cluster_id, cluster_found) = m_points->point_set()->property_map<int>("shape");
+  if (cluster_found)
+  {
+    for (Point_set::const_iterator it = m_points->point_set()->begin();
+         it != m_points->point_set()->first_selected(); ++ it)
+    {
+      int c = cluster_id[*it];
+      if (c == -1)
+        continue;
+      if (c >= m_clusters.size())
+        m_clusters.resize (c + 1);
+      m_clusters[c].inliers.push_back (*it);
+    }
+  }
+
   backup_existing_colors_and_add_new();
   bool training_found = false;
   boost::tie (m_training, training_found) = m_points->point_set()->add_property_map<int>("training", -1);
@@ -473,42 +490,59 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales)
 void Point_set_item_classification::select_random_region()
 {
   m_points->point_set()->reset_indices();
-  
-  std::size_t scale = (rand() % m_generator->number_of_scales());
-
-  bool use_grid = (rand() % 2);
 
   std::vector<std::size_t> selected;
-  
-  if (use_grid)
+  std::vector<std::size_t> unselected;
+
+  // If no cluster, fallback mode on grid or region selection
+  if (m_clusters.empty())
   {
-    std::size_t x = (rand() % m_generator->grid(scale).width());
-    std::size_t y = (rand() % m_generator->grid(scale).height());
-    std::copy (m_generator->grid(scale).indices_begin(x,y),
-               m_generator->grid(scale).indices_end(x,y),
-               std::back_inserter (selected));
+    std::size_t scale = (rand() % m_generator->number_of_scales());
+
+    bool use_grid = (rand() % 2);
+
+    if (use_grid)
+    {
+      std::size_t x = (rand() % m_generator->grid(scale).width());
+      std::size_t y = (rand() % m_generator->grid(scale).height());
+      std::copy (m_generator->grid(scale).indices_begin(x,y),
+                 m_generator->grid(scale).indices_end(x,y),
+                 std::back_inserter (selected));
+    }
+    else
+    {
+      m_generator->neighborhood(0).sphere_neighbor_query (m_generator->radius_neighbors(scale))
+        (*(m_points->point_set()->points().begin() + (rand() % m_points->point_set()->size())),
+         std::back_inserter (selected));
+    }
+
+    if (selected.empty())
+      return;
+
+    std::sort (selected.begin(), selected.end());
+    std::size_t current_idx = 0;
+    for (Point_set::const_iterator it = m_points->point_set()->begin();
+         it != m_points->point_set()->end(); ++ it)
+      if (std::size_t(*it) == selected[current_idx])
+        current_idx ++;
+      else
+        unselected.push_back (*it);
+  
   }
   else
   {
-    m_generator->neighborhood(0).sphere_neighbor_query (m_generator->radius_neighbors(scale))
-      (*(m_points->point_set()->points().begin() + (rand() % m_points->point_set()->size())),
-       std::back_inserter (selected));
+    std::size_t c = rand() % m_clusters.size();
+    std::set<Point_set::Index> in_cluster;
+    for (std::size_t i = 0; i < m_clusters[c].size(); ++ i)
+      in_cluster.insert (m_clusters[c][i]);
+
+    for (Point_set::const_iterator it = m_points->point_set()->begin();
+         it != m_points->point_set()->end(); ++ it)
+      if (in_cluster.find (*it) != in_cluster.end())
+        selected.push_back (*it);
+      else
+        unselected.push_back (*it);
   }
-
-  if (selected.empty())
-    return;
-
-  std::sort (selected.begin(), selected.end());
-  std::size_t current_idx = 0;
-
-  std::vector<std::size_t> unselected;
-
-  for (Point_set::const_iterator it = m_points->point_set()->begin();
-       it != m_points->point_set()->end(); ++ it)
-    if (std::size_t(*it) == selected[current_idx])
-      current_idx ++;
-    else
-      unselected.push_back (*it);
   
   for (std::size_t i = 0; i < unselected.size(); ++ i)
     *(m_points->point_set()->begin() + i) = unselected[i];

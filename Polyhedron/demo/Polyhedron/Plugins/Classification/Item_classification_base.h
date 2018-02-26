@@ -103,6 +103,22 @@ public:
     m_random_forest = new Random_forest (m_labels, m_features);
 #endif
   }
+  virtual void clear_labels ()
+  {
+    m_labels.clear();
+    m_label_colors.clear();
+
+    delete m_sowf;
+    m_sowf = new Sum_of_weighted_features (m_labels, m_features);
+
+    delete m_ethz;
+    m_ethz = new ETHZ_random_forest (m_labels, m_features);
+
+#ifdef CGAL_LINKED_WITH_OPENCV
+    delete m_random_forest;
+    m_random_forest = new Random_forest (m_labels, m_features);
+#endif
+  }
   std::size_t number_of_labels() const { return m_labels.size(); }
   Label_handle label(std::size_t i) { return m_labels[i]; }
 
