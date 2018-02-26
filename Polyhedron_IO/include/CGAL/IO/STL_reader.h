@@ -47,6 +47,7 @@ namespace CGAL{
     char line[80];
     int i = 0, ni = 0;
 
+      // read the 5 first characters to check if the first word is "solid"
       boost::uint8_t c;
       for(; i < 5; i++){
         input.read(reinterpret_cast<char*>(&c), sizeof(c));
@@ -59,6 +60,8 @@ namespace CGAL{
         // But it might still be binary, so we have to find out if it is followed
         // by an (optional) name and then the keyword "facet"
         // When we find "facet" we conclude that it is really Ascii
+
+        // first skip whitespaces after solid
         do {
           input.read(reinterpret_cast<char*>(&c), sizeof(c));
           line[i++]=c;
@@ -87,7 +90,7 @@ namespace CGAL{
         
         // we continue to read what comes after the name
         
-        // now c is whitespace
+        // now c is whitespace, skip other whitespaces
         do {
           input.read(reinterpret_cast<char*>(&c), sizeof(c));
           line[i++]=c;
@@ -103,8 +106,8 @@ namespace CGAL{
           input.read(reinterpret_cast<char*>(&c), sizeof(c));
           line[i++]=c;
         }while(! isspace(c) && ( i < 80));
-#       ifdef CGAL_DEBUG_BINARY_HEADER
           s = std::string(line+ni, (i-1) - ni);
+#       ifdef CGAL_DEBUG_BINARY_HEADER
           std::cout << "|" << s  << "|" << std::endl;
 #       endif
         if(s == facet){

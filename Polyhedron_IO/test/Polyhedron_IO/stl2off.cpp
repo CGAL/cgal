@@ -44,6 +44,7 @@ int main()
   read("data/triangle.stl", 3, 1);
 
   
+  read("data/ascii-tetrahedron.stl", 4, 4);
   read("data/binary-tetrahedron-nice-header.stl", 4, 4);
   read("data/binary-tetrahedron-non-standard-header-1.stl", 4, 4);
   read("data/binary-tetrahedron-non-standard-header-2.stl", 4, 4);
