@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Minkowski_sum_3.h>
 
+#error FAKE MODIFICATION
 
 #include <CGAL/convex_decomposition_3.h>
 #include <CGAL/Minkowski_sum_3/bipartite_nary_union_sorted_combined.h> 
