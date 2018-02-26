@@ -7,7 +7,7 @@ namespace boost{
 namespace geometry{
 namespace traits{
 
-//Traits for Points
+//WKT traits for Points
 template< typename K > struct tag<CGAL::Point_2<K> >
 { typedef point_tag type; };
 

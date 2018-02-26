@@ -78,19 +78,15 @@ read_WKT( std::istream& in,
 }
 
 
-//!
-//! \brief read_polygon_WKT
-//! \tparam Polygon 
+//! \ingroup PkgPolygonIO
+//! \brief read_polygons_WKT reads the content of a .wkt file into a `Polygon`.
 //! 
-//! \param in
-//! \param polygon
-//! \return 
+//! A `Polygon` must inherit `CGAL::General_polygon_with_holes_2`.
 //! 
-//! \relates CGAL::Polygon_with_holes_2
-//!
+//! \relates CGAL::General_polygon_with_holes_2
 template<typename Polygon>
 std::istream&
-read_polygon_WKT( std::istream& in,
+read_polygons_WKT( std::istream& in,
           Polygon& polygon
           )
 {
@@ -116,6 +112,11 @@ read_polygon_WKT( std::istream& in,
   return in;  
 }
 
+//! \ingroup PkgPolygonIO
+//! \brief write_polygons_WKT writes the content of `polygons`, a range of 
+//! CGAL::General_polygon_with_holes_2 into a .WKT file.
+//! 
+//! \relates CGAL::General_polygon_with_holes_2
 template<typename PolygonRange>
 bool
 write_polygons_WKT( std::ostream& out,

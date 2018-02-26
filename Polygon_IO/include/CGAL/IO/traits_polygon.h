@@ -8,7 +8,7 @@
 namespace boost{
 namespace geometry{
 namespace traits{
-//traits for Polygon
+// WKT traits for Polygon
 template< typename K > struct tag<CGAL::Polygon_2<K> >
 { typedef ring_tag type; };
 

@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
   do
   {
     Polygon p;
-    CGAL::read_polygon_WKT(is, p);
+    CGAL::read_polygons_WKT(is, p);
     if(!p.outer_boundary().is_empty())
       polys.push_back(p);
   }while(is.good() && !is.eof());
