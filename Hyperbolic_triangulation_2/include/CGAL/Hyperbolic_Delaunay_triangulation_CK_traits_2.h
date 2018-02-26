@@ -19,8 +19,8 @@
 // Author(s)     : Mikhail Bogdanov
 //                 Monique Teillaud <Monique.Teillaud@inria.fr>
 
-#ifndef CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_H
-#define CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_H
+#ifndef CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_CK_TRAITS_2_H
+#define CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_CK_TRAITS_2_H
 
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include "boost/tuple/tuple.hpp"
@@ -29,7 +29,7 @@
 namespace CGAL {
 
 template < class R >
-class Hyperbolic_Delaunay_triangulation_traits_2
+class Hyperbolic_Delaunay_triangulation_CK_traits_2
   : public R
   // R is supposed to be a model of CircularKernel2
   {
@@ -65,7 +65,7 @@ public:
   typedef typename R::Compute_squared_distance_2 Compute_squared_Euclidean_distance_2;
   typedef typename R::Has_on_bounded_side_2 Has_on_bounded_side_2;
   // MT useless?
-  //  typedef Hyperbolic_Delaunay_triangulation_traits_2<R> Self;
+  //  typedef Hyperbolic_Delaunay_triangulation_CK_traits_2<R> Self;
   //  typedef typename R::RT          RT;
   //  typedef R Kernel;
   //  typedef R Rep;
@@ -199,14 +199,14 @@ public:
 
   }; // end Construct_hyperbolic_circumcenter_2
   
-  Hyperbolic_Delaunay_triangulation_traits_2() 
+  Hyperbolic_Delaunay_triangulation_CK_traits_2() 
   {}
   
-  Hyperbolic_Delaunay_triangulation_traits_2(const Hyperbolic_Delaunay_triangulation_traits_2 & other)
+  Hyperbolic_Delaunay_triangulation_CK_traits_2(const Hyperbolic_Delaunay_triangulation_CK_traits_2 & other)
   {}
   
-  Hyperbolic_Delaunay_triangulation_traits_2 &operator=
-  (const Hyperbolic_Delaunay_triangulation_traits_2 &)
+  Hyperbolic_Delaunay_triangulation_CK_traits_2 &operator=
+  (const Hyperbolic_Delaunay_triangulation_CK_traits_2 &)
   {
     return *this;
   }
@@ -515,18 +515,18 @@ public:
 
 #ifdef CGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL_H
 template  <>
-struct Triangulation_structural_filtering_traits< Hyperbolic_Delaunay_triangulation_traits_2<Epeck> > {
+struct Triangulation_structural_filtering_traits< Hyperbolic_Delaunay_triangulation_CK_traits_2<Epeck> > {
   typedef Tag_true Use_structural_filtering_tag;
 };
 #endif // CGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL_H
 
 #ifdef CGAL_EXACT_PREDICATES_INEXACT_CONSTRUCTIONS_KERNEL_H
 template <>
-struct Triangulation_structural_filtering_traits< Hyperbolic_Delaunay_triangulation_traits_2<Epick> > {
+struct Triangulation_structural_filtering_traits< Hyperbolic_Delaunay_triangulation_CK_traits_2<Epick> > {
   typedef Tag_true Use_structural_filtering_tag;
 };
 #endif // CGAL_EXACT_PREDICATES_INEXACT_CONSTRUCTIONS_KERNEL_H
 
 } //namespace CGAL 
 
-#endif // CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_H
+#endif // CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_CK_TRAITS_2_H

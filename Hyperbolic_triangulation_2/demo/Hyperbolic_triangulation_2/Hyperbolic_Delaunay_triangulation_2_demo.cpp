@@ -3,7 +3,7 @@
 // CGAL headers
 
 #include <CGAL/Exact_circular_kernel_2.h>
-#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>
 
 #include <CGAL/Qt/HyperbolicPainterOstream.h>
@@ -39,7 +39,7 @@
 
 //typedef CGAL::Exact_predicates_exact_constructions_kernel R;
 typedef CGAL::Exact_circular_kernel_2             R;
-typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<R> K;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<R> K;
 
 typedef K::Point_2 Point_2;
 typedef K::Iso_rectangle_2 Iso_rectangle_2;
