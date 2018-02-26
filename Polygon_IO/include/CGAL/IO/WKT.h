@@ -1,3 +1,23 @@
+// Copyright (c) 2018  GeometryFactory Sarl (France).
+// All rights reserved.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0+
+//
+// Author(s)     : Maxime Gimeno
+
 #ifndef CGAL_WKT_H
 #define CGAL_WKT_H
 
@@ -57,6 +77,17 @@ read_WKT( std::istream& in,
   return in.good();  
 }
 
+
+//!
+//! \brief read_polygon_WKT
+//! \tparam Polygon 
+//! 
+//! \param in
+//! \param polygon
+//! \return 
+//! 
+//! \relates CGAL::Polygon_with_holes_2
+//!
 template<typename Polygon>
 std::istream&
 read_polygon_WKT( std::istream& in,
