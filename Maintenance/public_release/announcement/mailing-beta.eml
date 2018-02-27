@@ -11,8 +11,8 @@ a solid ground to report bugs that need to be tackled before the
 release of the final version of CGAL 4.12 in September.
 
 
-*WARNING*: The release features an important change of the CMake scripts
-uses to configure the CGAL libraries and examples. Developers using
+*WARNING*: This release features an important change of the CMake scripts
+used to configure the CGAL libraries and examples. Developers using
 makefiles or the Ninja build-system should set the `CMAKE_BUILD_TYPE` to
 `Release` manually, to avoid using CGAL libraries without any compile-time
 optimization. Please read the first paragraph of the release notes

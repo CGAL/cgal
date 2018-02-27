@@ -21,7 +21,8 @@ Release date: April 2018
     set to `Release` by default. For a developer using the Visual Studio
     IDE or the Xcode IDE, the change should be transparent. Developers using
     makefiles or the Ninja build-system should set the `CMAKE_BUILD_TYPE`
-    to `Release` manually.
+    to `Release` manually, to avoid using CGAL libraries without any
+    compile-time optimization.
 
 ### 2D Movable Separability of Sets (new package)
 
