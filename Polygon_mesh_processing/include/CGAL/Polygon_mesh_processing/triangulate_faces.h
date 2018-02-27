@@ -37,6 +37,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
 #include <boost/range/size.hpp>
 #include <boost/foreach.hpp>
@@ -138,9 +139,13 @@ public:
     }
     else
     {
+#ifdef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT
+      triangulate_face_with_hole_filling(f, pmesh);
+#else
       P_traits cdt_traits(normal);
       CDT cdt(cdt_traits);
       triangulate_face_with_CDT(f, pmesh, cdt);
+#endif
     }
     return true;
   }
@@ -262,6 +267,16 @@ public:
         Euler::fill_hole(h0, pmesh);
       }
     }
+  }
+
+  bool triangulate_face_with_hole_filling(face_descriptor f, PM& pmesh)
+  {
+
+    this->make_hole(halfedge(f, pmesh), pmesh);
+    // run and get h
+    // out can be a back inserter to a vector of tuples of ints
+    CGAL::Polygon_mesh_processing::triangulate_hole(pmesh, h, out);
+    // put the filling in the hole
   }
 
   template<typename FaceRange>
