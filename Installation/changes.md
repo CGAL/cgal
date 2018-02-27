@@ -6,6 +6,23 @@ Release 4.12
 
 Release date: April 2018
 
+
+### Important Notice
+
+-   The CMake scripts used by CGAL have been changed to use modern patterns
+    introduced by CMake 2.8.12 and CMake 3.0: instead of setting CMake
+    variables, the script now defines imported targets and uses link
+    interfaces.
+    
+    That is mostly backward-compatible with existing usages of CGAL CMake
+    scripts. The only non-compatible effect is that the `CMAKE_BUILD_TYPE`
+    and compilation flags are no longer copied from the `CGAL_DIR` to the
+    project using it. Note also that the `CMAKE_BUILD_TYPE` is no longer
+    set to `Release` by default. For a developer using the Visual Studio
+    IDE or the Xcode IDE, the change should be transparent. Developers using
+    makefiles or the Ninja build-system should set the `CMAKE_BUILD_TYPE`
+    to `Release` manually.
+
 ### 2D Movable Separability of Sets (new package)
 
 -   A new package called "2D Movable Separability of Sets" has been
@@ -36,10 +53,17 @@ Release date: April 2018
     will have to keep using the source code available in CGAL-4.11 or
     earlier.
 
-### 2D Alpha Shapes
+### 2D Arrangements
 
--   It is now possible to use `CGAL::Periodic_2_triangulation_2` as
-    underlying triangulation for `Alpha_shape_2`.
+-   When removing an edge from an arrangement and the user has requested to
+    remove the end-vertices in case they become redundant (either isolated or
+    approach infinity), defer the removal of the such end-vertices to occur
+    after the observer is notified that the edge has been removed. This is
+    symmetric (opposite) to the order of notification when an edge is inserted.
+
+    The user can restore old (non-symmetric) behaviour by defining the macro:
+
+    `CGAL_NON_SYMETRICAL_OBSERVER_EDGE_REMOVAL_BACKWARD_COMPATIBILITY`
 
 ### 2D Periodic Triangulations
 
@@ -53,6 +77,11 @@ Release date: April 2018
     are related to Delaunay triangulations and have been moved from
     `Periodic_2_triangulation_2` to
     `Periodic_2_Delaunay_triangulation_2`.
+
+### 2D Alpha Shapes
+
+-   It is now possible to use `CGAL::Periodic_2_triangulation_2` as
+    underlying triangulation for `Alpha_shape_2`.
 
 ### 3D Surface Mesh Generation
 
@@ -130,18 +159,6 @@ Release date: April 2018
     offered.
 
     [METIS library]: http://glaros.dtc.umn.edu/gkhome/metis/metis/overview
-
-### 2D Arrangements
-
--   When removing an edge from an arrangement and the user has requested to
-    remove the end-vertices in case they become redundant (either isolated or
-    approach infinity), defer the removal of the such end-vertices to occur
-    after the observer is notified that the edge has been removed. This is
-    symmetric (opposite) to the order of notification when an edge is inserted.
-
-    The user can restore old (non-symmetric) behaviour by defining the macro:
-
-    `CGAL_NON_SYMETRICAL_OBSERVER_EDGE_REMOVAL_BACKWARD_COMPATIBILITY`
 
 
 Release 4.11
