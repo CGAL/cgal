@@ -22,6 +22,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Timer.h>
+#include <CGAL/IO/WKT.h>
 
 // Qt headers
 #include <QtGui>
@@ -39,7 +40,6 @@
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/DelaunayMeshTriangulationGraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
-
 // the two base classes
 #include "ui_Constrained_Delaunay_triangulation_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -224,6 +224,8 @@ public Q_SLOTS:
 
   void on_actionLoadConstraints_triggered();
 
+  void loadWKT(QString);
+  
   void loadFile(QString);
 
   void loadPolyConstraints(QString);
@@ -514,17 +516,16 @@ MainWindow::open(QString fileName)
     }
     if(fileName.endsWith(".polygon.cgal")){
       loadPolygonConstraints(fileName);
-      this->addToRecentFiles(fileName);
     } else if(fileName.endsWith(".cgal")){
       loadFile(fileName);
-      this->addToRecentFiles(fileName);
     } else if(fileName.endsWith(".edg")){
       loadEdgConstraints(fileName);
-      this->addToRecentFiles(fileName);
     } else if(fileName.endsWith(".poly")){
       loadPolyConstraints(fileName);
-      this->addToRecentFiles(fileName);
+    } else if(fileName.endsWith(".wkt")){
+      loadWKT(fileName);
     }
+    this->addToRecentFiles(fileName);
   }
   Q_EMIT(changed());
   actionRecenter->trigger();
@@ -540,8 +541,49 @@ MainWindow::on_actionLoadConstraints_triggered()
                                                      "Polyline files (*.polygon.cgal);;"
                                                      "Poly files (*.poly);;"
                                                      "CGAL files (*.cpts.cgal);;"
+                                                     "WKT files (*.wkt);;"
                                                      "All (*)"));
   open(fileName);
+}
+
+void 
+MainWindow::loadWKT(QString filename)
+{
+  typedef CGAL::Polygon_with_holes_2<K> Polygon;
+  typedef CGAL::Point_2<K> Point;
+  std::ifstream ifs(qPrintable(filename));
+  do
+  {
+    Polygon p;
+    CGAL::read_polygon_WKT(ifs, p);
+    if(!p.outer_boundary().is_empty())
+    {
+      BOOST_FOREACH(Point point, p.outer_boundary().container())
+          cdt.insert(point);
+      for(Polygon::General_polygon_2::Edge_const_iterator 
+          e_it=p.outer_boundary().edges_begin(); e_it != p.outer_boundary().edges_end(); ++e_it)
+          cdt.insert_constraint(e_it->source(), e_it->target());
+      
+      for(Polygon::Hole_const_iterator h_it = 
+          p.holes_begin(); h_it != p.holes_end(); ++h_it)
+      {                  
+        BOOST_FOREACH(Point point, h_it->container())
+            cdt.insert(point);
+        for(Polygon::General_polygon_2::Edge_const_iterator 
+            e_it=h_it->edges_begin(); e_it != h_it->edges_end(); ++e_it)
+        {
+            cdt.insert_constraint(e_it->source(), e_it->target());
+        }
+        
+      }
+      
+      
+    }
+  }while(ifs.good() && !ifs.eof());
+  
+  discoverComponents(cdt, m_seeds);
+  Q_EMIT( changed());
+  actionRecenter->trigger();
 }
 
 void

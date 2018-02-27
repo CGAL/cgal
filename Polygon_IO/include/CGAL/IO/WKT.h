@@ -30,6 +30,7 @@
 
 #include <CGAL/IO/traits_point.h>
 #include <CGAL/IO/traits_polygon.h>
+#include <CGAL/IO/traits_multipolygon.h>
 
 
 
@@ -79,14 +80,14 @@ read_WKT( std::istream& in,
 
 
 //! \ingroup PkgPolygonIO
-//! \brief read_polygons_WKT reads the content of a .wkt file into a `Polygon`.
+//! \brief read_polygon_WKT reads the content of a .wkt file into a `Polygon`.
 //! 
 //! A `Polygon` must inherit `CGAL::General_polygon_with_holes_2`.
 //! 
 //! \relates CGAL::General_polygon_with_holes_2
 template<typename Polygon>
 std::istream&
-read_polygons_WKT( std::istream& in,
+read_polygon_WKT( std::istream& in,
           Polygon& polygon
           )
 {
@@ -112,11 +113,39 @@ read_polygons_WKT( std::istream& in,
   return in;  
 }
 
+template<typename Polygon>
+std::istream&
+read_multipolygon_WKT( std::istream& in,
+          std::vector<Polygon>& polygons
+          )
+{
+  if(!in)
+  {
+    std::cerr << "Error: cannot open file" << std::endl;
+    return in;  
+  }
+  
+  std::string line;
+  while(std::getline(in, line))
+  {
+    std::istringstream iss(line);
+    std::string type;
+    iss >> type;
+    
+    if(type.compare("MULTIPOLYGON")==0)
+    {
+      boost::geometry::read_wkt(line, polygons);
+      break;
+    }
+  }
+  return in;  
+}
 //! \ingroup PkgPolygonIO
 //! \brief write_polygons_WKT writes the content of `polygons`, a range of 
 //! CGAL::General_polygon_with_holes_2 into a .WKT file.
 //! 
 //! \relates CGAL::General_polygon_with_holes_2
+//! \todo Should we use multipolygon instead ?
 template<typename PolygonRange>
 bool
 write_polygons_WKT( std::ostream& out,

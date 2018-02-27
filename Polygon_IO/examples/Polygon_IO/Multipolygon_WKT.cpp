@@ -7,6 +7,8 @@
 
 #include <boost/foreach.hpp>
 
+#include <vector>
+
 //TODO : If FT is Gmpq, the output of writing will not be doubles.
 //typedef CGAL::Simple_cartesian<CGAL::Gmpq> Kernel;
 
@@ -17,16 +19,11 @@ int main(int argc, char* argv[])
 {
   typedef CGAL::Polygon_with_holes_2<Kernel> Polygon;
   typedef CGAL::Point_2<Kernel> Point;
-  std::ifstream is((argc>1)?argv[1]:"data/polygons.wkt");
-  std::list<Polygon> polys;
-  do
-  {
-    Polygon p;
-    CGAL::read_polygon_WKT(is, p);
-    if(!p.outer_boundary().is_empty())
-      polys.push_back(p);
-  }while(is.good() && !is.eof());
-  std::ofstream os("test_out.wkt");
-  CGAL::write_polygons_WKT(os,polys);
+  std::ifstream is((argc>1)?argv[1]:"data/multipolygon.wkt");
+  std::vector<Polygon> multi_poly;
+  CGAL::read_multipolygon_WKT(is, multi_poly);
+  
+  BOOST_FOREACH(Polygon p, multi_poly)
+      std::cout<<p<<std::endl;
   
 }

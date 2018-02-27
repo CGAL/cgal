@@ -25,6 +25,7 @@ if ( CGAL_FOUND )
     include_directories (BEFORE "../../include")
   
     create_single_source_cgal_program( "Polygon_WKT.cpp" )
+    create_single_source_cgal_program( "Multipolygon_WKT.cpp" )
   
 else ()
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
