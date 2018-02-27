@@ -73,14 +73,14 @@ IFS=$'\n'
       echo "  - compiler: clang-3.6" >> .travis.yml
       echo "    env: PACKAGE='$package' " >> .travis.yml
     else
-      echo "  - PACKAGE='$package' " >> .$TYPE.yml
+      echo "  - PACKAGE: '$package' " >> .$TYPE.yml
     fi
   done
   if [ $TYPE = 'travis' ]; then
     echo "  - compiler: clang-3.6" >> .travis.yml
     echo "    env: PACKAGE='Polyhedron_demo' " >> .travis.yml
   else
-    echo "  - PACKAGE='Polyhedron_demo' " >> .$TYPE.yml
+    echo "  - PACKAGE: 'Polyhedron_demo' " >> .$TYPE.yml
   fi
 
   #writes the end of the file
