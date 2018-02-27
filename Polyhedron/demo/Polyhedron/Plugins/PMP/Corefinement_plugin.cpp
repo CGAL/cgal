@@ -201,6 +201,8 @@ private:
         {
           delete new_poly;
           messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
+          // default cursor
+          QApplication::restoreOverrideCursor();
           return;
         }
         str_op = "Union";
@@ -211,6 +213,8 @@ private:
         {
           delete new_poly;
           messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
+          // default cursor
+          QApplication::restoreOverrideCursor();
           return;
         }
         str_op = "Intersection";
@@ -224,6 +228,8 @@ private:
         {
           delete new_poly;
           messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
+          // default cursor
+          QApplication::restoreOverrideCursor();
           return;
         }
         str_op = "Difference";
