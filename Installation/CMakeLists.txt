@@ -1052,6 +1052,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
     endif()
 
     message( "== Setting header checking ==" )
+    find_package(boost REQUIRED)
     find_package(GMP REQUIRED)
     find_package(Doxygen REQUIRED)
     find_package(Eigen3 REQUIRED)
