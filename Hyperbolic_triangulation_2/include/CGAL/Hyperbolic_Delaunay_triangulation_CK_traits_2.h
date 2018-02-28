@@ -135,6 +135,7 @@ public:
     
     Circular_arc_point_2 operator()(Point_2 p, Point_2 q, Point_2 r)
     { 
+      std::cout << "Computing circumcenter" << std::endl;
       Origin o; 
       Point_2 po = Point_2(o);
       Circle_2 l_inf(po, FT(1));
@@ -240,6 +241,7 @@ public:
     // constructs a hyperbolic line 
     Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q) const
     {
+      std::cout << "Computing bisector(p,q)" << std::endl;
       Origin o; 
       Point_2 po = Point_2(o);
       Circle_2 l_inf = Circle_2(po,FT(1));
@@ -272,6 +274,7 @@ public:
     Hyperbolic_segment_2 
       operator()(Point_2 p, Point_2 q, Point_2 r, Point_2 s)
     {
+      std::cout << "Computing bisector(p,q,r,s)" << std::endl;
       CGAL_triangulation_precondition
 	( (Orientation_2()(p,q,r) == ON_POSITIVE_SIDE) 
 	  && (Orientation_2()(p,s,q) == ON_POSITIVE_SIDE) );
@@ -308,6 +311,7 @@ public:
     // and going to the infinite line on the other side
     Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q, Point_2 r)
     {
+      std::cout << "Computing bisector(p,q,r)" << std::endl;
       CGAL_triangulation_precondition
 	( Orientation_2()(p,q,r) == POSITIVE );
 

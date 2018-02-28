@@ -2,7 +2,7 @@
 
 // CGAL headers
 
-//#define USE_CORE_EXPR_KERNEL
+#define USE_CORE_EXPR_KERNEL
 
 #ifndef USE_CORE_EXPR_KERNEL
   #include <CGAL/Exact_circular_kernel_2.h>
