@@ -139,6 +139,7 @@ public:
     }
     else
     {
+#define CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT
 #ifdef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT
       triangulate_face_with_hole_filling(f, pmesh);
 #else
@@ -272,11 +273,22 @@ public:
   bool triangulate_face_with_hole_filling(face_descriptor f, PM& pmesh)
   {
 
+    // cut the hole
     this->make_hole(halfedge(f, pmesh), pmesh);
-    // run and get h
-    // out can be a back inserter to a vector of tuples of ints
-    CGAL::Polygon_mesh_processing::triangulate_hole(pmesh, h, out);
+
+    // triangulate
+    halfedge_descriptor h = halfedge(f, pmesh);
+    std::vector<face_descriptor> patch_faces;
+    CGAL::Polygon_mesh_processing::triangulate_hole(pmesh, h, std::back_inserter(patch_faces));
+
     // put the filling in the hole
+    BOOST_FOREACH(face_descriptor face, patch_faces)
+    {
+      halfedge_descriptor h0 = halfedge(face, pmesh);
+
+      Euler::fill_hole(h0, pmesh);
+    }
+
   }
 
   template<typename FaceRange>
