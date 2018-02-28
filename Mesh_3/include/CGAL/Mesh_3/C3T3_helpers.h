@@ -1428,7 +1428,7 @@ private:
       subdomain_index_ = c->subdomain_index();
       for(std::size_t i = 0; i < 4; ++i)
       {
-        const int ii = static_cast<const int>(i);//avoid warnings
+        const int ii = static_cast<int>(i);//avoid warnings
         surface_index_table_[i] = c->surface_patch_index(ii);
         facet_surface_center_[i] = c->get_facet_surface_center(ii);
         surface_center_index_table_[i] = c->get_facet_surface_center_index(ii);
