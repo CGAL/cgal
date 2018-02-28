@@ -2,17 +2,17 @@
 
 // CGAL headers
 
-#define USE_CORE_EXPR_KERNEL
+//#define USE_CORE_EXPR_KERNEL
 
 #ifndef USE_CORE_EXPR_KERNEL
   #include <CGAL/Exact_circular_kernel_2.h>
   #include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
-  #include <CGAL/Qt/HyperbolicPainterOstreamCK.h>
+  #include <internal/Qt/HyperbolicPainterOstreamCK.h>
 #else
   #include <CGAL/Cartesian.h>
   #include <CGAL/CORE_Expr.h>
   #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
-  #include <CGAL/Qt/HyperbolicPainterOstream.h>
+  #include <internal/Qt/HyperbolicPainterOstream.h>
 #endif
 
 #include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>
@@ -27,14 +27,13 @@
 #include <QGraphicsEllipseItem>
 
 // GraphicsView items and event filters (input classes)
-#include "TriangulationCircumcircle.h"
-#include "TriangulationMovingPoint.h"
-#include "TriangulationConflictZone.h"
-#include "TriangulationRemoveVertex.h"
-#include "TriangulationPointInputAndConflictZone.h"
-#include <CGAL/Qt/TriangulationGraphicsItem.h>
-
-#include <CGAL/Qt/HyperbolicVoronoiGraphicsItem.h>
+#include <internal/Qt/TriangulationCircumcircle.h>
+#include <internal/Qt/TriangulationMovingPoint.h>
+#include <internal/Qt/TriangulationConflictZone.h>
+#include <internal/Qt/TriangulationRemoveVertex.h>
+#include <internal/Qt/TriangulationPointInputAndConflictZone.h>
+#include <internal/Qt/TriangulationGraphicsItem.h>
+#include <internal/Qt/HyperbolicVoronoiGraphicsItem.h>
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
@@ -132,7 +131,7 @@ MainWindow::MainWindow()
 
   QPen pen;  // creates a default pen
 
-  pen.setWidth(0);
+  pen.setWidthF(0.01);
   pen.setBrush(Qt::black);
   disk->setPen(pen);
 
@@ -144,7 +143,19 @@ MainWindow::MainWindow()
   QObject::connect(this, SIGNAL(changed()),
 		   dgi, SLOT(modelChanged()));
 
-  dgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  QPen vpen;
+  vpen.setStyle(::Qt::SolidLine);
+  vpen.setWidth(7);
+  vpen.setBrush(::Qt::red);
+  vpen.setCapStyle(::Qt::RoundCap);
+  vpen.setJoinStyle(::Qt::RoundJoin);
+  dgi->setVerticesPen(vpen);
+  
+  QPen epen;
+  epen.setWidthF(0.005);
+  epen.setBrush(::Qt::black);
+  dgi->setEdgesPen(epen);
+
   scene.addItem(dgi);
 
   // Add a GraphicItem for the Voronoi diagram
@@ -153,7 +164,7 @@ MainWindow::MainWindow()
   QObject::connect(this, SIGNAL(changed()),
 		   vgi, SLOT(modelChanged()));
 
-  vgi->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  vgi->setEdgesPen(QPen(Qt::blue, 0.001, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(vgi);
   vgi->hide();
 
@@ -177,7 +188,7 @@ MainWindow::MainWindow()
 		   this, SIGNAL(changed()));
 
   tcc = new CGAL::Qt::TriangulationCircumcircle<Delaunay>(&scene, &dt, this);
-  tcc->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  tcc->setPen(QPen(Qt::red, 7, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
   cz = new CGAL::Qt::TriangulationConflictZone<Delaunay>(&scene, &dt, this);
 
