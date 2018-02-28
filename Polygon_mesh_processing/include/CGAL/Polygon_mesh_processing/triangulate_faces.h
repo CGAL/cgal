@@ -289,7 +289,6 @@ public:
     BOOST_FOREACH(face_descriptor face, patch_faces)
     {
       halfedge_descriptor h0 = halfedge(face, pmesh);
-
       Euler::fill_hole(h0, pmesh);
     }
 
