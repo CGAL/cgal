@@ -12,13 +12,13 @@ environment:
 install:
     -  set "CONDA_ROOT=C:\Miniconda36-x64"
     -  set "PATH=%CONDA_ROOT%;%CONDA_ROOT%\Scripts;%CONDA_ROOT%\Library\bin;;C:\Qt\5.6\msvc2013_64\bin;%PATH%"
-    -  set "BOOST_ROOT=C:\Libraries/boost"
+    -  set "BOOST_ROOT=C:\Libraries\boost"
     -  conda install -y -c conda-forge cmake mpfr zlib eigen
     -  conda install -y -c anaconda-nb-extensions gmp
 
 before_build:
 - cmd:
-- cd C:\projects\cgal\ && mkdir build && cd build && cmake -DCGAL_HEADER_ONLY=ON -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG .. && cmake --build . && cmake --build . --target install
+- cd C:\projects\cgal\ && mkdir build && cd build && cmake -DCGAL_HEADER_ONLY=ON -DCMAKE_CXX_FLAGS_RELEASE=-DCGAL_NDEBUG -G "Visual Studio 12 2013 Win64" ..  && cmake --build .
 
 build_script:
 - cd C:\projects\cgal\.travis
