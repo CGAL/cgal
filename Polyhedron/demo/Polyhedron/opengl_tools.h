@@ -26,7 +26,6 @@
 #ifndef CGAL_OPENGL_TOOLS_H
 #define CGAL_OPENGL_TOOLS_H
 
-# include <CGAL/gl.h>
 #include <CGAL/Three/Viewer_interface.h>
 
 namespace CGAL {
