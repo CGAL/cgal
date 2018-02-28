@@ -35,6 +35,8 @@
 
 #include <cmath>
 
+/// \cond SKIP_IN_MANUAL
+
 namespace CGAL {
 namespace Polygon_mesh_processing{
 namespace internal {
@@ -233,8 +235,33 @@ struct Intersect_polylines
 
 }// namespace internal
 
+
+// Note this is not officially documented  
 /*!
-   \ingroup PMP_predicates_grp
+  Computes snapping points among a set of polylines.
+
+  The output is given as a set of `cpp11::tuple` with the following
+  elements in the following order:
+
+  - index `i` of the first polyline
+  - index `ii` of the segment in polyline `i`
+  - index `j` of the second polyline
+  - index `jj` of the segment in polyline `j`
+  - barycentric coordinate `c_i` of snapping point `p_i` with respect
+    to points `p[i][ii]` and `p[i][ii+1]`
+  - barycentric coordinate `c_j` of snapping point `p_j` with respect
+    to points `p[j][jj]` and `p[j][jj+1]`
+
+  \tparam PolylineRange a `RandomAccessRange` of `RandomAccessRange`
+  of `Kernel::Point_3`.
+  \tparam OutputIterator a model of `OutputIterator` that accepts
+  objects of type `cpp11::tuple<std::size_t, std::size_t, std::size_t, std::size_t, FT, FT>`
+  \tparam Kernel a model of `Kernel`
+
+  \param polylines the input polyline range.
+  \param tolerance the minimum distance between two polylines such
+  that the snapping points are computed
+  \param output output iterator
 
  */
 template <class PolylineRange, class OutputIterator, class Kernel>
@@ -298,5 +325,7 @@ void polyline_snapping (const PolylineRange& polylines,
 
 
 } } //end of namespace CGAL::Polygon_mesh_processing
+
+/// \endcond
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_POLYLINE_SNAPPING_H
