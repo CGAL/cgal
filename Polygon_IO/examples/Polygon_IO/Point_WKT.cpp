@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+
 #include <CGAL/IO/WKT.h>
 
 #include <CGAL/Simple_cartesian.h>
@@ -17,13 +18,14 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 
 int main(int argc, char* argv[])
 {
-  typedef CGAL::Polygon_with_holes_2<Kernel> Polygon;
   typedef CGAL::Point_2<Kernel> Point;
-  std::ifstream is((argc>1)?argv[1]:"data/multipolygon.wkt");
-  std::vector<Polygon> multi_poly;
-  CGAL::read_multipolygon_WKT(is, multi_poly);
+  typedef CGAL::Geometry_container<std::vector<Point>, boost::geometry::multi_point_tag>  MultiPoint;
   
-  BOOST_FOREACH(Polygon p, multi_poly)
-      std::cout<<p<<std::endl;
-  
+  std::ifstream is((argc>1)?argv[1]:"data/multipoint.wkt");
+  MultiPoint mp;
+  CGAL::read_multipoint_WKT(is, mp);
+  BOOST_FOREACH(const Point& p, mp)
+  {
+    std::cout<<p<<std::endl;
+  }
 }
