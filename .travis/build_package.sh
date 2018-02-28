@@ -1,3 +1,4 @@
+
 #!/bin/bash
 set -e
 
@@ -8,10 +9,10 @@ function build_examples {
   mkdir -p build-travis
   cd build-travis
 if [ $IS_WINDOWS ]; then
-  cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS}" -G "Visual Studio 12 2013 Win64" ..
+  cmake -DCGAL_DIR="C:\projects\cgal\build" -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS}" -G "Visual Studio 12 2013 Win64" ..
   cmake --build .
 else
-  cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS}" ..
+  cmake -DCGAL_DIR="C:\projects\cgal\build" -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS}" ..
   make -j2
 fi
 }
@@ -55,10 +56,10 @@ function build_demo {
     export QGLVIEWERROOT
   fi
   if [ $IS_WINDOWS ]; then
-    cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" -G "Visual Studio 12 2013 Win64" ..
+    cmake -DCGAL_DIR="C:\projects\cgal\build" -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" -G "Visual Studio 12 2013 Win64" ..
     cmake --build .
   else
-    cmake -DCGAL_DIR="/usr/local/lib/cmake/CGAL" -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" ..
+    cmake -DCGAL_DIR="C:\projects\cgal\build" -DQt5_DIR="/opt/qt55/lib/cmake/Qt5" -DQt5Svg_DIR="/opt/qt55/lib/cmake/Qt5Svg" -DQt5OpenGL_DIR="/opt/qt55/lib/cmake/Qt5OpenGL" -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=ON -DCMAKE_CXX_FLAGS_RELEASE="${CXX_FLAGS} ${EXTRA_CXX_FLAGS}" ..
     make -j2
   fi
 }
