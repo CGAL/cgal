@@ -31,20 +31,6 @@
 namespace CGAL {
 namespace GL {
 
-class Color {
-  GLfloat c[4];
-public:
-  Color() {
-    ::glGetFloatv(GL_CURRENT_COLOR, &c[0]);
-  }
-  ~Color() {
-    set_rgb_color(c[0], c[1], c[2], c[3]);
-  }
-  void set_rgb_color(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.f) {
-    ::glColor4f(r, g, b, a);
-  }
-}; // end class Color;
-
 class Point_size {
   GLfloat ps;
   CGAL::Three::Viewer_interface* viewer;
