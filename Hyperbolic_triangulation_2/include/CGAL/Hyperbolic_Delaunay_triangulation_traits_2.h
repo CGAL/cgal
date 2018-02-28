@@ -43,11 +43,10 @@ namespace CGAL {
 
 
 template <class R>
-class Simple_circular_arc_2 {
+class Circular_arc_2 {
 	typedef typename R::FT 			  FT;
 	typedef Exact_complex<FT> 		  Cplx;
 	typedef typename R::Point_2 	  Point;
-	//typedef typename R::Bbox_2 		  Bbox_2;
 	typedef typename R::Circle_2 	  Circle;
 	typedef typename R::Orientation_2 Orientation_2;
 
@@ -56,13 +55,13 @@ private:
 	Point _s, _t;
 
 public:
-	Simple_circular_arc_2() :
+	Circular_arc_2() :
 		_c(Point(FT(0),FT(0)), FT(0)), _s(FT(0),FT(0)), _t(FT(0),FT(0)) {}
 	
-	Simple_circular_arc_2(Circle c, Point source, Point target) :
+	Circular_arc_2(Circle c, Point source, Point target) :
 		_c(c), _s(source), _t(target) {}
 
-	Simple_circular_arc_2(Point p1, Point p2) {
+	Circular_arc_2(Point p1, Point p2) {
 		Cplx p(p1), q(p2);
 		Cplx O(0,0);
 		Cplx inv;
@@ -75,7 +74,6 @@ public:
 		Point ip(inv.real(), inv.imag());
 
 		_c = Circle(p1, p2, ip);
-        std::cout << "--> supporting circle has been created!" << std::endl;
 		if (Orientation_2()(p1, p2, _c.center()) == LEFT_TURN) {
 			_s = p1;
 			_t = p2;
@@ -86,7 +84,7 @@ public:
 
 	}
 
-	Circle circle() const {
+	Circle supporting_circle() const {
 		return _c;
 	}
 
@@ -129,7 +127,7 @@ public:
 	typedef typename Kernel::Circle_2    								Circle_2;
 	typedef typename Kernel::Line_2      								Euclidean_line_2;
 	typedef boost::variant<Circle_2,Euclidean_line_2>    				Euclidean_circle_or_line_2; 
-	typedef Simple_circular_arc_2<Kernel>				 				Circular_arc_2;
+	typedef Circular_arc_2<Kernel>				 						Circular_arc_2;
 	typedef typename Kernel::Segment_2                       			Euclidean_segment_2; //only used internally here
 	typedef boost::variant<Circular_arc_2, Euclidean_segment_2>  		Hyperbolic_segment_2;
 
@@ -327,12 +325,6 @@ public:
 
 			Compute_circle_orthogonal comp;
 			Circle_2 supp = comp(Circle_2(p1, FT(0)), Circle_2(p2, FT(0)), poincare);
- 
- 			// to avoid ridiculously big circles -- allow radius up to 5
-			// if (supp.squared_radius() > 100) {
-			// 	Euclidean_segment_2 seg(p1, p2);
-			// 	return seg;
-			// }
 
 			if (ori == LEFT_TURN) {
 				Circular_arc_2 carc(supp, p2, p1);
@@ -438,14 +430,6 @@ public:
 		
 		result_type operator()(Point_2 p1, Point_2 p2) {
 			Circle_2 poincare(Point_2(FT(0),FT(0)), FT(1));
-			
-			// double np1 = sqrt(to_double(p1.x()*p1.x() + p1.y()*p1.y()));
-			// double np2 = sqrt(to_double(p2.x()*p2.x() + p2.y()*p2.y()));
-			// if ( fabs(np1 - np2) < 1e-16 ) {      
-			// 	Euclidean_line_2 ell = Construct_Euclidean_bisector_2()(p1, p2);
-			// 	pair<Point_2, Point_2> pts = Construct_inexact_intersection_2()(ell, poincare);
-			// 	return Euclidean_segment_2(pts.first, pts.second);
-			// }
 
 			Circle_2 supp = Compute_circle_in_pencil()(poincare, Circle_2(p1,FT(0)), Circle_2(p2,FT(0)));
 			pair<Point, Point> res = Construct_inexact_intersection_2()(supp, poincare);
@@ -453,16 +437,6 @@ public:
  			Point pp2 = res.second;
 
  			return Construct_hyperbolic_segment_2()(pp1, pp2);
-
- 		// 	Orientation ori = orientation(poincare.center(), pp1, pp2);
-
-			// if (ori == LEFT_TURN) {
-			// 	Circular_arc_2 carc(supp, pp2, pp1);
-			// 	return carc;
-			// } else {
-			// 	Circular_arc_2 carc(supp, pp1, pp2);
-			// 	return carc;
-			// }
 		}
 
 
@@ -483,7 +457,7 @@ public:
 			Exact_complex cp(p.x(), p.y());
 			Circular_arc_2 * supp = boost::get<Circular_arc_2>(&seg);
 			if (supp) {
-				Exact_complex rp = cp.invert_in_circle(supp->circle());
+				Exact_complex rp = cp.invert_in_circle(supp->supporting_circle());
 				return Point_2(rp.real(), rp.imag());
 			} else {
 				std::cout << "Inversion FAILED!!" << std::endl;
@@ -535,7 +509,6 @@ public:
 			Orientation ori = orientation(c, p, q);
 			Circle_2 poincare(Point_2(0,0), 1);
 			if (Euclidean_segment_2* seg = boost::get<Euclidean_segment_2>(&res)) {	
-				CGAL_assertion(seg->supporting_line().has_on(c));
 				std::pair<Point_2, Point_2> ip = Construct_intersection_2()(poincare, seg->supporting_line());
 				if (ori == LEFT_TURN)
 					return Euclidean_segment_2(c, ip.first);
@@ -543,20 +516,19 @@ public:
 					return Euclidean_segment_2(c, ip.second);
 			} else {
 				Circular_arc_2* supp = boost::get<Circular_arc_2>(&res);
-				CGAL_assertion(supp->circle().has_on_boundary(c));
-				std::pair<Point_2, Point_2> ip = Construct_intersection_2()(poincare, supp->circle());
+				std::pair<Point_2, Point_2> ip = Construct_intersection_2()(poincare, supp->supporting_circle());
 
 				if (orientation(ip.first, p, q) == LEFT_TURN) {
-					if (orientation(supp->circle().center(), c, ip.second) == LEFT_TURN) {
-						return Circular_arc_2(supp->circle(), c, ip.second);
+					if (orientation(supp->supporting_circle().center(), c, ip.second) == LEFT_TURN) {
+						return Circular_arc_2(supp->supporting_circle(), c, ip.second);
 					} else {
-						return Circular_arc_2(supp->circle(), ip.second, c);
+						return Circular_arc_2(supp->supporting_circle(), ip.second, c);
 					}
 				} else {
-					if (orientation(supp->circle().center(), c, ip.first) == LEFT_TURN) {
-						return Circular_arc_2(supp->circle(), c, ip.first);
+					if (orientation(supp->center(), c, ip.first) == LEFT_TURN) {
+						return Circular_arc_2(supp->supporting_circle(), c, ip.first);
 					} else {
-						return Circular_arc_2(supp->circle(), ip.first, c);
+						return Circular_arc_2(supp->supporting_circle(), ip.first, c);
 					}
 				}
 			}
@@ -572,17 +544,13 @@ public:
 			Point_2 c2 = Construct_hyperbolic_circumcenter_2()(p,s,q);
 
 			if (Euclidean_segment_2* seg = boost::get<Euclidean_segment_2>(&res)) {	
-				CGAL_assertion(seg->supporting_line().has_on(c1));
-				CGAL_assertion(seg->supporting_line().has_on(c1));
 				return Euclidean_segment_2(c1, c2);
 			} else {
 				Circular_arc_2* supp = boost::get<Circular_arc_2>(&res);
-				CGAL_assertion(supp->circle().has_on_boundary(c1));
-				CGAL_assertion(supp->circle().has_on_boundary(c2));
 				if (orientation(Point(0,0), c1, c2) == LEFT_TURN) {
-					return Circular_arc_2(supp->circle(), c2, c1);
+					return Circular_arc_2(supp->supporting_circle(), c2, c1);
 				} else { 
-					return Circular_arc_2(supp->circle(), c1, c2);
+					return Circular_arc_2(supp->supporting_circle(), c1, c2);
 				}
 			}
 		}
@@ -682,7 +650,7 @@ public:
 		Point_2 operator()(Hyperbolic_segment_2 s1, Hyperbolic_segment_2 s2) {
 			if (Circular_arc_2* c1 = boost::get<Circular_arc_2>(&s1)) {
 				if (Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2)) {
-					pair<Point_2, Point_2> res = operator()(c1->circle(), c2->circle());
+					pair<Point_2, Point_2> res = operator()(c1->supporting_circle(), c2->supporting_circle());
 					Point_2 p1 = res.first;
 					if (CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1)) {
 						return p1;
@@ -692,7 +660,7 @@ public:
 					return p2;
 				} else {
 					Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
-					pair<Point_2, Point_2> res = operator()(c1->circle(), ell2->supporting_line());
+					pair<Point_2, Point_2> res = operator()(c1->supporting_circle(), ell2->supporting_line());
 					Point_2 p1 = res.first;
 					if (CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1)) {
 						return p1;
@@ -704,7 +672,7 @@ public:
 			} else {
 				Euclidean_segment_2* ell1 = boost::get<Euclidean_segment_2>(&s1);
 				if (Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2)) {
-					pair<Point_2, Point_2> res = operator()(ell1->supporting_line(), c2->circle());
+					pair<Point_2, Point_2> res = operator()(ell1->supporting_line(), c2->supporting_circle());
 					Point_2 p1 = res.first;
 					if (CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1)) {
 						return p1;
@@ -824,10 +792,7 @@ public:
 		Point_2 operator()(Hyperbolic_segment_2 s1, Hyperbolic_segment_2 s2) {
 			if (Circular_arc_2* c1 = boost::get<Circular_arc_2>(&s1)) {
 				if (Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2)) {
-					std::cout << "intersecting two circles" << std::endl;
-					std::cout << "c1: center = " << c1->circle().center() << ", sq_radius = " << c1->circle().squared_radius() << std::endl;
-					std::cout << "c2: center = " << c2->circle().center() << ", sq_radius = " << c2->circle().squared_radius() << std::endl;
-					pair<Point_2, Point_2> res = operator()(c1->circle(), c2->circle());
+					pair<Point_2, Point_2> res = operator()(c1->supporting_circle(), c2->supporting_circle());
 					Point_2 p1 = res.first;
 					if (CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1)) {
 						return p1;
@@ -836,9 +801,8 @@ public:
 					CGAL_assertion(CGAL::sqrt(p2.x()*p2.x() + p2.y()*p2.y()) < FT(1));
 					return p2;
 				} else {
-					std::cout << "intersecting circle and line" << std::endl;
 					Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
-					pair<Point_2, Point_2> res = operator()(c1->circle(), ell2->supporting_line());
+					pair<Point_2, Point_2> res = operator()(c1->supporting_circle(), ell2->supporting_line());
 					Point_2 p1 = res.first;
 					if (CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1)) {
 						return p1;
@@ -850,8 +814,7 @@ public:
 			} else {
 				Euclidean_segment_2* ell1 = boost::get<Euclidean_segment_2>(&s1);
 				if (Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2)) {
-					std::cout << "intersecting line and circle" << std::endl;
-					pair<Point_2, Point_2> res = operator()(ell1->supporting_line(), c2->circle());
+					pair<Point_2, Point_2> res = operator()(ell1->supporting_line(), c2->supporting_circle());
 					Point_2 p1 = res.first;
 					if (CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1)) {
 						return p1;
@@ -860,7 +823,6 @@ public:
 					CGAL_assertion(CGAL::sqrt(p2.x()*p2.x() + p2.y()*p2.y()) < FT(1));
 					return p2;	
 				} else {
-					std::cout << "intersecting two lines" << std::endl;
 					Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
 					Point_2 p1 = operator()(ell1->supporting_line(), ell2->supporting_line());
 					CGAL_assertion(CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1));
@@ -903,13 +865,13 @@ public:
 			FT r3(0);
 
 			if (arc1) {
-				r1 = arc1->circle().squared_radius();
+				r1 = arc1->squared_radius();
 			}
 			if (arc2) {
-				r2 = arc2->circle().squared_radius();
+				r2 = arc2->squared_radius();
 			}
 			if (arc3) {
-				r3 = arc3->circle().squared_radius();
+				r3 = arc3->squared_radius();
 			}
 
 			Point_2 rp;
@@ -975,13 +937,13 @@ public:
 			double r3(0);
 
 			if (arc1) {
-				r1 = CGAL::to_double(arc1->circle().squared_radius());
+				r1 = CGAL::to_double(arc1->squared_radius());
 			}
 			if (arc2) {
-				r2 = CGAL::to_double(arc2->circle().squared_radius());
+				r2 = CGAL::to_double(arc2->squared_radius());
 			}
 			if (arc3) {
-				r3 = CGAL::to_double(arc3->circle().squared_radius());
+				r3 = CGAL::to_double(arc3->squared_radius());
 			}
 
 			Point_2 rp;

@@ -41,7 +41,7 @@ namespace Qt {
 
 private:  	
   	PainterOstream& operator<<(const Circular_arc_2& arc) {
-		const typename K::Circle_2 & circ  = arc.circle();
+		const typename K::Circle_2 & circ  = arc.supporting_circle();
 		const typename K::Point_2 & center = circ.center();
 		const typename K::Point_2 & source = arc.source();
 		const typename K::Point_2 & target = arc.target();
