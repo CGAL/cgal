@@ -136,6 +136,29 @@ struct Noborder {
 };
 */
 
+// todo: add this in Dual.h
+template <class SurfaceMesh, class Point>
+struct Dual_vpm
+{
+  typedef typename boost::graph_traits<SurfaceMesh>::face_descriptor key_type;
+  typedef Point reference;
+  typedef Point value_type;
+  typedef boost::readable_property_map_tag category;
+
+  friend
+  Point get(Dual_vpm& mesh, key_type& f)
+  {
+    std::vector<Point> face_points;
+
+
+
+    Point centroid = CGAL::centroid(face_points.begin(), face_points.end(),
+                                    CGAL::Dimension_tag<0>());
+
+    return centroid;
+  }
+};
+
 template <typename K>
 bool
 test_dual_with_various_faces()
@@ -152,6 +175,10 @@ test_dual_with_various_faces()
     return false;
   }
 
+  // todo this
+  //boost::property_map<Graph, boost::vertex_point_t>::const_type PMap;
+  //Pmap = get_property_map()
+
   typedef CGAL::Dual<Surface_mesh> Dual;
   //typedef boost::filtered_graph<Dual, Noborder<K, Surface_mesh> > FiniteDual;
 
@@ -159,8 +186,13 @@ test_dual_with_various_faces()
   //FiniteDual finite_dual(dual, Noborder<K, Surface_mesh>(mesh)); crap
 
 
+
   Surface_mesh sm_dual;
-  CGAL::copy_face_graph(dual, sm_dual);
+  CGAL::copy_face_graph(dual, sm_dual,
+                        CGAL::Emptyset_iterator(),
+                        CGAL::Emptyset_iterator(),
+                        CGAL::Emptyset_iterator(),
+                        Dual_vpm<Surface_mesh, Point>());
 
 
   //sm_dual.add_face(vertices(dual));
