@@ -298,8 +298,6 @@ void Polyhedron_demo_orient_soup_plugin::displayNonManifoldEdges()
 void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
 {
   
-  typedef std::pair<std::size_t, std::vector<std::size_t> > V_ID_and_P_IDs;
-  
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   
   Scene_polygon_soup_item* item =
