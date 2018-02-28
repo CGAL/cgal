@@ -8,6 +8,7 @@
 #include <CGAL/boost/graph/Dual.h>
 #include <boost/graph/filtered_graph.hpp>
 #include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/centroid.h>
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
@@ -137,7 +138,7 @@ struct Noborder {
 */
 
 // todo: add this in Dual.h
-template <class SurfaceMesh, class Point>
+template <class SurfaceMesh, class Point, class Pmap>
 struct Dual_vpm
 {
   typedef typename boost::graph_traits<SurfaceMesh>::face_descriptor key_type;
@@ -145,18 +146,30 @@ struct Dual_vpm
   typedef Point value_type;
   typedef boost::readable_property_map_tag category;
 
+  typedef typename boost::graph_traits<SurfaceMesh>::vertex_descriptor vertex_descriptor;
+
+  Dual_vpm(const Pmap& vpmap) : vpmap_(vpmap) {}
+
   friend
   Point get(Dual_vpm& mesh, key_type& f)
   {
     std::vector<Point> face_points;
 
+    BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f), mesh))
+    {
+      Point p = get(vpmap_, v);
+      face_points.push_back(p);
+    }
 
-
+    // temp extra copy
     Point centroid = CGAL::centroid(face_points.begin(), face_points.end(),
                                     CGAL::Dimension_tag<0>());
 
     return centroid;
   }
+
+  const Pmap& vpmap_;
+
 };
 
 template <typename K>
@@ -175,27 +188,23 @@ test_dual_with_various_faces()
     return false;
   }
 
-  // todo this
-  //boost::property_map<Graph, boost::vertex_point_t>::const_type PMap;
-  //Pmap = get_property_map()
+  // get mesh's vpmap
+  typedef typename boost::property_map<Surface_mesh, boost::vertex_point_t>::type Pmap;
+  Pmap vpmap = get_property_map(boost::vertex_point, mesh);
 
-  typedef CGAL::Dual<Surface_mesh> Dual;
+  // mesh's dual
+  CGAL::Dual<Surface_mesh> dual(mesh);
+
   //typedef boost::filtered_graph<Dual, Noborder<K, Surface_mesh> > FiniteDual;
-
-  Dual dual(mesh);
   //FiniteDual finite_dual(dual, Noborder<K, Surface_mesh>(mesh)); crap
 
-
-
+  // copy dual to a sm
   Surface_mesh sm_dual;
   CGAL::copy_face_graph(dual, sm_dual,
                         CGAL::Emptyset_iterator(),
                         CGAL::Emptyset_iterator(),
                         CGAL::Emptyset_iterator(),
-                        Dual_vpm<Surface_mesh, Point>());
-
-
-  //sm_dual.add_face(vertices(dual));
+                        Dual_vpm<Surface_mesh, Point, Pmap>(vpmap));
 
 
   std::ofstream out("data/dual_sm_elephant.off");
