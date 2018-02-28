@@ -45,7 +45,7 @@
 #include <queue>
 #include <vector>
 #include <utility>
-
+#include <fstream>
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
@@ -272,12 +272,16 @@ public:
 
   bool triangulate_face_with_hole_filling(face_descriptor f, PM& pmesh)
   {
+    halfedge_descriptor h = halfedge(f, pmesh);
 
     // cut the hole
     this->make_hole(halfedge(f, pmesh), pmesh);
 
+    std::ofstream outhole("data/hole.off");
+    outhole << pmesh;
+    outhole.close();
+
     // triangulate
-    halfedge_descriptor h = halfedge(f, pmesh);
     std::vector<face_descriptor> patch_faces;
     CGAL::Polygon_mesh_processing::triangulate_hole(pmesh, h, std::back_inserter(patch_faces));
 

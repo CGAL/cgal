@@ -90,15 +90,50 @@ test_triangulate_face()
   return true;
 }
 
+template <typename K>
+bool
+test_triangulate_triangle_face()
+{
+  typedef typename K::Point_3                    Point;
+  typedef CGAL::Surface_mesh<Point>          Surface_mesh;
+
+  Surface_mesh mesh;
+  std::ifstream input("data/tetra3.off");
+
+  if (!input || !(input >> mesh) || mesh.is_empty())
+  {
+    std::cerr << "Not a valid off file." << std::endl;
+    return false;
+  }
+
+  BOOST_FOREACH(typename boost::graph_traits<Surface_mesh>::face_descriptor fit, faces(mesh))
+  {
+    if(!CGAL::Polygon_mesh_processing::triangulate_face(fit, mesh))
+      assert(false);
+  }
+
+  std::ofstream out("data/result.off");
+  out << mesh;
+  out.close();
+
+
+  return true;
+}
+
+
+
 int main()
 {
-  assert(test_triangulate_faces<Epic>());
+/*  assert(test_triangulate_faces<Epic>());
   assert(test_triangulate_face_range<Epic>());
   assert(test_triangulate_face<Epic>());
 
   assert(test_triangulate_faces<Epec>());
   assert(test_triangulate_face_range<Epec>());
   assert(test_triangulate_face<Epec>());
+*/
+
+  assert(test_triangulate_triangle_face<Epic>());
 
   return EXIT_SUCCESS;
 }
