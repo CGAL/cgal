@@ -81,6 +81,7 @@ if ( CGAL_FOUND )
       endif()
  
       create_single_source_cgal_program( "mesh_3D_gray_image.cpp" )
+      create_single_source_cgal_program( "mesh_3D_gray_image_multiple_values.cpp" )
       create_single_source_cgal_program( "mesh_3D_image_with_features.cpp" )
       if( CGAL_ImageIO_USE_ZLIB )
         create_single_source_cgal_program( "mesh_optimization_example.cpp" )
