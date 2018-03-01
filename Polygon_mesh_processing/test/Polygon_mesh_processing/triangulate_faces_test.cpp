@@ -150,14 +150,19 @@ struct Dual_vpm
 
   Dual_vpm(const Pmap& vpmap) : vpmap_(vpmap) {}
 
+  Pmap& pmap()
+  {
+    return vpmap_;
+  }
+
   friend
   Point get(Dual_vpm& mesh, key_type& f)
   {
     std::vector<Point> face_points;
 
-    BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f), mesh))
+    BOOST_FOREACH(vertex_descriptor v, CGAL::vertices_around_face(halfedge(f, mesh), mesh))
     {
-      Point p = get(vpmap_, v);
+      Point p = get(pmap(), v);
       face_points.push_back(p);
     }
 
@@ -168,7 +173,7 @@ struct Dual_vpm
     return centroid;
   }
 
-  const Pmap& vpmap_;
+  const Pmap vpmap_;
 
 };
 
