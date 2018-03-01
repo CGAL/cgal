@@ -32,6 +32,8 @@ struct Geometry_container{
   template<typename T>
   void push_back(const T& t){ range.push_back(t); }
   
+  std::size_t size() { return range.size(); }
+  
 };//end Geometry_container
 }//end CGAL
 
