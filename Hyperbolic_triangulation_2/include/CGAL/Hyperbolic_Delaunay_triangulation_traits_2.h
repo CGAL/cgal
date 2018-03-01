@@ -652,21 +652,21 @@ public:
 				if (Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2)) {
 					pair<Point_2, Point_2> res = operator()(c1->supporting_circle(), c2->supporting_circle());
 					Point_2 p1 = res.first;
-					if (CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1)) {
+					if (p1.x()*p1.x() + p1.y()*p1.y() < FT(1)) {
 						return p1;
 					}
 					Point_2 p2 = res.second;
-                    CGAL_assertion(CGAL::sqrt(p2.x()*p2.x() + p2.y()*p2.y()) < FT(1));
+                    CGAL_assertion(p2.x()*p2.x() + p2.y()*p2.y() < FT(1));
 					return p2;
 				} else {
 					Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
 					pair<Point_2, Point_2> res = operator()(c1->supporting_circle(), ell2->supporting_line());
 					Point_2 p1 = res.first;
-					if (CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1)) {
+					if (p1.x()*p1.x() + p1.y()*p1.y() < FT(1)) {
 						return p1;
 					}
 					Point_2 p2 = res.second;
-					CGAL_assertion(CGAL::sqrt(p2.x()*p2.x() + p2.y()*p2.y()) < FT(1));
+					CGAL_assertion(p2.x()*p2.x() + p2.y()*p2.y() < FT(1));
 					return p2;
 				}
 			} else {
@@ -674,16 +674,16 @@ public:
 				if (Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2)) {
 					pair<Point_2, Point_2> res = operator()(ell1->supporting_line(), c2->supporting_circle());
 					Point_2 p1 = res.first;
-					if (CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1)) {
+					if (p1.x()*p1.x() + p1.y()*p1.y() < FT(1)) {
 						return p1;
 					}
 					Point_2 p2 = res.second;
-					CGAL_assertion(CGAL::sqrt(p2.x()*p2.x() + p2.y()*p2.y()) < FT(1));
+					CGAL_assertion(p2.x()*p2.x() + p2.y()*p2.y() < FT(1));
 					return p2;	
 				} else {
 					Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
 					Point_2 p1 = operator()(ell1->supporting_line(), ell2->supporting_line());
-					CGAL_assertion(CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1));
+					CGAL_assertion(p1.x()*p1.x() + p1.y()*p1.y() < FT(1));
 					return p1;
 				}
 			}
@@ -794,21 +794,21 @@ public:
 				if (Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2)) {
 					pair<Point_2, Point_2> res = operator()(c1->supporting_circle(), c2->supporting_circle());
 					Point_2 p1 = res.first;
-					if (CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1)) {
+					if (p1.x()*p1.x() + p1.y()*p1.y() < FT(1)) {
 						return p1;
 					}
 					Point_2 p2 = res.second;
-					CGAL_assertion(CGAL::sqrt(p2.x()*p2.x() + p2.y()*p2.y()) < FT(1));
+					CGAL_assertion(p2.x()*p2.x() + p2.y()*p2.y() < FT(1));
 					return p2;
 				} else {
 					Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
 					pair<Point_2, Point_2> res = operator()(c1->supporting_circle(), ell2->supporting_line());
 					Point_2 p1 = res.first;
-					if (CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1)) {
+					if (p1.x()*p1.x() + p1.y()*p1.y() < FT(1)) {
 						return p1;
 					}
 					Point_2 p2 = res.second;
-					CGAL_assertion(CGAL::sqrt(p2.x()*p2.x() + p2.y()*p2.y()) < FT(1));
+					CGAL_assertion(p2.x()*p2.x() + p2.y()*p2.y() < FT(1));
 					return p2;
 				}
 			} else {
@@ -816,16 +816,16 @@ public:
 				if (Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2)) {
 					pair<Point_2, Point_2> res = operator()(ell1->supporting_line(), c2->supporting_circle());
 					Point_2 p1 = res.first;
-					if (CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1)) {
+					if (p1.x()*p1.x() + p1.y()*p1.y() < FT(1)) {
 						return p1;
 					}
 					Point_2 p2 = res.second;
-					CGAL_assertion(CGAL::sqrt(p2.x()*p2.x() + p2.y()*p2.y()) < FT(1));
+					CGAL_assertion(p2.x()*p2.x() + p2.y()*p2.y() < FT(1));
 					return p2;	
 				} else {
 					Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
 					Point_2 p1 = operator()(ell1->supporting_line(), ell2->supporting_line());
-					CGAL_assertion(CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1));
+					CGAL_assertion(p1.x()*p1.x() + p1.y()*p1.y() < FT(1));
 					return p1;
 				}
 			}
