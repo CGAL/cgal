@@ -42,80 +42,81 @@ using std::make_pair;
 namespace CGAL {
 
 
-template <class R>
-class Circular_arc_2 {
-	typedef typename R::FT 			  FT;
-	typedef Exact_complex<FT> 		  Cplx;
-	typedef typename R::Point_2 	  Point;
-	typedef typename R::Circle_2 	  Circle;
-	typedef typename R::Orientation_2 Orientation_2;
-
-private:
-	Circle _c;
-	Point _s, _t;
-
-public:
-	Circular_arc_2() :
-		_c(Point(FT(0),FT(0)), FT(0)), _s(FT(0),FT(0)), _t(FT(0),FT(0)) {}
-	
-	Circular_arc_2(Circle c, Point source, Point target) :
-		_c(c), _s(source), _t(target) {}
-
-	Circular_arc_2(Point p1, Point p2) {
-		Cplx p(p1), q(p2);
-		Cplx O(0,0);
-		Cplx inv;
-		if (p == O) {
-			inv = q.invert_in_unit_circle();
-		} else {
-			inv = p.invert_in_unit_circle();
-		}
-
-		Point ip(inv.real(), inv.imag());
-
-		_c = Circle(p1, p2, ip);
-		if (Orientation_2()(p1, p2, _c.center()) == LEFT_TURN) {
-			_s = p1;
-			_t = p2;
-		} else {
-			_s = p2;
-			_t = p1;
-		}
-
-	}
-
-	Circle supporting_circle() const {
-		return _c;
-	}
-
-	Point source() const {
-		return _s;
-	}
-
-	Point target() const {
-		return _t;
-	}
-
-	FT squared_radius() const {
-		return _c.squared_radius();
-	}
-
-	Point center() const {
-		return _c.center();
-	}
-
-	Bbox_2 bbox(void) const {
-    	return typename R::Construct_bbox_2()(*this);
-  	}
-
-};
-
-
 
 template< class Kernel >
 class Hyperbolic_Delaunay_triangulation_traits_2 {
 
 typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>  Self;  
+
+private:
+
+
+	class Circular_arc_2 {
+		typedef typename Kernel::FT 	  		FT;
+		typedef Exact_complex<FT> 		  		Cplx;
+		typedef typename Kernel::Point_2 	  	Point;
+		typedef typename Kernel::Circle_2 	  	Circle;
+		typedef typename Kernel::Orientation_2 	Orientation_2;
+
+	private:
+		Circle _c;
+		Point _s, _t;
+
+	public:
+		Circular_arc_2() :
+			_c(Point(FT(0),FT(0)), FT(0)), _s(FT(0),FT(0)), _t(FT(0),FT(0)) {}
+		
+		Circular_arc_2(Circle c, Point source, Point target) :
+			_c(c), _s(source), _t(target) {}
+
+		Circular_arc_2(Point p1, Point p2) {
+			Cplx p(p1), q(p2);
+			Cplx O(0,0);
+			Cplx inv;
+			if (p == O) {
+				inv = q.invert_in_unit_circle();
+			} else {
+				inv = p.invert_in_unit_circle();
+			}
+
+			Point ip(inv.real(), inv.imag());
+
+			_c = Circle(p1, p2, ip);
+			if (Orientation_2()(p1, p2, _c.center()) == LEFT_TURN) {
+				_s = p1;
+				_t = p2;
+			} else {
+				_s = p2;
+				_t = p1;
+			}
+
+		}
+
+		Circle supporting_circle() const {
+			return _c;
+		}
+
+		Point source() const {
+			return _s;
+		}
+
+		Point target() const {
+			return _t;
+		}
+
+		FT squared_radius() const {
+			return _c.squared_radius();
+		}
+
+		Point center() const {
+			return _c.center();
+		}
+
+		Bbox_2 bbox(void) const {
+	    	return typename Kernel::Construct_bbox_2()(*this);
+	  	}
+
+	};
 
 public:
 
@@ -124,10 +125,11 @@ public:
 	typedef typename Kernel::Kernel_base 								Kernel_base;
 	typedef typename Kernel::Point_2     								Point_2;
 	typedef Point_2                 									Point;
+	typedef Point_2 													Voronoi_point;
 	typedef typename Kernel::Circle_2    								Circle_2;
 	typedef typename Kernel::Line_2      								Euclidean_line_2;
 	typedef boost::variant<Circle_2,Euclidean_line_2>    				Euclidean_circle_or_line_2; 
-	typedef Circular_arc_2<Kernel>				 						Circular_arc_2;
+	typedef Self::Circular_arc_2										Circular_arc_2;
 	typedef typename Kernel::Segment_2                       			Euclidean_segment_2; //only used internally here
 	typedef boost::variant<Circular_arc_2, Euclidean_segment_2>  		Hyperbolic_segment_2;
 
@@ -846,7 +848,7 @@ public:
 	class Construct_hyperbolic_circumcenter_2_base {
 	public:
 
-		typedef Point_2 result_type;
+		typedef Voronoi_point result_type;
 
 		Construct_hyperbolic_circumcenter_2_base() {}
 

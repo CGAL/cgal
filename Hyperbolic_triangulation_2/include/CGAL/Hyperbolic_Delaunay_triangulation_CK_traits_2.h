@@ -23,6 +23,7 @@
 #define CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_CK_TRAITS_2_H
 
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
+#include <CGAL/Circular_kernel_2/Intersection_traits.h>
 #include "boost/tuple/tuple.hpp"
 #include "boost/variant.hpp"
 
@@ -44,6 +45,7 @@ public:
   typedef typename R::Circular_arc_2         Circular_arc_2;
   typedef typename R::Line_arc_2             Line_arc_2; 
   typedef typename R::Circular_arc_point_2   Circular_arc_point_2;
+  typedef Circular_arc_point_2               Voronoi_point;
   typedef typename R::Segment_2                       Euclidean_segment_2; //only used internally here
   typedef boost::variant<Circular_arc_2, Line_arc_2>  Hyperbolic_segment_2;
 
@@ -133,9 +135,8 @@ public:
   {
   public:
     
-    Circular_arc_point_2 operator()(Point_2 p, Point_2 q, Point_2 r)
+    Voronoi_point operator()(Point_2 p, Point_2 q, Point_2 r)
     { 
-      std::cout << "Computing circumcenter" << std::endl;
       Origin o; 
       Point_2 po = Point_2(o);
       Circle_2 l_inf(po, FT(1));
