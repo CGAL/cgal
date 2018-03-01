@@ -213,7 +213,7 @@ test_dual_with_various_faces()
 
 
   std::ofstream out("data/result.off");
-  out << mesh;
+  out << sm_dual;
   out.close();
 
 

@@ -293,22 +293,54 @@ public:
     if(patch.empty())
       return false;
 
-    // cut the hole
-    this->make_hole(halfedge(f, pmesh), pmesh);
+    // triangulate the hole
+    std::map< std::pair<int, int> , halfedge_descriptor > halfedge_map;
+    int i=0;
+    BOOST_FOREACH(halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
+    {
+      int j = std::size_t(i+1) == hole_points.size() ? 0 : i+1;
+      halfedge_map[ std::make_pair(i, j) ] = h;
+      ++i;
+    }
 
-    std::ofstream outhole("data/hole.off");
-    outhole << pmesh;
-    outhole.close();
-
-    // patch the hole
+    bool first = true;
+    std::vector<halfedge_descriptor> hedges;
+    hedges.reserve(4);
     BOOST_FOREACH(const Face_indices& triangle, patch)
     {
-      cpp11::array<vertex_descriptor, 3> face =
-        make_array( border_vertices[triangle.first],
-                    border_vertices[triangle.second],
-                    border_vertices[triangle.third] );
+      if (first)
+        first=false;
+      else
+        f=add_face(pmesh);
 
-      Euler::add_face(face, pmesh);
+      cpp11::array<int, 4> indices =
+        make_array( triangle.first,
+                    triangle.second,
+                    triangle.third,
+                    triangle.first );
+      for (int i=0; i<3; ++i)
+      {
+        typename std::map< std::pair<int, int> , halfedge_descriptor >::iterator insert_res =
+          halfedge_map.insert(
+            std::make_pair( std::make_pair(indices[i], indices[i+1]),
+                            boost::graph_traits<PM>::null_halfedge() ) ).first;
+        if (insert_res->second == boost::graph_traits<PM>::null_halfedge())
+        {
+          halfedge_descriptor nh = halfedge(add_edge(pmesh), pmesh);
+          insert_res->second=nh;
+          halfedge_map[std::make_pair(indices[i+1], indices[i])]=opposite(nh, pmesh);
+        }
+        hedges.push_back(insert_res->second);
+      }
+      hedges.push_back(hedges.front());
+      for(int i=0; i<3;++i)
+      {
+        set_next(hedges[i], hedges[i+1], pmesh);
+        set_face(hedges[i], f, pmesh);
+        set_target(hedges[i], border_vertices[indices[i+1]], pmesh);
+      }
+      set_halfedge(f, hedges[0], pmesh);
+      hedges.clear();
     }
 
     return true;
