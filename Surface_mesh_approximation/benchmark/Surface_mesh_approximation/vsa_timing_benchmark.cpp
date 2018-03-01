@@ -76,10 +76,9 @@ int main(int argc, char *argv[])
   t0.stop();
   std::cerr << "iterations time " << t0.time() << " sec." << std::endl;
 
-  Polyhedron mesh_out;
   t0.reset();
   t0.start();
-  approx.extract_mesh(mesh_out);
+  approx.extract_mesh();
   t0.stop();
   std::cerr << "meshing time " << t0.time() << " sec." << std::endl;
 

@@ -43,8 +43,7 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
   std::cout << "#proxies " << approx.proxies_size() << std::endl;
 
   // meshing
-  Polyhedron mesh_out;
-  if (approx.extract_mesh(mesh_out)) {
+  if (approx.extract_mesh()) {
     std::cout << "Succeeded." << std::endl;
     return true;
   }

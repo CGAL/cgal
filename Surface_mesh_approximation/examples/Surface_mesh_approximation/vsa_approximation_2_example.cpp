@@ -3,7 +3,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/vsa_mesh_approximation.h>
+#include <CGAL/mesh_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Plane_proxy<Kernel> Plane_proxy;
@@ -36,14 +36,14 @@ int main()
   std::vector<Plane_proxy> proxies;
 
   // free function interface with named parameters
-  CGAL::vsa_mesh_approximation(input,
-    std::back_inserter(points),
-    std::back_inserter(triangles),
+  CGAL::mesh_approximation(input,
     CGAL::Surface_mesh_approximation::parameters::min_error_drop(0.05). // seeding with minimum error drop
     nb_of_iterations(40). // set number of clustering iterations after seeding
     mesh_chord_error(0.3). // set chord approximation error threshold when meshing
     facet_proxy_map(fpxmap). // get facet partition map
-    proxies(std::back_inserter(proxies))); // get proxies
+    proxies(std::back_inserter(proxies)). // get proxies
+    anchor_points(std::back_inserter(points)). // anchor points
+    indexed_triangles(std::back_inserter(triangles))); // indexed triangles
 
   return EXIT_SUCCESS;
 }

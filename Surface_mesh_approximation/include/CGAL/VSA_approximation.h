@@ -851,11 +851,9 @@ public:
   }
 
   /*!
-   * @brief Extract the approximated surface mesh.
+   * @brief Extract the approximated indexed triangle surface.
    * @note If the extracted surface mesh contains non-manifold facets, 
    * they are not built into the output polyhedron.
-   * @tparam PolyhedronSurface should be `CGAL::Polyhedron_3`
-   * @param[out] tm_out output triangle mesh
    * @param chord_error boundary approximation recursively split criterion
    * @param is_relative_to_chord set `true` if the chord_error is relative to the the chord length (relative sense),
    * otherwise it's relative to the average edge length (absolute sense).
@@ -864,9 +862,7 @@ public:
    * @param pca_plane set `true` if use PCA plane fitting, otherwise use the default area averaged plane parameters
    * @return `true` if the extracted surface mesh is manifold, `false` otherwise.
    */
-  template <typename PolyhedronSurface>
-  bool extract_mesh(PolyhedronSurface &tm_out,
-    const FT chord_error = FT(5.0),
+  bool extract_mesh(const FT chord_error = FT(5.0),
     const bool is_relative_to_chord = false,
     const bool with_dihedral_angle = false,
     const bool optimize_anchor_location = true,
@@ -896,7 +892,9 @@ public:
     if (optimize_anchor_location)
       this->optimize_anchor_location();
 
-    return build_polyhedron_surface(tm_out);
+    // check manifold
+    CGAL::Polyhedron_3<Geom_traits> tm_test;
+    return build_polyhedron_surface(tm_test);
   }
 
   /*!

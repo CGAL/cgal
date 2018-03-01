@@ -3,7 +3,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/vsa_mesh_segmentation.h>
+#include <CGAL/mesh_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
@@ -29,12 +29,12 @@ int main()
   Facet_proxy_pmap fpxmap(fidx_map);
 
   // free function interface with named parameters
-  CGAL::vsa_mesh_segmentation(input,
-    fpxmap, // output segmentation
+  CGAL::mesh_approximation(input,
     CGAL::Surface_mesh_approximation::parameters::seeding_method(CGAL::Hierarchical). // hierarchical seeding
     max_nb_proxies(200). // first stop criterion
     min_error_drop(0.05). // second stop criterion
-    nb_of_iterations(30)); // number of iterations after seeding
+    nb_of_iterations(30). // number of iterations after seeding
+    facet_proxy_map(fpxmap)); // output facet proxy-id map
 
   // TODO: retrieve segments of the segmentation
 

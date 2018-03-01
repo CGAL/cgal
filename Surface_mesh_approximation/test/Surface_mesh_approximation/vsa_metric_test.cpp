@@ -104,10 +104,9 @@ int main()
   if (approx.proxies_size() != 20)
     return EXIT_FAILURE;
 
-  // extract the approximation polyhedron
+  // extract the approximation
   std::cout << "meshing" << std::endl;
-  Polyhedron out_mesh;
-  if (approx.extract_mesh(out_mesh))
+  if (approx.extract_mesh())
     std::cout << "manifold." << std::endl;
   else
     std::cout << "non-manifold" << std::endl;

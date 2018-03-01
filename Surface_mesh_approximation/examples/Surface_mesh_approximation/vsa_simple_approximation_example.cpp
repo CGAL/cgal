@@ -3,7 +3,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/vsa_mesh_approximation.h>
+#include <CGAL/mesh_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
@@ -18,12 +18,12 @@ int main()
   // The output will be an indexed triangle mesh
   std::vector<Kernel::Point_3> points;
   std::vector<std::vector<std::size_t> > triangles;
- 
+
   // free function interface with named parameters
-  CGAL::vsa_mesh_approximation(input,
-                                std::back_inserter(points),
-                                std::back_inserter(triangles),
-                                CGAL::Surface_mesh_approximation::parameters::max_nb_proxies(200));
+  CGAL::mesh_approximation(input,
+    CGAL::Surface_mesh_approximation::parameters::max_nb_proxies(200).
+    anchor_points(std::back_inserter(points)). // anchor points
+    indexed_triangles(std::back_inserter(triangles))); // indexed triangles
 
   std::cout << "#vertices: " << points.size() << std::endl;
   std::cout << "#triangles: " << triangles.size() << std::endl;

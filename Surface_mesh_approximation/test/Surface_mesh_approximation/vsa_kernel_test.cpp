@@ -10,7 +10,7 @@
 
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/vsa_mesh_approximation.h>
+#include <CGAL/mesh_approximation.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
 typedef CGAL::Simple_cartesian<double> Sckernel;
@@ -29,14 +29,13 @@ int test() {
   std::vector<typename K::Point_3> points;
   std::vector<std::vector<std::size_t> > triangles;
 
-  CGAL::vsa_mesh_approximation(tm,
-    std::back_inserter(points),
-    std::back_inserter(triangles),
+  CGAL::mesh_approximation(tm,
     CGAL::Surface_mesh_approximation::parameters::max_nb_proxies(6).
       nb_of_iterations(30).
       nb_of_relaxations(5).
       mesh_chord_error(0.5).
-      output_mesh(&out_mesh));
+      anchor_points(std::back_inserter(points)).
+      indexed_triangles(std::back_inserter(triangles)));
 
   return EXIT_SUCCESS;
 }

@@ -52,9 +52,8 @@ int main()
   approx.teleport_proxies(2, 5);
   approx.run(10);
 
-  // mesh and output final polyhedral surface
-  Polyhedron output;
-  approx.extract_mesh(output);
+  // meshing with default parameters
+  approx.extract_mesh();
 
   return EXIT_SUCCESS;
 }

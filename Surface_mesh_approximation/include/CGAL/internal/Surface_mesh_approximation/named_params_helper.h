@@ -82,14 +82,6 @@ template <typename Approximation>
 void get_proxy_map(const Approximation &, internal_np::vsa_no_output_t) {}
 
 template <typename Approximation, typename OutputIterator>
-void get_anchor_vertices(const Approximation &approx, OutputIterator out_itr) {
-  approx.anchor_vertices(out_itr);
-}
-
-template <typename Approximation>
-void get_anchor_vertices(const Approximation &, internal_np::vsa_no_output_t) {}
-
-template <typename Approximation, typename OutputIterator>
 void get_proxies(const Approximation &approx, OutputIterator out_itr) {
   approx.proxies(out_itr);
 }
@@ -97,6 +89,21 @@ void get_proxies(const Approximation &approx, OutputIterator out_itr) {
 template <typename Approximation>
 void get_proxies(const Approximation &, internal_np::vsa_no_output_t) {}
 
+template <typename Approximation, typename OutputIterator>
+void get_anchor_points(const Approximation &approx, OutputIterator out_itr) {
+  approx.anchor_points(out_itr);
+}
+
+template <typename Approximation>
+void get_anchor_points(const Approximation &, internal_np::vsa_no_output_t) {}
+
+template <typename Approximation, typename OutputIterator>
+void get_indexed_triangles(const Approximation &approx, OutputIterator out_itr) {
+  approx.indexed_triangles(out_itr);
+}
+
+template <typename Approximation>
+void get_indexed_triangles(const Approximation &, internal_np::vsa_no_output_t) {}
 } //end of namespace CGAL
 
 #endif //CGAL_NAMED_PARAMETERS_HELPERS_H

@@ -9,7 +9,6 @@
 #include <CGAL/internal/Surface_mesh_approximation/named_function_params.h>
 #include <CGAL/internal/Surface_mesh_approximation/named_params_helper.h>
 
-#include <CGAL/Polyhedron_3.h>
 #include <CGAL/property_map.h>
 
 #include <boost/graph/graph_traits.hpp>
@@ -26,16 +25,12 @@ namespace CGAL {
  * @tparam TriangleMesh model of `FaceListGraph`.
  *         If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
  *         and no `face_index_map` is given as a named parameter, then the internal one should be initialized.
- * @tparam AnchorPointOutputIterator a class model of `OutputIterator` with `GeomTraits::Point_3` value type
- * @tparam IndexedTriangleOutputIterator a class model of `OutputIterator` with `std::vector<std::size_t>` value type
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param tm a triangle surface mesh to be approximated
- * @param[out] apts_out_itr output iterator over anchor points 
- * @param[out] tris_out_itr output iterator over indexed triangles (triplets of integers referring to anchor points)
  * @param np optional sequence of \ref namedparameters among the ones listed below
  * @return `true` if the indexed triangles represent a valid 2-manifold, oriented surface mesh, and `false` otherwise. 
-  *
+ *
  * \cgalNamedParamsBegin
  *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
  *    Exact constructions kernels are not supported by this function.
@@ -55,25 +50,21 @@ namespace CGAL {
  *  \cgalParamEnd
  *  \cgalParamBegin{mesh_chord_error} maximum chord approximation error used for meshing.
  *  \cgalParamEnd
- *  \cgalParamBegin{face_proxy_map} property map containing the assigned proxy index of each face of input mesh `tm`.
+ *  \cgalParamBegin{face_proxy_map} a ReadWritePropertyMap with
+ * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type.
+ * A proxy is a set of connected facets which are placed under the same proxy patch (see \cgalFigureRef{iterations}).
+ * The proxy-id is contiguous in range [0, number_of_proxies - 1].
  *  \cgalParamEnd
  *  \cgalParamBegin{proxies} output iterator over proxies.
  *  \cgalParamEnd
- *  \cgalParamBegin{anchor_vertices} output iterator over anchor vertices, defined on the input mesh `tm`. 
+ *  \cgalParamBegin{anchor_points} output iterator over anchor points. 
  *  \cgalParamEnd
- *  \cgalParamBegin{output_mesh} polyhedral surface mesh derived from the indexed facet set. The polyhedron is not empty only 
- *  when the indexed face set represents a 2-manifold, oriented surface triangle mesh.
+ *  \cgalParamBegin{indexed_triangles} output iterator over indexed triangles.
  *  \cgalParamEnd
  * \cgalNamedParamsEnd
  */
-template <typename TriangleMesh,
-  typename AnchorPointOutputIterator,
-  typename IndexedTriangleOutputIterator,
-  typename NamedParameters>
-bool vsa_mesh_approximation(const TriangleMesh &tm,
-  AnchorPointOutputIterator apts_out_itr,
-  IndexedTriangleOutputIterator tris_out_itr,
-  const NamedParameters &np)
+template <typename TriangleMesh, typename NamedParameters>
+bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
 {
   using boost::get_param;
   using boost::choose_param;
@@ -119,6 +110,7 @@ bool vsa_mesh_approximation(const TriangleMesh &tm,
     << ", #relx = " << nb_of_relaxations << std::endl;
 #endif
 
+  // get proxy map
   typedef typename boost::lookup_named_param_def<
     internal_np::facet_proxy_map_t,
     NamedParameters,
@@ -127,26 +119,7 @@ bool vsa_mesh_approximation(const TriangleMesh &tm,
     get_param(np, internal_np::facet_proxy_map), internal_np::vsa_no_output);
   get_proxy_map(approx, fproxymap);
 
-  typedef CGAL::Polyhedron_3<Geom_traits> PolyhedronSurface;
-  PolyhedronSurface tmp_poly;
-  PolyhedronSurface * const tm_out = choose_param(get_param(np, internal_np::output_mesh), &tmp_poly);
-  const FT chord_error = choose_param(get_param(np, internal_np::mesh_chord_error), FT(5.0));
-  const bool is_manifold = approx.extract_mesh(*tm_out, chord_error);
-
-  // get anchor points
-  approx.anchor_points(apts_out_itr);
-
-  // get indexed triangles
-  approx.indexed_triangles(tris_out_itr);
-
-  typedef typename boost::lookup_named_param_def<
-    internal_np::anchor_vertices_t,
-    NamedParameters,
-    internal_np::vsa_no_output_t>::type AnchorVertexOutItr;
-  AnchorVertexOutItr avtx_out_itr = choose_param(
-    get_param(np, internal_np::anchor_vertices) , internal_np::vsa_no_output);
-  get_anchor_vertices(approx, avtx_out_itr);
-
+  // get proxies
   typedef typename boost::lookup_named_param_def <
     internal_np::proxies_t,
     NamedParameters,
@@ -154,6 +127,28 @@ bool vsa_mesh_approximation(const TriangleMesh &tm,
   ProxiesOutItr pxies_out_itr = choose_param(
     get_param(np, internal_np::proxies), internal_np::vsa_no_output);
   get_proxies(approx, pxies_out_itr);
+
+  // meshing
+  const FT chord_error = choose_param(get_param(np, internal_np::mesh_chord_error), FT(5.0));
+  const bool is_manifold = approx.extract_mesh(chord_error);
+
+  // get anchor points
+  typedef typename boost::lookup_named_param_def<
+    internal_np::anchor_points_t,
+    NamedParameters,
+    internal_np::vsa_no_output_t>::type Anchor_point_output_iterator;
+  Anchor_point_output_iterator apts_out_itr = choose_param(
+    get_param(np, internal_np::anchor_points) , internal_np::vsa_no_output);
+  get_anchor_points(approx, apts_out_itr);
+
+  // get indexed triangles
+  typedef typename boost::lookup_named_param_def<
+    internal_np::indexed_triangles_t,
+    NamedParameters,
+    internal_np::vsa_no_output_t>::type Indexed_triangles_output_iterator;
+  Indexed_triangles_output_iterator tris_out_itr = choose_param(
+    get_param(np, internal_np::indexed_triangles) , internal_np::vsa_no_output);
+  get_indexed_triangles(approx, tris_out_itr);
 
   return is_manifold;
 }

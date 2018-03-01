@@ -12,5 +12,5 @@ CGAL_add_named_parameter(mesh_chord_error_t, mesh_chord_error, mesh_chord_error)
 // output parameters
 CGAL_add_named_parameter(facet_proxy_map_t, facet_proxy_map, facet_proxy_map)
 CGAL_add_named_parameter(proxies_t, proxies, proxies)
-CGAL_add_named_parameter(anchor_vertices_t, anchor_vertices, anchor_vertices)
-CGAL_add_named_parameter(output_mesh_t, output_mesh, output_mesh)
+CGAL_add_named_parameter(anchor_points_t, anchor_points, anchor_points)
+CGAL_add_named_parameter(indexed_triangles_t, indexed_triangles, indexed_triangles)
