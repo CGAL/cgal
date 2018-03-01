@@ -45,7 +45,8 @@
 #include <queue>
 #include <vector>
 #include <utility>
-#include <fstream>
+#include <CGAL/array.h>
+#include <fstream> //temp
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
@@ -272,7 +273,16 @@ public:
 
   bool triangulate_face_with_hole_filling(face_descriptor f, PM& pmesh)
   {
-    halfedge_descriptor h = halfedge(f, pmesh);
+    // gather halfedges around the face
+    std::vector<Point> hole_points;
+    std::vector<vertex_descriptor> border_vertices;
+    CGAL_assertion(CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh).size() > 0);
+    BOOST_FOREACH(halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
+    {
+      vertex_descriptor v = source(h, pmesh);
+      hole_points.push_back( get(_vpmap, v) );
+      border_vertices.push_back(v);
+    }
 
     // cut the hole
     this->make_hole(halfedge(f, pmesh), pmesh);
@@ -281,17 +291,28 @@ public:
     outhole << pmesh;
     outhole.close();
 
-    // triangulate
-    std::vector<face_descriptor> patch_faces;
-    CGAL::Polygon_mesh_processing::triangulate_hole(pmesh, h, std::back_inserter(patch_faces));
 
-    // put the filling in the hole
-    BOOST_FOREACH(face_descriptor face, patch_faces)
+
+    // use hole filling
+    typedef CGAL::Triple<int, int, int> Face_indices;
+    std::vector<Face_indices> patch;
+    CGAL::Polygon_mesh_processing::triangulate_hole_polyline(hole_points,
+                                                             std::back_inserter(patch));
+
+    if(patch.empty())
+      std::cerr << "  DEBUG: Failed to fill a hole using the whole search space.\n";
+
+    // patch the hole
+    BOOST_FOREACH(const Face_indices& triangle, patch)
     {
-      halfedge_descriptor h0 = halfedge(face, pmesh);
-      Euler::fill_hole(h0, pmesh);
-    }
 
+      cpp11::array<vertex_descriptor, 3> face =
+        make_array( border_vertices[triangle.first],
+                    border_vertices[triangle.second],
+                    border_vertices[triangle.third] );
+
+      Euler::add_face(face, pmesh);
+    }
   }
 
   template<typename FaceRange>

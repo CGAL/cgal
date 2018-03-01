@@ -118,24 +118,8 @@ test_triangulate_triangle_face()
   out << mesh;
   out.close();
 
-
   return true;
 }
-
-/*
-template <typename K, typename G>
-struct Noborder {
-
-  typedef typename K::Point_3                    Point;
-  typedef CGAL::Surface_mesh<Point>          Surface_mesh;
-
-  Noborder() : g(NULL) {} // default-constructor required by filtered_graph
-  Noborder(G& g) : g(&g) {}
-  bool operator()(const typename boost::graph_traits<Surface_mesh>::edge_descriptor& e) const
-  { return !is_border(e,*g); }
-  G* g;
-};
-*/
 
 // todo: add this in Dual.h
 template <class SurfaceMesh, class Point, class Primal_map>
@@ -194,7 +178,7 @@ test_dual_with_various_faces()
   typedef CGAL::Surface_mesh<Point>          Surface_mesh;
 
   Surface_mesh mesh;
-  std::ifstream input("data/tetra3.off");
+  std::ifstream input("data/elephant.off");
 
   if (!input || !(input >> mesh) || mesh.is_empty())
   {
@@ -202,15 +186,10 @@ test_dual_with_various_faces()
     return false;
   }
 
-  // get mesh's vpmap
   typedef typename boost::property_map<Surface_mesh, boost::vertex_point_t>::type Pmap;
   Pmap vpmap = get_property_map(boost::vertex_point, mesh);
 
-  // mesh's dual
   CGAL::Dual<Surface_mesh> dual(mesh);
-
-  //typedef boost::filtered_graph<Dual, Noborder<K, Surface_mesh> > FiniteDual;
-  //FiniteDual finite_dual(dual, Noborder<K, Surface_mesh>(mesh)); crap
 
   // copy dual to a sm
   Surface_mesh sm_dual;
@@ -221,24 +200,21 @@ test_dual_with_various_faces()
                         Dual_vpm<Surface_mesh, Point, Pmap>(mesh, vpmap));
 
 
-  std::ofstream out("data/dual_sm_elephant.off");
-  out << sm_dual;
-  out.close();
+  std::ofstream outdual("data/dual_sm_elephant.off");
+  outdual<< sm_dual;
+  outdual.close();
 
-
-/*
-  BOOST_FOREACH(typename boost::graph_traits<Surface_mesh>::face_descriptor fit, faces(dual))
+  BOOST_FOREACH(typename boost::graph_traits<Surface_mesh>::face_descriptor fit, faces(sm_dual))
   {
-    if(!CGAL::Polygon_mesh_processing::triangulate_face(fit, dual))
+    if(!CGAL::Polygon_mesh_processing::triangulate_face(fit, sm_dual))
       assert(false);
   }
-*/
 
-/*
+
+
   std::ofstream out("data/result.off");
   out << mesh;
   out.close();
-*/
 
 
   return true;
@@ -250,17 +226,18 @@ test_dual_with_various_faces()
 
 int main()
 {
-/*  assert(test_triangulate_faces<Epic>());
+  assert(test_triangulate_faces<Epic>());
   assert(test_triangulate_face_range<Epic>());
   assert(test_triangulate_face<Epic>());
 
   assert(test_triangulate_faces<Epec>());
   assert(test_triangulate_face_range<Epec>());
   assert(test_triangulate_face<Epec>());
-*/
 
-  //assert(test_triangulate_triangle_face<Epic>());
+  assert(test_triangulate_triangle_face<Epic>());
   assert(test_dual_with_various_faces<Epic>());
+
+  // Epec too
 
   return EXIT_SUCCESS;
 }
