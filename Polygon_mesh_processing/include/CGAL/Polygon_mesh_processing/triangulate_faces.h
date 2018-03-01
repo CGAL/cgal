@@ -284,15 +284,6 @@ public:
       border_vertices.push_back(v);
     }
 
-    // cut the hole
-    this->make_hole(halfedge(f, pmesh), pmesh);
-
-    std::ofstream outhole("data/hole.off");
-    outhole << pmesh;
-    outhole.close();
-
-
-
     // use hole filling
     typedef CGAL::Triple<int, int, int> Face_indices;
     std::vector<Face_indices> patch;
@@ -300,12 +291,18 @@ public:
                                                              std::back_inserter(patch));
 
     if(patch.empty())
-      std::cerr << "  DEBUG: Failed to fill a hole using the whole search space.\n";
+      return false;
+
+    // cut the hole
+    this->make_hole(halfedge(f, pmesh), pmesh);
+
+    std::ofstream outhole("data/hole.off");
+    outhole << pmesh;
+    outhole.close();
 
     // patch the hole
     BOOST_FOREACH(const Face_indices& triangle, patch)
     {
-
       cpp11::array<vertex_descriptor, 3> face =
         make_array( border_vertices[triangle.first],
                     border_vertices[triangle.second],
@@ -313,6 +310,8 @@ public:
 
       Euler::add_face(face, pmesh);
     }
+
+    return true;
   }
 
   template<typename FaceRange>
