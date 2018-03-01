@@ -62,10 +62,10 @@ public:
   typedef typename Base::All_faces_iterator       All_faces_iterator;
  
   typedef Gt Geom_traits;
-  typedef typename Geom_traits::FT            FT;
-  typedef typename Geom_traits::Point_2       Point;
-  //typedef typename Geom_traits::Circular_arc_point_2       Circular_arc_point;
-  typedef typename Geom_traits::Hyperbolic_segment_2       Hyperbolic_segment;
+  typedef typename Geom_traits::FT                    FT;
+  typedef typename Geom_traits::Point_2               Point;
+  typedef typename Geom_traits::Voronoi_point         Voronoi_point;
+  typedef typename Geom_traits::Hyperbolic_segment_2  Hyperbolic_segment;
   
   Hyperbolic_Delaunay_triangulation_2(const Gt& gt = Gt())
   : Delaunay_triangulation_2<Gt,Tds>(gt) {}
@@ -477,8 +477,7 @@ public:
   Finite_edges_iterator finite_edges_begin() const { return hyperbolic_edges_begin(); }
   Finite_edges_iterator finite_edges_end() const { return hyperbolic_edges_end(); }
   
-  //Circular_arc_point
-  Point
+  Voronoi_point
   dual(Face_handle f) const
   {
     CGAL_triangulation_precondition (!this->is_non_hyperbolic(f));
