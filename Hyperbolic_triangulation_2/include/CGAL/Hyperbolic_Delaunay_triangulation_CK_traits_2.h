@@ -22,8 +22,8 @@
 #ifndef CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_CK_TRAITS_2_H
 #define CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_CK_TRAITS_2_H
 
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Circular_kernel_2/Intersection_traits.h>
+#include <CGAL/triangulation_assertions.h>
 #include "boost/tuple/tuple.hpp"
 #include "boost/variant.hpp"
 
@@ -66,31 +66,19 @@ public:
   typedef typename R::Construct_midpoint_2       Construct_Euclidean_midpoint_2;
   typedef typename R::Compute_squared_distance_2 Compute_squared_Euclidean_distance_2;
   typedef typename R::Has_on_bounded_side_2 Has_on_bounded_side_2;
-  // MT useless?
-  //  typedef Hyperbolic_Delaunay_triangulation_CK_traits_2<R> Self;
-  //  typedef typename R::RT          RT;
-  //  typedef R Kernel;
-  //  typedef R Rep;
-  //  typedef typename R::Triangle_2  Triangle_2;
-  //  typedef typename R::Line_2      Line_2;
-  //  typedef typename R::Ray_2       Ray_2; // why would we need Eucldean rays??
-  //  typedef typename R::Iso_rectangle_2 Iso_rectangle_2;
-  //  typedef typename R::Angle_2                       Angle_2;
 
   typedef typename R::Less_x_2                   Less_x_2;
   typedef typename R::Less_y_2                   Less_y_2;
-  //  typedef typename R::Construct_triangle_2       Construct_triangle_2;
-  //  typedef typename R::Construct_direction_2      Construct_direction_2;
       
 public:
 
   class Construct_hyperbolic_segment_2
   {
-    typedef typename CGAL::Regular_triangulation_euclidean_traits_2<R> Regular_geometric_traits_2;
-    typedef typename Regular_geometric_traits_2::Construct_weighted_circumcenter_2 Construct_weighted_circumcenter_2;
-    typedef typename Regular_geometric_traits_2::Weighted_point_2 Weighted_point_2;
-    typedef typename Regular_geometric_traits_2::Bare_point Bare_point;
     
+    typedef typename R::Construct_weighted_circumcenter_2 Construct_weighted_circumcenter_2;
+    typedef typename R::Weighted_point_2 Weighted_point_2;
+    typedef typename R::Point_2 Bare_point;
+
   public:
     Construct_hyperbolic_segment_2() 
       {}
@@ -111,7 +99,7 @@ public:
       
       Circle_2 circle(center, sq_radius);
       // uncomment!!!
-      //assert(circle.has_on_boundary(p) && circle.has_on_boundary(q));
+      assert(circle.has_on_boundary(p) && circle.has_on_boundary(q));
       
       if(Orientation_2()(p, q, center) == LEFT_TURN) {
         return Circular_arc_2(circle, p, q);
@@ -242,7 +230,6 @@ public:
     // constructs a hyperbolic line 
     Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q) const
     {
-      std::cout << "Computing bisector(p,q)" << std::endl;
       Origin o; 
       Point_2 po = Point_2(o);
       Circle_2 l_inf = Circle_2(po,FT(1));
@@ -275,7 +262,6 @@ public:
     Hyperbolic_segment_2 
       operator()(Point_2 p, Point_2 q, Point_2 r, Point_2 s)
     {
-      std::cout << "Computing bisector(p,q,r,s)" << std::endl;
       CGAL_triangulation_precondition
 	( (Orientation_2()(p,q,r) == ON_POSITIVE_SIDE) 
 	  && (Orientation_2()(p,s,q) == ON_POSITIVE_SIDE) );
@@ -312,7 +298,6 @@ public:
     // and going to the infinite line on the other side
     Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q, Point_2 r)
     {
-      std::cout << "Computing bisector(p,q,r)" << std::endl;
       CGAL_triangulation_precondition
 	( Orientation_2()(p,q,r) == POSITIVE );
 

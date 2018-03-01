@@ -2,7 +2,7 @@
 
 // CGAL headers
 
-#define USE_CORE_EXPR_KERNEL
+// #define USE_CORE_EXPR_KERNEL
 
 #ifndef USE_CORE_EXPR_KERNEL
   #include <CGAL/Exact_circular_kernel_2.h>
@@ -346,9 +346,9 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   CGAL::Random_points_in_disc_2<Point_2> pg(1);
   bool ok = false;
   const int number_of_points = 
-    QInputDialog::getInteger(this, 
-                             tr("Number of random points"),
-                             tr("Enter number of random points"),
+    QInputDialog::getInt(this, 
+                         tr("Number of random points"),
+                         tr("Enter number of random points"),
 			     100,
 			     0,
 			     std::numeric_limits<int>::max(),
