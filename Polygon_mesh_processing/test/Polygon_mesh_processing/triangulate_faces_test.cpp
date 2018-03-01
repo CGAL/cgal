@@ -138,7 +138,7 @@ struct Noborder {
 */
 
 // todo: add this in Dual.h
-template <class SurfaceMesh, class Point, class Pmap>
+template <class SurfaceMesh, class Point, class Primal_map>
 struct Dual_vpm
 {
   typedef typename boost::graph_traits<SurfaceMesh>::face_descriptor key_type;
@@ -148,22 +148,30 @@ struct Dual_vpm
 
   typedef typename boost::graph_traits<SurfaceMesh>::vertex_descriptor vertex_descriptor;
 
-  Dual_vpm(const Pmap& vpmap) : vpmap_(vpmap) {}
+  Dual_vpm(const SurfaceMesh& primal,
+           const Primal_map& primal_map)
+    : primal_(primal)
+    , primal_map_(primal_map) {}
 
-  Pmap& pmap()
+  const Primal_map& primal_map() const
   {
-    return vpmap_;
+    return primal_map_;
+  }
+
+  const SurfaceMesh& primal() const
+  {
+    return primal_;
   }
 
   friend
-  Point get(Dual_vpm& mesh, key_type& f)
+  Point get(Dual_vpm& map, key_type& f)
   {
     std::vector<Point> face_points;
 
-    BOOST_FOREACH(vertex_descriptor v, CGAL::vertices_around_face(halfedge(f, mesh), mesh))
+    BOOST_FOREACH(vertex_descriptor v,
+                  CGAL::vertices_around_face(halfedge(f, map.primal()), map.primal()))
     {
-      Point p = get(pmap(), v);
-      face_points.push_back(p);
+      face_points.push_back( get(map.primal_map(), v) );
     }
 
     // temp extra copy
@@ -173,7 +181,8 @@ struct Dual_vpm
     return centroid;
   }
 
-  const Pmap vpmap_;
+  const SurfaceMesh& primal_;
+  Primal_map primal_map_;
 
 };
 
@@ -209,7 +218,7 @@ test_dual_with_various_faces()
                         CGAL::Emptyset_iterator(),
                         CGAL::Emptyset_iterator(),
                         CGAL::Emptyset_iterator(),
-                        Dual_vpm<Surface_mesh, Point, Pmap>(vpmap));
+                        Dual_vpm<Surface_mesh, Point, Pmap>(mesh, vpmap));
 
 
   std::ofstream out("data/dual_sm_elephant.off");
