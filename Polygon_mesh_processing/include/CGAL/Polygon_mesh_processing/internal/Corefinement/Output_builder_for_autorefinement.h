@@ -801,7 +801,7 @@ public:
                 //       parts of a mesh (ex: a square in crossing the interior
                 //       of a larger). In practice, we could say this is not an
                 //       issue if anyway the whole patch would be dropped.
-                //       Note that this remark is value for all cases where
+                //       Note that this remark is valid for all cases where
                 //       all_fixed is set to false.
                 if (patch_id_p1==patch_id_p2 || patch_id_q1==patch_id_q2)
                 {
