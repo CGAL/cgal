@@ -320,6 +320,7 @@ class Intersection_nodes<TriangleMesh,VertexPointMap,Predicates_on_constructions
 //members
   Nodes_vector nodes;
   Input_kernel k;
+  typename Input_kernel::Intersect_3 intersection;
 public:
   typedef Input_kernel                                             Exact_kernel;
 
@@ -343,6 +344,34 @@ public:
 
   size_t size() const {return nodes.size();}
   const Point_3& exact_node(std::size_t i) const {return nodes[i];}
+
+  void add_new_node(halfedge_descriptor h1,
+                    halfedge_descriptor h2,
+                    halfedge_descriptor h3,
+                    const TriangleMesh& tm,
+                    const VertexPointMap& vpm)
+  {
+    // TODO Far from optimal!
+    typedef typename Exact_kernel::Plane_3 Plane_3;
+    Plane_3 p1( get(vpm, source(h1,tm)),
+                get(vpm, target(h1,tm)),
+                get(vpm, target(next(h1,tm),tm))),
+            p2(get(vpm, source(h2,tm)),
+               get(vpm, target(h2,tm)),
+               get(vpm, target(next(h2,tm),tm))),
+            p3(get(vpm, source(h3,tm)),
+               get(vpm, target(h3,tm)),
+               get(vpm, target(next(h3,tm),tm)));
+    typename cpp11::result_of<
+      typename Exact_kernel::Intersect_3(Plane_3, Plane_3, Plane_3)
+    >::type inter_res = intersection(p1, p2, p3);
+
+    CGAL_assertion(inter_res != boost::none);
+    const Point_3* pt =
+      boost::get<Point_3>(&(*inter_res));
+    CGAL_assertion(pt!=NULL);
+    add_new_node(*pt);
+  }
 
   //add a new node in the final graph.
   //it is the intersection of the triangle with the segment
