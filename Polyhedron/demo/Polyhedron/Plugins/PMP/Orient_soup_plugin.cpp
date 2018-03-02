@@ -352,7 +352,7 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
     }
     QApplication::restoreOverrideCursor();
     if(!items_created)
-      QMessageBox::information(mw, "Nothing Non-manifold", "No non-manifold edge nore vertex was found.");
+      QMessageBox::information(mw, "Nothing Non-manifold", "No non-manifold edge nor vertex was found.");
   }  
 }
 
