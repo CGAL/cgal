@@ -101,9 +101,9 @@ private:
   {
     return static_cast<return_type>(transform(
        r_im_.template labellized_trilinear_interpolation<Image_word_type>(
-          CGAL::to_double(p.x()),
-          CGAL::to_double(p.y()),
-          CGAL::to_double(p.z()),
+          CGAL::to_double(p.x()-r_im_.image()->tx),
+          CGAL::to_double(p.y()-r_im_.image()->ty),
+          CGAL::to_double(p.z()-r_im_.image()->tz),
           value_outside)));
   }
 
@@ -115,9 +115,9 @@ private:
     return transform(
         r_im_.template trilinear_interpolation<Image_word_type,
                                                Interpolation_type>(
-          CGAL::to_double(p.x()),
-          CGAL::to_double(p.y()),
-          CGAL::to_double(p.z()),
+          CGAL::to_double(p.x()-r_im_.image()->tx),
+          CGAL::to_double(p.y()-r_im_.image()->ty),
+          CGAL::to_double(p.z()-r_im_.image()->tz),
           value_outside));
   }
 
@@ -126,9 +126,9 @@ private:
                    CGAL::Tag_false /*trilinear*/,
                    Labeled_tag /*labeled*/) const
   {
-    const std::ptrdiff_t px = static_cast<std::ptrdiff_t>(p.x()/r_im_.vx());
-    const std::ptrdiff_t py = static_cast<std::ptrdiff_t>(p.y()/r_im_.vy());
-    const std::ptrdiff_t pz = static_cast<std::ptrdiff_t>(p.z()/r_im_.vz());
+    const std::ptrdiff_t px = static_cast<std::ptrdiff_t>((p.x()-r_im_.image()->tx)/r_im_.vx());
+    const std::ptrdiff_t py = static_cast<std::ptrdiff_t>((p.y()-r_im_.image()->ty)/r_im_.vy());
+    const std::ptrdiff_t pz = static_cast<std::ptrdiff_t>((p.z()-r_im_.image()->tz)/r_im_.vz());
 
     const std::ptrdiff_t dimx = static_cast<std::ptrdiff_t>(r_im_.xdim());
     const std::ptrdiff_t dimy = static_cast<std::ptrdiff_t>(r_im_.ydim());
