@@ -449,10 +449,11 @@ polylines_to_protect
                                                 InterpolationFunctor> G_manip;
   G_manip g_manip(graph, interpolate);
 
+  const float& tx = cgal_image.image()->tx;
+  const float& ty = cgal_image.image()->ty;
+  const float& tz = cgal_image.image()->tz;
   double max_squared_distance =
-    (std::max)( (std::max)(cgal_image.vx(),
-                           cgal_image.vy()),
-                cgal_image.vz() );
+    (std::max)( (std::max)(vx, vy), vz );
   max_squared_distance *= max_squared_distance;
   max_squared_distance *= 2;
 
@@ -525,9 +526,9 @@ polylines_to_protect
           for(int ii = 0; ii < 2; ++ii) {
             for(int jj = 0; jj < 2; ++jj) {
               const Pixel& pixel = square[ii][jj].pixel;
-              double x = pixel[0] * vx;
-              double y = pixel[1] * vy;
-              double z = pixel[2] * vz;
+              double x = pixel[0] * vx + tx;
+              double y = pixel[1] * vy + ty;
+              double z = pixel[2] * vz + tz;
               square[ii][jj].point = Point_3(x, y, z);
               square[ii][jj].word =
                 static_cast<Image_word_type>(cgal_image.value(pixel[0],
