@@ -73,6 +73,7 @@ namespace Mesh_3 {
   template<typename T>
   struct Greater_than {
     typedef T argument_type;
+    typedef bool result_type;
     Greater_than(const T& second) : second(second) {}
     bool operator()(const T& first) const {
       return std::greater<T>()(first, second);
