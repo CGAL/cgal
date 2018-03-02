@@ -244,7 +244,10 @@ self_intersections( const FaceRange& face_range,
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * @param tmesh the triangulated surface mesh to be checked
- * @param out output iterator to be filled with all pairs of non-adjacent faces that intersect
+ * @param out output iterator to be filled with all pairs of non-adjacent faces that intersect.
+              In case `tmesh` contains some degenerate faces, for each degenerate face `f` a pair `(f,f)`
+              will be put in `out` before any other self intersection between non-degenerate faces.
+              These are the only pairs where degenerate faces will be reported.
  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -343,10 +346,15 @@ self_intersections( const FaceRange& face_range,
 
   BOOST_FOREACH(face_descriptor f, face_range)
   {
-    boxes.push_back(Box( get(vpmap, target(halfedge(f,tmesh),tmesh)).bbox()
-      + get(vpmap, target(next(halfedge(f, tmesh), tmesh), tmesh)).bbox()
-      + get(vpmap, target(next(next(halfedge(f, tmesh), tmesh), tmesh), tmesh)).bbox(),
-    f));
+    typename boost::property_traits<VertexPointMap>::reference
+      p = get(vpmap, target(halfedge(f,tmesh),tmesh)),
+      q = get(vpmap, target(next(halfedge(f, tmesh), tmesh), tmesh)),
+      r = get(vpmap, target(next(next(halfedge(f, tmesh), tmesh), tmesh), tmesh));
+
+    if ( collinear(p, q, r) )
+      *out++= std::make_pair(f,f);
+    else
+      boxes.push_back(Box(p.bbox() + q.bbox() + r.bbox(), f));
   }
   // generate box pointers
   std::vector<const Box*> box_ptr;
