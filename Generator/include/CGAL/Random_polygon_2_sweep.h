@@ -88,11 +88,11 @@ class Vertex_data ;
 template <class ForwardIterator, class PolygonTraits>
 class Less_segments {
     Vertex_data<ForwardIterator, PolygonTraits> *m_vertex_data;
-    bool less_than_in_tree(Vertex_index i, Vertex_index j);
+    bool less_than_in_tree(Vertex_index i, Vertex_index j) const;
   public:
     Less_segments(Vertex_data<ForwardIterator, PolygonTraits> *vertex_data)
     : m_vertex_data(vertex_data) {}
-   bool operator()(Vertex_index i, Vertex_index j);
+   bool operator()(Vertex_index i, Vertex_index j) const;
 };
 
 template <class ForwardIterator, class PolygonTraits>
@@ -144,7 +144,7 @@ public:
 namespace i_generator_polygon {
 template <class ForwardIterator, class PolygonTraits>
 bool Less_segments<ForwardIterator, PolygonTraits>::
-operator()(Vertex_index i, Vertex_index j)
+operator()(Vertex_index i, Vertex_index j) const
 {
     if (m_vertex_data->edges[j.as_int()].is_in_tree) {
         return less_than_in_tree(i,j);
@@ -155,7 +155,7 @@ operator()(Vertex_index i, Vertex_index j)
 
 template <class ForwardIterator, class PolygonTraits>
 bool Less_segments<ForwardIterator, PolygonTraits>::
-less_than_in_tree(Vertex_index new_edge, Vertex_index tree_edge)
+less_than_in_tree(Vertex_index new_edge, Vertex_index tree_edge) const
 {
 #if defined(CGAL_POLY_GENERATOR_DEBUG)
     std::cout << "less_than_in_tree" << std::endl;
