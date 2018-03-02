@@ -579,10 +579,10 @@ public:
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
 
-  template <typename T1,
-            typename boost::disable_if<boost::is_same<T1,Self>, int>::type = 0
-            >
-  Mesh_domain_with_polyline_features_3(const T1& o1)
+  template <typename T1>
+  Mesh_domain_with_polyline_features_3
+  (const T1& o1, typename boost::disable_if<boost::is_same<T1,Self>,
+                                            CGAL::Tag_false>::type* = 0)
     : MeshDomain_3(o1)
     , current_corner_index_(1)
     , current_curve_index_(1)
