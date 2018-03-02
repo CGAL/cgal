@@ -78,6 +78,13 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
     page_footer='''<table class="test-results">
 <tr>
 <th>Package Name</th>
+<th>Logs </th>
+<th>Warnings</th>
+<th>Errors</th>
+<th>Logs </th>
+<th>Warnings</th>
+<th>Errors</th>
+<th>Logs </th>
 <th>Warnings</th>
 <th>Errors</th>
 </tr>
@@ -184,9 +191,11 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 </style>
 <html><head><title>Manual Testsuite Overview</title></head>
 <body><h1>Overviewpage of the Doxygen Manual Testsuite</h1>
-<table  border="1" cellspacing="2" cellpadding="5" id="revisions" class="rev-table">
-<tr><th>Revision</th><th>Date</th><th>Warnings</th><th>Errors</th><th>Diff with doxygen master</th></tr></table></body></html>''')
-
+<table border="1" cellspacing="2" cellpadding="5" id="revisions" class="rev-table">
+  <tr><td/><td/><th colspan="2">Doxygen 1.8.4</th><th colspan="2">Doxygen 1.8.13</th><th colspan="2">Doxygen master</th><td/><td/></tr>
+<tr><th>Revision</th><th>Date</th><th>Warnings</th>
+<th>Errors</th><th>Warnings </th><th>Errors</th><th>Warnings </th><th>Errors </th>
+<th>Diff with doxygen master</th><th>Diff with doxygen 1.8.13</th></tr></table></body>''')
         with open(diff_file, 'r') as myfile:
           diff=myfile.read()
         if not diff:
@@ -196,9 +205,11 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
           log_path=version_string, test_version=args.doxygen_version, master_version=args.master_describe)
         d=pq(filename=publish_dir + 'index.html',parser="html")
         revs=d('#revisions tr')
-        new_row='<tr><td><a href="{revision}/index.html">{revision}</a></td><td>{date}</td><td>{warnings}</td><td>{errors}</td><td>{diffs}</td></tr>'.format(
+
+        new_row='''<tr><td><a href="{revision}/index.html">{revision}</a></td><td>{date}</td><td>{warnings}</td><td>{errors}</td><td></td>
+<td></td><td></td><td></td><td>{diffs}</td></tr>'''.format(
             revision=version_string, date=version_date, warnings=sum[0], errors=sum[1], diffs=diff)
-        revs.eq(0).after(new_row)
+        revs.eq(1).after(new_row)
         if args.version_to_keep:
           nb_items=len(revs)
           for k in range(int(args.version_to_keep),nb_items):
