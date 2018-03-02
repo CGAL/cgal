@@ -195,6 +195,7 @@ class Intersection_of_triangle_meshes
   Node_vector nodes;
   Node_visitor visitor;
   Faces_to_nodes_map         f_to_node;      //Associate a pair of triangles to their intersection points
+  std::vector<Node_id> extra_terminal_nodes; //used only for autorefinement
   CGAL_assertion_code(bool doing_autorefinement;)
 // member functions
   void filter_intersections(const TriangleMesh& tm_f,
@@ -1051,6 +1052,13 @@ class Intersection_of_triangle_meshes
       }
     }
 
+    CGAL_assertion(extra_terminal_nodes.empty() || doing_autorefinement);
+    // these nodes are created by pinchements along an edge of the surface.
+    // the node ids being the same for the two edges, the degree of the node
+    // in the graph is two while it should be 3
+    BOOST_FOREACH(Node_id id, extra_terminal_nodes)
+      graph[id].make_terminal();
+
     //visitor call
     visitor.annotate_graph(graph);
 
@@ -1187,6 +1195,7 @@ class Intersection_of_triangle_meshes
               ++current_node;
               nodes.add_new_node(get(nodes.vpm1, target(h1,tm)));
               visitor.new_node_added(node_id,ON_VERTEX,h1,h2,tm,tm,true,false);
+              extra_terminal_nodes.push_back(node_id);
             }
             else
               node_id = insert_res.first->second;
