@@ -40,7 +40,12 @@
 
 
 namespace CGAL{
-
+//! \ingroup PkgPolygonIO
+//! \brief read_point_WKT reads the content of a .wkt file into a `Point`.
+//! 
+//! A `Point` must inherit `CGAL::Point_2`.
+//! 
+//! \relates CGAL::Point_2
 template<typename Point>
 std::istream&
 read_point_WKT( std::istream& in,
@@ -59,7 +64,7 @@ read_point_WKT( std::istream& in,
     std::string type;
     iss >> type;
     
-    if(type.compare("POINT")==0)
+    if(type.substr(0, 5).compare("POINT")==0)
     {
       boost::geometry::read_wkt(line, point);
       break;
@@ -68,6 +73,13 @@ read_point_WKT( std::istream& in,
   return in;  
 }
 
+//! \ingroup PkgPolygonIO
+//! \brief read_multipoint_WKT reads the content of a .wkt file into a `MultiPoint`.
+//! 
+//! A `MultiPoint` must be a model of `RandomAccessIterator` of `CGAL::Point_2`.
+//! \see `CGAL::Geometry_container`
+//! 
+//! \relates CGAL::Point_2
 template<typename Multipoint>
 std::istream&
 read_multipoint_WKT( std::istream& in,
@@ -86,7 +98,7 @@ read_multipoint_WKT( std::istream& in,
     std::string type;
     iss >> type;
     
-    if(type.compare("MULTIPOINT")==0)
+    if(type.substr(0, 10).compare("MULTIPOINT")==0)
     {
       boost::geometry::read_wkt(line, multipoint);
       break;
@@ -98,8 +110,11 @@ read_multipoint_WKT( std::istream& in,
 
 //! \ingroup PkgPolygonIO
 //! \brief read_linestring_WKT reads the content of a .wkt file into 
-//! an `std::vector<CGAL::Point_2>`.
-//! 
+//! a `Linestring`.
+//!
+//! A `Linestring` must be a model of `RandomAccessIterator` of `CGAL::Point_2`.
+//! \see `CGAL::Geometry_container`
+
 //! \relates CGAL::Point_2
 template<typename Linestring>
 std::istream&
@@ -119,7 +134,7 @@ read_linestring_WKT( std::istream& in,
     std::string type;
     iss >> type;
     
-    if(type.compare("LINESTRING")==0)
+    if(type.substr(0, 10).compare("LINESTRING")==0)
     {
       boost::geometry::read_wkt(line, polyline);
       break;
@@ -128,6 +143,14 @@ read_linestring_WKT( std::istream& in,
   return in;  
 }
 
+//! \ingroup PkgPolygonIO
+//! \brief read_linestring_WKT reads the content of a .wkt file into 
+//! a `Multilinestring`.
+//!
+//! A `Multilinestring` must be a model of `RandomAccessIterator` of `Linestring`.
+//! 
+//! \see `CGAL::Geometry_container`
+//! \relates CGAL::Point_2
 template<typename Multilinestring>
 std::istream&
 read_multilinestring_WKT( std::istream& in,
@@ -146,7 +169,7 @@ read_multilinestring_WKT( std::istream& in,
     std::string type;
     iss >> type;
     
-    if(type.compare("MULTILINESTRING")==0)
+    if(type.substr(0, 15).compare("MULTILINESTRING")==0)
     {
       boost::geometry::read_wkt(line, mls);
       break;
@@ -180,7 +203,7 @@ read_polygon_WKT( std::istream& in,
     std::string type;
     iss >> type;
     
-    if(type.compare("POLYGON")==0)
+    if(type.substr(0, 7).compare("POLYGON")==0)
     {
       boost::geometry::read_wkt(line, polygon);
       break;
@@ -188,6 +211,15 @@ read_polygon_WKT( std::istream& in,
   }
   return in;  
 }
+
+//! \ingroup PkgPolygonIO
+//! \brief read_multipolygon_WKT reads the content of a .wkt file into 
+//! a `Multipolygon`.
+//!
+//! A `Multipolygon` must be a model of `RandomAccessIterator` of `CGAL::General_polygon_with_holes_2`.
+//! \see `CGAL::Geometry_container`
+
+//! \relates CGAL::General_polygon_with_holes_2
 
 template<typename MultiPolygon>
 std::istream&
@@ -208,7 +240,7 @@ read_multipolygon_WKT( std::istream& in,
     std::string type;
     iss >> type;
     
-    if(type.compare("MULTIPOLYGON")==0)
+    if(type.substr(0, 12).compare("MULTIPOLYGON")==0)
     {
       boost::geometry::read_wkt(line, polygons);
       break;
@@ -228,9 +260,6 @@ read_multipolygon_WKT( std::istream& in,
 //! - `std::vector<CGAL::Polygon_with_hole_2>` as WKT Multipolygon
 //! 
 //! \relates CGAL::General_polygon_with_holes_2
-//! \todo We should find a way to generalize the range types instead of 
-//! forcing list and vector. Maybe through a pair of <Range, Tag> to avoid 
-//! conflicts between traits.
 template<typename Type>
 std::ostream&
 write_WKT( std::ostream& out,

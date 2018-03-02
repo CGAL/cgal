@@ -58,5 +58,7 @@ int main()
   CGAL::read_multipolygon_WKT(in, polies);
   in.close();
   CGAL_assertion(polies.size() == 2);
+  
+  std::cout<<"WKT reading test passed."<<std::endl;
   return 0;
 }
