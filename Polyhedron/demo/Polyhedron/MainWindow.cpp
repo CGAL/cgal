@@ -1321,6 +1321,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
       else if(scene->selectionIndices().size() > 1 )
       {
         QMap<QString, QAction*> menu_actions;
+        bool has_stats = false;
         Q_FOREACH(QAction* action, scene->item(main_index)->contextMenu()->actions())
         {
           if(action->property("is_groupable").toBool())
@@ -1334,11 +1335,8 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
           CGAL::Three::Scene_item* item = scene->item(index);
           if(!item)
             continue;
-          QVector<QString> action_names;
-          Q_FOREACH(QAction* action, item->contextMenu()->actions())
-          {
-            action_names.push_back(action->text());
-          }
+          if(item->has_stats())
+            has_stats = true;
         }
         QMenu menu;
         Q_FOREACH(QString name, menu_actions.keys())
@@ -1346,7 +1344,14 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
           QAction* action = menu.addAction(name);
           connect(action, &QAction::triggered, this, &MainWindow::propagate_action);
         }
-
+        if(has_stats)
+        {
+          QAction* actionStatistics =
+              menu.addAction(tr("Statistics..."));
+          actionStatistics->setObjectName("actionStatisticsOnPolyhedron");
+          connect(actionStatistics, SIGNAL(triggered()),
+                  this, SLOT(statisticsOnItem()));
+        }
           QAction* reload = menu.addAction(tr("&Reload Item from File"));
           reload->setProperty("is_groupable", true);
           connect(reload, SIGNAL(triggered()),
