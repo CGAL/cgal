@@ -195,7 +195,7 @@ void Polyhedron_demo_orient_soup_plugin::orientSM()
 
     if(item)
     {
-      int create_items = QMessageBox::question(mw, "Orient Mesh", "Do you wish to extract the eventual non manifold simplicies ?");
+      int create_items = QMessageBox::question(mw, "Orient Mesh", "Do you wish to extract the potential non manifold simplicies ?");
       if(create_items == QMessageBox::Yes)
       {
         createPointsAndPolyline();
@@ -309,6 +309,7 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
     Scene_points_with_normal_item* points = new Scene_points_with_normal_item();
     std::vector<std::size_t> nm_vertices;
     getNMPoints(nm_vertices, item);
+    bool items_created = false;
     if(nm_vertices.empty())
     {
       delete points;
@@ -316,7 +317,7 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
     }
     else
     {
-      
+        items_created = true;
       BOOST_FOREACH(std::size_t id, nm_vertices)
       {
         points->point_set()->insert(item->points()[id]);
@@ -343,12 +344,15 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
       poly->setColor(QColor(Qt::red));
       
       scene->addItem(poly);
+      items_created = true;
     }
     else
     {
-      messages->information("Non non-manifold edges were found.");
+      messages->information(tr("There is no non-manifold edge in this soup."));
     }
     QApplication::restoreOverrideCursor();
+    if(!items_created)
+      QMessageBox::information(mw, "Nothing Non-manifold", "No non-manifold edge nore vertex was found.");
   }  
 }
 
