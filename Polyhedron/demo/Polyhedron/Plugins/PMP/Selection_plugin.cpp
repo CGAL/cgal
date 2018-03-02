@@ -147,7 +147,33 @@ public:
     if(scene) { 
       connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this, SLOT(item_about_to_be_destroyed(CGAL::Three::Scene_item*)));
       connect(scene, SIGNAL(newItem(int)), this, SLOT(new_item_created(int)));
+      connect(scene, SIGNAL(selectionChanged(int)), this, SLOT(filter_operations()));
     } 
+    
+    //Fill operations combo box.
+    operations_strings = {
+      "Create Point Set Item from Selected Vertices"           ,
+      "Create Polyline Item from Selected Edges"               ,
+      "Create Polyhedron Item from Selected Facets"            ,
+      "Erase Selected Facets from Polyhedron Item"             ,
+      "Keep Connected Components of Selected Facets"           ,
+      "Expand Face Selection to Stay Manifold After Removal"   ,
+      "Convert from Edge Selection to Facets Selection"        ,
+      "Convert from Edge Selection to Point Selection"         ,
+      "Convert from Facet Selection to Boundary Edge Selection",
+      "Convert from Facet Selection to Point Selection"        
+    };
+    
+    operations_map[operations_strings[0]] = 0;
+    operations_map[operations_strings[1]] = 1;
+    operations_map[operations_strings[2]] = 2;
+    operations_map[operations_strings[3]] = 3;
+    operations_map[operations_strings[4]] = 4;
+    operations_map[operations_strings[5]] = 5;
+    operations_map[operations_strings[6]] = 6;
+    operations_map[operations_strings[7]] = 7;
+    operations_map[operations_strings[8]] = 8;
+    operations_map[operations_strings[9]] = 9;
   }
   virtual void closure()
   {
@@ -169,10 +195,12 @@ public Q_SLOTS:
     if (scene_ptr)
       connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
     connect(new_item,SIGNAL(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)));
+    connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), this, SLOT(filter_operations()));
     scene->setSelectedItem(item_id);
     on_SelectionOrEuler_changed(ui_widget.selectionOrEuler->currentIndex());
     if(last_mode == 0)
       on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
+    filter_operations();
   }
   // If the selection_item or the polyhedron_item associated to the k-ring_selector is currently selected,
   // set the k-ring_selector as currently selected. (A k-ring_selector tha tis not "currently selected" will
@@ -228,6 +256,7 @@ public Q_SLOTS:
     }
 
     selection_item->select_all();
+    filter_operations();
   }
 
   void on_Select_all_NTButton_clicked()
@@ -241,6 +270,7 @@ public Q_SLOTS:
     }
 
     selection_item->select_all_NT();
+    filter_operations();
   }
 
   // Select Boundary
@@ -267,6 +297,7 @@ public Q_SLOTS:
     }
 
     selection_item->add_to_selection();
+    filter_operations();
   }
   // Clear selection
   void on_Clear_button_clicked() {
@@ -277,6 +308,7 @@ public Q_SLOTS:
     }
 
     selection_item->clear();
+    filter_operations();
   }
   void on_Clear_all_button_clicked(){
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
@@ -286,6 +318,7 @@ public Q_SLOTS:
     }
 
     selection_item->clear_all();
+    filter_operations();
   }
   void on_Inverse_selection_button_clicked()
   {
@@ -311,6 +344,7 @@ public Q_SLOTS:
     if(minimum) {
       ui_widget.Threshold_size_spin_box->setValue((int) *minimum);
     }
+    filter_operations();
   }
   void on_Get_minimum_button_clicked() {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
@@ -324,6 +358,7 @@ public Q_SLOTS:
     if(minimum) {
       ui_widget.Threshold_size_spin_box->setValue((int) *minimum);
     }
+    filter_operations();
   }
   // Create selection item for selected polyhedron item
   void on_Create_selection_item_button_clicked() {
@@ -344,6 +379,7 @@ public Q_SLOTS:
     new_item->setName(QString("%1 (selection)").arg(poly_item->name()));
     ui_widget.selectionOrEuler->setCurrentIndex(last_mode);
     connectItem(new_item);
+    filter_operations();
   }
   void on_LassoCheckBox_changed(bool b)
   {
@@ -414,7 +450,7 @@ public Q_SLOTS:
   }
 
   void on_validateButton_clicked() {
-    switch(ui_widget.operationsBox->currentIndex())
+    switch(operations_map[ui_widget.operationsBox->currentText()])
     {
     //Create Point Set Item from Selected Vertices
     case 0:
@@ -678,6 +714,7 @@ public Q_SLOTS:
     default :
       break;
     }
+    filter_operations();
     return;
   }
 
@@ -807,6 +844,7 @@ public Q_SLOTS:
     double angle = ui_widget.Sharp_angle_spinbox->value();
     selection_item->select_sharp_edges(angle);
     scene->itemChanged(selection_item);
+    filter_operations();
   }
 
   void on_Expand_reduce_button_clicked() {
@@ -818,6 +856,7 @@ public Q_SLOTS:
 
     int steps = ui_widget.Expand_reduce_spin_box->value();
     selection_item->expand_or_reduce(steps);
+    filter_operations();
   }
   // To handle empty selection items coming from loader
   void new_item_created(int item_id) {
@@ -896,13 +935,48 @@ public Q_SLOTS:
       }
     }
   }
-
+void filter_operations()
+{
+  Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+  if (!selection_item) 
+    return;
+  QString current_op = ui_widget.operationsBox->currentText();
+  ui_widget.operationsBox->clear();
+  
+  bool has_v(!selection_item->selected_vertices.empty()), 
+      has_e(!selection_item->selected_edges.empty()), 
+      has_f(!selection_item->selected_facets.empty());
+  
+  if(has_v)
+  {
+    ui_widget.operationsBox->addItem(operations_strings[0]);
+  }
+  if(has_e)
+  {
+    ui_widget.operationsBox->addItem(operations_strings[1]);
+    ui_widget.operationsBox->addItem(operations_strings[6]);
+    ui_widget.operationsBox->addItem(operations_strings[7]);
+  }
+  if(has_f)
+  {
+    ui_widget.operationsBox->addItem(operations_strings[2]);
+    ui_widget.operationsBox->addItem(operations_strings[3]);
+    ui_widget.operationsBox->addItem(operations_strings[4]);
+    ui_widget.operationsBox->addItem(operations_strings[5]);
+    ui_widget.operationsBox->addItem(operations_strings[8]);
+    ui_widget.operationsBox->addItem(operations_strings[9]);
+  }
+  if(!current_op.isEmpty())
+    ui_widget.operationsBox->setCurrentText(current_op);
+}
 private:
   Messages_interface* messages;
   QAction* actionSelection;
 
   QDockWidget* dock_widget;
   Ui::Selection ui_widget;
+  std::map<QString, int> operations_map;
+  std::vector<QString> operations_strings;
 typedef std::multimap<Scene_face_graph_item*, Scene_polyhedron_selection_item*> Selection_item_map;
   Selection_item_map selection_item_map;
   int last_mode;
