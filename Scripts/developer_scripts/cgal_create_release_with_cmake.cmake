@@ -74,7 +74,7 @@ foreach(pkg ${files})
           string(REPLACE "$URL$" "$URL: ${GITHUB_PREFIX}/${pkg}/${f} $" file_content "${file_content}")
           if(EXISTS ${CMAKE_BINARY_DIR}/.git)
             execute_process(
-              COMMAND git --git-dir=${CMAKE_BINARY_DIR}/.git --work-tree=${CMAKE_BINARY_DIR} log -n1 "--format=format:%h %aI %an"
+              COMMAND git --git-dir=${CMAKE_BINARY_DIR}/.git --work-tree=${CMAKE_BINARY_DIR} log -n1 "--format=format:%h %aI %an" -- "${pkg}/${f}"
               RESULT_VARIABLE RESULT_VAR
               OUTPUT_VARIABLE OUT_VAR
               )
