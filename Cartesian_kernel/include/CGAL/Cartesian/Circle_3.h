@@ -45,7 +45,7 @@ class CircleC3 {
     Rep () : first(), second() { }
     Rep (const Sphere_3& s, const Plane_3& p) : first(s), second(p) { }
   };
-  
+
   typedef typename R_::template Handle<Rep>::type  Base;
   Base base;  
 
