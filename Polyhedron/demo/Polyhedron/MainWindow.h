@@ -402,6 +402,7 @@ private:
   QTreeView* sceneView;
   Ui::MainWindow* ui;
   QVector<CGAL::Three::Polyhedron_demo_io_plugin_interface*> io_plugins;
+  QString last_saved_dir;
   QMap<QString,QString> default_plugin_selection;
   // typedef to make Q_FOREACH work
   typedef QPair<CGAL::Three::Polyhedron_demo_plugin_interface*, QString> PluginNamePair;

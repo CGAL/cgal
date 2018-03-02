@@ -24,6 +24,13 @@ class SurfaceMeshIoPlugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 public:
+  bool isDefaultLoader(const CGAL::Three::Scene_item *item) const 
+  { 
+    if(qobject_cast<const Scene_surface_mesh_item*>(item))
+      return true; 
+    return false;
+  }
+  
   void init(QMainWindow*, CGAL::Three::Scene_interface*, Messages_interface* m)
   {
     this->message = m;
