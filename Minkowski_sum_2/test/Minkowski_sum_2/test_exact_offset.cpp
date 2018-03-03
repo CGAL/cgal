@@ -82,11 +82,12 @@ int main (int argc, char **argv)
     read_polygon (argv[i], pgn);
     
     // Read the offset radius.
-    int         numer, denom;
-    char c;
+    int         numer=0, denom = 0;
     std::istringstream iss(argv[i+1]);
+    char c;
     iss >> numer >> c >> denom;
-    if (! iss.good())
+    
+    if (iss.bad())
     {
       std::cerr << "Invalid radius: " << argv[i+1] << std::endl;
       return (1);
