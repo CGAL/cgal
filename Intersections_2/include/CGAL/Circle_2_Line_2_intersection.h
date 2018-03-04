@@ -32,7 +32,7 @@
 #include <CGAL/squared_distance_2_1.h>
 
 namespace CGAL {
-
+namespace Intersections {
 namespace internal {
 
 template <class K>
@@ -54,7 +54,8 @@ do_intersect(const typename K::Line_2& l,
 }
 
 } // namespace internal
-
+} // namespace Intersections
+  
 template <class K>
 inline
 bool
