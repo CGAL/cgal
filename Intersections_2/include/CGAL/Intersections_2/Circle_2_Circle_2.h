@@ -24,19 +24,46 @@
 // Author(s)     : Geert-Jan Giezeman
 
 
+#ifndef CGAL_INTERSECTIONS_2_CIRCLE_2_CIRCLE_2_H
+#define CGAL_INTERSECTIONS_2_CIRCLE_2_CIRCLE_2_H
 
-#ifndef CGAL_INTERSECTION_2_2_H
-#define CGAL_INTERSECTION_2_2_H
+#include <CGAL/Circle_2.h>
+#include <CGAL/squared_distance_2_1.h>
 
-#include <CGAL/Intersections_2/Triangle_2_Triangle_2.h>
-#include <CGAL/Intersections_2/Line_2_Triangle_2.h>
-#include <CGAL/Intersections_2/Ray_2_Triangle_2.h>
-#include <CGAL/Intersections_2/Segment_2_Triangle_2.h>
-#include <CGAL/Intersections_2/Iso_rectangle_2_Line_2.h>
-#include <CGAL/Intersections_2/Iso_rectangle_2_Ray_2.h>
-#include <CGAL/Intersections_2/Iso_rectangle_2_Segment_2.h>
-#include <CGAL/Intersections_2/Iso_rectangle_2_Point_2.h>
-#include <CGAL/Intersections_2/Iso_rectangle_2_Iso_rectangle_2.h>
-#include <CGAL/Intersections_2/Iso_rectangle_2_Triangle_2.h>
+namespace CGAL {
+  
+namespace Intersections {
+
+namespace internal {
+
+template <class K>
+bool
+do_intersect(const typename K::Circle_2 & circ1, 
+	     const typename K::Circle_2& circ2,
+	     const K&)
+{
+    typedef typename K::FT FT;
+    FT sr1 = circ1.squared_radius();
+    FT sr2 = circ2.squared_radius();
+    FT squared_dist = squared_distance(circ1.center(), circ2.center());
+    FT temp = sr1+sr2-squared_dist;
+    return !(FT(4)*sr1*sr2 < temp*temp);
+}
+
+} // namespace internal
+} // namespace Intersections
+
+template <class K>
+inline
+bool
+do_intersect(const Circle_2<K> & circ1, 
+	     const Circle_2<K> & circ2)
+{
+  typedef typename K::Do_intersect_2 Do_intersect;
+  return Do_intersect()(circ1, circ2);
+}
+
+
+} //namespace CGAL
 
 #endif

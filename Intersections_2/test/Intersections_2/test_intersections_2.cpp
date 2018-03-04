@@ -8,12 +8,12 @@
 #include <CGAL/Ray_2.h>
 #include <CGAL/Triangle_2.h>
 #include <CGAL/Iso_rectangle_2.h>
-#include <CGAL/Segment_2_Segment_2_intersection.h>
-#include <CGAL/Line_2_Line_2_intersection.h>
-#include <CGAL/Ray_2_Ray_2_intersection.h>
-#include <CGAL/Triangle_2_Triangle_2_intersection.h>
-#include <CGAL/Line_2_Iso_rectangle_2_intersection.h>
-#include <CGAL/Ray_2_Iso_rectangle_2_intersection.h>
+#include <CGAL/Intersections_2/Segment_2_Segment_2.h>
+#include <CGAL/Intersections_2/Line_2_Line_2.h>
+#include <CGAL/Intersections_2/Ray_2_Ray_2.h>
+#include <CGAL/Intersections_2/Triangle_2_Triangle_2.h>
+#include <CGAL/Intersections_2/Iso_rectangle_2_Line_2.h>
+#include <CGAL/Intersections_2/Iso_rectangle_2_Ray_2.h>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>

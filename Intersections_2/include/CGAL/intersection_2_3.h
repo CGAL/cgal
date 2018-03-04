@@ -28,7 +28,7 @@
 #ifndef CGAL_INTERSECTION_2_3_H
 #define CGAL_INTERSECTION_2_3_H
 
-#include <CGAL/Circle_2_Circle_2_intersection.h>
-#include <CGAL/Circle_2_Line_2_intersection.h>
+#include <CGAL/Intersections_2/Circle_2_Circle_2.h>
+#include <CGAL/Intersections_2/Circle_2_Line_2.h>
 
 #endif

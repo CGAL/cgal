@@ -24,19 +24,15 @@
 // Author(s)     : Geert-Jan Giezeman
 
 
+#ifndef CGAL_INTERSECTIONS_2_TRIANGLE_2_TRIANGLE_2_H
+#define CGAL_INTERSECTIONS_2_TRIANGLE_2_TRIANGLE_2_H
 
-#ifndef CGAL_INTERSECTION_2_2_H
-#define CGAL_INTERSECTION_2_2_H
+#include <CGAL/Intersections_2/internal/Triangle_2_Triangle_2_do_intersect_impl.h>
+#include <CGAL/Intersections_2/internal/Triangle_2_Triangle_2_intersection_impl.h>
 
-#include <CGAL/Intersections_2/Triangle_2_Triangle_2.h>
-#include <CGAL/Intersections_2/Line_2_Triangle_2.h>
-#include <CGAL/Intersections_2/Ray_2_Triangle_2.h>
-#include <CGAL/Intersections_2/Segment_2_Triangle_2.h>
-#include <CGAL/Intersections_2/Iso_rectangle_2_Line_2.h>
-#include <CGAL/Intersections_2/Iso_rectangle_2_Ray_2.h>
-#include <CGAL/Intersections_2/Iso_rectangle_2_Segment_2.h>
-#include <CGAL/Intersections_2/Iso_rectangle_2_Point_2.h>
-#include <CGAL/Intersections_2/Iso_rectangle_2_Iso_rectangle_2.h>
-#include <CGAL/Intersections_2/Iso_rectangle_2_Triangle_2.h>
+namespace CGAL {
+CGAL_DO_INTERSECT_FUNCTION_SELF(Triangle_2, 2)
+CGAL_INTERSECTION_FUNCTION_SELF(Triangle_2, 2)
+} // namespace CGAL
 
 #endif
