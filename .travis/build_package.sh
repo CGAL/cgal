@@ -55,7 +55,7 @@ cd $ROOT
 for ARG in $(echo "$@")
 do
 #install openmesh only if necessary
-  if [ "$ARG" = BGL ] || [ "$ARG" = Convex_hull_3 ] ||\
+  if [ "$ARG" = "CHECK" ] || [ "$ARG" = BGL ] || [ "$ARG" = Convex_hull_3 ] ||\
      [ "$ARG" = Polygon_mesh_processing ] || [ "$ARG" = Property_map ] ||\
      [ "$ARG" = Surface_mesh_deformation ] || [ "$ARG" = Surface_mesh_shortest_path ] ||\
      [ "$ARG" = Surface_mesh_simplification ]; then
