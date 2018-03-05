@@ -340,7 +340,8 @@ public:
       TriangleMesh& tm)
   {
     CGAL_assertion_code(bool insert_ok = )
-    mesh_to_vertex_to_node_id[&tm].insert(std::make_pair(target(h,tm),node_id)).second;
+    mesh_to_vertex_to_node_id[&tm].insert(std::make_pair(target(h,tm),node_id))
+    CGAL_assertion_code(.second);
     CGAL_assertion(insert_ok || mesh_to_vertex_to_node_id[&tm][target(h,tm)]==node_id);
   }
 
