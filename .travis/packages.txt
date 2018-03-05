@@ -81,7 +81,6 @@ Point_set_processing_3
 Point_set_shape_detection_3 
 Poisson_surface_reconstruction_3 
 Polygon 
-Polygon_IO 
 Polygon_mesh_processing 
 Polyhedron 
 Polyhedron_IO 
