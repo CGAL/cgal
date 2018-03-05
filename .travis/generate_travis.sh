@@ -75,6 +75,7 @@ do
 		echo "$LINE" >> .travis.yml
 	fi
 done
+echo "" >> .travis.yml
 IFS=$' '
 #check if there are differences between the files
 if ! cmp -s ./.travis.yml ./.travis.old;
