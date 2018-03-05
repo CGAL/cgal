@@ -140,8 +140,7 @@ public:
     }
     else
     {
-#define CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT
-#ifdef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT
+#ifdef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT2
       triangulate_face_with_hole_filling(f, pmesh);
 #else
       P_traits cdt_traits(normal);
