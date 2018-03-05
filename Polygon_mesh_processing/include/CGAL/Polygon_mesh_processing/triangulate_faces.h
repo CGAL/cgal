@@ -46,7 +46,7 @@
 #include <vector>
 #include <utility>
 #include <CGAL/array.h>
-#include <fstream> //temp
+
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
@@ -342,7 +342,6 @@ public:
       set_halfedge(f, hedges[0], pmesh);
       hedges.clear();
     }
-
     return true;
   }
 
@@ -414,7 +413,7 @@ public:
 * @return `true` if the face has been triangulated.
 */
 template<typename PolygonMesh, typename NamedParameters>
-bool  triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
+bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
                       PolygonMesh& pmesh,
                       const NamedParameters& np)
 {
@@ -508,7 +507,7 @@ bool triangulate_faces(FaceRange face_range, PolygonMesh& pmesh)
 * @see triangulate_face()
 */
 template <typename PolygonMesh, typename NamedParameters>
-bool  triangulate_faces(PolygonMesh& pmesh,
+bool triangulate_faces(PolygonMesh& pmesh,
                        const NamedParameters& np)
 {
   return triangulate_faces(faces(pmesh), pmesh, np);

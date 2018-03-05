@@ -113,11 +113,6 @@ test_triangulate_triangle_face()
     if(!CGAL::Polygon_mesh_processing::triangulate_face(fit, mesh))
       assert(false);
   }
-
-  std::ofstream out("data/result.off");
-  out << mesh;
-  out.close();
-
   return true;
 }
 
@@ -167,7 +162,6 @@ struct Dual_vpm
 
   const SurfaceMesh& primal_;
   Primal_map primal_map_;
-
 };
 
 template <typename K>
@@ -190,7 +184,6 @@ test_dual_with_various_faces()
   Pmap vpmap = get_property_map(boost::vertex_point, mesh);
 
   CGAL::Dual<Surface_mesh> dual(mesh);
-
   // copy dual to a sm
   Surface_mesh sm_dual;
   CGAL::copy_face_graph(dual, sm_dual,
@@ -199,24 +192,11 @@ test_dual_with_various_faces()
                         CGAL::Emptyset_iterator(),
                         Dual_vpm<Surface_mesh, Point, Pmap>(mesh, vpmap));
 
-
-  std::ofstream outdual("data/dual_sm_elephant.off");
-  outdual<< sm_dual;
-  outdual.close();
-
   BOOST_FOREACH(typename boost::graph_traits<Surface_mesh>::face_descriptor fit, faces(sm_dual))
   {
     if(!CGAL::Polygon_mesh_processing::triangulate_face(fit, sm_dual))
       assert(false);
   }
-
-
-
-  std::ofstream out("data/result.off");
-  out << sm_dual;
-  out.close();
-
-
   return true;
 }
 
@@ -229,15 +209,14 @@ int main()
   assert(test_triangulate_faces<Epic>());
   assert(test_triangulate_face_range<Epic>());
   assert(test_triangulate_face<Epic>());
+  assert(test_triangulate_triangle_face<Epic>());
+  assert(test_dual_with_various_faces<Epic>());
 
   assert(test_triangulate_faces<Epec>());
   assert(test_triangulate_face_range<Epec>());
   assert(test_triangulate_face<Epec>());
-
-  assert(test_triangulate_triangle_face<Epic>());
-  assert(test_dual_with_various_faces<Epic>());
-
-  // Epec too
+  assert(test_triangulate_triangle_face<Epec>());
+  assert(test_dual_with_various_faces<Epec>());
 
   return EXIT_SUCCESS;
 }
