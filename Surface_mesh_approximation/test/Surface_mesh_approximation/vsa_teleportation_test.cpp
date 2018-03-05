@@ -24,8 +24,7 @@ typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_poin
 typedef boost::associative_property_map<std::map<Facet_handle, std::size_t> > Facet_proxy_map;
 
 typedef CGAL::VSA_approximation<Polyhedron, Vertex_point_map> L21_approx;
-typedef L21_approx::Error_metric L21_metric;
-typedef L21_approx::Proxy_fitting L21_proxy_fitting;
+typedef L21_approx::Approximation_traits L21_metric;
 typedef L21_approx::Proxy Plane_proxies;
 
 #define CGAL_VSA_TEST_TOLERANCE 1e-8
@@ -60,11 +59,11 @@ int main()
   std::cout << "Teleportation test." << std::endl;
 
   // algorithm instance
-  L21_metric error_metric(mesh);
-  L21_proxy_fitting proxy_fitting(mesh);
+  L21_metric error_metric(mesh,
+    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
   L21_approx approx(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
-  approx.set_metric(error_metric, proxy_fitting);
+  approx.set_metric(error_metric);
 
   std::cout << "Random seeding by number." << std::endl;
   std::srand(static_cast<unsigned int>(std::time(0)));
@@ -142,7 +141,7 @@ int main()
   }
 
   // proxy of the planar part should facing straight towards the y positive.
-  double px_dir_var = std::abs(CGAL::to_double(proxies[planar_pxidx].normal.y()) - 1.0);
+  double px_dir_var = std::abs(CGAL::to_double(proxies[planar_pxidx].y()) - 1.0);
   if (px_dir_var > CGAL_VSA_TEST_TOLERANCE) {
     std::cout << "Failed: the proxy of planar part is incorrect." << std::endl;
     return EXIT_FAILURE;

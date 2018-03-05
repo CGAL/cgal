@@ -12,8 +12,7 @@ typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_poin
 typedef CGAL::VSA_approximation<Polyhedron, Vertex_point_map> Mesh_approximation;
 
 // L21 error metric 
-typedef Mesh_approximation::Error_metric Metric;
-typedef Mesh_approximation::Proxy_fitting Proxy_fitting;
+typedef Mesh_approximation::Approximation_traits L21_metric;
 
 int main()
 {
@@ -30,9 +29,9 @@ int main()
     get(boost::vertex_point, const_cast<Polyhedron &>(input)));
 
   // set error and fitting functors
-  Metric metric(input);
-  Proxy_fitting proxy_fitting(input);
-  approx.set_metric(metric, proxy_fitting);
+  L21_metric metric(input,
+    get(boost::vertex_point, const_cast<Polyhedron &>(input)));
+  approx.set_metric(metric);
 
   // seeding 100 random proxies
   approx.seeding(CGAL::Random, 100);

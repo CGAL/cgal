@@ -4,7 +4,6 @@
 #include <CGAL/license/Surface_mesh_approximation.h>
 
 
-#include <CGAL/vsa_metrics.h>
 #include <CGAL/VSA_approximation.h>
 #include <CGAL/internal/Surface_mesh_approximation/named_function_params.h>
 #include <CGAL/internal/Surface_mesh_approximation/named_params_helper.h>
@@ -76,14 +75,12 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
   Vertex_point_map point_pmap = choose_param(get_param(np, internal_np::vertex_point),
     get_property_map(vertex_point, const_cast<TriangleMesh &>(tm)));
 
+  typedef CGAL::Approximation_l21_traits<TriangleMesh, Vertex_point_map, false, Geom_traits> Approximation_traits;
   typedef CGAL::VSA_approximation<TriangleMesh, Vertex_point_map> L21_approx;
-  typedef typename L21_approx::Error_metric L21_metric;
-  typedef typename L21_approx::Proxy_fitting L21_proxy_fitting;
 
   L21_approx approx(tm, point_pmap);
-  L21_metric l21_metric(tm);
-  L21_proxy_fitting l21_fitting(tm);
-  approx.set_metric(l21_metric, l21_fitting);
+  Approximation_traits l21_metric(tm, point_pmap);
+  approx.set_metric(l21_metric);
 
   // default hierarchical seeding
   CGAL::Approximation_seeding_tag method = choose_param(

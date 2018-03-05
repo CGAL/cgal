@@ -14,8 +14,7 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
 
 typedef CGAL::VSA_approximation<Polyhedron, Vertex_point_map> L21_approx;
-typedef L21_approx::Error_metric L21_metric;
-typedef L21_approx::Proxy_fitting L21_proxy_fitting;
+typedef L21_approx::Approximation_traits L21_metric;
 
 bool test_shape(const char *file_name, const std::size_t target_num_proxies)
 {
@@ -31,9 +30,9 @@ bool test_shape(const char *file_name, const std::size_t target_num_proxies)
   L21_approx approx(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
 
-  L21_metric error_metric(mesh);
-  L21_proxy_fitting proxy_fitting(mesh);
-  approx.set_metric(error_metric, proxy_fitting);
+  L21_metric error_metric(mesh,
+    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
+  approx.set_metric(error_metric);
 
   // approximation, seeding from error, drop to the target error incrementally
   // should reach targeted number of proxies gradually

@@ -25,7 +25,7 @@ int main()
   Polyhedron out_mesh;
   std::map<Polyhedron::Facet_handle, std::size_t> fidxmap;
   boost::associative_property_map<std::map<Polyhedron::Facet_handle, std::size_t> > fpxmap(fidxmap);
-  std::vector<CGAL::Plane_proxy<Kernel> > proxies;
+  std::vector<Kernel::Vector_3> proxies;
   std::vector<Kernel::Point_3> points;
   std::vector<std::vector<std::size_t> > triangles;
 

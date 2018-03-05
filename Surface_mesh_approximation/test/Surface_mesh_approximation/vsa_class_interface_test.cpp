@@ -7,6 +7,7 @@
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/VSA_approximation.h>
+#include <CGAL/Approximation_l2_traits.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
@@ -17,10 +18,8 @@ typedef Polyhedron::Facet_handle Facet_handle;
 typedef boost::associative_property_map<std::map<Facet_handle, std::size_t> > Facet_proxy_map;
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
 
-typedef CGAL::L2_metric<Polyhedron> L2_metric;
-typedef CGAL::L2_proxy_fitting<Polyhedron> L2_proxy_fitting;
-typedef CGAL::VSA_approximation<Polyhedron, Vertex_point_map,
-  L2_metric, L2_proxy_fitting> L2_approx;
+typedef CGAL::Approximation_l2_traits<Polyhedron> L2_metric;
+typedef CGAL::VSA_approximation<Polyhedron, Vertex_point_map, L2_metric> L2_approx;
 typedef L2_approx::Proxy Plane_proxy;
 
 /**
@@ -47,9 +46,9 @@ int main()
   std::cout << "setup algorithm instance" << std::endl;
   L2_approx approx(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
-  L2_metric error_metric(mesh);
-  L2_proxy_fitting proxy_fitting(mesh);
-  approx.set_metric(error_metric, proxy_fitting);
+  L2_metric error_metric(mesh,
+    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
+  approx.set_metric(error_metric);
 
   // random seeding and run
   std::cout << "random seeding and run" << std::endl;

@@ -11,7 +11,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 
-#include <CGAL/vsa_metrics.h>
+#include <CGAL/Approximation_l21_traits.h>
 #include <CGAL/Default.h>
 #include <CGAL/tags.h>
 
@@ -60,14 +60,13 @@ namespace CGAL {
  * @brief Main class for Variational Shape Approximation algorithm.
  * @tparam TriangleMesh a CGAL TriangleMesh
  * @tparam VertexPointMap vertex point map
- * @tparam ErrorMetric error metric type
- * @tparam ProxyFitting proxy fitting type
+ * @tparam ApproximationTraits approximation traits
  * @tparam GeomTraits geometric traits type
+ * @tparam Concurrency_tag concurrency tag
  */
 template <typename TriangleMesh,
   typename VertexPointMap,
-  typename ErrorMetric = CGAL::Default,
-  typename ProxyFitting = CGAL::Default,
+  typename ApproximationTraits = CGAL::Default,
   typename GeomTraits = CGAL::Default,
   typename Concurrency_tag = CGAL::Sequential_tag>
 class VSA_approximation {
@@ -80,14 +79,11 @@ public:
     typename Kernel_traits<
       typename boost::property_traits<VertexPointMap>::value_type
     >::Kernel >::type Geom_traits;
-  /// ErrorMetric type
-  typedef typename CGAL::Default::Get<ErrorMetric,
-    CGAL::L21_metric<TriangleMesh, VertexPointMap, false, Geom_traits> >::type Error_metric;
-  /// ProxyFitting type
-  typedef typename CGAL::Default::Get<ProxyFitting,
-    CGAL::L21_proxy_fitting<TriangleMesh, VertexPointMap, Geom_traits> >::type Proxy_fitting;
+  /// ApproximationTraits type
+  typedef typename CGAL::Default::Get<ApproximationTraits,
+    CGAL::Approximation_l21_traits<TriangleMesh, VertexPointMap, false, Geom_traits> >::type Approximation_traits;
   /// Proxy type
-  typedef typename Error_metric::Proxy Proxy;
+  typedef typename Approximation_traits::Proxy Proxy;
 
 // private typedefs and data member
 private:
@@ -232,10 +228,8 @@ private:
   const TriangleMesh *m_ptm;
   // The mesh vertex point map.
   VertexPointMap m_vpoint_map;
-  // The error metric functor.
-  const Error_metric *m_perror_metric;
-  // The proxy fitting functor.
-  const Proxy_fitting *m_pproxy_fitting;
+  // The approximation object.
+  const Approximation_traits *m_approx_traits;
 
   Construct_vector_3 vector_functor;
   Construct_point_3 point_functor;
@@ -271,8 +265,7 @@ public:
    */
   VSA_approximation() :
     m_ptm(NULL),
-    m_perror_metric(NULL),
-    m_pproxy_fitting(NULL),
+    m_approx_traits(NULL),
     m_average_edge_length(0.0) {
 
     Geom_traits traits;
@@ -292,8 +285,7 @@ public:
   VSA_approximation(const TriangleMesh &tm, const VertexPointMap &vpoint_map) :
     m_ptm(&tm),
     m_vpoint_map(vpoint_map),
-    m_perror_metric(NULL),
-    m_pproxy_fitting(NULL),
+    m_approx_traits(NULL),
     m_average_edge_length(0.0) {
 
     Geom_traits traits;
@@ -332,14 +324,11 @@ public:
   }
 
   /*!
-   * Set the error and fitting functor.
-   * @param error_metric_ an `ErrorMetric` functor.
-   * @param proxy_fitting_ a `ProxyFitting` functor.
+   * Set the apprroximation traits.
+   * @param approx_traits an `ApproximationTraits` object.
    */
-  void set_metric(const Error_metric &error_metric_,
-    const Proxy_fitting &proxy_fitting_) {
-    m_perror_metric = &error_metric_;
-    m_pproxy_fitting = &proxy_fitting_;
+  void set_metric(const Approximation_traits &approx_traits) {
+    m_approx_traits = &approx_traits;
   }
 
   /*!
@@ -1177,7 +1166,7 @@ private:
         if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && get(m_fproxy_map, fadj) == CGAL_VSA_INVALID_TAG) {
           facet_pqueue.push(Facet_to_integrate(
-            fadj, pxw_itr->idx, (*m_perror_metric)(fadj, pxw_itr->px)));
+            fadj, pxw_itr->idx, m_approx_traits->compute_error(fadj, pxw_itr->px)));
         }
       }
     }
@@ -1191,7 +1180,7 @@ private:
           if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && get(m_fproxy_map, fadj) == CGAL_VSA_INVALID_TAG) {
             facet_pqueue.push(Facet_to_integrate(
-              fadj, c.px, (*m_perror_metric)(fadj, m_proxies[c.px].px)));
+              fadj, c.px, m_approx_traits->compute_error(fadj, m_proxies[c.px].px)));
           }
         }
       }
@@ -1267,7 +1256,7 @@ private:
       if (px_idx != px_worst || f == m_proxies[px_idx].seed)
         continue;
 
-      FT err = (*m_perror_metric)(f, m_proxies[px_idx].px);
+      FT err = m_approx_traits->compute_error(f, m_proxies[px_idx].px);
       if (first || max_error < err) {
         first = false;
         max_error = err;
@@ -1298,14 +1287,14 @@ private:
     CGAL_assertion(!px_patch.empty());
 
     // use Proxy_fitting functor to fit proxy parameters
-    const Proxy px = (*m_pproxy_fitting)(px_patch.begin(), px_patch.end());
+    const Proxy px = m_approx_traits->fit_proxy(px_patch.begin(), px_patch.end());
 
     // find proxy seed and sum error
     face_descriptor seed = *px_patch.begin();
-    FT err_min = (*m_perror_metric)(seed, px);
+    FT err_min = m_approx_traits->compute_error(seed, px);
     FT sum_error(0.0);
     BOOST_FOREACH(face_descriptor f, px_patch) {
-      const FT err = (*m_perror_metric)(f, px);
+      const FT err = m_approx_traits->compute_error(f, px);
       sum_error += err;
       if (err < err_min) {
         err_min = err;
@@ -1338,14 +1327,14 @@ private:
   Proxy_wrapper fit_proxy_from_facet(const face_descriptor f, const std::size_t px_idx) {
     // fit proxy parameters
     std::vector<face_descriptor> fvec(1, f);
-    const Proxy px = (*m_pproxy_fitting)(fvec.begin(), fvec.end());
-    const FT err = (*m_perror_metric)(f, px);
+    const Proxy px = m_approx_traits->fit_proxy(fvec.begin(), fvec.end());
+    const FT err = m_approx_traits->compute_error(f, px);
 
     // original proxy map should always be falid
     const std::size_t prev_px_idx = get(m_fproxy_map, f);
     CGAL_assertion(prev_px_idx != CGAL_VSA_INVALID_TAG);
     // update the proxy error and proxy map
-    m_proxies[prev_px_idx].err -= (*m_perror_metric)(f, m_proxies[prev_px_idx].px);
+    m_proxies[prev_px_idx].err -= m_approx_traits->compute_error(f, m_proxies[prev_px_idx].px);
     put(m_fproxy_map, f, px_idx);
 
     return Proxy_wrapper(px, px_idx, f, err);

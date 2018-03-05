@@ -24,43 +24,42 @@ typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_poin
 
 // user defined point-wise compact metric
 struct Compact_metric {
+// use point as proxy
   typedef Point Proxy;
 
-  Compact_metric(const Facet_center_map &_center_pmap)
-    : center_pmap(_center_pmap) {}
+  // we keep a precomputed property map to speed up computations
+  Compact_metric(const Facet_center_map &_center_pmap, const Facet_area_map &_area_pmap)
+    : center_pmap(_center_pmap), area_pmap(_area_pmap) {}
 
-  FT operator()(const Facet_handle &f, const Proxy &px) const {
+  // compute and return error from a facet to a proxy,
+  // defined as the Euclidean distance between
+  // the facet center of mass and proxy point.
+  FT compute_error(const Facet_handle &f, const Proxy &px) const {
     return FT(std::sqrt(CGAL::to_double(
       CGAL::squared_distance(center_pmap[f], px))));
   }
 
-  const Facet_center_map center_pmap;
-};
-
-struct Point_proxy_fitting {
-  typedef Point Proxy;
-
-  Point_proxy_fitting(const Facet_center_map &_center_pmap, const Facet_area_map &_area_pmap)
-    : center_pmap(_center_pmap), area_pmap(_area_pmap) {}
-
+  // template functor to compute a best-fit 
+  // proxy from a range of facets
   template<typename FacetIterator>
-  Proxy operator()(const FacetIterator beg, const FacetIterator end) const {
+  Proxy fit_proxy(const FacetIterator beg, const FacetIterator end) const {
     // fitting center
     Vector center = CGAL::NULL_VECTOR;
-    FT area(0);
+    FT sum_areas = FT(0.0);
     for (FacetIterator fitr = beg; fitr != end; ++fitr) {
       center = center + (center_pmap[*fitr] - CGAL::ORIGIN) * area_pmap[*fitr];
-      area += area_pmap[*fitr];
+      sum_areas += area_pmap[*fitr];
     }
-    center = center / area;
+    center = center / sum_areas;
     return CGAL::ORIGIN + center;
   }
 
   const Facet_center_map center_pmap;
   const Facet_area_map area_pmap;
 };
-typedef CGAL::VSA_approximation<Polyhedron, Vertex_point_map,
-  Compact_metric, Point_proxy_fitting> Compact_approx;
+
+typedef CGAL::VSA_approximation<
+  Polyhedron, Vertex_point_map, Compact_metric> Compact_approx;
 
 /**
  * This file tests the user defined metric.
@@ -94,9 +93,8 @@ int main()
   Compact_approx approx(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
 
-  Compact_metric error_metric(center_pmap);
-  Point_proxy_fitting proxy_fitting(center_pmap, area_pmap);
-  approx.set_metric(error_metric, proxy_fitting);
+  Compact_metric error_metric(center_pmap, area_pmap);
+  approx.set_metric(error_metric);
 
   std::cout << "random seeding and run" << std::endl;
   approx.seeding(CGAL::Random, 20);
