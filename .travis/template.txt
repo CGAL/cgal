@@ -1,6 +1,8 @@
 language: cpp 
 dist: trusty 
 sudo: required 
+git: 
+ depth: 3
 matrix:
  include:
   PACKAGES_MATRIX
@@ -17,7 +19,6 @@ before_script:
 - make 
 - sudo make install &>/dev/null
 - cd ..
-- sudo bash ./.travis/install_openmesh.sh
 script: 
 - cd ./.travis
 - bash -x -e ./build_package.sh $PACKAGE
