@@ -104,74 +104,97 @@ int main()
   
   srand( unsigned(time(NULL) ));
   Point p = generate_point(0,6,0,6);
-  std::ofstream os("test.wkt");
-  os.precision(17);
-  CGAL::write_WKT(os, p);
-  os.close();
+  {
+    std::ofstream os("test.wkt");
+    os.precision(17);
+    CGAL::write_WKT(os, p);
+    os.close();
+  }
   Point test_p;
-  std::ifstream is("test.wkt");
-  CGAL::read_point_WKT(is, test_p);
-  is.close();
+  {
+    std::ifstream is("test.wkt");
+    CGAL::read_point_WKT(is, test_p);
+    is.close();
+  }
   CGAL_assertion(p == test_p);
   
   Linestring ls = generate_linestring();
-  os = std::ofstream("test.wkt");
-  os.precision(17);
-  CGAL::write_WKT(os, ls);
-  os.close();
+  {
+    std::ofstream os("test.wkt");
+    os.precision(17);
+    CGAL::write_WKT(os, ls);
+    os.close();
+  }
   Linestring test_ls;
-  is = std::ifstream("test.wkt");
-  CGAL::read_linestring_WKT(is, test_ls);
-  is.close();
+  {
+    std::ifstream is("test.wkt");
+    CGAL::read_linestring_WKT(is, test_ls);
+    is.close();
+  }
   CGAL_assertion(ls.range == test_ls.range);
   
   
   Polygon poly = generate_polygon();
-  
-  os = std::ofstream("test.wkt");
-  os.precision(17);
-  CGAL::write_WKT(os, poly);
-  os.close();
+  {
+    std::ofstream os("test.wkt");
+    os.precision(17);
+    CGAL::write_WKT(os, poly);
+    os.close();
+  }
   Polygon test_poly;
-  is = std::ifstream("test.wkt");
-  CGAL::read_polygon_WKT(is, test_poly);
-  is.close();
+  {
+    std::ifstream is("test.wkt");
+    CGAL::read_polygon_WKT(is, test_poly);
+    is.close();
+  }
   CGAL_assertion(poly == test_poly);
   
   MultiPoint pees = generate_multipoint();
-  os = std::ofstream("test.wkt");
-  os.precision(17);
-  CGAL::write_WKT(os, pees);
-  os.close();
+  {
+    std::ofstream os("test.wkt");
+    os.precision(17);
+    CGAL::write_WKT(os, pees);
+    os.close();
+  }
   MultiPoint test_pees;
-  is = std::ifstream("test.wkt");
-  CGAL::read_multipoint_WKT(is, test_pees);
-  is.close();
+  {
+    std::ifstream is("test.wkt");
+    CGAL::read_multipoint_WKT(is, test_pees);
+    is.close();
+  }
   CGAL_assertion(pees.range == test_pees.range);
   
   MultiLinestring mls = generate_multilinestring();
-  os = std::ofstream("test.wkt");
-  os.precision(17);
-  CGAL::write_WKT(os, mls);
-  os.close();
+  {
+    std::ofstream os("test.wkt");
+    os.precision(17);
+    CGAL::write_WKT(os, mls);
+    os.close();
+  }
   MultiLinestring test_mls;
-  is = std::ifstream("test.wkt");
-  CGAL::read_multilinestring_WKT(is, test_mls);
-  is.close();
+  {
+    std::ifstream is("test.wkt");
+    CGAL::read_multilinestring_WKT(is, test_mls);
+    is.close();
+  }
   bool ok = true;
   for(size_t i=0; i<mls.size(); ++i)
     ok &= mls[i].range == test_mls[i].range;
   CGAL_assertion(ok);
   
   MultiPolygon polies = generate_multipolygon();
-  os = std::ofstream("test.wkt");
-  os.precision(17);
-  CGAL::write_WKT(os, polies);
-  os.close();
+  {
+    std::ofstream os("test.wkt");
+    os.precision(17);
+    CGAL::write_WKT(os, polies);
+    os.close();
+  }
   MultiPolygon test_polies;
-  is = std::ifstream("test.wkt");
-  CGAL::read_multipolygon_WKT(is, test_polies);
-  is.close();
+  {
+    std::ifstream is("test.wkt");
+    CGAL::read_multipolygon_WKT(is, test_polies);
+    is.close();
+  }
   CGAL_assertion(polies.range == test_polies.range);
   
   std::cout<<"WKT writing test passed."<<std::endl;
