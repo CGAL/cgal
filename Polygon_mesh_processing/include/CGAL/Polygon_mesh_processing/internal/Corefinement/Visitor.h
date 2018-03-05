@@ -547,7 +547,7 @@ public:
       // retriangulated. This ensure that triangulations are compatible.
       // This edges were not constrained in the first mesh but are in the
       // second (ensuring compatibility)
-      std::map< Node_id,std::set<Node_id> >::iterator it_neighbors =
+      typename std::map< Node_id,std::set<Node_id> >::iterator it_neighbors =
         coplanar_constraints.find(node_id);
       if (it_neighbors!=coplanar_constraints.end())
       {
@@ -1004,7 +1004,7 @@ public:
                 vit->info() >= number_coplanar_vertices) continue;
             // \todo no need to insert constrained edges (they also are constrained
             // in the other mesh)!!
-            std::map< Node_id,std::set<Node_id> >::iterator res =
+            typename std::map< Node_id,std::set<Node_id> >::iterator res =
                 coplanar_constraints.insert(
                     std::make_pair(vit->info(),std::set<Node_id>())).first;
             //turn around the vertex and get incident edge

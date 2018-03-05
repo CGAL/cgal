@@ -276,7 +276,7 @@ public:
       ++i;
     }
 
-    std::vector<Bmask>::const_iterator iter = std::lower_bound(bmasks.begin(), bmasks.end(), bmask);
+    typename std::vector<Bmask>::const_iterator iter = std::lower_bound(bmasks.begin(), bmasks.end(), bmask);
     if (iter != bmasks.end() && *iter == bmask)
       return static_cast<return_type>(1 + (iter - bmasks.begin()));
     return 0;
