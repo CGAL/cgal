@@ -1673,7 +1673,8 @@ Scene_c3t3_item_priv::reset_cut_plane() {
   const float ycenter = static_cast<float>((bbox.ymax()+bbox.ymin())/2.);
   const float zcenter = static_cast<float>((bbox.zmax()+bbox.zmin())/2.);
  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-  frame->setPosition(qglviewer::Vec(xcenter+offset.x, ycenter+offset.y, zcenter+offset.z));
+ qglviewer::Vec center(xcenter+offset.x, ycenter+offset.y, zcenter+offset.z);
+  frame->setPosition(center);
 }
 
 void
@@ -2050,6 +2051,7 @@ CGAL::Three::Scene_item::Header_data Scene_c3t3_item::header() const
 void Scene_c3t3_item::invalidateOpenGLBuffers()
 {
   are_buffers_filled = false;
+  resetCutPlane();
   compute_bbox();
   d->invalidate_stats();
 }
