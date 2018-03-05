@@ -471,14 +471,14 @@ class Cluster_classification : public Item_classification_base
     
     for (std::size_t i = 0; i < m_clusters.size(); ++ i)
     {
-      if (m_clusters[i].training == position)
+      if (m_clusters[i].training == int(position))
         m_clusters[i].training = -1;
-      else if (m_clusters[i].training > position)
+      else if (m_clusters[i].training > int(position))
         m_clusters[i].training --;
           
-      if (m_clusters[i].label == position)
+      if (m_clusters[i].label == int(position))
         m_clusters[i].label = -1;
-      else if (m_clusters[i].label > position)
+      else if (m_clusters[i].label > int(position))
         m_clusters[i].label --;
     }
 

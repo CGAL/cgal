@@ -248,14 +248,14 @@ class Point_set_item_classification : public Item_classification_base
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
     {
-      if (m_training[*it] == position)
+      if (m_training[*it] == int(position))
         m_training[*it] = -1;
-      else if (m_training[*it] > position)
+      else if (m_training[*it] > int(position))
         m_training[*it] --;
       
-      if (m_classif[*it] == position)
+      if (m_classif[*it] == int(position))
         m_classif[*it] = -1;
-      else if (m_classif[*it] > position)
+      else if (m_classif[*it] > int(position))
         m_classif[*it] --;
     }
     update_comments_of_point_set_item();
