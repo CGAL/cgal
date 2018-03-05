@@ -1,4 +1,3 @@
-AABB_tree 
 Advancing_front_surface_reconstruction 
 Algebraic_foundations 
 Algebraic_kernel_d 
