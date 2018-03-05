@@ -34,6 +34,9 @@
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
+
+class Cartesian_tag;
+class Homogeneous_tag;
   
 namespace Intersections {
 
