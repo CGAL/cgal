@@ -1346,28 +1346,6 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 }
 
 /// \cond SKIP_IN_MANUAL
-namespace internal{
-template <class Descriptor>
-struct Is_selected{
-  std::set<Descriptor>& selection;
-
-  Is_selected(std::set<Descriptor>& sel)
-    :selection(sel)
-  {}
-
-  friend bool get(Is_selected is, Descriptor d){
-    return (is.selection.count(d) == 1);
-  }
-
-  friend void put(Is_selected is, Descriptor d, bool b){
-    if (b)
-      is.selection.insert(d);
-    else
-      is.selection.erase(d);
-  }
-};
-} // end of namespace internal
-
 template <class TriangleMesh,  class face_descriptor, class NamedParameters>
 std::pair< bool, bool >
 remove_self_intersections_one_step(TriangleMesh& tm,
@@ -1399,55 +1377,10 @@ remove_self_intersections_one_step(TriangleMesh& tm,
 
   if(!faces_to_remove.empty()){
     // expand the region to be filled
-    internal::Is_selected<face_descriptor> is_selected(faces_to_remove);
-    expand_face_selection(faces_to_remove, tm, step+1, is_selected, Emptyset_iterator());
-    // try to avoid non-manifold vertices (morpho-math)
-    reduce_face_selection(faces_to_remove, tm, 1, is_selected, Emptyset_iterator());
-
-    // extract the set of halfedges that is on the boundary of the holes to be
-    // made. In addition, we make sure no hole to be created contains a vertex
-    // visited more than once along a hole border (pinched surface)
-    //  We save the size of boundary_hedges to make sur halfedges added
-    // from non_filled_hole are not removed.
-    do{
-      bool non_manifold_vertex_removed = false; //here non-manifold is for the 1D polyline
-      std::vector<halfedge_descriptor> boundary_hedges;
-      BOOST_FOREACH(face_descriptor fh, faces_to_remove)
-      {
-        halfedge_descriptor h = halfedge(fh,tm);
-        for (int i=0;i<3; ++i)
-        {
-          if ( is_border( opposite(h, tm), tm) ||
-               faces_to_remove.count( face( opposite(h, tm), tm) ) == 0)
-          {
-            boundary_hedges.push_back(h);
-          }
-          h=next(h, tm);
-        }
-      }
-
-      // detect vertices visited more than once along
-      // a hole border. We then remove all faces incident
-      // to such a vertex to force the removal of the vertex.
-      // Actually even if two holes are sharing a vertex, this
-      // vertex will be removed. It is not needed but since
-      // we do not yet have one halfedge per hole it is simpler
-      // and does not harm
-      std::set<vertex_descriptor> border_vertices;
-      BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
-      {
-        if (!border_vertices.insert(target(h,tm)).second){
-          BOOST_FOREACH(halfedge_descriptor hh, halfedges_around_target(h,tm)){
-            if (!is_border(hh, tm))
-              faces_to_remove.insert(face(hh, tm));
-          }
-          non_manifold_vertex_removed=true;
-        }
-      }
-      if (!non_manifold_vertex_removed)
-        break;
-    }
-    while(true);
+    if (step > 0)
+      expand_face_selection(faces_to_remove, tm, step,
+                            make_boolean_property_map(faces_to_remove),
+                            Emptyset_iterator());
 
     while(!faces_to_remove.empty())
     {
@@ -1484,6 +1417,78 @@ remove_self_intersections_one_step(TriangleMesh& tm,
         faces_to_remove.erase(f);
 
       if (cc_faces.size()==1) continue; // it is a triangle nothing better can be done
+
+      //Check for non-manifold vertices in the selection and remove them by selecting all incident faces:
+      //  extract the set of halfedges that is on the boundary of the holes to be
+      //  made. In addition, we make sure no hole to be created contains a vertex
+      //  visited more than once along a hole border (pinched surface)
+      //  We save the size of boundary_hedges to make sur halfedges added
+      //  from non_filled_hole are not removed.
+      bool border_hedges_invalid=false;
+      do{
+        bool non_manifold_vertex_removed = false; //here non-manifold is for the 1D polyline
+        std::vector<halfedge_descriptor> boundary_hedges;
+        BOOST_FOREACH(face_descriptor fh, cc_faces)
+        {
+          halfedge_descriptor h = halfedge(fh,tm);
+          for (int i=0;i<3; ++i)
+          {
+            if ( is_border( opposite(h, tm), tm) ||
+                 cc_faces.count( face( opposite(h, tm), tm) ) == 0)
+            {
+              boundary_hedges.push_back(h);
+            }
+            h=next(h, tm);
+          }
+        }
+
+        // detect vertices visited more than once along
+        // a hole border. We then remove all faces incident
+        // to such a vertex to force the removal of the vertex.
+        // Actually even if two holes are sharing a vertex, this
+        // vertex will be removed. It is not needed but since
+        // we do not yet have one halfedge per hole it is simpler
+        // and does not harm
+        std::set<vertex_descriptor> border_vertices;
+        BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+        {
+          if (!border_vertices.insert(target(h,tm)).second){
+            BOOST_FOREACH(halfedge_descriptor hh, halfedges_around_target(h,tm)){
+              if (!is_border(hh, tm))
+              {
+                cc_faces.insert(face(hh, tm)); // add the face to the current selection
+                faces_to_remove.erase(face(hh, tm));
+                border_hedges_invalid=true;
+              }
+            }
+            non_manifold_vertex_removed=true;
+          }
+        }
+
+        if (!non_manifold_vertex_removed)
+        {
+          break;
+        }
+      }
+      while(true);
+
+      if (border_hedges_invalid)
+      {
+        cc_border_hedges.clear();
+        BOOST_FOREACH(face_descriptor fd, cc_faces)
+        {
+          halfedge_descriptor h = halfedge(fd, tm);
+          for (int i=0; i<3;++i)
+          {
+            if ( is_border(opposite(h, tm), tm) ||
+                 cc_faces.count( face(opposite(h, tm), tm) )== 0)
+            {
+              cc_border_hedges.push_back(h);
+            }
+            h=next(h, tm);
+          }
+        }
+      }
 
       if(!is_selection_a_topologial_disk(cc_faces, tm))
       {
