@@ -679,7 +679,9 @@ protected:
               QApplication::restoreOverrideCursor();
               return false;
             }
-
+            const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
+            point = point - offset;
+            
             neighborhood.point_set (point_set_item).grow_region
               (Kernel::Point_3 (point.x, point.y, point.z),
                rg_epsilon, rg_cluster_epsilon, rg_normal_threshold);
@@ -759,6 +761,9 @@ protected:
       typedef Neighbor_search::Tree Tree;
       Tree tree(item->point_set()->points().begin(), item->point_set()->points().end());
 
+      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
+      point = point - offset;
+      
       Neighbor_search search(tree, Point(point.x, point.y, point.z), 1);
       Point res = search.begin()->first;
       messages->information(QString("Selected point : (%1, %2, %3)").arg(res.x()).arg(res.y()).arg(res.z()));
