@@ -43,7 +43,6 @@
 namespace CGAL {
 
 struct No_intersection_tag{};
-struct Throw_on_intersection_tag{};
 struct Exact_intersections_tag{}; // to be used with an exact number type
 struct Exact_predicates_tag{}; // to be used with filtered exact number
 
@@ -456,7 +455,7 @@ protected:
   Vertex_handle intersect(Face_handle f, int i,
                           Vertex_handle vaa,
                           Vertex_handle vbb,
-                          Throw_on_intersection_tag);
+                          No_intersection_tag);
   Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
@@ -893,7 +892,7 @@ Constrained_triangulation_2<Gt,Tds,Itag>::
 intersect(Face_handle , int ,
           Vertex_handle ,
           Vertex_handle ,
-          Throw_on_intersection_tag)
+          No_intersection_tag)
 {
 
   throw Intersection_of_constraints_exception();
