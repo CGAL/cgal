@@ -866,7 +866,7 @@ endif()
 # DESTINATION option is mandatory; skipping it breaks CPack!
 
 if(CGAL_INSTALL_DOC_DIR)
-  install(FILES AUTHORS changes.md LICENSE LICENSE.FREE_USE LICENSE.GPL LICENSE.LGPL DESTINATION ${CGAL_INSTALL_DOC_DIR} )
+  install(FILES AUTHORS CHANGES.md LICENSE LICENSE.FREE_USE LICENSE.GPL LICENSE.LGPL DESTINATION ${CGAL_INSTALL_DOC_DIR} )
 endif()
 
 #install all includes collected in trunk et cetera
