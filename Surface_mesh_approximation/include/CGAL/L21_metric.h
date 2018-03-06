@@ -11,18 +11,16 @@
 
 namespace CGAL {
 
-/*!
- * \ingroup PkgTSMA
- * @brief Approximation L21 metric.
- *
- * \cgalModels`ErrorMetric`
- *
- * @tparam TriangleMesh a triangle `FaceListGraph`
- * @tparam VertexPointMap a property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
-    as key type, GeomTraits::Point_3 as value type
- * @tparam with_area_weighing set `true` to activate area weighing
- * @tparam GeomTraits geometric traits
- */
+/// \ingroup PkgTSMA
+/// @brief Approximation L21 metric.
+///
+/// \cgalModels `ErrorMetric`
+///
+/// @tparam TriangleMesh a triangle `FaceListGraph`
+/// @tparam VertexPointMap a property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///    as key type, GeomTraits::Point_3 as value type
+/// @tparam with_area_weighing set `true` to activate area weighing
+/// @tparam GeomTraits geometric traits
 template <typename TriangleMesh,
   typename VertexPointMap
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
@@ -46,10 +44,18 @@ class L21_metric {
   typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type Face_area_map;
 
 public:
-  // type required by the `ErrorMetric` concept
+  /// \name Types
+  /// @{
   typedef typename GeomTraits::Vector_3 Proxy;
+  /// @}
 
-  // constructor
+  /// \name Constructor
+  /// @{
+  /*!
+   * @brief Constructor
+   * @param tm a triangle mesh
+   * @param vpmap vertex point map
+   */
   L21_metric(const TriangleMesh &tm, const VertexPointMap &vpmap) {
     GeomTraits traits;
     m_scalar_product_functor = traits.compute_scalar_product_3_object();
@@ -70,16 +76,26 @@ public:
       put(m_famap, f, std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
     }
   }
+  /// @}
 
-  // member function required by the `ErrorMetric` concept
-  // It is a function that takes a facet and a proxy, returns the L21 error between them.
+  /// \name Operations
+  /*!
+   * @brief Computes the L21 error between a facet and a proxy.
+   * @param f face_descriptor of a face
+   * @param px proxy
+   * @return computed error
+   */
   FT compute_error(const face_descriptor &f, const Proxy &px) const {
     Vector_3 v = m_sum_functor(get(m_fnmap, f), m_scale_functor(px, FT(-1.0)));
     return get(m_famap, f) * m_scalar_product_functor(v, v);
   }
 
-  // member function required by the `ErrorMetric` concept
-  // It returns the proxy fitted from the facets from beg to end.
+  /*!
+   * @brief Fits a proxy from a face range.
+   * @param beg face range begin
+   * @param end face range end
+   * @return fitted proxy
+   */
   template <typename FacetIterator>
   Proxy fit_proxy(const FacetIterator beg, const FacetIterator end) const {
     CGAL_assertion(beg != end);
@@ -95,6 +111,7 @@ public:
 
     return norm;
   }
+  /// @}
 
 private:
   Face_normal_map m_fnmap;
@@ -128,10 +145,10 @@ class L21_metric<TriangleMesh,
   typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type Face_area_map;
 
 public:
-  // type required by the `ErrorMetric` concept
+  // Public types
   typedef typename GeomTraits::Vector_3 Proxy;
 
-  // constructor
+  // Constructor.
   L21_metric(const TriangleMesh &tm, const VertexPointMap &vpmap) {
     GeomTraits traits;
     m_scalar_product_functor = traits.compute_scalar_product_3_object();
@@ -151,15 +168,13 @@ public:
     }
   }
 
-  // member function required by the `ErrorMetric` concept
-  // It is a function that takes a facet and a proxy, returns the L21 error between them.
+  // Computes the L21 error between a facet and a proxy.
   FT compute_error(const face_descriptor &f, const Proxy &px) const {
     Vector_3 v = m_sum_functor(get(m_fnmap, f), m_scale_functor(px, FT(-1.0)));
     return m_scalar_product_functor(v, v);
   }
 
-  // member function required by the `ErrorMetric` concept
-  // It returns the proxy fitted from the facets from beg to end.
+  // Fits a proxy from a face range.
   template <typename FacetIterator>
   Proxy fit_proxy(const FacetIterator beg, const FacetIterator end) const {
     CGAL_assertion(beg != end);

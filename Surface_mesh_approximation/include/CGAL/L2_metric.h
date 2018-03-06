@@ -14,17 +14,15 @@
 
 namespace CGAL {
 
-/*!
- * \ingroup PkgTSMA
- * @brief Approximation L2 metric.
- *
- * \cgalModels`ErrorMetric`
- *
- * @tparam TriangleMesh a triangle `FaceListGraph`
- * @tparam VertexPointMap a property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
-    as key type, GeomTraits::Point_3 as value type
- * @tparam GeomTraits geometric traits
- */
+/// \ingroup PkgTSMA
+/// @brief Approximation L2 metric.
+///
+/// \cgalModels `ErrorMetric`
+///
+/// @tparam TriangleMesh a triangle `FaceListGraph`
+/// @tparam VertexPointMap a property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///    as key type, GeomTraits::Point_3 as value type
+/// @tparam GeomTraits geometric traits
 template <typename TriangleMesh,
   typename VertexPointMap
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
@@ -42,10 +40,18 @@ class L2_metric {
   typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type Face_area_map;
 
 public:
-  // type required by the `ErrorMetric` concept
+  /// \name Types
+  /// @{
   typedef typename GeomTraits::Plane_3 Proxy;
+  /// @}
 
-  // constructor
+  /// \name Constructor
+  /// @{
+  /*!
+   * @brief Constructor
+   * @param tm a triangle mesh
+   * @param vpmap vertex point map
+   */
   L2_metric(const TriangleMesh &tm, const VertexPointMap &vpmap)
     : m_tm(&tm), m_vpmap(vpmap){
     m_famap = CGAL::internal::add_property(
@@ -59,9 +65,15 @@ public:
       put(m_famap, f, std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
     }
   }
+  /// @}
 
-  // member function required by the `ErrorMetric` concept
-  // It is a function that takes a facet and a proxy, returns the L21 error between them.
+  /// \name Operations
+  /*!
+   * @brief Computes the L21 error between a facet and a proxy.
+   * @param f face_descriptor of a face
+   * @param px proxy
+   * @return computed error
+   */
   FT compute_error(const face_descriptor &f, const Proxy &px) const {
     halfedge_descriptor he = halfedge(f, *m_tm);
     const Point_3 &p0 = m_vpmap[source(he, *m_tm)];
@@ -77,8 +89,12 @@ public:
     return (sq_d0 + sq_d1 + sq_d2 + d0 * d1 + d1 * d2 + d2 * d0) * get(m_famap, f) / FT(6.0);
   }
 
-  // member function required by the `ErrorMetric` concept
-  // It returns the proxy fitted from the facets from beg to end.
+  /*!
+   * @brief Fits a proxy from a face range.
+   * @param beg face range begin
+   * @param end face range end
+   * @return fitted proxy
+   */
   template <typename FacetIterator>
   Proxy fit_proxy(const FacetIterator beg, const FacetIterator end) const {
     CGAL_assertion(beg != end);
@@ -104,6 +120,7 @@ public:
 
     return px;
   }
+  /// @}
 
 private:
   const TriangleMesh *m_tm;
