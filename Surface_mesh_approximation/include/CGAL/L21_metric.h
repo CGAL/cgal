@@ -1,5 +1,5 @@
-#ifndef CGAL_APPROXIMATION_L21_TRAITS_H
-#define CGAL_APPROXIMATION_L21_TRAITS_H
+#ifndef CGAL_L21_METRIC_H
+#define CGAL_L21_METRIC_H
 
 #include <CGAL/license/Surface_mesh_approximation.h>
 
@@ -13,9 +13,9 @@ namespace CGAL {
 
 /*!
  * \ingroup PkgTSMA
- * @brief Approximation traits for L21 metric.
+ * @brief Approximation L21 metric.
  *
- * \cgalModels`Approximation_traits`
+ * \cgalModels`ErrorMetric`
  *
  * @tparam TriangleMesh a triangle `FaceListGraph`
  * @tparam VertexPointMap a property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
@@ -29,7 +29,7 @@ template <typename TriangleMesh,
   bool with_area_weighing = true,
   typename GeomTraits
     = typename TriangleMesh::Traits>
-class Approximation_l21_traits {
+class L21_metric {
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Vector_3 Vector_3;
   typedef typename GeomTraits::Point_3 Point_3;
@@ -46,11 +46,11 @@ class Approximation_l21_traits {
   typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type Face_area_map;
 
 public:
-  // type required by the `Approximation_traits` concept
+  // type required by the `ErrorMetric` concept
   typedef typename GeomTraits::Vector_3 Proxy;
 
   // constructor
-  Approximation_l21_traits(const TriangleMesh &tm, const VertexPointMap &vpmap) {
+  L21_metric(const TriangleMesh &tm, const VertexPointMap &vpmap) {
     GeomTraits traits;
     m_scalar_product_functor = traits.compute_scalar_product_3_object();
     m_sum_functor = traits.construct_sum_of_vectors_3_object();
@@ -71,14 +71,14 @@ public:
     }
   }
 
-  // member function required by the `Approximation_traits` concept
+  // member function required by the `ErrorMetric` concept
   // It is a function that takes a facet and a proxy, returns the L21 error between them.
   FT compute_error(const face_descriptor &f, const Proxy &px) const {
     Vector_3 v = m_sum_functor(get(m_fnmap, f), m_scale_functor(px, FT(-1.0)));
     return get(m_famap, f) * m_scalar_product_functor(v, v);
   }
 
-  // member function required by the `Approximation_traits` concept
+  // member function required by the `ErrorMetric` concept
   // It returns the proxy fitted from the facets from beg to end.
   template <typename FacetIterator>
   Proxy fit_proxy(const FacetIterator beg, const FacetIterator end) const {
@@ -106,7 +106,7 @@ private:
 
 // specialization without area weighing
 template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
-class Approximation_l21_traits<TriangleMesh,
+class L21_metric<TriangleMesh,
   VertexPointMap,
   false,
   GeomTraits> {
@@ -128,11 +128,11 @@ class Approximation_l21_traits<TriangleMesh,
   typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type Face_area_map;
 
 public:
-  // type required by the `Approximation_traits` concept
+  // type required by the `ErrorMetric` concept
   typedef typename GeomTraits::Vector_3 Proxy;
 
   // constructor
-  Approximation_l21_traits(const TriangleMesh &tm, const VertexPointMap &vpmap) {
+  L21_metric(const TriangleMesh &tm, const VertexPointMap &vpmap) {
     GeomTraits traits;
     m_scalar_product_functor = traits.compute_scalar_product_3_object();
     m_sum_functor = traits.construct_sum_of_vectors_3_object();
@@ -151,14 +151,14 @@ public:
     }
   }
 
-  // member function required by the `Approximation_traits` concept
+  // member function required by the `ErrorMetric` concept
   // It is a function that takes a facet and a proxy, returns the L21 error between them.
   FT compute_error(const face_descriptor &f, const Proxy &px) const {
     Vector_3 v = m_sum_functor(get(m_fnmap, f), m_scale_functor(px, FT(-1.0)));
     return m_scalar_product_functor(v, v);
   }
 
-  // member function required by the `Approximation_traits` concept
+  // member function required by the `ErrorMetric` concept
   // It returns the proxy fitted from the facets from beg to end.
   template <typename FacetIterator>
   Proxy fit_proxy(const FacetIterator beg, const FacetIterator end) const {
@@ -184,4 +184,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_APPROXIMATION_L21_TRAITS_H
+#endif // CGAL_L21_METRIC_H

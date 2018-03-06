@@ -18,7 +18,7 @@ More specifically, we give each parameter a name by wrapping it into a function 
 
 When using named parameters, the ordering is irrelevant, so that `f(name(n).age(a).gender(g))` is equivalent to `f(age(a).gender(g).name(n))`, and we can omit any named parameter that has a default value.
 
-The sequence of named parameters should start with `CGAL::VSA::parameters::`.
+The sequence of named parameters should start with `CGAL::Surface_mesh_approximation::parameters::`.
 
 \cgalHeading{Example}
 
@@ -33,7 +33,7 @@ See below a sample call of a function that uses the optional BGL named parameter
 // triangles: output triplets of indexed triangles
 
 CGAL::mesh_approximation(tm,
-    CGAL::VSA::parameters::seeding_method(method).
+    CGAL::Surface_mesh_approximation::parameters::seeding_method(method).
         max_nb_proxies(nb_proxies).
         nb_of_iterations(nb_iterations).
         anchor_points(std::back_inserter(points)).

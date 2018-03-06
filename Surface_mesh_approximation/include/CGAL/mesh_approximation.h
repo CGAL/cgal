@@ -75,12 +75,13 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
   Vertex_point_map point_pmap = choose_param(get_param(np, internal_np::vertex_point),
     get_property_map(vertex_point, const_cast<TriangleMesh &>(tm)));
 
-  typedef CGAL::Approximation_l21_traits<TriangleMesh, Vertex_point_map, false, Geom_traits> Approximation_traits;
+  typedef CGAL::L21_metric<TriangleMesh, Vertex_point_map, false, Geom_traits> L21_metric;
   typedef CGAL::VSA_approximation<TriangleMesh, Vertex_point_map> L21_approx;
+  typedef L21_approx::Error_metric L21_metric;
 
   L21_approx approx(tm, point_pmap);
-  Approximation_traits l21_metric(tm, point_pmap);
-  approx.set_metric(l21_metric);
+  L21_metric metric(tm, point_pmap);
+  approx.set_metric(metric);
 
   // default hierarchical seeding
   CGAL::Approximation_seeding_tag method = choose_param(

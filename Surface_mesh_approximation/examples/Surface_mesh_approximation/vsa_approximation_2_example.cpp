@@ -7,7 +7,6 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
-typedef CGAL::Approximation_l21_traits<Polyhedron>::Proxy Plane_proxy;
 typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 typedef std::map<face_descriptor, std::size_t> Facet_index_map;
 typedef boost::associative_property_map<Facet_index_map> Facet_proxy_pmap;
@@ -33,7 +32,7 @@ int main()
   Facet_proxy_pmap fpxmap(fidx_map);
 
   // output planar proxies
-  std::vector<Plane_proxy> proxies;
+  std::vector<Kernel::Vector_3> proxies;
 
   // free function interface with named parameters
   CGAL::mesh_approximation(input,

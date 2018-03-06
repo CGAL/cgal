@@ -14,7 +14,7 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
 
 typedef CGAL::VSA_approximation<Polyhedron, Vertex_point_map> L21_approx;
-typedef L21_approx::Approximation_traits L21_metric;
+typedef L21_approx::Error_metric L21_metric;
 
 bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
 {

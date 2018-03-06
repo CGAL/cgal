@@ -24,7 +24,7 @@ typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_poin
 typedef boost::associative_property_map<std::map<Facet_handle, std::size_t> > Facet_proxy_map;
 
 typedef CGAL::VSA_approximation<Polyhedron, Vertex_point_map> L21_approx;
-typedef L21_approx::Approximation_traits L21_metric;
+typedef L21_approx::Error_metric L21_metric;
 typedef L21_approx::Proxy Plane_proxies;
 
 #define CGAL_VSA_TEST_TOLERANCE 1e-8

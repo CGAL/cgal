@@ -1,5 +1,5 @@
-#ifndef CGAL_APPROXIMATION_L2_TRAITS_H
-#define CGAL_APPROXIMATION_L2_TRAITS_H
+#ifndef CGAL_L2_METRIC_H
+#define CGAL_L2_METRIC_H
 
 #include <CGAL/license/Surface_mesh_approximation.h>
 
@@ -16,9 +16,9 @@ namespace CGAL {
 
 /*!
  * \ingroup PkgTSMA
- * @brief Approximation traits for L2 metric.
+ * @brief Approximation L2 metric.
  *
- * \cgalModels`Approximation_traits`
+ * \cgalModels`ErrorMetric`
  *
  * @tparam TriangleMesh a triangle `FaceListGraph`
  * @tparam VertexPointMap a property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
@@ -30,7 +30,7 @@ template <typename TriangleMesh,
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits
     = typename TriangleMesh::Traits>
-class Approximation_l2_traits {
+class L2_metric {
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
   typedef typename GeomTraits::Triangle_3 Triangle_3;
@@ -42,11 +42,11 @@ class Approximation_l2_traits {
   typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type Face_area_map;
 
 public:
-  // type required by the `Approximation_traits` concept
+  // type required by the `ErrorMetric` concept
   typedef typename GeomTraits::Plane_3 Proxy;
 
   // constructor
-  Approximation_l2_traits(const TriangleMesh &tm, const VertexPointMap &vpmap)
+  L2_metric(const TriangleMesh &tm, const VertexPointMap &vpmap)
     : m_tm(&tm), m_vpmap(vpmap){
     m_famap = CGAL::internal::add_property(
       Face_area_tag("VSA-face_area"), const_cast<TriangleMesh &>(*m_tm));
@@ -60,7 +60,7 @@ public:
     }
   }
 
-  // member function required by the `Approximation_traits` concept
+  // member function required by the `ErrorMetric` concept
   // It is a function that takes a facet and a proxy, returns the L21 error between them.
   FT compute_error(const face_descriptor &f, const Proxy &px) const {
     halfedge_descriptor he = halfedge(f, *m_tm);
@@ -77,7 +77,7 @@ public:
     return (sq_d0 + sq_d1 + sq_d2 + d0 * d1 + d1 * d2 + d2 * d0) * get(m_famap, f) / FT(6.0);
   }
 
-  // member function required by the `Approximation_traits` concept
+  // member function required by the `ErrorMetric` concept
   // It returns the proxy fitted from the facets from beg to end.
   template <typename FacetIterator>
   Proxy fit_proxy(const FacetIterator beg, const FacetIterator end) const {
@@ -113,4 +113,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_APPROXIMATION_L2_TRAITS_H
+#endif // CGAL_L2_METRIC_H
