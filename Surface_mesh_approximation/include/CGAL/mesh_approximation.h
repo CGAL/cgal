@@ -35,7 +35,7 @@ namespace CGAL {
  *    Exact constructions kernels are not supported by this function.
  *  \cgalParamEnd
  *  \cgalParamBegin{vertex_point_map} the property map with the points associated
- *    to the vertices of `tm`. Instance of a class model of `ReadWritePropertyMap`.
+ *    to the vertices of `tm`. Instance of a class model of `ReadablePropertyMap`.
  *  \cgalParamEnd
  *  \cgalParamBegin{seeding_method} selection of seeding method.
  *  \cgalParamEnd

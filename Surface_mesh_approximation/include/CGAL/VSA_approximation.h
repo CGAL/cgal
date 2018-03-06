@@ -42,28 +42,24 @@
 
 namespace CGAL {
 
-/*!
- * \ingroup PkgTSMA
- * @brief Seeding method enumeration for Variational Shape Approximation algorithm.
- */
-  enum Approximation_seeding_tag {
-    /// Random seeding
-    Random,
-    /// Incremental seeding
-    Incremental,
-    /// Hierarchical seeding
-    Hierarchical
-  };
+/// \ingroup PkgTSMA
+/// @brief Seeding method enumeration for Variational Shape Approximation algorithm.
+enum Approximation_seeding_tag {
+  /// Random seeding
+  Random,
+  /// Incremental seeding
+  Incremental,
+  /// Hierarchical seeding
+  Hierarchical
+};
 
-/*!
- * \ingroup PkgTSMA
- * @brief Main class for Variational Shape Approximation algorithm.
- * @tparam TriangleMesh a CGAL TriangleMesh
- * @tparam VertexPointMap vertex point map
- * @tparam ErrorMetric approximation metric type
- * @tparam GeomTraits geometric traits type
- * @tparam Concurrency_tag concurrency tag
- */
+/// \ingroup PkgTSMA
+/// @brief Main class for Variational Shape Approximation algorithm.
+/// @tparam TriangleMesh a CGAL TriangleMesh
+/// @tparam VertexPointMap vertex point map
+/// @tparam ErrorMetric approximation metric type
+/// @tparam GeomTraits geometric traits type
+/// @tparam Concurrency_tag concurrency tag
 template <typename TriangleMesh,
   typename VertexPointMap,
   typename ErrorMetric = CGAL::Default,
@@ -72,18 +68,29 @@ template <typename TriangleMesh,
 class VSA_approximation {
 // public typedefs
 public:
-  // Default typedefs
-  /// Geometric trait type
+
+  /// \name Types
+  /// @{
+#ifndef DOXYGEN_RUNNING
+  // GeomTraits type
   typedef typename CGAL::Default::Get<
     GeomTraits,
     typename Kernel_traits<
       typename boost::property_traits<VertexPointMap>::value_type
     >::Kernel >::type Geom_traits;
-  /// ErrorMetric type
+#else
+  typedef GeomTraits Geom_traits;
+#endif
+  // ErrorMetric type
+#ifndef DOXYGEN_RUNNING
   typedef typename CGAL::Default::Get<ErrorMetric,
     CGAL::L21_metric<TriangleMesh, VertexPointMap, false, Geom_traits> >::type Error_metric;
-  /// Proxy type
+#else
+  typedef ErrorMetric Error_metric;
+#endif
+  // Proxy type
   typedef typename Error_metric::Proxy Proxy;
+  /// @}
 
 // private typedefs and data member
 private:
@@ -260,8 +267,10 @@ private:
 
 //member functions
 public:
+  /// \name Construction
+  /// @{
   /*!
-   * %Default constructor.
+   * @brief %Default empty constructor
    */
   VSA_approximation() :
     m_ptm(NULL),
@@ -278,7 +287,7 @@ public:
   }
 
   /*!
-   * Initialize and prepare for the approximation.
+   * @brief Initialize and prepare for the approximation.
    * @param tm `CGAL TriangleMesh` on which approximation operates.
    * @param vpoint_map vertex point map of the mesh
    */
@@ -302,7 +311,7 @@ public:
     m_fproxy_map = CGAL::internal::add_property(
       Face_proxy_tag("VSA-face_proxy"), *(const_cast<TriangleMesh *>(m_ptm)));
   }
-
+  /// @}
   
   ~VSA_approximation() {
     if (m_ptm) {
@@ -311,8 +320,10 @@ public:
     }
   }
   
+  /// \name Setup
+  /// @{
   /*!
-   * Set the mesh for approximation and rebuild the internal data structure.
+   * @brief Set the mesh for approximation and rebuild the internal data structure.
    * @pre @a tm.is_pure_triangle()
    * @param tm `CGAL TriangleMesh` on which approximation operates.
    * @param vpoint_map vertex point map of the mesh
@@ -324,7 +335,7 @@ public:
   }
 
   /*!
-   * Set the apprroximation traits.
+   * @brief Set the apprroximation traits.
    * @param approx_traits an `ErrorMetric` object.
    */
   void set_metric(const Error_metric &approx_traits) {
@@ -332,7 +343,7 @@ public:
   }
 
   /*!
-   * Rebuild the internal data structure.
+   * @brief Rebuild the internal data structure.
    */
   void rebuild() {
     // cleanup
@@ -358,8 +369,11 @@ public:
     BOOST_FOREACH(vertex_descriptor v, vertices(*m_ptm))
       put(m_vanchor_map, v, CGAL_VSA_INVALID_TAG);
   }
+  /// @}
 
-  /*!
+  /// \name Processing
+  /// @{
+    /*!
    * @brief Initialize the seeds with both maximum number of proxies
    * and minmum error drop stop criteria.
    * The first criterion met stops the seeding.
@@ -602,8 +616,11 @@ public:
 
     return num_added;
   }
+  /// @}
 
-  /*!
+  /// \name Refinement Operations
+  /// @{
+    /*!
    * @brief Teleport the local minima to the worst region, this combines the merging and adding processes.
    * The re-fitting is performed after each teleportation.
    * Here if we specify more than one proxy this means we teleport in a naive iterative fashion.
@@ -838,8 +855,11 @@ public:
 
     return true;
   }
+  /// @}
 
-  /*!
+  /// \name Meshing
+  /// @{
+    /*!
    * @brief Extract the approximated indexed triangle surface.
    * @note If the extracted surface mesh contains non-manifold facets, 
    * they are not built into the output polyhedron.
@@ -885,8 +905,12 @@ public:
     CGAL::Polyhedron_3<Geom_traits> tm_test;
     return build_polyhedron_surface(tm_test);
   }
+  /// @}
 
-  /*!
+
+  /// \name Output
+  /// @{
+    /*!
    * @brief Get the facet-proxy index map.
    * @tparam FacetProxyMap `WritablePropertyMap` with
    * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type
@@ -995,6 +1019,7 @@ public:
       *out_itr++ = plg;
     }
   }
+  /// @}
 
 // private member functions
 private:
