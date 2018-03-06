@@ -17,6 +17,7 @@
 
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/internal/repair_extra.h>
+#include <CGAL/Polygon_mesh_processing/corefinement.h>
 
 using namespace CGAL::Three;
 class Polyhedron_demo_repair_polyhedron_plugin :
@@ -41,19 +42,25 @@ public:
     actionRemoveDegenerateFaces = new QAction(tr("Remove Degenerate Faces"), mw);
     actionRemoveSelfIntersections = new QAction(tr("Remove Self-Intersections"), mw);
     actionStitchCloseBorderHalfedges = new QAction(tr("Stitch Close Border Halfedges"), mw);
-    actionDuplicateNMVertices = new QAction(tr("Duplicate non-manifold vertices"), mw);
+    actionDuplicateNMVertices = new QAction(tr("Duplicate Non-Manifold Vertices"), mw);
+    actionAutorefine = new QAction(tr("Autorefine Mesh"), mw);
+    actionAutorefineAndRMSelfIntersections = new QAction(tr("Autorefine and Remove Self-Intersections"), mw);
 
     actionRemoveIsolatedVertices->setObjectName("actionRemoveIsolatedVertices");
     actionRemoveDegenerateFaces->setObjectName("actionRemoveDegenerateFaces");
     actionRemoveSelfIntersections->setObjectName("actionRemoveSelfIntersections");
     actionStitchCloseBorderHalfedges->setObjectName("actionStitchCloseBorderHalfedges");
     actionDuplicateNMVertices->setObjectName("actionDuplicateNMVertices");
+    actionAutorefine->setObjectName("actionAutorefine");
+    actionAutorefineAndRMSelfIntersections->setObjectName("actionAutorefineAndRMSelfIntersections");
 
     actionRemoveDegenerateFaces->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionStitchCloseBorderHalfedges->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionRemoveSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionRemoveIsolatedVertices->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
     actionDuplicateNMVertices->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
+    actionAutorefine->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
+    actionAutorefineAndRMSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
 
     autoConnectActions();
   }
@@ -64,7 +71,9 @@ public:
                              << actionRemoveIsolatedVertices
                              << actionRemoveSelfIntersections
                              << actionStitchCloseBorderHalfedges
-                             << actionDuplicateNMVertices;
+                             << actionDuplicateNMVertices
+                             << actionAutorefine
+                             << actionAutorefineAndRMSelfIntersections;
   }
 
   bool applicable(QAction*) const
@@ -83,6 +92,10 @@ public:
   void on_actionStitchCloseBorderHalfedges_triggered(Scene_interface::Item_id index);
   template <typename Item>
   void on_actionDuplicateNMVertices_triggered(Scene_interface::Item_id index);
+  template <typename Item>
+  void on_actionAutorefine_triggered(Scene_interface::Item_id index);
+  template <typename Item>
+  void on_actionAutorefineAndRMSelfIntersections_triggered(Scene_interface::Item_id index);
 
 public Q_SLOTS:
   void on_actionRemoveIsolatedVertices_triggered();
@@ -90,6 +103,8 @@ public Q_SLOTS:
   void on_actionRemoveSelfIntersections_triggered();
   void on_actionStitchCloseBorderHalfedges_triggered();
   void on_actionDuplicateNMVertices_triggered();
+  void on_actionAutorefine_triggered();
+  void on_actionAutorefineAndRMSelfIntersections_triggered();
 
 private:
   QAction* actionRemoveIsolatedVertices;
@@ -97,6 +112,8 @@ private:
   QAction* actionRemoveSelfIntersections;
   QAction* actionStitchCloseBorderHalfedges;
   QAction* actionDuplicateNMVertices;
+  QAction* actionAutorefine;
+  QAction* actionAutorefineAndRMSelfIntersections;
 
   Messages_interface* messages;
 }; // end Polyhedron_demo_repair_polyhedron_plugin
@@ -176,6 +193,54 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   on_actionRemoveSelfIntersections_triggered<Scene_polyhedron_item>(index);
   on_actionRemoveSelfIntersections_triggered<Scene_surface_mesh_item>(index);
+  QApplication::restoreOverrideCursor();
+}
+
+template <typename Item>
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefine_triggered(Scene_interface::Item_id index)
+{
+  Item* poly_item =
+    qobject_cast<Item*>(scene->item(index));
+  if (poly_item)
+  {
+    CGAL::Polygon_mesh_processing::experimental::autorefine(*poly_item->polyhedron());
+    poly_item->invalidateOpenGLBuffers();
+    Q_EMIT poly_item->itemChanged();
+  }
+}
+
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefine_triggered()
+{
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  on_actionAutorefine_triggered<Scene_polyhedron_item>(index);
+  on_actionAutorefine_triggered<Scene_surface_mesh_item>(index);
+  QApplication::restoreOverrideCursor();
+}
+
+template <typename Item>
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefineAndRMSelfIntersections_triggered(Scene_interface::Item_id index)
+{
+  Item* poly_item =
+    qobject_cast<Item*>(scene->item(index));
+  if (poly_item)
+  {
+    bool solved =
+      CGAL::Polygon_mesh_processing::experimental::
+        autorefine_and_remove_self_intersections(*poly_item->polyhedron());
+    if (!solved)
+      messages->information(tr("Self-intersection could not be removed due to non-manifold edges in the output"));
+    poly_item->invalidateOpenGLBuffers();
+    Q_EMIT poly_item->itemChanged();
+  }
+}
+
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefineAndRMSelfIntersections_triggered()
+{
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  on_actionAutorefineAndRMSelfIntersections_triggered<Scene_polyhedron_item>(index);
+  on_actionAutorefineAndRMSelfIntersections_triggered<Scene_surface_mesh_item>(index);
   QApplication::restoreOverrideCursor();
 }
 
