@@ -223,9 +223,9 @@ public :
       colors->push_back((float)color.green()/255);
       colors->push_back((float)color.blue()/255);
 
-      barycenters->push_back((pa[0]+pb[0]+pc[0])/3.0);
-      barycenters->push_back((pa[1]+pb[1]+pc[1])/3.0);
-      barycenters->push_back((pa[2]+pb[2]+pc[2])/3.0);
+      barycenters->push_back((pa[0]+pb[0]+pc[0])/3.0 + offset.x);
+      barycenters->push_back((pa[1]+pb[1]+pc[1])/3.0 + offset.y);
+      barycenters->push_back((pa[2]+pb[2]+pc[2])/3.0 + offset.z);
     }
   }
 
@@ -1096,9 +1096,9 @@ void Scene_c3t3_item_priv::draw_triangle(const Tr::Bare_point& pa,
 
   for(int i=0; i<3; ++i)
   {
-   positions_barycenter.push_back((pa[0]+pb[0]+pc[0])/3.0);
-   positions_barycenter.push_back((pa[1]+pb[1]+pc[1])/3.0);
-   positions_barycenter.push_back((pa[2]+pb[2]+pc[2])/3.0);
+   positions_barycenter.push_back((pa[0]+pb[0]+pc[0])/3.0 + offset.x);
+   positions_barycenter.push_back((pa[1]+pb[1]+pc[1])/3.0 + offset.y);
+   positions_barycenter.push_back((pa[2]+pb[2]+pc[2])/3.0 + offset.z);
   }
 
 
@@ -1673,7 +1673,8 @@ Scene_c3t3_item_priv::reset_cut_plane() {
   const float ycenter = static_cast<float>((bbox.ymax()+bbox.ymin())/2.);
   const float zcenter = static_cast<float>((bbox.zmax()+bbox.zmin())/2.);
  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-  frame->setPosition(qglviewer::Vec(xcenter+offset.x, ycenter+offset.y, zcenter+offset.z));
+ qglviewer::Vec center(xcenter+offset.x, ycenter+offset.y, zcenter+offset.z);
+  frame->setPosition(center);
 }
 
 void
@@ -2050,6 +2051,7 @@ CGAL::Three::Scene_item::Header_data Scene_c3t3_item::header() const
 void Scene_c3t3_item::invalidateOpenGLBuffers()
 {
   are_buffers_filled = false;
+  resetCutPlane();
   compute_bbox();
   d->invalidate_stats();
 }
