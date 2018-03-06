@@ -163,6 +163,7 @@ class Intersection_of_triangle_meshes
   typedef typename graph_traits::face_descriptor face_descriptor;
   typedef typename graph_traits::edge_descriptor edge_descriptor;
   typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
+  typedef typename graph_traits::vertex_descriptor vertex_descriptor;
 
   typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, halfedge_descriptor> Box;
 
@@ -194,6 +195,7 @@ class Intersection_of_triangle_meshes
   Node_vector nodes;
   Node_visitor visitor;
   Faces_to_nodes_map         f_to_node;      //Associate a pair of triangles to their intersection points
+  std::vector<Node_id> extra_terminal_nodes; //used only for autorefinement
   CGAL_assertion_code(bool doing_autorefinement;)
 // member functions
   void filter_intersections(const TriangleMesh& tm_f,
@@ -1050,6 +1052,13 @@ class Intersection_of_triangle_meshes
       }
     }
 
+    CGAL_assertion(extra_terminal_nodes.empty() || doing_autorefinement);
+    // these nodes are created by pinchements along an edge of the surface.
+    // the node ids being the same for the two edges, the degree of the node
+    // in the graph is two while it should be 3
+    BOOST_FOREACH(Node_id id, extra_terminal_nodes)
+      graph[id].make_terminal();
+
     //visitor call
     visitor.annotate_graph(graph);
 
@@ -1163,6 +1172,7 @@ class Intersection_of_triangle_meshes
   {
     const TriangleMesh& tm = nodes.tm1;
     CGAL_assertion(doing_autorefinement);
+    std::map<vertex_descriptor, Node_id> vertex_to_node_id;
     for (typename Faces_to_nodes_map::iterator it=f_to_node.begin();
           it!=f_to_node.end(); ++it)
     {
@@ -1177,9 +1187,18 @@ class Intersection_of_triangle_meshes
         {
           if ( target(h1, tm)==target(h2,tm) )
           {
-            Node_id node_id=++current_node;
-            nodes.add_new_node(get(nodes.vpm1, target(h1,tm)));
-            visitor.new_node_added(node_id,ON_VERTEX,h1,h2,tm,tm,true,false);
+            Node_id node_id = current_node+1;
+            std::pair< typename std::map<vertex_descriptor, Node_id>::iterator, bool>
+              insert_res = vertex_to_node_id.insert(std::make_pair(target(h1,tm), node_id));
+            if (insert_res.second)
+            {
+              ++current_node;
+              nodes.add_new_node(get(nodes.vpm1, target(h1,tm)));
+              visitor.new_node_added(node_id,ON_VERTEX,h1,h2,tm,tm,true,false);
+              extra_terminal_nodes.push_back(node_id);
+            }
+            else
+              node_id = insert_res.first->second;
             it->second.insert(node_id);
             break;
           }
@@ -1320,11 +1339,12 @@ public:
 /// TODO AUTOREF_TAG does this happen in coplanar cases only? + shall we do it have new edge splitting?
     remove_duplicated_intersecting_edges();
 
-    detect_intersections_in_the_graph(tm, vpm, current_node);
 
     // If a pair of faces defines an isolated node, check if they share a common
     // vertex and create a new node in that case.
     add_common_vertices_for_pairs_of_faces_with_isolated_node(current_node);
+
+    detect_intersections_in_the_graph(tm, vpm, current_node);
 #if 0
     //collect connectivity infos and create polylines
     if ( Node_visitor::do_need_vertex_graph )

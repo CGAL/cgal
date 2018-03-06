@@ -339,7 +339,10 @@ public:
       Node_id node_id,
       TriangleMesh& tm)
   {
-    mesh_to_vertex_to_node_id[&tm].insert(std::make_pair(target(h,tm),node_id));
+    CGAL_assertion_code(bool insert_ok = )
+    mesh_to_vertex_to_node_id[&tm].insert(std::make_pair(target(h,tm),node_id))
+    CGAL_assertion_code(.second);
+    CGAL_assertion(insert_ok || mesh_to_vertex_to_node_id[&tm][target(h,tm)]==node_id);
   }
 
   void new_node_added_triple_face(std::size_t node_id,
