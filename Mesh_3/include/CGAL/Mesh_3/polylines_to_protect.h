@@ -205,18 +205,18 @@ private:
         translate(translate(p00,
                             scale(vx, x)),
                   scale(vy, y));
-      v_int = g_manip.get_vertex(inter_p);
+      v_int = g_manip.get_vertex(inter_p, false);
       g_manip.try_add_edge(old, v_int);
       CGAL_assertion_msg(max_squared_distance == 0 ||
-                         CGAL::squared_distance(g_manip.g[old],
-                                                g_manip.g[v_int]) <
+                         CGAL::squared_distance(g_manip.g[old].point,
+                                                g_manip.g[v_int].point) <
                          max_squared_distance,
 #ifndef CGAL_CFG_NO_CPP0X_LAMBDAS
                        ([this, old, v_int] {
                          std::stringstream s;
                          s << "Problem at segment ("
-                           << this->g_manip.g[old] << ", "
-                           << this->g_manip.g[v_int] << ")";
+                           << this->g_manip.g[old].point << ", "
+                           << this->g_manip.g[v_int].point << ")";
                          return s.str();
                        }().c_str())
 #else // no C++ lamdbas
@@ -229,15 +229,15 @@ private:
       // v_int can be null if the curve is degenerated into one point.
       g_manip.try_add_edge(v_int, end_v);
       CGAL_assertion_msg(max_squared_distance == 0 ||
-                         CGAL::squared_distance(g_manip.g[end_v],
-                                                g_manip.g[v_int]) <
+                         CGAL::squared_distance(g_manip.g[end_v].point,
+                                                g_manip.g[v_int].point) <
                          max_squared_distance,
 #ifndef CGAL_CFG_NO_CPP0X_LAMBDAS
                          ([this, end_v, v_int] {
                            std::stringstream s;
                            s << "Problem at segment ("
-                             << this->g_manip.g[end_v] << ", "
-                             << this->g_manip.g[v_int] << ")";
+                             << this->g_manip.g[end_v].point << ", "
+                             << this->g_manip.g[v_int].point << ")";
                            return s.str();
                          }().c_str())
 #else // no C++ lamdbas
@@ -257,6 +257,7 @@ struct Enriched_pixel {
   Point point;
   Domain_type domain;
   Image_word_type word;
+  bool on_edge_of_the_cube;
 }; // end struct template Enriched_pixel<Pix,P,D,C>
 }} // namespaces: end Mesh_3, end internal
 
@@ -295,7 +296,7 @@ struct Polyline_visitor
   void add_node(typename boost::graph_traits<G>::vertex_descriptor vd)
   {
     std::vector<P>& polyline = polylines.back();
-    polyline.push_back(graph[vd]);
+    polyline.push_back(graph[vd].point);
   }
 
   void end_polyline()
@@ -313,7 +314,7 @@ struct Angle_tester
   bool operator()(vertex_descriptor& v, const Graph& g) const
   {
     typedef typename boost::graph_traits<Graph>::out_edge_iterator out_edge_iterator;
-    if (out_degree(v, g) != 2)
+    if (g[v].force_terminal || out_degree(v, g) != 2)
       return true;
     else
     {
@@ -324,9 +325,9 @@ struct Angle_tester
       vertex_descriptor v2 = target(*out_edge_it++, g);
       CGAL_assertion(out_edge_it == out_edges_end);
 
-      const typename Kernel::Point_3& p = g[v];
-      const typename Kernel::Point_3& p1 = g[v1];
-      const typename Kernel::Point_3& p2 = g[v2];
+      const typename Kernel::Point_3& p = g[v].point;
+      const typename Kernel::Point_3& p1 = g[v1].point;
+      const typename Kernel::Point_3& p2 = g[v2].point;
 
       if(CGAL::angle(p1, p, p2) == CGAL::ACUTE) {
         // const typename Kernel::Vector_3 e1 = p1 - p;
@@ -380,11 +381,11 @@ void snap_graph_vertices(Graph& graph,
   BOOST_FOREACH(typename boost::graph_traits<Graph>::vertex_descriptor v,
                 vertices(graph))
   {
-    const typename K::Point_3 p = graph[v];
+    const typename K::Point_3 p = graph[v].point;
     NN_search nn(tree, p);
     CGAL_assertion(nn.begin() != nn.end());
     if(squared_distance(nn.begin()->first, p) < sq_dist_bound) {
-      graph[v] = nn.begin()->first;
+      graph[v].point = nn.begin()->first;
     }
   }
 }
@@ -402,9 +403,21 @@ struct Less_for_Graph_vertex_descriptors
 
   template <typename vertex_descriptor>
   bool operator()(vertex_descriptor v1, vertex_descriptor v2) const {
-    return graph[v1] < graph[v2];
+    return graph[v1].point < graph[v2].point;
   }
 }; // end of Less_for_Graph_vertex_descriptors<Graph>
+
+namespace internal {
+namespace polylines_to_protect_namespace {
+  template <typename Point>
+  struct Vertex_info {
+    Point point;
+    bool force_terminal;
+    Vertex_info() : force_terminal(false) {}
+    Vertex_info(const Point& p) : point(p), force_terminal(false) {}
+  };
+} // end namespace polylines_to_protect_namespace
+} // end namespace internal
 
 template <typename P,
           typename Image_word_type,
@@ -429,7 +442,11 @@ polylines_to_protect
   typedef typename DomainFunctor::result_type Domain_type;
   typedef typename Kernel_traits<P>::Kernel K;
   typedef P Point_3;
-  typedef boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS, Point_3> Graph;
+
+  using CGAL::internal::polylines_to_protect_namespace::Vertex_info;
+  typedef boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS,
+                                Vertex_info<Point_3> > Graph;
+
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   // typedef typename boost::graph_traits<Graph>::edge_iterator edge_iterator;
 
@@ -517,10 +534,10 @@ polylines_to_protect
                                                    > Enriched_pixel;
 
           array<array<Enriched_pixel, 2>, 2> square =
-            {{ {{ { pix00, Point_3(), Domain_type(), 0 },
-                  { pix01, Point_3(), Domain_type(), 0 } }},
-               {{ { pix10, Point_3(), Domain_type(), 0 },
-                  { pix11, Point_3(), Domain_type(), 0 } }} }};
+            {{ {{ { pix00, Point_3(), Domain_type(), 0, false },
+                  { pix01, Point_3(), Domain_type(), 0, false } }},
+               {{ { pix10, Point_3(), Domain_type(), 0, false },
+                  { pix11, Point_3(), Domain_type(), 0, false } }} }};
 
           std::map<Image_word_type, int> pixel_values_set;
           for(int ii = 0; ii < 2; ++ii) {
@@ -529,6 +546,10 @@ polylines_to_protect
               double x = pixel[0] * vx + tx;
               double y = pixel[1] * vy + ty;
               double z = pixel[2] * vz + tz;
+              square[ii][jj].on_edge_of_the_cube =
+                ( axis != 0 && xdim != 1 && ( 0 == pixel[0] || (xdim + 1) == pixel[0] ) ) ||
+                ( axis != 1 && ydim != 1 && ( 0 == pixel[1] || (ydim + 1) == pixel[1] ) ) ||
+                ( axis != 2 && zdim != 1 && ( 0 == pixel[2] || (zdim + 1) == pixel[2] ) );
               square[ii][jj].point = Point_3(x, y, z);
               square[ii][jj].word =
                 static_cast<Image_word_type>(cgal_image.value(pixel[0],
@@ -554,38 +575,45 @@ polylines_to_protect
           const Image_word_type& v01 = square[0][1].word;
           const Image_word_type& v11 = square[1][1].word;
 
-          bool out00 = null(square[0][0].domain);
-          bool out10 = null(square[1][0].domain);
-          bool out01 = null(square[0][1].domain);
-          bool out11 = null(square[1][1].domain);
+          {
+            bool out00 = null(square[0][0].domain);
+            bool out10 = null(square[1][0].domain);
+            bool out01 = null(square[0][1].domain);
+            bool out11 = null(square[1][1].domain);
 
-          //
-          // Protect the edges of the cube
-          //
-          if(pix00[axis_xx] == 0 &&
-             ! ( out00 && out01 ) )
-          {
-            g_manip.try_add_edge(g_manip.get_vertex(p00),
-                                 g_manip.get_vertex(p01));
-          }
-          if(pix11[axis_xx] == image_dims[axis_xx]-1 &&
-             ! ( out10 && out11 ) )
-          {
-            g_manip.try_add_edge(g_manip.get_vertex(p10),
-                                 g_manip.get_vertex(p11));
-          }
-          if(pix00[axis_yy] == 0 &&
-             ! ( out00 && out10 ) )
-          {
-            g_manip.try_add_edge(g_manip.get_vertex(p00),
-                                 g_manip.get_vertex(p10));
-          }
-          if(pix11[axis_yy] == image_dims[axis_yy]-1 &&
-             ! ( out01 && out11 ) )
-          {
-            g_manip.try_add_edge(g_manip.get_vertex(p01),
-                                 g_manip.get_vertex(p11));
-          }
+            bool on_edge00 = square[0][0].on_edge_of_the_cube;
+            bool on_edge10 = square[1][0].on_edge_of_the_cube;
+            bool on_edge01 = square[0][1].on_edge_of_the_cube;
+            bool on_edge11 = square[1][1].on_edge_of_the_cube;
+
+            //
+            // Protect the edges of the cube
+            //
+            if(pix00[axis_xx] == 0 &&
+               ! ( out00 && out01 ) )
+            {
+              g_manip.try_add_edge(g_manip.get_vertex(p00, on_edge00),
+                                   g_manip.get_vertex(p01, on_edge01));
+            }
+            if(pix11[axis_xx] == image_dims[axis_xx]-1 &&
+               ! ( out10 && out11 ) )
+            {
+              g_manip.try_add_edge(g_manip.get_vertex(p10, on_edge10),
+                                   g_manip.get_vertex(p11, on_edge11));
+            }
+            if(pix00[axis_yy] == 0 &&
+               ! ( out00 && out10 ) )
+            {
+              g_manip.try_add_edge(g_manip.get_vertex(p00, on_edge00),
+                                   g_manip.get_vertex(p10, on_edge10));
+            }
+            if(pix11[axis_yy] == image_dims[axis_yy]-1 &&
+               ! ( out01 && out11 ) )
+            {
+              g_manip.try_add_edge(g_manip.get_vertex(p01, on_edge01),
+                                   g_manip.get_vertex(p11, on_edge11));
+            }
+          } // end of scope for outIJ and on_edgeIJ
 
           //
           // Protect lines inside the square
@@ -612,13 +640,19 @@ case_4:
             // ---------------
             //
             ++case4;
-            vertex_descriptor left   = g_manip.split(p00, p01, v00, v01, out00, out01);
-            vertex_descriptor right  = g_manip.split(p10, p11, v10, v11, out10, out11);
-            vertex_descriptor top    = g_manip.split(p01, p11, v01, v11, out01, out11);
-            vertex_descriptor bottom = g_manip.split(p00, p10, v00, v10, out00, out10);
+            vertex_descriptor left   = g_manip.split(square[0][0],
+                                                     square[0][1], null);
+            vertex_descriptor right  = g_manip.split(square[1][0],
+                                                     square[1][1], null);
+            vertex_descriptor top    = g_manip.split(square[0][1],
+                                                     square[1][1], null);
+            vertex_descriptor bottom = g_manip.split(square[0][0],
+                                                     square[1][0], null);
 
-            vertex_descriptor vmid = g_manip.split(graph[left], graph[right],
+            vertex_descriptor vmid = g_manip.split(graph[left].point,
+                                                   graph[right].point,
                                                    v00, v10,
+                                                   false, false,
                                                    false, false);
             g_manip.try_add_edge(left   , vmid);
             g_manip.try_add_edge(right  , vmid);
@@ -630,8 +664,7 @@ case_4:
             if(square[0][0].domain == square[1][1].domain) {
               // Diagonal, but the wrong one.
               // Vertical swap
-              std::swap(square[0][1], square[0][0]); std::swap(out01, out00);
-              std::swap(square[1][1], square[1][0]); std::swap(out11, out10);
+              std::swap(square[0][1], square[0][0]);
             }
             if(square[0][1].domain == square[1][0].domain) {
               // diagonal case 1-2-1
@@ -660,10 +693,14 @@ case_4:
               CGAL_assertion(square[0][1].domain != square[1][1].domain);
 case_1_2_1:
               ++case121;
-              vertex_descriptor left   = g_manip.split(p00, p01, v00, v01, out00, out01);
-              vertex_descriptor right  = g_manip.split(p10, p11, v10, v11, out10, out11);
-              vertex_descriptor top    = g_manip.split(p01, p11, v01, v11, out01, out11);
-              vertex_descriptor bottom = g_manip.split(p00, p10, v00, v10, out00, out10);
+              vertex_descriptor left   = g_manip.split(square[0][0],
+                                                       square[0][1], null);
+              vertex_descriptor right  = g_manip.split(square[1][0],
+                                                       square[1][1], null);
+              vertex_descriptor top    = g_manip.split(square[0][1],
+                                                       square[1][1], null);
+              vertex_descriptor bottom = g_manip.split(square[0][0],
+                                                       square[1][0], null);
 
               Isoline_equation equation =
                 (scalar_interpolation_value == boost::none) ?
@@ -690,16 +727,16 @@ case_1_2_1:
               // case 2-1-1
               if(square[0][0].domain == square[1][0].domain) {
                 // Diagonal swap
-                std::swap(square[0][1], square[1][0]); std::swap(out01, out10);
+                std::swap(square[0][1], square[1][0]);
               } else
               if(square[0][1].domain == square[1][1].domain) {
                 // The other diagonal swap
-                std::swap(square[0][0], square[1][1]); std::swap(out00, out11);
+                std::swap(square[0][0], square[1][1]);
               } else
               if(square[1][0].domain == square[1][1].domain) {
                 // Vertical swap
-                std::swap(square[0][0], square[1][0]); std::swap(out00, out10);
-                std::swap(square[0][1], square[1][1]); std::swap(out01, out11);
+                std::swap(square[0][0], square[1][0]);
+                std::swap(square[0][1], square[1][1]);
               }
               CGAL_assertion(square[0][0].domain == square[0][1].domain);
               CGAL_assertion(square[0][0].domain != square[1][0].domain);
@@ -734,10 +771,13 @@ case_1_2_1:
               Point_3 midright = midpoint(p10, p11);
               Point_3 inter = translate(midleft
                               , (2./3) * vector(midleft, midright));
-              vertex_descriptor v_inter = g_manip.get_vertex(inter);
-              vertex_descriptor right  = g_manip.split(p10, p11, v10, v11, out10, out11);
-              vertex_descriptor top    = g_manip.split(p01, p11, v01, v11, out01, out11);
-              vertex_descriptor bottom = g_manip.split(p00, p10, v00, v10, out00, out10);
+              vertex_descriptor v_inter = g_manip.get_vertex(inter, false);
+              vertex_descriptor right  = g_manip.split(square[1][0],
+                                                       square[1][1], null);
+              vertex_descriptor top    = g_manip.split(square[0][1],
+                                                       square[1][1], null);
+              vertex_descriptor bottom = g_manip.split(square[0][0],
+                                                       square[1][0], null);
 
               insert_curve_in_graph.insert_curve(Isoline_equation(1, -1, 1, 0),
                                                  bottom, v_inter,
@@ -765,18 +805,18 @@ case_1_2_1:
 
               if(square[0][0].domain==square[1][0].domain) {
                 // case 2-2, diagonal swap
-                std::swap(square[0][1], square[1][0]); std::swap(out01, out10);
+                std::swap(square[0][1], square[1][0]);
                 CGAL_assertion(square[0][0].domain==square[0][1].domain);
               }
               if(square[1][0].domain==square[1][1].domain) {
                 // case 2-2, vertical swap
-                std::swap(square[0][1], square[1][1]); std::swap(out01, out11);
-                std::swap(square[0][0], square[1][0]); std::swap(out00, out10);
+                std::swap(square[0][1], square[1][1]);
+                std::swap(square[0][0], square[1][0]);
                 CGAL_assertion(square[0][0].domain==square[0][1].domain);
               }
               if(square[0][1].domain==square[1][1].domain) {
                 // case 2-2, diagonal swap
-                std::swap(square[0][0], square[1][1]); std::swap(out00, out11);
+                std::swap(square[0][0], square[1][1]);
                 CGAL_assertion(square[0][0].domain==square[0][1].domain);
               }
 
@@ -796,8 +836,10 @@ case_1_2_1:
                 //
                 CGAL_assertion(square[1][0].domain==square[1][1].domain);
                 CGAL_assertion(square[1][0].domain!=square[0][1].domain);
-                vertex_descriptor top    = g_manip.split(p01, p11, v01, v11, out01, out11);
-                vertex_descriptor bottom = g_manip.split(p00, p10, v00, v10, out00, out10);
+                vertex_descriptor top    = g_manip.split(square[0][1],
+                                                         square[1][1], null);
+                vertex_descriptor bottom = g_manip.split(square[0][0],
+                                                         square[1][0], null);
                 if(scalar_interpolation_value == boost::none) {
                   g_manip.try_add_edge(top, bottom);
                 } else {
@@ -831,8 +873,8 @@ case_1_2_1:
                     // In that case, the case 1-2-1 will be applied
                     if(discrimant > 0.) {
                       // Vertical swap
-                      std::swap(square[0][1], square[0][0]); std::swap(out01, out00);
-                      std::swap(square[1][1], square[1][0]); std::swap(out11, out10);
+                      std::swap(square[0][1], square[0][0]);
+                      std::swap(square[1][1], square[1][0]);
                     }
                     goto case_1_2_1;
                   }
@@ -853,20 +895,20 @@ case_1_2_1:
               }
               if(square[0][1].domain == value_alone) {
                 // central symmetry
-                std::swap(square[0][1], square[1][0]); std::swap(out01, out10);
-                std::swap(square[0][0], square[1][1]); std::swap(out00, out11);
+                std::swap(square[0][1], square[1][0]);
+                std::swap(square[0][0], square[1][1]);
                 CGAL_assertion(square[1][0].domain == value_alone);
               }
               if(square[1][1].domain == value_alone) {
                 // vertical swap
-                std::swap(square[0][0], square[0][1]); std::swap(out00, out01);
-                std::swap(square[1][0], square[1][1]); std::swap(out10, out11);
+                std::swap(square[0][0], square[0][1]);
+                std::swap(square[1][0], square[1][1]);
                 CGAL_assertion(square[1][0].domain == value_alone);
               }
               if(square[0][0].domain == value_alone) {
                 // horizontal swap
-                std::swap(square[0][1], square[1][1]); std::swap(out01, out11);
-                std::swap(square[0][0], square[1][0]); std::swap(out00, out10);
+                std::swap(square[0][1], square[1][1]);
+                std::swap(square[0][0], square[1][0]);
                 CGAL_assertion(square[1][0].domain == value_alone);
               }
               ++case31;
@@ -884,8 +926,10 @@ case_1_2_1:
               CGAL_assertion(square[1][0].domain != square[0][0].domain);
               CGAL_assertion(square[1][1].domain == square[0][0].domain);
               CGAL_assertion(square[0][1].domain == square[0][0].domain);
-              vertex_descriptor bottom = g_manip.split(p00, p10, v00, v10, out00, out10);
-              vertex_descriptor right  = g_manip.split(p10, p11, v10, v11, out10, out11);
+              vertex_descriptor bottom = g_manip.split(square[0][0],
+                                                       square[1][0], null);
+              vertex_descriptor right  = g_manip.split(square[1][0],
+                                                       square[1][1], null);
 
               Isoline_equation equation =
                 (scalar_interpolation_value == boost::none) ?
@@ -950,7 +994,9 @@ polylines_to_protect(std::vector<std::vector<P> >& polylines,
 {
   typedef P Point_3;
   typedef typename Kernel_traits<P>::Kernel K;
-  typedef boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS, Point_3> Graph;
+  using CGAL::internal::polylines_to_protect_namespace::Vertex_info;
+  typedef boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS,
+                                Vertex_info<Point_3> > Graph;
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typedef typename std::iterator_traits<PolylineInputIterator>::value_type Polyline;
 
@@ -971,8 +1017,8 @@ polylines_to_protect(std::vector<std::vector<P> >& polylines,
     typename Polyline::iterator pit = polyline.begin();
     while (boost::next(pit) != polyline.end())
     {
-      vertex_descriptor v = g_manip.get_vertex(*pit);
-      vertex_descriptor w = g_manip.get_vertex(*boost::next(pit));
+      vertex_descriptor v = g_manip.get_vertex(*pit, false);
+      vertex_descriptor w = g_manip.get_vertex(*boost::next(pit), false);
       g_manip.try_add_edge(v, w);
       ++pit;
     }
