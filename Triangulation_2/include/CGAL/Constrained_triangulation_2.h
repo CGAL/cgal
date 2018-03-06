@@ -105,7 +105,7 @@ public:
   };
 
 
-  class To_be_renamed_exception : public std::exception
+  class Intersection_of_constraints_exception : public std::exception
   {
     const char* what() const throw ()
     {
@@ -896,7 +896,7 @@ intersect(Face_handle , int ,
           Throw_on_intersection_tag)
 {
 
-  throw To_be_renamed_exception();
+  throw Intersection_of_constraints_exception();
   return Vertex_handle() ;
 }
 

@@ -13,7 +13,7 @@ struct No_intersection_tag{};
 \ingroup PkgTriangulation2TriangulationClasses
 
 Intersection tag for constrained triangulations, when input constraints should not intersect.
-Will throw a `To_be_renamed_exception` if constraints do intersect.
+Will throw a `Intersection_of_constraints_exception` if constraints do intersect.
 */
 struct Throw_on_intersection_tag{};
 
@@ -338,5 +338,5 @@ istream& operator>>(istream& is,Constrained_triangulation_2<Traits,Tds> Ct& t);
 
 //! Exception thrown for `intersect()` when called with the tag `Throw_on_intersection_tag`.
 //! Then, if constraints intersect, an exception of this type will be thrown.
-class To_be_renamed_exception;
+class Intersection_of_constraints_exception;
 } /* end namespace CGAL */
