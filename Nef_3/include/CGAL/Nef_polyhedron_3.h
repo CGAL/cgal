@@ -164,8 +164,8 @@ class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<Kernel_, 
   typedef typename Kernel::Segment_3                  Segment_3;
   typedef typename Kernel::Aff_transformation_3       Aff_transformation_3;
 
-#ifndef _MSC_VER
-  // VC++ has a problem to digest the following typedef,
+#if (! defined _MSC_VER) || (_MSC_VER >= 1900)
+  // VC++ < 2017 has a problem to digest the following typedef,
   // and does not need the using statements -- AF
   // The left and right part of these typedefs have the same name. It is
   // very important to qualify the left part with the CGAL:: namespace, no
