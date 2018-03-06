@@ -32,21 +32,15 @@ The page \ref namedparameters describes their usage
 and provides the list of parameters used in this package.
 
 ## Concepts ##
-- `Proxy`
 - `ErrorMetric`
-- `ProxyFitting`
 
 ## Main Functions ##
-- `CGAL::VSA::mesh_approximation()`
-- `CGAL::VSA::mesh_segmentation()`
+- `CGAL::mesh_approximation()`
 
 ## Classes ##
-- `CGAL::VSA::Plane_proxy`
-- `CGAL::VSA::L21_metric`
-- `CGAL::VSA::L21_proxy_fitting`
-- `CGAL::VSA::L2_metric`
-- `CGAL::VSA::L2_proxy_fitting`
-- `CGAL::VSA::Mesh_approximation`
+- `CGAL::L21_metric`
+- `CGAL::L2_metric`
+- `CGAL::VSA_approximation`
 
 \todo add option to enforce guarantee of 2-manifold and oriented output mesh
 \todo add traits class to design custom proxies

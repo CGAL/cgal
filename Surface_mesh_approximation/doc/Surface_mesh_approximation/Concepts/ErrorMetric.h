@@ -2,10 +2,10 @@
 \ingroup PkgTSMAConcepts
 \cgalConcept
 
-The concept `ErrorMetric` computes the fitting error of a face to a `Proxy`, used in CGAL::VSA::Mesh_approximation.
+The concept `ErrorMetric` computes the fitting error of a face to a `Proxy`, used in CGAL::VSA_approximation.
 
-\cgalHasModel `CGAL::VSA::L21_metric`
-\cgalHasModel `CGAL::VSA::L2_metric`
+\cgalHasModel `CGAL::L21_metric`
+\cgalHasModel `CGAL::L2_metric`
 */
 
 class ErrorMetric {
@@ -14,15 +14,20 @@ public:
   typedef unspecified_type FT;
   /// Triangle mesh face descriptor.
   typedef unspecified_type face_descriptor;
-  /// Parametrized shape proxy.
+  /// Parameterized shape proxy.
   typedef unspecified_type Proxy;
 
   /// @name Operations
   /// A model of this concept must provide:
   /// @{
 
-  /// returns the fitting error of a face f to the proxy px.
-  FT operator()(const face_descriptor &f, const Proxy &px) const;
+  /// returns the fitting error of a face f to the Proxy px.
+  FT compute_error(const face_descriptor &f, const Proxy &px) const;
+
+  /// returns the fitted proxy from a range of facets.
+  template <typename FacetIterator>
+  Proxy fit_proxy(const FacetIterator &beg, const FacetIterator &end) const;
 
   /// }
+
 };

@@ -25,21 +25,19 @@ The sequence of named parameters should start with `CGAL::VSA::parameters::`.
 See below a sample call of a function that uses the optional BGL named parameters.
 
 \code
-// input: input triangle mesh to be approximated
-// output: output polyhedron mesh
-// points: output anchor points
-// triangles: output triplets of indexed triangles
+// tm: input triangle mesh to be approximated
 // method: seed initialization method
 // nb_proxies: number of proxies used to approximate the geometry
 // nb_iterations: number of iterations after initialization
+// points: output anchor points
+// triangles: output triplets of indexed triangles
 
-CGAL::VSA::mesh_approximation(input,
-    std::back_inserter(points),
-    std::back_inserter(triangles),
+CGAL::mesh_approximation(tm,
     CGAL::VSA::parameters::seeding_method(method).
         max_nb_proxies(nb_proxies).
         nb_of_iterations(nb_iterations).
-        output_mesh(&output));
+        anchor_points(std::back_inserter(points)).
+        indexed_triangles(std::back_inserter(triangles)));
 \endcode
 
 \cgalHeading{List of Available Named Parameters}
@@ -49,7 +47,7 @@ In this package, all functions optional parameters are implemented as BGL option
 In the following, we assume that the following types are provided as template parameters of surface mesh approximation functions and classes. Note that the type is more specific for some of these functions.
 
 <ul>
-<li>`PolygonMesh` implements a `FaceGraph`
+<li>`TriangleMesh` implements a `FaceListGraph`
 <li>`GeomTraits` a geometric traits class in which constructions are performed and predicates evaluated. Everywhere in this package, a \cgal `Kernel` fulfills the requirements.
 </ul>
 
@@ -64,14 +62,14 @@ Here is the list of the named parameters available in this package:
 \code
 typename CGAL::Kernel_traits<
   typename boost::property_traits<
-    typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel
+    typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel
 \endcode
 \cgalNPEnd
 
 \cgalNPBegin{vertex_point_map} \anchor VSA_vertex_point_map
  is the property map with the points associated to the vertices of the polygon mesh `pmesh`.\n
 \b Type: a class model of `ReadablePropertyMap` with
-`boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
+`boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
 `GeomTraits::Point_3` as value type. \n
 \b Default value is \code boost::get(CGAL::vertex_point, pmesh)\endcode
 \cgalNPEnd
@@ -114,7 +112,7 @@ the chord subdivision threshold used in the meshing step.\n
 
 \cgalNPBegin{face_proxy_map} \anchor VSA_face_proxy_map
 the property map outputs the proxy index of each face of the input polygon mesh.\n
-\b Type: a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and the value type `std::size_t`\n
+\b Type: a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as key type and the value type `std::size_t`\n
 \b Default : if this parameter is omitted, no output operation performed
 \cgalNPEnd
 
@@ -124,15 +122,15 @@ an `OutputIterator` to write proxies in.\n
 \b Default : if this parameter is omitted, no output operation performed
 \cgalNPEnd
 
-\cgalNPBegin{anchor_vertices} \anchor VSA_anchor_vertices
-an `OutputIterator` to write anchor vertices in.\n
-\b Type : a class model of `OutputIterator` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor` value type.\n
+\cgalNPBegin{anchor_points} \anchor VSA_anchor_points
+an `OutputIterator` to write anchor points in.\n
+\b Type : a class model of `OutputIterator` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` value type.\n
 \b Default : if this parameter is omitted, no output operation performed
 \cgalNPEnd
 
-\cgalNPBegin{output_mesh} \anchor VSA_output_mesh
-a pointer to `CGAL::Polyhedron_3` to write the approximated surface mesh, constructed from the indexed triangles.\n
-\b Type : a pointer to `CGAL::Polyhedron_3`\n
+\cgalNPBegin{indexed_triangles} \anchor VSA_indexed_triangles
+an `OutputIterator` to write indexed triangles in.\n
+\b Type : a class model of `OutputIterator` with `CGAL::cpp11::array<std::size_t, 3>` value type.\n
 \b Default : if this parameter is omitted, no output operation performed
 \cgalNPEnd
 
