@@ -151,11 +151,6 @@ public:
    */
   virtual void drawPoints(CGAL::Three::Viewer_interface*) const { drawPoints(); }
 
-  //! Draws the splats of the item in the viewer using GLSplat functions.
-  virtual void drawSplats() const {}
-  //! Draws the splats of the item in the viewer using the GLSplat library.
-  virtual void drawSplats(CGAL::Three::Viewer_interface*) const {drawSplats();}
-
   //! Called by the scene. If b is true, then this item is currently selected.
   virtual void selection_changed(bool b);
 
@@ -350,10 +345,6 @@ public Q_SLOTS:
   //!Sets the RenderingMode to PointsPlusNormals.
   void setPointsPlusNormalsMode(){
     setRenderingMode(PointsPlusNormals);
-  }
-  //!Sets the RenderingMode to Splatting.
-  void setSplattingMode(){
-    setRenderingMode(Splatting);
   }
   
   //!Emits an aboutToBeDestroyed() signal.

@@ -81,14 +81,13 @@ public:
   void render(QImage& image) const {
 
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
-    QPainter *painter = viewer->getPainter();
+
     QPen pen;
     pen.setColor(QColor(Qt::green));
     pen.setWidth(5);
+    QImage temp(image);
 
-
-    painter->begin(viewer);
-    painter->drawImage(QPoint(0,0), image);
+    QPainter *painter = new QPainter(&temp);
     painter->setPen(pen);
     for(std::size_t i=0; i<polyline->size(); ++i)
     {
@@ -100,6 +99,10 @@ public:
         }
     }
     painter->end();
+    delete painter;
+    viewer->set2DSelectionMode(true);
+    viewer->setStaticImage(temp);
+    viewer->update();
   }
 
   Polyline_2& poly() const
@@ -731,6 +734,7 @@ protected:
 	select_points();
 	visualizer = NULL;
 	QApplication::restoreOverrideCursor();
+        static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin())->set2DSelectionMode(false);
 	return true;
       }
     // Update selection
@@ -998,13 +1002,14 @@ public Q_SLOTS:
   {
     if(toggle)
     {
+      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+      qobject_cast<Viewer_interface*>(viewer)->set2DSelectionMode(false);
       edit_box = new Scene_edit_box_item(scene);
       edit_box->setRenderingMode(Wireframe);
       edit_box->setName("Selection Box");
       connect(edit_box, &Scene_edit_box_item::aboutToBeDestroyed,
               this, &Polyhedron_demo_point_set_selection_plugin::reset_editbox);
       scene->addItem(edit_box);
-      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
       viewer->installEventFilter(edit_box);
       add_box->setEnabled(true);
     }

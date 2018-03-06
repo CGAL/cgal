@@ -33,6 +33,7 @@
 #include <CGAL/Qt/CreateOpenGLContext.h>
 // forward declarations
 class QWidget;
+class QImage;
 class QMouseEvent;
 class QKeyEvent;
 class QOpenGLShaderProgram;
@@ -198,6 +199,21 @@ public:
   //! Unbinds the combination SHIFT+LEFT CLICK. It allows to
   //! avoid conflicts in the selection_tool, for example.
   virtual void setNoBinding() = 0 ;
+
+  //!
+  //! If this mode is ON, the viewer will display the content of `staticImage()` instead
+  //! of drawing the cene. This is used when drawing 2D lines over the viewer.
+  //! @see `staticImage()`
+  //! @see `setStaticImage()`
+  virtual void set2DSelectionMode(bool) = 0;
+
+  //!
+  //! Setter for the image to be displayed in 2D selection mode.
+  //!
+  virtual void setStaticImage(QImage image)=0;
+
+  //! Returns the static image to be displayed in 2D selection mode.
+  virtual const QImage& staticImage() const = 0;
 
 Q_SIGNALS:
   //!Emit this to signal that the `id`th item has been picked.

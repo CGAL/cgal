@@ -769,10 +769,10 @@ double Scene_edit_box_item::point(short i, short j) const
   return (d->frame->inverseCoordinatesOf(pos))[j];
 }
 
-void Scene_edit_box_item::highlight()
+void Scene_edit_box_item::highlight(Viewer_interface *viewer)
 {
   d->ready_to_hl = true;
-  Viewer_interface* viewer = dynamic_cast<Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+  viewer->makeCurrent();
   int type = -1, id = -1;
   //pick
   if(!d->selection_on)
@@ -910,6 +910,7 @@ void Scene_edit_box_item::highlight()
 void Scene_edit_box_item::clearHL()
 {
   Viewer_interface* viewer = dynamic_cast<Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+  viewer->makeCurrent();
   d->hl_normal.clear();
   d->hl_vertex.clear();
 
@@ -997,7 +998,7 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
 {
   if(!visible())
     return false;
-  QGLViewer* viewer = qobject_cast<QGLViewer*>(obj);
+  CGAL::Three::Viewer_interface* viewer = qobject_cast<CGAL::Three::Viewer_interface*>(obj);
   if(!viewer)
     return false;
   if(event->type() == QEvent::MouseButtonPress)
@@ -1083,7 +1084,10 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
       }
       d->ready_to_hl= true;
       d->picked_pixel = e->pos();
-      QTimer::singleShot(0, this, SLOT(highlight()));
+      QTimer::singleShot(0, this,
+                         [this, viewer](){
+        highlight(viewer);
+      });
     }
     else if(e->modifiers() == Qt::ControlModifier &&
             e->buttons() == Qt::LeftButton)
@@ -1275,6 +1279,7 @@ double Scene_edit_box_item_priv::applyZ(int id, double z, double dirz)
 //type : 0 = vertex, 1 = edge, 2 = face
 void Scene_edit_box_item_priv::picking(int& type, int& id, Viewer_interface *viewer)
 {
+  viewer->makeCurrent();
   type = -1;
   id = -1;
   int deviceWidth = viewer->camera()->screenWidth();

@@ -128,7 +128,7 @@ public :
     return false;
   }
   QList<QAction*> actions() const {
-    return _actions;
+    return QList<QAction*>();
   }
 public Q_SLOTS:
 
