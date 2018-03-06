@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 
@@ -849,5 +850,7 @@ namespace CGAL { namespace Mesh_3 {
 } } //namespace CGAL::Mesh_3
 
 #endif // CGAL_LINKED_WITH_TBB
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_WORKSHARING_DATA_STRUCTURES_H

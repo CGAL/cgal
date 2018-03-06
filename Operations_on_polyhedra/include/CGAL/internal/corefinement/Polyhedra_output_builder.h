@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
@@ -2509,5 +2510,7 @@ public:
 };
 
 } } // end of namespace CGAL::Corefinement
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_INTERNAL_COREFINEMENT_POLYHEDRA_OUTPUT_BUILDER_H

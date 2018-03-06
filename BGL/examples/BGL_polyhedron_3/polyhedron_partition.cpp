@@ -3,9 +3,8 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/partition.h>
 
-//
-// TEST BGL NP
-//
+#include <fstream>
+#include <iostream>
 
 int main(int argc, char** argv)
 {

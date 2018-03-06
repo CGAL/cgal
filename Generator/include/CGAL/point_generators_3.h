@@ -28,6 +28,9 @@
 
 #ifndef CGAL_POINT_GENERATORS_3_H
 #define CGAL_POINT_GENERATORS_3_H 1
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/generators.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/number_type_basic.h>
@@ -696,6 +699,7 @@ struct Random_points_in_triangles_3
 
 } //namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POINT_GENERATORS_3_H //
 // EOF //

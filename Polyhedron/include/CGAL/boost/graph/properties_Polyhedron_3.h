@@ -474,25 +474,29 @@ struct vertex_property_type<const CGAL::Polyhedron_3<Gt,I,HDS,A> >
   typedef CGAL::vertex_point_t type;
 };
 
+
+} // namespace boost
+
+namespace CGAL{
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, vertex_point_t>
+struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::vertex_point_t>
   : CGAL::Tag_true {};
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, edge_weight_t>
+struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::edge_weight_t>
   : CGAL::Tag_true {};
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, edge_index_t>
+struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::edge_index_t>
   : CGAL::Boolean_tag<
       CGAL::internal::Has_member_id<
-        typename graph_traits<CGAL::Polyhedron_3<Gt, I, HDS, A> >::edge_descriptor
+        typename boost::graph_traits<CGAL::Polyhedron_3<Gt, I, HDS, A> >::edge_descriptor
       >::value
     >
 {};
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, face_index_t>
+struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::face_index_t>
   : CGAL::Boolean_tag<
       CGAL::internal::Has_member_id<
         typename CGAL::Polyhedron_3<Gt, I, HDS, A>::Facet
@@ -501,7 +505,7 @@ struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, face_index_t>
 {};
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, halfedge_index_t>
+struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::halfedge_index_t>
   : CGAL::Boolean_tag<
       CGAL::internal::Has_member_id<
         typename CGAL::Polyhedron_3<Gt, I, HDS, A>::Halfedge
@@ -510,17 +514,14 @@ struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, halfedge_index_t>
 {};
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, vertex_index_t>
+struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::vertex_index_t>
   : CGAL::Boolean_tag<
       CGAL::internal::Has_member_id<
         typename CGAL::Polyhedron_3<Gt, I, HDS, A>::Vertex
       >::value
     >
 {};
-
-} // namespace boost
-
-
+}// end CGAL
 #undef CGAL_HDS_PARAM_
 
 #endif // CGAL_BOOST_GRAPH_PROPERTIES_POLYHEDRON_3_H

@@ -31,6 +31,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The header file for the Arrangement_on_surface_2<Traits,Dcel> class.
@@ -3010,4 +3011,5 @@ bool do_intersect(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 #include <CGAL/Arrangement_2/Arrangement_on_surface_2_impl.h>
 #include <CGAL/Arrangement_2/Arrangement_on_surface_2_global.h>
 
+#include <CGAL/enable_warnings.h>
 #endif

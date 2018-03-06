@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/connected_components.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include<set>
 #include<vector>
@@ -803,5 +804,7 @@ void keep_connected_components(PolygonMesh& pmesh
 } // namespace Polygon_mesh_processing
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_CONNECTED_COMPONENTS_H

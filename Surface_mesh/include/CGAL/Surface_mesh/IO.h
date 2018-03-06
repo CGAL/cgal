@@ -25,6 +25,7 @@
 #include <CGAL/license/Surface_mesh.h>
 
 
+#include <CGAL/disable_warnings.h>
 
 //== INCLUDES =================================================================
 
@@ -481,6 +482,7 @@ generic_print_surface_mesh( std::ostream&   out,
 }
 } // CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_IO_H
 

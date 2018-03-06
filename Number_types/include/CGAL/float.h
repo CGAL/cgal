@@ -119,10 +119,13 @@ public:
       : public CGAL::unary_function< Type, bool > {
       public:
         bool operator()( const Type& x ) const {
-#ifdef CGAL_CFG_IEEE_754_BUG
+
+#if defined CGAL_CFG_IEEE_754_BUG
           Type f = x;
           IEEE_754_float* p = reinterpret_cast<IEEE_754_float*>(&f);
           return is_finite_by_mask_float( p->c );
+#elif !defined CGAL_CFG_NO_CPP0X_ISFINITE
+          return std::isfinite(x);
 #else
           return (x == x) && (is_valid(x-x));
 #endif

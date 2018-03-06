@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Origin.h>
 #include <CGAL/trace.h>
@@ -180,5 +181,7 @@ radial_orient_normals(
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_RADIAL_ORIENT_NORMALS_H

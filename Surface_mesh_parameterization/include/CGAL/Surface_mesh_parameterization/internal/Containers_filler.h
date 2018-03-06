@@ -23,10 +23,12 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <boost/foreach.hpp>
 #include "boost/tuple/tuple.hpp"
 #include <boost/unordered_set.hpp>
-
+#include <boost/graph/graph_traits.hpp>
 #include <vector>
 
 namespace CGAL {
@@ -109,5 +111,7 @@ struct Index_map_filler
 } // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_CONTAINERS_FILLER_H

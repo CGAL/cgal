@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/fair_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
@@ -169,5 +170,7 @@ namespace internal {
 } //end namespace Polygon_mesh_processing
 
 } //end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_FAIR_H

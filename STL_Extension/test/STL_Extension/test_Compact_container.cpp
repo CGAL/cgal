@@ -15,6 +15,8 @@
 
 #include <boost/type_traits/is_base_of.hpp>
 
+#include <CGAL/disable_warnings.h>
+
 template <typename Has_timestamp_ = CGAL::Tag_true>
 struct Node_1
 : public CGAL::Compact_container_base

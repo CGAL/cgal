@@ -56,7 +56,7 @@ void partition_dual_graph(const TriangleMesh& tm, int nparts,
   typedef typename boost::graph_traits<TriangleMesh>::face_iterator       face_iterator;
 
   // vertex index map
-  typedef typename GetVertexIndexMap<TriangleMesh, NamedParameters>::type Indices;
+  typedef typename CGAL::Polygon_mesh_processing::GetVertexIndexMap<TriangleMesh, NamedParameters>::type Indices;
   Indices indices = choose_param(get_param(np, internal_np::vertex_index),
                                  get_const_property_map(boost::vertex_index, tm));
 
@@ -104,12 +104,13 @@ void partition_dual_graph(const TriangleMesh& tm, int nparts,
   CGAL_assertion((*options)[METIS_OPTION_NUMBERING] == -1 || // default initialization is '-1'
                  (*options)[METIS_OPTION_NUMBERING] == 0);
 
-  int ret = METIS_PartMeshDual(&ne, &nn, eptr, eind,
-                               NULL /* elements weights*/, NULL /*elements sizes*/,
-                               &ncommon, &nparts,
-                               NULL /* partitions weights */,
-                               *options,
-                               &objval, epart, npart);
+  CGAL_assertion_code(int ret =)
+    METIS_PartMeshDual(&ne, &nn, eptr, eind,
+                       NULL /* elements weights*/, NULL /*elements sizes*/,
+                       &ncommon, &nparts,
+                       NULL /* partitions weights */,
+                       *options,
+                       &objval, epart, npart);
 
   CGAL_assertion(ret == METIS_OK);
 

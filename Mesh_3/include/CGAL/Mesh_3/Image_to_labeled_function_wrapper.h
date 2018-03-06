@@ -30,6 +30,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Image_3.h>
 #include <CGAL/function_objects.h>
@@ -152,5 +153,7 @@ private:
 }  // end namespace Mesh_3
 
 }  // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_IMAGE_TO_LABELED_FUNCTION_WRAPPER_H

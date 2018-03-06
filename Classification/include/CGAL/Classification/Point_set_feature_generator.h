@@ -37,7 +37,7 @@
 #include <CGAL/Classification/Feature/Eigen.h>
 #include <CGAL/Classification/Label.h>
 #include <CGAL/Classification/internal/verbosity.h>
-
+#include <CGAL/Classification/Feature_set.h>
 #include <CGAL/bounding_box.h>
 
 #include <boost/property_tree/ptree.hpp>

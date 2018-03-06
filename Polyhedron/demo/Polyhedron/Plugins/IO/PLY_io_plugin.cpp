@@ -22,6 +22,12 @@ class Polyhedron_demo_ply_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
 public:
+  bool isDefaultLoader(const CGAL::Three::Scene_item *item) const 
+  { 
+    if(qobject_cast<const Scene_points_with_normal_item*>(item)) 
+      return true; 
+    return false;
+  }
   QString name() const { return "ply_plugin"; }
   QString nameFilters() const { return "PLY files (*.ply)"; }
   bool canLoad() const;

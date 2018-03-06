@@ -25,6 +25,8 @@
 
 #include <CGAL/Classification/Label.h>
 #include <CGAL/Classification/Label_set.h>
+#include <map>
+#include <cmath> // for std::isnan
 
 namespace CGAL {
 

@@ -69,8 +69,6 @@ public:
 
   virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   virtual void drawPoints(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
-
-  virtual void drawSplats(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
   
   // Gets wrapped point set
   Point_set*       point_set();
@@ -84,8 +82,6 @@ public:
   virtual bool isFinite() const Q_DECL_OVERRIDE { return true; }
   virtual bool isEmpty() const Q_DECL_OVERRIDE;
   virtual void compute_bbox() const Q_DECL_OVERRIDE;
-
-  virtual void setRenderingMode(RenderingMode m) Q_DECL_OVERRIDE;
 
   // computes the local point spacing (aka radius) of each point
   void computes_local_spacing(int k);

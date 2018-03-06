@@ -26,6 +26,7 @@
 
 #include <CGAL/license/AABB_tree.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/AABB_primitive.h>
 #include <CGAL/result_of.h>
@@ -102,6 +103,7 @@ public:
 
 }  // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_AABB_TRIANGLE_PRIMITIVE_H_
 

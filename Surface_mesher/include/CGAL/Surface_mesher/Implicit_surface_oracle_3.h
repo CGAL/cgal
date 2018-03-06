@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Surface_mesher/Null_oracle_visitor.h>
 #include <CGAL/point_generators_3.h>
@@ -504,5 +505,6 @@ FT approximate_sqrt(const FT x) {
 
 } // namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif  // CGAL_SURFACE_MESHER_IMPLICIT_SURFACE_ORACLE_3_H

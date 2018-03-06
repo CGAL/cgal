@@ -27,6 +27,7 @@
 #ifndef CGAL_IO_H
 #define CGAL_IO_H
 
+#include <CGAL/disable_warnings.h>
 
 #include <cstdio>
 #include <cctype>
@@ -613,5 +614,7 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/IO/io_impl.h>
 #endif // CGAL_HEADER_ONLY
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_IO_H

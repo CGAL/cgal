@@ -8,6 +8,8 @@
 
 #include <string>
 
+#include <CGAL/disable_warnings.h>
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 //

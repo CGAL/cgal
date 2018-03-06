@@ -24,6 +24,7 @@
         <file>resources/right_arrow.png</file>
         <file>resources/pss_rectangle.png</file>
         <file>resources/pss_freeform.png</file>
+        <file>resources/pss_region.png</file>
         <file>resources/pss_box.png</file>
         <file>resources/pss_new.png</file>
         <file>resources/pss_union.png</file>

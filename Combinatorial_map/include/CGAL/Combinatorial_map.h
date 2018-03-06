@@ -21,6 +21,8 @@
 #ifndef CGAL_COMBINATORIAL_MAP_H
 #define CGAL_COMBINATORIAL_MAP_H 1
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/internal/Combinatorial_map_internal_functors.h>
 #include <CGAL/internal/Combinatorial_map_utility.h>
 #include <CGAL/internal/Combinatorial_map_group_functors.h>
@@ -5103,5 +5105,7 @@ namespace CGAL {
  _Pragma("GCC diagnostic pop")
 #endif
 
+ #include <CGAL/enable_warnings.h>
+ 
 #endif // CGAL_COMBINATORIAL_MAP_H //
 // EOF //

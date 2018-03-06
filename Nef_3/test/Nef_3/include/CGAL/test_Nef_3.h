@@ -36,6 +36,8 @@
 #include <cassert>
 #include <string>
 
+#include <CGAL/disable_warnings.h>
+
 namespace CGAL {
 
 template<typename Kernel>

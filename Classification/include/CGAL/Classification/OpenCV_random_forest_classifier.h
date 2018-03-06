@@ -25,9 +25,13 @@
 
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
-
+#if (CV_MAJOR_VERSION < 3)
 #include <cv.h>
 #include <ml.h>
+#else
+#include <opencv/cv.h>
+#include <opencv/ml.h>
+#endif
 
 namespace CGAL {
 

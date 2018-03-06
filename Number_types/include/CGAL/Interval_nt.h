@@ -464,7 +464,7 @@ std::ostream & operator<< (std::ostream &os, const Interval_nt<Protected> & I )
 #define CGAL_SWALLOW(IS,CHAR)                           \
     {                                                   \
         char c;                                         \
-        do c = is.get(); while (isspace(c));            \
+        do is.get(c); while (isspace(c));            \
         if (c != CHAR) {                                \
             is.setstate(std::ios_base::failbit);        \
         }                                               \
@@ -474,7 +474,7 @@ template <bool Protected>
 std::istream & operator>> (std::istream &is, Interval_nt<Protected> & I)
 {
     char c;
-    do c = is.get(); while (isspace(c));
+    do is.get(c); while (isspace(c));
     is.putback(c);
     if(c == '['){ // read original output from operator <<
         double inf,sup;
@@ -931,23 +931,6 @@ namespace INTERN_INTERVAL_NT {
     return Uncertain<bool>::indeterminate();
   }
 
- // TODO: Whats this for? Why is this in this file??
-  inline
-  std::pair<double, double>
-  to_interval (const long & l)
-  {
-    if (sizeof(double) > sizeof(long)) {
-      // On 64bit platforms, a long doesn't fit exactly in a double.
-      // Well, a perfect fix would be to use std::numeric_limits<>, but...
-      Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
-      Interval_nt<false> approx (static_cast<double>(l));
-      FPU_set_cw(CGAL_FE_UPWARD);
-      approx += Interval_nt<false>::smallest();
-      return approx.pair();
-    }
-    else
-      return std::pair<double,double>(static_cast<double>(l),static_cast<double>(l));
-  }
 } // namespace INTERN_INTERVAL_NT
 
 

@@ -29,6 +29,7 @@ typedef Traits_2::Point_2                          Point_2;
 
 template <typename Cmp_object>
 struct Cmp {
+  Cmp<Cmp_object>& operator=(const  Cmp<Cmp_object>&);
   const Cmp_object& m_cmp_object;
   Cmp(const Cmp_object& cmp_object) : m_cmp_object(cmp_object) {}
   bool operator()(const Point_2& p1, const Point_2& p2) const

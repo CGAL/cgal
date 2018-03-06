@@ -133,10 +133,6 @@ namespace CGAL {
           it_list != m_local_lists.end() ;
           ++it_list )
       {
-#ifdef _DEBUG
-        size_t multimap_size = container.size();
-        size_t local_list_size = it_list->size();
-#endif
         container.insert(it_list->begin(), it_list->end());
         it_list->clear();
       }
@@ -213,9 +209,6 @@ namespace CGAL {
 
     void splice_local_lists_impl()
     {
-#ifdef _DEBUG
-      size_t s = size();
-#endif
       Base::splice_local_lists_impl(container);
     }
 
@@ -231,9 +224,6 @@ namespace CGAL {
 
     bool no_longer_element_to_refine_impl()
     {
-#ifdef _DEBUG
-      size_t multimap_size = container.size();
-#endif
       bool is_empty = container.empty();
       while( !is_empty && !test(container.begin()->second) )
       {

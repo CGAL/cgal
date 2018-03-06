@@ -18,6 +18,8 @@ CGAL::Three::Scene_item::Scene_item(int buffers_size, int vaos_size)
     vaosSize(vaos_size),
     vaos(vaos_size)
 {
+
+  QGLViewer::QGLViewerPool().first()->makeCurrent();
   is_bbox_computed = false;
   is_diag_bbox_computed = false;
   for(int i=0; i<vaosSize; i++)
@@ -77,8 +79,6 @@ QString modeName(RenderingMode mode) {
         return QObject::tr("Gouraud");
     case PointsPlusNormals:
         return QObject::tr("pts+normals");
-    case Splatting:
-        return QObject::tr("splats");
     default:
         Q_ASSERT(false);
         return QObject::tr("unknown");
@@ -102,8 +102,6 @@ const char* slotName(RenderingMode mode) {
         return SLOT(setGouraudMode());
     case PointsPlusNormals:
         return SLOT(setPointsPlusNormalsMode());
-    case Splatting:
-        return SLOT(setSplattingMode());
     default:
         Q_ASSERT(false);
         return "";

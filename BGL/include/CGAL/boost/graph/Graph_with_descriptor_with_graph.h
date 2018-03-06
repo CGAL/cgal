@@ -828,6 +828,9 @@ std::size_t hash_value(CGAL::Gwdwg_descriptor<G,D> d)
   return hash_value(d.descriptor);
 }
 
+template<typename Graph, typename PropertyTag>
+struct graph_has_property<CGAL::Graph_with_descriptor_with_graph<Graph>, PropertyTag>
+  : graph_has_property<Graph, PropertyTag> {};
 }//end namespace CGAL
 
 namespace boost {
@@ -837,9 +840,6 @@ namespace boost {
     typedef CGAL::Graph_with_descriptor_with_graph_property_map<Graph, typename boost::property_map<Graph, PropertyTag >::const_type> const_type;
   };
 
-  template<typename Graph, typename PropertyTag>
-  struct graph_has_property<CGAL::Graph_with_descriptor_with_graph<Graph>, PropertyTag>
-    : graph_has_property<Graph, PropertyTag> {};
 
 }// namespace boost
 

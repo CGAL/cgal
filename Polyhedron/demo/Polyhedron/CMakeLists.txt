@@ -139,12 +139,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
 
   qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES Polyhedron_3.qrc )
-  qt5_add_resources(gl_splat_rc GlSplat/glsplat.qrc)
-  add_library(gl_splat SHARED
-    GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
-  target_link_libraries(gl_splat PUBLIC ${QGLVIEWER_LIBRARIES} Qt5::OpenGL Qt5::Gui)
-  target_link_libraries(gl_splat PRIVATE ${OPENGL_LIBRARIES} ${QGLVIEWER_LIBRARIES})
-
   find_path(CGAL_THREE_HEADERS_PATH
     NAME CGAL/Three/Scene_item.h
     HINTS ${CGAL_INCLUDE_DIRS}
@@ -189,7 +183,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(demo_framework
     PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui Qt5::Script
     ${QGLVIEWER_LIBRARIES}
-    gl_splat
     )
   if(CGAL_HEADER_ONLY)
     target_compile_definitions(demo_framework PRIVATE -DCGAL_USE_Qt5_RESOURCES)
@@ -204,7 +197,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     demo_framework
     ${CGAL_LIBRARIES}
     ${QGLVIEWER_LIBRARIES}
-    gl_splat
     Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
   add_library(scene_color_ramp SHARED Color_ramp.cpp)
   target_link_libraries(scene_color_ramp PRIVATE Qt5::Core)
@@ -301,16 +293,13 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     if (MSVC)
       target_compile_definitions( scene_points_with_normal_item PUBLIC "-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS")
     endif()
-    target_link_libraries( scene_points_with_normal_item PUBLIC gl_splat  ${LASLIB_LIBRARIES})
+    target_link_libraries( scene_points_with_normal_item PUBLIC ${LASLIB_LIBRARIES})
   else()
     add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
-    target_link_libraries( scene_points_with_normal_item PUBLIC gl_splat )
   endif()
   if(TBB_FOUND)
     CGAL_target_use_TBB(scene_points_with_normal_item)
   endif()
-
-  target_link_libraries( demo_framework PUBLIC gl_splat)
 
 
   foreach( lib 
@@ -404,7 +393,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   export(
     TARGETS
-    gl_splat
     NAMESPACE Polyhedron_
     APPEND FILE polyhedron_demo_targets.cmake)
   configure_file(CGAL_polyhedron_demoConfig.cmake.in  CGAL_polyhedron_demoConfig.cmake)

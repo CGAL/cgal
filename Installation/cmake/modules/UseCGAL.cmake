@@ -18,7 +18,7 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   set(USE_CGAL_FILE_INCLUDED 1)
 
   include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Common.cmake)
-  if( RUNNING_CGAL_AUTO_TEST )
+  if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST )
     include(${CMAKE_CURRENT_LIST_DIR}/CGAL_SetupFlags.cmake)
   else()
     include(${CMAKE_CURRENT_LIST_DIR}/CGAL_display_flags.cmake)

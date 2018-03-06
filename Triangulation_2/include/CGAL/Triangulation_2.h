@@ -23,6 +23,8 @@
 
 #include <CGAL/license/Triangulation_2.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <list>
 #include <vector>
 #include <map>
@@ -3652,5 +3654,7 @@ operator>>(std::istream& is, Triangulation_2<Gt, Tds> &tr)
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_TRIANGULATION_2_H

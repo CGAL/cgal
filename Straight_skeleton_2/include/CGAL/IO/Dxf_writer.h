@@ -24,6 +24,8 @@
 #ifndef CGAL_IO_DXF_WRITER_H
 #define CGAL_IO_DXF_WRITER_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/algorithm.h>
 #include <iostream>
@@ -281,5 +283,7 @@ private:
 } ;
 
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_IO_DXF_WRITER_H

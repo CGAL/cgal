@@ -1415,7 +1415,7 @@ namespace internal {
 
 inline static void swallow(std::istream &is, char d) {
   char c;
-  do c = is.get(); while (isspace(c));
+  do is.get(c); while (isspace(c));
   if (c != d) CGAL_error_msg( "input error: unexpected character in polynomial");
 }
 } // namespace internal
@@ -1434,7 +1434,7 @@ Polynomial<NT> Polynomial<NT>::input_ascii(std::istream &is) {
   internal::Creation_tag TAG;
   Polynomial<NT> p(TAG, degr+1);
 
-  do c = is.get(); while (isspace(c));
+  do is.get(c); while (isspace(c));
   do {
     if (c != '(') CGAL_error_msg( "input error: ( expected");
     is >> CGAL::iformat(i);
@@ -1444,7 +1444,7 @@ Polynomial<NT> Polynomial<NT>::input_ascii(std::istream &is) {
     internal::swallow(is, ',');
     is >> CGAL::iformat(p.coeff(i));
     internal::swallow(is, ')');
-    do c = is.get(); while (isspace(c));
+    do is.get(c); while (isspace(c));
   } while (c != ']');
 
   p.reduce();

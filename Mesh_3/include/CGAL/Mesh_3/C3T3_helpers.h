@@ -28,6 +28,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/use.h>
@@ -1427,7 +1428,7 @@ private:
       subdomain_index_ = c->subdomain_index();
       for(std::size_t i = 0; i < 4; ++i)
       {
-        const int ii = static_cast<const int>(i);//avoid warnings
+        const int ii = static_cast<int>(i);//avoid warnings
         surface_index_table_[i] = c->surface_patch_index(ii);
         facet_surface_center_[i] = c->get_facet_surface_center(ii);
         surface_center_index_table_[i] = c->get_facet_surface_center_index(ii);
@@ -3942,5 +3943,7 @@ check_no_inside_vertices(const Facet_vector& facets) const
 
 } // end namespace Mesh_3
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_C3T3_HELPERS_H

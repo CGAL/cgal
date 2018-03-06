@@ -146,11 +146,6 @@ h1 {
 \package_listing{Interpolation}
 \package_listing{Barycentric_coordinates_2}
 
-\section PartKineticDataStructures Kinetic Data Structures
-
-\package_listing{Kinetic_data_structures}
-\package_listing{Kinetic_framework}
-
 \section PartSupportLibrary Support Library
 
 \package_listing{STL_Extension}

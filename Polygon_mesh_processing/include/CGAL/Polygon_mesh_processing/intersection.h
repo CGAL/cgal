@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_impl.h>
 #include <boost/type_traits/is_same.hpp>
@@ -1730,7 +1731,9 @@ surface_self_intersection(const TriangleMesh& tm,
                               vertex_point);
 
 // surface intersection algorithm call
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm>
+  typedef Corefinement::Default_surface_intersection_visitor<TriangleMesh,
+                                                             true>      Visitor;
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm, Visitor>
     functor(tm, vpm);
 
   polyline_output=functor(polyline_output, true);
@@ -1769,5 +1772,7 @@ surface_self_intersection(const TriangleMesh& tm,
 } //end of namespace experimental
 
 } } //end of namespace CGAL::Polygon_mesh_processing
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_INTERSECTION_H

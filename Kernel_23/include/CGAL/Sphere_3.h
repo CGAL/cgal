@@ -319,7 +319,7 @@ extract(std::istream& is, Sphere_3<R>& c, const Homogeneous_tag&)
 {
     typename R::Point_3 center;
     typename R::FT squared_radius;
-    int o;
+    int o=0;
     switch(get_mode(is)) {
     case IO::ASCII :
         is >> center >> squared_radius >> o;

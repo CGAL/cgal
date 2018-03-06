@@ -2022,7 +2022,6 @@ bool Scene_polyhedron_item::supportsRenderingMode(RenderingMode m) const
 {
   return (
         m!=PointsPlusNormals &&
-      m!=Splatting &&
       m!=ShadedPoints &&
       !(m==Flat && d->no_flat)
       );

@@ -23,6 +23,13 @@ class Polyhedron_demo_off_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
 public:
+  bool isDefaultLoader(const Scene_item *item) const 
+  { 
+    if(qobject_cast<const Scene_polyhedron_item*>(item)
+       || qobject_cast<const Scene_polygon_soup_item*>(item)) 
+      return true; 
+    return false;
+  }
   QString name() const { return "off_plugin"; }
   QString nameFilters() const { return "OFF files (*.off);;Wavefront OBJ (*.obj)"; }
   bool canLoad() const;

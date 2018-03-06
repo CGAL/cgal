@@ -164,7 +164,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_
       CGAL::Polygon_mesh_processing::remove_self_intersections(
       *poly_item->polyhedron());
     if (!solved)
-    messages->information(tr("Some self-intersection could not be fixed"));
+      messages->information(tr("Some self-intersection could not be fixed"));
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
   }

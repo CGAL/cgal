@@ -31,14 +31,12 @@
 
 #include <algorithm>
 #include <vector>
-# include <CGAL/gl.h>
 
 /// The Point_set_3 class is array of points + normals of type
 /// Point_with_normal_3<Gt> (in fact
 /// UI_point_3 to support a selection flag and an optional radius).
 /// It provides:
 /// - accessors: points and normals iterators, property maps
-/// - OpenGL rendering
 /// - bounding box
 ///
 /// CAUTION:

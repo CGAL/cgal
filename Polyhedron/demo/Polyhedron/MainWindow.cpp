@@ -1015,7 +1015,7 @@ void MainWindow::open(QString filename)
     Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
       if ( !io_plugin->canLoad() ) continue;
       all_items << io_plugin->name();
-      if ( file_matches_filter(io_plugin->loadNameFilters(), filename) )
+      if ( file_matches_filter(io_plugin->loadNameFilters(), filename.toLower()) )
         selected_items << io_plugin->name();
     }
   }
@@ -1321,6 +1321,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
       else if(scene->selectionIndices().size() > 1 )
       {
         QMap<QString, QAction*> menu_actions;
+        bool has_stats = false;
         Q_FOREACH(QAction* action, scene->item(main_index)->contextMenu()->actions())
         {
           if(action->property("is_groupable").toBool())
@@ -1334,11 +1335,8 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
           CGAL::Three::Scene_item* item = scene->item(index);
           if(!item)
             continue;
-          QVector<QString> action_names;
-          Q_FOREACH(QAction* action, item->contextMenu()->actions())
-          {
-            action_names.push_back(action->text());
-          }
+          if(item->has_stats())
+            has_stats = true;
         }
         QMenu menu;
         Q_FOREACH(QString name, menu_actions.keys())
@@ -1346,7 +1344,14 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
           QAction* action = menu.addAction(name);
           connect(action, &QAction::triggered, this, &MainWindow::propagate_action);
         }
-
+        if(has_stats)
+        {
+          QAction* actionStatistics =
+              menu.addAction(tr("Statistics..."));
+          actionStatistics->setObjectName("actionStatisticsOnPolyhedron");
+          connect(actionStatistics, SIGNAL(triggered()),
+                  this, SLOT(statisticsOnItem()));
+        }
           QAction* reload = menu.addAction(tr("&Reload Item from File"));
           reload->setProperty("is_groupable", true);
           connect(reload, SIGNAL(triggered()),
@@ -1579,15 +1584,26 @@ void MainWindow::on_actionSaveAs_triggered()
     item = scene->item(id);
     QVector<CGAL::Three::Polyhedron_demo_io_plugin_interface*> canSavePlugins;
     QStringList filters;
+      QString sf;
     Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
       if(plugin->canSave(item)) {
         canSavePlugins << plugin;
         filters += plugin->saveNameFilters();
+        if(plugin->isDefaultLoader(item))
+          sf = plugin->saveNameFilters().split(";;").first();
       }
     }
     QString ext1, ext2;
     QRegExp extensions("\\(\\*\\..+\\)");
     QStringList filter_ext;
+    if(filters.empty())
+    {
+      QMessageBox::warning(this,
+                           tr("Cannot save"),
+                           tr("The selected object %1 cannot be saved.")
+                           .arg(item->name()));
+      return;
+    }
     Q_FOREACH(QString s, filters.first().split(";;"))
     {
       int pos = extensions.indexIn(s);
@@ -1603,13 +1619,19 @@ void MainWindow::on_actionSaveAs_triggered()
       continue;
     }
     QString caption = tr("Save %1 to File...").arg(item->name());
-    QString sf;
+    QString dir = item->property("source filename").toString();
+    if(dir.isEmpty())
+      dir = QString("%1/%2").arg(last_saved_dir).arg(item->name());
+    if(dir.isEmpty())
+      dir = item->name();
     QString filename =
         QFileDialog::getSaveFileName(this,
                                      caption,
-                                     QString("%1").arg(item->name()),
+                                     dir,
                                      filters.join(";;"),
                                      &sf);
+    
+    last_saved_dir = QFileInfo(dir).absoluteDir().path();
     extensions.indexIn(sf.split(";;").first());
     ext1 = extensions.cap();
     //remove `)`
@@ -1619,7 +1641,13 @@ void MainWindow::on_actionSaveAs_triggered()
     if(filename.isEmpty())
       continue;
 
-    ext2 = filename.split(".").last();
+    QStringList filename_split = filename.split(".");
+    int fs_size = filename_split.size();
+    ext2 = filename_split.last();
+    
+    if(fs_size > 2 &&
+       ext2 == filename_split[filename.split(".").size()-2])
+      filename.chop(ext2.size()+1);
     QStringList final_extensions;
     Q_FOREACH(QString s, filter_ext)
     {
@@ -1642,7 +1670,7 @@ void MainWindow::save(QString filename, CGAL::Three::Scene_item* item) {
   bool saved = false;
   Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
     if(  plugin->canSave(item) &&
-        file_matches_filter(plugin->saveNameFilters(),filename) )
+        file_matches_filter(plugin->saveNameFilters(),filename.toLower()) )
     {
       if(plugin->save(item, fileinfo))
       {

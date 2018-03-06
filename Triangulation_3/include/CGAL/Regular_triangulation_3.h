@@ -27,6 +27,8 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
 
 #include <set>
@@ -67,11 +69,6 @@
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
 #include <CGAL/point_generators_3.h>
 #endif
-
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4355) // complaint about using 'this' to
-#endif                          // initialize a member
 
 namespace CGAL {
 
@@ -2184,8 +2181,16 @@ namespace CGAL {
     Regular_triangulation_3<Gt,Tds,Lds>::
     is_Gabriel(Vertex_handle v) const
   {
-    return nearest_power_vertex(
-             geom_traits().construct_point_3_object()(v->point()), v->cell()) == v;
+    typename Geom_traits::Power_side_of_bounded_power_sphere_3
+      side_of_bounded_orthogonal_sphere =
+      geom_traits().power_side_of_bounded_power_sphere_3_object();
+
+    Vertex_handle nearest_v =
+      nearest_power_vertex(geom_traits().construct_point_3_object()(v->point()),
+                           v->cell());
+
+    return (side_of_bounded_orthogonal_sphere(v->point(), nearest_v->point())
+              != CGAL::ON_BOUNDED_SIDE);
   }
 
   // Returns
@@ -2570,8 +2575,6 @@ namespace CGAL {
 
 } //namespace CGAL
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_REGULAR_TRIANGULATION_3_H

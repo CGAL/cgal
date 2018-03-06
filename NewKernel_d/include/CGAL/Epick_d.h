@@ -20,6 +20,9 @@
 
 #ifndef CGAL_EPICK_D_H
 #define CGAL_EPICK_D_H
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/NewKernel_d/Cartesian_base.h>
 #include <CGAL/NewKernel_d/Cartesian_static_filters.h>
 #include <CGAL/NewKernel_d/Cartesian_filter_K.h>
@@ -69,4 +72,7 @@ struct Epick_d
 };
 #undef CGAL_BASE
 }
+
+#include <CGAL/enable_warnings.h>
+
 #endif

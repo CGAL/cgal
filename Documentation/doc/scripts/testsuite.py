@@ -81,13 +81,13 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
     page_footer='''<table class="test-results">
 <tr>
 <th>Package Name</th>
-<th>Logs for 1.8.4</th>
+<th>Logs </th>
 <th>Warnings</th>
 <th>Errors</th>
-<th>Logs for 1.8.13</th>
+<th>Logs </th>
 <th>Warnings</th>
 <th>Errors</th>
-<th>Logs for Master</th>
+<th>Logs </th>
 <th>Warnings</th>
 <th>Errors</th>
 </tr>
@@ -264,9 +264,10 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 </style>
 <html><head><title>Manual Testsuite Overview</title></head>
 <body><h1>Overviewpage of the Doxygen Manual Testsuite</h1>
-<table  border="1" cellspacing="2" cellpadding="5" id="revisions" class="rev-table">
-<tr><th>Revision</th><th>Date</th><th>Warnings 1.8.4</th>
-<th>Warnings 1.8.13</th><th>Warnings master</th><th>Errors 1.8.4</th><th>Errors 1.8.13</th><th>Errors master</th>
+<table border="1" cellspacing="2" cellpadding="5" id="revisions" class="rev-table">
+  <tr><td/><td/><th colspan="2">Doxygen 1.8.4</th><th colspan="2">Doxygen 1.8.13</th><th colspan="2">Doxygen master</th><td/><td/></tr>
+<tr><th>Revision</th><th>Date</th><th>Warnings</th>
+<th>Errors</th><th>Warnings </th><th>Errors</th><th>Warnings </th><th>Errors </th>
 <th>Diff with doxygen master</th><th>Diff with doxygen 1.8.13</th></tr></table></body>''')
                 args_list=''
                 for arg in sys.argv[0:]:
@@ -293,12 +294,12 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
         d=pq(filename=publish_dir + 'index.html',parser="html")
         revs=d('#revisions tr')
         new_row='''<tr><td><a href="{revision}/index.html">{revision}</a></td><td>{date}</td>
-        <td>{warnings1}</td><td>{warnings2}</td><td>{warnings3}</td>
-        <td>{errors1}</td><td>{errors2}</td><td>{errors3}</td>
+        <td>{warnings1}</td><td>{errors1}</td><td>{warnings2}</td>
+        <td>{errors2}</td><td>{warnings3}</td><td>{errors3}</td>
         <td>{diffs1}</td><td>{diffs2}</td></tr>'''.format(
             revision=version_string, date=version_date, warnings1=sum1[0], warnings2=sum2[0],warnings3=mastersum[0],
             errors1=sum1[1],errors2=sum2[1],errors3=mastersum[1], diffs1=diff2, diffs2=diff1)
-        revs.eq(0).after(new_row)
+        revs.eq(1).after(new_row)
         if args.version_to_keep:
           nb_items=len(revs)
           for k in range(int(args.version_to_keep),nb_items):

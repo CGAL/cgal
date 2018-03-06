@@ -17,7 +17,7 @@
 #include <CGAL/linear_least_squares_fitting_3.h>
 
 #include <CGAL/Random.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 #include <CGAL/Shape_detection_3.h>
 #include <CGAL/regularize_planes.h>
@@ -55,6 +55,93 @@ struct build_from_pair
 
 };
 
+struct Progress_bar_callback
+{
+  mutable int nb;
+  CGAL::Real_timer timer;
+  double t_start;
+  mutable double t_latest;
+  int bar_size;
+  mutable std::size_t string_size;
+  
+  Progress_bar_callback() : nb(0), bar_size (30), string_size(0)
+  {
+    timer.start();
+    t_start = timer.time();
+    t_latest = t_start;
+  }
+  
+  bool operator()(double advancement) const
+  {
+    // Avoid calling time() at every single iteration, which could
+    // impact performances very badly
+    ++ nb;
+    if (advancement != 1 && nb % 1000 != 0)
+      return true;
+
+    // If the limit is reach, interrupt the algorithm
+    double t = timer.time();
+    if (advancement == 1 || (t - t_latest) > 1.)
+    {
+      std::ostringstream oss;
+      oss << "[";
+      int adv = int(advancement * bar_size);
+      for (int i = 0; i < adv; ++ i)
+        oss << "=";
+      if (adv != bar_size)
+        oss << ">";
+      for (int i = adv; i < bar_size; ++ i)
+        oss << " ";
+      
+      oss << "] " << int(advancement * 100) << "% (";
+
+      display_time (oss, t);
+
+      oss << " elapsed, ";
+
+      display_time (oss, estimate_remaining(t, advancement));
+      
+      oss << " remaining)";
+      
+      std::string bar_string = oss.str();
+      std::cerr << "\r" << bar_string;
+      for (std::size_t i = bar_string.size(); i < string_size; ++ i)
+        std::cerr << " ";
+      string_size = (std::max) (string_size, bar_string.size());
+      
+      if (advancement == 1)
+        std::cerr << std::endl;
+      
+      t_latest = t;
+    }
+
+    return true;
+  }
+
+  void display_time (std::ostringstream& oss, double seconds) const
+  {
+    if (seconds > 3600.)
+      {
+	int hours = int(seconds / 3600.);
+	oss << hours << "h";
+	seconds -= hours * 3600.;
+      }
+    if (seconds > 60.)
+      {
+	int minutes = (int)(seconds / 60.);
+	oss << minutes << "min";
+	seconds -= minutes * 60.;
+      }
+    oss << int(seconds) << "sec";
+  }
+
+  double estimate_remaining (double seconds, double advancement) const
+  {
+    return ((1. - advancement) * (seconds - t_start) / advancement);
+  }
+};
+
+
 class Point_set_demo_point_set_shape_detection_dialog : public QDialog, private Ui::PointSetShapeDetectionDialog
 {
   Q_OBJECT
@@ -76,6 +163,7 @@ public:
   bool detect_cylinder() const { return cylinderCB->isChecked(); } 
   bool detect_torus() const { return torusCB->isChecked(); } 
   bool detect_cone() const { return coneCB->isChecked(); }
+  bool add_property() const { return m_add_property->isChecked(); }
   bool generate_colored_point_set() const { return m_one_colored_point_set->isChecked(); }
   bool generate_subset() const { return m_point_subsets->isChecked(); }
   bool generate_alpha() const { return m_alpha_shapes->isChecked(); }
@@ -184,6 +272,36 @@ private:
       colored_item->point_set()->check_colors();
       scene->addItem(colored_item);
     }
+
+    std::string& comments = item->comments();
+    
+    Point_set::Property_map<int> shape_id;
+    if (dialog.add_property())
+    {
+      bool added = false;
+      boost::tie (shape_id, added) = points->template add_property_map<int> ("shape", -1);
+      if (!added)
+      {
+        for (Point_set::iterator it = points->begin(); it != points->end(); ++ it)
+          shape_id[*it] = -1;
+      }
+
+      // Remove previously detected shapes from comments
+      std::string new_comment;
+      
+      std::istringstream stream (comments);
+      std::string line;
+      while (getline(stream, line))
+      {
+        std::stringstream iss (line);
+        std::string tag;
+        if (iss >> tag && tag == "shape")
+          continue;
+        new_comment += line + "\n";
+      }
+      comments = new_comment;
+      comments += "shape -1 no assigned shape\n";
+    }
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -220,9 +338,10 @@ private:
     }
 
     // The actual shape detection.
-    CGAL::Timer t;
+    CGAL::Real_timer t;
     t.start();
-    shape_detection.detect(op);
+    Progress_bar_callback callback;
+    shape_detection.detect(op, callback);
     t.stop();
     
     std::cout << shape_detection.shapes().size() << " shapes found in "
@@ -255,11 +374,40 @@ private:
           continue;
         }
       }
+
+      if (dialog.add_property())
+      {
+        std::ostringstream oss;
+        oss << "shape " << index;
+        if (CGAL::Shape_detection_3::Plane<Traits>* s
+            = dynamic_cast<CGAL::Shape_detection_3::Plane<Traits> *>(shape.get()))
+          oss << " plane " << Kernel::Plane_3(*s) << std::endl;
+        else if (CGAL::Shape_detection_3::Cylinder<Traits>* s
+            = dynamic_cast<CGAL::Shape_detection_3::Cylinder<Traits> *>(shape.get()))
+          oss << " cylinder axis = [" << s->axis() << "] radius = " << s->radius() << std::endl;
+        else if (CGAL::Shape_detection_3::Cone<Traits>* s
+            = dynamic_cast<CGAL::Shape_detection_3::Cone<Traits> *>(shape.get()))
+          oss << " cone apex = [" << s->apex() << "] axis = [" << s->axis()
+              << "] angle = " << s->angle() << std::endl;
+        else if (CGAL::Shape_detection_3::Torus<Traits>* s
+            = dynamic_cast<CGAL::Shape_detection_3::Torus<Traits> *>(shape.get()))
+          oss << " torus center = [" << s->center() << "] axis = [" << s->axis()
+              << "] R = " << s->major_radius() << " r = " << s->minor_radius() << std::endl;
+        else if (CGAL::Shape_detection_3::Sphere<Traits>* s
+            = dynamic_cast<CGAL::Shape_detection_3::Sphere<Traits> *>(shape.get()))
+          oss << " sphere center = [" << s->center() << "] radius = " << s->radius() << std::endl;
+
+        comments += oss.str();
+      }
         
       Scene_points_with_normal_item *point_item = new Scene_points_with_normal_item;
       
       BOOST_FOREACH(std::size_t i, shape->indices_of_assigned_points())
+      {
         point_item->point_set()->insert(points->point(*(points->begin()+i)));
+        if (dialog.add_property())
+          shape_id[*(points->begin()+i)] = index;
+      }
       
       unsigned char r, g, b;
 

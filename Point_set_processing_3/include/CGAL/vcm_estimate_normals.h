@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Point_set_processing_3/internal/Voronoi_covariance_3/voronoi_covariance_3.h>
 
@@ -661,5 +662,7 @@ vcm_estimate_normals (ForwardIterator first,
 /// \endcond
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_VCM_ESTIMATE_NORMALS_H

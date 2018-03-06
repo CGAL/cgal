@@ -226,6 +226,7 @@ public Q_SLOTS:
       // paint with mouse move event
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
       qglviewer::Camera* camera = viewer->camera();
+      viewer->makeCurrent();
 
       bool found = false;
       const qglviewer::Vec& point = camera->pointUnderPixel(paint_pos, found) - offset;
@@ -693,7 +694,9 @@ protected:
 
   void sample_mouse_path()
   {
+
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+    viewer->makeCurrent();
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
     contour_2d.push_back (Kernel::Point_2 (p.x(), p.y()));
 

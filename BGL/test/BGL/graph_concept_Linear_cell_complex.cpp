@@ -48,6 +48,7 @@ void concept_check_polyhedron() {
 
   // null
   boost::graph_traits<LCC>::null_vertex();
+  boost::graph_traits<LCC>::null_halfedge();
   boost::graph_traits<LCC>::null_face();
 }
 

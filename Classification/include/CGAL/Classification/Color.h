@@ -22,7 +22,8 @@
 #define CGAL_CLASSIFICATION_COLOR_H
 
 #include <CGAL/license/Classification.h>
-
+#include <CGAL/number_utils.h>
+#include <CGAL/int.h>
 #include <CGAL/array.h>
 
 namespace CGAL {

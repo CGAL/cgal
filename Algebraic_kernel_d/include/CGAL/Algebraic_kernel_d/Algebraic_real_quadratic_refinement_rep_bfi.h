@@ -28,6 +28,8 @@
 #ifndef CGAL_ALGEBRAIC_REAL_QUADRATIC_REFINEMENT_REP_BFI_H
 #define CGAL_ALGEBRAIC_REAL_QUADRATIC_REFINEMENT_REP_BFI_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep.h>
 
@@ -504,5 +506,7 @@ public:
 } // namepace internal
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_ALGEBRAIC_REAL_QUADRATIC_REFINEMENT_REP_H

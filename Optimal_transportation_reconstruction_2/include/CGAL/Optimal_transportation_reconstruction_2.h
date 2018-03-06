@@ -1779,6 +1779,8 @@ public:
 
 
   /// \cond SKIP_IN_MANUAL
+  const Triangulation& tds() const { return m_dt; }
+  
   void extract_tds_output(Triangulation& rt2) const {
     rt2 = m_dt;
     //mark vertices

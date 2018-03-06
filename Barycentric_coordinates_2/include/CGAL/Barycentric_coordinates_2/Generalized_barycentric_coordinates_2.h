@@ -27,6 +27,7 @@
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 // CGAL headers.
 #include <CGAL/Polygon_2_algorithms.h>
@@ -595,5 +596,7 @@ private:
 } // namespace Barycentric_coordinates
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_GENERALIZED_BARYCENTRIC_COORDINATES_2_H

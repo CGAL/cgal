@@ -28,6 +28,8 @@
 #include <CGAL/license/Triangulation_3.h>
 
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
 
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
@@ -2075,5 +2077,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
 } //namespace CGAL
 
 #include <CGAL/internal/Delaunay_triangulation_hierarchy_3.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_DELAUNAY_TRIANGULATION_3_H

@@ -51,7 +51,7 @@ if(NOT CGAL_Qt5_MISSING_DEPS)
 
   include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Qt5_moc_and_resource_files.cmake)
 
-  if(NOT TARGET CGAL_Qt5_moc_and_resources)
+  if(CGAL_HEADER_ONLY AND NOT CGAL_BUILDING_LIBS AND NOT TARGET CGAL_Qt5_moc_and_resources)
     add_library(CGAL_Qt5_moc_and_resources STATIC ${_CGAL_Qt5_MOC_FILES_private} ${_CGAL_Qt5_RESOURCE_FILES_private})
     set_target_properties(CGAL_Qt5_moc_and_resources PROPERTIES
       POSITION_INDEPENDENT_CODE TRUE

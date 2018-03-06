@@ -33,6 +33,8 @@
 
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 
+#include <CGAL/disable_warnings.h>
+
 template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Polyhedron_tester : public Tester<K>
 {

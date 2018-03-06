@@ -58,6 +58,8 @@
 #include <string>
 #include <map>
 
+#include <CGAL/disable_warnings.h>
+
 // Automatically define CGAL_CONCURRENT_PROFILE if we're linked with TBB
 #ifdef CGAL_LINKED_WITH_TBB
 # ifndef CGAL_CONCURRENT_PROFILE
@@ -255,5 +257,7 @@ private:
 #endif
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_PROFILE_COUNTER_H

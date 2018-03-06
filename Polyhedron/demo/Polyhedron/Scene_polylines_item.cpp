@@ -348,7 +348,7 @@ Scene_polylines_item::toolTip() const {
         length += CGAL::sqrt(vec.squared_length());
       }
       QString vertices_info = tr("<p>Number of vertices: %1<br />"
-                                 "Polyline's length: %1</p>")
+                                 "Polyline's length: %2</p>")
           .arg(polylines.front().size())
           .arg(length);
      s.append(vertices_info);

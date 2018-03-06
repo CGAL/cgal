@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <cmath>
 #include <stack>
@@ -420,5 +421,7 @@ namespace CGAL {
   /// \endcond  
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // HIERARCHY_SIMPLIFY_POINT_SET_H

@@ -125,6 +125,62 @@ See http://www.boost.org/libs/range/doc/html/range/concepts/forward_range.html
 class ForwardRange {};
 
 /*!
+Concept from the Boost Graph Library.
+See http://www.boost.org/libs/graph/doc/IncidenceGraph.html
+\cgalConcept
+*/
+class IncidenceGraph {};
+
+/*!
+Concept from the Boost Graph Library.
+See http://www.boost.org/libs/graph/doc/BidirectionalGraph.html
+\cgalConcept
+*/
+class BidirectionalGraph {};
+
+/*!
+Concept from the Boost Graph Library.
+See http://www.boost.org/libs/graph/doc/VertexAndEdgeListGraph.html
+\cgalConcept
+*/
+class VertexAndEdgeListGraph {};
+
+/*!
+Concept from the Boost Graph Library.
+See http://www.boost.org/libs/graph/doc/AdjacencyGraph.html
+\cgalConcept
+*/
+class AdjacencyGraph {};
+
+/*!
+Concept from the Boost Graph Library.
+See http://www.boost.org/libs/graph/doc/AdjacencyMatrix.html
+\cgalConcept
+*/
+class AdjacencyMatrix {};
+
+/*!
+Concept from the Boost Graph Library.
+See http://www.boost.org/libs/graph/doc/MutableGraph.html
+\cgalConcept
+*/
+class MutableGraph {};
+
+/*!
+Concept from the Boost Graph Library.
+See http://www.boost.org/libs/graph/doc/PropertyGraph.html
+\cgalConcept
+*/
+class PropertyGraph {};
+
+/*!
+Concept from the Boost Graph Library.
+See http://www.boost.org/libs/graph/doc/MutablePropertyGraph.html
+\cgalConcept
+*/
+class MutablePropertyGraph {};
+
+/*!
 This indicates that the definition of a type nested in a class is not documented.
 */
 class unspecified_type {};

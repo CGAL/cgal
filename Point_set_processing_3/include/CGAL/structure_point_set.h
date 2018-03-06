@@ -25,6 +25,8 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/assertions.h>
@@ -36,12 +38,15 @@
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Fuzzy_iso_box.h>
 #include <CGAL/Search_traits_d.h>
+#include <CGAL/Search_traits_3.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+
+#include <boost/iterator/counting_iterator.hpp>
 
 #include <iterator>
 #include <list>
@@ -1668,6 +1673,8 @@ structure_point_set (const PointRange& points,
 /// \endcond
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_STRUCTURE_POINT_SET_3_H
 

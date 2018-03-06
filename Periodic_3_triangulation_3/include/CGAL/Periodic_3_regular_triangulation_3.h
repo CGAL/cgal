@@ -740,37 +740,96 @@ public:
 
   Vertex_handle nearest_power_vertex(const Bare_point& p, Cell_handle start) const
   {
+    CGAL_triangulation_precondition(p.x() < domain().xmax());
+    CGAL_triangulation_precondition(p.y() < domain().ymax());
+    CGAL_triangulation_precondition(p.z() < domain().zmax());
+    CGAL_triangulation_precondition(p.x() >= domain().xmin());
+    CGAL_triangulation_precondition(p.y() >= domain().ymin());
+    CGAL_triangulation_precondition(p.z() >= domain().zmin());
+
     if(number_of_vertices() == 0)
       return Vertex_handle();
 
+    typename Gt::Construct_weighted_point_3 p2wp =
+        geom_traits().construct_weighted_point_3_object();
+
     Locate_type lt;
     int li, lj;
+    Offset query_offset;
+    Cell_handle c = locate(p2wp(p), query_offset, lt, li, lj, start);
 
-    typename Gt::Construct_weighted_point_3 p2wp =
-      geom_traits().construct_weighted_point_3_object();
-    Cell_handle c = locate(p2wp(p), lt, li, lj, start);
-    if(lt == Tr_Base::VERTEX)
-      return c->vertex(li);
-    const Conflict_tester tester(p2wp(p), this);
-    Offset o = combine_offsets(Offset(), get_location_offset(tester, c));
+#ifdef CGAL_PERIODIC_DEBUG_NEAREST_POWER_VERTEX
+    std::cout << "nearest power vertex: " << p << std::endl;
+    std::cout << "vertices: " << number_of_vertices() << std::endl;
+    std::cout << "stored vertices: " << this->number_of_stored_vertices() << std::endl;
+    std::cout << "Locate: " << p << std::endl;
+    std::cout << "Cell: " << &*c << std::endl;
+    std::cout << this->point(c, 0) << std::endl;
+    std::cout << this->point(c, 1) << std::endl;
+    std::cout << this->point(c, 2) << std::endl;
+    std::cout << this->point(c, 3) << std::endl;
+    std::cout << "offset query: " << query_offset << std::endl;
+    std::cout << "bounded side : " << geom_traits().bounded_side_3_object()(
+                   Tetrahedron(this->point(c, 0).point(), this->point(c, 1).point(),
+                               this->point(c, 2).point(), this->point(c, 3).point()), p) << std::endl;
+    std::cout << "power side: " << geom_traits().power_side_of_bounded_power_sphere_3_object()(
+                   this->point(c, 0), this->point(c, 1),
+                   this->point(c, 2), this->point(c, 3), p2wp(p)) << std::endl;
+    std::cout << "power distance: " << geom_traits().compute_power_distance_to_power_sphere_3_object()(
+                   this->point(c, 0), this->point(c, 1),
+                   this->point(c, 2), this->point(c, 3), p2wp(p)) << std::endl;
+#endif
 
     // - start with the closest vertex from the located cell.
     // - repeatedly take the nearest of its incident vertices if any
     // - if not, we're done.
-    Vertex_handle nearest = nearest_vertex_in_cell(c, p, o);
+
+    // Take the opposite because periodic_locate() returns the offset such that
+    // cell + offset contains 'p' but here we need to move 'p'
+    query_offset = this->combine_offsets(Offset(), -query_offset);
+
+    Vertex_handle nearest = nearest_vertex_in_cell(c, p, query_offset);
+    Offset offset_of_nearest = get_min_dist_offset(p, query_offset, nearest);
+
+#ifdef CGAL_PERIODIC_DEBUG_NEAREST_POWER_VERTEX
+    std::cout << "nearest vertex in cell : " << &*nearest << " : " << nearest->point() << std::endl;
+    std::cout << "offset_of_nearest: " << offset_of_nearest << std::endl;
+#endif
+
     std::vector<Vertex_handle> vs;
     vs.reserve(32);
     while(true)
     {
       Vertex_handle tmp = nearest;
-      Offset tmp_off = get_min_dist_offset(p, o, tmp);
+#ifdef CGAL_PERIODIC_DEBUG_NEAREST_POWER_VERTEX
+      std::cout << "tmp set to : " << &*nearest << " : " << nearest->point()
+                << " || offset: " << nearest->offset() << std::endl;
+#endif
+
       adjacent_vertices(nearest, std::back_inserter(vs));
-      for(typename std::vector<Vertex_handle>::const_iterator vsit = vs.begin(); vsit != vs.end(); ++vsit)
-        tmp = (compare_distance(p, tmp->point(), (*vsit)->point(),
-                                o, tmp_off, get_min_dist_offset(p, o, *vsit))
-                 == SMALLER) ? tmp : *vsit;
+      for(typename std::vector<Vertex_handle>::const_iterator vsit = vs.begin();
+          vsit != vs.end(); ++vsit)
+      {
+        // Can happen in 27-sheeted triangulations composed of few points
+        if((*vsit)->point() == nearest->point())
+          continue;
+
+        const Offset min_dist_offset = get_min_dist_offset(p, query_offset, *vsit);
+        if(compare_distance(p, (*vsit)->point(), tmp->point(),
+                            query_offset, min_dist_offset, offset_of_nearest) == SMALLER)
+        {
+          tmp = *vsit;
+          offset_of_nearest = min_dist_offset;
+#ifdef CGAL_PERIODIC_DEBUG_NEAREST_POWER_VERTEX
+          std::cout << " Closer adjacent vertex: " << &*tmp << " : " << tmp->point()
+                    << " || offset " << offset_of_nearest << std::endl;
+#endif
+        }
+      }
+
       if(tmp == nearest)
         break;
+
       vs.clear();
       nearest = tmp;
     }
@@ -841,7 +900,7 @@ public:
     return true;
   }
 
-  bool is_Gabriel(const Facet& f)const
+  bool is_Gabriel(const Facet& f) const
   {
     return is_Gabriel(f.first, f.second);
   }
@@ -853,8 +912,20 @@ public:
 
   bool is_Gabriel(Vertex_handle v) const
   {
-    return nearest_power_vertex(
-             geom_traits().construct_point_3_object()(v->point()), v->cell()) == v;
+    typename Geom_traits::Power_side_of_bounded_power_sphere_3
+      side_of_bounded_orthogonal_sphere =
+      geom_traits().power_side_of_bounded_power_sphere_3_object();
+
+    const Bare_point& bp = geom_traits().construct_point_3_object()(v->point());
+
+    Vertex_handle nearest_v = nearest_power_vertex(bp, v->cell());
+
+    // Need to find the offset such that power distance v->point()
+    // to nearest_v->point() is minimum
+    Offset nearest_v_off = get_min_dist_offset_general(bp, nearest_v);
+
+    return (side_of_bounded_orthogonal_sphere(
+              v->point(), nearest_v->point(), Offset(), nearest_v_off) != CGAL::ON_BOUNDED_SIDE);
   }
 
   Offset get_min_dist_offset(const Bare_point& p, const Offset & o,
@@ -883,6 +954,36 @@ public:
       o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(1,1,1)))
         == SMALLER ? min_off : Offset(1,1,1) );
     return combine_offsets(mdo,min_off);
+  }
+
+  // In this version, `p` must be in the domain, and we check all possible
+  // offsets to find the minimum
+  Offset get_min_dist_offset_general(const Bare_point& p, const Vertex_handle vh) const
+  {
+    CGAL_triangulation_precondition(p.x() < domain().xmax());
+    CGAL_triangulation_precondition(p.y() < domain().ymax());
+    CGAL_triangulation_precondition(p.z() < domain().zmax());
+    CGAL_triangulation_precondition(p.x() >= domain().xmin());
+    CGAL_triangulation_precondition(p.y() >= domain().ymin());
+    CGAL_triangulation_precondition(p.z() >= domain().zmin());
+
+    Offset min_off = Offset(0,0,0);
+
+    for(int i=-1; i<=1; ++i) {
+      for(int j=-1; j<=1; ++j) {
+        for(int k=-1; k<=1; ++k)
+        {
+          if(i==0 && j==0 && k==0)
+            continue;
+
+          Offset loc_off(i, j, k);
+          if(compare_distance(p, vh->point(), vh->point(), Offset(), min_off, loc_off) == LARGER)
+            min_off = loc_off;
+        }
+      }
+    }
+
+    return min_off;
   }
 
   Vertex_handle nearest_vertex_in_cell(const Cell_handle& c, const Bare_point& p,

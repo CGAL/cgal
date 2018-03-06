@@ -117,12 +117,6 @@ public :
     //! rendering mode is adequat.
     //! @see #RenderingMode
     virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
-    //!\brief draws all the children
-    //!
-    //! Calls `Scene_item::drawSplats()` for each child if its current
-    //! rendering mode is `Splatting`.
-    //! @see #RenderingMode
-    virtual void drawSplats(CGAL::Three::Viewer_interface*) const;
     ///@}
 
     //!Adds a CGAL::Three::Scene_item* to the list of children.
@@ -165,10 +159,6 @@ public :
     //!Sets all the children in point rendering with normals.
     void setPointsPlusNormalsMode(){
       setRenderingMode(PointsPlusNormals);
-    }
-    //!Sets all the children in splat rendering.
-    void setSplattingMode(){
-      setRenderingMode(Splatting);
     }
     //! \brief Returns a list of all the direct children.
     //!

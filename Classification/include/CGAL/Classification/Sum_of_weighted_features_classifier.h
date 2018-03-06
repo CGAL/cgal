@@ -27,6 +27,7 @@
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
 #include <CGAL/Classification/internal/verbosity.h>
+#include <CGAL/tags.h>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -34,6 +35,8 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+#include <map>
+#include <iostream>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
@@ -114,7 +117,7 @@ private:
         std::vector<float> v;
         m_classifier (m_training_set[k], v);
 
-        float min = std::numeric_limits<float>::max();
+        float min = (std::numeric_limits<float>::max)();
         for(std::size_t l = 0; l < v.size(); ++ l)
           if (v[l] < min)
           {
@@ -923,7 +926,7 @@ private:
           std::vector<float> v;
           (*this) (training_sets[j][k], v);
 
-          float min = std::numeric_limits<float>::max();
+          float min = (std::numeric_limits<float>::max)();
           for(std::size_t l = 0; l < m_labels.size(); ++ l)
             if (v[l] < min)
             {

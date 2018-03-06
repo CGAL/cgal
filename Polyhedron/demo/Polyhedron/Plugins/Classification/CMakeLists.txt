@@ -8,6 +8,9 @@ if(EIGEN3_FOUND)
   find_package(Boost OPTIONAL_COMPONENTS serialization iostreams)
 
   if( WIN32 )
+# to avoid a warning with old cmake
+    set(_Boost_BZIP2_HEADERS             "boost/iostreams/filter/bzip2.hpp")
+    set(_Boost_ZLIB_HEADERS              "boost/iostreams/filter/zlib.hpp")
     find_package( Boost OPTIONAL_COMPONENTS zlib)
     if( Boost_ZLIB_FOUND )
       set(classification_linked_libraries ${classification_linked_libraries}

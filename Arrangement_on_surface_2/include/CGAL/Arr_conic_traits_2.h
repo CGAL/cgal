@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The conic traits-class for the arrangement package.
@@ -874,6 +875,8 @@ public:
   Trim_2 trim_2_object() const { return Trim_2(*this); }
   //@}
 };
+
+#include <CGAL/enable_warnings.h>
 
 } //namespace CGAL
 #endif

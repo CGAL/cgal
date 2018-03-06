@@ -80,7 +80,7 @@ private:
   { 
 #ifdef _MSC_VER
     DWORD pid = GetCurrentProcessId();
-    size_type result;
+    size_type result=0;
     HANDLE hProcess;
     PROCESS_MEMORY_COUNTERS pmc;
     hProcess = OpenProcess(  PROCESS_QUERY_INFORMATION |

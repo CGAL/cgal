@@ -35,6 +35,8 @@
 #ifndef CGAL_SQRT_EXTENSION_TYPE_H
 #define CGAL_SQRT_EXTENSION_TYPE_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/number_type_basic.h>
 #include <boost/operators.hpp>
 #include <CGAL/Interval_arithmetic.h> 
@@ -825,6 +827,8 @@ print(std::ostream &os, const Sqrt_extension<NT_,ROOT_,ACDE_TAG_,FP_TAG> &r)
 } //namespace CGAL
 
 #undef CGAL_int
+
+#include <CGAL/enable_warnings.h>
 
 #endif  // CGAL_SQRT_EXTENSION_TYPE_H
 

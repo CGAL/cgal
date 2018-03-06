@@ -32,16 +32,7 @@ include(GNUInstallDirs)
 #                                    -= HEADER ONLY =-
 #
 #--------------------------------------------------------------------------------------------------
-if(CMAKE_MAJOR_VERSION GREATER 2)
-  # In header only mode, we use INTERFACE libraries, which was introduced in cmake 3.0.
-  # Thus this option is only enabled for cmake >= 3.0.
-
-  if (CGAL_HEADER_ONLY)
-    set(CGAL_HEADER_ONLY TRUE CACHE BOOL "Enable cgal header only" FORCE)
-    add_definitions(-DCGAL_HEADER_ONLY)
-  endif()
-
-endif()
+option(CGAL_HEADER_ONLY "Enable header-only mode of CGAL (no compilation of CGAL libraries)" FALSE)
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -551,7 +542,7 @@ message( "== Generate version files (DONE) ==\n")
 #
 #--------------------------------------------------------------------------------------------------
 
-if( RUNNING_CGAL_AUTO_TEST )
+if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST )
   message("== Set up flags ==")
 
   # Ugly hack to be compatible with current CGAL testsuite process (as of
@@ -875,7 +866,7 @@ endif()
 # DESTINATION option is mandatory; skipping it breaks CPack!
 
 if(CGAL_INSTALL_DOC_DIR)
-  install(FILES AUTHORS changes.md LICENSE LICENSE.FREE_USE LICENSE.GPL LICENSE.LGPL DESTINATION ${CGAL_INSTALL_DOC_DIR} )
+  install(FILES AUTHORS CHANGES.md LICENSE LICENSE.FREE_USE LICENSE.GPL LICENSE.LGPL DESTINATION ${CGAL_INSTALL_DOC_DIR} )
 endif()
 
 #install all includes collected in trunk et cetera
@@ -1046,16 +1037,23 @@ if ( CGAL_BRANCH_BUILD )
   option(CGAL_COMPUTE_DEPENDENCIES
     "Enable the special targets \"packages_dependencies\", and \"pkg_<package>_deps\" for each package.
 Note that this option will modify the source directory!"
-    FALSE)
+    ${CGAL_ENABLE_CHECK_HEADERS})
 
   if(CGAL_ENABLE_CHECK_HEADERS OR CGAL_COMPUTE_DEPENDENCIES)
+
+    option(CGAL_COPY_DEPENDENCIES
+      "Copy package dependencies in source directories.
+  Note that this option will modify the source directory!"
+      FALSE)
+
     if(NOT CMAKE_MAJOR_VERSION GREATER 2)
       message(FATAL_ERROR "Your version of CMake is too old.
 You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
     endif()
 
     message( "== Setting header checking ==" )
-
+    find_package(GMP REQUIRED)
+    find_package(Doxygen REQUIRED)
     find_package(Eigen3 REQUIRED)
     find_package(Qt5 COMPONENTS Core Widgets Xml OpenGL REQUIRED)
     find_package(QGLViewer)
@@ -1064,9 +1062,10 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
     find_package(RS3)
     find_package(LEDA)
     find_package(OpenMesh)
+    find_package(OpenCV QUIET)
 
     set(compile_options "\
-${CMAKE_CXX_FLAGS} -DCGAL_EIGEN3_ENABLED \
+${CMAKE_CXX_FLAGS} -DCGAL_EIGEN3_ENABLED -DCGAL_PROFILE \
 ${Qt5Widgets_DEFINITIONS} ${Qt5Xml_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS} \
 ${Qt5OpenGL_EXECUTABLE_COMPILE_FLAGS} -fPIC \
 ${Qt5Gui_EXECUTABLE_COMPILE_FLAGS} \
@@ -1074,6 +1073,7 @@ ${Qt5Xml_EXECUTABLE_COMPILE_FLAGS} \
 ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt5_3RD_PARTY_DEFINITIONS} \
 ${CGAL_DEFINITIONS}"
       )
+    message("COMPILATION OPTIONS ARE :  ${compile_options}")
 
     if(NOT RS_FOUND AND NOT RS3_FOUND)
       set(compile_options "${compile_options} \
@@ -1090,11 +1090,22 @@ and \"CGAL/Algebraic_kernel_rs_gmpz_d_1.h\" because RS_FOUND is false.")
       set(compile_options "${compile_options} \
 -DCGAL_BOOST_GRAPH_GRAPH_TRAITS_POLYMESH_ARRAYKERNELT_H \
 -DCGAL_BOOST_GRAPH_GRAPH_TRAITS_TRIMESH_ARRAYKERNELT_H \
--DCGAL_HASH_OPENMESH_H \
 -DCGAL_PROPERTIES_POLYMESH_ARRAYKERNELT_H \
 -DCGAL_PROPERTIES_TRIMESH_ARRAYKERNELT_H")
+      message(STATUS "Skip headers \
+\"CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h\", \
+\"CGAL/boost/graph/graph_traits_TriMesh_ArrayKernelT.h\", \
+\"CGAL/boost/graph/properties_PolyMesh_ArrayKernelT.h\", and \
+\"CGAL/boost/graph/properties_TriMesh_ArrayKernelT.h\", \
+because OpenMesh_FOUND is false.")
     endif()
-
+    if(NOT OpenCV_FOUND)
+      set(compile_options "${compile_options} \
+-DCGAL_CLASSIFICATION_OPENCV_RANDOM_FOREST_CLASSIFIER_H")
+      message(STATUS "Skip header \
+\"CGAL/Classification/OpenCV_random_forest_classifier.h\" \
+because OpenCV_FOUND is false")
+    endif()
     if(LEDA_FOUND)
       set(compile_options "${compile_options} -DCGAL_USE_LEDA")
     endif()
@@ -1107,9 +1118,14 @@ because IPE_FOUND is false.")
       set(compile_options "${compile_options} -DCGAL_USE_IPE_7")
     endif()
 
+    if(CGAL_ENABLE_CHECK_HEADERS)
+      set(falg "-fsyntax-only")
+    else()
+      set(falg "-E")
+    endif()
     if(NOT DEFINED CGAL_CHECK_SYNTAX_ONLY)
       execute_process(COMMAND 
-        ${CMAKE_CXX_COMPILER} -x c++ -fsyntax-only ${CGAL_MODULES_DIR}/config/support/test_syntaxonly.cpp
+        ${CMAKE_CXX_COMPILER} -x c++ ${falg} ${CGAL_MODULES_DIR}/config/support/test_syntaxonly.cpp
         ERROR_QUIET
         RESULT_VARIABLE ok)
       if(ok EQUAL 0)
@@ -1120,7 +1136,7 @@ because IPE_FOUND is false.")
     endif(NOT DEFINED CGAL_CHECK_SYNTAX_ONLY)
 
     if(NOT CGAL_CHECK_SYNTAX_ONLY)
-      message(FATAL_ERROR "Your compiler does not seem to support -fsyntax-only.
+      message(FATAL_ERROR "Your compiler does not seem to support ${falg}.
 You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
     endif()
 
@@ -1133,8 +1149,10 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
         ${VTK_INCLUDE_DIRS}
         ${LEDA_INCLUDE_DIR}
         ${OPENMESH_INCLUDE_DIR}
+        ${OpenCV_INCLUDE_DIRS}
         ${RS_INCLUDE_DIR}
         ${EIGEN3_INCLUDE_DIR}
+        ${GMP_INCLUDE_DIR}
         ${QGLVIEWER_INCLUDE_DIR} ${Qt5OpenGL_INCLUDE_DIRS}
         ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS}
         ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt5_3RD_PARTY_INCLUDE_DIRS}
@@ -1143,9 +1161,51 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
     endforeach()
     include_directories ( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
 
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/list_of_documented_headers.cmake
-      OPTIONAL RESULT_VARIABLE has_list_of_documented_headers)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/list_of_whitelisted_headers.cmake
+    # Build the doc
+    file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/build_doc")
+    set(DOC_DIR "${CMAKE_SOURCE_DIR}/build_doc")
+    execute_process(COMMAND "${CMAKE_COMMAND}" -DDOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE} "${CMAKE_SOURCE_DIR}/Documentation/doc"
+        WORKING_DIRECTORY "${DOC_DIR}"
+        )
+    execute_process(COMMAND "${CMAKE_COMMAND}" --build . --target "doc"
+        WORKING_DIRECTORY "${DOC_DIR}" )
+
+  #Get the list of the documented headers
+
+  file(GLOB html_files RELATIVE "${DOC_DIR}/doc_output/" "${DOC_DIR}/doc_output/*/*.html")
+  file(GLOB example_files RELATIVE "${CMAKE_SOURCE_DIR}/" "${CMAKE_SOURCE_DIR}/*/examples/*/*.cpp")
+  find_program(AWK awk)
+  #set(arguments [=[{ match($0, /# *include *(&lt;|[<"])(CGAL\/[^>&]*)([>"]|&gt;)/,arr); if(arr[2]!="") print arr[2] }]=])
+  set(arguments [=[{ match($0, /# *include *(&lt;)(CGAL\/[^>&]*)([>"]|&gt;)/,arr); if(arr[2]!="") print arr[2] }]=])
+  message("listing headers from html files")
+  foreach(f ${html_files})
+    execute_process(COMMAND "${AWK}" "${arguments}" "${DOC_DIR}/doc_output/${f}"
+      OUTPUT_VARIABLE tmp_list)
+    if (NOT "${tmp_list}" STREQUAL "")
+      string(REPLACE "\n" ";" tmp_list ${tmp_list})
+      LIST( APPEND list_of_documented_headers ${tmp_list})
+    endif()
+  endforeach()
+  message("listing headers from examples files")
+  foreach(f ${example_files})
+    execute_process(COMMAND "${AWK}" "${arguments}" "${CMAKE_SOURCE_DIR}/${f}"
+      OUTPUT_VARIABLE tmp_list)
+    if (NOT "${tmp_list}" STREQUAL "")
+      string(REPLACE "\n" ";" tmp_list ${tmp_list})
+      LIST( APPEND list_of_documented_headers ${tmp_list})
+    endif()
+  endforeach()
+  message("removing duplicates:")
+  list(REMOVE_DUPLICATES list_of_documented_headers)
+  message("sorting:")
+  list(SORT list_of_documented_headers)
+  #string(REPLACE ";" " \n" list_of_documented_headers "${list_of_documented_headers}")
+  if (NOT "${list_of_documented_headers}" STREQUAL "")
+    set(has_list_of_documented_headers TRUE)
+  else()
+    set(has_list_of_documented_headers FALSE)
+  endif()
+  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/list_of_whitelisted_headers.cmake
       OPTIONAL RESULT_VARIABLE has_list_of_whitelisted_headers)
     message("list_of_whitelisted_headers: ${list_of_whitelisted_headers}")
     ## Loop on package and headers
@@ -1153,6 +1213,8 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
     if(POLICY CMP0057)
       cmake_policy(SET CMP0057 NEW)
     endif()
+    #get build dir for removal from deps
+    get_filename_component(BUILD_DIR ${CMAKE_BINARY_DIR} NAME)
     foreach (package ${CGAL_CONFIGURED_PACKAGES_NAMES})
       if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include)
         set(check_pkg_headers_depends "")
@@ -1175,7 +1237,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
           if(POLICY CMP0057)
             if(has_list_of_documented_headers
                 AND NOT header IN_LIST list_of_documented_headers)
-              message(STATUS "Skip non-documented header \"${header}\".")
+#              message(STATUS "Skip non-documented header \"${header}\".")
               set(skip_hdr TRUE)
             endif()
           endif()
@@ -1216,7 +1278,7 @@ LEDA_FOUND is false.")
             separate_arguments(CMD
               UNIX_COMMAND
               "${CMAKE_CXX_COMPILER} ${compile_options_str}
-${include_options_str} -x c++ -fsyntax-only \
+${include_options_str} -x c++ ${falg} \
 ${compute_deps_extra_args} \
 ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
               # The header Algebraic_kernel_rs_gmpz_d_1.h is skipped on purpose: it
@@ -1249,6 +1311,8 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
           COMMENT "Compute dependencies of ${package}"
           COMMAND ${CMAKE_COMMAND}
             -DCGAL_PACKAGES_PREFIX=${CGAL_SOURCE_DIR}
+            -DCGAL_COPY_DEPENDENCIES=${CGAL_COPY_DEPENDENCIES}
+            -DCGAL_COPY_PATH=${CGAL_SOURCE_DIR}/${package}/package_info/${package}/dependencies
             -DOUTPUT_HEADERS_LIST=${CGAL_BINARY_DIR}/package_info/${package}/included_headers
             -DOUTPUT_PACKAGES_LIST=${CGAL_BINARY_DIR}/package_info/${package}/dependencies
             -P "${CGAL_MODULES_DIR}/process_dependencies.cmake"
@@ -1274,7 +1338,6 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
     - package_info/<package>/check_headers/ (error messages from \
 the headers checks)\n")
     message( "== Setting header checking (DONE) ==\n" )
-
   endif()
 endif( CGAL_BRANCH_BUILD )
 
@@ -1282,3 +1345,4 @@ if(NOT CGAL_BRANCH_BUILD AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc")
   # in a non-branch build this is the top-level CMakeLists.txt
   add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/doc")
 endif()
+

@@ -628,6 +628,7 @@ bool Volume_plane<T>::eventFilter(QObject *, QEvent *event)
         {
             //pick
             bool found = false;
+            viewer->makeCurrent();
             qglviewer::Vec pos = viewer->camera()->pointUnderPixel(e->pos(), found);
             if(!found)
                 return false;

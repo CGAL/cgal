@@ -210,6 +210,34 @@ typedef unspecified_type Construct_ray_3;
 
 /// @} 
 
+/// \name
+/// When `is_Gabriel` functions are used, the traits class must
+/// in addition provide the following predicate object:
+/// @{
+
+/*!
+A predicate object that must provide the function operators
+
+`Bounded_side operator()(Weighted_point_3 p, Weighted_point_3 t)`,
+
+which returns the sign of the power test of `t` with respect to the smallest
+sphere orthogonal to `p` (which is the sphere with center `p` and squared
+radius `-w_p` with `w_p` the weight of `p`),
+
+`Bounded_side operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 t)`,
+
+which returns the sign of the power test of `t` with respect to the smallest
+sphere orthogonal to `p` and `q`,
+
+`Bounded_side operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 t)`,
+
+which returns the sign of the power test of `t` with respect to the smallest
+sphere orthogonal to `p`, `q`, and `r`.
+*/
+typedef unspecified_type Power_side_of_bounded_power_sphere_3;
+
+/// @}
+
 /// \name Operations 
 /// @{
 

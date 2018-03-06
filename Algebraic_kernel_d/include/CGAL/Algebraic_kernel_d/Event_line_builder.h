@@ -340,7 +340,7 @@ protected:
 	
         bool k_fixed=false;
         
-        int seq_size = std::distance(seq_begin,seq_end);
+        std::ptrdiff_t seq_size = static_cast<std::ptrdiff_t>(std::distance(seq_begin,seq_end));
 
         typedef int VT;
 

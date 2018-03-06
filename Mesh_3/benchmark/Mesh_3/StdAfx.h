@@ -172,7 +172,6 @@
 #include <CGAL/Filtered_kernel/Cartesian_coordinate_iterator_3.h>
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/function_objects.h>
-#include <CGAL/gl.h>
 #include <CGAL/Hilbert_policy_tags.h>
 #include <CGAL/hilbert_sort.h>
 #include <CGAL/Hilbert_sort_2.h>

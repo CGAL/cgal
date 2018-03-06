@@ -57,7 +57,7 @@ class SCENE_EDIT_BOX_ITEM_EXPORT Scene_edit_box_item:
 
     double point(short i, short j) const;
 public Q_SLOTS:
-    void highlight();
+    void highlight(CGAL::Three::Viewer_interface* viewer);
     void clearHL();
 protected:
     friend struct Scene_edit_box_item_priv;
