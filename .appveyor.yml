@@ -53,8 +53,8 @@ environment:
 install:
     -  set "CONDA_ROOT=C:\Miniconda36-x64"
     -  set "PATH=%CONDA_ROOT%;%CONDA_ROOT%\Scripts;%CONDA_ROOT%\Library\bin;;C:\Qt\5.6\msvc2015_64\bin;%PATH%"
-    -  set "BOOST_ROOT=C:\Libraries\boost_1_59_0"
-    -  conda install -y -c conda-forge cmake mpfr zlib eigen
+    -  set "BOOST_ROOT=C:\Libraries\boost_1_63_0"
+    -  conda install -y -c conda-forge cmake zlib eigen mpfr=3.1.4
     -  conda install -y -c anaconda-nb-extensions gmp
 before_build:
 - cmd:
