@@ -452,10 +452,6 @@ protected:
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
 			  No_intersection_tag);
-  Vertex_handle intersect(Face_handle f, int i,
-                          Vertex_handle vaa,
-                          Vertex_handle vbb,
-                          No_intersection_tag);
   Vertex_handle intersect(Face_handle f, int i, 
 			  Vertex_handle vaa,
 			  Vertex_handle vbb,
@@ -864,26 +860,6 @@ intersect(Face_handle f, int i,
 	  Vertex_handle vbb) 
 {
   return intersect(f, i, vaa, vbb, Itag());
-}
-
-template <class Gt, class Tds, class Itag >
-typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle 
-Constrained_triangulation_2<Gt,Tds,Itag>::
-intersect(Face_handle , int ,
-          Vertex_handle ,
-          Vertex_handle ,
-	  No_intersection_tag)
-{
-  //SL: I added that to be able to throw while we find a better solution
-  #ifdef CGAL_CT2_WANTS_TO_HAVE_EXTRA_ACTION_FOR_INTERSECTING_CONSTRAINTS
-  CGAL_CDT2_EXTRA_ACTION_FOR_INTERSECTING_CONSTRAINTS
-  #endif
-  
-  std::cerr << " sorry, this triangulation does not deal with"
-            <<    std::endl
-            << " intersecting constraints" << std::endl;
-  CGAL_triangulation_assertion(false);
-  return Vertex_handle() ;
 }
 
 template <class Gt, class Tds, class Itag >
