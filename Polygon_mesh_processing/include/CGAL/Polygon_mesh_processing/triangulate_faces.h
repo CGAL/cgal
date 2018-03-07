@@ -141,11 +141,11 @@ public:
     else
     {
 #ifdef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT2
-      triangulate_face_with_hole_filling(f, pmesh);
+      return triangulate_face_with_hole_filling(f, pmesh);
 #else
       P_traits cdt_traits(normal);
       CDT cdt(cdt_traits);
-      triangulate_face_with_CDT(f, pmesh, cdt);
+      return triangulate_face_with_CDT(f, pmesh, cdt);
 #endif
     }
     return true;
@@ -268,6 +268,7 @@ public:
         Euler::fill_hole(h0, pmesh);
       }
     }
+    return true;
   }
 
   bool triangulate_face_with_hole_filling(face_descriptor f, PM& pmesh)
