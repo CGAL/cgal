@@ -27,7 +27,7 @@ int main()
   boost::associative_property_map<std::map<Polyhedron::Facet_handle, std::size_t> > fpxmap(fidxmap);
   std::vector<Kernel::Vector_3> proxies;
   std::vector<Kernel::Point_3> points;
-  std::vector<std::vector<std::size_t> > triangles;
+  std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles;
 
   CGAL::mesh_approximation(mesh,
     CGAL::Surface_mesh_approximation::parameters::seeding_method(CGAL::Incremental).

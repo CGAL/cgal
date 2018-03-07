@@ -27,7 +27,7 @@ int test() {
   typedef CGAL::Polyhedron_3<K> Polyhedron;
   Polyhedron out_mesh;
   std::vector<typename K::Point_3> points;
-  std::vector<std::vector<std::size_t> > triangles;
+  std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles;
 
   CGAL::mesh_approximation(tm,
     CGAL::Surface_mesh_approximation::parameters::max_nb_proxies(6).

@@ -17,7 +17,7 @@ int main()
 
   // The output will be an indexed triangle mesh
   std::vector<Kernel::Point_3> points;
-  std::vector<std::vector<std::size_t> > triangles;
+  std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles;
 
   // free function interface with named parameters
   CGAL::mesh_approximation(input,

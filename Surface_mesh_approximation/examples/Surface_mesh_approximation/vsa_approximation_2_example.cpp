@@ -23,7 +23,7 @@ int main()
 
   // output indexed triangle mesh
   std::vector<Kernel::Point_3> points;
-  std::vector<std::vector<std::size_t> > triangles; // triplets of indices
+  std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles; // triplets of indices
 
   // output facet proxy index property map
   Facet_index_map fidx_map;

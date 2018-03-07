@@ -20,7 +20,7 @@ int main()
 
   // output indexed triangles
   std::vector<Kernel::Point_3> points;
-  std::vector<std::vector<std::size_t> > triangles; // triplets of indices
+  std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles; // triplets of indices
 
   // free function interface with named parameters
   bool is_manifold = CGAL::mesh_approximation(input,

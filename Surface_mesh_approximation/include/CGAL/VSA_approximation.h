@@ -10,6 +10,7 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
+#include <CGAL/array.h>
 
 #include <CGAL/L21_metric.h>
 #include <CGAL/Default.h>
@@ -90,6 +91,9 @@ public:
 #endif
   // Proxy type
   typedef typename Error_metric::Proxy Proxy;
+
+  // indexed triangle type
+  typedef CGAL::cpp11::array<std::size_t, 3> Indexed_triangle;
   /// @}
 
 // private typedefs and data member
@@ -118,7 +122,7 @@ private:
 
   typedef CGAL::internal::face_property_t<std::size_t> Face_proxy_tag;
   typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_proxy_tag >::type Face_proxy_map;
-  
+
   typedef std::vector<halfedge_descriptor> Boundary_chord;
   typedef typename Boundary_chord::iterator Boundary_chord_iterator;
 
@@ -200,11 +204,11 @@ private:
   template <typename HDS>
   class Triangle_polyhedron_builder : public CGAL::Modifier_base<HDS> {
     const std::vector<Point_3> &vtxs;
-    const std::vector<std::vector<std::size_t> > &tris;
+    const std::vector<Indexed_triangle> &tris;
   public:
     bool is_manifold;
     Triangle_polyhedron_builder(const std::vector<Point_3> &vtxs_,
-      const std::vector<std::vector<std::size_t> > &tris_)
+      const std::vector<Indexed_triangle> &tris_)
       : vtxs(vtxs_), tris(tris_), is_manifold(true) {}
 
     void operator()(HDS &hds) {
@@ -214,13 +218,12 @@ private:
       builder.begin_surface(vtxs.size(), tris.size());
       BOOST_FOREACH(const Point_3 &v, vtxs)
         builder.add_vertex(Point(v));
-      BOOST_FOREACH(const std::vector<std::size_t> &t, tris) {
-        std::vector<std::size_t>::const_iterator itr = t.begin();
-        if (builder.test_facet(itr, itr + 3)) {
+      BOOST_FOREACH(const Indexed_triangle &t, tris) {
+        if (builder.test_facet(t.begin(), t.end())) {
           builder.begin_facet();
-          builder.add_vertex_to_facet(*itr);
-          builder.add_vertex_to_facet(*(itr + 1));
-          builder.add_vertex_to_facet(*(itr + 2));
+          builder.add_vertex_to_facet(t[0]);
+          builder.add_vertex_to_facet(t[1]);
+          builder.add_vertex_to_facet(t[2]);
           builder.end_facet();
         }
         else
@@ -260,7 +263,7 @@ private:
   // All boundary cycles.
   std::vector<Boundary_cycle> m_bcycles;
   // The indexed triangle approximation.
-  std::vector<std::vector<std::size_t> > m_tris;
+  std::vector<Indexed_triangle> m_tris;
 
   // meshing parameters
   FT m_average_edge_length;
@@ -336,10 +339,10 @@ public:
 
   /*!
    * @brief Set the apprroximation traits.
-   * @param approx_traits an `ErrorMetric` object.
+   * @param error_metric an `ErrorMetric` object.
    */
-  void set_metric(const Error_metric &approx_traits) {
-    m_metric = &approx_traits;
+  void set_metric(const Error_metric &error_metric) {
+    m_metric = &error_metric;
   }
 
   /*!
@@ -993,12 +996,12 @@ public:
   /*!
    * @brief Get the indexed triangles,
    * one triplet of integers per triangles, which refers to the anchor point indexes.
-   * @tparam OutputIterator output iterator with std::vector<size_t> as value type
+   * @tparam OutputIterator output iterator with Indexed_triangle as value type
    * @param out_itr output iterator
    */
   template <typename OutputIterator>
   void indexed_triangles(OutputIterator out_itr) const {
-    BOOST_FOREACH(const std::vector<std::size_t> &t, m_tris)
+    BOOST_FOREACH(const Indexed_triangle &t, m_tris)
       *out_itr++ = t;
   }
 
@@ -1756,10 +1759,10 @@ private:
       std::size_t j = global_vtag_map[to_sgv_map[target(he, *m_ptm)]];
       std::size_t k = global_vtag_map[to_sgv_map[target(next(he, *m_ptm), *m_ptm)]];
       if (i != j && i != k && j != k) {
-        std::vector<std::size_t> t;
-        t.push_back(i);
-        t.push_back(j);
-        t.push_back(k);
+        CGAL::cpp11::array<std::size_t, 3> t;
+        t[0] = i;
+        t[1] = j;
+        t[2] = k;
         m_tris.push_back(t);
       }
     }
