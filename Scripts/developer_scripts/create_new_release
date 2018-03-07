@@ -309,7 +309,7 @@ if [ -n "$DO_PUBLIC" ]; then
     fi
     public_release_version="${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}"
     if [ -n "$BETA" ]; then
-	public_release_name="CGAL-${public_release_version}-beta${$BETA}"
+	public_release_name="CGAL-${public_release_version}-beta${BETA}"
     elif [ -r "${NUMBERS_DIR}/public_release_name" ]; then
 	public_release_name=`cat "${NUMBERS_DIR}/public_release_name"`
     else
