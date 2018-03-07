@@ -17,6 +17,9 @@ if ( CGAL_FOUND )
 
   # VisualC++ optimization for applications dealing with large data
   if (MSVC)
+    # Quit warning in the lasreader
+    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS)
+    
     if ( CMAKE_SIZEOF_VOID_P EQUAL 4 )
       # Allow Windows 32bit applications to use up to 3GB of RAM
       SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")

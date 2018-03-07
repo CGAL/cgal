@@ -44,6 +44,7 @@ typename CGAL::internal::Innermost_coefficient_type<T>::Type , 2>::Type
 #include <CGAL/ipower.h>
 #include <cstdio>
 #include <sstream>
+#include <string>
 #include <CGAL/Polynomial/misc.h>
 
 #include <CGAL/use.h>
@@ -1305,7 +1306,7 @@ std::istream& operator >> (std::istream& is, Polynomial<NT>& p) {
 
 template <class NT> inline
 void print_maple_monomial(std::ostream& os, const NT& coeff,
-    const char *var, int expn)
+                          const std::string& var, int expn)
 {
   if (expn == 0 || coeff != NT(1)) {
     os << CGAL::oformat(coeff, Parens_as_product_tag());
@@ -1323,24 +1324,22 @@ template <typename Polynomial_d> class Polynomial_traits_d;
 template <class NT>
 void Polynomial<NT>::output_maple(std::ostream& os) const {
   const Polynomial<NT>& p = *this;
-  const char *varname;
-  char vnbuf[42];
-    
+  std::ostringstream oss;
+  
   // use variable names x, y, z, w1, w2, w3, ...
   if (Polynomial_traits_d<NT>::d < 3) {
     static const char *varnames[] = { "x", "y", "z" };
-    varname = varnames[Polynomial_traits_d<NT>::d];
+    oss << varnames[Polynomial_traits_d<NT>::d];
   } else {
-    std::sprintf(vnbuf, "w%d", Polynomial_traits_d<NT>::d - 2);
-    varname = vnbuf;
+    oss << "w" <<  Polynomial_traits_d<NT>::d - 2;
   }
     
   int i = p.degree();
-  CGAL::print_maple_monomial(os, p[i], varname, i);
+  CGAL::print_maple_monomial(os, p[i], oss.str(), i);
   while (--i >= 0) {
     if (p[i] != NT(0)) {
       os << " + ";
-      CGAL::print_maple_monomial(os, p[i], varname, i);
+      CGAL::print_maple_monomial(os, p[i], oss.str(), i);
     }
   }
 }
