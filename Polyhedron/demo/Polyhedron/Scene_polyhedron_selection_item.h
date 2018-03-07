@@ -828,6 +828,7 @@ public Q_SLOTS:
   void validateMoveVertex();
   void compute_normal_maps();
   void clearHL();
+  QString toolTip() const;
 
   // slots are called by signals of polyhedron_k_ring_selector
   void selected(const std::set<fg_vertex_descriptor>& m)
