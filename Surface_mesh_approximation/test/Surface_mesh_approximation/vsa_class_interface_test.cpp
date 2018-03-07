@@ -59,8 +59,8 @@ int main()
 
   // incremental add and run to convergence
   std::cout << "incremental add and run to convergence" << std::endl;
-  approx.add_proxies_furthest(3, 5);
-  if (approx.run_to_converge(0.1))
+  approx.add_to_furthest_proxies(3, 5);
+  if (approx.run_to_convergence(0.1))
     std::cout << "Converged." << std::endl;
   if (approx.proxies_size() != 13)
     return EXIT_FAILURE;

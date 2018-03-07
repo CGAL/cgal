@@ -41,7 +41,7 @@ int main()
 
   // add 3 proxies to the one with the maximum fitting error
   // run 5 iterations between each addition
-  approx.add_proxies_furthest(3, 5);
+  approx.add_to_furthest_proxies(3, 5);
 
   // run 10 iterations
   approx.run(10);
