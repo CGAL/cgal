@@ -1,6 +1,6 @@
 find_package( GMP QUIET )
 
-if( GMP_FOUND )
+if( GMP_FOUND AND MPFR_FOUND )
 
   if( MPFI_INCLUDE_DIR AND MPFI_LIBRARIES )
     set( MPFI_FOUND TRUE )
@@ -22,23 +22,44 @@ if( GMP_FOUND )
                DOC "Directory containing the MPFI library"
                )
 
-  if( MPFI_LIBRARIES )
-    get_filename_component(MPFI_LIBRARIES_DIR ${MPFI_LIBRARIES} PATH CACHE )
-  endif( MPFI_LIBRARIES )
+  get_dependency_version( MPFR )
+  message( STATUS "MPFR version is ${MPFR_VERSION}." )
+  IS_VERSION_LESS("${MPFR_VERSION}" "4.0.0" _MPFR_OLD)
 
-  if( NOT MPFI_INCLUDE_DIR OR NOT MPFI_LIBRARIES_DIR )
-    include( MPFIConfig OPTIONAL )
-  endif( NOT MPFI_INCLUDE_DIR OR NOT MPFI_LIBRARIES_DIR )
+  get_dependency_version( MPFI )
+  message( STATUS "MPFI version is ${MPFI_VERSION}." )
+  IS_VERSION_LESS("${MPFI_VERSION}" "1.5.2" _MPFI_OLD)
 
-  include(FindPackageHandleStandardArgs)
+  if( ( _MPFR_OLD AND NOT _MPFI_OLD ) OR ( NOT _MPFR_OLD AND _MPFI_OLD ) )
+    message(
+      STATUS
+      "MPFI<1.5.2 requires MPFR<4.0.0; MPFI>=1.5.2 requires MPFR>=4.0.0" )
+    set( MPFI_FOUND FALSE )
 
-  find_package_handle_standard_args(MPFI "DEFAULT_MSG" MPFI_LIBRARIES MPFI_INCLUDE_DIR )
+  else( ( _MPFR_OLD AND NOT _MPFI_OLD ) OR ( NOT _MPFR_OLD AND _MPFI_OLD ) )
 
-else( GMP_FOUND )
+    if( MPFI_LIBRARIES )
+      get_filename_component(MPFI_LIBRARIES_DIR ${MPFI_LIBRARIES} PATH CACHE )
+    endif( MPFI_LIBRARIES )
+
+    if( NOT MPFI_INCLUDE_DIR OR NOT MPFI_LIBRARIES_DIR )
+      include( MPFIConfig OPTIONAL )
+    endif( NOT MPFI_INCLUDE_DIR OR NOT MPFI_LIBRARIES_DIR )
+
+    include(FindPackageHandleStandardArgs)
+
+    find_package_handle_standard_args( MPFI
+                                       "DEFAULT_MSG"
+                                       MPFI_LIBRARIES
+                                       MPFI_INCLUDE_DIR )
+
+  endif( ( _MPFR_OLD AND NOT _MPFI_OLD ) OR ( NOT _MPFR_OLD AND _MPFI_OLD ) )
+
+else( GMP_FOUND AND MPFR_FOUND )
 
   message( STATUS "MPFI needs GMP and MPFR" )
 
-endif( GMP_FOUND )
+endif( GMP_FOUND AND MPFR_FOUND )
 
 if( MPFI_FOUND )
   set( MPFI_USE_FILE "CGAL_UseMPFI" )
