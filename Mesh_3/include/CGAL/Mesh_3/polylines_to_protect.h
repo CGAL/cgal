@@ -453,7 +453,6 @@ polylines_to_protect
   const int xdim = static_cast<int>(cgal_image.xdim());
   const int ydim = static_cast<int>(cgal_image.ydim());
   const int zdim = static_cast<int>(cgal_image.zdim());
-
   const int image_dims[3] = { xdim, ydim, zdim };
 
   Graph graph;
@@ -547,9 +546,18 @@ polylines_to_protect
               double y = pixel[1] * vy + ty;
               double z = pixel[2] * vz + tz;
               square[ii][jj].on_edge_of_the_cube =
-                ( axis != 0 && xdim != 1 && ( 0 == pixel[0] || (xdim + 1) == pixel[0] ) ) ||
-                ( axis != 1 && ydim != 1 && ( 0 == pixel[1] || (ydim + 1) == pixel[1] ) ) ||
-                ( axis != 2 && zdim != 1 && ( 0 == pixel[2] || (zdim + 1) == pixel[2] ) );
+                ( ( ( 0 == pixel[0] || (xdim - 1) == pixel[0] ) ? 1 : 0 )
+                  +
+                  ( ( 0 == pixel[1] || (ydim - 1) == pixel[1] ) ? 1 : 0 )
+                  +
+                  ( ( 0 == pixel[2] || (zdim - 1) == pixel[2] ) ? 1 : 0 ) > 1 );
+#ifdef CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
+              if(square[ii][jj].on_edge_of_the_cube) {
+                std::cerr << "  Pixel(" << pixel[0] << ", " << pixel[1] << ", "
+                          << pixel[2] << ") is on edge\n";
+              }
+#endif // CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
+
               square[ii][jj].point = Point_3(x, y, z);
               square[ii][jj].word =
                 static_cast<Image_word_type>(cgal_image.value(pixel[0],

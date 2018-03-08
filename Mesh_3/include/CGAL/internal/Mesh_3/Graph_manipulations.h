@@ -129,8 +129,11 @@ struct Graph_manipulations
 
   bool try_add_edge(vertex_descriptor v1, vertex_descriptor v2) {
 #ifdef CGAL_MESH_3_DEBUG_GRAPH_MANIPULATION
-    std::cerr << "try_add_edge(" << v1 << " (" << g[v1]
-              << "), " << v2 << " (" << g[v2] << "))\n";
+    std::cerr << "try_add_edge(" << v1 << " (" << g[v1].point
+              << ", " << std::boolalpha << g[v1].force_terminal
+              << "), " << v2 << " (" << g[v2].point
+              << ", " << std::boolalpha << g[v2].force_terminal
+              << "))\n";
 #endif // CGAL_MESH_3_DEBUG_GRAPH_MANIPULATION
     if(v1 != v2) {
       edge_descriptor edge;
