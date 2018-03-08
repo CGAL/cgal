@@ -29,15 +29,17 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 
+#ifndef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT2
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_2_projection_traits_3.h>
+#endif
 
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
-#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
 #include <boost/range/size.hpp>
 #include <boost/foreach.hpp>
@@ -66,24 +68,10 @@ class Triangulate_modifier
   typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
   typedef typename Kernel::Point_3 Point;
 
-  typedef CGAL::Triangulation_2_projection_traits_3<Traits>   P_traits;
-
-  typedef CGAL::Triangulation_vertex_base_with_info_2<halfedge_descriptor,
-                                                      P_traits>        Vb;
-
   struct Face_info {
     typename boost::graph_traits<PM>::halfedge_descriptor e[3];
     bool is_external;
   };
-
-  typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
-                                                    P_traits>          Fb1;
-  typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
-  typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
-  typedef CGAL::Exact_intersections_tag                                Itag;
-  typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
-                                                     TDS,
-                                                     Itag>             CDT;
 
   typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
   VertexPointMap _vpmap;
@@ -94,7 +82,8 @@ public:
   {
   }
 
-  bool is_external(typename CDT::Face_handle fh) const {
+  template <class Face_handle>
+  bool is_external(Face_handle fh) const {
     return fh->info().is_external;
   }
 
@@ -143,6 +132,17 @@ public:
 #ifdef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT2
       return triangulate_face_with_hole_filling(f, pmesh);
 #else
+      typedef CGAL::Triangulation_2_projection_traits_3<Traits>   P_traits;
+      typedef CGAL::Triangulation_vertex_base_with_info_2<halfedge_descriptor,
+                                                          P_traits>        Vb;
+      typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
+                                                        P_traits>          Fb1;
+      typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
+      typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
+      typedef CGAL::Exact_intersections_tag                                Itag;
+      typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
+                                                         TDS,
+                                                         Itag>             CDT;
       P_traits cdt_traits(normal);
       CDT cdt(cdt_traits);
       return triangulate_face_with_CDT(f, pmesh, cdt);
