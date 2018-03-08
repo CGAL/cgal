@@ -22,38 +22,20 @@ if( GMP_FOUND AND MPFR_FOUND )
                DOC "Directory containing the MPFI library"
                )
 
-  get_dependency_version( MPFR )
-  message( STATUS "MPFR version is ${MPFR_VERSION}." )
-  IS_VERSION_LESS("${MPFR_VERSION}" "4.0.0" _MPFR_OLD)
+  if( MPFI_LIBRARIES )
+    get_filename_component(MPFI_LIBRARIES_DIR ${MPFI_LIBRARIES} PATH CACHE )
+  endif( MPFI_LIBRARIES )
 
-  get_dependency_version( MPFI )
-  message( STATUS "MPFI version is ${MPFI_VERSION}." )
-  IS_VERSION_LESS("${MPFI_VERSION}" "1.5.2" _MPFI_OLD)
+  if( NOT MPFI_INCLUDE_DIR OR NOT MPFI_LIBRARIES_DIR )
+    include( MPFIConfig OPTIONAL )
+  endif( NOT MPFI_INCLUDE_DIR OR NOT MPFI_LIBRARIES_DIR )
 
-  if( ( _MPFR_OLD AND NOT _MPFI_OLD ) OR ( NOT _MPFR_OLD AND _MPFI_OLD ) )
-    message(
-      STATUS
-      "MPFI<1.5.2 requires MPFR<4.0.0; MPFI>=1.5.2 requires MPFR>=4.0.0" )
-    set( MPFI_FOUND FALSE )
+  include(FindPackageHandleStandardArgs)
 
-  else( ( _MPFR_OLD AND NOT _MPFI_OLD ) OR ( NOT _MPFR_OLD AND _MPFI_OLD ) )
-
-    if( MPFI_LIBRARIES )
-      get_filename_component(MPFI_LIBRARIES_DIR ${MPFI_LIBRARIES} PATH CACHE )
-    endif( MPFI_LIBRARIES )
-
-    if( NOT MPFI_INCLUDE_DIR OR NOT MPFI_LIBRARIES_DIR )
-      include( MPFIConfig OPTIONAL )
-    endif( NOT MPFI_INCLUDE_DIR OR NOT MPFI_LIBRARIES_DIR )
-
-    include(FindPackageHandleStandardArgs)
-
-    find_package_handle_standard_args( MPFI
-                                       "DEFAULT_MSG"
-                                       MPFI_LIBRARIES
-                                       MPFI_INCLUDE_DIR )
-
-  endif( ( _MPFR_OLD AND NOT _MPFI_OLD ) OR ( NOT _MPFR_OLD AND _MPFI_OLD ) )
+  find_package_handle_standard_args( MPFI
+                                     "DEFAULT_MSG"
+                                     MPFI_LIBRARIES
+                                     MPFI_INCLUDE_DIR )
 
 else( GMP_FOUND AND MPFR_FOUND )
 
@@ -62,5 +44,24 @@ else( GMP_FOUND AND MPFR_FOUND )
 endif( GMP_FOUND AND MPFR_FOUND )
 
 if( MPFI_FOUND )
-  set( MPFI_USE_FILE "CGAL_UseMPFI" )
+  get_dependency_version( MPFR )
+  IS_VERSION_LESS("${MPFR_VERSION}" "4.0.0" _MPFR_OLD)
+
+  get_dependency_version( MPFI )
+  IS_VERSION_LESS("${MPFI_VERSION}" "1.5.2" _MPFI_OLD)
+
+  if( ( _MPFR_OLD AND NOT _MPFI_OLD ) OR ( NOT _MPFR_OLD AND _MPFI_OLD ) )
+
+    message(
+      STATUS
+      "MPFI<1.5.2 requires MPFR<4.0.0; MPFI>=1.5.2 requires MPFR>=4.0.0" )
+
+    set( MPFI_FOUND FALSE )
+
+  else( ( _MPFR_OLD AND NOT _MPFI_OLD ) OR ( NOT _MPFR_OLD AND _MPFI_OLD ) )
+
+    set( MPFI_USE_FILE "CGAL_UseMPFI" )
+
+  endif( ( _MPFR_OLD AND NOT _MPFI_OLD ) OR ( NOT _MPFR_OLD AND _MPFI_OLD ) )
+
 endif( MPFI_FOUND )
