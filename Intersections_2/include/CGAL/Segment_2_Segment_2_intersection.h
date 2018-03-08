@@ -129,31 +129,31 @@ do_intersect(const typename K::Segment_2 &seg1,
                     return false;
                 case EQUAL:
                     return true;
-                case LARGER:
+                default: // LARGER
                     switch(make_certain(compare_xy(A2,B2))) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(A1,A2,B1,B2, k);
                     case EQUAL:
                         return true;
-                    case LARGER:
+                    default: // LARGER
                         return seg_seg_do_intersect_contained(A1,A2,B1,B2, k);
                     }
                 }
             case EQUAL:
                 return true;
-            case LARGER:
+            default: // LARGER
                 switch(make_certain(compare_xy(B2,A1))) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
-                case LARGER:
+                default: // LARGER
                     switch(make_certain(compare_xy(B2,A2))) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(B1,B2,A1,A2, k);
                     case EQUAL:
                         return true;
-                    case LARGER:
+                    default: // LARGER
                         return seg_seg_do_intersect_contained(B1,B2,A1,A2, k);
                     }
                 }
@@ -166,31 +166,31 @@ do_intersect(const typename K::Segment_2 &seg1,
                     return false;
                 case EQUAL:
                     return true;
-                case LARGER:
+                default: // LARGER
                     switch(make_certain(compare_xy(A2,B1))) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(A1,A2,B2,B1, k);
                     case EQUAL:
                         return true;
-                    case LARGER:
+                    default: // LARGER
                         return seg_seg_do_intersect_contained(A1,A2,B2,B1, k);
                     }
                 }
             case EQUAL:
                 return true;
-            case LARGER:
+            default: // LARGER
                 switch(make_certain(compare_xy(B1,A1))) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
-                case LARGER:
+                default: // LARGER
                     switch(make_certain(compare_xy(B1,A2))) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(B2,B1,A1,A2, k);
                     case EQUAL:
                         return true;
-                    case LARGER:
+                    default: // LARGER
                         return seg_seg_do_intersect_contained(B2,B1,A1,A2, k);
                     }
                 }
@@ -205,31 +205,31 @@ do_intersect(const typename K::Segment_2 &seg1,
                     return false;
                 case EQUAL:
                     return true;
-                case LARGER:
+                default: // LARGER
                     switch(make_certain(compare_xy(A1,B2))) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(A2,A1,B1,B2, k);
                     case EQUAL:
                         return true;
-                    case LARGER:
+                    default: // LARGER
                         return seg_seg_do_intersect_contained(A2,A1,B1,B2, k);
                     }
                 }
             case EQUAL:
                 return true;
-            case LARGER:
+            default: // LARGER
                 switch(make_certain(compare_xy(B2,A2))) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
-                case LARGER:
+                default: // LARGER
                     switch(make_certain(compare_xy(B2,A1))) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(B1,B2,A2,A1, k);
                     case EQUAL:
                         return true;
-                    case LARGER:
+                    default: // LARGER
                         return seg_seg_do_intersect_contained(B1,B2,A2,A1, k);
                     }
                 }
@@ -242,31 +242,31 @@ do_intersect(const typename K::Segment_2 &seg1,
                     return false;
                 case EQUAL:
                     return true;
-                case LARGER:
+                default: // LARGER
                     switch(make_certain(compare_xy(A1,B1))) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(A2,A1,B2,B1, k);
                     case EQUAL:
                         return true;
-                    case LARGER:
+                    default: // LARGER
                         return seg_seg_do_intersect_contained(A2,A1,B2,B1, k);
                     }
                 }
             case EQUAL:
                 return true;
-            case LARGER:
+            default: // LARGER
                 switch(make_certain(compare_xy(B1,A2))) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
-                case LARGER:
+                default: // LARGER
                     switch(make_certain(compare_xy(B1,A1))) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(B2,B1,A2,A1, k);
                     case EQUAL:
                         return true;
-                    case LARGER:
+                    default: // LARGER
                         return seg_seg_do_intersect_contained(B2,B1,A2,A1, k);
                     }
                 }
