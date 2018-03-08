@@ -65,7 +65,7 @@ public:
   typedef typename R::Construct_bisector_2       Construct_Euclidean_bisector_2;
   typedef typename R::Construct_midpoint_2       Construct_Euclidean_midpoint_2;
   typedef typename R::Compute_squared_distance_2 Compute_squared_Euclidean_distance_2;
-  typedef typename R::Has_on_bounded_side_2 Has_on_bounded_side_2;
+  typedef typename R::Has_on_bounded_side_2      Has_on_bounded_side_2;
 
   typedef typename R::Less_x_2                   Less_x_2;
   typedef typename R::Less_y_2                   Less_y_2;
