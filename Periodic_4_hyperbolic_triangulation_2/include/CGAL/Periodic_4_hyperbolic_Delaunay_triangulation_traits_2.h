@@ -161,6 +161,10 @@ public:
 		return Point(rx/den, ry/den);
 	}
 
+	Point operator() ( const Point& p ) const {
+		return p;
+	}
+
 };
 
 
