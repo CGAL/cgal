@@ -4,8 +4,7 @@
 
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Hyperbolic_random_points_in_disc_2.h>
-
-#include <CGAL/Qt/HyperbolicPainterOstream.h>
+#include <internal/Qt/HyperbolicPainterOstream.h>
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
 
@@ -22,12 +21,12 @@
 #include <string>
 
 // GraphicsView items and event filters (input classes)
-#include <CGAL/Qt/TriangulationCircumcircle.h>
-#include <CGAL/Qt/TriangulationGraphicsItem.h>    
-#include <CGAL/Qt/VoronoiGraphicsItem.h>
-#include <CGAL/Qt/TriangulationConflictZone.h>
 #include <CGAL/Qt/DemosMainWindow.h>
-#include <CGAL/Qt/TriangulationPointInput.h>
+#include <internal/Qt/TriangulationCircumcircle.h>
+#include <internal/Qt/TriangulationGraphicsItem.h>    
+#include <internal/Qt/VoronoiGraphicsItem.h>
+#include <internal/Qt/TriangulationConflictZone.h>
+#include <internal/Qt/TriangulationPointInput.h>
 
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Cartesian.h>
@@ -138,7 +137,7 @@ signals:
 };
 
 
-#include <hyperbolic_billiards_animation.h>
+#include <internal/hyperbolic_billiards_animation.h>
 
 
 MainWindow::MainWindow()
