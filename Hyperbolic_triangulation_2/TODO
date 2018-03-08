@@ -1,0 +1,94 @@
+==== new ====
+
+add operator == for triangulations (?)
+
+** traits bisectors
+
+class Construct_hyperbolic_bisector_2
+Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q, Point_2 r)
+at the end
+the following lines are giving the wrong arc (wrong orientation), aren't they?
+      CGAL_triangulation_assertion(assign(pair,inters[1]));
+      if ( Orientation_2()(approx_c,approx_a,approx_pinf) == POSITIVE )
+	return Circular_arc_2( *c_pq, pair.first, a);
+      return Circular_arc_2( *c_pq, a, pair.first);
+but this is what works on the demo...
+understand why
+
+remove variant for supporting circle or line of bisector
+call it only when we know that it is a circle
+it will simplyfy the code of Construct_hyperbolic_bisector_2 at least in some cases
+
+test bisectors dual functions in special cases of euclidean line segments
+
+** Hyperbolic_random_points_in_disc
+
+repair
+number types have changed (using CK) 
+
+** benchmarks
+
+idem, repair number types
+
+** doc
+
+** test suite
+
+** only keep relevant files for the submission
+
+========== demo
+
+--- input from file does not do anything...
+
+--- clean files
+do we need demo/Hyperbolic_triangulation_2/include/* for the basic demo?
+todo diff with similar .h in Graphics view (after updating the branch)
+
+--- clean buttons 
+remove translations, add circumcircle, etc
+and put appropriate window title
+
+--- fix aretes delaunay presque rectilineaires pas au bon endroit 
+
+--- create an adapted Graphicsitem that does not require finite_* stuff. Replace by hyperbolic_*
+       => understand apply_to_range
+the graphicsitem should also not require Segment_2 or Line_segment_2 (does it?)
+
+--- fix bugs:
+- conflict regions (when inserting or in mode 'show conflict zone)
+show Euclidean triangles instead of hyperbolic triangles  
+- in mode 'draw circumcenter', some triangles that are not in the
+hyperbolic DT appear, with their circle intersecting the infinite
+line. They should not appear.
+
+Done
+ 
+- However, we could think to add a specific mode allowing to show
+triangles that are not hyperbolic. Not sure whether this is interesting. 
+- cosmetic detail: the title of the demo should mention "hyperbolic"
+
+--- PainterOstream
+Is it clean for CGAL to have a local file?
+
+I have to ask Laurent to make some members of PainterOstream protected.
+It allows me to have a local file with partial specialization of 
+the class PainterOstream.
+I have to discuss with Laurent.
+
+========== OLD STUFF code
+
+--- sqrt
+check whether and when an exact type is needed for sqrt. 
+- sqrt can be kept eg for demos
+- when needed, replace the inexact CGAL::sqrt by the new type
+replacing CGAL::Root_of_2, see 
+CGAL::https://cgal.geometryfactory.com/CGAL/Members/wiki/Features/Unique_sqrt_extension 
+
+Done. std::sqrt is replaced by CGAL::sqrt everywhere, 
+because it's used only for computation of the Voronoi diagram. 
+
+========== future
+
+--- make Constrained_delaunay_... work with Hyperbolic_triangulation_2
+--- make Mesh_2 work with Hyperbolic_triangulation_2
+O.Faugeras and his student are waiting for it. 
