@@ -41,7 +41,9 @@
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
-#include <tbb/scalable_allocator.h>  
+#include <tbb/scalable_allocator.h>
+#define TBB_IMPLEMENT_CPP0X 1
+#include <tbb/compat/thread>
 #endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
@@ -109,20 +111,69 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
     const unsigned int k;
     const std::vector<Point>& input;
     std::vector<FT>& output;
+    tbb::atomic<std::size_t>& advancement;
+    tbb::atomic<bool>& interrupted;
 
   public:
     Compute_average_spacings(Tree& tree, unsigned int k, std::vector<Point>& points,
-			     std::vector<FT>& output)
+			     std::vector<FT>& output,
+                             tbb::atomic<std::size_t>& advancement,
+                             tbb::atomic<bool>& interrupted)
       : tree(tree), k (k), input (points), output (output)
+      , advancement (advancement)
+      , interrupted (interrupted)
     { }
     
     void operator()(const tbb::blocked_range<std::size_t>& r) const
     {
       for( std::size_t i = r.begin(); i != r.end(); ++i)
+      {
+        if (interrupted)
+          break;
+        
 	output[i] = CGAL::internal::compute_average_spacing<Kernel,Tree>(input[i], tree, k);
+        ++ advancement;
+      }
     }
 
   };
+
+  template <typename Callback>
+  class Callback_caller
+  {
+    const Callback& callback;
+    tbb::atomic<std::size_t>& advancement;
+    tbb::atomic<bool>& interrupted;
+    std::size_t size;
+    
+  public:
+    Callback_caller (const Callback& callback,
+                     tbb::atomic<bool>& interrupted,
+                     tbb::atomic<std::size_t>& advancement,
+                     std::size_t size)
+      : callback (callback)
+      , interrupted (interrupted)
+      , advancement (advancement)
+      , size (size)
+    { }
+
+    void operator()()
+    {
+      tbb::tick_count::interval_t sleeping_time(0.00001);
+
+      while (advancement != size)
+      {
+        if (!callback (advancement / double(size)))
+        {
+          interrupted = true;
+          return;
+        }
+        std::this_thread::sleep_for(sleeping_time);
+      }
+      callback (1.);
+    }
+  };
+
 #endif // CGAL_LINKED_WITH_TBB
 
 } /* namespace internal */
@@ -180,10 +231,12 @@ compute_average_spacing(
   // basic geometric types
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+  typedef typename Point_set_processing_3::GetCallback<PointRange, NamedParameters>::type Callback;
 
   typedef typename Kernel::Point_3 Point;
 
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+  const Callback& callback = choose_param(get_param(np, internal_np::callback), Callback());
   
   // types for K nearest neighbors search structure
   typedef typename Kernel::FT FT;
@@ -209,6 +262,7 @@ compute_average_spacing(
   // iterate over input points, compute and output normal
   // vectors (already normalized)
   FT sum_spacings = (FT)0.0;
+  std::size_t nb = 0;
 
 #ifndef CGAL_LINKED_WITH_TBB
   CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
@@ -216,26 +270,44 @@ compute_average_spacing(
 #else
    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
    {
-     std::vector<FT> spacings (kd_tree_points.size ());
+     tbb::atomic<std::size_t> advancement = 0;
+     tbb::atomic<bool> interrupted = false;
+     
+     internal::Callback_caller<Callback> callback_caller (callback, interrupted, advancement, kd_tree_points.size());
+     std::thread callback_thread (callback_caller);
+     
+     std::vector<FT> spacings (kd_tree_points.size (), -1);
      CGAL::internal::Compute_average_spacings<Kernel, Tree>
-       f (tree, k, kd_tree_points, spacings);
+       f (tree, k, kd_tree_points, spacings, advancement, interrupted);
      tbb::parallel_for(tbb::blocked_range<size_t>(0, kd_tree_points.size ()), f);
+
      for (unsigned int i = 0; i < spacings.size (); ++ i)
-       sum_spacings += spacings[i];
+       if (spacings[i] >= 0.)
+       {
+         sum_spacings += spacings[i];
+         ++ nb;
+       }
+     
+     callback_thread.join();
    }
    else
 #endif
      {
-       for(typename PointRange::const_iterator it = points.begin(); it != points.end(); it++)
-	 {
-	   sum_spacings += internal::compute_average_spacing<Kernel,Tree>(
-									  get(point_map,*it),
-									  tree,k);
-	 }
+         for(typename PointRange::const_iterator it = points.begin(); it != points.end(); it++, nb++)
+       {
+         sum_spacings += internal::compute_average_spacing<Kernel,Tree>(
+           get(point_map,*it),
+           tree,k);
+         if (!callback ((nb+1) / double(kd_tree_points.size())))
+         {
+           ++ nb;
+           break;
+         }
+       }
      }
    
   // return average spacing
-   return sum_spacings / (FT)(kd_tree_points.size ());
+   return sum_spacings / (FT)(nb);
 }
 
 /// \cond SKIP_IN_MANUAL
