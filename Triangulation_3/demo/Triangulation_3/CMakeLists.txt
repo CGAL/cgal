@@ -30,15 +30,15 @@ if(Qt5_FOUND)
 endif(Qt5_FOUND)
 
 # Activate concurrency ? (turned OFF by default)
-option(ACTIVATE_CONCURRENT_TRIANGULATION_3
+option(CGAL_ACTIVATE_CONCURRENT_TRIANGULATION_3
   "Activate parallelism in Triangulation_3"
   OFF)
   
 # And add -DCGAL_CONCURRENT_TRIANGULATION_3 if that option is ON
-if( ACTIVATE_CONCURRENT_TRIANGULATION_3 )
+if( CGAL_ACTIVATE_CONCURRENT_TRIANGULATION_3 )
   add_definitions( -DCGAL_CONCURRENT_TRIANGULATION_3 )
   find_package( TBB REQUIRED )
-else( ACTIVATE_CONCURRENT_TRIANGULATION_3 )
+else( CGAL_ACTIVATE_CONCURRENT_TRIANGULATION_3 )
   option( LINK_WITH_TBB
     "Link with TBB anyway so we can use TBB timers for profiling"
     ON)
