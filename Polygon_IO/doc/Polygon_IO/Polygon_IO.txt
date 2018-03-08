@@ -1,0 +1,38 @@
+
+namespace CGAL {
+//! \todo decide what kind of tags we want to use and list them here
+/*!
+\mainpage User Manual
+\anchor Chapter_PolygonIO
+\cgalAutoToc
+\author Maxime Gimeno
+
+This package regroups the files used for writing and reading 2D data structures. \n
+\section Inroduction 
+Although one can virtually use any format existing or not to perform his/her own IO actions, it has been 
+decided to support officially WKT as a unified IO standard for CGAL 2D data structures. 
+
+Only the ASCII format (not the binary one, named WKB) for 2D geometry is supported.
+
+\section Usage
+The provided functions will fill CGAL 2D data structures from WKT files and the reverse. Those structures
+use specific traits classes to work, and CGAL provides some making the following types usable:
+- `CGAL::Point_2` as WKT Point
+- `CGAL::Geometry_container<CGAL::Point_2>` as WKT Linestring
+- `CGAL::Polygon_with_holes_2` as WKT Polygon
+- `CGAL::Geometry_container<CGAL::Point_2>` as WKT Multipoint
+- `CGAL::Geometry_container<CGAL::Geometry_container<CGAL::Point_2>>` as WKT Multilinestring
+- `CGAL::Geometry_container<CGAL::Polygon_with_holes_2>` as WKT Multipolygon
+
+\section Specific Container
+To help the user manipulate collection types like multiplepoint, CGAL provides a wrapper:
+`CGAL::Geometry_container`, that depends on two template types. The first one is the type of the container that it will wrap,
+which must be a model of `Boost.Range Random Access Range`, and the second one is a tag corresponding to the target type of WKT data. 
+Here is a list of the existing tags :
+TO BE FILLED LATER
+
+
+
+*/
+} /* namespace CGAL */
+

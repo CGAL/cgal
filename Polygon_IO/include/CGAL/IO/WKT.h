@@ -38,7 +38,7 @@
 #include <CGAL/IO/traits_multipolygon.h>
 
 
-
+//! \todo Should they be in a namespace CGAL::IO or just CGAL ?
 namespace CGAL{
 //! \ingroup PkgPolygonIO
 //! \brief read_point_WKT reads the content of a .wkt file into a `Point`.
@@ -253,11 +253,11 @@ read_multipolygon_WKT( std::istream& in,
 //! `Type` must have appropriate boost::geometry::traits available.
 //! Such traits are already available in CGAL for the following type :
 //! - `CGAL::Point_2` as WKT Point
-//! - `std::list<CGAL::Point_2>` as WKT Linestring
-//! - `CGAL::Polygon_with_hole_2` as WKT Polygon
-//! - `std::vector<CGAL::Point_2>` as WKT Multipoint
-//! - `std::vector<std::list<CGAL::Point_2>>` as WKT Multilinestring
-//! - `std::vector<CGAL::Polygon_with_hole_2>` as WKT Multipolygon
+//! - `CGAL::Geometry_container<CGAL::Point_2>` as WKT Linestring
+//! - `CGAL::Polygon_with_holes_2` as WKT Polygon
+//! - `CGAL::Geometry_container<CGAL::Point_2>` as WKT Multipoint
+//! - `CGAL::Geometry_container<CGAL::Geometry_container<CGAL::Point_2>>` as WKT Multilinestring
+//! - `CGAL::Geometry_container<CGAL::Polygon_with_holes_2>` as WKT Multipolygon
 //! 
 //! \relates CGAL::General_polygon_with_holes_2
 template<typename Type>
