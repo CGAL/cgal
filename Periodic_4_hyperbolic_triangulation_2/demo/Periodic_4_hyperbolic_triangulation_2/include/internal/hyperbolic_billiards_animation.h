@@ -95,7 +95,7 @@ Point
 MainWindow::get_image(Point src, Point tgt, double time) {
   Segment_2 seg = Construct_hyperbolic_segment_2()(src, tgt);
   Circular_arc_2* carc = boost::get<Circular_arc_2>(&seg);
-  Circle_2 crc = carc->circle();
+  Circle_2 crc = carc->supporting_circle();
   
   double sx = to_double(((src.x()) - crc.center().x())/sqrt(crc.squared_radius()));
   double sy = to_double(((src.y()) - crc.center().y())/sqrt(crc.squared_radius()));

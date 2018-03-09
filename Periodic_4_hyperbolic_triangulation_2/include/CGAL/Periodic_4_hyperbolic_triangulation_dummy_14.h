@@ -24,27 +24,6 @@
 
 namespace CGAL {
 
-    template<class Point, class Face_handle>
-    Point barycenter(Face_handle fh) {
-        Point p0 = fh->translation(0).apply(fh->vertex(0)->point());
-        Point p1 = fh->translation(1).apply(fh->vertex(1)->point());
-        Point p2 = fh->translation(2).apply(fh->vertex(2)->point());
-        return Point( (p0.x() + p1.x() + p2.x())/3, (p0.y() + p1.y() + p2.y())/3 );
-    }
-    
-    template<class Point, class Face_handle>
-    Point midpoint(Face_handle fh, int i, int j) {
-        Point p0 = fh->translation(i).apply(fh->vertex(i)->point());
-        Point p1 = fh->translation(j).apply(fh->vertex(j)->point());
-        return Point( (p0.x() + p1.x())/2, (p0.y() + p1.y())/2 );
-    }
-
-    template<class Point, class Face_handle>
-    Point vertex(Face_handle fh, int i) {
-        Point p0 = fh->translation(i).apply(fh->vertex(i)->point());
-        return Point( p0.x(), p0.y() );
-    }
-
 
 
     template < class GT, class TDS >
@@ -65,7 +44,7 @@ namespace CGAL {
         dummy_points.clear();
 
         if (rational) {
-
+            std::cout << "Dummy points are rational!" << std::endl;
             // Push back the origin
             dummy_points.push_back(Dummy_point( FT(0), FT(0) ));  
 
@@ -91,7 +70,7 @@ namespace CGAL {
 
 
         } else { // Algebraic dummy points
-
+            std::cout << "Dummy points are algebraic!" << std::endl;
             FT F0 = FT(0);
             FT F1 = FT(1);
             FT F2 = FT(2);

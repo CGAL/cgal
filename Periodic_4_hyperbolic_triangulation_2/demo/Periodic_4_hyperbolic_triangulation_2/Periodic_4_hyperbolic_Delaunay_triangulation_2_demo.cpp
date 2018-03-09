@@ -247,6 +247,9 @@ MainWindow::MainWindow()
 void
 MainWindow::processInput(CGAL::Object o)
 {
+
+  CGAL::Timer tmr;
+
   Point p;
   if(CGAL::assign(p, o)){
     if (last_location != Face_handle()) {
@@ -262,10 +265,25 @@ MainWindow::processInput(CGAL::Object o)
       vi->remove_translation();
     }
 
+    std::cout << "Inserting point in triangulation..."; std::cout.flush();
+    tmr.reset();
+    tmr.start();
     Vertex_handle v = dt.insert(p);
+    tmr.stop();
+    std::cout << "  DONE! Time: " << tmr.time() << std::endl;
   }
+  std::cout << "Emitting..."; std::cout.flush();
+  tmr.reset();
+  tmr.start();
   emit(changed());
+  tmr.stop();
+  std::cout << "  DONE! Time: " << tmr.time() << std::endl;
+  std::cout << "Processing..."; std::cout.flush();
+  tmr.reset();
+  tmr.start();
   qApp->processEvents();
+  tmr.stop();
+  std::cout << "  DONE! Time: " << tmr.time() << std::endl;
 
 }
 
