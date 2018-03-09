@@ -243,19 +243,15 @@ compute_average_spacing(
 #else
    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
    {
-     // tbb::atomic only has default constructor, initialization done in two steps
-     tbb::atomic<std::size_t> advancement;
-     advancement = 0;
-     tbb::atomic<bool> interrupted;
-     interrupted = false;
-     
      internal::Point_set_processing_3::Parallel_callback
-       parallel_callback (callback, interrupted, advancement, kd_tree_points.size());
+       parallel_callback (callback, kd_tree_points.size());
      std::thread* callback_thread = (callback ? new std::thread (parallel_callback) : NULL);
      
      std::vector<FT> spacings (kd_tree_points.size (), -1);
      CGAL::internal::Compute_average_spacings<Kernel, Tree>
-       f (tree, k, kd_tree_points, spacings, advancement, interrupted);
+       f (tree, k, kd_tree_points, spacings,
+          parallel_callback.advancement(),
+          parallel_callback.interrupted());
      tbb::parallel_for(tbb::blocked_range<size_t>(0, kd_tree_points.size ()), f);
 
      for (unsigned int i = 0; i < spacings.size (); ++ i)

@@ -33,36 +33,70 @@ namespace Point_set_processing_3 {
   
 class Parallel_callback
 {
-  const cpp11::function<bool(double)>& callback;
-  tbb::atomic<std::size_t>& advancement;
-  tbb::atomic<bool>& interrupted;
-  std::size_t size;
-    
+  const cpp11::function<bool(double)>& m_callback;
+  tbb::atomic<std::size_t>* m_advancement;
+  tbb::atomic<bool>* m_interrupted;
+  std::size_t m_size;
+  bool m_creator;  
+
 public:
   Parallel_callback (const cpp11::function<bool(double)>& callback,
-                     tbb::atomic<bool>& interrupted,
-                     tbb::atomic<std::size_t>& advancement,
-                     std::size_t size)
-    : callback (callback)
-    , advancement (advancement)
-    , interrupted (interrupted)
-    , size (size)
-  { }
+                     std::size_t size,
+                     std::size_t advancement = 0,
+                     bool interrupted = false)
+    : m_callback (callback)
+    , m_advancement (new tbb::atomic<std::size_t>())
+    , m_interrupted (new tbb::atomic<bool>())
+    , m_size (size)
+    , m_creator (true)
+  {
+    // tbb::atomic only has default constructor, initialization done in two steps
+    *m_advancement = advancement;
+    *m_interrupted = interrupted;
+  }
+
+  Parallel_callback (const Parallel_callback& other)
+    : m_callback (other.m_callback)
+    , m_advancement (other.m_advancement)
+    , m_interrupted (other.m_interrupted)
+    , m_size (other.m_size)
+    , m_creator (false)
+  {
+
+  }
+
+  Parallel_callback& operator= (const Parallel_callback& other)
+  {
+    Parallel_callback out (other);
+    return out;
+  }
+
+  ~Parallel_callback ()
+  {
+    if (m_creator)
+    {
+      delete m_advancement;
+      delete m_interrupted;
+    }
+  }
+
+  tbb::atomic<std::size_t>& advancement() { return *m_advancement; }
+  tbb::atomic<bool>& interrupted() { return *m_interrupted; }
 
   void operator()()
   {
     tbb::tick_count::interval_t sleeping_time(0.00001);
 
-    while (advancement != size)
+    while (*m_advancement != m_size)
     {
-      if (!callback (advancement / double(size)))
+      if (!m_callback (*m_advancement / double(m_size)))
       {
-        interrupted = true;
+        *m_interrupted = true;
         return;
       }
       std::this_thread::sleep_for(sleeping_time);
     }
-    callback (1.);
+    m_callback (1.);
   }
 };
 
