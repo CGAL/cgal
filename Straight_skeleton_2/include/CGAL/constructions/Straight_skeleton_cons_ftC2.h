@@ -395,9 +395,13 @@ optional< Rational< typename K::FT> > compute_normal_offset_lines_isec_timeC2 ( 
          +(l1->b()*l0->a()*l2->c())
          -(l0->b()*l1->a()*l2->c());
 
-    FT r0 = CGAL_SS_i :: inexact_sqrt(square(l0->a())+square(l0->b()));
-    FT r1 = CGAL_SS_i :: inexact_sqrt(square(l1->a())+square(l1->b()));
-    FT r2 = CGAL_SS_i :: inexact_sqrt(square(l2->a())+square(l2->b()));
+    FT sum_sq_0 = square(l0->a()) + square(l0->b());
+    FT sum_sq_1 = square(l1->a()) + square(l1->b());
+    FT sum_sq_2 = square(l2->a()) + square(l2->b());
+
+    FT r0 = CGAL_SS_i::inexact_sqrt(sum_sq_0);
+    FT r1 = CGAL_SS_i::inexact_sqrt(sum_sq_1);
+    FT r2 = CGAL_SS_i::inexact_sqrt(sum_sq_2);
 
     den = r0 * (l2->b()*l1->a() - l2->a()*l1->b()) +
           r1 * (l2->a()*l0->b() - l2->b()*l0->a()) +
@@ -657,9 +661,13 @@ optional< Point_2<K> > construct_normal_offset_lines_isecC2 ( intrusive_ptr< Tri
   
   if ( l0 && l1 && l2 )
   {
-    FT r0 = CGAL_SS_i :: inexact_sqrt(square(l0->a())+square(l0->b()));
-    FT r1 = CGAL_SS_i :: inexact_sqrt(square(l1->a())+square(l1->b()));
-    FT r2 = CGAL_SS_i :: inexact_sqrt(square(l2->a())+square(l2->b()));
+    FT sum_sq_0 = square(l0->a()) + square(l0->b());
+    FT sum_sq_1 = square(l1->a()) + square(l1->b());
+    FT sum_sq_2 = square(l2->a()) + square(l2->b());
+
+    FT r0 = CGAL_SS_i::inexact_sqrt(sum_sq_0);
+    FT r1 = CGAL_SS_i::inexact_sqrt(sum_sq_1);
+    FT r2 = CGAL_SS_i::inexact_sqrt(sum_sq_2);
 
     FT den = r0 * ( l2->a()*l1->b() - l1->a()*l2->b()) +
              r1 * ( l0->a()*l2->b() - l0->b()*l2->a()) +
