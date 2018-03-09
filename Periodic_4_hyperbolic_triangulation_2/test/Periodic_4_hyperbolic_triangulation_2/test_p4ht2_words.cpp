@@ -18,16 +18,16 @@ int main(void) {
     typedef Hyperbolic_octagon_translation<NT>                  Word;
 
     Word w;
-    cout << "empty word: " << w << ", matrix: " << w.matrix() << endl;
+    // cout << "empty word: " << w << ", matrix: " << w.matrix() << endl;
 
     Word a(0), ab(0, 5), abc(0, 5, 2), abcd(0, 5, 2, 7), dcb(7, 2, 5), dc(7, 2), d(7);
-    cout << "a    = " << a << ",    matrix: " << a.matrix()     << endl;
-    cout << "ab   = " << ab << ",   matrix: " << ab.matrix()    << endl;
-    cout << "abc  = " << abc << ",  matrix: " << abc.matrix()   << endl;
-    cout << "abcd = " << abcd << ", matrix: " << abcd.matrix()  << endl;
-    cout << "dcb  = " << dcb << ",  matrix: " << dcb.matrix()   << endl;
-    cout << "dc   = " << dc << ",   matrix: " << dc.matrix()    << endl;
-    cout << "d    = " << d << ",    matrix: " << d.matrix()     << endl;    
+    // cout << "a    = " << a << ",    matrix: " << a.matrix()     << endl;
+    // cout << "ab   = " << ab << ",   matrix: " << ab.matrix()    << endl;
+    // cout << "abc  = " << abc << ",  matrix: " << abc.matrix()   << endl;
+    // cout << "abcd = " << abcd << ", matrix: " << abcd.matrix()  << endl;
+    // cout << "dcb  = " << dcb << ",  matrix: " << dcb.matrix()   << endl;
+    // cout << "dc   = " << dc << ",   matrix: " << dc.matrix()    << endl;
+    // cout << "d    = " << d << ",    matrix: " << d.matrix()     << endl;    
 
     return 0;
 }

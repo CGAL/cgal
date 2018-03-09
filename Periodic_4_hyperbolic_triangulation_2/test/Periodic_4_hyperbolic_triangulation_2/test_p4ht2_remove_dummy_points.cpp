@@ -50,7 +50,6 @@ int main(int argc, char** argv) {
         Hyperbolic_random_points_in_disc_2_double(v, N, -1, 0.159);
 
         Triangulation tr;  
-        tr.insert_dummy_points(true);
         assert(tr.is_valid(true));
         
         int cnt = 0;

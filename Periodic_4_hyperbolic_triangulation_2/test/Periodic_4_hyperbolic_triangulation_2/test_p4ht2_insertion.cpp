@@ -97,7 +97,6 @@ int main(int argc, char** argv) {
 
         cout << "iteration " << exec << ": inserting into triangulation (rational dummy points)... "; cout.flush();
         Triangulation tr;
-        tr.insert_dummy_points(true);  
 
         CGAL::Timer tt;
         tt.start();

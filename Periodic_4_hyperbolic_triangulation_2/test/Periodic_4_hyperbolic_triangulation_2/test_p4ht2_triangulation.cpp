@@ -21,7 +21,6 @@ int main(void) {
     typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>        Triangulation;
 
     Triangulation tr;
-    tr.insert_dummy_points(false);
     CGAL_assertion(tr.is_valid());
 
     cout << "triangulation works!" << 

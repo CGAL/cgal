@@ -31,7 +31,6 @@ using std::endl;
 int main(void) {
 
     Triangulation tr;    
-    tr.insert_dummy_points();
     
     cout << "Triangulation successfully initialized with dummy points!" << endl << "---------------------------------------------" << endl;
     cout << "Number of vertices:                  " << tr.number_of_vertices() << endl;

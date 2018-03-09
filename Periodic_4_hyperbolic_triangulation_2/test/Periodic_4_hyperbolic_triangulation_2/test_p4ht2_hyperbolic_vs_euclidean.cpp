@@ -84,7 +84,6 @@ int main(int argc, char** argv) {
 
         cout << "iteration " << exec << ": inserting into hyperbolic periodic triangulation...    "; cout.flush();
         Triangulation tr;
-        tr.insert_dummy_points(true);  
         CGAL::Timer t1;
         t1.start();
         tr.insert(pts.begin(), pts.end());

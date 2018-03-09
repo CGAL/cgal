@@ -45,7 +45,6 @@ using std::endl;
 int main(void) {
 
     Triangulation tr;    
-    tr.insert_dummy_points(true);
 
     assert(tr.is_valid());
 
