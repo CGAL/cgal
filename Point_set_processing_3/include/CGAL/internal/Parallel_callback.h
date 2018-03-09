@@ -23,6 +23,8 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/function.h>
+
 #include <tbb/atomic.h>
 #define TBB_IMPLEMENT_CPP0X 1
 #include <tbb/compat/thread>
@@ -37,7 +39,7 @@ class Parallel_callback
   tbb::atomic<std::size_t>* m_advancement;
   tbb::atomic<bool>* m_interrupted;
   std::size_t m_size;
-  bool m_creator;  
+  bool m_creator;
 
 public:
   Parallel_callback (const cpp11::function<bool(double)>& callback,
@@ -90,10 +92,9 @@ public:
     while (*m_advancement != m_size)
     {
       if (!m_callback (*m_advancement / double(m_size)))
-      {
         *m_interrupted = true;
+      if (*m_interrupted)
         return;
-      }
       std::this_thread::sleep_for(sleeping_time);
     }
     m_callback (1.);
