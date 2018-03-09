@@ -285,6 +285,7 @@ public Q_SLOTS:
     }
 
     selection_item->select_boundary();
+    filter_operations();
   }
 
   void on_Add_to_selection_button_clicked()
@@ -328,6 +329,7 @@ public Q_SLOTS:
       return;
     }
     selection_item->inverse_selection();
+    filter_operations();
   }
   // Isolated component related functions
   void on_Select_isolated_components_button_clicked() {
