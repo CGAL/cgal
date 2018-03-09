@@ -28,7 +28,7 @@
 
 #include <CGAL/structure_point_set.h>
 
-#include "Progress_bar_callback.h"
+#include "Qt_progress_bar_callback.h"
 
 #include <QObject>
 #include <QAction>
@@ -255,7 +255,7 @@ private:
     // The actual shape detection.
     CGAL::Real_timer t;
     t.start();
-    Progress_bar_callback callback;
+    Qt_progress_bar_callback callback ("Detecting shapes...", mw);
     shape_detection.detect(op, callback);
     t.stop();
     
