@@ -61,7 +61,7 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "square_border_parameterizer.cpp" )
     
     if(SuiteSparse_FOUND)
-      target_link_libraries(orbifold ${SuiteSparse_LIBRARIES})
+      target_link_libraries(orbifold PRIVATE ${SuiteSparse_LIBRARIES})
     endif()
 
   else(EIGEN3_FOUND)
