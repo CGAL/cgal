@@ -40,6 +40,7 @@
 #include <list>
 
 #ifdef CGAL_LINKED_WITH_TBB
+#include <CGAL/internal/Parallel_callback.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>
@@ -139,42 +140,6 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
     }
 
   };
-
-  class Callback_caller
-  {
-    const cpp11::function<bool(double)>& callback;
-    tbb::atomic<std::size_t>& advancement;
-    tbb::atomic<bool>& interrupted;
-    std::size_t size;
-    
-  public:
-    Callback_caller (const cpp11::function<bool(double)>& callback,
-                     tbb::atomic<bool>& interrupted,
-                     tbb::atomic<std::size_t>& advancement,
-                     std::size_t size)
-      : callback (callback)
-      , advancement (advancement)
-      , interrupted (interrupted)
-      , size (size)
-    { }
-
-    void operator()()
-    {
-      tbb::tick_count::interval_t sleeping_time(0.00001);
-
-      while (advancement != size)
-      {
-        if (!callback (advancement / double(size)))
-        {
-          interrupted = true;
-          return;
-        }
-        std::this_thread::sleep_for(sleeping_time);
-      }
-      callback (1.);
-    }
-  };
-
 #endif // CGAL_LINKED_WITH_TBB
 
 } /* namespace internal */
@@ -205,7 +170,13 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
    \cgalNamedParamsBegin
      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
      If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{callback} an instance of `cpp11::function<bool(double)>`\cgalParamEnd
+     \cgalParamBegin{callback} an instance of
+      `cpp11::function<bool(double)>`. It is called regularly when the
+      algorithm is running: the current advancement (between 0. and
+      1.) is passed as parameter. If it returns `true`, then the
+      algorithm continues its execution normally; if it returns
+      `false`, the algorithm is stopped and the average spacing value
+      estimated on the processed subset is returned.\cgalParamEnd
      \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 
@@ -278,11 +249,9 @@ compute_average_spacing(
      tbb::atomic<bool> interrupted;
      interrupted = false;
      
-     internal::Callback_caller callback_caller (callback, interrupted, advancement, kd_tree_points.size());
-     std::thread* callback_thread;
-
-     if (callback)
-       callback_thread = new std::thread (callback_caller);
+     internal::Point_set_processing_3::Parallel_callback
+       parallel_callback (callback, interrupted, advancement, kd_tree_points.size());
+     std::thread* callback_thread = (callback ? new std::thread (parallel_callback) : NULL);
      
      std::vector<FT> spacings (kd_tree_points.size (), -1);
      CGAL::internal::Compute_average_spacings<Kernel, Tree>
