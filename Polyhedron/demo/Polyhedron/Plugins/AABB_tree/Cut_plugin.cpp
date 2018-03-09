@@ -394,8 +394,10 @@ public:
   bool isEmpty() const { return edges.empty(); }
   void compute_bbox() const {
     if(isEmpty())
+    {
       _bbox = Bbox();
-    return;
+      return;
+    }
     CGAL::Bbox_3 bbox = edges.begin()->bbox();
     for(size_t i = 1, end = edges.size(); i < end; ++i) {
       bbox = bbox + edges[i].bbox();
