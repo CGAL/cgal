@@ -121,12 +121,10 @@ struct Is_border_edge {
   }
 }; // end Is_featured_edge<Polyhedron>
 
-template<typename Polyhedral_mesh_domain,
-         typename Polyline_with_context,
+template<typename Polyline_with_context,
          typename Graph>
 struct Extract_polyline_with_context_visitor
 {
-  typedef typename Polyhedral_mesh_domain::Polyhedron Polyhedron;
   std::vector<Polyline_with_context>& polylines;
   const Graph& graph;
 
@@ -519,7 +517,6 @@ add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
   std::vector<Polyline_with_context> polylines;
 
   internal::Mesh_3::Extract_polyline_with_context_visitor<
-    Polyhedral_mesh_domain_with_features_3,
     Polyline_with_context,
     Featured_edges_copy_graph
     > visitor(g_copy, polylines);
