@@ -26,6 +26,7 @@
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/certified_quotient_predicates.h>
+#include <CGAL/Root_of_traits.h>
 
 namespace CGAL {
 
@@ -369,9 +370,6 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2<K> > c
   try
   {
     Point_2 p = validate(construct_offset_lines_isecC2(event));
-    
-    Line_2 l0 = validate(compute_normalized_line_ceoffC2(e0)) ;
-    Line_2 l1 = validate(compute_normalized_line_ceoffC2(e1)) ;
   
     CGAL_STSKEL_TRAITS_TRACE("Getting oriented side of point " << p2str(p)
                             << " w.r.t bisector ["
@@ -383,7 +381,10 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2<K> > c
       
     // Degenerate bisector?   
     if ( certainly( are_edges_parallelC2(e0,e1) ) )
-    { 
+    {
+      Line_2 l0 = validate(compute_normalized_line_ceoffC2(e0)) ;
+      Line_2 l1 = validate(compute_normalized_line_ceoffC2(e1)) ;
+
       CGAL_STSKEL_TRAITS_TRACE("Bisector is not angular." ) ;
       
       // b01 is degenerate so we don't have an *angular bisector* but a *perpendicular* bisector.
@@ -413,17 +414,25 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2<K> > c
     }
     else // Valid (non-degenerate) angular bisector
     {
+      Line_2 l0 = validate(compute_line_ceoffC2(e0)) ;
+      Line_2 l1 = validate(compute_line_ceoffC2(e1)) ;
+
       // Scale distance from to the lines.
       FT sd_p_l0 = validate(l0.a() * p.x() + l0.b() * p.y() + l0.c()) ;
       FT sd_p_l1 = validate(l1.a() * p.x() + l1.b() * p.y() + l1.c()) ;
-      
+      FT r0_2 = CGAL::square(l0.a())+CGAL::square(l0.b());
+      FT r1_2 = CGAL::square(l1.a())+CGAL::square(l1.b());
+
+      typedef typename CGAL::Root_of_traits<FT>::Root_of_2 RO_2;
+
       CGAL_STSKEL_TRAITS_TRACE("sd_p_l1=" << n2str(sd_p_l1) ) ;
       CGAL_STSKEL_TRAITS_TRACE("sd_p_l0=" << n2str(sd_p_l0) ) ;
-        
-      Uncertain<bool> equal = CGAL_NTS certified_is_equal(sd_p_l0,sd_p_l1) ;   
-      if ( is_certain(equal) )
+
+      Uncertain< CGAL::Comparison_result > sd_p_cmp_res = CGAL::compare(RO_2(sd_p_l0) * CGAL::make_sqrt(r1_2),
+                                                                        RO_2(sd_p_l1) * CGAL::make_sqrt(r0_2));
+      if ( is_certain(sd_p_cmp_res) )
       {
-        if ( equal )
+        if ( sd_p_cmp_res == EQUAL )
         {
           CGAL_STSKEL_TRAITS_TRACE("Point is exactly at bisector"); 
           
@@ -437,16 +446,14 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2<K> > c
             // Reflex bisector?
             if ( smaller )
             {
-              rResult = CGAL_NTS certified_is_smaller(sd_p_l0,sd_p_l1) ? ON_NEGATIVE_SIDE 
-                                                                       : ON_POSITIVE_SIDE ;
-                                                                      
+              rResult = (sd_p_cmp_res==SMALLER) ? ON_NEGATIVE_SIDE : ON_POSITIVE_SIDE;
+
               CGAL_STSKEL_TRAITS_TRACE("\nEvent point is at " << rResult << " side of reflex bisector" ) ;
             }
             else
             {
-              rResult = CGAL_NTS certified_is_larger (sd_p_l0,sd_p_l1) ? ON_NEGATIVE_SIDE
-                                                                       : ON_POSITIVE_SIDE ; 
-                              
+              rResult = (sd_p_cmp_res==LARGER) ? ON_NEGATIVE_SIDE : ON_POSITIVE_SIDE ;
+
               CGAL_STSKEL_TRAITS_TRACE("\nEvent point is at " << rResult << " side of convex bisector" ) ;
             }
           }
