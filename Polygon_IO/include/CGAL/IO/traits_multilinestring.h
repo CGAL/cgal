@@ -29,7 +29,7 @@ namespace geometry{
 namespace traits{
 // WKT traits for MultiLinestring
 template< typename R >
-struct tag<CGAL::Geometry_container<R, multi_linestring_tag> >
+struct tag<CGAL::internal::Geometry_container<R, multi_linestring_tag> >
 { typedef multi_linestring_tag type; };
 
 }//end traits

@@ -25,6 +25,7 @@
 #include <string>
 
 #include <boost/geometry.hpp>
+#include <boost/foreach.hpp>
 
 #include <CGAL/Point_2.h>
 #include <CGAL/Polygon_2.h>
@@ -41,11 +42,11 @@
 //! \todo Should they be in a namespace CGAL::IO or just CGAL ?
 namespace CGAL{
 //! \ingroup PkgPolygonIO
-//! \brief read_point_WKT reads the content of a .wkt file into a `Point`.
+//! \brief read_point_WKT reads the content of a .wkt file into a `Point` if possible.
 //! 
 //! A `Point` must inherit `CGAL::Point_2`.
 //! 
-//! \relates CGAL::Point_2
+//! \see CGAL::Point_2
 template<typename Point>
 std::istream&
 read_point_WKT( std::istream& in,
@@ -74,23 +75,22 @@ read_point_WKT( std::istream& in,
 }
 
 //! \ingroup PkgPolygonIO
-//! \brief read_multipoint_WKT reads the content of a .wkt file into a `MultiPoint`.
+//! \brief read_multipoint_WKT reads the content of a .wkt file into a `MultiPoint` if possible.
 //! 
-//! A `MultiPoint` must be a model of `RandomAccessIterator` of `CGAL::Point_2`.
-//! \see `CGAL::Geometry_container`
+//! A `MultiPoint` must be a model of `RandomAccessRange` of `CGAL::Point_2`.
 //! 
-//! \relates CGAL::Point_2
-template<typename Multipoint>
+//! \see CGAL::Point_2
+template<typename MultiPoint>
 std::istream&
-read_multipoint_WKT( std::istream& in,
-                     Multipoint& multipoint)
+read_multi_point_WKT( std::istream& in,
+                     MultiPoint& mp)
 {
   if(!in)
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return in;  
   }
-  
+  internal::Geometry_container<MultiPoint, boost::geometry::multi_point_tag> gc(mp);
   std::string line;
   while(std::getline(in, line))
   {
@@ -100,7 +100,7 @@ read_multipoint_WKT( std::istream& in,
     
     if(type.substr(0, 10).compare("MULTIPOINT")==0)
     {
-      boost::geometry::read_wkt(line, multipoint);
+      boost::geometry::read_wkt(line, gc);
       break;
     }
   }
@@ -110,23 +110,21 @@ read_multipoint_WKT( std::istream& in,
 
 //! \ingroup PkgPolygonIO
 //! \brief read_linestring_WKT reads the content of a .wkt file into 
-//! a `Linestring`.
+//! a `Linestring` if possible.
 //!
-//! A `Linestring` must be a model of `RandomAccessIterator` of `CGAL::Point_2`.
-//! \see `CGAL::Geometry_container`
-
-//! \relates CGAL::Point_2
-template<typename Linestring>
+//! A `Linestring` must be a model of `RandomAccessRange` of `CGAL::Point_2`.
+//! \see CGAL::Point_2
+template<typename LineString>
 std::istream&
 read_linestring_WKT( std::istream& in,
-                     Linestring& polyline)
+                     LineString& polyline)
 {
   if(!in)
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return in;  
   }
-  
+  internal::Geometry_container<LineString, boost::geometry::linestring_tag> gc(polyline);
   std::string line;
   while(std::getline(in, line))
   {
@@ -136,7 +134,7 @@ read_linestring_WKT( std::istream& in,
     
     if(type.substr(0, 10).compare("LINESTRING")==0)
     {
-      boost::geometry::read_wkt(line, polyline);
+      boost::geometry::read_wkt(line, gc);
       break;
     }
   }
@@ -145,23 +143,26 @@ read_linestring_WKT( std::istream& in,
 
 //! \ingroup PkgPolygonIO
 //! \brief read_linestring_WKT reads the content of a .wkt file into 
-//! a `Multilinestring`.
+//! a `MultiLineString` if possible.
 //!
-//! A `Multilinestring` must be a model of `RandomAccessIterator` of `Linestring`.
+//! A `MultiLineString` must be a model of `RandomAccessRange` of `Linestring`.
 //! 
-//! \see `CGAL::Geometry_container`
-//! \relates CGAL::Point_2
-template<typename Multilinestring>
+//! \see CGAL::Point_2
+template<typename MultiLineString>
 std::istream&
-read_multilinestring_WKT( std::istream& in,
-                          Multilinestring& mls)
+read_multi_linestring_WKT( std::istream& in,
+                          MultiLineString& mls)
 {
   if(!in)
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return in;  
   }
+  typedef typename MultiLineString::value_type PointRange;
+  typedef internal::Geometry_container<PointRange, boost::geometry::linestring_tag> LineString;
   
+  std::vector<LineString> pr_range;
+  internal::Geometry_container<std::vector<LineString>, boost::geometry::multi_linestring_tag> gc(pr_range);
   std::string line;
   while(std::getline(in, line))
   {
@@ -171,19 +172,23 @@ read_multilinestring_WKT( std::istream& in,
     
     if(type.substr(0, 15).compare("MULTILINESTRING")==0)
     {
-      boost::geometry::read_wkt(line, mls);
+      boost::geometry::read_wkt(line, gc);
       break;
     }
+  }
+  BOOST_FOREACH(LineString& ls, gc)
+  {
+    mls.push_back(*ls.range);
   }
   return in;  
 }
 
 //! \ingroup PkgPolygonIO
-//! \brief read_polygon_WKT reads the content of a .wkt file into a `Polygon`.
+//! \brief read_polygon_WKT reads the content of a .wkt file into a `Polygon` if possible.
 //! 
 //! A `Polygon` must inherit `CGAL::General_polygon_with_holes_2`.
 //! 
-//! \relates CGAL::General_polygon_with_holes_2
+//! \see CGAL::General_polygon_with_holes_2
 template<typename Polygon>
 std::istream&
 read_polygon_WKT( std::istream& in,
@@ -214,25 +219,23 @@ read_polygon_WKT( std::istream& in,
 
 //! \ingroup PkgPolygonIO
 //! \brief read_multipolygon_WKT reads the content of a .wkt file into 
-//! a `Multipolygon`.
+//! a `Multipolygon` if possible.
 //!
-//! A `Multipolygon` must be a model of `RandomAccessIterator` of `CGAL::General_polygon_with_holes_2`.
-//! \see `CGAL::Geometry_container`
-
-//! \relates CGAL::General_polygon_with_holes_2
+//! A `Multipolygon` must be a model of `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`.
+//! \see CGAL::General_polygon_with_holes_2
 
 template<typename MultiPolygon>
 std::istream&
-read_multipolygon_WKT( std::istream& in,
-                       MultiPolygon& polygons
-                       )
+read_multi_polygon_WKT( std::istream& in,
+                        MultiPolygon& polygons
+                        )
 {
   if(!in)
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return in;  
   }
-  
+  internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag> gc(polygons);
   std::string line;
   while(std::getline(in, line))
   {
@@ -242,28 +245,21 @@ read_multipolygon_WKT( std::istream& in,
     
     if(type.substr(0, 12).compare("MULTIPOLYGON")==0)
     {
-      boost::geometry::read_wkt(line, polygons);
+      boost::geometry::read_wkt(line, gc);
       break;
     }
   }
   return in;  
 }
+
 //! \ingroup PkgPolygonIO
-//! \brief write_WKT writes the content of `type` into a .WKT file.
-//! `Type` must have appropriate boost::geometry::traits available.
-//! Such traits are already available in CGAL for the following type :
-//! - `CGAL::Point_2` as WKT Point
-//! - `CGAL::Geometry_container<CGAL::Point_2>` as WKT Linestring
-//! - `CGAL::Polygon_with_holes_2` as WKT Polygon
-//! - `CGAL::Geometry_container<CGAL::Point_2>` as WKT Multipoint
-//! - `CGAL::Geometry_container<CGAL::Geometry_container<CGAL::Point_2>>` as WKT Multilinestring
-//! - `CGAL::Geometry_container<CGAL::Polygon_with_holes_2>` as WKT Multipolygon
-//! 
-//! \relates CGAL::General_polygon_with_holes_2
-template<typename Type>
+//! \brief write_point_WKT writes `point` into a .WKT file.
+//! `Point` must be a `CGAL::Point_2`
+//! \see CGAL::Point_2
+template<typename Point>
 std::ostream&
-write_WKT( std::ostream& out,
-           const Type& type
+write_point_WKT( std::ostream& out,
+           const Point& point
            )
 {
   if(!out)
@@ -271,10 +267,119 @@ write_WKT( std::ostream& out,
     std::cerr << "Error: cannot open file" << std::endl;
     return out;
   }
-  out<<boost::geometry::wkt(type)<<std::endl;
+  out<<boost::geometry::wkt(point)<<std::endl;
   return out;
 }
 
+//! \ingroup PkgPolygonIO
+//! \brief write_point_WKT writes `poly` into a .WKT file.
+//! `Polygon` must be a `CGAL::General_polygon_with_holes_2`
+//! \see `CGAL::General_polygon_with_holes_2`
+template<typename Polygon>
+std::ostream&
+write_polygon_WKT( std::ostream& out,
+           const Polygon& poly
+           )
+{
+  if(!out)
+  {
+    std::cerr << "Error: cannot open file" << std::endl;
+    return out;
+  }
+  out<<boost::geometry::wkt(poly)<<std::endl;
+  return out;
+}
 
+//! \ingroup PkgPolygonIO
+//! \brief write_linestring_WKT writes the content of `ls` 
+//! into a WKT file.
+//! `LineString` must be a `RandomAccessRange` of `CGAL::Point_2`. 
+//!\see `CGAL::Point_2`
+template<typename LineString>
+std::ostream&
+write_linestring_WKT( std::ostream& out,
+            LineString ls
+           )
+{
+  if(!out)
+  {
+    std::cerr << "Error: cannot open file" << std::endl;
+    return out;
+  }
+  internal::Geometry_container<LineString, boost::geometry::linestring_tag> gc(ls);
+  out<<boost::geometry::wkt(gc)<<std::endl;
+  return out;
+}
+
+//! \ingroup PkgPolygonIO
+//! \brief write_multi_point_WKT writes the content of `mp` 
+//! into a WKT file.
+//! `MultiPoint` must be a `RandomAccessRange` of `CGAL::Point_2`. 
+//!\see `CGAL::Point_2`
+template<typename MultiPoint>
+std::ostream&
+write_multi_point_WKT( std::ostream& out,
+            MultiPoint& mp
+           )
+{
+  if(!out)
+  {
+    std::cerr << "Error: cannot open file" << std::endl;
+    return out;
+  }
+  internal::Geometry_container<MultiPoint, boost::geometry::multi_point_tag> gc(mp);
+  out<<boost::geometry::wkt(gc)<<std::endl;
+  return out;
+}
+
+//! \ingroup PkgPolygonIO
+//! \brief write_multi_polygon_WKT writes the content of `polygons` 
+//! into a WKT file.
+//! `multiPolygon` must be a `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`. 
+//!\see `CGAL::General_polygon_with_holes_2`
+template<typename MultiPolygon>
+std::ostream&
+write_multi_polygon_WKT( std::ostream& out,
+            MultiPolygon& polygons
+           )
+{
+  if(!out)
+  {
+    std::cerr << "Error: cannot open file" << std::endl;
+    return out;
+  }
+  internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag> gc(polygons);
+  out<<boost::geometry::wkt(gc)<<std::endl;
+  return out;
+}
+
+//! \ingroup PkgPolygonIO
+//! \brief write_multi_linestring_WKT writes the content of `mls` 
+//! into a WKT file.
+//! `MultiLineString` must be a `RandomAccessRange` of `LineString`. 
+//! \see `CGAL::write_linestring_WKT`
+template<typename MultiLineString>
+std::ostream&
+write_multi_linestring_WKT( std::ostream& out,
+            MultiLineString& mls
+           )
+{
+  if(!out)
+  {
+    std::cerr << "Error: cannot open file" << std::endl;
+    return out;
+  }
+  typedef typename MultiLineString::value_type PointRange;
+  typedef internal::Geometry_container<PointRange, boost::geometry::linestring_tag> LineString;
+  std::vector<LineString> pr_range;
+  BOOST_FOREACH(PointRange& pr, mls)
+  {
+    LineString ls(pr);
+    pr_range.push_back(ls);
+  }
+  internal::Geometry_container<std::vector<LineString>, boost::geometry::multi_linestring_tag> gc(pr_range);
+  out<<boost::geometry::wkt(gc)<<std::endl;
+  return out;
+}
 }//end CGAL
 #endif

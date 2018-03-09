@@ -16,11 +16,11 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 int main()
 {
   typedef CGAL::Point_2<Kernel> Point;
-  typedef CGAL::Geometry_container<std::vector<Point>, boost::geometry::linestring_tag> Linestring;
+  typedef std::vector<Point> Linestring;
   typedef CGAL::Polygon_with_holes_2<Kernel> Polygon;
-  typedef CGAL::Geometry_container<std::vector<Point>, boost::geometry::multi_point_tag> MultiPoint;
-  typedef CGAL::Geometry_container<std::vector<Linestring>, boost::geometry::multi_linestring_tag> MultiLinestring;
-  typedef CGAL::Geometry_container<std::vector<Polygon>, boost::geometry::multi_polygon_tag> MultiPolygon;
+  typedef std::vector<Point> MultiPoint;
+  typedef std::vector<Linestring> MultiLinestring;
+  typedef std::vector<Polygon> MultiPolygon;
   
   Point p;
   {
@@ -46,21 +46,21 @@ int main()
   {
     MultiPoint pees;
     std::ifstream in("data/multipoint.wkt");
-    CGAL::read_multipoint_WKT(in, pees);
+    CGAL::read_multi_point_WKT(in, pees);
     in.close();
     CGAL_assertion(pees.size() == 4);
   }
   {
     std::ifstream in("data/multilinestring.wkt");
     MultiLinestring mls;
-    CGAL::read_multilinestring_WKT(in, mls);
+    CGAL::read_multi_linestring_WKT(in, mls);
     in.close();
     CGAL_assertion(mls.size() == 2);
   }
   {
     MultiPolygon polies;
     std::ifstream in("data/multipolygon.wkt");
-    CGAL::read_multipolygon_WKT(in, polies);
+    CGAL::read_multi_polygon_WKT(in, polies);
     in.close();
     CGAL_assertion(polies.size() == 2);
   }

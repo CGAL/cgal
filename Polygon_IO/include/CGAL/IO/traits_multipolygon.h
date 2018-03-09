@@ -29,7 +29,7 @@ namespace geometry{
 namespace traits{
 // WKT traits for MultiPolygon
 template< typename R >
-struct tag<CGAL::Geometry_container<R, multi_polygon_tag> >
+struct tag<CGAL::internal::Geometry_container<R, multi_polygon_tag> >
 { typedef multi_polygon_tag type; };
 
 }//end traits
