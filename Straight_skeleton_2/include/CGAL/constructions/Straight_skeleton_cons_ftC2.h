@@ -35,12 +35,24 @@ Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2
                                                                      , Segment_2<K> const& e1
                                                                      , Segment_2<K> const& e2
                                                                      );
-#ifdef CGAL_USE_CORE  
+#ifdef CGAL_USE_CORE
+
+#ifdef CGAL_USE_GMPXX
+inline CORE::BigFloat to_BigFloat( mpq_class const& n )
+{
+  return CORE::BigFloat( CORE::BigRat(n.get_mpq_t()) );
+}
+#else
+inline CORE::BigFloat to_BigFloat( CGAL::Gmpq const& n )
+{
+  return CORE::BigFloat( CORE::BigRat(n.mpq()) );
+}
+#endif
 
 template<class NT>
 inline CORE::BigFloat to_BigFloat( NT const& n )
 {
-  return CORE::BigFloat( CGAL::to_double(n) ) ;
+  return to_BigFloat( CGAL::exact(n) );
 }
 
 template<>
