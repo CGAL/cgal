@@ -24,6 +24,7 @@
 
 
 #include <CGAL/config.h>
+#include <CGAL/MP_Float.h>
 
 #ifdef CGAL_USE_CORE
 #  include <CGAL/CORE_BigFloat.h>
@@ -269,12 +270,10 @@ inline std::string newn2str( char const* name, VH const& v, Triedge const& aTrie
 #endif
 
 #ifdef CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE
-bool sEnableTraitsTrace = false ;
-#  define CGAL_STSKEL_TRAITS_ENABLE_TRACE sEnableTraitsTrace = true ;
-#  define CGAL_STSKEL_TRAITS_ENABLE_TRACE_IF(cond) if ((cond)) sEnableTraitsTrace = true ;
-#  define CGAL_STSKEL_TRAITS_DISABLE_TRACE sEnableTraitsTrace = false;
+#  define CGAL_STSKEL_TRAITS_ENABLE_TRACE 1
+#  define CGAL_STSKEL_TRAITS_ENABLE_TRACE_IF(cond) if ((cond))
+#  define CGAL_STSKEL_TRAITS_DISABLE_TRACE 0
 #  define CGAL_STSKEL_TRAITS_TRACE(m) \
-     if ( sEnableTraitsTrace ) \
      { \
        std::ostringstream ss ; \
        ss << m ; \
@@ -282,9 +281,9 @@ bool sEnableTraitsTrace = false ;
        Straight_skeleton_traits_external_trace(s); \
      }
 #else
-#  define CGAL_STSKEL_TRAITS_ENABLE_TRACE
+#  define CGAL_STSKEL_TRAITS_ENABLE_TRACE 0
 #  define CGAL_STSKEL_TRAITS_ENABLE_TRACE_IF(cond)
-#  define CGAL_STSKEL_TRAITS_DISABLE_TRACE
+#  define CGAL_STSKEL_TRAITS_DISABLE_TRACE 1
 #  define CGAL_STSKEL_TRAITS_TRACE(m)
 #endif
 
@@ -350,8 +349,6 @@ template<> char const* kernel_type<CORE::Expr>          () { return "Expr" ;    
 #define CGAL_STSKEL_ASSERT_CONSTRUCTION_RESULT(expr,K,cons,error)
 
 #endif
-
-#undef CGAL_STSKEL_ENABLE_TRACE
 
 #endif // CGAL_STRAIGHT_SKELETON_DEBUG_H //
 // EOF //

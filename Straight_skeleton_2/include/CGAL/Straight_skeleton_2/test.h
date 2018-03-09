@@ -108,6 +108,11 @@ inline bool is_possibly_inexact_distance_clearly_not_zero ( Lazy_exact_nt<NT> co
 }  
 #endif
 
+template<class NT>
+inline bool is_possibly_inexact_distance_clearly_not_zero ( NT const& n )
+{
+  return is_possibly_inexact_distance_clearly_not_zero( to_double(n), 1e-8 ) ;
+}
 
 inline bool is_possibly_inexact_distance_clearly_not_zero ( double n )
 {
