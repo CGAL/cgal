@@ -229,6 +229,77 @@ optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const& e )
   return cgal_make_optional( finite, K().construct_line_2_object()(a,b,c) ) ;
 }
 
+template<class K>
+optional< Line_2<K> > compute_line_ceoffC2( Segment_2<K> const& e )
+{
+  bool finite = true ;
+
+  typedef typename K::FT FT ;
+
+  FT a (0.0),b (0.0) ,c(0.0)  ;
+
+  if(e.source().y() == e.target().y())
+  {
+    a = 0 ;
+    if(e.target().x() > e.source().x())
+    {
+      b = 1;
+      c = -e.source().y();
+    }
+    else if(e.target().x() == e.source().x())
+    {
+      b = 0;
+      c = 0;
+    }
+    else
+    {
+      b = -1;
+      c = e.source().y();
+    }
+
+    CGAL_STSKEL_TRAITS_TRACE("Line coefficients for HORIZONTAL line:\n"
+                            << s2str(e)
+                            << "\na="<< n2str(a) << ", b=" << n2str(b) << ", c=" << n2str(c)
+                           ) ;
+  }
+  else if(e.target().x() == e.source().x())
+  {
+    b = 0;
+    if(e.target().y() > e.source().y())
+    {
+      a = -1;
+      c = e.source().x();
+    }
+    else if (e.target().y() == e.source().y())
+    {
+      a = 0;
+      c = 0;
+    }
+    else
+    {
+      a = 1;
+      c = -e.source().x();
+    }
+
+    CGAL_STSKEL_TRAITS_TRACE("Line coefficients for VERTICAL line:\n"
+                            << s2str(e)
+                            << "\na="<< n2str(a) << ", b=" << n2str(b) << ", c=" << n2str(c)
+                           ) ;
+  }
+  else
+  {
+    a = e.source().y() - e.target().y();
+    b = e.target().x() - e.source().x();
+    c = -e.source().x()*a - e.source().y()*b;
+  }
+
+  if ( finite )
+    if ( !CGAL_NTS is_finite(a) || !CGAL_NTS is_finite(b) || !CGAL_NTS is_finite(c) )
+      finite = false ;
+
+  return cgal_make_optional( finite, K().construct_line_2_object()(a,b,c) ) ;
+}
+
 template<class FT>
 Rational<FT> squared_distance_from_point_to_lineC2( FT const& px, FT const& py, FT const& sx, FT const& sy, FT const& tx, FT const& ty )
 {
@@ -311,9 +382,9 @@ optional< Rational< typename K::FT> > compute_normal_offset_lines_isec_timeC2 ( 
 
   bool ok = false ;
   
-  Optional_line_2 l0 = compute_normalized_line_ceoffC2(tri->e0()) ;
-  Optional_line_2 l1 = compute_normalized_line_ceoffC2(tri->e1()) ;
-  Optional_line_2 l2 = compute_normalized_line_ceoffC2(tri->e2()) ;
+  Optional_line_2 l0 = compute_line_ceoffC2(tri->e0()) ;
+  Optional_line_2 l1 = compute_line_ceoffC2(tri->e1()) ;
+  Optional_line_2 l2 = compute_line_ceoffC2(tri->e2()) ;
 
   if ( l0 && l1 && l2 )
   {
@@ -323,14 +394,15 @@ optional< Rational< typename K::FT> > compute_normal_offset_lines_isec_timeC2 ( 
          +(l2->b()*l1->a()*l0->c())
          +(l1->b()*l0->a()*l2->c())
          -(l0->b()*l1->a()*l2->c());
-      
-    den = (-l2->a()*l1->b())
-         +( l2->a()*l0->b())
-         +( l2->b()*l1->a())
-         -( l2->b()*l0->a())
-         +( l1->b()*l0->a())
-         -( l0->b()*l1->a());
-         
+
+    FT r0 = CGAL_SS_i :: inexact_sqrt(square(l0->a())+square(l0->b()));
+    FT r1 = CGAL_SS_i :: inexact_sqrt(square(l1->a())+square(l1->b()));
+    FT r2 = CGAL_SS_i :: inexact_sqrt(square(l2->a())+square(l2->b()));
+
+    den = r0 * (l2->b()*l1->a() - l2->a()*l1->b()) +
+          r1 * (l2->a()*l0->b() - l2->b()*l0->a()) +
+          r2 * (l1->b()*l0->a() - l0->b()*l1->a());
+
     ok = CGAL_NTS is_finite(num) && CGAL_NTS is_finite(den);     
   }
   
@@ -577,23 +649,33 @@ optional< Point_2<K> > construct_normal_offset_lines_isecC2 ( intrusive_ptr< Tri
   
   FT x(0.0),y(0.0) ;
   
-  Optional_line_2 l0 = compute_normalized_line_ceoffC2(tri->e0()) ;
-  Optional_line_2 l1 = compute_normalized_line_ceoffC2(tri->e1()) ;
-  Optional_line_2 l2 = compute_normalized_line_ceoffC2(tri->e2()) ;
+  Optional_line_2 l0 = compute_line_ceoffC2(tri->e0()) ;
+  Optional_line_2 l1 = compute_line_ceoffC2(tri->e1()) ;
+  Optional_line_2 l2 = compute_line_ceoffC2(tri->e2()) ;
 
   bool ok = false ;
   
   if ( l0 && l1 && l2 )
   {
-    FT den = l0->a()*l2->b() - l0->a()*l1->b() - l1->a()*l2->b() + l2->a()*l1->b() + l0->b()*l1->a() - l0->b()*l2->a();
-  
+    FT r0 = CGAL_SS_i :: inexact_sqrt(square(l0->a())+square(l0->b()));
+    FT r1 = CGAL_SS_i :: inexact_sqrt(square(l1->a())+square(l1->b()));
+    FT r2 = CGAL_SS_i :: inexact_sqrt(square(l2->a())+square(l2->b()));
+
+    FT den = r0 * ( l2->a()*l1->b() - l1->a()*l2->b()) +
+             r1 * ( l0->a()*l2->b() - l0->b()*l2->a()) +
+             r2 * ( l0->b()*l1->a() - l0->a()*l1->b());
+
     CGAL_STSKEL_TRAITS_TRACE("den=" << n2str(den) )
   
     if ( ! CGAL_NTS certified_is_zero(den) ) 
     {
-      FT numX = l0->b()*l2->c() - l0->b()*l1->c() - l1->b()*l2->c() + l2->b()*l1->c() + l1->b()*l0->c() - l2->b()*l0->c();
-      FT numY = l0->a()*l2->c() - l0->a()*l1->c() - l1->a()*l2->c() + l2->a()*l1->c() + l1->a()*l0->c() - l2->a()*l0->c();
-    
+      FT numX = r0 * (l2->b()*l1->c() - l1->b()*l2->c() ) +
+                r1 * ( l0->b()*l2->c() - l2->b()*l0->c()) +
+                r2 * (  l1->b()*l0->c() - l0->b()*l1->c() );
+      FT numY = r0 * (l2->a()*l1->c() - l1->a()*l2->c() ) +
+                r1 * ( l0->a()*l2->c() - l2->a()*l0->c() ) +
+                r2 * ( l1->a()*l0->c()- l0->a()*l1->c() );
+
       if ( CGAL_NTS is_finite(den) && CGAL_NTS is_finite(numX) && CGAL_NTS is_finite(numY)  )
       {
         ok = true ;
