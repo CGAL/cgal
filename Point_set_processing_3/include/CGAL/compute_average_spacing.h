@@ -31,6 +31,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/assertions.h>
+#include <CGAL/function.h>
 
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -42,6 +43,7 @@
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>
+#include <tbb/atomic.h>
 #define TBB_IMPLEMENT_CPP0X 1
 #include <tbb/compat/thread>
 #endif // CGAL_LINKED_WITH_TBB
@@ -138,22 +140,21 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
 
   };
 
-  template <typename Callback>
   class Callback_caller
   {
-    const Callback& callback;
+    const cpp11::function<bool(double)>& callback;
     tbb::atomic<std::size_t>& advancement;
     tbb::atomic<bool>& interrupted;
     std::size_t size;
     
   public:
-    Callback_caller (const Callback& callback,
+    Callback_caller (const cpp11::function<bool(double)>& callback,
                      tbb::atomic<bool>& interrupted,
                      tbb::atomic<std::size_t>& advancement,
                      std::size_t size)
       : callback (callback)
-      , interrupted (interrupted)
       , advancement (advancement)
+      , interrupted (interrupted)
       , size (size)
     { }
 
@@ -204,6 +205,7 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
    \cgalNamedParamsBegin
      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
      If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{callback} an instance of `cpp11::function<bool(double)>`\cgalParamEnd
      \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 
@@ -231,12 +233,12 @@ compute_average_spacing(
   // basic geometric types
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
-  typedef typename Point_set_processing_3::GetCallback<PointRange, NamedParameters>::type Callback;
 
   typedef typename Kernel::Point_3 Point;
 
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  const Callback& callback = choose_param(get_param(np, internal_np::callback), Callback());
+  const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+                                                               cpp11::function<bool(double)>());
   
   // types for K nearest neighbors search structure
   typedef typename Kernel::FT FT;
@@ -270,11 +272,17 @@ compute_average_spacing(
 #else
    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
    {
-     tbb::atomic<std::size_t> advancement = 0;
-     tbb::atomic<bool> interrupted = false;
+     // tbb::atomic only has default constructor, initialization done in two steps
+     tbb::atomic<std::size_t> advancement;
+     advancement = 0;
+     tbb::atomic<bool> interrupted;
+     interrupted = false;
      
-     internal::Callback_caller<Callback> callback_caller (callback, interrupted, advancement, kd_tree_points.size());
-     std::thread callback_thread (callback_caller);
+     internal::Callback_caller callback_caller (callback, interrupted, advancement, kd_tree_points.size());
+     std::thread* callback_thread;
+
+     if (callback)
+       callback_thread = new std::thread (callback_caller);
      
      std::vector<FT> spacings (kd_tree_points.size (), -1);
      CGAL::internal::Compute_average_spacings<Kernel, Tree>
@@ -287,8 +295,12 @@ compute_average_spacing(
          sum_spacings += spacings[i];
          ++ nb;
        }
-     
-     callback_thread.join();
+
+     if (callback)
+     {
+       callback_thread->join();
+       delete callback_thread;
+     }
    }
    else
 #endif
@@ -298,7 +310,7 @@ compute_average_spacing(
          sum_spacings += internal::compute_average_spacing<Kernel,Tree>(
            get(point_map,*it),
            tree,k);
-         if (!callback ((nb+1) / double(kd_tree_points.size())))
+         if (callback && !callback ((nb+1) / double(kd_tree_points.size())))
          {
            ++ nb;
            break;
