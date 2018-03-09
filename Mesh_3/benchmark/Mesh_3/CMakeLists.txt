@@ -52,12 +52,12 @@ if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
 
   # Activate concurrency ? (turned OFF by default)
-  option(ACTIVATE_CONCURRENT_MESH_3
+  option(CGAL_ACTIVATE_CONCURRENT_MESH_3
     "Activate parallelism in Mesh_3"
     OFF)
     
   # And add -DCGAL_CONCURRENT_MESH_3 if that option is ON
-  if( ACTIVATE_CONCURRENT_MESH_3 )
+  if( CGAL_ACTIVATE_CONCURRENT_MESH_3 )
     add_definitions( -DCGAL_CONCURRENT_MESH_3 )
     find_package( TBB REQUIRED )	
   else()
