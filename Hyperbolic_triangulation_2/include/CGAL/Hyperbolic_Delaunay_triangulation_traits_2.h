@@ -32,6 +32,7 @@
 #include <CGAL/basic_constructions_2.h>
 #include <CGAL/distance_predicates_2.h>
 #include <CGAL/internal/Exact_complex.h>
+#include <CGAL/determinant.h>
 #include "boost/tuple/tuple.hpp"
 #include "boost/variant.hpp"
 
@@ -120,51 +121,48 @@ private:
 
 public:
 
-	typedef typename Kernel::FT          								FT;
-	typedef typename Kernel::RT 										RT;
-	typedef typename Kernel::Kernel_base 								Kernel_base;
-	typedef typename Kernel::Point_2     								Point_2;
-	typedef Point_2                 									Point;
-	typedef Point_2 													Voronoi_point;
-	typedef typename Kernel::Circle_2    								Circle_2;
-	typedef typename Kernel::Line_2      								Euclidean_line_2;
-	typedef boost::variant<Circle_2,Euclidean_line_2>    				Euclidean_circle_or_line_2; 
-	typedef Self::Circular_arc_2										Circular_arc_2;
-	typedef typename Kernel::Segment_2                       			Euclidean_segment_2; //only used internally here
-	typedef boost::variant<Circular_arc_2, Euclidean_segment_2>  		Hyperbolic_segment_2;
+	typedef typename Kernel::FT          								        FT;
+	typedef typename Kernel::RT 										            RT;
+	typedef typename Kernel::Kernel_base 								        Kernel_base;
+	typedef typename Kernel::Point_2     								        Point_2;
+	typedef Point_2                 									          Point;
+	typedef Point_2 													                  Voronoi_point;
+	typedef typename Kernel::Circle_2    								        Circle_2;
+	typedef typename Kernel::Line_2      								        Euclidean_line_2;
+	typedef boost::variant<Circle_2,Euclidean_line_2>    			  Euclidean_circle_or_line_2; 
+	typedef Self::Circular_arc_2										            Circular_arc_2;
+	typedef typename Kernel::Segment_2                       	  Euclidean_segment_2; //only used internally here
+	typedef boost::variant<Circular_arc_2, Euclidean_segment_2>	Hyperbolic_segment_2;
 
-	typedef typename Kernel::Triangle_2 								Triangle_2;	
-	//typedef typename Kernel::Bbox_2 									Bbox_2;
+	typedef typename Kernel::Triangle_2 								        Triangle_2;	
 	typedef typename Kernel::Orientation_2               				Orientation_2;
 	typedef typename Kernel::Side_of_oriented_circle_2   				Side_of_oriented_circle_2;
 
 	// only kept for demo to please T2graphicsitems
-	typedef Euclidean_segment_2  										Line_segment_2;
-	typedef Hyperbolic_segment_2 										Segment_2;
+	typedef Euclidean_segment_2  										            Line_segment_2;
+	typedef Hyperbolic_segment_2 										            Segment_2;
 
 	typedef typename Kernel::Compare_x_2                				Compare_x_2;
 	typedef typename Kernel::Compare_y_2                				Compare_y_2;
 
 	typedef typename Kernel::Less_x_2                   				Less_x_2;
-  	typedef typename Kernel::Less_y_2                   				Less_y_2;
+  	typedef typename Kernel::Less_y_2                   			Less_y_2;
 
   	// The objects Ray_2, Iso_rectangle_2 and Line_2 are needed by the CGAL::Qt::PainterOstream
-  	typedef typename Kernel::Direction_2 								Direction_2;
-  	typedef typename Kernel::Vector_2 									Vector_2;
-  	typedef typename Kernel::Ray_2 										Ray_2;
-  	typedef typename Kernel::Iso_rectangle_2 							Iso_rectangle_2;
-  	typedef Euclidean_line_2 											Line_2;
+  	typedef typename Kernel::Direction_2 								      Direction_2;
+  	typedef typename Kernel::Vector_2 									      Vector_2;
+  	typedef typename Kernel::Ray_2 										        Ray_2;
+  	typedef typename Kernel::Iso_rectangle_2 							    Iso_rectangle_2;
+  	typedef Euclidean_line_2 											            Line_2;
 
 	// the following types are only used internally in this traits class, 
 	// so they need not be documented, and they don't need _object()
 	typedef typename Kernel::Collinear_2                				Euclidean_collinear_2;
 	typedef typename Kernel::Construct_bisector_2       				Construct_Euclidean_bisector_2;
-	typedef typename Kernel::Construct_midpoint_2  						Construct_Euclidean_midpoint_2;
+	typedef typename Kernel::Construct_midpoint_2  						  Construct_Euclidean_midpoint_2;
 	typedef typename Kernel::Construct_triangle_2       				Construct_triangle_2;
 	typedef typename Kernel::Compare_distance_2        					Compare_distance_2;
-	//typedef typename Kernel::Construct_point_2         					Construct_point_2;
-	typedef typename Kernel::Has_on_bounded_side_2 						Has_on_bounded_side_2;
-
+	typedef typename Kernel::Has_on_bounded_side_2 						  Has_on_bounded_side_2;
 	typedef typename Kernel::Compute_squared_distance_2 				Compute_squared_Euclidean_distance_2;
 		
 
@@ -175,10 +173,13 @@ public:
   {
     
     typedef typename Kernel::Construct_weighted_circumcenter_2 	Construct_weighted_circumcenter_2;
-    typedef typename Kernel::Weighted_point_2 					Weighted_point_2;
-    typedef typename Kernel::Point_2 							Bare_point;
+    typedef typename Kernel::Weighted_point_2 					        Weighted_point_2;
+    typedef typename Kernel::Point_2 							              Bare_point;
 
   public:
+
+  	typedef Hyperbolic_segment_2 result_type;
+
     Construct_hyperbolic_segment_2() 
       {}
     
@@ -198,7 +199,7 @@ public:
       
       Circle_2 circle(center, sq_radius);
       // uncomment!!!
-      assert(circle.has_on_boundary(p) && circle.has_on_boundary(q));
+      //assert(circle.has_on_boundary(p) && circle.has_on_boundary(q));
       
       if(Orientation_2()(p, q, center) == LEFT_TURN) {
         return Circular_arc_2(circle, p, q);
@@ -218,10 +219,11 @@ public:
     construct_segment_2_object() const
   { return Construct_hyperbolic_segment_2(); }
   
-  class Construct_hyperbolic_circumcenter_2
-  {
+  class Construct_hyperbolic_circumcenter_2 {
   public:
     
+  	typedef Voronoi_point 	result_type;
+
     Voronoi_point operator()(Point_2 p, Point_2 q, Point_2 r)
     { 
       Origin o; 
@@ -277,11 +279,6 @@ public:
   Orientation_2
     orientation_2_object() const
   { return Orientation_2();}
-  
-  // Construct_point_2
-  // construct_point_2_object() const {
-  // 	return Construct_point_2();
-  // }
 
   Side_of_oriented_circle_2
     side_of_oriented_circle_2_object() const
@@ -614,21 +611,21 @@ public:
 				if (Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2)) {
 					pair<Point_2, Point_2> res = operator()(c1->circle(), c2->circle());
 					Point_2 p1 = res.first;
-					if (CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1)) {
+					if (p1.x()*p1.x() + p1.y()*p1.y() < FT(1)) {
 						return p1;
 					}
 					Point_2 p2 = res.second;
-					CGAL_assertion(CGAL::sqrt(p2.x()*p2.x() + p2.y()*p2.y()) < FT(1));
+					CGAL_assertion(p2.x()*p2.x() + p2.y()*p2.y() < FT(1));
 					return p2;
 				} else {
 					Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
 					pair<Point_2, Point_2> res = operator()(c1->circle(), ell2->supporting_line());
 					Point_2 p1 = res.first;
-					if (CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1)) {
+					if (p1.x()*p1.x() + p1.y()*p1.y() < FT(1)) {
 						return p1;
 					}
 					Point_2 p2 = res.second;
-					CGAL_assertion(CGAL::sqrt(p2.x()*p2.x() + p2.y()*p2.y()) < FT(1));
+					CGAL_assertion(p2.x()*p2.x() + p2.y()*p2.y() < FT(1));
 					return p2;
 				}
 			} else {
@@ -636,16 +633,16 @@ public:
 				if (Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2)) {
 					pair<Point_2, Point_2> res = operator()(ell1->supporting_line(), c2->circle());
 					Point_2 p1 = res.first;
-					if (CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1)) {
+					if (p1.x()*p1.x() + p1.y()*p1.y() < FT(1)) {
 						return p1;
 					}
 					Point_2 p2 = res.second;
-					CGAL_assertion(CGAL::sqrt(p2.x()*p2.x() + p2.y()*p2.y()) < FT(1));
+					CGAL_assertion(p2.x()*p2.x() + p2.y()*p2.y() < FT(1));
 					return p2;	
 				} else {
 					Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
 					Point_2 p1 = operator()(ell1->supporting_line(), ell2->supporting_line());
-					CGAL_assertion(CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1));
+					CGAL_assertion(p1.x()*p1.x() + p1.y()*p1.y() < FT(1));
 					return p1;
 				}
 			}
@@ -658,154 +655,6 @@ public:
 	construct_intersection_2_object() const {
 		return Construct_intersection_2();
 	}
-
-
-
-	class Construct_inexact_intersection_2 {
-	public:
-		Construct_inexact_intersection_2() {}
-
-		Point_2 operator()(Euclidean_line_2 ell1, Euclidean_line_2 ell2) {
-
-			if (fabs(to_double(ell1.b())) < 1e-16) {
-				std::swap(ell1, ell2);
-			}
-			
-			double a1 = to_double(ell1.a()), b1 = to_double(ell1.b()), c1 = to_double(ell1.c());
-			double a2 = to_double(ell2.a()), b2 = to_double(ell2.b()), c2 = to_double(ell2.c());
-
-			CGAL_assertion(fabs(b1) > 1e-16);
-			if (fabs(b2) > 1e-16) {
-				CGAL_assertion( fabs(a1/b1 - a2/b2) > 1e-16 );
-			}
-
-			double lambda1 = -a1/b1;
-			double mu1     = -c1/b1;
-			double x = ( -c2 - mu1*b2 )/( a2 + lambda1*b2 );
-			double y = lambda1*x + mu1;
-			return Point_2(x, y);
-		}
-
-		std::pair<Point_2, Point_2> operator()(Euclidean_line_2 ell, Circle_2 cc) {
-			double a = to_double(ell.a()), b = to_double(ell.b()), c = to_double(ell.c());
-			double p = to_double(cc.center().x()), q = to_double(cc.center().y()), r2 = to_double(cc.squared_radius());
-			
-			double A, B, C, D;
-			double x1, y1, x2, y2;
-			if (fabs(a) < 1e-16) {
-				y1 = -c/b;  y2 = -c/b;
-				A = b*p;
-				D = -b*b*q*q + b*b*r2 - 2.*b*c*q - c*c;
-				x1 = (A + sqrt(D))/b;
-				x2 = (A - sqrt(D))/b;
-			} else if (fabs(b) < 1e-16) {
-				x1 = -c/a;  x2 = -c/a;
-				A = q*a;
-				D = -a*a*p*p + r2*a*a - 2.*a*c*p - c*c;
-				y1 = (A + sqrt(D))/a;
-				y2 = (A - sqrt(D))/a;
-			} else {
-				A = a*a*q - a*b*p-b*c;
-				C = (-b*q - c)*a*a + b*b*p*a;
-				D = -a*a*( b*b*q*q + 2.*q*(p*a + c)*b - b*b*r2 + (p*p - r2)*a*a + 2.*a*c*p + c*c );
-				B = a*a + b*b;
-
-				y1 = (A + sqrt(D))/B;
-				y2 = (A - sqrt(D))/B;
-				x1 = (C - b*sqrt(D))/(a*(a*a + b*b));
-				x2 = (C + b*sqrt(D))/(a*(a*a + b*b));
-			}
-
-			Point_2 p1(x1, y1);
-			Point_2 p2(x2, y2);
-
-			return make_pair(p1, p2);
-		}
-
-		std::pair<Point_2, Point_2> operator()(Circle_2 c, Euclidean_line_2 ell) {
-			return operator()(ell, c);
-		}
-
-		std::pair<Point_2, Point_2> operator()(Circle_2 c1, Circle_2 c2) {
-			double xa = to_double(c1.center().x()), ya = to_double(c1.center().y());
-			double xb = to_double(c2.center().x()), yb = to_double(c2.center().y());
-			double d2 = (xa-xb)*(xa-xb) + (ya-yb)*(ya-yb);
-			double ra = sqrt(to_double(c1.squared_radius()));
-			double rb = sqrt(to_double(c2.squared_radius()));
-			double K  = sqrt(((ra+rb)*(ra+rb)-d2)*(d2-(ra-rb)*(ra-rb)))/4.; 
-
-			double xbase = (xb + xa)/2. + (xb - xa)*(ra*ra - rb*rb)/d2/2.;
-			double xdiff = 2.*(yb - ya)*K/d2;
-			double x1 = xbase + xdiff;
-			double x2 = xbase - xdiff;
-
-			double ybase = (yb + ya)/2. + (yb - ya)*(ra*ra - rb*rb)/d2/2.;
-			double ydiff = -2.*(xb - xa)*K/d2;
-			double y1 = ybase + ydiff;
-			double y2 = ybase - ydiff;
-
-			Point_2 res1(x1, y1);
-			Point_2 res2(x2, y2);
-			return make_pair(res1, res2);
-		}
-
-
-		Point_2 operator()(Hyperbolic_segment_2 s1, Hyperbolic_segment_2 s2) {
-			if (Circular_arc_2* c1 = boost::get<Circular_arc_2>(&s1)) {
-				if (Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2)) {
-					pair<Point_2, Point_2> res = operator()(c1->circle(), c2->circle());
-					Point_2 p1 = res.first;
-					if (CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1)) {
-						return p1;
-					}
-					Point_2 p2 = res.second;
-					CGAL_assertion(CGAL::sqrt(p2.x()*p2.x() + p2.y()*p2.y()) < FT(1));
-					return p2;
-				} else {
-					Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
-					pair<Point_2, Point_2> res = operator()(c1->circle(), ell2->supporting_line());
-					Point_2 p1 = res.first;
-					if (CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1)) {
-						return p1;
-					}
-					Point_2 p2 = res.second;
-					CGAL_assertion(CGAL::sqrt(p2.x()*p2.x() + p2.y()*p2.y()) < FT(1));
-					return p2;
-				}
-			} else {
-				Euclidean_segment_2* ell1 = boost::get<Euclidean_segment_2>(&s1);
-				if (Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2)) {
-					pair<Point_2, Point_2> res = operator()(ell1->supporting_line(), c2->circle());
-					Point_2 p1 = res.first;
-					if (CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1)) {
-						return p1;
-					}
-					Point_2 p2 = res.second;
-					CGAL_assertion(CGAL::sqrt(p2.x()*p2.x() + p2.y()*p2.y()) < FT(1));
-					return p2;	
-				} else {
-					Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
-					Point_2 p1 = operator()(ell1->supporting_line(), ell2->supporting_line());
-					CGAL_assertion(CGAL::sqrt(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1));
-					return p1;
-				}
-			}
-		}
-
-	};
-
-
-
-	Construct_inexact_intersection_2
-	construct_inexact_intersection_2_object() const {
-		return Construct_inexact_intersection_2();
-	}
-
-
-
-
-
-
 
 
 
