@@ -14,15 +14,20 @@
 #include <QtPlugin>
 #include <QMessageBox>
 
+#include <sstream>
+
 #include "ui_Point_set_bilateral_smoothing_plugin.h"
 
 // Concurrency
 #ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
+#  include "Progress_bar_callback.h"
+   typedef Progress_bar_callback Callback;
+   typedef CGAL::Parallel_tag Concurrency_tag;
 #else
-typedef CGAL::Sequential_tag Concurrency_tag;
+#  include "Qt_progress_bar_callback.h"
+   typedef Qt_progress_bar_callback Callback;
+   typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
-
 
 using namespace CGAL::Three;
 class Polyhedron_demo_point_set_bilateral_smoothing_plugin :
@@ -109,12 +114,24 @@ void Polyhedron_demo_point_set_bilateral_smoothing_plugin::on_actionBilateralSmo
 
     for (unsigned int i = 0; i < dialog.iterations (); ++i)
       {
-	/* double error = */
-	CGAL::bilateral_smooth_point_set<Concurrency_tag>
+#ifdef CGAL_LINKED_WITH_TBB
+        Callback callback;
+#else
+        std::ostringstream oss;
+        oss << "Bilateral smoothing (iteration " << i+1 << "/" << dialog.iterations() << ")";
+        Callback callback(oss.str().c_str(), mw);
+#endif
+
+	double error =
+          CGAL::bilateral_smooth_point_set<Concurrency_tag>
 	  (points->all_or_selection_if_not_empty(),
 	   dialog.neighborhood_size (),
            points->parameters().
-	   sharpness_angle(dialog.sharpness_angle ()));
+	   sharpness_angle(dialog.sharpness_angle ()).
+           callback (callback));
+
+        if (std::isnan(error)) // NaN return means algorithm was interrupted
+          break;
       }
 
 
