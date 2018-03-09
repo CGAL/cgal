@@ -18,9 +18,8 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 
 int main(int argc, char* argv[])
 {
-  typedef CGAL::Point_2<Kernel> Point;
   typedef CGAL::Polygon_with_holes_2<Kernel> Polygon;
-  typedef CGAL::Geometry_container<std::vector<Polygon>, boost::geometry::multi_polygon_tag> MultiPolygon;
+  typedef std::vector<Polygon> MultiPolygon;
 
   {
     std::ifstream is((argc>1)?argv[1]:"data/polygons.wkt");
@@ -39,7 +38,7 @@ int main(int argc, char* argv[])
   {
     std::ifstream  is((argc>2)?argv[2]:"data/multipolygon.wkt");
     MultiPolygon mp;
-    CGAL::read_multipolygon_WKT(is, mp);
+    CGAL::read_multi_polygon_WKT(is, mp);
     BOOST_FOREACH(Polygon p, mp)
       std::cout<<p<<std::endl;
   }

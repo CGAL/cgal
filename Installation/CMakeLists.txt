@@ -108,6 +108,11 @@ else ( CGAL_BRANCH_BUILD )
 
   # Enable testing with BUILD_TESTING
   option(BUILD_TESTING "Build the testing tree." OFF)
+  #enable coverage with TESTING_WITH_COVERAGE
+  option(TESTING_WITH_COVERAGE "Build the testing tree with coverage." OFF)
+  if(TESTING_WITH_COVERAGE)
+    set(BUILD_TESTING ON)
+  endif(TESTING_WITH_COVERAGE)
   include(CTest)
   if(BUILD_TESTING AND NOT POLICY CMP0064)
     message(FATAL_ERROR "CGAL support of CTest requires CMake version 3.4 or later.

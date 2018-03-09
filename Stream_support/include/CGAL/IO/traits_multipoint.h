@@ -21,7 +21,7 @@
 #ifndef TRAITS_MULTIPOINT_H
 #define TRAITS_MULTIPOINT_H
 #include <boost/geometry/geometry.hpp>
-#include <CGAL/Geometry_container.h>
+#include <CGAL/internal/Geometry_container.h>
 
 namespace boost{
 namespace geometry{

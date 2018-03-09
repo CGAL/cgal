@@ -18,23 +18,21 @@
 //
 // Author(s)     : Maxime Gimeno
 
-#ifndef CGAL_TRAITS_MULTIPOLYGON_H
-#define CGAL_TRAITS_MULTIPOLYGON_H
-#include <CGAL/Geometry_container.h>
-#include <boost/geometry/geometry.hpp>
+#ifndef TRAITS_MULTILINESTRING_H
+#define TRAITS_MULTILINESTRING_H
 
+#include <CGAL/internal/Geometry_container.h>
+#include <boost/geometry/geometry.hpp>
 
 namespace boost{
 namespace geometry{
 namespace traits{
-// WKT traits for MultiPolygon
+// WKT traits for MultiLinestring
 template< typename R >
-struct tag<CGAL::internal::Geometry_container<R, multi_polygon_tag> >
-{ typedef multi_polygon_tag type; };
+struct tag<CGAL::internal::Geometry_container<R, multi_linestring_tag> >
+{ typedef multi_linestring_tag type; };
 
 }//end traits
 }//end geometry
 }//end boost
-
-#endif 
-
+#endif // TRAITS_MULTILINESTRING_H

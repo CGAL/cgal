@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+
 #include <CGAL/IO/WKT.h>
 #include <boost/foreach.hpp> //must be included before WKT for some reason
 #include <CGAL/Simple_cartesian.h>
@@ -15,8 +16,8 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 int main(int argc, char* argv[])
 {
   typedef CGAL::Point_2<Kernel> Point;
-  typedef CGAL::Geometry_container<std::vector<Point>,boost::geometry::linestring_tag> LineString;
-  typedef CGAL::Geometry_container<std::vector<LineString>, boost::geometry::multi_linestring_tag> MultiLineString;
+  typedef std::vector<Point> LineString;
+  typedef std::vector<LineString> MultiLineString;
   LineString ls;
   {
     std::ifstream is((argc>1)?argv[1]:"data/linestring.wkt");
@@ -30,7 +31,7 @@ int main(int argc, char* argv[])
   MultiLineString mls;
   {
     std::ifstream is((argc>2)?argv[2]:"data/multilinestring.wkt");
-    CGAL::read_multilinestring_WKT(is, mls);
+    CGAL::read_multi_linestring_WKT(is, mls);
     is.close();
   }
   BOOST_FOREACH(LineString l, mls)

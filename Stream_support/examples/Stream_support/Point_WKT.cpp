@@ -19,11 +19,11 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 int main(int argc, char* argv[])
 {
   typedef CGAL::Point_2<Kernel> Point;
-  typedef CGAL::Geometry_container<std::vector<Point>, boost::geometry::multi_point_tag>  MultiPoint;
+  typedef std::vector<Point>  MultiPoint;
   
   std::ifstream is((argc>1)?argv[1]:"data/multipoint.wkt");
   MultiPoint mp;
-  CGAL::read_multipoint_WKT(is, mp);
+  CGAL::read_multi_point_WKT(is, mp);
   BOOST_FOREACH(const Point& p, mp)
   {
     std::cout<<p<<std::endl;
