@@ -45,8 +45,6 @@
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>
 #include <tbb/atomic.h>
-#define TBB_IMPLEMENT_CPP0X 1
-#include <tbb/compat/thread>
 #endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
@@ -245,7 +243,6 @@ compute_average_spacing(
    {
      internal::Point_set_processing_3::Parallel_callback
        parallel_callback (callback, kd_tree_points.size());
-     std::thread* callback_thread = (callback ? new std::thread (parallel_callback) : NULL);
      
      std::vector<FT> spacings (kd_tree_points.size (), -1);
      CGAL::internal::Compute_average_spacings<Kernel, Tree>
@@ -261,11 +258,7 @@ compute_average_spacing(
          ++ nb;
        }
 
-     if (callback)
-     {
-       callback_thread->join();
-       delete callback_thread;
-     }
+     parallel_callback.join();
    }
    else
 #endif

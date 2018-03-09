@@ -51,8 +51,6 @@
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>  
 #include <tbb/atomic.h>
-#define TBB_IMPLEMENT_CPP0X 1
-#include <tbb/compat/thread>
 #endif // CGAL_LINKED_WITH_TBB
 
 // Default allocator: use TBB allocators if available
@@ -538,7 +536,6 @@ bilateral_smooth_point_set(
    {
      internal::Point_set_processing_3::Parallel_callback
        parallel_callback (callback, 2 * nb_points);
-     std::thread* callback_thread = (callback ? new std::thread (parallel_callback) : NULL);
 
      Compute_pwns_neighbors<Kernel, Tree> f(k, tree, pwns, pwns_neighbors,
                                             parallel_callback.advancement(),
@@ -551,9 +548,7 @@ bilateral_smooth_point_set(
   
        // We interrupt by hand as counter only goes halfway and won't terminate by itself
        parallel_callback.interrupted() = true;
-       
-       callback_thread->join();
-       delete callback_thread;
+       parallel_callback.join();       
 
        // If interrupted during this step, nothing is computed, we return NaN
        if (interrupted)
@@ -595,7 +590,6 @@ bilateral_smooth_point_set(
    {
      internal::Point_set_processing_3::Parallel_callback
        parallel_callback (callback, 2 * nb_points, nb_points);
-     std::thread* callback_thread = (callback ? new std::thread (parallel_callback) : NULL);
      
      //tbb::task_scheduler_init init(4);
      tbb::blocked_range<size_t> block(0, nb_points);
@@ -610,8 +604,7 @@ bilateral_smooth_point_set(
 
      if (callback)
      {
-       callback_thread->join();
-       delete callback_thread;
+       parallel_callback.join();
 
        // If interrupted during this step, nothing is computed, we return NaN
        if (parallel_callback.interrupted())

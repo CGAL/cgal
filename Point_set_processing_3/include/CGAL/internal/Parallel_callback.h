@@ -40,6 +40,7 @@ class Parallel_callback
   tbb::atomic<bool>* m_interrupted;
   std::size_t m_size;
   bool m_creator;
+  std::thread* m_thread;
 
 public:
   Parallel_callback (const cpp11::function<bool(double)>& callback,
@@ -51,10 +52,13 @@ public:
     , m_interrupted (new tbb::atomic<bool>())
     , m_size (size)
     , m_creator (true)
+    , m_thread (NULL)
   {
     // tbb::atomic only has default constructor, initialization done in two steps
     *m_advancement = advancement;
     *m_interrupted = interrupted;
+    if (m_callback)
+      m_thread = new std::thread (*this);
   }
 
   Parallel_callback (const Parallel_callback& other)
@@ -63,6 +67,7 @@ public:
     , m_interrupted (other.m_interrupted)
     , m_size (other.m_size)
     , m_creator (false)
+    , m_thread (NULL)
   {
 
   }
@@ -80,10 +85,13 @@ public:
       delete m_advancement;
       delete m_interrupted;
     }
+    if (m_thread != NULL)
+      delete m_thread;
   }
 
   tbb::atomic<std::size_t>& advancement() { return *m_advancement; }
   tbb::atomic<bool>& interrupted() { return *m_interrupted; }
+  void join() { m_thread->join(); }
 
   void operator()()
   {
