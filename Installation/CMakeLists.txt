@@ -1031,25 +1031,16 @@ endif()
 
 if ( CGAL_BRANCH_BUILD )
   option(CGAL_ENABLE_CHECK_HEADERS 
-    "Enable the special targets \"check_pkg_headers\", and \"check_pkg_<package>_headers\" for each package"
+    "Enable the special targets \"check_pkg_headers\", \"packages_dependencies\", and \"check_pkg_<package>_headers\" and \"pkg_<package>_deps\" for each package"
     FALSE)
+  unset(CGAL_COMPUTE_DEPENDENCIES CACHE) # remove that variable, no longer used
 
-  option(CGAL_COMPUTE_DEPENDENCIES
-    "Enable the special targets \"packages_dependencies\", and \"pkg_<package>_deps\" for each package.
-Note that this option will modify the source directory!"
-    ${CGAL_ENABLE_CHECK_HEADERS})
-
-  if(CGAL_ENABLE_CHECK_HEADERS OR CGAL_COMPUTE_DEPENDENCIES)
+  if(CGAL_ENABLE_CHECK_HEADERS)
 
     option(CGAL_COPY_DEPENDENCIES
       "Copy package dependencies in source directories.
   Note that this option will modify the source directory!"
       FALSE)
-
-    if(NOT CMAKE_MAJOR_VERSION GREATER 2)
-      message(FATAL_ERROR "Your version of CMake is too old.
-You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
-    endif()
 
     message( "== Setting header checking ==" )
     find_package(GMP REQUIRED)
@@ -1137,7 +1128,7 @@ because IPE_FOUND is false.")
 
     if(NOT CGAL_CHECK_SYNTAX_ONLY)
       message(FATAL_ERROR "Your compiler does not seem to support ${falg}.
-You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
+You must disable CGAL_ENABLE_CHECK_HEADERS.")
     endif()
 
     ## Fill the variable include_options with all the -I and -isystem options
@@ -1162,8 +1153,8 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
     include_directories ( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
 
     # Build the doc
-    file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/build_doc")
-    set(DOC_DIR "${CMAKE_SOURCE_DIR}/build_doc")
+    set(DOC_DIR "${CMAKE_BINARY_DIR}/build_doc")
+    file(MAKE_DIRECTORY "${DOC_DIR}")
     execute_process(COMMAND "${CMAKE_COMMAND}" -DDOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE} "${CMAKE_SOURCE_DIR}/Documentation/doc"
         WORKING_DIRECTORY "${DOC_DIR}"
         )
@@ -1175,11 +1166,10 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
   file(GLOB html_files RELATIVE "${DOC_DIR}/doc_output/" "${DOC_DIR}/doc_output/*/*.html")
   file(GLOB example_files RELATIVE "${CMAKE_SOURCE_DIR}/" "${CMAKE_SOURCE_DIR}/*/examples/*/*.cpp")
   find_program(AWK awk)
-  #set(arguments [=[{ match($0, /# *include *(&lt;|[<"])(CGAL\/[^>&]*)([>"]|&gt;)/,arr); if(arr[2]!="") print arr[2] }]=])
-  set(arguments [=[{ match($0, /# *include *(&lt;)(CGAL\/[^>&]*)([>"]|&gt;)/,arr); if(arr[2]!="") print arr[2] }]=])
+  set(awk_arguments [=[{ match($0, /# *include *(&lt;|[<"])(CGAL\/[^>&"]*)([>"]|&gt;)/,arr); if(arr[2]!="") print arr[2] }]=])
   message("listing headers from html files")
   foreach(f ${html_files})
-    execute_process(COMMAND "${AWK}" "${arguments}" "${DOC_DIR}/doc_output/${f}"
+    execute_process(COMMAND "${AWK}" "${awk_arguments}" "${DOC_DIR}/doc_output/${f}"
       OUTPUT_VARIABLE tmp_list)
     if (NOT "${tmp_list}" STREQUAL "")
       string(REPLACE "\n" ";" tmp_list ${tmp_list})
@@ -1188,7 +1178,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
   endforeach()
   message("listing headers from examples files")
   foreach(f ${example_files})
-    execute_process(COMMAND "${AWK}" "${arguments}" "${CMAKE_SOURCE_DIR}/${f}"
+    execute_process(COMMAND "${AWK}" "${awk_arguments}" "${CMAKE_SOURCE_DIR}/${f}"
       OUTPUT_VARIABLE tmp_list)
     if (NOT "${tmp_list}" STREQUAL "")
       string(REPLACE "\n" ";" tmp_list ${tmp_list})
@@ -1229,9 +1219,6 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
             "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h*")
         endif()
         list(SORT ${package}_HEADERS)
-        if(CGAL_COMPUTE_DEPENDENCIES OR COMPUTE_DEPS)
-          set(compute_deps_extra_args "-H ")
-        endif()
         foreach(header ${${package}_HEADERS})
           set(skip_hdr FALSE)
           if(POLICY CMP0057)
@@ -1278,8 +1265,7 @@ LEDA_FOUND is false.")
             separate_arguments(CMD
               UNIX_COMMAND
               "${CMAKE_CXX_COMPILER} ${compile_options_str}
-${include_options_str} -x c++ ${falg} \
-${compute_deps_extra_args} \
+${include_options_str} -x c++ ${falg} -H \
 ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
               # The header Algebraic_kernel_rs_gmpz_d_1.h is skipped on purpose: it
               # depends on RS.
@@ -1318,12 +1304,12 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
             -P "${CGAL_MODULES_DIR}/process_dependencies.cmake"
             ${check_pkg_headers_depends}
           )
-        add_custom_target(${package}_deps DEPENDS ${CGAL_BINARY_DIR}/package_info/${package}/dependencies)
+        add_custom_target(pkg_${package}_deps DEPENDS ${CGAL_BINARY_DIR}/package_info/${package}/dependencies)
         list(APPEND check_pkg_target_list check_pkg_${package}_headers)
         list(APPEND packages_deps ${CGAL_BINARY_DIR}/package_info/${package}/dependencies)
       endif() # if the package has an include directory
-      if(${package}_deps)
-        list(REMOVE_DUPLICATES ${package}_deps)
+      if(packages_deps)
+        list(REMOVE_DUPLICATES packages_deps)
       endif()
     endforeach() # loop on packages
     add_custom_target(check_headers DEPENDS ${check_pkg_target_list})
