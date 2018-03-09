@@ -1,5 +1,5 @@
-#ifndef PROGRESS_BAR_CALLBACK_H
-#define PROGRESS_BAR_CALLBACK_H
+#ifndef QT_PROGRESS_BAR_CALLBACK_H
+#define QT_PROGRESS_BAR_CALLBACK_H
 
 #include <CGAL/Real_timer.h>
 
@@ -65,4 +65,4 @@ public:
 };
 
 
-#endif // PROGRESS_BAR_CALLBACK_H
+#endif // QT_PROGRESS_BAR_CALLBACK_H
