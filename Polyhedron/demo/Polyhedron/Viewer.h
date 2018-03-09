@@ -137,6 +137,7 @@ protected:
 
   //!Defines the behaviour for the mouse press events
   void mousePressEvent(QMouseEvent*)Q_DECL_OVERRIDE;
+  void mouseDoubleClickEvent(QMouseEvent*)Q_DECL_OVERRIDE;
   void wheelEvent(QWheelEvent *)Q_DECL_OVERRIDE;
   //!Defines the behaviour for the key press events
   void keyPressEvent(QKeyEvent*)Q_DECL_OVERRIDE;
@@ -144,7 +145,6 @@ protected:
   void contextMenuEvent(QContextMenuEvent*)Q_DECL_OVERRIDE;
   //!Defines the behaviour for the key release events
   void keyReleaseEvent(QKeyEvent *)Q_DECL_OVERRIDE;
-
 
   void resizeGL(int w, int h)Q_DECL_OVERRIDE;
 

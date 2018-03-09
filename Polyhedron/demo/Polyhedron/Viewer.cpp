@@ -506,6 +506,7 @@ void Viewer::initializeGL()
 
 void Viewer::mousePressEvent(QMouseEvent* event)
 {
+  makeCurrent();
   if(event->button() == Qt::RightButton &&
      event->modifiers().testFlag(Qt::ShiftModifier)) 
   {
@@ -533,8 +534,14 @@ void Viewer::mousePressEvent(QMouseEvent* event)
       event->accept();
   }
   else {
+    makeCurrent();
     QGLViewer::mousePressEvent(event);
   }
+}
+void Viewer::mouseDoubleClickEvent(QMouseEvent* event)
+{
+  makeCurrent(); 
+  QGLViewer::mouseDoubleClickEvent(event);
 }
 
 #include <QContextMenuEvent>
@@ -1168,7 +1175,6 @@ void Viewer::drawVisualHints()
       //draws the distance
       QMatrix4x4 mvpMatrix;
       double mat[16];
-      //camera()->frame()->rotation().getMatrix(mat);
       camera()->getModelViewProjectionMatrix(mat);
       //nullifies the translation
       for(int i=0; i < 16; i++)
@@ -1875,7 +1881,6 @@ void Viewer::set2DSelectionMode(bool b) { d->is_2d_selection_mode = b; }
 void Viewer::setStaticImage(QImage image) { d->static_image = image; }
 
 const QImage& Viewer:: staticImage() const { return d->static_image; }
-
 
 
 
