@@ -14,13 +14,13 @@ This package implements the <em>Variational Shape Approximation</em> \cgalCite{c
 
 Given an input surface triangle mesh, %VSA leverages a discrete clustering algorithm to approximate it by a set of local simple shapes referred to as proxies. Each cluster is represented as a connected set of triangles of the input mesh, and the output mesh is constructed by generating a triangle mesh approximation of the clusters.
 By default the proxies are planar, and the algorithm design is generic for future extensions to non-planar proxies \cgalCite{cgal:ywly-vmsqs-12}.
-The approximation error is one-sided, defined between the clusters and their associated proxies. Two error metrics (\f$ \mathcal{L}^2 \f$, \f$ \mathcal{L}^{2,1} \f$) are provided via the classes `CGAL::VSA::L2_metric` and `CGAL::VSA::L21_metric`, and the algorithm design is generic to other user-defined metrics. A brief background about <em>%Proxy</em> and <em>%ErrorMetric</em> is available in Section \ref sma_background.
+The approximation error is one-sided, defined between the clusters and their associated proxies. Two error metrics (\f$ \mathcal{L}^2 \f$, \f$ \mathcal{L}^{2,1} \f$) are provided via the classes `CGAL::L2_metric` and `CGAL::L21_metric`, and the algorithm design is generic to other user-defined metrics. A brief background about <em>%Proxy</em> and <em>%ErrorMetric</em> is available in Section \ref sma_background.
 
 \cgalFigureBegin{Approximation_teaser, teaser.png}
 Variational shape approximation on two models with the \f$ \mathcal{L}^{2,1} \f$ error metric. From left to right: partition of the input surface triangle mesh, anchor vertices and edges, and output triangle mesh. The partition is optimized via discrete clustering of the input triangles, so as to minimize the approximation error from the clusters to planar proxies (not shown). 
 \cgalFigureEnd
 
-This package offers both the approximation and mesh construction functionalities. They can be accessed through the free function `CGAL::VSA::mesh_approximation()`, which runs a fully automated version of the algorithm:
+This package offers both the approximation and mesh construction functionalities. They can be accessed through the free function `CGAL::mesh_approximation()`, which runs a fully automated version of the algorithm:
 
 \cgalExample{Surface_mesh_approximation/vsa_simple_approximation_example.cpp}
 
@@ -161,11 +161,10 @@ As there is no guarantee that the output mesh is 2-manifold and oriented, the ma
 This package can be used with any class model of the concept `FaceListGraph` described in \ref PkgBGL "CGAL and the Boost Graph Library".
 
 Free function with \ref namedparameters options.
-- `CGAL::VSA::mesh_approximation()`: given a triangle mesh, approximate the geometry with default \f$ \mathcal{L}^{2,1} \f$ metric.
-- `CGAL::VSA::mesh_segmentation()`: given a triangle mesh, segment the geometry with default \f$ \mathcal{L}^{2,1} \f$ metric, no meshing process.
+- `CGAL::mesh_approximation()`: given a triangle mesh, approximate the geometry with default \f$ \mathcal{L}^{2,1} \f$ metric.
 
 Class interface:
-- `CGAL::VSA::Mesh_approximation`: allowing more customization of the proxy, metric and approximation process.
+- `CGAL::VSA_approximation`: allowing more customization of the proxy, metric and approximation process.
 
 The input of the algorithm is expected to be:
 - Triangulated
@@ -175,7 +174,7 @@ The input of the algorithm is expected to be:
 
 \subsection sma_example1 Free Function Approximation
 
-The following example calls the free function `CGAL::VSA::mesh_approximation()` on the input triangle mesh with default `CGAL::VSA::L21_metric`.
+The following example calls the free function `CGAL::mesh_approximation()` on the input triangle mesh with default `CGAL::L21_metric`.
 
 \cgalExample{Surface_mesh_approximation/vsa_approximation_example.cpp}
 
@@ -187,20 +186,20 @@ The face proxy index map and the output proxies provide a means to access the pa
 
 \subsection sma_example2 Free Function Segmentation
 
-The package can be used for segmenting the input mesh via the free function `CGAL::VSA::mesh_segmentation()`, with the default `CGAL::VSA::L21_metric` approximation:
+The package can be used for segmentation when proxy id is viewed as the segment id:
 
 \cgalExample{Surface_mesh_approximation/vsa_segmentation_example.cpp}
 
 \subsection sma_example3 Class Interface
 
-The class interface `CGAL::VSA::Mesh_approximation` offers a means to achieve flexible and interactive control of the algorithm. The following example uses the L2 metric class  `CGAL::VSA::L2_metric` to approximate the shape.
+The class interface `CGAL::VSA_approximation` offers a means of flexible control of the algorithm. The following example uses the `CGAL::L2_metric` to approximate the shape.
 
 \cgalExample{Surface_mesh_approximation/vsa_class_interface_example.cpp}
 
 \subsection sma_example4 Customized Proxy and Error Metric
 
 \cgalFigureBegin{vsa_metric_comparison, vsa_metric_comparison_200_30.png}
-Comparison of different metrics on the bear model, with 200 proxies and hierarchical seeding. From left to right: \f$ \mathcal{L}^{2,1} \f$ metric, \f$ \mathcal{L}^2 \f$ metric and compact metric.
+Comparison of different metrics on the bear model, with 200 proxies and hierarchical seeding. From left to right: \f$ \mathcal{L}^{2,1} \f$ metric, \f$ \mathcal{L}^2 \f$ metric and custom compact metric.
 \cgalFigureEnd
 
 The following example defines a point-wise proxy to yield an isotropic approximation. The output mesh is depicted in Figure \cgalFigureRef{vsa_metric_comparison}.
@@ -209,7 +208,7 @@ The following example defines a point-wise proxy to yield an isotropic approxima
 
 \section sma_perf Performances
 
-We provide some performance comparisons with the free function API `CGAL::VSA::mesh_approximation`. 
+We provide some performance comparisons with the free function API `CGAL::mesh_approximation`. 
 Timings are recorded on a PC running Windows10 X64 with an Intel Xeon E5-1620 clocked at 3.70 GHz with 32GB of RAM. 
 The program has been optimized with the O2 option with Visual Studio 2015. By default the kernel used is `Exact_predicates_inexact_constructions_kernel` (`EPICK`).
 
@@ -266,7 +265,7 @@ and an input surface \f$ S \f$, we denote by <em>optimal shape proxies</em> a se
 
 \f[ E(\mathcal{R}, P) = \sum_{i = 1..k} E(\mathcal{R}_i, P_i). \f]
 
-By casting the approximation problem into an optimal discrete clustering one, the algorithm leverages the effective Lloyd algorithm \cgalCite{cgal:cad-vsa-04} to drive the total error down iteratively. 
+By casting the approximation problem into an optimal discrete clustering one, the algorithm leverages the effective Lloyd algorithm \cgalCite{cgal:cad-vsa-04} to drive the total error down iteratively.
 More specifically, during each iteration two different steps are conducted, for the \f$ m \f$th iteration:
 - <b>Partition process</b>. Firstly, all triangle faces are partitioned into \f$ k \f$ connected regions \f$ \{ R^{m}_1, \cdots, R^{m}_k \} \f$ by assigning each face to its nearest proxy \f$ P^{m-1}_i \f$.
 - <b>Fitting process</b>. Then, the algorithm fits a proxy and update the parameters \f$ P^{m}_i \f$ from the corresponding region \f$ R^{m}_i \f$.
@@ -276,7 +275,7 @@ For a sequence of iteration with the fitting error \f$ \{ E^1, \cdots, E^m \} \f
 - No significant error change between two iterations: \f$ (E^{m-1} - E^{m}) / E^{m-1} < converge\_threshold \f$.
 
 Intuitively, each region \f$ \mathcal{R}_i \f$ of a partition \f$ \mathcal{R} \f$ can be summarily represented to first order as an "average" point \f$ X_i \f$ and an "average" normal \f$ N_i \f$. 
-We denote such local representative pair \f$ P_i = (X_i, N_i) \f$, a <em>planar proxy</em> of the associated region. In the package, we provide such a planar proxy as `CGAL::VSA::Plane_proxy`.
+We denote such local representative pair \f$ P_i = (X_i, N_i) \f$, a <em>planar proxy</em> of the associated region.
 
 Defining an appropriate error metric is the key ingredient for the algorithm. 
 The \f$ \mathcal{L}^2 \f$ metric is defined as:
