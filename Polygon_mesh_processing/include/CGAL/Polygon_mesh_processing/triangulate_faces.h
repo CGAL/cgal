@@ -34,6 +34,8 @@
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_2_projection_traits_3.h>
+#else
+#include <CGAL/use.h>
 #endif
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
@@ -87,7 +89,7 @@ public:
     return fh->info().is_external;
   }
 
-  bool triangulate_face(face_descriptor f, PM& pmesh)
+  bool triangulate_face(face_descriptor f, PM& pmesh, bool use_cdt)
   {
     typedef typename Traits::FT FT;
     typename Traits::Vector_3 normal =
@@ -129,24 +131,28 @@ public:
     }
     else
     {
-#ifdef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT2
-      return triangulate_face_with_hole_filling(f, pmesh);
+#ifndef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT2
+      if (use_cdt)
+      {
+        typedef CGAL::Triangulation_2_projection_traits_3<Traits>   P_traits;
+        typedef CGAL::Triangulation_vertex_base_with_info_2<halfedge_descriptor,
+                                                            P_traits>        Vb;
+        typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
+                                                          P_traits>          Fb1;
+        typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
+        typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
+        typedef CGAL::Exact_intersections_tag                                Itag;
+        typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
+                                                           TDS,
+                                                           Itag>             CDT;
+        P_traits cdt_traits(normal);
+        CDT cdt(cdt_traits);
+        return triangulate_face_with_CDT(f, pmesh, cdt);
+      }
 #else
-      typedef CGAL::Triangulation_2_projection_traits_3<Traits>   P_traits;
-      typedef CGAL::Triangulation_vertex_base_with_info_2<halfedge_descriptor,
-                                                          P_traits>        Vb;
-      typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
-                                                        P_traits>          Fb1;
-      typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
-      typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
-      typedef CGAL::Exact_intersections_tag                                Itag;
-      typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
-                                                         TDS,
-                                                         Itag>             CDT;
-      P_traits cdt_traits(normal);
-      CDT cdt(cdt_traits);
-      return triangulate_face_with_CDT(f, pmesh, cdt);
+      CGAL_USE(use_cdt);
 #endif
+      return triangulate_face_with_hole_filling(f, pmesh);
     }
     return true;
   }
@@ -346,7 +352,7 @@ public:
   }
 
   template<typename FaceRange>
-  bool operator()(FaceRange face_range, PM& pmesh)
+  bool operator()(FaceRange face_range, PM& pmesh, bool use_cdt)
   {
    bool result = true;
     // One need to store facet handles into a vector, because the list of
@@ -364,7 +370,7 @@ public:
     // Iterates on the vector of face descriptors
     BOOST_FOREACH(face_descriptor f, facets)
     {
-     if(!this->triangulate_face(f, pmesh))
+     if(!this->triangulate_face(f, pmesh, use_cdt))
        result = false;
     }
     return result;
@@ -427,8 +433,11 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
   //Kernel
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
 
+  //Option
+  bool use_cdt = choose_param(get_param(np, internal_np::use_delaunay_triangulation), true);
+
   internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel> modifier(vpmap);
-  return modifier.triangulate_face(f, pmesh);
+  return modifier.triangulate_face(f, pmesh, use_cdt);
 }
 
 template<typename PolygonMesh>
@@ -477,8 +486,11 @@ bool triangulate_faces(FaceRange face_range,
   //Kernel
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
 
+  //Option
+  bool use_cdt = choose_param(get_param(np, internal_np::use_delaunay_triangulation), true);
+
   internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel> modifier(vpmap);
-  return modifier(face_range, pmesh);
+  return modifier(face_range, pmesh, use_cdt);
 }
 
 template <typename FaceRange, typename PolygonMesh>
