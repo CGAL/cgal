@@ -249,32 +249,20 @@ public:
 	  			if ( Has_on_bounded_side_2()( l_inf, inters.first ) )
 	    			return inters.first;
 	  			return inters.second;
-			} else {
-        l = boost::get<Euclidean_line_2>(&bis_qr);
-
-        std::pair<Point_2, Point_2> inters = Construct_intersection_2()(*c_pq, *l);
-        
-        if ( Has_on_bounded_side_2()( l_inf, inters.first ) )
-          return inters.first;
-        return inters.second;
-      }
+			} 
+      l = boost::get<Euclidean_line_2>(&bis_qr);
+      c = c_pq;
 		} else {
       // here bis_pq is a line
       l = boost::get<Euclidean_line_2>(&bis_pq);  
-      if ((c = boost::get<Circle_2>(&bis_qr))) {
-        std::pair<Point_2, Point_2> inters = Construct_intersection_2()(*c, *l);
-        
-        if ( Has_on_bounded_side_2()( l_inf, inters.first ) )
-          return inters.first;
-        return inters.second;  
-      } else {
-        std::cout << "This should NOT be happening!" << std::endl;
-      }
+      c = boost::get<Circle_2>(&bis_qr);
     }
 
-    // Being here means that both segments are supported by Euclidean lines.
-    // Two Euclidean lines in the Poincaré disk can intersect only in the origin.		
-		return Voronoi_point(0,0);
+    std::pair<Point_2, Point_2> inters = Construct_intersection_2()(*c, *l);
+    
+    if ( Has_on_bounded_side_2()( l_inf, inters.first ) )
+      return inters.first;
+    return inters.second;
 	}
 
   }; // end Construct_hyperbolic_circumcenter_2
@@ -435,9 +423,9 @@ public:
       Vector_3 v2 = Vector_3(p0.y(), p1.y(), p2.y());
       Vector_3 v3 = Vector_3(FT(1), FT(1), FT(1));
       
-      FT dt0 = CGAL::determinant(v0, v1, v3);
-      FT dt1 = CGAL::determinant(v0, v2, v3);
-      FT dt2 = CGAL::determinant(v0 - v3, v1, v2);
+      FT dt0 = determinant(v0, v1, v3);
+      FT dt1 = determinant(v0, v2, v3);
+      FT dt2 = determinant(v0 - v3, v1, v2);
       
       return dt0*dt0 + dt1*dt1 - dt2*dt2 < 0;
     }
@@ -466,9 +454,9 @@ public:
       Vector_3 v2 = Vector_3(p0.y(), p1.y(), p2.y());
       Vector_3 v3 = Vector_3(FT(1), FT(1), FT(1));
       
-      FT dt0 = CGAL::determinant(v0, 2*v2, -v3);
-      FT dt1 = CGAL::determinant(2*v1, v0, -v3);
-      FT dt2 = CGAL::determinant(2*v1, 2*v2, -v3);
+      FT dt0 = determinant(v0, 2*v2, -v3);
+      FT dt1 = determinant(2*v1, v0, -v3);
+      FT dt2 = determinant(2*v1, 2*v2, -v3);
       
       Direction_2 d0(p0.x()*dt2 - dt0, p0.y()*dt2 - dt1);
       Direction_2 d1(p1.x()*dt2 - dt0, p1.y()*dt2 - dt1);

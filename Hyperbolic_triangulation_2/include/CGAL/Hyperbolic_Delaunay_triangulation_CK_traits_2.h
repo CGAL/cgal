@@ -26,6 +26,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include "boost/tuple/tuple.hpp"
 #include "boost/variant.hpp"
+#include <CGAL/determinant.h>
 
 namespace CGAL {
 
@@ -123,68 +124,70 @@ public:
   {
   public:
     
-    Voronoi_point operator()(Point_2 p, Point_2 q, Point_2 r)
-    { 
+    Voronoi_point operator()(Point_2 p, Point_2 q, Point_2 r) { 
       Origin o; 
       Point_2 po = Point_2(o);
       Circle_2 l_inf(po, FT(1));
      
-      Euclidean_circle_or_line_2 bis_pq = Construct_circle_or_line_supporting_bisector()(p,q);
-      Euclidean_circle_or_line_2 bis_qr = Construct_circle_or_line_supporting_bisector()(q,r);
-
-      if ( Compare_distance_2()(po,p,q) == EQUAL &&
-	   Compare_distance_2()(po,p,r) == EQUAL ) 
-	return po; 
+      if ( Compare_distance_2()(po,p,q) == EQUAL && Compare_distance_2()(po,p,r) == EQUAL ) 
+        return po; 
+      
       // now supporting objects cannot both be Euclidean lines
 
+      Euclidean_circle_or_line_2 bis_pq = Construct_circle_or_line_supporting_bisector()(p,q);
+      Euclidean_circle_or_line_2 bis_qr = Construct_circle_or_line_supporting_bisector()(q,r);
+      
       std::pair<Circular_arc_point_2, unsigned> pair;
-
       Euclidean_line_2* l;
       Circle_2* c;
 
-      if ( Circle_2* c_pq = boost::get<Circle_2>(&bis_pq) )
-	{
-	  if ( Circle_2* c_qr = boost::get<Circle_2>(&bis_qr) )
-	    {
-	      typedef typename CK2_Intersection_traits<R, Circle_2, Circle_2>::type Intersection_result; 
-	      std::vector< Intersection_result > inters;
-	      intersection(*c_pq, *c_qr, std::back_inserter(inters));
+      if ( Circle_2* c_pq = boost::get<Circle_2>(&bis_pq) )	{
+        if ( Circle_2* c_qr = boost::get<Circle_2>(&bis_qr) ) {
+	       typedef typename CK2_Intersection_traits<R, Circle_2, Circle_2>::type Intersection_result; 
+	       std::vector< Intersection_result > inters;
+	       intersection(*c_pq, *c_qr, std::back_inserter(inters));
 	      
-	      CGAL_triangulation_assertion(assign(pair,inters[0]));
-	      if ( pair.second == 1 )
-		{ 
-		  if ( Has_on_bounded_side_2()( l_inf, pair.first ) )
-		    return pair.first;
+	       CGAL_triangulation_assertion(assign(pair,inters[0]));
+	       if ( pair.second == 1 ) { 
+		      if ( Has_on_bounded_side_2()( l_inf, pair.first ) )
+		        return pair.first;
 		  
-		  CGAL_triangulation_assertion(assign(pair,inters[1]));
-		  return pair.first;
-		}
-	      return pair.first;
-	    }
+		      CGAL_triangulation_assertion(assign(pair,inters[1]));
+		      return pair.first;
+		      }
+	       return pair.first;
+        }
 
-	  // here bis_qr is a line
-	  l = boost::get<Euclidean_line_2>(&bis_qr);
-	  c = c_pq;
-	}
-
-      // here bis_pq is a line
-      l = boost::get<Euclidean_line_2>(&bis_pq);
-      c = boost::get<Circle_2>(&bis_qr);
+        // here bis_qr is a line
+        l = boost::get<Euclidean_line_2>(&bis_qr);
+        c = c_pq;
+      } else {
+        // here bis_pq is a line, and bis_qr is necessarily a circle
+        l = boost::get<Euclidean_line_2>(&bis_pq);
+        c = boost::get<Circle_2>(&bis_qr);        
+      }
 
       typedef typename CK2_Intersection_traits<R, Euclidean_line_2, Circle_2>::type Intersection_result; 
       std::vector< Intersection_result > inters;
       intersection(*l, *c, std::back_inserter(inters));
 
       CGAL_triangulation_assertion(assign(pair,inters[0]));
-      if ( pair.second == 1 )
-	{ 
-	  if ( Has_on_bounded_side_2()( l_inf, pair.first ) )
-	    return pair.first;
+      if ( pair.second == 1 )	{ 
+        if ( Has_on_bounded_side_2()( l_inf, pair.first ) )
+          return pair.first;
 	  
-	  CGAL_triangulation_assertion(assign(pair,inters[1]));
-	  return pair.first;
-	}
+        CGAL_triangulation_assertion(assign(pair,inters[1]));
+        return pair.first;
+      }
       return pair.first;
+    }
+
+
+    template <typename Face_handle>
+    Voronoi_point operator()(Face_handle fh) {
+      return operator()(fh.vertex(0)->point(),
+                        fh.vertex(1)->point(),
+                        fh.vertex(2)->point());
     }
 
   }; // end Construct_hyperbolic_circumcenter_2
@@ -385,9 +388,9 @@ public:
       Vector_3 v2 = Vector_3(p0.y(), p1.y(), p2.y());
       Vector_3 v3 = Vector_3(FT(1), FT(1), FT(1));
       
-      FT dt0 = CGAL::determinant(v0, v1, v3);
-      FT dt1 = CGAL::determinant(v0, v2, v3);
-      FT dt2 = CGAL::determinant(v0 - v3, v1, v2);
+      FT dt0 = determinant(v0, v1, v3);
+      FT dt1 = determinant(v0, v2, v3);
+      FT dt2 = determinant(v0 - v3, v1, v2);
       
       return dt0*dt0 + dt1*dt1 - dt2*dt2 < 0;
     }
@@ -416,9 +419,9 @@ public:
       Vector_3 v2 = Vector_3(p0.y(), p1.y(), p2.y());
       Vector_3 v3 = Vector_3(FT(1), FT(1), FT(1));
       
-      FT dt0 = CGAL::determinant(v0, 2*v2, -v3);
-      FT dt1 = CGAL::determinant(2*v1, v0, -v3);
-      FT dt2 = CGAL::determinant(2*v1, 2*v2, -v3);
+      FT dt0 = determinant(v0, 2*v2, -v3);
+      FT dt1 = determinant(2*v1, v0, -v3);
+      FT dt2 = determinant(2*v1, 2*v2, -v3);
       
       Direction_2 d0(p0.x()*dt2 - dt0, p0.y()*dt2 - dt1);
       Direction_2 d1(p1.x()*dt2 - dt0, p1.y()*dt2 - dt1);

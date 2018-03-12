@@ -37,63 +37,77 @@ using std::endl;
 int main(int argc, char** argv) {    
 
     if (argc < 2) {
-        cout << "usage: " << argv[0] << " [number_of_points_to_insert]" << endl;
+        cout << "usage: " << argv[0] << " [number_of_points_to_insert] [optional: number_of_iterations]" << endl;
         return -1;
     }
 
     int N = atoi(argv[1]);
 
-
-    std::cout << "--> generating random points..."; std::cout.flush();
-    std::vector<CP> pts;
-    CGAL::Random_points_in_disc_2<CP,Creator> g( 1.0 );
-    CGAL::cpp11::copy_n( g, N, std::back_inserter(pts));
-    std::cout << "  DONE!" << std::endl;
-
-    std::cout << "--> copying random points...   "; std::cout.flush();
-    std::vector<P1> pts1;
-    std::vector<P2> pts2;
-    for (int i = 0; i < pts.size(); i++) {
-        pts1.push_back( P1(pts[i].x(), pts[i].y()) );
-        pts2.push_back( P2(pts[i].x(), pts[i].y()) );
+    int iterations = 1;
+    if (argc > 2) {
+        iterations = atoi(argv[2]);
     }
-    std::cout << "  DONE!" << std::endl;
 
-    CGAL::Timer tmr;
-    tmr.reset();
+    std::vector<double> extCK, extCORE;
 
-    Triangulation1 tr1;
-    std::cout << "--> inserting into triangulation with CK...        "; std::cout.flush();
-    tmr.start();
-    tr1.insert( pts1.begin(), pts1.end() );
-    tmr.stop();
-    std::cout << "  DONE! Triangulation vertices: " << tr1.number_of_vertices() << std::endl;
-    double t1 = tmr.time();
+    for (int iter = 0; iter < iterations; iter++) {
+        std::cout << "--> generating random points..."; std::cout.flush();
+        std::vector<CP> pts;
+        CGAL::Random_points_in_disc_2<CP,Creator> g( 1.0 );
+        CGAL::cpp11::copy_n( g, N, std::back_inserter(pts));
+        std::cout << "  DONE!" << std::endl;
 
-    tmr.reset();
+        std::cout << "--> copying random points...   "; std::cout.flush();
+        std::vector<P1> pts1;
+        std::vector<P2> pts2;
+        for (int i = 0; i < pts.size(); i++) {
+            pts1.push_back( P1(pts[i].x(), pts[i].y()) );
+            pts2.push_back( P2(pts[i].x(), pts[i].y()) );
+        }
+        std::cout << "  DONE!" << std::endl;
 
-    Triangulation2 tr2;
-    std::cout << "--> inserting into triangulation with CORE::Expr..."; std::cout.flush();
-    tmr.start();
-    tr2.insert( pts2.begin(), pts2.end() );
-    tmr.stop();
-    std::cout << "  DONE! Triangulation vertices: " << tr2.number_of_vertices() << std::endl;
-    double t2 = tmr.time();
+        CGAL::Timer tmr;
+        tmr.reset();
 
+        Triangulation1 tr1;
+        std::cout << "--> inserting into triangulation with CK...        "; std::cout.flush();
+        tmr.start();
+        tr1.insert( pts1.begin(), pts1.end() );
+        tmr.stop();
+        std::cout << "  DONE! Triangulation vertices: " << tr1.number_of_vertices() << std::endl;
+        double t1 = tmr.time();
+
+        tmr.reset();
+
+        Triangulation2 tr2;
+        std::cout << "--> inserting into triangulation with CORE::Expr..."; std::cout.flush();
+        tmr.start();
+        tr2.insert( pts2.begin(), pts2.end() );
+        tmr.stop();
+        std::cout << "  DONE! Triangulation vertices: " << tr2.number_of_vertices() << std::endl;
+        double t2 = tmr.time();
+
+        std::cout << std::endl;
+        std::cout << "Time for CK:         " << t1 << std::endl;
+        std::cout << "Time for CORE::Expr: " << t2 << std::endl;
+        std::cout << std::endl << "===========================================================" << std::endl << std::endl;
+        extCK.push_back(t1);
+        extCORE.push_back(t2);
+    }
+
+    double avgCK = 0;
+    double avgCORE = 0;
+    for (int i = 0; i < iterations; i++) {
+        avgCK += extCK[i];
+        avgCORE += extCORE[i];
+    }
+    avgCK = avgCK/(double)iterations;
+    avgCORE = avgCORE/(double)iterations;
+
+    std::cout << "######################################################################" << std::endl << std::endl;
+    std::cout << "Average time for CK:   " << avgCK   << std::endl;
+    std::cout << "Average time for CORE: " << avgCORE << std::endl;
     std::cout << std::endl;
-    std::cout << "Time for CK:         " << t1 << std::endl;
-    std::cout << "Time for CORE::Expr: " << t2 << std::endl;
-    std::cout << std::endl;
-
-
-    FH1 h1 = tr1.finite_faces_begin();
-    FH2 h2 = tr2.finite_faces_begin();
-
-    VP1 p1 = tr1.dual(h1);
-    VP2 p2 = tr2.dual(h2);
-
-    std::cout << "Dual of first face of t1 is the point " << p1 << std::endl;
-    std::cout << "Dual of first face of t2 is the point " << p2 << std::endl;
 
     return 0;
 }
