@@ -13,8 +13,13 @@ struct Progress_bar_callback
   int bar_size;
   mutable std::size_t string_size;
 
-  Progress_bar_callback() : nb(0), bar_size (30), string_size(0)
+  Progress_bar_callback(const char* title = NULL,
+                        void* = NULL) // Hack to have same constructor as Qt_progress_bar_callback
+    : nb(0), bar_size (30), string_size(0)
   {
+    if (title != NULL)
+      std::cerr << title << std::endl;
+    
     timer.start();
     t_start = timer.time();
     t_start_estimate = 0.;
