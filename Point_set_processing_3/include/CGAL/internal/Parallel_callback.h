@@ -91,7 +91,11 @@ public:
 
   tbb::atomic<std::size_t>& advancement() { return *m_advancement; }
   tbb::atomic<bool>& interrupted() { return *m_interrupted; }
-  void join() { m_thread->join(); }
+  void join()
+  {
+    if (m_thread != NULL)
+      m_thread->join();
+  }
 
   void operator()()
   {
