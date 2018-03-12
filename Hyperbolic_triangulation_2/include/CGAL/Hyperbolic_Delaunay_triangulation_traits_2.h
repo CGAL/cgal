@@ -249,20 +249,32 @@ public:
 	  			if ( Has_on_bounded_side_2()( l_inf, inters.first ) )
 	    			return inters.first;
 	  			return inters.second;
-			}
-			// here bis_qr is a line
-			l = boost::get<Euclidean_line_2>(&bis_qr);
-			c = c_pq;
-		}
+			} else {
+        l = boost::get<Euclidean_line_2>(&bis_qr);
 
-		// here bis_pq is a line
-		l = boost::get<Euclidean_line_2>(&bis_pq);
-		c = boost::get<Circle_2>(&bis_qr);
+        std::pair<Point_2, Point_2> inters = Construct_intersection_2()(*c_pq, *l);
+        
+        if ( Has_on_bounded_side_2()( l_inf, inters.first ) )
+          return inters.first;
+        return inters.second;
+      }
+		} else {
+      // here bis_pq is a line
+      l = boost::get<Euclidean_line_2>(&bis_pq);  
+      if ((c = boost::get<Circle_2>(&bis_qr))) {
+        std::pair<Point_2, Point_2> inters = Construct_intersection_2()(*c, *l);
+        
+        if ( Has_on_bounded_side_2()( l_inf, inters.first ) )
+          return inters.first;
+        return inters.second;  
+      } else {
+        std::cout << "This should NOT be happening!" << std::endl;
+      }
+    }
 
-		std::pair<Point_2, Point_2> inters = Construct_intersection_2()(*l, *c);
-		if ( Has_on_bounded_side_2()( l_inf, inters.first ) )
-			return inters.first;
-		return inters.second;
+    // Being here means that both segments are supported by Euclidean lines.
+    // Two Euclidean lines in the Poincaré disk can intersect only in the origin.		
+		return Voronoi_point(0,0);
 	}
 
   }; // end Construct_hyperbolic_circumcenter_2
