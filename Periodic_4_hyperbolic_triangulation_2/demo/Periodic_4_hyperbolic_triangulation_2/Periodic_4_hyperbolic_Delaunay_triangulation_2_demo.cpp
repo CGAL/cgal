@@ -54,7 +54,7 @@ typedef Kernel::Point_2                                                         
 typedef Triangulation::Vertex_handle                                            Vertex_handle;
 typedef Traits::Side_of_original_octagon                                        Side_of_original_octagon;
 typedef Traits::Construct_hyperbolic_segment_2                                  Construct_hyperbolic_segment_2;
-typedef Traits::Construct_hyperbolic_line_2                                     Construct_hyperbolic_line_2;
+typedef Traits::Construct_inexact_intersection_2                                Construct_inexact_intersection_2;
 typedef Triangulation::Hyperbolic_translation                                   Hyperbolic_translation;
 typedef Triangulation::Locate_type                                              Locate_type;
 typedef Triangulation::Face_handle                                              Face_handle;
@@ -95,6 +95,7 @@ private:
   void        animate();
   double      updateTime();
   Point       get_image(Point, Point, double);
+  Circle_2    poincare;
   Face_handle last_location;
   double      timestep;
   Hyperbolic_translation      last_loc_translation;

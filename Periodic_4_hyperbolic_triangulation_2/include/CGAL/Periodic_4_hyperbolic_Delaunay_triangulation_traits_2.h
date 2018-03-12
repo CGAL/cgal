@@ -199,6 +199,7 @@ public:
 	typedef typename Base::Construct_intersection_2 							Construct_intersection_2;
 	typedef typename Base::Construct_hyperbolic_segment_2						Construct_hyperbolic_segment_2;
 	typedef typename Base::Construct_hyperbolic_bisector_2 						Construct_hyperbolic_bisector_2;
+	typedef typename Base::Construct_circle_or_line_supporting_bisector 		Construct_circle_or_line_supporting_bisector;
 	typedef typename Base::Euclidean_collinear_2 								Euclidean_collinear_2;
 	typedef typename Base::Compute_squared_Euclidean_distance_2 				Compute_squared_Euclidean_distance_2;
 	typedef typename Base::Has_on_bounded_side_2 								Has_on_bounded_side_2;
@@ -514,8 +515,8 @@ public:
       if (Compare_distance_2()(po,p,q) == EQUAL && Compare_distance_2()(po,p,r) == EQUAL ) 
       	return po; 
 
-      Euclidean_circle_or_line_2 bis_pq = typename Base::Construct_circle_or_line_supporting_bisector()(p,q);
-      Euclidean_circle_or_line_2 bis_qr = typename Base::Construct_circle_or_line_supporting_bisector()(q,r);
+      Euclidean_circle_or_line_2 bis_pq = Construct_circle_or_line_supporting_bisector()(p,q);
+      Euclidean_circle_or_line_2 bis_qr = Construct_circle_or_line_supporting_bisector()(q,r);
 		
       // now supporting objects cannot both be Euclidean lines
 

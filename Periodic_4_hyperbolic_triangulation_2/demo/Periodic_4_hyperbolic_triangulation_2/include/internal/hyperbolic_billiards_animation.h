@@ -8,6 +8,7 @@
 void 
 MainWindow::initialize_animation_parameters() {
 
+  poincare = Circle_2(Point(0,0),1);
 	timestep = 0.005;
 
 	std::srand(std::time(0));
@@ -18,10 +19,20 @@ MainWindow::initialize_animation_parameters() {
 	ry2 = ((double)std::rand()/(double)RAND_MAX)*0.6;
 	source = Point(rx1, ry1);
 	target = Point(rx2, ry2);
-	Segment_2 seg = Construct_hyperbolic_line_2()(source, target);
+	Segment_2 seg = Construct_hyperbolic_segment_2()(source, target);
 	Circular_arc_2* carc = boost::get<Circular_arc_2>(&seg);
-	source = carc->source();
-	target = carc->target();
+
+  source = carc->source();
+  target = carc->target();
+
+  std::pair<Point,Point> inters = Construct_inexact_intersection_2()(carc->supporting_circle(), poincare);
+  if (squared_distance(source, inters.first) < squared_distance(source, inters.second)) {
+    source = inters.first;
+    target = inters.second;
+  } else {
+    source = inters.second;
+    target = inters.first;
+  }
 
 	time = updateTime();
 	last_location = dt.periodic_locate(get_image(source, target, time), last_loc_translation); 
@@ -203,20 +214,24 @@ MainWindow::animate() {
     // The correct translation MUST have been identified now.
  	  CGAL_assertion(found);
 
+    std::cout << "  ..making points..." << std::endl;
     source = Make_point()(source,o);
     target = Make_point()(target,o);
     
     // Correct in case of wrong orientation.
-    Segment_2 seg = Construct_hyperbolic_line_2()(source, target);
+    std::cout << "  ..making line..." << std::endl;
+    Segment_2 seg = Construct_hyperbolic_segment_2()(source, target);
     Circular_arc_2* carc = boost::get<Circular_arc_2>(&seg);
-    if (squared_distance(source, carc->source()) < squared_distance(source, carc->target())) {
-      source = carc->source();
-      target = carc->target();
+    std::pair<Point,Point> inters = Construct_inexact_intersection_2()(carc->supporting_circle(), poincare);
+    if (squared_distance(source, inters.first) < squared_distance(source, inters.second)) {
+      source = inters.first;
+      target = inters.second;
     } else {
-      source = carc->target();
-      target = carc->source();
+      source = inters.second;
+      target = inters.first;
     }
 
+    std::cout << "  ..updating time for next iteration..." << std::endl;
     // Make sure the time is correct.
     time = updateTime();
   }
