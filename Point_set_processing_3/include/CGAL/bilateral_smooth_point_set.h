@@ -542,19 +542,15 @@ bilateral_smooth_point_set(
                                             parallel_callback.interrupted());
      tbb::parallel_for(tbb::blocked_range<size_t>(0, nb_points), f);
 
-     if (callback)
-     {
-       bool interrupted = parallel_callback.interrupted();
+     bool interrupted = parallel_callback.interrupted();
   
-       // We interrupt by hand as counter only goes halfway and won't terminate by itself
-       parallel_callback.interrupted() = true;
-       parallel_callback.join();       
+     // We interrupt by hand as counter only goes halfway and won't terminate by itself
+     parallel_callback.interrupted() = true;
+     parallel_callback.join();       
 
-       // If interrupted during this step, nothing is computed, we return NaN
-       if (interrupted)
-         return std::numeric_limits<double>::quiet_NaN();
-     }
-
+     // If interrupted during this step, nothing is computed, we return NaN
+     if (interrupted)
+       return std::numeric_limits<double>::quiet_NaN();
    }
    else
 #endif
@@ -602,14 +598,11 @@ bilateral_smooth_point_set(
                                      parallel_callback.interrupted());
      tbb::parallel_for(block, pwn_updater);
 
-     if (callback)
-     {
-       parallel_callback.join();
+     parallel_callback.join();
 
-       // If interrupted during this step, nothing is computed, we return NaN
-       if (parallel_callback.interrupted())
-         return std::numeric_limits<double>::quiet_NaN();
-     }
+     // If interrupted during this step, nothing is computed, we return NaN
+     if (parallel_callback.interrupted())
+       return std::numeric_limits<double>::quiet_NaN();
    }
    else
 #endif // CGAL_LINKED_WITH_TBB
