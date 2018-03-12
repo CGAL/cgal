@@ -29,6 +29,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/function.h>
 
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -163,6 +164,8 @@ remove_outliers(
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
   double threshold_percent = choose_param(get_param(np, internal_np::threshold_percent), 10.);
   double threshold_distance = choose_param(get_param(np, internal_np::threshold_distance), 0.);
+  const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+                                                               cpp11::function<bool(double)>());
   
   typedef typename Kernel::FT FT;
   
@@ -198,12 +201,15 @@ remove_outliers(
 
   // iterate over input points and add them to multimap sorted by distance to k
   std::multimap<FT,Enriched_point> sorted_points;
-  for(it = points.begin(); it != points.end(); it++)
+  std::size_t nb = 0;
+  for(it = points.begin(); it != points.end(); it++, ++ nb)
   {
     FT sq_distance = internal::compute_avg_knn_sq_distance_3<Kernel>(
       get(point_map,*it),
       tree, k);
     sorted_points.insert( std::make_pair(sq_distance, *it) );
+    if (callback && !callback ((nb+1) / double(kd_tree_points.size())))
+      break;
   }
 
   // Replaces [points.begin(), points.end()) range by the multimap content.

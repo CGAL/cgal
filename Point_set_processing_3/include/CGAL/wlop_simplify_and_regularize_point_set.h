@@ -42,8 +42,11 @@
 #include <ctime>
 
 #ifdef CGAL_LINKED_WITH_TBB
+#include <CGAL/internal/Parallel_callback.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
+#include <tbb/scalable_allocator.h>  
+#include <tbb/atomic.h>
 #endif // CGAL_LINKED_WITH_TBB
 
 #include <CGAL/Simple_cartesian.h>
@@ -354,6 +357,8 @@ class Sample_point_updater
   const typename Kernel::FT radius;  
   const std::vector<typename Kernel::FT> &original_densities;
   const std::vector<typename Kernel::FT> &sample_densities; 
+  tbb::atomic<std::size_t>& advancement;
+  tbb::atomic<bool>& interrupted;
 
 public:
   Sample_point_updater(
@@ -363,20 +368,25 @@ public:
     const Tree &_sample_kd_tree,              
     const typename Kernel::FT _radius,
     const std::vector<typename Kernel::FT> &_original_densities,
-    const std::vector<typename Kernel::FT> &_sample_densities): 
+    const std::vector<typename Kernel::FT> &_sample_densities,
+    tbb::atomic<std::size_t>& advancement,
+    tbb::atomic<bool>& interrupted):
   update_sample_points(out), 
     sample_points(in),
     original_kd_tree(_original_kd_tree),
     sample_kd_tree(_sample_kd_tree),
     radius(_radius),
     original_densities(_original_densities),
-    sample_densities(_sample_densities){} 
-
+    sample_densities(_sample_densities),
+    advancement (advancement),
+    interrupted (interrupted) {} 
 
   void operator() ( const tbb::blocked_range<size_t>& r ) const 
   { 
     for (size_t i = r.begin(); i != r.end(); ++i) 
     {
+      if (interrupted)
+        break;
       update_sample_points[i] = simplify_and_regularize_internal::
         compute_update_sample_point<Kernel, Tree, RandomAccessIterator>(
         sample_points[i], 
@@ -385,6 +395,7 @@ public:
         radius, 
         original_densities,
         sample_densities);
+      ++ advancement;
     }
   }
 };
@@ -466,6 +477,8 @@ wlop_simplify_and_regularize_point_set(
   double radius = choose_param(get_param(np, internal_np::neighbor_radius), -1);
   unsigned int iter_number = choose_param(get_param(np, internal_np::number_of_iterations), 35);
   bool require_uniform_sampling = choose_param(get_param(np, internal_np::require_uniform_sampling), false);
+  const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+                                                               cpp11::function<bool(double)>());
 
   typedef typename Kernel::Point_3   Point;
   typedef typename Kernel::FT        FT;
@@ -589,6 +602,9 @@ wlop_simplify_and_regularize_point_set(
     //parallel
     if (boost::is_convertible<ConcurrencyTag, Parallel_tag>::value)
     {
+      internal::Point_set_processing_3::Parallel_callback
+        parallel_callback (callback, iter_number * number_of_sample, iter_n * number_of_sample);
+     
       tbb::blocked_range<size_t> block(0, number_of_sample);
       Sample_point_updater<Kernel, Kd_Tree, typename PointRange::iterator> sample_updater(
                            update_sample_points,
@@ -597,15 +613,28 @@ wlop_simplify_and_regularize_point_set(
                            sample_kd_tree,
                            radius2,
                            original_density_weights,
-                           sample_density_weights);
+                           sample_density_weights,
+                           parallel_callback.advancement(),
+                           parallel_callback.interrupted());
 
        tbb::parallel_for(block, sample_updater);
+
+       bool interrupted = parallel_callback.interrupted();
+  
+       // We interrupt by hand as counter only goes halfway and won't terminate by itself
+       parallel_callback.interrupted() = true;
+       parallel_callback.join();       
+
+       // If interrupted during this step, nothing is computed, we return NaN
+       if (interrupted)
+         return output;
     }else
 #endif
     {
       //sequential
+      std::size_t nb = iter_n * number_of_sample;
       for (sample_iter = sample_points.begin();
-        sample_iter != sample_points.end(); ++sample_iter, ++update_iter)
+           sample_iter != sample_points.end(); ++sample_iter, ++update_iter, ++ nb)
       {
         *update_iter = simplify_and_regularize_internal::
           compute_update_sample_point<Kernel,
@@ -617,6 +646,8 @@ wlop_simplify_and_regularize_point_set(
                                        radius2,
                                        original_density_weights,
                                        sample_density_weights);
+        if (callback && !callback ((nb+1) / double(iter_number * number_of_sample)))
+          return output;
       }
     }
     

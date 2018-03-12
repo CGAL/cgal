@@ -39,9 +39,11 @@
 #include <list>
 
 #ifdef CGAL_LINKED_WITH_TBB
+#include <CGAL/internal/Parallel_callback.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>  
+#include <tbb/atomic.h>
 #endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
@@ -125,20 +127,31 @@ jet_smooth_point(
     unsigned int degree_monge;
     const std::vector<Point>& input;
     std::vector<Point>& output;
+    tbb::atomic<std::size_t>& advancement;
+    tbb::atomic<bool>& interrupted;
 
   public:
     Jet_smooth_pwns (Tree& tree, unsigned int k, std::vector<Point>& points,
-		     unsigned int degree_fitting, unsigned int degree_monge, std::vector<Point>& output)
+		     unsigned int degree_fitting, unsigned int degree_monge, std::vector<Point>& output,
+                     tbb::atomic<std::size_t>& advancement,
+                     tbb::atomic<bool>& interrupted)
       : tree(tree), k (k), degree_fitting (degree_fitting),
 	degree_monge (degree_monge), input (points), output (output)
+      , advancement (advancement)
+      , interrupted (interrupted)
     { }
     
     void operator()(const tbb::blocked_range<std::size_t>& r) const
     {
       for( std::size_t i = r.begin(); i != r.end(); ++i)
+      {
+        if (interrupted)
+          break;
 	output[i] = CGAL::internal::jet_smooth_point<Kernel, SvdTraits>(input[i], tree, k,
 									degree_fitting,
 									degree_monge);
+        ++ advancement;
+      }
     }
 
   };
@@ -210,6 +223,8 @@ jet_smooth_point_set(
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
   unsigned int degree_fitting = choose_param(get_param(np, internal_np::degree_fitting), 2);
   unsigned int degree_monge = choose_param(get_param(np, internal_np::degree_monge), 2);
+  const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+                                                               cpp11::function<bool(double)>());
 
   typedef typename Kernel::Point_3 Point;
 
@@ -244,27 +259,35 @@ jet_smooth_point_set(
 #else
    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
    {
+     internal::Point_set_processing_3::Parallel_callback
+       parallel_callback (callback, kd_tree_points.size());
+     
      std::vector<Point> mutated_points (kd_tree_points.size ());
      CGAL::internal::Jet_smooth_pwns<Kernel, SvdTraits, Tree>
        f (tree, k, kd_tree_points, degree_fitting, degree_monge,
-	  mutated_points);
+	  mutated_points,
+          parallel_callback.advancement(),
+          parallel_callback.interrupted());
      tbb::parallel_for(tbb::blocked_range<size_t>(0, kd_tree_points.size ()), f);
      unsigned int i = 0;
      for(it = points.begin(); it != points.end(); ++ it, ++ i)
-       {
-	 put(point_map, *it, mutated_points[i]);
+       put(point_map, *it, mutated_points[i]);
 
-       }
+     parallel_callback.join();
+
    }
    else
 #endif
      {
-       for(it = points.begin(); it != points.end(); it++)
+       std::size_t nb = 0;
+       for(it = points.begin(); it != points.end(); it++, ++ nb)
 	 {
 	   const typename boost::property_traits<PointMap>::reference p = get(point_map, *it);
 	   put(point_map, *it ,
 	       internal::jet_smooth_point<Kernel, SvdTraits>(
 							     p,tree,k,degree_fitting,degree_monge) );
+           if (callback && !callback ((nb+1) / double(kd_tree_points.size())))
+             break;
 	 }
      }
 }

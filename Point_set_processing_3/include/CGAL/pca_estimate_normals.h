@@ -41,9 +41,11 @@
 #include <list>
 
 #ifdef CGAL_LINKED_WITH_TBB
+#include <CGAL/internal/Parallel_callback.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>  
+#include <tbb/atomic.h>
 #endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
@@ -117,17 +119,28 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
     const unsigned int k;
     const std::vector<Point>& input;
     std::vector<Vector>& output;
+    tbb::atomic<std::size_t>& advancement;
+    tbb::atomic<bool>& interrupted;
 
   public:
     PCA_estimate_normals(Tree& tree, unsigned int k, std::vector<Point>& points,
-			 std::vector<Vector>& output)
+			 std::vector<Vector>& output,
+                     tbb::atomic<std::size_t>& advancement,
+                     tbb::atomic<bool>& interrupted)
       : tree(tree), k (k), input (points), output (output)
+      , advancement (advancement)
+      , interrupted (interrupted)
     { }
     
     void operator()(const tbb::blocked_range<std::size_t>& r) const
     {
       for( std::size_t i = r.begin(); i != r.end(); ++i)
+      {
+        if (interrupted)
+          break;
 	output[i] = CGAL::internal::pca_estimate_normal<Kernel,Tree>(input[i], tree, k);
+        ++ advancement;
+      }
     }
 
   };
@@ -193,6 +206,8 @@ pca_estimate_normals(
 
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
   NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
+  const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+                                                               cpp11::function<bool(double)>());
 
   typedef typename Kernel::Point_3 Point;
 
@@ -235,20 +250,26 @@ pca_estimate_normals(
 #else
   if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
     {
+      internal::Point_set_processing_3::Parallel_callback
+        parallel_callback (callback, kd_tree_points.size());
+     
       std::vector<Vector> normals (kd_tree_points.size ());
       CGAL::internal::PCA_estimate_normals<Kernel, Tree>
-	f (tree, k, kd_tree_points, normals);
+	f (tree, k, kd_tree_points, normals,
+           parallel_callback.advancement(),
+           parallel_callback.interrupted());
       tbb::parallel_for(tbb::blocked_range<size_t>(0, kd_tree_points.size ()), f);
       unsigned int i = 0;
       for(it = points.begin(); it != points.end(); ++ it, ++ i)
-	{
-	  put (normal_map, *it, normals[i]);
-	}
+        put (normal_map, *it, normals[i]);
+
+      parallel_callback.join();
     }
   else
 #endif
     {
-      for(it = points.begin(); it != points.end(); it++)
+      std::size_t nb = 0;
+      for(it = points.begin(); it != points.end(); it++, ++ nb)
 	{
 	  Vector normal = internal::pca_estimate_normal<Kernel,Tree>(      
 								     get(point_map,*it),
@@ -256,6 +277,8 @@ pca_estimate_normals(
 								     k);
 
 	  put(normal_map, *it, normal); // normal_map[it] = normal
+          if (callback && !callback ((nb+1) / double(kd_tree_points.size())))
+            break;
 	}
     }
    
