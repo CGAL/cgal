@@ -25,12 +25,16 @@
 #include <boost/property_map/property_map.hpp>
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <Eigen/Sparse>
+#include <CGAL/Eigen_solver_traits.h>
 #else
 #pragma message("Error: You must link CGAL with the Eigen library")
 #endif
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_explicit_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/constraints_map.h>
+
+// new cgal traits
+#include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_new_impl.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -247,6 +251,117 @@ void smooth_along_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, con
   std::cout<<std::endl;
   #endif
 }
+
+
+// new with cgal solver traits
+template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
+void smooth_along_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, const double& time,
+                                 const NamedParameters& np)
+{
+  using boost::choose_param;
+  using boost::get_param;
+
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  CGAL::Timer t;
+  std::cout << "Smoothing parameters...";
+  std::cout.flush();
+  t.start();
+  #endif
+
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
+
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
+  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+                               get_property_map(CGAL::vertex_point, pmesh));
+
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::lookup_named_param_def <
+      internal_np::vertex_is_constrained_t,
+      NamedParameters,
+      internal::Constrained_vertices_map<vertex_descriptor>
+    > ::type VCMap;
+  VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
+                             internal::Constrained_vertices_map<vertex_descriptor>());
+
+  std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+
+  bool use_explicit_scheme = choose_param(get_param(np, internal_np::use_explicit_scheme), false);
+
+  if(use_explicit_scheme)
+  {
+    smooth_curvature_flow_explicit(faces, pmesh, parameters::number_of_iterations(nb_iterations));
+  }
+  else
+  {
+    // implicit scheme
+#if defined(CGAL_EIGEN3_ENABLED)
+  #if EIGEN_VERSION_AT_LEAST(3,2,0)
+    typedef CGAL::Eigen_solver_traits<> Default_solver;
+  #else
+    typedef bool Default_solver;//compilation should crash
+      //if no solver is provided and Eigen version < 3.2
+  #endif
+#else
+    typedef bool Default_solver;//compilation should crash
+      //if no solver is provided and Eigen version < 3.2
+#endif
+
+#if defined(CGAL_EIGEN3_ENABLED)
+    CGAL_static_assertion_msg(
+      (!boost::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value) || EIGEN_VERSION_AT_LEAST(3, 2, 0),
+      "Eigen3 version 3.2 or later is required.");
+#else
+    CGAL_static_assertion_msg(
+      (!boost::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value),
+      "Eigen3 version 3.2 or later is required.");
+#endif
+
+    typedef typename Default_solver::Matrix Eigen_matrix;
+    typedef typename Default_solver::Vector Eigen_vector;
+
+    std::size_t n = static_cast<int>(vertices(pmesh).size());
+    Eigen_matrix A(n, n), stiffness_matrix(n, n), mass_matrix(n, n);
+    Eigen_vector bx(n), by(n), bz(n), Xx(n), Xy(n), Xz(n);
+
+    internal::Shape_smoother_new<PolygonMesh, VertexPointMap, VCMap, Default_solver, GeomTraits>
+        smoother(pmesh, vpmap, vcmap);
+
+    #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+    t.stop();
+    std::cout << " done ("<< t.time() <<" sec)." << std::endl;
+    std::cout << "Initializing..." << std::endl;
+    t.reset(); t.start();
+    #endif
+
+    smoother.init_smoothing(faces);
+    smoother.calculate_stiffness_matrix_elements();
+
+    #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+    t.stop();
+    std::cout << " done ("<< t.time() <<" sec)." << std::endl;
+    std::cout << "#iter = " << nb_iterations << std::endl;
+    std::cout << "Solving linear system..." << std::endl;
+    t.reset(); t.start();
+    #endif
+
+    for(std::size_t iter = 0; iter < nb_iterations; ++iter)
+    {
+      smoother.setup_system(A, stiffness_matrix, mass_matrix, bx, by, bz, time);
+      smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz);
+      smoother.update_mesh(Xx, Xy, Xz);
+    }
+  }
+
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  t.stop();
+  std::cout << "Shape smoothing done in ";
+  std::cout << t.time() << " sec." << std::endl;
+  std::cout<<std::endl;
+  #endif
+}
+
+
+
 
 template<typename PolygonMesh, typename NamedParameters>
 void smooth_along_curvature_flow(PolygonMesh& pmesh, const double& time,
