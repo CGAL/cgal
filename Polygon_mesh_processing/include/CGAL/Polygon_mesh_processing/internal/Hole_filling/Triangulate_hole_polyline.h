@@ -26,8 +26,11 @@
 
 
 #include <CGAL/value_type_traits.h>
+#ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
+#endif
+#include <CGAL/utility.h>
 #include <CGAL/iterator.h>
 #include <CGAL/use.h>
 #include <CGAL/Kernel/global_functions_3.h>
@@ -730,6 +733,7 @@ template<
 >
 class Triangulate_hole_polyline;
 
+#ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
 // By default Lookup_table_map is used, since Lookup_table requires n*n mem.
 // Performance decrease is nearly 2x (for n = 10,000, for larger n Lookup_table just goes out of mem) 
 template<
@@ -1111,6 +1115,7 @@ private:
     return W.get(0, n-1);
   }
 }; // End of Triangulate_hole_polyline_DT
+#endif
 
 /************************************************************************
  * Triangulate hole by using all search space
@@ -1213,7 +1218,11 @@ triangulate_hole_polyline(const PointRange1& points,
 {
   typedef Kernel        K;
   typedef typename K::Point_3    Point_3;
+  #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
   typedef CGAL::internal::Triangulate_hole_polyline_DT<K, Tracer, WeightCalculator> Fill_DT;
+  #else
+  CGAL_USE(use_delaunay_triangulation);
+  #endif
   typedef CGAL::internal::Triangulate_hole_polyline<K, Tracer, WeightCalculator>    Fill;
 
   std::vector<Point_3> P(boost::begin(points), boost::end(points));
@@ -1226,8 +1235,10 @@ triangulate_hole_polyline(const PointRange1& points,
     }
   }
 
-  typename WeightCalculator::Weight w = use_delaunay_triangulation ?
-    Fill_DT().operator()(P,Q,tracer,WC) :
+  typename WeightCalculator::Weight w =
+  #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
+    use_delaunay_triangulation ? Fill_DT().operator()(P,Q,tracer,WC) :
+  #endif
     Fill().operator()(P,Q,tracer,WC);
   #ifdef CGAL_PMP_HOLE_FILLING_DEBUG
   std::cerr << w << std::endl;
