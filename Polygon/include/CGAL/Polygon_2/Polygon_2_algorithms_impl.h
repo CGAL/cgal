@@ -23,16 +23,83 @@
 //
 // Author(s)     : Wieger Wesselink <wieger@cs.ruu.nl>
 
+#include <CGAL/assertions.h>
 #include <CGAL/Polygon_2/Polygon_2_simplicity.h>
-#include <cstdlib>
+
+#include <boost/next_prior.hpp>
+
 #include <algorithm>
+#include <cstdlib>
 #include <iterator>
+#include <limits>
 #include <set>
 #include <vector>
 
 /// \cond SKIP_IN_MANUAL
 
 namespace CGAL {
+
+namespace internal {
+namespace Polygon_2 {
+
+template<typename Kernel, typename InputForwardIterator, typename OutputForwardIterator>
+void filter_collinear_points(InputForwardIterator first,
+                             InputForwardIterator beyond,
+                             OutputForwardIterator out,
+                             const typename Kernel::FT tolerance =
+                               std::numeric_limits<typename Kernel::FT>::epsilon())
+{
+  if(std::distance(first, beyond) < 4)
+    return;
+
+  typedef typename Kernel::FT                              FT;
+  typedef typename Kernel::Point_2                         Point;
+
+  InputForwardIterator last = boost::prior(beyond);
+
+  InputForwardIterator vit = first, vit_next = vit, vit_next_2 = vit, vend = vit;
+  ++vit_next;
+  ++(++vit_next_2);
+
+  bool stop = false;
+
+  do
+  {
+    CGAL_assertion(vit != vit_next && vit_next != vit_next_2 && vit != vit_next_2);
+
+    const Point& o = *vit;
+    const Point& p = *vit_next;
+    const Point& q = *vit_next_2;
+
+    // Stop when 'p' is the starting point. It does not matter whether we are
+    // in a collinear case or not.
+    stop = (vit_next == vend);
+
+    const FT det = CGAL::determinant(o.x() - q.x(), o.y() - q.y(),
+                                     p.x() - q.x(), p.y() - q.y());
+
+    if(CGAL::abs(det) <= tolerance)
+    {
+      // Only move 'p' and 'q' to ignore consecutive collinear points
+      vit_next = (vit_next == last) ? first : ++vit_next;
+      vit_next_2 = (vit_next_2 == last) ? first : ++vit_next_2;
+    }
+    else
+    {
+      // 'vit = vit_next' and not '++vit' because we don't necessarily have *(boost::next(vit) == p)
+      // and collinear points between 'o' and 'p' are ignored
+      vit = vit_next;
+      vit_next = (vit_next == last) ? first : ++vit_next;
+      vit_next_2 = (vit_next_2 == last) ? first : ++vit_next_2;
+
+      *out++ = p;
+    }
+  }
+  while(!stop);
+}
+
+} // namespace Polygon_2
+} // namespace internal
 
 
 //-----------------------------------------------------------------------//
