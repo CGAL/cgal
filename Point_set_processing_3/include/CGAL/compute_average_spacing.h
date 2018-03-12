@@ -263,7 +263,7 @@ compute_average_spacing(
    else
 #endif
      {
-         for(typename PointRange::const_iterator it = points.begin(); it != points.end(); it++, nb++)
+       for(typename PointRange::const_iterator it = points.begin(); it != points.end(); it++, nb++)
        {
          sum_spacings += internal::compute_average_spacing<Kernel,Tree>(
            get(point_map,*it),
