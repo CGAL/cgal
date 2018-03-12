@@ -44,7 +44,6 @@ namespace CGAL {
         dummy_points.clear();
 
         if (rational) {
-            std::cout << "Dummy points are rational!" << std::endl;
             // Push back the origin
             dummy_points.push_back(Dummy_point( FT(0), FT(0) ));  
 
@@ -70,7 +69,6 @@ namespace CGAL {
 
 
         } else { // Algebraic dummy points
-            std::cout << "Dummy points are algebraic!" << std::endl;
             FT F0 = FT(0);
             FT F1 = FT(1);
             FT F2 = FT(2);

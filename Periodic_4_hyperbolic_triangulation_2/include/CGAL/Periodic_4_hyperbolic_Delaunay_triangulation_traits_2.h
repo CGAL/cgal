@@ -158,8 +158,9 @@ public:
 
 	template <typename PP>
 	Point operator() ( const PP& p ) const {
-		Point ret(NT(p.x()), NT(p.y()));
-		return ret;
+		//Point ret(NT(p.x()), NT(p.y()));
+		//return ret;
+		return p; 
 	}
 
 };
@@ -529,31 +530,21 @@ public:
 	  			if ( Has_on_bounded_side_2()( l_inf, inters.first ) )
 	    			return inters.first;
 	  			return inters.second;
-			} else {
-				// here bis_qr is a line
-				l = boost::get<Euclidean_line_2>(&bis_qr);	
-				std::pair<Point_2, Point_2> inters = Construct_inexact_intersection_2()(*c_pq, *l);
-      	
-	  			if ( Has_on_bounded_side_2()( l_inf, inters.first ) )
-	    			return inters.first;
-	  			return inters.second;
-			}
+			} 
+			// here bis_qr is a line
+			l = boost::get<Euclidean_line_2>(&bis_qr);	
+			c = c_pq;
 		} else {
 			// here bis_pq is a line
 			l = boost::get<Euclidean_line_2>(&bis_pq);	
-			if (( c = boost::get<Circle_2>(&bis_qr) )) {
-				std::pair<Point_2, Point_2> inters = Construct_inexact_intersection_2()(*l, *c);
-				if ( Has_on_bounded_side_2()( l_inf, inters.first ) )
-					return inters.first;
-				return inters.second;		
-			} else {
-				std::cout << "This should NOT be happening!" << std::endl;
-			}	
+			c = boost::get<Circle_2>(&bis_qr);
 		}	
 
-		// Two Euclidean lines can intersect only in the origin of the Poincaré disk.
-		// We are here only if ALL other tests have failed, so we intersect two lines.
-		return Voronoi_point(0,0);
+		std::pair<Point_2, Point_2> inters = Construct_inexact_intersection_2()(*c, *l);
+      	
+		if ( Has_on_bounded_side_2()( l_inf, inters.first ) )
+			return inters.first;					
+		return inters.second;
 	}
 
 	template <typename Face_handle>

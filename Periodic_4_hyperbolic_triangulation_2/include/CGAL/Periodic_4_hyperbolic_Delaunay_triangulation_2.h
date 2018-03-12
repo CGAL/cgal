@@ -151,9 +151,7 @@ namespace CGAL {
   public:
 	Periodic_4_hyperbolic_Delaunay_triangulation_2(Geometric_traits gt) : 
 	Periodic_4_hyperbolic_triangulation_2<GT, TDS>(gt) { 
-		std::cout << "Inserting dummy points..."; std::cout.flush();
 		insert_dummy_points();
-		std::cout << "  DONE!" << std::endl;
 		n_dpt = 14; 
 	}  
 
@@ -161,17 +159,13 @@ namespace CGAL {
 	  const Circle_2 domain = Circle_2(Point_2(FT(0),FT(0)), FT(1*1)), 
 	  const Geometric_traits &gt = Geometric_traits() ) :
 	Periodic_4_hyperbolic_triangulation_2<GT, TDS>(domain, gt) { 
-		std::cout << "Inserting dummy points..."; std::cout.flush();
 		insert_dummy_points();
-		std::cout << "  DONE!" << std::endl;
 		n_dpt = 14; 
 	}
 
 	Periodic_4_hyperbolic_Delaunay_triangulation_2(const Periodic_4_hyperbolic_Delaunay_triangulation_2& tr) :
 	Periodic_4_hyperbolic_triangulation_2<GT, TDS>(tr) { 
-		std::cout << "Inserting dummy points..."; std::cout.flush();
 		insert_dummy_points();
-		std::cout << "  DONE!" << std::endl;
 		n_dpt = 14;
 	}
 
@@ -471,19 +465,11 @@ insert(const Point  &p,  Face_handle hint, bool batch_insertion, bool verified_i
 
 	typedef typename Gt::Side_of_original_octagon Side_of_original_octagon;
 
-	//CGAL::Timer tmr;
-	//CGAL::Timer ttmr;
-	//ttmr.start();
-
 	CGAL::Bounded_side side = CGAL::ON_BOUNDED_SIDE;
 
 	if (!verified_input) {
-		//tmr.reset();
-		//tmr.start();
 		Side_of_original_octagon check = Side_of_original_octagon();
 		side = check(p);
-		//tmr.stop();
-		//std::cout << "  side check: " << tmr.time() << std::endl;
 	}
 
 	if (side != CGAL::ON_UNBOUNDED_SIDE) {
@@ -491,33 +477,19 @@ insert(const Point  &p,  Face_handle hint, bool batch_insertion, bool verified_i
 		Hyperbolic_translation loff;
 		Locate_type lt;
 		int li;
-		//tmr.reset();
-		//tmr.start();
 		Face_handle start = this->euclidean_locate(p, lt, li, loff, hint, true);
-		//tmr.stop();
-		//std::cout << "  locate: " << tmr.time() << std::endl;
 		if (lt == Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::VERTEX) {
 			return Vertex_handle();
 		}
 
 		std::vector<Face_handle> faces;
-		//tmr.reset();
-		//tmr.start();
 		this->find_conflicts(start, p, loff, std::back_inserter(faces));
-		//tmr.stop();
-		//std::cout << "  conflicts: " << tmr.time() << std::endl;
 
 		for (int i = 0; i < faces.size(); i++) {
 		}
 
-		//tmr.reset();
-		//tmr.start();
 		v = this->insert_in_hole(p, faces.begin(), faces.end());
-		//tmr.stop();
-		//std::cout << "  in hole: " << tmr.time() << std::endl;
 
-		//tmr.reset();
-		//tmr.start();
 		Face_circulator ifc = tds().incident_faces(v), done(ifc);
 		do {
 			ifc->restore_translations(loff);
@@ -529,8 +501,6 @@ insert(const Point  &p,  Face_handle hint, bool batch_insertion, bool verified_i
 		do {
 			ivc->remove_translation();
 		} while (++ivc != done_v);
-		//tmr.stop();
-		//std::cout << "  cleanup: " << tmr.time() << std::endl;
 		
 		if (!batch_insertion) {
 			CGAL_triangulation_assertion(this->is_valid(true));
@@ -550,8 +520,6 @@ insert(const Point  &p,  Face_handle hint, bool batch_insertion, bool verified_i
 			}
 		}
 
-		//ttmr.stop();
-		//std::cout << "  --> total: " << ttmr.time();
 		return v;
 	}
 
