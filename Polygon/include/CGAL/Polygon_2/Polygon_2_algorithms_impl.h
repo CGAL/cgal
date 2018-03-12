@@ -49,6 +49,8 @@ bool is_simple_2(ForwardIterator first,
                       ForwardIterator last,
                       const PolygonTraits& traits)
 {
+    if (first == last) return true;
+
     return is_simple_polygon(first, last, traits);
 }
 
