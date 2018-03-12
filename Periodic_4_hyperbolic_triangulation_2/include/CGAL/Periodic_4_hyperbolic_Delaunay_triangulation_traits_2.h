@@ -221,18 +221,18 @@ public:
 
 public:
 
-	class Compute_hyperbolic_diameter {
+	class Compute_approximate_hyperbolic_diameter {
 	public:
 
 		typedef double result_type;
 
-		Compute_hyperbolic_diameter() {}
+		Compute_approximate_hyperbolic_diameter() {}
 
 		result_type operator()(Circle_2 c) {
 		
 			typedef Euclidean_line_2       				Line;
 			typedef Circle_2     						Circle;
-			typedef Construct_intersection_2 			Intersection;
+			typedef Construct_inexact_intersection_2 	Intersection;
 
 			Point  p0(0, 0);
 			Circle c0(p0, 1);

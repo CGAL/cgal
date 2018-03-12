@@ -416,7 +416,7 @@ is_removable(Vertex_handle v, Delaunay_triangulation_2<Gt,Tds>& dt, std::map<Ver
 	  Circle c(fit->vertex(0)->point(), 
 			   fit->vertex(1)->point(), 
 			   fit->vertex(2)->point());
-	  typename Gt::Compute_hyperbolic_diameter cdiam;
+	  typename Gt::Compute_approximate_hyperbolic_diameter cdiam;
 	  double diam = cdiam(c);
 	  if (max_diam < diam) {
 		max_diam = diam;
