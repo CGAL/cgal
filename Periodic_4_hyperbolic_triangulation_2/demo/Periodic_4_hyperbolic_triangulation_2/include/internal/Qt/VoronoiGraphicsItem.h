@@ -68,8 +68,24 @@ public:
   }
 
 private:
+
+  void updateCCenters() {
+    cc.clear();
+    for (typename DT::Face_iterator it = dt->faces_begin(); it != dt->faces_end(); it++) {
+      cc[it] = Circumcenter()(*it);
+    }
+    std::cout << "Circumcenters: " << cc.size() << std::endl;
+  }
+
+  typedef typename DT::Voronoi_point                                              Voronoi_point;
+  typedef typename DT::Geom_traits::Construct_inexact_hyperbolic_circumcenter_2   Circumcenter;
+  typedef typename DT::Geom_traits::Construct_hyperbolic_segment_2                Segment;
+  typedef typename DT::Face_handle                                                Face_handle;
+  typedef typename DT::Geom_traits::Construct_point_2                             CP2;
+
   DT * dt;
   QPen edges_pen;
+  std::map<Face_handle, Voronoi_point> cc;   // to hold the circumcenters of all the faces
 };
 
 
@@ -79,6 +95,7 @@ VoronoiGraphicsItem<DT>::VoronoiGraphicsItem(DT * dt_)
   :  dt(dt_)
 {
   setZValue(3);
+  updateCCenters();
 }
 
 template <typename DT>
@@ -108,7 +125,7 @@ VoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem
   
   for (typename DT::Face_iterator fit = dt->faces_begin(); fit != dt->faces_end(); fit++) {
     for (int i = 0; i < 3; i++) {
-      typename DT::Segment s = dt->dual(std::pair<typename DT::Face_handle, int>(fit, i));
+      typename DT::Segment s =  Segment()(cc[fit], CP2()(cc[fit->neighbor(i)], fit->neighbor_translation(i))); //dt->dual(std::pair<typename DT::Face_handle, int>(fit, i));
       pos << s;
     }
   }
@@ -129,6 +146,7 @@ template <typename T>
 void 
 VoronoiGraphicsItem<T>::modelChanged()
 {
+  updateCCenters();
   update();
 }
 
