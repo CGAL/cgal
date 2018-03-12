@@ -73,6 +73,8 @@ namespace internal{
     using boost::choose_param;
     using boost::get_param;
 
+    CGAL_assertion(halfedge(v_max, pmesh)!=boost::graph_traits<PolygonMesh>::null_halfedge());
+
     //VertexPointMap
     typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
     VPMap vpmap = choose_param(get_param(np, vertex_point),
@@ -193,13 +195,22 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
   GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
 
   //find the vertex with maximal z coordinate
-  typename boost::graph_traits<PolygonMesh>::vertex_iterator vbegin, vend;
-  cpp11::tie(vbegin, vend) = vertices(pmesh);
-
   internal::Compare_vertex_points_z_3<GT, VPMap> less_z(vpmap, gt);
-  typename boost::graph_traits<PolygonMesh>::vertex_iterator v_max_it
-    = std::max_element(vbegin, vend, less_z);
-  typename boost::graph_traits<PolygonMesh>::vertex_descriptor v_max = *v_max_it;
+  typename boost::graph_traits<PolygonMesh>::vertex_descriptor v_max = *(vertices(pmesh).first);
+  for (typename boost::graph_traits<PolygonMesh>::vertex_iterator
+          vit=cpp11::next(vertices(pmesh).first), vit_end = vertices(pmesh).second;
+          vit!=vit_end; ++vit)
+  {
+    // skip isolated vertices
+    if (halfedge(*vit, pmesh)==boost::graph_traits<PolygonMesh>::null_halfedge())
+      continue;
+    if( less_z(v_max, *vit) )
+      v_max=*vit;
+  }
+
+  // only isolated vertices
+  if (halfedge(v_max, pmesh)==boost::graph_traits<PolygonMesh>::null_halfedge())
+    return true;
 
   return internal::is_outward_oriented(v_max, pmesh, np);
 }
