@@ -114,13 +114,9 @@ void Polyhedron_demo_point_set_bilateral_smoothing_plugin::on_actionBilateralSmo
 
     for (unsigned int i = 0; i < dialog.iterations (); ++i)
       {
-#ifdef CGAL_LINKED_WITH_TBB
-        Callback callback;
-#else
         std::ostringstream oss;
         oss << "Bilateral smoothing (iteration " << i+1 << "/" << dialog.iterations() << ")";
         Callback callback(oss.str().c_str(), mw);
-#endif
 
 	double error =
           CGAL::bilateral_smooth_point_set<Concurrency_tag>
@@ -133,8 +129,6 @@ void Polyhedron_demo_point_set_bilateral_smoothing_plugin::on_actionBilateralSmo
         if (std::isnan(error)) // NaN return means algorithm was interrupted
           break;
       }
-
-
     
     std::size_t memory = CGAL::Memory_sizer().virtual_size();
     std::cerr << task_timer.time() << " seconds, "

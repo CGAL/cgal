@@ -15,6 +15,9 @@
 #include <QInputDialog>
 #include <QMessageBox>
 
+#include "Qt_progress_bar_callback.h"
+typedef Qt_progress_bar_callback Callback;
+
 #include "ui_Point_set_outliers_removal_plugin.h"
 using namespace CGAL::Three;
 class Polyhedron_demo_point_set_outliers_removal_plugin :
@@ -93,21 +96,24 @@ void Polyhedron_demo_point_set_outliers_removal_plugin::on_actionOutlierRemoval_
     std::cerr << "Select outliers (" << removed_percentage <<"% with distance threshold "
               << distance_threshold << ")...\n";
 
+    Callback callback("Selecting outliers...", NULL);
+    
     // Computes outliers
     Point_set::iterator first_point_to_remove =
       CGAL::remove_outliers(*points,
                             nb_neighbors,
                             points->parameters().
                             threshold_percent(removed_percentage).
-                            threshold_distance(distance_threshold));
+                            threshold_distance(distance_threshold).
+                            callback (callback));
 
 
     std::size_t nb_points_to_remove = std::distance(first_point_to_remove, points->end());
     std::size_t memory = CGAL::Memory_sizer().virtual_size();
-    std::cerr << "Simplification: " << nb_points_to_remove << " point(s) are selected ("
-                                    << task_timer.time() << " seconds, "
-                                    << (memory>>20) << " Mb allocated)"
-                                    << std::endl;
+    std::cerr << "Outliers: " << nb_points_to_remove << " point(s) are selected ("
+              << task_timer.time() << " seconds, "
+              << (memory>>20) << " Mb allocated)"
+              << std::endl;
 
     // Selects points to delete
     points->set_first_selected (first_point_to_remove);

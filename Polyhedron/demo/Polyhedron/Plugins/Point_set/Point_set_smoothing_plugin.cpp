@@ -14,9 +14,13 @@
 
 // Concurrency
 #ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
+#  include "Progress_bar_callback.h"
+   typedef Progress_bar_callback Callback;
+   typedef CGAL::Parallel_tag Concurrency_tag;
 #else
-typedef CGAL::Sequential_tag Concurrency_tag;
+#  include "Qt_progress_bar_callback.h"
+   typedef Qt_progress_bar_callback Callback;
+   typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
 
 using namespace CGAL::Three;
@@ -81,9 +85,13 @@ void Polyhedron_demo_point_set_smoothing_plugin::on_actionJetSmoothing_triggered
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
     QApplication::processEvents();
+
+    Callback callback("Smoothing point set...", NULL);
+    
     CGAL::jet_smooth_point_set<Concurrency_tag>(points->all_or_selection_if_not_empty(),
                                                 nb_neighbors,
-                                                points->parameters());
+                                                points->parameters().
+                                                callback (callback));
 
     points->invalidate_bounds();
 

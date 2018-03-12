@@ -96,11 +96,7 @@ void Polyhedron_demo_point_set_average_spacing_plugin::on_actionAverageSpacing_t
     CGAL::Real_timer task_timer; task_timer.start();
     std::cerr << "Average spacing (k=" << nb_neighbors <<")...\n";
 
-#ifdef CGAL_LINKED_WITH_TBB
-    Callback callback;
-#else
     Callback callback("Computing average spacing...", mw);
-#endif
 
     // Computes average spacing
 //    double average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>(

@@ -28,10 +28,15 @@
 
 // Concurrency
 #ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
+#  include "Progress_bar_callback.h"
+   typedef Progress_bar_callback Callback;
+   typedef CGAL::Parallel_tag Concurrency_tag;
 #else
-typedef CGAL::Sequential_tag Concurrency_tag;
+#  include "Qt_progress_bar_callback.h"
+   typedef Qt_progress_bar_callback Callback;
+   typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
+
 using namespace CGAL::Three;
 
 class Polyhedron_demo_point_set_normal_estimation_plugin :
@@ -174,10 +179,14 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
       CGAL::Timer task_timer; task_timer.start();
       std::cerr << "Estimates normal direction by PCA (k=" << dialog.pca_neighbors() <<")...\n";
 
+      Callback callback("Estimating normals by PCA...", NULL);
+      
       // Estimates normals direction.
       CGAL::pca_estimate_normals<Concurrency_tag>(points->all_or_selection_if_not_empty(),
                                                   dialog.pca_neighbors(),
-                                                  points->parameters());
+                                                  points->parameters().
+                                                  callback (callback));
+                                                  
 
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << "Estimates normal direction: " << task_timer.time() << " seconds, "
@@ -189,10 +198,13 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
       CGAL::Timer task_timer; task_timer.start();
       std::cerr << "Estimates normal direction by Jet Fitting (k=" << dialog.jet_neighbors() <<")...\n";
 
+      Callback callback("Estimating normals by jet fitting...", NULL);
+      
       // Estimates normals direction.
       CGAL::jet_estimate_normals<Concurrency_tag>(points->all_or_selection_if_not_empty(),
                                                   dialog.jet_neighbors(),
-                                                  points->parameters());
+                                                  points->parameters().
+                                                  callback (callback));
 
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << "Estimates normal direction: " << task_timer.time() << " seconds, "

@@ -17,15 +17,19 @@
 #include <QtPlugin>
 #include <QMessageBox>
 
+#include "Qt_progress_bar_callback.h"
+
 #include "ui_Point_set_simplification_plugin.h"
 
 // Concurrency
 #ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
+#  include "Progress_bar_callback.h"
+   typedef Progress_bar_callback Callback;
+   typedef CGAL::Parallel_tag Concurrency_tag;
 #else
-typedef CGAL::Sequential_tag Concurrency_tag;
+   typedef Qt_progress_bar_callback Callback;
+   typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
-
 
 using namespace CGAL::Three;
 class Polyhedron_demo_point_set_simplification_plugin :
@@ -151,25 +155,35 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
     {
       std::cerr << "Point set grid simplification (cell size = " << dialog.gridCellSize() <<" * average spacing)...\n";
 
+      Callback as_callback("Computing average spacing...", NULL);
+      
       // Computes average spacing
-      double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(*points, 6 /* knn = 1 ring */);
+      double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(*points, 6, /* knn = 1 ring */
+                                                                              points->parameters().
+                                                                              callback (as_callback));
 
+      Qt_progress_bar_callback callback("Grid simplyfing...", NULL);
+      
       // Computes points to remove by Grid Clustering
       first_point_to_remove =
         CGAL::grid_simplify_point_set(*points,
-                                      dialog.gridCellSize()*average_spacing);
+                                      dialog.gridCellSize()*average_spacing,
+                                      points->parameters().
+                                      callback (callback));
     }
     else
     {
       std::cerr << "Point set hierarchy simplification (cluster size = " << dialog.maximumClusterSize()
 		<< ", maximum variation = " << dialog.maximumSurfaceVariation() << ")...\n";
 
-      // Computes points to remove by Grid Clustering
+      Qt_progress_bar_callback callback("Hierarchy simplyfing...", NULL);
+      // Computes points to remove by Hierarchy
       first_point_to_remove =
         CGAL::hierarchy_simplify_point_set(*points,
                                            points->parameters().
                                            size(dialog.maximumClusterSize()).
-                                           maximum_variation(dialog.maximumSurfaceVariation()));
+                                           maximum_variation(dialog.maximumSurfaceVariation()).
+                                           callback(callback));
     }
 
     std::size_t nb_points_to_remove = std::distance(first_point_to_remove, points->end());

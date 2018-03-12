@@ -19,9 +19,13 @@
 
 // Concurrency
 #ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
+#  include "Progress_bar_callback.h"
+   typedef Progress_bar_callback Callback;
+   typedef CGAL::Parallel_tag Concurrency_tag;
 #else
-typedef CGAL::Sequential_tag Concurrency_tag;
+#  include "Qt_progress_bar_callback.h"
+   typedef Qt_progress_bar_callback Callback;
+   typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
 
 using namespace CGAL::Three;
@@ -108,13 +112,16 @@ void Polyhedron_demo_point_set_wlop_plugin::on_actionSimplifyAndRegularize_trigg
     new_item->setVisible(true);
     item->setVisible(false);
     scene->addItem(new_item);
+
+    Callback callback ("WLOP simplification and regularization...", NULL);
     
     CGAL::wlop_simplify_and_regularize_point_set<Concurrency_tag>
       (points->all_or_selection_if_not_empty(),
        new_item->point_set()->point_back_inserter(),
        points->parameters().
        select_percentage (dialog.retainedPercentage()).
-       neighbor_radius (dialog.neighborhoodRadius()*average_spacing));
+       neighbor_radius (dialog.neighborhoodRadius()*average_spacing).
+       callback (callback));
 
     std::size_t memory = CGAL::Memory_sizer().virtual_size();
     std::cerr << "Simplification and regularization: "
