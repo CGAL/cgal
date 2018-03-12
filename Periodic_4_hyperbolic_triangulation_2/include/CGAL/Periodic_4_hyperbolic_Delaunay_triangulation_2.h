@@ -79,6 +79,7 @@ namespace CGAL {
 	typedef Circle_2                                           Circle;
 	typedef typename Base::Point_2                             Point_2;
 	typedef Point_2                                            Point;
+	typedef typename Geometric_traits::Voronoi_point 		   Voronoi_point;
 	typedef typename Base::Segment_2                           Segment_2;
 	typedef Segment_2                                          Segment;
 	typedef typename Base::Triangle_2                          Triangle_2;

@@ -121,6 +121,10 @@ public:
 	template <typename PP>
 	Point operator() ( const PP& pt, const Hyperbolic_translation& tr ) const
 	{
+		if (tr.is_identity()) {
+			return operator()(pt);
+		}
+
 		Point p = operator()(pt);
 		std::pair<NT, NT> a, b;
 		a = tr.alpha();
@@ -500,18 +504,18 @@ public:
     
   	typedef Voronoi_point 	result_type;
 
-    Voronoi_point operator()(Point_2 p, Point_2 q, Point_2 r)
-    { 
+    Voronoi_point operator()(Point_2 p, Point_2 q, Point_2 r) { 
       Origin o; 
       Point_2 po = Point_2(o);
       Circle_2 l_inf(po, FT(1));
      
+      // Check if |p,O| = |q,O| = |r,O| -- then the circumcenter is the origin O
+      if (Compare_distance_2()(po,p,q) == EQUAL && Compare_distance_2()(po,p,r) == EQUAL ) 
+      	return po; 
+
       Euclidean_circle_or_line_2 bis_pq = typename Base::Construct_circle_or_line_supporting_bisector()(p,q);
       Euclidean_circle_or_line_2 bis_qr = typename Base::Construct_circle_or_line_supporting_bisector()(q,r);
-
-		if (Compare_distance_2()(po,p,q) == EQUAL &&
-	   		Compare_distance_2()(po,p,r) == EQUAL ) 
-			return po; 
+		
       // now supporting objects cannot both be Euclidean lines
 
 		Euclidean_line_2* l;
@@ -525,20 +529,38 @@ public:
 	  			if ( Has_on_bounded_side_2()( l_inf, inters.first ) )
 	    			return inters.first;
 	  			return inters.second;
+			} else {
+				// here bis_qr is a line
+				l = boost::get<Euclidean_line_2>(&bis_qr);	
+				std::pair<Point_2, Point_2> inters = Construct_inexact_intersection_2()(*c_pq, *l);
+      	
+	  			if ( Has_on_bounded_side_2()( l_inf, inters.first ) )
+	    			return inters.first;
+	  			return inters.second;
 			}
-			// here bis_qr is a line
-			l = boost::get<Euclidean_line_2>(&bis_qr);
-			c = c_pq;
-		}
+		} else {
+			// here bis_pq is a line
+			l = boost::get<Euclidean_line_2>(&bis_pq);	
+			if (( c = boost::get<Circle_2>(&bis_qr) )) {
+				std::pair<Point_2, Point_2> inters = Construct_inexact_intersection_2()(*l, *c);
+				if ( Has_on_bounded_side_2()( l_inf, inters.first ) )
+					return inters.first;
+				return inters.second;		
+			} else {
+				std::cout << "This should NOT be happening!" << std::endl;
+			}	
+		}	
 
-		// here bis_pq is a line
-		l = boost::get<Euclidean_line_2>(&bis_pq);
-		c = boost::get<Circle_2>(&bis_qr);
+		// Two Euclidean lines can intersect only in the origin of the Poincaré disk.
+		// We are here only if ALL other tests have failed, so we intersect two lines.
+		return Voronoi_point(0,0);
+	}
 
-		std::pair<Point_2, Point_2> inters = Construct_inexact_intersection_2()(*l, *c);
-		if ( Has_on_bounded_side_2()( l_inf, inters.first ) )
-			return inters.first;
-		return inters.second;
+	template <typename Face_handle>
+	Voronoi_point operator()(Face_handle fh) {
+		return operator()(	Construct_point_2()(fh.vertex(0)->point(), fh.translation(0)),
+							Construct_point_2()(fh.vertex(1)->point(), fh.translation(1)),
+							Construct_point_2()(fh.vertex(2)->point(), fh.translation(2))  );
 	}
 
   }; // end Construct_inexact_hyperbolic_circumcenter_2
