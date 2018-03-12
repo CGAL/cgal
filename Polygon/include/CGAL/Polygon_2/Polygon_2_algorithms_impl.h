@@ -42,18 +42,34 @@ namespace CGAL {
 namespace internal {
 namespace Polygon_2 {
 
-template<typename Kernel, typename InputForwardIterator, typename OutputForwardIterator>
+// Filter a range of points to simplify sequences of collinear (or almost) points.
+// A point is removed if the two segments, formed using its previous and next points
+// in the range are collinear segments, up to a given tolerance.
+//
+// \tparam K must be a model of `Kernel`
+// \tparam InputForwardIterator must be a model of `ForwardIterator`
+//                              with value type `K::Point_2`
+// \tparam OutputForwardIterator must be a model of `OutputIterator`
+//                               with value type `K::Point_2`
+//
+// \param first, beyond the range
+// \param out points that are not removed are output in `out`
+// \param tolerance a tolerance on the collinearity of the two segments formed
+//                  by three consecutive points of the range (more specifically,
+//                  on the value of the determinant).
+//
+template<typename K, typename InputForwardIterator, typename OutputForwardIterator>
 void filter_collinear_points(InputForwardIterator first,
                              InputForwardIterator beyond,
                              OutputForwardIterator out,
-                             const typename Kernel::FT tolerance =
-                               std::numeric_limits<typename Kernel::FT>::epsilon())
+                             const typename K::FT tolerance =
+                               std::numeric_limits<typename K::FT>::epsilon())
 {
   if(std::distance(first, beyond) < 4)
     return;
 
-  typedef typename Kernel::FT                              FT;
-  typedef typename Kernel::Point_2                         Point;
+  typedef typename K::FT                              FT;
+  typedef typename K::Point_2                         Point;
 
   InputForwardIterator last = boost::prior(beyond);
 
