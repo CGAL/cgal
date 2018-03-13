@@ -24,6 +24,7 @@
 // Author(s)     : Wieger Wesselink <wieger@cs.ruu.nl>
 
 #include <CGAL/assertions.h>
+#include <CGAL/determinant.h>
 #include <CGAL/Polygon_2/Polygon_2_simplicity.h>
 
 #include <boost/next_prior.hpp>
