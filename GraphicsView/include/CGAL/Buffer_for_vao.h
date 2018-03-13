@@ -22,6 +22,8 @@
 #ifndef CGAL_VBO_BUFFER_FILLER_H
 #define CGAL_VBO_BUFFER_FILLER_H
 
+#include <CGAL/license/GraphicsView.h>
+
 #include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>

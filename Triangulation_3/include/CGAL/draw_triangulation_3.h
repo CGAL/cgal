@@ -23,6 +23,8 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/license/Triangulation_3.h>
+
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Random.h>
 

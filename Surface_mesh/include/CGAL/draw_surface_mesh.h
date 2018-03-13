@@ -38,6 +38,8 @@ void draw(const SM& asm);
   
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/license/Surface_mesh.h>
+
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Random.h>
 

@@ -22,6 +22,8 @@
 #ifndef CGAL_BASIC_VIEWER_QT_H
 #define CGAL_BASIC_VIEWER_QT_H
 
+#include <CGAL/license/GraphicsView.h>
+
 #include <QApplication>
 #include <QKeyEvent>
 
