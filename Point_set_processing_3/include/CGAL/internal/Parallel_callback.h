@@ -43,6 +43,12 @@ class Parallel_callback
   bool m_creator;
   std::thread* m_thread;
 
+  // assignment operator shouldn't be used (m_callback is const ref)
+  Parallel_callback& operator= (const Parallel_callback&)
+  {
+    return *this;
+  }
+  
 public:
   Parallel_callback (const cpp11::function<bool(double)>& callback,
                      std::size_t size,
@@ -73,11 +79,6 @@ public:
 
   }
 
-  Parallel_callback& operator= (const Parallel_callback& other)
-  {
-    Parallel_callback out (other);
-    return out;
-  }
 
   ~Parallel_callback ()
   {
