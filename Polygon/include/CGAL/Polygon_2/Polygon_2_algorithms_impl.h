@@ -23,11 +23,10 @@
 //
 // Author(s)     : Wieger Wesselink <wieger@cs.ruu.nl>
 
+#include <CGAL/algorithm.h>
 #include <CGAL/assertions.h>
 #include <CGAL/determinant.h>
 #include <CGAL/Polygon_2/Polygon_2_simplicity.h>
-
-#include <boost/next_prior.hpp>
 
 #include <algorithm>
 #include <cstdlib>
@@ -72,7 +71,7 @@ OutputForwardIterator filter_collinear_points(InputForwardIterator first,
   typedef typename K::FT                              FT;
   typedef typename K::Point_2                         Point;
 
-  InputForwardIterator last = boost::prior(beyond);
+  InputForwardIterator last = cpp11::prev(beyond);
 
   InputForwardIterator vit = first, vit_next = vit, vit_next_2 = vit, vend = vit;
   ++vit_next;
@@ -103,7 +102,7 @@ OutputForwardIterator filter_collinear_points(InputForwardIterator first,
     }
     else
     {
-      // 'vit = vit_next' and not '++vit' because we don't necessarily have *(boost::next(vit) == p)
+      // 'vit = vit_next' and not '++vit' because we don't necessarily have *(next(vit) == p)
       // and collinear points between 'o' and 'p' are ignored
       vit = vit_next;
       vit_next = (vit_next == last) ? first : ++vit_next;
