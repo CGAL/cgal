@@ -37,7 +37,8 @@
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
 
-#include <tbb/tbb.h>
+#include <tbb/enumerable_thread_specific.h>
+#include <tbb/queuing_mutex.h>
 
 #include <boost/mpl/if.hpp>
 
