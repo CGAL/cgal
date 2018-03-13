@@ -118,6 +118,7 @@ public:
     CGAL_assertion(stiffness_elements_.empty());
     stiffness_elements_.reserve(8 * nb_vert_); //estimation
 
+    /*
     BOOST_FOREACH(face_descriptor f, frange_)
     {
       BOOST_FOREACH(halfedge_descriptor hi, halfedges_around_face(halfedge(f, mesh_), mesh_))
@@ -137,6 +138,36 @@ public:
         }
       }
     }
+    */
+
+    boost::unordered_map<std::size_t, NT> diag_coeff;
+    BOOST_FOREACH(face_descriptor f, frange_)
+    {
+      BOOST_FOREACH(halfedge_descriptor hi, halfedges_around_face(halfedge(f, mesh_), mesh_))
+      {
+        halfedge_descriptor hi_opp = opposite(hi, mesh_);
+        if(!is_border(hi_opp, mesh_) && hi > hi_opp) continue;
+        vertex_descriptor v_source = source(hi, mesh_);
+        vertex_descriptor v_target = target(hi, mesh_);
+
+        if(!is_constrained(v_source) && !is_constrained(v_target))
+        {
+          auto i_source = vimap_[v_source];
+          auto i_target = vimap_[v_target];
+          NT Lij = weight_calculator_(hi);
+          if (!is_border(hi_opp, mesh_))
+            Lij+= weight_calculator_(hi_opp);
+          stiffness_elements_.push_back(Triplet(i_source, i_target, Lij));
+          stiffness_elements_.push_back(Triplet(i_target, i_source, Lij));
+          diag_coeff.insert(std::make_pair(i_source,0)).first->second -= Lij;
+          diag_coeff.insert(std::make_pair(i_target,0)).first->second -= Lij;
+        }
+      }
+    }
+    for (auto p : diag_coeff)
+      stiffness_elements_.push_back(Triplet(p.first, p.first, p.second));
+
+
   }
 
   void update_mesh(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
@@ -160,6 +191,7 @@ private:
     // fill A = D - time * L
 
 
+    /*
     for(int idx = 0; idx < diagonal_.size(); ++idx)
     {
       A.set_coef(idx, idx, diagonal_[idx], true); // A is empty
@@ -169,9 +201,10 @@ private:
     {
       A.add_coef(t.get<0>(), t.get<1>(), -time * t.get<2>());
     }
+    */
 
 
-    /*
+
     std::vector<bool> diag_set(diagonal_.size(), false);
 
     for(Triplet t : stiffness_elements_)
@@ -193,7 +226,7 @@ private:
         A.set_coef(idx, idx, diagonal_[idx], true); // A is empty
       }
     }
-    */
+
 
 
     A.assemble_matrix(); // does setFromTriplets and some compression
