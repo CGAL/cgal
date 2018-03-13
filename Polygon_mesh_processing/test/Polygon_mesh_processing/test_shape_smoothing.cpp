@@ -1,9 +1,10 @@
+#define CGAL_PMP_SMOOTHING_VERBOSE 1
+#define CGAL_PMP_SMOOTHING_DEBUG 1
 #include <fstream>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/shape_smoothing.h>
 #include <boost/graph/graph_traits.hpp>
-
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point;
@@ -140,6 +141,29 @@ void test_curvature_flow(const char* filename)
   #endif
 }
 
+void test_curvature_flow_new(const char* filename)
+{
+  std::ifstream input(filename);
+  Mesh mesh;
+  input >> mesh;
+  input.close();
+
+  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
+          get(CGAL::vertex_point, mesh);
+
+  const double time_step = 1.0;
+  CGAL::Polygon_mesh_processing::smooth_along_curvature_flow_new(faces(mesh), mesh, time_step,
+                                                                 CGAL::Polygon_mesh_processing::parameters::all_default());
+
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  std::ofstream out("data/output_precision_pyramid_new.off");
+  out << mesh;
+  out.close();
+  #endif
+}
+
+
+
 void test_demo_helpers(const char* filename)
 {
   std::ifstream input(filename);
@@ -168,11 +192,12 @@ int main(int argc, char* argv[])
   const char* filename_devil = "data/mannequin-devil.off";
   const char* filename_pyramid = "data/simple_pyramid.off";
 
-  test_demo_helpers(filename_devil);
-  test_curvature_flow_time_step(filename_devil);
-  test_curvature_flow(filename_pyramid);
-  test_implicit_constrained(filename_devil);
-  test_explicit_scheme(filename_devil);
+  //test_demo_helpers(filename_devil);
+  //test_curvature_flow_time_step(filename_devil);
+  test_curvature_flow(filename_devil);
+  test_curvature_flow_new(filename_devil);
+  //test_implicit_constrained(filename_devil);
+  //test_explicit_scheme(filename_devil);
 
   return 0;
 }

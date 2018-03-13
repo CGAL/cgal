@@ -39,70 +39,11 @@
 #include <unordered_set>
 #include <unordered_map>
 
+#include <CGAL/Polygon_mesh_processing/internal/Smoothing/constraints_map.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
-
-template<typename PolygonMesh, typename VertexPointMap,
-         typename CotangentValue = CGAL::internal::Cotangent_value_Meyer<PolygonMesh, VertexPointMap>>
-struct Edge_cotangent_weight : CotangentValue
-{
-    Edge_cotangent_weight(PolygonMesh& pmesh_, VertexPointMap vpmap_)
-      : CotangentValue(pmesh_, vpmap_)
-    {}
-
-    PolygonMesh& pmesh()
-    {
-      return CotangentValue::pmesh();
-    }
-
-    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
-    typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor     vertex_descriptor;
-
-    double operator()(halfedge_descriptor he)
-    {
-      if(is_border_edge(he, pmesh()))
-      {
-        halfedge_descriptor h1 = next(he, pmesh());
-        vertex_descriptor vs = source(he, pmesh());
-        vertex_descriptor vt = target(he, pmesh());
-        vertex_descriptor v1 = target(h1, pmesh());
-        return (CotangentValue::operator ()(vs, v1, vt));
-      }
-      else
-      {
-        halfedge_descriptor h1 = next(he, pmesh());
-        halfedge_descriptor h2 = prev(opposite(he, pmesh()), pmesh());
-        vertex_descriptor vs = source(he, pmesh());
-        vertex_descriptor vt = target(he, pmesh());
-        vertex_descriptor v1 = target(h1, pmesh());
-        vertex_descriptor v2 = source(h2, pmesh());
-        return ( CotangentValue::operator()(vs, v1, vt) + CotangentValue::operator()(vs, v2, vt) ) / 2.0;
-      }
-    }
-};
-
-template<typename PolygonMesh>
-struct Incident_area
-{
-  Incident_area(PolygonMesh& mesh) : pmesh(mesh){}
-
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-
-  double operator()(halfedge_descriptor he)
-  {
-    halfedge_descriptor hopp = opposite(he, pmesh);
-    face_descriptor f1 = face(he, pmesh);
-    face_descriptor f2 = face(hopp, pmesh);
-
-    double A1 = f1 == boost::graph_traits<PolygonMesh>::null_face() ? 0 : face_area(f1, pmesh);
-    double A2 = f2 == boost::graph_traits<PolygonMesh>::null_face() ? 0 : face_area(f2, pmesh);
-    return A1 + A2;
-  }
-  PolygonMesh& pmesh;
-};
 
 template<typename PolygonMesh,
          typename VertexPointMap,
@@ -147,62 +88,35 @@ public:
     check_face_range(face_range);
   }
 
-  void setup_system(Eigen_matrix& A, const Eigen_matrix& L, Eigen_matrix& D,
+  void setup_system(Eigen_matrix& A,
                     Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz,
                     const double& time)
   {
-
-    #ifdef CGAL_PMP_SMOOTHING_DEBUG
-    std::cerr << "compute coefficient matrix...\n";
-    #endif
-
-    compute_coeff_matrix(A, L, D, time);
-
-    #ifdef CGAL_PMP_SMOOTHING_DEBUG
-    std::cerr << "conpute rhs...\n";
-    #endif
-
-    compute_rhs(bx, by, bz, D);
-
-    #ifdef CGAL_PMP_SMOOTHING_DEBUG
-    std::cout<<"Done with setting up the system.\n";
-    #endif
+    compute_coefficient_matrix(A, time);
+    compute_rhs(bx, by, bz);
   }
 
   void solve_system(const Eigen_matrix& A,
                     Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz,
                     const Eigen_vector& bx, const Eigen_vector& by, const Eigen_vector& bz)
   {
-    #ifdef CGAL_PMP_SMOOTHING_DEBUG
-    std::cerr << "Preparing linear solver ...\n";
-    #endif
+    SparseLinearSolver solver;
+    NT Dx, Dy, Dz;
 
-    Eigen_solver solver;
-    solver.compute(A);
-
-    #ifdef CGAL_PMP_SMOOTHING_DEBUG
-    std::cerr << "solving...";
-    #endif
-
-    Xx = solver.solve(bx);
-    Xy = solver.solve(by);
-    Xz = solver.solve(bz);
-
-    #ifdef CGAL_PMP_SMOOTHING_DEBUG
-    std::cerr << "ok." << std::endl;
-    #endif
-
-    if(solver.info() != Eigen::Success)
+    if(!solver.linear_solver(A, bx, Xx, Dx) ||
+       !solver.linear_solver(A, by, Xy, Dy) ||
+       !solver.linear_solver(A, bz, Xz, Dz) )
     {
-      std::cerr << "Not Solved!" << std::endl;
+      std::cerr << "Could not solve linear system." << std::endl;
       return;
     }
+
   }
 
   void calculate_stiffness_matrix_elements()
   {
-    CGAL_assertion(tripletList_.empty());
-    tripletList.reserve(8 * nb_vert_); //estimation
+    CGAL_assertion(stiffness_elements_.empty());
+    stiffness_elements_.reserve(8 * nb_vert_); //estimation
 
     BOOST_FOREACH(face_descriptor f, frange_)
     {
@@ -213,13 +127,13 @@ public:
 
         if(!is_constrained(v_source) && !is_constrained(v_target))
         {
-          auto i_source = vimap_[v_source];
-          auto i_target = vimap_[v_target];
+          int i_source = vimap_[v_source];
+          int i_target = vimap_[v_target];
           NT Lij = weight_calculator_(hi);
-          tripletList.push_back(Triplet(i_source, i_target, Lij));
-          tripletList.push_back(Triplet(i_target, i_source, Lij));
-          tripletList.push_back(Triplet(i_source, i_source, -Lij));
-          tripletList.push_back(Triplet(i_target, i_target, -Lij));
+          stiffness_elements_.push_back(Triplet(i_source, i_target, Lij));
+          stiffness_elements_.push_back(Triplet(i_target, i_source, Lij));
+          stiffness_elements_.push_back(Triplet(i_source, i_source, -Lij));
+          stiffness_elements_.push_back(Triplet(i_target, i_target, -Lij));
         }
       }
     }
@@ -231,62 +145,105 @@ public:
   }
 
 private:
-  void calc_mass_matrix(Eigen_matrix& D)
+
+  void compute_coefficient_matrix(Eigen_matrix& A, const double& time)
   {
+    CGAL_assertion(A.row_dimension() != 0);
+    CGAL_assertion(A.column_dimension() != 0);
+    CGAL_assertion(A.row_dimension() == nb_vert_);
+    CGAL_assertion(A.column_dimension() == nb_vert_);
+
+    calculate_D_diagonal(diagonal_);
+    CGAL_assertion(diagonal_.size() == nb_vert_);
+
+
+    // fill A = D - time * L
+
+
+    for(int idx = 0; idx < diagonal_.size(); ++idx)
+    {
+      A.set_coef(idx, idx, diagonal_[idx], true); // A is empty
+    }
+
+    for(Triplet t : stiffness_elements_)
+    {
+      A.add_coef(t.get<0>(), t.get<1>(), -time * t.get<2>());
+    }
+
+
+    /*
+    std::vector<bool> diag_set(diagonal_.size(), false);
+
+    for(Triplet t : stiffness_elements_)
+    {
+      if (t.get<0>() != t.get<1>())
+        A.set_coef(t.get<0>(), t.get<1>(), -time * t.get<2>(), true);
+      else
+      {
+        A.set_coef(t.get<0>(), t.get<1>(), diagonal_[t.get<0>()] -time * t.get<2>(), true);
+        diag_set[t.get<0>()]=true;
+      }
+    }
+
+    for(int idx = 0; idx < diagonal_.size(); ++idx)
+    {
+      if (!diag_set[idx])
+      {
+        std::cout << "diag_NOT_set\n"  ;
+        A.set_coef(idx, idx, diagonal_[idx], true); // A is empty
+      }
+    }
+    */
+
+
+    A.assemble_matrix(); // does setFromTriplets and some compression
+
+  }
+
+  void calculate_D_diagonal(std::vector<double>& diagonal)
+  {
+    diagonal.clear();
+    //diagonal.resize(nb_vert_);
+    diagonal.assign(nb_vert_, 0);
     for(face_descriptor f : frange_)
     {
       double area = face_area(f, mesh_);
       for(vertex_descriptor v : vertices_around_face(halfedge(f, mesh_), mesh_))
       {
-        auto idx = vimap_[v];
+        int idx = vimap_[v];
         if(!is_constrained(v))
-          D.coeffRef(idx, idx) += 2.0 * area;
+        {
+          diagonal[idx] += 2.0 * area;
+        }
         else
-          D.coeffRef(idx, idx) = 1.0;
+        {
+          diagonal[idx] = 1.0;
+        }
       }
     }
-    D /= 12.0;
+
+    for(int i = 0; i < diagonal.size(); ++i)
+    {
+      diagonal[i] /= 12.0; // constraints (= 1) as well ?
+    }
+
   }
 
-  void compute_coefficient_matrix(Eigen_matrix& A, const double& time)
+  void compute_rhs(Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz)
   {
-    assert(A.rows() != 0);
-    assert(A.cols() != 0);
-    assert(A.rows() == L.rows());
-    assert(A.cols() == L.cols());
+    CGAL_assertion(diagonal_.size() == nb_vert_);
+    CGAL_assertion(bx.size() == nb_vert_);
+    CGAL_assertion(by.size() == nb_vert_);
+    CGAL_assertion(bz.size() == nb_vert_);
 
-    std::vector<Triple> diagonal;
-    calculate_D_diagonal(diagonal);
-
-
-
-
-
-
-    //A = D - time * L;
-  }
-
-
-  void calculate_D_diagonal(std::vector<Triple>& diagonal)
-  {
-    // to fill
-  }
-
-
-  void compute_rhs(Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz,
-                   Eigen_matrix& D)
-  {
     for(vertex_descriptor vi : vrange_)
     {
       int index = vimap_[vi];
       Point p = get(vpmap_, vi);
-      bx.coeffRef(index) = p.x();
-      by.coeffRef(index) = p.y();
-      bz.coeffRef(index) = p.z();
+      bx.set(index, diagonal_[index] * p.x());
+      by.set(index, diagonal_[index] * p.y());
+      bz.set(index, diagonal_[index] * p.z());
     }
-    bx = D * bx;
-    by = D * by;
-    bz = D * bz;
   }
 
   // update mesh
@@ -300,24 +257,14 @@ private:
     return Triangle(get(vpmap_, v1), get(vpmap_, v2), get(vpmap_, v3));
   }
 
-  /*
-  void normalize_area(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
-  {
-    NT surface_area = area(faces(mesh_), mesh_);
-    Xx /= CGAL::sqrt(surface_area);
-    Xy /= CGAL::sqrt(surface_area);
-    Xz /= CGAL::sqrt(surface_area);
-  }
-  */
-
   void update_map(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
   {
     for (vertex_descriptor v : vertices(mesh_))
     {
       int index = get(vimap_, v);
-      NT x_new = Xx.coeffRef(index);
-      NT y_new = Xy.coeffRef(index);
-      NT z_new = Xz.coeffRef(index);
+      NT x_new = Xx[index];
+      NT y_new = Xy[index];
+      NT z_new = Xz[index];
       put(vpmap_, v, Point(x_new, y_new, z_new));
     }
   }
@@ -346,7 +293,11 @@ private:
   PolygonMesh& mesh_;
   VertexPointMap& vpmap_;
   std::size_t nb_vert_;
-  std::vector<Triplet> tripletList_;
+
+  // linear system data
+  std::vector<Triplet> stiffness_elements_;
+  std::vector<double> diagonal_; // index of vector -> index of vimap_
+
   std::set<face_descriptor> frange_;
   std::set<vertex_descriptor> vrange_;
   IndexMap vimap_ = get(boost::vertex_index, mesh_);

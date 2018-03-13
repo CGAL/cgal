@@ -33,6 +33,9 @@
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_explicit_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/constraints_map.h>
 
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#include <CGAL/Timer.h>
+#endif
 // new cgal traits
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_new_impl.h>
 
@@ -221,7 +224,7 @@ void smooth_along_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, con
     #ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-    std::cout << "Initializing..." << std::endl;
+    std::cout << "Initializing...";
     t.reset(); t.start();
     #endif
 
@@ -231,31 +234,61 @@ void smooth_along_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, con
     #ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-    std::cout << "#iter = " << nb_iterations << std::endl;
-    std::cout << "Solving linear system..." << std::endl;
+    std::cout << "Setup system...";
     t.reset(); t.start();
     #endif
 
     for(std::size_t iter = 0; iter < nb_iterations; ++iter)
     {
       smoother.setup_system(A, stiffness_matrix, mass_matrix, bx, by, bz, time);
+
+      #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+      t.stop();
+      std::cout << " done ("<< t.time() <<" sec)." << std::endl;
+      std::cout << "Solve system...";
+      t.reset(); t.start();
+      #endif
+
       smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz);
+
+      #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+      t.stop();
+      std::cout << " done ("<< t.time() <<" sec)." << std::endl;
+      std::cout << "update_mesh...";
+      t.reset(); t.start();
+      #endif
+
+
       smoother.update_mesh(Xx, Xy, Xz);
     }
   }
 
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   t.stop();
-  std::cout << "Shape smoothing done in ";
+  std::cout << " done in ";
   std::cout << t.time() << " sec." << std::endl;
   std::cout<<std::endl;
   #endif
 }
 
+template<typename PolygonMesh, typename NamedParameters>
+void smooth_along_curvature_flow(PolygonMesh& pmesh, const double& time,
+                                    const NamedParameters& np)
+{
+  smooth_along_curvature_flow(faces(pmesh), pmesh, time, np);
+}
+
+template<typename PolygonMesh>
+void smooth_along_curvature_flow(PolygonMesh& pmesh, const double& time)
+{
+  smooth_along_curvature_flow(faces(pmesh), pmesh, time,
+                                 parameters::all_default());
+}
+
 
 // new with cgal solver traits
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
-void smooth_along_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, const double& time,
+void smooth_along_curvature_flow_new(const FaceRange& faces, PolygonMesh& pmesh, const double& time,
                                  const NamedParameters& np)
 {
   using boost::choose_param;
@@ -263,7 +296,7 @@ void smooth_along_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, con
 
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   CGAL::Timer t;
-  std::cout << "Smoothing parameters...";
+  std::cout << "Initializing...";
   std::cout.flush();
   t.start();
   #endif
@@ -296,7 +329,9 @@ void smooth_along_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, con
     // implicit scheme
 #if defined(CGAL_EIGEN3_ENABLED)
   #if EIGEN_VERSION_AT_LEAST(3,2,0)
-    typedef CGAL::Eigen_solver_traits<> Default_solver;
+    typedef typename Eigen::SparseMatrix<double> Eigen_sparse_matrix;
+    typedef typename Eigen::BiCGSTAB<Eigen_sparse_matrix, Eigen::IncompleteLUT<double> > Eigen_solver;
+    typedef CGAL::Eigen_solver_traits<Eigen_solver> Default_solver;
   #else
     typedef bool Default_solver;//compilation should crash
       //if no solver is provided and Eigen version < 3.2
@@ -320,62 +355,67 @@ void smooth_along_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, con
     typedef typename Default_solver::Vector Eigen_vector;
 
     std::size_t n = static_cast<int>(vertices(pmesh).size());
-    Eigen_matrix A(n, n), stiffness_matrix(n, n), mass_matrix(n, n);
+    Eigen_matrix A(n, n);
     Eigen_vector bx(n), by(n), bz(n), Xx(n), Xy(n), Xz(n);
 
     internal::Shape_smoother_new<PolygonMesh, VertexPointMap, VCMap, Default_solver, GeomTraits>
         smoother(pmesh, vpmap, vcmap);
 
+    smoother.init_smoothing(faces);
+
     #ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-    std::cout << "Initializing..." << std::endl;
+    std::cout << "calculate_stiffness_matrix_elements... ";
     t.reset(); t.start();
     #endif
 
-    smoother.init_smoothing(faces);
     smoother.calculate_stiffness_matrix_elements();
 
     #ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
     std::cout << " done ("<< t.time() <<" sec)." << std::endl;
-    std::cout << "#iter = " << nb_iterations << std::endl;
-    std::cout << "Solving linear system..." << std::endl;
-    t.reset(); t.start();
     #endif
 
     for(std::size_t iter = 0; iter < nb_iterations; ++iter)
     {
-      smoother.setup_system(A, stiffness_matrix, mass_matrix, bx, by, bz, time);
+
+      #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+      std::cout << "setup_system... ";
+      t.reset(); t.start();
+      #endif
+
+      smoother.setup_system(A, bx, by, bz, time);
+
+      #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+      t.stop();
+      std::cout << " done ("<< t.time() <<" sec)." << std::endl;
+      std::cout << "solve_system... ";
+      t.reset(); t.start();
+      #endif
+
       smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz);
+
+      #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+      t.stop();
+      std::cout << " done ("<< t.time() <<" sec)." << std::endl;
+      std::cout << "update_mesh... ";
+      t.reset(); t.start();
+      #endif
+
       smoother.update_mesh(Xx, Xy, Xz);
+
+      #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+      t.stop();
+      std::cout << " done ("<< t.time() <<" sec)." << std::endl;
+      #endif
+
     }
   }
 
-  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  t.stop();
-  std::cout << "Shape smoothing done in ";
-  std::cout << t.time() << " sec." << std::endl;
-  std::cout<<std::endl;
-  #endif
 }
 
 
-
-
-template<typename PolygonMesh, typename NamedParameters>
-void smooth_along_curvature_flow(PolygonMesh& pmesh, const double& time,
-                                    const NamedParameters& np)
-{
-  smooth_along_curvature_flow(faces(pmesh), pmesh, time, np);
-}
-
-template<typename PolygonMesh>
-void smooth_along_curvature_flow(PolygonMesh& pmesh, const double& time)
-{
-  smooth_along_curvature_flow(faces(pmesh), pmesh, time,
-                                 parameters::all_default());
-}
 
 // demo helpers, undocumented
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
