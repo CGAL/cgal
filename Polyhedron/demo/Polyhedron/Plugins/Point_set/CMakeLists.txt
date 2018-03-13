@@ -16,7 +16,7 @@ if(EIGEN3_FOUND)
   target_link_libraries(point_set_smoothing_plugin PUBLIC scene_points_with_normal_item)
 
   polyhedron_demo_plugin(point_set_average_spacing_plugin Point_set_average_spacing_plugin)
-  target_link_libraries(point_set_average_spacing_plugin PUBLIC scene_points_with_normal_item)
+  target_link_libraries(point_set_average_spacing_plugin PUBLIC scene_points_with_normal_item scene_callback_signaler)
 
 else(EIGEN3_FOUND)
   message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Surface reconstruction plugin will not be available.")
