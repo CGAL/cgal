@@ -2,15 +2,21 @@
 #define RUN_WITH_QPROGRESSDIALOG_H
 
 #include <QProgressDialog>
+#include <QThread>
+
+#include <CGAL/Real_timer.h>
 
 #include "Callback_signaler.h"
 
 #ifdef CGAL_LINKED_WITH_TBB
-#ifndef TBB_IMPLEMENT_CPP0X
-#define TBB_IMPLEMENT_CPP0X 1
+   typedef CGAL::Parallel_tag Concurrency_tag;
+#  undef TBB_IMPLEMENT_CPP0X
+#  define TBB_IMPLEMENT_CPP0X 1
+#  include <tbb/compat/thread>
+#else
+   typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
-#include <tbb/compat/thread>
-#endif
+
 
 class Signal_callback
 {
@@ -93,6 +99,14 @@ void run_with_qprogressdialog (Functor& functor,
                                const char* title,
                                QWidget* mainWindow)
 {
+  return run_with_qprogressdialog<Concurrency_tag> (functor, title, mainWindow);
+}
+
+template <typename ConcurrencyTag, typename Functor>
+void run_with_qprogressdialog (Functor& functor,
+                               const char* title,
+                               QWidget* mainWindow)
+{
   mainWindow->setEnabled(false);
   QProgressDialog progress (QString(title),
                             QString("Cancel"),
@@ -108,20 +122,25 @@ void run_with_qprogressdialog (Functor& functor,
            signal_callback->signaler.get(), SLOT(cancel()));
 
 #ifdef CGAL_LINKED_WITH_TBB
-  std::thread thread (functor);
-
-  while (*signal_callback->latest_adv != 1. &&
-         *signal_callback->state)
+  if (boost::is_convertible<ConcurrencyTag, CGAL::Parallel_tag>::value)
   {
-    QThread::msleep(10);
-    QApplication::processEvents ();
-  }
+    std::thread thread (functor);
+
+    while (*signal_callback->latest_adv != 1. &&
+           *signal_callback->state)
+    {
+      QThread::msleep(10);
+      QApplication::processEvents ();
+    }
     
-  thread.join();
-#else // Sequential version
-  progress.setWindowModality(Qt::WindowModal);
-  functor();
-#endif
+    thread.join();
+  }
+  else
+#endif // Sequential version
+  {
+    progress.setWindowModality(Qt::WindowModal);
+    functor();
+  }
   
   mainWindow->setEnabled(true);
 }
