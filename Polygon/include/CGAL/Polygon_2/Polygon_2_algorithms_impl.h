@@ -60,14 +60,14 @@ namespace Polygon_2 {
 //                  on the value of the determinant).
 //
 template<typename K, typename InputForwardIterator, typename OutputForwardIterator>
-void filter_collinear_points(InputForwardIterator first,
-                             InputForwardIterator beyond,
-                             OutputForwardIterator out,
-                             const typename K::FT tolerance =
-                               std::numeric_limits<typename K::FT>::epsilon())
+OutputForwardIterator filter_collinear_points(InputForwardIterator first,
+                                              InputForwardIterator beyond,
+                                              OutputForwardIterator out,
+                                              const typename K::FT tolerance =
+                                                std::numeric_limits<typename K::FT>::epsilon())
 {
   if(std::distance(first, beyond) < 4)
-    return;
+    return out;
 
   typedef typename K::FT                              FT;
   typedef typename K::Point_2                         Point;
@@ -113,6 +113,8 @@ void filter_collinear_points(InputForwardIterator first,
     }
   }
   while(!stop);
+
+  return out;
 }
 
 } // namespace Polygon_2
