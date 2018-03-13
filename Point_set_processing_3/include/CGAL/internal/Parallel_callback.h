@@ -26,6 +26,7 @@
 #include <CGAL/function.h>
 
 #include <tbb/atomic.h>
+#undef TBB_IMPLEMENT_CPP0X
 #define TBB_IMPLEMENT_CPP0X 1
 #include <tbb/compat/thread>
 
