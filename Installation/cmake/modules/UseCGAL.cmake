@@ -66,7 +66,6 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   add_definitions     ( ${CGAL_3RD_PARTY_DEFINITIONS}  ${CGAL_DEFINITIONS}  )
 
   if (CGAL_HEADER_ONLY)
-    add_definitions(-DCGAL_HEADER_ONLY)
     if(NOT CGAL_NO_BLANKET_LINKING)
       link_directories    ( ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
       link_libraries      ( ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}      )
