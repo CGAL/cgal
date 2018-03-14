@@ -21,13 +21,14 @@
 #ifndef CGAL_DRAW_T3_H
 #define CGAL_DRAW_T3_H
 
+#include <iostream>
+
 #ifdef CGAL_USE_BASIC_VIEWER
 
 #include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Random.h>
-#include <iostream>
 
 namespace CGAL
 {

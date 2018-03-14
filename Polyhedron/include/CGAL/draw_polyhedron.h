@@ -21,14 +21,14 @@
 #ifndef CGAL_DRAW_POLYHEDRON_H
 #define CGAL_DRAW_POLYHEDRON_H
 
+#include <iostream>
+
 #ifdef CGAL_USE_BASIC_VIEWER
 
 #include <CGAL/license/Polyhedron.h>
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Random.h>
-#include <iostream>
-
 namespace CGAL
 {
   
