@@ -1354,6 +1354,10 @@ remove_self_intersections_one_step(TriangleMesh& tm,
                                    bool verbose,
                                    NamedParameters np)
 {
+  if (verbose)
+    std::cout << "DEBUG: running remove_self_intersections_one_step, step " << step
+              << " with " << faces_to_remove.size() << " intersecting faces\n";
+
   CGAL_assertion(tm.is_valid());
 
   typedef boost::graph_traits<TriangleMesh> graph_traits;
@@ -1370,17 +1374,12 @@ remove_self_intersections_one_step(TriangleMesh& tm,
   bool topology_issue = false;
   if (verbose)
   {
-    std::cout << "DEBUG: is_valid in one_step(tm)? ";
+    std::cout << "  DEBUG: is_valid in one_step(tm)? ";
     std::cout.flush();
     std::cout << is_valid(tm) << "\n";
   }
 
   if(!faces_to_remove.empty()){
-    // expand the region to be filled
-    if (step > 0)
-      expand_face_selection(faces_to_remove, tm, step,
-                            make_boolean_property_map(faces_to_remove),
-                            Emptyset_iterator());
 
     while(!faces_to_remove.empty())
     {
@@ -1412,6 +1411,13 @@ remove_self_intersections_one_step(TriangleMesh& tm,
           h = next(h, tm);
         }
       }
+
+      // expand the region to be filled
+      if (step > 0)
+        expand_face_selection(cc_faces, tm, step,
+                              make_boolean_property_map(cc_faces),
+                              Emptyset_iterator());
+
       // remove faces from the set to process
       BOOST_FOREACH(face_descriptor f, cc_faces)
         faces_to_remove.erase(f);
@@ -1472,7 +1478,7 @@ remove_self_intersections_one_step(TriangleMesh& tm,
       }
       while(true);
 
-      if (border_hedges_invalid)
+      if (border_hedges_invalid || step > 0)
       {
         cc_border_hedges.clear();
         BOOST_FOREACH(face_descriptor fd, cc_faces)
@@ -1531,14 +1537,14 @@ remove_self_intersections_one_step(TriangleMesh& tm,
         if(nb_cycles > (only_border_edges ? 1 : 0) )
         {
           if(verbose)
-            std::cout << "DEBUG: CC not handled due to the presence of  "
+            std::cout << "  DEBUG: CC not handled due to the presence of  "
                       << nb_cycles << " of boundary edges\n";
           topology_issue = true;
         }
         else
         {
           if(verbose)
-            std::cout << "DEBUG: CC not handled because it is not a topological disk\n";
+            std::cout << "  DEBUG: CC not handled because it is not a topological disk\n";
           all_fixed = false;
         }
         continue;
@@ -1586,7 +1592,7 @@ remove_self_intersections_one_step(TriangleMesh& tm,
 
       if (verbose)
       {
-        std::cout << "DEBUG: is_valid(tm) in one_step, before mesh changes? ";
+        std::cout << "  DEBUG: is_valid(tm) in one_step, before mesh changes? ";
         std::cout << is_valid(tm) << std::endl;
       }
 
@@ -1716,26 +1722,26 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np,
   typedef boost::graph_traits<TriangleMesh> graph_traits;
   typedef typename graph_traits::face_descriptor face_descriptor;
 
+  if (verbose)
+    std::cout << "DEBUG: Starting remove_self_intersections, is_valid(tm)? " << is_valid(tm) << "\n";
+
   // first handle the removal of degenerate faces
   remove_degenerate_faces(tm, np);
+
+  if (verbose)
+    std::cout << "DEBUG: After degenerate faces removal, is_valid(tm)? " << is_valid(tm) << "\n";
+
   // Look for self-intersections in the polyhedron and remove them
   int step=-1;
   bool all_fixed = true; // indicates if the filling of all created holes went fine
   bool topology_issue = false; // indicates if some boundary cycles of edges are blocking the fixing
   while( ++step<max_steps )
   {
-    if (verbose)
-      std::cout << "DEBUG: is_valid(tm)? " << is_valid(tm) << "\n";
-
     typedef std::pair<face_descriptor, face_descriptor> Face_pair;
     std::vector<Face_pair> self_inter;
     // TODO : possible optimization to reduce the range to check with the bbox
     // of the previous patches or something.
     self_intersections(tm, std::back_inserter(self_inter));
-
-    if (verbose)
-      std::cout << "DEBUG: is_valid(tm) after self_intersections? "
-                << is_valid(tm) << "\n";
 
     std::set<face_descriptor> faces_to_remove;
     BOOST_FOREACH(Face_pair fp, self_inter)
@@ -1744,13 +1750,9 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np,
       faces_to_remove.insert(fp.second);
     }
 
-    if (verbose)
-      std::cout << "DEBUG: Iterative self-intersection removal step " << step
-                << " - is_valid(tm) = " << is_valid(tm) << std::endl;
-
     if ( faces_to_remove.empty() && all_fixed){
       if (verbose)
-        std::cout<<"DEBUG: There is no more faces to remove."<<std::endl;
+        std::cout<<"DEBUG: There is no more face to remove."<<std::endl;
       break;
     }
 
@@ -1759,7 +1761,8 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np,
     if (all_fixed && topology_issue)
     {
       if (verbose)
-        std::cout<< "DEBUG: Process stopped because of boundary cycles of boundary edges involved in self-intersections.\n";
+        std::cout<< "DEBUG: Process stopped because of boundary cycles"
+                    " of boundary edges involved in self-intersections.\n";
       return false;
     }
   }
