@@ -33,6 +33,7 @@ if(NOT CGAL_DISABLE_GMP)
   include(${CMAKE_CURRENT_LIST_DIR}/CGAL_SetupGMP.cmake)
   if(GMP_FOUND)
     set(CGAL_Core_FOUND TRUE)
+    set_property(GLOBAL PROPERTY CGAL_Core_FOUND TRUE)
   endif()
 endif()
 
@@ -52,18 +53,19 @@ endif()
 #   keyword, or ``PUBLIC`` otherwise.
 #
 
-# See the release notes of CGAL-4.10: CGAL_Core now requires
-# Boost.Thread, with all compilers but MSVC.
-if (NOT MSVC)
-  find_package( Boost 1.48 REQUIRED thread system )
-endif()
-
 function(CGAL_setup_CGAL_Core_dependencies target)
   if(ARGV1 STREQUAL INTERFACE)
     set(keyword INTERFACE)
   else()
     set(keyword PUBLIC)
   endif()
+
+  # See the release notes of CGAL-4.10: CGAL_Core now requires
+  # Boost.Thread, with all compilers but MSVC.
+  if (NOT MSVC)
+    find_package( Boost 1.48 REQUIRED thread system )
+  endif()
+
   use_CGAL_GMP_support(CGAL_Core ${keyword})
   target_compile_definitions(${target} ${keyword} CGAL_USE_CORE=1)
   target_link_libraries( CGAL_Core ${keyword} CGAL::CGAL ${Boost_LIBRARIES})

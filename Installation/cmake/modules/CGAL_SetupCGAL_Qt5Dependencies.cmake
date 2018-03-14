@@ -48,6 +48,7 @@ endif()
 #
 if(NOT CGAL_Qt5_MISSING_DEPS)
   set(CGAL_Qt5_FOUND TRUE)
+  set_property(GLOBAL PROPERTY CGAL_Qt5_FOUND TRUE)
 
   include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Qt5_moc_and_resource_files.cmake)
 
