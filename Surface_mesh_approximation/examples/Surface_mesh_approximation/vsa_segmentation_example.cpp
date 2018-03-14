@@ -13,7 +13,7 @@ typedef boost::associative_property_map<Facet_index_map> Facet_proxy_pmap;
 
 int main()
 {
-  // create polyhedral surface and read input surface triangle mesh 
+  // creates polyhedral surface and reads input mesh 
   Polyhedron input;
   std::ifstream file("data/mask.off");
   if (!file || !(file >> input) || input.empty()) {
@@ -36,7 +36,7 @@ int main()
     nb_of_iterations(30). // number of iterations after seeding
     facet_proxy_map(fpxmap)); // output facet proxy-id map
 
-  // TODO: retrieve segments of the segmentation
+  // TODO: iterates over segments and outputs to console
 
   return EXIT_SUCCESS;
 }

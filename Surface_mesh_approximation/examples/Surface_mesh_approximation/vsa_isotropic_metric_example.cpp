@@ -62,7 +62,7 @@ typedef CGAL::VSA_approximation<
 
 int main()
 {
-  // create polyhedral surface and read input mesh
+  // creates polyhedral surface and reads input mesh
   Polyhedron input;
   std::ifstream file("data/bear.off");
   if (!file || !(file >> input) || input.empty()) {
@@ -70,7 +70,7 @@ int main()
     return EXIT_FAILURE;
   }
 
-  // construct precomputed facet normal and area map
+  // constructs precomputed facet normal and area map
   std::map<Facet_handle, FT> facet_areas;
   std::map<Facet_handle, Point> facet_centers;
   for(Facet_iterator fitr = input.facets_begin(); fitr != input.facets_end(); ++fitr) {
@@ -86,15 +86,15 @@ int main()
   Facet_area_map area_pmap(facet_areas);
   Facet_center_map center_pmap(facet_centers);
 
-  // create compact metric approximation algorithm instance
+  // creates compact metric approximation algorithm instance
   Approximation approx(input,
     get(boost::vertex_point, const_cast<Polyhedron &>(input)));
 
-  // construct and set metric
+  // constructs and set metric
   Compact_metric metric(center_pmap, area_pmap);
   approx.set_metric(metric);
 
-  // approximation via 200 proxies and 30 iterations
+  // approximates via 200 proxies and 30 iterations
   approx.seeding(CGAL::Hierarchical, 200);
   approx.run(30);
 

@@ -16,7 +16,7 @@ typedef Mesh_approximation::Error_metric L21_metric;
 
 int main()
 {
-  // read input surface triangle mesh
+  // reads input surface triangle mesh
   Polyhedron input;
   std::ifstream file("data/mask.off");
   if (!file || !(file >> input) || input.empty()) {
@@ -24,34 +24,36 @@ int main()
     return EXIT_FAILURE;
   }
 
-  // create VSA algorithm instance
+  // creates VSA algorithm instance
   Mesh_approximation approx(input,
     get(boost::vertex_point, const_cast<Polyhedron &>(input)));
 
-  // set error and fitting functors
+  // sets error and fitting functors
   L21_metric metric(input,
     get(boost::vertex_point, const_cast<Polyhedron &>(input)));
   approx.set_metric(metric);
 
-  // seeding 100 random proxies
+  // seeds 100 random proxies
   approx.seeding(CGAL::Random, 100);
   
-  // run 30 iterations 
+  // runs 30 iterations 
   approx.run(30);
 
-  // add 3 proxies to the one with the maximum fitting error
-  // run 5 iterations between each addition
+  // adds 3 proxies to the one with the maximum fitting error,
+  // running 5 iterations between each addition
   approx.add_to_furthest_proxies(3, 5);
 
-  // run 10 iterations
+  // runs 10 iterations
   approx.run(10);
 
-  // teleport 2 proxies to tunnel out of local minima
-  // run 5 iterations between each teleport
+  // teleports 2 proxies to tunnel out of local minima, 
+  // running 5 iterations between each teleport
   approx.teleport_proxies(2, 5);
+
+  // runs 10 iterations
   approx.run(10);
 
-  // meshing with default parameters
+  // generates output mesh with default parameters
   approx.extract_mesh();
 
   return EXIT_SUCCESS;
