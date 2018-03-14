@@ -1677,42 +1677,92 @@ remove_self_intersections_one_step(TriangleMesh& tm,
         continue;
       }
 
-      // now remove edges,
-      BOOST_FOREACH(edge_descriptor e, cc_interior_edges)
-        remove_edge(e, tm);
-      // and vertices,
-      BOOST_FOREACH(vertex_descriptor vh, cc_interior_vertices)
-        remove_vertex(vh, tm);
-      // and finally facets
-      BOOST_FOREACH(face_descriptor f, cc_faces)
-        remove_face(f, tm);
-      // set new border_vertices to the boundary and update
-      // the halfedge pointer of the border vertices
-      // TODO check Euler::add_face has issues in case a mesh border edge is present
-      for(std::size_t i=0; i<cc_border_hedges.size(); ++i)
+      // plug the new triangles in the mesh, reusing previous edges and faces
+      std::vector<edge_descriptor> edge_stack(cc_interior_edges.begin(), cc_interior_edges.end());
+      std::vector<face_descriptor> face_stack(cc_faces.begin(), cc_faces.end());
+
+      std::map< std::pair<int, int>, halfedge_descriptor > halfedge_map;
+      int i=0;
+      // register border halfedges
+      BOOST_FOREACH(halfedge_descriptor h, cc_border_hedges)
       {
-        halfedge_descriptor h = cc_border_hedges[i];
-        set_face(h, graph_traits::null_face(), tm);
-        set_halfedge(border_vertices[(i+1)%cc_border_hedges.size()], h, tm);
-        set_next(h, cc_border_hedges[(i+1)%cc_border_hedges.size()], tm);
+        int j = static_cast<int>( std::size_t(i+1)%cc_border_hedges.size() );
+        halfedge_map.insert(std::make_pair( std::make_pair(i, j), h) );
+        set_halfedge(target(h, tm), h, tm); // update vertex halfedge pointer
+        CGAL_assertion( border_vertices[i] == source(h, tm) &&
+                        border_vertices[j] == target(h, tm) );
+        ++i;
       }
-      CGAL_assertion(is_valid(tm));
 
-      if (verbose)
-        std::cout << "  DEBUG: " << cc_faces.size() << " triangles removed" << std::endl;
-
-      //reconnect patch in hole
+      std::vector<halfedge_descriptor> hedges;
+      hedges.reserve(4);
+      face_descriptor f = boost::graph_traits<TriangleMesh>::null_face();
       BOOST_FOREACH(const Face_indices& triangle, patch)
       {
-        cpp11::array<vertex_descriptor, 3> face =
-          make_array( border_vertices[triangle.first],
-                      border_vertices[triangle.second],
-                      border_vertices[triangle.third] );
-        //TODO: don't use add_face
-        CGAL_assertion_code(face_descriptor new_fh = )
-        CGAL::Euler::add_face(face, tm);
-        CGAL_assertion( new_fh != boost::graph_traits<TriangleMesh>::null_face());
+        // get the new face
+        if (face_stack.empty())
+          f=add_face(tm);
+        else
+        {
+          f=face_stack.back();
+          face_stack.pop_back();
+        }
+
+        cpp11::array<int, 4> indices =
+          make_array( triangle.first,
+                      triangle.second,
+                      triangle.third,
+                      triangle.first );
+        for (int i=0; i<3; ++i)
+        {
+          // get the corresponding halfedge (either a new one or an already created)
+          typename std::map< std::pair<int, int> , halfedge_descriptor >::iterator insert_res =
+            halfedge_map.insert(
+              std::make_pair( std::make_pair(indices[i], indices[i+1]),
+                              boost::graph_traits<TriangleMesh>::null_halfedge() ) ).first;
+          if (insert_res->second == boost::graph_traits<TriangleMesh>::null_halfedge())
+          {
+            if (edge_stack.empty())
+              insert_res->second = halfedge(add_edge(tm), tm);
+            else
+            {
+              insert_res->second = halfedge(edge_stack.back(), tm);
+              edge_stack.pop_back();
+            }
+
+            halfedge_map[std::make_pair(indices[i+1], indices[i])] =
+              opposite(insert_res->second, tm);
+          }
+          hedges.push_back(insert_res->second);
+        }
+        hedges.push_back(hedges.front());
+        // update halfedge connections + face pointers
+        for(int i=0; i<3;++i)
+        {
+          set_next(hedges[i], hedges[i+1], tm);
+          set_face(hedges[i], f, tm);
+          set_target(hedges[i], border_vertices[indices[i+1]], tm);
+        }
+        set_halfedge(f, hedges[0], tm);
+        hedges.clear();
       }
+
+      // now remove remaining edges,
+      BOOST_FOREACH(edge_descriptor e, edge_stack)
+        remove_edge(e, tm);
+      // vertices,
+      BOOST_FOREACH(vertex_descriptor vh, cc_interior_vertices)
+        remove_vertex(vh, tm);
+      // and remaning faces
+      BOOST_FOREACH(face_descriptor f, face_stack)
+        remove_face(f, tm);
+
+      if (verbose)
+        std::cout << "  DEBUG: " << cc_faces.size() << " triangles removed, "
+                  << patch.size() << " created\n";
+
+      CGAL_assertion(is_valid(tm));
+
       something_was_done = true;
     }
   }
