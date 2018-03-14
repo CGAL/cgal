@@ -101,7 +101,7 @@
 
   !define MUI_FINISHPAGE_LINK "Installation instructions"
   
-  !define MUI_FINISHPAGE_LINK_LOCATION "http://www.cgal.org/download/windows.html"
+  !define MUI_FINISHPAGE_LINK_LOCATION "https://www.cgal.org/download/windows.html"
   
 ;--------------------------------
 ; Pages
@@ -195,7 +195,7 @@ Section "!Main CGAL" MAIN_Idx
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${CGAL_SRC}" \
                    "Publisher" "The CGAL Project and GeometryFactory"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${CGAL_SRC}" \
-                   "URLInfoAbout" "http://www.cgal.org/"
+                   "URLInfoAbout" "https://www.cgal.org/"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${CGAL_SRC}" \
                    "DisplayedVersion" "4.8.0"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${CGAL_SRC}" \

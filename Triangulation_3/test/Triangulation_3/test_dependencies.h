@@ -1,5 +1,5 @@
 // For the license check mechanism see:
-// http://doc.cgal.org/latest/Manual/preliminaries.html#title5
+// https://doc.cgal.org/latest/Manual/preliminaries.html#title5
 
 // This package depends on the following packages
 

@@ -87,7 +87,7 @@ LC_CTYPE=en_US.UTF-8
 #  - on trunk
 #0 21  *  *  Sat                        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/trunk --public --do-it
 
-# Check the links of http://www.cgal.org/projects.html every sunday at 17:42
+# Check the links of https://www.cgal.org/projects.html every sunday at 17:42
 #42 17 * * Sun   linklint -host www.cgal.org -http /projects.html -net -no_anchors -quiet -silent -error
 
 # A test that does not work
