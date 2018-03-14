@@ -1354,6 +1354,8 @@ remove_self_intersections_one_step(TriangleMesh& tm,
                                    bool verbose,
                                    NamedParameters np)
 {
+  std::set<face_descriptor> faces_to_remove_copy = faces_to_remove;
+
   if (verbose)
     std::cout << "DEBUG: running remove_self_intersections_one_step, step " << step
               << " with " << faces_to_remove.size() << " intersecting faces\n";
@@ -1368,6 +1370,7 @@ remove_self_intersections_one_step(TriangleMesh& tm,
   VertexPointMap vpmap = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
                                       get_property_map(vertex_point, tm));
 
+  bool something_was_done = false; // indicates if a region was successfully remeshed
   bool all_fixed = true; // indicates if all removal went well
   // indicates if a removal was not possible because the region handle has
   // some boundary cycle of halfedges
@@ -1710,7 +1713,14 @@ remove_self_intersections_one_step(TriangleMesh& tm,
         CGAL::Euler::add_face(face, tm);
         CGAL_assertion( new_fh != boost::graph_traits<TriangleMesh>::null_face());
       }
+      something_was_done = true;
     }
+  }
+  if (!something_was_done)
+  {
+    faces_to_remove.swap(faces_to_remove_copy);
+    if (verbose)
+      std::cout<<"  DEBUG: Nothing was changed during this step, self-intersections won't be recomputed."<<std::endl;
   }
   return std::make_pair(all_fixed, topology_issue);
 }
@@ -1735,19 +1745,22 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np,
   int step=-1;
   bool all_fixed = true; // indicates if the filling of all created holes went fine
   bool topology_issue = false; // indicates if some boundary cycles of edges are blocking the fixing
+  std::set<face_descriptor> faces_to_remove;
   while( ++step<max_steps )
   {
-    typedef std::pair<face_descriptor, face_descriptor> Face_pair;
-    std::vector<Face_pair> self_inter;
-    // TODO : possible optimization to reduce the range to check with the bbox
-    // of the previous patches or something.
-    self_intersections(tm, std::back_inserter(self_inter));
-
-    std::set<face_descriptor> faces_to_remove;
-    BOOST_FOREACH(Face_pair fp, self_inter)
+    if (faces_to_remove.empty()) // the previous round might have been blocked due to topological constraints
     {
-      faces_to_remove.insert(fp.first);
-      faces_to_remove.insert(fp.second);
+      typedef std::pair<face_descriptor, face_descriptor> Face_pair;
+      std::vector<Face_pair> self_inter;
+      // TODO : possible optimization to reduce the range to check with the bbox
+      // of the previous patches or something.
+      self_intersections(tm, std::back_inserter(self_inter));
+
+      BOOST_FOREACH(Face_pair fp, self_inter)
+      {
+        faces_to_remove.insert(fp.first);
+        faces_to_remove.insert(fp.second);
+      }
     }
 
     if ( faces_to_remove.empty() && all_fixed){
