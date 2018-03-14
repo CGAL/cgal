@@ -89,15 +89,32 @@ void test_simplify_path(const LCC_3_cmap& lcc,
   {
     curp=new CGAL::Path_on_surface<LCC_3_cmap>(*prevp);
     if (curp->bracket_flattening_one_step())
-    { v.push_back(curp); }
+    {
+      v.push_back(curp);
+      prevp=curp;
+    }
     else
-    { curp=NULL; }
-    prevp=curp;
+    {
+      delete curp;
+      curp=NULL;
+    }
     // if (nbtest==1)
      // display(lcc, v);
   }
   while(curp!=NULL);
-  
+
+  curp=new CGAL::Path_on_surface<LCC_3_cmap>(*prevp);
+  if (curp->remove_spurs())
+  {
+    v.push_back(curp);
+    prevp=curp;
+  }
+  else
+  {
+    delete curp;
+    curp=NULL;
+  }
+
   if (draw)
   { display(lcc, v); }
 
@@ -120,16 +137,16 @@ void test_square()
   CGAL::Random random(1); // fix seed
 
   // path 1: 2 straight darts to begin; 1 + turn; 6 straight; 1 + turn; 3 straight
-  test_simplify_path(lcc, 2, 6, 3, random, false);
+  test_simplify_path(lcc, 2, 6, 3, random, true);
 
   // path 2: 3 straight darts to begin; 1 + turn; 8 straight; 1 + turn; 4 straight
-  test_simplify_path(lcc, 3, 8, 4, random, false);
+  test_simplify_path(lcc, 3, 8, 4, random, true);
 
   // path 3: 5 straight darts to begin; 1 + turn; 12 straight; 1 + turn; 8 straight
-  test_simplify_path(lcc, 5, 12, 8, random, false);
+  test_simplify_path(lcc, 5, 12, 8, random, true);
 
   // path 4: 5 straight darts to begin; 1 + turn; 12 straight; 1 + turn; 8 straight
-  test_simplify_path(lcc, 5, 12, 8, random, false);
+  test_simplify_path(lcc, 5, 12, 8, random, true);
 }
 
 int main(int argc, char** argv)

@@ -310,6 +310,93 @@ public:
     return res;
   }
   
+  bool remove_spurs_one_step()
+  {
+    bool res=false;
+    std::size_t i;
+    std::vector<Dart_const_handle> new_path;
+    for (i=0; i<m_path.size()-1; )
+    {
+      if (m_path[i]==m_map.template beta<2>(m_path[i+1]))
+      {
+        i+=2;
+        res=true;
+      }
+      else
+      {
+        new_path.push_back(m_path[i]); // We copy this dart
+        ++i;
+      }
+    }
+    new_path.swap(m_path);
+    return res;
+  }
+
+  bool remove_spurs()
+  {
+    bool res=false;
+    while(remove_spurs_one_step())
+    { res=true; }
+    return res;
+  }
+
+  std::size_t find_l_shape(std::size_t begin) const
+  {
+    assert(next_turn(begin)!=2);
+    std::size_t end=begin+1;
+    if (end==m_path.size()-1)
+    { return begin; } // begin is the before last dart
+
+    while (next_turn(end)==2)
+    {
+      ++end;
+  //    if (is_closed() && end==m_path.size()) { end=0; }
+    }
+
+    // TODO
+   /* if ((positive && next_turn(end)==1) ||
+        (!positive && next_negative_turn(end)==1)) // We are on the end of a bracket
+    {
+      ++end;
+      if (is_closed() && end==m_path.size()) { end=0; }
+    }
+    else
+    { end=begin; }
+*/
+    return end;
+  }
+
+  bool right_push_one_step()
+  {
+    bool res=false;
+    std::size_t begin, end;
+    std::size_t i;
+    std::vector<Dart_const_handle> new_path;
+    for (i=0; i<m_path.size()-1; )
+    {
+      if (next_turn(begin)!=2)
+      {
+       // TODO begin, end
+      // res=true;
+      }
+      else
+      {
+        new_path.push_back(m_path[i]); // We copy this dart
+        ++i;
+      }
+    }
+    new_path.swap(m_path);
+    return res;
+  }
+
+  bool right_push()
+  {
+    bool res=false;
+    while(right_push_one_step())
+    { res=true; }
+    return res;
+  }
+
 protected:
   const Map& m_map; // The underlying map
   std::vector<Dart_const_handle> m_path; // The sequence of darts
