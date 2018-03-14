@@ -157,6 +157,10 @@ public:
       }
     }
     mat.setFromTriplets(tripletList.begin(), tripletList.end());
+
+
+
+
   }
 
   void update_mesh(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
@@ -189,6 +193,19 @@ private:
       }
     }
     D /= 12.0;
+
+
+    /*
+    std::ofstream out_d("data/diag_eigen.cat");
+    for(int i = 0; i < D.rows(); ++i)
+    {
+      out_d << D.coeffRef(i, i) << std::endl;
+    }
+    */
+
+
+
+
   }
 
   void compute_coeff_matrix(Eigen_matrix& A, const Eigen_matrix& L, const Eigen_matrix& D, const double& time)
@@ -200,11 +217,27 @@ private:
     assert(A.rows() == D.rows());
     assert(A.cols() == D.cols());
     A = D - time * L;
+
+    /*
+    std::ofstream out("data/eigen_A.dat");
+    for(auto j = 0 ; j < A.cols(); ++j)
+    {
+      for(auto i = 0; i < A.rows(); ++i)
+      {
+
+        out << A.coeffRef(i, j) << " ";
+      }
+      out << std::endl;
+    }
+    */
+
+
   }
 
   void compute_rhs(Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz,
                    Eigen_matrix& D)
   {
+
     for(vertex_descriptor vi : vrange_)
     {
       int index = vimap_[vi];
@@ -216,6 +249,21 @@ private:
     bx = D * bx;
     by = D * by;
     bz = D * bz;
+
+
+    std::ofstream outbx("data/outb-eigen-x");
+    std::ofstream outby("data/outb-eigen-y");
+    std::ofstream outbz("data/outb-eigen-z");
+    for(int i = 0 ; i < bx.rows(); ++i)
+    {
+      outbx << bx[i] << std::endl;
+      outby << by[i] << std::endl;
+      outbz << bz[i] << std::endl;
+
+    }
+
+
+
   }
 
   // update mesh

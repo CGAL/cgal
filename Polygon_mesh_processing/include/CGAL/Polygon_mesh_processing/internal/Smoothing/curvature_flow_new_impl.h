@@ -33,6 +33,7 @@
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
+#include <Eigen/Sparse>
 #endif
 
 #include <fstream>
@@ -118,7 +119,7 @@ public:
     CGAL_assertion(stiffness_elements_.empty());
     stiffness_elements_.reserve(8 * nb_vert_); //estimation
 
-    /*
+
     BOOST_FOREACH(face_descriptor f, frange_)
     {
       BOOST_FOREACH(halfedge_descriptor hi, halfedges_around_face(halfedge(f, mesh_), mesh_))
@@ -138,7 +139,9 @@ public:
         }
       }
     }
-    */
+
+
+    /*
 
     boost::unordered_map<std::size_t, NT> diag_coeff;
     BOOST_FOREACH(face_descriptor f, frange_)
@@ -167,6 +170,7 @@ public:
     for (auto p : diag_coeff)
       stiffness_elements_.push_back(Triplet(p.first, p.first, p.second));
 
+    */
 
   }
 
@@ -191,7 +195,7 @@ private:
     // fill A = D - time * L
 
 
-    /*
+
     for(int idx = 0; idx < diagonal_.size(); ++idx)
     {
       A.set_coef(idx, idx, diagonal_[idx], true); // A is empty
@@ -201,9 +205,9 @@ private:
     {
       A.add_coef(t.get<0>(), t.get<1>(), -time * t.get<2>());
     }
-    */
 
 
+    /*
 
     std::vector<bool> diag_set(diagonal_.size(), false);
 
@@ -226,10 +230,28 @@ private:
         A.set_coef(idx, idx, diagonal_[idx], true); // A is empty
       }
     }
+    */
 
 
 
     A.assemble_matrix(); // does setFromTriplets and some compression
+
+
+
+    /*
+    std::ofstream out("data/traits_A.dat");
+    for(auto j = 0 ; j < A.column_dimension(); ++j)
+    {
+      for(auto i = 0; i < A.row_dimension(); ++i)
+      {
+
+        out << A.get_coef(i, j) << " ";
+      }
+      out << std::endl;
+    }
+    */
+
+
 
   }
 
@@ -269,14 +291,45 @@ private:
     CGAL_assertion(by.size() == nb_vert_);
     CGAL_assertion(bz.size() == nb_vert_);
 
+
     for(vertex_descriptor vi : vrange_)
     {
       int index = vimap_[vi];
       Point p = get(vpmap_, vi);
-      bx.set(index, diagonal_[index] * p.x());
-      by.set(index, diagonal_[index] * p.y());
-      bz.set(index, diagonal_[index] * p.z());
+      bx.set(index, p.x());
+      by.set(index, p.y());
+      bz.set(index, p.z());
     }
+
+    for(int i = 0; i < nb_vert_; ++i)
+    {
+      bx[i] *= diagonal_[i];
+      by[i] *= diagonal_[i];
+      bz[i] *= diagonal_[i];
+    }
+
+
+    /*
+
+    std::ofstream outbx("data/outb-traits-x");
+    for(int i = 0 ; i < nb_vert_; ++i)
+    {
+      outbx << bx[i] << std::endl;
+    }
+    std::ofstream outby("data/outb-traits-y");
+    for(int i = 0 ; i < by.dimension(); ++i)
+    {
+      outby << by[i] << std::endl;
+    }
+    std::ofstream outbz("data/outb-traits-z");
+    for(int i = 0 ; i < bz.dimension(); ++i)
+    {
+      outbz << bz[i] << std::endl;
+    }
+    */
+
+
+
   }
 
   // update mesh
