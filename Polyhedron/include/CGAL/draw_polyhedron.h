@@ -231,7 +231,7 @@ namespace CGAL
   
 template<class Polyhedron, class ColorFunctor>
 void draw(const Polyhedron&,
-          const char*="Polyhedron Viewer",
+          const char* ="Polyhedron Viewer",
           bool=false,
           const ColorFunctor&=ColorFunctor())
 {
