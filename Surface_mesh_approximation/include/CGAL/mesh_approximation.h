@@ -18,15 +18,15 @@ namespace CGAL {
 /*!
  * \ingroup PkgTSMA
  * @brief Function approximates the input mesh by fitting it with proxies.
- * This function use the Variational Shape Approximation algorithm to approximate the shape of a triangle surface mesh.
- * With indexed triangles as output.
+ * This function uses the Variational Shape Approximation algorithm to approximate a triangle surface mesh,
+ * with indexed triangles as output.
  *
  * @tparam TriangleMesh model of `FaceListGraph`.
  *         If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
  *         and no `face_index_map` is given as a named parameter, then the internal one should be initialized.
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
- * @param tm a triangle surface mesh to be approximated
+ * @param tm triangle surface mesh to be approximated
  * @param np optional sequence of \ref namedparameters among the ones listed below
  * @return `true` if the indexed triangles represent a valid 2-manifold, oriented surface mesh, and `false` otherwise. 
  *
@@ -39,20 +39,20 @@ namespace CGAL {
  *  \cgalParamEnd
  *  \cgalParamBegin{seeding_method} selection of seeding method.
  *  \cgalParamEnd
- *  \cgalParamBegin{max_nb_proxies} maximum number of proxies to approximate the geometry.
+ *  \cgalParamBegin{max_nb_proxies} maximum number of proxies to approximate the input mesh.
  *  \cgalParamEnd
  *  \cgalParamBegin{min_error_drop} minimum error drop of the approximation, expressed in ratio between two iterations of proxy addition.
  *  \cgalParamEnd
  *  \cgalParamBegin{nb_of_iterations} number of partitioning and fitting iterations after seeding.
  *  \cgalParamEnd
- *  \cgalParamBegin{nb_of_relaxations} number of relaxations interleaved within seeding.
+ *  \cgalParamBegin{nb_of_relaxations} number of relaxation iterations interleaved within seeding.
  *  \cgalParamEnd
  *  \cgalParamBegin{mesh_chord_error} maximum chord approximation error used for meshing.
  *  \cgalParamEnd
  *  \cgalParamBegin{face_proxy_map} a ReadWritePropertyMap with
  * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type.
  * A proxy is a set of connected facets which are placed under the same proxy patch (see \cgalFigureRef{iterations}).
- * The proxy-id is contiguous in range [0, number_of_proxies - 1].
+ * The proxy-ids are contiguous in range [0, number_of_proxies - 1].
  *  \cgalParamEnd
  *  \cgalParamBegin{proxies} output iterator over proxies.
  *  \cgalParamEnd
@@ -83,7 +83,7 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
   L21_metric metric(tm, point_pmap);
   approx.set_metric(metric);
 
-  // default hierarchical seeding
+  // hierarchical seeding by default
   CGAL::Approximation_seeding_tag method = choose_param(
     get_param(np, internal_np::seeding_method), CGAL::Hierarchical);
   boost::optional<std::size_t> max_nb_proxies = choose_param(

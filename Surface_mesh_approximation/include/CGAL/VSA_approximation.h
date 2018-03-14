@@ -56,7 +56,7 @@ enum Approximation_seeding_tag {
 
 /// \ingroup PkgTSMA
 /// @brief Main class for Variational Shape Approximation algorithm.
-/// @tparam TriangleMesh a CGAL TriangleMesh
+/// @tparam TriangleMesh CGAL TriangleMesh
 /// @tparam VertexPointMap vertex point map
 /// @tparam ErrorMetric approximation metric type
 /// @tparam GeomTraits geometric traits type
@@ -196,8 +196,8 @@ private:
     Boundary_cycle(const halfedge_descriptor &h)
       : he_head(h), num_anchors(0) {}
 
-    halfedge_descriptor he_head; // The heading halfedge of the boundary cylce.
-    std::size_t num_anchors; // The number of anchors on the boundary cycle.
+    halfedge_descriptor he_head; // Heading halfedge of the boundary cycle.
+    std::size_t num_anchors; // Number of anchors on the boundary cycle.
   };
 
   // Triangle polyhedron builder.
@@ -329,7 +329,7 @@ public:
    * @brief Sets the mesh for approximation and rebuilds the internal data structure.
    * @pre @a tm.is_pure_triangle()
    * @param tm `CGAL TriangleMesh` on which approximation operates.
-   * @param vpoint_map vertex point map of the mesh
+   * @param vpoint_map vertex point map of the mesh.
    */
   void set_mesh(const TriangleMesh &tm, const VertexPointMap &vpoint_map) {
     m_ptm = &tm;
@@ -338,7 +338,7 @@ public:
   }
 
   /*!
-   * @brief Sets the apprroximation traits.
+   * @brief Sets the approximation traits.
    * @param error_metric an `ErrorMetric` object.
    */
   void set_metric(const Error_metric &error_metric) {
@@ -378,7 +378,7 @@ public:
   /// @{
     /*!
    * @brief Initializes the seeds with both maximum number of proxies
-   * and minmum error drop stop criteria.
+   * and minimum error drop stop criteria.
    * The first criterion met stops the seeding.
    * Parameters out of range are ignored.
    * @param method seeding method
@@ -402,7 +402,7 @@ public:
 
     if (min_error_drop && *min_error_drop > FT(0.0) && *min_error_drop < FT(1.0)) {
       // as long as minimum error is specified and valid
-      // maximum number of proxies always exist, no matter specified or not or out of range
+      // maximum number of proxies always exists, no matter specified or not or out of range
       // there is always a maximum number of proxies explicitly (max_nb_proxies) or implicitly (nb_px)
       std::size_t max_nb_px_adjusted = nb_px;
       if (max_nb_proxies && *max_nb_proxies < nb_px && *max_nb_proxies > 0)
@@ -491,7 +491,7 @@ public:
       avg_err /= static_cast<FT>(avg_interval);
 
       drop_pct = (pre_err - avg_err) / pre_err;
-      // the error may fluctuates
+      // the error may fluctuate
       if (drop_pct < FT(0.0))
         drop_pct = -drop_pct;
       if (drop_pct < cvg_threshold)
@@ -540,7 +540,7 @@ public:
   }
 
   /*!
-   * @brief Adds proxies by diffusing fitting error into current partitions.
+   * @brief Adds proxies by diffusing fitting error into current partition.
    * Each partition is added with the number of proxies in proportion to its fitting error.
    * @param num_proxies number of proxies to be added
    * @return number of proxies successfully added
@@ -624,12 +624,12 @@ public:
   /// \name Refinement Operations
   /// @{
     /*!
-   * @brief Teleports the local minima to the worst region, this combines the merging and adding processes.
+   * @brief Teleports the local minimum to the worst region by combining the merging and adding processes.
    * The re-fitting is performed after each teleportation.
    * Here if we specify more than one proxy this means we teleport in a naive iterative fashion.
-   * @param num_proxies number of proxies request to teleport
-   * @param num_iterations number of re-fitting iterations
-   * @param if_force set `true` to force the teleportation (no merge test)
+   * @param num_proxies number of proxies requested to teleport.
+   * @param num_iterations number of re-fitting iterations.
+   * @param if_force set `true` to force the teleportation (no merge test).
    * @return number of proxies teleported.
    */
   std::size_t teleport_proxies(const std::size_t num_proxies,
@@ -731,17 +731,17 @@ public:
   }
 
   /*!
-   * @brief Simulates merging and local re-fitting of all two adjacent proxies
-   * and find the best two regions to merge.
+   * @brief Simulates merging and local re-fitting of all pairs of adjacent proxies
+   * and finds the best pair to merge.
    * @note The <b>best</b> is defined as the minimum merged sum error
-   * <b>change</b> (increase of decrease) among all adjacent pairs.
-   * @param[out] px_tobe_enlarged the proxy index to be enlarged
-   * @param[out] px_tobe_merged the proxy index to be merged,
+   * <b>change</b> (increase or decrease) among all pairs.
+   * @param[out] px_tobe_enlarged proxy index to be enlarged (FIX TERM ENLARGED, NOT DEFINED)
+   * @param[out] px_tobe_merged proxy index to be merged,
    * guaranteed to be greater than <em>px_tobe_enlarged</em>.
    * @param if_test set `true` to activate the merge test.
    * The merge test is considered successful if the merged error change
-   * is less than the half of the maximum proxy error.
-   * @return `true` if best merge pair found, `false` otherwise
+   * is lower than half of the maximum proxy error.
+   * @return `true` if best merge pair found, `false` otherwise.
    */
   bool find_best_merge(std::size_t &px_tobe_enlarged,
     std::size_t &px_tobe_merged,
@@ -804,11 +804,11 @@ public:
   }
 
   /*!
-   * @brief Splits one proxy area by default bisection, but N-section is also possible.
-   * @param px_idx proxy index
-   * @param n number of split sections
-   * @param nb_relaxations number of relaxation on the confined proxy area
-   * @return `true` if split succeeds, `false` otherwise
+   * @brief Splits one proxy area via N-section (by default bisection).
+   * @param px_idx proxy index.
+   * @param n number of split sections.
+   * @param nb_relaxations number of relaxation on the confined proxy area. (DEFINE CONFINED)
+   * @return `true` if split succeeds, `false` otherwise.
    */
   bool split(const std::size_t px_idx,
     const std::size_t n = 2,
@@ -829,7 +829,7 @@ public:
     std::vector<Proxy_wrapper> confined_proxies;
     confined_proxies.push_back(m_proxies[px_idx]);
 
-    // select seed facets in the confiend area
+    // select seed facets in the confined area
     std::size_t count = 1;
     BOOST_FOREACH(face_descriptor f, confined_area) {
       if (count >= n)
@@ -863,13 +863,13 @@ public:
   /// \name Meshing
   /// @{
     /*!
-   * @brief Extracts the approximated indexed triangle surface.
+   * @brief Extracts the output mesh in the form of an indexed triangle set.
    * @note If the extracted surface mesh contains non-manifold facets, 
    * they are not built into the output polyhedron.
    * @param chord_error boundary approximation recursively split criterion
-   * @param is_relative_to_chord set `true` if the chord_error is relative to the the chord length (relative sense),
-   * otherwise it's relative to the average edge length (absolute sense).
-   * @param with_dihedral_angle set `true` if add dihedral angle weight to the distance, `false` otherwise
+   * @param is_relative_to_chord set `true` if the chord_error is defined as a ratio of chord length,
+   * and defined as ratio of average edge length otherwise.
+   * @param with_dihedral_angle set `true` if distance is weighted by dihedral angle, `false` otherwise
    * @param optimize_anchor_location set `true` if optimize the anchor locations, `false` otherwise
    * @param pca_plane set `true` if use PCA plane fitting, otherwise use the default area averaged plane parameters
    * @return `true` if the extracted surface mesh is manifold, `false` otherwise.
@@ -994,8 +994,8 @@ public:
   }
 
   /*!
-   * @brief Gets the indexed triangles,
-   * one triplet of integers per triangles, which refers to the anchor point indexes.
+   * @brief Gets the indexed triangles, with
+   * one triplet of integers per triangles, which refers to the anchor point indices.
    * @tparam OutputIterator output iterator with Indexed_triangle as value type
    * @param out_itr output iterator
    */
@@ -1089,9 +1089,9 @@ private:
   }
 
   /*!
-   * @brief Randomly initializes proxies.
-   * with both maximum number of proxies and minimum error drop stop criteria,
-   * The first criterion met stops the seeding.
+   * @brief Randomly initializes proxies
+   * with both maximum number of proxies and minimum error drop stop criteria, where
+   * the first criterion met stops the seeding.
    * @note To ensure the randomness, call `std::srand()` beforehand.
    * @param max_nb_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
    * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
@@ -1125,7 +1125,7 @@ private:
   }
 
   /*!
-   * @brief Incrementally initializes proxies.
+   * @brief Incrementally initializes proxies
    * with both maximum number of proxies and minimum error drop stop criteria,
    * The first criterion met stops the seeding.
    * @param max_nb_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
@@ -1148,9 +1148,9 @@ private:
   }
 
   /*!
-   * @brief Hierarchically initializes proxies.
-   * with both maximum number of proxies and minimum error drop stop criteria,
-   * The first criterion met stops the seeding.
+   * @brief Hierarchically initializes proxies
+   * with both maximum number of proxies and minimum error drop stop criteria, where
+   * the first criterion met stops the seeding.
    * @param max_nb_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
    * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
    * @param num_iterations number of re-fitting iterations 
@@ -1408,14 +1408,14 @@ private:
   }
 
   /*!
-   * @brief Initializes proxies from each connected components of the surface.
-   * @note This function clears proxy vector and set facet proxy map to initial state,
+   * @brief Initializes proxies from each connected component of the input mesh.
+   * @note This function clears proxy vector and sets facet proxy map to initial state,
    * intended only for bootstrapping initialization.
-   * Coarse approximation iteration is not performed, because it's inaccurate anyway
-   * and may cause serious degenerate cases(e.g. a standard cube mode).
+   * Coarse approximation iteration is not performed, because it is inaccurate anyway
+   * and may yield degenerate cases (e.g. a standard cube model).
    */
   void bootstrap_from_connected_components() {
-    // set all face invalid to mark as unvisited / untagged
+    // set all faces invalid to mark as unvisited / untagged
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
       put(m_fproxy_map, f, CGAL_VSA_INVALID_TAG);
 
@@ -1522,7 +1522,7 @@ private:
   /*!
    * @brief Finds and approximates the chord connecting the anchors.
    * @param chord_error boundary chord approximation recursive split creterion
-   * @param is_relative_to_chord set `true` if the chord_error is relative to the the chord length (relative sense),
+   * @param is_relative_to_chord set `true` if the chord_error is relative to the chord length (relative sense),
    * otherwise it's relative to the average edge length (absolute sense).
    * @param with_dihedral_angle set `true` if add dihedral angle weight to the distance, `false` otherwise
    */

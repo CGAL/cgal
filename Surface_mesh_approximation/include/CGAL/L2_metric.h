@@ -49,7 +49,7 @@ public:
   /// @{
   /*!
    * @brief Constructor
-   * @param tm a triangle mesh
+   * @param tm triangle mesh
    * @param vpmap vertex point map
    */
   L2_metric(const TriangleMesh &tm, const VertexPointMap &vpmap)
