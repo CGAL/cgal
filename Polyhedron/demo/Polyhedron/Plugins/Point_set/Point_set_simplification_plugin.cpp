@@ -17,19 +17,79 @@
 #include <QtPlugin>
 #include <QMessageBox>
 
-#include "Qt_progress_bar_callback.h"
+#include "run_with_qprogressdialog.h"
 
 #include "ui_Point_set_simplification_plugin.h"
 
 // Concurrency
 #ifdef CGAL_LINKED_WITH_TBB
-#  include "Progress_bar_callback.h"
-   typedef Progress_bar_callback Callback;
-   typedef CGAL::Parallel_tag Concurrency_tag;
+typedef CGAL::Parallel_tag Concurrency_tag;
 #else
-   typedef Qt_progress_bar_callback Callback;
-   typedef CGAL::Sequential_tag Concurrency_tag;
+typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
+
+struct Compute_average_spacing_functor
+  : public Functor_with_signal_callback
+{
+  Point_set* points;
+  const int nb_neighbors;
+  boost::shared_ptr<double> result;
+
+  Compute_average_spacing_functor (Point_set* points, const int nb_neighbors)
+    : points (points), nb_neighbors (nb_neighbors), result (new double(0)) { }
+
+  void operator()()
+  {
+    *result = CGAL::compute_average_spacing<Concurrency_tag>(
+      points->all_or_selection_if_not_empty(),
+      nb_neighbors,
+      points->parameters().
+      callback (*(this->callback())));
+  }
+};
+
+struct Grid_simplify_functor
+  : public Functor_with_signal_callback
+{
+  Point_set* points;
+  double grid_size;
+  boost::shared_ptr<Point_set::iterator> result;
+
+  Grid_simplify_functor (Point_set* points, double grid_size)
+    : points (points), grid_size (grid_size), result (new Point_set::iterator) { }
+
+  void operator()()
+  {
+    *result = CGAL::grid_simplify_point_set(*points,
+                                            grid_size,
+                                            points->parameters().
+                                            callback (*(this->callback())));
+  }
+};
+
+struct Hierarchy_simplify_functor
+  : public Functor_with_signal_callback
+{
+  Point_set* points;
+  unsigned int max_cluster_size;
+  double max_surface_variation;
+  boost::shared_ptr<Point_set::iterator> result;
+
+  Hierarchy_simplify_functor (Point_set* points,
+                              double max_cluster_size,
+                              double max_surface_variation)
+    : points (points), max_cluster_size (max_cluster_size)
+    , max_surface_variation (max_surface_variation), result (new Point_set::iterator) { }
+
+  void operator()()
+  {
+    *result = CGAL::hierarchy_simplify_point_set(*points,
+                                                 points->parameters().
+                                                 size(max_cluster_size).
+                                                 maximum_variation(max_surface_variation).
+                                                 callback (*(this->callback())));
+  }
+};
 
 using namespace CGAL::Three;
 class Polyhedron_demo_point_set_simplification_plugin :
@@ -45,6 +105,7 @@ class Polyhedron_demo_point_set_simplification_plugin :
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface,Messages_interface*) {
     scene = scene_interface;
+    mw = mainWindow;
     actionSimplify = new QAction(tr("Simplification Selection"), mainWindow);
     actionSimplify->setProperty("subMenuName","Point Set Processing");
 
@@ -134,7 +195,7 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
     if(!dialog.exec())
       return;
 
-    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::setOverrideCursor(Qt::BusyCursor);
 
     CGAL::Timer task_timer; task_timer.start();
 
@@ -155,35 +216,31 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
     {
       std::cerr << "Point set grid simplification (cell size = " << dialog.gridCellSize() <<" * average spacing)...\n";
 
-      Callback as_callback("Computing average spacing...", NULL);
-      
       // Computes average spacing
-      double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(*points, 6, /* knn = 1 ring */
-                                                                              points->parameters().
-                                                                              callback (as_callback));
+      Compute_average_spacing_functor functor_as (points, 6);
+      run_with_qprogressdialog (functor_as, "Simplification: computing average spacing...", mw);
 
-      Qt_progress_bar_callback callback("Grid simplyfing...", NULL);
+      double average_spacing = *functor_as.result;
+
+      Grid_simplify_functor functor (points, dialog.gridCellSize() * average_spacing);
+      run_with_qprogressdialog<CGAL::Sequential_tag> (functor, "Grid simplyfing...", mw);
       
       // Computes points to remove by Grid Clustering
-      first_point_to_remove =
-        CGAL::grid_simplify_point_set(*points,
-                                      dialog.gridCellSize()*average_spacing,
-                                      points->parameters().
-                                      callback (callback));
+      first_point_to_remove = *functor.result;
+        
     }
     else
     {
       std::cerr << "Point set hierarchy simplification (cluster size = " << dialog.maximumClusterSize()
 		<< ", maximum variation = " << dialog.maximumSurfaceVariation() << ")...\n";
 
-      Qt_progress_bar_callback callback("Hierarchy simplyfing...", NULL);
       // Computes points to remove by Hierarchy
-      first_point_to_remove =
-        CGAL::hierarchy_simplify_point_set(*points,
-                                           points->parameters().
-                                           size(dialog.maximumClusterSize()).
-                                           maximum_variation(dialog.maximumSurfaceVariation()).
-                                           callback(callback));
+      Hierarchy_simplify_functor functor (points, dialog.maximumClusterSize(),
+                                          dialog.maximumSurfaceVariation());
+      run_with_qprogressdialog<CGAL::Sequential_tag> (functor, "Hierarchy simplyfing...", mw);
+      
+      first_point_to_remove = *functor.result;
+        
     }
 
     std::size_t nb_points_to_remove = std::distance(first_point_to_remove, points->end());

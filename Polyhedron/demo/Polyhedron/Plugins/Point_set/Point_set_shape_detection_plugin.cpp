@@ -28,8 +28,6 @@
 
 #include <CGAL/structure_point_set.h>
 
-#include "Qt_progress_bar_callback.h"
-
 #include <QObject>
 #include <QAction>
 #include <QMainWindow>
@@ -40,8 +38,27 @@
 #include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
 
+#include "run_with_qprogressdialog.h"
+
 #include "ui_Point_set_shape_detection_plugin.h"
 
+template <typename Shape_detection>
+struct Detect_shapes_functor
+  : public Functor_with_signal_callback
+{
+  Shape_detection& shape_detection;
+  typename Shape_detection::Parameters& op;
+  
+  Detect_shapes_functor (Shape_detection& shape_detection,
+                         typename Shape_detection::Parameters& op)
+    : shape_detection (shape_detection), op (op)
+  { }
+
+  void operator()()
+  {
+    shape_detection.detect(op, *(this->callback()));
+  }
+};
 
 struct build_from_pair
 {
@@ -218,7 +235,7 @@ private:
       comments += "shape -1 no assigned shape\n";
     }
     
-    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::setOverrideCursor(Qt::BusyCursor);
 
     Shape_detection shape_detection;
     shape_detection.set_input(*points, points->point_map(), points->normal_map());
@@ -255,8 +272,8 @@ private:
     // The actual shape detection.
     CGAL::Real_timer t;
     t.start();
-    Qt_progress_bar_callback callback ("Detecting shapes...", mw);
-    shape_detection.detect(op, callback);
+    Detect_shapes_functor<Shape_detection> functor (shape_detection, op);
+    run_with_qprogressdialog<CGAL::Sequential_tag> (functor, "Detecting shapes...", mw);
     t.stop();
     
     std::cout << shape_detection.shapes().size() << " shapes found in "

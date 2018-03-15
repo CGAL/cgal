@@ -2,27 +2,20 @@
 #define RUN_WITH_QPROGRESSDIALOG_H
 
 #include <QProgressDialog>
-#include <QThread>
-
 #include <CGAL/Real_timer.h>
+#include <CGAL/thread.h>
 
 #include "Callback_signaler.h"
 
 #ifdef CGAL_LINKED_WITH_TBB
-   typedef CGAL::Parallel_tag Concurrency_tag;
-#  undef TBB_IMPLEMENT_CPP0X
-#  define TBB_IMPLEMENT_CPP0X 1
-#  include <tbb/compat/thread>
+typedef CGAL::Parallel_tag Concurrency_tag;
 #else
-   typedef CGAL::Sequential_tag Concurrency_tag;
+typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
 
 
 class Signal_callback
 {
-public:
-  
-  
 private:
   
   CGAL::Real_timer timer;
@@ -121,15 +114,15 @@ void run_with_qprogressdialog (Functor& functor,
   QEventLoop::connect (&progress, SIGNAL(canceled()),
            signal_callback->signaler.get(), SLOT(cancel()));
 
-#ifdef CGAL_LINKED_WITH_TBB
+#ifdef CGAL_HAS_STD_THREADS
   if (boost::is_convertible<ConcurrencyTag, CGAL::Parallel_tag>::value)
   {
-    std::thread thread (functor);
+    CGAL::cpp11::thread thread (functor);
 
     while (*signal_callback->latest_adv != 1. &&
            *signal_callback->state)
     {
-      QThread::msleep(10);
+      CGAL::cpp11::this_thread::sleep_for(CGAL::cpp11::chrono::seconds(0.1));
       QApplication::processEvents ();
     }
     

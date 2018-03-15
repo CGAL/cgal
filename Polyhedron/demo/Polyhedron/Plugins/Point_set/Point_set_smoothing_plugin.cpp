@@ -12,16 +12,32 @@
 
 #include <CGAL/jet_smooth_point_set.h>
 
+#include "run_with_qprogressdialog.h"
+
 // Concurrency
 #ifdef CGAL_LINKED_WITH_TBB
-#  include "Progress_bar_callback.h"
-   typedef Progress_bar_callback Callback;
-   typedef CGAL::Parallel_tag Concurrency_tag;
+typedef CGAL::Parallel_tag Concurrency_tag;
 #else
-#  include "Qt_progress_bar_callback.h"
-   typedef Qt_progress_bar_callback Callback;
-   typedef CGAL::Sequential_tag Concurrency_tag;
+typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
+
+struct Jet_smoothing_functor
+  : public Functor_with_signal_callback
+{
+  Point_set* points;
+  const int nb_neighbors;
+
+  Jet_smoothing_functor (Point_set* points, const int nb_neighbors)
+    : points (points), nb_neighbors (nb_neighbors) { }
+
+  void operator()()
+  {
+    CGAL::jet_smooth_point_set<Concurrency_tag>(points->all_or_selection_if_not_empty(),
+                                                nb_neighbors,
+                                                points->parameters().
+                                                callback (*(this->callback())));
+  }
+};
 
 using namespace CGAL::Three;
 class Polyhedron_demo_point_set_smoothing_plugin :
@@ -83,20 +99,13 @@ void Polyhedron_demo_point_set_smoothing_plugin::on_actionJetSmoothing_triggered
                            &ok);
     if(!ok) return;
 
-    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::setOverrideCursor(Qt::BusyCursor);
     QApplication::processEvents();
 
-    Callback callback("Smoothing point set...", NULL);
-    
-    CGAL::jet_smooth_point_set<Concurrency_tag>(points->all_or_selection_if_not_empty(),
-                                                nb_neighbors,
-                                                points->parameters().
-                                                callback (callback));
+    Jet_smoothing_functor functor (points, nb_neighbors);
+    run_with_qprogressdialog (functor, "Smoothing point set...", mw);
 
     points->invalidate_bounds();
-
-    // calling jet_smooth_point_set breaks the normals
-    points->remove_normal_map();
 
     // update scene
     item->invalidateOpenGLBuffers();

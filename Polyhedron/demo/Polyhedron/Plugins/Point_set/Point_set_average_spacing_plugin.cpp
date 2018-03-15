@@ -16,7 +16,6 @@
 #include <QtPlugin>
 #include <QInputDialog>
 #include <QMessageBox>
-#include <QThread>
 
 #include "run_with_qprogressdialog.h"
 
@@ -112,7 +111,7 @@ void Polyhedron_demo_point_set_average_spacing_plugin::on_actionAverageSpacing_t
     if(!ok) 
       return;
     
-    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::setOverrideCursor(Qt::BusyCursor);
     QApplication::processEvents();
     CGAL::Real_timer task_timer; task_timer.start();
     std::cerr << "Average spacing (k=" << nb_neighbors <<")...\n";
