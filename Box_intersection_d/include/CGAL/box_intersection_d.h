@@ -183,6 +183,9 @@ void box_self_intersection_d(
     std::ptrdiff_t cutoff,
     Box_intersection_d::Topology topology)
 {
+    // Copying rather than calling 'box_intersection_d(begin, end, begin, end, ...'
+    // is necessary because the 'std::partition' and range splits on the first range
+    // would be messed up by sorts on the second range otherwise.
     typedef typename std::iterator_traits<RandomAccessIter>::value_type val_t;
     std::vector< val_t> i( begin, end);
     box_intersection_d( begin, end, i.begin(), i.end(),
