@@ -856,7 +856,7 @@ private:
         
             size_type mult_of_resultant  = event.mult_of_prim_res_root;
 
-/*
+            // AF was commented
 #if CGAL_ACK_DEBUG_FLAG
             CGAL_ACK_DEBUG_PRINT << "Event line for " << index << " " 
                                  << root_of_resultant << " " 
@@ -865,7 +865,7 @@ private:
                                  << left_arcs << " " << right_arcs 
                                  << std::endl;
 #endif
-*/
+
 
             Status_line_1 ev_line 
                 = event_line_builder().create_event_line(index,
