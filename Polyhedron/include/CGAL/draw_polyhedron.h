@@ -233,7 +233,7 @@ template<class Polyhedron, class ColorFunctor>
 void draw(const Polyhedron&,
           const char* ="Polyhedron Viewer",
           bool=false,
-          const ColorFunctor&=ColorFunctor())
+          const ColorFunctor& =ColorFunctor())
 {
   std::cerr<<"Impossible to draw a Polyhedron_3 because CGAL_USE_BASIC_VIEWER is not defined."
            <<std::endl;
