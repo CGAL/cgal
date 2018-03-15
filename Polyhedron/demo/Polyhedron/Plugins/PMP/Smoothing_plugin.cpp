@@ -191,7 +191,6 @@ public Q_SLOTS:
         // explicit scheme
         if(ui_widget.explicit_checkBox->isChecked()) 
         {
-          std::cout << "iterations = " << nb_iter << std::endl;
           CGAL::Polygon_mesh_processing::smooth_along_curvature_flow(pmesh, time_step,
                             CGAL::Polygon_mesh_processing::parameters::use_explicit_scheme(true)
                                                                        .number_of_iterations(nb_iter));
@@ -201,31 +200,14 @@ public Q_SLOTS:
           // calculate stiffness matrix only once before solving repeatedly
           if(index_id != last_index_id)
           {
-            #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-            std::cout<<"setting up system...\n";
-            #endif
-
-            setup_mcf_system(faces(pmesh), pmesh, stiffness_matrix_, parameters::all_default());
+            solve_mcf(faces(pmesh), pmesh, time_step, stiffness, true, parameters::all_default());
             last_index_id = index_id;
           }
 
-          #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-          std::cout<<"solving linear system...\n";
-          #endif
-
           for(unsigned int iter=0; iter<nb_iter; ++iter)
           {
-            #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-            std::cout<<"iteration "<<iter<<"\n";
-            #endif
-            
-            solve_mcf_system(faces(pmesh), pmesh, time_step, stiffness_matrix_, parameters::all_default());
+            solve_mcf(faces(pmesh), pmesh, time_step, stiffness, false, parameters::all_default());
           }
-
-          #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-          std::cout<<"ok.\n";
-          #endif
-
         }
 
         // recenter scene
@@ -248,7 +230,7 @@ private:
     Ui::Smoothing ui_widget;
 
     int last_index_id = -1;
-    Eigen::SparseMatrix<double> stiffness_matrix_;
+    std::vector<CGAL::Triple<int, int, double> > stiffness;
 
 
 };

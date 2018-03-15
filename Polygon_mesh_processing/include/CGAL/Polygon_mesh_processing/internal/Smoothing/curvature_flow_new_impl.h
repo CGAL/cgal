@@ -84,9 +84,10 @@ public:
 
   void setup_system(Eigen_matrix& A,
                     Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz,
+                    std::vector<Triplet>& stiffness_elements,
                     const double& time)
   {
-    compute_coefficient_matrix(A, time);
+    compute_coefficient_matrix(A, stiffness_elements, time);
     compute_rhs(bx, by, bz);
   }
 
@@ -112,10 +113,10 @@ public:
     }
   }
 
-  void calculate_stiffness_matrix_elements()
+  void calculate_stiffness_matrix_elements(std::vector<Triplet>& stiffness_elements)
   {
-    CGAL_assertion(stiffness_elements_.empty());
-    stiffness_elements_.reserve(8 * nb_vert_); //estimation
+    CGAL_assertion(stiffness_elements.empty());
+    stiffness_elements.reserve(8 * nb_vert_); //estimation
 
     boost::unordered_map<std::size_t, NT> diag_coeff;
     BOOST_FOREACH(face_descriptor f, frange_)
@@ -134,8 +135,8 @@ public:
           NT Lij = weight_calculator_(hi);
           if (!is_border(hi_opp, mesh_))
             Lij+= weight_calculator_(hi_opp);
-          stiffness_elements_.push_back(Triplet(i_source, i_target, Lij));
-          stiffness_elements_.push_back(Triplet(i_target, i_source, Lij));
+          stiffness_elements.push_back(Triplet(i_source, i_target, Lij));
+          stiffness_elements.push_back(Triplet(i_target, i_source, Lij));
           diag_coeff.insert(std::make_pair(i_source,0)).first->second -= Lij;
           diag_coeff.insert(std::make_pair(i_target,0)).first->second -= Lij;
         }
@@ -145,7 +146,7 @@ public:
     for(typename boost::unordered_map<std::size_t, NT>::iterator p = diag_coeff.begin();
         p != diag_coeff.end(); ++p)
     {
-      stiffness_elements_.push_back(Triplet(p->first, p->first, p->second));
+      stiffness_elements.push_back(Triplet(p->first, p->first, p->second));
     }
   }
 
@@ -165,7 +166,9 @@ private:
 
   // compute linear system
   // -----------------------------------
-  void compute_coefficient_matrix(Eigen_matrix& A, const double& time)
+  void compute_coefficient_matrix(Eigen_matrix& A,
+                                  std::vector<Triplet>& stiffness_elements,
+                                  const double& time)
   {
     CGAL_assertion(A.row_dimension() != 0);
     CGAL_assertion(A.column_dimension() != 0);
@@ -176,7 +179,7 @@ private:
     CGAL_assertion(diagonal_.size() == nb_vert_);
 
     // fill A = D - time * L
-    for(Triplet t : stiffness_elements_)
+    BOOST_FOREACH(Triplet t, stiffness_elements)
     {
       if (t.get<0>() != t.get<1>())
         A.set_coef(t.get<0>(), t.get<1>(), -time * t.get<2>(), true);
@@ -271,7 +274,7 @@ private:
   IndexMap vimap_ = get(boost::vertex_index, mesh_);
 
   // linear system data
-  std::vector<Triplet> stiffness_elements_;
+  //std::vector<Triplet> stiffness_elements_;
   std::vector<double> diagonal_; // index of vector -> index of vimap_
 
   std::set<face_descriptor> frange_;

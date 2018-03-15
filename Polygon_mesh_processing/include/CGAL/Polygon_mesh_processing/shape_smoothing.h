@@ -23,15 +23,16 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map/property_map.hpp>
+
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <Eigen/Sparse>
 #include <CGAL/Eigen_solver_traits.h>
-#else
-#pragma message("Error: You must link CGAL with the Eigen library")
 #endif
+
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_explicit_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/constraints_map.h>
+#include <CGAL/utility.h>
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
 #include <CGAL/Timer.h>
@@ -357,6 +358,7 @@ void smooth_along_curvature_flow_new(const FaceRange& faces, PolygonMesh& pmesh,
     std::size_t n = static_cast<int>(vertices(pmesh).size());
     Eigen_matrix A(n, n);
     Eigen_vector bx(n), by(n), bz(n), Xx(n), Xy(n), Xz(n);
+    std::vector<CGAL::Triple<int, int, double> > stiffness;
 
     internal::Shape_smoother_new<PolygonMesh, VertexPointMap, VCMap, Default_solver, GeomTraits>
         smoother(pmesh, vpmap, vcmap);
@@ -370,7 +372,7 @@ void smooth_along_curvature_flow_new(const FaceRange& faces, PolygonMesh& pmesh,
     t.reset(); t.start();
     #endif
 
-    smoother.calculate_stiffness_matrix_elements();
+    smoother.calculate_stiffness_matrix_elements(stiffness);
 
     #ifdef CGAL_PMP_SMOOTHING_VERBOSE
     t.stop();
@@ -385,7 +387,7 @@ void smooth_along_curvature_flow_new(const FaceRange& faces, PolygonMesh& pmesh,
       t.reset(); t.start();
       #endif
 
-      smoother.setup_system(A, bx, by, bz, time);
+      smoother.setup_system(A, bx, by, bz, stiffness, time);
 
       #ifdef CGAL_PMP_SMOOTHING_VERBOSE
       t.stop();
@@ -409,26 +411,31 @@ void smooth_along_curvature_flow_new(const FaceRange& faces, PolygonMesh& pmesh,
       t.stop();
       std::cout << " done ("<< t.time() <<" sec)." << std::endl;
       #endif
-
     }
   }
-
 }
 
+template<typename PolygonMesh, typename NamedParameters>
+void smooth_along_curvature_flow_new(PolygonMesh& pmesh, const double& time,
+                                     const NamedParameters& np)
+{
+  smooth_along_curvature_flow_new(faces(pmesh), pmesh, time, np);
+}
 
+template<typename PolygonMesh>
+void smooth_along_curvature_flow_new(PolygonMesh& pmesh, const double& time)
+{
+  smooth_along_curvature_flow_new(faces(pmesh), pmesh, time,
+                                  parameters::all_default());
+}
 
-// demo helpers, undocumented
+// API for Polyhedron demo plugin
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
 void setup_mcf_system(const FaceRange& faces, PolygonMesh& mesh,
                       Eigen::SparseMatrix<double>& stiffness_matrix, const NamedParameters& np)
 {
   using boost::choose_param;
   using boost::get_param;
-
-  //typedef typename GetGeomTraits<PolygonMesh>::type GeomTraits;
-
-  //typedef typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type VertexPointMap;
-  //VertexPointMap vpmap = get(CGAL::vertex_point, mesh);
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
 
@@ -463,7 +470,6 @@ void solve_mcf_system(const FaceRange& faces, PolygonMesh& mesh, const double& t
   using boost::get_param;
 
   //typedef typename GetGeomTraits<PolygonMesh>::type GeomTraits;
-
   //typedef typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type VertexPointMap;
   //VertexPointMap vpmap = get(CGAL::vertex_point, mesh);
 
@@ -497,6 +503,86 @@ void solve_mcf_system(const FaceRange& faces, PolygonMesh& mesh, const double& t
   smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz);
   smoother.update_mesh(Xx, Xy, Xz);
 }
+
+template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
+void solve_mcf(const FaceRange& faces, PolygonMesh& mesh, const double& time,
+               std::vector<CGAL::Triple<int, int, double> >& stiffness, bool compute_stiffness,
+               const NamedParameters& np)
+{
+  using boost::choose_param;
+  using boost::get_param;
+
+  //typedef typename GetGeomTraits<PolygonMesh>::type GeomTraits;
+  //typedef typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type VertexPointMap;
+  //VertexPointMap vpmap = get(CGAL::vertex_point, mesh);
+
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GeomTraits;
+
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
+  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+                               get_property_map(CGAL::vertex_point, mesh));
+
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::lookup_named_param_def <
+      internal_np::vertex_is_constrained_t,
+      NamedParameters,
+      internal::Constrained_vertices_map<vertex_descriptor>
+    > ::type VCMap;
+  VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
+                             internal::Constrained_vertices_map<vertex_descriptor>());
+
+#if defined(CGAL_EIGEN3_ENABLED)
+  #if EIGEN_VERSION_AT_LEAST(3,2,0)
+    typedef typename Eigen::SparseMatrix<double> Eigen_sparse_matrix;
+    typedef typename Eigen::BiCGSTAB<Eigen_sparse_matrix, Eigen::IncompleteLUT<double> > Eigen_solver;
+    typedef CGAL::Eigen_solver_traits<Eigen_solver> Default_solver;
+  #else
+    typedef bool Default_solver;//compilation should crash
+      //if no solver is provided and Eigen version < 3.2
+  #endif
+#else
+    typedef bool Default_solver;//compilation should crash
+      //if no solver is provided and Eigen version < 3.2
+#endif
+
+#if defined(CGAL_EIGEN3_ENABLED)
+    CGAL_static_assertion_msg(
+      (!boost::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value) || EIGEN_VERSION_AT_LEAST(3, 2, 0),
+      "Eigen3 version 3.2 or later is required.");
+#else
+    CGAL_static_assertion_msg(
+      (!boost::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value),
+      "Eigen3 version 3.2 or later is required.");
+#endif
+
+  typedef typename Default_solver::Matrix Eigen_matrix;
+  typedef typename Default_solver::Vector Eigen_vector;
+
+  std::size_t n = static_cast<int>(vertices(mesh).size());
+
+  Eigen_matrix A(n, n);
+  Eigen_vector bx(n), by(n), bz(n), Xx(n), Xy(n), Xz(n);
+
+  if(compute_stiffness)
+  {
+    internal::Shape_smoother_new<PolygonMesh, VertexPointMap, VCMap, Default_solver, GeomTraits>
+        smoother(mesh, vpmap, vcmap);
+    smoother.init_smoothing(faces);
+    smoother.calculate_stiffness_matrix_elements(stiffness);
+  }
+  else
+  {
+    internal::Shape_smoother_new<PolygonMesh, VertexPointMap, VCMap, Default_solver, GeomTraits>
+        smoother(mesh, vpmap, vcmap);
+    smoother.init_smoothing(faces);
+    smoother.setup_system(A, bx, by, bz, stiffness, time);
+    smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz);
+    smoother.update_mesh(Xx, Xy, Xz);
+  }
+
+}
+
+
 
 } //Polygon_mesh_processing
 } //CGAL
