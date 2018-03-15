@@ -403,7 +403,7 @@ parameters:
 <LI><I>`facet_angle`.</I> This parameter controls the shape of
 surface facets. Specifically, it is a lower bound for the angle (in degrees) of
 surface facets. When boundary surfaces are smooth, the termination of the meshing process is
-guaranteed if this angular bound is at most 30 degrees.
+guaranteed if this angular bound is at most 30 degrees \cgalCite{c-gqmgc-93}.
 <LI><I>`facet_size`.</I> This parameter controls the size of surface facets.
 Each surface facet has
 a surface Delaunay ball which is a ball circumscribing the surface facet and

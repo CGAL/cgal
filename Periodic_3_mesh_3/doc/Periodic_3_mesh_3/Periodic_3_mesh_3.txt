@@ -192,6 +192,8 @@ implicit function should be continuous and without intersections.
 
 \cgalFigureBegin{Periodic_3_mesh_3ContinuityIssue, periodicity_issue.svg}
 Illustration in 2D (cut view) of a domain defined by an implicit function.
+Note that the zero isovalue of the implicit function restricted to the canonical cube
+does not form a closed curve.
 \cgalFigureEnd
 
 \subsection Periodic_3_mesh_3OutputMesh Output Mesh
@@ -391,7 +393,7 @@ parameters:
 <LI><I>`facet_angle`.</I> This parameter controls the shape of
 surface facets. Specifically, it is a lower bound for the angle (in degree) of
 surface facets. When boundary surfaces are smooth, the termination of the meshing process is
-guaranteed if this angular bound is at most 30 degrees.
+guaranteed if this angular bound is at most 30 degrees \cgalCite{c-gqmgc-93}.
 <LI><I>`facet_size`.</I> This parameter controls the size of surface facets.
 Each surface facet has
 a surface Delaunay ball which is a ball circumscribing the surface facet and
@@ -426,6 +428,14 @@ This parameter controls the size of mesh tetrahedra.
 It is either a scalar or a spatially variable scalar field.
 It provides an upper bound on the circumradii of the
 mesh tetrahedra.
+</UL>
+
+If the domain has 1-dimensional exposed features, the `criteria` includes
+a sizing field to guide the sampling of 1-dimensional features with protecting balls centers.
+<UL>
+<LI><I>`edge_size`</I>. This constant or variable scalar field is used as an upper bound for the distance between two
+protecting ball centers that are consecutive on a 1-feature. This parameter has to be set to a positive value when
+1-dimensional features protection is used.
 </UL>
 
 \section Periodic_3_mesh_3_section_examples Examples
