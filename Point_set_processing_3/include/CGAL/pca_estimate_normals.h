@@ -45,7 +45,6 @@
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>  
-#include <tbb/atomic.h>
 #endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
@@ -119,14 +118,14 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
     const unsigned int k;
     const std::vector<Point>& input;
     std::vector<Vector>& output;
-    tbb::atomic<std::size_t>& advancement;
-    tbb::atomic<bool>& interrupted;
+    cpp11::atomic<std::size_t>& advancement;
+    cpp11::atomic<bool>& interrupted;
 
   public:
     PCA_estimate_normals(Tree& tree, unsigned int k, std::vector<Point>& points,
 			 std::vector<Vector>& output,
-                     tbb::atomic<std::size_t>& advancement,
-                     tbb::atomic<bool>& interrupted)
+                     cpp11::atomic<std::size_t>& advancement,
+                     cpp11::atomic<bool>& interrupted)
       : tree(tree), k (k), input (points), output (output)
       , advancement (advancement)
       , interrupted (interrupted)

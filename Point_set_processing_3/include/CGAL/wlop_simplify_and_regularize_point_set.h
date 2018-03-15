@@ -46,7 +46,6 @@
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>  
-#include <tbb/atomic.h>
 #endif // CGAL_LINKED_WITH_TBB
 
 #include <CGAL/Simple_cartesian.h>
@@ -357,8 +356,8 @@ class Sample_point_updater
   const typename Kernel::FT radius;  
   const std::vector<typename Kernel::FT> &original_densities;
   const std::vector<typename Kernel::FT> &sample_densities; 
-  tbb::atomic<std::size_t>& advancement;
-  tbb::atomic<bool>& interrupted;
+  cpp11::atomic<std::size_t>& advancement;
+  cpp11::atomic<bool>& interrupted;
 
 public:
   Sample_point_updater(
@@ -369,8 +368,8 @@ public:
     const typename Kernel::FT _radius,
     const std::vector<typename Kernel::FT> &_original_densities,
     const std::vector<typename Kernel::FT> &_sample_densities,
-    tbb::atomic<std::size_t>& advancement,
-    tbb::atomic<bool>& interrupted):
+    cpp11::atomic<std::size_t>& advancement,
+    cpp11::atomic<bool>& interrupted):
   update_sample_points(out), 
     sample_points(in),
     original_kd_tree(_original_kd_tree),

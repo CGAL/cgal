@@ -303,14 +303,14 @@ class Compute_pwns_neighbors
   const Tree                                              & m_tree;
   const Pwns                                              & m_pwns;
   Pwns_neighbors                                          & m_pwns_neighbors;
-  tbb::atomic<std::size_t>& advancement;
-  tbb::atomic<bool>& interrupted;
+  cpp11::atomic<std::size_t>& advancement;
+  cpp11::atomic<bool>& interrupted;
 
 public:
   Compute_pwns_neighbors(unsigned int k, const Tree &tree,
                          const Pwns &pwns, Pwns_neighbors &neighbors,
-                         tbb::atomic<std::size_t>& advancement,
-                         tbb::atomic<bool>& interrupted)
+                         cpp11::atomic<std::size_t>& advancement,
+                         cpp11::atomic<bool>& interrupted)
     : m_k(k), m_tree(tree), m_pwns(pwns), m_pwns_neighbors(neighbors)
     , advancement (advancement), interrupted (interrupted) {} 
 
@@ -343,8 +343,8 @@ class Pwn_updater
   Pwns* pwns;
   Pwns* update_pwns;
   std::vector<Pwns,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwns> >* pwns_neighbors;
-  tbb::atomic<std::size_t>& advancement;
-  tbb::atomic<bool>& interrupted;
+  cpp11::atomic<std::size_t>& advancement;
+  cpp11::atomic<bool>& interrupted;
 
 public:
   Pwn_updater(FT sharpness, 
@@ -352,8 +352,8 @@ public:
     Pwns *in,
     Pwns *out, 
     std::vector<Pwns,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwns> >* neighbors,
-    tbb::atomic<std::size_t>& advancement,
-    tbb::atomic<bool>& interrupted): 
+    cpp11::atomic<std::size_t>& advancement,
+    cpp11::atomic<bool>& interrupted): 
   sharpness_angle(sharpness), 
     radius(r),
     pwns(in),

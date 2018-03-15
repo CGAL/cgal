@@ -25,10 +25,7 @@
 
 #include <CGAL/function.h>
 
-#include <tbb/atomic.h>
-#undef TBB_IMPLEMENT_CPP0X
-#define TBB_IMPLEMENT_CPP0X 1
-#include <tbb/compat/thread>
+#include <CGAL/thread.h>
 
 namespace CGAL {
 namespace internal {
@@ -37,11 +34,11 @@ namespace Point_set_processing_3 {
 class Parallel_callback
 {
   const cpp11::function<bool(double)>& m_callback;
-  tbb::atomic<std::size_t>* m_advancement;
-  tbb::atomic<bool>* m_interrupted;
+  cpp11::atomic<std::size_t>* m_advancement;
+  cpp11::atomic<bool>* m_interrupted;
   std::size_t m_size;
   bool m_creator;
-  std::thread* m_thread;
+  cpp11::thread* m_thread;
 
   // assignment operator shouldn't be used (m_callback is const ref)
   Parallel_callback& operator= (const Parallel_callback&)
@@ -55,17 +52,17 @@ public:
                      std::size_t advancement = 0,
                      bool interrupted = false)
     : m_callback (callback)
-    , m_advancement (new tbb::atomic<std::size_t>())
-    , m_interrupted (new tbb::atomic<bool>())
+    , m_advancement (new cpp11::atomic<std::size_t>())
+    , m_interrupted (new cpp11::atomic<bool>())
     , m_size (size)
     , m_creator (true)
     , m_thread (NULL)
   {
-    // tbb::atomic only has default constructor, initialization done in two steps
+    // cpp11::atomic only has default constructor, initialization done in two steps
     *m_advancement = advancement;
     *m_interrupted = interrupted;
     if (m_callback)
-      m_thread = new std::thread (*this);
+      m_thread = new cpp11::thread (*this);
   }
 
   Parallel_callback (const Parallel_callback& other)
@@ -91,8 +88,8 @@ public:
       delete m_thread;
   }
 
-  tbb::atomic<std::size_t>& advancement() { return *m_advancement; }
-  tbb::atomic<bool>& interrupted() { return *m_interrupted; }
+  cpp11::atomic<std::size_t>& advancement() { return *m_advancement; }
+  cpp11::atomic<bool>& interrupted() { return *m_interrupted; }
   void join()
   {
     if (m_thread != NULL)
@@ -101,7 +98,7 @@ public:
 
   void operator()()
   {
-    tbb::tick_count::interval_t sleeping_time(0.00001);
+    cpp11::chrono::seconds sleeping_time(0.00001);
 
     while (*m_advancement != m_size)
     {
@@ -109,7 +106,7 @@ public:
         *m_interrupted = true;
       if (*m_interrupted)
         return;
-      std::this_thread::sleep_for(sleeping_time);
+      cpp11::this_thread::sleep_for(sleeping_time);
     }
     m_callback (1.);
   }
