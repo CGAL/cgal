@@ -70,7 +70,7 @@ struct Polyhedron_with_features_tester : public Tester<K>
     // non-documented, provided to the FEniCS project
     const std::vector<Polyhedron>& polyhedra = domain.polyhedra();
     CGAL_USE(polyhedra);
-    
+
     // Set mesh criteria
     Edge_criteria edge_criteria(0.2);
     Facet_criteria facet_criteria(30, 0.2, 0.02);

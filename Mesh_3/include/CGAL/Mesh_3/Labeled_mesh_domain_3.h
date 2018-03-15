@@ -60,7 +60,7 @@ namespace Mesh_3 {
  *  - f(p)=0 means that p is outside domain.
  *  - f(p)=a, a!=0 means that p is inside subdomain a.
  *
- *  Any boundary facet is labelled <a,b>, a<b, where a and b are the
+ *  Any boundary facet is labelled <a,b>, with a<b, where a and b are the
  *  tags of it's incident subdomain.
  *  Thus, a boundary facet of the domain is labelled <0,b>, where b!=0.
  */
