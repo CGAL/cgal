@@ -133,6 +133,13 @@ compute_avg_knn_sq_distance_3(
      \cgalParamBegin{threshold_percent} maximum percentage of points to remove.\cgalParamEnd
      \cgalParamBegin{threshold_distance} minimum distance for a point to be considered as outlier
      (distance here is the square root of the average squared distance to K nearest neighbors).\cgalParamEnd
+     \cgalParamBegin{callback} an instance of
+      `cpp11::function<bool(double)>`. It is called regularly when the
+      algorithm is running: the current advancement (between 0. and
+      1.) is passed as parameter. If it returns `true`, then the
+      algorithm continues its execution normally; if it returns
+      `false`, the algorithm is stopped, all points are left unchanged
+      and the function return `points.end()`.\cgalParamEnd
      \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 
@@ -209,7 +216,7 @@ remove_outliers(
       tree, k);
     sorted_points.insert( std::make_pair(sq_distance, *it) );
     if (callback && !callback ((nb+1) / double(kd_tree_points.size())))
-      break;
+      return points.end();
   }
 
   // Replaces [points.begin(), points.end()) range by the multimap content.

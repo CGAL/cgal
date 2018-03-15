@@ -178,6 +178,13 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
      If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
      \cgalParamBegin{normal_map} a model of `WritablePropertyMap` with value type
      `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamBegin{callback} an instance of
+      `cpp11::function<bool(double)>`. It is called regularly when the
+      algorithm is running: the current advancement (between 0. and
+      1.) is passed as parameter. If it returns `true`, then the
+      algorithm continues its execution normally; if it returns
+      `false`, the algorithm is stopped and the remaining normals are
+      left unchanged.\cgalParamEnd
      \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 */
@@ -252,7 +259,8 @@ pca_estimate_normals(
       internal::Point_set_processing_3::Parallel_callback
         parallel_callback (callback, kd_tree_points.size());
      
-      std::vector<Vector> normals (kd_tree_points.size ());
+      std::vector<Vector> normals (kd_tree_points.size (),
+                                   CGAL::NULL_VECTOR);
       CGAL::internal::PCA_estimate_normals<Kernel, Tree>
 	f (tree, k, kd_tree_points, normals,
            parallel_callback.advancement(),
@@ -260,7 +268,8 @@ pca_estimate_normals(
       tbb::parallel_for(tbb::blocked_range<size_t>(0, kd_tree_points.size ()), f);
       unsigned int i = 0;
       for(it = points.begin(); it != points.end(); ++ it, ++ i)
-        put (normal_map, *it, normals[i]);
+        if (normals[i] != CGAL::NULL_VECTOR)
+          put (normal_map, *it, normals[i]);
 
       parallel_callback.join();
     }

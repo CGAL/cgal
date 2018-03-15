@@ -421,6 +421,13 @@ public:
      \cgalParamBegin{normal_map} a model of `ReadWritePropertyMap` with value type
      `geom_traits::Vector_3`.\cgalParamEnd
      \cgalParamBegin{sharpness_angle} controls the sharpness of the result.\cgalParamEnd
+     \cgalParamBegin{callback} an instance of
+      `cpp11::function<bool(double)>`. It is called regularly when the
+      algorithm is running: the current advancement (between 0. and
+      1.) is passed as parameter. If it returns `true`, then the
+      algorithm continues its execution normally; if it returns
+      `false`, the algorithm is stopped, all points are left unchanged
+      and the function return `NaN`.\cgalParamEnd
      \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 

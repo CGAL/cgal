@@ -450,6 +450,13 @@ public:
      value is 35. More iterations give a more regular result but increase the runtime.\cgalParamEnd
      \cgalParamBegin{require_uniform_sampling} an optional preprocessing, which will give better result if the
      distribution of the input points is highly non-uniform. The default value is `false`. \cgalParamEnd
+     \cgalParamBegin{callback} an instance of
+      `cpp11::function<bool(double)>`. It is called regularly when the
+      algorithm is running: the current advancement (between 0. and
+      1.) is passed as parameter. If it returns `true`, then the
+      algorithm continues its execution normally; if it returns
+      `false`, the algorithm is stopped, no output points are
+      generated.\cgalParamEnd
      \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 

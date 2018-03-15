@@ -194,6 +194,13 @@ jet_smooth_point(
      \cgalParamBegin{svd_traits} template parameter for the class `Monge_via_jet_fitting`. If
      \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined,
      then `CGAL::Eigen_svd` is used.\cgalParamEnd
+     \cgalParamBegin{callback} an instance of
+      `cpp11::function<bool(double)>`. It is called regularly when the
+      algorithm is running: the current advancement (between 0. and
+      1.) is passed as parameter. If it returns `true`, then the
+      algorithm continues its execution normally; if it returns
+      `false`, the algorithm is stopped and the remaining points are
+      left unchanged.\cgalParamEnd
      \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 
@@ -261,7 +268,7 @@ jet_smooth_point_set(
      internal::Point_set_processing_3::Parallel_callback
        parallel_callback (callback, kd_tree_points.size());
      
-     std::vector<Point> mutated_points (kd_tree_points.size ());
+     std::vector<Point> mutated_points (kd_tree_points.size (), CGAL::ORIGIN);
      CGAL::internal::Jet_smooth_pwns<Kernel, SvdTraits, Tree>
        f (tree, k, kd_tree_points, degree_fitting, degree_monge,
 	  mutated_points,
@@ -270,7 +277,8 @@ jet_smooth_point_set(
      tbb::parallel_for(tbb::blocked_range<size_t>(0, kd_tree_points.size ()), f);
      unsigned int i = 0;
      for(it = points.begin(); it != points.end(); ++ it, ++ i)
-       put(point_map, *it, mutated_points[i]);
+       if (mutated_points[i] != CGAL::ORIGIN)
+         put(point_map, *it, mutated_points[i]);
 
      parallel_callback.join();
 
