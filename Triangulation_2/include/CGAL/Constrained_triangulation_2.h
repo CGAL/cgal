@@ -108,7 +108,7 @@ public:
   {
     const char* what() const throw ()
     {
-      return "the constraint and subconstraint edge are intersecting.";
+      return "Intersection of constraints while using No_intersection_tag";
     }
   };
 
@@ -894,8 +894,8 @@ intersect(Face_handle f, int i,
   "using a Constrained_triangulation_plus_2 class\n"
   "would avoid cascading intersection computation\n"
   " and be much more efficient\n"
-  "define CGAL_NO_WARNING_WHEN_USING_CDT_PLUS_WHILE_INTERSECTING_CONSTRAINTS "
-  "to disable this warning.\n");
+  "This message is shown only when not using "
+  "CGAL_NO_WARNING_WHEN_USING_CDT_PLUS_WHILE_INTERSECTING_CONSTRAINTS.\n");
 #endif
   const Point& pa = vaa->point();
   const Point& pb = vbb->point();
