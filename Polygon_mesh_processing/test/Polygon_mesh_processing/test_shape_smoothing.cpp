@@ -1,5 +1,3 @@
-#define CGAL_PMP_SMOOTHING_VERBOSE 1
-#define CGAL_PMP_SMOOTHING_DEBUG 1
 #include <fstream>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
@@ -46,10 +44,10 @@ public:
   }
 };
 
-void test_implicit_constrained(const char* filename)
+void test_implicit_constrained_devil(const char* filename)
 {
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  std::cout << "-- test_implicit_constrained --" << std::endl;
+  std::cout << "-- test_implicit_constrained_devil --" << std::endl;
   #endif
 
   std::ifstream input(filename);
@@ -66,7 +64,7 @@ void test_implicit_constrained(const char* filename)
   for (vertex_descriptor v : vertices(mesh))
   {
     const double z = get(vpmap, v).z();
-    if(z  > 19)
+    if(z  > 19.0)
       selected_vertices.insert(v);
   }
 
@@ -75,9 +73,46 @@ void test_implicit_constrained(const char* filename)
   const double time_step = 1.0;
   CGAL::Polygon_mesh_processing::smooth_along_curvature_flow(mesh, time_step,
                             CGAL::Polygon_mesh_processing::parameters::vertex_is_constrained_map(vcmap).
-                                                                       number_of_iterations(1));
+                                                                       number_of_iterations(5));
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  std::ofstream out("data/output_implicit_constrained.off");
+  std::ofstream out("data/output_implicit_constrained_devil.off");
+  out << mesh;
+  out.close();
+  #endif
+}
+
+void test_implicit_constrained_pyramid(const char* filename)
+{
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  std::cout << "-- test_implicit_constrained_pyramid --" << std::endl;
+  #endif
+
+  std::ifstream input(filename);
+  Mesh mesh;
+  input >> mesh;
+  input.close();
+
+  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
+          get(CGAL::vertex_point, mesh);
+
+  // z max is 20 in the devil;
+  std::set<vertex_descriptor> selected_vertices;
+
+  for (vertex_descriptor v : vertices(mesh))
+  {
+    const double z = get(vpmap, v).z();
+    if(z  > 0.8)
+      selected_vertices.insert(v);
+  }
+
+  Constraints_pmap vcmap(&selected_vertices);
+
+  const double time_step = 1.0;
+  CGAL::Polygon_mesh_processing::smooth_along_curvature_flow(mesh, time_step,
+                            CGAL::Polygon_mesh_processing::parameters::vertex_is_constrained_map(vcmap).
+                                                                       number_of_iterations(5));
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  std::ofstream out("data/output_implicit_constrained_pyramid.off");
   out << mesh;
   out.close();
   #endif
@@ -197,11 +232,12 @@ int main(int argc, char* argv[])
   const char* filename_devil = "data/mannequin-devil.off";
   const char* filename_pyramid = "data/simple_pyramid.off";
 
-  //test_demo_helpers(filename_devil);
-  //test_curvature_flow_time_step(filename_devil);
-  //test_curvature_flow(filename_pyramid);
-  test_implicit_constrained(filename_devil);
-  //test_explicit_scheme(filename_devil);
+  test_demo_helpers(filename_devil);
+  test_curvature_flow_time_step(filename_devil);
+  test_curvature_flow(filename_pyramid);
+  test_implicit_constrained_pyramid(filename_pyramid);
+  test_implicit_constrained_devil(filename_devil);
+  test_explicit_scheme(filename_devil);
 
   return 0;
 }

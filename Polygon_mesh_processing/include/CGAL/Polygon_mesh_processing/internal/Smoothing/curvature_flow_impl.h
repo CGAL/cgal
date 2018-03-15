@@ -29,14 +29,11 @@
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/constraints_map.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map/property_map.hpp>
-#include <CGAL/barycenter.h>
 #include <CGAL/utility.h>
+
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
 #endif
-#include <fstream>
-#include <unordered_set>
-#include <unordered_map>
 
 
 namespace CGAL {
@@ -99,6 +96,7 @@ public:
     NT D;
 
     // calls compute once to factorize with the preconditioner
+    // compute does "build" of the matrix from triplets
     if(!solver.factor(A, D))
     {
       std::cerr << "Could not factorize linear system with preconditioner." << std::endl;
@@ -189,14 +187,23 @@ private:
         A.set_coef(t.get<0>(), t.get<1>(), diagonal_[t.get<0>()] -time * t.get<2>(), true);
       }
     }
-    A.assemble_matrix(); // does setFromTriplets and some compression
+
+    apply_constraints(A);
+
+    // we do not call A.assemble_matrix here
+    // because assemble_matrix clears all triplets
+    // leaving the _is_matrix_built flag on.
+    // Eigen's compute in factorization does the building correctly.
   }
 
   void calculate_D_diagonal(std::vector<double>& diagonal)
   {
-    diagonal.clear();
+    // calculates all elements on the diagonal of D
+    // and marks the entries that correspond to constrained vertices
+
     diagonal.assign(nb_vert_, 0);
-    std::vector<bool> constraints_flags(diagonal.size(), false);
+    constrained_flags_.assign(nb_vert_, false);
+
     BOOST_FOREACH(face_descriptor f, frange_)
     {
       double area = face_area(f, mesh_);
@@ -205,20 +212,13 @@ private:
         int idx = vimap_[v];
         if(!is_constrained(v))
         {
-          diagonal[idx] += 2.0 * area;
+          diagonal[idx] += 2.0 * area / 12.0;
         }
         else
         {
-          diagonal[idx] = 1.0;
-          constraints_flags[idx] = true;
+          constrained_flags_[idx] = true;
         }
       }
-    }
-
-    for(int i = 0; i < diagonal.size(); ++i)
-    {
-      //if(!constraints_flags[i] == true)
-        diagonal[i] /= 12.0;
     }
   }
 
@@ -249,6 +249,16 @@ private:
 
   // handling constrains
   // -----------------------------------
+  void apply_constraints(Eigen_matrix& A)
+  {
+    CGAL_assertion(constrained_flags_.size() == nb_vert_);
+    for(int i = 0; i < nb_vert_; ++i)
+    {
+      if(constrained_flags_[i] == true)
+        A.set_coef(i, i, 1.0, true);
+    }
+  }
+
   bool is_constrained(const vertex_descriptor& v)
   {
     return get(vcmap_, v);
@@ -275,13 +285,12 @@ private:
   IndexMap vimap_ = get(boost::vertex_index, mesh_);
 
   // linear system data
-  //std::vector<Triplet> stiffness_elements_;
   std::vector<double> diagonal_; // index of vector -> index of vimap_
+  std::vector<bool> constrained_flags_;
 
   std::set<face_descriptor> frange_;
   std::set<vertex_descriptor> vrange_;
   Edge_cotangent_weight<PolygonMesh, VertexPointMap> weight_calculator_;
-
 };
 
 
