@@ -73,28 +73,6 @@ namespace internal {
       }
   };
 
-  template<typename PolygonMesh>
-  struct Incident_area
-  {
-    Incident_area(PolygonMesh& mesh) : pmesh(mesh){}
-
-    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-
-    double operator()(halfedge_descriptor he)
-    {
-      halfedge_descriptor hopp = opposite(he, pmesh);
-      face_descriptor f1 = face(he, pmesh);
-      face_descriptor f2 = face(hopp, pmesh);
-
-      double A1 = f1 == boost::graph_traits<PolygonMesh>::null_face() ? 0 : face_area(f1, pmesh);
-      double A2 = f2 == boost::graph_traits<PolygonMesh>::null_face() ? 0 : face_area(f2, pmesh);
-      return A1 + A2;
-    }
-    PolygonMesh& pmesh;
-  };
-
-
 
 
 

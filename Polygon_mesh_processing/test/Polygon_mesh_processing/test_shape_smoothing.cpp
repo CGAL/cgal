@@ -3,6 +3,7 @@
 #include <fstream>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/utility.h>
 #include <CGAL/Polygon_mesh_processing/shape_smoothing.h>
 #include <boost/graph/graph_traits.hpp>
 
@@ -47,6 +48,10 @@ public:
 
 void test_implicit_constrained(const char* filename)
 {
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  std::cout << "-- test_implicit_constrained --" << std::endl;
+  #endif
+
   std::ifstream input(filename);
   Mesh mesh;
   input >> mesh;
@@ -70,7 +75,7 @@ void test_implicit_constrained(const char* filename)
   const double time_step = 1.0;
   CGAL::Polygon_mesh_processing::smooth_along_curvature_flow(mesh, time_step,
                             CGAL::Polygon_mesh_processing::parameters::vertex_is_constrained_map(vcmap).
-                                                                       number_of_iterations(5));
+                                                                       number_of_iterations(1));
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   std::ofstream out("data/output_implicit_constrained.off");
   out << mesh;
@@ -80,6 +85,10 @@ void test_implicit_constrained(const char* filename)
 
 void test_explicit_scheme(const char* filename)
 {
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  std::cout << "-- test_explicit_scheme --" << std::endl;
+  #endif
+
   std::ifstream input(filename);
   Mesh mesh;
   input >> mesh;
@@ -103,6 +112,10 @@ void test_explicit_scheme(const char* filename)
 
 void test_curvature_flow_time_step(const char* filename)
 {
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  std::cout << "-- test_curvature_flow_time_step --" << std::endl;
+  #endif
+
   std::ifstream input(filename);
   Mesh mesh;
   input >> mesh;
@@ -123,6 +136,10 @@ void test_curvature_flow_time_step(const char* filename)
 
 void test_curvature_flow(const char* filename)
 {
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  std::cout << "-- test_curvature_flow --" << std::endl;
+  #endif
+
   std::ifstream input(filename);
   Mesh mesh;
   input >> mesh;
@@ -141,31 +158,12 @@ void test_curvature_flow(const char* filename)
   #endif
 }
 
-void test_curvature_flow_new(const char* filename)
-{
-  std::ifstream input(filename);
-  Mesh mesh;
-  input >> mesh;
-  input.close();
-
-  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
-          get(CGAL::vertex_point, mesh);
-
-  const double time_step = 1.0;
-  CGAL::Polygon_mesh_processing::smooth_along_curvature_flow_new(faces(mesh), mesh, time_step,
-                                                                 CGAL::Polygon_mesh_processing::parameters::all_default());
-
-  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-  std::ofstream out("data/output_precision_pyramid_new.off");
-  out << mesh;
-  out.close();
-  #endif
-}
-
-
-
 void test_demo_helpers(const char* filename)
 {
+  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+  std::cout << "-- test_demo_helpers --" << std::endl;
+  #endif
+
   std::ifstream input(filename);
   Mesh mesh;
   input >> mesh;
@@ -175,9 +173,16 @@ void test_demo_helpers(const char* filename)
           get(CGAL::vertex_point, mesh);
 
   const double time_step = 1e-2;
-  Eigen::SparseMatrix<double> stiff_matrix;
-  CGAL::Polygon_mesh_processing::setup_mcf_system(faces(mesh), mesh, stiff_matrix, CGAL::Polygon_mesh_processing::parameters::all_default());
-  CGAL::Polygon_mesh_processing::solve_mcf_system(faces(mesh), mesh, time_step, stiff_matrix, CGAL::Polygon_mesh_processing::parameters::all_default());
+  std::vector<CGAL::Triple<int, int, double> > stiffness;
+
+  bool compute_stiffness = true;
+  CGAL::Polygon_mesh_processing::solve_mcf(faces(mesh), mesh, time_step,
+                                           stiffness, compute_stiffness,
+                                           CGAL::Polygon_mesh_processing::parameters::all_default());
+  compute_stiffness = false;
+  CGAL::Polygon_mesh_processing::solve_mcf(faces(mesh), mesh, time_step,
+                                           stiffness, compute_stiffness,
+                                           CGAL::Polygon_mesh_processing::parameters::all_default());
 
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   std::ofstream out("data/output_devil_demo_helpers.off");
@@ -194,9 +199,8 @@ int main(int argc, char* argv[])
 
   //test_demo_helpers(filename_devil);
   //test_curvature_flow_time_step(filename_devil);
-  test_curvature_flow(filename_devil);
-  test_curvature_flow_new(filename_devil);
-  //test_implicit_constrained(filename_devil);
+  //test_curvature_flow(filename_pyramid);
+  test_implicit_constrained(filename_devil);
   //test_explicit_scheme(filename_devil);
 
   return 0;
