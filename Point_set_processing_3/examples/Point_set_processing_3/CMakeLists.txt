@@ -57,6 +57,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "wlop_simplify_and_regularize_point_set_example.cpp" )
   create_single_source_cgal_program( "edge_aware_upsample_point_set_example.cpp" )
   create_single_source_cgal_program( "structuring_example.cpp" )
+  create_single_source_cgal_program( "callback_example.cpp" )
 
   set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)    
   create_single_source_cgal_program( "read_ply_points_with_colors_example.cpp" CXX_FEATURES ${needed_cxx_features} )
