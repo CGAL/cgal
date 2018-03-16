@@ -272,9 +272,9 @@ point_on_planeC3(const FT &pa, const FT &pb, const FT &pc, const FT &pd,
   // to avoid badly defined point with an overly large coordinate when
   //  the plane is almost orthogonal to one axis, we use the largest
   //  scalar coordinate instead of always using the first non-null
-  if (CGAL::possibly(CGAL_AND (abs_pa >= abs_pb, abs_pa >= abs_pc)))
+  if (abs_pa >= abs_pb && abs_pa >= abs_pc)
     x = -pd/pa;
-  else if (CGAL::possibly(CGAL_AND (abs_pb >= abs_pa, abs_pb >= abs_pc)))
+  else if (abs_pb >= abs_pa && abs_pb >= abs_pc)
     y = -pd/pb;
   else
     z = -pd/pc;

@@ -1771,10 +1771,10 @@ namespace CartesianKernelFunctors {
         // to avoid badly defined vectors with coordinates all close
         // to 0 when the plane is almost horizontal, we ignore the
         // smallest coordinate instead of always ignoring Z
-        if (CGAL::possibly(CGAL_AND (a <= b, a <= c)))
+        if (a <= b && a <= c)
           return Vector_3(FT(0), -h.c(), h.b());
 
-        if (CGAL::possibly(CGAL_AND (b <= a, b <= c)))
+        if (b <= a && b <= c)
           return Vector_3(-h.c(), FT(0), h.a());
 
         return Vector_3(-h.b(), h.a(), FT(0));
