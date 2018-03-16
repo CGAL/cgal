@@ -22,17 +22,16 @@ This package offers both the approximation and mesh construction functionalities
 
 \cgalExample{Surface_mesh_approximation/vsa_simple_approximation_example.cpp}
 
-A class interface is also provided for advanced users, with interactive capabilities during clustering and customization in terms of error and proxies. In addition to approximation, the package can be used for shape segmentation via another free function which provides access to the clustering partition.
+A class interface is also provided for advanced users, with interactive capabilities during clustering and customization in terms of error and proxies. 
 
 \section sma_overview Overview
 
-The package contains 3 major components: main approximation algorithm, post refinement operations and meshing.
+The package contains 3 main components: approximation algorithm, pliant operators and meshing.
 
-(PA: post refinement sounds bad, as we can unrefine. Pliant operations may sound better.)
 
 \subsection sma_approximation Approximation
 
-Figure \cgalFigureRef{workflow} shows the workflow of the approximation algorithm in the free function APIs. The main steps of the workflow are described below.
+Figure \cgalFigureRef{workflow} depicts the workflow of the approximation algorithm in the free function APIs. The main steps of the workflow are described below.
 
 \cgalFigureBegin{workflow, workflow.png}
 Workflow of the approximation process in the free functions.
@@ -56,8 +55,8 @@ To start the clustering iterations, we need an initial set of proxies. The defau
 
 Assuming a clustering partition of \f$n\f$ regions with errors \f$ \{E_k\}_{k=1\cdots n} \f$, and we wish to add \f$m\f$ proxies. We provide 3 different seeding methods:
 - <b>Random</b>. \f$m\f$ seed faces are picked randomly on the surface, excluding the current seed faces.
-- <b>Incremental</b>. Each new proxy is initialized from a face of the worse region matching the largest approximation error. The face itself is chosen as the one realizing the largest error in its region.
-- <b>Hierarchical</b>. \f$m\f$ seed faces are dispatched within the current partition, where each partition is refined with a number of proxies chosen in accordance to their fitting error:
+- <b>Incremental</b>. Each new proxy is initialized from a face of the region with the largest approximation error. The face itself is chosen as the one realizing the largest error in its region.
+- <b>Hierarchical</b>. \f$m\f$ seed faces are dispatched within the current partition, where each region is refined with a number of proxies chosen in accordance to its fitting error:
   - calculate total error \f$ E_{total} \f$, then average error \f$ E_{avg} = E_{total} / m \f$ (assuming that each new proxy shares the same amount of error)
   - sort errors \f$ \{E_{min},\cdots,E_{max}\} \f$
   - from \f$ E_{min} \f$ to \f$ E_{max} \f$, we diffuse the error <em>hierarchically</em> one after another. More specifically, the number of proxies \f$N_k\f$ added to the \f$k\f$th region is proportional to its error:
@@ -65,11 +64,13 @@ Assuming a clustering partition of \f$n\f$ regions with errors \f$ \{E_k\}_{k=1\
 and the remaining error is added to the next proxy error in order to keep the total error unchanged:
 \f[ E'_{k+1} = (E_k - N_k * E_{avg}) + E_{k+1}. \f]
 
+
+Figure \cgalFigureRef{seeding_method} depicts different seeding methods. Random initialization randomly selects a set of input triangle faces as proxy seeds. While it is very fast, the subsequent clustering process can be entrapped in a bad local minimum, especially on shapes with regions surrounded by sharp creases (left rectangle). Incremental initialization adds the proxies one by one at the most distorted region. It can thus be slow due to the large number of interleaved relaxation iterations. Hierarchical initialization (selected by default) repeatedly doubles the number of proxies in a hierarchical refinement sequence, so as to generate clustering regions with evenly distributed fitting errors. Time consumption is somewhere in-between the former two. Statistics and comparisons are available in Section \ref sma_perf.
+
 \cgalFigureBegin{seeding_method, seeding_method.png}
-Comparison of seeding methods on the sphere-cube model. From left to right: initial partition (\f$ \mathcal{L}^{2,1} \f$ metrics and 20 proxies), add 5 proxy seeds (red faces) with random, incremental and hierarchical methods respectively.
+Different seeding methods on the sphere-cube model. From left to right: initial partition (\f$ \mathcal{L}^{2,1} \f$ metrics and 20 proxies), add 5 proxy seeds (red faces) with random, incremental and hierarchical methods respectively.
 \cgalFigureEnd
 
-Figure \cgalFigureRef{seeding_method} depicts the effect of different seeding methods. Random initialization randomly selects a set of input triangle faces as proxy seeds. While it is very fast, the subsequent clustering process can be entrapped in local minima, especially on shapes with regions surrounded by sharp creases (left rectangle). Incremental initialization adds the proxies one by one at the most distorted region. It can thus be slow due to the large number of interleaved relaxation iterations. Hierarchical initialization (selected by default) repeatedly doubles the number of proxies in a hierarchical refinement sequence, so as to generate clustering regions with evenly distributed fitting errors. Time consumption is somewhere in-between the former two. Some statistics and comparisons are available in Section \ref sma_perf.
 
 \subsubsection sma_stop Stop Criteria
 
@@ -112,11 +113,11 @@ A vertex is selected as a basic anchor if it is:
 
 \subsubsection sma_anchors_subdivision Subdivision Anchors
 
-Walking along the proxy region boundary (counterclockwise), a <em>chord</em> is a sequence of halfedges at the boundary of a cluster and connecting two anchors. One cluster boundary cycle may consist of several pieces of chords. Note that a connected region with holes yields several boundary cycles (Figure \cgalFigureRef{operations}, planar part before teleportation).
+Walking along the boundary of a proxy region  (counterclockwise), a <em>chord</em> is a sequence of halfedges connecting two anchors. One cluster boundary cycle may consist of several chords. Note that a connected region with holes may yield several boundary cycles (Figure \cgalFigureRef{operations}, planar part before teleportation).
 
-In order to approximate complex boundaries, more anchors are generated by recursive chord subdivision (Figure \cgalFigureRef{chord}). An anchor \f$ \mathbf{c} \f$ is added at the furthest vertex of a chord \f$ (\mathbf{a}, \mathbf{b}) \f$, split it into \f$ (\mathbf{a}, \mathbf{c}) \f$ and \f$ (\mathbf{c}, \mathbf{b}) \f$, if the distance \f$ d = \Vert \mathbf{c} , (\mathbf{a}, \mathbf{b}) \Vert \f$ is beyond certain threshold. To make \f$ d \f$ independent to the scale of the input:
+In order to approximate complex boundaries well, more anchors are generated by recursive chord subdivision (Figure \cgalFigureRef{chord}). An anchor \f$ \mathbf{c} \f$ is added at the furthest vertex of a chord \f$ (\mathbf{a}, \mathbf{b}) \f$, split it into \f$ (\mathbf{a}, \mathbf{c}) \f$ and \f$ (\mathbf{c}, \mathbf{b}) \f$, if the distance \f$ d = \Vert \mathbf{c} , (\mathbf{a}, \mathbf{b}) \Vert \f$ is beyond certain threshold. To make \f$ d \f$ independent to the scale of the input:
 \f[ d = d / input\_mesh\_average\_edge\_length. \f]
-Optionally, \f$ d \f$ can be measured in a relative way to the chord length:
+Optionally, \f$ d \f$ can be measured as the ratio of the chord length:
 \f[ d = d / \Vert(\mathbf{a}, \mathbf{b})\Vert. \f]
 Also, we can add a dihedral angle weight \f$ sin(\mathbf{N}_i,\mathbf{N}_j) \f$ to the distance measurement, where \f$ \mathbf{N}_i,\mathbf{N}_j \f$ is the normal of the proxies separated by the chord \f$ (\mathbf{a}, \mathbf{b}) \f$. If the angle between proxy \f$ P_i \f$ and \f$ P_j \f$ is rather small, even a coarse approximation will do as it does not add geometric information on the shape. Trivial non-circular chords (less than 4 edges) are not subdivided. (LAST SENTENCE TO REPHRASE, as a triangle cycle may require to be subdivided)
 
