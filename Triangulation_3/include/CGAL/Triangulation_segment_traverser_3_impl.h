@@ -301,6 +301,100 @@ walk_to_next_3()
          &(get<0>(_cur)->vertex(2)->point()),
          &(get<0>(_cur)->vertex(3)->point()) };
 
+#ifdef CGAL_FAST_TRAVERSER    
+    Orientation o0, o1, o2;
+    int inside=0,outside=0,regular_case=0,degenerate=0;
+    Cell_handle nnext;
+    
+      if( get<1>(_cur) == Tr::FACET ) {
+        regular_case=1;
+        int i = get<2>(_cur);
+        int j0 = Tr::vertex_triple_index(i,0);
+        int j1 = Tr::vertex_triple_index(i,1);
+        int j2 = Tr::vertex_triple_index(i,2);
+        o0 = orientation(_source, *vert[i], *vert[j0], _target);
+        if (o0==POSITIVE){
+          o1 = orientation(_source, *vert[i], *vert[j1], _target);
+          if(o1!=POSITIVE){
+            if (orientation(*vert[i], *vert[j0], *vert[j1], _target)==POSITIVE){
+              nnext= get<0>(_cur)->neighbor(j2);
+              outside=j2;
+              if(o1==ZERO) degenerate=1; //EDGE i j1
+            }
+            else
+              inside=1;
+          }else{
+            if (orientation(*vert[i], *vert[j1], *vert[j2], _target)==POSITIVE){
+              nnext= get<0>(_cur)->neighbor(j0);
+              outside=j0;
+            }
+            else
+              inside=2;
+          }
+        }else if (o0==ZERO){
+          o1 = orientation(_source, *vert[i], *vert[j1], _target);
+          if(o1==NEGATIVE){
+            if (orientation(*vert[i], *vert[j0], *vert[j1], _target)==POSITIVE){
+              nnext= get<0>(_cur)->neighbor(j2); //EDGE i j0
+              degenerate=2;
+              outside=44;
+            }
+            else
+              inside=3;
+          }else if (o1==ZERO){
+              nnext= get<0>(_cur)->neighbor(j2);  //VERTEX i
+              degenerate =3;
+              outside=5;
+          }else {
+            if (orientation(*vert[i], *vert[j1], *vert[j2], _target)==POSITIVE){
+              nnext= get<0>(_cur)->neighbor(j0);
+              outside=j0;
+            }
+            else
+              inside=4;
+          }
+        }else{
+          o2 = orientation(_source, *vert[i], *vert[j2], _target);
+          if(o2!=NEGATIVE){
+            if (orientation(*vert[i], *vert[j2], *vert[j0], _target)==POSITIVE){
+              nnext= get<0>(_cur)->neighbor(j1);
+              outside=j1;
+              if(o2==ZERO) degenerate =4; // EDGE i j2
+            }
+            else
+              inside=5;
+          }else{
+            if (orientation(*vert[i], *vert[j1], *vert[j2], _target)==POSITIVE){
+              nnext= get<0>(_cur)->neighbor(j0);
+              outside=j0;
+            }
+            else
+              inside=6;
+          }
+        }
+
+
+        if( (! degenerate) && (! inside) ){
+          get<0>(_prev) = get<0>(_cur);
+          get<0>(_cur) = nnext;
+          get<1>(_prev) = Tr::FACET;
+          get<2>(_prev) = outside;
+          get<1>(_cur) = Tr::FACET;
+          get<2>(_cur) = nnext->index(get<0>(_prev));
+          return;
+        }
+
+        if((! degenerate) && inside){
+          _prev = Simplex( get<0>(_cur), Tr::CELL, -1, -1 );
+          get<0>(_cur) = Cell_handle();
+          return;
+        }
+      }
+
+#endif
+
+
+    
     // We check in which direction the target lies
     // by comparing its position relative to the planes through the
     // source and the edges of the cell.
@@ -328,7 +422,7 @@ walk_to_next_3()
     }
 
     // For the remembering stochastic walk, we start trying with a random facet.
-    int li = rng.template get_bits<2>();
+    int li = 0;
     CGAL_triangulation_assertion_code( bool incell = true; )
     for( int k = 0; k < 4; ++k, li = _tr.increment_index(li) )
     {
@@ -355,7 +449,7 @@ walk_to_next_3()
 
         // Check if the target is inside the 3-wedge with
         // the source as apex and the facet as an intersection.
-        int lj = rng.template get_bits<2>();
+          int lj = 0;
         int Or = 0;
         for( int l = 0; l < 4; ++l, lj = _tr.increment_index(lj) ) {
             if( li == lj )
@@ -406,8 +500,30 @@ walk_to_next_3()
                 get<2>(_prev) = li;
                 get<1>(_cur) = Tr::FACET;
                 get<2>(_cur) = get<0>(_cur)->index(get<0>(_prev));
+#ifdef CGAL_FAST_TRAVERSER
+                if(regular_case){
+                if ((get<0>(_cur) != Cell_handle()) && (nnext != Cell_handle()) ){
+                if (get<0>(_cur)!=nnext ){
+                  std::cout<<"nnext "<<nnext->vertex(0)->point();
+                  std::cout<<"  "<<nnext->vertex(1)->point();
+                  std::cout<<"  "<<nnext->vertex(2)->point();
+                  std::cout<<"  "<<nnext->vertex(3)->point()<<std::endl;
+                  std::cout<<" current "<< get<0>(_cur)->vertex(0)->point();
+                  std::cout<<"  "<< get<0>(_cur)->vertex(1)->point();
+                  std::cout<<"  "<< get<0>(_cur)->vertex(2)->point();
+                  std::cout<<"  "<< get<0>(_cur)->vertex(3)->point()<<std::endl;
+                }} else std::cout<<" null pointer on tetra"<<std::endl;
+                CGAL_triangulation_assertion( get<0>(_cur)==nnext );
+                CGAL_triangulation_assertion( li==outside );
+                CGAL_triangulation_assertion( ! inside );
+                }
+#endif                
                 return;
             case 2:
+#ifdef CGAL_FAST_TRAVERSER
+                if(regular_case)
+                CGAL_triangulation_assertion(degenerate );
+#endif
                 get<1>(_prev) = Tr::EDGE;
                 get<1>(_cur) = Tr::EDGE;
                 for( int j = 0; j < 4; ++j ) {
@@ -423,6 +539,10 @@ walk_to_next_3()
                 CGAL_triangulation_assertion( false );
                 return;
             case 1:
+#ifdef CGAL_FAST_TRAVERSER
+                if(regular_case)
+                CGAL_triangulation_assertion(degenerate );
+#endif
                 get<1>(_prev) = Tr::VERTEX;
                 get<1>(_cur) = Tr::VERTEX;
                 for( int j = 0; j < 4; ++j ) {
@@ -439,13 +559,16 @@ walk_to_next_3()
                 return;
         }
     }
-
+    
     // The target lies inside this cell.
     CGAL_triangulation_assertion( incell );
     switch( op[0] + op[1] + op[2] + op[3] ) {
     case 4:
         CGAL_triangulation_assertion( pos == 6 );
         _prev = Simplex( get<0>(_cur), Tr::CELL, -1, -1 );
+#ifdef CGAL_FAST_TRAVERSER
+        CGAL_triangulation_assertion( (! regular_case) || inside );
+#endif
         break;
     case 3:
         _prev = Simplex( get<0>(_cur), Tr::FACET, 6-pos, -1 );
@@ -502,9 +625,7 @@ walk_to_next_3_inf( int inf ) {
     vert[inf] = &(_source);
     CGAL_triangulation_assertion( orientation( *vert[0], *vert[1], *vert[2], *vert[3] ) == POSITIVE );
 
-    // For the remembering stochastic walk, we start trying with a random index:
-    int li = rng.template get_bits<2>();
-
+    int li = 0;
     // Check if the line enters an adjacent infinite cell.
     // This occurs if the target lies on the other side of
     // a plane through one of the finite edges and the source point.
@@ -780,9 +901,8 @@ walk_to_next_2()
             return;
         }
         case Tr::FACET: {
-            // We test its edges in a random order until we find a neighbor to go further
-            int li = rng.get_int(0, 3);
-
+          int li = 0;
+          
             Orientation o[3];
             bool calc[3] = { false, false, false };
 

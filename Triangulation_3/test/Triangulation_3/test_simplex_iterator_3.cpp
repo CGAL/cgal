@@ -19,6 +19,8 @@
 // Author(s)     : Jane Tournois
 
 
+#define CGAL_FAST_TRAVERSER
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_segment_traverser_3.h>
@@ -415,7 +417,6 @@ int main(int argc, char* argv[])
   // - along 2 successive edges (vertex/edge/vertex/edge/vertex)
   // - along a facet and an edge successively
   test_triangulation_on_a_grid();
-
 
   return 0;
 }

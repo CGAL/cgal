@@ -1,5 +1,7 @@
+#define CGAL_PROFILE 1
+#define CGAL_FAST_TRAVERSER
 //#define CGAL_TRIANGULATION_3_TRAVERSER_CHECK_INTERSECTION
-#define CGAL_EXPERIMENT_WITH_SIMPLE_CARTESIAN
+//#define CGAL_EXPERIMENT_WITH_SIMPLE_CARTESIAN
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
@@ -14,7 +16,6 @@
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/Random.h>
 #include <CGAL/Timer.h>
-
 
 //#define CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
 
@@ -104,25 +105,25 @@ int main(int argc, char* argv[])
         {
           ++fin;
 
-          //DT::Locate_type lt;
-          //int li, lj;
-          //ct.entry(lt, li, lj);
+          DT::Locate_type lt;
+          int li, lj;
+          ct.entry(lt, li, lj);
 
-          //switch (lt)
-          //{
-          //case DT::Locate_type::FACET:
-          //  ++nb_facets;
-          //  break;
-          //case DT::Locate_type::EDGE:
-          //  ++nb_edges;
-          //  break;
-          //case DT::Locate_type::VERTEX:
-          //  ++nb_vertex;
-          //  break;
-          //default:
-          //  /*when source is in a cell*/
-          //  CGAL_assertion(lt == DT::Locate_type::CELL);
-          //}
+          switch (lt)
+          {
+          case DT::Locate_type::FACET:
+           ++nb_facets;
+           break;
+          case DT::Locate_type::EDGE:
+           ++nb_edges;
+           break;
+          case DT::Locate_type::VERTEX:
+           ++nb_vertex;
+           break;
+          default:
+           /*when source is in a cell*/
+           CGAL_assertion(lt == DT::Locate_type::CELL);
+          }
         }
       }
 
