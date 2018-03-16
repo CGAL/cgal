@@ -224,14 +224,20 @@ protected:
     
     //! orders pair items by ids
     struct Pair_id_order {
-
+#ifdef CGAL_ALGEBRAIC_KERNEL_DONT_SWAP
+        template<class T1, class T2>
+        const std::pair<T1, T2>& operator()(const std::pair<T1, T2>& p) const {
+          return p;
+        }
+#else      
         template<class T1, class T2>
         std::pair<T1, T2> operator()(const std::pair<T1, T2>& p) const {
             
-            if(p.first.id() > p.second.id())
-                return std::make_pair(p.second, p.first);
-            return p;
+          if(p.first.id() > p.second.id())
+            return std::make_pair(p.second, p.first);
+          return p;
         }
+ #endif
     };
     
     class Curve_creator {
