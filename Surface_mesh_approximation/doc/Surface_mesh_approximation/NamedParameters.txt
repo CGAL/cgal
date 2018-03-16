@@ -4,19 +4,12 @@
 
 \cgalHeading{How to use BGL Optional Named Parameters}
 
-This page contains similar content to the named parameters introduced in \ref PkgPolygonMeshProcessingSummary.
-
 The notion of named parameters was introduced in the BGL.
 Details can be found from: http://www.boost.org/libs/graph/doc/bgl_named_params.html.
 Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering not required.
 
-Assume a function `f()` that takes 3 parameters referred to as name, age and gender, and variables `n`, `a` and `g` to pass as parameters to that function. Without named parameters, we would call the function as `f(n,a,g)`, whereas with named parameters, we call it as `f(name(n).age(a).gender(g))`.
+We refer to the named parameters introduced in \ref PkgPolygonMeshProcessingSummary.
 
-More specifically, we give each parameter a name by wrapping it into a function whose name matches that of the parameter. The entire list of named parameters is a composition of function calls separated by a dot (.). Thus, if the function takes a mix of mandatory and named parameters, we must use a comma to separate the last non-named parameter from the first named parameters, like this:
-
-`f(non_named_par0, non_named_par1, name(n).age(a).gender(g))`
-
-When using named parameters, the ordering is irrelevant, so that `f(name(n).age(a).gender(g))` is equivalent to `f(age(a).gender(g).name(n))`, and we can omit any named parameter that has a default value.
 
 The sequence of named parameters should start with `CGAL::Surface_mesh_approximation::parameters::`.
 
@@ -26,18 +19,18 @@ See below a sample call of a function that uses the optional BGL named parameter
 
 \code
 // tm: input triangle mesh to be approximated
-// method: seed initialization method
-// nb_proxies: number of proxies used to approximate the geometry
-// nb_iterations: number of iterations after initialization
-// points: output anchor points
+// method: seeding initialization method
+// nb_proxies: number of proxies used to approximate the input mesh
+// nb_iterations: number of relaxation iterations after initialization
+// vertices: output anchor vertices
 // triangles: output triplets of indexed triangles
 
 CGAL::mesh_approximation(tm,
     CGAL::Surface_mesh_approximation::parameters::seeding_method(method).
         max_nb_proxies(nb_proxies).
         nb_of_iterations(nb_iterations).
-        anchor_points(std::back_inserter(points)).
-        indexed_triangles(std::back_inserter(triangles)));
+        vertex_output_iterator(std::back_inserter(vertices)).
+        triangle_output_iterator(std::back_inserter(triangles)));
 \endcode
 
 \cgalHeading{List of Available Named Parameters}
@@ -48,7 +41,7 @@ In the following, we assume that the following types are provided as template pa
 
 <ul>
 <li>`TriangleMesh` implements a `FaceListGraph`
-<li>`GeomTraits` a geometric traits class in which constructions are performed and predicates evaluated. Everywhere in this package, a \cgal `Kernel` fulfills the requirements.
+<li>`GeomTraits` a geometric traits class in which constructions are performed and predicates evaluated. Throughout this package, a \cgal `Kernel` fulfills the requirements.
 </ul>
 
 Here is the list of the named parameters available in this package:
@@ -99,7 +92,7 @@ the number of partitioning and fitting iterations after seeding.\n
 \cgalNPEnd
 
 \cgalNPBegin{nb_of_relaxations} \anchor VSA_nb_of_relaxations
-the number of relaxations interleaved within seeding.\n
+the number of relaxation iterations interleaved within seeding.\n
 \b Type : `std::size_t` \n
 \b Default value is `5`
 \cgalNPEnd
@@ -116,19 +109,19 @@ the property map outputs the proxy index of each face of the input polygon mesh.
 \b Default : if this parameter is omitted, no output operation are performed
 \cgalNPEnd
 
-\cgalNPBegin{proxies} \anchor VSA_proxies
+\cgalNPBegin{proxy_output_iterator} \anchor VSA_proxies
 an `OutputIterator` to write proxies in.\n
 \b Type : a class model of `OutputIterator` with `CGAL::PlaneProxy<GeomTraits>` value type.\n
 \b Default : if this parameter is omitted, no output operation are performed
 \cgalNPEnd
 
-\cgalNPBegin{anchor_points} \anchor VSA_anchor_points
-an `OutputIterator` to write anchor points in.\n
+\cgalNPBegin{vertex_output_iterator} \anchor VSA_anchor_vertices
+an `OutputIterator` to write anchor vertices in.\n
 \b Type : a class model of `OutputIterator` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` value type.\n
 \b Default : if this parameter is omitted, no output operation are performed
 \cgalNPEnd
 
-\cgalNPBegin{indexed_triangles} \anchor VSA_indexed_triangles
+\cgalNPBegin{triangle_output_iterator} \anchor VSA_indexed_triangles
 an `OutputIterator` to write indexed triangles in.\n
 \b Type : a class model of `OutputIterator` with `CGAL::cpp11::array<std::size_t, 3>` value type.\n
 \b Default : if this parameter is omitted, no output operation are performed

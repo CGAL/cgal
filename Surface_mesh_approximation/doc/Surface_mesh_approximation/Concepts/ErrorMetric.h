@@ -22,10 +22,10 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /// returns the fitting error from face f to Proxy px.
-  FT compute_error(const face_descriptor &f, const Proxy &px) const;
+  /// returns fitting error from face f to proxy.
+  FT compute_error(const face_descriptor &f, const Proxy &proxy) const;
 
-  /// returns the fitted proxy for a range of facets.
+  /// returns fitted proxy for a range of facets.
   template <typename FacetIterator>
   Proxy fit_proxy(const FacetIterator &begin, const FacetIterator &end) const;
 

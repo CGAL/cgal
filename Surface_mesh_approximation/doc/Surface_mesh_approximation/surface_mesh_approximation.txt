@@ -34,7 +34,7 @@ The package contains 3 main components: approximation algorithm, pliant operator
 Figure \cgalFigureRef{workflow} depicts the workflow of the approximation algorithm in the free function APIs. The main steps of the workflow are described below.
 
 \cgalFigureBegin{workflow, workflow.png}
-Workflow of the approximation process in the free functions.
+Workflow of the approximation process in the free function.
 \cgalFigureEnd
 
 \subsubsection sma_clustering Clustering Iteration
@@ -187,7 +187,7 @@ The face proxy index map and the output proxies provide a means to access the pa
 
 \subsection sma_example2 Free Function Segmentation
 
-The package can be used for segmentation when proxy id is viewed as the segment id:
+The free function can be used for retrieving the segmentation via proxy ids output into the proxy output iterator:
 
 \cgalExample{Surface_mesh_approximation/vsa_segmentation_example.cpp}
 
