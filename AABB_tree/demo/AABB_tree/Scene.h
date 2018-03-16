@@ -17,9 +17,8 @@
 
 #include <QtCore/qglobal.h>
 #include <QMap>
-#include <QGLViewer/manipulatedFrame.h>
-#include <QGLViewer/qglviewer.h>
-#include <QOpenGLFunctions_2_1>
+#include <CGAL/Qt/manipulatedFrame.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>

@@ -24,7 +24,7 @@ set(CGAL_SetupCGAL_Qt5Dependencies_included TRUE)
 # Used Modules
 # ^^^^^^^^^^^^
 #   - :module:`Qt5Config`
-find_package(Qt5 QUIET COMPONENTS OpenGL Svg)
+find_package(Qt5 QUIET COMPONENTS OpenGL Svg Xml)
 
 set(CGAL_Qt5_MISSING_DEPS "")
 if(NOT Qt5OpenGL_FOUND)
@@ -57,7 +57,7 @@ if(NOT CGAL_Qt5_MISSING_DEPS)
     set_target_properties(CGAL_Qt5_moc_and_resources PROPERTIES
       POSITION_INDEPENDENT_CODE TRUE
       EXCLUDE_FROM_ALL TRUE)
-    target_link_libraries(CGAL_Qt5_moc_and_resources CGAL::CGAL Qt5::Widgets Qt5::OpenGL Qt5::Svg)
+    target_link_libraries(CGAL_Qt5_moc_and_resources CGAL::CGAL Qt5::Widgets Qt5::OpenGL Qt5::Svg Qt5::Xml)
 
     add_library(CGAL::CGAL_Qt5_moc_and_resources ALIAS CGAL_Qt5_moc_and_resources)
     add_library(CGAL::Qt5_moc_and_resources ALIAS CGAL_Qt5_moc_and_resources)
@@ -101,6 +101,6 @@ function(CGAL_setup_CGAL_Qt5_dependencies target)
   if(CGAL_HEADER_ONLY)
     target_link_libraries( ${target} ${keyword} CGAL::Qt5_moc_and_resources)
   endif()
-  target_link_libraries( ${target} ${keyword} Qt5::OpenGL Qt5::Svg)
+  target_link_libraries( ${target} ${keyword} Qt5::OpenGL Qt5::Svg Qt5::Xml)
 endfunction()
 
