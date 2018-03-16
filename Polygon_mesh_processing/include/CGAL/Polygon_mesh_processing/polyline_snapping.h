@@ -270,15 +270,8 @@ void polyline_snapping (const PolylineRange& polylines,
                         OutputIterator output,
                         const Kernel&)
 {
-  typedef typename boost::range_const_iterator<PolylineRange>::type PolylineIterator;
-  typedef typename boost::range_value<PolylineRange>::type Polyline;
-  typedef typename boost::range_const_iterator<Polyline>::type PointIterator;
-  
   typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::pair<std::size_t, std::size_t> > Box;
   typedef typename Kernel::Point_3 Point_3;
-  typedef typename Kernel::FT FT;
-
-  typedef cpp11::tuple<std::size_t, std::size_t, std::size_t, std::size_t, FT, FT> OutputType;
 
   std::size_t size = 0;
   for (std::size_t i = 0; i < polylines.size(); ++ i)
