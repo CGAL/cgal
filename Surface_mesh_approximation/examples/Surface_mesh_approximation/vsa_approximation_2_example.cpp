@@ -16,10 +16,7 @@ int main()
   // read input surface triangle mesh 
   Polyhedron input;
   std::ifstream file("data/mask.off");
-  if (!file || !(file >> input) || input.empty()) {
-    std::cerr << "Invalid off file." << std::endl;
-    return EXIT_FAILURE;
-  }
+  file >> input;
 
   // output indexed triangle mesh
   std::vector<Kernel::Point_3> anchors;

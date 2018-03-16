@@ -63,7 +63,7 @@ typedef CGAL::VSA_approximation<
 
 int main()
 {
-  // creates polyhedral surface and reads input mesh
+  // reads input mesh
   Polyhedron input;
   std::ifstream file("data/bear.off");
   file >> input;

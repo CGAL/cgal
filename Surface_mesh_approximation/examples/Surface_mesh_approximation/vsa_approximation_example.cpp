@@ -16,7 +16,7 @@ int main()
   file >> input;
 
   // output indexed triangles
-  std::vector<Kernel::Point_3> vertices;
+  std::vector<Kernel::Point_3> anchors;
   std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles; // triplets of indices
 
   // free function interface with named parameters
@@ -24,10 +24,10 @@ int main()
     CGAL::Surface_mesh_approximation::parameters::seeding_method(CGAL::Hierarchical). // hierarchical seeding
     max_nb_proxies(200). // seeding with maximum number of proxies
     nb_of_iterations(30). // number of clustering iterations after seeding
-    anchors(std::back_inserter(vertices)). // anchor vertices
+    anchors(std::back_inserter(anchors)). // anchor vertices
     triangles(std::back_inserter(triangles))); // indexed triangles
 
-  std::cout << "#anchor vertices: " << vertices.size() << std::endl;
+  std::cout << "#anchor vertices: " << anchors.size() << std::endl;
   std::cout << "#triangles: " << triangles.size() << std::endl;
 
   if (is_manifold)
