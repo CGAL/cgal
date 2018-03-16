@@ -26,6 +26,8 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/assertions.h>
 #include <CGAL/determinant.h>
+#include <CGAL/number_utils.h>
+
 #include <CGAL/Polygon_2/Polygon_2_simplicity.h>
 
 #include <algorithm>
