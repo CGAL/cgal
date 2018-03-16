@@ -22,15 +22,15 @@ See below a sample call of a function that uses the optional BGL named parameter
 // method: seeding initialization method
 // nb_proxies: number of proxies used to approximate the input mesh
 // nb_iterations: number of relaxation iterations after initialization
-// vertices: output anchor vertices
+// anchors: output anchor points
 // triangles: output triplets of indexed triangles
 
 CGAL::mesh_approximation(tm,
     CGAL::Surface_mesh_approximation::parameters::seeding_method(method).
         max_nb_proxies(nb_proxies).
         nb_of_iterations(nb_iterations).
-        vertex_output_iterator(std::back_inserter(vertices)).
-        triangle_output_iterator(std::back_inserter(triangles)));
+        anchors(std::back_inserter(anchors)).
+        triangles(std::back_inserter(triangles)));
 \endcode
 
 \cgalHeading{List of Available Named Parameters}
@@ -109,19 +109,19 @@ the property map outputs the proxy index of each face of the input polygon mesh.
 \b Default : if this parameter is omitted, no output operation are performed
 \cgalNPEnd
 
-\cgalNPBegin{proxy_output_iterator} \anchor VSA_proxies
+\cgalNPBegin{proxies} \anchor VSA_proxies
 an `OutputIterator` to write proxies in.\n
 \b Type : a class model of `OutputIterator` with `CGAL::PlaneProxy<GeomTraits>` value type.\n
 \b Default : if this parameter is omitted, no output operation are performed
 \cgalNPEnd
 
-\cgalNPBegin{vertex_output_iterator} \anchor VSA_anchor_vertices
-an `OutputIterator` to write anchor vertices in.\n
+\cgalNPBegin{anchors} \anchor VSA_anchor_points
+an `OutputIterator` to write anchor points in.\n
 \b Type : a class model of `OutputIterator` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` value type.\n
 \b Default : if this parameter is omitted, no output operation are performed
 \cgalNPEnd
 
-\cgalNPBegin{triangle_output_iterator} \anchor VSA_indexed_triangles
+\cgalNPBegin{triangles} \anchor VSA_indexed_triangles
 an `OutputIterator` to write indexed triangles in.\n
 \b Type : a class model of `OutputIterator` with `CGAL::cpp11::array<std::size_t, 3>` value type.\n
 \b Default : if this parameter is omitted, no output operation are performed
