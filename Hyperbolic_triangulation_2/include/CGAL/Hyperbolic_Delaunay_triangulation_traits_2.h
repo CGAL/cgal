@@ -477,7 +477,7 @@ public:
   }; // end Is_hyperbolic
 
   Is_hyperbolic 
-    Is_hyperbolic_object() const
+    is_hyperbolic_object() const
   { return Is_hyperbolic(); }
 
   // do not document

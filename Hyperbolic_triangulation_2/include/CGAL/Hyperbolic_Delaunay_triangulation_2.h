@@ -63,7 +63,8 @@ public:
  
   typedef Gt Geom_traits;
   typedef typename Geom_traits::FT                    FT;
-  typedef typename Geom_traits::Point_2               Point;
+  typedef typename Geom_traits::Point_2               Point_2;
+  typedef typename Point_2                            Point;
   typedef typename Geom_traits::Voronoi_point         Voronoi_point;
   typedef typename Geom_traits::Hyperbolic_segment_2  Hyperbolic_segment;
   
@@ -362,7 +363,7 @@ private:
       Point p2 = f->vertex(2)->point();
       int ind = 0;
       
-      Is_hyperbolic is_hyperbolic = _tr.geom_traits().Is_hyperbolic_object();
+      Is_hyperbolic is_hyperbolic = _tr.geom_traits().is_hyperbolic_object();
       if(is_hyperbolic(p0, p1, p2, ind) == false) {
 	f->set_finite_non_hyperbolic(true); // MT should not be necessary, return true should be enough (?)
 	f->set_non_hyperbolic_edge(ind);

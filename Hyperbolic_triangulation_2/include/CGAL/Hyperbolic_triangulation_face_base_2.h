@@ -85,16 +85,16 @@ public:
   // Higly recommended to call "has_non_hyperbolic_edge" before 
   unsigned char get_non_hyperbolic_edge() const
   {
-    assert(_is_finite_non_hyperbolic);
-    assert(_non_hyperbolic_edge <= 2);
+    CGAL_triangulation_precondition(_is_finite_non_hyperbolic);
+    CGAL_triangulation_precondition(_non_hyperbolic_edge <= 2);
     
     return _non_hyperbolic_edge;
   }
   
   void set_non_hyperbolic_edge(unsigned char non_hyperbolic_edge)
   {
-    assert(_is_finite_non_hyperbolic);
-    assert(non_hyperbolic_edge <= 2); 
+    CGAL_triangulation_precondition(_is_finite_non_hyperbolic);
+    CGAL_triangulation_precondition(non_hyperbolic_edge <= 2); 
     
     _non_hyperbolic_edge = non_hyperbolic_edge;
   }
