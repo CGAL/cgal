@@ -198,6 +198,8 @@ void test_should_be_no_output(const char* file_name, bool use_DT) {
 }
 
  Main() {
+
+
   std::vector<std::string> input_files_1;
   input_files_1.push_back("data/triangle.polylines.txt");
   input_files_1.push_back("data/quad.polylines.txt");
@@ -223,6 +225,8 @@ void test_should_be_no_output(const char* file_name, bool use_DT) {
 
   test_should_be_no_output("data/collinear.polylines.txt", true);
   test_should_be_no_output("data/collinear.polylines.txt", false);
+  test_should_be_no_output("data/null_edge.polylines.txt", true);
+  test_should_be_no_output("data/null_edge.polylines.txt", false);
   std::cerr << "All Done!" << std::endl;
  }
 
