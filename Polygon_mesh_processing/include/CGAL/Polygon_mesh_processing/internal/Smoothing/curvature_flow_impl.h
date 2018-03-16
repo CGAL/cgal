@@ -212,11 +212,12 @@ private:
         int idx = vimap_[v];
         if(!is_constrained(v))
         {
-          diagonal[idx] += 2.0 * area / 12.0;
+          diagonal[idx] += area / 6.0; // 2*area/12
         }
         else
         {
           constrained_flags_[idx] = true;
+          diagonal[idx] = 1.0; // needed at multiplication D*b when computing rhs
         }
       }
     }
