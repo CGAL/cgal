@@ -149,7 +149,7 @@ namespace CGAL {
        1.) is passed as parameter. If it returns `true`, then the
        algorithm continues its execution normally; if it returns
        `false`, the algorithm is stopped and simplification stops with
-       no guarantee on the outut.\cgalParamEnd
+       no guarantee on the output.\cgalParamEnd
        \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
      \cgalNamedParamsEnd
 

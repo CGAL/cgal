@@ -640,7 +640,15 @@ Algorithms that support this mechanism are detailed in the [Reference Manual](@r
 
 \subsection Point_set_processing_3Example_callbacks Example
 
-The following example defines a callback that displays the name of the current algorithm along with the progress (as a percentage) updated every \f$1/10th\f$ of a second.
+The following example defines a callback that displays the name of the current algorithm along with the progress (as a percentage) updated every \f$1/10th\f$ of a second. While the algorithm is running, the console output will typically look like this:
+
+\code{.sh}
+Computing average spacing: 100%
+Grid simplification: 100%
+Jet smoothing: 54%
+\endcode
+
+Thanks to the carriage return character `\r`, the lines are overwritten and the user sees the percentage increasing on each line.
 
 \cgalExample{Point_set_processing_3/callback_example.cpp}
 
