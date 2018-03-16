@@ -34,7 +34,8 @@
 #include <CGAL/Mesh_3/Mesher_level.h>
 #include <CGAL/Mesh_3/Mesher_level_default_implementations.h>
 #ifdef CGAL_LINKED_WITH_TBB
-  #include <tbb/tbb.h>
+  #include <tbb/enumerable_thread_specific.h>
+  #include <tbb/parallel_do.h>
 #endif
 
 #include <CGAL/Meshes/Filtered_deque_container.h>
