@@ -22,7 +22,7 @@ int main()
   }
 
   // output indexed triangle mesh
-  std::vector<Kernel::Point_3> points;
+  std::vector<Kernel::Point_3> anchors;
   std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles; // triplets of indices
 
   // output facet proxy index property map
@@ -40,9 +40,9 @@ int main()
     nb_of_iterations(40). // set number of clustering iterations after seeding
     mesh_chord_error(0.3). // set chord approximation error threshold when meshing
     facet_proxy_map(fpxmap). // get facet partition map
-    proxies(std::back_inserter(proxies)). // get proxies
-    anchor_points(std::back_inserter(points)). // anchor points
-    indexed_triangles(std::back_inserter(triangles))); // indexed triangles
+    proxies(std::back_inserter(proxies)). // output proxies
+    anchors(std::back_inserter(anchors)). // output anchor points
+    triangles(std::back_inserter(triangles))); // output indexed triangles
 
   return EXIT_SUCCESS;
 }

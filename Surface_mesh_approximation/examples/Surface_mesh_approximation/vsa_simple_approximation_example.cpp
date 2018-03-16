@@ -16,16 +16,16 @@ int main()
   file >> input;
 
   // The output will be an indexed triangle mesh
-  std::vector<Kernel::Point_3> points;
+  std::vector<Kernel::Point_3> anchors;
   std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles;
 
   // free function interface with named parameters
   CGAL::mesh_approximation(input,
     CGAL::Surface_mesh_approximation::parameters::max_nb_proxies(200).
-    anchor_points(std::back_inserter(points)). // anchor points
-    indexed_triangles(std::back_inserter(triangles))); // indexed triangles
+    anchors(std::back_inserter(anchors)). // anchor points
+    triangles(std::back_inserter(triangles))); // indexed triangles
 
-  std::cout << "#vertices: " << points.size() << std::endl;
+  std::cout << "#anchor points: " << anchors.size() << std::endl;
   std::cout << "#triangles: " << triangles.size() << std::endl;
 
   return EXIT_SUCCESS;

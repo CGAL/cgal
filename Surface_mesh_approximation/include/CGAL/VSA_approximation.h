@@ -12,7 +12,7 @@
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/array.h>
 
-#include <CGAL/L21_metric.h>
+#include <CGAL/L21_metric_plane_proxy.h>
 #include <CGAL/Default.h>
 #include <CGAL/tags.h>
 
@@ -85,7 +85,7 @@ public:
   // ErrorMetric type
 #ifndef DOXYGEN_RUNNING
   typedef typename CGAL::Default::Get<ErrorMetric,
-    CGAL::L21_metric<TriangleMesh, VertexPointMap, false, Geom_traits> >::type Error_metric;
+    CGAL::VSA::L21_metric_plane_proxy<TriangleMesh, VertexPointMap, false, Geom_traits> >::type Error_metric;
 #else
   typedef ErrorMetric Error_metric;
 #endif
@@ -947,9 +947,9 @@ public:
    * @param out_itr output iterator
    */
   template <typename OutputIterator>
-  void proxies(OutputIterator out_itr) const {
+  void proxies(OutputIterator out) const {
     BOOST_FOREACH(const Proxy_wrapper &pxw, m_proxies)
-      *out_itr++ = pxw.px;
+      *out++ = pxw.px;
   }
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG

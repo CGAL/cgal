@@ -3,7 +3,6 @@
 
 #include <CGAL/license/Surface_mesh_approximation.h>
 
-
 #include <CGAL/boost/graph/named_function_params.h>
 
 namespace CGAL{

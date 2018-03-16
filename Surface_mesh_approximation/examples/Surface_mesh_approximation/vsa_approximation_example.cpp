@@ -24,8 +24,8 @@ int main()
     CGAL::Surface_mesh_approximation::parameters::seeding_method(CGAL::Hierarchical). // hierarchical seeding
     max_nb_proxies(200). // seeding with maximum number of proxies
     nb_of_iterations(30). // number of clustering iterations after seeding
-    vertex_output_iterator(std::back_inserter(vertices)). // anchor vertices
-    triangle_output_iterator(std::back_inserter(triangles))); // indexed triangles
+    anchors(std::back_inserter(vertices)). // anchor vertices
+    triangles(std::back_inserter(triangles))); // indexed triangles
 
   std::cout << "#anchor vertices: " << vertices.size() << std::endl;
   std::cout << "#triangles: " << triangles.size() << std::endl;

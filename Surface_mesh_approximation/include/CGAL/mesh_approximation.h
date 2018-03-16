@@ -75,7 +75,7 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
   Vertex_point_map point_pmap = choose_param(get_param(np, internal_np::vertex_point),
     get_property_map(vertex_point, const_cast<TriangleMesh &>(tm)));
 
-  typedef CGAL::L21_metric<TriangleMesh, Vertex_point_map, false, Geom_traits> L21_metric;
+  typedef CGAL::VSA::L21_metric_plane_proxy<TriangleMesh, Vertex_point_map, false, Geom_traits> L21_metric;
   typedef CGAL::VSA_approximation<TriangleMesh, Vertex_point_map> L21_approx;
   typedef L21_approx::Error_metric L21_metric;
 
@@ -115,7 +115,7 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
     internal_np::vsa_no_output_t>::type FPMap;
   FPMap fproxymap = choose_param(
     get_param(np, internal_np::facet_proxy_map), internal_np::vsa_no_output);
-  get_proxy_map(approx, fproxymap);
+  proxies(approx, fproxymap);
 
   // get proxies
   typedef typename boost::lookup_named_param_def <
@@ -124,7 +124,7 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
     internal_np::vsa_no_output_t>::type ProxiesOutItr;
   ProxiesOutItr pxies_out_itr = choose_param(
     get_param(np, internal_np::proxies), internal_np::vsa_no_output);
-  get_proxies(approx, pxies_out_itr);
+  proxies(approx, pxies_out_itr);
 
   // meshing
   const FT chord_error = choose_param(get_param(np, internal_np::mesh_chord_error), FT(5.0));
@@ -136,8 +136,8 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
     NamedParameters,
     internal_np::vsa_no_output_t>::type Anchor_point_output_iterator;
   Anchor_point_output_iterator apts_out_itr = choose_param(
-    get_param(np, internal_np::anchor_points) , internal_np::vsa_no_output);
-  get_anchor_points(approx, apts_out_itr);
+    get_param(np, internal_np::anchors) , internal_np::vsa_no_output);
+  anchors(approx, apts_out_itr);
 
   // get indexed triangles
   typedef typename boost::lookup_named_param_def<
@@ -145,8 +145,8 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
     NamedParameters,
     internal_np::vsa_no_output_t>::type Indexed_triangles_output_iterator;
   Indexed_triangles_output_iterator tris_out_itr = choose_param(
-    get_param(np, internal_np::indexed_triangles) , internal_np::vsa_no_output);
-  get_indexed_triangles(approx, tris_out_itr);
+    get_param(np, internal_np::triangles) , internal_np::vsa_no_output);
+  triangles(approx, tris_out_itr);
 
   return is_manifold;
 }

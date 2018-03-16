@@ -22,8 +22,9 @@ typedef boost::associative_property_map<std::map<Facet_handle, FT> > Facet_area_
 typedef boost::associative_property_map<std::map<Facet_handle, Point> > Facet_center_map;
 
 // user-defined "compact" error metric
-struct Compact_metric {
-// use point as proxy
+struct Compact_metric
+{
+  // use point as proxy
   typedef Point Proxy;
 
   // we keep a precomputed property map to speed up computations
@@ -49,7 +50,7 @@ struct Compact_metric {
       center = center + (center_pmap[*fitr] - CGAL::ORIGIN) * area_pmap[*fitr];
       sum_areas += area_pmap[*fitr];
     }
-    center = center / sum_areas;
+    center = center / sum_areas; // TODO: deal with case where sum = 0
     return CGAL::ORIGIN + center;
   }
 
@@ -65,10 +66,7 @@ int main()
   // creates polyhedral surface and reads input mesh
   Polyhedron input;
   std::ifstream file("data/bear.off");
-  if (!file || !(file >> input) || input.empty()) {
-    std::cerr << "Invalid off file." << std::endl;
-    return EXIT_FAILURE;
-  }
+  file >> input;
 
   // constructs precomputed facet normal and area map
   std::map<Facet_handle, FT> facet_areas;

@@ -74,36 +74,48 @@ public:
 
 // output helper functions
 template <typename Approximation, typename FacetProxyMap>
-void get_proxy_map(const Approximation &approx, FacetProxyMap fproxymap) {
+void facet_proxy_map(const Approximation &approx, FacetProxyMap fproxymap) {
   approx.proxy_map(fproxymap);
 }
 
 template <typename Approximation>
-void get_proxy_map(const Approximation &, internal_np::vsa_no_output_t) {}
+void facet_proxy_map(const Approximation &, internal_np::vsa_no_output_t) {}
+
+// proxies
 
 template <typename Approximation, typename OutputIterator>
-void get_proxies(const Approximation &approx, OutputIterator out_itr) {
-  approx.proxies(out_itr);
+void proxies(const Approximation &approx, OutputIterator out) 
+{
+  approx.proxies(out);
 }
 
 template <typename Approximation>
-void get_proxies(const Approximation &, internal_np::vsa_no_output_t) {}
+void proxies(const Approximation &, internal_np::vsa_no_output_t) 
+{}
+
+// anchors 
 
 template <typename Approximation, typename OutputIterator>
-void get_anchor_points(const Approximation &approx, OutputIterator out_itr) {
-  approx.anchor_points(out_itr);
+void anchors(const Approximation &approx, OutputIterator out)
+{
+  approx.anchor_points(out);
 }
 
 template <typename Approximation>
-void get_anchor_points(const Approximation &, internal_np::vsa_no_output_t) {}
+void anchors(const Approximation &, internal_np::vsa_no_output_t) {}
+
+// indexed triangles
 
 template <typename Approximation, typename OutputIterator>
-void get_indexed_triangles(const Approximation &approx, OutputIterator out_itr) {
-  approx.indexed_triangles(out_itr);
+void triangles(const Approximation &approx, OutputIterator out)
+{
+  approx.indexed_triangles(out);
 }
 
 template <typename Approximation>
-void get_indexed_triangles(const Approximation &, internal_np::vsa_no_output_t) {}
+void triangles(const Approximation &, internal_np::vsa_no_output_t)
+{}
+
 } //end of namespace CGAL
 
 #endif //CGAL_NAMED_PARAMETERS_HELPERS_H
