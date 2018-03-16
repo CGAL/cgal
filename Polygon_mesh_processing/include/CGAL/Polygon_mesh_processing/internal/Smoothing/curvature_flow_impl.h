@@ -96,7 +96,6 @@ public:
     NT D;
 
     // calls compute once to factorize with the preconditioner
-    // compute does "build" of the matrix from triplets
     if(!solver.factor(A, D))
     {
       std::cerr << "Could not factorize linear system with preconditioner." << std::endl;
@@ -189,11 +188,9 @@ private:
     }
 
     apply_constraints(A);
-
     // we do not call A.assemble_matrix here
-    // because assemble_matrix clears all triplets
-    // leaving the _is_matrix_built flag on.
-    // Eigen's compute in factorization does the building correctly.
+    // Eigen's compute during factorization does the building correctly,
+    // and without assemble_matrix the reference A can be used in the next iterations.
   }
 
   void calculate_D_diagonal(std::vector<double>& diagonal)
