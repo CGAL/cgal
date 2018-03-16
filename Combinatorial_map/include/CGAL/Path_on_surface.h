@@ -350,8 +350,16 @@ public:
     while (next_turn(end)==2)
     {
       ++end;
-  //    if (is_closed() && end==m_path.size()) { end=0; }
+      if (is_closed() && end==m_path.size()) { end=0; }
     }
+
+    if (next_turn(end)==1)
+    {
+      ++end;
+      if (is_closed() && end==m_path.size()) { end=0; }
+    }
+    else
+    { return begin; }
 
     // TODO
    /* if ((positive && next_turn(end)==1) ||
