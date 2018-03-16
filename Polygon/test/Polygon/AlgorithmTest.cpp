@@ -179,8 +179,8 @@ int main()
   typedef CGAL::Cartesian<double> R1;
 
   typedef CGAL::Point_2<R1> Point1;
-  test_polygon(R1(), Point1(), "../data/polygon_cartesian.dat");
-  test_collinear_point_filtering(R1(), "../data/polygon_cartesian_collinear_points.dat");
+  test_polygon(R1(), Point1(), "data/polygon_cartesian.dat");
+  test_collinear_point_filtering(R1(), "data/polygon_cartesian_collinear_points.dat");
 
   cout << endl;
   cout << "--------------------------------------------------------" << endl;
@@ -189,8 +189,8 @@ int main()
   cout << endl;
   typedef CGAL::Homogeneous<double> R2;
   typedef CGAL::Point_2<R2> Point2;
-  test_polygon(R2(), Point2(), "../data/polygon_homogeneous.dat");
-  test_collinear_point_filtering(R2(), "../data/polygon_homogeneous_collinear_points.dat");
+  test_polygon(R2(), Point2(), "data/polygon_homogeneous.dat");
+  test_collinear_point_filtering(R2(), "data/polygon_homogeneous_collinear_points.dat");
 
   return 0;
 }
