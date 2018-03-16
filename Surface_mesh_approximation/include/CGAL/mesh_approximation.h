@@ -17,7 +17,7 @@ namespace CGAL {
 
 /*!
  * \ingroup PkgTSMA
- * @brief Function approximates the input mesh by fitting it with proxies.
+ * @brief Approximates the input mesh by fitting it with proxies.
  * This function uses the Variational Shape Approximation algorithm to approximate a triangle surface mesh,
  * with indexed triangles as output.
  *
@@ -28,7 +28,7 @@ namespace CGAL {
  *
  * @param tm triangle surface mesh to be approximated
  * @param np optional sequence of \ref namedparameters among the ones listed below
- * @return `true` if the indexed triangles represent a valid 2-manifold, oriented surface mesh, and `false` otherwise. 
+ * @return `true` if the indexed triangles represent a 2-manifold, oriented surface mesh, and `false` otherwise. 
  *
  * \cgalNamedParamsBegin
  *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
@@ -56,9 +56,9 @@ namespace CGAL {
  *  \cgalParamEnd
  *  \cgalParamBegin{proxies} output iterator over proxies.
  *  \cgalParamEnd
- *  \cgalParamBegin{anchor_points} output iterator over anchor points. 
+ *  \cgalParamBegin{anchors} output iterator over anchor points. 
  *  \cgalParamEnd
- *  \cgalParamBegin{indexed_triangles} output iterator over indexed triangles.
+ *  \cgalParamBegin{triangles} output iterator over indexed triangles.
  *  \cgalParamEnd
  * \cgalNamedParamsEnd
  */
@@ -93,7 +93,7 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
   std::size_t nb_of_relaxations = choose_param(get_param(np, internal_np::nb_of_relaxations), 5);
   approx.seeding(method, max_nb_proxies, min_error_drop, nb_of_relaxations);
 
-// reasonable default number of iterations
+  // default number of iterations
   std::size_t nb_of_iterations_default = max_nb_proxies ? num_faces(tm) / *max_nb_proxies : 30;
   nb_of_iterations_default = (std::min)((std::max)(
     nb_of_iterations_default, static_cast<std::size_t>(20)), static_cast<std::size_t>(60));

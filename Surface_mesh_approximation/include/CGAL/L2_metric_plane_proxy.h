@@ -1,5 +1,5 @@
-#ifndef CGAL_L2_METRIC_H
-#define CGAL_L2_METRIC_H
+#ifndef CGAL_L2_METRIC_PLANE_PROXY_H
+#define CGAL_L2_METRIC_PLANE_PROXY_H
 
 #include <CGAL/license/Surface_mesh_approximation.h>
 
@@ -13,6 +13,7 @@
 #include <list>
 
 namespace CGAL {
+	namespace VSA {
 
 /// \ingroup PkgTSMA
 /// @brief Approximation L2 metric.
@@ -28,7 +29,7 @@ template <typename TriangleMesh,
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits
     = typename TriangleMesh::Traits>
-class L2_metric {
+class L2_metric_plane_proxy {
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point_3;
   typedef typename GeomTraits::Triangle_3 Triangle_3;
@@ -52,7 +53,7 @@ public:
    * @param tm triangle mesh
    * @param vpmap vertex point map
    */
-  L2_metric(const TriangleMesh &tm, const VertexPointMap &vpmap)
+  L2_metric_plane_proxy(const TriangleMesh &tm, const VertexPointMap &vpmap)
     : m_tm(&tm), m_vpmap(vpmap){
     m_famap = CGAL::internal::add_property(
       Face_area_tag("VSA-face_area"), const_cast<TriangleMesh &>(*m_tm));
@@ -69,7 +70,8 @@ public:
 
   /// \name Operations
   /*!
-   * @brief Computes the L21 error between a facet and a proxy.
+   * @brief Computes the L21 error from a face to a proxy, 
+   * using integral (closed-form) computation.
    * @param f face_descriptor of a face
    * @param px proxy
    * @return computed error
@@ -86,11 +88,15 @@ public:
     const FT d1(std::sqrt(CGAL::to_double(sq_d1)));
     const FT d2(std::sqrt(CGAL::to_double(sq_d2)));
 
-    return (sq_d0 + sq_d1 + sq_d2 + d0 * d1 + d1 * d2 + d2 * d0) * get(m_famap, f) / FT(6.0);
+    return (sq_d0 + sq_d1 + sq_d2 + 
+            d0 * d1 + d1 * d2 + d2 * d0) * get(m_famap, f) / FT(6.0);
   }
 
   /*!
-   * @brief Fits a proxy from a face range.
+   * @brief Fits a proxy from a face range, in the L2 sense, with an 
+   * integral (closed-form) formulation. The best-fit plane passes
+   * through the center of mass and is defined by the two principal
+   * components of the integral covariance matrix.
    * @param beg face range begin
    * @param end face range end
    * @return fitted proxy
@@ -109,16 +115,16 @@ public:
     }
 
     // construct and fit proxy plane
-    Proxy px;
+    Proxy proxy;
     CGAL::linear_least_squares_fitting_3(
       tris.begin(),
       tris.end(),
-      px,
+      proxy,
       CGAL::Dimension_tag<2>());
 
-    // TODO: check and flip plane normal
+    // TODO: check and flip plane normal?
 
-    return px;
+    return proxy;
   }
   /// @}
 
@@ -128,6 +134,7 @@ private:
   Face_area_map m_famap;
 };
 
+} // namespace VSA
 } // namespace CGAL
 
-#endif // CGAL_L2_METRIC_H
+#endif // CGAL_L2_METRIC_PLANE_PROXY_H

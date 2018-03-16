@@ -1,5 +1,5 @@
-#ifndef CGAL_L21_METRIC_H
-#define CGAL_L21_METRIC_H
+#ifndef CGAL_L21_METRIC_PLANE_PROXY_H
+#define CGAL_L21_METRIC_PLANE_PROXY_H
 
 #include <CGAL/license/Surface_mesh_approximation.h>
 
@@ -10,24 +10,27 @@
 #include <boost/unordered_map.hpp>
 
 namespace CGAL {
+namespace VSA {
+
+	// TODO: remove unweighted version? or make separate metric if justified
 
 /// \ingroup PkgTSMA
 /// @brief Approximation L21 metric.
 ///
-/// \cgalModels `ErrorMetric`
+/// \cgalModels `ErrorMetricProxy`
 ///
 /// @tparam TriangleMesh a triangle `FaceListGraph`
 /// @tparam VertexPointMap a property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 ///    as key type, GeomTraits::Point_3 as value type
-/// @tparam with_area_weighing set `true` to activate area weighing
+/// @tparam use_area_weighting set `true` to activate area weighting
 /// @tparam GeomTraits geometric traits
 template <typename TriangleMesh,
   typename VertexPointMap
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
-  bool with_area_weighing = true,
+  bool use_area_weighting = true,
   typename GeomTraits
     = typename TriangleMesh::Traits>
-class L21_metric {
+class L21_metric_plane_proxy {
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Vector_3 Vector_3;
   typedef typename GeomTraits::Point_3 Point_3;
@@ -53,10 +56,10 @@ public:
   /// @{
   /*!
    * @brief Constructor
-   * @param tm a triangle mesh
+   * @param tm triangle mesh
    * @param vpmap vertex point map
    */
-  L21_metric(const TriangleMesh &tm, const VertexPointMap &vpmap) {
+  L21_metric_plane_proxy(const TriangleMesh &tm, const VertexPointMap &vpmap) {
     GeomTraits traits;
     m_scalar_product_functor = traits.compute_scalar_product_3_object();
     m_sum_functor = traits.construct_sum_of_vectors_3_object();
@@ -80,7 +83,7 @@ public:
 
   /// \name Operations
   /*!
-   * @brief Computes the L21 error between a facet and a proxy.
+   * @brief Computes the L2,1 error from a facet to a proxy. 
    * @param f face_descriptor of a face
    * @param px proxy
    * @return computed error
@@ -91,7 +94,7 @@ public:
   }
 
   /*!
-   * @brief Fits a proxy from a face range.
+   * @brief Fits a proxy to a face range.
    * @param beg face range begin
    * @param end face range end
    * @return fitted proxy
@@ -123,7 +126,7 @@ private:
 
 // specialization without area weighing
 template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
-class L21_metric<TriangleMesh,
+class L21_metric_plane_proxy<TriangleMesh,
   VertexPointMap,
   false,
   GeomTraits> {
@@ -149,7 +152,7 @@ public:
   typedef typename GeomTraits::Vector_3 Proxy;
 
   // Constructor.
-  L21_metric(const TriangleMesh &tm, const VertexPointMap &vpmap) {
+  L21_metric_plane_proxy(const TriangleMesh &tm, const VertexPointMap &vpmap) {
     GeomTraits traits;
     m_scalar_product_functor = traits.compute_scalar_product_3_object();
     m_sum_functor = traits.construct_sum_of_vectors_3_object();
@@ -196,7 +199,7 @@ private:
   Compute_scalar_product_3 m_scalar_product_functor;
   Construct_sum_of_vectors_3 m_sum_functor;
 };
-
+} // namespace VSA
 } // namespace CGAL
 
-#endif // CGAL_L21_METRIC_H
+#endif // CGAL_L21_METRIC_PLANE_PROXY_H
