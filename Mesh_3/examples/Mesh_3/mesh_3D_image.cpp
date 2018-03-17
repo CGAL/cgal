@@ -40,8 +40,9 @@ int main(int argc, char* argv[])
   }
   /// [Loads image]
 
-  // Domain
+  /// [Domain creation]
   Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image);
+  /// [Domain creation]
 
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_size=6, facet_distance=4,

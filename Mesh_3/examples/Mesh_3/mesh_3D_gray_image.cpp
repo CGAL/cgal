@@ -35,9 +35,10 @@ int main(int argc, char*argv[])
     std::cerr << "Error: Cannot read file " <<  fname << std::endl;
     return EXIT_FAILURE;
   }
-  // Domain
+  /// [Domain creation]
   Mesh_domain domain =
     Mesh_domain::create_gray_image_mesh_domain(image, 2.9f, 0.f);
+  /// [Domain creation]
 
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_size=6, facet_distance=2,
