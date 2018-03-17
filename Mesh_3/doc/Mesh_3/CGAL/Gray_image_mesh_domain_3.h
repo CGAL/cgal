@@ -3,6 +3,10 @@ namespace CGAL {
 /*!
 \ingroup PkgMesh_3Domains
 
+\deprecated The class `Gray_image_mesh_domain_3` is deprecated since
+CGAL-4.13, in favor of the `Labeled_mesh_domain_3` and its static
+function `Labeled_mesh_domain_3::create_gray_image_mesh_domain()`.
+
 The class `Gray_image_mesh_domain_3` implements a domain described by a 3D
 gray image. A 3D gray image is a grid of voxels, 
 where each voxel is associated with a gray level value.
