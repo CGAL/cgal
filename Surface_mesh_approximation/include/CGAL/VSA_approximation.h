@@ -878,7 +878,8 @@ public:
     const bool is_relative_to_chord = false,
     const bool with_dihedral_angle = false,
     const bool optimize_anchor_location = true,
-    const bool pca_plane = false) {
+    const bool pca_plane = false) 
+  {
     // compute averaged edge length, used in chord subdivision
     m_average_edge_length = compute_averaged_edge_length(*m_ptm, m_vpoint_map);
 
@@ -904,7 +905,7 @@ public:
     if (optimize_anchor_location)
       this->optimize_anchor_location();
 
-    // check manifold
+    // check manifold-oriented
     CGAL::Polyhedron_3<Geom_traits> tm_test;
     return build_polyhedron_surface(tm_test);
   }
@@ -932,19 +933,19 @@ public:
    * @param out_itr output iterator
    */
   template <typename OutputIterator>
-  void proxy_region(const std::size_t px_idx, OutputIterator out_itr) const {
+  void proxy_region(const std::size_t px_idx, OutputIterator out) const {
     if (px_idx >= m_proxies.size())
       return;
 
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
       if (get(m_fproxy_map, f) == px_idx)
-        *out_itr++ = f;
+        *out++ = f;
   }
 
   /*!
    * @brief Gets the proxies.
    * @tparam OutputIterator output iterator with Proxy as value type
-   * @param out_itr output iterator
+   * @param out output iterator
    */
   template <typename OutputIterator>
   void proxies(OutputIterator out) const {

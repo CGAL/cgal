@@ -102,7 +102,8 @@ void anchors(const Approximation &approx, OutputIterator out)
 }
 
 template <typename Approximation>
-void anchors(const Approximation &, internal_np::vsa_no_output_t) {}
+void anchors(const Approximation &, internal_np::vsa_no_output_t)
+{}
 
 // indexed triangles
 

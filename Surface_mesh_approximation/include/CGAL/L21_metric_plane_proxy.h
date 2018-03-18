@@ -13,6 +13,8 @@ namespace CGAL {
 namespace VSA {
 
 	// TODO: remove unweighted version? or make separate metric if justified
+	// rename with vector instead of plane? as Proxy is a vector_3
+
 
 /// \ingroup PkgTSMA
 /// @brief Approximation L21 metric.

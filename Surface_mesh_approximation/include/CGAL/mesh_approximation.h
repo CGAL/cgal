@@ -18,8 +18,8 @@ namespace CGAL {
 /*!
  * \ingroup PkgTSMA
  * @brief Approximates the input mesh by fitting it with proxies.
- * This function uses the Variational Shape Approximation algorithm to approximate a triangle surface mesh,
- * with indexed triangles as output.
+ * This function uses the Variational Shape Approximation algorithm 
+ * to approximate a triangle surface mesh, with indexed triangles as output.
  *
  * @tparam TriangleMesh model of `FaceListGraph`.
  *         If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
