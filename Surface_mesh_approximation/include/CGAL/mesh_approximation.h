@@ -47,7 +47,7 @@ namespace CGAL {
  *  \cgalParamEnd
  *  \cgalParamBegin{nb_of_relaxations} number of relaxation iterations interleaved within seeding.
  *  \cgalParamEnd
- *  \cgalParamBegin{mesh_chord_error} maximum chord approximation error used for meshing.
+ *  \cgalParamBegin{mesh_chord_error} maximum chord approximation error used for meshing (TODO: precise unit).
  *  \cgalParamEnd
  *  \cgalParamBegin{face_proxy_map} a ReadWritePropertyMap with
  * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type.
@@ -102,7 +102,8 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
 
   approx.run(nb_of_iterations);
 
-#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
+  
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG // TODO replace by verbose level? 
   std::cout << "#px = " << approx.proxies_size()
     << ", #itr = " << nb_of_iterations
     << ", #relx = " << nb_of_relaxations << std::endl;

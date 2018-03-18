@@ -874,11 +874,11 @@ public:
    * @param pca_plane set `true` if use PCA plane fitting, otherwise use the default area averaged plane parameters
    * @return `true` if the extracted surface mesh is manifold, `false` otherwise.
    */
-  bool extract_mesh(const FT chord_error = FT(5.0),
-    const bool is_relative_to_chord = false,
-    const bool with_dihedral_angle = false,
-    const bool optimize_anchor_location = true,
-    const bool pca_plane = false) 
+  bool extract_mesh(const FT chord_error = FT(5.0), // replace by optional named parama
+    const bool is_relative_to_chord = false, // replace by optional named parama
+    const bool with_dihedral_angle = false, // replace by optional named parama
+    const bool optimize_anchor_location = true, // replace by optional named parama
+    const bool pca_plane = false) // replace by optional named parama
   {
     // compute averaged edge length, used in chord subdivision
     m_average_edge_length = compute_averaged_edge_length(*m_ptm, m_vpoint_map);
