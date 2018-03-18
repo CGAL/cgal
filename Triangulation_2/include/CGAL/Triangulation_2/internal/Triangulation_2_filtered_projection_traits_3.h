@@ -26,7 +26,7 @@
 #include <CGAL/license/Triangulation_2.h>
 
 
-#include <CGAL/internal/Triangulation_2_projection_traits_base_3.h>
+#include <CGAL/Triangulation_2/internal/Triangulation_2_projection_traits_base_3.h>
 #include <CGAL/Filtered_predicate_with_state.h>
 
 namespace CGAL {

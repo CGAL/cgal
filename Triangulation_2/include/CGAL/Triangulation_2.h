@@ -41,7 +41,7 @@
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
-#include <CGAL/Triangulation_line_face_circulator_2.h>
+#include <CGAL/Triangulation_2/internal/Triangulation_line_face_circulator_2.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 
