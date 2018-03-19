@@ -1,9 +1,9 @@
-#include <fstream>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/utility.h>
 #include <CGAL/Polygon_mesh_processing/shape_smoothing.h>
 #include <boost/graph/graph_traits.hpp>
+#include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point;
