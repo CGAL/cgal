@@ -23,6 +23,7 @@
 #define CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_CK_TRAITS_2_H
 
 #include <CGAL/Circular_kernel_2/Intersection_traits.h>
+#include <CGAL/Exact_circular_kernel_2.h>
 #include <CGAL/triangulation_assertions.h>
 #include "boost/tuple/tuple.hpp"
 #include "boost/variant.hpp"
@@ -30,7 +31,7 @@
 
 namespace CGAL {
 
-template < class R >
+template < class R = CGAL::Exact_circular_kernel_2 >
 class Hyperbolic_Delaunay_triangulation_CK_traits_2
   : public R
   // R is supposed to be a model of CircularKernel2
@@ -46,7 +47,7 @@ public:
   typedef typename R::Circular_arc_2         Circular_arc_2;
   typedef typename R::Line_arc_2             Line_arc_2; 
   typedef typename R::Circular_arc_point_2   Circular_arc_point_2;
-  typedef Circular_arc_point_2               Voronoi_point;
+  typedef Circular_arc_point_2               Voronoi_point_2;
   typedef typename R::Segment_2                       Euclidean_segment_2; //only used internally here
   typedef boost::variant<Circular_arc_2, Line_arc_2>  Hyperbolic_segment_2;
 
@@ -124,7 +125,7 @@ public:
   {
   public:
     
-    Voronoi_point operator()(Point_2 p, Point_2 q, Point_2 r) { 
+    Voronoi_point_2 operator()(Point_2 p, Point_2 q, Point_2 r) { 
       Origin o; 
       Point_2 po = Point_2(o);
       Circle_2 l_inf(po, FT(1));
@@ -180,14 +181,6 @@ public:
         return pair.first;
       }
       return pair.first;
-    }
-
-
-    template <typename Face_handle>
-    Voronoi_point operator()(Face_handle fh) {
-      return operator()(fh.vertex(0)->point(),
-                        fh.vertex(1)->point(),
-                        fh.vertex(2)->point());
     }
 
   }; // end Construct_hyperbolic_circumcenter_2

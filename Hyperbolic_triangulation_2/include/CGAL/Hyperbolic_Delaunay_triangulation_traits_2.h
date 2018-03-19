@@ -33,8 +33,11 @@
 #include <CGAL/distance_predicates_2.h>
 #include <CGAL/internal/Exact_complex.h>
 #include <CGAL/determinant.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/CORE_Expr.h>
 #include "boost/tuple/tuple.hpp"
 #include "boost/variant.hpp"
+
 
 
 using std::pair;
@@ -43,8 +46,7 @@ using std::make_pair;
 namespace CGAL {
 
 
-
-template< class Kernel >
+template< typename Kernel = CGAL::Cartesian<CORE::Expr> >
 class Hyperbolic_Delaunay_triangulation_traits_2 : public Kernel {
 
 typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>  Self;  
@@ -125,8 +127,7 @@ public:
 	typedef typename Kernel::RT 										            RT;
 	typedef typename Kernel::Kernel_base 								        Kernel_base;
 	typedef typename Kernel::Point_2     								        Point_2;
-	typedef Point_2                 									          Point;
-	typedef Point_2 													                  Voronoi_point;
+	typedef Point_2 													                  Voronoi_point_2;
 	typedef typename Kernel::Circle_2    								        Circle_2;
 	typedef typename Kernel::Line_2      								        Euclidean_line_2;
 	typedef boost::variant<Circle_2,Euclidean_line_2>    			  Euclidean_circle_or_line_2; 
@@ -222,9 +223,9 @@ public:
   class Construct_hyperbolic_circumcenter_2 {
   public:
     
-  	typedef Voronoi_point 	result_type;
+  	typedef Voronoi_point_2 	result_type;
 
-    Voronoi_point operator()(Point_2 p, Point_2 q, Point_2 r)
+    Voronoi_point_2 operator()(Point_2 p, Point_2 q, Point_2 r)
     { 
       Origin o; 
       Point_2 po = Point_2(o);
@@ -670,6 +671,7 @@ public:
 		}
 
 }; // class Hyperbolic_Delaunay_triangulation_traits_2
+
 
 
 } // namespace CGAL

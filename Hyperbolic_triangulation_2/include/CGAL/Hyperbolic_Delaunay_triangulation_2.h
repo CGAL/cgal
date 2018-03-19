@@ -63,9 +63,8 @@ public:
  
   typedef Gt Geom_traits;
   typedef typename Geom_traits::FT                    FT;
-  typedef typename Geom_traits::Point_2               Point_2;
-  typedef Point_2                                     Point;
-  typedef typename Geom_traits::Voronoi_point         Voronoi_point;
+  typedef typename Geom_traits::Point_2               Point;
+  typedef typename Geom_traits::Voronoi_point_2       Voronoi_point;
   typedef typename Geom_traits::Hyperbolic_segment_2  Hyperbolic_segment;
   
   Hyperbolic_Delaunay_triangulation_2(const Gt& gt = Gt())
