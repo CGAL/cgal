@@ -166,7 +166,6 @@ protected:
     return squared_distance((bbox.min)(), (bbox.max)())*error*error/4;
   }
 
-  /// Returns an `Iso_cuboid_3` from a `Bbox_3`
   static Iso_cuboid_3 iso_cuboid(const Bbox_3& bbox)
   {
     const Point_3 p_min(bbox.xmin(), bbox.ymin(), bbox.zmin());
@@ -175,13 +174,11 @@ protected:
     return Iso_cuboid_3(p_min,p_max);
   }
 
-  /// Returns and Iso_cuboid_3 from a Bbox_3
   static Iso_cuboid_3 iso_cuboid(const typename Geom_traits::Sphere_3& sphere)
   {
     return iso_cuboid(sphere.bbox());
   }
 
-  /// Returns and Iso_cuboid_3 from a Bbox_3
   static Iso_cuboid_3 iso_cuboid(const typename Geom_traits::Iso_cuboid_3& c)
   {
     return c;
