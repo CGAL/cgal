@@ -60,6 +60,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/CGAL_SetupBoost.cmake)
 #    Set to `TRUE` if the dependencies of CGAL were found.
 if(Boost_FOUND)
   set(CGAL_FOUND TRUE)
+  set_property(GLOBAL PROPERTY CGAL_FOUND TRUE)
 endif()
 
 #.rst:
