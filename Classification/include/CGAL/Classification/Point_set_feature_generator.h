@@ -35,7 +35,12 @@
 #include <CGAL/Classification/Feature/Vertical_dispersion.h>
 #include <CGAL/Classification/Feature/Verticality.h>
 #include <CGAL/Classification/Feature/Eigen.h>
+
+// Experimental feature, not used officially
+#ifdef CGAL_CLASSIFICATION_USE_GRADIENT_OF_FEATURE
 #include <CGAL/Classification/Feature/Gradient_of_feature.h>
+#endif
+
 #include <CGAL/Classification/Label.h>
 #include <CGAL/Classification/internal/verbosity.h>
 #include <CGAL/Classification/Feature_set.h>
@@ -142,8 +147,11 @@ public:
   <GeomTraits>                                          Verticality;
   
   typedef typename Neighborhood::K_neighbor_query       Neighbor_query;
+
+#ifdef CGAL_CLASSIFICATION_USE_GRADIENT_OF_FEATURE
   typedef Classification::Feature::Gradient_of_feature
   <PointRange, PointMap, Neighbor_query>                Gradient_of_feature;
+#endif
   
   typedef typename Classification::RGB_Color RGB_Color;
   /// \endcond
@@ -578,6 +586,7 @@ private:
 
   void generate_gradient_features()
   {
+#ifdef CGAL_CLASSIFICATION_USE_GRADIENT_OF_FEATURE
     std::size_t size = m_features->size();
 
     for (std::size_t i = 0; i < size; ++ i)
@@ -594,6 +603,7 @@ private:
         }
       }
     }
+#endif
   }
 
 
@@ -651,7 +661,7 @@ private:
     delete m_tasks;
 #endif
 
-//    generate_gradient_features();
+    generate_gradient_features();
     
     t.stop();
     CGAL_CLASSIFICATION_CERR << "Features computed in " << t.time() << " second(s)" << std::endl;

@@ -259,6 +259,8 @@ public:
     m_mean_range /= input.size();
   }
 
+  // Experimental feature, not used officially
+  /// \cond SKIP_IN_MANUAL
   struct Input_is_clusters { };
   
   template <typename ClusterRange,
@@ -311,6 +313,7 @@ public:
         f.apply (i);
     }
   }
+  /// \endcond
 
   /*!
     \brief Returns the estimated unoriented normal vector of the point at position `index`.

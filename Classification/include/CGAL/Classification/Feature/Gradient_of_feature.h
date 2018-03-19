@@ -1,4 +1,4 @@
-// Copyright (c) 2017 GeometryFactory Sarl (France).
+// Copyright (c) 2018 GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -24,6 +24,10 @@
 #include <CGAL/license/Classification.h>
 
 #include <vector>
+
+// Experimental feature, not used officially and not documented yet
+
+/// \cond SKIP_IN_MANUAL
 
 namespace CGAL {
 
@@ -82,5 +86,7 @@ public:
 } // namespace Classification
 
 } // namespace CGAL
+
+/// \endcond
 
 #endif // CGAL_CLASSIFICATION_GRADIENT_OF_FEATURE_H
