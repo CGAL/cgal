@@ -67,6 +67,11 @@ public:
   typedef typename Geom_traits::Voronoi_point_2       Voronoi_point;
   typedef typename Geom_traits::Hyperbolic_segment_2  Hyperbolic_segment;
   
+  typedef typename Base::Locate_type                  Locate_type;
+
+  typedef typename Geom_traits::Side_of_hyperbolic_triangle_2 Side_of_hyperbolic_triangle;
+  typedef typename Geom_traits::Is_hyperbolic         Is_hyperbolic;
+
   Hyperbolic_Delaunay_triangulation_2(const Gt& gt = Gt())
   : Delaunay_triangulation_2<Gt,Tds>(gt) {}
   
@@ -551,6 +556,111 @@ public:
     //    Segment ray = this->geom_traits().construct_ray_2_object()(dual(finite_face), line);
     return ray;
   }
+
+public:
+  Face_handle locate(const Point& p, const Face_handle hint = Face_handle()) const {
+    Locate_type lt;
+    int li;
+    return locate(p, lt, li, hint);
+  }
+
+  Face_handle locate(const Point& query, Locate_type& lt, int &li, Face_handle hint = Face_handle()) const {
+    
+    // Perform an Euclidean location first and get close to the hyperbolic face containing the query point
+    Face_handle fh = Base::locate(query, lt, li, hint);
+    
+    if (lt == Base::OUTSIDE_CONVEX_HULL ||
+        lt == Base::OUTSIDE_AFFINE_HULL ||
+        lt == Base::VERTEX) {
+      return Face_handle();
+    }
+    
+    // This case corresponds to when the point is located on an Euclidean edge.
+    if (lt == Base::EDGE) {
+      Point p = fh->vertex(0)->point();
+      Point q = fh->vertex(1)->point();
+      Point r = fh->vertex(2)->point();
+      if (Is_hyperbolic()(p, q, r)) {
+        Bounded_side side = Side_of_hyperbolic_triangle()(p, q, r, query, li);
+        if (side == ON_BOUNDARY) {
+          lt = Base::EDGE;
+          return fh;
+        } else {
+          if (side == ON_BOUNDED_SIDE) {
+            lt = Base::FACE;
+            return fh;
+          } else {
+            // do nothing -- we still have to check the neighboring face
+          }
+        }
+      }
+
+      p = fh->vertex(ccw(li))->point();
+      q = fh->mirror_vertex(li)->point();
+      r = fh->vertex(cw(li))->point();
+      if (Is_hyperbolic()(p, q, r)) {
+        Bounded_side side = Side_of_hyperbolic_triangle()(p, q, r, query, li);
+        if (side == ON_BOUNDARY) {
+          lt = Base::EDGE;
+          return fh;
+        } else {
+          if (side == ON_BOUNDED_SIDE) {
+            lt = Base::FACE;
+            return fh;
+          } else {
+            // There is nothing to be done now -- the point is outside the convex hull of the triangulation
+            lt = Base::OUTSIDE_CONVEX_HULL;
+            return Face_handle();
+          }
+        }
+      }
+    }
+
+    // Here, the face has been located in the Euclidean face lh
+    Point p = fh->vertex(0)->point();
+    Point q = fh->vertex(1)->point();
+    Point r = fh->vertex(2)->point();
+    if (!Is_hyperbolic()(p, q, r)) {
+      lt = Base::OUTSIDE_CONVEX_HULL;
+      return Face_handle();
+    }
+
+    Bounded_side side = Side_of_hyperbolic_triangle()(p, q, r, query, li);
+    if (side == ON_BOUNDED_SIDE) {
+      lt = Base::FACE;
+      return fh;
+    } else {
+      if (side == ON_BOUNDARY) {
+        lt = Base::EDGE;
+        return fh;
+      } else {
+        // Here, the point lies in a face that is a neighbor to fh
+        for (int i = 0; i < 3; i++) {
+          Face_handle nfh = fh->neighbor(i);
+          if (Is_hyperbolic()(nfh->vertex(0)->point(),nfh->vertex(1)->point(),nfh->vertex(2)->point())) {
+            Bounded_side nside = Side_of_hyperbolic_triangle()(nfh->vertex(0)->point(),nfh->vertex(1)->point(),nfh->vertex(2)->point(), query, li);
+            if (nside == ON_BOUNDED_SIDE) {
+              lt = Base::FACE;
+              return nfh;
+            } else if (nside == ON_BOUNDARY) {
+              lt = Base::EDGE;
+              return nfh;
+            }
+          }
+        }
+
+        // At this point, the point lies outside of the convex hull of the triangulation,
+        // since it has not been found in any of the hyperbolic faces adjacent to fh.
+        lt = Base::OUTSIDE_CONVEX_HULL;
+        return Face_handle();
+      }
+    }
+
+    // We never reach this point, but we have to make the compiler happy
+    lt = Base::OUTSIDE_CONVEX_HULL;
+    return Face_handle();
+  }
+
 };
   
 } //namespace CGAL
