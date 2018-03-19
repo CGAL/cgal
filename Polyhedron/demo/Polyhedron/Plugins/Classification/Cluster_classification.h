@@ -432,10 +432,30 @@ class Cluster_classification : public Item_classification_base
     }
     return points_item;
   }
-  void generate_one_item_per_label(std::vector<CGAL::Three::Scene_item*>&,
-                                   const char*) const
+  void generate_one_item_per_label(std::vector<CGAL::Three::Scene_item*>& items,
+                                   const char* name) const
   {
-    // TODO
+    std::vector<Scene_points_with_normal_item*> points_item
+      (m_labels.size(), NULL);
+    for (std::size_t i = 0; i < m_labels.size(); ++ i)
+    {
+      points_item[i] = new Scene_points_with_normal_item;
+      points_item[i]->setName (QString("%1 (%2)").arg(name).arg(m_labels[i]->name().c_str()));
+      points_item[i]->setColor (m_label_colors[i]);
+      items.push_back (points_item[i]);
+    }
+
+    for (Point_set::const_iterator it = m_points->point_set()->begin();
+         it != m_points->point_set()->end(); ++ it)
+    {
+      int cid = m_cluster_id[*it];
+      if (cid != -1)
+      {
+        int c = m_clusters[cid].label;
+        points_item[c]->point_set()->insert (m_points->point_set()->point(*it));
+      }
+    }
+
   }
   
   bool write_output(std::ostream& out);
