@@ -1525,7 +1525,7 @@ remove_self_intersections_one_step(TriangleMesh& tm,
         }
       }
 
-      if(!is_selection_a_topologial_disk(cc_faces, tm))
+      if(!is_selection_a_topological_disk(cc_faces, tm))
       {
         // check if the selection contains cycles of border halfedges
         bool only_border_edges = true;
