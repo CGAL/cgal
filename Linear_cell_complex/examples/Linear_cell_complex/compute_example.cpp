@@ -11,9 +11,56 @@
 
 #include <CGAL/Path_generators.h>
 #include <CGAL/Path_on_surface.h>
+#include <CGAL/Creation_of_test_cases_for_paths.h>
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
 typedef CGAL::Linear_cell_complex_for_generalized_map<2,3> LCC_3_gmap;
+
+void simplify_path(CGAL::Path_on_surface<LCC_3_cmap>& path,
+                   bool draw=false)
+{
+  std::vector<const CGAL::Path_on_surface<LCC_3_cmap>*> v;
+  if (draw)
+  {
+    v.push_back(&path);
+    display(path.get_map(), v);
+  }
+
+  CGAL::Path_on_surface<LCC_3_cmap>* prevp=&path;
+  CGAL::Path_on_surface<LCC_3_cmap>* curp=NULL;
+  do
+  {
+    curp=new CGAL::Path_on_surface<LCC_3_cmap>(*prevp);
+    if (curp->bracket_flattening_one_step())
+    {
+      if (draw) { v.push_back(curp); }
+      prevp=curp;
+    }
+    else
+    {
+      delete curp;
+      curp=NULL;
+    }
+    // if (nbtest==1)
+     // display(lcc, v);
+  }
+  while(curp!=NULL);
+
+  curp=new CGAL::Path_on_surface<LCC_3_cmap>(*prevp);
+  if (curp->remove_spurs())
+  {
+    if (draw) { v.push_back(curp); }
+    prevp=curp;
+  }
+  else
+  {
+    delete curp;
+    curp=NULL;
+  }
+
+  if (draw)
+  { display(path.get_map(), v); }
+}
 
 void test_file(int argc, char** argv)
 {
@@ -60,14 +107,14 @@ void test_file(int argc, char** argv)
       pp1=cmt.transform_original_path_into_quad_surface(p1);
 
   std::cout<<"Original path has "<<pp1.length()<<" darts."<<std::endl;
-  pp1.bracket_flattening();
+  simplify_path(pp1, false);
   std::cout<<"After bracket flattening, the path has "<<pp1.length()<<" darts."<<std::endl;
 }
 
-void test_simplify_path(const LCC_3_cmap& lcc,
-                        std::size_t nb1, std::size_t nb2, std::size_t nb3,
-                        CGAL::Random& random,
-                        bool draw=false)
+void test_simplify_random_path(const LCC_3_cmap& lcc,
+                               std::size_t nb1, std::size_t nb2, std::size_t nb3,
+                               CGAL::Random& random,
+                               bool draw=false)
 {
   static std::size_t nbtest=0;
   std::cout<<"[BEGIN] TEST "<<nbtest<<"."<<std::endl;
@@ -79,49 +126,12 @@ void test_simplify_path(const LCC_3_cmap& lcc,
   CGAL::extend_straight_positive(path, nb3);
   CGAL::generate_random_path(path, random.get_int(0, 15), random);
 
-  std::vector<const CGAL::Path_on_surface<LCC_3_cmap>*> v;
-  v.push_back(&path);
-  // display(lcc, v);
-
-  CGAL::Path_on_surface<LCC_3_cmap>* prevp=&path;
-  CGAL::Path_on_surface<LCC_3_cmap>* curp=NULL;
-  do
-  {
-    curp=new CGAL::Path_on_surface<LCC_3_cmap>(*prevp);
-    if (curp->bracket_flattening_one_step())
-    {
-      v.push_back(curp);
-      prevp=curp;
-    }
-    else
-    {
-      delete curp;
-      curp=NULL;
-    }
-    // if (nbtest==1)
-     // display(lcc, v);
-  }
-  while(curp!=NULL);
-
-  curp=new CGAL::Path_on_surface<LCC_3_cmap>(*prevp);
-  if (curp->remove_spurs())
-  {
-    v.push_back(curp);
-    prevp=curp;
-  }
-  else
-  {
-    delete curp;
-    curp=NULL;
-  }
-
-  if (draw)
-  { display(lcc, v); }
+  simplify_path(path, draw);
 
   std::cout<<"[END] TEST "<<nbtest++<<"."<<std::endl;
 }
 
-void test_square()
+void test_some_random_paths_on_cube()
 {
   LCC_3_cmap lcc;
   if (!CGAL::load_off(lcc, "./cube-mesh-5-5.off"))
@@ -137,22 +147,67 @@ void test_square()
   CGAL::Random random(1); // fix seed
 
   // path 1: 2 straight darts to begin; 1 + turn; 6 straight; 1 + turn; 3 straight
-  test_simplify_path(lcc, 2, 6, 3, random, true);
+  test_simplify_random_path(lcc, 2, 6, 3, random, true);
 
   // path 2: 3 straight darts to begin; 1 + turn; 8 straight; 1 + turn; 4 straight
-  test_simplify_path(lcc, 3, 8, 4, random, true);
+  test_simplify_random_path(lcc, 3, 8, 4, random, true);
 
   // path 3: 5 straight darts to begin; 1 + turn; 12 straight; 1 + turn; 8 straight
-  test_simplify_path(lcc, 5, 12, 8, random, true);
+  test_simplify_random_path(lcc, 5, 12, 8, random, true);
 
   // path 4: 5 straight darts to begin; 1 + turn; 12 straight; 1 + turn; 8 straight
-  test_simplify_path(lcc, 5, 12, 8, random, true);
+  test_simplify_random_path(lcc, 5, 12, 8, random, true);
+}
+
+void test_all_cases_spurs_and_bracket()
+{
+  LCC_3_cmap lcc1;
+  if (!CGAL::load_off(lcc1, "./cube-mesh-5-5.off"))
+  {
+    std::cout<<"PROBLEM reading file ./cube-mesh-5-5.off"<<std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  LCC_3_cmap lcc2;
+  if (!CGAL::load_off(lcc2, "./spiral-squared.off"))
+  {
+    std::cout<<"PROBLEM reading file ./spiral-squared.off"<<std::endl;
+    exit(EXIT_FAILURE);
+  }
+  lcc2.reverse_orientation();
+  /* std::cout<<"Initial map 1: ";
+  lcc.display_characteristics(std::cout) << ", valid="
+                                         << lcc.is_valid() << std::endl;
+  */
+
+  CGAL::Path_on_surface<LCC_3_cmap> path1(lcc1);
+
+  generate_one_positive_spur(path1);
+  simplify_path(path1, false);
+
+  generate_one_negative_spur(path1);
+  simplify_path(path1, false);
+
+  generate_cyclic_spur(path1);
+  simplify_path(path1, false);
+
+  generate_one_positive_bracket(path1);
+  simplify_path(path1, false);
+
+  generate_one_negative_bracket(path1);
+  simplify_path(path1, false);
+
+  CGAL::Path_on_surface<LCC_3_cmap> path2(lcc2);
+
+  generate_positive_bracket_special1(path2);
+  simplify_path(path2, true);
 }
 
 int main(int argc, char** argv)
 {
   // test_file(argc, argv);
-  test_square();
-   
+  // test_some_random_paths_on_cube();
+   test_all_cases_spurs_and_bracket();
+
   return EXIT_SUCCESS;
 }

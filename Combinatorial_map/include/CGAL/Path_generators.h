@@ -102,7 +102,7 @@ bool extend_path_randomly(Path& p, bool allow_half_turn=false)
 template<typename Path>  
 void extend_straight_positive(Path& p, std::size_t nb=1)
 {
-  if (p.is_empty())
+  if (p.is_empty() || nb==0)
   { return; }
   
   for (std::size_t i=0; i<nb; ++i)
@@ -116,7 +116,7 @@ void extend_straight_positive(Path& p, std::size_t nb=1)
 template<typename Path>  
 void extend_straight_negative(Path& p, std::size_t nb=1)
 {
-  if (p.is_empty())
+  if (p.is_empty() || nb==0)
   { return; }
   
   for (std::size_t i=0; i<nb; ++i)
@@ -128,28 +128,45 @@ void extend_straight_negative(Path& p, std::size_t nb=1)
 }
 
 template<typename Path>  
-void extend_uturn_positive(Path& p)
+void extend_uturn_positive(Path& p, std::size_t nb=1)
 {
-  if (p.is_empty())
+  if (p.is_empty() || nb==0)
   { return; }
-  
+
   typename Path::Dart_const_handle d2=p.get_map().template beta<1>(p.back());
+  for (std::size_t i=1; i<nb; ++i)
+  { d2=p.get_map().template beta<2, 1>(d2); }
+
   if (d2!=p.get_map().null_dart_handle)
   { p.push_back(d2); }
 }
 
 template<typename Path>  
-void extend_uturn_negative(Path& p)
+void extend_uturn_negative(Path& p, std::size_t nb=1)
 {
   if (p.is_empty())
   { return; }
   
-  typename Path::Dart_const_handle d2=p.get_map().template beta<2,0,2>(p.back());
+  typename Path::Dart_const_handle d2=p.get_map().template beta<2>(p.back());
+  for (std::size_t i=0; i<nb; ++i)
+  { d2=p.get_map().template beta<0, 2>(d2); }
+
   if (d2!=p.get_map().null_dart_handle)
   { p.push_back(d2); }
 }
   
-template<typename Path>  
+template<typename Path>
+void extend_uturn_half_turn(Path& p)
+{
+  if (p.is_empty())
+  { return; }
+
+  typename Path::Dart_const_handle d2=p.get_map().template beta<2>(p.back());
+  if (d2!=p.get_map().null_dart_handle)
+  { p.push_back(d2); }
+}
+
+template<typename Path>
 void create_braket_positive(Path& p, std::size_t length, CGAL::Random& random)
 {
   if (p.is_empty())

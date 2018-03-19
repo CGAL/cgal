@@ -92,6 +92,7 @@ public:
     lcc(alcc),
     m_paths(paths),
     m_current_path(m_paths.size()),
+    m_current_dart(alcc.number_of_darts()),
     m_nofaces(anofaces),
     m_fcolor(fcolor)
   { compute_elements(); }
@@ -106,35 +107,55 @@ protected:
     unsigned int markedges    = lcc.get_new_mark();
     unsigned int markvertices = lcc.get_new_mark();
 
-    if (m_current_path==m_paths.size())
-    {
-      for (unsigned int i=0; i<m_paths.size(); ++i)
-      { compute_path(i, markedges); }
+    if (m_current_dart!=lcc.number_of_darts())
+    { // We want to draw only one dart
+      Dart_const_handle selected_dart=lcc.darts().iterator_to(lcc.darts()[m_current_dart]);
+      compute_edge(selected_dart, CGAL::Color(255,0,0));
+      CGAL::mark_cell<LCC, 1>(lcc, selected_dart, markedges);
+      compute_vertex(selected_dart);
+
+      for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
+           itend=lcc.darts().end(); it!=itend; ++it )
+      {
+        if ( !lcc.is_marked(it, markedges) )
+        {
+          compute_edge(it);
+          CGAL::mark_cell<LCC, 1>(lcc, it, markedges);
+        }
+      }
     }
     else
     {
-      compute_path(m_current_path, markedges);
-    }
-    
-    for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
-         itend=lcc.darts().end(); it!=itend; ++it )
-    {
-      if ( !m_nofaces && !lcc.is_marked(it, markfaces) )
+      if (m_current_path==m_paths.size())
       {
-        compute_face(it);
-        CGAL::mark_cell<LCC, 2>(lcc, it, markfaces);
+        for (unsigned int i=0; i<m_paths.size(); ++i)
+        { compute_path(i, markedges); }
+      }
+      else
+      {
+        compute_path(m_current_path, markedges);
       }
 
-      if ( !lcc.is_marked(it, markedges) )
+      for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
+           itend=lcc.darts().end(); it!=itend; ++it )
       {
-        compute_edge(it);
-        CGAL::mark_cell<LCC, 1>(lcc, it, markedges);
-      }
+        if ( !m_nofaces && !lcc.is_marked(it, markfaces) )
+        {
+          compute_face(it);
+          CGAL::mark_cell<LCC, 2>(lcc, it, markfaces);
+        }
 
-      if ( !lcc.is_marked(it, markvertices) )
-      {
-        compute_vertex(it);
-        CGAL::mark_cell<LCC, 0>(lcc, it, markvertices);
+        if ( !lcc.is_marked(it, markedges) )
+        {
+          compute_edge(it);
+          CGAL::mark_cell<LCC, 1>(lcc, it, markedges);
+        }
+
+        if ( !lcc.is_marked(it, markvertices) )
+        {
+          compute_vertex(it);
+          CGAL::mark_cell<LCC, 0>(lcc, it, markvertices);
+        }
       }
     }
 
@@ -196,7 +217,30 @@ protected:
     if ((e->key()==::Qt::Key_N) && (modifiers==::Qt::NoButton))
     {
       m_current_path=(m_current_path+1)%(m_paths.size()+1);
-      displayMessage(QString("Draw path=%1.").arg((m_current_path)));
+      if (m_current_path==m_paths.size())
+      {
+        displayMessage(QString("Draw all paths."));
+      }
+      else
+      {
+        displayMessage(QString("Draw path=%1.").arg((m_current_path)));
+      }
+      compute_elements();
+      initialize_buffers();
+      compile_shaders();
+      updateGL();
+    }
+    else if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::NoButton))
+    {
+      m_current_dart=(m_current_dart+1)%(lcc.number_of_darts()+1);
+      if (m_current_dart==lcc.number_of_darts())
+      {
+        displayMessage(QString("Draw all darts."));
+      }
+      else
+      {
+        displayMessage(QString("Draw dart=%1.").arg((m_current_dart)));
+      }
       compute_elements();
       initialize_buffers();
       compile_shaders();
@@ -227,6 +271,7 @@ protected:
   const ColorFunctor& m_fcolor;
   const std::vector<const Path_on_surface<LCC>*>& m_paths;
   unsigned int m_current_path;
+  unsigned int m_current_dart;
 };
   
 template<class LCC, class ColorFunctor>

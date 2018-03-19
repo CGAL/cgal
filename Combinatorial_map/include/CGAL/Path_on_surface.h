@@ -259,6 +259,8 @@ public:
 
   bool bracket_flattening_one_step()
   {
+    if (is_empty()) return false;
+
     bool res=false;
     std::vector<Dart_const_handle> new_path;
     std::size_t i;
@@ -312,6 +314,8 @@ public:
   
   bool remove_spurs_one_step()
   {
+    if (is_empty()) return false;
+
     bool res=false;
     std::size_t i;
     std::vector<Dart_const_handle> new_path;
@@ -328,6 +332,9 @@ public:
         ++i;
       }
     }
+    if (i==m_path.size()-1)
+    { new_path.push_back(m_path[m_path.size()-1]); }
+
     new_path.swap(m_path);
     return res;
   }
@@ -344,13 +351,19 @@ public:
   {
     assert(next_turn(begin)!=2);
     std::size_t end=begin+1;
-    if (end==m_path.size()-1)
+    if (end==m_path.size()-1 && !is_closed())
     { return begin; } // begin is the before last dart
 
-    while (next_turn(end)==2)
+    while (next_turn(end)==2 && end!=begin)
     {
       ++end;
       if (is_closed() && end==m_path.size()) { end=0; }
+    }
+
+    if (begin==end)
+    { // Case of a path having only 2 turns
+      // TODO SOMETHING
+      std::cout<<"TODO TODO !!"<<std::endl;
     }
 
     if (next_turn(end)==1)
@@ -361,16 +374,12 @@ public:
     else
     { return begin; }
 
-    // TODO
-   /* if ((positive && next_turn(end)==1) ||
-        (!positive && next_negative_turn(end)==1)) // We are on the end of a bracket
+    while (next_turn(end)==2)
     {
       ++end;
       if (is_closed() && end==m_path.size()) { end=0; }
     }
-    else
-    { end=begin; }
-*/
+
     return end;
   }
 
