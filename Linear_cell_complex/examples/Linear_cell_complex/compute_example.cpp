@@ -58,6 +58,7 @@ void simplify_path(CGAL::Path_on_surface<LCC_3_cmap>& path,
     curp=NULL;
   }
 
+  path.swap(*prevp);
   if (draw)
   { display(path.get_map(), v); }
 }
@@ -174,7 +175,7 @@ void test_all_cases_spurs_and_bracket()
     std::cout<<"PROBLEM reading file ./spiral-squared.off"<<std::endl;
     exit(EXIT_FAILURE);
   }
-  lcc2.reverse_orientation();
+  // lcc2.reverse_orientation();
   /* std::cout<<"Initial map 1: ";
   lcc.display_characteristics(std::cout) << ", valid="
                                          << lcc.is_valid() << std::endl;
@@ -200,7 +201,12 @@ void test_all_cases_spurs_and_bracket()
   CGAL::Path_on_surface<LCC_3_cmap> path2(lcc2);
 
   generate_positive_bracket_special1(path2);
+  simplify_path(path2, false);
+  path2.display_negative_turns();std::cout<<std::endl;
+
+  generate_negative_bracket_special1(path2);
   simplify_path(path2, true);
+  path2.display_positive_turns();std::cout<<std::endl;
 }
 
 int main(int argc, char** argv)

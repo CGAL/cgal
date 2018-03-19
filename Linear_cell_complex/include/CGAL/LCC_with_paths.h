@@ -151,11 +151,11 @@ protected:
           CGAL::mark_cell<LCC, 1>(lcc, it, markedges);
         }
 
-        if ( !lcc.is_marked(it, markvertices) )
+        /*if ( !lcc.is_marked(it, markvertices) )
         {
           compute_vertex(it);
           CGAL::mark_cell<LCC, 0>(lcc, it, markvertices);
-        }
+        }*/
       }
     }
 
@@ -255,6 +255,7 @@ protected:
     CGAL::Random random(i);
     CGAL::Color color=get_random_color(random);
     
+    add_point(lcc.point(m_paths[i]->get_ith_dart(0)), color);
     for (unsigned int j=0; j<m_paths[i]->length(); ++j)
     {
       if ( !lcc.is_marked( m_paths[i]->get_ith_dart(j), amark) )

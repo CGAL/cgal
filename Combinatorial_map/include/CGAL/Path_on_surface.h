@@ -38,6 +38,13 @@ public:
   Path_on_surface(const Map& amap) : m_map(amap), m_is_closed(false)
   {}
 
+  void swap(Path_on_surface& p2)
+  {
+    assert(&m_map==&(p2.m_map));
+    m_path.swap(p2.m_path);
+    std::swap(m_is_closed, p2.m_is_closed);
+  }
+
   // @return true iff the path is empty
   bool is_empty() const
   { return m_path.empty(); }
@@ -95,6 +102,14 @@ public:
       if (!CGAL::template belong_to_same_cell<Map,0>(m_map, m_path[i], pend))
       { return false; }
     }
+    if (is_closed())
+    {
+      Dart_const_handle pend=m_map.other_extremity(m_path[m_path.size()-1]);
+      if (pend==Map::null_handle) { return false; }
+      if (!CGAL::template belong_to_same_cell<Map,0>(m_map, pend, m_path[0]))
+      { return false; }
+    }
+
     return true;
   }
 
@@ -158,7 +173,7 @@ public:
     { return 0; }
 
     Dart_const_handle d1=m_path[i];
-    Dart_const_handle d2=m_path[i+1]; // Work also for the last dart for cycles
+    Dart_const_handle d2=get_ith_dart(i+1); // Work also for the last dart for cycles
     assert(d1!=d2);
 
     std::size_t res=1;
@@ -181,7 +196,7 @@ public:
     { return 0; }
 
     Dart_const_handle d1=m_map.template beta<2>(m_path[i]);
-    Dart_const_handle d2=m_map.template beta<2>(m_path[i+1]); // Work also for the last dart for cycles
+    Dart_const_handle d2=m_map.template beta<2>(get_ith_dart(i+1)); // Work also for the last dart for cycles
     assert(d1!=d2);
 
     std::size_t res=1;
@@ -412,6 +427,38 @@ public:
     while(right_push_one_step())
     { res=true; }
     return res;
+  }
+
+  void display_positive_turns() const
+  {
+    std::size_t i;
+    for (i=0; i<m_path.size()-1; ++i)
+    {
+      std::cout<<next_turn(i)<<" ";
+    }
+    if (is_closed())
+    { std::cout<<next_turn(i)<<" "; }
+  }
+
+  void display_negative_turns() const
+  {
+    std::size_t i;
+    for (i=0; i<m_path.size()-1; ++i)
+    {
+      std::cout<<"-"<<next_negative_turn(i)<<" ";
+    }
+    if (is_closed())
+    { std::cout<<"-"<<next_negative_turn(i)<<" "; }
+  }
+
+  void reverse()
+  {
+    std::vector<Dart_const_handle> new_path(m_path.size());
+    for (std::size_t i=0; i<m_path.size(); ++i)
+    {
+      new_path[m_path.size()-1-i]=m_map.template beta<2>(m_path[i]);
+    }
+    new_path.swap(m_path);
   }
 
 protected:
