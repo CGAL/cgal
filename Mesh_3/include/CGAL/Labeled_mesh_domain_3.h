@@ -154,6 +154,7 @@ class Labeled_mesh_domain_3_impl_details {
 protected:
   typedef Surface_patch_index_ Surface_patch_index;
   typedef typename Geom_traits::Point_3 Point_3;
+  typedef typename Geom_traits::Sphere_3 Sphere_3;
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
   typedef typename Geom_traits::FT FT;
   typedef boost::shared_ptr<CGAL::Random> CGAL_Random_share_ptr_t;

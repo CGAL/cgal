@@ -40,7 +40,7 @@ Let `p` be a Point.
 `CGAL::Implicit_multi_domain_to_labeling_function_wrapper` is a good candidate for this template parameter
 if there are several components to mesh.
 
-The function type can be any model of the concept `Callable` compatible with the signature `Subdomain_index(const Point_3&)`: it can be a function, a function object, a lambda expression... that take a `Point_3` as argument, and returns a type convertible to `Subdomain_index`.
+The function type can be any model of the concept `Callable` compatible with the signature `Subdomain_index(const Point_3&)`: it can be a function, a function object, a lambda expression... that takes a `%Point_3` as argument, and returns a type convertible to `Subdomain_index`.
 
 \cgalModels MeshDomain_3
 
@@ -57,12 +57,25 @@ public:
 /// \name Types
 ///@{
 
-/// The subdomain index of this model of `MeshDomain_3`
+/// The subdomain index of this model of `MeshDomain_3`.
 typedef int Subdomain_index;
 
 /// The type of that stores the function internally
 typedef CGAL::cpp11::function<Subdomain_index(const Point_3&)> Labeling_function;
 
+///@}
+/// \name Types imported from the geometric traits class
+///@{
+
+/// The point type of the geometric traits class
+typedef typename Geom_traits::Point_3      Point_3;
+/// The sphere type of the geometric traits class
+typedef typename Geom_traits::Sphere_3     Sphere_3;
+/// The iso-cuboid type of the geometric traits class
+typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
+/// The number type (a field type) of the geometric traits class
+typedef typename Geom_traits::FT           FT;
+///@}
 
 /// \name Creation
 /// @{
