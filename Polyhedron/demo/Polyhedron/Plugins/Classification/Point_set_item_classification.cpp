@@ -35,7 +35,7 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
       int c = cluster_id[*it];
       if (c == -1)
         continue;
-      if (c >= m_clusters.size())
+      if (std::size_t(c) >= m_clusters.size())
         m_clusters.resize (c + 1);
       m_clusters[c].inliers.push_back (*it);
     }

@@ -91,7 +91,7 @@ class Cluster_classification : public Item_classification_base
 
     template <typename PointRange,
               typename ClusterRange>
-    Mean_feature (const PointRange& input,
+    Mean_feature (const PointRange&,
                   ClusterRange& clusters,
                   Feature_handle pointwise_feature)
     {
@@ -126,7 +126,7 @@ class Cluster_classification : public Item_classification_base
 
     template <typename PointRange,
               typename ClusterRange>
-    Standard_deviation_feature (const PointRange& input,
+    Standard_deviation_feature (const PointRange&,
                                 ClusterRange& clusters,
                                 Feature_handle pointwise_feature,
                                 Feature_handle mean_feature)
@@ -363,7 +363,7 @@ class Cluster_classification : public Item_classification_base
   void reset_training_set(std::size_t label)
   {
     for (std::size_t i = 0; i < m_clusters.size(); ++ i)
-      if (m_clusters[i].training == label)
+      if (m_clusters[i].training == int(label))
         m_clusters[i].training = -1;
 
     if (m_index_color == 1 || m_index_color == 2)
@@ -432,28 +432,10 @@ class Cluster_classification : public Item_classification_base
     }
     return points_item;
   }
-  void generate_one_item_per_label(std::vector<CGAL::Three::Scene_item*>& items,
-                                   const char* name) const
+  void generate_one_item_per_label(std::vector<CGAL::Three::Scene_item*>&,
+                                   const char*) const
   {
     // TODO
-    
-    // std::vector<Scene_points_with_normal_item*> points_item
-    //   (m_labels.size(), NULL);
-    // for (std::size_t i = 0; i < m_labels.size(); ++ i)
-    //   {
-    //     points_item[i] = new Scene_points_with_normal_item;
-    //     points_item[i]->setName (QString("%1 (%2)").arg(name).arg(m_labels[i]->name().c_str()));
-    //     points_item[i]->setColor (m_label_colors[i]);
-    //     items.push_back (points_item[i]);
-    //   }
-
-    // for (Point_set::const_iterator it = m_points->point_set()->begin();
-    //      it != m_points->point_set()->end(); ++ it)
-    //   {
-    //     int c = m_classif[*it];
-    //     if (c != -1)
-    //       points_item[c]->point_set()->insert (m_points->point_set()->point(*it));
-    //   }
   }
   
   bool write_output(std::ostream& out);

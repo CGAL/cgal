@@ -153,7 +153,7 @@ class Point_set_item_classification : public Item_classification_base
   {
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
-      if (m_training[*it] == label)
+      if (m_training[*it] == int(label))
         m_training[*it] = -1;
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);

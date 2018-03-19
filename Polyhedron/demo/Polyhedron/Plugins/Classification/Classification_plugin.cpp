@@ -64,10 +64,9 @@ class Polyhedron_demo_classification_plugin :
 
     LabelButton (QWidget* parent,
                  const char* name,
-                 std::size_t idx,
                  const QColor& color,
                  const char shortcut)
-      : color (color), shortcut (shortcut)
+      : shortcut (shortcut), color (color)
     {
       color_button = new QPushButton (tr("%1 (%2)").arg(name).arg((char)(std::toupper(shortcut))), parent);
       
@@ -398,7 +397,6 @@ public Q_SLOTS:
         for (std::size_t i = 0; i < classif->number_of_labels(); ++ i)
           add_new_label (LabelButton (dock_widget,
                                       classif->label(i)->name().c_str(),
-                                      i,
                                       classif->label_color(i),
                                       get_shortcut (i, classif->label(i)->name().c_str())));
         add_label_button();
@@ -778,7 +776,6 @@ public Q_SLOTS:
   {
     add_new_label (LabelButton (dock_widget,
                                 name.c_str(),
-                                label_buttons.size(),
                                 QColor (64 + rand() % 192,
                                         64 + rand() % 192,
                                         64 + rand() % 192),
@@ -1135,7 +1132,7 @@ public Q_SLOTS:
 
     QAction* add_selection = label_buttons.back().menu->addAction ("Add selection to training set"); 
 
-    add_selection->setShortcut(Qt::SHIFT | Qt::Key_A + (label_button.shortcut - 'a'));
+    add_selection->setShortcut(Qt::SHIFT | (Qt::Key_A + (label_button.shortcut - 'a')));
 //    add_selection->setShortcut(Qt::Key_0 + label_buttons.size() - 1);
     
     connect(add_selection,  SIGNAL(triggered()), this,
