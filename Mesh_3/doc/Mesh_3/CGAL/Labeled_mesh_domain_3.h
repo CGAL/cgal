@@ -87,7 +87,7 @@ Library</em>). They can be specified in any order.
 
 \cgalHeading{Named Parameters}
 - <b>`parameters::function` (mandatory)</b>  the labeling function, compatible with `Labeling_function`.
-- <b>`parameters::bounding_object` (mandatory)</b>  the bounding object is either a bounding sphere (of type `Sphere_3`, a bounding box (type `Bbox_3`), or a bounding `Iso_cuboid_3`. It bounds the meshable space.
+- <b>`parameters::bounding_object` (mandatory)</b>  the bounding object is either a bounding sphere (of type `Sphere_3`), a bounding box (type `Bbox_3`), or a bounding `Iso_cuboid_3`. It bounds the meshable space.
 - <b>`parameters::relative_error_bound` (optional)</b>  the relative error bound used to compute intersection points between the implicit surface and query segments. The
 bisection is stopped when the length of the intersected segment is less than the product of `relative_error_bound` by the diameter of the bounding object. Its default value is `FT(1e-3)`.
 
