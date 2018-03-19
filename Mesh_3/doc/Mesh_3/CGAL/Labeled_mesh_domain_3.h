@@ -60,7 +60,7 @@ public:
 /// The subdomain index of this model of `MeshDomain_3`.
 typedef int Subdomain_index;
 
-/// The type of that stores the function internally
+/// The type of object that stores the function using type-erasure
 typedef CGAL::cpp11::function<Subdomain_index(const Point_3&)> Labeling_function;
 
 ///@}
@@ -171,7 +171,7 @@ This static method is a <em>named constructor</em>. It constructs a
 domain described by a 3D labeled image. A 3D labeled image is a grid
 of voxels, where each voxel is associated with an index (a subdomain
 index) characterizing the subdomain in which the voxel lies. The
-domain to be discretized is the union of voxels that have an non-zero
+domain to be discretized is the union of voxels that have non-zero
 values.
 
 This constructor uses named parameters (from the <em>Boost Parameter
