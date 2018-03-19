@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
+#include <CGAL/array.h>
 #include <CGAL/assertions.h>
 #include <CGAL/IO/File_medit.h>
 
