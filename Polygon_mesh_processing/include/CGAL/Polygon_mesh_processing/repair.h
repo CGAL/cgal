@@ -1389,8 +1389,6 @@ remove_self_intersections_one_step(TriangleMesh& tm,
       // Process a connected component of faces to remove.
       // collect all the faces from the connected component
       std::set<face_descriptor> cc_faces;
-      // and collect halfedges on the boundary of the region to be selected (pointing insi
-      std::vector<halfedge_descriptor> cc_border_hedges;
       std::vector<face_descriptor> queue(1, *faces_to_remove.begin()); // temporary queue
       cc_faces.insert(queue.back());
       while(!queue.empty())
@@ -1401,15 +1399,11 @@ remove_self_intersections_one_step(TriangleMesh& tm,
         for (int i=0;i<3; ++i)
         {
           face_descriptor adjacent_face = face( opposite(h, tm), tm );
-          if ( adjacent_face==boost::graph_traits<TriangleMesh>::null_face())
-            cc_border_hedges.push_back(h);
-          else
+          if ( adjacent_face!=boost::graph_traits<TriangleMesh>::null_face())
           {
-            if (faces_to_remove.count(adjacent_face) == 0)
-              cc_border_hedges.push_back(h);
-            else
-              if(cc_faces.insert(adjacent_face).second)
-                queue.push_back(adjacent_face);
+            if (faces_to_remove.count(adjacent_face) != 0 &&
+                cc_faces.insert(adjacent_face).second)
+              queue.push_back(adjacent_face);
           }
           h = next(h, tm);
         }
@@ -1420,6 +1414,41 @@ remove_self_intersections_one_step(TriangleMesh& tm,
         expand_face_selection(cc_faces, tm, step,
                               make_boolean_property_map(cc_faces),
                               Emptyset_iterator());
+
+      // try to compactify the selection region by also selecting all the faces included
+      // in the bounding box of the initial selection
+      std::vector<halfedge_descriptor> stack_for_expension;
+      Bbox_3 bb;
+      BOOST_FOREACH(face_descriptor fd, cc_faces)
+      {
+        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(fd, tm), tm))
+        {
+          bb += get(vpmap, target(h, tm)).bbox();
+          face_descriptor nf = face(opposite(h, tm), tm);
+          if (nf != boost::graph_traits<TriangleMesh>::null_face() &&
+              cc_faces.count(nf)==0)
+          {
+            stack_for_expension.push_back(opposite(h, tm));
+          }
+        }
+      }
+
+      while(!stack_for_expension.empty())
+      {
+        halfedge_descriptor h=stack_for_expension.back();
+        stack_for_expension.pop_back();
+        if ( cc_faces.count(face(h,tm))==1) continue;
+        if ( do_overlap(bb, get(vpmap, target(next(h, tm), tm)).bbox()) )
+        {
+          cc_faces.insert(face(h,tm));
+          halfedge_descriptor candidate = opposite(next(h, tm), tm);
+          if ( face(candidate, tm) != boost::graph_traits<TriangleMesh>::null_face() )
+            stack_for_expension.push_back( candidate );
+          candidate = opposite(prev(h, tm), tm);
+          if ( face(candidate, tm) != boost::graph_traits<TriangleMesh>::null_face() )
+            stack_for_expension.push_back( candidate );
+        }
+      }
 
       // remove faces from the set to process
       BOOST_FOREACH(face_descriptor f, cc_faces)
@@ -1433,7 +1462,6 @@ remove_self_intersections_one_step(TriangleMesh& tm,
       //  visited more than once along a hole border (pinched surface)
       //  We save the size of boundary_hedges to make sur halfedges added
       //  from non_filled_hole are not removed.
-      bool border_hedges_invalid=false;
       do{
         bool non_manifold_vertex_removed = false; //here non-manifold is for the 1D polyline
         std::vector<halfedge_descriptor> boundary_hedges;
@@ -1467,7 +1495,6 @@ remove_self_intersections_one_step(TriangleMesh& tm,
               {
                 cc_faces.insert(face(hh, tm)); // add the face to the current selection
                 faces_to_remove.erase(face(hh, tm));
-                border_hedges_invalid=true;
               }
             }
             non_manifold_vertex_removed=true;
@@ -1481,21 +1508,20 @@ remove_self_intersections_one_step(TriangleMesh& tm,
       }
       while(true);
 
-      if (border_hedges_invalid || step > 0)
+      // Collect halfedges on the boundary of the region to be selected
+      // (pointing inside the domain to be remeshed)
+      std::vector<halfedge_descriptor> cc_border_hedges;
+      BOOST_FOREACH(face_descriptor fd, cc_faces)
       {
-        cc_border_hedges.clear();
-        BOOST_FOREACH(face_descriptor fd, cc_faces)
+        halfedge_descriptor h = halfedge(fd, tm);
+        for (int i=0; i<3;++i)
         {
-          halfedge_descriptor h = halfedge(fd, tm);
-          for (int i=0; i<3;++i)
+          if ( is_border(opposite(h, tm), tm) ||
+               cc_faces.count( face(opposite(h, tm), tm) )== 0)
           {
-            if ( is_border(opposite(h, tm), tm) ||
-                 cc_faces.count( face(opposite(h, tm), tm) )== 0)
-            {
-              cc_border_hedges.push_back(h);
-            }
-            h=next(h, tm);
+            cc_border_hedges.push_back(h);
           }
+          h=next(h, tm);
         }
       }
 
