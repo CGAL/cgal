@@ -30,14 +30,14 @@ with a model of the concept `BisectionGeometricTraits_3`.
 
 \cgalHeading{Labeling function}
 
-A labeling function f must return 0 if the point isn't located in any subdomain. The return type of labeling functions is an integer.
+A labeling function `f` must return `0` if the point isn't located in any subdomain. The return type of labeling functions is an integer.
 
-Let p be a Point.
+Let `p` be a Point.
 <ul>
-<li>f(p)=0 means that p is outside domain.</li>
-<li>f(p)=a, a!=0 means that p is inside subdomain a.</li>
+<li>`f(p)=0` means that `p` is outside domain.</li>
+<li>`f(p)=a`, `a!=0` means that `p` is inside subdomain `a`.</li>
 </ul>
-Implicit_multi_domain_to_labeling_function_wrapper is a good candidate for this template parameter
+`CGAL::Implicit_multi_domain_to_labeling_function_wrapper` is a good candidate for this template parameter
 if there are several components to mesh.
 
 The function type can be any model of the concept `Callable` compatible with the signature `Subdomain_index(const Point_3&)`: it can be a function, a function object, a lambda expression... that take a `Point_3` as argument, and returns a type convertible to `Subdomain_index`.
