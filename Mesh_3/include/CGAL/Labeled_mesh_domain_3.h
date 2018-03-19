@@ -166,7 +166,7 @@ protected:
     return squared_distance((bbox.min)(), (bbox.max)())*error*error/4;
   }
 
-  /// Returns and Iso_cuboid_3 from a Bbox_3
+  /// Returns an `Iso_cuboid_3` from a `Bbox_3`
   static Iso_cuboid_3 iso_cuboid(const Bbox_3& bbox)
   {
     const Point_3 p_min(bbox.xmin(), bbox.ymin(), bbox.zmin());

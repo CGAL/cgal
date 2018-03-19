@@ -3,9 +3,10 @@ namespace CGAL {
 /*!
 \ingroup PkgMesh_3Domains
 
-\deprecated The class `Labeled_image_mesh_domain_3` is deprecated since
-CGAL-4.13, in favor of the `Labeled_mesh_domain_3` and its static
-function `Labeled_mesh_domain_3::create_labeled_image_mesh_domain()`.
+\deprecated The class template `Labeled_image_mesh_domain_3` is deprecated
+since CGAL-4.13, in favor of the class template`Labeled_mesh_domain_3` and
+its static function
+`Labeled_mesh_domain_3::create_labeled_image_mesh_domain()`.
 
 The class `Labeled_image_mesh_domain_3` implements a domain described by a 3D labeled image. A 3D 
 labeled image is a grid of voxels, where each voxel is associated with an index 
