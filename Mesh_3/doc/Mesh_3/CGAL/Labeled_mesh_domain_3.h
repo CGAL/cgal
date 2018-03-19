@@ -79,9 +79,8 @@ typedef typename Geom_traits::FT           FT;
 
 /// \name Creation
 /// @{
-/*!
-\brief Construction from a function, a bounding object and a relative
-error bound.
+/*!  \brief Construction from a function, a bounding
+object and a relative error bound.
 
 This constructor uses named parameters (from the <em>Boost Parameter
 Library</em>). They can be specified in any order.
@@ -106,7 +105,7 @@ Labeled_mesh_domain_3(const A_i&...);
 
 
 /*!
-\brief Construct a labeled mesh domain from a 3D gray image
+\brief Construction from a 3D gray image
 
 This static method is a <em>named constructor</em>. It constructs a domain
 described by a 3D gray image. A 3D gray image is a grid of voxels,
@@ -166,7 +165,7 @@ Labeled_mesh_domain_3
 Labeled_mesh_domain_3::create_gray_image_mesh_domain(A_i&...);
 
 /*!
-\brief Construct a labeled mesh domain from a 3D labeled image
+\brief Construction from a 3D labeled image
 
 This static method is a <em>named constructor</em>. It constructs a
 domain described by a 3D labeled image. A 3D labeled image is a grid
