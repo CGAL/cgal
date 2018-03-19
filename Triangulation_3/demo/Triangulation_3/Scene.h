@@ -3,7 +3,7 @@
 
 #include "typedefs.h"
 #include <QMap>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 
 class Scene {
 

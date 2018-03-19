@@ -82,7 +82,6 @@ void QGLViewer::defaultConstructor() {
     QGLViewer::QGLViewerPool_.replace(poolIndex, this);
   else
     QGLViewer::QGLViewerPool_.append(this);
-
   camera_ = new Camera();
   setCamera(camera());
 
@@ -171,6 +170,12 @@ QGLViewer::QGLViewer(QWidget *parent,
   defaultConstructor();
 }
 
+QGLViewer::QGLViewer(QGLContext*,
+                     QWidget *parent,
+                     Qt::WindowFlags flags)
+  : QOpenGLWidget(parent, flags) {
+  defaultConstructor();
+}
 #endif // DOXYGEN
 
 /*! Virtual destructor.

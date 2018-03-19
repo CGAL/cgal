@@ -9,7 +9,7 @@
 #include "Polyhedron_type.h"
 #endif
 #include <set>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QMainWindow>

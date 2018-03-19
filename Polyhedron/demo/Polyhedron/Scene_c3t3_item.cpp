@@ -18,8 +18,8 @@
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Real_timer.h>
 
-#include <QGLViewer/manipulatedFrame.h>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/manipulatedFrame.h>
+#include <CGAL/Qt/qglviewer.h>
 
 #include <boost/function_output_iterator.hpp>
 #include <boost/foreach.hpp>

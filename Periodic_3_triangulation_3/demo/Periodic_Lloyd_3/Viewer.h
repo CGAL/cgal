@@ -3,7 +3,7 @@
 
 #include "Scene.h"
 #include <QMap>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <QOpenGLFunctions_2_1>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
@@ -11,7 +11,7 @@
 #include <CGAL/Qt/CreateOpenGLContext.h>
 
 
-class Viewer : public QGLViewer, QOpenGLFunctions_2_1 {
+class Viewer : public QGLViewer{
 
   typedef qglviewer::Vec Vec;
 
@@ -23,7 +23,7 @@ class Viewer : public QGLViewer, QOpenGLFunctions_2_1 {
   int nr_of_facets;
 public:
   Viewer(QWidget* parent)
-    : QGLViewer(CGAL::Qt::createOpenGLContext(), parent)
+    : QGLViewer(parent)
   {}
   ~Viewer()
   {

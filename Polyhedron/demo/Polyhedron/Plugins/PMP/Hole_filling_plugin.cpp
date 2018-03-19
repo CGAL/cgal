@@ -30,7 +30,7 @@
 #include <vector>
 #include <algorithm>
 
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/boost/graph/Euler_operations.h>

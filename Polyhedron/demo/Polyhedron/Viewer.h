@@ -10,7 +10,7 @@
 #include <QOpenGLShaderProgram>
 #include <CGAL/Three/Viewer_interface.h>
 
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <QPoint>
 #include <QFont>
 #include <QOpenGLFramebufferObject>

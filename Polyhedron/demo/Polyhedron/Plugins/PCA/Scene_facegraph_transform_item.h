@@ -13,8 +13,8 @@
 #include "Scene_polyhedron_item.h"
 #endif
 
-#include <QGLViewer/manipulatedFrame.h>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/manipulatedFrame.h>
+#include <CGAL/Qt/qglviewer.h>
 
 #include <QKeyEvent>
 

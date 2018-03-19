@@ -2,7 +2,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Polygon_2.h>
 #include <QtCore/qglobal.h>
-#include <QGLViewer/manipulatedCameraFrame.h>
+#include <CGAL/Qt/manipulatedCameraFrame.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>

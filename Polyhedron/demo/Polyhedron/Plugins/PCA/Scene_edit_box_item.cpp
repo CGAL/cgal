@@ -1,7 +1,7 @@
 #include "Scene_edit_box_item.h"
 #include <QApplication>
 #include <CGAL/Three/Viewer_interface.h>
-#include <QGLViewer/manipulatedFrame.h>
+#include <CGAL/Qt/manipulatedFrame.h>
 #include <QMouseEvent>
 #include <QOpenGLFramebufferObject>
 #include <QOpenGLShaderProgram>

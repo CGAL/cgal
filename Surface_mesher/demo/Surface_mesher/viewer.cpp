@@ -1,7 +1,7 @@
 #include "viewer.h"
 #include "surface.h"
 #include <QAction>
-#include <QGLViewer/manipulatedCameraFrame.h>
+#include <CGAL/Qt/manipulatedCameraFrame.h>
 
 Viewer::Viewer(QWidget* parent)
   : QGLViewer(parent), surface(0)

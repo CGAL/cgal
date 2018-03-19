@@ -23,7 +23,7 @@
 #include <QApplication>
 #include <QKeyEvent>
 
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <QKeyEvent>
 #include <QOpenGLFunctions_2_1>
 #include <QOpenGLVertexArrayObject>

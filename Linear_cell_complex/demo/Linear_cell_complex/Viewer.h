@@ -26,7 +26,7 @@
 
 #include <vector>
 #include <QMap>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <QKeyEvent>
 #include <QOpenGLFunctions_2_1>
 #include <QOpenGLVertexArrayObject>
@@ -36,7 +36,7 @@
 #define NB_VBO_BUFFERS 8
 #define NB_VAO_BUFFERS 4
 
-class Viewer : public QGLViewer, public QOpenGLFunctions_2_1
+class Viewer : public QGLViewer
 {
   Q_OBJECT
 

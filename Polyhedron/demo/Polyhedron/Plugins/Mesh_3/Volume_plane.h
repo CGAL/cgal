@@ -7,7 +7,7 @@
 #include <cassert>
 
 #include <QDebug>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 
 #include "Volume_plane_interface.h"
 #include "create_sphere.h"

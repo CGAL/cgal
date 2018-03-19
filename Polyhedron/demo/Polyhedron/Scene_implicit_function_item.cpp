@@ -3,7 +3,7 @@
 #include <QApplication>
 #include <map>
 #include <CGAL/Simple_cartesian.h>
-#include <QGLViewer/manipulatedFrame.h>
+#include <CGAL/Qt/manipulatedFrame.h>
 
 #include "Color_ramp.h"
 #include <CGAL/Three/Viewer_interface.h>

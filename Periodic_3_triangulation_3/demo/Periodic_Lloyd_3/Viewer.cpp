@@ -1,7 +1,7 @@
 #include "Viewer.h"
 #include <vector>
 #include <CGAL/bounding_box.h>
-#include <QGLViewer/vec.h>
+#include <CGAL/Qt/vec.h>
 
 
 void

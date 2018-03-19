@@ -1,5 +1,5 @@
 #include <QMap>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <QOpenGLFunctions_2_1>
@@ -9,7 +9,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel EPIC;
 
-class Viewer : public QGLViewer, QOpenGLFunctions_2_1
+class Viewer : public QGLViewer
 {
 public:
     Viewer(QWidget* parent = 0);

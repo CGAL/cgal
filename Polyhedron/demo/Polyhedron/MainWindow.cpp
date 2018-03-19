@@ -53,8 +53,8 @@
 #include "Show_point_dialog.h"
 #include "File_loader_dialog.h"
 
-#include <QGLViewer/manipulatedCameraFrame.h>
-#include <QGLViewer/manipulatedFrame.h>
+#include <CGAL/Qt/manipulatedCameraFrame.h>
+#include <CGAL/Qt/manipulatedFrame.h>
 
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptEngine>

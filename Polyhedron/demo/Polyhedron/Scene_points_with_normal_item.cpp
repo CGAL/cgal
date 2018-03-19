@@ -19,7 +19,7 @@
 #include <QMenu>
 #include <QSlider>
 #include <QWidgetAction>
-#include <QGLViewer/manipulatedCameraFrame.h>
+#include <CGAL/Qt/manipulatedCameraFrame.h>
 
 #include <set>
 #include <stack>

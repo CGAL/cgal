@@ -25,7 +25,7 @@
 #include <CGAL/bounding_box.h>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 
-#include <QGLViewer/vec.h>
+#include <CGAL/Qt/vec.h>
 #include <QDebug>
 
 //Vertex source code
@@ -105,7 +105,7 @@ const char fragment_source_p_l[] =
   };
 
 Viewer::Viewer(QWidget* parent)
-  : QGLViewer(CGAL::Qt::createOpenGLContext(),parent),
+  : QGLViewer(parent),
     wireframe(false),
     flatShading(true),
     edges(true),

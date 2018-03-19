@@ -29,6 +29,7 @@
 #include <QOpenGLFunctions_2_1>
 #include <QMap>
 #include <QTime>
+#include <QGLContext>
 
 class QTabWidget;
 
@@ -69,6 +70,8 @@ class QGLVIEWER_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions
   Q_OBJECT
 
 public:
+  explicit QGLViewer(QGLContext* context, QWidget *parent = 0,
+                     Qt::WindowFlags flags = 0);
   explicit QGLViewer(QWidget *parent = 0,
                      Qt::WindowFlags flags = 0);
 

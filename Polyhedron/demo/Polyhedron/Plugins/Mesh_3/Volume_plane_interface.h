@@ -6,11 +6,11 @@
 #include <QMenu>
 #include <QSlider>
 #include <QWidgetAction>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <iostream>
-#include <QGLViewer/manipulatedFrame.h>
+#include <CGAL/Qt/manipulatedFrame.h>
 using namespace CGAL::Three;
 class Volume_plane_interface : public Scene_item {
 Q_OBJECT

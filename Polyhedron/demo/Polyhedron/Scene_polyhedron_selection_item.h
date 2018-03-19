@@ -33,7 +33,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 
-#include <QGLViewer/manipulatedFrame.h>
+#include <CGAL/Qt/manipulatedFrame.h>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 

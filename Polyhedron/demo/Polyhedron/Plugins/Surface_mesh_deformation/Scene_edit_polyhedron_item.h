@@ -19,9 +19,9 @@
 #include <iostream>
 #include <fstream>
 
-#include <QGLViewer/manipulatedFrame.h>
-#include <QGLViewer/qglviewer.h>
-#include <QGLViewer/camera.h>
+#include <CGAL/Qt/manipulatedFrame.h>
+#include <CGAL/Qt/qglviewer.h>
+#include <CGAL/Qt/camera.h>
 
 #include "ui_Deform_mesh.h"
 

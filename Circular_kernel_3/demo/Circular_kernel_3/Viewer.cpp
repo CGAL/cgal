@@ -7,7 +7,7 @@
 
 
 Viewer::Viewer(QWidget* parent )
-  : QGLViewer(CGAL::Qt::createOpenGLContext(),parent)
+  : QGLViewer(parent)
 {
     extension_is_found = false;
 }

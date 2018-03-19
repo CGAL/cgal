@@ -5,7 +5,7 @@
 #include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QMainWindow>

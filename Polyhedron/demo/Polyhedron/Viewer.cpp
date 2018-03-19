@@ -2,7 +2,7 @@
 #include <CGAL/Three/Scene_draw_interface.h>
 #include <QMouseEvent>
 #include <QKeyEvent>
-#include <QGLViewer/manipulatedCameraFrame.h>
+#include <CGAL/Qt/manipulatedCameraFrame.h>
 #include <QDebug>
 #include <QOpenGLShader>
 #include <QFileDialog>

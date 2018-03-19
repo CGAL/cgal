@@ -16,7 +16,7 @@
 #include <QItemDelegate>
 #include <QPixmap>
 #include <QItemSelection>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <QDebug>
 #include <iostream>
 #include <cmath>

@@ -66,13 +66,10 @@ find_package(Qt5
 # Find OpenGL
 find_package(OpenGL)
 
-# Find QGLViewer
 if(Qt5_FOUND)
 
   add_definitions(-DQT_NO_KEYWORDS)
   add_definitions(-DSCENE_IMAGE_GL_BUFFERS_AVAILABLE)
-  find_package(QGLViewer )
-
 endif(Qt5_FOUND)
 
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
@@ -126,12 +123,11 @@ endif()
 
 
 
-if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
 
   set(Boost_USE_MULTITHREADED      ON)
   find_package(Boost COMPONENTS thread system filesystem)
 
-  include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
   qt5_wrap_ui( MainWindowUI_files MainWindow.ui)
   qt5_wrap_ui( statisticsUI_FILES Statistics_on_item_dialog.ui)
   qt5_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
@@ -188,7 +184,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Polyhedron_demo_plugin_helper.cpp)
   target_link_libraries(demo_framework
     PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui Qt5::Script
-    ${QGLVIEWER_LIBRARIES}
     )
   if(CGAL_HEADER_ONLY)
     target_compile_definitions(demo_framework PRIVATE -DCGAL_USE_Qt5_RESOURCES)
@@ -202,7 +197,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     PUBLIC
     demo_framework
     ${CGAL_LIBRARIES}
-    ${QGLVIEWER_LIBRARIES}
     Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
   add_library(scene_color_ramp SHARED Color_ramp.cpp)
   target_link_libraries(scene_color_ramp PRIVATE Qt5::Core)
@@ -344,9 +338,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   # Link with CGAL
   target_link_libraries( Polyhedron_3 PUBLIC ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
-  # Link with libQGLViewer
-  target_link_libraries( Polyhedron_3 PUBLIC ${QGLVIEWER_LIBRARIES})
-
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
 
 
@@ -404,7 +395,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   configure_file(CGAL_polyhedron_demoConfig.cmake.in  CGAL_polyhedron_demoConfig.cmake)
 #TO DO script the activation of all the plugins.
 
-else (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+else (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
 
   set(POLYHEDRON_MISSING_DEPS "")
 
@@ -420,11 +411,7 @@ else (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     set(POLYHEDRON_MISSING_DEPS "OpenGL, ${POLYHEDRON_MISSING_DEPS}")
   endif()
 
-  if(NOT QGLVIEWER_FOUND)
-    set(POLYHEDRON_MISSING_DEPS "QGLViewer, ${POLYHEDRON_MISSING_DEPS}")
-  endif()
-
   message(STATUS "NOTICE: This demo requires ${POLYHEDRON_MISSING_DEPS}and will not be compiled.")
 
 
-endif (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+endif (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
