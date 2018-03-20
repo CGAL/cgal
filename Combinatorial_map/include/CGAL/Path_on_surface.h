@@ -296,8 +296,8 @@ public:
         std::size_t end=find_end_of_braket(begin, positive);
         if (begin!=end)
         {
-          std::cout<<"Bracket: ["<<begin<<"; "<<end<<"] "
-                   <<(positive?"+":"-")<<std::endl;
+          /* std::cout<<"Bracket: ["<<begin<<"; "<<end<<"] "
+                   <<(positive?"+":"-")<<std::endl; */
           if (end<begin)
           { i=m_path.size(); }
           else
@@ -431,24 +431,46 @@ public:
 
   void display_positive_turns() const
   {
-    std::size_t i;
-    for (i=0; i<m_path.size()-1; ++i)
+    std::cout<<"(";
+    if (!is_empty())
     {
-      std::cout<<next_turn(i)<<" ";
+      std::size_t i;
+      for (i=0; i<m_path.size()-1; ++i)
+      {
+        if (m_path[i]==m_map.template beta<2>(m_path[i+1]))
+        { std::cout<<"0 "; }
+        else { std::cout<<next_turn(i)<<" "; }
+      }
+      if (is_closed())
+      {
+        if (m_path[i]==m_map.template beta<2>(m_path[0]))
+        { std::cout<<"0 "; }
+        else { std::cout<<next_turn(i)<<" "; }
+      }
     }
-    if (is_closed())
-    { std::cout<<next_turn(i)<<" "; }
+    std::cout<<")";
   }
 
   void display_negative_turns() const
   {
-    std::size_t i;
-    for (i=0; i<m_path.size()-1; ++i)
+    std::cout<<"(";
+    if (!is_empty())
     {
-      std::cout<<"-"<<next_negative_turn(i)<<" ";
+      std::size_t i;
+      for (i=0; i<m_path.size()-1; ++i)
+      {
+        if (m_path[i]==m_map.template beta<2>(m_path[i+1]))
+        { std::cout<<"0 "; }
+        else { std::cout<<"-"<<next_negative_turn(i)<<" "; }
+      }
+      if (is_closed())
+      {
+        if (m_path[i]==m_map.template beta<2>(m_path[0]))
+        { std::cout<<"0 "; }
+        else { std::cout<<"-"<<next_negative_turn(i)<<" "; }
+      }
     }
-    if (is_closed())
-    { std::cout<<"-"<<next_negative_turn(i)<<" "; }
+    std::cout<<")";
   }
 
   void reverse()

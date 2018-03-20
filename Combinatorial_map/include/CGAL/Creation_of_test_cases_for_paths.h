@@ -94,16 +94,7 @@ void generate_bracket_special1(Path& p, bool reverse)
   extend_uturn_positive(p);
 
   if (reverse)
-  {
-    p.reverse();
-    std::cout<<"SPECIAL CASE 1 (x, -1, -2^r, -1): ";
-    p.display_negative_turns(); std::cout<<std::endl;
-  }
-  else
-  {
-    std::cout<<"SPECIAL CASE 1 (x, 1, 2^r, 1): ";
-    p.display_positive_turns(); std::cout<<std::endl;
-  }
+  { p.reverse(); }
 }
 
 template<typename Path>
