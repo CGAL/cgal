@@ -569,9 +569,12 @@ public:
     // Perform an Euclidean location first and get close to the hyperbolic face containing the query point
     Face_handle fh = Base::locate(query, lt, li, hint);
     
+    if (lt == Base::VERTEX) {
+      return fh;
+    }
+
     if (lt == Base::OUTSIDE_CONVEX_HULL ||
-        lt == Base::OUTSIDE_AFFINE_HULL ||
-        lt == Base::VERTEX) {
+        lt == Base::OUTSIDE_AFFINE_HULL) {
       return Face_handle();
     }
     

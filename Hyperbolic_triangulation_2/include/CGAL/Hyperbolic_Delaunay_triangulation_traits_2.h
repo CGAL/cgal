@@ -663,7 +663,7 @@ public:
   public:
     Side_of_hyperbolic_triangle_2() {}
 
-    typedef Bounded_side return_type;
+    typedef Bounded_side result_type;
 
     // Returns the relative position of point t to the hyperbolic triangle (p,q,r)
     Bounded_side operator()(Point_2 p, Point_2 q, Point_2 r, Point_2 t, int& li) const {
