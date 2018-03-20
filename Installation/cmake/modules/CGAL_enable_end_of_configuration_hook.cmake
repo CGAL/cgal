@@ -30,9 +30,8 @@ function(CGAL_run_at_the_end_of_configuration variable access value current_list
       message(${keyword} "\
 =======================================================================\n\
 CGAL performance notice:\n\
-The variable CMAKE_BUILD_TYPE is set to \"${CMAKE_BUILD_TYPE}\".  That \
-value should be used only for debugging. For performance reasons, you \
-should set CMAKE_BUILD_TYPE to \"Release\".\n\
+The variable CMAKE_BUILD_TYPE is set to \"${CMAKE_BUILD_TYPE}\". For \
+performance reasons, you should set CMAKE_BUILD_TYPE to \"Release\".\n\
 Set CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE to TRUE if you want to \
 disable this warning.\n\
 =======================================================================\
