@@ -235,7 +235,6 @@ bool Viewer::inFastDrawing() const
 
 void Viewer::draw()
 { 
-  makeCurrent();
   glEnable(GL_DEPTH_TEST);
   d->draw_aux(false, this);
 }
