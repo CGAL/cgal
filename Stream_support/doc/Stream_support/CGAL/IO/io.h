@@ -288,5 +288,138 @@ The input operator is defined for all classes in the \cgal `Kernel`.
 \sa `CGAL::is_pretty()`
 */
 istream& operator>>(istream& is, Class c);
+//! \ingroup PkgIOstreams
+//! \brief read_point_WKT reads the content of a .wkt file into a `Point` if possible.
+//! 
+//! A `Point` must inherit `CGAL::Point_2`.
+//! 
+//! \see CGAL::Point_2
+template<typename Point>
+std::istream&
+read_point_WKT( std::istream& in,
+                Point& point);
 
+//! \ingroup PkgIOstreams
+//! \brief read_multipoint_WKT reads the content of a .wkt file into a `MultiPoint` if possible.
+//! 
+//! A `MultiPoint` must be a model of `RandomAccessRange` of `CGAL::Point_2`.
+//! 
+//! \see CGAL::Point_2
+template<typename MultiPoint>
+std::istream&
+read_multi_point_WKT( std::istream& in,
+                     MultiPoint& mp);
+
+
+//! \ingroup PkgIOstreams
+//! \brief read_linestring_WKT reads the content of a .wkt file into 
+//! a `Linestring` if possible.
+//!
+//! A `Linestring` must be a model of `RandomAccessRange` of `CGAL::Point_2`.
+//! \see CGAL::Point_2
+template<typename LineString>
+std::istream&
+read_linestring_WKT( std::istream& in,
+                     LineString& polyline);
+
+//! \ingroup PkgIOstreams
+//! \brief read_linestring_WKT reads the content of a .wkt file into 
+//! a `MultiLineString` if possible.
+//!
+//! A `MultiLineString` must be a model of `RandomAccessRange` of `Linestring`.
+//! 
+//! \see CGAL::Point_2
+template<typename MultiLineString>
+std::istream&
+read_multi_linestring_WKT( std::istream& in,
+                          MultiLineString& mls);
+
+//! \ingroup PkgIOstreams
+//! \brief read_polygon_WKT reads the content of a .wkt file into a `Polygon` if possible.
+//! 
+//! A `Polygon` must inherit `CGAL::General_polygon_with_holes_2`.
+//! 
+//! \see CGAL::General_polygon_with_holes_2
+template<typename Polygon>
+std::istream&
+read_polygon_WKT( std::istream& in,
+                  Polygon& polygon
+                  );
+
+//! \ingroup PkgIOstreams
+//! \brief read_multipolygon_WKT reads the content of a .wkt file into 
+//! a `Multipolygon` if possible.
+//!
+//! A `Multipolygon` must be a model of `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`.
+//! \see CGAL::General_polygon_with_holes_2
+
+template<typename MultiPolygon>
+std::istream&
+read_multi_polygon_WKT( std::istream& in,
+                        MultiPolygon& polygons
+                        );
+
+//! \ingroup PkgIOstreams
+//! \brief write_point_WKT writes `point` into a .WKT file.
+//! `Point` must be a `CGAL::Point_2`
+//! \see CGAL::Point_2
+template<typename Point>
+std::ostream&
+write_point_WKT( std::ostream& out,
+           const Point& point
+           );
+
+//! \ingroup PkgIOstreams
+//! \brief write_point_WKT writes `poly` into a .WKT file.
+//! `Polygon` must be a `CGAL::General_polygon_with_holes_2`
+//! \see `CGAL::General_polygon_with_holes_2`
+template<typename Polygon>
+std::ostream&
+write_polygon_WKT( std::ostream& out,
+           const Polygon& poly
+           );
+
+//! \ingroup PkgIOstreams
+//! \brief write_linestring_WKT writes the content of `ls` 
+//! into a WKT file.
+//! `LineString` must be a `RandomAccessRange` of `CGAL::Point_2`. 
+//!\see `CGAL::Point_2`
+template<typename LineString>
+std::ostream&
+write_linestring_WKT( std::ostream& out,
+            LineString ls
+           );
+
+//! \ingroup PkgIOstreams
+//! \brief write_multi_point_WKT writes the content of `mp` 
+//! into a WKT file.
+//! `MultiPoint` must be a `RandomAccessRange` of `CGAL::Point_2`. 
+//!\see `CGAL::Point_2`
+template<typename MultiPoint>
+std::ostream&
+write_multi_point_WKT( std::ostream& out,
+            MultiPoint& mp
+           );
+
+//! \ingroup PkgIOstreams
+//! \brief write_multi_polygon_WKT writes the content of `polygons` 
+//! into a WKT file.
+//! `multiPolygon` must be a `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`. 
+//!\see `CGAL::General_polygon_with_holes_2`
+template<typename MultiPolygon>
+std::ostream&
+write_multi_polygon_WKT( std::ostream& out,
+            MultiPolygon& polygons
+           );
+
+//! \ingroup PkgIOstreams
+//! \brief write_multi_linestring_WKT writes the content of `mls` 
+//! into a WKT file.
+//! `MultiLineString` must be a `RandomAccessRange` of `LineString`. 
+//! \see `CGAL::write_linestring_WKT`
+template<typename MultiLineString>
+std::ostream&
+write_multi_linestring_WKT( std::ostream& out,
+            MultiLineString& mls
+           );
 }

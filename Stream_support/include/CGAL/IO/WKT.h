@@ -41,7 +41,7 @@
 
 //! \todo Should they be in a namespace CGAL::IO or just CGAL ?
 namespace CGAL{
-//! \ingroup PkgPolygonIO
+//! \ingroup PkgIOstreams
 //! \brief read_point_WKT reads the content of a .wkt file into a `Point` if possible.
 //! 
 //! A `Point` must inherit `CGAL::Point_2`.
@@ -74,7 +74,7 @@ read_point_WKT( std::istream& in,
   return in;  
 }
 
-//! \ingroup PkgPolygonIO
+//! \ingroup PkgIOstreams
 //! \brief read_multipoint_WKT reads the content of a .wkt file into a `MultiPoint` if possible.
 //! 
 //! A `MultiPoint` must be a model of `RandomAccessRange` of `CGAL::Point_2`.
@@ -108,7 +108,7 @@ read_multi_point_WKT( std::istream& in,
 }
 
 
-//! \ingroup PkgPolygonIO
+//! \ingroup PkgIOstreams
 //! \brief read_linestring_WKT reads the content of a .wkt file into 
 //! a `Linestring` if possible.
 //!
@@ -141,7 +141,7 @@ read_linestring_WKT( std::istream& in,
   return in;  
 }
 
-//! \ingroup PkgPolygonIO
+//! \ingroup PkgIOstreams
 //! \brief read_linestring_WKT reads the content of a .wkt file into 
 //! a `MultiLineString` if possible.
 //!
@@ -183,7 +183,7 @@ read_multi_linestring_WKT( std::istream& in,
   return in;  
 }
 
-//! \ingroup PkgPolygonIO
+//! \ingroup PkgIOstreams
 //! \brief read_polygon_WKT reads the content of a .wkt file into a `Polygon` if possible.
 //! 
 //! A `Polygon` must inherit `CGAL::General_polygon_with_holes_2`.
@@ -217,7 +217,7 @@ read_polygon_WKT( std::istream& in,
   return in;  
 }
 
-//! \ingroup PkgPolygonIO
+//! \ingroup PkgIOstreams
 //! \brief read_multipolygon_WKT reads the content of a .wkt file into 
 //! a `Multipolygon` if possible.
 //!
@@ -252,7 +252,7 @@ read_multi_polygon_WKT( std::istream& in,
   return in;  
 }
 
-//! \ingroup PkgPolygonIO
+//! \ingroup PkgIOstreams
 //! \brief write_point_WKT writes `point` into a .WKT file.
 //! `Point` must be a `CGAL::Point_2`
 //! \see CGAL::Point_2
@@ -271,7 +271,7 @@ write_point_WKT( std::ostream& out,
   return out;
 }
 
-//! \ingroup PkgPolygonIO
+//! \ingroup PkgIOstreams
 //! \brief write_point_WKT writes `poly` into a .WKT file.
 //! `Polygon` must be a `CGAL::General_polygon_with_holes_2`
 //! \see `CGAL::General_polygon_with_holes_2`
@@ -290,7 +290,7 @@ write_polygon_WKT( std::ostream& out,
   return out;
 }
 
-//! \ingroup PkgPolygonIO
+//! \ingroup PkgIOstreams
 //! \brief write_linestring_WKT writes the content of `ls` 
 //! into a WKT file.
 //! `LineString` must be a `RandomAccessRange` of `CGAL::Point_2`. 
@@ -311,7 +311,7 @@ write_linestring_WKT( std::ostream& out,
   return out;
 }
 
-//! \ingroup PkgPolygonIO
+//! \ingroup PkgIOstreams
 //! \brief write_multi_point_WKT writes the content of `mp` 
 //! into a WKT file.
 //! `MultiPoint` must be a `RandomAccessRange` of `CGAL::Point_2`. 
@@ -332,7 +332,7 @@ write_multi_point_WKT( std::ostream& out,
   return out;
 }
 
-//! \ingroup PkgPolygonIO
+//! \ingroup PkgIOstreams
 //! \brief write_multi_polygon_WKT writes the content of `polygons` 
 //! into a WKT file.
 //! `multiPolygon` must be a `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`. 
@@ -353,7 +353,7 @@ write_multi_polygon_WKT( std::ostream& out,
   return out;
 }
 
-//! \ingroup PkgPolygonIO
+//! \ingroup PkgIOstreams
 //! \brief write_multi_linestring_WKT writes the content of `mls` 
 //! into a WKT file.
 //! `MultiLineString` must be a `RandomAccessRange` of `LineString`. 

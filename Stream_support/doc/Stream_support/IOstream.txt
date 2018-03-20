@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor Chapter_operator_for_IO_streams
 \cgalAutoToc
 
-\authors Andreas Fabri, Geert-Jan Giezeman, and Lutz Kettner
+\authors Andreas Fabri, Geert-Jan Giezeman, Lutz Kettner, and Maxime Gimeno
 
 All classes in the \cgal kernel provide input and output operators for
 IO streams. Classes external to \cgal are also supported, by means of `oformat()` (Section \ref seciofornoncgaltypes "IO for Non CGAL Types").
@@ -245,6 +245,13 @@ output is active or not. If the state is active, the stream output
 operator `<<` uses the internal stream to output its argument. If
 the state is inactive, nothing happens.
 
+
+\section IOstreamWKT WKT Support
+There is a set of functions that
+provide support for the WKT format for 2D structures. Support Types are :
+- `CGAL::Point_2`
+- `CGAL::Polygon_with_holes_2`
+- Random Access Range of the previous types.
 */ 
 } /* namespace CGAL */
 
