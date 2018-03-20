@@ -31,7 +31,6 @@
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/basic_constructions_2.h>
 #include <CGAL/distance_predicates_2.h>
-#include <CGAL/Exact_complex.h>
 #include "boost/tuple/tuple.hpp"
 #include "boost/variant.hpp"
 #include <CGAL/Hyperbolic_octagon_translation.h>

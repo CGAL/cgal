@@ -25,7 +25,7 @@
 #include <vector>
 #include <CGAL/Hyperbolic_octagon_translation_matrix.h>
 #include <CGAL/Hyperbolic_octagon_translation_word.h>
-#include <CGAL/Exact_complex.h>
+#include <CGAL/internal/Exact_complex.h>
 
 namespace CGAL {
 

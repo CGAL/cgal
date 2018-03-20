@@ -19,7 +19,7 @@
 #ifndef CGAL_HYPERBOLIC_OCTAGON_TRANSLATION_MATRIX_H
 #define CGAL_HYPERBOLIC_OCTAGON_TRANSLATION_MATRIX_H
 
-#include <CGAL/Exact_complex.h>
+#include <CGAL/internal/Exact_complex.h>
 #include <CGAL/number_utils.h>
 #include <iostream>
 #include <vector>
