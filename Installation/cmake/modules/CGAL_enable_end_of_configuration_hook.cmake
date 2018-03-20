@@ -1,5 +1,16 @@
+# This module install a hook (with `variable_watch()`) on CMAKE_CURRENT_LIST_DIR
+# 
+# That uses the non-documented fact that CMAKE_CURRENT_LIST_DIR is cleared
+# by CMake at the end of the configuration process. So, if the value of
+# that variable gets empty, that means that CMake has reached the end of
+# the configuration.
+#
+# See https://stackoverflow.com/a/43300621/1728537 for the starting point.
+
 function(CGAL_run_at_the_end_of_configuration variable access value current_list_file stack)
   if(NOT access STREQUAL "MODIFIED_ACCESS" OR value)
+    # Only do something at the end of the CMake process, when the value of
+    # variable CMAKE_CURRENT_LIST_DIR is changed to the empty string.
     return()
   endif()
   # Warn when CMAKE_BUILD_TYPE is empty or Debug
