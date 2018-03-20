@@ -7,6 +7,12 @@
 #
 # See https://stackoverflow.com/a/43300621/1728537 for the starting point.
 
+get_property(PROPERTY_CGAL_run_at_the_end_of_configuration_INCLUDED
+  GLOBAL PROPERTY CGAL_run_at_the_end_of_configuration_INCLUDED)
+if(PROPERTY_CGAL_run_at_the_end_of_configuration_INCLUDED)
+  return()
+endif()
+
 function(CGAL_run_at_the_end_of_configuration variable access value current_list_file stack)
   if(NOT access STREQUAL "MODIFIED_ACCESS" OR value)
     # Only do something at the end of the CMake process, when the value of
@@ -36,3 +42,5 @@ disable this warning.\n\
 endfunction()
 
 variable_watch("CMAKE_CURRENT_LIST_DIR" CGAL_run_at_the_end_of_configuration)
+
+set_property(GLOBAL PROPERTY CGAL_run_at_the_end_of_configuration_INCLUDED TRUE)
