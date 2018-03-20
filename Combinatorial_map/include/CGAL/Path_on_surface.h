@@ -62,6 +62,12 @@ public:
   void clear()
   { m_path.clear(); }
   
+  std::size_t next_index(std::size_t i) const
+  { return (i==m_path.size()-1?0:i+1); }
+
+  std::size_t prev_index(std::size_t i) const
+  { return (i==0?m_path.size()-1:i-1); }
+
   Dart_const_handle get_ith_dart(std::size_t i) const
   {
     assert(i<=m_path.size());
@@ -214,22 +220,16 @@ public:
     assert((positive && next_turn(begin)==1) ||
            (!positive && next_negative_turn(begin)==1));
     std::size_t end=begin+1;
-    if (end==m_path.size()-1)
+    if (!is_closed() && end==m_path.size()-1)
     { return begin; } // begin is the before last dart
 
     while ((positive && next_turn(end)==2) ||
            (!positive && next_negative_turn(end)==2))
-    {
-      ++end;
-      if (is_closed() && end==m_path.size()) { end=0; }
-    }
+    { end=next_index(end); }
     
     if ((positive && next_turn(end)==1) ||
         (!positive && next_negative_turn(end)==1)) // We are on the end of a bracket
-    {
-      ++end;
-      if (is_closed() && end==m_path.size()) { end=0; }
-    }
+    { end=next_index(end); }
     else
     { end=begin; }
     
@@ -239,8 +239,14 @@ public:
   void transform_positive_bracket(std::size_t begin, std::size_t end,
                           std::vector<Dart_const_handle>& new_path)
   {
-    Dart_const_handle d1=m_map.template beta<0>(get_ith_dart(begin));
-    Dart_const_handle d2=m_map.template beta<2,0>(get_ith_dart(end));
+    // There is a special case for (1 2^r). In this case, we need to ignore
+    // the two darts begin and end
+    Dart_const_handle d1=(next_index(begin)!=end?
+          m_map.template beta<0>(get_ith_dart(begin)):
+          m_map.template beta<1,2,0>(get_ith_dart(end)));
+    Dart_const_handle d2=(next_index(begin)!=end?
+          m_map.template beta<2,0>(get_ith_dart(end)):
+          m_map.template beta<0,0>(get_ith_dart(begin)));
     do
     {
       new_path.push_back(m_map.template beta<2>(d1));
@@ -252,8 +258,14 @@ public:
   void transform_negative_bracket(std::size_t begin, std::size_t end,
                                   std::vector<Dart_const_handle>& new_path)
   {
-    Dart_const_handle d1=m_map.template beta<2,1>(get_ith_dart(begin));
-    Dart_const_handle d2=m_map.template beta<1>(get_ith_dart(end));
+    // There is a special case for (-1 -2^r). In this case, we need to ignore
+    // the two darts begin and end
+    Dart_const_handle d1=(next_index(begin)!=end?
+          m_map.template beta<2,1>(get_ith_dart(begin)):
+          m_map.template beta<2,0,2,1>(get_ith_dart(end)));
+    Dart_const_handle d2=(next_index(begin)!=end?
+          m_map.template beta<1>(get_ith_dart(end)):
+          m_map.template beta<2,1,1>(get_ith_dart(begin)));
     do
     {
       new_path.push_back(d1);
@@ -300,7 +312,9 @@ public:
                    <<(positive?"+":"-")<<std::endl; */
           if (end<begin)
           { i=m_path.size(); }
-          else
+          else if (next_index(begin)==end) // Special case of (1 2^r)
+          { i=m_path.size(); }
+          else // Normal case
           { i=end+1; }
           transform_bracket(begin, end, new_path, positive);
           res=true;

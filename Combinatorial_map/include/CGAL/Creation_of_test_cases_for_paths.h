@@ -101,10 +101,29 @@ template<typename Path>
 void generate_positive_bracket_special1(Path& p)
 { generate_bracket_special1(p, false); }
 
-
 template<typename Path>
 void generate_negative_bracket_special1(Path& p)
 { generate_bracket_special1(p, true); }
+
+template<typename Path>
+void generate_bracket_special2(Path& p, bool reverse)
+{ // Case (1, 2^r)
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[0]));
+  extend_uturn_positive(p, 1);
+  extend_straight_positive(p, 10);
+
+  if (reverse)
+  { p.reverse(); }
+}
+
+template<typename Path>
+void generate_positive_bracket_special2(Path& p)
+{ generate_bracket_special2(p, false); }
+
+template<typename Path>
+void generate_negative_bracket_special2(Path& p)
+{ generate_bracket_special2(p, true); }
 
 } // namespace CGAL
 

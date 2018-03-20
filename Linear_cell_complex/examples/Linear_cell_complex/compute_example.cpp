@@ -41,8 +41,8 @@ void simplify_path(CGAL::Path_on_surface<LCC_3_cmap>& path,
       delete curp;
       curp=NULL;
     }
-    // if (nbtest==1)
-     // display(lcc, v);
+     if (draw /* && nbtest==1*/)
+      display(path.get_map(), v);
   }
   while(curp!=NULL);
 
@@ -58,9 +58,10 @@ void simplify_path(CGAL::Path_on_surface<LCC_3_cmap>& path,
     curp=NULL;
   }
 
-  path.swap(*prevp);
   if (draw)
   { display(path.get_map(), v); }
+
+  path.swap(*prevp);
 }
 
 void test_file(int argc, char** argv)
@@ -162,72 +163,92 @@ void test_some_random_paths_on_cube()
 
 void test_all_cases_spurs_and_bracket()
 {
-  LCC_3_cmap lcc1;
-  if (!CGAL::load_off(lcc1, "./data/cube-mesh-5-5.off"))
+  LCC_3_cmap lcc;
+  if (!CGAL::load_off(lcc, "./data/cube-mesh-5-5.off"))
   {
     std::cout<<"PROBLEM reading file ./data/cube-mesh-5-5.off"<<std::endl;
     exit(EXIT_FAILURE);
   }
 
-  LCC_3_cmap lcc2;
-  if (!CGAL::load_off(lcc2, "./data/spiral-squared.off"))
-  {
-    std::cout<<"PROBLEM reading file ./data/spiral-squared.off"<<std::endl;
-    exit(EXIT_FAILURE);
-  }
-  // lcc2.reverse_orientation();
   /* std::cout<<"Initial map 1: ";
   lcc.display_characteristics(std::cout) << ", valid="
                                          << lcc.is_valid() << std::endl;
   */
 
-  CGAL::Path_on_surface<LCC_3_cmap> path1(lcc1);
+  CGAL::Path_on_surface<LCC_3_cmap> path(lcc);
 
-  generate_one_positive_spur(path1);
+  generate_one_positive_spur(path);
   std::cout<<"Posivite spur (2^6 1 0 2^4): "<<std::flush;
-  path1.display_positive_turns();
-  simplify_path(path1, false);
-  std::cout<<" -> "; path1.display_positive_turns(); std::cout<<std::endl;
+  path.display_positive_turns();
+  simplify_path(path, false);
+  std::cout<<" -> "; path.display_positive_turns(); std::cout<<std::endl;
 
-  generate_one_negative_spur(path1);
+  generate_one_negative_spur(path);
   std::cout<<"Negative spur (-2^6 -1 0 -2^4): "<<std::flush;
-  path1.display_negative_turns();
-  simplify_path(path1, false);
-  std::cout<<" -> "; path1.display_negative_turns(); std::cout<<std::endl;
+  path.display_negative_turns();
+  simplify_path(path, false);
+  std::cout<<" -> "; path.display_negative_turns(); std::cout<<std::endl;
 
-  generate_cyclic_spur(path1);
+  generate_cyclic_spur(path);
   std::cout<<"Cyclic spur (0 0): "<<std::flush;
-  path1.display_positive_turns();
-  simplify_path(path1, false);
-  std::cout<<" -> "; path1.display_positive_turns(); std::cout<<std::endl;
+  path.display_positive_turns();
+  simplify_path(path, false);
+  std::cout<<" -> "; path.display_positive_turns(); std::cout<<std::endl;
 
-  generate_one_positive_bracket(path1);
+  generate_one_positive_bracket(path);
   std::cout<<"Positive bracket (2^3 3 1 2^6 1 3 2^2): "<<std::flush;
-  path1.display_positive_turns();
-  simplify_path(path1, false);
-  std::cout<<" -> "; path1.display_positive_turns(); std::cout<<std::endl;
+  path.display_positive_turns();
+  simplify_path(path, false);
+  std::cout<<" -> "; path.display_positive_turns(); std::cout<<std::endl;
 
-  generate_one_negative_bracket(path1);
+  generate_one_negative_bracket(path);
   std::cout<<"Negative bracket (-2^3 -3 -1 -2^6 -1 -3 -2^2): "<<std::flush;
-  path1.display_negative_turns();
-  simplify_path(path1, false);
-  std::cout<<" -> "; path1.display_negative_turns(); std::cout<<std::endl;
+  path.display_negative_turns();
+  simplify_path(path, false);
+  std::cout<<" -> "; path.display_negative_turns(); std::cout<<std::endl;
 
-  CGAL::Path_on_surface<LCC_3_cmap> path2(lcc2);
+  lcc.clear();
+  if (!CGAL::load_off(lcc, "./data/spiral-squared.off"))
+  {
+    std::cout<<"PROBLEM reading file ./data/spiral-squared.off"<<std::endl;
+    exit(EXIT_FAILURE);
+  }
 
-  generate_positive_bracket_special1(path2);
+  generate_positive_bracket_special1(path);
   std::cout<<"Positive special case 1 (3 1 2^8 1): "<<std::flush;
-  path2.display_positive_turns();
-  simplify_path(path2, false);
-  std::cout<<" -> +"; path2.display_positive_turns();
-  std::cout<<" -"; path2.display_negative_turns(); std::cout<<std::endl;
+  path.display_positive_turns();
+  simplify_path(path, false);
+  std::cout<<" -> +"; path.display_positive_turns();
+  std::cout<<" -"; path.display_negative_turns(); std::cout<<std::endl;
 
-  generate_negative_bracket_special1(path2);
+  generate_negative_bracket_special1(path);
   std::cout<<"Negative special case 1 (-3 -1 -2^8 -1): "<<std::flush;
-  path2.display_negative_turns();
-  simplify_path(path2, true);
-  std::cout<<" -> +"; path2.display_positive_turns();
-  std::cout<<" -"; path2.display_negative_turns(); std::cout<<std::endl;
+  path.display_negative_turns();
+  simplify_path(path, false);
+  std::cout<<" -> +"; path.display_positive_turns();
+  std::cout<<" -"; path.display_negative_turns(); std::cout<<std::endl;
+
+  lcc.clear();
+  if (!CGAL::load_off(lcc, "./data/loop-squared.off"))
+  {
+    std::cout<<"PROBLEM reading file ./data/spiral-squared.off"<<std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  generate_positive_bracket_special2(path);
+  std::cout<<"Positive special case 1 (1 2^10): "<<std::flush;
+  path.display_positive_turns();
+  simplify_path(path, false);
+  std::cout<<" -> +"; path.display_positive_turns();
+  std::cout<<" -"; path.display_negative_turns(); std::cout<<std::endl;
+
+  generate_negative_bracket_special2(path);
+  std::cout<<"Negative special case 1 (-1 -2^10): "<<std::flush;
+  path.display_negative_turns();
+  simplify_path(path, true);
+  std::cout<<" -> +"; path.display_positive_turns();
+  std::cout<<" -"; path.display_negative_turns(); std::cout<<std::endl;
+
 }
 
 int main(int argc, char** argv)

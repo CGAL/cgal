@@ -252,6 +252,9 @@ protected:
 
   void compute_path(unsigned int i, unsigned int amark)
   {
+    if (m_paths[i]->is_empty())
+    { return; }
+
     CGAL::Random random(i);
     CGAL::Color color=get_random_color(random);
     
