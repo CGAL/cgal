@@ -91,6 +91,21 @@ public:
 		return Predicate()(p0, p1, p2, p3);
 	}
 
+	// Added for Side_of_hyperbolic_triangle_2
+	template <typename T>
+	result_type operator()(	const Point& p0, 	const Point& p1,
+							const Point& p2, 	const Point& p3, T& t) const
+	{
+		return Predicate()(p0, p1, p2, p3, t);
+	}
+	template <typename T>
+	result_type operator()(	const Point& p0, 	const Point& p1,
+							const Point& p2, 	const Point& p3,
+							const Hyperbolic_translation& o0, 	const Hyperbolic_translation& o1,
+							const Hyperbolic_translation& o2, 	const Hyperbolic_translation& o3, T& t) const
+	{
+		return Predicate()(pp(p0, o0), pp(p1, o1), pp(p2, o2), pp(p3, o3), t);
+	}
 private:
 	Point pp(const Point &p, const Hyperbolic_translation &o) const
 	{
@@ -218,10 +233,9 @@ public:
 	typedef Hyperbolic_traits_with_translations_2_adaptor<Self, 
 			typename Base::Compare_distance_2>      							Compare_distance_2;
 	typedef Periodic_4_hyperbolic_construct_point_2<Self, 		
-			Periodic_4_hyperbolic_construct_point_2<Self, typename Base::Construct_point_2> >      						Construct_point_2;
-
-
-
+			typename Base::Construct_point_2> 		      						Construct_point_2;
+	typedef Hyperbolic_traits_with_translations_2_adaptor<Self,
+			typename Base::Side_of_hyperbolic_triangle_2> 						Side_of_hyperbolic_triangle_2;
 
 
 public:
@@ -557,116 +571,6 @@ public:
   }; // end Construct_inexact_hyperbolic_circumcenter_2
 
 
-
-
-
-
-
-	/****************************************************/
-	class Side_of_hyperbolic_face_2 {
-		
-	public:
-		typedef Bounded_side result_type;
-
-		Side_of_hyperbolic_face_2() {}
-
-
-		template<class Face_handle, class Hyperbolic_translation>
-		Bounded_side operator()(const Point_2 p, Bounded_side sides[3], const Face_handle fh, const Hyperbolic_translation o) const {
-
-			Point_2 p1 = Construct_point_2()(fh->vertex(0)->point(), o * fh->translation(0));
-			Point_2 p2 = Construct_point_2()(fh->vertex(0)->point(), o * fh->translation(1));
-			Point_2 p3 = Construct_point_2()(fh->vertex(0)->point(), o * fh->translation(2));
-
-			Bounded_side cp1 = side_of_segment_2(p,  p2, p3);
-
-			sides[0] = cp1;
-			if (cp1 == ON_BOUNDARY) {
-				return ON_BOUNDARY;
-			}
-
-			Bounded_side cp2 = side_of_segment_2(p,  p3, p1);
-
-			sides[1] = cp2;
-			if (cp2 == ON_BOUNDARY) {
-				return ON_BOUNDARY;
-			}
-
-			Bounded_side cp3 = side_of_segment_2(p,  p1, p2);
-
-			sides[2] = cp3;
-			if (cp3 == ON_BOUNDARY) {
-				return ON_BOUNDARY;
-			}			
-
-			Bounded_side cs1 = side_of_segment_2(p1, p2, p3);
-			Bounded_side cs2 = side_of_segment_2(p2, p3, p1);
-			Bounded_side cs3 = side_of_segment_2(p3, p1, p2);
-
-			// Cannot be on the boundary here.
-			if (cs1 != cp1 || cs2 != cp2 || cs3 != cp3) {
-				return ON_UNBOUNDED_SIDE;
-			} else {
-				return ON_BOUNDED_SIDE;	
-			}
-
-
-		}
-
-
-		template<class Face_handle>
-		Bounded_side operator()(const Point_2 p, Bounded_side sides[3], const Face_handle fh) const {
-			return operator()(p, sides, fh, Hyperbolic_translation());
-		}
-
-
-	private:
-
-		typedef typename Kernel::Construct_weighted_circumcenter_2 	Construct_weighted_circumcenter_2;
-    	typedef typename Kernel::Weighted_point_2 					Weighted_point_2;
-    	typedef typename Kernel::Point_2 							Bare_point;
-
-		Bounded_side side_of_segment_2(const Point_2 query, const Point_2 p, const Point_2 q) const {
-			
-			// Check first if the points are collinear with the origin
-			Circle_2 poincare(Point_2(FT(0),FT(0)), FT(1));
-			Orientation ori = orientation(poincare.center(), p, q);
-			if (ori == COLLINEAR) {
-				Euclidean_line_2 seg(p, q);
-				Orientation qori = orientation(query, p, q);
-				if (qori == COLLINEAR) {
-					return ON_BOUNDARY;
-				} else {
-					// It is sufficient that these are consistent.
-					if (qori == LEFT_TURN) {
-						return ON_BOUNDED_SIDE;
-					} else {
-						return ON_UNBOUNDED_SIDE;
-					}
-				}
-			}
-
-			Origin o;
-			Weighted_point_2 wp(p);
-			Weighted_point_2 wq(q);
-			Weighted_point_2 wo(Point_2(o), FT(1)); // Poincaré circle 
-
-			Bare_point center = typename Base::Construct_weighted_circumcenter_2()(wp, wo, wq);
-			FT sq_radius = typename Base::Compute_squared_Euclidean_distance_2()(p, center);
-
-			Circle_2 circle(center, sq_radius);
- 			return circle.bounded_side(query);
-		}
-
-	};
-
-
-	Side_of_hyperbolic_face_2
-	side_of_hyperbolic_face_2_object() const {
-		return Side_of_hyperbolic_face_2();
-	}
-
-	/****************************************************/
 
 
 

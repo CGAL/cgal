@@ -1005,44 +1005,51 @@ hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_translati
 		return lf;
 	}
 
-	typedef typename GT::Side_of_hyperbolic_face_2 Side_of_hyperbolic_face_2;
-	Side_of_hyperbolic_face_2 sf;
+	typedef typename GT::Side_of_hyperbolic_triangle_2 Side_of_hyperbolic_triangle_2;
+	Side_of_hyperbolic_triangle_2 sf;
 
-	Bounded_side sides[3];
+	Point p0 = apply( apply(lf->vertex(0)->point(), lf->translation(0)) , lo );
+	Point p1 = apply( apply(lf->vertex(1)->point(), lf->translation(1)) , lo );
+	Point p2 = apply( apply(lf->vertex(2)->point(), lf->translation(2)) , lo );
     
-	Bounded_side bs = sf(p, sides, lf, lo);
+	Bounded_side bs = sf(p0, p1, p2, p, li);
 	if (bs == ON_BOUNDED_SIDE) {
 		lt = Base::FACE;
 	} else if (bs == ON_BOUNDARY) {
 		lt = Base::EDGE;
-		if (sides[0] == ON_BOUNDARY) {
-			li = 0;
-		} else {
-			if (sides[1] == ON_BOUNDARY) {
-				li = 1;
-			} else {
-				CGAL_assertion(sides[2] == ON_BOUNDARY);
-				li = 2;
-			}
-		}	
 	} else {
 		// Here we have to find the face containing the point, it's one of the neighbors of lf.
-		Bounded_side bs1 = sf(p, sides, lf->neighbor(0), lo * lf->neighbor_translation(0));
+		Hyperbolic_translation tr = lo * lf->neighbor_translation(0);
+		Face_handle nf = lf->neighbor(0);
+		Point np0 = apply( apply(nf->vertex(0)->point(), nf->translation(0)) , tr );
+		Point np1 = apply( apply(nf->vertex(1)->point(), nf->translation(1)) , tr );
+		Point np2 = apply( apply(nf->vertex(2)->point(), nf->translation(2)) , tr );
+		Bounded_side bs1 = sf(np0, np1, np2, p, li);
 		if (bs1 == ON_BOUNDED_SIDE) {
-			lo = lo * lf->neighbor_translation(0);
-			lf = lf->neighbor(0);
+			lo = tr;
+			lf = nf;
 			lt = Base::FACE;
 		} else {
-			Bounded_side bs2 = sf(p, sides, lf->neighbor(1), lo * lf->neighbor_translation(1));	
+			tr = lo * lf->neighbor_translation(1);
+			nf = lf->neighbor(1);
+			np0 = apply( apply(nf->vertex(0)->point(), nf->translation(0)) , tr );
+			np1 = apply( apply(nf->vertex(1)->point(), nf->translation(1)) , tr );
+			np2 = apply( apply(nf->vertex(2)->point(), nf->translation(2)) , tr );
+			Bounded_side bs2 = sf(np0, np1, np2, p, li);
 			if (bs2 == ON_BOUNDED_SIDE) {
-				lo = lo * lf->neighbor_translation(1);
-				lf = lf->neighbor(1);
+				lo = tr;
+				lf = nf;
 				lt = Base::FACE;
 			} else {
-				Bounded_side bs3 = sf(p, sides, lf->neighbor(2), lo * lf->neighbor_translation(2));
+				tr = lo * lf->neighbor_translation(2);
+				nf = lf->neighbor(2);
+				np0 = apply( apply(nf->vertex(0)->point(), nf->translation(0)) , tr );
+				np1 = apply( apply(nf->vertex(1)->point(), nf->translation(1)) , tr );
+				np2 = apply( apply(nf->vertex(2)->point(), nf->translation(2)) , tr );
+				Bounded_side bs3 = sf(np0, np1, np2, p, li);
 				CGAL_triangulation_assertion(bs3 == ON_BOUNDED_SIDE);
-				lo = lo * lf->neighbor_translation(2);
-				lf = lf->neighbor(2);
+				lo = tr;
+				lf = nf;
 				lt = Base::FACE;
 			}
 		}
