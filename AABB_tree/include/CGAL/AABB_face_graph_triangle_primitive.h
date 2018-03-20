@@ -1,3 +1,4 @@
+//dummy com'
 // Copyright (c) 2012 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
