@@ -666,6 +666,6 @@ remove(Vertex_handle v) {
 } // namespace CGAL
 
 
-#include <CGAL/Periodic_4_hyperbolic_triangulation_dummy_14.h>
+#include <CGAL/internal/Periodic_4_hyperbolic_triangulation_dummy_14.h>
 
 #endif // CGAL_PERIODIC_4_HYPERBOLIC_DELAUNAY_TRIANGULATION_2_H
