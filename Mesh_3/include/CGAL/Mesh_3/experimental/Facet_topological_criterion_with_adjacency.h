@@ -14,14 +14,9 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Laurent Rineau
-//
-//******************************************************************************
-// File Description :
-//
-//
-//******************************************************************************
 
 #ifndef CGAL_MESH_3_FACET_TOPOLOGICAL_CRITERION_WITH_ADJACENCY_H
 #define CGAL_MESH_3_FACET_TOPOLOGICAL_CRITERION_WITH_ADJACENCY_H
@@ -107,8 +102,8 @@ protected:
       case 1: 
         {
           ++nb_vertices_on_curves;
-          const typename MeshDomain::Curve_segment_index curve_id =
-            domain->curve_segment_index(v->index());
+          const typename MeshDomain::Curve_index curve_id =
+            domain->curve_index(v->index());
           Index_set set;
           domain->get_incidences(curve_id, std::back_inserter(set));
           if(std::find(set.begin(), set.end(), patch_index) == set.end())

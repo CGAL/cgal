@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
@@ -24,6 +25,7 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 
@@ -531,9 +533,10 @@ public:
   typedef const value_type&             const_reference;
 
   //Tag to distinguish triangulations with weighted_points
-  typedef Tag_false  Weighted_tag;
+  typedef Tag_false                     Weighted_tag;
 
-
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_false                     Periodic_tag;
 
   enum Locate_type {
     VERTEX=0,
@@ -6788,5 +6791,7 @@ operator!=(const Triangulation_3<GT, Tds1> &t1,
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TRIANGULATION_3_H

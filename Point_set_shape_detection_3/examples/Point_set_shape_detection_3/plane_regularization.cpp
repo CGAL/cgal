@@ -1,3 +1,8 @@
+#if defined (_MSC_VER) && !defined (_WIN64)
+#pragma warning(disable:4244) // boost::number_distance::distance()
+                              // converts 64 to 32 bits integers
+#endif
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/Point_with_normal_3.h>
@@ -15,34 +20,39 @@ typedef std::vector<Point_with_normal>                       Pwn_vector;
 typedef CGAL::First_of_pair_property_map<Point_with_normal>  Point_map;
 typedef CGAL::Second_of_pair_property_map<Point_with_normal> Normal_map;
 
-typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits
+typedef CGAL::Shape_detection_3::Shape_detection_traits
   <Kernel, Pwn_vector, Point_map, Normal_map>                Traits;
-typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>    Efficient_ransac;
+typedef CGAL::Shape_detection_3::Region_growing<Traits>      Region_growing;
 typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
 
-int main() 
+int main(int argc, char** argv) 
 {
   Pwn_vector points;
-  std::ifstream stream("data/cube.pwn");
+  std::ifstream stream(argc > 1 ? argv[1] : "data/cube.pwn");
 
   if (!stream || 
-    !CGAL::read_xyz_points_and_normals(stream,
+    !CGAL::read_xyz_points(stream,
       std::back_inserter(points),
-      Point_map(),
-      Normal_map()))
+      CGAL::parameters::point_map(Point_map()).
+      normal_map(Normal_map())))
   {
       std::cerr << "Error: cannot read file cube.pwn" << std::endl;
       return EXIT_FAILURE;
   }
 
   // Call RANSAC shape detection with planes
-  Efficient_ransac ransac;
-  ransac.set_input(points);
-  ransac.add_shape_factory<Plane>();
-  ransac.detect();
+  Region_growing region_growing;
+  region_growing.set_input(points);
+  region_growing.add_shape_factory<Plane>();
+  region_growing.detect();
 
+  Region_growing::Plane_range planes = region_growing.planes();
   // Regularize detected planes
-  CGAL::regularize_planes (ransac,
+  CGAL::regularize_planes (points,
+                           Point_map(),
+                           planes,
+                           CGAL::Shape_detection_3::Plane_map<Traits>(),
+                           CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes),
                            true, // Regularize parallelism
                            true, // Regularize orthogonality
                            false, // Do not regularize coplanarity

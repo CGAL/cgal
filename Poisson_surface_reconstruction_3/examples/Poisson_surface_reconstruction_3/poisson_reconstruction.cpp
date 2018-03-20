@@ -19,7 +19,7 @@
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Poisson_implicit_surface_3.h>
-#include <CGAL/IO/output_surface_facets_to_polyhedron.h>
+#include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/read_xyz_points.h>
@@ -193,10 +193,11 @@ int main(int argc, char * argv[])
       // The position property map can be omitted here as we use iterators over Point_3 elements.
       std::ifstream stream(input_filename.c_str());
       if (!stream ||
-          !CGAL::read_xyz_points_and_normals(
+          !CGAL::read_xyz_points(
                                 stream,
                                 std::back_inserter(points),
-                                CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type())))
+                                CGAL::parameters::normal_map
+                                (CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -252,7 +253,7 @@ int main(int argc, char * argv[])
     Poisson_reconstruction_function function(
                               points.begin(), points.end(),
                               CGAL::make_identity_property_map(PointList::value_type()),
-                              CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type()),
+                              CGAL::make_normal_of_point_with_normal_map(PointList::value_type()),
                               visitor);
 
     #ifdef CGAL_EIGEN3_ENABLED
@@ -294,8 +295,7 @@ int main(int argc, char * argv[])
     std::cerr << "Surface meshing...\n";
 
     // Computes average spacing
-    FT average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>(points.begin(), points.end(),
-                                                       6 /* knn = 1 ring */);
+    FT average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>(points, 6 /* knn = 1 ring */);
 
     // Gets one point inside the implicit surface
     Point inner_point = function.get_inner_point();
@@ -350,7 +350,7 @@ int main(int argc, char * argv[])
 
     // Converts to polyhedron
     Polyhedron output_mesh;
-    CGAL::output_surface_facets_to_polyhedron(c2t3, output_mesh);
+    CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, output_mesh);
 
     // Prints total reconstruction duration
     std::cerr << "Total reconstruction (implicit function + meshing): " << reconstruction_timer.time() << " seconds\n";

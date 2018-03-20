@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)    : Samuel Hornus
 
@@ -22,6 +23,7 @@
 
 #include <CGAL/license/Triangulation.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Triangulation_ds_vertex.h>
 #include <CGAL/Default.h>
@@ -127,5 +129,7 @@ operator<<(std::ostream & os, const Triangulation_vertex<A, Data, B> & v)
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TRIANGULATION_VERTEX_H

@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:
-// $Id: 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Simon Giraudot, Pierre Alliez
 
@@ -23,6 +24,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <cmath>
 #include <stack>
@@ -36,19 +38,24 @@
 #include <CGAL/Default_diagonalize_traits.h>
 #include <CGAL/PCA_util.h>
 #include <CGAL/squared_distance_3.h>
+#include <CGAL/Iterator_range.h>
+
+#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL {
 
 
+  /// \cond SKIP_IN_MANUAL
   namespace internal {
 
     template < typename InputIterator,
-	       typename PointPMap,
+	       typename PointMap,
 	       typename K >
     typename K::Point_3
     hsps_centroid(InputIterator begin, 
 		 InputIterator end,
-		 PointPMap& point_pmap,	     
+		 PointMap& point_map,	     
 		 const K&)
     {
       typedef typename K::Point_3 Point;
@@ -60,8 +67,8 @@ namespace CGAL {
       unsigned int nb_pts = 0;
       while(begin != end) 
 	{
-	  typename boost::property_traits<PointPMap>::reference point =
-            get(point_pmap, *begin);
+	  typename boost::property_traits<PointMap>::reference point =
+            get(point_map, *begin);
 	  x += point.x ();  y += point.y ();  z += point.z ();
 	  ++ nb_pts;
 	  ++ begin;
@@ -70,13 +77,13 @@ namespace CGAL {
     }
 
     template < typename Input_type,
-	       typename PointPMap,
+	       typename PointMap,
 	       typename K >
     void
     hsc_terminate_cluster (std::list<Input_type>& cluster,
 			   std::list<Input_type>& points_to_keep,
 			   std::list<Input_type>& points_to_remove,
-			   PointPMap& point_pmap,
+			   PointMap& point_map,
 			   const typename K::Point_3& centroid,
 			   const K&)
     {
@@ -88,7 +95,7 @@ namespace CGAL {
       typename std::list<Input_type>::iterator point_min;
       for (Iterator it = cluster.begin (); it != cluster.end (); ++ it)
 	{
-	  FT dist = CGAL::squared_distance (get(point_pmap, *it), centroid);
+	  FT dist = CGAL::squared_distance (get(point_map, *it), centroid);
 	  if (dist < dist_min)
 	    {
 	      dist_min = dist;
@@ -104,53 +111,64 @@ namespace CGAL {
 
 
   } // namespace internal
-    
+  /// \endcond
 
-  /// \ingroup PkgPointSetProcessingAlgorithms
+  /**
+     \ingroup PkgPointSetProcessingAlgorithms
   
-  /// Recursively split the point set in smaller clusters until the
-  /// clusters have less than `size` elements or until their variation
-  /// factor is below `var_max`. 
-  ///
-  /// This method modifies the order of input points so as to pack all remaining points first,
-  /// and returns an iterator over the first point to remove (see erase-remove idiom).
-  /// For this reason it should not be called on sorted containers.
-  ///
-  /// \pre `0 < var_max < 1/3`
-  /// \pre `size > 0`
-  ///
-  /// @tparam ForwardIterator iterator over input points.
-  /// @tparam PointPMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
-  ///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
-  /// @tparam DiagonalizeTraits is a model of `DiagonalizeTraits`. It
-  ///        can be omitted: if Eigen 3 (or greater) is available and
-  ///        `CGAL_EIGEN3_ENABLED` is defined then an overload using
-  ///        `Eigen_diagonalize_traits` is provided. Otherwise, the internal
-  ///        implementation `Internal_diagonalize_traits` is used.
-  /// @tparam Kernel Geometric traits class.
-  ///        It can be omitted and deduced automatically from the value type of `PointPMap`.
-  ///
-  /// @return iterator over the first point to remove.
+     Recursively split the point set in smaller clusters until the
+     clusters have less than `size` elements or until their variation
+     factor is below `var_max`. 
+  
+     This method modifies the order of input points so as to pack all remaining points first,
+     and returns an iterator over the first point to remove (see erase-remove idiom).
+     For this reason it should not be called on sorted containers.
+  
+     \pre `0 < maximum_variation < 1/3`
+     \pre `size > 0`
+  
+     \tparam PointRange is a model of `Range`. The value type of
+     its iterator is the key type of the named parameter `point_map`.
 
+     \param points input point range.
+     \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
-  // This variant requires all parameters.
+     \cgalNamedParamsBegin
+       \cgalParamBegin{point_map} a model of `ReadWritePropertyMap` with value type `geom_traits::Point_3`.
+       If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+       \cgalParamBegin{size} maximum cluster size.\cgalParamEnd
+       \cgalParamBegin{maximum_variation} maximum cluster variation value.\cgalParamEnd
+       \cgalParamBegin{diagonalize_traits} a model of `DiagonalizeTraits`. It can be omitted:
+       if Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined then an overload
+       using `Eigen_diagonalize_traits` is provided. Otherwise, the internal implementation
+       `CGAL::Diagonalize_traits` is used.\cgalParamEnd
+       \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+     \cgalNamedParamsEnd
 
-  template <typename ForwardIterator,
-	    typename PointPMap,
-	    typename DiagonalizeTraits,
-	    typename Kernel>
-  ForwardIterator hierarchy_simplify_point_set (ForwardIterator begin,
-						ForwardIterator end,
-						PointPMap point_pmap,
-						const unsigned int size,
-						const double var_max,
-						const DiagonalizeTraits&,
-						const Kernel&)
+     \return iterator over the first point to remove.
+  */
+  template <typename PointRange,
+	    typename NamedParameters>
+  typename PointRange::iterator
+  hierarchy_simplify_point_set (PointRange& points,
+                                const NamedParameters& np)
   {
-    typedef typename std::iterator_traits<ForwardIterator>::value_type Input_type;
-    typedef typename Kernel::FT FT;
-    typedef typename Kernel::Point_3  Point;
+    using boost::choose_param;
+  
+    // basic geometric types
+    typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+    typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+    typedef typename GetDiagonalizeTraits<NamedParameters, double, 3>::type DiagonalizeTraits;
+
+    typedef typename Kernel::Point_3 Point;
     typedef typename Kernel::Vector_3 Vector;
+    typedef typename Kernel::FT FT;
+
+    PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+    unsigned int size = choose_param(get_param(np, internal_np::size), 10);
+    double var_max = choose_param(get_param(np, internal_np::maximum_variation), 1./3.);
+
+    typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Input_type;
 
     // We define a cluster as a point set + its centroid (useful for
     // faster computations of centroids - to be implemented)
@@ -159,17 +177,17 @@ namespace CGAL {
     std::list<cluster> clusters_stack;
     typedef typename std::list<cluster>::iterator cluster_iterator;
 
-    CGAL_precondition (begin != end);
+    CGAL_precondition (points.begin() != points.end());
     CGAL_point_set_processing_precondition (size > 0);
     CGAL_point_set_processing_precondition (var_max > 0.0);
 
     // The first cluster is the whole input point set
     clusters_stack.push_front (cluster (std::list<Input_type>(), Point (0., 0., 0.)));
-    std::copy (begin, end, std::back_inserter (clusters_stack.front ().first));
+    std::copy (points.begin(), points.end(), std::back_inserter (clusters_stack.front ().first));
     
     clusters_stack.front ().second = internal::hsps_centroid (clusters_stack.front ().first.begin (),
-							     clusters_stack.front ().first.end (),
-							     point_pmap, Kernel());
+                                                              clusters_stack.front ().first.end (),
+                                                              point_map, Kernel());
 
     std::list<Input_type> points_to_keep;
     std::list<Input_type> points_to_remove;
@@ -194,7 +212,7 @@ namespace CGAL {
 	for (typename std::list<Input_type>::iterator it = current_cluster->first.begin ();
 	     it != current_cluster->first.end (); ++ it)
 	  {
-	    const Point& point = get(point_pmap, *it);
+	    const Point& point = get(point_map, *it);
 	    Vector d = point - current_cluster->second;
 	    covariance[0] += d.x () * d.x ();
 	    covariance[1] += d.x () * d.y ();
@@ -233,7 +251,7 @@ namespace CGAL {
 	    while (it != current_cluster->first.end ())
 	      {
 		typename std::list<Input_type>::iterator current = it ++;
-                const Point& point = get(point_pmap, *current);
+                const Point& point = get(point_map, *current);
 
 		// Test if point is on negative side of plane and
 		// transfer it to the negative_side cluster if it is
@@ -253,12 +271,12 @@ namespace CGAL {
 		// Compute the centroid
 		nonempty->second = internal::hsps_centroid (nonempty->first.begin (),
 							    nonempty->first.end (),
-							    point_pmap, Kernel());
+							    point_map, Kernel());
 		
 		internal::hsc_terminate_cluster (nonempty->first,
 						 points_to_keep,
 						 points_to_remove,
-						 point_pmap,
+						 point_map,
 						 nonempty->second,
 						 Kernel ());
 		clusters_stack.pop_front ();
@@ -272,7 +290,7 @@ namespace CGAL {
 		// Compute the first centroid
 		current_cluster->second = internal::hsps_centroid (current_cluster->first.begin (),
 								   current_cluster->first.end (),
-								   point_pmap, Kernel());
+								   point_map, Kernel());
 
 		// The second centroid can be computed with the first and
 		// the old ones :
@@ -296,73 +314,114 @@ namespace CGAL {
 	    internal::hsc_terminate_cluster (current_cluster->first,
 					     points_to_keep,
 					     points_to_remove,
-					     point_pmap,
+					     point_map,
 					     current_cluster->second,
 					     Kernel ());
 	    clusters_stack.pop_front ();
 	  }
       }
-    ForwardIterator first_point_to_remove =
-      std::copy (points_to_keep.begin(), points_to_keep.end(), begin);
+    typename PointRange::iterator first_point_to_remove =
+      std::copy (points_to_keep.begin(), points_to_keep.end(), points.begin());
     std::copy (points_to_remove.begin(), points_to_remove.end(), first_point_to_remove);
 
     return first_point_to_remove;
 
   }
-  /// @endcond
 
 
-  /// @cond SKIP_IN_MANUAL
-  // This variant deduces the kernel from the iterator type.
+  /// \cond SKIP_IN_MANUAL
+  // variant with default NP
+  template <typename PointRange>
+  typename PointRange::iterator
+  hierarchy_simplify_point_set (PointRange& points)
+  {
+    return hierarchy_simplify_point_set
+      (points, CGAL::Point_set_processing_3::parameters::all_default(points));
+  }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+  // deprecated API
   template <typename ForwardIterator,
-	    typename PointPMap,
-	    typename DiagonalizeTraits>
+	    typename PointMap,
+	    typename DiagonalizeTraits,
+	    typename Kernel>
+  CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::hierarchy_simplify_point_set(), please update your code")
   ForwardIterator hierarchy_simplify_point_set (ForwardIterator begin,
 						ForwardIterator end,
-						PointPMap point_pmap,
+						PointMap point_map,
+						const unsigned int size,
+						const double var_max,
+						const DiagonalizeTraits&,
+						const Kernel&)
+  {
+    CGAL::Iterator_range<ForwardIterator> points (begin, end);
+    return hierarchy_simplify_point_set
+      (points,
+       CGAL::parameters::point_map (point_map).
+       size (size).
+       maximum_variation (var_max).
+       diagonalize_traits (DiagonalizeTraits()).
+       geom_traits(Kernel()));
+  }
+
+  // deprecated API
+  template <typename ForwardIterator,
+	    typename PointMap,
+	    typename DiagonalizeTraits>
+  CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::hierarchy_simplify_point_set(), please update your code")
+  ForwardIterator hierarchy_simplify_point_set (ForwardIterator begin,
+						ForwardIterator end,
+						PointMap point_map,
 						const unsigned int size,
 						const double var_max,
 						const DiagonalizeTraits& diagonalize_traits)
   {
-    typedef typename boost::property_traits<PointPMap>::value_type Point;
-    typedef typename Kernel_traits<Point>::Kernel Kernel;
-    return hierarchy_simplify_point_set (begin, end, point_pmap, size, var_max,
-					 diagonalize_traits, Kernel());
+    CGAL::Iterator_range<ForwardIterator> points (begin, end);
+    return hierarchy_simplify_point_set
+      (points,
+       CGAL::parameters::point_map (point_map).
+       size (size).
+       maximum_variation (var_max).
+       diagonalize_traits (diagonalize_traits));
   }
-  /// @endcond
 
-  /// @cond SKIP_IN_MANUAL  
-  // This variant uses default diagonalize traits
+  // deprecated API
   template <typename ForwardIterator,
-	    typename PointPMap >
+	    typename PointMap >
+  CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::hierarchy_simplify_point_set(), please update your code")
   ForwardIterator hierarchy_simplify_point_set (ForwardIterator begin,
 						ForwardIterator end,
-						PointPMap point_pmap,
+						PointMap point_map,
 						const unsigned int size,
 						const double var_max)
   {
-    typedef typename boost::property_traits<PointPMap>::value_type Point;
-    typedef typename Kernel_traits<Point>::Kernel Kernel;
-    return hierarchy_simplify_point_set (begin, end, point_pmap, size, var_max,
-					 Default_diagonalize_traits<double, 3> (), Kernel());
+    CGAL::Iterator_range<ForwardIterator> points (begin, end);
+    return hierarchy_simplify_point_set
+      (points,
+       CGAL::parameters::point_map (point_map).
+       size (size).
+       maximum_variation (var_max));
   }
-  /// @endcond  
-
-  /// @cond SKIP_IN_MANUAL
-  // This variant creates a default point property map = Identity_property_map.
+  
+  // deprecated API
   template <typename ForwardIterator >
+  CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::hierarchy_simplify_point_set(), please update your code")
   ForwardIterator hierarchy_simplify_point_set (ForwardIterator begin,
 						ForwardIterator end,
 						const unsigned int size = 10,
 						const double var_max = 0.333)
   {
+    CGAL::Iterator_range<ForwardIterator> points (begin, end);
     return hierarchy_simplify_point_set
-      (begin, end,
-       make_identity_property_map (typename std::iterator_traits<ForwardIterator>::value_type()),
-       size, var_max);
+      (points,
+       CGAL::parameters::size (size).
+       maximum_variation (var_max));
   }
-  /// @endcond  
+#endif // CGAL_NO_DEPRECATED_CODE
+  /// \endcond  
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // HIERARCHY_SIMPLIFY_POINT_SET_H

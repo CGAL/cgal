@@ -36,4 +36,48 @@ enum vertex_point_t { vertex_point };
 
 
 /// @}
-}
+} // namespace boost
+
+namespace CGAL {
+
+
+/// @{
+
+/// \ingroup PkgBGLPropertiesDynamic
+/// Dynamic vertex property tag
+/// \tparam T the value type of the vertex property
+template <typename T>
+struct dynamic_vertex_property_t
+{
+  dynamic_vertex_property_t();
+};
+
+/// \ingroup PkgBGLPropertiesDynamic
+/// Dynamic halfedge property tag
+/// \tparam T the value type of the halfedge property
+template <typename T>
+struct dynamic_halfedge_property_t
+{
+  dynamic_halfedge_property_t();
+};
+  
+/// \ingroup PkgBGLPropertiesDynamic
+/// Dynamic edge property tag
+/// \tparam T the value type of the edge property
+template <typename T>
+struct dynamic_edge_property_t
+{
+  dynamic_edge_property_t();
+};
+ 
+/// \ingroup PkgBGLPropertiesDynamic
+/// Dynamic face property tag
+/// \tparam T the value type of the face property
+template <typename T>
+struct dynamic_face_property_t
+{
+  dynamic_face_property_t();
+};
+
+/// @}
+} // namespace CGAL

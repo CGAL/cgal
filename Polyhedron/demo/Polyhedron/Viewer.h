@@ -82,6 +82,11 @@ public:
   void setSceneBoundingBox(const qglviewer::Vec &min, const qglviewer::Vec &max);
 
   TextRenderer* textRenderer() Q_DECL_OVERRIDE;
+  void enableClippingBox(QVector4D box[]) Q_DECL_OVERRIDE;
+  void disableClippingBox() Q_DECL_OVERRIDE;
+  void set2DSelectionMode(bool) Q_DECL_OVERRIDE;
+  void setStaticImage(QImage image) Q_DECL_OVERRIDE;
+  const QImage& staticImage() const Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
   void sendMessage(QString);
@@ -132,6 +137,7 @@ protected:
 
   //!Defines the behaviour for the mouse press events
   void mousePressEvent(QMouseEvent*)Q_DECL_OVERRIDE;
+  void mouseDoubleClickEvent(QMouseEvent*)Q_DECL_OVERRIDE;
   void wheelEvent(QWheelEvent *)Q_DECL_OVERRIDE;
   //!Defines the behaviour for the key press events
   void keyPressEvent(QKeyEvent*)Q_DECL_OVERRIDE;
@@ -140,13 +146,16 @@ protected:
   //!Defines the behaviour for the key release events
   void keyReleaseEvent(QKeyEvent *)Q_DECL_OVERRIDE;
 
-
   void resizeGL(int w, int h)Q_DECL_OVERRIDE;
 
 protected:
   friend class Viewer_impl;
   Viewer_impl* d;
   double prev_radius;
+
+public:
+  bool isOpenGL_4_3() const Q_DECL_OVERRIDE;
+  QOpenGLFunctions_4_3_Compatibility* openGL_4_3_functions() Q_DECL_OVERRIDE;
 
 }; // end class Viewer
 

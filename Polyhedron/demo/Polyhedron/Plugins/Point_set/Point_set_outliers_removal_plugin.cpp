@@ -95,10 +95,12 @@ void Polyhedron_demo_point_set_outliers_removal_plugin::on_actionOutlierRemoval_
 
     // Computes outliers
     Point_set::iterator first_point_to_remove =
-      CGAL::remove_outliers(points->begin(), points->end(),
-                            points->point_map(),
+      CGAL::remove_outliers(*points,
                             nb_neighbors,
-                            removed_percentage, distance_threshold, Kernel());
+                            points->parameters().
+                            threshold_percent(removed_percentage).
+                            threshold_distance(distance_threshold));
+
 
     std::size_t nb_points_to_remove = std::distance(first_point_to_remove, points->end());
     std::size_t memory = CGAL::Memory_sizer().virtual_size();

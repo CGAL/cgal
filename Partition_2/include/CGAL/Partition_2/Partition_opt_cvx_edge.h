@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
@@ -67,7 +68,8 @@ public:
 
       _validity = PARTITION_OPT_CVX_NOT_VALID;
 
-      Turn_reverser<Point_2_, Left_turn_2>  right_turn(left_turn);
+      Turn_reverser<typename Traits::Point_2,
+                    Left_turn_2>  right_turn(left_turn);
       if (right_turn(p1, p2, p3))
          _validity = PARTITION_OPT_CVX_START_VALID;
       if (right_turn(p4, p5, p6)) {

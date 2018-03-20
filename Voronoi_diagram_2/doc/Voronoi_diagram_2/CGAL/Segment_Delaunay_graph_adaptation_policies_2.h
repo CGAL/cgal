@@ -23,8 +23,7 @@ edges of zero length and no Voronoi faces of zero area.
 
 */
 template< typename SDG2 >
-class Segment_Delaunay_graph_caching_degeneracy_removal_policy_2 {
-public:
+struct Segment_Delaunay_graph_caching_degeneracy_removal_policy_2 {
 
 /// \name Types 
 /// @{
@@ -63,8 +62,7 @@ zero area.
 
 */
 template< typename SDG2 >
-class Segment_Delaunay_graph_degeneracy_removal_policy_2 {
-public:
+struct Segment_Delaunay_graph_degeneracy_removal_policy_2 {
 
 /// \name Types 
 /// @{

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -33,6 +34,8 @@
 
 #ifndef CGAL_SQRT_EXTENSION_TYPE_H
 #define CGAL_SQRT_EXTENSION_TYPE_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/number_type_basic.h>
 #include <boost/operators.hpp>
@@ -677,7 +680,7 @@ Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG> square (const Sqrt_extension<NT,ROOT,ACD
 //NT_converter specializations
 template <class NT1,class ROOT1,class NT2,class ROOT2,class ACDE_TAG,class FP_TAG>
 struct NT_converter < Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG> , Sqrt_extension<NT2,ROOT2,ACDE_TAG,FP_TAG> >
-  : public std::unary_function< NT1, NT2 >
+  : public CGAL::unary_function< NT1, NT2 >
 {
     Sqrt_extension<NT2,ROOT2,ACDE_TAG,FP_TAG>
     operator()(const Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG> &a) const
@@ -695,7 +698,7 @@ struct NT_converter < Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG> , Sqrt_extension
 
 template <class NT1,class NT2,class ROOT2,class ACDE_TAG,class FP_TAG>
 struct NT_converter < NT1 , Sqrt_extension<NT2,ROOT2,ACDE_TAG,FP_TAG> >
-  : public std::unary_function< NT1, NT2 >
+  : public CGAL::unary_function< NT1, NT2 >
 {
     Sqrt_extension<NT2,ROOT2,ACDE_TAG,FP_TAG>
     operator()(const NT1 &a) const
@@ -707,7 +710,7 @@ struct NT_converter < NT1 , Sqrt_extension<NT2,ROOT2,ACDE_TAG,FP_TAG> >
 //needed because it's a better match than the specialization <NT1,NT1>
 template <class NT1,class ROOT1,class ACDE_TAG,class FP_TAG>
 struct NT_converter < Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG>, Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG> >
-  : public std::unary_function< NT1, NT1 >
+  : public CGAL::unary_function< NT1, NT1 >
 {
     const Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG>&
     operator()(const Sqrt_extension<NT1,ROOT1,ACDE_TAG,FP_TAG> &a) const
@@ -824,6 +827,8 @@ print(std::ostream &os, const Sqrt_extension<NT_,ROOT_,ACDE_TAG_,FP_TAG> &r)
 } //namespace CGAL
 
 #undef CGAL_int
+
+#include <CGAL/enable_warnings.h>
 
 #endif  // CGAL_SQRT_EXTENSION_TYPE_H
 

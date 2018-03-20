@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s): Ron Wein          <wein@post.tau.ac.il>
@@ -30,6 +31,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The header file for the Arrangement_on_surface_2<Traits,Dcel> class.
@@ -71,6 +73,7 @@ class Arrangement_on_surface_2 {
 public:
   typedef GeomTraits_                                     Geometry_traits_2;
   typedef TopTraits_                                      Topology_traits;
+  typedef CGAL_ALLOCATOR(int)                             Allocator;
 
   // first define adaptor ...
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
@@ -3008,4 +3011,5 @@ bool do_intersect(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 #include <CGAL/Arrangement_2/Arrangement_on_surface_2_impl.h>
 #include <CGAL/Arrangement_2/Arrangement_on_surface_2_global.h>
 
+#include <CGAL/enable_warnings.h>
 #endif

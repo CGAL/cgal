@@ -159,16 +159,22 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
       set ( ${LIB}_VERSION "unknown" )
 
-      try_run( ${LIB}_RUN_RES
-               ${LIB}_COMPILE_RES
-               "${CMAKE_BINARY_DIR}"
-               "${CGAL_INSTALLATION_PACKAGE_DIR}/config/support/print_${LIB}_version.cpp"
-               CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${${PKG}_INCLUDE_DIR};${${PKG}_DEPENDENCY_INCLUDE_DIR}"
-                           "-DLINK_LIBRARIES:STRING=${${PKG}_LIBRARIES};${${PKG}_DEPENDENCY_LIBRARIES}"
-                           "-DLINK_DIRECTORIES:STRING=${${PKG}_LIBRARIES_DIR};${${PKG}_DEPENDENCY_LIBRARIES_DIR}"
-               OUTPUT_VARIABLE ${LIB}_OUTPUT
-            )
-
+      if(NOT CMAKE_CROSSCOMPILING)
+        if(EXISTS "${CGAL_MODULES_DIR}/config/support/print_${LIB}_version.cpp")
+          try_run( ${LIB}_RUN_RES
+                   ${LIB}_COMPILE_RES
+                   "${CMAKE_BINARY_DIR}"
+                   "${CGAL_MODULES_DIR}/config/support/print_${LIB}_version.cpp"
+                   CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${${PKG}_INCLUDE_DIR};${${PKG}_DEPENDENCY_INCLUDE_DIR}"
+                               "-DLINK_LIBRARIES:STRING=${${PKG}_LIBRARIES};${${PKG}_DEPENDENCY_LIBRARIES}"
+                               "-DLINK_DIRECTORIES:STRING=${${PKG}_LIBRARIES_DIR};${${PKG}_DEPENDENCY_LIBRARIES_DIR}"
+                   OUTPUT_VARIABLE ${LIB}_OUTPUT
+                   )
+        endif()
+      else()
+        set(${LIB}_COMPILE_RES FALSE)
+        message(STATUS "CROSS-COMPILING!")
+      endif()
       if ( ${LIB}_COMPILE_RES )
 
         if ( ${LIB}_RUN_RES EQUAL "0" )
@@ -268,7 +274,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     message (STATUS "Requested component: ${component}")
 
     if(WITH_CGAL_${component})
-      if(TARGET CGAL_${component})
+      if(TARGET CGAL::CGAL_${component})
+        add_to_list( CGAL_LIBRARIES CGAL::CGAL_${component} )
+      elseif(TARGET CGAL_${component})
         add_to_list( CGAL_LIBRARIES CGAL_${component} )
       else()
         add_to_list( CGAL_LIBRARIES ${CGAL_${component}_LIBRARY} )
@@ -279,27 +287,19 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       add_to_list( CGAL_3RD_PARTY_DEFINITIONS    ${CGAL_${component}_3RD_PARTY_DEFINITIONS}    )
       add_to_list( CGAL_3RD_PARTY_LIBRARIES_DIRS ${CGAL_${component}_3RD_PARTY_LIBRARIES_DIRS} )
 
-      if (NOT MSVC AND "${component}" STREQUAL "Core")
-        # See the release notes of CGAL-4.10: CGAL_Core now requires
-        # Boost.Thread, with all compilers but MSVC.
-        find_package( Boost 1.48 REQUIRED thread system )
-        add_to_list( CGAL_3RD_PARTY_LIBRARIES ${Boost_LIBRARIES} )
-      endif()
+      # To deal with imported targets of Qt5 and Boost, when CGAL
+      # targets are themselves imported by another project.
+      if(NOT CGAL_BUILDING_LIBS)
+        if (NOT MSVC AND "${component}" STREQUAL "Core")
+          # See the release notes of CGAL-4.10: CGAL_Core now requires
+          # Boost.Thread, with all compilers but MSVC.
+          find_package( Boost 1.48 REQUIRED thread system )
+          add_to_list( CGAL_3RD_PARTY_LIBRARIES ${Boost_LIBRARIES} )
+        endif()
 
-      if (${component} STREQUAL "ImageIO")
-        find_package( ZLIB QUIET )
-
-        if(ZLIB_FOUND)
-          cache_set(CGAL_ImageIO_USE_ZLIB "ON")
-          add_definitions("-DCGAL_USE_ZLIB")
-          include_directories( SYSTEM ${ZLIB_INCLUDE_DIR} )
-        endif(ZLIB_FOUND)
-
-      endif()
-
-      if (${component} STREQUAL "Qt5")
-        find_package(OpenGL QUIET)
-        find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
+        if (${component} STREQUAL "Qt5")
+          find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
+        endif()
       endif()
 
     else(WITH_CGAL_${component})
@@ -321,23 +321,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
         else()
 
-          ####message( STATUS "External library ${component} has not been preconfigured")
-          if (${component} STREQUAL "ImageIO")
-            find_package( ZLIB QUIET )
-
-            if(ZLIB_FOUND)
-              cache_set(CGAL_ImageIO_USE_ZLIB "ON")
-              add_definitions("-DCGAL_USE_ZLIB")
-              include_directories( SYSTEM ${ZLIB_INCLUDE_DIR} )
-            endif(ZLIB_FOUND)
-
-          endif()
-
-          if (${component} STREQUAL "Qt5")
-            set(CGAL_${component}_FOUND TRUE)
-            find_package(OpenGL QUIET)
-            find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
-          endif()
           ####message( STATUS "External library ${vlib} after find")
           if (${vlib}_FOUND)
             ####message( STATUS "External library ${vlib} about to be used")
@@ -721,10 +704,6 @@ function(process_CGAL_subdirectory entry subdir type_name)
           add_subdirectory( "${source_dir}" "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
         endif()
       endif()
-    endif()
-    if(source_dir AND type_name STREQUAL "demo")
-      # Do not test demos
-      set_property(DIRECTORY "${entry}"	PROPERTY CGAL_NO_TESTING TRUE)
     endif()
   else()
     message(STATUS "${subdir}/${ENTRY_DIR_NAME} is in dont_submit")

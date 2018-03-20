@@ -13,15 +13,13 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
 
 #ifndef CGAL_GRAPH_TRAITS_TRIANGULATION_DATA_STRUCTURE_2_H
 #define CGAL_GRAPH_TRAITS_TRIANGULATION_DATA_STRUCTURE_2_H
-
-#include <CGAL/license/Triangulation_2.h>
-
 
 #include <functional>
 
@@ -272,20 +270,20 @@ namespace CGAL {
   template <class VB, class FB>
   typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::halfedge_descriptor
   next(typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::halfedge_descriptor e,
-       const Triangulation_data_structure_2<VB,FB>& g)
+       const Triangulation_data_structure_2<VB,FB>& )
   {
     typedef typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::halfedge_descriptor halfedge_descriptor;
-    return halfedge_descriptor(e.first, g.ccw(e.second));
+    return halfedge_descriptor(e.first, Triangulation_data_structure_2<VB,FB>::ccw(e.second));
   }
 
 
   template <class VB, class FB>
   typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::halfedge_descriptor
   prev(typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::halfedge_descriptor e,
-       const Triangulation_data_structure_2<VB,FB>& g)
+       const Triangulation_data_structure_2<VB,FB>& )
   {
     typedef typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::halfedge_descriptor halfedge_descriptor;
-    return halfedge_descriptor(e.first, g.cw(e.second));
+    return halfedge_descriptor(e.first, Triangulation_data_structure_2<VB,FB>::cw(e.second));
   }
 
   
@@ -302,33 +300,33 @@ namespace CGAL {
   template <class VB, class FB>
   typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::vertex_descriptor
   source(typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::edge_descriptor e,
-         const Triangulation_data_structure_2<VB,FB>& g)
+         const Triangulation_data_structure_2<VB,FB>& )
   {
-    return e.first->vertex(g.ccw(e.second));
+    return e.first->vertex(Triangulation_data_structure_2<VB,FB>::ccw(e.second));
   }
 
   template <class VB, class FB>
   typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::vertex_descriptor
   target(typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::edge_descriptor e,
-         const Triangulation_data_structure_2<VB,FB>& g)
+         const Triangulation_data_structure_2<VB,FB>& )
   {
-    return e.first->vertex(g.cw(e.second));
+    return e.first->vertex(Triangulation_data_structure_2<VB,FB>::cw(e.second));
   }
 
   template <class VB, class FB>
   typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::vertex_descriptor
   source(typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::halfedge_descriptor e,
-         const Triangulation_data_structure_2<VB,FB>& g)
+         const Triangulation_data_structure_2<VB,FB>& )
   {
-    return e.first->vertex(g.ccw(e.second));
+    return e.first->vertex(Triangulation_data_structure_2<VB,FB>::ccw(e.second));
   }
 
   template <class VB, class FB>
   typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::vertex_descriptor
   target(typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::halfedge_descriptor e,
-         const Triangulation_data_structure_2<VB,FB>& g)
+         const Triangulation_data_structure_2<VB,FB>& )
   {
-    return e.first->vertex(g.cw(e.second));
+    return e.first->vertex(Triangulation_data_structure_2<VB,FB>::cw(e.second));
   }
 
   template <class VB, class FB>
@@ -351,13 +349,13 @@ namespace CGAL {
   template <class VB, class FB>
   typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::halfedge_descriptor
   halfedge(typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::vertex_descriptor v,
-           const Triangulation_data_structure_2<VB,FB>& g)
+           const Triangulation_data_structure_2<VB,FB>& )
   {
     typedef typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits< Triangulation_data_structure_2<VB,FB> >::face_descriptor face_descriptor;
     face_descriptor fd = v->face();
     int i = fd->index(v);
-    return halfedge_descriptor(fd,g.ccw(i));
+    return halfedge_descriptor(fd,Triangulation_data_structure_2<VB,FB>::ccw(i));
   }
 
   template <class VB, class FB>

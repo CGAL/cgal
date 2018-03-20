@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri
@@ -24,8 +25,9 @@
 #include <CGAL/boost/graph/properties.h>
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/boost/graph/iterator.h>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
+#include <CGAL/boost/graph/Graph_with_descriptor_with_graph_fwd.h>
 
 namespace CGAL
 {
@@ -151,7 +153,7 @@ struct Graph_with_descriptor_with_graph
 
 
 template <typename Graph, typename Graph_descriptor, typename Descriptor>
-struct Descriptor2Descriptor: public std::unary_function<Graph_descriptor,Descriptor>
+struct Descriptor2Descriptor: public CGAL::unary_function<Graph_descriptor,Descriptor>
 {
 
   Descriptor2Descriptor()
@@ -702,16 +704,63 @@ is_valid(const Graph_with_descriptor_with_graph<Graph> & w, bool verbose = false
     @tparam PM a property_map of a `Graph`.
 
 */
-template <typename Graph, typename PM>
+template <typename Graph, typename PM, typename Category =
+          typename boost::property_traits<PM>::category>
 struct Graph_with_descriptor_with_graph_property_map {
 
-  typedef typename boost::property_traits<PM>::category category;
+  typedef Category category;
   typedef typename boost::property_traits<PM>::value_type value_type;
   typedef typename boost::property_traits<PM>::reference reference;
   typedef Gwdwg_descriptor<Graph, typename boost::property_traits<PM>::key_type > key_type;
 
   Graph* graph;
   PM pm;
+
+  Graph_with_descriptor_with_graph_property_map()
+    : graph(NULL)
+  {}
+
+  Graph_with_descriptor_with_graph_property_map(const Graph& graph, const PM& pm)
+    : graph(const_cast<Graph*>(&graph)), pm(pm)
+  {}
+
+  template <typename Descriptor>
+  friend
+  reference
+  get(const Graph_with_descriptor_with_graph_property_map<Graph,PM>& gpm, const Descriptor& d)
+  {
+    CGAL_assertion(gpm.graph!=NULL);
+    CGAL_assertion(d.graph == gpm.graph);
+    return get(gpm.pm, d.descriptor);
+  }
+
+  template <typename Descriptor>
+  friend
+  void
+  put(const Graph_with_descriptor_with_graph_property_map<Graph,PM>& gpm, const Descriptor& d,   const value_type& v)
+  {
+    CGAL_assertion(gpm.graph!=NULL);
+    CGAL_assertion(d.graph == gpm.graph);
+    put(gpm.pm, d.descriptor, v);
+  }
+}; // class Graph_with_descriptor_with_graph_property_map
+
+//specialisation for lvaluepropertymaps
+template <typename Graph, typename PM>
+struct Graph_with_descriptor_with_graph_property_map<Graph, PM, boost::lvalue_property_map_tag> {
+
+  typedef boost::lvalue_property_map_tag category;
+  typedef typename boost::property_traits<PM>::value_type value_type;
+  typedef typename boost::property_traits<PM>::reference reference;
+  typedef Gwdwg_descriptor<Graph, typename boost::property_traits<PM>::key_type > key_type;
+
+  Graph* graph;
+  PM pm;
+
+  value_type& operator[](key_type& k) const
+  {
+      return get(*this, k);
+  }
 
   Graph_with_descriptor_with_graph_property_map()
     : graph(NULL)
@@ -779,6 +828,9 @@ std::size_t hash_value(CGAL::Gwdwg_descriptor<G,D> d)
   return hash_value(d.descriptor);
 }
 
+template<typename Graph, typename PropertyTag>
+struct graph_has_property<CGAL::Graph_with_descriptor_with_graph<Graph>, PropertyTag>
+  : graph_has_property<Graph, PropertyTag> {};
 }//end namespace CGAL
 
 namespace boost {
@@ -788,9 +840,6 @@ namespace boost {
     typedef CGAL::Graph_with_descriptor_with_graph_property_map<Graph, typename boost::property_map<Graph, PropertyTag >::const_type> const_type;
   };
 
-  template<typename Graph, typename PropertyTag>
-  struct graph_has_property<CGAL::Graph_with_descriptor_with_graph<Graph>, PropertyTag>
-    : graph_has_property<Graph, PropertyTag> {};
 
 }// namespace boost
 

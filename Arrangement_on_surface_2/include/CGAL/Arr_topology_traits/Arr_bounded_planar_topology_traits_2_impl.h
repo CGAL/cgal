@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
@@ -24,8 +25,8 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
-
 /*! \file
+ *
  * Member-function definitions for the
  * Arr_bounded_planar_topology_traits_2<GeomTraits> class.
  */
@@ -35,8 +36,8 @@ namespace CGAL {
 //-----------------------------------------------------------------------------
 // Assign the contents of another topology-traits class.
 //
-template <typename GeomTraits_, typename Dcel_>
-void Arr_bounded_planar_topology_traits_2<GeomTraits_, Dcel_>::
+template <typename GeometryTraits_2, typename Dcel_>
+void Arr_bounded_planar_topology_traits_2<GeometryTraits_2, Dcel_>::
 assign(const Self& other)
 {
   // Assign the base class.
@@ -49,8 +50,8 @@ assign(const Self& other)
 //-----------------------------------------------------------------------------
 // Initialize an empty DCEL structure.
 //
-template <typename GeomTraits_, typename Dcel_>
-void Arr_bounded_planar_topology_traits_2<GeomTraits_, Dcel_>::init_dcel()
+template <typename GeometryTraits_2, typename Dcel_>
+void Arr_bounded_planar_topology_traits_2<GeometryTraits_2, Dcel_>::init_dcel()
 {
   // Clear the current DCEL.
   this->m_dcel.delete_all();
@@ -65,8 +66,9 @@ void Arr_bounded_planar_topology_traits_2<GeomTraits_, Dcel_>::init_dcel()
 //-----------------------------------------------------------------------------
 // Make the necessary updates after the DCEL structure have been updated.
 //
-template <typename GeomTraits_, typename Dcel_>
-void Arr_bounded_planar_topology_traits_2<GeomTraits_, Dcel_>::dcel_updated()
+template <typename GeometryTraits_2, typename Dcel_>
+void Arr_bounded_planar_topology_traits_2<GeometryTraits_2, Dcel_>::
+dcel_updated()
 {
   // Go over the DCEL faces and locate the unbounded face.
   unb_face = NULL;
@@ -80,6 +82,6 @@ void Arr_bounded_planar_topology_traits_2<GeomTraits_, Dcel_>::dcel_updated()
   CGAL_assertion(unb_face != NULL);
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

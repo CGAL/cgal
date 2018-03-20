@@ -12,9 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://balasmic@scm.gforge.inria.fr/svn/cgal/trunk/Arrangement_on_surface_2/include/CGAL/Arr_point_location/Trapezoidal_decomposition_2_impl.h $
-// $Id: Arr_trapezoid_ric_pl_impl.h 56667 2010-06-09 07:37:13Z sloriot $
-//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Michal Balas   <balasmic@post.tau.ac.il>
 //                based on the methods implemented in Trapezoidal_decomposition.h by Oren Nechushtan

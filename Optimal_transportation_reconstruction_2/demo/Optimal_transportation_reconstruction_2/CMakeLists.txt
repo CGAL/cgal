@@ -21,9 +21,6 @@ if(Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
 endif(Qt5_FOUND)
 
-# Find OpenGL
-find_package(OpenGL)
-
 # Find CImg
 find_path(CIMG_INCLUDE_DIR
           NAMES CImg.h
@@ -31,19 +28,18 @@ find_path(CIMG_INCLUDE_DIR
           DOC "Path to the header of the CImg library")
 
 if (CIMG_INCLUDE_DIR)
-  add_definitions(-DCGAL_USE_CIMG)
-  include_directories(${CIMG_INCLUDE_DIR})
   MESSAGE(STATUS "CImg library found, the demo can load point set from image files.")
 else()
   MESSAGE(STATUS "CImg library was not found, the demo will not be able to load point set from image files. "
                  "Try setting the environment variable CIMG_INC_DIR to point to the path of the directory containing CImg.h.")
 endif()
 
-if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND)
+if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   set(
   SRCS 
   glviewer.cpp 
+  scene.cpp
   Otr2_demo.cpp 
   window.cpp 
   render.cpp 
@@ -79,30 +75,26 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND)
 
   add_executable  ( Otr2_demo ${SRCS} ${CGAL_Qt5_MOC_FILES} ${UI_FILES} ${CGAL_Qt5_RESOURCE_FILES})
   
-  qt5_use_modules(Otr2_demo OpenGL)
-
-  # Link with Qt libraries
-  target_link_libraries( Otr2_demo ${QT_LIBRARIES} )
-
-  # Link with CGAL
-  target_link_libraries( Otr2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
-
-  # Link with OpenGL
-  target_link_libraries( Otr2_demo ${OPENGL_gl_LIBRARY} )
+  target_link_libraries( Otr2_demo PRIVATE
+    CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui Qt5::OpenGL )
   
   # Link with pthread if necessary
   if (CIMG_INCLUDE_DIR)
+    target_compile_definitions( Otr2_demo PRIVATE -DCGAL_USE_CIMG )
+    target_include_directories( Otr2_demo PRIVATE ${CIMG_INCLUDE_DIR} )
     # Is pthread around? If yes, we need to link against it
     set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
     find_package (Threads)
     if (CMAKE_USE_PTHREADS_INIT)
-      target_link_libraries( Otr2_demo ${CMAKE_THREAD_LIBS_INIT} )
+      target_link_libraries( Otr2_demo PRIVATE ${CMAKE_THREAD_LIBS_INIT} )
     endif()
   endif()
     
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Otr2_demo )
 
-else (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(Otr2_demo)
+else (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
   set(OTR2_MISSING_DEPS "")
 
@@ -118,10 +110,6 @@ else (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
     set(OTR2_MISSING_DEPS "Qt5.4, ${OTR2_MISSING_DEPS}")
   endif()
 
-  if(NOT OPENGL_FOUND)
-    set(OTR2_MISSING_DEPS "OpenGL, ${OTR2_MISSING_DEPS}")
-  endif()
-
   message(STATUS "NOTICE: This demo requires ${OTR2_MISSING_DEPS}and will not be compiled.")
 
-endif (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND)
+endif (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)

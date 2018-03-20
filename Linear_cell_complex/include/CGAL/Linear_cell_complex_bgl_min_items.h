@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -22,6 +23,7 @@
 
 #include <CGAL/Cell_attribute_with_point_and_id.h>
 #include <CGAL/Cell_attribute_with_id.h>
+#include <CGAL/tuple.h>
 
 namespace CGAL {
 

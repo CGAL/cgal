@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
@@ -31,7 +32,7 @@
 #include <vector>
 #include <functional>
 #include <iterator>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 
 namespace CGAL {

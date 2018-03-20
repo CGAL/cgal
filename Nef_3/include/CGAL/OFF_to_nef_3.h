@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$ 
-// $Id$ 
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Ralf Osbild <osbild@mpi-sb.mpg.de>
@@ -23,6 +24,7 @@
 
 #include <CGAL/license/Nef_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Nef_polyhedron_3.h>
 
@@ -246,4 +248,7 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif // CGAL_OFF_TO_NEF_3_H

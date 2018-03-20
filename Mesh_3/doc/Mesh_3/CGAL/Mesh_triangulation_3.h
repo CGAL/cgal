@@ -32,15 +32,14 @@ and defaults to `Compact_mesh_cell_base_3<Gt, MD>`.
          will have type `Robust_weighted_circumcenter_filtered_traits_3<Gt>`.
 
 \sa `make_mesh_3()`
-\sa `Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>`
+\sa `Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 
 */
 template< typename MD, typename Gt,
           typename Concurrency_tag,
           typename Vertex_base,
           typename Cell_base >
-class Mesh_triangulation_3 {
-public:
+struct Mesh_triangulation_3 {
 
 /// \name Types
 /// @{

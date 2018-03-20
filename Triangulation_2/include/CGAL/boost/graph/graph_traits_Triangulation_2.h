@@ -13,15 +13,13 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
 
 #ifndef CGAL_GRAPH_TRAITS_TRIANGULATION_2_H
 #define CGAL_GRAPH_TRAITS_TRIANGULATION_2_H
-
-#include <CGAL/license/Triangulation_2.h>
-
 
 #include <functional>
 
@@ -363,6 +361,57 @@ namespace CGAL {
     return edge_descriptor(e.first,e.second);
   }
 
+  template <class Gt, class Tds>
+  std::pair<typename boost::graph_traits< Triangulation_2<Gt,Tds> >::edge_descriptor,
+            bool>
+  edge(typename boost::graph_traits< Triangulation_2<Gt,Tds> >::vertex_descriptor u,
+       typename boost::graph_traits< Triangulation_2<Gt,Tds> >::vertex_descriptor v,
+       const Triangulation_2<Gt,Tds>& g)
+  {
+    typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >::edge_descriptor edge_descriptor;
+
+    typename Triangulation_2<Gt,Tds>::Edge_circulator c = g.incident_edges(u), done(c);
+    if (c != 0) {
+      do {
+        // find the index of the other vertex of *c
+        int indv = 3 - c->first->index(u) - c->second;
+        if(c->first->vertex(indv) == v)
+          return std::make_pair(edge_descriptor(c->first, c->second), true);
+      } while (++c != done);
+    }
+
+    return std::make_pair(edge_descriptor(), false);
+  }
+
+  template <class Gt, class Tds>
+  std::pair<typename boost::graph_traits<Triangulation_2<Gt,Tds> >::halfedge_descriptor,
+            bool>
+  halfedge(typename boost::graph_traits<Triangulation_2<Gt,Tds> >::vertex_descriptor u,
+           typename boost::graph_traits<Triangulation_2<Gt,Tds> >::vertex_descriptor v,
+           const Triangulation_2<Gt,Tds>& g)
+  {
+    typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >::halfedge_descriptor halfedge_descriptor;
+    typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >::edge_descriptor edge_descriptor;
+    typedef typename boost::graph_traits< Triangulation_2<Gt,Tds> >::face_descriptor face_descriptor;
+
+    std::pair<edge_descriptor, bool> eb = edge(u, v, g);
+
+    if(!eb.second)
+      return std::make_pair(halfedge_descriptor(), false);
+
+    const edge_descriptor& e = eb.first;
+
+    if(e.first->vertex(g.ccw(e.first->index(u))) == v)
+    {
+      return std::make_pair(halfedge_descriptor(e.first, e.second), true);
+    }
+    else
+    {
+      face_descriptor nf = e.first->neighbor(e.second);
+      int idx = nf->index(e.first);
+      return std::make_pair(halfedge_descriptor(nf, idx), true);
+    }
+  }
 
   template <class Gt, class Tds>
   inline Iterator_range<typename boost::graph_traits< Triangulation_2<Gt,Tds> >::vertex_iterator>  
@@ -530,7 +579,7 @@ namespace CGAL {
     {}
     
     long operator[](key_type vh) const {
-      return vh->id(); 
+      return vh->id();
     }
   };
 
@@ -545,11 +594,11 @@ namespace CGAL {
 
     friend reference get(T2_vertex_point_map<Gt,Tds>, key_type vh)
     { 
-      return vh->point(); 
+      return vh->point();
     }
     friend void put(T2_vertex_point_map<Gt,Tds>, key_type vh, reference v)
     {
-      vh->point()=v; 
+      vh->point() = v;
     }
     reference operator[](key_type vh) const {
       return vh->point();
@@ -637,8 +686,6 @@ namespace CGAL {
     };
   };
 
-
-
   template <>
   struct T2_property_map<boost::vertex_point_t> {
     template <class Gt, class Tds>
@@ -648,7 +695,6 @@ namespace CGAL {
     };
   };
 
-
   template <>
   struct T2_property_map<boost::edge_index_t> {
     template <class Gt, class Tds>
@@ -657,7 +703,6 @@ namespace CGAL {
       typedef T2_edge_id_map<Gt,Tds> const_type;
     };
   };
-
 
   template <>
   struct T2_property_map<boost::edge_weight_t> {

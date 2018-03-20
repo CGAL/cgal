@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Olivier Devillers <Olivivier.Devillers@sophia.inria.fr>
@@ -23,6 +24,8 @@
 #define CGAL_TRIANGULATION_HIERARCHY_2_H
 
 #include <CGAL/license/Triangulation_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/internal/Has_nested_type_Bare_point.h>
@@ -76,9 +79,10 @@ class Triangulation_hierarchy_2
     typename internal::Bare_point_type<Tr_Base>,
     boost::mpl::identity<typename Tr_Base::Point>
   >::type                                          Bare_point;
-
   typedef typename Geom_traits::Weighted_point_2   Weighted_point;
+
   typedef typename Tr_Base::Weighted_tag           Weighted_tag;
+  typedef typename Tr_Base::Periodic_tag           Periodic_tag;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Tr_Base::geom_traits;
@@ -776,5 +780,7 @@ random_level()
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TRIANGULATION_HIERARCHY_2_H

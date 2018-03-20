@@ -12,6 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
 #ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_TWO_VERTICES_PARAMETERIZER_3_H_INCLUDED
@@ -19,11 +23,15 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <boost/foreach.hpp>
+#include <boost/function_output_iterator.hpp>
 
 #include <cfloat>
 #include <climits>
@@ -319,5 +327,7 @@ public:
 } // Surface_mesh_parameterization
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_PARAMETERIZATION_TWO_VERTICES_PARAMETERIZER_3_H_INCLUDED

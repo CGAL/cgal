@@ -51,7 +51,7 @@ void test_average_spacing(std::deque<Point>& points, // input point set
   std::cerr << "Computes average spacing to k nearest neighbors (k="<< nb_neighbors << ")... ";
   CGAL::Timer task_timer; task_timer.start();
 
-  FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(points.begin(), points.end(), nb_neighbors);
+  FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(points, nb_neighbors);
   std::cout << average_spacing << std::endl;
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();

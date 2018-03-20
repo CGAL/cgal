@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s): Peter Hachenberger
@@ -23,6 +24,7 @@
 
 #include <CGAL/license/Nef_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <list>
 
@@ -68,4 +70,7 @@ class Nef_nary_intersection_3 {
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif // CGAL_NEF_NARY_INTERSECTION_3_H

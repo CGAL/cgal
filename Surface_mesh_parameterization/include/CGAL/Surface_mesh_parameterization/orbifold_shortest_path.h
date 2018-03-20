@@ -23,6 +23,8 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/assertions.h>
 
 #include <boost/foreach.hpp>
@@ -33,6 +35,8 @@
 #include <exception>
 #include <list>
 #include <utility>
+#include <iostream>
+#include <fstream>
 
 namespace CGAL {
 
@@ -199,5 +203,7 @@ void compute_shortest_paths_between_cones(const TriangleMesh& mesh,
 } // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_PARAMETERIZATION_SHORTEST_PATH_H

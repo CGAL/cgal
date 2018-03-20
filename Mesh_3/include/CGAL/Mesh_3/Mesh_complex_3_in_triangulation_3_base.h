@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau, Stéphane Tayeb
@@ -28,6 +29,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -563,7 +565,7 @@ private:
           end = triangulation().finite_vertices_end();
         vit != end; ++vit)
     {
-      vit->set_c2t3_cache(0, -1);
+      vit->set_c2t3_cache(0, (std::numeric_limits<size_type>::max)());
     }
 
     edge_facet_counter_.clear();
@@ -594,7 +596,7 @@ private:
 #endif // CGAL_LINKED_WITH_TBB
 
           const std::size_t n = edge_va->cached_number_of_incident_facets();
-          edge_va->set_c2t3_cache(n+1, -1);
+          edge_va->set_c2t3_cache(n+1, (std::numeric_limits<size_type>::max)());
         }
       }
     }
@@ -608,7 +610,7 @@ private:
     if( v->is_c2t3_cache_valid() )
     {
       const std::size_t n = v->cached_number_of_components();
-      if(n != std::size_t(-1)) return n;
+      if(n != (std::numeric_limits<size_type>::max)()) return n;
     }
 
     Union_find<Facet> facets;
@@ -1074,5 +1076,7 @@ rescan_after_load_of_triangulation() {
 
 }  // end namespace Mesh_3
 }  // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_BASE_H

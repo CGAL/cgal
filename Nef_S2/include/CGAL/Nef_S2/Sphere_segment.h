@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel  <seel@mpi-sb.mpg.de>
@@ -193,13 +194,18 @@ void split_halfcircle(Sphere_segment<R>& s1,
 bool is_short() const 
 /*{\Mop a segment is short iff it is shorter than a halfcircle.}*/
 { 
-  return R().orientation_3_object()(Point_3(0,0,0), source(), target(),
-				    CGAL::ORIGIN + this->ptr()->c_.orthogonal_vector()) 
+  return R().orientation_3_object()(Point_3(0,0,0),
+                                    Point_3(source()),
+                                    Point_3(target()),
+				    CGAL::ORIGIN +
+                                    this->ptr()->c_.orthogonal_vector())
     == CGAL::POSITIVE; }
 
 bool is_long() const 
 /*{\Mop a segment is long iff it is longer than a halfcircle.}*/
-{ return R().orientation_3_object()(Point_3(0,0,0), source(), target(),
+{ return R().orientation_3_object()(Point_3(0,0,0),
+                                    Point_3(source()),
+                                    Point_3(target()),
 				    CGAL::ORIGIN + this->ptr()->c_.orthogonal_vector()) 
     == CGAL::NEGATIVE; }
 

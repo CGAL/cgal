@@ -13,14 +13,12 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Laurent Rineau and Sebastien Loriot
 
 #ifndef CGAL_IO_OFF_READER_H
 #define CGAL_IO_OFF_READER_H
-
-#include <CGAL/license/Polyhedron.h>
-
 
 #include <CGAL/IO/File_scanner_OFF.h>
 

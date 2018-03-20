@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Fernando Cacciola
@@ -23,14 +24,15 @@
 #ifndef CGAL_IO_DXF_WRITER_H
 #define CGAL_IO_DXF_WRITER_H
 
-#include <CGAL/license/Straight_skeleton_2.h>
-
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/algorithm.h>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <list>
+#include <boost/format.hpp>
 
 namespace CGAL {
 
@@ -142,24 +144,24 @@ private:
 
   std::string get_entity_handle()
   {
-    char lBuff[64];
-    sprintf(lBuff,"%5x",mHandle++);
-    return std::string(lBuff);
+    std::ostringstream oss;
+    oss << boost::format("%5x") % mHandle++;
+    return oss.str();
   }
   
   std::string to_str ( int aN )
   {
-    char lBuff[64];
-    sprintf(lBuff,"%6d",aN);
-    return std::string(lBuff);
+    std::ostringstream oss;
+    oss << boost::format("%6d") % aN;
+    return oss.str();
   }
   
   
   std::string to_str ( double aN )
   {
-    char lBuff[64];
-    sprintf(lBuff,"%6.6f",aN);
-    return std::string(lBuff);
+    std::ostringstream oss;
+    oss << boost::format("%6.6f") % aN;
+    return oss.str();
   }
   
   void insert_line ( Line_iterator aPos, std::string aLine )
@@ -281,5 +283,7 @@ private:
 } ;
 
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_IO_DXF_WRITER_H

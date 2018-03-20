@@ -67,8 +67,8 @@ int main(int argc, char*argv[])
   // Set tetrahedron size (keep cell_radius_edge_ratio), ignore facets
   Mesh_criteria new_criteria(cell_radius_edge_ratio=3, cell_size=0.03);
 
-  // Mesh refinement
-  CGAL::refine_mesh_3(c3t3, domain, new_criteria);
+  // Mesh refinement (and make the output manifold)
+  CGAL::refine_mesh_3(c3t3, domain, new_criteria, manifold());
 
   // Output
   medit_file.open("out_2.mesh");

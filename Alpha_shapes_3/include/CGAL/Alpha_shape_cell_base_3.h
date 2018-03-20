@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Tran Kai Frank DA
 
@@ -22,7 +22,6 @@
 #define CGAL_ALPHA_SHAPE_CELL_BASE_3_H
 
 #include <CGAL/license/Alpha_shapes_3.h>
-
 
 #include <vector>
 #include <CGAL/Compact_container.h>
@@ -57,8 +56,10 @@ public:
   bool is_on_chull() const {return  _is_on_chull;}
 };
 
-
-template < class Gt, class Cb_ = Default, class ExactAlphaComparisonTag=Tag_false,class Weighted_tag=Tag_false >
+template < class Gt,
+           class Cb_ = Default,
+           class ExactAlphaComparisonTag = Tag_false,
+           class Weighted_tag = Tag_false >
 class Alpha_shape_cell_base_3
   : public Default::Get<Cb_, Triangulation_cell_base_3<Gt> >::type
 {
@@ -73,21 +74,18 @@ public:
     typedef Alpha_shape_cell_base_3<Gt, Cb2,ExactAlphaComparisonTag,Weighted_tag>                Other;
   };
 
-  typedef typename internal::Alpha_nt_selector_3<Gt,ExactAlphaComparisonTag,Weighted_tag>::Type_of_alpha  NT;
-  typedef CGAL::Alpha_status<NT>        Alpha_status;
-  typedef Compact_container<Alpha_status>   Alpha_status_container;
-  typedef typename Alpha_status_container::const_iterator 
-                                            Alpha_status_const_iterator;
-  typedef typename Alpha_status_container::iterator 
-                                            Alpha_status_iterator;
- 
+  typedef typename internal::Alpha_nt_selector_3<
+    Gt,ExactAlphaComparisonTag,Weighted_tag>::Type_of_alpha  NT;
+  typedef CGAL::Alpha_status<NT>                             Alpha_status;
+  typedef Compact_container<Alpha_status>                    Alpha_status_container;
+  typedef typename Alpha_status_container::const_iterator    Alpha_status_const_iterator;
+  typedef typename Alpha_status_container::iterator          Alpha_status_iterator;
 
 private:
   Alpha_status_iterator facet_status[4];
   NT A;
 
 public:
-  
   Alpha_shape_cell_base_3() 
     : Cb() {}
   
@@ -101,19 +99,15 @@ public:
                           Cell_handle n2, Cell_handle n3)
     : Cb(v0, v1, v2, v3, n0, n1, n2, n3) {}
 
+  NT get_alpha() const { return A; }
+  void set_alpha(const NT & AA) { A = AA;}
 
- NT get_alpha() const    {  return A;    }
- void set_alpha(const NT & AA) { A = AA;}
+  Alpha_status_iterator get_facet_status(int i) {return facet_status[i]; }
+  Alpha_status_const_iterator get_facet_status(int i) const { return facet_status[i]; }
 
- Alpha_status_iterator get_facet_status(int i) {return facet_status[i];}
- Alpha_status_const_iterator get_facet_status(int i) const {
-   return facet_status[i];}
-
- void set_facet_status(int i, Alpha_status_iterator as) {
-   facet_status[i]= as;  }
-
+  void set_facet_status(int i, Alpha_status_iterator as) { facet_status[i]= as; }
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_ALPHA_SHAPE_CELL_BASE_3_H

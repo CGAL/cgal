@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch> and
@@ -295,7 +296,7 @@ namespace Optimisation {
     
     template < class Kernel >
     class Rdbmop
-    : public std::binary_function< Direction_2, int, Direction_2 >
+    : public CGAL::binary_function< Direction_2, int, Direction_2 >
     {
       typename Kernel::Construct_perpendicular_vector_2   cperpvec;
       typename Kernel::Construct_vector_from_direction_2  cvec;

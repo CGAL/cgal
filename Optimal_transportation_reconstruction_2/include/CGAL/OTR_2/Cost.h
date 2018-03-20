@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
@@ -36,20 +37,23 @@ private:
   FT m_tang;
   FT m_max_norm;
   FT m_max_tang;
+  FT m_total_weight;
 
 public:
   Cost()
   : m_norm(0),
     m_tang(0),
     m_max_norm(0),
-    m_max_tang(0)
+    m_max_tang(0),
+    m_total_weight(0)
   {}
 
   Cost(const FT norm, const FT tang)
   : m_norm(norm),
     m_tang(tang),
     m_max_norm(norm),
-    m_max_tang(tang)
+    m_max_tang(tang),
+    m_total_weight(0)
   {}
 
   ~Cost() {}
@@ -70,6 +74,17 @@ public:
   const FT max_norm() const { return m_max_norm; }
 
   const FT max_tang() const { return m_max_tang; }
+
+  const FT total_weight() const { return m_total_weight; }
+
+  template <typename SampleContainer>
+  void set_total_weight(const SampleContainer& samples)
+  {
+    m_total_weight = (FT)0;
+    for (typename SampleContainer::const_iterator it = samples.begin();
+         it != samples.end(); ++ it)
+      m_total_weight += (*it)->mass();
+  }
 
   FT finalize(const FT alpha = FT(0.5)) const
   {

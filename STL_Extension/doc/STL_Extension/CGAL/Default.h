@@ -39,8 +39,7 @@ using `Default`. It is enough to fetch the type as
 \cgalExample{STL_Extension/Default.cpp} 
 
 */
-class Default {
-public:
+struct Default {
 
 
 /// \name Types 
@@ -50,10 +49,19 @@ A nested template providing a typedef `type` which equals `Type` if
 `Parameter` is `Default`, and `Parameter` otherwise. 
 */ 
 template <typename Parameter, typename Type>
-struct struct Get {
+struct Get {
   typedef unspecified_type type;
 };
-/// @}
+/*!
+A nested template providing a typedef `type` which equals `MetaFct::type` if
+`Parameter` is `Default`, and `Parameter` otherwise. Use this template
+instead of `CGAL::Default::Get` when the default parameter should not be
+instantiated by default.
+*/
+template <typename Parameter, typename MetaFct>
+struct Lazy_get {
+  typedef unspecified_type type;
+};/// @}
 
 
 }; /* end Default */

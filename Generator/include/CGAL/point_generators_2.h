@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
@@ -28,6 +29,8 @@
 
 #ifndef CGAL_POINT_GENERATORS_2_H
 #define CGAL_POINT_GENERATORS_2_H 1
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/generators.h>
 #include <CGAL/number_type_basic.h>
@@ -703,5 +706,7 @@ struct Random_points_in_triangles_2
 };
 
 } //namespace CGAL
+#include <CGAL/enable_warnings.h>
+
 #endif // CGAL_POINT_GENERATORS_2_H //
 // EOF //

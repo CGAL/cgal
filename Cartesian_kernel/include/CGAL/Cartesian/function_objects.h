@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Stefan Schirra, Sylvain Pion, Michael Hoffmann
@@ -1043,7 +1044,6 @@ namespace CartesianKernelFunctors {
 
   };
 
-  // TODO ...
   template <typename K>
   class Compute_squared_radius_2
   {
@@ -1051,29 +1051,21 @@ namespace CartesianKernelFunctors {
     typedef typename K::Point_2     Point_2;
     typedef typename K::Circle_2    Circle_2;
   public:
-    template<class>
-    struct result {
-      typedef FT type;
-    };
-    
-    template<typename F>
-    struct result<F(Circle_2)> {
-      typedef const FT& type;
-    };
+    typedef FT                      result_type;
 
-    const FT&
+    result_type
     operator()( const Circle_2& c) const
     { return c.rep().squared_radius(); }
 
-    FT
+    result_type
     operator()( const Point_2& /*p*/) const
     { return FT(0); }
 
-    FT
+    result_type
     operator()( const Point_2& p, const Point_2& q) const
     { return squared_radiusC2(p.x(), p.y(), q.x(), q.y()); }
 
-    FT
+    result_type
     operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
     { return squared_radiusC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y()); }
   };
@@ -1811,10 +1803,21 @@ namespace CartesianKernelFunctors {
     result_type
     operator()(const Triangle_2& t) const
     {
+      Bbox_2 bb = this->operator()(t.vertex(0));
+      bb += this->operator()(t.vertex(1));
+      bb += this->operator()(t.vertex(2));
+      return bb;
+      /*
+	  Microsoft (R) C/C++ Optimizing Compiler Version 18.00.40629.0 for x64 
+	  produces a segfault of this functor for Simple_cartesian<Interval_nt<0>>
+	  with the original version of the code below
+	  Note that it also worked for 18.00.21005.1
+
       typename K::Construct_bbox_2 construct_bbox_2;
       return construct_bbox_2(t.vertex(0))
 	   + construct_bbox_2(t.vertex(1))
 	   + construct_bbox_2(t.vertex(2));
+      */
     }
 
     result_type

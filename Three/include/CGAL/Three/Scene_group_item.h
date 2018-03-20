@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Maxime Gimeno
@@ -116,12 +117,6 @@ public :
     //! rendering mode is adequat.
     //! @see #RenderingMode
     virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
-    //!\brief draws all the children
-    //!
-    //! Calls `Scene_item::drawSplats()` for each child if its current
-    //! rendering mode is `Splatting`.
-    //! @see #RenderingMode
-    virtual void drawSplats(CGAL::Three::Viewer_interface*) const;
     ///@}
 
     //!Adds a CGAL::Three::Scene_item* to the list of children.
@@ -165,15 +160,20 @@ public :
     void setPointsPlusNormalsMode(){
       setRenderingMode(PointsPlusNormals);
     }
-    //!Sets all the children in splat rendering.
-    void setSplattingMode(){
-      setRenderingMode(Splatting);
-    }
     //! \brief Returns a list of all the direct children.
     //!
     //! Only returns children that have this item as a parent.
     //! Children of these children are not returned.
     QList<Scene_item*> getChildren() const {return children;}
+
+    //! \brief getChildrenForSelection returns the list of
+    //! children to select along with the group.
+    //!
+    //! When a `Scene_group_item` is added to the selection of the scene,
+    //! this function defines which of its children will be added too.
+    //! Typically overriden to allow applying an operation from the
+    //! Operation menu only to the parent item and not to its children.
+    virtual QList<Scene_item*> getChildrenForSelection() const {return children;}
     //!Removes a Scene_item from the list of children.
     //!@see getChildren() @see addChild()
     void removeChild( Scene_item* item)
@@ -181,6 +181,7 @@ public :
      if(isChildLocked(item))
       return;
      update_group_number(item,0);
+     item->moveToGroup(0);
      children.removeOne(item);
     }
     //!Moves a child up in the list.

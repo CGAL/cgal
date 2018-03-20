@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
@@ -209,11 +210,13 @@ bool collinearly_visible(unsigned int edge_num1, unsigned int e_num,
                          const Traits& traits)
 {
    typedef typename Traits::Orientation_2                Orientation_2;
+   typedef typename Traits::Point_2                      Point_2;
    Orientation_2 orientation = traits.orientation_2_object();
 
    if ((e_num == edge_num1+1 || e_num+1 == edge_num2) && 
        edges[edge_num1][edge_num2].is_visible() &&
-       orientation(polygon[edge_num1], polygon[e_num], polygon[edge_num2]) ==
+       orientation(Point_2(polygon[edge_num1]), Point_2(polygon[e_num]),
+                   Point_2(polygon[edge_num2])) ==
                   COLLINEAR)
      return true;
    else
@@ -364,6 +367,7 @@ void make_collinear_vertices_visible(Polygon& polygon,
 {
     typedef typename Polygon::size_type                   size_type;
     typedef typename Traits::Orientation_2                Orientation_2;
+    typedef typename Traits::Point_2                      Point_2;
     Orientation_2 orientation = traits.orientation_2_object();
 
     size_type i; 
@@ -380,7 +384,7 @@ void make_collinear_vertices_visible(Polygon& polygon,
     j = 1;
     size_type start_i = 0;
     while (i > 0 && 
-           orientation(polygon[i], polygon[prev_j], polygon[j]) == COLLINEAR)
+           orientation(Point_2(polygon[i]), Point_2(polygon[prev_j]), Point_2(polygon[j])) == COLLINEAR)
     {
        prev_j = i;
        start_i = i;
@@ -390,7 +394,7 @@ void make_collinear_vertices_visible(Polygon& polygon,
     prev_j = 1;
     j = 2;
     while (j < polygon.size() &&
-           orientation(polygon[i], polygon[prev_j], polygon[j]) == COLLINEAR)
+           orientation(Point_2(polygon[i]), Point_2(polygon[prev_j]), Point_2(polygon[j])) == COLLINEAR)
     {
        i++;
        prev_j++;
@@ -419,7 +423,7 @@ void make_collinear_vertices_visible(Polygon& polygon,
        prev_j = i+1;
        j = i+2;
        while (j < polygon.size() &&
-              orientation(polygon[i], polygon[prev_j], polygon[j]) == 
+              orientation(Point_2(polygon[i]), Point_2(polygon[prev_j]), Point_2(polygon[j])) == 
               COLLINEAR)
        {
            j++;

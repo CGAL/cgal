@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
 //                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
@@ -24,6 +25,7 @@
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 
+#include <CGAL/tss.h>
 #include <CGAL/Arr_rat_arc/Base_rational_arc_ds_1.h>
 #include <CGAL/Handle_with_policy.h>
 namespace CGAL {
@@ -212,8 +214,8 @@ public:
 private:
   static Self& get_default_instance()
   {
-    static Algebraic_kernel_d_1 kernel;
-    static Self x = Self(Polynomial_1(0), Polynomial_1(1), &kernel); 
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Algebraic_kernel_d_1, kernel);
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_3(Self, x, Polynomial_1(0), Polynomial_1(1), &kernel); 
     return x; 
   } 
 public:

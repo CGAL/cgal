@@ -20,7 +20,7 @@ typedef CGAL::First_of_pair_property_map<Point_with_normal>  Point_map;
 typedef CGAL::Second_of_pair_property_map<Point_with_normal> Normal_map;
 
 // Efficient RANSAC types
-typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits
+typedef CGAL::Shape_detection_3::Shape_detection_traits
   <Kernel, Pwn_vector, Point_map, Normal_map>                Traits;
 typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>    Efficient_ransac;
 typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
@@ -34,10 +34,10 @@ int main (int argc, char** argv)
   std::ifstream stream(argc>1 ? argv[1] : "data/cube.pwn");
 
   if (!stream || 
-    !CGAL::read_xyz_points_and_normals(stream,
+    !CGAL::read_xyz_points(stream,
       std::back_inserter(points),
-      Point_map(),
-      Normal_map()))
+      CGAL::parameters::point_map(Point_map()).
+      normal_map(Normal_map())))
   {
       std::cerr << "Error: cannot read file cube.pwn" << std::endl;
       return EXIT_FAILURE;
@@ -50,20 +50,26 @@ int main (int argc, char** argv)
   ransac.set_input(points);
   ransac.add_shape_factory<Plane>();
   ransac.detect();
-
+  
+  Efficient_ransac::Plane_range planes = ransac.planes();
+  
   Pwn_vector structured_pts;
 
-  CGAL::structure_point_set (points.begin (), points.end (), // input points
+  CGAL::structure_point_set (points,
+                             planes,
                              std::back_inserter (structured_pts),
-                             ransac, // shape detection engine
-                             0.015); // epsilon for structuring points
+                             0.015, // epsilon for structuring points
+                             CGAL::parameters::point_map (Point_map()).
+                             normal_map (Normal_map()).
+                             plane_map (CGAL::Shape_detection_3::Plane_map<Traits>()).
+                             plane_index_map (CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes)));
 
   std::cerr << structured_pts.size ()
             << " structured point(s) generated." << std::endl;
 
   std::ofstream out ("out.pwn");
-  CGAL::write_xyz_points_and_normals (out, structured_pts.begin(), structured_pts.end(),
-                                      Point_map(), Normal_map());
+  CGAL::write_xyz_points (out, structured_pts,
+                          CGAL::parameters::point_map(Point_map()).normal_map(Normal_map()));
   out.close();
   
   return EXIT_SUCCESS;

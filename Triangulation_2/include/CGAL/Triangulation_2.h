@@ -12,12 +12,18 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Olivier Devillers, Mariette Yvinec
 
 #ifndef CGAL_TRIANGULATION_2_H
 #define CGAL_TRIANGULATION_2_H
 
 #include <CGAL/license/Triangulation_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <list>
 #include <vector>
@@ -46,7 +52,7 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
 #include <CGAL/internal/Static_filters/tools.h>
@@ -211,8 +217,11 @@ public:
         OUTSIDE_CONVEX_HULL, //3
         OUTSIDE_AFFINE_HULL}; //4
 
-  //Tag to distinguish regular triangulations from others;
+  //Tag to distinguish regular triangulations from others
   typedef Tag_false  Weighted_tag;
+
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_false  Periodic_tag;
 
 protected:
   Gt _gt;
@@ -269,12 +278,14 @@ public:
 
   // GEOMETRIC FEATURES AND CONSTRUCTION
   Point_2 construct_point(const Point& p) const;
-  Triangle triangle(Face_handle f) const;
+  const Point& point(Face_handle c, int i) const;
+  const Point& point(Vertex_handle v) const;
   Segment segment(Face_handle f, int i) const;
   Segment segment(const Edge& e) const;
   Segment segment(const Edge_circulator& ec) const;
   Segment segment(const All_edges_iterator& ei) const;
   Segment segment(const Finite_edges_iterator& ei) const;
+  Triangle triangle(Face_handle f) const;
   Point_2 circumcenter(Face_handle f) const;
   Point_2 circumcenter(const Point& p0,
                        const Point& p1,
@@ -965,16 +976,24 @@ construct_point(const Point& p) const
 }
 
 template <class Gt, class Tds >
-typename Triangulation_2<Gt, Tds>::Triangle
+const typename Triangulation_2<Gt, Tds>::Point&
 Triangulation_2<Gt, Tds>::
-triangle(Face_handle f) const
+point(Face_handle f, int i) const
 {
-  CGAL_triangulation_precondition( ! is_infinite(f) );
-  typename Gt::Construct_triangle_2
-      construct_triangle = geom_traits().construct_triangle_2_object();
-  return construct_triangle(construct_point(f->vertex(0)->point()),
-                            construct_point(f->vertex(1)->point()),
-                            construct_point(f->vertex(2)->point()));
+  CGAL_triangulation_precondition( dimension() >= 0 );
+  CGAL_triangulation_precondition( i >= 0 && i <= dimension() );
+  CGAL_triangulation_precondition( ! is_infinite(f->vertex(i)) );
+  return f->vertex(i)->point();
+}
+
+template <class Gt, class Tds >
+const typename Triangulation_2<Gt, Tds>::Point&
+Triangulation_2<Gt, Tds>::
+point(Vertex_handle v) const
+{
+  CGAL_triangulation_precondition( dimension() >= 0 );
+  CGAL_triangulation_precondition( ! is_infinite(v) );
+  return v->point();
 }
 
 template <class Gt, class Tds >
@@ -1023,6 +1042,19 @@ Triangulation_2<Gt, Tds>::
 segment(const All_edges_iterator& ei) const
 {
   return segment(*ei);
+}
+
+template <class Gt, class Tds >
+typename Triangulation_2<Gt, Tds>::Triangle
+Triangulation_2<Gt, Tds>::
+triangle(Face_handle f) const
+{
+  CGAL_triangulation_precondition( ! is_infinite(f) );
+  typename Gt::Construct_triangle_2
+      construct_triangle = geom_traits().construct_triangle_2_object();
+  return construct_triangle(construct_point(f->vertex(0)->point()),
+                            construct_point(f->vertex(1)->point()),
+                            construct_point(f->vertex(2)->point()));
 }
 
 template <class Gt, class Tds >
@@ -3622,5 +3654,7 @@ operator>>(std::istream& is, Triangulation_2<Gt, Tds> &tr)
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_TRIANGULATION_2_H

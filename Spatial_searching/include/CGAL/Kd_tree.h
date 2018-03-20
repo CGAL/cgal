@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>),
 //               : Waqar Khan <wkhan@mpi-inf.mpg.de>
@@ -23,6 +24,7 @@
 
 #include <CGAL/license/Spatial_searching.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/assertions.h>
@@ -415,7 +417,6 @@ private:
       //if (traits().construct_cartesian_const_iterator_d_object()(p)[newparent->cutting_dimension()] >= newparent->cutting_value())
 	return remove_(p, parent, islower, newparent, false, newparent->upper(), equal_to_p);
 
-      CGAL_assertion(false); // Point was not found
     }
 
     // Actual removal
@@ -584,5 +585,7 @@ public:
 };
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_KD_TREE_H

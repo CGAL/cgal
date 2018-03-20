@@ -14,7 +14,8 @@
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0+
+//
 //
 // Author(s)     : Sebastien Loriot, Sylvain Pion
 
@@ -28,9 +29,9 @@
 #endif
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>
-#include <CGAL/Sweep_line_2_algorithms.h>
+#include <CGAL/Surface_sweep_2_algorithms.h>
 #include <CGAL/Object.h>
-#include <CGAL/CGAL_Ipelet_base.h> 
+#include <CGAL/CGAL_Ipelet_base.h>
 
 
 namespace CGAL_argt{
@@ -43,7 +44,7 @@ typedef std::list<Curve_2>                                          Curve_list;
 typedef std::list<X_monotone_curve_2>                               X_monotone_list;
 
 const std::string sublabel[] = {
-  "Segmentation","Help" 
+  "Segmentation","Help"
 };
 
 const std::string helpmsg[] = {
@@ -51,7 +52,7 @@ const std::string helpmsg[] = {
 };
 
 
-class ArrPolyIpelet 
+class ArrPolyIpelet
   : public CGAL::Ipelet_base<Kernel,2>{
 public:
   ArrPolyIpelet()
@@ -67,12 +68,12 @@ void ArrPolyIpelet::protected_run(int fn){
 
   X_monotone_list output_curves;
   Curve_list input_curves;
-  //Argt 
+  //Argt
   std::list<Segment_2> sg_list;
   std::list<Circle_2> cir_list;
   std::list<Polygon_2> pol_list;
   std::list<Circular_arc_2> arc_list;
-  
+
   read_active_objects(
     CGAL::dispatch_or_drop_output<Polygon_2,Circle_2,Segment_2,Circular_arc_2>(
       std::back_inserter(pol_list),
@@ -86,13 +87,13 @@ void ArrPolyIpelet::protected_run(int fn){
   for (std::list<Polygon_2>::iterator it=pol_list.begin();it!=pol_list.end();++it)
     for(Polygon_2::Edge_const_iterator edge_it=it->edges_begin();edge_it!=it->edges_end();++edge_it)
       input_curves.push_back(Curve_2(edge_it->point(0),edge_it->point(1)));
-  
+
   for (std::list<Segment_2>::iterator it=sg_list.begin();it!=sg_list.end();++it)
     input_curves.push_back(Curve_2(it->point(0),it->point(1)));
-  
+
   for (std::list<Circle_2>::iterator it=cir_list.begin();it!=cir_list.end();++it)
     input_curves.push_back(Curve_2(it->center(),sqrt(CGAL::to_double(it->squared_radius()))));
-  
+
   for (std::list<Circular_arc_2>::iterator it=arc_list.begin();it!=arc_list.end();++it)
     input_curves.push_back(
       Curve_2( CGAL::cpp11::get<0>(*it).center(),
@@ -105,10 +106,10 @@ void ArrPolyIpelet::protected_run(int fn){
 
   Traits T;
   CGAL::compute_subcurves(input_curves.begin(),input_curves.end(),std::back_inserter(output_curves),false,T);
-  
 
 
-  
+
+
   for (X_monotone_list::iterator it=output_curves.begin();it!=output_curves.end();++it){
     Point_2 S(CGAL::to_double(it->source().x()),CGAL::to_double(it->source().y()));
     Point_2 T(CGAL::to_double(it->target().x()),CGAL::to_double(it->target().y()));

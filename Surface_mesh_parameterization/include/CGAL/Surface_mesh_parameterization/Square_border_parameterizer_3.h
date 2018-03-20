@@ -12,12 +12,18 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
 #ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_SQUARE_BORDER_PARAMETERIZER_3_H
 #define CGAL_SURFACE_MESH_PARAMETERIZATION_SQUARE_BORDER_PARAMETERIZER_3_H
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
@@ -123,7 +129,7 @@ private:
     halfedge_around_face_iterator b, e, best;
     double min = DBL_MAX; // distance for 'best'
 
-    std::size_t id = 0, min_id = -1;
+    std::size_t id = 0, min_id = (std::numeric_limits<std::size_t>::max)();
     for(boost::tie(b,e) = halfedges_around_face(bhd, mesh); b!=e; ++b, ++id) {
       double d = CGAL::abs(offset[id] - value);
       if(d < min) {
@@ -514,5 +520,7 @@ protected:
 } // Surface_mesh_parameterization
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_PARAMETERIZATION_SQUARE_BORDER_PARAMETERIZER_3_H

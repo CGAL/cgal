@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez
@@ -134,7 +135,7 @@ private:
 /// @param Gt Geometric traits class.
 
 template <class Gt>
-struct Normal_of_point_with_normal_pmap
+struct Normal_of_point_with_normal_map
 {
   typedef Point_with_normal_3<Gt> Point_with_normal; ///< Position + normal
   typedef typename Gt::Vector_3 Vector; /// normal
@@ -147,7 +148,7 @@ struct Normal_of_point_with_normal_pmap
   /// Access a property map element
   value_type& operator[](key_type& pwn) const { return pwn.normal(); }
 
-  typedef Normal_of_point_with_normal_pmap<Gt> Self;
+  typedef Normal_of_point_with_normal_map<Gt> Self;
   /// \name Put/get free functions
   /// @{
   friend reference get(const Self&,const key_type& k) {return k.normal();}
@@ -155,16 +156,16 @@ struct Normal_of_point_with_normal_pmap
   /// @};}
 };
 
-/// Free function to create a Normal_of_point_with_normal_pmap property map.
+/// Free function to create a Normal_of_point_with_normal_map property map.
 ///
-/// @relates Normal_of_point_with_normal_pmap
+/// @relates Normal_of_point_with_normal_map
 
 template <class Point_with_normal> // Point_with_normal type
-Normal_of_point_with_normal_pmap<
+Normal_of_point_with_normal_map<
   typename CGAL::Kernel_traits<Point_with_normal>::Kernel>
-  make_normal_of_point_with_normal_pmap(Point_with_normal)
+  make_normal_of_point_with_normal_map(Point_with_normal)
 {
-  return Normal_of_point_with_normal_pmap<typename CGAL::Kernel_traits<Point_with_normal>::Kernel>();
+  return Normal_of_point_with_normal_map<typename CGAL::Kernel_traits<Point_with_normal>::Kernel>();
 }
 
 /// \endcond

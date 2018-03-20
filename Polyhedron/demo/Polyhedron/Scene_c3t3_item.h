@@ -11,7 +11,6 @@
 #include <set>
 
 #include <QtCore/qglobal.h>
-#include <CGAL/gl.h>
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
 #include <QOpenGLVertexArrayObject>
@@ -113,12 +112,14 @@ public:
 
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const  Q_DECL_OVERRIDE{
-    return (m != Gouraud && m != PointsPlusNormals && m != Splatting && m != Points && m != ShadedPoints);
+    return (m != Gouraud && m != PointsPlusNormals && m != Points && m != ShadedPoints);
   }
 
   void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   void drawPoints(CGAL::Three::Viewer_interface * viewer) const Q_DECL_OVERRIDE;
+   //When selecting a c3t3 item, we don't want to select its children, so we can still apply Operations to it
+  QList<Scene_item*> getChildrenForSelection() const Q_DECL_OVERRIDE { return QList<Scene_item*>(); }
   public:
     QMenu* contextMenu() Q_DECL_OVERRIDE;
     void copyProperties(Scene_item *) Q_DECL_OVERRIDE;

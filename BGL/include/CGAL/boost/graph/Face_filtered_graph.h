@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Maxime Gimeno
@@ -25,11 +26,12 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/Dynamic_property_map.h>
 #include <CGAL/assertions.h>
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/foreach.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/dynamic_bitset.hpp>
@@ -1110,6 +1112,13 @@ put(PropertyTag ptag, const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w,
   put(ptag, w.graph(), k, v);
 }
 
+template<typename Graph,
+         typename FIMap,
+         typename VIMap,
+         typename HIMap,
+         typename PropertyTag>
+struct graph_has_property<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, PropertyTag>
+    : graph_has_property<Graph, PropertyTag> {};
 }//end namespace CGAL
 
 namespace boost {
@@ -1123,13 +1132,24 @@ struct property_map<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>,Proper
   typedef typename boost::property_map<Graph, PropertyTag >::const_type const_type;
 };
 
-template<typename Graph,
-         typename FIMap,
-         typename VIMap,
-         typename HIMap,
-         typename PropertyTag>
-struct graph_has_property<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, PropertyTag>
-    : graph_has_property<Graph, PropertyTag> {};
+#define CGAL_FILTERED_FACE_GRAPH_DYNAMIC_PMAP_SPECIALIZATION(DYNAMIC_TAG) \
+template<typename Graph, \
+         typename FIMap, \
+         typename VIMap, \
+         typename HIMap, \
+         typename T> \
+struct property_map<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, CGAL::DYNAMIC_TAG<T> > { \
+  typedef typename boost::property_map<Graph, CGAL::DYNAMIC_TAG<T> >::type type; \
+  typedef typename boost::property_map<Graph, CGAL::DYNAMIC_TAG<T> >::const_type const_type; \
+};
+
+CGAL_FILTERED_FACE_GRAPH_DYNAMIC_PMAP_SPECIALIZATION(dynamic_vertex_property_t)
+CGAL_FILTERED_FACE_GRAPH_DYNAMIC_PMAP_SPECIALIZATION(dynamic_edge_property_t)
+CGAL_FILTERED_FACE_GRAPH_DYNAMIC_PMAP_SPECIALIZATION(dynamic_halfedge_property_t)
+CGAL_FILTERED_FACE_GRAPH_DYNAMIC_PMAP_SPECIALIZATION(dynamic_face_property_t)
+
+#undef CGAL_FILTERED_FACE_GRAPH_DYNAMIC_PMAP_SPECIALIZATION
+
 
 
 //specializations for indices

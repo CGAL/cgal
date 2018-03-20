@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
@@ -53,7 +54,19 @@ public:
    typedef typename internal::vector<Node>::iterator  Self_iterator;
    typedef typename Traits::Point_2                Point_2;
 
-  using  internal::vector< Rotation_tree_node_2<Traits_> >::push_back;
+   using internal::vector< Rotation_tree_node_2<Traits_> >::push_back;
+
+   class Greater {
+      typename Traits::Less_xy_2 less;
+      typedef typename Traits::Point_2 Point;
+   public:
+      Greater(typename Traits::Less_xy_2 less) : less(less) {}
+
+      template <typename Point_like>
+      bool operator()(const Point_like& p1, const Point_like& p2) {
+         return less(Point(p2), Point(p1));
+      }
+   };
 
    // constructor
    template<class ForwardIterator>
@@ -61,9 +74,9 @@ public:
    {
       for (ForwardIterator it = first; it != beyond; it++)
          push_back(*it);
-   
-      std::sort(this->begin(), this->end(), 
-                boost::bind(Traits().less_xy_2_object(), _2, _1));
+
+      Greater greater (Traits().less_xy_2_object());
+      std::sort(this->begin(), this->end(), greater);
       std::unique(this->begin(), this->end());
    
       // front() is the point with the largest x coordinate
@@ -166,3 +179,8 @@ private:
 #include <CGAL/Partition_2/Rotation_tree_2_impl.h>
 
 #endif // CGAL_ROTATION_TREE_H
+
+// For the Emacs editor:
+// Local Variables:
+// c-basic-offset: 3
+// End:

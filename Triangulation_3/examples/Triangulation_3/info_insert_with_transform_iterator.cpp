@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
@@ -13,7 +13,7 @@ typedef Delaunay::Point                                             Point;
 //a functor that returns a std::pair<Point,unsigned>.
 //the unsigned integer is incremented at each call to 
 //operator()
-struct Auto_count : public std::unary_function<const Point&,std::pair<Point,unsigned> >{
+struct Auto_count : public CGAL::unary_function<const Point&,std::pair<Point,unsigned> >{
   mutable unsigned i;
   Auto_count() : i(0){}
   std::pair<Point,unsigned> operator()(const Point& p) const {

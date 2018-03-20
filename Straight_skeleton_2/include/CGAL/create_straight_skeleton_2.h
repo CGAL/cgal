@@ -14,6 +14,7 @@
 
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
@@ -22,6 +23,7 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/compute_outer_frame_margin.h>
@@ -245,6 +247,7 @@ create_exterior_straight_skeleton_2 ( FT const& aMaxOffset, Polygon const& aPoly
 
 } // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_H //
 // EOF //

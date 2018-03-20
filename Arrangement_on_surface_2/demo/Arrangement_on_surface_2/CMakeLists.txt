@@ -11,7 +11,7 @@ endif()
 find_package(CGAL COMPONENTS Core Qt5 )
 include( ${CGAL_USE_FILE} )
 
-find_package( Qt5 QUIET COMPONENTS Script Widgets )
+find_package( Qt5 QUIET COMPONENTS Gui )
 
 if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
   include_directories( ./ )
@@ -68,15 +68,15 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
    ${arrangement_2_uis}
    ${CGAL_Qt5_RESOURCE_FILES}
   )
-  qt5_use_modules(arrangement_2 Widgets Script)
-  target_link_libraries( arrangement_2
-    ${CGAL_LIBRARIES}
-    ${CGAL_3RD_PARTY_LIBRARIES}
-    ${QT_LIBRARIES}
+  target_link_libraries( arrangement_2 PRIVATE
+    CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core
+    Qt5::Gui
   )
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS arrangement_2 )
 
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(arrangement_2)
 else()
 
   message(STATUS "NOTICE: This demo requires CGAL, CGAL-Core and Qt5, and will not be compiled.")

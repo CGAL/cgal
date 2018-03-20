@@ -13,15 +13,13 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
 
 #ifndef CGAL_GRAPH_TRAITS_CONSTRAINED_DELAUNAY_TRIANGULATION_2_H
 #define CGAL_GRAPH_TRAITS_CONSTRAINED_DELAUNAY_TRIANGULATION_2_H
-
-#include <CGAL/license/Triangulation_2.h>
-
 
 // include this to avoid a VC15 warning
 #include <CGAL/boost/graph/named_function_params.h>
@@ -72,6 +70,8 @@ namespace boost {
     typedef typename Constrained_Delaunay_triangulation::size_type size_type;
     typedef size_type vertices_size_type;
     typedef size_type edges_size_type;
+    typedef size_type halfedges_size_type;
+    typedef size_type faces_size_type;
     typedef size_type degree_size_type;
 
     // nulls

@@ -34,6 +34,9 @@
 #include <CGAL/Nef_S2/SM_point_locator.h>
 #include <fstream>
 #include <cassert>
+#include <string>
+
+#include <CGAL/disable_warnings.h>
 
 namespace CGAL {
 
@@ -143,13 +146,10 @@ private:
   }
 
   bool does_nef3_equals_file(Nef_polyhedron& N, const char* name) {
-    char* fullname = new char[std::strlen(datadir)+std::strlen(name)+1];
-    std::strcpy(fullname, datadir);
-    std::strcat(fullname, name);
+    std::string fullname = std::string(datadir) + std::string(name);
     std::ofstream out("data/temp.nef3");
     out << N;
-    bool b = are_files_equal("data/temp.nef3",fullname);
-    delete [] fullname;
+    bool b = are_files_equal("data/temp.nef3",fullname.c_str());
     return b;
   }
 
@@ -163,14 +163,11 @@ private:
   }
 
   Nef_polyhedron load_nef3(const char* name) {
-    char* fullname = new char[std::strlen(datadir)+std::strlen(name)+1];
-    std::strcpy(fullname, datadir);
-    std::strcat(fullname, name);
-    std::ifstream input(fullname);
+    std::string fullname = std::string(datadir) + std::string(name);
+    std::ifstream input(fullname.c_str());
     assert(input.good());
     Nef_polyhedron tmp;
     input >> tmp;
-    delete[] fullname;
     return tmp;
   }
 

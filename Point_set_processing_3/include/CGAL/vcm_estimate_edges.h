@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Jocelyn Meyron and Quentin Mérigot
 //
@@ -23,6 +24,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/vcm_estimate_normals.h>
 
@@ -83,5 +85,7 @@ vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
 }
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_VCM_ESTIMATE_EDGES_H

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
@@ -22,16 +23,13 @@
 #ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_FUNCTORS_H
 #define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_FUNCTORS_H
 
-#include <CGAL/license/Arrangement_on_surface_2.h>
-
-
 /*!\file include/CGAL/Curved_kernel_via_analysis_2/Curved_kernel_via_analysis_2_functors.h
  * \brief defines Curved_kernel_via_analysis_2 function objects + class
  */
 
 #include <CGAL/config.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Make_x_monotone_2.h>
-
+#include <CGAL/iterator.h>
 namespace CGAL {
 
 namespace internal {
@@ -1434,7 +1432,7 @@ public:
     CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES
     
     //! the result type
-    typedef std::iterator< std::output_iterator_tag, CGAL::Object > 
+    typedef CGAL::iterator< std::output_iterator_tag, CGAL::Object > 
     result_type;
     
     //! the arity of the functor
@@ -1890,7 +1888,7 @@ public:
     CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES
     
     //! the result type
-    typedef std::iterator< std::output_iterator_tag, CGAL::Object > 
+    typedef CGAL::iterator< std::output_iterator_tag, CGAL::Object > 
     result_type;
 
     //! the arity of the functor
@@ -2513,7 +2511,7 @@ public:
     typedef typename Curve_analysis_2::Coordinate_2 Coordinate_2;
     
     //! the result type
-    typedef std::iterator< std::output_iterator_tag, Coordinate_2 >
+    typedef CGAL::iterator< std::output_iterator_tag, Coordinate_2 >
          result_type;
 
     //! the arity of the functor
@@ -2578,7 +2576,7 @@ public:
     typedef typename Curve_analysis_2::Coordinate_2 Coordinate_2;
     
     //! the result type
-    typedef std::iterator< std::output_iterator_tag, Coordinate_2 >
+    typedef CGAL::iterator< std::output_iterator_tag, Coordinate_2 >
              result_type;
 
     //! the arity of the functor

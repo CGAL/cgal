@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
@@ -299,10 +300,10 @@ public:
         mCSIdx=0; mNCSIdx=1; break ;
         
       case TRISEGMENT_COLLINEARITY_ALL:
-        mCSIdx=-1; mNCSIdx=-1; break ;
+        mCSIdx = mNCSIdx = (std::numeric_limits<unsigned>::max)(); break ;
         
       case TRISEGMENT_COLLINEARITY_NONE:
-        mCSIdx=-1; mNCSIdx=-1; break ;
+        mCSIdx = mNCSIdx = (std::numeric_limits<unsigned>::max)(); break ;
     }
   }
     

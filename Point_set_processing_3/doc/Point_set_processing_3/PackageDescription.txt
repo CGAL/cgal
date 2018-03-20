@@ -71,21 +71,15 @@ format.
 ## IO (XYZ/OFF Formats) ##
 
 - `CGAL::read_off_points()`
-- `CGAL::read_off_points_and_normals()`
 - `CGAL::read_xyz_points()`
-- `CGAL::read_xyz_points_and_normals()`
 - `CGAL::write_off_points()`
-- `CGAL::write_off_points_and_normals()`
 - `CGAL::write_xyz_points()`
-- `CGAL::write_xyz_points_and_normals()`
 
 ## IO (PLY Format) ##
 
 - `CGAL::read_ply_points()`
-- `CGAL::read_ply_points_and_normals()`
 - `CGAL::read_ply_points_with_properties()`
 - `CGAL::write_ply_points()`
-- `CGAL::write_ply_points_and_normals()`
 - `CGAL::write_ply_points_with_properties()`
 - `CGAL::PLY_property<T>`
 - `CGAL::make_ply_point_reader()`

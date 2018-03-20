@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent RINEAU
@@ -41,7 +42,7 @@ public:
   /*! Is called by Viewer::initializeGL(). Allows all the initialization
    * of OpenGL code that needs a context.
    */
-  virtual void initializeGL() = 0;
+  virtual void initializeGL(CGAL::Three::Viewer_interface*) = 0;
 
   //! \brief Draws the items.
   //! It is called by Viewer::draw().

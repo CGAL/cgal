@@ -1,39 +1,50 @@
-#version 120
-varying highp vec4 color;
-varying highp vec4 fP;
-uniform highp vec4 light_pos;
-uniform highp vec4 light_diff;
-uniform highp vec4 light_spec;
-uniform highp vec4 light_amb;
-uniform highp float spec_power ;
-uniform int is_two_side;
-uniform bool is_selected;
-void main(void) {
-   highp vec3 L = light_pos.xyz - fP.xyz;
-   highp vec3 V = -fP.xyz;
-   highp vec3 N;
-   vec3 X = dFdx(fP.xyz);
-   vec3 Y = dFdy(fP.xyz);
-   vec3 normal=normalize(cross(X,Y));
+#version 430 core
 
-   if(normal == highp vec3(0.0,0.0,0.0))
+in GS_OUT
+{
+  vec4 fP;
+  flat vec3 normal;
+  flat vec4 color;
+  float dist[6];
+} fs_in;
+
+uniform bool is_two_side;
+uniform vec4 light_pos;
+uniform vec4 light_diff;
+uniform vec4 light_spec;
+uniform vec4 light_amb;
+uniform float spec_power ;
+uniform bool is_clipbox_on;
+
+out vec4 out_color;
+
+void main(void)
+{
+  if(is_clipbox_on)
+    if(fs_in.dist[0]>0 ||
+       fs_in.dist[1]>0 ||
+       fs_in.dist[2]>0 ||
+       fs_in.dist[3]>0 ||
+       fs_in.dist[4]>0 ||
+       fs_in.dist[5]>0)
+      discard;
+  vec3 L = light_pos.xyz - fs_in.fP.xyz;
+  vec3 V = -fs_in.fP.xyz;
+
+  vec3 N;
+  if(fs_in.normal == highp vec3(0.0,0.0,0.0))
        N = highp vec3(0.0,0.0,0.0);
    else
-       N = normalize(normal);
-   L = normalize(L);
-   V = normalize(V);
-   highp vec3 R = reflect(-L, N);
+       N = fs_in.normal;
+  L = normalize(L);
+  V = normalize(V);
+
+  vec3 R = reflect(-L, N);
   vec4 diffuse;
-   if(is_two_side == 1)
-       diffuse = abs(dot(N,L)) * light_diff * color;
-   else
-       diffuse = max(dot(N,L), 0.0) * light_diff * color;
-   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec;
-   vec4 ret_color = vec4((color*light_amb).xyz + diffuse.xyz + specular.xyz,1);
-   if(is_selected)
-       gl_FragColor = vec4(ret_color.r+70.0/255.0, ret_color.g+70.0/255.0, ret_color.b+70.0/255.0, 1.0);
-   else
-       gl_FragColor = ret_color;
+  if(!is_two_side)
+      diffuse = max(dot(N,L),0) * light_diff*fs_in.color;
+  else
+      diffuse = max(abs(dot(N,L)),0) * light_diff*fs_in.color;
+  vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec;
+  out_color = vec4((fs_in.color*light_amb).xyz + diffuse.xyz + specular.xyz,1.0);
 }
-
-

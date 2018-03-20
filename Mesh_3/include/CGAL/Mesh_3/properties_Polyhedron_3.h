@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri
@@ -20,7 +21,6 @@
 #ifndef CGAL_MESH_3_PROPERTIES_POLYHEDRON_3_H
 #define CGAL_MESH_3_PROPERTIES_POLYHEDRON_3_H
 
-#include <CGAL/license/Mesh_3.h>
 #include <CGAL/Mesh_3/properties.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 
@@ -139,7 +139,39 @@ struct Polyhedron_property_map<CGAL::face_patch_id_t<void> >
   };
 };
 
+// Compatibility: when the `Patch_id` template argument of
+// `Polyhedron_mesh_domain` is `Tag_true` (because that argument was named
+// `UsePatchId` in previous versions of CGAL.
+template <>
+struct Polyhedron_property_map<CGAL::face_patch_id_t<CGAL::Tag_true> >
+{
+  template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+  struct bind_
+  {
+    typedef Polyhedron_3<Gt,I,HDS,A> Polyhedron;
+    typedef Polyhedron_face_patch_id_pmap<typename Polyhedron::Face::Patch_id> type;
+    typedef type const_type;
+  };
+};
 
+// Compatibility: when the `Patch_id` template argument of
+// `Polyhedron_mesh_domain` is `Tag_false` (because that argument was named
+// `UsePatchId` in previous versions of CGAL.
+template <>
+struct Polyhedron_property_map<CGAL::face_patch_id_t<CGAL::Tag_false> >
+  : public Polyhedron_property_map<CGAL::face_patch_id_t<void> >
+{
+};
+
+template <class Gt, class I, CGAL_HDS_PARAM_, class A>
+typename boost::lazy_enable_if<
+  internal::has_Plane_3<Gt>,
+  internal::Get_static_property_map<Gt, I, HDS, A>
+  >::type
+get(CGAL::face_patch_id_t<Tag_false>, const Polyhedron_3<Gt,I,HDS,A>& p)
+{
+  return get(CGAL::face_patch_id_t<void>(), p);
+}
 
 struct Polyhedron_num_feature_edges_pmap {
   typedef void                               key_type;
@@ -162,7 +194,7 @@ void put(Polyhedron_num_feature_edges_pmap, Handle_type h, int n)
 
 
 template <>
-struct Polyhedron_property_map<CGAL::vertex_num_feature_edges_t>
+struct Polyhedron_property_map<CGAL::vertex_feature_degree_t>
 {
   template<class Gt, class I, CGAL_HDS_PARAM_, class A>
   struct bind_
@@ -177,22 +209,25 @@ struct Polyhedron_is_feature_edge_pmap {
   typedef bool                               value_type;
   typedef bool                               reference;
   typedef boost::read_write_property_map_tag category;
+
 };
 
 template <typename Handle_type>
-bool get(Polyhedron_is_feature_edge_pmap, Handle_type h)
+bool get(Polyhedron_is_feature_edge_pmap, Handle_type e)
 {
-  return h->is_feature_edge();
+  return e.halfedge()->is_feature_edge()
+          || e.halfedge()->opposite()->is_feature_edge();
 }
 
 template <typename Handle_type>
-void put(Polyhedron_is_feature_edge_pmap, Handle_type h, bool b)
+void put(Polyhedron_is_feature_edge_pmap, Handle_type e, bool b)
 {
-  h->set_feature_edge(b);
+  e.halfedge()->set_feature_edge(b);
+  e.halfedge()->opposite()->set_feature_edge(b);
 }
 
 template <>
-struct Polyhedron_property_map<CGAL::halfedge_is_feature_t>
+struct Polyhedron_property_map<CGAL::edge_is_feature_t>
 {
   template<class Gt, class I, CGAL_HDS_PARAM_, class A>
   struct bind_
@@ -209,7 +244,14 @@ struct Polyhedron_incident_patches_pmap {
   typedef void                               key_type;
   typedef std::set<Patch_id>                 value_type;
   typedef std::set<Patch_id>&                reference;
-  typedef boost::read_write_property_map_tag category;
+  typedef boost::lvalue_property_map_tag     category;
+
+  template <typename Handle_type>
+  value_type& operator[](Handle_type h) const
+  {
+    return get(*this, h);
+  }
+
 };
 
 template <typename Patch_id, typename Handle_type>
@@ -223,6 +265,7 @@ template <typename Patch_id, typename Handle_type>
 void put(Polyhedron_incident_patches_pmap<Patch_id>,
          Handle_type h, const std::set<Patch_id>& v)
 {
+  h->clear_incident_patches();
   BOOST_FOREACH(Patch_id n, v)
     h->add_incident_patch(n);
 }

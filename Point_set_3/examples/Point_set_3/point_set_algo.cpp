@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Point_set_3.h>
-#include <CGAL/Point_set_3/Point_set_processing_3.h>
+#include <CGAL/jet_estimate_normals.h>
 #include <CGAL/grid_simplify_point_set.h>
 #include <CGAL/point_generators_3.h>
 
@@ -18,7 +18,7 @@ typedef CGAL::Random_points_on_sphere_3<Point> Point_generator;
 
 typedef CGAL::Point_set_3<Point> Point_set;
 
-typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits
+typedef CGAL::Shape_detection_3::Shape_detection_traits
 <Kernel, Point_set, Point_set::Point_map, Point_set::Vector_map> Traits;
 typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>        Efficient_ransac;
 typedef CGAL::Shape_detection_3::Sphere<Traits>                  Sphere;
@@ -37,13 +37,19 @@ int main (int, char**)
 
 
   // Add normal property and estimate normal values
-  CGAL::jet_estimate_normals<CGAL::Sequential_tag> (point_set,
-                                                    12); // Number of neighbors
+  point_set.add_normal_map();
+  CGAL::jet_estimate_normals<CGAL::Sequential_tag>
+    (point_set,
+     12, // Number of neighbors
+     point_set.parameters(). // Named parameters provided by Point_set_3
+     degree_fitting(2));     // additional named parameter specific to jet_estimate_normals
 
 
   // Simplify point set
-  CGAL::grid_simplify_point_set (point_set,
-                                 0.1); // Size of grid cell
+  CGAL::grid_simplify_point_set
+    (point_set,
+     0.1); // Size of grid cell
+  // point_set.parameters() can be omitted if no additional named parameter is needed
 
   std::vector<std::string> properties = point_set.properties();
   std::cerr << "Properties:" << std::endl;

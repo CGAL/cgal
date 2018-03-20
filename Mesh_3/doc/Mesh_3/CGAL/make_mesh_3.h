@@ -43,7 +43,7 @@ respectively.
 \tparam MeshDomain_3 is required to be a model of 
 the concept `MeshDomain_3`, or of the refined concept 
 `MeshDomainWithFeatures_3` 
-if the domain has corners and curve segments that need to be accurately represented in the mesh. 
+if the domain has corners and curves that need to be accurately represented in the mesh. 
 The argument `domain` 
 is the sole link through which the domain 
 to be discretized is known by the mesh generation algorithm. 
@@ -78,6 +78,12 @@ if parameter `features` is not specified.
 of 0 and 1-dimensional features in the mesh. 
 </UL> 
 
+- <b>`manifold`</b> allows the user to drive the meshing algorithm,
+and ensure that the output mesh surface follows the given manifold criterion.
+It can be activated with `parameters::manifold()`, `parameters::manifold_with_boundary()`
+and `parameters::non_manifold()`. Note that the meshing algorithm cannot generate a manifold
+surface if the input surface is not manifold.
+
 The four additional parameters are optimization parameters. 
 They control which optimization processes are performed 
 and allow the user to tune the parameters of the optimization processes. 
@@ -109,7 +115,6 @@ parameters of this optimizer. If one parameter is not set, the default value of
 `exude_mesh_3()` is used for this parameter, except for the time bound which is set to be 
 equal to the refinement CPU time. 
 
-
 The optimization parameters can be passed in an arbitrary order. If one parameter 
 is not passed, its default value is used. The default values are 
 `no_lloyd()`, `no_odt()`, `perturb()` and `exude()`. 
@@ -131,6 +136,9 @@ optimization processes.
 \sa `refine_mesh_3()` 
 \sa `parameters::features()` 
 \sa `parameters::no_features()` 
+\sa `parameters::manifold()`
+\sa `parameters::manifold_with_boundary()`
+\sa `parameters::non_manifold()`
 \sa `exude_mesh_3()` 
 \sa `perturb_mesh_3()`
 \sa `lloyd_optimize_mesh_3()` 
@@ -142,7 +150,7 @@ optimization processes.
 \sa `parameters::lloyd()` 
 \sa `parameters::no_lloyd()` 
 \sa `parameters::odt()` 
-\sa `parameters::no_odt()` 
+\sa `parameters::no_odt()`
 
 */
 
@@ -155,6 +163,7 @@ parameters::internal::Features_options features = parameters::features(domain),
 parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
 parameters::internal::Odt_options odt = parameters::no_odt(),
 parameters::internal::Perturb_options perturb = parameters::perturb(),
-parameters::internal::Exude_options exude = parameters::exude()); 
+parameters::internal::Exude_options exude = parameters::exude(),
+parameters::internal::Manifold_options manifold = parameters::non_manifold()); 
 
 } /* namespace CGAL */

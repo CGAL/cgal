@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Florent Lafarge, Simon Giraudot
@@ -59,6 +60,16 @@ struct Plane_cluster
   typename Traits::FT cosangle_symmetry;
   typename Traits::FT area;
   typename Traits::FT cosangle_centroid;
+
+  Plane_cluster()
+    : is_free (true)
+    , normal (typename Traits::FT(0.),
+              typename Traits::FT(0.),
+              typename Traits::FT(1.))
+    , cosangle_symmetry (typename Traits::FT(0.))
+    , area (typename Traits::FT(0.))
+    , cosangle_centroid (typename Traits::FT(0.))
+  { }
 };
 
   
@@ -151,42 +162,45 @@ typename Traits::Vector_3 regularize_normals_from_prior
 }
 
 template <typename Traits,
-          typename RandomAccessIterator,
-          typename PlaneContainer,
-          typename PointPMap,
-          typename CentroidContainer,
-          typename AreaContainer>
-void compute_centroids_and_areas (RandomAccessIterator input_begin,
-                                  PlaneContainer& planes,
-                                  PointPMap point_pmap,
-                                  CentroidContainer& centroids,
-                                  AreaContainer& areas)
+          typename PointRange,
+          typename PointMap,
+          typename IndexMap>
+void compute_centroids_and_areas (const PointRange& points,
+                                  PointMap point_map,
+                                  std::size_t nb_planes,
+                                  IndexMap index_map,
+                                  std::vector<typename Traits::Point_3>& centroids,
+                                  std::vector<typename Traits::FT>& areas)
 {
   typedef typename Traits::FT FT;
   typedef typename Traits::Point_3 Point;
-  
-  for (std::size_t i = 0; i < planes.size (); ++ i)
-    {
-      std::vector < Point > listp;
-      for (std::size_t j = 0; j < planes[i]->indices_of_assigned_points ().size (); ++ j)
-        {
-          std::size_t yy = planes[i]->indices_of_assigned_points()[j];
-          Point pt = get (point_pmap, *(input_begin + yy));
-          listp.push_back(pt);
-        }
-      centroids.push_back (CGAL::centroid (listp.begin (), listp.end ()));
-      areas.push_back ((FT)(planes[i]->indices_of_assigned_points().size()) / (FT)100.);
-    }
+
+  std::vector<std::vector<Point> > listp (nb_planes);
+
+  for (std::size_t i = 0; i < points.size(); ++ i)
+  {
+    int idx = get (index_map, i);
+    if (idx != -1)
+      listp[std::size_t(idx)].push_back (get(point_map, *(points.begin() + i)));
+  }
+
+  centroids.reserve (nb_planes);
+  areas.reserve (nb_planes);
+  for (std::size_t i = 0; i < nb_planes; ++ i)
+  {
+    centroids.push_back (CGAL::centroid (listp[i].begin (), listp[i].end ()));
+    areas.push_back ((FT)(listp[i].size() / (FT)100.));
+  }
 }
 
 
 template <typename Traits,
-          typename PlaneContainer,
-          typename PlaneClusterContainer,
-          typename AreaContainer>
-void compute_parallel_clusters (PlaneContainer& planes,
-                                PlaneClusterContainer& clusters,
-                                AreaContainer& areas,
+          typename PlaneRange,
+          typename PlaneMap>
+void compute_parallel_clusters (PlaneRange& planes,
+                                PlaneMap plane_map,
+                                std::vector<Plane_cluster<Traits> >& clusters,
+                                std::vector<typename Traits::FT>& areas,
                                 typename Traits::FT tolerance_cosangle,
                                 const typename Traits::Vector_3& symmetry_direction)
 {
@@ -194,20 +208,20 @@ void compute_parallel_clusters (PlaneContainer& planes,
   typedef typename Traits::FT FT;
   typedef typename Traits::Vector_3 Vector;
   
-  typedef typename PlaneClusterContainer::value_type Plane_cluster;
-  
   // find pairs of epsilon-parallel primitives and store them in parallel_planes
   std::vector<std::vector<std::size_t> > parallel_planes (planes.size ());
-  for (std::size_t i = 0; i < planes.size (); ++ i)
+  for (std::size_t i = 0; i < std::size_t(planes.size ()); ++ i)
     {
-      Vector v1 = planes[i]->plane_normal ();
+      typename PlaneRange::iterator it = planes.begin() + i;
+      Vector v1 = get(plane_map, *it).orthogonal_vector();
           
-      for (std::size_t j = 0; j < planes.size(); ++ j)
+      for (std::size_t j = 0; j < std::size_t(planes.size()); ++ j)
         {
           if (i == j)
             continue;
-              
-          Vector v2 = planes[j]->plane_normal ();
+
+          typename PlaneRange::iterator it2 = planes.begin() + j;
+          Vector v2 = get(plane_map, *it2).orthogonal_vector();
 
           if (std::fabs (v1 * v2) > 1. - tolerance_cosangle)
             parallel_planes[i].push_back (j);
@@ -217,15 +231,17 @@ void compute_parallel_clusters (PlaneContainer& planes,
 
   std::vector<bool> is_available (planes.size (), true);
       
-  for (std::size_t i = 0; i < planes.size(); ++ i)
+  for (std::size_t i = 0; i < std::size_t(planes.size()); ++ i)
     {
 
       if(is_available[i])
         {
+          const typename Traits::Plane_3& plane = get(plane_map, *(planes.begin() + i));
+          
           is_available[i] = false;
 
-          clusters.push_back (Plane_cluster());
-          Plane_cluster& clu = clusters.back ();
+          clusters.push_back (Plane_cluster<Traits>());
+          Plane_cluster<Traits>& clu = clusters.back ();
 
           //initialization containers
           clu.planes.push_back (i);
@@ -237,7 +253,7 @@ void compute_parallel_clusters (PlaneContainer& planes,
 
           //propagation over the pairs of epsilon-parallel primitives
           bool propagation=true;
-          clu.normal = planes[i]->plane_normal ();
+          clu.normal = plane.orthogonal_vector ();
           clu.area = areas[i];
 			
           do
@@ -252,8 +268,8 @@ void compute_parallel_clusters (PlaneContainer& planes,
                   for (std::size_t l = 0; l < parallel_planes[plane_index].size(); ++ l)
                     {
                       std::size_t it = parallel_planes[plane_index][l];
-                          
-                      Vector normal_it =  planes[it]->plane_normal ();
+                      
+                      Vector normal_it = get(plane_map, *(planes.begin() + it)).orthogonal_vector ();
 
                       if(is_available[it]
                          && std::fabs (normal_it*clu.normal) > 1. - tolerance_cosangle )
@@ -302,9 +318,8 @@ void compute_parallel_clusters (PlaneContainer& planes,
   is_available.clear();
 }
 
-template <typename Traits,
-          typename PlaneClusterContainer>
-void cluster_symmetric_cosangles (PlaneClusterContainer& clusters,
+template <typename Traits>
+void cluster_symmetric_cosangles (std::vector<Plane_cluster<Traits> >& clusters,
                                   typename Traits::FT tolerance_cosangle,
                                   typename Traits::FT tolerance_cosangle_ortho)
 {
@@ -353,9 +368,8 @@ void cluster_symmetric_cosangles (PlaneClusterContainer& clusters,
 }
 
 
-template <typename Traits,
-          typename PlaneClusterContainer>
-void subgraph_mutually_orthogonal_clusters (PlaneClusterContainer& clusters,
+template <typename Traits>
+void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster<Traits> >& clusters,
                                             const typename Traits::Vector_3& symmetry_direction)
 {
   typedef typename Traits::FT FT;
@@ -548,16 +562,21 @@ void subgraph_mutually_orthogonal_clusters (PlaneClusterContainer& clusters,
 
     The implementation follows \cgalCite{cgal:vla-lod-15}.
 
-    \tparam Traits a model of `EfficientRANSACTraits`
+    \tparam PointRange range of points, model of `ConstRange`
+    \tparam PointPMap is a model of `ReadablePropertyMap` with value type `Kernel::Point_3`.
+    It can be omitted if the value type of the iterator of `PointRange` is convertible to `Point_3<Kernel>`.
+    \tparam PlaneRange range of planes, model of `Range`
+    \tparam PlaneMap is a model of `WritablePropertyMap` with value type `Kernel::Plane_3`.
+    It can be omitted if the value type of the iterator of `PlaneRange` is convertible to `Plane_3<Kernel>`.
+    \tparam IndexMap is a model of `ReadablePropertyMap` with value type `int`.
+    \tparam Kernel Geometric traits class.
+    It can be omitted and deduced automatically from the value type of `PointMap`.
 
-    \param shape_detection Shape detection object used to detect
-    shapes from the input data. While the shape detection algorithm
-    deals with several types of primitive shapes only planes can be
-    regularized.
-
-    \warning The `shape_detection` parameter must have already
-    detected shapes. If no plane exists in it, the regularization
-    function doesn't do anything.
+    \param points range of points.
+    \param point_map property map: value_type of `typename PointRange::const_iterator` -> `Point_3`
+    \param planes range of planes.
+    \param plane_map property map: value_type of `typename PlaneRange::iterator` -> `Plane_3`
+    \param index_map property map: index of point `std::size_t` -> index of plane `int` (-1 if the point is not assigned to a plane)
 
     \param regularize_parallelism Select whether parallelism is
     regularized or not.
@@ -583,67 +602,54 @@ void subgraph_mutually_orthogonal_clusters (PlaneClusterContainer& clusters,
     regularization. Default value is the Z axis.
 */ 
 
-template <typename EfficientRANSACTraits>
-void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSACTraits>& shape_detection,
+// This variant requires all parameters
+template <typename PointRange,
+          typename PointMap,
+          typename PlaneRange,
+          typename PlaneMap,
+          typename IndexMap,
+          typename Kernel>
+void regularize_planes (const PointRange& points,
+                        PointMap point_map,
+                        PlaneRange& planes,
+                        PlaneMap plane_map,
+                        IndexMap index_map,
+                        const Kernel&,
                         bool regularize_parallelism,
                         bool regularize_orthogonality,
                         bool regularize_coplanarity,
                         bool regularize_axis_symmetry,
-                        typename EfficientRANSACTraits::FT tolerance_angle
-                        = (typename EfficientRANSACTraits::FT)25.0,
-                        typename EfficientRANSACTraits::FT tolerance_coplanarity
-                        = (typename EfficientRANSACTraits::FT)0.01,
-                        typename EfficientRANSACTraits::Vector_3 symmetry_direction
-                        = typename EfficientRANSACTraits::Vector_3
-                        ((typename EfficientRANSACTraits::FT)0.,
-                         (typename EfficientRANSACTraits::FT)0.,
-                         (typename EfficientRANSACTraits::FT)1.))
+                        double tolerance_angle = 25.0,
+                        double tolerance_coplanarity = 0.01,
+                        typename Kernel::Vector_3 symmetry_direction
+                        = typename Kernel::Vector_3 (0., 0., 1.))
 {
-  typedef typename EfficientRANSACTraits::FT FT;
-  typedef typename EfficientRANSACTraits::Point_3 Point;
-  typedef typename EfficientRANSACTraits::Vector_3 Vector;
-  typedef typename EfficientRANSACTraits::Plane_3 Plane;
+  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Point_3 Point;
+  typedef typename Kernel::Vector_3 Vector;
+  typedef typename Kernel::Plane_3 Plane;
 
-  typedef Shape_detection_3::Shape_base<EfficientRANSACTraits> Shape;
-  typedef Shape_detection_3::Plane<EfficientRANSACTraits> Plane_shape;
-
-  typedef typename internal::PlaneRegularization::Plane_cluster<EfficientRANSACTraits>
+  typedef typename internal::PlaneRegularization::Plane_cluster<Kernel>
     Plane_cluster;
-
-  typename EfficientRANSACTraits::Input_range::iterator input_begin = shape_detection.input_iterator_first();
-
-  std::vector<boost::shared_ptr<Plane_shape> > planes;
-    
-  BOOST_FOREACH (boost::shared_ptr<Shape> shape, shape_detection.shapes())
-    {
-      boost::shared_ptr<Plane_shape> pshape
-        = boost::dynamic_pointer_cast<Plane_shape>(shape);
-        
-      // Ignore all shapes other than plane
-      if (pshape == boost::shared_ptr<Plane_shape>())
-        continue;
-      planes.push_back (pshape);
-    }
-
 
   /*
    * Compute centroids and areas
    */
   std::vector<Point> centroids;
   std::vector<FT> areas;
-  internal::PlaneRegularization::compute_centroids_and_areas<EfficientRANSACTraits>
-    (input_begin, planes, shape_detection.point_map(), centroids, areas);
+  internal::PlaneRegularization::compute_centroids_and_areas<Kernel>
+    (points, point_map, planes.size(), index_map, centroids, areas);
 
   tolerance_angle = tolerance_angle * (FT)CGAL_PI / (FT)(180);
-  FT tolerance_cosangle = (FT)1. - std::cos (tolerance_angle);
-  FT tolerance_cosangle_ortho = std::cos ((FT)0.5 * (FT)CGAL_PI - tolerance_angle);
+  FT tolerance_cosangle = (FT)(1. - std::cos (tolerance_angle));
+  FT tolerance_cosangle_ortho = (FT)(std::cos ((FT)0.5 * (FT)CGAL_PI - (FT)tolerance_angle));
       
   // clustering the parallel primitives and store them in clusters
   // & compute the normal, size and cos angle to the symmetry
   // direction of each cluster
   std::vector<Plane_cluster> clusters;
-  internal::PlaneRegularization::compute_parallel_clusters<EfficientRANSACTraits>
-    (planes, clusters, areas,
+  internal::PlaneRegularization::compute_parallel_clusters<Kernel>
+    (planes, plane_map, clusters, areas,
      (regularize_parallelism ? tolerance_cosangle : (FT)0.0),
      (regularize_axis_symmetry ? symmetry_direction : CGAL::NULL_VECTOR));
 
@@ -668,7 +674,7 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
       //clustering the symmetry cosangle and store their centroids in
       //cosangle_centroids and the centroid index of each cluster in
       //list_cluster_index
-      internal::PlaneRegularization::cluster_symmetric_cosangles<EfficientRANSACTraits>
+      internal::PlaneRegularization::cluster_symmetric_cosangles<Kernel>
         (clusters, tolerance_cosangle, tolerance_cosangle_ortho);
     }
   
@@ -676,27 +682,27 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
   //clusters in subgraph_clusters), and select the cluster of
   //largest area
   if (regularize_orthogonality || regularize_axis_symmetry)
-    internal::PlaneRegularization::subgraph_mutually_orthogonal_clusters<EfficientRANSACTraits>
+    internal::PlaneRegularization::subgraph_mutually_orthogonal_clusters<Kernel>
       (clusters, (regularize_axis_symmetry ? symmetry_direction : CGAL::NULL_VECTOR));
       
   //recompute optimal plane for each primitive after normal regularization
   for (std::size_t i=0; i < clusters.size(); ++ i)
     {
-
       Vector vec_reg = clusters[i].normal;
       for (std::size_t j = 0; j < clusters[i].planes.size(); ++ j)
         {
           std::size_t index_prim = clusters[i].planes[j];
-          Point pt_reg = planes[index_prim]->projection (centroids[index_prim]);
-          if( planes[index_prim]->plane_normal () * vec_reg < 0)
+          const Plane& plane = get(plane_map, *(planes.begin() + index_prim));
+
+          Point pt_reg = plane.projection (centroids[index_prim]);
+          if(plane.orthogonal_vector () * vec_reg < 0)
             vec_reg=-vec_reg;
           Plane plane_reg(pt_reg,vec_reg);
 
-          if( std::fabs(planes[index_prim]->plane_normal () * vec_reg) > 1. - tolerance_cosangle)
-            planes[index_prim]->update (plane_reg);
+          if( std::fabs(plane.orthogonal_vector () * vec_reg) > 1. - tolerance_cosangle)
+            put(plane_map, *(planes.begin() + index_prim), plane_reg);
         }
     }
-
 
   if (regularize_coplanarity)
     {
@@ -716,9 +722,11 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
 
               if (clusters[i].coplanar_group[j] == static_cast<std::size_t>(-1))
                 {
+                  const Plane& plane = get(plane_map, *(planes.begin() + index_prim));
+                  
                   clusters[i].coplanar_group[j] = cop_index;
-			
-                  Point pt_reg = planes[index_prim]->projection(centroids[index_prim]);
+                  
+                  Point pt_reg = plane.projection(centroids[index_prim]);
                   Plane plan_reg(pt_reg,vec_reg);
 
                   for (std::size_t k = j + 1; k < clusters[i].planes.size(); ++ k)
@@ -726,7 +734,8 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
                       if (clusters[i].coplanar_group[k] == static_cast<std::size_t>(-1))
                         {
                           std::size_t index_prim_next = clusters[i].planes[k];
-                          Point pt_reg_next = planes[index_prim_next]->projection(centroids[index_prim_next]);
+                          const Plane& plane_next = get(plane_map, *(planes.begin() + index_prim_next));
+                          Point pt_reg_next = plane_next.projection(centroids[index_prim_next]);
                           Point pt_proj=plan_reg.projection(pt_reg_next);
                           FT distance = std::sqrt (CGAL::squared_distance(pt_reg_next,pt_proj));
 
@@ -746,7 +755,7 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
               std::size_t index_prim = clusters[i].planes[j];
               std::size_t group = clusters[i].coplanar_group[j];
               
-              Point pt_reg = planes[index_prim]->projection(centroids[index_prim]);
+              Point pt_reg = get(plane_map, *(planes.begin()+index_prim)).projection(centroids[index_prim]);
 
               pt_bary[group] = CGAL::barycenter (pt_bary[group], area[group], pt_reg, areas[index_prim]); 
               area[group] += areas[index_prim];
@@ -759,16 +768,64 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
               std::size_t group = clusters[i].coplanar_group[j];
               Plane plane_reg (pt_bary[group], vec_reg);
 
-              if (planes[index_prim]->plane_normal ()
+              if (get(plane_map, *(planes.begin() + index_prim)).orthogonal_vector ()
                   * plane_reg.orthogonal_vector() < 0)
-                planes[index_prim]->update (plane_reg.opposite());
+                put(plane_map, *(planes.begin() + index_prim), plane_reg.opposite());
               else
-                planes[index_prim]->update (plane_reg);
+                put(plane_map, *(planes.begin() + index_prim), plane_reg);
             }
         }
     } 
 }
 
+
+/// \cond SKIP_IN_MANUAL
+
+
+// This variant deduces the kernel from the point property map.
+template <typename PointRange,
+          typename PointMap,
+          typename PlaneRange,
+          typename PlaneMap,
+          typename IndexMap>
+void regularize_planes (const PointRange& points,
+                        PointMap point_map,
+                        PlaneRange& planes,
+                        PlaneMap plane_map,
+                        IndexMap index_map,
+                        bool regularize_parallelism,
+                        bool regularize_orthogonality,
+                        bool regularize_coplanarity,
+                        bool regularize_axis_symmetry,
+                        double tolerance_angle = 25.0,
+                        double tolerance_coplanarity = 0.01,
+                        typename Kernel_traits
+                        <typename boost::property_traits
+                        <PointMap>::value_type>::Kernel::Vector_3 symmetry_direction
+                        = typename Kernel_traits
+                          <typename boost::property_traits
+                          <PointMap>::value_type>::Kernel::Vector_3
+                        (typename Kernel_traits
+                         <typename boost::property_traits
+                         <PointMap>::value_type>::Kernel::FT(0.),
+                         typename Kernel_traits
+                         <typename boost::property_traits
+                         <PointMap>::value_type>::Kernel::FT(0.),
+                         typename Kernel_traits
+                         <typename boost::property_traits
+                         <PointMap>::value_type>::Kernel::FT(1.)))
+{
+  typedef typename boost::property_traits<PointMap>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel Kernel;
+
+  regularize_planes (points, point_map, planes, plane_map, index_map, Kernel(),
+                     regularize_parallelism, regularize_orthogonality,
+                     regularize_coplanarity, regularize_axis_symmetry,
+                     tolerance_angle, tolerance_coplanarity, symmetry_direction);
+}
+
+
+/// \endcond
 
 } // namespace CGAL
 

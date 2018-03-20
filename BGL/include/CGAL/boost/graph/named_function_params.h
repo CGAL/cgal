@@ -4,48 +4,22 @@
 //
 // This file is part of the Boost Graph Library
 //
-// You should have received a copy of the License Agreement for the
-// Boost Graph Library along with the software; see the file LICENSE.
-// If not, contact Office of Research, University of Notre Dame, Notre
-// Dame, IN 46556.
-//
-// Permission to modify the code and to distribute modified code is
-// granted, provided the text of this NOTICE is retained, a notice that
-// the code was modified is included with the above COPYRIGHT NOTICE and
-// with the COPYRIGHT NOTICE in the LICENSE file, and that the LICENSE
-// file is distributed with the modified code.
-//
-// LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.
-// By way of example, but not limitation, Licensor MAKES NO
-// REPRESENTATIONS OR WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
-// PARTICULAR PURPOSE OR THAT THE USE OF THE LICENSED SOFTWARE COMPONENTS
-// OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
-// OR OTHER RIGHTS.
-
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 // Copyright (c) 2007  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: BSL-1.0
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
 
-
-
 #ifndef CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_H
 #define CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 
@@ -106,6 +80,7 @@ namespace boost{
 
 namespace CGAL {
 namespace internal_np{
+enum all_default_t { all_default }; //cannot use macro because it takes no argument
 
 // for uniformity we import them in this namespace. Note that
 // it is an import so that if we use the named parameter function
@@ -131,6 +106,12 @@ using boost::visitor;
 
     cgal_bgl_named_params(T v = T()) : base(v) {}
     cgal_bgl_named_params(T v, const Base& b) : base(v, b) {}
+    cgal_bgl_named_params<bool, internal_np::all_default_t, self>
+    all_default() const
+    {
+      typedef cgal_bgl_named_params<bool, internal_np::all_default_t, self> Params;
+      return Params(*this);
+    }
 
 // create the functions for new named parameters and the one imported boost
 // used to concatenate several parameters
@@ -147,7 +128,23 @@ using boost::visitor;
 #undef CGAL_add_named_parameter
   };
 
-  namespace parameters {
+namespace parameters {
+
+  cgal_bgl_named_params<bool, internal_np::all_default_t>
+  inline all_default()
+  {
+    typedef cgal_bgl_named_params<bool, internal_np::all_default_t> Params;
+    return Params();
+  }
+
+
+  template <typename T, typename Tag, typename Base>
+  cgal_bgl_named_params<T,Tag,Base>
+  inline no_parameters(cgal_bgl_named_params<T,Tag,Base>)
+  {
+    typedef cgal_bgl_named_params<T,Tag,Base> Params;
+    return Params();
+  }
 
 // define free functions for named parameters
 #define CGAL_add_named_parameter(X, Y, Z)        \
@@ -164,68 +161,6 @@ using boost::visitor;
 
   } // namespace parameters
 
-  //helper classes
-  template<typename PolygonMesh, typename PropertyTag>
-  class property_map_selector
-  {
-  public:
-    typedef typename boost::graph_has_property<PolygonMesh, PropertyTag>::type Has_internal_pmap;
-    typedef typename boost::mpl::if_c< Has_internal_pmap::value
-                            , typename boost::property_map<PolygonMesh, PropertyTag>::type
-                            , typename boost::cgal_no_property::type
-    >::type type;
-    typedef typename boost::mpl::if_c< Has_internal_pmap::value
-                            , typename boost::property_map<PolygonMesh, PropertyTag>::const_type
-                            , typename boost::cgal_no_property::const_type
-    >::type const_type;
-
-    type get_pmap(const PropertyTag& p, PolygonMesh& pmesh)
-    {
-      return get_impl(p, pmesh, Has_internal_pmap());
-    }
-
-    const_type get_const_pmap(const PropertyTag& p, const PolygonMesh& pmesh)
-    {
-      return get_const_pmap_impl(p, pmesh, Has_internal_pmap());
-    }
-
-  private:
-    type get_impl(const PropertyTag&, PolygonMesh&, CGAL::Tag_false)
-    {
-      return type(); //boost::cgal_no_property::type
-    }
-    type get_impl(const PropertyTag& p, PolygonMesh& pmesh, CGAL::Tag_true)
-    {
-      return get(p, pmesh);
-    }
-
-    const_type get_const_pmap_impl(const PropertyTag&
-                                 , const PolygonMesh&, CGAL::Tag_false)
-    {
-      return const_type(); //boost::cgal_no_property::type
-    }
-    const_type get_const_pmap_impl(const PropertyTag& p
-                                 , const PolygonMesh& pmesh, CGAL::Tag_true)
-    {
-      return get(p, pmesh);
-    }
-  };
-
-  template<typename PolygonMesh, typename PropertyTag>
-  typename property_map_selector<PolygonMesh, PropertyTag>::type
-  get_property_map(const PropertyTag& p, PolygonMesh& pmesh)
-  {
-    property_map_selector<PolygonMesh, PropertyTag> pms;
-    return pms.get_pmap(p, pmesh);
-  }
-
-  template<typename PolygonMesh, typename PropertyTag>
-  typename property_map_selector<PolygonMesh, PropertyTag>::const_type
-  get_const_property_map(const PropertyTag& p, const PolygonMesh& pmesh)
-  {
-    property_map_selector<PolygonMesh, PropertyTag> pms;
-    return pms.get_const_pmap(p, pmesh);
-  }
 } //namespace CGAL
 
 // partial specializations hate inheritance and we need to repeat
@@ -264,5 +199,7 @@ struct lookup_named_param_def<Tag1, CGAL::cgal_bgl_named_params<T, Tag, Base>, D
   }
 };
 } // boost
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP

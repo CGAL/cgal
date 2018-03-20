@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
@@ -23,6 +24,7 @@
 #ifndef CGAL_GENERIC_DESCARTES
 #define CGAL_GENERIC_DESCARTES 1
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial.h>
@@ -1452,5 +1454,7 @@ public:
 } // namespace internal
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

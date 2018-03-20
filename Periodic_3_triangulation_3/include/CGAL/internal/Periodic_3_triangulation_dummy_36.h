@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
@@ -23,6 +24,666 @@
 template < class GT, class TDS >
 inline std::vector<typename Periodic_3_triangulation_3<GT,TDS>::Vertex_handle >
 Periodic_3_triangulation_3<GT,TDS>::insert_dummy_points() {
+
+    
+static const unsigned V[216][4] = {
+  { 3, 9, 4, 12 },
+  { 28, 8, 3, 6 },
+  { 0, 11, 9, 3 },
+  { 11, 19, 13, 10 },
+  { 7, 15, 12, 13 },
+  { 6, 12, 7, 15 },
+  { 2, 8, 6, 17 },
+  { 3, 12, 4, 6 },
+  { 25, 24, 16, 22 },
+  { 3, 14, 12, 6 },
+  { 2, 1, 10, 4 },
+  { 8, 7, 5, 13 },
+  { 27, 5, 28, 8 },
+  { 29, 21, 27, 18 },
+  { 26, 25, 17, 23 },
+  { 21, 30, 27, 22 },
+  { 29, 6, 3, 4 },
+  { 17, 8, 6, 14 },
+  { 22, 30, 31, 25 },
+  { 6, 2, 17, 0 },
+  { 11, 19, 14, 13 },
+  { 2, 4, 10, 5 },
+  { 12, 21, 23, 18 },
+  { 16, 14, 17, 22 },
+  { 31, 2, 34, 33 },
+  { 25, 31, 23, 26 },
+  { 25, 22, 17, 23 },
+  { 14, 5, 11, 13 },
+  { 2, 16, 17, 10 },
+  { 9, 24, 16, 10 },
+  { 19, 18, 13, 10 },
+  { 17, 2, 11, 0 },
+  { 21, 32, 27, 30 },
+  { 4, 7, 13, 5 },
+  { 11, 2, 10, 5 },
+  { 0, 2, 11, 5 },
+  { 6, 15, 7, 0 },
+  { 8, 5, 14, 13 },
+  { 30, 8, 31, 2 },
+  { 31, 8, 6, 2 },
+  { 19, 28, 20, 22 },
+  { 13, 15, 21, 16 },
+  { 10, 18, 25, 19 },
+  { 9, 26, 15, 24 },
+  { 12, 23, 20, 18 },
+  { 30, 8, 28, 31 },
+  { 16, 8, 14, 13 },
+  { 15, 26, 17, 23 },
+  { 4, 12, 9, 10 },
+  { 6, 17, 15, 0 },
+  { 10, 1, 9, 4 },
+  { 14, 19, 20, 22 },
+  { 23, 14, 20, 22 },
+  { 16, 1, 9, 10 },
+  { 22, 28, 23, 31 },
+  { 4, 3, 1, 9 },
+  { 0, 3, 9, 1 },
+  { 17, 11, 15, 0 },
+  { 19, 28, 34, 20 },
+  { 9, 12, 18, 10 },
+  { 7, 6, 4, 12 },
+  { 33, 4, 2, 5 },
+  { 33, 35, 1, 4 },
+  { 0, 5, 11, 3 },
+  { 4, 7, 12, 13 },
+  { 7, 16, 13, 8 },
+  { 32, 34, 26, 31 },
+  { 26, 23, 15, 21 },
+  { 7, 1, 16, 8 },
+  { 3, 8, 14, 6 },
+  { 4, 13, 10, 5 },
+  { 16, 1, 10, 2 },
+  { 13, 5, 11, 10 },
+  { 13, 21, 18, 19 },
+  { 9, 20, 18, 12 },
+  { 32, 0, 6, 7 },
+  { 3, 14, 9, 12 },
+  { 7, 15, 1, 0 },
+  { 27, 29, 4, 7 },
+  { 28, 8, 6, 31 },
+  { 15, 9, 1, 0 },
+  { 7, 15, 13, 16 },
+  { 4, 13, 12, 10 },
+  { 15, 11, 9, 0 },
+  { 2, 17, 11, 10 },
+  { 7, 1, 15, 16 },
+  { 8, 1, 16, 2 },
+  { 15, 1, 9, 16 },
+  { 3, 11, 9, 14 },
+  { 14, 5, 3, 11 },
+  { 8, 5, 3, 14 },
+  { 19, 34, 28, 27 },
+  { 23, 14, 22, 17 },
+  { 11, 19, 26, 20 },
+  { 18, 29, 35, 33 },
+  { 12, 13, 18, 10 },
+  { 23, 21, 29, 18 },
+  { 17, 14, 6, 12 },
+  { 15, 17, 6, 12 },
+  { 16, 8, 17, 14 },
+  { 2, 8, 17, 16 },
+  { 24, 26, 15, 21 },
+  { 35, 3, 1, 4 },
+  { 12, 14, 23, 17 },
+  { 24, 30, 32, 21 },
+  { 9, 11, 26, 20 },
+  { 29, 6, 4, 7 },
+  { 33, 30, 24, 25 },
+  { 21, 24, 30, 22 },
+  { 18, 29, 20, 35 },
+  { 35, 34, 3, 28 },
+  { 24, 21, 15, 16 },
+  { 20, 28, 23, 22 },
+  { 25, 33, 30, 31 },
+  { 29, 23, 28, 31 },
+  { 12, 17, 23, 15 },
+  { 9, 11, 15, 26 },
+  { 12, 14, 20, 23 },
+  { 29, 28, 3, 6 },
+  { 24, 35, 30, 33 },
+  { 9, 20, 26, 24 },
+  { 15, 11, 17, 26 },
+  { 9, 20, 24, 18 },
+  { 27, 7, 5, 8 },
+  { 19, 27, 28, 22 },
+  { 9, 18, 24, 10 },
+  { 35, 20, 34, 28 },
+  { 12, 23, 21, 15 },
+  { 22, 30, 28, 31 },
+  { 29, 32, 6, 7 },
+  { 25, 16, 17, 22 },
+  { 24, 21, 16, 22 },
+  { 20, 11, 19, 14 },
+  { 9, 11, 20, 14 },
+  { 9, 14, 20, 12 },
+  { 10, 25, 11, 19 },
+  { 35, 32, 26, 24 },
+  { 12, 21, 18, 13 },
+  { 12, 15, 21, 13 },
+  { 22, 31, 23, 25 },
+  { 9, 24, 15, 16 },
+  { 35, 32, 30, 1 },
+  { 11, 25, 17, 26 },
+  { 32, 35, 0, 1 },
+  { 13, 22, 21, 19 },
+  { 22, 13, 14, 19 },
+  { 16, 13, 14, 22 },
+  { 13, 16, 21, 22 },
+  { 34, 2, 0, 5 },
+  { 28, 5, 3, 8 },
+  { 24, 30, 22, 25 },
+  { 21, 23, 29, 32 },
+  { 33, 35, 30, 1 },
+  { 19, 33, 34, 27 },
+  { 27, 8, 28, 30 },
+  { 27, 30, 7, 8 },
+  { 19, 21, 27, 22 },
+  { 18, 33, 25, 19 },
+  { 10, 18, 24, 25 },
+  { 10, 24, 16, 25 },
+  { 10, 16, 17, 25 },
+  { 10, 17, 11, 25 },
+  { 27, 30, 28, 22 },
+  { 18, 20, 29, 23 },
+  { 32, 23, 31, 26 },
+  { 11, 19, 25, 26 },
+  { 33, 2, 30, 31 },
+  { 30, 1, 7, 8 },
+  { 27, 7, 4, 5 },
+  { 18, 21, 27, 19 },
+  { 24, 32, 30, 35 },
+  { 30, 1, 2, 33 },
+  { 33, 31, 25, 34 },
+  { 34, 5, 28, 27 },
+  { 32, 31, 6, 0 },
+  { 29, 23, 31, 32 },
+  { 18, 35, 24, 33 },
+  { 35, 34, 26, 32 },
+  { 29, 3, 35, 4 },
+  { 29, 35, 3, 28 },
+  { 33, 1, 2, 4 },
+  { 34, 5, 0, 3 },
+  { 35, 3, 0, 1 },
+  { 19, 34, 25, 26 },
+  { 30, 1, 8, 2 },
+  { 33, 2, 34, 5 },
+  { 28, 5, 34, 3 },
+  { 19, 34, 26, 20 },
+  { 31, 2, 0, 34 },
+  { 18, 33, 24, 25 },
+  { 30, 32, 27, 7 },
+  { 30, 32, 7, 1 },
+  { 21, 29, 27, 32 },
+  { 32, 0, 7, 1 },
+  { 32, 29, 27, 7 },
+  { 29, 31, 28, 6 },
+  { 31, 2, 6, 0 },
+  { 29, 20, 28, 23 },
+  { 20, 34, 26, 35 },
+  { 32, 0, 34, 31 },
+  { 18, 35, 20, 24 },
+  { 20, 35, 26, 24 },
+  { 18, 27, 33, 19 },
+  { 33, 29, 35, 4 },
+  { 33, 5, 34, 27 },
+  { 19, 33, 25, 34 },
+  { 34, 31, 25, 26 },
+  { 24, 32, 26, 21 },
+  { 21, 23, 32, 26 },
+  { 29, 31, 6, 32 },
+  { 33, 27, 29, 4 },
+  { 27, 4, 33, 5 },
+  { 18, 27, 29, 33 },
+  { 29, 20, 35, 28 },
+  { 34, 3, 0, 35 },
+  { 35, 0, 34, 32 }
+};
+
+  
+static const unsigned N[216][4] = {
+   { 48, 7, 76, 55 },
+   { 69, 118, 79, 149 },
+   { 88, 56, 63, 83 },
+   { 30, 72, 135, 20 },
+   { 138, 64, 81, 5 },
+   { 4, 36, 98, 60 },
+   { 17, 19, 100, 39 },
+   { 60, 16, 9, 0 },
+   { 131, 130, 150, 159 },
+   { 97, 7, 69, 76 },
+   { 50, 21, 180, 71 },
+   { 33, 37, 65, 123 },
+   { 149, 154, 123, 173 },
+   { 169, 212, 96, 192 },
+   { 26, 47, 25, 142 },
+   { 162, 156, 108, 32 },
+   { 7, 178, 106, 118 },
+   { 69, 97, 99, 6 },
+   { 113, 139, 150, 128 },
+   { 31, 49, 196, 6 },
+   { 145, 27, 3, 132 },
+   { 70, 34, 61, 10 },
+   { 96, 44, 137, 127 },
+   { 92, 130, 146, 99 },
+   { 185, 172, 166, 188 },
+   { 164, 14, 206, 139 },
+   { 92, 14, 139, 130 },
+   { 72, 20, 37, 89 },
+   { 160, 84, 71, 100 },
+   { 159, 53, 125, 140 },
+   { 95, 3, 42, 73 },
+   { 35, 57, 19, 84 },
+   { 190, 15, 104, 192 },
+   { 11, 70, 168, 64 },
+   { 21, 72, 35, 84 },
+   { 34, 63, 148, 31 },
+   { 77, 75, 49, 5 },
+   { 27, 46, 11, 90 },
+   { 39, 166, 184, 45 },
+   { 6, 196, 38, 79 },
+   { 112, 51, 124, 58 },
+   { 111, 147, 81, 138 },
+   { 157, 135, 30, 158 },
+   { 101, 140, 120, 116 },
+   { 163, 74, 22, 117 },
+   { 79, 128, 38, 154 },
+   { 37, 146, 65, 99 },
+   { 14, 115, 67, 121 },
+   { 59, 50, 82, 0 },
+   { 57, 36, 19, 98 },
+   { 55, 48, 10, 53 },
+   { 40, 52, 145, 132 },
+   { 51, 112, 92, 117 },
+   { 50, 29, 71, 87 },
+   { 114, 139, 128, 112 },
+   { 56, 50, 0, 102 },
+   { 55, 80, 182, 2 },
+   { 83, 49, 31, 121 },
+   { 126, 187, 40, 91 },
+   { 95, 125, 48, 74 },
+   { 7, 64, 5, 106 },
+   { 21, 185, 211, 180 },
+   { 102, 180, 203, 152 },
+   { 89, 2, 181, 35 },
+   { 4, 82, 33, 60 },
+   { 46, 11, 68, 81 },
+   { 206, 164, 199, 177 },
+   { 127, 101, 208, 47 },
+   { 86, 65, 167, 85 },
+   { 17, 9, 1, 90 },
+   { 72, 21, 33, 82 },
+   { 10, 28, 86, 53 },
+   { 34, 3, 70, 27 },
+   { 169, 30, 144, 137 },
+   { 44, 59, 134, 122 },
+   { 36, 129, 193, 174 },
+   { 134, 0, 9, 88 },
+   { 80, 193, 36, 85 },
+   { 106, 168, 194, 210 },
+   { 39, 195, 45, 1 },
+   { 56, 77, 83, 87 },
+   { 41, 65, 85, 4 },
+   { 95, 48, 70, 64 },
+   { 2, 80, 57, 116 },
+   { 161, 34, 28, 31 },
+   { 87, 81, 68, 77 },
+   { 71, 100, 184, 68 },
+   { 53, 140, 85, 80 },
+   { 133, 76, 89, 2 },
+   { 63, 88, 27, 90 },
+   { 89, 69, 37, 149 },
+   { 173, 124, 153, 58 },
+   { 23, 26, 103, 52 },
+   { 187, 105, 132, 165 },
+   { 203, 176, 212, 109 },
+   { 30, 59, 82, 137 },
+   { 13, 163, 22, 151 },
+   { 9, 98, 103, 17 },
+   { 97, 5, 115, 49 },
+   { 17, 23, 46, 100 },
+   { 99, 28, 86, 6 },
+   { 67, 111, 207, 43 },
+   { 55, 62, 178, 182 },
+   { 92, 115, 97, 117 },
+   { 32, 207, 108, 170 },
+   { 93, 120, 133, 116 },
+   { 60, 78, 129, 16 },
+   { 150, 189, 113, 119 },
+   { 150, 15, 131, 104 },
+   { 213, 200, 94, 163 },
+   { 186, 179, 126, 214 },
+   { 41, 140, 131, 101 },
+   { 54, 52, 40, 197 },
+   { 166, 18, 172, 107 },
+   { 54, 195, 175, 197 },
+   { 47, 127, 98, 103 },
+   { 121, 43, 105, 83 },
+   { 52, 44, 103, 134 },
+   { 1, 16, 195, 179 },
+   { 152, 107, 176, 170 },
+   { 201, 43, 122, 105 },
+   { 142, 47, 116, 57 },
+   { 200, 125, 74, 120 },
+   { 11, 12, 155, 168 },
+   { 162, 40, 156, 91 },
+   { 158, 29, 59, 122 },
+   { 58, 110, 213, 198 },
+   { 67, 138, 115, 22 },
+   { 45, 54, 18, 162 },
+   { 75, 106, 194, 209 },
+   { 23, 26, 8, 160 },
+   { 147, 8, 108, 111 },
+   { 20, 51, 133, 93 },
+   { 132, 134, 88, 105 },
+   { 117, 74, 76, 133 },
+   { 165, 3, 42, 161 },
+   { 207, 201, 170, 177 },
+   { 73, 95, 138, 22 },
+   { 41, 137, 4, 127 },
+   { 25, 26, 18, 54 },
+   { 111, 87, 29, 43 },
+   { 191, 152, 143, 170 },
+   { 14, 121, 165, 161 },
+   { 182, 193, 141, 215 },
+   { 156, 73, 145, 147 },
+   { 20, 51, 144, 146 },
+   { 145, 23, 147, 46 },
+   { 131, 144, 146, 41 },
+   { 35, 181, 185, 188 },
+   { 90, 1, 12, 186 },
+   { 18, 8, 107, 108 },
+   { 175, 192, 208, 96 },
+   { 141, 171, 62, 119 },
+   { 204, 91, 202, 205 },
+   { 45, 162, 155, 12 },
+   { 167, 123, 154, 190 },
+   { 15, 124, 144, 169 },
+   { 205, 42, 202, 189 },
+   { 189, 159, 42, 125 },
+   { 8, 160, 158, 29 },
+   { 130, 161, 159, 28 },
+   { 142, 135, 160, 84 },
+   { 128, 124, 15, 154 },
+   { 197, 96, 44, 109 },
+   { 25, 66, 208, 175 },
+   { 183, 142, 93, 135 },
+   { 38, 113, 24, 171 },
+   { 68, 155, 184, 191 },
+   { 33, 211, 123, 78 },
+   { 156, 202, 73, 13 },
+   { 141, 119, 136, 104 },
+   { 180, 166, 152, 184 },
+   { 206, 205, 24, 113 },
+   { 12, 91, 204, 186 },
+   { 196, 75, 199, 209 },
+   { 164, 209, 151, 114 },
+   { 119, 189, 94, 200 },
+   { 66, 136, 215, 198 },
+   { 102, 203, 16, 179 },
+   { 110, 118, 213, 178 },
+   { 10, 61, 62, 171 },
+   { 63, 214, 186, 148 },
+   { 56, 143, 102, 214 },
+   { 206, 165, 187, 205 },
+   { 86, 38, 171, 167 },
+   { 148, 204, 61, 24 },
+   { 181, 110, 149, 173 },
+   { 198, 93, 58, 183 },
+   { 148, 199, 24, 196 },
+   { 107, 158, 157, 176 },
+   { 194, 155, 191, 32 },
+   { 193, 167, 141, 190 },
+   { 194, 32, 151, 13 },
+   { 77, 191, 143, 75 },
+   { 78, 190, 129, 192 },
+   { 79, 118, 209, 114 },
+   { 19, 174, 188, 39 },
+   { 112, 114, 163, 213 },
+   { 177, 201, 126, 187 },
+   { 188, 66, 174, 215 },
+   { 201, 122, 176, 109 },
+   { 136, 120, 200, 198 },
+   { 153, 157, 169, 212 },
+   { 178, 62, 210, 94 },
+   { 173, 153, 211, 185 },
+   { 172, 183, 153, 157 },
+   { 25, 183, 66, 172 },
+   { 208, 101, 104, 136 },
+   { 164, 207, 67, 151 },
+   { 174, 129, 175, 195 },
+   { 78, 203, 211, 212 },
+   { 61, 204, 168, 210 },
+   { 210, 94, 202, 13 },
+   { 126, 179, 197, 109 },
+   { 182, 215, 110, 181 },
+   { 199, 177, 143, 214 }
+};
+
+static const int O[216][4] = {
+  { 0,0,0,0 },
+  { 0,1,5,5 },
+  { 4,0,4,4 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 2,0,4,0 },
+  { 0,0,0,0 },
+  { 2,2,0,0 },
+  { 4,0,4,4 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,1,0,1 },
+  { 0,0,0,0 },
+  { 6,2,0,4 },
+  { 0,0,0,0 },
+  { 0,1,1,1 },
+  { 0,0,4,0 },
+  { 0,0,0,2 },
+  { 4,2,0,6 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,3,2,2 },
+  { 2,0,4,6 },
+  { 2,0,0,4 },
+  { 0,0,0,0 },
+  { 2,0,0,2 },
+  { 2,2,0,2 },
+  { 0,0,0,0 },
+  { 0,2,2,6 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 4,0,0,0 },
+  { 0,0,0,2 },
+  { 0,0,0,0 },
+  { 0,1,0,3 },
+  { 0,1,5,3 },
+  { 0,0,4,0 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 2,2,0,2 },
+  { 0,0,0,0 },
+  { 0,1,0,0 },
+  { 0,0,0,0 },
+  { 4,6,0,4 },
+  { 0,0,0,0 },
+  { 4,0,4,6 },
+  { 0,0,0,0 },
+  { 0,0,4,0 },
+  { 4,0,4,0 },
+  { 0,2,2,2 },
+  { 0,0,4,0 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,2,4,6 },
+  { 0,0,0,4 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,1,1,1 },
+  { 0,0,1,1 },
+  { 4,0,0,4 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 4,2,6,0 },
+  { 2,0,0,0 },
+  { 0,2,0,0 },
+  { 4,0,0,4 },
+  { 0,0,0,0 },
+  { 0,2,2,2 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,3,1,1 },
+  { 4,0,4,4 },
+  { 0,0,2,2 },
+  { 0,0,1,1 },
+  { 0,1,5,0 },
+  { 0,2,2,2 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 4,2,6,6 },
+  { 2,0,2,2 },
+  { 0,2,0,0 },
+  { 0,2,0,2 },
+  { 0,2,2,0 },
+  { 4,0,4,0 },
+  { 0,0,4,0 },
+  { 0,0,4,0 },
+  { 0,0,0,0 },
+  { 4,0,0,0 },
+  { 0,0,4,4 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,0,4,4 },
+  { 4,0,4,4 },
+  { 0,0,0,0 },
+  { 2,0,0,0 },
+  { 2,2,0,0 },
+  { 0,1,1,1 },
+  { 4,0,4,0 },
+  { 2,0,0,0 },
+  { 4,0,4,4 },
+  { 0,1,1,1 },
+  { 2,0,2,2 },
+  { 0,2,0,0 },
+  { 0,0,0,0 },
+  { 4,0,5,0 },
+  { 2,0,0,0 },
+  { 4,0,4,0 },
+  { 2,2,0,0 },
+  { 4,4,0,0 },
+  { 4,0,4,4 },
+  { 6,2,4,6 },
+  { 4,0,4,4 },
+  { 4,0,5,5 },
+  { 2,2,0,2 },
+  { 0,0,0,0 },
+  { 4,2,0,6 },
+  { 0,0,0,0 },
+  { 0,1,1,1 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 4,4,0,0 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,0,1,1 },
+  { 2,0,0,0 },
+  { 2,0,0,0 },
+  { 4,0,0,0 },
+  { 4,0,4,0 },
+  { 4,0,4,4 },
+  { 0,0,0,0 },
+  { 2,0,2,2 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,0,4,2 },
+  { 2,2,0,0 },
+  { 2,0,0,3 },
+  { 2,2,0,6 },
+  { 0,2,3,3 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,1,5,1 },
+  { 0,1,5,1 },
+  { 2,0,0,2 },
+  { 0,0,0,0 },
+  { 2,2,0,3 },
+  { 0,0,0,0 },
+  { 0,1,0,0 },
+  { 0,0,1,1 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 2,2,0,2 },
+  { 2,0,0,2 },
+  { 2,0,2,2 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 4,4,0,6 },
+  { 0,0,0,4 },
+  { 2,3,0,0 },
+  { 0,3,1,1 },
+  { 0,1,1,1 },
+  { 0,0,0,0 },
+  { 2,0,0,2 },
+  { 0,3,3,2 },
+  { 2,0,2,2 },
+  { 0,1,0,0 },
+  { 4,0,5,7 },
+  { 4,4,0,4 },
+  { 0,0,0,0 },
+  { 6,2,6,4 },
+  { 0,1,0,1 },
+  { 4,4,5,0 },
+  { 0,1,1,1 },
+  { 0,1,5,5 },
+  { 0,1,1,1 },
+  { 0,0,0,4 },
+  { 0,3,1,3 },
+  { 0,1,0,1 },
+  { 0,1,0,5 },
+  { 0,0,4,4 },
+  { 0,3,7,2 },
+  { 0,0,0,0 },
+  { 0,0,0,1 },
+  { 0,0,1,3 },
+  { 0,0,0,0 },
+  { 0,3,1,3 },
+  { 0,0,0,1 },
+  { 4,0,0,5 },
+  { 0,3,5,7 },
+  { 4,4,0,4 },
+  { 4,0,4,4 },
+  { 4,7,2,0 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,0,0,0 },
+  { 0,0,0,1 },
+  { 0,1,0,0 },
+  { 0,0,0,0 },
+  { 2,0,2,6 },
+  { 2,0,2,0 },
+  { 0,0,0,2 },
+  { 4,0,5,4 },
+  { 0,0,0,1 },
+  { 0,1,0,1 },
+  { 0,0,0,0 },
+  { 4,4,4,0 },
+  { 0,5,5,4 },
+  { 6,7,2,4 }
+};
+ 
   clear();
 
   Vertex_handle vertices[36];
@@ -52,658 +713,14 @@ Periodic_3_triangulation_3<GT,TDS>::insert_dummy_points() {
   // Create cells:
   for (int i=0; i<216; i++) {
     cells[i] = _tds.create_cell();
+    cells[i]->set_vertices(vertices[V[i][0]], vertices[V[i][1]], vertices[V[i][2]], vertices[V[i][3]]);
+  }
+  for (int i=0; i<216; i++) {
+    cells[i]->set_neighbors(cells[N[i][0]], cells[N[i][1]], cells[N[i][2]], cells[N[i][3]]);
+    set_offsets(cells[i], O[i][0], O[i][1], O[i][2], O[i][3]);
   }
 
-  cells[0]->set_vertices(vertices[3],vertices[9],vertices[4],vertices[12]);
-  cells[1]->set_vertices(vertices[28],vertices[8],vertices[3],vertices[6]);
-  cells[2]->set_vertices(vertices[0],vertices[11],vertices[9],vertices[3]);
-  cells[3]->set_vertices(vertices[11],vertices[19],vertices[13],vertices[10]);
-  cells[4]->set_vertices(vertices[7],vertices[15],vertices[12],vertices[13]);
-  cells[5]->set_vertices(vertices[6],vertices[12],vertices[7],vertices[15]);
-  cells[6]->set_vertices(vertices[2],vertices[8],vertices[6],vertices[17]);
-  cells[7]->set_vertices(vertices[3],vertices[12],vertices[4],vertices[6]);
-  cells[8]->set_vertices(vertices[25],vertices[24],vertices[16],vertices[22]);
-  cells[9]->set_vertices(vertices[3],vertices[14],vertices[12],vertices[6]);
-  cells[10]->set_vertices(vertices[2],vertices[1],vertices[10],vertices[4]);
-  cells[11]->set_vertices(vertices[8],vertices[7],vertices[5],vertices[13]);
-  cells[12]->set_vertices(vertices[27],vertices[5],vertices[28],vertices[8]);
-  cells[13]->set_vertices(vertices[29],vertices[21],vertices[27],vertices[18]);
-  cells[14]->set_vertices(vertices[26],vertices[25],vertices[17],vertices[23]);
-  cells[15]->set_vertices(vertices[21],vertices[30],vertices[27],vertices[22]);
-  cells[16]->set_vertices(vertices[29],vertices[6],vertices[3],vertices[4]);
-  cells[17]->set_vertices(vertices[17],vertices[8],vertices[6],vertices[14]);
-  cells[18]->set_vertices(vertices[22],vertices[30],vertices[31],vertices[25]);
-  cells[19]->set_vertices(vertices[6],vertices[2],vertices[17],vertices[0]);
-  cells[20]->set_vertices(vertices[11],vertices[19],vertices[14],vertices[13]);
-  cells[21]->set_vertices(vertices[2],vertices[4],vertices[10],vertices[5]);
-  cells[22]->set_vertices(vertices[12],vertices[21],vertices[23],vertices[18]);
-  cells[23]->set_vertices(vertices[16],vertices[14],vertices[17],vertices[22]);
-  cells[24]->set_vertices(vertices[31],vertices[2],vertices[34],vertices[33]);
-  cells[25]->set_vertices(vertices[25],vertices[31],vertices[23],vertices[26]);
-  cells[26]->set_vertices(vertices[25],vertices[22],vertices[17],vertices[23]);
-  cells[27]->set_vertices(vertices[14],vertices[5],vertices[11],vertices[13]);
-  cells[28]->set_vertices(vertices[2],vertices[16],vertices[17],vertices[10]);
-  cells[29]->set_vertices(vertices[9],vertices[24],vertices[16],vertices[10]);
-  cells[30]->set_vertices(vertices[19],vertices[18],vertices[13],vertices[10]);
-  cells[31]->set_vertices(vertices[17],vertices[2],vertices[11],vertices[0]);
-  cells[32]->set_vertices(vertices[21],vertices[32],vertices[27],vertices[30]);
-  cells[33]->set_vertices(vertices[4],vertices[7],vertices[13],vertices[5]);
-  cells[34]->set_vertices(vertices[11],vertices[2],vertices[10],vertices[5]);
-  cells[35]->set_vertices(vertices[0],vertices[2],vertices[11],vertices[5]);
-  cells[36]->set_vertices(vertices[6],vertices[15],vertices[7],vertices[0]);
-  cells[37]->set_vertices(vertices[8],vertices[5],vertices[14],vertices[13]);
-  cells[38]->set_vertices(vertices[30],vertices[8],vertices[31],vertices[2]);
-  cells[39]->set_vertices(vertices[31],vertices[8],vertices[6],vertices[2]);
-  cells[40]->set_vertices(vertices[19],vertices[28],vertices[20],vertices[22]);
-  cells[41]->set_vertices(vertices[13],vertices[15],vertices[21],vertices[16]);
-  cells[42]->set_vertices(vertices[10],vertices[18],vertices[25],vertices[19]);
-  cells[43]->set_vertices(vertices[9],vertices[26],vertices[15],vertices[24]);
-  cells[44]->set_vertices(vertices[12],vertices[23],vertices[20],vertices[18]);
-  cells[45]->set_vertices(vertices[30],vertices[8],vertices[28],vertices[31]);
-  cells[46]->set_vertices(vertices[16],vertices[8],vertices[14],vertices[13]);
-  cells[47]->set_vertices(vertices[15],vertices[26],vertices[17],vertices[23]);
-  cells[48]->set_vertices(vertices[4],vertices[12],vertices[9],vertices[10]);
-  cells[49]->set_vertices(vertices[6],vertices[17],vertices[15],vertices[0]);
-  cells[50]->set_vertices(vertices[10],vertices[1],vertices[9],vertices[4]);
-  cells[51]->set_vertices(vertices[14],vertices[19],vertices[20],vertices[22]);
-  cells[52]->set_vertices(vertices[23],vertices[14],vertices[20],vertices[22]);
-  cells[53]->set_vertices(vertices[16],vertices[1],vertices[9],vertices[10]);
-  cells[54]->set_vertices(vertices[22],vertices[28],vertices[23],vertices[31]);
-  cells[55]->set_vertices(vertices[4],vertices[3],vertices[1],vertices[9]);
-  cells[56]->set_vertices(vertices[0],vertices[3],vertices[9],vertices[1]);
-  cells[57]->set_vertices(vertices[17],vertices[11],vertices[15],vertices[0]);
-  cells[58]->set_vertices(vertices[19],vertices[28],vertices[34],vertices[20]);
-  cells[59]->set_vertices(vertices[9],vertices[12],vertices[18],vertices[10]);
-  cells[60]->set_vertices(vertices[7],vertices[6],vertices[4],vertices[12]);
-  cells[61]->set_vertices(vertices[33],vertices[4],vertices[2],vertices[5]);
-  cells[62]->set_vertices(vertices[33],vertices[35],vertices[1],vertices[4]);
-  cells[63]->set_vertices(vertices[0],vertices[5],vertices[11],vertices[3]);
-  cells[64]->set_vertices(vertices[4],vertices[7],vertices[12],vertices[13]);
-  cells[65]->set_vertices(vertices[7],vertices[16],vertices[13],vertices[8]);
-  cells[66]->set_vertices(vertices[32],vertices[34],vertices[26],vertices[31]);
-  cells[67]->set_vertices(vertices[26],vertices[23],vertices[15],vertices[21]);
-  cells[68]->set_vertices(vertices[7],vertices[1],vertices[16],vertices[8]);
-  cells[69]->set_vertices(vertices[3],vertices[8],vertices[14],vertices[6]);
-  cells[70]->set_vertices(vertices[4],vertices[13],vertices[10],vertices[5]);
-  cells[71]->set_vertices(vertices[16],vertices[1],vertices[10],vertices[2]);
-  cells[72]->set_vertices(vertices[13],vertices[5],vertices[11],vertices[10]);
-  cells[73]->set_vertices(vertices[13],vertices[21],vertices[18],vertices[19]);
-  cells[74]->set_vertices(vertices[9],vertices[20],vertices[18],vertices[12]);
-  cells[75]->set_vertices(vertices[32],vertices[0],vertices[6],vertices[7]);
-  cells[76]->set_vertices(vertices[3],vertices[14],vertices[9],vertices[12]);
-  cells[77]->set_vertices(vertices[7],vertices[15],vertices[1],vertices[0]);
-  cells[78]->set_vertices(vertices[27],vertices[29],vertices[4],vertices[7]);
-  cells[79]->set_vertices(vertices[28],vertices[8],vertices[6],vertices[31]);
-  cells[80]->set_vertices(vertices[15],vertices[9],vertices[1],vertices[0]);
-  cells[81]->set_vertices(vertices[7],vertices[15],vertices[13],vertices[16]);
-  cells[82]->set_vertices(vertices[4],vertices[13],vertices[12],vertices[10]);
-  cells[83]->set_vertices(vertices[15],vertices[11],vertices[9],vertices[0]);
-  cells[84]->set_vertices(vertices[2],vertices[17],vertices[11],vertices[10]);
-  cells[85]->set_vertices(vertices[7],vertices[1],vertices[15],vertices[16]);
-  cells[86]->set_vertices(vertices[8],vertices[1],vertices[16],vertices[2]);
-  cells[87]->set_vertices(vertices[15],vertices[1],vertices[9],vertices[16]);
-  cells[88]->set_vertices(vertices[3],vertices[11],vertices[9],vertices[14]);
-  cells[89]->set_vertices(vertices[14],vertices[5],vertices[3],vertices[11]);
-  cells[90]->set_vertices(vertices[8],vertices[5],vertices[3],vertices[14]);
-  cells[91]->set_vertices(vertices[19],vertices[34],vertices[28],vertices[27]);
-  cells[92]->set_vertices(vertices[23],vertices[14],vertices[22],vertices[17]);
-  cells[93]->set_vertices(vertices[11],vertices[19],vertices[26],vertices[20]);
-  cells[94]->set_vertices(vertices[18],vertices[29],vertices[35],vertices[33]);
-  cells[95]->set_vertices(vertices[12],vertices[13],vertices[18],vertices[10]);
-  cells[96]->set_vertices(vertices[23],vertices[21],vertices[29],vertices[18]);
-  cells[97]->set_vertices(vertices[17],vertices[14],vertices[6],vertices[12]);
-  cells[98]->set_vertices(vertices[15],vertices[17],vertices[6],vertices[12]);
-  cells[99]->set_vertices(vertices[16],vertices[8],vertices[17],vertices[14]);
-  cells[100]->set_vertices(vertices[2],vertices[8],vertices[17],vertices[16]);
-  cells[101]->set_vertices(vertices[24],vertices[26],vertices[15],vertices[21]);
-  cells[102]->set_vertices(vertices[35],vertices[3],vertices[1],vertices[4]);
-  cells[103]->set_vertices(vertices[12],vertices[14],vertices[23],vertices[17]);
-  cells[104]->set_vertices(vertices[24],vertices[30],vertices[32],vertices[21]);
-  cells[105]->set_vertices(vertices[9],vertices[11],vertices[26],vertices[20]);
-  cells[106]->set_vertices(vertices[29],vertices[6],vertices[4],vertices[7]);
-  cells[107]->set_vertices(vertices[33],vertices[30],vertices[24],vertices[25]);
-  cells[108]->set_vertices(vertices[21],vertices[24],vertices[30],vertices[22]);
-  cells[109]->set_vertices(vertices[18],vertices[29],vertices[20],vertices[35]);
-  cells[110]->set_vertices(vertices[35],vertices[34],vertices[3],vertices[28]);
-  cells[111]->set_vertices(vertices[24],vertices[21],vertices[15],vertices[16]);
-  cells[112]->set_vertices(vertices[20],vertices[28],vertices[23],vertices[22]);
-  cells[113]->set_vertices(vertices[25],vertices[33],vertices[30],vertices[31]);
-  cells[114]->set_vertices(vertices[29],vertices[23],vertices[28],vertices[31]);
-  cells[115]->set_vertices(vertices[12],vertices[17],vertices[23],vertices[15]);
-  cells[116]->set_vertices(vertices[9],vertices[11],vertices[15],vertices[26]);
-  cells[117]->set_vertices(vertices[12],vertices[14],vertices[20],vertices[23]);
-  cells[118]->set_vertices(vertices[29],vertices[28],vertices[3],vertices[6]);
-  cells[119]->set_vertices(vertices[24],vertices[35],vertices[30],vertices[33]);
-  cells[120]->set_vertices(vertices[9],vertices[20],vertices[26],vertices[24]);
-  cells[121]->set_vertices(vertices[15],vertices[11],vertices[17],vertices[26]);
-  cells[122]->set_vertices(vertices[9],vertices[20],vertices[24],vertices[18]);
-  cells[123]->set_vertices(vertices[27],vertices[7],vertices[5],vertices[8]);
-  cells[124]->set_vertices(vertices[19],vertices[27],vertices[28],vertices[22]);
-  cells[125]->set_vertices(vertices[9],vertices[18],vertices[24],vertices[10]);
-  cells[126]->set_vertices(vertices[35],vertices[20],vertices[34],vertices[28]);
-  cells[127]->set_vertices(vertices[12],vertices[23],vertices[21],vertices[15]);
-  cells[128]->set_vertices(vertices[22],vertices[30],vertices[28],vertices[31]);
-  cells[129]->set_vertices(vertices[29],vertices[32],vertices[6],vertices[7]);
-  cells[130]->set_vertices(vertices[25],vertices[16],vertices[17],vertices[22]);
-  cells[131]->set_vertices(vertices[24],vertices[21],vertices[16],vertices[22]);
-  cells[132]->set_vertices(vertices[20],vertices[11],vertices[19],vertices[14]);
-  cells[133]->set_vertices(vertices[9],vertices[11],vertices[20],vertices[14]);
-  cells[134]->set_vertices(vertices[9],vertices[14],vertices[20],vertices[12]);
-  cells[135]->set_vertices(vertices[10],vertices[25],vertices[11],vertices[19]);
-  cells[136]->set_vertices(vertices[35],vertices[32],vertices[26],vertices[24]);
-  cells[137]->set_vertices(vertices[12],vertices[21],vertices[18],vertices[13]);
-  cells[138]->set_vertices(vertices[12],vertices[15],vertices[21],vertices[13]);
-  cells[139]->set_vertices(vertices[22],vertices[31],vertices[23],vertices[25]);
-  cells[140]->set_vertices(vertices[9],vertices[24],vertices[15],vertices[16]);
-  cells[141]->set_vertices(vertices[35],vertices[32],vertices[30],vertices[1]);
-  cells[142]->set_vertices(vertices[11],vertices[25],vertices[17],vertices[26]);
-  cells[143]->set_vertices(vertices[32],vertices[35],vertices[0],vertices[1]);
-  cells[144]->set_vertices(vertices[13],vertices[22],vertices[21],vertices[19]);
-  cells[145]->set_vertices(vertices[22],vertices[13],vertices[14],vertices[19]);
-  cells[146]->set_vertices(vertices[16],vertices[13],vertices[14],vertices[22]);
-  cells[147]->set_vertices(vertices[13],vertices[16],vertices[21],vertices[22]);
-  cells[148]->set_vertices(vertices[34],vertices[2],vertices[0],vertices[5]);
-  cells[149]->set_vertices(vertices[28],vertices[5],vertices[3],vertices[8]);
-  cells[150]->set_vertices(vertices[24],vertices[30],vertices[22],vertices[25]);
-  cells[151]->set_vertices(vertices[21],vertices[23],vertices[29],vertices[32]);
-  cells[152]->set_vertices(vertices[33],vertices[35],vertices[30],vertices[1]);
-  cells[153]->set_vertices(vertices[19],vertices[33],vertices[34],vertices[27]);
-  cells[154]->set_vertices(vertices[27],vertices[8],vertices[28],vertices[30]);
-  cells[155]->set_vertices(vertices[27],vertices[30],vertices[7],vertices[8]);
-  cells[156]->set_vertices(vertices[19],vertices[21],vertices[27],vertices[22]);
-  cells[157]->set_vertices(vertices[18],vertices[33],vertices[25],vertices[19]);
-  cells[158]->set_vertices(vertices[10],vertices[18],vertices[24],vertices[25]);
-  cells[159]->set_vertices(vertices[10],vertices[24],vertices[16],vertices[25]);
-  cells[160]->set_vertices(vertices[10],vertices[16],vertices[17],vertices[25]);
-  cells[161]->set_vertices(vertices[10],vertices[17],vertices[11],vertices[25]);
-  cells[162]->set_vertices(vertices[27],vertices[30],vertices[28],vertices[22]);
-  cells[163]->set_vertices(vertices[18],vertices[20],vertices[29],vertices[23]);
-  cells[164]->set_vertices(vertices[32],vertices[23],vertices[31],vertices[26]);
-  cells[165]->set_vertices(vertices[11],vertices[19],vertices[25],vertices[26]);
-  cells[166]->set_vertices(vertices[33],vertices[2],vertices[30],vertices[31]);
-  cells[167]->set_vertices(vertices[30],vertices[1],vertices[7],vertices[8]);
-  cells[168]->set_vertices(vertices[27],vertices[7],vertices[4],vertices[5]);
-  cells[169]->set_vertices(vertices[18],vertices[21],vertices[27],vertices[19]);
-  cells[170]->set_vertices(vertices[24],vertices[32],vertices[30],vertices[35]);
-  cells[171]->set_vertices(vertices[30],vertices[1],vertices[2],vertices[33]);
-  cells[172]->set_vertices(vertices[33],vertices[31],vertices[25],vertices[34]);
-  cells[173]->set_vertices(vertices[34],vertices[5],vertices[28],vertices[27]);
-  cells[174]->set_vertices(vertices[32],vertices[31],vertices[6],vertices[0]);
-  cells[175]->set_vertices(vertices[29],vertices[23],vertices[31],vertices[32]);
-  cells[176]->set_vertices(vertices[18],vertices[35],vertices[24],vertices[33]);
-  cells[177]->set_vertices(vertices[35],vertices[34],vertices[26],vertices[32]);
-  cells[178]->set_vertices(vertices[29],vertices[3],vertices[35],vertices[4]);
-  cells[179]->set_vertices(vertices[29],vertices[35],vertices[3],vertices[28]);
-  cells[180]->set_vertices(vertices[33],vertices[1],vertices[2],vertices[4]);
-  cells[181]->set_vertices(vertices[34],vertices[5],vertices[0],vertices[3]);
-  cells[182]->set_vertices(vertices[35],vertices[3],vertices[0],vertices[1]);
-  cells[183]->set_vertices(vertices[19],vertices[34],vertices[25],vertices[26]);
-  cells[184]->set_vertices(vertices[30],vertices[1],vertices[8],vertices[2]);
-  cells[185]->set_vertices(vertices[33],vertices[2],vertices[34],vertices[5]);
-  cells[186]->set_vertices(vertices[28],vertices[5],vertices[34],vertices[3]);
-  cells[187]->set_vertices(vertices[19],vertices[34],vertices[26],vertices[20]);
-  cells[188]->set_vertices(vertices[31],vertices[2],vertices[0],vertices[34]);
-  cells[189]->set_vertices(vertices[18],vertices[33],vertices[24],vertices[25]);
-  cells[190]->set_vertices(vertices[30],vertices[32],vertices[27],vertices[7]);
-  cells[191]->set_vertices(vertices[30],vertices[32],vertices[7],vertices[1]);
-  cells[192]->set_vertices(vertices[21],vertices[29],vertices[27],vertices[32]);
-  cells[193]->set_vertices(vertices[32],vertices[0],vertices[7],vertices[1]);
-  cells[194]->set_vertices(vertices[32],vertices[29],vertices[27],vertices[7]);
-  cells[195]->set_vertices(vertices[29],vertices[31],vertices[28],vertices[6]);
-  cells[196]->set_vertices(vertices[31],vertices[2],vertices[6],vertices[0]);
-  cells[197]->set_vertices(vertices[29],vertices[20],vertices[28],vertices[23]);
-  cells[198]->set_vertices(vertices[20],vertices[34],vertices[26],vertices[35]);
-  cells[199]->set_vertices(vertices[32],vertices[0],vertices[34],vertices[31]);
-  cells[200]->set_vertices(vertices[18],vertices[35],vertices[20],vertices[24]);
-  cells[201]->set_vertices(vertices[20],vertices[35],vertices[26],vertices[24]);
-  cells[202]->set_vertices(vertices[18],vertices[27],vertices[33],vertices[19]);
-  cells[203]->set_vertices(vertices[33],vertices[29],vertices[35],vertices[4]);
-  cells[204]->set_vertices(vertices[33],vertices[5],vertices[34],vertices[27]);
-  cells[205]->set_vertices(vertices[19],vertices[33],vertices[25],vertices[34]);
-  cells[206]->set_vertices(vertices[34],vertices[31],vertices[25],vertices[26]);
-  cells[207]->set_vertices(vertices[24],vertices[32],vertices[26],vertices[21]);
-  cells[208]->set_vertices(vertices[21],vertices[23],vertices[32],vertices[26]);
-  cells[209]->set_vertices(vertices[29],vertices[31],vertices[6],vertices[32]);
-  cells[210]->set_vertices(vertices[33],vertices[27],vertices[29],vertices[4]);
-  cells[211]->set_vertices(vertices[27],vertices[4],vertices[33],vertices[5]);
-  cells[212]->set_vertices(vertices[18],vertices[27],vertices[29],vertices[33]);
-  cells[213]->set_vertices(vertices[29],vertices[20],vertices[35],vertices[28]);
-  cells[214]->set_vertices(vertices[34],vertices[3],vertices[0],vertices[35]);
-  cells[215]->set_vertices(vertices[35],vertices[0],vertices[34],vertices[32]);
 
-  cells[0]->set_neighbors(cells[48],cells[7],cells[76],cells[55]);
-  cells[1]->set_neighbors(cells[69],cells[118],cells[79],cells[149]);
-  cells[2]->set_neighbors(cells[88],cells[56],cells[63],cells[83]);
-  cells[3]->set_neighbors(cells[30],cells[72],cells[135],cells[20]);
-  cells[4]->set_neighbors(cells[138],cells[64],cells[81],cells[5]);
-  cells[5]->set_neighbors(cells[4],cells[36],cells[98],cells[60]);
-  cells[6]->set_neighbors(cells[17],cells[19],cells[100],cells[39]);
-  cells[7]->set_neighbors(cells[60],cells[16],cells[9],cells[0]);
-  cells[8]->set_neighbors(cells[131],cells[130],cells[150],cells[159]);
-  cells[9]->set_neighbors(cells[97],cells[7],cells[69],cells[76]);
-  cells[10]->set_neighbors(cells[50],cells[21],cells[180],cells[71]);
-  cells[11]->set_neighbors(cells[33],cells[37],cells[65],cells[123]);
-  cells[12]->set_neighbors(cells[149],cells[154],cells[123],cells[173]);
-  cells[13]->set_neighbors(cells[169],cells[212],cells[96],cells[192]);
-  cells[14]->set_neighbors(cells[26],cells[47],cells[25],cells[142]);
-  cells[15]->set_neighbors(cells[162],cells[156],cells[108],cells[32]);
-  cells[16]->set_neighbors(cells[7],cells[178],cells[106],cells[118]);
-  cells[17]->set_neighbors(cells[69],cells[97],cells[99],cells[6]);
-  cells[18]->set_neighbors(cells[113],cells[139],cells[150],cells[128]);
-  cells[19]->set_neighbors(cells[31],cells[49],cells[196],cells[6]);
-  cells[20]->set_neighbors(cells[145],cells[27],cells[3],cells[132]);
-  cells[21]->set_neighbors(cells[70],cells[34],cells[61],cells[10]);
-  cells[22]->set_neighbors(cells[96],cells[44],cells[137],cells[127]);
-  cells[23]->set_neighbors(cells[92],cells[130],cells[146],cells[99]);
-  cells[24]->set_neighbors(cells[185],cells[172],cells[166],cells[188]);
-  cells[25]->set_neighbors(cells[164],cells[14],cells[206],cells[139]);
-  cells[26]->set_neighbors(cells[92],cells[14],cells[139],cells[130]);
-  cells[27]->set_neighbors(cells[72],cells[20],cells[37],cells[89]);
-  cells[28]->set_neighbors(cells[160],cells[84],cells[71],cells[100]);
-  cells[29]->set_neighbors(cells[159],cells[53],cells[125],cells[140]);
-  cells[30]->set_neighbors(cells[95],cells[3],cells[42],cells[73]);
-  cells[31]->set_neighbors(cells[35],cells[57],cells[19],cells[84]);
-  cells[32]->set_neighbors(cells[190],cells[15],cells[104],cells[192]);
-  cells[33]->set_neighbors(cells[11],cells[70],cells[168],cells[64]);
-  cells[34]->set_neighbors(cells[21],cells[72],cells[35],cells[84]);
-  cells[35]->set_neighbors(cells[34],cells[63],cells[148],cells[31]);
-  cells[36]->set_neighbors(cells[77],cells[75],cells[49],cells[5]);
-  cells[37]->set_neighbors(cells[27],cells[46],cells[11],cells[90]);
-  cells[38]->set_neighbors(cells[39],cells[166],cells[184],cells[45]);
-  cells[39]->set_neighbors(cells[6],cells[196],cells[38],cells[79]);
-  cells[40]->set_neighbors(cells[112],cells[51],cells[124],cells[58]);
-  cells[41]->set_neighbors(cells[111],cells[147],cells[81],cells[138]);
-  cells[42]->set_neighbors(cells[157],cells[135],cells[30],cells[158]);
-  cells[43]->set_neighbors(cells[101],cells[140],cells[120],cells[116]);
-  cells[44]->set_neighbors(cells[163],cells[74],cells[22],cells[117]);
-  cells[45]->set_neighbors(cells[79],cells[128],cells[38],cells[154]);
-  cells[46]->set_neighbors(cells[37],cells[146],cells[65],cells[99]);
-  cells[47]->set_neighbors(cells[14],cells[115],cells[67],cells[121]);
-  cells[48]->set_neighbors(cells[59],cells[50],cells[82],cells[0]);
-  cells[49]->set_neighbors(cells[57],cells[36],cells[19],cells[98]);
-  cells[50]->set_neighbors(cells[55],cells[48],cells[10],cells[53]);
-  cells[51]->set_neighbors(cells[40],cells[52],cells[145],cells[132]);
-  cells[52]->set_neighbors(cells[51],cells[112],cells[92],cells[117]);
-  cells[53]->set_neighbors(cells[50],cells[29],cells[71],cells[87]);
-  cells[54]->set_neighbors(cells[114],cells[139],cells[128],cells[112]);
-  cells[55]->set_neighbors(cells[56],cells[50],cells[0],cells[102]);
-  cells[56]->set_neighbors(cells[55],cells[80],cells[182],cells[2]);
-  cells[57]->set_neighbors(cells[83],cells[49],cells[31],cells[121]);
-  cells[58]->set_neighbors(cells[126],cells[187],cells[40],cells[91]);
-  cells[59]->set_neighbors(cells[95],cells[125],cells[48],cells[74]);
-  cells[60]->set_neighbors(cells[7],cells[64],cells[5],cells[106]);
-  cells[61]->set_neighbors(cells[21],cells[185],cells[211],cells[180]);
-  cells[62]->set_neighbors(cells[102],cells[180],cells[203],cells[152]);
-  cells[63]->set_neighbors(cells[89],cells[2],cells[181],cells[35]);
-  cells[64]->set_neighbors(cells[4],cells[82],cells[33],cells[60]);
-  cells[65]->set_neighbors(cells[46],cells[11],cells[68],cells[81]);
-  cells[66]->set_neighbors(cells[206],cells[164],cells[199],cells[177]);
-  cells[67]->set_neighbors(cells[127],cells[101],cells[208],cells[47]);
-  cells[68]->set_neighbors(cells[86],cells[65],cells[167],cells[85]);
-  cells[69]->set_neighbors(cells[17],cells[9],cells[1],cells[90]);
-  cells[70]->set_neighbors(cells[72],cells[21],cells[33],cells[82]);
-  cells[71]->set_neighbors(cells[10],cells[28],cells[86],cells[53]);
-  cells[72]->set_neighbors(cells[34],cells[3],cells[70],cells[27]);
-  cells[73]->set_neighbors(cells[169],cells[30],cells[144],cells[137]);
-  cells[74]->set_neighbors(cells[44],cells[59],cells[134],cells[122]);
-  cells[75]->set_neighbors(cells[36],cells[129],cells[193],cells[174]);
-  cells[76]->set_neighbors(cells[134],cells[0],cells[9],cells[88]);
-  cells[77]->set_neighbors(cells[80],cells[193],cells[36],cells[85]);
-  cells[78]->set_neighbors(cells[106],cells[168],cells[194],cells[210]);
-  cells[79]->set_neighbors(cells[39],cells[195],cells[45],cells[1]);
-  cells[80]->set_neighbors(cells[56],cells[77],cells[83],cells[87]);
-  cells[81]->set_neighbors(cells[41],cells[65],cells[85],cells[4]);
-  cells[82]->set_neighbors(cells[95],cells[48],cells[70],cells[64]);
-  cells[83]->set_neighbors(cells[2],cells[80],cells[57],cells[116]);
-  cells[84]->set_neighbors(cells[161],cells[34],cells[28],cells[31]);
-  cells[85]->set_neighbors(cells[87],cells[81],cells[68],cells[77]);
-  cells[86]->set_neighbors(cells[71],cells[100],cells[184],cells[68]);
-  cells[87]->set_neighbors(cells[53],cells[140],cells[85],cells[80]);
-  cells[88]->set_neighbors(cells[133],cells[76],cells[89],cells[2]);
-  cells[89]->set_neighbors(cells[63],cells[88],cells[27],cells[90]);
-  cells[90]->set_neighbors(cells[89],cells[69],cells[37],cells[149]);
-  cells[91]->set_neighbors(cells[173],cells[124],cells[153],cells[58]);
-  cells[92]->set_neighbors(cells[23],cells[26],cells[103],cells[52]);
-  cells[93]->set_neighbors(cells[187],cells[105],cells[132],cells[165]);
-  cells[94]->set_neighbors(cells[203],cells[176],cells[212],cells[109]);
-  cells[95]->set_neighbors(cells[30],cells[59],cells[82],cells[137]);
-  cells[96]->set_neighbors(cells[13],cells[163],cells[22],cells[151]);
-  cells[97]->set_neighbors(cells[9],cells[98],cells[103],cells[17]);
-  cells[98]->set_neighbors(cells[97],cells[5],cells[115],cells[49]);
-  cells[99]->set_neighbors(cells[17],cells[23],cells[46],cells[100]);
-  cells[100]->set_neighbors(cells[99],cells[28],cells[86],cells[6]);
-  cells[101]->set_neighbors(cells[67],cells[111],cells[207],cells[43]);
-  cells[102]->set_neighbors(cells[55],cells[62],cells[178],cells[182]);
-  cells[103]->set_neighbors(cells[92],cells[115],cells[97],cells[117]);
-  cells[104]->set_neighbors(cells[32],cells[207],cells[108],cells[170]);
-  cells[105]->set_neighbors(cells[93],cells[120],cells[133],cells[116]);
-  cells[106]->set_neighbors(cells[60],cells[78],cells[129],cells[16]);
-  cells[107]->set_neighbors(cells[150],cells[189],cells[113],cells[119]);
-  cells[108]->set_neighbors(cells[150],cells[15],cells[131],cells[104]);
-  cells[109]->set_neighbors(cells[213],cells[200],cells[94],cells[163]);
-  cells[110]->set_neighbors(cells[186],cells[179],cells[126],cells[214]);
-  cells[111]->set_neighbors(cells[41],cells[140],cells[131],cells[101]);
-  cells[112]->set_neighbors(cells[54],cells[52],cells[40],cells[197]);
-  cells[113]->set_neighbors(cells[166],cells[18],cells[172],cells[107]);
-  cells[114]->set_neighbors(cells[54],cells[195],cells[175],cells[197]);
-  cells[115]->set_neighbors(cells[47],cells[127],cells[98],cells[103]);
-  cells[116]->set_neighbors(cells[121],cells[43],cells[105],cells[83]);
-  cells[117]->set_neighbors(cells[52],cells[44],cells[103],cells[134]);
-  cells[118]->set_neighbors(cells[1],cells[16],cells[195],cells[179]);
-  cells[119]->set_neighbors(cells[152],cells[107],cells[176],cells[170]);
-  cells[120]->set_neighbors(cells[201],cells[43],cells[122],cells[105]);
-  cells[121]->set_neighbors(cells[142],cells[47],cells[116],cells[57]);
-  cells[122]->set_neighbors(cells[200],cells[125],cells[74],cells[120]);
-  cells[123]->set_neighbors(cells[11],cells[12],cells[155],cells[168]);
-  cells[124]->set_neighbors(cells[162],cells[40],cells[156],cells[91]);
-  cells[125]->set_neighbors(cells[158],cells[29],cells[59],cells[122]);
-  cells[126]->set_neighbors(cells[58],cells[110],cells[213],cells[198]);
-  cells[127]->set_neighbors(cells[67],cells[138],cells[115],cells[22]);
-  cells[128]->set_neighbors(cells[45],cells[54],cells[18],cells[162]);
-  cells[129]->set_neighbors(cells[75],cells[106],cells[194],cells[209]);
-  cells[130]->set_neighbors(cells[23],cells[26],cells[8],cells[160]);
-  cells[131]->set_neighbors(cells[147],cells[8],cells[108],cells[111]);
-  cells[132]->set_neighbors(cells[20],cells[51],cells[133],cells[93]);
-  cells[133]->set_neighbors(cells[132],cells[134],cells[88],cells[105]);
-  cells[134]->set_neighbors(cells[117],cells[74],cells[76],cells[133]);
-  cells[135]->set_neighbors(cells[165],cells[3],cells[42],cells[161]);
-  cells[136]->set_neighbors(cells[207],cells[201],cells[170],cells[177]);
-  cells[137]->set_neighbors(cells[73],cells[95],cells[138],cells[22]);
-  cells[138]->set_neighbors(cells[41],cells[137],cells[4],cells[127]);
-  cells[139]->set_neighbors(cells[25],cells[26],cells[18],cells[54]);
-  cells[140]->set_neighbors(cells[111],cells[87],cells[29],cells[43]);
-  cells[141]->set_neighbors(cells[191],cells[152],cells[143],cells[170]);
-  cells[142]->set_neighbors(cells[14],cells[121],cells[165],cells[161]);
-  cells[143]->set_neighbors(cells[182],cells[193],cells[141],cells[215]);
-  cells[144]->set_neighbors(cells[156],cells[73],cells[145],cells[147]);
-  cells[145]->set_neighbors(cells[20],cells[51],cells[144],cells[146]);
-  cells[146]->set_neighbors(cells[145],cells[23],cells[147],cells[46]);
-  cells[147]->set_neighbors(cells[131],cells[144],cells[146],cells[41]);
-  cells[148]->set_neighbors(cells[35],cells[181],cells[185],cells[188]);
-  cells[149]->set_neighbors(cells[90],cells[1],cells[12],cells[186]);
-  cells[150]->set_neighbors(cells[18],cells[8],cells[107],cells[108]);
-  cells[151]->set_neighbors(cells[175],cells[192],cells[208],cells[96]);
-  cells[152]->set_neighbors(cells[141],cells[171],cells[62],cells[119]);
-  cells[153]->set_neighbors(cells[204],cells[91],cells[202],cells[205]);
-  cells[154]->set_neighbors(cells[45],cells[162],cells[155],cells[12]);
-  cells[155]->set_neighbors(cells[167],cells[123],cells[154],cells[190]);
-  cells[156]->set_neighbors(cells[15],cells[124],cells[144],cells[169]);
-  cells[157]->set_neighbors(cells[205],cells[42],cells[202],cells[189]);
-  cells[158]->set_neighbors(cells[189],cells[159],cells[42],cells[125]);
-  cells[159]->set_neighbors(cells[8],cells[160],cells[158],cells[29]);
-  cells[160]->set_neighbors(cells[130],cells[161],cells[159],cells[28]);
-  cells[161]->set_neighbors(cells[142],cells[135],cells[160],cells[84]);
-  cells[162]->set_neighbors(cells[128],cells[124],cells[15],cells[154]);
-  cells[163]->set_neighbors(cells[197],cells[96],cells[44],cells[109]);
-  cells[164]->set_neighbors(cells[25],cells[66],cells[208],cells[175]);
-  cells[165]->set_neighbors(cells[183],cells[142],cells[93],cells[135]);
-  cells[166]->set_neighbors(cells[38],cells[113],cells[24],cells[171]);
-  cells[167]->set_neighbors(cells[68],cells[155],cells[184],cells[191]);
-  cells[168]->set_neighbors(cells[33],cells[211],cells[123],cells[78]);
-  cells[169]->set_neighbors(cells[156],cells[202],cells[73],cells[13]);
-  cells[170]->set_neighbors(cells[141],cells[119],cells[136],cells[104]);
-  cells[171]->set_neighbors(cells[180],cells[166],cells[152],cells[184]);
-  cells[172]->set_neighbors(cells[206],cells[205],cells[24],cells[113]);
-  cells[173]->set_neighbors(cells[12],cells[91],cells[204],cells[186]);
-  cells[174]->set_neighbors(cells[196],cells[75],cells[199],cells[209]);
-  cells[175]->set_neighbors(cells[164],cells[209],cells[151],cells[114]);
-  cells[176]->set_neighbors(cells[119],cells[189],cells[94],cells[200]);
-  cells[177]->set_neighbors(cells[66],cells[136],cells[215],cells[198]);
-  cells[178]->set_neighbors(cells[102],cells[203],cells[16],cells[179]);
-  cells[179]->set_neighbors(cells[110],cells[118],cells[213],cells[178]);
-  cells[180]->set_neighbors(cells[10],cells[61],cells[62],cells[171]);
-  cells[181]->set_neighbors(cells[63],cells[214],cells[186],cells[148]);
-  cells[182]->set_neighbors(cells[56],cells[143],cells[102],cells[214]);
-  cells[183]->set_neighbors(cells[206],cells[165],cells[187],cells[205]);
-  cells[184]->set_neighbors(cells[86],cells[38],cells[171],cells[167]);
-  cells[185]->set_neighbors(cells[148],cells[204],cells[61],cells[24]);
-  cells[186]->set_neighbors(cells[181],cells[110],cells[149],cells[173]);
-  cells[187]->set_neighbors(cells[198],cells[93],cells[58],cells[183]);
-  cells[188]->set_neighbors(cells[148],cells[199],cells[24],cells[196]);
-  cells[189]->set_neighbors(cells[107],cells[158],cells[157],cells[176]);
-  cells[190]->set_neighbors(cells[194],cells[155],cells[191],cells[32]);
-  cells[191]->set_neighbors(cells[193],cells[167],cells[141],cells[190]);
-  cells[192]->set_neighbors(cells[194],cells[32],cells[151],cells[13]);
-  cells[193]->set_neighbors(cells[77],cells[191],cells[143],cells[75]);
-  cells[194]->set_neighbors(cells[78],cells[190],cells[129],cells[192]);
-  cells[195]->set_neighbors(cells[79],cells[118],cells[209],cells[114]);
-  cells[196]->set_neighbors(cells[19],cells[174],cells[188],cells[39]);
-  cells[197]->set_neighbors(cells[112],cells[114],cells[163],cells[213]);
-  cells[198]->set_neighbors(cells[177],cells[201],cells[126],cells[187]);
-  cells[199]->set_neighbors(cells[188],cells[66],cells[174],cells[215]);
-  cells[200]->set_neighbors(cells[201],cells[122],cells[176],cells[109]);
-  cells[201]->set_neighbors(cells[136],cells[120],cells[200],cells[198]);
-  cells[202]->set_neighbors(cells[153],cells[157],cells[169],cells[212]);
-  cells[203]->set_neighbors(cells[178],cells[62],cells[210],cells[94]);
-  cells[204]->set_neighbors(cells[173],cells[153],cells[211],cells[185]);
-  cells[205]->set_neighbors(cells[172],cells[183],cells[153],cells[157]);
-  cells[206]->set_neighbors(cells[25],cells[183],cells[66],cells[172]);
-  cells[207]->set_neighbors(cells[208],cells[101],cells[104],cells[136]);
-  cells[208]->set_neighbors(cells[164],cells[207],cells[67],cells[151]);
-  cells[209]->set_neighbors(cells[174],cells[129],cells[175],cells[195]);
-  cells[210]->set_neighbors(cells[78],cells[203],cells[211],cells[212]);
-  cells[211]->set_neighbors(cells[61],cells[204],cells[168],cells[210]);
-  cells[212]->set_neighbors(cells[210],cells[94],cells[202],cells[13]);
-  cells[213]->set_neighbors(cells[126],cells[179],cells[197],cells[109]);
-  cells[214]->set_neighbors(cells[182],cells[215],cells[110],cells[181]);
-  cells[215]->set_neighbors(cells[199],cells[177],cells[143],cells[214]);
-
-  set_offsets(cells[0],0,0,0,0);
-  set_offsets(cells[1],0,1,5,5);
-  set_offsets(cells[2],4,0,4,4);
-  set_offsets(cells[3],0,0,0,0);
-  set_offsets(cells[4],0,0,0,0);
-  set_offsets(cells[5],0,0,0,0);
-  set_offsets(cells[6],2,0,4,0);
-  set_offsets(cells[7],0,0,0,0);
-  set_offsets(cells[8],2,2,0,0);
-  set_offsets(cells[9],4,0,4,4);
-  set_offsets(cells[10],0,0,0,0);
-  set_offsets(cells[11],0,0,0,0);
-  set_offsets(cells[12],0,1,0,1);
-  set_offsets(cells[13],0,0,0,0);
-  set_offsets(cells[14],6,2,0,4);
-  set_offsets(cells[15],0,0,0,0);
-  set_offsets(cells[16],0,1,1,1);
-  set_offsets(cells[17],0,0,4,0);
-  set_offsets(cells[18],0,0,0,2);
-  set_offsets(cells[19],4,2,0,6);
-  set_offsets(cells[20],0,0,0,0);
-  set_offsets(cells[21],0,0,0,0);
-  set_offsets(cells[22],0,0,0,0);
-  set_offsets(cells[23],0,0,0,0);
-  set_offsets(cells[24],0,3,2,2);
-  set_offsets(cells[25],2,0,4,6);
-  set_offsets(cells[26],2,0,0,4);
-  set_offsets(cells[27],0,0,0,0);
-  set_offsets(cells[28],2,0,0,2);
-  set_offsets(cells[29],2,2,0,2);
-  set_offsets(cells[30],0,0,0,0);
-  set_offsets(cells[31],0,2,2,6);
-  set_offsets(cells[32],0,0,0,0);
-  set_offsets(cells[33],0,0,0,0);
-  set_offsets(cells[34],0,0,0,0);
-  set_offsets(cells[35],4,0,0,0);
-  set_offsets(cells[36],0,0,0,2);
-  set_offsets(cells[37],0,0,0,0);
-  set_offsets(cells[38],0,1,0,3);
-  set_offsets(cells[39],0,1,5,3);
-  set_offsets(cells[40],0,0,4,0);
-  set_offsets(cells[41],0,0,0,0);
-  set_offsets(cells[42],0,0,0,0);
-  set_offsets(cells[43],2,2,0,2);
-  set_offsets(cells[44],0,0,0,0);
-  set_offsets(cells[45],0,1,0,0);
-  set_offsets(cells[46],0,0,0,0);
-  set_offsets(cells[47],4,6,0,4);
-  set_offsets(cells[48],0,0,0,0);
-  set_offsets(cells[49],4,0,4,6);
-  set_offsets(cells[50],0,0,0,0);
-  set_offsets(cells[51],0,0,4,0);
-  set_offsets(cells[52],4,0,4,0);
-  set_offsets(cells[53],0,2,2,2);
-  set_offsets(cells[54],0,0,4,0);
-  set_offsets(cells[55],0,0,0,0);
-  set_offsets(cells[56],0,0,0,0);
-  set_offsets(cells[57],0,2,4,6);
-  set_offsets(cells[58],0,0,0,4);
-  set_offsets(cells[59],0,0,0,0);
-  set_offsets(cells[60],0,0,0,0);
-  set_offsets(cells[61],0,1,1,1);
-  set_offsets(cells[62],0,0,1,1);
-  set_offsets(cells[63],4,0,0,4);
-  set_offsets(cells[64],0,0,0,0);
-  set_offsets(cells[65],0,0,0,0);
-  set_offsets(cells[66],4,2,6,0);
-  set_offsets(cells[67],2,0,0,0);
-  set_offsets(cells[68],0,2,0,0);
-  set_offsets(cells[69],4,0,0,4);
-  set_offsets(cells[70],0,0,0,0);
-  set_offsets(cells[71],0,2,2,2);
-  set_offsets(cells[72],0,0,0,0);
-  set_offsets(cells[73],0,0,0,0);
-  set_offsets(cells[74],0,0,0,0);
-  set_offsets(cells[75],0,3,1,1);
-  set_offsets(cells[76],4,0,4,4);
-  set_offsets(cells[77],0,0,2,2);
-  set_offsets(cells[78],0,0,1,1);
-  set_offsets(cells[79],0,1,5,0);
-  set_offsets(cells[80],0,2,2,2);
-  set_offsets(cells[81],0,0,0,0);
-  set_offsets(cells[82],0,0,0,0);
-  set_offsets(cells[83],4,2,6,6);
-  set_offsets(cells[84],2,0,2,2);
-  set_offsets(cells[85],0,2,0,0);
-  set_offsets(cells[86],0,2,0,2);
-  set_offsets(cells[87],0,2,2,0);
-  set_offsets(cells[88],4,0,4,0);
-  set_offsets(cells[89],0,0,4,0);
-  set_offsets(cells[90],0,0,4,0);
-  set_offsets(cells[91],0,0,0,0);
-  set_offsets(cells[92],4,0,0,0);
-  set_offsets(cells[93],0,0,4,4);
-  set_offsets(cells[94],0,0,0,0);
-  set_offsets(cells[95],0,0,0,0);
-  set_offsets(cells[96],0,0,0,0);
-  set_offsets(cells[97],0,0,4,4);
-  set_offsets(cells[98],4,0,4,4);
-  set_offsets(cells[99],0,0,0,0);
-  set_offsets(cells[100],2,0,0,0);
-  set_offsets(cells[101],2,2,0,0);
-  set_offsets(cells[102],0,1,1,1);
-  set_offsets(cells[103],4,0,4,0);
-  set_offsets(cells[104],2,0,0,0);
-  set_offsets(cells[105],4,0,4,4);
-  set_offsets(cells[106],0,1,1,1);
-  set_offsets(cells[107],2,0,2,2);
-  set_offsets(cells[108],0,2,0,0);
-  set_offsets(cells[109],0,0,0,0);
-  set_offsets(cells[110],4,0,5,0);
-  set_offsets(cells[111],2,0,0,0);
-  set_offsets(cells[112],4,0,4,0);
-  set_offsets(cells[113],2,2,0,0);
-  set_offsets(cells[114],4,4,0,0);
-  set_offsets(cells[115],4,0,4,4);
-  set_offsets(cells[116],6,2,4,6);
-  set_offsets(cells[117],4,0,4,4);
-  set_offsets(cells[118],4,0,5,5);
-  set_offsets(cells[119],2,2,0,2);
-  set_offsets(cells[120],0,0,0,0);
-  set_offsets(cells[121],4,2,0,6);
-  set_offsets(cells[122],0,0,0,0);
-  set_offsets(cells[123],0,1,1,1);
-  set_offsets(cells[124],0,0,0,0);
-  set_offsets(cells[125],0,0,0,0);
-  set_offsets(cells[126],4,4,0,0);
-  set_offsets(cells[127],0,0,0,0);
-  set_offsets(cells[128],0,0,0,0);
-  set_offsets(cells[129],0,0,1,1);
-  set_offsets(cells[130],2,0,0,0);
-  set_offsets(cells[131],2,0,0,0);
-  set_offsets(cells[132],4,0,0,0);
-  set_offsets(cells[133],4,0,4,0);
-  set_offsets(cells[134],4,0,4,4);
-  set_offsets(cells[135],0,0,0,0);
-  set_offsets(cells[136],2,0,2,2);
-  set_offsets(cells[137],0,0,0,0);
-  set_offsets(cells[138],0,0,0,0);
-  set_offsets(cells[139],0,0,4,2);
-  set_offsets(cells[140],2,2,0,0);
-  set_offsets(cells[141],2,0,0,3);
-  set_offsets(cells[142],2,2,0,6);
-  set_offsets(cells[143],0,2,3,3);
-  set_offsets(cells[144],0,0,0,0);
-  set_offsets(cells[145],0,0,0,0);
-  set_offsets(cells[146],0,0,0,0);
-  set_offsets(cells[147],0,0,0,0);
-  set_offsets(cells[148],0,1,5,1);
-  set_offsets(cells[149],0,1,5,1);
-  set_offsets(cells[150],2,0,0,2);
-  set_offsets(cells[151],0,0,0,0);
-  set_offsets(cells[152],2,2,0,3);
-  set_offsets(cells[153],0,0,0,0);
-  set_offsets(cells[154],0,1,0,0);
-  set_offsets(cells[155],0,0,1,1);
-  set_offsets(cells[156],0,0,0,0);
-  set_offsets(cells[157],0,0,0,0);
-  set_offsets(cells[158],0,0,0,0);
-  set_offsets(cells[159],2,2,0,2);
-  set_offsets(cells[160],2,0,0,2);
-  set_offsets(cells[161],2,0,2,2);
-  set_offsets(cells[162],0,0,0,0);
-  set_offsets(cells[163],0,0,0,0);
-  set_offsets(cells[164],4,4,0,6);
-  set_offsets(cells[165],0,0,0,4);
-  set_offsets(cells[166],2,3,0,0);
-  set_offsets(cells[167],0,3,1,1);
-  set_offsets(cells[168],0,1,1,1);
-  set_offsets(cells[169],0,0,0,0);
-  set_offsets(cells[170],2,0,0,2);
-  set_offsets(cells[171],0,3,3,2);
-  set_offsets(cells[172],2,0,2,2);
-  set_offsets(cells[173],0,1,0,0);
-  set_offsets(cells[174],4,0,5,7);
-  set_offsets(cells[175],4,4,0,4);
-  set_offsets(cells[176],0,0,0,0);
-  set_offsets(cells[177],6,2,6,4);
-  set_offsets(cells[178],0,1,0,1);
-  set_offsets(cells[179],4,4,5,0);
-  set_offsets(cells[180],0,1,1,1);
-  set_offsets(cells[181],0,1,5,5);
-  set_offsets(cells[182],0,1,1,1);
-  set_offsets(cells[183],0,0,0,4);
-  set_offsets(cells[184],0,3,1,3);
-  set_offsets(cells[185],0,1,0,1);
-  set_offsets(cells[186],0,1,0,5);
-  set_offsets(cells[187],0,0,4,4);
-  set_offsets(cells[188],0,3,7,2);
-  set_offsets(cells[189],0,0,0,0);
-  set_offsets(cells[190],0,0,0,1);
-  set_offsets(cells[191],0,0,1,3);
-  set_offsets(cells[192],0,0,0,0);
-  set_offsets(cells[193],0,3,1,3);
-  set_offsets(cells[194],0,0,0,1);
-  set_offsets(cells[195],4,0,0,5);
-  set_offsets(cells[196],0,3,5,7);
-  set_offsets(cells[197],4,4,0,4);
-  set_offsets(cells[198],4,0,4,4);
-  set_offsets(cells[199],4,7,2,0);
-  set_offsets(cells[200],0,0,0,0);
-  set_offsets(cells[201],0,0,0,0);
-  set_offsets(cells[202],0,0,0,0);
-  set_offsets(cells[203],0,0,0,1);
-  set_offsets(cells[204],0,1,0,0);
-  set_offsets(cells[205],0,0,0,0);
-  set_offsets(cells[206],2,0,2,6);
-  set_offsets(cells[207],2,0,2,0);
-  set_offsets(cells[208],0,0,0,2);
-  set_offsets(cells[209],4,0,5,4);
-  set_offsets(cells[210],0,0,0,1);
-  set_offsets(cells[211],0,1,0,1);
-  set_offsets(cells[212],0,0,0,0);
-  set_offsets(cells[213],4,4,4,0);
-  set_offsets(cells[214],0,5,5,4);
-  set_offsets(cells[215],6,7,2,4);
 
   vertices[0]->set_cell(cells[2]);
   vertices[1]->set_cell(cells[10]);

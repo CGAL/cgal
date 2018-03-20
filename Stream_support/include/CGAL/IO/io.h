@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri
@@ -26,6 +27,7 @@
 #ifndef CGAL_IO_H
 #define CGAL_IO_H
 
+#include <CGAL/disable_warnings.h>
 
 #include <cstdio>
 #include <cctype>
@@ -175,8 +177,59 @@ public:
 	break;
       }
     }while(true);
+    if(sscanf_s(buffer.c_str(), "%lf", &t) != 1) {
+      // if a 'buffer' does not contain a double, set the fail bit.
+      is.setstate(std::ios_base::failbit);
+    }
+    return is; 
+  }
+};
 
-    if(sscanf(buffer.c_str(), "%lf", &t) != 1) {
+template <>
+class Input_rep<float> {
+    float& t;
+public:
+  //! initialize with a reference to \a t.
+  Input_rep( float& tt) : t(tt) {}
+
+  std::istream& operator()( std::istream& is) const 
+  {
+    typedef std::istream istream;
+    typedef istream::char_type char_type;
+    typedef istream::int_type int_type;
+    typedef istream::traits_type traits_type;
+
+    std::string buffer;
+    buffer.reserve(32);
+
+    char_type c;
+    do {
+      const int_type i = is.get();
+      if(i == traits_type::eof()) {
+	return is;
+      }
+      c = static_cast<char_type>(i);
+    }while (std::isspace(c));
+    if(c == '-'){
+      buffer += '-';
+    } else if(c != '+'){
+      is.unget();
+    }
+    do {
+      const int_type i = is.get();
+      if(i == traits_type::eof()) {
+	is.clear(is.rdstate() & ~std::ios_base::failbit);
+	break;
+      }
+      c = static_cast<char_type>(i);
+      if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='+') || (c =='-')){
+        buffer += c;
+      }else{
+	is.unget();
+	break;
+      }
+    }while(true);
+    if(sscanf_s(buffer.c_str(), "%f", &t) != 1) {
       // if a 'buffer' does not contain a double, set the fail bit.
       is.setstate(std::ios_base::failbit);
     }
@@ -561,5 +614,7 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/IO/io_impl.h>
 #endif // CGAL_HEADER_ONLY
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_IO_H

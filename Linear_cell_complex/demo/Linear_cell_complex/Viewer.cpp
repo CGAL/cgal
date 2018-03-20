@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Kumar Snehasish <kumar.snehasish@gmail.com>
@@ -709,14 +710,14 @@ void Viewer::draw()
       color.setRgbF(0.2f, 0.2f, 0.7f);
       rendering_program_p_l.bind();
       rendering_program_p_l.setAttributeValue(colorLocation,color);
-      ::glLineWidth(size_edges);
+      glLineWidth(size_edges);
       glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_lines.size()/3));
       rendering_program_p_l.release();
       vao[2].release();
     }
     if(vertices)
     {
-      ::glPointSize(size_points);
+      glPointSize(size_points);
       vao[3].bind();
       attrib_buffers(this);
       color.setRgbF(.2f,.2f,.6f);
@@ -750,23 +751,23 @@ void Viewer::init()
   setKeyDescription(Qt::Key_PageUp, "Decrease light (all colors, use shift/alt/ctrl for one rgb component)");
 
   // Light default parameters
-  ::glLineWidth(size_edges);
-  ::glPointSize(size_points);
-  ::glEnable(GL_POLYGON_OFFSET_FILL);
-  ::glPolygonOffset(1.0f,1.0f);
-  ::glClearColor(1.0f,1.0f,1.0f,0.0f);
-  ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+  glLineWidth(size_edges);
+  glPointSize(size_points);
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glPolygonOffset(1.0f,1.0f);
+  glClearColor(1.0f,1.0f,1.0f,0.0f);
+  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
-  ::glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHTING);
 
-  ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 
-  ::glShadeModel(GL_FLAT);
-  ::glDisable(GL_BLEND);
-  ::glDisable(GL_LINE_SMOOTH);
-  ::glDisable(GL_POLYGON_SMOOTH_HINT);
-  ::glBlendFunc(GL_ONE, GL_ZERO);
-  ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
+  glShadeModel(GL_FLAT);
+  glDisable(GL_BLEND);
+  glDisable(GL_LINE_SMOOTH);
+  glDisable(GL_POLYGON_SMOOTH_HINT);
+  glBlendFunc(GL_ONE, GL_ZERO);
+  glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
   compile_shaders();
 }
 

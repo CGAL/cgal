@@ -12,10 +12,16 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Mael Rouxel-Labbé
 
 #ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_ARAP_PARAMETERIZER_3_H
 #define CGAL_SURFACE_MESH_PARAMETERIZATION_ARAP_PARAMETERIZER_3_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
@@ -1407,5 +1413,7 @@ public:
 } // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_PARAMETERIZATION_ARAP_PARAMETERIZER_3_H

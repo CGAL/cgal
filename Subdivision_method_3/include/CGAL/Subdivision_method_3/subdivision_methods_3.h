@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s): Le-Jeng Shiue <Andy.Shiue@gmail.com>
@@ -107,10 +108,10 @@ void CatmullClark_subdivision(PolygonMesh& pmesh, int step = 1) {
  * This function overwrites the control mesh `pmesh` with the subdivided mesh.
  *
  * @tparam PolygonMesh a model of `MutableFaceGraph`
- * @tparam NamedParameters a sequence of \ref namedparameters
+ * @tparam NamedParameters a sequence of \ref sm_namedparameters "Named Parameters"
  *
  * @param pmesh a polygon mesh
- * @param np optional sequence of \ref namedparameters among the ones listed below
+ * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -126,7 +127,7 @@ template <class PolygonMesh, class NamedParameters>
 void CatmullClark_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   using boost::choose_param;
   using boost::get_param;
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
@@ -154,10 +155,10 @@ void Loop_subdivision(PolygonMesh& pmesh, int step = 1) {
  * This function overwrites the control mesh `pmesh` with the subdivided mesh.
 
  * @tparam PolygonMesh a model of `MutableFaceGraph`
- * @tparam NamedParameters a sequence of \ref namedparameters
+ * @tparam NamedParameters a sequence of \ref sm_namedparameters "Named Parameters"
  *
  * @param pmesh a polygon mesh
- * @param np optional sequence of \ref namedparameters among the ones listed below
+ * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -171,7 +172,7 @@ template <class PolygonMesh, class NamedParameters>
 void Loop_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   using boost::choose_param;
   using boost::get_param;
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
@@ -199,10 +200,10 @@ void DooSabin_subdivision(PolygonMesh& pmesh, int step = 1) {
  * This function overwrites the control mesh `pmesh` with the subdivided mesh.
 
  * @tparam PolygonMesh a model of `MutableFaceGraph`
- * @tparam NamedParameters a sequence of \ref namedparameters
+ * @tparam NamedParameters a sequence of \ref sm_namedparameters "Named Parameters"
  *
  * @param pmesh a polygon mesh
- * @param np optional sequence of \ref namedparameters among the ones listed below
+ * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -216,7 +217,7 @@ template <class PolygonMesh, class NamedParameters>
 void DooSabin_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   using boost::choose_param;
   using boost::get_param;
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
@@ -247,10 +248,10 @@ void Sqrt3_subdivision(PolygonMesh& pmesh, int step = 1) {
  *            during a <em>single</em> call of this function.
  *
  * @tparam PolygonMesh a model of `MutableFaceGraph`
- * @tparam NamedParameters a sequence of \ref namedparameters
+ * @tparam NamedParameters a sequence of \ref sm_namedparameters "Named Parameters"
  *
  * @param pmesh a polygon mesh
- * @param np optional sequence of \ref namedparameters among the ones listed below
+ * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -266,7 +267,7 @@ template <class PolygonMesh, class NamedParameters>
 void Sqrt3_subdivision(PolygonMesh& pmesh, const NamedParameters& np) {
   using boost::choose_param;
   using boost::get_param;
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
   Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 

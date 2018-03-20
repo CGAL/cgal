@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent Rineau
@@ -29,7 +30,7 @@
 #include <CGAL/Unique_hash_map.h>
 
 #include <utility>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 
@@ -117,7 +118,7 @@ private:
   typedef typename Cluster_map::value_type Cluster_map_value_type;
 
   template <class Pair>
-  struct Pair_get_first: public std::unary_function<Pair,
+  struct Pair_get_first: public CGAL::unary_function<Pair,
                                                     typename Pair::first_type>
   {
     typedef typename Pair::first_type result;

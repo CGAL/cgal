@@ -18,12 +18,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
 #ifndef CGAL_IO_FILE_SCANNER_OFF_H
 #define CGAL_IO_FILE_SCANNER_OFF_H 1
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/config.h>
 #include <cstddef>
@@ -697,6 +700,8 @@ file_scan_normal( File_scanner_OFF& scanner, Vector& v) {
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/IO/File_scanner_OFF_impl.h>
 #endif // CGAL_HEADER_ONLY
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_IO_FILE_SCANNER_OFF_H //
 // EOF //

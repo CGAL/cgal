@@ -9,7 +9,7 @@ typedef LCC_3::FT                         FT;
 
 // Functor used to display all the vertices of a given volume.
 template<class LCC> 
-struct Display_vol_vertices : public std::unary_function<LCC, void>
+struct Display_vol_vertices : public CGAL::unary_function<LCC, void>
 {
   Display_vol_vertices(const LCC& alcc) : 
     lcc(alcc), 

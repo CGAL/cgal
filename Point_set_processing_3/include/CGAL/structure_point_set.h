@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Florent Lafarge, Simon Giraudot
@@ -24,6 +25,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
@@ -36,9 +38,15 @@
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Fuzzy_iso_box.h>
 #include <CGAL/Search_traits_d.h>
+#include <CGAL/Search_traits_3.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
+
+#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+
+#include <boost/iterator/counting_iterator.hpp>
 
 #include <iterator>
 #include <list>
@@ -58,40 +66,31 @@ set. Each output point is assigned to one, two or more primitives
 (depending wether it belongs to a planar section, an edge or a if it
 is a vertex). The implementation follow \cgalCite{cgal:la-srpss-13}.
 
-\tparam Traits a model of `EfficientRANSACTraits` that must provide in
+\tparam Kernel a model of `ShapeDetectionTraits` that must provide in
 addition a function `Intersect_3 intersection_3_object() const` and a
 functor `Intersect_3` with:
 - `boost::optional< boost::variant< Traits::Plane_3, Traits::Line_3 > > operator()(typename Traits::Plane_3, typename Traits::Plane_3)`
 - `boost::optional< boost::variant< Traits::Line_3, Traits::Point_3 > > operator()(typename Traits::Line_3, typename Traits::Plane_3)`
 
 */
-template <typename Traits>
+template <typename Kernel>
 class Point_set_with_structure
 {
-  typedef Point_set_with_structure<Traits> Self;
+  typedef Point_set_with_structure<Kernel> Self;
 
-  typedef typename Traits::FT FT;
-  typedef typename Traits::Segment_3 Segment;
-  typedef typename Traits::Line_3 Line;
-  typedef typename Traits::Plane_3 Plane;
-
-  typedef typename Traits::Point_2 Point_2;
-
-
-  typedef Shape_detection_3::Shape_base<Traits> Shape;
+  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Segment_3 Segment;
+  typedef typename Kernel::Line_3 Line;
+  typedef typename Kernel::Point_2 Point_2;
 
   enum Point_status { POINT, RESIDUS, PLANE, EDGE, CORNER, SKIPPED };
 
 public:
 
 
-  typedef typename Traits::Point_3 Point;
-  typedef typename Traits::Vector_3 Vector;
-  typedef typename Traits::Point_map Point_map;
-  typedef typename Traits::Normal_map Normal_map;
-  typedef typename Traits::Input_range Input_range;
-  typedef typename Input_range::iterator Input_iterator;
-  typedef Shape_detection_3::Plane<Traits> Plane_shape;
+  typedef typename Kernel::Point_3 Point;
+  typedef typename Kernel::Vector_3 Vector;
+  typedef typename Kernel::Plane_3 Plane;
 
   /// Tag classifying the coherence of a triplet of points with
   /// respect to an inferred surface
@@ -127,7 +126,10 @@ private:
     bool active;
 
     Edge (std::size_t a, std::size_t b)
-    { planes[0] = a; planes[1] = b; active = true; }
+      : support (Point (FT(0.), FT(0.), FT(0.)),
+                 Vector (FT(0.), FT(0.), FT(0.)))
+      , active(true)
+    { planes[0] = a; planes[1] = b; }
   };
   struct Corner
   {
@@ -147,16 +149,13 @@ private:
   };
       
 
-  Traits m_traits;
-
   std::vector<Point> m_points;
   std::vector<Vector> m_normals;
   std::vector<std::size_t> m_indices;
   std::vector<Point_status> m_status;
-  Point_map m_point_map;
-  Normal_map m_normal_map;
     
-  std::vector<boost::shared_ptr<Plane_shape> > m_planes;
+  std::vector<Plane> m_planes;
+  std::vector<std::vector<std::size_t> > m_indices_of_assigned_points;
   std::vector<Edge> m_edges;
   std::vector<Corner> m_corners;
     
@@ -167,69 +166,125 @@ public:
     Constructs a structured point set based on the input points and the
     associated shape detection object.
 
-    \note Both property maps can be omitted if the default constructors of these property maps can be safely used.
+    \tparam PointRange is a model of `ConstRange`. The value type of
+    its iterator is the key type of the named parameter `point_map`.
+    \tparam PlaneRange is a model of `ConstRange`. The value type of
+    its iterator is the key type of the named parameter `plane_map`.
+
+    \param points input point range.
+    \param planes input plane range.
+    \param epsilon size parameter.
+    \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+    \cgalNamedParamsBegin
+      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `Kernel::Point_3`.
+      If this parameter is omitted, `CGAL::Identity_property_map<Kernel::Point_3>` is used.\cgalParamEnd
+      \cgalParamBegin{normal_map} a model of `ReadablePropertyMap` with value type
+      `Kernel::Vector_3`.\cgalParamEnd
+      \cgalParamBegin{plane_index_map} a model of `ReadablePropertyMap` with value type `int`.
+      Associates the index of a point in the input range to the index of plane (-1 if point does is not assigned to
+      a plane).\cgalParamEnd
+      \cgalParamBegin{plane_map} a model of `ReadablePropertyMap` with value type
+      `Kernel::Plane_3`. If this parameter is omitted, `CGAL::Identity_property_map<Kernel::Plane_3>`
+      is used.\cgalParamEnd
+      \cgalParamBegin{attraction_factor} multiple of `epsilon` used to connect simplices.\cgalParamEnd
+    \cgalNamedParamsEnd
 
   */
-  Point_set_with_structure (Input_iterator begin, ///< iterator over the first input point.
-                            Input_iterator end, ///< past-the-end iterator over the input points.
-                            Point_map point_map, ///< property map: value_type of InputIterator -> Point_3. 
-                            Normal_map normal_map, ///< property map: value_type of InputIterator -> Vector_3. 
-                            const Shape_detection_3::Efficient_RANSAC<Traits>&
-                            shape_detection, ///< shape detection object
-                            double epsilon, ///< size parameter
-                            double attraction_factor = 3.) ///< attraction factor
-    : m_traits (shape_detection.traits()),
-      m_point_map(point_map), m_normal_map (normal_map)
+  template <typename PointRange,
+            typename PlaneRange,
+            typename NamedParameters>
+  Point_set_with_structure (const PointRange& points,
+                            const PlaneRange& planes,
+                            double epsilon,
+                            const NamedParameters& np)
   {
-    constructor (begin, end, shape_detection, epsilon, attraction_factor);
+    init (points, planes, epsilon, np);
   }
 
   /// \cond SKIP_IN_MANUAL
-  Point_set_with_structure (Input_iterator begin, ///< iterator over the first input point.
-                            Input_iterator end, ///< past-the-end iterator over the input points.
-                            const Shape_detection_3::Efficient_RANSAC<Traits>&
-                            shape_detection, ///< shape detection object
-                            double epsilon, ///< size parameter
-                            double attraction_factor = 3.) ///< attraction factor
-    : m_traits (shape_detection.traits())
+  // deprecated
+  template <typename PointRange,
+            typename PointMap,
+            typename NormalMap,
+            typename PlaneRange,
+            typename PlaneMap,
+            typename IndexMap>
+  CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::Point_set_with_structure(), please update your code")
+  Point_set_with_structure (const PointRange& points,
+                            PointMap point_map,
+                            NormalMap normal_map,
+                            const PlaneRange& planes,
+                            PlaneMap plane_map,
+                            IndexMap index_map,
+                            double epsilon,
+                            double attraction_factor = 3.)
   {
-    constructor (begin, end, shape_detection, epsilon, attraction_factor);
+    init (points, planes, epsilon,
+          CGAL::parameters::point_map (point_map).
+          normal_map (normal_map).
+          plane_map (plane_map).
+          plane_index_map (index_map).
+          attraction_factor (attraction_factor));
   }
 
-  void constructor(Input_iterator begin, ///< iterator over the first input point.
-                   Input_iterator end, ///< past-the-end iterator over the input points.
-                   const Shape_detection_3::Efficient_RANSAC<Traits>&
-                   shape_detection, ///< shape detection object
-                   double epsilon, ///< size parameter
-                   double attraction_factor = 3.) ///< attraction factor
+  template <typename PointRange,
+            typename PlaneRange,
+            typename NamedParameters>
+  void init (const PointRange& points,
+             const PlaneRange& planes,
+             double epsilon,
+             const NamedParameters& np)
   {
-    m_points.reserve(end - begin);
-    m_normals.reserve(end - begin);
-    for (Input_iterator it = begin; it != end; ++ it)
-      {
-        m_points.push_back (get(m_point_map, *it));
-        m_normals.push_back (get(m_normal_map, *it));
-      }
-      
-    m_indices.resize (m_points.size (), (std::numeric_limits<std::size_t>::max)());
-    m_status.resize (m_points.size (), POINT);
+    using boost::choose_param;
 
-    BOOST_FOREACH (boost::shared_ptr<Shape> shape, shape_detection.shapes())
-      {
-        boost::shared_ptr<Plane_shape> pshape
-          = boost::dynamic_pointer_cast<Plane_shape>(shape);
-        
-        // Ignore all shapes other than plane
-        if (pshape == boost::shared_ptr<Plane_shape>())
-          continue;
-        m_planes.push_back (pshape);
+    // basic geometric types
+    typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+    typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
+    typedef typename Point_set_processing_3::GetPlaneMap<PlaneRange, NamedParameters>::type PlaneMap;
+    typedef typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::type PlaneIndexMap;
 
-        for (std::size_t i = 0; i < pshape->indices_of_assigned_points().size (); ++ i)
-          {
-            m_indices[pshape->indices_of_assigned_points()[i]] = m_planes.size () - 1;
-            m_status[pshape->indices_of_assigned_points()[i]] = PLANE;
-          }
+    CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
+                                typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
+                              "Error: no normal map");
+    CGAL_static_assertion_msg(!(boost::is_same<PlaneIndexMap,
+                                typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::NoMap>::value),
+                              "Error: no plane index map");
+
+    PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+    NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
+    PlaneMap plane_map = choose_param(get_param(np, internal_np::plane_map), PlaneMap());
+    PlaneIndexMap index_map = choose_param(get_param(np, internal_np::plane_index_map), PlaneIndexMap());
+    double attraction_factor = choose_param(get_param(np, internal_np::attraction_factor), 3.);
+    
+    m_points.reserve(points.size());
+    m_normals.reserve(points.size());
+    m_indices_of_assigned_points.resize (planes.size());
+
+    m_indices.resize (points.size (), (std::numeric_limits<std::size_t>::max)());
+    m_status.resize (points.size (), POINT);
+
+    std::size_t idx = 0;
+    for (typename PointRange::const_iterator it = points.begin();
+         it != points.end(); ++ it)
+    {
+      m_points.push_back (get(point_map, *it));
+      m_normals.push_back (get(normal_map, *it));
+      int plane_index = get (index_map, idx);
+      if (plane_index != -1)
+      {
+        m_indices_of_assigned_points[std::size_t(plane_index)].push_back(idx);
+        m_indices[idx] = std::size_t(plane_index);
+        m_status[idx] = PLANE;
       }
+      ++ idx;
+    }
+
+
+    m_planes.reserve (planes.size());
+    for (typename PlaneRange::const_iterator it = planes.begin();
+         it != planes.end(); ++ it)
+      m_planes.push_back (get (plane_map, *it));
 
     run (epsilon, attraction_factor);
     clean ();
@@ -253,23 +308,21 @@ public:
     vertices.
 
    */
-  std::vector<boost::shared_ptr<Plane_shape> > adjacency (std::size_t i) const
+  template <typename OutputIterator>
+  void adjacency (std::size_t i, OutputIterator output) const
   {
-    std::vector<boost::shared_ptr<Plane_shape> > out;
-
     if (m_status[i] == PLANE || m_status[i] == RESIDUS)
-      out.push_back (m_planes[m_indices[i]]);
+      *(output ++) = m_planes[m_indices[i]];
     else if (m_status[i] == EDGE)
       {
-        out.push_back (m_planes[m_edges[m_indices[i]].planes[0]]);
-        out.push_back (m_planes[m_edges[m_indices[i]].planes[1]]);
+        *(output ++) = m_planes[m_edges[m_indices[i]].planes[0]];
+        *(output ++) = m_planes[m_edges[m_indices[i]].planes[1]];
       }
     else if (m_status[i] == CORNER)
       {
         for (std::size_t j = 0; j < m_corners[m_indices[i]].planes.size(); ++ j)
-          out.push_back (m_planes[m_corners[m_indices[i]].planes[j]]);
+          *(output ++) = m_planes[m_corners[m_indices[i]].planes[j]];
       }
-    return out;
   }
 
   /*!
@@ -546,11 +599,11 @@ private:
 
   void project_inliers ()
   {
-    for(std::size_t i = 0; i < m_planes.size (); ++ i)
-      for (std::size_t j = 0; j < m_planes[i]->indices_of_assigned_points ().size(); ++ j)
+    for(std::size_t i = 0; i < m_indices_of_assigned_points.size (); ++ i)
+      for (std::size_t j = 0; j < m_indices_of_assigned_points[i].size(); ++ j)
         {
-          std::size_t ind = m_planes[i]->indices_of_assigned_points ()[j];
-          m_points[ind] = static_cast<Plane> (*(m_planes[i])).projection (m_points[ind]);
+          std::size_t ind = m_indices_of_assigned_points[i][j];
+          m_points[ind] = m_planes[i].projection (m_points[ind]);
         }
   }
 
@@ -561,7 +614,7 @@ private:
     for (std::size_t c = 0; c < m_planes.size (); ++ c)
       {
         //plane attributes and 2D projection vectors
-        Plane plane = static_cast<Plane> (*(m_planes[c]));
+        const Plane& plane = m_planes[c];
         Vector vortho = plane.orthogonal_vector();
         Vector b1 = plane.base1();
         Vector b2 = plane.base2();
@@ -572,9 +625,9 @@ private:
         std::vector<Point_2> points_2d;
 
         //storage of the 2D points in "pt_2d"
-        for (std::size_t j = 0; j < m_planes[c]->indices_of_assigned_points ().size(); ++ j)
+        for (std::size_t j = 0; j < m_indices_of_assigned_points[c].size(); ++ j)
           {
-            std::size_t ind = m_planes[c]->indices_of_assigned_points ()[j];
+            std::size_t ind = m_indices_of_assigned_points[c][j];
             const Point& pt = m_points[ind];
             points_2d.push_back (Point_2 (b1.x() * pt.x() + b1.y() * pt.y() + b1.z() * pt.z(),
                                           b2.x() * pt.x() + b2.y() * pt.y() + b2.z() * pt.z()));
@@ -597,7 +650,7 @@ private:
             std::size_t ind_x = static_cast<std::size_t>((points_2d[i].x() - box_2d.xmin()) / grid_length);
             std::size_t ind_y = static_cast<std::size_t>((points_2d[i].y() - box_2d.ymin()) / grid_length);
             Mask[ind_x][ind_y] = true;
-            point_map[ind_x][ind_y].push_back (m_planes[c]->indices_of_assigned_points ()[i]);
+            point_map[ind_x][ind_y].push_back (m_indices_of_assigned_points[c][i]);
           }
 
         //hole filing in Mask in 4-connexity
@@ -657,7 +710,7 @@ private:
 
                     std::size_t index_pt = point_map[i][j][0];
                     m_points[index_pt] = Point (X1, X2, X3);
-                    m_normals[index_pt] = m_planes[c]->plane_normal();
+                    m_normals[index_pt] = m_planes[c].orthogonal_vector();
                     m_status[index_pt] = PLANE;
 
                     for (std::size_t np = 1; np < point_map[i][j].size(); ++ np)
@@ -692,7 +745,7 @@ private:
                 FT X3 = x2pt * b1.z() + y2pt * b2.z() - plane.d() * vortho.z();
 
                 m_points.push_back (Point (X1, X2, X3));
-                m_normals.push_back (m_planes[c]->plane_normal());
+                m_normals.push_back (m_planes[c].orthogonal_vector());
                 m_indices.push_back (c);
                 m_status.push_back (RESIDUS);
               }
@@ -702,7 +755,7 @@ private:
 
   void find_pairs_of_adjacent_primitives (double radius)
   {
-    typedef typename Traits::Search_traits Search_traits_base;
+    typedef typename CGAL::Search_traits_3<Kernel> Search_traits_base;
     typedef Search_traits_adapter <std::size_t, typename Pointer_property_map<Point>::type, Search_traits_base> Search_traits;
     typedef CGAL::Kd_tree<Search_traits> Tree;
     typedef CGAL::Fuzzy_sphere<Search_traits> Fuzzy_sphere;
@@ -754,15 +807,14 @@ private:
   {
     for (std::size_t i = 0; i < m_edges.size(); ++ i)
       {
-        boost::shared_ptr<Plane_shape> plane1 = m_planes[m_edges[i].planes[0]];
-        boost::shared_ptr<Plane_shape> plane2 = m_planes[m_edges[i].planes[1]];       
+        const Plane& plane1 = m_planes[m_edges[i].planes[0]];
+        const Plane& plane2 = m_planes[m_edges[i].planes[1]];       
 
-        double angle_A = std::acos (CGAL::abs (plane1->plane_normal() * plane2->plane_normal()));
+        double angle_A = std::acos (CGAL::abs (plane1.orthogonal_vector() * plane2.orthogonal_vector()));
         double angle_B = CGAL_PI - angle_A;
 
-        typename cpp11::result_of<typename Traits::Intersect_3(Plane, Plane)>::type
-          result = CGAL::intersection(static_cast<Plane>(*plane1),
-                                      static_cast<Plane>(*plane2));
+        typename cpp11::result_of<typename Kernel::Intersect_3(Plane, Plane)>::type
+          result = CGAL::intersection(plane1, plane2);
 
         if (!result)
           {
@@ -783,9 +835,9 @@ private:
           }
         
         Vector direction_p1 (0., 0., 0.);
-        for (std::size_t k = 0; k < plane1->indices_of_assigned_points ().size(); ++ k)
+        for (std::size_t k = 0; k < m_indices_of_assigned_points[m_edges[i].planes[0]].size(); ++ k)
           {
-            std::size_t index_point = plane1->indices_of_assigned_points ()[k];
+            std::size_t index_point = m_indices_of_assigned_points[m_edges[i].planes[0]][k];
               
             const Point& point = m_points[index_point];
             Point projected = m_edges[i].support.projection (point);
@@ -798,9 +850,9 @@ private:
           direction_p1 = direction_p1 / std::sqrt (direction_p1 * direction_p1);
 
         Vector direction_p2 (0., 0., 0.);
-        for (std::size_t k = 0; k < plane2->indices_of_assigned_points ().size(); ++ k)
+        for (std::size_t k = 0; k < m_indices_of_assigned_points[m_edges[i].planes[1]].size(); ++ k)
           {
-            std::size_t index_point = plane2->indices_of_assigned_points ()[k];
+            std::size_t index_point = m_indices_of_assigned_points[m_edges[i].planes[1]][k];
               
             const Point& point = m_points[index_point];
             Point projected = m_edges[i].support.projection (point);
@@ -831,8 +883,8 @@ private:
       
     for (std::size_t i = 0; i < m_edges.size(); ++ i)
       {
-        boost::shared_ptr<Plane_shape> plane1 = m_planes[m_edges[i].planes[0]];
-        boost::shared_ptr<Plane_shape> plane2 = m_planes[m_edges[i].planes[1]];
+        const Plane& plane1 = m_planes[m_edges[i].planes[0]];
+        const Plane& plane2 = m_planes[m_edges[i].planes[1]];
 
         const Line& line = m_edges[i].support;
 
@@ -841,21 +893,21 @@ private:
             continue;
           }
 
-        Vector normal = 0.5 * plane1->plane_normal () + 0.5 * plane2->plane_normal();
+        Vector normal = 0.5 * plane1.orthogonal_vector () + 0.5 * plane2.orthogonal_vector();
 							
         //find set of points close (<attraction_radius) to the edge and store in intersection_points
         std::vector<std::size_t> intersection_points;
-        for (std::size_t k = 0; k < plane1->indices_of_assigned_points().size(); ++ k)
+        for (std::size_t k = 0; k < m_indices_of_assigned_points[m_edges[i].planes[0]].size(); ++ k)
           {
-            std::size_t index_point = plane1->indices_of_assigned_points()[k];
+            std::size_t index_point = m_indices_of_assigned_points[m_edges[i].planes[0]][k];
             const Point& point = m_points[index_point];
             Point projected = line.projection (point);
             if (CGAL::squared_distance (point, projected) < radius * radius)
               intersection_points.push_back (index_point);
           }
-        for (std::size_t k = 0; k < plane2->indices_of_assigned_points().size(); ++ k)
+        for (std::size_t k = 0; k < m_indices_of_assigned_points[m_edges[i].planes[1]].size(); ++ k)
           {
-            std::size_t index_point = plane2->indices_of_assigned_points()[k];
+            std::size_t index_point = m_indices_of_assigned_points[m_edges[i].planes[1]][k];
             const Point& point = m_points[index_point];
             Point projected = line.projection (point);
             if (CGAL::squared_distance (point, projected) < radius * radius)
@@ -990,8 +1042,8 @@ private:
                   pts2.push_back (m_points[inde]);
               }
 
-            typename cpp11::result_of<typename Traits::Intersect_3(Plane, Plane)>::type
-              result = CGAL::intersection (static_cast<Plane> (*plane1), ortho);
+            typename cpp11::result_of<typename Kernel::Intersect_3(Plane, Plane)>::type
+              result = CGAL::intersection (plane1, ortho);
             if (result)
               {
                 if (const Line* l = boost::get<Line>(&*result))
@@ -1008,7 +1060,7 @@ private:
 
                         Point anchor1 = anchor + vecp1 * r_edge;
                         m_points.push_back (anchor1);
-                        m_normals.push_back (m_planes[m_edges[i].planes[0]]->plane_normal());
+                        m_normals.push_back (m_planes[m_edges[i].planes[0]].orthogonal_vector());
                         m_indices.push_back (m_edges[i].planes[0]);
                         m_status.push_back (PLANE);
                       }
@@ -1028,7 +1080,7 @@ private:
               }
 
             
-            result = CGAL::intersection (static_cast<Plane> (*plane2),ortho);
+            result = CGAL::intersection (plane2,ortho);
             if (result)
               {
                 if (const Line* l = boost::get<Line>(&*result))
@@ -1045,7 +1097,7 @@ private:
 
                         Point anchor2 = anchor + vecp2 * r_edge;
                         m_points.push_back (anchor2);
-                        m_normals.push_back (m_planes[m_edges[i].planes[1]]->plane_normal());
+                        m_normals.push_back (m_planes[m_edges[i].planes[1]].orthogonal_vector());
                         m_indices.push_back (m_edges[i].planes[1]);
                         m_status.push_back (PLANE);
                       }
@@ -1151,18 +1203,18 @@ private:
     for (std::size_t i = 0; i < m_corners.size (); ++ i)
       {
         //calcul pt d'intersection des 3 plans
-        Plane plane1 = static_cast<Plane> (*(m_planes[m_corners[i].planes[0]]));
-        Plane plane2 = static_cast<Plane> (*(m_planes[m_corners[i].planes[1]]));
-        Plane plane3 = static_cast<Plane> (*(m_planes[m_corners[i].planes[2]]));
+        const Plane& plane1 = m_planes[m_corners[i].planes[0]];
+        const Plane& plane2 = m_planes[m_corners[i].planes[1]];
+        const Plane& plane3 = m_planes[m_corners[i].planes[2]];
 
-        typename cpp11::result_of<typename Traits::Intersect_3(Plane, Plane)>::type
+        typename cpp11::result_of<typename Kernel::Intersect_3(Plane, Plane)>::type
           result = CGAL::intersection(plane1, plane2);
         
         if (result)
           {
             if (const Line* l = boost::get<Line>(&*result))
               {
-                typename cpp11::result_of<typename Traits::Intersect_3(Line, Plane)>::type
+                typename cpp11::result_of<typename Kernel::Intersect_3(Line, Plane)>::type
                   result2 = CGAL::intersection(*l, plane3);
 
                 if (result2)
@@ -1307,7 +1359,7 @@ private:
         Vector normal (0., 0., 0.);
         for (std::size_t i = 0; i < m_corners[k].planes.size(); ++ i)
           normal = normal + (1. / (double)(m_corners[k].planes.size()))
-            * m_planes[m_corners[k].planes[i]]->plane_normal();
+            * m_planes[m_corners[k].planes[i]].orthogonal_vector();
           
         m_points.push_back (m_corners[k].support);
         m_normals.push_back (normal);
@@ -1415,8 +1467,8 @@ private:
               {
                 Point new_edge = m_corners[k].support + m_corners[k].directions[ed] * d_DeltaEdge;
                 m_points.push_back (new_edge);
-                m_normals.push_back (0.5 * m_planes[m_edges[m_corners[k].edges[ed]].planes[0]]->plane_normal()
-                                     + 0.5 * m_planes[m_edges[m_corners[k].edges[ed]].planes[1]]->plane_normal());
+                m_normals.push_back (0.5 * m_planes[m_edges[m_corners[k].edges[ed]].planes[0]].orthogonal_vector()
+                                     + 0.5 * m_planes[m_edges[m_corners[k].edges[ed]].planes[1]].orthogonal_vector());
                 m_status.push_back (EDGE);
                 m_indices.push_back (m_corners[k].edges[ed]);
                 edge.indices.push_back (m_points.size() - 1);
@@ -1425,8 +1477,8 @@ private:
             //rajouter un edge a 1/3 epsilon du cote dominant
             Point new_edge = m_corners[k].support + m_corners[k].directions[ed] * d_DeltaEdge / 3;
             m_points.push_back (new_edge);
-            m_normals.push_back (0.5 * m_planes[m_edges[m_corners[k].edges[ed]].planes[0]]->plane_normal()
-                                 + 0.5 * m_planes[m_edges[m_corners[k].edges[ed]].planes[1]]->plane_normal());
+            m_normals.push_back (0.5 * m_planes[m_edges[m_corners[k].edges[ed]].planes[0]].orthogonal_vector()
+                                 + 0.5 * m_planes[m_edges[m_corners[k].edges[ed]].planes[1]].orthogonal_vector());
             m_status.push_back (EDGE);
             m_indices.push_back (m_corners[k].edges[ed]);
             edge.indices.push_back (m_points.size() - 1);
@@ -1445,50 +1497,68 @@ private:
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessingAlgorithms
-  
-/// This is an implementation of the Point Set Structuring algorithm. This
-/// algorithm takes advantage of a set of detected planes: it detects adjacency
-/// relationships between planes and resamples the detected planes, edges and
-/// corners to produce a structured point set.
-///
-/// The size parameter `epsilon` is used both for detecting adjacencies and for
-/// setting the sampling density of the structured point set.
-///
-/// For more details, please refer to \cgalCite{cgal:la-srpss-13}.
-///
-/// @tparam Traits a model of `EfficientRANSACTraits` that must provide in
-/// addition a function `Intersect_3 intersection_3_object() const` and a
-/// functor `Intersect_3` with:
-/// - `boost::optional< boost::variant< Traits::Plane_3, Traits::Line_3 > > operator()(typename Traits::Plane_3, typename Traits::Plane_3)`
-/// - `boost::optional< boost::variant< Traits::Line_3, Traits::Point_3 > > operator()(typename Traits::Line_3, typename Traits::Plane_3)`
-///
-/// @tparam OutputIterator Type of the output iterator. The type of the objects
-/// put in it is `std::pair<Traits::Point_3, Traits::Vector_3>`.  Note that the
-/// user may use a <A HREF="http://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
-/// to match specific needs.
-///
-/// @note If no plane is found in the shape detection object, the
-/// algorithm does nothing and the output points are the unaltered
-/// input points.
-///
-/// @note Both property maps can be omitted if the default constructors of these property maps can be safely used.
-template <typename Traits,
-          typename OutputIterator
->
+/** 
+   \ingroup PkgPointSetProcessingAlgorithms
+
+   This is an implementation of the Point Set Structuring algorithm. This
+   algorithm takes advantage of a set of detected planes: it detects adjacency
+   relationships between planes and resamples the detected planes, edges and
+   corners to produce a structured point set.
+
+   The size parameter `epsilon` is used both for detecting adjacencies and for
+   setting the sampling density of the structured point set.
+
+   For more details, please refer to \cgalCite{cgal:la-srpss-13}.
+
+   \tparam PointRange is a model of `ConstRange`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+   \tparam PlaneRange is a model of `ConstRange`. The value type of
+   its iterator is the key type of the named parameter `plane_map`.
+   \tparam OutputIterator Type of the output iterator. The type of the
+   objects put in it is `std::pair<Kernel::Point_3, Kernel::Vector_3>`.
+   Note that the user may use a
+   <A HREF="http://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
+   to match specific needs.
+
+   \param points input point range.
+   \param planes input plane range.
+   \param output output iterator where output points are written
+   \param epsilon size parameter.
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{normal_map} a model of `ReadablePropertyMap` with value type
+     `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamBegin{plane_index_map} a model of `ReadablePropertyMap` with value type `int`.
+     Associates the index of a point in the input range to the index of plane (-1 if point does is not assigned to
+     a plane).\cgalParamEnd
+     \cgalParamBegin{plane_map} a model of `ReadablePropertyMap` with value type
+     `geom_traits::Plane_3`. If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Plane_3>`
+     is used.\cgalParamEnd
+     \cgalParamBegin{attraction_factor} multiple of `epsilon` used to connect simplices.\cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+
+*/
+template <typename PointRange,
+          typename PlaneRange,
+          typename OutputIterator,
+          typename NamedParameters
+          >
 OutputIterator
-structure_point_set (typename Traits::Input_range::iterator first,  ///< iterator over the first input point.
-                     typename Traits::Input_range::iterator beyond, ///< past-the-end iterator over the input points.
-                     typename Traits::Point_map point_map, ///< property map: value_type of InputIterator -> Point_3. 
-                     typename Traits::Normal_map normal_map, ///< property map: value_type of InputIterator -> Vector_3.
-                     OutputIterator output, ///< output iterator where output points are written
-                     Shape_detection_3::Efficient_RANSAC<Traits>&
-                     shape_detection, ///< shape detection object
-                     double epsilon, ///< size parameter
-                     double attraction_factor = 3.) ///< attraction factor
+structure_point_set (const PointRange& points,
+                     const PlaneRange& planes,
+                     OutputIterator output,
+                     double epsilon,
+                     const NamedParameters& np)
 {
-  Point_set_with_structure<Traits> pss (first, beyond, point_map, normal_map,
-                                        shape_detection, epsilon, attraction_factor);
+  using boost::choose_param;
+
+  typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+
+  Point_set_with_structure<Kernel> pss (points, planes, epsilon, np);
 
   for (std::size_t i = 0; i < pss.size(); ++ i)
     *(output ++) = pss[i];
@@ -1496,34 +1566,115 @@ structure_point_set (typename Traits::Input_range::iterator first,  ///< iterato
   return output;
 }
 
-
 /// \cond SKIP_IN_MANUAL
-template <typename Traits,
-          typename OutputIterator
->
+// variant with default NP
+template <typename PointRange,
+          typename PlaneRange,
+          typename OutputIterator>
 OutputIterator
-structure_point_set (typename Traits::Input_range::iterator first,  ///< iterator over the first input point.
-                     typename Traits::Input_range::iterator beyond, ///< past-the-end iterator over the input points.
+structure_point_set (const PointRange& points, ///< range of points.
+                     const PlaneRange& planes, ///< range of planes.
+                     OutputIterator output, ///< output iterator where output points are written.
+                     double epsilon) ///< size parameter.
+{
+  return structure_point_set
+    (points, planes, output, epsilon,
+     CGAL::Point_set_processing_3::parameters::all_default(points));
+}
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+// deprecated API
+template <typename PointRange,
+          typename PointMap,
+          typename NormalMap,
+          typename PlaneRange,
+          typename PlaneMap,
+          typename IndexMap,
+          typename OutputIterator,
+          typename Kernel
+          >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::structure_point_set(), please update your code")
+OutputIterator
+structure_point_set (const PointRange& points, ///< range of points.
+                     PointMap point_map, ///< property map: value_type of `typename PointRange::const_iterator` -> `Point_3`
+                     NormalMap normal_map, ///< property map: value_type of `typename PointRange::const_iterator` -> `Normal_3`
+                     const PlaneRange& planes, ///< range of planes.
+                     PlaneMap plane_map, ///< property map: value_type of `typename PlaneRange::const_iterator` -> `Plane_3`
+                     IndexMap index_map, ///< property map: index of point `std::size_t` -> index of plane `int` (-1 if point does is not assigned to a plane)
+                     OutputIterator output, ///< output iterator where output points are written.
+                     const Kernel&, ///< geometric traits.
+                     double epsilon, ///< size parameter.
+                     double attraction_factor = 3.) ///< attraction factor.
+{
+  return structure_point_set
+    (points, planes, output, epsilon,
+     CGAL::parameters::point_map (point_map).
+     normal_map (normal_map).
+     plane_map (plane_map).
+     plane_index_map (index_map).
+     attraction_factor (attraction_factor).
+     geom_traits (Kernel()));
+}
+  
+// deprecated API
+template <typename PointRange,
+          typename PointMap,
+          typename NormalMap,
+          typename PlaneRange,
+          typename PlaneMap,
+          typename IndexMap,
+          typename OutputIterator
+          >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::structure_point_set(), please update your code")
+OutputIterator
+structure_point_set (const PointRange& points,
+                     PointMap point_map,
+                     NormalMap normal_map,
+                     const PlaneRange& planes,
+                     PlaneMap plane_map,
+                     IndexMap index_map,
                      OutputIterator output, ///< output iterator where output points are written
-                     Shape_detection_3::Efficient_RANSAC<Traits>&
-                     shape_detection, ///< shape detection object
                      double epsilon, ///< size parameter
                      double attraction_factor = 3.) ///< attraction factor
 {
-  return structure_point_set (first, beyond,
-                              typename Traits::Point_map(),
-                              typename Traits::Normal_map(),
-                              output,
-                              shape_detection,
-                              epsilon,
-                              attraction_factor);
+  return structure_point_set
+    (points, planes, output, epsilon,
+     CGAL::parameters::point_map (point_map).
+     normal_map (normal_map).
+     plane_map (plane_map).
+     plane_index_map (index_map).
+     attraction_factor (attraction_factor));
 }
+
+// deprecated API
+template <typename PointRange,
+          typename NormalMap,
+          typename PlaneRange,
+          typename IndexMap,
+          typename OutputIterator
+          >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::structure_point_set(), please update your code")
+OutputIterator
+structure_point_set (const PointRange& points,
+                     NormalMap normal_map,
+                     const PlaneRange& planes,
+                     IndexMap index_map,
+                     OutputIterator output, ///< output iterator where output points are written
+                     double epsilon, ///< size parameter
+                     double attraction_factor = 3.) ///< attraction factor
+{
+  return structure_point_set
+    (points, planes, output, epsilon,
+     CGAL::parameters::normal_map (normal_map).
+     plane_index_map (index_map).
+     attraction_factor (attraction_factor));
+}
+#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
-
-
-
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_STRUCTURE_POINT_SET_3_H
 

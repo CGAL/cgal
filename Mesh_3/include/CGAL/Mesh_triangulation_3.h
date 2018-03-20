@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau, Stephane Tayeb
@@ -25,6 +26,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -69,7 +71,7 @@ template<class MD, class K_, class Concurrency_tag,
 struct Mesh_triangulation_3
 {
 private:
-  typedef typename Default::Get<K_, typename Kernel_traits<MD>::Kernel>::type K;
+  typedef typename Default::Lazy_get<K_, Kernel_traits<MD> >::type K;
 
   typedef typename details::Mesh_geom_traits_generator<K>::type Geom_traits;
 
@@ -118,5 +120,7 @@ public:
 #endif // CGAL_LINKED_WITH_TBB
 
 }  // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_TRIANGULATION_3_H

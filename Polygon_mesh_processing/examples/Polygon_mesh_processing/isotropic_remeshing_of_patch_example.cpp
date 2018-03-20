@@ -73,6 +73,8 @@ int main(int argc, char* argv[])
                            .protect_constraints(true)//i.e. protect border, here
                            );
 
+  std::ofstream out("out.off");
+  out << mesh;
   std::cout << "Remeshing done." << std::endl;
 
   return 0;

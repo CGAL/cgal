@@ -29,9 +29,9 @@ int main(int argc, char*argv[])
   CGAL::Timer task_timer; task_timer.start();
 
   // simplification by clustering using erase-remove idiom
-  points.erase (CGAL::hierarchy_simplify_point_set (points.begin (), points.end (),
-						    100, // Max cluster size
-						    0.01), // Max surface variation
+  points.erase (CGAL::hierarchy_simplify_point_set (points,
+						    CGAL::parameters::size(100). // Max cluster size
+						    maximum_variation(0.01)), // Max surface variation
 		points.end ());
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
@@ -41,7 +41,7 @@ int main(int argc, char*argv[])
 	    << (memory>>20) << " Mib allocated." << std::endl;
 
   std::ofstream f ("out.xyz");
-  CGAL::write_xyz_points (f, points.begin (), points.end ());
+  CGAL::write_xyz_points (f, points);
   
   return EXIT_SUCCESS;
 }

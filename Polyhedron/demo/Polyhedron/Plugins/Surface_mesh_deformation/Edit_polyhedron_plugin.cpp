@@ -126,7 +126,13 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, CGAL:
 {
   mw = mainWindow;
   scene = scene_interface;
-  actionDeformation = new QAction("Surface Mesh Deformation", mw);
+  actionDeformation = new QAction(
+      #ifdef USE_SURFACE_MESH
+          "Surface Mesh Deformation"
+      #else
+          " Polyhedron Deformation"
+      #endif
+        , mw);
   actionDeformation->setProperty("subMenuName", "Triangulated Surface Mesh Deformation");
   actionDeformation->setObjectName("actionDeformation");
   actionDeformation->setShortcutContext(Qt::ApplicationShortcut);
@@ -140,10 +146,24 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, CGAL:
 
   ////////////////// Construct widget /////////////////////////////
   // First time, construct docking window
-  dock_widget = new QDockWidget("Mesh Deformation", mw);
+  dock_widget = new QDockWidget(
+      #ifdef USE_SURFACE_MESH
+          "Surface Mesh Deformation"
+      #else
+          " Polyhedron Deformation"
+      #endif
+        , mw);
   dock_widget->setVisible(false); // do not show at the beginning
 
   ui_widget.setupUi(dock_widget); 
+  dock_widget->setWindowTitle(tr(
+                              #ifdef USE_SURFACE_MESH
+                                  "Surface Mesh Deformation"
+                              #else
+                                  " Polyhedron Deformation"
+                              #endif
+                                ));
+
   mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
 
   connect(ui_widget.AddCtrlVertPushButton, SIGNAL(clicked()), this, SLOT(on_AddCtrlVertPushButton_clicked()));

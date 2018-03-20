@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)    : Samuel Hornus
 
@@ -22,6 +23,7 @@
 
 #include <CGAL/license/Triangulation.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Triangulation_ds_full_cell.h>
 #include <CGAL/internal/Triangulation/utilities.h>
@@ -147,5 +149,7 @@ operator>>(std::istream & I, Triangulation_full_cell<TDS, Data, SSP> & s)
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TRIANGULATION_SIMPLEX_H

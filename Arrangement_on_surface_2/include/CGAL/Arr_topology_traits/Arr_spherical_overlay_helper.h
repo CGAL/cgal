@@ -14,7 +14,8 @@
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0+
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
@@ -25,8 +26,8 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
-
 /*! \file
+ *
  * Definition of the Arr_spherical_overlay_helper class-template.
  */
 
@@ -35,41 +36,47 @@
 namespace CGAL {
 
 /*! \class Arr_spherical_overlay_helper
+ *
  * A helper class for the overlay sweep-line visitor, suitable for the overlay
  * of Arrangement_on_surface_2 objects instantiated with a topology-traits
  * class for bounded curves in the plane.
  */
-template <class Traits_,
-          class ArrangementRed_,
-          class ArrangementBlue_,
-          class Arrangement_,
-          class Event_,
-          class Subcurve_>
-class Arr_spherical_overlay_helper
-{
+template <typename GeometryTraits_2,
+          typename ArrangementRed_2,
+          typename ArrangementBlue_2,
+          typename Arrangement_,
+          typename Event_,
+          typename Subcurve_>
+class Arr_spherical_overlay_helper {
 public:
-  typedef Traits_                                         Traits_2; 
-  typedef Arrangement_                                    Arrangement_2;
-  typedef Event_                                          Event;
-  typedef Subcurve_                                       Subcurve;
+  typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef ArrangementRed_2                              Arrangement_red_2;
+  typedef ArrangementBlue_2                             Arrangement_blue_2;
+  typedef Arrangement_                                  Arrangement_2;
+  typedef Event_                                        Event;
+  typedef Subcurve_                                     Subcurve;
 
-  typedef typename Traits_2::X_monotone_curve_2           X_monotone_curve_2;
-  typedef typename Traits_2::Point_2                      Point_2;
+private:
+  typedef Geometry_traits_2                             Gt2;
+  typedef Arrangement_red_2                             Ar2;
+  typedef Arrangement_blue_2                            Ab2;
 
-  typedef typename Event::Subcurve_iterator               Subcurve_iterator;
+public:
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Gt2::Point_2                         Point_2;
+
+  typedef typename Event::Subcurve_iterator             Subcurve_iterator;
 
 
   // The input arrangements (the "red" and the "blue" one):
-  typedef ArrangementRed_                                 Arrangement_red_2;
-  typedef typename Arrangement_red_2::Topology_traits     Topology_traits_red;
-  typedef typename Arrangement_red_2::Face_const_handle   Face_handle_red;
+  typedef typename Ar2::Topology_traits                 Topology_traits_red;
+  typedef typename Ar2::Face_const_handle               Face_handle_red;
 
-  typedef ArrangementBlue_                                Arrangement_blue_2;
-  typedef typename Arrangement_blue_2::Topology_traits    Topology_traits_blue;
-  typedef typename Arrangement_blue_2::Face_const_handle  Face_handle_blue;
+  typedef typename Ab2::Topology_traits                 Topology_traits_blue;
+  typedef typename Ab2::Face_const_handle               Face_handle_blue;
 
   // Define the helper class for the construction visitor.
-  typedef Arr_spherical_construction_helper<Traits_2, Arrangement_2, Event,
+  typedef Arr_spherical_construction_helper<Gt2, Arrangement_2, Event,
                                             Subcurve>     Construction_helper;
 
 protected:
@@ -85,8 +92,7 @@ protected:
 
 public:
   /*! Constructor, given the input red and blue arrangements. */
-  Arr_spherical_overlay_helper(const Arrangement_red_2* red_arr,
-                               const Arrangement_blue_2* blue_arr) :
+  Arr_spherical_overlay_helper(const Ar2* red_arr, const Ab2* blue_arr) :
     m_red_top_traits(red_arr->topology_traits()),
     m_blue_top_traits(blue_arr->topology_traits())
   {}
@@ -108,7 +114,7 @@ public:
 
   /*! A notification invoked before the sweep-line starts handling the given
    * event.
-   */  
+   */
   void before_handle_event(Event* event)
   {
     if (event->parameter_space_in_y() != ARR_TOP_BOUNDARY &&
@@ -128,83 +134,83 @@ public:
       it_blue = it_red = event->left_curves_begin();
       it_end = event->left_curves_end();
     }
-    
+
     // red arrangement
-    while ((it_red != it_end) && ((*it_red)->color() == Traits_2::BLUE))
+    while ((it_red != it_end) && ((*it_red)->color() == Gt2::BLUE))
       ++it_red;
-    
+
     if (it_red != it_end) {
       const Subcurve* sc_red = *it_red;
       if (event->parameter_space_in_y() == ARR_TOP_BOUNDARY) {
         // The curve is incident to the north pole.
         switch (sc_red->color()) {
-         case Traits_2::RED:
+         case Gt2::RED:
           m_red_nf = (ind == ARR_MIN_END) ?
             sc_red->red_halfedge_handle()->twin()->face() :
             sc_red->red_halfedge_handle()->face();
           break;
-          
-         case Traits_2::RB_OVERLAP:
+
+         case Gt2::RB_OVERLAP:
           m_red_nf = (ind == ARR_MIN_END) ?
             sc_red->red_halfedge_handle()->twin()->face() :
             sc_red->red_halfedge_handle()->face();
           break;
-          
-         case Traits_2::BLUE: break;
+
+         case Gt2::BLUE: break;
         }
       }
       else {
         // The curve extends to the right from the curve of discontinuity.
         CGAL_assertion(ind == ARR_MIN_END);
         switch (sc_red->color()) {
-        case Traits_2::RED:
+        case Gt2::RED:
           m_red_nf = sc_red->red_halfedge_handle()->twin()->face();
           break;
-        case Traits_2::RB_OVERLAP:
+        case Gt2::RB_OVERLAP:
           m_red_nf = sc_red->red_halfedge_handle()->twin()->face();
           break;
-        case Traits_2::BLUE: break;
+        case Gt2::BLUE: break;
         }
       }
     }
-    
+
     // blue arrangement
-    while ((it_blue != it_end) && ((*it_blue)->color() == Traits_2::RED))
+    while ((it_blue != it_end) && ((*it_blue)->color() == Gt2::RED))
       ++it_blue;
-    
+
     if (it_blue != it_end) {
       const Subcurve* sc_blue = *it_blue;
       if (event->parameter_space_in_y() == ARR_TOP_BOUNDARY) {
         // The curve is incident to the north pole.
         switch (sc_blue->color()) {
-         case Traits_2::BLUE:
-          m_blue_nf = (ind == ARR_MIN_END) ?
-            sc_blue->blue_halfedge_handle()->twin()->face() :
-            sc_blue->blue_halfedge_handle()->face();
-          break;
-          
-         case Traits_2::RB_OVERLAP:
+         case Gt2::BLUE:
           m_blue_nf = (ind == ARR_MIN_END) ?
             sc_blue->blue_halfedge_handle()->twin()->face() :
             sc_blue->blue_halfedge_handle()->face();
           break;
 
-         case Traits_2::RED: break;
+         case Gt2::RB_OVERLAP:
+          m_blue_nf = (ind == ARR_MIN_END) ?
+            sc_blue->blue_halfedge_handle()->twin()->face() :
+            sc_blue->blue_halfedge_handle()->face();
+          break;
+
+         case Gt2::RED: break;
         }
       }
       else {
         // The curve extends to the right from the curve of discontinuity.
         CGAL_assertion(ind == ARR_MIN_END);
         switch (sc_blue->color()) {
-         case Traits_2::BLUE:
+         case Gt2::BLUE:
           m_blue_nf = sc_blue->blue_halfedge_handle()->twin()->face();
           break;
-          
-         case Traits_2::RB_OVERLAP:
+
+         case Gt2::RB_OVERLAP:
           m_blue_nf = sc_blue->blue_halfedge_handle()->twin()->face();
           break;
-          
-         case Traits_2::RED: break;
+
+         case Gt2::RED: break;
         }
       }
     }

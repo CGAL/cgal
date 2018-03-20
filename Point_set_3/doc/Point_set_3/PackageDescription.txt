@@ -21,28 +21,6 @@
 ## Class ##
 - `CGAL::Point_set_3<Point,Vector>`
 
-
-\defgroup PkgPointSet3PointSetProcessing3 Point Set Processing
-\ingroup PkgPointSet3
-
-\brief This module offers convenience overloads of functions available in the
-\ref PkgPointSetProcessingSummary package. These overloads allow the
-user to call point set processing algorithms without having to handle
-manually property maps and iterators.
-
-The overloads, available after including
-`CGAL/Point_set_3/Point_set_processing_3.h`, all follow the same
-pattern based on the original point set processing functions:
-
-- Iterators and property maps of the original functions are replaced
-with a single parameter `CGAL::Point_set_3<Point,Vector>`
-
-- The other parameters (and their potential default values) are
-following in the same order as the original function.
-
-For a complete documentation of these functions, please refer to the
-\ref PkgPointSetProcessing manual.
-
 \defgroup PkgPointSet3IO Input/Output
 \ingroup PkgPointSet3
 

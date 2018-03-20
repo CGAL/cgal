@@ -27,12 +27,14 @@ A polygon mesh can have any number of connected components, and also some self-i
 In this package, a polygon mesh is considered to have the topology of a 2-manifold.
 
 \subsection PMPAPI API
-This package follows the BGL API described in \ref chapterBGL.
+This package follows the BGL API described in \ref PkgBGLSummary.
 It can thus be used either with `Polyhedron_3`, `Surface_mesh`, or
 any class model of the concept `FaceGraph`. Each function or class of this package
 details the requirements on the input polygon mesh.
 
-BGL \ref namedparameters are used to deal with optional parameters.
+\ref BGLNamedParameters are used to deal with optional parameters.
+The page \ref pmp_namedparameters describes their usage
+and provides a list of the parameters that are used in this package.
 
 \subsection PMPOutline Outline
 The algorithms described in this manual are organized in sections:
@@ -225,7 +227,7 @@ Mathematically speaking, the intersection with an infinitesimally small ball
 centered in the output volume is a topological ball. At the surface level this means
 that no non-manifold vertex or edge is allowed in the output. For example, it
 is not possible to compute the union of two cubes that are disjoint but sharing an edge.
-In case you have to deal with such scenarii, you should consider using the
+In case you have to deal with such scenarios, you should consider using the
 package \ref PkgNef3Summary.
 
 It is possible to update the input so that it contains the result (in-place operation).
@@ -378,7 +380,7 @@ This packages provides several predicates to be evaluated with respect to a tria
 Self intersections can be detected from a triangle mesh, by calling the predicate
 `CGAL::Polygon_mesh_processing::does_self_intersect()`.
 Additionally, the function `CGAL::Polygon_mesh_processing::self_intersections()`
-records all pairs of intersecting triangles.
+reports all pairs of intersecting triangles.
 
 \cgalFigureBegin{SelfIntersections, selfintersections.jpg}
 Detecting self-intersections on a triangle mesh.
@@ -410,6 +412,11 @@ input triangle mesh.
 \subsubsection InsideExample Inside Test Example
 \cgalExample{Polygon_mesh_processing/point_inside_example.cpp}
 
+\subsection PMPDoIntersect Intersections Detection
+Intersection tests between triangle meshes and/or polylines can be done using
+\link PMP_predicates_grp `CGAL::Polygon_mesh_processing::do_intersect()` \endlink.
+Additionally, the function `CGAL::Polygon_mesh_processing::intersecting_meshes()`
+records all pairs of intersecting meshes in a range.
 
 ****************************************
 \section PMPOrientation Orientation
@@ -427,6 +434,13 @@ As a consequence, the normal computed for each face (see Section
 \ref PMPNormalComp) is also reversed.
 
 The \ref PolygonSoupExample puts these functions at work on a polygon soup.
+
+The function `CGAL::Polygon_mesh_processing::orient()` makes each connected component
+of a closed polygon mesh outward or inward oriented.
+
+The function `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()` orients
+the connected components of a closed polygon mesh so that it bounds a volume
+(see \ref coref_def_subsec for the precise definition).
 
 
 ****************************************
@@ -679,6 +693,23 @@ and the distance between the point set and the reconstructed surface is computed
 with the following code:
 
 \snippet Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp PMP_distance_snippet
+
+\section PMPDetectFeatures Feature Detection
+
+This package provides methods to detect some features of a polygon mesh.
+
+The function `CGAL::Polygon_mesh_processing::sharp_edges_segmentation()`
+detects the sharp edges of a polygon mesh and deduces surface patches and vertices incidences.
+It can be split into three functions : `CGAL::Polygon_mesh_processing::detect_sharp_edges()`, `CGAL::Polygon_mesh_processing::connected_components()`
+and `CGAL::Polygon_mesh_processing::detect_vertex_incident_patches()`,
+that respectively detect the sharp edges, compute the patch indices, and give each of `pmesh` vertices the patch indices of its incident faces.
+
+\subsection DetectFeaturesExample Feature Detection Example
+In the following example, we count how many edges of `pmesh` are incident to two faces
+which normals form an angle smaller than 90 degrees,
+and the number of surface patches that are separated by these edges.
+
+\cgalExample{Polygon_mesh_processing/detect_features_example.cpp}
 
 \section PMPHistory Implementation History
 

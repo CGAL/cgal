@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stéphane Tayeb
@@ -27,6 +28,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/global_parameters.h>
@@ -127,6 +129,7 @@ CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
   BOOST_PARAMETER_NAME( features_param )
 
 CGAL_PRAGMA_DIAG_POP
+
   
 } // end namespace parameters::internal
 
@@ -393,6 +396,11 @@ C3T3 make_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2& a2,
 }
 
 #endif  
+ 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4003) // not enough actual parameters for macro
+#endif
   
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
@@ -413,15 +421,23 @@ BOOST_PARAMETER_FUNCTION(
       (lloyd_param, (parameters::internal::Lloyd_options), parameters::no_lloyd())
       (mesh_options_param, (parameters::internal::Mesh_3_options), 
                            parameters::internal::Mesh_3_options())
+      (manifold_options_param, (parameters::internal::Manifold_options),
+                               parameters::internal::Manifold_options())
     )
   )
 )
 {
   make_mesh_3_impl(c3t3, domain, criteria,
                    exude_param, perturb_param, odt_param, lloyd_param,
-                   features_param.features(), mesh_options_param);
+                   features_param.features(), mesh_options_param,
+                   manifold_options_param);
 }
 CGAL_PRAGMA_DIAG_POP
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 
 /**
  * @brief This function meshes the domain defined by mesh_traits
@@ -444,7 +460,9 @@ void make_mesh_3_impl(C3T3& c3t3,
                       const parameters::internal::Lloyd_options& lloyd,
                       const bool with_features,
                       const parameters::internal::Mesh_3_options& 
-                        mesh_options = parameters::internal::Mesh_3_options())
+                        mesh_options = parameters::internal::Mesh_3_options(),
+                      const parameters::internal::Manifold_options&
+                        manifold_options = parameters::internal::Manifold_options())
 {
 #ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
   CGAL::get_default_random() = CGAL::Random(0);
@@ -467,11 +485,13 @@ void make_mesh_3_impl(C3T3& c3t3,
   // Build mesher and launch refinement process
   // Don't reset c3t3 as we just created it
   refine_mesh_3(c3t3, domain, criteria,
-                exude, perturb, odt, lloyd, parameters::no_reset_c3t3(), mesh_options);
+                exude, perturb, odt, lloyd, parameters::no_reset_c3t3(), mesh_options,
+                manifold_options);
 }
 
 
 }  // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MAKE_MESH_3_H

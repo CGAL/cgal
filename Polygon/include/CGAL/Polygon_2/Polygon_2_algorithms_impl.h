@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Wieger Wesselink <wieger@cs.ruu.nl>
@@ -52,6 +53,25 @@ bool is_simple_2(ForwardIterator first,
     return is_simple_polygon(first, last, traits);
 }
 
+namespace internal { namespace Polygon_2 {
+
+template <typename Traits>
+class Compare_vertices {
+    typedef typename Traits::Less_xy_2 Less_xy_2;
+    typedef typename Traits::Point_2 Point_2;
+    Less_xy_2 less;
+public:
+    Compare_vertices(Less_xy_2 less) : less(less) {}
+
+    // `Point_like` derives from `Point_2`
+    template <typename Point_like>
+    bool operator()(const Point_like& p1, const Point_like& p2) {
+        return less(Point_2(p1), Point_2(p2));
+    }
+}; // end Compare_vertices
+
+} // end namespace Polygon_2
+} // end namespace internal
 
 //-----------------------------------------------------------------------//
 //                          left_vertex_2
@@ -64,7 +84,9 @@ ForwardIterator left_vertex_2(ForwardIterator first,
                                    const PolygonTraits&traits)
 {
     CGAL_polygon_precondition(first != last);
-    return std::min_element(first, last, traits.less_xy_2_object());
+    internal::Polygon_2::Compare_vertices<PolygonTraits>
+        less(traits.less_xy_2_object());
+    return std::min_element(first, last, less);
 }
 
 //-----------------------------------------------------------------------//
@@ -78,7 +100,9 @@ ForwardIterator right_vertex_2(ForwardIterator first,
                                     const PolygonTraits &traits)
 {
     CGAL_polygon_precondition(first != last);
-    return std::max_element(first, last, traits.less_xy_2_object());
+    internal::Polygon_2::Compare_vertices<PolygonTraits>
+        less(traits.less_xy_2_object());
+    return std::max_element(first, last, less);
 }
 
 //-----------------------------------------------------------------------//
@@ -416,9 +440,14 @@ Orientation orientation_2(ForwardIterator first,
   // of the points (prev,i,next) will coincide
 
   // return the orientation of the triple (prev,i,next)
-  return traits.orientation_2_object()(*prev, *i, *next);
+  typedef typename Traits::Point_2 Point;
+  return traits.orientation_2_object()(Point(*prev), Point(*i), Point(*next));
 }
 
 } //namespace CGAL
 
 /// \endcond
+
+// Local Variables:
+// c-basic-offset: 4
+// End:

@@ -8,6 +8,8 @@
 
 #include <string>
 
+#include <CGAL/disable_warnings.h>
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 //
@@ -19,7 +21,7 @@ struct MD_homogeneous_types {
   typedef CGAL::Tag_false Has_features;
   typedef int Subdomain_index;
   typedef int Surface_patch_index;
-  typedef int Curve_segment_index;
+  typedef int Curve_index;
   typedef int Corner_index;
   typedef int Index;
 
@@ -27,8 +29,8 @@ struct MD_homogeneous_types {
   static Subdomain_index get_sub_domain_index_2() { return 2; }
   static Surface_patch_index get_surface_patch_index_1() { return 3; }
   static Surface_patch_index get_surface_patch_index_2() { return 4; }
-  static Curve_segment_index get_curve_segment_index_1() { return 5; }
-  static Curve_segment_index get_curve_segment_index_2() { return 6; }
+  static Curve_index get_curve_index_1() { return 5; }
+  static Curve_index get_curve_index_2() { return 6; }
   static Corner_index get_corner_index_1() { return 7; }
   static Corner_index get_corner_index_2() { return 8; }
 
@@ -44,18 +46,18 @@ struct MD_heterogeneous_types {
   enum Subdomain_index_enum { Z = 0, A, B, C, D};
   typedef Subdomain_index_enum Subdomain_index;
   typedef std::pair<int, int> Surface_patch_index;
-  typedef int Curve_segment_index;
+  typedef int Curve_index;
   typedef double Corner_index;
   typedef boost::variant<Subdomain_index,
                          Surface_patch_index,
-                         Curve_segment_index,
+                         Curve_index,
                          Corner_index> Index;
   static Subdomain_index get_sub_domain_index_1() { return A; }
   static Subdomain_index get_sub_domain_index_2() { return B; }
   static Surface_patch_index get_surface_patch_index_1() { return std::make_pair(1, 2); }
   static Surface_patch_index get_surface_patch_index_2() { return std::make_pair(3, 4); }
-  static Curve_segment_index get_curve_segment_index_1() { return 5; }
-  static Curve_segment_index get_curve_segment_index_2() { return 6; }
+  static Curve_index get_curve_index_1() { return 5; }
+  static Curve_index get_curve_index_2() { return 6; }
   static Corner_index get_corner_index_1() { return 7.; }
   static Corner_index get_corner_index_2() { return 8.; }
 
@@ -201,7 +203,7 @@ template <typename Mesh_domain>
 struct Test_c3t3_io {
   typedef typename Mesh_domain::Subdomain_index Subdomain_index;
   typedef typename Mesh_domain::Surface_patch_index Surface_patch_index;
-  typedef typename Mesh_domain::Curve_segment_index Curve_segment_index;
+  typedef typename Mesh_domain::Curve_index Curve_index;
   typedef typename Mesh_domain::Corner_index Corner_index;
   typedef typename Mesh_domain::Index Index;
 
@@ -209,7 +211,7 @@ struct Test_c3t3_io {
   typedef CGAL::Mesh_complex_3_in_triangulation_3<
     Tr,
     Corner_index,
-    Curve_segment_index
+    Curve_index
     > C3t3;
 
   typedef typename Tr::Point Point;
@@ -422,8 +424,8 @@ struct Test_c3t3_io {
     c3t3.add_to_complex(c2, Mesh_domain::get_sub_domain_index_2());
     c3t3.add_to_complex(f1, Mesh_domain::get_surface_patch_index_1());
     c3t3.add_to_complex(f2, Mesh_domain::get_surface_patch_index_2());
-    c3t3.add_to_complex(e1, Mesh_domain::get_curve_segment_index_1());
-    c3t3.add_to_complex(e2, Mesh_domain::get_curve_segment_index_2());
+    c3t3.add_to_complex(e1, Mesh_domain::get_curve_index_1());
+    c3t3.add_to_complex(e2, Mesh_domain::get_curve_index_2());
     c3t3.add_to_complex(v1, Mesh_domain::get_corner_index_1());
     c3t3.add_to_complex(v2, Mesh_domain::get_corner_index_2());
 
@@ -433,9 +435,9 @@ struct Test_c3t3_io {
     v2->set_dimension(0);
     v2->set_index(Mesh_domain::get_corner_index_2());
     v3->set_dimension(1);
-    v3->set_index(Mesh_domain::get_curve_segment_index_1());
+    v3->set_index(Mesh_domain::get_curve_index_1());
     v4->set_dimension(1);
-    v4->set_index(Mesh_domain::get_curve_segment_index_2());
+    v4->set_index(Mesh_domain::get_curve_index_2());
     v5->set_dimension(2);
     v5->set_index(Mesh_domain::get_surface_patch_index_1());
     v6->set_dimension(3);

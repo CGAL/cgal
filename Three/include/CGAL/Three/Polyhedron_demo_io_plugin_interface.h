@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent RINEAU
@@ -67,6 +68,11 @@ public:
   //!contained in fileinfo. Returns false if error.
   //! This must be overriden.
   virtual bool save(const Scene_item*, QFileInfo fileinfo) = 0;
+  
+  //! If this returns `true`, then the loader will be chosen as defaultin the
+  //! list of available loaders when saving a file, which means it will be the 
+  //! first in the list.
+  virtual bool isDefaultLoader(const Scene_item*) const { return false; }
 };
 }
 }

@@ -14,11 +14,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_COMBINATORIAL_MAP_H
 #define CGAL_COMBINATORIAL_MAP_H 1
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/internal/Combinatorial_map_internal_functors.h>
 #include <CGAL/internal/Combinatorial_map_utility.h>
@@ -5102,5 +5105,7 @@ namespace CGAL {
  _Pragma("GCC diagnostic pop")
 #endif
 
+ #include <CGAL/enable_warnings.h>
+ 
 #endif // CGAL_COMBINATORIAL_MAP_H //
 // EOF //

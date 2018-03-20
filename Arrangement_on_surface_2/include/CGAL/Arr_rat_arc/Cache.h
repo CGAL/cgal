@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
 //                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
@@ -280,10 +281,9 @@ private:
     }
 
     //re-set watermark
-    _rat_func_map_watermark = (std::max)(
-        2*_rat_func_map.size(),
-        typename Rational_function_map::size_type(128));
-    
+    _rat_func_map_watermark
+      = static_cast<unsigned int>((std::max)(2* _rat_func_map.size(),
+                                             typename Rational_function_map::size_type(128)));
     return;
   }
   void rat_pair_map_clean_up() const 
@@ -310,8 +310,8 @@ private:
 
     //re-set watermark
     _rat_pair_map_watermark = 
-      (std::max)(2*_rat_pair_map.size(),
-          typename Rational_function_canonicalized_pair_map::size_type(128));
+      static_cast<unsigned int>((std::max)(2* _rat_pair_map.size(),
+                                           typename Rational_function_canonicalized_pair_map::size_type(128)));
   }
 
 private:

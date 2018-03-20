@@ -16,6 +16,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri, Laurent Rineau
@@ -83,7 +84,7 @@ public:
   // of the triangle and the segment
   // By calling the do_intersect function with
   // the  statically filtered kernel we avoid
-  // that doubles are put into Inteval_nt
+  // that doubles are put into Interval_nt
   // to get taken out again with fit_in_double
   result_type 
   operator()(const Segment_3 &s, const Triangle_3& t) const
@@ -318,9 +319,9 @@ public:
     std::cerr << "\n"
               << "Now for underflow/overflows...\n"
               << "        min_double/eps = " 
-              << std::numeric_limits<double>::min() / err << std::endl
+              << (std::numeric_limits<double>::min)() / err << std::endl
               << "  sqrt(min_double/eps) = "
-              << CGAL::sqrt(std::numeric_limits<double>::min() / err) << std::endl;
+              << CGAL::sqrt((std::numeric_limits<double>::min)() / err) << std::endl;
     return err;
   }
 

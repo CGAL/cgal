@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
@@ -24,6 +25,8 @@
 #define CGAL_CONVEX_HULL_3_H
 
 #include <CGAL/license/Convex_hull_3.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/algorithm.h> 
@@ -905,5 +908,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 }
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_CONVEX_HULL_3_H

@@ -2,6 +2,8 @@
 
 project( Mesh_3_implicit_functions )
 
+include( polyhedron_demo_macros )
+
 cmake_minimum_required(VERSION 3.1)
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
@@ -23,7 +25,7 @@ set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
-find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL ScriptTools )
+find_package(Qt5 QUIET COMPONENTS Script OpenGL ScriptTools )
 
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
@@ -36,27 +38,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   ###########
   include(AddFileDependencies)
   remove_definitions(-DQT_STATICPLUGIN)
-
-  # polyhedron_demo_plugin is a macro copied from demo/Polyhedron/CMakeLists.txt
-  macro(polyhedron_demo_plugin plugin_name plugin_implementation_base_name)
-    list_split(option ARGN_TAIL ${ARGN} )
-    if(NOT ${option} STREQUAL "EXCLUDE_FROM_ALL")
-      set(other_sources ${ARGN})
-      set(option "")
-    else()
-      set(other_sources ${ARGN_TAIL})
-    endif()
-    qt5_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" ${plugin_implementation_base_name}.moc )
-    add_file_dependencies( ${plugin_implementation_base_name}.moc "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" )
-
-    add_library(${plugin_name} MODULE ${option} ${plugin_implementation_base_name}.moc ${plugin_implementation_base_name}.cpp ${other_sources})
-    qt5_use_modules(${plugin_name} Widgets Script OpenGL Gui Xml)
-    add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${plugin_name} )
-    # Link with Qt
-    target_link_libraries( ${plugin_name} ${QT_LIBRARIES} )
-    # Link with CGAL
-    target_link_libraries( ${plugin_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
-  endmacro(polyhedron_demo_plugin)
 
   polyhedron_demo_plugin(p_sphere_function_plugin Sphere_implicit_function)
   polyhedron_demo_plugin(p_tanglecube_function_plugin Tanglecube_implicit_function)

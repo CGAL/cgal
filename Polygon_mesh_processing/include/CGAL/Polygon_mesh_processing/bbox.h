@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Jane Tournois
@@ -42,10 +43,10 @@ namespace CGAL {
     *  computes a bounding box of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeListGraph`
-    * @tparam NamedParameters a sequence of \ref namedparameters
+    * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
     *
     * @param pmesh a polygon mesh
-    * @param np optional sequence of \ref namedparameters among the ones listed below
+    * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
     *
     * \cgalNamedParamsBegin
     *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -91,11 +92,11 @@ namespace CGAL {
     *  computes a bounding box of a vertex of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeGraph`
-    * @tparam NamedParameters a sequence of \ref namedparameters
+    * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
     *
     * @param vd a descriptor of a vertex in `pmesh`
     * @param pmesh a polygon mesh
-    * @param np optional sequence of \ref namedparameters among the ones listed below
+    * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
     *
     * \cgalNamedParamsBegin
     *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -134,11 +135,11 @@ namespace CGAL {
     *  computes a bounding box of an edge of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeGraph`
-    * @tparam NamedParameters a sequence of \ref namedparameters
+    * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
     *
     * @param ed a descriptor of an edge in `pmesh`
     * @param pmesh a polygon mesh
-    * @param np optional sequence of \ref namedparameters among the ones listed below
+    * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
     *
     * \cgalNamedParamsBegin
     *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -178,11 +179,11 @@ namespace CGAL {
     *  computes a bounding box of a face of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeGraph`
-    * @tparam NamedParameters a sequence of \ref namedparameters
+    * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
     *
     * @param fd a descriptor of a face in `pmesh`
     * @param pmesh a polygon mesh
-    * @param np optional sequence of \ref namedparameters among the ones listed below
+    * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
     *
     * \cgalNamedParamsBegin
     *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.

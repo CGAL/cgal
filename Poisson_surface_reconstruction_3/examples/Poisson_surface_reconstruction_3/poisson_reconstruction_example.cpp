@@ -5,7 +5,7 @@
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
-#include <CGAL/IO/output_surface_facets_to_polyhedron.h>
+#include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
@@ -44,10 +44,10 @@ int main(void)
     PointList points;
     std::ifstream stream("data/kitten.xyz");
     if (!stream ||
-        !CGAL::read_xyz_points_and_normals(
+        !CGAL::read_xyz_points(
                               stream,
                               std::back_inserter(points),
-                              CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type())))
+                              CGAL::parameters::normal_map(CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))))
     {
       std::cerr << "Error: cannot read file data/kitten.xyz" << std::endl;
       return EXIT_FAILURE;
@@ -59,7 +59,7 @@ int main(void)
     // + property maps to access each point's position and normal.
     // The position property map can be omitted here as we use iterators over Point_3 elements.
     Poisson_reconstruction_function function(points.begin(), points.end(),
-                                             CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type()) );
+                                             CGAL::make_normal_of_point_with_normal_map(PointList::value_type()) );
 
     // Computes the Poisson indicator function f()
     // at each vertex of the triangulation.
@@ -67,8 +67,7 @@ int main(void)
       return EXIT_FAILURE;
 
     // Computes average spacing
-    FT average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>(points.begin(), points.end(),
-                                                       6 /* knn = 1 ring */);
+    FT average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>(points, 6 /* knn = 1 ring */);
 
     // Gets one point inside the implicit surface
     // and computes implicit function bounding sphere radius.
@@ -103,7 +102,7 @@ int main(void)
     // saves reconstructed surface mesh
     std::ofstream out("kitten_poisson-20-30-0.375.off");
     Polyhedron output_mesh;
-    CGAL::output_surface_facets_to_polyhedron(c2t3, output_mesh);
+    CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, output_mesh);
     out << output_mesh;
 
 

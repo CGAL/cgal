@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -25,6 +26,7 @@
 
 #include <CGAL/license/Segment_Delaunay_graph_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <map>
 
@@ -496,5 +498,6 @@ std::ostream& operator<<(std::ostream& os,
 
 #include <CGAL/Segment_Delaunay_graph_2/Segment_Delaunay_graph_hierarchy_2_impl.h>
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_HIERARCHY_2_H

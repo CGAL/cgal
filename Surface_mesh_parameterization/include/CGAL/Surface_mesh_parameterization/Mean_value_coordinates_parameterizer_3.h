@@ -12,12 +12,18 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
 #ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_MEAN_VALUE_COORDINATES_PARAMETERIZER_3_H
 #define CGAL_SURFACE_MESH_PARAMETERIZATION_MEAN_VALUE_COORDINATES_PARAMETERIZER_3_H
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Surface_mesh_parameterization/internal/validity.h>
 
@@ -225,5 +231,7 @@ protected:
 } // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_PARAMETERIZATION_MEAN_VALUE_COORDINATES_PARAMETERIZER_3_H

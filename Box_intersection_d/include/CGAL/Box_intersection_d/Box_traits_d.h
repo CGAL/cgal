@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
@@ -91,7 +92,7 @@ struct Predicate_traits_d : public BoxTraits {
 
     // compare dim a b = islolesslo a b dim
     class Compare : 
-        public std::binary_function<Box_parameter,Box_parameter,bool>
+        public CGAL::binary_function<Box_parameter,Box_parameter,bool>
     {
         int dim;
     public:
@@ -102,7 +103,7 @@ struct Predicate_traits_d : public BoxTraits {
     };
 
     // loless val dim box = getlo box dim < val
-    class Lo_less : public std::unary_function<Box_parameter,bool> {
+    class Lo_less : public CGAL::unary_function<Box_parameter,bool> {
         NT value;
         int dim;
     public:
@@ -112,7 +113,7 @@ struct Predicate_traits_d : public BoxTraits {
         }
     };
 
-    class Hi_greater : public std::unary_function<Box_parameter,bool> {
+    class Hi_greater : public CGAL::unary_function<Box_parameter,bool> {
         NT value;
         int dim;
     public:
@@ -123,7 +124,7 @@ struct Predicate_traits_d : public BoxTraits {
     };
 
     // spanning lo hi dim box = getlo box dim < lo && gethi box dim > hi
-    class Spanning : public std::unary_function<Box_parameter,bool> {
+    class Spanning : public CGAL::unary_function<Box_parameter,bool> {
         NT lo, hi;
         int dim;
     public:

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
@@ -24,7 +25,7 @@
 #include <string>
 #include <cstdlib>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -173,7 +174,7 @@ create_output_file(const char *filename, // Note: "Bernd3" and not
 
 template<typename NT>
 struct tuple_add : 
-  public std::unary_function<const boost::tuple<NT, NT>&, NT>
+  public CGAL::unary_function<const boost::tuple<NT, NT>&, NT>
 {
   NT operator()(const boost::tuple<NT, NT>& t) const
   {

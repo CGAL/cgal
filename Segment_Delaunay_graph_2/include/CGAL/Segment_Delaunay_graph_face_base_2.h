@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -25,6 +26,7 @@
 
 #include <CGAL/license/Segment_Delaunay_graph_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Triangulation_ds_face_base_2.h>
@@ -150,5 +152,7 @@ public:
 
 
 } //namespace CGAL 
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_SEGMENT_DELAUNAY_GRAPH_FACE_BASE_2_H

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau
@@ -25,6 +26,7 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/property_map.h>
+#include <CGAL/Mesh_3/properties.h>
 #include <boost/mpl/has_xxx.hpp>
 
 namespace CGAL { namespace Mesh_3 {
@@ -93,8 +95,6 @@ template <typename MeshDomain>
 struct Get_facet_patch_id_sm_property_traits<MeshDomain, true>
 {
   typedef typename MeshDomain::AABB_primitive::Id Id;
-  typedef typename std::iterator_traits<Id>::value_type Face;
-
   typedef typename MeshDomain::Patch_id value_type;
 
   typedef value_type& reference;
@@ -115,10 +115,16 @@ namespace CGAL { namespace Mesh_3 {
 
 template <typename MeshDomain>
 typename boost::property_traits< Get_facet_patch_id_sm<MeshDomain> >::value_type
-get(const Get_facet_patch_id_sm<MeshDomain>, const typename MeshDomain::AABB_primitive::Id& primitive_id) {
-  typedef typename boost::property_map<typename MeshDomain::Polyhedron::Graph, face_patch_id_t<typename MeshDomain::Patch_id> >::type Fpim;
-  Fpim fpim = get(face_patch_id_t<typename MeshDomain::Patch_id>(),*((*primitive_id).graph));
-  typename MeshDomain::Patch_id patch_index =  get(fpim, (*primitive_id).descriptor);
+get(const Get_facet_patch_id_sm<MeshDomain>,
+    const typename MeshDomain::AABB_primitive::Id& primitive_id)
+{
+  typedef typename boost::property_map<
+       typename MeshDomain::Polyhedron,
+       face_patch_id_t<typename MeshDomain::Patch_id> >::type Fpim;
+  Fpim fpim = get(face_patch_id_t<typename MeshDomain::Patch_id>(),
+                  *(primitive_id.graph));
+  typename MeshDomain::Patch_id patch_index = get(fpim,
+                                                  primitive_id.face_descriptor);
   return patch_index;
 }
 }} // end namespace CGAL::Mesh_3

@@ -15,11 +15,14 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Sylvain Pion
 
 #ifndef CGAL_COMPACT_CONTAINER_H
 #define CGAL_COMPACT_CONTAINER_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/config.h>
 #include <CGAL/Default.h>
@@ -1281,16 +1284,11 @@ namespace internal {
 
 namespace std {
 
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4099) // For VC10 it is class hash
-#endif
-
 #ifndef CGAL_CFG_NO_STD_HASH
 
   template < class DSC, bool Const >
   struct hash<CGAL::internal::CC_iterator<DSC, Const> >
-    : public std::unary_function<CGAL::internal::CC_iterator<DSC, Const>, std::size_t> {
+    : public CGAL::unary_function<CGAL::internal::CC_iterator<DSC, Const>, std::size_t> {
 
     std::size_t operator()(const CGAL::internal::CC_iterator<DSC, Const>& i) const
     {
@@ -1299,10 +1297,9 @@ namespace std {
   };
 #endif // CGAL_CFG_NO_STD_HASH
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
 
 } // namespace std
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_COMPACT_CONTAINER_H

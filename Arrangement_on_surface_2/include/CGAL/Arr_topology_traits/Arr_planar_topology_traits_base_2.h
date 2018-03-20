@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
@@ -24,8 +25,8 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
-
 /*! \file
+ *
  * Definition of the Arr_planar_topology_traits_base_2<GeomTraits> class.
  */
 
@@ -33,23 +34,15 @@
 #include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
-#include <CGAL/Sweep_line_2/Arr_construction_event.h>
-#include <CGAL/Sweep_line_2/Arr_construction_subcurve.h>
-#include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_basic_insertion_traits_2.h>
-#include <CGAL/Sweep_line_2/Arr_basic_insertion_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_insertion_traits_2.h>
-#include <CGAL/Sweep_line_2/Arr_insertion_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_overlay_subcurve.h>
-#include <CGAL/Sweep_line_2/Arr_overlay_traits_2.h>
-#include <CGAL/Sweep_line_2/Arr_overlay_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_batched_pl_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_vert_decomp_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_basic_insertion_traits_2.h>
+#include <CGAL/Surface_sweep_2/Arr_insertion_traits_2.h>
+#include <CGAL/Surface_sweep_2/Arr_overlay_traits_2.h>
 #include <CGAL/Arr_point_location/Arr_batched_point_location_traits_2.h>
 
 namespace CGAL {
 
 /*! \class Arr_planar_topology_traits_base_2
+ *
  * A base topology-traits class that encapsulates the embedding of 2D
  * arrangements of bounded or unbounded curves on the plane.
  */
@@ -133,8 +126,7 @@ public:
   /*! Get the DCEL (non-const version). */
   Dcel& dcel() { return (m_dcel); }
 
-  /*!
-   * Receive a notification on the creation of a new boundary vertex that
+  /*! Receive a notification on the creation of a new boundary vertex that
    * corresponds to the given curve end.
    * \param v The new boundary vertex.
    * \param cv The x-monotone curve.
@@ -172,8 +164,7 @@ public:
   }
 
 
-  /*!
-   * Given signs of two ccbs that show up when splitting upon insertion of
+  /*! Given signs of two ccbs that show up when splitting upon insertion of
    * curve into two, determine what happens to the face(s).
    * \param signs1 signs in x and y of the first implied ccb
    * \param signs2 signs in x and y of the secondd implied ccb
@@ -189,11 +180,10 @@ public:
   {
     // In case of a planar topology, connecting two vertices on the same
     // inner CCB closes a new face that becomes a hole in the original face:
-    return (std::make_pair(true, true));
+    return std::make_pair(true, true);
   }
 
-  /*!
-   * Determine whether the given point lies in the interior of the given face.
+  /*! Determine whether the given point lies in the interior of the given face.
    * \param f The face.
    * \param p The query point.
    * \param v The vertex associated with p (if exists).
@@ -213,8 +203,7 @@ public:
   /// \name Additional predicates, specialized for this topology-traits class.
   //@{
 
-  /*!
-   * Compare the given vertex (which may lie at infinity) and the given point.
+  /*! Compare the given vertex (which may lie at infinity) and the given point.
    * \param p The point.
    * \param v The vertex.
    * \return The result of the comparison of the x-coordinates of p and v.
@@ -222,17 +211,15 @@ public:
   virtual Comparison_result compare_x(const Point_2& p,
                                       const Vertex* v) const = 0;
 
-  /*!
-   * Compare the given vertex (which may lie at infinity) and the given point.
+  /*! Compare the given vertex (which may lie at infinity) and the given point.
    * \param p The point.
    * \param v The vertex.
    * \return The result of the xy-lexicographic comparison of p and v.
    */
-  virtual Comparison_result compare_xy (const Point_2& p,
-                                        const Vertex* v) const = 0;
+  virtual Comparison_result compare_xy(const Point_2& p,
+                                       const Vertex* v) const = 0;
 
-  /*!
-   * Compare the relative y-position of the given point and the given edge
+  /*! Compare the relative y-position of the given point and the given edge
    * (which may be fictitious).
    * \param p The point.
    * \param he The edge (one of the pair of halfedges).
@@ -378,6 +365,6 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
   return ((n_ray_intersections % 2) != 0);
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

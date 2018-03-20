@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Geert-Jan Giezeman
@@ -25,6 +26,8 @@
 
 #ifndef CGAL_SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
 #define CGAL_SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Segment_2.h>
@@ -234,5 +237,7 @@ CGAL_INTERSECTION_FUNCTION(Segment_2, Iso_rectangle_2, 2)
 CGAL_DO_INTERSECT_FUNCTION(Segment_2, Iso_rectangle_2, 2)
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H

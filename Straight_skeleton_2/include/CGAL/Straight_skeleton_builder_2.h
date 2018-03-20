@@ -14,6 +14,7 @@
 
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
@@ -22,6 +23,7 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <list>
 #include <queue>
@@ -212,7 +214,7 @@ private :
   
   typedef std::vector<MultinodePtr> MultinodeVector ;
 
-  struct Halfedge_ID_compare : std::binary_function<bool,Halfedge_handle,Halfedge_handle>
+  struct Halfedge_ID_compare : CGAL::binary_function<bool,Halfedge_handle,Halfedge_handle>
   {
     bool operator() ( Halfedge_handle const& aA, Halfedge_handle const& aB ) const
     {
@@ -229,7 +231,7 @@ public:
 private :
 
   
-  class Event_compare : public std::binary_function<bool,EventPtr,EventPtr>
+  class Event_compare : public CGAL::binary_function<bool,EventPtr,EventPtr>
   {
   public:
 
@@ -932,6 +934,7 @@ public:
 
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_2_impl.h>
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_H //
 // EOF //

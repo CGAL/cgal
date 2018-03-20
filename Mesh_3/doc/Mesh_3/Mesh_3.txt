@@ -46,7 +46,7 @@ or with respect to some user customized quality criteria.
 The meshing engine used in this mesh generator
 is based on Delaunay refinement \cgalCite{c-gqmgc-93}, \cgalCite{r-draq2d-95}, \cgalCite{s-tmgdr-98}.
 It uses the notion of restricted Delaunay triangulation
-to approximate 1-dimensional curve segments and surface patches \cgalCite{cgal:bo-pgsms-05}.
+to approximate 1-dimensional curves and surface patches \cgalCite{cgal:bo-pgsms-05}.
 Before the refinement, a mechanism of protecting balls is set up on 1-dimensional features, if any,
 to ensure a fair representation
 of those features in the mesh, and also to guarantee the termination of the refinement process,
@@ -77,14 +77,14 @@ some 3D faces may have dangling 2D or 1D faces in their boundary faces.
 In the rest of the documentation, we will refer to the
 input 3D complex as the input domain. The faces of the input domain 
 with dimension 0, 1, 2 and 3 are called respectively
-<I>corners</I>, <I>curve segments</I>, <I>surface patches</I> and <I>subdomains</I>
+<I>corners</I>, <I>curves</I>, <I>surface patches</I> and <I>subdomains</I>
 to clearly distinguish them from the faces of the mesh
 that are called vertices, edges, facets and cells.
 
 Note that the input complex faces are not required to be linear nor smooth.
 Surface patches, for instance, may be smooth surface patches, 
 or portions of surface meshes with boundaries.
-Curve segments may be for instance straight segments, curved segments
+Curves may be for instance straight segments, parameterized curves
 or polylines. Each of those features will be accurately represented in the final mesh.
 
 The 0 and 1-dimensional features of the input domain are usually singular points
@@ -102,7 +102,7 @@ in the final mesh.
 Note also that input complex faces are not required to be connected.
 Faces of the input domain are identified by indexes.
 If a subdomain is not connected, its different components receive the same index.
-Likewise different surface patches, segment curves or corners may share the same index.
+Likewise different surface patches, curves or corners may share the same index.
 Each connected component of a feature will be accurately represented
 in the final mesh.
 Note however that the occurrence of multiply connected faces in the
@@ -136,8 +136,14 @@ The resulting mesh is output as a subcomplex of a 3D Delaunay triangulation,
 in a class providing various iterators
 on mesh elements.
 
+\subsection Mesh_3OutputFaceGraph Output FaceGraph
+
+This \cgal component also provides a function to convert the reconstructed mesh to a `FaceGraph`:
+
+- `facets_in_complex_3_to_triangle_mesh()`
+
 The 3D triangulation provides approximations of the
-subdomains, surface patches and curve segments
+subdomains, surface patches and curves
 and corners, according to the restricted
 Delaunay triangulation paradigm. This means that each subdomain
 is approximated by the union of the tetrahedral cells
@@ -370,11 +376,11 @@ the concept `MeshDomainWithFeatures_3` provides
 the incidence
 graph of 0, 1 and 2-dimensional features,
 and a member function to construct
-sample points on curve segments.
+sample points on curves.
 
 Using the parameter of type `Features`, the user
 whose domain is a model of `MeshDomainWithFeatures_3` 
-can choose to have the corners and curve segments of the domain
+can choose to have the corners and curves of the domain
 represented in the mesh or not.
 The type `Features` of this parameter is an internal undescribed type.
 The library provides functions to construct appropriate values of that type.
@@ -422,7 +428,7 @@ provides an upper bound for the distance between the circumcenter
 of a surface facet and the center of a surface Delaunay ball of this facet.
 <LI><I>`facet_topology`.</I> This parameters controls the set of topological constraints
 which have to be verified by each surface facet. By default, each vertex of a surface
-facet has to be located on a surface patch, on a curve segment, or on a corner. It can
+facet has to be located on a surface patch, on a curve, or on a corner. It can
 also be set to check whether the three vertices of a surface facet belongs to the same
 surface patch. This has to be done cautiously, as such a criteria needs that each surface
 patches intersection is an input 1-dimensional feature.

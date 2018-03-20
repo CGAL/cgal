@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Laurent Saboret and Andreas Fabri
 
@@ -22,6 +23,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/trace.h>
 #include <CGAL/Search_traits_3.h>
@@ -32,6 +34,9 @@
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/use.h>
+
+#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
 #include <list>
@@ -101,7 +106,7 @@ struct MST_graph_vertex_properties {
     bool is_oriented; ///< Is input point's normal oriented?
 };
 template <typename ForwardIterator, ///< Input point iterator
-          typename NormalPMap, ///< property map: value_type of ForwardIterator -> Normal
+          typename NormalMap, ///< property map: value_type of ForwardIterator -> Normal
           typename Kernel ///< Geometric traits class
 >
 class MST_graph
@@ -110,10 +115,10 @@ class MST_graph
                                   MST_graph_vertex_properties<ForwardIterator> >
 {
 public:
-    MST_graph(NormalPMap normal_pmap) : m_normal_pmap(normal_pmap) {}
+    MST_graph(NormalMap normal_map) : m_normal_map(normal_map) {}
 
 // Public data
-    const NormalPMap m_normal_pmap;
+    const NormalMap m_normal_map;
 };
 
 
@@ -129,17 +134,17 @@ public:
 /// \pre `0 < angle_max <= PI/2`
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam NormalPMap is a model of `ReadWritePropertyMap`.
+/// @tparam NormalMap is a model of `ReadWritePropertyMap`.
 /// @tparam Kernel Geometric traits class.
 
 template <typename ForwardIterator, ///< Input point iterator
-          typename NormalPMap, ///< property map: value_type of ForwardIterator -> Normal
+          typename NormalMap, ///< property map: value_type of ForwardIterator -> Normal
           typename Kernel
 >
 struct Propagate_normal_orientation
-  : public boost::base_visitor< Propagate_normal_orientation<ForwardIterator, NormalPMap, Kernel> >
+  : public boost::base_visitor< Propagate_normal_orientation<ForwardIterator, NormalMap, Kernel> >
 {
-    typedef internal::MST_graph<ForwardIterator, NormalPMap, Kernel> MST_graph;
+    typedef internal::MST_graph<ForwardIterator, NormalMap, Kernel> MST_graph;
     typedef boost::on_examine_edge event_filter;
 
     Propagate_normal_orientation(double angle_max = CGAL_PI/2.) ///< max angle to propagate the normal orientation (radians)
@@ -152,16 +157,16 @@ struct Propagate_normal_orientation
     template <class Edge>
     void operator()(Edge& edge, const MST_graph& mst_graph)
     {
-        typedef typename boost::property_traits<NormalPMap>::reference Vector_ref;
+        typedef typename boost::property_traits<NormalMap>::reference Vector_ref;
         typedef typename MST_graph::vertex_descriptor vertex_descriptor;
 
         // Gets source normal
         vertex_descriptor source_vertex = source(edge, mst_graph);
-        Vector_ref source_normal = get(mst_graph.m_normal_pmap, *(mst_graph[source_vertex].input_point) );
+        Vector_ref source_normal = get(mst_graph.m_normal_map, *(mst_graph[source_vertex].input_point) );
         const bool source_normal_is_oriented = mst_graph[source_vertex].is_oriented;
         // Gets target normal
         vertex_descriptor target_vertex = target(edge, mst_graph);
-        Vector_ref target_normal = get( mst_graph.m_normal_pmap, *(mst_graph[target_vertex].input_point) );
+        Vector_ref target_normal = get( mst_graph.m_normal_map, *(mst_graph[target_vertex].input_point) );
         bool& target_normal_is_oriented = ((MST_graph&)mst_graph)[target_vertex].is_oriented;
         if ( ! target_normal_is_oriented )
         {
@@ -170,7 +175,7 @@ struct Propagate_normal_orientation
           double normals_dot = source_normal * target_normal;
           if (normals_dot < 0)
           {
-            put( mst_graph.m_normal_pmap, *(mst_graph[target_vertex].input_point), -target_normal );
+            put( mst_graph.m_normal_map, *(mst_graph[target_vertex].input_point), -target_normal );
           }
 
           // Is orientation robust?
@@ -189,29 +194,29 @@ private:
 /// Orients the normal of the point with maximum Z towards +Z axis.
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
-/// @tparam NormalPMap is a model of `ReadWritePropertyMap` with a value_type = Vector_3<Kernel>.
+/// @tparam PointMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
+/// @tparam NormalMap is a model of `ReadWritePropertyMap` with a value_type = Vector_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///
 /// @return iterator over the top point.
 template <typename ForwardIterator,
-          typename PointPMap,
-          typename NormalPMap,
+          typename PointMap,
+          typename NormalMap,
           typename Kernel
 >
 ForwardIterator
 mst_find_source(
     ForwardIterator first,   ///< iterator over the first input point.
     ForwardIterator beyond,  ///< past-the-end iterator over the input points.
-    PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3
-    NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3
+    PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3
+    NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3
     const Kernel& /*kernel*/)    ///< geometric traits.
 {
     CGAL_TRACE("  mst_find_source()\n");
 
     // Input points types
-    typedef typename boost::property_traits<NormalPMap>::value_type Vector;
-    typedef typename boost::property_traits<NormalPMap>::reference Vector_ref;
+    typedef typename boost::property_traits<NormalMap>::value_type Vector;
+    typedef typename boost::property_traits<NormalMap>::reference Vector_ref;
 
     // Precondition: at least one element in the container
     CGAL_point_set_processing_precondition(first != beyond);
@@ -221,19 +226,19 @@ mst_find_source(
     for (ForwardIterator v = ++first; v != beyond; v++)
     {
       
-      double top_z = get(point_pmap,*top_point).z(); // top_point's Z coordinate
-      double z = get(point_pmap,*v).z();
+      double top_z = get(point_map,*top_point).z(); // top_point's Z coordinate
+      double z = get(point_map,*v).z();
       
       if (top_z < z)
         top_point = v;
     }
 
     // Orients its normal towards +Z axis
-    Vector_ref normal = get(normal_pmap,*top_point);
+    Vector_ref normal = get(normal_map,*top_point);
     const Vector Z(0, 0, 1);
     if (Z * normal < 0) {
       CGAL_TRACE("  Flip top point normal\n");
-    put(normal_pmap,*top_point, -normal);
+    put(normal_map,*top_point, -normal);
     }
 
     return top_point;
@@ -249,31 +254,31 @@ mst_find_source(
 /// \pre `k >= 2`
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam IndexPMap is a model of `ReadablePropertyMap` with an integral value_type.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
-/// @tparam NormalPMap is a model of `ReadWritePropertyMap` with a value_type = Vector_3<Kernel>.
+/// @tparam IndexMap is a model of `ReadablePropertyMap` with an integral value_type.
+/// @tparam PointMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
+/// @tparam NormalMap is a model of `ReadWritePropertyMap` with a value_type = Vector_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///
 /// @return the Riemannian graph
 template <typename ForwardIterator,
-          typename PointPMap,
-          typename NormalPMap,
-          typename IndexPMap,
+          typename PointMap,
+          typename NormalMap,
+          typename IndexMap,
           typename Kernel
 >
 Riemannian_graph<ForwardIterator>
 create_riemannian_graph(
     ForwardIterator first,  ///< iterator over the first input point.
     ForwardIterator beyond, ///< past-the-end iterator over the input points.
-    PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3
-    NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3
-    IndexPMap index_pmap, ///< property map ForwardIterator -> index
+    PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3
+    NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3
+    IndexMap index_map, ///< property map ForwardIterator -> index
     unsigned int k, ///< number of neighbors
     const Kernel& /*kernel*/) ///< geometric traits.
 {
     // Input points types
-    typedef typename boost::property_traits<PointPMap>::reference Point_ref;
-    typedef typename boost::property_traits<NormalPMap>::reference Vector_ref;
+    typedef typename boost::property_traits<PointMap>::reference Point_ref;
+    typedef typename boost::property_traits<NormalMap>::reference Vector_ref;
 
     // Types for K nearest neighbors search structure
     typedef Point_vertex_handle_3<ForwardIterator> Point_vertex_handle_3;
@@ -306,7 +311,7 @@ create_riemannian_graph(
     for (ForwardIterator it = first; it != beyond; it++)
     {
         
-        Point_ref point = get(point_pmap, *it);
+        Point_ref point = get(point_map, *it);
         Point_vertex_handle_3 point_wrapper(point.x(), point.y(), point.z(), it);
         kd_tree_points.push_back(point_wrapper);
     }
@@ -329,7 +334,7 @@ create_riemannian_graph(
     for (ForwardIterator it = first; it != beyond; it++)
     {
         typename Riemannian_graph::vertex_descriptor v = add_vertex(riemannian_graph);
-        CGAL_point_set_processing_assertion(v == get(index_pmap,it));
+        CGAL_point_set_processing_assertion(v == get(index_map,it));
         riemannian_graph[v].input_point = it;
     }
     //
@@ -337,15 +342,15 @@ create_riemannian_graph(
     Riemannian_graph_weight_map riemannian_graph_weight_map = get(boost::edge_weight, riemannian_graph);
     for (ForwardIterator it = first; it != beyond; it++)
     {
-        std::size_t it_index = get(index_pmap,it);
-        Vector_ref it_normal_vector = get(normal_pmap,*it);
+        std::size_t it_index = get(index_map,it);
+        Vector_ref it_normal_vector = get(normal_map,*it);
         
         // Gather set of (k+1) neighboring points.
         // Perform k+1 queries (as in point set, the query point is
         // output first). Search may be aborted if k is greater
         // than number of input points.
         
-        Point_ref point = get(point_pmap, *it);
+        Point_ref point = get(point_map, *it);
         Point_vertex_handle_3 point_wrapper(point.x(), point.y(), point.z(), it);
         Neighbor_search search(*tree, point_wrapper, k+1);
         Search_iterator search_iterator = search.begin();
@@ -355,7 +360,7 @@ create_riemannian_graph(
                 break; // premature ending
 
             ForwardIterator neighbor = search_iterator->first;
-            std::size_t neighbor_index = get(index_pmap,neighbor);
+            std::size_t neighbor_index = get(index_map,neighbor);
             if (neighbor_index > it_index) // undirected graph
             {
                 // Add edge
@@ -370,7 +375,7 @@ create_riemannian_graph(
                 // Computes edge weight = 1 - | normal1 * normal2 |
                 // where normal1 and normal2 are the normal at the edge extremities.
                 
-                Vector_ref neighbor_normal_vector = get(normal_pmap,*neighbor);
+                Vector_ref neighbor_normal_vector = get(normal_map,*neighbor);
                 double weight = 1.0 - std::abs(it_normal_vector * neighbor_normal_vector);
                 if (weight < 0)
                     weight = 0; // safety check
@@ -392,32 +397,32 @@ create_riemannian_graph(
 /// \pre Normals must be unit vectors.
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam IndexPMap is a model of `ReadablePropertyMap` with an integral value_type.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
-/// @tparam NormalPMap is a model of `ReadWritePropertyMap` with a value_type = Vector_3<Kernel>.
+/// @tparam IndexMap is a model of `ReadablePropertyMap` with an integral value_type.
+/// @tparam PointMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
+/// @tparam NormalMap is a model of `ReadWritePropertyMap` with a value_type = Vector_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///
 /// @return the MST graph.
 template <typename ForwardIterator,
-          typename PointPMap,
-          typename NormalPMap,
-          typename IndexPMap,
+          typename PointMap,
+          typename NormalMap,
+          typename IndexMap,
           typename Kernel
 >
-MST_graph<ForwardIterator, NormalPMap, Kernel>
+MST_graph<ForwardIterator, NormalMap, Kernel>
 create_mst_graph(
     ForwardIterator first,  ///< iterator over the first input point.
     ForwardIterator beyond, ///< past-the-end iterator over the input points.
-    PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3
-    NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3
-    IndexPMap index_pmap, ///< property map ForwardIterator -> index
+    PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3
+    NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3
+    IndexMap index_map, ///< property map ForwardIterator -> index
     unsigned int k, ///< number of neighbors
     const Kernel& kernel, ///< geometric traits.
     const Riemannian_graph<ForwardIterator>& riemannian_graph, ///< graph connecting each vertex to its knn
     ForwardIterator source_point) ///< source point (with an oriented normal)
 {
     // prevents warnings
-    CGAL_USE(point_pmap);
+    CGAL_USE(point_map);
     CGAL_USE(k);
     CGAL_USE(kernel);
 
@@ -429,7 +434,7 @@ create_mst_graph(
     typedef typename boost::property_map<Riemannian_graph, boost::edge_weight_t>::const_type Riemannian_graph_weight_map;
 
     // MST_graph types
-    typedef internal::MST_graph<ForwardIterator, NormalPMap, Kernel> MST_graph;
+    typedef internal::MST_graph<ForwardIterator, NormalMap, Kernel> MST_graph;
 
     // Precondition: at least one element in the container.
     CGAL_point_set_processing_precondition(first != beyond);
@@ -441,7 +446,7 @@ create_mst_graph(
     CGAL_TRACE("  Calls boost::prim_minimum_spanning_tree()\n");
 
     // Computes Minimum Spanning Tree.
-    std::size_t source_point_index = get(index_pmap, source_point);
+    std::size_t source_point_index = get(index_map, source_point);
     Riemannian_graph_weight_map riemannian_graph_weight_map = get(boost::edge_weight, riemannian_graph);
     typedef std::vector<typename Riemannian_graph::vertex_descriptor> PredecessorMap;
     PredecessorMap predecessor(num_input_points);
@@ -456,7 +461,7 @@ create_mst_graph(
     // - vertices are numbered like the input points index.
     // - vertices contain the corresponding input point iterator.
     // - we add the edge (predecessor[i], i) for each element of the predecessor map.
-    MST_graph mst_graph(normal_pmap);
+    MST_graph mst_graph(normal_map);
     //
     // Add vertices. source_point is the unique point marked "oriented".
     for (ForwardIterator it = first; it != beyond; it++)
@@ -465,7 +470,7 @@ create_mst_graph(
         // 1.56 and 1.57:
         //   https://svn.boost.org/trac/boost/ticket/10382
         typename MST_graph::vertex_descriptor v = add_vertex(mst_graph);
-        CGAL_point_set_processing_assertion(v == get(index_pmap,it));
+        CGAL_point_set_processing_assertion(v == get(index_map,it));
         mst_graph[v].input_point = it;
         mst_graph[v].is_oriented = (it == source_point);
     }
@@ -493,61 +498,77 @@ create_mst_graph(
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetProcessingAlgorithms
-/// Orients the normals of the `[first, beyond)` range of points using the propagation
-/// of a seed orientation through a minimum spanning tree of the Riemannian graph [Hoppe92].
-///
-/// This method modifies the order of input points so as to pack all sucessfully oriented points first,
-/// and returns an iterator over the first point with an unoriented normal (see erase-remove idiom).
-/// For this reason it should not be called on sorted containers.
-/// \warning This function may fail when Boost version 1.54 is used,
-/// because of the following bug: https://svn.boost.org/trac/boost/ticket/9012
-///
-/// \pre Normals must be unit vectors
-/// \pre `k >= 2`
-///
-/// @tparam ForwardIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with value type  `Point_3<Kernel>`.
-///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
-/// @tparam NormalPMap is a model of `ReadWritePropertyMap` with value type `Vector_3<Kernel>` .
-/// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointPMap`.
-///
-/// @return iterator over the first point with an unoriented normal.
+/**  
+   \ingroup PkgPointSetProcessingAlgorithms
+   Orients the normals of the range of `points` using the propagation
+   of a seed orientation through a minimum spanning tree of the Riemannian graph [Hoppe92].
 
-// This variant requires all parameters.
-template <typename ForwardIterator,
-          typename PointPMap,
-          typename NormalPMap,
-          typename Kernel
+   This method modifies the order of input points so as to pack all sucessfully oriented points first,
+   and returns an iterator over the first point with an unoriented normal (see erase-remove idiom).
+   For this reason it should not be called on sorted containers.
+   \warning This function may fail when Boost version 1.54 is used,
+   because of the following bug: https://svn.boost.org/trac/boost/ticket/9012
+
+   \pre Normals must be unit vectors
+   \pre `k >= 2`
+
+   \tparam PointRange is a model of `Range`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+
+   \param points input point range.
+   \param k number of neighbors.
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{normal_map} a model of `ReadWritePropertyMap` with value type
+     `geom_traits::Vector_3`.\cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+
+   \return iterator over the first point with an unoriented normal.
+*/
+template <typename PointRange,
+          typename NamedParameters
 >
-ForwardIterator
+typename PointRange::iterator
 mst_orient_normals(
-    ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator over the input points.
-    PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
-    NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
-    unsigned int k, ///< number of neighbors
-    const Kernel& kernel) ///< geometric traits.
+  PointRange& points,
+  unsigned int k,
+  const NamedParameters& np)
 {
+    using boost::choose_param;
     CGAL_TRACE("Calls mst_orient_normals()\n");
 
-    // Bring private stuff to scope
+    typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+    typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
+    typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+
+    CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
+                                typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
+                              "Error: no normal map");
+
+    PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+    NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
+    Kernel kernel;
+
+  // Bring private stuff to scope
     using namespace internal;
 
     // Input points types
-    typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point; // actual type of input points
-    // Property map ForwardIterator -> index
-    typedef Index_property_map<ForwardIterator> IndexPMap;
+    typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Enriched_point; // actual type of input points
+    // Property map typename PointRange::iterator -> index
+    typedef Index_property_map<typename PointRange::iterator> IndexMap;
 
     // Riemannian_graph types
-    typedef Riemannian_graph<ForwardIterator> Riemannian_graph;
+    typedef Riemannian_graph<typename PointRange::iterator> Riemannian_graph;
 
     // MST_graph types
-    typedef MST_graph<ForwardIterator, NormalPMap, Kernel> MST_graph;
+    typedef MST_graph<typename PointRange::iterator, NormalMap, Kernel> MST_graph;
 
     // Precondition: at least one element in the container.
-    CGAL_point_set_processing_precondition(first != beyond);
+    CGAL_point_set_processing_precondition(points.begin() != points.end());
 
     // Precondition: at least 2 nearest neighbors
     CGAL_point_set_processing_precondition(k >= 2);
@@ -556,16 +577,16 @@ mst_orient_normals(
     CGAL_TRACE("  Create Index_property_map\n");
 
     // Create a property map Iterator -> index.
-    // - if ForwardIterator is a random access iterator (typically vector and deque),
+    // - if typename PointRange::iterator is a random access iterator (typically vector and deque),
     // get() just calls std::distance() and is very efficient;
     // - else, the property map allocates a std::map to store indices
     // and get() requires a lookup in the map.
-    IndexPMap index_pmap(first, beyond);
+    IndexMap index_map(points.begin(), points.end());
 
     // Orients the normal of the point with maximum Z towards +Z axis.
-    ForwardIterator source_point
-      = mst_find_source(first, beyond,
-                        point_pmap, normal_pmap,
+    typename PointRange::iterator source_point
+      = mst_find_source(points.begin(), points.end(),
+                        point_map, normal_map,
                         kernel);
 
     // Iterates over input points and creates Riemannian Graph:
@@ -574,14 +595,14 @@ mst_orient_normals(
     // - we add the edge (i, j) if either vertex i is in the k-neighborhood of vertex j,
     //   or vertex j is in the k-neighborhood of vertex i.
     Riemannian_graph riemannian_graph
-      = create_riemannian_graph(first, beyond,
-                                point_pmap, normal_pmap, index_pmap,
+      = create_riemannian_graph(points.begin(), points.end(),
+                                point_map, normal_map, index_map,
                                 k,
                                 kernel);
 
     // Creates a Minimum Spanning Tree starting at source_point
-    MST_graph mst_graph = create_mst_graph(first, beyond,
-                                           point_pmap, normal_pmap, index_pmap,
+    MST_graph mst_graph = create_mst_graph(points.begin(), points.end(),
+                                           point_map, normal_map, index_map,
                                            k,
                                            kernel,
                                            riemannian_graph,
@@ -591,17 +612,17 @@ mst_orient_normals(
     CGAL_TRACE("  Calls boost::breadth_first_search()\n");
 
     // Traverse the point set along the MST to propagate source_point's orientation
-    Propagate_normal_orientation<ForwardIterator, NormalPMap, Kernel> orienter;
-    std::size_t source_point_index = get(index_pmap, source_point);
+    Propagate_normal_orientation<typename PointRange::iterator, NormalMap, Kernel> orienter;
+    std::size_t source_point_index = get(index_map, source_point);
     boost::breadth_first_search(mst_graph,
                                 vertex(source_point_index, mst_graph), // source
                                 visitor(boost::make_bfs_visitor(orienter)));
 
     // Copy points with robust normal orientation to oriented_points[], the others to unoriented_points[].
     std::deque<Enriched_point> oriented_points, unoriented_points;
-    for (ForwardIterator it = first; it != beyond; it++)
+    for (typename PointRange::iterator it = points.begin(); it != points.end(); it++)
     {
-        std::size_t it_index = get(index_pmap,it);
+        std::size_t it_index = get(index_map,it);
         typename MST_graph::vertex_descriptor v = vertex(it_index, mst_graph);
         if (mst_graph[v].is_oriented)
           oriented_points.push_back(*it);
@@ -609,9 +630,9 @@ mst_orient_normals(
           unoriented_points.push_back(*it);
     }
 
-    // Replaces [first, beyond) range by the content of oriented_points[], then unoriented_points[].
-    ForwardIterator first_unoriented_point =
-      std::copy(oriented_points.begin(), oriented_points.end(), first);
+    // Replaces [points.begin(), points.end()) range by the content of oriented_points[], then unoriented_points[].
+    typename PointRange::iterator first_unoriented_point =
+      std::copy(oriented_points.begin(), oriented_points.end(), points.begin());
     std::copy(unoriented_points.begin(), unoriented_points.end(), first_unoriented_point);
 
     // At this stage, we have typically 0 unoriented normals if k is large enough
@@ -623,53 +644,90 @@ mst_orient_normals(
     return first_unoriented_point;
 }
 
-/// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from the point property map.
-template <typename ForwardIterator,
-          typename PointPMap,
-          typename NormalPMap
->
-ForwardIterator
+/// \cond SKIP_IN_MANUAL
+// variant with default NP
+template <typename PointRange>
+typename PointRange::iterator
 mst_orient_normals(
-    ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator over the input points.
-    PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
-    NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
-    unsigned int k) ///< number of neighbors
-{
-    typedef typename boost::property_traits<PointPMap>::value_type Point;
-    typedef typename Kernel_traits<Point>::Kernel Kernel;
-    return mst_orient_normals(
-      first,beyond,
-      point_pmap,
-      normal_pmap,
-      k,
-      Kernel());
-}
-/// @endcond
+  PointRange& points,
+  unsigned int k) ///< number of neighbors
 
-/// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Identity_property_map.
+{
+  return mst_orient_normals (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
+}
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+// deprecated API
 template <typename ForwardIterator,
-          typename NormalPMap
+          typename PointMap,
+          typename NormalMap,
+          typename Kernel
 >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::mst_orient_normals(), please update your code")
 ForwardIterator
 mst_orient_normals(
     ForwardIterator first,  ///< iterator over the first input point.
     ForwardIterator beyond, ///< past-the-end iterator over the input points.
-    NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
+    PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3.
+    NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
+    unsigned int k, ///< number of neighbors
+    const Kernel& kernel) ///< geometric traits.
+{
+  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
+  return mst_orient_normals
+    (points,
+     k,
+     CGAL::parameters::point_map (point_map).
+     normal_map (normal_map).
+     geom_traits(kernel));
+}
+  
+// deprecated API
+template <typename ForwardIterator,
+          typename PointMap,
+          typename NormalMap
+>
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::mst_orient_normals(), please update your code")
+ForwardIterator
+mst_orient_normals(
+    ForwardIterator first,  ///< iterator over the first input point.
+    ForwardIterator beyond, ///< past-the-end iterator over the input points.
+    PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3.
+    NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
     unsigned int k) ///< number of neighbors
 {
-    return mst_orient_normals(
-      first,beyond,
-      make_identity_property_map(
-      typename std::iterator_traits<ForwardIterator>::value_type()),
-      normal_pmap,
-      k);
+  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
+  return mst_orient_normals
+    (points,
+     k,
+     CGAL::parameters::point_map (point_map).
+     normal_map (normal_map));
 }
-/// @endcond
+
+// deprecated API
+template <typename ForwardIterator,
+          typename NormalMap
+>
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::mst_orient_normals(), please update your code")
+ForwardIterator
+mst_orient_normals(
+    ForwardIterator first,  ///< iterator over the first input point.
+    ForwardIterator beyond, ///< past-the-end iterator over the input points.
+    NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
+    unsigned int k) ///< number of neighbors
+{
+  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
+  return mst_orient_normals
+    (points,
+     k,
+     CGAL::parameters::normal_map (normal_map));
+}
+#endif // CGAL_NO_DEPRECATED_CODE
+/// \endcond
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MST_ORIENT_NORMALS_H

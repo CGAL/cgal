@@ -88,10 +88,9 @@ struct Scene_surface_mesh_item_priv{
     item = parent;
     has_feature_edges = false;
     invalidate_stats();
-    vertices_displayed = true;
-    edges_displayed = true;
-    faces_displayed = true;
-    all_primitives_displayed = false;
+    vertices_displayed = false;
+    edges_displayed = false;
+    faces_displayed = false;
   }
 
   Scene_surface_mesh_item_priv(SMesh* sm, Scene_surface_mesh_item *parent):
@@ -100,10 +99,9 @@ struct Scene_surface_mesh_item_priv{
     item = parent;
     has_feature_edges = false;
     invalidate_stats();
-    vertices_displayed = true;
-    edges_displayed = true;
-    faces_displayed = true;
-    all_primitives_displayed = false;
+    vertices_displayed = false;
+    edges_displayed = false;
+    faces_displayed = false;
   }
 
   ~Scene_surface_mesh_item_priv()
@@ -165,7 +163,6 @@ struct Scene_surface_mesh_item_priv{
   mutable bool vertices_displayed;
   mutable bool edges_displayed;
   mutable bool faces_displayed;
-  mutable bool all_primitives_displayed;
   mutable QList<double> text_ids;
   mutable std::vector<TextItem*> targeted_id;
 
@@ -194,7 +191,7 @@ struct Scene_surface_mesh_item_priv{
   mutable SMesh::Property_map<face_descriptor,int> fpatch_id_map;
   mutable SMesh::Property_map<vertex_descriptor,int> v_selection_map;
   mutable SMesh::Property_map<face_descriptor,int> f_selection_map;
-  mutable SMesh::Property_map<halfedge_descriptor, bool> h_is_feature_map;
+  mutable SMesh::Property_map<boost::graph_traits<SMesh>::edge_descriptor, bool> e_is_feature_map;
 
   Color_vector colors_;
   double volume, area;
@@ -390,7 +387,7 @@ void Scene_surface_mesh_item_priv::compute_elements()
     idx_edge_data_.push_back(source(ed, *smesh_));
     idx_edge_data_.push_back(target(ed, *smesh_));
     if(has_feature_edges &&
-       get(h_is_feature_map, halfedge(ed, *smesh_)) )
+       get(e_is_feature_map, ed) )
     {
       idx_feature_edge_data_.push_back(source(ed, *smesh_));
       idx_feature_edge_data_.push_back(target(ed, *smesh_));
@@ -654,7 +651,7 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
 
 void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
 {
-  glShadeModel(GL_SMOOTH);
+  viewer->glShadeModel(GL_SMOOTH);
   if(!are_buffers_filled)
   {
     d->compute_elements();
@@ -673,8 +670,8 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
       d->program->setAttributeValue("is_selected", false);
     if(!d->has_vcolors)
       d->program->setAttributeValue("colors", this->color());
-    glDrawElements(GL_TRIANGLES, static_cast<GLuint>(d->idx_data_.size()),
-                   GL_UNSIGNED_INT, d->idx_data_.data());
+    viewer->glDrawElements(GL_TRIANGLES, static_cast<GLuint>(d->idx_data_.size()),
+                           GL_UNSIGNED_INT, d->idx_data_.data());
     vaos[Scene_surface_mesh_item_priv::Smooth_facets]->release();
   }
   else
@@ -686,7 +683,7 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
       d->program->setAttributeValue("is_selected", false);
     if(!d->has_fcolors)
       d->program->setAttributeValue("colors", this->color());
-    glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(d->nb_flat/3));
+    viewer->glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(d->nb_flat/3));
     vaos[Scene_surface_mesh_item_priv::Flat_facets]->release();
   }
 
@@ -709,15 +706,15 @@ void Scene_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface *viewer) c
    d->program->setUniformValue("is_selected", true);
  else
    d->program->setUniformValue("is_selected", false);
- glDrawElements(GL_LINES, static_cast<GLuint>(d->idx_edge_data_.size()),
-                GL_UNSIGNED_INT, d->idx_edge_data_.data());
+ viewer->glDrawElements(GL_LINES, static_cast<GLuint>(d->idx_edge_data_.size()),
+                        GL_UNSIGNED_INT, d->idx_edge_data_.data());
 
  if(d->has_feature_edges)
  {
    d->program->setAttributeValue("colors", Qt::red);
    d->program->setUniformValue("is_selected", false);
-   glDrawElements(GL_LINES, static_cast<GLuint>(d->idx_feature_edge_data_.size()),
-                  GL_UNSIGNED_INT, d->idx_feature_edge_data_.data());
+   viewer->glDrawElements(GL_LINES, static_cast<GLuint>(d->idx_feature_edge_data_.size()),
+                          GL_UNSIGNED_INT, d->idx_feature_edge_data_.data());
  }
  vaos[Scene_surface_mesh_item_priv::Edges]->release();
  d->program->release();
@@ -739,8 +736,8 @@ void Scene_surface_mesh_item::drawPoints(CGAL::Three::Viewer_interface *viewer) 
    d->program->setAttributeValue("is_selected", true);
  else
    d->program->setAttributeValue("is_selected", false);
- glDrawElements(GL_POINTS, static_cast<GLuint>(d->idx_edge_data_.size()),
-                GL_UNSIGNED_INT, d->idx_edge_data_.data());
+ viewer->glDrawElements(GL_POINTS, static_cast<GLuint>(d->idx_edge_data_.size()),
+                        GL_UNSIGNED_INT, d->idx_edge_data_.data());
  vaos[Scene_surface_mesh_item_priv::Edges]->release();
  d->program->release();
 }
@@ -774,16 +771,18 @@ Scene_surface_mesh_item::isEmpty() const
 
 QString Scene_surface_mesh_item::toolTip() const
 {
-  return QObject::tr("<p>Surface_mesh <b>%1</b> (mode: %5, color: %6)</p>"
-                     "<p>Number of vertices: %2<br />"
-                     "Number of edges: %3<br />"
-                     "Number of faces: %4</p>")
-    .arg(this->name())
-    .arg(num_vertices(*d->smesh_))
-    .arg(num_edges(*d->smesh_))
-    .arg(num_faces(*d->smesh_))
-    .arg(this->renderingModeName())
-    .arg(this->color().name());
+  QString str = QObject::tr("<p>Surface_mesh <b>%1</b> (mode: %5, color: %6)</p>"
+                            "<p>Number of vertices: %2<br />"
+                            "Number of edges: %3<br />"
+                            "Number of faces: %4</p>")
+      .arg(this->name())
+      .arg(num_vertices(*d->smesh_))
+      .arg(num_edges(*d->smesh_))
+      .arg(num_faces(*d->smesh_))
+      .arg(this->renderingModeName())
+      .arg(this->color().name());
+  str += QString("<br />Number of isolated vertices: %1<br />").arg(getNbIsolatedvertices());
+  return str;
 }
 
 void Scene_surface_mesh_item_priv::checkFloat()const
@@ -873,6 +872,39 @@ void delete_aabb_tree(Scene_surface_mesh_item* item)
 Scene_surface_mesh_item::~Scene_surface_mesh_item()
 {
   delete_aabb_tree(this);
+  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  if(viewer)
+  {
+    CGAL::Three::Viewer_interface* v = qobject_cast<CGAL::Three::Viewer_interface*>(viewer);
+
+    //Clears the targeted Id
+    if(d)
+    {
+      BOOST_FOREACH(TextItem* item, d->targeted_id)
+          v->textRenderer()->removeText(item);
+    }
+    //Remove vertices textitems
+    if(d->textVItems)
+    {
+      v->textRenderer()->removeTextList(d->textVItems);
+      delete d->textVItems;
+      d->textVItems=NULL;
+    }
+    //Remove edges textitems
+    if(d->textEItems)
+    {
+      v->textRenderer()->removeTextList(d->textEItems);
+      delete d->textEItems;
+      d->textEItems=NULL;
+    }
+    //Remove faces textitems
+    if(d->textFItems)
+    {
+      v->textRenderer()->removeTextList(d->textFItems);
+      delete d->textFItems;
+      d->textFItems=NULL;
+    }
+  }
   delete d;
 }
 SMesh* Scene_surface_mesh_item::polyhedron() { return d->smesh_; }
@@ -1184,11 +1216,28 @@ void Scene_surface_mesh_item::setItemIsMulticolor(bool b)
     d->fpatch_id_map = d->smesh_->add_property_map<face_descriptor,int>("f:patch_id", 1).first;
     d->has_fcolors = true;
   }
-  else if(d->smesh_->property_map<face_descriptor,int>("f:patch_id").second)
+  else
   {
-    d->fpatch_id_map = d->smesh_->property_map<face_descriptor,int>("f:patch_id").first;
-    d->smesh_->remove_property_map(d->fpatch_id_map);
-    d->has_fcolors = false;
+    if(d->smesh_->property_map<face_descriptor,int>("f:patch_id").second)
+    {
+      d->fpatch_id_map = d->smesh_->property_map<face_descriptor,int>("f:patch_id").first;
+      d->smesh_->remove_property_map(d->fpatch_id_map);
+      d->has_fcolors = false;
+    }
+    if(d->smesh_->property_map<face_descriptor, CGAL::Color >("f:color").second)
+    {
+     SMesh::Property_map<face_descriptor, CGAL::Color> pmap =
+         d->smesh_->property_map<face_descriptor, CGAL::Color >("f:color").first;
+         d->smesh_->remove_property_map(pmap);
+      d->has_fcolors = false;
+    }
+    if(d->smesh_->property_map<vertex_descriptor, CGAL::Color >("v:color").second)
+    {
+      SMesh::Property_map<vertex_descriptor, CGAL::Color> pmap =
+          d->smesh_->property_map<vertex_descriptor, CGAL::Color >("v:color").first;
+          d->smesh_->remove_property_map(pmap);
+      d->has_vcolors = false;
+    }
   }
 }
 
@@ -1196,7 +1245,7 @@ void Scene_surface_mesh_item::show_feature_edges(bool b)
 {
   if(b)
   {
-    d->h_is_feature_map = d->smesh_->add_property_map<halfedge_descriptor,bool>("h:is_feature").first;
+    d->e_is_feature_map = d->smesh_->add_property_map<boost::graph_traits<SMesh>::edge_descriptor,bool>("e:is_feature").first;
     invalidateOpenGLBuffers();
     itemChanged();
   }
@@ -1656,12 +1705,6 @@ QMenu* Scene_surface_mesh_item::contextMenu()
     connect(actionPrintFaces, SIGNAL(triggered(bool)),
             this, SLOT(showFaces(bool)));
 
-    QAction* actionPrintAll=
-        menu->addAction(tr("Display All Ids"));
-    actionPrintAll->setCheckable(true);
-    actionPrintAll->setObjectName("actionPrintAll");
-    connect(actionPrintAll, SIGNAL(triggered(bool)),
-            this, SLOT(showPrimitives(bool)));
 
     QAction* actionZoomToId=
         menu->addAction(tr("Zoom to Index"));
@@ -1677,14 +1720,10 @@ QMenu* Scene_surface_mesh_item::contextMenu()
   if(action) action->setChecked(d->edges_displayed);
   action = menu->findChild<QAction*>("actionPrintFaces");
   if(action) action->setChecked(d->faces_displayed);
-  action = menu->findChild<QAction*>("actionPrintAll");
-  if(action) action->setChecked(d->all_primitives_displayed);
   return menu;
 }
 void Scene_surface_mesh_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface *viewer)
 {
-  if(d->all_primitives_displayed)
-    return;
   typedef Input_facets_AABB_tree Tree;
   Tree* aabb_tree = static_cast<Input_facets_AABB_tree*>(d->get_aabb_tree());
   if(!aabb_tree)
@@ -1709,8 +1748,7 @@ void Scene_surface_mesh_item_priv::fillTargetedIds(const face_descriptor &select
                         textVItems,
                         textEItems,
                         textFItems,
-                        &targeted_id,
-                        &all_primitives_displayed);
+                        &targeted_id);
 
 
   if(vertices_displayed
@@ -1766,8 +1804,7 @@ void Scene_surface_mesh_item_priv::killIds()
             textVItems,
             textEItems,
             textFItems,
-            &targeted_id,
-            &all_primitives_displayed);
+            &targeted_id);
 }
 
 void Scene_surface_mesh_item::printAllIds(CGAL::Three::Viewer_interface *viewer)
@@ -1782,7 +1819,6 @@ void Scene_surface_mesh_item::printAllIds(CGAL::Three::Viewer_interface *viewer)
         s3(printFaceIds(viewer));
     if((s1 && s2 && s3))
     {
-      d->all_primitives_displayed = true;
       viewer->update();
     }
     return;
@@ -1837,7 +1873,7 @@ void Scene_surface_mesh_item::showEdges(bool b)
     if(d->textEItems->isEmpty())
     {
       d->edges_displayed = b;
-      printFaceIds(viewer);
+      printEdgeIds(viewer);
     }
     else
       renderer->addTextList(d->textEItems);
@@ -1882,6 +1918,9 @@ void Scene_surface_mesh_item::zoomToId()
   QString text = QInputDialog::getText(QApplication::activeWindow(), tr("Zoom to Index"),
                                        tr("Simplex"), QLineEdit::Normal,
                                        tr("v0"), &ok);
+  if(!ok)
+    return;
+
   CGAL::Three::Viewer_interface* viewer =
       qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
   Point_3 p;

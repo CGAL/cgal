@@ -13,7 +13,6 @@
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Viewer_interface.h>
-#include <CGAL/gl.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -328,7 +327,7 @@ public:
       .arg(this->color().name())
       .arg(tree_size);
   }
-  
+
 
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
@@ -395,8 +394,10 @@ public:
   bool isEmpty() const { return edges.empty(); }
   void compute_bbox() const {
     if(isEmpty())
+    {
       _bbox = Bbox();
-    return;
+      return;
+    }
     CGAL::Bbox_3 bbox = edges.begin()->bbox();
     for(size_t i = 1, end = edges.size(); i < end; ++i) {
       bbox = bbox + edges[i].bbox();
@@ -961,7 +962,7 @@ using namespace CGAL::Three;
 class Polyhedron_demo_cut_plugin :
   public QObject,
   public Polyhedron_demo_plugin_interface,
-  public Polyhedron_demo_io_plugin_interface 
+  public Polyhedron_demo_io_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
@@ -971,7 +972,7 @@ class Polyhedron_demo_cut_plugin :
 public:
   Polyhedron_demo_cut_plugin() : QObject(), edges_item(0) {
   }
-  
+
   virtual ~Polyhedron_demo_cut_plugin();
 
   bool applicable(QAction*) const {
@@ -1017,15 +1018,15 @@ public:
 
   virtual bool save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
   {  // This plugin supports edges items
-    const Scene_edges_item* edges_item = 
+    const Scene_edges_item* edges_item =
       qobject_cast<const Scene_edges_item*>(item);
-    
+
     if(!edges_item){
       return false;
     }
-    
+
     std::ofstream out(fileinfo.filePath().toUtf8());
-    
+
     return (out && edges_item->save(out));
   }
 
@@ -1090,6 +1091,13 @@ public Q_SLOTS:
       action->setChecked(false);
       return;
     }
+  }
+
+  void deleteTree()
+  {
+    Scene_item* item = qobject_cast<Scene_item*>(sender());
+    if(item)
+      deleteTrees(item);
   }
   void deleteTrees(CGAL::Three::Scene_item* sender)
   {
@@ -1264,6 +1272,8 @@ void Polyhedron_demo_cut_plugin::apply(Item* item, QMap< QObject*, Facets_tree*>
     PPMAP<Mesh> pmap(item->polyhedron());
     Facets_traits traits;
     traits.set_shared_data(mesh, pmap); //Mandatory for SMesh. If not provided, mesh and PPmap are taken default, saying NULL in tree.traversal().
+    connect(item, SIGNAL(item_is_about_to_be_changed()),
+            this, SLOT(deleteTree()));
     f_trees[item] = new Facets_tree(traits);
     //filter facets to ignore degenerated ones
 

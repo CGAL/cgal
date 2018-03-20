@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
@@ -53,8 +54,9 @@ bool partition_appx_cvx_is_edge_through_interior(const Point_2& before_s,
 {
    // determine if the edge goes through the interior of the polygon or not
    typedef typename Traits::Left_turn_2   Left_turn_2;
+   typedef typename Traits::Point_2       Bare_point_2;
    Left_turn_2 left_turn = traits.left_turn_2_object();
-   Turn_reverser<Point_2, Left_turn_2> right_turn(left_turn);
+   Turn_reverser<Bare_point_2, Left_turn_2> right_turn(left_turn);
    if (right_turn(before_s, source, after_s)) // concave angle
    {
      if (right_turn(before_s, source, target) &&

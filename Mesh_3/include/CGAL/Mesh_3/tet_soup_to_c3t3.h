@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Mael Rouxel-Labbé, Maxime Gimeno
@@ -27,6 +28,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/IO/File_medit.h>
 
@@ -413,5 +415,7 @@ bool build_triangulation_from_file(std::istream& is,
 }
 
 }  // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_TET_SOUP_TO_C3T3_H

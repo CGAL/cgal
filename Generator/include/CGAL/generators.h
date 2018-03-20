@@ -18,12 +18,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 
 #ifndef CGAL_GENERATORS_H
 #define CGAL_GENERATORS_H 1
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <cstddef>
@@ -106,5 +109,8 @@ class Random_double_in_interval : public Random_generator_base<double> {
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif // CGAL_GENERATORS_H //
 // EOF //

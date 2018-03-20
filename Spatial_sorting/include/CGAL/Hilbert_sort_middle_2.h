@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     :  Olivier Devillers
 
@@ -33,7 +34,7 @@ namespace internal {
 
     template <class K, int x>
     struct Fixed_hilbert_cmp_2<K,x,true>
-        : public std::binary_function<typename K::Point_2,
+        : public CGAL::binary_function<typename K::Point_2,
                                       typename K::Point_2, bool>
     {
         typedef typename K::Point_2 Point;
@@ -48,7 +49,7 @@ namespace internal {
     
     template <class K>
     struct Fixed_hilbert_cmp_2<K,0,false>
-        : public std::binary_function<typename K::Point_2,
+        : public CGAL::binary_function<typename K::Point_2,
                                       typename K::Point_2, bool>
     {
         typedef typename K::Point_2 Point;
@@ -63,7 +64,7 @@ namespace internal {
     
     template <class K>
     struct Fixed_hilbert_cmp_2<K,1,false>
-        : public std::binary_function<typename K::Point_2,
+        : public CGAL::binary_function<typename K::Point_2,
                                       typename K::Point_2, bool>
     {
         typedef typename K::Point_2 Point;

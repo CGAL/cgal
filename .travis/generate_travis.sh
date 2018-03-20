@@ -41,27 +41,32 @@ old_IFS=$IFS
 IFS=$'\n'
 for LINE in $(cat "$PWD/.travis/template.txt")
 do
-	if [ "$LINE" != " matrix: " ]
+	if [ "$LINE" != " include:" ]
 	then
 		echo "$LINE" >> .travis.yml
   else
   	break
 	fi
 done
-echo " matrix: " >> .travis.yml
+echo " include: " >> .travis.yml
 #writes the matrix
-echo "  - PACKAGE='CHECK' " >> .travis.yml
+echo "  - compiler: gcc " >> .travis.yml
+echo "    env: PACKAGE='CHECK' " >> .travis.yml
+echo "  - compiler: clang-3.6" >> .travis.yml
+echo "    env: PACKAGE='CHECK' " >> .travis.yml
 for package in ${PACKAGES[@]}
 do
- 	echo "  - PACKAGE='$package' " >> .travis.yml
+echo "  - compiler: clang-3.6" >> .travis.yml
+echo "    env: PACKAGE='$package' " >> .travis.yml
 done
-echo "  - PACKAGE='Polyhedron_demo' " >> .travis.yml
+echo "  - compiler: clang-3.6" >> .travis.yml
+echo "    env: PACKAGE='Polyhedron_demo' " >> .travis.yml
 
 #writes the end of the file
 COPY=0
 for LINE in $(cat "$PWD/.travis/template.txt")
 do
-	if [ "$LINE" = "compiler: " ]
+	if [ "$LINE" = "install: " ]
 	then
 		COPY=1
 	fi

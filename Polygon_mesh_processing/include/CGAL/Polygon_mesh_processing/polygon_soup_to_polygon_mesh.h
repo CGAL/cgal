@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau and Ilker O. Yaz
@@ -23,6 +24,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/property_map.h>
@@ -222,5 +224,7 @@ public:
 }//end namespace Polygon_mesh_processing
 
 }// end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH

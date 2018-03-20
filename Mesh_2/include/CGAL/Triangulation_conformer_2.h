@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU
@@ -23,6 +24,8 @@
 
 #include <CGAL/license/Mesh_2.h>
 
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_2/Refine_edges_with_clusters.h>
 
@@ -264,5 +267,7 @@ make_conforming_Delaunay_2(Tr& t)
 }
 
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TRIANGULATION_CONFORMER_2_H

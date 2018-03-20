@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -32,7 +33,7 @@
 
 #include <CGAL/Linear_cell_complex_for_bgl_combinatorial_map_helper.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/boost/graph/cgal_bgl_graph_io.h> // TODO update path when small feature generic load off will be accepted
+#include <CGAL/boost/graph/io.h>
 #include <CGAL/Dart_iterators.h>
 
 #include <CGAL/boost/graph/helpers.h>
@@ -283,6 +284,21 @@ typename boost::graph_traits<CGAL_LCC_TYPE >::degree_size_type
 in_degree(typename boost::graph_traits<CGAL_LCC_TYPE >::vertex_descriptor v,
           const CGAL_LCC_TYPE& lcc)
 { return degree(v, lcc); }
+
+CGAL_LCC_TEMPLATE_ARGS
+typename boost::graph_traits<CGAL_LCC_TYPE >::degree_size_type
+degree(typename boost::graph_traits<CGAL_LCC_TYPE >::face_descriptor f,
+       const CGAL_LCC_TYPE& lcc)
+
+{
+  typename boost::graph_traits<CGAL_LCC_TYPE >::degree_size_type degree=0;
+  for (typename CGAL_LCC_TYPE::template Dart_of_cell_range<2>::const_iterator
+         it=lcc.template darts_of_cell<2>(f->dart()).begin(),
+         itend=lcc.template darts_of_cell<2>(f->dart()).end();
+       it!=itend; ++it)
+  { ++degree; }
+  return degree;
+}
 
 CGAL_LCC_TEMPLATE_ARGS
 typename boost::graph_traits<CGAL_LCC_TYPE >::vertex_descriptor 

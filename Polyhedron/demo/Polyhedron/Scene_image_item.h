@@ -4,7 +4,6 @@
 #include <CGAL/Three/Scene_item.h>
 #include "Image_type_fwd.h"
 #include "Scene_image_item_config.h"
-#include <CGAL/gl.h>
 
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>

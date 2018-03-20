@@ -240,6 +240,11 @@ public Q_SLOTS:
    * set_face_graph_default_type sets the global state of the application to `Polyhedron mode` or `Surface_mesh mode`.
    */
   void set_face_graph_default_type(MainWindow::Face_graph_mode m);
+
+  /*!
+   * Writes the statistics dialog content in a text file.
+   */
+  void exportStatistics();
 protected Q_SLOTS:
 
    //!Gets the new selected item(s) from the Geometric Objects view and updates the scene
@@ -349,6 +354,8 @@ protected Q_SLOTS:
   void on_actionRecenterScene_triggered();
   //!Resizes the header of the scene view
   void resetHeader();
+  //!apply an action named `name` to all selected items
+  void propagate_action();
 protected:
   QList<QAction*> createSubMenus(QList<QAction*>);
   /*! For each objects in the Geometric Objects view, loads the associated plugins.
@@ -379,7 +386,7 @@ protected:
   QList<int> getSelectedSceneItemIndices() const;
 private:
   void updateMenus();
-  void load_plugin(QString names, bool blacklisted);
+  bool load_plugin(QString names, bool blacklisted);
   void recurseExpand(QModelIndex index);
   QMap<QString, QMenu*> menu_map;
   QString get_item_stats();
@@ -387,12 +394,15 @@ private:
   void setMenus(QString, QString, QAction *a);
   /// plugin black-list
   QSet<QString> plugin_blacklist;
+  QMap<QString, std::vector<QString> > PathNames_map; //For each non-empty plugin directory, contains a vector of plugin names
+  QMap<QString, QString > pluginsStatus_map; //For each non-empty plugin directory, contains a vector of plugin names
   Scene* scene;
   Viewer* viewer;
   QSortFilterProxyModel* proxyModel;
   QTreeView* sceneView;
   Ui::MainWindow* ui;
   QVector<CGAL::Three::Polyhedron_demo_io_plugin_interface*> io_plugins;
+  QString last_saved_dir;
   QMap<QString,QString> default_plugin_selection;
   // typedef to make Q_FOREACH work
   typedef QPair<CGAL::Three::Polyhedron_demo_plugin_interface*, QString> PluginNamePair;

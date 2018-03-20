@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri, Mariette Yvinec
@@ -23,6 +24,7 @@
 
 #include <CGAL/license/Triangulation_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Polygon_2.h>
@@ -40,11 +42,6 @@
 #include <boost/container/flat_set.hpp>
 #endif
 
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4355)
-//warning C4355: 'this' : used in base member initializer list
-#endif
 
 namespace CGAL {
 
@@ -161,10 +158,16 @@ public:
   typedef Polyline_constraint_hierarchy_2<Vertex_handle, Vh_less_xy, Point>
                                                    Constraint_hierarchy;
 public:
-  typedef Tag_true                                Constraint_hierarchy_tag;
+  // Tag to mark the presence of a hierarchy of constraints
+  typedef Tag_true                                 Constraint_hierarchy_tag;
+
+  //Tag to distinguish Delaunay from regular triangulations
+  typedef Tag_false                                Weighted_tag;
+
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_false                                Periodic_tag;
 
   // for user interface with the constraint hierarchy
-
   typedef typename Constraint_hierarchy::Vertex_it 
                                             Vertices_in_constraint_iterator;
   
@@ -872,6 +875,9 @@ public:
     std::ptrdiff_t insert(InputIterator first, InputIterator last) 
 #endif
   {
+#if defined(_MSC_VER)
+    CGAL_USE(i);
+#endif
     size_type n = this->number_of_vertices();
 
     std::vector<Point> points (first, last);
@@ -1239,7 +1245,6 @@ points_in_constraint_end(Constraint_id cid) const
 
 } //namespace CGAL
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
+#include <CGAL/enable_warnings.h>
+
 #endif //CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H

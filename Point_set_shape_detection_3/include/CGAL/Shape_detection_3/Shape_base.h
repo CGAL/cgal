@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez
@@ -67,6 +68,8 @@ namespace CGAL {
     /// \cond SKIP_IN_MANUAL
     template <class T>
     friend class Efficient_RANSAC;
+    template <class T>
+    friend class Region_growing;
     template<class PointAccessor>
     friend class internal::Octree;
     /// \endcond
@@ -544,6 +547,26 @@ namespace CGAL {
       (void)max;
     }
 
+    void compute(const std::vector<std::size_t>& indices,
+                 Input_iterator first,
+                 Traits traits,
+                 Point_map point_pmap,
+                 Normal_map normal_pmap,
+                 FT epsilon,
+                 FT normal_threshold) {
+      if (indices.size() < minimum_sample_size())
+        return;
+
+      m_first = first;
+      m_traits = traits;
+      m_point_pmap = point_pmap;
+      m_normal_pmap = normal_pmap;
+      m_epsilon = epsilon;
+      m_normal_threshold = normal_threshold;
+
+      create_shape(indices);
+    }
+    
     void compute(const std::set<std::size_t>& indices,
                  Input_iterator first,
                  Traits traits,

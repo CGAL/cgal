@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
@@ -543,7 +544,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::CreateContourBisectors()
 template<class Gt, class Ss, class V>
 void Straight_skeleton_builder_2<Gt,Ss,V>::InitPhase()
 {
-  mVisitor.on_initialization_started(mSSkel->size_of_vertices());
+  mVisitor.on_initialization_started(static_cast<int>(mSSkel->size_of_vertices()));
   CreateContourBisectors();
   CreateInitialEvents();
   mVisitor.on_initialization_finished();

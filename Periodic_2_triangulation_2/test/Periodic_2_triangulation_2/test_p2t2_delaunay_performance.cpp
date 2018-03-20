@@ -1,21 +1,16 @@
 // Author(s)     : Nico Kruithof  <Nico@nghk.nl>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/point_generators_2.h>
 
-#include <CGAL/Periodic_2_triangulation_traits_2.h>
-#include <CGAL/Periodic_2_triangulation_2.h>
 #include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
+#include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Periodic_2_triangulation_hierarchy_2.h>
-#include <CGAL/Triangulation_hierarchy_2.h>
 
 #include <CGAL/Timer.h>
-
 #include <CGAL/point_generators_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Periodic_2_triangulation_traits_2<K>          Gt;
+typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<K> Gt;
 typedef Gt::Point_2                                         Point;
 typedef Gt::Vector_2                                        Vector;
 

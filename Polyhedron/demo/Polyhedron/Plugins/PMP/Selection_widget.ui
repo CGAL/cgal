@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>597</width>
-    <height>334</height>
+    <width>613</width>
+    <height>342</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -153,11 +153,22 @@
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="Select_all_NTButton">
-                  <property name="text">
-                   <string>Select All Non Triangle</string>
-                  </property>
-                 </widget>
+                 <layout class="QVBoxLayout" name="verticalLayout_7">
+                  <item>
+                   <widget class="QPushButton" name="Select_all_NTButton">
+                    <property name="text">
+                     <string>Select All Non Triangle</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="Select_boundaryButton">
+                    <property name="text">
+                     <string>Select Boundary Edges</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                 <item>
                  <widget class="QPushButton" name="Add_to_selection_button">
@@ -473,6 +484,11 @@
             <item>
              <property name="text">
               <string>Keep Connected Components of Selected Facets</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Expand Face Selection to Stay Manifold After Removal</string>
              </property>
             </item>
             <item>

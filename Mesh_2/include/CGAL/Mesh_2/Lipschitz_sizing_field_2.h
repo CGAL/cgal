@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s) : Lakulish Antani, Christophe Delage, Jane Tournois, Pierre Alliez
@@ -25,6 +26,7 @@
 
 #include <CGAL/license/Mesh_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <list>
 
@@ -290,5 +292,7 @@ protected:
 };
 
 }//namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_LIPSCHITZ_SIZING_FIELD_2_H

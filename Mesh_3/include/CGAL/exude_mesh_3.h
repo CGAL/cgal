@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -27,6 +28,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/sliver_criteria.h>
 #include <CGAL/Mesh_3/Slivers_exuder.h>
@@ -36,6 +38,11 @@
 #include <boost/parameter.hpp>
 
 namespace CGAL {
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4003) // not enough actual parameters for macro
+#endif
 
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
@@ -56,6 +63,10 @@ BOOST_PARAMETER_FUNCTION(
   return exude_mesh_3_impl(c3t3, time_limit_, sliver_bound_);
 }
 CGAL_PRAGMA_DIAG_POP
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 
 
@@ -83,5 +94,7 @@ exude_mesh_3_impl(C3T3& c3t3,
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_EXUDE_MESH_3_H

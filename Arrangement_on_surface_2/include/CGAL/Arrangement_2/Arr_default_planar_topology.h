@@ -14,7 +14,8 @@
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0+
+//
 //
 // Author(s): Ron Wein          <wein@post.tau.ac.il>
 //            Eric Berberich    <ericb@post.tau.ac.il>
@@ -44,8 +45,8 @@ template <class GeomTraits, class Dcel, class Tag>
 struct Default_planar_topology_impl {};
 
 template <class GeomTraits, class Dcel>
-struct Default_planar_topology_impl< GeomTraits, Dcel, 
-                                     Arr_all_sides_oblivious_tag>
+struct Default_planar_topology_impl<GeomTraits, Dcel,
+                                    Arr_all_sides_oblivious_tag>
 {
   // A topology-traits class that supports only bounded curves:
   typedef Arr_bounded_planar_topology_traits_2<GeomTraits, Dcel>    Traits;
@@ -53,25 +54,24 @@ struct Default_planar_topology_impl< GeomTraits, Dcel,
 };
 
 template <class GeomTraits, class Dcel>
-struct Default_planar_topology_impl< GeomTraits, Dcel, 
-                                     Arr_not_all_sides_oblivious_tag>
+struct Default_planar_topology_impl<GeomTraits, Dcel,
+                                    Arr_not_all_sides_oblivious_tag>
 {
   // A topology-traits class that supports unbounded curves:
   typedef Arr_unb_planar_topology_traits_2<GeomTraits, Dcel>        Traits;
 };
 
-
 } // namespace internal
 
-template < class GeomTraits, class Dcel >
-struct Default_planar_topology : 
-  public internal::Default_planar_topology_impl < 
-    GeomTraits, Dcel, 
-    typename Arr_are_all_sides_oblivious_tag< 
-      typename internal::Arr_complete_left_side_category< GeomTraits >::Category,
-      typename internal::Arr_complete_bottom_side_category< GeomTraits> ::Category,
-      typename internal::Arr_complete_top_side_category< GeomTraits >::Category,
-      typename internal::Arr_complete_right_side_category< GeomTraits >::Category >::result 
+template <typename GeomTraits, typename Dcel >
+struct Default_planar_topology :
+  public internal::Default_planar_topology_impl<
+    GeomTraits, Dcel,
+    typename Arr_are_all_sides_oblivious_tag<
+      typename internal::Arr_complete_left_side_category<GeomTraits>::Category,
+      typename internal::Arr_complete_bottom_side_category<GeomTraits>::Category,
+      typename internal::Arr_complete_top_side_category<GeomTraits>::Category,
+      typename internal::Arr_complete_right_side_category<GeomTraits>::Category>::result
 >
 {};
 

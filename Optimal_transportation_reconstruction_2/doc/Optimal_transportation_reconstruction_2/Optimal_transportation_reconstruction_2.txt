@@ -24,9 +24,28 @@ The output of the reconstruction algorithm is a subset of edges and vertices of 
 \cgalFigureEnd
 
 
-\subsection Optimal_transportation_reconstruction_2Simplest_example Simplest Example
-The following example first generates a set of input points on a square. The points, with no mass attribute, are then passed to the Optimal_transportation_reconstruction_2 object. After initialization, 100 iterations of the reconstruction process are performed. 
+\subsection Optimal_transportation_reconstruction_2Simplest_example Simplest Examples
+
+The following example first generates a set of input points on a
+square. The points, with no mass attribute, are then passed to the
+Optimal_transportation_reconstruction_2 object. After initialization,
+100 iterations of the reconstruction process are performed.
 \cgalExample{Optimal_transportation_reconstruction_2/otr2_simplest_example.cpp}
+
+There is no direct relationship between the target number of edges for
+the output reconstruction and a notion of approximation error. The
+simplification algorithm can thus be stopped via a maximum tolerance
+error homogeneous to a distance. More specifically, the tolerance
+error is specified as the maximum square root of transport cost per
+unit of mass, which is homogeneous to a distance.
+
+Note that the tolerance is given in the sense of the Wasserstein
+distance (see \ref Optimal_transportation_reconstruction_2Wasserstein). It is _not_ a
+Hausdorff tolerance: it does not mean that the distance between the
+input samples and the output polyline is guaranteed to be less than
+`tolerance`. It means that the square root of transport cost per mass
+(homogeneous to a distance) is at most `tolerance`.
+\cgalExample{Optimal_transportation_reconstruction_2/otr2_simplest_example_with_tolerance.cpp}
 
 \subsection Optimal_transportation_reconstruction_2Output_example Output Examples
 The output of the reconstruction can be obtained in two ways: either as a sequence of 2D points and segments, or as an indexed format where the connectivity of the segments is encoded, hence the terms vertices and edges. The indexed format records a list of points, then pairs of point indices in the said list for the edges, and point indices for the isolated vertices. 
@@ -83,6 +102,18 @@ and specify the number of output vertices one wants to keep as illustrated in
 Examples of 20-vertex reconstructions from datasets consisting of 2000, 400 
 and 200 input points respectively. These examples illustrate the behavior of
 the algorithm when the input point density decreases. 
+\cgalFigureEnd
+
+Finally, calling \link Optimal_transportation_reconstruction_2::run_under_wasserstein_tolerance `run_under_wasserstein_tolerance()` \endlink
+allows the user to run the algorithm based on a distance criterion
+when the number of output edges is not known as illustrated in
+ \cgalFigureRef{Optimal_Transportation_Curve_Reconstruction_tolerance}.
+\code{.cpp}
+otr2.run_under_wasserstein_tolerance(0.1); // perform collapses until no more can be done within tolerance
+\endcode
+
+\cgalFigureBegin{Optimal_Transportation_Curve_Reconstruction_tolerance,tolerances.png}
+Examples of reconstructions with different Wasserstein tolerance threshold. Top: input point set and reconstruction with a tolerance of 0.005. Bottom: reconstructions with a tolerance of 0.05 and with a tolerance of 0.1.
 \cgalFigureEnd
 
 

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
@@ -25,6 +26,8 @@
 #define CGAL_REGULAR_TRIANGULATION_3_H
 
 #include <CGAL/license/Triangulation_3.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 
@@ -66,11 +69,6 @@
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
 #include <CGAL/point_generators_3.h>
 #endif
-
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4355) // complaint about using 'this' to
-#endif                          // initialize a member
 
 namespace CGAL {
 
@@ -146,7 +144,10 @@ namespace CGAL {
     typedef typename Gt::Object_3      Object;
 
     //Tag to distinguish Delaunay from regular triangulations
-    typedef Tag_true   Weighted_tag;
+    typedef Tag_true                   Weighted_tag;
+
+    // Tag to distinguish periodic triangulations from others
+    typedef Tag_false                  Periodic_tag;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
     using Tr_Base::geom_traits;
@@ -2574,8 +2575,6 @@ namespace CGAL {
 
 } //namespace CGAL
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_REGULAR_TRIANGULATION_3_H

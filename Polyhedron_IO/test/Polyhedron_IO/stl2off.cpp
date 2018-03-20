@@ -1,3 +1,4 @@
+#include <cassert>
 #include <CGAL/IO/STL_reader.h>
 #include <CGAL/array.h>
 
@@ -5,8 +6,9 @@
 #include <iostream>
 #include <vector>
 
-void read(const char* fname)
+void read(const char* fname, std::size_t v, std::size_t f)
 {
+  std::cout << "Reading "<< fname << std::endl;
   std::ifstream input(fname, std::ios::in | std::ios::binary);
 
   std::vector< CGAL::cpp11::array<double,3> > points;
@@ -16,7 +18,10 @@ void read(const char* fname)
                   points,
                   faces,
                   true);
-  
+
+  assert(points.size() == v);
+    assert(faces.size() == f);
+    
   std::cout << "OFF version of file " << fname << std::endl;
 
   std::cout.precision(17);
@@ -35,7 +40,16 @@ void read(const char* fname)
 
 int main()
 {
-  read("data/cube.stl");
-  read("data/triangle.stl");
+  read("data/cube.stl", 8, 12);
+  read("data/triangle.stl", 3, 1);
+
+  
+  read("data/ascii-tetrahedron.stl", 4, 4);
+  read("data/binary-tetrahedron-nice-header.stl", 4, 4);
+  read("data/binary-tetrahedron-non-standard-header-1.stl", 4, 4);
+  read("data/binary-tetrahedron-non-standard-header-2.stl", 4, 4);
+  read("data/binary-tetrahedron-non-standard-header-3.stl", 4, 4);
+  read("data/binary-tetrahedron-non-standard-header-4.stl", 4, 4);
+  read("data/binary-tetrahedron-non-standard-header-5.stl", 4, 4);
   return 0;
 }

@@ -130,9 +130,11 @@ struct Scene_edit_polyhedron_item_priv
   mutable std::vector<GLdouble> normals;
   mutable std::vector<GLdouble> pos_bbox;
   mutable std::vector<GLdouble> pos_axis;
+  mutable std::vector<unsigned int> plane_idx;
   mutable std::vector<GLdouble> pos_frame_plane;
   mutable QOpenGLShaderProgram *program;
   mutable QOpenGLShaderProgram bbox_program;
+  mutable QOpenGLShaderProgram transparent_plane_program;
   mutable std::size_t nb_ROI;
   mutable std::size_t nb_control;
   mutable std::size_t nb_axis;
@@ -333,6 +335,71 @@ void Scene_edit_polyhedron_item_priv::init_values()
     bbox_program.addShaderFromSourceCode(QOpenGLShader::Fragment,fragment_shader_source);
     bbox_program.link();
 
+    //Vertex source code
+    const char vertex_source[] =
+    {
+      "#version 120                                     \n"
+      "attribute highp vec4 vertex;                     \n"
+      "attribute highp vec4 colors;                     \n"
+      "uniform highp mat4 mvp_matrix;                   \n"
+      "uniform highp mat4 f_matrix;                     \n"
+      "varying highp vec4 color;                        \n"
+      "varying highp float dist[6];                     \n"
+      "uniform bool is_clipbox_on;                      \n"
+      "uniform highp mat4x4 clipbox1;                   \n"
+      "uniform highp mat4x4 clipbox2;                   \n"
+      "                                                 \n"
+      "void compute_distances(void)                     \n"
+      "{                                                \n"
+      "  for(int i=0; i<3; ++i)                         \n"
+      "  {                                              \n"
+      "    dist[i]=                                     \n"
+      "    clipbox1[i][0]*vertex.x+                     \n"
+      "    clipbox1[i][1]*vertex.y+                     \n"
+      "    clipbox1[i][2]*vertex.z +                    \n"
+      "    clipbox1[i][3];                              \n"
+      "    dist[i+3]=                                   \n"
+      "    clipbox2[i][0]*vertex.x+                     \n"
+      "    clipbox2[i][1]*vertex.y+                     \n"
+      "    clipbox2[i][2]*vertex.z +                    \n"
+      "    clipbox2[i][3];                              \n"
+      "  }                                              \n"
+      "}                                                \n"
+      "                                                 \n"
+      "void main(void)                                  \n"
+      "{                                                \n"
+      "   color = colors;                               \n"
+      "   if(is_clipbox_on)                             \n"
+      "    compute_distances();                         \n"
+      "   gl_Position = mvp_matrix * f_matrix * vertex; \n"
+      "}                                                \n"
+    };
+
+    //Fragment source code
+    const char fragment_source[] =
+    {
+      "#version 120                 \n"
+      "varying highp vec4 color;    \n"
+      "varying highp float dist[6]; \n"
+      "uniform bool is_clipbox_on;  \n"
+      "void main(void)              \n"
+      "{                            \n"
+      "if(is_clipbox_on)            \n"
+      "  if(dist[0]>0 ||            \n"
+      "     dist[1]>0 ||            \n"
+      "     dist[2]>0 ||            \n"
+      "     dist[3]>0 ||            \n"
+      "     dist[4]>0 ||            \n"
+      "     dist[5]>0)              \n"
+      "    discard;                 \n"
+      "  gl_FragColor = color;      \n"
+      "}                            \n"
+      "                             \n"
+    };
+    transparent_plane_program.addShaderFromSourceCode(QOpenGLShader::Vertex,vertex_source);
+    transparent_plane_program.addShaderFromSourceCode(QOpenGLShader::Fragment,fragment_source);
+    transparent_plane_program.bindAttributeLocation("colors", 1);
+    transparent_plane_program.link();
     ui_widget->remeshing_iterations_spinbox->setValue(1);
 
     ui_widget->remeshing_edge_length_spinbox->setValue(length_of_axis);
@@ -340,6 +407,7 @@ void Scene_edit_polyhedron_item_priv::init_values()
     ui_widget->remeshingEdgeLengthInput_checkBox->setChecked(false);
 
 }
+
 Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
 (Scene_polyhedron_item* poly_item,
  Ui::DeformMesh* ui_widget,
@@ -547,7 +615,7 @@ void Scene_edit_polyhedron_item_priv::initializeBuffers(CGAL::Three::Viewer_inte
     }
     //vao for the frame plane
     {
-        program = item->getShaderProgram(Scene_edit_polyhedron_item::PROGRAM_NO_SELECTION, viewer);
+        program = &transparent_plane_program;
         program->bind();
         item->vaos[Frame_plane]->bind();
         item->buffers[Frame_vertices].bind();
@@ -1350,16 +1418,6 @@ void Scene_edit_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer
     vaos[Scene_edit_polyhedron_item_priv::Edges]->release();
 
 
-    vaos[Scene_edit_polyhedron_item_priv::Frame_plane]->bind();
-    d->program = getShaderProgram(PROGRAM_NO_SELECTION);
-    attribBuffers(viewer,PROGRAM_NO_SELECTION);
-    d->program->bind();
-    d->program->setAttributeValue("colors", QColor(0,0,0));
-    viewer->glDrawArrays(GL_LINE_LOOP, 0, (GLsizei)d->pos_frame_plane.size()/3);
-    d->program->release();
-    vaos[Scene_edit_polyhedron_item_priv::Frame_plane]->release();
-
-
   if(rendering_mode == Wireframe) {
         draw_ROI_and_control_vertices(viewer);
   }
@@ -1385,12 +1443,39 @@ void Scene_edit_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) con
   drawEdges(viewer);
   draw_ROI_and_control_vertices(viewer);
 
+
+
+}
+
+void Scene_edit_polyhedron_item::drawTransparent(Viewer_interface *viewer) const
+{
+  if(d->ui_widget->ActivateFixedPlaneCheckBox->isChecked())
+  {
+    GLdouble d_mat[16];
+    QMatrix4x4 mvp_mat;
+    viewer->camera()->getModelViewProjectionMatrix(d_mat);
+    for (int i=0; i<16; ++i)
+      mvp_mat.data()[i] = GLfloat(d_mat[i]);
+    viewer->glEnable(GL_BLEND);
+    viewer->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    vaos[Scene_edit_polyhedron_item_priv::Frame_plane]->bind();
+    d->program = &d->transparent_plane_program;
+    d->program->bind();
+    d->program->setUniformValue("is_clipbox_on", false);
+    d->program->setUniformValue("mvp_matrix", mvp_mat);
+    d->program->setUniformValue("f_matrix", QMatrix4x4());
+    d->program->setAttributeValue("colors", QColor(128,64,64,128));
+    viewer->glDrawElements(GL_TRIANGLES, (GLsizei) d->plane_idx.size(), GL_UNSIGNED_INT, d->plane_idx.data());
+    d->program->release();
+    vaos[Scene_edit_polyhedron_item_priv::Frame_plane]->release();
+    viewer->glDisable(GL_BLEND);
+  }
 }
 
 template<typename Mesh>
 void Scene_edit_polyhedron_item::draw_frame_plane(QGLViewer* , Mesh* mesh) const
 {
-  d->pos_frame_plane.resize(15);
+  d->pos_frame_plane.resize(12);
   Facegraph_selector fs;
   for(typename std::list<Control_vertices_data<Mesh> >::const_iterator hgb_data = fs.get_ctrl_vertex_frame_map(mesh, d).begin();
       hgb_data != fs.get_ctrl_vertex_frame_map(mesh, d).end(); ++hgb_data)
@@ -1413,7 +1498,13 @@ void Scene_edit_polyhedron_item::draw_frame_plane(QGLViewer* , Mesh* mesh) const
     d->pos_frame_plane[3] = p2.x ; d->pos_frame_plane[4] = p2.y; d->pos_frame_plane[5] =p2.z ;
     d->pos_frame_plane[6] = p3.x ; d->pos_frame_plane[7] = p3.y; d->pos_frame_plane[8] =p3.z ;
     d->pos_frame_plane[9] = p4.x ; d->pos_frame_plane[10]= p4.y; d->pos_frame_plane[11] =p4.z ;
-    d->pos_frame_plane[12] = p1.x ; d->pos_frame_plane[13]= p1.y; d->pos_frame_plane[14] =p1.z ;
+    d->plane_idx.push_back(0);
+    d->plane_idx.push_back(1);
+    d->plane_idx.push_back(2);
+    d->plane_idx.push_back(0);
+    d->plane_idx.push_back(2);
+    d->plane_idx.push_back(3);
+
   }
 }
 void Scene_edit_polyhedron_item_priv::draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface* viewer, qglviewer::ManipulatedFrame* frame, const qglviewer::Vec &center) const
@@ -1481,7 +1572,7 @@ void Scene_edit_polyhedron_item_priv::draw_ROI_and_control_vertices(CGAL::Three:
 }
 void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface* viewer) const {
 
-  CGAL::GL::Point_size point_size; point_size.set_point_size(5);
+  CGAL::GL::Point_size point_size(viewer); point_size.set_point_size(5);
 
   //Draw the points
   if(d->ui_widget->ShowROICheckBox->isChecked()) {
@@ -2110,9 +2201,11 @@ void Scene_edit_polyhedron_item_priv::pivoting_end(Mesh* mesh)
     //translate center of the frame
     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     qglviewer::Vec vec= it->frame->position();
+    qglviewer::Quaternion orientation = it->frame->orientation();
     it->refresh(mesh);
     it->frame_initial_center = vec-offset;
     it->frame->setPosition(vec);
+    it->frame->setOrientation(orientation);
     it->frame->blockSignals(false);
   }
 }

@@ -14,20 +14,21 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_PROPERTIES_H
-#define CGAL_POLYGON_MESH_PROCESSING_PROPERTIES_H
+#ifndef CGAL_MESH_3_PROPERTIES_H
+#define CGAL_MESH_3_PROPERTIES_H
 
-#include <CGAL/license/Polygon_mesh_processing.h>
+#include <CGAL/license/Mesh_3.h>
 
 namespace CGAL
 {
 
-enum vertex_num_feature_edges_t { vertex_num_feature_edges };
-enum halfedge_is_feature_t      { halfedge_is_feature };
+enum vertex_feature_degree_t    { vertex_feature_degree };
+enum edge_is_feature_t          { edge_is_feature };
 
 enum vertex_time_stamp_t        { vertex_time_stamp};
 enum halfedge_time_stamp_t      { halfedge_time_stamp};
@@ -44,4 +45,4 @@ struct face_patch_id_t {
 };
 } //end namespace CGAL
 
-#endif //CGAL_POLYGON_MESH_PROCESSING_PROPERTIES_H
+#endif //CGAL_MESH_3_PROPERTIES_H

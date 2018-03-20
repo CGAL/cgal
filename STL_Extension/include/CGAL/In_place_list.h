@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -26,6 +27,8 @@
 
 #ifndef CGAL_IN_PLACE_LIST_H
 #define CGAL_IN_PLACE_LIST_H 1
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <cstddef>
@@ -782,7 +785,7 @@ namespace std {
 
   template < class T, class Alloc >
   struct hash<CGAL::internal::In_place_list_iterator<T, Alloc> >
-    : public std::unary_function<CGAL::internal::In_place_list_iterator<T, Alloc>, std::size_t>  {
+    : public CGAL::unary_function<CGAL::internal::In_place_list_iterator<T, Alloc>, std::size_t>  {
 
     std::size_t operator()(const CGAL::internal::In_place_list_iterator<T, Alloc>& i) const
     {
@@ -793,7 +796,7 @@ namespace std {
 
   template < class T, class Alloc >
   struct hash<CGAL::internal::In_place_list_const_iterator<T, Alloc> >
-    : public std::unary_function<CGAL::internal::In_place_list_const_iterator<T, Alloc>, std::size_t> {
+    : public CGAL::unary_function<CGAL::internal::In_place_list_const_iterator<T, Alloc>, std::size_t> {
 
     std::size_t operator()(const CGAL::internal::In_place_list_const_iterator<T, Alloc>& i) const
     {
@@ -808,5 +811,7 @@ namespace std {
 #endif
 
 } // namespace std
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_IN_PLACE_LIST_H

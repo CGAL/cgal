@@ -1,15 +1,13 @@
 //! \file examples/Arrangement_on_surface_2/vertical_decomposition.cpp
 // Performing vertical decomposition of an arrangement.
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/MP_Float.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_vertical_decomposition_2.h>
 #include <list>
 
-typedef CGAL::MP_Float                                  Number_type;
-typedef CGAL::Cartesian<Number_type>                    Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Traits_2;
 typedef Traits_2::Point_2                               Point_2;
 typedef Traits_2::X_monotone_curve_2                    Segment_2;
@@ -24,7 +22,7 @@ typedef std::list<Vert_decomp_entry>                    Vert_decomp_list;
 int main()
 {
   // Construct the arrangement.
-  Arrangement_2    arr;
+  Arrangement_2 arr;
 
   insert_non_intersecting_curve(arr, Segment_2(Point_2(1, 1), Point_2(3, 0)));
   insert_non_intersecting_curve(arr, Segment_2(Point_2(1, 1), Point_2(2, 2)));

@@ -521,7 +521,7 @@
   </action>
   <action name="actionColorItems">
    <property name="text">
-    <string>Set different colors to selected items</string>
+    <string>Set Different Colors for Selected Items</string>
    </property>
   </action>
   <action name="actionPolyhedron_Mode">

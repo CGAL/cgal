@@ -36,7 +36,7 @@ public:
   // QMenu* contextMenu();
   
   // Indicate if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode m) const { return (m!=PointsPlusNormals && m!=Splatting); }
+  bool supportsRenderingMode(RenderingMode m) const { return (m!=PointsPlusNormals ); }
 
   // Get wrapped polyhedron
   Face_graph*       polyhedron();

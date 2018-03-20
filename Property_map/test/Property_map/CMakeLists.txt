@@ -1,5 +1,3 @@
-# Created by the script cgal_create_CMakeLists
-# This is the CMake script for compiling a set of CGAL applications.
 
 project( Property_map_Tests )
 
@@ -31,6 +29,15 @@ if ( NOT Boost_FOUND )
 
 endif()
 
+find_package( OpenMesh QUIET )
+
+if ( OpenMesh_FOUND )
+  include( UseOpenMesh )
+  add_definitions( -DCGAL_USE_OPENMESH )
+else()
+  message(STATUS "Examples that use OpenMesh will not be compiled.")
+endif()
+
 # include for local directory
 
 # include for local package
@@ -44,4 +51,9 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "dynamic_property_map.cpp" )
 
+create_single_source_cgal_program( "dynamic_properties_test.cpp" )
+
+if(OpenMesh_FOUND)
+        target_link_libraries( dynamic_properties_test PRIVATE ${OPENMESH_LIBRARIES} )
+endif()
 

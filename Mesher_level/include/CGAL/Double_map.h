@@ -14,12 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_DOUBLE_MAP_H
 #define CGAL_DOUBLE_MAP_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <map>
 #include <utility>
@@ -37,7 +40,7 @@
 #endif
 
 #ifdef CGAL_USE_BOOST_BIMAP
-#include <boost/bimap.hpp>
+#include <CGAL/boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
 #endif
 
@@ -315,5 +318,7 @@ erase(const Key& k)
 }
 
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_DOUBLE_MAP_H

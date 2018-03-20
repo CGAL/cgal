@@ -14,12 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri, Sylvain Pion
 
 #ifndef CGAL_LAZY_H
 #define CGAL_LAZY_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle.h>
@@ -1759,5 +1762,6 @@ struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> { \
 #undef CGAL_LEXACT
 #undef CGAL_LARGS
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_LAZY_H

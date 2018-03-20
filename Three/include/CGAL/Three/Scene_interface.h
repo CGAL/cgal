@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent RINEAU
@@ -36,7 +37,6 @@ enum RenderingMode
 {
   Points = 0, //! Renders only points without lighting.
   PointsPlusNormals, //!Renders points and normals.
-  Splatting, //!Renders splats. Splats are oriented points that look like discs.
   Wireframe, //!Renders only edges.
   Flat, //!Renders only faces, with a lighting per face.
   FlatPlusEdges, //!Renders flat faces and edges.

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -27,6 +28,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -732,7 +734,7 @@ operator()(int nb_iterations, Visitor visitor)
   big_moves_size_ =
     (std::max)(std::size_t(1), std::size_t(moving_vertices.size()/500));
 
-  std::size_t nb_vertices_moved = -1;
+  std::size_t nb_vertices_moved = (std::numeric_limits<size_t>::max)();
   bool convergence_stop = false;
 
   // Iterate
@@ -1176,5 +1178,7 @@ sq_circumradius_length(const Cell_handle& cell, const Vertex_handle& v) const
 } // end namespace Mesh_3
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_MESH_GLOBAL_OPTIMIZER_H

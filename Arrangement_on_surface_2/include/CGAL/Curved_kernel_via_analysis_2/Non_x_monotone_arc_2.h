@@ -14,15 +14,13 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 
 #ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_NON_X_MONOTONE_ARC_2_H
 #define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_NON_X_MONOTONE_ARC_2_H
-
-#include <CGAL/license/Arrangement_on_surface_2.h>
-
 
 /*!\file include/CGAL/Curved_kernel_via_analysis_2/Non_x_monotone_arc_2.h
  * \brief defines class \c Non_x_monotone_arc_2

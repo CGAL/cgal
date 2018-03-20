@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau
@@ -23,6 +24,7 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Complex_2_in_triangulation_3.h>
 
@@ -45,5 +47,7 @@ public:
 }; // end Surface_mesh_complex_2_in_triangulation_3
 
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_COMPLEX_2_IN_TRIANGULATION_3_H

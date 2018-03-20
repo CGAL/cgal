@@ -12,6 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Frederic Fichel, Mariette Yvinec, Julia Floetotto
 
 #ifndef CGAL_REGULAR_TRIANGULATION_2_H
@@ -200,8 +204,11 @@ public:
   typedef Finite_edges_iterator                Edge_iterator;
   typedef Finite_vertices_iterator             Vertex_iterator;
 
- //Tag to distinguish Delaunay from regular triangulations
+  //Tag to distinguish Delaunay from regular triangulations
   typedef Tag_true  Weighted_tag;
+
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_false  Periodic_tag;
 
 private:
   size_type _hidden_vertices;

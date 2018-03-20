@@ -10,6 +10,7 @@
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Advancing_front_surface_reconstruction.h>
 #include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/disable_warnings.h>
 
 #include <boost/lexical_cast.hpp>
 
@@ -21,13 +22,13 @@ typedef CGAL::First_of_pair_property_map<Point_with_normal>  Point_map;
 typedef CGAL::Second_of_pair_property_map<Point_with_normal> Normal_map;
 
 // Efficient RANSAC types
-typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits
+typedef CGAL::Shape_detection_3::Shape_detection_traits
   <Kernel, Pwn_vector, Point_map, Normal_map>                Traits;
 typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>    Efficient_ransac;
 typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
 
 // Point set structuring type
-typedef CGAL::Point_set_with_structure<Traits>               Structure;
+typedef CGAL::Point_set_with_structure<Kernel>               Structure;
 
 // Advancing front types
 typedef CGAL::Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
@@ -115,10 +116,10 @@ int main (int argc, char* argv[])
   std::ifstream stream(fname);
 
   if (!stream || 
-    !CGAL::read_xyz_points_and_normals(stream,
+    !CGAL::read_xyz_points(stream,
       std::back_inserter(points),
-      Point_map(),
-      Normal_map()))
+      CGAL::parameters::point_map(Point_map()).
+      normal_map(Normal_map())))
   {
       std::cerr << "Error: cannot read file" << std::endl;
       return EXIT_FAILURE;
@@ -140,11 +141,19 @@ int main (int argc, char* argv[])
 
   ransac.detect(op); // Plane detection
 
+  Efficient_ransac::Plane_range planes = ransac.planes();
+
   std::cerr << "done\nPoint set structuring... ";
 
   Pwn_vector structured_pts;
-  Structure pss (points.begin (), points.end (), ransac,
-                 op.cluster_epsilon);  // Same parameter as RANSAC
+  Structure pss (points,
+                 planes,
+                 op.cluster_epsilon,  // Same parameter as RANSAC
+                 CGAL::parameters::point_map (Point_map()).
+                 normal_map (Normal_map()).
+                 plane_map (CGAL::Shape_detection_3::Plane_map<Traits>()).
+                 plane_index_map(CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes)));
+
 
   for (std::size_t i = 0; i < pss.size(); ++ i)
     structured_pts.push_back (pss[i]);

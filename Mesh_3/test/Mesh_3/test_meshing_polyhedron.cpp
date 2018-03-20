@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -31,6 +32,8 @@
 #include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/Mesh_3/Dump_c3t3.h>
+
+#include <CGAL/disable_warnings.h>
 
 template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Polyhedron_tester : public Tester<K>

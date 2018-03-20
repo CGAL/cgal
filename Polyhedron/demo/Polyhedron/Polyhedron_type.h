@@ -44,6 +44,11 @@ public:
     return nb_of_feature_edges != 0;
   }
 
+  void clear_incident_patches()
+  {
+    indices.clear();
+  }
+
   void add_incident_patch(const Patch_id& i) {
     indices.insert(i);
   }
@@ -62,6 +67,11 @@ public:
 
   const Set_of_indices&
   incident_patches_ids_set() const {
+    return indices;
+  }
+
+  Set_of_indices&
+  incident_patches_ids_set() {
     return indices;
   }
 

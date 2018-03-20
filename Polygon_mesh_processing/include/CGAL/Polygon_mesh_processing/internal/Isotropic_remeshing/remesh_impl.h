@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Jane Tournois
@@ -169,8 +170,9 @@ namespace internal {
     typedef EdgeIsConstrainedMap                                ECMap;
     typedef Connected_components_pmap<PM, ECMap, FIMap>         CCMap;
 
-    typedef CGAL::internal::face_property_t<Patch_id> Face_property_tag;
-    typename CGAL::internal::dynamic_property_map<PM, Face_property_tag >::type patch_ids_map;
+    typedef CGAL::dynamic_face_property_t<Patch_id> Face_property_tag;
+    typedef typename boost::property_map<PM, Face_property_tag >::type Patch_ids_map;
+    Patch_ids_map patch_ids_map;
     std::size_t nb_cc;
 
   public:
@@ -179,14 +181,14 @@ namespace internal {
     typedef Patch_id&                           reference;
     typedef boost::read_write_property_map_tag  category;
 
-    //note pmesh is a non-const ref because add_property() and remove_property()
+    //note pmesh is a non-const ref because properties are added and removed
     //modify the mesh data structure, but not the mesh itself
     Connected_components_pmap(PM& pmesh
                             , EdgeIsConstrainedMap ecmap
                             , FIMap fimap
                             , const bool do_init = true)
     {
-      patch_ids_map = CGAL::internal::add_property(Face_property_tag("PMP_patch_id"), pmesh);
+      patch_ids_map = get(Face_property_tag(),pmesh);
       if (do_init)
       {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -198,15 +200,11 @@ namespace internal {
                                       PMP::parameters::edge_is_constrained_map(ecmap)
                                      .face_index_map(fimap));
         if(nb_cc == 1){
-          CGAL::internal::remove_property(patch_ids_map, pmesh);
+          patch_ids_map = Patch_ids_map();
         }
       }
     }
 
-    friend void remove(CCMap m, PM& pmesh)
-    {
-      CGAL::internal::remove_property(m.patch_ids_map, pmesh);
-    }
 
     friend value_type get(const CCMap& m, const key_type& f)
     {
@@ -287,8 +285,8 @@ namespace internal {
     typedef CGAL::AABB_traits<GeomTraits, AABB_primitive> AABB_traits;
     typedef CGAL::AABB_tree<AABB_traits>                  AABB_tree;
 
-    typedef typename CGAL::internal::dynamic_property_map<
-      PM, CGAL::internal::halfedge_property_t<Halfedge_status> >::type Halfedge_status_pmap;
+    typedef typename boost::property_map<
+      PM, CGAL::dynamic_halfedge_property_t<Halfedge_status> >::type Halfedge_status_pmap;
 
   public:
     Incremental_remesher(PolygonMesh& pmesh
@@ -311,31 +309,21 @@ namespace internal {
       , vcmap_(vcmap)
       , fimap_(fimap)
     {
-      halfedge_status_pmap_ = CGAL::internal::add_property(
-        CGAL::internal::halfedge_property_t<Halfedge_status>("PMP_halfedge_status", MESH),
-        pmesh);
+      halfedge_status_pmap_ = get(CGAL::dynamic_halfedge_property_t<Halfedge_status>(),
+                                  pmesh);
+      BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh_))
+        put(halfedge_status_pmap_, h, MESH);
+
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
     }
 
     ~Incremental_remesher()
     {
-      typedef Connected_components_pmap<PM, EdgeIsConstrainedMap, FaceIndexMap> CCPmap;
-      remove_connected_components_pmap
-        (CGAL::Boolean_tag<boost::is_same<FacePatchMap, CCPmap>::value>());
-
-      CGAL::internal::remove_property(halfedge_status_pmap_, mesh_);
-
       if (build_tree_){
         for(std::size_t i=0; i < trees.size();++i){
           delete trees[i];
         }
       }
-    }
-
-    void remove_connected_components_pmap(CGAL::Tag_false) {}
-    void remove_connected_components_pmap(CGAL::Tag_true)
-    {
-      remove(patch_ids_map_, mesh_);
     }
 
     template<typename FaceRange>
@@ -1475,6 +1463,8 @@ private:
         if (is_border(h, mesh_)){
           set_status(h, MESH_BORDER); //erase previous value if exists
           has_border_ = true;
+        } else {
+          set_status(h, MESH);
         }
       }
 
@@ -1754,10 +1744,7 @@ private:
     void halfedge_added(const halfedge_descriptor& h,
                         const Halfedge_status& s)
     {
-      // AF: Can s be MESH?
-      if(s != MESH){
         set_status(h, s);
-      }
     }
 
     void halfedge_and_opp_removed(const halfedge_descriptor& h)

@@ -55,7 +55,7 @@ public:
     actionStitchBorders= new QAction(tr("Stitch Duplicated Boundaries"), mainWindow);
     actionDetectBorders->setObjectName("actionDetectBorders");
     actionStitchBorders->setObjectName("actionStitchBorders");
-    actionStitchBorders->setProperty("subMenuName", "Polygon Mesh Processing");
+    actionStitchBorders->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
     actionDetectBorders->setProperty("subMenuName", "Polygon Mesh Processing");
     autoConnectActions();
   }

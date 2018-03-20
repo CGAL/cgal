@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -25,6 +26,7 @@
 
 #include <CGAL/license/Segment_Delaunay_graph_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <iostream>
 #include <vector>
@@ -56,7 +58,7 @@
 #include <CGAL/assertions.h>
 
 #include <CGAL/boost/iterator/counting_iterator.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 /*
   Conventions:
@@ -2029,5 +2031,6 @@ std::ostream& operator<<(std::ostream& os,
 
 #include <CGAL/Segment_Delaunay_graph_2/Segment_Delaunay_graph_2_impl.h>
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_H

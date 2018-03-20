@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -23,6 +24,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Cartesian_converter.h>
@@ -2170,6 +2172,8 @@ intersection_Polyhedron_3_Polyhedron_3(const Polyhedron& P, const Polyhedron& Q,
 }
 
 }// namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_INTERSECTION_OF_POLYHEDRA_3_H
 

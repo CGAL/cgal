@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s): Efi Fogel      <efif@post.tau.ac.il>
 //            Eric Berberich <ericb@post.tau.ac.il>
@@ -23,6 +24,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * A counting traits-class for the arrangement package.
@@ -1064,5 +1066,7 @@ Out_stream& operator<<(Out_stream& os,
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

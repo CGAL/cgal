@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
@@ -1170,7 +1171,6 @@ Node* build_kdtree(Object_list& O, Object_iterator v_end,
     CGAL_NEF_TRACEN("build_kdtree: splitting plane not found");
     //    if(depth > max_depth)
     return new Node( parent, 0, 0, Plane_3(), O);
-    non_efective_split = true;
   } else {
     CGAL_NEF_TRACEN("Sizes " << O1.size() << ", " << O2.size() << ", " << O.size());
     CGAL_assertion( O1.size() <= O.size() && O2.size() <= O.size());

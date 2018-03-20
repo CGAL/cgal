@@ -15,7 +15,6 @@
 
 #include <map>
 #include <vector>
-#include <CGAL/gl.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Real_timer.h>
 
@@ -43,10 +42,12 @@ class Scene_intersection_item : public CGAL::Three::Scene_item
   Q_OBJECT
 public :
   Scene_intersection_item(Scene_c3t3_item* parent)
-  :CGAL::Three::Scene_item(NumberOfBuffers,NumberOfVaos)
+  :CGAL::Three::Scene_item(NumberOfBuffers,NumberOfVaos),
+    is_fast(false)
   {
     setParent(parent);
   }
+  bool isFinite() const { return false; }
   void init_vectors(
       std::vector<float> *p_vertices,
       std::vector<float> *p_normals,
@@ -68,13 +69,13 @@ public :
   }
   // Indicates if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
-    return (m != Gouraud && m != PointsPlusNormals && m != Splatting && m != Points && m != ShadedPoints);
+    return (m != Gouraud && m != PointsPlusNormals && m != Points && m != ShadedPoints);
   }
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer)
   {
    //vao containing the data for the facets
     {
-      program = getShaderProgram(PROGRAM_C3T3_TETS, viewer);
+      program = getShaderProgram(PROGRAM_C3T3, viewer);
       program->bind();
 
       vaos[Facets]->bind();
@@ -130,11 +131,16 @@ public :
   //Displays the item
   void draw(CGAL::Three::Viewer_interface* viewer) const
   {
+    if(is_fast)
+      return;
+    const Kernel::Plane_3& plane = qobject_cast<Scene_c3t3_item*>(this->parent())->plane();
     vaos[Facets]->bind();
-    program = getShaderProgram(PROGRAM_C3T3_TETS);
-    attribBuffers(viewer, PROGRAM_C3T3_TETS);
+    program = getShaderProgram(PROGRAM_C3T3);
+    attribBuffers(viewer, PROGRAM_C3T3);
     program->bind();
     float shrink_factor = qobject_cast<Scene_c3t3_item*>(this->parent())->getShrinkFactor();
+    QVector4D cp(-plane.a(), -plane.b(), -plane.c(), -plane.d());
+    program->setUniformValue("cutplane", cp);
     program->setUniformValue("shrink_factor", shrink_factor);
     // positions_poly is also used for the faces in the cut plane
     // and changes when the cut plane is moved
@@ -144,6 +150,8 @@ public :
   }
   void drawEdges(CGAL::Three::Viewer_interface* viewer) const
   {
+    if(is_fast)
+      return;
     vaos[Lines]->bind();
     program = getShaderProgram(PROGRAM_NO_SELECTION);
     attribBuffers(viewer, PROGRAM_NO_SELECTION);
@@ -153,6 +161,12 @@ public :
     program->release();
     vaos[Lines]->release();
   }
+
+  void setFast(bool b)
+  {
+    is_fast = b;
+  }
+
   void addTriangle(const Tr::Bare_point& pa, const Tr::Bare_point& pb,
                    const Tr::Bare_point& pc, const CGAL::Color color)
   {
@@ -209,9 +223,9 @@ public :
       colors->push_back((float)color.green()/255);
       colors->push_back((float)color.blue()/255);
 
-      barycenters->push_back((pa[0]+pb[0]+pc[0])/3.0);
-      barycenters->push_back((pa[1]+pb[1]+pc[1])/3.0);
-      barycenters->push_back((pa[2]+pb[2]+pc[2])/3.0);
+      barycenters->push_back((pa[0]+pb[0]+pc[0])/3.0 + offset.x);
+      barycenters->push_back((pa[1]+pb[1]+pc[1])/3.0 + offset.y);
+      barycenters->push_back((pa[2]+pb[2]+pc[2])/3.0 + offset.z);
     }
   }
 
@@ -241,6 +255,7 @@ private:
   mutable std::vector<float> *colors;
   mutable std::vector<float> *barycenters;
   mutable QOpenGLShaderProgram *program;
+  mutable bool is_fast;
 }; //end of class Scene_triangle_item
 
 
@@ -284,7 +299,6 @@ struct Scene_c3t3_item_priv {
     tree.clear();
     if(frame)
     {
-      static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->setManipulatedFrame(0);
       delete frame;
       frame = NULL;
       delete tet_Slider;
@@ -303,7 +317,7 @@ struct Scene_c3t3_item_priv {
     intersection = NULL;
     spheres_are_shown = false;
     cnc_are_shown = false;
-    show_tetrahedra = false;
+    show_tetrahedra = true;
     is_aabb_tree_built = false;
     are_intersection_buffers_filled = false;
     is_grid_shown = true;
@@ -901,16 +915,19 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   vaos[Scene_c3t3_item_priv::Facets]->release();
 
   if(d->show_tetrahedra){
+    ncthis->show_intersection(true);
+    if(!d->frame->isManipulated())
+      d->intersection->setFast(false);
+    else
+      d->intersection->setFast(true);
+
     if(!d->frame->isManipulated() && !d->are_intersection_buffers_filled)
     {
-      if(!d->intersection->visible())
-        d->intersection->setVisible(true);
       ncthis->d->computeIntersections();
       d->intersection->initialize_buffers(viewer);
       d->are_intersection_buffers_filled = true;
+      ncthis->show_intersection(true);
     }
-    else if(d->frame->isManipulated() && d->intersection->visible())
-      d->intersection->setVisible(false);
   }
 
   if(d->spheres_are_shown)
@@ -941,7 +958,7 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
   if(renderingMode() == FlatPlusEdges)
   {
     GLint renderMode;
-    glGetIntegerv(GL_RENDER_MODE, &renderMode);
+    viewer->glGetIntegerv(GL_RENDER_MODE, &renderMode);
     if(renderMode == GL_SELECT) return;
   }
   Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
@@ -979,16 +996,16 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
   vaos[Scene_c3t3_item_priv::Edges]->release();
 
   if(d->show_tetrahedra){
+    if(!d->frame->isManipulated())
+      d->intersection->setFast(false);
+    else
+      d->intersection->setFast(true);
     if(!d->frame->isManipulated() && !d->are_intersection_buffers_filled)
     {
-      if(!d->intersection->visible())
-        d->intersection->setVisible(true);
       ncthis->d->computeIntersections();
       d->intersection->initialize_buffers(viewer);
       d->are_intersection_buffers_filled = true;
     }
-    else if(d->frame->isManipulated() && d->intersection->visible())
-      d->intersection->setVisible(false);
   }
   if(d->spheres_are_shown)
   {
@@ -1079,9 +1096,9 @@ void Scene_c3t3_item_priv::draw_triangle(const Tr::Bare_point& pa,
 
   for(int i=0; i<3; ++i)
   {
-   positions_barycenter.push_back((pa[0]+pb[0]+pc[0])/3.0);
-   positions_barycenter.push_back((pa[1]+pb[1]+pc[1])/3.0);
-   positions_barycenter.push_back((pa[2]+pb[2]+pc[2])/3.0);
+   positions_barycenter.push_back((pa[0]+pb[0]+pc[0])/3.0 + offset.x);
+   positions_barycenter.push_back((pa[1]+pb[1]+pc[1])/3.0 + offset.y);
+   positions_barycenter.push_back((pa[2]+pb[2]+pc[2])/3.0 + offset.z);
   }
 
 
@@ -1408,7 +1425,7 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
   Tr::Cell_handle ch = facet.id().first;
   if(intersected_cells.find(ch) == intersected_cells.end())
   {
-    QColor c = this->colors_subdomains[ch->subdomain_index()].darker(150);
+    QColor c = this->colors_subdomains[ch->subdomain_index()].light(50);
 
     const Tr::Bare_point& pa = wp2p(ch->vertex(0)->point());
     const Tr::Bare_point& pb = wp2p(ch->vertex(1)->point());
@@ -1433,9 +1450,10 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
         const Tr::Bare_point& pc = wp2p(nh->vertex(2)->point());
         const Tr::Bare_point& pd = wp2p(nh->vertex(3)->point());
 
-        QColor c = this->colors_subdomains[nh->subdomain_index()].darker(150);
+        QColor c = this->colors_subdomains[nh->subdomain_index()].light(50);
 
         CGAL::Color color(c.red(), c.green(), c.blue());
+
         intersection->addTriangle(pb, pa, pc, color);
         intersection->addTriangle(pa, pb, pd, color);
         intersection->addTriangle(pa, pd, pc, color);
@@ -1655,7 +1673,8 @@ Scene_c3t3_item_priv::reset_cut_plane() {
   const float ycenter = static_cast<float>((bbox.ymax()+bbox.ymin())/2.);
   const float zcenter = static_cast<float>((bbox.zmax()+bbox.zmin())/2.);
  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-  frame->setPosition(qglviewer::Vec(xcenter+offset.x, ycenter+offset.y, zcenter+offset.z));
+ qglviewer::Vec center(xcenter+offset.x, ycenter+offset.y, zcenter+offset.z);
+  frame->setPosition(center);
 }
 
 void
@@ -1813,7 +1832,7 @@ bool Scene_c3t3_item::keyPressEvent(QKeyEvent *event)
    d->tet_Slider->setValue(d->tet_Slider->value() -5);
    itemChanged();
  }
- return true;
+ return false;
 }
 
 QString Scene_c3t3_item::computeStats(int type)
@@ -2032,6 +2051,7 @@ CGAL::Three::Scene_item::Header_data Scene_c3t3_item::header() const
 void Scene_c3t3_item::invalidateOpenGLBuffers()
 {
   are_buffers_filled = false;
+  resetCutPlane();
   compute_bbox();
   d->invalidate_stats();
 }

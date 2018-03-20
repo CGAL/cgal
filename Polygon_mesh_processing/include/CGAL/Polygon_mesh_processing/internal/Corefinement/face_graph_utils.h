@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -1282,7 +1283,7 @@ remove_patches(TriangleMesh& tm,
           CGAL_assertion( is_border(nxt, tm) );//we marked it above!
           // now update the prev pointer
           halfedge_descriptor prv=prev(opposite(h, tm), tm);
-          set_next(prv, next(h, tm), tm);
+          set_next(prv, nxt, tm);
           set_halfedge(target(prv, tm), prv, tm);
         }
       }

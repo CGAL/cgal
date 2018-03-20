@@ -24,7 +24,6 @@
 #include <CGAL/Three/Scene_group_item.h>
 class QEvent;
 class QMouseEvent;
-namespace GlSplat { class SplatRenderer; }
 namespace CGAL { namespace Three{ class Viewer_interface;}}
 
 //! This class is not supposed to be used by Plugins, but sometimes you may need access to
@@ -78,7 +77,7 @@ public:
   QList<int> selectionIndices() const Q_DECL_OVERRIDE;
   int selectionAindex() const Q_DECL_OVERRIDE;
   int selectionBindex() const Q_DECL_OVERRIDE;
-  void initializeGL() Q_DECL_OVERRIDE;
+  void initializeGL(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
   void setPickedPixel(const QPoint &p) Q_DECL_OVERRIDE {picked_pixel = p;}
   void draw(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
   void drawWithNames(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
@@ -191,7 +190,7 @@ public Q_SLOTS:
        if(group)
        {
          QList<int> list;
-         Q_FOREACH(CGAL::Three::Scene_item* child, group->getChildren())
+         Q_FOREACH(CGAL::Three::Scene_item* child, group->getChildrenForSelection())
            list<<m_entries.indexOf(child);
          l << setSelectedItemsList(list);
        }
@@ -259,12 +258,7 @@ private:
   bool picked;
   QPoint picked_pixel;
   bool gl_init;
-  static GlSplat::SplatRenderer* ms_splatting;
-  static int ms_splattingCounter;
   QMap<QModelIndex, int> index_map;
-
-public:
-  static GlSplat::SplatRenderer* splatting();
 
 }; // end class Scene
 

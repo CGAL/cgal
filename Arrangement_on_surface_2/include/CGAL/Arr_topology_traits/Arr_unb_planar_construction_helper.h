@@ -14,85 +14,104 @@
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0+
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein        <wein@post.tau.ac.il>
-//                 Efi Fogel       <efif@post.tau.ac.il>
+//                 Ron Wein <wein@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_UNB_PLANAR_CONSTRUCTION_HELPER_H
 #define CGAL_ARR_UNB_PLANAR_CONSTRUCTION_HELPER_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
-
-/*!
+/*! \file
+ *
  * Definition of the Arr_unb_planar_construction_helper class-template.
  */
 
-#include <CGAL/Sweep_line_empty_visitor.h>
+#include <CGAL/Arr_accessor.h>
 #include <CGAL/Unique_hash_map.h>
 
 namespace CGAL {
 
 /*! \class Arr_unb_planar_construction_helper
+ *
  * A helper class for the construction sweep-line visitor, suitable
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for unbounded curves in the plane.
  */
-template <class Traits_, class Arrangement_, class Event_, class Subcurve_> 
-class Arr_unb_planar_construction_helper
-{
+template <typename GeometryTraits_2, typename Arrangement_, typename Event_,
+          typename Subcurve_>
+class Arr_unb_planar_construction_helper {
 public:
+  typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef Arrangement_                                  Arrangement_2;
+  typedef Event_                                        Event;
+  typedef Subcurve_                                     Subcurve;
+  typedef typename Subcurve::Allocator                  Allocator;
 
-  typedef Traits_                                      Traits_2;
-  typedef Arrangement_                                 Arrangement_2;
-  typedef Event_                                       Event;
-  typedef Subcurve_                                    Subcurve;
+  // The following should be private. It is declared 'protected' as a
+  // workaround to a problem with VC. (At least VC 14 exhibits this problem).
+  // When declared private, VC claims that Gt2 is private (within
+  // Arr_unb_planar_construction_helper); thus, it cannot be access by
+  // Arr_unb_planar_construction_helper.
+protected:
+  typedef Geometry_traits_2                             Gt2;
 
-  typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
-  typedef typename Traits_2::Point_2                   Point_2;
+public:
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Gt2::Point_2                         Point_2;
 
-  typedef Sweep_line_empty_visitor<Traits_2, Subcurve, Event>
-                                                       Base_visitor;
+  typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
+  typedef typename Arrangement_2::Face_handle           Face_handle;
 
-  typedef typename Arrangement_2::Halfedge_handle      Halfedge_handle;
-  typedef typename Arrangement_2::Face_handle          Face_handle;
-  
-  typedef typename Subcurve::Halfedge_indices_list     Indices_list;
-  typedef Unique_hash_map<Halfedge_handle, 
-                          Indices_list>                Halfedge_indices_map;
+  typedef typename Subcurve::Halfedge_indices_list      Indices_list;
+  typedef Unique_hash_map<Halfedge_handle, Indices_list>
+                                                        Halfedge_indices_map;
+
+  /*! \struct rebind
+   * An auxiliary structure for rebinding the helper with a new types.
+   * Mainly used to rebind the geometry-traits type and a new type that derives
+   * from the old one.
+   */
+  template <typename OtherGeometryTraits_2, typename OtherArrangement,
+            typename OtherEvent, typename OtherSubcurve>
+  struct rebind {
+    typedef Arr_unb_planar_construction_helper<OtherGeometryTraits_2,
+                                               OtherArrangement,
+                                               OtherEvent, OtherSubcurve>
+                                                        other;
+  };
 
 protected:
-
-  typedef typename Arrangement_2::Topology_traits      Topology_traits;
-  typedef typename Arrangement_2::Vertex_handle        Vertex_handle;
+  typedef typename Arrangement_2::Topology_traits       Topology_traits;
+  typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
 
   // Data members:
-  Topology_traits*         m_top_traits;  // The topology-traits class.
-  Arr_accessor<Arrangement_2>
-                           m_arr_access;  // An arrangement accessor.
+  Topology_traits* m_top_traits;        // The topology-traits class.
+  Arr_accessor<Arrangement_2> m_arr_access; // An arrangement accessor.
 
-  Halfedge_handle          m_lh;          // The current left fictitious
-                                          // halfedge (on x = -oo).
-  Halfedge_handle          m_th;          // The current top fictitious
-                                          // halfedge (on y = +oo).
-  Halfedge_handle          m_bh;          // The current bottom fictitious
-                                          // halfedge (on y = -oo).
-  Halfedge_handle          m_rh;          // The current right fictitious
-                                          // halfedge (on x = +oo).
+  Halfedge_handle m_lh;                 // The current left fictitious
+                                        // halfedge (on x = -oo).
+  Halfedge_handle m_th;                 // The current top fictitious
+                                        // halfedge (on y = +oo).
+  Halfedge_handle m_bh;                 // The current bottom fictitious
+                                        // halfedge (on y = -oo).
+  Halfedge_handle m_rh;                 // The current right fictitious
+                                        // halfedge (on x = +oo).
 
-  Indices_list      m_subcurves_at_ubf;       // Indices of the curves that
+  Indices_list m_subcurves_at_ubf;      // Indices of the curves that
                                               // "see" m_th from below.
-  Event*            m_prev_minus_inf_x_event; // The previous event at x = -oo.
-  Event*            m_prev_plus_inf_y_event;  // The previous event at y = +oo.
+  Event* m_prev_minus_inf_x_event;      // The previous event at x = -oo.
+  Event* m_prev_plus_inf_y_event;       // The previous event at y = +oo.
 
-  Halfedge_indices_map*    m_he_ind_map_p;    // A pointer to a map of
-                                              // halfedges to indices lists
-                                              // (stored in the visitor class).
-  
+  Halfedge_indices_map* m_he_ind_map_p; // A pointer to a map of
+                                        // halfedges to indices lists
+                                        // (stored in the visitor class).
+
 public:
- 
   /*! Constructor. */
   Arr_unb_planar_construction_helper(Arrangement_2* arr) :
     m_top_traits(arr->topology_traits()),
@@ -124,15 +143,10 @@ public:
 
   /*! Collect a subcurve index that does not see any status-line from below. */
   void add_subcurve_in_top_face(unsigned int index)
-  {
-    m_subcurves_at_ubf.push_back(index);
-  }
+  { m_subcurves_at_ubf.push_back(index); }
 
   /*! Get the indices of the halfedges below the subcurve. */
-  Indices_list& halfedge_indices_list()
-  {
-    return (m_subcurves_at_ubf);
-  }
+  Indices_list& halfedge_indices_list() { return (m_subcurves_at_ubf); }
 
 
   /*! A notification invoked before the given event it deallocated. */
@@ -143,16 +157,14 @@ public:
     if (event == m_prev_plus_inf_y_event)
       m_prev_plus_inf_y_event = NULL;
   }
-  //@} 
-  
+  //@}
+
   /*!
    * Set the map that maps each halfedge to the list of subcurve indices
    * that "see" the halfedge from below.
    */
   void set_halfedge_indices_map(Halfedge_indices_map& table)
-  {
-    m_he_ind_map_p = &table;
-  }
+  { m_he_ind_map_p = &table; }
 
   /*!
    * Determine if we should swap the order of predecessor halfedges when
@@ -169,9 +181,7 @@ public:
 
   /*! Get the current top face. */
   Face_handle top_face() const
-  {
-    return (m_th->face());
-  }
+  { return (m_th->face()); }
 };
 
 //-----------------------------------------------------------------------------
@@ -181,7 +191,7 @@ public:
 //-----------------------------------------------------------------------------
 // A notification issued before the sweep process starts.
 //
-template <class Tr, class Arr, class Evnt, class Sbcv> 
+template <class Tr, class Arr, class Evnt, class Sbcv>
 void Arr_unb_planar_construction_helper<Tr,Arr,Evnt,Sbcv>::before_sweep()
 {
   // Obtain the four fictitious vertices that form the "corners" of the
@@ -191,7 +201,7 @@ void Arr_unb_planar_construction_helper<Tr,Arr,Evnt,Sbcv>::before_sweep()
   CGAL_assertion_code
     (Vertex_handle v_br = Vertex_handle(m_top_traits->bottom_right_vertex());
      Vertex_handle v_tr = Vertex_handle(m_top_traits->top_right_vertex()));
-  
+
   // Get the fictitous halfedges incident to these vertices, representing
   // the left, right, top and bottom edges of the fictitious face.
   //
@@ -205,7 +215,7 @@ void Arr_unb_planar_construction_helper<Tr,Arr,Evnt,Sbcv>::before_sweep()
   //
   m_lh = v_tl->incident_halfedges();
   m_lh = (m_lh->source() != v_bl) ? m_lh->next() : m_lh->twin();
-  
+
   m_bh = m_lh->next();
   m_rh = m_bh->next();
   m_th = m_rh->next();
@@ -215,15 +225,15 @@ void Arr_unb_planar_construction_helper<Tr,Arr,Evnt,Sbcv>::before_sweep()
   CGAL_assertion(m_lh->direction() == ARR_RIGHT_TO_LEFT);
   CGAL_assertion(m_lh->face() != fict_face);
   CGAL_assertion(m_lh->source() == v_tl && m_lh->target() == v_bl);
-  
+
   CGAL_assertion(m_bh->direction() == ARR_LEFT_TO_RIGHT);
   CGAL_assertion(m_bh->face() != fict_face);
   CGAL_assertion(m_bh->source() == v_bl && m_bh->target() == v_br);
-  
+
   CGAL_assertion(m_rh->direction() == ARR_LEFT_TO_RIGHT);
   CGAL_assertion(m_rh->face() != fict_face);
   CGAL_assertion(m_rh->source() == v_br && m_rh->target() == v_tr);
-  
+
   CGAL_assertion(m_th->direction() == ARR_RIGHT_TO_LEFT);
   CGAL_assertion(m_th->face() != fict_face);
   CGAL_assertion(m_th->source() == v_tr && m_th->target() == v_tl);
@@ -233,7 +243,7 @@ void Arr_unb_planar_construction_helper<Tr,Arr,Evnt,Sbcv>::before_sweep()
 // A notification invoked before the sweep-line starts handling the given
 // event.
 //
-template <class Tr, class Arr, class Evnt, class Sbcv> 
+template <class Tr, class Arr, class Evnt, class Sbcv>
 void Arr_unb_planar_construction_helper<Tr, Arr, Evnt, Sbcv>::
 before_handle_event(Event* event)
 {
@@ -246,15 +256,15 @@ before_handle_event(Event* event)
                   (event->number_of_right_curves() == 1)) ||
                  ((event->number_of_left_curves() == 1) &&
                   (event->number_of_right_curves() == 0)));
-  Arr_curve_end  ind = (event->number_of_left_curves() == 0 &&
-                        event->number_of_right_curves() == 1) ?
+  Arr_curve_end ind = (event->number_of_left_curves() == 0 &&
+                       event->number_of_right_curves() == 1) ?
     ARR_MIN_END : ARR_MAX_END;
-  const X_monotone_curve_2&  xc = (ind == ARR_MIN_END) ?
+  const X_monotone_curve_2& xc = (ind == ARR_MIN_END) ?
     (*(event->right_curves_begin()))->last_curve() :
     (*(event->left_curves_begin()))->last_curve();
 
-  const Arr_parameter_space  ps_x = event->parameter_space_in_x();
-  const Arr_parameter_space  ps_y = event->parameter_space_in_y();
+  const Arr_parameter_space ps_x = event->parameter_space_in_x();
+  const Arr_parameter_space ps_y = event->parameter_space_in_y();
 
   // Create a vertex at infinity and split the corresponding fictitious edge.
   Vertex_handle v_at_inf =
@@ -280,11 +290,9 @@ before_handle_event(Event* event)
     m_rh = m_rh->next();
     return;
 
-  case ARR_INTERIOR:
-    break;
+   case ARR_INTERIOR: break;
 
-  default:
-    CGAL_error();
+   default: CGAL_error();
   }
 
   switch (ps_y) {
@@ -303,7 +311,7 @@ before_handle_event(Event* event)
 
       // Update the incident halfedge of the previous vertex at y = +oo
       // (m_th used to be incident to it, but now we have split it).
-      if(m_prev_plus_inf_y_event != NULL)
+      if (m_prev_plus_inf_y_event != NULL)
         m_prev_plus_inf_y_event->set_halfedge_handle(m_th->next());
       m_prev_plus_inf_y_event = event;
 
@@ -315,8 +323,7 @@ before_handle_event(Event* event)
         list_ref.clear();
         list_ref.splice(list_ref.end(), m_subcurves_at_ubf);
       }
-      else
-      {
+      else {
         m_subcurves_at_ubf.clear();
       }
       CGAL_assertion(m_subcurves_at_ubf.empty());
@@ -330,6 +337,6 @@ before_handle_event(Event* event)
   }
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

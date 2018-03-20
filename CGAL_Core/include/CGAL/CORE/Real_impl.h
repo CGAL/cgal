@@ -33,6 +33,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 #ifdef CGAL_HEADER_ONLY
@@ -40,6 +41,8 @@
 #else
 #define CGAL_INLINE_FUNCTION
 #endif
+
+#include <CGAL/disable_warnings.h>
 
 #include <ctype.h>
 #include <CGAL/CORE/Real.h>
@@ -267,7 +270,7 @@ std::istream& operator >>(std::istream& i, Real& x) {
   }
   // chenli: make sure that the p is still in the range
   if (p - str >= size) {
-    int len = p - str;
+    std::ptrdiff_t len = p - str;
     char *t = str;
     str = new char[len + 1];
     std::memcpy(str, t, len);
@@ -290,3 +293,5 @@ std::istream& operator >>(std::istream& i, Real& x) {
 
 
 } //namespace CORE
+
+#include <CGAL/enable_warnings.h>

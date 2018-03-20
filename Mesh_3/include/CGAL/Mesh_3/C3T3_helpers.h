@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -27,6 +28,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/use.h>
@@ -46,7 +48,7 @@
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 #include <boost/optional.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/function_output_iterator.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_convertible.hpp>
@@ -1028,7 +1030,7 @@ private:
    * A functor which returns true if a given handle is in c3t3
    */
   template <typename Handle>
-  class Is_in_c3t3 : public std::unary_function<Handle, bool>
+  class Is_in_c3t3 : public CGAL::unary_function<Handle, bool>
   {
   public:
     Is_in_c3t3(const C3T3& c3t3) : c3t3_(c3t3) { }
@@ -1045,7 +1047,7 @@ private:
    * A functor which answers true if a Cell_handle is a sliver
    */
   template <typename SliverCriterion>
-  struct Is_sliver : public std::unary_function<Cell_handle,bool>
+  struct Is_sliver : public CGAL::unary_function<Cell_handle,bool>
   {
     Is_sliver(const C3T3& c3t3,
               const SliverCriterion& criterion,
@@ -1318,7 +1320,7 @@ private:
    */
   template <typename SliverCriterion>
   class Sliver_criterion_value
-    : public std::unary_function<Cell_handle, double>
+    : public CGAL::unary_function<Cell_handle, double>
   {
   public:
     Sliver_criterion_value(const Tr& tr,
@@ -1426,7 +1428,7 @@ private:
       subdomain_index_ = c->subdomain_index();
       for(std::size_t i = 0; i < 4; ++i)
       {
-        const int ii = static_cast<const int>(i);//avoid warnings
+        const int ii = static_cast<int>(i);//avoid warnings
         surface_index_table_[i] = c->surface_patch_index(ii);
         facet_surface_center_[i] = c->get_facet_surface_center(ii);
         surface_center_index_table_[i] = c->get_facet_surface_center_index(ii);
@@ -3941,5 +3943,7 @@ check_no_inside_vertices(const Facet_vector& facets) const
 
 } // end namespace Mesh_3
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_C3T3_HELPERS_H

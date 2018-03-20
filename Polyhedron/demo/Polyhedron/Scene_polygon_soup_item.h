@@ -103,11 +103,13 @@ class Scene_surface_mesh_item;
 class SCENE_POLYGON_SOUP_ITEM_EXPORT Scene_polygon_soup_item 
         : public CGAL::Three::Scene_item
 {
-    typedef Kernel::Point_3 Point_3;
-    typedef Polygon_soup::Points Points;
-
     Q_OBJECT
 public:  
+    typedef Kernel::Point_3 Point_3;
+    typedef Polygon_soup::Points Points;
+    typedef Polygon_soup::Polygons Polygons;
+    typedef Polygon_soup::Edges Edges;
+
     Scene_polygon_soup_item();
     ~Scene_polygon_soup_item();
 
@@ -115,6 +117,11 @@ public:
 
     template <class Point, class Polygon>
     void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons);
+    
+    template <class Point, class Polygon>
+    void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons,
+              const std::vector<CGAL::Color>& fcolors,
+              const std::vector<CGAL::Color>& vcolors);
 
     bool load(std::istream& in);
     void load(Scene_polyhedron_item*);
@@ -127,7 +134,7 @@ public:
     QString toolTip() const Q_DECL_OVERRIDE;
 
     // Indicate if rendering mode is supported
-    virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{ return ( m!=PointsPlusNormals && m!=Splatting && m!=ShadedPoints); }
+    virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{ return ( m!=PointsPlusNormals && m!=ShadedPoints); }
     // OpenGL drawing in a display list
     virtual void draw() const Q_DECL_OVERRIDE{}
     virtual void draw(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
@@ -144,6 +151,9 @@ public:
     void init_polygon_soup(std::size_t nb_pts, std::size_t nb_polygons);
 
     const Points& points() const;
+    const Polygons& polygons() const;
+    const Edges& non_manifold_edges() const;
+
 public Q_SLOTS:
     void shuffle_orientations();
     bool orient();

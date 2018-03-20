@@ -52,12 +52,12 @@ if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
 
   # Activate concurrency ? (turned OFF by default)
-  option(ACTIVATE_CONCURRENT_MESH_3
+  option(CGAL_ACTIVATE_CONCURRENT_MESH_3
     "Activate parallelism in Mesh_3"
     OFF)
     
   # And add -DCGAL_CONCURRENT_MESH_3 if that option is ON
-  if( ACTIVATE_CONCURRENT_MESH_3 )
+  if( CGAL_ACTIVATE_CONCURRENT_MESH_3 )
     add_definitions( -DCGAL_CONCURRENT_MESH_3 )
     find_package( TBB REQUIRED )	
   else()
@@ -67,11 +67,6 @@ if ( CGAL_FOUND )
     if( LINK_WITH_TBB )
       find_package( TBB )
     endif( LINK_WITH_TBB )
-  endif()
-  
-  if( TBB_FOUND )
-    include(${TBB_USE_FILE})
-    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
   endif()
 
   # Link with Boost.ProgramOptions (optional)
@@ -91,6 +86,9 @@ if ( CGAL_FOUND )
 
     # Compilable benchmark
     set (BENCHMARK_SOURCE_FILES "concurrency.cpp")
+    if(TBB_FOUND)
+      CGAL_target_use_TBB(concurrency)
+    endif()
     ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" BENCHMARK_SOURCE_FILES)
     create_single_source_cgal_program( ${BENCHMARK_SOURCE_FILES} )
     

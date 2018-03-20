@@ -31,6 +31,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 #ifdef CGAL_HEADER_ONLY
@@ -39,8 +40,9 @@
 #define CGAL_INLINE_FUNCTION
 #endif
 
+#include <CGAL/use.h>
 #include <CGAL/CORE/CoreAux.h>
-#include <gmp.h>
+#include <CGAL/gmp.h>
 
 namespace CORE { 
 
@@ -148,7 +150,7 @@ long gcd(long m, long n) {
   return p;
 }
 
-// char* core_itoa(int n, char* buffer)
+// char* core_itoa(int n, char* buffer, int buffer_size)
 //      returns a pointer to the null-terminated string in buffer
 // NOTES:
 // 0. Buffer size should be 17 bytes (resp., 33 bytes, 65 bytes) on 16-bit
@@ -160,8 +162,13 @@ long gcd(long m, long n) {
 // 3. A more general program should take a 3rd argument (the radix of
 //      output number).  We assume radix 10.
 CGAL_INLINE_FUNCTION
-char * core_itoa(int n, char* buffer) {
-	std::sprintf(buffer, "%d", n);
+char * core_itoa(int n, char* buffer, int buffer_size) {
+#if   defined(_MSC_VER)
+  sprintf_s(buffer, buffer_size, "%d", n);
+#else
+  CGAL_USE(buffer_size);
+  std::sprintf(buffer, "%d", n);
+#endif
 	return buffer;
 }
 
@@ -203,9 +210,9 @@ void core_error(std::string msg, std::string file, int lineno, bool err) {
   if (err) {
      char buf[65];
      // perror((std::string("CORE ERROR") + " (file " + file + ", line "
-     //        + core_itoa(lineno,buf) +"):" + msg + "\n").c_str());
+     //        + core_itoa(lineno,buf, 65) +"):" + msg + "\n").c_str());
      std::cerr << (std::string("CORE ERROR") + " (file " + file + ", line "
-             + core_itoa(lineno,buf) +"):" + msg + "\n").c_str();
+                   + core_itoa(lineno,buf, 65) +"):" + msg + "\n").c_str();
      std::exit(1); //Note: do not call abort()
   }
 }

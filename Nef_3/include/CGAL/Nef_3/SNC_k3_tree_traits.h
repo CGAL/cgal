@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
@@ -416,7 +417,6 @@ Side_of_plane<SNC_decorator>::operator()
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   }
 #endif
-  CGAL_error_msg( "should not be reached");
 }
 
 /* 

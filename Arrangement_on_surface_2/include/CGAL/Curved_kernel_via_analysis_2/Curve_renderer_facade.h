@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 //
@@ -28,9 +29,6 @@
 
 #ifndef CGAL_CKVA_CURVE_RENDERER_FACADE_H
 #define CGAL_CKVA_CURVE_RENDERER_FACADE_H
-
-#include <CGAL/license/Arrangement_on_surface_2.h>
-
 
 // do not compile curve renderer code (for fast debugging)
 //#define CGAL_CKVA_DUMMY_RENDERER
@@ -69,11 +67,13 @@
 #define STILL_ALIVE std::cout << __LINE__ << "\n";
 
 #include <CGAL/basic.h>
+#include <CGAL/tss.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Arithmetic_kernel.h>
 
 #include <boost/array.hpp>
 #include <CGAL/Curved_kernel_via_analysis_2/gfx/Curve_renderer_2.h>
+
 
 namespace CGAL {
 
@@ -100,7 +100,7 @@ public:
              Interval_double > Curve_renderer;
 
     static Curve_renderer& instance() {
-        static Curve_renderer _this;
+        CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Curve_renderer, _this);
         return _this;
     }
 
@@ -179,20 +179,20 @@ public:
 #ifdef CGAL_CKVA_USE_STATIC_RENDERER
     static Default_renderer_2& renderer()
     {
-        static Default_renderer_2 rend;
+        CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Default_renderer_2, rend);
         return rend;
     }
 #ifdef CGAL_CKVA_USE_MULTIPREC_ARITHMETIC
     static Bigfloat_renderer_2& bigfloat_renderer()
     {
-        static Bigfloat_renderer_2 rend;
+        CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Bigfloat_renderer_2, rend);
         return rend;
     }
 #endif
 #ifdef CGAL_CKVA_USE_RATIONAL_ARITHMETIC
     static Exact_renderer_2& exact_renderer()
     {
-        static Exact_renderer_2 rend;
+        CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Exact_renderer_2, rend);
         return rend;
     }
 #endif

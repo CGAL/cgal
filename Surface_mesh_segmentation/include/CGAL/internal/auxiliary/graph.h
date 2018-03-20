@@ -11,6 +11,11 @@
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-2.0+
+//
 /*
 ###################################################################
 #                                                                 #
@@ -238,6 +243,16 @@ void main()
 
 #ifndef __MAXFLOW_BLOCK_H__
 #define __MAXFLOW_BLOCK_H__
+
+#  if defined(CGAL_LICENSE_WARNING)
+     CGAL_pragma_warning("\nYou use the MaxFlow package of Vladimir Kolmogorov under the terms of the GPLv2+.")
+#  endif // CGAL_LICENSE_WARNING
+
+#  ifdef CGAL_LICENSE_ERROR
+#    error "You use the the MaxFlow package of Vladimir Kolmogorov under the terms of the GPLv2+.\
+You get this error, as you defined CGAL_LICENSE_ERROR."
+#  endif // CGAL_LICENSE_ERROR
+
 
 #include <stdlib.h>
 

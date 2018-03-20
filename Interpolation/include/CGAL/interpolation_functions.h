@@ -12,6 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Julia Floetotto
 
 #ifndef CGAL_INTERPOLATION_FUNCTIONS_H
@@ -31,7 +35,7 @@ namespace CGAL {
 //Functor class for accessing the function values/gradients
 template< class Map >
 struct Data_access
-    : public std::unary_function< typename Map::key_type,
+    : public CGAL::unary_function< typename Map::key_type,
                                   std::pair< typename Map::mapped_type, bool> >
 {
   typedef typename Map::mapped_type Data_type;

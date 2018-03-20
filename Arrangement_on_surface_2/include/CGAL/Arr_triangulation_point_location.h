@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 
@@ -21,6 +22,8 @@
 #define CGAL_ARR_TRIANGULATION_POINT_LOCATION_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 
 /*! \file
@@ -388,5 +391,7 @@ protected:
 
 // The member-function definitions can be found under:
 #include <CGAL/Arr_point_location/Arr_triangulation_pl_functions.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif

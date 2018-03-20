@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Sebastien Loriot <sebastien.loriot@cgal.org>,
 //                 Jane Tournois
@@ -287,11 +288,11 @@ public:
 
 #ifdef USE_SURFACE_MESH
   QString nameFilters() const {
-    return "VTK PolyData files (Surface_mesh) (*.vtk);; VTK XML PolyData (Surface_mesh) (*.vtp);; VTK XML UnstructuredGrid (Surface_mesh)(*.vtu)"; }
+    return "VTK PolyData files Surface_mesh (*.vtk);; VTK XML PolyData Surface_mesh (*.vtp);; VTK XML UnstructuredGrid Surface_mesh(*.vtu)"; }
   QString name() const { return "vtk_sm_plugin"; }
 #else
   QString nameFilters() const {
-    return "VTK PolyData files (Polyhedron) (*.vtk);; VTK XML PolyData (Polyhedron) (*.vtp);; VTK XML UnstructuredGrid (Polyhedron)(*.vtu)"; }
+    return "VTK PolyData files Polyhedron (*.vtk);; VTK XML PolyData Polyhedron (*.vtp);; VTK XML UnstructuredGrid Polyhedron(*.vtu)"; }
   QString name() const { return "vtk_plugin"; }
 #endif
   bool canSave(const CGAL::Three::Scene_item* item)

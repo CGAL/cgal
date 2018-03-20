@@ -24,7 +24,7 @@
 #include <vector>
 #include <algorithm>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/optional/optional.hpp>
 
 using namespace CGAL::Three;

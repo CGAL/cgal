@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Kumar Snehasish <kumar.snehasish@gmail.com>
@@ -113,7 +114,6 @@ public Q_SLOTS:
   void on_actionSave_triggered();
   void on_actionLoad_triggered();  
   void on_actionImportOFF_triggered();
-  void on_actionAddOFF_triggered();
   void on_actionImport3DTDS_triggered();
   void on_actionImportMoka_triggered();
   void on_actionCompute_Voronoi_3D_triggered();
@@ -147,12 +147,12 @@ public Q_SLOTS:
   void on_actionExtend_hidden_volumes_triggered();
 
   // Other slots
-  void load_depend_on_extension(const QString& fileName, bool clear=true);
-  void load(const QString& fileName, bool clear=true);
+  void load_depend_on_extension(const QString& fileName, bool clear=false);
+  void load(const QString& fileName, bool clear=false);
   void save(const QString& fileName);
-  void load_off(const QString& fileName, bool clear=true);
-  void load_3DTDS(const QString& fileName, bool clear=true);
-  void load_moka(const QString& fileName, bool clear=true);
+  void load_off(const QString& fileName, bool clear=false);
+  void load_3DTDS(const QString& fileName, bool clear=false);
+  void load_moka(const QString& fileName, bool clear=false);
 
   void onSceneChanged();
 

@@ -69,19 +69,19 @@ public:
 
   virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   virtual void drawPoints(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
-
-  virtual void drawSplats(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
   
   // Gets wrapped point set
   Point_set*       point_set();
   const Point_set* point_set() const;
 
+  // Gets PLY comments (empty if point set not originated from PLY input)
+  std::string& comments();
+  const std::string& comments() const;
+
   // Gets dimensions
   virtual bool isFinite() const Q_DECL_OVERRIDE { return true; }
   virtual bool isEmpty() const Q_DECL_OVERRIDE;
   virtual void compute_bbox() const Q_DECL_OVERRIDE;
-
-  virtual void setRenderingMode(RenderingMode m) Q_DECL_OVERRIDE;
 
   // computes the local point spacing (aka radius) of each point
   void computes_local_spacing(int k);
@@ -107,7 +107,9 @@ public Q_SLOTS:
   //Set the status of the slider as `released`
   void pointSliderReleased();
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
-
+  void setPointSize(int size);
+  void setNormalSize(int size);
+  void resetColors();
 // Data
 protected:
   friend struct Scene_points_with_normal_item_priv;

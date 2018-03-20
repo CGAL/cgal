@@ -314,7 +314,7 @@ T& std::min(const T& a, const T& b)
 } 
 \endcode
 
-This function only compiles if the `operator<<(..)` is defined for the type used as `T`,
+This function only compiles if the `operator<(..)` is defined for the type used as `T`,
 and we say that the type must be a model of `LessThanComparable`.
 
 An example for a concept with required free functions is the `HalfedgeListGraph` in the

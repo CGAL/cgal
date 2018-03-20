@@ -2,7 +2,6 @@
 #include "Scene_spheres_item.h"
 
 #include <CGAL/bounding_box.h>
-#include <CGAL/gl.h>
 #include <QMenu>
 #include <QSlider>
 #include <QWidgetAction>
@@ -342,9 +341,18 @@ Scene_polylines_item::toolTip() const {
             .arg(polylines.size());
     if(polylines.size() == 1 )
     {
-      QString vertices_info = tr("<p>Number of vertices: %1</p>")
-                              .arg(polylines.front().size());
+      double length = 0;
+      for(std::size_t i=1; i<polylines.front().size(); ++i)
+      {
+        K::Vector_3 vec(polylines.front()[i-1], polylines.front()[i]);
+        length += CGAL::sqrt(vec.squared_length());
+      }
+      QString vertices_info = tr("<p>Number of vertices: %1<br />"
+                                 "Polyline's length: %2</p>")
+          .arg(polylines.front().size())
+          .arg(length);
      s.append(vertices_info);
+
     }
     return s;
 }

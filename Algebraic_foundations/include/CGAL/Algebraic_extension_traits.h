@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Michael Hemmer    <hemmer@mpi-inf.mpg.de>
@@ -29,7 +30,6 @@
 #define CGAL_ALGEBRAIC_NUMBER_TRAITS_H 1
 
 #include <numeric> // for std::accumulate
-#include <functional> // for std::unary_function
 #include <CGAL/tags.h>
 #include <CGAL/Algebraic_structure_traits.h>
 
@@ -47,7 +47,7 @@ public:
     //! computes the factor which normalizes a number to be integral after 
     //  multiplication
     class Normalization_factor 
-        : public std::unary_function<Type,Type> {
+        : public CGAL::unary_function<Type,Type> {
     private:
         static Type 
         normalization_factor(const Type&,Integral_domain_without_division_tag){
@@ -68,7 +68,7 @@ public:
     };
     
     class Denominator_for_algebraic_integers 
-        : public std::unary_function<Type,Type> {
+        : public CGAL::unary_function<Type,Type> {
     public: 
         //! determine normalization factor
         Type operator () (const Type&) {

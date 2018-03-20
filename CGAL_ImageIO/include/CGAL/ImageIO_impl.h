@@ -17,6 +17,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 
 #ifdef CGAL_HEADER_ONLY
@@ -27,7 +28,7 @@
 
 #ifdef _MSC_VER
 // Suppress deprecated warning for fileno and strdup
-#  pragma warning(disable:4996) 
+#  pragma warning(disable: 4127 4706 4996) 
 
 #include <fcntl.h>
 #include <sys/types.h>

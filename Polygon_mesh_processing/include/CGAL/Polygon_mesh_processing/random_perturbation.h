@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Jane Tournois
@@ -22,6 +23,8 @@
 #define CGAL_POLYGON_MESH_PROCESSING_RANDOM_PERTURBATION_H
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
 
@@ -114,13 +117,13 @@ namespace internal {
 *         vertices of type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`.
 *         Its iterator type is `ForwardIterator`. 
 * @tparam TriangleMesh model of `MutableFaceGraph`.
-* @tparam NamedParameters a sequence of \ref namedparameters
+* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 *
 * @param vertices the range of vertices to be perturbed
 * @param tmesh the triangulated surface mesh
 * @param perturbation_max_size the maximal length of moves that can be applied to
 *        vertices of `tmesh`.
-* @param np optional sequence of \ref namedparameters among the ones listed below
+* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
@@ -229,6 +232,8 @@ void random_perturbation(TriangleMesh& tmesh
 
 } //end namespace Polygon_mesh_processing
 } //end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_RANDOM_PERTURBATION_H
 

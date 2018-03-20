@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Jane Tournois
@@ -23,6 +24,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
 
@@ -53,13 +55,13 @@ namespace Polygon_mesh_processing {
 *         as a named parameter, then the internal one must be initialized
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
-* @tparam NamedParameters a sequence of \ref namedparameters
+* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 *
 * @param pmesh a polygon mesh with triangulated surface patches to be remeshed
 * @param faces the range of triangular faces defining one or several surface patches to be remeshed
 * @param target_edge_length the edge length that is targeted in the remeshed patch.
 *        If `0` is passed then only the edge-flip, tangential relaxation, and projection steps will be done.
-* @param np optional sequence of \ref namedparameters among the ones listed below
+* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 *
 * @pre if constraints protection is activated, the constrained edges should
 * not be longer than 4/3*`target_edge_length`
@@ -282,13 +284,13 @@ void isotropic_remeshing(
 *         has an internal property map for `CGAL::vertex_point_t`.
 * @tparam EdgeRange range of `boost::graph_traits<PolygonMesh>::%edge_descriptor`,
 *   model of `Range`. Its iterator type is `InputIterator`.
-* @tparam NamedParameters a sequence of \ref namedparameters
+* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 *
 * @param pmesh a polygon mesh
 * @param edges the range of edges to be split if they are longer than given threshold
 * @param max_length the edge length above which an edge from `edges` is split
 *        into to sub-edges
-* @param np optional \ref namedparameters described below
+* @param np optional \ref pmp_namedparameters "Named Parameters" described below
 
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated
@@ -358,5 +360,7 @@ void split_long_edges(const EdgeRange& edges
 
 } //end namespace Polygon_mesh_processing
 } //end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

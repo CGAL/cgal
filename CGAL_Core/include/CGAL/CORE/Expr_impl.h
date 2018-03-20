@@ -32,6 +32,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 #ifdef CGAL_HEADER_ONLY
@@ -39,6 +40,8 @@
 #else
 #define CGAL_INLINE_FUNCTION
 #endif
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/CORE/Expr.h>
 #include <cmath>
@@ -1247,3 +1250,5 @@ template class Realbase_for<BigFloat>;
  template class ConstPolyRep<BigInt>;
  template class ConstPolyRep<BigRat>;
 } //namespace CORE
+
+#include <CGAL/enable_warnings.h>

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent RINEAU, Maxime Gimeno
@@ -70,21 +71,21 @@ public:
    */
  enum OpenGL_program_IDs
  {
-  PROGRAM_WITH_LIGHT = 0,      //! Used to render a surface or an edge affected by the light. It uses a per fragment lighting model, and renders the selected item brighter.
-  PROGRAM_WITHOUT_LIGHT,       //! Used to render a polyhedron edge or points. It renders in a uniform color and is not affected by light. \attention It renders the selected item in black.
-  PROGRAM_NO_SELECTION,        //! Used to render a polyline or a surface that is not affected by light, like a cutting plane. It renders in a uniform color that does not change with selection.
-  PROGRAM_WITH_TEXTURE,        //! Used to render a textured polyhedron. Affected by light.
-  PROGRAM_PLANE_TWO_FACES,     //! Used to render a two-faced plane. The two faces have a different color. Not affected by light.
-  PROGRAM_WITH_TEXTURED_EDGES, //! Used to render the edges of a textured polyhedron. Not affected by light.
-  PROGRAM_INSTANCED,           //! Used to display instanced rendered spheres.Affected by light.
-  PROGRAM_INSTANCED_WIRE,      //! Used to display instanced rendered wired spheres. Not affected by light.
-  PROGRAM_C3T3,                //! Used to render a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Affected by light.
-  PROGRAM_C3T3_EDGES,          //! Used to render the edges of a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Not affected by light.
-  PROGRAM_CUTPLANE_SPHERES,    //! Used to render the spheres of an item with a cut plane.
-  PROGRAM_SPHERES,             //! Used to render one or several spheres.
-  PROGRAM_C3T3_TETS,           //! Used to render the tetrahedra of the intersection of a c3t3_item.
-  PROGRAM_FLAT,                //! Used to render flat shading without pre computing normals
-  NB_OF_PROGRAMS               //! Holds the number of different programs in this enum.
+  PROGRAM_WITH_LIGHT = 0,      /** Used to render a surface or edge affected by the light. It uses a per fragment lighting model, and renders brighter the selected item.*/
+  PROGRAM_WITHOUT_LIGHT,       /** Used to render a polygon edge or points. It renders in a uniform color and is not affected by light. It renders the selected item in black.*/
+  PROGRAM_NO_SELECTION,        /** Used to render a polyline or a surface that is not affected by light, like a cutting plane. It renders in a uniform color that does not change with selection.*/
+  PROGRAM_WITH_TEXTURE,        /** Used to render a textured polyhedron. Affected by light.*/
+  PROGRAM_PLANE_TWO_FACES,     /** Used to render a two-faced plane. The two faces have a different color. Not affected by light.*/
+  PROGRAM_WITH_TEXTURED_EDGES, /** Used to render the edges of a textured polyhedorn. Not affected by light.*/
+  PROGRAM_INSTANCED,           /** Used to display instanced rendered spheres.Affected by light.*/
+  PROGRAM_INSTANCED_WIRE,      /** Used to display instanced rendered wired spheres. Not affected by light.*/
+  PROGRAM_C3T3,                /** Used to render a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Affected by light.*/
+  PROGRAM_C3T3_EDGES,          /** Used to render the edges of a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Not affected by light.*/
+  PROGRAM_CUTPLANE_SPHERES,    /** Used to render the spheres of an item with a cut plane.*/
+  PROGRAM_SPHERES,             /** Used to render one or several spheres.*/
+  PROGRAM_FLAT,                /** Used to render flat shading without pre computing normals*/
+  PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
+  NB_OF_PROGRAMS               /** Holds the number of different programs in this enum.*/
  };
   typedef CGAL::Bbox_3 Bbox;
   typedef qglviewer::ManipulatedFrame ManipulatedFrame;
@@ -149,11 +150,6 @@ public:
    * @see initializeBuffers()
    */
   virtual void drawPoints(CGAL::Three::Viewer_interface*) const { drawPoints(); }
-
-  //! Draws the splats of the item in the viewer using GLSplat functions.
-  virtual void drawSplats() const {}
-  //! Draws the splats of the item in the viewer using the GLSplat library.
-  virtual void drawSplats(CGAL::Three::Viewer_interface*) const {drawSplats();}
 
   //! Called by the scene. If b is true, then this item is currently selected.
   virtual void selection_changed(bool b);
@@ -349,10 +345,6 @@ public Q_SLOTS:
   //!Sets the RenderingMode to PointsPlusNormals.
   void setPointsPlusNormalsMode(){
     setRenderingMode(PointsPlusNormals);
-  }
-  //!Sets the RenderingMode to Splatting.
-  void setSplattingMode(){
-    setRenderingMode(Splatting);
   }
   
   //!Emits an aboutToBeDestroyed() signal.

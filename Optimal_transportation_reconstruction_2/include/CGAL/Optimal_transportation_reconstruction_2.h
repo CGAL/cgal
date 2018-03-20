@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
@@ -41,7 +42,7 @@
 #include <boost/multi_index/mem_fun.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/identity.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/type_traits/is_float.hpp>
 
 namespace CGAL {
@@ -176,6 +177,7 @@ protected:
   FT m_alpha; // [0, 1]
   FT m_ghost; // ghost vs solid
   unsigned int m_relocation; // # relocations
+  FT m_tolerance;
 
   PointPMap point_pmap;
   MassPMap  mass_pmap;
@@ -229,6 +231,7 @@ public:
     m_alpha(0.5),
     m_ghost(1.0),
     m_relocation(relocation),
+    m_tolerance (FT(-1.)),
     point_pmap(point_map),
     mass_pmap(mass_map)
   {
@@ -317,6 +320,8 @@ public:
   FT ghost() {
     return m_ghost;
   }
+
+  FT tolerance() const { return m_tolerance; }
 
   /// @}
 
@@ -621,6 +626,7 @@ public:
     copy.assign_samples_brute_force(samples.begin(), samples.end());
     copy.reset_all_costs();
     cost = copy.compute_total_cost();
+    cost.set_total_weight (samples);
     restore_samples(samples.begin(), samples.end());
 
     if (m_verbose > 1) {
@@ -661,6 +667,14 @@ public:
     return true;
   }
 
+  bool is_above_tolerance (const Rec_edge_2& pedge)
+  {
+    if (m_tolerance == (FT)(-1.))
+      return false;
+    FT cost = CGAL::approximate_sqrt (pedge.after() / pedge.total_weight());
+    return cost > m_tolerance;
+  }
+
   bool create_pedge(const Edge& edge, Rec_edge_2& pedge) {
     Cost_ after_cost;
     bool ok = simulate_collapse(edge, after_cost);
@@ -672,7 +686,11 @@ public:
 
     FT before = before_cost.finalize(m_alpha);
     FT after = after_cost.finalize(m_alpha);
-    pedge = Rec_edge_2(edge, before, after);
+    pedge = Rec_edge_2(edge, before, after, after_cost.total_weight());
+
+    if (is_above_tolerance (pedge))
+      return false;
+    
     return true;
   }
 
@@ -1484,6 +1502,7 @@ public:
     collapse was possible.
    */
   bool run_until(std::size_t np) {
+    m_tolerance = (FT)(-1.);
     CGAL::Real_timer timer;
     if (m_verbose > 0)
       std::cerr << "reconstruct until " << np << " V";
@@ -1516,6 +1535,7 @@ public:
     edge collapse was possible.
    */
   bool run(const unsigned steps) {
+    m_tolerance = (FT)(-1.);
     CGAL::Real_timer timer;
     if (m_verbose > 0)
       std::cerr << "reconstruct " << steps;
@@ -1535,6 +1555,39 @@ public:
                 << " V, " << timer.time() << " s)"
                 << std::endl;
     return (performed == steps);
+  }
+
+
+  /*!
+    Computes a shape, reconstructing the input, by performing edge
+    collapse operators on the output simplex until the user-defined
+    tolerance is reached.
+
+    \note The tolerance is given in the sense of the Wasserstein
+    distance. It is _not_ a Hausdorff tolerance: it does not mean that
+    the distance between the input samples and the output polyline is
+    guaranteed to be less than `tolerance`. It means that the square
+    root of transport cost per mass (homogeneous to a distance) is at
+    most `tolerance`.
+    
+    \param tolerance Tolerance on the Wasserstein distance.
+   */
+  void run_under_wasserstein_tolerance (const FT tolerance) {
+    m_tolerance = tolerance;
+    CGAL::Real_timer timer;
+    if (m_verbose > 0)
+      std::cerr << "reconstruct under tolerance " << tolerance;
+
+    timer.start();
+    unsigned performed = 0;
+    while (decimate ())
+      performed++;
+
+    if (m_verbose > 0)
+      std::cerr << " done" << " (" << performed 
+                << " iters, " << m_dt.number_of_vertices() - 4
+                << " V, " << timer.time() << " s)"
+                << std::endl;
   }
 
 
@@ -1726,6 +1779,8 @@ public:
 
 
   /// \cond SKIP_IN_MANUAL
+  const Triangulation& tds() const { return m_dt; }
+  
   void extract_tds_output(Triangulation& rt2) const {
     rt2 = m_dt;
     //mark vertices

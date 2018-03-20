@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
@@ -27,6 +28,7 @@
 
 #include <CGAL/license/Nef_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
@@ -162,8 +164,8 @@ class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<Kernel_, 
   typedef typename Kernel::Segment_3                  Segment_3;
   typedef typename Kernel::Aff_transformation_3       Aff_transformation_3;
 
-#ifndef _MSC_VER
-  // VC++ has a problem to digest the following typedef,
+#if (! defined _MSC_VER) || (_MSC_VER >= 1900)
+  // VC++ < 2017 has a problem to digest the following typedef,
   // and does not need the using statements -- AF
   // The left and right part of these typedefs have the same name. It is
   // very important to qualify the left part with the CGAL:: namespace, no
@@ -2160,5 +2162,7 @@ extract_boundary() {
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_NEF_POLYHEDRON_3_H

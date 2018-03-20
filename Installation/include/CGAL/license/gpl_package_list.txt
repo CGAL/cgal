@@ -10,6 +10,7 @@ Bounding_volumes Bounding Volumes
 Box_intersection_d Intersecting Sequences of dD Iso-oriented Boxes
 Circular_kernel_2 2D Circular Geometry Kernel
 Circular_kernel_3 3D Spherical Geometry Kernel
+Classification Classification
 Cone_spanners_2 Cone-Based Spanners
 Convex_decomposition_3 Convex Decomposition of Polyhedra
 Convex_hull_2 2D Convex Hulls and Extreme Points
@@ -51,6 +52,7 @@ Polygon_mesh_processing/orientation Polygon Mesh Processing - Orientation
 Polygon_mesh_processing/predicate Polygon Mesh Processing - Predicate
 Polygon_mesh_processing/repair Polygon Mesh Processing - Repair
 Polygon_mesh_processing/miscellaneous Polygon Mesh Processing - Miscellaneous
+Polygon_mesh_processing/detect_features Polygon Mesh Processing - Feature Detection
 Polyhedron 3D Polyhedral Surface
 Polyline_simplification_2 2D Polyline Simplification
 Polytope_distance_d Optimal Distances
@@ -61,6 +63,7 @@ Scale_space_reconstruction_3 Scale-Space Surface Reconstruction
 SearchStructures dD Range and Segment Trees
 Segment_Delaunay_graph_2 2D Segment Delaunay Graphs
 Segment_Delaunay_graph_Linf_2 L Infinity Segment Delaunay Graphs
+Set_movable_separability_2 2D Movable Separability of Sets
 Skin_surface_3 3D Skin Surface Meshing
 Snap_rounding_2 2D Snap Rounding
 Spatial_searching dD Spatial Searching
@@ -74,7 +77,7 @@ Surface_mesh_segmentation Triangulated Surface Mesh Segmentation
 Surface_mesh_shortest_path Triangulated Surface Mesh Shortest Paths
 Surface_mesh_simplification Triangulated Surface Mesh Simplification
 Surface_mesh_skeletonization Triangulated Surface Mesh Skeletonization
-Sweep_line_2 2D Intersection of Curves
+Surface_sweep_2 2D Intersection of Curves
 TDS_2 2D Triangulation Data Structure
 TDS_3 3D Triangulation Data Structure
 Three Three

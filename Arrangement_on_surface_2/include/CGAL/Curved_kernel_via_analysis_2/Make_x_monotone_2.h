@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
@@ -25,14 +26,12 @@
 #ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_MAKE_X_MONOTONE_2_H
 #define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_MAKE_X_MONOTONE_2_H
 
-#include <CGAL/license/Arrangement_on_surface_2.h>
-
-
 /*!\file include/CGAL/Curved_kernel_via_analysis_2/Make_x_monotone_2.h
  * \brief Defines \c Make_x_monotone_2 functor
  */
 
 #include <CGAL/config.h>
+#include <CGAL/iterator.h>
 #include <CGAL/Handle_with_policy.h>
 
 // TODO remove polynomial_traits
@@ -58,9 +57,9 @@ template < class CurvedKernelViaAnalysis_2,
            class ConstructArc_2 =
            typename CurvedKernelViaAnalysis_2::Construct_arc_2 >
 struct Make_x_monotone_2 :
-    public std::binary_function< typename CurvedKernelViaAnalysis_2::Curve_2,
-            std::iterator<std::output_iterator_tag, CGAL::Object>,
-            std::iterator<std::output_iterator_tag, CGAL::Object> > {
+    public CGAL::binary_function< typename CurvedKernelViaAnalysis_2::Curve_2,
+            CGAL::iterator<std::output_iterator_tag, CGAL::Object>,
+            CGAL::iterator<std::output_iterator_tag, CGAL::Object> > {
 
     //!\name Public types
     //!@{

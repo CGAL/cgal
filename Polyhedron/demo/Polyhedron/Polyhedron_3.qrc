@@ -22,6 +22,15 @@
         <file>resources/down.png</file>
         <file>resources/left_arrow.png</file>
         <file>resources/right_arrow.png</file>
+        <file>resources/pss_rectangle.png</file>
+        <file>resources/pss_freeform.png</file>
+        <file>resources/pss_region.png</file>
+        <file>resources/pss_box.png</file>
+        <file>resources/pss_new.png</file>
+        <file>resources/pss_union.png</file>
+        <file>resources/pss_inter.png</file>
+        <file>resources/pss_diff.png</file>
+        <file>resources/help_button.png</file>
     </qresource>
     <qresource prefix="/cgal/Polyhedron_3">
         <file alias="about.html">resources/about.html</file>
@@ -49,7 +58,6 @@
         <file>resources/euler_facet.png</file>
         <file>resources/euler_vertex.png</file>
         <file>javascript/lib.js</file>
-        <file>resources/shader_c3t3_tets.v</file>
         <file>resources/shader_flat.f</file>
         <file>resources/hexahedron.png</file>
         <file>resources/icosphere.png</file>
@@ -59,6 +67,12 @@
         <file>resources/prism-open.png</file>
         <file>resources/pyramid.png</file>
         <file>resources/pyramid-open.png</file>
+        <file>resources/no_interpolation_shader.f</file>
+        <file>resources/no_interpolation_shader.g</file>
+        <file>resources/no_interpolation_shader.v</file>
+        <file>resources/shader_flat.g</file>
+        <file>resources/shader_flat.v</file>
+        <file>resources/shader_old_flat.f</file>
     </qresource>
     <qresource prefix="/cgal/cursors">
         <file>resources/rotate_around_cursor.png</file>

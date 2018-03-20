@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     :  Camille Wormser, Pierre Alliez
@@ -25,7 +26,6 @@
 
 
 #include <CGAL/Bbox_3.h>
-#include <CGAL/gl.h>
 #include <vector>
 
 namespace CGAL {

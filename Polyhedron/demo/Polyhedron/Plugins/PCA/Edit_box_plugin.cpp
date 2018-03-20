@@ -118,19 +118,19 @@ void Edit_box_plugin::exportToPoly()
   Polyhedron::Point_3 points[8];
   for(int i=0; i<8; ++i)
   {
-    points[i] = Polyhedron::Point_3(item->point(i,0),item->point(i,2), item->point(i,1))-offset;
+    points[i] = Polyhedron::Point_3(item->point(i,0),item->point(i,1), item->point(i,2))-offset;
   }
 
   if(mw->property("is_polyhedron_mode").toBool()){
     Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
     CGAL::make_hexahedron(points[0],
-                          points[1],
-                          points[2],
                           points[3],
-                          points[4],
+                          points[2],
+                          points[1],
                           points[5],
-                          points[6],
+                          points[4],
                           points[7],
+                          points[6],
                           *poly_item->polyhedron());
     CGAL::Polygon_mesh_processing::triangulate_faces(*poly_item->polyhedron());
     item->setName("Edit box");
@@ -141,13 +141,13 @@ void Edit_box_plugin::exportToPoly()
   }else{
  Scene_surface_mesh_item* poly_item = new Scene_surface_mesh_item();
     CGAL::make_hexahedron(points[0],
-                          points[1],
-                          points[2],
                           points[3],
-                          points[4],
+                          points[2],
+                          points[1],
                           points[5],
-                          points[6],
+                          points[4],
                           points[7],
+                          points[6],
                           *poly_item->polyhedron());
     CGAL::Polygon_mesh_processing::triangulate_faces(*poly_item->polyhedron());
     item->setName("Edit box");

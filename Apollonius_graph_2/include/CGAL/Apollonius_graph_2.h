@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -25,6 +26,7 @@
 
 #include <CGAL/license/Apollonius_graph_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #define CGAL_APOLLONIUS_GRAPH_PSEUDO_CIRCLE_DESIGN 1
 
@@ -1344,5 +1346,6 @@ std::istream& operator>>(std::istream& is,
 
 #include <CGAL/Apollonius_graph_2/Apollonius_graph_2_impl.h>
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_APOLLONIUS_GRAPH_2_H

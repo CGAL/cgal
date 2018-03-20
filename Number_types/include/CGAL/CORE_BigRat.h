@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -21,6 +22,8 @@
 
 #ifndef CGAL_CORE_BIGRAT_H
 #define CGAL_CORE_BIGRAT_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/config.h>
 #include <CGAL/number_type_basic.h>
@@ -64,7 +67,7 @@ template <> class Real_embeddable_traits< CORE::BigRat >
   public:
 
     class Abs
-      : public std::unary_function< Type, Type > {
+      : public CGAL::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return CORE::abs( x );
@@ -72,7 +75,7 @@ template <> class Real_embeddable_traits< CORE::BigRat >
     };
 
     class Sgn
-      : public std::unary_function< Type, ::CGAL::Sign > {
+      : public CGAL::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
           return (::CGAL::Sign) CORE::sign( x );
@@ -80,7 +83,7 @@ template <> class Real_embeddable_traits< CORE::BigRat >
     };
 
     class Compare
-      : public std::binary_function< Type, Type,
+      : public CGAL::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
@@ -91,7 +94,7 @@ template <> class Real_embeddable_traits< CORE::BigRat >
     };
 
     class To_double
-      : public std::unary_function< Type, double > {
+      : public CGAL::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           // this call is required to get reasonable values for the double
@@ -101,7 +104,7 @@ template <> class Real_embeddable_traits< CORE::BigRat >
     };
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x_ ) const {
             CORE::Expr x(x_);
@@ -259,5 +262,7 @@ namespace Eigen {
     };
   };
 }
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_CORE_BIGRAT_H

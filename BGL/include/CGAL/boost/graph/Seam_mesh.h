@@ -13,12 +13,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri, Mael Rouxel-Labbé
 
 #ifndef CGAL_SEAM_MESH_H
 #define CGAL_SEAM_MESH_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/graph_traits_Seam_mesh.h>
@@ -1124,10 +1127,12 @@ public:
   Seam_mesh(const TM& tm, const SEM& sem, const SVM svm)
     : tm(tm),
       sem(sem), svm(svm),
-      number_of_seams(0), number_of_vertices(-1)
+      number_of_seams(0), number_of_vertices(static_cast<vertices_size_type>(-1))
   { }
 };
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_SEAM_MESH_H

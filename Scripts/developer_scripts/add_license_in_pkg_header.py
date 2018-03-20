@@ -17,6 +17,12 @@ def add_license_include_in_file(package_name, fname):
     if any(re.search("#include\s*<CGAL/license/", line) for line in f):
       return # include directive already there
 
+  #match only file under a GPL license
+  with codecs.open(fname, encoding='utf-8') as f:
+    if not any(re.search("SPDX-License-Identifier:.*[ (]GPL", line) for line in f):
+      return # include directive already there
+
+
   # include directive not already there
   inserted = False
   with codecs.open(fname, encoding='utf-8') as f:
@@ -36,7 +42,7 @@ def add_license_include_in_file(package_name, fname):
     if not inserted:
       print("Warning: file "+fname+" was not modified (no CGAL_*_H defined)")
 
-if len(argv)==0:
+if len(argv)==1:
   print("Usage: "+argv[0]+" Package_directory [Package_name=Package_directory]\n")
 else:
   package_dir=argv[1]

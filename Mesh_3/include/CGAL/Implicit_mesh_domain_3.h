@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stéphane Tayeb
@@ -28,11 +29,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4180) // qualifier applied to function type has no meaning; ignored
-#endif
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
@@ -90,8 +87,6 @@ private:
 
 }  // end namespace CGAL
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_IMPLICIT_MESH_DOMAIN_3_H

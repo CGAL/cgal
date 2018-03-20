@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
@@ -26,6 +27,8 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 
@@ -136,6 +139,11 @@ public:
   typedef typename Tr_Base::size_type size_type;
   typedef typename Tr_Base::Locate_type Locate_type;
 
+  //Tag to distinguish Delaunay from regular triangulations
+  typedef Tag_false                          Weighted_tag;
+
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_false                          Periodic_tag;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Tr_Base::cw;
@@ -2069,5 +2077,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
 } //namespace CGAL
 
 #include <CGAL/internal/Delaunay_triangulation_hierarchy_3.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_DELAUNAY_TRIANGULATION_3_H

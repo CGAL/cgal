@@ -13,12 +13,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Laurent Rineau, Xiang Gao
 //
 
 #ifndef CGAL_SPLIT_GRAPH_INTO_POLYLINES
 #define CGAL_SPLIT_GRAPH_INTO_POLYLINES
+
+#include <CGAL/disable_warnings.h>
 
 #include <map> 
 #include <vector>
@@ -373,5 +376,7 @@ split_graph_into_polylines(const Graph& graph,
 /// \endcond
 
 } //end of namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_SPLIT_GRAPH_INTO_POLYLINES

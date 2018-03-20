@@ -2,7 +2,6 @@
 #include <QColor>
 #include <QApplication>
 #include <map>
-#include <CGAL/gl.h>
 #include <CGAL/Simple_cartesian.h>
 #include <QGLViewer/manipulatedFrame.h>
 
@@ -514,7 +513,6 @@ Scene_implicit_function_item::supportsRenderingMode(RenderingMode m) const
 {
     switch ( m )
     {
-    case Splatting:
     case Gouraud:
         return false;
 

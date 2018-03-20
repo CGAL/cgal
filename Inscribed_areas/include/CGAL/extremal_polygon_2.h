@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -40,7 +41,7 @@ namespace CGAL {
 //!!! This will eventually be integrated into function_objects.h
 template < class Array, class Index, class Element >
 struct Index_operator
-: public std::binary_function< Array, Index, Element >
+: public CGAL::binary_function< Array, Index, Element >
 {
   Element&
   operator()( Array& a, const Index& i) const

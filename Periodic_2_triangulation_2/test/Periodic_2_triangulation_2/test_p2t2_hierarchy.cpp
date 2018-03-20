@@ -12,9 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://mcaroli@scm.gforge.inria.fr/svn/cgal/trunk/Periodic_2_triangulation_2/test/Periodic_2_triangulation_2/test_periodic_2_delaunay_2.cpp $
-// $Id: test_periodic_2_delaunay_2.cpp 48874 2009-04-22 12:54:28Z mcaroli $
-//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 //                 Manuel Caroli
@@ -23,46 +23,43 @@
 #include <fstream>
 
 #include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
+#include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Periodic_2_triangulation_hierarchy_2.h>
-#include <CGAL/Periodic_2_triangulation_traits_2.h>
+#include <CGAL/Triangulation_hierarchy_vertex_base_2.h>
 
 #include "interface_test.h"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 typedef CGAL::Exact_predicates_inexact_constructions_kernel          K1;
-typedef CGAL::Periodic_2_triangulation_traits_2<K1>                  PTT1;
+typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<K1>         PTT1;
 typedef CGAL::Periodic_2_triangulation_vertex_base_2<PTT1>           PVB1;
-typedef CGAL::Periodic_2_triangulation_face_base_2<PTT1>             PFB1;
 typedef CGAL::Triangulation_hierarchy_vertex_base_2<PVB1>            PHVB1;
-typedef CGAL::Triangulation_data_structure_2<PHVB1, PFB1>             Tds1;
-typedef CGAL::Periodic_2_Delaunay_triangulation_2<PTT1, Tds1>         PDT1;
+typedef CGAL::Periodic_2_triangulation_face_base_2<PTT1>             PFB1;
+typedef CGAL::Triangulation_data_structure_2<PHVB1, PFB1>            Tds1;
+typedef CGAL::Periodic_2_Delaunay_triangulation_2<PTT1, Tds1>        PDT1;
 // Explicit instantiation of the whole class :
 template class CGAL::Periodic_2_triangulation_hierarchy_2<PDT1>;
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 typedef CGAL::Exact_predicates_exact_constructions_kernel            K2;
-typedef CGAL::Periodic_2_triangulation_traits_2<K2>                  PTT2;
-typedef CGAL::Periodic_2_triangulation_vertex_base_2<PTT2>           DSVB2;
-typedef CGAL::Periodic_2_triangulation_face_base_2<PTT2>             DSFB2;
-typedef CGAL::Triangulation_vertex_base_2<PTT2, DSVB2>                VBB2;
+typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<K2>         PTT2;
+typedef CGAL::Periodic_2_triangulation_vertex_base_2<PTT2>           VBB2;
 typedef CGAL::Triangulation_hierarchy_vertex_base_2<VBB2>            VB2;
-typedef CGAL::Triangulation_face_base_2<PTT2, DSFB2>                  FB2;
-typedef CGAL::Triangulation_data_structure_2<VB2, FB2>                Tds2;
-typedef CGAL::Periodic_2_Delaunay_triangulation_2<PTT2, Tds2>         PDT2;
+typedef CGAL::Periodic_2_triangulation_face_base_2<PTT2>             FB2;
+typedef CGAL::Triangulation_data_structure_2<VB2, FB2>               Tds2;
+typedef CGAL::Periodic_2_Delaunay_triangulation_2<PTT2, Tds2>        PDT2;
 // Explicit instantiation of the whole class :
 template class CGAL::Periodic_2_triangulation_hierarchy_2<PDT2>;
 
 #include <CGAL/MP_Float.h>
 #include <CGAL/Simple_homogeneous.h>
 typedef CGAL::Simple_homogeneous<CGAL::MP_Float>                     K3;
-typedef CGAL::Periodic_2_triangulation_traits_2<K3>                  PTT3;
-typedef CGAL::Periodic_2_triangulation_vertex_base_2<PTT3>           DSVB3;
-typedef CGAL::Periodic_2_triangulation_face_base_2<PTT3>             DSFB3;
-typedef CGAL::Triangulation_vertex_base_2<PTT3, DSVB3>                VBB3;
+typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<K3>         PTT3;
+typedef CGAL::Periodic_2_triangulation_vertex_base_2<PTT3>           VBB3;
 typedef CGAL::Triangulation_hierarchy_vertex_base_2<VBB3>            VB3;
-typedef CGAL::Triangulation_face_base_2<PTT3, DSFB3>                  FB3;
-typedef CGAL::Triangulation_data_structure_2<VB3, FB3>                Tds3;
-typedef CGAL::Periodic_2_Delaunay_triangulation_2<PTT3, Tds3>         PDT3;
+typedef CGAL::Periodic_2_triangulation_face_base_2<PTT3>             FB3;
+typedef CGAL::Triangulation_data_structure_2<VB3, FB3>               Tds3;
+typedef CGAL::Periodic_2_Delaunay_triangulation_2<PTT3, Tds3>        PDT3;
 // Explicit instantiation of the whole class :
 template class CGAL::Periodic_2_triangulation_hierarchy_2<PDT3>;
 

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Ilker O. Yaz
@@ -36,7 +37,7 @@
 #include <stack>
 #include <map>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/unordered_set.hpp>
 
 namespace CGAL {

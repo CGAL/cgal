@@ -7,7 +7,6 @@
 #include  <CGAL/Three/Scene_item.h>
 #include <qgl.h>
 #include <QtCore/qglobal.h>
-#include <CGAL/gl.h>
 
 class SCENE_C2T3_ITEM_EXPORT Scene_c2t3_item : public CGAL::Three::Scene_item
 {
@@ -72,7 +71,7 @@ public:
 
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
-    return (m != Gouraud && m!=PointsPlusNormals && m!=Splatting && m!=ShadedPoints); // CHECK THIS!
+    return (m != Gouraud && m!=PointsPlusNormals && m!=ShadedPoints); // CHECK THIS!
   }
 
   void draw() const {

@@ -26,8 +26,8 @@ void concept_check_polyhedron() {
   boost::function_requires< boost::IncidenceGraphConcept<Sm> >();
   boost::function_requires< boost::AdjacencyMatrixConcept<Sm> >();
   boost::function_requires< boost::BidirectionalGraphConcept<Sm> >();
+//  boost::function_requires< boost::MutableGraphConcept<Sm> >();
 
-  // boost::function_requires< boost::MutableGraphConcept<Sm> >();
   boost::function_requires< CGAL::HalfedgeGraphConcept<Sm> >();
   boost::function_requires< CGAL::HalfedgeListGraphConcept<Sm> >();
   boost::function_requires< CGAL::FaceGraphConcept<Sm> >();
@@ -44,13 +44,12 @@ void concept_check_polyhedron() {
   boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, face_descriptor,     CGAL::face_index_t> >();
   boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, halfedge_descriptor, CGAL::halfedge_index_t> >();
   //  boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, vertex_descriptor,   CGAL::vertex_is_border_t> >();
+
   // null
   boost::graph_traits<Sm>::null_vertex();
+  boost::graph_traits<Sm>::null_halfedge();
   boost::graph_traits<Sm>::null_face();
 }
-
-
-
 
 int main()
 {

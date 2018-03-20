@@ -23,7 +23,8 @@ if ( CGAL_FOUND )
 
   include_directories (BEFORE "../../include")
 
-  create_single_source_cgal_program( "efficient_RANSAC_basic.cpp" )
+  create_single_source_cgal_program( "shape_detection_basic.cpp" )
+  create_single_source_cgal_program( "shape_detection_with_callback.cpp" )
   create_single_source_cgal_program( "efficient_RANSAC_custom_shape.cpp" )
   create_single_source_cgal_program( "efficient_RANSAC_parameters.cpp" )
   create_single_source_cgal_program( "efficient_RANSAC_point_access.cpp" )

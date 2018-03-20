@@ -12,8 +12,13 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Nico Kruithof <Nico.Kruithof@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_PERIODIC_3_TRIANGULATION_TRAITS_3_H
 #define CGAL_PERIODIC_3_TRIANGULATION_TRAITS_3_H
@@ -21,7 +26,7 @@
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
 #include <CGAL/internal/Periodic_3_construct_point_3.h>
-#include <CGAL/internal/Functor_with_offset_points_adaptor.h>
+#include <CGAL/internal/Functor_with_offset_points_adaptor_3.h>
 #include <CGAL/Periodic_3_offset_3.h>
 
 #include <CGAL/basic.h>
@@ -83,17 +88,17 @@ public:
       Construct_point_3;
 
   // Triangulation predicates
-  typedef Functor_with_offset_points_adaptor<Self, typename K::Compare_xyz_3>
+  typedef Functor_with_offset_points_adaptor_3<Self, typename K::Compare_xyz_3>
       Compare_xyz_3;
-  typedef Functor_with_offset_points_adaptor<Self, typename K::Orientation_3>
+  typedef Functor_with_offset_points_adaptor_3<Self, typename K::Orientation_3>
       Orientation_3;
 
   // Triangulation constructions
-  typedef Functor_with_offset_points_adaptor<Self, typename K::Construct_segment_3>
+  typedef Functor_with_offset_points_adaptor_3<Self, typename K::Construct_segment_3>
       Construct_segment_3;
-  typedef Functor_with_offset_points_adaptor<Self, typename K::Construct_triangle_3>
+  typedef Functor_with_offset_points_adaptor_3<Self, typename K::Construct_triangle_3>
       Construct_triangle_3;
-  typedef Functor_with_offset_points_adaptor<Self, typename K::Construct_tetrahedron_3>
+  typedef Functor_with_offset_points_adaptor_3<Self, typename K::Construct_tetrahedron_3>
       Construct_tetrahedron_3;
 
   // Operations

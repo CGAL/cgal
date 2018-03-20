@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
 //                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
@@ -25,6 +26,7 @@
 
 
 #include <ostream>
+#include <CGAL/tss.h>
 
 #include <CGAL/Arr_rat_arc/Base_rational_arc_ds_1.h>
 #include <CGAL/Arr_rat_arc/Cache.h>
@@ -348,15 +350,15 @@ public:
 private:
   static Self& get_default_instance()
   {
-    static Algebraic_kernel_d_1 kernel;
-    static typename Rational_function::Polynomial_1 numer(0);
-    static typename Rational_function::Polynomial_1 denom(1);
-    static Rational_function rational_function(numer, denom, &kernel);
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Algebraic_kernel_d_1, kernel);
+    typedef typename Rational_function::Polynomial_1 Poly;
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(Poly, numer,0);
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(Poly, denom, 1);
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_3(Rational_function, rational_function, numer, denom, &kernel);
     
-    static Algebraic_real_1 x_coordinate =
-      kernel.construct_algebraic_real_1_object()(Rational(0));
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(Algebraic_real_1, x_coordinate,kernel.construct_algebraic_real_1_object()(Rational(0)));
     
-    static Self default_instance(rational_function,x_coordinate); 
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(Self, default_instance, rational_function, x_coordinate); 
     
     return default_instance;
 

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Steve Oudot, David Rey, Mariette Yvinec, Laurent Rineau, Andreas Fabri
@@ -23,6 +24,7 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#include <CGAL/disable_warnings.h>
 
 // TODO: add the iterators
 // TODO: document the output/input function of C2T3?
@@ -793,5 +795,7 @@ operator<< (std::ostream& os, const Complex_2_in_triangulation_3<Tr, Edge_info> 
 }
 
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_COMPLEX_2_IN_TRIANGULATION_3_H

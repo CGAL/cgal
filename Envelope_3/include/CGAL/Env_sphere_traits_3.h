@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 //                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
@@ -245,7 +246,7 @@ public:
           
           Algebraic  ys[2];
           Algebraic *ys_end;
-          int   n_ys;
+          std::ptrdiff_t   n_ys;
 
           ys_end = nt_traits.solve_quadratic_equation(A, B, C, ys);
           n_ys = ys_end - ys;
@@ -326,7 +327,7 @@ public:
           
           Algebraic  xs[2];
           Algebraic *xs_end;
-          int   n_xs;
+          std::ptrdiff_t n_xs;
 
           xs_end = nt_traits.solve_quadratic_equation(D, E, F, xs);
           n_xs = xs_end - xs;
@@ -512,7 +513,7 @@ public:
         // with the conic
         //    R*x^2 + S*y^2 + T*xy + U*x + V*y + W = 0
         Alg_point_2 source, target, pmid;
-        int n_inter_points;
+        std::ptrdiff_t n_inter_points;
         if (CGAL_NTS compare(lb, zero) != EQUAL)
         {
           // Find the x-coordinates of the intersection points of the conic 
@@ -1093,7 +1094,7 @@ public:
     
     Algebraic  zs[2];
     Algebraic *zs_end;
-    int   n_zs;
+    std::ptrdiff_t n_zs;
 
     Nt_traits nt_traits;
     zs_end = nt_traits.solve_quadratic_equation(A, B, C, zs);

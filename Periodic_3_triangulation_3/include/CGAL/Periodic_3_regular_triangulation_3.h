@@ -12,6 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Monique Teillaud <Monique.Teillaud@inria.fr>
 //                 Aymeric Pelle <Aymeric.Pelle@sophia.inria.fr>
 //                 Mael Rouxel-Labbé
@@ -129,6 +133,9 @@ public:
   //Tag to distinguish Delaunay from Regular triangulations
   typedef Tag_true                                 Weighted_tag;
 
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_true                                 Periodic_tag;
+
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using Tr_Base::cw;
   using Tr_Base::ccw;
@@ -181,7 +188,7 @@ public:
 
 private:
   struct Cell_handle_hash
-    : public std::unary_function<Cell_handle, std::size_t>
+    : public CGAL::unary_function<Cell_handle, std::size_t>
   {
     std::size_t operator()(const Cell_handle& ch) const {
       return boost::hash<typename Cell_handle::pointer>()(&*ch);
@@ -1005,7 +1012,7 @@ public:
 
 protected:
   // Protected, because inheritors(e.g. periodic triangulation for meshing)
-  // of the class Periodic_3_Delaunay_triangulation_3 use this class
+  // of the class Periodic_3_regular_triangulation_3 use this class
   class Conflict_tester;
 
 private:

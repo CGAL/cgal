@@ -12,12 +12,19 @@
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
+// Author(s)     : Ilker O. Yaz
 
 
 #define CGAL_SURFACE_MESH_SEGMENTATION_MESH_SEGMENTATION_H
 
 #include <CGAL/license/Surface_mesh_segmentation.h>
 
+#include <CGAL/disable_warnings.h>
 
 /**
  * @file mesh_segmentation.h
@@ -492,5 +499,7 @@ segmentation_via_sdf_values(const TriangleMesh& triangle_mesh,
 
 
 }//namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_SEGMENTATION_MESH_SEGMENTATION_H //

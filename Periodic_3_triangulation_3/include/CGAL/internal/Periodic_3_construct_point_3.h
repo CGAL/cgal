@@ -12,6 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //                 Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
@@ -47,15 +51,15 @@ public:
   using Base::operator();
 
   Point operator() ( const Point& p, const Offset& o ) const {
-    return Point(p.x() + (_dom->xmax() - _dom->xmin()) * o.x(),
-                 p.y() + (_dom->ymax() - _dom->ymin()) * o.y(),
-                 p.z() + (_dom->zmax() - _dom->zmin()) * o.z());
+    return operator()(p.x() + (_dom->xmax() - _dom->xmin()) * o.x(),
+                      p.y() + (_dom->ymax() - _dom->ymin()) * o.y(),
+                      p.z() + (_dom->zmax() - _dom->zmin()) * o.z());
   }
 
   Point operator() ( const Weighted_point& p, const Offset& o ) const {
-    return Point(p.x() + (_dom->xmax() - _dom->xmin()) * o.x(),
-                 p.y() + (_dom->ymax() - _dom->ymin()) * o.y(),
-                 p.z() + (_dom->zmax() - _dom->zmin()) * o.z());
+    return operator()(p.x() + (_dom->xmax() - _dom->xmin()) * o.x(),
+                      p.y() + (_dom->ymax() - _dom->ymin()) * o.y(),
+                      p.z() + (_dom->zmax() - _dom->zmin()) * o.z());
   }
 
 private:

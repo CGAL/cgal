@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Laurent Rineau <laurent.rineau__CGAL@normalesup.org>
@@ -25,36 +26,23 @@
 #ifndef CGAL_OPENGL_TOOLS_H
 #define CGAL_OPENGL_TOOLS_H
 
-# include <CGAL/gl.h>
+#include <CGAL/Three/Viewer_interface.h>
 
 namespace CGAL {
 namespace GL {
 
-class Color {
-  GLfloat c[4];
-public:
-  Color() {
-    ::glGetFloatv(GL_CURRENT_COLOR, &c[0]);
-  }
-  ~Color() {
-    set_rgb_color(c[0], c[1], c[2], c[3]);
-  }
-  void set_rgb_color(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.f) {
-    ::glColor4f(r, g, b, a);
-  }
-}; // end class Color;
-
 class Point_size {
   GLfloat ps;
+  CGAL::Three::Viewer_interface* viewer;
 public:
-  Point_size() {
-    ::glGetFloatv(GL_POINT_SIZE, &ps);
+  Point_size(CGAL::Three::Viewer_interface* viewer) : viewer(viewer) {
+    viewer->glGetFloatv(GL_POINT_SIZE, &ps);
   }
   ~Point_size() {
     set_point_size(ps);
   }
   void set_point_size(GLfloat v) {
-    ::glPointSize(v);
+    viewer->glPointSize(v);
   }
 }; // end class Point_size
 

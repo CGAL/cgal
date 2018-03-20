@@ -10,6 +10,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau
@@ -29,7 +30,7 @@ namespace CGAL {
 // replacement for C99 functions
 
 inline int
-feclearexcept(int exceptions) {
+feclearexcept(int /* exceptions */ ) {
   _clearfp();
   return 0;
 }

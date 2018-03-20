@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
@@ -28,6 +29,7 @@
 #include <CGAL/intersections.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <boost/foreach.hpp>
+#include <CGAL/boost/graph/property_maps.h>
 
 namespace CGAL {
 

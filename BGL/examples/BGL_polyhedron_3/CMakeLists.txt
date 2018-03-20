@@ -40,6 +40,14 @@ else()
   message(STATUS "Examples that use OpenMesh will not be compiled.")
 endif()
 
+find_package( METIS )
+
+if( METIS_FOUND )
+  include_directories(${METIS_INCLUDE_DIRS} )
+else()
+  message( STATUS "Examples that use the METIS library will not be compiled." )
+endif()
+
 # include for local directory
 
 # include for local package
@@ -67,8 +75,12 @@ create_single_source_cgal_program( "transform_iterator.cpp" )
 
 create_single_source_cgal_program( "copy_polyhedron.cpp" )
 
-
 if(OpenMesh_FOUND)
-  target_link_libraries( copy_polyhedron ${OPENMESH_LIBRARIES} )
+  target_link_libraries( copy_polyhedron PRIVATE ${OPENMESH_LIBRARIES} )
+endif()
+
+if( METIS_FOUND )
+  create_single_source_cgal_program( "polyhedron_partition.cpp" )
+  target_link_libraries( polyhedron_partition PRIVATE ${METIS_LIBRARIES} )
 endif()
 

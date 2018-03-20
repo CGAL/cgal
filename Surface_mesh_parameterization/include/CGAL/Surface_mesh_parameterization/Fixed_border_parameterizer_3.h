@@ -12,6 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -19,6 +22,8 @@
 #define CGAL_SURFACE_MESH_PARAMETERIZATION_FIXED_BORDER_PARAMETERIZER_3_H
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Surface_mesh_parameterization/internal/angles.h>
 #include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
@@ -258,7 +263,7 @@ public:
 
     // Solve "A*Xu = Bu". On success, solution is (1/Du) * Xu.
     // Solve "A*Xv = Bv". On success, solution is (1/Dv) * Xv.
-    NT Du, Dv;
+    NT Du = 0, Dv = 0;
     if(!get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
        !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv))
     {
@@ -414,5 +419,7 @@ private:
 } // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_PARAMETERIZATION_FIXED_BORDER_PARAMETERIZER_3_H

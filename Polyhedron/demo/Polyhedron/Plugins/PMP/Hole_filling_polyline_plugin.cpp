@@ -26,7 +26,7 @@
 #include <algorithm>
 
 #include <boost/function_output_iterator.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 
 struct Face : public CGAL::cpp11::array<int,3>

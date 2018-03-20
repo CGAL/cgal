@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent RINEAU
@@ -23,6 +24,7 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Surface_mesher/Null_oracle_visitor.h>
 #include <CGAL/point_generators_3.h>
@@ -201,7 +203,7 @@ namespace CGAL {
         return Object();
       } // end private_intersection
 
-      struct Lambda_between_0_and_1 : public std::unary_function<FT, bool> 
+      struct Lambda_between_0_and_1 : public CGAL::unary_function<FT, bool> 
       {
         bool operator()(const FT x) const
         {
@@ -209,7 +211,7 @@ namespace CGAL {
         }
       };
         
-      struct Lambda_positive : public std::unary_function<FT, bool> 
+      struct Lambda_positive : public CGAL::unary_function<FT, bool> 
       {
         bool operator()(const FT x) const
         {
@@ -217,7 +219,7 @@ namespace CGAL {
         }
       };
         
-      struct Always_true : public std::unary_function<FT, bool> 
+      struct Always_true : public CGAL::unary_function<FT, bool> 
       {
         bool operator()(const FT) const
         {
@@ -459,5 +461,6 @@ namespace CGAL {
 
 } // namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif  // CGAL_SURFACE_MESHER_SPHERE_ORACLE_3_H

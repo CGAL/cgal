@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Olivier Devillers
 
@@ -21,6 +22,9 @@
 
 #ifndef CGAL_POINT_GENERATORS_D_H
 #define CGAL_POINT_GENERATORS_D_H 1
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/generators.h>
 #include <CGAL/number_type_basic.h>
 #include <cmath>
@@ -206,6 +210,8 @@ points_on_cube_grid_d( int dimension, double a,
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POINT_GENERATORS_D_H //
 // EOF //

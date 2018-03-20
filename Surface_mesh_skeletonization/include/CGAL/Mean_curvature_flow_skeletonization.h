@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Xiang Gao <gaox@ethz.ch>
 //
@@ -38,7 +39,7 @@
 #include <boost/unordered_map.hpp>
 #include <boost/property_map/property_map.hpp>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/foreach.hpp>
 
 #include <CGAL/boost/graph/iterator.h>

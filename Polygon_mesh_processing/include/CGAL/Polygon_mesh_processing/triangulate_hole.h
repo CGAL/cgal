@@ -14,8 +14,8 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
-//
 // Author(s)     : Ilker O. Yaz
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_HOLE_H
@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/Hole_filling/Triangulate_hole_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/internal/Hole_filling/Triangulate_hole_polyline.h>
@@ -53,12 +54,12 @@ namespace Polygon_mesh_processing {
   @tparam PolygonMesh a model of `MutableFaceGraph`
   @tparam OutputIterator a model of `OutputIterator`
     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
-  @tparam NamedParameters a sequence of \ref namedparameters
+  @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 
   @param pmesh polygon mesh containing the hole
   @param border_halfedge a border halfedge incident to the hole
   @param out iterator over patch faces
-  @param np optional sequence of \ref namedparameters among the ones listed below
+  @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
      \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -143,13 +144,13 @@ namespace Polygon_mesh_processing {
      holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
   @tparam VertexOutputIterator model of `OutputIterator`
      holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices.
-  @tparam NamedParameters a sequence of \ref namedparameters
+  @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 
   @param pmesh polygon mesh which has the hole
   @param border_halfedge a border halfedge incident to the hole
   @param face_out output iterator over patch faces
   @param vertex_out output iterator over patch vertices without including the boundary
-  @param np optional sequence of \ref namedparameters among the ones listed below
+  @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
      \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -210,13 +211,13 @@ namespace Polygon_mesh_processing {
       holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces
   @tparam VertexOutputIterator model of `OutputIterator`
       holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices
-  @tparam NamedParameters a sequence of \ref namedparameters
+  @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 
   @param pmesh polygon mesh which has the hole
   @param border_halfedge a border halfedge incident to the hole
   @param face_out output iterator over patch faces
   @param vertex_out output iterator over patch vertices without including the boundary
-  @param np optional sequence of \ref namedparameters among the ones listed below
+  @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
      \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -307,13 +308,13 @@ namespace Polygon_mesh_processing {
      and the corresponding value type `type` must have
      a constructor `type(int p0, int p1, int p2)` available.
      The indices correspond to the ones of input points in `points`.
-  @tparam NamedParameters a sequence of \ref namedparameters
+  @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 
   @param points the range of input points
   @param third_points the range of third points
   @param out iterator over output patch triangles, described by indices of points
              in `points`
-  @param np optional sequence of \ref namedparameters among the ones listed below
+  @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
      \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space \cgalParamEnd
@@ -410,5 +411,7 @@ namespace Polygon_mesh_processing {
 } //end namespace Polygon_mesh_processing
 
 } //end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_HOLE_H

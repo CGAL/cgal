@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
@@ -24,7 +25,7 @@
 
 #include <CGAL/license/Segment_Delaunay_graph_Linf_2.h>
 
-
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2/basic.h>
 
@@ -165,5 +166,7 @@ Segment_Delaunay_graph_Linf_traits_without_intersections_2<Filtered_kernel<R>,
 {};
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_LINF_TRAITS_2_H

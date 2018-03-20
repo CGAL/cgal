@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau
@@ -24,6 +25,7 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <list>
 #include <algorithm>
@@ -155,5 +157,6 @@ namespace CGAL {
 
 } // namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif  // CGAL_SURFACE_MESHER_COMBINING_ORACLE_H

@@ -65,15 +65,20 @@ intensity property, and how to modify the point set according to this.
 \section Point_set_3_Algorithms Applying CGAL Algorithms
 
 Most \cgal algorithms let the user free to choose an input data
-structure: the points and attributes are then accessed
-through iterators and property maps. The `CGAL::Point_set_3`
-class directly provides these iterators and property maps so that
-applying \cgal algorithms is straightforward.
+structure: the points and attributes are then accessed through ranges
+and property maps. The `CGAL::Point_set_3` class is a range that
+provides property maps: applying \cgal algorithms is straightforward.
 
-In addition, all functions of the package
+As the \ref PkgPointSetProcessing "Point Set Processing" algorithms
+use \ref BGLNamedParameters to handle property maps, a method
+`CGAL::Point_set_3::parameters()` is provided: it returns a named
+parameter object with the right point and normal maps to read and
+write in the point set object.
+
+In addition, all input/output functions of the package
 \ref Chapter_Point_Set_Processing "Point Set Processing" are overloaded so
 that the user only has to call them with a `CGAL::Point_set_3`
-object as a parameter.
+object as a parameter (see \ref Point_set_3_IO).
 
 \subsection Point_set_3_PSP Point Set Processing
 

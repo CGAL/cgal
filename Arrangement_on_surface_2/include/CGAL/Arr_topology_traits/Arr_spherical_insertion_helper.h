@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
@@ -24,46 +25,43 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
-
 /*! \file
+ *
  * Definition of the Arr_spherical_insertion_helper class-template.
  */
 
-#include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
 #include <CGAL/Arr_topology_traits/Arr_spherical_construction_helper.h>
 
 namespace CGAL {
 
 /*! \class Arr_spherical_insertion_helper
+ *
  * A helper class for the insertion sweep-line visitors, suitable
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for bounded curves in the plane.
  */
-template <typename Traits_, typename Arrangement_, typename Event_,
+template <typename GeometryTraits_2, typename Arrangement_, typename Event_,
           typename Subcurve_>
 class Arr_spherical_insertion_helper :
-  public Arr_spherical_construction_helper<Traits_, Arrangement_,
+  public Arr_spherical_construction_helper<GeometryTraits_2, Arrangement_,
                                            Event_, Subcurve_>
 {
 public:
-  typedef Traits_                                       Traits_2;
+  typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Arrangement_                                  Arrangement_2;
   typedef Event_                                        Event;
   typedef Subcurve_                                     Subcurve;
 
-  typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
-  typedef typename Traits_2::Point_2                    Point_2;
+private:
+  typedef Geometry_traits_2                             Gt2;
+  typedef Arr_spherical_insertion_helper<Gt2, Arrangement_2, Event, Subcurve>
+                                                        Self;
+  typedef Arr_spherical_construction_helper<Gt2, Arrangement_2, Event, Subcurve>
+                                                        Base;
 
-  typedef Arr_spherical_construction_helper<Traits_2, Arrangement_2, Event,
-                                            Subcurve>   Base;
-
-  typedef Sweep_line_empty_visitor<Traits_2, Subcurve, Event>
-                                                        Base_visitor;
-
-  typedef Arr_spherical_insertion_helper<Traits_2, Arrangement_2, Event,
-                                         Subcurve>      Self;
-
-  typedef Arr_construction_sl_visitor<Self>             Parent_visitor;
+public:
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Gt2::Point_2                         Point_2;
 
   typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
   typedef typename Arrangement_2::Face_handle           Face_handle;
@@ -230,6 +228,6 @@ Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::top_face() const
   return this->m_spherical_face;
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

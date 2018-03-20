@@ -16,6 +16,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau, Stephane Tayeb
@@ -25,6 +26,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
@@ -38,7 +40,7 @@
 #include <algorithm>
 #include <iomanip> // std::setprecision
 #include <iostream> // std::cerr/cout
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/function_output_iterator.hpp>
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
@@ -80,10 +82,10 @@ namespace Mesh_3 {
     // to use them. -- Laurent Rineau, 2007/07/27
     template <typename Map>
     struct Second_of :
-    public std::unary_function<typename Map::value_type,
+    public CGAL::unary_function<typename Map::value_type,
     const typename Map::mapped_type&>
     {
-      typedef std::unary_function<typename Map::value_type,
+      typedef CGAL::unary_function<typename Map::value_type,
         const typename Map::mapped_type&> Base;
       typedef typename Base::result_type result_type;
       typedef typename Base::argument_type argument_type;
@@ -101,7 +103,7 @@ namespace Mesh_3 {
     // It is used in Slivers_exuder, to constructor a transform iterator.
     template <typename Gt, typename Vertex_handle>
     class Min_distance_from_v :
-    public std::unary_function<Vertex_handle, void>
+    public CGAL::unary_function<Vertex_handle, void>
     {
       const Vertex_handle * v;
       const Gt& gt;
@@ -1873,5 +1875,6 @@ check_ratios(const Sliver_values& criterion_values,
 
 } // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // end CGAL_MESH_3_SLIVERS_EXUDER_H

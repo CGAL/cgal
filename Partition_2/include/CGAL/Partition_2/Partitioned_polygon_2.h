@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
@@ -47,15 +48,15 @@ public:
                 _vertex(vertex),
                 _prev_v_ref(prev_ref)
    { 
-      _vertex_orientation = _orientation(*_prev_v_ref, vertex, *next_ref);
+     _vertex_orientation = _orientation(Point_2(*_prev_v_ref), Point_2(vertex), Point_2(*next_ref));
    }
 
    bool
    operator()(Iterator d1, Iterator d2) 
    {
-      Orientation d1_orientation = _orientation(*_prev_v_ref, _vertex, *d1);
-      Orientation d2_orientation = _orientation(*_prev_v_ref, _vertex, *d2);
-      Orientation d1_to_d2 = _orientation(*d1, _vertex, *d2);
+     Orientation d1_orientation = _orientation(Point_2(*_prev_v_ref), Point_2(_vertex), Point_2(*d1));
+     Orientation d2_orientation = _orientation(Point_2(*_prev_v_ref), Point_2(_vertex), Point_2(*d2));
+     Orientation d1_to_d2 = _orientation(Point_2(*d1), Point_2(_vertex), Point_2(*d2));
 
       // if both diagonals are on the same side of the line from previous 
       // vertex to this vertex then d1 comes before d2 (in CW order from
@@ -277,7 +278,7 @@ private:
          next = *next_d_it;
    
 //      return _right_turn(*prev, *vertex_ref, *next);
-      return _left_turn(*vertex_ref, *prev, *next);
+      return _left_turn(Point_2(*vertex_ref), Point_2(*prev), Point_2(*next));
    }
 
    bool diagonal_is_necessary(Circulator diag_ref1, Circulator diag_ref2) 

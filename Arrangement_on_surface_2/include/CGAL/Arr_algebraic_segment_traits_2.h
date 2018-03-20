@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Kerber    <mkerber@mpi-inf.mpg.de>
@@ -23,8 +24,7 @@
 #ifndef CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS
 #define CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS
 
-#include <CGAL/license/Arrangement_on_surface_2.h>
-
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/config.h>
 
@@ -658,5 +658,7 @@ public:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS

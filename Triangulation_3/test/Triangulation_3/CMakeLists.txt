@@ -15,11 +15,6 @@ if ( CGAL_FOUND )
 
   find_package( TBB QUIET )
 
-  if( TBB_FOUND )
-    include(${TBB_USE_FILE})
-    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
-  endif()
-  
   include( CGAL_CreateSingleSourceCGALProgram )
 
   include_directories (BEFORE "../../include")
@@ -39,6 +34,25 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_simplex_3.cpp" )
   create_single_source_cgal_program( "test_static_filters.cpp" )
   create_single_source_cgal_program( "test_triangulation_3.cpp" )
+
+  if(TBB_FOUND)
+    foreach(target
+        test_delaunay_3
+        test_regular_3
+        test_regular_insert_range_with_info)
+      CGAL_target_use_TBB(${target})
+    endforeach()
+  endif()
+
+  if(BUILD_TESTING)
+    set_tests_properties(
+        execution___of__test_delaunay_hierarchy_3
+        execution___of__test_delaunay_hierarchy_3_old
+        execution___of__test_regular_as_delaunay_3
+        execution___of__test_triangulation_3
+        execution___of__test_delaunay_3
+      PROPERTIES RESOURCE_LOCK Triangulation_3_Tests_IO)
+  endif()
 
 else()
   

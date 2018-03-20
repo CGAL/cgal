@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
@@ -25,13 +26,11 @@
 //                                           Ester Ezra,
 //                                           Shai Hirsch,
 //                                           and Eugene Lipovetsky)
-//
 
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_IMPL_H
 #define CGAL_ARRANGEMENT_ON_SURFACE_2_IMPL_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
-
 
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
 #define CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE 0
@@ -2682,7 +2681,7 @@ _insert_at_vertices(DHalfedge* he_to,
     // Check what to do here, when allow_swap_of_predecessors = false and thus
     // signs1 and signs2 set to DEFAULT (=ZERO) values.
     // swapping is currently only disabled when _insert_at_vertices is called
-    // from Arr_construction_sl_visitor, which however uses the
+    // from Arr_construction_ss_visitor, which however uses the
     // 'swap_predecessors' member of the topology traits' construction helper.
     // So it's questionable whether we can combine the light-weigth swap
     // information with the slightly more expensive sign computations, to keep
@@ -4281,7 +4280,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
       std::cout << "signs1.x: " << signs1.first << std::endl;
       std::cout << "signs1.y: " << signs1.second << std::endl;
-      if (! he_min1->is_fictitious())
+      if (! he_min1->has_null_curve())
         std::cout << "he_min1: " << he_min1->curve() << std::endl;
       else std::cout << "he_min1 fictitious" << std::endl;
 #endif
@@ -4297,7 +4296,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
       std::cout << "signs2.x: " << signs2.first << std::endl;
       std::cout << "signs2.y: " << signs2.second << std::endl;
-      if (! he_min2->is_fictitious())
+      if (! he_min2->has_null_curve())
         std::cout << "he_min2: " << he_min2->curve() << std::endl;
       else std::cout << "he_min2 fictitious" << std::endl;
 #endif
@@ -4438,35 +4437,41 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       // The two halfedges form a "singleton" hole inside the incident face
       // (case 1 of the removal procedure, as detailed in the design document),
       // so we simply have to remove it.
-      // First notify the observers that we are about to remove this hole
-      // (inner CCB).
+
+      // Notify before the removal of this hole (inner CCB).
+      // Erase the inner CCB from the incident face.
+      // Delete the corresponding component.
+      // Notify after the removal.
       Face_handle fh(f1);
-
       _notify_before_remove_inner_ccb(fh, (Halfedge_handle(he1))->ccb());
-
-      // Erase the inner CCB from the incident face and delete the
-      // corresponding component.
       f1->erase_inner_ccb(ic1);
-
       _dcel().delete_inner_ccb(ic1);
-
-      // Notify the observers that the inner CCB has been removed.
       _notify_after_remove_inner_ccb(fh);
+
+      DVertex* v1 = he1->vertex();
+      DVertex* v2 = he2->vertex();
+
+      _delete_curve(he1->curve());
+      _dcel().delete_edge(he1);
+
+#ifndef CGAL_NON_SYMETRICAL_OBSERVER_EDGE_REMOVAL_BACKWARD_COMPATIBILITY
+      _notify_after_remove_edge();
+#endif
 
       // Remove the end-vertices, if necessary.
       if (remove_target) {
-        if ((he1->vertex()->parameter_space_in_x() != ARR_INTERIOR) ||
-            (he1->vertex()->parameter_space_in_y() != ARR_INTERIOR))
+        if ((v1->parameter_space_in_x() != ARR_INTERIOR) ||
+            (v1->parameter_space_in_y() != ARR_INTERIOR))
         {
-          he1->vertex()->set_halfedge(NULL);    // disconnect the end vertex
-          _remove_vertex_if_redundant(he1->vertex(), f1);
+          v1->set_halfedge(NULL);    // disconnect the end vertex
+          _remove_vertex_if_redundant(v1, f1);
         }
         else {
           // Delete the he1's target vertex and its associated point.
-          _notify_before_remove_vertex(Vertex_handle(he1->vertex()));
+          _notify_before_remove_vertex(Vertex_handle(v1));
 
-          _delete_point(he1->vertex()->point());
-          _dcel().delete_vertex(he1->vertex());
+          _delete_point(v1->point());
+          _dcel().delete_vertex(v1);
 
           _notify_after_remove_vertex();
         }
@@ -4474,21 +4479,21 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       else
         // The remaining target vertex now becomes an isolated vertex inside
         // the containing face:
-        _insert_isolated_vertex(f1, he1->vertex());
+        _insert_isolated_vertex(f1, v1);
 
       if (remove_source) {
-        if ((he2->vertex()->parameter_space_in_x() != ARR_INTERIOR) ||
-            (he2->vertex()->parameter_space_in_y() != ARR_INTERIOR))
+        if ((v2->parameter_space_in_x() != ARR_INTERIOR) ||
+            (v2->parameter_space_in_y() != ARR_INTERIOR))
         {
-          he2->vertex()->set_halfedge(NULL);    // disconnect the end vertex
-          _remove_vertex_if_redundant(he2->vertex(), f1);
+          v2->set_halfedge(NULL);    // disconnect the end vertex
+          _remove_vertex_if_redundant(v2, f1);
         }
         else {
           // Delete the he1's source vertex and its associated point.
-          _notify_before_remove_vertex(Vertex_handle(he2->vertex()));
+          _notify_before_remove_vertex(Vertex_handle(v2));
 
-          _delete_point(he2->vertex()->point());
-          _dcel().delete_vertex(he2->vertex());
+          _delete_point(v2->point());
+          _dcel().delete_vertex(v2);
 
           _notify_after_remove_vertex();
         }
@@ -4496,19 +4501,17 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       else
         // The remaining source vertex now becomes an isolated vertex inside
         // the containing face:
-        _insert_isolated_vertex(f1, he2->vertex());
+        _insert_isolated_vertex(f1, v2);
 
-      // Delete the curve associated with the edge to be removed.
-      _delete_curve(he1->curve());
-      _dcel().delete_edge(he1);
-
-      // Notify the observers that an edge has been deleted.
+#ifdef CGAL_NON_SYMETRICAL_OBSERVER_EDGE_REMOVAL_BACKWARD_COMPATIBILITY
       _notify_after_remove_edge();
+#endif
 
       // Return the face that used to contain the hole.
       return f1;
     }
-    else if ((he1->next() == he2) || (he2->next() == he1)) {
+
+    if ((he1->next() == he2) || (he2->next() == he1)) {
       CGAL_assertion((oc1 == oc2) && (ic1 == ic2));
 
       // In this case the two halfedges form an "antenna" (case 2).
@@ -4542,25 +4545,35 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       if (he2->vertex()->halfedge() == he2)
         he2->vertex()->set_halfedge(prev1);
 
+      DVertex* v1 = he1->vertex();
+      DVertex* v2 = he2->vertex();
+
+      _delete_curve(he1->curve());
+      _dcel().delete_edge(he1);
+
+#ifndef CGAL_NON_SYMETRICAL_OBSERVER_EDGE_REMOVAL_BACKWARD_COMPATIBILITY
+      _notify_after_remove_edge();
+#endif
+
       // Try to temove the base vertex, in case it has boundary conditions.
-      if ((he2->vertex()->parameter_space_in_x() != ARR_INTERIOR) ||
-          (he2->vertex()->parameter_space_in_y() != ARR_INTERIOR))
-        _remove_vertex_if_redundant(he2->vertex(), f1);
+      if ((v2->parameter_space_in_x() != ARR_INTERIOR) ||
+          (v2->parameter_space_in_y() != ARR_INTERIOR))
+        _remove_vertex_if_redundant(v2, f1);
 
       // Remove the redundant tip vertex, if necessary.
       if (remove_tip_vertex) {
-        if ((he1->vertex()->parameter_space_in_x() != ARR_INTERIOR) ||
-            (he1->vertex()->parameter_space_in_y() != ARR_INTERIOR))
+        if ((v1->parameter_space_in_x() != ARR_INTERIOR) ||
+            (v1->parameter_space_in_y() != ARR_INTERIOR))
         {
-          he1->vertex()->set_halfedge(NULL);    // disconnect the end vertex
-          _remove_vertex_if_redundant(he1->vertex(), f1);
+          v1->set_halfedge(NULL);    // disconnect the end vertex
+          _remove_vertex_if_redundant(v1, f1);
         }
         else {
           // Delete the vertex that forms the tip of the "antenna".
-          _notify_before_remove_vertex(Vertex_handle(he1->vertex()));
+          _notify_before_remove_vertex(Vertex_handle(v1));
 
-          _delete_point(he1->vertex()->point());
-          _dcel().delete_vertex(he1->vertex());
+          _delete_point(v1->point());
+          _dcel().delete_vertex(v1);
 
           _notify_after_remove_vertex();
         }
@@ -4568,14 +4581,11 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       else
         // The remaining "antenna" tip now becomes an isolated vertex inside
         // the containing face:
-        _insert_isolated_vertex(f1, he1->vertex());
+        _insert_isolated_vertex(f1, v1);
 
-      // Delete the curve associated with the edge to be removed.
-      _delete_curve(he1->curve());
-      _dcel().delete_edge(he1);
-
-      // Notify the observers that an edge has been deleted.
+#ifdef CGAL_NON_SYMETRICAL_OBSERVER_EDGE_REMOVAL_BACKWARD_COMPATIBILITY
       _notify_after_remove_edge();
+#endif
 
       // Return the incident face.
       return f1;
@@ -4589,6 +4599,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     prev2 = he2->prev();
 
     if ((ic1 != NULL) && (ic1 == ic2)) {
+
       // If both halfedges lie on the same inner component (hole) inside the
       // face (case 3.1), we have to split this component into two holes.
       //
@@ -4639,19 +4650,15 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       Face_handle fh(f1);
 
       _notify_before_remove_outer_ccb(fh, (Halfedge_handle(he1))->ccb());
-
       f1->erase_outer_ccb(oc1);
       _dcel().delete_outer_ccb(oc1);
-
       _notify_after_remove_outer_ccb(fh);
 
       // We now remove the outer CCBs oc2 from f, and inform the observers
       // on doing so.
       _notify_before_remove_outer_ccb(fh, (Halfedge_handle(he2))->ccb());
-
       f2->erase_outer_ccb(oc2);
       _dcel().delete_outer_ccb(oc2);
-
       _notify_after_remove_outer_ccb(fh);
 
       // Mark that we should eventually add a new inner CCB inside the face.
@@ -4768,19 +4775,10 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     if (he2->vertex()->halfedge() == he2)
       he2->vertex()->set_halfedge(prev1);
 
-    // Remove the end vertices, in case they become redundant.
-    if ((he1->vertex()->parameter_space_in_x() != ARR_INTERIOR) ||
-        (he1->vertex()->parameter_space_in_y() != ARR_INTERIOR))
-      _remove_vertex_if_redundant(he1->vertex(), f1);
+    DVertex* v1 = he1->vertex();
+    DVertex* v2 = he2->vertex();
 
-    if ((he2->vertex()->parameter_space_in_x() != ARR_INTERIOR) ||
-        (he2->vertex()->parameter_space_in_y() != ARR_INTERIOR))
-      _remove_vertex_if_redundant(he2->vertex(), f1);
-
-    // Delete the curve associated with the edge to be removed.
     _delete_curve(he1->curve());
-
-    // Delete the pair of halfedges.
     _dcel().delete_edge(he1);
 
     // RWRW: NEW!
@@ -4811,8 +4809,27 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       _notify_after_add_inner_ccb(hh->ccb());
     }
 
-    // Notify the observers that an edge has been deleted.
+#ifndef CGAL_NON_SYMETRICAL_OBSERVER_EDGE_REMOVAL_BACKWARD_COMPATIBILITY
     _notify_after_remove_edge();
+#endif
+
+    // Remove the end vertices, in case they become redundant.
+    // We defer the removal of the end vertices (in case they are indeed
+    // redundant) to occur after the observer is notified that the edge has
+    // been removed, to match the case where the end vertices are associated
+    // with concrete points, and need to be removed as they became isolated
+    // vertices, and the user has requested the removal of isolated end vertices.
+    if ((v1->parameter_space_in_x() != ARR_INTERIOR) ||
+        (v1->parameter_space_in_y() != ARR_INTERIOR))
+      _remove_vertex_if_redundant(v1, f1);
+
+    if ((v2->parameter_space_in_x() != ARR_INTERIOR) ||
+        (v2->parameter_space_in_y() != ARR_INTERIOR))
+      _remove_vertex_if_redundant(v2, f1);
+
+#ifdef CGAL_NON_SYMETRICAL_OBSERVER_EDGE_REMOVAL_BACKWARD_COMPATIBILITY
+    _notify_after_remove_edge();
+#endif
 
     // Return the incident face.
     return f1;
@@ -4869,7 +4886,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
 
     // Both halfedges lie on the outer boundary of their incident faces
     // (case 3.4). We have to distinguish two possible sub-cases.
-      // TODO EBEB 2012-07-30 replace with signs
+    // TODO EBEB 2012-07-30 replace with signs
     if (_hole_creation_on_edge_removal(signs1, signs2, false)) {
       // We have to remove the outer CCBs of f1 and f2 that he1 and he2 lie
       // on, and create a new hole in the merged face (case 3.4.2).
@@ -4927,9 +4944,6 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     prev1->set_next(he2->next());
     prev2->set_next(he1->next());
 
-    // Delete the curve associated with the edge to be removed.
-    _delete_curve(he1->curve());
-
     // If the face f2 we have just merged with f1 is unbounded, then the
     // merged face is also unbounded.
     if (f2->is_unbounded())
@@ -4941,16 +4955,10 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     // Notify the observers that the faces have been merged.
     _notify_after_merge_face(Face_handle(f1));
 
-    // Remove the end vertices, in case they become redundant.
-    if ((he1->vertex()->parameter_space_in_x() != ARR_INTERIOR) ||
-        (he1->vertex()->parameter_space_in_y() != ARR_INTERIOR))
-      _remove_vertex_if_redundant(he1->vertex(), f1);
+    DVertex* v1 = he1->vertex();
+    DVertex* v2 = he2->vertex();
 
-    if ((he2->vertex()->parameter_space_in_x() != ARR_INTERIOR) ||
-        (he2->vertex()->parameter_space_in_y() != ARR_INTERIOR))
-      _remove_vertex_if_redundant(he2->vertex(), f1);
-
-    // Delete the pair of halfedges.
+    _delete_curve(he1->curve());
     _dcel().delete_edge(he1);
 
     // In case we have to create a new inner CCB inside the merged face
@@ -4979,8 +4987,27 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       _notify_after_add_inner_ccb(hh->ccb());
     }
 
-    // Notify the observers that an edge has been deleted.
+#ifndef CGAL_NON_SYMETRICAL_OBSERVER_EDGE_REMOVAL_BACKWARD_COMPATIBILITY
     _notify_after_remove_edge();
+#endif
+
+    // Remove the end vertices, in case they become redundant.
+    // We defer the removal of the end vertices (in case they are indeed
+    // redundant) to occur after the observer is notified that the edge has
+    // been removed, to match the case where the end vertices are associated
+    // with concrete points, and need to be removed as they became isolated
+    // vertices, and the user has requested the removal of isolated end vertices.
+    if ((v1->parameter_space_in_x() != ARR_INTERIOR) ||
+        (v1->parameter_space_in_y() != ARR_INTERIOR))
+      _remove_vertex_if_redundant(v1, f1);
+
+    if ((v2->parameter_space_in_x() != ARR_INTERIOR) ||
+        (v2->parameter_space_in_y() != ARR_INTERIOR))
+      _remove_vertex_if_redundant(v2, f1);
+
+#ifdef CGAL_NON_SYMETRICAL_OBSERVER_EDGE_REMOVAL_BACKWARD_COMPATIBILITY
+    _notify_after_remove_edge();
+#endif
 
     // Return the merged face.
     return f1;
@@ -5037,9 +5064,6 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   prev1->set_next(he2->next());
   prev2->set_next(he1->next());
 
-  // Delete the curve associated with the edge to be removed.
-  _delete_curve(he1->curve());
-
   // If the face f2 we have just merged with f1 is unbounded, then the merged
   // face is also unbounded.
   if (f2->is_unbounded())
@@ -5051,20 +5075,33 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   // Notify the observers that the faces have been merged.
   _notify_after_merge_face(Face_handle(f1));
 
-  // Remove the end vertices, in case they become redundant.
-  if ((he1->vertex()->parameter_space_in_x() != ARR_INTERIOR) ||
-      (he1->vertex()->parameter_space_in_y() != ARR_INTERIOR))
-    _remove_vertex_if_redundant(he1->vertex(), f1);
+  DVertex* v1 = he1->vertex();
+  DVertex* v2 = he2->vertex();
 
-  if ((he2->vertex()->parameter_space_in_x() != ARR_INTERIOR) ||
-      (he2->vertex()->parameter_space_in_y() != ARR_INTERIOR))
-    _remove_vertex_if_redundant(he2->vertex(), f1);
-
-  // Delete the pair of halfedges.
+  _delete_curve(he1->curve());
   _dcel().delete_edge(he1);
 
-  // Notify the observers that an edge has been deleted.
+#ifndef CGAL_NON_SYMETRICAL_OBSERVER_EDGE_REMOVAL_BACKWARD_COMPATIBILITY
   _notify_after_remove_edge();
+#endif
+
+  // Remove the end vertices, in case they become redundant.
+  // We defer the removal of the end vertices (in case they are indeed
+  // redundant) to occur after the observer is notified that the edge has
+  // been removed, to match the case where the end vertices are associated
+  // with concrete points, and need to be removed as they became isolated
+  // vertices, and the user has requested the removal of isolated end vertices.
+  if ((v1->parameter_space_in_x() != ARR_INTERIOR) ||
+      (v1->parameter_space_in_y() != ARR_INTERIOR))
+    _remove_vertex_if_redundant(v1, f1);
+
+  if ((v2->parameter_space_in_x() != ARR_INTERIOR) ||
+      (v2->parameter_space_in_y() != ARR_INTERIOR))
+    _remove_vertex_if_redundant(v2, f1);
+
+#ifdef CGAL_NON_SYMETRICAL_OBSERVER_EDGE_REMOVAL_BACKWARD_COMPATIBILITY
+  _notify_after_remove_edge();
+#endif
 
   // Return the merged face.
   return f1;
@@ -5490,6 +5527,6 @@ _are_curves_ordered_cw_around_vertrex(Vertex_const_handle v) const
   return true;
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

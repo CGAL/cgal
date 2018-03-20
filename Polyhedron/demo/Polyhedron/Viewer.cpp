@@ -1,5 +1,4 @@
 #include "Viewer.h"
-#include <CGAL/gl.h>
 #include <CGAL/Three/Scene_draw_interface.h>
 #include <QMouseEvent>
 #include <QKeyEvent>
@@ -30,6 +29,8 @@ public:
   bool macro_mode;
   bool inFastDrawing;
   bool inDrawWithNames;
+  bool clipping;
+  QVector4D clipbox[6];
   QPainter *painter;
   // F P S    d i s p l a y
   QTime fpsTime;
@@ -40,6 +41,9 @@ public:
   QString message;
   bool _displayMessage;
   QTimer messageTimer;
+  QOpenGLFunctions_4_3_Compatibility* _recentFunctions;
+  bool is_ogl_4_3;
+  bool is_2d_selection_mode;
 
   //! Holds useful data to draw the axis system
   struct AxisData
@@ -50,9 +54,9 @@ public:
   };
 
   //! The buffers used to draw the axis system
-  QOpenGLBuffer buffers[4];
+  QOpenGLBuffer buffers[8];
   //! The VAO used to draw the axis system
-  QOpenGLVertexArrayObject vao[2];
+  QOpenGLVertexArrayObject vao[4];
   //! The rendering program used to draw the axis system
   QOpenGLShaderProgram rendering_program;
   //! The rendering program used to draw the distance
@@ -66,12 +70,17 @@ public:
   std::vector<float> c_Axis;
   //! Decides if the axis system must be drawn or not
   bool axis_are_displayed;
+  bool grid_is_displayed;
+  std::size_t grid_size;
+  std::size_t v_gaxis_size;
   //! Decides if the text is displayed in the drawVisualHints function.
   bool has_text;
   //! Decides if the distance between APoint and BPoint must be drawn;
   bool distance_is_displayed;
   bool i_is_pressed;
+  bool initialized;
   bool z_is_pressed;
+  QImage static_image;
   //!Draws the distance between two selected points.
   void showDistance(QPoint);
   qglviewer::Vec APoint;
@@ -92,6 +101,7 @@ public:
    * \param data the struct of std::vector that will contain the results.
    */
   void makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data);
+  void drawGrid(qreal size, int nbSubdivisions=10);
   //!Clears the distance display
   void clearDistancedisplay();
   void draw_aux(bool with_names, Viewer*);
@@ -107,15 +117,18 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
 {
   d = new Viewer_impl;
   d->scene = 0;
+  d->initialized = false;
   d->antialiasing = antialiasing;
   d->twosides = false;
   this->setProperty("draw_two_sides", false);
   d->macro_mode = false;
   d->inFastDrawing = true;
   d->inDrawWithNames = false;
+  d->clipping = false;
   d->shader_programs.resize(NB_OF_PROGRAMS);
   d->offset = qglviewer::Vec(0,0,0);
   d->textRenderer = new TextRenderer();
+  d->is_2d_selection_mode = false;
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
   connect(&d->messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
@@ -132,6 +145,8 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
                       tr("Toggle the primitive IDs visibility of the selected Item."));
   setKeyDescription(Qt::Key_D,
                       tr("Disable the distance between two points  visibility."));
+  setKeyDescription(Qt::Key_F5,
+                    tr("Reload selected items if possible."));
 
 #if QGLVIEWER_VERSION >= 0x020501
   //modify mouse bindings that have been updated
@@ -162,6 +177,8 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
 #endif // QGLVIEWER_VERSION >= 2.5.0
   prev_radius = sceneRadius();
   d->axis_are_displayed = true;
+  d->grid_is_displayed = false;
+  d->grid_size = 0;
   d->has_text = false;
   d->i_is_pressed = false;
   d->z_is_pressed = false;
@@ -230,8 +247,61 @@ void Viewer::fastDraw()
 
 void Viewer::initializeGL()
 {
+#if QGLVIEWER_VERSION >= 0x020700
+
+  QSurfaceFormat format;
+  format.setDepthBufferSize(24);
+  format.setStencilBufferSize(8);
+  format.setVersion(4,3);
+  format.setProfile(QSurfaceFormat::CompatibilityProfile);
+  format.setSamples(0);
+  context()->setFormat(format);
+  bool created = context()->create();
+  if(!created || context()->format().profile() != QSurfaceFormat::CompatibilityProfile) {
+    // impossible to get a 4.3 compatibility profile, retry with 2.0
+    format.setVersion(2,1);
+    context()->setFormat(format);
+    created = context()->create();
+    d->is_ogl_4_3 = false;
+  }
+  else
+  {
+    d->is_ogl_4_3 = true;
+    d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
+  }
+  CGAL_warning_msg(created && context()->isValid(), "The openGL context initialization failed "
+                   "and the default context (2.0) will be used" );
+  makeCurrent();
+#else
+  QGLFormat format;
+  format.setVersion(4,3);
+  format.setProfile(QGLFormat::CompatibilityProfile);
+  QGLContext *new_context = new QGLContext(format, this);
+  new_context->setFormat(format);
+  bool created = new_context->create();
+  if(!created || new_context->format().profile() != QGLFormat::CompatibilityProfile) {
+    // impossible to get a 4.3 compatibility profile, retry with 2.0
+    format.setVersion(2,1);
+    new_context->setFormat(format);
+    created = new_context->create();
+    d->is_ogl_4_3 = false;
+  }
+  else
+  {
+    d->is_ogl_4_3 = true;
+    d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
+  }
+  CGAL_warning_msg(created && new_context->isValid(), "The openGL context initialization failed "
+                   "and the default context (2.0) will be used" );
+  this->setContext(new_context);
+  context()->makeCurrent();
+#endif
   QGLViewer::initializeGL();
   initializeOpenGLFunctions();
+  if(isOpenGL_4_3())
+  {
+   d->_recentFunctions->initializeOpenGLFunctions();
+  }
   glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
   if(!glDrawArraysInstanced)
   {
@@ -340,6 +410,12 @@ void Viewer::initializeGL()
      {
          d->vao[1].create();
          d->buffers[3].create();
+         d->vao[2].create();
+         d->vao[3].create();
+         d->buffers[4].create();
+         d->buffers[5].create();
+         d->buffers[6].create();
+         d->buffers[7].create();
          //Vertex source code
          const char vertex_source_dist[] =
          {
@@ -422,13 +498,15 @@ void Viewer::initializeGL()
 
       d->rendering_program.release();
 
-  d->painter = new QPainter(this);
+  d->painter = new QPainter();
+  d->initialized = true;
 }
 
 #include <QMouseEvent>
 
 void Viewer::mousePressEvent(QMouseEvent* event)
 {
+  makeCurrent();
   if(event->button() == Qt::RightButton &&
      event->modifiers().testFlag(Qt::ShiftModifier)) 
   {
@@ -456,8 +534,14 @@ void Viewer::mousePressEvent(QMouseEvent* event)
       event->accept();
   }
   else {
+    makeCurrent();
     QGLViewer::mousePressEvent(event);
   }
+}
+void Viewer::mouseDoubleClickEvent(QMouseEvent* event)
+{
+  makeCurrent(); 
+  QGLViewer::mouseDoubleClickEvent(event);
 }
 
 #include <QContextMenuEvent>
@@ -498,6 +582,10 @@ void Viewer::keyPressEvent(QKeyEvent* e)
           d->axis_are_displayed = !d->axis_are_displayed;
           update();
         }
+    else if(e->key() == Qt::Key_G) {
+          d->grid_is_displayed = !d->grid_is_displayed;
+          update();
+        }
     else if(e->key() == Qt::Key_I) {
           d->i_is_pressed = true;
         }
@@ -517,6 +605,12 @@ void Viewer::keyPressEvent(QKeyEvent* e)
         update();
         return;
     }
+    else if(e->key() == Qt::Key_C) {
+      QVector4D box[6];
+      for(int i=0; i<6; ++i)
+        box[i] = QVector4D(1,0,0,0);
+          enableClippingBox(box);
+        }
   }
   else if(e->key() == Qt::Key_I && e->modifiers() & Qt::ControlModifier){
     d->scene->printAllIds(this);
@@ -727,6 +821,19 @@ void Viewer::attribBuffers(int program_name) const {
     QOpenGLShaderProgram* program = getShaderProgram(program_name);
     program->bind();
     program->setUniformValue("mvp_matrix", mvp_mat);
+    program->setUniformValue("is_clipbox_on", d->clipping);
+    if(d->clipping)
+    {
+      QMatrix4x4 clipbox1;
+      QMatrix4x4 clipbox2;
+      for(int i=0;i<12;++i)
+      {
+        clipbox1.data()[i]=d->clipbox[i/4][i%4];
+        clipbox2.data()[i]=d->clipbox[(i+12)/4][(i+12)%4];
+      }
+      program->setUniformValue("clipbox1", clipbox1);
+      program->setUniformValue("clipbox2", clipbox2);
+    }
     switch(program_name)
     {
     case PROGRAM_WITH_LIGHT:
@@ -736,7 +843,7 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_WITH_TEXTURE:
     case PROGRAM_CUTPLANE_SPHERES:
     case PROGRAM_SPHERES:
-    case PROGRAM_C3T3_TETS:
+    case PROGRAM_OLD_FLAT:
     case PROGRAM_FLAT:
         program->setUniformValue("light_pos", position);
         program->setUniformValue("light_diff",diffuse);
@@ -754,7 +861,7 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_INSTANCED:
     case PROGRAM_CUTPLANE_SPHERES:
     case PROGRAM_SPHERES:
-    case PROGRAM_C3T3_TETS:
+    case PROGRAM_OLD_FLAT:
     case PROGRAM_FLAT:
       program->setUniformValue("mv_matrix", mv_mat);
       break;
@@ -1063,6 +1170,70 @@ void Viewer::drawVisualHints()
         glLineWidth(1.0f);
 
     }
+    if(d->grid_is_displayed)
+    {
+      //draws the distance
+      QMatrix4x4 mvpMatrix;
+      double mat[16];
+      camera()->getModelViewProjectionMatrix(mat);
+      //nullifies the translation
+      for(int i=0; i < 16; i++)
+      {
+          mvpMatrix.data()[i] = (float)mat[i];
+      }
+      d->rendering_program_dist.bind();
+      d->rendering_program_dist.setUniformValue("mvp_matrix", mvpMatrix);
+      d->vao[2].bind();
+      glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->grid_size));
+      d->vao[2].release();
+      d->rendering_program_dist.release();
+
+      d->rendering_program.bind();
+        QMatrix4x4 mvMatrix;
+        for(int i=0; i < 16; i++)
+        {
+            mvMatrix.data()[i] = camera()->orientation().inverse().matrix()[i];
+        }
+        QVector4D	position(0.0f,0.0f,1.0f,1.0f );
+        // define material
+        QVector4D	ambient;
+        QVector4D	diffuse;
+        QVector4D	specular;
+        GLfloat      shininess ;
+        // Ambient
+        ambient[0] = 0.29225f;
+        ambient[1] = 0.29225f;
+        ambient[2] = 0.29225f;
+        ambient[3] = 1.0f;
+        // Diffuse
+        diffuse[0] = 0.50754f;
+        diffuse[1] = 0.50754f;
+        diffuse[2] = 0.50754f;
+        diffuse[3] = 1.0f;
+        // Specular
+        specular[0] = 0.0f;
+        specular[1] = 0.0f;
+        specular[2] = 0.0f;
+        specular[3] = 0.0f;
+        // Shininess
+        shininess = 51.2f;
+
+        d->rendering_program.setUniformValue("light_pos", position);
+        d->rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
+        d->rendering_program.setUniformValue("mv_matrix", mvMatrix);
+        d->rendering_program.setUniformValue("light_diff", diffuse);
+        d->rendering_program.setUniformValue("light_spec", specular);
+        d->rendering_program.setUniformValue("light_amb", ambient);
+        d->rendering_program.setUniformValue("spec_power", shininess);
+
+        d->vao[3].bind();
+        // Axis viewport size, in pixels
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->v_gaxis_size / 3));
+        // The viewport and the scissor are restored.
+        d->vao[3].release();
+        d->rendering_program.release();
+    }
+
     if (!d->painter->isActive())
       d->painter->begin(this);
     //So that the text is drawn in front of everything
@@ -1118,6 +1289,13 @@ QOpenGLShaderProgram* Viewer::declare_program(int name,
     {
       std::cerr<<"adding fragment shader FAILED"<<std::endl;
     }
+    if(strcmp(f_shader,":/cgal/Polyhedron_3/resources/shader_flat.f" ) == 0)
+    {
+      if(!program->addShaderFromSourceFile(QOpenGLShader::Geometry,":/cgal/Polyhedron_3/resources/shader_flat.g" ))
+      {
+        std::cerr<<"adding geometry shader FAILED"<<std::endl;
+      }
+    }
     program->bindAttributeLocation("colors", 1);
     program->link();
     d->shader_programs[name] = program;
@@ -1161,14 +1339,13 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     case PROGRAM_CUTPLANE_SPHERES:
       return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3_spheres.v" , ":/cgal/Polyhedron_3/resources/shader_c3t3.f");
      break;
-    case PROGRAM_C3T3_TETS:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3_tets.v" , ":/cgal/Polyhedron_3/resources/shader_with_light.f");
-     break;
     case PROGRAM_SPHERES:
       return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_spheres.v" , ":/cgal/Polyhedron_3/resources/shader_with_light.f");
       break;
     case PROGRAM_FLAT:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_light.v", ":/cgal/Polyhedron_3/resources/shader_flat.f");
+      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_flat.v", ":/cgal/Polyhedron_3/resources/shader_flat.f");
+    case PROGRAM_OLD_FLAT:
+      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_light.v", ":/cgal/Polyhedron_3/resources/shader_old_flat.f");
       break;
 
     default:
@@ -1202,28 +1379,40 @@ QPainter* Viewer::getPainter(){return d->painter;}
 
 void Viewer::paintEvent(QPaintEvent *)
 {
-    paintGL();
+  if(!d->initialized)
+    initializeGL();
+  paintGL();
 }
 
 void Viewer::paintGL()
 {
+  makeCurrent();
   if (!d->painter->isActive())
     d->painter->begin(this);
-  d->painter->beginNativePainting();
-  glClearColor(backgroundColor().redF(), backgroundColor().greenF(), backgroundColor().blueF(), 1.0);
-
-  //set the default frustum
-  GLdouble d_mat[16];
-  this->camera()->getProjectionMatrix(d_mat);
-  //Convert the GLdoubles matrices in GLfloats
-  for (int i=0; i<16; ++i)
+  if(d->is_2d_selection_mode)
+  {
+    d->painter->drawImage(QPoint(0,0), d->static_image);
+  }
+  else
+  {
+    d->painter->beginNativePainting();
+    glClearColor(backgroundColor().redF(), backgroundColor().greenF(), backgroundColor().blueF(), 1.0);
+    glClearDepth(1.0f);
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    //set the default frustum
+    GLdouble d_mat[16];
+    this->camera()->getProjectionMatrix(d_mat);
+    //Convert the GLdoubles matrices in GLfloats
+    for (int i=0; i<16; ++i)
       d->projectionMatrix.data()[i] = GLfloat(d_mat[i]);
 
-  preDraw();
-  draw();
-  postDraw();
-  d->painter->endNativePainting();
+    preDraw();
+    draw();
+    postDraw();
+    d->painter->endNativePainting();
+  }
   d->painter->end();
+  doneCurrent();
 }
 
 void Viewer::postDraw()
@@ -1238,9 +1427,6 @@ void Viewer::postDraw()
 
   // Pivot point, line when camera rolls, zoom region
   drawVisualHints();
-
-  if (gridIsDrawn()) { glLineWidth(1.0); drawGrid(camera()->sceneRadius()); }
-  if (axisIsDrawn()) { glLineWidth(2.0); drawAxis(camera()->sceneRadius()); }
 
   // FPS computation
   const unsigned int maxCounter = 20;
@@ -1577,6 +1763,7 @@ qglviewer::Vec Viewer::offset()const { return d->offset; }
 void Viewer::setSceneBoundingBox(const qglviewer::Vec &min, const qglviewer::Vec &max)
 {
   QGLViewer::setSceneBoundingBox(min+d->offset, max+d->offset);
+  d->drawGrid(camera()->sceneRadius());
 }
 
 void Viewer::updateIds(CGAL::Three::Scene_item * item)
@@ -1588,6 +1775,7 @@ void Viewer::updateIds(CGAL::Three::Scene_item * item)
   d->scene->updatePrimitiveIds(this, item);
 }
 
+
 TextRenderer* Viewer::textRenderer()
 {
   return d->textRenderer;
@@ -1596,5 +1784,104 @@ TextRenderer* Viewer::textRenderer()
 bool Viewer::isExtensionFound()
 {
   return d->extension_is_found;
+
 }
- #include "Viewer.moc"
+
+void Viewer::disableClippingBox()
+{
+  d->clipping = false;
+}
+
+void Viewer::enableClippingBox(QVector4D box[6])
+{
+  d->clipping = true;
+  for(int i=0; i<6; ++i)
+    d->clipbox[i] = box[i];
+}
+
+
+bool Viewer::isOpenGL_4_3() const { return d->is_ogl_4_3; }
+void Viewer_impl::drawGrid(qreal size, int nbSubdivisions)
+{
+  std::vector<float> v_Grid;
+  std::vector<float> v_gAxis;
+  std::vector<float> n_gAxis;
+  std::vector<float> c_gAxis;
+  for (int i=0; i<=nbSubdivisions; ++i)
+  {
+          const float pos = size*(2.0*i/nbSubdivisions-1.0);
+          v_Grid.push_back(pos);
+          v_Grid.push_back(-size);
+          v_Grid.push_back(0.0);
+
+          v_Grid.push_back(pos);
+          v_Grid.push_back(+size);
+          v_Grid.push_back(0.0);
+
+          v_Grid.push_back(-size);
+          v_Grid.push_back(pos);
+          v_Grid.push_back(0.0);
+
+          v_Grid.push_back( size);
+          v_Grid.push_back( pos);
+          v_Grid.push_back( 0.0);
+  }
+  rendering_program_dist.bind();
+  vao[2].bind();
+  buffers[4].bind();
+  buffers[4].allocate(v_Grid.data(),static_cast<int>(v_Grid.size()*sizeof(float)));
+  rendering_program_dist.enableAttributeArray("vertex");
+  rendering_program_dist.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+  buffers[4].release();
+  vao[2].release();
+  rendering_program_dist.release();
+  grid_size = v_Grid.size();
+
+  Viewer_impl::AxisData data;
+  v_gAxis.resize(0);
+  n_gAxis.resize(0);
+  c_gAxis.resize(0);
+  data.vertices = &v_gAxis;
+  data.normals =  &n_gAxis;
+  data.colors =   &c_gAxis;
+  makeArrow(0.02*size,10, qglviewer::Vec(0,0,0),qglviewer::Vec(size,0,0),qglviewer::Vec(1,0,0), data);
+  makeArrow(0.02*size,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,size,0),qglviewer::Vec(0,1,0), data);
+  makeArrow(0.02*size,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,0,size),qglviewer::Vec(0,0,1), data);
+
+  rendering_program.bind();
+  vao[3].bind();
+  buffers[5].bind();
+  buffers[5].allocate(v_gAxis.data(), static_cast<int>(v_gAxis.size()) * sizeof(float));
+  rendering_program.enableAttributeArray("vertex");
+  rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+  buffers[5].release();
+
+  buffers[6].bind();
+  buffers[6].allocate(n_gAxis.data(), static_cast<int>(n_gAxis.size() * sizeof(float)));
+  rendering_program.enableAttributeArray("normal");
+  rendering_program.setAttributeBuffer("normal",GL_FLOAT,0,3);
+  buffers[6].release();
+
+  buffers[7].bind();
+  buffers[7].allocate(c_gAxis.data(), static_cast<int>(c_gAxis.size() * sizeof(float)));
+  rendering_program.enableAttributeArray("colors");
+  rendering_program.setAttributeBuffer("colors",GL_FLOAT,0,3);
+  buffers[7].release();
+  vao[3].release();
+
+  rendering_program.release();
+
+  v_gaxis_size = v_gAxis.size();
+
+}
+QOpenGLFunctions_4_3_Compatibility* Viewer::openGL_4_3_functions() { return d->_recentFunctions; }
+
+void Viewer::set2DSelectionMode(bool b) { d->is_2d_selection_mode = b; }
+
+void Viewer::setStaticImage(QImage image) { d->static_image = image; }
+
+const QImage& Viewer:: staticImage() const { return d->static_image; }
+
+
+
+#include "Viewer.moc"

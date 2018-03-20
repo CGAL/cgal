@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
@@ -31,6 +32,7 @@
 #include <CGAL/Qt/GraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Fuzzy_iso_box.h>
+#include <CGAL/iterator.h>
 
 #include <QGraphicsScene>
 #include <QPainter>
@@ -52,7 +54,7 @@ class PointsInKdTreeGraphicsItem : public GraphicsItem
   // Instead of first collecting points into a container, and then draw them
   // we use an output iterator that draws them on the fly
   template <typename K>
-  class Draw : public std::iterator<std::output_iterator_tag, void, void, void, void> {
+  class Draw : public CGAL::iterator<std::output_iterator_tag, void, void, void, void> {
     QPainter* painter;
     QMatrix* matrix;
     Converter<K> convert;

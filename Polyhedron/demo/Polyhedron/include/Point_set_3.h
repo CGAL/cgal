@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Saboret, Nader Salman, Gael Guennebaud, Simon Giraudot
@@ -26,17 +27,16 @@
 #include <CGAL/Min_sphere_of_points_d_traits_3.h>
 #include <CGAL/Min_sphere_of_spheres_d_traits_3.h>
 #include <CGAL/Point_set_3.h>
+#include <CGAL/Iterator_range.h>
 
 #include <algorithm>
 #include <vector>
-# include <CGAL/gl.h>
 
 /// The Point_set_3 class is array of points + normals of type
 /// Point_with_normal_3<Gt> (in fact
 /// UI_point_3 to support a selection flag and an optional radius).
 /// It provides:
 /// - accessors: points and normals iterators, property maps
-/// - OpenGL rendering
 /// - bounding box
 ///
 /// CAUTION:
@@ -94,7 +94,10 @@ private:
   Double_map m_fred;
   Double_map m_fgreen;
   Double_map m_fblue;
-
+  
+  mutable CGAL::Iterator_range<const_iterator> m_const_range;
+  CGAL::Iterator_range<iterator> m_range;
+  
   // Assignment operator not implemented and declared private to make
   // sure nobody uses the default one without knowing it
   Point_set_3& operator= (const Point_set_3&)
@@ -104,14 +107,20 @@ private:
 
   
 public:
+  
   Point_set_3 ()
+    : m_const_range (begin(), end())
+    , m_range (begin(), end())
   {
     m_bounding_box_is_valid = false;
     m_radii_are_uptodate = false;
   }
 
   // copy constructor 
-  Point_set_3 (const Point_set_3& p) : Base (p)
+  Point_set_3 (const Point_set_3& p)
+    : Base (p)
+    , m_const_range (begin(), end())
+    , m_range (begin(), end())
   {
     check_colors();
     m_bounding_box_is_valid = p.m_bounding_box_is_valid;
@@ -127,6 +136,14 @@ public:
   const_iterator end() const { return this->m_indices.end(); }
   std::size_t size() const { return this->m_base.size(); }
 
+  void reset_indices()
+  {
+    unselect_all();
+    
+    for (std::size_t i = 0; i < this->m_base.size(); ++ i)
+      this->m_indices[i] = i;
+  }
+  
   bool add_radius()
   {
     bool out = false;
@@ -252,13 +269,36 @@ public:
     return (m_blue != Byte_map());
   }
     
+  void remove_colors()
+  {
+    if (m_blue != Byte_map())
+      {
+        this->template remove_property_map<unsigned char>(m_red);
+        this->template remove_property_map<unsigned char>(m_green);
+        this->template remove_property_map<unsigned char>(m_blue);
+      }
+    if (m_fblue != Double_map())
+      {
+        this->template remove_property_map<double>(m_fred);
+        this->template remove_property_map<double>(m_fgreen);
+        this->template remove_property_map<double>(m_fblue);
+      }
+  }
+  
   double red (const Index& index) const
   { return (m_red == Byte_map()) ? m_fred[index]  : double(m_red[index]) / 255.; }
   double green (const Index& index) const
   { return (m_green == Byte_map()) ? m_fgreen[index]  : double(m_green[index]) / 255.; }
   double blue (const Index& index) const
   { return (m_blue == Byte_map()) ? m_fblue[index]  : double(m_blue[index]) / 255.; }
+  void set_color (const Index& index, unsigned char r, unsigned char g, unsigned char b)
+  {
+    m_red[index] = r;
+    m_green[index] = g;
+    m_blue[index] = b;
+  }
 
+    
   
   iterator first_selected() { return this->m_indices.end() - this->m_nb_removed; }
   const_iterator first_selected() const { return this->m_indices.end() - this->m_nb_removed; }
@@ -274,6 +314,17 @@ public:
   iterator begin_or_selection_begin()
   {
     return (this->m_nb_removed == 0 ? begin() : first_selected());
+  }
+
+  const CGAL::Iterator_range<const_iterator>& all_or_selection_if_not_empty() const
+  {
+    m_const_range = CGAL::make_range (begin_or_selection_begin(), end());
+    return m_const_range;
+  }
+  CGAL::Iterator_range<iterator>& all_or_selection_if_not_empty()
+  {
+    m_range = CGAL::make_range (begin_or_selection_begin(), end());
+    return m_range;
   }
 
 
@@ -426,6 +477,21 @@ public:
   bool are_radii_uptodate() const { return m_radii_are_uptodate; }
   void set_radii_uptodate(bool /*on*/) { m_radii_are_uptodate = false; }
   
+  CGAL::cgal_bgl_named_params
+  <Kernel,
+   CGAL::internal_np::geom_traits_t,
+   CGAL::cgal_bgl_named_params
+   <typename Base::template Property_map<Vector>,
+    CGAL::internal_np::normal_t,
+    CGAL::cgal_bgl_named_params
+    <typename Base::template Property_map<Point>,
+     CGAL::internal_np::point_t> > >
+  inline parameters() const
+  {
+    return CGAL::parameters::point_map (this->m_points).
+      normal_map (this->m_normals).
+      geom_traits (Kernel());
+  }
 
 private:
 
@@ -490,5 +556,35 @@ private:
   
 }; // end of class Point_set_3
 
+namespace CGAL
+{
+namespace Point_set_processing_3
+{
+  template<typename Kernel>
+  class GetFT<::Point_set_3<Kernel> >
+  {
+  public:
+    typedef typename Kernel::FT type;
+  };
+  
+  namespace parameters
+  {
+    template <typename Kernel>
+    cgal_bgl_named_params
+    <Kernel,
+     internal_np::geom_traits_t,
+     cgal_bgl_named_params
+     <typename ::Point_set_3<Kernel>::template Property_map<typename Kernel::Vector_3>,
+      internal_np::normal_t,
+      cgal_bgl_named_params
+      <typename ::Point_set_3<Kernel>::template Property_map<typename Kernel::Point_3>,
+       internal_np::point_t> > >
+    inline all_default(const ::Point_set_3<Kernel>& ps)
+    {
+      return ps.parameters();
+    }
+  }
+}
+}
 
 #endif // POINT_SET_3_H

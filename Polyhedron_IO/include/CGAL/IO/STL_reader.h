@@ -13,14 +13,12 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Andreas Fabri
 
 #ifndef CGAL_IO_STL_READER_H
 #define CGAL_IO_STL_READER_H
-
-#include <CGAL/license/Polyhedron.h>
-
 
 #include <CGAL/array.h>
 #include <boost/cstdint.hpp> 
@@ -28,6 +26,7 @@
 #include <map>
 #include <iostream>
 #include <string>
+#include <cctype>
 
 namespace CGAL{
 
@@ -37,26 +36,100 @@ namespace CGAL{
             std::vector< cpp11::array<int,3> >& facets,
             bool verbose = false)
   {
-    std::string s, solid("solid");
+    bool is_binary_file = false;
+    
+    std::string s, solid("solid"), facet("facet");
     std::map<cpp11::array<double,3>, int> pmap;
     int index = 0;
     cpp11::array<int,3> ijk;
     cpp11::array<double,3> p;
 
     char line[80];
-    for(int i=0;i < 80; i++){
-      boost::uint8_t c;
-      input.read(reinterpret_cast<char*>(&c), sizeof(c));
-      line[i]=c;
-      if(i==5){
-        s = std::string(line,5);
-        if(s == solid){
-          break;
-        }
-      }
-    }
+    int i = 0, ni = 0;
 
-    if(s!= solid){
+      // read the 5 first characters to check if the first word is "solid"
+      boost::uint8_t c;
+      for(; i < 5; i++){
+        input.read(reinterpret_cast<char*>(&c), sizeof(c));
+        line[i]=c;
+      }
+
+      s = std::string(line,5);
+      if(s == solid){
+        // we found the keyword "solid" which is supposed to indicate the file is Ascii
+        // But it might still be binary, so we have to find out if it is followed
+        // by an (optional) name and then the keyword "facet"
+        // When we find "facet" we conclude that it is really Ascii
+
+        // first skip whitespaces after solid
+        do {
+          input.read(reinterpret_cast<char*>(&c), sizeof(c));
+          line[i++]=c;
+        }while(isspace(c) && ( i < 80));
+        if(i==80){
+          is_binary_file = true;
+          goto done;
+        }
+        // now c is not whitespace
+        ni = i-1; // here starts either the name or the keyword "facet"
+        do {
+          input.read(reinterpret_cast<char*>(&c), sizeof(c));
+          line[i++]=c;
+        }while(! isspace(c) && ( i < 80));
+        s = std::string(line+ni, (i-1) - ni);
+#       ifdef CGAL_DEBUG_BINARY_HEADER
+          std::cout << "|" << s  << "|" << std::endl;
+#       endif        
+        if(s == facet){
+          goto done;
+        } else if(i == 80){
+          // the entire header is a name
+          is_binary_file = true;
+          goto done;
+        }
+        
+        // we continue to read what comes after the name
+        
+        // now c is whitespace, skip other whitespaces
+        do {
+          input.read(reinterpret_cast<char*>(&c), sizeof(c));
+          line[i++]=c;
+        }while(isspace(c) && ( i < 80));
+        if(i==80){
+          is_binary_file = true;
+          goto done;
+        }
+        
+        // now c is not whitespace
+        ni = i-1; // here starts either "facet", or it is really binary
+        do {
+          input.read(reinterpret_cast<char*>(&c), sizeof(c));
+          line[i++]=c;
+        }while(! isspace(c) && ( i < 80));
+          s = std::string(line+ni, (i-1) - ni);
+#       ifdef CGAL_DEBUG_BINARY_HEADER
+          std::cout << "|" << s  << "|" << std::endl;
+#       endif
+        if(s == facet){
+          goto done;
+        } else {
+          for(; i < 80; i++){
+            input.read(reinterpret_cast<char*>(&c), sizeof(c));
+          }
+          is_binary_file = true;
+          goto done;
+        }
+      }else{
+        // we read the other 75 characters of the header
+        for(; i < 80; i++){
+          input.read(reinterpret_cast<char*>(&c), sizeof(c));
+        }
+        is_binary_file = true;
+      }
+
+  done:
+
+    if(is_binary_file){
       boost::uint32_t N32;
       input.read(reinterpret_cast<char*>(&N32), sizeof(N32));
       unsigned int N = N32;
@@ -98,14 +171,17 @@ namespace CGAL{
       }
       return true;
     } else {
-      std::string facet("facet"),
-        outer("outer"),
+
+      // It is an Ascii file but the first occurence of "facet" has already be parsed
+      bool first_facet = true;
+      std::string outer("outer"),
         loop("loop"),
         vertex("vertex"),
         endloop("endloop"),
         endsolid("endsolid");
-
-      while(input >> s){
+      s = facet;
+      while(first_facet || (input >> s)){
+        first_facet = false;
         if(s == endsolid){
           //std::cerr << "found endsolid" << std::endl;
         } else if(s == facet){

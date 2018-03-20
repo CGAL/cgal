@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Clement Jamin
 
@@ -21,6 +22,8 @@
 #define CGAL_REGULAR_TRIANGULATION_H
 
 #include <CGAL/license/Triangulation.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Triangulation.h>
 #include <CGAL/Dimension.h>
@@ -95,11 +98,10 @@ public: // PUBLIC NESTED TYPES
   //Tag to distinguish Delaunay from Regular triangulations
   typedef Tag_true                                Weighted_tag;
 
-protected: // DATA MEMBERS
-
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_false                               Periodic_tag;
 
 public:
-
   typedef typename Base::Point Weighted_point;
   typedef typename Base::Rotor Rotor;
   using Base::maximal_dimension;
@@ -1165,5 +1167,7 @@ Regular_triangulation<Traits, TDS>
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_REGULAR_TRIANGULATION_H

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Marc Glisse
 
@@ -1032,7 +1033,7 @@ template<class R_> struct Midpoint : private Store_kernel<R_> {
 	typedef Point first_argument_type;
 	typedef Point second_argument_type;
 	// There is a division, but it will be cast to RT afterwards anyway, so maybe we could use RT.
-	struct Average : std::binary_function<FT,RT,FT> {
+	struct Average : CGAL::binary_function<FT,RT,FT> {
 		FT operator()(FT const&a, RT const&b)const{
 			return (a+b)/2;
 		}
@@ -1098,7 +1099,7 @@ template<class R_> struct Squared_distance : private Store_kernel<R_> {
 	typedef RT result_type;
 	typedef Point first_argument_type;
 	typedef Point second_argument_type;
-	struct Sq_diff : std::binary_function<RT,RT,RT> {
+	struct Sq_diff : CGAL::binary_function<RT,RT,RT> {
 		RT operator()(RT const&a, RT const&b)const{
 			return CGAL::square(a-b);
 		}

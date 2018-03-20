@@ -4,7 +4,7 @@
 
 project( Circular_kernel_3_Tests )
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.11)
 
 find_package(CGAL QUIET COMPONENTS Core )
 

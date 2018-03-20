@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $UR$
+// $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -23,6 +24,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/intersection_of_Polyhedra_3.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -1156,6 +1158,6 @@ public:
 
 }//namespace CGAL
 
-
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_INTERSECTION_OF_POLYHEDRA_3_REFINEMENT_VISITOR_H

@@ -12,6 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
 //                 Ron Wein          <wein@post.tau.ac.il>
 
@@ -20,8 +24,8 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
-
 /*! \file
+ *
  * Member-function definitions for the
  * Arr_spherical_topology_traits_2<GeomTraits> class.
  */
@@ -37,7 +41,7 @@ Arr_spherical_topology_traits_2() :
   m_south_pole(NULL),
   m_own_geom_traits(true)
 {
-  m_geom_traits = new Traits_adaptor_2;
+  m_geom_traits = new Gt_adaptor_2;
   m_boundary_vertices = Vertex_map(Vertex_key_comparer(m_geom_traits));
 }
 
@@ -50,7 +54,7 @@ Arr_spherical_topology_traits_2(const Geometry_traits_2* traits) :
   m_south_pole(NULL),
   m_own_geom_traits(false)
 {
-  m_geom_traits = static_cast<const Traits_adaptor_2*>(traits);
+  m_geom_traits = static_cast<const Gt_adaptor_2*>(traits);
   m_boundary_vertices = Vertex_map(Vertex_key_comparer(m_geom_traits));
 }
 
@@ -84,7 +88,7 @@ assign(const Self& other)
   }
 
   if (other.m_own_geom_traits) {
-    m_geom_traits = new Traits_adaptor_2;
+    m_geom_traits = new Gt_adaptor_2;
     m_own_geom_traits = true;
   }
   else {
@@ -189,15 +193,15 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
    * return false;
    */
 
-  typename Traits_adaptor_2::Parameter_space_in_x_2 ps_x_op =
+  typename Gt_adaptor_2::Parameter_space_in_x_2 ps_x_op =
     m_geom_traits->parameter_space_in_x_2_object();
-  typename Traits_adaptor_2::Parameter_space_in_y_2 ps_y_op =
+  typename Gt_adaptor_2::Parameter_space_in_y_2 ps_y_op =
     m_geom_traits->parameter_space_in_y_2_object();
-  typename Traits_adaptor_2::Compare_x_2 cmp_x_op =
+  typename Gt_adaptor_2::Compare_x_2 cmp_x_op =
     m_geom_traits->compare_x_2_object();
-  typename Traits_adaptor_2::Compare_y_at_x_2 cmp_y_at_x_op =
+  typename Gt_adaptor_2::Compare_y_at_x_2 cmp_y_at_x_op =
     m_geom_traits->compare_y_at_x_2_object();
-  typename Traits_adaptor_2::Compare_x_point_curve_end_2 cmp_x_pt_ce =
+  typename Gt_adaptor_2::Compare_x_point_curve_end_2 cmp_x_pt_ce =
     m_geom_traits->compare_x_point_curve_end_2_object();
 
   // Process the input point.
@@ -713,7 +717,7 @@ _locate_around_vertex_on_discontinuity(Vertex* v,
 
   // Otherwise, we traverse the halfedges around v until we find the pair
   // of adjacent halfedges between which we should insert xc.
-  typename Traits_adaptor_2::Is_between_cw_2 is_between_cw =
+  typename Gt_adaptor_2::Is_between_cw_2 is_between_cw =
     m_geom_traits->is_between_cw_2_object();
   bool eq_curr, eq_next;
 
@@ -770,7 +774,7 @@ _locate_around_pole(Vertex* v,
 
   // Traverse all other halfedges, and compare their x-positions next to the
   // pole with the query curve xc.
-  typename Traits_adaptor_2::Compare_x_curve_ends_2 cmp_x_curve_ends =
+  typename Gt_adaptor_2::Compare_x_curve_ends_2 cmp_x_curve_ends =
     m_geom_traits->compare_x_curve_ends_2_object();
   Arr_curve_end curr_end, next_end;
   Comparison_result curr_res, next_res;
@@ -833,9 +837,9 @@ _face_below_vertex_on_discontinuity(Vertex* v) const
   // Otherwise, we traverse the halfedges around v and locate the first
   // halfedge we encounter if we go from "6 o'clock" clockwise.
   // First locate the lower left and the top right halfedges around v.
-  typename Traits_adaptor_2::Compare_y_at_x_right_2 cmp_y_at_x_op_right =
+  typename Gt_adaptor_2::Compare_y_at_x_right_2 cmp_y_at_x_op_right =
     m_geom_traits->compare_y_at_x_right_2_object();
-  typename Traits_adaptor_2::Compare_y_at_x_left_2  cmp_y_at_x_op_left =
+  typename Gt_adaptor_2::Compare_y_at_x_left_2  cmp_y_at_x_op_left =
     m_geom_traits->compare_y_at_x_left_2_object();
 
   Halfedge* lowest_left = NULL;

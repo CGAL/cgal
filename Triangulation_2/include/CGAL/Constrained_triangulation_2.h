@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Mariette Yvinec, Jean-Daniel Boissonnat
@@ -24,6 +25,7 @@
 
 #include <CGAL/license/Triangulation_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <set>
 
@@ -141,8 +143,13 @@ public:
   typedef std::list<Constraint>              List_constraints;
 
   // Tag to mark the presence of a hierarchy of constraints
- typedef Tag_false                           Constraint_hierarchy_tag;
-   
+  typedef Tag_false                          Constraint_hierarchy_tag;
+
+  //Tag to distinguish Delaunay from regular triangulations
+  typedef Tag_false                          Weighted_tag;
+
+  // Tag to distinguish periodic triangulations from others
+  typedef Tag_false                          Periodic_tag;
 
   class Less_edge;
   typedef std::set<Edge,Less_edge> Edge_set;
@@ -396,7 +403,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
   
 
   class Less_edge 
-    :  public std::binary_function<Edge, Edge, bool>
+    :  public CGAL::binary_function<Edge, Edge, bool>
   {
   public:
     Less_edge() {}
@@ -487,6 +494,9 @@ public:
     std::ptrdiff_t insert(InputIterator first, InputIterator last) 
 #endif
     {
+#if defined(_MSC_VER)
+      CGAL_USE(i);
+#endif      
       size_type n = number_of_vertices(); 
 
       std::vector<Point> points (first, last);
@@ -1496,5 +1506,7 @@ limit_intersection(const Gt& gt,
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_CONSTRAINED_TRIANGULATION_2_H

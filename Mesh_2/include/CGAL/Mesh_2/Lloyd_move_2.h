@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 // Author(s) : Jane Tournois, Raul Gallegos, Pierre Alliez
 //

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -87,11 +88,15 @@ class Face_graph_output_builder
   typedef std::pair<Node_id,Node_id>                      Node_id_pair;
   typedef boost::unordered_map<edge_descriptor,
                                Node_id_pair >    Intersection_edge_map;
+  // to maintain a halfedge on each polyline per TriangleMesh + pair<bool,size_t>
+  // with first = "is the key (pair<Node_id,Node_id>) was reversed?" and
+  // second is the number of edges -1 in the polyline
   typedef std::map< Node_id_pair,
                     std::pair< std::map<TriangleMesh*,
                                         halfedge_descriptor>,
                                std::pair<bool,std::size_t> > >
                                               An_edge_per_polyline_map;
+
   typedef boost::unordered_map<vertex_descriptor, Node_id> Node_id_map;
   typedef boost::unordered_map<edge_descriptor,
                                edge_descriptor>               Edge_map;
@@ -122,6 +127,22 @@ class Face_graph_output_builder
   // 2 = tm1 - tm2
   // 3 = tm2 - tm1
   std::bitset<4> impossible_operation;
+  // for mapping an edge per polyline per triangle mesh
+  An_edge_per_polyline_map an_edge_per_polyline;
+  // To collect all intersection edges
+  class Mesh_to_intersection_edges{
+    TriangleMesh& m_tm;
+    Intersection_edge_map tm_map;
+    Intersection_edge_map other_map;
+  public:
+    Mesh_to_intersection_edges(TriangleMesh& tm1, TriangleMesh) : m_tm(tm1) {}
+    Intersection_edge_map& operator[](TriangleMesh* tm_ptr) {
+      return &m_tm==tm_ptr?tm_map:other_map;
+    }
+  };
+  Mesh_to_intersection_edges mesh_to_intersection_edges;
+
+  typename An_edge_per_polyline_map::iterator last_polyline;
 
   Node_id get_node_id(vertex_descriptor v,
                       const Node_id_map& node_ids)
@@ -330,7 +351,8 @@ public:
     , is_tm2_closed( is_closed(tm2))
     , is_tm1_inside_out( is_tm1_closed && !PMP::is_outward_oriented(tm1) )
     , is_tm2_inside_out( is_tm2_closed && !PMP::is_outward_oriented(tm2) )
-    , NID(-1)
+    , NID((std::numeric_limits<Node_id>::max)())
+    , mesh_to_intersection_edges(tm1, tm2)
   {}
 
   bool union_is_valid() const
@@ -349,13 +371,53 @@ public:
   {
     return !impossible_operation[TM2_MINUS_TM1];
   }
+// functions called by the intersection visitor
+  void start_new_polyline(Node_id i, Node_id j)
+  {
+    std::pair<typename An_edge_per_polyline_map::iterator,bool> res=
+      an_edge_per_polyline.insert(
+        std::make_pair( make_sorted_pair(i,j),
+          std::make_pair( std::map<TriangleMesh*,halfedge_descriptor>(),std::make_pair(false,0))  )
+      );
+    CGAL_assertion(res.second);
+    last_polyline=res.first;
+    if ( i !=last_polyline->first.first )
+      last_polyline->second.second.first=true;
+  }
+
+  void add_node_to_polyline(Node_id)
+  {
+    ++(last_polyline->second.second.second);
+  }
+
+  void set_edge_per_polyline(TriangleMesh& tm,
+                             Node_id_pair indices,
+                             halfedge_descriptor hedge)
+  {
+    //register an intersection halfedge
+    // It is important here not to use operator[] since a two edges might be
+    // equals while the indices are reversed
+    mesh_to_intersection_edges[&tm].
+      insert(std::make_pair(edge(hedge, tm), indices));
+
+    if (indices.first>indices.second)
+    {
+      std::swap(indices.first,indices.second);
+      hedge=opposite(hedge,tm);
+    }
+    typename An_edge_per_polyline_map::iterator it =
+      an_edge_per_polyline.find(indices);
+
+    if (it!=an_edge_per_polyline.end()){
+      CGAL_assertion(it->second.first.count(&tm) == 0 ||
+                     it->second.first[&tm]==hedge);
+      it->second.first.insert( std::make_pair( &tm,hedge) );
+    }
+  }
 
   template <class Nodes_vector, class Mesh_to_map_node>
   void operator()(
-    std::map<const TriangleMesh*,
-             Intersection_edge_map>& mesh_to_intersection_edges,
     const Nodes_vector& nodes,
-    An_edge_per_polyline_map& an_edge_per_polyline,
     bool input_have_coplanar_faces,
     const boost::dynamic_bitset<>& is_node_of_degree_one,
     const Mesh_to_map_node&)
@@ -393,7 +455,7 @@ public:
     boost::dynamic_bitset<> tm1_coplanar_faces(num_faces(tm1), 0);
     boost::dynamic_bitset<> tm2_coplanar_faces(num_faces(tm2), 0);
 
-    // In the following loop we filter intersection edge that are strictly inside a patch
+    // In the following loop we filter intersection edges that are strictly inside a patch
     // of coplanar facets so that we keep only the edges on the border of the patch.
     // This is not optimal and in an ideal world being able to find the outside edges
     // directly would avoid to compute the intersection of edge/facets inside the patch
@@ -519,12 +581,14 @@ public:
     // (2-a) Use the orientation around an edge to classify a patch
     boost::dynamic_bitset<> is_patch_inside_tm2(nb_patches_tm1, false);
     boost::dynamic_bitset<> is_patch_inside_tm1(nb_patches_tm2, false);
-    boost::dynamic_bitset<> patch_status_not_set_tm1(nb_patches_tm1,true);
-    boost::dynamic_bitset<> patch_status_not_set_tm2(nb_patches_tm2,true);
+    boost::dynamic_bitset<> patch_status_not_set_tm1(nb_patches_tm1);
+    boost::dynamic_bitset<> patch_status_not_set_tm2(nb_patches_tm2);
     boost::dynamic_bitset<> coplanar_patches_of_tm1(nb_patches_tm1,false);
     boost::dynamic_bitset<> coplanar_patches_of_tm2(nb_patches_tm2,false);
     boost::dynamic_bitset<> coplanar_patches_of_tm1_for_union_and_intersection(nb_patches_tm1,false);
     boost::dynamic_bitset<> coplanar_patches_of_tm2_for_union_and_intersection(nb_patches_tm2,false);
+    patch_status_not_set_tm1.set();
+    patch_status_not_set_tm2.set();
 
     for (typename An_edge_per_polyline_map::iterator
             it=an_edge_per_polyline.begin(),
@@ -665,7 +729,7 @@ public:
                    vpm1, vpm2,
                    nodes) ) //p1==q2
             {
-              CGAL_assertion( index_p1!=index_p2 || index_p1==Node_id(-1) );
+              CGAL_assertion( index_p1!=index_p2 || index_p1==Node_id((std::numeric_limits<Node_id>::max)()) );
               coplanar_patches_of_tm1.set(patch_id_p1);
               coplanar_patches_of_tm2.set(patch_id_q2);
               bool q1_is_between_p1p2 = sorted_around_edge(
@@ -735,17 +799,17 @@ public:
 #endif //CGAL_COREFINEMENT_POLYHEDRA_DEBUG
 
           CGAL_assertion(
-              ( index_p1 == Node_id(-1) ? nodes.to_exact(get(vpm1,p1)): nodes.exact_node(index_p1) ) !=
-              ( index_q1 == Node_id(-1) ? nodes.to_exact(get(vpm2,q1)): nodes.exact_node(index_q1) )
+              ( index_p1 == Node_id((std::numeric_limits<Node_id>::max)()) ? nodes.to_exact(get(vpm1,p1)): nodes.exact_node(index_p1) ) !=
+              ( index_q1 == Node_id((std::numeric_limits<Node_id>::max)()) ? nodes.to_exact(get(vpm2,q1)): nodes.exact_node(index_q1) )
           &&
-              ( index_p2 == Node_id(-1) ? nodes.to_exact(get(vpm1,p2)): nodes.exact_node(index_p2) ) !=
-              ( index_q1 == Node_id(-1) ? nodes.to_exact(get(vpm2,q1)): nodes.exact_node(index_q1) )
+              ( index_p2 == Node_id((std::numeric_limits<Node_id>::max)()) ? nodes.to_exact(get(vpm1,p2)): nodes.exact_node(index_p2) ) !=
+              ( index_q1 == Node_id((std::numeric_limits<Node_id>::max)()) ? nodes.to_exact(get(vpm2,q1)): nodes.exact_node(index_q1) )
           &&
-              ( index_p1 == Node_id(-1) ? nodes.to_exact(get(vpm1,p1)): nodes.exact_node(index_p1) ) !=
-              ( index_q2 == Node_id(-1) ? nodes.to_exact(get(vpm2,q2)): nodes.exact_node(index_q2) )
+              ( index_p1 == Node_id((std::numeric_limits<Node_id>::max)()) ? nodes.to_exact(get(vpm1,p1)): nodes.exact_node(index_p1) ) !=
+              ( index_q2 == Node_id((std::numeric_limits<Node_id>::max)()) ? nodes.to_exact(get(vpm2,q2)): nodes.exact_node(index_q2) )
           &&
-              ( index_p2 == Node_id(-1) ? nodes.to_exact(get(vpm1,p2)): nodes.exact_node(index_p2) ) !=
-              ( index_q2 == Node_id(-1) ? nodes.to_exact(get(vpm2,q2)): nodes.exact_node(index_q2) )
+              ( index_p2 == Node_id((std::numeric_limits<Node_id>::max)()) ? nodes.to_exact(get(vpm1,p2)): nodes.exact_node(index_p2) ) !=
+              ( index_q2 == Node_id((std::numeric_limits<Node_id>::max)()) ? nodes.to_exact(get(vpm2,q2)): nodes.exact_node(index_q2) )
           );
 
           bool q1_is_between_p1p2 = sorted_around_edge(
@@ -967,7 +1031,7 @@ public:
 
     //to maintain a halfedge on each polyline + pair<bool,int>
     //with first = "is the key (pair<Node_id,Node_id>) was reversed?"
-    // and second is the number of edges +1 in the polyline
+    // and second is the number of edges -1 in the polyline
     //typedef std::map< std::pair<Node_id,Node_id>,
     //                  std::pair< std::map<TriangleMesh*,
     //                                      halfedge_descriptor>,

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -166,7 +167,8 @@ struct Get_convert_attribute_functor<Map1,Map2,i,Converters,false>
   }
 };
 // ****************************************************************************
-// Call a given functor if both i-attribute have an non void info
+// Call a given functor if both i-attribute have an non void info, or both
+// have no info.
 template< typename Map1, typename Map2, unsigned int i,
           typename Converters,
           bool Withinfo1=CGAL::template
@@ -199,6 +201,21 @@ struct Call_functor_if_both_attributes_have_info<Map1, Map2, i,
   {
     return Get_convert_attribute_functor<Map1,Map2,i,Converters>::
         run(cmap1, cmap2, dh1, dh2, converters);
+  }
+};
+
+template< typename Map1, typename Map2, unsigned int i, typename Converters >
+struct Call_functor_if_both_attributes_have_info<Map1, Map2, i,
+    Converters, false, false>
+{
+  static typename Map2::template Attribute_handle<i>::type
+  run( const Map1& /*cmap1*/,
+       Map2& cmap2,
+       typename Map1::Dart_const_handle /*dh1*/,
+       typename Map2::Dart_handle /*dh2*/,
+       const Converters& /*converters*/ )
+  {
+    return cmap2.template create_attribute<i>();
   }
 };
 // ****************************************************************************
@@ -257,7 +274,8 @@ struct Copy_attribute_functor_if_nonvoid
     // If dh2 has already an i-attribute, it was already copied.
     if ( cmap2.template attribute<i>(dh2)!=Map2::null_handle ) return;
 
-    // Otherwise we copy the info if both attribute have non void info.
+    // Otherwise we copy the attribute if both attributes have non void info,
+    // or if they both have no info.
     typename Map2::template Attribute_handle<i>::type
         res=Call_functor_if_both_attributes_have_info
         <Map1, Map2, i, Converters>::

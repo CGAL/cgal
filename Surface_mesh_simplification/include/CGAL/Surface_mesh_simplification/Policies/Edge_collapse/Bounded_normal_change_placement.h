@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Andreas Fabri
 //
@@ -20,7 +21,7 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_BOUNDED_NORMAL_CHANGE_PLACEMENT_H
 
 #include <CGAL/license/Surface_mesh_simplification.h>
-
+#include <boost/optional.hpp>
 
 namespace CGAL {
 
@@ -41,10 +42,10 @@ public:
   {}
      
   template <typename Profile> 
-  optional<typename Profile::Point>
+  boost::optional<typename Profile::Point>
   operator()( Profile const& aProfile) const
   {
-    optional<typename Profile::Point> op = mPlacement(aProfile); 
+    boost::optional<typename Profile::Point> op = mPlacement(aProfile);
     if(op){
       // triangles returns the triangles of the star of the vertices of the edge to collapse
       // First the two trianges incident to the edge, then the other triangles
@@ -77,7 +78,7 @@ public:
            Vector n1 = Traits().construct_cross_product_vector_3_object()(eqp,eqr);
            Vector n2 = Traits().construct_cross_product_vector_3_object()(eq2p,eq2r);
            if(! is_positive(Traits().compute_scalar_product_3_object()(n1, n2))){
-             return optional<typename Profile::Point>();
+             return boost::optional<typename Profile::Point>();
            }
            ++it;
          }

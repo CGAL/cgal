@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -21,12 +22,10 @@
 #ifndef CGAL_POLYHEDRON_3_TO_LCC_H
 #define CGAL_POLYHEDRON_3_TO_LCC_H
 
-#include <CGAL/license/Polyhedron.h>
-
-
 #include <CGAL/assertions.h>
 #include <iostream>
 #include <map>
+#include <CGAL/Polyhedron_3.h>
 
 namespace CGAL {
 

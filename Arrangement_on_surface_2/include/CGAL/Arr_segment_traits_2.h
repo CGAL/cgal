@@ -12,6 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
 //                 Waqar Khan        <wkhan@mpi-inf.mpg.de>
@@ -21,6 +25,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The segment traits-class for the arrangement package.
@@ -1171,5 +1176,6 @@ InputStream& operator>>(InputStream& is, Arr_segment_2<Kernel>& seg)
 
 } //namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif

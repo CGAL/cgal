@@ -13,12 +13,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri
 
 #ifndef CGAL_BGL_DUAL_H
 #define CGAL_BGL_DUAL_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/boost/graph/properties.h>
 #include <boost/range/distance.hpp>
@@ -486,5 +489,7 @@ in_degree(typename boost::graph_traits<Dual<P> >::vertex_descriptor v,
          
         
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

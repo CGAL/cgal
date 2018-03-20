@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Frank Da, David Cohen-Steiner, Andreas Fabri
 
@@ -22,6 +23,7 @@
 
 #include <CGAL/license/Advancing_front_surface_reconstruction.h>
 
+#include <CGAL/disable_warnings.h>
 
 // In order to activate lazy evaluation:
 // #define LAZY
@@ -2311,7 +2313,7 @@ namespace CGAL {
     }
 
 
-    struct Remove : public std::unary_function<Vertex_handle, bool>
+    struct Remove : public CGAL::unary_function<Vertex_handle, bool>
     {
 
       Extract& E;
@@ -2449,7 +2451,7 @@ namespace CGAL {
   namespace AFSR {
 
     template <typename T>
-    struct Auto_count : public std::unary_function<const T&,std::pair<T,std::size_t> >{
+    struct Auto_count : public CGAL::unary_function<const T&,std::pair<T,std::size_t> >{
       mutable std::size_t i;
 
       Auto_count()
@@ -2462,7 +2464,7 @@ namespace CGAL {
     };
 
     template <typename T, typename CC>
-    struct Auto_count_cc : public std::unary_function<const T&,std::pair<T,std::size_t> >{
+    struct Auto_count_cc : public CGAL::unary_function<const T&,std::pair<T,std::size_t> >{
       mutable std::size_t i;
       CC cc;
 
@@ -2648,5 +2650,7 @@ namespace CGAL {
 
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_H

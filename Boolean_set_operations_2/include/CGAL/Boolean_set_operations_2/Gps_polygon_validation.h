@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -21,35 +22,30 @@
 //                 Boris Kozorovitzky <boriskoz@post.tau.ac.il>
 //                 Guy Zucker <guyzucke@post.tau.ac.il>
 
-#ifndef CGAL_GPS_POLYGON_VALIDATION_2_H
-#define CGAL_GPS_POLYGON_VALIDATION_2_H
+#ifndef CGAL_BSO_2_GPS_POLYGON_VALIDATION_2_H
+#define CGAL_BSO_2_GPS_POLYGON_VALIDATION_2_H
 
 #include <CGAL/license/Boolean_set_operations_2.h>
-
 
 #include <CGAL/Boolean_set_operations_2/Gps_traits_adaptor.h>
 #include <CGAL/Boolean_set_operations_2/Gps_default_dcel.h>
 #include <CGAL/Boolean_set_operations_2/Gps_on_surface_base_2.h>
-
 #include <CGAL/Arrangement_2/Arr_default_planar_topology.h>
-#include <CGAL/Sweep_line_2.h>
-#include <CGAL/Sweep_line_2/Sweep_line_event.h>
-#include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
-#include <CGAL/Sweep_line_empty_visitor.h>
+#include <CGAL/Surface_sweep_2.h>
+#include <CGAL/Surface_sweep_2/Default_visitor.h>
 #include <CGAL/Arr_default_overlay_traits.h>
 #include <CGAL/Arr_naive_point_location.h>
-
 
 #include <iostream>
 #include <list>
 #include <iterator>
 
-
 namespace CGAL {
 
-/*Arrangement is templated with extended face dcel*/
+namespace Ss2 = Surface_sweep_2;
+
 template <typename Arrangement_2>
-class ValidationOverlayTraits :
+class Validation_overlay_traits :
   public CGAL::Arr_default_overlay_traits<Arrangement_2>
 {
 public:
@@ -79,14 +75,12 @@ public:
   }
 
 public:
-  ValidationOverlayTraits() : hole_overlap(false) {}
-  bool getHoleOverlap() {
-    return hole_overlap;
-  }
-  void setHoleOverlap(bool b) {
-    hole_overlap = b;
-    return;
-  }
+  Validation_overlay_traits() : hole_overlap(false) {}
+
+  bool getHoleOverlap() { return hole_overlap; }
+
+  void setHoleOverlap(bool b) { hole_overlap = b; }
+
 private:
   mutable bool hole_overlap;
 };
@@ -95,24 +89,30 @@ private:
  * A visitor used for checking whether the edges of a polygon are
  * non-intersecting.
  */
-template <class ArrTraits_>
+template <typename GeometryTraits_2, typename Allocator_ = CGAL_ALLOCATOR(int)>
 class Gps_polygon_validation_visitor :
-  public Sweep_line_empty_visitor<ArrTraits_>
+  public Ss2::Default_visitor<Gps_polygon_validation_visitor<GeometryTraits_2,
+                                                             Allocator_>,
+                              GeometryTraits_2, Allocator_>
 {
+public:
+  typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef Allocator_                                    Allocator;
+
 private:
-  typedef ArrTraits_                                   Traits_2;
-  typedef Gps_polygon_validation_visitor<Traits_2>     Self;
-  typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
-  typedef typename Traits_2::Point_2                   Point_2;
-
-  typedef Sweep_line_empty_visitor<Traits_2>           Base;
-  typedef typename Base::Event                         Event;
-  typedef typename Base::Subcurve                      Subcurve;
-  typedef typename Base::Status_line_iterator          SL_iterator;
-
-  typedef Basic_sweep_line_2<Traits_2, Self>           Sweep_line;
+  typedef Geometry_traits_2                             Gt2;
+  typedef Gps_polygon_validation_visitor<Gt2, Allocator>
+                                                        Self;
+  typedef Ss2::Default_visitor<Self, Gt2, Allocator>    Base;
 
 public:
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Gt2::Point_2                         Point_2;
+
+  typedef typename Base::Event                          Event;
+  typedef typename Base::Subcurve                       Subcurve;
+  typedef typename Base::Status_line_iterator           SL_iterator;
+
   enum Error_code {
     ERROR_NONE = 0,
     ERROR_EDGE_INTERSECTION,
@@ -130,8 +130,8 @@ public:
   template <class XCurveIterator>
   void sweep(XCurveIterator begin, XCurveIterator end)
   {
-    //Perform the sweep
-    reinterpret_cast<Sweep_line*>(this->m_sweep_line)->sweep(begin, end);
+    // Perform the sweep
+    this->m_surface_sweep->sweep(begin, end);
   }
 
   bool after_handle_event(Event* event, SL_iterator, bool)
@@ -139,25 +139,26 @@ public:
     if (event->is_intersection()) {
       m_error_code = ERROR_EDGE_INTERSECTION;
       m_is_valid = false;
-      reinterpret_cast<Sweep_line*>(this->m_sweep_line)->stop_sweep();
+      this->m_surface_sweep->stop_sweep();
     }
     else if (event->is_weak_intersection()) {
       m_error_code = ERROR_EDGE_VERTEX_INTERSECTION;
       m_is_valid = false;
-      reinterpret_cast<Sweep_line*>(this->m_sweep_line)->stop_sweep();
+      this->m_surface_sweep->stop_sweep();
     }
     else if (event->is_overlap()) {
       m_error_code = ERROR_EDGE_OVERLAP;
       m_is_valid = false;
-      reinterpret_cast<Sweep_line*>(this->m_sweep_line)->stop_sweep();
-    } else {
+      this->m_surface_sweep->stop_sweep();
+    }
+    else {
       if (m_is_s_simple &&
           (event->number_of_right_curves() + event->number_of_left_curves()) !=
           2)
       {
         m_error_code = ERROR_VERTEX_INTERSECTION;
         m_is_valid = false;
-        reinterpret_cast<Sweep_line*>(this->m_sweep_line)->stop_sweep();
+        this->m_surface_sweep->stop_sweep();
       }
     }
     return true;
@@ -173,7 +174,6 @@ protected:
 private:
   Error_code m_error_code;
 };
-
 
 //Traits_2 templates the General_polygon_set_2 Traits.
 //These include types for polygon and PWH.
@@ -219,12 +219,12 @@ bool is_closed_polygon(const typename Traits_2::Polygon_2& pgn,
   }
 
   // Make sure that the last target equals the first source.
-  if (equal_func (construct_vertex_func (*curr, 0),
-                  construct_vertex_func (*curr, 1)))
+  if (equal_func(construct_vertex_func (*curr, 0),
+                 construct_vertex_func (*curr, 1)))
     return false;
 
-  if (! equal_func (construct_vertex_func (*curr, 1),
-                    construct_vertex_func (*begin, 0)))
+  if (! equal_func(construct_vertex_func (*curr, 1),
+                   construct_vertex_func (*begin, 0)))
     return false;
 
   return true;
@@ -235,16 +235,17 @@ template <typename Traits_2>
 bool is_simple_polygon(const typename Traits_2::Polygon_2& pgn,
                        const Traits_2& traits)
 {
-  typedef typename Traits_2::Curve_const_iterator    Curve_const_iterator;
-  typedef std::pair<Curve_const_iterator,Curve_const_iterator>    Cci_pair;
+  typedef typename Traits_2::Curve_const_iterator       Curve_const_iterator;
+  typedef std::pair<Curve_const_iterator,Curve_const_iterator>
+                                                        Cci_pair;
 
   // Sweep the boundary curves and look for intersections.
-  typedef Gps_polygon_validation_visitor<Traits_2>  Visitor;
-  typedef Sweep_line_2<Traits_2, Visitor>           Sweep_line;
+  typedef Gps_polygon_validation_visitor<Traits_2>      Visitor;
+  typedef Ss2::Surface_sweep_2<Visitor>                 Surface_sweep;
 
-  Cci_pair              itr_pair = traits.construct_curves_2_object()(pgn);
-  Visitor               visitor;
-  Sweep_line            sweep_line (&traits, &visitor);
+  Cci_pair itr_pair = traits.construct_curves_2_object()(pgn);
+  Visitor visitor;
+  Surface_sweep surface_sweep(&traits, &visitor);
 
   visitor.sweep(itr_pair.first, itr_pair.second);
   if (!visitor.is_valid()) {
@@ -319,7 +320,6 @@ bool is_valid_polygon(const typename Traits_2::Polygon_2& pgn,
   return true;
 }
 
-
 template <typename Traits_2>
 bool
 is_closed_polygon_with_holes(const typename Traits_2::Polygon_with_holes_2& pgn,
@@ -336,7 +336,7 @@ is_closed_polygon_with_holes(const typename Traits_2::Polygon_with_holes_2& pgn,
 }
 
 // templated point location version
-template<class Traits_2, class PointLocation>
+template <typename Traits_2, typename PointLocation>
 bool
 is_crossover_outer_boundary(const typename Traits_2::Polygon_with_holes_2& pgn,
                             const Traits_2& traits, PointLocation& pl)
@@ -457,17 +457,16 @@ is_crossover_outer_boundary(const typename Traits_2::Polygon_with_holes_2& pgn,
    */
   typename Arrangement_2::Face_handle fh = (*he_path.begin())->twin()->face();
   for (he_itr = he_path.begin(); he_itr != he_path.end(); he_itr++) {
-    if ((*he_itr)->twin()->face() != fh)
-      return false;
+    if ((*he_itr)->twin()->face() != fh) return false;
   }
   return true;
 }
 
 template<typename Traits_2>
-bool is_crossover_outer_boundary
-(const typename Traits_2::Polygon_with_holes_2& pgn, const Traits_2& traits)
+bool
+is_crossover_outer_boundary(const typename Traits_2::Polygon_with_holes_2& pgn,
+                            const Traits_2& traits)
 {
-
   typedef CGAL::Gps_default_dcel<Traits_2>                      Dcel;
   // IMPORTATNT! TODO!
   // Currently the topology traits is the bounded planar traits. This
@@ -489,25 +488,25 @@ template <typename Traits_2>
 bool is_relatively_simple_polygon_with_holes
 (const typename Traits_2::Polygon_with_holes_2& pgn, const Traits_2& traits)
 {
-  typedef typename Traits_2::Curve_const_iterator    Curve_const_iterator;
-  typedef std::pair<Curve_const_iterator,Curve_const_iterator>    Cci_pair;
-  typedef typename Traits_2::Construct_curves_2    Construct_curves_2;
+  typedef typename Traits_2::Curve_const_iterator       Curve_const_iterator;
+  typedef std::pair<Curve_const_iterator,Curve_const_iterator>
+                                                        Cci_pair;
+  typedef typename Traits_2::Construct_curves_2         Construct_curves_2;
 
-  typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
-  typedef Gps_polygon_validation_visitor<Traits_2>  Visitor;
-  typedef Sweep_line_2<Traits_2, Visitor>           Sweep_line;
-  typedef typename Traits_2::Polygon_with_holes_2   Polygon_with_holes_2;
+  typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
+  typedef Gps_polygon_validation_visitor<Traits_2>      Visitor;
+  typedef Ss2::Surface_sweep_2<Visitor>                 Surface_sweep;
+  typedef typename Traits_2::Polygon_with_holes_2       Polygon_with_holes_2;
 
   Construct_curves_2 construct_curves_func = traits.construct_curves_2_object();
   // Construct a container of all outer boundary curves.
-  Cci_pair         itr_pair = construct_curves_func (pgn.outer_boundary());
+  Cci_pair itr_pair = construct_curves_func (pgn.outer_boundary());
   std::list<X_monotone_curve_2>  outer_curves;
-  std::copy (itr_pair.first, itr_pair.second,
-             std::back_inserter(outer_curves));
+  std::copy(itr_pair.first, itr_pair.second, std::back_inserter(outer_curves));
   // Create visitor and sweep to verify outer boundary is relatively simple
-  Visitor      relative_visitor(false);
-  Sweep_line   sweep_line (&traits, &relative_visitor);
-  relative_visitor.sweep (outer_curves.begin(), outer_curves.end());
+  Visitor relative_visitor(false);
+  Surface_sweep surface_sweep(&traits, &relative_visitor);
+  relative_visitor.sweep(outer_curves.begin(), outer_curves.end());
   if (!relative_visitor.is_valid()) {
     switch (relative_visitor.error_code()) {
      case Visitor::ERROR_NONE: break;
@@ -547,7 +546,8 @@ bool has_valid_orientation_polygon_with_holes
 {
   typedef Gps_traits_adaptor<Traits_2>                  Traits_adapter_2;
   typedef typename Traits_2::Curve_const_iterator       Curve_const_iterator;
-  typedef std::pair<Curve_const_iterator,Curve_const_iterator>    Cci_pair;
+  typedef std::pair<Curve_const_iterator,Curve_const_iterator>
+                                                        Cci_pair;
   typedef typename Traits_2::Construct_curves_2         Construct_curves_2;
 
   typedef typename Traits_adapter_2::Orientation_2      Check_orientation_2;
@@ -559,10 +559,10 @@ bool has_valid_orientation_polygon_with_holes
   Check_orientation_2 check_orientation_func =
     traits_adapter.orientation_2_object();
   // Check the orientation of the outer boundary.
-  Cci_pair itr_pair = construct_curves_func (pgn.outer_boundary());
+  Cci_pair itr_pair = construct_curves_func(pgn.outer_boundary());
 
   if ((itr_pair.first != itr_pair.second) &&
-      (check_orientation_func (itr_pair.first, itr_pair.second) !=
+      (check_orientation_func(itr_pair.first, itr_pair.second) !=
        COUNTERCLOCKWISE))
   {
     return false;
@@ -572,10 +572,10 @@ bool has_valid_orientation_polygon_with_holes
   typename Polygon_with_holes_2::Hole_const_iterator    hoit;
 
   for (hoit = pgn.holes_begin(); hoit != pgn.holes_end(); ++hoit) {
-    itr_pair = construct_curves_func (*hoit);
+    itr_pair = construct_curves_func(*hoit);
 
     if ((itr_pair.first != itr_pair.second) &&
-        (check_orientation_func (itr_pair.first, itr_pair.second) != CLOCKWISE))
+        (check_orientation_func(itr_pair.first, itr_pair.second) != CLOCKWISE))
     {
       return false;
     }
@@ -597,38 +597,38 @@ bool has_valid_orientation_polygon_with_holes
  * the boundary and the iterative loop will be stopped after a small number of
  * iterations.
  */
-template <class Traits_2>
+template <typename Traits_2>
 bool are_holes_and_boundary_pairwise_disjoint
 (const typename Traits_2::Polygon_with_holes_2& pwh, Traits_2& traits)
 {
-  typedef typename Traits_2::Curve_const_iterator    Curve_const_iterator;
-  typedef std::pair<Curve_const_iterator,Curve_const_iterator>    Cci_pair;
-  typedef typename Traits_2::Construct_curves_2    Construct_curves_2;
-
-  typedef CGAL::Gps_default_dcel<Traits_2>                 Dcel;
+  typedef typename Traits_2::Curve_const_iterator       Curve_const_iterator;
+  typedef std::pair<Curve_const_iterator, Curve_const_iterator>
+                                                        Cci_pair;
+  typedef typename Traits_2::Construct_curves_2         Construct_curves_2;
+  typedef CGAL::Gps_default_dcel<Traits_2>              Dcel;
   // IMPORTATNT! TODO!
   // Currently the topology traits is the bounded planar traits. This
   // should be replaced with a templated topology traits!
   typedef typename Default_planar_topology<Traits_2, Dcel>::Traits
-                                                           Topology_traits;
-
+                                                        Topology_traits;
   typedef CGAL::Gps_on_surface_base_2<Traits_2, Topology_traits>
-    Polygon_set_2;
-  typedef typename Polygon_set_2::Size                     Size;
-  typedef  typename Traits_2::Polygon_2                    Polygon_2;
-  typedef typename Traits_2::Polygon_with_holes_2          Polygon_with_holes_2;
+                                                        Polygon_set_2;
+  typedef typename Polygon_set_2::Size                  Size;
+  typedef  typename Traits_2::Polygon_2                 Polygon_2;
+  typedef typename Traits_2::Polygon_with_holes_2       Polygon_with_holes_2;
   typedef typename Polygon_with_holes_2::Hole_const_iterator
-    Hole_const_iterator;
-  typedef typename Traits_2::X_monotone_curve_2            X_monotone_curve_2;
-  typedef std::pair<Curve_const_iterator,Curve_const_iterator>
-                                                           Cci_pair;
-  typedef typename Traits_2::Construct_curves_2            Construct_curves_2;
+                                                        Hole_const_iterator;
+  typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
+  typedef std::pair<Curve_const_iterator, Curve_const_iterator>
+                                                        Cci_pair;
+  typedef typename Traits_2::Construct_curves_2         Construct_curves_2;
   typedef typename Traits_2::Construct_general_polygon_with_holes_2
     Construct_polygon_with_holes_2;
 
-  typedef Gps_polygon_validation_visitor<Traits_2>         Visitor;
-  typedef Sweep_line_2<Traits_2, Visitor>                  Sweep_line ;
-  typedef typename Polygon_set_2::Arrangement_on_surface_2 Arrangement_2;
+  typedef Gps_polygon_validation_visitor<Traits_2>      Visitor;
+  typedef Ss2::Surface_sweep_2<Visitor>                 Surface_sweep;
+  typedef typename Polygon_set_2::Arrangement_on_surface_2
+                                                        Arrangement_2;
 
   /* Should be perfored more efficeintly  than using sweep and than
    * difference().
@@ -644,7 +644,7 @@ bool are_holes_and_boundary_pairwise_disjoint
   Hole_const_iterator hoit;
   // Construct a container of all boundary curves.
   Polygon_2 pgn2 = traits.construct_outer_boundary_object()(pwh);
-  Construct_curves_2    construct_curves_func;
+  Construct_curves_2 construct_curves_func;
   Cci_pair itr_pair = construct_curves_func(pgn2);
 
   std::list<X_monotone_curve_2>  curves;
@@ -661,7 +661,7 @@ bool are_holes_and_boundary_pairwise_disjoint
   // Perform the sweep and check for curve  intersections on the interior.
   // Traits_2     traits; moved to top, needed also for boundary.
   Visitor visitor(false);
-  Sweep_line sweep_line(&traits, &visitor);
+  Surface_sweep surface_sweep(&traits, &visitor);
   visitor.sweep(curves.begin(), curves.end());
   if (!visitor.is_valid()) return false;
 
@@ -672,7 +672,7 @@ bool are_holes_and_boundary_pairwise_disjoint
   // functors for creating a pwh needed for inserting pgns into the arrangement
   // quickly
   Construct_polygon_with_holes_2 construct_pwh_functor =
-    traits.construct_polygon_with_holes_2_object() ;
+    traits.construct_polygon_with_holes_2_object();
   for (hoit = pwh.holes_begin(); hoit != pwh.holes_end(); ++hoit) {
     Polygon_2 hole(*hoit);
     hole.reverse_orientation();
@@ -713,8 +713,8 @@ bool are_holes_and_boundary_pairwise_disjoint
    * (simple) polygon.
    */
 
-  //Polygon_with_holes_2 boundary(pwh.outer_boundary(), fit, fit);
- Polygon_with_holes_2 boundary =  construct_pwh_functor(pwh.outer_boundary());
+  // Polygon_with_holes_2 boundary(pwh.outer_boundary(), fit, fit);
+  Polygon_with_holes_2 boundary = construct_pwh_functor(pwh.outer_boundary());
   // Unbounded outer boundaries contain all the holes and the holes were checked
   // and are OK.
   if (boundary.is_unbounded()) return true;
@@ -726,7 +726,7 @@ bool are_holes_and_boundary_pairwise_disjoint
    * reasons, we use a customized overlay traits and perform an arrangement
    * overlay instead of difference
    */
-  ValidationOverlayTraits<Arrangement_2> valOverlayTraits;
+  Validation_overlay_traits<Arrangement_2> valOverlayTraits;
   valOverlayTraits.setHoleOverlap(false);
   Polygon_set_2 gps2(traits);
 
@@ -798,6 +798,6 @@ bool is_valid_unknown_polygon(const typename Traits_2::Polygon_2& pgn,
                               const Traits_2& traits)
 { return is_valid_polygon(pgn, traits); }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

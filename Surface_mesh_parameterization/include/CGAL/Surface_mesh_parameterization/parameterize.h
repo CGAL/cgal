@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
@@ -22,6 +23,8 @@
 #define CGAL_SURFACE_MESH_PARAMETERIZATION_PARAMETERIZE_H
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Surface_mesh_parameterization/internal/Bool_property_map.h>
 
@@ -164,5 +167,7 @@ Error_code parameterize(Seam_mesh<TM, SEM, SVM>& mesh,
 } // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_PARAMETERIZE_H

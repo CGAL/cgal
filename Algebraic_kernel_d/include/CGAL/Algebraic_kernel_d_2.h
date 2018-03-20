@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Kerber    <mkerber@mpi-inf.mpg.de>
@@ -22,6 +23,8 @@
 
 #ifndef CGAL_ALGEBRAIC_KERNEL_D_2_H
 #define CGAL_ALGEBRAIC_KERNEL_D_2_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 
@@ -37,6 +40,6 @@ template<typename Coefficient> class Algebraic_kernel_d_2
  
 } //namespace CGAL
 
-
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_ALGEBRAIC_KERNEL_D_1_H

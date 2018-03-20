@@ -12,7 +12,7 @@
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
-#include <CGAL/IO/output_surface_facets_to_facegraph.h>
+#include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/compute_average_spacing.h>
 
@@ -132,9 +132,9 @@ bool poisson_reconstruct(FaceGraph* graph,
     std::cerr << "Surface meshing...\n";
 
     // Computes average spacing
-    Kernel::FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(points.begin_or_selection_begin(), points.end(),
-                                                                                points.point_map(),
-                                                                                6 /* knn = 1 ring */);
+    Kernel::FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(points.all_or_selection_if_not_empty(),
+                                                                                6 /* knn = 1 ring */,
+                                                                                points.parameters());
 
     // Gets one point inside the implicit surface
     Kernel::Point_3 inner_point = function.get_inner_point();
@@ -188,7 +188,7 @@ bool poisson_reconstruct(FaceGraph* graph,
      return false;
 
     // Converts to polyhedron
-    c2t3_to_facegraph(c2t3, *graph);
+    CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, *graph);
 
     // Prints total reconstruction duration
     std::cerr << "Total reconstruction (implicit function + meshing): " << reconstruction_timer.time() << " seconds\n";

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -24,6 +25,7 @@
 
 #include <CGAL/license/AABB_tree.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
 #include <CGAL/property_map.h>
@@ -230,6 +232,7 @@ public:
 
 }  // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_AABB_PRIMITIVE_H
 

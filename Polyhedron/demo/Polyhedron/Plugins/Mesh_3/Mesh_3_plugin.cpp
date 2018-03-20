@@ -136,7 +136,7 @@ public Q_SLOTS:
 private:
   void mesh_3(const bool surface_only, const bool use_defaults = false);
   void launch_thread(Meshing_thread* mesh_thread);
-  void treat_result(Scene_item& source_item, Scene_c3t3_item& result_item) const;
+  void treat_result(Scene_item& source_item, Scene_c3t3_item* result_item) const;
 
 private:
   QAction* actionMesh_3;
@@ -147,6 +147,7 @@ private:
   Scene_item* source_item_;
   CGAL::Three::Scene_interface* scene;
   QMainWindow* mw;
+  bool as_facegraph;
 }; // end class Mesh_3_plugin
 
 double
@@ -420,6 +421,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   ui.protect->setChecked(features_protection_available);
   ui.protectEdges->setEnabled(features_protection_available);
 
+  ui.facegraphCheckBox->setVisible(surface_only);
   ui.initializationGroup->setVisible(image_item != NULL && !image_item->isGray());
   ui.grayImgGroup->setVisible(image_item != NULL && image_item->isGray());
   if (poly_item != NULL)
@@ -493,6 +495,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   const float iso_value = float(ui.iso_value_spinBox->value());
   const float value_outside = float(ui.value_outside_spinBox->value());
   const float inside_is_less =  float(ui.inside_is_less_checkBox->isChecked());
+  as_facegraph = surface_only ? ui.facegraphCheckBox->isChecked() : false;
 
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -522,7 +525,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  edge_size,
                                  radius_edge,
                                  protect_features,
-                                 protect_borders,//available only for poly_item
+                                 protect_borders,//available only for poly_item and sm_item
                                  sharp_edges_angle,
                                  manifold,
                                  surface_only,
@@ -531,17 +534,15 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   // Surface_mesh
   if ( NULL != sm_item )
   {
-    SMesh* psMesh = sm_item->polyhedron();
-    if (NULL == psMesh)
+    SMesh* pMesh = sm_item->polyhedron();
+    if (NULL == pMesh)
     {
       QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
       return;
     }
-    typedef CGAL::Graph_with_descriptor_with_graph<SMesh> SMwgd;
-    SMwgd *pMesh = new SMwgd(*psMesh);
     Scene_polylines_item::Polylines_container plc;
-    SMwgd *pBMesh = (bounding_sm_item == NULL) ? NULL
-                    : new SMwgd(*bounding_sm_item->polyhedron());
+    SMesh *pBMesh = (bounding_sm_item == NULL) ? NULL
+                    : bounding_sm_item->polyhedron();
 
     thread =    cgal_code_mesh_3(pMesh,
                                  (polylines_item == NULL)?plc:polylines_item->polylines,
@@ -559,7 +560,6 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
                                  manifold,
                                  surface_only,
                                  scene);
-    delete pMesh;
   }
   // Image
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
@@ -702,7 +702,7 @@ meshing_done(Meshing_thread* thread)
   msg->information(qPrintable(str));
 
   // Treat new c3t3 item
-  treat_result(*source_item_, *result_item);
+  treat_result(*source_item_, result_item);
 
   // close message box
   message_box_->done(0);
@@ -717,29 +717,67 @@ meshing_done(Meshing_thread* thread)
 void
 Mesh_3_plugin::
 treat_result(Scene_item& source_item,
-             Scene_c3t3_item& result_item) const
+             Scene_c3t3_item* result_item) const
 {
-  result_item.setName(tr("%1 [3D Mesh]").arg(source_item.name()));
+  if(!as_facegraph)
+  {
+    result_item->setName(tr("%1 [3D Mesh]").arg(source_item.name()));
 
-  result_item.c3t3_changed();
+    result_item->c3t3_changed();
 
-  const Scene_item::Bbox& bbox = result_item.bbox();
-  result_item.setPosition(float((bbox.xmin() + bbox.xmax())/2.f),
-                          float((bbox.ymin() + bbox.ymax())/2.f),
-                          float((bbox.zmin() + bbox.zmax())/2.f));
+    const Scene_item::Bbox& bbox = result_item->bbox();
+    result_item->setPosition(float((bbox.xmin() + bbox.xmax())/2.f),
+                            float((bbox.ymin() + bbox.ymax())/2.f),
+                            float((bbox.zmin() + bbox.zmax())/2.f));
 
-  result_item.setColor(default_mesh_color);
-  result_item.setRenderingMode(source_item.renderingMode());
-  result_item.set_data_item(&source_item);
+    result_item->setColor(default_mesh_color);
+    result_item->setRenderingMode(source_item.renderingMode());
+    result_item->set_data_item(&source_item);
 
-  Q_FOREACH(int ind, scene->selectionIndices()) {
-    scene->item(ind)->setVisible(false);
+    Q_FOREACH(int ind, scene->selectionIndices()) {
+      scene->item(ind)->setVisible(false);
+    }
+    const Scene_interface::Item_id index = scene->mainSelectionIndex();
+    scene->itemChanged(index);
+    scene->setSelectedItem(-1);
+    Scene_interface::Item_id new_item_id = scene->addItem(result_item);
+    scene->setSelectedItem(new_item_id);
   }
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  scene->itemChanged(index);
-  scene->setSelectedItem(-1);
-  Scene_interface::Item_id new_item_id = scene->addItem(&result_item);
-  scene->setSelectedItem(new_item_id);
+  else
+  {
+    if(mw->property("is_polyhedron_mode").toBool())
+    {
+      Scene_polyhedron_item* new_item = new Scene_polyhedron_item;
+      CGAL::facets_in_complex_3_to_triangle_mesh(result_item->c3t3(), *new_item->face_graph());
+      new_item->setName(tr("%1 [Remeshed as Polyhedron_3]").arg(source_item.name()));
+      Q_FOREACH(int ind, scene->selectionIndices()) {
+        scene->item(ind)->setVisible(false);
+      }
+      const Scene_interface::Item_id index = scene->mainSelectionIndex();
+      scene->itemChanged(index);
+      scene->setSelectedItem(-1);
+      Scene_interface::Item_id new_item_id = scene->addItem(new_item);
+      scene->setSelectedItem(new_item_id);
+      delete result_item;
+    }
+    else
+    {
+      {
+        Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item;
+        CGAL::facets_in_complex_3_to_triangle_mesh(result_item->c3t3(), *new_item->face_graph());
+        new_item->setName(tr("%1 [Remeshed as Surface_mesh]").arg(source_item.name()));
+        Q_FOREACH(int ind, scene->selectionIndices()) {
+          scene->item(ind)->setVisible(false);
+        }
+        const Scene_interface::Item_id index = scene->mainSelectionIndex();
+        scene->itemChanged(index);
+        scene->setSelectedItem(-1);
+        Scene_interface::Item_id new_item_id = scene->addItem(new_item);
+        scene->setSelectedItem(new_item_id);
+        delete result_item;
+      }
+    }
+  }
 }
 
 #include "Mesh_3_plugin.moc"

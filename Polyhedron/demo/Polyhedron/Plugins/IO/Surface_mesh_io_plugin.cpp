@@ -5,6 +5,8 @@
 #include <QObject>
 #include <QAction>
 #include <QMainWindow>
+#include <QMessageBox>
+#include <QApplication>
 #include <QDebug>
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polygon_soup_item.h"
@@ -22,6 +24,13 @@ class SurfaceMeshIoPlugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 public:
+  bool isDefaultLoader(const CGAL::Three::Scene_item *item) const 
+  { 
+    if(qobject_cast<const Scene_surface_mesh_item*>(item))
+      return true; 
+    return false;
+  }
+  
   void init(QMainWindow*, CGAL::Three::Scene_interface*, Messages_interface* m)
   {
     this->message = m;
@@ -35,7 +44,9 @@ public:
      return QList<QAction*>();
    }
    QString name() const { return "surface_mesh_io_plugin"; }
-   QString nameFilters() const { return "OFF files to Surface_mesh (*.off);;Wavefront Surface_mesh OBJ (*.obj)"; }
+   QString loadNameFilters() const { return "OFF files to Surface_mesh (*.off);;Wavefront Surface_mesh OBJ (*.obj)"; }
+   QString saveNameFilters() const { return "OFF files (*.off);;Wavefront OBJ (*.obj)"; }
+   QString nameFilters() const { return QString(); }
    bool canLoad() const { return true; }
    CGAL::Three::Scene_item* load(QFileInfo fileinfo) {
      if(fileinfo.suffix().toLower() == "off")
@@ -68,6 +79,24 @@ public:
      }
      Scene_surface_mesh_item* item = new Scene_surface_mesh_item(surface_mesh);
      item->setName(fileinfo.completeBaseName());
+     std::size_t isolated_v = 0;
+     BOOST_FOREACH(vertex_descriptor v, vertices(*surface_mesh))
+     {
+       if(surface_mesh->is_isolated(v))
+       {
+         ++isolated_v;
+       }
+     }
+     if(isolated_v >0)
+     {
+       item->setNbIsolatedvertices(isolated_v);
+       //needs two restore, it's not a typo
+       QApplication::restoreOverrideCursor();
+       QMessageBox::warning((QWidget*)NULL,
+                      tr("Isolated vertices"),
+                      tr("%1 isolated vertices found")
+                      .arg(item->getNbIsolatedvertices()));
+     }
      return item;
      }
      else if(fileinfo.suffix().toLower() == "obj")
@@ -86,8 +115,8 @@ public:
      return 0;
 
    }
-   bool canSave(const CGAL::Three::Scene_item* ) {
-     return true;
+   bool canSave(const CGAL::Three::Scene_item* item) {
+       return qobject_cast<const Scene_surface_mesh_item*>(item) != 0;
    }
 
    bool save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo) {

@@ -2,7 +2,6 @@
 
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_interface.h>
-#include <CGAL/gl.h>
 
 #include <QAction>
 #include <QMainWindow>
@@ -28,7 +27,8 @@ public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface*);
   QList<QAction*> actions() const;
   bool applicable(QAction*) const {
-    if(scene->mainSelectionIndex() != -1)
+    if(scene->mainSelectionIndex() != -1
+       && scene->item(scene->mainSelectionIndex())->isFinite())
       return true;
   return false;}
 

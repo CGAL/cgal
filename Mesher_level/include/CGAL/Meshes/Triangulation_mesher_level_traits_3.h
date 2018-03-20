@@ -13,13 +13,15 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ $Date$
-// 
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Laurent RINEAU
 
 #ifndef CGAL_MESH_2_TRIANGULATION_MESHER_LEVEL_TRAITS_3_H
 #define CGAL_MESH_2_TRIANGULATION_MESHER_LEVEL_TRAITS_3_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <vector>
 #include <CGAL/Mesher_level.h>
@@ -140,5 +142,7 @@ struct Triangulation_mesher_level_traits_3 :
 }; // end Triangulation_mesher_level_traits_3
 
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_2_TRIANGULATION_MESHER_LEVEL_TRAITS_3_H

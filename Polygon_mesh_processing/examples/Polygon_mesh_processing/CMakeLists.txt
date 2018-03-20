@@ -62,13 +62,13 @@ find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 include( CGAL_CreateSingleSourceCGALProgram )
 
 find_package( TBB )
+create_single_source_cgal_program( "hausdorff_distance_remeshing_example.cpp")
 if( TBB_FOUND )
-  include( ${TBB_USE_FILE} )
-  list( APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES} )
+  CGAL_target_use_TBB(hausdorff_distance_remeshing_example)
 else()
   message( STATUS "NOTICE: Intel TBB was not found. hausdorff_distance_example will use sequential code." )
 endif()
-create_single_source_cgal_program( "hausdorff_distance_remeshing_example.cpp")
+
 if (EIGEN3_FOUND)
   # Executables that require Eigen 3.2
   include( ${EIGEN3_USE_FILE} )
@@ -101,25 +101,26 @@ create_single_source_cgal_program( "corefinement_polyhedron_union.cpp" )
 create_single_source_cgal_program( "random_perturbation_SM_example.cpp" )
 create_single_source_cgal_program( "corefinement_LCC.cpp")
 create_single_source_cgal_program( "hole_filling_example_LCC.cpp" )
+create_single_source_cgal_program( "detect_features_example.cpp" )
 
 if(OpenMesh_FOUND)
 create_single_source_cgal_program( "compute_normals_example_OM.cpp" )
-target_link_libraries( compute_normals_example_OM ${OPENMESH_LIBRARIES} )
+target_link_libraries( compute_normals_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
 
 create_single_source_cgal_program( "hole_filling_example_OM.cpp" )
-target_link_libraries( hole_filling_example_OM ${OPENMESH_LIBRARIES} )
+target_link_libraries( hole_filling_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
 
 create_single_source_cgal_program( "point_inside_example_OM.cpp")
-target_link_libraries( point_inside_example_OM ${OPENMESH_LIBRARIES} )
+target_link_libraries( point_inside_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
 
 create_single_source_cgal_program( "stitch_borders_example_OM.cpp" )
-target_link_libraries( stitch_borders_example_OM ${OPENMESH_LIBRARIES} )
+target_link_libraries( stitch_borders_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
 
 #create_single_source_cgal_program( "remove_degeneracies_example_OM.cpp")
-#target_link_libraries( remove_degeneracies_example_OM ${OPENMESH_LIBRARIES} )
+#target_link_libraries( remove_degeneracies_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
 
 create_single_source_cgal_program( "triangulate_faces_example_OM.cpp")
-target_link_libraries( triangulate_faces_example_OM ${OPENMESH_LIBRARIES} )
+target_link_libraries( triangulate_faces_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
 endif(OpenMesh_FOUND)
 
 

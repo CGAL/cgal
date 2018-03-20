@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Andreas Fabri and Laurent Saboret
 
@@ -44,10 +45,13 @@ namespace CGAL {
 template <typename K, typename V>
 class Static_property_map
 {
+public:
   typedef K key_type;
   typedef V value_type;
   typedef const V& reference;
   typedef boost::read_write_property_map_tag category;
+
+private:
   V v;
 
 public:
@@ -435,6 +439,72 @@ make_property_map(const std::vector<T>& v)
   return make_property_map(&v[0]);
 }
 
+/// \ingroup PkgProperty_map
+/// Property map that only returns the default value type
+/// \cgalModels `ReadablePropertyMap`
+template<class InputIterator, class ValueType>
+struct Default_property_map{
+  const ValueType default_value;
+  
+  typedef typename InputIterator::value_type key_type;
+  typedef boost::readable_property_map_tag category;
+
+  Default_property_map(const ValueType& default_value = ValueType()) : default_value (default_value) { }
+  
+  /// Free function to use a get the value from an iterator using Input_iterator_property_map.
+  inline friend ValueType
+  get (const Default_property_map&, const key_type&){ return ValueType(); }
+};
+
+/// \ingroup PkgProperty_map
+/// Read-write Property map turning a set (such a `std::set`,
+/// `boost::unordered_set`, `std::unordered_set`) into a property map
+/// associating a Boolean to the value type of the set. The function `get` will
+/// return `true` if the key is inside the set and `false` otherwise. The `put`
+/// function will insert an element in the set if `true` is passed and erase it
+/// otherwise.
+/// \cgalModels `ReadWritePropertyMap`
+template<class Set>
+struct Boolean_property_map
+{
+  typedef typename Set::value_type key_type;
+  typedef bool value_type;
+  typedef bool reference;
+  typedef boost::read_write_property_map_tag category;
+
+  Set* set_ptr;
+  /// Constructor taking a copy of the set. Note that `set_` must be valid
+  /// while the property map is in use.
+  Boolean_property_map(Set& set_) : set_ptr(&set_) {}
+  Boolean_property_map() : set_ptr(NULL) {}
+
+  friend bool get(const Boolean_property_map<Set>& pm, const key_type& k)
+  {
+    CGAL_assertion(pm.set_ptr!=NULL);
+    return pm.set_ptr->count(k) != 0;
+  }
+
+  friend void put(Boolean_property_map<Set>& pm, const key_type& k, bool v)
+  {
+    CGAL_assertion(pm.set_ptr!=NULL);
+    if (v)
+      pm.set_ptr->insert(k);
+    else
+      pm.set_ptr->erase(k);
+  }
+};
+
+/// \ingroup PkgProperty_map
+/// returns `Boolean_property_map<Set>(set_)`
+template <class Set>
+Boolean_property_map<Set>
+make_boolean_property_map(Set& set_)
+{
+  return Boolean_property_map<Set>(set_);
+}
+
 } // namespace CGAL
+
+
 
 #endif // CGAL_POINT_SET_PROPERTY_MAP_H

@@ -18,15 +18,13 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>
 
 #ifndef CGAL_MIN_SPHERE_ANNULUS_D_TRAITS_2_H
 #define CGAL_MIN_SPHERE_ANNULUS_D_TRAITS_2_H
-
-#include <CGAL/license/Bounding_volumes.h>
-
 
 // includes
 #  include <CGAL/Optimisation/Access_dimension_2.h>

@@ -31,8 +31,7 @@ struct Combinatorial_map_min_items
 
 */
 template< unsigned int d >
-class Combinatorial_map_min_items {
-public:
+struct Combinatorial_map_min_items {
 
 /// @}
 

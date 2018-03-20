@@ -12,16 +12,15 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:  $
-// $Id:  $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Clement Jamin
 
 
 #ifndef CGAL_TRIANGULATION_IO_H
 #define CGAL_TRIANGULATION_IO_H
-
-#include <CGAL/license/Triangulation.h>
 
 #include <CGAL/Epick_d.h>
 #include <CGAL/Triangulation.h>

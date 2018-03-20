@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
@@ -21,9 +22,6 @@
 
 #ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_IMPL_H
 #define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_IMPL_H
-
-#include <CGAL/license/Arrangement_on_surface_2.h>
-
 
 /*!\file include/CGAL/Curved_kernel_via_analysis_2.h
  * \brief defines class \c Curved_kernel_via_analysis_2
@@ -33,6 +31,7 @@
 
 #include <CGAL/config.h>
 
+#include <CGAL/tss.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Point_2.h>
@@ -187,8 +186,8 @@ public:
     static NewCKvA& set_instance(
             const NewCKvA& ckva
     ) {
-        static NewCKvA instance;
-        static NewCKvA binstance;
+      CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(NewCKvA, instance);
+      CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(NewCKvA, binstance);
         
         if (&ckva == &_reset_instance()) {
             instance = binstance; 
@@ -212,7 +211,7 @@ private:
      * sets instance to default for internal purposes
      */
     static NewCKvA& _set_instance() {
-        static NewCKvA instance;
+      CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(NewCKvA, instance);
         return instance;
         
     }
@@ -221,7 +220,7 @@ private:
      * sets instance to default for internal purposes
      */
     static NewCKvA& _reset_instance() {
-        static NewCKvA instance;
+      CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(NewCKvA, instance);
         return instance;
     }
     

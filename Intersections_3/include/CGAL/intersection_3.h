@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Geert-Jan Giezeman <geert@cs.uu.nl>
@@ -25,6 +26,8 @@
 
 #ifndef CGAL_INTERSECTION_3_H
 #define CGAL_INTERSECTION_3_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/intersection_3_1.h>
 
@@ -49,5 +52,6 @@
 #include <CGAL/internal/Intersections_3/Bbox_3_Sphere_3_do_intersect.h>
 #include <CGAL/internal/Intersections_3/Bbox_3_Triangle_3_do_intersect.h>
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_INTERSECTION_3_H

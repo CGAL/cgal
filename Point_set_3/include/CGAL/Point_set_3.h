@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Simon Giraudot
@@ -29,6 +30,10 @@
 #include <CGAL/Surface_mesh/Properties.h>
 
 #include <CGAL/demangle.h>
+
+#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+
 
 namespace CGAL {
 
@@ -832,6 +837,40 @@ public:
     return out;
   }
 
+  /*!
+    \brief Returns a sequence of \ref psp_namedparameters "Named Parameters" for Point Set Processing algorithms.
+
+    \cgalNamedParamsBegin
+      \cgalParamBegin{point_map} contains the point map (see `point_map()`)\cgalParamEnd
+      \cgalParamBegin{normal_map} contains the normal map (see `normal_map()`)\cgalParamEnd
+      \cgalParamBegin{geom_traits} contains the kernel `typename Kernel_traits<Point>`::`Kernel`\cgalParamEnd
+    \cgalNamedParamsEnd
+
+    \warning this method does not check if the normal map was
+    instanciated or not. The normal map named parameter should not be
+    used if this property was not instanciated first.
+  */
+#ifdef DOXYGEN_RUNNING
+  unspecified_type
+#else
+  cgal_bgl_named_params
+  <typename Kernel_traits<Point>::Kernel,
+   internal_np::geom_traits_t,
+   cgal_bgl_named_params
+   <typename CGAL::Point_set_3<Point, Vector>::template Property_map<Vector>,
+    internal_np::normal_t,
+    cgal_bgl_named_params
+    <typename CGAL::Point_set_3<Point, Vector>::template Property_map<Point>,
+     internal_np::point_t> > >
+#endif
+  inline parameters() const
+  {
+    return CGAL::parameters::point_map (m_points).
+      normal_map (m_normals).
+      geom_traits (typename Kernel_traits<Point>::Kernel());
+  }
+
+
   /// \cond SKIP_IN_MANUAL
   std::string info() const
   {
@@ -1138,7 +1177,35 @@ Point_set_3<Point, Vector>& operator+=(Point_set_3<Point, Vector>& ps,
 
 
 
-
+/// \cond SKIP_IN_MANUAL
+namespace Point_set_processing_3
+{
+  template<typename Point, typename Vector>
+  class GetFT<CGAL::Point_set_3<Point, Vector> >
+  {
+  public:
+    typedef typename Kernel_traits<Point>::Kernel::FT type;
+  };
+  
+  namespace parameters
+  {
+    template <typename Point, typename Vector>
+    cgal_bgl_named_params
+    <typename Kernel_traits<Point>::Kernel,
+     internal_np::geom_traits_t,
+     cgal_bgl_named_params
+     <typename CGAL::Point_set_3<Point, Vector>::template Property_map<Vector>,
+      internal_np::normal_t,
+      cgal_bgl_named_params
+      <typename CGAL::Point_set_3<Point, Vector>::template Property_map<Point>,
+       internal_np::point_t> > >
+    inline all_default(const CGAL::Point_set_3<Point, Vector>& ps)
+    {
+      return ps.parameters();
+    }
+  }
+}
+/// \endcond
 
 } // namespace CGAL
 

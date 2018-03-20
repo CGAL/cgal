@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Maxime Gimeno and Sebastien Loriot
@@ -237,7 +238,7 @@ sample_triangles(const FaceRange& triangles,
  *
  * @param tm the triangle mesh that will be sampled
  * @param out output iterator to be filled with sampled points
- * @param np an optional sequence of \ref namedparameters among the ones listed below
+ * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points
@@ -599,14 +600,14 @@ double approximate_Hausdorff_distance(
  *                         Possible values are `Sequential_tag`
  *                         and `Parallel_tag`.
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
- * @tparam NamedParameters1 a sequence of \ref namedparameters for `tm1`
- * @tparam NamedParameters2 a sequence of \ref namedparameters for `tm2`
+ * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters" for `tm1`
+ * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters" for `tm2`
  *
  * @param tm1 the triangle mesh that will be sampled
  * @param tm2 the triangle mesh to compute the distance to
- * @param np1 optional sequence of \ref namedparameters for `tm1` passed to `sample_triangle_mesh()`.
+ * @param np1 optional sequence of \ref pmp_namedparameters "Named Parameters" for `tm1` passed to `sample_triangle_mesh()`.
  *
- * @param np2 optional sequence of \ref namedparameters for `tm2` among the ones listed below
+ * @param np2 optional sequence of \ref pmp_namedparameters "Named Parameters" for `tm2` among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm2`
@@ -614,7 +615,7 @@ double approximate_Hausdorff_distance(
  *      and in all places where vertex_point_map is used.
  *    \cgalParamEnd
  * \cgalNamedParamsEnd
- * The function `CGAL::Polygon_mesh_processing::params::all_default()` can be used to indicate to use the default values for
+ * The function `CGAL::parameters::all_default()` can be used to indicate to use the default values for
  * `np1` and specify custom values for `np2`
  */
 template< class Concurrency_tag,
@@ -662,10 +663,10 @@ double approximate_symmetric_Hausdorff_distance(
  * that is the furthest from `tm`.
  * @tparam PointRange a range of `Point_3`, model of `Range`.
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref namedparameters
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  * @param points the range of points of interest
  * @param tm the triangle mesh to compute the distance to
- * @param np an optional sequence of \ref namedparameters among the ones listed below
+ * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map}
@@ -696,13 +697,13 @@ double max_distance_to_triangle_mesh(const PointRange& points,
  * returns an approximation of the distance between `points` and the point lying on `tm` that is the farthest from `points`
  * @tparam PointRange a range of `Point_3`, model of `Range`.
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref namedparameters
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  * @param tm a triangle mesh
  * @param points a range of points
  * @param precision for each triangle of `tm`, the distance of its farthest point from `points` is bounded.
  *                  A triangle is subdivided into sub-triangles so that the difference of its distance bounds
  *                  is smaller than `precision`. `precision` must be strictly positive to avoid infinite loops.
- * @param np an optional sequence of \ref namedparameters among the ones listed below
+ * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map}

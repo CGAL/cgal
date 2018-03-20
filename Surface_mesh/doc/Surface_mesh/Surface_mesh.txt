@@ -221,12 +221,11 @@ face of `h`, and for all vertices of the surface mesh, respectively.
 
 \section sectionSurfaceMesh_BGL Surface Mesh and the BGL API
 
-The class `Surface_mesh` is a model of the concept 
-[<tt>IncidenceGraph</tt>](http://www.boost.org/doc/libs/1_55_0/libs/graph/doc/IncidenceGraph.html)
+The class `Surface_mesh` is a model of the concept `IncidenceGraph`
 defined in the Boost Graph Library.  This enables to apply algorithms such
 as 
-[Dijkstra shortest path](http://www.boost.org/doc/libs/1_55_0/libs/graph/doc/dijkstra_shortest_paths.html), or
-[Kruskal minimum spanning tree](http://www.boost.org/doc/libs/1_55_0/libs/graph/doc/kruskal_min_spanning_tree.html)
+[Dijkstra shortest path](http://www.boost.org/libs/graph/doc/dijkstra_shortest_paths.html), or
+[Kruskal minimum spanning tree](http://www.boost.org/libs/graph/doc/kruskal_min_spanning_tree.html)
 directly on a surface mesh.
 
 The types and free functions of the BGL API have each a similar type or member function,

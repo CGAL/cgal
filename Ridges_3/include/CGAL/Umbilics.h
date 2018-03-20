@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Marc Pouget and Frédéric Cazals
 #ifndef CGAL_UMBILIC_H_

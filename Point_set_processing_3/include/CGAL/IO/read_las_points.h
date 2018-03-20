@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Simon Giraudot
 
@@ -33,6 +34,9 @@
 #include <CGAL/value_type_traits.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Kernel_traits.h>
+
+#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/version.hpp>
 #include <boost/cstdint.hpp>
@@ -245,13 +249,13 @@ namespace internal {
   
   template <typename OutputValueType, typename PropertyMap, typename T, LAS_property::Id::Id id>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, LAS_property::Base<T,id> >& current);
+                           std::pair<PropertyMap, LAS_property::Base<T,id> >&& current);
 
   template <typename OutputValueType, typename PropertyMap, typename T, LAS_property::Id::Id id,
             typename NextPropertyBinder, typename ... PropertyMapBinders>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, LAS_property::Base<T,id> >& current,
-                           NextPropertyBinder& next,
+                           std::pair<PropertyMap, LAS_property::Base<T,id> >&& current,
+                           NextPropertyBinder&& next,
                            PropertyMapBinders&& ... properties);
   
   template <typename OutputValueType,
@@ -260,7 +264,7 @@ namespace internal {
             typename ... T,
             LAS_property::Id::Id ... id>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::tuple<PropertyMap, Constructor, LAS_property::Base<T,id>...>& current)
+                           std::tuple<PropertyMap, Constructor, LAS_property::Base<T,id>...>&& current)
   {
     typedef typename PropertyMap::value_type PmapValueType;
     std::tuple<T...> values;
@@ -277,8 +281,8 @@ namespace internal {
             typename NextPropertyBinder,
             typename ... PropertyMapBinders>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::tuple<PropertyMap, Constructor, LAS_property::Base<T,id>...>& current,
-                           NextPropertyBinder& next,
+                           std::tuple<PropertyMap, Constructor, LAS_property::Base<T,id>...>&& current,
+                           NextPropertyBinder&& next,
                            PropertyMapBinders&& ... properties)
   {
     typedef typename PropertyMap::value_type PmapValueType;
@@ -287,13 +291,14 @@ namespace internal {
     PmapValueType new_value = call_functor<PmapValueType>(std::get<1>(current), values);
     put (std::get<0>(current), new_element, new_value);
   
-    process_properties (reader, new_element, next, properties...);
+    process_properties (reader, new_element, std::forward<NextPropertyBinder>(next),
+                        std::forward<PropertyMapBinders>(properties)...);
   }
 
 
   template <typename OutputValueType, typename PropertyMap, typename T, LAS_property::Id::Id id>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, LAS_property::Base<T,id> >& current)
+                           std::pair<PropertyMap, LAS_property::Base<T,id> >&& current)
   {
     T new_value = T();
     get_value (reader, new_value, current.second);
@@ -303,14 +308,15 @@ namespace internal {
   template <typename OutputValueType, typename PropertyMap, typename T, LAS_property::Id::Id id,
             typename NextPropertyBinder, typename ... PropertyMapBinders>
   void process_properties (const LASpoint& reader, OutputValueType& new_element,
-                           std::pair<PropertyMap, LAS_property::Base<T,id> >& current,
-                           NextPropertyBinder& next,
+                           std::pair<PropertyMap, LAS_property::Base<T,id> >&& current,
+                           NextPropertyBinder&& next,
                            PropertyMapBinders&& ... properties)
   {
     T new_value = T();
     get_value (reader, new_value, current.second);
     put (current.first, new_element, new_value);
-    process_properties (reader, new_element, next, properties...);
+    process_properties (reader, new_element, std::forward<NextPropertyBinder>(next),
+                        std::forward<PropertyMapBinders>(properties)...);
   }
 
   } // namespace LAS
@@ -321,66 +327,64 @@ namespace internal {
 /// \endcond
 
 
-//===================================================================================
-/// \ingroup PkgPointSetProcessingIOLas
+/**
+   \ingroup PkgPointSetProcessingIOLas
 
-/// Reads user-selected points properties from a .las or .laz stream.
-/// Potential additional properties are ignored.
-///
-/// Properties are handled through a variadic list of property
-/// handlers. A `PropertyHandler` can either be:
-///
-///  - A `std::pair<PropertyMap, LAS_property::Tag >` if the user wants to
-///  read a %LAS property as a scalar value `LAS_property::Tag::type` (for
-///  example, storing an `int` %LAS property into an `int` variable).
-///
-///  - A `std::tuple<PropertyMap, Constructor,
-///  LAS_property::Tag...>` if the user wants to use one or several
-///  %LAS properties to construct a complex object (for example,
-///  storing 4 `unsigned short` %LAS properties into a %Color object
-///  that can for example be a `CGAL::cpp11::array<unsigned short,
-///  4>`). In that case, the second element of the tuple should be a
-///  functor that constructs the value type of `PropertyMap` from N
-///  objects of of type `LAS_property::Tag::type`.
-///
-/// The %LAS standard defines a fixed set of properties accessible
-/// through the following tag classes:
-///
-///  - `LAS_property::X` with type `double`
-///  - `LAS_property::Y` with type `double`
-///  - `LAS_property::Z` with type `double`
-///  - `LAS_property::Intensity` with type `unsigned short`
-///  - `LAS_property::Return_number` with type `unsigned char`
-///  - `LAS_property::Number_of_returns` with type `unsigned char`
-///  - `LAS_property::Scan_direction_flag` with type `unsigned char`
-///  - `LAS_property::Edge_of_flight_line` with type `unsigned char`
-///  - `LAS_property::Classification` with type `unsigned char`
-///  - `LAS_property::Synthetic_flag` with type `unsigned char`
-///  - `LAS_property::Keypoint_flag` with type `unsigned char`
-///  - `LAS_property::Withheld_flag` with type `unsigned char`
-///  - `LAS_property::Scan_angle` with type `double`
-///  - `LAS_property::User_data` with type `unsigned char`
-///  - `LAS_property::Point_source_ID` with type `unsigned short`
-///  - `LAS_property::Deleted_flag` with type `unsigned int`
-///  - `LAS_property::GPS_time` with type `double`
-///  - `LAS_property::R` with type `unsigned short`
-///  - `LAS_property::G` with type `unsigned short`
-///  - `LAS_property::B` with type `unsigned short`
-///  - `LAS_property::I` with type `unsigned short`
-///
-/// @cgalRequiresCPP11
-///
-/// @sa `make_las_point_reader()`
-///
-/// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
-///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
-/// @tparam OutputIterator iterator over output points.
-/// @tparam PropertyHandler handlers to recover properties.
-///
-/// @return `true` on success.
+   Reads user-selected points properties from a .las or .laz stream.
+   Potential additional properties are ignored.
 
-// This variant requires all parameters.
-//-----------------------------------------------------------------------------------
+   Properties are handled through a variadic list of property
+   handlers. A `PropertyHandler` can either be:
+
+   - A `std::pair<PropertyMap, LAS_property::Tag >` if the user wants to
+   read a %LAS property as a scalar value `LAS_property::Tag::type` (for
+   example, storing an `int` %LAS property into an `int` variable).
+
+   - A `std::tuple<PropertyMap, Constructor,
+   LAS_property::Tag...>` if the user wants to use one or several
+   %LAS properties to construct a complex object (for example,
+   storing 4 `unsigned short` %LAS properties into a %Color object
+   that can for example be a `CGAL::cpp11::array<unsigned short,
+   4>`). In that case, the second element of the tuple should be a
+   functor that constructs the value type of `PropertyMap` from N
+   objects of of type `LAS_property::Tag::type`.
+
+   The %LAS standard defines a fixed set of properties accessible
+   through the following tag classes:
+
+   - `LAS_property::X` with type `double`
+   - `LAS_property::Y` with type `double`
+   - `LAS_property::Z` with type `double`
+   - `LAS_property::Intensity` with type `unsigned short`
+   - `LAS_property::Return_number` with type `unsigned char`
+   - `LAS_property::Number_of_returns` with type `unsigned char`
+   - `LAS_property::Scan_direction_flag` with type `unsigned char`
+   - `LAS_property::Edge_of_flight_line` with type `unsigned char`
+   - `LAS_property::Classification` with type `unsigned char`
+   - `LAS_property::Synthetic_flag` with type `unsigned char`
+   - `LAS_property::Keypoint_flag` with type `unsigned char`
+   - `LAS_property::Withheld_flag` with type `unsigned char`
+   - `LAS_property::Scan_angle` with type `double`
+   - `LAS_property::User_data` with type `unsigned char`
+   - `LAS_property::Point_source_ID` with type `unsigned short`
+   - `LAS_property::Deleted_flag` with type `unsigned int`
+   - `LAS_property::GPS_time` with type `double`
+   - `LAS_property::R` with type `unsigned short`
+   - `LAS_property::G` with type `unsigned short`
+   - `LAS_property::B` with type `unsigned short`
+   - `LAS_property::I` with type `unsigned short`
+
+   \cgalRequiresCPP11
+
+   \sa `make_las_point_reader()`
+
+   \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
+   It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
+   \tparam OutputIterator iterator over output points.
+   \tparam PropertyHandler handlers to recover properties.
+
+   \return `true` on success.
+*/
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename ... PropertyHandler>
@@ -398,7 +402,7 @@ bool read_las_points_with_properties (std::istream& stream,
       const LASpoint& laspoint = lasreader.point;
       Enriched_point new_point;
 
-      internal::LAS::process_properties (laspoint, new_point, properties...);
+      internal::LAS::process_properties (laspoint, new_point, std::forward<PropertyHandler>(properties)...);
 
       *(output ++) = new_point;
     }
@@ -420,81 +424,127 @@ bool read_las_points_with_properties (std::istream& stream,
   typedef typename value_type_traits<OutputIterator>::type OutputValueType;
 
   return read_las_points_with_properties<OutputValueType>
-    (stream, output, properties...);
+    (stream, output, std::forward<PropertyHandler>(properties)...);
 }
 /// \endcond
 
-//===================================================================================
-/// \ingroup PkgPointSetProcessingIOLas
-/// Reads points (position only) from a .las or .laz stream.
-/// Potential additional properties are ignored.
-///
-/// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
-///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
-/// @tparam OutputIterator iterator over output points.
-/// @tparam PointPMap is a model of `WritablePropertyMap` with  value_type `CGAL::Point_3`.
-///        It can be omitted if the value type of `OutputIterator` is convertible to `CGAL::Point_3`.
-///
-/// @return `true` on success.
-///
-/// @cgalRequiresCPP11
+/**
+   \ingroup PkgPointSetProcessingIOLas
+   Reads points (position only) from a .las or .laz stream.
+   Potential additional properties are ignored.
 
-// This variant requires all parameters.
-//-----------------------------------------------------------------------------------
+   \tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
+   It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
+   \tparam OutputIterator iterator over output points.
+
+   \param stream input stream.
+   \param output output iterator over points.
+
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `WritablePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+   
+   \return true on success.
+
+   \cgalRequiresCPP11
+*/
 template < typename OutputIteratorValueType,
            typename OutputIterator,
-           typename PointPMap >
-bool read_las_points(std::istream& stream, ///< input stream.
-                     OutputIterator output, ///< output iterator over points.
-                     PointPMap point_pmap) ///< property map: value_type of OutputIterator -> Point_3.
+#ifdef DOXYGEN_RUNNING
+           typename NamedParameters
+#else
+           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+#endif
+>
+bool read_las_points(std::istream& stream,
+                     OutputIterator output,
+#ifdef DOXYGEN_RUNNING
+                     const NamedParameters& np)
+#else
+                     const CGAL_BGL_NP_CLASS& np)
+#endif
 {
+  using boost::choose_param;
+
+  typedef Point_set_processing_3::Fake_point_range<OutputIteratorValueType> PointRange;
+  
+  typedef typename Point_set_processing_3::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
+  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+  
   return read_las_points_with_properties (stream, output,
-                                          make_las_point_reader(point_pmap));
+                                          make_las_point_reader (point_map));
 }
 
-/// @cond SKIP_IN_MANUAL
-template < typename OutputIterator,
-           typename PointPMap >
+/// \cond SKIP_IN_MANUAL
+// variant with default NP
+template <typename OutputIteratorValueType,
+          typename OutputIterator>
+bool
+read_las_points(
+  std::istream& stream, ///< input stream.
+  OutputIterator output) ///< output iterator over points.
+{
+  return read_las_points<OutputIteratorValueType>
+    (stream, output, CGAL::parameters::all_default());
+}
+
+// variant with default output iterator value type
+template <typename OutputIterator,
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool
+read_las_points(
+  std::istream& stream, ///< input stream.
+  OutputIterator output,
+  const CGAL_BGL_NP_CLASS& np)
+{
+  return read_las_points<typename value_type_traits<OutputIterator>::type>
+    (stream, output, np);
+}
+
+// variant with default NP and output iterator value type
+template <typename OutputIterator>
+bool
+read_las_points(
+  std::istream& stream, ///< input stream.
+  OutputIterator output)
+{
+  return read_las_points<typename value_type_traits<OutputIterator>::type>
+    (stream, output, CGAL::parameters::all_default());
+}
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+// deprecated API  
+template < typename OutputIteratorValueType,
+           typename OutputIterator,
+           typename PointMap >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_las_points(), please update your code")
 bool read_las_points(std::istream& stream, ///< input stream.
                      OutputIterator output, ///< output iterator over points.
-                     PointPMap point_pmap) ///< property map: value_type of OutputIterator -> Point_3.
+                     PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  // just deduce value_type of OutputIterator
-  return read_las_points
-    <typename value_type_traits<OutputIterator>::type>(stream,
-                                                       output,
-                                                       point_pmap);
+  return read_las_points<OutputIteratorValueType>
+    (stream, output,
+     CGAL::parameters::point_map (point_map));
 }
-//-----------------------------------------------------------------------------------
-/// @endcond
 
-/// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Identity_property_map.
-//-----------------------------------------------------------------------------------
-template < typename OutputIteratorValueType,
-           typename OutputIterator >
+// deprecated API
+template < typename OutputIterator,
+           typename PointMap >
+CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::read_las_points(), please update your code")
 bool read_las_points(std::istream& stream, ///< input stream.
-                     OutputIterator output) ///< output iterator over points.
+                     OutputIterator output, ///< output iterator over points.
+                     PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  return read_las_points
-    <OutputIteratorValueType>(stream,
-                              output,
-                              make_identity_property_map(OutputIteratorValueType())
-                              );
+  return read_las_points<typename value_type_traits<OutputIterator>::type>
+    (stream, output,
+     CGAL::parameters::point_map (point_map));
 }
-
-template < typename OutputIterator>
-bool read_las_points(std::istream& stream, ///< input stream.
-                     OutputIterator output) ///< output iterator over points.
-{
-  // just deduce value_type of OutputIterator
-  return read_las_points
-    <typename value_type_traits<OutputIterator>::type>(stream,
-                                                       output);
-}
-//-----------------------------------------------------------------------------------
-
-/// @endcond
+#endif // CGAL_NO_DEPRECATED_CODE
+/// \endcond
 
 
 } //namespace CGAL

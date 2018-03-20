@@ -12,6 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ophir Setter    <ophir.setter@cs.tau.ac.il>
 //                 Guy Zucker <guyzucke@post.tau.ac.il>
@@ -22,6 +26,7 @@
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Object.h>
@@ -1754,5 +1759,7 @@ protected:
 } //namespace CGAL
 
 #include <CGAL/Boolean_set_operations_2/Gps_on_surface_base_2_impl.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_GPS_ON_SURFACE_BASE_2_H

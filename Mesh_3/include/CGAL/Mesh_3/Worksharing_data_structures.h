@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Clement Jamin
 
@@ -22,6 +23,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 
@@ -848,5 +850,7 @@ namespace CGAL { namespace Mesh_3 {
 } } //namespace CGAL::Mesh_3
 
 #endif // CGAL_LINKED_WITH_TBB
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_WORKSHARING_DATA_STRUCTURES_H

@@ -4,6 +4,8 @@
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_tags.h>
 
+#include <CGAL/disable_warnings.h>
+
 template <typename T_Geom_traits>
 class Point_compare {
 private:
@@ -129,3 +131,5 @@ public:
     return (res == CGAL::SMALLER) ? true : false;
   }
 };
+
+#include <CGAL/enable_warnings.h>

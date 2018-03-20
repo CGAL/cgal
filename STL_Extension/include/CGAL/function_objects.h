@@ -18,6 +18,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -357,7 +358,7 @@ class Creator_uniform_d {
 
 template < class Op1, class Op2 >
 class Unary_compose_1
-  : public std::unary_function< typename Op2::argument_type,
+  : public CGAL::unary_function< typename Op2::argument_type,
                                 typename Op1::result_type >
 {
 protected:
@@ -381,7 +382,7 @@ compose1_1(const Op1& op1, const Op2& op2)
 
 template < class Op1, class Op2, class Op3 >
 class Binary_compose_1
-  : public std::unary_function< typename Op2::argument_type,
+  : public CGAL::unary_function< typename Op2::argument_type,
                                 typename Op1::result_type >
 {
 protected:
@@ -407,7 +408,7 @@ compose2_1(const Op1& op1, const Op2& op2, const Op3& op3)
 
 template < class Op1, class Op2 >
 class Unary_compose_2
-  : public std::binary_function< typename Op2::first_argument_type,
+  : public CGAL::binary_function< typename Op2::first_argument_type,
                                  typename Op2::second_argument_type,
                                  typename Op1::result_type >
 {
@@ -434,7 +435,7 @@ compose1_2(const Op1& op1, const Op2& op2)
 
 template < class Op1, class Op2, class Op3 >
 class Binary_compose_2
-  : public std::binary_function< typename Op2::argument_type,
+  : public CGAL::binary_function< typename Op2::argument_type,
                                  typename Op3::argument_type,
                                  typename Op1::result_type >
 {

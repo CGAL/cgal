@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
@@ -23,6 +24,7 @@
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <iostream>
 #include <list>
@@ -51,5 +53,7 @@ std::ostream & operator<< (std::ostream& os,
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

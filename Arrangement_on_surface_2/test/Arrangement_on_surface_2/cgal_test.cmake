@@ -156,9 +156,16 @@ function(cgal_arr_2_add_target exe_name source_file)
   target_compile_options(${name} PRIVATE ${flags})
   cgal_debug_message(STATUS "#      -> target ${name} with TESTSUITE_CXXFLAGS: ${flags}")
 
+  if(BUILD_TESTING)
+    cgal_add_compilation_test(${name})
+  endif(BUILD_TESTING)
+
   # Add a compatibility-mode with the shell script `cgal_test_base`
   if(NOT TARGET ${exe_name})
     create_single_source_cgal_program( "${source_file}" NO_TESTING)
+    if(BUILD_TESTING)
+      cgal_add_compilation_test(${exe_name})
+    endif(BUILD_TESTING)
   endif()
 endfunction()
 
@@ -171,11 +178,17 @@ endfunction()
 function(run_test_with_flags)
   # ${ARGV0} - executable name
   # ${ARGV1} - test substring name
+  if(NOT BUILD_TESTING)
+    return()
+  endif()
   cgal_debug_message(STATUS "# run_test_with_flags(${ARGN})")
   cgal_add_test(${ARGV0}_${suffix} ${ARGV0} ${ARGV0}.${ARGV1})
 endfunction()
 
 function(run_test_alt name datafile)
+  if(NOT BUILD_TESTING)
+    return()
+  endif()
   if(suffix)
     set(name ${name}_${suffix})
   endif()
@@ -185,6 +198,16 @@ function(run_test_alt name datafile)
   string(MAKE_C_IDENTIFIER "${name}  ${ARGV4}  ${ARGV5}" test_name)
   add_test(NAME ${test_name} COMMAND ${command}
     WORKING_DIRECTORY ${CGAL_CURRENT_SOURCE_DIR})
+  set_property(TEST "${test_name}"
+    APPEND PROPERTY DEPENDS "compilation_of__${name}")
+  if(POLICY CMP0066) # CMake 3.7 or later
+    set_tests_properties("${test_name}"
+      PROPERTIES
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/__exec_test_dir
+      FIXTURES_REQUIRED ${PROJECT_NAME})
+  endif()
+  cgal_debug_message(STATUS "#       .. depends on compilation_of__${name}")
+
 #  message("   successful execution of ${name}  ${ARGV4} ${ARGV5}")
   set_property(TEST "${test_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
@@ -201,7 +224,9 @@ function(compile_and_run)
   cgal_debug_message(STATUS "# compile_and_run(${ARGN})")
 #  message("   successful compilation of ${name}")
   cgal_arr_2_add_target(${name} ${name}.cpp)
-  cgal_add_test(${name})
+  if(BUILD_TESTING)
+    cgal_add_test(${name})
+  endif()
 endfunction()
 
 function(execute_commands_old_structure data_dir traits_type_name)
@@ -660,6 +685,18 @@ function(test_construction_spherical_arcs)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits} -DTEST_TOPOL_TRAITS=${topol_traits}")
   compile_and_run_with_flags( test_construction geodesic_arcs_on_sphere "${flags}")
 endfunction()
+
+#---------------------------------------------------------------------#
+# construction with polylines
+#---------------------------------------------------------------------#
+function(test_construction_polylines)
+  set(nt ${CGAL_GMPQ_NT})
+  set(kernel ${CARTESIAN_KERNEL})
+  set(geom_traits ${POLYLINE_GEOM_TRAITS})
+  set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
+  compile_and_run_with_flags( test_construction polylines "${flags}")
+endfunction()
+
 
 #---------------------------------------------------------------------#
 # overlay with segments
@@ -1333,6 +1370,8 @@ test_algebraic_traits_core()
 test_algebraic_traits_gmp()
 test_algebraic_traits_leda()
 
+compile_and_run(test_data_traits)
+
 compile_and_run(test_insertion)
 compile_and_run(test_unbounded_rational_insertion)
 compile_and_run(test_unbounded_rational_direct_insertion)
@@ -1344,6 +1383,7 @@ compile_and_run(test_vert_ray_shoot_vert_segments)
 test_construction_segments()
 test_construction_linear_curves()
 test_construction_spherical_arcs()
+test_construction_polylines()
 
 test_overlay_segments()
 test_overlay_spherical_arcs()

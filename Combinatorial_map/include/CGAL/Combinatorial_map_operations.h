@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -712,18 +713,18 @@ namespace CGAL
       typename CMap::Dart_handle d1, d2;
       typename CMap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
 
-      typename CMap::size_type mark = amap.get_new_mark();
+      typename CMap::size_type amark = amap.get_new_mark();
 
       // First we store and mark all the darts of the 1-cell to contract.
       std::deque<typename CMap::Dart_handle> to_erase;
-      for ( CGAL::CMap_dart_iterator_basic_of_cell<CMap,1> it(amap,adart,mark);
+      for ( CGAL::CMap_dart_iterator_basic_of_cell<CMap,1> it(amap,adart,amark);
             it.cont(); ++it )
       {
         to_erase.push_back(it);
         if ( dg1==amap.null_handle && !amap.template is_free<0>(it) &&
              !amap.template is_free<1>(it) )
         { dg1=amap.template beta<0>(it); dg2=amap.template beta<1>(it); }
-        amap.mark(it, mark);
+        amap.mark(it, amark);
         ++res;
       }
 
@@ -756,7 +757,8 @@ namespace CGAL
               if ( (*it)->beta(0)!=(*it)->beta(1) )*/
               if ( amap.are_attributes_automatically_managed() && update_attributes )
               {
-                modified_darts.push_back(amap.template beta<1>(*it));
+                if (!amap.is_marked(amap.template beta<1>(*it), amark))
+                { modified_darts.push_back(amap.template beta<1>(*it)); }
               }
               amap.basic_link_beta_1(amap.template beta<0>(*it),
                                      amap.template beta<1>(*it));
@@ -766,7 +768,8 @@ namespace CGAL
           {
             if ( amap.are_attributes_automatically_managed() && update_attributes )
             {
-              modified_darts2.push_back(amap.template beta<0>(*it));
+              if (!amap.is_marked(amap.template beta<0>(*it), amark))
+              { modified_darts2.push_back(amap.template beta<0>(*it)); }
             }
             amap.template dart_unlink_beta<1>(amap.template beta<0>(*it));
           }
@@ -777,7 +780,8 @@ namespace CGAL
           {
             if ( amap.are_attributes_automatically_managed() && update_attributes )
             {
-              modified_darts.push_back(amap.template beta<1>(*it));
+              if (!amap.is_marked(amap.template beta<1>(*it), amark))
+              { modified_darts.push_back(amap.template beta<1>(*it)); }
             }
             amap.template dart_unlink_beta<0>(amap.template beta<1>(*it));
           }
@@ -788,8 +792,8 @@ namespace CGAL
       for ( it=to_erase.begin(); it!=to_erase.end(); ++it )
       { amap.erase_dart(*it); }
 
-      CGAL_assertion( amap.is_whole_map_unmarked(mark) );
-      amap.free_mark(mark);
+      CGAL_assertion( amap.is_whole_map_unmarked(amark) );
+      amap.free_mark(amark);
 
       if ( amap.are_attributes_automatically_managed() && update_attributes )
       {

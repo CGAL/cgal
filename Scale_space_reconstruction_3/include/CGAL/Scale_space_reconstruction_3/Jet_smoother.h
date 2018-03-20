@@ -13,6 +13,10 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
 // Author(s):      Simon Giraudot
 
 
@@ -87,7 +91,9 @@ public:
   template <typename InputIterator>
   void operator() (InputIterator begin, InputIterator end)
   {
-    CGAL::jet_smooth_point_set<ConcurrencyTag> (begin, end, m_k, m_degree_fitting, m_degree_monge);
+    CGAL::Iterator_range<InputIterator> points (begin, end);
+    CGAL::jet_smooth_point_set<ConcurrencyTag>
+    (points, m_k, CGAL::parameters::degree_fitting(m_degree_fitting).degree_monge(m_degree_monge));
   }
   
 };

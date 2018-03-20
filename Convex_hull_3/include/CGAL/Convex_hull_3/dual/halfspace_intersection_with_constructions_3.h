@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Jocelyn Meyron
@@ -24,6 +25,7 @@
 
 #include <CGAL/license/Convex_hull_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Origin.h>
 #include <CGAL/convex_hull_3.h>
@@ -157,6 +159,8 @@ namespace CGAL
 
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_HALFSPACE_INTERSECTION_WITH_CONSTRUCTION_3_H
 

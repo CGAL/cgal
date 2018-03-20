@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
@@ -23,6 +24,8 @@
 #define CGAL_BOOST_GRAPH_TRAITS_ARRANGEMENT_2_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 
 /*! \file
@@ -246,6 +249,9 @@ public:
     arr_access (const_cast<Arrangement_on_surface_2&> (arr))
   {}
 
+  /*! Nulls */
+  static vertex_descriptor null_vertex() { return vertex_descriptor(); }
+
   /*! Traverse the vertices. */
   vertices_size_type number_of_vertices()
   {
@@ -308,7 +314,7 @@ public:
     if (v->is_isolated())
       return out_edge_iterator ();
 
-    const int  deg = static_cast<int>(v->degree());
+    const int deg = static_cast<int>(v->degree());
     return out_edge_iterator (v->incident_halfedges(), true, deg, deg);
   }
 
@@ -318,7 +324,8 @@ public:
     if (v->is_isolated())
       return in_edge_iterator();
 
-    return in_edge_iterator (v->incident_halfedges(), false, 0, v->degree());
+    const int deg = static_cast<int>(v->degree());
+    return in_edge_iterator (v->incident_halfedges(), false, 0, deg);
   }
 
   in_edge_iterator in_edges_end (vertex_descriptor v)
@@ -326,7 +333,7 @@ public:
     if (v->is_isolated())
       return in_edge_iterator ();
 
-    const int  deg = v->degree();
+    const int deg = static_cast<int>(v->degree());
     return in_edge_iterator (v->incident_halfedges(), false, deg, deg);
   }
 };
@@ -608,5 +615,7 @@ edges (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

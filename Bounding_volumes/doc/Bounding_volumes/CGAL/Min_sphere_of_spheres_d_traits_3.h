@@ -35,7 +35,7 @@ public:
 /*!
 is the constant 3, i.e.\ the dimension of \f$ \mathbb{R}^3\f$. 
 */ 
-typedef unspecified_type D; 
+static const int D;
 
 /// @} 
 

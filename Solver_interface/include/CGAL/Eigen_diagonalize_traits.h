@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s) : Jocelyn Meyron and Quentin Mérigot
 //
@@ -23,7 +24,6 @@
 
 #include <Eigen/Dense>
 #include <Eigen/Eigenvalues>
-
 
 // If the matrix to diagonalize is of dimension 2x2 or 3x3, Eigen
 // provides a faster implementation using a closed-form
@@ -39,70 +39,83 @@
 
 namespace CGAL {
 
-/// A model of the concept `DiagonalizeTraits` using \ref thirdpartyEigen.
+/// \ingroup PkgSolver
+///
+/// The class `Eigen_diagonalize_traits` provides an interface to the
+/// diagonalization of covariance matrices of \ref thirdpartyEigen
+/// "Eigen".
+///
+/// \ref thirdpartyEigen "Eigen" version 3.1 (or later) must be available on the system.
+///
+/// \tparam FT Number type
+/// \tparam dim Dimension of the matrices and vectors
+///
 /// \cgalModels `DiagonalizeTraits`
-
+///
+/// \sa http://eigen.tuxfamily.org
 template <typename FT, unsigned int dim = 3>
-class Eigen_diagonalize_traits{
-
+class Eigen_diagonalize_traits
+{
 public:
+  typedef cpp11::array<FT, dim>                  Vector;
+  typedef cpp11::array<FT, dim*dim>              Matrix;
+  typedef cpp11::array<FT, (dim * (dim+1) / 2)>  Covariance_matrix;
 
-  typedef cpp11::array<FT, dim> Vector;
-  typedef cpp11::array<FT, dim*dim> Matrix;
-  typedef cpp11::array<FT, (dim * (dim+1) / 2)> Covariance_matrix;
-  
 private:
+  typedef Eigen::Matrix<FT, dim, dim>            EigenMatrix;
+  typedef Eigen::Matrix<FT, dim, 1>              EigenVector;
 
-  typedef Eigen::Matrix<FT, dim, dim> EigenMatrix;
-  typedef Eigen::Matrix<FT, dim, 1> EigenVector;
-  
-  // Construct the covariance matrix
-  static EigenMatrix
-  construct_covariance_matrix
-  (const Covariance_matrix& cov)  {
+  /// Construct the covariance matrix
+  static EigenMatrix construct_covariance_matrix(const Covariance_matrix& cov)
+  {
     EigenMatrix m;
 
-    for (std::size_t i = 0; i < dim; ++ i)
-      for (std::size_t j = i; j < dim; ++ j)
-	{
-	  m(i,j) = static_cast<float>(cov[(dim * i) + j - ((i * (i+1)) / 2)]);
-	  if (i != j)
-	    m(j,i) = m(i,j);
-	}
+    for(std::size_t i=0; i<dim; ++i)
+    {
+      for(std::size_t j=i; j<dim; ++j)
+      {
+        m(i,j) = static_cast<float>(cov[(dim * i) + j - ((i * (i+1)) / 2)]);
+
+        if(i != j)
+          m(j,i) = m(i,j);
+      }
+    }
 
     return m;
   }
 
-  // Diagonalize a selfadjoint matrix
-  static bool
-  diagonalize_selfadjoint_matrix (EigenMatrix& m,
-				  EigenMatrix& eigenvectors,
-                                  EigenVector& eigenvalues) {
-      Eigen::SelfAdjointEigenSolver<EigenMatrix> eigensolver;
+  /// Fill `eigenvalues` with the eigenvalues and `eigenvectors` with
+  /// the eigenvectors of the selfadjoint matrix represented by `m`.
+  /// Eigenvalues are sorted by increasing order.
+  /// \return `true` if the operation was successful and `false` otherwise.
+  static bool diagonalize_selfadjoint_matrix(EigenMatrix& m,
+                                             EigenMatrix& eigenvectors,
+                                             EigenVector& eigenvalues)
+  {
+    Eigen::SelfAdjointEigenSolver<EigenMatrix> eigensolver;
 
 #ifndef DO_NOT_USE_EIGEN_COMPUTEDIRECT_FOR_DIAGONALIZATION
-      if (dim == 2 || dim == 3)
-        eigensolver.computeDirect(m);
-      else
+    if(dim == 2 || dim == 3)
+      eigensolver.computeDirect(m);
+    else
 #endif
-        eigensolver.compute(m);
+      eigensolver.compute(m);
 
-      if (eigensolver.info() != Eigen::Success) {
-          return false;
-      }
+    if(eigensolver.info() != Eigen::Success)
+      return false;
 
-      eigenvalues = eigensolver.eigenvalues();
-      eigenvectors = eigensolver.eigenvectors();
+    eigenvalues = eigensolver.eigenvalues();
+    eigenvectors = eigensolver.eigenvectors();
 
-      return true;
+    return true;
   }
 
 public:
-
-  static bool
-  diagonalize_selfadjoint_covariance_matrix(
-    const Covariance_matrix& cov,
-    Vector& eigenvalues)
+  /// Fill `eigenvalues` with the eigenvalues of the covariance matrix represented by `cov`.
+  /// Eigenvalues are sorted by increasing order.
+  /// \return `true` if the operation was successful and `false` otherwise.
+  static bool diagonalize_selfadjoint_covariance_matrix(const Covariance_matrix& cov,
+                                                        Vector& eigenvalues)
   {
     EigenMatrix m = construct_covariance_matrix(cov);
 
@@ -111,20 +124,22 @@ public:
     EigenMatrix eigenvectors_;
     bool res = diagonalize_selfadjoint_matrix(m, eigenvectors_, eigenvalues_);
 
-    if (res)
+    if(res)
     {
-      for (std::size_t i = 0; i < dim; ++ i)
-	eigenvalues[i] = static_cast<FT>(eigenvalues_[i]);
+      for(std::size_t i=0; i<dim; ++i)
+        eigenvalues[i] = static_cast<FT>(eigenvalues_[i]);
     }
 
     return res;
   }
 
-  static bool
-  diagonalize_selfadjoint_covariance_matrix(
-    const Covariance_matrix& cov,
-    Vector& eigenvalues,
-    Matrix& eigenvectors)
+  /// Fill `eigenvalues` with the eigenvalues and `eigenvectors` with
+  /// the eigenvectors of the covariance matrix represented by `cov`.
+  /// Eigenvalues are sorted by increasing order.
+  /// \return `true` if the operation was successful and `false` otherwise.
+  static bool diagonalize_selfadjoint_covariance_matrix(const Covariance_matrix& cov,
+                                                        Vector& eigenvalues,
+                                                        Matrix& eigenvectors)
   {
     EigenMatrix m = construct_covariance_matrix(cov);
 
@@ -133,41 +148,40 @@ public:
     EigenMatrix eigenvectors_;
     bool res = diagonalize_selfadjoint_matrix(m, eigenvectors_, eigenvalues_);
 
-    if (res)
+    if(res)
     {
-      for (std::size_t i = 0; i < dim; ++ i)
-	{
-	  eigenvalues[i] = static_cast<FT>(eigenvalues_[i]);
+      for(std::size_t i=0; i<dim; ++i)
+      {
+        eigenvalues[i] = static_cast<FT>(eigenvalues_[i]);
 
-	  for (std::size_t j = 0; j < dim; ++ j)
-	    eigenvectors[dim*i + j]=static_cast<FT>(eigenvectors_(j,i));
-	}
-    }
-
-    return res;
-  }
-
-  // Extract the eigenvector associated to the largest eigenvalue
-  static bool
-  extract_largest_eigenvector_of_covariance_matrix (
-    const Covariance_matrix& cov,
-    Vector& normal)
-  {
-      // Construct covariance matrix
-      EigenMatrix m = construct_covariance_matrix(cov);
-
-      // Diagonalizing the matrix
-      EigenVector eigenvalues;
-      EigenMatrix eigenvectors;
-      if (! diagonalize_selfadjoint_matrix(m, eigenvectors, eigenvalues)) {
-          return false;
+        for(std::size_t j=0; j<dim; ++j)
+          eigenvectors[dim*i + j] = static_cast<FT>(eigenvectors_(j,i));
       }
+    }
 
-      // Eigenvalues are sorted by increasing order
-      for (unsigned int i = 0; i < dim; ++ i)
-	normal[i] = static_cast<FT> (eigenvectors(i,dim-1));
+    return res;
+  }
 
-      return true;
+  /// Extract the eigenvector associated to the largest eigenvalue
+  /// of the covariance matrix represented by `cov`.
+  /// \return `true` if the operation was successful and `false` otherwise.
+  static bool extract_largest_eigenvector_of_covariance_matrix(const Covariance_matrix& cov,
+                                                               Vector& normal)
+  {
+    // Construct covariance matrix
+    EigenMatrix m = construct_covariance_matrix(cov);
+
+    // Diagonalizing the matrix
+    EigenVector eigenvalues;
+    EigenMatrix eigenvectors;
+    if(! diagonalize_selfadjoint_matrix(m, eigenvectors, eigenvalues))
+      return false;
+
+    // Eigenvalues are sorted by increasing order
+    for(unsigned int i=0; i<dim; ++i)
+      normal[i] = static_cast<FT> (eigenvectors(i, dim-1));
+
+    return true;
   }
 };
 

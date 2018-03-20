@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Laurent RINEAU
@@ -23,6 +24,7 @@
 
 #include <CGAL/license/Mesh_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_2/Do_not_refine_edges.h>
 #include <CGAL/Mesh_2/Refine_faces.h>
@@ -362,5 +364,7 @@ refine_Delaunay_mesh_2_without_edge_refinement(Tr& t,
 }
 
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_DELAUNAY_MESHER_NO_EDGE_REFINEMENT_2_H

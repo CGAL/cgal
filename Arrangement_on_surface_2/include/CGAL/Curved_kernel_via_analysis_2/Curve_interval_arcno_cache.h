@@ -14,15 +14,13 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de> 
 
 #ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_CURVE_INTERVAL_ARCNO_CACHE_H
 #define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_CURVE_INTERVAL_ARCNO_CACHE_H
-
-#include <CGAL/license/Arrangement_on_surface_2.h>
-
 
 /*!\file include/CGAL/Curved_kernel_via_analysis_2/Curve_interval_arcno_cache.h
  * \brief defines \c Curve_interval_arcno_cache functor
@@ -117,7 +115,7 @@ struct Curve_interval_arcno_cache {
         
         Curve_analysis_2 ca_2 = cv_line.curve_analysis_2();
         ///////////////////////////////// polynomial or curve id ?
-        int curve_id = ca_2.polynomial_2().id();
+        int curve_id = static_cast<int>(ca_2.polynomial_2().id());
         /////////////////////////////////
         if(_m_last_curve_id != curve_id) {
             typename Curve_to_interval_arcno_map::iterator it;

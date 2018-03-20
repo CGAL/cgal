@@ -10,6 +10,7 @@ GlViewer::GlViewer(QWidget *pParent)
   m_scene = NULL;
 
   m_view_points         = true;
+  m_view_tolerance      = false;
   m_view_vertices       = true;
   m_view_edges          = false;
   m_view_ghost_edges    = false;
@@ -46,6 +47,9 @@ void GlViewer::resizeGL(int width, int height)
 
 void GlViewer::initializeGL() 
 {
+  QOpenGLWidget::initializeGL();
+  initializeOpenGLFunctions();
+  makeCurrent();
   glClearColor(1., 1., 1., 0.);
   glDisable(GL_DEPTH_TEST);
   glEnable(GL_SMOOTH);
@@ -62,6 +66,7 @@ void GlViewer::paintGL()
   glTranslated(-m_center_x, -m_center_y, 0.0);
 
   m_scene->render(m_view_points,
+      m_view_tolerance,
       m_view_vertices,
       m_view_edges,
       m_view_ghost_edges,
@@ -73,7 +78,8 @@ void GlViewer::paintGL()
       m_view_edge_relevance,
       float(m_point_size),
       float(m_vertex_size),
-      float(m_line_thickness));
+      float(m_line_thickness),
+      this);
 
   glPopMatrix();
 }

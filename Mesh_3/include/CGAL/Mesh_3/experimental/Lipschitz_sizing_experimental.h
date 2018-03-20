@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Jane Tournois
@@ -205,7 +206,7 @@ public:
     else if (dim == 1)
     {
 #ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
-      const typename MeshDomain::Curve_segment_index& curve_id =
+      const typename MeshDomain::Curve_index& curve_id =
         m_domain.curve_segment_index(index);
       const Patches_ids& ids = patches_ids_map[curve_id];
       

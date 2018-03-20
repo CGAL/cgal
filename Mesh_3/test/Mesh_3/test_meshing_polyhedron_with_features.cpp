@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -28,6 +29,7 @@
 #include <CGAL/IO/File_medit.h>
 #include <CGAL/IO/File_tetgen.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
+#include <CGAL/use.h>
 
 #include <fstream>
 
@@ -47,7 +49,7 @@ struct Polyhedron_with_features_tester : public Tester<K>
     typedef CGAL::Mesh_complex_3_in_triangulation_3 <
       Tr,
       typename Mesh_domain::Corner_index,
-      typename Mesh_domain::Curve_segment_index > C3t3;
+      typename Mesh_domain::Curve_index > C3t3;
 
     typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
     typedef typename Mesh_criteria::Edge_criteria Edge_criteria;
@@ -65,6 +67,10 @@ struct Polyhedron_with_features_tester : public Tester<K>
     Mesh_domain domain(polyhedron, &CGAL::get_default_random());
     domain.detect_features();
 
+    // non-documented, provided to the FEniCS project
+    const std::vector<Polyhedron>& polyhedra = domain.polyhedra();
+    CGAL_USE(polyhedra);
+    
     // Set mesh criteria
     Edge_criteria edge_criteria(0.2);
     Facet_criteria facet_criteria(30, 0.2, 0.02);

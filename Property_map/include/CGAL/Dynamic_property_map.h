@@ -1,4 +1,4 @@
-// Copyright (c) 2007  GeometryFactory (France).  All rights reserved.
+// Copyright (c) 2017  GeometryFactory (France).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -13,6 +13,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s)     : Andreas Fabri
@@ -77,53 +78,94 @@ struct Dynamic_property_map {
   V default_value_;
 };
 
-template <typename T>
-struct vertex_property_t
-{
-  vertex_property_t(const std::string s, const T& t = T())
-    : s(s), t(t)
+  
+template <typename M, typename PM>
+struct Dynamic_property_map_deleter {
+  M& mesh;
+
+  Dynamic_property_map_deleter(const M& mesh)
+    : mesh(const_cast<M&>(mesh))
   {}
-  std::string s;
-  T t;
+
+  void operator()(PM* pm) const
+  {
+    remove_property(*pm, mesh);
+    delete pm;
+  }
+};
+
+
+template <typename Mesh, typename PM>
+struct Dynamic {
+  typedef typename PM::key_type key_type;
+  typedef typename PM::value_type value_type;
+  typedef typename PM::reference reference;
+  typedef typename PM::category category;
+
+  typedef Dynamic_property_map_deleter<Mesh,PM> Deleter;
+
+  Dynamic()
+    : map_()
+  {}
+  
+  Dynamic(const Mesh& mesh, PM* pm)
+    : map_(pm, Deleter(mesh))
+  {}
+             
+  friend reference get(const Dynamic& m, const key_type& k)
+  {
+    return get(*(m.map_), k);
+  }
+    
+
+  friend void put(const Dynamic& m, const key_type& k, const value_type& v)
+  {
+    put(*(m.map_), k, v);
+  }
+   
+  boost::shared_ptr<PM> map_;
+};
+  
+} // namespace internal
+
+  
+template <typename T>
+struct dynamic_vertex_property_t
+{
+  dynamic_vertex_property_t()
+  {}
 };
 
 
 template <typename T>
-struct halfedge_property_t
+struct dynamic_halfedge_property_t
 {
-  halfedge_property_t(const std::string s, const T& t = T())
-    : s(s), t(t)
+  dynamic_halfedge_property_t()
   {}
-  std::string s;
-  T t;
 };
 
 template <typename T>
-struct edge_property_t
+struct dynamic_edge_property_t
 {
-  edge_property_t(const std::string s, const T& t = T())
-    : s(s), t(t)
+  dynamic_edge_property_t()
   {}
-  std::string s;
-  T t;
 };
 
 
 template <typename T>
-struct face_property_t
+struct dynamic_face_property_t
 {
-  face_property_t(const std::string s, const T& t = T())
-    : s(s), t(t)
+  dynamic_face_property_t()
   {}
-  std::string s;
-  T t;
 };
 
-template <typename G, typename Tag>
-struct dynamic_property_map{};
+} // namespace CGAL
+
+namespace boost {
+
 
 template <typename G, typename T>
-struct dynamic_property_map<G,vertex_property_t<T> >
+struct property_map<G, CGAL::dynamic_vertex_property_t<T> >
 {
   typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
   typedef CGAL::internal::Dynamic_property_map<vertex_descriptor,T> type;
@@ -131,7 +173,7 @@ struct dynamic_property_map<G,vertex_property_t<T> >
 };
 
 template <typename G, typename T>
-struct dynamic_property_map<G,halfedge_property_t<T> >
+struct property_map<G, CGAL::dynamic_halfedge_property_t<T> >
 {
   typedef typename boost::graph_traits<G>::halfedge_descriptor halfedge_descriptor;
   typedef CGAL::internal::Dynamic_property_map<halfedge_descriptor,T> type;
@@ -140,7 +182,7 @@ struct dynamic_property_map<G,halfedge_property_t<T> >
 
 
 template <typename G, typename T>
-struct dynamic_property_map<G,edge_property_t<T> >
+struct property_map<G, CGAL::dynamic_edge_property_t<T> >
 {
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
   typedef CGAL::internal::Dynamic_property_map<edge_descriptor,T> type;
@@ -148,45 +190,47 @@ struct dynamic_property_map<G,edge_property_t<T> >
 };
 
 template <typename G, typename T>
-struct dynamic_property_map<G,face_property_t<T> >
+struct property_map<G, CGAL::dynamic_face_property_t<T> >
 {
   typedef typename boost::graph_traits<G>::face_descriptor face_descriptor;
   typedef CGAL::internal::Dynamic_property_map<face_descriptor,T> type;
   typedef type const_type;
 };
 
+} // namespace boost
 
+namespace CGAL {
 
 template <typename T, typename G>
-typename dynamic_property_map<G,vertex_property_t<T> >::const_type
-add_property(vertex_property_t<T> prop, const G&)
+typename boost::property_map<G, dynamic_vertex_property_t<T> >::const_type
+get(const CGAL::dynamic_vertex_property_t<T>&, const G&)
 {
   typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
-  return internal::Dynamic_property_map<vertex_descriptor,T>(prop.t);
+  return internal::Dynamic_property_map<vertex_descriptor,T>();
 }
 
 template <typename T, typename G>
-typename dynamic_property_map<G,halfedge_property_t<T> >::const_type
-add_property(halfedge_property_t<T> prop, const G&)
+typename boost::property_map<G, dynamic_halfedge_property_t<T> >::const_type
+get(const CGAL::dynamic_halfedge_property_t<T>&, const G&)
 {
   typedef typename boost::graph_traits<G>::halfedge_descriptor halfedge_descriptor;
-  return internal::Dynamic_property_map<halfedge_descriptor,T>(prop.t);
+  return internal::Dynamic_property_map<halfedge_descriptor,T>();
 }
 
 template <typename T, typename G>
-typename dynamic_property_map<G,edge_property_t<T> >::const_type
-add_property(edge_property_t<T> prop, const G&)
+typename boost::property_map<G, dynamic_edge_property_t<T> >::const_type
+get(const CGAL::dynamic_edge_property_t<T>&, const G&)
 {
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
-  return internal::Dynamic_property_map<edge_descriptor,T>(prop.t);
+  return internal::Dynamic_property_map<edge_descriptor,T>();
 }
 
 template <typename T, typename G>
-typename dynamic_property_map<G,face_property_t<T> >::const_type
-add_property(face_property_t<T> prop, const G&)
+typename boost::property_map<G, dynamic_face_property_t<T> >::const_type
+get(const CGAL::dynamic_face_property_t<T>&, const G&)
 {
   typedef typename boost::graph_traits<G>::face_descriptor face_descriptor;
-  return internal::Dynamic_property_map<face_descriptor,T>(prop.t);
+  return internal::Dynamic_property_map<face_descriptor,T>();
 }
 
 template<typename G, typename Descriptor, typename T>
@@ -199,7 +243,7 @@ void remove_property(
 
 
 
-} // namespace internal
+
 } // namespace CGAL
 
 #endif // CGAL_DYNAMIC_PROPERTY_MAP_H

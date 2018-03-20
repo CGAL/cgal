@@ -43,16 +43,13 @@ qt5_generate_moc( "Segment_voronoi_linf_2.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Segm
 # The executable itself.
 add_executable  ( Segment_voronoi_linf_2 Segment_voronoi_linf_2.cpp Segment_voronoi_linf_2.moc ${CDT_UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
-qt5_use_modules(Segment_voronoi_linf_2 Xml Script OpenGL Svg)
-
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS Segment_voronoi_linf_2 )
 
-# Link with Qt libraries
-target_link_libraries( Segment_voronoi_linf_2 ${QT_LIBRARIES} )
-# Link with CGAL
-target_link_libraries( Segment_voronoi_linf_2 ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
+target_link_libraries( Segment_voronoi_linf_2 PRIVATE
+  CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui )
 
-
+include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+cgal_add_compilation_test(Segment_voronoi_linf_2)
 else()
 
   message(STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")

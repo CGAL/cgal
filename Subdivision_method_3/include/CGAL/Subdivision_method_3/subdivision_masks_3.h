@@ -15,6 +15,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 //
 // Author(s): Le-Jeng Shiue <Andy.Shiue@gmail.com>
@@ -29,6 +30,7 @@
 
 #include <CGAL/circulator.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/property_maps.h>
 
 namespace CGAL {
 

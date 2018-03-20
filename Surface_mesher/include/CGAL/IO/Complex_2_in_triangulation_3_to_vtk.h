@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Laurent Rineau
@@ -23,6 +24,7 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <map>
 
@@ -90,5 +92,7 @@ vtkPolyData* output_c2t3_to_vtk_polydata(const C2T3& c2t3,
 }
 
 } // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_COMPLEX_2_IN_TRIANGULATION_3_TO_VTK

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Authors       : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -243,23 +244,14 @@ namespace CGAL {
 	// after splitting b denotes the lower part of b
 	Kd_tree_rectangle<FT,D> b_upper(b);
 	node->split_bbox(b, b_upper);
-                             
-	if (q.outer_range_contains(b)){ 	
-          result = node->lower()->any_tree_item();
-	}else{
-	  if (q.inner_range_intersects(b)){ 
-	    result = node->lower()->search_any_point(q,b);
-          }
-        }
-        if(result){
-          return result;
-        }
-	if  (q.outer_range_contains(b_upper)){     
-	  result = node->upper()->any_tree_item();
-	}else{
-	  if (q.inner_range_intersects(b_upper)) 
-	    result = node->upper()->search_any_point(q,b_upper);
-        }
+
+	if (q.inner_range_intersects(b)) {
+	  result = node->lower()->search_any_point(q,b);
+	  if(result)
+	    return result;
+	}
+	if (q.inner_range_intersects(b_upper))
+	  result = node->upper()->search_any_point(q,b_upper);
       }
       return result;				
     }
@@ -561,7 +553,7 @@ namespace CGAL {
 
     inline
     void set_separator(Separator& sep){
-      cut_dim = sep.cutting_dimension();
+      cut_dim = static_cast<boost::uint8_t>(sep.cutting_dimension());
       cut_val = sep.cutting_value();
     }
   	

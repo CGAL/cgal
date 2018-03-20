@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Stephen Kiazyk
 
@@ -22,6 +23,7 @@
 
 #include <CGAL/license/Surface_mesh_shortest_path.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <iterator>
 #include <vector>
@@ -2058,7 +2060,6 @@ public:
       std::cout << "Final node count: " << m_currentNodeCount << std::endl;
     }
     return;
-    CGAL_assertion(m_currentNodeCount == 0);
 #endif
   }
 
@@ -2806,5 +2807,7 @@ public:
 };
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_SHORTEST_PATH_SURFACE_MESH_SHORTEST_PATH_H

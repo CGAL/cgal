@@ -30,10 +30,13 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0+
  ***************************************************************************/
 
 #ifndef _CORE_BIGFLOAT_H_
 #define _CORE_BIGFLOAT_H_
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/CORE/BigFloatRep.h>
 #include <CGAL/assertions.h>
@@ -631,5 +634,7 @@ inline BigRat::BigRat(const BigFloat& f) : RCBigRat(new BigRatRep()){
 #include <CGAL/CORE/BigFloat_impl.h>
 #include <CGAL/CORE/CoreIO_impl.h>
 #endif // CGAL_HEADER_ONLY
+
+#include <CGAL/enable_warnings.h>
 
 #endif // _CORE_BIGFLOAT_H_

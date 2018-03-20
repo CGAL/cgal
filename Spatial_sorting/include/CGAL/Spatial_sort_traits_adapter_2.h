@@ -14,12 +14,15 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Sebastien Loriot
 
 
 #ifndef CGAL_SPATIAL_SORT_TRAITS_ADAPTER_2_H
 #define CGAL_SPATIAL_SORT_TRAITS_ADAPTER_2_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <boost/call_traits.hpp>
 
@@ -69,5 +72,7 @@ public:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_SPATIAL_SORT_TRAITS_ADAPTER_2_H

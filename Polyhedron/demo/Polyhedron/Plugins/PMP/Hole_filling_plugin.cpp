@@ -435,11 +435,23 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
   scene = scene_interface;
   messages = m;
 
-  actionHoleFilling = new QAction(tr("Hole Filling"), mw);
+  actionHoleFilling = new QAction(tr(
+                                  #ifdef USE_SURFACE_MESH
+                                      "Hole Filling for Surface Mesh"
+                                  #else
+                                      "Hole Filling for Polyhedron"
+                                  #endif
+                                    ), mw);
   actionHoleFilling->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionHoleFilling, SIGNAL(triggered()), this, SLOT(hole_filling_action()));
 
-  dock_widget = new QDockWidget("Hole Filling", mw);
+  dock_widget = new QDockWidget(
+      #ifdef USE_SURFACE_MESH
+          "Hole Filling for Surface Mesh"
+      #else
+          "Hole Filling for Polyhedron"
+      #endif
+        , mw);
   dock_widget->setVisible(false);
   dock_widget->installEventFilter(this);
 
@@ -448,6 +460,13 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
   ui_widget.Reject_button->setVisible(false);
 
   addDockWidget(dock_widget);
+  dock_widget->setWindowTitle(tr(
+                              #ifdef USE_SURFACE_MESH
+                                  "Hole Filling for Surface Mesh"
+                              #else
+                                  "Hole Filling for Polyhedron"
+                              #endif
+                                ));
   
   connect(ui_widget.Fill_from_selection_button,  SIGNAL(clicked()), this, SLOT(on_Fill_from_selection_button()));
   connect(ui_widget.Visualize_holes_button,  SIGNAL(clicked()), this, SLOT(on_Visualize_holes_button()));

@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 // 
 //
 // Author(s)     : Ron Wein     <wein@post.tau.ac.il>
@@ -474,7 +475,7 @@ _Bezier_cache<NtTraits>::get_intersections
   {
     // Construct a vector of distances from the current point to all other
     // points in the pts2 list.
-    const int                     n_pts2 = pts2_ptr->size();
+    const int                     n_pts2 = static_cast<int>(pts2_ptr->size());
     std::vector<Distance_iter>    dist_vec (n_pts2);
 
     for (k = 0, pit2 = pts2_ptr->begin(); pit2 != pts2_ptr->end(); k++, ++pit2)
@@ -729,15 +730,15 @@ _Bezier_cache<NtTraits>::_compute_resultant
   // Create the Sylvester matrix of polynomial coefficients. Also prepare
   // the exp_fact vector, that represents the normalization factor (see
   // below).
-  const int        m = bp1.size() - 1;
-  const int        n = bp2.size() - 1;
-  const int        dim = m + n;
+  const std::size_t        m = bp1.size() - 1;
+  const std::size_t        n = bp2.size() - 1;
+  const std::size_t        dim = m + n;
   const Integer    zero = 0;
   const Polynomial zero_poly = nt_traits.construct_polynomial (&zero, 0);
-  int              i, j, k;
+  std::size_t              i, j, k;
 
   std::vector<std::vector<Polynomial> >  mat (dim);
-  std::vector <int>                      exp_fact (dim);
+  std::vector <std::size_t>                      exp_fact (dim);
   
   for (i = 0; i < dim; i++)
   {
@@ -750,11 +751,11 @@ _Bezier_cache<NtTraits>::_compute_resultant
   
   // Initialize it with copies of the two bivariate polynomials.
   for (i = 0; i < n; i++)
-    for (j = m; j >= 0; j--)
+    for (j = 0; j <= m; ++j)
       mat[i][i + j] = bp1[j];
   
   for (i = 0; i < m; i++)
-    for (j = n; j >= 0; j--)
+    for (j = 0; j <= n;++j)
       mat[n + i][i + j] = bp2[j];
   
   // Perform Gaussian elimination on the Sylvester matrix. The goal is to
@@ -849,7 +850,7 @@ _Bezier_cache<NtTraits>::_compute_resultant
   Polynomial       diag_prod = mat[dim - 1][dim - 1];
   
   CGAL_assertion (exp_fact [dim - 1] == 0);
-  for (i = dim - 2; i >= 0; i--)
+  for (i = 0; i+2 <= dim; ++i)
   {
     // Try to avoid unnecessary multiplications by ignoring the current
     // diagonal item if its exponent in the normalization factor is greater

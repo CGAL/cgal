@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s):  Michael Hemmer <michael.hemmer@cgal.org>
@@ -27,7 +28,7 @@
 
 #include <CGAL/Arrangement_2.h>
 #include <boost/shared_ptr.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Arr_observer.h>
 #include <CGAL/assertions.h>

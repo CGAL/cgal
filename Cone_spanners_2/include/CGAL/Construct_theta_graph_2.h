@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Authors: Weisheng Si, Quincy Tse, Frédérik Paradis
@@ -37,6 +38,7 @@
 #include <CGAL/Cone_spanners_2/Less_by_direction_2.h>
 #include <CGAL/Cone_spanners_2/Plane_scan_tree.h>
 #include <CGAL/Cone_spanners_enum_2.h>
+#include <CGAL/tss.h>
 
 #include <boost/config.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -191,8 +193,8 @@ protected:
         Direction_2 bisector_direction = bisector(cwLine, ccwLine).direction();
 
         // Rotational transformation of cw 90 degree
-        static const Transformation cw90( 0, 1, -1,  0);
-
+        CGAL_STATIC_THREAD_LOCAL_VARIABLE_4(Transformation, cw90, 0, 1, -1,  0);
+        
         // Ordering
         // here D1 is the reverse of D1 in the book, we find this is easier to implement
         const Less_by_direction  orderD1 (g, ccwBound);

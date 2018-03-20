@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Ron Wein     <wein@post.tau.ac.il>
@@ -157,7 +158,7 @@ public:
     p_normY(NULL)
   {
     // Copy the control points and compute their bounding box.
-    const int   pts_size = std::distance (pts_begin, pts_end);
+    const int   pts_size = static_cast<int>(std::distance (pts_begin, pts_end));
     double      x, y;
     double      x_min = 0, x_max = 0;
     double      y_min = 0, y_max = 0;
@@ -415,7 +416,7 @@ public:
    */
   unsigned int number_of_control_points () const
   {
-    return (this->_rep()._ctrl_pts.size());
+    return static_cast<unsigned int>((this->_rep()._ctrl_pts.size()));
   }
 
   /*!
@@ -683,7 +684,7 @@ template <class RatKer, class AlgKer, class NtTrt, class BndTrt>
 void _Bezier_curve_2_rep<RatKer, AlgKer, NtTrt,
                          BndTrt>::_construct_polynomials () const
 {
-  const int        n = _ctrl_pts.size() - 1;
+  const int        n = static_cast<int>(_ctrl_pts.size() - 1);
   Rational        *coeffsX = new Rational [n + 1];
   Rational        *coeffsY = new Rational [n + 1];
   const Rational   rat_zero = Rational (0);
