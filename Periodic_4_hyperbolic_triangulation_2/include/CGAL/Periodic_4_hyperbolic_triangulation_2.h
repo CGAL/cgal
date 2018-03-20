@@ -554,6 +554,7 @@ public:
 		return hyperbolic_locate(p, lt, li, lo, start);
 	}
 	
+protected:
 	template< class FaceIt >
 	Vertex_handle insert_in_hole(const Point& p, 
 								 FaceIt face_begin, 
