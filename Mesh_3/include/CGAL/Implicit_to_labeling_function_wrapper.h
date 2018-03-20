@@ -68,10 +68,7 @@ public:
   Implicit_to_labeling_function_wrapper(const Function_& f)
     : r_f_(f) {}
 
-  // Default copy constructor and assignment operator are ok
-
-  /// Destructor
-  ~Implicit_to_labeling_function_wrapper() {}
+  // Default copy constructor, assignment operator, and destructor are ok
 
   /// Operator ()
   return_type operator()(const Point_3& p, const bool = true) const
@@ -85,7 +82,12 @@ private:
 
 };  // end class Implicit_to_labeling_function_wrapper
 
-
+template <typename BGT, typename Function>
+Implicit_to_labeling_function_wrapper<Function, BGT>
+make_implicit_to_labeling_function_wrapper(const Function& f)
+{
+  return Implicit_to_labeling_function_wrapper<Function, BGT>(f);
+}
 
 /**
  * \deprecated

@@ -47,7 +47,12 @@ namespace CGAL {
 template<class Function,
   class BGT,
   class Wrapper = Implicit_to_labeling_function_wrapper<Function,BGT> >
-class Implicit_mesh_domain_3
+class
+CGAL_DEPRECATED_MSG
+( "The class template `CGAL::Implicit_mesh_domain_3` is now deprecated. "
+  "Use the static member function template "
+  "`Labeled_mesh_domain_3<K>::create_implicit_image_mesh_domain` instead.")
+Implicit_mesh_domain_3
  : public Labeled_mesh_domain_3<BGT>
 {
 public:

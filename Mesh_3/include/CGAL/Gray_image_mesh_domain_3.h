@@ -48,7 +48,7 @@ template<class Image,
 class
 CGAL_DEPRECATED_MSG
 ( "The class template `CGAL::Gray_image_mesh_domain_3` is now deprecated. "
-  "Use the member function template "
+  "Use the static member function template "
   "`Labeled_mesh_domain_3<K>::create_gray_image_mesh_domain` instead.")
 Gray_image_mesh_domain_3
   : public Labeled_mesh_domain_3<BGT, Subdomain_index>

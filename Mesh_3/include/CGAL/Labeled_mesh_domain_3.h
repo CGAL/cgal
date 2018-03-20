@@ -58,6 +58,9 @@
 #include <CGAL/Image_3.h>
 #include <CGAL/Mesh_3/Image_to_labeled_function_wrapper.h>
 
+// support for implicit functions
+#include <CGAL/Implicit_to_labeling_function_wrapper.h>
+
 
 namespace CGAL {
 
@@ -440,6 +443,35 @@ public:
         image_values_to_subdomain_indices_,
         value_outside_),
        internal::Mesh_3::compute_bounding_box(image_),
+       p::relative_error_bound = relative_error_bound_,
+       p::p_rng = p_rng_,
+       p::null_subdomain_index =
+         create_null_subdomain_index(null_subdomain_index_),
+       p::construct_surface_patch_index =
+       create_construct_surface_patch_index(construct_surface_patch_index_));
+  }
+  BOOST_PARAMETER_MEMBER_FUNCTION(
+                                  (Labeled_mesh_domain_3),
+                                  static create_implicit_mesh_domain,
+                                  parameters::tag,
+                                  (required
+                                   (function_, *)
+                                   (bounding_object_,*)
+                                   )
+                                  (optional
+                                   (relative_error_bound_, (const FT&),
+                                    FT(1e-3))
+                                   (p_rng_, (CGAL::Random*), (CGAL::Random*)(0))
+                                   (null_subdomain_index_,*,Null_functor())
+                                   (construct_surface_patch_index_, *,
+                                    Null_functor())
+                                   )
+                                  )
+  {
+    namespace p = CGAL::parameters;
+    return Labeled_mesh_domain_3
+      (make_implicit_to_labeling_function_wrapper<BGT>(function_),
+       bounding_object_,
        p::relative_error_bound = relative_error_bound_,
        p::p_rng = p_rng_,
        p::null_subdomain_index =
