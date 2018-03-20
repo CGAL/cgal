@@ -23,8 +23,8 @@
 
 #include <iostream>
 #include <vector>
-#include <CGAL/Hyperbolic_octagon_translation_matrix.h>
-#include <CGAL/Dehn_hyperbolic_octagon_translation_word.h>
+#include <CGAL/internal/Hyperbolic_octagon_translation_matrix.h>
+#include <CGAL/internal/Dehn_hyperbolic_octagon_translation_word.h>
  
 
 //-------------------------------------------------------
