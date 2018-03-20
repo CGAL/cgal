@@ -21,6 +21,7 @@
 #ifndef CGAL_TRAITS_POINT_H
 #define CGAL_TRAITS_POINT_H
 
+#include <CGAL/number_utils.h>
 #include <CGAL/Point_2.h>
 #include <boost/geometry/geometry.hpp>
 namespace boost{
