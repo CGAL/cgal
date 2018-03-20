@@ -116,16 +116,7 @@ public:
 	typedef Point                                			value_type;
 	typedef const value_type&                    			const_reference;
 
-
-	enum Locate_type {
-		VERTEX=0, 
-		EDGE, 					// 1
-		FACE,	   				// 2
-		CELL, 					// 3
-		EMPTY , 				// 4
-		OUTSIDE_CONVEX_HULL, 	// unused, for compatibility with Alpha_shape_3
-		OUTSIDE_AFFINE_HULL 	// unused, for compatibility with Alpha_shape_3
-	}; 
+	typedef typename Base::Locate_type 						Locate_type;
 
 protected:
 	GT       _gt;
@@ -974,19 +965,19 @@ euclidean_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_translatio
 	Point_2 p1 = apply(f->vertex(1), loff * f->translation(1));
 	Point_2 p2 = apply(f->vertex(2), loff * f->translation(2));
 
-	lt = FACE;
+	lt = Base::FACE;
 	li = -1;
 
 	if (p == p0) {
-		lt = VERTEX;
+		lt = Base::VERTEX;
 		li = 0;
 	} else {
 		if (p == p1) {
-			lt = VERTEX;
+			lt = Base::VERTEX;
 			li = 1;
 		} else {
 			if (p == p2) {
-				lt = VERTEX;
+				lt = Base::VERTEX;
 				li = 2;
 			}
 		}
@@ -1009,7 +1000,7 @@ hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_translati
     }
     
 	// The input point has been located in a vertex, so we can just return here, nothing more to do.
-	if (lt == VERTEX) {
+	if (lt == Base::VERTEX) {
 		return lf;
 	}
 
@@ -1020,9 +1011,9 @@ hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_translati
     
 	Bounded_side bs = sf(p, sides, lf, lo);
 	if (bs == ON_BOUNDED_SIDE) {
-		lt = FACE;
+		lt = Base::FACE;
 	} else if (bs == ON_BOUNDARY) {
-		lt = EDGE;
+		lt = Base::EDGE;
 		if (sides[0] == ON_BOUNDARY) {
 			li = 0;
 		} else {
@@ -1039,19 +1030,19 @@ hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_translati
 		if (bs1 == ON_BOUNDED_SIDE) {
 			lo = lo * lf->neighbor_translation(0);
 			lf = lf->neighbor(0);
-			lt = FACE;
+			lt = Base::FACE;
 		} else {
 			Bounded_side bs2 = sf(p, sides, lf->neighbor(1), lo * lf->neighbor_translation(1));	
 			if (bs2 == ON_BOUNDED_SIDE) {
 				lo = lo * lf->neighbor_translation(1);
 				lf = lf->neighbor(1);
-				lt = FACE;
+				lt = Base::FACE;
 			} else {
 				Bounded_side bs3 = sf(p, sides, lf->neighbor(2), lo * lf->neighbor_translation(2));
 				CGAL_triangulation_assertion(bs3 == ON_BOUNDED_SIDE);
 				lo = lo * lf->neighbor_translation(2);
 				lf = lf->neighbor(2);
-				lt = FACE;
+				lt = Base::FACE;
 			}
 		}
 	}
