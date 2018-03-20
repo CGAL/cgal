@@ -1,6 +1,5 @@
 function(CGAL_run_at_the_end_of_configuration variable access value current_list_file stack)
-  if(value)
-    # Only do something at the end of the CMake process
+  if(NOT access STREQUAL "MODIFIED_ACCESS" OR value)
     return()
   endif()
   # Warn when CMAKE_BUILD_TYPE is empty or Debug
