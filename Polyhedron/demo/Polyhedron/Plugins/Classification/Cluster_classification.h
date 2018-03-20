@@ -310,7 +310,7 @@ class Cluster_classification : public Item_classification_base
 
   void add_cluster_features ()
   {
-    m_eigen = boost::make_shared<Local_eigen_analysis> (typename Local_eigen_analysis::Input_is_clusters(),
+    m_eigen = boost::make_shared<Local_eigen_analysis> (Local_eigen_analysis::Input_is_clusters(),
                                                         m_clusters,
                                                         Cluster_index_to_point_map (m_points->point_set()),
                                                         Concurrency_tag());
@@ -351,8 +351,8 @@ class Cluster_classification : public Item_classification_base
       int cid = m_cluster_id[*it];
       if (cid != -1)
       {
-        m_clusters[cid].training = label;
-        m_clusters[cid].label = label;
+        m_clusters[cid].training = int(label);
+        m_clusters[cid].label = int(label);
       }
     }
 

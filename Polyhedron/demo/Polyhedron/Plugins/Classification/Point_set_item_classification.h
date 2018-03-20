@@ -141,8 +141,8 @@ class Point_set_item_classification : public Item_classification_base
     for (Point_set::const_iterator it = m_points->point_set()->first_selected();
          it != m_points->point_set()->end(); ++ it)
     {
-      m_training[*it] = label;
-      m_classif[*it] = label;
+      m_training[*it] = int(label);
+      m_classif[*it] = int(label);
     }
 
     m_points->resetSelection();

@@ -260,11 +260,11 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
 
   std::set<std::pair<int, int> > adjacencies;
   
-  for (typename Delaunay::Finite_edges_iterator it = dt.finite_edges_begin();
+  for (Delaunay::Finite_edges_iterator it = dt.finite_edges_begin();
        it != dt.finite_edges_end(); ++ it)
   {
-    typename Delaunay::Vertex_handle v0 = it->first->vertex (it->second);
-    typename Delaunay::Vertex_handle v1 = it->first->vertex (it->third);
+    Delaunay::Vertex_handle v0 = it->first->vertex (it->second);
+    Delaunay::Vertex_handle v1 = it->first->vertex (it->third);
     int a = v0->info();
     int b = v1->info();
 
@@ -277,7 +277,7 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
     adjacencies.insert (std::make_pair (a, b));
   }
 
-  for (typename std::set<std::pair<int, int> >::iterator it = adjacencies.begin();
+  for (std::set<std::pair<int, int> >::iterator it = adjacencies.begin();
        it != adjacencies.end(); ++ it)
   {
     m_clusters[std::size_t(it->first)].neighbors.push_back (std::size_t(it->second));
@@ -722,7 +722,7 @@ void Cluster_classification::train(int classifier, unsigned int nb_trials,
   for (std::size_t i = 0; i < m_labels.size(); ++ i)
     std::cerr << " * " << m_labels[i]->name() << ": " << nb_label[i] << " clusters(s)" << std::endl;
   
-  std::vector<std::size_t> indices (m_clusters.size(), -1);
+  std::vector<int> indices (m_clusters.size(), -1);
 
   if (classifier == 0)
   {
@@ -745,7 +745,7 @@ void Cluster_classification::train(int classifier, unsigned int nb_trials,
       delete m_random_forest;
     m_random_forest = new Random_forest (m_labels, m_features,
                                          max_depth, 5, 15,
-                                         num_trees);
+                                         int(num_trees));
     m_random_forest->train (training);
     CGAL::Classification::classify<Concurrency_tag> (m_clusters,
                                                      m_labels, *m_random_forest,

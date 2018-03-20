@@ -604,7 +604,7 @@ void Point_set_item_classification::train(int classifier, unsigned int nb_trials
   reset_indices();
 
   std::vector<int> training (m_points->point_set()->size(), -1);
-  std::vector<std::size_t> indices (m_points->point_set()->size(), std::size_t(-1));
+  std::vector<int> indices (m_points->point_set()->size(), -1);
 
   std::vector<std::size_t> nb_label (m_labels.size(), 0);
   std::size_t nb_total = 0;
@@ -655,7 +655,7 @@ void Point_set_item_classification::train(int classifier, unsigned int nb_trials
     }
   for (Point_set::const_iterator it = m_points->point_set()->begin();
        it != m_points->point_set()->first_selected(); ++ it)
-    m_classif[*it] = int(indices[*it]);
+    m_classif[*it] = indices[*it];
   
   if (m_index_color == 1 || m_index_color == 2)
      change_color (m_index_color);
