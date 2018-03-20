@@ -1619,6 +1619,7 @@ void Viewer::saveSnapshot(bool, bool)
 //copy a snapshot with transparent background with arbitrary quality values.
 QImage* Viewer_impl::takeSnapshot(Viewer *viewer, int quality, int background_color, QSize finalSize, double oversampling, bool expand)
 {
+  viewer->makeCurrent();
   qreal aspectRatio = viewer->width() / static_cast<qreal>(viewer->height());
   viewer->setSnapshotQuality(quality);
   GLfloat alpha = 1.0f;
@@ -1691,8 +1692,6 @@ QImage* Viewer_impl::takeSnapshot(Viewer *viewer, int quality, int background_co
     nbY++;
 
   QOpenGLFramebufferObject* fbo = new QOpenGLFramebufferObject(size, QOpenGLFramebufferObject::CombinedDepthStencil);
-  viewer->makeCurrent();
-  int count=0;
   for (int i=0; i<nbX; i++)
     for (int j=0; j<nbY; j++)
     {
@@ -1701,7 +1700,6 @@ QImage* Viewer_impl::takeSnapshot(Viewer *viewer, int quality, int background_co
       viewer->glClearColor(viewer->backgroundColor().redF(), viewer->backgroundColor().greenF(), viewer->backgroundColor().blueF(), alpha);
       viewer->preDraw();
       viewer->draw();
-      viewer->postDraw();
       fbo->release();
 
       QImage snapshot = fbo->toImage();
@@ -1720,10 +1718,10 @@ QImage* Viewer_impl::takeSnapshot(Viewer *viewer, int quality, int background_co
           image->setPixel(fi, fj, subImage.pixel(ii,jj));
         }
       }
-      count++;
     }
   if(background_color !=0)
     viewer->setBackgroundColor(previousBGColor);
+  delete fbo;
   return image;
 }
 void Viewer_impl::sendSnapshotToClipboard(Viewer *viewer)
