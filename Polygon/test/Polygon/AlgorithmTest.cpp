@@ -66,10 +66,6 @@ void test_polygon(const R&, const Point&, const char* FileName)
     CGAL::Orientation orientation =
 	CGAL::orientation_2(polygon.begin(), polygon.end());
 
-    polygon.clear();
-    assert(CGAL::is_simple_2(polygon.begin(), polygon.end()));
-    assert(CGAL::is_convex_2(polygon.begin(), polygon.end()));
-
     cout << "left   = " << *left << endl;
     cout << "right  = " << *right << endl;
     cout << "top    = " << *top << endl;
@@ -120,6 +116,9 @@ void test_polygon(const R&, const Point&, const char* FileName)
 	cout << "the orientation is collinear" << endl;
 	break;
     }
+
+    polygon.clear();
+    assert(CGAL::is_convex_2(polygon.begin(), polygon.end()));
 }
 
 //-----------------------------------------------------------------------//
