@@ -165,3 +165,4 @@ if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST )
   # Nov. 2017). -- Laurent Rineau
   include(CGAL_SetupFlags)
 endif()
+include("${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake")

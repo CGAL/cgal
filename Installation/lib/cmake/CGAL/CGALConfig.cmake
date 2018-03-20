@@ -139,3 +139,5 @@ include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 cgal_setup_module_path()
 
 set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
+
+include("${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake")
