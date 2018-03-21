@@ -34,6 +34,8 @@ private:
   }
 
   //@{
+  bool ta_compare_xy(std::istringstream&);
+  bool ta_compare_xy_imp(std::istringstream&);
 
   bool ta_compare_y_at_x_left_wrapper(std::istringstream&);
   bool ta_compare_y_at_x_left_wrapper_imp(std::istringstream&,
@@ -80,6 +82,8 @@ Traits_adaptor_test(const Geom_traits_T& geom_traits) :
 {
   typedef Geom_traits_T         Geom_traits;
 
+  m_wrappers[std::string("compare_xy")] =
+    &Traits_adaptor_test<Geom_traits>::ta_compare_xy;
   m_wrappers[std::string("compare_y_at_x_left")] =
     &Traits_adaptor_test<Geom_traits>::ta_compare_y_at_x_left_wrapper;
   m_wrappers[std::string("is_in_x_range")] =
@@ -102,6 +106,22 @@ Traits_adaptor_test(const Geom_traits_T& geom_traits) :
  */
 template <typename Geom_traits_T>
 Traits_adaptor_test<Geom_traits_T>::~Traits_adaptor_test() {}
+
+template <typename Geom_traits_T>
+bool Traits_adaptor_test<Geom_traits_T>::
+ta_compare_xy(std::istringstream & str_stream)
+{
+  unsigned int id1, id2;
+  str_stream >> id1 >> id2;
+  unsigned int exp_answer = this->get_expected_enum(str_stream);
+  std::cout << "Test: compare_xy( " << this->m_xcurves[id1]
+            << "," << this->m_xcurves[id2] << " ) ? " << exp_answer << " ";
+
+  unsigned int real_answer =
+    m_geom_traits.compare_xy_2_object()(this->m_xcurves[id1] ,
+                                        this->m_xcurves[id2]);
+  return this->compare(exp_answer, real_answer);
+}
 
 template <typename Geom_traits_T>
 bool Traits_adaptor_test<Geom_traits_T>::

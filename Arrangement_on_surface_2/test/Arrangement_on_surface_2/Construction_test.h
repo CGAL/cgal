@@ -270,10 +270,9 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::are_same_results()
   typename Xcurve_container::iterator xcit = curves_res.begin();
 
   Edge_const_iterator eit;
-  for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit) {
-    if (is_interior(eit->source()) && is_interior(eit->target()))
-      *xcit++ = eit->curve();
-  }
+  for (eit = m_arr->edges_begin(); eit != m_arr->edges_end(); ++eit)
+    *xcit++ = eit->curve();
+
   Curve_compare<Geom_traits> curve_compare(m_geom_traits);
   std::sort(curves_res.begin(), xcit, curve_compare);
 
