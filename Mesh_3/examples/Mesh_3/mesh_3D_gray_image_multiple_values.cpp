@@ -55,7 +55,7 @@ int main(int argc, char*argv[])
     iso_values.insert(2.9f);
   } else {
     for(int i = 2; i < argc; ++i) {
-      iso_values.insert(std::atof(argv[i]));
+      iso_values.insert(static_cast<float>(std::atof(argv[i])));
     }
   }
 
