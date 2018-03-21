@@ -4,7 +4,7 @@ namespace CGAL {
 \ingroup PkgMesh_3Domains
 
 \deprecated The class template `Labeled_image_mesh_domain_3` is deprecated
-since CGAL-4.13, in favor of the class template`Labeled_mesh_domain_3` and
+since CGAL-4.13, in favor of the class template `Labeled_mesh_domain_3` and
 its static function
 `Labeled_mesh_domain_3::create_labeled_image_mesh_domain()`.
 
