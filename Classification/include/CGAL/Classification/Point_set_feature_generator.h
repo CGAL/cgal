@@ -338,7 +338,11 @@ public:
                               std::size_t nb_scales,
                               VectorMap normal_map = VectorMap(),
                               ColorMap color_map = ColorMap(),
-                              EchoMap echo_map = EchoMap())
+                              EchoMap echo_map = EchoMap()
+#ifndef DOXYGEN_RUNNING
+                              , float voxel_size = -1.f // Undocumented way of changing base voxel size
+#endif
+                              )
     : m_input (input), m_point_map (point_map), m_features (&features)
   {
     m_bbox = CGAL::bounding_box
@@ -352,7 +356,7 @@ public:
     typedef typename Default::Get<EchoMap, std::size_t >::type
       Emap;
 
-    generate_features_impl (nb_scales,
+    generate_features_impl (nb_scales, voxel_size,
                             get_parameter<Vmap>(normal_map),
                             get_parameter<Cmap>(color_map),
                             get_parameter<Emap>(echo_map));
@@ -474,7 +478,6 @@ private:
     using Feature_adder::scale;
     VectorMap normal_map;
 
-    // TODO!
     Feature_adder_verticality (Point_set_feature_generator* generator, VectorMap normal_map, std::size_t scale)
       : Feature_adder (generator, scale), normal_map (normal_map) { }
     
@@ -510,7 +513,6 @@ private:
     float mean;
     float sd;
 
-    // TODO!
     Feature_adder_color (Point_set_feature_generator* generator, ColorMap color_map, std::size_t scale,
                          std::size_t channel, float mean, float sd)
       : Feature_adder (generator, scale), color_map (color_map),
@@ -556,7 +558,6 @@ private:
     using Feature_adder::scale;
     EchoMap echo_map;
 
-    // TODO!
     Feature_adder_echo (Point_set_feature_generator* generator, EchoMap echo_map, std::size_t scale)
       : Feature_adder (generator, scale), echo_map (echo_map) { }
     
@@ -621,7 +622,7 @@ private:
   }
 
   template<typename VectorMap, typename ColorMap, typename EchoMap>
-  void generate_features_impl (std::size_t nb_scales,
+  void generate_features_impl (std::size_t nb_scales, float voxel_size,
                                VectorMap normal_map,
                                ColorMap color_map,
                                EchoMap echo_map)
@@ -630,12 +631,11 @@ private:
     
     m_scales.reserve (nb_scales);
     
-    float voxel_size = -1;
-    //    voxel_size = 0.05; // WARNING: do not keep (-1 is the right value)
+    m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, -1.f));
 
+    if (voxel_size == -1.f)
+      voxel_size = m_scales[0]->grid_resolution();
     
-    m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size));
-    voxel_size = m_scales[0]->grid_resolution();
     for (std::size_t i = 1; i < nb_scales; ++ i)
     {
       voxel_size *= 2;
@@ -701,7 +701,6 @@ private:
     using Feature_adder::scale;
     PointMap point_map;
 
-    // TODO!
     Feature_adder_variant_1 (Point_set_feature_generator* generator, PointMap point_map, std::size_t scale)
       : Feature_adder (generator, scale), point_map (point_map) { }
     
@@ -729,7 +728,6 @@ private:
     using Feature_adder::scale;
     PointMap point_map;
 
-    // TODO!
     Feature_adder_variant_2 (Point_set_feature_generator* generator, PointMap point_map, std::size_t scale)
       : Feature_adder (generator, scale), point_map (point_map) { }
     
@@ -759,7 +757,6 @@ private:
     using Feature_adder::scale;
     PointMap point_map;
 
-    // TODO!
     Feature_adder_variant_3 (Point_set_feature_generator* generator, PointMap point_map, std::size_t scale)
       : Feature_adder (generator, scale), point_map (point_map) { }
     
