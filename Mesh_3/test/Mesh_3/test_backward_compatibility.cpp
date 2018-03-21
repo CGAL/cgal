@@ -20,6 +20,8 @@
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
+#define  CGAL_NO_DEPRECATION_WARNINGS 1
+
 #include <boost/optional.hpp>
 
 // The following Mesh_cell_criteria<Tr> and Mesh_facet_criteria<Tr>
