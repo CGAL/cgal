@@ -53,11 +53,11 @@ namespace Polygon_mesh_processing {
 *         as a named parameter, then the internal one should be initialized.
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
-* @tparam NamedParameters a sequence of \ref namedparameters.
+* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters".
 *
 * @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
 * @param faces the range of triangular faces defining one or several surface patches to be smoothed.
-* @param np optional sequence of \ref namedparameters among the ones listed below.
+* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below.
 *
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
@@ -186,11 +186,11 @@ void smooth_angles(PolygonMesh& pmesh)
 *         as a named parameter, then the internal one should be initialized.
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
-* @tparam NamedParameters a sequence of \ref namedparameters
+* @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 *
 * @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
 * @param faces the range of triangular faces defining one or several surface patches to be smoothed.
-* @param np optional sequence of \ref namedparameters among the ones listed below.
+* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below.
 *
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.

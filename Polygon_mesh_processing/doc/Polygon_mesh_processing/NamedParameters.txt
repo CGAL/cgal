@@ -310,10 +310,10 @@ of close meshes should be done in addition to surface intersection tests.
 \b Default value is `false`
 \cgalNPEnd
 
-\cgalNPBegin{gradient_descent_tolerance} \anchor PMP_gradient_descent_tolerance
-Parameter used in `smooth_area()` to define the tolerance under which the relative energy
+\cgalNPBegin{gradient_descent_precision} \anchor PMP_gradient_descent_precision
+Parameter used in `smooth_area()` to define the precision under which the relative energy
 between iterations of each triangle is minimized. Triangle energy is defined based on its area compared to the
-average area of all triangles adjacent to the vertex that is being moved.
+average area of all triangles adjacent to the vertex that is being moved. The smaller the number, the higher the precision.
 \n
 \b Type : `double` \n
 \b Default is `0.00001`
