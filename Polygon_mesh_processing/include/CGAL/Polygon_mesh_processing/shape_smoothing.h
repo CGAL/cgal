@@ -132,8 +132,8 @@ void smooth_curvature_flow_explicit(const FaceRange& faces, PolygonMesh& pmesh, 
 * smooths the overall shape of the mesh by using the mean curvature flow.
 * The effect depends on the curvature of each area and on a time step which
 * represents the amount by which vertices are allowed to move.
-* Convergence is achieved at a conformal map of the initial surface
-* to a sphere.
+* The result is a conformal map of the initial surface and converges to a sphere.
+*
 *
 * @tparam PolygonMesh model of `MutableFaceGraph`.
 *         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
@@ -145,7 +145,9 @@ void smooth_curvature_flow_explicit(const FaceRange& faces, PolygonMesh& pmesh, 
 *
 * @param pmesh a polygon mesh with triangulated surface patches to be smoothed.
 * @param faces the range of triangular faces defining one or several surface patches to be smoothed.
-* @param time a time step that corresponds to the amount by which the surface is smoothed.
+* @param time a time step that corresponds to the speed by which the surface is smoothed.
+*        A larger time step results in faster convergence but details may be distorted to a greater effect
+*        compared to more iterations with a smaller step. Typical values scale at the region (1e-6, 1).
 * @param np optional sequence of \ref namedparameters among the ones listed below.
 *
 * \cgalNamedParamsBegin
@@ -165,7 +167,8 @@ void smooth_curvature_flow_explicit(const FaceRange& faces, PolygonMesh& pmesh, 
 *  \cgalParamEnd
 *  \cgalParamBegin{use_explicit_scheme} a normalized explicit scheme for smoothing along the curvature flow.
 *    It is not dependent on the time step parameter. Each vertex is moved sequentially without solving
-*    a linear system.
+*    a linear system. It can be useful for subtle noise removal and the result
+*    does not converge to a sphere.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 */

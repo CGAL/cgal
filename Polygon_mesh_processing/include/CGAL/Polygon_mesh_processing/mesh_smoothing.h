@@ -45,9 +45,7 @@ namespace Polygon_mesh_processing {
 * \ingroup PMP_meshing_grp
 * smoothes a triangulated region of a polygon mesh using angle based criteria.
 * This function improves the angles of triangle faces by iteratively moving non
-* constrained vertices.
-* A weighted scheme is used to favorise the removal of small angles.
-* Optionally, the points are reprojected after each iteration.
+* constrained vertices. Optionally, the points are reprojected after each iteration.
 *
 * @tparam PolygonMesh model of `MutableFaceGraph`.
 *         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
@@ -75,7 +73,7 @@ namespace Polygon_mesh_processing {
 *    constrained-or-not status of each vertex of `pmesh`. A constrained vertex
 *    cannot be modified at all during smoothing.
 *  \cgalParamEnd
-*  \cgalParamBegin{do_project} If `true` (default value), points are projected to the initial surface after each iteration.
+*  \cgalParamBegin{do_project} if `true` (default value), points are projected to the initial surface after each iteration.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 */
@@ -208,12 +206,16 @@ void smooth_angles(PolygonMesh& pmesh)
 *    constrained-or-not status of each vertex of `pmesh`. A constrained vertex
 *    cannot be modified at all during smoothing.
 *  \cgalParamEnd
-*  \cgalParamBegin{gradient_descent_tolerance} Tolerance under which the energy of each
-*    triangle is being minimized. Triangle energy is defined based on its area compared to
-*    the average area of all triangles adjacent to the vertex that is being moved. The tolerance corresponds to the
-*    relative energy of triangles between iterations. Defaults to 1e-5.
+*  \cgalParamBegin{gradient_descent_precision} precision which is achieved by minimizing the energy of each
+*    triangle. Triangle energy is defined based on its area compared to
+*    the average area of all triangles adjacent to the vertex that is being moved. The precision refers to the
+*    relative energy of triangles between the previous and the current iteration.
+*    A small value corresponds to high precision and may result in slow gradient descent.
+*    On the contrary, a larger value implies less precision, thus gradient descent may not
+*    move the vertices enough. The higher the precision, the more equal the areas around each vertex are.
+*    Defaults to 1e-5.
 *  \cgalParamEnd
-*  \cgalParamBegin{do_project} If `true` (default value), points are projected to the initial surface after each iteration.
+*  \cgalParamBegin{do_project} if `true` (default value), points are projected to the initial surface after each iteration.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 */
@@ -247,7 +249,7 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
 
   std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
-  const double gd_tolerance = choose_param(get_param(np, internal_np::gradient_descent_tolerance), 1e-5);
+  const double gd_precision = choose_param(get_param(np, internal_np::gradient_descent_precision), 1e-5);
 
   bool do_project = choose_param(get_param(np, internal_np::do_project), true);
 
@@ -286,7 +288,7 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
     std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
     #endif
 
-    remesher.area_relaxation(gd_tolerance);
+    remesher.area_relaxation(gd_precision);
     if(do_project)
       remesher.project_to_surface();
   }

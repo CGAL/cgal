@@ -157,14 +157,14 @@ public:
 #endif
     }
 
-    void area_relaxation(const double& tolerance)
+    void area_relaxation(const double& precision)
     {
         std::size_t moved_points = 0;
         BOOST_FOREACH(vertex_descriptor v, vrange_)
         {
              if(!is_border(v, mesh_) && !is_constrained(v))
              {
-                 if (gradient_descent(v, tolerance))
+                 if (gradient_descent(v, precision))
                      moved_points++;
              }
         }
@@ -285,18 +285,18 @@ private:
         Vector vec_main_he(pt, ps);
 
         // check degenerate cases
-        double tolerance = 1e-3;
+        double precision = 1e-3;
 
-        if ( edge1.squared_length()           < tolerance ||
-             edge2.squared_length()           < tolerance ||
-             sqlength(main_he)                < tolerance ||
-             (edge1 - vec_main_he).squared_length() < tolerance ||
-             (edge2 - vec_main_he).squared_length() < tolerance   )
+        if ( edge1.squared_length()           < precision ||
+             edge2.squared_length()           < precision ||
+             sqlength(main_he)                < precision ||
+             (edge1 - vec_main_he).squared_length() < precision ||
+             (edge2 - vec_main_he).squared_length() < precision   )
         {
             return CGAL::NULL_VECTOR;
         }
 
-        CGAL_assertion(vec_main_he.squared_length() > tolerance);
+        CGAL_assertion(vec_main_he.squared_length() > precision);
 
         // find bisector
         Vector bisector = CGAL::NULL_VECTOR;
@@ -307,14 +307,14 @@ private:
         // special case in angle bisecting: If no edge is actually degenerate
         // but edge1 and edge2 are almost parallel, then by adding them the bisector is
         // almost zero.
-        if( bisector.squared_length() < tolerance )
+        if( bisector.squared_length() < precision )
         {
             // angle is (almost) 180 degrees, take the perpendicular
             // which is normal to edge and tangent to the surface
             Vector normal_vec = find_perpendicular(edge1, pt, ps);
 
             CGAL_assertion(normal_vec != CGAL::NULL_VECTOR);
-            CGAL_assertion(CGAL::scalar_product(edge1, normal_vec) < tolerance);
+            CGAL_assertion(CGAL::scalar_product(edge1, normal_vec) < precision);
 
             Segment b_segment(pt, pt + normal_vec);
             Point b_segment_end = b_segment.target();
@@ -332,8 +332,8 @@ private:
         double target_length = CGAL::sqrt(sqlength(main_he));
         double bisector_length = CGAL::sqrt(bisector.squared_length());
 
-        CGAL_assertion(   ( target_length - tolerance    <   bisector_length     ) &&
-                          ( bisector_length        <   target_length + tolerance )    );
+        CGAL_assertion(   ( target_length - precision    <   bisector_length     ) &&
+                          ( bisector_length        <   target_length + precision )    );
 
         return bisector;
     }
@@ -458,7 +458,7 @@ private:
 
     // gradient descent
     // ----------------
-    bool gradient_descent(const vertex_descriptor& v, const double& tolerance)
+    bool gradient_descent(const vertex_descriptor& v, const double& precision)
     {
         bool move_flag;
         double x, y, z, x_new, y_new, z_new, drdx, drdy, drdz;
@@ -481,7 +481,7 @@ private:
         double t0 = 0.001;
         double eta = eta0 / (1 + t0*t);
 
-        while(relative_energy > tolerance)
+        while(relative_energy > precision)
         {
             drdx=0, drdy=0, drdz=0;
             compute_derivatives(drdx, drdy, drdz, v, S_av);
