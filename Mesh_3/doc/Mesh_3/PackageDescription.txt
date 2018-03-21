@@ -92,17 +92,17 @@ related to the template parameters of some models of the main concepts:
 The following classes are models of domain concepts
 and their associated classes:
 
-- `CGAL::Implicit_mesh_domain_3<Function,BGT>`
 - `CGAL::Labeled_mesh_domain_3<LabelingFunction,BGT>`
 - `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
 - `CGAL::Polyhedral_mesh_domain_with_features_3<IGT>`
 - `CGAL::Polyhedral_complex_mesh_domain_3<IGT>`
-- `CGAL::Labeled_image_mesh_domain_3<Image,BGT>`
-- `CGAL::Gray_image_mesh_domain_3<Image,BGT,Image_word_type>`
 - `CGAL::Mesh_domain_with_polyline_features_3<MeshDomain_3>`
 - `CGAL::Mesh_polyhedron_3<IGT>`
 - `CGAL::Triangle_accessor_3<CGAL::Polyhedron_3<K>,K>`
 - `CGAL::Implicit_multi_domain_to_labeling_function_wrapper<ImplicitFunction>`
+- `CGAL::Implicit_mesh_domain_3<Function,BGT>` (deprecated)
+- `CGAL::Labeled_image_mesh_domain_3<Image,BGT>` (deprecated)
+- `CGAL::Gray_image_mesh_domain_3<Image,BGT,Image_word_type>` (deprecated)
 
 ## Function Templates ##
 
