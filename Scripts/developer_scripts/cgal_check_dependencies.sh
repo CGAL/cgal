@@ -35,7 +35,7 @@ for pkg_path in $CGAL_ROOT/*
 do
   pkg=$(basename $pkg_path)
   if [ -f "$pkg_path/package_info/$pkg/dependencies" ]; then
-    PKG_DIFF=$(diff -N -w  "$pkg_path/package_info/$pkg/dependencies.old" "$pkg_path/package_info/$pkg/dependencies")
+    PKG_DIFF=$(diff -N -w  "$pkg_path/package_info/$pkg/dependencies.old" "$pkg_path/package_info/$pkg/dependencies" || true)
     if [ -n "$PKG_DIFF" ]; then
       HAS_DIFF=TRUE
       echo "Differences in $pkg: $PKG_DIFF"

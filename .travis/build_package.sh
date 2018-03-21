@@ -54,6 +54,15 @@ NEED_3D=0
 cd $ROOT
 for ARG in $(echo "$@")
 do
+#install openmesh only if necessary
+  if [ "$ARG" = "CHECK" ] || [ "$ARG" = BGL ] || [ "$ARG" = Convex_hull_3 ] ||\
+     [ "$ARG" = Polygon_mesh_processing ] || [ "$ARG" = Property_map ] ||\
+     [ "$ARG" = Surface_mesh_deformation ] || [ "$ARG" = Surface_mesh_shortest_path ] ||\
+     [ "$ARG" = Surface_mesh_simplification ]; then
+    sudo bash .travis/install_openmesh.sh
+  fi
+
+
   if [ "$ARG" = "CHECK" ]
   then
     cd .travis
@@ -118,6 +127,7 @@ do
     exit 0
   fi
   IFS=$old_IFS
+
   if [ -n "$TRAVIS_PULL_REQUEST" ] && [ "$ARG" != Polyhedron_demo ]; then
     DO_IGNORE=FALSE
     . $ROOT/.travis/test_package.sh "$ROOT" "$ARG"
