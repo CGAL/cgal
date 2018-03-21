@@ -71,7 +71,7 @@ public:
   // Default copy constructor, assignment operator, and destructor are ok
 
   /// Operator ()
-  return_type operator()(const Point_3& p, const bool = true) const
+  return_type operator()(const Point_3& p) const
   {
     return ( (r_f_(p)<0) ? 1 : 0 );
   }
@@ -121,7 +121,7 @@ public:
   ~Implicit_vector_to_labeling_function_wrapper() {}
 
   /// Operator ()
-  return_type operator()(const Point_3& p, const bool = true) const
+  return_type operator()(const Point_3& p) const
   {
     int nb_func = function_vector_.size();
     if ( nb_func > 8 )
@@ -260,7 +260,7 @@ public:
     std::sort(bmasks.begin(), bmasks.end());
   }
 
-  return_type operator() (const Point_3& p, const bool = true) const
+  return_type operator() (const Point_3& p) const
   {
     Bmask bmask(funcs.size() * 2, false);
 

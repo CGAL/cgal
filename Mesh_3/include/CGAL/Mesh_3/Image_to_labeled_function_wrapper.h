@@ -86,7 +86,7 @@ public:
    * @return the label at point \c p
    */
   template <typename Point_3>
-  return_type operator()(const Point_3& p, const bool = true) const
+  return_type operator()(const Point_3& p) const
   {
     return eval(p,
                 CGAL::Boolean_tag<use_trilinear_interpolation>(),
