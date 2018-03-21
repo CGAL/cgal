@@ -51,10 +51,13 @@ FT sphere_function (const Point& p)
 
 int main()
 {
-  // Domain (Warning: Sphere_3 constructor uses squared radius !)
-  Mesh_domain domain =
-    Mesh_domain::create_implicit_mesh_domain(sphere_function,
-                                             K::Sphere_3(CGAL::ORIGIN, 2.));
+  /// [Domain creation] (Warning: Sphere_3 constructor uses squared radius !)
+  namespace p = CGAL::parameters;
+  Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain
+    (p::function = sphere_function,
+     p::bounding_object = K::Sphere_3(CGAL::ORIGIN, 2.)
+     );
+  /// [Domain creation]
 
   // Mesh criteria
   Spherical_sizing_field size;

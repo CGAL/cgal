@@ -20,7 +20,13 @@ The bisection stops when the query segment is shorter than an error bound
 length of the diagonal of the bounding box (in world coordinates), or the radius of the bounding sphere, and
 a relative error bound passed as argument to the constructor of `Labeled_mesh_domain_3`.
 
-Implicit_mesh_domain_3 is a heir of Labeled_mesh_domain_3. It uses a satisfying labeling function if there is only one component to mesh.
+This class has a constructor taking a labeling function. It has also three
+static template member functions that act as named constructors:
+<ul>
+<li>`create_gray_image_mesh_domain()`, to create a domain from a 3D gray image,
+<li>`create_labeled_image_mesh_domain()`, to create a domain from a 3D labeled image, and
+<li>`create_implicit_mesh_domain()`, to create a domain from an implicit function.
+</ul>
 
 \tparam BGT is a geometric traits class that provides
 the basic operations to implement
@@ -44,7 +50,6 @@ The function type can be any model of the concept `Callable` compatible with the
 
 \cgalModels MeshDomain_3
 
-\sa `Implicit_mesh_domain_3`
 \sa `Implicit_multi_domain_to_labeling_function_wrapper`
 \sa `CGAL::make_mesh_3()`.
 
@@ -101,6 +106,51 @@ Labeled_mesh_domain_3(const A_i&...);
 
 ///@}
 
+/// \name Creation of domains from implicit functions
+
+/*!
+\brief Construction from an implicit function
+
+This static method is a <em>named constructor</em>. It constructs a domain
+whose bounding surface is described implicitly as the zero level set of a
+function.  The domain to be discretized is assumed to be the domain where
+the function has negative values.
+
+The method takes as argument a bounding sphere which is required to
+circumscribe the surface and to have its center inside the domain.
+
+This constructor uses named parameters (from the <em>Boost Parameter
+Library</em>). They can be specified in any order.
+
+\cgalHeading{Named Parameters}
+<ul>
+<li> <b>`parameters::function` (mandatory)</b>  the implicit function,
+compatible with the signature `FT(Point_3)`: it takes a point as argument,
+and returns a scalar value.
+<li> <b>`parameters::bounding_object` (mandatory)</b> the bounding object is
+either a bounding sphere (of type `Sphere_3`), a bounding box (type
+`Bbox_3`), or a bounding `Iso_cuboid_3`. It must bounds the surface, and
+its center must be inside the domain.
+</ul>
+
+\cgalHeading{Examples}
+
+From the example (\ref Mesh_3/mesh_implicit_sphere.cpp), where the name of
+the parameters is not specified, as they are given is the same order as the
+parameters definition:
+
+\snippet Mesh_3/mesh_implicit_sphere.cpp Domain creation
+
+From the example (\ref Mesh_3/mesh_implicit_sphere_variable_size.cpp):
+
+\snippet Mesh_3/mesh_implicit_sphere_variable_size.cpp Domain creation
+
+ */
+template <typename ... A_i>
+static
+Labeled_mesh_domain_3
+create_implicit_mesh_domain(A_i&...);
+
 /// \name Creation of domains from 3D images
 
 
@@ -115,7 +165,7 @@ described by an isolevel value, called \a isovalue. The voxels lying
 inside the domain have gray level values that are larger than the
 isovalue.
 
-The value of voxels is interpolated to  a gray level value at any query point.
+The value of voxels is interpolated to a gray level value at any query point.
 
 This constructor uses named parameters (from the <em>Boost Parameter
 Library</em>). They can be specified in any order.
@@ -162,7 +212,7 @@ From the example (\ref Mesh_3/mesh_3D_gray_vtk_image.cpp):
 template <typename ... A_i>
 static
 Labeled_mesh_domain_3
-Labeled_mesh_domain_3::create_gray_image_mesh_domain(A_i&...);
+create_gray_image_mesh_domain(A_i&...);
 
 /*!
 \brief Construction from a 3D labeled image
@@ -201,7 +251,7 @@ From the example (\ref Mesh_3/mesh_3D_image.cpp):
 template <typename ... A_i>
 static
 Labeled_mesh_domain_3
-Labeled_mesh_domain_3::create_labeled_image_mesh_domain(A_i&...);
+create_labeled_image_mesh_domain(A_i&...);
 
 /// \name Deprecated constructors
 ///
