@@ -70,11 +70,6 @@ are provided.
 See the project main page for details on the project and installation steps. */
 
 void QGLViewer::defaultConstructor() {
-  // Test OpenGL context
-  // if (glGetString(GL_VERSION) == 0)
-  // qWarning("Unable to get OpenGL version, context may not be available -
-  // Check your configuration");
-
   int poolIndex = QGLViewer::QGLViewerPool_.indexOf(NULL);
   setFocusPolicy(Qt::StrongFocus);
 
@@ -149,6 +144,7 @@ void QGLViewer::defaultConstructor() {
   currentlyPressedKey_ = Qt::Key(0);
 
   setAttribute(Qt::WA_NoSystemBackground);
+  axisIsDrawn_ = true;
 
   tileRegion_ = NULL;
 }
@@ -256,6 +252,153 @@ void QGLViewer::initializeGL() {
   } else
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  //OpenGL buffers and programs initialization
+  for(int i=0; i<VAO_size; ++i)
+  {
+    vaos[i].create();
+  }
+  vbos.resize(VBO_size);
+  for(int i=0; i<VBO_size; ++i)
+  {
+    vbos[i].create();
+  }
+  //program without light
+  {
+    //Vertex source code
+    const char v_s[] =
+    {
+      "#version 120 \n"
+      "attribute highp vec4 vertex;\n"
+      "uniform highp mat4 mvp_matrix;\n"
+      "void main(void)\n"
+      "{\n"
+      "   gl_Position = mvp_matrix * vertex; \n"
+      "} \n"
+      "\n"
+    };
+    //Fragment source code
+    const char f_s[] =
+    {
+      "#version 120 \n"
+      "uniform highp vec4 color; \n"
+      "void main(void) { \n"
+      "gl_FragColor = color; \n"
+      "} \n"
+      "\n"
+    };
+    
+    //It is said in the doc that a QOpenGLShader is 
+    // only destroyed with the QOpenGLShaderProgram 
+    //it has been linked with.
+    QOpenGLShader vertex_shader(QOpenGLShader::Vertex);
+    if(!vertex_shader.compileSourceCode(v_s))
+    {
+      std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+    }
+    
+    QOpenGLShader fragment_shader(QOpenGLShader::Fragment);
+    if(!fragment_shader.compileSourceCode(f_s))
+    {
+      std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+    }
+    
+    if(!rendering_program.addShader(&vertex_shader))
+    {
+      std::cerr<<"adding vertex shader FAILED"<<std::endl;
+    }
+    if(!rendering_program.addShader(&fragment_shader))
+    {
+      std::cerr<<"adding fragment shader FAILED"<<std::endl;
+    }
+    if(!rendering_program.link())
+    {
+      qDebug() << rendering_program.log();
+    }
+  }
+  //program with light
+  {
+    //Vertex source code
+    const char vertex_source[] =
+    {
+      "#version 120 \n"
+      "attribute highp vec4 vertex;\n"
+      "attribute highp vec3 normal;\n"
+      "attribute highp vec4 colors;\n"
+      "uniform highp mat4 mvp_matrix;\n"
+      "uniform highp mat4 mv_matrix; \n"
+      "varying highp vec4 fP; \n"
+      "varying highp vec3 fN; \n"
+      "varying highp vec4 color; \n"
+      "void main(void)\n"
+      "{\n"
+      "   color = vec4(colors.xyz, 1.0f); \n"
+      "   fP = mv_matrix * vertex; \n"
+      "   fN = mat3(mv_matrix)* normal; \n"
+      "   gl_Position = vec4(mvp_matrix * vertex); \n"
+      "} \n"
+      "\n"
+    };
+    //Fragment source code
+    const char fragment_source[] =
+    {
+      "#version 120 \n"
+      "varying highp vec4 color; \n"
+      "varying highp vec4 fP; \n"
+      "varying highp vec3 fN; \n"  
+      "void main(void) { \n"
+      "   highp vec4 light_pos = vec4(0.0f, 0.0f, 1.0f, 1.0f);  \n"
+      "   highp vec4 light_diff = vec4(1.0f, 1.0f, 1.0f, 1.0f); \n"
+      "   highp vec4 light_spec = vec4(0.0f, 0.0f, 0.0f, 1.0f); \n"
+      "   highp vec4 light_amb = vec4(0.4f, 0.4f, 0.4f, 0.4f);  \n"
+      "   highp float spec_power = 51.8f ; \n"
+      "   vec3 L = light_pos.xyz - fP.xyz; \n"
+      "   vec3 V = -fP.xyz; \n"
+      "   vec3 N; \n"
+      "   if(fN == vec3(0.0,0.0,0.0)) \n"
+      "       N = vec3(0.0,0.0,0.0); \n"
+      "   else \n"
+      "       N = normalize(fN); \n"
+      "   L = normalize(L); \n"
+      "   V = normalize(V); \n"
+      "   vec3 R = reflect(-L, N); \n"
+      "   vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
+      "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+      
+      "gl_FragColor = color*light_amb + diffuse + specular; \n"
+      "gl_FragColor = vec4(gl_FragColor.xyz, 1.0f); \n"
+      "} \n"
+      "\n"
+    };
+    
+    //It is said in the doc that a QOpenGLShader is 
+    // only destroyed with the QOpenGLShaderProgram 
+    //it has been linked with.
+    QOpenGLShader vertex_shader(QOpenGLShader::Vertex);
+    if(!vertex_shader.compileSourceCode(vertex_source))
+    {
+      std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+    }
+    
+    QOpenGLShader fragment_shader(QOpenGLShader::Fragment);
+    if(!fragment_shader.compileSourceCode(fragment_source))
+    {
+      std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+    }
+    
+    if(!rendering_program_light.addShader(&vertex_shader))
+    {
+      std::cerr<<"adding vertex shader FAILED"<<std::endl;
+    }
+    if(!rendering_program_light.addShader(&fragment_shader))
+    {
+      std::cerr<<"adding fragment shader FAILED"<<std::endl;
+    }
+    if(!rendering_program_light.link())
+    {
+      qDebug() << rendering_program_light.log();
+    }
+  }
+  
   // Calls user defined method. Default emits a signal.
   init();
 
@@ -334,40 +477,7 @@ that in draw(), the user can rely on the OpenGL context he defined. Respect this
 convention (by pushing/popping the different attributes) if you overload this
 method. */
 void QGLViewer::postDraw() {
-  // Reset model view matrix to world coordinates origin
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  camera()->loadModelViewMatrix();
-  // TODO restore model loadProjectionMatrixStereo
-
-  // Save OpenGL state
-  glPushAttrib(GL_ALL_ATTRIB_BITS);
-
-  // Set neutral GL state
-  glDisable(GL_TEXTURE_1D);
-  glDisable(GL_TEXTURE_2D);
-#ifdef GL_TEXTURE_3D // OpenGL 1.2 Only...
-  glDisable(GL_TEXTURE_3D);
-#endif
-
-  glDisable(GL_TEXTURE_GEN_Q);
-  glDisable(GL_TEXTURE_GEN_R);
-  glDisable(GL_TEXTURE_GEN_S);
-  glDisable(GL_TEXTURE_GEN_T);
-
-#ifdef GL_RESCALE_NORMAL // OpenGL 1.2 Only...
-  glEnable(GL_RESCALE_NORMAL);
-#endif
-
-  glDisable(GL_COLOR_MATERIAL);
-  glColor4f(foregroundColor().redF(), foregroundColor().greenF(),
-            foregroundColor().blueF(), foregroundColor().alphaF());
-
-  if (cameraIsEdited())
-    camera()->drawAllPaths();
-
   // Pivot point, line when camera rolls, zoom region
-  drawVisualHints();
 
   if (gridIsDrawn()) {
     glLineWidth(1.0);
@@ -375,9 +485,10 @@ void QGLViewer::postDraw() {
   }
   if (axisIsDrawn()) {
     glLineWidth(2.0);
-    drawAxis(camera()->sceneRadius());
+    drawAxis(1.0);
   }
 
+  drawVisualHints();
   // FPS computation
   const unsigned int maxCounter = 20;
   if (++fpsCounter_ == maxCounter) {
@@ -696,11 +807,8 @@ void QGLViewer::drawLight(GLenum light, qreal scale) const {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
 void QGLViewer::renderText(int x, int y, const QString &str,
                            const QFont &font) {
-  // Retrieve last OpenGL color to use as a font color
-  GLdouble glColor[4];
-  glGetDoublev(GL_CURRENT_COLOR, glColor);
-  QColor fontColor = QColor(255 * glColor[0], 255 * glColor[1],
-                            255 * glColor[2], 255 * glColor[3]);
+  QColor fontColor = QColor(0, 0,
+                            0, 255);
 
   // Render text
   QPainter painter(this);
@@ -3298,7 +3406,65 @@ Limitation : One needs to have access to visualHint_ to overload this method.
 
 Removed from the documentation for this reason. */
 void QGLViewer::drawVisualHints() {
+  rendering_program.bind();
+  vaos[GRID].bind();
+  QMatrix4x4 mvpMatrix;
+  double mat[16];
+  camera()->getModelViewProjectionMatrix(mat);
+  for(int i=0; i < 16; i++)
+  {
+      mvpMatrix.data()[i] = (float)mat[i];
+  }
+  QMatrix4x4 mvMatrix;
+  for(int i=0; i < 16; i++)
+  {
+    mvMatrix.data()[i] = camera()->orientation().inverse().matrix()[i];
+  }
+  rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
+  rendering_program.setUniformValue("color", QColor(Qt::lightGray));
+  glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(grid_size));
+  vaos[GRID].release();
+  rendering_program.release();
   
+  rendering_program_light.bind();
+  vaos[GRID_AXIS].bind();
+  
+  rendering_program_light.setUniformValue("mvp_matrix", mvpMatrix);
+  rendering_program_light.setUniformValue("mv_matrix", mvMatrix);
+  glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(g_axis_size/9));
+  vaos[GRID_AXIS].release();
+  
+  qglviewer::Camera::Type camera_type = camera()->type();
+  camera()->setType(qglviewer::Camera::ORTHOGRAPHIC);
+  for(int i=0; i < 16; i++)
+  {
+    mvMatrix.data()[i] = camera()->orientation().inverse().matrix()[i];
+  }
+  mvpMatrix.setToIdentity();
+  mvpMatrix.ortho(-1,1,-1,1,-1,1);
+  mvpMatrix = mvpMatrix*mvMatrix;
+  rendering_program_light.setUniformValue("mvp_matrix", mvpMatrix);
+  rendering_program_light.setUniformValue("mv_matrix", mvMatrix);
+  camera()->setType(camera_type);
+  vaos[AXIS].bind();
+  int viewport[4];
+  int scissor[4];
+  
+  // The viewport and the scissor are changed to fit the upper right
+  // corner. Original values are saved.
+  glGetIntegerv(GL_VIEWPORT, viewport);
+  glGetIntegerv(GL_SCISSOR_BOX, scissor);
+  
+  // Axis viewport size, in pixels
+  const int size = 100;
+  glViewport(width()*devicePixelRatio()-size, height()*devicePixelRatio()-size, size, size);
+  glScissor (width()*devicePixelRatio()-size, height()*devicePixelRatio()-size, size, size);
+  glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(axis_size / 9));
+  // The viewport and the scissor are restored.
+  glScissor(scissor[0],scissor[1],scissor[2],scissor[3]);
+  glViewport(viewport[0],viewport[1],viewport[2],viewport[3]);
+  vaos[AXIS].release();
+  rendering_program_light.release();
 }
 
 /*! Defines the mask that will be used to drawVisualHints(). The only available
@@ -3319,56 +3485,286 @@ void QGLViewer::resetVisualHints() { visualHint_ = 0; }
 //       A x i s   a n d   G r i d   d i s p l a y   l i s t s                //
 ////////////////////////////////////////////////////////////////////////////////
 
-/*! Draws a 3D arrow along the positive Z axis.
+/*! Draws a 3D arrow between the 3D point \p from and the 3D point \p to. 
+\p data is filled with the three components of a point, then its normal, and then its color, which makes it filled like this:
+[P1.x-P1.y-P1.z-N1.x-N1.y-N1.z-C1.r-C1.g-C1.b|P2.x-P2.y-P2.z-N2.x-N2.y-N2.z-C2.r-C2.g-C2.b|...]
+*/
+void QGLViewer::drawArrow(double r,double R, int prec, qglviewer::Vec from,
+                          qglviewer::Vec to, qglviewer::Vec color, 
+                          std::vector<float> &data) {
+  qglviewer::Vec temp = to-from;
+  QVector3D dir = QVector3D(temp.x, temp.y, temp.z);
+  QMatrix4x4 mat;
+  mat.setToIdentity();
+  mat.translate(from.x, from.y, from.z);
+  mat.scale(dir.length());
+  dir.normalize();
+  float angle = 0.0;
+  if(std::sqrt((dir.x()*dir.x()+dir.y()*dir.y())) > 1)
+      angle = 90.0f;
+  else
+      angle =acos(dir.y()/std::sqrt(dir.x()*dir.x()+dir.y()*dir.y()+dir.z()*dir.z()))*180.0/M_PI;
 
-\p length, \p radius and \p nbSubdivisions define its geometry. If \p radius is
-negative (default), it is set to 0.05 * \p length.
+  QVector3D axis;
+  axis = QVector3D(dir.z(), 0, -dir.x());
+  mat.rotate(angle, axis);
 
-Use drawArrow(const Vec& from, const Vec& to, qreal radius, int nbSubdivisions)
-or change the \c ModelView matrix to place the arrow in 3D.
+  //Head
+  const float Rf = static_cast<float>(R);
+  for(int d = 0; d<360; d+= 360/prec)
+  {
+      float D = (float) (d * M_PI / 180.);
+      float a = (float) std::atan(Rf / 0.33);
+      QVector4D p(0., 1., 0, 1.);
+      QVector4D n(Rf*sin(D), sin(a), Rf*cos(D), 1.);
+      QVector4D pR = mat*p;
+      QVector4D nR = mat*n;
 
-Uses current color and does not modify the OpenGL state. */
-void QGLViewer::drawArrow(qreal , qreal , int ) {
-}
+      //point A1
+      data.push_back(pR.x());
+      data.push_back(pR.y());
+      data.push_back(pR.z());
+      data.push_back(nR.x());
+      data.push_back(nR.y());
+      data.push_back(nR.z());
+      data.push_back((float)color.x);
+      data.push_back((float)color.y);
+      data.push_back((float)color.z);
 
-/*! Draws a 3D arrow between the 3D point \p from and the 3D point \p to, both
-defined in the current ModelView coordinates system.
+      //point B1
+      p = QVector4D(Rf*sin(D), 0.66f, Rf* cos(D), 1.f);
+      n = QVector4D(sin(D), sin(a), cos(D), 1.);
+      pR = mat*p;
+      nR = mat*n;
+      data.push_back(pR.x());
+      data.push_back(pR.y());
+      data.push_back(pR.z());
+      data.push_back(nR.x());
+      data.push_back(nR.y());
+      data.push_back(nR.z());
+      data.push_back((float)color.x);
+      data.push_back((float)color.y);
+      data.push_back((float)color.z);
+      //point C1
+      D = (d+360/prec)*M_PI/180.0;
+      p = QVector4D(Rf* sin(D), 0.66f, Rf* cos(D), 1.f);
+      n = QVector4D(sin(D), sin(a), cos(D), 1.0);
+      pR = mat*p;
+      nR = mat*n;
 
-See drawArrow(qreal length, qreal radius, int nbSubdivisions) for details. */
-void QGLViewer::drawArrow(const Vec &, const Vec &, qreal ,
-                          int ) {
+      data.push_back(pR.x());
+      data.push_back(pR.y());
+      data.push_back(pR.z());
+      data.push_back(nR.x());
+      data.push_back(nR.y());
+      data.push_back(nR.z());
+      data.push_back((float)color.x);
+      data.push_back((float)color.y);
+      data.push_back((float)color.z);
+
+  }
+
+  //cylinder
+  //body of the cylinder
+  const float rf = static_cast<float>(r);
+  for(int d = 0; d<360; d+= 360/prec)
+  {
+      //point A1
+      double D = d*M_PI/180.0;
+      QVector4D p(rf*sin(D), 0.66f, rf*cos(D), 1.f);
+      QVector4D n(sin(D), 0.f, cos(D), 1.f);
+      QVector4D pR = mat*p;
+      QVector4D nR = mat*n;
+
+      data.push_back(pR.x());
+      data.push_back(pR.y());
+      data.push_back(pR.z());
+      data.push_back(nR.x());
+      data.push_back(nR.y());
+      data.push_back(nR.z());
+      data.push_back(color.x);
+      data.push_back(color.y);
+      data.push_back(color.z);
+      //point B1
+      p = QVector4D(rf * sin(D),0,rf*cos(D), 1.0);
+      n = QVector4D(sin(D), 0, cos(D), 1.0);
+      pR = mat*p;
+      nR = mat*n;
+
+
+      data.push_back(pR.x());
+      data.push_back(pR.y());
+      data.push_back(pR.z());
+      data.push_back(nR.x());
+      data.push_back(nR.y());
+      data.push_back(nR.z());
+      data.push_back(color.x);
+      data.push_back(color.y);
+      data.push_back(color.z);
+        //point C1
+      D = (d+360/prec)*M_PI/180.0;
+      p = QVector4D(rf * sin(D),0,rf*cos(D), 1.0);
+      n = QVector4D(sin(D), 0, cos(D), 1.0);
+      pR = mat*p;
+      nR = mat*n;
+      data.push_back(pR.x());
+      data.push_back(pR.y());
+      data.push_back(pR.z());
+      data.push_back(nR.x());
+      data.push_back(nR.y());
+      data.push_back(nR.z());
+      data.push_back(color.x);
+      data.push_back(color.y);
+      data.push_back(color.z);
+      //point A2
+      D = (d+360/prec)*M_PI/180.0;
+
+      p = QVector4D(rf * sin(D),0,rf*cos(D), 1.0);
+      n = QVector4D(sin(D), 0, cos(D), 1.0);
+      pR = mat*p;
+      nR = mat*n;
+      data.push_back(pR.x());
+      data.push_back(pR.y());
+      data.push_back(pR.z());
+      data.push_back(nR.x());
+      data.push_back(nR.y());
+      data.push_back(nR.z());
+      data.push_back((float)color.x);
+      data.push_back((float)color.y);
+      data.push_back((float)color.z);
+      //point B2
+      p = QVector4D(rf * sin(D), 0.66f, rf*cos(D), 1.f);
+      n = QVector4D(sin(D), 0, cos(D), 1.0);
+      pR = mat*p;
+      nR = mat*n;
+      data.push_back(pR.x());
+      data.push_back(pR.y());
+      data.push_back(pR.z());
+      data.push_back(nR.x());
+      data.push_back(nR.y());
+      data.push_back(nR.z());
+      data.push_back((float)color.x);
+      data.push_back((float)color.y);
+      data.push_back((float)color.z);
+      //point C2
+      D = d*M_PI/180.0;
+      p = QVector4D(rf * sin(D), 0.66f, rf*cos(D), 1.f);
+      n = QVector4D(sin(D), 0.f, cos(D), 1.f);
+      pR = mat*p;
+      nR = mat*n;
+      data.push_back(pR.x());
+      data.push_back(pR.y());
+      data.push_back(pR.z());
+      data.push_back(nR.x());
+      data.push_back(nR.y());
+      data.push_back(nR.z());
+      data.push_back(color.x);
+      data.push_back(color.y);
+      data.push_back(color.z);
+
+  }
 }
 
 /*! Draws an XYZ axis, with a given size (default is 1.0).
 
-The axis position and orientation matches the current modelView matrix state:
+The axis orientation matches the current modelView matrix state:
 three arrows (red, green and blue) of length \p length are drawn along the
-positive X, Y and Z directions.
-
-Use the following code to display the current position and orientation of a
-qglviewer::Frame: \code glPushMatrix(); glMultMatrixd(frame.matrix());
-QGLViewer::drawAxis(sceneRadius() / 5.0); // Or any scale
-glPopMatrix();
-\endcode
-
-The current color and line width are used to draw the X, Y and Z characters at
-the extremities of the three arrows. The OpenGL state is not modified by this
-method.
-
-axisIsDrawn() uses this method to draw a representation of the world coordinate
-system. See also QGLViewer::drawArrow() and QGLViewer::drawGrid(). */
-void QGLViewer::drawAxis(qreal) {
+positive X, Y and Z directions in the top right corner of the screen. 
+X arrow is red, Y arrow is green and Z arrow is blue.*/
+void QGLViewer::drawAxis(qreal length) {
+  std::vector<float> data;
+  data.resize(0);
+  drawArrow(0.06,0.12,10, qglviewer::Vec(0,0,0),qglviewer::Vec(length,0,0),qglviewer::Vec(1,0,0), data);
+  drawArrow(0.06,0.12,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,length,0),qglviewer::Vec(0,1,0), data);
+  drawArrow(0.06,0.12,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,0,length),qglviewer::Vec(0,0,1), data);
+  rendering_program_light.bind();
+  vaos[AXIS].bind();
+  vbos[Axis].bind();
+  vbos[Axis].allocate(data.data(), static_cast<int>(data.size()) * sizeof(float));
+  rendering_program_light.enableAttributeArray("vertex");
+  rendering_program_light.setAttributeBuffer("vertex",GL_FLOAT,0,3,
+                                             static_cast<int>(9*sizeof(float)));
+  
+  rendering_program_light.enableAttributeArray("normal");
+  rendering_program_light.setAttributeBuffer("normal",GL_FLOAT,3*sizeof(float),3,
+                                             static_cast<int>(9*sizeof(float)));
+  
+  rendering_program_light.enableAttributeArray("colors");
+  rendering_program_light.setAttributeBuffer("colors",GL_FLOAT,6*sizeof(float),3,
+                                             static_cast<int>(9*sizeof(float)));
+  vbos[Axis].release();
+  vaos[AXIS].release();
+  axis_size = data.size();
+  rendering_program_light.release();
 }
 
 /*! Draws a grid in the XY plane, centered on (0,0,0) (defined in the current
 coordinate system).
 
-\p size (OpenGL units) and \p nbSubdivisions define its geometry. Set the \c
-GL_MODELVIEW matrix to place and orientate the grid in 3D space (see the
-drawAxis() documentation).
+\p size (OpenGL units) and \p nbSubdivisions define its geometry.*/
+void QGLViewer::drawGrid(qreal size, int nbSubdivisions) {
+  
+  //The Grid
+  std::vector<float> v_Grid;
+  for (int i=0; i<=nbSubdivisions; ++i)
+  {
+          const float pos = size*(2.0*i/nbSubdivisions-1.0);
+          v_Grid.push_back(pos);
+          v_Grid.push_back(-size);
+          v_Grid.push_back(0.0);
 
-The OpenGL state is not modified by this method. */
-void QGLViewer::drawGrid(qreal , int ) {
+          v_Grid.push_back(pos);
+          v_Grid.push_back(+size);
+          v_Grid.push_back(0.0);
+
+          v_Grid.push_back(-size);
+          v_Grid.push_back(pos);
+          v_Grid.push_back(0.0);
+
+          v_Grid.push_back( size);
+          v_Grid.push_back( pos);
+          v_Grid.push_back( 0.0);
+  }
+  rendering_program.bind();
+  vaos[GRID].bind();
+  vbos[Grid].bind();
+  vbos[Grid].allocate(v_Grid.data(),static_cast<int>(v_Grid.size()*sizeof(float)));
+  rendering_program.enableAttributeArray("vertex");
+  rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+  vbos[Grid].release();
+  vaos[GRID].release();
+  rendering_program.release();
+  grid_size = v_Grid.size();
+  
+  //The Axis
+  std::vector<float> d_axis;
+  d_axis.resize(0);
+  //d_axis is filled by drawArrow always this way : V.x V.y V.z N.x N.y N.z C.r C.g C.b, so it is possible
+  //to use a single buffer with offset and stride
+  drawArrow(0.005*size,0.02*size,10, qglviewer::Vec(0,0,0),qglviewer::Vec(size,0,0),qglviewer::Vec(1,0,0), d_axis);
+  drawArrow(0.005*size,0.02*size,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,size,0),qglviewer::Vec(0,1,0), d_axis);
+
+  rendering_program_light.bind();
+  vaos[GRID_AXIS].bind();
+  vbos[Grid_axis].bind();
+  vbos[Grid_axis].allocate(d_axis.data(), static_cast<int>(d_axis.size()) * sizeof(float));
+  rendering_program_light.enableAttributeArray("vertex");
+  rendering_program_light.setAttributeBuffer("vertex",GL_FLOAT,0,3,
+                                             static_cast<int>(9*sizeof(float)));
+  
+  rendering_program_light.enableAttributeArray("normal");
+  rendering_program_light.setAttributeBuffer("normal",GL_FLOAT,3*sizeof(float),3,
+                                             static_cast<int>(9*sizeof(float)));
+  
+  rendering_program_light.enableAttributeArray("colors");
+  rendering_program_light.setAttributeBuffer("colors",GL_FLOAT,6*sizeof(float),3,
+                                             static_cast<int>(9*sizeof(float)));
+  vbos[Grid_axis].release();
+
+  vaos[GRID_AXIS].release();
+  rendering_program_light.release();
+
+  g_axis_size = d_axis.size();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -409,8 +409,8 @@ void KeyFrameInterpolator::drawPath(int mask, int nbFrames, qreal scale) {
           glMultMatrixd(fr.matrix());
           if (mask & 2)
             drawCamera(scale);
-          if (mask & 4)
-            QGLViewer::drawAxis(scale / 10.0);
+          //if (mask & 4)
+          //  QGLViewer::drawAxis(scale / 10.0);
           glPopMatrix();
         }
     }

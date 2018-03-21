@@ -27,7 +27,11 @@
 
 #include <QClipboard>
 #include <QOpenGLFunctions_2_1>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLVertexArrayObject>
+#include <QOpenGLBuffer>
 #include <QMap>
+#include <QVector>
 #include <QTime>
 #include <QGLContext>
 
@@ -69,7 +73,7 @@ implementation.
 class QGLVIEWER_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions_2_1 {
   Q_OBJECT
 
-public:
+public:  
   explicit QGLViewer(QGLContext* context, QWidget *parent = 0,
                      Qt::WindowFlags flags = 0);
   explicit QGLViewer(QWidget *parent = 0,
@@ -118,6 +122,8 @@ public Q_SLOTS:
   /*! Sets the state of axisIsDrawn(). Emits the axisIsDrawnChanged() signal.
    * See also toggleAxisIsDrawn(). */
   void setAxisIsDrawn(bool draw = true) {
+    if(!draw)
+      axis_size = 0;
     axisIsDrawn_ = draw;
     Q_EMIT axisIsDrawnChanged(draw);
     update();
@@ -125,6 +131,11 @@ public Q_SLOTS:
   /*! Sets the state of gridIsDrawn(). Emits the gridIsDrawnChanged() signal.
    * See also toggleGridIsDrawn(). */
   void setGridIsDrawn(bool draw = true) {
+    if(!draw)
+    {
+      grid_size=0;
+      g_axis_size=0;
+    }
     gridIsDrawn_ = draw;
     Q_EMIT gridIsDrawnChanged(draw);
     update();
@@ -357,6 +368,10 @@ public:
   \c QTimer, when animationIsStarted() or when the camera is manipulated with
   the mouse.  */
   qreal currentFPS() { return f_p_s_; }
+  /*!
+   * Returns the string used to display the current fps.
+   */
+  QString fpsString() { return fpsString_; }
   /*! Returns \c true if the viewer is in fullScreen mode.
 
   Default value is \c false. Set by setFullScreen() or toggleFullScreen().
@@ -404,12 +419,10 @@ private:
   /*! @name Display methods */
   //@{
 public:
-  static void drawArrow(qreal = 1.0, qreal = -1.0,
-                        int = 12);
-  static void drawArrow(const qglviewer::Vec &, const qglviewer::Vec &,
-                        qreal = -1.0, int = 12);
-  static void drawAxis(qreal = 1.0);
-  static void drawGrid(qreal = 1.0, int = 10);
+  void drawArrow(double r, double R, int prec,
+                        qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, std::vector<float> &data);
+  void drawAxis(qreal l = 1.0);
+  void drawGrid(qreal size= 1.0, int nbSubdivisions = 10);
 
   virtual void startScreenCoordinatesSystem(bool upward = false) const;
   virtual void stopScreenCoordinatesSystem() const;
@@ -1456,6 +1469,30 @@ private:
 
   // H e l p   w i n d o w
   QTabWidget *helpWidget_;
+  
+  //internal drawing buffers
+  enum VBO
+  {
+    Grid = 0,
+    Grid_axis,
+    Axis,
+    VBO_size
+  };
+  enum VAO
+  {
+    GRID = 0,
+    GRID_AXIS,
+    AXIS,
+    VAO_size
+  };
+  QOpenGLShaderProgram rendering_program;
+  QOpenGLShaderProgram rendering_program_light;
+  QOpenGLVertexArrayObject vaos[VAO_size];
+  QVector<QOpenGLBuffer> vbos;
+  std::size_t grid_size;
+  std::size_t g_axis_size;
+  std::size_t axis_size;
+  
 };
 
 #endif // QGLVIEWER_QGLVIEWER_H

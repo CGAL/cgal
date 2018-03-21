@@ -32,11 +32,6 @@ public:
   bool clipping;
   QVector4D clipbox[6];
   QPainter *painter;
-  // F P S    d i s p l a y
-  QTime fpsTime;
-  unsigned int fpsCounter;
-  QString fpsString;
-  float f_p_s;
   // M e s s a g e s
   QString message;
   bool _displayMessage;
@@ -44,14 +39,6 @@ public:
   QOpenGLFunctions_4_3_Compatibility* _recentFunctions;
   bool is_ogl_4_3;
   bool is_2d_selection_mode;
-
-  //! Holds useful data to draw the axis system
-  struct AxisData
-  {
-      std::vector<float> *vertices;
-      std::vector<float> *normals;
-      std::vector<float> *colors;
-  };
 
   //! The buffers used to draw the axis system
   QOpenGLBuffer buffers[8];
@@ -62,17 +49,6 @@ public:
   //! The rendering program used to draw the distance
   QOpenGLShaderProgram rendering_program_dist;
   QList<TextItem*>  distance_text;
-  //! Holds the vertices data for the axis system
-  std::vector<float> v_Axis;
-  //! Holds the normals data for the axis system
-  std::vector<float> n_Axis;
-  //! Holds the color data for the axis system
-  std::vector<float> c_Axis;
-  //! Decides if the axis system must be drawn or not
-  bool axis_are_displayed;
-  bool grid_is_displayed;
-  std::size_t grid_size;
-  std::size_t v_gaxis_size;
   //! Decides if the text is displayed in the drawVisualHints function.
   bool has_text;
   //! Decides if the distance between APoint and BPoint must be drawn;
@@ -90,18 +66,6 @@ public:
   bool extension_is_found;
 
   TextRenderer *textRenderer;
-  /*!
-   * \brief makeArrow creates an arrow and stores it in a struct of vectors.
-   * \param R the radius of the arrow.
-   * \param prec the precision of the quadric. The lower this value is, the higher precision you get.
-   * It can be any int between 1 and 360.
-   * \param from the starting point of the arrow.
-   * \param to the destination point of the arrow (the pointed extremity).
-   * \param color the RGB color of the arrow.
-   * \param data the struct of std::vector that will contain the results.
-   */
-  void makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data);
-  void drawGrid(qreal size, int nbSubdivisions=10);
   //!Clears the distance display
   void clearDistancedisplay();
   void draw_aux(bool with_names, Viewer*);
@@ -133,14 +97,11 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
            this, SLOT(printMessage(QString,int)) );
   connect(&d->messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
   setShortcut(EXIT_VIEWER, 0);
-  setShortcut(DRAW_AXIS, 0);
   setKeyDescription(Qt::Key_T,
                     tr("Turn the camera by 180 degrees"));
   setKeyDescription(Qt::Key_M,
                     tr("Toggle macro mode: useful to view details very near from the camera, "
                        "but decrease the z-buffer precision"));
-  setKeyDescription(Qt::Key_A,
-                      tr("Toggle the axis system visibility."));
   setKeyDescription(Qt::Key_I + Qt::CTRL,
                       tr("Toggle the primitive IDs visibility of the selected Item."));
   setKeyDescription(Qt::Key_D,
@@ -176,19 +137,13 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
 
 #endif // QGLVIEWER_VERSION >= 2.5.0
   prev_radius = sceneRadius();
-  d->axis_are_displayed = true;
-  d->grid_is_displayed = false;
-  d->grid_size = 0;
   d->has_text = false;
   d->i_is_pressed = false;
   d->z_is_pressed = false;
-  d->fpsTime.start();
-  d->fpsCounter=0;
-  d->f_p_s=0.0;
-  d->fpsString=tr("%1Hz", "Frames per seconds, in Hertz").arg("?");
   d->distance_is_displayed = false;
   d->is_d_pressed = false;
   d->viewer = this;
+  setTextIsEnabled(true);
 }
 
 Viewer::~Viewer()
@@ -246,8 +201,6 @@ void Viewer::fastDraw()
 
 void Viewer::initializeGL()
 {
-#if QGLVIEWER_VERSION >= 0x020700
-
   QSurfaceFormat format;
   format.setDepthBufferSize(24);
   format.setStencilBufferSize(8);
@@ -271,30 +224,6 @@ void Viewer::initializeGL()
   CGAL_warning_msg(created && context()->isValid(), "The openGL context initialization failed "
                    "and the default context (2.0) will be used" );
   makeCurrent();
-#else
-  QGLFormat format;
-  format.setVersion(4,3);
-  format.setProfile(QGLFormat::CompatibilityProfile);
-  QGLContext *new_context = new QGLContext(format, this);
-  new_context->setFormat(format);
-  bool created = new_context->create();
-  if(!created || new_context->format().profile() != QGLFormat::CompatibilityProfile) {
-    // impossible to get a 4.3 compatibility profile, retry with 2.0
-    format.setVersion(2,1);
-    new_context->setFormat(format);
-    created = new_context->create();
-    d->is_ogl_4_3 = false;
-  }
-  else
-  {
-    d->is_ogl_4_3 = true;
-    d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
-  }
-  CGAL_warning_msg(created && new_context->isValid(), "The openGL context initialization failed "
-                   "and the default context (2.0) will be used" );
-  this->setContext(new_context);
-  context()->makeCurrent();
-#endif
   QGLViewer::initializeGL();
   initializeOpenGLFunctions();
   if(isOpenGL_4_3())
@@ -461,42 +390,6 @@ void Viewer::initializeGL()
              qDebug() << d->rendering_program_dist.log();
          }
      }
-
-      Viewer_impl::AxisData data;
-      d->v_Axis.resize(0);
-      d->n_Axis.resize(0);
-      d->c_Axis.resize(0);
-      data.vertices = &d->v_Axis;
-      data.normals =  &d->n_Axis;
-      data.colors =   &d->c_Axis;
-      GLdouble l = 1.0;
-      d->makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(l,0,0),qglviewer::Vec(1,0,0), data);
-      d->makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,l,0),qglviewer::Vec(0,1,0), data);
-      d->makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,0,l),qglviewer::Vec(0,0,1), data);
-
-      d->rendering_program.bind();
-      d->vao[0].bind();
-      d->buffers[0].bind();
-      d->buffers[0].allocate(d->v_Axis.data(), static_cast<int>(d->v_Axis.size()) * sizeof(float));
-      d->rendering_program.enableAttributeArray("vertex");
-      d->rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
-      d->buffers[0].release();
-
-      d->buffers[1].bind();
-      d->buffers[1].allocate(d->n_Axis.data(), static_cast<int>(d->n_Axis.size() * sizeof(float)));
-      d->rendering_program.enableAttributeArray("normal");
-      d->rendering_program.setAttributeBuffer("normal",GL_FLOAT,0,3);
-      d->buffers[1].release();
-
-      d->buffers[2].bind();
-      d->buffers[2].allocate(d->c_Axis.data(), static_cast<int>(d->c_Axis.size() * sizeof(float)));
-      d->rendering_program.enableAttributeArray("colors");
-      d->rendering_program.setAttributeBuffer("colors",GL_FLOAT,0,3);
-      d->buffers[2].release();
-      d->vao[0].release();
-
-      d->rendering_program.release();
-
   d->painter = new QPainter();
   d->initialized = true;
 }
@@ -577,14 +470,6 @@ void Viewer::keyPressEvent(QKeyEvent* e)
 
       return;
     }
-    else if(e->key() == Qt::Key_A) {
-          d->axis_are_displayed = !d->axis_are_displayed;
-          update();
-        }
-    else if(e->key() == Qt::Key_G) {
-          d->grid_is_displayed = !d->grid_is_displayed;
-          update();
-        }
     else if(e->key() == Qt::Key_I) {
           d->i_is_pressed = true;
         }
@@ -896,250 +781,10 @@ void Viewer::endSelection(const QPoint&)
     d->draw_aux(false, this);
 }
 
-void Viewer_impl::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, Viewer_impl::AxisData &data)
-{
-    qglviewer::Vec temp = to-from;
-    QVector3D dir = QVector3D(temp.x, temp.y, temp.z);
-    QMatrix4x4 mat;
-    mat.setToIdentity();
-    mat.translate(from.x, from.y, from.z);
-    mat.scale(dir.length());
-    dir.normalize();
-    float angle = 0.0;
-    if(std::sqrt((dir.x()*dir.x()+dir.y()*dir.y())) > 1)
-        angle = 90.0f;
-    else
-        angle =acos(dir.y()/std::sqrt(dir.x()*dir.x()+dir.y()*dir.y()+dir.z()*dir.z()))*180.0/M_PI;
-
-    QVector3D axis;
-    axis = QVector3D(dir.z(), 0, -dir.x());
-    mat.rotate(angle, axis);
-
-    //Head
-    const float Rf = static_cast<float>(R);
-    for(int d = 0; d<360; d+= 360/prec)
-    {
-        float D = (float) (d * M_PI / 180.);
-        float a = (float) std::atan(Rf / 0.33);
-        QVector4D p(0., 1., 0, 1.);
-        QVector4D n(Rf*2.*sin(D), sin(a), Rf*2.*cos(D), 1.);
-        QVector4D pR = mat*p;
-        QVector4D nR = mat*n;
-
-        //point A1
-        data.vertices->push_back(pR.x());
-        data.vertices->push_back(pR.y());
-        data.vertices->push_back(pR.z());
-        data.normals->push_back(nR.x());
-        data.normals->push_back(nR.y());
-        data.normals->push_back(nR.z());
-        data.colors->push_back((float)color.x);
-        data.colors->push_back((float)color.y);
-        data.colors->push_back((float)color.z);
-
-        //point B1
-        p = QVector4D(Rf*2.*sin(D), 0.66f, Rf*2.* cos(D), 1.f);
-        n = QVector4D(sin(D), sin(a), cos(D), 1.);
-        pR = mat*p;
-        nR = mat*n;
-        data.vertices->push_back(pR.x());
-        data.vertices->push_back(pR.y());
-        data.vertices->push_back(pR.z());
-        data.normals->push_back(nR.x());
-        data.normals->push_back(nR.y());
-        data.normals->push_back(nR.z());
-        data.colors->push_back((float)color.x);
-        data.colors->push_back((float)color.y);
-        data.colors->push_back((float)color.z);
-        //point C1
-        D = (d+360/prec)*M_PI/180.0;
-        p = QVector4D(Rf*2.* sin(D), 0.66f, Rf *2.* cos(D), 1.f);
-        n = QVector4D(sin(D), sin(a), cos(D), 1.0);
-        pR = mat*p;
-        nR = mat*n;
-
-        data.vertices->push_back(pR.x());
-        data.vertices->push_back(pR.y());
-        data.vertices->push_back(pR.z());
-        data.normals->push_back(nR.x());
-        data.normals->push_back(nR.y());
-        data.normals->push_back(nR.z());
-        data.colors->push_back((float)color.x);
-        data.colors->push_back((float)color.y);
-        data.colors->push_back((float)color.z);
-
-    }
-
-    //cylinder
-    //body of the cylinder
-    for(int d = 0; d<360; d+= 360/prec)
-    {
-        //point A1
-        double D = d*M_PI/180.0;
-        QVector4D p(Rf*sin(D), 0.66f, Rf*cos(D), 1.f);
-        QVector4D n(sin(D), 0.f, cos(D), 1.f);
-        QVector4D pR = mat*p;
-        QVector4D nR = mat*n;
-
-        data.vertices->push_back(pR.x());
-        data.vertices->push_back(pR.y());
-        data.vertices->push_back(pR.z());
-        data.normals->push_back(nR.x());
-        data.normals->push_back(nR.y());
-        data.normals->push_back(nR.z());
-        data.colors->push_back(color.x);
-        data.colors->push_back(color.y);
-        data.colors->push_back(color.z);
-        //point B1
-        p = QVector4D(Rf * sin(D),0,Rf*cos(D), 1.0);
-        n = QVector4D(sin(D), 0, cos(D), 1.0);
-        pR = mat*p;
-        nR = mat*n;
-
-
-        data.vertices->push_back(pR.x());
-        data.vertices->push_back(pR.y());
-        data.vertices->push_back(pR.z());
-        data.normals->push_back(nR.x());
-        data.normals->push_back(nR.y());
-        data.normals->push_back(nR.z());
-        data.colors->push_back(color.x);
-        data.colors->push_back(color.y);
-        data.colors->push_back(color.z);
-          //point C1
-        D = (d+360/prec)*M_PI/180.0;
-        p = QVector4D(Rf * sin(D),0,Rf*cos(D), 1.0);
-        n = QVector4D(sin(D), 0, cos(D), 1.0);
-        pR = mat*p;
-        nR = mat*n;
-        data.vertices->push_back(pR.x());
-        data.vertices->push_back(pR.y());
-        data.vertices->push_back(pR.z());
-        data.normals->push_back(nR.x());
-        data.normals->push_back(nR.y());
-        data.normals->push_back(nR.z());
-        data.colors->push_back(color.x);
-        data.colors->push_back(color.y);
-        data.colors->push_back(color.z);
-        //point A2
-        D = (d+360/prec)*M_PI/180.0;
-
-        p = QVector4D(Rf * sin(D),0,Rf*cos(D), 1.0);
-        n = QVector4D(sin(D), 0, cos(D), 1.0);
-        pR = mat*p;
-        nR = mat*n;
-        data.vertices->push_back(pR.x());
-        data.vertices->push_back(pR.y());
-        data.vertices->push_back(pR.z());
-        data.normals->push_back(nR.x());
-        data.normals->push_back(nR.y());
-        data.normals->push_back(nR.z());
-        data.colors->push_back((float)color.x);
-        data.colors->push_back((float)color.y);
-        data.colors->push_back((float)color.z);
-        //point B2
-        p = QVector4D(Rf * sin(D), 0.66f, Rf*cos(D), 1.f);
-        n = QVector4D(sin(D), 0, cos(D), 1.0);
-        pR = mat*p;
-        nR = mat*n;
-        data.vertices->push_back(pR.x());
-        data.vertices->push_back(pR.y());
-        data.vertices->push_back(pR.z());
-        data.normals->push_back(nR.x());
-        data.normals->push_back(nR.y());
-        data.normals->push_back(nR.z());
-        data.colors->push_back((float)color.x);
-        data.colors->push_back((float)color.y);
-        data.colors->push_back((float)color.z);
-        //point C2
-        D = d*M_PI/180.0;
-        p = QVector4D(Rf * sin(D), 0.66f, Rf*cos(D), 1.f);
-        n = QVector4D(sin(D), 0.f, cos(D), 1.f);
-        pR = mat*p;
-        nR = mat*n;
-        data.vertices->push_back(pR.x());
-        data.vertices->push_back(pR.y());
-        data.vertices->push_back(pR.z());
-        data.normals->push_back(nR.x());
-        data.normals->push_back(nR.y());
-        data.normals->push_back(nR.z());
-        data.colors->push_back(color.x);
-        data.colors->push_back(color.y);
-        data.colors->push_back(color.z);
-
-    }
-}
-
 void Viewer::drawVisualHints()
 {
 
     QGLViewer::drawVisualHints();
-    if(d->axis_are_displayed)
-    {
-      d->rendering_program.bind();
-      qglviewer::Camera::Type camera_type = camera()->type();
-      camera()->setType(qglviewer::Camera::ORTHOGRAPHIC);
-        QMatrix4x4 mvpMatrix;
-        QMatrix4x4 mvMatrix;
-        for(int i=0; i < 16; i++)
-        {
-            mvMatrix.data()[i] = camera()->orientation().inverse().matrix()[i];
-        }
-        mvpMatrix.ortho(-1,1,-1,1,-1,1);
-        mvpMatrix = mvpMatrix*mvMatrix;
-        camera()->setType(camera_type);
-        QVector4D	position(0.0f,0.0f,1.0f,1.0f );
-        // define material
-        QVector4D	ambient;
-        QVector4D	diffuse;
-        QVector4D	specular;
-        GLfloat      shininess ;
-        // Ambient
-        ambient[0] = 0.29225f;
-        ambient[1] = 0.29225f;
-        ambient[2] = 0.29225f;
-        ambient[3] = 1.0f;
-        // Diffuse
-        diffuse[0] = 0.50754f;
-        diffuse[1] = 0.50754f;
-        diffuse[2] = 0.50754f;
-        diffuse[3] = 1.0f;
-        // Specular
-        specular[0] = 0.0f;
-        specular[1] = 0.0f;
-        specular[2] = 0.0f;
-        specular[3] = 0.0f;
-        // Shininess
-        shininess = 51.2f;
-
-        d->rendering_program.setUniformValue("light_pos", position);
-        d->rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
-        d->rendering_program.setUniformValue("mv_matrix", mvMatrix);
-        d->rendering_program.setUniformValue("light_diff", diffuse);
-        d->rendering_program.setUniformValue("light_spec", specular);
-        d->rendering_program.setUniformValue("light_amb", ambient);
-        d->rendering_program.setUniformValue("spec_power", shininess);
-
-        d->vao[0].bind();
-        int viewport[4];
-        int scissor[4];
-
-        // The viewport and the scissor are changed to fit the upper right
-        // corner. Original values are saved.
-        glGetIntegerv(GL_VIEWPORT, viewport);
-        glGetIntegerv(GL_SCISSOR_BOX, scissor);
-
-        // Axis viewport size, in pixels
-        const int size = 100;
-        glViewport(width()*devicePixelRatio()-size, height()*devicePixelRatio()-size, size, size);
-        glScissor (width()*devicePixelRatio()-size, height()*devicePixelRatio()-size, size, size);
-        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->v_Axis.size() / 3));
-        // The viewport and the scissor are restored.
-        glScissor(scissor[0],scissor[1],scissor[2],scissor[3]);
-        glViewport(viewport[0],viewport[1],viewport[2],viewport[3]);
-        d->vao[0].release();
-        d->rendering_program.release();
-    }
 
     if(d->distance_is_displayed)
     {
@@ -1169,82 +814,12 @@ void Viewer::drawVisualHints()
         glLineWidth(1.0f);
 
     }
-    if(d->grid_is_displayed)
-    {
-      //draws the distance
-      QMatrix4x4 mvpMatrix;
-      double mat[16];
-      camera()->getModelViewProjectionMatrix(mat);
-      //nullifies the translation
-      for(int i=0; i < 16; i++)
-      {
-          mvpMatrix.data()[i] = (float)mat[i];
-      }
-      d->rendering_program_dist.bind();
-      d->rendering_program_dist.setUniformValue("mvp_matrix", mvpMatrix);
-      d->vao[2].bind();
-      glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->grid_size));
-      d->vao[2].release();
-      d->rendering_program_dist.release();
-
-      d->rendering_program.bind();
-        QMatrix4x4 mvMatrix;
-        for(int i=0; i < 16; i++)
-        {
-            mvMatrix.data()[i] = camera()->orientation().inverse().matrix()[i];
-        }
-        QVector4D	position(0.0f,0.0f,1.0f,1.0f );
-        // define material
-        QVector4D	ambient;
-        QVector4D	diffuse;
-        QVector4D	specular;
-        GLfloat      shininess ;
-        // Ambient
-        ambient[0] = 0.29225f;
-        ambient[1] = 0.29225f;
-        ambient[2] = 0.29225f;
-        ambient[3] = 1.0f;
-        // Diffuse
-        diffuse[0] = 0.50754f;
-        diffuse[1] = 0.50754f;
-        diffuse[2] = 0.50754f;
-        diffuse[3] = 1.0f;
-        // Specular
-        specular[0] = 0.0f;
-        specular[1] = 0.0f;
-        specular[2] = 0.0f;
-        specular[3] = 0.0f;
-        // Shininess
-        shininess = 51.2f;
-
-        d->rendering_program.setUniformValue("light_pos", position);
-        d->rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
-        d->rendering_program.setUniformValue("mv_matrix", mvMatrix);
-        d->rendering_program.setUniformValue("light_diff", diffuse);
-        d->rendering_program.setUniformValue("light_spec", specular);
-        d->rendering_program.setUniformValue("light_amb", ambient);
-        d->rendering_program.setUniformValue("spec_power", shininess);
-
-        d->vao[3].bind();
-        // Axis viewport size, in pixels
-        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->v_gaxis_size / 3));
-        // The viewport and the scissor are restored.
-        d->vao[3].release();
-        d->rendering_program.release();
-    }
-
     if (!d->painter->isActive())
       d->painter->begin(this);
     //So that the text is drawn in front of everything
     d->painter->beginNativePainting();
     glDisable(GL_DEPTH_TEST);
     d->painter->endNativePainting();
-    //prints FPS
-    TextItem *fps_text = new TextItem(20, int(1.5*((QApplication::font().pixelSize()>0)?QApplication::font().pixelSize():QApplication::font().pointSize())),0,d->fpsString,false, QFont(), Qt::gray);
-    if(FPSIsDisplayed())
-    {
-      d->textRenderer->addText(fps_text);
-    }
     //Prints the displayMessage
     QFont font = QFont();
     QFontMetrics fm(font);
@@ -1254,8 +829,7 @@ void Viewer::drawVisualHints()
       d->textRenderer->addText(message_text);
     }
     d->textRenderer->draw(this);
-    if(FPSIsDisplayed())
-      d->textRenderer->removeText(fps_text);
+    
     if (d->_displayMessage)
       d->textRenderer->removeText(message_text);
 }
@@ -1414,29 +988,6 @@ void Viewer::paintGL()
   doneCurrent();
 }
 
-void Viewer::postDraw()
-{
-
-#ifdef GL_RESCALE_NORMAL  // OpenGL 1.2 Only...
-  glEnable(GL_RESCALE_NORMAL);
-#endif
-
-  if (cameraIsEdited())
-    camera()->drawAllPaths();
-
-  // Pivot point, line when camera rolls, zoom region
-  drawVisualHints();
-
-  // FPS computation
-  const unsigned int maxCounter = 20;
-  if (++d->fpsCounter == maxCounter)
-  {
-    d->f_p_s = 1000.0 * maxCounter / d->fpsTime.restart();
-    d->fpsString = tr("%1Hz", "Frames per seconds, in Hertz").arg(d->f_p_s, 0, 'f', ((d->f_p_s < 10.0)?1:0));
-    d->fpsCounter = 0;
-  }
-
-}
 void Viewer::displayMessage(const QString &_message, int delay)
 {
           d->message = _message;
@@ -1759,7 +1310,6 @@ qglviewer::Vec Viewer::offset()const { return d->offset; }
 void Viewer::setSceneBoundingBox(const qglviewer::Vec &min, const qglviewer::Vec &max)
 {
   QGLViewer::setSceneBoundingBox(min+d->offset, max+d->offset);
-  d->drawGrid(camera()->sceneRadius());
 }
 
 void Viewer::updateIds(CGAL::Three::Scene_item * item)
@@ -1797,79 +1347,7 @@ void Viewer::enableClippingBox(QVector4D box[6])
 
 
 bool Viewer::isOpenGL_4_3() const { return d->is_ogl_4_3; }
-void Viewer_impl::drawGrid(qreal size, int nbSubdivisions)
-{
-  std::vector<float> v_Grid;
-  std::vector<float> v_gAxis;
-  std::vector<float> n_gAxis;
-  std::vector<float> c_gAxis;
-  for (int i=0; i<=nbSubdivisions; ++i)
-  {
-          const float pos = size*(2.0*i/nbSubdivisions-1.0);
-          v_Grid.push_back(pos);
-          v_Grid.push_back(-size);
-          v_Grid.push_back(0.0);
 
-          v_Grid.push_back(pos);
-          v_Grid.push_back(+size);
-          v_Grid.push_back(0.0);
-
-          v_Grid.push_back(-size);
-          v_Grid.push_back(pos);
-          v_Grid.push_back(0.0);
-
-          v_Grid.push_back( size);
-          v_Grid.push_back( pos);
-          v_Grid.push_back( 0.0);
-  }
-  rendering_program_dist.bind();
-  vao[2].bind();
-  buffers[4].bind();
-  buffers[4].allocate(v_Grid.data(),static_cast<int>(v_Grid.size()*sizeof(float)));
-  rendering_program_dist.enableAttributeArray("vertex");
-  rendering_program_dist.setAttributeBuffer("vertex",GL_FLOAT,0,3);
-  buffers[4].release();
-  vao[2].release();
-  rendering_program_dist.release();
-  grid_size = v_Grid.size();
-
-  Viewer_impl::AxisData data;
-  v_gAxis.resize(0);
-  n_gAxis.resize(0);
-  c_gAxis.resize(0);
-  data.vertices = &v_gAxis;
-  data.normals =  &n_gAxis;
-  data.colors =   &c_gAxis;
-  makeArrow(0.02*size,10, qglviewer::Vec(0,0,0),qglviewer::Vec(size,0,0),qglviewer::Vec(1,0,0), data);
-  makeArrow(0.02*size,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,size,0),qglviewer::Vec(0,1,0), data);
-  makeArrow(0.02*size,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,0,size),qglviewer::Vec(0,0,1), data);
-
-  rendering_program.bind();
-  vao[3].bind();
-  buffers[5].bind();
-  buffers[5].allocate(v_gAxis.data(), static_cast<int>(v_gAxis.size()) * sizeof(float));
-  rendering_program.enableAttributeArray("vertex");
-  rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
-  buffers[5].release();
-
-  buffers[6].bind();
-  buffers[6].allocate(n_gAxis.data(), static_cast<int>(n_gAxis.size() * sizeof(float)));
-  rendering_program.enableAttributeArray("normal");
-  rendering_program.setAttributeBuffer("normal",GL_FLOAT,0,3);
-  buffers[6].release();
-
-  buffers[7].bind();
-  buffers[7].allocate(c_gAxis.data(), static_cast<int>(c_gAxis.size() * sizeof(float)));
-  rendering_program.enableAttributeArray("colors");
-  rendering_program.setAttributeBuffer("colors",GL_FLOAT,0,3);
-  buffers[7].release();
-  vao[3].release();
-
-  rendering_program.release();
-
-  v_gaxis_size = v_gAxis.size();
-
-}
 QOpenGLFunctions_4_3_Compatibility* Viewer::openGL_4_3_functions() { return d->_recentFunctions; }
 
 void Viewer::set2DSelectionMode(bool b) { d->is_2d_selection_mode = b; }

@@ -131,7 +131,6 @@ public Q_SLOTS:
   }
 
 protected:
-  void postDraw()Q_DECL_OVERRIDE;
   void paintEvent(QPaintEvent *)Q_DECL_OVERRIDE;
   void paintGL()Q_DECL_OVERRIDE;
 
