@@ -26,8 +26,7 @@ length of the diagonal of the bounding box (in world coordinates) and
 
 
 \tparam Image is the type of the input image. 
-This parameter must be a model of the concept 
-`LabeledImage_3`. 
+This parameter must be `CGAL::Image_3`.
 
 \tparam BGT is a geometric traits class which provides 
 the basic operations to implement 
