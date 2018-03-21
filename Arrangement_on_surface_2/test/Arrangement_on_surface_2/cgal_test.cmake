@@ -479,6 +479,7 @@ function(execute_commands_traits_adaptor data_dir traits_type_name)
 
   set(commands_indicator_PARAMETER_SPACE_X 0)
   set(commands_indicator_PARAMETER_SPACE_Y 0)
+  set(commands_indicator_COMPARE_XY 0)
   set(commands_indicator_COMPARE_X_AT_LIMIT 0)
   set(commands_indicator_COMPARE_X_NEAR_LIMIT 0)
   set(commands_indicator_COMPARE_X_ON_BOUNDARY 0)
@@ -507,6 +508,11 @@ function(execute_commands_traits_adaptor data_dir traits_type_name)
     run_trapped_test(test_traits_adaptor data/test_adaptor/${data_dir}/points
       data/test_adaptor/${data_dir}/xcurves data/test_adaptor/${data_dir}/curves
       data/test_adaptor/${data_dir}/parameter_space_y ${traits_type_name})
+  endif()
+  if(commands_indicator_COMPARE_XY)
+    run_trapped_test(test_traits_adaptor data/test_adaptor/${data_dir}/points
+      data/test_adaptor/${data_dir}/xcurves data/test_adaptor/${data_dir}/curves
+      data/test_adaptor/${data_dir}/compare_xy ${traits_type_name})
   endif()
   if(commands_indicator_COMPARE_X_AT_LIMIT)
     run_trapped_test(test_traits_adaptor data/test_adaptor/${data_dir}/points
@@ -599,7 +605,7 @@ function(test_segment_traits_adaptor)
   compile_test_with_flags(test_traits_adaptor segments "${flags}")
 #  if [ -n "${SUCCESS}" ] ; then
   execute_commands_traits_adaptor( segments segments_traits_adaptor
-    COMPARE_Y_POSITION COMPARE_CW_AROUND_POINT COMPARE_Y_AT_X_LEFT
+    COMPARE_XY COMPARE_Y_POSITION COMPARE_CW_AROUND_POINT COMPARE_Y_AT_X_LEFT
     ARE_MERGEABLE MERGE IS_IN_X_RANGE IS_BETWEEN_CW)
 endfunction()
 
@@ -615,7 +621,7 @@ function(test_linear_traits_adaptor)
   compile_test_with_flags( test_traits_adaptor linear "${flags}")
 
   execute_commands_traits_adaptor( linear linear_traits_adaptor
-    COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE
+    COMPARE_XY COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE
     COMPARE_Y_POSITION IS_BETWEEN_CW COMPARE_CW_AROUND_POINT)
 endfunction()
 
@@ -632,7 +638,7 @@ function(test_spherical_arcs_traits_adaptor)
   compile_test_with_flags( test_traits_adaptor geodesic_arcs_on_sphere "${flags}")
 
   execute_commands_traits_adaptor( spherical_arcs spherical_arcs_traits_adaptor
-    COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE
+    COMPARE_XY COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE
     COMPARE_Y_POSITION IS_BETWEEN_CW COMPARE_CW_AROUND_POINT)
 endfunction()
 
