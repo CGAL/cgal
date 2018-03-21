@@ -141,7 +141,9 @@ distribution of the vertices over the area that is being smoothed.
 
 \cgalFigureBegin{smooth_sphere, smooth_sphere.png}
 Mesh smoothing. (a) Input mesh.
-(b) Result from mesh smoothing after 10 iterations.
+(b) Smoothing based on angles. 
+(c) Smoothing based on areas.
+(d) Combination of smoothing angles and areas.
 \cgalFigureEnd
 
 - For **shape smoothing**: `CGAL::Polygon_mesh_processing::smooth_along_curvature_flow()`
@@ -153,13 +155,12 @@ If the region around a vertex is flat, this vertex does not move (zero curvature
 pinches the algorithm slows down the evolution in cylindrical regions. The smoothed surface converges to a conformal
 parameterization of the initial surface onto a sphere.
 
-\cgalFigureBegin{dino_teaser, dino-teaser.jpg}
-Shape smoothing on a dinoseur model using the mean curvature flow. The resulted smoothed shape is colored white.
+\cgalFigureBegin{shape_smoothing, shape_smoothing.png}
+(a) Shape smoothing on a dinosaur model using the normalized mean curvature flow. The resulted smoothed shape is colored white.
+(b) Smoothing the shape of the devil using the mean curvature flow with a time step equal to 0.5. The result is a conformal map to a sphere. 
 \cgalFigureEnd
 
-\cgalFigureBegin{devil, devils.png}
-Smoothing the shape of the devil using the mean curvature flow. The result is a conformal map to a sphere.
-\cgalFigureEnd
+
 
 \subsection MeshingExamples Meshing Examples
 
