@@ -22,9 +22,7 @@
 
 // Sphere Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef K::FT FT;
-typedef K::Point_3 Point;
-typedef FT (Function)(const Point&);
+
 typedef CGAL::Labeled_mesh_domain_3<K> Implicit_domain;
 
 // Polyhedral Domain
@@ -182,6 +180,9 @@ typedef Mesh_criteria::Facet_criteria Facet_criteria;
 typedef Mesh_criteria::Cell_criteria  Cell_criteria;
 
 // Function
+typedef K::FT FT;
+typedef K::Point_3 Point;
+
 FT sphere_centered_at_111 (const Point& p)
 {
   const FT dx=p.x()-1;
