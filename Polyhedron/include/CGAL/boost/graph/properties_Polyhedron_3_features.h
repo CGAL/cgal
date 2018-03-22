@@ -22,6 +22,7 @@
 #define CGAL_PROPERTIES_POLYHEDRON_3_FEATURES_H
 
 #include <CGAL/Polyhedron_3.h>
+#include <set>
 
 #define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
 

@@ -6,7 +6,6 @@
 #include <CGAL/Mesh_3/polylines_to_protect.h>
 #include <CGAL/Bbox_3.h>
 #include <Polyhedron_type.h>
-#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 
 #include <Scene_c3t3_item.h>
 

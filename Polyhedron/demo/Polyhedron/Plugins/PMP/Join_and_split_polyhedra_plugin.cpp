@@ -4,11 +4,9 @@
 #include "Kernel_type.h"
 #ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
-#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 #else
 #include "Polyhedron_type.h"
 #include "Scene_polyhedron_item.h"
-#include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 #endif
 #include "Scene_polyhedron_selection_item.h"
 #include "Scene_polylines_item.h"

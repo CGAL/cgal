@@ -4,7 +4,6 @@
 #include "Scene_c3t3_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polyhedron_item.h"
-#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 #include "Scene_image_item.h"
