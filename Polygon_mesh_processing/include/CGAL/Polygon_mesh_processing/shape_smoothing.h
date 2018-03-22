@@ -111,11 +111,11 @@ void smooth_curvature_flow_explicit(const FaceRange& faces, PolygonMesh& pmesh, 
   for(std::size_t i=0; i<nb_iterations; ++i)
   {
 
-  #ifdef CGAL_PMP_SMOOTHING_VERBOSE
-      std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
-  #endif
+    #ifdef CGAL_PMP_SMOOTHING_VERBOSE
+        std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
+    #endif
 
-  curvature_remesher.curvature_smoothing();
+    curvature_remesher.curvature_smoothing();
 
   }
 
@@ -341,6 +341,9 @@ void solve_mcf(const FaceRange& faces, PolygonMesh& mesh, const double& time,
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                              internal::Constrained_vertices_map<vertex_descriptor>());
 
+  // nb_iterations
+  std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+
 #if defined(CGAL_EIGEN3_ENABLED)
   #if EIGEN_VERSION_AT_LEAST(3,2,0)
     typedef typename Eigen::SparseMatrix<double> Eigen_sparse_matrix;
@@ -385,9 +388,13 @@ void solve_mcf(const FaceRange& faces, PolygonMesh& mesh, const double& time,
     internal::Shape_smoother<PolygonMesh, VertexPointMap, VCMap, Default_solver, GeomTraits>
         smoother(mesh, vpmap, vcmap);
     smoother.init_smoothing(faces);
-    smoother.setup_system(A, bx, by, bz, stiffness, time);
-    smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz);
-    smoother.update_mesh(Xx, Xy, Xz);
+
+    for(std::size_t i=0; i<nb_iterations; ++i)
+    {
+      smoother.setup_system(A, bx, by, bz, stiffness, time);
+      smoother.solve_system(A, Xx, Xy, Xz, bx, by, bz);
+      smoother.update_mesh(Xx, Xy, Xz);
+    }
   }
 
 }

@@ -195,9 +195,8 @@ public Q_SLOTS:
     // explicit scheme
     if(ui_widget.explicit_checkBox->isChecked())
     {
-      CGAL::Polygon_mesh_processing::smooth_along_curvature_flow(pmesh, time_step,
-                        CGAL::Polygon_mesh_processing::parameters::use_explicit_scheme(true)
-                                                                   .number_of_iterations(nb_iter));
+      smooth_along_curvature_flow(pmesh, time_step, parameters::use_explicit_scheme(true)
+                                                               .number_of_iterations(nb_iter));
     }
     else // implicit scheme
     {
@@ -212,10 +211,8 @@ public Q_SLOTS:
         stiffness_is_cleared = false;
       }
 
-      for(unsigned int iter=0; iter<nb_iter; ++iter)
-      {
-        solve_mcf(faces(pmesh), pmesh, time_step, stiffness, false, parameters::vertex_is_constrained_map(vcmap));
-      }
+      solve_mcf(faces(pmesh), pmesh, time_step, stiffness, false, parameters::vertex_is_constrained_map(vcmap)
+                                                                    .number_of_iterations(nb_iter));
     }
 
     // recenter scene
