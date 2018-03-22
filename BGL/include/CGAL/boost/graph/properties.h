@@ -241,6 +241,25 @@ void init_halfedge_indices(PolygonMesh& pm, HalfedgeIndexMap hid)
 
 } //namespace helpers
 
+
+// Needed by PMP::detec_features and Mesh_3
+enum vertex_feature_degree_t    { vertex_feature_degree };
+enum edge_is_feature_t          { edge_is_feature };
+
+enum vertex_time_stamp_t        { vertex_time_stamp};
+enum halfedge_time_stamp_t      { halfedge_time_stamp};
+enum face_time_stamp_t          { face_time_stamp};
+
+template <typename ID>
+struct vertex_incident_patches_t {
+  typedef ID type;
+};
+
+template <typename ID>
+struct face_patch_id_t {
+  typedef ID type;
+};
+
 } // namespace CGAL
 
 

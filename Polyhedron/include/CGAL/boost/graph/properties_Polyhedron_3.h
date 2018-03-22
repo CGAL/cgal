@@ -524,4 +524,9 @@ struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, boost::vertex_index
 }// end CGAL
 #undef CGAL_HDS_PARAM_
 
+
+
+#include <CGAL/boost/graph/properties_Polyhedron_3_time_stamp.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3_features.h>
+
 #endif // CGAL_BOOST_GRAPH_PROPERTIES_POLYHEDRON_3_H

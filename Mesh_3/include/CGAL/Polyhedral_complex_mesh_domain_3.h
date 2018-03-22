@@ -39,11 +39,9 @@
 
 #include <CGAL/Mesh_3/Polyline_with_context.h>
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
-#include <CGAL/Mesh_3/properties_Polyhedron_3.h>
+#include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/enum.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/adjacency_list.hpp>

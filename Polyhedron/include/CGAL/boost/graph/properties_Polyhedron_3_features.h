@@ -18,57 +18,29 @@
 //
 // Author(s)     : Andreas Fabri
 
-#ifndef CGAL_MESH_3_PROPERTIES_POLYHEDRON_3_H
-#define CGAL_MESH_3_PROPERTIES_POLYHEDRON_3_H
+#ifndef CGAL_PROPERTIES_POLYHEDRON_3_FEATURES_H
+#define CGAL_PROPERTIES_POLYHEDRON_3_FEATURES_H
 
-#include <CGAL/Mesh_3/properties.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
+#include <CGAL/Polyhedron_3.h>
 
 #define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
 
 namespace CGAL {
 
-struct Polyhedron_face_time_stamp_pmap
-{
-  typedef void                               key_type;
-  typedef std::size_t                        value_type;
-  typedef std::size_t                        reference;
-  typedef boost::read_write_property_map_tag category;
+  
+namespace internal{
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Plane_3)
+
+
+template <class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct Get_static_property_map {
+  typedef boost::graph_traits<CGAL::Polyhedron_3<Gt,I,HDS,A> > Graph_traits;
+  typedef CGAL::Static_property_map<typename Graph_traits::face_descriptor,
+                                    std::pair<int,int> > type;
 };
 
-template <typename Handle_type>
-std::size_t get(Polyhedron_face_time_stamp_pmap, Handle_type h)
-{
-  return h->time_stamp();
-}
+} // end namespace internal
 
-template <typename Handle_type>
-void put(Polyhedron_face_time_stamp_pmap, Handle_type h,
-         std::size_t ts)
-{
-  h->set_time_stamp(ts);
-}
-
-template <>
-struct Polyhedron_property_map<CGAL::vertex_time_stamp_t>
-{
-  template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-  struct bind_
-  {
-    typedef Polyhedron_face_time_stamp_pmap type;
-    typedef type const_type;
-  };
-};
-
-template <>
-struct Polyhedron_property_map<CGAL::halfedge_time_stamp_t>
-  : public Polyhedron_property_map<CGAL::vertex_time_stamp_t>
-{};
-
-template <>
-struct Polyhedron_property_map<CGAL::face_time_stamp_t>
-  : public Polyhedron_property_map<CGAL::vertex_time_stamp_t>
-{};
 
 
 template <typename Patch_id>
@@ -104,18 +76,6 @@ struct Polyhedron_property_map<CGAL::face_patch_id_t<Patch_id> >
 };
 
 
-
-namespace internal{
-BOOST_MPL_HAS_XXX_TRAIT_DEF(Plane_3)
-
-template <class Gt, class I, CGAL_HDS_PARAM_, class A>
-struct Get_static_property_map {
-  typedef boost::graph_traits<CGAL::Polyhedron_3<Gt,I,HDS,A> > Graph_traits;
-  typedef CGAL::Static_property_map<typename Graph_traits::face_descriptor,
-                                    std::pair<int,int> > type;
-};
-
-} // end namespace internal
 
 template <class Gt, class I, CGAL_HDS_PARAM_, class A>
 typename boost::lazy_enable_if<
@@ -286,4 +246,4 @@ struct Polyhedron_property_map<CGAL::vertex_incident_patches_t<Patch_id> >
 
 #undef CGAL_HDS_PARAM_
 
-#endif // CGAL_MESH_3_PROPERTIES_POLYHEDRON_3_H
+#endif // CGAL_PROPERTIES_POLYHEDRON_3_FEATURES_H
