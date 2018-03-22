@@ -1,10 +1,10 @@
 // Copyright (c) 2016 GeometryFactory (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -14,13 +14,15 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Sebastien Loriot
 
 #ifndef CGAL_BOOST_GRAPH_NEF_POLYHEDRON_TO_POLYGON_MESH_H
 #define CGAL_BOOST_GRAPH_NEF_POLYHEDRON_TO_POLYGON_MESH_H
+
+#include <CGAL/license/Nef_3.h>
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/algorithm.h>
@@ -341,13 +343,7 @@ void collect_polygon_mesh_info(
 
 } //end of namespace nef_to_pm
 
-/// \ingroup PkgBGL
-/// Converts an objet of type `Nef_polyhedron_3` into a polygon mesh model of `MutableFaceGraph`.
-/// Note that contrary to `Nef_polyhedron_3::convert_to_polyhedron()`, the output is not triangulated
-/// (but faces with more than one connected component of the boundary).
-/// The polygon mesh can be triangulated by setting `triangulate_all_faces` to `true` or by calling the function `triangulate_faces()`.
-/// \pre `Polygon_mesh` must have an internal point property map with value type being `Nef_polyhedron_3::Point_3`.
-/// \pre `nef.simple()`
+
 template <class Nef_polyhedron, class Polygon_mesh>
 void convert_nef_polyhedron_to_polygon_mesh(const Nef_polyhedron& nef, Polygon_mesh& pm, bool triangulate_all_faces = false)
 {
