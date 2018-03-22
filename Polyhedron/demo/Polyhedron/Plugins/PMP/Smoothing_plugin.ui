@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>462</width>
-    <height>319</height>
+    <width>467</width>
+    <height>351</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -147,6 +147,13 @@
         <widget class="QCheckBox" name="explicit_checkBox">
          <property name="text">
           <string>normalized scheme</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QCheckBox" name="border_button">
+         <property name="text">
+          <string>constrain border vertices</string>
          </property>
         </widget>
        </item>

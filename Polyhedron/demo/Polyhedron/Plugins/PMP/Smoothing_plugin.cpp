@@ -23,6 +23,7 @@
 #include <CGAL/utility.h>
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/property_map.h>
+#include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/mesh_smoothing.h>
 #include <CGAL/Polygon_mesh_processing/shape_smoothing.h>
@@ -182,6 +183,13 @@ public Q_SLOTS:
     const double time_step = ui_widget.time_step_spinBox->value();
     const unsigned int nb_iter = ui_widget.curvature_iter_spinBox->value();
 
+
+    if(ui_widget.border_button->isChecked())
+    {
+      collect_border_vertices(pmesh);
+    }
+
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     // explicit scheme
@@ -197,7 +205,7 @@ public Q_SLOTS:
       // If we changed item or if the stiffness cache is cleared (by the user hitting the button)
       if(index_id != last_index_id || stiffness_is_cleared)
       {
-        solve_mcf(faces(pmesh), pmesh, time_step, stiffness, true, parameters::all_default());
+        solve_mcf(faces(pmesh), pmesh, time_step, stiffness, true, parameters::vertex_is_constrained_map(vcmap));
         last_index_id = index_id;
 
         // reset the cache flag
@@ -206,7 +214,7 @@ public Q_SLOTS:
 
       for(unsigned int iter=0; iter<nb_iter; ++iter)
       {
-        solve_mcf(faces(pmesh), pmesh, time_step, stiffness, false, parameters::all_default());
+        solve_mcf(faces(pmesh), pmesh, time_step, stiffness, false, parameters::vertex_is_constrained_map(vcmap));
       }
     }
 
@@ -227,8 +235,20 @@ public Q_SLOTS:
 
   void on_actionItemAboutToBeDestroyed()
   {
-      last_index_id= -1;
+    last_index_id= -1;
   }
+
+  void collect_border_vertices(Polyhedron& pmesh)
+  {
+    for (vertex_descriptor v : vertices(pmesh))
+    {
+      if(is_border(v, pmesh))
+        put(vcmap, v);
+    }
+  }
+
+private:
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
 private:
   QAction* actionSmoothing_;
@@ -238,6 +258,9 @@ private:
   int last_index_id = -1;
   std::vector<CGAL::Triple<int, int, double> > stiffness;
   bool stiffness_is_cleared;
+
+  CGAL::Polygon_mesh_processing::internal::Constrained_vertices_map<vertex_descriptor> vcmap;
+
 
 };
 
