@@ -137,13 +137,13 @@ No new vertex is inserted, although degenerate faces are removed as a first step
 Angle and area smoothing algorithms are based on Surazhsky and Gotsman \cgalCite{cgal:sg-hqct-04}. 
 Since area smoothing considers only triangle areas as a smoothing criterion, it may result in long and skinny triangles,
 especially for meshes with highly irregular connectivity. However, area smoothing is guaranteed to improve the spatial
-distribution of the vertices over the area that is being smoothed. A simple example can be found at \cgalExample{Polygon_mesh_processing/mesh_smoothing_example.cpp}
+distribution of the vertices over the area that is being smoothed. (A simple example can be found in `Polygon_mesh_processing/mesh_smoothing_example.cpp`).
 
 \cgalFigureBegin{smooth_sphere, smooth_sphere.png}
 Mesh smoothing. (a) Input mesh.
 (b) Smoothing based on angles after 10 iterations.
 (c) Smoothing based on areas after 15 iterations.
-(d) Combination 5 iterations of smoothing based on angles followed by 1 iteration of smoothing based on areas. The combination is applied twice.
+(d) Applied twice a sequence of 5 iterations of smoothing based on angles followed by 1 iteration of smoothing based on areas.
 \cgalFigureEnd
 
 - For shape smoothing: `CGAL::Polygon_mesh_processing::smooth_along_curvature_flow()`
@@ -152,8 +152,8 @@ The curvature flow algorithm for shape smoothing is based on Desbrun et al \cgal
 The algorithm uses the mean curvature flow to calculate the translation of vertices along the surface normal with a speed equal
 to the mean curvature of the area that is being smoothed. This means that vertices on sharp corners slide faster.
 If the region around a vertex is flat, this vertex does not move (zero curvature). To avoid the formation of undesirable neck
-pinches the algorithm slows down the evolution in cylindrical regions. The smoothed surface converges to a conformal
-parameterization of the initial surface onto a sphere. A simple example can be found at \cgalExample{Polygon_mesh_processing/shape_smoothing_example.cpp}
+pinches the algorithm slows down the evolution in cylindrical regions. The smoothed shape converges to a sphere while staying conformally equivalent to its original shape. 
+(A simple example can be found in `Polygon_mesh_processing/shape_smoothing_example.cpp`).
 
 \cgalFigureBegin{shape_smoothing, shape_smoothing.png}
 (a) Shape smoothing on a dinosaur model using the normalized mean curvature flow. The resulted smoothed shape is colored white.
