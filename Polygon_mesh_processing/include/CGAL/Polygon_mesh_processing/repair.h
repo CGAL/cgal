@@ -107,6 +107,41 @@ namespace debug{
     }
     return out;
   }
+
+  template <class FaceRange, class TriangleMesh>
+  void dump_cc_faces(const FaceRange& cc_faces, const TriangleMesh& tm, std::ostream& output)
+  {
+    typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::const_type Vpm;
+    typedef typename boost::property_traits<Vpm>::value_type Point_3;
+    typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+    typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+
+    Vpm vpm = get(boost::vertex_point, tm);
+
+    int id=0;
+    std::map<vertex_descriptor, int> vids;
+    BOOST_FOREACH(face_descriptor f, cc_faces)
+    {
+      if ( vids.insert( std::make_pair( target(halfedge(f, tm), tm), id) ).second ) ++id;
+      if ( vids.insert( std::make_pair( target(next(halfedge(f, tm), tm), tm), id) ).second ) ++id;
+      if ( vids.insert( std::make_pair( target(next(next(halfedge(f, tm), tm), tm), tm), id) ).second ) ++id;
+    }
+    output << std::setprecision(17);
+    output << "OFF\n" << vids.size() << " " << cc_faces.size() << " 0\n";
+    std::vector<Point_3> points(vids.size());
+    typedef std::pair<const vertex_descriptor, int> Pair_type;
+    BOOST_FOREACH(Pair_type p, vids)
+      points[p.second]=get(vpm, p.first);
+    BOOST_FOREACH(Point_3 p, points)
+      output << p << "\n";
+    BOOST_FOREACH(face_descriptor f, cc_faces)
+    {
+      output << "3 "
+             << vids[ target(halfedge(f, tm), tm) ] << " "
+             << vids[ target(next(halfedge(f, tm), tm), tm) ] << " "
+             << vids[ target(next(next(halfedge(f, tm), tm), tm), tm) ] << "\n";
+    }
+  }
 } //end of namespace debug
 
 template <class HalfedgeGraph, class VertexPointMap, class Traits>
