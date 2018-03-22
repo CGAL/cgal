@@ -1387,6 +1387,7 @@ remove_self_intersections_one_step(TriangleMesh& tm,
                                    std::set<face_descriptor>& faces_to_remove,
                                    VertexPointMap& vpmap,
                                    int step,
+                                   bool preserve_genus,
                                    bool verbose)
 {
   std::set<face_descriptor> faces_to_remove_copy = faces_to_remove;
@@ -1601,14 +1602,52 @@ remove_self_intersections_one_step(TriangleMesh& tm,
             std::cout << "  DEBUG: CC not handled due to the presence of  "
                       << nb_cycles << " of boundary edges\n";
           topology_issue = true;
+          continue;
         }
         else
         {
-          if(verbose)
-            std::cout << "  DEBUG: CC not handled because it is not a topological disk\n";
-          all_fixed = false;
+          if (preserve_genus)
+          {
+            if(verbose)
+              std::cout << "  DEBUG: CC not handled because it is not a topological disk (preserve_genus=true)\n";
+            all_fixed = false;
+            continue;
+          }
+          // count the number of cycles of halfedges of the boundary
+          std::map<vertex_descriptor, vertex_descriptor> bhs;
+          BOOST_FOREACH(halfedge_descriptor h, cc_border_hedges)
+          {
+            bhs[source(h, tm)]=target(h, tm);
+          }
+          int nbc=0;
+          while(!bhs.empty())
+          {
+            ++nbc;
+            std::pair<vertex_descriptor, vertex_descriptor > top=*bhs.begin();
+            bhs.erase(bhs.begin());
+            do
+            {
+              typename std::map<vertex_descriptor, vertex_descriptor>::iterator
+                it_find = bhs.find(top.second);
+              if (it_find == bhs.end()) break;
+              top = *it_find;
+              bhs.erase(it_find);
+            }
+            while(true);
+          }
+          if (nbc!=1){
+            if(verbose)
+              std::cout << "  DEBUG: CC not handled because it is not a topological disk("
+                        << nbc << " boundary cycles)<<\n";
+            all_fixed = false;
+            continue;
+          }
+          else
+          {
+            if(verbose)
+              std::cout << "  DEBUG: CC that is not a topological disk but has only one boundary cycle(preserve_genus=false)\n";
+          }
         }
-        continue;
       }
 
       // sort halfedges so that they describe the sequence
@@ -1846,6 +1885,7 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np)
 
   const int max_steps = boost::choose_param(boost::get_param(np, internal_np::number_of_iterations), 7);
   bool verbose = boost::choose_param(boost::get_param(np, internal_np::verbosity_level), 0) > 0;
+  bool preserve_genus = boost::choose_param(boost::get_param(np, internal_np::preserve_genus), true);
 
   if (verbose)
     std::cout << "DEBUG: Starting remove_self_intersections, is_valid(tm)? " << is_valid(tm) << "\n";
@@ -1885,7 +1925,7 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np)
     }
 
     cpp11::tie(all_fixed, topology_issue) =
-      remove_self_intersections_one_step(tm, faces_to_remove, vpm, step, verbose);
+      remove_self_intersections_one_step(tm, faces_to_remove, vpm, step, preserve_genus, verbose);
     if (all_fixed && topology_issue)
     {
       if (verbose)
