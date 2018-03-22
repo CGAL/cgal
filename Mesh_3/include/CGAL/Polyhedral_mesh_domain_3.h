@@ -47,8 +47,6 @@
 #include <CGAL/Mesh_3/Profile_counter.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
-#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
-#include <CGAL/boost/graph/Graph_with_descriptor_with_graph_fwd.h>
 
 #include <boost/optional.hpp>
 #include <boost/none.hpp>

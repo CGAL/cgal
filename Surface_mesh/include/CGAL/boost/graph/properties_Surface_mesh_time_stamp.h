@@ -21,6 +21,8 @@
 #ifndef CGAL_PROPERTIES_SURFACE_MESH_TIME_STAMP_H
 #define CGAL_PROPERTIES_SURFACE_MESH_TIME_STAMP_H
 
+#ifndef DOXYGEN_RUNNING
+
 #include <CGAL/Surface_mesh.h>
 #include <set>
 
@@ -120,5 +122,7 @@ inline get(CGAL::face_time_stamp_t, const Surface_mesh<P> & smesh)
 } // namespace CGAL
 
 #undef CGAL_PROPERTY_SURFACE_MESH_RETURN_TYPE
+
+#endif // DOXYGEN_RUNNING
 
 #endif //CGAL_PROPERTIES_SURFACE_MESH_TIME_STAMP_H

@@ -21,6 +21,8 @@
 #ifndef CGAL_PROPERTIES_SURFACE_MESH_FEATURES_H
 #define CGAL_PROPERTIES_SURFACE_MESH_FEATURES_H
 
+#ifndef DOXYGEN_RUNNING
+
 #include <CGAL/Surface_mesh.h>
 #include <set>
 
@@ -183,5 +185,7 @@ typename boost::lazy_disable_if<
 } // namespace CGAL
 
 #undef CGAL_PROPERTY_SURFACE_MESH_RETURN_TYPE
+
+#endif // DOXYGEN_RUNNING
 
 #endif //CGAL_PROPERTIES_SURFACE_MESH_FEATURES_H
