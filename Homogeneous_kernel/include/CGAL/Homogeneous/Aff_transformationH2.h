@@ -1068,7 +1068,7 @@ cartesian(int i, int j) const
               default: CGAL_ASSUME(false);
             }
   }
-  GAL_ASSUME(false);
+  CGAL_ASSUME(false);
 }
 
 } //namespace CGAL
