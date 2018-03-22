@@ -99,9 +99,9 @@ public:
     ui_widget.time_step_spinBox->setMinimum(1e-6);
 
     // todo: replace this spinbox with a sliding bar
-    ui_widget.tolerance_spinBox->setValue(0.00001);
-    ui_widget.tolerance_spinBox->setSingleStep(0.0000001);
-    ui_widget.tolerance_spinBox->setMinimum(1e-7);
+    ui_widget.precision_spinBox->setValue(0.00001);
+    ui_widget.precision_spinBox->setSingleStep(0.0000001);
+    ui_widget.precision_spinBox->setMinimum(1e-7);
 
     ui_widget.projection_checkBox->setChecked(true);
 
@@ -159,12 +159,12 @@ public Q_SLOTS:
 
     unsigned int nb_iter = ui_widget.areas_iter_spinBox->value();
     bool projection = ui_widget.projection_checkBox->isChecked();
-    const double tolerance = ui_widget.tolerance_spinBox->value();
+    const double precision = ui_widget.precision_spinBox->value();
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
     smooth_areas(pmesh, parameters::number_of_iterations(nb_iter)
                                     .do_project(projection)
-                                    .gradient_descent_tolerance(tolerance));
+                                    .gradient_descent_precision(precision));
 
     poly_item->invalidateOpenGLBuffers();
     poly_item->itemChanged();

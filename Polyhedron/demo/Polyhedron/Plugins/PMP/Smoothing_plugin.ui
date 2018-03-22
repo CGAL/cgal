@@ -75,12 +75,12 @@
          <item>
           <widget class="QLabel" name="label_4">
            <property name="text">
-            <string>tolerance:</string>
+            <string>precision:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="tolerance_spinBox">
+          <widget class="QDoubleSpinBox" name="precision_spinBox">
            <property name="decimals">
             <number>7</number>
            </property>
