@@ -1381,13 +1381,13 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 }
 
 /// \cond SKIP_IN_MANUAL
-template <class TriangleMesh,  class face_descriptor, class NamedParameters>
+template <class TriangleMesh,  class face_descriptor, class VertexPointMap>
 std::pair< bool, bool >
 remove_self_intersections_one_step(TriangleMesh& tm,
                                    std::set<face_descriptor>& faces_to_remove,
+                                   VertexPointMap& vpmap,
                                    int step,
-                                   bool verbose,
-                                   NamedParameters np)
+                                   bool verbose)
 {
   std::set<face_descriptor> faces_to_remove_copy = faces_to_remove;
 
@@ -1401,9 +1401,6 @@ remove_self_intersections_one_step(TriangleMesh& tm,
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
   typedef typename graph_traits::edge_descriptor edge_descriptor;
   typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpmap = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
-                                      get_property_map(vertex_point, tm));
 
   bool something_was_done = false; // indicates if a region was successfully remeshed
   bool all_fixed = true; // indicates if all removal went well
@@ -1837,11 +1834,18 @@ remove_self_intersections_one_step(TriangleMesh& tm,
 }
 
 template <class TriangleMesh, class NamedParameters>
-bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np,
-                               const int max_steps = 7, bool verbose=false)
+bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np)
 {
   typedef boost::graph_traits<TriangleMesh> graph_traits;
   typedef typename graph_traits::face_descriptor face_descriptor;
+
+  // named parameter extraction
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VertexPointMap;
+  VertexPointMap vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+                                           get_property_map(vertex_point, tm));
+
+  const int max_steps = boost::choose_param(boost::get_param(np, internal_np::number_of_iterations), 7);
+  bool verbose = boost::choose_param(boost::get_param(np, internal_np::verbosity_level), 0) > 0;
 
   if (verbose)
     std::cout << "DEBUG: Starting remove_self_intersections, is_valid(tm)? " << is_valid(tm) << "\n";
@@ -1881,7 +1885,7 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np,
     }
 
     cpp11::tie(all_fixed, topology_issue) =
-      remove_self_intersections_one_step(tm, faces_to_remove, step, verbose, np);
+      remove_self_intersections_one_step(tm, faces_to_remove, vpm, step, verbose);
     if (all_fixed && topology_issue)
     {
       if (verbose)
@@ -1895,10 +1899,9 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np,
 }
 
 template <class TriangleMesh>
-bool remove_self_intersections(TriangleMesh& tm,
-                               const int max_steps = 7, bool verbose=false)
+bool remove_self_intersections(TriangleMesh& tm)
 {
-  return remove_self_intersections(tm, parameters::all_default(), max_steps, verbose);
+  return remove_self_intersections(tm, parameters::all_default());
 }
 /// \endcond
 
