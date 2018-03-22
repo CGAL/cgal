@@ -159,7 +159,7 @@ void Polyhedron_demo_snap_polylines_plugin::on_actionSnapPolylines_triggered()
       for (std::size_t j = 0; j < polylines[i].size(); ++ j)
       {
         poly.push_back (polylines[i][j]);
-        typename Get_snapping_points_map::Map_pts::iterator
+        Get_snapping_points_map::Map_pts::iterator
           it = snapping_pts.map_pts->find (std::make_pair (i, j));
         if (it == snapping_pts.map_pts->end())
           continue;
