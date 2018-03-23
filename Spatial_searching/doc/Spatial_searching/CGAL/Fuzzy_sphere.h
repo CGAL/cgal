@@ -8,15 +8,6 @@ A fuzzy sphere with radius \f$ r\f$ and fuzziness value \f$ \epsilon\f$ has
 as inner approximation a sphere with radius \f$ r-\epsilon\f$ and
 as outer approximation a sphere with radius \f$ r+\epsilon\f$.
 
-\attention The fuzziness of a `Fuzzy_sphere` is specified by a parameter \f$ \epsilon\f$
-denoting a maximal allowed distance to the boundary of a sphere.
-If the distance to the boundary is greater than \f$ \epsilon\f$, points inside the
-object are always reported and points outside the sphere are never reported.
-Points whose distance to the boundary is less than or equal to \f$ \epsilon\f$
-may or may not be reported. Subsequently, points on the inner and outer spheres
-may or may not be reported. Specifically when \f$ \epsilon = 0\f$, points
-on the sphere of radius \f$ r\f$ may or may not be reported.
-
 \tparam Traits must be a model of the concept
 `SearchTraits`, for example `CGAL::Cartesian_d<double>`.
 

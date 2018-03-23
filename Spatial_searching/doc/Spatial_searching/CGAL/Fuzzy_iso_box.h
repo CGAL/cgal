@@ -3,15 +3,9 @@ namespace CGAL {
 /*!
 \ingroup RangeQueryItemClasses
 
-The class `Fuzzy_iso_box` implements fuzzy `d`-dimensional iso boxes. A fuzzy iso
-box with fuzziness value \f$ \epsilon\f$ has as inner and outer approximations
+The class `Fuzzy_iso_box` implements fuzzy `d`-dimensional (closed) iso boxes.
+A fuzzy iso box with fuzziness value \f$ \epsilon\f$ has as inner and outer approximations
 a box respectively eroded and dilated by a `d`-dim square with side length \f$ \epsilon\f$.
-
-\attention Points in the interior of the inner approximation are always reported and points
-that are not in the closure of the outer approximation are never reported. Other
-points may or may not be reported. Subsequently, points on the boundary of the
-inner and outer approximations may or may not be reported. Specifically when \f$ \epsilon = 0\f$,
-points on the boundary of the box may or may not be reported.
 
 \tparam Traits must be a model of the concept
 `SearchTraits`, for example `CGAL::Search_traits_2<CGAL::Simple_cartesian<double> >`.
