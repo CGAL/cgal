@@ -148,7 +148,7 @@ GeneralDistance, Splitter, SpatialTree>`
 
 \subsection Spatial_searchingRangeSearching Range Searching
 
-<I>Exact range searching</I> and <I>approximate range searching</I> is
+<I>Exact range searching</I> and <I>approximate range searching</I> are
 supported using exact or fuzzy `d`-dimensional objects enclosing a
 region. The fuzziness of the query object is specified by a parameter
 \f$ \epsilon\f$ used to define <em>inner</em> and <em>outer</em>
