@@ -916,25 +916,26 @@ cartesian(int i, int j) const
             {
               case 0: return FT(_cos) / FT(_den);
               case 1: return - FT(_sin) / FT(_den);
-              case 2: return RT(0);
-              default: CGAL_ASSUME(false);
+              case 2: return FT(0);
+              default: CGAL_assume(false);
             }
     case 1: switch (j)
             {
               case 0: return FT(_sin) / FT(_den);
               case 1: return FT(_cos) / FT(_den);
               case 2: return FT(0);
-              default: CGAL_ASSUME(false);
+              default: CGAL_assume(false);
             }
     case 2: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(0);
               case 2: return FT(1);
-              default: CGAL_ASSUME(false);
+              default: CGAL_assume(false);
             }
   }
-  CGAL_ASSUME(false);
+  CGAL_assume(false);
+  return FT(0);
 }
 
 template < class R >
@@ -950,24 +951,25 @@ homogeneous(int i, int j) const
               case 0: return _sf_num;
               case 1: return RT(0);
               case 2: return RT(0);
-              default: CGAL_ASSUME(false);
+              default: CGAL_assume(false);
             }
     case 1: switch (j)
             {
               case 0: return RT(0);
               case 1: return _sf_num;
               case 2: return RT(0);
-              default: CGAL_ASSUME(false);
+              default: CGAL_assume(false);
             }
     case 2: switch (j)
             {
               case 0: return RT(0);
               case 1: return RT(0);
               case 2: return _sf_den;
-              default: CGAL_ASSUME(false);
+              default: CGAL_assume(false);
             }
   }
-  CGAL_ASSUME(false);
+  CGAL_assume(false);
+  return RT(0);
 }
 
 template <class R>
@@ -983,24 +985,25 @@ cartesian(int i, int j) const
               case 0: return FT(_sf_num) / FT(_sf_den);
               case 1: return FT(0);
               case 2: return FT(0);
-              default: CGAL_ASSUME(false);
+              default: CGAL_assume(false);
             }
     case 1: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(_sf_num) / FT(_sf_den);
               case 2: return FT(0);
-              default: CGAL_ASSUME(false);
+              default: CGAL_assume(false);
             }
     case 2: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(0);
               case 2: return FT(1);
-              default: CGAL_ASSUME(false);
+              default: CGAL_assume(false);
             }
   }
- CGAL_ASSUME(false);
+ CGAL_assume(false);
+ return FT(0);
 }
 
 template < class R >
@@ -1017,24 +1020,25 @@ homogeneous(int i, int j) const
               case 0: return l.b()*l.b() - l.a()*l.a();
               case 1: return l.a()*l.b()*mRT2;
               case 2: return l.a()*l.c()*mRT2;
-              default: CGAL_ASSUME(false);
+              default: CGAL_assume(false);
             }
     case 1: switch (j)
             {
               case 0: return l.a()*l.b()*mRT2;
               case 1: return l.a()*l.a() - l.b()*l.b();
               case 2: return l.b()*l.c()*mRT2;
-              default: CGAL_ASSUME(false);
+              default: CGAL_assume(false);
             }
     case 2: switch (j)
             {
               case 0: return RT(0);
               case 1: return RT(0);
               case 2: return l.a()*l.a() + l.b()*l.b();
-              default: CGAL_ASSUME(false);
+              default: CGAL_assume(false);
             }
   }
-  CGAL_ASSUME(false);
+  CGAL_assume(false);
+  return RT(0);
 }
 
 template <class R>
@@ -1051,24 +1055,25 @@ cartesian(int i, int j) const
               case 0: return FT( l.b()-l.a() ) / FT( l.a()+l.b());
               case 1: return FT( homogeneous(0,1)) / de;
               case 2: return FT( homogeneous(0,2)) / de;
-              default: CGAL_ASSUME(false);
+              default: CGAL_assume(false);
             }
     case 1: switch (j)
             {
               case 0: return FT( homogeneous(1,0)) / de;
               case 1: return FT( l.a()-l.b() ) / FT( l.a()+l.b());
               case 2: return FT( homogeneous(1,2)) / de;
-              default: CGAL_ASSUME(false);
+              default: CGAL_assume(false);
             }
     case 2: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(0);
               case 2: return FT(1);
-              default: CGAL_ASSUME(false);
+              default: CGAL_assume(false);
             }
   }
-  CGAL_ASSUME(false);
+  CGAL_assume(false);
+  return FT(0);
 }
 
 } //namespace CGAL

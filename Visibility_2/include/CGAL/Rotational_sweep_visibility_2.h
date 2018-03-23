@@ -129,7 +129,7 @@ private:
         return 1;
       case LEFT_TURN:
         return 2;
-      default: CGAL_ASSUME(false);
+      default: CGAL_assume(false);
       }
       return -1;
     }
@@ -223,7 +223,7 @@ private:
                 == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
           else
             return true;
-        default: CGAL_ASSUME(false);
+        default: CGAL_assume(false);
         }
       case LEFT_TURN:
         switch (Visibility_2::orientation_2(geom_traits, s1, t1, s2)) {
@@ -241,7 +241,7 @@ private:
                 == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
           else
             return true;
-        default: CGAL_ASSUME(false);
+        default: CGAL_assume(false);
         }
       }
 
