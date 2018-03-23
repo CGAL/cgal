@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>467</width>
-    <height>351</height>
+    <height>353</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -116,13 +116,6 @@
          <item>
           <widget class="QSpinBox" name="curvature_iter_spinBox"/>
          </item>
-         <item>
-          <widget class="QPushButton" name="cache_button">
-           <property name="text">
-            <string>clear cache</string>
-           </property>
-          </widget>
-         </item>
         </layout>
        </item>
        <item row="0" column="2">
@@ -154,6 +147,13 @@
         <widget class="QCheckBox" name="border_button">
          <property name="text">
           <string>constrain border vertices</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QPushButton" name="cache_button">
+         <property name="text">
+          <string>clear cache</string>
          </property>
         </widget>
        </item>

@@ -183,12 +183,10 @@ public Q_SLOTS:
     const double time_step = ui_widget.time_step_spinBox->value();
     const unsigned int nb_iter = ui_widget.curvature_iter_spinBox->value();
 
-
     if(ui_widget.border_button->isChecked())
     {
       collect_border_vertices(pmesh);
     }
-
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -221,7 +219,6 @@ public Q_SLOTS:
     poly_item->invalidateOpenGLBuffers();
     poly_item->itemChanged();
     QApplication::restoreOverrideCursor();
-
   }
 
   void on_clean_cache_clicked()
