@@ -1,93 +1,121 @@
-// file          : test/Spatial_searching/Circular_query.C
 // test whether circular queries are computed correctly for random data
 //
 // 1) generate list of query points using report_all
 // 2) remove and check reported points from these list
 // 3) check if no remaining points should have been reported
 
+#include "Point_with_info.h"
+
 #include <CGAL/Cartesian.h>
-#include <cassert>
+
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_2.h>
 #include <CGAL/Search_traits_adapter.h>
-#include <CGAL/point_generators_2.h>
-#include <CGAL/algorithm.h>
 #include <CGAL/Fuzzy_sphere.h>
+
+#include <CGAL/algorithm.h>
 #include <CGAL/iterator.h>
-#include "Point_with_info.h"
+#include <CGAL/point_generators_2.h>
 
-typedef CGAL::Cartesian<double> K;
-typedef K::Point_2 Point;
-typedef CGAL::Random_points_in_square_2<Point> Random_points_iterator;
-typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
-typedef CGAL::Search_traits_2<K>                Traits;
+#include <CGAL/boost/iterator/transform_iterator.hpp>
+
+#include <cassert>
+#include <iostream>
+#include <list>
+#include <vector>
+
+typedef CGAL::Cartesian<double>                                        K;
+typedef K::FT                                                          FT;
+typedef K::Point_2                                                     Point;
+
+typedef CGAL::Random_points_in_square_2<Point>                         Random_points_iterator;
+typedef CGAL::Counting_iterator<Random_points_iterator>                N_Random_points_iterator;
+typedef CGAL::Search_traits_2<K>                                       Traits;
+
 //for Point_with_info
-typedef Point_with_info_helper<Point>::type                                          Point_with_info;
-typedef Point_property_map<Point>                                                    Ppmap;
-typedef CGAL::Search_traits_adapter<Point_with_info,Ppmap,Traits>                    Traits_with_info;
+typedef Point_with_info_helper<Point>::type                            Point_with_info;
+typedef Point_property_map<Point>                                      Ppmap;
+typedef CGAL::Search_traits_adapter<Point_with_info,Ppmap,Traits>      Traits_with_info;
 
-template <class Traits>
-void run(std::list<Point> all_points){
-  typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_circle;
-  typedef CGAL::Kd_tree<Traits> Tree;
+template <class SearchTraits, class Tree>
+void run_with_fuzziness(std::list<Point> all_points, // intentional copy
+                        const Tree& tree,
+                        const Point& center,
+                        const FT radius,
+                        const FT fuzziness)
+{
+  typedef CGAL::Fuzzy_sphere<SearchTraits> Fuzzy_circle;
 
-  // Insert also the N points in the tree
-  Tree tree(
-    boost::make_transform_iterator(all_points.begin(),Create_point_with_info<typename Traits::Point_d>()),
-    boost::make_transform_iterator(all_points.end(),Create_point_with_info<typename Traits::Point_d>())
-  );
+  Fuzzy_circle default_range(typename SearchTraits::Point_d(center), radius);
+  std::list<typename SearchTraits::Point_d> result;
+  tree.search(std::back_inserter(result), default_range);
 
-  // define exact circular range query  (fuzziness=0)
-  Point center(0.25, 0.25);
-  Fuzzy_circle exact_range(typename Traits::Point_d(center), 0.25);
-
-  std::list<typename Traits::Point_d> result;
-  tree.search(std::back_inserter( result ), exact_range);
-
-  typedef std::vector<typename Traits::Point_d> V;
+  typedef std::vector<typename SearchTraits::Point_d> V;
   V vec;
   vec.resize(result.size());
-  typename V::iterator it = tree.search(vec.begin(), exact_range);
+  typename V::iterator it = tree.search(vec.begin(), default_range);
   assert(it == vec.end());
-
-  tree.search(CGAL::Emptyset_iterator(), Fuzzy_circle(center, 0.25) ); //test compilation when Point != Traits::Point_d
-
-  // test the results of the exact query
-  std::list<Point> copy_all_points(all_points);
-  for (typename std::list<typename Traits::Point_d>::iterator pt=result.begin(); (pt != result.end()); ++pt) {
-    // a point with distance d to the center may be reported if d <= r
-    assert(CGAL::squared_distance(center, get_point(*pt)) <= 0.0625);
-    copy_all_points.remove(get_point(*pt));
-  }
-
-  for (std::list<Point>::iterator pt=copy_all_points.begin(); (pt != copy_all_points.end()); ++pt) {
-    if(CGAL::squared_distance(center, *pt) < 0.0625){
-      // all points with a distance d < r must be reported
-      std::cout << "we missed " << *pt << " with distance = " << CGAL::squared_distance(center,*pt) << std::endl;
-    }
-    assert(CGAL::squared_distance(center, *pt) >= 0.0625);
-  }
-
   result.clear();
-  // approximate range searching using value 0.125 for fuzziness parameter
-  Fuzzy_circle approximate_range(typename Traits::Point_d(center), 0.25, 0.125);
 
-  tree.search(std::back_inserter( result ), approximate_range);
-  // test the results of the approximate query
-  for (typename std::list<typename Traits::Point_d>::iterator pt=result.begin(); (pt != result.end()); ++pt) {
-    // a point with distance d to the center may be reported if d <= r + eps
-    assert(CGAL::squared_distance(center,get_point(*pt))<=0.140625); // (0.25 + 0.125)²
+  std::cout << "test with center: " << center << " radius: " << radius << " eps: " << fuzziness << "... ";
+
+  tree.search(CGAL::Emptyset_iterator(), Fuzzy_circle(center, radius) ); //test compilation when Point != Traits::Point_d
+
+  // range searching
+  Fuzzy_circle approximate_range(typename SearchTraits::Point_d(center), radius, fuzziness);
+  tree.search(std::back_inserter(result), approximate_range);
+  std::cout << result.size() << " hits... Verifying correctness...";
+
+  // test the results
+  const FT sq_inner_radius = (fuzziness > radius) ? 0 : (radius - fuzziness) * (radius - fuzziness);
+  const FT sq_outer_radius = (radius + fuzziness) * (radius + fuzziness);
+
+  for(typename std::list<typename SearchTraits::Point_d>::iterator pt=result.begin(); (pt != result.end()); ++pt)
+  {
+    // a point with distance d to the center can only be reported if d <= r + eps
+    bool is_correct = (CGAL::squared_distance(center, get_point(*pt)) <= sq_outer_radius);
+    if(!is_correct)
+      std::cout << get_point(*pt) << " at distance = " << CGAL::squared_distance(center, get_point(*pt))
+                << " should not have been reported (max is: " << sq_outer_radius << ")" << std::endl;
+    assert(is_correct);
     all_points.remove(get_point(*pt));
   }
 
-  for (std::list<Point>::iterator pt=all_points.begin(); (pt != all_points.end()); ++pt) {
-    // all points with a distance d < r - eps must be reported
-    if(CGAL::squared_distance(center, *pt) < 0.015625){ // (0.25 - 0.125)²
-      std::cout << "we missed " << *pt << " with distance = " << CGAL::squared_distance(center,*pt) << std::endl;
-    }
-    assert(CGAL::squared_distance(center,*pt) >= 0.015625);
+  for(std::list<Point>::const_iterator pt=all_points.begin(); (pt != all_points.end()); ++pt)
+  {
+    // all points with a distance d <= r - eps must have been reported
+    bool is_correct = (CGAL::squared_distance(center,*pt) > sq_inner_radius);
+    if(!is_correct)
+      std::cout << "missed " << *pt << " with distance = " << CGAL::squared_distance(center,*pt) << std::endl;
+
+    assert(is_correct);
   }
+
   std::cout << "done" << std::endl;
+}
+
+template <class SearchTraits>
+void run(std::list<Point> all_points) // intentional copy
+{
+  typedef CGAL::Kd_tree<SearchTraits> Tree;
+
+  // Insert also the N points in the tree
+  Tree tree(
+    boost::make_transform_iterator(all_points.begin(), Create_point_with_info<typename SearchTraits::Point_d>()),
+    boost::make_transform_iterator(all_points.end(), Create_point_with_info<typename SearchTraits::Point_d>())
+  );
+
+  Point center(0.25, 0.25);
+  run_with_fuzziness<SearchTraits>(all_points, tree, center, 0. /*radius*/, 0. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, tree, center, 0.25 /*radius*/, 0. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, tree, center, 0.25 /*radius*/, 0.125 /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, tree, center, 0.25 /*radius*/, 0.25 /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, tree, center, 0.25 /*radius*/, 1. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, tree, center, 1. /*radius*/, 0. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, tree, center, 1. /*radius*/, 0.25 /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, tree, center, 10. /*radius*/, 0. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, tree, center, 10. /*radius*/, 10. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, tree, center, 10. /*radius*/, 100. /*fuzziness*/);
 }
 
 int main() {
@@ -100,6 +128,12 @@ int main() {
   // construct list containing N random points
   std::list<Point> all_points(N_Random_points_iterator(rpit,0),
                               N_Random_points_iterator(N));
+
+  // add some interesting points
+  all_points.push_back(Point(0.25, 0.25));
+  all_points.push_back(Point(0.375, 0.25));
+  all_points.push_back(Point(0.5, 0.25));
+  all_points.push_back(Point(1.25, 0.25));
 
   run<Traits>(all_points);
   run<Traits_with_info>(all_points);
