@@ -14,10 +14,10 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0+
 //
 //
 // Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
-
 
 #ifndef CURVATURE_FLOW_NEW_IMPL_H
 #define CURVATURE_FLOW_NEW_IMPL_H
