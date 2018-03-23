@@ -286,6 +286,10 @@ public:
   {
     return corners_.size();
   }
+  size_type number_of_corners() const
+  {
+    return corners_.size();
+  }
 
   void rescan_after_load_of_triangulation();
 
