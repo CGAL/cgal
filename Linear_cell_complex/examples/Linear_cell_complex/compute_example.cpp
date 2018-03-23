@@ -23,7 +23,7 @@ void simplify_path(CGAL::Path_on_surface<LCC_3_cmap>& path,
   if (draw)
   {
     v.push_back(&path);
-    display(path.get_map(), v);
+    // display(path.get_map(), v);
   }
 
   CGAL::Path_on_surface<LCC_3_cmap>* prevp=&path;
@@ -31,32 +31,41 @@ void simplify_path(CGAL::Path_on_surface<LCC_3_cmap>& path,
   do
   {
     curp=new CGAL::Path_on_surface<LCC_3_cmap>(*prevp);
+    /* std::cout<<"+ "; curp->display_negative_turns();
+    std::cout<<"- "; curp->display_positive_turns();
+    std::cout<<" -> "<<std::flush; */
+
     if (curp->bracket_flattening_one_step())
     {
       if (draw) { v.push_back(curp); }
       prevp=curp;
+
+      /* std::cout<<"+ "; curp->display_negative_turns();
+      std::cout<<"- "; curp->display_positive_turns();
+      std::cout<<std::endl; */
     }
     else
     {
-      delete curp;
-      curp=NULL;
+      if (curp->remove_spurs())
+      {
+        if (draw) { v.push_back(curp); }
+        prevp=curp;
+
+       /* std::cout<<"+ "; curp->display_negative_turns();
+        std::cout<<"- "; curp->display_positive_turns();
+        std::cout<<std::endl; */
+      }
+      else
+      {
+        delete curp;
+        curp=NULL;
+        // std::cout<<"unchanged."<<std::endl;
+      }
     }
-     if (draw /* && nbtest==1*/)
-      display(path.get_map(), v);
+     // if (draw /* && nbtest==1*/)
+     // display(path.get_map(), v);
   }
   while(curp!=NULL);
-
-  curp=new CGAL::Path_on_surface<LCC_3_cmap>(*prevp);
-  if (curp->remove_spurs())
-  {
-    if (draw) { v.push_back(curp); }
-    prevp=curp;
-  }
-  else
-  {
-    delete curp;
-    curp=NULL;
-  }
 
   if (draw)
   { display(path.get_map(), v); }
@@ -245,7 +254,7 @@ void test_all_cases_spurs_and_bracket()
   generate_negative_bracket_special2(path);
   std::cout<<"Negative special case 1 (-1 -2^10): "<<std::flush;
   path.display_negative_turns();
-  simplify_path(path, true);
+  simplify_path(path, false);
   std::cout<<" -> +"; path.display_positive_turns();
   std::cout<<" -"; path.display_negative_turns(); std::cout<<std::endl;
 
@@ -255,7 +264,7 @@ int main(int argc, char** argv)
 {
   // test_file(argc, argv);
   // test_some_random_paths_on_cube();
-   test_all_cases_spurs_and_bracket();
+  test_all_cases_spurs_and_bracket();
 
   return EXIT_SUCCESS;
 }

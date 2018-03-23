@@ -63,10 +63,10 @@ public:
   { m_path.clear(); }
   
   std::size_t next_index(std::size_t i) const
-  { return (i==m_path.size()-1?0:i+1); }
+  { return (is_closed() && i==m_path.size()-1?0:i+1); }
 
   std::size_t prev_index(std::size_t i) const
-  { return (i==0?m_path.size()-1:i-1); }
+  { return (is_closed() && i==0?m_path.size()-1:i-1); }
 
   Dart_const_handle get_ith_dart(std::size_t i) const
   {
@@ -284,24 +284,32 @@ public:
     { transform_negative_bracket(begin, end, new_path); }
   }
 
+  // copy all darts starting from begin and going to the dart before end
+  // from this path to new_path.
+  void copy_rest_of_path(std::size_t begin, std::size_t end,
+                         std::vector<Dart_const_handle>& new_path)
+  {
+    assert(end<=length());
+    assert(begin<=end);
+    while(begin!=end)
+    {
+      new_path.push_back(get_ith_dart(begin));
+      ++begin;
+    }
+  }
+
   bool bracket_flattening_one_step()
   {
     if (is_empty()) return false;
 
-    bool res=false;
     std::vector<Dart_const_handle> new_path;
     std::size_t i;
     bool positive=false;
 
-    for (i=0; i<m_path.size()-1; )
+    for (i=0; i<m_path.size()-1; ++i)
     {
       positive=(next_turn(i)==1);
-      if (!positive && next_negative_turn(i)!=1)
-      {
-        new_path.push_back(m_path[i]); // We copy this dart
-        ++i;
-      }
-      else
+      if (positive || next_negative_turn(i)==1)
       {
         // i is maybe the beginning of a bracket
         std::size_t begin=i;
@@ -310,27 +318,32 @@ public:
         {
           /* std::cout<<"Bracket: ["<<begin<<"; "<<end<<"] "
                    <<(positive?"+":"-")<<std::endl; */
-          if (end<begin)
-          { i=m_path.size(); }
-          else if (next_index(begin)==end) // Special case of (1 2^r)
-          { i=m_path.size(); }
+          if (next_index(begin)==end) // Special case of (1 2^r)
+          {
+            new_path.clear(); // TODO BETTER; MOREOVER THERE IS A POSSIBLE BUG IF END<BEGIN; in this case I already copied some darts which must be not copied
+            i=m_path.size(); }
           else // Normal case
           { i=end+1; }
+          if (end<begin)
+          { // Necessarily a closed path !
+            assert(is_closed());
+            copy_rest_of_path(end+1, begin, new_path);
+          }
+          else if (next_index(begin)!=end) // Special case of (1 2^r)
+          { copy_rest_of_path(0, begin, new_path); }
+
           transform_bracket(begin, end, new_path, positive);
-          res=true;
-        }
-        else
-        {
-          new_path.push_back(m_path[i]); // We copy this dart
-          ++i;
+
+          if (begin<end && next_index(begin)!=end && end<length()-1)
+          { copy_rest_of_path(end+1, length(), new_path); }
+
+          new_path.swap(m_path);
+          return true;
         }
       }
     }
-    if (i==m_path.size()-1)
-    { new_path.push_back(m_path[m_path.size()-1]); }
-    
-    new_path.swap(m_path);
-    return res;
+
+    return false;
   }
 
   bool bracket_flattening()
