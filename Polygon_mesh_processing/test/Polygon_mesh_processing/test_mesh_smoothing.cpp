@@ -55,7 +55,7 @@ void test_angle_smoothing(const char* filename)
 
   CGAL::Polygon_mesh_processing::smooth_angles(mesh);
 
-  for (vertex_descriptor v : vertices(mesh))
+  BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
   {
     if(!is_border(v, mesh))
     {
@@ -81,7 +81,7 @@ void test_area_smoothing(const char* filename)
 
   CGAL::Polygon_mesh_processing::smooth_areas(mesh);
 
-  for (vertex_descriptor v : vertices(mesh))
+  BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
   {
     if(!is_border(v, mesh))
     {
@@ -107,7 +107,7 @@ void test_angle_smoothing_without_projection(const char* filename)
 
   CGAL::Polygon_mesh_processing::smooth_angles(mesh, CGAL::Polygon_mesh_processing::parameters::do_project(false));
 
-  for (vertex_descriptor v : vertices(mesh))
+  BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
   {
     if(!is_border(v, mesh))
     {
@@ -133,7 +133,7 @@ void test_area_smoothing_without_projection(const char* filename)
 
   CGAL::Polygon_mesh_processing::smooth_areas(mesh, CGAL::Polygon_mesh_processing::parameters::do_project(false));
 
-  for (vertex_descriptor v : vertices(mesh))
+  BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
   {
     if(!is_border(v, mesh))
     {
@@ -159,7 +159,7 @@ void test_constrained_vertices(const char* filename)
 
   double x_init, y_init, z_init;
   std::set<vertex_descriptor> selected_vertices;
-  for(vertex_descriptor v : vertices(mesh))
+  BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
   {
     if(!is_border(v, mesh))
     {
@@ -177,7 +177,7 @@ void test_constrained_vertices(const char* filename)
   CGAL::Polygon_mesh_processing::smooth_areas(mesh,
         CGAL::Polygon_mesh_processing::parameters::vertex_is_constrained_map(vcmap));
 
-  for(vertex_descriptor v : vertices(mesh))
+  BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
   {
     if(!is_border(v, mesh))
     {

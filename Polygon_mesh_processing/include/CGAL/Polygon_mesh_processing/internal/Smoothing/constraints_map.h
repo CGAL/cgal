@@ -35,26 +35,25 @@ struct Constrained_vertices_map
   typedef value_type&                         reference;
   typedef boost::read_write_property_map_tag  category;
 
-  // to change this to boost::shared_ptr
-  std::shared_ptr<std::set<Descriptor>> const_things;
+  boost::shared_ptr<std::set<Descriptor> > constrained_data;
 
 public:
-  Constrained_vertices_map() : const_things(new std::set<Descriptor>) {}
+  Constrained_vertices_map() : constrained_data(new std::set<Descriptor>) {}
 
   friend bool get(const Constrained_vertices_map& map, const key_type& d)
   {
-    typename std::set<Descriptor>::iterator it = map.const_things->find(d);
-    return it != map.const_things->end() ? true : false;
+    typename std::set<Descriptor>::iterator it = map.constrained_data->find(d);
+    return it != map.constrained_data->end() ? true : false;
   }
 
   friend void put(Constrained_vertices_map& map, const key_type& d)
   {
-    map.const_things->insert(d);
+    map.constrained_data->insert(d);
   }
 };
 
 template<typename PolygonMesh, typename VertexPointMap,
-         typename CotangentValue = CGAL::internal::Cotangent_value_Meyer<PolygonMesh, VertexPointMap>>
+         typename CotangentValue = CGAL::internal::Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
 struct Edge_cotangent_weight : CotangentValue
 {
     Edge_cotangent_weight(PolygonMesh& pmesh_, VertexPointMap vpmap_)
@@ -87,8 +86,7 @@ struct Edge_cotangent_weight : CotangentValue
         vertex_descriptor vt = target(he, pmesh());
         vertex_descriptor v1 = target(h1, pmesh());
         vertex_descriptor v2 = source(h2, pmesh());
-        return ( CotangentValue::operator()(vs, v1, vt) + CotangentValue::operator()(vs, v2, vt) ) / 2.0;
-      }
+        return ( CotangentValue::operator()(vs, v1, vt) + CotangentValue::operator()(vs, v2, vt) ) / 2.0; }
     }
 };
 

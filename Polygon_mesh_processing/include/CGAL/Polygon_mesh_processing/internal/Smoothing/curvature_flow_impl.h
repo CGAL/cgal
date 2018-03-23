@@ -71,7 +71,9 @@ public:
       vpmap_(vpmap),
       vcmap_(vcmap),
       weight_calculator_(mesh, vpmap),
-      nb_vert_(static_cast<int>(vertices(mesh).size())) {}
+      nb_vert_(static_cast<int>(vertices(mesh).size())),
+      vimap_(get(boost::vertex_index, mesh_))
+  {}
 
   template<typename FaceRange>
   void init_smoothing(const FaceRange& face_range)
@@ -150,7 +152,7 @@ public:
 
   void update_mesh(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
   {
-    for (vertex_descriptor v : vertices(mesh_))
+    BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
     {
       int index = get(vimap_, v);
       NT x_new = Xx[index];
@@ -204,7 +206,7 @@ private:
     BOOST_FOREACH(face_descriptor f, frange_)
     {
       double area = face_area(f, mesh_);
-      for(vertex_descriptor v : vertices_around_face(halfedge(f, mesh_), mesh_))
+      BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, mesh_), mesh_))
       {
         int idx = vimap_[v];
         if(!is_constrained(v))
@@ -280,7 +282,7 @@ private:
   PolygonMesh& mesh_;
   VertexPointMap& vpmap_;
   VertexConstraintMap& vcmap_;
-  IndexMap vimap_ = get(boost::vertex_index, mesh_);
+  IndexMap vimap_;
 
   // linear system data
   std::vector<double> diagonal_; // index of vector -> index of vimap_

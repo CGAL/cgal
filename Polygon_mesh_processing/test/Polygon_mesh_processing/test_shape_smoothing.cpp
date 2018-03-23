@@ -57,17 +57,14 @@ void test_implicit_constrained_devil(const char* filename)
 
   boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
           get(CGAL::vertex_point, mesh);
-
   // z max is 20 in the devil;
   std::set<vertex_descriptor> selected_vertices;
-
-  for (vertex_descriptor v : vertices(mesh))
+  BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
   {
     const double z = get(vpmap, v).z();
     if(z  > 19.0)
       selected_vertices.insert(v);
   }
-
   Constraints_pmap vcmap(&selected_vertices);
 
   const double time_step = 1.0;
@@ -98,7 +95,7 @@ void test_implicit_constrained_pyramid(const char* filename)
   // z max is 20 in the devil;
   std::set<vertex_descriptor> selected_vertices;
 
-  for (vertex_descriptor v : vertices(mesh))
+  BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
   {
     const double z = get(vpmap, v).z();
     if(z  > 0.8)
