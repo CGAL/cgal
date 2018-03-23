@@ -72,18 +72,20 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::number_of_points_on_edges).v == 31);
   assert(get_param(np, CGAL::internal_np::nb_points_per_area_unit).v == 32);
   assert(get_param(np, CGAL::internal_np::nb_points_per_distance_unit).v == 33);
+  assert(get_param(np, CGAL::internal_np::gradient_descent_precision).v == 34);
+  assert(get_param(np, CGAL::internal_np::use_explicit_scheme).v == 35);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
-  assert(get_param(np, CGAL::internal_np::get_cost_policy).v == 34);
-  assert(get_param(np, CGAL::internal_np::get_placement_policy).v == 35);
+  assert(get_param(np, CGAL::internal_np::get_cost_policy).v == 36);
+  assert(get_param(np, CGAL::internal_np::get_placement_policy).v == 37);
 
     // To-be-documented named parameters
-  assert(get_param(np, CGAL::internal_np::face_normal).v == 36);
-  assert(get_param(np, CGAL::internal_np::random_seed).v == 37);
-  assert(get_param(np, CGAL::internal_np::do_project).v == 38);
+  assert(get_param(np, CGAL::internal_np::face_normal).v == 38);
+  assert(get_param(np, CGAL::internal_np::random_seed).v == 39);
+  assert(get_param(np, CGAL::internal_np::do_project).v == 40);
 
     // Internal named parameters
-  assert(get_param(np, CGAL::internal_np::weight_calculator).v == 39);
+  assert(get_param(np, CGAL::internal_np::weight_calculator).v == 41);
 
 
   // Test types
@@ -134,18 +136,20 @@ void test(const NamedParameters& np)
   check_same_type<31>(get_param(np, CGAL::internal_np::number_of_points_on_edges));
   check_same_type<32>(get_param(np, CGAL::internal_np::nb_points_per_area_unit));
   check_same_type<33>(get_param(np, CGAL::internal_np::nb_points_per_distance_unit));
+  check_same_type<34>(get_param(np, CGAL::internal_np::gradient_descent_precision));
+  check_same_type<35>(get_param(np, CGAL::internal_np::use_explicit_scheme));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
-  check_same_type<34>(get_param(np, CGAL::internal_np::get_cost_policy));
-  check_same_type<35>(get_param(np, CGAL::internal_np::get_placement_policy));
+  check_same_type<36>(get_param(np, CGAL::internal_np::get_cost_policy));
+  check_same_type<37>(get_param(np, CGAL::internal_np::get_placement_policy));
 
     // To-be-documented named parameters
-  check_same_type<36>(get_param(np, CGAL::internal_np::face_normal));
-  check_same_type<37>(get_param(np, CGAL::internal_np::random_seed));
-  check_same_type<38>(get_param(np, CGAL::internal_np::do_project));
+  check_same_type<38>(get_param(np, CGAL::internal_np::face_normal));
+  check_same_type<39>(get_param(np, CGAL::internal_np::random_seed));
+  check_same_type<40>(get_param(np, CGAL::internal_np::do_project));
 
     // Internal named parameters
-  check_same_type<39>(get_param(np, CGAL::internal_np::weight_calculator));
+  check_same_type<41>(get_param(np, CGAL::internal_np::weight_calculator));
 }
 
 int main()
@@ -187,12 +191,14 @@ int main()
                          .number_of_points_on_edges(A<31>(31))
                          .number_of_points_per_area_unit(A<32>(32))
                          .number_of_points_per_distance_unit(A<33>(33))
-                         .get_cost(A<34>(34))
-                         .get_placement(A<35>(35))
-                         .face_normal_map(A<36>(36))
-                         .random_seed(A<37>(37))
-                         .do_project(A<38>(38))
-                         .weight_calculator(A<39>(39))
+                         .gradient_descent_precision(A<34>(34))
+                         .use_explicit_scheme(A<35>(35))
+                         .get_cost(A<36>(36))
+                         .get_placement(A<37>(37))
+                         .face_normal_map(A<38>(38))
+                         .random_seed(A<39>(39))
+                         .do_project(A<40>(40))
+                         .weight_calculator(A<41>(41))
        );
 
   return EXIT_SUCCESS;
