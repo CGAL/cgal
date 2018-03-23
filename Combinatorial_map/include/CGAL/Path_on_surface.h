@@ -346,6 +346,7 @@ public:
     return false;
   }
 
+  // Simplify the path by removing all brackets
   bool bracket_flattening()
   {
     bool res=false;
@@ -381,6 +382,7 @@ public:
     return res;
   }
 
+  // Simplify the path by removing all spurs
   bool remove_spurs()
   {
     bool res=false;
@@ -389,38 +391,43 @@ public:
     return res;
   }
 
+  // Simplify the path by removing all possible brackets and spurs
+
+  void simplify()
+  {
+    bool modified=false;
+    do
+    {
+      modified=bracket_flattening_one_step();
+      if (!modified)
+      { modified=remove_spurs_one_step(); }
+    }
+    while(modified);
+  }
+
   std::size_t find_l_shape(std::size_t begin) const
   {
-    assert(next_turn(begin)!=2);
+    assert(next_turn(begin)==2);
     std::size_t end=begin+1;
     if (end==m_path.size()-1 && !is_closed())
     { return begin; } // begin is the before last dart
 
     while (next_turn(end)==2 && end!=begin)
-    {
-      ++end;
-      if (is_closed() && end==m_path.size()) { end=0; }
-    }
+    { end=next_index(end); }
 
     if (begin==end)
     { // Case of a path having only 2 turns
-      // TODO SOMETHING
       std::cout<<"TODO TODO !!"<<std::endl;
+      return;
     }
 
     if (next_turn(end)==1)
-    {
-      ++end;
-      if (is_closed() && end==m_path.size()) { end=0; }
-    }
+    { end=next_index(end); }
     else
     { return begin; }
 
     while (next_turn(end)==2)
-    {
-      ++end;
-      if (is_closed() && end==m_path.size()) { end=0; }
-    }
+    { end=next_index(end); }
 
     return end;
   }
