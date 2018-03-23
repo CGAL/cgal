@@ -255,9 +255,6 @@ private:
 
   CGAL::Polygon_mesh_processing::internal::Constrained_vertices_map<vertex_descriptor> vcmap;
 
-
 };
-
-
 
 #include "Smoothing_plugin.moc"

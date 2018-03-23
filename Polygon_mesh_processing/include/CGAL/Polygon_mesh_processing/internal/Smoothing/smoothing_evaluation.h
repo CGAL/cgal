@@ -143,6 +143,4 @@ private:
 }
 
 
-
-
 #endif // SMOOTHING_EVALUATION_H

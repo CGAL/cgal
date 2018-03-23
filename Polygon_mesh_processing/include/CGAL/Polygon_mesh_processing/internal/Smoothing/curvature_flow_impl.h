@@ -298,18 +298,4 @@ private:
 } // PMP
 } // CGAL
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #endif // CURVATURE_FLOW_NEW_IMPL_H

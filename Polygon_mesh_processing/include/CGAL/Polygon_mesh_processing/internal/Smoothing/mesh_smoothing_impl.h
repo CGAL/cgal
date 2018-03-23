@@ -634,6 +634,4 @@ private:
 } // namespace CGAL
 
 
-
-
 #endif // CGAL_POLYGON_MESH_PROCESSING_MESH_SMOOTHING_IMPL_H
