@@ -21,7 +21,7 @@
 #ifndef CGAL_INTERNAL_TRIANGULATION_DS_ITERATORS_3_H
 #define CGAL_INTERNAL_TRIANGULATION_DS_ITERATORS_3_H
 
-#include <CGAL/license/Triangulation_3.h>
+#include <CGAL/license/TDS_3.h>
 
 
 #include <utility>
