@@ -33,24 +33,14 @@ typedef Point_with_info_helper<Point>::type                           Point_with
 typedef Point_property_map<Point>                                     Ppmap;
 typedef CGAL::Search_traits_adapter<Point_with_info,Ppmap,Traits>     Traits_with_info;
 
-template <class SearchTraits, class Tree>
-void run_with_fuzziness(std::list<Point> all_points, const Tree& tree,
-                        const Point& p, const Point& q, const FT fuzziness)
+template <class SearchTraits>
+void run_with_fuzziness(std::list<Point> all_points,
+                        const Point& p, const Point& q,
+                        const FT fuzziness)
 {
   typedef CGAL::Fuzzy_iso_box<SearchTraits> Fuzzy_box;
 
-  tree.search(CGAL::Emptyset_iterator(), Fuzzy_box(p,q)); //test compilation when Point != Traits::Point_d
-
-  typename SearchTraits::Point_d pp(p);
-  typename SearchTraits::Point_d qq(q);
-
   std::cout << "test with box: [" << p << " || " << q << "] and eps: " << fuzziness << "... ";
-
-  // approximate range searching
-  std::list<typename SearchTraits::Point_d> result;
-  Fuzzy_box approximate_range(pp, qq, fuzziness);
-  tree.search(std::back_inserter(result), approximate_range);
-  std::cout << result.size() << " hits... Verifying correctness...";
 
   // test the results of the approximate query
   Iso_rectangle inner_ic(p + fuzziness*Vector(1,1), q - fuzziness*Vector(1,1));
@@ -62,6 +52,45 @@ void run_with_fuzziness(std::list<Point> all_points, const Tree& tree,
   const bool is_inner_c_empty = (fuzziness > 0.5 * max_box_edge_length);
   if(is_inner_c_empty)
     std::cout << " (empty inner box)... ";
+
+  // Insert a bunch of points on the boundary of the inner approximation
+  CGAL::Random random;
+  std::size_t N = all_points.size();
+
+  if(!is_inner_c_empty)
+  {
+    for(std::size_t i=0, max=N/10; i<max; ++i)
+    {
+      double x = random.get_double(-1., 1.);
+      all_points.push_back(Point(x, p.y() + fuzziness));
+      all_points.push_back(Point(p.x() + fuzziness, x));
+    }
+  }
+
+  // same for the outer boundary
+  for(std::size_t i=0, max=N/10; i<max; ++i)
+  {
+    double x = random.get_double(-1., 1.);
+    all_points.push_back(Point(x, q.y() + fuzziness));
+    all_points.push_back(Point(q.x() + fuzziness, x));
+  }
+
+  // Insert also the N points in the tree
+  CGAL::Kd_tree<SearchTraits> tree(
+    boost::make_transform_iterator(all_points.begin(), Create_point_with_info<typename SearchTraits::Point_d>()),
+    boost::make_transform_iterator(all_points.end(), Create_point_with_info<typename SearchTraits::Point_d>())
+  );
+
+  tree.search(CGAL::Emptyset_iterator(), Fuzzy_box(p,q)); //test compilation when Point != Traits::Point_d
+
+  typename SearchTraits::Point_d pp(p);
+  typename SearchTraits::Point_d qq(q);
+
+  // approximate range searching
+  std::list<typename SearchTraits::Point_d> result;
+  Fuzzy_box approximate_range(pp, qq, fuzziness);
+  tree.search(std::back_inserter(result), approximate_range);
+  std::cout << result.size() << " hits... Verifying correctness...";
 
   for (typename std::list<typename SearchTraits::Point_d>::iterator pt=result.begin(); (pt != result.end()); ++pt)
   {
@@ -93,12 +122,6 @@ void run_with_fuzziness(std::list<Point> all_points, const Tree& tree,
 template <class SearchTraits>
 void run(std::list<Point> all_points) // intentional copy
 {
-  // Insert also the N points in the tree
-  CGAL::Kd_tree<SearchTraits> tree(
-    boost::make_transform_iterator(all_points.begin(), Create_point_with_info<typename SearchTraits::Point_d>()),
-    boost::make_transform_iterator(all_points.end(), Create_point_with_info<typename SearchTraits::Point_d>())
-  );
-
   // bigger box
   Point p0(-10., -10.);
   Point q0( 10.,  10.);
@@ -115,23 +138,23 @@ void run(std::list<Point> all_points) // intentional copy
   Point p3(0., 0.);
   Point q3(0., 0.);
 
-  run_with_fuzziness<SearchTraits>(all_points, tree, p0, q0, 0. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, tree, p0, q0, 0.1 /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, tree, p0, q0, 1. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, tree, p0, q0, 10. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, p0, q0, 0. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, p0, q0, 0.1 /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, p0, q0, 1. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, p0, q0, 10. /*fuzziness*/);
 
-  run_with_fuzziness<SearchTraits>(all_points, tree, p1, q1, 0. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, tree, p1, q1, 0.1 /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, tree, p1, q1, 1. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, tree, p1, q1, 10. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, p1, q1, 0. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, p1, q1, 0.1 /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, p1, q1, 1. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, p1, q1, 10. /*fuzziness*/);
 
-  run_with_fuzziness<SearchTraits>(all_points, tree, p2, q2, 0. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, tree, p2, q2, 0.1 /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, tree, p2, q2, 0.4 /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, p2, q2, 0. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, p2, q2, 0.1 /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, p2, q2, 0.4 /*fuzziness*/);
 
-  run_with_fuzziness<SearchTraits>(all_points, tree, p3, q3, 0. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, tree, p3, q3, 0.33 /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, tree, p3, q3, 1. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, p3, q3, 0. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, p3, q3, 0.33 /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, p3, q3, 1. /*fuzziness*/);
 }
 
 int main()

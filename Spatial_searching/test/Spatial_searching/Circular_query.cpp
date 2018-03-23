@@ -15,6 +15,7 @@
 
 #include <CGAL/algorithm.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Origin.h>
 #include <CGAL/point_generators_2.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
@@ -27,8 +28,10 @@
 typedef CGAL::Cartesian<double>                                        K;
 typedef K::FT                                                          FT;
 typedef K::Point_2                                                     Point;
+typedef K::Vector_2                                                    Vector;
 
 typedef CGAL::Random_points_in_square_2<Point>                         Random_points_iterator;
+typedef CGAL::Random_points_on_circle_2<Point>                         Random_points_on_circle_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator>                N_Random_points_iterator;
 typedef CGAL::Search_traits_2<K>                                       Traits;
 
@@ -37,14 +40,41 @@ typedef Point_with_info_helper<Point>::type                            Point_wit
 typedef Point_property_map<Point>                                      Ppmap;
 typedef CGAL::Search_traits_adapter<Point_with_info,Ppmap,Traits>      Traits_with_info;
 
-template <class SearchTraits, class Tree>
+template <class SearchTraits>
 void run_with_fuzziness(std::list<Point> all_points, // intentional copy
-                        const Tree& tree,
                         const Point& center,
                         const FT radius,
                         const FT fuzziness)
 {
   typedef CGAL::Fuzzy_sphere<SearchTraits> Fuzzy_circle;
+
+  std::cout << "test with center: " << center << " radius: " << radius << " eps: " << fuzziness << "... ";
+
+  const FT inner_radius = (fuzziness > radius) ? 0 : (radius - fuzziness);
+  const FT sq_inner_radius = inner_radius * inner_radius;
+  const FT outer_radius = radius + fuzziness;
+  const FT sq_outer_radius = outer_radius * outer_radius;
+
+  // add a bunch of points on the boundary of the inner approximation
+  // (in general all the constructed points won't be exactly on the boundary,
+  // but as long as some are, that's okay)
+  std::size_t N = all_points.size();
+  Random_points_on_circle_iterator rpocit(inner_radius);
+  for(std::size_t i=0, max=N/10; i<max; ++i)
+    all_points.push_back(*rpocit++ + Vector(CGAL::ORIGIN, center));
+
+  // same for the outer approximation boundary
+  Random_points_on_circle_iterator rpocit2(outer_radius);
+  for(std::size_t i=0, max = N/10; i<max; ++i)
+    all_points.push_back(*rpocit2++ + Vector(CGAL::ORIGIN, center));
+
+  typedef CGAL::Kd_tree<SearchTraits> Tree;
+
+  // Insert also the N points in the tree
+  Tree tree(
+    boost::make_transform_iterator(all_points.begin(), Create_point_with_info<typename SearchTraits::Point_d>()),
+    boost::make_transform_iterator(all_points.end(), Create_point_with_info<typename SearchTraits::Point_d>())
+  );
 
   Fuzzy_circle default_range(typename SearchTraits::Point_d(center), radius);
   std::list<typename SearchTraits::Point_d> result;
@@ -57,8 +87,6 @@ void run_with_fuzziness(std::list<Point> all_points, // intentional copy
   assert(it == vec.end());
   result.clear();
 
-  std::cout << "test with center: " << center << " radius: " << radius << " eps: " << fuzziness << "... ";
-
   tree.search(CGAL::Emptyset_iterator(), Fuzzy_circle(center, radius) ); //test compilation when Point != Traits::Point_d
 
   // range searching
@@ -67,9 +95,6 @@ void run_with_fuzziness(std::list<Point> all_points, // intentional copy
   std::cout << result.size() << " hits... Verifying correctness...";
 
   // test the results
-  const FT sq_inner_radius = (fuzziness > radius) ? 0 : (radius - fuzziness) * (radius - fuzziness);
-  const FT sq_outer_radius = (radius + fuzziness) * (radius + fuzziness);
-
   for(typename std::list<typename SearchTraits::Point_d>::iterator pt=result.begin(); (pt != result.end()); ++pt)
   {
     // a point with distance d to the center can only be reported if d <= r + eps
@@ -97,29 +122,25 @@ void run_with_fuzziness(std::list<Point> all_points, // intentional copy
 template <class SearchTraits>
 void run(std::list<Point> all_points) // intentional copy
 {
-  typedef CGAL::Kd_tree<SearchTraits> Tree;
-
-  // Insert also the N points in the tree
-  Tree tree(
-    boost::make_transform_iterator(all_points.begin(), Create_point_with_info<typename SearchTraits::Point_d>()),
-    boost::make_transform_iterator(all_points.end(), Create_point_with_info<typename SearchTraits::Point_d>())
-  );
-
   Point center(0.25, 0.25);
-  run_with_fuzziness<SearchTraits>(all_points, tree, center, 0. /*radius*/, 0. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, tree, center, 0.25 /*radius*/, 0. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, tree, center, 0.25 /*radius*/, 0.125 /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, tree, center, 0.25 /*radius*/, 0.25 /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, tree, center, 0.25 /*radius*/, 1. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, tree, center, 1. /*radius*/, 0. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, tree, center, 1. /*radius*/, 0.25 /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, tree, center, 10. /*radius*/, 0. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, tree, center, 10. /*radius*/, 10. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, tree, center, 10. /*radius*/, 100. /*fuzziness*/);
+
+  // add some interesting points
+  all_points.push_back(center);
+
+  run_with_fuzziness<SearchTraits>(all_points, center, 0. /*radius*/, 0. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, center, 0.25 /*radius*/, 0. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, center, 0.25 /*radius*/, 0.125 /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, center, 0.25 /*radius*/, 0.25 /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, center, 0.25 /*radius*/, 1. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, center, 1. /*radius*/, 0. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, center, 1. /*radius*/, 0.25 /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, center, 10. /*radius*/, 0. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, center, 10. /*radius*/, 10. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, center, 10. /*radius*/, 100. /*fuzziness*/);
 }
 
-int main() {
-
+int main()
+{
   const int N=1000;
 
   // generator for random data points in the square ( (-1,-1), (1,1) )
@@ -128,12 +149,6 @@ int main() {
   // construct list containing N random points
   std::list<Point> all_points(N_Random_points_iterator(rpit,0),
                               N_Random_points_iterator(N));
-
-  // add some interesting points
-  all_points.push_back(Point(0.25, 0.25));
-  all_points.push_back(Point(0.375, 0.25));
-  all_points.push_back(Point(0.5, 0.25));
-  all_points.push_back(Point(1.25, 0.25));
 
   run<Traits>(all_points);
   run<Traits_with_info>(all_points);
