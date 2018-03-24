@@ -12,7 +12,7 @@
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/array.h>
 
-#include <CGAL/L21_metric_plane_proxy.h>
+#include <CGAL/L21_metric_vector_proxy_no_area_weighting.h>
 #include <CGAL/Default.h>
 #include <CGAL/tags.h>
 
@@ -88,7 +88,7 @@ public:
   // ErrorMetric type
 #ifndef DOXYGEN_RUNNING
   typedef typename CGAL::Default::Get<ErrorMetric,
-    CGAL::VSA::L21_metric_plane_proxy<TriangleMesh, VertexPointMap, false, Geom_traits> >::type Error_metric;
+    CGAL::VSA::L21_metric_vector_proxy_no_area_weighting<TriangleMesh, VertexPointMap, Geom_traits> >::type Error_metric;
 #else
   typedef ErrorMetric Error_metric;
 #endif
