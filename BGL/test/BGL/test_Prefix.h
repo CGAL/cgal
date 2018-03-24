@@ -11,10 +11,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_items_with_id_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-
 #include <CGAL/Linear_cell_complex_for_bgl_combinatorial_map_helper.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/boost/graph/properties_Linear_cell_complex_for_combinatorial_map.h>
@@ -22,9 +18,6 @@
 #ifdef CGAL_USE_SURFACE_MESH
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh/IO.h>
-
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-#include <CGAL/boost/graph/properties_Surface_mesh.h>
 #endif
 
 #include <CGAL/boost/graph/io.h>

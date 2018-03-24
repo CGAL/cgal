@@ -241,6 +241,46 @@ void init_halfedge_indices(PolygonMesh& pm, HalfedgeIndexMap hid)
 
 } //namespace helpers
 
+namespace internal {
+  
+  template<typename Polyhedron, typename Handle>
+struct Index_accessor
+    : boost::put_get_helper< std::size_t&, Index_accessor<Polyhedron,Handle> >
+{
+  typedef boost::lvalue_property_map_tag category;
+  typedef std::size_t&                   reference;
+  typedef std::size_t                    value_type;
+  typedef Handle                         key_type;
+
+  reference operator[](Handle h) const { return h->id(); }
+};
+
+template<typename Handle>
+struct Edge_index_accessor
+  : boost::put_get_helper< std::size_t, Edge_index_accessor<Handle> >
+{
+  typedef boost::readable_property_map_tag category;
+  typedef std::size_t                      reference;
+  typedef std::size_t                      value_type;
+  typedef Handle                           key_type;
+
+  reference operator[](Handle h) const { return h.id(); }
+};
+
+template<typename Handle, typename ValueType, typename Reference>
+struct Point_accessor
+  : boost::put_get_helper< Reference, Point_accessor<Handle, ValueType, Reference> >
+{
+  typedef boost::lvalue_property_map_tag category;
+  typedef Reference                      reference;
+  typedef ValueType                      value_type;
+  typedef Handle                         key_type;
+
+  reference operator[](Handle h) const { return h->point(); }
+};
+
+} // namespace internal
+
 } // namespace CGAL
 
 
