@@ -2,6 +2,7 @@
 CGAL_add_named_parameter(geom_traits_t, geom_traits, geom_traits)
 
 // approximation parameters
+CGAL_add_named_parameter(verbose_level_t, verbose_level, verbose_level)
 CGAL_add_named_parameter(seeding_method_t, seeding_method, seeding_method)
 CGAL_add_named_parameter(max_nb_proxies_t, max_nb_proxies, max_nb_proxies)
 CGAL_add_named_parameter(min_error_drop_t, min_error_drop, min_error_drop)
