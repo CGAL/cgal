@@ -104,7 +104,7 @@ int main()
 
   // extract the approximation
   std::cout << "meshing" << std::endl;
-  if (approx.extract_mesh())
+  if (approx.extract_mesh(CGAL::Surface_mesh_approximation::parameters::mesh_chord_error(5.0)))
     std::cout << "manifold." << std::endl;
   else
     std::cout << "non-manifold" << std::endl;

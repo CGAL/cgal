@@ -54,7 +54,7 @@ int main()
   approx.run(10);
 
   // generates output mesh with default parameters
-  approx.extract_mesh();
+  approx.extract_mesh(CGAL::Surface_mesh_approximation::parameters::mesh_chord_error(5.0));
 
   return EXIT_SUCCESS;
 }

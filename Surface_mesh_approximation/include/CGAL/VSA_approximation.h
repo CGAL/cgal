@@ -23,6 +23,9 @@
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 
+#include <CGAL/internal/Surface_mesh_approximation/named_function_params.h>
+#include <CGAL/internal/Surface_mesh_approximation/named_params_helper.h>
+
 #include <vector>
 #include <stack>
 #include <queue>
@@ -864,20 +867,36 @@ public:
   /// @{
   /*!
    * @brief Extracts the output mesh in the form of an indexed triangle set.
-   * @param chord_error boundary approximation recursively split criterion
-   * @param is_relative_to_chord set `true` if the chord_error is defined as a ratio of chord length,
-   * and defined as ratio of average edge length otherwise.
-   * @param with_dihedral_angle set `true` if distance is weighted by dihedral angle, `false` otherwise
-   * @param optimize_anchor_location set `true` if optimize the anchor locations, `false` otherwise
-   * @param pca_plane set `true` if use PCA plane fitting, otherwise use the default area averaged plane parameters
+   * @tparam NamedParameters a sequence of \ref namedparameters
+   *
+   * @param np optional sequence of \ref namedparameters among the ones listed below
    * @return `true` if the extracted surface mesh is manifold, `false` otherwise.
+   *
+   * \cgalNamedParamsBegin
+   *   \cgalParamBegin{mesh_chord_error} maximum chord approximation error used for meshing (TODO: precise unit).
+   *   \cgalParamEnd
+   *   \cgalParamBegin{is_relative_to_chord}  set `true` if the chord_error is defined as a ratio of chord length.
+   *     and defined as ratio of average edge length otherwise.
+   *   \cgalParamEnd
+   *   \cgalParamBegin{with_dihedral_angle}  set `true` if distance is weighted by dihedral angle, `false` otherwise.
+   *   \cgalParamEnd
+   *   \cgalParamBegin{optimize_anchor_location}  set `true` if optimize the anchor locations, `false` otherwise.
+   *   \cgalParamEnd
+   *   \cgalParamBegin{pca_plane}  set `true` if use PCA plane fitting, otherwise use the default area averaged plane parameters.
+   *   \cgalParamEnd
+   * \cgalNamedParamsEnd
    */
-  bool extract_mesh(const FT chord_error = FT(5.0), // replace by optional named parama
-    const bool is_relative_to_chord = false, // replace by optional named parama
-    const bool with_dihedral_angle = false, // replace by optional named parama
-    const bool optimize_anchor_location = true, // replace by optional named parama
-    const bool pca_plane = false) // replace by optional named parama
-  {
+  template <typename NamedParameters>
+  bool extract_mesh(const NamedParameters &np) {
+    using boost::get_param;
+    using boost::choose_param;
+
+    const FT chord_error = choose_param(get_param(np, internal_np::mesh_chord_error), FT(5.0));
+    const bool is_relative_to_chord = choose_param(get_param(np, internal_np::is_relative_to_chord), false);
+    const bool with_dihedral_angle = choose_param(get_param(np, internal_np::with_dihedral_angle), false);
+    const bool optimize_anchor_location = choose_param(get_param(np, internal_np::optimize_anchor_location), true);
+    const bool pca_plane = choose_param(get_param(np, internal_np::pca_plane), false);
+
     // compute averaged edge length, used in chord subdivision
     m_average_edge_length = compute_averaged_edge_length(*m_ptm, m_vpoint_map);
 

@@ -127,8 +127,7 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
   proxies(approx, pxies_out_itr);
 
   // meshing
-  const FT chord_error = choose_param(get_param(np, internal_np::mesh_chord_error), FT(5.0));
-  const bool is_manifold = approx.extract_mesh(chord_error);
+  const bool is_manifold = approx.extract_mesh(np);
 
   // get anchor points
   typedef typename boost::lookup_named_param_def<
