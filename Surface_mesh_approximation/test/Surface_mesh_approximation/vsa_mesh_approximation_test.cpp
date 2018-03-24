@@ -37,8 +37,8 @@ int main()
       mesh_chord_error(0.5).
       facet_proxy_map(fpxmap).
       proxies(std::back_inserter(proxies)).
-      anchor_points(std::back_inserter(points)).
-      indexed_triangles(std::back_inserter(triangles)));
+      anchors(std::back_inserter(points)).
+      triangles(std::back_inserter(triangles)));
 
   std::cout << "#fpxmap " << fidxmap.size() << std::endl;
   std::cout << "#proxies " << proxies.size() << std::endl;

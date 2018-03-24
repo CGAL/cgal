@@ -102,7 +102,6 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
 
   approx.run(nb_of_iterations);
 
-  
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG // TODO replace by verbose level? 
   std::cout << "#px = " << approx.proxies_size()
     << ", #itr = " << nb_of_iterations
@@ -116,7 +115,7 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
     internal_np::vsa_no_output_t>::type FPMap;
   FPMap fproxymap = choose_param(
     get_param(np, internal_np::facet_proxy_map), internal_np::vsa_no_output);
-  proxies(approx, fproxymap);
+  facet_proxy_map(approx, fproxymap);
 
   // get proxies
   typedef typename boost::lookup_named_param_def <
@@ -133,7 +132,7 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
 
   // get anchor points
   typedef typename boost::lookup_named_param_def<
-    internal_np::anchor_points_t,
+    internal_np::anchors_t,
     NamedParameters,
     internal_np::vsa_no_output_t>::type Anchor_point_output_iterator;
   Anchor_point_output_iterator apts_out_itr = choose_param(
@@ -142,7 +141,7 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
 
   // get indexed triangles
   typedef typename boost::lookup_named_param_def<
-    internal_np::indexed_triangles_t,
+    internal_np::triangles_t,
     NamedParameters,
     internal_np::vsa_no_output_t>::type Indexed_triangles_output_iterator;
   Indexed_triangles_output_iterator tris_out_itr = choose_param(

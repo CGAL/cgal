@@ -13,7 +13,7 @@
 #include <list>
 
 namespace CGAL {
-	namespace VSA {
+namespace VSA {
 
 /// \ingroup PkgTSMA
 /// @brief Approximation L2 metric.

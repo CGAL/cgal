@@ -862,10 +862,8 @@ public:
 
   /// \name Meshing
   /// @{
-    /*!
+  /*!
    * @brief Extracts the output mesh in the form of an indexed triangle set.
-   * @note If the extracted surface mesh contains non-manifold facets, 
-   * they are not built into the output polyhedron.
    * @param chord_error boundary approximation recursively split criterion
    * @param is_relative_to_chord set `true` if the chord_error is defined as a ratio of chord length,
    * and defined as ratio of average edge length otherwise.
@@ -914,7 +912,7 @@ public:
 
   /// \name Output
   /// @{
-    /*!
+  /*!
    * @brief Gets the facet-proxy index map.
    * @tparam FacetProxyMap `WritablePropertyMap` with
    * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type
@@ -930,7 +928,7 @@ public:
    * @brief Gets the facet region of the specified proxy.
    * @tparam OutputIterator output iterator with `boost::graph_traits<TriangleMesh>::%face_descriptor` as value type
    * @param px_idx proxy index
-   * @param out_itr output iterator
+   * @param out output iterator
    */
   template <typename OutputIterator>
   void proxy_region(const std::size_t px_idx, OutputIterator out) const {
@@ -957,12 +955,12 @@ public:
   /*!
    * @brief Gets the wrapped proxies.
    * @tparam OutputIterator output iterator with Proxy_wrapper as value type
-   * @param out_itr output iterator
+   * @param out output iterator
    */
   template <typename OutputIterator>
-  void wrapped_proxies(OutputIterator out_itr) const {
+  void wrapped_proxies(OutputIterator out) const {
     BOOST_FOREACH(const Proxy_wrapper &pxw, m_proxies)
-      *out_itr++ = pxw;
+      *out++ = pxw;
   }
 #endif
 
@@ -975,35 +973,35 @@ public:
   /*!
    * @brief Gets the anchor points, which have the area-averaged position of the projected anchor vertex points on the incident proxies.
    * @tparam OutputIterator output iterator with Point_3 as value type
-   * @param out_itr output iterator
+   * @param out output iterator
    */
   template <typename OutputIterator>
-  void anchor_points(OutputIterator out_itr) const {
+  void anchor_points(OutputIterator out) const {
     BOOST_FOREACH(const Anchor &a, m_anchors)
-      *out_itr++ = a.pos;
+      *out++ = a.pos;
   }
 
   /*!
    * @brief Gets the anchor vertices.
    * @tparam OutputIterator output iterator with vertex_descriptor as value type
-   * @param out_itr output iterator
+   * @param out output iterator
    */
   template <typename OutputIterator>
-  void anchor_vertices(OutputIterator out_itr) const {
+  void anchor_vertices(OutputIterator out) const {
     BOOST_FOREACH(const Anchor &a, m_anchors)
-      *out_itr++ = a.vtx;
+      *out++ = a.vtx;
   }
 
   /*!
    * @brief Gets the indexed triangles, with
    * one triplet of integers per triangles, which refers to the anchor point indices.
    * @tparam OutputIterator output iterator with Indexed_triangle as value type
-   * @param out_itr output iterator
+   * @param out output iterator
    */
   template <typename OutputIterator>
-  void indexed_triangles(OutputIterator out_itr) const {
+  void indexed_triangles(OutputIterator out) const {
     BOOST_FOREACH(const Indexed_triangle &t, m_tris)
-      *out_itr++ = t;
+      *out++ = t;
   }
 
   /*!
@@ -1011,7 +1009,7 @@ public:
    * @tparam OutputIterator output iterator with std::vector<std::size_t> as value type
    */
   template <typename OutputIterator>
-  void indexed_boundary_polygons(OutputIterator out_itr) const {
+  void indexed_boundary_polygons(OutputIterator out) const {
     BOOST_FOREACH(const Boundary_cycle &bcycle, m_bcycles) {
       std::vector<std::size_t> plg;
       halfedge_descriptor he = bcycle.he_head;
@@ -1020,7 +1018,7 @@ public:
         walk_to_next_anchor(he, chord);
         plg.push_back(get(m_vanchor_map, target(he, *m_ptm)));
       } while (he != bcycle.he_head);
-      *out_itr++ = plg;
+      *out++ = plg;
     }
   }
   /// @}
@@ -1091,8 +1089,8 @@ private:
 
   /*!
    * @brief Randomly initializes proxies
-   * with both maximum number of proxies and minimum error drop stop criteria, where
-   * the first criterion met stops the seeding.
+   * with both maximum number of proxies and minimum error drop stop criteria,
+   * where the first criterion met stops the seeding.
    * @note To ensure the randomness, call `std::srand()` beforehand.
    * @param max_nb_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
    * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
@@ -1150,8 +1148,8 @@ private:
 
   /*!
    * @brief Hierarchically initializes proxies
-   * with both maximum number of proxies and minimum error drop stop criteria, where
-   * the first criterion met stops the seeding.
+   * with both maximum number of proxies and minimum error drop stop criteria,
+   * where the first criterion met stops the seeding.
    * @param max_nb_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
    * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
    * @param num_iterations number of re-fitting iterations 
