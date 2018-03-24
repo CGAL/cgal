@@ -149,12 +149,12 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
   typedef typename boost::lookup_named_param_def<
     internal_np::facet_proxy_map_t,
     NamedParameters,
-    internal_np::vsa_no_output_t>::type FPMap;
-  FPMap fproxymap = choose_param(
+    internal_np::vsa_no_output_t>::type Face_proxy_map;
+  Face_proxy_map fproxymap = choose_param(
     get_param(np, internal_np::facet_proxy_map), internal_np::vsa_no_output);
   facet_proxy_map(approx, fproxymap);
 
-  if (!boost::is_same<FPMap, internal_np::vsa_no_output_t>::value
+  if (!boost::is_same<Face_proxy_map, internal_np::vsa_no_output_t>::value
     && (vl == CGAL::Main_steps || vl == CGAL::Verbose))
     std::cout << "Filling facet proxy map done." << std::endl;
 
@@ -172,48 +172,54 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
     std::cout << "Get proxies done." << std::endl;
 
   // meshing
-  if (vl == CGAL::Verbose) {
-    const FT chord_error = choose_param(get_param(np, internal_np::mesh_chord_error), FT(5.0));
-    const bool is_relative_to_chord = choose_param(get_param(np, internal_np::is_relative_to_chord), false);
-    const bool with_dihedral_angle = choose_param(get_param(np, internal_np::with_dihedral_angle), false);
-    const bool optimize_anchor_location = choose_param(get_param(np, internal_np::optimize_anchor_location), true);
-    const bool pca_plane = choose_param(get_param(np, internal_np::pca_plane), false);
-    std::cout << "Meshing: "
-      << "\nchord_error = " << chord_error
-      << "\nis_relative_to_chord = " << is_relative_to_chord
-      << "\nwith_dihedral_angle = " << with_dihedral_angle
-      << "\noptimize_anchor_location = " << optimize_anchor_location
-      << "\npca_plane = " << pca_plane << std::endl;
-  }
-  const bool is_manifold = approx.extract_mesh(np);
-
-  if (vl == CGAL::Main_steps || vl == CGAL::Verbose)
-    std::cout << "Meshing done.\n"
-      << (is_manifold ? "Can" : "Cannot") << " be built into 2-manifold surface." << std::endl;
-
-  // get anchor points
   typedef typename boost::lookup_named_param_def<
     internal_np::anchors_t,
     NamedParameters,
-    internal_np::vsa_no_output_t>::type Anchor_point_output_iterator;
-  Anchor_point_output_iterator apts_out_itr = choose_param(
+    internal_np::vsa_no_output_t>::type Anchors_output_iterator;
+  typedef typename boost::lookup_named_param_def<
+    internal_np::triangles_t,
+    NamedParameters,
+    internal_np::vsa_no_output_t>::type Triangles_output_iterator;
+
+  bool is_manifold = false;
+  if (!boost::is_same<Anchors_output_iterator, internal_np::vsa_no_output_t>::value
+    || !boost::is_same<Triangles_output_iterator, internal_np::vsa_no_output_t>::value) {
+    if (vl == CGAL::Verbose) {
+      const FT chord_error = choose_param(get_param(np, internal_np::mesh_chord_error), FT(5.0));
+      const bool is_relative_to_chord = choose_param(get_param(np, internal_np::is_relative_to_chord), false);
+      const bool with_dihedral_angle = choose_param(get_param(np, internal_np::with_dihedral_angle), false);
+      const bool optimize_anchor_location = choose_param(get_param(np, internal_np::optimize_anchor_location), true);
+      const bool pca_plane = choose_param(get_param(np, internal_np::pca_plane), false);
+      std::cout << "Meshing: "
+        << "\nchord_error = " << chord_error
+        << "\nis_relative_to_chord = " << is_relative_to_chord
+        << "\nwith_dihedral_angle = " << with_dihedral_angle
+        << "\noptimize_anchor_location = " << optimize_anchor_location
+        << "\npca_plane = " << pca_plane << std::endl;
+    }
+
+    is_manifold = approx.extract_mesh(np);
+
+    if (vl == CGAL::Main_steps || vl == CGAL::Verbose)
+      std::cout << "Meshing done.\n"
+        << (is_manifold ? "Can" : "Cannot") << " be built into 2-manifold surface." << std::endl;
+  }
+
+  // get anchor points
+  Anchors_output_iterator apts_out_itr = choose_param(
     get_param(np, internal_np::anchors) , internal_np::vsa_no_output);
   anchors(approx, apts_out_itr);
 
-  if (!boost::is_same<Anchor_point_output_iterator, internal_np::vsa_no_output_t>::value
+  if (!boost::is_same<Anchors_output_iterator, internal_np::vsa_no_output_t>::value
     && (vl == CGAL::Main_steps || vl == CGAL::Verbose))
     std::cout << "Get anchors done." << std::endl;
 
   // get indexed triangles
-  typedef typename boost::lookup_named_param_def<
-    internal_np::triangles_t,
-    NamedParameters,
-    internal_np::vsa_no_output_t>::type Indexed_triangles_output_iterator;
-  Indexed_triangles_output_iterator tris_out_itr = choose_param(
+  Triangles_output_iterator tris_out_itr = choose_param(
     get_param(np, internal_np::triangles) , internal_np::vsa_no_output);
   triangles(approx, tris_out_itr);
 
-  if (!boost::is_same<Indexed_triangles_output_iterator, internal_np::vsa_no_output_t>::value
+  if (!boost::is_same<Triangles_output_iterator, internal_np::vsa_no_output_t>::value
     && (vl == CGAL::Main_steps || vl == CGAL::Verbose))
     std::cout << "Get indexed triangles done." << std::endl;
 
