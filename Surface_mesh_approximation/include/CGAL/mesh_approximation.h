@@ -21,11 +21,11 @@ namespace CGAL {
 /// \ingroup PkgTSMA
 /// @brief Verbose level enumeration for Variational Shape Approximation algorithm.
 enum Approximation_verbose_level {
-  /// Silent seeding
+  /// Silent
   Silent,
-  /// Incremental seeding
+  /// Main steps
   Main_steps,
-  /// Hierarchical seeding
+  /// Verbose
   Verbose
 };
 
@@ -63,7 +63,7 @@ enum Approximation_verbose_level {
  *  \cgalParamEnd
  *  \cgalParamBegin{mesh_chord_error} maximum chord approximation error used for meshing (TODO: precise unit).
  *  \cgalParamEnd
- *  \cgalParamBegin{face_proxy_map} a ReadWritePropertyMap with
+ *  \cgalParamBegin{facet_proxy_map} a ReadWritePropertyMap with
  * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type.
  * A proxy is a set of connected facets which are placed under the same proxy patch (see \cgalFigureRef{iterations}).
  * The proxy-ids are contiguous in range [0, number_of_proxies - 1].

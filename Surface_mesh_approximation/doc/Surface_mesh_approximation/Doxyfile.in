@@ -18,3 +18,5 @@ ALIASES += "cgalNPTableBegin=<dl class=\"params\"><dt></dt><dd> <table class=\"p
 ALIASES += "cgalNPTableEnd=</table> </dd> </dl>"
 ALIASES += "cgalNPBegin{1}=<tr><td class=\"paramname\">\1 </td><td>"
 ALIASES += "cgalNPEnd=</td></tr>"
+
+EXCLUDE = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/internal

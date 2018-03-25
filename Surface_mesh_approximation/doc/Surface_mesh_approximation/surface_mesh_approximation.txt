@@ -11,7 +11,7 @@ namespace CGAL {
 This package implements the <em>Variational Shape Approximation</em> \cgalCite{cgal:cad-vsa-04} (%VSA) method to approximate an input surface mesh by a simpler surface triangle mesh.
 
 Given an input surface triangle mesh, %VSA leverages a discrete clustering algorithm to approximate it by a set of local simple shapes referred to as proxies. Each cluster is represented as a connected set of triangles of the input mesh, and the output mesh is constructed by generating a surface triangle mesh which approximates the clusters.
-The approximation error is one-sided, defined between the clusters and their associated proxies. Two error metrics (\f$ \mathcal{L}^2 \f$, \f$ \mathcal{L}^{2,1} \f$) for planar proxies are provided via the classes `CGAL::L2_metric_planar_proxy` and `CGAL::L21_metric_planar_proxy`, and the algorithm design is generic to other user-defined metrics. The current proxies are planar, but the algorithm design is generic for future extensions to non-planar proxies \cgalCite{cgal:ywly-vmsqs-12}. A brief background about <em>%Proxy</em> and <em>%ErrorMetric</em> is provided in Section \ref sma_background.
+The approximation error is one-sided, defined between the clusters and their associated proxies. Two error metrics (\f$ \mathcal{L}^2 \f$, \f$ \mathcal{L}^{2,1} \f$) for planar proxies are provided via the classes `CGAL::VSA::L2_metric_plane_proxy` and `CGAL::VSA::L21_metric_vector_proxy`, and the algorithm design is generic to other user-defined metrics. The current proxies are planar, but the algorithm design is generic for future extensions to non-planar proxies \cgalCite{cgal:ywly-vmsqs-12}. A brief background about <em>%Proxy</em> and <em>%ErrorMetric</em> is provided in Section \ref sma_background.
 
 \cgalFigureBegin{Approximation_teaser, teaser.png}
 Variational shape approximation on two models with the \f$ \mathcal{L}^{2,1} \f$ error metric and planar proxies. From left to right: partition of the input surface triangle mesh, anchor vertices and edges, and output triangle mesh. The partition is optimized via discrete clustering of the input triangles, so as to minimize the approximation error from the clusters to the planar proxies (not shown). 
@@ -175,7 +175,7 @@ The input of the algorithm is expected to be:
 
 \subsection sma_example1 Free Function Approximation
 
-The following example calls the free function `CGAL::mesh_approximation()` on the input triangle mesh with default `CGAL::L21_metric`.
+The following example calls the free function `CGAL::mesh_approximation()` on the input triangle mesh with default `CGAL::VSA::L21_metric_plane_proxy_no_area_weighting`.
 
 \cgalExample{Surface_mesh_approximation/vsa_approximation_example.cpp}
 

@@ -45,10 +45,18 @@ class L21_metric_vector_proxy_no_area_weighting {
   typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type Face_area_map;
 
 public:
-  // Public types
+  /// \name Types
+  /// @{
   typedef typename GeomTraits::Vector_3 Proxy;
+  /// @}
 
-  // Constructor.
+  /// \name Constructor
+  /// @{
+  /*!
+   * @brief Constructor
+   * @param tm triangle mesh
+   * @param vpmap vertex point map
+   */
   L21_metric_vector_proxy_no_area_weighting(const TriangleMesh &tm, const VertexPointMap &vpmap) {
     GeomTraits traits;
     m_scalar_product_functor = traits.compute_scalar_product_3_object();
@@ -67,14 +75,26 @@ public:
       put(m_fnmap, f, CGAL::unit_normal(p0, p1, p2));
     }
   }
+  /// @}
 
-  // Computes the L21 error between a facet and a proxy.
+  /// \name Operations
+  /*!
+   * @brief Computes the L2,1 error from a facet to a proxy. 
+   * @param f face_descriptor of a face
+   * @param px proxy
+   * @return computed error
+   */
   FT compute_error(const face_descriptor &f, const Proxy &px) const {
     Vector_3 v = m_sum_functor(get(m_fnmap, f), m_scale_functor(px, FT(-1.0)));
     return m_scalar_product_functor(v, v);
   }
 
-  // Fits a proxy from a face range.
+  /*!
+   * @brief Fits a proxy to a face range.
+   * @param beg face range begin
+   * @param end face range end
+   * @return fitted proxy
+   */
   template <typename FacetIterator>
   Proxy fit_proxy(const FacetIterator beg, const FacetIterator end) const {
     CGAL_assertion(beg != end);
@@ -89,6 +109,7 @@ public:
 
     return norm;
   }
+  /// @}
 
 private:
   Face_normal_map m_fnmap;

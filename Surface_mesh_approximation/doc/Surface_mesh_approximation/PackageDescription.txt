@@ -32,14 +32,15 @@ The page \ref namedparameters describes their usage
 and provides the list of parameters used in this package.
 
 ## Concepts ##
-- `ErrorMetric`
+- `ErrorMetricProxy`
 
 ## Main Functions ##
 - `CGAL::mesh_approximation()`
 
 ## Classes ##
-- `CGAL::VSA::L21_metric_planar_proxy`
-- `CGAL::VSA::L2_metric_planar_proxy`
+- `CGAL::VSA::L21_metric_vector_proxy`
+- `CGAL::VSA::L21_metric_vector_proxy_no_area_weighting`
+- `CGAL::VSA::L2_metric_plane_proxy`
 - `CGAL::VSA_approximation`
 
 \todo add option to enforce guarantee of 2-manifold and oriented output mesh

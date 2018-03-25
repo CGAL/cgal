@@ -67,10 +67,16 @@ typename CGAL::Kernel_traits<
 \b Default value is \code boost::get(CGAL::vertex_point, pmesh)\endcode
 \cgalNPEnd
 
+\cgalNPBegin{verbose_level} \anchor VSA_verbose_level
+set the verbose level of the function.\n
+\b Type : \c CGAL::Approximation_verbose_level \n
+\b Default value is `CGAL::Approximation_verbose_level::Main_steps`
+\cgalNPEnd
+
 \cgalNPBegin{seeding_method} \anchor VSA_seeding_method
 the selection of seeding method.\n
-\b Type : \c CGAL::Seeding \n
-\b Default value is `CGAL::Seeding::Hierarchical`
+\b Type : \c CGAL::Approximation_seeding_tag \n
+\b Default value is `CGAL::Approximation_seeding_tag::Hierarchical`
 \cgalNPEnd
 
 \cgalNPBegin{max_nb_proxies} \anchor VSA_max_nb_proxies
@@ -103,28 +109,52 @@ the chord subdivision threshold used in the meshing step.\n
 \b Default value is `5.0`
 \cgalNPEnd
 
-\cgalNPBegin{face_proxy_map} \anchor VSA_face_proxy_map
+\cgalNPBegin{is_relative_to_chord} \anchor VSA_is_relative_to_chord
+set the chord subdivision threshold relative to the chord length.\n
+\b Type : `bool` \n
+\b Default value is `false`
+\cgalNPEnd
+
+\cgalNPBegin{with_dihedral_angle} \anchor VSA_with_dihedral_angle
+set the chord subdivision with dihedral angle weighting.\n
+\b Type : `bool` \n
+\b Default value is `false`
+\cgalNPEnd
+
+\cgalNPBegin{optimize_anchor_location} \anchor VSA_optimize_anchor_location
+set if optimize the anchor position in the meshing step.\n
+\b Type : `bool` \n
+\b Default value is `true`
+\cgalNPEnd
+
+\cgalNPBegin{pca_plane} \anchor VSA_pca_plane
+set the plane approximated with the PCA algorithm in the meshing step.\n
+\b Type : `bool` \n
+\b Default value is `false`
+\cgalNPEnd
+
+\cgalNPBegin{facet_proxy_map} \anchor VSA_facet_proxy_map
 the property map outputs the proxy index of each face of the input polygon mesh.\n
 \b Type: a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as key type and the value type `std::size_t`\n
-\b Default : if this parameter is omitted, no output operation are performed
+\b Default : if this parameter is omitted, no output operation is performed
 \cgalNPEnd
 
 \cgalNPBegin{proxies} \anchor VSA_proxies
 an `OutputIterator` to write proxies in.\n
-\b Type : a class model of `OutputIterator` with `CGAL::PlaneProxy<GeomTraits>` value type.\n
-\b Default : if this parameter is omitted, no output operation are performed
+\b Type : a class model of `OutputIterator` with `CGAL::VSA::L21_metric_vector_proxy_no_area_weighting::Proxy` value type.\n
+\b Default : if this parameter is omitted, no output operation is performed
 \cgalNPEnd
 
-\cgalNPBegin{anchors} \anchor VSA_anchor_points
+\cgalNPBegin{anchors} \anchor VSA_anchors
 an `OutputIterator` to write anchor points in.\n
-\b Type : a class model of `OutputIterator` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` value type.\n
-\b Default : if this parameter is omitted, no output operation are performed
+\b Type : a class model of `OutputIterator` with `GeomTraits::%Point_3` value type.\n
+\b Default : if this parameter is omitted, no output operation is performed
 \cgalNPEnd
 
-\cgalNPBegin{triangles} \anchor VSA_indexed_triangles
+\cgalNPBegin{triangles} \anchor VSA_triangles
 an `OutputIterator` to write indexed triangles in.\n
 \b Type : a class model of `OutputIterator` with `CGAL::cpp11::array<std::size_t, 3>` value type.\n
-\b Default : if this parameter is omitted, no output operation are performed
+\b Default : if this parameter is omitted, no output operation is performed
 \cgalNPEnd
 
 \cgalNPTableEnd
