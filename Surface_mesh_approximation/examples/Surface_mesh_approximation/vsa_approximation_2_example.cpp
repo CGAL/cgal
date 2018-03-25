@@ -35,7 +35,7 @@ int main()
   CGAL::mesh_approximation(input,
     CGAL::Surface_mesh_approximation::parameters::min_error_drop(0.05). // seeding with minimum error drop
     nb_of_iterations(40). // set number of clustering iterations after seeding
-    mesh_chord_error(0.3). // set chord approximation error threshold when meshing
+    subdivision_ratio(0.3). // set chord subdivision ratio threshold when meshing
     facet_proxy_map(fpxmap). // get facet partition map
     proxies(std::back_inserter(proxies)). // output proxies
     anchors(std::back_inserter(anchors)). // output anchor points

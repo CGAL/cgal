@@ -61,7 +61,16 @@ enum Approximation_verbose_level {
  *  \cgalParamEnd
  *  \cgalParamBegin{nb_of_relaxations} number of relaxation iterations interleaved within seeding.
  *  \cgalParamEnd
- *  \cgalParamBegin{mesh_chord_error} maximum chord approximation error used for meshing (TODO: precise unit).
+ *  \cgalParamBegin{subdivision_ratio} chord subdivision ratio threshold to the chord length or average edge length.
+ *  \cgalParamEnd
+ *  \cgalParamBegin{relative_to_chord} set `true` if the subdivision_ratio is the ratio of the
+ *    furthest vertex distance to the chord length, or to the average edge length otherwise.
+ *  \cgalParamEnd
+ *  \cgalParamBegin{with_dihedral_angle}  set `true` if subdivision_ratio is weighted by dihedral angle, `false` otherwise.
+ *  \cgalParamEnd
+ *  \cgalParamBegin{optimize_anchor_location}  set `true` if optimize the anchor locations, `false` otherwise.
+ *  \cgalParamEnd
+ *  \cgalParamBegin{pca_plane}  set `true` if use PCA plane fitting, otherwise use the default area averaged plane parameters.
  *  \cgalParamEnd
  *  \cgalParamBegin{facet_proxy_map} a ReadWritePropertyMap with
  * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type.
@@ -159,7 +168,7 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
     std::cout << "Filling facet proxy map done." << std::endl;
 
   // get proxies
-  typedef typename boost::lookup_named_param_def <
+  typedef typename boost::lookup_named_param_def<
     internal_np::proxies_t,
     NamedParameters,
     internal_np::vsa_no_output_t>::type Proxies_output_iterator;
@@ -185,14 +194,14 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
   if (!boost::is_same<Anchors_output_iterator, internal_np::vsa_no_output_t>::value
     || !boost::is_same<Triangles_output_iterator, internal_np::vsa_no_output_t>::value) {
     if (vl == CGAL::Verbose) {
-      const FT chord_error = choose_param(get_param(np, internal_np::mesh_chord_error), FT(5.0));
-      const bool is_relative_to_chord = choose_param(get_param(np, internal_np::is_relative_to_chord), false);
+      const FT subdivision_ratio = choose_param(get_param(np, internal_np::subdivision_ratio), FT(5.0));
+      const bool relative_to_chord = choose_param(get_param(np, internal_np::relative_to_chord), false);
       const bool with_dihedral_angle = choose_param(get_param(np, internal_np::with_dihedral_angle), false);
       const bool optimize_anchor_location = choose_param(get_param(np, internal_np::optimize_anchor_location), true);
       const bool pca_plane = choose_param(get_param(np, internal_np::pca_plane), false);
       std::cout << "Meshing: "
-        << "\nchord_error = " << chord_error
-        << "\nis_relative_to_chord = " << is_relative_to_chord
+        << "\nchord_error = " << subdivision_ratio
+        << "\nrelative_to_chord = " << relative_to_chord
         << "\nwith_dihedral_angle = " << with_dihedral_angle
         << "\noptimize_anchor_location = " << optimize_anchor_location
         << "\npca_plane = " << pca_plane << std::endl;

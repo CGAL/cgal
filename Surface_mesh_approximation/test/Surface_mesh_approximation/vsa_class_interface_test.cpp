@@ -88,7 +88,7 @@ int main()
 
   // extract the approximation polyhedron
   std::cout << "meshing" << std::endl;
-  if (approx.extract_mesh(CGAL::Surface_mesh_approximation::parameters::mesh_chord_error(1.0)))
+  if (approx.extract_mesh(CGAL::Surface_mesh_approximation::parameters::subdivision_ratio(1.0)))
     std::cout << "manifold." << std::endl;
   else
     std::cout << "non-manifold" << std::endl;

@@ -10,8 +10,8 @@ CGAL_add_named_parameter(nb_of_iterations_t, nb_of_iterations, nb_of_iterations)
 CGAL_add_named_parameter(nb_of_relaxations_t, nb_of_relaxations, nb_of_relaxations)
 
 // meshing parameters
-CGAL_add_named_parameter(mesh_chord_error_t, mesh_chord_error, mesh_chord_error)
-CGAL_add_named_parameter(is_relative_to_chord_t, is_relative_to_chord, is_relative_to_chord)
+CGAL_add_named_parameter(subdivision_ratio_t, subdivision_ratio, subdivision_ratio)
+CGAL_add_named_parameter(relative_to_chord_t, relative_to_chord, relative_to_chord)
 CGAL_add_named_parameter(with_dihedral_angle_t, with_dihedral_angle, with_dihedral_angle)
 CGAL_add_named_parameter(optimize_anchor_location_t, optimize_anchor_location, optimize_anchor_location)
 CGAL_add_named_parameter(pca_plane_t, pca_plane, pca_plane)

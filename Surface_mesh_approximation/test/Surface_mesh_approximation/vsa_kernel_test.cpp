@@ -33,7 +33,7 @@ int test() {
     CGAL::Surface_mesh_approximation::parameters::max_nb_proxies(6).
       nb_of_iterations(30).
       nb_of_relaxations(5).
-      mesh_chord_error(0.5).
+      subdivision_ratio(0.5).
       anchors(std::back_inserter(points)).
       triangles(std::back_inserter(triangles)));
 

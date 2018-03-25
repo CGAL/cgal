@@ -873,12 +873,12 @@ public:
    * @return `true` if the extracted surface mesh is manifold, `false` otherwise.
    *
    * \cgalNamedParamsBegin
-   *   \cgalParamBegin{mesh_chord_error} maximum chord approximation error used for meshing (TODO: precise unit).
+   *   \cgalParamBegin{subdivision_ratio} chord subdivision ratio threshold to the chord length or average edge length.
    *   \cgalParamEnd
-   *   \cgalParamBegin{is_relative_to_chord}  set `true` if the chord_error is defined as a ratio of chord length.
-   *     and defined as ratio of average edge length otherwise.
+   *   \cgalParamBegin{relative_to_chord} set `true` if the subdivision_ratio is the ratio of the
+   *     furthest vertex distance to the chord length, or to the average edge length otherwise.
    *   \cgalParamEnd
-   *   \cgalParamBegin{with_dihedral_angle}  set `true` if distance is weighted by dihedral angle, `false` otherwise.
+   *   \cgalParamBegin{with_dihedral_angle}  set `true` if subdivision_ratio is weighted by dihedral angle, `false` otherwise.
    *   \cgalParamEnd
    *   \cgalParamBegin{optimize_anchor_location}  set `true` if optimize the anchor locations, `false` otherwise.
    *   \cgalParamEnd
@@ -891,8 +891,8 @@ public:
     using boost::get_param;
     using boost::choose_param;
 
-    const FT chord_error = choose_param(get_param(np, internal_np::mesh_chord_error), FT(5.0));
-    const bool is_relative_to_chord = choose_param(get_param(np, internal_np::is_relative_to_chord), false);
+    const FT subdivision_ratio = choose_param(get_param(np, internal_np::subdivision_ratio), FT(5.0));
+    const bool relative_to_chord = choose_param(get_param(np, internal_np::relative_to_chord), false);
     const bool with_dihedral_angle = choose_param(get_param(np, internal_np::with_dihedral_angle), false);
     const bool optimize_anchor_location = choose_param(get_param(np, internal_np::optimize_anchor_location), true);
     const bool pca_plane = choose_param(get_param(np, internal_np::pca_plane), false);
@@ -913,7 +913,7 @@ public:
 
     // generate anchors
     find_anchors();
-    find_edges(chord_error, is_relative_to_chord, with_dihedral_angle);
+    find_edges(subdivision_ratio, relative_to_chord, with_dihedral_angle);
     add_anchors();
 
     // discrete constrained Delaunay triangulation
@@ -1539,13 +1539,13 @@ private:
 
   /*!
    * @brief Finds and approximates the chord connecting the anchors.
-   * @param chord_error boundary chord approximation recursive split creterion
-   * @param is_relative_to_chord set `true` if the chord_error is relative to the chord length (relative sense),
+   * @param subdivision_ratio boundary chord approximation recursive split creterion
+   * @param relative_to_chord set `true` if the subdivision_ratio is relative to the chord length (relative sense),
    * otherwise it's relative to the average edge length (absolute sense).
    * @param with_dihedral_angle set `true` if add dihedral angle weight to the distance, `false` otherwise
    */
-  void find_edges(const FT chord_error,
-    const bool is_relative_to_chord,
+  void find_edges(const FT subdivision_ratio,
+    const bool relative_to_chord,
     const bool with_dihedral_angle) {
     // collect candidate halfedges in a set
     std::set<halfedge_descriptor> he_candidates;
@@ -1576,7 +1576,7 @@ private:
         Boundary_chord chord;
         walk_to_next_anchor(he_start, chord);
         m_bcycles.back().num_anchors += subdivide_chord(chord.begin(), chord.end(),
-          chord_error, is_relative_to_chord, with_dihedral_angle);
+          subdivision_ratio, relative_to_chord, with_dihedral_angle);
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
         std::cerr << "#chord_anchor " << m_bcycles.back().num_anchors << std::endl;
@@ -1833,8 +1833,8 @@ private:
    * @brief Subdivides a chord recursively in range [@a chord_begin, @a chord_end).
    * @param chord_begin begin iterator of the chord
    * @param chord_end end iterator of the chord
-   * @param chord_error the chord recursive split error threshold
-   * @param is_relative_to_chord set `true` if the chord_error is relative to the the chord length (relative sense),
+   * @param subdivision_ratio the chord recursive split error threshold
+   * @param relative_to_chord set `true` if the subdivision_ratio is relative to the the chord length (relative sense),
    * otherwise it's relative to the average edge length (absolute sense).
    * @param with_dihedral_angle set `true` if add dihedral angle weight to the distance, `false` otherwise
    * @return the number of anchors of the chord apart from the first one
@@ -1842,8 +1842,8 @@ private:
   std::size_t subdivide_chord(
     const Boundary_chord_iterator &chord_begin,
     const Boundary_chord_iterator &chord_end,
-    const FT chord_error,
-    const bool is_relative_to_chord,
+    const FT subdivision_ratio,
+    const bool relative_to_chord,
     const bool with_dihedral_angle) {
     const std::size_t chord_size = std::distance(chord_begin, chord_end);
     const halfedge_descriptor he_first = *chord_begin;
@@ -1892,7 +1892,7 @@ private:
       }
 
       FT criterion = dist_max;
-      if (is_relative_to_chord)
+      if (relative_to_chord)
         criterion /= chord_len;
       else
         criterion /= m_average_edge_length;
@@ -1912,7 +1912,7 @@ private:
         criterion *= norm_sin;
       }
 
-      if (criterion > chord_error)
+      if (criterion > subdivision_ratio)
         if_subdivide = true;
     }
 
@@ -1921,9 +1921,9 @@ private:
       attach_anchor(*chord_max);
 
       const std::size_t num_left = subdivide_chord(chord_begin, chord_max + 1,
-        chord_error, is_relative_to_chord, with_dihedral_angle);
+        subdivision_ratio, relative_to_chord, with_dihedral_angle);
       const std::size_t num_right = subdivide_chord(chord_max + 1, chord_end,
-        chord_error, is_relative_to_chord, with_dihedral_angle);
+        subdivision_ratio, relative_to_chord, with_dihedral_angle);
 
       return num_left + num_right;
     }
