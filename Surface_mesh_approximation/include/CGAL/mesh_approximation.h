@@ -29,6 +29,20 @@ enum Approximation_verbose_level {
   Verbose
 };
 
+// the named parameter header being not documented the doc is put here for now
+#ifdef DOXYGEN_RUNNING
+namespace Surface_mesh_approximation {
+namespace parameters {
+
+/*! \ingroup namedparameters
+ * This function is used when default parameters are just fine for approximation or meshing.
+ */
+unspecified_type all_default();
+
+} // namespace parameters
+} // namespace Surface_mesh_approximation
+#endif
+
 /*!
  * \ingroup PkgTSMA
  * @brief Approximates the input mesh by fitting it with proxies.

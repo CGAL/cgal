@@ -54,7 +54,7 @@ int main()
   approx.run(10);
 
   // generates output mesh with default parameters
-  approx.extract_mesh(CGAL::Surface_mesh_approximation::parameters::subdivision_ratio(5.0));
+  approx.extract_mesh(CGAL::Surface_mesh_approximation::parameters::all_default());
 
   return EXIT_SUCCESS;
 }

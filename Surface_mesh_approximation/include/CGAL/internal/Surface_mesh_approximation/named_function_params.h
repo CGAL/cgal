@@ -8,7 +8,8 @@
 namespace CGAL{
 namespace internal_np{
 
-  enum vsa_no_output_t { vsa_no_output };
+enum vsa_no_output_t { vsa_no_output };
+enum all_default_t { all_default }; //cannot use macro because it takes no argument
 
 // define enum types and values for new named parameters
 #define CGAL_add_named_parameter(X, Y, Z)            \
@@ -27,6 +28,13 @@ namespace internal_np{
 
     vsa_bgl_named_params(T v = T()) : base(v) {}
     vsa_bgl_named_params(T v, const Base& b) : base(v, b) {}
+
+    vsa_bgl_named_params<bool, internal_np::all_default_t, self>
+    all_default() const
+    {
+      typedef vsa_bgl_named_params<bool, internal_np::all_default_t, self> Params;
+      return Params(*this);
+    }
 
 // define the functions for new named parameters and the one imported from BGL and boost
 // used to concatenate several parameters
@@ -47,6 +55,13 @@ namespace internal_np{
 namespace Surface_mesh_approximation{
 
 namespace parameters{
+
+vsa_bgl_named_params<bool, internal_np::all_default_t>
+inline all_default()
+{
+  typedef vsa_bgl_named_params<bool, internal_np::all_default_t> Params;
+  return Params();
+}
 
 // define free functions for new named parameters and the one imported from BGL and boost
 #define CGAL_add_named_parameter(X, Y, Z)          \

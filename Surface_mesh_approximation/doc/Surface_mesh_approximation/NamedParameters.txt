@@ -10,8 +10,9 @@ Named parameters allow the user to specify only those parameters which are reall
 
 We refer to the named parameters introduced in \ref PkgPolygonMeshProcessingSummary.
 
-
 The sequence of named parameters should start with `CGAL::Surface_mesh_approximation::parameters::`.
+`#CGAL::Surface_mesh_approximation::parameters::all_default()` can be used to indicate
+that default values of optional named parameters are used.
 
 \cgalHeading{Example}
 
