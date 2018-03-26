@@ -63,6 +63,9 @@ void TestDegenerateCases()
 
   polygon.push_back(Point(1,2));
   assert(CGAL::is_simple_2(polygon.begin(), polygon.end()));
+
+  polygon.clear();
+  assert(CGAL::is_simple_2(polygon.begin(), polygon.end()));
 }
 
 int main()

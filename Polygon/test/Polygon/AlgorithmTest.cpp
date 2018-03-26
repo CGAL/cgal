@@ -161,6 +161,9 @@ void test_polygon(const R&, const Point&, const char* FileName)
 	cout << "the orientation is collinear" << endl;
 	break;
     }
+
+    polygon.clear();
+    assert(CGAL::is_convex_2(polygon.begin(), polygon.end()));
 }
 
 //-----------------------------------------------------------------------//

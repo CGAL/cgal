@@ -361,7 +361,7 @@ namespace CGAL {
         // Insert "num_points_seq" points sequentially
         // (or more if dim < 3 after that)
         size_t num_points_seq = (std::min)(num_points, (size_t)100);
-        while (dimension() < 3 || i < num_points_seq)
+        while (i < num_points_seq || (dimension() < 3 && i < num_points))
         {
           Locate_type lt;
           Cell_handle c;
@@ -484,7 +484,7 @@ namespace CGAL {
         // Insert "num_points_seq" points sequentially
         // (or more if dim < 3 after that)
         size_t num_points_seq = (std::min)(num_points, (size_t)100);
-        while (dimension() < 3 || i < num_points_seq)
+        while (i < num_points_seq || (dimension() < 3 && i < num_points))
         {
           Locate_type lt;
           Cell_handle c;
