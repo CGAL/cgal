@@ -84,6 +84,8 @@ void test(const NamedParameters& np)
 
     // Internal named parameters
   assert(get_param(np, CGAL::internal_np::weight_calculator).v == 39);
+  assert(get_param(np, CGAL::internal_np::preserve_genus).v == 40);
+  assert(get_param(np, CGAL::internal_np::verbosity_level).v == 41);
 
 
   // Test types
@@ -146,6 +148,8 @@ void test(const NamedParameters& np)
 
     // Internal named parameters
   check_same_type<39>(get_param(np, CGAL::internal_np::weight_calculator));
+  check_same_type<40>(get_param(np, CGAL::internal_np::preserve_genus));
+  check_same_type<41>(get_param(np, CGAL::internal_np::verbosity_level));
 }
 
 int main()
@@ -193,6 +197,8 @@ int main()
                          .random_seed(A<37>(37))
                          .do_project(A<38>(38))
                          .weight_calculator(A<39>(39))
+                         .preserve_genus(A<40>(40))
+                         .verbosity_level(A<41>(41))
        );
 
   return EXIT_SUCCESS;
