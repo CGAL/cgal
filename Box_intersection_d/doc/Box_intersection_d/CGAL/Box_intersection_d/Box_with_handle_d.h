@@ -19,9 +19,9 @@ of the `Assignable` and the `LessThanComparable` concept.
 \tparam D the dimension of the box.
 \tparam Handle Handle concept, e.g., a pointer, an iterator, or a circulator.
 \tparam IdPolicy specifies how the `id`-number will be
-provided. Can be one of the following types, where
+provided and can be one of the following types, where
 `ID_FROM_HANDLE` is the default for this parameter:
-  - `ID_NONE`: no `id`-number is provided. Can be useful
+  - `ID_NONE`: no `id`-number is provided. This can be useful
     to have this class as a base class for different
     implementations of `id`-numbers than the ones provided
     here.
@@ -33,7 +33,7 @@ provided. Can be one of the following types, where
     `CGAL::box_self_intersection_d()` algorithm. This is therefore
 the safe default implementation.
   - `ID_FROM_BOX_ADDRESS`: casts the address of the box into a
-    `std::ptrdiff_t` to create the `id`-number. Works fine
+    `std::ptrdiff_t` to create the `id`-number. This works fine
     if the intersection algorithms work effectively with pointers
     to boxes, but not in the case where the algorithms work with
     box values, because the algorithms modify the order of the
