@@ -367,6 +367,32 @@ and perturbation is not deterministic
 \b Default is that this variable is not set
 \cgalNPEnd
 
+\cgalNPBegin{use_weights} \anchor PMP_use_weights
+Parameter used in `angle_remeshing()` to set whether angles should carry weights while remeshing
+so that small angles carry more weight.
+\n
+\b Type : `bool` \n
+\b Default is `false`
+\cgalNPEnd
+
+\cgalNPBegin{gradient_descent_precision} \anchor PMP_gradient_descent_precision
+Parameter used in `area_remeshing()` to set precision to be met while the relative energy
+between iterations of each triagle is minimized. Triangle energy is defined based on its area compared to the
+average area of all triagnles adjacent to the vertex that is being moved.
+\n
+\b Type : `double` \n
+\b Default is `0.001`
+\cgalNPEnd
+
+\cgalNPBegin{distance_precision} \anchor PMP_distance_precision
+Parameter used in `compatible_remeshing()` to set precision for the Hausdorff distance
+of the mesh between the previous and the current iteration that has to be achieved for a mesh to converge
+during smoothing.
+\n
+\b Type : `double` \n
+\b Default is `0.01`
+\cgalNPEnd
+
 \cgalNPTableEnd
 
 */
