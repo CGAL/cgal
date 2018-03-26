@@ -51,7 +51,7 @@ echo " Checks finished"
 cd $CGAL_ROOT
 rm -r dep_check_build
 if [ -n "$HAS_DIFF" ]; then
-  echo " You should run cmake with options CGAL_CHECK_HEADERS and CGAL_COPY_DEPENDENCIES ON, make the target packages_dependencies and commit the new dependencies files."
+  echo " You should run cmake with options CGAL_ENABLE_CHECK_HEADERS and CGAL_COPY_DEPENDENCIES ON, make the target packages_dependencies and commit the new dependencies files."
   exit 1
 else
   echo "The dependencies are up to date."

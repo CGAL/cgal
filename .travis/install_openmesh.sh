@@ -2,8 +2,7 @@
 mkdir -p openmesh
 cd openmesh
 wget -O openmesh.tar.gz https://www.openmesh.org/media/Releases/6.3/OpenMesh-6.3.tar.gz
-tar xvf openmesh.tar.gz --strip-components=1
-
+tar xf openmesh.tar.gz --strip-components=1
 sed -i '94i #include <sys/time.h>' src/OpenMesh/Tools/Utils/conio.cc
 
 mkdir build
