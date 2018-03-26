@@ -124,9 +124,25 @@ struct Intersect_coplanar_faces_3{
     }
     else{
       if(ipt_curr.type_1==ON_VERTEX && ipt_prev.info_1 == ipt_curr.info_1){
-        CGAL_assertion(ipt_prev.type_1!=ON_FACE);
-        res.type_1=ON_EDGE;
-        res.info_1=ipt_curr.info_1;
+        if (ipt_prev.type_1!=ON_FACE)
+        {
+          res.type_1=ON_EDGE;
+          res.info_1=ipt_curr.info_1;
+        }
+        else
+        {
+          CGAL_assertion( ipt_prev.type_2==ON_VERTEX);
+          res.type_1=ON_FACE;
+          res.info_1=h1;
+          res.type_2=ON_VERTEX;
+          typename Exact_kernel::Collinear_3 is_collinear = Exact_kernel().collinear_3_object();
+          if ( !is_collinear(ipt_prev.point,ipt_curr.point,to_exact(get(vpm2,target(res.info_2,tm2)) ) ) ){
+            res.info_2=prev(res.info_2,tm2);
+            CGAL_assertion( is_collinear(ipt_prev.point,ipt_curr.point,to_exact(get(vpm2,target(res.info_2,tm2))) ) );
+          }
+          res.point = to_exact( get(vpm2, target(res.info_2,tm2)) );
+          return res;
+        }
       }
       else{
         if (ipt_curr.type_1==ON_EDGE && ipt_prev.type_1==ON_EDGE &&  ipt_curr.info_1==ipt_prev.info_1){
