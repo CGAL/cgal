@@ -405,31 +405,35 @@ public:
     while(modified);
   }
 
-  std::size_t find_l_shape(std::size_t begin) const
+  bool find_l_shape(std::size_t begin,
+                    std::size_t& middle,
+                    std::size_t& end) const
   {
-    assert(next_turn(begin)==2);
-    std::size_t end=begin+1;
+    assert(next_turn(begin)==1 || next_turn(begin)==2);
+    end=begin+1;
     if (end==m_path.size()-1 && !is_closed())
-    { return begin; } // begin is the before last dart
+    { return false; } // begin is the before last dart
 
     while (next_turn(end)==2 && end!=begin)
     { end=next_index(end); }
 
     if (begin==end)
     { // Case of a path having only 2 turns
-      std::cout<<"TODO TODO !!"<<std::endl;
-      return;
+      return true;
     }
 
     if (next_turn(end)==1)
-    { end=next_index(end); }
+    {
+      middle=end;
+      end=next_index(end);
+    }
     else
-    { return begin; }
+    { return false; }
 
     while (next_turn(end)==2)
     { end=next_index(end); }
 
-    return end;
+    return true;
   }
 
   bool right_push_one_step()
