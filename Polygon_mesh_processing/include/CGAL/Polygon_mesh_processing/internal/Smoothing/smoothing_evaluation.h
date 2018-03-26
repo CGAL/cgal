@@ -22,6 +22,8 @@
 #ifndef SMOOTHING_EVALUATION_H
 #define SMOOTHING_EVALUATION_H
 
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+
 #include <vector>
 #include <set>
 #include <fstream>

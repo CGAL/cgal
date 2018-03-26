@@ -22,6 +22,8 @@
 #ifndef CURVATURE_FLOW_NEW_IMPL_H
 #define CURVATURE_FLOW_NEW_IMPL_H
 
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/Weights.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>

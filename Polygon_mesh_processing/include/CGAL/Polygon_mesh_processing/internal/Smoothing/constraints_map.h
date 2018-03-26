@@ -22,6 +22,8 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_CONSTRAINTS_MAP_H
 #define CGAL_POLYGON_MESH_PROCESSING_CONSTRAINTS_MAP_H
 
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+
 #include <CGAL/property_map.h>
 
 namespace CGAL {

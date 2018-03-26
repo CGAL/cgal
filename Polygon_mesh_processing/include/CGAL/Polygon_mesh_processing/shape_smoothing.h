@@ -22,6 +22,8 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_SHAPE_SMOOTHING_H
 #define CGAL_POLYGON_MESH_PROCESSING_sHAPE_SMOOTHING_H
 
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map/property_map.hpp>
 

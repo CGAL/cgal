@@ -70,7 +70,7 @@ void test_implicit_constrained_devil(const char* filename)
   const double time_step = 1.0;
   CGAL::Polygon_mesh_processing::smooth_along_curvature_flow(mesh, time_step,
                             CGAL::Polygon_mesh_processing::parameters::vertex_is_constrained_map(vcmap).
-                                                                       number_of_iterations(3));
+                                                                       number_of_iterations(2));
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   std::ofstream out("data/output_implicit_constrained_devil.off");
   out << mesh;

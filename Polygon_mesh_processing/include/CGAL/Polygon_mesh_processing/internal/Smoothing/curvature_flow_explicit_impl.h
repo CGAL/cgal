@@ -22,6 +22,8 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_EXPLICIT_IMPL_H
 #define CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_EXPLICIT_IMPL_H
 
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+
 #include <utility>
 #include <math.h>
 

@@ -22,6 +22,8 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_MESH_SMOOTHING_H
 #define CGAL_POLYGON_MESH_PROCESSING_MESH_SMOOTHING_H
 
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/mesh_smoothing_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_evaluation.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
