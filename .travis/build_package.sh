@@ -51,9 +51,9 @@ old_IFS=$IFS
 IFS=$' '
 ROOT="$PWD/.."
 NEED_3D=0
-cd $ROOT
 for ARG in $(echo "$@")
 do
+cd $ROOT
 #install openmesh only if necessary
   if [ "$ARG" = "CHECK" ] || [ "$ARG" = BGL ] || [ "$ARG" = Convex_hull_3 ] ||\
      [ "$ARG" = Polygon_mesh_processing ] || [ "$ARG" = Property_map ] ||\
