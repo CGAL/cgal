@@ -325,8 +325,10 @@ public:
           else // Normal case
           { i=end+1; }
           if (end<begin)
-          { // Necessarily a closed path !
-            assert(is_closed());
+          {
+            if (!is_closed())
+            { return false; }
+
             copy_rest_of_path(end+1, begin, new_path);
           }
           else if (next_index(begin)!=end) // Special case of (1 2^r)
@@ -409,12 +411,12 @@ public:
                     std::size_t& middle,
                     std::size_t& end) const
   {
-    assert(next_turn(begin)==1 || next_turn(begin)==2);
+    assert(next_negative_turn(begin)==1 || next_negative_turn(begin)==2);
     end=begin+1;
     if (end==m_path.size()-1 && !is_closed())
     { return false; } // begin is the before last dart
 
-    while (next_turn(end)==2 && end!=begin)
+    while (next_negative_turn(end)==2 && end!=begin)
     { end=next_index(end); }
 
     if (begin==end)
@@ -422,7 +424,7 @@ public:
       return true;
     }
 
-    if (next_turn(end)==1)
+    if (next_negative_turn(end)==1)
     {
       middle=end;
       end=next_index(end);
@@ -430,7 +432,7 @@ public:
     else
     { return false; }
 
-    while (next_turn(end)==2)
+    while (next_negative_turn(end)==2)
     { end=next_index(end); }
 
     return true;
@@ -438,25 +440,44 @@ public:
 
   bool right_push_one_step()
   {
-    bool res=false;
-    std::size_t begin, end;
+    std::size_t begin, middle, end;
     std::size_t i;
-    std::vector<Dart_const_handle> new_path;
+    std::size_t next_turn;
     for (i=0; i<m_path.size()-1; )
     {
-      if (next_turn(begin)!=2)
+      next_turn=next_negative_turn(begin);
+      if (next_turn==1 || next_turn==2)
       {
-       // TODO begin, end
-      // res=true;
-      }
-      else
-      {
-        new_path.push_back(m_path[i]); // We copy this dart
-        ++i;
+        if (find_l_shape(begin, middle, end))
+        {
+          std::vector<Dart_const_handle> new_path;
+          if (begin==end)
+          { // Special case of (-2^l)
+            // TODO
+            return true;
+          }
+
+          if (end<begin)
+          {
+            if (!is_closed())
+            { return false; }
+
+            copy_rest_of_path(end+1, begin, new_path);
+          }
+          else // TODO SPECIAL CASES ??
+          { copy_rest_of_path(0, begin, new_path); }
+
+          push_l_shape(begin, middle, end, new_path);
+
+          if (begin<end /* && XXX (TODO SPECIAL CASES ??)*/)
+          { copy_rest_of_path(end+1, length(), new_path); }
+
+          new_path.swap(m_path);
+          return true;
+        }
       }
     }
-    new_path.swap(m_path);
-    return res;
+    return false;
   }
 
   bool right_push()
