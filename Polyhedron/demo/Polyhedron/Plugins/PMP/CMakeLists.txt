@@ -162,3 +162,7 @@ polyhedron_demo_plugin(degenerated_faces_sm_plugin Degenerated_faces_plugin)
 target_link_libraries(degenerated_faces_sm_plugin PUBLIC scene_surface_mesh_item scene_surface_mesh_selection_item)
 target_compile_definitions(degenerated_faces_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
+qt5_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui)
+polyhedron_demo_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
+target_link_libraries(smoothing_plugin scene_polyhedron_item scene_polyhedron_selection_item)
+

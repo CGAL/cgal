@@ -39,7 +39,8 @@ and provides a list of the parameters that are used in this package.
 \subsection PMPOutline Outline
 The algorithms described in this manual are organized in sections:
 - \ref PMPMeshing : meshing algorithms, including triangulation of non-triangulated
-meshes, refinement, optimization by fairing, and isotropic remeshing of triangulated surface meshes.
+meshes, refinement, optimization by fairing, isotropic remeshing of triangulated surface meshes
+and smoothing algorithms.
 - \ref Coref_section : methods to corefine triangle meshes and to compute
   boolean operations out of corefined closed triangle meshes.
 - \ref PMPHoleFilling : available hole filling algorithms, which can possibly be combined with refinement and fairing.
@@ -122,6 +123,46 @@ Isotropic remeshing. (a) Triangulated input surface mesh.
 (d) Surface mesh with the selection uniformly remeshed.
 \cgalFigureEnd
 
+\subsubsection Smoothing
+
+Smoothing of a triangulated mesh region can be achieved with algorithms that aim at either mesh smoothing or shape smoothing.
+While mesh smoothing is achieved by improving the quality of triangles based on criteria such as angle and area,
+shape smoothing is designed to be \e intrinsic, depending as little as possible on the discretization
+and smoothing the shape alone without optimizing the shape of the triangles.
+
+- For **mesh smoothing**, `CGAL::Polygon_mesh_processing::smooth_angles()` may be used to
+move vertices so that incident edges equalize angles and `CGAL::Polygon_mesh_processing::smooth_areas()` may be used to
+move vertices so that the areas of adjacent triangles tend to equalize.
+Border vertices are considered as constrained and do not move at any step of the procedures.
+No new vertex is inserted, although degenerate faces are removed as a first step before smoothing.
+
+Angle and area smoothing algorithms are based on Surazhsky and Gotsman \cgalCite{cgal:sg-hqct-04}. Angle weights are considered
+so that small angles carry more weight and convergence may be achieved faster.
+Since area smoothing considers only triangle areas as a smoothing criterion, it may result in long and skinny triangles,
+especially for meshes with highly irregular connectivity. However, area smoothing is guaranteed to improve the spatial
+distribution of the vertices over the area that is being smoothed.
+
+- For **shape smoothing**, `CGAL::Polygon_mesh_processing::smooth_along_curvature_flow()`
+takes into account the mean curvature flow to calculate a weighted barycenter towards which vertices move incrementally.
+Shape smoothing using the curvature flow is based on Desbrun et al \cgalCite{cgal:dmsb-ifamdcf-99} and on Kazhdan et al \cgalCite{kazhdan2012can}.
+The algorithm uses the mean curvature flow to calculate the translation of vertices along the surface normal with a speed equal
+to the mean curvature of the area that is being smoothed. This means that vertices on sharp corners slide faster.
+If the region around a vertex is flat, this vertex does not move (zero curvature). To avoid the formation of undesirable neck
+pinches the algorithm slows down the evolution in cylindrical regions. The smoothed surface converges to a conformal
+parameterization of the initial surface onto a sphere.
+
+\cgalFigureBegin{smooth_sphere, smooth_sphere.png}
+Mesh smoothing. (a) Input mesh.
+(b) Result from mesh smoothing after 10 iterations.
+\cgalFigureEnd
+
+\cgalFigureBegin{dino_teaser, dino-teaser.jpg}
+Shape smoothing on a dinoseur model using the mean curvature flow. The resulted smoothed shape is colored white.
+\cgalFigureEnd
+
+\cgalFigureBegin{devil, devils.png}
+Smoothing the shape of the devil using the mean curvature flow. The result is a conformal map to a sphere.
+\cgalFigureEnd
 
 \subsection MeshingExamples Meshing Examples
 
@@ -286,7 +327,7 @@ This package provides an algorithm for filling one closed hole that is either in
 or defined by a sequence of points that describe a polyline.
 The main steps of the algorithm are described in \cgalCite{liepa2003filling} and can be summarized as follows.
 
-First, the largest patch triangulating the boundary of the hole is generated without introducing any new vertex. 
+First, the largest patch triangulating the boundary of the hole is generated without introducing any new vertex.
 The patch is selected so as to minimize a quality function evaluated for all possible triangular patches.
 The quality function first minimizes the worst dihedral angle between patch triangles,
 then the total surface area of the patch as a tiebreaker.
@@ -352,7 +393,7 @@ time of \f$ O(n^3)\f$ , \cgalCite{zou2013algorithm} in most cases has
 running time of \f$ O(n \log n)\f$.  We were running
 `triangulate_refine_and_fair_hole()` for the below meshes (and two
 more meshes with smaller holes). The machine used is a PC running
-Windows 10 with an Intel Core i7 CPU clocked at 2.70 GHz. 
+Windows 10 with an Intel Core i7 CPU clocked at 2.70 GHz.
 The program has been compiled with Visual C++ 2013 compiler with the O2
 option which maximizes speed.
 
@@ -363,7 +404,7 @@ The elephant on the left/right has a hole with 963/7657 vertices.
 This takes time
 
 |  # vertices | without Delaunay (sec.) | with Delaunay (sec.)|
-| ----:       | ----:                   | ----:               | 
+| ----:       | ----:                   | ----:               |
   565         | 8.5                     | 0.03                |
   774         | 21                      | 0.035               |
   967         | 43                      | 0.06                |
@@ -393,7 +434,7 @@ The intersecting triangles are displayed in dark grey on the right image.
 
 \subsection PMPInsideTest Side of Triangle Mesh
 
-The class `CGAL::Side_of_triangle_mesh` provides a functor that tests whether a query point is 
+The class `CGAL::Side_of_triangle_mesh` provides a functor that tests whether a query point is
 inside, outside, or on the boundary of the domain bounded by a given closed triangle mesh.
 
 A point is said to be on the bounded side of the domain bounded by the input triangle mesh
@@ -444,7 +485,7 @@ the connected components of a closed polygon mesh so that it bounds a volume
 
 
 ****************************************
-\section PMPRepairing Combinatorial Repairing 
+\section PMPRepairing Combinatorial Repairing
 *******************
 \subsection Stitching
 
@@ -496,7 +537,7 @@ is output.
 When the faces of a polygon mesh are given but the connectivity is unknown,
 we must deal with of a \e polygon \e soup.
 
-Before running any of the algorithms on the so-called 
+Before running any of the algorithms on the so-called
 polygon soup, one should ensure that the polygons are consistently oriented.
 To do so, this package provides the function
 `CGAL::Polygon_mesh_processing::orient_polygon_soup()`,
