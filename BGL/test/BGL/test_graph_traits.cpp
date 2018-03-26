@@ -255,8 +255,6 @@ template<typename G>
 void test_read(const G& g)
 {
   assert(CGAL::is_valid_polygon_mesh(g));
-  assert(CGAL::is_valid_face_graph(g));
-  assert(CGAL::is_valid_halfedge_graph(g));
 }
 
 

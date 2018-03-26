@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/Euler_operations.h>
@@ -25,9 +26,85 @@ test(const char *fname, bool triangle, bool quad, bool tetrahedron, bool hexahed
   assert(CGAL::is_hexahedron(hd, m) == hexahedron);
   }
 
+template <typename Mesh>
+void
+test_validity(Mesh& mesh)
+{
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<Mesh>::edge_descriptor edge_descriptor;
+  typedef typename boost::graph_traits<Mesh>::face_descriptor face_descriptor;
+  typedef typename boost::property_map<Mesh, CGAL::vertex_point_t>::type VPMap;
+  VPMap vpmap = get(CGAL::vertex_point, mesh);
+  vertex_descriptor vertices[4];
+  edge_descriptor edges[4];
+  vertices[0] = add_vertex(mesh);
+  vertices[1] = add_vertex(mesh);
+  vertices[2] = add_vertex(mesh);
+  vertices[3] = add_vertex(mesh);
+  
+  put(vpmap, vertices[0], Point_3(0,0,0));
+  put(vpmap, vertices[1], Point_3(1,0,0));
+  put(vpmap, vertices[2], Point_3(1,1,0));
+  put(vpmap, vertices[3], Point_3(0,1,0));
+  
+  edges[0] = add_edge(mesh); 
+  edges[1] = add_edge(mesh); 
+  edges[2] = add_edge(mesh); 
+  edges[3] = add_edge(mesh); 
+  
+  assert(!CGAL::is_valid_halfedge_graph(mesh));
+  for(int i=0; i<4; ++i)
+  {
+    set_target(halfedge(edges[i], mesh), vertices[i], mesh);
+    set_halfedge(vertices[i], halfedge(edges[i], mesh), mesh);
+  }
+  
+  for(int i=0; i<4; ++i)
+    set_target(opposite(halfedge(edges[i], mesh), mesh), vertices[(i+1)%4], mesh);
+  for(int i=0; i<4; ++i)
+  {
+    set_next(halfedge(edges[(i+1)%4], mesh), halfedge(edges[i], mesh), mesh);
+    set_next(opposite(halfedge(edges[i], mesh), mesh), 
+        opposite(halfedge(edges[(i+1)%4], mesh), mesh), mesh);
+  }
+  
+  assert(CGAL::is_valid_halfedge_graph(mesh));
+  face_descriptor faces[1];
+  faces[0] = add_face(mesh);
+  assert(!CGAL::is_valid_face_graph(mesh));
+  
+  for(int i=0; i<4; ++i)
+  {
+    set_face(opposite(halfedge(edges[i], mesh), mesh), faces[0], mesh);
+  }
+  set_halfedge(faces[0], opposite(halfedge(edges[0], mesh), mesh), mesh);
+  assert(CGAL::is_valid_face_graph(mesh));
+  assert(CGAL::is_valid_polygon_mesh(mesh));
+  
+  Mesh dummy;
+  vertices[0] = add_vertex(dummy);
+  vertices[1] = add_vertex(dummy);
+  edges[0] = add_edge(dummy);
+  set_target(halfedge(edges[0], dummy), vertices[0], dummy);
+  set_halfedge(vertices[0], halfedge(edges[0], dummy), dummy);
+  set_target(opposite(halfedge(edges[0], dummy), dummy), vertices[1], dummy);
+  set_halfedge(vertices[1], opposite(halfedge(edges[0], dummy), dummy), dummy);
+  set_next(halfedge(edges[0], dummy), opposite(halfedge(edges[0], dummy), dummy), dummy);
+  set_next(opposite(halfedge(edges[0], dummy), dummy), halfedge(edges[0], dummy), dummy);
+  faces[0] = add_face(dummy);
+  set_halfedge(faces[0], opposite(halfedge(edges[0], dummy), dummy), dummy);
+  set_face(halfedge(edges[0], dummy), faces[0], dummy);
+  set_face(opposite(halfedge(edges[0], dummy), dummy), faces[0], dummy);
+  assert(CGAL::is_valid_face_graph(dummy));
+  assert(!CGAL::is_valid_polygon_mesh(dummy));
+  
+}
+
 int main()
 {
   typedef CGAL::Surface_mesh<Point_3> Mesh;
+  Mesh mesh;
+  test_validity(mesh);
   //                                  triangle  quad    tetra   hexa
   test<Mesh>("data/triangle.off",     true,     false,  false,  false );
   test<Mesh>("data/quad.off",         false,    true,   false,  false );
@@ -79,7 +156,6 @@ int main()
   assert(num_faces(m) == 9);
   assert(CGAL::is_quad_mesh(m));
   assert(CGAL::is_valid_polygon_mesh(m));
-
   std::cerr << "done" << std::endl;
   return 0;
 }

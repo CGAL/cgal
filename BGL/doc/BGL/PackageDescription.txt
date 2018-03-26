@@ -618,6 +618,8 @@ user might encounter.
 - `CGAL::is_quad()`
 - `CGAL::is_quad_mesh()`
 - `CGAL::is_isolated_quad()`
+- `CGAL::is_valid_halfedge_graph()`
+- `CGAL::is_valid_face_graph()`
 - `CGAL::is_valid_polygon_mesh()`
 
 - `CGAL::is_tetrahedron()`

@@ -356,6 +356,16 @@ bool is_valid_face_descriptor( typename boost::graph_traits<FaceGraph>::face_des
   return true;
 }
 
+/*!
+  \ingroup PkgBGLHelperFct
+ * \brief is_valid_face_graph checks the integrity of a `HalfedgeGraph`.
+ * \param g the `HalfedgeGraph` to test.
+ * \param verb : if `true`, the details of the check will be written in the standard output.
+ *
+ * \tparam HalfedgeGraph a model of `HalfedgeGraph`
+ * \return `true` if the `FaceGraph` is valid, `false` otherwise.
+ * 
+ */
 template<typename HalfedgeGraph>
 bool is_valid_halfedge_graph(const HalfedgeGraph& g, bool verb = false)
 {
@@ -377,8 +387,6 @@ bool is_valid_halfedge_graph(const HalfedgeGraph& g, bool verb = false)
     if(!valid)
       break;
     verr << "halfedge " << n << std::endl;
-    if ( is_border(begin, g))
-      verr << "    is border halfedge" << std::endl;
     // Pointer integrity.
     valid = valid && ( next(begin, g) != boost::graph_traits<HalfedgeGraph>::null_halfedge());
     valid = valid && ( opposite(begin, g) != boost::graph_traits<HalfedgeGraph>::null_halfedge());
@@ -471,12 +479,9 @@ bool is_valid_halfedge_graph(const HalfedgeGraph& g, bool verb = false)
       verr << "halfedge " << n << std::endl;
   // At least triangular facets and distinct geometry.
   valid = valid && ( next(i, g) != i);
-  valid = valid && ( next(next(i, g), g) != i);
   valid = valid && ( target(i, g) != target(opposite(i, g), g));
-  valid = valid && ( target(i, g) != target(next(i, g), g));
-  valid = valid && ( target(i, g) != target(next(next(i, g), g), g));
   if ( ! valid) {
-      verr << "    incident facet is not at least a triangle."
+      verr << "    pointer validity corrupted."
            << std::endl;
       break;
   }
@@ -486,11 +491,21 @@ valid = valid && (n == num_h);
 if ( n != num_h)
   verr << "counting halfedges failed." << std::endl;
 
-verr << "end of CGAL::is_valid_polygon_mesh(): structure is "
+verr << "structure is "
    << ( valid ? "valid." : "NOT VALID.") << std::endl;
 return valid;
 }
 
+/*!
+  \ingroup PkgBGLHelperFct
+ * \brief is_valid_face_graph checks the integrity of a `FaceGraph`.
+ * \param g the `FaceGraph` to test.
+ * \param verb : if `true`, the details of the check will be written in the standard output.
+ *
+ * \tparam FaceGraph a model of `FaceGraph`
+ * \return `true` if the `FaceGraph` is valid, `false` otherwise.
+ * 
+ */
 template<typename FaceGraph>
 bool is_valid_face_graph(const FaceGraph& g, bool verb = false)
 {
@@ -557,13 +572,6 @@ bool is_valid_face_graph(const FaceGraph& g, bool verb = false)
            << std::endl;
       break;
     }
-    
-    // Distinct facets on each side of an halfedge.
-    valid = valid && (face(i, g) != face(opposite(i, g), g));
-    if ( ! valid) {
-      verr << "    both incident facets are equal." << std::endl;
-      break;
-    }
   }
   verr << "sum border halfedges (2*nb) = " << 2 * nb << std::endl;
   if ( valid && n + nb  != num_h)
@@ -580,48 +588,38 @@ bool is_valid_face_graph(const FaceGraph& g, bool verb = false)
  * \param g the `PolygonMesh` to test.
  * \param verb : if `true`, the details of the check will be written in the standard output.
  *
- * \tparam PolygonMesh a model of `FaceListGraph`, `HalfedgeListGraph` and `VertexListGraph`
+ * \tparam PolygonMesh a model of \ref PMPDef "PolygonMesh"
  * \return `true` if the `PolygonMesh` is valid, `false` otherwise.
  * 
- * A `PolygonMesh` `g` is valid if:
- 
-- it has an even number of halfedges 
-- for each halfedge `h` of `g`:
-  - halfedge(edge(h,g),g)==h
-  - next(h,g) != null_halfedge()
-  - opposite(h,g) != null_halfedge()
-  - opposite(h,g) != h
-  - opposite(opposite(h,g)) == h
-  - next(h, g) != h
-  - next(next(h,g),g) != h;
-  - target(h,g) != target(opposite(h,g),g)
-  - target(h,g) != target(next(h,g),g)
-  - target(h,g) != target(next(next(h,g),g),g)
-  - prev(next(h,g),g) == next(prev(h,g),g) == h
-  - target(h,g) != null_vertex()
-  - target(h,g) == target(opposite(next(h,g),g),g)
-  - face(h,g) == face(next(h,g),g)
-- std::distance(halfedges(g).first, halfedges(g).second)) is the number of halfedges of `g`
-- for each vertex `v` of `g`:
-  - halfedge(v,g) != null_halfedge()
-  - target(halfedge(v,g),g) == v
-
-- the sum of the halfedges around all the vertices of `g` is 
-std::distance(halfedges(g).first, halfedges(g).second))
-- std::distance(vertices(g).first, vertices(g).second)) is the number of vertices of `g`
-- for each face `f` of `g`:
-  - halfedge(f,g) != null_halfedge()
-  - face(halfedge(f,g),g) == f
-
-- the sum of halfedges around all the faces of `g` + the border halfedges of `g` is 
-std::distance(halfedges(g).first, halfedges(g).second))
-- `g` has distinct faces on each side of an edge.
  */
 template <typename PolygonMesh>
 bool is_valid_polygon_mesh(const PolygonMesh& g, bool verb = false)
 {
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
+  Verbose_ostream verr(verb);
  bool valid=is_valid_face_graph(g, verb);
  //test for 2-manifoldness
+ // Distinct facets on each side of an halfedge.
+ BOOST_FOREACH(halfedge_descriptor i, halfedges(g)){
+   valid = valid && (face(i, g) != face(opposite(i, g), g));
+   if ( ! valid) {
+     verr << "    both incident facets are equal." << std::endl;
+     break;
+   }
+   valid = valid && ( next(next(i, g), g) != i);
+   valid = valid && ( target(i, g) != target(next(i, g), g));
+   valid = valid && ( target(i, g) != target(next(next(i, g), g), g));
+   if ( ! valid) {
+     verr << "    incident facet is not at least a triangle."
+          << std::endl;
+     break;
+   }
+   if ( ! valid) {
+       verr << "    incident facet is not at least a triangle."
+            << std::endl;
+       break;
+   }
+ }
  return valid;
 }
 
