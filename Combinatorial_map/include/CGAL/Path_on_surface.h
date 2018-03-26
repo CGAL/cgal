@@ -464,7 +464,7 @@ public:
     for (begin=0; begin<m_path.size()-1; ++begin)
     {
       next_turn=next_negative_turn(begin);
-      if (next_turn==1 || next_turn==2)
+      if (next_turn!=2)
       {
         if (find_l_shape(begin, middle, end))
         {
