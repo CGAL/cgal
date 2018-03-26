@@ -381,7 +381,7 @@ public:
       // Insert "num_points_seq" points sequentially
       // (or more if dim < 3 after that)
       size_t num_points_seq = (std::min)(num_points, (size_t)100);
-      while (dimension() < 3 || i < num_points_seq)
+      while (i < num_points_seq || (dimension() < 3 && i < num_points))
       {
         hint = insert(points[i], hint);
         ++i;
@@ -464,7 +464,7 @@ private:
         // Insert "num_points_seq" points sequentially
         // (or more if dim < 3 after that)
         size_t num_points_seq = (std::min)(num_points, (size_t)100);
-        while (dimension() < 3 || i < num_points_seq)
+        while (i < num_points_seq || (dimension() < 3 && i < num_points))
         {
           hint = insert(points[indices[i]], hint);
           if (hint != Vertex_handle()) hint->info() = infos[indices[i]];
