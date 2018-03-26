@@ -358,12 +358,12 @@ bool is_valid_face_descriptor( typename boost::graph_traits<FaceGraph>::face_des
 
 /*!
   \ingroup PkgBGLHelperFct
- * \brief is_valid_face_graph checks the integrity of a `HalfedgeGraph`.
- * \param g the `HalfedgeGraph` to test.
+ * \brief checks the integrity of `g`.
+ * \param g the HalfedgeGraph to test.
  * \param verb : if `true`, the details of the check will be written in the standard output.
  *
- * \tparam HalfedgeGraph a model of `HalfedgeGraph`
- * \return `true` if the `FaceGraph` is valid, `false` otherwise.
+ * \tparam HalfedgeGraph a model of `HalfedgeListGraph`
+ * \return `true` if `g` is valid, `false` otherwise.
  * 
  */
 template<typename HalfedgeGraph>
@@ -498,12 +498,14 @@ return valid;
 
 /*!
   \ingroup PkgBGLHelperFct
- * \brief is_valid_face_graph checks the integrity of a `FaceGraph`.
- * \param g the `FaceGraph` to test.
+ * \brief checks the integrity of `g`.
+ * 
+ * calls `is_valid_halfedge_graph()`
+ * \param g the FaceGraph to test.
  * \param verb : if `true`, the details of the check will be written in the standard output.
  *
- * \tparam FaceGraph a model of `FaceGraph`
- * \return `true` if the `FaceGraph` is valid, `false` otherwise.
+ * \tparam FaceGraph a model of `FaceListGraph`
+ * \return `true` if `g` is valid, `false` otherwise.
  * 
  */
 template<typename FaceGraph>
@@ -584,12 +586,15 @@ bool is_valid_face_graph(const FaceGraph& g, bool verb = false)
 }
 /*!
   \ingroup PkgBGLHelperFct
- * \brief is_valid_polygon_mesh checks the integrity of a `PolygonMesh`.
+ * \brief checks the integrity of `g`.
+ * 
+ * calls `is_valid_face_graph()`
  * \param g the `PolygonMesh` to test.
  * \param verb : if `true`, the details of the check will be written in the standard output.
  *
- * \tparam PolygonMesh a model of \ref PMPDef "PolygonMesh"
- * \return `true` if the `PolygonMesh` is valid, `false` otherwise.
+ * \tparam PolygonMesh a model of `FaceListGraph` and `HalfedgeListGraph`, and follows 
+ * the definition of a \ref PMPDef "PolygonMesh"
+ * \return `true` if `g` is valid, `false` otherwise.
  * 
  */
 template <typename PolygonMesh>
