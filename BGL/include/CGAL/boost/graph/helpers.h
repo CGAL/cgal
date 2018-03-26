@@ -359,20 +359,25 @@ bool is_valid_face_descriptor( typename boost::graph_traits<FaceGraph>::face_des
 /*!
   \ingroup PkgBGLHelperFct
  * \brief checks the integrity of `g`.
- * \param g the HalfedgeGraph to test.
+ * 
+ * `g` is valid if it follows the rules of the `HalfedgeListGraph` concept,
+ * and all of its associations are reciprocal.
+ * For example, `prev(next(h, g), g)` must be `h`, 
+ * and `next(prev(h, g), g)` must be `h`.
+ * \param g the `Graph` to test.
  * \param verb : if `true`, the details of the check will be written in the standard output.
  *
- * \tparam HalfedgeGraph a model of `HalfedgeListGraph`
+ * \tparam `Graph` a model of `HalfedgeListGraph`
  * \return `true` if `g` is valid, `false` otherwise.
  * 
  */
-template<typename HalfedgeGraph>
-bool is_valid_halfedge_graph(const HalfedgeGraph& g, bool verb = false)
+template<typename Graph>
+bool is_valid_halfedge_graph(const Graph& g, bool verb = false)
 {
-  typedef typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor     vertex_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::vertices_size_type    vertex_size_type;
-  typedef typename boost::graph_traits<HalfedgeGraph>::halfedges_size_type   halfedges_size_type;
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor     vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::vertices_size_type    vertex_size_type;
+  typedef typename boost::graph_traits<Graph>::halfedges_size_type   halfedges_size_type;
   Verbose_ostream verr(verb);
   std::size_t num_v(std::distance(boost::begin(vertices(g)), boost::end(vertices(g)))),
   num_h(std::distance(boost::begin(halfedges(g)), boost::end(halfedges(g))));
@@ -388,8 +393,8 @@ bool is_valid_halfedge_graph(const HalfedgeGraph& g, bool verb = false)
       break;
     verr << "halfedge " << n << std::endl;
     // Pointer integrity.
-    valid = valid && ( next(begin, g) != boost::graph_traits<HalfedgeGraph>::null_halfedge());
-    valid = valid && ( opposite(begin, g) != boost::graph_traits<HalfedgeGraph>::null_halfedge());
+    valid = valid && ( next(begin, g) != boost::graph_traits<Graph>::null_halfedge());
+    valid = valid && ( opposite(begin, g) != boost::graph_traits<Graph>::null_halfedge());
     if ( ! valid) {
       verr << "    pointer integrity corrupted (ptr==0)."
            << std::endl;
@@ -414,7 +419,7 @@ bool is_valid_halfedge_graph(const HalfedgeGraph& g, bool verb = false)
       break;
     }
     // vertex integrity.
-    valid = valid && ( target(begin, g) != boost::graph_traits<HalfedgeGraph>::null_vertex());
+    valid = valid && ( target(begin, g) != boost::graph_traits<Graph>::null_vertex());
     if ( ! valid) {
       verr << "    vertex pointer integrity corrupted."
            << std::endl;
@@ -440,7 +445,7 @@ bool is_valid_halfedge_graph(const HalfedgeGraph& g, bool verb = false)
       break;
     verr << "vertex " << v << std::endl;
     // Pointer integrity.
-    if ( halfedge(vbegin, g) != boost::graph_traits<HalfedgeGraph>::null_halfedge())
+    if ( halfedge(vbegin, g) != boost::graph_traits<Graph>::null_halfedge())
       valid = valid && (
             target( halfedge(vbegin, g), g) == vbegin);
     else
@@ -452,7 +457,7 @@ bool is_valid_halfedge_graph(const HalfedgeGraph& g, bool verb = false)
     }
     // cycle-around-vertex test.
     halfedge_descriptor h = halfedge(vbegin, g);
-    if ( h != boost::graph_traits<HalfedgeGraph>::null_halfedge()) {
+    if ( h != boost::graph_traits<Graph>::null_halfedge()) {
       halfedge_descriptor ge = h;
       do {
         verr << "    halfedge " << n << std::endl;
@@ -500,21 +505,25 @@ return valid;
   \ingroup PkgBGLHelperFct
  * \brief checks the integrity of `g`.
  * 
+ * `g` is valid if it is a valid `HalfedgeListGraph`, if it follows the rules
+ * of the `FaceListGraph` concept, and all of its associations are reciprocal.
+ * For example, `face(halfedge(f,g),g)` must be `f`.
  * calls `is_valid_halfedge_graph()`
- * \param g the FaceGraph to test.
+ * \param g the `Graph` to test.
  * \param verb : if `true`, the details of the check will be written in the standard output.
  *
- * \tparam FaceGraph a model of `FaceListGraph`
+ * \tparam `Graph` a model of `FaceListGraph`
  * \return `true` if `g` is valid, `false` otherwise.
  * 
+ * \see `is_valid_halfedge_graph()` 
  */
-template<typename FaceGraph>
-bool is_valid_face_graph(const FaceGraph& g, bool verb = false)
+template<typename Graph>
+bool is_valid_face_graph(const Graph& g, bool verb = false)
 {
-  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor       face_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::faces_size_type       faces_size_type;
-  typedef typename boost::graph_traits<FaceGraph>::halfedges_size_type   halfedges_size_type;
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<Graph>::face_descriptor       face_descriptor;
+  typedef typename boost::graph_traits<Graph>::faces_size_type       faces_size_type;
+  typedef typename boost::graph_traits<Graph>::halfedges_size_type   halfedges_size_type;
   std::size_t num_f(std::distance(boost::begin(faces(g)), boost::end(faces(g)))),
       num_h(std::distance(boost::begin(halfedges(g)), boost::end(halfedges(g))));
   
@@ -534,7 +543,7 @@ bool is_valid_face_graph(const FaceGraph& g, bool verb = false)
       break;
     verr << "face " << f << std::endl;
     // Pointer integrity.
-    if ( halfedge(fbegin, g) != boost::graph_traits<FaceGraph>::null_halfedge())
+    if ( halfedge(fbegin, g) != boost::graph_traits<Graph>::null_halfedge())
       valid = valid && (
             face(halfedge(fbegin, g), g) == fbegin);
     else
@@ -545,7 +554,7 @@ bool is_valid_face_graph(const FaceGraph& g, bool verb = false)
     }
     // cycle-around-face test.
     halfedge_descriptor h = halfedge( fbegin, g);
-    if (h != boost::graph_traits<FaceGraph>::null_halfedge()) {
+    if (h != boost::graph_traits<Graph>::null_halfedge()) {
       halfedge_descriptor ge = h;
       do {
         verr << "    halfedge " << n << std::endl;
@@ -588,19 +597,24 @@ bool is_valid_face_graph(const FaceGraph& g, bool verb = false)
   \ingroup PkgBGLHelperFct
  * \brief checks the integrity of `g`.
  * 
- * calls `is_valid_face_graph()`
- * \param g the `PolygonMesh` to test.
+ * `g` is valid if it is a valid `FaceListGraph` and it has distinct faces on each side of an edge.
+ * calls `is_valid_face_graph()`.
+ * 
+ * \param g the `Mesh` to test.
  * \param verb : if `true`, the details of the check will be written in the standard output.
  *
- * \tparam PolygonMesh a model of `FaceListGraph` and `HalfedgeListGraph`, and follows 
+ * \tparam Mesh a model of `FaceListGraph` and `HalfedgeListGraph`, and follows 
  * the definition of a \ref PMPDef "PolygonMesh"
  * \return `true` if `g` is valid, `false` otherwise.
  * 
+ * \see `is_valid_face_graph()`
+ * \see `is_valid_halfedge_graph()`
+ * 
  */
-template <typename PolygonMesh>
-bool is_valid_polygon_mesh(const PolygonMesh& g, bool verb = false)
+template <typename Mesh>
+bool is_valid_polygon_mesh(const Mesh& g, bool verb = false)
 {
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor   halfedge_descriptor;
   Verbose_ostream verr(verb);
  bool valid=is_valid_face_graph(g, verb);
  //test for 2-manifoldness
