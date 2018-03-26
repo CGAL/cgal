@@ -23,6 +23,7 @@
 
 #include <stack>
 #include <CGAL/Union_find.h>
+#include <CGAL/Path_generators.h>
 #include <boost/unordered_map.hpp>
 
 namespace CGAL {
@@ -35,10 +36,12 @@ public:
   typedef typename Map::Dart_handle Dart_handle;
   typedef typename Map::Dart_const_handle Dart_const_handle;
 
+  typedef Path_on_surface<Map> Self;
+
   Path_on_surface(const Map& amap) : m_map(amap), m_is_closed(false)
   {}
 
-  void swap(Path_on_surface& p2)
+  void swap(Self& p2)
   {
     assert(&m_map==&(p2.m_map));
     m_path.swap(p2.m_path);
@@ -88,6 +91,7 @@ public:
   
   void push_back(Dart_const_handle dh)
   {
+    assert(dh!=NULL && dh!=m_map.null_dart_handle);
     assert((is_empty() ||
            CGAL::template belong_to_same_cell<Map, 0>
            (m_map, m_map.other_extremity(back()), dh)));
@@ -102,6 +106,9 @@ public:
   {
     for (unsigned int i=1; i<m_path.size(); ++i)
     {
+      if (m_path[i]==NULL || m_path[i]==m_map.null_dart_handle)
+      { return false; }
+
       Dart_const_handle pend=m_map.other_extremity(m_path[i-1]);
       if (pend==Map::null_handle) { return false; }
 
@@ -237,7 +244,7 @@ public:
   }
 
   void transform_positive_bracket(std::size_t begin, std::size_t end,
-                          std::vector<Dart_const_handle>& new_path)
+                                  Self& new_path)
   {
     // There is a special case for (1 2^r). In this case, we need to ignore
     // the two darts begin and end
@@ -245,18 +252,15 @@ public:
           m_map.template beta<0>(get_ith_dart(begin)):
           m_map.template beta<1,2,0>(get_ith_dart(end)));
     Dart_const_handle d2=(next_index(begin)!=end?
-          m_map.template beta<2,0>(get_ith_dart(end)):
-          m_map.template beta<0,0>(get_ith_dart(begin)));
-    do
-    {
-      new_path.push_back(m_map.template beta<2>(d1));
-      d1=m_map.template beta<0,2,0>(d1);
-    }
-    while(d1!=d2);
+          m_map.template beta<2,0,2>(get_ith_dart(end)):
+          m_map.template beta<0,0,2>(get_ith_dart(begin)));
+
+    new_path.push_back(m_map.template beta<2>(d1));
+    CGAL::extend_straight_negative_until(new_path, d2);
   }
 
   void transform_negative_bracket(std::size_t begin, std::size_t end,
-                                  std::vector<Dart_const_handle>& new_path)
+                                  Self& new_path)
   {
     // There is a special case for (-1 -2^r). In this case, we need to ignore
     // the two darts begin and end
@@ -266,16 +270,13 @@ public:
     Dart_const_handle d2=(next_index(begin)!=end?
           m_map.template beta<1>(get_ith_dart(end)):
           m_map.template beta<2,1,1>(get_ith_dart(begin)));
-    do
-    {
-      new_path.push_back(d1);
-      d1=m_map.template beta<1,2,1>(d1);
-    }
-    while(d1!=d2);
+
+    new_path.push_back(d1);
+    CGAL::extend_straight_positive_until(new_path, d2);
   }
 
   void transform_bracket(std::size_t begin, std::size_t end,
-                         std::vector<Dart_const_handle>& new_path,
+                         Self& new_path,
                          bool positive)
   {
     if (positive)
@@ -287,7 +288,7 @@ public:
   // copy all darts starting from begin and going to the dart before end
   // from this path to new_path.
   void copy_rest_of_path(std::size_t begin, std::size_t end,
-                         std::vector<Dart_const_handle>& new_path)
+                         Self& new_path)
   {
     assert(end<=length());
     assert(begin<=end);
@@ -302,28 +303,21 @@ public:
   {
     if (is_empty()) return false;
 
-    std::vector<Dart_const_handle> new_path;
-    std::size_t i;
+    Self new_path(m_map);
     bool positive=false;
+    std::size_t begin, end;
 
-    for (i=0; i<m_path.size()-1; ++i)
+    for (begin=0; begin<m_path.size()-1; ++begin)
     {
-      positive=(next_turn(i)==1);
-      if (positive || next_negative_turn(i)==1)
+      positive=(next_turn(begin)==1);
+      if (positive || next_negative_turn(begin)==1)
       {
-        // i is maybe the beginning of a bracket
-        std::size_t begin=i;
-        std::size_t end=find_end_of_braket(begin, positive);
+        // we test if begin is the beginning of a bracket
+        end=find_end_of_braket(begin, positive);
         if (begin!=end)
         {
           /* std::cout<<"Bracket: ["<<begin<<"; "<<end<<"] "
                    <<(positive?"+":"-")<<std::endl; */
-          if (next_index(begin)==end) // Special case of (1 2^r)
-          {
-            new_path.clear(); // TODO BETTER; MOREOVER THERE IS A POSSIBLE BUG IF END<BEGIN; in this case I already copied some darts which must be not copied
-            i=m_path.size(); }
-          else // Normal case
-          { i=end+1; }
           if (end<begin)
           {
             if (!is_closed())
@@ -339,7 +333,7 @@ public:
           if (begin<end && next_index(begin)!=end && end<length()-1)
           { copy_rest_of_path(end+1, length(), new_path); }
 
-          new_path.swap(m_path);
+          swap(new_path);
           return true;
         }
       }
@@ -363,7 +357,7 @@ public:
 
     bool res=false;
     std::size_t i;
-    std::vector<Dart_const_handle> new_path;
+    Self new_path(m_map);
     for (i=0; i<m_path.size()-1; )
     {
       if (m_path[i]==m_map.template beta<2>(m_path[i+1]))
@@ -380,7 +374,7 @@ public:
     if (i==m_path.size()-1)
     { new_path.push_back(m_path[m_path.size()-1]); }
 
-    new_path.swap(m_path);
+    swap(new_path);
     return res;
   }
 
@@ -432,28 +426,53 @@ public:
     else
     { return false; }
 
-    while (next_negative_turn(end)==2)
+    while (next_negative_turn(end)==2 && end!=begin)
     { end=next_index(end); }
 
     return true;
   }
 
+  void push_l_shape(std::size_t begin,
+                    std::size_t middle,
+                    std::size_t end,
+                    Self& new_path)
+  {
+    assert(begin!=middle);
+    assert(middle!=end);
+
+    Dart_const_handle d1=
+        m_map.template beta<2,1>(get_ith_dart(begin));
+    new_path.push_back(d1);
+
+    CGAL::extend_uturn_positive(new_path, 1);
+
+    d1=m_map.template beta<2,1,1>(get_ith_dart(middle));
+    CGAL::extend_straight_positive_until(new_path, d1);
+
+    CGAL::extend_uturn_positive(new_path, 3);
+
+    d1=m_map.template beta<2,0,2,1>(get_ith_dart(end));
+    CGAL::extend_straight_positive_until(new_path, d1);
+
+    CGAL::extend_uturn_positive(new_path, 1);
+  }
+
   bool right_push_one_step()
   {
     std::size_t begin, middle, end;
-    std::size_t i;
     std::size_t next_turn;
-    for (i=0; i<m_path.size()-1; )
+    for (begin=0; begin<m_path.size()-1; ++begin)
     {
       next_turn=next_negative_turn(begin);
       if (next_turn==1 || next_turn==2)
       {
         if (find_l_shape(begin, middle, end))
         {
-          std::vector<Dart_const_handle> new_path;
+          Self new_path(m_map);
           if (begin==end)
           { // Special case of (-2^l)
             // TODO
+            assert(false);
             return true;
           }
 
@@ -472,7 +491,7 @@ public:
           if (begin<end /* && XXX (TODO SPECIAL CASES ??)*/)
           { copy_rest_of_path(end+1, length(), new_path); }
 
-          new_path.swap(m_path);
+          swap(new_path);
           return true;
         }
       }

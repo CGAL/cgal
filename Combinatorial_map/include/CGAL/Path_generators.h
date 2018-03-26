@@ -104,10 +104,11 @@ void extend_straight_positive(Path& p, std::size_t nb=1)
 {
   if (p.is_empty() || nb==0)
   { return; }
-  
+
+  typename Path::Dart_const_handle d2;
   for (std::size_t i=0; i<nb; ++i)
   {
-    typename Path::Dart_const_handle d2=p.get_map().template beta<1,2,1>(p.back());
+    d2=p.get_map().template beta<1,2,1>(p.back());
     if (d2!=p.get_map().null_dart_handle)
     { p.push_back(d2); }
   }
@@ -119,15 +120,48 @@ void extend_straight_negative(Path& p, std::size_t nb=1)
   if (p.is_empty() || nb==0)
   { return; }
   
+  typename Path::Dart_const_handle d2;
   for (std::size_t i=0; i<nb; ++i)
   {
-    typename Path::Dart_const_handle d2=p.get_map().template beta<2,0,2,0,2>(p.back());
+    d2=p.get_map().template beta<2,0,2,0,2>(p.back());
     if (d2!=p.get_map().null_dart_handle)
     { p.push_back(d2); }
   }
 }
 
-template<typename Path>  
+template<typename Path>
+void extend_straight_positive_until(Path& p,
+                                    typename Path::Dart_const_handle dend)
+{
+  if (p.is_empty() || p.back()==dend)
+  { return; }
+
+  typename Path::Dart_const_handle
+      d2=p.get_map().template beta<1,2,1>(p.back());
+  while(d2!=dend)
+  {
+    p.push_back(d2);
+    d2=p.get_map().template beta<1,2,1>(d2);
+  }
+}
+
+template<typename Path>
+void extend_straight_negative_until(Path& p,
+                                    typename Path::Dart_const_handle dend)
+{
+  if (p.is_empty() || p.back()==dend)
+  { return; }
+
+  typename Path::Dart_const_handle
+      d2=p.get_map().template beta<2,0,2,0,2>(p.back());
+  while(d2!=dend)
+  {
+    p.push_back(d2);
+    d2=p.get_map().template beta<2,0,2,0,2>(d2);
+  }
+}
+
+template<typename Path>
 void extend_uturn_positive(Path& p, std::size_t nb=1)
 {
   if (p.is_empty() || nb==0)

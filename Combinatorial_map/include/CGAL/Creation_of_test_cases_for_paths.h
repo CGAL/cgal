@@ -125,6 +125,32 @@ template<typename Path>
 void generate_negative_bracket_special2(Path& p)
 { generate_bracket_special2(p, true); }
 
+template<typename Path>
+void generate_one_l_shape(Path& p)
+{ // Generic case
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[0]));
+  extend_straight_negative(p, 2);
+  extend_uturn_positive(p, 1);
+  extend_straight_negative(p, 8);
+  extend_uturn_negative(p);
+  extend_straight_negative(p, 5);
+  extend_uturn_positive(p, 1);
+  extend_straight_negative(p, 3);
+}
+
+template<typename Path>
+void generate_l_shape_vase2(Path& p)
+{ // (... x -1 -2^t y ...)
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[0]));
+  extend_straight_negative(p, 2);
+  extend_uturn_negative(p);
+  extend_straight_negative(p, 5);
+  extend_uturn_positive(p, 1);
+  extend_straight_negative(p, 3);
+}
+
 } // namespace CGAL
 
 #endif // CGAL_CREATION_OF_TEST_CASES_FOR_PATHS_H //
