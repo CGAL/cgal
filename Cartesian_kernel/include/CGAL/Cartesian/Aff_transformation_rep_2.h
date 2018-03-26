@@ -145,19 +145,19 @@ friend class Scaling_repC2<R>;
             {
               case 0: return t11;
               case 1: return t12;
-              case 2: return t13;
+              default: return t13;
             }
     case 1: switch (j)
             {
               case 0: return t21;
               case 1: return t22;
-              case 2: return t23;
+              default: return t23;
             }
     case 2: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(0);
-              case 2: return FT(1);
+              default: return FT(1);
             }
     }
     return FT(0);
