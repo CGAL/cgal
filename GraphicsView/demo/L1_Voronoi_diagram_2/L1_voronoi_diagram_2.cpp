@@ -31,6 +31,7 @@
 #include <QActionGroup>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <CGAL/IO/WKT.h>
 
 #include <fstream>
 
@@ -279,6 +280,7 @@ MainWindow::on_actionLoadPoints_triggered()
 						  tr("Open Points file"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
+                                                     "WKT files (*.wkt *.WKT);;"
                                                      "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
@@ -294,10 +296,16 @@ MainWindow::open(QString fileName)
   m_sites.clear();
   
   std::ifstream ifs(qPrintable(fileName));
-  
-  Kernel::Point_2 p;
-  while(ifs >> p) {
-    m_sites.push_back(p);
+  if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+  {
+    CGAL::read_multi_point_WKT(ifs, m_sites);
+  }
+  else
+  {
+    Kernel::Point_2 p;
+    while(ifs >> p) {
+      m_sites.push_back(p);
+    }
   }
   calculate_envelope();
 
@@ -315,11 +323,15 @@ MainWindow::on_actionSavePoints_triggered()
 						  tr("Save points"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
+                                                     "WKT files (*.wkt *.WKT);;"
                                                      "All files (*)"));
   if(! fileName.isEmpty()) {
     std::ofstream ofs(qPrintable(fileName));
-    for(Points::iterator it = m_sites.begin();
-        it != m_sites.end(); ++it)
+    if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+      CGAL::write_multi_point_WKT(ofs, m_sites);
+    else
+      for(Points::iterator it = m_sites.begin();
+          it != m_sites.end(); ++it)
       {
         ofs << *it << std::endl;
       }

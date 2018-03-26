@@ -3,9 +3,9 @@
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_2.h>
+#include <CGAL/IO/WKT.h>
 
 #include <CGAL/point_generators_2.h>
-
 // Qt headers
 #include <QtGui>
 #include <QString>
@@ -243,15 +243,27 @@ MainWindow::on_actionLoadPoints_triggered()
 						  tr("Open Points file"),
                                                   ".",
                                                   tr("Weighted Points (*.wpts.cgal);;"
+                                                     "WKT files (*.wkt *.WKT);;"
                                                      "All (*)"));
 
   if(! fileName.isEmpty()){
     std::ifstream ifs(qPrintable(fileName));
-
-    Weighted_point_2 p;
     std::vector<Weighted_point_2> points;
-    while(ifs >> p) {
-      points.push_back(p);
+    if(fileName.endsWith(".wkt",Qt::CaseInsensitive))
+    {
+      std::vector<K::Point_3> points_3;
+      CGAL::read_multi_point_WKT(ifs, points_3);
+      BOOST_FOREACH(const K::Point_3& p, points_3)
+      {
+        points.push_back(Weighted_point_2(K::Point_2(p.x(), p.y()), p.z()));
+      }
+    }
+    else
+    {
+      Weighted_point_2 p;
+      while(ifs >> p) {
+        points.push_back(p);
+      }
     }
     dt.insert(points.begin(), points.end());
 
@@ -268,15 +280,33 @@ MainWindow::on_actionSavePoints_triggered()
 						  tr("Save points"),
                                                   ".reg.cgal",
                                                   tr("Weighted Points (*.wpts.cgal);;"
+                                                     "WKT files (*.wkt *.WKT);;"
                                                      "All (*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
-    for(Regular::Finite_vertices_iterator 
+    if(fileName.endsWith(".wkt",Qt::CaseInsensitive))
+    {
+      std::vector<K::Point_3> points_3;
+      for(Regular::Finite_vertices_iterator 
           vit = dt.finite_vertices_begin(),
           end = dt.finite_vertices_end();
-        vit!= end; ++vit)
+          vit!= end; ++vit)
+      {
+        points_3.push_back(K::Point_3(vit->point().x(), 
+                                      vit->point().y(),
+                                      vit->point().weight()));
+      }
+      CGAL::write_multi_point_WKT(ofs, points_3);
+    }
+    else
     {
-      ofs << vit->point() << std::endl;
+      for(Regular::Finite_vertices_iterator 
+          vit = dt.finite_vertices_begin(),
+          end = dt.finite_vertices_end();
+          vit!= end; ++vit)
+      {
+        ofs << vit->point() << std::endl;
+      }
     }
   }
 }

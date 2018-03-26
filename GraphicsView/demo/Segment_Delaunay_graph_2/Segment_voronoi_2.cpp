@@ -24,6 +24,7 @@
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/SegmentDelaunayGraphGraphicsItem.h>
 #include <CGAL/Constraints_loader.h>
+#include <CGAL/IO/WKT.h>
 //#include <CGAL/Qt/Converter.h>
 
 // the two base classes
@@ -100,6 +101,7 @@ public Q_SLOTS:
   void loadPolygonConstraints(QString);
 
   void loadEdgConstraints(QString);
+  void loadWKTConstraints(QString fileName);
 
 Q_SIGNALS:
   void changed();
@@ -242,6 +244,9 @@ MainWindow::open(QString fileName)
     } else if(fileName.endsWith(".edg")){
       loadEdgConstraints(fileName);
       this->addToRecentFiles(fileName);
+    } else if(fileName.endsWith(".wkt", Qt::CaseInsensitive)){
+      loadWKTConstraints(fileName);
+      this->addToRecentFiles(fileName);
     }
   }
 }
@@ -252,8 +257,9 @@ MainWindow::on_actionLoadSegments_triggered()
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open Constraint File"),
 						  ".",
-						  tr("Edge files (*.edg)\n"
-                                                     "Polyline files (*.polygon.cgal)"));
+						  tr("Edge files (*.edg);;"
+                                                     "Polyline files (*.polygon.cgal);;"
+                                                     "WKT files (*.wkt *.WKT)"));
   open(fileName);
 }
 
@@ -326,6 +332,76 @@ MainWindow::loadEdgConstraints(QString fileName)
   actionRecenter->trigger();
 }
 
+void 
+MainWindow::loadWKTConstraints(QString fileName)
+{
+  typedef CGAL::Polygon_with_holes_2<K> Polygon;
+  typedef std::vector<K::Point_2> LineString;
+  
+  //Multipolygon 
+  K::Point_2 p,q, first;
+  SVD::Vertex_handle vp, vq, vfirst;
+  std::ifstream ifs(qPrintable(fileName));
+  do{
+    std::vector<Polygon> polygons;
+    CGAL::read_multi_polygon_WKT(ifs, polygons);
+    BOOST_FOREACH(const Polygon& poly, polygons)
+    {
+      if(poly.outer_boundary().is_empty())
+        continue;
+      Polygon::General_polygon_2::const_iterator it
+          =poly.outer_boundary().begin();
+      first = *(it++);
+      p = first;
+      vfirst = vp = svd.insert(p);
+      for(; it !=
+          poly.outer_boundary().end();
+          ++it){
+        q = *it;
+        vq = svd.insert(q, vp);
+        svd.insert(vp,vq);
+        p = q;
+        vp = vq;
+      }
+      if(vp != vfirst)
+        svd.insert(vp, vfirst);
+    }
+  }while(ifs.good() && !ifs.eof());
+  ifs.close();
+  //MultiLineString
+  ifs = std::ifstream(qPrintable(fileName));
+  K::Point_2 qold(0,0); // Initialize qold, as otherwise some g++ issue a unjustified warning
+  SVD::Vertex_handle vqold;
+  do{
+    std::vector<LineString > linestrings;
+    CGAL::read_multi_linestring_WKT(ifs, linestrings);
+    BOOST_FOREACH(const LineString& ls, linestrings)
+    {
+      bool first_pass=true;      
+      LineString::const_iterator it = ls.begin();
+      for(; it!=ls.end(); ++it){
+        p = *it++;
+        q = *it;
+        if(p == q){
+          continue;
+        }
+        if((!first_pass) && (p == qold)){
+          vp = vqold;
+        } else {
+          vp = svd.insert(p);
+        }
+        vq = svd.insert(q, vp);
+        if(vp != vq)
+          svd.insert(vp,vq);
+        qold = q;
+        vqold = vq;
+        first_pass = false;
+      }
+    }
+  }while(ifs.good() && !ifs.eof());
+  Q_EMIT( changed());
+  actionRecenter->trigger();
+}
 
 void
 MainWindow::on_actionRecenter_triggered()

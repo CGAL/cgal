@@ -21,6 +21,7 @@
 #include "TriangulationPointInputAndConflictZone.h"
 #include <CGAL/Qt/TriangulationGraphicsItem.h>
 #include <CGAL/Qt/VoronoiGraphicsItem.h>
+#include <CGAL/IO/WKT.h>
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
@@ -317,6 +318,7 @@ MainWindow::on_actionLoadPoints_triggered()
 						  tr("Open Points file"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
+                                                     "WKT files (*.WKT *.wkt);;"
                                                      "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
@@ -333,11 +335,16 @@ MainWindow::open(QString fileName)
   
   K::Point_2 p;
   std::vector<K::Point_2> points;
-  while(ifs >> p) {
-    // ignore whatever comes after x and y
-    ifs.ignore((std::numeric_limits<std::streamsize>::max)(), '\n'); 
-    points.push_back(p);
+  if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+  {
+    CGAL::read_multi_point_WKT(ifs, points);
   }
+  else
+    while(ifs >> p) {
+      // ignore whatever comes after x and y
+      ifs.ignore((std::numeric_limits<std::streamsize>::max)(), '\n'); 
+      points.push_back(p);
+    }
   dt.insert(points.begin(), points.end());
 
   // default cursor
@@ -355,16 +362,31 @@ MainWindow::on_actionSavePoints_triggered()
                                                   tr("Save points"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
+                                                     "WKT files (*.WKT *.wkt);;"
                                                      "All files (*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
-    for(Delaunay::Finite_vertices_iterator 
+    if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+    {
+      std::vector<K::Point_2> points;
+      points.reserve(dt.number_of_vertices());
+      for(Delaunay::Finite_vertices_iterator 
           vit = dt.finite_vertices_begin(),
           end = dt.finite_vertices_end();
-        vit!= end; ++vit)
-    {
-      ofs << vit->point() << std::endl;
+          vit!= end; ++vit)
+      {
+        points.push_back(vit->point());
+      }
+      CGAL::write_multi_point_WKT(ofs, points);
     }
+    else
+      for(Delaunay::Finite_vertices_iterator 
+          vit = dt.finite_vertices_begin(),
+          end = dt.finite_vertices_end();
+          vit!= end; ++vit)
+      {
+        ofs << vit->point() << std::endl;
+      }
   }
 }
 

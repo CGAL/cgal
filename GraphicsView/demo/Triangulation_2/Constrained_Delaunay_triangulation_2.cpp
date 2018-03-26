@@ -516,7 +516,7 @@ MainWindow::open(QString fileName)
     }
     if(fileName.endsWith(".polygon.cgal")){
       loadPolygonConstraints(fileName);
-    } else if(fileName.endsWith(".cgal")){
+    } else if(fileName.endsWith(".cpts.cgal")){
       loadFile(fileName);
     } else if(fileName.endsWith(".edg")){
       loadEdgConstraints(fileName);
@@ -541,7 +541,7 @@ MainWindow::on_actionLoadConstraints_triggered()
                                                      "Polyline files (*.polygon.cgal);;"
                                                      "Poly files (*.poly);;"
                                                      "CGAL files (*.cpts.cgal);;"
-                                                     "WKT files (*.wkt);;"
+                                                     "WKT files (*.WKT *.wkt);;"
                                                      "All (*)"));
   open(fileName);
 }
@@ -549,20 +549,24 @@ MainWindow::on_actionLoadConstraints_triggered()
 void 
 MainWindow::loadWKT(QString filename)
 {
-  typedef CGAL::Polygon_with_holes_2<K> Polygon;
-  typedef CGAL::Point_2<K> Point;
+  //Polygons todo : make it multipolygons
   std::ifstream ifs(qPrintable(filename));
   do
   {
-    Polygon p;
-    CGAL::read_polygon_WKT(ifs, p);
-    if(!p.outer_boundary().is_empty())
+    typedef CGAL::Polygon_with_holes_2<K> Polygon;
+    typedef CGAL::Point_2<K> Point;
+    std::vector<Polygon> mps;
+    CGAL::read_multi_polygon_WKT(ifs, mps);
+    BOOST_FOREACH(const Polygon& p, mps)
     {
+      if(p.outer_boundary().is_empty())
+        continue;
+      
       BOOST_FOREACH(Point point, p.outer_boundary().container())
           cdt.insert(point);
       for(Polygon::General_polygon_2::Edge_const_iterator 
           e_it=p.outer_boundary().edges_begin(); e_it != p.outer_boundary().edges_end(); ++e_it)
-          cdt.insert_constraint(e_it->source(), e_it->target());
+        cdt.insert_constraint(e_it->source(), e_it->target());
       
       for(Polygon::Hole_const_iterator h_it = 
           p.holes_begin(); h_it != p.holes_end(); ++h_it)
@@ -572,12 +576,60 @@ MainWindow::loadWKT(QString filename)
         for(Polygon::General_polygon_2::Edge_const_iterator 
             e_it=h_it->edges_begin(); e_it != h_it->edges_end(); ++e_it)
         {
-            cdt.insert_constraint(e_it->source(), e_it->target());
+          cdt.insert_constraint(e_it->source(), e_it->target());
         }
-        
       }
-      
-      
+    }
+  }while(ifs.good() && !ifs.eof());
+  //Edges
+  ifs.close();
+  ifs = std::ifstream(qPrintable(filename));
+  do
+  {
+    typedef std::vector<K::Point_2> LineString;
+    std::vector<LineString> mls;
+    CGAL::read_multi_linestring_WKT(ifs, mls);
+    BOOST_FOREACH(const LineString& ls, mls)
+    {
+      if(ls.empty())
+        continue;
+      K::Point_2 p,q, qold(0,0); // initialize to avoid maybe-uninitialized warning from GCC6
+      bool first = true;
+      CDT::Vertex_handle vp, vq, vqold;
+      LineString::const_iterator it = 
+          ls.begin();
+      for(; it != ls.end(); ++it) {
+        p = *it++;
+        q = *it;
+        if(p == q){
+          continue;
+        }
+        if((!first) && (p == qold)){
+          vp = vqold;
+        } else {
+          vp = cdt.insert(p);
+        }
+        vq = cdt.insert(q, vp->face());
+        if(vp != vq) {
+          cdt.insert_constraint(vp,vq);
+        }
+        qold = q;
+        vqold = vq;
+        first = false;
+      }
+    }
+  }while(ifs.good() && !ifs.eof());
+  
+  //Points
+  ifs.close();
+  ifs = std::ifstream(qPrintable(filename));
+  do
+  {
+    std::vector<K::Point_2> mpts;
+    CGAL::read_multi_point_WKT(ifs, mpts);
+    BOOST_FOREACH(const K::Point_2& p, mpts)
+    {
+      cdt.insert(p);
     }
   }while(ifs.good() && !ifs.eof());
   

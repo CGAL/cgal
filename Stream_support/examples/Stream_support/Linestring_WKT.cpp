@@ -21,7 +21,6 @@ int main(int argc, char* argv[])
   LineString ls;
   {
     std::ifstream is((argc>1)?argv[1]:"data/linestring.wkt");
-    //std::vector<Point> ls;
     CGAL::read_linestring_WKT(is, ls);
     is.close();
   }

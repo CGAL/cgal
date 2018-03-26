@@ -22,6 +22,7 @@
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/SegmentDelaunayGraphLinfGraphicsItem.h>
 #include <CGAL/Constraints_loader.h>
+#include <CGAL/IO/WKT.h>
 //#include <CGAL/Qt/Converter.h>
 
 // the two base classes
@@ -104,6 +105,8 @@ public Q_SLOTS:
   void loadEdgConstraints(QString);
 
   void loadPoints(QString);
+
+  void loadWKT(QString);
 
   void loadPointsInput(QString);
   
@@ -265,7 +268,10 @@ MainWindow::open(QString fileName)
     } else if(fileName.endsWith(".cin")){
       loadSitesInput(fileName);
       this->addToRecentFiles(fileName);
-    }    
+    } else if(fileName.endsWith(".wkt", Qt::CaseInsensitive)){
+      loadWKT(fileName);
+      this->addToRecentFiles(fileName);
+    }
   }
 }
 
@@ -277,11 +283,12 @@ MainWindow::on_actionLoadSegments_triggered()
                                  tr("Open Constraint File"),
                                  ".",
                                  tr(
-                                    "Cin  files (*.cin)\n"
-                                    "Pin  files (*.pin)\n" 
-                                    "Pts  files (*.pts)\n"
-                                    "Edge files (*.edg)\n"
-                                    "Polylines files (*.polygon.cgal)"
+                                    "Cin  files (*.cin);;"
+                                    "Pin  files (*.pin);;" 
+                                    "Pts  files (*.pts);;"
+                                    "Edge files (*.edg);;"
+                                    "Polylines files (*.polygon.cgal);;"
+                                    "WKT files (*.WKT *.wkt)"
                                                           ));
   open(fileName);
 }
@@ -370,6 +377,95 @@ MainWindow::loadPoints(QString fileName)
       svd.insert(p);
     }
   }
+  
+  Q_EMIT( changed());
+  actionRecenter->trigger();
+}
+
+void
+MainWindow::loadWKT(QString fileName)
+{
+  std::ifstream ifs(qPrintable(fileName));
+  //Points
+  do
+    {
+    std::vector<K::Point_2> mpts;
+    CGAL::read_multi_point_WKT(ifs, mpts);
+    BOOST_FOREACH(const K::Point_2& p, mpts)
+      svd.insert(p);
+    }while(ifs.good() && !ifs.eof());
+  //Lines
+  ifs.close();
+  ifs = std::ifstream(qPrintable(fileName));
+  do
+    {
+    typedef std::vector<K::Point_2> LineString;
+    std::vector<LineString> mls;
+    CGAL::read_multi_linestring_WKT(ifs, mls);
+    BOOST_FOREACH(const LineString& ls, mls)
+    {
+      if(ls.empty())
+        continue;
+      
+      bool first=true;
+      K::Point_2 p,q, qold(0,0); // Initialize qold, as otherwise some g++ issue a unjustified warning
+    
+      SVD::Vertex_handle vp, vq, vqold;
+      LineString::const_iterator it = ls.begin();
+      for(; it != ls.end(); ++it){
+        p = *it++;
+        q = *it;
+        if(p == q){
+          continue;
+        }
+        if((!first) && (p == qold)){
+          vp = vqold;
+        } else {
+          vp = svd.insert(p);
+        }
+        vq = svd.insert(q, vp);
+        svd.insert(vp,vq);
+        qold = q;
+        vqold = vq;
+        first = false;
+      }
+    }
+    }while(ifs.good() && !ifs.eof());
+  
+  //Polygons
+  ifs.close();
+  ifs = std::ifstream(qPrintable(fileName));
+  do
+  {
+    typedef CGAL::Polygon_with_holes_2<K> Polygon;
+    std::vector<Polygon> mps;
+    CGAL::read_multi_polygon_WKT(ifs, mps);
+    BOOST_FOREACH(const Polygon& poly, mps)
+    {
+      if(poly.outer_boundary().is_empty())
+        continue;
+      K::Point_2 p,q, first;
+      SVD::Vertex_handle vp, vq, vfirst;
+      Polygon::General_polygon_2::const_iterator it
+          = poly.outer_boundary().begin();
+      
+        first = *it;
+        p = first;
+        vfirst = vp = svd.insert(p);
+        for(; it != poly.outer_boundary().end(); ++it)
+        {
+          q = *it;
+          vq = svd.insert(q, vp);
+          if(vp != vq)
+            svd.insert(vp,vq);
+          p = q;
+          vp = vq;
+        }
+        if (vfirst != vp) {
+          svd.insert(vp, vfirst);
+        }
+      }
+  }while(ifs.good() && !ifs.eof());
   
   Q_EMIT( changed());
   actionRecenter->trigger();

@@ -11,6 +11,7 @@
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/extremal_polygon_2.h>
 #include <CGAL/minkowski_sum_2.h>
+#include <CGAL/IO/WKT.h>
 
 // Qt headers
 #include <QtGui>
@@ -229,6 +230,7 @@ MainWindow::on_actionLoadPolygon_triggered()
 						  ".",
                                                   tr( "Polyline files (*.polygon.cgal);;"
                                                       "WSL files (*.wsl);;"
+                                                      "WKT files (*.wkt *.WKT);;"
                                                       "All file (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
@@ -241,7 +243,17 @@ MainWindow::open(QString fileName)
   this->actionCreateInputPolygon->setChecked(false);
   std::ifstream ifs(qPrintable(fileName));
   poly.clear();
-  ifs >> poly;
+  if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+  {
+    CGAL::Polygon_with_holes_2<K> P;
+    CGAL::read_polygon_WKT(ifs, P);
+    poly = Polygon2(P.outer_boundary().begin(), 
+                    P.outer_boundary().end());
+  }
+  else
+  {
+    ifs >> poly;
+  }
   clear();
 
   this->addToRecentFiles(fileName);
@@ -256,10 +268,19 @@ MainWindow::on_actionSavePolygon_triggered()
 						  tr("Save Polygon"),
 						  ".",
                                                   tr( "Polyline files (*.polygon.cgal);;"
+                                                      "WKT files (*.wkt *.WKT);;"
                                                       "All file (*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
-    ofs << poly;
+    if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+    {
+      CGAL::Polygon_2<K> P(poly.begin(),
+                           poly.end());
+      CGAL::Polygon_with_holes_2<K> Pwh(P);
+      CGAL::write_polygon_WKT(ofs, Pwh);
+    }
+    else
+      ofs << poly;
   }
 }
 

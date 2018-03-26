@@ -6,6 +6,7 @@
 #include <CGAL/Apollonius_graph_hierarchy_2.h>
 #include <CGAL/Apollonius_graph_filtered_traits_2.h>
 #include <CGAL/point_generators_2.h>
+#include <CGAL/IO/WKT.h>
 
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_real.hpp>
@@ -216,6 +217,7 @@ MainWindow::on_actionLoadPoints_triggered()
 						  tr("Open Points file"),
                                                   ".",
                                                   tr("CGAL files (*.wpts.cgal);;"
+                                                     "WKT files (*.wkt *.WKT);;"
                                                      "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
@@ -231,10 +233,20 @@ MainWindow::open(QString fileName)
   if(! fileName.isEmpty()){
     std::ifstream ifs(qPrintable(fileName));
 
-    K::Weighted_point_2 p;
     std::vector<Apollonius_site_2> points;
-    while(ifs >> p) {
-      points.push_back(Apollonius_site_2(p.point(),p.weight()));
+    if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+    {
+      std::vector<K::Point_3> point_3_s;
+      CGAL::read_multi_point_WKT(ifs, point_3_s);
+      BOOST_FOREACH(const K::Point_3& point_3, point_3_s)
+      {
+        points.push_back(Apollonius_site_2(K::Point_2(point_3.x(), point_3.y()), point_3.z()));
+      }
+    } else{
+      K::Weighted_point_2 p;
+      while(ifs >> p) {
+        points.push_back(Apollonius_site_2(p.point(),p.weight()));
+      }
     }
     ag.insert(points.begin(), points.end());
     this->addToRecentFiles(fileName);
@@ -251,16 +263,32 @@ MainWindow::on_actionSavePoints_triggered()
                                                   tr("Save points"),
                                                   ".reg.cgal",
                                                   tr("Weighted Points (*.wpts.cgal);;"
+                                                     "WKT files(*.wkt *.WKT);;"
                                                      "All (*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
-    for(Apollonius::Sites_iterator
-        vit = ag.sites_begin(),
-        end = ag.sites_end();
-        vit!= end; ++vit)
+    if(fileName.endsWith(".wkt",Qt::CaseInsensitive))
     {
-      ofs << vit->point()<<" "<<vit->weight()<<std::endl;
+      std::vector<K::Point_3> points;
+      for(Apollonius::Sites_iterator
+          vit = ag.sites_begin(),
+          end = ag.sites_end();
+          vit!= end; ++vit)
+      {
+        points.push_back(K::Point_3(vit->point().x(),
+                                    vit->point().y(),
+                                    vit->weight()));
+      }
+      CGAL::write_multi_point_WKT(ofs, points);
     }
+    else
+      for(Apollonius::Sites_iterator
+          vit = ag.sites_begin(),
+          end = ag.sites_end();
+          vit!= end; ++vit)
+      {
+        ofs << vit->point()<<" "<<vit->weight()<<std::endl;
+      }
   }
 }
 

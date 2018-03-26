@@ -6,6 +6,7 @@
 #include <CGAL/Alpha_shape_2.h>
 #include <CGAL/Alpha_shape_face_base_2.h>
 #include <CGAL/Alpha_shape_vertex_base_2.h>
+#include <CGAL/IO/WKT.h>
 
 #include <CGAL/point_generators_2.h>
 
@@ -250,6 +251,7 @@ MainWindow::on_actionLoadPoints_triggered()
 						  tr("Open Points file"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
+                                                     "WKT files (*.wktk *.WKT);;"
                                                      "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
@@ -266,14 +268,19 @@ MainWindow::open(QString fileName)
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
   std::ifstream ifs(qPrintable(fileName));
-  
-  K::Point_2 p;
-  while(ifs >> p) {
-    points.push_back(p);
+  if(fileName.endsWith(".wkt",Qt::CaseInsensitive))
+  {
+    CGAL::read_multi_point_WKT(ifs, points);
+  }
+  else
+  {
+    K::Point_2 p;
+    while(ifs >> p) {
+      points.push_back(p);
+    }
   }
   as.make_alpha_shape(points.begin(), points.end());
   as.set_alpha(alpha);
-
   // default cursor
   QApplication::restoreOverrideCursor();
   this->addToRecentFiles(fileName);

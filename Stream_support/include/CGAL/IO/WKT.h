@@ -28,10 +28,12 @@
 #include <boost/foreach.hpp>
 
 #include <CGAL/Point_2.h>
+#include <CGAL/Point_3.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 
 #include <CGAL/IO/traits_point.h>
+#include <CGAL/IO/traits_point_3.h>
 #include <CGAL/IO/traits_linestring.h>
 #include <CGAL/IO/traits_polygon.h>
 #include <CGAL/IO/traits_multipoint.h>
@@ -44,9 +46,9 @@ namespace CGAL{
 //! \ingroup PkgIOstreams
 //! \brief read_point_WKT reads the content of a .wkt file into a `Point` if possible.
 //! 
-//! A `Point` must inherit `CGAL::Point_2`.
+//! A `Point` must inherit `CGAL::Point_2` or `CGAL::Point_3`.
 //! 
-//! \see CGAL::Point_2
+//! \see CGAL::Point_2 \see CGAL::Point_3
 template<typename Point>
 std::istream&
 read_point_WKT( std::istream& in,
@@ -77,9 +79,10 @@ read_point_WKT( std::istream& in,
 //! \ingroup PkgIOstreams
 //! \brief read_multipoint_WKT reads the content of a .wkt file into a `MultiPoint` if possible.
 //! 
-//! A `MultiPoint` must be a model of `RandomAccessRange` of `CGAL::Point_2`.
+//! A `MultiPoint` must be a model of `RandomAccessRange` of `CGAL::Point_2` or `CGAL::Point_3`.
 //! 
-//! \see CGAL::Point_2
+//! \see CGAL::Point_2 
+//! \see CGAL::Point_3
 template<typename MultiPoint>
 std::istream&
 read_multi_point_WKT( std::istream& in,

@@ -15,6 +15,7 @@
 // GraphicsView items and event filters (input classes)
 #include <CGAL/Qt/PointsInKdTreeGraphicsItem.h>
 #include <CGAL/Qt/utility.h>
+#include <CGAL/IO/WKT.h>
   
 // the two base classes
 #include "ui_Spatial_searching_2.h"
@@ -244,6 +245,7 @@ MainWindow::on_actionLoadPoints_triggered()
 						  tr("Open Points file"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
+                                                     "WKT files (*.wkt *.WKT);;"
                                                      "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
@@ -261,8 +263,14 @@ MainWindow::open(QString fileName)
   
   K::Point_2 p;
   std::vector<K::Point_2> points;
-  while(ifs >> p) {
-    points.push_back(p);
+  if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+  {
+    CGAL::read_multi_point_WKT(ifs, points);
+  }
+  else{
+    while(ifs >> p) {
+      points.push_back(p);
+    }
   }
   tree.insert(points.begin(), points.end());
 

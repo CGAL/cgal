@@ -9,6 +9,7 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Object.h>
+#include <CGAL/IO/WKT.h>
 
 // Qt headers
 #include <QtGui>
@@ -211,7 +212,8 @@ MainWindow::on_actionLoadLineAndCircularArcs_triggered()
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open Line and Circular Arc File"),
 						  ".",
-						  tr("Edge files (*.arc)\n"));
+						  tr("Edge files (*.arc)\n"
+                                                     "WKT files (*.wkt *.WKT)\n"));
   if(! fileName.isEmpty()){
     open(fileName);
     this->addToRecentFiles(fileName);
@@ -223,46 +225,93 @@ void
 MainWindow::open(QString fileName)
 {
     std::ifstream ifs(qPrintable(fileName));
+    
     char c;
     double x,y;
-    Segment_2 s;
-    
-    while(ifs >> c){
-      if(c == 's'){
-	ifs >> x >> y;
-	Point_2 p(x,y);
-	ifs >> x >> y;
-	Point_2 q(x,y);
-	
-	Line_arc_2 la(Segment_2(p,q));
-	for(std::vector<CGAL::Object>::iterator it = arcs.begin(); it != arcs.end(); ++it){
-	  Circular_arc_2 vca;
-	  Line_arc_2 vla;
-	  if(assign(vca, *it)){
-	    CGAL::intersection(la, vca, std::back_inserter(intersections));
-	  } else if(assign(vla, *it)){
-	    CGAL::intersection(la, vla, std::back_inserter(intersections));
-	  }
-	}
-	arcs.push_back(make_object(la));
-      } else if(c == 'c'){
-	ifs >> x >> y;
-	Point_2 p(x,y);
-	ifs >> x >> y;
-	Point_2 q(x,y);
-	ifs >> x >> y;
-	Point_2 r(x,y);
-	Circular_arc_2 ca(p,q,r);
-	for(std::vector<CGAL::Object>::iterator it = arcs.begin(); it != arcs.end(); ++it){
-	  Circular_arc_2 vca;
-	  Line_arc_2 vla;
-	  if(assign(vca, *it)){
-	    CGAL::intersection(ca, vca, std::back_inserter(intersections));
-	  } else if(assign(vla, *it)){
-	    CGAL::intersection(ca, vla, std::back_inserter(intersections));
-	  }
-	}
-	arcs.push_back(make_object(ca));
+    if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+    {
+      //read pairs as Line_arc_2 and triplets as circular_arc_2
+      do
+      {
+        std::vector<Point_2> multi_points;
+        CGAL::read_multi_point_WKT(ifs, multi_points);
+        if(multi_points.size() == 2)
+        {
+          Line_arc_2 la(Segment_2(multi_points[0], 
+                        multi_points[1]));
+          for(std::vector<CGAL::Object>::iterator it = arcs.begin(); it != arcs.end(); ++it){
+            Circular_arc_2 vca;
+            Line_arc_2 vla;
+            if(assign(vca, *it)){
+              CGAL::intersection(la, vca, std::back_inserter(intersections));
+            } else if(assign(vla, *it)){
+              CGAL::intersection(la, vla, std::back_inserter(intersections));
+            }
+          }
+          arcs.push_back(make_object(la));
+        }
+        else if(multi_points.size() == 3)
+        {
+          Circular_arc_2 ca(multi_points[0],
+                            multi_points[1],
+                            multi_points[2]);
+          for(std::vector<CGAL::Object>::iterator it = arcs.begin(); it != arcs.end(); ++it){
+            Circular_arc_2 vca;
+            Line_arc_2 vla;
+            if(assign(vca, *it)){
+              CGAL::intersection(ca, vca, std::back_inserter(intersections));
+            } else if(assign(vla, *it)){
+              CGAL::intersection(ca, vla, std::back_inserter(intersections));
+            }
+          }
+          arcs.push_back(make_object(ca));
+        }
+        else if(multi_points.size()>0)
+        {
+          std::cerr<<"unreadable object."<<std::endl;
+        }
+      }while(ifs.good() && !ifs.eof());
+      ifs.close();
+    }
+    else
+    {
+      while(ifs >> c){
+        if(c == 's'){
+          ifs >> x >> y;
+          Point_2 p(x,y);
+          ifs >> x >> y;
+          Point_2 q(x,y);
+          
+          Line_arc_2 la(Segment_2(p,q));
+          for(std::vector<CGAL::Object>::iterator it = arcs.begin(); it != arcs.end(); ++it){
+            Circular_arc_2 vca;
+            Line_arc_2 vla;
+            if(assign(vca, *it)){
+              CGAL::intersection(la, vca, std::back_inserter(intersections));
+            } else if(assign(vla, *it)){
+              CGAL::intersection(la, vla, std::back_inserter(intersections));
+            }
+          }
+          arcs.push_back(make_object(la));
+        } else if(c == 'c'){
+          ifs >> x >> y;
+          Point_2 p(x,y);
+          ifs >> x >> y;
+          Point_2 q(x,y);
+          ifs >> x >> y;
+          Point_2 r(x,y);
+          Circular_arc_2 ca(p,q,r);
+          for(std::vector<CGAL::Object>::iterator it = arcs.begin(); it != arcs.end(); ++it){
+            Circular_arc_2 vca;
+            Line_arc_2 vla;
+            if(assign(vca, *it)){
+              CGAL::intersection(ca, vca, std::back_inserter(intersections));
+            } else if(assign(vla, *it)){
+              CGAL::intersection(ca, vla, std::back_inserter(intersections));
+            }
+          }
+          arcs.push_back(make_object(ca));
+        }
       }
     }
     Q_EMIT( changed());
