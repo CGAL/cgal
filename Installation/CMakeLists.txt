@@ -378,6 +378,7 @@ set( CGAL_MODULES_REL_DIR cmake/modules )
 set( CGAL_MODULES_DIR     ${CGAL_INSTALLATION_PACKAGE_DIR}/${CGAL_MODULES_REL_DIR} )
 
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake)
 cgal_setup_module_path()
 
 message( STATUS "CGAL_REFERENCE_CACHE_DIR=${CGAL_REFERENCE_CACHE_DIR}" )
