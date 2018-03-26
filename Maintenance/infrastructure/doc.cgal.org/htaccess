@@ -1,6 +1,6 @@
 Options +FollowSymLinks
 <IfModule mod_alias.c>
-	RedirectMatch permanent /$ http://doc.cgal.org/4.2/CGAL.CGAL/html/index.html
+	RedirectMatch permanent /$ https://doc.cgal.org/4.2/CGAL.CGAL/html/index.html
 </IfModule>
 
 <IfModule mod_expires.c>

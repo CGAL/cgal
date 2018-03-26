@@ -7,13 +7,13 @@ are for the most common use cases, and cover the command line tools.
 For further information, or in case of problems, please see the
 detailed installation instructions, which can be found in this
 distribution in the file ./doc_html/index.html or on the CGAL website
-http://doc.cgal.org/latest/Manual/installation.html
+https://doc.cgal.org/latest/Manual/installation.html
 
 The documentation of CGAL is available in PDF and HTML formats.
 It is not bundled with the software but can be downloaded separately
-at <http://www.cgal.org/Manual>.
+at <https://www.cgal.org/Manual>.
 
-For more information about CGAL, see the <http://www.cgal.org/>.
+For more information about CGAL, see the <https://www.cgal.org/>.
 
 In the current file, x.y is an implicit replacement for the current version
 of CGAL (3.5.1, 3.6, and so on).
