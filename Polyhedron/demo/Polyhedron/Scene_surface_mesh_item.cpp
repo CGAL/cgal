@@ -921,7 +921,7 @@ void Scene_surface_mesh_item::compute_bbox()const
   }
   _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
                bbox.xmax(),bbox.ymax(),bbox.zmax());
-
+  is_bbox_computed = true;
 }
 
 void Scene_surface_mesh_item::itemAboutToBeDestroyed(Scene_item *item)
@@ -1109,6 +1109,7 @@ void Scene_surface_mesh_item::invalidateOpenGLBuffers()
   d->smesh_->collect_garbage();
   are_buffers_filled = false;
   d->invalidate_stats();
+  is_bbox_computed = false;
 }
 
 

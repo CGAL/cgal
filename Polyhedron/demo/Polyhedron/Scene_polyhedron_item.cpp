@@ -1414,7 +1414,7 @@ invalidateOpenGLBuffers()
     d->init();
     Base::invalidateOpenGLBuffers();
     are_buffers_filled = false;
-
+    is_bbox_computed = false;
     d->invalidate_stats();
     d->killIds();
 }
