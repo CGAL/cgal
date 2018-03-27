@@ -227,7 +227,7 @@ public:
     assert((positive && next_turn(begin)==1) ||
            (!positive && next_negative_turn(begin)==1));
     std::size_t end=begin+1;
-    if (!is_closed() && end==m_path.size()-1)
+    if (!is_closed() && end==length()-1)
     { return begin; } // begin is the before last dart
 
     while ((positive && next_turn(end)==2) ||
@@ -306,8 +306,9 @@ public:
     Self new_path(m_map);
     bool positive=false;
     std::size_t begin, end;
+    std::size_t lastturn=m_path.size()-(is_closed()?0:1);
 
-    for (begin=0; begin<m_path.size()-1; ++begin)
+    for (begin=0; begin<lastturn; ++begin)
     {
       positive=(next_turn(begin)==1);
       if (positive || next_negative_turn(begin)==1)
@@ -357,10 +358,11 @@ public:
 
     bool res=false;
     std::size_t i;
+    std::size_t lastturn=m_path.size()-(is_closed()?0:1);
     Self new_path(m_map);
-    for (i=0; i<m_path.size()-1; )
+    for (i=0; i<lastturn; )
     {
-      if (m_path[i]==m_map.template beta<2>(m_path[i+1]))
+      if (m_path[i]==m_map.template beta<2>(m_path[next_index(i)]))
       {
         i+=2;
         res=true;
@@ -372,7 +374,7 @@ public:
       }
     }
     if (i==m_path.size()-1)
-    { new_path.push_back(m_path[m_path.size()-1]); }
+    { new_path.push_back(m_path[m_path.size()-1]); } // we copy the last dart
 
     swap(new_path);
     return res;
@@ -457,25 +459,70 @@ public:
     CGAL::extend_uturn_positive(new_path, 1);
   }
 
+  void push_l_shape_cycle_2()
+  {
+    Dart_const_handle d1=
+        m_map.template beta<2,1,1>(get_ith_dart(0));
+    clear();
+    push_back(d1);
+    CGAL::extend_straight_positive_until(*this, d1);
+  }
+
   bool right_push_one_step()
   {
     std::size_t begin, middle, end;
-    std::size_t next_turn;
-    for (begin=0; begin<m_path.size()-1; ++begin)
-    {
-      next_turn=next_negative_turn(begin);
-      if (next_turn!=2)
-      {
-        if (find_l_shape(begin, middle, end))
-        {
-          Self new_path(m_map);
-          if (begin==end)
-          { // Special case of (-2^l)
-            // TODO
-            assert(false);
-            return true;
-          }
+    std::size_t lastturn=m_path.size()-(is_closed()?0:1);
 
+    std::size_t next_turn, next_next_turn;
+    bool prev2=false;
+
+    for (middle=0; middle<lastturn; ++middle)
+    {
+      next_turn=next_negative_turn(middle);
+
+      if (next_turn==2)
+      {
+        if (!prev2)
+        {
+          begin=middle; // First 2 of a serie
+          prev2=true;
+          if (begin==0 && is_closed())
+          {
+            begin=length()-1;
+            do
+            {
+              next_turn=next_negative_turn(begin);
+              if (next_turn==2) { --begin; }
+              if (begin==0) // Loop of only -2 turns
+              {
+                push_l_shape_cycle_2();
+                return true;
+              }
+            }
+            while(next_turn==2);
+          }
+          // Here begin is the first dart of the path s.t. next_turn==-2
+          // i.e. the previous turn != -2
+        }
+      }
+      else
+      {
+        prev2=false;
+        if (next_turn==1)
+        { // Here middle is a real middle; we already know begin (or we know
+          // that there is no -2 before if !prev2), we only need to compute
+          // end.
+          end=next_index(middle);
+          do
+          {
+            next_turn=next_negative_turn(end);
+            if (next_turn==2) { end=next_index(end); }
+            assert(end!=middle);
+          }
+          while(next_turn==2);
+
+          // And here now we can push
+          Self new_path(m_map);
           if (end<begin)
           {
             if (!is_closed())
@@ -493,6 +540,7 @@ public:
 
           swap(new_path);
           return true;
+
         }
       }
     }
