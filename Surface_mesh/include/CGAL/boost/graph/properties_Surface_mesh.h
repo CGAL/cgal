@@ -393,7 +393,17 @@ remove_property(Pmap pm, CGAL::Surface_mesh<P>& sm)
   return sm.remove_property_map(pm);
 }
 
+
+template <typename P, typename Property_tag>
+struct Get_pmap_of_surface_mesh {
+  typedef typename boost::property_map<Surface_mesh<P>, Property_tag >::type type;
+};
+
+
 } // namespace CGAL
+
+#include <CGAL/boost/graph/properties_Surface_mesh_time_stamp.h>
+#include <CGAL/boost/graph/properties_Surface_mesh_features.h>
 
 #endif // DOXYGEN_RUNNING
 

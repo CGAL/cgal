@@ -26,7 +26,7 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/property_map.h>
-#include <CGAL/Mesh_3/properties.h>
+#include <CGAL/boost/graph/properties.h>
 #include <boost/mpl/has_xxx.hpp>
 
 namespace CGAL { namespace Mesh_3 {
