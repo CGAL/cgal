@@ -67,9 +67,9 @@ public:
  *
  *
  * \tparam ObjectPropertyMap is a model of `ReadablePropertyMap` with `Id` as
- *           `key_type`. It must be default constructible.
+ *           `key_type`. It must be a model of `CopyConstructible`, `DefaultConstructible`, and `CopyAssignable`.
  * \tparam PointPropertyMap is a model of `ReadablePropertyMap` with `Id` as
- *           `key_type`. It must be default constructible.
+ *           `key_type`. It must be a model of `CopyConstructible`, `DefaultConstructible`, and `CopyAssignable`.
  * \tparam ExternalPropertyMaps either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former
  *          case, the property maps will be stored in the traits class, while
  *          in the latter they will be stored in the primitive
