@@ -127,27 +127,41 @@ void generate_negative_bracket_special2(Path& p)
 
 template<typename Path>
 void generate_one_l_shape(Path& p)
-{ // Generic case
+{ // Generic case (... x -2^s -1 -2^t y ... ): here  (-2^2 -3 -2^8 -1 -2^5 -3 -2^3)
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[0]));
   extend_straight_negative(p, 2);
-  extend_uturn_positive(p, 1);
+  extend_uturn_negative(p, 3);
   extend_straight_negative(p, 8);
   extend_uturn_negative(p);
   extend_straight_negative(p, 5);
-  extend_uturn_positive(p, 1);
+  extend_uturn_negative(p, 3);
   extend_straight_negative(p, 3);
 }
 
 template<typename Path>
-void generate_l_shape_vase2(Path& p)
-{ // (... x -1 -2^t y ...)
+void generate_l_shape_case2(Path& p)
+{ // (... x -1 -2^t y ...): here (-2^2 -3 -1 -2^5 -3 -2^3)
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[0]));
   extend_straight_negative(p, 2);
+  extend_uturn_negative(p, 3);
   extend_uturn_negative(p);
   extend_straight_negative(p, 5);
-  extend_uturn_positive(p, 1);
+  extend_uturn_negative(p, 3);
+  extend_straight_negative(p, 3);
+}
+
+template<typename Path>
+void generate_l_shape_case3(Path& p)
+{ // (... x -2^s -1 y ...): here (-2^2 -3 -2^5 -1 -3 -2^3)
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[0]));
+  extend_straight_negative(p, 2);
+  extend_uturn_negative(p, 3);
+  extend_straight_negative(p, 5);
+  extend_uturn_negative(p, 1);
+  extend_uturn_negative(p, 3);
   extend_straight_negative(p, 3);
 }
 

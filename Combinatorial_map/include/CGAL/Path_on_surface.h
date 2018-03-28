@@ -177,7 +177,7 @@ public:
   ///         (turn is position of the second edge in the cyclic ordering of
   ///          edges starting from the first edge around the second extremity
   ///          of the first dart)
-  std::size_t next_turn(std::size_t i) const
+  std::size_t next_positive_turn(std::size_t i) const
   {
     assert(is_valid());
     assert(i<m_path.size());
@@ -195,11 +195,11 @@ public:
       ++res;
       d1=m_map.template beta<1, 2>(d1);
     }
-    // std::cout<<"next_turn="<<res<<std::endl;
+    // std::cout<<"next_positive_turn="<<res<<std::endl;
     return res;
   }
 
-  /// Same than next_turn but turning in reverse orientation around vertex.
+  /// Same than next_positive_turn but turning in reverse orientation around vertex.
   std::size_t next_negative_turn(std::size_t i) const
   {
     assert(is_valid());
@@ -224,17 +224,17 @@ public:
 
   std::size_t find_end_of_braket(std::size_t begin, bool positive) const
   {
-    assert((positive && next_turn(begin)==1) ||
+    assert((positive && next_positive_turn(begin)==1) ||
            (!positive && next_negative_turn(begin)==1));
     std::size_t end=begin+1;
     if (!is_closed() && end==length()-1)
     { return begin; } // begin is the before last dart
 
-    while ((positive && next_turn(end)==2) ||
+    while ((positive && next_positive_turn(end)==2) ||
            (!positive && next_negative_turn(end)==2))
     { end=next_index(end); }
     
-    if ((positive && next_turn(end)==1) ||
+    if ((positive && next_positive_turn(end)==1) ||
         (!positive && next_negative_turn(end)==1)) // We are on the end of a bracket
     { end=next_index(end); }
     else
@@ -310,7 +310,7 @@ public:
 
     for (begin=0; begin<lastturn; ++begin)
     {
-      positive=(next_turn(begin)==1);
+      positive=(next_positive_turn(begin)==1);
       if (positive || next_negative_turn(begin)==1)
       {
         // we test if begin is the beginning of a bracket
@@ -439,24 +439,33 @@ public:
                     std::size_t end,
                     Self& new_path)
   {
-    assert(begin!=middle);
-    assert(middle!=end);
+    Dart_const_handle d1;
 
-    Dart_const_handle d1=
-        m_map.template beta<2,1>(get_ith_dart(begin));
+    // TODO SPECIAL CASE 7: do not push this dart
+    d1=m_map.template beta<2,1>(get_ith_dart(begin));
     new_path.push_back(d1);
 
-    CGAL::extend_uturn_positive(new_path, 1);
+    if (begin!=middle)
+    {
+      CGAL::extend_uturn_positive(new_path, 1);
 
-    d1=m_map.template beta<2,1,1>(get_ith_dart(middle));
-    CGAL::extend_straight_positive_until(new_path, d1);
+      d1=m_map.template beta<2,1,1>(get_ith_dart(middle));
+      CGAL::extend_straight_positive_until(new_path, d1);
 
-    CGAL::extend_uturn_positive(new_path, 3);
+      if (next_index(middle)!=end)
+      { CGAL::extend_uturn_positive(new_path, 3); }
+      else
+      { CGAL::extend_straight_positive(new_path, 1); }
+    }
 
-    d1=m_map.template beta<2,0,2,1>(get_ith_dart(end));
-    CGAL::extend_straight_positive_until(new_path, d1);
+    if (next_index(middle)!=end)
+    {
+      d1=m_map.template beta<2,0,2,1>(get_ith_dart(end));
+      CGAL::extend_straight_positive_until(new_path, d1);
 
-    CGAL::extend_uturn_positive(new_path, 1);
+      if (begin!=end) // TODO CHECK THIS TEST : CASE 7
+      { CGAL::extend_uturn_positive(new_path, 1); }
+    }
   }
 
   void push_l_shape_cycle_2()
@@ -507,11 +516,11 @@ public:
       }
       else
       {
-        prev2=false;
         if (next_turn==1)
         { // Here middle is a real middle; we already know begin (or we know
           // that there is no -2 before if !prev2), we only need to compute
           // end.
+          if (!prev2) { begin=middle; } // There is no -2 before this -1
           end=next_index(middle);
           do
           {
@@ -542,6 +551,7 @@ public:
           return true;
 
         }
+        prev2=false;
       }
     }
     return false;
@@ -555,47 +565,59 @@ public:
     return res;
   }
 
+  std::vector<std::size_t> compute_positive_turns() const
+  {
+    std::vector<std::size_t> res;
+    std::size_t i;
+    for (i=0; i<m_path.size()-1; ++i)
+    {
+      if (m_path[i]==m_map.template beta<2>(m_path[i+1]))
+      { res.push_back(0); }
+      else { res.push_back(next_positive_turn(i)); }
+    }
+    if (is_closed())
+    {
+      if (m_path[i]==m_map.template beta<2>(m_path[0]))
+      { res.push_back(0); }
+      else { res.push_back(next_positive_turn(i)); }
+    }
+    return res;
+  }
+
+  std::vector<std::size_t> compute_negative_turns() const
+  {
+    std::vector<std::size_t> res;
+    std::size_t i;
+    for (i=0; i<m_path.size()-1; ++i)
+    {
+      if (m_path[i]==m_map.template beta<2>(m_path[i+1]))
+      { res.push_back(0); }
+      else { res.push_back(next_negative_turn(i)); }
+    }
+    if (is_closed())
+    {
+      if (m_path[i]==m_map.template beta<2>(m_path[0]))
+      { res.push_back(0); }
+      else { res.push_back(next_negative_turn(i)); }
+    }
+    return res;
+  }
+
   void display_positive_turns() const
   {
-    std::cout<<"(";
-    if (!is_empty())
-    {
-      std::size_t i;
-      for (i=0; i<m_path.size()-1; ++i)
-      {
-        if (m_path[i]==m_map.template beta<2>(m_path[i+1]))
-        { std::cout<<"0 "; }
-        else { std::cout<<next_turn(i)<<" "; }
-      }
-      if (is_closed())
-      {
-        if (m_path[i]==m_map.template beta<2>(m_path[0]))
-        { std::cout<<"0 "; }
-        else { std::cout<<next_turn(i)<<" "; }
-      }
-    }
+    std::cout<<"+(";
+    std::vector<std::size_t> res=compute_positive_turns();
+    for (std::size_t i=0; i<res.size(); ++i)
+    { std::cout<<res[i]<<(i<res.size()-1?" ":""); }
     std::cout<<")";
   }
 
   void display_negative_turns() const
   {
-    std::cout<<"(";
-    if (!is_empty())
-    {
-      std::size_t i;
-      for (i=0; i<m_path.size()-1; ++i)
-      {
-        if (m_path[i]==m_map.template beta<2>(m_path[i+1]))
-        { std::cout<<"0 "; }
-        else { std::cout<<"-"<<next_negative_turn(i)<<" "; }
-      }
-      if (is_closed())
-      {
-        if (m_path[i]==m_map.template beta<2>(m_path[0]))
-        { std::cout<<"0 "; }
-        else { std::cout<<"-"<<next_negative_turn(i)<<" "; }
-      }
-    }
+    std::cout<<"-(";
+    std::vector<std::size_t> res=compute_negative_turns();
+    for (std::size_t i=0; i<res.size(); ++i)
+    { std::cout<<res[i]<<(i<res.size()-1?" ":""); }
     std::cout<<")";
   }
 
