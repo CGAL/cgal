@@ -129,24 +129,24 @@ void push_l_shape(CGAL::Path_on_surface<LCC_3_cmap>& path,
   path.swap(*prevp);
 }
 
-void test_file(int argc, char** argv)
+bool test_file(int argc, char** argv)
 {
+  std::string filename;
   if (argc!=2)
-  {
-    std::cout<<"Usage: "<<argv[0]<<" filename.off"<<std::endl;
-    exit(EXIT_FAILURE);
-  }
+  { filename="./data/elephant.off"; }
+  else
+  { filename=argv[1]; }
 
   LCC_3_cmap lcc;
-  if (!CGAL::load_off(lcc, argv[1]))
+  if (!CGAL::load_off(lcc, filename.c_str()))
   {
-    std::cout<<"PROBLEM reading file "<<argv[1]<<std::endl;
+    std::cout<<"PROBLEM reading file "<<filename<<std::endl;
     exit(EXIT_FAILURE);
   }
 
-  std::cout<<"Initial map: ";
+ /* std::cout<<"Initial map: ";
   lcc.display_characteristics(std::cout) << ", valid=" 
-                                         << lcc.is_valid() << std::endl;
+                                         << lcc.is_valid() << std::endl; */
 
   CGAL::Random random;
   CGAL::Path_on_surface<LCC_3_cmap> p1(lcc);
@@ -158,34 +158,27 @@ void test_file(int argc, char** argv)
   CGAL::Path_on_surface<LCC_3_cmap> p4(lcc);
   generate_random_path(p4, 15, random);
 
-  std::vector<const CGAL::Path_on_surface<LCC_3_cmap>*> v;
-  v.push_back(&p1);
-  v.push_back(&p2);
-  v.push_back(&p3);
-  v.push_back(&p4);  
-
-#ifdef CGAL_USE_BASIC_VIEWER
-  display(lcc, v);
-#endif // CGAL_USE_BASIC_VIEWER
-    
   CGAL::Combinatorial_map_tools<LCC_3_cmap> cmt(lcc);
 
   CGAL::Path_on_surface<LCC_3_cmap>
-      pp1=cmt.transform_original_path_into_quad_surface(p1);
+      pp1=cmt.transform_original_path_into_quad_surface(p1),
+      pp2=cmt.transform_original_path_into_quad_surface(p2),
+      pp3=cmt.transform_original_path_into_quad_surface(p3),
+      pp4=cmt.transform_original_path_into_quad_surface(p4);
 
-  std::cout<<"Original path has "<<pp1.length()<<" darts."<<std::endl;
   simplify_path(pp1, false);
-  std::cout<<"After bracket flattening, the path has "<<pp1.length()<<" darts."<<std::endl;
+  simplify_path(pp2, false);
+  simplify_path(pp3, false);
+  simplify_path(pp4, false);
+
+  return pp1.is_valid() && pp2.is_valid() && pp3.is_valid() && pp4.is_valid();
 }
 
-void test_simplify_random_path(const LCC_3_cmap& lcc,
+bool test_simplify_random_path(const LCC_3_cmap& lcc,
                                std::size_t nb1, std::size_t nb2, std::size_t nb3,
                                CGAL::Random& random,
                                bool draw=false)
 {
-  // static std::size_t nbtest=1;
-  // std::cout<<"[BEGIN] TEST "<<nbtest<<"."<<std::endl;
-
   CGAL::Path_on_surface<LCC_3_cmap> path(lcc);
   CGAL::initialize_path_random_starting_dart(path, random);
   CGAL::extend_straight_positive(path, nb1-1);
@@ -195,10 +188,10 @@ void test_simplify_random_path(const LCC_3_cmap& lcc,
 
   simplify_path(path, draw);
 
-  // std::cout<<"[END] TEST "<<nbtest++<<"."<<std::endl;
+  return path.is_valid();
 }
 
-void test_some_random_paths_on_cube()
+bool test_some_random_paths_on_cube()
 {
   LCC_3_cmap lcc;
   if (!CGAL::load_off(lcc, "./data/cube-mesh-5-5.off"))
@@ -207,23 +200,25 @@ void test_some_random_paths_on_cube()
     exit(EXIT_FAILURE);
   }
 
-  std::cout<<"Initial map: ";
-  lcc.display_characteristics(std::cout) << ", valid=" 
-                                         << lcc.is_valid() << std::endl;
-
   CGAL::Random random(1); // fix seed
 
   // path 1: 2 straight darts to begin; 1 + turn; 6 straight; 1 + turn; 3 straight
-  test_simplify_random_path(lcc, 2, 6, 3, random, true);
+  if (!test_simplify_random_path(lcc, 2, 6, 3, random, false))
+  { return false; }
 
   // path 2: 3 straight darts to begin; 1 + turn; 8 straight; 1 + turn; 4 straight
-  test_simplify_random_path(lcc, 3, 8, 4, random, true);
+  if (!test_simplify_random_path(lcc, 3, 8, 4, random, false))
+  { return false; }
 
   // path 3: 5 straight darts to begin; 1 + turn; 12 straight; 1 + turn; 8 straight
-  test_simplify_random_path(lcc, 5, 12, 8, random, true);
+  if (!test_simplify_random_path(lcc, 5, 12, 8, random, false))
+  { return false; }
 
   // path 4: 5 straight darts to begin; 1 + turn; 12 straight; 1 + turn; 8 straight
-  test_simplify_random_path(lcc, 5, 12, 8, random, true);
+  if (!test_simplify_random_path(lcc, 5, 12, 8, random, false))
+  { return false; }
+
+  return true;
 }
 
 bool test_all_cases_spurs_and_bracket()
@@ -509,10 +504,19 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
+  if (!test_some_random_paths_on_cube())
+  {
+    std::cout<<"TEST RANDOM PATHS ON CUBE FAILED."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
   std::cout<<"All test OK."<<std::endl;
 
-  // test_file(argc, argv);
-  // test_some_random_paths_on_cube();
+  if (!test_file(argc, argv))
+  {
+    std::cout<<"TEST FILE FAILED."<<std::endl;
+    return EXIT_FAILURE;
+  }
 
   return EXIT_SUCCESS;
 }
