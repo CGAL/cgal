@@ -434,8 +434,7 @@ bool test_all_cases_l_shape()
 
   generate_l_shape_case5(path);
   // std::cout<<"Case 5: L-shape (-4 -1 -2^12): "<<std::flush;
-  path.display_pos_and_neg_turns();std::cout<<std::endl;
-  push_l_shape(path, true, 1);
+  push_l_shape(path, false, 1);
   if (!path.same_turns("4 2 2 2 2 2 2 2 2 2 2 2 2 1"))
   {
     std::cout<<"[test_all_cases_l_shape case 5] ERROR: ";
@@ -452,6 +451,26 @@ bool test_all_cases_l_shape()
     std::cout<<"[test_all_cases_l_shape case 6] ERROR: ";
     std::cout<<"we obtained "; path.display_pos_and_neg_turns();
     std::cout<<" instead of (4 1 2 2 2 2 2 2 2 2 2 2 2 2)"<<std::endl;
+    res=false;
+  }
+
+  lcc.clear();
+  if (!CGAL::load_off(lcc, "./data/case7-right-shift-squared.off"))
+  {
+    std::cout<<"PROBLEM reading file ./data/case7-right-shift-squared.off"<<std::endl;
+    exit(EXIT_FAILURE);
+  }
+  // lcc.reverse_orientation();
+
+  generate_l_shape_case7(path);
+  // std::cout<<"Case 7: L-shape (-3 -2^7 -1 -2^3): "<<std::flush;
+  path.display_pos_and_neg_turns();std::cout<<std::endl;
+  push_l_shape(path, true, 1);
+  if (!path.same_turns("1 2 2 2 2 2 2 2 3 2 2 2"))
+  {
+    std::cout<<"[test_all_cases_l_shape case 7] ERROR: ";
+    std::cout<<"we obtained "; path.display_pos_and_neg_turns();
+    std::cout<<" instead of (1 2 2 2 2 2 2 2 3 2 2 2)"<<std::endl;
     res=false;
   }
 

@@ -531,6 +531,8 @@ public:
           }
           while(next_turn==2);
 
+          // TODO for cases 4, 5 and 6, add a test that X!=3 (?)
+
           // And here now we can push
           Self new_path(m_map);
           if (end<begin)
