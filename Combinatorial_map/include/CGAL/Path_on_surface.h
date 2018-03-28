@@ -509,6 +509,7 @@ public:
               }
             }
             while(next_turn==2);
+            begin=next_index(begin); // because we stopped on a dart s.t. next_turn!=2
           }
           // Here begin is the first dart of the path s.t. next_turn==-2
           // i.e. the previous turn != -2

@@ -298,6 +298,7 @@ bool test_all_cases_spurs_and_bracket()
     res=false;
   }
 
+  // TODO Update spiral-squared.off to have only square
   lcc.clear();
   if (!CGAL::load_off(lcc, "./data/spiral-squared.off"))
   {
@@ -327,6 +328,7 @@ bool test_all_cases_spurs_and_bracket()
     res=false;
   }
 
+  // TODO Update loop-squared.off to have only square
   lcc.clear();
   if (!CGAL::load_off(lcc, "./data/loop-squared.off"))
   {
@@ -413,13 +415,43 @@ bool test_all_cases_l_shape()
 
   generate_l_shape_case4(path);
   // std::cout<<"Case 4: L-shape (-4 -2^7 -1 -2^3): "<<std::flush;
-  path.display_pos_and_neg_turns();std::cout<<std::endl;
-  push_l_shape(path, true, 1);
+  push_l_shape(path, false, 1);
   if (!path.same_turns("4 1 2 2 2 2 2 2 3 2 2 1"))
   {
     std::cout<<"[test_all_cases_l_shape case 4] ERROR: ";
     std::cout<<"we obtained "; path.display_pos_and_neg_turns();
     std::cout<<" instead of (4 1 2 2 2 2 2 2 3 2 2 1)"<<std::endl;
+    res=false;
+  }
+
+  lcc.clear();
+  if (!CGAL::load_off(lcc, "./data/cases5-6-right-shift-squared.off"))
+  {
+    std::cout<<"PROBLEM reading file ./data/cases5-6-right-shift-squared.off"<<std::endl;
+    exit(EXIT_FAILURE);
+  }
+  lcc.reverse_orientation();
+
+  generate_l_shape_case5(path);
+  // std::cout<<"Case 5: L-shape (-4 -1 -2^12): "<<std::flush;
+  path.display_pos_and_neg_turns();std::cout<<std::endl;
+  push_l_shape(path, true, 1);
+  if (!path.same_turns("4 2 2 2 2 2 2 2 2 2 2 2 2 1"))
+  {
+    std::cout<<"[test_all_cases_l_shape case 5] ERROR: ";
+    std::cout<<"we obtained "; path.display_pos_and_neg_turns();
+    std::cout<<" instead of (4 2 2 2 2 2 2 2 2 2 2 2 2 1)"<<std::endl;
+    res=false;
+  }
+
+  generate_l_shape_case6(path);
+  // std::cout<<"Case 6: L-shape (-4 -2^12 -1): "<<std::flush;
+  push_l_shape(path, false, 1);
+  if (!path.same_turns("4 1 2 2 2 2 2 2 2 2 2 2 2 2"))
+  {
+    std::cout<<"[test_all_cases_l_shape case 6] ERROR: ";
+    std::cout<<"we obtained "; path.display_pos_and_neg_turns();
+    std::cout<<" instead of (4 1 2 2 2 2 2 2 2 2 2 2 2 2)"<<std::endl;
     res=false;
   }
 

@@ -174,6 +174,24 @@ void generate_l_shape_case4(Path& p)
 }
 
 template<typename Path>
+void generate_l_shape_case5(Path& p)
+{ // (x -1 -2^t): here (-4 -1 -2^12)
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[27]));
+  extend_uturn_negative(p, 1);
+  extend_straight_negative(p, 12);
+}
+
+template<typename Path>
+void generate_l_shape_case6(Path& p)
+{ // (x -2^t -1): here (-4 -2^12 -1)
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[13]));
+  extend_straight_negative(p, 12);
+  extend_uturn_negative(p, 1);
+}
+
+template<typename Path>
 void generate_l_shape_case7(Path& p)
 { // (-3 -2^s -1 -2^t): here (-2^7 -1 -2^3 -3)
   p.clear();
