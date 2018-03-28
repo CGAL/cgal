@@ -1,16 +1,21 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/mesh_smoothing.h>
 #include <boost/graph/graph_traits.hpp>
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
-typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef Kernel::Point_3 Point;
+typedef CGAL::Surface_mesh<Point> SurfaceMesh;
+typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
+template<typename Mesh>
 struct Constraints_pmap
 {
+
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+
   std::set<vertex_descriptor>* set_ptr_;
 
   typedef vertex_descriptor                   key_type;
@@ -42,6 +47,7 @@ struct Constraints_pmap
   }
  };
 
+template <typename Mesh>
 void test_angle_smoothing(const char* filename)
 {
   std::cout.precision(17);
@@ -50,7 +56,9 @@ void test_angle_smoothing(const char* filename)
   input >> mesh;
   input.close();
 
-  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+
+  typename boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
           get(CGAL::vertex_point, mesh);
 
   CGAL::Polygon_mesh_processing::smooth_angles(mesh);
@@ -68,6 +76,7 @@ void test_angle_smoothing(const char* filename)
   }
 }
 
+template <typename Mesh>
 void test_area_smoothing(const char* filename)
 {
   std::cout.precision(17);
@@ -76,7 +85,9 @@ void test_area_smoothing(const char* filename)
   input >> mesh;
   input.close();
 
-  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+
+  typename boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
           get(CGAL::vertex_point, mesh);
 
   CGAL::Polygon_mesh_processing::smooth_areas(mesh);
@@ -94,6 +105,7 @@ void test_area_smoothing(const char* filename)
   }
 }
 
+template <typename Mesh>
 void test_angle_smoothing_without_projection(const char* filename)
 {
   std::cout.precision(17);
@@ -102,7 +114,9 @@ void test_angle_smoothing_without_projection(const char* filename)
   input >> mesh;
   input.close();
 
-  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+
+  typename boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
           get(CGAL::vertex_point, mesh);
 
   CGAL::Polygon_mesh_processing::smooth_angles(mesh, CGAL::Polygon_mesh_processing::parameters::do_project(false));
@@ -120,6 +134,7 @@ void test_angle_smoothing_without_projection(const char* filename)
   }
 }
 
+template <typename Mesh>
 void test_area_smoothing_without_projection(const char* filename)
 {
   std::cout.precision(17);
@@ -128,7 +143,9 @@ void test_area_smoothing_without_projection(const char* filename)
   input >> mesh;
   input.close();
 
-  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+
+  typename boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
           get(CGAL::vertex_point, mesh);
 
   CGAL::Polygon_mesh_processing::smooth_areas(mesh, CGAL::Polygon_mesh_processing::parameters::do_project(false));
@@ -146,6 +163,7 @@ void test_area_smoothing_without_projection(const char* filename)
   }
 }
 
+template <typename Mesh>
 void test_constrained_vertices(const char* filename)
 {
   std::cout.precision(17);
@@ -154,7 +172,9 @@ void test_constrained_vertices(const char* filename)
   input >> mesh;
   input.close();
 
-  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+
+  typename boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
           get(CGAL::vertex_point, mesh);
 
   double x_init, y_init, z_init;
@@ -170,7 +190,7 @@ void test_constrained_vertices(const char* filename)
     }
   }
 
-  Constraints_pmap vcmap(&selected_vertices);
+  Constraints_pmap<Mesh> vcmap(&selected_vertices);
 
   CGAL::Polygon_mesh_processing::smooth_angles(mesh,
         CGAL::Polygon_mesh_processing::parameters::vertex_is_constrained_map(vcmap));
@@ -188,15 +208,22 @@ void test_constrained_vertices(const char* filename)
   }
 }
 
+
 int main(){
 
   const char* filename_polygon = "data/simple_polygon.off";
-  test_angle_smoothing(filename_polygon);
-  test_area_smoothing(filename_polygon);
-  test_constrained_vertices(filename_polygon);
   const char* filename_pyramid = "data/simple_pyramid.off";
-  test_angle_smoothing_without_projection(filename_pyramid);
-  test_area_smoothing_without_projection(filename_pyramid);
+  test_angle_smoothing<SurfaceMesh>(filename_polygon);
+  test_area_smoothing<SurfaceMesh>(filename_polygon);
+  test_constrained_vertices<SurfaceMesh>(filename_polygon);
+  test_angle_smoothing_without_projection<SurfaceMesh>(filename_pyramid);
+  test_area_smoothing_without_projection<SurfaceMesh>(filename_pyramid);
+  test_angle_smoothing<Polyhedron>(filename_polygon);
+  test_area_smoothing<Polyhedron>(filename_polygon);
+  test_constrained_vertices<Polyhedron>(filename_polygon);
+  test_angle_smoothing_without_projection<Polyhedron>(filename_pyramid);
+  test_area_smoothing_without_projection<Polyhedron>(filename_pyramid);
+
 
   return 0;
 }
