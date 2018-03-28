@@ -77,9 +77,6 @@ public:
                                         const char* f_shader)const;
   QPainter* getPainter()Q_DECL_OVERRIDE;
   void saveSnapshot(bool , bool overwrite = false);
-  void setOffset(qglviewer::Vec offset);
-  qglviewer::Vec offset()const Q_DECL_OVERRIDE;
-  void setSceneBoundingBox(const qglviewer::Vec &min, const qglviewer::Vec &max);
 
   TextRenderer* textRenderer() Q_DECL_OVERRIDE;
   void enableClippingBox(QVector4D box[]) Q_DECL_OVERRIDE;

@@ -117,7 +117,24 @@ public:
   qglviewer::Camera::drawAllPaths(). Actual camera and path edition will be
   implemented in the future. */
   bool cameraIsEdited() const { return cameraIsEdited_; }
-
+  
+  /*!
+   * Sets the offset of the scene. The offset is the difference between the origin 
+   * of the world and the origin of the scene. It is relevant when the whole scene is translated
+   * of a big number, because there is a useless loss of precision when drawing.
+   * 
+   * The offset must be added to the drawn coordinates, and substracted from the computation 
+   * \attention  the result of pointUnderPixel is the real item translated by the offset.
+   * 
+   */
+  void setOffset(qglviewer::Vec offset);
+  
+  /*!
+   * returns the offset of the scene.
+   * \see `setOffset()`
+   */
+  qglviewer::Vec offset()const;
+  
 public Q_SLOTS:
   /*! Sets the state of axisIsDrawn(). Emits the axisIsDrawnChanged() signal.
    * See also toggleAxisIsDrawn(). */
@@ -261,7 +278,7 @@ public Q_SLOTS:
   }
 
   /*! Convenient way to call setSceneCenter() and setSceneRadius() from a (world
-    axis aligned) bounding box of the scene.
+    axis aligned) bounding box of the scene. Takes the offset into account.
 
     This is equivalent to:
     \code
@@ -270,7 +287,7 @@ public Q_SLOTS:
     \endcode */
   void setSceneBoundingBox(const qglviewer::Vec &min,
                            const qglviewer::Vec &max) {
-    camera()->setSceneBoundingBox(min, max);
+    camera()->setSceneBoundingBox(min + offset(), max + offset());
   }
 
   /*! Moves the camera so that the entire scene is visible.
@@ -1476,6 +1493,7 @@ private:
     Grid = 0,
     Grid_axis,
     Axis,
+    Pivot_point,
     VBO_size
   };
   enum VAO
@@ -1483,6 +1501,7 @@ private:
     GRID = 0,
     GRID_AXIS,
     AXIS,
+    PIVOT_POINT,
     VAO_size
   };
   QOpenGLShaderProgram rendering_program;
@@ -1492,6 +1511,9 @@ private:
   std::size_t grid_size;
   std::size_t g_axis_size;
   std::size_t axis_size;
+  
+  // O f f s e t
+  qglviewer::Vec _offset;
   
 };
 

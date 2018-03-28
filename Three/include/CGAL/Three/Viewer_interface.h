@@ -187,8 +187,6 @@ public:
   //! \brief Used by the items to avoid SEGFAULT.
   //!@returns true if glVertexAttribDivisor, and glDrawArraysInstanced are found.
   virtual bool isExtensionFound() = 0;
-  //!Returns the scene's offset
-  virtual qglviewer::Vec offset()const = 0;
   //!\brief Allows to perform picking from the keyboard and mouse
   //!
   //! Sets the combination SHIFT+LEFT CLICK to perform a selection on the screen.

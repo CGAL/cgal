@@ -147,6 +147,7 @@ void QGLViewer::defaultConstructor() {
   axisIsDrawn_ = true;
 
   tileRegion_ = NULL;
+  _offset = qglviewer::Vec(0,0,0);
 }
 
 #ifndef DOXYGEN
@@ -478,7 +479,6 @@ convention (by pushing/popping the different attributes) if you overload this
 method. */
 void QGLViewer::postDraw() {
   // Pivot point, line when camera rolls, zoom region
-
   if (gridIsDrawn()) {
     glLineWidth(1.0);
     drawGrid(camera()->sceneRadius());
@@ -487,6 +487,7 @@ void QGLViewer::postDraw() {
     glLineWidth(2.0);
     drawAxis(1.0);
   }
+  
 
   drawVisualHints();
   // FPS computation
@@ -3406,6 +3407,7 @@ Limitation : One needs to have access to visualHint_ to overload this method.
 
 Removed from the documentation for this reason. */
 void QGLViewer::drawVisualHints() {
+  // G r i d
   rendering_program.bind();
   vaos[GRID].bind();
   QMatrix4x4 mvpMatrix;
@@ -3434,6 +3436,7 @@ void QGLViewer::drawVisualHints() {
   glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(g_axis_size/9));
   vaos[GRID_AXIS].release();
   
+  //A x i s
   qglviewer::Camera::Type camera_type = camera()->type();
   camera()->setType(qglviewer::Camera::ORTHOGRAPHIC);
   for(int i=0; i < 16; i++)
@@ -3456,7 +3459,7 @@ void QGLViewer::drawVisualHints() {
   glGetIntegerv(GL_SCISSOR_BOX, scissor);
   
   // Axis viewport size, in pixels
-  const int size = 100;
+  int size = 100;
   glViewport(width()*devicePixelRatio()-size, height()*devicePixelRatio()-size, size, size);
   glScissor (width()*devicePixelRatio()-size, height()*devicePixelRatio()-size, size, size);
   glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(axis_size / 9));
@@ -3465,6 +3468,46 @@ void QGLViewer::drawVisualHints() {
   glViewport(viewport[0],viewport[1],viewport[2],viewport[3]);
   vaos[AXIS].release();
   rendering_program_light.release();
+  
+  //P i v o t - P o i n t 
+  if (visualHint_ & 1)
+  {
+    std::vector<float> vertices;
+    for(int i=0; i< 4; ++i)
+    {
+      float x = (pow(-1, i)*(1-i/2));
+      float y = (pow(-1, i)*(i/2));
+      vertices.push_back(x);
+      vertices.push_back(y);
+      vertices.push_back(0);
+    }
+    rendering_program.bind();
+    vaos[PIVOT_POINT].bind();
+    vbos[Pivot_point].bind();
+    vbos[Pivot_point].allocate(vertices.data(),static_cast<int>(vertices.size()*sizeof(float)));
+    rendering_program.enableAttributeArray("vertex");
+    rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+    vbos[Pivot_point].release();
+    mvpMatrix.setToIdentity();
+    mvpMatrix.ortho(-1,1,-1,1,-1,1);
+    size=30*devicePixelRatio();
+    rendering_program.setUniformValue("mvp_matrix", mvpMatrix);  
+    glViewport((camera()->projectedCoordinatesOf(camera()->pivotPoint()).x-size/2)*devicePixelRatio(), (height() - camera()->projectedCoordinatesOf(camera()->pivotPoint()).y-size/2)*devicePixelRatio(), size, size);
+    glScissor ((camera()->projectedCoordinatesOf(camera()->pivotPoint()).x-size/2)*devicePixelRatio(), (height() - camera()->projectedCoordinatesOf(camera()->pivotPoint()).y-size/2)*devicePixelRatio(), size, size);
+    rendering_program.setUniformValue("color", QColor(Qt::black));
+    glLineWidth(3.0);
+    glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(4));
+    rendering_program.setUniformValue("color", QColor(Qt::white));
+    glLineWidth(3.0);
+    glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(4));
+    glLineWidth(1.0);
+    // The viewport and the scissor are restored.
+    glScissor(scissor[0],scissor[1],scissor[2],scissor[3]);
+    glViewport(viewport[0],viewport[1],viewport[2],viewport[3]);
+    vaos[PIVOT_POINT].release();
+    rendering_program.release();
+  }
+  
 }
 
 /*! Defines the mask that will be used to drawVisualHints(). The only available
@@ -4168,3 +4211,14 @@ deleted using glDeleteTextures() since then. */
 GLuint QGLViewer::bufferTextureId() const {
     return 0;
 }
+
+void QGLViewer::setOffset(qglviewer::Vec offset)
+{ 
+  this->_offset = offset; 
+}
+
+qglviewer::Vec QGLViewer::offset()const 
+{ 
+  return _offset; 
+}
+
