@@ -33,6 +33,7 @@
 #include <CGAL/assertions.h>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/foreach.hpp>
+#include <CGAL/Bbox_3.h>
 
 namespace CGAL {
  
