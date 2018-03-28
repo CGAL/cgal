@@ -30,7 +30,7 @@
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
-#include <CGAL/Mesh_3/properties.h>
+#include <CGAL/boost/graph/properties.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <set>
 
@@ -225,7 +225,7 @@ template<typename GT,
   BOOST_FOREACH(edge_descriptor ed, edges(pmesh))
   {
     halfedge_descriptor he = halfedge(ed,pmesh);
-    if(is_border(he,pmesh)
+    if(is_border_edge(he,pmesh)
       || angle_in_deg == FT()
       || (angle_in_deg != FT(180) && internal::is_sharp<PolygonMesh, GT>(pmesh,he,cos_angle))
       )

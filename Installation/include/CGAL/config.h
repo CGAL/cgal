@@ -412,7 +412,7 @@
 #    warning "Your configuration may exhibit run-time errors in CGAL code"
 #    warning "This appears with g++ 4.0 on MacOSX when optimizing"
 #    warning "You can disable this warning using -DCGAL_NO_WARNING_FOR_MACOSX_GCC_4_0_BUG"
-#    warning "For more information, see http://www.cgal.org/FAQ.html#mac_optimization_bug"
+#    warning "For more information, see https://www.cgal.org/FAQ.html#mac_optimization_bug"
 #  endif
 #endif
 

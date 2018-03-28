@@ -235,7 +235,6 @@ bool Viewer::inFastDrawing() const
 
 void Viewer::draw()
 { 
-  makeCurrent();
   glEnable(GL_DEPTH_TEST);
   d->draw_aux(false, this);
 }
@@ -1619,6 +1618,7 @@ void Viewer::saveSnapshot(bool, bool)
 //copy a snapshot with transparent background with arbitrary quality values.
 QImage* Viewer_impl::takeSnapshot(Viewer *viewer, int quality, int background_color, QSize finalSize, double oversampling, bool expand)
 {
+  viewer->makeCurrent();
   qreal aspectRatio = viewer->width() / static_cast<qreal>(viewer->height());
   viewer->setSnapshotQuality(quality);
   GLfloat alpha = 1.0f;
@@ -1690,21 +1690,18 @@ QImage* Viewer_impl::takeSnapshot(Viewer *viewer, int quality, int background_co
   if (nbY * subSize.height() < finalSize.height())
     nbY++;
 
-  QOpenGLFramebufferObject* fbo = new QOpenGLFramebufferObject(size, QOpenGLFramebufferObject::CombinedDepthStencil);
-  viewer->makeCurrent();
-  int count=0;
+  QOpenGLFramebufferObject fbo(size, QOpenGLFramebufferObject::CombinedDepthStencil);
   for (int i=0; i<nbX; i++)
     for (int j=0; j<nbY; j++)
     {
       setFrustum(-xMin + i*deltaX, -xMin + (i+1)*deltaX, yMin - j*deltaY, yMin - (j+1)*deltaY, zNear, zFar);
-      fbo->bind();
+      fbo.bind();
       viewer->glClearColor(viewer->backgroundColor().redF(), viewer->backgroundColor().greenF(), viewer->backgroundColor().blueF(), alpha);
       viewer->preDraw();
       viewer->draw();
-      viewer->postDraw();
-      fbo->release();
+      fbo.release();
 
-      QImage snapshot = fbo->toImage();
+      QImage snapshot = fbo.toImage();
       QImage subImage = snapshot.scaled(subSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
       // Copy subImage in image
       for (int ii=0; ii<subSize.width(); ii++)
@@ -1720,7 +1717,6 @@ QImage* Viewer_impl::takeSnapshot(Viewer *viewer, int quality, int background_co
           image->setPixel(fi, fj, subImage.pixel(ii,jj));
         }
       }
-      count++;
     }
   if(background_color !=0)
     viewer->setBackgroundColor(previousBGColor);

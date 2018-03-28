@@ -22,7 +22,7 @@
 #ifndef CGAL_INTERNAL_TRIANGULATION_DUMMY_TDS_3_H
 #define CGAL_INTERNAL_TRIANGULATION_DUMMY_TDS_3_H
 
-#include <CGAL/license/Triangulation_3.h>
+#include <CGAL/license/TDS_3.h>
 
 
 namespace CGAL { namespace internal {

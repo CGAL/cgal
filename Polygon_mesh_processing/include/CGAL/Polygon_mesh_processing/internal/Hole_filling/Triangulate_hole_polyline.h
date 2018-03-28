@@ -1142,7 +1142,7 @@ public:
     
     triangulate_all(P, Q, WC, std::make_pair(0,n-1), W, lambda);
 
-    if(W.get(0,n-1) == Weight::NOT_VALID()) {
+    if(W.get(0,n-1) == Weight::NOT_VALID() || n <= 2) {
       #ifndef CGAL_TEST_SUITE
       CGAL_warning(!"Returning no output. No possible triangulation is found!");
       #else

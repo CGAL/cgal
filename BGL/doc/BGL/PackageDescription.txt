@@ -689,7 +689,6 @@ user might encounter.
 - `CGAL::expand_face_selection_for_removal()`
 
 ## Conversion Functions ##
-- `CGAL::convert_nef_polyhedron_to_polygon_mesh()`
 - `CGAL::split_graph_into_polylines()`
 
 ## Graph Adaptors ##

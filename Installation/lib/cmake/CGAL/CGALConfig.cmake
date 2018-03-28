@@ -2,19 +2,42 @@
 # This file is the CGALConfig.cmake for a header-only CGAL installation
 #
 
-if(CGALConfig_included)
+# For UseCGAL.cmake
+set( CGAL_REQUESTED_COMPONENTS ${CGAL_FIND_COMPONENTS} )
+
+set(CGAL_LIBRARIES CGAL)
+
+if(CGAL_BUILDING_LIBS)
+  foreach(comp ${CGAL_FIND_COMPONENTS})
+    if(CGAL_${comp}_FOUND)
+      list(APPEND CGAL_LIBRARIES CGAL_${comp})
+    endif()
+  endforeach()
+  return()
+endif()
+
+foreach(comp ${CGAL_FIND_COMPONENTS})
+  if(NOT comp MATCHES "Core|ImageIO|Qt5")
+    message(FATAL_ERROR "The requested CGAL component ${comp} does not exist!")
+  endif()
+  list(APPEND CGAL_LIBRARIES CGAL_${comp})
+endforeach()
+
+set(CGALConfig_all_targets_are_defined TRUE)
+foreach(cgal_lib ${CGAL_LIBRARIES})
+  if(NOT WITH_${cgal_lib})
+    set(CGALConfig_all_targets_are_defined FALSE)
+  endif()
+endforeach()
+if(CGALConfig_all_targets_are_defined)
   return()
 endif()
 
 message(STATUS "Using header-only CGAL")
 
-set(CGALConfig_included TRUE)
-
 get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 set(CGAL_HEADER_ONLY TRUE)
-
-set( CGAL_REQUESTED_COMPONENTS ${CGAL_FIND_COMPONENTS} )
 
 # Save the current source directory. That variable can be changed by
 # a `CMakeLists.txt`, for `CMakeLists.txt` files that are created in
@@ -76,20 +99,16 @@ list(APPEND CMAKE_MODULE_PATH ${CGAL_MODULES_DIR})
 include( ${CGAL_MODULES_DIR}/CGAL_SCM.cmake )
 CGAL_detect_git(${CGAL_CONFIG_DIR}/../../../..)
 
-set(CGAL_LIBRARIES CGAL)
-foreach(comp ${CGAL_FIND_COMPONENTS})
-  if(NOT comp MATCHES "Core|ImageIO|Qt5")
-    message(FATAL_ERROR "The requested CGAL component ${comp} does not exist!")
-  endif()
-  list(APPEND CGAL_LIBRARIES CGAL_${comp})
-endforeach()
-
 #
 # Search for all dependencies
 #
 foreach(cgal_lib ${CGAL_LIBRARIES})
   include(CGAL_Setup${cgal_lib}Dependencies)
 endforeach()
+
+# this include has to be after the loop that includes the
+# `CGAL_Setup${cgal_lib}Dependencies` files
+include(CGAL_setup_target_dependencies)
 
 #
 # Define the CGAL targets and theirs CGAL:: aliases
@@ -101,20 +120,12 @@ foreach(cgal_lib ${CGAL_LIBRARIES})
     if(NOT TARGET CGAL::${cgal_lib})
       add_library(CGAL::${cgal_lib} ALIAS ${cgal_lib})
     endif()
-  endif()
-endforeach()
-
-# this include has to be after the loop that includes the
-# `CGAL_Setup${cgal_lib}Dependencies` files
-include(CGAL_setup_target_dependencies)
-
-foreach(cgal_lib ${CGAL_LIBRARIES})
-  if(${cgal_lib}_FOUND)
+    if(${cgal_lib} STREQUAL CGAL)
+      target_compile_definitions(CGAL INTERFACE CGAL_HEADER_ONLY=1)
+    endif()
     CGAL_setup_target_dependencies(${cgal_lib} INTERFACE)
   endif()
 endforeach()
-
-target_compile_definitions(CGAL INTERFACE CGAL_HEADER_ONLY=1)
 
 
 #
@@ -128,3 +139,5 @@ include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 cgal_setup_module_path()
 
 set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
+
+include("${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake")

@@ -2958,7 +2958,7 @@ This is a bug fix release.
 -   CAUTION: Since version 3.3.1, CGAL is no longer compatible with the
     official release of TAUCS (currently 2.2). Make sure to use the
     version modified by the CGAL project and available from the download
-    section of http://www.cgal.org.
+    section of https://www.cgal.org.
 
 Release 3.3
 -----------

@@ -156,12 +156,6 @@ Returns the number of vertices which are corners of the complex.
 size_type number_of_corners() const; 
 
 /*!
-
-Returns the number of vertices which are corners of the complex with index `index`. 
-*/ 
-size_type number_of_corners(Corner_index index) const; 
-
-/*!
 Returns `true` 
 iff edge `e` belongs to some curve.
 */ 

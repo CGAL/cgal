@@ -116,7 +116,7 @@ namespace CGAL{
     int ipelibVersion() const { return ipe::IPELIB_VERSION; }
     int NumFunctions() const { return nbf; }
     virtual const char *Label() const{ return &Name[0]; }
-    const char *About() const {return "http://www.cgal.org";};
+    const char *About() const {return "https://www.cgal.org";};
     virtual const char *SubLabel(int function) const {return &SubLab[function][0];};
     virtual const char *HelpMsg(int function) const{return &HMsg[function][0];};
     bool run (int i, ipe::IpeletData* data, ipe::IpeletHelper* helper) {
@@ -127,7 +127,7 @@ namespace CGAL{
         return true;
       }
       catch(...){
-        helper->messageBox("Error : Save your page in a file and submit it to \n http://www.cgal.org/bug_report.html",NULL,ipe::IpeletHelper::EOkCancelButtons);
+        helper->messageBox("Error : Save your page in a file and submit it to \n https://www.cgal.org/bug_report.html",NULL,ipe::IpeletHelper::EOkCancelButtons);
         return false;
       }
     };

@@ -5,7 +5,6 @@
 #include <CGAL/Mesh_criteria_3.h>
 
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 
 #include <CGAL/Polyhedral_complex_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>

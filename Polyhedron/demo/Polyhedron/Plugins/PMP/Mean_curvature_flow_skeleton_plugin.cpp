@@ -2,16 +2,13 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Scene_group_item.h>
 #include "ui_Mean_curvature_flow_skeleton_plugin.h"
-#include <CGAL/Mesh_3/properties.h>
 #ifdef USE_SURFACE_MESH
 #include "Kernel_type.h"
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 #else
 #include "Scene_polyhedron_item.h"
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 #endif
 
 #include "Scene_mcf_item.h"

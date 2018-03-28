@@ -46,8 +46,26 @@ namespace CGAL {
   An important special application of this algorithm is the test for 
   self-intersections where the second box sequence is an identical copy 
   of the first sequence including the preserved `id`-number. We 
-  offer a specialized implementation 
-  `box_self_intersection_all_pairs` for this application. 
+  offer a specialized implementation `box_self_intersection_all_pairs_d()`
+  for this application.
+
+\cgalHeading{Requirements}
+
+  <UL>
+  <LI>`ForwardIterator1`, and \f$ \ldots\f$ `2`, must meet
+  the requirements of `ForwardIterator` and both value types must be the same.
+  We call this value type `Box_handle` in the following.
+  <LI>`Callback` must be of the `BinaryFunction` concept.
+  The `Box_handle` must be convertible to both argument types. The
+  return type is not used and can be `void`.
+  <LI>The `Box_handle` must be a model of the `Assignable` concept.
+  <LI>In addition, if the default box traits is used the `Box_handle` must
+  be a class type `T` or a pointer to a class type `T`, where
+  `T` must be a model of the `BoxIntersectionBox_d` concept.
+  In both cases, the default box traits specializes to a suitable
+  implementation.
+  <LI>`BoxTraits` must be of the `BoxIntersectionTraits_d` concept.
+  </UL>
 
   \sa \link PkgBoxIntersectionD_box_intersection_d `CGAL::box_intersection_d()` \endlink
   \sa \link PkgBoxIntersectionD_box_self_intersection_d `CGAL::box_self_intersection_d()` \endlink
@@ -62,6 +80,40 @@ namespace CGAL {
   \f$ O(nm)\f$ where \f$ n\f$ is the size of the first sequence and \f$ m\f$ is the 
   size of the second sequence. 
 */
+
+/*!
+  \ingroup PkgBoxIntersectionD_box_intersection_all_pairs_d
+
+  Invocation of box intersection with default box traits
+  `Box_intersection_d::Box_traits_d<Box_handle>`, where
+  `Box_handle` corresponds to the iterator value type of
+  `ForwardIterator1`.
+
+*/
+template< class ForwardIterator1,
+          class ForwardIterator2,
+          class Callback >
+void box_intersection_all_pairs_d(
+  ForwardIterator1 begin1, ForwardIterator1 end1,
+  ForwardIterator2 begin2, ForwardIterator2 end2,
+  Callback callback,
+  CGAL::Box_intersection_d::Topology topology = CGAL::Box_intersection_d::CLOSED);
+
+/*!
+  \ingroup PkgBoxIntersectionD_box_intersection_all_pairs_d
+
+  Invocation with custom box traits.
+
+*/
+template< class ForwardIterator1,
+          class ForwardIterator2,
+          class Callback, class BoxTraits >
+void box_intersection_all_pairs_d(
+  ForwardIterator1 begin1, ForwardIterator1 end1,
+  ForwardIterator2 begin2, ForwardIterator2 end2,
+  Callback callback,
+  BoxTraits box_traits,
+  CGAL::Box_intersection_d::Topology topology = CGAL::Box_intersection_d::CLOSED);
 
 /*!
   \addtogroup  PkgBoxIntersectionD_box_intersection_d
@@ -112,7 +164,7 @@ namespace CGAL {
   concept and that the box handle, i.e., the iterators value type, is 
   identical to the box type or a pointer to the box type. 
 
-  An important special application of this algorithm is the test for 
+  An important special application of this algorithm is the test for
   self-intersections where the second box sequence is an identical copy 
   of the first sequence including the preserved `id`-number. Note 
   that this implies that the address of the box is not sufficient for 
@@ -130,12 +182,16 @@ namespace CGAL {
   values `Box_intersection_d::COMPLETE` and 
   `Box_intersection_d::BIPARTITE`. 
 
+  \warning The two sequences of boxes passed to `box_intersection_d()` can be
+  ranges created from the same container, but these ranges must not contain
+  any common element.
+
 \cgalHeading{Requirements}
 
   <UL> 
-  <LI>`RandomAccessIterator1`, and \f$ \ldots\f$ `2`, must be 
-  mutable random-access iterators and both value types must be 
-  the same. We call this value type `Box_handle` in the following. 
+  <LI>`RandomAccessIterator1`, and \f$ \ldots\f$ `2`, must meet
+  the requirements of `RandomAccessIterator` and both value types must be the same.
+  We call this value type `Box_handle` in the following.
   <LI>`Callback` must be of the `BinaryFunction` concept. 
   The `Box_handle` must be convertible to both argument types. The 
   return type is not used and can be `void`. 
@@ -209,44 +265,6 @@ namespace CGAL {
 */
 
 /*!
-  \ingroup PkgBoxIntersectionD_box_intersection_all_pairs_d
-
-  Invocation of box intersection with default box traits
-  `Box_intersection_d::Box_traits_d<Box_handle>`, where
-  `Box_handle` corresponds to the iterator value type of
-  `ForwardIterator1`.
-
-*/
-template< class ForwardIterator1, 
-          class ForwardIterator2, 
-          class Callback >
-void box_intersection_all_pairs_d(
-  ForwardIterator1 begin1, ForwardIterator1 end1,
-  ForwardIterator2 begin2, ForwardIterator2 end2,
-  Callback callback,
-  CGAL::Box_intersection_d::Topology topology = CGAL::Box_intersection_d::CLOSED);
-
-/*!
-  \ingroup PkgBoxIntersectionD_box_intersection_all_pairs_d
-
-  Invocation with custom box traits.
-
-*/
-template< class ForwardIterator1,
-          class ForwardIterator2,
-          class Callback, class BoxTraits >
-void box_intersection_all_pairs_d(
-  ForwardIterator1 begin1, ForwardIterator1 end1,
-  ForwardIterator2 begin2, ForwardIterator2 end2,
-  Callback callback,
-  BoxTraits box_traits,
-  CGAL::Box_intersection_d::Topology topology = CGAL::Box_intersection_d::CLOSED);
-
-} /* namespace CGAL */
-
-namespace CGAL {
-
-/*!
   \ingroup PkgBoxIntersectionD_box_intersection_d
 
   Invocation of box intersection with default box traits
@@ -297,7 +315,7 @@ namespace CGAL {
   inferior to the fast `box_self_intersection_d()` algorithm. 
 
   The sequence of boxes is given with a forward iterator range. The 
-  sequences are not modified. For each intersecting pair of boxes a 
+  sequence is not modified. For each intersecting pair of boxes a
   `callback` function object is called with the two intersecting 
   boxes as argument. 
 
@@ -330,7 +348,7 @@ namespace CGAL {
 \cgalHeading{Requirements}
 
   <UL> 
-  <LI>`ForwardIterator` must be a forward iterator. We call its 
+  <LI>`ForwardIter` must meet the requirements of `ForwardIterator`. We call its
   value type `Box_handle` in the following. 
   <LI>`Callback` must be of the `BinaryFunction` concept. 
   The `Box_handle` must be convertible to both argument types. The 
@@ -365,13 +383,11 @@ namespace CGAL {
   Invocation of box intersection with default box traits
   `Box_intersection_d::Box_traits_d<Box_handle>`, where
   `Box_handle` corresponds to the iterator value type of
-  `ForwardIterator`.
-
-
+  `ForwardIter`.
 */
-template< class ForwardIterator, class Callback >
+template< class ForwardIter, class Callback >
 void box_self_intersection_all_pairs_d(
-  ForwardIterator begin, ForwardIterator end,
+  ForwardIter begin, ForwardIter end,
   Callback callback,
   CGAL::Box_intersection_d::Topology topology = CGAL::Box_intersection_d::CLOSED);
 
@@ -381,10 +397,10 @@ void box_self_intersection_all_pairs_d(
 
 
 */
-template< class ForwardIterator,
+template< class ForwardIter,
           class Callback, class BoxTraits >
 void box_self_intersection_all_pairs_d(
-  ForwardIterator begin, ForwardIterator end,
+  ForwardIter begin, ForwardIter end,
   Callback callback,
   BoxTraits box_traits,
   CGAL::Box_intersection_d::Topology topology = CGAL::Box_intersection_d::CLOSED);
@@ -430,16 +446,17 @@ namespace CGAL {
   `Box_intersection_d::HALF_OPEN` and 
   `Box_intersection_d::CLOSED`. 
 
-  In addition, a box has a unique `id`-number. It is used to order 
-  boxes consistently in each dimension even if boxes have identical 
-  coordinates. In consequence, the algorithm guarantees that a pair of 
-  intersecting boxes is reported only once. This self-intersection 
-  function creates internally a second copy of the box sequence. The 
-  copying has to preserve the `id`-number of boxes. Note that this 
-  implies that the address of the box is not sufficient for the 
-  `id`-number if boxes are copied by value. Boxes of equal 
-  `id`-number are not reported as intersecting pairs since they are 
-  always intersecting trivially. 
+  In addition, a box has a unique `id`-number. It is used to order
+  boxes consistently in each dimension even if boxes have identical
+  coordinates. In consequence, the algorithm guarantees that a pair of
+  intersecting boxes is reported only once. Boxes of equal
+  `id`-number are not reported as intersecting pairs since they are
+  always intersecting trivially.
+
+  \warning This self-intersection function creates internally a second copy
+  of the box sequence. Note that this implies that an `id`-number based on the address
+  of the box is not acceptable if boxes are copied by value and one must either
+  pass boxes by pointer or use another type of box `id`-number such as `ID_EXPLICIT`.
 
   The algorithm uses a traits class of the `BoxIntersectionTraits_d` 
   concept to access the boxes. A default traits class is provided that 

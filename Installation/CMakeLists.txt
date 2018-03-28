@@ -378,6 +378,7 @@ set( CGAL_MODULES_REL_DIR cmake/modules )
 set( CGAL_MODULES_DIR     ${CGAL_INSTALLATION_PACKAGE_DIR}/${CGAL_MODULES_REL_DIR} )
 
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake)
 cgal_setup_module_path()
 
 message( STATUS "CGAL_REFERENCE_CACHE_DIR=${CGAL_REFERENCE_CACHE_DIR}" )
@@ -804,6 +805,16 @@ cache_get(CGAL_3RD_PARTY_LIBRARIES     )
 cache_get(CGAL_3RD_PARTY_LIBRARIES_DIRS) 
 
 add_subdirectory(src)
+
+#
+# Variables used when WITH_{demos|examples|tests} are TRUE, and
+# CGAL_HEADER_ONLY=ON
+#
+set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
+get_property(CGAL_FOUND GLOBAL PROPERTY CGAL_FOUND)
+get_property(CGAL_Core_FOUND GLOBAL PROPERTY CGAL_Core_FOUND)
+get_property(CGAL_ImageIO_FOUND GLOBAL PROPERTY CGAL_ImageIO_FOUND)
+get_property(CGAL_Qt5_FOUND GLOBAL PROPERTY CGAL_Qt5_FOUND)
 
 #
 # Repeat some problems

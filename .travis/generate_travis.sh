@@ -59,8 +59,8 @@ do
 echo "  - compiler: clang-3.6" >> .travis.yml
 echo "    env: PACKAGE='$package' " >> .travis.yml
 done
-echo "  - compiler: clang-3.6" >> .travis.yml
-echo "    env: PACKAGE='Polyhedron_demo' " >> .travis.yml
+#echo "  - compiler: clang-3.6" >> .travis.yml
+#echo "    env: PACKAGE='Polyhedron_demo' " >> .travis.yml
 
 #writes the end of the file
 COPY=0
@@ -75,6 +75,7 @@ do
 		echo "$LINE" >> .travis.yml
 	fi
 done
+echo "" >> .travis.yml
 IFS=$' '
 #check if there are differences between the files
 if ! cmp -s ./.travis.yml ./.travis.old;

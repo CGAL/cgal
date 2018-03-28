@@ -2641,9 +2641,6 @@ namespace internal{
 
 namespace std {
 
-
-  struct TTTTTffff {};
-    
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4099) // For VC10 it is class hash 
