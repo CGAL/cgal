@@ -29,6 +29,8 @@
 #include <CGAL/HalfedgeDS_items_2.h>
 #include <CGAL/HalfedgeDS_list.h>
 #include <CGAL/memory.h>
+#include <CGAL/boost/graph/graph_traits_HalfedgeDS_default.h>
+
 
 namespace CGAL {
 

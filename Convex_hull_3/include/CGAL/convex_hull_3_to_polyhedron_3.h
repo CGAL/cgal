@@ -30,11 +30,14 @@
 #define CGAL_REPLACEMENT_HEADER "<CGAL/convex_hull_3_to_face_graph.h>"
 #include <CGAL/internal/deprecation_warning.h>
 
-#include <CGAL/Polyhedron_incremental_builder_3.h>
-#include <CGAL/Modifier_base.h>
+//#include <CGAL/Polyhedron_incremental_builder_3.h>
+//#include <CGAL/Modifier_base.h>
+
+#include <CGAL/Polyhedron_3_fwd.h>
 
 namespace CGAL {
 
+#if 0
 template <class HDS,class Triangulation>
 class Convex_hull_modifier_from_triangulation_3 : public CGAL::Modifier_base<HDS> {
   typedef std::map<typename Triangulation::Vertex_handle,unsigned> Vertex_map;
@@ -88,12 +91,12 @@ public:
     B.end_surface();
   }
 };
-
+#endif
+  
 template<class Triangulation_3,class Polyhedron_3>
 CGAL_DEPRECATED void convex_hull_3_to_polyhedron_3(const Triangulation_3& T,Polyhedron_3& P){
-  P.clear();
-  Convex_hull_modifier_from_triangulation_3<typename Polyhedron_3::HalfedgeDS,Triangulation_3> modifier(T);
-  P.delegate(modifier);
+  clear(P);
+  link_to_face_graph(T,T.infinite_vertex(), P);
 }
 
 } //namespace CGAL
