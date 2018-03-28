@@ -47,7 +47,7 @@ class ManipulatedCameraFrame;
 \class QGLViewer qglviewer.h QGLViewer/qglviewer.h
 
 It features many classical viewer functionalities, such as a camera trackball,
-manipulated objects, snapshot saving and much <a
+manipulated objects and much <a
 href="../features.html">more</a>. Its main goal is to ease the development of
 new 3D applications.
 
@@ -495,142 +495,6 @@ public Q_SLOTS:
   virtual void setMouseTracking(bool enable);
 #endif
 
-  /*! @name Snapshots */
-  //@{
-public:
-  /*! Returns the snapshot file name used by saveSnapshot().
-
-  This value is used in \p automatic mode (see saveSnapshot()). A dialog is
-  otherwise popped-up to set it.
-
-  You can also directly provide a file name using saveSnapshot(const QString&,
-  bool).
-
-  If the file name is relative, the current working directory at the moment of
-  the method call is used. Set using setSnapshotFileName(). */
-  const QString &snapshotFileName() const { return snapshotFileName_; }
-#ifndef DOXYGEN
-  const QString &snapshotFilename() const;
-#endif
-  /*! Returns the snapshot file format used by saveSnapshot().
-
-  This value is used when saveSnapshot() is passed the \p automatic flag. It is
-  defined using a saveAs pop-up dialog otherwise.
-
-  The available formats are those handled by Qt. Classical values are \c "JPEG",
-  \c "PNG", \c "PPM", \c "BMP". Use the following code to get the actual list:
-  \code
-  QList<QByteArray> formatList = QImageReader::supportedImageFormats();
-  // or with Qt version 2 or 3:
-  QStringList formatList = QImage::outputFormatList();
-  \endcode
-
-  If the library was compiled with the vectorial rendering option (default),
-  three additional vectorial formats are available: \c "EPS", \c "PS" and \c
-  "XFIG". \c "SVG" and \c "PDF" formats should soon be available. The <a
-  href="http://artis.imag.fr/Software/VRender">VRender library</a> was created
-  by Cyril Soler.
-
-  Note that the VRender library has some limitations: vertex shader effects are
-  not reproduced and \c PASS_THROUGH tokens are not handled so one can not
-  change point and line size in the middle of a drawing.
-
-  Default value is the first supported among "JPEG, PNG, EPS, PS, PPM, BMP", in
-  that order.
-
-  This value is set using setSnapshotFormat() or with
-  openSnapshotFormatDialog().
-
-  \attention No verification is performed on the provided format validity. The
-  next call to saveSnapshot() may fail if the format string is not supported. */
-  const QString &snapshotFormat() const { return snapshotFormat_; }
-  /*! Returns the value of the counter used to name snapshots in saveSnapshot()
-  when \p automatic is \c true.
-
-  Set using setSnapshotCounter(). Default value is 0, and it is incremented
-  after each \p automatic snapshot. See saveSnapshot() for details. */
-  int snapshotCounter() const { return snapshotCounter_; }
-  /*! Defines the image quality of the snapshots produced with saveSnapshot().
-
-  Values must be in the range -1..100. Use 0 for lowest quality and 100 for
-  highest quality (and larger files). -1 means use Qt default quality. Default
-  value is 95.
-
-  Set using setSnapshotQuality(). See also the QImage::save() documentation.
-
-  \note This value has no impact on the images produced in vectorial format. */
-  int snapshotQuality() { return snapshotQuality_; }
-
-  // Qt 2.3 does not support qreal default value parameters in slots.
-  // Remove "Q_SLOTS" from the following line to compile with Qt 2.3
-public Q_SLOTS:
-  void saveSnapshot(bool automatic = true, bool overwrite = false);
-
-public Q_SLOTS:
-  void saveSnapshot(const QString &fileName, bool overwrite = false);
-  void setSnapshotFileName(const QString &name);
-
-  /*! Sets the snapshotFormat(). */
-  void setSnapshotFormat(const QString &format) { snapshotFormat_ = format; }
-  /*! Sets the snapshotCounter(). */
-  void setSnapshotCounter(int counter) { snapshotCounter_ = counter; }
-  /*! Sets the snapshotQuality(). */
-  void setSnapshotQuality(int quality) { snapshotQuality_ = quality; }
-  bool openSnapshotFormatDialog();
-  void snapshotToClipboard();
-
-private:
-  bool saveImageSnapshot(const QString &fileName);
-
-#ifndef DOXYGEN
-  /* This class is used internally for screenshot that require tiling (image
-  size size different from window size). Only in that case, is the private
-  tileRegion_ pointer non null. It then contains the current tiled region, which
-  is used by startScreenCoordinatesSystem to adapt the coordinate system. Not
-  using it would result in a tiled drawing of the parts that use
-  startScreenCoordinatesSystem. Also used by scaledFont for same purposes. */
-  class TileRegion {
-  public:
-    qreal xMin, yMin, xMax, yMax, textScale;
-  };
-#endif
-
-public:
-  /*! Return a possibly scaled version of \p font, used for snapshot rendering.
-
-  From a user's point of view, this method simply returns \p font and can be
-  used transparently.
-
-  However when internally rendering a screen snapshot using saveSnapshot(), it
-  returns a scaled version of the font, so that the size of the rendered text on
-  the snapshot is identical to what is displayed on screen, even if the snapshot
-  uses image tiling to create an image of dimensions different from those of the
-  current window. This scaled version will only be used when saveSnapshot()
-  calls your draw() method to generate the snapshot.
-
-  All your calls to renderText() function hence should use this method.
-  \code
-  renderText(x, y, z, "My Text", scaledFont(QFont()));
-  \endcode
-  will guarantee that this text will be properly displayed on arbitrary sized
-  snapshots.
-
-  Note that this method is not needed if you use drawText() which already calls
-  it internally. */
-  QFont scaledFont(const QFont &font) const {
-    if (tileRegion_ == NULL)
-      return font;
-    else {
-      QFont f(font);
-      if (f.pixelSize() == -1)
-        f.setPointSizeF(f.pointSizeF() * tileRegion_->textScale);
-      else
-        f.setPixelSize(int(f.pixelSize() * tileRegion_->textScale));
-      return f;
-    }
-  }
-  //@}
-
   /*! @name Buffer to texture */
   //@{
 public:
@@ -742,15 +606,7 @@ Q_SIGNALS:
   /*! Signal emitted at the end of the QGLViewer::paintGL() method, when frame
   is drawn.
 
-  Can be used to notify an image grabbing process that the image is ready. A
-  typical example is to connect this signal to the saveSnapshot() method, so
-  that a (numbered) snapshot is generated after each new display, in order to
-  create a movie: \code connect(viewer, SIGNAL(drawFinished(bool)),
-  SLOT(saveSnapshot(bool))); \endcode
-
-  The \p automatic bool variable is always \c true and has been added so that
-  the signal can be connected to saveSnapshot() with an \c automatic value set
-  to \c true. */
+  Can be used to notify an image grabbing process that the image is ready.  */
   void drawFinished(bool automatic);
 
   /*! Signal emitted by the default animate() method.
@@ -1015,7 +871,6 @@ public:
     DISPLAY_FPS,
     ENABLE_TEXT,
     EXIT_VIEWER,
-    SAVE_SCREENSHOT,
     CAMERA_MODE,
     FULL_SCREEN,
     STEREO,
@@ -1027,8 +882,7 @@ public:
     MOVE_CAMERA_UP,
     MOVE_CAMERA_DOWN,
     INCREASE_FLYSPEED,
-    DECREASE_FLYSPEED,
-    SNAPSHOT_TO_CLIPBOARD
+    DECREASE_FLYSPEED
   };
 
   unsigned int shortcut(KeyboardAction action) const;
@@ -1470,13 +1324,6 @@ private:
   QMap<WheelBindingPrivate, MouseActionPrivate> wheelBinding_;
   QMap<ClickBindingPrivate, ClickAction> clickBinding_;
   Qt::Key currentlyPressedKey_;
-
-  // S n a p s h o t s
-  void initializeSnapshotFormats();
-  QImage frameBufferSnapshot();
-  QString snapshotFileName_, snapshotFormat_;
-  int snapshotCounter_, snapshotQuality_;
-  TileRegion *tileRegion_;
   
   // Q G L V i e w e r   p o o l
   static QList<QGLViewer *> QGLViewerPool_;

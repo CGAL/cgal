@@ -60,6 +60,7 @@ public:
   qglviewer::Vec BPoint;
   bool is_d_pressed;
   bool extension_is_found;
+  int quality;
 
   TextRenderer *textRenderer;
   //!Clears the distance display
@@ -397,7 +398,7 @@ void Viewer::keyPressEvent(QKeyEvent* e)
   }
 
   else if(e->key() == Qt::Key_S && e->modifiers() & Qt::ControlModifier){
-    this->saveSnapshot(true,true);
+    this->saveSnapshot();
     return;
   }
 
@@ -1018,7 +1019,7 @@ private Q_SLOTS:
   }
 };
 
-void Viewer::saveSnapshot(bool, bool)
+void Viewer::saveSnapshot()
 {
   qreal aspectRatio = width() / static_cast<qreal>(height());
   static ImageInterface* imageInterface = NULL;
@@ -1028,7 +1029,7 @@ void Viewer::saveSnapshot(bool, bool)
 
   imageInterface->imgWidth->setValue(width());
   imageInterface->imgHeight->setValue(height());
-  imageInterface->imgQuality->setValue(snapshotQuality());
+  imageInterface->imgQuality->setValue(d->quality);
 
   if (imageInterface->exec() == QDialog::Rejected)
     return;
@@ -1053,8 +1054,8 @@ void Viewer::saveSnapshot(bool, bool)
 QImage* Viewer_impl::takeSnapshot(Viewer *viewer, int quality, int background_color, QSize finalSize, double oversampling, bool expand)
 {
   viewer->makeCurrent();
+  this->quality = quality;
   qreal aspectRatio = viewer->width() / static_cast<qreal>(viewer->height());
-  viewer->setSnapshotQuality(quality);
   GLfloat alpha = 1.0f;
   QColor previousBGColor = viewer->backgroundColor();
   switch(background_color)

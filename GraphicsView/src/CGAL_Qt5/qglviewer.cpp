@@ -54,7 +54,7 @@ libQGLViewer is a free C++ library based on Qt that enables the quick creation
 of OpenGL 3D viewers. It features a powerful camera trackball and simple
 applications simply require an implementation of the <code>draw()</code> method.
 This makes it a tool of choice for OpenGL beginners and assignments. It provides
-screenshot saving, mouse manipulated frames, stereo display, interpolated
+mouse manipulated frames, stereo display, interpolated
 keyFrames, object selection, and much more. It is fully
 customizable and easy to extend to create complex applications, with a possible
 Qt GUI.
@@ -82,11 +82,6 @@ void QGLViewer::defaultConstructor() {
 
   setDefaultShortcuts();
   setDefaultMouseBindings();
-
-  setSnapshotFileName(tr("snapshot", "Default snapshot file name"));
-  initializeSnapshotFormats();
-  setSnapshotCounter(0);
-  setSnapshotQuality(95);
 
   fpsTime_.start();
   fpsCounter_ = 0;
@@ -146,7 +141,6 @@ void QGLViewer::defaultConstructor() {
   setAttribute(Qt::WA_NoSystemBackground);
   axisIsDrawn_ = true;
 
-  tileRegion_ = NULL;
   _offset = qglviewer::Vec(0,0,0);
 }
 
@@ -589,7 +583,6 @@ void QGLViewer::setDefaultShortcuts() {
   setShortcut(DISPLAY_FPS, Qt::Key_F);
   setShortcut(ENABLE_TEXT, Qt::SHIFT + Qt::Key_Question);
   setShortcut(EXIT_VIEWER, Qt::Key_Escape);
-  setShortcut(SAVE_SCREENSHOT, Qt::CTRL + Qt::Key_S);
   setShortcut(CAMERA_MODE, Qt::Key_Space);
   setShortcut(FULL_SCREEN, Qt::ALT + Qt::Key_Return);
   setShortcut(STEREO, Qt::Key_S);
@@ -602,12 +595,9 @@ void QGLViewer::setDefaultShortcuts() {
   setShortcut(MOVE_CAMERA_DOWN, Qt::Key_Down);
   setShortcut(INCREASE_FLYSPEED, Qt::Key_Plus);
   setShortcut(DECREASE_FLYSPEED, Qt::Key_Minus);
-  setShortcut(SNAPSHOT_TO_CLIPBOARD, Qt::CTRL + Qt::Key_C);
 
   keyboardActionDescription_[DISPLAY_FPS] =
       tr("Toggles the display of the FPS", "DISPLAY_FPS action description");
-  keyboardActionDescription_[SAVE_SCREENSHOT] =
-      tr("Saves a screenshot", "SAVE_SCREENSHOT action description");
   keyboardActionDescription_[FULL_SCREEN] =
       tr("Toggles full screen display", "FULL_SCREEN action description");
   keyboardActionDescription_[DRAW_AXIS] = tr(
@@ -641,10 +631,7 @@ void QGLViewer::setDefaultShortcuts() {
       tr("Increases fly speed", "INCREASE_FLYSPEED action description");
   keyboardActionDescription_[DECREASE_FLYSPEED] =
       tr("Decreases fly speed", "DECREASE_FLYSPEED action description");
-  keyboardActionDescription_[SNAPSHOT_TO_CLIPBOARD] =
-      tr("Copies a snapshot to clipboard",
-         "SNAPSHOT_TO_CLIPBOARD action description");
-
+  
   // K e y f r a m e s   s h o r t c u t   k e y s
   setPathKey(Qt::Key_F1, 1);
   setPathKey(Qt::Key_F2, 2);
@@ -862,14 +849,7 @@ void QGLViewer::drawText(int x, int y, const QString &text, const QFont &fnt) {
   if (!textIsEnabled())
     return;
 
-  if (tileRegion_ != NULL) {
-    renderText(int((x - tileRegion_->xMin) * width() /
-                   (tileRegion_->xMax - tileRegion_->xMin)),
-               int((y - tileRegion_->yMin) * height() /
-                   (tileRegion_->yMax - tileRegion_->yMin)),
-               text, scaledFont(fnt));
-  } else
-    renderText(x, y, text, fnt);
+  renderText(x, y, text, fnt);
 }
 
 /*! Briefly displays a message in the lower left corner of the widget.
@@ -2275,9 +2255,6 @@ void QGLViewer::handleKeyboardAction(KeyboardAction id) {
     saveStateToFileForAllViewers();
     qApp->closeAllWindows();
     break;
-  case SAVE_SCREENSHOT:
-    saveSnapshot(false, false);
-    break;
   case FULL_SCREEN:
     toggleFullScreen();
     break;
@@ -2292,9 +2269,6 @@ void QGLViewer::handleKeyboardAction(KeyboardAction id) {
     break;
   case EDIT_CAMERA:
     toggleCameraIsEdited();
-    break;
-  case SNAPSHOT_TO_CLIPBOARD:
-    snapshotToClipboard();
     break;
   case CAMERA_MODE:
     toggleCameraMode();

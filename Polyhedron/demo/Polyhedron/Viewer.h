@@ -76,7 +76,7 @@ public:
                                         const char* v_shader,
                                         const char* f_shader)const;
   QPainter* getPainter()Q_DECL_OVERRIDE;
-  void saveSnapshot(bool , bool overwrite = false);
+  void saveSnapshot();
 
   TextRenderer* textRenderer() Q_DECL_OVERRIDE;
   void enableClippingBox(QVector4D box[]) Q_DECL_OVERRIDE;

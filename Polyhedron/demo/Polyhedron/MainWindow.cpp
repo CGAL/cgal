@@ -1700,7 +1700,7 @@ void MainWindow::save(QString filename, CGAL::Three::Scene_item* item) {
 
 void MainWindow::on_actionSaveSnapshot_triggered()
 {
-  viewer->saveSnapshot(false);
+  viewer->saveSnapshot();
 }
 
 bool MainWindow::on_actionErase_triggered()
