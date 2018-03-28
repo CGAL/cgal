@@ -278,7 +278,7 @@ set_halfedge(typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::face_des
   , typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::halfedge_descriptor h
   , HalfedgeDS_default<T,I,A>& g)
 {
-  typedef typename HalfedgeDS_default<T,I,A> Hds;
+  typedef HalfedgeDS_default<T,I,A> Hds;
   CGAL::HalfedgeDS_decorator<Hds> D(g);
   D.set_face_halfedge(f, h);
 }
