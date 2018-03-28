@@ -965,7 +965,7 @@ public Q_SLOTS:
   void setSelectedName(int id) { selectedObjectId_ = id; }
 
 protected:
-  virtual void beginSelection(const QPoint &);
+  virtual void beginSelection(const QPoint &point);
   /*! This method is called by select() and should draw selectable entities.
 
   Default implementation is empty. Overload and draw the different elements of
@@ -1477,7 +1477,7 @@ private:
   QString snapshotFileName_, snapshotFormat_;
   int snapshotCounter_, snapshotQuality_;
   TileRegion *tileRegion_;
-
+  
   // Q G L V i e w e r   p o o l
   static QList<QGLViewer *> QGLViewerPool_;
 
@@ -1514,6 +1514,14 @@ private:
   
   // O f f s e t
   qglviewer::Vec _offset;
+  
+  //C o n t e x t
+  bool is_ogl_4_3;
+public:
+  //! Is used to know if the openGL context is 4.3 or 2.1.
+  //! @returns `true` if the context is 4.3.
+  //! @returns `false` if the context is 2.1.  
+  bool isOpenGL_4_3()const {return is_ogl_4_3; }
   
 };
 

@@ -37,7 +37,6 @@ public:
   bool _displayMessage;
   QTimer messageTimer;
   QOpenGLFunctions_4_3_Compatibility* _recentFunctions;
-  bool is_ogl_4_3;
   bool is_2d_selection_mode;
 
   //! The buffers used to draw the axis system
@@ -195,36 +194,17 @@ void Viewer::fastDraw()
   d->draw_aux(false, this);
 }
 
-void Viewer::initializeGL()
+void Viewer::init()
 {
-  QSurfaceFormat format;
-  format.setDepthBufferSize(24);
-  format.setStencilBufferSize(8);
-  format.setVersion(4,3);
-  format.setProfile(QSurfaceFormat::CompatibilityProfile);
-  format.setSamples(0);
-  context()->setFormat(format);
-  bool created = context()->create();
-  if(!created || context()->format().profile() != QSurfaceFormat::CompatibilityProfile) {
-    // impossible to get a 4.3 compatibility profile, retry with 2.0
-    format.setVersion(2,1);
-    context()->setFormat(format);
-    created = context()->create();
-    d->is_ogl_4_3 = false;
+  if(!isOpenGL_4_3())
+  {
+    std::cerr<<"The openGL context initialization failed "
+    "and the default context (2.1) will be used" <<std::endl;
   }
   else
   {
-    d->is_ogl_4_3 = true;
     d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
-  }
-  CGAL_warning_msg(created && context()->isValid(), "The openGL context initialization failed "
-                   "and the default context (2.0) will be used" );
-  makeCurrent();
-  QGLViewer::initializeGL();
-  initializeOpenGLFunctions();
-  if(isOpenGL_4_3())
-  {
-   d->_recentFunctions->initializeOpenGLFunctions();
+    d->_recentFunctions->initializeOpenGLFunctions();
   }
   glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
   if(!glDrawArraysInstanced)
@@ -247,14 +227,12 @@ void Viewer::initializeGL()
 
   setBackgroundColor(::Qt::white);
   d->vao.create();
-    d->buffer.create();
+  d->buffer.create();
 
   QOpenGLShader *vertex_shader, *fragment_shader;
   
   //setting the program used for the distance
      {
-         d->vao.create();
-         d->buffer.create();
          //Vertex source code
          const char vertex_source_dist[] =
          {
@@ -680,14 +658,12 @@ void Viewer::attribBuffers(int program_name) const {
 
 void Viewer::beginSelection(const QPoint &point)
 {
-    makeCurrent();
-    glEnable(GL_SCISSOR_TEST);
-    glScissor(point.x(), camera()->screenHeight()-1-point.y(), 1, 1);
-    d->scene->setPickedPixel(point);
+  QGLViewer::beginSelection(point);
+  d->scene->setPickedPixel(point);
 }
-void Viewer::endSelection(const QPoint&)
+void Viewer::endSelection(const QPoint& point)
 {
-    glDisable(GL_SCISSOR_TEST);
+  QGLViewer::endSelection(point);
     //redraw the true scene for the glReadPixel in postSelection();
     d->draw_aux(false, this);
 }
@@ -745,10 +721,6 @@ void Viewer::drawVisualHints()
       d->textRenderer->removeText(message_text);
 }
 
-void Viewer::resizeGL(int w, int h)
-{
-    QGLViewer::resizeGL(w,h);
-}
 QOpenGLShaderProgram* Viewer::declare_program(int name,
                                       const char* v_shader,
                                       const char* f_shader) const
@@ -1248,9 +1220,6 @@ void Viewer::enableClippingBox(QVector4D box[6])
   for(int i=0; i<6; ++i)
     d->clipbox[i] = box[i];
 }
-
-
-bool Viewer::isOpenGL_4_3() const { return d->is_ogl_4_3; }
 
 QOpenGLFunctions_4_3_Compatibility* Viewer::openGL_4_3_functions() { return d->_recentFunctions; }
 

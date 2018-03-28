@@ -249,10 +249,7 @@ public Q_SLOTS:
   virtual bool moveCameraToCoordinates(QString target,
                                        float animation_duration = 0.5f) = 0;
 public:
-  //! Is used to know if the openGL context is 4.3 or 2.1.
-  //! @returns `true` if the context is 4.3.
-  //! @returns `false` if the context is 2.1.
-  virtual bool isOpenGL_4_3() const = 0;
+  
   //! Gives acces to recent openGL(4.3) features, allowing use of things like
   //! Geometry Shaders or Depth Textures.
   //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Compatibility if `isOpenGL_4_3()` is `true`

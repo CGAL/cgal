@@ -220,39 +220,42 @@ static Qt::MouseButton mouseButtonFromState(unsigned int state) {
 
 This method is automatically called once, before the first call to paintGL().
 
-Overload init() instead of this method to modify viewer specific OpenGL state or
-to create display lists.
+Overload init() instead of this method to modify viewer specific OpenGL state.
 
-To make beginners' life easier and to simplify the examples, this method
-slightly modifies the standard OpenGL state: \code glEnable(GL_LIGHT0);
-glEnable(GL_LIGHTING);
-glEnable(GL_DEPTH_TEST);
-glEnable(GL_COLOR_MATERIAL);
-\endcode
-
-If you port an existing application to QGLViewer and your display changes, you
-probably want to disable these flags in init() to get back to a standard OpenGL
-state. */
+If a 4.3 context could not be set, a 2.1 context will be used instead. 
+ \see `isOpenGL_4_3()`
+*/
 void QGLViewer::initializeGL() {
+  QSurfaceFormat format;
+  format.setDepthBufferSize(24);
+  format.setStencilBufferSize(8);
+  format.setVersion(4,3);
+  format.setProfile(QSurfaceFormat::CompatibilityProfile);
+  format.setSamples(0);
+  context()->setFormat(format);
+  bool created = context()->create();
+  if(!created || context()->format().profile() != QSurfaceFormat::CompatibilityProfile) {
+    // impossible to get a 4.3 compatibility profile, retry with 2.0
+    format.setVersion(2,1);
+    context()->setFormat(format);
+    created = context()->create();
+    is_ogl_4_3 = false;
+  }
+  else
+  {
+    is_ogl_4_3 = true;
+  }
+  makeCurrent();
   QOpenGLFunctions_2_1::initializeOpenGLFunctions();
-  glEnable(GL_LIGHT0);
-  glEnable(GL_LIGHTING);
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_COLOR_MATERIAL);
-
   // Default colors
   setForegroundColor(QColor(180, 180, 180));
   setBackgroundColor(QColor(51, 51, 51));
 
   // Clear the buffer where we're going to draw
-  if (format().stereo()) {
-    glDrawBuffer(GL_BACK_RIGHT);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glDrawBuffer(GL_BACK_LEFT);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  } else
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  // Calls user defined method. Default emits a signal.
+  init();
+  
   //OpenGL buffers and programs initialization
   for(int i=0; i<VAO_size; ++i)
   {
@@ -400,9 +403,6 @@ void QGLViewer::initializeGL() {
       qDebug() << rendering_program_light.log();
     }
   }
-  
-  // Calls user defined method. Default emits a signal.
-  init();
 
   // Give time to glInit to finish and then call setFullScreen().
   if (isFullScreen())
@@ -1111,80 +1111,20 @@ void QGLViewer::select(const QPoint &point) {
 
 /*! This method should prepare the selection. It is called by select() before
 drawWithNames().
-The default function is empty.
 */
-void QGLViewer::beginSelection(const QPoint &) 
+void QGLViewer::beginSelection(const QPoint &point) 
 {
-  
+  makeCurrent();
+  glEnable(GL_SCISSOR_TEST);
+  glScissor(point.x(), camera()->screenHeight()-1-point.y(), 1, 1);
 }
 
 /*! This method is called by select() after scene elements were drawn by
-drawWithNames(). It should analyze the selection result to determine which
-object is actually selected.
-
-The default implementation relies on \c GL_SELECT mode (see beginSelection()).
-It assumes that names were pushed and popped in drawWithNames(), and analyzes
-the selectBuffer() to find the name that corresponds to the closer (z min)
-object. It then setSelectedName() to this value, or to -1 if the selectBuffer()
-is empty (no object drawn in selection region). Use selectedName() (probably in
-the postSelection() method) to retrieve this value and update your data
-structure accordingly.
-
-This default implementation, although sufficient for many cases is however
-limited and you may have to overload this method. This will be the case if
-drawWithNames() uses several push levels in the name heap. A more precise depth
-selection, for instance privileging points over edges and triangles to avoid z
-precision problems, will also require an overloading. A typical implementation
-will look like:
-\code
-glFlush();
-
-// Get the number of objects that were seen through the pick matrix frustum.
-// Resets GL_RENDER mode.
-GLint nbHits = glRenderMode(GL_RENDER);
-
-if (nbHits <= 0)
-setSelectedName(-1);
-else
-{
-// Interpret results: each object created values in the selectBuffer().
-// See the glSelectBuffer() man page for details on the buffer structure.
-// The following code depends on your selectBuffer() structure.
-for (int i=0; i<nbHits; ++i)
-if ((selectBuffer())[i*4+1] < zMin)
-setSelectedName((selectBuffer())[i*4+3])
-}
-\endcode
-
-See the <a href="../examples/multiSelect.html">multiSelect example</a> for
-a multi-object selection implementation of this method. */
+drawWithNames(). 
+ It clears the OpenGL state set by beginSelection*/
 void QGLViewer::endSelection(const QPoint &point) {
   Q_UNUSED(point);
-
-  // Flush GL buffers
-  glFlush();
-
-  // Get the number of objects that were seen through the pick matrix frustum.
-  // Reset GL_RENDER mode.
-  GLint nbHits = glRenderMode(GL_RENDER);
-
-  if (nbHits <= 0)
-    setSelectedName(-1);
-  else {
-    // Interpret results: each object created 4 values in the selectBuffer().
-    // selectBuffer[4*i+1] is the object minimum depth value, while
-    // selectBuffer[4*i+3] is the id pushed on the stack. Of all the objects
-    // that were projected in the pick region, we select the closest one (zMin
-    // comparison). This code needs to be modified if you use several stack
-    // levels. See glSelectBuffer() man page.
-    GLuint zMin = (selectBuffer())[1];
-    setSelectedName(int((selectBuffer())[3]));
-    for (int i = 1; i < nbHits; ++i)
-      if ((selectBuffer())[4 * i + 1] < zMin) {
-        zMin = (selectBuffer())[4 * i + 1];
-        setSelectedName(int((selectBuffer())[4 * i + 3]));
-      }
-  }
+  glDisable(GL_SCISSOR_TEST);
 }
 
 /*! Sets the selectBufferSize().

@@ -47,7 +47,7 @@ public:
   void fastDraw()Q_DECL_OVERRIDE;
   bool isExtensionFound()Q_DECL_OVERRIDE;
   //! Initializes the OpenGL functions and sets the backGround color.
-  void initializeGL()Q_DECL_OVERRIDE;
+  void init()Q_DECL_OVERRIDE;
   //! Draws the scene "with names" to allow picking.
   void drawWithNames()Q_DECL_OVERRIDE;
   /*! Uses the parameter pixel's coordinates to get the corresponding point
@@ -142,15 +142,12 @@ protected:
   //!Defines the behaviour for the key release events
   void keyReleaseEvent(QKeyEvent *)Q_DECL_OVERRIDE;
 
-  void resizeGL(int w, int h)Q_DECL_OVERRIDE;
-
 protected:
   friend class Viewer_impl;
   Viewer_impl* d;
   double prev_radius;
 
 public:
-  bool isOpenGL_4_3() const Q_DECL_OVERRIDE;
   QOpenGLFunctions_4_3_Compatibility* openGL_4_3_functions() Q_DECL_OVERRIDE;
 
 }; // end class Viewer
