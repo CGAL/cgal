@@ -61,11 +61,11 @@ void generate_one_positive_bracket(Path& p)
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[5])); // 6th dart of the map
   extend_straight_positive(p, 3);
-  extend_uturn_negative(p);
+  extend_uturn_positive(p, 3);
   extend_uturn_positive(p);
   extend_straight_positive(p, 6);
   extend_uturn_positive(p);
-  extend_uturn_negative(p);
+  extend_uturn_positive(p, 3);
   extend_straight_positive(p, 2);
 }
 
@@ -75,11 +75,9 @@ void generate_one_negative_bracket(Path& p)
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[5])); // 6th dart of the map
   extend_straight_negative(p, 3);
-  extend_uturn_positive(p);
   extend_uturn_negative(p);
   extend_straight_negative(p, 6);
   extend_uturn_negative(p);
-  extend_uturn_positive(p);
   extend_straight_negative(p, 2);
 }
 
@@ -87,7 +85,6 @@ template<typename Path>
 void generate_bracket_special1(Path& p, bool reverse)
 { // Case (x, 1, 2^r, 1)
   p.clear();
-  // p.push_back(p.get_map().template beta<2>(p.get_map().darts().iterator_to(p.get_map().darts()[5]))); // 6th dart of the map
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[91])); // 6th dart of the map
   extend_uturn_positive(p, 1);
   extend_straight_positive(p, 8);

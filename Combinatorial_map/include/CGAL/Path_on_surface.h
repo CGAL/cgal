@@ -226,8 +226,8 @@ public:
   {
     assert((positive && next_positive_turn(begin)==1) ||
            (!positive && next_negative_turn(begin)==1));
-    std::size_t end=begin+1;
-    if (!is_closed() && end==length()-1)
+    std::size_t end=next_index(begin);
+    if (!is_closed() && end>=length()-1)
     { return begin; } // begin is the before last dart
 
     while ((positive && next_positive_turn(end)==2) ||
@@ -568,6 +568,8 @@ public:
   std::vector<std::size_t> compute_positive_turns() const
   {
     std::vector<std::size_t> res;
+    if (is_empty()) return res;
+
     std::size_t i;
     for (i=0; i<m_path.size()-1; ++i)
     {
@@ -587,6 +589,8 @@ public:
   std::vector<std::size_t> compute_negative_turns() const
   {
     std::vector<std::size_t> res;
+    if (is_empty()) return res;
+
     std::size_t i;
     for (i=0; i<m_path.size()-1; ++i)
     {
@@ -601,6 +605,34 @@ public:
       else { res.push_back(next_negative_turn(i)); }
     }
     return res;
+  }
+
+  std::vector<std::size_t> compute_turns(bool positive) const
+  { return (positive?compute_positive_turns():compute_negative_turns()); }
+
+  bool same_turns(const char* turns) const
+  {
+    std::vector<std::size_t> resplus=compute_positive_turns();
+    std::vector<std::size_t> resmoins=compute_negative_turns();
+
+    std::string sturns(turns);
+    std::istringstream iss(sturns);
+    int64_t nb;
+
+    for(std::size_t i=0; i<resplus.size(); ++i)
+    {
+      if (!iss.good())
+      { return false; }
+      iss>>nb;
+      if ((nb>=0 && resplus[i]!=nb) ||
+          (nb<0 && resmoins[i]!=-nb))
+      { return false; }
+    }
+    iss>>nb;
+    if (iss.good())
+    { return false; } // There are more elements in turns than in res
+
+    return true;
   }
 
   void display_positive_turns() const
@@ -619,6 +651,13 @@ public:
     for (std::size_t i=0; i<res.size(); ++i)
     { std::cout<<res[i]<<(i<res.size()-1?" ":""); }
     std::cout<<")";
+  }
+
+  void display_pos_and_neg_turns() const
+  {
+    display_positive_turns();
+    std::cout<<"  ";
+    display_negative_turns();
   }
 
   void reverse()
