@@ -35,6 +35,12 @@
 #include <CGAL/Classification/Feature/Vertical_dispersion.h>
 #include <CGAL/Classification/Feature/Verticality.h>
 #include <CGAL/Classification/Feature/Eigen.h>
+
+// Experimental feature, not used officially
+#ifdef CGAL_CLASSIFICATION_USE_GRADIENT_OF_FEATURE
+#include <CGAL/Classification/Feature/Gradient_of_feature.h>
+#endif
+
 #include <CGAL/Classification/Label.h>
 #include <CGAL/Classification/internal/verbosity.h>
 #include <CGAL/Classification/Feature_set.h>
@@ -139,6 +145,13 @@ public:
   <GeomTraits, PointRange, PointMap>                    Dispersion;
   typedef Classification::Feature::Verticality
   <GeomTraits>                                          Verticality;
+  
+  typedef typename Neighborhood::K_neighbor_query       Neighbor_query;
+
+#ifdef CGAL_CLASSIFICATION_USE_GRADIENT_OF_FEATURE
+  typedef Classification::Feature::Gradient_of_feature
+  <PointRange, PointMap, Neighbor_query>                Gradient_of_feature;
+#endif
   
   typedef typename Classification::RGB_Color RGB_Color;
   /// \endcond
@@ -325,7 +338,11 @@ public:
                               std::size_t nb_scales,
                               VectorMap normal_map = VectorMap(),
                               ColorMap color_map = ColorMap(),
-                              EchoMap echo_map = EchoMap())
+                              EchoMap echo_map = EchoMap()
+#ifndef DOXYGEN_RUNNING
+                              , float voxel_size = -1.f // Undocumented way of changing base voxel size
+#endif
+                              )
     : m_input (input), m_point_map (point_map), m_features (&features)
   {
     m_bbox = CGAL::bounding_box
@@ -339,7 +356,7 @@ public:
     typedef typename Default::Get<EchoMap, std::size_t >::type
       Emap;
 
-    generate_features_impl (nb_scales,
+    generate_features_impl (nb_scales, voxel_size,
                             get_parameter<Vmap>(normal_map),
                             get_parameter<Cmap>(color_map),
                             get_parameter<Emap>(echo_map));
@@ -461,7 +478,6 @@ private:
     using Feature_adder::scale;
     VectorMap normal_map;
 
-    // TODO!
     Feature_adder_verticality (Point_set_feature_generator* generator, VectorMap normal_map, std::size_t scale)
       : Feature_adder (generator, scale), normal_map (normal_map) { }
     
@@ -497,7 +513,6 @@ private:
     float mean;
     float sd;
 
-    // TODO!
     Feature_adder_color (Point_set_feature_generator* generator, ColorMap color_map, std::size_t scale,
                          std::size_t channel, float mean, float sd)
       : Feature_adder (generator, scale), color_map (color_map),
@@ -543,7 +558,6 @@ private:
     using Feature_adder::scale;
     EchoMap echo_map;
 
-    // TODO!
     Feature_adder_echo (Point_set_feature_generator* generator, EchoMap echo_map, std::size_t scale)
       : Feature_adder (generator, scale), echo_map (echo_map) { }
     
@@ -571,6 +585,28 @@ private:
   {
   }
 
+  void generate_gradient_features()
+  {
+#ifdef CGAL_CLASSIFICATION_USE_GRADIENT_OF_FEATURE
+    std::size_t size = m_features->size();
+
+    for (std::size_t i = 0; i < size; ++ i)
+    {
+      for (int j = m_scales.size() - 1; j >= 0; -- j)
+      {
+        std::ostringstream oss;
+        oss << "_" << j;
+        if ((*m_features)[i]->name().find (oss.str()))
+        {
+          const Neighbor_query& neighbor_query = neighborhood(std::size_t(j)).k_neighbor_query(6);
+          m_features->template add<Gradient_of_feature> (m_input, m_point_map, (*m_features)[i], neighbor_query);
+          break;
+        }
+      }
+    }
+#endif
+  }
+
 
   template <typename T>
   const T& get_parameter (const T& t)
@@ -586,7 +622,7 @@ private:
   }
 
   template<typename VectorMap, typename ColorMap, typename EchoMap>
-  void generate_features_impl (std::size_t nb_scales,
+  void generate_features_impl (std::size_t nb_scales, float voxel_size,
                                VectorMap normal_map,
                                ColorMap color_map,
                                EchoMap echo_map)
@@ -595,12 +631,11 @@ private:
     
     m_scales.reserve (nb_scales);
     
-    float voxel_size = -1;
-    //    voxel_size = 0.05; // WARNING: do not keep (-1 is the right value)
+    m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, -1.f));
 
+    if (voxel_size == -1.f)
+      voxel_size = m_scales[0]->grid_resolution();
     
-    m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size));
-    voxel_size = m_scales[0]->grid_resolution();
     for (std::size_t i = 1; i < nb_scales; ++ i)
     {
       voxel_size *= 2;
@@ -625,6 +660,8 @@ private:
     m_tasks->wait();
     delete m_tasks;
 #endif
+
+    generate_gradient_features();
     
     t.stop();
     CGAL_CLASSIFICATION_CERR << "Features computed in " << t.time() << " second(s)" << std::endl;
@@ -664,7 +701,6 @@ private:
     using Feature_adder::scale;
     PointMap point_map;
 
-    // TODO!
     Feature_adder_variant_1 (Point_set_feature_generator* generator, PointMap point_map, std::size_t scale)
       : Feature_adder (generator, scale), point_map (point_map) { }
     
@@ -692,7 +728,6 @@ private:
     using Feature_adder::scale;
     PointMap point_map;
 
-    // TODO!
     Feature_adder_variant_2 (Point_set_feature_generator* generator, PointMap point_map, std::size_t scale)
       : Feature_adder (generator, scale), point_map (point_map) { }
     
@@ -722,7 +757,6 @@ private:
     using Feature_adder::scale;
     PointMap point_map;
 
-    // TODO!
     Feature_adder_variant_3 (Point_set_feature_generator* generator, PointMap point_map, std::size_t scale)
       : Feature_adder (generator, scale), point_map (point_map) { }
     

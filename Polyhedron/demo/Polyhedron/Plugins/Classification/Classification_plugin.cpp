@@ -1,6 +1,9 @@
 #include <QtCore/qglobal.h>
 #include <QFileDialog>
 #include <QColorDialog> 
+#include <QGLViewer/manipulatedCameraFrame.h>
+#include <QGLViewer/manipulatedFrame.h>
+
 #include <fstream>
 #include "opengl_tools.h"
 
@@ -8,6 +11,7 @@
 #include "Scene_points_with_normal_item.h"
 #include "Item_classification_base.h"
 #include "Point_set_item_classification.h"
+#include "Cluster_classification.h"
 #include "Scene_polylines_item.h"
 #include "Scene_polygon_soup_item.h"
 
@@ -20,6 +24,7 @@
 #include <QMultipleInputDialog.h>
 
 #include "ui_Classification_widget.h"
+#include "ui_Classification_advanced_widget.h"
 
 #include <QAction>
 #include <QMainWindow>
@@ -50,16 +55,20 @@ class Polyhedron_demo_classification_plugin :
   {
     QPushButton* color_button;
     QMenu* menu;
+    char shortcut;
     
     QColor color;
 
     QLabel* label2;
     QComboBox* effect;
 
-    LabelButton (QWidget* parent, const char* name, const QColor& color)
-      : color (color)
+    LabelButton (QWidget* parent,
+                 const char* name,
+                 const QColor& color,
+                 const char shortcut)
+      : shortcut (shortcut), color (color)
     {
-      color_button = new QPushButton (name, parent);
+      color_button = new QPushButton (tr("%1 (%2)").arg(name).arg((char)(std::toupper(shortcut))), parent);
       
       menu = new QMenu("Label Menu", color_button);
 
@@ -131,18 +140,48 @@ public:
 
     dock_widget = new QDockWidget("Classification", mw);
     dock_widget->setVisible(false);
+    dock_widget_adv = new QDockWidget("Classification (Advanced)", mw);
+    dock_widget_adv->setVisible(false);
 
-    new_label_button = new QPushButton(QIcon(QString(":/cgal/icons/plus")), "", dock_widget);
-    new_label_button->setStyleSheet("font-weight: bold;");
+    label_button = new QPushButton(QIcon(QString(":/cgal/icons/plus")), "", dock_widget);
 
-    connect(new_label_button,  SIGNAL(clicked()), this,
+    QMenu* label_menu = new QMenu("Label Menu", label_button);
+    label_button->setMenu (label_menu);
+
+    QAction* add_new_label = label_menu->addAction ("Add new label(s)");
+    connect(add_new_label,  SIGNAL(triggered()), this,
             SLOT(on_add_new_label_clicked()));
+
+    label_menu->addSeparator();
+    
+    QAction* use_config_building = label_menu->addAction ("Use configuration ground/vegetation/building");
+    connect(use_config_building,  SIGNAL(triggered()), this,
+            SLOT(on_use_config_building_clicked()));
+    QAction* use_config_roof = label_menu->addAction ("Use configuration ground/vegetation/roof/facade");
+    connect(use_config_roof,  SIGNAL(triggered()), this,
+            SLOT(on_use_config_roof_clicked()));
+    QAction* use_config_las = label_menu->addAction ("Use LAS standard configuration");
+    connect(use_config_las,  SIGNAL(triggered()), this,
+            SLOT(on_use_las_config_clicked()));
+
+    label_menu->addSeparator();
+
+    
+    QAction* generate = label_menu->addAction ("Create one point set item per label");
+    connect(generate,  SIGNAL(triggered()), this,
+            SLOT(on_generate_items_button_clicked()));
+
+    label_menu->addSeparator();
+        
+    QAction* clear_labels = label_menu->addAction ("Clear labels");
+    connect(clear_labels,  SIGNAL(triggered()), this,
+            SLOT(on_clear_labels_clicked()));
     
     ui_widget.setupUi(dock_widget);
+    ui_widget_adv.setupUi(dock_widget_adv);
     addDockWidget(dock_widget);
+    addDockWidget(dock_widget_adv);
 
-    ui_widget.classifier->addItem (tr("Random Forest (ETHZ)"));
-    
 #ifdef CGAL_LINKED_WITH_OPENCV
     ui_widget.classifier->addItem (tr("Random Forest (OpenCV %1.%2)")
                                    .arg(CV_MAJOR_VERSION)
@@ -153,6 +192,9 @@ public:
 
     ui_widget.menu->setMenu (new QMenu("Classification Menu", ui_widget.menu));
 
+    connect(ui_widget.classifier,  SIGNAL(currentIndexChanged(int)), this,
+            SLOT(on_classifier_changed(int)));
+    
     QAction* compute_features = ui_widget.menu->menu()->addAction ("Compute features");
     connect(compute_features,  SIGNAL(triggered()), this,
             SLOT(on_compute_features_button_clicked()));
@@ -160,12 +202,22 @@ public:
     ui_widget.menu->menu()->addSection ("Training");
 
     action_train = ui_widget.menu->menu()->addAction ("Train classifier");
+    action_train->setShortcut(Qt::SHIFT | Qt::Key_T);
     connect(action_train,  SIGNAL(triggered()), this,
             SLOT(on_train_clicked()));
+    
+    action_reset_local = ui_widget.menu->menu()->addAction ("Reset training set of selection");
+    connect(action_reset_local,  SIGNAL(triggered()), this,
+            SLOT(on_reset_training_set_of_selection_clicked()));
     
     action_reset = ui_widget.menu->menu()->addAction ("Reset all training sets");
     connect(action_reset,  SIGNAL(triggered()), this,
             SLOT(on_reset_training_sets_clicked()));
+
+    action_random_region = ui_widget.menu->menu()->addAction ("Select random region");
+    action_random_region->setShortcut(Qt::SHIFT | Qt::Key_S);
+    connect(action_random_region,  SIGNAL(triggered()), this,
+            SLOT(on_select_random_region_clicked()));
 
     action_validate = ui_widget.menu->menu()->addAction ("Validate labels of current selection as training sets");
     connect(action_validate,  SIGNAL(triggered()), this,
@@ -192,12 +244,6 @@ public:
     connect(action_run_graphcut,  SIGNAL(triggered()), this,
             SLOT(on_run_graphcut_button_clicked()));
 
-    ui_widget.menu->menu()->addSection ("Output");
-
-    action_generate = ui_widget.menu->menu()->addAction ("Generate one item per label");
-    connect(action_generate,  SIGNAL(triggered()), this,
-            SLOT(on_generate_items_button_clicked()));
-
     ui_widget.menu->menu()->addSeparator();
 
     QAction* close = ui_widget.menu->menu()->addAction ("Close");
@@ -207,9 +253,9 @@ public:
     connect(ui_widget.display,  SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_display_button_clicked(int)));
 
-    connect(ui_widget.selected_feature,  SIGNAL(currentIndexChanged(int)), this,
+    connect(ui_widget_adv.selected_feature,  SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_selected_feature_changed(int)));
-    connect(ui_widget.feature_weight,  SIGNAL(valueChanged(int)), this,
+    connect(ui_widget_adv.feature_weight,  SIGNAL(valueChanged(int)), this,
             SLOT(on_feature_weight_changed(int)));
 
     QObject* scene_obj = dynamic_cast<QObject*>(scene_interface);
@@ -292,21 +338,22 @@ public Q_SLOTS:
     ui_widget.menu->setEnabled(false);
     ui_widget.display->setEnabled(false);
     ui_widget.classifier->setEnabled(false);
-    ui_widget.tabWidget->setEnabled(false);
+    ui_widget.frame->setEnabled(false);
   }
 
   void enable_computation()
   {
     ui_widget.menu->setEnabled(true);
     action_train->setEnabled(false);
+    action_reset_local->setEnabled(false);
     action_reset->setEnabled(false);
+    action_random_region->setEnabled(false);
     action_validate->setEnabled(false);
     action_save_config->setEnabled(false);
     action_load_config->setEnabled(false);
     action_run->setEnabled(false);
     action_run_smoothed->setEnabled(false);
     action_run_graphcut->setEnabled(false);
-    action_generate->setEnabled(false);
     ui_widget.display->setEnabled(true);
     ui_widget.classifier->setEnabled(true);
   }
@@ -314,23 +361,22 @@ public Q_SLOTS:
   void enable_classif()
   {
     action_train->setEnabled(true);
+    action_reset_local->setEnabled(true);
     action_reset->setEnabled(true);
+    action_random_region->setEnabled(true);
     action_validate->setEnabled(true);
     action_save_config->setEnabled(true);
     action_load_config->setEnabled(true);
     action_run->setEnabled(true);
     action_run_smoothed->setEnabled(true);
     action_run_graphcut->setEnabled(true);
-    action_generate->setEnabled(true);
-    ui_widget.tabWidget->setEnabled(true);
+    ui_widget.frame->setEnabled(true);
   }
 
   void update_plugin_from_item(Item_classification_base* classif)
   {
     disable_everything();
-    if (classif == NULL) // Deactivate plugin
-      ui_widget.tabWidget->setCurrentIndex(0);
-    else
+    if (classif != NULL)
       {
         enable_computation();
         
@@ -339,9 +385,10 @@ public Q_SLOTS:
           {
             ui_widget.labelGrid->removeWidget (label_buttons[i].color_button);
             label_buttons[i].color_button->deleteLater();
-            ui_widget.gridLayout->removeWidget (label_buttons[i].label2);
+            label_buttons[i].menu->deleteLater();
+            ui_widget_adv.gridLayout->removeWidget (label_buttons[i].label2);
             delete label_buttons[i].label2;
-            ui_widget.gridLayout->removeWidget (label_buttons[i].effect);
+            ui_widget_adv.gridLayout->removeWidget (label_buttons[i].effect);
             delete label_buttons[i].effect;
           }
         label_buttons.clear();
@@ -350,14 +397,12 @@ public Q_SLOTS:
         for (std::size_t i = 0; i < classif->number_of_labels(); ++ i)
           add_new_label (LabelButton (dock_widget,
                                       classif->label(i)->name().c_str(),
-                                      classif->label_color(i)));
-
-        add_new_label_button();
-
+                                      classif->label_color(i),
+                                      get_shortcut (i, classif->label(i)->name().c_str())));
+        add_label_button();
+        
         // Enabled classif if features computed
-        if (!(classif->features_computed()))
-          ui_widget.tabWidget->setCurrentIndex(0);
-        else
+        if (classif->features_computed())
           enable_classif();
 
         int index = ui_widget.display->currentIndex();
@@ -365,13 +410,13 @@ public Q_SLOTS:
         ui_widget.display->addItem("Real colors");
         ui_widget.display->addItem("Classification");
         ui_widget.display->addItem("Training sets");
-        ui_widget.selected_feature->clear();
-        classif->fill_display_combo_box(ui_widget.display, ui_widget.selected_feature);
+        ui_widget_adv.selected_feature->clear();
+        classif->fill_display_combo_box(ui_widget.display, ui_widget_adv.selected_feature);
         if (index >= ui_widget.display->count())
           ui_widget.display->setCurrentIndex(1);
         else
           ui_widget.display->setCurrentIndex(index);
-        ui_widget.selected_feature->setCurrentIndex(0);
+        ui_widget_adv.selected_feature->setCurrentIndex(0);
       }
   }
 
@@ -400,10 +445,28 @@ public Q_SLOTS:
     if (item_map.find(points_item) != item_map.end())
       return item_map[points_item];
 
+    bool use_clusters = false;
+    
+    if (points_item->point_set()->has_property_map<int> ("shape"))
+    {
+      QMessageBox::StandardButton reply
+        = QMessageBox::question(NULL, "Point Set Classification",
+                                "This point set is divided in clusters. Do you want to classify clusters instead of points?",
+                                QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
+      
+      use_clusters = (reply == QMessageBox::Yes);
+    }
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    Item_classification_base* classif
-      = new Point_set_item_classification (points_item);
+
+    Item_classification_base* classif;
+    if (use_clusters)
+      classif = new Cluster_classification (points_item);
+    else
+      classif = new Point_set_item_classification (points_item);
+
     item_map.insert (std::make_pair (points_item, classif));
+    
     QApplication::restoreOverrideCursor();
     update_plugin_from_item(classif);
     return classif;
@@ -416,6 +479,17 @@ public Q_SLOTS:
     classif->run (method, ui_widget.classifier->currentIndex(), subdivisions, smoothing);
   }
 
+  void on_classifier_changed (int index)
+  {
+    if (index == 0)
+    {
+      dock_widget_adv->show();
+      dock_widget_adv->raise();
+    }
+    else
+      dock_widget_adv->hide();
+  }
+    
   void on_compute_features_button_clicked()
   {
     Item_classification_base* classif
@@ -693,6 +767,23 @@ public Q_SLOTS:
     QApplication::restoreOverrideCursor();
   }
 
+  void clear_labels (Item_classification_base* classif)
+  {
+    classif->clear_labels();
+  }
+  
+  void add_new_label (Item_classification_base* classif, const std::string& name)
+  {
+    add_new_label (LabelButton (dock_widget,
+                                name.c_str(),
+                                QColor (64 + rand() % 192,
+                                        64 + rand() % 192,
+                                        64 + rand() % 192),
+                                get_shortcut (label_buttons.size(), name.c_str())));
+    QColor color = classif->add_new_label (name.c_str());
+    label_buttons.back().change_color (color);
+  }
+  
   void on_add_new_label_clicked()
   {
     Item_classification_base* classif
@@ -706,23 +797,141 @@ public Q_SLOTS:
     bool ok;
     QString name =
       QInputDialog::getText((QWidget*)mw,
-                            tr("Add new label"), // dialog title
-                            tr("Name:"), // field label
+                            tr("Add new labels"), // dialog title
+                            tr("Names (separated by spaces):"), // field label
                             QLineEdit::Normal,
-                            tr("label%1").arg(label_buttons.size() + 1),
+                            tr("label_%1").arg(label_buttons.size()),
                             &ok);
     if (!ok)
       return;
 
-    add_new_label (LabelButton (dock_widget,
-                                name.toStdString().c_str(),
-                                QColor (64 + rand() % 192,
-                                        64 + rand() % 192,
-                                        64 + rand() % 192)));
-    classif->add_new_label (label_buttons.back().color_button->text().toStdString().c_str(),
-                                        label_buttons.back().color);
-    
-    add_new_label_button();
+    std::istringstream iss (name.toStdString());
+
+    std::string n;
+    while (iss >> n)
+      add_new_label (classif, n);
+
+    add_label_button();
+  }
+
+  void on_use_config_building_clicked()
+  {
+    Item_classification_base* classif
+      = get_classification();
+    if(!classif)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+
+    if (classif->number_of_labels() != 0)
+    {
+      QMessageBox::StandardButton reply
+        = QMessageBox::question(NULL, "Classification",
+                                "Current labels will be discarded. Continue?",
+                                QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
+      
+      if (reply == QMessageBox::No)
+        return;
+    }
+    clear_labels (classif);
+    add_new_label (classif, "ground");
+    add_new_label (classif, "vegetation");
+    add_new_label (classif, "building");
+    update_plugin_from_item (classif);
+  }
+
+  void on_use_config_roof_clicked()
+  {
+    Item_classification_base* classif
+      = get_classification();
+    if(!classif)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+
+    if (classif->number_of_labels() != 0)
+    {
+      QMessageBox::StandardButton reply
+        = QMessageBox::question(NULL, "Classification",
+                                "Current labels will be discarded. Continue?",
+                                QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
+      
+      if (reply == QMessageBox::No)
+        return;
+    }
+    clear_labels (classif);
+    add_new_label (classif, "ground");
+    add_new_label (classif, "vegetation");
+    add_new_label (classif, "roof");
+    add_new_label (classif, "facade");
+    update_plugin_from_item (classif);
+  }
+
+  void on_use_las_config_clicked()
+  {
+    Item_classification_base* classif
+      = get_classification();
+    if(!classif)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+
+    if (classif->number_of_labels() != 0)
+    {
+      QMessageBox::StandardButton reply
+        = QMessageBox::question(NULL, "Classification",
+                                "Current labels will be discarded. Continue?",
+                                QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
+      
+      if (reply == QMessageBox::No)
+        return;
+    }
+    clear_labels (classif);
+    add_new_label (classif, "ground");
+    add_new_label (classif, "low_veget");
+    add_new_label (classif, "med_veget");
+    add_new_label (classif, "high_veget");
+    add_new_label (classif, "building");
+    add_new_label (classif, "noise");
+    add_new_label (classif, "reserved");
+    add_new_label (classif, "water");
+    add_new_label (classif, "rail");
+    add_new_label (classif, "road_surface");
+    add_new_label (classif, "reserved_2");
+    add_new_label (classif, "wire_guard");
+    add_new_label (classif, "wire_conduct");
+    add_new_label (classif, "trans_tower");
+    add_new_label (classif, "wire_connect");
+    add_new_label (classif, "bridge_deck");
+    add_new_label (classif, "high_noise");
+    update_plugin_from_item (classif);
+  }
+
+  void on_clear_labels_clicked()
+  {
+    Item_classification_base* classif
+      = get_classification();
+    if(!classif)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+
+    if (classif->number_of_labels() != 0)
+    {
+      QMessageBox::StandardButton reply
+        = QMessageBox::question(NULL, "Classification",
+                                "Current labels will be discarded. Continue?",
+                                QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
+      
+      if (reply == QMessageBox::No)
+        return;
+    }
+    clear_labels (classif);
+    update_plugin_from_item (classif);
   }
 
   void on_reset_training_sets_clicked()
@@ -736,6 +945,21 @@ public Q_SLOTS:
       }
 
     classif->reset_training_sets();
+
+    item_changed(classif->item());
+  }
+
+  void on_reset_training_set_of_selection_clicked()
+  {
+    Item_classification_base* classif
+      = get_classification();
+    if(!classif)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+
+    classif->reset_training_set_of_selection();
 
     item_changed(classif->item());
   }
@@ -762,7 +986,7 @@ public Q_SLOTS:
       int position = row_index * 3 + column_index;
       
       classif->reset_training_set
-        (label_buttons[position].color_button->text().toStdString().c_str());
+        (position);
     }
     
     item_changed(classif->item());
@@ -793,6 +1017,30 @@ public Q_SLOTS:
 
     classif->select_random_region();
     item_changed(classif->item());
+
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    CGAL::Bbox_3 bbox = classif->bbox();
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
+    
+    viewer->camera()->fitBoundingBox(qglviewer::Vec (bbox.xmin(), bbox.ymin(), bbox.zmin()) + offset,
+                                     qglviewer::Vec (bbox.xmax(), bbox.ymax(), bbox.zmax()) + offset);
+    
+    // viewer->camera()->showEntireScene();
+    
+    // bbox = scene->bbox();
+    // viewer->setSceneBoundingBox(qglviewer::Vec (bbox.xmin(), bbox.ymin(), bbox.zmin()),
+    //                             qglviewer::Vec (bbox.xmax(), bbox.ymax(), bbox.zmax()));
+
+#if QGLVIEWER_VERSION >= 0x020502
+    viewer->camera()->setPivotPoint (qglviewer::Vec ((bbox.xmin() + bbox.xmax()) / 2.,
+                                                     (bbox.ymin() + bbox.ymax()) / 2.,
+                                                     (bbox.zmin() + bbox.zmax()) / 2.) + offset);
+#else
+    viewer->camera()->setRevolveAroundPoint (qglviewer::Vec ((bbox.xmin() + bbox.xmax()) / 2.,
+                                                             (bbox.ymin() + bbox.ymax()) / 2.,
+                                                             (bbox.zmin() + bbox.zmax()) / 2.) + offset);
+#endif
+
   }
 
   void on_train_clicked()
@@ -803,15 +1051,6 @@ public Q_SLOTS:
       {
         print_message("Error: there is no point set classification item!");
         return; 
-      }
-
-    std::vector<std::string> classes;
-    std::vector<QColor> colors;
-    
-    for (std::size_t i = 0; i < label_buttons.size(); ++ i)
-      {
-        classes.push_back (label_buttons[i].color_button->text().toStdString());
-        colors.push_back (label_buttons[i].color);
       }
 
     int nb_trials = 0;
@@ -855,6 +1094,32 @@ public Q_SLOTS:
     update_plugin_from_item(classif);
   }
 
+  char get_shortcut (std::size_t position, const char* name)
+  {
+    std::set<char> used_letters;
+    
+    used_letters.insert('t'); // used for "train"
+    used_letters.insert('s'); // used for "random select"
+    for (std::size_t i = 0; i < label_buttons.size(); ++ i)
+      if (i != position)
+        used_letters.insert (label_buttons[i].shortcut);
+
+    std::size_t idx = 0;
+    while (name[idx] != '\0')
+    {
+      if (std::isalpha(name[idx]) &&
+          used_letters.find (std::tolower(name[idx])) == used_letters.end())
+        return std::tolower(name[idx]);
+      ++ idx;
+    }
+
+    char fallback = 'a';
+    while (used_letters.find (fallback) != used_letters.end())
+      ++ fallback;
+
+    return fallback;
+  }
+  
   void add_new_label (const LabelButton& label_button)
   {
     label_buttons.push_back (label_button);
@@ -865,11 +1130,11 @@ public Q_SLOTS:
 
     ui_widget.labelGrid->addWidget (label_buttons.back().color_button, x, y);
 
-    QAction* change_color = label_buttons.back().menu->addAction ("Change color");
-    connect(change_color,  SIGNAL(triggered()), this,
-            SLOT(on_color_changed_clicked()));
+    QAction* add_selection = label_buttons.back().menu->addAction ("Add selection to training set"); 
 
-    QAction* add_selection = label_buttons.back().menu->addAction ("Add selection to training set");
+    add_selection->setShortcut(Qt::SHIFT | (Qt::Key_A + (label_button.shortcut - 'a')));
+//    add_selection->setShortcut(Qt::Key_0 + label_buttons.size() - 1);
+    
     connect(add_selection,  SIGNAL(triggered()), this,
             SLOT(on_add_selection_to_training_set_clicked()));
     
@@ -877,34 +1142,38 @@ public Q_SLOTS:
     connect(reset,  SIGNAL(triggered()), this,
             SLOT(on_reset_training_set_clicked()));
 
+    label_buttons.back().menu->addSeparator();
+    
+    QAction* change_color = label_buttons.back().menu->addAction ("Change color");
+    connect(change_color,  SIGNAL(triggered()), this,
+            SLOT(on_color_changed_clicked()));
+
     QAction* create = label_buttons.back().menu->addAction ("Create point set item from labeled points");
     connect(create,  SIGNAL(triggered()), this,
             SLOT(on_create_point_set_item()));
 
     label_buttons.back().menu->addSeparator();
-    
+
     QAction* remove_label = label_buttons.back().menu->addAction ("Remove label");
     connect(remove_label,  SIGNAL(triggered()), this,
             SLOT(on_remove_label_clicked()));
 
-    ui_widget.gridLayout->addWidget (label_buttons.back().label2, position + 1, 0);
-    ui_widget.gridLayout->addWidget (label_buttons.back().effect, position + 1, 2);
+    ui_widget_adv.gridLayout->addWidget (label_buttons.back().label2, position + 1, 0);
+    ui_widget_adv.gridLayout->addWidget (label_buttons.back().effect, position + 1, 2);
 
     connect(label_buttons.back().effect,  SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_effect_changed(int)));
   }
 
-  void add_new_label_button()
+  void add_label_button()
   {
     int position = static_cast<int>(label_buttons.size());
     int x = position / 3;
     int y = position % 3;
 
-    new_label_button->setVisible (true);
-    ui_widget.labelGrid->addWidget (new_label_button, x, y);
+    label_button->setVisible (true);
+    ui_widget.labelGrid->addWidget (label_button, x, y);
   }
-
-
 
   void on_remove_label_clicked()
   {
@@ -927,14 +1196,15 @@ public Q_SLOTS:
 
       int position = row_index * 3 + column_index;
 
-      classif->remove_label (label_buttons[position].color_button->text().toStdString().c_str());
+      classif->remove_label (position);
     
       ui_widget.labelGrid->removeWidget (label_buttons[position].color_button);
       label_buttons[position].color_button->deleteLater();
-
-      ui_widget.gridLayout->removeWidget (label_buttons[position].label2);
+      label_buttons[position].menu->deleteLater();
+            
+      ui_widget_adv.gridLayout->removeWidget (label_buttons[position].label2);
       delete label_buttons[position].label2;
-      ui_widget.gridLayout->removeWidget (label_buttons[position].effect);
+      ui_widget_adv.gridLayout->removeWidget (label_buttons[position].effect);
       delete label_buttons[position].effect;
 
       if (label_buttons.size() > 1)
@@ -945,12 +1215,12 @@ public Q_SLOTS:
           int y = position % 3;
           
           ui_widget.labelGrid->addWidget (label_buttons[i].color_button, x, y);
-          ui_widget.gridLayout->addWidget (label_buttons[i].label2, (int)i, 0);
-          ui_widget.gridLayout->addWidget (label_buttons[i].effect, (int)i, 2);
+          ui_widget_adv.gridLayout->addWidget (label_buttons[i].label2, (int)i, 0);
+          ui_widget_adv.gridLayout->addWidget (label_buttons[i].effect, (int)i, 2);
         }
 
       label_buttons.erase (label_buttons.begin() + position);
-      add_new_label_button();
+      add_label_button();
     }
 
     item_changed(classif->item());
@@ -980,7 +1250,7 @@ public Q_SLOTS:
       QColor color = label_buttons[position].color;
       color = QColorDialog::getColor(color, (QWidget*)mw, "Change of color of label");
       label_buttons[position].change_color (color);
-      classif->change_label_color (label_buttons[position].color_button->text().toStdString().c_str(),
+      classif->change_label_color (position,
                                    color);
     }
     classif->update_color ();
@@ -1008,7 +1278,7 @@ public Q_SLOTS:
 
       int position = row_index * 3 + column_index;
       classif->add_selection_to_training_set
-        (label_buttons[position].color_button->text().toStdString().c_str());
+        (position);
     }
     
     item_changed(classif->item());
@@ -1033,7 +1303,7 @@ public Q_SLOTS:
     if (att == Item_classification_base::Feature_handle())
       return;
 
-    ui_widget.feature_weight->setValue ((int)(1001. * 2. * std::atan(classif->weight(att)) / CGAL_PI));
+    ui_widget_adv.feature_weight->setValue ((int)(1001. * 2. * std::atan(classif->weight(att)) / CGAL_PI));
 
     for (std::size_t i = 0; i < classif->number_of_labels(); ++ i)
       {
@@ -1059,7 +1329,7 @@ public Q_SLOTS:
         return; 
       }
     Item_classification_base::Feature_handle
-      att = classif->feature(ui_widget.selected_feature->currentIndex());
+      att = classif->feature(ui_widget_adv.selected_feature->currentIndex());
 
     if (att == Item_classification_base::Feature_handle())
       return;
@@ -1080,7 +1350,7 @@ public Q_SLOTS:
         return; 
       }
     Item_classification_base::Feature_handle
-      att = classif->feature(ui_widget.selected_feature->currentIndex());
+      att = classif->feature(ui_widget_adv.selected_feature->currentIndex());
 
     if (att == Item_classification_base::Feature_handle())
       return;
@@ -1114,26 +1384,29 @@ private:
   QAction* actionClassification;
 
   QDockWidget* dock_widget;
+  QDockWidget* dock_widget_adv;
   QAction* action_train;
+  QAction* action_reset_local;
   QAction* action_reset;
+  QAction* action_random_region;
   QAction* action_validate;
   QAction* action_save_config;
   QAction* action_load_config;
   QAction* action_run;
   QAction* action_run_smoothed;
   QAction* action_run_graphcut;
-  QAction* action_generate;
-
   
   std::vector<LabelButton> label_buttons;
-  QPushButton* new_label_button;
+  QPushButton* label_button;
   
   Ui::Classification ui_widget;
+  Ui::ClassificationAdvanced ui_widget_adv;
 
   QColor color_att;
 
   typedef std::map<Scene_item*, Item_classification_base*> Item_map;
   Item_map item_map;
+
 
 }; // end Polyhedron_demo_classification_plugin
 
