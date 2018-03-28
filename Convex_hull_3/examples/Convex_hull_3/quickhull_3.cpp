@@ -4,13 +4,13 @@
 #include <CGAL/convex_hull_3.h>
 #include <vector>
 #include <fstream>
-#include <CGAL/HalfedgeDS_default.h>
+
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
 typedef CGAL::Polyhedron_3<K>                     Polyhedron_3;
 typedef K::Point_3                                Point_3;
 typedef CGAL::Surface_mesh<Point_3>               Surface_mesh;
-typedef CGAL::HalfedgeDS_default<K, CGAL::HalfedgeDS_items_3> HDS;
+
 
 int main(int argc, char* argv[])
 {
@@ -33,10 +33,6 @@ int main(int argc, char* argv[])
   CGAL::convex_hull_3(points.begin(), points.end(), sm);
 
   std::cout << "The convex hull contains " << num_vertices(sm) << " vertices" << std::endl;
-
-  HDS hds;
-  CGAL::convex_hull_3(points.begin(), points.end(), hds);
-
 
   return 0;
 }
