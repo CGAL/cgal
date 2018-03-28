@@ -610,10 +610,13 @@ public:
   std::vector<std::size_t> compute_turns(bool positive) const
   { return (positive?compute_positive_turns():compute_negative_turns()); }
 
-  bool same_turns(const char* turns) const
+  bool same_turns_from(const char* turns,
+                       const std::vector<std::size_t>& resplus,
+                       const std::vector<std::size_t>& resmoins,
+                       std::size_t start) const
   {
-    std::vector<std::size_t> resplus=compute_positive_turns();
-    std::vector<std::size_t> resmoins=compute_negative_turns();
+    assert(start==0 || start<resplus.size());
+    assert(resplus.size()==resmoins.size());
 
     std::string sturns(turns);
     std::istringstream iss(sturns);
@@ -624,15 +627,36 @@ public:
       if (!iss.good())
       { return false; }
       iss>>nb;
-      if ((nb>=0 && resplus[i]!=nb) ||
-          (nb<0 && resmoins[i]!=-nb))
+      if ((nb>=0 && resplus[start]!=nb) ||
+          (nb<0 && resmoins[start]!=-nb))
       { return false; }
+
+      ++start;
+      if (start==resplus.size())
+      { start=0; }
     }
     iss>>nb;
     if (iss.good())
     { return false; } // There are more elements in turns than in res
 
     return true;
+  }
+
+  bool same_turns(const char* turns) const
+  {
+    std::vector<std::size_t> resplus=compute_positive_turns();
+    std::vector<std::size_t> resmoins=compute_negative_turns();
+
+    if (!is_closed())
+    { return same_turns_from(turns, resplus, resmoins, 0); }
+
+    for (std::size_t start=0; start<resplus.size(); ++start)
+    {
+      if (same_turns_from(turns, resplus, resmoins, start))
+      { return true; }
+    }
+
+    return false;
   }
 
   void display_positive_turns() const

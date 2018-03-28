@@ -29,7 +29,7 @@ template<typename Path>
 void generate_one_positive_spur(Path& p)
 {
   p.clear();
-  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[5])); // 6th dart of the map
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[5]));
   extend_straight_positive(p, 6);
   extend_uturn_positive(p);
   extend_uturn_half_turn(p);
@@ -40,7 +40,7 @@ template<typename Path>
 void generate_one_negative_spur(Path& p)
 {
   p.clear();
-  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[5])); // 6th dart of the map
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[5]));
   extend_straight_negative(p, 6);
   extend_uturn_negative(p);
   extend_uturn_half_turn(p);
@@ -51,7 +51,7 @@ template<typename Path>
 void generate_cyclic_spur(Path& p)
 {
   p.clear();
-  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[5])); // 6th dart of the map
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[5]));
   extend_uturn_half_turn(p);
 }
 
@@ -59,7 +59,7 @@ template<typename Path>
 void generate_one_positive_bracket(Path& p)
 {
   p.clear();
-  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[5])); // 6th dart of the map
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[5]));
   extend_straight_positive(p, 3);
   extend_uturn_positive(p, 3);
   extend_uturn_positive(p);
@@ -73,7 +73,7 @@ template<typename Path>
 void generate_one_negative_bracket(Path& p)
 {
   p.clear();
-  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[5])); // 6th dart of the map
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[5]));
   extend_straight_negative(p, 3);
   extend_uturn_negative(p);
   extend_straight_negative(p, 6);
@@ -85,7 +85,7 @@ template<typename Path>
 void generate_bracket_special1(Path& p, bool reverse)
 { // Case (x, 1, 2^r, 1)
   p.clear();
-  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[91])); // 6th dart of the map
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[91]));
   extend_uturn_positive(p, 1);
   extend_straight_positive(p, 8);
   extend_uturn_positive(p);
@@ -159,6 +159,27 @@ void generate_l_shape_case3(Path& p)
   extend_straight_negative(p, 5);
   extend_uturn_negative(p, 1);
   extend_uturn_negative(p, 3);
+  extend_straight_negative(p, 3);
+}
+
+template<typename Path>
+void generate_l_shape_case4(Path& p)
+{ // (x -2^s -1 -2^t): here (-2^7 -1 -2^3 -4)
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[35]));
+  extend_uturn_negative(p, 4);
+  extend_straight_negative(p, 7);
+  extend_uturn_negative(p, 1);
+  extend_straight_negative(p, 2);
+}
+
+template<typename Path>
+void generate_l_shape_case7(Path& p)
+{ // (-3 -2^s -1 -2^t): here (-2^7 -1 -2^3 -3)
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[194]));
+  extend_straight_negative(p, 7);
+  extend_uturn_negative(p, 1);
   extend_straight_negative(p, 3);
 }
 

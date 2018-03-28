@@ -403,6 +403,26 @@ bool test_all_cases_l_shape()
     res=false;
   }
 
+  lcc.clear();
+  if (!CGAL::load_off(lcc, "./data/case4-right-shift-squared.off"))
+  {
+    std::cout<<"PROBLEM reading file ./data/case4-right-shift-squared.off"<<std::endl;
+    exit(EXIT_FAILURE);
+  }
+  lcc.reverse_orientation();
+
+  generate_l_shape_case4(path);
+  // std::cout<<"Case 4: L-shape (-4 -2^7 -1 -2^3): "<<std::flush;
+  path.display_pos_and_neg_turns();std::cout<<std::endl;
+  push_l_shape(path, true, 1);
+  if (!path.same_turns("4 1 2 2 2 2 2 2 3 2 2 1"))
+  {
+    std::cout<<"[test_all_cases_l_shape case 4] ERROR: ";
+    std::cout<<"we obtained "; path.display_pos_and_neg_turns();
+    std::cout<<" instead of (4 1 2 2 2 2 2 2 3 2 2 1)"<<std::endl;
+    res=false;
+  }
+
   // path.display_pos_and_neg_turns();std::cout<<std::endl;
   return res;
 }

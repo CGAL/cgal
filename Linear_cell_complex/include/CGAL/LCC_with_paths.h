@@ -110,9 +110,15 @@ protected:
     if (m_current_dart!=lcc.number_of_darts())
     { // We want to draw only one dart
       Dart_const_handle selected_dart=lcc.darts().iterator_to(lcc.darts()[m_current_dart]);
-      compute_edge(selected_dart, CGAL::Color(255,0,0));
-      CGAL::mark_cell<LCC, 1>(lcc, selected_dart, markedges);
-      compute_vertex(selected_dart);
+      if (lcc.is_dart_used(selected_dart))
+      {
+        compute_edge(selected_dart, CGAL::Color(255,0,0));
+        CGAL::mark_cell<LCC, 1>(lcc, selected_dart, markedges);
+        compute_vertex(selected_dart);
+
+        if ( !m_nofaces )
+        { compute_face(selected_dart); }
+      }
 
       for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
            itend=lcc.darts().end(); it!=itend; ++it )
@@ -233,6 +239,22 @@ protected:
     else if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::NoButton))
     {
       m_current_dart=(m_current_dart+1)%(lcc.number_of_darts()+1);
+      if (m_current_dart==lcc.number_of_darts())
+      {
+        displayMessage(QString("Draw all darts."));
+      }
+      else
+      {
+        displayMessage(QString("Draw dart=%1.").arg((m_current_dart)));
+      }
+      compute_elements();
+      initialize_buffers();
+      compile_shaders();
+      updateGL();
+    }
+    else if ((e->key()==::Qt::Key_P) && (modifiers==::Qt::NoButton))
+    {
+      m_current_dart=(m_current_dart==0?lcc.number_of_darts():m_current_dart-1);
       if (m_current_dart==lcc.number_of_darts())
       {
         displayMessage(QString("Draw all darts."));
