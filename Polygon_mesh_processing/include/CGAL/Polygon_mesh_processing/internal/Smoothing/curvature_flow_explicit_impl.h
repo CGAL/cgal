@@ -106,8 +106,7 @@ public:
   std::size_t remove_degenerate_faces()
   {
     std::size_t nb_removed_faces = 0;
-    nb_removed_faces = CGAL::Polygon_mesh_processing::remove_degenerate_faces(mesh_);
-    return nb_removed_faces;
+    return CGAL::Polygon_mesh_processing::remove_degenerate_faces(mesh_);
   }
 
   void curvature_smoothing()
@@ -173,23 +172,6 @@ private:
     vertex_descriptor v2 = target(next(h, mesh_), mesh_);
     vertex_descriptor v3 = target(next(next(h, mesh_), mesh_), mesh_);
     return Triangle(get(vpmap_, v1), get(vpmap_, v2), get(vpmap_, v3));
-  }
-
-  double sqlength(const vertex_descriptor& v1, const vertex_descriptor& v2) const
-  {
-    return to_double(CGAL::squared_distance(get(vpmap_, v1), get(vpmap_, v2)));
-  }
-
-  double sqlength(const halfedge_descriptor& h) const
-  {
-      vertex_descriptor v1 = target(h, mesh_);
-      vertex_descriptor v2 = source(h, mesh_);
-      return sqlength(v1, v2);
-  }
-
-  double sqlength(const edge_descriptor& e) const
-  {
-      return sqlength(halfedge(e, mesh_));
   }
 
   // degeneracy removal

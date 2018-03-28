@@ -6,10 +6,11 @@
 
 #include <CGAL/Polygon_mesh_processing/mesh_smoothing.h>
 #include <CGAL/Polygon_mesh_processing/shape_smoothing.h>
-#define CGAL_PMP_SMOOTHING_VERBOSE
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
+
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[]){
 
@@ -23,13 +24,20 @@ int main(int argc, char* argv[]){
       return 1;
     }
 
-    unsigned int nb_iterations = 2;
+    const unsigned int repeat = 2;
+    const unsigned int nb_iterations = 5;
+    const double gradient_descent_precision = 1e-6;
 
-    for(unsigned int t = 0 ; t < nb_iterations; ++t)
+    for(unsigned int t = 0 ; t < repeat; ++t)
     {
-      CGAL::Polygon_mesh_processing::smooth_angles(mesh);
-      CGAL::Polygon_mesh_processing::smooth_areas(mesh);
-      CGAL::Polygon_mesh_processing::smooth_angles(mesh);
+      PMP::smooth_angles(mesh,
+        PMP::parameters::number_of_iterations(nb_iterations));
+
+      PMP::smooth_areas(mesh,
+        PMP::parameters::gradient_descent_precision(gradient_descent_precision));
+
+      PMP::smooth_angles(mesh,
+        PMP::parameters::number_of_iterations(nb_iterations));
     }
 
     std::ofstream output("data/eight_smoothed.off");

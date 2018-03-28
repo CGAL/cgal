@@ -35,12 +35,6 @@
 #include <CGAL/Timer.h>
 #endif
 
-#if defined(CGAL_LINKED_WITH_TBB)
-#define TAG CGAL::Parallel_tag
-#else
-#define TAG CGAL::Sequential_tag
-#endif
-
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
@@ -48,7 +42,8 @@ namespace Polygon_mesh_processing {
 * \ingroup PMP_meshing_grp
 * smoothes a triangulated region of a polygon mesh using angle based criteria.
 * This function improves the angles of triangle faces by iteratively moving non
-* constrained vertices. Optionally, the points are reprojected after each iteration.
+* constrained vertices. Optionally, the points are reprojected to the input surface
+* after each iteration.
 *
 * @tparam PolygonMesh model of `MutableFaceGraph`.
 *         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
@@ -213,10 +208,7 @@ void smooth_angles(PolygonMesh& pmesh)
 *    triangle. Triangle energy is defined based on its area compared to
 *    the average area of all triangles adjacent to the vertex that is being moved. The precision refers to the
 *    relative energy of triangles between the previous and the current iteration.
-*    A small value corresponds to high precision and may result in slow gradient descent.
-*    On the contrary, a larger value implies less precision, thus gradient descent may not
-*    move the vertices enough. The higher the precision, the more equal the areas around each vertex are.
-*    Defaults to 1e-5.
+*    A small value corresponds to high precision.
 *  \cgalParamEnd
 *  \cgalParamBegin{do_project} if `true` (default value), points are projected to the initial surface after each iteration.
 *  \cgalParamEnd

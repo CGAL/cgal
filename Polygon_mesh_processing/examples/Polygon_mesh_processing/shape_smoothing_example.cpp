@@ -7,9 +7,10 @@
 #include <CGAL/Polygon_mesh_processing/mesh_smoothing.h>
 #include <CGAL/Polygon_mesh_processing/shape_smoothing.h>
 
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
+
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[]){
 
@@ -24,7 +25,10 @@ int main(int argc, char* argv[]){
     }
 
     const double time = 0.1;
-    CGAL::Polygon_mesh_processing::smooth_along_curvature_flow(mesh, time);
+    const unsigned int nb_iterations = 2;
+
+    PMP::smooth_along_curvature_flow(mesh, time,
+        PMP::parameters::number_of_iterations(nb_iterations));
 
     std::ofstream output("data/pig_smoothed_to_sphere.off");
     output << mesh;
