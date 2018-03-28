@@ -67,8 +67,8 @@ private:
 
 public:
   Shape_smoother(PolygonMesh& mesh,
-                     VertexPointMap& vpmap,
-                     VertexConstraintMap& vcmap) :
+                 VertexPointMap& vpmap,
+                 VertexConstraintMap& vcmap) :
       mesh_(mesh),
       vpmap_(vpmap),
       vcmap_(vcmap),

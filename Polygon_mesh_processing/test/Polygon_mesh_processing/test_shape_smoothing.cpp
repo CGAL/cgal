@@ -1,5 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/utility.h>
 #include <CGAL/Polygon_mesh_processing/shape_smoothing.h>
 #include <boost/graph/graph_traits.hpp>
@@ -7,19 +9,20 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point;
-typedef CGAL::Surface_mesh<Point> Mesh;
+typedef CGAL::Surface_mesh<Point> SurfaceMesh;
+typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3> Mesh_with_id;
 
-typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-typedef typename boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
-
+template<typename Mesh>
 struct Constraints_pmap
 {
-  std::set<vertex_descriptor>* set_ptr_;
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
   typedef vertex_descriptor                   key_type;
   typedef bool                                value_type;
   typedef value_type&                         reference;
   typedef boost::read_write_property_map_tag  category;
+
+  std::set<vertex_descriptor>* set_ptr_;
 
 public:
   Constraints_pmap(std::set<vertex_descriptor>* set_ptr)
@@ -44,18 +47,15 @@ public:
   }
 };
 
-void test_implicit_constrained_devil(const char* filename)
+template <typename Mesh>
+void test_implicit_constrained_devil(Mesh mesh)
 {
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   std::cout << "-- test_implicit_constrained_devil --" << std::endl;
   #endif
 
-  std::ifstream input(filename);
-  Mesh mesh;
-  input >> mesh;
-  input.close();
-
-  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+  typename boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
           get(CGAL::vertex_point, mesh);
   // z max is 20 in the devil;
   std::set<vertex_descriptor> selected_vertices;
@@ -65,7 +65,7 @@ void test_implicit_constrained_devil(const char* filename)
     if(z  > 19.0)
       selected_vertices.insert(v);
   }
-  Constraints_pmap vcmap(&selected_vertices);
+  Constraints_pmap<Mesh> vcmap(&selected_vertices);
 
   const double time_step = 1.0;
   CGAL::Polygon_mesh_processing::smooth_along_curvature_flow(mesh, time_step,
@@ -78,18 +78,15 @@ void test_implicit_constrained_devil(const char* filename)
   #endif
 }
 
-void test_implicit_constrained_pyramid(const char* filename)
+template <typename Mesh>
+void test_implicit_constrained_pyramid(Mesh mesh)
 {
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   std::cout << "-- test_implicit_constrained_pyramid --" << std::endl;
   #endif
 
-  std::ifstream input(filename);
-  Mesh mesh;
-  input >> mesh;
-  input.close();
-
-  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+  typename boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
           get(CGAL::vertex_point, mesh);
 
   // z max is 20 in the devil;
@@ -102,7 +99,7 @@ void test_implicit_constrained_pyramid(const char* filename)
       selected_vertices.insert(v);
   }
 
-  Constraints_pmap vcmap(&selected_vertices);
+  Constraints_pmap<Mesh> vcmap(&selected_vertices);
 
   const double time_step = 1.0;
   CGAL::Polygon_mesh_processing::smooth_along_curvature_flow(mesh, time_step,
@@ -115,19 +112,12 @@ void test_implicit_constrained_pyramid(const char* filename)
   #endif
 }
 
-void test_explicit_scheme(const char* filename)
+template <typename Mesh>
+void test_explicit_scheme(Mesh mesh)
 {
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   std::cout << "-- test_explicit_scheme --" << std::endl;
   #endif
-
-  std::ifstream input(filename);
-  Mesh mesh;
-  input >> mesh;
-  input.close();
-
-  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
-          get(CGAL::vertex_point, mesh);
 
   const double time_step = 1;
   const unsigned int iterations = 5;
@@ -142,19 +132,12 @@ void test_explicit_scheme(const char* filename)
   #endif
 }
 
-void test_curvature_flow_time_step(const char* filename)
+template <typename Mesh>
+void test_curvature_flow_time_step(Mesh mesh)
 {
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   std::cout << "-- test_curvature_flow_time_step --" << std::endl;
   #endif
-
-  std::ifstream input(filename);
-  Mesh mesh;
-  input >> mesh;
-  input.close();
-
-  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
-          get(CGAL::vertex_point, mesh);
 
   const double time_step = 1e-15;
   CGAL::Polygon_mesh_processing::smooth_along_curvature_flow(mesh, time_step);
@@ -166,19 +149,12 @@ void test_curvature_flow_time_step(const char* filename)
   #endif
 }
 
-void test_curvature_flow(const char* filename)
+template <typename Mesh>
+void test_curvature_flow(Mesh mesh)
 {
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   std::cout << "-- test_curvature_flow --" << std::endl;
   #endif
-
-  std::ifstream input(filename);
-  Mesh mesh;
-  input >> mesh;
-  input.close();
-
-  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
-          get(CGAL::vertex_point, mesh);
 
   const double time_step = 1.0;
   CGAL::Polygon_mesh_processing::smooth_along_curvature_flow(mesh, time_step);
@@ -190,18 +166,14 @@ void test_curvature_flow(const char* filename)
   #endif
 }
 
-void test_demo_helpers(const char* filename)
+template <typename Mesh>
+void test_demo_helpers(Mesh mesh)
 {
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   std::cout << "-- test_demo_helpers --" << std::endl;
   #endif
 
-  std::ifstream input(filename);
-  Mesh mesh;
-  input >> mesh;
-  input.close();
-
-  boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
+  typename boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
           get(CGAL::vertex_point, mesh);
 
   const double time_step = 1e-2;
@@ -221,7 +193,6 @@ void test_demo_helpers(const char* filename)
   out << mesh;
   out.close();
   #endif
-
 }
 
 int main(int argc, char* argv[])
@@ -229,12 +200,41 @@ int main(int argc, char* argv[])
   const char* filename_devil = "data/mannequin-devil.off";
   const char* filename_pyramid = "data/simple_pyramid.off";
 
-  test_demo_helpers(filename_devil);
-  test_curvature_flow_time_step(filename_devil);
-  test_curvature_flow(filename_pyramid);
-  test_implicit_constrained_pyramid(filename_pyramid);
-  test_implicit_constrained_devil(filename_devil);
-  test_explicit_scheme(filename_devil);
+  std::ifstream input1(filename_devil);
+  SurfaceMesh mesh_devil;
+  input1 >> mesh_devil;
+  input1.close();
+
+  std::ifstream input2(filename_pyramid);
+  SurfaceMesh mesh_pyramid;
+  input2.close();
+
+  test_demo_helpers<SurfaceMesh>(mesh_devil);
+  test_curvature_flow_time_step<SurfaceMesh>(mesh_devil);
+  test_curvature_flow<SurfaceMesh>(mesh_pyramid);
+  test_implicit_constrained_pyramid<SurfaceMesh>(mesh_pyramid);
+  test_implicit_constrained_devil<SurfaceMesh>(mesh_devil);
+  test_explicit_scheme<SurfaceMesh>(mesh_devil);
+
+  input1.open(filename_devil);
+  Mesh_with_id pl_mesh_devil;
+  input1 >> pl_mesh_devil;
+  input1.close();
+
+  input2.open(filename_pyramid);
+  Mesh_with_id pl_mesh_pyramid;
+  input2 >> pl_mesh_pyramid;
+  input2.close();
+
+  set_halfedgeds_items_id(pl_mesh_devil);
+  set_halfedgeds_items_id(pl_mesh_pyramid);
+
+  test_demo_helpers<Mesh_with_id>(pl_mesh_devil);
+  test_curvature_flow_time_step<Mesh_with_id>(pl_mesh_devil);
+  test_curvature_flow<Mesh_with_id>(pl_mesh_pyramid);
+  test_implicit_constrained_pyramid<Mesh_with_id>(pl_mesh_pyramid);
+  test_implicit_constrained_devil<Mesh_with_id>(pl_mesh_devil);
+  test_explicit_scheme<Mesh_with_id>(pl_mesh_devil);
 
   return 0;
 }

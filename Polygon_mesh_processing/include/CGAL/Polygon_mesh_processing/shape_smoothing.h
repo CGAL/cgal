@@ -179,6 +179,9 @@ template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
 void smooth_along_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, const double& time,
                                  const NamedParameters& np)
 {
+  if (boost::begin(faces)==boost::end(faces))
+    return;
+
   using boost::choose_param;
   using boost::get_param;
 

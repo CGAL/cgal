@@ -78,6 +78,9 @@ namespace Polygon_mesh_processing {
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
 void smooth_angles(const FaceRange& faces, PolygonMesh& pmesh, const NamedParameters& np)
 {
+  if (boost::begin(faces)==boost::end(faces))
+    return;
+
   using boost::choose_param;
   using boost::get_param;
 
@@ -217,6 +220,9 @@ void smooth_angles(PolygonMesh& pmesh)
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
 void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParameters& np)
 {
+  if (boost::begin(faces)==boost::end(faces))
+    return;
+
   using boost::choose_param;
   using boost::get_param;
 
