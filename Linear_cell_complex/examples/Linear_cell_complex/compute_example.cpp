@@ -464,13 +464,30 @@ bool test_all_cases_l_shape()
 
   generate_l_shape_case7(path);
   // std::cout<<"Case 7: L-shape (-3 -2^7 -1 -2^3): "<<std::flush;
-  path.display_pos_and_neg_turns();std::cout<<std::endl;
-  push_l_shape(path, true, 1);
+  push_l_shape(path, false, 1);
   if (!path.same_turns("1 2 2 2 2 2 2 2 3 2 2 2"))
   {
     std::cout<<"[test_all_cases_l_shape case 7] ERROR: ";
     std::cout<<"we obtained "; path.display_pos_and_neg_turns();
     std::cout<<" instead of (1 2 2 2 2 2 2 2 3 2 2 2)"<<std::endl;
+    res=false;
+  }
+
+  lcc.clear();
+  if (!CGAL::load_off(lcc, "./data/cube-mesh-5-5.off"))
+  {
+    std::cout<<"PROBLEM reading file ./data/cube-mesh-5-5.off"<<std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  generate_l_shape_case8(path);
+  // std::cout<<"Case 8: L-shape (-2^20): "<<std::flush;
+  push_l_shape(path, false, 1);
+  if (!path.same_turns("2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2"))
+  {
+    std::cout<<"[test_all_cases_l_shape case 8] ERROR: ";
+    std::cout<<"we obtained "; path.display_pos_and_neg_turns();
+    std::cout<<" instead of (2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2)"<<std::endl;
     res=false;
   }
 

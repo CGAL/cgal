@@ -437,17 +437,21 @@ public:
   void push_l_shape(std::size_t begin,
                     std::size_t middle,
                     std::size_t end,
-                    Self& new_path)
+                    Self& new_path,
+                    bool case_seven)
   {
     Dart_const_handle d1;
 
-    // TODO SPECIAL CASE 7: do not push this dart
-    d1=m_map.template beta<2,1>(get_ith_dart(begin));
+    if (!case_seven)
+    { d1=m_map.template beta<2,1>(get_ith_dart(begin)); }
+    else
+    { d1=m_map.template beta<2,1,2,0>(get_ith_dart(begin)); }
     new_path.push_back(d1);
 
     if (begin!=middle)
     {
-      CGAL::extend_uturn_positive(new_path, 1);
+      if (!case_seven)
+      { CGAL::extend_uturn_positive(new_path, 1); }
 
       d1=m_map.template beta<2,1,1>(get_ith_dart(middle));
       CGAL::extend_straight_positive_until(new_path, d1);
@@ -463,8 +467,10 @@ public:
       d1=m_map.template beta<2,0,2,1>(get_ith_dart(end));
       CGAL::extend_straight_positive_until(new_path, d1);
 
-      if (begin!=end) // TODO CHECK THIS TEST : CASE 7
+      if (!case_seven)
       { CGAL::extend_uturn_positive(new_path, 1); }
+      else
+      { CGAL::extend_straight_positive(new_path, 1); }
     }
   }
 
@@ -474,6 +480,7 @@ public:
         m_map.template beta<2,1,1>(get_ith_dart(0));
     clear();
     push_back(d1);
+    CGAL::extend_straight_positive(*this, 1);
     CGAL::extend_straight_positive_until(*this, d1);
   }
 
@@ -481,8 +488,8 @@ public:
   {
     std::size_t begin, middle, end;
     std::size_t lastturn=m_path.size()-(is_closed()?0:1);
-
-    std::size_t next_turn, next_next_turn;
+    std::size_t next_turn;
+    std::size_t val_x; // value of turn before the beginning of a l-shape
     bool prev2=false;
 
     for (middle=0; middle<lastturn; ++middle)
@@ -531,9 +538,9 @@ public:
           }
           while(next_turn==2);
 
-          // TODO for cases 4, 5 and 6, add a test that X!=3 (?)
+          val_x=next_negative_turn(prev_index(begin));
 
-          // And here now we can push
+          // And here now we can push the path
           Self new_path(m_map);
           if (end<begin)
           {
@@ -542,12 +549,15 @@ public:
 
             copy_rest_of_path(end+1, begin, new_path);
           }
-          else // TODO SPECIAL CASES ??
+          else
           { copy_rest_of_path(0, begin, new_path); }
 
-          push_l_shape(begin, middle, end, new_path);
+          // std::cout<<prev_index(begin)<<"  "<<next_index(end)<<std::endl;
+          bool  case_seven=(val_x==3 && prev_index(begin)==end);
 
-          if (begin<end /* && XXX (TODO SPECIAL CASES ??)*/)
+          push_l_shape(begin, middle, end, new_path, case_seven);
+
+          if (begin<end)
           { copy_rest_of_path(end+1, length(), new_path); }
 
           swap(new_path);

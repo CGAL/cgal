@@ -201,6 +201,14 @@ void generate_l_shape_case7(Path& p)
   extend_straight_negative(p, 3);
 }
 
+template<typename Path>
+void generate_l_shape_case8(Path& p)
+{ // (-2^l): here (-2^20)
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[4]));
+  extend_straight_negative(p, 19);
+}
+
 } // namespace CGAL
 
 #endif // CGAL_CREATION_OF_TEST_CASES_FOR_PATHS_H //
