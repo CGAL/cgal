@@ -41,11 +41,9 @@ public:
   bool is_2d_selection_mode;
 
   //! The buffers used to draw the axis system
-  QOpenGLBuffer buffers[8];
+  QOpenGLBuffer buffer;
   //! The VAO used to draw the axis system
-  QOpenGLVertexArrayObject vao[4];
-  //! The rendering program used to draw the axis system
-  QOpenGLShaderProgram rendering_program;
+  QOpenGLVertexArrayObject vao;
   //! The rendering program used to draw the distance
   QOpenGLShaderProgram rendering_program_dist;
   QList<TextItem*>  distance_text;
@@ -248,100 +246,15 @@ void Viewer::initializeGL()
 
 
   setBackgroundColor(::Qt::white);
-  d->vao[0].create();
-  for(int i=0; i<3; i++)
-    d->buffers[i].create();
+  d->vao.create();
+    d->buffer.create();
 
-  //Vertex source code
-  const char vertex_source[] =
-  {
-      "#version 120 \n"
-      "attribute highp vec4 vertex;\n"
-      "attribute highp vec3 normal;\n"
-      "attribute highp vec4 colors;\n"
-      "uniform highp mat4 mvp_matrix;\n"
-      "uniform highp mat4 mv_matrix; \n"
-      "varying highp vec4 fP; \n"
-      "varying highp vec3 fN; \n"
-      "varying highp vec4 color; \n"
-      "void main(void)\n"
-      "{\n"
-      "   color = colors; \n"
-      "   fP = mv_matrix * vertex; \n"
-      "   fN = mat3(mv_matrix)* normal; \n"
-      "   gl_Position = vec4(mvp_matrix * vertex); \n"
-      "} \n"
-      "\n"
-  };
-  //Fragment source code
-  const char fragment_source[] =
-  {
-      "#version 120 \n"
-      "varying highp vec4 color; \n"
-      "varying highp vec4 fP; \n"
-      "varying highp vec3 fN; \n"
-      "uniform highp vec4 light_pos;  \n"
-      "uniform highp vec4 light_diff; \n"
-      "uniform highp vec4 light_spec; \n"
-      "uniform highp vec4 light_amb;  \n"
-      "uniform highp float spec_power ; \n"
-
-      "void main(void) { \n"
-
-      "   vec3 L = light_pos.xyz - fP.xyz; \n"
-      "   vec3 V = -fP.xyz; \n"
-      "   vec3 N; \n"
-      "   if(fN == vec3(0.0,0.0,0.0)) \n"
-      "       N = vec3(0.0,0.0,0.0); \n"
-      "   else \n"
-      "       N = normalize(fN); \n"
-      "   L = normalize(L); \n"
-      "   V = normalize(V); \n"
-      "   vec3 R = reflect(-L, N); \n"
-      "   vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
-      "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
-
-      "gl_FragColor = color*light_amb + diffuse + specular; \n"
-      "} \n"
-      "\n"
-      };
-
-      QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
-      if(!vertex_shader->compileSourceCode(vertex_source))
-      {
-          std::cerr<<"Compiling vertex source FAILED"<<std::endl;
-      }
-
-      QOpenGLShader *fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
-      if(!fragment_shader->compileSourceCode(fragment_source))
-      {
-          std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
-      }
-
-      if(!d->rendering_program.addShader(vertex_shader))
-      {
-          std::cerr<<"adding vertex shader FAILED"<<std::endl;
-      }
-      if(!d->rendering_program.addShader(fragment_shader))
-      {
-          std::cerr<<"adding fragment shader FAILED"<<std::endl;
-      }
-      d->rendering_program.bindAttributeLocation("colors", 1);
-      if(!d->rendering_program.link())
-      {
-          //std::cerr<<"linking Program FAILED"<<std::endl;
-          qDebug() << d->rendering_program.log();
-      }
+  QOpenGLShader *vertex_shader, *fragment_shader;
+  
   //setting the program used for the distance
      {
-         d->vao[1].create();
-         d->buffers[3].create();
-         d->vao[2].create();
-         d->vao[3].create();
-         d->buffers[4].create();
-         d->buffers[5].create();
-         d->buffers[6].create();
-         d->buffers[7].create();
+         d->vao.create();
+         d->buffer.create();
          //Vertex source code
          const char vertex_source_dist[] =
          {
@@ -802,10 +715,10 @@ void Viewer::drawVisualHints()
         }
         d->rendering_program_dist.bind();
         d->rendering_program_dist.setUniformValue("mvp_matrix", mvpMatrix);
-        d->vao[1].bind();
+        d->vao.bind();
         glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(2));
         glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(2));
-        d->vao[1].release();
+        d->vao.release();
         d->rendering_program_dist.release();
         glEnable(GL_DEPTH_TEST);
         glPointSize(1.0f);
@@ -1031,13 +944,13 @@ void Viewer_impl::showDistance(QPoint pixel)
         v[0] = APoint.x; v[1] = APoint.y; v[2] = APoint.z;
         v[3] = BPoint.x; v[4] = BPoint.y; v[5] = BPoint.z;
         rendering_program_dist.bind();
-        vao[1].bind();
-        buffers[3].bind();
-        buffers[3].allocate(v.data(),6*sizeof(float));
+        vao.bind();
+        buffer.bind();
+        buffer.allocate(v.data(),6*sizeof(float));
         rendering_program_dist.enableAttributeArray("vertex");
         rendering_program_dist.setAttributeBuffer("vertex",GL_FLOAT,0,3);
-        buffers[3].release();
-        vao[1].release();
+        buffer.release();
+        vao.release();
         rendering_program_dist.release();
         distance_is_displayed = true;
         double dist = std::sqrt((BPoint.x-APoint.x)*(BPoint.x-APoint.x) + (BPoint.y-APoint.y)*(BPoint.y-APoint.y) + (BPoint.z-APoint.z)*(BPoint.z-APoint.z));

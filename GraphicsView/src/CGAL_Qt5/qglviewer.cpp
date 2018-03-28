@@ -394,6 +394,7 @@ void QGLViewer::initializeGL() {
     {
       std::cerr<<"adding fragment shader FAILED"<<std::endl;
     }
+    rendering_program_light.bindAttributeLocation("colors", 1);//because of MacOs
     if(!rendering_program_light.link())
     {
       qDebug() << rendering_program_light.log();
