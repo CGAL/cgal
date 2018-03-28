@@ -140,7 +140,7 @@ public:
   MouseGrabber();
   /*! Virtual destructor. Removes the MouseGrabber from the MouseGrabberPool().
    */
-  virtual ~MouseGrabber() { MouseGrabber::MouseGrabberPool_.removeAll(this); }
+  virtual ~MouseGrabber() { MouseGrabber::MouseGrabberPool().removeAll(this); }
 
   /*! @name Mouse grabbing detection */
   //@{
@@ -198,12 +198,8 @@ public:
 
   You should not have to directly use this list. Use
   removeFromMouseGrabberPool() and addInMouseGrabberPool() to modify this list.
-
-  \attention This method returns a \c QPtrList<MouseGrabber> with Qt 3 and a \c
-  QList<MouseGrabber> with Qt 2. */
-  static const QList<MouseGrabber *> &MouseGrabberPool() {
-    return MouseGrabber::MouseGrabberPool_;
-  }
+*/
+  static QList<MouseGrabber *> &MouseGrabberPool();
 
   /*! Returns \c true if the MouseGrabber is currently in the MouseGrabberPool()
   list.
@@ -212,7 +208,7 @@ public:
   removeFromMouseGrabberPool(), the QGLViewers no longer checkIfGrabsMouse() on
   this MouseGrabber. Use addInMouseGrabberPool() to insert it back. */
   bool isInMouseGrabberPool() const {
-    return MouseGrabber::MouseGrabberPool_.contains(
+    return MouseGrabber::MouseGrabberPool().contains(
         const_cast<MouseGrabber *>(this));
   }
   void addInMouseGrabberPool();
@@ -289,10 +285,11 @@ private:
 
   bool grabsMouse_;
 
-  // Q G L V i e w e r   p o o l
-  static QList<MouseGrabber *> MouseGrabberPool_;
 };
 
 } // namespace qglviewer
 
+#ifdef CGAL_HEADER_ONLY
+//#include <CGAL/Qt/qglviewer_impl_list.h>
+#endif // CGAL_HEADER_ONLY
 #endif // QGLVIEWER_MOUSE_GRABBER_H

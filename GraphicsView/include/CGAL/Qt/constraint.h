@@ -26,10 +26,10 @@
 #include <CGAL/Qt/quaternion.h>
 #include <CGAL/Qt/vec.h>
 
+
 namespace qglviewer {
 class Frame;
 class Camera;
-
 /*! \brief An interface class for Frame constraints.
   \class Constraint constraint.h QGLViewer/constraint.h
 
@@ -349,14 +349,14 @@ class QGLVIEWER_EXPORT CameraConstraint : public AxisPlaneConstraint {
 public:
   explicit CameraConstraint(const Camera *const camera);
   /*! Virtual destructor. Empty. */
-  virtual ~CameraConstraint(){};
+  virtual ~CameraConstraint(){}
 
   virtual void constrainTranslation(Vec &translation, Frame *const frame);
   virtual void constrainRotation(Quaternion &rotation, Frame *const frame);
 
   /*! Returns the associated Camera. Set using the CameraConstraint constructor.
    */
-  const Camera *camera() const { return camera_; };
+  const Camera *camera() const { return camera_; }
 
 private:
   const Camera *const camera_;
@@ -364,4 +364,7 @@ private:
 
 } // namespace qglviewer
 
+#ifdef CGAL_HEADER_ONLY
+//#include <CGAL/Qt/qglviewer_impl_list.h>
+#endif // CGAL_HEADER_ONLY
 #endif // QGLVIEWER_CONSTRAINT_H

@@ -28,14 +28,13 @@
 
 #include <CGAL/Qt/quaternion.h>
 // Not actually needed, but some bad compilers (Microsoft VS6) complain.
-#include <CGAL/Qt/frame.h>
+//#include <CGAL/Qt/frame.h>
 
 // If you compiler complains about incomplete type, uncomment the next line
 // #include "frame.h"
 // and comment "class Frame;" 3 lines below
 
 namespace qglviewer {
-class Camera;
 class Frame;
 /*! \brief A keyFrame Catmull-Rom Frame interpolator.
   \class KeyFrameInterpolator keyFrameInterpolator.h
@@ -290,12 +289,6 @@ public Q_SLOTS:
       startInterpolation();
   }
   virtual void interpolateAtTime(qreal time);
-  //@}
-
-  /*! @name Path drawing */
-  //@{
-public:
-  virtual void drawPath(int mask = 1, int nbFrames = 6, qreal scale = 1.0);
   //@}
 
   /*! @name XML representation */

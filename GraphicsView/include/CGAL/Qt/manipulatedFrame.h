@@ -22,16 +22,18 @@
 
 #ifndef QGLVIEWER_MANIPULATED_FRAME_H
 #define QGLVIEWER_MANIPULATED_FRAME_H
-
+#include <CGAL/Qt/config.h>
 #include <CGAL/Qt/frame.h>
+#include <CGAL/Qt/camera.h>
 #include <CGAL/Qt/mouseGrabber.h>
-#include <CGAL/Qt/qglviewer.h>
+#include <CGAL/Qt/viewer_actions.h>
 
 #include <QDateTime>
 #include <QString>
 #include <QTimer>
 
 namespace qglviewer {
+
 /*! \brief A ManipulatedFrame is a Frame that can be rotated and translated
   using the mouse. \class ManipulatedFrame manipulatedFrame.h
   QGLViewer/manipulatedFrame.h
@@ -299,7 +301,7 @@ public:
    modifiers, Qt::MouseButton buttons, MouseHandler handler, MouseAction action,
    bool withConstraint).
     */
-  QGLViewer::MouseAction currentMouseAction() const { return action_; }
+  MouseAction currentMouseAction() const { return action_; }
   //@}
 
   /*! @name MouseGrabber implementation */
@@ -322,12 +324,12 @@ protected:
   Quaternion deformedBallQuaternion(int x, int y, qreal cx, qreal cy,
                                     const Camera *const camera);
 
-  QGLViewer::MouseAction action_;
+  MouseAction action_;
   Constraint *previousConstraint_; // When manipulation is without Contraint.
 
   virtual void startAction(
       int ma,
-      bool withConstraint = true); // int is really a QGLViewer::MouseAction
+      bool withConstraint = true); // int is really a MouseAction
   void computeMouseSpeed(const QMouseEvent *const e);
   int mouseOriginalDirection(const QMouseEvent *const e);
 
@@ -372,4 +374,7 @@ private:
 
 } // namespace qglviewer
 
+#ifdef CGAL_HEADER_ONLY
+//#include <CGAL/Qt/qglviewer_impl_list.h>
+#endif // CGAL_HEADER_ONLY
 #endif // QGLVIEWER_MANIPULATED_FRAME_H

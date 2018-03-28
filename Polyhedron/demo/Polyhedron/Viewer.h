@@ -9,8 +9,6 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLShaderProgram>
 #include <CGAL/Three/Viewer_interface.h>
-
-#include <CGAL/Qt/qglviewer.h>
 #include <QPoint>
 #include <QFont>
 #include <QOpenGLFramebufferObject>
@@ -112,7 +110,7 @@ public Q_SLOTS:
   void setBindingSelect() Q_DECL_OVERRIDE
   {
 #if QGLVIEWER_VERSION >= 0x020501
-    setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, SELECT);
+    setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, qglviewer::SELECT);
 #else
     setMouseBinding(::Qt::SHIFT + ::Qt::LeftButton, SELECT);
 #endif
@@ -121,7 +119,7 @@ public Q_SLOTS:
   virtual void setNoBinding() Q_DECL_OVERRIDE
   {
 #if QGLVIEWER_VERSION >= 0x020501
-    setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, NO_CLICK_ACTION);
+    setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, qglviewer::NO_CLICK_ACTION);
 #else
     setMouseBinding(::Qt::SHIFT + ::Qt::LeftButton, NO_CLICK_ACTION);
 #endif

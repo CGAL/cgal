@@ -2,7 +2,6 @@
 #include <CGAL/Three/Scene_draw_interface.h>
 #include <QMouseEvent>
 #include <QKeyEvent>
-#include <CGAL/Qt/manipulatedCameraFrame.h>
 #include <QDebug>
 #include <QOpenGLShader>
 #include <QFileDialog>
@@ -92,7 +91,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
   connect(&d->messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
-  setShortcut(EXIT_VIEWER, 0);
+  setShortcut(qglviewer::EXIT_VIEWER, 0);
   setKeyDescription(Qt::Key_T,
                     tr("Turn the camera by 180 degrees"));
   setKeyDescription(Qt::Key_M,
@@ -107,12 +106,12 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
 
 #if QGLVIEWER_VERSION >= 0x020501
   //modify mouse bindings that have been updated
-  setMouseBinding(Qt::Key(0), Qt::NoModifier, Qt::LeftButton, RAP_FROM_PIXEL, true, Qt::RightButton);
+  setMouseBinding(Qt::Key(0), Qt::NoModifier, Qt::LeftButton, qglviewer::RAP_FROM_PIXEL, true, Qt::RightButton);
   setMouseBindingDescription(Qt::ShiftModifier, Qt::RightButton,
                              tr("Select and pop context menu"));
-  setMouseBinding(Qt::Key_R, Qt::NoModifier, Qt::LeftButton, RAP_FROM_PIXEL);
+  setMouseBinding(Qt::Key_R, Qt::NoModifier, Qt::LeftButton, qglviewer::RAP_FROM_PIXEL);
   //use the new API for these
-  setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, SELECT);
+  setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, qglviewer::SELECT);
 
   setMouseBindingDescription(Qt::Key(0), Qt::ShiftModifier, Qt::LeftButton,
                              tr("Selects and display context "

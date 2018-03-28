@@ -49,7 +49,9 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
                                        "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp"
                                        "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp" )
 
-  add_executable  ( AABB_demo AABB_demo.cpp ${UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
+  add_executable  ( AABB_demo AABB_demo.cpp ${UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} 
+    #${CGAL_Qt5_MOC_FILES}
+    )
   # Link with Qt libraries
   target_link_libraries( AABB_demo PRIVATE
     Qt5::OpenGL Qt5::Gui Qt5::Xml

@@ -22,14 +22,20 @@
 
 #ifndef QGLVIEWER_CAMERA_H
 #define QGLVIEWER_CAMERA_H
-
 #include <QMap>
-#include <CGAL/Qt/keyFrameInterpolator.h>
+#include <QDomElement>
+#include <CGAL/Qt/vec.h>
+#include <CGAL/Qt/quaternion.h>
+#include <CGAL/Qt/config.h>
+#include <QOpenGLFunctions_2_1>
 class QGLViewer;
 
 namespace qglviewer {
 
+class KeyFrameInterpolator;
+class Frame;
 class ManipulatedCameraFrame;
+
 
 /*! \brief A perspective or orthographic camera.
   \class Camera camera.h QGLViewer/camera.h
@@ -98,7 +104,7 @@ class QGLVIEWER_EXPORT Camera : public QObject {
   Q_OBJECT
 
 public:
-  Camera();
+  Camera(QObject *parent);
   virtual ~Camera();
 
   Camera(const Camera &camera);
@@ -182,9 +188,7 @@ public:
   Value is set using setHorizontalFieldOfView() or setFieldOfView(). These
   values are always linked by: \code horizontalFieldOfView() = 2.0 * atan (
   tan(fieldOfView()/2.0) * aspectRatio() ). \endcode */
-  qreal horizontalFieldOfView() const {
-    return 2.0 * atan(tan(fieldOfView() / 2.0) * aspectRatio());
-  }
+  qreal horizontalFieldOfView() const;
 
   /*! Returns the Camera aspect ratio defined by screenWidth() / screenHeight().
 
@@ -265,9 +269,7 @@ public Q_SLOTS:
   This method actually calls setFieldOfView(( 2.0 * atan (tan(hfov / 2.0) /
   aspectRatio()) )) so that a call to horizontalFieldOfView() returns the
   expected value. */
-  void setHorizontalFieldOfView(qreal hfov) {
-    setFieldOfView(2.0 * atan(tan(hfov / 2.0) / aspectRatio()));
-  }
+  void setHorizontalFieldOfView(qreal hfov);
 
   void setFOVToFitScene();
 
@@ -384,7 +386,6 @@ public Q_SLOTS:
   virtual void playPath(unsigned int i);
   virtual void deletePath(unsigned int i);
   virtual void resetPath(unsigned int i);
-  virtual void drawAllPaths();
   //@}
 
   /*! @name OpenGL matrices */
@@ -407,15 +408,6 @@ public:
   void getModelViewProjectionMatrix(GLfloat m[16]) const;
   void getModelViewProjectionMatrix(GLdouble m[16]) const;
 //@}
-
-/*! @name Drawing */
-//@{
-#ifndef DOXYGEN
-  static void drawCamera(qreal scale = 1.0, qreal aspectRatio = 1.33,
-                         qreal fieldOfView = qreal(M_PI) / 4.0);
-#endif
-  virtual void draw(bool drawFarPlane = true, qreal scale = 1.0) const;
-  //@}
 
   /*! @name World to Camera coordinate systems conversions */
   //@{
@@ -466,9 +458,7 @@ public:
 
   This is a helper function. It simply returns physicalScreenWidth() / 2.0 /
   tan(horizontalFieldOfView() / 2.0); */
-  qreal physicalDistanceToScreen() const {
-    return physicalScreenWidth() / 2.0 / tan(horizontalFieldOfView() / 2.0);
-  }
+  qreal physicalDistanceToScreen() const;
 
   /*! Returns the physical screen width, in meters. Default value is 0.5m
   (average monitor width).
@@ -525,6 +515,7 @@ private Q_SLOTS:
   void onFrameModified();
 
 private:
+  QOpenGLFunctions_2_1* gl() const{ return dynamic_cast<QOpenGLFunctions_2_1*>(parent()); }
   // F r a m e
   ManipulatedCameraFrame *frame_;
 
@@ -553,5 +544,4 @@ private:
 };
 
 } // namespace qglviewer
-
 #endif // QGLVIEWER_CAMERA_H

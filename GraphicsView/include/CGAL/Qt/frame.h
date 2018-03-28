@@ -25,11 +25,13 @@
 
 #include <QObject>
 #include <QString>
-
-#include <CGAL/Qt/constraint.h>
-// #include "GL/gl.h" is now included in config.h for ease of configuration
+#include <CGAL/Qt/config.h>
+#include <CGAL/Qt/vec.h>
+#include <CGAL/Qt/quaternion.h>
 
 namespace qglviewer {
+class Constraint;
+
 /*! \brief The Frame class represents a coordinate system, defined by a position
   and an orientation. \class Frame frame.h QGLViewer/frame.h
 
@@ -455,5 +457,9 @@ private:
 };
 
 } // namespace qglviewer
+
+#ifdef CGAL_HEADER_ONLY
+//#include <CGAL/Qt/qglviewer_impl_list.h>
+#endif // CGAL_HEADER_ONLY
 
 #endif // QGLVIEWER_FRAME_H

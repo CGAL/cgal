@@ -988,7 +988,7 @@ void Scene_edit_box_item_priv::reset_selection()
   selection_on = false;
   QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
   viewer->setManipulatedFrame(frame);
-  viewer->setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, QGLViewer::SELECT);
+  viewer->setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, qglviewer::SELECT);
   constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
   selected_vertices.clear();
 }
@@ -1060,8 +1060,8 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
         viewer->setMouseBinding(
                     Qt::NoModifier,
                     Qt::LeftButton,
-                    QGLViewer::FRAME,
-                    QGLViewer::TRANSLATE);
+                    qglviewer::FRAME,
+                    qglviewer::TRANSLATE);
       }
       else
       {
@@ -1108,8 +1108,8 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
     viewer->setMouseBinding(
                 Qt::NoModifier,
                 Qt::LeftButton,
-                QGLViewer::CAMERA,
-                QGLViewer::ROTATE);
+                qglviewer::CAMERA,
+                qglviewer::ROTATE);
   }
   else if(event->type() == QEvent::KeyRelease)
   {

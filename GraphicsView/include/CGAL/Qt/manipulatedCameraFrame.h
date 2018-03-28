@@ -22,8 +22,11 @@
 
 #ifndef QGLVIEWER_MANIPULATED_CAMERA_FRAME_H
 #define QGLVIEWER_MANIPULATED_CAMERA_FRAME_H
+#include <QTimer>
 
+#include <CGAL/Qt/config.h>
 #include <CGAL/Qt/manipulatedFrame.h>
+#include <CGAL/Qt/camera.h>
 
 namespace qglviewer {
 /*! \brief The ManipulatedCameraFrame class represents a ManipulatedFrame with
@@ -41,8 +44,8 @@ namespace qglviewer {
 
   A ManipulatedCameraFrame can also "fly" in the scene. It basically moves
   forward, and turns according to the mouse motion. See flySpeed(),
-  sceneUpVector() and the QGLViewer::MOVE_FORWARD and QGLViewer::MOVE_BACKWARD
-  QGLViewer::MouseAction.
+  sceneUpVector() and the MOVE_FORWARD and MOVE_BACKWARD
+  MouseAction.
 
   See the <a href="../mouse.html">mouse page</a> for a description of the
   possible actions that can be performed using the mouse and their bindings.
@@ -74,7 +77,7 @@ public:
   When the ManipulatedCameraFrame is associated to a Camera,
   Camera::pivotPoint() also returns this value. This point can interactively be
   changed using the mouse (see Camera::setPivotPointFromPixel() and
-  QGLViewer::RAP_FROM_PIXEL and QGLViewer::RAP_IS_CENTER in the <a
+  RAP_FROM_PIXEL and RAP_IS_CENTER in the <a
   href="../mouse.html">mouse page</a>). */
   Vec pivotPoint() const { return pivotPoint_; }
   /*! Sets the pivotPoint(), defined in the world coordinate system. */
@@ -125,7 +128,7 @@ public:
     rotatesAroundUpVector_ = constrained;
   }
 
-  /*! Returns whether or not the QGLViewer::ZOOM action zooms on the pivot
+  /*! Returns whether or not the ZOOM action zooms on the pivot
     point.
 
     When set to \c false (default), a zoom action will move the camera along its
@@ -169,8 +172,8 @@ public:
   /*! Returns the fly speed, expressed in OpenGL units.
 
   It corresponds to the incremental displacement that is periodically applied to
-  the ManipulatedCameraFrame position when a QGLViewer::MOVE_FORWARD or
-  QGLViewer::MOVE_BACKWARD QGLViewer::MouseAction is proceeded.
+  the ManipulatedCameraFrame position when a MOVE_FORWARD or
+  MOVE_BACKWARD MouseAction is proceeded.
 
   \attention When the ManipulatedCameraFrame is set as the Camera::frame(), this
   value is set according to the QGLViewer::sceneRadius() by
@@ -180,8 +183,8 @@ public:
   /*! Returns the up vector of the scene, expressed in the world coordinate
   system.
 
-  In 'fly mode' (corresponding to the QGLViewer::MOVE_FORWARD and
-  QGLViewer::MOVE_BACKWARD QGLViewer::MouseAction bindings), horizontal
+  In 'fly mode' (corresponding to the MOVE_FORWARD and
+  MOVE_BACKWARD MouseAction bindings), horizontal
   displacements of the mouse rotate the ManipulatedCameraFrame around this
   vector. Vertical displacements rotate always around the Camera \c X axis.
 
@@ -229,7 +232,7 @@ public Q_SLOTS:
 protected:
   virtual void startAction(
       int ma,
-      bool withConstraint = true); // int is really a QGLViewer::MouseAction
+      bool withConstraint = true); // int is really a MouseAction
 #endif
 
 private Q_SLOTS:
@@ -260,4 +263,7 @@ private:
 
 } // namespace qglviewer
 
+#ifdef CGAL_HEADER_ONLY
+//#include <CGAL/Qt/qglviewer_impl_list.h>
+#endif // CGAL_HEADER_ONLY
 #endif // QGLVIEWER_MANIPULATED_CAMERA_FRAME_H

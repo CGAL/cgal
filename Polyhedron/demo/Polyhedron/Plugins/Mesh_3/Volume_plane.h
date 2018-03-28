@@ -660,8 +660,8 @@ bool Volume_plane<T>::eventFilter(QObject *, QEvent *event)
             viewer->setMouseBinding(
                         Qt::NoModifier,
                         Qt::LeftButton,
-                        QGLViewer::FRAME,
-                        QGLViewer::TRANSLATE);
+                        qglviewer::FRAME,
+                        qglviewer::TRANSLATE);
         }
     }
     else if(event->type() == QEvent::MouseButtonRelease && is_grabbing)
@@ -670,8 +670,8 @@ bool Volume_plane<T>::eventFilter(QObject *, QEvent *event)
         viewer->setMouseBinding(
                     Qt::NoModifier,
                     Qt::LeftButton,
-                    QGLViewer::CAMERA,
-                    QGLViewer::ROTATE);
+                    qglviewer::CAMERA,
+                    qglviewer::ROTATE);
     }
     return false;
 }

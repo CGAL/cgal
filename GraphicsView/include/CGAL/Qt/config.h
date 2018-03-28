@@ -48,7 +48,8 @@ Error : libQGLViewer requires a minimum Qt version of 4.0
 #define M_PI 3.14159265358979323846
 #endif
 #ifndef QGLVIEWER_STATIC
-#ifdef CREATE_QGLVIEWER_DLL
+#if ( defined(CGAL_BUILD_SHARED_LIBS) && ( ! defined(CGAL_HEADER_ONLY) ) ) \
+  || defined(CGAL_USE_Qt5_RESOURCES)
 #if QT_VERSION >= 0x040500
 #define QGLVIEWER_EXPORT Q_DECL_EXPORT
 #else
@@ -77,13 +78,6 @@ Error : libQGLViewer requires a minimum Qt version of 4.0
 // OpenGL includes - Included here and hence shared by all the files that need
 // OpenGL headers.
 #include <QOpenGLWidget>
-
-// GLU was removed from Qt in version 4.8
-#ifdef Q_OS_MAC
-#include <OpenGL/glu.h>
-#else
-#include <GL/glu.h>
-#endif
 
 // Container classes interfaces changed a lot in Qt.
 // Compatibility patches are all grouped here.

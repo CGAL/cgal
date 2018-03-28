@@ -22,7 +22,7 @@
 
 #ifndef QGLVIEWER_QUATERNION_H
 #define QGLVIEWER_QUATERNION_H
-
+#include <CGAL/Qt/config.h>
 #include <CGAL/Qt/vec.h>
 #include <iostream>
 #include <math.h>
