@@ -395,8 +395,8 @@ MainWindow::loadWKT(QString fileName)
       svd.insert(p);
     }while(ifs.good() && !ifs.eof());
   //Lines
-  ifs.close();
-  ifs = std::ifstream(qPrintable(fileName));
+  ifs.clear();
+  ifs.seekg(0, ifs.beg);
   do
     {
     typedef std::vector<K::Point_2> LineString;
@@ -433,8 +433,8 @@ MainWindow::loadWKT(QString fileName)
     }while(ifs.good() && !ifs.eof());
   
   //Polygons
-  ifs.close();
-  ifs = std::ifstream(qPrintable(fileName));
+  ifs.clear();
+  ifs.seekg(0, ifs.beg);
   do
   {
     typedef CGAL::Polygon_with_holes_2<K> Polygon;

@@ -582,8 +582,8 @@ MainWindow::loadWKT(QString filename)
     }
   }while(ifs.good() && !ifs.eof());
   //Edges
-  ifs.close();
-  ifs = std::ifstream(qPrintable(filename));
+  ifs.clear();
+  ifs.seekg(0, ifs.beg);
   do
   {
     typedef std::vector<K::Point_2> LineString;
@@ -621,8 +621,8 @@ MainWindow::loadWKT(QString filename)
   }while(ifs.good() && !ifs.eof());
   
   //Points
-  ifs.close();
-  ifs = std::ifstream(qPrintable(filename));
+  ifs.clear();
+  ifs.seekg(0, ifs.beg);
   do
   {
     std::vector<K::Point_2> mpts;

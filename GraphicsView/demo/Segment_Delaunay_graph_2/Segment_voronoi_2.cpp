@@ -367,9 +367,9 @@ MainWindow::loadWKTConstraints(QString fileName)
         svd.insert(vp, vfirst);
     }
   }while(ifs.good() && !ifs.eof());
-  ifs.close();
   //MultiLineString
-  ifs = std::ifstream(qPrintable(fileName));
+  ifs.clear();
+  ifs.seekg(ifs.beg);
   K::Point_2 qold(0,0); // Initialize qold, as otherwise some g++ issue a unjustified warning
   SVD::Vertex_handle vqold;
   do{
