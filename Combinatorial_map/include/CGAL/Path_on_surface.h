@@ -106,6 +106,9 @@ public:
   {
     for (unsigned int i=1; i<m_path.size(); ++i)
     {
+      if (!m_map.darts().owns(m_path[i]))
+      { return false; }
+
       if (m_path[i]==NULL || m_path[i]==m_map.null_dart_handle)
       { return false; }
 

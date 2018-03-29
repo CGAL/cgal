@@ -503,6 +503,7 @@ namespace CGAL {
     /// 2) all the darts of the paths belong to m_map;
     /// 3) the origin of the second dart of the pair is the extremity of the
     ///    first dart.
+    /// 4) all the darts of m_map are not free (both for beta 1 and 2)
     bool are_paths_valid() const
     {
       bool res=true;
@@ -526,6 +527,23 @@ namespace CGAL {
                     <<" T has an associated path."<<std::endl;
             res=false;
           }
+        }
+      }
+
+      for (auto it=m_map.darts().begin(),
+           itend=m_map.darts().end(); it!=itend; ++it)
+      {
+        if (m_map.is_free(it, 1))
+        {
+          std::cout<<"ERROR: a dart of the quandrangulated map is 1-free"
+                   <<std::endl;
+          res=false;
+        }
+        if (m_map.is_free(it, 2))
+        {
+          std::cout<<"ERROR: a dart of the quandrangulated map is 2-free"
+                   <<std::endl;
+          res=false;
         }
       }
 
