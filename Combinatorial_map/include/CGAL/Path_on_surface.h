@@ -486,10 +486,12 @@ public:
 
   bool right_push_one_step()
   {
+    if (is_empty()) { return false; }
+
     std::size_t begin, middle, end;
     std::size_t lastturn=m_path.size()-(is_closed()?0:1);
     std::size_t next_turn;
-    std::size_t val_x; // value of turn before the beginning of a l-shape
+    std::size_t val_x=0; // value of turn before the beginning of a l-shape
     bool prev2=false;
 
     for (middle=0; middle<lastturn; ++middle)
@@ -538,7 +540,8 @@ public:
           }
           while(next_turn==2);
 
-          val_x=next_negative_turn(prev_index(begin));
+          if (is_closed() || begin>0)
+          { val_x=next_negative_turn(prev_index(begin)); }
 
           // And here now we can push the path
           Self new_path(m_map);
@@ -553,7 +556,7 @@ public:
           { copy_rest_of_path(0, begin, new_path); }
 
           // std::cout<<prev_index(begin)<<"  "<<next_index(end)<<std::endl;
-          bool  case_seven=(val_x==3 && prev_index(begin)==end);
+          bool case_seven=(val_x==3 && prev_index(begin)==end);
 
           push_l_shape(begin, middle, end, new_path, case_seven);
 

@@ -85,9 +85,9 @@ template<typename Path>
 void generate_bracket_special1(Path& p, bool reverse)
 { // Case (x, 1, 2^r, 1)
   p.clear();
-  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[91]));
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[79]));
   extend_uturn_positive(p, 1);
-  extend_straight_positive(p, 8);
+  extend_straight_positive(p, 7);
   extend_uturn_positive(p);
 
   if (reverse)
