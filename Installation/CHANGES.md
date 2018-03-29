@@ -57,8 +57,8 @@ Release date: April 2018
 
 ### 3D Convex Hull
 
--   **Breaking change**: The header <CGAL/convex_hull_3.h> no longer
-    includes <CGAL/Polyhedron_3.h>, as the convex hull function works
+-   **Breaking change**: The header `<CGAL/convex_hull_3.h>` no longer
+    includes `<CGAL/Polyhedron_3.h>`, as the convex hull function works
     with any model of the concept `MutableFaceGraph`.
 
 ### 2D Arrangements
