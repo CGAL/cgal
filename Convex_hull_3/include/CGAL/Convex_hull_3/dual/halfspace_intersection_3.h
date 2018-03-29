@@ -64,8 +64,6 @@ namespace CGAL
 
               typedef typename boost::graph_traits<Polyhedron_dual>::face_descriptor 
                 Facet_const_handle;
-              typedef typename boost::graph_traits<Polyhedron_dual>::face_iterator
-                Facet_const_iterator;
               typedef typename boost::graph_traits<Polyhedron_dual>::vertex_descriptor
                 Vertex_const_descriptor;
               typedef typename boost::graph_traits<Polyhedron_dual>::halfedge_descriptor

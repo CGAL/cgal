@@ -137,9 +137,9 @@ public:
     typedef typename Halfedge_list::const_iterator     Halfedge_const_iterator;
 
     typedef N_step_adaptor_derived<Halfedge_iterator, 2>
-                                                  Edge_iterator;
+                                                       Edge_iterator;
     typedef N_step_adaptor_derived<Halfedge_const_iterator, 2>
-                                                  Edge_const_iterator;
+                                                       Edge_const_iterator;
   
     typedef In_place_list<Face,false,Face_allocator>   Face_list;
     typedef typename Face_list::iterator               Face_handle;

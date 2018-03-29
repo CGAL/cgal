@@ -32,6 +32,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/memory.h>
 #include <CGAL/HalfedgeDS_items_decorator.h>
+#include <CGAL/N_step_adaptor_derived.h>
 #include <algorithm>
 #include <vector>
 #include <map>
@@ -75,7 +76,7 @@ public:
     typedef typename Face_alloc_rebind::other          Face_allocator;
 
 #ifdef CGAL__HALFEDGEDS_USE_INTERNAL_VECTOR
-    typedef internal::vector<Vertex, Vertex_allocator>    Vertex_vector;
+    typedef internal::vector<Vertex, Vertex_allocator> Vertex_vector;
     typedef typename Vertex_vector::iterator           Vertex_I;
     typedef typename Vertex_vector::const_iterator     Vertex_CI;
     typedef typename Vertex_vector::iterator           Vertex_iterator;
@@ -87,7 +88,12 @@ public:
     typedef typename Halfedge_vector::iterator         Halfedge_iterator;
     typedef typename Halfedge_vector::const_iterator   Halfedge_const_iterator;
 
-    typedef internal::vector<Face, Face_allocator>        Face_vector;
+    typedef N_step_adaptor_derived<Halfedge_iterator, 2>
+                                                       Edge_iterator;
+    typedef N_step_adaptor_derived<Halfedge_const_iterator, 2>
+                                                       Edge_const_iterator;
+  
+    typedef internal::vector<Face, Face_allocator>     Face_vector;
     typedef typename Face_vector::iterator             Face_I;
     typedef typename Face_vector::const_iterator       Face_CI;
     typedef typename Face_vector::iterator             Face_iterator;
