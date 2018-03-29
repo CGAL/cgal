@@ -79,14 +79,16 @@ namespace CGAL {
 
       // 1) We simplify m_map in a surface with only one vertex
       surface_simplification_in_one_vertex(origin_to_copy, copy_to_origin);
+
+#ifdef CGAL_TRACE_CMAP_TOOLS
       std::cout<<"All non loop contracted: ";
       m_map.display_characteristics(std::cout) << ", valid=" 
                                                << m_map.is_valid() << std::endl;
-
       /* std::cout<<"Number of darts in m_map: "<<m_map.number_of_darts()
               <<"; number of darts in origin_to_copy: "<<origin_to_copy.size()
              <<"; number of darts in copy_to_origin: "<<copy_to_origin.size()
             <<std::endl; */
+#endif
 
       // 2) Now we compute each length two path associated with each edge that does
       // not belong to the spanning tree (which are thus all the survival edges).
@@ -102,6 +104,8 @@ namespace CGAL {
 
       // 3) We simplify m_map in a surface with only one face
       surface_simplification_in_one_face(origin_to_copy, copy_to_origin);
+
+#ifdef CGAL_TRACE_CMAP_TOOLS
       std::cout<<"All faces merges: ";
       m_map.display_characteristics(std::cout) << ", valid=" 
                                                << m_map.is_valid() << std::endl;
@@ -113,17 +117,19 @@ namespace CGAL {
               <<"; number of darts in origin_to_copy: "<<origin_to_copy.size()
              <<"; number of darts in copy_to_origin: "<<copy_to_origin.size()
             <<std::endl; */
+#endif
 
       // 4) And we quadrangulate the face
       surface_quadrangulate();
+
+#ifdef CGAL_TRACE_CMAP_TOOLS
       std::cout<<"After quadrangulation: ";
       m_map.display_characteristics(std::cout) << ", valid=" 
                                                << m_map.is_valid() << std::endl;
 
-#ifndef NDEBUG
       std::cout<<"Paths are all valid ? "<<(are_paths_valid()?"YES":"NO")
                <<std::endl;
-#endif // NDEBUG
+#endif
     }
     
     ~Combinatorial_map_tools()
@@ -293,8 +299,10 @@ namespace CGAL {
         }
       }
 
+#ifdef CGAL_TRACE_CMAP_TOOLS
       std::cout<<"Number of darts in paths: "<<paths.size()
                <<"; number of darts in m_map: "<<m_map.number_of_darts()<<std::endl;
+#endif
     }
 
     // Step 3) Transform the 2-map into an equivalent surface having only
