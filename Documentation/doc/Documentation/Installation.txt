@@ -336,14 +336,14 @@ cmake -DCGAL_HEADER_ONLY=ON . # configure \cgal
 
 and we do not need to run `make` anymore.
 
-\subsubsection subsection_headeronly_without_configuration Header-only without CMake configuration
+\subsubsection subsection_headeronly_without_configuration Header-only without CMake Configuration
 
 Since \cgal 4.12, \cgal can be used in header-only mode, without even
-configuring \cgal libraries. In this case, the program using \cgal
-(example, test, demo, etc.) must be directly configured using CMake. The
-variable `CGAL_DIR` must point to the root directory of the CGAL source
-code (either the root of the unpacked release tarball, or the root of the
-Git repository).
+configuring \cgal\. The program using \cgal (example, test, demo, etc.)
+must be directly configured using CMake in any case, but then \cgal will be
+configured at the same time. The variable `CGAL_DIR` must point to the root
+directory of the \cgal source code (either the root of the unpacked release
+tarball, or the root of the Git working directory).
 
 So, using \cgal becomes now:
 
