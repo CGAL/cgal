@@ -270,8 +270,8 @@ struct Mpzf {
 //#endif
 
   mp_limb_t* data_; /* data_[0] is never 0 (except possibly for 0). */
-  inline mp_limb_t*& data() { return data_; };
-  inline mp_limb_t const* data() const { return data_; };
+  inline mp_limb_t*& data() { return data_; }
+  inline mp_limb_t const* data() const { return data_; }
 
 #ifdef CGAL_MPZF_USE_CACHE
   mp_limb_t cache[cache_size + 1];
