@@ -354,7 +354,7 @@ cmake -DCGAL_DIR=<CGAL-root> .
 
 \subsubsection subsection_headeronly_dependencies CGAL Dependencies
 
-\cgal can be used as a header-only library, but no all its dependencies are
+\cgal can be used as a header-only library, but not all its dependencies are
 header-only. The libraries \sc{Gmp} and \sc{Mpfr}, for example, are not
 header-only.
 
