@@ -210,7 +210,7 @@ void generate_l_shape_case8(Path& p)
 }
 
 template<typename Path>
-void generate_path0_torus(Path& p)
+void generate_g1_v0_torus(Path& p)
 { // 1st generator
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[0]));
@@ -218,7 +218,7 @@ void generate_path0_torus(Path& p)
 }
 
 template<typename Path>
-void generate_path1_torus(Path& p)
+void generate_g1_v1_torus(Path& p)
 { // 1st generator v2
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[20]));
@@ -226,7 +226,7 @@ void generate_path1_torus(Path& p)
 }
 
 template<typename Path>
-void generate_path2_torus(Path& p)
+void generate_g1_v2_torus(Path& p)
 { // 1st generator v3
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[20]));
@@ -241,7 +241,20 @@ void generate_path2_torus(Path& p)
 }
 
 template<typename Path>
-void generate_path3_torus(Path& p)
+void generate_g1_torus(Path& p, std::size_t i)
+{
+  assert(i<3);
+  switch(i)
+  {
+    case 0: generate_g1_v0_torus(p); break;
+    case 1: generate_g1_v1_torus(p); break;
+    case 2: generate_g1_v2_torus(p); break;
+    default: assert(false);
+  }
+}
+
+template<typename Path>
+void generate_null_cycle_v0_torus(Path& p)
 { // Empty cycle
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[20]));
@@ -251,7 +264,7 @@ void generate_path3_torus(Path& p)
 }
 
 template<typename Path>
-void generate_path4_torus(Path& p)
+void generate_null_cycle_v1_torus(Path& p)
 { // Empty cycle v2
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[20]));
@@ -263,7 +276,7 @@ void generate_path4_torus(Path& p)
 }
 
 template<typename Path>
-void generate_path5_torus(Path& p)
+void generate_null_cycle_v2_torus(Path& p)
 { // Empty cycle v3
   p.clear();
   p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[20]));
@@ -278,17 +291,59 @@ void generate_path5_torus(Path& p)
 }
 
 template<typename Path>
-void generate_ith_path_torus(Path& p, std::size_t i)
+void generate_null_cycle_torus(Path& p, std::size_t i)
 {
-  assert(i<6);
+  assert(i<3);
   switch(i)
   {
-    case 0: generate_path0_torus(p); break;
-    case 1: generate_path1_torus(p); break;
-    case 2: generate_path2_torus(p); break;
-    case 3: generate_path3_torus(p); break;
-    case 4: generate_path4_torus(p); break;
-    case 5: generate_path5_torus(p); break;
+    case 0: generate_null_cycle_v0_torus(p); break;
+    case 1: generate_null_cycle_v1_torus(p); break;
+    case 2: generate_null_cycle_v2_torus(p); break;
+    default: assert(false);
+  }
+}
+
+template<typename Path>
+void generate_g2_v0_torus(Path& p)
+{ // 2nd generator v1
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[1]));
+  extend_straight_positive(p, 4);
+}
+
+template<typename Path>
+void generate_g2_v1_torus(Path& p)
+{ // 2nd generator v2
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[13]));
+  extend_straight_negative(p, 4);
+}
+
+template<typename Path>
+void generate_g2_v2_torus(Path& p)
+{ // 2nd generator v3
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[0]));
+  extend_uturn_negative(p, 1);
+  extend_uturn_positive(p, 1);
+  extend_uturn_negative(p, 1);
+  extend_uturn_positive(p, 1);
+  extend_uturn_negative(p, 1);
+  extend_uturn_positive(p, 1);
+  extend_straight_negative(p, 1);
+  extend_uturn_positive(p, 1);
+  extend_straight_negative(p, 2);
+}
+
+template<typename Path>
+void generate_g2_torus(Path& p, std::size_t i)
+{
+  assert(i<3);
+  switch(i)
+  {
+    case 0: generate_g2_v0_torus(p); break;
+    case 1: generate_g2_v1_torus(p); break;
+    case 2: generate_g2_v2_torus(p); break;
     default: assert(false);
   }
 }

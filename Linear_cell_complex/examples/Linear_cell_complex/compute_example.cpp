@@ -17,7 +17,7 @@
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
 typedef CGAL::Linear_cell_complex_for_generalized_map<2,3> LCC_3_gmap;
 
-#define NB_TESTS 25
+#define NB_TESTS 23 // 0 ... 22
 int nbtests=0;
 
 enum Transformation // enum for the type of transformations
@@ -144,10 +144,14 @@ bool unit_test(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
   return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
-bool unit_test_canonize(CGAL::Path_on_surface<LCC_3_cmap>& path,
-                        const char* msg, const char* expected_result,
-                        int testtorun)
+bool unit_test_canonize(std::vector<CGAL::Path_on_surface<LCC_3_cmap> >& paths,
+                        std::vector<CGAL::Path_on_surface<LCC_3_cmap> >& transformed_paths,
+                        const char* msg,
+                        bool draw, int testtorun)
 {
+  assert(paths.size()==transformed_paths.size());
+
+  std::vector<const CGAL::Path_on_surface<LCC_3_cmap>*> v;
   bool res=true;
 
   if (testtorun==-1 || nbtests==testtorun)
@@ -158,18 +162,42 @@ bool unit_test_canonize(CGAL::Path_on_surface<LCC_3_cmap>& path,
     std::cout<<"."<<std::flush;
 #endif
 
-    path.canonize();
-
-    if (path!=expected_result)
+    for (int i=0; i<paths.size(); ++i)
     {
-      std::cout<<"[Test "<<nbtests<<"] ERROR: ";
-      std::cout<<"we obtained "; path.display();
-      std::cout<<" instead of ("<<expected_result<<")"<<std::endl;
-      res=false;
+      if (draw)
+      {
+        v.push_back(&paths[i]);
+        // display(paths[i].get_map(), v);
+      }
+
+      transformed_paths[i].canonize();
+
+#ifdef CGAL_TRACE_PATH_TESTS
+      std::cout<<"Path["<<i<<"] -> (";
+      transformed_paths[i].display();
+      std::cout<<")  ";
+#endif
+
+      if (i>0 && transformed_paths[i]!=transformed_paths[0])
+      {
+        std::cout<<"[Test "<<nbtests<<"] ERROR: ";
+        std::cout<<"paths["<<i<<"]"
+                 <<" is not isotopic to paths[0] while it should be. (";
+        transformed_paths[0].display();
+        std::cout<<") != (";
+        transformed_paths[i].display();
+        std::cout<<")"<<std::endl;
+        res=false;
+      }
+    }
+
+    if (draw)
+    {
+      std::string title="Test "+std::to_string(nbtests);
+      display(paths[0].get_map(), v, title.c_str());
     }
 
 #ifdef CGAL_TRACE_PATH_TESTS
-    std::cout<<" -> "<<std::flush; path.display();
     std::cout<<std::endl;
 #endif
   }
@@ -385,66 +413,62 @@ bool test_torus_quad(bool draw, int testtorun)
 {
   bool res=true;
 
-  if (testtorun==-1 || nbtests==testtorun)
+  LCC_3_cmap lcc;
+  if (!CGAL::load_off(lcc, "./data/torus_quad.off"))
   {
-#ifdef CGAL_TRACE_PATH_TESTS
-    std::cout<<"[Test "<<nbtests<<"] canonize paths on torus: "<<std::flush;
-#else
-    std::cout<<"."<<std::flush;
-#endif
-
-    LCC_3_cmap lcc;
-
-    if (!CGAL::load_off(lcc, "./data/torus_quad.off"))
-    {
-      std::cout<<"PROBLEM reading file ./data/torus_quad.off"<<std::endl;
-      exit(EXIT_FAILURE);
-    }
-    CGAL::Combinatorial_map_tools<LCC_3_cmap> cmt(lcc);
-
-    std::vector<CGAL::Path_on_surface<LCC_3_cmap> > paths;
-    std::vector<CGAL::Path_on_surface<LCC_3_cmap> > transformed_paths;
-    const char* expected_result[]={"83", "83", "83", "", "", ""};
-
-    for (int i=0; i<6; ++i)
-    {
-      paths.push_back(CGAL::Path_on_surface<LCC_3_cmap>(lcc));
-      CGAL::generate_ith_path_torus(paths[i], i);
-      transformed_paths.push_back
-          (cmt.transform_original_path_into_quad_surface(paths[i]));
-      transformed_paths[i].canonize();
-
-      if (transformed_paths[i]!=expected_result[i])
-      {
-        std::cout<<"[Test "<<nbtests<<"."<<i<<"] ERROR: ";
-        std::cout<<"we obtained "; transformed_paths[i].display();
-        std::cout<<" instead of ("<<expected_result[i]<<")"<<std::endl;
-        res=false;
-      }
-
-#ifdef CGAL_TRACE_PATH_TESTS
-      std::cout<<"Path["<<i<<"] -> (";
-      transformed_paths[i].display();
-      std::cout<<")  ";
-#endif
-    }
-
-#ifdef CGAL_TRACE_PATH_TESTS
-    std::cout<<std::endl;
-#endif
-
-    if (draw)
-    {
-      std::vector<const CGAL::Path_on_surface<LCC_3_cmap>*> v;
-      for (int i=0; i<6; ++i)
-      { v.push_back(&paths[i]); }
-
-      std::string title="Test "+std::to_string(nbtests);
-      display(lcc, v, title.c_str());
-    }
-
-    ++nbtests;
+    std::cout<<"PROBLEM reading file ./data/torus_quad.off"<<std::endl;
+    exit(EXIT_FAILURE);
   }
+
+  CGAL::Combinatorial_map_tools<LCC_3_cmap> cmt(lcc);
+
+  std::vector<CGAL::Path_on_surface<LCC_3_cmap> > paths;
+  std::vector<CGAL::Path_on_surface<LCC_3_cmap> > transformed_paths;
+
+  // Test 21 (3 g1 cycles)
+  for (int i=0; i<3; ++i)
+  {
+    paths.push_back(CGAL::Path_on_surface<LCC_3_cmap>(lcc));
+    CGAL::generate_g1_torus(paths[i], i);
+    transformed_paths.push_back
+        (cmt.transform_original_path_into_quad_surface(paths[i]));
+  }
+
+  if (!unit_test_canonize(paths, transformed_paths,
+                          "canonize paths on torus gen1",
+                          draw, testtorun))
+  { res=false; }
+
+  // Test 22 (3 null cycles)
+  paths.clear(); transformed_paths.clear();
+  for (int i=0; i<3; ++i)
+  {
+    paths.push_back(CGAL::Path_on_surface<LCC_3_cmap>(lcc));
+    CGAL::generate_null_cycle_torus(paths[i], i);
+    transformed_paths.push_back
+        (cmt.transform_original_path_into_quad_surface(paths[i]));
+  }
+
+  if (!unit_test_canonize(paths, transformed_paths,
+                          "canonize paths on torus null cycles",
+                          draw, testtorun))
+  { res=false; }
+
+  // Test 23 (3 g2 cycles) TODO BUG IN TEST 23 !!!
+  /* paths.clear(); transformed_paths.clear();
+  for (int i=0; i<3; ++i)
+  {
+    paths.push_back(CGAL::Path_on_surface<LCC_3_cmap>(lcc));
+    CGAL::generate_g2_torus(paths[i], i);
+    transformed_paths.push_back
+        (cmt.transform_original_path_into_quad_surface(paths[i]));
+  }
+
+  if (!unit_test_canonize(paths, transformed_paths,
+                          "canonize paths on torus gen2",
+                          draw, testtorun))
+  { res=false; }
+  */
 
   return res;
 }
@@ -488,19 +512,19 @@ bool test_elephant(bool draw, int testtorun) // TODO LATER
   bool res=true;
 
   if (!unit_test(pp1, FULL_SIMPLIFICATION, 0, "1st random path on off file",
-                 "", draw, testtorun)) // Test 21
+                 "", draw, testtorun)) // Test XX
   { res=false; }
 
   if (!unit_test(pp2, FULL_SIMPLIFICATION, 0, "2nd random path on off file",
-                 "", draw, testtorun)) // Test 22
+                 "", draw, testtorun)) // Test XX
   { res=false; }
 
   if (!unit_test(pp3, FULL_SIMPLIFICATION, 0, "3rd random path on off file",
-                 "", draw, testtorun)) // Test 23
+                 "", draw, testtorun)) // Test XX
   { res=false; }
 
   if (!unit_test(pp4, FULL_SIMPLIFICATION, 0, "4th random path on off file",
-                 "", draw, testtorun)) // Test 24
+                 "", draw, testtorun)) // Test XX
   { res=false; }
 
   return res;

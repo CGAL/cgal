@@ -683,6 +683,9 @@ public:
   // Canonize the path
   void canonize()
   {
+    if (!is_closed())
+    { return; }
+
     bool modified=false;
     do
     {
@@ -749,7 +752,6 @@ public:
   {
     assert(start==0 || start<resplus.size());
     assert(resplus.size()==resmoins.size());
-    assert(resplus.size()==length());
 
     std::string sturns(turns);
     std::istringstream iss(sturns);
