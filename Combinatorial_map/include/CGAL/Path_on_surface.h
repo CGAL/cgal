@@ -48,6 +48,93 @@ public:
     std::swap(m_is_closed, p2.m_is_closed);
   }
 
+  /// @Return true if this path is equal to other path, identifying dart 0 of
+  ///          this path with dart start in other path.
+  bool are_same_paths_from(const Self& other, std::size_t start) const
+  {
+    assert(start==0 || start<length());
+
+    if (length()!=other.length() || is_closed()!=other.is_closed())
+    { return false; }
+
+    if (!is_closed() && start>0) { return false; }
+
+    for(std::size_t i=0; i<length(); ++i)
+    {
+      if (get_ith_dart(i)!=other.get_ith_dart(start))
+      { return false; }
+      start=next_index(start);
+    }
+    return true;
+  }
+
+  /// @return true if this path is equal to other path. For closed paths, test
+  ///         all possible starting darts.
+  bool operator==(const Self& other) const
+  {
+    if (length()!=other.length() || is_closed()!=other.is_closed())
+    { return false; }
+
+    if (!is_closed())
+    { return are_same_paths_from(other, 0); }
+
+    for(std::size_t start=0; start<length(); ++start)
+    {
+      if (are_same_paths_from(other, start))
+      { return true; }
+    }
+    return false;
+  }
+  bool operator!=(const Self&  other) const
+  { return !(operator==(other)); }
+
+  /// @Return true if this path is equal to other path, identifying dart 0 of
+  ///          this path with dart start in other path. other path is given
+  ///          by index of its darts, in text format.
+  bool are_same_paths_from(const char* other, std::size_t start) const
+  {
+    assert(start==0 || start<length());
+
+    std::string sother(other);
+    std::istringstream iss(sother);
+    uint64_t nb;
+
+    if (!is_closed() && start>0) { return false; }
+
+    for(std::size_t i=0; i<length(); ++i)
+    {
+      if (!iss.good())
+      { return false; }
+      iss>>nb;
+      if (nb!=m_map.darts().index(get_ith_dart(start)))
+      { return false; }
+      start=next_index(start);
+    }
+    iss>>nb;
+    if (iss.good())
+    { return false; } // There are more elements in other than in this path
+
+    return true;
+  }
+
+  /// @return true if this path is equal to other path. For closed paths, test
+  ///         all possible starting darts. other path is given by index of its
+  ///         darts, in text format.
+  bool operator==(const char*  other) const
+  {
+    if (!is_closed())
+    { return are_same_paths_from(other, 0); }
+
+    for(std::size_t start=0; start<length(); ++start)
+    {
+      if (are_same_paths_from(other, start))
+      { return true; }
+    }
+    return false;
+  }
+  bool operator!=(const char*  other) const
+  { return !(operator==(other)); }
+
   // @return true iff the path is empty
   bool is_empty() const
   { return m_path.empty(); }
@@ -174,6 +261,16 @@ public:
     m_map.free_mark(markedge);
 
     return res;
+  }
+
+  void reverse()
+  {
+    std::vector<Dart_const_handle> new_path(m_path.size());
+    for (std::size_t i=0; i<m_path.size(); ++i)
+    {
+      new_path[m_path.size()-1-i]=m_map.template beta<2>(m_path[i]);
+    }
+    new_path.swap(m_path);
   }
 
   /// @return the turn between dart number i and dart number i+1.
@@ -393,7 +490,6 @@ public:
   }
 
   // Simplify the path by removing all possible brackets and spurs
-
   void simplify()
   {
     bool modified=false;
@@ -584,6 +680,23 @@ public:
     return res;
   }
 
+  // Canonize the path
+  void canonize()
+  {
+    bool modified=false;
+    do
+    {
+      modified=bracket_flattening_one_step();
+      if (!modified)
+      {
+        modified=remove_spurs_one_step();
+        if (!modified)
+        { modified=right_push_one_step(); }
+      }
+    }
+    while(modified);
+  }
+
   std::vector<std::size_t> compute_positive_turns() const
   {
     std::vector<std::size_t> res;
@@ -636,6 +749,7 @@ public:
   {
     assert(start==0 || start<resplus.size());
     assert(resplus.size()==resmoins.size());
+    assert(resplus.size()==length());
 
     std::string sturns(turns);
     std::istringstream iss(sturns);
@@ -650,9 +764,7 @@ public:
           (nb<0 && resmoins[start]!=-nb))
       { return false; }
 
-      ++start;
-      if (start==resplus.size())
-      { start=0; }
+      start=next_index(start);
     }
     iss>>nb;
     if (iss.good())
@@ -669,7 +781,7 @@ public:
     if (!is_closed())
     { return same_turns_from(turns, resplus, resmoins, 0); }
 
-    for (std::size_t start=0; start<resplus.size(); ++start)
+    for (std::size_t start=0; start<length(); ++start)
     {
       if (same_turns_from(turns, resplus, resmoins, start))
       { return true; }
@@ -703,14 +815,15 @@ public:
     display_negative_turns();
   }
 
-  void reverse()
+  void display() const
   {
-    std::vector<Dart_const_handle> new_path(m_path.size());
-    for (std::size_t i=0; i<m_path.size(); ++i)
+    for (std::size_t i=0; i<length(); ++i)
     {
-      new_path[m_path.size()-1-i]=m_map.template beta<2>(m_path[i]);
+      std::cout<<m_map.darts().index(get_ith_dart(i));
+      if (i<length()-1) { std::cout<<" "; }
     }
-    new_path.swap(m_path);
+    if (is_closed())
+    { std::cout<<" "<<m_map.darts().index(get_ith_dart(0)); }
   }
 
 protected:

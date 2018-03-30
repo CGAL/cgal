@@ -259,7 +259,8 @@ namespace CGAL {
       for (typename Map::Dart_range::iterator it=m_map.darts().begin(),
            itend=m_map.darts().end(); it!=itend; ++it)
       {
-        if (get_uftree(uftrees, vertices, it)!=
+        if (m_map.is_dart_used(it) &&
+            get_uftree(uftrees, vertices, it)!=
             get_uftree(uftrees, vertices, m_map.template beta<2>(it)))
         {
           mark_edge(m_original_map, copy_to_origin[it], m_mark_T);
@@ -267,7 +268,12 @@ namespace CGAL {
 
           uftrees.unify_sets(get_uftree(uftrees, vertices, it),
                              get_uftree(uftrees, vertices, m_map.template beta<2>(it)));
-          m_map.template contract_cell<1>(it);
+          //m_map.template contract_cell<1>(it);
+          Dart_handle d1=it, d2=m_map.template beta<2>(it);
+          m_map.template link_beta<1>(m_map.template beta<0>(d1), m_map.template beta<1>(d1));
+          m_map.template link_beta<1>(m_map.template beta<0>(d2), m_map.template beta<1>(d2));
+          m_map.erase_dart(d1);
+          m_map.erase_dart(d2);
         }
       }
 
@@ -289,12 +295,14 @@ namespace CGAL {
       {
         if (!m_original_map.is_marked(it, m_mark_T))
         {
-          if (m_original_map.template is_free<2>(it) ||
-              it<m_original_map.template beta<2>(it))
+          assert(!m_original_map.template is_free<2>(it));
+          if (it<m_original_map.template beta<2>(it))
           {
             paths[it]=std::make_pair
                 (origin_to_copy.at(it),
                  m_map.template beta<2>(origin_to_copy.at(it)));
+            assert(paths[it].first!=paths[it].second);
+            assert(paths[it].first==m_map.template beta<2>(paths[it].second));
           }
         }
       }
@@ -350,7 +358,11 @@ namespace CGAL {
           }
         }
       }
-      
+
+      /* m_map.display_characteristics(std::cout) << ", valid="
+                                             << m_map.is_valid() << std::endl;
+      m_map.display_darts(std::cout)<<std::endl; */
+
       if (m_map.number_of_marked_darts(toremove)==m_map.number_of_darts())
       {
         // Case of sphere; all darts are removed.
@@ -358,26 +370,36 @@ namespace CGAL {
       }
       else
       {
+        // std::cout<<"************************************************"<<std::endl;
         // We update the pair of darts
         for (typename TPaths::iterator itp=paths.begin(), itpend=paths.end();
              itp!=itpend; ++itp)
         {
           std::pair<Dart_const_handle, Dart_const_handle>& p=itp->second;
-          Dart_const_handle initdart=p.first;
+          //std::cout<<"Pair: "<<m_map.darts().index(p.first)<<", "
+          //         <<m_map.darts().index(p.second)<<": "<<std::flush;
+
           //std::cout<<m_map.darts().index(p.first)<<"; "<<std::flush;
+          p.first=m_map.template beta<0>(p.first);
+          Dart_const_handle initdart=p.first;
           while (m_map.is_marked(p.first, toremove))
           {
-            p.first=m_map.template beta<0, 2>(p.first);
-            // std::cout<<m_map.darts().index(p.first)<<"; "<<std::flush;
+            p.first=m_map.template beta<2, 0>(p.first);
+            //std::cout<<m_map.darts().index(p.first)<<"; "<<std::flush;
             assert(p.first!=initdart);
           }
-          // std::cout<<std::endl;
+          //std::cout<<std::endl;
+          p.second=m_map.template beta<0>(p.second);
           initdart=p.second;
           while (m_map.is_marked(p.second, toremove))
           {
-            p.second=m_map.template beta<0, 2>(p.second);
+            p.second=m_map.template beta<2, 0>(p.second);
+            //std::cout<<m_map.darts().index(p.second)<<"; "<<std::flush;
             assert(p.second!=initdart);
           }
+          //std::cout<<std::endl;
+          //std::cout<<" -> "<<m_map.darts().index(p.first)<<", "
+          //         <<m_map.darts().index(p.second)<<std::endl;
         }
       }
 
@@ -411,13 +433,22 @@ namespace CGAL {
       m_map.insert_point_in_cell_2(m_map.darts().begin(),
                                    m_map.point(m_map.darts().begin()));
 
+      // m_map.display_darts(std::cout);
+
       // 2) We update the pair of darts
+      // std::cout<<"************************************************"<<std::endl;
       for (typename TPaths::iterator itp=paths.begin(), itpend=paths.end();
            itp!=itpend; ++itp)
       {
         std::pair<Dart_const_handle, Dart_const_handle>& p=itp->second;
-        p.first=m_map.template beta<0, 2>(p.first);
-        p.second=m_map.template beta<0>(p.second);
+        //std::cout<<"Pair: "<<m_map.darts().index(p.first)<<", "
+        //         <<m_map.darts().index(p.second)<<std::flush;
+        p.first=m_map.template beta<1>(p.first);
+        p.second=m_map.template beta<1,2>(p.second);
+        //std::cout<<" -> "<<m_map.darts().index(p.first)<<", "
+        //         <<m_map.darts().index(p.second)<<std::endl;
+        // WRONG ASSERTS assert(p.first!=p.second);
+        // assert(p.first!=m_map.template beta<2>(p.second));
       }
 
       // 3) We remove all the old edges.
@@ -504,6 +535,7 @@ namespace CGAL {
     /// 3) the origin of the second dart of the pair is the extremity of the
     ///    first dart.
     /// 4) all the darts of m_map are not free (both for beta 1 and 2)
+    /// 5) The two darts in a pair are different
     bool are_paths_valid() const
     {
       bool res=true;
@@ -571,6 +603,12 @@ namespace CGAL {
         {
           std::cout<<"ERROR: second dart in paths does not belong to m_map."
                   <<std::endl;
+          res=false;
+        }
+        if (it->second.first==it->second.second)
+        {
+          std::cout<<"ERROR: two darts in the same pair are equal."
+                   <<std::endl;
           res=false;
         }
       }

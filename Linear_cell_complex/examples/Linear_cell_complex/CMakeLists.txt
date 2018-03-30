@@ -25,7 +25,7 @@ include("CMakeBasicViewerQt.inc")
 # To use valgrind, we must disable rounding math ckeck.
 # add_definitions(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
 
-add_definitions(-DCGAL_TRACE_CMAP_TOOLS) # to trace construction of Combinatorial_map_tools
+# add_definitions(-DCGAL_TRACE_CMAP_TOOLS) # to trace construction of Combinatorial_map_tools
 add_definitions(-DCGAL_TRACE_PATH_TESTS) # to trace tests on path transfromations
 
 if ( CGAL_FOUND )

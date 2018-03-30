@@ -209,6 +209,90 @@ void generate_l_shape_case8(Path& p)
   extend_straight_negative(p, 19);
 }
 
+template<typename Path>
+void generate_path0_torus(Path& p)
+{ // 1st generator
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[0]));
+  extend_straight_negative(p, 4);
+}
+
+template<typename Path>
+void generate_path1_torus(Path& p)
+{ // 1st generator v2
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[20]));
+  extend_straight_negative(p, 4);
+}
+
+template<typename Path>
+void generate_path2_torus(Path& p)
+{ // 1st generator v3
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[20]));
+  extend_uturn_negative(p, 1);
+  extend_straight_negative(p, 1);
+  extend_uturn_positive(p, 1);
+  extend_straight_negative(p, 2);
+  extend_uturn_positive(p, 1);
+  extend_straight_negative(p, 2);
+  extend_uturn_negative(p, 1);
+  extend_uturn_negative(p, 1);
+}
+
+template<typename Path>
+void generate_path3_torus(Path& p)
+{ // Empty cycle
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[20]));
+  extend_uturn_positive(p, 1);
+  extend_uturn_positive(p, 1);
+  extend_uturn_positive(p, 1);
+}
+
+template<typename Path>
+void generate_path4_torus(Path& p)
+{ // Empty cycle v2
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[20]));
+  extend_uturn_positive(p, 1);
+  extend_straight_positive(p, 1);
+  extend_uturn_positive(p, 1);
+  extend_uturn_positive(p, 1);
+  extend_straight_positive(p, 1);
+}
+
+template<typename Path>
+void generate_path5_torus(Path& p)
+{ // Empty cycle v3
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[20]));
+  extend_uturn_negative(p, 1);
+  extend_straight_negative(p, 3);
+  extend_uturn_negative(p, 1);
+  extend_straight_negative(p, 2);
+  extend_uturn_negative(p, 1);
+  extend_straight_negative(p, 3);
+  extend_uturn_negative(p, 1);
+  extend_straight_negative(p, 1);
+}
+
+template<typename Path>
+void generate_ith_path_torus(Path& p, std::size_t i)
+{
+  assert(i<6);
+  switch(i)
+  {
+    case 0: generate_path0_torus(p); break;
+    case 1: generate_path1_torus(p); break;
+    case 2: generate_path2_torus(p); break;
+    case 3: generate_path3_torus(p); break;
+    case 4: generate_path4_torus(p); break;
+    case 5: generate_path5_torus(p); break;
+    default: assert(false);
+  }
+}
+
 } // namespace CGAL
 
 #endif // CGAL_CREATION_OF_TEST_CASES_FOR_PATHS_H //

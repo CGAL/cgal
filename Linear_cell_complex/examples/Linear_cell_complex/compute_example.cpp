@@ -115,7 +115,7 @@ bool unit_test(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
 {
   bool res=true;
 
-  if (testtorun==-1 || nbtests==testtorun) // Test 0
+  if (testtorun==-1 || nbtests==testtorun)
   {
 #ifdef CGAL_TRACE_PATH_TESTS
     std::cout<<"[Test "<<nbtests<<"] "<<msg<<": "<<std::flush;
@@ -136,6 +136,40 @@ bool unit_test(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
 
 #ifdef CGAL_TRACE_PATH_TESTS
     std::cout<<" -> "<<std::flush; path.display_pos_and_neg_turns();
+    std::cout<<std::endl;
+#endif
+  }
+
+  ++nbtests;
+  return res;
+}
+///////////////////////////////////////////////////////////////////////////////
+bool unit_test_canonize(CGAL::Path_on_surface<LCC_3_cmap>& path,
+                        const char* msg, const char* expected_result,
+                        int testtorun)
+{
+  bool res=true;
+
+  if (testtorun==-1 || nbtests==testtorun)
+  {
+#ifdef CGAL_TRACE_PATH_TESTS
+    std::cout<<"[Test "<<nbtests<<"] "<<msg<<": "<<std::flush;
+#else
+    std::cout<<"."<<std::flush;
+#endif
+
+    path.canonize();
+
+    if (path!=expected_result)
+    {
+      std::cout<<"[Test "<<nbtests<<"] ERROR: ";
+      std::cout<<"we obtained "; path.display();
+      std::cout<<" instead of ("<<expected_result<<")"<<std::endl;
+      res=false;
+    }
+
+#ifdef CGAL_TRACE_PATH_TESTS
+    std::cout<<" -> "<<std::flush; path.display();
     std::cout<<std::endl;
 #endif
   }
@@ -347,7 +381,76 @@ bool test_some_random_paths_on_cube(bool draw, int testtorun)
   return true;
 }
 ///////////////////////////////////////////////////////////////////////////////
-bool test_file(bool draw, int testtorun)
+bool test_torus_quad(bool draw, int testtorun)
+{
+  bool res=true;
+
+  if (testtorun==-1 || nbtests==testtorun)
+  {
+#ifdef CGAL_TRACE_PATH_TESTS
+    std::cout<<"[Test "<<nbtests<<"] canonize paths on torus: "<<std::flush;
+#else
+    std::cout<<"."<<std::flush;
+#endif
+
+    LCC_3_cmap lcc;
+
+    if (!CGAL::load_off(lcc, "./data/torus_quad.off"))
+    {
+      std::cout<<"PROBLEM reading file ./data/torus_quad.off"<<std::endl;
+      exit(EXIT_FAILURE);
+    }
+    CGAL::Combinatorial_map_tools<LCC_3_cmap> cmt(lcc);
+
+    std::vector<CGAL::Path_on_surface<LCC_3_cmap> > paths;
+    std::vector<CGAL::Path_on_surface<LCC_3_cmap> > transformed_paths;
+    const char* expected_result[]={"83", "83", "83", "", "", ""};
+
+    for (int i=0; i<6; ++i)
+    {
+      paths.push_back(CGAL::Path_on_surface<LCC_3_cmap>(lcc));
+      CGAL::generate_ith_path_torus(paths[i], i);
+      transformed_paths.push_back
+          (cmt.transform_original_path_into_quad_surface(paths[i]));
+      transformed_paths[i].canonize();
+
+      if (transformed_paths[i]!=expected_result[i])
+      {
+        std::cout<<"[Test "<<nbtests<<"."<<i<<"] ERROR: ";
+        std::cout<<"we obtained "; transformed_paths[i].display();
+        std::cout<<" instead of ("<<expected_result[i]<<")"<<std::endl;
+        res=false;
+      }
+
+#ifdef CGAL_TRACE_PATH_TESTS
+      std::cout<<"Path["<<i<<"] -> (";
+      transformed_paths[i].display();
+      std::cout<<")  ";
+#endif
+    }
+
+#ifdef CGAL_TRACE_PATH_TESTS
+    std::cout<<std::endl;
+#endif
+
+    if (draw)
+    {
+      std::vector<const CGAL::Path_on_surface<LCC_3_cmap>*> v;
+      for (int i=0; i<6; ++i)
+      { v.push_back(&paths[i]); }
+
+      std::string title="Test "+std::to_string(nbtests);
+      display(lcc, v, title.c_str());
+    }
+
+    ++nbtests;
+  }
+
+  return res;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool test_elephant(bool draw, int testtorun) // TODO LATER
 {
   LCC_3_cmap lcc;
   if (!CGAL::load_off(lcc, "./data/elephant.off"))
@@ -473,11 +576,17 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  if (!test_file(draw, testN))
+  if (!test_torus_quad(draw, testN))
+  {
+    std::cout<<"TEST TORUS FAILED."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
+  /* TODO LATER if (!test_file(draw, testN))
   {
     std::cout<<"TEST FILE FAILED."<<std::endl;
     return EXIT_FAILURE;
-  }
+  } */
 
   if (testN==-1)
   { std::cout<<"all the "<<nbtests<<" tests OK."<<std::endl; }
