@@ -245,6 +245,7 @@ private:
         }
       }
 
+      CGAL_assume(false);
       return false;
     }
 
