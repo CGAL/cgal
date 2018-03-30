@@ -27,7 +27,7 @@ Release date: April 2018
 ### Header-only mode
 
 - Since CGAL-4.9, it was possible to use CGAL by configuring it using
-  CMake, but without compiling the CGAL libraries. With CGAL-4.11, it is
+  CMake, but without compiling the CGAL libraries. With CGAL-4.12, it is
   now possible to use CGAL header-only, without even configuring it. CMake
   is then used only to configure programs using CGAL.
 
