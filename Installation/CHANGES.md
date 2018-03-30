@@ -54,6 +54,13 @@ Release date: April 2018
     will have to keep using the source code available in CGAL-4.11 or
     earlier.
 
+
+### 3D Convex Hull
+
+-   **Breaking change**: The header `<CGAL/convex_hull_3.h>` no longer
+    includes `<CGAL/Polyhedron_3.h>`, as the convex hull function works
+    with any model of the concept `MutableFaceGraph`.
+
 ### 2D Arrangements
 
 -   When removing an edge from an arrangement and the user has requested to

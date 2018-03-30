@@ -30,6 +30,7 @@
 #include <CGAL/HalfedgeDS_items_decorator.h>
 #include <CGAL/memory.h>
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/N_step_adaptor_derived.h>
 #include <cstddef>
 
 namespace CGAL {
@@ -135,6 +136,11 @@ public:
     typedef typename Halfedge_list::iterator           Halfedge_iterator;
     typedef typename Halfedge_list::const_iterator     Halfedge_const_iterator;
 
+    typedef N_step_adaptor_derived<Halfedge_iterator, 2>
+                                                       Edge_iterator;
+    typedef N_step_adaptor_derived<Halfedge_const_iterator, 2>
+                                                       Edge_const_iterator;
+  
     typedef In_place_list<Face,false,Face_allocator>   Face_list;
     typedef typename Face_list::iterator               Face_handle;
     typedef typename Face_list::const_iterator         Face_const_handle;

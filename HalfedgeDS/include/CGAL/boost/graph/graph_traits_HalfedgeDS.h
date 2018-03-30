@@ -179,7 +179,6 @@ public:
   typedef CGAL::Prevent_deref<typename HDS::Halfedge_iterator>   halfedge_iterator;
 
 
-
   typedef boost::transform_iterator<
     internal::Construct_edge<typename HDS::Halfedge_handle>,
     edge_iterator_i,
