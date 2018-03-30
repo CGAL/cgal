@@ -396,6 +396,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
         Scene_facegraph_item* item = convert_to_plain_facegraph(i, edit_item);
         item->setRenderingMode(last_RM);
         updateSelectionItems(item);
+        item->itemChanged();
       }
     }
   }
