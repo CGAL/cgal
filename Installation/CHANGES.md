@@ -24,6 +24,13 @@ Release date: April 2018
     to `Release` manually, to avoid using CGAL libraries without any
     compile-time optimization.
 
+### Header-only mode
+
+- Since CGAL-4.9, it was possible to use CGAL by configuring it using
+  CMake, but without compiling the CGAL libraries. With CGAL-4.11, it is
+  now possible to use CGAL header-only, without even configuring it. CMake
+  is then used only to configure programs using CGAL.
+
 ### 2D Movable Separability of Sets (new package)
 
 -   A new package called "2D Movable Separability of Sets" has been
