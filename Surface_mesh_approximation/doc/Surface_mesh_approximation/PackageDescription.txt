@@ -39,7 +39,6 @@ and provides the list of parameters used in this package.
 
 ## Classes ##
 - `CGAL::VSA::L21_metric_vector_proxy`
-- `CGAL::VSA::L21_metric_vector_proxy_no_area_weighting`
 - `CGAL::VSA::L2_metric_plane_proxy`
 - `CGAL::VSA_approximation`
 

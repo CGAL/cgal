@@ -175,7 +175,7 @@ The input of the algorithm is expected to be:
 
 \subsection sma_example1 Free Function Approximation
 
-The following example calls the free function `CGAL::mesh_approximation()` on the input triangle mesh with default `CGAL::VSA::L21_metric_plane_proxy_no_area_weighting`.
+The following example calls the free function `CGAL::mesh_approximation()` on the input triangle mesh with default `CGAL::VSA::L21_metric_vector_proxy`.
 
 \cgalExample{Surface_mesh_approximation/vsa_approximation_example.cpp}
 
