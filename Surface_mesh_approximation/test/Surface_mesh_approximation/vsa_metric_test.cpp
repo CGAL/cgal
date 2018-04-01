@@ -23,12 +23,12 @@ typedef boost::associative_property_map<std::map<Facet_handle, Point> > Facet_ce
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
 
 // user defined point-wise compact metric
-struct Compact_metric {
+struct Compact_metric_point_proxy {
 // use point as proxy
   typedef Point Proxy;
 
   // we keep a precomputed property map to speed up computations
-  Compact_metric(const Facet_center_map &_center_pmap, const Facet_area_map &_area_pmap)
+  Compact_metric_point_proxy(const Facet_center_map &_center_pmap, const Facet_area_map &_area_pmap)
     : center_pmap(_center_pmap), area_pmap(_area_pmap) {}
 
   // compute and return error from a facet to a proxy,
@@ -59,7 +59,7 @@ struct Compact_metric {
 };
 
 typedef CGAL::VSA_approximation<
-  Polyhedron, Vertex_point_map, Compact_metric> Compact_approx;
+  Polyhedron, Vertex_point_map, Compact_metric_point_proxy> Compact_approx;
 
 /**
  * This file tests the user defined metric.
@@ -93,7 +93,7 @@ int main()
   Compact_approx approx(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
 
-  Compact_metric error_metric(center_pmap, area_pmap);
+  Compact_metric_point_proxy error_metric(center_pmap, area_pmap);
   approx.set_metric(error_metric);
 
   std::cout << "random seeding and run" << std::endl;
