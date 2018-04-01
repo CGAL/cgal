@@ -34,21 +34,21 @@ struct Compact_metric_point_proxy
   // compute and return error from a facet to a proxy,
   // defined as the Euclidean distance between
   // the facet center of mass and proxy point.
-  FT compute_error(const Facet_handle &f, const Proxy &px) const {
+  FT compute_error(const Polyhedron &tm, const Facet_handle &f, const Proxy &px) const {
     return FT(std::sqrt(CGAL::to_double(
       CGAL::squared_distance(center_pmap[f], px))));
   }
 
   // template functor to compute a best-fit 
-  // proxy from a range of facets
-  template<typename FacetIterator>
-  Proxy fit_proxy(const FacetIterator beg, const FacetIterator end) const {
+  // proxy from a range of faces
+  template <typename FaceRange>
+  Proxy fit_proxy(const Polyhedron &tm, const FaceRange &faces) const {
     // fitting center
     Vector center = CGAL::NULL_VECTOR;
     FT sum_areas = FT(0.0);
-    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
-      center = center + (center_pmap[*fitr] - CGAL::ORIGIN) * area_pmap[*fitr];
-      sum_areas += area_pmap[*fitr];
+    BOOST_FOREACH(const Facet_handle &f, faces) {
+      center = center + (center_pmap[f] - CGAL::ORIGIN) * area_pmap[f];
+      sum_areas += area_pmap[f];
     }
     center = center / sum_areas; // TODO: deal with case where sum = 0
     return CGAL::ORIGIN + center;

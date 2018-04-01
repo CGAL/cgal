@@ -72,11 +72,12 @@ public:
   /*!
    * @brief Computes the L21 error from a face to a proxy, 
    * using integral (closed-form) computation.
+   * @param tm input triangle mesh
    * @param f face_descriptor of a face
    * @param px proxy
    * @return computed error
    */
-  FT compute_error(const face_descriptor &f, const Proxy &px) const {
+  FT compute_error(const TriangleMesh &tm, const face_descriptor &f, const Proxy &px) const {
     halfedge_descriptor he = halfedge(f, *m_tm);
     const Point_3 &p0 = m_vpmap[source(he, *m_tm)];
     const Point_3 &p1 = m_vpmap[target(he, *m_tm)];
@@ -93,21 +94,22 @@ public:
   }
 
   /*!
-   * @brief Fits a proxy from a face range, in the L2 sense, with an 
+   * @brief Fits a proxy from a range of faces, in the L2 sense, with an 
    * integral (closed-form) formulation. The best-fit plane passes
    * through the center of mass and is defined by the two principal
    * components of the integral covariance matrix.
-   * @param beg face range begin
-   * @param end face range end
+   * @tparam FaceRange range of face descriptors, model of Range.
+   * @param tm input triangle mesh
+   * @param faces the range of faces to be fitted
    * @return fitted proxy
    */
-  template <typename FacetIterator>
-  Proxy fit_proxy(const FacetIterator beg, const FacetIterator end) const {
-    CGAL_assertion(beg != end);
+  template <typename FaceRange>
+  Proxy fit_proxy(const TriangleMesh &tm, const FaceRange &faces) const {
+    CGAL_assertion(!faces.empty());
 
     std::list<Triangle_3> tris;
-    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
-      halfedge_descriptor he = halfedge(*fitr, *m_tm);
+    BOOST_FOREACH(const face_descriptor &f, faces) {
+      const halfedge_descriptor he = halfedge(f, *m_tm);
       const Point_3 &p0 = m_vpmap[source(he, *m_tm)];
       const Point_3 &p1 = m_vpmap[target(he, *m_tm)];
       const Point_3 &p2 = m_vpmap[target(next(he, *m_tm), *m_tm)];

@@ -80,30 +80,32 @@ public:
   /// \name Operations
   /*!
    * @brief Computes the L2,1 error from a facet to a proxy. 
+   * @param tm input triangle mesh
    * @param f face_descriptor of a face
    * @param px proxy
    * @return computed error
    */
-  FT compute_error(const face_descriptor &f, const Proxy &px) const {
+  FT compute_error(const TriangleMesh &tm, const face_descriptor &f, const Proxy &px) const {
     Vector_3 v = m_sum_functor(get(m_fnmap, f), m_scale_functor(px, FT(-1.0)));
     return get(m_famap, f) * m_scalar_product_functor(v, v);
   }
 
   /*!
-   * @brief Fits a proxy to a face range.
-   * @param beg face range begin
-   * @param end face range end
+   * @brief Fits a proxy to a range of faces.
+   * @tparam FaceRange range of face descriptors, model of Range.
+   * @param tm input triangle mesh
+   * @param faces the range of faces to be fitted
    * @return fitted proxy
    */
-  template <typename FacetIterator>
-  Proxy fit_proxy(const FacetIterator beg, const FacetIterator end) const {
-    CGAL_assertion(beg != end);
+  template <typename FaceRange>
+  Proxy fit_proxy(const TriangleMesh &tm, const FaceRange &faces) const {
+    CGAL_assertion(!faces.empty());
 
     // fitting normal
     Vector_3 norm = CGAL::NULL_VECTOR;
-    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
+    BOOST_FOREACH(const face_descriptor &f, faces) {
       norm = m_sum_functor(norm,
-        m_scale_functor(get(m_fnmap, *fitr), get(m_famap, *fitr)));
+        m_scale_functor(get(m_fnmap, f), get(m_famap, f)));
     }
     norm = m_scale_functor(norm,
       FT(1.0 / std::sqrt(CGAL::to_double(norm.squared_length()))));

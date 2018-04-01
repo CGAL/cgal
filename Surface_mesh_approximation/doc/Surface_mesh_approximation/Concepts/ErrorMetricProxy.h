@@ -14,6 +14,8 @@ class ErrorMetricProxy {
 public:
   /// Number type model of `Field` and `RealEmbeddable`
   typedef unspecified_type FT;
+  /// Triangle mesh
+  typedef unspecified_type TriangleMesh;
   /// Triangle mesh face descriptor
   typedef unspecified_type face_descriptor;
   /// Parameterized shape proxy
@@ -24,11 +26,11 @@ public:
   /// @{
 
   /// returns fitting error from face f to proxy.
-  FT compute_error(const face_descriptor &f, const Proxy &proxy) const;
+  FT compute_error(const TriangleMesh &tm, const face_descriptor &f, const Proxy &proxy) const;
 
-  /// returns fitted proxy for a range of facets.
-  template <typename FacetIterator>
-  Proxy fit_proxy(const FacetIterator &begin, const FacetIterator &end) const;
+  /// returns fitted proxy from a range of faces.
+  template <typename FaceRange>
+  Proxy fit_proxy(const TriangleMesh &tm, const FaceRange &faces) const;
 
   /// }
 
