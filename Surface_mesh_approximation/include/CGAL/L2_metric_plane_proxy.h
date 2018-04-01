@@ -16,9 +16,9 @@ namespace CGAL {
 namespace VSA {
 
 /// \ingroup PkgTSMA
-/// @brief Approximation L2 metric.
+/// @brief Approximation L2 metric of plane proxy.
 ///
-/// \cgalModels `ErrorMetric`
+/// \cgalModels `ErrorMetricProxy`
 ///
 /// @tparam TriangleMesh a triangle `FaceListGraph`
 /// @tparam VertexPointMap a property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`

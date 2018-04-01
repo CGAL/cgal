@@ -61,12 +61,12 @@ enum Approximation_seeding_tag {
 /// @brief Main class for Variational Shape Approximation algorithm.
 /// @tparam TriangleMesh CGAL TriangleMesh
 /// @tparam VertexPointMap vertex point map
-/// @tparam ErrorMetric approximation metric type
+/// @tparam ErrorMetricProxy approximation metric type
 /// @tparam GeomTraits geometric traits type
 /// @tparam Concurrency_tag concurrency tag
 template <typename TriangleMesh,
   typename VertexPointMap,
-  typename ErrorMetric = CGAL::Default,
+  typename ErrorMetricProxy = CGAL::Default,
   typename GeomTraits = CGAL::Default,
   typename Concurrency_tag = CGAL::Sequential_tag>
 class VSA_approximation {
@@ -85,12 +85,12 @@ public:
 #else
   typedef GeomTraits Geom_traits;
 #endif
-  // ErrorMetric type
+  // ErrorMetricProxy type
 #ifndef DOXYGEN_RUNNING
-  typedef typename CGAL::Default::Get<ErrorMetric,
+  typedef typename CGAL::Default::Get<ErrorMetricProxy,
     CGAL::VSA::L21_metric_vector_proxy<TriangleMesh, VertexPointMap, Geom_traits> >::type Error_metric;
 #else
-  typedef ErrorMetric Error_metric;
+  typedef ErrorMetricProxy Error_metric;
 #endif
   // Proxy type
   typedef typename Error_metric::Proxy Proxy;
@@ -342,7 +342,7 @@ public:
 
   /*!
    * @brief Sets the approximation traits.
-   * @param error_metric an `ErrorMetric` object.
+   * @param error_metric an `ErrorMetricProxy` object.
    */
   void set_metric(const Error_metric &error_metric) {
     m_metric = &error_metric;

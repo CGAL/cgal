@@ -2,15 +2,15 @@
 \ingroup PkgTSMAConcepts
 \cgalConcept
 
-The concept `FittingProxyErrorMetric` defines the notion of 
-proxy and computes the fitting error from a face to a `Proxy`,
-used in CGAL::VSA_approximation.
+The concept `ErrorMetricProxy` defines the notion of proxy,
+computes the fitting error from a face to a proxy,
+and fits a proxy from a range of faces.
 
-\cgalHasModel `CGAL::L2_metric_plane_proxy`
-\cgalHasModel `CGAL::L21_metric_plane_proxy`
+\cgalHasModel `CGAL::VSA::L21_metric_vector_proxy`
+\cgalHasModel `CGAL::VSA::L2_metric_plane_proxy`
 */
 
-class FittingProxyErrorMetric {
+class ErrorMetricProxy {
 public:
   /// Number type model of `Field` and `RealEmbeddable`
   typedef unspecified_type FT;
