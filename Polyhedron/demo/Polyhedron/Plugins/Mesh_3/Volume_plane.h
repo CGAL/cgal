@@ -518,6 +518,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
 
 template<typename T>
 void Volume_plane<T>::init(Viewer_interface* viewer) {
+  viewer->makeCurrent();
   is_grabbing = false;
   initShaders();
 
