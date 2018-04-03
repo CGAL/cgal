@@ -250,6 +250,7 @@ the state is inactive, nothing happens.
 There is a set of functions that
 provide support for the WKT format for 2D structures. Support Types are :
 - `CGAL::Point_2`
+- `CGAL::Point_3`
 - `CGAL::Polygon_with_holes_2`
 - Random Access Range of the previous types.
 */ 

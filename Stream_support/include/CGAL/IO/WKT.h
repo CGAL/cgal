@@ -360,7 +360,7 @@ write_multi_polygon_WKT( std::ostream& out,
 //! \brief write_multi_linestring_WKT writes the content of `mls` 
 //! into a WKT file.
 //! `MultiLineString` must be a `RandomAccessRange` of `LineString`. 
-//! \see `CGAL::write_linestring_WKT`
+//! \see `CGAL::write_linestring_WKT()`
 template<typename MultiLineString>
 std::ostream&
 write_multi_linestring_WKT( std::ostream& out,
