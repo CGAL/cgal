@@ -446,7 +446,7 @@ make_property_map(const std::vector<T>& v)
 ///
 /// \cgalModels `ReadWritePropertyMap`
 template<class KeyType, class ValueType>
-struct Default_property_map
+struct Constant_property_map
 {
   const ValueType default_value;
 
@@ -454,15 +454,15 @@ struct Default_property_map
   typedef ValueType                                     value_type;
   typedef boost::read_write_property_map_tag            category;
 
-  Default_property_map(const value_type& default_value = value_type()) : default_value (default_value) { }
+  Constant_property_map(const value_type& default_value = value_type()) : default_value (default_value) { }
 
   /// Free function that returns `pm.default_value`.
   inline friend value_type
-  get (const Default_property_map& pm, const key_type&){ return pm.default_value; }
+  get (const Constant_property_map& pm, const key_type&){ return pm.default_value; }
 
   /// Free function that does nothing.
   inline friend void
-  put (const Default_property_map&, const key_type&, const value_type&) { }
+  put (const Constant_property_map&, const key_type&, const value_type&) { }
 };
 
 /// \ingroup PkgProperty_map
