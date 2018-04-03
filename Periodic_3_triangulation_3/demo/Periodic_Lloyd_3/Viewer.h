@@ -49,7 +49,6 @@ public:
 public slots :
   void changed();
   void sceneChanged();
-  void render_video();
   
 signals:
   void valueChanged(int i);

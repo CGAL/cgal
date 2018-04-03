@@ -3483,7 +3483,9 @@ void QGLViewer::drawVisualHints() {
   rendering_program_light.setUniformValue("mv_matrix", mvMatrix);
   glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(g_axis_size/9));
   vaos[GRID_AXIS].release();
-  
+  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+  glEnable(GL_POLYGON_OFFSET_FILL);
+  glPolygonOffset(3.0f,-3.0f);
   //A x i s
   qglviewer::Camera::Type camera_type = camera()->type();
   camera()->setType(qglviewer::Camera::ORTHOGRAPHIC);

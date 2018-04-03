@@ -104,29 +104,6 @@ Viewer::next_around_circle(const float& phi, const Vec& pos, const Vec& ori) {
   return new_cam;  
 }
 
-void
-Viewer::render_video()
-{
-  setSnapshotFormat("PNG");
-  for (int alpha=0 ; alpha <= 100 ; alpha++ ) {
-    emit (valueChanged(alpha));
-    std::cout<<alpha<<std::endl;
-    QString alpha_str;
-    alpha_str.setNum(alpha);
-    displayMessage(QString("alpha: ") + alpha_str + QString("%"),10000);
-    
-    for (int fr=0 ; fr < 50 ; fr++) {
-      Vec cam = camera()->position();
-      Vec ori = sceneCenter();
-      Vec new_cam = next_around_circle(0.01f,cam,ori);
-      camera()->setPosition(new_cam);
-      camera()->lookAt(ori);
-      this->showEntireScene();
-      saveSnapshot(true);
-    }
-  }
-}
-
 void Viewer::initialize_buffers()
 {
     rendering_program.bind();
