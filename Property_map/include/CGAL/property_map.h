@@ -450,10 +450,10 @@ struct Default_property_map{
   typedef boost::readable_property_map_tag category;
 
   Default_property_map(const ValueType& default_value = ValueType()) : default_value (default_value) { }
-  
-  /// Free function to use a get the value from an iterator using Input_iterator_property_map.
-  inline friend ValueType
-  get (const Default_property_map&, const key_type&){ return ValueType(); }
+
+  /// Free function that returns `pm.default_value`.
+  inline friend value_type
+  get (const Default_property_map& pm, const key_type&){ return pm.default_value; }
 };
 
 /// \ingroup PkgProperty_map
