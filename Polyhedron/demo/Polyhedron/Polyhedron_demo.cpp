@@ -61,12 +61,7 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   parser.addOption(verbose);
   parser.addPositionalArgument("files", tr("Files to open"), "[files...]");
   parser.process(*this);
-  if(parser.isSet(verbose)) {
-    d_ptr->mainWindow.reset(new MainWindow(true));
-  }
-  else{
-    d_ptr->mainWindow.reset(new MainWindow);
-  }
+  d_ptr->mainWindow.reset(new MainWindow(parser.isSet(verbose)));
   MainWindow& mainWindow = *d_ptr->mainWindow;
   
   mainWindow.setWindowTitle(main_window_title);
