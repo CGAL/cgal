@@ -17,7 +17,6 @@ using namespace std;
 
 void Viewer::init()
 {
-    initializeOpenGLFunctions();
     glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
     if(!glDrawArraysInstanced)
     {
@@ -1621,10 +1620,13 @@ void Viewer::draw()
         rendering_program_spheres.bind();
         vao[11].bind();
         rendering_program_spheres.setUniformValue(colorLocation[1], m_colorTrackball);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         if(extension_is_found)
             glDrawArraysInstanced(GL_TRIANGLES, 0, points_trackBall->size()/3, 1);
         else
             glDrawArrays(GL_TRIANGLES, 0, points_trackBall->size()/3);
+        glDisable(GL_BLEND);
         vao[11].release();
         rendering_program_spheres.release();
     }
