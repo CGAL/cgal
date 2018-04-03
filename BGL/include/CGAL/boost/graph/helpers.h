@@ -958,48 +958,48 @@ make_icosahedron(
 
   std::vector<vertex_descriptor> face;
   face.resize(3);
-  face[1] = v_vertices[0]; face[0] = v_vertices[11]; face[2] = v_vertices[5];
+  face[1] = v_vertices[0]; face[0] = v_vertices[5]; face[2] = v_vertices[11];
   Euler::add_face(face, g);
-  face[1] = v_vertices[0]; face[0] = v_vertices[5]; face[2] = v_vertices[1];
+  face[1] = v_vertices[0]; face[0] = v_vertices[1]; face[2] = v_vertices[5];
   Euler::add_face(face, g);
-  face[1] = v_vertices[0]; face[0] = v_vertices[1]; face[2] = v_vertices[7];
+  face[1] = v_vertices[0]; face[0] = v_vertices[7]; face[2] = v_vertices[1];
   Euler::add_face(face, g);
-  face[1] = v_vertices[0]; face[0] = v_vertices[7]; face[2] = v_vertices[10];
+  face[1] = v_vertices[0]; face[0] = v_vertices[10]; face[2] = v_vertices[7];
   Euler::add_face(face, g);
-  face[1] = v_vertices[0]; face[0] = v_vertices[10]; face[2] = v_vertices[11];
-  Euler::add_face(face, g);
-
-  face[1] = v_vertices[1] ; face[0] = v_vertices[5] ; face[2] = v_vertices[9];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[5] ; face[0] = v_vertices[11]; face[2] = v_vertices[4];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[11]; face[0] = v_vertices[10]; face[2] = v_vertices[2];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[10]; face[0] = v_vertices[7] ; face[2] = v_vertices[6];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[7] ; face[0] = v_vertices[1] ; face[2] = v_vertices[8];
+  face[1] = v_vertices[0]; face[0] = v_vertices[11]; face[2] = v_vertices[10];
   Euler::add_face(face, g);
 
-  face[1] = v_vertices[3] ; face[0] = v_vertices[9] ; face[2] = v_vertices[4];
+  face[1] = v_vertices[1] ; face[0] = v_vertices[9] ; face[2] = v_vertices[5];
   Euler::add_face(face, g);
-  face[1] = v_vertices[3] ; face[0] = v_vertices[4] ; face[2] = v_vertices[2];
+  face[1] = v_vertices[5] ; face[0] = v_vertices[4]; face[2] = v_vertices[11];
   Euler::add_face(face, g);
-  face[1] = v_vertices[3] ; face[0] = v_vertices[2] ; face[2] = v_vertices[6];
+  face[1] = v_vertices[11]; face[0] = v_vertices[2]; face[2] = v_vertices[10];
   Euler::add_face(face, g);
-  face[1] = v_vertices[3] ; face[0] = v_vertices[6] ; face[2] = v_vertices[8];
+  face[1] = v_vertices[10]; face[0] = v_vertices[6] ; face[2] = v_vertices[7];
   Euler::add_face(face, g);
-  face[1] = v_vertices[3] ; face[0] = v_vertices[8] ; face[2] = v_vertices[9];
+  face[1] = v_vertices[7] ; face[0] = v_vertices[8] ; face[2] = v_vertices[1];
   Euler::add_face(face, g);
 
-  face[1] = v_vertices[4] ; face[0] = v_vertices[9] ; face[2] = v_vertices[5] ;
-  Euler::add_face(face, g);
-  face[1] = v_vertices[2] ; face[0] = v_vertices[4] ; face[2] = v_vertices[11];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[6] ; face[0] = v_vertices[2] ; face[2] = v_vertices[10];
-  Euler::add_face(face, g);
-  face[1] = v_vertices[8] ; face[0] = v_vertices[6] ; face[2] = v_vertices[7] ;
-  Euler::add_face(face, g);
-  face[1] = v_vertices[9] ; face[0] = v_vertices[8] ; face[2] = v_vertices[1] ;
+  face[1] = v_vertices[3] ; face[0] = v_vertices[4] ; face[2] = v_vertices[9];
+  Euler::add_face(face, g);                                                  
+  face[1] = v_vertices[3] ; face[0] = v_vertices[2] ; face[2] = v_vertices[4];
+  Euler::add_face(face, g);                                                  
+  face[1] = v_vertices[3] ; face[0] = v_vertices[6] ; face[2] = v_vertices[2];
+  Euler::add_face(face, g);                                                  
+  face[1] = v_vertices[3] ; face[0] = v_vertices[8] ; face[2] = v_vertices[6];
+  Euler::add_face(face, g);                                                  
+  face[1] = v_vertices[3] ; face[0] = v_vertices[9] ; face[2] = v_vertices[8];
+  Euler::add_face(face, g);                                                  
+                                                                             
+  face[1] = v_vertices[4] ; face[0] = v_vertices[5] ; face[2] = v_vertices[9] ;
+  Euler::add_face(face, g);                                                  
+  face[1] = v_vertices[2] ; face[0] = v_vertices[11] ; face[2] = v_vertices[4];
+  Euler::add_face(face, g);                                                   
+  face[1] = v_vertices[6] ; face[0] = v_vertices[10] ; face[2] = v_vertices[2];
+  Euler::add_face(face, g);                                                  
+  face[1] = v_vertices[8] ; face[0] = v_vertices[7] ; face[2] = v_vertices[6] ;
+  Euler::add_face(face, g);                                                  
+  face[1] = v_vertices[9] ; face[0] = v_vertices[1] ; face[2] = v_vertices[8] ;
   Euler::add_face(face, g);
 
   return halfedge(v_vertices[1], v_vertices[0], g).first;
