@@ -125,13 +125,14 @@ MainWindow::~MainWindow()
   delete ui;
   delete statistics_ui;
 }
-MainWindow::MainWindow(QWidget* parent)
+MainWindow::MainWindow(bool verbose, QWidget* parent)
   : CGAL::Qt::DemosMainWindow(parent)
 {
   ui = new Ui::MainWindow;
   ui->setupUi(this);
   menuBar()->setNativeMenuBar(false);
   menu_map[ui->menuOperations->title()] = ui->menuOperations;
+  this->verbose = verbose;
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
   ui->menuBar->removeAction(ui->actionLoadScript);
@@ -540,7 +541,8 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
         }
       }
       QDebug qdebug = qDebug();
-      qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
+      if(verbose)
+        qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
       QPluginLoader loader;
       loader.setFileName(fileinfo.absoluteFilePath());
       QObject *obj = loader.instance();
@@ -560,6 +562,7 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
       else {
         //qdebug << "error: " << qPrintable(loader.errorString());
         pluginsStatus_map[name] = loader.errorString();
+
       }
       PathNames_map[fileinfo.absoluteDir().absolutePath()].push_back(name);
       return true;
@@ -621,8 +624,9 @@ void MainWindow::loadPlugins()
 
   QSet<QString> loaded;
   Q_FOREACH (QDir pluginsDir, plugins_directories) {
-    qDebug("# Looking for plugins in directory \"%s\"...",
-           qPrintable(pluginsDir.absolutePath()));
+    if(verbose)
+      qDebug("# Looking for plugins in directory \"%s\"...",
+             qPrintable(pluginsDir.absolutePath()));
     Q_FOREACH(QString fileName, pluginsDir.entryList(QDir::Files))
     {
       QString abs_name = pluginsDir.absoluteFilePath(fileName);
@@ -1518,8 +1522,11 @@ void MainWindow::on_actionLoad_triggered()
     Q_FOREACH(const QString& filter, split_filters) {
       FilterPluginMap::iterator it = filterPluginMap.find(filter);
       if(it != filterPluginMap.end()) {
-        qDebug() << "Duplicate Filter: " << it.value()->name();
-        qDebug() << "This filter will not be available.";
+        if(verbose)
+        {
+          qDebug() << "Duplicate Filter: " << it.value()->name();
+          qDebug() << "This filter will not be available.";
+        }
       } else {
         filterPluginMap[filter] = plugin;
       }
