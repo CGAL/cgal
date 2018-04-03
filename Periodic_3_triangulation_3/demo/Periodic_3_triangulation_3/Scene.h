@@ -130,10 +130,7 @@ public Q_SLOTS:
     dconflict = temp_flags[1];
     changed();
   }
-  void grab_image() {
-    ui->viewer->openSnapshotFormatDialog();
-    ui->viewer->saveSnapshot(false);
-  }
+
   void toggle_dlocate(bool on) {
     dlocate = on;
     changed();

@@ -97,7 +97,6 @@
     <addaction name="actionInsert_point"/>
     <addaction name="actionInsert_random_point"/>
     <addaction name="separator"/>
-    <addaction name="actionGrab_image"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -127,7 +126,6 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionLoad_Points"/>
-   <addaction name="actionGrab_image"/>
    <addaction name="separator"/>
    <addaction name="actionEmpty_scene"/>
    <addaction name="actionSingle_Point"/>
@@ -532,21 +530,6 @@
    </property>
    <property name="shortcut">
     <string>4</string>
-   </property>
-  </action>
-  <action name="actionGrab_image">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="Periodic_3_triangulation_3.qrc">
-     <normaloff>:/cgal/Periodic_3_triangulation_3/icons/camera.png</normaloff>:/cgal/Periodic_3_triangulation_3/icons/camera.png</iconset>
-   </property>
-   <property name="text">
-    <string>Grab image</string>
-   </property>
-   <property name="shortcut">
-    <string>G</string>
    </property>
   </action>
   <action name="actionExport_pov">
