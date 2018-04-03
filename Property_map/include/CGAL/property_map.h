@@ -440,20 +440,29 @@ make_property_map(const std::vector<T>& v)
 }
 
 /// \ingroup PkgProperty_map
-/// Property map that only returns the default value type
-/// \cgalModels `ReadablePropertyMap`
-template<class InputIterator, class ValueType>
-struct Default_property_map{
+/// Property map that returns a fixed value.
+/// Note that this value is chosen when the map is constructed and cannot
+/// be changed afterwards. Specifically, the free function `put()` does nothing.
+///
+/// \cgalModels `ReadWritePropertyMap`
+template<class KeyType, class ValueType>
+struct Default_property_map
+{
   const ValueType default_value;
-  
-  typedef typename InputIterator::value_type key_type;
-  typedef boost::readable_property_map_tag category;
 
-  Default_property_map(const ValueType& default_value = ValueType()) : default_value (default_value) { }
+  typedef KeyType                                       key_type;
+  typedef ValueType                                     value_type;
+  typedef boost::read_write_property_map_tag            category;
+
+  Default_property_map(const value_type& default_value = value_type()) : default_value (default_value) { }
 
   /// Free function that returns `pm.default_value`.
   inline friend value_type
   get (const Default_property_map& pm, const key_type&){ return pm.default_value; }
+
+  /// Free function that does nothing.
+  inline friend void
+  put (const Default_property_map&, const key_type&, const value_type&) { }
 };
 
 /// \ingroup PkgProperty_map
