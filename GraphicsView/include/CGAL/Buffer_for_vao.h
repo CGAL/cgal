@@ -58,6 +58,7 @@ namespace internal
                n.z()+((p.x()-q.x())*(p.y()+q.y())));
     }
 
+  inline
   Local_vector compute_normal_of_face(const std::vector<Local_point>& points)
   {
     Local_vector normal(CGAL::NULL_VECTOR);
