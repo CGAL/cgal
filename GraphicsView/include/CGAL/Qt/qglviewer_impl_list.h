@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0+
+
 #ifndef QGLVIEWER_IMPL_LIST_H
 #define QGLVIEWER_IMPL_LIST_H
 #include <CGAL/Qt/vec_impl.h>

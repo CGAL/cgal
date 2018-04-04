@@ -19,6 +19,7 @@
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
+// SPDX-License-Identifier: GPL-3.0+
 
 #ifndef QGLVIEWER_MOUSE_GRABBER_H
 #define QGLVIEWER_MOUSE_GRABBER_H
