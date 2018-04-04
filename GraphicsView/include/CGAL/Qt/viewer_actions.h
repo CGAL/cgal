@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0
 #ifndef VIEWER_ACTIONS_H
 #define VIEWER_ACTIONS_H
 namespace  qglviewer {
