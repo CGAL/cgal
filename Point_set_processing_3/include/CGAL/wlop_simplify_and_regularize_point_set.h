@@ -34,7 +34,7 @@
 
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-
+#include <CGAL/algorithm.h>
 #include <iterator>
 #include <set>
 #include <algorithm>
@@ -484,7 +484,7 @@ wlop_simplify_and_regularize_point_set(
                                          && select_percentage <= 100);
 
   // Random shuffle
-  std::random_shuffle (points.begin(), points.end());
+  CGAL::random_shuffle (points.begin(), points.end());
 
   // Computes original(input) and sample points size 
   std::size_t number_of_original = std::distance(points.begin(), points.end());

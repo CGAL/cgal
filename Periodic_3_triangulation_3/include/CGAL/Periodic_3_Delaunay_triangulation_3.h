@@ -34,7 +34,6 @@
 #include <CGAL/internal/Periodic_3_Delaunay_triangulation_remove_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 
-#include <algorithm>
 #include <iostream>
 #include <vector>
 #include <utility>
@@ -491,7 +490,7 @@ public:
       is_large_point_set = false;
 
     std::vector<Point> points(first, last);
-    std::random_shuffle (points.begin(), points.end());
+    CGAL::random_shuffle (points.begin(), points.end());
     Cell_handle hint;
     std::vector<Vertex_handle> dummy_points, double_vertices;
     typename std::vector<Point>::iterator pbegin = points.begin();

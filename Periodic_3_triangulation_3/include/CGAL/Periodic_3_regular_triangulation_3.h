@@ -43,7 +43,6 @@
 #include <boost/mpl/identity.hpp>
 #include <boost/unordered_set.hpp>
 
-#include <algorithm>
 #include <cstdlib>
 #include <functional>
 #include <iterator>
@@ -520,7 +519,7 @@ public:
       is_large_point_set = false;
 
     std::vector<Weighted_point> points(first, last);
-    std::random_shuffle(points.begin(), points.end());
+    CGAL::random_shuffle(points.begin(), points.end());
     Cell_handle hint;
     std::vector<Vertex_handle> dummy_points_vhs, double_vertices;
     std::vector<Weighted_point> dummy_points;

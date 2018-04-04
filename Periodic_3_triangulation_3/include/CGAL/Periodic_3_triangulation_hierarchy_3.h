@@ -33,7 +33,6 @@
 #include <boost/random/geometric_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
-#include <algorithm>
 #include <cstddef>
 #include <map>
 #include <vector>
@@ -127,7 +126,7 @@ public:
     size_type n = number_of_vertices();
 
     std::vector<Point> points (first, last);
-    std::random_shuffle (points.begin(), points.end());
+    CGAL::random_shuffle (points.begin(), points.end());
     spatial_sort (points.begin(), points.end(), geom_traits());
 
     // hints[i] is the cell of the previously inserted point in level i.

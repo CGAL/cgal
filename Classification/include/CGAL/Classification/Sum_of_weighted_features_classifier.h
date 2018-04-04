@@ -28,6 +28,7 @@
 #include <CGAL/Classification/Label_set.h>
 #include <CGAL/Classification/internal/verbosity.h>
 #include <CGAL/tags.h>
+#include <CGAL/algorithm.h>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -317,7 +318,7 @@ public:
 
 #ifdef CLASSIFICATION_TRAINING_QUICK_ESTIMATION
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
-      std::random_shuffle (training_sets[i].begin(), training_sets[i].end());
+      CGAL::random_shuffle (training_sets[i].begin(), training_sets[i].end());
 #endif
     
     CGAL_CLASSIFICATION_CERR << "Training using " << nb_tot << " inliers" << std::endl;

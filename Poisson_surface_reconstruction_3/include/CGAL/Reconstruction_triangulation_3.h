@@ -35,6 +35,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
 
+#include <CGAL/algorithm.h>
 #include <CGAL/bounding_box.h>
 #include <boost/random/random_number_generator.hpp>
 #include <boost/random/linear_congruential.hpp>
@@ -390,7 +391,7 @@ public:
     typedef typename Iterator_traits::difference_type Diff_t;
     boost::rand48 random;
     boost::random_number_generator<boost::rand48, Diff_t> rng(random);
-    std::random_shuffle (points.begin(), points.end(), rng);
+    CGAL::random_shuffle (points.begin(), points.end(), rng);
     fraction = 0;
 
     fractions.clear();
