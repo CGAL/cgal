@@ -372,13 +372,15 @@ public:
 
     if (m_points_of_face.size()==3)
     { triangular_face_end_internal(normal); } // Triangle: no need to triangulate
-    else if (is_current_face_convex(normal))
+    /*
+      // TODO BUG FIX HERE
+      else if (is_current_face_convex(normal))
     {
       if (m_points_of_face.size()==4)
       { convex_quadrangular_face_end_internal(normal); } // Convex quad
       else 
       { convex_face_end_internal(normal); } // Convex face with > 4 vertices
-    }
+      } */
     else
     { // Non convex and more than 3 points: we triangulate
       nonconvex_face_end_internal(normal);
