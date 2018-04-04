@@ -12,6 +12,7 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
+#include <CGAL/algorithm.h>
 
 #include <QObject>
 #include <QApplication>
@@ -451,9 +452,9 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
     colors_points.resize(0);
 
     //Shuffle container to allow quick display random points
-    std::random_shuffle (m_points->begin(), m_points->first_selected());
+    CGAL::random_shuffle (m_points->begin(), m_points->first_selected());
     if (m_points->nb_selected_points() != 0)
-      std::random_shuffle (m_points->first_selected(), m_points->end());
+      CGAL::random_shuffle (m_points->first_selected(), m_points->end());
     //if item has normals, points will be one point out of two in the lines data.
     //else points will be lines and lines discarded.
     double average_spacing = 0;

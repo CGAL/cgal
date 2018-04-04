@@ -9,6 +9,7 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/Timer.h>
 
 #include <fstream>
@@ -86,7 +87,7 @@ void shuffle_off(const char* fname_in, const char* fname_out)
     for (int k=0;k<n;++k)
       input >> indices[k];
 
-    std::random_shuffle(indices.begin(), indices.end());
+    CGAL::random_shuffle(indices.begin(), indices.end());
 
     output << n;
     for (int k=0;k<n;++k)
