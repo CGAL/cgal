@@ -928,20 +928,21 @@ add_vertex_and_face_to_border(typename boost::graph_traits<Graph>::halfedge_desc
   typename boost::graph_traits<Graph>::halfedge_descriptor ohe1= opposite(he1, g);
   typename boost::graph_traits<Graph>::halfedge_descriptor ohe2= opposite(he2, g);
 
-  set_next(he1, next(h1,g),g);
-  set_next(h1,ohe1,g);
-  set_target(he1,target(h1,g),g);
-  set_target(ohe1,v,g);
-  set_next(he2,he1,g);
-  set_next(ohe1,ohe2,g);
-  set_target(he2,v,g);
-  set_halfedge(v,ohe1,g);
-  set_next(ohe2,next(h2,g),g);
-  set_target(ohe2,target(h2,g),g);
-  set_next(h2,he2,g);
+  set_next(ohe1, next(h1,g),g);
+  set_next(h1,he1,g);
+  set_target(ohe1,target(h1,g),g);
+  set_target(he1,v,g);
+  set_next(ohe2,ohe1,g);
+  set_target(ohe2,v,g);
+  set_next(he1,he2,g);
+  set_target(he1,v,g);
+  set_halfedge(v,he1,g);
+  set_next(he2,next(h2,g),g);
+  set_target(he2,target(h2,g),g);
+  set_next(h2,ohe2,g);
   internal::set_border(he1,g);
   internal::set_border(he2,g);
-
+  
   CGAL::Halfedge_around_face_iterator<Graph> hafib,hafie;
   for(boost::tie(hafib, hafie) = halfedges_around_face(ohe1, g);
       hafib != hafie;
