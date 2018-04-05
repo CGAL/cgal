@@ -171,7 +171,7 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 void MainWindow::on_actionSave_snapshot_triggered()
 {
 	QApplication::setOverrideCursor(Qt::WaitCursor);
-  m_pViewer->saveSnapshot(QString("snapshot.png"));
+  //m_pViewer->saveSnapshot(QString("snapshot.png"));
 	QApplication::restoreOverrideCursor();
 }
 void MainWindow::on_actionCopy_snapshot_triggered()

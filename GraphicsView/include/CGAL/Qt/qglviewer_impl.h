@@ -30,6 +30,8 @@
 #define CGAL_INLINE_FUNCTION
 #endif
 
+#include <cmath>
+
 #include <CGAL/Qt/qglviewer.h>
 #include <CGAL/Qt/manipulatedCameraFrame.h>
 #include <CGAL/Qt/camera.h>
