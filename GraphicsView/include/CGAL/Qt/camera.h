@@ -398,6 +398,7 @@ public:
   void computeProjectionMatrix() const;
   void computeModelViewMatrix() const;
   void setFrustum(double l, double r, double t, double b, double n, double f);
+  void getFrustum(double frustum[6]);
 
   virtual void loadProjectionMatrixStereo(bool leftBuffer = true) const;
   virtual void loadModelViewMatrixStereo(bool leftBuffer = true) const;

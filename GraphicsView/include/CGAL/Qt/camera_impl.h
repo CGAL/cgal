@@ -2497,11 +2497,30 @@ void Camera::setFrustum(double l, double r, double t, double b, double n, double
   double D = (t+b)/(t-b);
   float E = -(f+n)/(f-n);
   float F = -2*(f*n)/(f-n);
-  projectionMatrix_[0] = A; projectionMatrix_[1] = 0; projectionMatrix_[2] = B ; projectionMatrix_[3] = 0;
-  projectionMatrix_[4] = 0; projectionMatrix_[5] = C; projectionMatrix_[6] = D ; projectionMatrix_[7] = 0;
-  projectionMatrix_[8] = 0; projectionMatrix_[9] = 0; projectionMatrix_[10] = E ; projectionMatrix_[11] = F;
-  projectionMatrix_[12] =0; projectionMatrix_[13] =0; projectionMatrix_[14] =-1; projectionMatrix_[15] =0;
+  projectionMatrix_[0] = A; projectionMatrix_[4] = 0; projectionMatrix_[8] = B ; projectionMatrix_[12] = 0;
+  projectionMatrix_[1] = 0; projectionMatrix_[5] = C; projectionMatrix_[9] = D ; projectionMatrix_[13] = 0;
+  projectionMatrix_[2] = 0; projectionMatrix_[6] = 0; projectionMatrix_[10] = E ; projectionMatrix_[14] = F;
+  projectionMatrix_[3] =0; projectionMatrix_[7] =0; projectionMatrix_[11] =-1; projectionMatrix_[15] =0;
 
   projectionMatrixIsUpToDate_ = true;
+}
+
+CGAL_INLINE_FUNCTION
+void Camera::getFrustum(double frustum[6])
+{
+  double l,r,t,b,n,f;
+  n = projectionMatrix_[14]/2*((projectionMatrix_[10]+1)/(projectionMatrix_[10]-1)-1);
+  f = n*(projectionMatrix_[10]-1)/(projectionMatrix_[10]+1);
+  l = ((2*n/projectionMatrix_[0])*(projectionMatrix_[8]-1)/(projectionMatrix_[8]+1))/(1-(projectionMatrix_[8]-1)/(projectionMatrix_[8]+1));
+  r = 2*n/projectionMatrix_[0]+l;
+  b=(-2*n/projectionMatrix_[5]*(1-projectionMatrix_[9])/(1+projectionMatrix_[9]))/(1+(1-projectionMatrix_[9])/(1+projectionMatrix_[9]));
+  t = 2*n/projectionMatrix_[5]+b;
+  
+  frustum[0] = l;
+  frustum[1] = r;
+  frustum[2] = t;
+  frustum[3] = b;
+  frustum[4] = n;
+  frustum[5] = f;
 }
 

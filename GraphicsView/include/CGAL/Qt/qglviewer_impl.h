@@ -4402,14 +4402,20 @@ QImage* QGLViewer::takeSnapshot( qglviewer::SnapShotBackground  background_color
     nbX++;
   if (nbY * subSize.height() < finalSize.height())
     nbY++;
-
+  GLdouble frustum[6]; 
+  camera()->getFrustum(frustum);
   QOpenGLFramebufferObject fbo(size, QOpenGLFramebufferObject::CombinedDepthStencil);
   for (int i=0; i<nbX; i++)
     for (int j=0; j<nbY; j++)
     {
-      camera()->setFrustum(-xMin + i*deltaX, -xMin + (i+1)*deltaX, yMin - j*deltaY, yMin - (j+1)*deltaY, zNear, zFar);
       fbo.bind();
       glClearColor(backgroundColor().redF(), backgroundColor().greenF(), backgroundColor().blueF(), alpha);
+      camera()->setFrustum(-xMin + i*deltaX, 
+                           -xMin + (i+1)*deltaX, 
+                           yMin - j*deltaY,
+                           yMin - (j+1)*deltaY, 
+                           zNear,
+                           zFar);
       preDraw();
       draw();
       fbo.release();
@@ -4433,6 +4439,12 @@ QImage* QGLViewer::takeSnapshot( qglviewer::SnapShotBackground  background_color
     }
   if(background_color !=0)
     setBackgroundColor(previousBGColor);
+  camera()->setFrustum(frustum[0],
+                       frustum[1],
+                       frustum[2],
+                       frustum[3],
+                       frustum[4],
+                       frustum[5]);
   return image;
 }
 

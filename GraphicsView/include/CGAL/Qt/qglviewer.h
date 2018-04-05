@@ -424,7 +424,7 @@ public Q_SLOTS:
   void toggleStereoDisplay() { setStereoDisplay(!stereo_); }
   void toggleCameraMode();
 
-private:
+protected:
   bool cameraIsInRotateMode() const;
   //@}
 
@@ -445,14 +445,10 @@ public:
 protected:
   virtual void drawLight(GLenum light, qreal scale = 1.0) const;
 
-private:
+protected:
   void displayFPS();
-  /*! Vectorial rendering callback method. */
-  void drawVectorial() { paintGL(); }
+  
 
-#ifndef DOXYGEN
-  friend void drawVectorial(void *param);
-#endif
 //@}
 
 #ifdef DOXYGEN
@@ -995,7 +991,7 @@ public Q_SLOTS:
   void setMouseStateKey(qglviewer::MouseHandler handler, unsigned int buttonState);
 #endif
 
-private:
+protected:
   static QString mouseActionString(qglviewer::MouseAction ma);
   static QString clickActionString(qglviewer::ClickAction ca);
   //@}
@@ -1033,7 +1029,7 @@ public Q_SLOTS:
   bool restoreFromFile(const QString &fileName = QString::null);
 #endif
 
-private:
+protected:
   static void saveStateToFileForAllViewers();
   //@}
 
@@ -1085,7 +1081,7 @@ private Q_SLOTS:
   }
   void hideMessage();
 
-private:
+protected:
   // Copy constructor and operator= are declared private and undefined
   // Prevents everyone from trying to use them
   QGLViewer(const QGLViewer &v);
