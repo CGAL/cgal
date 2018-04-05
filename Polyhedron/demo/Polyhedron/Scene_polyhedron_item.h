@@ -41,6 +41,7 @@ public:
       NB_CONNECTED_COMPOS,
       NB_BORDER_EDGES,
       IS_PURE_TRIANGLE,
+      IS_PURE_QUAD,
       NB_DEGENERATED_FACES,
       HOLES,
       AREA,
