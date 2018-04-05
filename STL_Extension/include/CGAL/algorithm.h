@@ -396,7 +396,7 @@ random_shuffle(RandomAccessIterator begin, RandomAccessIterator end)
   typedef typename Iterator_traits::difference_type Diff_t;
   boost::rand48 random;
   boost::random_number_generator<boost::rand48, Diff_t> rng(random);
-  random_shuffle(begin,end, rng);
+  CGAL::random_shuffle(begin,end, rng);
 }
 
   
