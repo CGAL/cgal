@@ -58,6 +58,9 @@ public:
     connect(ui->actionInsert_random_point, SIGNAL(triggered()),
 	    s, SLOT(insert_random()));
 
+    connect(ui->actionGrab_image, SIGNAL(triggered()),
+            s, SLOT(grab_image()));
+    
     // Features menu:
     connect(ui->actionPoint_location, SIGNAL(toggled(bool)),
 	    s, SLOT(toggle_dlocate(bool)));

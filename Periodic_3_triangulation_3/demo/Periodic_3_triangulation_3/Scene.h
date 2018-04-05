@@ -131,6 +131,10 @@ public Q_SLOTS:
     changed();
   }
 
+  void grab_image() {
+    ui->viewer->saveSnapshot();
+  }
+  
   void toggle_dlocate(bool on) {
     dlocate = on;
     changed();
