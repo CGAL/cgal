@@ -27,6 +27,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/array.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_3.h>
 
 #include <boost/random/linear_congruential.hpp>
