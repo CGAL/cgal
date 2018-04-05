@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: (GPL-2.0 OR GPL-3.0)
 #ifndef VIEWER_ACTIONS_H
 #define VIEWER_ACTIONS_H
 namespace  qglviewer {
@@ -70,6 +70,12 @@ enum MouseAction {
   DRIVE,
   SCREEN_TRANSLATE,
   ZOOM_ON_REGION
+};
+
+enum SnapShotBackground {
+  CURRENT_BACKGROUND=0,
+  TRANSPARENT_BACKGROUND,
+  CHOOSE_BACKGROUND
 };
 
 }

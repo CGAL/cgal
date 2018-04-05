@@ -13,9 +13,9 @@ if(CGAL_Qt5_MISSING_DEPS)
 endif()
 
 message( STATUS "USING Qt5_VERSION = '${Qt5Core_VERSION_STRING}'" )
-
 if(NOT CGAL_HEADER_ONLY)
-  collect_cgal_library( CGAL_Qt5 "${_CGAL_Qt5_MOC_FILES_private};${_CGAL_Qt5_RESOURCE_FILES_private}")
+  qt5_wrap_ui(viewerUI_FILES ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/resources/ImageInterface.ui)
+  collect_cgal_library( CGAL_Qt5 "${_CGAL_Qt5_MOC_FILES_private};${_CGAL_Qt5_RESOURCE_FILES_private};${viewerUI_FILES}")
 else()
   collect_cgal_library( CGAL_Qt5 "")
 endif()

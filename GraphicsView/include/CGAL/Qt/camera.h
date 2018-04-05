@@ -19,7 +19,8 @@
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: (GPL-2.0 OR GPL-3.0)
+
 
 #ifndef QGLVIEWER_CAMERA_H
 #define QGLVIEWER_CAMERA_H
@@ -396,6 +397,7 @@ public:
   virtual void loadModelViewMatrix(bool reset = true) const;
   void computeProjectionMatrix() const;
   void computeModelViewMatrix() const;
+  void setFrustum(double l, double r, double t, double b, double n, double f);
 
   virtual void loadProjectionMatrixStereo(bool leftBuffer = true) const;
   virtual void loadModelViewMatrixStereo(bool leftBuffer = true) const;

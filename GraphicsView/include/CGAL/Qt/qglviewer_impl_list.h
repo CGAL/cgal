@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: (GPL-2.0 OR GPL-3.0)
 
 #ifndef QGLVIEWER_IMPL_LIST_H
 #define QGLVIEWER_IMPL_LIST_H

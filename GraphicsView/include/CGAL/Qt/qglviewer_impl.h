@@ -19,7 +19,7 @@
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: (GPL-2.0 OR GPL-3.0)
 
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
@@ -53,6 +53,9 @@
 #include <QTimer>
 #include <QUrl>
 #include <QtAlgorithms>
+#include <QColorDialog>
+#include <QOpenGLFramebufferObject>
+#include <QFileDialog>
 
 using namespace std;
 using namespace qglviewer;
@@ -4323,4 +4326,144 @@ CGAL_INLINE_FUNCTION
 void QGLViewer::showEntireScene() {
   camera()->showEntireScene();
   update();
+}
+
+
+CGAL_INLINE_FUNCTION
+QImage* QGLViewer::takeSnapshot( qglviewer::SnapShotBackground  background_color, QSize finalSize, double oversampling, bool expand)
+{
+  makeCurrent();
+  qreal aspectRatio = width() / static_cast<qreal>(height());
+  GLfloat alpha = 1.0f;
+  QColor previousBGColor = backgroundColor();
+  switch(background_color)
+  {
+  case qglviewer::CURRENT_BACKGROUND:
+    break;
+  case qglviewer::TRANSPARENT_BACKGROUND:
+    setBackgroundColor(QColor(Qt::transparent));
+    alpha = 0.0f;
+    break;
+  case qglviewer::CHOOSE_BACKGROUND:
+    QColor c =  QColorDialog::getColor();
+    if(c.isValid()) {
+      setBackgroundColor(c);
+    }
+    else
+      return NULL;
+    break;
+  }
+
+
+  QSize subSize(int(width()/oversampling), int(height()/oversampling));
+  QSize size=QSize(width(), height());
+
+
+  qreal newAspectRatio = finalSize.width() / static_cast<qreal>(finalSize.height());
+
+  qreal zNear = camera()->zNear();
+  qreal zFar = camera()->zFar();
+
+  qreal xMin, yMin;
+
+  if ((expand && (newAspectRatio>aspectRatio)) || (!expand && (newAspectRatio<aspectRatio)))
+  {
+    yMin = zNear * tan(camera()->fieldOfView() / 2.0);
+    xMin = newAspectRatio * yMin;
+  }
+  else
+  {
+    xMin = zNear * tan(camera()->fieldOfView() / 2.0) * aspectRatio;
+    yMin = xMin / newAspectRatio;
+  }
+
+  QImage *image = new QImage(finalSize.width(), finalSize.height(), QImage::Format_ARGB32);
+
+  if (image->isNull())
+  {
+    QMessageBox::warning(this, "Image saving error",
+                         "Unable to create resulting image",
+                         QMessageBox::Ok, QMessageBox::NoButton);
+    setBackgroundColor(previousBGColor);
+    return NULL;
+  }
+
+  qreal scaleX = subSize.width() / static_cast<qreal>(finalSize.width());
+  qreal scaleY = subSize.height() / static_cast<qreal>(finalSize.height());
+
+  qreal deltaX = 2.0 * xMin * scaleX;
+  qreal deltaY = 2.0 * yMin * scaleY;
+
+  int nbX = finalSize.width() / subSize.width();
+  int nbY = finalSize.height() / subSize.height();
+
+  // Extra subimage on the right/bottom border(s) if needed
+  if (nbX * subSize.width() < finalSize.width())
+    nbX++;
+  if (nbY * subSize.height() < finalSize.height())
+    nbY++;
+
+  QOpenGLFramebufferObject fbo(size, QOpenGLFramebufferObject::CombinedDepthStencil);
+  for (int i=0; i<nbX; i++)
+    for (int j=0; j<nbY; j++)
+    {
+      camera()->setFrustum(-xMin + i*deltaX, -xMin + (i+1)*deltaX, yMin - j*deltaY, yMin - (j+1)*deltaY, zNear, zFar);
+      fbo.bind();
+      glClearColor(backgroundColor().redF(), backgroundColor().greenF(), backgroundColor().blueF(), alpha);
+      preDraw();
+      draw();
+      fbo.release();
+
+      QImage snapshot = fbo.toImage();
+      QImage subImage = snapshot.scaled(subSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+      // Copy subImage in image
+      for (int ii=0; ii<subSize.width(); ii++)
+      {
+        int fi = i*subSize.width() + ii;
+        if (fi == image->width())
+          break;
+        for (int jj=0; jj<subSize.height(); jj++)
+        {
+          int fj = j*subSize.height() + jj;
+          if (fj == image->height())
+            break;
+          image->setPixel(fi, fj, subImage.pixel(ii,jj));
+        }
+      }
+    }
+  if(background_color !=0)
+    setBackgroundColor(previousBGColor);
+  return image;
+}
+
+CGAL_INLINE_FUNCTION
+void QGLViewer::saveSnapshot()
+{
+  qreal aspectRatio = width() / static_cast<qreal>(height());
+  static ImageInterface* imageInterface = NULL;
+
+  if (!imageInterface)
+    imageInterface = new ImageInterface(this, aspectRatio);
+
+  imageInterface->imgWidth->setValue(width());
+  imageInterface->imgHeight->setValue(height());
+
+  if (imageInterface->exec() == QDialog::Rejected)
+    return;
+  QSize finalSize(imageInterface->imgWidth->value(), imageInterface->imgHeight->value());
+  bool expand = imageInterface->expandFrustum->isChecked();
+  QString fileName = QFileDialog::getSaveFileName(this,
+                                                  tr("Save Snapshot"), "", tr("Image Files (*.png *.jpg *.bmp)"));
+  if(fileName.isEmpty())
+  {
+    return;
+  }
+  QImage* image= takeSnapshot(static_cast<qglviewer::SnapShotBackground>(imageInterface->color_comboBox->currentIndex()),
+        finalSize, imageInterface->oversampling->value(), expand);
+  if(image)
+  {
+    image->save(fileName);
+    delete image;
+  }
+
 }

@@ -19,7 +19,7 @@
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
- // SPDX-License-Identifier: GPL-3.0
+ // SPDX-License-Identifier: (GPL-2.0 OR GPL-3.0)
 
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
@@ -2486,3 +2486,22 @@ CGAL_INLINE_FUNCTION
 qreal Camera::physicalDistanceToScreen() const {
   return physicalScreenWidth() / 2.0 / tan(horizontalFieldOfView() / 2.0);
 }
+
+
+CGAL_INLINE_FUNCTION
+void Camera::setFrustum(double l, double r, double t, double b, double n, double f)
+{
+  double A = 2*n/(r-l);
+  double B = (r+l)/(r-l);
+  double C = 2*n/(t-b);
+  double D = (t+b)/(t-b);
+  float E = -(f+n)/(f-n);
+  float F = -2*(f*n)/(f-n);
+  projectionMatrix_[0] = A; projectionMatrix_[1] = 0; projectionMatrix_[2] = B ; projectionMatrix_[3] = 0;
+  projectionMatrix_[4] = 0; projectionMatrix_[5] = C; projectionMatrix_[6] = D ; projectionMatrix_[7] = 0;
+  projectionMatrix_[8] = 0; projectionMatrix_[9] = 0; projectionMatrix_[10] = E ; projectionMatrix_[11] = F;
+  projectionMatrix_[12] =0; projectionMatrix_[13] =0; projectionMatrix_[14] =-1; projectionMatrix_[15] =0;
+
+  projectionMatrixIsUpToDate_ = true;
+}
+

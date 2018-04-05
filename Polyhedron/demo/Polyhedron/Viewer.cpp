@@ -976,79 +976,8 @@ void Viewer_impl::setFrustum(double l, double r, double t, double b, double n, d
 
 }
 
-#include "ui_ImageInterface.h"
-class ImageInterface: public QDialog, public Ui::ImageInterface
-{
-  Q_OBJECT
-  qreal ratio;
-  QWidget *currentlyFocused;
-public:
-  ImageInterface(QWidget *parent, qreal ratio)
-    : QDialog(parent), ratio(ratio)
-  {
-    currentlyFocused = NULL;
-    setupUi(this);
-    connect(imgHeight, SIGNAL(valueChanged(int)),
-            this, SLOT(imgHeightValueChanged(int)));
 
-    connect(imgWidth, SIGNAL(valueChanged(int)),
-            this, SLOT(imgWidthValueChanged(int)));
 
-    connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)),
-            this, SLOT(onFocusChanged(QWidget*, QWidget*)));
-  }
-private Q_SLOTS:
-  void imgHeightValueChanged(int i)
-  {
-    if(currentlyFocused == imgHeight
-       && ratioCheckBox->isChecked())
-    {imgWidth->setValue(i*ratio);}
-  }
-
-  void imgWidthValueChanged(int i)
-  {
-    if(currentlyFocused == imgWidth
-       && ratioCheckBox->isChecked())
-    {imgHeight->setValue(i/ratio);}
-  }
-
-  void onFocusChanged(QWidget*, QWidget* now)
-  {
-    currentlyFocused = now;
-  }
-};
-
-void Viewer::saveSnapshot()
-{
-  qreal aspectRatio = width() / static_cast<qreal>(height());
-  static ImageInterface* imageInterface = NULL;
-
-  if (!imageInterface)
-    imageInterface = new ImageInterface(this, aspectRatio);
-
-  imageInterface->imgWidth->setValue(width());
-  imageInterface->imgHeight->setValue(height());
-  imageInterface->imgQuality->setValue(d->quality);
-
-  if (imageInterface->exec() == QDialog::Rejected)
-    return;
-  QSize finalSize(imageInterface->imgWidth->value(), imageInterface->imgHeight->value());
-  bool expand = imageInterface->expandFrustum->isChecked();
-  QString fileName = QFileDialog::getSaveFileName(this,
-                                                  tr("Save Snapshot"), "", tr("Image Files (*.png *.jpg *.bmp)"));
-  if(fileName.isEmpty())
-  {
-    return;
-  }
-  QImage* image= d->takeSnapshot(this, imageInterface->imgQuality->value(), imageInterface->color_comboBox->currentIndex(),
-        finalSize, imageInterface->oversampling->value(), expand);
-  if(image)
-  {
-    image->save(fileName);
-    delete image;
-  }
-
-}
 //copy a snapshot with transparent background with arbitrary quality values.
 QImage* Viewer_impl::takeSnapshot(Viewer *viewer, int quality, int background_color, QSize finalSize, double oversampling, bool expand)
 {

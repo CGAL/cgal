@@ -19,7 +19,7 @@
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: (GPL-2.0 OR GPL-3.0)
 
 #ifndef QGLVIEWER_QGLVIEWER_H
 #define QGLVIEWER_QGLVIEWER_H
@@ -43,7 +43,9 @@
 #include <QGLContext>
 
 
+
 class QTabWidget;
+class QImage;
 namespace qglviewer {
 } // namespace qglviewer
 /*! \brief A versatile 3D OpenGL viewer based on QOpenGLWidget.
@@ -120,23 +122,6 @@ public:
   qglviewer::Camera::drawAllPaths(). Actual camera and path edition will be
   implemented in the future. */
   bool cameraIsEdited() const { return cameraIsEdited_; }
-  
-  /*!
-   * Sets the offset of the scene. The offset is the difference between the origin 
-   * of the world and the origin of the scene. It is relevant when the whole scene is translated
-   * of a big number, because there is a useless loss of precision when drawing.
-   * 
-   * The offset must be added to the drawn coordinates, and substracted from the computation 
-   * \attention  the result of pointUnderPixel is the real item translated by the offset.
-   * 
-   */
-  void setOffset(qglviewer::Vec offset);
-  
-  /*!
-   * returns the offset of the scene.
-   * \see `setOffset()`
-   */
-  qglviewer::Vec offset()const;
   
 public Q_SLOTS:
   /*! Sets the state of axisIsDrawn(). Emits the axisIsDrawnChanged() signal.
@@ -413,6 +398,22 @@ public:
   /*! Returns the recommended size for the QGLViewer. Default value is 600x400
    * pixels. */
   virtual QSize sizeHint() const { return QSize(600, 400); }
+  /*!
+   * Sets the offset of the scene. The offset is the difference between the origin 
+   * of the world and the origin of the scene. It is relevant when the whole scene is translated
+   * of a big number, because there is a useless loss of precision when drawing.
+   * 
+   * The offset must be added to the drawn coordinates, and substracted from the computation 
+   * \attention  the result of pointUnderPixel is the real item translated by the offset.
+   * 
+   */
+  void setOffset(qglviewer::Vec offset);
+  
+  /*!
+   * returns the offset of the scene.
+   * \see `setOffset()`
+   */
+  qglviewer::Vec offset()const;
 
 public Q_SLOTS:
   void setFullScreen(bool fullScreen = true);
@@ -440,8 +441,6 @@ public:
 
   void drawText(int x, int y, const QString &text, const QFont &fnt = QFont());
   void displayMessage(const QString &message, int delay = 2000);
-  // void draw3DText(const qglviewer::Vec& pos, const qglviewer::Vec& normal,
-  // const QString& string, GLfloat height=0.1);
 
 protected:
   virtual void drawLight(GLenum light, qreal scale = 1.0) const;
@@ -582,6 +581,11 @@ public Q_SLOTS:
       startAnimation();
   }
   //@}
+public:
+  /*!
+   * Prompt a configuration dialog and takes a snapshot.
+   */
+  void saveSnapshot();
 
 public:
 Q_SIGNALS:
@@ -1277,6 +1281,12 @@ private:
   std::size_t grid_size;
   std::size_t g_axis_size;
   std::size_t axis_size;
+
+  //S n a p s h o t
+  QImage* takeSnapshot(qglviewer::SnapShotBackground  background_color, 
+                       QSize finalSize, double oversampling, bool expand);
+  
+  //Internal Projection Matrix
   
   // O f f s e t
   qglviewer::Vec _offset;
@@ -1290,6 +1300,50 @@ public:
   bool isOpenGL_4_3()const {return is_ogl_4_3; }
   
 };
+
+#include "ui_ImageInterface.h"
+class ImageInterface: public QDialog, public Ui::ImageInterface
+{
+  Q_OBJECT
+  qreal ratio;
+  QWidget *currentlyFocused;
+public:
+  ImageInterface(QWidget *parent, qreal ratio)
+    : QDialog(parent), ratio(ratio)
+  {
+    currentlyFocused = NULL;
+    setupUi(this);
+    connect(imgHeight, SIGNAL(valueChanged(int)),
+            this, SLOT(imgHeightValueChanged(int)));
+
+    connect(imgWidth, SIGNAL(valueChanged(int)),
+            this, SLOT(imgWidthValueChanged(int)));
+
+    connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)),
+            this, SLOT(onFocusChanged(QWidget*, QWidget*)));
+  }
+private Q_SLOTS:
+  void imgHeightValueChanged(int i)
+  {
+    if(currentlyFocused == imgHeight
+       && ratioCheckBox->isChecked())
+    {imgWidth->setValue(i*ratio);}
+  }
+
+  void imgWidthValueChanged(int i)
+  {
+    if(currentlyFocused == imgWidth
+       && ratioCheckBox->isChecked())
+    {imgHeight->setValue(i/ratio);}
+  }
+
+  void onFocusChanged(QWidget*, QWidget* now)
+  {
+    currentlyFocused = now;
+  }
+};
+
+
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/Qt/qglviewer_impl_list.h>
 #endif // CGAL_HEADER_ONLY
