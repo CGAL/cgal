@@ -560,9 +560,11 @@ polylines_to_protect
 
               square[ii][jj].point = Point_3(x, y, z);
               square[ii][jj].word =
-                static_cast<Image_word_type>(cgal_image.value(pixel[0],
-                                                              pixel[1],
-                                                              pixel[2]));
+                CGAL::IMAGEIO::static_evaluate<Image_word_type>
+                (cgal_image.image(),
+                 pixel[0],
+                 pixel[1],
+                 pixel[2]);
               square[ii][jj].domain = domain_fct(square[ii][jj].word);
               if(scalar_interpolation_value != boost::none) {
                 square[ii][jj].word =
