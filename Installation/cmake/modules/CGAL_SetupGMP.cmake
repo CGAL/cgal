@@ -17,8 +17,17 @@ if(CGAL_SetupGMP_included OR CGAL_DISABLE_GMP)
 endif()
 set(CGAL_SetupGMP_included TRUE)
 
-find_package(GMP)
-find_package(MPFR)
+find_package(GMP REQUIRED)
+find_package(MPFR REQUIRED)
+
+if(NOT DEFINED WITH_GMPXX)
+  option(CGAL_WITH_GMPXX "Use CGAL with GMPXX: use C++ classes of GNU MP instead of CGAL wrappers" OFF)
+endif()
+set(CGAL_GMPXX_find_package_keyword QUIET)
+if(WITH_GMPXX OR CGAL_WITH_GMPXX)
+  set(CGAL_GMPXX_find_package_keyword REQUIRED)
+endif()
+find_package(GMPXX ${CGAL_GMPXX_find_package_keyword})
 
 #.rst:
 # Provided Functions
@@ -47,4 +56,9 @@ function(use_CGAL_GMP_support target)
 
   target_include_directories(${target} SYSTEM ${keyword} ${GMP_INCLUDE_DIR} ${MPFR_INCLUDE_DIR})
   target_link_libraries(${target} ${keyword} ${GMP_LIBRARIES} ${MPFR_LIBRARIES})
+  if(WITH_GMPXX OR CGAL_WITH_GMPXX)
+    target_include_directories(${target} SYSTEM ${keyword}  ${GMPXX_INCLUDE_DIR})
+    target_link_libraries(${target}  ${keyword} ${GMPXX_LIBRARIES})
+    target_compile_definitions(${target} ${keyword} CGAL_USE_GMPXX=1)
+  endif()
 endfunction()
