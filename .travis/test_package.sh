@@ -7,7 +7,7 @@ DO_IGNORE=FALSE
 cd $1
 if [ ! -f "$2/package_info/$2/dependencies" ];then 
   echo "No dependencies found for $2"
-  exit 0
+  exit 1
 fi
 LIST_OF_FILES=$(git diff --name-only origin/master |cut -d/ -f1 |uniq |sort)
 LIST_OF_DEPS=$(cat "$2/package_info/$2/dependencies")
