@@ -207,6 +207,7 @@ private:
             return (Visibility_2::orientation_2(geom_traits, s2, t2, q)
                     == Visibility_2::orientation_2(geom_traits, s2, t2, s1));
         }
+        break;
       case RIGHT_TURN:
         switch (Visibility_2::orientation_2(geom_traits, s1, t1, s2)) {
         case COLLINEAR:
@@ -225,6 +226,7 @@ private:
             return true;
         default: CGAL_assume(false);
         }
+        break;
       case LEFT_TURN:
         switch (Visibility_2::orientation_2(geom_traits, s1, t1, s2)) {
         case COLLINEAR:
@@ -245,6 +247,7 @@ private:
         }
       }
 
+      CGAL_assume(false);
       return false;
     }
 
