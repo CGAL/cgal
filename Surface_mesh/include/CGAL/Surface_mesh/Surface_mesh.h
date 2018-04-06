@@ -1966,7 +1966,6 @@ private: //------------------------------------------------------- private data
   /// Inserts the surface mesh in an output stream in Ascii OFF format. 
   /// Only the \em point property is inserted in the stream.
   /// \pre `operator<<(std::ostream&,const P&)` must be defined.
- 
   template <typename P>
   bool write_off(std::ostream& os, const Surface_mesh<P>& sm) {
     typedef Surface_mesh<P> Mesh;
@@ -2015,7 +2014,7 @@ private: //------------------------------------------------------- private data
 
   /// \relates Surface_mesh
   /// 
-  /// This operator calls `write_off(std::istream& , CGAL::Surface_mesh)`.
+  /// This operator calls `write_off(std::ostream& os, const CGAL::Surface_mesh& sm)`.
    template <typename P>
   std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
   {
@@ -2158,8 +2157,8 @@ private: //------------------------------------------------------- private data
 
  
   /// \relates Surface_mesh
-  /// This operator calls `read_off(std::istream& , CGAL::Surface_mesh& sm)`.
-  /// \attention Up to CGAL 4.10 this operator called `sm.clear()`.
+  /// This operator calls `read_off(std::istream& is, CGAL::Surface_mesh& sm)`.
+  /// \attention Up to %CGAL 4.10 this operator called `sm.clear()`.
   template <typename P>
   std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
   {

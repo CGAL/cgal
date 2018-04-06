@@ -51,8 +51,8 @@ main purpose is to guarantee type safety.
 They are default constructible, which yields an *invalid* element. New
 elements can be added and removed to the `Surface_mesh` through a
 set of low-level functions which do not maintain connectivity. One
-exception is `Surface_mesh::add_face()` which tries to add a new
-face to the mesh (defined by a sequence of vertices), and fails, if the
+exception is `Surface_mesh::add_face()`, which tries to add a new
+face to the mesh (defined by a sequence of vertices), and fails if the
 operation is not topologically valid.
 
 \code
@@ -64,11 +64,14 @@ Mesh::Vertex_index w = m.add_vertex(Point(1,0,0));
 m.add_face(u, v, w);
 \endcode
 
-As `Surface_mesh` is index-based `Vertex_index`, `Face_index`, 
-`Halfedge_index` and `Edge_index`
-don't have member functions to access connectivity or properties.
-The functions of the `Surface_mesh` instance they were
-created from must be used to obtain that information.
+As `Surface_mesh` is index-based
+\link Surface_mesh::Vertex_index Vertex_index\endlink,
+\link Surface_mesh::Halfedge_index Halfedge_index\endlink,
+\link Surface_mesh::Edge_index Edge_index\endlink, and
+\link Surface_mesh::Face_index Face_index\endlink
+do not have member functions to access connectivity or properties.
+The functions of the `Surface_mesh` instance from which
+they were created must be used to obtain this information.
 
 \section sectionSurfaceMeshConnectivity Connectivity 
 
@@ -327,7 +330,7 @@ to access data in temporary vectors of size `num_vertices()`
 this function must return a number larger than the largest index of 
 the elements.
 
-Iterators like the `Surface_mesh::Vertex_iterator` only enumerate
+Iterators such as `Surface_mesh::Vertex_iterator` only enumerate
 elements that are not marked as deleted. 
 
 
