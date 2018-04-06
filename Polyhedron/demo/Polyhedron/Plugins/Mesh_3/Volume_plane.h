@@ -295,15 +295,15 @@ private:
   GLdouble getTranslation() const { return getTranslation(*this); }
   GLdouble getTranslation(x_tag) const {
       const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-      return mFrame_->matrix()[12] / xscale_ - offset.x;
+      return (mFrame_->matrix()[12]  - offset.x)/ xscale_;
   }
   GLdouble getTranslation(y_tag) const {
       const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-      return mFrame_->matrix()[13] / yscale_ - offset.y;
+      return (mFrame_->matrix()[13]  - offset.y)/ yscale_;
   }
   GLdouble getTranslation(z_tag) const {
       const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-      return mFrame_->matrix()[14] / zscale_ - offset.z;
+      return (mFrame_->matrix()[14] - offset.z)/ zscale_ ;
   }
 
   void initializeBuffers(CGAL::Three::Viewer_interface* viewer) const
