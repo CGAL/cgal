@@ -1492,6 +1492,11 @@ QString Scene_surface_mesh_item::computeStats(int type)
       return QString("yes");
     else
       return QString("no");
+  case IS_PURE_QUAD:
+    if (is_quad_mesh(*d->smesh_))
+      return QString("yes");
+    else
+      return QString("no");
   }
   return QString();
 }
@@ -1512,6 +1517,7 @@ CGAL::Three::Scene_item::Header_data Scene_surface_mesh_item::header() const
   data.titles.append(QString("#Connected Components"));
   data.titles.append(QString("#Border Edges"));
   data.titles.append(QString("Pure Triangle"));
+  data.titles.append(QString("Pure Quad"));
   data.titles.append(QString("#Degenerated Faces"));
   data.titles.append(QString("Connected Components of the Boundary"));
   data.titles.append(QString("Area"));

@@ -1785,6 +1785,11 @@ QString Scene_polyhedron_item::computeStats(int type)
       return QString("yes");
     else
       return QString("no");
+  case IS_PURE_QUAD:
+    if (d->poly->is_pure_quad())
+      return QString("yes");
+    else
+      return QString("no");
   }
   return QString();
 }
@@ -1805,6 +1810,7 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
   data.titles.append(QString("#Connected Components"));
   data.titles.append(QString("#Border Edges"));
   data.titles.append(QString("Pure Triangle"));
+  data.titles.append(QString("Pure Quad"));
   data.titles.append(QString("#Degenerated Faces"));
   data.titles.append(QString("Connected Components of the Boundary"));
   data.titles.append(QString("Area"));
