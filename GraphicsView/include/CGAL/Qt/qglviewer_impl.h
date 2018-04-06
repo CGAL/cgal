@@ -4367,17 +4367,35 @@ QImage* QGLViewer::takeSnapshot( qglviewer::SnapShotBackground  background_color
 
   qreal xMin, yMin;
 
-  if ((expand && (newAspectRatio>aspectRatio)) || (!expand && (newAspectRatio<aspectRatio)))
+  if(camera()->type()==qglviewer::Camera::PERSPECTIVE)
   {
-    yMin = zNear * tan(camera()->fieldOfView() / 2.0);
-    xMin = newAspectRatio * yMin;
+    if ((expand && (newAspectRatio>aspectRatio)) || (!expand && (newAspectRatio<aspectRatio)))
+    {
+      yMin = zNear * tan(camera()->fieldOfView() / 2.0);
+      xMin = newAspectRatio * yMin;
+    }
+    else
+    {
+      xMin = zNear * tan(camera()->fieldOfView() / 2.0) * aspectRatio;
+      yMin = xMin / newAspectRatio;
+    }
   }
   else
   {
-    xMin = zNear * tan(camera()->fieldOfView() / 2.0) * aspectRatio;
-    yMin = xMin / newAspectRatio;
+    double xy[6];
+    camera()->getFrustum(xy);
+    if ((expand && (newAspectRatio>aspectRatio)) || (!expand && (newAspectRatio<aspectRatio)))
+    {
+      yMin = -xy[3];
+      xMin = newAspectRatio * yMin;
+      ;
+    }
+    else
+    {
+      xMin = -xy[0] * aspectRatio;
+      yMin = xMin / newAspectRatio;
+    }
   }
-
   QImage *image = new QImage(finalSize.width(), finalSize.height(), QImage::Format_ARGB32);
 
   if (image->isNull())
@@ -4411,12 +4429,14 @@ QImage* QGLViewer::takeSnapshot( qglviewer::SnapShotBackground  background_color
     {
       fbo.bind();
       glClearColor(backgroundColor().redF(), backgroundColor().greenF(), backgroundColor().blueF(), alpha);
-      camera()->setFrustum(-xMin + i*deltaX, 
-                           -xMin + (i+1)*deltaX, 
-                           yMin - j*deltaY,
-                           yMin - (j+1)*deltaY, 
-                           zNear,
-                           zFar);
+      double frustum[6];
+      frustum[0]= -xMin + i*deltaX;
+      frustum[1]= -xMin + (i+1)*deltaX ;
+      frustum[2]= yMin - j*deltaY;
+      frustum[3]= yMin - (j+1)*deltaY;
+      frustum[4]= zNear;
+      frustum[5]= zFar;
+      camera()->setFrustum(frustum);
       preDraw();
       draw();
       fbo.release();
@@ -4440,12 +4460,7 @@ QImage* QGLViewer::takeSnapshot( qglviewer::SnapShotBackground  background_color
     }
   if(background_color !=0)
     setBackgroundColor(previousBGColor);
-  camera()->setFrustum(frustum[0],
-                       frustum[1],
-                       frustum[2],
-                       frustum[3],
-                       frustum[4],
-                       frustum[5]);
+  camera()->setFrustum(frustum);
   return image;
 }
 

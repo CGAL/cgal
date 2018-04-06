@@ -398,7 +398,13 @@ public:
   virtual void loadModelViewMatrix(bool reset = true) const;
   void computeProjectionMatrix() const;
   void computeModelViewMatrix() const;
-  void setFrustum(double l, double r, double t, double b, double n, double f);
+  //!Sets the frustum according to the current type of the camera
+  //! (PERSPECTIVE or ORTHOGRAPHIC) in this order : 
+  //! left, right, top, bottom, near, far
+  void setFrustum(double frustum[6]);
+  //!Fills `frustum` from the current frustum of the camera according 
+  //! to the current type (PERSPECTIVE or ORTHOGRAPHIC) in this order : 
+  //! left, right, top, bottom, near, far
   void getFrustum(double frustum[6]);
 
   virtual void loadProjectionMatrixStereo(bool leftBuffer = true) const;

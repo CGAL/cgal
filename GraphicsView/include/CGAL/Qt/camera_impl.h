@@ -2490,19 +2490,36 @@ qreal Camera::physicalDistanceToScreen() const {
 
 
 CGAL_INLINE_FUNCTION
-void Camera::setFrustum(double l, double r, double t, double b, double n, double f)
+void Camera::setFrustum(double frustum[6])
 {
-  double A = 2*n/(r-l);
-  double B = (r+l)/(r-l);
-  double C = 2*n/(t-b);
-  double D = (t+b)/(t-b);
-  float E = -(f+n)/(f-n);
-  float F = -2*(f*n)/(f-n);
-  projectionMatrix_[0] = A; projectionMatrix_[4] = 0; projectionMatrix_[8] = B ; projectionMatrix_[12] = 0;
-  projectionMatrix_[1] = 0; projectionMatrix_[5] = C; projectionMatrix_[9] = D ; projectionMatrix_[13] = 0;
-  projectionMatrix_[2] = 0; projectionMatrix_[6] = 0; projectionMatrix_[10] = E ; projectionMatrix_[14] = F;
-  projectionMatrix_[3] =0; projectionMatrix_[7] =0; projectionMatrix_[11] =-1; projectionMatrix_[15] =0;
-
+  double l(frustum[0]),r(frustum[1]),t(frustum[2]),
+      b(frustum[3]),n(frustum[4]),f(frustum[5]);
+  if(type() == PERSPECTIVE)
+  {
+    double A = 2*n/(r-l);
+    double B = (r+l)/(r-l);
+    double C = 2*n/(t-b);
+    double D = (t+b)/(t-b);
+    float E = -(f+n)/(f-n);
+    float F = -2*(f*n)/(f-n);
+    projectionMatrix_[0] = A; projectionMatrix_[4] = 0; projectionMatrix_[8] = B ; projectionMatrix_[12] = 0;
+    projectionMatrix_[1] = 0; projectionMatrix_[5] = C; projectionMatrix_[9] = D ; projectionMatrix_[13] = 0;
+    projectionMatrix_[2] = 0; projectionMatrix_[6] = 0; projectionMatrix_[10] = E ; projectionMatrix_[14] = F;
+    projectionMatrix_[3] =0; projectionMatrix_[7] =0; projectionMatrix_[11] =-1; projectionMatrix_[15] =0;
+  }
+  else
+  {
+    double A = 2/(r-l);
+    double B = -(r+l)/(r-l);
+    double C = 2/(t-b);
+    double D = -(t+b)/(t-b);
+    float E = -(f+n)/(f-n);
+    float F = -2/(f-n);
+    projectionMatrix_[0] = A; projectionMatrix_[1] = 0; projectionMatrix_[2] = 0 ; projectionMatrix_[3] = 0;
+    projectionMatrix_[4] = 0; projectionMatrix_[5] = C; projectionMatrix_[6] = 0 ; projectionMatrix_[7] = 0;
+    projectionMatrix_[8] = 0; projectionMatrix_[9] = 0; projectionMatrix_[10] = F ; projectionMatrix_[11] = 0;
+    projectionMatrix_[12] = B; projectionMatrix_[13] = D; projectionMatrix_[14] = E; projectionMatrix_[15] = 1;
+  }
   projectionMatrixIsUpToDate_ = true;
 }
 
@@ -2510,13 +2527,31 @@ CGAL_INLINE_FUNCTION
 void Camera::getFrustum(double frustum[6])
 {
   double l,r,t,b,n,f;
+  if(type() == PERSPECTIVE)
+  {
   n = projectionMatrix_[14]/2*((projectionMatrix_[10]+1)/(projectionMatrix_[10]-1)-1);
   f = n*(projectionMatrix_[10]-1)/(projectionMatrix_[10]+1);
   l = ((2*n/projectionMatrix_[0])*(projectionMatrix_[8]-1)/(projectionMatrix_[8]+1))/(1-(projectionMatrix_[8]-1)/(projectionMatrix_[8]+1));
   r = 2*n/projectionMatrix_[0]+l;
   b=(-2*n/projectionMatrix_[5]*(1-projectionMatrix_[9])/(1+projectionMatrix_[9]))/(1+(1-projectionMatrix_[9])/(1+projectionMatrix_[9]));
   t = 2*n/projectionMatrix_[5]+b;
-  
+  }
+  else
+  {
+    double A(projectionMatrix_[0]),B(projectionMatrix_[12]),
+        C(projectionMatrix_[5]),D(projectionMatrix_[13]),
+        E(projectionMatrix_[14]),F(projectionMatrix_[10]);
+    double B1 = (B+1)/(1-B), D1 = (1-D)/(D+1),
+        E1=(E+1)/(1-E);
+    
+    l = -2*B1/(1+B1*A);
+    r = 2+A*l;
+    t = 2*D1/(C*(1+D1));
+    b =t -2/C;
+    n = -2/(F*(1+E1));
+    f=n-2/F;
+    
+  }
   frustum[0] = l;
   frustum[1] = r;
   frustum[2] = t;
