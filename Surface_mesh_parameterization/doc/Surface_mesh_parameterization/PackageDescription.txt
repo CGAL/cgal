@@ -14,7 +14,7 @@ This package implements several surface mesh parameterization methods, such as
 As Rigid As Possible Parameterization, Discrete Authalic Parameterization,
 Discrete Conformal Map, Floater Mean Value Coordinates, Least Squares Conformal Maps,
 Orbifold Tutte Embedding, or Tutte Barycentric Mapping.
-The code is generic and works with any model of the `FaceListGraph` concept.}
+The code is generic and works with any model of the `FaceGraph` concept.}
 \cgalPkgManuals{Chapter_Planar_Parameterization_of_Triangulated_Surface_Meshes, PkgSurfaceParameterization}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
