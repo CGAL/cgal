@@ -19,6 +19,8 @@
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
+// $URL$
+// $Id$
 // SPDX-License-Identifier: GPL-3.0
 #ifndef VIEWER_ACTIONS_H
 #define VIEWER_ACTIONS_H
