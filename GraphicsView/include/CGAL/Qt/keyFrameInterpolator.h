@@ -19,7 +19,7 @@
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
-
+// SPDX-License-Identifier: GPL-3.0
 #ifndef QGLVIEWER_KEY_FRAME_INTERPOLATOR_H
 #define QGLVIEWER_KEY_FRAME_INTERPOLATOR_H
 

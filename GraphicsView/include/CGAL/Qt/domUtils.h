@@ -19,7 +19,7 @@
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
-
+// SPDX-License-Identifier: GPL-3.0
 #ifndef QGLVIEWER_DOMUTILS_H
 #define QGLVIEWER_DOMUTILS_H
 #include <CGAL/Qt/config.h>
