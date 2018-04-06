@@ -2091,7 +2091,7 @@ bool Scene_polyhedron_selection_item_priv::canAddFaceAndVertex(fg_halfedge_descr
     if(iterator == hc)
     {
       found = true;
-      CGAL::Euler::add_vertex_and_face_to_border(hc,t, *item->polyhedron());
+      CGAL::Euler::add_vertex_and_face_to_border(t,hc, *item->polyhedron());
       break;
     }
     iterator = next(iterator, *item->polyhedron());
