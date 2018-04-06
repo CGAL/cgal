@@ -178,7 +178,7 @@ public:
 
   static IA largest()
   {
-    return IA(-internal::infinity, internal::infinity);
+    return IA(-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity());
   }
 
   static IA smallest()
