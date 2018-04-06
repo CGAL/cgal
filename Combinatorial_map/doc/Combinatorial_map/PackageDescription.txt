@@ -26,7 +26,7 @@
 /*!
 \addtogroup PkgCombinatorialMaps
 \cgalPkgDescriptionBegin{Combinatorial Maps,PkgCombinatorialMapsSummary}
-\cgalPkgPicture{cmap_logo.svg}
+\cgalPkgPicture{cmap_logo.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Guillaume Damiand}
 \cgalPkgDesc{This package implements Combinatorial Maps in <I>d</I> dimensions. A combinatorial map is a data structure enabling to represent an orientable subdivided object by describing all the cells of the subdivision (for example in 3D vertices, edges, faces, volumes) and all the incidence and adjacency relationships between these cells. Information can be associated to cells thanks to attributes. In 2D, a combinatorial map is equivalent to a halfedge data structure. The package provides basic creation, modification operations, and several iterators enabling to run through some specific part of the object.}
