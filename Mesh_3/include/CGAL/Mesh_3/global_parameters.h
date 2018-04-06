@@ -32,6 +32,8 @@
 #include <CGAL/config.h>
 #include <CGAL/Mesh_3/config.h>
 
+#include <CGAL/Meshes/global_parameters.h>
+
 #ifdef BOOST_PARAMETER_MAX_ARITY
 #  if (BOOST_PARAMETER_MAX_ARITY < 12)
 #    error "BOOST_PARAMETER_MAX_ARITY must be at least 12 for CGAL::Mesh_3"
@@ -75,14 +77,10 @@ BOOST_PARAMETER_NAME( c3t3 )
 BOOST_PARAMETER_NAME( domain )
 BOOST_PARAMETER_NAME( criteria )
   
-BOOST_PARAMETER_NAME( (time_limit, tag) time_limit_ )
 BOOST_PARAMETER_NAME( (sliver_bound, tag) sliver_bound_)
 BOOST_PARAMETER_NAME( (sliver_criterion, tag) sliver_criterion_)
 BOOST_PARAMETER_NAME( (perturbation_vector, tag) perturbation_vector_) 
-BOOST_PARAMETER_NAME( (freeze_bound, tag) freeze_bound_)
 BOOST_PARAMETER_NAME( (do_freeze, tag) do_freeze_)
-BOOST_PARAMETER_NAME( (max_iteration_number, tag) max_iteration_number_ )
-BOOST_PARAMETER_NAME( (convergence, tag) convergence_)
 
 BOOST_PARAMETER_NAME( (mesh_topology, tag) mesh_topology_)
 

@@ -34,6 +34,8 @@
 
 #include <fstream>
 
+#include <CGAL/Meshes/global_parameters.h>
+
 #if ( defined( __clang__ ) || (BOOST_GCC >= 40600 ) ) && (BOOST_VERSION < 106000)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-variable"
@@ -57,10 +59,6 @@ namespace parameters
   
 
 BOOST_PARAMETER_NAME( cdt )
-BOOST_PARAMETER_NAME( (max_iteration_number, tag) max_iteration_number_ )
-BOOST_PARAMETER_NAME( (convergence, tag) convergence_)
-BOOST_PARAMETER_NAME( (time_limit, tag) time_limit_ )
-BOOST_PARAMETER_NAME( (freeze_bound, tag) freeze_bound_)
 BOOST_PARAMETER_NAME( (seeds_begin, tag) seeds_begin_)
 BOOST_PARAMETER_NAME( (seeds_end, tag) seeds_end_)
 BOOST_PARAMETER_NAME( (mark, tag) mark_)
