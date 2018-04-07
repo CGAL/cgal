@@ -2544,6 +2544,8 @@ public:
       typedef typename Self::Split_2        Split_2;
       Split_2 split = m_self.split_2_object();
       X_monotone_curve_2 c11, c12, c21, c22;
+      Construct_max_vertex_2 ctr_max =
+        m_self.construct_max_vertex_2_object();
       const Point_2& p1 = ctr_max(xcv);
       const Point_2& p2 = ctr_max(xcv);
       split(c1, p1, c11, c12);
