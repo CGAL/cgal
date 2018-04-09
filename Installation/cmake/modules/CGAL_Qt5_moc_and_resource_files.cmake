@@ -33,3 +33,5 @@ else()
     ${CGAL_MODULES_DIR}/demo/icons/File.qrc
     ${CGAL_MODULES_DIR}/demo/icons/Triangulation_2.qrc)
 endif()
+
+qt5_wrap_ui(_CGAL_Qt5_UI_FILES ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/resources/ImageInterface.ui)

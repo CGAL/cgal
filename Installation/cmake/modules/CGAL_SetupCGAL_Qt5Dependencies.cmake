@@ -53,7 +53,6 @@ if(NOT CGAL_Qt5_MISSING_DEPS)
   include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Qt5_moc_and_resource_files.cmake)
 
   if(CGAL_HEADER_ONLY AND (WITH_demos OR WITH_examples OR NOT CGAL_BUILDING_LIBS) AND NOT TARGET CGAL_Qt5_moc_and_resources)
-    qt5_wrap_ui(viewerUI_FILES ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/resources/ImageInterface.ui)
     add_library(CGAL_Qt5_moc_and_resources STATIC 
       ${_CGAL_Qt5_MOC_FILES_private} 
         ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/GraphicsViewNavigation.h
@@ -66,8 +65,7 @@ if(NOT CGAL_Qt5_MISSING_DEPS)
         ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/manipulatedCameraFrame.h
         ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/manipulatedFrame.h
         ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/qglviewer.h
-        ${viewerUI_FILES}
-      
+        ${_CGAL_Qt5_UI_FILES}
       ${_CGAL_Qt5_RESOURCE_FILES_private})
     set_target_properties(CGAL_Qt5_moc_and_resources PROPERTIES
       POSITION_INDEPENDENT_CODE TRUE
