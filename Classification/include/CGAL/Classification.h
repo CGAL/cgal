@@ -41,6 +41,8 @@
 #include <CGAL/Classification/Planimetric_grid.h>
 #include <CGAL/Classification/Point_set_feature_generator.h>
 #include <CGAL/Classification/Point_set_neighborhood.h>
+#include <CGAL/Classification/Mesh_feature_generator.h>
+#include <CGAL/Classification/Mesh_neighborhood.h>
 
 #include <CGAL/Classification/Feature/Distance_to_plane.h>
 #include <CGAL/Classification/Feature/Echo_scatter.h>
