@@ -899,7 +899,7 @@ public:
   ///         `boost::graph_traits<Seam_mesh>::%vertex_descriptor` as key type and
   ///         a unique integer as value type.
   ///
-  /// \param mesh a `Seam_mesh` parameterized by any model of a `FaceGraph`
+  /// \param mesh a `Seam_mesh` parameterized by any model of a `FaceListGraph` and `HalfedgeListGraph`
   /// \param bhd a halfedge on the border of the seam mesh
   /// \param cmap a mapping of the `vertex_descriptor`s of `mesh` that are cones
   ///             to their respective \link PkgSurfaceParameterizationEnums Cone_type \endlink
