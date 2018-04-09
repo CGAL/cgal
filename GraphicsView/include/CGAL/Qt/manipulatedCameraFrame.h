@@ -26,7 +26,7 @@
 #define QGLVIEWER_MANIPULATED_CAMERA_FRAME_H
 #include <QTimer>
 
-#include <CGAL/Qt/config.h>
+#include <CGAL/export/Qt.h>
 #include <CGAL/Qt/manipulatedFrame.h>
 #include <CGAL/Qt/camera.h>
 
@@ -52,7 +52,7 @@ namespace qglviewer {
   See the <a href="../mouse.html">mouse page</a> for a description of the
   possible actions that can be performed using the mouse and their bindings.
   \nosubgrouping */
-class QGLVIEWER_EXPORT ManipulatedCameraFrame : public ManipulatedFrame {
+class CGAL_QT_EXPORT ManipulatedCameraFrame : public ManipulatedFrame {
 #ifndef DOXYGEN
   friend class Camera;
   friend class ::QGLViewer;

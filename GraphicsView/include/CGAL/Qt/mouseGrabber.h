@@ -25,7 +25,7 @@
 #ifndef QGLVIEWER_MOUSE_GRABBER_H
 #define QGLVIEWER_MOUSE_GRABBER_H
 
-#include <CGAL/Qt/config.h>
+#include <CGAL/export/Qt.h>
 
 #include <QEvent>
 
@@ -133,7 +133,7 @@ class Camera;
   \endcode
   Note that the different event callback methods are called only once the
   MouseGrabber grabsMouse(). \nosubgrouping */
-class QGLVIEWER_EXPORT MouseGrabber {
+class CGAL_QT_EXPORT MouseGrabber {
 #ifndef DOXYGEN
   friend class ::QGLViewer;
 #endif

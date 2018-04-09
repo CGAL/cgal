@@ -31,7 +31,7 @@
 #include <QDomElement>
 
 // Included by all files as vec.h is at the end of the include hierarchy
-#include <CGAL/Qt/config.h> // Specific configuration options.
+#include <CGAL/export/Qt.h>
 
 namespace qglviewer {
 
@@ -64,7 +64,7 @@ namespace qglviewer {
 
   See also the Quaternion and the Frame documentations.
   \nosubgrouping */
-class QGLVIEWER_EXPORT Vec {
+class CGAL_QT_EXPORT Vec {
 
 // If your compiler complains the "The class "qglviewer::Vec" has no member
 // "x"." Add your architecture Q_OS_XXXX flag (see qglobal.h) in this list.

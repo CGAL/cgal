@@ -24,10 +24,11 @@
 
 #ifndef QGLVIEWER_QUATERNION_H
 #define QGLVIEWER_QUATERNION_H
-#include <CGAL/Qt/config.h>
+#include <CGAL/export/Qt.h>
 #include <CGAL/Qt/vec.h>
 #include <iostream>
 #include <math.h>
+#include <QOpenGLWidget>
 
 namespace qglviewer {
 /*! \brief The Quaternion class represents 3D rotations and orientations.
@@ -68,7 +69,7 @@ namespace qglviewer {
 
         See also the Vec and Frame classes' documentations.
         \nosubgrouping */
-class QGLVIEWER_EXPORT Quaternion {
+class CGAL_QT_EXPORT Quaternion {
 public:
   /*! @name Defining a Quaternion */
   //@{

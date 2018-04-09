@@ -26,7 +26,7 @@
 
 #include <QObject>
 #include <QString>
-#include <CGAL/Qt/config.h>
+#include <CGAL/export/Qt.h>
 #include <CGAL/Qt/vec.h>
 #include <CGAL/Qt/quaternion.h>
 
@@ -134,7 +134,7 @@ class Constraint;
   scene with the mouse.
 
   \nosubgrouping */
-class QGLVIEWER_EXPORT Frame : public QObject {
+class CGAL_QT_EXPORT Frame : public QObject {
   Q_OBJECT
 
 public:

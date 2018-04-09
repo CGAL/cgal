@@ -26,6 +26,7 @@
 
 #include <CGAL/Qt/quaternion.h>
 #include <CGAL/Qt/vec.h>
+#include <CGAL/export/Qt.h>
 
 
 namespace qglviewer {
@@ -119,7 +120,7 @@ class Camera;
   }
   \endcode
   */
-class QGLVIEWER_EXPORT Constraint {
+class CGAL_QT_EXPORT Constraint {
 public:
   /*! Virtual destructor. Empty. */
   virtual ~Constraint() {}
@@ -180,7 +181,7 @@ public:
    However, adding an extra pointer to the QGLViewer::camera() in all the
    AxisPlaneConstraint derived classes (which the user would have to update in a
    multi-viewer application) was judged as an overkill. */
-class QGLVIEWER_EXPORT AxisPlaneConstraint : public Constraint {
+class CGAL_QT_EXPORT AxisPlaneConstraint : public Constraint {
 public:
   AxisPlaneConstraint();
   /*! Virtual destructor. Empty. */
@@ -310,7 +311,7 @@ private:
 
   See the <a href="../examples/constrainedFrame.html">constrainedFrame</a>
   example for an illustration. */
-class QGLVIEWER_EXPORT LocalConstraint : public AxisPlaneConstraint {
+class CGAL_QT_EXPORT LocalConstraint : public AxisPlaneConstraint {
 public:
   /*! Virtual destructor. Empty. */
   virtual ~LocalConstraint(){};
@@ -328,7 +329,7 @@ public:
   See the <a href="../examples/constrainedFrame.html">constrainedFrame</a> and
   <a href="../examples/multiView.html">multiView</a> examples for an
   illustration. */
-class QGLVIEWER_EXPORT WorldConstraint : public AxisPlaneConstraint {
+class CGAL_QT_EXPORT WorldConstraint : public AxisPlaneConstraint {
 public:
   /*! Virtual destructor. Empty. */
   virtual ~WorldConstraint(){};
@@ -346,7 +347,7 @@ public:
   See the <a href="../examples/constrainedFrame.html">constrainedFrame</a> and
   <a href="../examples/constrainedCamera.html">constrainedCamera</a> examples
   for an illustration. */
-class QGLVIEWER_EXPORT CameraConstraint : public AxisPlaneConstraint {
+class CGAL_QT_EXPORT CameraConstraint : public AxisPlaneConstraint {
 public:
   explicit CameraConstraint(const Camera *const camera);
   /*! Virtual destructor. Empty. */

@@ -26,7 +26,7 @@
 
 #include <QObject>
 #include <QTimer>
-
+#include <CGAL/export/Qt.h>
 #include <CGAL/Qt/quaternion.h>
 // Not actually needed, but some bad compilers (Microsoft VS6) complain.
 //#include <CGAL/Qt/frame.h>
@@ -129,7 +129,7 @@ class Frame;
   \endcode
   You may want to temporally disconnect the \c kfi interpolated() signal from
   the QGLViewer::update() slot before calling this code. \nosubgrouping */
-class QGLVIEWER_EXPORT KeyFrameInterpolator : public QObject {
+class CGAL_QT_EXPORT KeyFrameInterpolator : public QObject {
   // todo closedPath, insertKeyFrames, deleteKeyFrame, replaceKeyFrame
   Q_OBJECT
 

@@ -24,7 +24,7 @@
 
 #ifndef QGLVIEWER_QGLVIEWER_H
 #define QGLVIEWER_QGLVIEWER_H
-#include <CGAL/Qt/config.h>
+#include <CGAL/export/Qt.h>
 #include <CGAL/Qt/viewer_actions.h>
 #include <CGAL/Qt/vec.h>
 #include <CGAL/Qt/camera.h>
@@ -76,7 +76,7 @@ href="../examples/callback.html">callback example</a> for a complete
 implementation.
 
 \nosubgrouping */
-class QGLVIEWER_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions_2_1 {
+class CGAL_QT_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions_2_1 {
   Q_OBJECT
 
 public:  

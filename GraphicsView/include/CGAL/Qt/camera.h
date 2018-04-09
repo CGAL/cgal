@@ -29,7 +29,7 @@
 #include <QDomElement>
 #include <CGAL/Qt/vec.h>
 #include <CGAL/Qt/quaternion.h>
-#include <CGAL/Qt/config.h>
+#include <CGAL/export/Qt.h>
 #include <QOpenGLFunctions_2_1>
 class QGLViewer;
 
@@ -99,7 +99,7 @@ class ManipulatedCameraFrame;
   A Camera can also be used outside of a QGLViewer or even without OpenGL for
   its coordinate system conversion capabilities. Note however that some of them
   explicitly rely on the presence of a Z-buffer. \nosubgrouping */
-class QGLVIEWER_EXPORT Camera : public QObject {
+class CGAL_QT_EXPORT Camera : public QObject {
 #ifndef DOXYGEN
   friend class ::QGLViewer;
 #endif

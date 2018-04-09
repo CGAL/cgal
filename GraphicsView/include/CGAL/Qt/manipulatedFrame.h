@@ -24,7 +24,7 @@
 
 #ifndef QGLVIEWER_MANIPULATED_FRAME_H
 #define QGLVIEWER_MANIPULATED_FRAME_H
-#include <CGAL/Qt/config.h>
+#include <CGAL/export/Qt.h>
 #include <CGAL/Qt/frame.h>
 #include <CGAL/Qt/camera.h>
 #include <CGAL/Qt/mouseGrabber.h>
@@ -103,7 +103,7 @@ namespace qglviewer {
   button while moving the mouse fast enough (see spinningSensitivity()). See
   also translationSensitivity() and rotationSensitivity() for sensitivity
   tuning. \nosubgrouping */
-class QGLVIEWER_EXPORT ManipulatedFrame : public Frame, public MouseGrabber {
+class CGAL_QT_EXPORT ManipulatedFrame : public Frame, public MouseGrabber {
 #ifndef DOXYGEN
   friend class Camera;
   friend class ::QGLViewer;
