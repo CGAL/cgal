@@ -58,6 +58,19 @@ void check_triangle_face_degeneracy(const char* fname)
     CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, mesh);
 }
 
+void test_vetices_duplication(const char* fname)
+{
+  std::ifstream input(fname);
+
+  Surface_mesh mesh;
+  if (!input || !(input >> mesh) || mesh.is_empty()) {
+    std::cerr << fname << " is not a valid off file.\n";
+    exit(1);
+  }
+
+  CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices(mesh);
+}
+
 int main()
 {
   fix("data_degeneracies/degtri_2dt_1edge_split_twice.off");
@@ -69,6 +82,7 @@ int main()
   fix("data_degeneracies/trihole.off");
   check_edge_degeneracy("data_degeneracies/degtri_edge.off");
   check_triangle_face_degeneracy("data_degeneracies/degtri_four.off");
+  test_vetices_duplication("data_degeneracies/degtri_four.off");
 
   return 0;
 }

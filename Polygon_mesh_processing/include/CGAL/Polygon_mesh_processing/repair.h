@@ -157,8 +157,6 @@ struct Less_vertex_point{
   }
 };
 
-///\cond SKIP_IN_MANUAL
-
 template <class Traits, class TriangleMesh, class VertexPointMap, class OutputIterator>
 OutputIterator
 degenerate_faces(const TriangleMesh& tm,
@@ -1381,7 +1379,6 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
   return nb_deg_faces;
 }
 
-
 template<class TriangleMesh>
 std::size_t remove_degenerate_faces(TriangleMesh& tmesh)
 {
@@ -1389,9 +1386,38 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh)
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
-template <class TriangleMesh, class Vpm>
-std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm, Vpm vpm)
+/// \ingroup PMP_repairing_grp
+/// duplicates all non-manifold vertices of the input mesh.
+///
+/// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
+/// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+///
+/// @param tm the triangulated surface mesh to be repaired
+/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+///
+/// \cgalNamedParamsBegin
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`.
+/// If this parameter is omitted, an internal property map for
+/// `CGAL::vertex_point_t` should be available in `PolygonMesh`
+///    \cgalParamEnd
+///    \cgalParamBegin{geom_traits} a geometric traits class instance.
+///    \cgalParamEnd
+/// \cgalNamedParamsEnd
+///
+/// \return true if the triangle face is degenerate
+template <typename TriangleMesh, typename NamedParameters>
+std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm,
+                                            const NamedParameters& np)
 {
+  CGAL_assertion(CGAL::is_triangle_mesh(tm));
+
+  using boost::get_param;
+  using boost::choose_param;
+
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VertexPointMap;
+  VertexPointMap vpm = choose_param(get_param(np, internal_np::vertex_point),
+                                        get_property_map(vertex_point, tm));
+
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
@@ -1443,10 +1469,8 @@ std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm, Vpm vpm)
 template <class TriangleMesh>
 std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm)
 {
-  return duplicate_non_manifold_vertices(tm, get(vertex_point, tm));
+  return duplicate_non_manifold_vertices(tm, parameters::all_default());
 }
-
-/// \endcond
 
 
 /// \ingroup PMP_repairing_grp
