@@ -104,7 +104,6 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   setKeyDescription(Qt::Key_F5,
                     tr("Reload selected items if possible."));
 
-#if QGLVIEWER_VERSION >= 0x020501
   //modify mouse bindings that have been updated
   setMouseBinding(Qt::Key(0), Qt::NoModifier, Qt::LeftButton, qglviewer::RAP_FROM_PIXEL, true, Qt::RightButton);
   setMouseBindingDescription(Qt::ShiftModifier, Qt::RightButton,
@@ -124,13 +123,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   setMouseBindingDescription(Qt::Key_O, Qt::NoModifier, Qt::LeftButton,
                              tr("Move the camera orthogonally to the picked facet of a Scene_polyhedron_item or "
                                 "to the current selection of a Scene_points_with_normal_item."));
-#else
-  setMouseBinding(Qt::SHIFT + Qt::LeftButton, SELECT);
-  setMouseBindingDescription(Qt::SHIFT + Qt::RightButton,
-                             tr("Selects and display context "
-                                "menu of the selected item"));
 
-#endif // QGLVIEWER_VERSION >= 2.5.0
   prev_radius = sceneRadius();
   d->has_text = false;
   d->i_is_pressed = false;

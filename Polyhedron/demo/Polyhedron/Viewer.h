@@ -109,20 +109,12 @@ public Q_SLOTS:
   void hideMessage();
   void setBindingSelect() Q_DECL_OVERRIDE
   {
-#if QGLVIEWER_VERSION >= 0x020501
     setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, qglviewer::SELECT);
-#else
-    setMouseBinding(::Qt::SHIFT + ::Qt::LeftButton, SELECT);
-#endif
   }
 
   virtual void setNoBinding() Q_DECL_OVERRIDE
   {
-#if QGLVIEWER_VERSION >= 0x020501
     setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, qglviewer::NO_CLICK_ACTION);
-#else
-    setMouseBinding(::Qt::SHIFT + ::Qt::LeftButton, NO_CLICK_ACTION);
-#endif
   }
 
 protected:

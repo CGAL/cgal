@@ -636,8 +636,11 @@ protected:
       pen.setColor(QColor(Qt::green));
       pen.setWidth(3);
 
+      //Create a QImage of the screen and paint the lasso on top of it
       QImage temp(background);
       QPainter *painter = new QPainter(&temp);
+
+
       //painter->begin(&image);
       painter->setPen(pen);
       for(std::size_t i=0; i<polyline->size(); ++i)
