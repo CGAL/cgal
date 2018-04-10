@@ -3,7 +3,7 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of a frok of the QGLViewer library version 2.7.0.
+ This file is part of a fork of the QGLViewer library version 2.7.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
