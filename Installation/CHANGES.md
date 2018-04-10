@@ -144,6 +144,9 @@ Release date: April 2018
 
 ### Point Set Shape Detection
 
+-   **Breaking change**:
+    `CGAL::Shape_detection_3::Efficient_RANSAC_traits` is now called
+    `CGAL::Shape_detection_3::Shape_detection_traits`.
 -   New algorithm: `CGAL::Region_growing`. This is a deterministic
     alternative to RANSAC for plane detection.
 -   **Breaking change**: the API of `CGAL::regularize_planes()` is
