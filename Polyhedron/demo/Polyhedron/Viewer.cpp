@@ -1025,6 +1025,3 @@ void Viewer::setStaticImage(QImage image) { d->static_image = image; }
 
 const QImage& Viewer:: staticImage() const { return d->static_image; }
 
-
-
-#include "Viewer.moc"
