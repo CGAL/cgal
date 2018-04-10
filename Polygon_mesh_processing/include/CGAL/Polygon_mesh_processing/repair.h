@@ -193,6 +193,7 @@ degenerate_faces(const TriangleMesh& tm, OutputIterator out)
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 /// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
+/// @param e the edge to check whether is degenerate
 /// @param pm the triangulated surface mesh to be repaired
 /// @param np optional \ref pmp_namedparameters "Named Parameters" described below
 ///
@@ -232,6 +233,57 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
                         PolygonMesh& pm)
 {
   return is_degenerate_edge(e, pm, parameters::all_default());
+}
+
+/// \ingroup PMP_repairing_grp
+/// checks whether a triangle face is degenerate.
+/// A triangle face is considered degenerate if all three points of the face are collinear.
+///
+/// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
+/// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+///
+/// @param f the face to check whether is degenerate
+/// @param tm the triangulated surface mesh to be repaired
+/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+///
+/// \cgalNamedParamsBegin
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`.
+/// If this parameter is omitted, an internal property map for
+/// `CGAL::vertex_point_t` should be available in `PolygonMesh`
+/// \cgalParamEnd
+///    \cgalParamBegin{geom_traits} a geometric traits class instance.
+///       The traits class must provide the nested type `Point_3`,
+///       and the nested functor :
+///         - `Collinear_3` to check whether 3 points are collinear
+///   \cgalParamEnd
+/// \cgalNamedParamsEnd
+///
+/// \return true if the triangle face is degenerate
+template <typename TriangleMesh, typename NamedParameters>
+bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
+                                 TriangleMesh& tm,
+                                 const NamedParameters& np)
+{
+  CGAL_assertion(CGAL::is_triangle_mesh(tm));
+
+  using boost::get_param;
+  using boost::choose_param;
+
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VertexPointMap;
+  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+                                        get_property_map(vertex_point, tm));
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Traits;
+  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
+
+  // call from BGL helpers
+  return is_degenerate_triangle_face(f, tm, vpmap, traits);
+}
+
+template <typename TriangleMesh>
+bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
+                                 TriangleMesh& tm)
+{
+  return CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, tm, parameters::all_default());
 }
 
 // this function remove a border edge even if it does not satisfy the link condition.
@@ -780,7 +832,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 // Then, remove triangles made of 3 collinear points
   std::set<face_descriptor> degenerate_face_set;
   BOOST_FOREACH(face_descriptor fd, faces(tmesh))
-    if ( is_degenerate_triangle_face(fd, tmesh, vpmap, traits) )
+    if ( is_degenerate_triangle_face(fd, tmesh) )
       degenerate_face_set.insert(fd);
   nb_deg_faces+=degenerate_face_set.size();
 
@@ -811,7 +863,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
           degenerate_face_set.erase( face(hd2, tmesh) );
       // remove the central vertex and check if the new face is degenerated
       hd=CGAL::Euler::remove_center_vertex(hd, tmesh);
-      if (is_degenerate_triangle_face(face(hd, tmesh), tmesh, vpmap, traits))
+      if (is_degenerate_triangle_face(face(hd, tmesh), tmesh))
       {
         degenerate_face_set.insert( face(hd, tmesh) );
       }

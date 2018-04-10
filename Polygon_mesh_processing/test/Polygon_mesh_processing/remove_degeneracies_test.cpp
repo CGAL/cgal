@@ -44,6 +44,20 @@ void check_edge_degeneracy(const char* fname)
     CGAL::Polygon_mesh_processing::is_degenerate_edge(e, mesh);
 }
 
+void check_triangle_face_degeneracy(const char* fname)
+{
+  std::ifstream input(fname);
+
+  Surface_mesh mesh;
+  if (!input || !(input >> mesh) || mesh.is_empty()) {
+    std::cerr << fname << " is not a valid off file.\n";
+    exit(1);
+  }
+
+  BOOST_FOREACH(typename boost::graph_traits<Surface_mesh>::face_descriptor f, faces(mesh))
+    CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, mesh);
+}
+
 int main()
 {
   fix("data_degeneracies/degtri_2dt_1edge_split_twice.off");
@@ -54,6 +68,7 @@ int main()
   fix("data_degeneracies/degtri_single.off");
   fix("data_degeneracies/trihole.off");
   check_edge_degeneracy("data_degeneracies/degtri_edge.off");
+  check_triangle_face_degeneracy("data_degeneracies/degtri_four.off");
 
   return 0;
 }
