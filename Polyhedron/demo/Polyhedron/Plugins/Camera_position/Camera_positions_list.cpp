@@ -146,11 +146,7 @@ void Camera_positions_list::load(QString filename) {
 void Camera_positions_list::on_frontButton_pressed()
 {
     qglviewer::Vec posFront = qglviewer::Vec(0,0,m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)));
-#if QGLVIEWER_VERSION >= 0x020502
     qglviewer::Vec trans = m_viewer->camera()->pivotPoint();
-#else
-    qglviewer::Vec trans = m_viewer->camera()->revolveAroundPoint();
-#endif
     posFront = posFront + trans;
     qglviewer::Quaternion dirFront;
     dirFront.setAxisAngle(qglviewer::Vec(0,1,0),0);
@@ -169,11 +165,7 @@ void Camera_positions_list::on_frontButton_pressed()
 void Camera_positions_list::on_backButton_pressed()
 {
     qglviewer::Vec posBack = qglviewer::Vec(0,0,-m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)));
-#if QGLVIEWER_VERSION >= 0x020502
     qglviewer::Vec trans = m_viewer->camera()->pivotPoint();
-#else
-    qglviewer::Vec trans = m_viewer->camera()->revolveAroundPoint();
-#endif
     posBack+= trans;
     qglviewer::Quaternion dirBack;
     dirBack.setAxisAngle(qglviewer::Vec(0,1,0),CGAL_PI);
@@ -191,11 +183,7 @@ void Camera_positions_list::on_backButton_pressed()
 void Camera_positions_list::on_topButton_pressed()
 {
     qglviewer::Vec posTop = qglviewer::Vec(0,m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0);
-#if QGLVIEWER_VERSION >= 0x020502
     qglviewer::Vec trans = m_viewer->camera()->pivotPoint();
-#else
-    qglviewer::Vec trans = m_viewer->camera()->revolveAroundPoint();
-#endif
     posTop += trans;
     qglviewer::Quaternion dirTop;
     dirTop.setAxisAngle(qglviewer::Vec(1,0,0), -CGAL_PI/2);
@@ -213,11 +201,7 @@ void Camera_positions_list::on_topButton_pressed()
 void Camera_positions_list::on_botButton_pressed()
 {
     qglviewer::Vec posBot = qglviewer::Vec(0,-m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0);;
-#if QGLVIEWER_VERSION >= 0x020502
     qglviewer::Vec trans = m_viewer->camera()->pivotPoint();
-#else
-    qglviewer::Vec trans = m_viewer->camera()->revolveAroundPoint();
-#endif
     posBot += trans;
     qglviewer::Quaternion dirBot;
     dirBot.setAxisAngle(qglviewer::Vec(1,0,0),CGAL_PI/2);
@@ -235,11 +219,7 @@ void Camera_positions_list::on_botButton_pressed()
 void Camera_positions_list::on_leftButton_pressed()
 {
     qglviewer::Vec posLeft = qglviewer::Vec(-m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0, 0);;
-#if QGLVIEWER_VERSION >= 0x020502
     qglviewer::Vec trans = m_viewer->camera()->pivotPoint();
-#else
-    qglviewer::Vec trans = m_viewer->camera()->revolveAroundPoint();
-#endif
     posLeft += trans;
     qglviewer::Quaternion dirLeft;
     dirLeft.setAxisAngle(qglviewer::Vec(0,1,0),-CGAL_PI/2);
@@ -257,11 +237,7 @@ void Camera_positions_list::on_leftButton_pressed()
 void Camera_positions_list::on_rightButton_pressed()
 {
     qglviewer::Vec posRight = qglviewer::Vec(m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0,0);
-#if QGLVIEWER_VERSION >= 0x020502
     qglviewer::Vec trans = m_viewer->camera()->pivotPoint();
-#else
-    qglviewer::Vec trans = m_viewer->camera()->revolveAroundPoint();
-#endif
     posRight += trans;
     qglviewer::Quaternion dirRight;
     dirRight.setAxisAngle(qglviewer::Vec(0,1,0),CGAL_PI/2);

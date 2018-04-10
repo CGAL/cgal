@@ -154,9 +154,9 @@ void Scene_plane_item::flipPlane()
   qglviewer::Quaternion q;
   qglviewer::Vec axis(0,1,0);
   if(frame->orientation().axis() == axis)
-    q.setAxisAngle(qglviewer::Vec(1,0,0), M_PI);
+    q.setAxisAngle(qglviewer::Vec(1,0,0), CGAL_PI);
   else
-    q.setAxisAngle(axis, M_PI);
+    q.setAxisAngle(axis, CGAL_PI);
   frame->rotate(q.normalized());
   invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
@@ -244,7 +244,7 @@ void Scene_plane_item::setNormal(float x, float y, float z) {
   }
    if(origin == -normal)
   {
-    q.setAxisAngle(qglviewer::Vec(0,1,0),M_PI);
+    q.setAxisAngle(qglviewer::Vec(0,1,0),CGAL_PI);
     frame->setOrientation(q);
     return;
   }

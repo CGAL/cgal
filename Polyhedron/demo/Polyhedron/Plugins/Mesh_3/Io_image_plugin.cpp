@@ -153,11 +153,7 @@ public Q_SLOTS:
   void updateValue() {
     if(!ready_to_cut)
       return;
-#if QGLVIEWER_VERSION >= 0x020600
     typedef qreal qglviewer_real;
-#else // QGLViewer < 2.6.0
-    typedef float qglviewer_real;
-#endif // QGLViewer < 2.6.0
     qglviewer_real a, b, c;
     frame->getPosition(a, b, c);
     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();

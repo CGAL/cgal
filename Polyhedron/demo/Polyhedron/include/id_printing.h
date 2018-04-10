@@ -608,15 +608,9 @@ int zoomToId(const Mesh& mesh,
         viewer->camera()->position().z - viewer->camera()->sceneCenter().z)
       .norm() * normal ;
 
-#if QGLVIEWER_VERSION >= 0x020502
   viewer->camera()->setPivotPoint(qglviewer::Vec(p.x(),
                                                  p.y(),
                                                  p.z()));
-#else
-  viewer->camera()->setRevolveAroundPoint(qglviewer::Vec(p.x(),
-                                                         p.y(),
-                                                         p.z()));
-#endif
 
   viewer->moveCameraToCoordinates(QString("%1 %2 %3 %4 %5 %6 %7").arg(new_pos.x())
                                   .arg(new_pos.y())

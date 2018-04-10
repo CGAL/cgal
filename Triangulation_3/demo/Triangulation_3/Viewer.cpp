@@ -88,7 +88,7 @@ void Viewer::init()
                        tr("Cancel insertion in <u>Input-Point</u> mode;<br>")
                        + tr("Cancel current selection in <u>Select</u> mode") );
     setKeyDescription( Qt::Key_Delete, tr("Delete selected vertices in <u>Select</u> mode") );
-#if QGLVIEWER_VERSION >= 0x020500
+
     setMouseBindingDescription(Qt::NoModifier, Qt::LeftButton,
                                tr("Hold to move new point in <u>Input-Point</u> mode;<br>")
                                + tr("Hold to move a vertex in <u>Move</u> mode") );
@@ -100,19 +100,7 @@ void Viewer::init()
                                + tr("Click to place a query point in <u>Show-Empty-Sphere</u> mode") );
     setMouseBindingDescription(Qt::ControlModifier, Qt::LeftButton,
                                tr("Drag to add vertices to current selection in <u>Select</u> mode") );
-#else
-    setMouseBindingDescription( Qt::LeftButton,
-                                tr("Hold to move new point in <u>Input-Point</u> mode;<br>")
-                                + tr("Hold to move a vertex in <u>Move</u> mode") );
-    setMouseBindingDescription( Qt::SHIFT + Qt::LeftButton,
-                                tr("Click to insert a vertex in <u>Input-Vertex</u> mode;<br>")
-                                + tr("Click to insert a point in <u>Input-Point</u> mode;<br>")
-                                + tr("Click or Drag to select multiple points in <u>Select</u> mode;<br>")
-                                + tr("Click to place a query point in <u>Find-Nearest-Neighbor</u> mode;<br>")
-                                + tr("Click to place a query point in <u>Show-Empty-Sphere</u> mode") );
-    setMouseBindingDescription( Qt::CTRL + Qt::LeftButton,
-                                tr("Drag to add vertices to current selection in <u>Select</u> mode") );
-#endif
+
     compile_shaders();
     are_buffers_initialized = false;
 }
@@ -1802,12 +1790,7 @@ void Viewer::mousePressEvent(QMouseEvent *event)
                 // redraw window
             {  changed();
 
-#if QGLVIEWER_VERSION >= 0x020700
               update();
-#else
-              updateGL();
-
-#endif
             }
             else
                 // if no point is selected, then regular action (rotation) will be performed
@@ -1824,12 +1807,7 @@ void Viewer::mousePressEvent(QMouseEvent *event)
             // initialize multiple selection window
             m_rectSel = QRect( event->pos(), event->pos() );
             // redraw window
-#if QGLVIEWER_VERSION >= 0x020700
             update();
-#else
-            updateGL();
-
-#endif
             break;
         case Qt::CTRL : // add selection
             m_isPress = true;
@@ -1837,12 +1815,7 @@ void Viewer::mousePressEvent(QMouseEvent *event)
             // initialize multiple selection window
             m_rectSel = QRect( event->pos(), event->pos() );
             // redraw window
-#if QGLVIEWER_VERSION >= 0x020700
               update();
-#else
-              updateGL();
-
-#endif
             break;
         default: // rotate
             QGLViewer::mousePressEvent(event);
@@ -1859,12 +1832,7 @@ void Viewer::mousePressEvent(QMouseEvent *event)
         select( event->pos() );
         if( m_isMoving ) // redraw window
         {  changed();
-#if QGLVIEWER_VERSION >= 0x020700
               update();
-#else
-              updateGL();
-
-#endif
         }
         else // if no point is selected, then regular action (rotation) will be performed
             QGLViewer::mousePressEvent(event);
@@ -1902,12 +1870,7 @@ void Viewer::mouseMoveEvent(QMouseEvent *event)
             computeConflict( m_newPt );
             // redraw
             changed();
-#if QGLVIEWER_VERSION >= 0x020700
               update();
-#else
-              updateGL();
-
-#endif
         }//end-if-compute
     }//end-if-inspt
 
@@ -1960,12 +1923,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
               update();
-#else
-              updateGL();
-
-#endif
     }//end-if-ins
 
     /* INS_PT mode - Shift+Left: compute and insert a point */
@@ -1981,12 +1939,8 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
+        update();
 
-#endif
     }//end-if-inspt
 
     /* INS_PT mode - Left: compute and insert a point */
@@ -2001,12 +1955,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-inspt
 
     /* SEL mode - Left: terminate multiple point selection */
@@ -2049,12 +1998,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 
         // update display to show
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-select
 
     /* MOVE mode - Left: terminate point moving */
@@ -2082,13 +2026,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
-
+        update();
     }//end-if-move
 
     /* FindNb mode - Shift+Left: find the nearest neighbor of the point */
@@ -2102,12 +2040,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-findnb
 
     /* EmptySphere mode - Shift+Left: show the empty sphere of the cell */
@@ -2133,12 +2066,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
         }//end-if-compute
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-emptysphere
 
     else
@@ -2163,12 +2091,7 @@ void Viewer::wheelEvent(QWheelEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-insv
 
     else if( m_curMode == INSERT_PT && modifiers == Qt::SHIFT ) {
@@ -2190,12 +2113,7 @@ void Viewer::wheelEvent(QWheelEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-inspt
 
     // resize the trackball when moving a point
@@ -2226,12 +2144,7 @@ void Viewer::wheelEvent(QWheelEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-move
 
     else
@@ -2268,12 +2181,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-insVertex
 
     /* Cancel the newly inserted point and its conflict region */
@@ -2286,12 +2194,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-escapeIns
 
     /* Delete selected points */
@@ -2309,12 +2212,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-del
 
     /* Cancel the selection */
@@ -2328,12 +2226,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-escapeSel
 
 
@@ -2343,12 +2236,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
         m_showTrackball = !m_showTrackball;
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-showBall
 
     else
@@ -2357,12 +2245,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 
     // redraw
     changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+    update();
 }
 
 /*************************************************************/
@@ -2444,12 +2327,7 @@ void Viewer::toggleIncremental(bool on) {
 
     // redraw
     changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+    update();
 }
 
 void Viewer::stopIncremental() {
@@ -2474,12 +2352,7 @@ void Viewer::stopIncremental() {
 
     // redraw
     changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+    update();
 }
 
 void Viewer::incremental_insert() {
@@ -2539,12 +2412,7 @@ void Viewer::incremental_insert() {
 
     // redraw
     changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+    update();
 }
 
 

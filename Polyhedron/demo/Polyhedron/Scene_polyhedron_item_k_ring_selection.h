@@ -126,11 +126,7 @@ public:
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(this);
     mw->installEventFilter(this);
-#if QGLVIEWER_VERSION >= 0x020501
     viewer->setMouseBindingDescription(Qt::Key_D, Qt::ShiftModifier, Qt::LeftButton, "(When in selection plugin) Removes the clicked primitive from the selection. ");
-#else
-    viewer->setMouseBindingDescription(Qt::SHIFT + Qt::LeftButton,  "(When in selection plugin) When D is pressed too, removes the clicked primitive from the selection. ");
-#endif
     if(poly_item)
     {
       connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
@@ -708,11 +704,7 @@ protected:
       pen.setColor(QColor(Qt::green));
       pen.setWidth(3);
       //Create a QImage of the screen and paint the lasso on top of it
-#if QGLVIEWER_VERSION >= 0x020700
       QImage image = viewer->grabFramebuffer();
-#else
-      QImage image = viewer->grabFrameBuffer();
-#endif
       painter->begin(viewer);
       painter->drawImage(QPoint(0,0), image);
       painter->setPen(pen);

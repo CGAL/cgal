@@ -777,11 +777,7 @@ void MainWindow::viewerShow(float xmin,
 
   if(min_ == max_) return viewerShow(xmin, ymin, zmin);
 
-#if QGLVIEWER_VERSION >= 0x020502
   viewer->camera()->setPivotPoint((min_+max_)*0.5);
-#else
-  viewer->camera()->setRevolveAroundPoint((min_+max_)*0.5);
-#endif
 
   qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
   viewer->camera()->fitBoundingBox(min_, max_);
@@ -802,11 +798,7 @@ void MainWindow::viewerShow(float x, float y, float z) {
   viewer->camera()->interpolateTo(new_frame, 1.f);
   viewer->setVisualHintsMask(1);
 
-#if QGLVIEWER_VERSION >= 0x020502
   viewer->camera()->setPivotPoint(qglviewer::Vec(x, y, z));
-#else
-  viewer->camera()->setRevolveAroundPoint(qglviewer::Vec(x, y, z));
-#endif
 }
 
 void MainWindow::message(QString message, QString colorName, QString font) {
@@ -840,11 +832,7 @@ void MainWindow::error(QString text) {
 void MainWindow::updateViewerBBox(bool recenter = true)
 {
   const Scene::Bbox bbox = scene->bbox();
-#if QGLVIEWER_VERSION >= 0x020502
     qglviewer::Vec center = viewer->camera()->pivotPoint();
-#else
-    qglviewer::Vec center = viewer->camera()->revolveAroundPoint();
-#endif
   const double xmin = bbox.xmin();
   const double ymin = bbox.ymin();
   const double zmin = bbox.zmin();
@@ -886,11 +874,7 @@ void MainWindow::updateViewerBBox(bool recenter = true)
   }
   else
   {
-#if QGLVIEWER_VERSION >= 0x020502
     viewer->camera()->setPivotPoint(center);
-#else
-    viewer->camera()->setRevolveAroundPoint(center);
-#endif
   }
 }
 
