@@ -38,6 +38,7 @@
 #include <CGAL/Qt/camera.h>
 #include <CGAL/Qt/domUtils.h>
 #include <CGAL/Qt/keyFrameInterpolator.h>
+#include <CGAL/Qt/image_interface.h>
 
 #include <QApplication>
 #include <QDateTime>
@@ -4495,3 +4496,4 @@ void QGLViewer::saveSnapshot()
   }
 
 }
+

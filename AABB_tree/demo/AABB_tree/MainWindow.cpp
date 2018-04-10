@@ -416,18 +416,13 @@ void MainWindow::on_actionSave_snapshot_triggered()
 void MainWindow::on_actionCopy_snapshot_triggered()
 {
   // copy snapshot to clipboard
-	QApplication::setOverrideCursor(Qt::WaitCursor);
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   QClipboard *qb = QApplication::clipboard();
   m_pViewer->makeCurrent();
   m_pViewer->raise();
-#if QGLVIEWER_VERSION >= 0x020700
   QImage snapshot = m_pViewer->grabFramebuffer();
-#else
-  QImage snapshot = m_pViewer->grabFrameBuffer(true);
-
-#endif
   qb->setImage(snapshot);
-	QApplication::restoreOverrideCursor();
+  QApplication::restoreOverrideCursor();
 }
 
 

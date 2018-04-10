@@ -65,6 +65,7 @@ if(NOT CGAL_Qt5_MISSING_DEPS)
         ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/manipulatedCameraFrame.h
         ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/manipulatedFrame.h
         ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/qglviewer.h
+        ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/image_interface.h
         ${_CGAL_Qt5_UI_FILES}
       ${_CGAL_Qt5_RESOURCE_FILES_private})
     set_target_properties(CGAL_Qt5_moc_and_resources PROPERTIES
