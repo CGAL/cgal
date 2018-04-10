@@ -14,6 +14,7 @@
 #include <QMouseEvent>
 #include <QMainWindow>
 #include <QObject>
+#include <CGAL/Three/Viewer_interface.h>
 
 #include <map>
 #include <queue>
@@ -490,6 +491,7 @@ protected:
 
   bool eventFilter(QObject* target, QEvent *event)
   {
+    static QImage background;
     // This filter is both filtering events from 'viewer' and 'main window'
 
     // key events
@@ -562,7 +564,16 @@ protected:
       }
       else
       {
-        sample_mouse_path();
+        if (event->type() != QEvent::MouseMove)
+        {
+          //Create a QImage of the screen and paint the lasso on top of it
+#if QGLVIEWER_VERSION >= 0x020700
+          background = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin())->grabFramebuffer();
+#else
+          background = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin())->grabFrameBuffer();
+#endif
+        }
+        sample_mouse_path(background);
       }
     }
     //if in edit_mode and the mouse is moving without left button pressed :
@@ -612,7 +623,7 @@ protected:
     return true;
   }
 
-  void sample_mouse_path()
+  void sample_mouse_path(QImage& background)
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
     viewer->makeCurrent();
@@ -624,13 +635,9 @@ protected:
       QPen pen;
       pen.setColor(QColor(Qt::green));
       pen.setWidth(3);
-      //Create a QImage of the screen and paint the lasso on top of it
-#if QGLVIEWER_VERSION >= 0x020700
-      QImage image = viewer->grabFramebuffer();
-#else
-      QImage image = viewer->grabFrameBuffer();
-#endif
-      QPainter *painter = new QPainter(&image);
+
+      QImage temp(background);
+      QPainter *painter = new QPainter(&temp);
       //painter->begin(&image);
       painter->setPen(pen);
       for(std::size_t i=0; i<polyline->size(); ++i)
@@ -645,7 +652,7 @@ protected:
       painter->end();
       delete painter;
       viewer->set2DSelectionMode(true);
-      viewer->setStaticImage(image);
+      viewer->setStaticImage(temp);
       viewer->update();
 
     }
