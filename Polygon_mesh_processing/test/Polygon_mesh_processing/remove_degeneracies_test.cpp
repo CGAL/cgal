@@ -2,6 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
 #include <iostream>
 #include <fstream>
@@ -29,6 +30,20 @@ void fix(const char* fname)
   assert( CGAL::is_valid_polygon_mesh(mesh) );
 }
 
+void check_edge_degeneracy(const char* fname)
+{
+  std::ifstream input(fname);
+
+  Surface_mesh mesh;
+  if (!input || !(input >> mesh) || mesh.is_empty()) {
+    std::cerr << fname << " is not a valid off file.\n";
+    exit(1);
+  }
+
+  BOOST_FOREACH(typename boost::graph_traits<Surface_mesh>::edge_descriptor e, edges(mesh))
+    CGAL::Polygon_mesh_processing::is_degenerate_edge(e, mesh);
+}
+
 int main()
 {
   fix("data_degeneracies/degtri_2dt_1edge_split_twice.off");
@@ -38,6 +53,7 @@ int main()
   fix("data_degeneracies/degtri_three.off");
   fix("data_degeneracies/degtri_single.off");
   fix("data_degeneracies/trihole.off");
+  check_edge_degeneracy("data_degeneracies/degtri_edge.off");
 
   return 0;
 }

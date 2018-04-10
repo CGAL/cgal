@@ -186,6 +186,54 @@ degenerate_faces(const TriangleMesh& tm, OutputIterator out)
   return degenerate_faces(tm, get(vertex_point, tm), Kernel(), out);
 }
 
+/// \ingroup PMP_repairing_grp
+/// checks whether an edge is degenerate.
+/// An edge is considered degenerate if two of its vertices share the same location.
+///
+/// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+/// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+///
+/// @param pm the triangulated surface mesh to be repaired
+/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+///
+/// \cgalNamedParamsBegin
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`.
+/// If this parameter is omitted, an internal property map for
+/// `CGAL::vertex_point_t` should be available in `PolygonMesh`
+/// \cgalParamEnd
+///    \cgalParamBegin{geom_traits} a geometric traits class instance.
+///       The traits class must provide the nested type `Point_3`,
+///       and the nested functor :
+///         - `Equal_3` to check whether 2 points are identical
+///   \cgalParamEnd
+/// \cgalNamedParamsEnd
+///
+/// \return true if the edge is degenerate
+template <typename PolygonMesh, typename NamedParameters>
+bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
+                        PolygonMesh& pm,
+                        const NamedParameters& np)
+{
+  using boost::get_param;
+  using boost::choose_param;
+
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
+  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+                                        get_property_map(vertex_point, pm));
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Traits;
+  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
+
+  if ( traits.equal_3_object()(get(vpmap, target(e, pm)), get(vpmap, source(e, pm))) )
+    return true;
+}
+
+template <typename PolygonMesh>
+bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
+                        PolygonMesh& pm)
+{
+  return is_degenerate_edge(e, pm, parameters::all_default());
+}
+
 // this function remove a border edge even if it does not satisfy the link condition.
 // The only limitation is that the length connected component of the boundary this edge
 // is strictly greater than 3
