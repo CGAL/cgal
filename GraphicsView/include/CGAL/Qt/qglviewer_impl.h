@@ -66,7 +66,12 @@ using namespace qglviewer;
 CGAL_INLINE_FUNCTION
 QList<QGLViewer *> &QGLViewer::QGLViewerPool() {
   static QList<QGLViewer *> QGLViewerPool_;
-  return QGLViewerPool_;
+  void* p = qApp->property("qglviewer pool").value<void*>();
+  if(p == 0) {
+    p = (void*)(&QGLViewerPool_);
+    qApp->setProperty("qglviewer pool", QVariant::fromValue(p));
+  }
+  return *static_cast<QList<QGLViewer *> * >(p);
 }
 
 /*! \mainpage

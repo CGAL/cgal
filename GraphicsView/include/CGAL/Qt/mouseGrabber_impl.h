@@ -39,7 +39,12 @@ using namespace qglviewer;
 CGAL_INLINE_FUNCTION
  QList<MouseGrabber *> &MouseGrabber::MouseGrabberPool() {
   static QList<MouseGrabber*> MouseGrabberPool_;
-  return MouseGrabberPool_;
+  void* p = qApp->property("qglviewer mouse grabber pool").value<void*>();
+  if(p == 0) {
+    p = (void*)(&MouseGrabberPool_);
+    qApp->setProperty("qglviewer mouse grabber pool", QVariant::fromValue(p));
+  }
+  return *static_cast<QList<MouseGrabber *> * >(p);
 }
 
 /*! Default constructor.
