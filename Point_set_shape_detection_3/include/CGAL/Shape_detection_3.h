@@ -32,7 +32,6 @@
 
 #include <CGAL/license/Point_set_shape_detection_3.h>
 
-
 #include <CGAL/Shape_detection_3/Efficient_RANSAC.h>
 #include <CGAL/Shape_detection_3/Region_growing.h>
 #include <CGAL/Shape_detection_3/Shape_detection_traits.h>
@@ -42,5 +41,9 @@
 #include <CGAL/Shape_detection_3/Torus.h>
 #include <CGAL/Shape_detection_3/Sphere.h>
 #include <CGAL/Shape_detection_3/property_maps.h>
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+#include <CGAL/Shape_detection_3/Efficient_RANSAC_traits.h>
+#endif
 
 #endif //CGAL_SHAPE_DETECTION_3_H
