@@ -42,7 +42,7 @@
 #include <QTime>
 #include <QTimer>
 #include <QGLContext>
-
+#include <QOpenGLWidget>
 
 
 class QTabWidget;
@@ -1081,12 +1081,13 @@ private Q_SLOTS:
   }
   void hideMessage();
 
-protected:
+private:
   // Copy constructor and operator= are declared private and undefined
   // Prevents everyone from trying to use them
   QGLViewer(const QGLViewer &v);
   QGLViewer &operator=(const QGLViewer &v);
 
+protected:
   // Set parameters to their default values. Called by the constructors.
   void defaultConstructor();
 
