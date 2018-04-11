@@ -190,5 +190,26 @@ template< class InputIterator, class Size, class OutputIterator>
 OutputIterator copy_n(InputIterator first, Size count, OutputIterator result);
 
 } /* namespace cpp11 */
+
+namespace cpp98 {
+
+/*!
+\ingroup STLAlgos
+
+Replacement for `std::random_shuffle()` which was deprecated in C++14, and removed by C++17.
+In the \stl it was replaced by `std::shuffle()`. 
+The implementation in`\cgal produces the same order on all platforms.
+*/  
+template <class RandomAccessIterator,
+          class RandomGenerator>
+void
+random_shuffle(RandomAccessIterator begin, RandomAccessIterator end,
+               RandomGenerator& random);
+  
+template <class RandomAccessIterator>
+void
+random_shuffle(RandomAccessIterator begin, RandomAccessIterator end);
+} // namespace cpp98
+  
 } /* namespace CGAL */
 

@@ -484,7 +484,7 @@ wlop_simplify_and_regularize_point_set(
                                          && select_percentage <= 100);
 
   // Random shuffle
-  CGAL::random_shuffle (points.begin(), points.end());
+  CGAL::cpp98::random_shuffle (points.begin(), points.end());
 
   // Computes original(input) and sample points size 
   std::size_t number_of_original = std::distance(points.begin(), points.end());

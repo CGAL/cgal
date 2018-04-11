@@ -56,7 +56,7 @@ OutputIterator random_polygon_2(std::size_t n,  OutputIterator result,
    CGAL_assertion(!duplicate_points(vertices.begin(), vertices.end(), traits));
 
 #ifndef CGAL_DONT_SHUFFLE_IN_RANDOM_POLYGON_2
-   CGAL::random_shuffle(vertices.begin(), vertices.end());
+   CGAL::cpp98::random_shuffle(vertices.begin(), vertices.end());
 #endif
 
    make_simple_polygon(vertices.begin(), vertices.end(), traits);

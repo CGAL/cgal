@@ -87,7 +87,7 @@ void shuffle_off(const char* fname_in, const char* fname_out)
     for (int k=0;k<n;++k)
       input >> indices[k];
 
-    CGAL::random_shuffle(indices.begin(), indices.end());
+    CGAL::cpp98::random_shuffle(indices.begin(), indices.end());
 
     output << n;
     for (int k=0;k<n;++k)

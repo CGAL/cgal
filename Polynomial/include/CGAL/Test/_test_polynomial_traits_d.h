@@ -240,7 +240,7 @@ void test_construct_polynomial(const Polynomial_traits_d&){
     };
     
     Monom_vec monom_vec(monom_list.begin(),monom_list.end());
-    CGAL::random_shuffle(monom_vec. begin(),monom_vec. end());
+    CGAL::cpp98::random_shuffle(monom_vec. begin(),monom_vec. end());
       
     Polynomial_d p1 = Constructor()(monom_vec. begin(),
         monom_vec. begin()+((monom_vec. end()- monom_vec. begin())/2));
@@ -353,7 +353,7 @@ void test_get_monom_representation(const Polynomial_traits_d&){
     gmr(p,std::back_inserter(monom_rep));
     q = Constructor()(monom_rep.begin(), monom_rep.end());
     assert(q == p);
-    CGAL::random_shuffle(monom_rep.begin(), monom_rep.end());
+    CGAL::cpp98::random_shuffle(monom_rep.begin(), monom_rep.end());
     q = Constructor()(monom_rep.begin(), monom_rep.end());
     assert(q == p);
   }

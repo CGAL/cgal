@@ -22,7 +22,7 @@ fct()
   for(i = 0; i < n; i++) {
     intervals[i] = Interval(i,i+d);
   }
-  CGAL::random_shuffle(intervals.begin(), intervals.end());
+  CGAL::cpp98::random_shuffle(intervals.begin(), intervals.end());
 
   for(i = 0; i < n; i++) {
     isl.insert(intervals[i]);

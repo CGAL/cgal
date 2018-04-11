@@ -318,7 +318,7 @@ public:
 
 #ifdef CLASSIFICATION_TRAINING_QUICK_ESTIMATION
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
-      CGAL::random_shuffle (training_sets[i].begin(), training_sets[i].end());
+      CGAL::cpp98::random_shuffle (training_sets[i].begin(), training_sets[i].end());
 #endif
     
     CGAL_CLASSIFICATION_CERR << "Training using " << nb_tot << " inliers" << std::endl;

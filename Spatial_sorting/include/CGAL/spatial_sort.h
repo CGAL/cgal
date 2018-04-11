@@ -53,7 +53,7 @@ namespace internal {
       typedef Hilbert_sort_2<Kernel, Policy> Sort;
         boost::rand48 random;
         boost::random_number_generator<boost::rand48, Diff_t> rng(random);
-        CGAL::random_shuffle(begin,end,rng);
+        CGAL::cpp98::random_shuffle(begin,end,rng);
 
 	if (threshold_hilbert==0) threshold_hilbert=4;
 	if (threshold_multiscale==0) threshold_multiscale=16;
@@ -78,7 +78,7 @@ namespace internal {
       typedef Hilbert_sort_3<Kernel, Policy> Sort;
         boost::rand48 random;
         boost::random_number_generator<boost::rand48, Diff_t> rng(random);
-        CGAL::random_shuffle(begin,end, rng);
+        CGAL::cpp98::random_shuffle(begin,end, rng);
 
 	if (threshold_hilbert==0) threshold_hilbert=8;
 	if (threshold_multiscale==0) threshold_multiscale=64;
@@ -103,7 +103,7 @@ namespace internal {
       typedef Hilbert_sort_d<Kernel, Policy> Sort;
         boost::rand48 random;
         boost::random_number_generator<boost::rand48, Diff_t> rng(random);
-        CGAL::random_shuffle(begin,end, rng);
+        CGAL::cpp98::random_shuffle(begin,end, rng);
 
 	if (threshold_hilbert==0) threshold_hilbert=10;
 	if (threshold_multiscale==0) threshold_multiscale=500;

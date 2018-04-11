@@ -458,7 +458,7 @@ protected:
 
     // Apply a random shuffle on the points, since the batched point-location
     // returns them sorted.
-    CGAL::random_shuffle(pairs.begin(), pairs.end());
+    CGAL::cpp98::random_shuffle(pairs.begin(), pairs.end());
 
     // Insert all landmarks (paired with their current location in the
     // arrangement) into the nearest-neighbor search structure.

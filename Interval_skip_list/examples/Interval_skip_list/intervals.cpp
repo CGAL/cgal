@@ -20,7 +20,7 @@ int main()
   for(i = 0; i < n; i++) {
     intervals[i] = Interval(i, i+d);
   }
-  CGAL::random_shuffle(intervals.begin(), intervals.end());
+  CGAL::cpp98::random_shuffle(intervals.begin(), intervals.end());
 
   isl.insert(intervals.begin(), intervals.end());
 

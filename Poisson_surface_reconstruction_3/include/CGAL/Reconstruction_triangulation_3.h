@@ -391,7 +391,7 @@ public:
     typedef typename Iterator_traits::difference_type Diff_t;
     boost::rand48 random;
     boost::random_number_generator<boost::rand48, Diff_t> rng(random);
-    CGAL::random_shuffle (points.begin(), points.end(), rng);
+    CGAL::cpp98::random_shuffle (points.begin(), points.end(), rng);
     fraction = 0;
 
     fractions.clear();

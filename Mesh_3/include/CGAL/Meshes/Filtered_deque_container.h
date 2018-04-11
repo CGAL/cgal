@@ -292,7 +292,7 @@ namespace Meshes {
     // Random shuffle
     void random_shuffle ()
     {
-      CGAL::random_shuffle(container.begin(), container.end());
+      CGAL::cpp98::random_shuffle(container.begin(), container.end());
     }
 
     size_type size() const

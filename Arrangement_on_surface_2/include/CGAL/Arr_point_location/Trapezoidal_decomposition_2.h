@@ -1426,7 +1426,7 @@ public:
       start_over = false;
 
       //random_shuffle the range
-      CGAL::random_shuffle(begin,end);
+      CGAL::cpp98::random_shuffle(begin,end);
 
       Halfedge_const_handle he_cst;
       Halfedge_iterator it = begin;
@@ -1476,7 +1476,7 @@ public:
   //  if(begin == end)
   //    return;
   //
-  //  CGAL::random_shuffle(begin,end);
+  //  CGAL::cpp98::random_shuffle(begin,end);
   //
   //  curve_iterator it=begin,next=it;
   //  while(it!=end)
@@ -1872,7 +1872,7 @@ public:
       }
     }
     if(! container.empty()) {
-      CGAL::random_shuffle(container.begin(),container.end());
+      CGAL::cpp98::random_shuffle(container.begin(),container.end());
     }
     return sz;
   }

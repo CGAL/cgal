@@ -149,7 +149,7 @@ void simple_test(int n, int d, int multiplicity, double eps)
   Point_list P;
   typedef typename is_d_dimensional<Traits>::value is_d;
   add_random_points<Kernel>(n, d, multiplicity, P, is_d());
-  CGAL::random_shuffle(P.begin(), P.end());
+  CGAL::cpp98::random_shuffle(P.begin(), P.end());
 
   // compute minellipsoid:
   Traits tco;

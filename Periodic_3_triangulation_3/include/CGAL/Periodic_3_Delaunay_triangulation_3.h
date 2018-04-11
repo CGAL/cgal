@@ -490,7 +490,7 @@ public:
       is_large_point_set = false;
 
     std::vector<Point> points(first, last);
-    CGAL::random_shuffle (points.begin(), points.end());
+    CGAL::cpp98::random_shuffle (points.begin(), points.end());
     Cell_handle hint;
     std::vector<Vertex_handle> dummy_points, double_vertices;
     typename std::vector<Point>::iterator pbegin = points.begin();

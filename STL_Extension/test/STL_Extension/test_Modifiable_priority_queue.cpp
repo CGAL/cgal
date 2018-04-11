@@ -128,7 +128,7 @@ int main()
 
 //testing correctness of the order
   int array[10] = {0,1,2,3,4,5,6,7,8,9};
-  CGAL::random_shuffle(array,array+10);
+  CGAL::cpp98::random_shuffle(array,array+10);
   data.clear();
   data.reserve(10);
   for (int i=0;i<10;++i){

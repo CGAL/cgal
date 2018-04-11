@@ -246,7 +246,7 @@ public:
       }
     else
       {
-        CGAL::random_shuffle (points.begin(), points.end());
+        CGAL::cpp98::random_shuffle (points.begin(), points.end());
         pbegin = points.begin();
 
         // The empty triangulation is a 1-cover by definition, insert at least one point
@@ -357,7 +357,7 @@ private:
       }
     else
       {
-        CGAL::random_shuffle(indices.begin(), indices.end());
+        CGAL::cpp98::random_shuffle(indices.begin(), indices.end());
         pbegin = indices.begin();
 
         Vertex_handle v_new;

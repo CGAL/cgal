@@ -127,7 +127,7 @@ public:
     size_type n = number_of_vertices();
 
     std::vector<Point> points (first, last);
-    CGAL::random_shuffle (points.begin(), points.end());
+    CGAL::cpp98::random_shuffle (points.begin(), points.end());
     spatial_sort (points.begin(), points.end(), geom_traits());
 
     // hints[i] is the cell of the previously inserted point in level i.
