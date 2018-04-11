@@ -473,6 +473,9 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
                         QOpenGLFramebufferObject *fbo)
 {
   viewer->makeCurrent();
+  viewer->setCurrentPass(pass);
+  viewer->setDepthWriting(writing_depth);
+  viewer->setDepthPeelingFbo(fbo);
   Q_FOREACH(Scene_interface::Item_id index, items)
   {
     CGAL::Three::Scene_item& item = *m_entries[index];
@@ -500,7 +503,7 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
           viewer->glShadeModel(GL_SMOOTH);
         else
           viewer->glShadeModel(GL_FLAT);
-        item.draw(viewer, pass, writing_depth, fbo);
+        item.draw(viewer);
       }
 
       if(with_names) {
@@ -515,7 +518,7 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
         }
       }
       if(group)
-        group->renderChildren(viewer, picked_item_IDs, picked_pixel, with_names, pass, writing_depth, fbo);
+        group->renderChildren(viewer, picked_item_IDs, picked_pixel, with_names);
     }
   }
 }

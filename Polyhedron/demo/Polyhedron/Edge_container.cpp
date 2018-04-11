@@ -106,7 +106,7 @@ void Edge_container::initializeBuffers(Viewer_interface *viewer)
 }
 
 void Edge_container::draw(Viewer_interface *viewer,
-                          bool is_color_uniform, QOpenGLFramebufferObject *)
+                          bool is_color_uniform)
 
 {
   bindUniformValues(viewer);

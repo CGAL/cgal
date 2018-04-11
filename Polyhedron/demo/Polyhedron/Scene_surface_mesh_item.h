@@ -45,8 +45,7 @@ public:
 
 
   Scene_surface_mesh_item* clone() const Q_DECL_OVERRIDE;
-  void draw(CGAL::Three::Viewer_interface *, int pass,
-            bool, QOpenGLFramebufferObject *fbo) Q_DECL_OVERRIDE;
+  void draw(CGAL::Three::Viewer_interface *) Q_DECL_OVERRIDE;
   void drawEdges(CGAL::Three::Viewer_interface *) Q_DECL_OVERRIDE;
   void drawPoints(CGAL::Three::Viewer_interface *) Q_DECL_OVERRIDE;
 

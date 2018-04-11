@@ -131,10 +131,7 @@ void Scene_group_item::draw(CGAL::Three::Viewer_interface* , int , bool , QOpenG
 void Scene_group_item::renderChildren(Viewer_interface *viewer,
                             QMap<float, int>& picked_item_IDs,
                             const QPoint& picked_pixel,
-                            bool with_names,
-                            int pass,
-                            bool is_writing,
-                            QOpenGLFramebufferObject *fbo)
+                            bool with_names)
 {
 
   Q_FOREACH(Scene_interface::Item_id id, children){
@@ -155,7 +152,7 @@ void Scene_group_item::renderChildren(Viewer_interface *viewer,
         getChild(id)->renderingMode() == FlatPlusEdges ||
         getChild(id)->renderingMode() == Gouraud))
     {
-      getChild(id)->draw(viewer, pass, is_writing, fbo);
+      getChild(id)->draw(viewer);
     }
 
     if(getChild(id)->visible() &&

@@ -82,8 +82,7 @@ struct DEMO_FRAMEWORK_EXPORT Edge_container :public Primitive_container
   //! \param is_color_uniform must be `false` if `VBOs`[`Colors`] is not empty, `true` otherwise.
   //!
   void draw(CGAL::Three::Viewer_interface* viewer,
-            bool is_color_uniform,
-            QOpenGLFramebufferObject* = NULL)  Q_DECL_OVERRIDE;
+            bool is_color_uniform)  Q_DECL_OVERRIDE;
 
   void initializeBuffers(Viewer_interface *viewer) Q_DECL_OVERRIDE;
 

@@ -611,8 +611,7 @@ Scene_polygon_soup_item::toolTip() const
 }
 
 void
-Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface*,
-                              int, bool,QOpenGLFramebufferObject*) {
+Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface*) {
   /*  if(!are_buffers_filled)
     {
      d->compute_normals_and_vertices();

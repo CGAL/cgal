@@ -80,8 +80,7 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
   //! \param fbo holds the texture that is used for transparency.
   //!
   void draw(CGAL::Three::Viewer_interface* viewer,
-            bool is_color_uniform,
-            QOpenGLFramebufferObject* fbo = NULL)  Q_DECL_OVERRIDE;
+            bool is_color_uniform)  Q_DECL_OVERRIDE;
 
   void initializeBuffers(Viewer_interface *viewer) Q_DECL_OVERRIDE;
   /// \name Getters and Setters for the shaders parameters.
@@ -91,23 +90,11 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
   /// The others should be filled at each `draw()` from the item.
   ///@{
   float getShrinkFactor();
-  bool isComparing();
   QVector4D getPlane();
-  float getWidth();
-  float getHeight();
-  float getNear();
-  float getFar();
-  bool isDepthWriting();
   float getAlpha();
 
   void setShrinkFactor(const float&);
-  void setComparing   (const bool&);
   void setPlane       (const QVector4D&);
-  void setWidth       (const float&);
-  void setHeight      (const float&);
-  void setNear        (const float&);
-  void setFar         (const float&);
-  void setDepthWriting(const bool&);
   void setAlpha       (const float&);
   ///@}
 

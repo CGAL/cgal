@@ -120,12 +120,6 @@ public:
    *
    * Draws the faces of the item in the viewer.
    * \param viewer the active `Viewer_interface`
-   * \param pass the current pass in the Depth Peeling (transparency) algorithm.
-   * -1 means that no depth peeling is applied.
-   * \param writing_depth means that the color of the faces will be drawn in a grayscale
-   * according to the depth of the fragment in the shader. It is used by the transparency.
-   * \param fbo contains the texture used by the Depth Peeling algorithm.
-   * Should be NULL if pass <= 0;
    * 
    * @todo: Review Laurent Rineau: the obvious comment I can make is
    * that the API exposes a lot of the internal implementation of the
@@ -133,11 +127,9 @@ public:
    * how that is implemented in a library like VTK.
    */  
 #ifdef DOXYGEN_RUNNING
-    virtual void draw(CGAL::Three::Viewer_interface* viewer,
-                      int pass, bool writing_depth, QOpenGLFramebufferObject* fbo)
+    virtual void draw(CGAL::Three::Viewer_interface* viewer)
 #else
-  virtual void draw(CGAL::Three::Viewer_interface* ,
-                    int , bool , QOpenGLFramebufferObject* )
+  virtual void draw(CGAL::Three::Viewer_interface* )
 #endif
   {}
   /*! \brief The drawing function for the edges.

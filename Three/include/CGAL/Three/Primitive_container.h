@@ -75,8 +75,7 @@ public:
   //! \param fbo holds the texture that is used for transparency.
   //!
   virtual void draw(CGAL::Three::Viewer_interface* viewer,
-                    bool is_color_uniform,
-                    QOpenGLFramebufferObject* fbo = NULL)  = 0;
+                    bool is_color_uniform)  = 0;
 
   //!
   //! \brief initializeBuffers sends the data to the GPU memory.

@@ -47,7 +47,17 @@ public:
   QTimer messageTimer;
   QOpenGLFunctions_4_3_Compatibility* _recentFunctions;
   bool is_ogl_4_3;
-
+  // D e p t h  P e e l i n g
+  // \param pass the current pass in the Depth Peeling (transparency) algorithm.
+  // -1 means that no depth peeling is applied.
+  // \param writing_depth means that the color of the faces will be drawn in a grayscale
+  // according to the depth of the fragment in the shader. It is used by the transparency.
+  // \param fbo contains the texture used by the Depth Peeling algorithm.
+  // Should be NULL if pass <= 0;
+  int current_pass;
+  bool writing_depth;
+  QOpenGLFramebufferObject* dp_fbo;
+  
   //! Holds useful data to draw the axis system
   struct AxisData
   {
@@ -1895,3 +1905,13 @@ void Viewer::resetFov()
 {
   camera()->setHorizontalFieldOfView(ORIGINAL_FOV);
 }
+
+void Viewer::setCurrentPass(int pass) { d->current_pass = pass; }
+
+void Viewer::setDepthWriting(bool writing_depth) { d->writing_depth = writing_depth; }
+
+void Viewer::setDepthPeelingFbo(QOpenGLFramebufferObject* fbo) { d->dp_fbo = fbo; }
+
+int Viewer::currentPass()const{ return d->current_pass; }
+bool Viewer::isDepthWriting()const{ return d->writing_depth; }
+QOpenGLFramebufferObject *Viewer::depthPeelingFbo(){ return d->dp_fbo; }

@@ -1080,8 +1080,7 @@ void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
     d->erase_next_picked_facet_m = b;
 }
 
-void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* ,
-                                 int, bool, QOpenGLFramebufferObject* ) {
+void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* ) {
 
 }
 

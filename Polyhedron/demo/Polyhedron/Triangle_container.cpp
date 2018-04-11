@@ -8,32 +8,13 @@ struct D{
 
   D():
     shrink_factor(1.0f),
-    comparing(false),
     plane(QVector4D()),
-    width(0.0f),
-    height(0.0f),
-    m_near(0.0f),
-    m_far(0.0f),
-    writing(false),
     alpha(1.0f)
   {}
 
   Triangle_container* container;
   float shrink_factor;
-
-  bool comparing;
-
   QVector4D plane;
-
-  float width;
-
-  float height;
-
-  float m_near;
-
-  float m_far;
-
-  bool writing;
   float alpha;
 };
 
@@ -126,10 +107,9 @@ void Triangle_container::initGL( Viewer_interface* viewer)
 }
 
 void Triangle_container::draw(Viewer_interface* viewer,
-                              bool is_color_uniform,
-                              QOpenGLFramebufferObject* fbo)
+                              bool is_color_uniform)
 {
-
+QOpenGLFramebufferObject* fbo = viewer->depthPeelingFbo();
   bindUniformValues(viewer);
 
   if(isDataIndexed())
@@ -140,13 +120,13 @@ void Triangle_container::draw(Viewer_interface* viewer,
     getVbo(Vertex_indices)->bind();
     if(getVao(viewer)->program->property("hasTransparency").toBool())
     {
-      getVao(viewer)->program->setUniformValue("comparing", d->comparing);
-      getVao(viewer)->program->setUniformValue("width", d->width);
-      getVao(viewer)->program->setUniformValue("height", d->height);
-      getVao(viewer)->program->setUniformValue("near", d->m_near);
-      getVao(viewer)->program->setUniformValue("far", d->m_far);
-      getVao(viewer)->program->setUniformValue("writing", d->writing);
-      getVao(viewer)->program->setUniformValue("alpha", d->alpha);
+      getVao(viewer)->program->setUniformValue("comparing", viewer->currentPass() > 0);;
+      getVao(viewer)->program->setUniformValue("width", viewer->width()*1.0f);         
+      getVao(viewer)->program->setUniformValue("height", viewer->height()*1.0f);       
+      getVao(viewer)->program->setUniformValue("near", (float)viewer->camera()->zNear());     
+      getVao(viewer)->program->setUniformValue("far", (float)viewer->camera()->zFar());       
+      getVao(viewer)->program->setUniformValue("writing", viewer->isDepthWriting());   
+      getVao(viewer)->program->setUniformValue("alpha", d->alpha);                     
       if( fbo)
         viewer->glBindTexture(GL_TEXTURE_2D, fbo->texture());
     }
@@ -164,12 +144,12 @@ void Triangle_container::draw(Viewer_interface* viewer,
       getVao(viewer)->program->setAttributeValue("colors", getColor());
     if(getVao(viewer)->program->property("hasTransparency").toBool())
     {
-      getVao(viewer)->program->setUniformValue("comparing", d->comparing);
-      getVao(viewer)->program->setUniformValue("width", d->width);
-      getVao(viewer)->program->setUniformValue("height", d->height);
-      getVao(viewer)->program->setUniformValue("near", d->m_near);
-      getVao(viewer)->program->setUniformValue("far", d->m_far);
-      getVao(viewer)->program->setUniformValue("writing", d->writing);
+      getVao(viewer)->program->setUniformValue("comparing", viewer->currentPass() > 0);
+      getVao(viewer)->program->setUniformValue("width", viewer->width()*1.0f);
+      getVao(viewer)->program->setUniformValue("height", viewer->height()*1.0f);
+      getVao(viewer)->program->setUniformValue("near", (float)viewer->camera()->zNear());
+      getVao(viewer)->program->setUniformValue("far", (float)viewer->camera()->zFar());
+      getVao(viewer)->program->setUniformValue("writing", viewer->isDepthWriting());
       getVao(viewer)->program->setUniformValue("alpha", d->alpha);
       if( fbo)
         viewer->glBindTexture(GL_TEXTURE_2D, fbo->texture());
@@ -207,21 +187,8 @@ void Triangle_container::initializeBuffers(Viewer_interface *viewer)
 }
 
 float     Triangle_container::getShrinkFactor() { return d->shrink_factor ; }
-bool      Triangle_container::isComparing()     { return d->comparing; }
 QVector4D Triangle_container::getPlane()        { return d->plane; }
-float     Triangle_container::getWidth()        { return d->width; }
-float     Triangle_container::getHeight()       { return d->height; }
-float     Triangle_container::getNear()         { return d->m_near; }
-float     Triangle_container::getFar()          { return d->m_far; }
-bool      Triangle_container::isDepthWriting()  { return d->writing; }
 float     Triangle_container::getAlpha()        { return d->alpha; }
 
 void Triangle_container::setShrinkFactor(const float& f) { d->shrink_factor = f; }
-void Triangle_container::setComparing   (const bool& b)     { d->comparing = b; }
-void Triangle_container::setPlane       (const QVector4D& p)    { d->plane = p; }
-void Triangle_container::setWidth       (const float& f)        { d->width = f; }
-void Triangle_container::setHeight      (const float& f)       { d->height = f; }
-void Triangle_container::setNear        (const float& f)         { d->m_near = f; }
-void Triangle_container::setFar         (const float& f)          { d->m_far = f; }
-void Triangle_container::setDepthWriting(const bool& b)  { d->writing = b; }
 void Triangle_container::setAlpha       (const float& f)        { d->alpha = f ; }
