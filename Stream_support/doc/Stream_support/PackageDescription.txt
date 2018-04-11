@@ -41,6 +41,8 @@ the printing mode.
 - \link IOstreamOperators `CGAL::operator<<()` \endlink
 - `CGAL::iformat()`
 - `CGAL::oformat()`
+
+## WKT I/O Functions ##
 - `CGAL::read_point_WKT()`
 - `GCAL::read_multi_point_WKT()`
 - `GCAL::read_linestring_WKT()`
