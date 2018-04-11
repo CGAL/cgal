@@ -63,6 +63,8 @@ namespace CGAL {
 namespace Three{
 /*!
  * This is the class given to the plugins to interact with the scene.
+ * @todo Laurent Rineau Scene_interface should be a QObject, with the useful signals and slots of the scene
+
  * */
 class Scene_interface {
 public:
