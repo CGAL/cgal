@@ -56,19 +56,29 @@ class Viewer_interface;
 //! It contains all the functions called by the Scene.
 class SCENE_ITEM_EXPORT Scene_item : public QObject{
   Q_OBJECT
+  /// @todo Review Laurent Rineau: I wonder if we can come up with something better
+  /// than a color property per item. After a while, we found out that
+  /// a lot of items have several colors, and not just one.
   Q_PROPERTY(QColor color READ color WRITE setColor)
   Q_PROPERTY(QString name READ name WRITE setName)
+
+  /// @todo Review Laurent Rineau: even if I did that part of the API, I still
+  /// wonder why the `visible` property of an item is stored in an
+  /// item, and not in the scene that contains it.
   Q_PROPERTY(bool visible READ visible WRITE setVisible)
+
+  /// @todo Review Laurent Rineau: same... why is the rendering mode something stored in the item?
   Q_ENUMS(RenderingMode)
   Q_PROPERTY(RenderingMode renderingMode READ renderingMode WRITE setRenderingMode)
 public:
   typedef CGAL::Bbox_3 Bbox;
   typedef qglviewer::ManipulatedFrame ManipulatedFrame;
   //!
-  //! \brief The Gl_data_name enum is used as a flag to specify what should be
-  //! re-computed during `computeElements()`. The flag correspondig to this enum is
-  //! `Gl_data_names`, and multiple flags can be combined whith the operator |.
-  //! For instance, you can use GEOMETRY|COLORS as a single value.
+  //! \brief The `Gl_data_name` enum is used as a flag to specify what should be
+  //! re-computed during `computeElements()`. The flag corresponding to this enum is
+  //! `Gl_data_names`, and multiple flags can be combined whith the operator `|`.
+  //! For instance, you can use `GEOMETRY|COLORS` as a single value.
+  //! @todo Review Laurent Rineau We need to find a better name. 1. Do not refer to OpenGL. 2. Why "name"?
   //!
   enum Gl_data_name{
     GEOMETRY = 0x1,                     //!< Invalidates the vertices, edges and faces.
@@ -79,6 +89,7 @@ public:
 
 #ifdef DOXYGEN_RUNNING
   //! \brief Flag interface for Scene_item::Gl_data_name.
+  //! \todo Review Laurent Rineau:  Should be explained better. Points to `QFlags`...
   enum Gl_data_names{};
 #endif
   Q_DECLARE_FLAGS(Gl_data_names, Gl_data_name)
@@ -89,7 +100,7 @@ public:
   static const QColor defaultColor();
   //!
   //! \brief selectionColor is the color used for selected item.
-  //!
+  //! @todo Review Laurent Rineau: is that still used anywhere?
   QColor selectionColor();
   Scene_item();
 
@@ -115,6 +126,11 @@ public:
    * according to the depth of the fragment in the shader. It is used by the transparency.
    * \param fbo contains the texture used by the Depth Peeling algorithm.
    * Should be NULL if pass <= 0;
+   * 
+   * @todo: Review Laurent Rineau: the obvious comment I can make is
+   * that the API exposes a lot of the internal implementation of the
+   * depth peeling, as it is implemented in the application. I wonder
+   * how that is implemented in a library like VTK.
    */  
 #ifdef DOXYGEN_RUNNING
     virtual void draw(CGAL::Three::Viewer_interface* viewer,
