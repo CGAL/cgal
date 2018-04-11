@@ -50,17 +50,11 @@ do
 done
 echo " include: " >> .travis.yml
 #writes the matrix
-echo "  - compiler: gcc " >> .travis.yml
-echo "    env: PACKAGE='CHECK' " >> .travis.yml
-echo "  - compiler: clang-3.6" >> .travis.yml
-echo "    env: PACKAGE='CHECK' " >> .travis.yml
+echo "    - PACKAGE='CHECK' " >> .travis.yml
 for package in ${PACKAGES[@]}
 do
-echo "  - compiler: clang-3.6" >> .travis.yml
-echo "    env: PACKAGE='$package' " >> .travis.yml
+echo "    - PACKAGE='$package' " >> .travis.yml
 done
-#echo "  - compiler: clang-3.6" >> .travis.yml
-#echo "    env: PACKAGE='Polyhedron_demo' " >> .travis.yml
 
 #writes the end of the file
 COPY=0
