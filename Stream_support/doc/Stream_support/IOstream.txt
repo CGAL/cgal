@@ -251,9 +251,9 @@ the state is inactive, nothing happens.
 WKT stands for <em>Well Known Text</em> and it is a text markup language for representing
 vector geometry objects on a geographical map. See the
 <A HREF="https://en.wikipedia.org/wiki/Well-known_text">wikipedia page</A> for details.
-
-Several free functions are provided for reading and writing several \cgal types
-in the WKT format, namely:
+CGAL supports a subset of WKT types: point, multipoint, linestring, multilinestring, polygon and multipolygon. 
+Free functions are provided for reading and writing several \cgal types
+in those WKT types, namely:
 - `CGAL::Point_2`
 - `CGAL::Point_3`
 - `CGAL::Polygon_with_holes_2`

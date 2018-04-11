@@ -291,22 +291,24 @@ istream& operator>>(istream& is, Class c);
 
 
 //! \ingroup PkgIOstreams
-//! \brief `read_point_WKT()` reads the content of a .wkt file into a `Point` if possible.
+//! \brief `read_point_WKT()` fills a `Point` from a  WKT stream if possible.
 //! 
-//! \tparam Point must inherit `CGAL::Point_2`.
+//! \tparam Point must inherit from `CGAL::Point_2` or `CGAL::Point_3`.
 //! 
 //! \see `CGAL::Point_2`
+//! \see `CGAL::Point_3`
 template<typename Point>
 std::istream&
 read_point_WKT( std::istream& in,
                 Point& point );
 
 //! \ingroup PkgIOstreams
-//! \brief `read_multipoint_WKT()` reads the content of a .wkt file into a `MultiPoint` if possible.
+//! \brief `read_multi_point_WKT()` fills a `MultiPoint` from a  WKT stream if possible.
 //! 
-//! \tparam MultiPoint must be a model of `RandomAccessRange` of `CGAL::Point_2`.
+//! \tparam MultiPoint must be a model of `RandomAccessRange` of `CGAL::Point_2` or `CGAL::Point_3`.
 //! 
 //! \see `CGAL::Point_2`
+//! \see `CGAL::Point_3`
 template<typename MultiPoint>
 std::istream&
 read_multi_point_WKT( std::istream& in,
@@ -314,8 +316,7 @@ read_multi_point_WKT( std::istream& in,
 
 
 //! \ingroup PkgIOstreams
-//! \brief `read_linestring_WKT()` reads the content of a .wkt file into 
-//! a `Linestring` if possible.
+//! \brief `read_linestring_WKT()` fills a `Linestring` from a WKT stream if possible.
 //!
 //! \tparam Linestring must be a model of `RandomAccessRange` of `CGAL::Point_2`.
 //! \see `CGAL::Point_2`
@@ -325,8 +326,7 @@ read_linestring_WKT( std::istream& in,
                      LineString& polyline );
 
 //! \ingroup PkgIOstreams
-//! \brief `read_linestring_WKT()` reads the content of a .wkt file into 
-//! a `MultiLineString` if possible.
+//! \brief `read_multi_linestring_WKT()` fills a `MultiLineString` from a WKT stream if possible.
 //!
 //! \tparam MultiLineString must be a model of `RandomAccessRange` of `Linestring`.
 //! 
@@ -337,7 +337,7 @@ read_multi_linestring_WKT( std::istream& in,
                            MultiLineString& mls );
 
 //! \ingroup PkgIOstreams
-//! \brief `read_polygon_WKT()` reads the content of a .wkt file into a `Polygon` if possible.
+//! \brief `read_polygon_WKT()` fills `Polygon` from a WKT stream  if possible.
 //! 
 //! \tparam Polygon must inherit `CGAL::General_polygon_with_holes_2`.
 //! 
@@ -348,8 +348,7 @@ read_polygon_WKT( std::istream& in,
                   Polygon& polygon );
 
 //! \ingroup PkgIOstreams
-//! \brief `read_multipolygon_WKT()` reads the content of a .wkt file into 
-//! a `Multipolygon` if possible.
+//! \brief `read_multi_polygon_WKT()` fills a `Multipolygon` from a WKT stream if possible.
 //!
 //! \tparam Multipolygon must be a model of `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`.
 //! \see `CGAL::General_polygon_with_holes_2`
@@ -360,8 +359,8 @@ read_multi_polygon_WKT( std::istream& in,
                         MultiPolygon& polygons );
 
 //! \ingroup PkgIOstreams
-//! \brief `write_point_WKT()` writes `point` into a .wkt file.
-//! \tparam Point must be a `CGAL::Point_2`
+//! \brief `write_point_WKT()` writes `point` into a WKT stream.
+//! \tparam Point must inherit from `CGAL::Point_2`
 //! \see `CGAL::Point_2`
 template<typename Point>
 std::ostream&
@@ -369,7 +368,7 @@ write_point_WKT( std::ostream& out,
                  const Point& point );
 
 //! \ingroup PkgIOstreams
-//! \brief `write_point_WKT()` writes `poly` into a .wkt file.
+//! \brief `write_polygon_WKT()` writes `poly` into a WKT stream.
 //! \tparam Polygon  must be a `CGAL::General_polygon_with_holes_2`
 //! \see `CGAL::General_polygon_with_holes_2`
 template<typename Polygon>
@@ -379,7 +378,7 @@ write_polygon_WKT( std::ostream& out,
 
 //! \ingroup PkgIOstreams
 //! \brief `write_linestring_WKT()` writes the content of `ls` 
-//! into a .wkt file.
+//! into a WKT stream.
 //! \tparam LineString must be a `RandomAccessRange` of `CGAL::Point_2`. 
 //!\see `CGAL::Point_2`
 template<typename LineString>
@@ -389,7 +388,7 @@ write_linestring_WKT( std::ostream& out,
 
 //! \ingroup PkgIOstreams
 //! \brief `write_multi_point_WKT()` writes the content of `mp` 
-//! into a .wkt file.
+//! into a WKT stream.
 //! \tparam MultiPoint must be a `RandomAccessRange` of `CGAL::Point_2`. 
 //!\see `CGAL::Point_2`
 template<typename MultiPoint>
@@ -399,7 +398,7 @@ write_multi_point_WKT( std::ostream& out,
 
 //! \ingroup PkgIOstreams
 //! \brief `write_multi_polygon_WKT()` writes the content of `polygons` 
-//! into a .wkt file.
+//! into a WKT stream.
 //! \tparam MultiPolygon must be a `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`. 
 //!\see `CGAL::General_polygon_with_holes_2`
 template<typename MultiPolygon>
@@ -409,7 +408,7 @@ write_multi_polygon_WKT( std::ostream& out,
 
 //! \ingroup PkgIOstreams
 //! \brief `write_multi_linestring_WKT()` writes the content of `mls` 
-//! into a .wkt file.
+//! into a WKT stream.
 //! \tparam MultiLineString must be a `RandomAccessRange` of `LineString`. 
 //! \see `CGAL::write_linestring_WKT()`
 template<typename MultiLineString>
