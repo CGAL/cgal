@@ -185,6 +185,40 @@ degenerate_faces(const TriangleMesh& tm, OutputIterator out)
 }
 
 /// \ingroup PMP_repairing_grp
+/// checks whether a vertex is non-manifold.
+///
+/// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
+///
+/// @param v the vertex to check whether is degenerate
+/// @param tm the triangulated surface mesh upon evaluation
+///
+/// \return true if the vertrex is non-manifold
+template <typename TriangleMesh>
+bool is_non_manifold_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v,
+                            const TriangleMesh& tm)
+{
+  CGAL_assertion(CGAL::is_triangle_mesh(tm));
+
+  typedef boost::graph_traits<TriangleMesh> GT;
+  typedef typename GT::halfedge_descriptor halfedge_descriptor;
+
+  boost::unordered_set<halfedge_descriptor> halfedges_handled;
+  halfedge_descriptor start = halfedge(v, tm);
+  halfedge_descriptor h=start;
+  do{
+    halfedges_handled.insert(h);
+    h=opposite(next(h, tm), tm);
+  }while(h != start);
+
+  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, tm))
+  {
+    if(!halfedges_handled.count(h))
+      return true;
+  }
+  return false;
+}
+
+/// \ingroup PMP_repairing_grp
 /// checks whether an edge is degenerate.
 /// An edge is considered degenerate if two of its vertices share the same location.
 ///
@@ -192,7 +226,7 @@ degenerate_faces(const TriangleMesh& tm, OutputIterator out)
 /// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// @param e the edge to check whether is degenerate
-/// @param pm the triangulated surface mesh to be repaired
+/// @param pm the triangulated surface mesh upon evaluation
 /// @param np optional \ref pmp_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
@@ -210,15 +244,15 @@ degenerate_faces(const TriangleMesh& tm, OutputIterator out)
 /// \return true if the edge is degenerate
 template <typename PolygonMesh, typename NamedParameters>
 bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
-                        PolygonMesh& pm,
+                        const PolygonMesh& pm,
                         const NamedParameters& np)
 {
   using boost::get_param;
   using boost::choose_param;
 
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-                                        get_property_map(vertex_point, pm));
+                                      get_const_property_map(vertex_point, pm));
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Traits;
   Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
 
@@ -228,7 +262,7 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
 
 template <typename PolygonMesh>
 bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
-                        PolygonMesh& pm)
+                        const PolygonMesh& pm)
 {
   return is_degenerate_edge(e, pm, parameters::all_default());
 }
@@ -241,7 +275,7 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
 /// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// @param f the face to check whether is degenerate
-/// @param tm the triangulated surface mesh to be repaired
+/// @param tm the triangulated surface mesh upon evaluation
 /// @param np optional \ref pmp_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
@@ -259,7 +293,7 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
 /// \return true if the triangle face is degenerate
 template <typename TriangleMesh, typename NamedParameters>
 bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
-                                 TriangleMesh& tm,
+                                 const TriangleMesh& tm,
                                  const NamedParameters& np)
 {
   CGAL_assertion(CGAL::is_triangle_mesh(tm));
@@ -267,9 +301,9 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
   using boost::get_param;
   using boost::choose_param;
 
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VertexPointMap;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-                                        get_property_map(vertex_point, tm));
+                                      get_const_property_map(vertex_point, tm));
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Traits;
   Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
 
@@ -279,7 +313,7 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
 
 template <typename TriangleMesh>
 bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
-                                 TriangleMesh& tm)
+                                 const TriangleMesh& tm)
 {
   return CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, tm, parameters::all_default());
 }

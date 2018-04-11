@@ -71,6 +71,20 @@ void test_vetices_duplication(const char* fname)
   CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices(mesh);
 }
 
+void test_vertex_non_manifoldness(const char* fname)
+{
+  std::ifstream input(fname);
+
+  Surface_mesh mesh;
+  if (!input || !(input >> mesh) || mesh.is_empty()) {
+    std::cerr << fname << " is not a valid off file.\n";
+    exit(1);
+  }
+
+  BOOST_FOREACH(typename boost::graph_traits<Surface_mesh>::vertex_descriptor v, vertices(mesh))
+    CGAL::Polygon_mesh_processing::is_non_manifold_vertex(v, mesh);
+}
+
 int main()
 {
   fix("data_degeneracies/degtri_2dt_1edge_split_twice.off");
@@ -83,6 +97,7 @@ int main()
   check_edge_degeneracy("data_degeneracies/degtri_edge.off");
   check_triangle_face_degeneracy("data_degeneracies/degtri_four.off");
   test_vetices_duplication("data_degeneracies/degtri_four.off");
+  test_vertex_non_manifoldness("data/non_manifold_vertex.off");;
 
   return 0;
 }
