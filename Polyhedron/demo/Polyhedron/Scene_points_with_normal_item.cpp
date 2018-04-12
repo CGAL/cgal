@@ -154,7 +154,7 @@ class Fill_buffers {
   std::vector<CGAL_data_type>& positions_lines;
   std::vector<CGAL_data_type>& positions_normals;
   bool has_normals;
-  const qglviewer::Vec offset;
+  const CGAL::qglviewer::Vec offset;
   double length;
   std::size_t size_p;
   std::size_t offset_normal_indices;
@@ -164,7 +164,7 @@ public:
                std::vector<CGAL_data_type>& positions_lines,
                std::vector<CGAL_data_type>& positions_normals,
                bool has_normals,
-               const qglviewer::Vec offset,
+               const CGAL::qglviewer::Vec offset,
                double length,
                std::size_t offset_normal_indices = 0)
     : point_set (point_set)
@@ -442,7 +442,7 @@ void Scene_points_with_normal_item_priv::initializeBuffers(CGAL::Three::Viewer_i
 
 void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
 {
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_lines.resize(0);
     normals.resize(0);
@@ -1052,7 +1052,7 @@ zoomToPosition(const QPoint &, CGAL::Three::Viewer_interface *viewer) const
 {
   if (point_set()->nb_selected_points() == 0)
     return;
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   // fit plane to triangles
   Point_set points;
   Bbox selected_points_bbox;
@@ -1075,8 +1075,8 @@ zoomToPosition(const QPoint &, CGAL::Three::Viewer_interface *viewer) const
                            center_of_mass.y() + offset.y,
                            center_of_mass.z() + offset.z);
 
-  qglviewer::Quaternion new_orientation(qglviewer::Vec(0,0,-1),
-                                        qglviewer::Vec(-plane_normal.x(), -plane_normal.y(), -plane_normal.z()));
+  CGAL::qglviewer::Quaternion new_orientation(CGAL::qglviewer::Vec(0,0,-1),
+                                        CGAL::qglviewer::Vec(-plane_normal.x(), -plane_normal.y(), -plane_normal.z()));
   double max_side = (std::max)((std::max)(selected_points_bbox.xmax() - selected_points_bbox.xmin(),
                                           selected_points_bbox.ymax() - selected_points_bbox.ymin()),
                                selected_points_bbox.zmax() - selected_points_bbox.zmin());
@@ -1086,7 +1086,7 @@ zoomToPosition(const QPoint &, CGAL::Three::Viewer_interface *viewer) const
                                   (viewer->camera()->fieldOfView()/2)));
 
   Kernel::Point_3 new_pos = centroid + factor*plane_normal ;
-  viewer->camera()->setSceneCenter(qglviewer::Vec(centroid.x(),
+  viewer->camera()->setSceneCenter(CGAL::qglviewer::Vec(centroid.x(),
                                                   centroid.y(),
                                                   centroid.z()));
   viewer->moveCameraToCoordinates(QString("%1 %2 %3 %4 %5 %6 %7").arg(new_pos.x())

@@ -3,7 +3,7 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of a fork of the QGLViewer library version 2.7.0.
+ This file is part of a fork of the CGAL::QGLViewer library version 2.7.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -11,8 +11,8 @@
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
 
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
+ libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
+ purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -37,7 +37,7 @@
 
 #include <QMouseEvent>
 
-using namespace qglviewer;
+using namespace CGAL::qglviewer;
 using namespace std;
 
 /*! Default constructor.
@@ -430,11 +430,11 @@ The wheel behavior depends on the wheel binded action. Current possible actions
 are ZOOM, MOVE_FORWARD, MOVE_BACKWARD.
 ZOOM speed depends on wheelSensitivity() while
 MOVE_FORWARD and MOVE_BACKWARD depend on flySpeed(). See
-QGLViewer::setWheelBinding() to customize the binding. */
+CGAL::QGLViewer::setWheelBinding() to customize the binding. */
 CGAL_INLINE_FUNCTION
 void ManipulatedCameraFrame::wheelEvent(QWheelEvent *const event,
                                         Camera *const camera) {
-  //#CONNECTION# QGLViewer::setWheelBinding, ManipulatedFrame::wheelEvent.
+  //#CONNECTION# CGAL::QGLViewer::setWheelBinding, ManipulatedFrame::wheelEvent.
   switch (action_) {
   case ZOOM: {
     zoom(wheelDelta(event), camera);

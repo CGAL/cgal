@@ -3,7 +3,7 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.7.0.
+ This file is part of the CGAL::QGLViewer library version 2.7.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -11,8 +11,8 @@
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
 
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
+ libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
+ purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -31,8 +31,9 @@
 #include <CGAL/Qt/quaternion.h>
 #include <CGAL/export/Qt.h>
 #include <QOpenGLFunctions_2_1>
-class QGLViewer;
 
+namespace CGAL{
+class QGLViewer;
 namespace qglviewer {
 
 class KeyFrameInterpolator;
@@ -41,7 +42,7 @@ class ManipulatedCameraFrame;
 
 
 /*! \brief A perspective or orthographic camera.
-  \class Camera camera.h QGLViewer/camera.h
+  \class Camera camera.h CGAL::QGLViewer/camera.h
 
   A Camera defines some intrinsic parameters (fieldOfView(), position(),
   viewDirection(), upVector()...) and useful positioning tools that ease its
@@ -58,16 +59,16 @@ class ManipulatedCameraFrame;
   complex Camera setups.
 
   Different displacements can be performed using the mouse. The list of possible
-  actions is defined by the QGLViewer::MouseAction enum. Use
-  QGLViewer::setMouseBinding() to attach a specific action to an arbitrary mouse
+  actions is defined by the CGAL::QGLViewer::MouseAction enum. Use
+  CGAL::QGLViewer::setMouseBinding() to attach a specific action to an arbitrary mouse
   button-state key binding. These actions are detailed in the <a
   href="../mouse.html">mouse page</a>.
 
-  The default button binding are: QGLViewer::ROTATE (left), QGLViewer::ZOOM
-  (middle) and QGLViewer::TRANSLATE (right). With this configuration, the Camera
+  The default button binding are: CGAL::QGLViewer::ROTATE (left), CGAL::QGLViewer::ZOOM
+  (middle) and CGAL::QGLViewer::TRANSLATE (right). With this configuration, the Camera
   \e observes a scene and rotates around its pivotPoint(). You can switch
-  between this mode and a fly mode using the QGLViewer::CAMERA_MODE (see
-  QGLViewer::toggleCameraMode()) keyboard shortcut (default is 'Space').
+  between this mode and a fly mode using the CGAL::QGLViewer::CAMERA_MODE (see
+  CGAL::QGLViewer::toggleCameraMode()) keyboard shortcut (default is 'Space').
 
   <h3>Other functionalities</h3>
 
@@ -75,9 +76,9 @@ class ManipulatedCameraFrame;
   (see Type()). fieldOfView() is meaningless with Camera::ORTHOGRAPHIC.
 
   The near and far planes of the Camera are fitted to the scene and determined
-  from QGLViewer::sceneRadius(), QGLViewer::sceneCenter() and
+  from CGAL::QGLViewer::sceneRadius(), CGAL::QGLViewer::sceneCenter() and
   zClippingCoefficient() by the zNear() and zFar() methods. Reasonable values on
-  the scene extends hence have to be provided to the QGLViewer in order for the
+  the scene extends hence have to be provided to the CGAL::QGLViewer in order for the
   Camera to correctly display the scene. High level positioning methods also use
   this information (showEntireScene(), centerScene()...).
 
@@ -96,12 +97,12 @@ class ManipulatedCameraFrame;
   Camera::PERSPECTIVE type() only). Test the <a
   href="../examples/stereoViewer.html">stereoViewer example</a> to check.
 
-  A Camera can also be used outside of a QGLViewer or even without OpenGL for
+  A Camera can also be used outside of a CGAL::QGLViewer or even without OpenGL for
   its coordinate system conversion capabilities. Note however that some of them
   explicitly rely on the presence of a Z-buffer. \nosubgrouping */
 class CGAL_QT_EXPORT Camera : public QObject {
 #ifndef DOXYGEN
-  friend class ::QGLViewer;
+  friend class ::CGAL::QGLViewer;
 #endif
 
   Q_OBJECT
@@ -195,7 +196,7 @@ public:
 
   /*! Returns the Camera aspect ratio defined by screenWidth() / screenHeight().
 
-  When the Camera is attached to a QGLViewer, these values and hence the
+  When the Camera is attached to a CGAL::QGLViewer, these values and hence the
   aspectRatio() are automatically fitted to the viewer's window aspect ratio
   using setScreenWidthAndHeight(). */
   qreal aspectRatio() const {
@@ -204,13 +205,13 @@ public:
   /*! Returns the width (in pixels) of the Camera screen.
 
   Set using setScreenWidthAndHeight(). This value is automatically fitted to the
-  QGLViewer's window dimensions when the Camera is attached to a QGLViewer. See
+  CGAL::QGLViewer's window dimensions when the Camera is attached to a CGAL::QGLViewer. See
   also QOpenGLWidget::width() */
   int screenWidth() const { return screenWidth_; }
   /*! Returns the height (in pixels) of the Camera screen.
 
   Set using setScreenWidthAndHeight(). This value is automatically fitted to the
-  QGLViewer's window dimensions when the Camera is attached to a QGLViewer. See
+  CGAL::QGLViewer's window dimensions when the Camera is attached to a CGAL::QGLViewer. See
   also QOpenGLWidget::height() */
   int screenHeight() const { return screenHeight_; }
   void getViewport(GLint viewport[4]) const;
@@ -250,7 +251,7 @@ public:
   overload the zNear() and zFar() methods. See the <a
   href="../examples/standardCamera.html">standardCamera example</a>.
 
-  \attention When QGLViewer::cameraPathAreEdited(), this value is set to 5.0 so
+  \attention When CGAL::QGLViewer::cameraPathAreEdited(), this value is set to 5.0 so
   that the Camera paths are not clipped. The previous zClippingCoefficient()
   value is restored back when you leave this mode. */
   qreal zClippingCoefficient() const { return zClippingCoef_; }
@@ -282,13 +283,13 @@ public Q_SLOTS:
   You should use setScreenWidthAndHeight() instead.
 
   This method might however be convenient when the Camera is not associated with
-  a QGLViewer. It actually sets the screenHeight() to 100 and the screenWidth()
+  a CGAL::QGLViewer. It actually sets the screenHeight() to 100 and the screenWidth()
   accordingly. See also setFOVToFitScene().
 
   \note If you absolutely need an aspectRatio() that does not correspond to your
   viewer's window dimensions, overload loadProjectionMatrix() or multiply the
   created GL_PROJECTION matrix by a scaled diagonal matrix in your
-  QGLViewer::draw() method. */
+  CGAL::QGLViewer::draw() method. */
   void setAspectRatio(qreal aspect) {
     setScreenWidthAndHeight(int(100.0 * aspect), 100);
   }
@@ -317,9 +318,9 @@ public:
 
   See also setSceneBoundingBox().
 
-  Note that QGLViewer::sceneRadius() (resp. QGLViewer::setSceneRadius()) simply
+  Note that CGAL::QGLViewer::sceneRadius() (resp. CGAL::QGLViewer::setSceneRadius()) simply
   call this method (resp. setSceneRadius()) on its associated
-  QGLViewer::camera(). */
+  CGAL::QGLViewer::camera(). */
   qreal sceneRadius() const { return sceneRadius_; }
 
   /*! Returns the position of the scene center, defined in the world coordinate
@@ -333,9 +334,9 @@ public:
   Default value is (0,0,0) (world origin). Use setSceneCenter() to change it.
   See also setSceneBoundingBox().
 
-  Note that QGLViewer::sceneCenter() (resp. QGLViewer::setSceneCenter()) simply
+  Note that CGAL::QGLViewer::sceneCenter() (resp. CGAL::QGLViewer::setSceneCenter()) simply
   calls this method (resp. setSceneCenter()) on its associated
-  QGLViewer::camera(). */
+  CGAL::QGLViewer::camera(). */
   Vec sceneCenter() const { return sceneCenter_; }
   qreal distanceToSceneCenter() const;
 
@@ -488,7 +489,7 @@ public:
   This distance is the virtual world equivalent of the real-world
   physicalDistanceToScreen().
 
-  \attention This value is modified by QGLViewer::setSceneRadius(),
+  \attention This value is modified by CGAL::QGLViewer::setSceneRadius(),
   setSceneRadius() and setFieldOfView(). When one of these values is modified,
   focusDistance() is set to sceneRadius() / tan(fieldOfView()/2), which provides
   good results. */
@@ -555,4 +556,5 @@ private:
 };
 
 } // namespace qglviewer
+} //CGAL
 #endif // QGLVIEWER_CAMERA_H

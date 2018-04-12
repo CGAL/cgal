@@ -3,7 +3,7 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of a fork of the QGLViewer library version 2.7.0.
+ This file is part of a fork of the CGAL::QGLViewer library version 2.7.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -11,8 +11,8 @@
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
 
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
+ libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
+ purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -30,10 +30,11 @@
 #include <CGAL/Qt/manipulatedFrame.h>
 #include <CGAL/Qt/camera.h>
 
+namespace CGAL{
 namespace qglviewer {
 /*! \brief The ManipulatedCameraFrame class represents a ManipulatedFrame with
   Camera specific mouse bindings. \class ManipulatedCameraFrame
-  manipulatedCameraFrame.h QGLViewer/manipulatedCameraFrame.h
+  manipulatedCameraFrame.h CGAL::QGLViewer/manipulatedCameraFrame.h
 
   A ManipulatedCameraFrame is a specialization of a ManipulatedFrame, designed
   to be set as the Camera::frame(). Mouse motions are basically interpreted in a
@@ -55,7 +56,7 @@ namespace qglviewer {
 class CGAL_QT_EXPORT ManipulatedCameraFrame : public ManipulatedFrame {
 #ifndef DOXYGEN
   friend class Camera;
-  friend class ::QGLViewer;
+  friend class ::CGAL::QGLViewer;
 #endif
 
   Q_OBJECT
@@ -159,7 +160,7 @@ public Q_SLOTS:
   /*! Sets the flySpeed(), defined in OpenGL units.
 
   Default value is 0.0, but it is modified according to the
-  QGLViewer::sceneRadius() when the ManipulatedCameraFrame is set as the
+  CGAL::QGLViewer::sceneRadius() when the ManipulatedCameraFrame is set as the
   Camera::frame(). */
   void setFlySpeed(qreal speed) { flySpeed_ = speed; }
 
@@ -178,8 +179,8 @@ public:
   MOVE_BACKWARD MouseAction is proceeded.
 
   \attention When the ManipulatedCameraFrame is set as the Camera::frame(), this
-  value is set according to the QGLViewer::sceneRadius() by
-  QGLViewer::setSceneRadius(). */
+  value is set according to the CGAL::QGLViewer::sceneRadius() by
+  CGAL::QGLViewer::setSceneRadius(). */
   qreal flySpeed() const { return flySpeed_; }
 
   /*! Returns the up vector of the scene, expressed in the world coordinate
@@ -263,7 +264,7 @@ private:
   Vec pivotPoint_;
 };
 
-} // namespace qglviewer
+}} // namespace CGAL::qglviewer
 
 #ifdef CGAL_HEADER_ONLY
 //#include <CGAL/Qt/qglviewer_impl_list.h>

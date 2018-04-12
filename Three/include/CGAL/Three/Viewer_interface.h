@@ -47,7 +47,7 @@ namespace Three{
 class Scene_draw_interface;
 class Scene_item;
 //! Base class to interact with the viewer from the plugins, the items and the scene.
-class VIEWER_EXPORT Viewer_interface : public QGLViewer{
+class VIEWER_EXPORT Viewer_interface : public CGAL::QGLViewer{
 
   Q_OBJECT
 
@@ -104,7 +104,7 @@ public:
   //!
   //! Creates a valid context for OpenGL 2.1.
   //! \param parent the parent widget. It usually is the MainWindow.
-  Viewer_interface(QWidget* parent) : QGLViewer(parent) {}
+  Viewer_interface(QWidget* parent) : CGAL::QGLViewer(parent) {}
   virtual ~Viewer_interface() {}
 
   //! \brief Sets the scene for the viewer.
@@ -123,12 +123,12 @@ public:
   //! \param frame is the frame that will be moved
   //! @returns true if it worked.
   //! @see moveCameraToCoordinates()
-  static bool readFrame(QString s, qglviewer::Frame& frame);
+  static bool readFrame(QString s, CGAL::qglviewer::Frame& frame);
   //! \brief Gives information about a frame.
   //! @see readFrame
   //! @see dumpCameraCoordinates()
   //!@returns a QString containing the position and orientation of a frame.
-  static QString dumpFrame(const qglviewer::Frame&);
+  static QString dumpFrame(const CGAL::qglviewer::Frame&);
   //! \brief The fastDrawing state.
   //!
   //! In fast drawing mode, some items will be simplified while the camera is moving

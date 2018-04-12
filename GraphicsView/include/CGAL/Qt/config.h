@@ -3,7 +3,7 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of a fork of the QGLViewer library version 2.7.0.
+ This file is part of a fork of the CGAL::QGLViewer library version 2.7.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -11,8 +11,8 @@
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
 
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
+ libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
+ purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -22,7 +22,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0
 ///////////////////////////////////////////////////////////////////
-//               libQGLViewer configuration file                 //
+//               libCGAL::QGLViewer configuration file                 //
 //  Modify these settings according to your local configuration  //
 ///////////////////////////////////////////////////////////////////
 
@@ -40,7 +40,7 @@
 #include <qglobal.h>
 
 #if QT_VERSION < 0x040000
-Error : libQGLViewer requires a minimum Qt version of 4.0
+Error : libCGAL::QGLViewer requires a minimum Qt version of 4.0
 #endif
 
 // Win 32 DLL export macros

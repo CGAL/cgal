@@ -433,7 +433,7 @@ public:
     case Active_handle::PATH:
       selected_edges.insert(edges(*polyhedron()).first, edges(*polyhedron()).second);
       invalidateOpenGLBuffers();
-      QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
+      CGAL::QGLViewer* v = *CGAL::QGLViewer::QGLViewerPool().begin();
       v->update();
       break;
     }

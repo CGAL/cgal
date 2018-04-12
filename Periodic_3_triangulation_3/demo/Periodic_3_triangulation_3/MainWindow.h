@@ -23,7 +23,7 @@ public:
 
     process = new QProcess(this);
 
-    // QGLViewer drawing signals
+    // CGAL::QGLViewer drawing signals
     connect(ui->viewer, SIGNAL(viewerInitialized()), s, SLOT(init()));
     connect(ui->viewer, SIGNAL(drawNeeded()), s, SLOT(draw()));
 

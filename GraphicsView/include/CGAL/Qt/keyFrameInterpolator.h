@@ -3,7 +3,7 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of a fork of the QGLViewer library version 2.7.0.
+ This file is part of a fork of the CGAL::QGLViewer library version 2.7.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -11,8 +11,8 @@
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
 
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
+ libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
+ purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -35,11 +35,12 @@
 // #include "frame.h"
 // and comment "class Frame;" 3 lines below
 
+namespace CGAL{
 namespace qglviewer {
 class Frame;
 /*! \brief A keyFrame Catmull-Rom Frame interpolator.
   \class KeyFrameInterpolator keyFrameInterpolator.h
-  QGLViewer/keyFrameInterpolator.h
+  CGAL::QGLViewer/keyFrameInterpolator.h
 
   A KeyFrameInterpolator holds keyFrames (that define a path) and a pointer to a
   Frame of your application (which will be interpolated). When the user
@@ -97,7 +98,7 @@ class Frame;
   benchmarking or movie creation (constant number of snapshots).
 
   During the interpolation, the KeyFrameInterpolator emits an interpolated()
-  signal, which will usually be connected to the QGLViewer::update() slot. The
+  signal, which will usually be connected to the CGAL::QGLViewer::update() slot. The
   interpolation is stopped when interpolationTime() is greater than the
   lastTime() (unless loopInterpolation() is \c true) and the endReached() signal
   is then emitted.
@@ -105,7 +106,7 @@ class Frame;
   Note that a Camera has Camera::keyFrameInterpolator(), that can be used to
   drive the Camera along a path, or to restore a saved position (a path made of
   a single keyFrame). Press Alt+Fx to define a new keyFrame for path x. Pressing
-  Fx plays/pauses path interpolation. See QGLViewer::pathKey() and the <a
+  Fx plays/pauses path interpolation. See CGAL::QGLViewer::pathKey() and the <a
   href="../keyboard.html">keyboard page</a> for details.
 
   \attention If a Constraint is attached to the frame() (see
@@ -128,7 +129,7 @@ class Frame;
   }
   \endcode
   You may want to temporally disconnect the \c kfi interpolated() signal from
-  the QGLViewer::update() slot before calling this code. \nosubgrouping */
+  the CGAL::QGLViewer::update() slot before calling this code. \nosubgrouping */
 class CGAL_QT_EXPORT KeyFrameInterpolator : public QObject {
   // todo closedPath, insertKeyFrames, deleteKeyFrame, replaceKeyFrame
   Q_OBJECT
@@ -143,15 +144,15 @@ Q_SIGNALS:
   The emission of this signal triggers the synchronous emission of the frame()
   Frame::interpolated() signal, which may also be useful.
 
-  This signal should especially be connected to your QGLViewer::update() slot,
+  This signal should especially be connected to your CGAL::QGLViewer::update() slot,
   so that the display is updated after every update of the KeyFrameInterpolator
   frame(): \code connect(myKeyFrameInterpolator, SIGNAL(interpolated()),
-  SLOT(update())); \endcode Use the QGLViewer::QGLViewerPool() to connect the
+  SLOT(update())); \endcode Use the CGAL::QGLViewer::QGLViewerPool() to connect the
   signal to all the viewers.
 
-  Note that the QGLViewer::camera() Camera::keyFrameInterpolator() created using
-  QGLViewer::pathKey() have their interpolated() signals automatically connected
-  to the QGLViewer::update() slot. */
+  Note that the CGAL::QGLViewer::camera() Camera::keyFrameInterpolator() created using
+  CGAL::QGLViewer::pathKey() have their interpolated() signals automatically connected
+  to the CGAL::QGLViewer::update() slot. */
   void interpolated();
 
   /*! This signal is emitted when the interpolation reaches the first (when
@@ -370,6 +371,6 @@ private:
   Vec v1, v2;
 };
 
-} // namespace qglviewer
+}} // namespace CGAL::qglviewer
 
 #endif // QGLVIEWER_KEY_FRAME_INTERPOLATOR_H

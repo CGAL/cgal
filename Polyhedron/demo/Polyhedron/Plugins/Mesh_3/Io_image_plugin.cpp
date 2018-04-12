@@ -123,8 +123,8 @@ class Plane_slider : public QSlider
 {
   Q_OBJECT
 public:
-  Plane_slider(const qglviewer::Vec& v, int id, Scene_interface* scene,
-               qglviewer::ManipulatedFrame* frame, Qt::Orientation ori, QWidget* widget)
+  Plane_slider(const CGAL::qglviewer::Vec& v, int id, Scene_interface* scene,
+               CGAL::qglviewer::ManipulatedFrame* frame, Qt::Orientation ori, QWidget* widget)
     : QSlider(ori, widget), v(v), id(id), scene(scene), frame(frame) {
     this->setTracking(true);
     connect(frame,  SIGNAL(manipulated()), this, SLOT(updateCutPlane()));
@@ -141,8 +141,8 @@ public Q_SLOTS:
   {
     if(!ready_to_move)
       return;
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-    qglviewer::Vec v2 = v * (this->value() / scale);
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+    CGAL::qglviewer::Vec v2 = v * (this->value() / scale);
     v2+=offset;
     frame->setTranslationWithConstraint(v2);
     scene->itemChanged(id);
@@ -156,7 +156,7 @@ public Q_SLOTS:
     typedef qreal qglviewer_real;
     qglviewer_real a, b, c;
     frame->getPosition(a, b, c);
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     a-=offset.x;
     b-=offset.y;
     c-=offset.z;
@@ -180,10 +180,10 @@ private:
   static const unsigned int scale;
   bool ready_to_cut;
   bool ready_to_move;
-  qglviewer::Vec v;
+  CGAL::qglviewer::Vec v;
   int id;
   Scene_interface* scene;
-  qglviewer::ManipulatedFrame* frame;
+  CGAL::qglviewer::ManipulatedFrame* frame;
 };
 
 const unsigned int Plane_slider::scale = 100;
@@ -369,7 +369,7 @@ public Q_SLOTS:
 
   void addVP(Volume_plane_thread* thread) {
     Volume_plane_interface* plane = thread->getItem();
-    plane->init(static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first()));
+    plane->init(static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first()));
     // add the interface for this Volume_plane
     int id = scene->addItem(plane);
     scene->changeGroup(plane, group);
@@ -479,7 +479,7 @@ public Q_SLOTS:
 
   }
 private:
-  qglviewer::Vec first_offset;
+  CGAL::qglviewer::Vec first_offset;
 #ifdef CGAL_USE_VTK
   vtkImageData* vtk_image;
   vtkDICOMImageReader* dicom_reader;
@@ -678,7 +678,7 @@ private:
     x_item->setColor(QColor("red"));
     y_item->setColor(QColor("green"));
     z_item->setColor(QColor("blue"));
-    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
+    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
     viewer->installEventFilter(x_item);
     viewer->installEventFilter(y_item);
     viewer->installEventFilter(z_item);
@@ -751,7 +751,7 @@ private Q_SLOTS:
     msgBox.setText(QString("Planes created : %1/3").arg(nbPlanes));
     if(nbPlanes == 3)
     {
-      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
       if(offset != first_offset)
       {
         for(int i=0; i<scene->numberOfEntries(); ++i)

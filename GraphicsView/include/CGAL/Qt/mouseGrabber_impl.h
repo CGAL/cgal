@@ -3,7 +3,7 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of a fork of the QGLViewer library version 2.7.0.
+ This file is part of a fork of the CGAL::QGLViewer library version 2.7.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -11,8 +11,8 @@
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
 
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
+ libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
+ purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -33,7 +33,7 @@
 
 #include <CGAL/Qt/mouseGrabber.h>
 
-using namespace qglviewer;
+using namespace CGAL::qglviewer;
 
 // Static private variable
 CGAL_INLINE_FUNCTION
@@ -61,7 +61,7 @@ the constructor. Trying to add a MouseGrabber that already
 isInMouseGrabberPool() has no effect.
 
 Use removeFromMouseGrabberPool() to remove the MouseGrabber from the list, so
-that it is no longer tested with checkIfGrabsMouse() by the QGLViewer, and hence
+that it is no longer tested with checkIfGrabsMouse() by the CGAL::QGLViewer, and hence
 can no longer grab mouse focus. Use isInMouseGrabberPool() to know the current
 state of the MouseGrabber. */
 CGAL_INLINE_FUNCTION
@@ -84,7 +84,7 @@ void MouseGrabber::removeFromMouseGrabberPool() {
 
  Use this method only if it is faster to clear the MouseGrabberPool() and then
  to add back a few MouseGrabbers than to remove each one independently. Use
- QGLViewer::setMouseTracking(false) instead if you want to disable mouse
+ CGAL::QGLViewer::setMouseTracking(false) instead if you want to disable mouse
  grabbing.
 
  When \p autoDelete is \c true, the MouseGrabbers of the MouseGrabberPool() are

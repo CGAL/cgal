@@ -5,7 +5,7 @@
 #include "CGAL/Qt/CreateOpenGLContext.h"
 
 Viewer::Viewer(QWidget* parent)
-  : QGLViewer(parent)
+  : CGAL::QGLViewer(parent)
 {
   are_buffers_initialized = false;
 }
@@ -198,7 +198,7 @@ void Viewer::initialize_buffers()
 }
 
 
-void Viewer::attrib_buffers(QGLViewer* viewer)
+void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
 {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -261,7 +261,7 @@ void Viewer::attrib_buffers(QGLViewer* viewer)
 
 void Viewer::initializeGL()
 {
-  QGLViewer::initializeGL();
+  CGAL::QGLViewer::initializeGL();
   compile_shaders();
 }
 
@@ -272,8 +272,8 @@ Viewer::sceneChanged()
 
   Iso_cuboid_3 bb = CGAL::bounding_box(scene->points.begin(), scene->points.end());
    
-  this->camera()->setSceneBoundingBox(qglviewer::Vec(bb.xmin(), bb.ymin(), bb.zmin()),
-				      qglviewer::Vec(bb.xmax(),
+  this->camera()->setSceneBoundingBox(CGAL::qglviewer::Vec(bb.xmin(), bb.ymin(), bb.zmin()),
+				      CGAL::qglviewer::Vec(bb.xmax(),
 						     bb.ymax(),
 						     bb.zmax()));
 

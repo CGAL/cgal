@@ -42,7 +42,7 @@ class SCENE_IMPLICIT_FUNCTION_ITEM_EXPORT Scene_implicit_function_item
 {
   Q_OBJECT
   
-  typedef qglviewer::ManipulatedFrame ManipulatedFrame;
+  typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
   
 public:
   Scene_implicit_function_item(Implicit_function_interface*);

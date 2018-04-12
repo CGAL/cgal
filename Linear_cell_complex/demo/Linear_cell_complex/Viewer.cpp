@@ -105,7 +105,7 @@ const char fragment_source_p_l[] =
   };
 
 Viewer::Viewer(QWidget* parent)
-  : QGLViewer(parent),
+  : CGAL::QGLViewer(parent),
     wireframe(false),
     flatShading(true),
     edges(true),
@@ -595,7 +595,7 @@ void Viewer::compute_elements()
   lcc.free_mark(markface);
 }
 
-void Viewer::attrib_buffers(QGLViewer* viewer)
+void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
 {
   QMatrix4x4 mvpMatrix;
   QMatrix4x4 mvMatrix;
@@ -653,10 +653,10 @@ void Viewer::attrib_buffers(QGLViewer* viewer)
 void Viewer::sceneChanged()
 {
   compute_elements();
-  this->camera()->setSceneBoundingBox(qglviewer::Vec(bb.xmin(),
+  this->camera()->setSceneBoundingBox(CGAL::qglviewer::Vec(bb.xmin(),
                                                      bb.ymin(),
                                                      bb.zmin()),
-                                      qglviewer::Vec(bb.xmax(),
+                                      CGAL::qglviewer::Vec(bb.xmax(),
                                                      bb.ymax(),
                                                      bb.zmax()));
   are_buffers_initialized = false;
@@ -913,7 +913,7 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     update();
   }
   else
-    QGLViewer::keyPressEvent(e);
+    CGAL::QGLViewer::keyPressEvent(e);
 }
 
 QString Viewer::helpString() const

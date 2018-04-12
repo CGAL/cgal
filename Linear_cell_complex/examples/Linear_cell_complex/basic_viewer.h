@@ -202,7 +202,7 @@ typename K::Vector_3 compute_normal_of_face(const std::vector<typename K::Point_
   return (typename K::Construct_scaled_vector_3()(normal, 1.0/nb));
 }
 
-class Basic_viewer : public QGLViewer, public QOpenGLFunctions_2_1
+class Basic_viewer : public CGAL::QGLViewer, public QOpenGLFunctions_2_1
 {
   struct Vertex_info
   {
@@ -231,7 +231,7 @@ class Basic_viewer : public QGLViewer, public QOpenGLFunctions_2_1
 public:
   // Constructor/Destructor
   Basic_viewer(const char* title="") :
-    QGLViewer(CGAL::Qt::createOpenGLContext()),
+    CGAL::QGLViewer(CGAL::Qt::createOpenGLContext()),
     m_draw_vertices(true),
     m_draw_edges(true),
     m_draw_faces(true),
@@ -776,7 +776,7 @@ protected:
     m_are_buffers_initialized = true;
   }
 
-  void attrib_buffers(QGLViewer* viewer)
+  void attrib_buffers(CGAL::QGLViewer* viewer)
   {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -961,10 +961,10 @@ protected:
 
     compile_shaders();
 
-    this->camera()->setSceneBoundingBox(qglviewer::Vec(bb.xmin(),
+    this->camera()->setSceneBoundingBox(CGAL::qglviewer::Vec(bb.xmin(),
                                                        bb.ymin(),
                                                        bb.zmin()),
-                                        qglviewer::Vec(bb.xmax(),
+                                        CGAL::qglviewer::Vec(bb.xmax(),
                                                        bb.ymax(),
                                                        bb.zmax()));
 
@@ -1127,7 +1127,7 @@ protected:
       updateGL();
     }
     else
-      QGLViewer::keyPressEvent(e);
+      CGAL::QGLViewer::keyPressEvent(e);
   }
 
   virtual QString helpString() const

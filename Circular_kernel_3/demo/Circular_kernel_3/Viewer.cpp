@@ -7,7 +7,7 @@
 
 
 Viewer::Viewer(QWidget* parent )
-  : QGLViewer(parent)
+  : CGAL::QGLViewer(parent)
 {
     extension_is_found = false;
 }
@@ -722,7 +722,7 @@ void Viewer::compute_elements()
     }
 }
 
-void Viewer::attrib_buffers(QGLViewer* viewer)
+void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
 {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;

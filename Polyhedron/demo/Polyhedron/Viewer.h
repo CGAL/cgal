@@ -36,7 +36,7 @@ public:
   ~Viewer();
   bool testDisplayId(double, double, double)Q_DECL_OVERRIDE;
   void updateIds(CGAL::Three::Scene_item *)Q_DECL_OVERRIDE;
-  //! overload several QGLViewer virtual functions
+  //! overload several CGAL::QGLViewer virtual functions
   //! Draws the scene.
   void draw()Q_DECL_OVERRIDE;
   //!This step happens after draw(). It is here that all the useful information is displayed, like the axis system or the informative text.
@@ -109,12 +109,12 @@ public Q_SLOTS:
   void hideMessage();
   void setBindingSelect() Q_DECL_OVERRIDE
   {
-    setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, qglviewer::SELECT);
+    setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, CGAL::qglviewer::SELECT);
   }
 
   virtual void setNoBinding() Q_DECL_OVERRIDE
   {
-    setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, qglviewer::NO_CLICK_ACTION);
+    setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, CGAL::qglviewer::NO_CLICK_ACTION);
   }
 
 protected:

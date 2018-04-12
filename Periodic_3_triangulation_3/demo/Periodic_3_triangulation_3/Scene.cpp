@@ -695,7 +695,7 @@ void Scene::initialize_buffers()
 
 }
 
-void Scene::attrib_buffers(QGLViewer* viewer)
+void Scene::attrib_buffers(CGAL::QGLViewer* viewer)
 {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -762,7 +762,7 @@ void Scene::attrib_buffers(QGLViewer* viewer)
 }
 
 void Scene::init() {
-    // undo from QGLViewer internal initializeGL function
+    // undo from CGAL::QGLViewer internal initializeGL function
     // glDisable(GL_COLOR_MATERIAL);
     initializeOpenGLFunctions();
     glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)ui->viewer->context()->getProcAddress("glDrawArraysInstancedARB");
@@ -790,7 +790,7 @@ void Scene::init() {
     ui->viewer->camera()->lookAt(Vec(0.5,0.5,0.5));
 
     // scene inits
-    ui->viewer->setSceneCenter(qglviewer::Vec(0.5,0.5,0.5));
+    ui->viewer->setSceneCenter(CGAL::qglviewer::Vec(0.5,0.5,0.5));
     ui->viewer->setSceneRadius(2.0);
     ui->viewer->setBackgroundColor(Qt::white);
     ui->viewer->setForegroundColor(Qt::red);

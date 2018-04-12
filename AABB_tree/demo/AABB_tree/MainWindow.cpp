@@ -76,7 +76,7 @@ void MainWindow::updateViewerBBox()
 	const double xmax = bbox.xmax();
 	const double ymax = bbox.ymax();
 	const double zmax = bbox.zmax();
-	qglviewer::Vec 
+	CGAL::qglviewer::Vec 
 		vec_min(xmin, ymin, zmin),
 		vec_max(xmax, ymax, zmax);
 	m_pViewer->setSceneBoundingBox(vec_min,vec_max);

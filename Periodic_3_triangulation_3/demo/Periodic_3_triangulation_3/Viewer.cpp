@@ -2,7 +2,7 @@
  #include <CGAL/Qt/CreateOpenGLContext.h>
 
 Viewer::Viewer(QWidget *parent)
-: QGLViewer(CGAL::Qt::createOpenGLContext(),parent)
+: CGAL::QGLViewer(CGAL::Qt::createOpenGLContext(),parent)
 {}
 Viewer::~Viewer()
 {}

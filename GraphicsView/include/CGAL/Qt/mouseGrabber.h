@@ -3,7 +3,7 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of a fork of the QGLViewer library version 2.7.0.
+ This file is part of a fork of the CGAL::QGLViewer library version 2.7.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -11,8 +11,8 @@
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
 
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
+ libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
+ purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -29,13 +29,14 @@
 
 #include <QEvent>
 
-class QGLViewer;
 
+namespace CGAL{
+class QGLViewer;
 namespace qglviewer {
 class Camera;
 
-/*! \brief Abstract class for objects that grab mouse focus in a QGLViewer.
-  \class MouseGrabber mouseGrabber.h QGLViewer/mouseGrabber.h
+/*! \brief Abstract class for objects that grab mouse focus in a CGAL::QGLViewer.
+  \class MouseGrabber mouseGrabber.h CGAL::QGLViewer/mouseGrabber.h
 
   MouseGrabber are objects which react to the mouse cursor, usually when it
   hovers over them. This abstract class only provides an interface for all these
@@ -44,30 +45,30 @@ class Camera;
   <h3>How does it work ?</h3>
 
   All the created MouseGrabber are grouped in a MouseGrabberPool(). The
-  QGLViewers parse this pool, calling all the MouseGrabbers' checkIfGrabsMouse()
+  CGAL::QGLViewers parse this pool, calling all the MouseGrabbers' checkIfGrabsMouse()
   methods that setGrabsMouse() if desired.
 
-  When a MouseGrabber grabsMouse(), it becomes the QGLViewer::mouseGrabber().
+  When a MouseGrabber grabsMouse(), it becomes the CGAL::QGLViewer::mouseGrabber().
   All the mouse events (mousePressEvent(), mouseReleaseEvent(),
   mouseMoveEvent(), mouseDoubleClickEvent() and wheelEvent()) are then
-  transmitted to the QGLViewer::mouseGrabber() instead of being normally
+  transmitted to the CGAL::QGLViewer::mouseGrabber() instead of being normally
   processed. This continues while grabsMouse() (updated using
   checkIfGrabsMouse()) returns \c true.
 
   If you want to (temporarily) disable a specific MouseGrabbers, you can remove
   it from this pool using removeFromMouseGrabberPool(). You can also disable a
-  MouseGrabber in a specific QGLViewer using
-  QGLViewer::setMouseGrabberIsEnabled().
+  MouseGrabber in a specific CGAL::QGLViewer using
+  CGAL::QGLViewer::setMouseGrabberIsEnabled().
 
   <h3>Implementation details</h3>
 
   In order to make MouseGrabber react to mouse events, mouse tracking has to be
-  activated in the QGLViewer which wants to use MouseGrabbers: \code init() {
+  activated in the CGAL::QGLViewer which wants to use MouseGrabbers: \code init() {
   setMouseTracking(true); } \endcode Call \c QOpenGLWidget::hasMouseTracking()
   to get the current state of this flag.
 
   The \p camera parameter of the different mouse event methods is a pointer to
-  the QGLViewer::camera() of the QGLViewer that uses the MouseGrabber. It can be
+  the CGAL::QGLViewer::camera() of the CGAL::QGLViewer that uses the MouseGrabber. It can be
   used to compute 2D to 3D coordinates conversion using
   Camera::projectedCoordinatesOf() and Camera::unprojectedCoordinatesOf().
 
@@ -91,7 +92,7 @@ class Camera;
   public:
   MovableObject() : pos(0,0), moved(false) {}
 
-  void checkIfGrabsMouse(int x, int y, const qglviewer::Camera* const)
+  void checkIfGrabsMouse(int x, int y, const CGAL::qglviewer::Camera* const)
   {
     // MovableObject is active in a region of 5 pixels around its pos.
     // May depend on the actual shape of the object. Customize as desired.
@@ -135,7 +136,7 @@ class Camera;
   MouseGrabber grabsMouse(). \nosubgrouping */
 class CGAL_QT_EXPORT MouseGrabber {
 #ifndef DOXYGEN
-  friend class ::QGLViewer;
+  friend class ::CGAL::QGLViewer;
 #endif
 
 public:
@@ -147,7 +148,7 @@ public:
   /*! @name Mouse grabbing detection */
   //@{
 public:
-  /*! Pure virtual method, called by the QGLViewers before they test if the
+  /*! Pure virtual method, called by the CGAL::QGLViewers before they test if the
   MouseGrabber grabsMouse(). Should setGrabsMouse() according to the mouse
   position.
 
@@ -170,7 +171,7 @@ public:
   10); \endcode
 
   If the MouseGrabber position is defined in 3D, use the \p camera parameter,
-  corresponding to the calling QGLViewer Camera. Project on screen and then
+  corresponding to the calling CGAL::QGLViewer Camera. Project on screen and then
   compare the projected coordinates: \code Vec proj =
   camera->projectedCoordinatesOf(myMouseGrabber->frame()->position());
   setGrabsMouse((fabs(x-proj.x) < 5) && (fabs(y-proj.y) < 2)); // Rectangular
@@ -180,7 +181,7 @@ public:
   in the <a href="../examples/mouseGrabber.html">mouseGrabber example</a>. */
   virtual void checkIfGrabsMouse(int x, int y, const Camera *const camera) = 0;
 
-  /*! Returns \c true when the MouseGrabber grabs the QGLViewer's mouse events.
+  /*! Returns \c true when the MouseGrabber grabs the CGAL::QGLViewer's mouse events.
 
   This flag is set with setGrabsMouse() by the checkIfGrabsMouse() method. */
   bool grabsMouse() const { return grabsMouse_; }
@@ -195,7 +196,7 @@ protected:
 public:
   /*! Returns a list containing pointers to all the active MouseGrabbers.
 
-  Used by the QGLViewer to parse all the MouseGrabbers and to check if any of
+  Used by the CGAL::QGLViewer to parse all the MouseGrabbers and to check if any of
   them grabsMouse() using checkIfGrabsMouse().
 
   You should not have to directly use this list. Use
@@ -207,7 +208,7 @@ public:
   list.
 
   Default value is \c true. When set to \c false using
-  removeFromMouseGrabberPool(), the QGLViewers no longer checkIfGrabsMouse() on
+  removeFromMouseGrabberPool(), the CGAL::QGLViewers no longer checkIfGrabsMouse() on
   this MouseGrabber. Use addInMouseGrabberPool() to insert it back. */
   bool isInMouseGrabberPool() const {
     return MouseGrabber::MouseGrabberPool().contains(
@@ -289,7 +290,7 @@ private:
 
 };
 
-} // namespace qglviewer
+}} // namespace CGAL::qglviewer
 
 #ifdef CGAL_HEADER_ONLY
 //#include <CGAL/Qt/qglviewer_impl_list.h>

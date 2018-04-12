@@ -11,9 +11,9 @@
 #include <CGAL/Qt/CreateOpenGLContext.h>
 
 
-class Viewer : public QGLViewer{
+class Viewer : public CGAL::QGLViewer{
 
-  typedef qglviewer::Vec Vec;
+  typedef CGAL::qglviewer::Vec Vec;
 
   Q_OBJECT
 
@@ -23,7 +23,7 @@ class Viewer : public QGLViewer{
   int nr_of_facets;
 public:
   Viewer(QWidget* parent)
-    : QGLViewer(parent)
+    : CGAL::QGLViewer(parent)
   {}
   ~Viewer()
   {
@@ -72,7 +72,7 @@ private:
       QOpenGLShaderProgram rendering_program;
       void initialize_buffers();
       void compute_elements();
-      void attrib_buffers(QGLViewer*);
+      void attrib_buffers(CGAL::QGLViewer*);
       void compile_shaders();
 };
 

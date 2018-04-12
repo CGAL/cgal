@@ -15,17 +15,17 @@
 #include <QOpenGLShaderProgram>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 #include <iostream>
-using namespace qglviewer;
+using namespace CGAL::qglviewer;
 
 class MainWindow;
 
-class Viewer : public QGLViewer{
+class Viewer : public CGAL::QGLViewer{
 
   Q_OBJECT
 
 public:
   Viewer(QWidget* parent)
-    : QGLViewer(parent)
+    : CGAL::QGLViewer(parent)
     , m_showAxis(false)
     , m_showVertex(true)
     , m_showDEdge(true)
@@ -245,7 +245,7 @@ public Q_SLOTS:
   Q_SIGNALS:
   void stopIncAnimation();
 
-// overloading QGLViewer virtual functions
+// overloading CGAL::QGLViewer virtual functions
 protected:
   // initialize Viewer OpenGL context
   // Note: the default implement is empty and this is overloading.
@@ -407,7 +407,7 @@ private:
       PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
       void initialize_buffers();
       void compute_elements();
-      void attrib_buffers(QGLViewer*);
+      void attrib_buffers(CGAL::QGLViewer*);
       void compile_shaders();
       void draw_cylinder(float R, int prec, std::vector<float> *vertices, std::vector<float> *normals);
       void draw_sphere(float R, int prec, std::vector<float> *vertices, std::vector<float> *normals);

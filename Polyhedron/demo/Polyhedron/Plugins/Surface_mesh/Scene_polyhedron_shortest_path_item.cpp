@@ -121,7 +121,7 @@ void Scene_polyhedron_shortest_path_item_priv::compute_elements() const
     QApplication::setOverrideCursor(Qt::WaitCursor);
     vertices.resize(0);
 
-     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+     const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
     for(Scene_polyhedron_shortest_path_item::Surface_mesh_shortest_path::Source_point_iterator it = m_shortestPaths->source_points_begin(); it != m_shortestPaths->source_points_end(); ++it)
     {
@@ -278,14 +278,14 @@ void Scene_polyhedron_shortest_path_item::invalidateOpenGLBuffers()
 bool Scene_polyhedron_shortest_path_item_priv::get_mouse_ray(QMouseEvent* mouseEvent, Kernel::Ray_3& outRay)
 {
   bool found = false;
-  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
-  qglviewer::Camera* camera = viewer->camera();
-  const qglviewer::Vec point = camera->pointUnderPixel(mouseEvent->pos(), found) - offset;
+  CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
+  CGAL::qglviewer::Camera* camera = viewer->camera();
+  const CGAL::qglviewer::Vec point = camera->pointUnderPixel(mouseEvent->pos(), found) - offset;
   
   if(found)
   {
-    const qglviewer::Vec orig = camera->position() - offset;
+    const CGAL::qglviewer::Vec orig = camera->position() - offset;
     outRay = Ray_3(Point_3(orig.x, orig.y, orig.z), Point_3(point.x, point.y, point.z));
   }
   
@@ -588,7 +588,7 @@ void Scene_polyhedron_shortest_path_item::initialize(Scene_face_graph_item* poly
   this->poly_item = polyhedronItem;
   d->m_sceneInterface = sceneInterface;
   connect(polyhedronItem, SIGNAL(item_is_about_to_be_changed()), this, SLOT(poly_item_changed()));
-  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
   viewer->installEventFilter(this);
   d->m_mainWindow->installEventFilter(this);
   d->recreate_shortest_path_object();

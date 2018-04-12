@@ -6,7 +6,7 @@
 
 class Surface;
 
-class Viewer : public QGLViewer
+class Viewer : public CGAL::QGLViewer
 {
   Q_OBJECT
 public:

@@ -82,7 +82,7 @@ struct Scene_edit_polyhedron_item_priv
   void pivoting_end(Mesh* mesh);
   template<typename Mesh>
   void read_roi(const char* file_name, Mesh* mesh);
-  void draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface* viewer, qglviewer::ManipulatedFrame* frame, const qglviewer::Vec &center) const;
+  void draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface* viewer, CGAL::qglviewer::ManipulatedFrame* frame, const CGAL::qglviewer::Vec &center) const;
   template<typename Mesh, typename M_Deform_mesh>
   void apply_reset_drawing_data(Mesh* mesh, M_Deform_mesh* m_deform_mesh);
   template<typename Mesh>
@@ -158,7 +158,7 @@ struct Scene_edit_polyhedron_item_priv
   Mouse_keyboard_state_deformation state;
 
   //For constraint rotation
-  qglviewer::LocalConstraint rot_constraint;
+  CGAL::qglviewer::LocalConstraint rot_constraint;
   bool is_rot_free;
 
   bool own_poly_item; //indicates if the poly_item should be deleted by the destructor
@@ -291,7 +291,7 @@ void Scene_edit_polyhedron_item_priv::init_values()
                                (item->bbox().zmax()-item->bbox().zmin()))) / 15.0;
 
   // interleave events of viewer (there is only one viewer)
-  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
   viewer->installEventFilter(item);
 
   // create an empty group of control vertices for starting
@@ -481,7 +481,7 @@ void Scene_edit_polyhedron_item_priv::initializeBuffers(CGAL::Three::Viewer_inte
     {
         std::vector<GLdouble> vertices;
         std::vector<GLdouble> *vertices_ptr;
-        const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+        const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
         if(offset.norm() !=0)
         {
           vertices.resize(positions.size());
@@ -702,7 +702,7 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(Mesh* mesh)
     control_points.resize(0);
     control_color.resize(0);
     pos_frame_plane.resize(0);
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     Facegraph_selector fs(this);
     typedef typename boost::property_map<Mesh, boost::vertex_point_t>::type VertexPointMap;
     VertexPointMap pmap = get(boost::vertex_point, *mesh);
@@ -729,7 +729,7 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(Mesh* mesh)
     for(std::size_t i=0; i<ROI_color.size()/3; i++)
       ROI_color[3*i+1]=1.0;
 
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
 
     for(typename std::list<Control_vertices_data<Mesh> >::const_iterator hgb_data = fs.get_ctrl_vertex_frame_map(mesh).begin(); hgb_data != fs.get_ctrl_vertex_frame_map(mesh).end(); ++hgb_data)
     {
@@ -1374,7 +1374,7 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
   bool ctrl_released_now = !d->state.ctrl_pressing && old_state.ctrl_pressing;
   if(ctrl_pressed_now || ctrl_released_now || event->type() == QEvent::HoverMove)
   {// activate a handle manipulated frame
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
 
     bool need_repaint;
@@ -1473,7 +1473,7 @@ void Scene_edit_polyhedron_item::drawTransparent(Viewer_interface *viewer) const
 }
 
 template<typename Mesh>
-void Scene_edit_polyhedron_item::draw_frame_plane(QGLViewer* , Mesh* mesh) const
+void Scene_edit_polyhedron_item::draw_frame_plane(CGAL::QGLViewer* , Mesh* mesh) const
 {
   d->pos_frame_plane.resize(12);
   Facegraph_selector fs;
@@ -1481,18 +1481,18 @@ void Scene_edit_polyhedron_item::draw_frame_plane(QGLViewer* , Mesh* mesh) const
       hgb_data != fs.get_ctrl_vertex_frame_map(mesh, d).end(); ++hgb_data)
   {
     const double diag = scene_diag();
-    qglviewer::Vec base1(1,0,0);
-    qglviewer::Vec base2(0,1,0);
+    CGAL::qglviewer::Vec base1(1,0,0);
+    CGAL::qglviewer::Vec base2(0,1,0);
 
-    qglviewer::Quaternion orientation=hgb_data->frame->orientation();
+    CGAL::qglviewer::Quaternion orientation=hgb_data->frame->orientation();
     base1=orientation.rotate(base1);
     base2=orientation.rotate(base2);
 
-    qglviewer::Vec center = hgb_data->calculate_initial_center();
-    qglviewer::Vec p1 = center - diag*base1 - diag*base2;
-    qglviewer::Vec p2 = center + diag*base1 - diag*base2;
-    qglviewer::Vec p3 = center + diag*base1 + diag*base2;
-    qglviewer::Vec p4 = center - diag*base1 + diag*base2;
+    CGAL::qglviewer::Vec center = hgb_data->calculate_initial_center();
+    CGAL::qglviewer::Vec p1 = center - diag*base1 - diag*base2;
+    CGAL::qglviewer::Vec p2 = center + diag*base1 - diag*base2;
+    CGAL::qglviewer::Vec p3 = center + diag*base1 + diag*base2;
+    CGAL::qglviewer::Vec p4 = center - diag*base1 + diag*base2;
 
     d->pos_frame_plane[0] = p1.x ; d->pos_frame_plane[1] = p1.y; d->pos_frame_plane[2] =p1.z ;
     d->pos_frame_plane[3] = p2.x ; d->pos_frame_plane[4] = p2.y; d->pos_frame_plane[5] =p2.z ;
@@ -1507,10 +1507,10 @@ void Scene_edit_polyhedron_item::draw_frame_plane(QGLViewer* , Mesh* mesh) const
 
   }
 }
-void Scene_edit_polyhedron_item_priv::draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface* viewer, qglviewer::ManipulatedFrame* frame, const qglviewer::Vec &center) const
+void Scene_edit_polyhedron_item_priv::draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface* viewer, CGAL::qglviewer::ManipulatedFrame* frame, const CGAL::qglviewer::Vec &center) const
 {
   // Draw the axis
-  QGLViewer* viewerB = *QGLViewer::QGLViewerPool().begin();
+  CGAL::QGLViewer* viewerB = *CGAL::QGLViewer::QGLViewerPool().begin();
   if(frame == viewerB->manipulatedFrame())
   {
     GLfloat f_matrix[16];
@@ -1528,7 +1528,7 @@ void Scene_edit_polyhedron_item_priv::draw_ROI_and_control_vertices(CGAL::Three:
     program->release();
     item->vaos[Axis]->release();
 
-    //QGLViewer::drawAxis(length_of_axis);
+    //CGAL::QGLViewer::drawAxis(length_of_axis);
     // draw bbox
     if(!ui_widget->ActivatePivotingCheckBox->isChecked())
     {
@@ -1765,7 +1765,7 @@ void Scene_edit_polyhedron_item::setVisible(bool b) {
     d->sm_item->setVisible(b);
   Scene_item::setVisible(b);
   if(!b) {
-    (*QGLViewer::QGLViewerPool().begin())->setManipulatedFrame(NULL);
+    (*CGAL::QGLViewer::QGLViewerPool().begin())->setManipulatedFrame(NULL);
   }
 }
 void Scene_edit_polyhedron_item::setColor(QColor c) {
@@ -1831,8 +1831,8 @@ bool Scene_edit_polyhedron_item::keyPressEvent(QKeyEvent* e)
   {
     d->is_rot_free = !d->is_rot_free;
     d->rot_constraint.setRotationConstraintType( d->is_rot_free?
-        qglviewer::AxisPlaneConstraint::FREE:
-        qglviewer::AxisPlaneConstraint::AXIS);
+        CGAL::qglviewer::AxisPlaneConstraint::FREE:
+        CGAL::qglviewer::AxisPlaneConstraint::AXIS);
     return true;
   }
 
@@ -2058,8 +2058,8 @@ void Scene_edit_polyhedron_item::create_ctrl_vertices_group()
     }
   }
   // No empty group of control vertices
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-  qglviewer::ManipulatedFrame* new_frame = new qglviewer::ManipulatedFrame();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+  CGAL::qglviewer::ManipulatedFrame* new_frame = new CGAL::qglviewer::ManipulatedFrame();
   new_frame->setPosition(offset);
   new_frame->setRotationSensitivity(2.0f);
   connect(new_frame, SIGNAL(manipulated()), this, SLOT(change()));
@@ -2197,11 +2197,11 @@ void Scene_edit_polyhedron_item_priv::pivoting_end(Mesh* mesh)
   for(typename std::list<Control_vertices_data<Mesh> >::iterator it = fs.get_ctrl_vertex_frame_map(mesh).begin(); it != fs.get_ctrl_vertex_frame_map(mesh).end(); ++it)
   {
     //update constraint rotation vector, set only for the last group
-    it->rot_direction = it->frame->rotation().rotate( qglviewer::Vec(0.,0.,1.) );
+    it->rot_direction = it->frame->rotation().rotate( CGAL::qglviewer::Vec(0.,0.,1.) );
     //translate center of the frame
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-    qglviewer::Vec vec= it->frame->position();
-    qglviewer::Quaternion orientation = it->frame->orientation();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+    CGAL::qglviewer::Vec vec= it->frame->position();
+    CGAL::qglviewer::Quaternion orientation = it->frame->orientation();
     it->refresh(mesh);
     it->frame_initial_center = vec-offset;
     it->frame->setPosition(vec);
@@ -2214,8 +2214,8 @@ template<typename Mesh>
 void Scene_edit_polyhedron_item_priv::pivoting_begin(Mesh* mesh)
 {
   is_rot_free=true;
-  rot_constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
-  rot_constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
+  rot_constraint.setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
+  rot_constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
 
   // just block signals to prevent deformation
   Facegraph_selector fs(this);
@@ -2456,11 +2456,11 @@ bool Scene_edit_polyhedron_item::activate_closest_manipulated_frame(int x, int y
   }
   if(fs.get_ctrl_vertex_frame_map(mesh).empty()) { return false; }
 
-  d->rot_constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
-  d->rot_constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
+  d->rot_constraint.setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
+  d->rot_constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
 
-  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-  qglviewer::Camera* camera = viewer->camera();
+  CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
+  CGAL::qglviewer::Camera* camera = viewer->camera();
 
   if(!d->state.ctrl_pressing)
   {
@@ -2472,12 +2472,12 @@ bool Scene_edit_polyhedron_item::activate_closest_manipulated_frame(int x, int y
 
   // now find closest frame and make it active manipulated frame
   typename std::list<Control_vertices_data<Mesh> >::iterator min_it = fs.get_ctrl_vertex_frame_map(mesh).begin();
-  const qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(min_it->frame->position());
+  const CGAL::qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(min_it->frame->position());
   float min_dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
 
   for(typename std::list<Control_vertices_data<Mesh> >::iterator it = fs.get_ctrl_vertex_frame_map(mesh).begin(); it != fs.get_ctrl_vertex_frame_map(mesh).end(); ++it)
   {
-    const qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(it->frame->position());
+    const CGAL::qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(it->frame->position());
     float dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
     if(dist < min_dist) {
       min_dist = dist;
@@ -2488,7 +2488,7 @@ bool Scene_edit_polyhedron_item::activate_closest_manipulated_frame(int x, int y
   //set rotation constraint for the manipulated frame
   if (!d->is_rot_free){
     d->rot_constraint.setRotationConstraintDirection(min_it->rot_direction);
-    d->rot_constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::AXIS);
+    d->rot_constraint.setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::AXIS);
     min_it->frame->setConstraint(&d->rot_constraint);
   }
   else
@@ -2496,9 +2496,9 @@ bool Scene_edit_polyhedron_item::activate_closest_manipulated_frame(int x, int y
     if( d->ui_widget->ActivateFixedPlaneCheckBox->isChecked())
     {
       // the constraint is local to the frame
-      d->rot_constraint.setTranslationConstraint(qglviewer::AxisPlaneConstraint::PLANE,qglviewer::Vec(0,0,1));
+      d->rot_constraint.setTranslationConstraint(CGAL::qglviewer::AxisPlaneConstraint::PLANE,CGAL::qglviewer::Vec(0,0,1));
        if(!d->ui_widget->ActivatePivotingCheckBox->isChecked()){
-           d->rot_constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::FORBIDDEN);
+           d->rot_constraint.setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FORBIDDEN);
        }
        min_it->frame->setConstraint(&d->rot_constraint);
     }

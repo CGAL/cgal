@@ -36,7 +36,7 @@
 #define NB_VBO_BUFFERS 8
 #define NB_VAO_BUFFERS 4
 
-class Viewer : public QGLViewer
+class Viewer : public CGAL::QGLViewer
 {
   Q_OBJECT
 
@@ -66,7 +66,7 @@ public Q_SLOTS:
 
 private:
   void initialize_buffers();
-  void attrib_buffers(QGLViewer*);
+  void attrib_buffers(CGAL::QGLViewer*);
   void compile_shaders();
 
   void compute_elements();

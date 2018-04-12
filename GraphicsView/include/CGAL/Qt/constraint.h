@@ -3,7 +3,7 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of a fork of the QGLViewer library version 2.7.0.
+ This file is part of a fork of the CGAL::QGLViewer library version 2.7.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -11,8 +11,8 @@
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
 
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
+ libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
+ purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -28,12 +28,12 @@
 #include <CGAL/Qt/vec.h>
 #include <CGAL/export/Qt.h>
 
-
+namespace CGAL{
 namespace qglviewer {
 class Frame;
 class Camera;
 /*! \brief An interface class for Frame constraints.
-  \class Constraint constraint.h QGLViewer/constraint.h
+  \class Constraint constraint.h CGAL::QGLViewer/constraint.h
 
   This class defines the interface for the Constraints that can be applied to a
   Frame to limit its motion. Use Frame::setConstraint() to associate a
@@ -157,7 +157,7 @@ public:
 
 /*!
    \brief An abstract class for Frame Constraints defined by an axis or a plane.
-   \class AxisPlaneConstraint constraint.h QGLViewer/constraint.h
+   \class AxisPlaneConstraint constraint.h CGAL::QGLViewer/constraint.h
 
    AxisPlaneConstraint is an interface for (translation and/or rotation)
    Constraint that are defined by a direction. translationConstraintType() and
@@ -176,9 +176,9 @@ public:
    \attention When applied, the rotational Constraint may not intuitively follow
    the mouse displacement. A solution would be to directly measure the rotation
    angle in screen coordinates, but that would imply to know the
-   QGLViewer::camera(), so that we can compute the projected coordinates of the
-   rotation center (as is done with the QGLViewer::SCREEN_ROTATE binding).
-   However, adding an extra pointer to the QGLViewer::camera() in all the
+   CGAL::QGLViewer::camera(), so that we can compute the projected coordinates of the
+   rotation center (as is done with the CGAL::QGLViewer::SCREEN_ROTATE binding).
+   However, adding an extra pointer to the CGAL::QGLViewer::camera() in all the
    AxisPlaneConstraint derived classes (which the user would have to update in a
    multi-viewer application) was judged as an overkill. */
 class CGAL_QT_EXPORT AxisPlaneConstraint : public Constraint {
@@ -304,7 +304,7 @@ private:
 };
 
 /*! \brief An AxisPlaneConstraint defined in the Frame local coordinate system.
-  \class LocalConstraint constraint.h QGLViewer/constraint.h
+  \class LocalConstraint constraint.h CGAL::QGLViewer/constraint.h
 
   The translationConstraintDirection() and rotationConstraintDirection() are
   expressed in the Frame local coordinate system (see Frame::referenceFrame()).
@@ -321,7 +321,7 @@ public:
 };
 
 /*! \brief An AxisPlaneConstraint defined in the world coordinate system.
-        \class WorldConstraint constraint.h QGLViewer/constraint.h
+        \class WorldConstraint constraint.h CGAL::QGLViewer/constraint.h
 
   The translationConstraintDirection() and rotationConstraintDirection() are
   expressed in world coordinate system.
@@ -339,7 +339,7 @@ public:
 };
 
 /*! \brief An AxisPlaneConstraint defined in the camera coordinate system.
-  \class CameraConstraint constraint.h QGLViewer/constraint.h
+  \class CameraConstraint constraint.h CGAL::QGLViewer/constraint.h
 
   The translationConstraintDirection() and rotationConstraintDirection() are
   expressed in the associated camera() coordinate system.
@@ -364,7 +364,7 @@ private:
   const Camera *const camera_;
 };
 
-} // namespace qglviewer
+}} // namespace CGAL::qglviewer
 
 #ifdef CGAL_HEADER_ONLY
 //#include <CGAL/Qt/qglviewer_impl_list.h>

@@ -3,7 +3,7 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of the QGLViewer library version 2.7.0.
+ This file is part of the CGAL::QGLViewer library version 2.7.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -11,8 +11,8 @@
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
 
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
+ libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
+ purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -37,7 +37,7 @@
 #include <CGAL/Qt/keyFrameInterpolator.h>
 
 using namespace std;
-using namespace qglviewer;
+using namespace CGAL::qglviewer;
 
 /*! Default constructor.
 
@@ -130,7 +130,7 @@ Camera::Camera(const Camera &camera) : QObject(), frame_(NULL) {
  of \p camera.
 
  \attention The Camera screenWidth() and screenHeight() are set to those of \p
- camera. If your Camera is associated with a QGLViewer, you should update these
+ camera. If your Camera is associated with a CGAL::QGLViewer, you should update these
  value after the call to this method: \code
  *(camera()) = otherCamera;
  camera()->setScreenWidthAndHeight(width(), height());
@@ -171,14 +171,14 @@ Camera &Camera::operator=(const Camera &camera) {
 
 /*! Sets Camera screenWidth() and screenHeight() (expressed in pixels).
 
-You should not call this method when the Camera is associated with a QGLViewer,
+You should not call this method when the Camera is associated with a CGAL::QGLViewer,
 since the latter automatically updates these values when it is resized (hence
 overwritting your values).
 
 Non-positive dimension are silently replaced by a 1 pixel value to ensure
 frustrum coherence.
 
-If your Camera is used without a QGLViewer (offscreen rendering, shadow maps),
+If your Camera is used without a CGAL::QGLViewer (offscreen rendering, shadow maps),
 use setAspectRatio() instead to define the projection matrix. */
 CGAL_INLINE_FUNCTION
 void Camera::setScreenWidthAndHeight(int width, int height) {
@@ -213,7 +213,7 @@ void Camera::setScreenWidthAndHeight(int width, int height) {
 
  If you need a completely different zNear computation, overload the zNear() and
  zFar() methods in a new class that publicly inherits from Camera and use
- QGLViewer::setCamera(): \code class myCamera :: public qglviewer::Camera
+ CGAL::QGLViewer::setCamera(): \code class myCamera :: public CGAL::qglviewer::Camera
  {
    virtual qreal Camera::zNear() const { return 0.001; };
    virtual qreal Camera::zFar() const { return 100.0; };
@@ -278,7 +278,7 @@ viewDirection(), passing through the pivotPoint().
 Prefix the type with \c Camera if needed, as in:
 \code
 camera()->setType(Camera::ORTHOGRAPHIC);
-// or even qglviewer::Camera::ORTHOGRAPHIC if you do not use namespace
+// or even CGAL::qglviewer::Camera::ORTHOGRAPHIC if you do not use namespace
 \endcode */
 CGAL_INLINE_FUNCTION
 void Camera::setType(Type type) {
@@ -373,7 +373,7 @@ void Camera::getOrthoWidthHeight(GLdouble &halfWidth,
  matrix.
 
  \note You must call this method if your Camera is not associated with a
- QGLViewer and is used for offscreen computations (using
+ CGAL::QGLViewer and is used for offscreen computations (using
  (un)projectedCoordinatesOf() for instance). loadProjectionMatrix() does it
  otherwise. */
 CGAL_INLINE_FUNCTION
@@ -425,7 +425,7 @@ void Camera::computeProjectionMatrix() const {
  Use getModelViewMatrix() to retrieve this matrix.
 
  \note You must call this method if your Camera is not associated with a
- QGLViewer and is used for offscreen computations (using
+ CGAL::QGLViewer and is used for offscreen computations (using
  (un)projectedCoordinatesOf() for instance). loadModelViewMatrix() does it
  otherwise. */
 CGAL_INLINE_FUNCTION
@@ -480,11 +480,11 @@ void Camera::computeModelViewMatrix() const {
  When \p reset is \c true (default), the method clears the previous projection
  matrix by calling \c glLoadIdentity before setting the matrix. Setting \p reset
  to \c false is useful for \c GL_SELECT mode, to combine the pushed matrix with
- a picking matrix. See QGLViewer::beginSelection() for details.
+ a picking matrix. See CGAL::QGLViewer::beginSelection() for details.
 
- This method is used by QGLViewer::preDraw() (called before user's
- QGLViewer::draw() method) to set the \c GL_PROJECTION matrix according to the
- viewer's QGLViewer::camera() settings.
+ This method is used by CGAL::QGLViewer::preDraw() (called before user's
+ CGAL::QGLViewer::draw() method) to set the \c GL_PROJECTION matrix according to the
+ viewer's CGAL::QGLViewer::camera() settings.
 
  Use getProjectionMatrix() to retrieve this matrix. Overload this method if you
  want your Camera to use an exotic projection matrix. See also
@@ -513,11 +513,11 @@ void Camera::loadProjectionMatrix(bool reset) const {
 
  Calls computeModelViewMatrix() to compute the Camera's modelView matrix.
 
- This method is used by QGLViewer::preDraw() (called before user's
- QGLViewer::draw() method) to set the \c GL_MODELVIEW matrix according to the
- viewer's QGLViewer::camera() position() and orientation().
+ This method is used by CGAL::QGLViewer::preDraw() (called before user's
+ CGAL::QGLViewer::draw() method) to set the \c GL_MODELVIEW matrix according to the
+ viewer's CGAL::QGLViewer::camera() position() and orientation().
 
- As a result, the vertices used in QGLViewer::draw() can be defined in the so
+ As a result, the vertices used in CGAL::QGLViewer::draw() can be defined in the so
  called world coordinate system. They are multiplied by this matrix to get
  converted to the Camera coordinate system, before getting projected using the
  \c GL_PROJECTION matrix (see loadProjectionMatrix()).
@@ -527,7 +527,7 @@ void Camera::loadProjectionMatrix(bool reset) const {
  (might be useful for some applications).
 
  Overload this method or simply call glLoadMatrixd() at the beginning of
- QGLViewer::draw() if you want your Camera to use an exotic modelView matrix.
+ CGAL::QGLViewer::draw() if you want your Camera to use an exotic modelView matrix.
  See also loadProjectionMatrix().
 
  getModelViewMatrix() returns the 4x4 modelView matrix.
@@ -551,7 +551,7 @@ void Camera::loadModelViewMatrix(bool reset) const {
 /*! Same as loadProjectionMatrix() but for a stereo setup.
 
  Only the Camera::PERSPECTIVE type() is supported for stereo mode. See
- QGLViewer::setStereoDisplay().
+ CGAL::QGLViewer::setStereoDisplay().
 
  Uses focusDistance(), IODistance(), and physicalScreenWidth() to compute
  cameras offset and asymmetric frustums.
@@ -614,7 +614,7 @@ void Camera::loadProjectionMatrixStereo(bool leftBuffer) const {
 /*! Same as loadModelViewMatrix() but for a stereo setup.
 
  Only the Camera::PERSPECTIVE type() is supported for stereo mode. See
- QGLViewer::setStereoDisplay().
+ CGAL::QGLViewer::setStereoDisplay().
 
  The modelView matrix is almost identical to the mono-vision one. It is simply
  translated along its horizontal axis by a value that depends on stereo
@@ -656,9 +656,9 @@ void Camera::loadModelViewMatrixStereo(bool leftBuffer) const {
  This matrix only reflects the Camera's internal parameters and it may differ
  from the \c GL_PROJECTION matrix retrieved using \c
  glGetDoublev(GL_PROJECTION_MATRIX, m). It actually represents the state of the
- \c GL_PROJECTION after QGLViewer::preDraw(), at the beginning of
- QGLViewer::draw(). If you modified the \c GL_PROJECTION matrix (for instance
- using QGLViewer::startScreenCoordinatesSystem()), the two results differ.
+ \c GL_PROJECTION after CGAL::QGLViewer::preDraw(), at the beginning of
+ CGAL::QGLViewer::draw(). If you modified the \c GL_PROJECTION matrix (for instance
+ using CGAL::QGLViewer::startScreenCoordinatesSystem()), the two results differ.
 
  The result is an OpenGL 4x4 matrix, which is given in \e column-major order
  (see \c glMultMatrix man page for details).
@@ -687,9 +687,9 @@ void Camera::getProjectionMatrix(GLfloat m[16]) const {
 
  Note that this matrix may \e not be the one you would get from a \c
  glGetDoublev(GL_MODELVIEW_MATRIX, m). It actually represents the state of the
- \c GL_MODELVIEW after QGLViewer::preDraw(), at the \e beginning of
- QGLViewer::draw(). It converts from the world to the Camera coordinate system.
- As soon as you modify the \c GL_MODELVIEW in your QGLViewer::draw() method
+ \c GL_MODELVIEW after CGAL::QGLViewer::preDraw(), at the \e beginning of
+ CGAL::QGLViewer::draw(). It converts from the world to the Camera coordinate system.
+ As soon as you modify the \c GL_MODELVIEW in your CGAL::QGLViewer::draw() method
  (using glTranslate, glRotate... or similar methods), the two matrices differ.
 
  The result is an OpenGL 4x4 matrix, which is given in \e column-major order
@@ -885,7 +885,7 @@ qreal Camera::pixelGLRatio(const Vec &position) const {
 }
 
 /*! Changes the Camera fieldOfView() so that the entire scene (defined by
- QGLViewer::sceneCenter() and QGLViewer::sceneRadius()) is visible from the
+ CGAL::QGLViewer::sceneCenter() and CGAL::QGLViewer::sceneRadius()) is visible from the
  Camera position().
 
  The position() and orientation() of the Camera are not modified and you first
@@ -1049,7 +1049,7 @@ Vec Camera::pointUnderPixel(const QPoint &pixel, bool &found) const {
  Simply calls fitSphere() on a sphere defined by sceneCenter() and
  sceneRadius().
 
- You will typically use this method in QGLViewer::init() after you defined a new
+ You will typically use this method in CGAL::QGLViewer::init() after you defined a new
  sceneRadius(). */
 CGAL_INLINE_FUNCTION
 void Camera::showEntireScene() { fitSphere(sceneCenter(), sceneRadius()); }
@@ -1176,8 +1176,8 @@ void Camera::fitScreenRegion(const QRect &rectangle) {
 
  When \p noMove is \c true (default), the Camera position() is left unchanged,
  which is an intuitive behavior when the Camera is in a walkthrough fly mode
- (see the QGLViewer::MOVE_FORWARD and QGLViewer::MOVE_BACKWARD
- QGLViewer::MouseAction).
+ (see the CGAL::QGLViewer::MOVE_FORWARD and CGAL::QGLViewer::MOVE_BACKWARD
+ CGAL::QGLViewer::MouseAction).
 
  The frame()'s ManipulatedCameraFrame::sceneUpVector() is set accordingly.
 
@@ -1208,7 +1208,7 @@ void Camera::setUpVector(const Vec &up, bool noMove) {
  to call showEntireScene() after this method to move the Camera.
 
  This method can be useful to create Quicktime VR panoramic sequences, see the
- QGLViewer::saveSnapshot() documentation for details. */
+ CGAL::QGLViewer::saveSnapshot() documentation for details. */
 CGAL_INLINE_FUNCTION
 void Camera::setOrientation(qreal theta, qreal phi) {
   Vec axis(0.0, 1.0, 0.0);
@@ -1348,7 +1348,7 @@ Vec Camera::worldCoordinatesOf(const Vec &src) const {
 
 Simply returns frame()->flySpeed(). See the ManipulatedCameraFrame::flySpeed()
 documentation. This value is only meaningful when the MouseAction bindings is
-QGLViewer::MOVE_FORWARD or QGLViewer::MOVE_BACKWARD.
+CGAL::QGLViewer::MOVE_FORWARD or CGAL::QGLViewer::MOVE_BACKWARD.
 
 Set to 1% of the sceneRadius() by setSceneRadius(). See also setFlySpeed(). */
 CGAL_INLINE_FUNCTION
@@ -1360,7 +1360,7 @@ qreal Camera::flySpeed() const { return frame()->flySpeed(); }
 CGAL_INLINE_FUNCTION
 void Camera::setFlySpeed(qreal speed) { frame()->setFlySpeed(speed); }
 
-/*! The point the Camera pivots around with the QGLViewer::ROTATE mouse binding.
+/*! The point the Camera pivots around with the CGAL::QGLViewer::ROTATE mouse binding.
 Defined in world coordinate system.
 
 Default value is the sceneCenter().
@@ -1919,7 +1919,7 @@ int unProject(GLdouble winx, GLdouble winy, GLdouble winz, GLdouble *modelview, 
  getProjectionMatrix() and getViewport()) and is completely independent of the OpenGL \c
  GL_MODELVIEW, \c GL_PROJECTION and viewport matrices. You can hence define a virtual Camera and use
  this method to compute projections out of a classical rendering context.
- \attention However, if your Camera is not attached to a QGLViewer (used for offscreen computations
+ \attention However, if your Camera is not attached to a CGAL::QGLViewer (used for offscreen computations
  for instance), make sure the Camera matrices are updated before calling this method. Call
  computeModelViewMatrix() and computeProjectionMatrix() to do so.
  If you call this method several times with no change in the matrices, consider precomputing the
@@ -2001,7 +2001,7 @@ Vec Camera::projectedCoordinatesOf(const Vec& src, const Frame* frame) const
  getProjectionMatrix() and getViewport()) and is completely independent of the OpenGL \c
  GL_MODELVIEW, \c GL_PROJECTION and viewport matrices. You can hence define a virtual Camera and use
  this method to compute un-projections out of a classical rendering context.
- \attention However, if your Camera is not attached to a QGLViewer (used for offscreen computations
+ \attention However, if your Camera is not attached to a CGAL::QGLViewer (used for offscreen computations
  for instance), make sure the Camera matrices are updated before calling this method (use
  computeModelViewMatrix(), computeProjectionMatrix()). See also setScreenWidthAndHeight().
  This method is not computationally optimized. If you call it several times with no change in the
@@ -2061,7 +2061,7 @@ KeyFrameInterpolator *Camera::keyFrameInterpolator(unsigned int i) const {
  calling method if needed.
 
  The KeyFrameInterpolator::interpolated() signal of \p kfi probably needs to be
- connected to the Camera's associated QGLViewer::update() slot, so that when the
+ connected to the Camera's associated CGAL::QGLViewer::update() slot, so that when the
  Camera position is interpolated using \p kfi, every interpolation step updates
  the display: \code myViewer.camera()->deletePath(3);
  myViewer.camera()->setKeyFrameInterpolator(3, myKeyFrameInterpolator);
@@ -2069,8 +2069,8 @@ KeyFrameInterpolator *Camera::keyFrameInterpolator(unsigned int i) const {
  SLOT(update()); \endcode
 
  \note These connections are done automatically when a Camera is attached to a
- QGLViewer, or when a new KeyFrameInterpolator is defined using the
- QGLViewer::addKeyFrameKeyboardModifiers() and QGLViewer::pathKey() (default is
+ CGAL::QGLViewer, or when a new KeyFrameInterpolator is defined using the
+ CGAL::QGLViewer::addKeyFrameKeyboardModifiers() and CGAL::QGLViewer::pathKey() (default is
  Alt+F[1-12]). See the <a href="../keyboard.html">keyboard page</a> for details.
  */
 CGAL_INLINE_FUNCTION
@@ -2091,11 +2091,11 @@ keyFrame path (resp. restore the point of view). Use deletePath() to clear the
 path.
 
 The default keyboard shortcut for this method is Alt+F[1-12]. Set
-QGLViewer::pathKey() and QGLViewer::addKeyFrameKeyboardModifiers().
+CGAL::QGLViewer::pathKey() and CGAL::QGLViewer::addKeyFrameKeyboardModifiers().
 
 If you use directly this method and the keyFrameInterpolator(i) does not exist,
 a new one is created. Its KeyFrameInterpolator::interpolated() signal should
-then be connected to the QGLViewer::update() slot (see
+then be connected to the CGAL::QGLViewer::update() slot (see
 setKeyFrameInterpolator()). */
 CGAL_INLINE_FUNCTION
 void Camera::addKeyFrameToPath(unsigned int i) {
@@ -2113,7 +2113,7 @@ void Camera::addKeyFrameToPath(unsigned int i) {
  keyFrameInterpolator()).
 
  The default keyboard shortcut for this method is F[1-12]. Set
- QGLViewer::pathKey() and QGLViewer::playPathKeyboardModifiers(). */
+ CGAL::QGLViewer::pathKey() and CGAL::QGLViewer::playPathKeyboardModifiers(). */
 CGAL_INLINE_FUNCTION
 void Camera::playPath(unsigned int i) {
   if (kfi_.contains(i)) {
@@ -2184,9 +2184,9 @@ void Camera::deletePath(unsigned int i) {
   }
  \endcode
 
- Note that the QGLViewer::camera() is automatically saved by
- QGLViewer::saveStateToFile() when a QGLViewer is closed. Use
- QGLViewer::restoreStateFromFile() to restore it back. */
+ Note that the CGAL::QGLViewer::camera() is automatically saved by
+ CGAL::QGLViewer::saveStateToFile() when a CGAL::QGLViewer is closed. Use
+ CGAL::QGLViewer::restoreStateFromFile() to restore it back. */
 CGAL_INLINE_FUNCTION
 QDomElement Camera::domElement(const QString &name,
                                QDomDocument &document) const {

@@ -56,8 +56,8 @@ public:
   QImage static_image;
   //!Draws the distance between two selected points.
   void showDistance(QPoint);
-  qglviewer::Vec APoint;
-  qglviewer::Vec BPoint;
+  CGAL::qglviewer::Vec APoint;
+  CGAL::qglviewer::Vec BPoint;
   bool is_d_pressed;
   bool extension_is_found;
   int quality;
@@ -91,7 +91,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
   connect(&d->messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
-  setShortcut(qglviewer::EXIT_VIEWER, 0);
+  setShortcut(CGAL::qglviewer::EXIT_VIEWER, 0);
   setKeyDescription(Qt::Key_T,
                     tr("Turn the camera by 180 degrees"));
   setKeyDescription(Qt::Key_M,
@@ -105,12 +105,12 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
                     tr("Reload selected items if possible."));
 
   //modify mouse bindings that have been updated
-  setMouseBinding(Qt::Key(0), Qt::NoModifier, Qt::LeftButton, qglviewer::RAP_FROM_PIXEL, true, Qt::RightButton);
+  setMouseBinding(Qt::Key(0), Qt::NoModifier, Qt::LeftButton, CGAL::qglviewer::RAP_FROM_PIXEL, true, Qt::RightButton);
   setMouseBindingDescription(Qt::ShiftModifier, Qt::RightButton,
                              tr("Select and pop context menu"));
-  setMouseBinding(Qt::Key_R, Qt::NoModifier, Qt::LeftButton, qglviewer::RAP_FROM_PIXEL);
+  setMouseBinding(Qt::Key_R, Qt::NoModifier, Qt::LeftButton, CGAL::qglviewer::RAP_FROM_PIXEL);
   //use the new API for these
-  setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, qglviewer::SELECT);
+  setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, CGAL::qglviewer::SELECT);
 
   setMouseBindingDescription(Qt::Key(0), Qt::ShiftModifier, Qt::LeftButton,
                              tr("Selects and display context "
@@ -309,13 +309,13 @@ void Viewer::mousePressEvent(QMouseEvent* event)
   }
   else {
     makeCurrent();
-    QGLViewer::mousePressEvent(event);
+    CGAL::QGLViewer::mousePressEvent(event);
   }
 }
 void Viewer::mouseDoubleClickEvent(QMouseEvent* event)
 {
   makeCurrent(); 
-  QGLViewer::mouseDoubleClickEvent(event);
+  CGAL::QGLViewer::mouseDoubleClickEvent(event);
 }
 
 #include <QContextMenuEvent>
@@ -326,7 +326,7 @@ void Viewer::contextMenuEvent(QContextMenuEvent* event)
     event->accept();
   }
   else {
-    QGLViewer::contextMenuEvent(event);
+    CGAL::QGLViewer::contextMenuEvent(event);
   }
 }
 
@@ -396,7 +396,7 @@ void Viewer::keyPressEvent(QKeyEvent* e)
 
   //forward the event to the scene (item handling of the event)
   if (! d->scene->keyPressEvent(e) )
-    QGLViewer::keyPressEvent(e);
+    CGAL::QGLViewer::keyPressEvent(e);
 }
 
 void Viewer::keyReleaseEvent(QKeyEvent *e)
@@ -415,12 +415,12 @@ void Viewer::keyReleaseEvent(QKeyEvent *e)
     }
     d->is_d_pressed = false;
   }
-  QGLViewer::keyReleaseEvent(e);
+  CGAL::QGLViewer::keyReleaseEvent(e);
 }
 
 void Viewer::turnCameraBy180Degres() {
-  qglviewer::Camera* camera = this->camera();
-  using qglviewer::ManipulatedCameraFrame;
+  CGAL::qglviewer::Camera* camera = this->camera();
+  using CGAL::qglviewer::ManipulatedCameraFrame;
 
   ManipulatedCameraFrame frame_from(*camera->frame());
   camera->setViewDirection(-camera->viewDirection());
@@ -476,7 +476,7 @@ bool Viewer::inDrawWithNames() const {
 
 void Viewer::drawWithNames()
 {
-  QGLViewer::draw();
+  CGAL::QGLViewer::draw();
   d->draw_aux(true, this);
 }
 
@@ -484,18 +484,18 @@ void Viewer::postSelection(const QPoint& pixel)
 {
   Q_EMIT selected(this->selectedName());
   bool found = false;
-  qglviewer::Vec point = camera()->pointUnderPixel(pixel, found) - offset();
+  CGAL::qglviewer::Vec point = camera()->pointUnderPixel(pixel, found) - offset();
   if(found) {
     Q_EMIT selectedPoint(point.x,
                        point.y,
                        point.z);
-    const qglviewer::Vec orig = camera()->position() - offset();
-    const qglviewer::Vec dir = point - orig;
+    const CGAL::qglviewer::Vec orig = camera()->position() - offset();
+    const CGAL::qglviewer::Vec dir = point - orig;
     Q_EMIT selectionRay(orig.x, orig.y, orig.z,
                       dir.x, dir.y, dir.z);
   }
 }
-bool CGAL::Three::Viewer_interface::readFrame(QString s, qglviewer::Frame& frame)
+bool CGAL::Three::Viewer_interface::readFrame(QString s, CGAL::qglviewer::Frame& frame)
 {
   QStringList list = s.split(" ", QString::SkipEmptyParts);
   if(list.size() != 7)
@@ -514,7 +514,7 @@ bool CGAL::Three::Viewer_interface::readFrame(QString s, qglviewer::Frame& frame
     orient[i] = list[i + 3].toDouble(&ok);
     if(!ok) return false;
   }
-  frame.setPosition(qglviewer::Vec(vec[0],
+  frame.setPosition(CGAL::qglviewer::Vec(vec[0],
                                    vec[1],
                                    vec[2]));
   frame.setOrientation(orient[0],
@@ -524,9 +524,9 @@ bool CGAL::Three::Viewer_interface::readFrame(QString s, qglviewer::Frame& frame
   return true;
 }
 
-QString CGAL::Three::Viewer_interface::dumpFrame(const qglviewer::Frame& frame) {
-  const qglviewer::Vec pos = frame.position();
-  const qglviewer::Quaternion q = frame.orientation();
+QString CGAL::Three::Viewer_interface::dumpFrame(const CGAL::qglviewer::Frame& frame) {
+  const CGAL::qglviewer::Vec pos = frame.position();
+  const CGAL::qglviewer::Quaternion q = frame.orientation();
 
   return QString("%1 %2 %3 %4 %5 %6 %7")
     .arg(pos[0])
@@ -539,7 +539,7 @@ QString CGAL::Three::Viewer_interface::dumpFrame(const qglviewer::Frame& frame) 
 }
 
 bool Viewer::moveCameraToCoordinates(QString s, float animation_duration) {
-  qglviewer::Frame new_frame;
+  CGAL::qglviewer::Frame new_frame;
   if(readFrame(s, new_frame)) {
     camera()->interpolateTo(new_frame, animation_duration); 
     return true;
@@ -654,12 +654,12 @@ void Viewer::attribBuffers(int program_name) const {
 
 void Viewer::beginSelection(const QPoint &point)
 {
-  QGLViewer::beginSelection(point);
+  CGAL::QGLViewer::beginSelection(point);
   d->scene->setPickedPixel(point);
 }
 void Viewer::endSelection(const QPoint& point)
 {
-  QGLViewer::endSelection(point);
+  CGAL::QGLViewer::endSelection(point);
     //redraw the true scene for the glReadPixel in postSelection();
     d->draw_aux(false, this);
 }
@@ -667,7 +667,7 @@ void Viewer::endSelection(const QPoint& point)
 void Viewer::drawVisualHints()
 {
 
-    QGLViewer::drawVisualHints();
+    CGAL::QGLViewer::drawVisualHints();
 
     if(d->distance_is_displayed)
     {
@@ -819,7 +819,7 @@ void Viewer::wheelEvent(QWheelEvent* e)
         update();
     }
     else
-        QGLViewer::wheelEvent(e);
+        CGAL::QGLViewer::wheelEvent(e);
 }
 
 bool Viewer::testDisplayId(double x, double y, double z)
@@ -853,9 +853,9 @@ void Viewer::paintGL()
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     //set the default frustum
     if(d->projection_is_ortho)
-      camera()->setType(qglviewer::Camera::ORTHOGRAPHIC);
+      camera()->setType(CGAL::qglviewer::Camera::ORTHOGRAPHIC);
     else
-      camera()->setType(qglviewer::Camera::PERSPECTIVE);
+      camera()->setType(CGAL::qglviewer::Camera::PERSPECTIVE);
     preDraw();
     draw();
     postDraw();
@@ -889,7 +889,7 @@ void Viewer_impl::showDistance(QPoint pixel)
 {
     static bool isAset = false;
     bool found;
-    qglviewer::Vec point;
+    CGAL::qglviewer::Vec point;
     point = viewer->camera()->pointUnderPixel(pixel, found);
     if(!isAset && found)
     {
@@ -926,7 +926,7 @@ void Viewer_impl::showDistance(QPoint pixel)
         distance_text.append(ACoord);
         TextItem *BCoord = new TextItem(BPoint.x, BPoint.y, BPoint.z,QString("B(%1,%2,%3)").arg(BPoint.x-viewer->offset().x).arg(BPoint.y-viewer->offset().y).arg(BPoint.z-viewer->offset().z), true, font, Qt::red, true);
         distance_text.append(BCoord);
-        qglviewer::Vec centerPoint = 0.5*(BPoint+APoint);
+        CGAL::qglviewer::Vec centerPoint = 0.5*(BPoint+APoint);
         TextItem *centerCoord = new TextItem(centerPoint.x, centerPoint.y, centerPoint.z,QString(" distance: %1").arg(dist), true, font, Qt::red, true);
 
         distance_text.append(centerCoord);
@@ -957,7 +957,7 @@ void Viewer_impl::clearDistancedisplay()
 
 void Viewer_impl::sendSnapshotToClipboard(Viewer *viewer)
 {
-  QImage * snap = viewer->takeSnapshot(qglviewer::TRANSPARENT_BACKGROUND, 2*viewer->size(), 1, true);
+  QImage * snap = viewer->takeSnapshot(CGAL::qglviewer::TRANSPARENT_BACKGROUND, 2*viewer->size(), 1, true);
   if(snap)
   {
 #if defined(_WIN32)

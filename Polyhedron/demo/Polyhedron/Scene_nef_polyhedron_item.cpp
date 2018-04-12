@@ -266,7 +266,7 @@ void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
     positions_points.resize(0);
     normals.resize(0);
     positions_lines.resize(0);
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
     //The Facets
     {

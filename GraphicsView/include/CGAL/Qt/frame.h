@@ -3,7 +3,7 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of a fork of the QGLViewer library version 2.7.0.
+ This file is part of a fork of the CGAL::QGLViewer library version 2.7.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -11,8 +11,8 @@
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
 
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
+ libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
+ purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -30,11 +30,12 @@
 #include <CGAL/Qt/vec.h>
 #include <CGAL/Qt/quaternion.h>
 
+namespace CGAL{
 namespace qglviewer {
 class Constraint;
 
 /*! \brief The Frame class represents a coordinate system, defined by a position
-  and an orientation. \class Frame frame.h QGLViewer/frame.h
+  and an orientation. \class Frame frame.h CGAL::QGLViewer/frame.h
 
   A Frame is a 3D coordinate system, represented by a position() and an
   orientation(). The order of these transformations is important: the Frame is
@@ -91,7 +92,7 @@ class Constraint;
   and should be sufficient to prevent ambiguities. These notions are obviously
   identical when the referenceFrame() is \c NULL, i.e. when the Frame is defined
   in the world coordinate system (the one you are in at the beginning of the
-  QGLViewer::draw() method, see the <a href="../introduction.html">introduction
+  CGAL::QGLViewer::draw() method, see the <a href="../introduction.html">introduction
   page</a>).
 
   Frames can hence easily be organized in a tree hierarchy, which root is the
@@ -154,7 +155,7 @@ Q_SIGNALS:
   \code
   QObject::connect(myFrame, SIGNAL(modified()), myObject, SLOT(update()));
   \endcode
-  Use the QGLViewer::QGLViewerPool() to connect the signal to all the viewers.
+  Use the CGAL::QGLViewer::QGLViewerPool() to connect the signal to all the viewers.
 
   \note If your Frame is part of a Frame hierarchy (see referenceFrame()), a
   modification of one of the parents of this Frame will \e not emit this signal.
@@ -167,8 +168,8 @@ Q_SIGNALS:
 
   \attention Connecting this signal to a QOpenGLWidget::update() slot (or a
   method that calls it) will prevent you from modifying the Frame \e inside your
-  QGLViewer::draw() method as it would result in an infinite loop. However,
-  QGLViewer::draw() should not modify the scene.
+  CGAL::QGLViewer::draw() method as it would result in an infinite loop. However,
+  CGAL::QGLViewer::draw() should not modify the scene.
 
   \note Note that this signal might be emitted even if the Frame is not actually
   modified, for instance after a translate(Vec(0,0,0)) or a
@@ -457,7 +458,7 @@ private:
   const Frame *referenceFrame_;
 };
 
-} // namespace qglviewer
+}} // namespace CGAL::qglviewer
 
 #ifdef CGAL_HEADER_ONLY
 //#include <CGAL/Qt/qglviewer_impl_list.h>

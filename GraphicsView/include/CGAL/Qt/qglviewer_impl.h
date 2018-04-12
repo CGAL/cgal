@@ -3,7 +3,7 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of a fork of the QGLViewer library version 2.7.0.
+ This file is part of a fork of the CGAL::QGLViewer library version 2.7.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -11,8 +11,8 @@
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
 
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
+ libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
+ purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -60,23 +60,23 @@
 #include <QFileDialog>
 
 using namespace std;
-using namespace qglviewer;
+using namespace CGAL::qglviewer;
 
 // Static private variable
 CGAL_INLINE_FUNCTION
-QList<QGLViewer *> &QGLViewer::QGLViewerPool() {
-  static QList<QGLViewer *> QGLViewerPool_;
+QList<CGAL::QGLViewer *> &CGAL::QGLViewer::QGLViewerPool() {
+  static QList<CGAL::QGLViewer *> QGLViewerPool_;
   void* p = qApp->property("qglviewer pool").value<void*>();
   if(p == 0) {
     p = (void*)(&QGLViewerPool_);
     qApp->setProperty("qglviewer pool", QVariant::fromValue(p));
   }
-  return *static_cast<QList<QGLViewer *> * >(p);
+  return *static_cast<QList<CGAL::QGLViewer *> * >(p);
 }
 
 /*! \mainpage
 
-libQGLViewer is a free C++ library based on Qt that enables the quick creation
+libCGAL::QGLViewer is a free C++ library based on Qt that enables the quick creation
 of OpenGL 3D viewers. It features a powerful camera trackball and simple
 applications simply require an implementation of the <code>draw()</code> method.
 This makes it a tool of choice for OpenGL beginners and assignments. It provides
@@ -85,26 +85,26 @@ keyFrames, object selection, and much more. It is fully
 customizable and easy to extend to create complex applications, with a possible
 Qt GUI.
 
-libQGLViewer is <i>not</i> a 3D viewer that can be used directly to view 3D
+libCGAL::QGLViewer is <i>not</i> a 3D viewer that can be used directly to view 3D
 scenes in various formats. It is more likely to be the starting point for the
 coding of such a viewer.
 
-libQGLViewer is based on the Qt toolkit and hence compiles on any architecture
+libCGAL::QGLViewer is based on the Qt toolkit and hence compiles on any architecture
 (Unix-Linux, Mac, Windows, ...). Full reference documentation and many examples
 are provided.
 
 See the project main page for details on the project and installation steps. */
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::defaultConstructor() {
+void CGAL::QGLViewer::defaultConstructor() {
   
-  int poolIndex = QGLViewer::QGLViewerPool().indexOf(NULL);
-  setFocusPolicy(Qt::StrongFocus);
+  int poolIndex = CGAL::QGLViewer::QGLViewerPool().indexOf(NULL);
+  setFocusPolicy(::Qt::StrongFocus);
 
   if (poolIndex >= 0)
-    QGLViewer::QGLViewerPool().replace(poolIndex, this);
+    CGAL::QGLViewer::QGLViewerPool().replace(poolIndex, this);
   else
-    QGLViewer::QGLViewerPool().append(this);
+    CGAL::QGLViewer::QGLViewerPool().append(this);
   camera_ = new Camera(this);
   setCamera(camera());
 
@@ -164,12 +164,12 @@ void QGLViewer::defaultConstructor() {
   bufferTextureHeight_ = 0;
   previousBufferTextureFormat_ = 0;
   previousBufferTextureInternalFormat_ = 0;
-  currentlyPressedKey_ = Qt::Key(0);
+  currentlyPressedKey_ = ::Qt::Key(0);
 
-  setAttribute(Qt::WA_NoSystemBackground);
+  setAttribute(::Qt::WA_NoSystemBackground);
   axisIsDrawn_ = true;
 
-  _offset = qglviewer::Vec(0,0,0);
+  _offset = CGAL::qglviewer::Vec(0,0,0);
 }
 
 #ifndef DOXYGEN
@@ -181,19 +181,19 @@ void QGLViewer::defaultConstructor() {
 All viewer parameters (display flags, scene parameters, associated objects...)
 are set to their default values. See the associated documentation.
 
-If the \p shareWidget parameter points to a valid \c QGLWidget, the QGLViewer
+If the \p shareWidget parameter points to a valid \c QGLWidget, the CGAL::QGLViewer
 will share the OpenGL context with \p shareWidget (see isSharing()). */
 CGAL_INLINE_FUNCTION
-QGLViewer::QGLViewer(QWidget *parent,
-                     Qt::WindowFlags flags)
+CGAL::QGLViewer::QGLViewer(QWidget *parent,
+                     ::Qt::WindowFlags flags)
     : QOpenGLWidget(parent, flags) {
   defaultConstructor();
 }
 
 CGAL_INLINE_FUNCTION
-QGLViewer::QGLViewer(QGLContext*,
+CGAL::QGLViewer::QGLViewer(QGLContext*,
                      QWidget *parent,
-                     Qt::WindowFlags flags)
+                     ::Qt::WindowFlags flags)
   : QOpenGLWidget(parent, flags) {
   defaultConstructor();
 }
@@ -205,13 +205,13 @@ The viewer is replaced by \c NULL in the QGLViewerPool() (in order to preserve
 other viewer's indexes) and allocated memory is released. The camera() is
 deleted and should be copied before if it is shared by an other viewer. */
 CGAL_INLINE_FUNCTION
-QGLViewer::~QGLViewer() {
+CGAL::QGLViewer::~QGLViewer() {
   // See closeEvent comment. Destructor is called (and not closeEvent) only when
   // the widget is embedded. Hence we saveToFile here. It is however a bad idea
   // if virtual domElement() has been overloaded ! if (parent())
   // saveStateToFileForAllViewers();
 
-  QGLViewer::QGLViewerPool().replace(QGLViewer::QGLViewerPool().indexOf(this),
+  CGAL::QGLViewer::QGLViewerPool().replace(CGAL::QGLViewer::QGLViewerPool().indexOf(this),
                                     NULL);
 
   camera()->deleteLater();
@@ -223,25 +223,21 @@ QGLViewer::~QGLViewer() {
   }
 }
 
-static QString QGLViewerVersionString() {
-  return QString::number((QGLVIEWER_VERSION & 0xff0000) >> 16) + "." +
-         QString::number((QGLVIEWER_VERSION & 0x00ff00) >> 8) + "." +
-         QString::number(QGLVIEWER_VERSION & 0x0000ff);
-}
 
-static Qt::KeyboardModifiers keyboardModifiersFromState(unsigned int state) {
+
+static ::Qt::KeyboardModifiers keyboardModifiersFromState(unsigned int state) {
   // Convertion of keyboard modifiers and mouse buttons as an int is no longer
   // supported : emulate
-  return Qt::KeyboardModifiers(int(state & 0xFF000000));
+  return ::Qt::KeyboardModifiers(int(state & 0xFF000000));
 }
 
-static Qt::MouseButton mouseButtonFromState(unsigned int state) {
+static ::Qt::MouseButton mouseButtonFromState(unsigned int state) {
   // Convertion of keyboard modifiers and mouse buttons as an int is no longer
   // supported : emulate
-  return Qt::MouseButton(state & 0xFFFF);
+  return ::Qt::MouseButton(state & 0xFFFF);
 }
 
-/*! Initializes the QGLViewer OpenGL context and then calls user-defined init().
+/*! Initializes the CGAL::QGLViewer OpenGL context and then calls user-defined init().
 
 This method is automatically called once, before the first call to paintGL().
 
@@ -251,7 +247,7 @@ If a 4.3 context could not be set, a 2.1 context will be used instead.
  \see `isOpenGL_4_3()`
 */
 CGAL_INLINE_FUNCTION
-void QGLViewer::initializeGL() {
+void CGAL::QGLViewer::initializeGL() {
   QSurfaceFormat format;
   format.setDepthBufferSize(24);
   format.setStencilBufferSize(8);
@@ -443,7 +439,7 @@ camera in the world coordinate system. \arg draw() (or fastDraw() when the
 camera is manipulated) : main drawing method. Should be overloaded. \arg
 postDraw() : display of visual hints (world axis, FPS...) */
 CGAL_INLINE_FUNCTION
-void QGLViewer::paintGL() {
+void CGAL::QGLViewer::paintGL() {
   if (displaysInStereo()) {
     for (int view = 1; view >= 0; --view) {
       // Clears screen, set model view matrix with shifted matrix for ith buffer
@@ -482,7 +478,7 @@ camera()->loadModelViewMatrix();
 Emits the drawNeeded() signal once this is done (see the <a
 href="../examples/callback.html">callback example</a>). */
 CGAL_INLINE_FUNCTION
-void QGLViewer::preDraw() {
+void CGAL::QGLViewer::preDraw() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // GL_PROJECTION matrix
@@ -507,7 +503,7 @@ that in draw(), the user can rely on the OpenGL context he defined. Respect this
 convention (by pushing/popping the different attributes) if you overload this
 method. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::postDraw() {
+void CGAL::QGLViewer::postDraw() {
   // Pivot point, line when camera rolls, zoom region
   if (gridIsDrawn()) {
     glLineWidth(1.0);
@@ -553,10 +549,10 @@ void QGLViewer::postDraw() {
 
 Same as preDraw() except that the glDrawBuffer() is set to \c GL_BACK_LEFT or \c
 GL_BACK_RIGHT depending on \p leftBuffer, and it uses
-qglviewer::Camera::loadProjectionMatrixStereo() and
-qglviewer::Camera::loadModelViewMatrixStereo() instead. */
+CGAL::qglviewer::Camera::loadProjectionMatrixStereo() and
+CGAL::qglviewer::Camera::loadModelViewMatrixStereo() instead. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::preDrawStereo(bool leftBuffer) {
+void CGAL::QGLViewer::preDrawStereo(bool leftBuffer) {
   // Set buffer to draw in
   // Seems that SGI and Crystal Eyes are not synchronized correctly !
   // That's why we don't draw in the appropriate buffer...
@@ -578,15 +574,15 @@ void QGLViewer::preDrawStereo(bool leftBuffer) {
 /*! Draws a simplified version of the scene to guarantee interactive camera
 displacements.
 
-This method is called instead of draw() when the qglviewer::Camera::frame() is
-qglviewer::ManipulatedCameraFrame::isManipulated(). Default implementation
+This method is called instead of draw() when the CGAL::qglviewer::Camera::frame() is
+CGAL::qglviewer::ManipulatedCameraFrame::isManipulated(). Default implementation
 simply calls draw().
 
 Overload this method if your scene is too complex to allow for interactive
 camera manipulation. See the <a href="../examples/fastDraw.html">fastDraw
 example</a> for an illustration. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::fastDraw() { draw(); }
+void CGAL::QGLViewer::fastDraw() { draw(); }
 
 /*! Starts (\p edit = \c true, default) or stops (\p edit=\c false) the edition
 of the camera().
@@ -594,12 +590,12 @@ of the camera().
 Current implementation is limited to paths display. Get current state using
 cameraIsEdited().
 
-\attention This method sets the qglviewer::Camera::zClippingCoefficient() to 5.0
+\attention This method sets the CGAL::qglviewer::Camera::zClippingCoefficient() to 5.0
 when \p edit is \c true, so that the Camera paths (see
-qglviewer::Camera::keyFrameInterpolator()) are not clipped. It restores the
+CGAL::qglviewer::Camera::keyFrameInterpolator()) are not clipped. It restores the
 previous value when \p edit is \c false. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setCameraIsEdited(bool edit) {
+void CGAL::QGLViewer::setCameraIsEdited(bool edit) {
   cameraIsEdited_ = edit;
   if (edit) {
     previousCameraZClippingCoefficient_ = camera()->zClippingCoefficient();
@@ -615,25 +611,25 @@ void QGLViewer::setCameraIsEdited(bool edit) {
 
 // Key bindings. 0 means not defined
 CGAL_INLINE_FUNCTION
-void QGLViewer::setDefaultShortcuts() {
+void CGAL::QGLViewer::setDefaultShortcuts() {
   // D e f a u l t   a c c e l e r a t o r s
-  setShortcut(DRAW_AXIS, Qt::Key_A);
-  setShortcut(DRAW_GRID, Qt::Key_G);
-  setShortcut(DISPLAY_FPS, Qt::Key_F);
-  setShortcut(ENABLE_TEXT, Qt::SHIFT + Qt::Key_Question);
-  setShortcut(EXIT_VIEWER, Qt::Key_Escape);
-  setShortcut(CAMERA_MODE, Qt::Key_Space);
-  setShortcut(FULL_SCREEN, Qt::ALT + Qt::Key_Return);
-  setShortcut(STEREO, Qt::Key_S);
-  setShortcut(ANIMATION, Qt::Key_Return);
-  setShortcut(HELP, Qt::Key_H);
-  setShortcut(EDIT_CAMERA, Qt::Key_C);
-  setShortcut(MOVE_CAMERA_LEFT, Qt::Key_Left);
-  setShortcut(MOVE_CAMERA_RIGHT, Qt::Key_Right);
-  setShortcut(MOVE_CAMERA_UP, Qt::Key_Up);
-  setShortcut(MOVE_CAMERA_DOWN, Qt::Key_Down);
-  setShortcut(INCREASE_FLYSPEED, Qt::Key_Plus);
-  setShortcut(DECREASE_FLYSPEED, Qt::Key_Minus);
+  setShortcut(DRAW_AXIS, ::Qt::Key_A);
+  setShortcut(DRAW_GRID, ::Qt::Key_G);
+  setShortcut(DISPLAY_FPS, ::Qt::Key_F);
+  setShortcut(ENABLE_TEXT, ::Qt::SHIFT + ::Qt::Key_Question);
+  setShortcut(EXIT_VIEWER, ::Qt::Key_Escape);
+  setShortcut(CAMERA_MODE, ::Qt::Key_Space);
+  setShortcut(FULL_SCREEN, ::Qt::ALT + ::Qt::Key_Return);
+  setShortcut(STEREO, ::Qt::Key_S);
+  setShortcut(ANIMATION, ::Qt::Key_Return);
+  setShortcut(HELP, ::Qt::Key_H);
+  setShortcut(EDIT_CAMERA, ::Qt::Key_C);
+  setShortcut(MOVE_CAMERA_LEFT, ::Qt::Key_Left);
+  setShortcut(MOVE_CAMERA_RIGHT, ::Qt::Key_Right);
+  setShortcut(MOVE_CAMERA_UP, ::Qt::Key_Up);
+  setShortcut(MOVE_CAMERA_DOWN, ::Qt::Key_Down);
+  setShortcut(INCREASE_FLYSPEED, ::Qt::Key_Plus);
+  setShortcut(DECREASE_FLYSPEED, ::Qt::Key_Minus);
 
   keyboardActionDescription_[DISPLAY_FPS] =
       tr("Toggles the display of the FPS", "DISPLAY_FPS action description");
@@ -672,63 +668,63 @@ void QGLViewer::setDefaultShortcuts() {
       tr("Decreases fly speed", "DECREASE_FLYSPEED action description");
   
   // K e y f r a m e s   s h o r t c u t   k e y s
-  setPathKey(Qt::Key_F1, 1);
-  setPathKey(Qt::Key_F2, 2);
-  setPathKey(Qt::Key_F3, 3);
-  setPathKey(Qt::Key_F4, 4);
-  setPathKey(Qt::Key_F5, 5);
-  setPathKey(Qt::Key_F6, 6);
-  setPathKey(Qt::Key_F7, 7);
-  setPathKey(Qt::Key_F8, 8);
-  setPathKey(Qt::Key_F9, 9);
-  setPathKey(Qt::Key_F10, 10);
-  setPathKey(Qt::Key_F11, 11);
-  setPathKey(Qt::Key_F12, 12);
+  setPathKey(::Qt::Key_F1, 1);
+  setPathKey(::Qt::Key_F2, 2);
+  setPathKey(::Qt::Key_F3, 3);
+  setPathKey(::Qt::Key_F4, 4);
+  setPathKey(::Qt::Key_F5, 5);
+  setPathKey(::Qt::Key_F6, 6);
+  setPathKey(::Qt::Key_F7, 7);
+  setPathKey(::Qt::Key_F8, 8);
+  setPathKey(::Qt::Key_F9, 9);
+  setPathKey(::Qt::Key_F10, 10);
+  setPathKey(::Qt::Key_F11, 11);
+  setPathKey(::Qt::Key_F12, 12);
 
-  setAddKeyFrameKeyboardModifiers(Qt::AltModifier);
-  setPlayPathKeyboardModifiers(Qt::NoModifier);
+  setAddKeyFrameKeyboardModifiers(::Qt::AltModifier);
+  setPlayPathKeyboardModifiers(::Qt::NoModifier);
 }
 
 // M o u s e   b e h a v i o r
 CGAL_INLINE_FUNCTION
-void QGLViewer::setDefaultMouseBindings() {
-  const Qt::KeyboardModifiers cameraKeyboardModifiers = Qt::NoModifier;
-  const Qt::KeyboardModifiers frameKeyboardModifiers = Qt::ControlModifier;
+void CGAL::QGLViewer::setDefaultMouseBindings() {
+  const ::Qt::KeyboardModifiers cameraKeyboardModifiers = ::Qt::NoModifier;
+  const ::Qt::KeyboardModifiers frameKeyboardModifiers = ::Qt::ControlModifier;
 
   //#CONNECTION# toggleCameraMode()
   for (int handler = 0; handler < 2; ++handler) {
     MouseHandler mh = (MouseHandler)(handler);
-    Qt::KeyboardModifiers modifiers =
+    ::Qt::KeyboardModifiers modifiers =
         (mh == FRAME) ? frameKeyboardModifiers : cameraKeyboardModifiers;
 
-    setMouseBinding(modifiers, Qt::LeftButton, mh, ROTATE);
-    setMouseBinding(modifiers, Qt::MidButton, mh, ZOOM);
-    setMouseBinding(modifiers, Qt::RightButton, mh, TRANSLATE);
+    setMouseBinding(modifiers, ::Qt::LeftButton, mh, ROTATE);
+    setMouseBinding(modifiers, ::Qt::MidButton, mh, ZOOM);
+    setMouseBinding(modifiers, ::Qt::RightButton, mh, TRANSLATE);
 
-    setMouseBinding(Qt::Key_R, modifiers, Qt::LeftButton, mh, SCREEN_ROTATE);
+    setMouseBinding(::Qt::Key_R, modifiers, ::Qt::LeftButton, mh, SCREEN_ROTATE);
 
     setWheelBinding(modifiers, mh, ZOOM);
   }
 
   // Z o o m   o n   r e g i o n
-  setMouseBinding(Qt::ShiftModifier, Qt::MidButton, CAMERA, ZOOM_ON_REGION);
+  setMouseBinding(::Qt::ShiftModifier, ::Qt::MidButton, CAMERA, ZOOM_ON_REGION);
 
   // S e l e c t
-  setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, SELECT);
+  setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, SELECT);
 
-  setMouseBinding(Qt::ShiftModifier, Qt::RightButton, RAP_FROM_PIXEL);
+  setMouseBinding(::Qt::ShiftModifier, ::Qt::RightButton, RAP_FROM_PIXEL);
   // D o u b l e   c l i c k
-  setMouseBinding(Qt::NoModifier, Qt::LeftButton, ALIGN_CAMERA, true);
-  setMouseBinding(Qt::NoModifier, Qt::MidButton, SHOW_ENTIRE_SCENE, true);
-  setMouseBinding(Qt::NoModifier, Qt::RightButton, CENTER_SCENE, true);
+  setMouseBinding(::Qt::NoModifier, ::Qt::LeftButton, ALIGN_CAMERA, true);
+  setMouseBinding(::Qt::NoModifier, ::Qt::MidButton, SHOW_ENTIRE_SCENE, true);
+  setMouseBinding(::Qt::NoModifier, ::Qt::RightButton, CENTER_SCENE, true);
 
-  setMouseBinding(frameKeyboardModifiers, Qt::LeftButton, ALIGN_FRAME, true);
+  setMouseBinding(frameKeyboardModifiers, ::Qt::LeftButton, ALIGN_FRAME, true);
   // middle double click makes no sense for manipulated frame
-  setMouseBinding(frameKeyboardModifiers, Qt::RightButton, CENTER_FRAME, true);
+  setMouseBinding(frameKeyboardModifiers, ::Qt::RightButton, CENTER_FRAME, true);
 
   // A c t i o n s   w i t h   k e y   m o d i f i e r s
-  setMouseBinding(Qt::Key_Z, Qt::NoModifier, Qt::LeftButton, ZOOM_ON_PIXEL);
-  setMouseBinding(Qt::Key_Z, Qt::NoModifier, Qt::RightButton, ZOOM_TO_FIT);
+  setMouseBinding(::Qt::Key_Z, ::Qt::NoModifier, ::Qt::LeftButton, ZOOM_ON_PIXEL);
+  setMouseBinding(::Qt::Key_Z, ::Qt::NoModifier, ::Qt::RightButton, ZOOM_TO_FIT);
 
 #ifdef Q_OS_MAC
   // Specific Mac bindings for touchpads. Two fingers emulate a wheelEvent which
@@ -736,25 +732,25 @@ void QGLViewer::setDefaultMouseBindings() {
   // the right button. A Control+Left indeed emulates a right click (OS X system
   // configuration), but it does no seem to support dragging. Done at the end to
   // override previous settings.
-  const Qt::KeyboardModifiers macKeyboardModifiers = Qt::AltModifier;
+  const ::Qt::KeyboardModifiers macKeyboardModifiers = ::Qt::AltModifier;
 
-  setMouseBinding(macKeyboardModifiers, Qt::LeftButton, CAMERA, TRANSLATE);
-  setMouseBinding(macKeyboardModifiers, Qt::LeftButton, CENTER_SCENE, true);
-  setMouseBinding(frameKeyboardModifiers | macKeyboardModifiers, Qt::LeftButton,
+  setMouseBinding(macKeyboardModifiers, ::Qt::LeftButton, CAMERA, TRANSLATE);
+  setMouseBinding(macKeyboardModifiers, ::Qt::LeftButton, CENTER_SCENE, true);
+  setMouseBinding(frameKeyboardModifiers | macKeyboardModifiers, ::Qt::LeftButton,
                   CENTER_FRAME, true);
-  setMouseBinding(frameKeyboardModifiers | macKeyboardModifiers, Qt::LeftButton,
+  setMouseBinding(frameKeyboardModifiers | macKeyboardModifiers, ::Qt::LeftButton,
                   FRAME, TRANSLATE);
 #endif
 }
 
-/*! Associates a new qglviewer::Camera to the viewer.
+/*! Associates a new CGAL::qglviewer::Camera to the viewer.
 
 You should only use this method when you derive a new class from
-qglviewer::Camera and want to use one of its instances instead of the original
+CGAL::qglviewer::Camera and want to use one of its instances instead of the original
 class.
 
 It you simply want to save and restore Camera positions, use
-qglviewer::Camera::addKeyFrameToPath() and qglviewer::Camera::playPath()
+CGAL::qglviewer::Camera::addKeyFrameToPath() and CGAL::qglviewer::Camera::playPath()
 instead.
 
 This method silently ignores \c NULL \p camera pointers. The calling method is
@@ -762,14 +758,14 @@ responsible for deleting the previous camera pointer in order to prevent memory
 leaks if needed.
 
 The sceneRadius() and sceneCenter() of \p camera are set to the \e current
-QGLViewer values.
+CGAL::QGLViewer values.
 
-All the \p camera qglviewer::Camera::keyFrameInterpolator()
-qglviewer::KeyFrameInterpolator::interpolated() signals are connected to the
+All the \p camera CGAL::qglviewer::Camera::keyFrameInterpolator()
+CGAL::qglviewer::KeyFrameInterpolator::interpolated() signals are connected to the
 viewer update() slot. The connections with the previous viewer's camera are
 removed. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setCamera(Camera *const camera) {
+void CGAL::QGLViewer::setCamera(Camera *const camera) {
   if (!camera)
     return;
 
@@ -794,7 +790,7 @@ void QGLViewer::setCamera(Camera *const camera) {
 }
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::connectAllCameraKFIInterpolatedSignals(bool connection) {
+void CGAL::QGLViewer::connectAllCameraKFIInterpolatedSignals(bool connection) {
   for (QMap<unsigned int, KeyFrameInterpolator *>::ConstIterator
            it = camera()->kfi_.begin(),
            end = camera()->kfi_.end();
@@ -833,12 +829,12 @@ illustration.
 \attention You need to enable \c GL_COLOR_MATERIAL before calling this method.
 \c glColor is set to the light diffuse color. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::drawLight(GLenum, qreal ) const {
+void CGAL::QGLViewer::drawLight(GLenum, qreal ) const {
 }
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
 CGAL_INLINE_FUNCTION
-void QGLViewer::renderText(int x, int y, const QString &str,
+void CGAL::QGLViewer::renderText(int x, int y, const QString &str,
                            const QFont &font) {
   QColor fontColor = QColor(0, 0,
                             0, 255);
@@ -852,7 +848,7 @@ void QGLViewer::renderText(int x, int y, const QString &str,
 }
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::renderText(double x, double y, double z, const QString &str,
+void CGAL::QGLViewer::renderText(double x, double y, double z, const QString &str,
                            const QFont &font) {
   const Vec proj = camera_->projectedCoordinatesOf(Vec(x, y, z));
   renderText(proj.x, proj.y, str, font);
@@ -869,8 +865,8 @@ You should disable \c GL_LIGHTING and \c GL_DEPTH_TEST before this method so
 that colors are properly rendered.
 
 This method can be used in conjunction with the
-qglviewer::Camera::projectedCoordinatesOf() method to display a text attached to
-an object. In your draw() method use: \code qglviewer::Vec screenPos =
+CGAL::qglviewer::Camera::projectedCoordinatesOf() method to display a text attached to
+an object. In your draw() method use: \code CGAL::qglviewer::Vec screenPos =
 camera()->projectedCoordinatesOf(myFrame.position());
 drawText((int)screenPos[0], (int)screenPos[1], "My Object");
 \endcode
@@ -891,7 +887,7 @@ The \c GL_MODELVIEW and \c GL_PROJECTION matrices are not modified by this
 method.
 */
 CGAL_INLINE_FUNCTION
-void QGLViewer::drawText(int x, int y, const QString &text, const QFont &fnt) {
+void CGAL::QGLViewer::drawText(int x, int y, const QString &text, const QFont &fnt) {
   if (!textIsEnabled())
     return;
 
@@ -911,7 +907,7 @@ If this method is called when a message is already displayed, the new message
 replaces the old one. Use setTextIsEnabled() (default shortcut is '?') to enable
 or disable text (and hence messages) display. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::displayMessage(const QString &message, int delay) {
+void CGAL::QGLViewer::displayMessage(const QString &message, int delay) {
   message_ = message;
   displayMessage_ = true;
   // Was set to single shot in defaultConstructor.
@@ -921,7 +917,7 @@ void QGLViewer::displayMessage(const QString &message, int delay) {
 }
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::hideMessage() {
+void CGAL::QGLViewer::hideMessage() {
   displayMessage_ = false;
   if (textIsEnabled())
     update();
@@ -939,7 +935,7 @@ When FPSIsDisplayed() is \c true (default is \c false), this method is called by
 postDraw() to display the currentFPS(). Use QApplication::setFont() to define
 the font (see drawText()). */
 CGAL_INLINE_FUNCTION
-void QGLViewer::displayFPS() {
+void CGAL::QGLViewer::displayFPS() {
   drawText(10,
            int(1.5 * ((QApplication::font().pixelSize() > 0)
                           ? QApplication::font().pixelSize()
@@ -973,7 +969,7 @@ You may want to disable \c GL_LIGHTING, to enable \c GL_LINE_SMOOTH or \c
 GL_BLEND to draw when this method is used.
 
 If you want to link 2D drawings to 3D objects, use
-qglviewer::Camera::projectedCoordinatesOf() to compute the 2D projection on
+CGAL::qglviewer::Camera::projectedCoordinatesOf() to compute the 2D projection on
 screen of a 3D point (see the <a
 href="../examples/screenCoordSystem.html">screenCoordSystem</a> example). See
 also drawText().
@@ -985,7 +981,7 @@ z-buffer. Note that if you use the convenient \c glVertex2i() to provide
 coordinates, the implicit 0.0 z coordinate will make your drawings appear \e on
 \e top of the rest of the scene. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::startScreenCoordinatesSystem(bool ) const {
+void CGAL::QGLViewer::startScreenCoordinatesSystem(bool ) const {
 }
 
 /*! Stops the pixel coordinate drawing block started by
@@ -995,14 +991,14 @@ The \c GL_MODELVIEW and \c GL_PROJECTION matrices modified in
 startScreenCoordinatesSystem() are restored. \c glMatrixMode is set to \c
 GL_MODELVIEW. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::stopScreenCoordinatesSystem() const {
+void CGAL::QGLViewer::stopScreenCoordinatesSystem() const {
 }
 
 /*! Overloading of the \c QObject method.
 
 If animationIsStarted(), calls animate() and draw(). */
 CGAL_INLINE_FUNCTION
-void QGLViewer::timerEvent(QTimerEvent *) {
+void CGAL::QGLViewer::timerEvent(QTimerEvent *) {
   if (animationIsStarted()) {
     animate();
     update();
@@ -1011,14 +1007,14 @@ void QGLViewer::timerEvent(QTimerEvent *) {
 
 /*! Starts the animation loop. See animationIsStarted(). */
 CGAL_INLINE_FUNCTION
-void QGLViewer::startAnimation() {
+void CGAL::QGLViewer::startAnimation() {
   animationTimerId_ = startTimer(animationPeriod());
   animationStarted_ = true;
 }
 
 /*! Stops animation. See animationIsStarted(). */
 CGAL_INLINE_FUNCTION
-void QGLViewer::stopAnimation() {
+void CGAL::QGLViewer::stopAnimation() {
   animationStarted_ = false;
   if (animationTimerId_ != 0)
     killTimer(animationTimerId_);
@@ -1029,7 +1025,7 @@ void QGLViewer::stopAnimation() {
 Saves the viewer state using saveStateToFile() and then calls
 QOpenGLWidget::closeEvent(). */
 CGAL_INLINE_FUNCTION
-void QGLViewer::closeEvent(QCloseEvent *e) {
+void CGAL::QGLViewer::closeEvent(QCloseEvent *e) {
   // When the user clicks on the window close (x) button:
   // - If the viewer is a top level window, closeEvent is called and then saves
   // to file. - Otherwise, nothing happen s:( When the user press the
@@ -1068,15 +1064,15 @@ void QGLViewer::closeEvent(QCloseEvent *e) {
 /*! Simple wrapper method: calls \c select(event->pos()).
 
 Emits \c pointSelected(e) which is useful only if you rely on the Qt signal-slot
-mechanism and you did not overload QGLViewer. If you choose to derive your own
+mechanism and you did not overload CGAL::QGLViewer. If you choose to derive your own
 viewer class, simply overload select() (or probably simply drawWithNames(), see
 the <a href="../examples/select.html">select example</a>) to implement your
 selection mechanism.
 
-This method is called when you use the QGLViewer::SELECT mouse binding(s)
+This method is called when you use the CGAL::QGLViewer::SELECT mouse binding(s)
 (default is Shift + left button). Use setMouseBinding() to change this. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::select(const QMouseEvent *event) {
+void CGAL::QGLViewer::select(const QMouseEvent *event) {
   // For those who don't derive but rather rely on the signal-slot mechanism.
   Q_EMIT pointSelected(event);
   select(event->pos());
@@ -1084,8 +1080,8 @@ void QGLViewer::select(const QMouseEvent *event) {
 
 /*! This method performs a selection in the scene from pixel coordinates.
 
-It is called when the user clicks on the QGLViewer::SELECT
-QGLViewer::ClickAction binded button(s) (default is Shift + LeftButton).
+It is called when the user clicks on the CGAL::QGLViewer::SELECT
+CGAL::QGLViewer::ClickAction binded button(s) (default is Shift + LeftButton).
 
 This template method successively calls four other methods:
 \code
@@ -1132,14 +1128,14 @@ configuration. See the <a href="../examples/multiSelect.html">multiSelect
 example</a> for an illustration.
 
 \p point is the center pixel (origin in the upper left corner) of the selection
-region. Use qglviewer::Camera::convertClickToLine() to transform these
+region. Use CGAL::qglviewer::Camera::convertClickToLine() to transform these
 coordinates in a 3D ray if you want to perform an analytical intersection.
 
 \attention \c GL_SELECT mode seems to report wrong results when used in
 conjunction with backface culling. If you encounter problems try to \c
 glDisable(GL_CULL_FACE). */
 CGAL_INLINE_FUNCTION
-void QGLViewer::select(const QPoint &point) {
+void CGAL::QGLViewer::select(const QPoint &point) {
   beginSelection(point);
   drawWithNames();
   endSelection(point);
@@ -1150,7 +1146,7 @@ void QGLViewer::select(const QPoint &point) {
 drawWithNames().
 */
 CGAL_INLINE_FUNCTION
-void QGLViewer::beginSelection(const QPoint &point) 
+void CGAL::QGLViewer::beginSelection(const QPoint &point) 
 {
   makeCurrent();
   glEnable(GL_SCISSOR_TEST);
@@ -1161,7 +1157,7 @@ void QGLViewer::beginSelection(const QPoint &point)
 drawWithNames(). 
  It clears the OpenGL state set by beginSelection*/
 CGAL_INLINE_FUNCTION
-void QGLViewer::endSelection(const QPoint &point) {
+void CGAL::QGLViewer::endSelection(const QPoint &point) {
   Q_UNUSED(point);
   glDisable(GL_SCISSOR_TEST);
 }
@@ -1170,36 +1166,36 @@ void QGLViewer::endSelection(const QPoint &point) {
 
 The previous selectBuffer() is deleted and a new one is created. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setSelectBufferSize(int size) {
+void CGAL::QGLViewer::setSelectBufferSize(int size) {
   if (selectBuffer_)
     delete[] selectBuffer_;
   selectBufferSize_ = size;
   selectBuffer_ = new GLuint[selectBufferSize()];
 }
 
-static QString mouseButtonsString(Qt::MouseButtons b) {
+static QString mouseButtonsString(::Qt::MouseButtons b) {
   QString result("");
   bool addAmpersand = false;
-  if (b & Qt::LeftButton) {
-    result += QGLViewer::tr("Left", "left mouse button");
+  if (b & ::Qt::LeftButton) {
+    result += CGAL::QGLViewer::tr("Left", "left mouse button");
     addAmpersand = true;
   }
-  if (b & Qt::MidButton) {
+  if (b & ::Qt::MidButton) {
     if (addAmpersand)
       result += " & ";
-    result += QGLViewer::tr("Middle", "middle mouse button");
+    result += CGAL::QGLViewer::tr("Middle", "middle mouse button");
     addAmpersand = true;
   }
-  if (b & Qt::RightButton) {
+  if (b & ::Qt::RightButton) {
     if (addAmpersand)
       result += " & ";
-    result += QGLViewer::tr("Right", "right mouse button");
+    result += CGAL::QGLViewer::tr("Right", "right mouse button");
   }
   return result;
 }
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::performClickAction(ClickAction ca, const QMouseEvent *const e) {
+void CGAL::QGLViewer::performClickAction(ClickAction ca, const QMouseEvent *const e) {
   // Note: action that need it should call update().
   switch (ca) {
   // # CONNECTION setMouseBinding prevents adding NO_CLICK_ACTION in
@@ -1255,7 +1251,7 @@ void QGLViewer::performClickAction(ClickAction ca, const QMouseEvent *const e) {
 /*! Overloading of the \c QWidget method.
 
 When the user clicks on the mouse:
-\arg if a mouseGrabber() is defined, qglviewer::MouseGrabber::mousePressEvent()
+\arg if a mouseGrabber() is defined, CGAL::qglviewer::MouseGrabber::mousePressEvent()
 is called, \arg otherwise, the camera() or the manipulatedFrame() interprets the
 mouse displacements, depending on mouse bindings.
 
@@ -1270,12 +1266,12 @@ behavior customization using overloading.
 taken into account. This allows for a direct manipulation of the
 manipulatedFrame() when the mouse hovers, which is probably what is expected. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::mousePressEvent(QMouseEvent *e) {
+void CGAL::QGLViewer::mousePressEvent(QMouseEvent *e) {
   //#CONNECTION# mouseDoubleClickEvent has the same structure
   //#CONNECTION# mouseString() concatenates bindings description in inverse
   // order.
   ClickBindingPrivate cbp(e->modifiers(), e->button(), false,
-                          (Qt::MouseButtons)(e->buttons() & ~(e->button())),
+                          (::Qt::MouseButtons)(e->buttons() & ~(e->button())),
                           currentlyPressedKey_);
 
   if (clickBinding_.contains(cbp)) {
@@ -1349,7 +1345,7 @@ void Viewer::mousePressEvent(QMouseEvent* e)
 if ((e->button() == myButton) && (e->modifiers() == myModifiers))
   myMouseBehavior = true;
 else
-  QGLViewer::mousePressEvent(e);
+  CGAL::QGLViewer::mousePressEvent(e);
 }
 
 CGAL_INLINE_FUNCTION
@@ -1358,7 +1354,7 @@ void Viewer::mouseMoveEvent(QMouseEvent *e)
 if (myMouseBehavior)
   // Use e->x() and e->y() as you want...
 else
-  QGLViewer::mouseMoveEvent(e);
+  CGAL::QGLViewer::mouseMoveEvent(e);
 }
 
 CGAL_INLINE_FUNCTION
@@ -1367,11 +1363,11 @@ void Viewer::mouseReleaseEvent(QMouseEvent* e)
 if (myMouseBehavior)
   myMouseBehavior = false;
 else
-  QGLViewer::mouseReleaseEvent(e);
+  CGAL::QGLViewer::mouseReleaseEvent(e);
 }
 \endcode */
 CGAL_INLINE_FUNCTION
-void QGLViewer::mouseMoveEvent(QMouseEvent *e) {
+void CGAL::QGLViewer::mouseMoveEvent(QMouseEvent *e) {
   if (mouseGrabber()) {
     mouseGrabber()->checkIfGrabsMouse(e->x(), e->y(), camera());
     if (mouseGrabber()->grabsMouse())
@@ -1423,7 +1419,7 @@ method.
 See the mouseMoveEvent() documentation for an example of mouse behavior
 customization. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::mouseReleaseEvent(QMouseEvent *e) {
+void CGAL::QGLViewer::mouseReleaseEvent(QMouseEvent *e) {
   if (mouseGrabber()) {
     if (mouseGrabberIsAManipulatedCameraFrame_)
       (dynamic_cast<ManipulatedFrame *>(mouseGrabber()))
@@ -1456,7 +1452,7 @@ void QGLViewer::mouseReleaseEvent(QMouseEvent *e) {
 If defined, the wheel event is sent to the mouseGrabber(). It is otherwise sent
 according to wheel bindings (see setWheelBinding()). */
 CGAL_INLINE_FUNCTION
-void QGLViewer::wheelEvent(QWheelEvent *e) {
+void CGAL::QGLViewer::wheelEvent(QWheelEvent *e) {
   if (mouseGrabber()) {
     if (mouseGrabberIsAManipulatedFrame_) {
       for (QMap<WheelBindingPrivate, MouseActionPrivate>::ConstIterator
@@ -1513,10 +1509,10 @@ void QGLViewer::wheelEvent(QWheelEvent *e) {
 The behavior of the mouse double click depends on the mouse binding. See
 setMouseBinding() and the <a href="../mouse.html">mouse page</a>. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::mouseDoubleClickEvent(QMouseEvent *e) {
+void CGAL::QGLViewer::mouseDoubleClickEvent(QMouseEvent *e) {
   //#CONNECTION# mousePressEvent has the same structure
   ClickBindingPrivate cbp(e->modifiers(), e->button(), true,
-                          (Qt::MouseButtons)(e->buttons() & ~(e->button())),
+                          (::Qt::MouseButtons)(e->buttons() & ~(e->button())),
                           currentlyPressedKey_);
   if (clickBinding_.contains(cbp))
     performClickAction(clickBinding_[cbp], e);
@@ -1533,7 +1529,7 @@ CGAL_INLINE_FUNCTION
 QOpenGLWidget::format(). Opens a warning message box in case of failure. Emits
 the stereoChanged() signal otherwise. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setStereoDisplay(bool stereo) {
+void CGAL::QGLViewer::setStereoDisplay(bool stereo) {
   if (format().stereo()) {
     stereo_ = stereo;
     if (!displaysInStereo()) {
@@ -1556,11 +1552,11 @@ void QGLViewer::setStereoDisplay(bool stereo) {
 
 /*! Sets the isFullScreen() state.
 
-If the QGLViewer is embedded in an other QWidget (see
+If the CGAL::QGLViewer is embedded in an other QWidget (see
 CGAL_INLINE_FUNCTION
 QWidget::topLevelWidget()), this widget is displayed in full screen instead. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setFullScreen(bool fullScreen) {
+void CGAL::QGLViewer::setFullScreen(bool fullScreen) {
   if (fullScreen_ == fullScreen)
     return;
 
@@ -1581,12 +1577,12 @@ void QGLViewer::setFullScreen(bool fullScreen) {
 /*! Directly defines the mouseGrabber().
 
 You should not call this method directly as it bypasses the
-qglviewer::MouseGrabber::checkIfGrabsMouse() test performed by mouseMoveEvent().
+CGAL::qglviewer::MouseGrabber::checkIfGrabsMouse() test performed by mouseMoveEvent().
 
 If the MouseGrabber is disabled (see mouseGrabberIsEnabled()), this method
 silently does nothing. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setMouseGrabber(MouseGrabber *mouseGrabber) {
+void CGAL::QGLViewer::setMouseGrabber(MouseGrabber *mouseGrabber) {
   if (!mouseGrabberIsEnabled(mouseGrabber))
     return;
 
@@ -1602,8 +1598,8 @@ void QGLViewer::setMouseGrabber(MouseGrabber *mouseGrabber) {
 
 /*! Sets the mouseGrabberIsEnabled() state. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setMouseGrabberIsEnabled(
-    const qglviewer::MouseGrabber *const mouseGrabber, bool enabled) {
+void CGAL::QGLViewer::setMouseGrabberIsEnabled(
+    const CGAL::qglviewer::MouseGrabber *const mouseGrabber, bool enabled) {
   if (enabled)
     disabledMouseGrabbers_.remove(reinterpret_cast<size_t>(mouseGrabber));
   else
@@ -1611,66 +1607,66 @@ void QGLViewer::setMouseGrabberIsEnabled(
 }
 
 CGAL_INLINE_FUNCTION
-QString QGLViewer::mouseActionString(MouseAction ma) {
+QString CGAL::QGLViewer::mouseActionString(MouseAction ma) {
   switch (ma) {
-  case qglviewer::NO_MOUSE_ACTION:
+  case CGAL::qglviewer::NO_MOUSE_ACTION:
     return QString::null;
-  case qglviewer::ROTATE:
-    return QGLViewer::tr("Rotates", "ROTATE mouse action");
-  case qglviewer::ZOOM:
-    return QGLViewer::tr("Zooms", "ZOOM mouse action");
-  case qglviewer::TRANSLATE:
-    return QGLViewer::tr("Translates", "TRANSLATE mouse action");
-  case qglviewer::MOVE_FORWARD:
-    return QGLViewer::tr("Moves forward", "MOVE_FORWARD mouse action");
-  case qglviewer::LOOK_AROUND:
-    return QGLViewer::tr("Looks around", "LOOK_AROUND mouse action");
-  case qglviewer::MOVE_BACKWARD:
-    return QGLViewer::tr("Moves backward", "MOVE_BACKWARD mouse action");
-  case qglviewer::SCREEN_ROTATE:
-    return QGLViewer::tr("Rotates in screen plane",
+  case CGAL::qglviewer::ROTATE:
+    return CGAL::QGLViewer::tr("Rotates", "ROTATE mouse action");
+  case CGAL::qglviewer::ZOOM:
+    return CGAL::QGLViewer::tr("Zooms", "ZOOM mouse action");
+  case CGAL::qglviewer::TRANSLATE:
+    return CGAL::QGLViewer::tr("Translates", "TRANSLATE mouse action");
+  case CGAL::qglviewer::MOVE_FORWARD:
+    return CGAL::QGLViewer::tr("Moves forward", "MOVE_FORWARD mouse action");
+  case CGAL::qglviewer::LOOK_AROUND:
+    return CGAL::QGLViewer::tr("Looks around", "LOOK_AROUND mouse action");
+  case CGAL::qglviewer::MOVE_BACKWARD:
+    return CGAL::QGLViewer::tr("Moves backward", "MOVE_BACKWARD mouse action");
+  case CGAL::qglviewer::SCREEN_ROTATE:
+    return CGAL::QGLViewer::tr("Rotates in screen plane",
                          "SCREEN_ROTATE mouse action");
-  case qglviewer::ROLL:
-    return QGLViewer::tr("Rolls", "ROLL mouse action");
-  case qglviewer::DRIVE:
-    return QGLViewer::tr("Drives", "DRIVE mouse action");
-  case qglviewer::SCREEN_TRANSLATE:
-    return QGLViewer::tr("Horizontally/Vertically translates",
+  case CGAL::qglviewer::ROLL:
+    return CGAL::QGLViewer::tr("Rolls", "ROLL mouse action");
+  case CGAL::qglviewer::DRIVE:
+    return CGAL::QGLViewer::tr("Drives", "DRIVE mouse action");
+  case CGAL::qglviewer::SCREEN_TRANSLATE:
+    return CGAL::QGLViewer::tr("Horizontally/Vertically translates",
                          "SCREEN_TRANSLATE mouse action");
-  case qglviewer::ZOOM_ON_REGION:
-    return QGLViewer::tr("Zooms on region for", "ZOOM_ON_REGION mouse action");
+  case CGAL::qglviewer::ZOOM_ON_REGION:
+    return CGAL::QGLViewer::tr("Zooms on region for", "ZOOM_ON_REGION mouse action");
   }
   return QString::null;
 }
 
 CGAL_INLINE_FUNCTION
-QString QGLViewer::clickActionString(qglviewer::ClickAction ca) {
+QString CGAL::QGLViewer::clickActionString(CGAL::qglviewer::ClickAction ca) {
   switch (ca) {
-  case qglviewer::NO_CLICK_ACTION:
+  case CGAL::qglviewer::NO_CLICK_ACTION:
     return QString::null;
-  case qglviewer::ZOOM_ON_PIXEL:
-    return QGLViewer::tr("Zooms on pixel", "ZOOM_ON_PIXEL click action");
-  case qglviewer::ZOOM_TO_FIT:
-    return QGLViewer::tr("Zooms to fit scene", "ZOOM_TO_FIT click action");
-  case qglviewer::SELECT:
-    return QGLViewer::tr("Selects", "SELECT click action");
-  case qglviewer::RAP_FROM_PIXEL:
-    return QGLViewer::tr("Sets pivot point", "RAP_FROM_PIXEL click action");
-  case qglviewer::RAP_IS_CENTER:
-    return QGLViewer::tr("Resets pivot point", "RAP_IS_CENTER click action");
-  case qglviewer::CENTER_FRAME:
-    return QGLViewer::tr("Centers manipulated frame",
+  case CGAL::qglviewer::ZOOM_ON_PIXEL:
+    return CGAL::QGLViewer::tr("Zooms on pixel", "ZOOM_ON_PIXEL click action");
+  case CGAL::qglviewer::ZOOM_TO_FIT:
+    return CGAL::QGLViewer::tr("Zooms to fit scene", "ZOOM_TO_FIT click action");
+  case CGAL::qglviewer::SELECT:
+    return CGAL::QGLViewer::tr("Selects", "SELECT click action");
+  case CGAL::qglviewer::RAP_FROM_PIXEL:
+    return CGAL::QGLViewer::tr("Sets pivot point", "RAP_FROM_PIXEL click action");
+  case CGAL::qglviewer::RAP_IS_CENTER:
+    return CGAL::QGLViewer::tr("Resets pivot point", "RAP_IS_CENTER click action");
+  case CGAL::qglviewer::CENTER_FRAME:
+    return CGAL::QGLViewer::tr("Centers manipulated frame",
                          "CENTER_FRAME click action");
-  case qglviewer::CENTER_SCENE:
-    return QGLViewer::tr("Centers scene", "CENTER_SCENE click action");
-  case qglviewer::SHOW_ENTIRE_SCENE:
-    return QGLViewer::tr("Shows entire scene",
+  case CGAL::qglviewer::CENTER_SCENE:
+    return CGAL::QGLViewer::tr("Centers scene", "CENTER_SCENE click action");
+  case CGAL::qglviewer::SHOW_ENTIRE_SCENE:
+    return CGAL::QGLViewer::tr("Shows entire scene",
                          "SHOW_ENTIRE_SCENE click action");
-  case qglviewer::ALIGN_FRAME:
-    return QGLViewer::tr("Aligns manipulated frame",
+  case CGAL::qglviewer::ALIGN_FRAME:
+    return CGAL::QGLViewer::tr("Aligns manipulated frame",
                          "ALIGN_FRAME click action");
-  case qglviewer::ALIGN_CAMERA:
-    return QGLViewer::tr("Aligns camera", "ALIGN_CAMERA click action");
+  case CGAL::qglviewer::ALIGN_CAMERA:
+    return CGAL::QGLViewer::tr("Aligns camera", "ALIGN_CAMERA click action");
   }
   return QString::null;
 }
@@ -1684,8 +1680,8 @@ static QString keyString(unsigned int key) {
 }
 
 CGAL_INLINE_FUNCTION
-QString QGLViewer::formatClickActionPrivate(ClickBindingPrivate cbp) {
-  bool buttonsBefore = cbp.buttonsBefore != Qt::NoButton;
+QString CGAL::QGLViewer::formatClickActionPrivate(ClickBindingPrivate cbp) {
+  bool buttonsBefore = cbp.buttonsBefore != ::Qt::NoButton;
   QString keyModifierString = keyString(cbp.modifiers + cbp.key);
   if (!keyModifierString.isEmpty()) {
 #ifdef Q_OS_MAC
@@ -1704,7 +1700,7 @@ QString QGLViewer::formatClickActionPrivate(ClickBindingPrivate cbp) {
                             "/ button / pressed")
       .arg(keyModifierString)
       .arg(mouseButtonsString(cbp.button) +
-           (cbp.button == Qt::NoButton ? tr("Wheel", "Mouse wheel") : ""))
+           (cbp.button == ::Qt::NoButton ? tr("Wheel", "Mouse wheel") : ""))
       .arg(cbp.doubleClick ? tr(" double click", "Suffix after mouse button")
                            : "")
       .arg(buttonsBefore ? tr(" with ", "As in : Left button with Ctrl pressed")
@@ -1716,22 +1712,22 @@ QString QGLViewer::formatClickActionPrivate(ClickBindingPrivate cbp) {
 }
 
 CGAL_INLINE_FUNCTION
-bool QGLViewer::isValidShortcutKey(int key) {
-  return (key >= Qt::Key_Any && key < Qt::Key_Escape) ||
-         (key >= Qt::Key_F1 && key <= Qt::Key_F35);
+bool CGAL::QGLViewer::isValidShortcutKey(int key) {
+  return (key >= ::Qt::Key_Any && key < ::Qt::Key_Escape) ||
+         (key >= ::Qt::Key_F1 && key <= ::Qt::Key_F35);
 }
 
 #ifndef DOXYGEN
 /*! This method is deprecated since version 2.5.0
 
- Use setMouseBindingDescription(Qt::KeyboardModifiers, Qt::MouseButtons,
- QString, bool, Qt::MouseButtons) instead.
+ Use setMouseBindingDescription(::Qt::KeyboardModifiers, ::Qt::MouseButtons,
+ QString, bool, ::Qt::MouseButtons) instead.
 */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setMouseBindingDescription(unsigned int state,
+void CGAL::QGLViewer::setMouseBindingDescription(unsigned int state,
                                            QString description,
                                            bool doubleClick,
-                                           Qt::MouseButtons buttonsBefore) {
+                                           ::Qt::MouseButtons buttonsBefore) {
   qWarning("setMouseBindingDescription(int state,...) is deprecated. Use the "
            "modifier/button equivalent");
   setMouseBindingDescription(keyboardModifiersFromState(state),
@@ -1743,29 +1739,29 @@ void QGLViewer::setMouseBindingDescription(unsigned int state,
 /*! Defines a custom mouse binding description, displayed in the help() window's
  Mouse tab.
 
- Same as calling setMouseBindingDescription(Qt::Key, Qt::KeyboardModifiers,
- Qt::MouseButton, QString, bool, Qt::MouseButtons), with a key value of
- Qt::Key(0) (i.e. binding description when no regular key needs to be pressed).
+ Same as calling setMouseBindingDescription(::Qt::Key, ::Qt::KeyboardModifiers,
+ ::Qt::MouseButton, QString, bool, ::Qt::MouseButtons), with a key value of
+ ::Qt::Key(0) (i.e. binding description when no regular key needs to be pressed).
  */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setMouseBindingDescription(Qt::KeyboardModifiers modifiers,
-                                           Qt::MouseButton button,
+void CGAL::QGLViewer::setMouseBindingDescription(::Qt::KeyboardModifiers modifiers,
+                                           ::Qt::MouseButton button,
                                            QString description,
                                            bool doubleClick,
-                                           Qt::MouseButtons buttonsBefore) {
-  setMouseBindingDescription(Qt::Key(0), modifiers, button, description,
+                                           ::Qt::MouseButtons buttonsBefore) {
+  setMouseBindingDescription(::Qt::Key(0), modifiers, button, description,
                              doubleClick, buttonsBefore);
 }
 
 /*! Defines a custom mouse binding description, displayed in the help() window's
 Mouse tab.
 
-\p modifiers is a combination of Qt::KeyboardModifiers (\c Qt::ControlModifier,
-\c Qt::AltModifier, \c Qt::ShiftModifier, \c Qt::MetaModifier). Possibly
+\p modifiers is a combination of ::Qt::KeyboardModifiers (\c ::Qt::ControlModifier,
+\c ::Qt::AltModifier, \c ::Qt::ShiftModifier, \c ::Qt::MetaModifier). Possibly
 combined using the \c "|" operator.
 
-\p button is one of the Qt::MouseButtons (\c Qt::LeftButton, \c Qt::MidButton,
-\c Qt::RightButton...).
+\p button is one of the ::Qt::MouseButtons (\c ::Qt::LeftButton, \c ::Qt::MidButton,
+\c ::Qt::RightButton...).
 
 \p doubleClick indicates whether or not the user has to double click this button
 to perform the described action. \p buttonsBefore lists the buttons that need to
@@ -1775,15 +1771,15 @@ Set an empty \p description to \e remove a mouse binding description.
 
 \code
 // The R key combined with the Left mouse button rotates the camera in the
-screen plane. setMouseBindingDescription(Qt::Key_R, Qt::NoModifier,
-Qt::LeftButton, "Rotates camera in screen plane");
+screen plane. setMouseBindingDescription(::Qt::Key_R, ::Qt::NoModifier,
+::Qt::LeftButton, "Rotates camera in screen plane");
 
 // A left button double click toggles full screen
-setMouseBindingDescription(Qt::NoModifier, Qt::LeftButton, "Toggles full screen
+setMouseBindingDescription(::Qt::NoModifier, ::Qt::LeftButton, "Toggles full screen
 mode", true);
 
 // Removes the description of Ctrl+Right button
-setMouseBindingDescription(Qt::ControlModifier, Qt::RightButton, "");
+setMouseBindingDescription(::Qt::ControlModifier, ::Qt::RightButton, "");
 \endcode
 
 Overload mouseMoveEvent() and friends to implement your custom mouse behavior
@@ -1794,9 +1790,9 @@ illustration.
 Use setMouseBinding() and setWheelBinding() to change the standard mouse action
 bindings. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setMouseBindingDescription(
-    Qt::Key key, Qt::KeyboardModifiers modifiers, Qt::MouseButton button,
-    QString description, bool doubleClick, Qt::MouseButtons buttonsBefore) {
+void CGAL::QGLViewer::setMouseBindingDescription(
+    ::Qt::Key key, ::Qt::KeyboardModifiers modifiers, ::Qt::MouseButton button,
+    QString description, bool doubleClick, ::Qt::MouseButtons buttonsBefore) {
   ClickBindingPrivate cbp(modifiers, button, doubleClick, buttonsBefore, key);
 
   if (description.isEmpty())
@@ -1832,7 +1828,7 @@ href="../mouse.html">mouse page</a> for details on mouse bindings.
 
 See also helpString() and keyboardString(). */
 CGAL_INLINE_FUNCTION
-QString QGLViewer::mouseString() const {
+QString CGAL::QGLViewer::mouseString() const {
   QString text(
       "<center><table border=\"1\" cellspacing=\"0\" cellpadding=\"4\">\n");
   const QString trtd("<tr><td>");
@@ -1882,7 +1878,7 @@ QString QGLViewer::mouseString() const {
            endmb = mouseBinding_.end();
        itmb != endmb; ++itmb) {
     ClickBindingPrivate cbp(itmb.key().modifiers, itmb.key().button, false,
-                            Qt::NoButton, itmb.key().key);
+                            ::Qt::NoButton, itmb.key().key);
 
     QString text = mouseActionString(itmb.value().action);
 
@@ -1905,8 +1901,8 @@ QString QGLViewer::mouseString() const {
            itw = wheelBinding_.begin(),
            endw = wheelBinding_.end();
        itw != endw; ++itw) {
-    ClickBindingPrivate cbp(itw.key().modifiers, Qt::NoButton, false,
-                            Qt::NoButton, itw.key().key);
+    ClickBindingPrivate cbp(itw.key().modifiers, ::Qt::NoButton, false,
+                            ::Qt::NoButton, itw.key().key);
 
     QString text = mouseActionString(itw.value().action);
 
@@ -1952,17 +1948,17 @@ the help() window \c Keyboard tab.
 
 The \p key definition is given as an \c int using Qt enumerated values. Set an
 empty \p description to remove a shortcut description: \code
-setKeyDescription(Qt::Key_W, "Toggles wireframe display");
-setKeyDescription(Qt::CTRL+Qt::Key_L, "Loads a new scene");
+setKeyDescription(::Qt::Key_W, "Toggles wireframe display");
+setKeyDescription(::Qt::CTRL+::Qt::Key_L, "Loads a new scene");
 // Removes a description
-setKeyDescription(Qt::CTRL+Qt::Key_C, "");
+setKeyDescription(::Qt::CTRL+::Qt::Key_C, "");
 \endcode
 
 See the <a href="../examples/keyboardAndMouse.html">keyboardAndMouse example</a>
 for illustration and the <a href="../keyboard.html">keyboard page</a> for
 details. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setKeyDescription(unsigned int key, QString description) {
+void CGAL::QGLViewer::setKeyDescription(unsigned int key, QString description) {
   if (description.isEmpty())
     keyDescription_.remove(key);
   else
@@ -1970,24 +1966,24 @@ void QGLViewer::setKeyDescription(unsigned int key, QString description) {
 }
 
 CGAL_INLINE_FUNCTION
-QString QGLViewer::cameraPathKeysString() const {
+QString CGAL::QGLViewer::cameraPathKeysString() const {
   if (pathIndex_.isEmpty())
     return QString::null;
 
-  QVector<Qt::Key> keys;
+  QVector<::Qt::Key> keys;
   keys.reserve(pathIndex_.count());
-  for (QMap<Qt::Key, unsigned int>::ConstIterator i = pathIndex_.begin(),
+  for (QMap<::Qt::Key, unsigned int>::ConstIterator i = pathIndex_.begin(),
                                                   endi = pathIndex_.end();
        i != endi; ++i)
     keys.push_back(i.key());
   qSort(keys);
 
-  QVector<Qt::Key>::const_iterator it = keys.begin(), end = keys.end();
+  QVector<::Qt::Key>::const_iterator it = keys.begin(), end = keys.end();
   QString res = keyString(*it);
 
   const int maxDisplayedKeys = 6;
   int nbDisplayedKeys = 0;
-  Qt::Key previousKey = (*it);
+  ::Qt::Key previousKey = (*it);
   int state = 0;
   ++it;
   while ((it != end) && (nbDisplayedKeys < maxDisplayedKeys - 1)) {
@@ -2037,20 +2033,20 @@ QString QGLViewer::cameraPathKeysString() const {
 and that will be displayed in the help() window \c Keyboard tab.
 
 Default value is a table that describes the custom shortcuts defined using
-setKeyDescription() as well as the \e standard QGLViewer::KeyboardAction
+setKeyDescription() as well as the \e standard CGAL::QGLViewer::KeyboardAction
 shortcuts (defined using setShortcut()). See the <a
 href="../keyboard.html">keyboard page</a> for details on key customization.
 
 See also helpString() and mouseString(). */
 CGAL_INLINE_FUNCTION
-QString QGLViewer::keyboardString() const {
+QString CGAL::QGLViewer::keyboardString() const {
   QString text(
       "<center><table border=\"1\" cellspacing=\"0\" cellpadding=\"4\">\n");
   text += QString("<tr bgcolor=\"#aaaacc\"><th align=\"center\">%1</th><th "
                   "align=\"center\">%2</th></tr>\n")
-              .arg(QGLViewer::tr("Key(s)",
+              .arg(CGAL::QGLViewer::tr("Key(s)",
                                  "Keys column header in help window mouse tab"))
-              .arg(QGLViewer::tr(
+              .arg(CGAL::QGLViewer::tr(
                   "Description",
                   "Description column header in help window mouse tab"));
 
@@ -2072,7 +2068,7 @@ QString QGLViewer::keyboardString() const {
   if (!keyDescription.isEmpty()) {
     keyDescription.clear();
     text += QString("<tr bgcolor=\"#aaaacc\"><td colspan=2>%1</td></tr>\n")
-                .arg(QGLViewer::tr("Standard viewer keys",
+                .arg(CGAL::QGLViewer::tr("Standard viewer keys",
                                    "In help window keys tab"));
   }
 
@@ -2096,24 +2092,24 @@ QString QGLViewer::keyboardString() const {
   const QString cpks = cameraPathKeysString();
   if (!cpks.isNull()) {
     text += "<tr bgcolor=\"#ccccff\"><td colspan=2>\n";
-    text += QGLViewer::tr("Camera paths are controlled using the %1 keys "
+    text += CGAL::QGLViewer::tr("Camera paths are controlled using the %1 keys "
                           "(noted <i>Fx</i> below):",
                           "Help window key tab camera keys")
                 .arg(cpks) +
             "</td></tr>\n";
     text += tableLine(
         keyString(playPathKeyboardModifiers()) + "<i>" +
-            QGLViewer::tr("Fx", "Generic function key (F1..F12)") + "</i>",
-        QGLViewer::tr("Plays path (or resets saved position)"));
+            CGAL::QGLViewer::tr("Fx", "Generic function key (F1..F12)") + "</i>",
+        CGAL::QGLViewer::tr("Plays path (or resets saved position)"));
     text += tableLine(
         keyString(addKeyFrameKeyboardModifiers()) + "<i>" +
-            QGLViewer::tr("Fx", "Generic function key (F1..F12)") + "</i>",
-        QGLViewer::tr("Adds a key frame to path (or defines a position)"));
+            CGAL::QGLViewer::tr("Fx", "Generic function key (F1..F12)") + "</i>",
+        CGAL::QGLViewer::tr("Adds a key frame to path (or defines a position)"));
     text += tableLine(
         keyString(addKeyFrameKeyboardModifiers()) + "<i>" +
-            QGLViewer::tr("Fx", "Generic function key (F1..F12)") + "</i>+<i>" +
-            QGLViewer::tr("Fx", "Generic function key (F1..F12)") + "</i>",
-        QGLViewer::tr("Deletes path (or saved position)"));
+            CGAL::QGLViewer::tr("Fx", "Generic function key (F1..F12)") + "</i>+<i>" +
+            CGAL::QGLViewer::tr("Fx", "Generic function key (F1..F12)") + "</i>",
+        CGAL::QGLViewer::tr("Deletes path (or saved position)"));
   }
   text += "</table></center>";
 
@@ -2122,23 +2118,23 @@ QString QGLViewer::keyboardString() const {
 
 /*! Displays the help window "About" tab. See help() for details. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::aboutQGLViewer() {
+void CGAL::QGLViewer::aboutQGLViewer() {
   help();
   helpWidget()->setCurrentIndex(3);
 }
 
 /*! Opens a modal help window that includes four tabs, respectively filled with
-helpString(), keyboardString(), mouseString() and about libQGLViewer.
+helpString(), keyboardString(), mouseString() and about libCGAL::QGLViewer.
 
 Rich html-like text can be used (see the QStyleSheet documentation). This method
-is called when the user presses the QGLViewer::HELP key (default is 'H').
+is called when the user presses the CGAL::QGLViewer::HELP key (default is 'H').
 
 You can use helpWidget() to access to the help widget (to add/remove tabs,
 change layout...).
 
 The helpRequired() signal is emitted. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::help() {
+void CGAL::QGLViewer::help() {
   Q_EMIT helpRequired();
 
   bool resize = false;
@@ -2186,11 +2182,10 @@ void QGLViewer::help() {
     case 3:
       text = QString("<center><br><img src=\"mydata://qglviewer-icon.xpm\">") +
              tr("<h1>libQGLViewer</h1>"
-                "<h3>Version %1</h3><br>"
+                "<h3>Forked from version 2.7.0</h3><br>"
                 "A versatile 3D viewer based on OpenGL and Qt<br>"
                 "Copyright 2002-%2 Gilles Debunne<br>"
                 "<code>%3</code>")
-                 .arg(QGLViewerVersionString())
                  .arg("2014")
                  .arg("http://www.libqglviewer.com") +
              QString("</center>");
@@ -2222,18 +2217,18 @@ CGAL_INLINE_FUNCTION
 Viewer::keyPressEvent(QKeyEvent *e)
 {
   // Defines the Alt+R shortcut.
-  if ((e->key() == Qt::Key_R) && (e->modifiers() == Qt::AltModifier))
+  if ((e->key() == ::Qt::Key_R) && (e->modifiers() == ::Qt::AltModifier))
   {
   myResetFunction();
   update(); // Refresh display
   }
   else
-  QGLViewer::keyPressEvent(e);
+  CGAL::QGLViewer::keyPressEvent(e);
 }
 
 // With Qt 2 or 3, you would retrieve modifiers keys using :
-// const Qt::ButtonState modifiers = (Qt::ButtonState)(e->state() &
-Qt::KeyButtonMask); \endcode When you define a new keyboard shortcut, use
+// const ::Qt::ButtonState modifiers = (::Qt::ButtonState)(e->state() &
+::Qt::KeyButtonMask); \endcode When you define a new keyboard shortcut, use
 setKeyDescription() to provide a short description which is displayed in the
 help() window Keyboard tab. See the <a
 href="../examples/keyboardAndMouse.html">keyboardAndMouse</a> example for an
@@ -2242,15 +2237,15 @@ illustration.
 CGAL_INLINE_FUNCTION
 See also QOpenGLWidget::keyReleaseEvent(). */
 CGAL_INLINE_FUNCTION
-void QGLViewer::keyPressEvent(QKeyEvent *e) {
+void CGAL::QGLViewer::keyPressEvent(QKeyEvent *e) {
   if (e->key() == 0) {
     e->ignore();
     return;
   }
 
-  const Qt::Key key = Qt::Key(e->key());
+  const ::Qt::Key key = ::Qt::Key(e->key());
 
-  const Qt::KeyboardModifiers modifiers = e->modifiers();
+  const ::Qt::KeyboardModifiers modifiers = e->modifiers();
 
   QMap<KeyboardAction, unsigned int>::ConstIterator it = keyboardBinding_
                                                              .begin(),
@@ -2262,9 +2257,9 @@ void QGLViewer::keyPressEvent(QKeyEvent *e) {
 
   if (it != end)
     handleKeyboardAction(it.key());
-  else if (pathIndex_.contains(Qt::Key(key))) {
+  else if (pathIndex_.contains(::Qt::Key(key))) {
     // Camera paths
-    unsigned int index = pathIndex_[Qt::Key(key)];
+    unsigned int index = pathIndex_[::Qt::Key(key)];
 
     // not safe, but try to double press on two viewers at the same time !
     static QTime doublePress;
@@ -2324,13 +2319,13 @@ void QGLViewer::keyPressEvent(QKeyEvent *e) {
 }
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::keyReleaseEvent(QKeyEvent *e) {
+void CGAL::QGLViewer::keyReleaseEvent(QKeyEvent *e) {
   if (isValidShortcutKey(e->key()))
-    currentlyPressedKey_ = Qt::Key(0);
+    currentlyPressedKey_ = ::Qt::Key(0);
 }
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::handleKeyboardAction(KeyboardAction id) {
+void CGAL::QGLViewer::handleKeyboardAction(KeyboardAction id) {
   switch (id) {
   case DRAW_AXIS:
     toggleAxisIsDrawn();
@@ -2405,7 +2400,7 @@ void QGLViewer::handleKeyboardAction(KeyboardAction id) {
 If you overload this method, first call the inherited method. Also called when
 the widget is created, before its first display. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::resizeGL(int width, int height) {
+void CGAL::QGLViewer::resizeGL(int width, int height) {
   QOpenGLWidget::resizeGL(width, height);
   glViewport(0, 0, GLint(width), GLint(height));
   camera()->setScreenWidthAndHeight(this->width(), this->height());
@@ -2415,33 +2410,33 @@ void QGLViewer::resizeGL(int width, int height) {
 //              K e y b o a r d   s h o r t c u t s                     //
 //////////////////////////////////////////////////////////////////////////
 
-/*! Defines the shortcut() that triggers a given QGLViewer::KeyboardAction.
+/*! Defines the shortcut() that triggers a given CGAL::QGLViewer::KeyboardAction.
 
 Here are some examples:
 \code
 // Press 'Q' to exit application
-setShortcut(EXIT_VIEWER, Qt::Key_Q);
+setShortcut(EXIT_VIEWER, ::Qt::Key_Q);
 
 // Alt+M toggles camera mode
-setShortcut(CAMERA_MODE, Qt::ALT + Qt::Key_M);
+setShortcut(CAMERA_MODE, ::Qt::ALT + ::Qt::Key_M);
 
 // The DISPLAY_FPS action is disabled
 setShortcut(DISPLAY_FPS, 0);
 \endcode
 
-Only one shortcut can be assigned to a given QGLViewer::KeyboardAction (new
+Only one shortcut can be assigned to a given CGAL::QGLViewer::KeyboardAction (new
 bindings replace previous ones). If several KeyboardAction are binded to the
 same shortcut, only one of them is active. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setShortcut(KeyboardAction action, unsigned int key) {
+void CGAL::QGLViewer::setShortcut(KeyboardAction action, unsigned int key) {
   keyboardBinding_[action] = key;
 }
 
 /*! Returns the keyboard shortcut associated to a given
-QGLViewer::KeyboardAction.
+CGAL::QGLViewer::KeyboardAction.
 
 Result is an \c unsigned \c int defined using Qt enumerated values, as in \c
-Qt::Key_Q or \c Qt::CTRL + Qt::Key_X. Use Qt::MODIFIER_MASK to separate the key
+::Qt::Key_Q or \c ::Qt::CTRL + ::Qt::Key_X. Use ::Qt::MODIFIER_MASK to separate the key
 from the state keys. Returns \c 0 if the KeyboardAction is disabled (not
 binded). Set using setShortcut().
 
@@ -2455,7 +2450,7 @@ See the <a href="../keyboard.html">keyboard page</a> for details and default
 values and the <a href="../examples/keyboardAndMouse.html">keyboardAndMouse</a>
 example for a practical illustration. */
 CGAL_INLINE_FUNCTION
-unsigned int QGLViewer::shortcut(KeyboardAction action) const {
+unsigned int CGAL::QGLViewer::shortcut(KeyboardAction action) const {
   if (keyboardBinding_.contains(action))
     return keyboardBinding_[action];
   else
@@ -2464,14 +2459,14 @@ unsigned int QGLViewer::shortcut(KeyboardAction action) const {
 
 #ifndef DOXYGEN
 CGAL_INLINE_FUNCTION
-void QGLViewer::setKeyboardAccelerator(KeyboardAction action,
+void CGAL::QGLViewer::setKeyboardAccelerator(KeyboardAction action,
                                        unsigned int key) {
   qWarning("setKeyboardAccelerator is deprecated. Use setShortcut instead.");
   setShortcut(action, key);
 }
 
 CGAL_INLINE_FUNCTION
-unsigned int QGLViewer::keyboardAccelerator(KeyboardAction action) const {
+unsigned int CGAL::QGLViewer::keyboardAccelerator(KeyboardAction action) const {
   qWarning("keyboardAccelerator is deprecated. Use shortcut instead.");
   return shortcut(action);
 }
@@ -2496,13 +2491,13 @@ is returned. Returns \c 0 if no key is associated with this index.
 
 See also the <a href="../keyboard.html">keyboard page</a>. */
 CGAL_INLINE_FUNCTION
-Qt::Key QGLViewer::pathKey(unsigned int index) const {
-  for (QMap<Qt::Key, unsigned int>::ConstIterator it = pathIndex_.begin(),
+::Qt::Key CGAL::QGLViewer::pathKey(unsigned int index) const {
+  for (QMap<::Qt::Key, unsigned int>::ConstIterator it = pathIndex_.begin(),
                                                   end = pathIndex_.end();
        it != end; ++it)
     if (it.value() == index)
       return it.key();
-  return Qt::Key(0);
+  return ::Qt::Key(0);
 }
 
 /*! Sets the pathKey() associated with the camera Key Frame path \p index.
@@ -2510,14 +2505,14 @@ Qt::Key QGLViewer::pathKey(unsigned int index) const {
 Several keys can be binded to the same \p index. Use a negated \p key value to
 delete the binding (the \p index value is then ignored): \code
 // Press 'space' to play/pause/add/delete camera path of index 0.
-setPathKey(Qt::Key_Space, 0);
+setPathKey(::Qt::Key_Space, 0);
 
 // Remove this binding
-setPathKey(-Qt::Key_Space);
+setPathKey(-::Qt::Key_Space);
 \endcode */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setPathKey(int key, unsigned int index) {
-  Qt::Key k = Qt::Key(abs(key));
+void CGAL::QGLViewer::setPathKey(int key, unsigned int index) {
+  ::Qt::Key k = ::Qt::Key(abs(key));
   if (key < 0)
     pathIndex_.remove(k);
   else
@@ -2526,97 +2521,97 @@ void QGLViewer::setPathKey(int key, unsigned int index) {
 
 /*! Sets the playPathKeyboardModifiers() value. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setPlayPathKeyboardModifiers(Qt::KeyboardModifiers modifiers) {
+void CGAL::QGLViewer::setPlayPathKeyboardModifiers(::Qt::KeyboardModifiers modifiers) {
   playPathKeyboardModifiers_ = modifiers;
 }
 
 /*! Sets the addKeyFrameKeyboardModifiers() value. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setAddKeyFrameKeyboardModifiers(
-    Qt::KeyboardModifiers modifiers) {
+void CGAL::QGLViewer::setAddKeyFrameKeyboardModifiers(
+    ::Qt::KeyboardModifiers modifiers) {
   addKeyFrameKeyboardModifiers_ = modifiers;
 }
 
 /*! Returns the keyboard modifiers that must be pressed with a pathKey() to add
 the current camera position to a KeyFrame path.
 
-It can be \c Qt::NoModifier, \c Qt::ControlModifier, \c Qt::ShiftModifier, \c
-Qt::AltModifier, \c Qt::MetaModifier or a combination of these (using the
+It can be \c ::Qt::NoModifier, \c ::Qt::ControlModifier, \c ::Qt::ShiftModifier, \c
+::Qt::AltModifier, \c ::Qt::MetaModifier or a combination of these (using the
 bitwise '|' operator).
 
-Default value is Qt::AltModifier. Defined using
+Default value is ::Qt::AltModifier. Defined using
 setAddKeyFrameKeyboardModifiers().
 
 See also playPathKeyboardModifiers(). */
 CGAL_INLINE_FUNCTION
-Qt::KeyboardModifiers QGLViewer::addKeyFrameKeyboardModifiers() const {
+::Qt::KeyboardModifiers CGAL::QGLViewer::addKeyFrameKeyboardModifiers() const {
   return addKeyFrameKeyboardModifiers_;
 }
 
 /*! Returns the keyboard modifiers that must be pressed with a pathKey() to play
 a camera KeyFrame path.
 
-It can be \c Qt::NoModifier, \c Qt::ControlModifier, \c Qt::ShiftModifier, \c
-Qt::AltModifier, \c Qt::MetaModifier or a combination of these (using the
+It can be \c ::Qt::NoModifier, \c ::Qt::ControlModifier, \c ::Qt::ShiftModifier, \c
+::Qt::AltModifier, \c ::Qt::MetaModifier or a combination of these (using the
 bitwise '|' operator).
 
-Default value is Qt::NoModifier. Defined using setPlayPathKeyboardModifiers().
+Default value is ::Qt::NoModifier. Defined using setPlayPathKeyboardModifiers().
 
 See also addKeyFrameKeyboardModifiers(). */
 CGAL_INLINE_FUNCTION
-Qt::KeyboardModifiers QGLViewer::playPathKeyboardModifiers() const {
+::Qt::KeyboardModifiers CGAL::QGLViewer::playPathKeyboardModifiers() const {
   return playPathKeyboardModifiers_;
 }
 
 #ifndef DOXYGEN
 // Deprecated methods
 CGAL_INLINE_FUNCTION
-Qt::KeyboardModifiers QGLViewer::addKeyFrameStateKey() const {
+::Qt::KeyboardModifiers CGAL::QGLViewer::addKeyFrameStateKey() const {
   qWarning("addKeyFrameStateKey has been renamed addKeyFrameKeyboardModifiers");
   return addKeyFrameKeyboardModifiers();
 }
 
 CGAL_INLINE_FUNCTION
-Qt::KeyboardModifiers QGLViewer::playPathStateKey() const {
+::Qt::KeyboardModifiers CGAL::QGLViewer::playPathStateKey() const {
   qWarning("playPathStateKey has been renamed playPathKeyboardModifiers");
   return playPathKeyboardModifiers();
 }
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::setAddKeyFrameStateKey(unsigned int buttonState) {
+void CGAL::QGLViewer::setAddKeyFrameStateKey(unsigned int buttonState) {
   qWarning("setAddKeyFrameStateKey has been renamed "
            "setAddKeyFrameKeyboardModifiers");
   setAddKeyFrameKeyboardModifiers(keyboardModifiersFromState(buttonState));
 }
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::setPlayPathStateKey(unsigned int buttonState) {
+void CGAL::QGLViewer::setPlayPathStateKey(unsigned int buttonState) {
   qWarning("setPlayPathStateKey has been renamed setPlayPathKeyboardModifiers");
   setPlayPathKeyboardModifiers(keyboardModifiersFromState(buttonState));
 }
 
 CGAL_INLINE_FUNCTION
-Qt::Key QGLViewer::keyFrameKey(unsigned int index) const {
+::Qt::Key CGAL::QGLViewer::keyFrameKey(unsigned int index) const {
   qWarning("keyFrameKey has been renamed pathKey.");
   return pathKey(index);
 }
 
 CGAL_INLINE_FUNCTION
-Qt::KeyboardModifiers QGLViewer::playKeyFramePathStateKey() const {
+::Qt::KeyboardModifiers CGAL::QGLViewer::playKeyFramePathStateKey() const {
   qWarning(
       "playKeyFramePathStateKey has been renamed playPathKeyboardModifiers.");
   return playPathKeyboardModifiers();
 }
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::setKeyFrameKey(unsigned int index, int key) {
+void CGAL::QGLViewer::setKeyFrameKey(unsigned int index, int key) {
   qWarning("setKeyFrameKey is deprecated, use setPathKey instead, with swapped "
            "parameters.");
   setPathKey(key, index);
 }
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::setPlayKeyFramePathStateKey(unsigned int buttonState) {
+void CGAL::QGLViewer::setPlayKeyFramePathStateKey(unsigned int buttonState) {
   qWarning("setPlayKeyFramePathStateKey has been renamed "
            "setPlayPathKeyboardModifiers.");
   setPlayPathKeyboardModifiers(keyboardModifiersFromState(buttonState));
@@ -2631,8 +2626,8 @@ void QGLViewer::setPlayKeyFramePathStateKey(unsigned int buttonState) {
 
 Associates keyboard modifiers to MouseHandler \p handler.
 
-The \p modifiers parameter is \c Qt::AltModifier, \c Qt::ShiftModifier, \c
-Qt::ControlModifier, \c Qt::MetaModifier or a combination of these using the '|'
+The \p modifiers parameter is \c ::Qt::AltModifier, \c ::Qt::ShiftModifier, \c
+::Qt::ControlModifier, \c ::Qt::MetaModifier or a combination of these using the '|'
 bitwise operator.
 
 \e All the \p handler's associated bindings will then need the specified \p
@@ -2640,8 +2635,8 @@ modifiers key(s) to be activated.
 
 With this code,
 \code
-setHandlerKeyboardModifiers(QGLViewer::CAMERA, Qt::AltModifier);
-setHandlerKeyboardModifiers(QGLViewer::FRAME, Qt::NoModifier);
+setHandlerKeyboardModifiers(CGAL::QGLViewer::CAMERA, ::Qt::AltModifier);
+setHandlerKeyboardModifiers(CGAL::QGLViewer::FRAME, ::Qt::NoModifier);
 \endcode
 you will have to press the \c Alt key while pressing mouse buttons in order to
 move the camera(), while no key will be needed to move the manipulatedFrame().
@@ -2651,25 +2646,25 @@ has its keyboard modifier replaced by \p modifiers. If \p handler had some
 actions binded to different modifiers, these settings will be lost. You should
 hence consider using setMouseBinding() for finer tuning.
 
-The default binding associates \c Qt::ControlModifier to all the
-QGLViewer::FRAME actions and \c Qt::NoModifier to all QGLViewer::CAMERA actions.
+The default binding associates \c ::Qt::ControlModifier to all the
+CGAL::QGLViewer::FRAME actions and \c ::Qt::NoModifier to all CGAL::QGLViewer::CAMERA actions.
 See <a href="../mouse.html">mouse page</a> for details.
 
 \attention This method calls setMouseBinding(), which ensures that only one
 action is binded to a given modifiers. If you want to \e swap the
-QGLViewer::CAMERA and QGLViewer::FRAME keyboard modifiers, you have to use a
+CGAL::QGLViewer::CAMERA and CGAL::QGLViewer::FRAME keyboard modifiers, you have to use a
 temporary dummy modifier (as if you were swapping two variables) or else the
 first call will overwrite the previous settings: \code
 // Associate FRAME with Alt (temporary value)
-setHandlerKeyboardModifiers(QGLViewer::FRAME, Qt::AltModifier);
+setHandlerKeyboardModifiers(CGAL::QGLViewer::FRAME, ::Qt::AltModifier);
 // Control is associated with CAMERA
-setHandlerKeyboardModifiers(QGLViewer::CAMERA, Qt::ControlModifier);
+setHandlerKeyboardModifiers(CGAL::QGLViewer::CAMERA, ::Qt::ControlModifier);
 // And finally, FRAME can be associated with NoModifier
-setHandlerKeyboardModifiers(QGLViewer::FRAME, Qt::NoModifier);
+setHandlerKeyboardModifiers(CGAL::QGLViewer::FRAME, ::Qt::NoModifier);
 \endcode */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setHandlerKeyboardModifiers(MouseHandler handler,
-                                            Qt::KeyboardModifiers modifiers) {
+void CGAL::QGLViewer::setHandlerKeyboardModifiers(MouseHandler handler,
+                                            ::Qt::KeyboardModifiers modifiers) {
   qWarning("setHandlerKeyboardModifiers is deprecated, call setMouseBinding() "
            "instead");
 
@@ -2725,14 +2720,14 @@ void QGLViewer::setHandlerKeyboardModifiers(MouseHandler handler,
 }
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::setHandlerStateKey(MouseHandler handler,
+void CGAL::QGLViewer::setHandlerStateKey(MouseHandler handler,
                                    unsigned int buttonState) {
   qWarning("setHandlerStateKey has been renamed setHandlerKeyboardModifiers");
   setHandlerKeyboardModifiers(handler, keyboardModifiersFromState(buttonState));
 }
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::setMouseStateKey(MouseHandler handler,
+void CGAL::QGLViewer::setMouseStateKey(MouseHandler handler,
                                  unsigned int buttonState) {
   qWarning("setMouseStateKey has been renamed setHandlerKeyboardModifiers.");
   setHandlerKeyboardModifiers(handler, keyboardModifiersFromState(buttonState));
@@ -2740,11 +2735,11 @@ void QGLViewer::setMouseStateKey(MouseHandler handler,
 
 /*! This method is deprecated since version 2.5.0
 
- Use setMouseBinding(Qt::KeyboardModifiers, Qt::MouseButtons, MouseHandler,
+ Use setMouseBinding(::Qt::KeyboardModifiers, ::Qt::MouseButtons, MouseHandler,
  MouseAction, bool) instead.
 */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setMouseBinding(unsigned int state, MouseHandler handler,
+void CGAL::QGLViewer::setMouseBinding(unsigned int state, MouseHandler handler,
                                 MouseAction action, bool withConstraint) {
   qWarning("setMouseBinding(int state, MouseHandler...) is deprecated. Use the "
            "modifier/button equivalent");
@@ -2755,41 +2750,41 @@ void QGLViewer::setMouseBinding(unsigned int state, MouseHandler handler,
 
 /*! Defines a MouseAction binding.
 
-  Same as calling setMouseBinding(Qt::Key, Qt::KeyboardModifiers,
-  Qt::MouseButton, MouseHandler, MouseAction, bool), with a key value of
-  Qt::Key(0) (i.e. no regular extra key needs to be pressed to perform this
+  Same as calling setMouseBinding(::Qt::Key, ::Qt::KeyboardModifiers,
+  ::Qt::MouseButton, MouseHandler, MouseAction, bool), with a key value of
+  ::Qt::Key(0) (i.e. no regular extra key needs to be pressed to perform this
   action). */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setMouseBinding(Qt::KeyboardModifiers modifiers,
-                                Qt::MouseButton button, MouseHandler handler,
+void CGAL::QGLViewer::setMouseBinding(::Qt::KeyboardModifiers modifiers,
+                                ::Qt::MouseButton button, MouseHandler handler,
                                 MouseAction action, bool withConstraint) {
-  setMouseBinding(Qt::Key(0), modifiers, button, handler, action,
+  setMouseBinding(::Qt::Key(0), modifiers, button, handler, action,
                   withConstraint);
 }
 
 /*! Associates a MouseAction to any mouse \p button, while keyboard \p modifiers
 and \p key are pressed. The receiver of the mouse events is a MouseHandler
-(QGLViewer::CAMERA or QGLViewer::FRAME).
+(CGAL::QGLViewer::CAMERA or CGAL::QGLViewer::FRAME).
 
 The parameters should read: when the mouse \p button is pressed, while the
 keyboard \p modifiers and \p key are down, activate \p action on \p handler. Use
-Qt::NoModifier to indicate that no modifier key is needed, and a \p key value of
+::Qt::NoModifier to indicate that no modifier key is needed, and a \p key value of
 0 if no regular key has to be pressed (or simply use
-setMouseBinding(Qt::KeyboardModifiers, Qt::MouseButton, MouseHandler,
+setMouseBinding(::Qt::KeyboardModifiers, ::Qt::MouseButton, MouseHandler,
 MouseAction, bool)).
 
 Use the '|' operator to combine modifiers:
 \code
 // The R key combined with the Left mouse button rotates the camera in the
-screen plane. setMouseBinding(Qt::Key_R, Qt::NoModifier, Qt::LeftButton, CAMERA,
+screen plane. setMouseBinding(::Qt::Key_R, ::Qt::NoModifier, ::Qt::LeftButton, CAMERA,
 SCREEN_ROTATE);
 
 // Alt + Shift and Left button rotates the manipulatedFrame().
-setMouseBinding(Qt::AltModifier | Qt::ShiftModifier, Qt::LeftButton, FRAME,
+setMouseBinding(::Qt::AltModifier | ::Qt::ShiftModifier, ::Qt::LeftButton, FRAME,
 ROTATE); \endcode
 
 If \p withConstraint is \c true (default), the possible
-qglviewer::Frame::constraint() of the associated Frame will be enforced during
+CGAL::qglviewer::Frame::constraint() of the associated Frame will be enforced during
 motion.
 
 The list of all possible MouseAction, some binding examples and default bindings
@@ -2804,11 +2799,11 @@ overwritten (call mouseAction() before to check).
 
 To remove a specific mouse binding, use \p NO_MOUSE_ACTION as the \p action.
 
-See also setMouseBinding(Qt::KeyboardModifiers, Qt::MouseButtons, ClickAction,
+See also setMouseBinding(::Qt::KeyboardModifiers, ::Qt::MouseButtons, ClickAction,
 bool, int), setWheelBinding() and clearMouseBindings(). */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setMouseBinding(Qt::Key key, Qt::KeyboardModifiers modifiers,
-                                Qt::MouseButton button, MouseHandler handler,
+void CGAL::QGLViewer::setMouseBinding(::Qt::Key key, ::Qt::KeyboardModifiers modifiers,
+                                ::Qt::MouseButton button, MouseHandler handler,
                                 MouseAction action, bool withConstraint) {
   if ((handler == FRAME) &&
       ((action == MOVE_FORWARD) || (action == MOVE_BACKWARD) ||
@@ -2819,7 +2814,7 @@ void QGLViewer::setMouseBinding(Qt::Key key, Qt::KeyboardModifiers modifiers,
     return;
   }
 
-  if (button == Qt::NoButton) {
+  if (button == ::Qt::NoButton) {
     qWarning("No mouse button specified in setMouseBinding");
     return;
   }
@@ -2835,20 +2830,20 @@ void QGLViewer::setMouseBinding(Qt::Key key, Qt::KeyboardModifiers modifiers,
   else
     mouseBinding_.insert(mbp, map);
 
-  ClickBindingPrivate cbp(modifiers, button, false, Qt::NoButton, key);
+  ClickBindingPrivate cbp(modifiers, button, false, ::Qt::NoButton, key);
   clickBinding_.remove(cbp);
 }
 
 #ifndef DOXYGEN
 /*! This method is deprecated since version 2.5.0
 
- Use setMouseBinding(Qt::KeyboardModifiers, Qt::MouseButtons, MouseHandler,
+ Use setMouseBinding(::Qt::KeyboardModifiers, ::Qt::MouseButtons, MouseHandler,
  MouseAction, bool) instead.
 */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setMouseBinding(unsigned int state, ClickAction action,
+void CGAL::QGLViewer::setMouseBinding(unsigned int state, ClickAction action,
                                 bool doubleClick,
-                                Qt::MouseButtons buttonsBefore) {
+                                ::Qt::MouseButtons buttonsBefore) {
   qWarning("setMouseBinding(int state, ClickAction...) is deprecated. Use the "
            "modifier/button equivalent");
   setMouseBinding(keyboardModifiersFromState(state),
@@ -2859,16 +2854,16 @@ void QGLViewer::setMouseBinding(unsigned int state, ClickAction action,
 
 /*! Defines a ClickAction binding.
 
- Same as calling setMouseBinding(Qt::Key, Qt::KeyboardModifiers,
- Qt::MouseButton, ClickAction, bool, Qt::MouseButtons), with a key value of
- Qt::Key(0) (i.e. no regular key needs to be pressed to activate this action).
+ Same as calling setMouseBinding(::Qt::Key, ::Qt::KeyboardModifiers,
+ ::Qt::MouseButton, ClickAction, bool, ::Qt::MouseButtons), with a key value of
+ ::Qt::Key(0) (i.e. no regular key needs to be pressed to activate this action).
  */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setMouseBinding(Qt::KeyboardModifiers modifiers,
-                                Qt::MouseButton button, ClickAction action,
+void CGAL::QGLViewer::setMouseBinding(::Qt::KeyboardModifiers modifiers,
+                                ::Qt::MouseButton button, ClickAction action,
                                 bool doubleClick,
-                                Qt::MouseButtons buttonsBefore) {
-  setMouseBinding(Qt::Key(0), modifiers, button, action, doubleClick,
+                                ::Qt::MouseButtons buttonsBefore) {
+  setMouseBinding(::Qt::Key(0), modifiers, button, action, doubleClick,
                   buttonsBefore);
 }
 
@@ -2877,10 +2872,10 @@ combination.
 
 The parameters should read: when \p button is pressed, while the \p modifiers
 and \p key keys are down, and possibly as a \p doubleClick, then perform \p
-action. Use Qt::NoModifier to indicate that no modifier key is needed, and a \p
+action. Use ::Qt::NoModifier to indicate that no modifier key is needed, and a \p
 key value of 0 if no regular key has to be pressed (or simply use
-setMouseBinding(Qt::KeyboardModifiers, Qt::MouseButton, ClickAction, bool,
-Qt::MouseButtons)).
+setMouseBinding(::Qt::KeyboardModifiers, ::Qt::MouseButton, ClickAction, bool,
+::Qt::MouseButtons)).
 
 If \p buttonsBefore is specified (valid only when \p doubleClick is \c true),
 then this (or these) other mouse button(s) has (have) to be pressed \e before
@@ -2893,23 +2888,23 @@ setMouseBinding() documentation.
 See the <a href="../examples/keyboardAndMouse.html">keyboardAndMouse example</a>
 for an illustration.
 
-The binding is ignored if Qt::NoButton is specified as \p buttons.
+The binding is ignored if ::Qt::NoButton is specified as \p buttons.
 
-See also setMouseBinding(Qt::KeyboardModifiers, Qt::MouseButtons, MouseHandler,
+See also setMouseBinding(::Qt::KeyboardModifiers, ::Qt::MouseButtons, MouseHandler,
 MouseAction, bool), setWheelBinding() and clearMouseBindings().
 */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setMouseBinding(Qt::Key key, Qt::KeyboardModifiers modifiers,
-                                Qt::MouseButton button, ClickAction action,
+void CGAL::QGLViewer::setMouseBinding(::Qt::Key key, ::Qt::KeyboardModifiers modifiers,
+                                ::Qt::MouseButton button, ClickAction action,
                                 bool doubleClick,
-                                Qt::MouseButtons buttonsBefore) {
-  if ((buttonsBefore != Qt::NoButton) && !doubleClick) {
+                                ::Qt::MouseButtons buttonsBefore) {
+  if ((buttonsBefore != ::Qt::NoButton) && !doubleClick) {
     qWarning("Buttons before is only meaningful when doubleClick is true in "
              "setMouseBinding().");
     return;
   }
 
-  if (button == Qt::NoButton) {
+  if (button == ::Qt::NoButton) {
     qWarning("No mouse button specified in setMouseBinding");
     return;
   }
@@ -2922,7 +2917,7 @@ void QGLViewer::setMouseBinding(Qt::Key key, Qt::KeyboardModifiers modifiers,
   else
     clickBinding_.insert(cbp, action);
 
-  if ((!doubleClick) && (buttonsBefore == Qt::NoButton)) {
+  if ((!doubleClick) && (buttonsBefore == ::Qt::NoButton)) {
     MouseBindingPrivate mbp(modifiers, button, key);
     mouseBinding_.remove(mbp);
   }
@@ -2930,30 +2925,30 @@ void QGLViewer::setMouseBinding(Qt::Key key, Qt::KeyboardModifiers modifiers,
 
 /*! Defines a mouse wheel binding.
 
- Same as calling setWheelBinding(Qt::Key, Qt::KeyboardModifiers, MouseHandler,
- MouseAction, bool), with a key value of Qt::Key(0) (i.e. no regular key needs
+ Same as calling setWheelBinding(::Qt::Key, ::Qt::KeyboardModifiers, MouseHandler,
+ MouseAction, bool), with a key value of ::Qt::Key(0) (i.e. no regular key needs
  to be pressed to activate this action). */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setWheelBinding(Qt::KeyboardModifiers modifiers,
+void CGAL::QGLViewer::setWheelBinding(::Qt::KeyboardModifiers modifiers,
                                 MouseHandler handler, MouseAction action,
                                 bool withConstraint) {
-  setWheelBinding(Qt::Key(0), modifiers, handler, action, withConstraint);
+  setWheelBinding(::Qt::Key(0), modifiers, handler, action, withConstraint);
 }
 
 /*! Associates a MouseAction and a MouseHandler to a mouse wheel event.
 
 This method is very similar to setMouseBinding(), but specific to the wheel.
 
-In the current implementation only QGLViewer::ZOOM can be associated with
-QGLViewer::FRAME, while QGLViewer::CAMERA can receive QGLViewer::ZOOM and
-QGLViewer::MOVE_FORWARD.
+In the current implementation only CGAL::QGLViewer::ZOOM can be associated with
+CGAL::QGLViewer::FRAME, while CGAL::QGLViewer::CAMERA can receive CGAL::QGLViewer::ZOOM and
+CGAL::QGLViewer::MOVE_FORWARD.
 
-The difference between QGLViewer::ZOOM and QGLViewer::MOVE_FORWARD is that
-QGLViewer::ZOOM speed depends on the distance to the object, while
-QGLViewer::MOVE_FORWARD moves at a constant speed defined by
-qglviewer::Camera::flySpeed(). */
+The difference between CGAL::QGLViewer::ZOOM and CGAL::QGLViewer::MOVE_FORWARD is that
+CGAL::QGLViewer::ZOOM speed depends on the distance to the object, while
+CGAL::QGLViewer::MOVE_FORWARD moves at a constant speed defined by
+CGAL::qglviewer::Camera::flySpeed(). */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setWheelBinding(Qt::Key key, Qt::KeyboardModifiers modifiers,
+void CGAL::QGLViewer::setWheelBinding(::Qt::Key key, ::Qt::KeyboardModifiers modifiers,
                                 MouseHandler handler, MouseAction action,
                                 bool withConstraint) {
   //#CONNECTION# ManipulatedFrame::wheelEvent and
@@ -2989,7 +2984,7 @@ After this call, you will have to use setMouseBinding() and setWheelBinding() to
 restore the mouse bindings you are interested in.
 */
 CGAL_INLINE_FUNCTION
-void QGLViewer::clearMouseBindings() {
+void CGAL::QGLViewer::clearMouseBindings() {
   mouseBinding_.clear();
   clickBinding_.clear();
   wheelBinding_.clear();
@@ -3001,42 +2996,42 @@ After this call, you will have to use setShortcut() to define your own keyboard
 shortcuts.
 */
 CGAL_INLINE_FUNCTION
-void QGLViewer::clearShortcuts() {
+void CGAL::QGLViewer::clearShortcuts() {
   keyboardBinding_.clear();
   pathIndex_.clear();
 }
 
 /*! This method is deprecated since version 2.5.0
 
- Use mouseAction(Qt::Key, Qt::KeyboardModifiers, Qt::MouseButtons) instead.
+ Use mouseAction(::Qt::Key, ::Qt::KeyboardModifiers, ::Qt::MouseButtons) instead.
 */
 CGAL_INLINE_FUNCTION
-MouseAction QGLViewer::mouseAction(unsigned int state) const {
+MouseAction CGAL::QGLViewer::mouseAction(unsigned int state) const {
   qWarning("mouseAction(int state,...) is deprecated. Use the modifier/button "
            "equivalent");
-  return mouseAction(Qt::Key(0), keyboardModifiersFromState(state),
+  return mouseAction(::Qt::Key(0), keyboardModifiersFromState(state),
                      mouseButtonFromState(state));
 }
 
 /*! Returns the MouseAction the will be triggered when the mouse \p button is
 pressed, while the keyboard \p modifiers and \p key are pressed.
 
-Returns QGLViewer::NO_MOUSE_ACTION if no action is associated with this
+Returns CGAL::QGLViewer::NO_MOUSE_ACTION if no action is associated with this
 combination. Use 0 for \p key to indicate that no regular key needs to be
 pressed.
 
 For instance, to know which motion corresponds to Alt+LeftButton, do:
 \code
-MouseAction ma = mouseAction(0, Qt::AltModifier, Qt::LeftButton);
-if (ma != QGLViewer::NO_MOUSE_ACTION) ...
+MouseAction ma = mouseAction(0, ::Qt::AltModifier, ::Qt::LeftButton);
+if (ma != CGAL::QGLViewer::NO_MOUSE_ACTION) ...
 \endcode
 
-Use mouseHandler() to know which object (QGLViewer::CAMERA or QGLViewer::FRAME)
+Use mouseHandler() to know which object (CGAL::QGLViewer::CAMERA or CGAL::QGLViewer::FRAME)
 will execute this action. */
 CGAL_INLINE_FUNCTION
-MouseAction QGLViewer::mouseAction(Qt::Key key,
-                                              Qt::KeyboardModifiers modifiers,
-                                              Qt::MouseButton button) const {
+MouseAction CGAL::QGLViewer::mouseAction(::Qt::Key key,
+                                              ::Qt::KeyboardModifiers modifiers,
+                                              ::Qt::MouseButton button) const {
   MouseBindingPrivate mbp(modifiers, button, key);
   if (mouseBinding_.contains(mbp))
     return mouseBinding_[mbp].action;
@@ -3046,13 +3041,13 @@ MouseAction QGLViewer::mouseAction(Qt::Key key,
 
 /*! This method is deprecated since version 2.5.0
 
- Use mouseHanler(Qt::Key, Qt::KeyboardModifiers, Qt::MouseButtons) instead.
+ Use mouseHanler(::Qt::Key, ::Qt::KeyboardModifiers, ::Qt::MouseButtons) instead.
 */
 CGAL_INLINE_FUNCTION
-int QGLViewer::mouseHandler(unsigned int state) const {
+int CGAL::QGLViewer::mouseHandler(unsigned int state) const {
   qWarning("mouseHandler(int state,...) is deprecated. Use the modifier/button "
            "equivalent");
-  return mouseHandler(Qt::Key(0), keyboardModifiersFromState(state),
+  return mouseHandler(::Qt::Key(0), keyboardModifiersFromState(state),
                       mouseButtonFromState(state));
 }
 
@@ -3060,19 +3055,19 @@ int QGLViewer::mouseHandler(unsigned int state) const {
 pressed, while the \p modifiers and \p key are pressed.
 
 If no action is associated with this combination, returns \c -1. Use 0 for \p
-key and Qt::NoModifier for \p modifiers to represent the lack of a key press.
+key and ::Qt::NoModifier for \p modifiers to represent the lack of a key press.
 
 For instance, to know which handler receives the Alt+LeftButton, do:
 \code
-int mh = mouseHandler(0, Qt::AltModifier, Qt::LeftButton);
-if (mh == QGLViewer::CAMERA) ...
+int mh = mouseHandler(0, ::Qt::AltModifier, ::Qt::LeftButton);
+if (mh == CGAL::QGLViewer::CAMERA) ...
 \endcode
 
 Use mouseAction() to know which action (see the MouseAction enum) will be
 performed on this handler. */
 CGAL_INLINE_FUNCTION
-int QGLViewer::mouseHandler(Qt::Key key, Qt::KeyboardModifiers modifiers,
-                            Qt::MouseButton button) const {
+int CGAL::QGLViewer::mouseHandler(::Qt::Key key, ::Qt::KeyboardModifiers modifiers,
+                            ::Qt::MouseButton button) const {
   MouseBindingPrivate mbp(modifiers, button, key);
   if (mouseBinding_.contains(mbp))
     return mouseBinding_[mbp].handler;
@@ -3086,7 +3081,7 @@ int QGLViewer::mouseHandler(Qt::Key key, Qt::KeyboardModifiers modifiers,
  Use mouseButtons() and keyboardModifiers() instead.
 */
 CGAL_INLINE_FUNCTION
-int QGLViewer::mouseButtonState(MouseHandler handler, MouseAction action,
+int CGAL::QGLViewer::mouseButtonState(MouseHandler handler, MouseAction action,
                                 bool withConstraint) const {
   qWarning("mouseButtonState() is deprecated. Use mouseButtons() and "
            "keyboardModifiers() instead");
@@ -3098,7 +3093,7 @@ int QGLViewer::mouseButtonState(MouseHandler handler, MouseAction action,
         (it.value().withConstraint == withConstraint))
       return (int)it.key().modifiers | (int)it.key().button;
 
-  return Qt::NoButton;
+  return ::Qt::NoButton;
 }
 #endif
 
@@ -3113,9 +3108,9 @@ them is returned.
 See also setMouseBinding(), getClickActionBinding() and getMouseActionBinding().
 */
 CGAL_INLINE_FUNCTION
-void QGLViewer::getWheelActionBinding(MouseHandler handler, MouseAction action,
-                                      bool withConstraint, Qt::Key &key,
-                                      Qt::KeyboardModifiers &modifiers) const {
+void CGAL::QGLViewer::getWheelActionBinding(MouseHandler handler, MouseAction action,
+                                      bool withConstraint, ::Qt::Key &key,
+                                      ::Qt::KeyboardModifiers &modifiers) const {
   for (QMap<WheelBindingPrivate, MouseActionPrivate>::ConstIterator
            it = wheelBinding_.begin(),
            end = wheelBinding_.end();
@@ -3127,8 +3122,8 @@ void QGLViewer::getWheelActionBinding(MouseHandler handler, MouseAction action,
       return;
     }
 
-  key = Qt::Key(-1);
-  modifiers = Qt::NoModifier;
+  key = ::Qt::Key(-1);
+  modifiers = ::Qt::NoModifier;
 }
 
 /*! Returns the mouse and keyboard state that triggers \p action on \p handler
@@ -3136,16 +3131,16 @@ void QGLViewer::getWheelActionBinding(MouseHandler handler, MouseAction action,
 
 If such a binding exists, results are stored in the \p key, \p modifiers and \p
 button parameters. If the MouseAction \p action is not bound, \p button is set
-to \c Qt::NoButton. If several mouse and keyboard states trigger the
+to \c ::Qt::NoButton. If several mouse and keyboard states trigger the
 MouseAction, one of them is returned.
 
 See also setMouseBinding(), getClickActionBinding() and getWheelActionBinding().
 */
 CGAL_INLINE_FUNCTION
-void QGLViewer::getMouseActionBinding(MouseHandler handler, MouseAction action,
-                                      bool withConstraint, Qt::Key &key,
-                                      Qt::KeyboardModifiers &modifiers,
-                                      Qt::MouseButton &button) const {
+void CGAL::QGLViewer::getMouseActionBinding(MouseHandler handler, MouseAction action,
+                                      bool withConstraint, ::Qt::Key &key,
+                                      ::Qt::KeyboardModifiers &modifiers,
+                                      ::Qt::MouseButton &button) const {
   for (QMap<MouseBindingPrivate, MouseActionPrivate>::ConstIterator
            it = mouseBinding_.begin(),
            end = mouseBinding_.end();
@@ -3159,9 +3154,9 @@ void QGLViewer::getMouseActionBinding(MouseHandler handler, MouseAction action,
     }
   }
 
-  key = Qt::Key(0);
-  modifiers = Qt::NoModifier;
-  button = Qt::NoButton;
+  key = ::Qt::Key(0);
+  modifiers = ::Qt::NoModifier;
+  button = ::Qt::NoButton;
 }
 
 /*! Returns the MouseAction (if any) that is performed when using the wheel,
@@ -3174,7 +3169,7 @@ Same as mouseAction(), but for the wheel action. See also wheelHandler().
 */
 MouseAction
 CGAL_INLINE_FUNCTION
-QGLViewer::wheelAction(Qt::Key key, Qt::KeyboardModifiers modifiers) const {
+CGAL::QGLViewer::wheelAction(::Qt::Key key, ::Qt::KeyboardModifiers modifiers) const {
   WheelBindingPrivate wbp(modifiers, key);
   if (wheelBinding_.contains(wbp))
     return wheelBinding_[wbp].action;
@@ -3189,8 +3184,8 @@ QGLViewer::wheelAction(Qt::Key key, Qt::KeyboardModifiers modifiers) const {
   also wheelAction().
 */
 CGAL_INLINE_FUNCTION
-int QGLViewer::wheelHandler(Qt::Key key,
-                            Qt::KeyboardModifiers modifiers) const {
+int CGAL::QGLViewer::wheelHandler(::Qt::Key key,
+                            ::Qt::KeyboardModifiers modifiers) const {
   WheelBindingPrivate wbp(modifiers, key);
   if (wheelBinding_.contains(wbp))
     return wheelBinding_[wbp].handler;
@@ -3203,10 +3198,10 @@ int QGLViewer::wheelHandler(Qt::Key key,
 Returns NO_CLICK_ACTION if no click action is associated with this keyboard and
 mouse buttons combination. */
 CGAL_INLINE_FUNCTION
-qglviewer::ClickAction
-QGLViewer::clickAction(Qt::Key key, Qt::KeyboardModifiers modifiers,
-                       Qt::MouseButton button, bool doubleClick,
-                       Qt::MouseButtons buttonsBefore) const {
+CGAL::qglviewer::ClickAction
+CGAL::QGLViewer::clickAction(::Qt::Key key, ::Qt::KeyboardModifiers modifiers,
+                       ::Qt::MouseButton button, bool doubleClick,
+                       ::Qt::MouseButtons buttonsBefore) const {
   ClickBindingPrivate cbp(modifiers, button, doubleClick, buttonsBefore, key);
   if (clickBinding_.contains(cbp))
     return clickBinding_[cbp];
@@ -3217,30 +3212,30 @@ QGLViewer::clickAction(Qt::Key key, Qt::KeyboardModifiers modifiers,
 #ifndef DOXYGEN
 /*! This method is deprecated since version 2.5.0
 
-  Use wheelAction(Qt::Key key, Qt::KeyboardModifiers modifiers) instead. */
+  Use wheelAction(::Qt::Key key, ::Qt::KeyboardModifiers modifiers) instead. */
 MouseAction
 CGAL_INLINE_FUNCTION
-QGLViewer::wheelAction(Qt::KeyboardModifiers modifiers) const {
+CGAL::QGLViewer::wheelAction(::Qt::KeyboardModifiers modifiers) const {
   qWarning("wheelAction() is deprecated. Use the new wheelAction() method with "
            "a key parameter instead");
-  return wheelAction(Qt::Key(0), modifiers);
+  return wheelAction(::Qt::Key(0), modifiers);
 }
 
 /*! This method is deprecated since version 2.5.0
 
-  Use wheelHandler(Qt::Key key, Qt::KeyboardModifiers modifiers) instead. */
+  Use wheelHandler(::Qt::Key key, ::Qt::KeyboardModifiers modifiers) instead. */
 CGAL_INLINE_FUNCTION
-int QGLViewer::wheelHandler(Qt::KeyboardModifiers modifiers) const {
+int CGAL::QGLViewer::wheelHandler(::Qt::KeyboardModifiers modifiers) const {
   qWarning("wheelHandler() is deprecated. Use the new wheelHandler() method "
            "with a key parameter instead");
-  return wheelHandler(Qt::Key(0), modifiers);
+  return wheelHandler(::Qt::Key(0), modifiers);
 }
 
 /*! This method is deprecated since version 2.5.0
 
   Use wheelAction() and wheelHandler() instead. */
 CGAL_INLINE_FUNCTION
-unsigned int QGLViewer::wheelButtonState(MouseHandler handler,
+unsigned int CGAL::QGLViewer::wheelButtonState(MouseHandler handler,
                                          MouseAction action,
                                          bool withConstraint) const {
   qWarning("wheelButtonState() is deprecated. Use the wheelAction() and "
@@ -3258,33 +3253,33 @@ unsigned int QGLViewer::wheelButtonState(MouseHandler handler,
 
 /*! This method is deprecated since version 2.5.0
 
- Use clickAction(Qt::KeyboardModifiers, Qt::MouseButtons, bool,
- Qt::MouseButtons) instead.
+ Use clickAction(::Qt::KeyboardModifiers, ::Qt::MouseButtons, bool,
+ ::Qt::MouseButtons) instead.
 */
-qglviewer::ClickAction
+CGAL::qglviewer::ClickAction
 CGAL_INLINE_FUNCTION
-QGLViewer::clickAction(unsigned int state, bool doubleClick,
-                       Qt::MouseButtons buttonsBefore) const {
+CGAL::QGLViewer::clickAction(unsigned int state, bool doubleClick,
+                       ::Qt::MouseButtons buttonsBefore) const {
   qWarning("clickAction(int state,...) is deprecated. Use the modifier/button "
            "equivalent");
-  return clickAction(Qt::Key(0), keyboardModifiersFromState(state),
+  return clickAction(::Qt::Key(0), keyboardModifiersFromState(state),
                      mouseButtonFromState(state), doubleClick, buttonsBefore);
 }
 
 /*! This method is deprecated since version 2.5.0
 
- Use getClickActionState(ClickAction, Qt::Key, Qt::KeyboardModifiers,
- Qt::MouseButton, bool, Qt::MouseButtons) instead.
+ Use getClickActionState(ClickAction, ::Qt::Key, ::Qt::KeyboardModifiers,
+ ::Qt::MouseButton, bool, ::Qt::MouseButtons) instead.
 */
 CGAL_INLINE_FUNCTION
-void QGLViewer::getClickButtonState(ClickAction action, unsigned int &state,
+void CGAL::QGLViewer::getClickButtonState(ClickAction action, unsigned int &state,
                                     bool &doubleClick,
-                                    Qt::MouseButtons &buttonsBefore) const {
+                                    ::Qt::MouseButtons &buttonsBefore) const {
   qWarning("getClickButtonState(int state,...) is deprecated. Use the "
            "modifier/button equivalent");
-  Qt::KeyboardModifiers modifiers;
-  Qt::MouseButton button;
-  Qt::Key key;
+  ::Qt::KeyboardModifiers modifiers;
+  ::Qt::MouseButton button;
+  ::Qt::Key key;
   getClickActionBinding(action, key, modifiers, button, doubleClick,
                         buttonsBefore);
   state = (unsigned int)modifiers | (unsigned int)button | (unsigned int)key;
@@ -3295,17 +3290,17 @@ void QGLViewer::getClickButtonState(ClickAction action, unsigned int &state,
 
 If such a binding exists, results are stored in the \p key, \p modifiers, \p
 button, \p doubleClick and \p buttonsBefore parameters. If the ClickAction \p
-action is not bound, \p button is set to \c Qt::NoButton. If several mouse
+action is not bound, \p button is set to \c ::Qt::NoButton. If several mouse
 buttons trigger in the ClickAction, one of them is returned.
 
 See also setMouseBinding(), getMouseActionBinding() and getWheelActionBinding().
 */
 CGAL_INLINE_FUNCTION
-void QGLViewer::getClickActionBinding(ClickAction action, Qt::Key &key,
-                                      Qt::KeyboardModifiers &modifiers,
-                                      Qt::MouseButton &button,
+void CGAL::QGLViewer::getClickActionBinding(ClickAction action, ::Qt::Key &key,
+                                      ::Qt::KeyboardModifiers &modifiers,
+                                      ::Qt::MouseButton &button,
                                       bool &doubleClick,
-                                      Qt::MouseButtons &buttonsBefore) const {
+                                      ::Qt::MouseButtons &buttonsBefore) const {
   for (QMap<ClickBindingPrivate, ClickAction>::ConstIterator
            it = clickBinding_.begin(),
            end = clickBinding_.end();
@@ -3319,49 +3314,49 @@ void QGLViewer::getClickActionBinding(ClickAction action, Qt::Key &key,
       return;
     }
 
-  modifiers = Qt::NoModifier;
-  button = Qt::NoButton;
+  modifiers = ::Qt::NoModifier;
+  button = ::Qt::NoButton;
   doubleClick = false;
-  buttonsBefore = Qt::NoButton;
-  key = Qt::Key(0);
+  buttonsBefore = ::Qt::NoButton;
+  key = ::Qt::Key(0);
 }
 
 /*! This function should be used in conjunction with toggleCameraMode(). It
 returns \c true when at least one mouse button is binded to the \c ROTATE
 mouseAction. This is crude way of determining which "mode" the camera is in. */
 CGAL_INLINE_FUNCTION
-bool QGLViewer::cameraIsInRotateMode() const {
+bool CGAL::QGLViewer::cameraIsInRotateMode() const {
   //#CONNECTION# used in toggleCameraMode() and keyboardString()
-  Qt::Key key;
-  Qt::KeyboardModifiers modifiers;
-  Qt::MouseButton button;
+  ::Qt::Key key;
+  ::Qt::KeyboardModifiers modifiers;
+  ::Qt::MouseButton button;
   getMouseActionBinding(CAMERA, ROTATE, true /*constraint*/, key, modifiers,
                         button);
-  return button != Qt::NoButton;
+  return button != ::Qt::NoButton;
 }
 
 /*! Swaps between two predefined camera mouse bindings.
 
 The first mode makes the camera observe the scene while revolving around the
-qglviewer::Camera::pivotPoint(). The second mode is designed for walkthrough
+CGAL::qglviewer::Camera::pivotPoint(). The second mode is designed for walkthrough
 applications and simulates a flying camera.
 
 Practically, the three mouse buttons are respectively binded to:
-\arg In rotate mode: QGLViewer::ROTATE, QGLViewer::ZOOM, QGLViewer::TRANSLATE.
-\arg In fly mode: QGLViewer::MOVE_FORWARD, QGLViewer::LOOK_AROUND,
-QGLViewer::MOVE_BACKWARD.
+\arg In rotate mode: CGAL::QGLViewer::ROTATE, CGAL::QGLViewer::ZOOM, CGAL::QGLViewer::TRANSLATE.
+\arg In fly mode: CGAL::QGLViewer::MOVE_FORWARD, CGAL::QGLViewer::LOOK_AROUND,
+CGAL::QGLViewer::MOVE_BACKWARD.
 
 The current mode is determined by checking if a mouse button is binded to
-QGLViewer::ROTATE for the QGLViewer::CAMERA. The state key that was previously
+CGAL::QGLViewer::ROTATE for the CGAL::QGLViewer::CAMERA. The state key that was previously
 used to move the camera is preserved. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::toggleCameraMode() {
-  Qt::Key key;
-  Qt::KeyboardModifiers modifiers;
-  Qt::MouseButton button;
+void CGAL::QGLViewer::toggleCameraMode() {
+  ::Qt::Key key;
+  ::Qt::KeyboardModifiers modifiers;
+  ::Qt::MouseButton button;
   getMouseActionBinding(CAMERA, ROTATE, true /*constraint*/, key, modifiers,
                         button);
-  bool rotateMode = button != Qt::NoButton;
+  bool rotateMode = button != ::Qt::NoButton;
 
   if (!rotateMode) {
     getMouseActionBinding(CAMERA, MOVE_FORWARD, true /*constraint*/, key,
@@ -3373,29 +3368,29 @@ void QGLViewer::toggleCameraMode() {
     camera()->frame()->updateSceneUpVector();
     camera()->frame()->stopSpinning();
 
-    setMouseBinding(modifiers, Qt::LeftButton, CAMERA, MOVE_FORWARD);
-    setMouseBinding(modifiers, Qt::MidButton, CAMERA, LOOK_AROUND);
-    setMouseBinding(modifiers, Qt::RightButton, CAMERA, MOVE_BACKWARD);
+    setMouseBinding(modifiers, ::Qt::LeftButton, CAMERA, MOVE_FORWARD);
+    setMouseBinding(modifiers, ::Qt::MidButton, CAMERA, LOOK_AROUND);
+    setMouseBinding(modifiers, ::Qt::RightButton, CAMERA, MOVE_BACKWARD);
 
-    setMouseBinding(Qt::Key_R, modifiers, Qt::LeftButton, CAMERA, ROLL);
+    setMouseBinding(::Qt::Key_R, modifiers, ::Qt::LeftButton, CAMERA, ROLL);
 
-    setMouseBinding(Qt::NoModifier, Qt::LeftButton, NO_CLICK_ACTION, true);
-    setMouseBinding(Qt::NoModifier, Qt::MidButton, NO_CLICK_ACTION, true);
-    setMouseBinding(Qt::NoModifier, Qt::RightButton, NO_CLICK_ACTION, true);
+    setMouseBinding(::Qt::NoModifier, ::Qt::LeftButton, NO_CLICK_ACTION, true);
+    setMouseBinding(::Qt::NoModifier, ::Qt::MidButton, NO_CLICK_ACTION, true);
+    setMouseBinding(::Qt::NoModifier, ::Qt::RightButton, NO_CLICK_ACTION, true);
 
     setWheelBinding(modifiers, CAMERA, MOVE_FORWARD);
   } else {
     // Should stop flyTimer. But unlikely and not easy.
-    setMouseBinding(modifiers, Qt::LeftButton, CAMERA, ROTATE);
-    setMouseBinding(modifiers, Qt::MidButton, CAMERA, ZOOM);
-    setMouseBinding(modifiers, Qt::RightButton, CAMERA, TRANSLATE);
+    setMouseBinding(modifiers, ::Qt::LeftButton, CAMERA, ROTATE);
+    setMouseBinding(modifiers, ::Qt::MidButton, CAMERA, ZOOM);
+    setMouseBinding(modifiers, ::Qt::RightButton, CAMERA, TRANSLATE);
 
-    setMouseBinding(Qt::Key_R, modifiers, Qt::LeftButton, CAMERA,
+    setMouseBinding(::Qt::Key_R, modifiers, ::Qt::LeftButton, CAMERA,
                     SCREEN_ROTATE);
 
-    setMouseBinding(Qt::NoModifier, Qt::LeftButton, ALIGN_CAMERA, true);
-    setMouseBinding(Qt::NoModifier, Qt::MidButton, SHOW_ENTIRE_SCENE, true);
-    setMouseBinding(Qt::NoModifier, Qt::RightButton, CENTER_SCENE, true);
+    setMouseBinding(::Qt::NoModifier, ::Qt::LeftButton, ALIGN_CAMERA, true);
+    setMouseBinding(::Qt::NoModifier, ::Qt::MidButton, SHOW_ENTIRE_SCENE, true);
+    setMouseBinding(::Qt::NoModifier, ::Qt::RightButton, CENTER_SCENE, true);
 
     setWheelBinding(modifiers, CAMERA, ZOOM);
   }
@@ -3414,11 +3409,11 @@ Defining the \e own viewer's camera()->frame() as the manipulatedFrame() is
 possible and will result in a classical camera manipulation. See the <a
 href="../examples/luxo.html">luxo example</a> for an illustration.
 
-Note that a qglviewer::ManipulatedCameraFrame can be set as the
+Note that a CGAL::qglviewer::ManipulatedCameraFrame can be set as the
 manipulatedFrame(): it is possible to manipulate the camera of a first viewer in
 a second viewer. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setManipulatedFrame(ManipulatedFrame *frame) {
+void CGAL::QGLViewer::setManipulatedFrame(ManipulatedFrame *frame) {
   if (manipulatedFrame()) {
     manipulatedFrame()->stopSpinning();
 
@@ -3452,9 +3447,9 @@ void QGLViewer::setManipulatedFrame(ManipulatedFrame *frame) {
 /*! Draws viewer related visual hints.
 
 CGAL_INLINE_FUNCTION
-Displays the new qglviewer::Camera::pivotPoint() when it is changed. See the <a
+Displays the new CGAL::qglviewer::Camera::pivotPoint() when it is changed. See the <a
 href="../mouse.html">mouse page</a> for details. Also draws a line between
-qglviewer::Camera::pivotPoint() and mouse cursor when the camera is rotated
+CGAL::qglviewer::Camera::pivotPoint() and mouse cursor when the camera is rotated
 around the camera Z axis.
 
 See also setVisualHintsMask() and resetVisualHints(). The hint color is
@@ -3467,7 +3462,7 @@ Limitation : One needs to have access to visualHint_ to overload this method.
 
 Removed from the documentation for this reason. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::drawVisualHints() {
+void CGAL::QGLViewer::drawVisualHints() {
   // G r i d
   rendering_program.bind();
   vaos[GRID].bind();
@@ -3484,7 +3479,7 @@ void QGLViewer::drawVisualHints() {
     mvMatrix.data()[i] = camera()->orientation().inverse().matrix()[i];
   }
   rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
-  rendering_program.setUniformValue("color", QColor(Qt::lightGray));
+  rendering_program.setUniformValue("color", QColor(::Qt::lightGray));
   glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(grid_size));
   vaos[GRID].release();
   rendering_program.release();
@@ -3500,8 +3495,8 @@ void QGLViewer::drawVisualHints() {
   glEnable(GL_POLYGON_OFFSET_FILL);
   glPolygonOffset(3.0f,-3.0f);
   //A x i s
-  qglviewer::Camera::Type camera_type = camera()->type();
-  camera()->setType(qglviewer::Camera::ORTHOGRAPHIC);
+  CGAL::qglviewer::Camera::Type camera_type = camera()->type();
+  camera()->setType(CGAL::qglviewer::Camera::ORTHOGRAPHIC);
   for(int i=0; i < 16; i++)
   {
     mvMatrix.data()[i] = camera()->orientation().inverse().matrix()[i];
@@ -3557,10 +3552,10 @@ void QGLViewer::drawVisualHints() {
     rendering_program.setUniformValue("mvp_matrix", mvpMatrix);  
     glViewport((camera()->projectedCoordinatesOf(camera()->pivotPoint()).x-size/2)*devicePixelRatio(), (height() - camera()->projectedCoordinatesOf(camera()->pivotPoint()).y-size/2)*devicePixelRatio(), size, size);
     glScissor ((camera()->projectedCoordinatesOf(camera()->pivotPoint()).x-size/2)*devicePixelRatio(), (height() - camera()->projectedCoordinatesOf(camera()->pivotPoint()).y-size/2)*devicePixelRatio(), size, size);
-    rendering_program.setUniformValue("color", QColor(Qt::black));
+    rendering_program.setUniformValue("color", QColor(::Qt::black));
     glLineWidth(3.0);
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(4));
-    rendering_program.setUniformValue("color", QColor(Qt::white));
+    rendering_program.setUniformValue("color", QColor(::Qt::white));
     glLineWidth(3.0);
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(4));
     glLineWidth(1.0);
@@ -3575,10 +3570,10 @@ void QGLViewer::drawVisualHints() {
 
 /*! Defines the mask that will be used to drawVisualHints(). The only available
 mask is currently 1, corresponding to the display of the
-qglviewer::Camera::pivotPoint(). resetVisualHints() is automatically called
+CGAL::qglviewer::Camera::pivotPoint(). resetVisualHints() is automatically called
 after \p delay milliseconds (default is 2 seconds). */
 CGAL_INLINE_FUNCTION
-void QGLViewer::setVisualHintsMask(int mask, int delay) {
+void CGAL::QGLViewer::setVisualHintsMask(int mask, int delay) {
   visualHint_ = visualHint_ | mask;
   QTimer::singleShot(delay, this, SLOT(resetVisualHints()));
 }
@@ -3586,7 +3581,7 @@ void QGLViewer::setVisualHintsMask(int mask, int delay) {
 /*! Reset the mask used by drawVisualHints(). Called by setVisualHintsMask()
  * after 2 seconds to reset the display. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::resetVisualHints() { visualHint_ = 0; }
+void CGAL::QGLViewer::resetVisualHints() { visualHint_ = 0; }
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3598,10 +3593,10 @@ void QGLViewer::resetVisualHints() { visualHint_ = 0; }
 [P1.x-P1.y-P1.z-N1.x-N1.y-N1.z-C1.r-C1.g-C1.b|P2.x-P2.y-P2.z-N2.x-N2.y-N2.z-C2.r-C2.g-C2.b|...]
 */
 CGAL_INLINE_FUNCTION
-void QGLViewer::drawArrow(double r,double R, int prec, qglviewer::Vec from,
-                          qglviewer::Vec to, qglviewer::Vec color, 
+void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Vec from,
+                          CGAL::qglviewer::Vec to, CGAL::qglviewer::Vec color, 
                           std::vector<float> &data) {
-  qglviewer::Vec temp = to-from;
+  CGAL::qglviewer::Vec temp = to-from;
   QVector3D dir = QVector3D(temp.x, temp.y, temp.z);
   QMatrix4x4 mat;
   mat.setToIdentity();
@@ -3781,12 +3776,12 @@ three arrows (red, green and blue) of length \p length are drawn along the
 positive X, Y and Z directions in the top right corner of the screen. 
 X arrow is red, Y arrow is green and Z arrow is blue.*/
 CGAL_INLINE_FUNCTION
-void QGLViewer::drawAxis(qreal length) {
+void CGAL::QGLViewer::drawAxis(qreal length) {
   std::vector<float> data;
   data.resize(0);
-  drawArrow(0.06,0.12,10, qglviewer::Vec(0,0,0),qglviewer::Vec(length,0,0),qglviewer::Vec(1,0,0), data);
-  drawArrow(0.06,0.12,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,length,0),qglviewer::Vec(0,1,0), data);
-  drawArrow(0.06,0.12,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,0,length),qglviewer::Vec(0,0,1), data);
+  drawArrow(0.06,0.12,10, CGAL::qglviewer::Vec(0,0,0),CGAL::qglviewer::Vec(length,0,0),CGAL::qglviewer::Vec(1,0,0), data);
+  drawArrow(0.06,0.12,10, CGAL::qglviewer::Vec(0,0,0),CGAL::qglviewer::Vec(0,length,0),CGAL::qglviewer::Vec(0,1,0), data);
+  drawArrow(0.06,0.12,10, CGAL::qglviewer::Vec(0,0,0),CGAL::qglviewer::Vec(0,0,length),CGAL::qglviewer::Vec(0,0,1), data);
   rendering_program_light.bind();
   vaos[AXIS].bind();
   vbos[Axis].bind();
@@ -3813,7 +3808,7 @@ coordinate system).
 
 \p size (OpenGL units) and \p nbSubdivisions define its geometry.*/
 CGAL_INLINE_FUNCTION
-void QGLViewer::drawGrid(qreal size, int nbSubdivisions) {
+void CGAL::QGLViewer::drawGrid(qreal size, int nbSubdivisions) {
   
   //The Grid
   std::vector<float> v_Grid;
@@ -3852,8 +3847,8 @@ void QGLViewer::drawGrid(qreal size, int nbSubdivisions) {
   d_axis.resize(0);
   //d_axis is filled by drawArrow always this way : V.x V.y V.z N.x N.y N.z C.r C.g C.b, so it is possible
   //to use a single buffer with offset and stride
-  drawArrow(0.005*size,0.02*size,10, qglviewer::Vec(0,0,0),qglviewer::Vec(size,0,0),qglviewer::Vec(1,0,0), d_axis);
-  drawArrow(0.005*size,0.02*size,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,size,0),qglviewer::Vec(0,1,0), d_axis);
+  drawArrow(0.005*size,0.02*size,10, CGAL::qglviewer::Vec(0,0,0),CGAL::qglviewer::Vec(size,0,0),CGAL::qglviewer::Vec(1,0,0), d_axis);
+  drawArrow(0.005*size,0.02*size,10, CGAL::qglviewer::Vec(0,0,0),CGAL::qglviewer::Vec(0,size,0),CGAL::qglviewer::Vec(0,1,0), d_axis);
 
   rendering_program_light.bind();
   vaos[GRID_AXIS].bind();
@@ -3882,11 +3877,11 @@ void QGLViewer::drawGrid(qreal size, int nbSubdivisions) {
 //       S t a t i c    m e t h o d s   :  Q G L V i e w e r   P o o l        //
 ////////////////////////////////////////////////////////////////////////////////
 
-/*! saveStateToFile() is called on all the QGLViewers using the QGLViewerPool().
+/*! saveStateToFile() is called on all the CGAL::QGLViewers using the QGLViewerPool().
  */
 CGAL_INLINE_FUNCTION
-void QGLViewer::saveStateToFileForAllViewers() {
-  Q_FOREACH (QGLViewer *viewer, QGLViewer::QGLViewerPool()) {
+void CGAL::QGLViewer::saveStateToFileForAllViewers() {
+  Q_FOREACH (CGAL::QGLViewer *viewer, CGAL::QGLViewer::QGLViewerPool()) {
     if (viewer)
       viewer->saveStateToFile();
   }
@@ -3912,7 +3907,7 @@ QGLViewer::QGLViewerIndex()) for extra viewers. Each viewer will then read back
 its own information in restoreStateFromFile(), provided that the viewers are
 created in the same order, which is usually the case. */
 CGAL_INLINE_FUNCTION
-QString QGLViewer::stateFileName() const {
+QString CGAL::QGLViewer::stateFileName() const {
   QString name = stateFileName_;
 
   if (!name.isEmpty() && QGLViewer::QGLViewerIndex(this) > 0) {
@@ -3928,7 +3923,7 @@ QString QGLViewer::stateFileName() const {
   return name;
 }
 
-/*! Saves in stateFileName() an XML representation of the QGLViewer state,
+/*! Saves in stateFileName() an XML representation of the CGAL::QGLViewer state,
 obtained from domElement().
 
 Use restoreStateFromFile() to restore this viewer state.
@@ -3937,7 +3932,7 @@ This method is automatically called when a viewer is closed (using Escape or
 using the window's upper right \c x close button). setStateFileName() to \c
 QString::null to prevent this. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::saveStateToFile() {
+void CGAL::QGLViewer::saveStateToFile() {
   QString name = stateFileName();
 
   if (name.isEmpty())
@@ -3969,7 +3964,7 @@ void QGLViewer::saveStateToFile() {
   if (f.open(QIODevice::WriteOnly)) {
     QTextStream out(&f);
     QDomDocument doc("QGLVIEWER");
-    doc.appendChild(domElement("QGLViewer", doc));
+    doc.appendChild(domElement("CGAL::QGLViewer", doc));
     doc.save(out, 2);
     f.flush();
     f.close();
@@ -3979,7 +3974,7 @@ void QGLViewer::saveStateToFile() {
         tr("Unable to save to file %1").arg(name) + ":\n" + f.errorString());
 }
 
-/*! Restores the QGLViewer state from the stateFileName() file using
+/*! Restores the CGAL::QGLViewer state from the stateFileName() file using
 initFromDOMElement().
 
 States are saved using saveStateToFile(), which is automatically called on
@@ -4003,7 +3998,7 @@ showEntireScene(); // Previous state cannot be restored: fit camera to scene.
 }
 \endcode */
 CGAL_INLINE_FUNCTION
-bool QGLViewer::restoreStateFromFile() {
+bool CGAL::QGLViewer::restoreStateFromFile() {
   QString name = stateFileName();
 
   if (name.isEmpty())
@@ -4040,18 +4035,18 @@ bool QGLViewer::restoreStateFromFile() {
   return true;
 }
 
-/*! Returns an XML \c QDomElement that represents the QGLViewer.
+/*! Returns an XML \c QDomElement that represents the CGAL::QGLViewer.
 
 Used by saveStateToFile(). restoreStateFromFile() uses initFromDOMElement() to
-restore the QGLViewer state from the resulting \c QDomElement.
+restore the CGAL::QGLViewer state from the resulting \c QDomElement.
 
 \p name is the name of the QDomElement tag. \p doc is the \c QDomDocument
 factory used to create QDomElement.
 
 The created QDomElement contains state values (axisIsDrawn(), FPSIsDisplayed(),
 isFullScreen()...), viewer geometry, as well as camera() (see
-qglviewer::Camera::domElement()) and manipulatedFrame() (if defined, see
-qglviewer::ManipulatedFrame::domElement()) states.
+CGAL::qglviewer::Camera::domElement()) and manipulatedFrame() (if defined, see
+CGAL::qglviewer::ManipulatedFrame::domElement()) states.
 
 Overload this method to add your own attributes to the state file:
 \code
@@ -4067,21 +4062,20 @@ de.appendChild(lightManipulatedFrame()->domElement("LightFrame", document));
 
 // Get default state domElement and append custom node
 CGAL_INLINE_FUNCTION
-QDomElement res = QGLViewer::domElement(name, document);
+QDomElement res = CGAL::QGLViewer::domElement(name, document);
 res.appendChild(de);
 return res;
 }
 \endcode
 See initFromDOMElement() for the associated restoration code.
 
-\attention For the manipulatedFrame(), qglviewer::Frame::constraint() and
-qglviewer::Frame::referenceFrame() are not saved. See
-qglviewer::Frame::domElement(). */
+\attention For the manipulatedFrame(), CGAL::qglviewer::Frame::constraint() and
+CGAL::qglviewer::Frame::referenceFrame() are not saved. See
+CGAL::qglviewer::Frame::domElement(). */
 CGAL_INLINE_FUNCTION
-QDomElement QGLViewer::domElement(const QString &name,
+QDomElement CGAL::QGLViewer::domElement(const QString &name,
                                   QDomDocument &document) const {
   QDomElement de = document.createElement(name);
-  de.setAttribute("version", QGLViewerVersionString());
 
   QDomElement stateNode = document.createElement("State");
   // hasMouseTracking() is not saved
@@ -4130,11 +4124,11 @@ QDomElement QGLViewer::domElement(const QString &name,
   return de;
 }
 
-/*! Restores the QGLViewer state from a \c QDomElement created by domElement().
+/*! Restores the CGAL::QGLViewer state from a \c QDomElement created by domElement().
 
-Used by restoreStateFromFile() to restore the QGLViewer state from a file.
+Used by restoreStateFromFile() to restore the CGAL::QGLViewer state from a file.
 
-Overload this method to retrieve custom attributes from the QGLViewer state
+Overload this method to retrieve custom attributes from the CGAL::QGLViewer state
 file. This code corresponds to the one given in the domElement() documentation:
 \code
 CGAL_INLINE_FUNCTION
@@ -4142,7 +4136,7 @@ void Viewer::initFromDOMElement(const QDomElement& element)
 {
 // Restore standard state
 CGAL_INLINE_FUNCTION
-QGLViewer::initFromDOMElement(element);
+CGAL::QGLViewer::initFromDOMElement(element);
 
 QDomElement child=element.firstChild().toElement();
 while (!child.isNull())
@@ -4163,22 +4157,13 @@ child = child.nextSibling().toElement();
 \endcode
 
 CGAL_INLINE_FUNCTION
-See also qglviewer::Camera::initFromDOMElement(),
-qglviewer::ManipulatedFrame::initFromDOMElement().
+See also CGAL::qglviewer::Camera::initFromDOMElement(),
+CGAL::qglviewer::ManipulatedFrame::initFromDOMElement().
 
 \note The manipulatedFrame() \e pointer is not modified by this method. If
 defined, its state is simply set from the \p element values. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::initFromDOMElement(const QDomElement &element) {
-  const QString version = element.attribute("version");
-  // if (version != QGLViewerVersionString())
-  if (version[0] != '2')
-    // Patches for previous versions should go here when the state file syntax
-    // is modified.
-    qWarning("State file created using QGLViewer version %s may not be "
-             "correctly read.",
-             version.toLatin1().constData());
-
+void CGAL::QGLViewer::initFromDOMElement(const QDomElement &element) {
   QDomElement child = element.firstChild().toElement();
   bool tmpCameraIsEdited = cameraIsEdited();
   while (!child.isNull()) {
@@ -4257,7 +4242,7 @@ void QGLViewer::initFromDOMElement(const QDomElement &element) {
 /*! This method is deprecated since version 1.3.9-5. Use saveStateToFile() and
 setStateFileName() instead. */
 CGAL_INLINE_FUNCTION
-void QGLViewer::saveToFile(const QString &fileName) {
+void CGAL::QGLViewer::saveToFile(const QString &fileName) {
   if (!fileName.isEmpty())
     setStateFileName(fileName);
 
@@ -4268,7 +4253,7 @@ void QGLViewer::saveToFile(const QString &fileName) {
 /*! This function is deprecated since version 1.3.9-5. Use
 restoreStateFromFile() and setStateFileName() instead. */
 CGAL_INLINE_FUNCTION
-bool QGLViewer::restoreFromFile(const QString &fileName) {
+bool CGAL::QGLViewer::restoreFromFile(const QString &fileName) {
   if (!fileName.isEmpty())
     setStateFileName(fileName);
 
@@ -4280,7 +4265,7 @@ bool QGLViewer::restoreFromFile(const QString &fileName) {
 
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::copyBufferToTexture(GLint , GLenum ) {
+void CGAL::QGLViewer::copyBufferToTexture(GLint , GLenum ) {
 }
 
 /*! Returns the texture id of the texture created by copyBufferToTexture().
@@ -4291,53 +4276,53 @@ copyBufferToTexture().
 Returns \c 0 is copyBufferToTexture() was never called or if the texure was
 deleted using glDeleteTextures() since then. */
 CGAL_INLINE_FUNCTION
-GLuint QGLViewer::bufferTextureId() const {
+GLuint CGAL::QGLViewer::bufferTextureId() const {
     return 0;
 }
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::setOffset(qglviewer::Vec offset)
+void CGAL::QGLViewer::setOffset(CGAL::qglviewer::Vec offset)
 { 
   this->_offset = offset; 
 }
 
 CGAL_INLINE_FUNCTION
-qglviewer::Vec QGLViewer::offset()const 
+CGAL::qglviewer::Vec CGAL::QGLViewer::offset()const 
 { 
   return _offset; 
 }
 
 CGAL_INLINE_FUNCTION
-qreal QGLViewer::sceneRadius() const { return camera()->sceneRadius(); }
+qreal CGAL::QGLViewer::sceneRadius() const { return camera()->sceneRadius(); }
 
 CGAL_INLINE_FUNCTION
-qglviewer::Vec QGLViewer::sceneCenter() const { return camera()->sceneCenter(); }
+CGAL::qglviewer::Vec CGAL::QGLViewer::sceneCenter() const { return camera()->sceneCenter(); }
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::setSceneRadius(qreal radius) {
+void CGAL::QGLViewer::setSceneRadius(qreal radius) {
   camera()->setSceneRadius(radius);
 }
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::setSceneCenter(const qglviewer::Vec &center) {
+void CGAL::QGLViewer::setSceneCenter(const CGAL::qglviewer::Vec &center) {
   camera()->setSceneCenter(center);
 }
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::setSceneBoundingBox(const qglviewer::Vec &min,
-                         const qglviewer::Vec &max) {
+void CGAL::QGLViewer::setSceneBoundingBox(const CGAL::qglviewer::Vec &min,
+                         const CGAL::qglviewer::Vec &max) {
   camera()->setSceneBoundingBox(min + offset(), max + offset());
 }
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::showEntireScene() {
+void CGAL::QGLViewer::showEntireScene() {
   camera()->showEntireScene();
   update();
 }
 
 
 CGAL_INLINE_FUNCTION
-QImage* QGLViewer::takeSnapshot( qglviewer::SnapShotBackground  background_color, QSize finalSize, double oversampling, bool expand)
+QImage* CGAL::QGLViewer::takeSnapshot( CGAL::qglviewer::SnapShotBackground  background_color, QSize finalSize, double oversampling, bool expand)
 {
   makeCurrent();
   qreal aspectRatio = width() / static_cast<qreal>(height());
@@ -4345,13 +4330,13 @@ QImage* QGLViewer::takeSnapshot( qglviewer::SnapShotBackground  background_color
   QColor previousBGColor = backgroundColor();
   switch(background_color)
   {
-  case qglviewer::CURRENT_BACKGROUND:
+  case CGAL::qglviewer::CURRENT_BACKGROUND:
     break;
-  case qglviewer::TRANSPARENT_BACKGROUND:
-    setBackgroundColor(QColor(Qt::transparent));
+  case CGAL::qglviewer::TRANSPARENT_BACKGROUND:
+    setBackgroundColor(QColor(::Qt::transparent));
     alpha = 0.0f;
     break;
-  case qglviewer::CHOOSE_BACKGROUND:
+  case CGAL::qglviewer::CHOOSE_BACKGROUND:
     QColor c =  QColorDialog::getColor();
     if(c.isValid()) {
       setBackgroundColor(c);
@@ -4373,7 +4358,7 @@ QImage* QGLViewer::takeSnapshot( qglviewer::SnapShotBackground  background_color
 
   qreal xMin, yMin;
 
-  if(camera()->type()==qglviewer::Camera::PERSPECTIVE)
+  if(camera()->type()==CGAL::qglviewer::Camera::PERSPECTIVE)
   {
     if ((expand && (newAspectRatio>aspectRatio)) || (!expand && (newAspectRatio<aspectRatio)))
     {
@@ -4448,7 +4433,7 @@ QImage* QGLViewer::takeSnapshot( qglviewer::SnapShotBackground  background_color
       fbo.release();
 
       QImage snapshot = fbo.toImage();
-      QImage subImage = snapshot.scaled(subSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+      QImage subImage = snapshot.scaled(subSize, ::Qt::IgnoreAspectRatio, ::Qt::SmoothTransformation);
       // Copy subImage in image
       for (int ii=0; ii<subSize.width(); ii++)
       {
@@ -4471,7 +4456,7 @@ QImage* QGLViewer::takeSnapshot( qglviewer::SnapShotBackground  background_color
 }
 
 CGAL_INLINE_FUNCTION
-void QGLViewer::saveSnapshot()
+void CGAL::QGLViewer::saveSnapshot()
 {
   qreal aspectRatio = width() / static_cast<qreal>(height());
   static ImageInterface* imageInterface = NULL;
@@ -4492,7 +4477,7 @@ void QGLViewer::saveSnapshot()
   {
     return;
   }
-  QImage* image= takeSnapshot(static_cast<qglviewer::SnapShotBackground>(imageInterface->color_comboBox->currentIndex()),
+  QImage* image= takeSnapshot(static_cast<CGAL::qglviewer::SnapShotBackground>(imageInterface->color_comboBox->currentIndex()),
         finalSize, imageInterface->oversampling->value(), expand);
   if(image)
   {

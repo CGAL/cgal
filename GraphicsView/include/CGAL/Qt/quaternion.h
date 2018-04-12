@@ -3,7 +3,7 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of a fork of the QGLViewer library version 2.7.0.
+ This file is part of a fork of the CGAL::QGLViewer library version 2.7.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -11,8 +11,8 @@
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
 
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
+ libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
+ purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -30,9 +30,10 @@
 #include <math.h>
 #include <QOpenGLWidget>
 
+namespace CGAL{
 namespace qglviewer {
 /*! \brief The Quaternion class represents 3D rotations and orientations.
-        \class Quaternion quaternion.h QGLViewer/quaternion.h
+        \class Quaternion quaternion.h CGAL::QGLViewer/quaternion.h
 
         The Quaternion is an appropriate (although not very intuitive)
    representation for 3D rotations and orientations. Many tools are provided to
@@ -51,7 +52,7 @@ namespace qglviewer {
    q.axis().z); \endcode
 
         Quaternion is part of the \c qglviewer namespace, specify \c
-   qglviewer::Quaternion or use the qglviewer namespace: \code using namespace
+   Cgal::qglviewer::Quaternion or use the qglviewer namespace: \code using namespace
    qglviewer; \endcode
 
         <h3>Internal representation</h3>
@@ -326,7 +327,7 @@ public:
           Quaternion rot(...);
           cout << "Rotation=" << rot << endl;
           \endcode */
-  std::ostream &operator<<(std::ostream &o, const qglviewer::Vec &);
+  std::ostream &operator<<(std::ostream &o, const CGAL::qglviewer::Vec &);
 //@}
 #endif
 
@@ -336,8 +337,8 @@ private:
   qreal q[4];
 };
 
-} // namespace qglviewer
+}} // namespace CGAL::qglviewer
 
-std::ostream &operator<<(std::ostream &o, const qglviewer::Quaternion &);
+std::ostream &operator<<(std::ostream &o, const CGAL::qglviewer::Quaternion &);
 
 #endif // QGLVIEWER_QUATERNION_H

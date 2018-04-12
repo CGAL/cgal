@@ -10,8 +10,8 @@ Viewer::init()
   initializeOpenGLFunctions();
   setBackgroundColor(::Qt::white);
   this->camera()->setSceneBoundingBox(
-      qglviewer::Vec(-1.,-1.,-1.),
-      qglviewer::Vec( 1., 1., 1.));
+      CGAL::qglviewer::Vec(-1.,-1.,-1.),
+      CGAL::qglviewer::Vec( 1., 1., 1.));
   glEnable(GL_LINE_SMOOTH);
   compile_shaders();
   are_buffers_initialized = false;
@@ -210,7 +210,7 @@ void Viewer::compute_elements()
     }
 }
 
-void Viewer::attrib_buffers(QGLViewer* viewer)
+void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
 {
     QMatrix4x4 mvpMatrix;
     double mat[16];

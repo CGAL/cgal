@@ -3,7 +3,7 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of a fork of the QGLViewer library version 2.7.0.
+ This file is part of a fork of the CGAL::QGLViewer library version 2.7.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -11,8 +11,8 @@
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
 
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
+ libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
+ purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -33,7 +33,7 @@
 #include <CGAL/Qt/keyFrameInterpolator.h>
 #include <CGAL/Qt/domUtils.h>
 
-using namespace qglviewer;
+using namespace CGAL::qglviewer;
 using namespace std;
 
 /*! Creates a KeyFrameInterpolator, with \p frame as associated frame().
@@ -133,8 +133,8 @@ void KeyFrameInterpolator::update() {
   See the <a href="../examples/keyFrames.html">keyFrames example</a> for an
   illustration.
 
-  You may also be interested in QGLViewer::animate() and
-  QGLViewer::startAnimation().
+  You may also be interested in CGAL::QGLViewer::animate() and
+  CGAL::QGLViewer::startAnimation().
 
   \attention The keyFrames must be defined (see addKeyFrame()) \e before you
   startInterpolation(), or else the interpolation will naturally immediately
@@ -486,7 +486,7 @@ void KeyFrameInterpolator::interpolateAtTime(qreal time) {
  Quaternion::domElement(), Camera::domElement()...
 
  Note that the Camera::keyFrameInterpolator() are automatically saved by
- QGLViewer::saveStateToFile() when a QGLViewer is closed. */
+ CGAL::QGLViewer::saveStateToFile() when a CGAL::QGLViewer is closed. */
 CGAL_INLINE_FUNCTION
 QDomElement KeyFrameInterpolator::domElement(const QString &name,
                                              QDomDocument &document) const {

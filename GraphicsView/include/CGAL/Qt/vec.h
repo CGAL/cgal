@@ -3,7 +3,7 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of a fork of the QGLViewer library version 2.7.0.
+ This file is part of a fork of the CGAL::QGLViewer library version 2.7.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -11,8 +11,8 @@
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
 
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
+ libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
+ purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -33,10 +33,11 @@
 // Included by all files as vec.h is at the end of the include hierarchy
 #include <CGAL/export/Qt.h>
 
+namespace CGAL{
 namespace qglviewer {
 
 /*! \brief The Vec class represents 3D positions and 3D vectors.
-  \class Vec vec.h QGLViewer/vec.h
+  \class Vec vec.h CGAL::QGLViewer/vec.h
 
   Vec is used as a parameter and return type by many methods of the library. It
   provides classical algebraic computational methods and is compatible with
@@ -52,7 +53,7 @@ namespace qglviewer {
 
   This makes of Vec a good candidate for representing positions and vectors in
   your programs. Since it is part of the \c qglviewer namespace, specify \c
-  qglviewer::Vec or use the qglviewer namespace: \code using namespace
+  CGAL::qglviewer::Vec or use the qglviewer namespace: \code using namespace
   qglviewer; \endcode
 
   <h3>Interface with other vector classes</h3>
@@ -66,7 +67,7 @@ namespace qglviewer {
   \nosubgrouping */
 class CGAL_QT_EXPORT Vec {
 
-// If your compiler complains the "The class "qglviewer::Vec" has no member
+// If your compiler complains the "The class "CGAL::qglviewer::Vec" has no member
 // "x"." Add your architecture Q_OS_XXXX flag (see qglobal.h) in this list.
 #if defined(Q_OS_IRIX) || defined(Q_OS_AIX) || defined(Q_OS_HPUX)
 #define QGLVIEWER_UNION_NOT_SUPPORTED
@@ -373,13 +374,13 @@ Normalizing a null vector will result in \c NaN values. */
 Vec pos(...);
 cout << "Position=" << pos << endl;
 \endcode */
-  std::ostream &operator<<(std::ostream &o, const qglviewer::Vec &);
+  std::ostream &operator<<(std::ostream &o, const CGAL::qglviewer::Vec &);
 //@}
 #endif
 };
 
-} // namespace qglviewer
+}} // namespace CGAL::qglviewer
 
-std::ostream &operator<<(std::ostream &o, const qglviewer::Vec &);
+std::ostream &operator<<(std::ostream &o, const CGAL::qglviewer::Vec &);
 
 #endif // QGLVIEWER_VEC_H

@@ -43,7 +43,7 @@ void Viewer::init()
     /* Scene inits */
     setBackgroundColor(::Qt::white);
     // scene are defined by a sphere of 2.0, camera at the center, i.e. (0, 0, 0)
-    setSceneCenter( qglviewer::Vec(-0.,-0.,-0.) );
+    setSceneCenter( CGAL::qglviewer::Vec(-0.,-0.,-0.) );
     setSceneRadius( 2. );
     // show text message
     setTextIsEnabled(true);
@@ -1092,7 +1092,7 @@ void Viewer::initialize_buffers()
     are_buffers_initialized = true;
 }
 
-void Viewer::attrib_buffers(QGLViewer* viewer)
+void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
 {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -1794,7 +1794,7 @@ void Viewer::mousePressEvent(QMouseEvent *event)
             }
             else
                 // if no point is selected, then regular action (rotation) will be performed
-                QGLViewer::mousePressEvent(event);
+                CGAL::QGLViewer::mousePressEvent(event);
         }//end-if-shift
     }//end-if-inspt
 
@@ -1818,7 +1818,7 @@ void Viewer::mousePressEvent(QMouseEvent *event)
               update();
             break;
         default: // rotate
-            QGLViewer::mousePressEvent(event);
+            CGAL::QGLViewer::mousePressEvent(event);
             break;
         }
     }//end-if-select
@@ -1835,7 +1835,7 @@ void Viewer::mousePressEvent(QMouseEvent *event)
               update();
         }
         else // if no point is selected, then regular action (rotation) will be performed
-            QGLViewer::mousePressEvent(event);
+            CGAL::QGLViewer::mousePressEvent(event);
     }//end-if-move
 
     else if( m_curMode == FINDNB
@@ -1856,7 +1856,7 @@ void Viewer::mousePressEvent(QMouseEvent *event)
     }//end-if-emptyS
 
     else
-        QGLViewer::mousePressEvent(event);
+        CGAL::QGLViewer::mousePressEvent(event);
 
 }
 
@@ -1908,7 +1908,7 @@ void Viewer::mouseMoveEvent(QMouseEvent *event)
     }//end-if-move
 
     else
-        QGLViewer::mouseMoveEvent(event);
+        CGAL::QGLViewer::mouseMoveEvent(event);
 }
 
 void Viewer::mouseReleaseEvent(QMouseEvent *event)
@@ -2070,7 +2070,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
     }//end-if-emptysphere
 
     else
-        QGLViewer::mouseReleaseEvent(event);
+        CGAL::QGLViewer::mouseReleaseEvent(event);
 
 }
 
@@ -2148,7 +2148,7 @@ void Viewer::wheelEvent(QWheelEvent *event)
     }//end-if-move
 
     else
-        QGLViewer::wheelEvent(event);
+        CGAL::QGLViewer::wheelEvent(event);
 }
 
 void Viewer::keyPressEvent(QKeyEvent *event)
@@ -2240,7 +2240,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
     }//end-if-showBall
 
     else
-        QGLViewer::keyPressEvent(event);
+        CGAL::QGLViewer::keyPressEvent(event);
 
 
     // redraw

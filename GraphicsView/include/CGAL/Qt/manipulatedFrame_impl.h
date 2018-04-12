@@ -3,7 +3,7 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of a fork of the QGLViewer library version 2.7.0.
+ This file is part of a fork of the CGAL::QGLViewer library version 2.7.0.
 
  http://www.libqglviewer.com - contact@libqglviewer.com
 
@@ -11,8 +11,8 @@
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
 
- libQGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libQGLViewer Commercial License.
+ libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
+ purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -40,7 +40,7 @@
 
 #include <QMouseEvent>
 
-using namespace qglviewer;
+using namespace CGAL::qglviewer;
 using namespace std;
 
 /*! Default constructor.
@@ -188,8 +188,8 @@ void ManipulatedFrame::initFromDOMElement(const QDomElement &element) {
   Can be used to change the display of the manipulated object during
   manipulation.
 
-  When Camera::frame() of the QGLViewer::camera() isManipulated(),
-  QGLViewer::fastDraw() is used in place of QGLViewer::draw() for scene
+  When Camera::frame() of the CGAL::QGLViewer::camera() isManipulated(),
+  CGAL::QGLViewer::fastDraw() is used in place of CGAL::QGLViewer::draw() for scene
   rendering. A simplified drawing will then allow for interactive camera
   displacements.  */
 CGAL_INLINE_FUNCTION
@@ -214,7 +214,7 @@ CGAL_INLINE_FUNCTION
 void ManipulatedFrame::spin() { rotate(spinningQuaternion()); }
 
 /* spin() and spinUpdate() differ since spin can be used by itself (for instance
-   by QGLViewer::SCREEN_ROTATE) without a spun emission. Much nicer to use the
+   by CGAL::QGLViewer::SCREEN_ROTATE) without a spun emission. Much nicer to use the
    spinningQuaternion() and hence spin() for these incremental updates. Nothing
    special to be done for continuous spinning with this design. */
 CGAL_INLINE_FUNCTION
@@ -327,7 +327,7 @@ Overloading of MouseGrabber::mousePressEvent(). See also mouseMoveEvent() and
 mouseReleaseEvent().
 
 The mouse behavior depends on which button is pressed. See the <a
-href="../mouse.html">QGLViewer mouse page</a> for details. */
+href="../mouse.html">CGAL::QGLViewer mouse page</a> for details. */
 CGAL_INLINE_FUNCTION
 void ManipulatedFrame::mousePressEvent(QMouseEvent *const event,
                                        Camera *const camera) {
@@ -348,7 +348,7 @@ void ManipulatedFrame::mousePressEvent(QMouseEvent *const event,
 /*! Modifies the ManipulatedFrame according to the mouse motion.
 
 Actual behavior depends on mouse bindings. See the MouseAction enum
-and the <a href="../mouse.html">QGLViewer mouse page</a> for details.
+and the <a href="../mouse.html">CGAL::QGLViewer mouse page</a> for details.
 
 The \p camera is used to fit the mouse motion with the display parameters (see
 Camera::screenWidth(), Camera::screenHeight(), Camera::fieldOfView()).
@@ -516,12 +516,12 @@ ManipulatedFrame on the \p camera view direction. */
 CGAL_INLINE_FUNCTION
 void ManipulatedFrame::mouseDoubleClickEvent(QMouseEvent *const event,
                                              Camera *const camera) {
-  if (event->modifiers() == Qt::NoModifier)
+  if (event->modifiers() == ::Qt::NoModifier)
     switch (event->button()) {
-    case Qt::LeftButton:
+    case ::Qt::LeftButton:
       alignWithFrame(camera->frame());
       break;
-    case Qt::RightButton:
+    case ::Qt::RightButton:
       projectOnLine(camera->position(), camera->viewDirection());
       break;
     default:
@@ -532,11 +532,11 @@ void ManipulatedFrame::mouseDoubleClickEvent(QMouseEvent *const event,
 /*! Overloading of MouseGrabber::wheelEvent().
 
 Using the wheel is equivalent to a ZOOM MouseAction. See
- QGLViewer::setWheelBinding(), setWheelSensitivity(). */
+ CGAL::QGLViewer::setWheelBinding(), setWheelSensitivity(). */
 CGAL_INLINE_FUNCTION
 void ManipulatedFrame::wheelEvent(QWheelEvent *const event,
                                   Camera *const camera) {
-  //#CONNECTION# QGLViewer::setWheelBinding
+  //#CONNECTION# CGAL::QGLViewer::setWheelBinding
   if (action_ == ZOOM) {
     zoom(wheelDelta(event), camera);
     Q_EMIT manipulated();

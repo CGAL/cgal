@@ -10,7 +10,7 @@
 #include <QOpenGLShaderProgram>
 
 
-class Viewer : public QGLViewer{
+class Viewer : public CGAL::QGLViewer{
   Q_OBJECT
 
   CGAL::Timer timer;
@@ -61,7 +61,7 @@ private:
     QOpenGLShaderProgram rendering_program_points;
     void initialize_buffers();
     void compute_elements();
-    void attrib_buffers(QGLViewer*);
+    void attrib_buffers(CGAL::QGLViewer*);
     void compile_shaders();
  public Q_SLOTS:
     void initializeGL();

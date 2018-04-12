@@ -48,6 +48,7 @@
 class QTabWidget;
 class QImage;
 
+namespace CGAL{
 /*! \brief A versatile 3D OpenGL viewer based on QOpenGLWidget.
 \class QGLViewer qglviewer.h QGLViewer/qglviewer.h
 
@@ -80,9 +81,9 @@ class CGAL_QT_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions_2
 
 public:  
   explicit QGLViewer(QGLContext* context, QWidget *parent = 0,
-                     Qt::WindowFlags flags = 0);
+                     ::Qt::WindowFlags flags = 0);
   explicit QGLViewer(QWidget *parent = 0,
-                     Qt::WindowFlags flags = 0);
+                     ::Qt::WindowFlags flags = 0);
 
   virtual ~QGLViewer();
 
@@ -859,15 +860,15 @@ public:
 #ifndef DOXYGEN
   // QGLViewer 1.x
   unsigned int keyboardAccelerator(qglviewer::KeyboardAction action) const;
-  Qt::Key keyFrameKey(unsigned int index) const;
-  Qt::KeyboardModifiers playKeyFramePathStateKey() const;
+  ::Qt::Key keyFrameKey(unsigned int index) const;
+  ::Qt::KeyboardModifiers playKeyFramePathStateKey() const;
   // QGLViewer 2.0 without Qt4 support
-  Qt::KeyboardModifiers addKeyFrameStateKey() const;
-  Qt::KeyboardModifiers playPathStateKey() const;
+  ::Qt::KeyboardModifiers addKeyFrameStateKey() const;
+  ::Qt::KeyboardModifiers playPathStateKey() const;
 #endif
-  Qt::Key pathKey(unsigned int index) const;
-  Qt::KeyboardModifiers addKeyFrameKeyboardModifiers() const;
-  Qt::KeyboardModifiers playPathKeyboardModifiers() const;
+  ::Qt::Key pathKey(unsigned int index) const;
+  ::Qt::KeyboardModifiers addKeyFrameKeyboardModifiers() const;
+  ::Qt::KeyboardModifiers playPathKeyboardModifiers() const;
 
 public Q_SLOTS:
   void setShortcut(qglviewer::KeyboardAction action, unsigned int key);
@@ -887,8 +888,8 @@ public Q_SLOTS:
   virtual void setAddKeyFrameStateKey(unsigned int buttonState);
 #endif
   virtual void setPathKey(int key, unsigned int index = 0);
-  virtual void setPlayPathKeyboardModifiers(Qt::KeyboardModifiers modifiers);
-  virtual void setAddKeyFrameKeyboardModifiers(Qt::KeyboardModifiers modifiers);
+  virtual void setPlayPathKeyboardModifiers(::Qt::KeyboardModifiers modifiers);
+  virtual void setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers modifiers);
   //@}
 
 public:
@@ -902,39 +903,39 @@ public:
   int mouseButtonState(qglviewer::MouseHandler handler, qglviewer::MouseAction action,
                        bool withConstraint = true) const;
   qglviewer::ClickAction clickAction(unsigned int state, bool doubleClick,
-                          Qt::MouseButtons buttonsBefore) const;
+                          ::Qt::MouseButtons buttonsBefore) const;
   void getClickButtonState(qglviewer::ClickAction action, unsigned int &state,
                            bool &doubleClick,
-                           Qt::MouseButtons &buttonsBefore) const;
+                           ::Qt::MouseButtons &buttonsBefore) const;
   unsigned int wheelButtonState(qglviewer::MouseHandler handler, qglviewer::MouseAction action,
                                 bool withConstraint = true) const;
 #endif
 
-  qglviewer::MouseAction mouseAction(Qt::Key key, Qt::KeyboardModifiers modifiers,
-                          Qt::MouseButton button) const;
-  int mouseHandler(Qt::Key key, Qt::KeyboardModifiers modifiers,
-                   Qt::MouseButton button) const;
+  qglviewer::MouseAction mouseAction(::Qt::Key key, ::Qt::KeyboardModifiers modifiers,
+                          ::Qt::MouseButton button) const;
+  int mouseHandler(::Qt::Key key, ::Qt::KeyboardModifiers modifiers,
+                   ::Qt::MouseButton button) const;
 
   void getMouseActionBinding(qglviewer::MouseHandler handler, qglviewer::MouseAction action,
-                             bool withConstraint, Qt::Key &key,
-                             Qt::KeyboardModifiers &modifiers,
-                             Qt::MouseButton &button) const;
+                             bool withConstraint, ::Qt::Key &key,
+                             ::Qt::KeyboardModifiers &modifiers,
+                             ::Qt::MouseButton &button) const;
 
-  qglviewer::ClickAction clickAction(Qt::Key key, Qt::KeyboardModifiers modifiers,
-                          Qt::MouseButton button, bool doubleClick = false,
-                          Qt::MouseButtons buttonsBefore = Qt::NoButton) const;
+  qglviewer::ClickAction clickAction(::Qt::Key key, ::Qt::KeyboardModifiers modifiers,
+                          ::Qt::MouseButton button, bool doubleClick = false,
+                          ::Qt::MouseButtons buttonsBefore = ::Qt::NoButton) const;
 
-  void getClickActionBinding(qglviewer::ClickAction action, Qt::Key &key,
-                             Qt::KeyboardModifiers &modifiers,
-                             Qt::MouseButton &button, bool &doubleClick,
-                             Qt::MouseButtons &buttonsBefore) const;
+  void getClickActionBinding(qglviewer::ClickAction action, ::Qt::Key &key,
+                             ::Qt::KeyboardModifiers &modifiers,
+                             ::Qt::MouseButton &button, bool &doubleClick,
+                             ::Qt::MouseButtons &buttonsBefore) const;
 
-  qglviewer::MouseAction wheelAction(Qt::Key key, Qt::KeyboardModifiers modifiers) const;
-  int wheelHandler(Qt::Key key, Qt::KeyboardModifiers modifiers) const;
+  qglviewer::MouseAction wheelAction(::Qt::Key key, ::Qt::KeyboardModifiers modifiers) const;
+  int wheelHandler(::Qt::Key key, ::Qt::KeyboardModifiers modifiers) const;
 
   void getWheelActionBinding(qglviewer::MouseHandler handler, qglviewer::MouseAction action,
-                             bool withConstraint, Qt::Key &key,
-                             Qt::KeyboardModifiers &modifiers) const;
+                             bool withConstraint, ::Qt::Key &key,
+                             ::Qt::KeyboardModifiers &modifiers) const;
 
 public Q_SLOTS:
 #ifndef DOXYGEN
@@ -942,51 +943,51 @@ public Q_SLOTS:
                        qglviewer::MouseAction action, bool withConstraint = true);
   void setMouseBinding(unsigned int state, qglviewer::ClickAction action,
                        bool doubleClick = false,
-                       Qt::MouseButtons buttonsBefore = Qt::NoButton);
+                       ::Qt::MouseButtons buttonsBefore = ::Qt::NoButton);
   void
   setMouseBindingDescription(unsigned int state, QString description,
                              bool doubleClick = false,
-                             Qt::MouseButtons buttonsBefore = Qt::NoButton);
+                             ::Qt::MouseButtons buttonsBefore = ::Qt::NoButton);
 #endif
 
-  void setMouseBinding(Qt::KeyboardModifiers modifiers, Qt::MouseButton buttons,
+  void setMouseBinding(::Qt::KeyboardModifiers modifiers, ::Qt::MouseButton buttons,
                        qglviewer::MouseHandler handler, qglviewer::MouseAction action,
                        bool withConstraint = true);
-  void setMouseBinding(Qt::KeyboardModifiers modifiers, Qt::MouseButton button,
+  void setMouseBinding(::Qt::KeyboardModifiers modifiers, ::Qt::MouseButton button,
                        qglviewer::ClickAction action, bool doubleClick = false,
-                       Qt::MouseButtons buttonsBefore = Qt::NoButton);
-  void setWheelBinding(Qt::KeyboardModifiers modifiers, qglviewer::MouseHandler handler,
+                       ::Qt::MouseButtons buttonsBefore = ::Qt::NoButton);
+  void setWheelBinding(::Qt::KeyboardModifiers modifiers, qglviewer::MouseHandler handler,
                        qglviewer::MouseAction action, bool withConstraint = true);
   void
-  setMouseBindingDescription(Qt::KeyboardModifiers modifiers,
-                             Qt::MouseButton button, QString description,
+  setMouseBindingDescription(::Qt::KeyboardModifiers modifiers,
+                             ::Qt::MouseButton button, QString description,
                              bool doubleClick = false,
-                             Qt::MouseButtons buttonsBefore = Qt::NoButton);
+                             ::Qt::MouseButtons buttonsBefore = ::Qt::NoButton);
 
-  void setMouseBinding(Qt::Key key, Qt::KeyboardModifiers modifiers,
-                       Qt::MouseButton buttons, qglviewer::MouseHandler handler,
+  void setMouseBinding(::Qt::Key key, ::Qt::KeyboardModifiers modifiers,
+                       ::Qt::MouseButton buttons, qglviewer::MouseHandler handler,
                        qglviewer::MouseAction action, bool withConstraint = true);
-  void setMouseBinding(Qt::Key key, Qt::KeyboardModifiers modifiers,
-                       Qt::MouseButton button, qglviewer::ClickAction action,
+  void setMouseBinding(::Qt::Key key, ::Qt::KeyboardModifiers modifiers,
+                       ::Qt::MouseButton button, qglviewer::ClickAction action,
                        bool doubleClick = false,
-                       Qt::MouseButtons buttonsBefore = Qt::NoButton);
-  void setWheelBinding(Qt::Key key, Qt::KeyboardModifiers modifiers,
+                       ::Qt::MouseButtons buttonsBefore = ::Qt::NoButton);
+  void setWheelBinding(::Qt::Key key, ::Qt::KeyboardModifiers modifiers,
                        qglviewer::MouseHandler handler, qglviewer::MouseAction action,
                        bool withConstraint = true);
   void
-  setMouseBindingDescription(Qt::Key key, Qt::KeyboardModifiers modifiers,
-                             Qt::MouseButton button, QString description,
+  setMouseBindingDescription(::Qt::Key key, ::Qt::KeyboardModifiers modifiers,
+                             ::Qt::MouseButton button, QString description,
                              bool doubleClick = false,
-                             Qt::MouseButtons buttonsBefore = Qt::NoButton);
+                             ::Qt::MouseButtons buttonsBefore = ::Qt::NoButton);
 
   void clearMouseBindings();
 
 #ifndef DOXYGEN
-  qglviewer::MouseAction wheelAction(Qt::KeyboardModifiers modifiers) const;
-  int wheelHandler(Qt::KeyboardModifiers modifiers) const;
+  qglviewer::MouseAction wheelAction(::Qt::KeyboardModifiers modifiers) const;
+  int wheelHandler(::Qt::KeyboardModifiers modifiers) const;
 
   void setHandlerKeyboardModifiers(qglviewer::MouseHandler handler,
-                                   Qt::KeyboardModifiers modifiers);
+                                   ::Qt::KeyboardModifiers modifiers);
   void setHandlerStateKey(qglviewer::MouseHandler handler, unsigned int buttonState);
   void setMouseStateKey(qglviewer::MouseHandler handler, unsigned int buttonState);
 #endif
@@ -1155,8 +1156,8 @@ protected:
   QMap<unsigned int, QString> keyDescription_;
 
   // K e y   F r a m e s   s h o r t c u t s
-  QMap<Qt::Key, unsigned int> pathIndex_;
-  Qt::KeyboardModifiers addKeyFrameKeyboardModifiers_,
+  QMap<::Qt::Key, unsigned int> pathIndex_;
+  ::Qt::KeyboardModifiers addKeyFrameKeyboardModifiers_,
       playPathKeyboardModifiers_;
 
   // B u f f e r   T e x t u r e
@@ -1176,11 +1177,11 @@ protected:
 
   // M o u s e   b i n d i n g s
   struct MouseBindingPrivate {
-    const Qt::KeyboardModifiers modifiers;
-    const Qt::MouseButton button;
-    const Qt::Key key;
+    const ::Qt::KeyboardModifiers modifiers;
+    const ::Qt::MouseButton button;
+    const ::Qt::Key key;
 
-    MouseBindingPrivate(Qt::KeyboardModifiers m, Qt::MouseButton b, Qt::Key k)
+    MouseBindingPrivate(::Qt::KeyboardModifiers m, ::Qt::MouseButton b, ::Qt::Key k)
         : modifiers(m), button(b), key(k) {}
 
     // This sort order is used in mouseString() to display sorted mouse bindings
@@ -1195,10 +1196,10 @@ protected:
 
   // W h e e l   b i n d i n g s
   struct WheelBindingPrivate {
-    const Qt::KeyboardModifiers modifiers;
-    const Qt::Key key;
+    const ::Qt::KeyboardModifiers modifiers;
+    const ::Qt::Key key;
 
-    WheelBindingPrivate(Qt::KeyboardModifiers m, Qt::Key k)
+    WheelBindingPrivate(::Qt::KeyboardModifiers m, ::Qt::Key k)
         : modifiers(m), key(k) {}
 
     // This sort order is used in mouseString() to display sorted wheel bindings
@@ -1211,15 +1212,15 @@ protected:
 
   // C l i c k   b i n d i n g s
   struct ClickBindingPrivate {
-    const Qt::KeyboardModifiers modifiers;
-    const Qt::MouseButton button;
+    const ::Qt::KeyboardModifiers modifiers;
+    const ::Qt::MouseButton button;
     const bool doubleClick;
-    const Qt::MouseButtons
+    const ::Qt::MouseButtons
         buttonsBefore; // only defined when doubleClick is true
-    const Qt::Key key;
+    const ::Qt::Key key;
 
-    ClickBindingPrivate(Qt::KeyboardModifiers m, Qt::MouseButton b, bool dc,
-                        Qt::MouseButtons bb, Qt::Key k)
+    ClickBindingPrivate(::Qt::KeyboardModifiers m, ::Qt::MouseButton b, bool dc,
+                        ::Qt::MouseButtons bb, ::Qt::Key k)
         : modifiers(m), button(b), doubleClick(dc), buttonsBefore(bb), key(k) {}
 
     // This sort order is used in mouseString() to display sorted mouse bindings
@@ -1246,7 +1247,7 @@ protected:
   QMap<MouseBindingPrivate, MouseActionPrivate> mouseBinding_;
   QMap<WheelBindingPrivate, MouseActionPrivate> wheelBinding_;
   QMap<ClickBindingPrivate, qglviewer::ClickAction> clickBinding_;
-  Qt::Key currentlyPressedKey_;
+  ::Qt::Key currentlyPressedKey_;
   
   // S t a t e   F i l e
   QString stateFileName_;
@@ -1298,6 +1299,7 @@ public:
   
 };
 
+} //end CGAL
 
 
 #ifdef CGAL_HEADER_ONLY
