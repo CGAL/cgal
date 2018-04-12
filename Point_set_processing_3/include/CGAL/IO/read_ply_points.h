@@ -347,7 +347,10 @@ namespace internal {
                       reading_properties = true;
                     }
                   else
-                    continue;
+                    {
+                      reading_properties = false;
+                      continue;
+                    }
                 }
             
             }
