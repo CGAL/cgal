@@ -1581,8 +1581,10 @@ structure_point_set (const PointRange& points, ///< range of points.
     (points, planes, output, epsilon,
      CGAL::Point_set_processing_3::parameters::all_default(points));
 }
+/// \endcond
 
 #ifndef CGAL_NO_DEPRECATED_CODE
+/// \cond SKIP_IN_MANUAL
 // deprecated API
 template <typename Traits,
           typename OutputIterator
@@ -1611,8 +1613,6 @@ structure_point_set (typename Traits::Input_range::iterator first,  ///< iterato
                               attraction_factor(attraction_factor));
 }
 
-
-/// \cond SKIP_IN_MANUAL
 // deprecated API
 template <typename Traits,
           typename OutputIterator
@@ -1637,7 +1637,7 @@ structure_point_set (typename Traits::Input_range::iterator first,  ///< iterato
 }
 /// \endcond
 #endif // CGAL_NO_DEPRECATED_CODE
-/// \endcond
+
 
 } //namespace CGAL
 
