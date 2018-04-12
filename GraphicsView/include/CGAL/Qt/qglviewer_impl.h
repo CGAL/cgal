@@ -172,32 +172,12 @@ void CGAL::QGLViewer::defaultConstructor() {
   _offset = CGAL::qglviewer::Vec(0,0,0);
 }
 
-#ifndef DOXYGEN
-/*! These contructors are deprecated since version 2.7.0, since they are not
- * supported by QOpenGlWidget */
-
-/*! Constructor. See \c QGLWidget documentation for details.
-
-All viewer parameters (display flags, scene parameters, associated objects...)
-are set to their default values. See the associated documentation.
-
-If the \p shareWidget parameter points to a valid \c QGLWidget, the CGAL::QGLViewer
-will share the OpenGL context with \p shareWidget (see isSharing()). */
 CGAL_INLINE_FUNCTION
 CGAL::QGLViewer::QGLViewer(QWidget *parent,
                      ::Qt::WindowFlags flags)
     : QOpenGLWidget(parent, flags) {
   defaultConstructor();
 }
-
-CGAL_INLINE_FUNCTION
-CGAL::QGLViewer::QGLViewer(QGLContext*,
-                     QWidget *parent,
-                     ::Qt::WindowFlags flags)
-  : QOpenGLWidget(parent, flags) {
-  defaultConstructor();
-}
-#endif // DOXYGEN
 
 /*! Virtual destructor.
 
@@ -223,19 +203,6 @@ CGAL::QGLViewer::~QGLViewer() {
   }
 }
 
-
-
-static ::Qt::KeyboardModifiers keyboardModifiersFromState(unsigned int state) {
-  // Convertion of keyboard modifiers and mouse buttons as an int is no longer
-  // supported : emulate
-  return ::Qt::KeyboardModifiers(int(state & 0xFF000000));
-}
-
-static ::Qt::MouseButton mouseButtonFromState(unsigned int state) {
-  // Convertion of keyboard modifiers and mouse buttons as an int is no longer
-  // supported : emulate
-  return ::Qt::MouseButton(state & 0xFFFF);
-}
 
 /*! Initializes the CGAL::QGLViewer OpenGL context and then calls user-defined init().
 
@@ -1717,24 +1684,6 @@ bool CGAL::QGLViewer::isValidShortcutKey(int key) {
          (key >= ::Qt::Key_F1 && key <= ::Qt::Key_F35);
 }
 
-#ifndef DOXYGEN
-/*! This method is deprecated since version 2.5.0
-
- Use setMouseBindingDescription(::Qt::KeyboardModifiers, ::Qt::MouseButtons,
- QString, bool, ::Qt::MouseButtons) instead.
-*/
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::setMouseBindingDescription(unsigned int state,
-                                           QString description,
-                                           bool doubleClick,
-                                           ::Qt::MouseButtons buttonsBefore) {
-  qWarning("setMouseBindingDescription(int state,...) is deprecated. Use the "
-           "modifier/button equivalent");
-  setMouseBindingDescription(keyboardModifiersFromState(state),
-                             mouseButtonFromState(state), description,
-                             doubleClick, buttonsBefore);
-}
-#endif
 
 /*! Defines a custom mouse binding description, displayed in the help() window's
  Mouse tab.
@@ -2457,20 +2406,6 @@ unsigned int CGAL::QGLViewer::shortcut(KeyboardAction action) const {
     return 0;
 }
 
-#ifndef DOXYGEN
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::setKeyboardAccelerator(KeyboardAction action,
-                                       unsigned int key) {
-  qWarning("setKeyboardAccelerator is deprecated. Use setShortcut instead.");
-  setShortcut(action, key);
-}
-
-CGAL_INLINE_FUNCTION
-unsigned int CGAL::QGLViewer::keyboardAccelerator(KeyboardAction action) const {
-  qWarning("keyboardAccelerator is deprecated. Use shortcut instead.");
-  return shortcut(action);
-}
-#endif
 
 ///////     Key Frames associated keys       ///////
 
@@ -2563,190 +2498,10 @@ CGAL_INLINE_FUNCTION
   return playPathKeyboardModifiers_;
 }
 
-#ifndef DOXYGEN
-// Deprecated methods
-CGAL_INLINE_FUNCTION
-::Qt::KeyboardModifiers CGAL::QGLViewer::addKeyFrameStateKey() const {
-  qWarning("addKeyFrameStateKey has been renamed addKeyFrameKeyboardModifiers");
-  return addKeyFrameKeyboardModifiers();
-}
-
-CGAL_INLINE_FUNCTION
-::Qt::KeyboardModifiers CGAL::QGLViewer::playPathStateKey() const {
-  qWarning("playPathStateKey has been renamed playPathKeyboardModifiers");
-  return playPathKeyboardModifiers();
-}
-
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::setAddKeyFrameStateKey(unsigned int buttonState) {
-  qWarning("setAddKeyFrameStateKey has been renamed "
-           "setAddKeyFrameKeyboardModifiers");
-  setAddKeyFrameKeyboardModifiers(keyboardModifiersFromState(buttonState));
-}
-
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::setPlayPathStateKey(unsigned int buttonState) {
-  qWarning("setPlayPathStateKey has been renamed setPlayPathKeyboardModifiers");
-  setPlayPathKeyboardModifiers(keyboardModifiersFromState(buttonState));
-}
-
-CGAL_INLINE_FUNCTION
-::Qt::Key CGAL::QGLViewer::keyFrameKey(unsigned int index) const {
-  qWarning("keyFrameKey has been renamed pathKey.");
-  return pathKey(index);
-}
-
-CGAL_INLINE_FUNCTION
-::Qt::KeyboardModifiers CGAL::QGLViewer::playKeyFramePathStateKey() const {
-  qWarning(
-      "playKeyFramePathStateKey has been renamed playPathKeyboardModifiers.");
-  return playPathKeyboardModifiers();
-}
-
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::setKeyFrameKey(unsigned int index, int key) {
-  qWarning("setKeyFrameKey is deprecated, use setPathKey instead, with swapped "
-           "parameters.");
-  setPathKey(key, index);
-}
-
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::setPlayKeyFramePathStateKey(unsigned int buttonState) {
-  qWarning("setPlayKeyFramePathStateKey has been renamed "
-           "setPlayPathKeyboardModifiers.");
-  setPlayPathKeyboardModifiers(keyboardModifiersFromState(buttonState));
-}
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 //              M o u s e   b e h a v i o r   s t a t e   k e y s             //
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef DOXYGEN
-/*! This method has been deprecated since version 2.5.0
-
-Associates keyboard modifiers to MouseHandler \p handler.
-
-The \p modifiers parameter is \c ::Qt::AltModifier, \c ::Qt::ShiftModifier, \c
-::Qt::ControlModifier, \c ::Qt::MetaModifier or a combination of these using the '|'
-bitwise operator.
-
-\e All the \p handler's associated bindings will then need the specified \p
-modifiers key(s) to be activated.
-
-With this code,
-\code
-setHandlerKeyboardModifiers(CGAL::QGLViewer::CAMERA, ::Qt::AltModifier);
-setHandlerKeyboardModifiers(CGAL::QGLViewer::FRAME, ::Qt::NoModifier);
-\endcode
-you will have to press the \c Alt key while pressing mouse buttons in order to
-move the camera(), while no key will be needed to move the manipulatedFrame().
-
-This method has a very basic implementation: every action binded to \p handler
-has its keyboard modifier replaced by \p modifiers. If \p handler had some
-actions binded to different modifiers, these settings will be lost. You should
-hence consider using setMouseBinding() for finer tuning.
-
-The default binding associates \c ::Qt::ControlModifier to all the
-CGAL::QGLViewer::FRAME actions and \c ::Qt::NoModifier to all CGAL::QGLViewer::CAMERA actions.
-See <a href="../mouse.html">mouse page</a> for details.
-
-\attention This method calls setMouseBinding(), which ensures that only one
-action is binded to a given modifiers. If you want to \e swap the
-CGAL::QGLViewer::CAMERA and CGAL::QGLViewer::FRAME keyboard modifiers, you have to use a
-temporary dummy modifier (as if you were swapping two variables) or else the
-first call will overwrite the previous settings: \code
-// Associate FRAME with Alt (temporary value)
-setHandlerKeyboardModifiers(CGAL::QGLViewer::FRAME, ::Qt::AltModifier);
-// Control is associated with CAMERA
-setHandlerKeyboardModifiers(CGAL::QGLViewer::CAMERA, ::Qt::ControlModifier);
-// And finally, FRAME can be associated with NoModifier
-setHandlerKeyboardModifiers(CGAL::QGLViewer::FRAME, ::Qt::NoModifier);
-\endcode */
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::setHandlerKeyboardModifiers(MouseHandler handler,
-                                            ::Qt::KeyboardModifiers modifiers) {
-  qWarning("setHandlerKeyboardModifiers is deprecated, call setMouseBinding() "
-           "instead");
-
-  QMap<MouseBindingPrivate, MouseActionPrivate> newMouseBinding;
-  QMap<WheelBindingPrivate, MouseActionPrivate> newWheelBinding;
-  QMap<ClickBindingPrivate, ClickAction> newClickBinding_;
-
-  QMap<MouseBindingPrivate, MouseActionPrivate>::Iterator mit;
-  QMap<WheelBindingPrivate, MouseActionPrivate>::Iterator wit;
-
-  // First copy unchanged bindings.
-  for (mit = mouseBinding_.begin(); mit != mouseBinding_.end(); ++mit)
-    if ((mit.value().handler != handler) ||
-        (mit.value().action == ZOOM_ON_REGION))
-      newMouseBinding[mit.key()] = mit.value();
-
-  for (wit = wheelBinding_.begin(); wit != wheelBinding_.end(); ++wit)
-    if (wit.value().handler != handler)
-      newWheelBinding[wit.key()] = wit.value();
-
-  // Then, add modified bindings, that can overwrite the previous ones.
-  for (mit = mouseBinding_.begin(); mit != mouseBinding_.end(); ++mit)
-    if ((mit.value().handler == handler) &&
-        (mit.value().action != ZOOM_ON_REGION)) {
-      MouseBindingPrivate mbp(modifiers, mit.key().button, mit.key().key);
-      newMouseBinding[mbp] = mit.value();
-    }
-
-  for (wit = wheelBinding_.begin(); wit != wheelBinding_.end(); ++wit)
-    if (wit.value().handler == handler) {
-      WheelBindingPrivate wbp(modifiers, wit.key().key);
-      newWheelBinding[wbp] = wit.value();
-    }
-
-  // Same for button bindings
-  for (QMap<ClickBindingPrivate, ClickAction>::ConstIterator
-           cb = clickBinding_.begin(),
-           end = clickBinding_.end();
-       cb != end; ++cb)
-    if (((handler == CAMERA) &&
-         ((cb.value() == CENTER_SCENE) || (cb.value() == ALIGN_CAMERA))) ||
-        ((handler == FRAME) &&
-         ((cb.value() == CENTER_FRAME) || (cb.value() == ALIGN_FRAME)))) {
-      ClickBindingPrivate cbp(modifiers, cb.key().button, cb.key().doubleClick,
-                              cb.key().buttonsBefore, cb.key().key);
-      newClickBinding_[cbp] = cb.value();
-    } else
-      newClickBinding_[cb.key()] = cb.value();
-
-  mouseBinding_ = newMouseBinding;
-  wheelBinding_ = newWheelBinding;
-  clickBinding_ = newClickBinding_;
-}
-
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::setHandlerStateKey(MouseHandler handler,
-                                   unsigned int buttonState) {
-  qWarning("setHandlerStateKey has been renamed setHandlerKeyboardModifiers");
-  setHandlerKeyboardModifiers(handler, keyboardModifiersFromState(buttonState));
-}
-
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::setMouseStateKey(MouseHandler handler,
-                                 unsigned int buttonState) {
-  qWarning("setMouseStateKey has been renamed setHandlerKeyboardModifiers.");
-  setHandlerKeyboardModifiers(handler, keyboardModifiersFromState(buttonState));
-}
-
-/*! This method is deprecated since version 2.5.0
-
- Use setMouseBinding(::Qt::KeyboardModifiers, ::Qt::MouseButtons, MouseHandler,
- MouseAction, bool) instead.
-*/
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::setMouseBinding(unsigned int state, MouseHandler handler,
-                                MouseAction action, bool withConstraint) {
-  qWarning("setMouseBinding(int state, MouseHandler...) is deprecated. Use the "
-           "modifier/button equivalent");
-  setMouseBinding(keyboardModifiersFromState(state),
-                  mouseButtonFromState(state), handler, action, withConstraint);
-}
-#endif
 
 /*! Defines a MouseAction binding.
 
@@ -2834,23 +2589,6 @@ void CGAL::QGLViewer::setMouseBinding(::Qt::Key key, ::Qt::KeyboardModifiers mod
   clickBinding_.remove(cbp);
 }
 
-#ifndef DOXYGEN
-/*! This method is deprecated since version 2.5.0
-
- Use setMouseBinding(::Qt::KeyboardModifiers, ::Qt::MouseButtons, MouseHandler,
- MouseAction, bool) instead.
-*/
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::setMouseBinding(unsigned int state, ClickAction action,
-                                bool doubleClick,
-                                ::Qt::MouseButtons buttonsBefore) {
-  qWarning("setMouseBinding(int state, ClickAction...) is deprecated. Use the "
-           "modifier/button equivalent");
-  setMouseBinding(keyboardModifiersFromState(state),
-                  mouseButtonFromState(state), action, doubleClick,
-                  buttonsBefore);
-}
-#endif
 
 /*! Defines a ClickAction binding.
 
@@ -3001,18 +2739,6 @@ void CGAL::QGLViewer::clearShortcuts() {
   pathIndex_.clear();
 }
 
-/*! This method is deprecated since version 2.5.0
-
- Use mouseAction(::Qt::Key, ::Qt::KeyboardModifiers, ::Qt::MouseButtons) instead.
-*/
-CGAL_INLINE_FUNCTION
-MouseAction CGAL::QGLViewer::mouseAction(unsigned int state) const {
-  qWarning("mouseAction(int state,...) is deprecated. Use the modifier/button "
-           "equivalent");
-  return mouseAction(::Qt::Key(0), keyboardModifiersFromState(state),
-                     mouseButtonFromState(state));
-}
-
 /*! Returns the MouseAction the will be triggered when the mouse \p button is
 pressed, while the keyboard \p modifiers and \p key are pressed.
 
@@ -3039,17 +2765,6 @@ MouseAction CGAL::QGLViewer::mouseAction(::Qt::Key key,
     return NO_MOUSE_ACTION;
 }
 
-/*! This method is deprecated since version 2.5.0
-
- Use mouseHanler(::Qt::Key, ::Qt::KeyboardModifiers, ::Qt::MouseButtons) instead.
-*/
-CGAL_INLINE_FUNCTION
-int CGAL::QGLViewer::mouseHandler(unsigned int state) const {
-  qWarning("mouseHandler(int state,...) is deprecated. Use the modifier/button "
-           "equivalent");
-  return mouseHandler(::Qt::Key(0), keyboardModifiersFromState(state),
-                      mouseButtonFromState(state));
-}
 
 /*! Returns the MouseHandler which will be activated when the mouse \p button is
 pressed, while the \p modifiers and \p key are pressed.
@@ -3075,27 +2790,7 @@ int CGAL::QGLViewer::mouseHandler(::Qt::Key key, ::Qt::KeyboardModifiers modifie
     return -1;
 }
 
-#ifndef DOXYGEN
-/*! This method is deprecated since version 2.5.0
 
- Use mouseButtons() and keyboardModifiers() instead.
-*/
-CGAL_INLINE_FUNCTION
-int CGAL::QGLViewer::mouseButtonState(MouseHandler handler, MouseAction action,
-                                bool withConstraint) const {
-  qWarning("mouseButtonState() is deprecated. Use mouseButtons() and "
-           "keyboardModifiers() instead");
-  for (QMap<MouseBindingPrivate, MouseActionPrivate>::ConstIterator
-           it = mouseBinding_.begin(),
-           end = mouseBinding_.end();
-       it != end; ++it)
-    if ((it.value().handler == handler) && (it.value().action == action) &&
-        (it.value().withConstraint == withConstraint))
-      return (int)it.key().modifiers | (int)it.key().button;
-
-  return ::Qt::NoButton;
-}
-#endif
 
 /*! Returns the keyboard state that triggers \p action on \p handler \p
 withConstraint using the mouse wheel.
@@ -3208,83 +2903,6 @@ CGAL::QGLViewer::clickAction(::Qt::Key key, ::Qt::KeyboardModifiers modifiers,
   else
     return NO_CLICK_ACTION;
 }
-
-#ifndef DOXYGEN
-/*! This method is deprecated since version 2.5.0
-
-  Use wheelAction(::Qt::Key key, ::Qt::KeyboardModifiers modifiers) instead. */
-MouseAction
-CGAL_INLINE_FUNCTION
-CGAL::QGLViewer::wheelAction(::Qt::KeyboardModifiers modifiers) const {
-  qWarning("wheelAction() is deprecated. Use the new wheelAction() method with "
-           "a key parameter instead");
-  return wheelAction(::Qt::Key(0), modifiers);
-}
-
-/*! This method is deprecated since version 2.5.0
-
-  Use wheelHandler(::Qt::Key key, ::Qt::KeyboardModifiers modifiers) instead. */
-CGAL_INLINE_FUNCTION
-int CGAL::QGLViewer::wheelHandler(::Qt::KeyboardModifiers modifiers) const {
-  qWarning("wheelHandler() is deprecated. Use the new wheelHandler() method "
-           "with a key parameter instead");
-  return wheelHandler(::Qt::Key(0), modifiers);
-}
-
-/*! This method is deprecated since version 2.5.0
-
-  Use wheelAction() and wheelHandler() instead. */
-CGAL_INLINE_FUNCTION
-unsigned int CGAL::QGLViewer::wheelButtonState(MouseHandler handler,
-                                         MouseAction action,
-                                         bool withConstraint) const {
-  qWarning("wheelButtonState() is deprecated. Use the wheelAction() and "
-           "wheelHandler() instead");
-  for (QMap<WheelBindingPrivate, MouseActionPrivate>::ConstIterator
-           it = wheelBinding_.begin(),
-           end = wheelBinding_.end();
-       it != end; ++it)
-    if ((it.value().handler == handler) && (it.value().action == action) &&
-        (it.value().withConstraint == withConstraint))
-      return it.key().key + it.key().modifiers;
-
-  return -1;
-}
-
-/*! This method is deprecated since version 2.5.0
-
- Use clickAction(::Qt::KeyboardModifiers, ::Qt::MouseButtons, bool,
- ::Qt::MouseButtons) instead.
-*/
-CGAL::qglviewer::ClickAction
-CGAL_INLINE_FUNCTION
-CGAL::QGLViewer::clickAction(unsigned int state, bool doubleClick,
-                       ::Qt::MouseButtons buttonsBefore) const {
-  qWarning("clickAction(int state,...) is deprecated. Use the modifier/button "
-           "equivalent");
-  return clickAction(::Qt::Key(0), keyboardModifiersFromState(state),
-                     mouseButtonFromState(state), doubleClick, buttonsBefore);
-}
-
-/*! This method is deprecated since version 2.5.0
-
- Use getClickActionState(ClickAction, ::Qt::Key, ::Qt::KeyboardModifiers,
- ::Qt::MouseButton, bool, ::Qt::MouseButtons) instead.
-*/
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::getClickButtonState(ClickAction action, unsigned int &state,
-                                    bool &doubleClick,
-                                    ::Qt::MouseButtons &buttonsBefore) const {
-  qWarning("getClickButtonState(int state,...) is deprecated. Use the "
-           "modifier/button equivalent");
-  ::Qt::KeyboardModifiers modifiers;
-  ::Qt::MouseButton button;
-  ::Qt::Key key;
-  getClickActionBinding(action, key, modifiers, button, doubleClick,
-                        buttonsBefore);
-  state = (unsigned int)modifiers | (unsigned int)button | (unsigned int)key;
-}
-#endif
 
 /*! Returns the mouse and keyboard state that triggers \p action.
 
@@ -4238,30 +3856,6 @@ void CGAL::QGLViewer::initFromDOMElement(const QDomElement &element) {
   }
 }
 
-#ifndef DOXYGEN
-/*! This method is deprecated since version 1.3.9-5. Use saveStateToFile() and
-setStateFileName() instead. */
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::saveToFile(const QString &fileName) {
-  if (!fileName.isEmpty())
-    setStateFileName(fileName);
-
-  qWarning("saveToFile() is deprecated, use saveStateToFile() instead.");
-  saveStateToFile();
-}
-
-/*! This function is deprecated since version 1.3.9-5. Use
-restoreStateFromFile() and setStateFileName() instead. */
-CGAL_INLINE_FUNCTION
-bool CGAL::QGLViewer::restoreFromFile(const QString &fileName) {
-  if (!fileName.isEmpty())
-    setStateFileName(fileName);
-
-  qWarning(
-      "restoreFromFile() is deprecated, use restoreStateFromFile() instead.");
-  return restoreStateFromFile();
-}
-#endif
 
 
 CGAL_INLINE_FUNCTION

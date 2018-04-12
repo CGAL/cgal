@@ -86,17 +86,6 @@ public:
   /*! Sets the pivotPoint(), defined in the world coordinate system. */
   void setPivotPoint(const Vec &point) { pivotPoint_ = point; }
 
-#ifndef DOXYGEN
-  Vec revolveAroundPoint() const {
-    qWarning("revolveAroundPoint() is deprecated, use pivotPoint() instead");
-    return pivotPoint();
-  }
-  void setRevolveAroundPoint(const Vec &point) {
-    qWarning(
-        "setRevolveAroundPoint() is deprecated, use setPivotPoint() instead");
-    setPivotPoint(point);
-  }
-#endif
   //@}
 
   /*! @name Camera manipulation */

@@ -165,16 +165,6 @@ and can hence be used in place of Vec. See also operator const qreal*() .*/
 #endif
   }
 
-#ifndef DOXYGEN
-  /*! This method is deprecated since version 2.0. Use operator const qreal*
-   * instead. */
-  const qreal *address() const {
-    qWarning(
-        "Vec::address() is deprecated, use operator const qreal* instead.");
-    return operator const qreal *();
-  }
-#endif
-
   /*! Conversion operator returning the memory address of the vector.
 
 Very convenient to pass a Vec pointer as a parameter to \c GLdouble OpenGL
@@ -320,10 +310,6 @@ efficiency reasons. */
 
 /*! @name Norm of the vector */
 //@{
-#ifndef DOXYGEN
-  /*! This method is deprecated since version 2.0. Use squaredNorm() instead. */
-  qreal sqNorm() const { return x * x + y * y + z * z; }
-#endif
 
   /*! Returns the \e squared norm of the Vec. */
   qreal squaredNorm() const { return x * x + y * y + z * z; }

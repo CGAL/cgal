@@ -118,19 +118,6 @@ void ManipulatedCameraFrame::flyUpdate() {
   // callback to trigger a final draw(). #CONNECTION# wheelEvent.
   Q_EMIT manipulated();
 }
-
-CGAL_INLINE_FUNCTION
-Vec ManipulatedCameraFrame::flyUpVector() const {
-  qWarning("flyUpVector() is deprecated. Use sceneUpVector() instead.");
-  return sceneUpVector();
-}
-
-CGAL_INLINE_FUNCTION
-void ManipulatedCameraFrame::setFlyUpVector(const Vec &up) {
-  qWarning("setFlyUpVector() is deprecated. Use setSceneUpVector() instead.");
-  setSceneUpVector(up);
-}
-
 #endif
 
 /*! This method will be called by the Camera when its orientation is changed, so

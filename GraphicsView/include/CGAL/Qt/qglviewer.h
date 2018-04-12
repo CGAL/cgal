@@ -661,13 +661,6 @@ public:
   virtual QString mouseString() const;
   virtual QString keyboardString() const;
 
-#ifndef DOXYGEN
-  /*! This method is deprecated, use mouseString() instead. */
-  virtual QString mouseBindingsString() const { return mouseString(); }
-  /*! This method is deprecated, use keyboardString() instead. */
-  virtual QString shortcutBindingsString() const { return keyboardString(); }
-#endif
-
 public Q_SLOTS:
   virtual void help();
   virtual void aboutQGLViewer();
@@ -857,36 +850,19 @@ compatible with raster mode): use \c glRasterPos3fv() instead. */
   //@{
 public:
   unsigned int shortcut(qglviewer::KeyboardAction action) const;
-#ifndef DOXYGEN
-  // QGLViewer 1.x
-  unsigned int keyboardAccelerator(qglviewer::KeyboardAction action) const;
-  ::Qt::Key keyFrameKey(unsigned int index) const;
-  ::Qt::KeyboardModifiers playKeyFramePathStateKey() const;
-  // QGLViewer 2.0 without Qt4 support
-  ::Qt::KeyboardModifiers addKeyFrameStateKey() const;
-  ::Qt::KeyboardModifiers playPathStateKey() const;
-#endif
+
   ::Qt::Key pathKey(unsigned int index) const;
   ::Qt::KeyboardModifiers addKeyFrameKeyboardModifiers() const;
   ::Qt::KeyboardModifiers playPathKeyboardModifiers() const;
 
 public Q_SLOTS:
   void setShortcut(qglviewer::KeyboardAction action, unsigned int key);
-#ifndef DOXYGEN
-  void setKeyboardAccelerator(qglviewer::KeyboardAction action, unsigned int key);
-#endif
+
   void setKeyDescription(unsigned int key, QString description);
   void clearShortcuts();
 
 // Key Frames shortcut keys
-#ifndef DOXYGEN
-  // QGLViewer 1.x compatibility methods
-  virtual void setKeyFrameKey(unsigned int index, int key);
-  virtual void setPlayKeyFramePathStateKey(unsigned int buttonState);
-  // QGLViewer 2.0 without Qt4 support
-  virtual void setPlayPathStateKey(unsigned int buttonState);
-  virtual void setAddKeyFrameStateKey(unsigned int buttonState);
-#endif
+
   virtual void setPathKey(int key, unsigned int index = 0);
   virtual void setPlayPathKeyboardModifiers(::Qt::KeyboardModifiers modifiers);
   virtual void setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers modifiers);
@@ -895,21 +871,6 @@ public Q_SLOTS:
 public:
   /*! @name Mouse customization */
   //@{
- 
-
-#ifndef DOXYGEN
-  qglviewer::MouseAction mouseAction(unsigned int state) const;
-  int mouseHandler(unsigned int state) const;
-  int mouseButtonState(qglviewer::MouseHandler handler, qglviewer::MouseAction action,
-                       bool withConstraint = true) const;
-  qglviewer::ClickAction clickAction(unsigned int state, bool doubleClick,
-                          ::Qt::MouseButtons buttonsBefore) const;
-  void getClickButtonState(qglviewer::ClickAction action, unsigned int &state,
-                           bool &doubleClick,
-                           ::Qt::MouseButtons &buttonsBefore) const;
-  unsigned int wheelButtonState(qglviewer::MouseHandler handler, qglviewer::MouseAction action,
-                                bool withConstraint = true) const;
-#endif
 
   qglviewer::MouseAction mouseAction(::Qt::Key key, ::Qt::KeyboardModifiers modifiers,
                           ::Qt::MouseButton button) const;
@@ -938,17 +899,6 @@ public:
                              ::Qt::KeyboardModifiers &modifiers) const;
 
 public Q_SLOTS:
-#ifndef DOXYGEN
-  void setMouseBinding(unsigned int state, qglviewer::MouseHandler handler,
-                       qglviewer::MouseAction action, bool withConstraint = true);
-  void setMouseBinding(unsigned int state, qglviewer::ClickAction action,
-                       bool doubleClick = false,
-                       ::Qt::MouseButtons buttonsBefore = ::Qt::NoButton);
-  void
-  setMouseBindingDescription(unsigned int state, QString description,
-                             bool doubleClick = false,
-                             ::Qt::MouseButtons buttonsBefore = ::Qt::NoButton);
-#endif
 
   void setMouseBinding(::Qt::KeyboardModifiers modifiers, ::Qt::MouseButton buttons,
                        qglviewer::MouseHandler handler, qglviewer::MouseAction action,
@@ -981,16 +931,6 @@ public Q_SLOTS:
                              ::Qt::MouseButtons buttonsBefore = ::Qt::NoButton);
 
   void clearMouseBindings();
-
-#ifndef DOXYGEN
-  qglviewer::MouseAction wheelAction(::Qt::KeyboardModifiers modifiers) const;
-  int wheelHandler(::Qt::KeyboardModifiers modifiers) const;
-
-  void setHandlerKeyboardModifiers(qglviewer::MouseHandler handler,
-                                   ::Qt::KeyboardModifiers modifiers);
-  void setHandlerStateKey(qglviewer::MouseHandler handler, unsigned int buttonState);
-  void setMouseStateKey(qglviewer::MouseHandler handler, unsigned int buttonState);
-#endif
 
 protected:
   static QString mouseActionString(qglviewer::MouseAction ma);
@@ -1025,10 +965,6 @@ public Q_SLOTS:
     \endcode */
   void setStateFileName(const QString &name) { stateFileName_ = name; }
 
-#ifndef DOXYGEN
-  void saveToFile(const QString &fileName = QString::null);
-  bool restoreFromFile(const QString &fileName = QString::null);
-#endif
 
 protected:
   static void saveStateToFileForAllViewers();

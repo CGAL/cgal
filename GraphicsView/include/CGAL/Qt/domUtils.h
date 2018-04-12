@@ -23,8 +23,7 @@
 // SPDX-License-Identifier: GPL-3.0
 #ifndef QGLVIEWER_DOMUTILS_H
 #define QGLVIEWER_DOMUTILS_H
-#include <CGAL/Qt/config.h>
-
+#include <qglobal.h>
 #include <QColor>
 #include <QDomElement>
 #include <QString>

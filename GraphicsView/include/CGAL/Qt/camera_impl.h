@@ -798,26 +798,6 @@ bool Camera::setSceneCenterFromPixel(const QPoint &pixel) {
   return found;
 }
 
-#ifndef DOXYGEN
-CGAL_INLINE_FUNCTION
-void Camera::setRevolveAroundPoint(const Vec &point) {
-  qWarning(
-      "setRevolveAroundPoint() is deprecated, use setPivotPoint() instead");
-  setPivotPoint(point);
-}
-CGAL_INLINE_FUNCTION
-bool Camera::setRevolveAroundPointFromPixel(const QPoint &pixel) {
-  qWarning("setRevolveAroundPointFromPixel() is deprecated, use "
-           "setPivotPointFromPixel() instead");
-  return setPivotPointFromPixel(pixel);
-}
-CGAL_INLINE_FUNCTION
-Vec Camera::revolveAroundPoint() const {
-  qWarning("revolveAroundPoint() is deprecated, use pivotPoint() instead");
-  return pivotPoint();
-}
-#endif
-
 /*! Changes the pivotPoint() to \p point (defined in the world coordinate
  * system). */
 CGAL_INLINE_FUNCTION

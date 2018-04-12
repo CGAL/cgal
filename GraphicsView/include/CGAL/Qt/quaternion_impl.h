@@ -150,13 +150,6 @@ void Quaternion::setFromRotationMatrix(const qreal m[3][3]) {
   normalize();
 }
 
-#ifndef DOXYGEN
-CGAL_INLINE_FUNCTION
-void Quaternion::setFromRotatedBase(const Vec &X, const Vec &Y, const Vec &Z) {
-  qWarning("setFromRotatedBase is deprecated, use setFromRotatedBasis instead");
-  setFromRotatedBasis(X, Y, Z);
-}
-#endif
 
 /*! Sets the Quaternion from the three rotated vectors of an orthogonal basis.
 

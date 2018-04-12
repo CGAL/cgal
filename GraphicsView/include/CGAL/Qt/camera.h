@@ -356,14 +356,6 @@ public Q_SLOTS:
 public:
   Vec pivotPoint() const;
 
-#ifndef DOXYGEN
-public Q_SLOTS:
-  void setRevolveAroundPoint(const Vec &point);
-  bool setRevolveAroundPointFromPixel(const QPoint &pixel);
-
-public:
-  Vec revolveAroundPoint() const;
-#endif
   //@}
 
   /*! @name Associated frame */
@@ -497,15 +489,6 @@ public:
 public Q_SLOTS:
   /*! Sets the IODistance(). */
   void setIODistance(qreal distance) { IODistance_ = distance; }
-
-#ifndef DOXYGEN
-  /*! This method is deprecated. Use setPhysicalScreenWidth() instead. */
-  void setPhysicalDistanceToScreen(qreal distance) {
-    Q_UNUSED(distance);
-    qWarning("setPhysicalDistanceToScreen is deprecated, use "
-             "setPhysicalScreenWidth instead");
-  }
-#endif
 
   /*! Sets the physical screen (monitor or projected wall) width (in meters). */
   void setPhysicalScreenWidth(qreal width) { physicalScreenWidth_ = width; }
