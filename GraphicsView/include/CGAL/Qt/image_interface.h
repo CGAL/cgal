@@ -24,6 +24,8 @@
 
 #ifndef CGAL_IMAGE_INTERFACE_H
 #define CGAL_IMAGE_INTERFACE_H
+#include <CGAL/license/GraphicsView.h>
+
 #include <QDialog>
 #include <QWidget>
 #include <QApplication>
