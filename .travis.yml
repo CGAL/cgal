@@ -3,10 +3,8 @@ dist: trusty
 sudo: required 
 git: 
  depth: 3
-compiler: 
- clang-3.6
-matrix:
- include: 
+env:
+ matrix: 
     - PACKAGE='CHECK' 
     - PACKAGE='AABB_tree Advancing_front_surface_reconstruction Algebraic_foundations ' 
     - PACKAGE='Algebraic_kernel_d Algebraic_kernel_for_circles Algebraic_kernel_for_spheres ' 
@@ -52,6 +50,7 @@ matrix:
     - PACKAGE='Testsuite Three Triangulation ' 
     - PACKAGE='Triangulation_2 Triangulation_3 Union_find ' 
     - PACKAGE='Visibility_2 Voronoi_diagram_2 wininst ' 
+compiler: clang-3.6
 install: 
   - echo "$PWD"
   - if [ -n "$TRAVIS_PULL_REQUEST" ] && [ "$PACKAGE" != CHECK ]; then  DO_IGNORE=FALSE;  for ARG in $(echo "$PACKAGE");do . $PWD/.travis/test_package.sh "$PWD" "$ARG";  echo "DO_IGNORE is $DO_IGNORE";  if [ "$DO_IGNORE" = "TRUE" ]; then  travis_terminate 0; fi; done;fi
