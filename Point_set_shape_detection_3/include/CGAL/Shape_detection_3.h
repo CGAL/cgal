@@ -42,8 +42,4 @@
 #include <CGAL/Shape_detection_3/Sphere.h>
 #include <CGAL/Shape_detection_3/property_maps.h>
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-#include <CGAL/Shape_detection_3/Efficient_RANSAC_traits.h>
-#endif
-
 #endif //CGAL_SHAPE_DETECTION_3_H
