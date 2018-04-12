@@ -158,6 +158,7 @@ MainWindow::MainWindow(QWidget* parent)
   viewer->setObjectName("viewer");
   scene = new Scene(this);
   CGAL::Three::Three::s_scene = scene;
+  CGAL::Three::Three::s_connectable_scene = scene;
   setupViewer(viewer, 0);
   new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this, SLOT(recenterViewer()));
 

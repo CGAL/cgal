@@ -39,12 +39,12 @@ class QOpenGLShaderProgram;
 class QOpenGLFramebufferObject;
 class TextRenderer;
 class TextListItem;
+class Scene;
 
 //! \file Viewer_interface.h
 #include <CGAL/Three/Viewer_config.h> // for VIEWER_EXPORT
 namespace CGAL{
 namespace Three{
-class Scene_draw_interface;
 class Scene_item;
 //! Base class to interact with the viewer from the plugins, the items and the scene.
 class VIEWER_EXPORT Viewer_interface : public QGLViewer, public QOpenGLFunctions_2_1 {
@@ -120,7 +120,7 @@ public:
   virtual ~Viewer_interface() {}
 
   //! \brief Sets the scene for the viewer.
-  virtual void setScene(CGAL::Three::Scene_draw_interface* scene) = 0;
+  virtual void setScene(Scene* scene) = 0;
   //! \brief The antialiasing state.
   //!
   //! @returns true if the antialiasing is activated.

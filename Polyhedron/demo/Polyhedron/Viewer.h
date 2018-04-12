@@ -18,15 +18,9 @@
 #include <QMetaType>
 // forward declarations
 class QWidget;
-namespace CGAL{
-namespace Three{
-class Scene_draw_interface;
-}
-}
 class QMouseEvent;
 class QKeyEvent;
 class QContextMenuEvent;
-
 class Viewer_impl;
 struct LightComponents{
   QVector4D position;
@@ -87,7 +81,7 @@ public:
   //! Sets the pick matrix to Identity once the picking is done.
   void endSelection(const QPoint &point)Q_DECL_OVERRIDE;
   //! Sets the scene for the viewer.
-  void setScene(CGAL::Three::Scene_draw_interface* scene)Q_DECL_OVERRIDE;
+  void setScene(Scene *scene)Q_DECL_OVERRIDE;
   //! @returns the antialiasing state.
   bool antiAliasing() const Q_DECL_OVERRIDE;
   //! @returns the fastDrawing state.

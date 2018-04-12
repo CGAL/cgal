@@ -7,6 +7,7 @@ using namespace CGAL::Three;
 
 QMainWindow* Three::s_mainwindow = NULL;
 Scene_interface* Three::s_scene = NULL;
+QObject* Three::s_connectable_scene = NULL;
 Three* Three::s_three = NULL;
 
 QMainWindow* Three::mainWindow()
@@ -17,6 +18,11 @@ QMainWindow* Three::mainWindow()
 Scene_interface* Three::scene()
 {
   return s_scene;
+}
+
+QObject* Three::connectableScene()
+{
+  return s_connectable_scene;
 }
 
 Three* Three::messages()

@@ -1,5 +1,5 @@
 #include "Viewer.h"
-#include <CGAL/Three/Scene_draw_interface.h>
+#include "Scene.h"
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QGLViewer/manipulatedCameraFrame.h>
@@ -23,7 +23,7 @@
 #define ORIGINAL_FOV 0.94853805396568136
 class Viewer_impl {
 public:
-  CGAL::Three::Scene_draw_interface* scene;
+  Scene* scene;
   Viewer *viewer;
   Viewer *shareViewer;
   bool antialiasing;
@@ -245,7 +245,7 @@ Viewer::~Viewer()
   delete d;
 }
 
-void Viewer::setScene(CGAL::Three::Scene_draw_interface* scene)
+void Viewer::setScene(Scene* scene)
 {
   d->scene = scene;
 }

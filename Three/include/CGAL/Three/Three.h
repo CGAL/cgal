@@ -24,6 +24,7 @@ public:
   virtual void information(QString) = 0;
   static QMainWindow* mainWindow();
   static Scene_interface* scene();
+  static QObject* connectableScene();
   static Three* messages();
   /*! \brief Adds a dock widget to the interface
    *
@@ -47,6 +48,7 @@ public:
 protected:
   static QMainWindow* s_mainwindow;
   static Scene_interface* s_scene;
+  static QObject* s_connectable_scene;
   static Three* s_three;
 
 };

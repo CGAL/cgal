@@ -4,7 +4,6 @@
 #include "config.h"
 #include "Scene_config.h"
 #include <CGAL/Three/Scene_interface.h>
-#include <CGAL/Three/Scene_draw_interface.h>
 #include <CGAL/Three/Viewer_config.h>
 
 #include <QtOpenGL/qgl.h>
@@ -33,7 +32,7 @@ namespace CGAL { namespace Three{ class Viewer_interface;}}
 //! This class is not supposed to be used by Plugins, but sometimes you may need access to
 //! peculiar signals or slots.
 class SCENE_EXPORT Scene  :
-  public QStandardItemModel, public CGAL::Three::Scene_interface, public CGAL::Three::Scene_draw_interface
+  public QStandardItemModel, public CGAL::Three::Scene_interface
 
 {
   Q_OBJECT
@@ -78,20 +77,20 @@ public:
 
   int mainSelectionIndex() const Q_DECL_OVERRIDE;
   QList<int> selectionIndices() const Q_DECL_OVERRIDE;
-  void initializeGL(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-  void setPickedPixel(const QPoint &p) Q_DECL_OVERRIDE {picked_pixel = p;}
-  void draw(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-  void drawWithNames(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-  bool keyPressEvent(QKeyEvent* e) Q_DECL_OVERRIDE;
+  void initializeGL(CGAL::Three::Viewer_interface*);
+  void setPickedPixel(const QPoint &p)  {picked_pixel = p;}
+  void draw(CGAL::Three::Viewer_interface*);
+  void drawWithNames(CGAL::Three::Viewer_interface*);
+  bool keyPressEvent(QKeyEvent* e);
   void printPrimitiveId(QPoint point,
-                        CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-  void printVertexIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-  void printEdgeIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-  void printFaceIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-  void printAllIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
+                        CGAL::Three::Viewer_interface*);
+  void printVertexIds(CGAL::Three::Viewer_interface*);
+  void printEdgeIds(CGAL::Three::Viewer_interface*);
+  void printFaceIds(CGAL::Three::Viewer_interface*);
+  void printAllIds(CGAL::Three::Viewer_interface*);
   //!Re-computes the primitiveIds for `item`
-  void updatePrimitiveIds(Viewer_interface *, Scene_item *item) Q_DECL_OVERRIDE;
-  bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer) Q_DECL_OVERRIDE;
+  void updatePrimitiveIds(Viewer_interface *, Scene_item *item);
+  bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer);
   Bbox bbox() const Q_DECL_OVERRIDE;
   Bbox visibleBbox() const Q_DECL_OVERRIDE;
   void computeBbox();
@@ -138,7 +137,7 @@ public:
   void addGroup(Scene_group_item* group);
 
   void zoomToPosition(QPoint point,
-                        CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
+                        CGAL::Three::Viewer_interface*);
 
 public Q_SLOTS:
   //!Specifies a group as Expanded for the Geometric Objects view
