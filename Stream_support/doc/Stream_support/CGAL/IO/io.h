@@ -291,7 +291,8 @@ istream& operator>>(istream& is, Class c);
 
 
 //! \ingroup PkgIOstreams
-//! \brief `read_point_WKT()` fills a `Point` from a  WKT stream if possible.
+//! \brief `read_point_WKT()` fills a `Point` from a  WKT stream. The first line starting with POINT 
+//! in the stream will be used. 
 //! 
 //! \tparam Point must inherit from `CGAL::Point_2` or `CGAL::Point_3`.
 //! 
@@ -303,7 +304,8 @@ read_point_WKT( std::istream& in,
                 Point& point );
 
 //! \ingroup PkgIOstreams
-//! \brief `read_multi_point_WKT()` fills a `MultiPoint` from a  WKT stream if possible.
+//! \brief `read_multi_point_WKT()` overwrites the content of a `MultiPoint` 
+//! with the first line starting with MULTIPOINT in the stream.
 //! 
 //! \tparam MultiPoint must be a model of `RandomAccessRange` of `CGAL::Point_2` or `CGAL::Point_3`.
 //! 
@@ -316,7 +318,8 @@ read_multi_point_WKT( std::istream& in,
 
 
 //! \ingroup PkgIOstreams
-//! \brief `read_linestring_WKT()` fills a `Linestring` from a WKT stream if possible.
+//! \brief `read_linestring_WKT()` fills a `Linestring` from a WKT stream.
+//! The first line starting with LINESTRING in the stream will be used.
 //!
 //! \tparam Linestring must be a model of `RandomAccessRange` of `CGAL::Point_2`.
 //! \see `CGAL::Point_2`
@@ -326,7 +329,8 @@ read_linestring_WKT( std::istream& in,
                      LineString& polyline );
 
 //! \ingroup PkgIOstreams
-//! \brief `read_multi_linestring_WKT()` fills a `MultiLineString` from a WKT stream if possible.
+//! \brief `read_multi_linestring_WKT()` overwrites the content of a `MultiLineString` 
+//! with the first line starting with MULTILINESTRING in the stream.
 //!
 //! \tparam MultiLineString must be a model of `RandomAccessRange` of `Linestring`.
 //! 
@@ -337,7 +341,8 @@ read_multi_linestring_WKT( std::istream& in,
                            MultiLineString& mls );
 
 //! \ingroup PkgIOstreams
-//! \brief `read_polygon_WKT()` fills `Polygon` from a WKT stream  if possible.
+//! \brief `read_polygon_WKT()` fills `Polygon` from a WKT stream.
+//! The first line starting with POLYGON in the stream will be used.
 //! 
 //! \tparam Polygon must inherit `CGAL::General_polygon_with_holes_2`.
 //! 
@@ -348,7 +353,8 @@ read_polygon_WKT( std::istream& in,
                   Polygon& polygon );
 
 //! \ingroup PkgIOstreams
-//! \brief `read_multi_polygon_WKT()` fills a `Multipolygon` from a WKT stream if possible.
+//! \brief `read_multi_polygon_WKT()` overwrites the content of a `MultiPolygon` 
+//! with the first line starting with MULTIPOLYGON in the stream.
 //!
 //! \tparam Multipolygon must be a model of `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`.
 //! \see `CGAL::General_polygon_with_holes_2`
@@ -408,7 +414,7 @@ write_multi_polygon_WKT( std::ostream& out,
 
 //! \ingroup PkgIOstreams
 //! \brief `write_multi_linestring_WKT()` writes the content of `mls` 
-//! into a WKT stream.
+//! into a WKT stream. 
 //! \tparam MultiLineString must be a `RandomAccessRange` of `LineString`. 
 //! \see `CGAL::write_linestring_WKT()`
 template<typename MultiLineString>
@@ -416,3 +422,20 @@ std::ostream&
 write_multi_linestring_WKT( std::ostream& out,
                             MultiLineString& mls );
 }
+
+//! \ingroup PkgIOstreams
+//! \brief `read_WKT()` reads the content of a WKT stream and fills 
+//! `points`, `polylines` and `polygons` with all the POINT, MULTIPOINT, 
+//! LINESTRING, MULTILINESTRING, POLYGON and MULTIPOLYGON it finds in `input`.
+//! \tparam MultiPoint must be a model of `RandomAccessRange` of `CGAL::Point_2` or `CGAL::Point_3`.
+//! \tparam MultiLineString must be a `RandomAccessRange` of `LineString`. 
+//! \tparam MultiPolygon must be a model of `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`.
+//! \see `CGAL::read_linestring_WKT()`
+template<typename MultiPoint,
+         typename MultiLineString,
+         typename MultiPolygon>
+std::istream&
+read_WKT( std::istream& input,
+                        MultiPoint& points,   
+                        MultiLineString& polylines,
+                        MultiPolygon& polygons);
