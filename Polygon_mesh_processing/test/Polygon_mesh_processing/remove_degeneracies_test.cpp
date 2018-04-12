@@ -82,8 +82,51 @@ void test_vertex_non_manifoldness(const char* fname)
   }
 
   BOOST_FOREACH(typename boost::graph_traits<Surface_mesh>::vertex_descriptor v, vertices(mesh))
-    CGAL::Polygon_mesh_processing::is_non_manifold_vertex(v, mesh);
+  {
+    if(CGAL::Polygon_mesh_processing::is_non_manifold_vertex(v, mesh))
+      std::cout << "true\n";
+
+  }
 }
+
+void test_needle(const char* fname)
+{
+  std::ifstream input(fname);
+
+  Surface_mesh mesh;
+  if (!input || !(input >> mesh) || mesh.is_empty()) {
+    std::cerr << fname << " is not a valid off file.\n";
+    exit(1);
+  }
+
+  double threshold = 0.8;
+
+  BOOST_FOREACH(typename boost::graph_traits<Surface_mesh>::face_descriptor f, faces(mesh))
+  {
+    if(CGAL::Polygon_mesh_processing::is_needle_triangle_face(f, mesh, threshold))
+      std::cout << "needle\n";
+  }
+}
+
+void test_cap(const char* fname)
+{
+  std::ifstream input(fname);
+
+  Surface_mesh mesh;
+  if (!input || !(input >> mesh) || mesh.is_empty()) {
+    std::cerr << fname << " is not a valid off file.\n";
+    exit(1);
+  }
+
+  double threshold = 0.8;
+
+  BOOST_FOREACH(typename boost::graph_traits<Surface_mesh>::face_descriptor f, faces(mesh))
+  {
+    if(CGAL::Polygon_mesh_processing::is_cap_triangle_face(f, mesh, threshold))
+      std::cout << "cap\n";
+  }
+}
+
 
 int main()
 {
@@ -97,7 +140,9 @@ int main()
   check_edge_degeneracy("data_degeneracies/degtri_edge.off");
   check_triangle_face_degeneracy("data_degeneracies/degtri_four.off");
   test_vetices_duplication("data_degeneracies/degtri_four.off");
-  test_vertex_non_manifoldness("data/non_manifold_vertex.off");;
+  test_vertex_non_manifoldness("data/non_manifold_vertex.off");
+  test_needle("data_degeneracies/needle.off");
+  test_cap("data_degeneracies/cap.off");
 
   return 0;
 }
