@@ -1585,6 +1585,17 @@ structure_point_set (const PointRange& points, ///< range of points.
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 /// \cond SKIP_IN_MANUAL
+
+namespace Shape_detection_3{
+//Forward declarations
+template <class Traits>
+class Efficient_RANSAC;
+template <typename Traits>
+class Plane_map;
+template <typename Traits>
+class Point_to_shape_index_map;
+} // end of namespace Shape_detection_3
+
 // deprecated API
 template <typename Traits,
           typename OutputIterator
