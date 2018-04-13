@@ -11,7 +11,8 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Surface_mesh;
 
 
-void test_connected_components(const char* fname)
+void test_merge_duplicated_vertices_in_boundary_cycles(const char* fname,
+                                                       std::size_t expected_nb_vertices)
 {
   std::ifstream input(fname);
 
@@ -21,55 +22,22 @@ void test_connected_components(const char* fname)
     exit(1);
   }
 
-  typedef typename boost::graph_traits<Surface_mesh>::halfedge_descriptor halfedge_descriptor;
+  std::cout << "Testing " << fname << "\n";
+  std::cout << "  input mesh has " << vertices(mesh).size() << " vertices.\n";
+  CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycles(mesh);
+  std::cout << "  output mesh has " << vertices(mesh).size() << " vertices.\n";
 
-
-  std::vector<std::set<halfedge_descriptor> > connected_components;
-
-  CGAL::Polygon_mesh_processing::extract_connected_components(mesh,
-                             std::back_inserter(connected_components));
-
-  std::cout << "# cc = " << connected_components.size();
-
-  for(auto set : connected_components)
-  {
-    std::cout << "of size= " << set.size() << std::endl;
-  }
+  assert(expected_nb_vertices==0 ||
+         expected_nb_vertices == vertices(mesh).size());
 }
 
 
-void test_merge_points(const char* fname)
+int main(int argc, char** argv)
 {
-  std::ifstream input(fname);
-
-  Surface_mesh mesh;
-  if (!input || !(input >> mesh) || mesh.is_empty()) {
-    std::cerr << fname << " is not a valid off file.\n";
-    exit(1);
-  }
-
-  typedef typename boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
-  std::vector<vertex_descriptor> verts(vertices(mesh).begin(), vertices(mesh).end());
-
-  vertex_descriptor v_rm = verts[1];
-  vertex_descriptor v_keep = verts[2];
-
-  CGAL::Polygon_mesh_processing::merge_identical_points(mesh, v_keep, v_rm);
-
-  std::ofstream out("/tmp/result.off");
-  out << mesh;
-  out.close();
-}
-
-
-int main()
-{
-
-
-  test_connected_components("data/small_ex.off");
-  test_merge_points("data/merge_points.off");
-
-
-
+  if (argc==1)
+    test_merge_duplicated_vertices_in_boundary_cycles("data/merge_points.off", 43);
+  else
+    for (int i=1; i< argc; ++i)
+      test_merge_duplicated_vertices_in_boundary_cycles(argv[i], 0);
   return 0;
 }
