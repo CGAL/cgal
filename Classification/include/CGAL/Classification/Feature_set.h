@@ -25,8 +25,11 @@
 
 #include <CGAL/Classification/Feature_base.h>
 
+#include <boost/make_shared.hpp>
+
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/mutex.h>
+#include <tbb/task_group.h>
 #endif // CGAL_LINKED_WITH_TBB
 
 #include <vector>
@@ -35,7 +38,7 @@
 namespace CGAL {
 
 namespace Classification {
-  
+
 /*!
 \ingroup PkgClassificationFeature
 
@@ -53,25 +56,32 @@ class Feature_set
   {
     bool operator() (const Feature_handle& a, const Feature_handle& b) const
     {
+      if (a->name() == b->name())
+        return a < b;
       return a->name() < b->name();
     }
   };
   
 #ifdef CGAL_LINKED_WITH_TBB
-  tbb::mutex m_mutex;
-  void mutex_lock() { m_mutex.lock(); }
-  void mutex_unlock() { m_mutex.unlock(); }
-#else // CGAL_LINKED_WITH_TBB
-  void mutex_lock() { }
-  void mutex_unlock() { }
+  tbb::task_group* m_tasks;
 #endif // CGAL_LINKED_WITH_TBB
   
 public:
 
-  Feature_set() { }
+  Feature_set() :
+#ifdef CGAL_LINKED_WITH_TBB
+    m_tasks(NULL)
+#endif
+  { }
   
   /// \cond SKIP_IN_MANUAL
-  virtual ~Feature_set() { }
+  virtual ~Feature_set()
+  {
+#ifdef CGAL_LINKED_WITH_TBB
+    if (m_tasks != NULL)
+      delete m_tasks;
+#endif
+  }
   /// \endcond
 
   /*!
@@ -89,13 +99,42 @@ public:
   template <typename Feature, typename ... T>
   Feature_handle add (T&& ... t)
   {
-    Feature_handle fh (new Feature(std::forward<T>(t)...));
-    mutex_lock();
-    m_features.push_back (fh);
-    mutex_unlock();
-    return fh;
+#ifdef CGAL_LINKED_WITH_TBB
+    if (m_tasks != NULL)
+    {
+      m_features.push_back (Feature_handle());
+    
+      Parallel_feature_adder<Feature, T...>* adder
+        = new Parallel_feature_adder<Feature, T...>(m_features.back(), std::forward<T>(t)...);
+      
+      m_adders.push_back (adder);
+      m_tasks->run (*adder);
+    }
+    else
+#endif
+    {
+       m_features.push_back (Feature_handle (new Feature(std::forward<T>(t)...)));
+    }
+    return m_features.back();
   }
 
+#if defined(CGAL_LINKED_WITH_TBB) || defined(DOXYGEN_RUNNING)
+  void begin_parallel_additions()
+  {
+    m_tasks = new tbb::task_group;
+  }
+
+  void end_parallel_additions()
+  {
+    m_tasks->wait();
+    delete m_tasks;
+    m_tasks = NULL;
+    
+    for (std::size_t i = 0; i < m_adders.size(); ++ i)
+      delete m_adders[i];
+  }
+#endif
+    
   /*!
     \brief Removes a feature.
 
@@ -151,6 +190,60 @@ public:
     std::sort (m_features.begin(), m_features.end(),
                Compare_name());               
   }
+
+private:
+
+  struct Abstract_parallel_feature_adder
+  {
+    virtual ~Abstract_parallel_feature_adder() { }
+    virtual void operator()() const = 0;
+  };
+  
+  template <typename Feature, typename ... T>
+  struct Parallel_feature_adder : Abstract_parallel_feature_adder
+  {
+    Feature_handle fh;
+    boost::shared_ptr<std::tuple<T...> > args;
+    
+    Parallel_feature_adder (Feature_handle fh, T&& ... t)
+      : fh (fh)
+    {
+      args = boost::make_shared<std::tuple<T...> >(std::forward<T>(t)...);
+    }
+
+    template<int ...>
+    struct seq { };
+
+    template<int N, int ...S>
+    struct gens : gens<N-1, N-1, S...> { };
+
+    template<int ...S>
+    struct gens<0, S...> {
+      typedef seq<S...> type;
+    };
+
+    template <typename Type>
+    const Type& remove_ref_of_simple_type (const Type& t) const { return t; }
+
+    
+    template <typename Tuple, int ... S>
+    void add_feature (Tuple& t, seq<S...>) const
+    {
+      fh.attach (new Feature (std::forward<T>(std::get<S>(t))...));
+    }
+
+    void operator()() const
+    {
+      add_feature(*args, typename gens<sizeof...(T)>::type());
+    }
+
+  };
+
+
+  std::vector<Abstract_parallel_feature_adder*> m_adders;
+
+public:
+
   /// \endcond
   
 };

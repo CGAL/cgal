@@ -23,6 +23,9 @@
 
 #include <CGAL/license/Classification.h>
 
+#define DO_NOT_USE_EIGEN_FEATURES
+#define DO_NOT_USE_HSV_FEATURES
+
 #include <CGAL/Classification/classify.h>
 #include <CGAL/Classification/Sum_of_weighted_features_classifier.h>
 #include <CGAL/Classification/ETHZ_random_forest_classifier.h>
