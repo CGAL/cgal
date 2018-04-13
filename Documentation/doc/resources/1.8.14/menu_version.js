@@ -1,37 +1,31 @@
 (function() {
   'use strict';
 
-  var url_re =  /doc\.cgal\.org\/(master|latest|(\d\.\d+))\//;
+  var url_re =  /(cgal\.geometryfactory\.com\/CGAL\/doc\/|doc\.cgal\.org\/)(master|latest|(\d\.\d+|\d\.\d+\.\d+))\//;
   var url_local =  /.*\/doc_output\//;
   var all_versions = [
     'master',
     'latest',
     '4.12',
-    '4.11',
-    '4.10',
-    '4.9',
-    '4.8',
+    '4.11.1',
+    '4.10.2',
+    '4.9.1',
+    '4.8.2',
     '4.7',
-    '4.6',
-    '4.5',
+    '4.6.3',
+    '4.5.2',
     '4.4',
     '4.3'
   ];
 
-  function build_select(current_version, current_release) {
+  function build_select(current_version) {
     var buf = ['<select>'];
 
     $.each(all_versions, function(id) {
       var version = all_versions[id];
       buf.push('<option value="' + version + '"');
       if (version == current_version) {
-console.log(version);
-        buf.push(' selected="selected">');
-        if (version[0] == '4') {
-          buf.push(current_release);
-        } else {
-          buf.push(title + ' (' + current_release + ')');
-        }
+        buf.push(' selected="selected">' + version);
       } else {
         buf.push('>' + version);
       }
@@ -43,8 +37,8 @@ console.log(version);
   }
 
   function patch_url(url, new_version) {
-    if(url.includes("doc.cgal.org")){  
-      return url.replace(url_re, 'https://doc.cgal.org/' + new_version + '/');
+    if(url.includes("doc.cgal.org")||url.includes("cgal.geometryfactory.com")){
+      return url.replace(url_re, 'doc.cgal.org/' + new_version + '/');
     }
     else{
       return url.replace(url_local, 'https://doc.cgal.org/' + new_version + '/');
@@ -73,18 +67,16 @@ console.log(version);
       motherNode.insertBefore(node, motherNode.firstChild);
       var match = url_re.exec(window.location.href);
       if (match) {
-        var version = match[1];
-        var release = '4.11';
-        var select = build_select(version, release);
+        var version = match[2];
+        var select = build_select(version);
         spanNode.innerHTML=select;
-        $('.version_menu').bind('change', on_switch);
+        $('.version_menu select').bind('change', on_switch);
       }
       else {
         match = url_local.exec(window.location.href);
         if (match) {
           var version = '4.11';
-          var release = '4.11';
-          var select = build_select(version, release);
+          var select = build_select(version);
           spanNode.innerHTML=select;
           $('.version_menu select').bind('change', on_switch);
         }
