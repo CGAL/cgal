@@ -66,10 +66,14 @@ void detect_identical_vertices(std::vector<vertex_descriptor>& vertices,
         if (get(vpm, vertices[i]) == get(vpm, vertices[i-1]))
           identical_vertices.back().push_back(vertices[i]);
         else
+        {
+          ++i;
           break;
+        }
       }
     }
-    ++i;
+    else
+      ++i;
   }
 }
 
