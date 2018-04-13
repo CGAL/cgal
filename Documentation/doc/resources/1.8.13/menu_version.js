@@ -37,7 +37,7 @@
   }
 
   function patch_url(url, new_version) {
-    if(url.includes("doc.cgal.org")||url.includes("cgal.geometryfactory.com")){
+    if(url.includes("doc.cgal.org")||url.includes("cgal.geometryfactory.com")){  
       return url.replace(url_re, 'doc.cgal.org/' + new_version + '/');
     }
     else{
@@ -55,16 +55,17 @@
   }
 
   $(document).ready(function() {
-      var motherNode=document.getElementById("back-nav");
+      var motherNode=$("#back-nav ul")[0];
       var node = document.createElement("LI");
       var spanNode = document.createElement("SPAN");
       var titleNode =document.createTextNode("CGAL Version: "); 
-      var textNode = document.createTextNode("4.11");
+      var textNode = document.createTextNode("x.y");
       spanNode.setAttribute("class", "version_menu");
       spanNode.appendChild(textNode);
       node.appendChild(titleNode);
       node.appendChild(spanNode);
       motherNode.insertBefore(node, motherNode.firstChild);
+      $("#back-nav").css("padding-top", "0").css("padding-bottom", "0");
       var match = url_re.exec(window.location.href);
       if (match) {
         var version = match[2];
