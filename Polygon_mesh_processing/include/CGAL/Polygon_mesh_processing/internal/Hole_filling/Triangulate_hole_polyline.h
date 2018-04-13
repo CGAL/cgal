@@ -480,7 +480,7 @@ struct Tracer_polyline_incomplete {
       }
 
       CGAL_assertion(la >= 0 && la < n);
-      CGAL_assertion(r.first < la && r.second > la);
+      CGAL_assertion( (r.first < la) && (r.second > la) );
       *out++ = OutputIteratorValueType(r.first, la, r.second);
 
       ranges.push(std::make_pair(r.first, la));
