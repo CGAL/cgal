@@ -63,9 +63,51 @@ public:
     }
   };
 
+  template <typename FaceGraph>
+  struct Face_descriptor_with_bbox_property_map
+  {
+    typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
+    typedef typename boost::graph_traits<FaceGraph>::face_descriptor key_type;
+    typedef boost::readable_property_map_tag category;
+    
+    class value_type
+    {
+      key_type m_descriptor;
+      CGAL::Bbox_3 m_bbox;
+      
+    public:
+      value_type (const key_type& descriptor,
+                  const CGAL::Bbox_3& bbox)
+        : m_descriptor (descriptor), m_bbox (bbox)
+      { }
+
+      const CGAL::Bbox_3 bbox() const { return m_bbox; }
+
+      operator key_type() const { return m_descriptor; }
+
+    };
+    
+    typedef value_type reference;
+  
+    const FaceGraph* mesh;
+
+    Face_descriptor_with_bbox_property_map (const FaceGraph* mesh = NULL)
+      : mesh (mesh) { }
+
+    friend reference get (const Face_descriptor_with_bbox_property_map& map, key_type f)
+    {
+      CGAL::Bbox_3 bbox;
+      
+      BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, *(map.mesh)), *(map.mesh)))
+        bbox = bbox + map.mesh->point(v).bbox();
+
+      return value_type (f, bbox);
+    }
+  };
+
   typedef Face_graph_face_to_center_property_map<Mesh, Point> Face_center_map;
   typedef CGAL::Classification::Mesh_feature_generator<Kernel, Mesh, Face_center_map>             Generator;
-
+  typedef Face_descriptor_with_bbox_property_map<Mesh> Face_descriptor_with_bbox_map;
 
 public:
   
@@ -164,7 +206,7 @@ protected:
   bool run (int method, const Classifier& classifier,
             std::size_t subdivisions, double smoothing)
   {
-    std::vector<std::size_t> indices;
+    std::vector<std::size_t> indices(m_mesh->polyhedron()->faces().size(), -1);
     Face_center_map fc_map (m_mesh->polyhedron());
     
     if (method == 0)
@@ -180,11 +222,11 @@ protected:
     {
       // Fix: need bbox of face
       
-      // CGAL::Classification::classify_with_graphcut<Concurrency_tag>
-      //   (m_mesh->polyhedron()->faces(), Face_map(),
-      //    m_labels, classifier,
-      //    m_generator->neighborhood().n_ring_neighbor_query(1),
-      //    smoothing, subdivisions, indices);
+      CGAL::Classification::classify_with_graphcut<Concurrency_tag>
+        (m_mesh->polyhedron()->faces(), Face_descriptor_with_bbox_map(m_mesh->polyhedron()),
+         m_labels, classifier,
+         m_generator->neighborhood().n_ring_neighbor_query(1),
+         smoothing, subdivisions, indices);
     }
     
     std::vector<std::size_t> ground_truth(num_faces(*(m_mesh->polyhedron())), std::size_t(-1));

@@ -34,7 +34,10 @@
 #include <CGAL/Classification/Feature/Vertical_dispersion.h>
 #include <CGAL/Classification/Feature/Verticality.h>
 #include <CGAL/Classification/Feature/Eigen.h>
-#include <CGAL/Classification/Label.h>
+
+// New features
+#include <CGAL/Classification/Feature/Eigenvalue.h>
+#include <CGAL/Classification/Feature/Color_channel.h>
 
 #include <CGAL/bounding_box.h>
 
@@ -100,8 +103,6 @@ public:
 
   /// \cond SKIP_IN_MANUAL
   typedef Classification::Feature_handle                 Feature_handle;
-  typedef Classification::Label                          Label;
-  typedef Classification::Label_handle                   Label_handle;
   
   typedef Classification::Feature::Anisotropy            Anisotropy;
   typedef Classification::Feature::Distance_to_plane
@@ -119,6 +120,8 @@ public:
   <Geom_traits, Face_range, PointMap>                    Dispersion;
   typedef Classification::Feature::Verticality
   <Geom_traits>                                          Verticality;
+  typedef Classification::Feature::Eigenvalue           Eigenvalue;
+
   typedef typename Classification::RGB_Color RGB_Color;
   /// \endcond
     
@@ -198,29 +201,11 @@ private:
   Iso_cuboid_3 m_bbox;
   std::vector<Scale*> m_scales;
 
-#ifdef CGAL_LINKED_WITH_TBB
-  tbb::task_group* m_tasks;
-#endif
-  
-  struct Feature_adder
-  {
-    mutable Mesh_feature_generator* generator;
-    std::size_t scale;
-
-    Feature_adder (Mesh_feature_generator* generator, std::size_t scale)
-      : generator (generator), scale (scale) { }
-
-    virtual ~Feature_adder() { }
-
-    virtual void operator()() const = 0;
-  };
-  friend Feature_adder;
-
   const FaceListGraph& m_input;
   Face_range m_range;
   PointMap m_point_map;
-  std::vector<Feature_adder*> m_adders;
-  Feature_set* m_features;
+  Feature_set& m_features;
+  std::vector<std::pair<Feature_handle, std::size_t> > m_features_to_rename;
   
 public:
 
@@ -232,13 +217,14 @@ public:
                          const FaceListGraph& input,
                          PointMap point_map,
                          std::size_t nb_scales)
-    : m_input (input), m_range(faces(input)), m_point_map (point_map), m_features (&features)
+    : m_input (input), m_range(faces(input)), m_point_map (point_map), m_features (features)
   {
 
     m_bbox = CGAL::bounding_box
       (boost::make_transform_iterator (m_range.begin(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)),
        boost::make_transform_iterator (m_range.end(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)));
     generate_features_impl (nb_scales);
+
   }
 
   
@@ -311,159 +297,50 @@ private:
     m_scales.clear();
   }
 
+  void add (Feature_handle fh, std::size_t i)
+  {
+    m_features_to_rename.push_back (std::make_pair (fh, i));
+  }
+
   void generate_point_based_features ()
   {
-
-    generate_multiscale_feature_variant_0<Anisotropy> ();
-    generate_multiscale_feature_variant_0<Eigentropy> ();
-    generate_multiscale_feature_variant_0<Linearity> ();
-    generate_multiscale_feature_variant_0<Omnivariance> ();
-    generate_multiscale_feature_variant_0<Planarity> ();
-    generate_multiscale_feature_variant_0<Sphericity> ();
-    generate_multiscale_feature_variant_0<Sum_eigen> ();
-    generate_multiscale_feature_variant_0<Surface_variation> ();
-
-    generate_multiscale_feature_variant_1<Distance_to_plane> ();
-    generate_multiscale_feature_variant_2<Dispersion> ();
-    generate_multiscale_feature_variant_3<Elevation> ();
-  }
-
-  template <typename FeatureAdder>
-  void launch_feature_computation (FeatureAdder* adder)
-  {
-    m_adders.push_back (adder);
-    
-#ifndef CGAL_LINKED_WITH_TBB
-    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-                               "Parallel_tag is enabled but TBB is unavailable.");
+#ifdef DO_NOT_USE_EIGEN_FEATURES
+    for (int j = 0; j < 3; ++ j)
+    {
+      for (std::size_t i = 0; i < m_scales.size(); ++ i)
+        add(m_features.add<Eigenvalue> (m_range, eigen(i), std::size_t(j)), i);
+    }
 #else
-    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
-    {
-      m_tasks->run (*adder);
-    }
-    else
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      add(m_features.add<Anisotropy> (m_range, eigen(i)), i);
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      add(m_features.add<Eigentropy> (m_range, eigen(i)), i);
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      add(m_features.add<Linearity> (m_range, eigen(i)), i);
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      add(m_features.add<Omnivariance> (m_range, eigen(i)), i);
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      add(m_features.add<Planarity> (m_range, eigen(i)), i);
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      add(m_features.add<Sphericity> (m_range, eigen(i)), i);
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      add(m_features.add<Sum_eigen> (m_range, eigen(i)), i);
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      add(m_features.add<Surface_variation> (m_range, eigen(i)), i);
 #endif
-    {
-      (*adder)();
-    }
-  }
-
-  template <typename VectorMap>
-  struct Feature_adder_verticality : public Feature_adder
-  {
-    using Feature_adder::generator;
-    using Feature_adder::scale;
-    VectorMap normal_map;
-
-    // TODO!
-    Feature_adder_verticality (Mesh_feature_generator* generator, VectorMap normal_map, std::size_t scale)
-      : Feature_adder (generator, scale), normal_map (normal_map) { }
-    
-    void operator() () const
-    {
-      Feature_handle fh = generator->m_features->template add<Verticality> (generator->m_range, normal_map);
-      std::ostringstream oss;
-      oss << fh->name() << "_" << scale;
-      fh->set_name (oss.str());
-    }
-  };
-
-  template <typename VectorMap>
-  void generate_normal_based_features(VectorMap normal_map)
-  {
-    launch_feature_computation (new Feature_adder_verticality<VectorMap> (this, normal_map, 0));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      add(m_features.add<Distance_to_plane> (m_range, m_point_map, eigen(i)), i);
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      add(m_features.add<Dispersion> (m_range, m_point_map, grid(i), radius_neighbors(i)), i);
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      add(m_features.add<Elevation> (m_range, m_point_map, grid(i), radius_dtm(i)), i);
   }
 
   void generate_normal_based_features(const CGAL::Default_property_map<face_iterator, typename Geom_traits::Vector_3>&)
   {
-    generate_multiscale_feature_variant_0<Verticality> ();
-  }
-
-  template <typename ColorMap>
-  struct Feature_adder_color : public Feature_adder
-  {
-    typedef Classification::Feature::Hsv<Geom_traits, Face_range, ColorMap> Hsv;
-    
-    using Feature_adder::generator;
-    using Feature_adder::scale;
-    ColorMap color_map;
-    std::size_t channel;
-    float mean;
-    float sd;
-
-    // TODO!
-    Feature_adder_color (Mesh_feature_generator* generator, ColorMap color_map, std::size_t scale,
-                         std::size_t channel, float mean, float sd)
-      : Feature_adder (generator, scale), color_map (color_map),
-        channel (channel), mean (mean), sd (sd) { }
-    
-    void operator() () const
-    {
-      Feature_handle fh = generator->m_features->template add<Hsv> (generator->m_range, color_map, channel, mean, sd);
-      std::ostringstream oss;
-      oss << fh->name() << "_" << scale;
-      fh->set_name (oss.str());
-    }
-  };
-
-  template <typename ColorMap>
-  void generate_color_based_features(ColorMap color_map)
-  {
-    for (std::size_t i = 0; i <= 8; ++ i)
-      launch_feature_computation (new Feature_adder_color<ColorMap> (this, color_map, 0,
-                                                                     0, 45 * i, 22.5));
-
-    for (std::size_t i = 0; i <= 4; ++ i)
-      launch_feature_computation (new Feature_adder_color<ColorMap> (this, color_map, 0,
-                                                                     1, 25 * i, 12.5));
-    
-    for (std::size_t i = 0; i <= 4; ++ i)
-      launch_feature_computation (new Feature_adder_color<ColorMap> (this, color_map, 0,
-                                                                     2, 25 * i, 12.5));
-  }
-
-  void generate_color_based_features(const CGAL::Default_property_map<face_iterator, RGB_Color>&)
-  {
-  }
-
-
-  template <typename EchoMap>
-  struct Feature_adder_echo : public Feature_adder
-  {
-    typedef Classification::Feature::Echo_scatter<Geom_traits, Face_range, PointMap, EchoMap> Echo_scatter;
-    
-    using Feature_adder::generator;
-    using Feature_adder::scale;
-    EchoMap echo_map;
-
-    // TODO!
-    Feature_adder_echo (Mesh_feature_generator* generator, EchoMap echo_map, std::size_t scale)
-      : Feature_adder (generator, scale), echo_map (echo_map) { }
-    
-    void operator() () const
-    {
-      Feature_handle fh = generator->m_features->template add<Echo_scatter> (generator->m_range,
-                                                                             echo_map,
-                                                                             generator->grid(scale),
-                                                                             generator->radius_neighbors(scale));
-      std::ostringstream oss;
-      oss << fh->name() << "_" << scale;
-      fh->set_name (oss.str());
-    }
-  };
-
-
-  template <typename EchoMap>
-  void generate_echo_based_features(EchoMap echo_map)
-  {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      launch_feature_computation (new Feature_adder_echo<EchoMap> (this, echo_map, i));
+      add(m_features.add<Verticality> (m_range, eigen(i)), i);
   }
-
-  void generate_echo_based_features(const CGAL::Default_property_map<face_iterator, std::size_t>&)
-  {
-  }
-
 
   template <typename T>
   const T& get_parameter (const T& t)
@@ -485,8 +362,6 @@ private:
     m_scales.reserve (nb_scales);
     
     float voxel_size = -1;
-    //    voxel_size = 0.05; // WARNING: do not keep (-1 is the right value)
-
     
     m_scales.push_back (new Scale (m_input, m_range, m_point_map, m_bbox, voxel_size, 0));
     voxel_size = m_scales[0]->grid_resolution();
@@ -502,138 +377,24 @@ private:
     t.start();
     
 #ifdef CGAL_LINKED_WITH_TBB
-    m_tasks = new tbb::task_group;
+    m_features.begin_parallel_additions();
 #endif
     
     generate_point_based_features ();
     generate_normal_based_features (CGAL::Default_property_map<face_iterator, typename Geom_traits::Vector_3>());
-    // generate_color_based_features (color_map);
-    // generate_echo_based_features (echo_map);
 
 #ifdef CGAL_LINKED_WITH_TBB
-    m_tasks->wait();
-    delete m_tasks;
+    m_features.end_parallel_additions();
 #endif
+    
+    for (std::size_t i = 0; i < m_features_to_rename.size(); ++ i)
+      m_features_to_rename[i].first->set_name
+        (m_features_to_rename[i].first->name() + "_" + std::to_string(m_features_to_rename[i].second));
     
     t.stop();
     CGAL_CLASSIFICATION_CERR << "Features computed in " << t.time() << " second(s)" << std::endl;
-    for (std::size_t i = 0; i < m_adders.size(); ++ i)
-      delete m_adders[i];
   }
 
-  template <typename Feature_type>
-  struct Feature_adder_variant_0 : public Feature_adder
-  {
-    using Feature_adder::generator;
-    using Feature_adder::scale;
-
-    Feature_adder_variant_0 (Mesh_feature_generator* generator, std::size_t scale)
-      : Feature_adder (generator, scale) { }
-    
-    void operator() () const
-    {
-      Feature_handle fh = generator->m_features->template add<Feature_type> (generator->m_range, generator->eigen(scale));
-      std::ostringstream oss;
-      oss << fh->name() << "_" << scale;
-      fh->set_name (oss.str());
-    }
-  };
-  
-  template <typename Feature_type>
-  void generate_multiscale_feature_variant_0 ()
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      launch_feature_computation (new Feature_adder_variant_0<Feature_type> (this, i));
-  }
-
-  template <typename Feature_type>
-  struct Feature_adder_variant_1 : public Feature_adder
-  {
-    using Feature_adder::generator;
-    using Feature_adder::scale;
-
-    // TODO!
-    Feature_adder_variant_1 (Mesh_feature_generator* generator, std::size_t scale)
-      : Feature_adder (generator, scale) { }
-    
-    void operator() () const
-    {
-      Feature_handle fh = generator->m_features->template add<Feature_type> (generator->m_range, generator->m_point_map,
-                                                                             generator->eigen(scale));
-      std::ostringstream oss;
-      oss << fh->name() << "_" << scale;
-      fh->set_name (oss.str());
-    }
-  };
-  
-  template <typename Feature_type>
-  void generate_multiscale_feature_variant_1 ()
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      launch_feature_computation (new Feature_adder_variant_1<Feature_type> (this, i));
-  }
-
-  template <typename Feature_type>
-  struct Feature_adder_variant_2 : public Feature_adder
-  {
-    using Feature_adder::generator;
-    using Feature_adder::scale;
-    PointMap point_map;
-
-    // TODO!
-    Feature_adder_variant_2 (Mesh_feature_generator* generator, PointMap point_map, std::size_t scale)
-      : Feature_adder (generator, scale), point_map (point_map) { }
-    
-    void operator() () const
-    {
-      Feature_handle fh = generator->m_features->template add<Feature_type>
-        (generator->m_range, point_map,
-         generator->grid(scale),
-         generator->radius_neighbors(scale));
-      std::ostringstream oss;
-      oss << fh->name() << "_" << scale;
-      fh->set_name (oss.str());
-    }
-  };
-  
-  template <typename Feature_type>
-  void generate_multiscale_feature_variant_2 ()
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      launch_feature_computation (new Feature_adder_variant_2<Feature_type> (this, m_point_map, i));
-  }
-
-  template <typename Feature_type>
-  struct Feature_adder_variant_3 : public Feature_adder
-  {
-    using Feature_adder::generator;
-    using Feature_adder::scale;
-    PointMap point_map;
-
-    // TODO!
-    Feature_adder_variant_3 (Mesh_feature_generator* generator, PointMap point_map, std::size_t scale)
-      : Feature_adder (generator, scale), point_map (point_map) { }
-    
-    void operator() () const
-    {
-      Feature_handle fh = generator->m_features->template add<Feature_type> (generator->m_range,
-                                                                             point_map,
-                                                                             generator->grid(scale),
-                                                                             generator->radius_dtm(scale));
-      std::ostringstream oss;
-      oss << fh->name() << "_" << scale;
-      fh->set_name (oss.str());
-    }
-  };
-  
-  template <typename Feature_type>
-  void generate_multiscale_feature_variant_3 ()
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      launch_feature_computation (new Feature_adder_variant_3<Feature_type> (this, m_point_map, i));
-  }
-
-  
 };
 
 
