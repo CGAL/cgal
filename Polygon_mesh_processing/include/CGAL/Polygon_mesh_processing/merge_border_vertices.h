@@ -166,6 +166,14 @@ void merge_duplicated_vertices_in_boundary_cycles(PolygonMesh& pm)
   merge_duplicated_vertices_in_boundary_cycles(pm, parameters::all_default());
 }
 
+template <class PolygonMesh>
+void merge_duplicated_vertices_in_boundary_cycle(
+  typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
+  PolygonMesh& pm)
+{
+  merge_duplicated_vertices_in_boundary_cycles(h, pm, parameters::all_default());
+}
+
 } } // end of CGAL::Polygon_mesh_processing
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_MERGE_BORDER_VERTICES_H
