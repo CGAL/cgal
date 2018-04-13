@@ -140,4 +140,13 @@ cgal_setup_module_path()
 
 set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
 
+include("${CGAL_MODULES_DIR}/CGAL_parse_version_h.cmake")
+cgal_parse_version_h( "${CGAL_INSTALLATION_PACKAGE_DIR}/include/CGAL/version.h"
+  "CGAL_VERSION_NAME"
+  "CGAL_MAJOR_VERSION"
+  "CGAL_MINOR_VERSION"
+  "CGAL_BUGFIX_VERSION"
+  "CGAL_BUILD_VERSION")
+set(CGAL_VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUGFIX_VERSION}.${CGAL_BUILD_VERSION}")
+
 include("${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake")
