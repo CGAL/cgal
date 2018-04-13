@@ -152,7 +152,7 @@ add_vertex_and_face_to_border_test()
   assert(dist == 2);
 
   int blength = 0;
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(h1,m)){
+  BOOST_FOREACH(halfedge_descriptor hd, CGAL::halfedges_around_face(h1,m)){
     CGAL_USE(hd);
     blength++;
   }
@@ -163,7 +163,7 @@ add_vertex_and_face_to_border_test()
   assert(! is_border(res,m));
   assert(is_border(opposite(res,m),m));
   res = opposite(res,m);
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(res,m)){
+  BOOST_FOREACH(halfedge_descriptor hd, CGAL::halfedges_around_face(res,m)){
     CGAL_USE(hd);
     blength--;
   }
