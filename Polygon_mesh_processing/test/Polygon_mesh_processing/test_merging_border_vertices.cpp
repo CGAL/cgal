@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Polygon_mesh_processing/stitch_holes.h>
+#include <CGAL/Polygon_mesh_processing/merge_border_vertices.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
 #include <fstream>

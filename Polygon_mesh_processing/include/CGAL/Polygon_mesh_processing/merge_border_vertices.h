@@ -19,8 +19,8 @@
 //
 // Author(s)     : Sebastien Loriot
 
-#ifndef CGAL_STITCH_HOLES_H
-#define CGAL_STITCH_HOLES_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_MERGE_BORDER_VERTICES_H
+#define CGAL_POLYGON_MESH_PROCESSING_MERGE_BORDER_VERTICES_H
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
@@ -168,4 +168,4 @@ void merge_duplicated_vertices_in_boundary_cycles(PolygonMesh& pm)
 
 } } // end of CGAL::Polygon_mesh_processing
 
-#endif //CGAL_STITCH_HOLES_H
+#endif //CGAL_POLYGON_MESH_PROCESSING_MERGE_BORDER_VERTICES_H
