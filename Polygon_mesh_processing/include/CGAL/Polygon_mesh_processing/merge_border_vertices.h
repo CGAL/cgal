@@ -35,6 +35,46 @@ namespace CGAL{
 
 namespace Polygon_mesh_processing{
 
+namespace internal {
+
+// warning: vertices will be altered (sorted)
+template <class Vpm, class vertex_descriptor>
+void detect_identical_vertices(std::vector<vertex_descriptor>& vertices,
+                               std::vector< std::vector<vertex_descriptor> >& identical_vertices,
+                               Vpm vpm)
+{
+  typedef typename boost::property_traits<Vpm>::value_type Point_3;
+
+  // sort vertices using their point to ease the detection
+  // of vertices with identical points
+  CGAL::Property_map_to_unary_function<Vpm> Get_point(vpm);
+  std::sort( vertices.begin(), vertices.end(),
+             boost::bind(std::less<Point_3>(), boost::bind(Get_point,_1),
+                                               boost::bind(Get_point, _2)) );
+  std::size_t nbv=vertices.size();
+  std::size_t i=1;
+
+  while(i!=nbv)
+  {
+    if (get(vpm, vertices[i]) == get(vpm, vertices[i-1]))
+    {
+      identical_vertices.push_back( std::vector<vertex_descriptor>() );
+      identical_vertices.back().push_back(vertices[i-1]);
+      identical_vertices.back().push_back(vertices[i]);
+      while(++i!=nbv)
+      {
+        if (get(vpm, vertices[i]) == get(vpm, vertices[i-1]))
+          identical_vertices.back().push_back(vertices[i]);
+        else
+          break;
+      }
+    }
+    ++i;
+  }
+}
+
+} // end of internal
+
 /// \todo document me
 /// It should probably go into BGL package
 template <typename PolygonMesh, typename OutputIterator>
@@ -60,8 +100,8 @@ extract_boundary_cycles(PolygonMesh& pm,
 /// \ingroup PMP_repairing_grp
 /// \todo document me
 template <typename PolygonMesh, class VertexRange>
-void merge_vertices(const VertexRange& vertices,
-                          PolygonMesh& pm)
+void merge_boundary_vertices(const VertexRange& vertices,
+                                   PolygonMesh& pm)
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
@@ -102,7 +142,7 @@ void merge_duplicated_vertices_in_boundary_cycle(typename boost::graph_traits<Po
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameter>::const_type Vpm;
-  typedef typename boost::property_traits<Vpm>::value_type Point_3;
+
   Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
                          get_const_property_map(vertex_point, pm));
 
@@ -114,35 +154,11 @@ void merge_duplicated_vertices_in_boundary_cycle(typename boost::graph_traits<Po
     h=next(h, pm);
   }while(start!=h);
 
-  // sort vertices using their point to ease the detection
-  // of vertices with identical points
-  CGAL::Property_map_to_unary_function<Vpm> Get_point(vpm);
-  std::sort( vertices.begin(), vertices.end(),
-             boost::bind(std::less<Point_3>(), boost::bind(Get_point,_1),
-                                               boost::bind(Get_point, _2)) );
-  std::size_t nbv=vertices.size();
-  std::size_t i=1;
-
   std::vector< std::vector<vertex_descriptor> > identical_vertices;
-  while(i!=nbv)
-  {
-    if (get(vpm, vertices[i]) == get(vpm, vertices[i-1]))
-    {
-      identical_vertices.push_back( std::vector<vertex_descriptor>() );
-      identical_vertices.back().push_back(vertices[i-1]);
-      identical_vertices.back().push_back(vertices[i]);
-      while(++i!=nbv)
-      {
-        if (get(vpm, vertices[i]) == get(vpm, vertices[i-1]))
-          identical_vertices.back().push_back(vertices[i]);
-        else
-          break;
-      }
-    }
-    ++i;
-  }
+  internal::detect_identical_vertices(vertices, identical_vertices, vpm);
+
   BOOST_FOREACH(const std::vector<vertex_descriptor>& vrtcs, identical_vertices)
-    merge_vertices(vrtcs, pm);
+    merge_boundary_vertices(vrtcs, pm);
 }
 
 /// \ingroup PMP_repairing_grp
@@ -160,6 +176,36 @@ void merge_duplicated_vertices_in_boundary_cycles(      PolygonMesh& pm,
     merge_duplicated_vertices_in_boundary_cycle(h, pm, np);
 }
 
+
+/// \ingroup PMP_repairing_grp
+/// \todo document me
+template <class PolygonMesh, class NamedParameter>
+void merge_duplicated_boundary_vertices(      PolygonMesh& pm,
+                                        const NamedParameter& np)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameter>::const_type Vpm;
+
+  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+                         get_const_property_map(vertex_point, pm));
+
+  std::vector<vertex_descriptor> border_vertices;
+  BOOST_FOREACH(halfedge_descriptor h, halfedges(pm))
+  {
+    if(is_border(h, pm))
+      border_vertices.push_back(target(h, pm));
+  }
+
+  std::vector< std::vector<vertex_descriptor> > identical_vertices;
+  internal::detect_identical_vertices(border_vertices, identical_vertices, vpm);
+
+  BOOST_FOREACH(const std::vector<vertex_descriptor>& vrtcs, identical_vertices)
+    merge_boundary_vertices(vrtcs, pm);
+}
+
+
+
 template <class PolygonMesh>
 void merge_duplicated_vertices_in_boundary_cycles(PolygonMesh& pm)
 {
@@ -173,6 +219,13 @@ void merge_duplicated_vertices_in_boundary_cycle(
 {
   merge_duplicated_vertices_in_boundary_cycles(h, pm, parameters::all_default());
 }
+
+template <class PolygonMesh>
+void merge_duplicated_boundary_vertices(PolygonMesh& pm)
+{
+  merge_duplicated_boundary_vertices(pm, parameters::all_default());
+}
+
 
 } } // end of CGAL::Polygon_mesh_processing
 
