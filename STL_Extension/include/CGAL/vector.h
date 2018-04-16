@@ -158,6 +158,15 @@ public:
     // Note: the standard requires the following types to be equivalent
     // to T, T*, const T*, T&, const T&, size_t, and ptrdiff_t, respectively.
     // So we don't pass these types to the iterators explicitly.
+#ifdef CGAL_CXX11
+  typedef typename std::allocator_traits<Allocator>::value_type            value_type;
+  typedef typename std::allocator_traits<Allocator>::pointer               pointer;
+  typedef typename std::allocator_traits<Allocator>::const_pointer         const_pointer;
+  typedef typename std::allocator_traits<Allocator>::reference             reference;
+  typedef typename std::allocator_traits<Allocator>::const_reference       const_reference;
+  typedef typename std::allocator_traits<Allocator>::size_type             size_type;
+  typedef typename std::allocator_traits<Allocator>::difference_type       difference_type;
+#else
     typedef typename Allocator::value_type           value_type;
     typedef typename Allocator::pointer              pointer;
     typedef typename Allocator::const_pointer        const_pointer;
@@ -165,6 +174,8 @@ public:
     typedef typename Allocator::const_reference      const_reference;
     typedef typename Allocator::size_type            size_type;
     typedef typename Allocator::difference_type      difference_type;
+#endif
+  
     typedef std::random_access_iterator_tag          iterator_category;
     typedef vector_iterator< T, reference, pointer>  iterator;
     typedef vector_iterator< T, const_reference, const_pointer>
