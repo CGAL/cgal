@@ -1,3 +1,5 @@
+#define CGAL_NO_DEPRECATION_WARNINGS
+
 // test for the linear_least_square_fitting() functions.
 #include <CGAL/Cartesian.h>
 #include <CGAL/algorithm.h>

@@ -22,7 +22,6 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/Default_diagonalize_traits.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/grid_simplify_point_set.h>
 #include <CGAL/jet_smooth_point_set.h>

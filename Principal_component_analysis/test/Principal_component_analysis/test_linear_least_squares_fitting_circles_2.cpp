@@ -1,3 +1,5 @@
+#define CGAL_NO_DEPRECATION_WARNINGS
+
 // Example program for the linear_least_square_fitting function on a set of circles in 2D
 
 #include <CGAL/Cartesian.h>
