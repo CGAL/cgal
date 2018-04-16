@@ -34,9 +34,10 @@ for this concept:
 depend on another library.
 
 Although both models achieve the same computation,
-`Eigen_diagonalize_traits<T,dim>` is faster and should thus be used if the
-\ref thirdpartyEigen library is available. The eigenvalues are stored
-in ascending order and eigenvectors are stored in accordance.
+`Eigen_diagonalize_traits<T,dim>` is more precise and faster: it
+should thus be used if the \ref thirdpartyEigen library is
+available. The eigenvalues are stored in ascending order and
+eigenvectors are stored in accordance.
 
 This is an example of an eigen decomposition of a matrix using this
 class:
