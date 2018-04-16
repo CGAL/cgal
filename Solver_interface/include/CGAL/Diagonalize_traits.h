@@ -26,13 +26,9 @@
 #include <CGAL/number_type_config.h>
 #include <CGAL/double.h>
 
-#ifdef CGAL_TEST_SUITE
-#define CGAL_WARNING_DIAGONALIZE_TRAITS
-#else
 #define CGAL_WARNING_DIAGONALIZE_TRAITS \
-  CGAL_DEPRECATED_MSG("CGAL::Diagonalize_traits is an outdated class that can \
-lead to precision issues, using CGAL::Eigen_diagonalize_traits is strongly advised")
-#endif
+  CGAL_DEPRECATED_MSG("CGAL::Diagonalize_traits is a deprecated class that can \
+lead to precision issues, please use CGAL::Eigen_diagonalize_traits")
 
 namespace CGAL {
 
