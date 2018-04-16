@@ -52,8 +52,11 @@ class Handle_for
     };
 
     typedef typename Alloc::template rebind<RefCounted>::other  Allocator;
+#ifdef CGAL_CXX11
+  typedef typename std::allocator_traits<Allocator>::pointer    pointer;
+#else  
     typedef typename Allocator::pointer                         pointer;
-
+#endif
     static Allocator   allocator;
     pointer            ptr_;
 
