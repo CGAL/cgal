@@ -1919,15 +1919,15 @@ QString CGAL::QGLViewer::cameraPathKeysString() const {
   if (pathIndex_.isEmpty())
     return QString::null;
 
-  QVector<::Qt::Key> keys;
+  QVector< ::Qt::Key> keys;
   keys.reserve(pathIndex_.count());
-  for (QMap<::Qt::Key, unsigned int>::ConstIterator i = pathIndex_.begin(),
+  for (QMap< ::Qt::Key, unsigned int>::ConstIterator i = pathIndex_.begin(),
                                                   endi = pathIndex_.end();
        i != endi; ++i)
     keys.push_back(i.key());
   qSort(keys);
 
-  QVector<::Qt::Key>::const_iterator it = keys.begin(), end = keys.end();
+  QVector< ::Qt::Key>::const_iterator it = keys.begin(), end = keys.end();
   QString res = keyString(*it);
 
   const int maxDisplayedKeys = 6;
@@ -2427,7 +2427,7 @@ is returned. Returns \c 0 if no key is associated with this index.
 See also the <a href="../keyboard.html">keyboard page</a>. */
 CGAL_INLINE_FUNCTION
 ::Qt::Key CGAL::QGLViewer::pathKey(unsigned int index) const {
-  for (QMap<::Qt::Key, unsigned int>::ConstIterator it = pathIndex_.begin(),
+  for (QMap< ::Qt::Key, unsigned int>::ConstIterator it = pathIndex_.begin(),
                                                   end = pathIndex_.end();
        it != end; ++it)
     if (it.value() == index)

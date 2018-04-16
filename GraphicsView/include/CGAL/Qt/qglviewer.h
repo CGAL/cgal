@@ -1092,7 +1092,7 @@ protected:
   QMap<unsigned int, QString> keyDescription_;
 
   // K e y   F r a m e s   s h o r t c u t s
-  QMap<::Qt::Key, unsigned int> pathIndex_;
+  QMap< ::Qt::Key, unsigned int> pathIndex_;
   ::Qt::KeyboardModifiers addKeyFrameKeyboardModifiers_,
       playPathKeyboardModifiers_;
 
