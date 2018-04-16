@@ -259,7 +259,7 @@
 
 // Some random list to let us write C++11 without thinking about
 // each feature we are using.
-#if __cplusplus >= 201103L && \
+#if ( __cplusplus >= 201103L || _MSVC_LANG >= 201103L ) &&      \
     !defined CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES && \
     !defined CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE && \
     !defined CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS && \
