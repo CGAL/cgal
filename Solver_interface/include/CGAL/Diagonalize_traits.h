@@ -30,6 +30,8 @@
   CGAL_DEPRECATED_MSG("CGAL::Diagonalize_traits is a deprecated class that can \
 lead to precision issues, please use CGAL::Eigen_diagonalize_traits")
 
+/// \cond SKIP_IN_MANUAL
+
 namespace CGAL {
 
 /// \ingroup PkgSolver
@@ -298,5 +300,7 @@ public:
 };
 
 } // namespace CGAL
+
+/// \endcond
 
 #endif // CGAL_DIAGONALIZE_TRAITS_H
