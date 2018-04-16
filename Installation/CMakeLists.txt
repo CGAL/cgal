@@ -920,7 +920,6 @@ if(NOT CGAL_HEADER_ONLY)
     DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 else()
   install(FILES
-    ${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake
     ${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfig.cmake
     DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 endif()
