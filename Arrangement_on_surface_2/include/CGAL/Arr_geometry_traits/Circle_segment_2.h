@@ -142,7 +142,7 @@ public:
     return !equals(p);
   }
 
-  bool operator == (const Self& p)
+  bool operator == (const Self& p) const
   {
     return equals(p);
   }
