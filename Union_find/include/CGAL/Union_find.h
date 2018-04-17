@@ -223,7 +223,7 @@ typename Union_find<T,A>::handle Union_find<T,A>::make_set(const T& x) {
     pointer tmp = m_first;
     m_first = alloc.allocate(1);
 #ifdef CGAL_CXX11
-    std::allocator_traits<allocator>::construct(alloc, m_first, Union_find_struct(tmp,x));
+    std::allocator_traits<allocator>::construct(alloc, m_first, tmp, x);
 #else
     alloc.construct( m_first, Union_find_struct(tmp,x));
 #endif

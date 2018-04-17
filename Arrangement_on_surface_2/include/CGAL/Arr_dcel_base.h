@@ -1090,7 +1090,7 @@ public:
   {
     Vertex* v = vertex_alloc.allocate(1);
 #ifdef CGAL_CXX11
-    std::allocator_traits<Vertex_allocator>::construct(vertex_alloc,v, Vertex());
+    std::allocator_traits<Vertex_allocator>::construct(vertex_alloc,v);
 #else    
     vertex_alloc.construct(v, Vertex());
 #endif
@@ -1117,7 +1117,7 @@ public:
   {
     Face* f = face_alloc.allocate(1);
 #ifdef CGAL_CXX11
-    std::allocator_traits<Face_allocator>::construct(face_alloc, f, Face());
+    std::allocator_traits<Face_allocator>::construct(face_alloc, f);
 #else
     face_alloc.construct(f, Face());
 #endif    
@@ -1130,7 +1130,7 @@ public:
   {
     Outer_ccb* oc = out_ccb_alloc.allocate(1);
 #ifdef CGAL_CXX11
-    std::allocator_traits<Outer_ccb_allocator>::construct(out_ccb_alloc, oc, Outer_ccb());
+    std::allocator_traits<Outer_ccb_allocator>::construct(out_ccb_alloc, oc);
 #else
     out_ccb_alloc.construct(oc, Outer_ccb());
 #endif    
@@ -1143,7 +1143,7 @@ public:
   {
     Inner_ccb* ic = in_ccb_alloc.allocate(1);
 #ifdef CGAL_CXX11
-    std::allocator_traits<Inner_ccb_allocator>::construct(in_ccb_alloc, ic, Inner_ccb());
+    std::allocator_traits<Inner_ccb_allocator>::construct(in_ccb_alloc, ic);
 #else
     in_ccb_alloc.construct(ic, Inner_ccb());
 #endif    
@@ -1156,7 +1156,7 @@ public:
   {
     Isolated_vertex* iv = iso_vert_alloc.allocate(1);
 #ifdef CGAL_CXX11
-    std::allocator_traits<Iso_vert_allocator>::construct(iso_vert_alloc, iv, Isolated_vertex());
+    std::allocator_traits<Iso_vert_allocator>::construct(iso_vert_alloc, iv);
 #else
     iso_vert_alloc.construct(iv, Isolated_vertex());
 #endif

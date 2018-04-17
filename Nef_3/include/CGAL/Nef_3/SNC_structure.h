@@ -1052,7 +1052,7 @@ public:
   Vertex* get_vertex_node( const Vertex& ) {
     Vertex* p = vertex_allocator.allocate(1);
 #ifdef CGAL_CXX11
-    std::allocator_traits<Vertex_alloc>::construct(vertex_allocator, p, Vertex());
+    std::allocator_traits<Vertex_alloc>::construct(vertex_allocator, p);
 #else
     vertex_allocator.construct( p, Vertex());
 #endif
@@ -1071,7 +1071,7 @@ public:
   Halfedge* get_halfedge_node( const Halfedge&) {
     Halfedge* p = halfedge_allocator.allocate(1);
 #ifdef CGAL_CXX11
-    std::allocator_traits<Halfedge_alloc>::construct(halfedge_allocator, p, Halfedge());
+    std::allocator_traits<Halfedge_alloc>::construct(halfedge_allocator, p);
 #else
     halfedge_allocator.construct( p, Halfedge());
 #endif
@@ -1090,7 +1090,7 @@ public:
   Halffacet* get_halffacet_node( const Halffacet& ) {
     Halffacet* p = halffacet_allocator.allocate(1);
 #ifdef CGAL_CXX11
-    std::allocator_traits<Halffacet_alloc>::construct(halffacet_allocator, p, Halffacet());
+    std::allocator_traits<Halffacet_alloc>::construct(halffacet_allocator, p);
 #else
     halffacet_allocator.construct( p, Halffacet());
 #endif
@@ -1109,7 +1109,7 @@ public:
   Volume* get_volume_node( const Volume& ) {
     Volume* p = volume_allocator.allocate(1);
 #ifdef CGAL_CXX11
-    std::allocator_traits<Volume_alloc>::construct(volume_allocator, p, Volume());
+    std::allocator_traits<Volume_alloc>::construct(volume_allocator, p);
 #else
     volume_allocator.construct( p, Volume());
 #endif
@@ -1128,7 +1128,7 @@ public:
   SHalfedge* get_shalfedge_node( const SHalfedge& ) {
     SHalfedge* p = shalfedge_allocator.allocate(1);
 #ifdef CGAL_CXX11
-    std::allocator_traits<SHalfedge_alloc>::construct(shalfedge_allocator, p, SHalfedge());
+    std::allocator_traits<SHalfedge_alloc>::construct(shalfedge_allocator, p);
 #else
     shalfedge_allocator.construct( p, SHalfedge());
 #endif
@@ -1147,7 +1147,7 @@ public:
   SHalfloop* get_shalfloop_node( const SHalfloop& ) {
     SHalfloop* p = shalfloop_allocator.allocate(1);
 #ifdef CGAL_CXX11
-    std::allocator_traits<SHalfloop_alloc>::construct(shalfloop_allocator, p, SHalfloop());
+    std::allocator_traits<SHalfloop_alloc>::construct(shalfloop_allocator, p);
 #else
     shalfloop_allocator.construct( p, SHalfloop());
 #endif
@@ -1166,7 +1166,7 @@ public:
   SFace* get_sface_node( const SFace& ) {
     SFace* p = sface_allocator.allocate(1);
 #ifdef CGAL_CXX11
-    std::allocator_traits<SFace_alloc>::construct(sface_allocator, p, SFace());
+    std::allocator_traits<SFace_alloc>::construct(sface_allocator, p);
 #else
     sface_allocator.construct( p, SFace());
  #endif

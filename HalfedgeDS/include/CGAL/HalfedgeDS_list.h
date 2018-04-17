@@ -292,7 +292,7 @@ protected:
         // creates a new pair of opposite border halfedges.
         Halfedge_pair* hpair = edge_allocator.allocate(1);
 #ifdef CGAL_CXX11
-        std::allocator_traits<Edge_allocator>::construct(edge_allocator, hpair, Halfedge_pair( h, g));
+        std::allocator_traits<Edge_allocator>::construct(edge_allocator, hpair, h, g);
 #else        
         edge_allocator.construct(hpair, Halfedge_pair( h, g));
 #endif
