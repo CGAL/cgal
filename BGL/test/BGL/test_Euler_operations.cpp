@@ -160,8 +160,8 @@ add_vertex_and_face_to_border_test()
   halfedge_descriptor res = CGAL::Euler::add_vertex_and_face_to_border(f.h1, f.h2, f.m);
   assert(CGAL::is_valid(f.m));
   
-  assert(! is_border(res,m));
-  assert(is_border(opposite(res,m),m));
+  assert(! CGAL::is_border(res,m));
+  assert(CGAL::is_border(opposite(res,m),m));
   res = opposite(res,m);
   BOOST_FOREACH(halfedge_descriptor hd, CGAL::halfedges_around_face(res,m)){
     CGAL_USE(hd);
