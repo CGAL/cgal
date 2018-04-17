@@ -19,8 +19,8 @@
 //
 // Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
 
-#ifndef CURVATURE_FLOW_NEW_IMPL_H
-#define CURVATURE_FLOW_NEW_IMPL_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_NEW_IMPL_H
+#define CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_NEW_IMPL_H
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
@@ -300,4 +300,4 @@ private:
 } // PMP
 } // CGAL
 
-#endif // CURVATURE_FLOW_NEW_IMPL_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_NEW_IMPL_H

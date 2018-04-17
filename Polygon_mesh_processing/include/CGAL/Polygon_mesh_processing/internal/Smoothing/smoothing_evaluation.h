@@ -19,8 +19,8 @@
 //
 // Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
 
-#ifndef SMOOTHING_EVALUATION_H
-#define SMOOTHING_EVALUATION_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_SMOOTHING_EVALUATION_H
+#define CGAL_POLYGON_MESH_PROCESSING_SMOOTHING_EVALUATION_H
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
@@ -146,4 +146,4 @@ private:
 }
 
 
-#endif // SMOOTHING_EVALUATION_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_SMOOTHING_EVALUATION_H
