@@ -25,6 +25,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/helpers.h>
 
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
@@ -1039,7 +1040,7 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
       BOOST_FOREACH( face_descriptor f, faces(*sm))
       {
         //if face is degenerate, skip it
-        if (CGAL::is_degenerate_triangle_face(f, *sm, get(CGAL::vertex_point, *sm), EPICK()))
+        if (CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, *sm))
           continue;
         //if face not triangle, triangulate corresponding primitive before adding it to the tree
         if(!CGAL::is_triangle(halfedge(f, *sm), *sm))

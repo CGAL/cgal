@@ -2,6 +2,7 @@
 #include "Scene_polyhedron_selection_item.h"
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/helpers.h>
 #include <CGAL/boost/graph/dijkstra_shortest_paths.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/property_map.h>
@@ -2032,7 +2033,7 @@ bool Scene_polyhedron_selection_item_priv::canAddFace(fg_halfedge_descriptor hc,
       fg_halfedge_descriptor res =
           CGAL::Euler::add_face_to_border(t,hc, *item->polyhedron());
 
-      if(CGAL::is_degenerate_triangle_face(res, *item->polyhedron(), get(CGAL::vertex_point, *item->polyhedron()), Kernel()))
+      if(CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(res, *item->polyhedron()))
       {
         CGAL::Euler::remove_face(res, *item->polyhedron());
         tempInstructions("Edge not selected : resulting facet is degenerated.",

@@ -158,13 +158,9 @@ struct Less_vertex_point{
   }
 };
 
-// to be removed
-template <class Traits, class TriangleMesh, class VertexPointMap, class OutputIterator>
+template <class TriangleMesh, class OutputIterator>
 OutputIterator
-degenerate_faces(const TriangleMesh& tm,
-                 const VertexPointMap& vpmap,
-                 const Traits& traits,
-                 OutputIterator out)
+degenerate_faces(const TriangleMesh& tm, OutputIterator out)
 {
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   BOOST_FOREACH(face_descriptor fd, faces(tm))
@@ -173,17 +169,6 @@ degenerate_faces(const TriangleMesh& tm,
       *out++=fd;
   }
   return out;
-}
-
-template <class TriangleMesh, class OutputIterator>
-OutputIterator
-degenerate_faces(const TriangleMesh& tm, OutputIterator out)
-{
-  typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type Vpm;
-  typedef typename boost::property_traits<Vpm>::value_type Point;
-  typedef typename Kernel_traits<Point>::Kernel Kernel;
-
-  return degenerate_faces(tm, get(vertex_point, tm), Kernel(), out);
 }
 
 // this function remove a border edge even if it does not satisfy the link condition.

@@ -27,6 +27,7 @@
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/helpers.h>
 #include <Scene.h>
 
 #ifdef USE_SURFACE_MESH
@@ -745,10 +746,8 @@ public Q_SLOTS:
       bool is_valid = true;
       BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*selection_item->polyhedron()))
       {
-        if (CGAL::is_degenerate_triangle_face(fd,
-                                              *selection_item->polyhedron(),
-                                              vpmap,
-                                              CGAL::Kernel_traits< boost::property_traits<VPmap>::value_type >::Kernel()))
+        if (CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(fd,
+                                              *selection_item->polyhedron()))
         {
           is_valid = false;
           break;

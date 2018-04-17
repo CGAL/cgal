@@ -19,6 +19,7 @@
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Make_triangle_soup.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/Polygon_mesh_processing/helpers.h>
 #ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_facegraph_item;
 #else
@@ -87,7 +88,7 @@ bool isDegen(Mesh* mesh, std::vector<typename boost::graph_traits<Mesh>::face_de
   BOOST_FOREACH(FaceDescriptor f, faces(*mesh))
   {
     if(is_triangle(halfedge(f, *mesh), *mesh)
-       && is_degenerate_triangle_face(f, *mesh, get(boost::vertex_point, *mesh), Kernel()) )
+       && CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, *mesh) )
       out_faces.push_back(f);
   }
   return !out_faces.empty();

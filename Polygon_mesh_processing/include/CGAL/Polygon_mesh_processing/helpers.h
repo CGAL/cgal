@@ -136,33 +136,6 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
   return is_degenerate_edge(e, pm, parameters::all_default());
 }
 
-/// \cond SKIP_IN_DOC
-template <class Traits, class TriangleMesh, class VertexPointMap>
-bool is_degenerate_triangle_face(
-  typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd,
-  TriangleMesh& tmesh,
-  const VertexPointMap& vpmap,
-  const Traits& traits)
-{
-  CGAL_assertion(!is_border(hd, tmesh));
-
-  const typename Traits::Point_3& p1 = get(vpmap, target( hd, tmesh) );
-  const typename Traits::Point_3& p2 = get(vpmap, target(next(hd, tmesh), tmesh) );
-  const typename Traits::Point_3& p3 = get(vpmap, source( hd, tmesh) );
-  return traits.collinear_3_object()(p1, p2, p3);
-}
-
-template <class Traits, class TriangleMesh, class VertexPointMap>
-bool is_degenerate_triangle_face(
-  typename boost::graph_traits<TriangleMesh>::face_descriptor fd,
-  TriangleMesh& tmesh,
-  const VertexPointMap& vpmap,
-  const Traits& traits)
-{
-  return is_degenerate_triangle_face(halfedge(fd,tmesh), tmesh, vpmap, traits);
-}
-/// \endcond
-
 /// \ingroup PMP_repairing_grp
 /// checks whether a triangle face is degenerate.
 /// A triangle face is degenerate if its points are collinear.

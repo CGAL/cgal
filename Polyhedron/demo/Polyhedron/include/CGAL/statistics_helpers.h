@@ -14,6 +14,7 @@
 #include <boost/property_map/property_map.hpp>
 
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/helpers.h>
 
 
 template<typename Mesh>
@@ -92,7 +93,7 @@ unsigned int nb_degenerate_faces(Mesh* poly, VPmap vpmap)
   unsigned int nb = 0;
   BOOST_FOREACH(face_descriptor f, faces(*poly))
   {
-    if (CGAL::is_degenerate_triangle_face(f, *poly, vpmap, Traits()))
+    if (CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, *poly))
       ++nb;
   }
   return nb;

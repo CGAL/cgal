@@ -15,6 +15,7 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/helpers.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/boost/graph/selection.h>
@@ -276,7 +277,7 @@ void* Scene_polyhedron_item_priv::get_aabb_tree()
       int index =0;
       BOOST_FOREACH( Polyhedron::Facet_iterator f, faces(*poly))
       {
-        if (CGAL::is_degenerate_triangle_face(f, *poly, get(CGAL::vertex_point, *poly), Kernel()))
+        if (CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, *poly))
           continue;
         if(!f->is_triangle())
         {

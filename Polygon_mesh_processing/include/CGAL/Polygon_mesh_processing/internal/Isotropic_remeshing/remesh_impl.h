@@ -30,6 +30,7 @@
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/helpers.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -364,7 +365,7 @@ namespace internal {
 
       BOOST_FOREACH(face_descriptor f, face_range)
       {
-        if (is_degenerate_triangle_face(halfedge(f,mesh_),mesh_,vpmap_,GeomTraits())){
+        if (is_degenerate_triangle_face(f, mesh_,)){
           continue;
         }
         Patch_id pid = get_patch_id(f);
@@ -1593,7 +1594,7 @@ private:
       {
         if (is_border(h, mesh_))
           continue;
-        if (is_degenerate_triangle_face(h, mesh_, vpmap_, GeomTraits()))
+        if (is_degenerate_triangle_face(face(h), mesh_))
           degenerate_faces.insert(h);
       }
       while(!degenerate_faces.empty())
@@ -1601,7 +1602,7 @@ private:
         halfedge_descriptor h = *(degenerate_faces.begin());
         degenerate_faces.erase(degenerate_faces.begin());
 
-        if (!is_degenerate_triangle_face(h, mesh_, vpmap_, GeomTraits()))
+        if (!is_degenerate_triangle_face(face(h), mesh_))
           //this can happen when flipping h has consequences further in the mesh
           continue;
 
@@ -1654,10 +1655,10 @@ private:
             }
 
             if (!is_border(hf, mesh_)
-              && is_degenerate_triangle_face(hf, mesh_, vpmap_, GeomTraits()))
+              && is_degenerate_triangle_face(face(h), mesh_))
               degenerate_faces.insert(hf);
             if (!is_border(hfo, mesh_)
-              && is_degenerate_triangle_face(hfo, mesh_, vpmap_, GeomTraits()))
+              && is_degenerate_triangle_face(face(h), mesh_))
               degenerate_faces.insert(hfo);
 
             break;
@@ -1676,7 +1677,7 @@ private:
       {
         if (is_border(h, mesh_))
           continue;
-        if (is_degenerate_triangle_face(h, mesh_, vpmap_, GeomTraits()))
+        if (is_degenerate_triangle_face(face(h), mesh_))
           return true;
       }
       return false;
