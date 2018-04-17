@@ -678,7 +678,6 @@ Scene_image_item::compute_bbox() const
   if(!m_image)
     _bbox = Bbox();
   else
-
    _bbox = Bbox(m_image->image()->tx,
                 m_image->image()->ty,
                 m_image->image()->tz,
@@ -849,8 +848,7 @@ void Scene_image_item::changed()
 
 void Scene_image_item_priv::draw_Bbox(Scene_item::Bbox bbox, std::vector<float> *vertices)
 {
-  
-  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     vertices->push_back(bbox.xmin()+offset.x);
     vertices->push_back(bbox.ymin()+offset.y);
     vertices->push_back(bbox.zmin()+offset.z);
