@@ -553,8 +553,6 @@ void Cluster_classification::compute_features (std::size_t nb_scales)
 {
   CGAL_assertion (!(m_points->point_set()->empty()));
 
-  Generator* generator;
-  
   reset_indices();
   
   std::cerr << "Computing pointwise features with " << nb_scales << " scale(s)" << std::endl;
@@ -570,38 +568,51 @@ void Cluster_classification::compute_features (std::size_t nb_scales)
 
   Feature_set pointwise_features;
 
+  Generator generator (pointwise_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales);
+  
+  CGAL::Real_timer t;
+  t.start();
+    
+#ifdef CGAL_LINKED_WITH_TBB
+  pointwise_features.begin_parallel_additions();
+#endif
+
+  generator.generate_point_based_features();
+  if (normals)
+    generator.generate_normal_based_features (m_points->point_set()->normal_map());
+  if (colors)
+    generator.generate_color_based_features (m_color);
+  if (echo)
+    generator.generate_echo_based_features (echo_map);
+  
   add_remaining_point_set_properties_as_features(pointwise_features);
-  if (!normals && !colors && !echo)
-    generator = new Generator (pointwise_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales);
-  else if (!normals && !colors && echo)
-    generator = new Generator (pointwise_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 CGAL::Default(), CGAL::Default(), echo_map);
-  else if (!normals && colors && !echo)
-    generator = new Generator (pointwise_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 CGAL::Default(), m_color);
-  else if (!normals && colors && echo)
-    generator = new Generator (pointwise_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 CGAL::Default(), m_color, echo_map);
-  else if (normals && !colors && !echo)
-    generator = new Generator (pointwise_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 m_points->point_set()->normal_map());
-  else if (normals && !colors && echo)
-    generator = new Generator (pointwise_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 m_points->point_set()->normal_map(), CGAL::Default(), echo_map);
-  else if (normals && colors && !echo)
-    generator = new Generator (pointwise_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 m_points->point_set()->normal_map(), m_color);
-  else
-    generator = new Generator (pointwise_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 m_points->point_set()->normal_map(), m_color, echo_map);
+
+#ifdef CGAL_LINKED_WITH_TBB
+  pointwise_features.end_parallel_additions();
+#endif
+  
+  t.stop();
+  std::cerr << pointwise_features.size() << " feature(s) computed in " << t.time() << " second(s)" << std::endl;
+  t.reset();
 
   std::cerr << "Computing cluster features" << std::endl;
+  t.start();
+
+#ifdef CGAL_LINKED_WITH_TBB
+  m_features.begin_parallel_additions();
+#endif
+
   for (std::size_t i = 0; i < pointwise_features.size(); ++ i)
   {
     m_features.template add<Mean_feature> (*(m_points->point_set()),
                                            m_clusters,
                                            pointwise_features[i]);
   }
+  
+#ifdef CGAL_LINKED_WITH_TBB
+  m_features.end_parallel_additions();
+  m_features.begin_parallel_additions();
+#endif
   
   for (std::size_t i = 0; i < pointwise_features.size(); ++ i)
   {
@@ -613,6 +624,14 @@ void Cluster_classification::compute_features (std::size_t nb_scales)
   
   add_cluster_features();
 
+#ifdef CGAL_LINKED_WITH_TBB
+  m_features.end_parallel_additions();
+#endif
+  
+  t.stop();
+  std::cerr << m_features.size() << " feature(s) computed in " << t.time() << " second(s)" << std::endl;
+
+  
   delete m_sowf;
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
   delete m_ethz;
@@ -622,7 +641,6 @@ void Cluster_classification::compute_features (std::size_t nb_scales)
   m_random_forest = new Random_forest (m_labels, m_features);
 #endif
 
-  delete generator;
   std::cerr << "Features = " << m_features.size() << std::endl;
 }
 

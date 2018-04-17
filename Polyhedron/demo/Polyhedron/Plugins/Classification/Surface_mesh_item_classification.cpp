@@ -163,6 +163,16 @@ void Surface_mesh_item_classification::compute_features (std::size_t nb_scales)
   
   m_generator = new Generator (m_features, *(m_mesh->polyhedron()), fc_map, nb_scales);
   
+#ifdef CGAL_LINKED_WITH_TBB
+  m_features.begin_parallel_additions();
+#endif
+
+  m_generator->generate_point_based_features();
+
+#ifdef CGAL_LINKED_WITH_TBB
+  m_features.end_parallel_additions();
+#endif
+  
   delete m_sowf;
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
 #ifdef CGAL_LINKED_WITH_OPENCV

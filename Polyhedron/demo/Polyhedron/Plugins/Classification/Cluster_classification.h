@@ -310,10 +310,10 @@ class Cluster_classification : public Item_classification_base
 
   void add_cluster_features ()
   {
-    m_eigen = boost::make_shared<Local_eigen_analysis> (Local_eigen_analysis::Input_is_clusters(),
-                                                        m_clusters,
+    m_eigen = boost::make_shared<Local_eigen_analysis>
+      (Local_eigen_analysis::create_from_point_clusters(m_clusters,
                                                         Cluster_index_to_point_map (m_points->point_set()),
-                                                        Concurrency_tag());
+                                                        Concurrency_tag()));
 
     m_features.template add<Cluster_size_feature> (m_clusters);
     m_features.template add<Vertical_extent_feature> (m_clusters, m_points->point_set());

@@ -152,9 +152,10 @@ private:
       t.reset();
       t.start();
       
-      eigen = new Local_eigen_analysis (typename Local_eigen_analysis::Input_is_face_graph(),
-                                        input, neighborhood->n_ring_neighbor_query(nb_scale + 1),
-                                        ConcurrencyTag(), DiagonalizeTraits());
+      eigen = new Local_eigen_analysis
+        (Local_eigen_analysis::create_from_face_graph
+         (input, neighborhood->n_ring_neighbor_query(nb_scale + 1),
+          ConcurrencyTag(), DiagonalizeTraits()));
       float mrange = eigen->mean_range();
       if (this->voxel_size < 0)
         this->voxel_size = mrange;
@@ -216,15 +217,29 @@ public:
   Mesh_feature_generator(Feature_set& features,
                          const FaceListGraph& input,
                          PointMap point_map,
-                         std::size_t nb_scales)
+                         std::size_t nb_scales,
+                         float voxel_size = -1.f)
     : m_input (input), m_range(faces(input)), m_point_map (point_map), m_features (features)
   {
 
     m_bbox = CGAL::bounding_box
       (boost::make_transform_iterator (m_range.begin(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)),
        boost::make_transform_iterator (m_range.end(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)));
-    generate_features_impl (nb_scales);
 
+    CGAL::Real_timer t; t.start();
+    
+    m_scales.reserve (nb_scales);
+    
+    m_scales.push_back (new Scale (m_input, m_range, m_point_map, m_bbox, voxel_size, 0));
+    voxel_size = m_scales[0]->grid_resolution();
+    for (std::size_t i = 1; i < nb_scales; ++ i)
+    {
+      voxel_size *= 2;
+      m_scales.push_back (new Scale (m_input, m_range, m_point_map, m_bbox, voxel_size, i, m_scales[i-1]->grid));
+    }
+    t.stop();
+    CGAL_CLASSIFICATION_CERR << "Scales computed in " << t.time() << " second(s)" << std::endl;
+    t.reset();
   }
 
   
@@ -243,6 +258,42 @@ public:
   }
   /// \endcond
 
+
+  void generate_point_based_features ()
+  {
+#ifdef DO_NOT_USE_EIGEN_FEATURES
+    for (int j = 0; j < 3; ++ j)
+    {
+      for (std::size_t i = 0; i < m_scales.size(); ++ i)
+        m_features.add_with_scale_id<Eigenvalue> (i, m_range, eigen(i), std::size_t(j));
+    }
+#else
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Anisotropy> (i, i, m_range, eigen(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Eigentropy> (i, m_range, eigen(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Linearity> (i, m_range, eigen(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Omnivariance> (i, m_range, eigen(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Planarity> (i, m_range, eigen(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Sphericity> (i, m_range, eigen(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Sum_eigen> (i, m_range, eigen(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Surface_variation> (i, m_range, eigen(i));
+#endif
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Distance_to_plane> (i, m_range, m_point_map, eigen(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Dispersion> (i, m_range, m_point_map, grid(i), radius_neighbors(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Elevation> (i, m_range, m_point_map, grid(i), radius_dtm(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Verticality> (i, m_range, eigen(i));
+  }
 
   /*!
     \brief Returns the bounding box of the input point set.
@@ -297,51 +348,6 @@ private:
     m_scales.clear();
   }
 
-  void add (Feature_handle fh, std::size_t i)
-  {
-    m_features_to_rename.push_back (std::make_pair (fh, i));
-  }
-
-  void generate_point_based_features ()
-  {
-#ifdef DO_NOT_USE_EIGEN_FEATURES
-    for (int j = 0; j < 3; ++ j)
-    {
-      for (std::size_t i = 0; i < m_scales.size(); ++ i)
-        add(m_features.add<Eigenvalue> (m_range, eigen(i), std::size_t(j)), i);
-    }
-#else
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Anisotropy> (m_range, eigen(i)), i);
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Eigentropy> (m_range, eigen(i)), i);
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Linearity> (m_range, eigen(i)), i);
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Omnivariance> (m_range, eigen(i)), i);
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Planarity> (m_range, eigen(i)), i);
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Sphericity> (m_range, eigen(i)), i);
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Sum_eigen> (m_range, eigen(i)), i);
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Surface_variation> (m_range, eigen(i)), i);
-#endif
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Distance_to_plane> (m_range, m_point_map, eigen(i)), i);
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Dispersion> (m_range, m_point_map, grid(i), radius_neighbors(i)), i);
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Elevation> (m_range, m_point_map, grid(i), radius_dtm(i)), i);
-  }
-
-  void generate_normal_based_features(const CGAL::Default_property_map<face_iterator, typename Geom_traits::Vector_3>&)
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Verticality> (m_range, eigen(i)), i);
-  }
-
   template <typename T>
   const T& get_parameter (const T& t)
   {
@@ -353,46 +359,6 @@ private:
   get_parameter (const Default&)
   {
     return Default_property_map<face_iterator, T>();
-  }
-
-  void generate_features_impl (std::size_t nb_scales)
-  {
-    CGAL::Real_timer t; t.start();
-    
-    m_scales.reserve (nb_scales);
-    
-    float voxel_size = -1;
-    
-    m_scales.push_back (new Scale (m_input, m_range, m_point_map, m_bbox, voxel_size, 0));
-    voxel_size = m_scales[0]->grid_resolution();
-    for (std::size_t i = 1; i < nb_scales; ++ i)
-    {
-      voxel_size *= 2;
-      m_scales.push_back (new Scale (m_input, m_range, m_point_map, m_bbox, voxel_size, i, m_scales[i-1]->grid));
-    }
-    t.stop();
-    CGAL_CLASSIFICATION_CERR << "Scales computed in " << t.time() << " second(s)" << std::endl;
-    t.reset();
-
-    t.start();
-    
-#ifdef CGAL_LINKED_WITH_TBB
-    m_features.begin_parallel_additions();
-#endif
-    
-    generate_point_based_features ();
-    generate_normal_based_features (CGAL::Default_property_map<face_iterator, typename Geom_traits::Vector_3>());
-
-#ifdef CGAL_LINKED_WITH_TBB
-    m_features.end_parallel_additions();
-#endif
-    
-    for (std::size_t i = 0; i < m_features_to_rename.size(); ++ i)
-      m_features_to_rename[i].first->set_name
-        (m_features_to_rename[i].first->name() + "_" + std::to_string(m_features_to_rename[i].second));
-    
-    t.stop();
-    CGAL_CLASSIFICATION_CERR << "Features computed in " << t.time() << " second(s)" << std::endl;
   }
 
 };

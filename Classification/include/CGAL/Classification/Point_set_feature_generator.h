@@ -171,7 +171,7 @@ private:
     {
       CGAL::Real_timer t;
       t.start();
-      if (voxel_size < 0.)
+      if (lower_grid == NULL)
         neighborhood = new Neighborhood (input, point_map);
       else
         neighborhood = new Neighborhood (input, point_map, voxel_size);
@@ -186,7 +186,8 @@ private:
       t.start();
       
       eigen = new Local_eigen_analysis
-        (input, point_map, neighborhood->k_neighbor_query(12), ConcurrencyTag(), DiagonalizeTraits());
+        (Local_eigen_analysis::create_from_point_set
+         (input, point_map, neighborhood->k_neighbor_query(12), ConcurrencyTag(), DiagonalizeTraits()));
       
       float range = eigen->mean_range();
       if (this->voxel_size < 0)
@@ -237,7 +238,6 @@ private:
   const PointRange& m_input;
   PointMap m_point_map;
   Feature_set& m_features;
-  std::vector<std::pair<Feature_handle, std::size_t> > m_features_to_rename;
   
 public:
   
@@ -309,37 +309,34 @@ public:
     \param color_map property map to access the colors of the input points (if any).
     \param echo_map property map to access the echo values of the input points (if any).
   */
-  template <typename VectorMap = Default,
-            typename ColorMap = Default,
-            typename EchoMap = Default>
   Point_set_feature_generator(Feature_set& features,
                               const PointRange& input,
                               PointMap point_map,
                               std::size_t nb_scales,
-                              VectorMap normal_map = VectorMap(),
-                              ColorMap color_map = ColorMap(),
-                              EchoMap echo_map = EchoMap()
-#ifndef DOXYGEN_RUNNING
-                              , float voxel_size = -1.f // Undocumented way of changing base voxel size
-#endif
-                              )
+                              float voxel_size = -1.f)
     : m_input (input), m_point_map (point_map), m_features (features)
   {
     m_bbox = CGAL::bounding_box
       (boost::make_transform_iterator (m_input.begin(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)),
        boost::make_transform_iterator (m_input.end(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)));
 
-    typedef typename Default::Get<VectorMap, typename GeomTraits::Vector_3 >::type
-      Vmap;
-    typedef typename Default::Get<ColorMap, RGB_Color >::type
-      Cmap;
-    typedef typename Default::Get<EchoMap, std::size_t >::type
-      Emap;
+    CGAL::Real_timer t; t.start();
+    
+    m_scales.reserve (nb_scales);
+    
+    m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size));
 
-    generate_features_impl (nb_scales, voxel_size,
-                            get_parameter<Vmap>(normal_map),
-                            get_parameter<Cmap>(color_map),
-                            get_parameter<Emap>(echo_map));
+    if (voxel_size == -1.f)
+      voxel_size = m_scales[0]->grid_resolution();
+    
+    for (std::size_t i = 1; i < nb_scales; ++ i)
+    {
+      voxel_size *= 2;
+      m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size, m_scales[i-1]->grid));
+    }
+    t.stop();
+    CGAL_CLASSIFICATION_CERR << "Scales computed in " << t.time() << " second(s)" << std::endl;
+    t.reset();
   }
 
   
@@ -358,6 +355,77 @@ public:
   }
   /// \endcond
 
+
+  void generate_point_based_features ()
+  {
+#ifdef DO_NOT_USE_EIGEN_FEATURES
+    for (int j = 0; j < 3; ++ j)
+    {
+      for (std::size_t i = 0; i < m_scales.size(); ++ i)
+        m_features.add_with_scale_id<Eigenvalue> (i, m_input, eigen(i), std::size_t(j));
+    }
+#else
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Anisotropy> (i, m_input, eigen(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Eigentropy> (i, m_input, eigen(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Linearity> (i, m_input, eigen(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Omnivariance> (i, m_input, eigen(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Planarity> (i, m_input, eigen(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Sphericity> (i, m_input, eigen(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Sum_eigen> (i, m_input, eigen(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Surface_variation> (i, m_input, eigen(i));
+#endif
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Distance_to_plane> (i, m_input, m_point_map, eigen(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Dispersion> (i, m_input, m_point_map, grid(i), radius_neighbors(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Elevation> (i, m_input, m_point_map, grid(i), radius_dtm(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Verticality> (i, m_input, eigen(i));
+  }
+
+  template <typename VectorMap>
+  void generate_normal_based_features(const VectorMap& normal_map)
+  {
+    m_features.add<Verticality> (m_input, normal_map);
+  }
+
+  template <typename ColorMap>
+  void generate_color_based_features(const ColorMap& color_map)
+  {
+#ifdef DO_NOT_USE_HSV_FEATURES
+    typedef Feature::Color_channel<GeomTraits, PointRange, ColorMap> Color_channel;
+    for (std::size_t i = 0; i < 3; ++ i)
+      m_features.add<Color_channel> (m_input, color_map, typename Color_channel::Channel(i));
+#else
+    typedef Feature::Hsv<GeomTraits, PointRange, ColorMap> Hsv;
+    
+    for (std::size_t i = 0; i <= 8; ++ i)
+      m_features.add<Hsv> (m_input, color_map, typename Hsv::Channel(0), 45.f * float(i), 22.5f);
+
+    for (std::size_t i = 0; i <= 4; ++ i)
+      m_features.add<Hsv> (m_input, color_map, typename Hsv::Channel(1), 25.f * float(i), 12.5f);
+    
+    for (std::size_t i = 0; i <= 4; ++ i)
+      m_features.add<Hsv> (m_input, color_map, typename Hsv::Channel(2), 25.f * float(i), 12.5f);
+#endif
+  }
+
+  template <typename EchoMap>
+  void generate_echo_based_features(const EchoMap& echo_map)
+  {
+    typedef Feature::Echo_scatter<GeomTraits, PointRange, PointMap, EchoMap> Echo_scatter;
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      m_features.add_with_scale_id<Echo_scatter> (i, m_input, echo_map, grid(i), radius_neighbors(i));
+  }
 
   /*!
     \brief Returns the bounding box of the input point set.
@@ -412,94 +480,6 @@ private:
     m_scales.clear();
   }
 
-  void add (Feature_handle fh, std::size_t i)
-  {
-    m_features_to_rename.push_back (std::make_pair (fh, i));
-  }
-
-  void generate_point_based_features ()
-  {
-#ifdef DO_NOT_USE_EIGEN_FEATURES
-    for (int j = 0; j < 3; ++ j)
-    {
-      for (std::size_t i = 0; i < m_scales.size(); ++ i)
-        add(m_features.add<Eigenvalue> (m_input, eigen(i), std::size_t(j)), i);
-    }
-#else
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Anisotropy> (m_input, eigen(i)), i);
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Eigentropy> (m_input, eigen(i)), i);
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Linearity> (m_input, eigen(i)), i);
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Omnivariance> (m_input, eigen(i)), i);
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Planarity> (m_input, eigen(i)), i);
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Sphericity> (m_input, eigen(i)), i);
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Sum_eigen> (m_input, eigen(i)), i);
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Surface_variation> (m_input, eigen(i)), i);
-#endif
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Distance_to_plane> (m_input, m_point_map, eigen(i)), i);
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Dispersion> (m_input, m_point_map, grid(i), radius_neighbors(i)), i);
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Elevation> (m_input, m_point_map, grid(i), radius_dtm(i)), i);
-  }
-
-  template <typename VectorMap>
-  void generate_normal_based_features(const VectorMap& normal_map)
-  {
-    m_features.add<Verticality> (m_input, normal_map);
-  }
-
-  void generate_normal_based_features(const CGAL::Constant_property_map<Iterator, typename GeomTraits::Vector_3>&)
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Verticality> (m_input, eigen(i)), i);
-  }
-
-  template <typename ColorMap>
-  void generate_color_based_features(const ColorMap& color_map)
-  {
-#ifdef DO_NOT_USE_HSV_FEATURES
-    typedef Feature::Color_channel<GeomTraits, PointRange, ColorMap> Color_channel;
-    for (std::size_t i = 0; i < 3; ++ i)
-      m_features.add<Color_channel> (m_input, color_map, typename Color_channel::Channel(i));
-#else
-    typedef Feature::Hsv<GeomTraits, PointRange, ColorMap> Hsv;
-    
-    for (std::size_t i = 0; i <= 8; ++ i)
-      m_features.add<Hsv> (m_input, color_map, typename Hsv::Channel(0), 45.f * float(i), 22.5f);
-
-    for (std::size_t i = 0; i <= 4; ++ i)
-      m_features.add<Hsv> (m_input, color_map, typename Hsv::Channel(1), 25.f * float(i), 12.5f);
-    
-    for (std::size_t i = 0; i <= 4; ++ i)
-      m_features.add<Hsv> (m_input, color_map, typename Hsv::Channel(2), 25.f * float(i), 12.5f);
-#endif
-  }
-
-  void generate_color_based_features(const CGAL::Constant_property_map<Iterator, RGB_Color>&)
-  {
-  }
-
-  template <typename EchoMap>
-  void generate_echo_based_features(const EchoMap& echo_map)
-  {
-    typedef Feature::Echo_scatter<GeomTraits, PointRange, PointMap, EchoMap> Echo_scatter;
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      add(m_features.add<Echo_scatter> (m_input, echo_map, grid(i), radius_neighbors(i)), i);
-  }
-
-  void generate_echo_based_features(const CGAL::Constant_property_map<Iterator, std::size_t>&)
-  {
-  }
-
   void generate_gradient_features()
   {
 #ifdef CGAL_CLASSIFICATION_USE_GRADIENT_OF_FEATURE
@@ -533,61 +513,6 @@ private:
   get_parameter (const Default&)
   {
     return Constant_property_map<Iterator, T>();
-  }
-
-  template<typename VectorMap, typename ColorMap, typename EchoMap>
-  void generate_features_impl (std::size_t nb_scales, float voxel_size,
-                               VectorMap normal_map,
-                               ColorMap color_map,
-                               EchoMap echo_map)
-  {
-    CGAL::Real_timer t; t.start();
-    
-    m_scales.reserve (nb_scales);
-    
-    m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, -1.f));
-
-    if (voxel_size == -1.f)
-      voxel_size = m_scales[0]->grid_resolution();
-    
-    for (std::size_t i = 1; i < nb_scales; ++ i)
-    {
-      voxel_size *= 2;
-      m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size, m_scales[i-1]->grid));
-    }
-    t.stop();
-    CGAL_CLASSIFICATION_CERR << "Scales computed in " << t.time() << " second(s)" << std::endl;
-    t.reset();
-
-    t.start();
-    
-#ifdef CGAL_LINKED_WITH_TBB
-    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
-      m_features.begin_parallel_additions();
-#else
-    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-                               "Parallel_tag is enabled but TBB is unavailable.");
-#endif
-    
-    generate_point_based_features ();
-    generate_normal_based_features (normal_map);
-    generate_color_based_features (color_map);
-    generate_echo_based_features (echo_map);
-
-#ifdef CGAL_LINKED_WITH_TBB
-    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
-      m_features.end_parallel_additions();
-#else
-    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-                               "Parallel_tag is enabled but TBB is unavailable.");
-#endif
-
-    for (std::size_t i = 0; i < m_features_to_rename.size(); ++ i)
-      m_features_to_rename[i].first->set_name
-        (m_features_to_rename[i].first->name() + "_" + std::to_string(m_features_to_rename[i].second));
-
-    t.stop();
-    CGAL_CLASSIFICATION_CERR << "Features computed in " << t.time() << " second(s)" << std::endl;
   }
 
 };

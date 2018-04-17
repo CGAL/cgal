@@ -48,8 +48,6 @@ public:
               std::size_t idx)
     : eigen (eigen), m_idx (idx)
   {
-    std::cerr << "[" << idx << "]" << std::endl;
-    std::cerr << "[" << m_idx << "]" << std::endl;
     std::ostringstream oss;
     oss << "eigenvalue" << (idx+1);
     this->set_name (oss.str());

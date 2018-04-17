@@ -80,6 +80,8 @@ public:
 #ifdef CGAL_LINKED_WITH_TBB
     if (m_tasks != NULL)
       delete m_tasks;
+    for (std::size_t i = 0; i < m_adders.size(); ++ i)
+      delete m_adders[i];
 #endif
   }
   /// \endcond
@@ -118,6 +120,31 @@ public:
     return m_features.back();
   }
 
+  /// \cond SKIP_IN_MANUAL
+  template <typename Feature, typename ... T>
+  Feature_handle add_with_scale_id (std::size_t i, T&& ... t)
+  {
+#ifdef CGAL_LINKED_WITH_TBB
+    if (m_tasks != NULL)
+    {
+      m_features.push_back (Feature_handle());
+    
+      Parallel_feature_adder<Feature, T...>* adder
+        = new Parallel_feature_adder<Feature, T...>(i, m_features.back(), std::forward<T>(t)...);
+      
+      m_adders.push_back (adder);
+      m_tasks->run (*adder);
+    }
+    else
+#endif
+    {
+       m_features.push_back (Feature_handle (new Feature(std::forward<T>(t)...)));
+       m_features.back()->set_name (m_features.back()->name() + "_" + std::to_string(i));
+    }
+    return m_features.back();
+  }
+  /// \end
+
 #if defined(CGAL_LINKED_WITH_TBB) || defined(DOXYGEN_RUNNING)
   void begin_parallel_additions()
   {
@@ -132,6 +159,7 @@ public:
     
     for (std::size_t i = 0; i < m_adders.size(); ++ i)
       delete m_adders[i];
+    m_adders.clear();
   }
 #endif
     
@@ -202,11 +230,18 @@ private:
   template <typename Feature, typename ... T>
   struct Parallel_feature_adder : Abstract_parallel_feature_adder
   {
-    Feature_handle fh;
+    std::size_t scale;
+    mutable Feature_handle fh;
     boost::shared_ptr<std::tuple<T...> > args;
     
     Parallel_feature_adder (Feature_handle fh, T&& ... t)
-      : fh (fh)
+      : scale (std::size_t(-1)), fh (fh)
+    {
+      args = boost::make_shared<std::tuple<T...> >(std::forward<T>(t)...);
+    }
+    
+    Parallel_feature_adder (std::size_t scale, Feature_handle fh, T&& ... t)
+      : scale(scale), fh (fh)
     {
       args = boost::make_shared<std::tuple<T...> >(std::forward<T>(t)...);
     }
@@ -230,6 +265,8 @@ private:
     void add_feature (Tuple& t, seq<S...>) const
     {
       fh.attach (new Feature (std::forward<T>(std::get<S>(t))...));
+      if (scale != std::size_t(-1))
+        fh->set_name (fh->name() + "_" + std::to_string(scale));
     }
 
     void operator()() const

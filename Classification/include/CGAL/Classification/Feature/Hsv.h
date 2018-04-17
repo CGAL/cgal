@@ -138,8 +138,6 @@ public:
                                          * (c[std::size_t(channel)] - mean) / (2. * sd * sd)));
     }
 #endif
-    std::cerr << "[" << channel << " / " << mean << " / " << sd << "]" << std::endl;
-    std::cerr << "[" << m_channel << " / " << m_mean << " / " << m_sd << "]" << std::endl;
     std::ostringstream oss;
     if (channel == HUE) oss << "hue";
     else if (channel == SATURATION) oss << "saturation";
