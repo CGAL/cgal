@@ -50,14 +50,12 @@ void merge_identical_points(PolygonMesh& mesh,
 }
 } // end internal
 
-
-
 /// \ingroup PMP_repairing_grp
 /// checks whether a vertex is non-manifold.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 ///
-/// @param v the vertex to check whether is degenerate
+/// @param v the vertex
 /// @param tm triangle mesh containing v
 ///
 /// \return true if the vertrex is non-manifold
@@ -93,7 +91,7 @@ bool is_non_manifold_vertex(typename boost::graph_traits<PolygonMesh>::vertex_de
 /// @tparam PolygonMesh a model of `HalfedgeGraph`
 /// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
-/// @param e the edge to check whether is degenerate
+/// @param e the edge
 /// @param pm polygon mesh containing e
 /// @param np optional \ref pmp_namedparameters "Named Parameters" described below
 ///
@@ -143,7 +141,7 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
 /// @tparam TriangleMesh a model of `FaceGraph`
 /// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
-/// @param f the face to check whether is degenerate
+/// @param f the triangle face
 /// @param tm triangle mesh containing f
 /// @param np optional \ref pmp_namedparameters "Named Parameters" described below
 ///
@@ -198,12 +196,11 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
 /// @tparam TriangleMesh a model of `FaceGraph`
 /// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
-/// @param f a face to check whether is almost degenerate
+/// @param f the triangle face
 /// @param tm triangle mesh containing f
-/// @param threshold a number in the range [0, 1] to indicate the tolerance
-///        upon which to characterize the degeneracy. 1 means that needle triangles
-///        are those that have a infinitely small edge, while 0 means that all
-///        triangles are considered needles.
+/// @param threshold the cosine of an angle of f.
+///        The threshold is in range [0 1] and corresponds to
+///        angles between 0 and 90 degrees.
 /// @param np optional \ref pmp_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
@@ -216,7 +213,7 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
-/// \return true if the triangle face is almost degenerate
+/// \return true if the triangle face is a needle
 template <typename TriangleMesh, typename NamedParameters>
 bool is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
                              const TriangleMesh& tm,
@@ -224,109 +221,8 @@ bool is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_de
                              const NamedParameters& np)
 {
   CGAL_assertion(CGAL::is_triangle_mesh(tm));
-
-  using boost::get_param;
-  using boost::choose_param;
-
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
-  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-                                      get_const_property_map(vertex_point, tm));
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Traits;
-  typedef typename Traits::FT FT;
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::vertex_descriptor vertex_descriptor;
-  typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
-
-  vertex_descriptor v0 = target(halfedge(f, tm), tm);
-  vertex_descriptor v1 = target(next(halfedge(f, tm), tm), tm);
-  vertex_descriptor v2 = target(next(next(halfedge(f, tm), tm), tm), tm);
-  Point_ref p0 = get(vpmap, v0);
-  Point_ref p1 = get(vpmap, v1);
-  Point_ref p2 = get(vpmap, v2);
-
-  // e1 = p0p1  e2 = p1p2  e3 = p2p3
-  FT e1 = CGAL::squared_distance(p0,p1);
-  FT e2 = CGAL::squared_distance(p1,p2);
-  FT e3 = CGAL::squared_distance(p2,p0);
-
-  FT smallest, largest;
-  if(e1 < e2)
-  {
-    if(e1 < e3)
-      smallest = e1;
-    else
-      smallest = e3;
-  }
-  else
-  {
-    if(e2 < e3)
-      smallest = e2;
-    else
-      smallest = e3;
-  }
-  if(e1 > e2)
-  {
-    if(e1 > e3)
-      largest = e1;
-    else
-      largest = e3;
-  }
-  else
-  {
-    if(e2 > e3)
-      largest = e2;
-    else
-      largest = e3;
-  }
-
-  const double ratio = smallest / largest;
-  // threshold is opposite
-  if(ratio < (1 - threshold))
-    return true;
-  return false;
-}
-
-template <typename TriangleMesh>
-bool is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
-                             const TriangleMesh& tm,
-                             const double threshold)
-{
-  return is_needle_triangle_face(f, tm, threshold, parameters::all_default());
-}
-
-/// \ingroup PMP_repairing_grp
-/// checks whether a triangle face is a cap.
-/// A triangle is a cap if it has an angle very close to 180 degrees.
-///
-/// @tparam TriangleMesh a model of `FaceGraph`
-/// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
-///
-/// @param f the face to check whether is almost degenerate
-/// @param tm triangle mesh containing f
-/// @param threshold a number in the range [0, 1] to indicate the tolerance
-///        upon which to characterize the degeneracy. 1 means that cap triangles
-///        are considered those whose vertices form an angle of 180 degrees, while 0 means that
-///        all triangles are considered caps.
-/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
-///
-/// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`.
-/// If this parameter is omitted, an internal property map for
-/// `CGAL::vertex_point_t` should be available in `TriangleMesh`
-/// \cgalParamEnd
-///    \cgalParamBegin{geom_traits} a geometric traits class instance.
-///       The traits class must provide the nested type `Point_3`
-///   \cgalParamEnd
-/// \cgalNamedParamsEnd
-///
-/// \return true if the triangle face is almost degenerate
-template <typename TriangleMesh, typename NamedParameters>
-bool is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
-                             const TriangleMesh& tm,
-                             const double threshold,
-                             const NamedParameters& np)
-{
-  CGAL_assertion(CGAL::is_triangle_mesh(tm));
+  CGAL_assertion(threshold >= 0);
+  CGAL_assertion(threshold <= 1);
 
   using boost::get_param;
   using boost::choose_param;
@@ -351,11 +247,84 @@ bool is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descr
     Vector b = get(vpmap, v2) - get(vpmap, v1);
     FT aa = a.squared_length();
     FT bb = b.squared_length();
-    FT dot_ab = (a*b) / (aa * bb);
+    FT squared_dot_ab = ((a*b)*(a*b)) / (aa * bb);
 
-    // threshold = 1 means no tolerance, totally degenerate
-    // take the opposite, because cos is -1 at 180 degrees
-    if(dot_ab < -threshold)
+    if(squared_dot_ab > threshold * threshold)
+      return true;
+  }
+  return false;
+
+}
+
+template <typename TriangleMesh>
+bool is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
+                             const TriangleMesh& tm,
+                             const double threshold)
+{
+  return is_needle_triangle_face(f, tm, threshold, parameters::all_default());
+}
+
+/// \ingroup PMP_repairing_grp
+/// checks whether a triangle face is a cap.
+/// A triangle is a cap if it has an angle very close to 180 degrees.
+///
+/// @tparam TriangleMesh a model of `FaceGraph`
+/// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+///
+/// @param f the triangle face
+/// @param tm triangle mesh containing f
+/// @param threshold the cosine of an angle of f.
+///        The threshold is in range [-1 0] and corresponds to
+///        angles between 90 and 180 degrees.
+/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+///
+/// \cgalNamedParamsBegin
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`.
+/// If this parameter is omitted, an internal property map for
+/// `CGAL::vertex_point_t` should be available in `TriangleMesh`
+/// \cgalParamEnd
+///    \cgalParamBegin{geom_traits} a geometric traits class instance.
+///       The traits class must provide the nested type `Point_3`
+///   \cgalParamEnd
+/// \cgalNamedParamsEnd
+///
+/// \return true if the triangle face is a cap
+template <typename TriangleMesh, typename NamedParameters>
+bool is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
+                             const TriangleMesh& tm,
+                             const double threshold,
+                             const NamedParameters& np)
+{
+  CGAL_assertion(CGAL::is_triangle_mesh(tm));
+  CGAL_assertion(threshold >= -1);
+  CGAL_assertion(threshold <= 0);
+
+  using boost::get_param;
+  using boost::choose_param;
+
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
+  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+                                      get_const_property_map(vertex_point, tm));
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Traits;
+  typedef typename Traits::FT FT;
+  typedef boost::graph_traits<TriangleMesh> GT;
+  typedef typename GT::halfedge_descriptor halfedge_descriptor;
+  typedef typename GT::vertex_descriptor vertex_descriptor;
+  typedef typename boost::property_traits<VertexPointMap>::value_type Point_type;
+  typedef typename Kernel_traits<Point_type>::Kernel::Vector_3 Vector;
+
+  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f, tm), tm))
+  {
+    vertex_descriptor v0 = source(h, tm);
+    vertex_descriptor v1 = target(h, tm);
+    vertex_descriptor v2 = target(next(h, tm), tm);
+    Vector a = get(vpmap, v0) - get (vpmap, v1);
+    Vector b = get(vpmap, v2) - get(vpmap, v1);
+    FT aa = a.squared_length();
+    FT bb = b.squared_length();
+    FT squared_dot_ab = ((a*b)*(a*b)) / (aa * bb);
+
+    if(squared_dot_ab > threshold * threshold)
       return true;
   }
   return false;

@@ -119,7 +119,7 @@ void test_cap(const char* fname)
     exit(1);
   }
 
-  const double threshold = 0.8;
+  const double threshold = -0.8;
   BOOST_FOREACH(typename boost::graph_traits<Surface_mesh>::face_descriptor f, faces(mesh))
   {
     CGAL_assertion(CGAL::Polygon_mesh_processing::is_cap_triangle_face(f, mesh, threshold));
