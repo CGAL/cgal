@@ -162,20 +162,18 @@ public:
   typedef typename std::allocator_traits<Allocator>::value_type            value_type;
   typedef typename std::allocator_traits<Allocator>::pointer               pointer;
   typedef typename std::allocator_traits<Allocator>::const_pointer         const_pointer;
-  typedef typename std::allocator_traits<Allocator>::reference             reference;
-  typedef typename std::allocator_traits<Allocator>::const_reference       const_reference;
   typedef typename std::allocator_traits<Allocator>::size_type             size_type;
   typedef typename std::allocator_traits<Allocator>::difference_type       difference_type;
 #else
     typedef typename Allocator::value_type           value_type;
     typedef typename Allocator::pointer              pointer;
     typedef typename Allocator::const_pointer        const_pointer;
-    typedef typename Allocator::reference            reference;
-    typedef typename Allocator::const_reference      const_reference;
     typedef typename Allocator::size_type            size_type;
     typedef typename Allocator::difference_type      difference_type;
 #endif
-  
+
+    typedef value_type&                              reference;
+    typedef const value_type&                        const_reference;
     typedef std::random_access_iterator_tag          iterator_category;
     typedef vector_iterator< T, reference, pointer>  iterator;
     typedef vector_iterator< T, const_reference, const_pointer>
