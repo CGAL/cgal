@@ -1557,7 +1557,7 @@ protected:
   {
     Point_2* p_pt = m_points_alloc.allocate(1);
 #ifdef CGAL_CXX11
-  std::allocator_traits<Points_alloc>::construct(m_points_alloc, p_pt, pt);
+    std::allocator_traits<Points_alloc>::construct(m_points_alloc, p_pt, pt);
 #else
     m_points_alloc.construct(p_pt, pt);
 #endif
@@ -1570,7 +1570,7 @@ protected:
     Point_2* p_pt = &pt;
 #ifdef CGAL_CXX11
     std::allocator_traits<Points_alloc>::destroy(m_points_alloc, p_pt);
-#else    
+#else
     m_points_alloc.destroy(p_pt);
 #endif
     m_points_alloc.deallocate(p_pt, 1);
@@ -1582,7 +1582,7 @@ protected:
     X_monotone_curve_2* p_cv = m_curves_alloc.allocate(1);
 #ifdef CGAL_CXX11
     std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, p_cv, cv);
-#else    
+#else
     m_curves_alloc.construct(p_cv, cv);
 #endif
     return (p_cv);

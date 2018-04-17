@@ -78,10 +78,10 @@ namespace CGAL {
 #ifdef CGAL_CXX11
     typedef std::allocator_traits<Alloc_> Allocator_traits;
     typedef typename Allocator_traits::template rebind_alloc<Dart> Dart_allocator;
-#else    
+#else
     typedef typename Alloc_::template rebind<Dart>::other  Dart_allocator;
 #endif
-    
+
     typedef Compact_container<Dart, Dart_allocator>        Dart_container;
 
     typedef typename Dart_container::iterator              Dart_handle;

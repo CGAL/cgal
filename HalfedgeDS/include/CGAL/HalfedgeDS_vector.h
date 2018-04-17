@@ -71,7 +71,7 @@ public:
     typedef typename Allocator_traits::template rebind_alloc<Vertex> Vertex_allocator;
     typedef typename Allocator_traits::template rebind_alloc<Halfedge> Halfedge_allocator;
     typedef typename Allocator_traits::template rebind_alloc<Face> Face_allocator;
-#else
+#else // not CGAL_CXX11
     typedef typename Allocator::template rebind< Vertex> Vertex_alloc_rebind;
     typedef typename Vertex_alloc_rebind::other        Vertex_allocator;
     typedef typename Allocator::template rebind< Halfedge>
@@ -79,7 +79,7 @@ public:
     typedef typename Halfedge_alloc_rebind::other      Halfedge_allocator;
     typedef typename Allocator::template rebind< Face> Face_alloc_rebind;
     typedef typename Face_alloc_rebind::other          Face_allocator;
-#endif  
+#endif // not CGAL_CXX11
 
 #ifdef CGAL__HALFEDGEDS_USE_INTERNAL_VECTOR
     typedef internal::vector<Vertex, Vertex_allocator> Vertex_vector;

@@ -253,11 +253,11 @@ class Reference_counted_hierarchy : public Reference_counted_hierarchy_base {
 #ifdef CGAL_CXX11
     typedef std::allocator_traits<Allocator_> Allocator_traits;
     typedef typename Allocator_traits::template rebind_alloc<char> Char_allocator;
-#else  
+#else
     typedef typename Allocator_::template rebind< char> Char_alloc_rebind;
     typedef typename Char_alloc_rebind::other   Char_allocator;
 #endif
-  
+
     static Char_allocator alloc;
 
 public:

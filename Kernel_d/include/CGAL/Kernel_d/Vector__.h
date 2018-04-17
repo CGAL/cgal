@@ -122,7 +122,7 @@ protected:
     while (p >= vi)  {
 #ifdef CGAL_CXX11
       std::allocator_traits<allocator_type>::destroy(allocator(),p);
-#else      
+#else
       allocator().destroy(p);
 #endif
       p--;

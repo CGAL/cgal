@@ -403,7 +403,7 @@ random_shuffle(RandomAccessIterator begin, RandomAccessIterator end)
 }
 
 } // namespace cpp98
-  
+
 namespace internal {
 namespace algorithm {
 

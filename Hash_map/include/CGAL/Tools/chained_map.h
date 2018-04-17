@@ -65,13 +65,13 @@ class chained_map
 
    std::size_t old_index;
 #ifdef CGAL_CXX11
-    typedef std::allocator_traits<Allocator> Allocator_traits;
-  typedef typename Allocator_traits::template rebind_alloc<chained_map_elem<T> > allocator_type;
-#else  
+   typedef std::allocator_traits<Allocator> Allocator_traits;
+   typedef typename Allocator_traits::template rebind_alloc<chained_map_elem<T> > allocator_type;
+#else
    typedef typename Allocator::template rebind<chained_map_elem<T> >::other allocator_type;
 #endif
-  
-  allocator_type alloc;
+
+   allocator_type alloc;
 
 public:
    T& xdef() { return STOP.i; }
@@ -89,16 +89,16 @@ private:
 
    inline void insert(std::size_t x, T y);
 
-  void destroy(chained_map_elem<T>* item)
-  {
+   void destroy(chained_map_elem<T>* item)
+   {
 #ifdef CGAL_CXX11
-    typedef std::allocator_traits<allocator_type> Allocator_type_traits;
-    Allocator_type_traits::destroy(alloc,item);
+     typedef std::allocator_traits<allocator_type> Allocator_type_traits;
+     Allocator_type_traits::destroy(alloc,item);
 #else
-    alloc.destroy(item);
-#endif    
-  }
-  
+     alloc.destroy(item);
+#endif
+   }
+
 public:
    typedef chained_map_elem<T>*  chained_map_item;
    typedef chained_map_item item;
@@ -164,11 +164,11 @@ void chained_map<T, Allocator>::init_table(std::size_t t)
 #ifdef CGAL_CXX11
     typedef std::allocator_traits<Allocator> Allocator_traits;
     std::allocator_traits<allocator_type>::construct(alloc,table + i);
-#else    
+#else
     alloc.construct(table + i, chained_map_elem<T>());
 #endif
   }
-  
+
   free = table + t;
   table_end = table + t + t/2;      
 
@@ -327,7 +327,7 @@ chained_map<T, Allocator>& chained_map<T, Allocator>::operator=(const chained_ma
 
   for (chained_map_item item = table ; item != table_end ; ++item)
     destroy(item);
-  
+
   alloc.deallocate(table, table_end - table);
 
   init_table(D.table_size);

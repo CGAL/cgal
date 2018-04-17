@@ -281,11 +281,11 @@ private:
 #ifdef CGAL_CXX11
     typedef std::allocator_traits<Allocator> Allocator_traits;
     typedef typename Allocator_traits::template rebind_alloc<Vertex> Vertex_allocator;
-#else  
+#else
   typedef typename Allocator::template rebind<Vertex>    Vertex_alloc_rebind;
   typedef typename Vertex_alloc_rebind::other            Vertex_allocator;
 #endif
-  
+
   // Halfedge allocator.
 #ifdef CGAL_CXX11
     typedef typename Allocator_traits::template rebind_alloc<Edge> Edge_allocator;

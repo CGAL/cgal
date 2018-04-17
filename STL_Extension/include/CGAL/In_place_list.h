@@ -252,10 +252,10 @@ public:
   typedef typename Allocator::size_type           size_type;
   typedef typename Allocator::difference_type     difference_type;
 #endif
-  
+
   typedef value_type&       reference;
   typedef const value_type& const_reference;
-  
+
   typedef internal::In_place_list_iterator<T, Alloc> iterator;
   typedef internal::In_place_list_const_iterator<T, Alloc> const_iterator;
 
@@ -295,12 +295,12 @@ protected:
   }
   void put_node( pointer p) {
 #ifdef CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY  
-#ifdef CGAL_CXX11
+#  ifdef CGAL_CXX11
     std::allocator_traits<Allocator>::destroy(allocator, p);
-#else
+#  else
     allocator.destroy( p);
-#endif    
-#else 
+#  endif
+#else // not CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY
    p->~value_type();
 #endif
     allocator.deallocate( p, 1);

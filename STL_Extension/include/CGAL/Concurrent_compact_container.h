@@ -191,7 +191,7 @@ public:
   typedef typename Allocator::size_type             size_type;
   typedef typename Allocator::difference_type       difference_type;
 #endif
-  
+
   typedef CCC_internal::CCC_iterator<Self, false>   iterator;
   typedef CCC_internal::CCC_iterator<Self, true>    const_iterator;
   typedef std::reverse_iterator<iterator>           reverse_iterator;
@@ -440,7 +440,7 @@ private:
 #else
     m_alloc.destroy(&*x);
 #endif
-    
+
 /* WE DON'T DO THAT BECAUSE OF THE ERASE COUNTER
 #ifndef CGAL_NO_ASSERTIONS
     std::memset(&*x, 0, sizeof(T));

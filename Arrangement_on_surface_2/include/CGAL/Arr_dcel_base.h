@@ -916,7 +916,7 @@ protected:
     typedef typename Allocator_traits::template rebind_alloc<Outer_ccb>       Outer_ccb_allocator;
     typedef typename Allocator_traits::template rebind_alloc<Inner_ccb>       Inner_ccb_allocator;
     typedef typename Allocator_traits::template rebind_alloc<Isolated_vertex> Iso_vert_allocator;
-#else
+#else // not CGAL_CXX11
   // Vertex allocator.
   typedef typename Allocator::template rebind<Vertex>    Vertex_alloc_rebind;
   typedef typename Vertex_alloc_rebind::other            Vertex_allocator;
@@ -941,7 +941,7 @@ protected:
   typedef typename Allocator::template rebind<Isolated_vertex>
                                                          Iso_vert_alloc_rebind;
   typedef typename Iso_vert_alloc_rebind::other          Iso_vert_allocator;
-#endif
+#endif // not CGAL_CXX11
 
 public:
   typedef typename Halfedge_list::size_type              Size;
@@ -1091,7 +1091,7 @@ public:
     Vertex* v = vertex_alloc.allocate(1);
 #ifdef CGAL_CXX11
     std::allocator_traits<Vertex_allocator>::construct(vertex_alloc,v);
-#else    
+#else
     vertex_alloc.construct(v, Vertex());
 #endif
     vertices.push_back(*v);
@@ -1120,7 +1120,7 @@ public:
     std::allocator_traits<Face_allocator>::construct(face_alloc, f);
 #else
     face_alloc.construct(f, Face());
-#endif    
+#endif
     faces.push_back (*f);
     return(f);
   }
@@ -1133,7 +1133,7 @@ public:
     std::allocator_traits<Outer_ccb_allocator>::construct(out_ccb_alloc, oc);
 #else
     out_ccb_alloc.construct(oc, Outer_ccb());
-#endif    
+#endif
     out_ccbs.push_back(*oc);
     return (oc);
   }
@@ -1146,7 +1146,7 @@ public:
     std::allocator_traits<Inner_ccb_allocator>::construct(in_ccb_alloc, ic);
 #else
     in_ccb_alloc.construct(ic, Inner_ccb());
-#endif    
+#endif
     in_ccbs.push_back(*ic);
     return (ic);
   }

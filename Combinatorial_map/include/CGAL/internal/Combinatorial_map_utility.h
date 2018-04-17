@@ -439,7 +439,7 @@ namespace CGAL
         typedef typename Allocator_traits::template rebind_alloc<T> Attr_allocator;
 #else
         typedef typename CMap::Alloc::template rebind<T>::other Attr_allocator;
-#endif        
+#endif
         typedef typename CMap::template Container_for_attributes<T>::iterator
         iterator_type;
 
@@ -455,7 +455,7 @@ namespace CGAL
 #ifdef CGAL_CXX11
         typedef std::allocator_traits<typename CMap::Alloc> Allocator_traits;
         typedef typename Allocator_traits::template rebind_alloc<T> Attr_allocator;
-#else        
+#else
         typedef typename CMap::Alloc::template rebind<T>::other Attr_allocator;
 #endif
         typedef typename CMap::template Container_for_attributes<T>::
