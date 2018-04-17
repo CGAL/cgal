@@ -283,7 +283,11 @@ protected:
   pointer get_node( const T& t) {
     pointer p = allocator.allocate(1);
 #ifdef CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY
+#ifdef CGAL_CXX11
+    std::allocator_traits<Allocator>::construct(allocator, p, t);
+#else
     allocator.construct(p, t);
+    #endif
 #else
     new (p) value_type(t);
 #endif
@@ -291,7 +295,11 @@ protected:
   }
   void put_node( pointer p) {
 #ifdef CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY  
+#ifdef CGAL_CXX11
+    std::allocator_traits<Allocator>::destroy(allocator, p);
+#else
     allocator.destroy( p);
+#endif    
 #else 
    p->~value_type();
 #endif
