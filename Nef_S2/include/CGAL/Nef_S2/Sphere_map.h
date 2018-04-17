@@ -376,7 +376,7 @@ public:
   SVertex* get_vertex_node( const SVertex& ) {
     SVertex* p = vertex_allocator.allocate(1);
 #ifdef CGAL_CXX11
-    std::allocator_traits<SVertex_alloc>::construct(vertex_allocator, p, SVertex());
+    std::allocator_traits<SVertex_alloc>::construct(vertex_allocator, p);
 #else
     vertex_allocator.construct( p, SVertex());
 #endif
@@ -384,7 +384,7 @@ public:
   }
   void put_vertex_node( SVertex* p) {
 #ifdef CGAL_CXX11
-    std::allocator_traits<Vertex_alloc>::destroy(vertex_allocator, p);
+    std::allocator_traits<SVertex_alloc>::destroy(vertex_allocator, p);
 #else
     vertex_allocator.destroy(p);
 #endif
@@ -395,7 +395,7 @@ public:
   SHalfedge* get_halfedge_node( const SHalfedge& ) {
     SHalfedge* p = halfedge_allocator.allocate(1);
 #ifdef CGAL_CXX11
-    std::allocator_traits<Shalfedge_alloc>::construct(halfedge_allocator, p, SHalfedge());
+    std::allocator_traits<SHalfedge_alloc>::construct(halfedge_allocator, p);
 #else
     halfedge_allocator.construct( p, SHalfedge());
 #endif
@@ -414,7 +414,7 @@ public:
   SFace* get_face_node( const SFace& ) {
     SFace* p = face_allocator.allocate(1);
 #ifdef CGAL_CXX11
-    std::allocator_traits<SFace_alloc>::construct(face_allocator, p, Vertex());
+    std::allocator_traits<SFace_alloc>::construct(face_allocator, p);
 #else
     face_allocator.construct( p, SFace());
 #endif

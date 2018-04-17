@@ -404,8 +404,8 @@ public:
   {
     FreeList * fl = get_free_list();
     pointer ret = init_insert(fl);
- #ifdef CGAL_CXX11
-    std::allocator_traits<allocator_type>::construct(am_lloc, ret, t);
+#ifdef CGAL_CXX11
+    std::allocator_traits<allocator_type>::construct(m_alloc, ret, t);
 #else
     m_alloc.construct(ret, t);
 #endif
