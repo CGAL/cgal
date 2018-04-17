@@ -278,13 +278,21 @@ public:
 private:
 
   // Vertex allocator.
+#ifdef CGAL_CXX11
+    typedef std::allocator_traits<Allocator> Allocator_traits;
+    typedef typename Allocator_traits::template rebind_alloc<Vertex> Vertex_allocator;
+#else  
   typedef typename Allocator::template rebind<Vertex>    Vertex_alloc_rebind;
   typedef typename Vertex_alloc_rebind::other            Vertex_allocator;
-
+#endif
+  
   // Halfedge allocator.
+#ifdef CGAL_CXX11
+    typedef typename Allocator_traits::template rebind_alloc<Edge> Edge_allocator;
+#else
   typedef typename Allocator::template rebind<Edge>      Edge_alloc_rebind;
   typedef typename Edge_alloc_rebind::other              Edge_allocator;
-
+#endif
 
   Edge* _leftmostP;                   // The leftmost edge of the diagram
                                       // (representing the range from -oo).

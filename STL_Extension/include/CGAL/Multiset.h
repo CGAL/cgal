@@ -236,9 +236,14 @@ protected:
   };
 
   // Rebind the allocator to the Node type:
+#ifdef CGAL_CXX11
+  typedef std::allocator_traits<Allocator> Allocator_traits;
+  typedef typename Allocator_traits::template rebind_alloc<Node> Node_allocator;
+#else  
   typedef typename Allocator::template rebind <Node>  Node_alloc_rebind;
   typedef typename Node_alloc_rebind::other           Node_allocator;
-
+#endif
+  
 public:
 
   // Forward decleration:

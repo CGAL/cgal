@@ -578,7 +578,11 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
+#ifdef CGAL_CXX11
+    std::allocator_traits<allocator_type>::construct(alloc, ret, t);
+#else
     alloc.construct(ret, t);
+#endif
     CGAL_assertion(type(ret) == USED);
     ++size_;
     time_stamper->set_time_stamp(ret);
@@ -606,7 +610,11 @@ public:
 
     CGAL_precondition(type(&*x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
+#ifdef CGAL_CXX11
+    std::allocator_traits<allocator_type>::destroy(alloc, &*x);
+#else
     alloc.destroy(&*x);
+#endif
 /*#ifndef CGAL_NO_ASSERTIONS
     std::memset(&*x, 0, sizeof(T));
 #endif*/
@@ -916,7 +924,11 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::clear()
     for (pointer pp = p + 1; pp != p + s - 1; ++pp) {
       if (type(pp) == USED)
       {
+#ifdef CGAL_CXX11
+        std::allocator_traits<allocator_type>::destroy(alloc, pp);
+#else
         alloc.destroy(pp);
+#endif
         set_type(pp, NULL, FREE);
       }
     }

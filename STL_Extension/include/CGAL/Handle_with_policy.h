@@ -250,9 +250,14 @@ struct Reference_counted_hierarchy_base {};
 template <class Allocator_  = CGAL_ALLOCATOR(char)>
 class Reference_counted_hierarchy : public Reference_counted_hierarchy_base {
     // make sure it's always a char allocator
+#ifdef CGAL_CXX11
+    typedef std::allocator_traits<Allocator_> Allocator_traits;
+    typedef typename Allocator_traits::template rebind_alloc<char> Char_allocator;
+#else  
     typedef typename Allocator_::template rebind< char> Char_alloc_rebind;
     typedef typename Char_alloc_rebind::other   Char_allocator;
-
+#endif
+  
     static Char_allocator alloc;
 
 public:
@@ -750,8 +755,12 @@ public:
 
     typedef typename Rep::Rep_pointer  Rep_pointer;
 
+  #ifdef CGAL_CXX11
+    typedef std::allocator_traits<Allocator_> Allocator_traits;
+    typedef typename Allocator_traits::template rebind_alloc<Rep> Rep_allocator;
+#else
     typedef typename Allocator_::template rebind<Rep>::other  Rep_allocator;
-
+#endif
 
     //! integer type for identifying a representation.
     typedef std::ptrdiff_t              Id_type;

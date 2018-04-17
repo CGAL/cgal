@@ -404,7 +404,11 @@ public:
   {
     FreeList * fl = get_free_list();
     pointer ret = init_insert(fl);
+ #ifdef CGAL_CXX11
+    std::allocator_traits<allocator_type>::construct(am_lloc, ret, t);
+#else
     m_alloc.construct(ret, t);
+#endif
     return finalize_insert(ret, fl);
   }
 
@@ -430,7 +434,13 @@ private:
 
     CGAL_precondition(type(x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
+
+#ifdef CGAL_CXX11
+    std::allocator_traits<allocator_type>::destroy(m_alloc, &*x);
+#else
     m_alloc.destroy(&*x);
+#endif
+    
 /* WE DON'T DO THAT BECAUSE OF THE ERASE COUNTER
 #ifndef CGAL_NO_ASSERTIONS
     std::memset(&*x, 0, sizeof(T));
