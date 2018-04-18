@@ -162,7 +162,6 @@ void chained_map<T, Allocator>::init_table(std::size_t t)
   table = alloc.allocate(t + t/2);
   for (std::size_t i = 0 ; i < t + t/2 ; ++i){
 #ifdef CGAL_CXX11
-    typedef std::allocator_traits<Allocator> Allocator_traits;
     std::allocator_traits<allocator_type>::construct(alloc,table + i);
 #else
     alloc.construct(table + i, chained_map_elem<T>());

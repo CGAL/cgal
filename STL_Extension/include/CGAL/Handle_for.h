@@ -58,7 +58,7 @@ class Handle_for
     typedef std::allocator_traits<Allocator> Allocator_traits;
     typedef typename Alloc_traits::template rebind_traits<RefCounted>::pointer pointer;
 #else
-    typedef typename Alloc_::template rebind<RefCounted>::other  Allocator;
+    typedef typename Alloc::template rebind<RefCounted>::other   Allocator;
     typedef typename Allocator::pointer                          pointer;
 #endif
 
