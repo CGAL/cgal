@@ -86,6 +86,7 @@ public:
    * @return computed error
    */
   FT compute_error(const TriangleMesh &tm, const face_descriptor &f, const Proxy &px) const {
+    (void)(tm);
     Vector_3 v = m_sum_functor(get(m_fnmap, f), m_scale_functor(px, FT(-1.0)));
     return get(m_famap, f) * m_scalar_product_functor(v, v);
   }
@@ -99,6 +100,7 @@ public:
    */
   template <typename FaceRange>
   Proxy fit_proxy(const TriangleMesh &tm, const FaceRange &faces) const {
+    (void)(tm);
     CGAL_assertion(!faces.empty());
 
     // fitting normal
