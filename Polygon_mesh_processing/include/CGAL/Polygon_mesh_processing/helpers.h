@@ -32,6 +32,57 @@ namespace Polygon_mesh_processing {
 
 namespace internal {
 
+template<typename Descriptor>
+struct No_constraint_pmap
+{
+public:
+  typedef Descriptor                          key_type;
+  typedef bool                                value_type;
+  typedef value_type&                         reference;
+  typedef boost::read_write_property_map_tag  category;
+
+  friend bool get(const No_constraint_pmap& , const key_type& ) {
+    return false;
+  }
+  friend void put(No_constraint_pmap& , const key_type& , const bool ) {}
+};
+
+template <typename G, typename OutputIterator>
+struct Vertex_collector
+{
+  typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
+  void collect_vertices(vertex_descriptor v1, vertex_descriptor v2)
+  {
+    std::vector<vertex_descriptor>& verts = collections[v1];
+    if (verts.empty())
+      verts.push_back(v1);
+    verts.push_back(v2);
+  }
+
+  void dump(OutputIterator out)
+  {
+    typedef std::pair<const vertex_descriptor, std::vector<vertex_descriptor> > Pair_type;
+    BOOST_FOREACH(const Pair_type& p, collections)
+    {
+      *out++=p.second;
+    }
+  }
+
+  std::map<vertex_descriptor, std::vector<vertex_descriptor> > collections;
+};
+
+template <typename G>
+struct Vertex_collector<G, Emptyset_iterator>
+{
+  typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
+  void collect_vertices(vertex_descriptor, vertex_descriptor)
+  {}
+
+  void dump(Emptyset_iterator)
+  {}
+};
+
+// used only for testing
 template <typename PolygonMesh>
 void merge_identical_points(PolygonMesh& mesh,
                             typename boost::graph_traits<PolygonMesh>::vertex_descriptor v_keep,

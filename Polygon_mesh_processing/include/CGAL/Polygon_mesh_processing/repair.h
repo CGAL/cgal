@@ -1284,14 +1284,21 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh)
 ///
 /// \cgalNamedParamsBegin
 ///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`.
-/// If this parameter is omitted, an internal property map for
-/// `CGAL::vertex_point_t` should be available in `PolygonMesh`
+///       If this parameter is omitted, an internal property map for
+///       `CGAL::vertex_point_t` should be available in `PolygonMesh`
 ///    \cgalParamEnd
-///    \cgalParamBegin{geom_traits} a geometric traits class instance.
-///    \cgalParamEnd
+///   \cgalParamBegin{vertex_is_constrained_map} a writable property map with `vertex_descriptor`
+///     as key and `bool` as `value_type`. `put(pmap, v, true)` will be called for each duplicated
+///     vertices and the input one.
+///  \cgalParamEnd
+///   \cgalParamBegin{output_iterator} an output iterator where `std::vector<vertex_descriptor>` can be put.
+///    The first vertex of the vector is an input vertex that was non-manifold,
+///    the other vertices in the vertex are the new vertices created to fix
+///    the non-manifoldness.
+///  \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
-/// \return true if the triangle face is degenerate
+/// \return the number of vertices created
 template <typename TriangleMesh, typename NamedParameters>
 std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm,
                                             const NamedParameters& np)
@@ -1301,14 +1308,33 @@ std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm,
   using boost::get_param;
   using boost::choose_param;
 
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpm = choose_param(get_param(np, internal_np::vertex_point),
-                                        get_property_map(vertex_point, tm));
-
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
 
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VertexPointMap;
+  VertexPointMap vpm = choose_param(get_param(np, internal_np::vertex_point),
+                                        get_property_map(vertex_point, tm));
+
+  typedef typename boost::lookup_named_param_def <
+    internal_np::vertex_is_constrained_t,
+    NamedParameters,
+    internal::No_constraint_pmap<vertex_descriptor>//default
+  > ::type VerticesMap;
+  VerticesMap cmap
+    = choose_param(get_param(np, internal_np::vertex_is_constrained),
+                   internal::No_constraint_pmap<vertex_descriptor>());
+
+  typedef typename boost::lookup_named_param_def <
+    internal_np::output_iterator_t,
+    NamedParameters,
+    Emptyset_iterator
+  > ::type Output_iterator;
+  Output_iterator out
+    = choose_param(get_param(np, internal_np::output_iterator),
+                       Emptyset_iterator());
+
+  internal::Vertex_collector<TriangleMesh, Output_iterator> dmap;
   boost::unordered_set<vertex_descriptor> vertices_handled;
   boost::unordered_set<halfedge_descriptor> halfedges_handled;
 
@@ -1322,6 +1348,7 @@ std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm,
       vertex_descriptor vd = target(h, tm);
       if ( !vertices_handled.insert(vd).second )
       {
+        put(cmap, vd, true); // store the originals
         non_manifold_cones.push_back(h);
       }
       else
@@ -1341,6 +1368,8 @@ std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm,
       halfedge_descriptor start = h;
       vertex_descriptor new_vd = add_vertex(tm);
       ++nb_new_vertices;
+      put(cmap, new_vd, true); // store the duplicates
+      dmap.collect_vertices(target(h, tm), new_vd);
       put(vpm, new_vd, get(vpm, target(h, tm)));
       set_halfedge(new_vd, h, tm);
       do{
@@ -1348,8 +1377,8 @@ std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm,
         h=opposite(next(h, tm), tm);
       } while(h!=start);
     }
+    dmap.dump(out);
   }
-
   return nb_new_vertices;
 }
 

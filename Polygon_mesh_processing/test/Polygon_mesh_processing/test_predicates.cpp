@@ -43,7 +43,7 @@ void check_triangle_face_degeneracy(const char* fname)
   CGAL_assertion(!CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(all_faces[3], mesh));
 }
 
-// temp left here: tests repair.h
+// tests repair.h
 void test_vertices_merge_and_duplication(const char* fname)
 {
   std::ifstream input(fname);
@@ -62,10 +62,13 @@ void test_vertices_merge_and_duplication(const char* fname)
   const std::size_t vertices_after_merge = vertices(mesh).size();
   CGAL_assertion(vertices_after_merge == initial_vertices - 1);
 
-  CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices(mesh);
-  const std::size_t final_vertices = vertices(mesh).size();
-  CGAL_assertion(final_vertices == vertices_after_merge + 1);
-  CGAL_assertion(final_vertices == initial_vertices);
+  std::vector< std::vector<vertex_descriptor> > duplicated_vertices;
+  CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices(mesh,
+                                 CGAL::parameters::output_iterator(std::back_inserter(duplicated_vertices)));
+  const std::size_t final_vertices_size = vertices(mesh).size();
+  CGAL_assertion(final_vertices_size == vertices_after_merge + 1);
+  CGAL_assertion(final_vertices_size == initial_vertices);
+  CGAL_assertion(duplicated_vertices.size() == 2);
 }
 
 void test_vertex_non_manifoldness(const char* fname)
