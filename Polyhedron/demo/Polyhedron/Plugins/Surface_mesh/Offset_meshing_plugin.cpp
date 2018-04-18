@@ -184,6 +184,7 @@ public:
     , m_offset_distance(offset_distance)
   {
     CGAL_assertion(! m_tree_ptr->empty() );
+    m_tree_ptr->accelerate_distance_queries();
   }
 
   double operator()(const Kernel::Point_3& p) const
