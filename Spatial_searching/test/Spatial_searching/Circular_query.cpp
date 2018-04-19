@@ -17,6 +17,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Origin.h>
 #include <CGAL/point_generators_2.h>
+#include <CGAL/use.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
@@ -84,6 +85,7 @@ void run_with_fuzziness(std::list<Point> all_points, // intentional copy
   V vec;
   vec.resize(result.size());
   typename V::iterator it = tree.search(vec.begin(), default_range);
+  CGAL_USE(it);
   assert(it == vec.end());
   result.clear();
 
