@@ -91,7 +91,7 @@ public:
     for (int i = 0; cit != end && (distance <= sq_inner_radius); ++cit, ++i) {
       if ((*cit) < rectangle.min_coord(i))
         distance += CGAL::square(rectangle.min_coord(i)-(*cit));
-      if ((*cit) > rectangle.max_coord(i))
+      else if ((*cit) > rectangle.max_coord(i))
         distance += CGAL::square((*cit)-rectangle.max_coord(i));
     }
 
