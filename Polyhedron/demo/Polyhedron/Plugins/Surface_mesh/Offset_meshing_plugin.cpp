@@ -51,7 +51,9 @@ public:
     , m_side_of_ptr( new Side_of(*m_tree_ptr) )
     , m_offset_distance(offset_distance)
     , m_is_closed( is_closed(tm) )
-  {}
+  {
+    m_tree_ptr->accelerate_distance_queries();
+  }
 
   double operator()(const typename GeomTraits::Point_3& p) const
   {
