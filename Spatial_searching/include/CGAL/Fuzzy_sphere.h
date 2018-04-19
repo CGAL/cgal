@@ -74,7 +74,7 @@ public:
     typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
         pit = construct_it(p), end = construct_it(c, 0);
     for (; cit != end && (distance <= sq_radius); ++cit, ++pit) {
-      distance += ((*cit)-(*pit))*((*cit)-(*pit));
+      distance += CGAL::square((*cit)-(*pit));
     }
 
     return (distance <= sq_radius);
@@ -87,12 +87,12 @@ public:
     typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
         traits.construct_cartesian_const_iterator_d_object();
     typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
-        end = construct_it(c, 0);
+                                                      end = construct_it(c, 0);
     for (int i = 0; cit != end && (distance <= sq_inner_radius); ++cit, ++i) {
       if ((*cit) < rectangle.min_coord(i))
-        distance += (rectangle.min_coord(i)-(*cit))*(rectangle.min_coord(i)-(*cit));
+        distance += CGAL::square(rectangle.min_coord(i)-(*cit));
       if ((*cit) > rectangle.max_coord(i))
-        distance += ((*cit)-rectangle.max_coord(i))*((*cit)-rectangle.max_coord(i));
+        distance += CGAL::square((*cit)-rectangle.max_coord(i));
     }
 
     return (distance <= sq_inner_radius);
@@ -107,12 +107,12 @@ public:
     typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
         traits.construct_cartesian_const_iterator_d_object();
     typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
-        end = construct_it(c, 0);
+                                                      end = construct_it(c, 0);
     for (int i = 0; cit != end && (distance <= sq_outer_radius) ; ++cit,++i) {
       if ((*cit) <= (rectangle.min_coord(i)+rectangle.max_coord(i))/FT(2))
-        distance += (rectangle.max_coord(i)-(*cit))*(rectangle.max_coord(i)-(*cit));
+        distance += CGAL::square(rectangle.max_coord(i)-(*cit));
       else
-        distance += ((*cit)-rectangle.min_coord(i))*((*cit)-rectangle.min_coord(i));
+        distance += CGAL::square((*cit)-rectangle.min_coord(i));
     }
 
     return (distance <= sq_outer_radius);
