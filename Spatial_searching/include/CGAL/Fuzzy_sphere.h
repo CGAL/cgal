@@ -136,8 +136,8 @@ public:
 
 //specialization for Search_traits_adapter
 template <class K,class PM,class Base_traits>
-class Fuzzy_sphere< Search_traits_adapter<K,PM,Base_traits> > :
-    public internal::Fuzzy_sphere_impl<Search_traits_adapter<K,PM,Base_traits>,typename Base_traits::Point_d>
+class Fuzzy_sphere< Search_traits_adapter<K,PM,Base_traits> >
+  : public internal::Fuzzy_sphere_impl<Search_traits_adapter<K,PM,Base_traits>,typename Base_traits::Point_d>
 {
   typedef Search_traits_adapter<K,PM,Base_traits> SearchTraits;
   typedef internal::Fuzzy_sphere_impl<SearchTraits,typename Base_traits::Point_d> Base;
@@ -150,8 +150,8 @@ public:
   Fuzzy_sphere(const typename SearchTraits::Point_d& center, FT radius, FT epsilon=FT(0),
                const SearchTraits& traits_=SearchTraits(),
                typename boost::disable_if<
-               boost::is_same<typename Base_traits::Point_d,
-               typename SearchTraits::Point_d> >::type* = 0)
+                 boost::is_same<typename Base_traits::Point_d,
+                                typename SearchTraits::Point_d> >::type* = 0)
     : Base(get(traits_.point_property_map(),center),radius,epsilon,traits_) {}
 };
 

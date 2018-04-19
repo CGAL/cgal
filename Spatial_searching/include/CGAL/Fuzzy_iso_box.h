@@ -122,7 +122,8 @@ namespace CGAL {
     Cartesian_const_iterator_d pit = construct_it(p);
     Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;
     for (unsigned int i = 0; i < dim; ++i, ++pit, ++minit, ++maxit) {
-      if ( ((*pit) < (*minit)) || ((*pit) > (*maxit)) ) return false;
+      if ( ((*pit) < (*minit)) || ((*pit) > (*maxit)) )
+        return false;
     }
     return true;
   }
@@ -132,7 +133,8 @@ namespace CGAL {
     Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;
     for (unsigned int i = 0; i < dim; ++i, ++minit, ++maxit) {
       if ( ((*maxit)-eps < rectangle.min_coord(i))
-           || ((*minit)+eps > rectangle.max_coord(i)) ) return false;
+           || ((*minit)+eps > rectangle.max_coord(i)) )
+        return false;
     }
     return true;
   }
@@ -143,7 +145,8 @@ namespace CGAL {
     Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;
     for (unsigned int i = 0; i < dim; ++i, ++minit, ++maxit) {
       if (  ((*maxit)+eps < rectangle.max_coord(i) )
-            || ((*minit)-eps > rectangle.min_coord(i)) ) return false;
+            || ((*minit)-eps > rectangle.min_coord(i)) )
+        return false;
     }
     return true;
   }
