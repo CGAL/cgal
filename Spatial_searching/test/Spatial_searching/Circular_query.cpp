@@ -50,8 +50,8 @@ void run_with_fuzziness(std::list<Point> all_points, // intentional copy
 
   std::cout << "test with center: " << center << " radius: " << radius << " eps: " << fuzziness << "... ";
 
-  const FT inner_radius = (fuzziness > radius) ? 0 : (radius - fuzziness);
-  const FT sq_inner_radius = inner_radius * inner_radius;
+  const FT inner_radius = radius - fuzziness;
+  const FT sq_inner_radius = (inner_radius < 0) ? -1 : inner_radius * inner_radius;
   const FT outer_radius = radius + fuzziness;
   const FT sq_outer_radius = outer_radius * outer_radius;
 
@@ -106,14 +106,19 @@ void run_with_fuzziness(std::list<Point> all_points, // intentional copy
     all_points.remove(get_point(*pt));
   }
 
-  for(std::list<Point>::const_iterator pt=all_points.begin(); (pt != all_points.end()); ++pt)
+  // note: if eps > r, the squared radius is set to '-1'. We cannot have missed
+  // any point because there is no inner approximation.
+  if(sq_inner_radius >= 0.)
   {
-    // all points with a distance d <= r - eps must have been reported
-    bool is_correct = (CGAL::squared_distance(center,*pt) > sq_inner_radius);
-    if(!is_correct)
-      std::cout << "missed " << *pt << " with distance = " << CGAL::squared_distance(center,*pt) << std::endl;
+    for(std::list<Point>::const_iterator pt=all_points.begin(); (pt != all_points.end()); ++pt)
+    {
+      // all points with a distance d <= r - eps must have been reported
+      bool is_correct = (CGAL::squared_distance(center,*pt) > sq_inner_radius);
+      if(!is_correct)
+        std::cout << "missed " << *pt << " with distance = " << CGAL::squared_distance(center,*pt) << std::endl;
 
-    assert(is_correct);
+      assert(is_correct);
+    }
   }
 
   std::cout << "done" << std::endl;

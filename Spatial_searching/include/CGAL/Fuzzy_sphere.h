@@ -62,7 +62,7 @@ public:
     CGAL_precondition(r >= 0);
     CGAL_precondition(eps >= 0);
 
-    sq_inner_radius = (eps > r) ? 0 : (r - eps) * (r - eps);
+    sq_inner_radius = (eps > r) ? -1. : (r - eps) * (r - eps);
     sq_outer_radius = (r + eps) * (r + eps);
   }
 
