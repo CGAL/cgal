@@ -7,14 +7,20 @@ The class `Fuzzy_sphere` implements fuzzy `d`-dimensional spheres.
 A fuzzy sphere with radius \f$ r\f$ and fuzziness value \f$ \epsilon\f$ has
 as inner approximation a sphere with radius \f$ r-\epsilon\f$ and
 as outer approximation a sphere with radius \f$ r+\epsilon\f$.
+Points are returned depending on their location respective to the approximations,
+as follows:
+- points in the inner approximation (boundary included) are always returned.
+- points in the outer approximation (boundary included) and not in the previous
+  category may or may not be returned.
+- points that do not fit in the two previous categories are never returned.
+
+Note that if the fuzziness value is strictly greater than the radius, there is no
+inner approximation.
 
 \tparam Traits must be a model of the concept
 `SearchTraits`, for example `CGAL::Cartesian_d<double>`.
 
 \cgalModels `FuzzyQueryItem`
-
-\sa `FuzzyQueryItem`
-
 */
 template< typename Traits >
 class Fuzzy_sphere {
