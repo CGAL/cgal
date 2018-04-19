@@ -132,6 +132,10 @@ if  ${MAKE_CMD} -f Makefile help | grep "minkowski" > /dev/null; then
   compile_and_run CGAL_minkowski
   NEED_CLEAN=y
 fi
+if  ${MAKE_CMD} -f Makefile help | grep "mst" > /dev/null; then
+  compile_and_run CGAL_mst
+  NEED_CLEAN=y
+fi
 if  ${MAKE_CMD} -f Makefile help | grep "multi_delaunay" > /dev/null; then 
   compile_and_run CGAL_multi_delaunay
   NEED_CLEAN=y
