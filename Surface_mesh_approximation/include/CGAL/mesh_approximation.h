@@ -171,12 +171,12 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
   typedef typename boost::lookup_named_param_def<
     internal_np::facet_proxy_map_t,
     NamedParameters,
-    internal_np::vsa_no_output_t>::type Face_proxy_map;
+    internal_np::sma_dummy_output_t>::type Face_proxy_map;
   Face_proxy_map fproxymap = choose_param(
-    get_param(np, internal_np::facet_proxy_map), internal_np::vsa_no_output);
+    get_param(np, internal_np::facet_proxy_map), internal_np::sma_dummy_output);
   facet_proxy_map(approx, fproxymap);
 
-  if (!boost::is_same<Face_proxy_map, internal_np::vsa_no_output_t>::value
+  if (!boost::is_same<Face_proxy_map, internal_np::sma_dummy_output_t>::value
     && (vl == CGAL::Main_steps || vl == CGAL::Verbose))
     std::cout << "Filling facet proxy map done." << std::endl;
 
@@ -184,12 +184,12 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
   typedef typename boost::lookup_named_param_def<
     internal_np::proxies_t,
     NamedParameters,
-    internal_np::vsa_no_output_t>::type Proxies_output_iterator;
+    internal_np::sma_dummy_output_t>::type Proxies_output_iterator;
   Proxies_output_iterator pxies_out_itr = choose_param(
-    get_param(np, internal_np::proxies), internal_np::vsa_no_output);
+    get_param(np, internal_np::proxies), internal_np::sma_dummy_output);
   proxies(approx, pxies_out_itr);
 
-  if (!boost::is_same<Proxies_output_iterator, internal_np::vsa_no_output_t>::value
+  if (!boost::is_same<Proxies_output_iterator, internal_np::sma_dummy_output_t>::value
     && (vl == CGAL::Main_steps || vl == CGAL::Verbose))
     std::cout << "Get proxies done." << std::endl;
 
@@ -197,15 +197,15 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
   typedef typename boost::lookup_named_param_def<
     internal_np::anchors_t,
     NamedParameters,
-    internal_np::vsa_no_output_t>::type Anchors_output_iterator;
+    internal_np::sma_dummy_output_t>::type Anchors_output_iterator;
   typedef typename boost::lookup_named_param_def<
     internal_np::triangles_t,
     NamedParameters,
-    internal_np::vsa_no_output_t>::type Triangles_output_iterator;
+    internal_np::sma_dummy_output_t>::type Triangles_output_iterator;
 
   bool is_manifold = false;
-  if (!boost::is_same<Anchors_output_iterator, internal_np::vsa_no_output_t>::value
-    || !boost::is_same<Triangles_output_iterator, internal_np::vsa_no_output_t>::value) {
+  if (!boost::is_same<Anchors_output_iterator, internal_np::sma_dummy_output_t>::value
+    || !boost::is_same<Triangles_output_iterator, internal_np::sma_dummy_output_t>::value) {
     if (vl == CGAL::Verbose) {
       const FT subdivision_ratio = choose_param(get_param(np, internal_np::subdivision_ratio), FT(5.0));
       const bool relative_to_chord = choose_param(get_param(np, internal_np::relative_to_chord), false);
@@ -229,19 +229,19 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
 
   // get anchor points
   Anchors_output_iterator apts_out_itr = choose_param(
-    get_param(np, internal_np::anchors) , internal_np::vsa_no_output);
+    get_param(np, internal_np::anchors) , internal_np::sma_dummy_output);
   anchors(approx, apts_out_itr);
 
-  if (!boost::is_same<Anchors_output_iterator, internal_np::vsa_no_output_t>::value
+  if (!boost::is_same<Anchors_output_iterator, internal_np::sma_dummy_output_t>::value
     && (vl == CGAL::Main_steps || vl == CGAL::Verbose))
     std::cout << "Get anchors done." << std::endl;
 
   // get indexed triangles
   Triangles_output_iterator tris_out_itr = choose_param(
-    get_param(np, internal_np::triangles) , internal_np::vsa_no_output);
+    get_param(np, internal_np::triangles) , internal_np::sma_dummy_output);
   triangles(approx, tris_out_itr);
 
-  if (!boost::is_same<Triangles_output_iterator, internal_np::vsa_no_output_t>::value
+  if (!boost::is_same<Triangles_output_iterator, internal_np::sma_dummy_output_t>::value
     && (vl == CGAL::Main_steps || vl == CGAL::Verbose))
     std::cout << "Get indexed triangles done." << std::endl;
 

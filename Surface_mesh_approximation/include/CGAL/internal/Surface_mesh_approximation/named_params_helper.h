@@ -1,5 +1,5 @@
-#ifndef CGAL_NAMED_PARAMETERS_HELPERS_H
-#define CGAL_NAMED_PARAMETERS_HELPERS_H
+#ifndef CGAL_SMA_NAMED_PARAMETERS_HELPERS_H
+#define CGAL_SMA_NAMED_PARAMETERS_HELPERS_H
 
 #include <CGAL/license/Surface_mesh_approximation.h>
 
@@ -79,7 +79,7 @@ void facet_proxy_map(const Approximation &approx, FacetProxyMap fproxymap) {
 }
 
 template <typename Approximation>
-void facet_proxy_map(const Approximation &, internal_np::vsa_no_output_t) {}
+void facet_proxy_map(const Approximation &, internal_np::sma_dummy_output_t) {}
 
 // proxies
 
@@ -90,7 +90,7 @@ void proxies(const Approximation &approx, OutputIterator out)
 }
 
 template <typename Approximation>
-void proxies(const Approximation &, internal_np::vsa_no_output_t) 
+void proxies(const Approximation &, internal_np::sma_dummy_output_t) 
 {}
 
 // anchors 
@@ -102,7 +102,7 @@ void anchors(const Approximation &approx, OutputIterator out)
 }
 
 template <typename Approximation>
-void anchors(const Approximation &, internal_np::vsa_no_output_t)
+void anchors(const Approximation &, internal_np::sma_dummy_output_t)
 {}
 
 // indexed triangles
@@ -114,9 +114,9 @@ void triangles(const Approximation &approx, OutputIterator out)
 }
 
 template <typename Approximation>
-void triangles(const Approximation &, internal_np::vsa_no_output_t)
+void triangles(const Approximation &, internal_np::sma_dummy_output_t)
 {}
 
 } //end of namespace CGAL
 
-#endif //CGAL_NAMED_PARAMETERS_HELPERS_H
+#endif //CGAL_SMA_NAMED_PARAMETERS_HELPERS_H

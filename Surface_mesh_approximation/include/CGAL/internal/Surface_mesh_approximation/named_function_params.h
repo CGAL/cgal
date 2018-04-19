@@ -1,5 +1,5 @@
-#ifndef CGAL_VSA_BGL_NAMED_FUNCTION_PARAMS_H
-#define CGAL_VSA_BGL_NAMED_FUNCTION_PARAMS_H
+#ifndef CGAL_SMA_BGL_NAMED_FUNCTION_PARAMS_H
+#define CGAL_SMA_BGL_NAMED_FUNCTION_PARAMS_H
 
 #include <CGAL/license/Surface_mesh_approximation.h>
 
@@ -8,7 +8,7 @@
 namespace CGAL{
 namespace internal_np{
 
-enum vsa_no_output_t { vsa_no_output };
+enum sma_dummy_output_t { sma_dummy_output };
 enum all_default_t { all_default }; //cannot use macro because it takes no argument
 
 // define enum types and values for new named parameters
@@ -20,19 +20,19 @@ enum all_default_t { all_default }; //cannot use macro because it takes no argum
 }//internal_np
 
   template <typename T, typename Tag, typename Base = boost::no_property>
-  struct vsa_bgl_named_params
+  struct sma_bgl_named_params
     : CGAL::cgal_bgl_named_params<T, Tag, Base>
   {
     typedef CGAL::cgal_bgl_named_params<T, Tag, Base> base;
-    typedef vsa_bgl_named_params self;
+    typedef sma_bgl_named_params self;
 
-    vsa_bgl_named_params(T v = T()) : base(v) {}
-    vsa_bgl_named_params(T v, const Base& b) : base(v, b) {}
+    sma_bgl_named_params(T v = T()) : base(v) {}
+    sma_bgl_named_params(T v, const Base& b) : base(v, b) {}
 
-    vsa_bgl_named_params<bool, internal_np::all_default_t, self>
+    sma_bgl_named_params<bool, internal_np::all_default_t, self>
     all_default() const
     {
-      typedef vsa_bgl_named_params<bool, internal_np::all_default_t, self> Params;
+      typedef sma_bgl_named_params<bool, internal_np::all_default_t, self> Params;
       return Params(*this);
     }
 
@@ -40,10 +40,10 @@ enum all_default_t { all_default }; //cannot use macro because it takes no argum
 // used to concatenate several parameters
 #define CGAL_add_named_parameter(X, Y, Z)              \
   template<typename K>                               \
-  vsa_bgl_named_params<K, internal_np::X, self>                   \
+  sma_bgl_named_params<K, internal_np::X, self>                   \
   Z(const K& k) const                                \
   {                                                  \
-    typedef vsa_bgl_named_params<K, internal_np::X, self> Params; \
+    typedef sma_bgl_named_params<K, internal_np::X, self> Params; \
     return Params(k, *this);                         \
   }
 #include <CGAL/internal/Surface_mesh_approximation/parameters_interface.h>
@@ -56,20 +56,20 @@ namespace Surface_mesh_approximation{
 
 namespace parameters{
 
-vsa_bgl_named_params<bool, internal_np::all_default_t>
+sma_bgl_named_params<bool, internal_np::all_default_t>
 inline all_default()
 {
-  typedef vsa_bgl_named_params<bool, internal_np::all_default_t> Params;
+  typedef sma_bgl_named_params<bool, internal_np::all_default_t> Params;
   return Params();
 }
 
 // define free functions for new named parameters and the one imported from BGL and boost
 #define CGAL_add_named_parameter(X, Y, Z)          \
   template<typename K>                           \
-  vsa_bgl_named_params<K, internal_np::X>                     \
+  sma_bgl_named_params<K, internal_np::X>                     \
   Z(const K& k)                                  \
   {                                              \
-    typedef vsa_bgl_named_params<K, internal_np::X> Params;   \
+    typedef sma_bgl_named_params<K, internal_np::X> Params;   \
     return Params(k);                            \
   }
 #include <CGAL/boost/graph/boost_parameters_interface.h>
@@ -87,12 +87,12 @@ namespace boost {
 #if BOOST_VERSION < 105100
   template <class Tag1, class Tag2, class T1, class Base>
   inline
-  typename property_value< CGAL::vsa_bgl_named_params<T1,Tag1,Base>, Tag2>::type
-  get_param(const CGAL::vsa_bgl_named_params<T1,Tag1,Base>& p, Tag2 tag2)
+  typename property_value< CGAL::sma_bgl_named_params<T1,Tag1,Base>, Tag2>::type
+  get_param(const CGAL::sma_bgl_named_params<T1,Tag1,Base>& p, Tag2 tag2)
   {
     enum { match = detail::same_property<Tag1,Tag2>::value };
     typedef typename
-      boost::property_value< CGAL::vsa_bgl_named_params<T1,Tag1,Base>, Tag2>::type T2;
+      boost::property_value< CGAL::sma_bgl_named_params<T1,Tag1,Base>, Tag2>::type T2;
     T2* t2 = 0;
     typedef detail::property_value_dispatch<match> Dispatcher;
     return Dispatcher::const_get_value(p, t2, tag2);
@@ -100,7 +100,7 @@ namespace boost {
 #endif
 
   template <typename T, typename Tag, typename Base, typename Def>
-  struct lookup_named_param_def<Tag, CGAL::vsa_bgl_named_params<T, Tag, Base>, Def> {
+  struct lookup_named_param_def<Tag, CGAL::sma_bgl_named_params<T, Tag, Base>, Def> {
     typedef T type;
     static const type& get(const bgl_named_params<T, Tag, Base>& p, const Def&) {
       return p.m_value;
@@ -108,7 +108,7 @@ namespace boost {
   };
 
   template <typename Tag1, typename T, typename Tag, typename Base, typename Def>
-  struct lookup_named_param_def<Tag1, CGAL::vsa_bgl_named_params<T, Tag, Base>, Def> {
+  struct lookup_named_param_def<Tag1, CGAL::sma_bgl_named_params<T, Tag, Base>, Def> {
     typedef typename lookup_named_param_def<Tag1, Base, Def>::type type;
     static const type& get(const bgl_named_params<T, Tag, Base>& p, const Def& def) {
       return lookup_named_param_def<Tag1, Base, Def>::get(p.m_base, def);
@@ -117,4 +117,4 @@ namespace boost {
 
 } // boost
 
-#endif //CGAL_VSA_BGL_NAMED_FUNCTION_PARAMS_H
+#endif //CGAL_SMA_BGL_NAMED_FUNCTION_PARAMS_H
