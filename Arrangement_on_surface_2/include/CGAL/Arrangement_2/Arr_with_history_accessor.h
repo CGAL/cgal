@@ -131,8 +131,11 @@ public:
     // and store it in the curves' list.
     typename Arrangement_with_history_2::Curve_halfedges  *p_cv = 
                                            p_arr->m_curves_alloc.allocate (1);
-    
+#ifdef CGAL_CXX11
+    std::allocator_traits<Subcurve_alloc>::construct(p_arr->m_curves_alloc, p_cv, cv);
+#else
     p_arr->m_curves_alloc.construct (p_cv, cv);
+#endif
     p_arr->m_curves.push_back (*p_cv);
     
     // Return a handle to the inserted curve (the last in the list).

@@ -358,7 +358,8 @@ class Interval_for_container : public Interval_
 #ifdef CGAL_ISL_USE_CCC
     static Compact_container<IntervalListElt<Interval> > compact_container;
 #endif
-    std::allocator<IntervalListElt<Interval> > alloc;
+    typedef std::allocator<IntervalListElt<Interval> > Alloc;
+    Alloc alloc;
 
   public:
 
@@ -383,7 +384,11 @@ class Interval_for_container : public Interval_
       return it;
 #else
       IntervalListElt<Interval> *elt_ptr = alloc.allocate(1);
+#ifdef CGAL_CXX11
+      std::allocator_traits<Alloc>::construct(alloc,elt_ptr, I);
+#else      
       alloc.construct(elt_ptr, I);
+#endif
       return elt_ptr;
       //return new IntervalListElt<Interval>(I);
 #endif
@@ -394,7 +399,12 @@ class Interval_for_container : public Interval_
 #ifdef CGAL_ISL_USE_CCC
       compact_container.erase(I);
 #else
+
+#ifdef CGAL_CXX11
+      std::allocator_traits<Alloc>::destroy(alloc,I);
+#else
       alloc.destroy(I);
+#endif
       alloc.deallocate(I,1);
       //delete I;
 #endif

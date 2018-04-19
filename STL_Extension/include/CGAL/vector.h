@@ -192,8 +192,22 @@ protected:
     iterator end_of_storage;
 
     // ALLOCATION AND CONSTRUCTION HELPERS
-    void construct( iterator i, const T& x) { alloc.construct( &*i, x);}
-    void destroy( iterator i) { alloc.destroy( &*i); }
+    void construct( iterator i, const T& x) {
+#ifdef CGAL_CXX11
+      std::allocator_traits<Allocator>::construct(alloc,&*i, x);
+#else
+      alloc.construct(&*i, x);
+#endif
+    }
+  
+    void destroy( iterator i) {
+#ifdef CGAL_CXX11
+      std::allocator_traits<Allocator>::destroy(alloc,&*i);
+#else
+      alloc.destroy( &*i);
+#endif
+    }
+  
     void destroy( iterator first, iterator last) {
         // destroy in reverse order than construction
         while ( last != first) {

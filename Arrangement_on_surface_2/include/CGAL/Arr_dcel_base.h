@@ -1492,7 +1492,11 @@ protected:
   Halfedge* _new_halfedge()
   {
     Halfedge* h = halfedge_alloc.allocate(1);
+#ifdef CGAL_CXX11
+    std::allocator_traits<Halfedge_allocator>::construct(halfedge_alloc, h);
+#else
     halfedge_alloc.construct(h, Halfedge());
+#endif
     halfedges.push_back(*h);
     return (h);
   }
@@ -1501,7 +1505,11 @@ protected:
   void _delete_halfedge(Halfedge* h)
   {
     halfedges.erase(h);
+#ifdef CGAL_CXX11
+    std::allocator_traits<Halfedge_allocator>::destroy(halfedge_alloc,h);
+#else
     halfedge_alloc.destroy(h);
+#endif
     halfedge_alloc.deallocate(h, 1);
   }
 };

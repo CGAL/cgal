@@ -79,12 +79,18 @@ namespace CGAL {
 
     typedef Items_ Items;
     typedef Alloc_ Alloc;
-
+    
+#ifdef CGAL_CXX11
+  template <typename T>
+    struct Container_for_attributes :
+      public Compact_container<T, typename std::allocator_traits<Alloc_>::template rebind_alloc<T> >
+    {};
+#else
     template <typename T>
     struct Container_for_attributes :
         public Compact_container<T, typename Alloc_::template rebind<T>::other>
     {};
-
+#endif
     /// Typedef for attributes
     typedef typename internal::template Get_attributes_tuple<Dart_wrapper>::type
                                    Attributes;

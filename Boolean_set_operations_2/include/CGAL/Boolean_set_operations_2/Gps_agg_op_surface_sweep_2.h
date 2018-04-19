@@ -56,6 +56,7 @@ public:
 
   typedef typename Visitor::Event                       Event;
   typedef typename Visitor::Subcurve                    Subcurve;
+  typedef typename Visitor::Subcurve_alloc              Subcurve_alloc;
 
   typedef typename Base::Event_queue_iterator           EventQueueIter;
   typedef typename Event::Subcurve_iterator             EventCurveIter;
@@ -203,9 +204,13 @@ public:
       }
 
       // Create the subcurve object.
+#ifdef CGAL_CXX11
+      std::allocator_traits<Subcurve_alloc>::construct(this->m_subCurveAlloc, this->m_subCurves + index,
+                                      this->m_masterSubcurve);
+#else                                                    
       this->m_subCurveAlloc.construct(this->m_subCurves + index,
                                       this->m_masterSubcurve);
-
+#endif
       (this->m_subCurves + index)->init(*iter);
       (this->m_subCurves + index)->set_left_event(e_left);
       (this->m_subCurves + index)->set_right_event(e_right);
