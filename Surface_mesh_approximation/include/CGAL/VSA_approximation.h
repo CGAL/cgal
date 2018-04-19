@@ -890,12 +890,13 @@ public:
   bool extract_mesh(const NamedParameters &np) {
     using boost::get_param;
     using boost::choose_param;
+    namespace sma_np = CGAL::Surface_mesh_approximation::internal_np;
 
-    const FT subdivision_ratio = choose_param(get_param(np, internal_np::subdivision_ratio), FT(5.0));
-    const bool relative_to_chord = choose_param(get_param(np, internal_np::relative_to_chord), false);
-    const bool with_dihedral_angle = choose_param(get_param(np, internal_np::with_dihedral_angle), false);
-    const bool optimize_anchor_location = choose_param(get_param(np, internal_np::optimize_anchor_location), true);
-    const bool pca_plane = choose_param(get_param(np, internal_np::pca_plane), false);
+    const FT subdivision_ratio = choose_param(get_param(np, sma_np::subdivision_ratio), FT(5.0));
+    const bool relative_to_chord = choose_param(get_param(np, sma_np::relative_to_chord), false);
+    const bool with_dihedral_angle = choose_param(get_param(np, sma_np::with_dihedral_angle), false);
+    const bool optimize_anchor_location = choose_param(get_param(np, sma_np::optimize_anchor_location), true);
+    const bool pca_plane = choose_param(get_param(np, sma_np::pca_plane), false);
 
     // compute averaged edge length, used in chord subdivision
     m_average_edge_length = compute_averaged_edge_length(*m_ptm, m_vpoint_map);

@@ -13,6 +13,8 @@
 #include <boost/mpl/if.hpp>
 
 namespace CGAL {
+namespace Surface_mesh_approximation {
+namespace internal_np {
 
 // shortcut for accessing the value type of the property map
 template <class Graph, class Property>
@@ -74,49 +76,51 @@ public:
 
 // output helper functions
 template <typename Approximation, typename FacetProxyMap>
-void facet_proxy_map(const Approximation &approx, FacetProxyMap fproxymap) {
+void facet_proxy_map_helper(const Approximation &approx, FacetProxyMap fproxymap) {
   approx.proxy_map(fproxymap);
 }
 
 template <typename Approximation>
-void facet_proxy_map(const Approximation &, internal_np::sma_dummy_output_t) {}
+void facet_proxy_map_helper(const Approximation &, internal_np::dummy_output_t) {}
 
 // proxies
 
 template <typename Approximation, typename OutputIterator>
-void proxies(const Approximation &approx, OutputIterator out) 
+void proxies_helper(const Approximation &approx, OutputIterator out) 
 {
   approx.proxies(out);
 }
 
 template <typename Approximation>
-void proxies(const Approximation &, internal_np::sma_dummy_output_t) 
+void proxies_helper(const Approximation &, internal_np::dummy_output_t) 
 {}
 
 // anchors 
 
 template <typename Approximation, typename OutputIterator>
-void anchors(const Approximation &approx, OutputIterator out)
+void anchors_helper(const Approximation &approx, OutputIterator out)
 {
   approx.anchor_points(out);
 }
 
 template <typename Approximation>
-void anchors(const Approximation &, internal_np::sma_dummy_output_t)
+void anchors_helper(const Approximation &, internal_np::dummy_output_t)
 {}
 
 // indexed triangles
 
 template <typename Approximation, typename OutputIterator>
-void triangles(const Approximation &approx, OutputIterator out)
+void triangles_helper(const Approximation &approx, OutputIterator out)
 {
   approx.indexed_triangles(out);
 }
 
 template <typename Approximation>
-void triangles(const Approximation &, internal_np::sma_dummy_output_t)
+void triangles_helper(const Approximation &, internal_np::dummy_output_t)
 {}
 
-} //end of namespace CGAL
+} // namespace internal_np
+} // namespace Surface_mesh_approximation
+} // namespace CGAL
 
 #endif //CGAL_SMA_NAMED_PARAMETERS_HELPERS_H
