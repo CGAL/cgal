@@ -129,7 +129,7 @@ public Q_SLOTS:
     setMouseBinding(::Qt::SHIFT + ::Qt::LeftButton, NO_CLICK_ACTION);
 #endif
   }
-
+  void setLighting();
 protected:
   void postDraw()Q_DECL_OVERRIDE;
   void paintEvent(QPaintEvent *)Q_DECL_OVERRIDE;
