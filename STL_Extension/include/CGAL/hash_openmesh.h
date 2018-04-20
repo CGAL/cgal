@@ -141,7 +141,7 @@ struct hash<OpenMesh::EdgeHandle >
 
 template <>
 struct hash<CGAL::internal::OMesh_edge<OpenMesh::HalfedgeHandle> >
-  : public std::unary_function<OpenMesh::HalfedgeHandle, std::size_t>
+  : public CGAL::unary_function<OpenMesh::HalfedgeHandle, std::size_t>
 {
 
   std::size_t operator()(const CGAL::internal::OMesh_edge<OpenMesh::HalfedgeHandle>& h) const
