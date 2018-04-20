@@ -22,7 +22,7 @@
 #define CGAL_HASH_OPENMESH_H
 
 #include <OpenMesh/Core/Mesh/Handles.hh>
-#include <CGAL/algorith.h>
+#include <CGAL/algorithm.h>
 
 namespace CGAL { namespace internal {
 
