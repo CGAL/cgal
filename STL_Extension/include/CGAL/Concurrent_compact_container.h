@@ -480,7 +480,11 @@ public:
 
   size_type max_size() const
   {
+#ifdef CGAL_CXX11
+    return std::allocator_traits<allocator_type>::max_size(m_alloc);
+#else
     return m_alloc.max_size();
+#endif
   }
 
   size_type capacity() const
