@@ -385,7 +385,7 @@ public:
   {
     Vertex* v = vertex_alloc.allocate (1);
 #ifdef CGAL_CXX11
-    std::allocator_traits<Vertex_allocator>::construct(vertex_alloc, p);
+    std::allocator_traits<Vertex_allocator>::construct(vertex_alloc, v, p);
 #else
     vertex_alloc.construct (v, Vertex(p));
 #endif
