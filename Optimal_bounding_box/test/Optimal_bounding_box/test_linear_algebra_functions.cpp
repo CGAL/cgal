@@ -2,6 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Optimal_bounding_box/linear_algebra.h>
+#include <CGAL/Optimal_bounding_box/fitness_function.h>
 
 #include <iostream>
 #include <fstream>
@@ -46,6 +47,26 @@ void test_qr_factorization()
 }
 
 
+void test_fitness_function()
+{
+  MatrixXf data_points(4, 3);
+  data_points << 0.866802, 0.740808, 0.895304,
+                 0.912651, 0.761565, 0.160330,
+                 0.093661, 0.892578, 0.737412,
+                 0.166461, 0.149912, 0.364944;
+
+  MatrixXf rotation(3, 3);
+  rotation << -0.809204, 0.124296, 0.574230,
+             -0.574694, 0.035719, -0.817589,
+             -0.122134, -0.991602, 0.042528;
+
+  double fitness = CGAL::Optimal_bounding_box::compute_fitness(rotation, data_points);
+  CGAL_assertion(assert_doubles(fitness, 0.58606, 1e-6));
+
+}
+
+
+
 
 
 
@@ -53,6 +74,7 @@ int main()
 {
 
   test_qr_factorization();
+  test_fitness_function();
 
   return 0;
 }

@@ -38,8 +38,7 @@ void qr_factorization(EigenMatrix& A, EigenMatrix& Q)
 }
 
 
-
-}}
+}} // end namespaces
 
 
 
