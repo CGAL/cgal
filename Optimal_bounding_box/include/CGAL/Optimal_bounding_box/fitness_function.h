@@ -68,10 +68,6 @@ const double compute_fitness(Matrix& R, Matrix& data)
 
 
 
-
-
-
-
 }} // end namespaces
 
 
