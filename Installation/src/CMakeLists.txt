@@ -135,7 +135,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CGAL_RUNTIME_DIR})
 
 # TODO: Seems useless, because it is called again in ../CMakeLists.txt
 #       Should probably be removed. -- Laurent Rineau, 2014/07/22
-create_CGALconfig_files()
+if(NOT CGAL_HEADER_ONLY)
+  create_CGALconfig_files()
+endif()
 
 set(CGAL_DIR ${CMAKE_BINARY_DIR})
 

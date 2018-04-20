@@ -864,8 +864,10 @@ endif()
 if(NOT CGAL_HEADER_ONLY)
   create_CGALconfig_files()
 else()
-  configure_file("${CGAL_MODULES_DIR}/CGALConfig_binary_header_only.cmake.in"
-    "${CMAKE_BINARY_DIR}/CGALConfig.cmake"  @ONLY)
+  if(NOT EXISTS "${CMAKE_BINARY_DIR}/CGALConfig.cmake")
+    configure_file("${CGAL_MODULES_DIR}/CGALConfig_binary_header_only.cmake.in"
+      "${CMAKE_BINARY_DIR}/CGALConfig.cmake"  @ONLY)
+  endif()
 endif()
 
 #--------------------------------------------------------------------------------------------------
@@ -900,7 +902,7 @@ install(PROGRAMS ${scripts} DESTINATION ${CGAL_INSTALL_BIN_DIR})
 install(DIRECTORY ${CGAL_MODULES_REL_DIR}/                DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 install(FILES     ${CGAL_MODULES_REL_DIR}/UseCGAL.cmake   DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 
-if ( GMP_IN_AUXILIARY )
+if ( GMP_IN_CGAL_AUXILIARY OR MPFR_IN_CGAL_AUXILIARY )
   install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
   install(DIRECTORY auxiliary/gmp/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
 endif()
@@ -918,7 +920,6 @@ if(NOT CGAL_HEADER_ONLY)
     DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 else()
   install(FILES
-    ${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake
     ${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfig.cmake
     DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 endif()
