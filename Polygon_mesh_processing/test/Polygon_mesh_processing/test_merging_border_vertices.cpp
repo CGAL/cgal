@@ -38,6 +38,7 @@ void test_merge_duplicated_vertices_in_boundary_cycles(const char* fname,
   }
 }
 
+#if 0
 void test_merge_duplicated_boundary_vertices(const char* fname,
                                                    std::size_t expected_nb_vertices)
 {
@@ -64,21 +65,21 @@ void test_merge_duplicated_boundary_vertices(const char* fname,
     output << mesh;
   }
 }
-
+#endif
 
 int main(int argc, char** argv)
 {
   if (argc==1)
   {
     test_merge_duplicated_vertices_in_boundary_cycles("data/merge_points.off", 43);
-    test_merge_duplicated_boundary_vertices("data/merge_points.off", 40);
+    // test_merge_duplicated_boundary_vertices("data/merge_points.off", 40);
   }
   else
   {
     for (int i=1; i< argc; ++i)
     {
       test_merge_duplicated_vertices_in_boundary_cycles(argv[i], 0);
-      test_merge_duplicated_boundary_vertices(argv[i], 0);
+      // test_merge_duplicated_boundary_vertices(argv[i], 0);
     }
   }
   return 0;
