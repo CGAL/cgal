@@ -77,6 +77,17 @@ const Matrix constraction(Matrix& S_centroid, Matrix& S_worst)
   return Q / det;
 }
 
+template <typename Matrix>
+const Matrix centroid(Matrix& S1, Matrix& S2, Matrix& S3)
+{
+  Matrix mean = (S1 + S2 + S3) / 3.0;
+  Matrix Q;
+  qr_factorization(mean, Q);
+  double det = Q.determinant();
+  return Q / det;
+}
+
+
 
 
 

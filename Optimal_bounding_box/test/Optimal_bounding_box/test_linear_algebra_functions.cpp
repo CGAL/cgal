@@ -101,7 +101,6 @@ void test_simplex_operations()
   CGAL_assertion(assert_doubles(Se(2,1), -0.48595, epsilon));
   CGAL_assertion(assert_doubles(Se(2,2), 0.74300, epsilon));
 
-
   MatrixXf S_a(3, 3);
   S_a << -0.277970,  0.953559,  0.116010,
          -0.567497,  -0.065576,   -0.820760,
@@ -125,6 +124,37 @@ void test_simplex_operations()
 
 }
 
+void test_centroid()
+{
+  MatrixXf S_a(3, 3);
+  S_a <<  -0.588443,   0.807140,  -0.047542,
+          -0.786228,  -0.584933,  -0.199246,
+          -0.188629,  -0.079867,   0.978795;
+
+  MatrixXf S_b(3, 3);
+  S_b <<  -0.2192721,   0.2792986,  -0.9348326,
+          -0.7772152,  -0.6292092,  -0.0056861,
+          -0.5897934,   0.7253193,   0.3550431;
+
+  MatrixXf S_c(3, 3);
+  S_c <<   -0.32657,  -0.60013,  -0.73020,
+           -0.20022,  -0.71110,   0.67398,
+           -0.92372,   0.36630,   0.11207;
+
+
+  MatrixXf S_centroid = CGAL::Optimal_bounding_box::centroid(S_a, S_b, S_c);
+  double epsilon = 1e-5;
+  CGAL_assertion(assert_doubles(S_centroid(0,0), -0.419979, epsilon));
+  CGAL_assertion(assert_doubles(S_centroid(0,1), 0.301765, epsilon));
+  CGAL_assertion(assert_doubles(S_centroid(0,2), -0.855894, epsilon));
+  CGAL_assertion(assert_doubles(S_centroid(1,0), -0.653011, epsilon));
+  CGAL_assertion(assert_doubles(S_centroid(1,1), -0.755415, epsilon));
+  CGAL_assertion(assert_doubles(S_centroid(1,2), 0.054087, epsilon));
+  CGAL_assertion(assert_doubles(S_centroid(2,0), -0.630234, epsilon));
+  CGAL_assertion(assert_doubles(S_centroid(2,1), 0.581624, epsilon));
+  CGAL_assertion(assert_doubles(S_centroid(2,2), 0.514314, epsilon));
+
+}
 
 
 
@@ -135,6 +165,7 @@ int main()
   test_qr_factorization();
   test_fitness_function();
   test_simplex_operations();
+  test_centroid();
 
   return 0;
 }
