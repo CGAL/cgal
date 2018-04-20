@@ -92,10 +92,14 @@ struct Less_on_point_of_target
       vpm(vpm)
   {}
 
-  bool operator()(halfedge_descriptor h1,
-                  halfedge_descriptor h2) const
+  bool operator()(const std::pair<halfedge_descriptor, std::size_t>& h1,
+                  const std::pair<halfedge_descriptor, std::size_t>& h2) const
   {
-    return get(vpm, target(h1, pm)) < get(vpm, target(h2, pm));
+    if ( get(vpm, target(h1.first, pm)) < get(vpm, target(h2.first, pm)) )
+      return true;
+    if ( get(vpm, target(h1.first, pm)) > get(vpm, target(h2.first, pm)) )
+      return false;
+    return h1.second < h2.second;
   }
 
   const PM& pm;
@@ -105,10 +109,11 @@ struct Less_on_point_of_target
 
 // warning: cycle_hedges will be altered (sorted)
 template <class PolygonMesh, class Vpm, class halfedge_descriptor>
-void detect_identical_vertices(std::vector<halfedge_descriptor>& cycle_hedges,
-                               std::vector< std::vector<halfedge_descriptor> >& hedges_with_identical_point_target,
-                               const PolygonMesh& pm,
-                               Vpm vpm)
+void detect_identical_mergeable_vertices(
+        std::vector< std::pair<halfedge_descriptor, std::size_t> >& cycle_hedges,
+        std::vector< std::vector<halfedge_descriptor> >& hedges_with_identical_point_target,
+  const PolygonMesh& pm,
+  Vpm vpm)
 {
   // sort vertices using their point to ease the detection
   // of vertices with identical points
@@ -118,19 +123,27 @@ void detect_identical_vertices(std::vector<halfedge_descriptor>& cycle_hedges,
   std::size_t nbv=cycle_hedges.size();
   std::size_t i=1;
 
+  std::set< std::pair<std::size_t, std::size_t> > intervals;
+
   while(i!=nbv)
   {
-    if ( get(vpm, target(cycle_hedges[i], pm)) ==
-         get(vpm, target(cycle_hedges[i-1], pm)) )
+    if ( get(vpm, target(cycle_hedges[i].first, pm)) ==
+         get(vpm, target(cycle_hedges[i-1].first, pm)) )
     {
       hedges_with_identical_point_target.push_back( std::vector<halfedge_descriptor>() );
-      hedges_with_identical_point_target.back().push_back(cycle_hedges[i-1]);
-      hedges_with_identical_point_target.back().push_back(cycle_hedges[i]);
+      hedges_with_identical_point_target.back().push_back(cycle_hedges[i-1].first);
+      hedges_with_identical_point_target.back().push_back(cycle_hedges[i].first);
+      intervals.insert( std::make_pair(cycle_hedges[i-1].second, cycle_hedges[i].second) );
+      std::size_t previous = cycle_hedges[i].second;
       while(++i!=nbv)
       {
-        if ( get(vpm, target(cycle_hedges[i], pm)) ==
-             get(vpm, target(cycle_hedges[i-1], pm)) )
-          hedges_with_identical_point_target.back().push_back(cycle_hedges[i]);
+        if ( get(vpm, target(cycle_hedges[i].first, pm)) ==
+             get(vpm, target(cycle_hedges[i-1].first, pm)) )
+        {
+          hedges_with_identical_point_target.back().push_back(cycle_hedges[i].first);
+          intervals.insert( std::make_pair(previous, cycle_hedges[i].second) );
+          previous = cycle_hedges[i].second;
+        }
         else
         {
           ++i;
@@ -141,6 +154,27 @@ void detect_identical_vertices(std::vector<halfedge_descriptor>& cycle_hedges,
     else
       ++i;
   }
+
+  // check that intervals are disjoint or strictly nested
+  // if there is only one issue we drop the whole cycle.
+  /// \todo shall we try to be more conservative?
+  if (hedges_with_identical_point_target.empty()) return;
+  std::set< std::pair<std::size_t, std::size_t> >::iterator it1 = intervals.begin(),
+                                                            end2 = intervals.end(),
+                                                            end1 = cpp11::prev(end2),
+                                                            it2;
+  for (; it1!=end1; ++it1)
+    for(it2=cpp11::next(it1); it2!= end2; ++it2 )
+    {
+      CGAL_assertion(it1->first<it2->first);
+      CGAL_assertion(it1->first < it1->second && it2->first < it2->second);
+      if (it1->second > it2->first && it2->second > it1->second)
+      {
+        std::cerr << "Merging is skipt to avoid bad cycle connections\n";
+        hedges_with_identical_point_target.clear();
+        return;
+      }
+    }
 }
 
 } // end of internal
@@ -229,41 +263,24 @@ void merge_duplicated_vertices_in_boundary_cycle(
                          get_const_property_map(vertex_point, pm));
 
   // collect all the halfedges of the cycle
-  std::vector<halfedge_descriptor> cycle_hedges;
+  std::vector< std::pair<halfedge_descriptor, std::size_t> > cycle_hedges;
   halfedge_descriptor start=h;
+  std::size_t index=0;
   do{
-    cycle_hedges.push_back(h);
+    cycle_hedges.push_back( std::make_pair(h, index) );
     h=next(h, pm);
+    ++index;
   }while(start!=h);
 
   std::vector< std::vector<halfedge_descriptor> > hedges_with_identical_point_target;
-  internal::detect_identical_vertices(cycle_hedges, hedges_with_identical_point_target, pm, vpm);
+  internal::detect_identical_mergeable_vertices(cycle_hedges, hedges_with_identical_point_target, pm, vpm);
 
   BOOST_FOREACH(const std::vector<halfedge_descriptor>& hedges,
                 hedges_with_identical_point_target)
   {
     start=hedges.front();
-    // collect all halfedges in the cycle
-    std::vector<halfedge_descriptor> sorted_hedges;
-    h=start;
-    do{
-      sorted_hedges.push_back(h);
-      do
-      {
-        h=next(h, pm);
-      }
-      while( get(vpm, target(h, pm)) != get(vpm, target(start, pm)) );
-    }
-    while(h!=start);
-
-    if (sorted_hedges.size() != hedges.size())
-    {
-      std::cerr << "WARNING: cycle broken at " << get(vpm, target(start, pm)) << ". Skipped\n";
-      std::cout << sorted_hedges.size() << " vs " << hedges.size() << "\n";
-      CGAL_assertion(sorted_hedges.size() == hedges.size());
-      continue;
-    }
-    merge_boundary_vertices_in_cycle(sorted_hedges, pm);
+    // hedges are sorted along the cycle
+    merge_boundary_vertices_in_cycle(hedges, pm);
   }
 }
 
