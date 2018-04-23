@@ -11,7 +11,6 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -197,7 +196,7 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchByCC_triggered(
   if(!item)
     return;
   CGAL::Polygon_mesh_processing::stitch_borders(*item->polyhedron(),
-                                                CGAL::Polygon_mesh_processing::parameters::do_stitch_per_cc(true));
+                                                CGAL::Polygon_mesh_processing::parameters::apply_per_connected_component(true));
   item->invalidateOpenGLBuffers();
   scene->itemChanged(item);
 }
