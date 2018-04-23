@@ -656,7 +656,7 @@ protected:
     // and store it in the curves' list.
     Curve_halfedges   *p_cv = m_curves_alloc.allocate (1);
     
- #ifdef CGAL_CXX11
+#ifdef CGAL_CXX11
     std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, p_cv, cv);
 #else
     m_curves_alloc.construct (p_cv, cv);
@@ -691,8 +691,8 @@ protected:
     while (begin != end) {
       Curve_halfedges   *p_cv = m_curves_alloc.allocate (1);
     
- #ifdef CGAL_CXX11
-    std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, p_cv, *begin);
+#ifdef CGAL_CXX11
+      std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, p_cv, *begin);
 #else
       m_curves_alloc.construct (p_cv, *begin);
 #endif
@@ -812,7 +812,7 @@ public:
       p_cv = &(*ocit1);
       
 #ifdef CGAL_CXX11
-    std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, dup_c, *p_cv);
+      std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, dup_c, *p_cv);
 #else
       m_curves_alloc.construct (dup_c, *p_cv);
 #endif
@@ -831,9 +831,9 @@ public:
     
       p_cv = &(*ocit2);
 #ifdef CGAL_CXX11
-    std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, dup_c, *p_cv);
+      std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, dup_c, *p_cv);
 #else
-    m_curves_alloc.construct (dup_c, *p_cv);
+      m_curves_alloc.construct (dup_c, *p_cv);
 #endif
       m_curves.push_back (*dup_c);
 
