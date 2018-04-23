@@ -310,6 +310,14 @@ of close meshes should be done in addition to surface intersection tests.
 \b Default value is `false`
 \cgalNPEnd
 
+\cgalNPBegin{do_stitch_per_cc} \anchor PMP_do_stitch_per_cc
+Parameter used in `stitch_borders()` to indicate whether the automatic borders detection should take the 
+connected components of the mesh into account. In this case, only the stitchable borders inside a same 
+connected component will be stictched.
+\n
+\b Type : `bool` \n
+\b Default value is `false`
+\cgalNPEnd
 \cgalNPTableEnd
 
 */

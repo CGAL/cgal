@@ -32,6 +32,7 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/array.h>
 #include <CGAL/Union_find.h>
 #include <CGAL/utility.h>
@@ -504,6 +505,8 @@ void stitch_borders(PolygonMesh& pmesh,
 ///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
 /// If this parameter is omitted, an internal property map for
 /// `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
+/// `CGAL::do_stitch_per_cc_t` specifies if the borders should only be stitched inside their own connected component.
+/// Default value is `false`.\cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
 template <typename PolygonMesh, class CGAL_PMP_NP_TEMPLATE_PARAMETERS>
@@ -517,15 +520,65 @@ void stitch_borders(PolygonMesh& pmesh, const CGAL_PMP_NP_CLASS& np)
   std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> > hedge_pairs_to_stitch;
 
   typedef typename GetVertexPointMap<PolygonMesh, CGAL_PMP_NP_CLASS>::const_type VPMap;
+  typedef typename VPMap::value_type Point_3;
   VPMap vpm = choose_param(get_param(np, internal_np::vertex_point),
                            get_const_property_map(vertex_point, pmesh));
+  bool stitch_along_ccs = choose_param(get_param(np, internal_np::do_stitch_per_cc),
+                           false);
 
-  internal::collect_duplicated_stitchable_boundary_edges(pmesh,
-    std::back_inserter(hedge_pairs_to_stitch),
-    internal::Less_for_halfedge<PolygonMesh, VPMap>(pmesh, vpm), vpm);
-
-  stitch_borders(pmesh, hedge_pairs_to_stitch);
-  internal::stitch_boundary_cycle_2(pmesh);
+  if(!stitch_along_ccs)
+  {
+    internal::collect_duplicated_stitchable_boundary_edges(pmesh,
+                                                           std::back_inserter(hedge_pairs_to_stitch),
+                                                           internal::Less_for_halfedge<PolygonMesh, VPMap>(pmesh, vpm), vpm);
+    
+    stitch_borders(pmesh, hedge_pairs_to_stitch);
+    internal::stitch_boundary_cycle_2(pmesh);
+  }
+  else
+  {
+    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+    boost::unordered_map<typename boost::graph_traits<PolygonMesh>::face_descriptor,int> cc(num_faces(pmesh));
+    std::size_t num_component = CGAL::Polygon_mesh_processing::connected_components(pmesh, boost::make_assoc_property_map(cc));
+    
+    //add each border edge in map with cc
+    std::vector<std::vector<halfedge_descriptor> > border_edges_per_cc;
+    border_edges_per_cc.resize(num_component);
+    BOOST_FOREACH(face_descriptor fd, faces(pmesh))
+    {
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd,pmesh), pmesh))
+      {
+        halfedge_descriptor ohd = opposite(hd, pmesh);
+        if(is_border(ohd, pmesh))
+        {
+          border_edges_per_cc[cc[fd]].push_back(ohd);
+        }
+      }
+    }
+    // foreach cc make pair of corresponding edges.
+    typename boost::property_map< PolygonMesh,CGAL::vertex_point_t>::type vpmap
+        = get(CGAL::vertex_point, pmesh);
+    for(std::size_t i = 0; i < num_component; ++i)
+    {
+      for(int j = 0; j < static_cast<int>(border_edges_per_cc[i].size())-1; ++j)
+      {
+        halfedge_descriptor h1 = border_edges_per_cc[i].back();
+        border_edges_per_cc[i].pop_back();
+        Point_3 src1(get(vpmap, source(h1, pmesh))), tgt1(get(vpmap, target(h1, pmesh)));
+        BOOST_FOREACH(halfedge_descriptor h2, border_edges_per_cc[i])
+        {
+          Point_3 src2(get(vpmap, source(h2, pmesh))), tgt2(get(vpmap, target(h2, pmesh)));
+          if(src1 == tgt2 && src2 == tgt1)
+          {
+            hedge_pairs_to_stitch.push_back(std::make_pair(h1,h2));
+          }
+        }
+      }
+    }
+    
+    //finally feed the pairs to the stitch_function  
+    CGAL::Polygon_mesh_processing::stitch_borders(pmesh, hedge_pairs_to_stitch);
+  }
 }
 
 
