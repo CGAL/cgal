@@ -11,6 +11,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -46,17 +47,23 @@ class Polyhedron_demo_polyhedron_stitching_plugin :
 
   QAction* actionDetectBorders;
   QAction* actionStitchBorders;
+  QAction* actionStitchByCC;
 public:
-  QList<QAction*> actions() const { return QList<QAction*>() << actionDetectBorders << actionStitchBorders; }
+  QList<QAction*> actions() const { return QList<QAction*>() << actionDetectBorders << actionStitchBorders << actionStitchByCC; }
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* /* m */)
   {
     scene = scene_interface;
     actionDetectBorders= new QAction(tr("Detect Boundaries"), mainWindow);
-    actionStitchBorders= new QAction(tr("Stitch Duplicated Boundaries"), mainWindow);
     actionDetectBorders->setObjectName("actionDetectBorders");
+    actionDetectBorders->setProperty("subMenuName", "Polygon Mesh Processing");
+    actionStitchBorders= new QAction(tr("Stitch Duplicated Boundaries"), mainWindow);
     actionStitchBorders->setObjectName("actionStitchBorders");
     actionStitchBorders->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
-    actionDetectBorders->setProperty("subMenuName", "Polygon Mesh Processing");
+    
+    actionStitchByCC= new QAction(tr("Stitch Following Connected Components"), mainWindow);
+    actionStitchByCC->setObjectName("actionStitchByCC");
+    actionStitchByCC->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
+    
     autoConnectActions();
   }
 
@@ -75,10 +82,14 @@ public:
 
   template <typename Item>
   void on_actionStitchBorders_triggered(Scene_interface::Item_id index);
+  
+  template <typename Item>
+  void on_actionStitchByCC_triggered(Scene_interface::Item_id index);
 
 public Q_SLOTS:
   void on_actionDetectBorders_triggered();
   void on_actionStitchBorders_triggered();
+  void on_actionStitchByCC_triggered();
 
 }; // end Polyhedron_demo_polyhedron_stitching_plugin
 
@@ -174,6 +185,83 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchBorders_trigger
   Q_FOREACH(int index, scene->selectionIndices()){
     on_actionStitchBorders_triggered<Scene_polyhedron_item>(index);
     on_actionStitchBorders_triggered<Scene_surface_mesh_item>(index);
+  }
+}
+
+template <typename Item>
+void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchByCC_triggered(Scene_interface::Item_id index)
+{
+  Item* item =
+      qobject_cast<Item*>(scene->item(index));
+  
+  if(!item)
+    return;
+  typedef typename Item::Face_graph Face_graph;
+  typedef typename boost::graph_traits<Face_graph>::halfedge_descriptor halfedge_descriptor;
+  //typedef typename boost::graph_traits<Face_graph>::edge_descriptor edge_descriptor;
+  typedef typename boost::graph_traits<Face_graph>::face_descriptor face_descriptor;
+  typename Item::Face_graph* pMesh = item->polyhedron();
+  //detect CCs
+  boost::unordered_map<typename boost::graph_traits<Face_graph>::face_descriptor,int> cc(num_faces(*pMesh));
+  std::size_t num_component = CGAL::Polygon_mesh_processing::connected_components(*pMesh, boost::make_assoc_property_map(cc));
+  
+  //if only one cc just stitch and stop
+  if(num_component < 2)
+  {
+    CGAL::Polygon_mesh_processing::stitch_borders(*pMesh);
+    item->invalidateOpenGLBuffers();
+    scene->itemChanged(item);
+    return;
+  }
+  //else add each border edge in map with cc
+  normalize_border(*pMesh);
+  std::vector<std::vector<halfedge_descriptor> > border_edges_per_cc;
+  border_edges_per_cc.resize(num_component);
+  BOOST_FOREACH(face_descriptor fd, faces(*pMesh))
+  {
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd,*pMesh), *pMesh))
+    {
+      halfedge_descriptor ohd = opposite(hd, *pMesh);
+      if(is_border(ohd, *pMesh))
+      {
+        border_edges_per_cc[cc[fd]].push_back(ohd);
+      }
+    }
+  }
+  // foreach cc make pair of corresponding edges.
+  std::vector<std::pair<halfedge_descriptor,halfedge_descriptor> > hedges;
+  typename boost::property_map< Face_graph,CGAL::vertex_point_t>::type vpmap
+      = get(CGAL::vertex_point, *pMesh);
+  for(std::size_t i = 0; i < num_component; ++i)
+  {
+    for(int j = 0; j < static_cast<int>(border_edges_per_cc[i].size())-1; ++j)
+    {
+      halfedge_descriptor h1 = border_edges_per_cc[i].back();
+      border_edges_per_cc[i].pop_back();
+      Point_3 src1(get(vpmap, source(h1, *pMesh))), tgt1(get(vpmap, target(h1, *pMesh)));
+      BOOST_FOREACH(halfedge_descriptor h2, border_edges_per_cc[i])
+      {
+          Point_3 src2(get(vpmap, source(h2, *pMesh))), tgt2(get(vpmap, target(h2, *pMesh)));
+          if(src1 == tgt2 && src2 == tgt1)
+          {
+            hedges.push_back(std::make_pair(h1,h2));
+          }
+      }
+    }
+  }
+  
+  //finally feed the pairs to the stitch_function  
+  CGAL::Polygon_mesh_processing::stitch_borders(*pMesh, hedges);
+  item->invalidateOpenGLBuffers();
+  scene->itemChanged(item);
+}
+
+
+void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchByCC_triggered()
+{
+  Q_FOREACH(int index, scene->selectionIndices()){
+    on_actionStitchByCC_triggered<Scene_polyhedron_item>(index);
+    on_actionStitchByCC_triggered<Scene_surface_mesh_item>(index);
   }
 }
 #include "Polyhedron_stitching_plugin.moc"
