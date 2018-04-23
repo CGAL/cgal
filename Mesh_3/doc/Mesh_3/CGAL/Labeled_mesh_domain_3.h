@@ -126,7 +126,7 @@ Library</em>). They can be specified in any order.
 <ul>
 <li> <b>`parameters::function` (mandatory)</b>  the implicit function,
 compatible with the signature `FT(Point_3)`: it takes a point as argument,
-and returns a scalar value.
+and returns a scalar value. That object must be model of `CopyConstructible`.
 <li> <b>`parameters::bounding_object` (mandatory)</b> the bounding object is
 either a bounding sphere (of type `Sphere_3`), a bounding box (type
 `Bbox_3`), or a bounding `Iso_cuboid_3`. It must bounds the surface, and
