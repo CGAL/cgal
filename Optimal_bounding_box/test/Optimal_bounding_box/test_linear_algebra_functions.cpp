@@ -3,6 +3,7 @@
 
 #include <CGAL/Optimal_bounding_box/linear_algebra.h>
 #include <CGAL/Optimal_bounding_box/fitness_function.h>
+#include <CGAL/Optimal_bounding_box/population.h>
 
 #include <iostream>
 #include <fstream>
@@ -158,6 +159,21 @@ void test_centroid()
 
 
 
+void test_population()
+{
+
+  CGAL::Optimal_bounding_box::Population<MatrixXf> pop(5);
+
+  //pop.show_population();
+
+  CGAL_assertion(pop.size() == 5);
+
+
+
+}
+
+
+
 
 int main()
 {
@@ -166,6 +182,9 @@ int main()
   test_fitness_function();
   test_simplex_operations();
   test_centroid();
+
+  test_population();
+
 
   return 0;
 }
