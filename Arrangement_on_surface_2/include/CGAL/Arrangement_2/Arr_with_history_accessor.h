@@ -132,8 +132,8 @@ public:
     typename Arrangement_with_history_2::Curve_halfedges  *p_cv = 
                                            p_arr->m_curves_alloc.allocate (1);
 #ifdef CGAL_CXX11
- typedef decltype(p_arr->m_curves_alloc) M_Curves_alloc;
- std::allocator_traits<M_Curves_alloc>::construct(p_arr->m_curves_alloc, p_cv, cv);
+    typedef decltype(p_arr->m_curves_alloc) M_Curves_alloc;
+    std::allocator_traits<M_Curves_alloc>::construct(p_arr->m_curves_alloc, p_cv, cv);
 #else
     p_arr->m_curves_alloc.construct (p_cv, cv);
 #endif
