@@ -60,7 +60,7 @@ public:
     actionStitchBorders->setObjectName("actionStitchBorders");
     actionStitchBorders->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
     
-    actionStitchByCC= new QAction(tr("Stitch Following Connected Components"), mainWindow);
+    actionStitchByCC= new QAction(tr("Stitch Borders Per Connected Components"), mainWindow);
     actionStitchByCC->setObjectName("actionStitchByCC");
     actionStitchByCC->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
     

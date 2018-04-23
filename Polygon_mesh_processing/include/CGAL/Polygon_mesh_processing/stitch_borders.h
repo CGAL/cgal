@@ -537,22 +537,19 @@ void stitch_borders(PolygonMesh& pmesh, const CGAL_PMP_NP_CLASS& np)
   }
   else
   {
-    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
     boost::unordered_map<typename boost::graph_traits<PolygonMesh>::face_descriptor,int> cc(num_faces(pmesh));
     std::size_t num_component = CGAL::Polygon_mesh_processing::connected_components(pmesh, boost::make_assoc_property_map(cc));
     
     //add each border edge in map with cc
     std::vector<std::vector<halfedge_descriptor> > border_edges_per_cc;
     border_edges_per_cc.resize(num_component);
-    BOOST_FOREACH(face_descriptor fd, faces(pmesh))
+    
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges(pmesh))
     {
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd,pmesh), pmesh))
+      halfedge_descriptor ohd = opposite(hd, pmesh);
+      if(is_border(ohd, pmesh))
       {
-        halfedge_descriptor ohd = opposite(hd, pmesh);
-        if(is_border(ohd, pmesh))
-        {
-          border_edges_per_cc[cc[fd]].push_back(ohd);
-        }
+        border_edges_per_cc[cc[face(hd, pmesh)]].push_back(ohd);
       }
     }
     // foreach cc make pair of corresponding edges.
