@@ -139,10 +139,37 @@ add_vertex_and_face_to_border_test()
   CGAL_GRAPH_TRAITS_MEMBERS(T);
  
   Surface_fixture_5<T> f;
+  typedef typename boost::graph_traits<T>::halfedge_descriptor  halfedge_descriptor;
+  halfedge_descriptor h1 = f.h1, h2 = f.h2;
+  const T& m = f.m;
 
-  CGAL::Euler::add_vertex_and_face_to_border(f.h1, f.h2, f.m);
+  int dist=0;
+  halfedge_descriptor hd = h1;
+  while(hd != h2){
+    ++dist;
+    hd = next(hd,m);
+  }
+  assert(dist == 2);
 
+  int blength = 0;
+  BOOST_FOREACH(halfedge_descriptor hd, CGAL::halfedges_around_face(h1,m)){
+    CGAL_USE(hd);
+    blength++;
+  }
+
+  halfedge_descriptor res = CGAL::Euler::add_vertex_and_face_to_border(f.h1, f.h2, f.m);
   assert(CGAL::is_valid(f.m));
+  
+  assert(! CGAL::is_border(res,m));
+  assert(CGAL::is_border(opposite(res,m),m));
+  res = opposite(res,m);
+  BOOST_FOREACH(halfedge_descriptor hd, CGAL::halfedges_around_face(res,m)){
+    CGAL_USE(hd);
+    blength--;
+  }
+  assert(blength == 0);
+
+
 
 }
 
