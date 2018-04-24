@@ -1604,11 +1604,14 @@ void MainWindow::on_actionSaveAs_triggered()
                            .arg(item->name()));
       return;
     }
-    Q_FOREACH(QString s, filters.first().split(";;"))
+    Q_FOREACH(QString string, filters)
     {
-      int pos = extensions.indexIn(s);
-      if( pos >-1)
-        filter_ext.append(extensions.capturedTexts());
+      QStringList sl = string.split(";;");
+      Q_FOREACH(QString s, sl){
+        int pos = extensions.indexIn(s);
+        if( pos >-1)
+          filter_ext.append(extensions.capturedTexts());
+      }
     }
     filters << tr("All files (*)");
     if(canSavePlugins.isEmpty()) {
@@ -1633,28 +1636,30 @@ void MainWindow::on_actionSaveAs_triggered()
     
     last_saved_dir = QFileInfo(dir).absoluteDir().path();
     extensions.indexIn(sf.split(";;").first());
-    ext1 = extensions.cap();
-    //remove `)`
-    ext1.chop(1);
-    //remove `(*`
-    ext1 = ext1.right(ext1.size()-2);
+    ext1 = extensions.cap().split(" ").first();// in case of syntax like (*.a *.b)
+    
+    ext1.remove(")");
+    ext1.remove("(");
+    //remove *
+    ext1=ext1.right(ext1.size()-1);
     if(filename.isEmpty())
       continue;
 
     QStringList filename_split = filename.split(".");
-    int fs_size = filename_split.size();
-    ext2 = filename_split.last();
-    
-    if(fs_size > 2 &&
-       ext2 == filename_split[filename.split(".").size()-2])
-      filename.chop(ext2.size()+1);
+    filename_split.removeFirst();
+    ext2 = filename_split.join(".");
+    ext2.push_front(".");
+   
     QStringList final_extensions;
-    Q_FOREACH(QString s, filter_ext)
+    Q_FOREACH(QString string, filter_ext)
     {
-      //remove `)`
-      s.chop(1);
-      //remove `(*.`
-      final_extensions.append(s.right(s.size()-3));
+      Q_FOREACH(QString s, string.split(" ")){// in case of syntax like (*.a *.b) 
+          s.remove(")");
+          s.remove("(");
+          //remove *
+          s=s.right(s.size()-1);
+          final_extensions.append(s);
+      }
     }
     if(!final_extensions.contains(ext2))
     {
