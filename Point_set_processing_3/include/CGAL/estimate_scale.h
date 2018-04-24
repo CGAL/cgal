@@ -570,8 +570,11 @@ estimate_global_k_neighbor_scale(
   const PointRange& points,
   const NamedParameters& np)
 {
+  using boost::choose_param;
+  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
+  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
   std::vector<std::size_t> scales;
-  estimate_local_k_neighbor_scales (points, points, std::back_inserter (scales), np);
+  estimate_local_k_neighbor_scales (points, points, std::back_inserter (scales), np.query_point_map(point_map));
   std::sort (scales.begin(), scales.end());
   return scales[scales.size() / 2];
 }
@@ -723,8 +726,11 @@ estimate_global_range_scale(
   const PointRange& points,
   const NamedParameters& np)
 {
+  using boost::choose_param;
   std::vector<double> scales;
-  estimate_local_range_scales (points, points, std::back_inserter (scales), np);
+  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
+  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+  estimate_local_range_scales (points, points, std::back_inserter (scales), np.query_point_map(point_map));
   std::sort (scales.begin(), scales.end());
   return std::sqrt (scales[scales.size() / 2]);
 }

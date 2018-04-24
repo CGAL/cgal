@@ -1685,8 +1685,7 @@ surface_intersection(const TriangleMesh& tm1,
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm>
     functor(tm1, tm2, vpm1, vpm2);
-  polyline_output=functor(polyline_output, throw_on_self_intersection, true);
-  return polyline_output;
+  return functor(polyline_output, throw_on_self_intersection, true);
 }
 
 namespace experimental {
