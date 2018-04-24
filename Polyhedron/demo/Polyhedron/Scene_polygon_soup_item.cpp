@@ -683,8 +683,10 @@ Scene_polygon_soup_item::exportAsSurfaceMesh(SMesh *out_surface_mesh)
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh< CGAL::Surface_mesh<Point_3> >(
     d->soup->points, d->soup->polygons, *out_surface_mesh);
   std::size_t rv = CGAL::Polygon_mesh_processing::remove_isolated_vertices(*out_surface_mesh);
-  if(rv > 0)
+  if(rv > 0){
     std::cerr << "Ignore isolated vertices: " << rv << std::endl;
+    out_surface_mesh->collect_garbage();
+  }
   if(out_surface_mesh->vertices().size() > 0) {
     return true;
   }
