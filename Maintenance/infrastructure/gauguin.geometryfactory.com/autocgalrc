@@ -22,4 +22,3 @@ PROCESSORS_localhost="7"
 
 UPLOAD_RESULT_DESTINATION="cgaltest@cgaltest.geometryfactory.com:incoming"
 WGET_OPTS="--no-verbose"
-
