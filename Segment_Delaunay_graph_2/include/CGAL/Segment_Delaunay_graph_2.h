@@ -711,7 +711,7 @@ public:
                           segment_indices.begin(),
                           segment_indices.end() );
     //insert non-input sites
-    std::random_shuffle( non_input_segments.begin(), non_input_segments.end() );
+    CGAL::cpp98::random_shuffle( non_input_segments.begin(), non_input_segments.end() );
     n += insert(non_input_segments.begin(),
                 non_input_segments.end(), Tag_false() );
     return n;

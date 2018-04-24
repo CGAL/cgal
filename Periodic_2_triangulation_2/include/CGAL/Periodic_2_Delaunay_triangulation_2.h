@@ -25,6 +25,7 @@
 
 #include <CGAL/Periodic_2_triangulation_2.h>
 #include <CGAL/iterator.h>
+#include <CGAL/algorithm.h>
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
@@ -245,7 +246,7 @@ public:
       }
     else
       {
-        std::random_shuffle (points.begin(), points.end());
+        CGAL::cpp98::random_shuffle (points.begin(), points.end());
         pbegin = points.begin();
 
         // The empty triangulation is a 1-cover by definition, insert at least one point
@@ -356,7 +357,7 @@ private:
       }
     else
       {
-        std::random_shuffle(indices.begin(), indices.end());
+        CGAL::cpp98::random_shuffle(indices.begin(), indices.end());
         pbegin = indices.begin();
 
         Vertex_handle v_new;

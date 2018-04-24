@@ -119,8 +119,15 @@ protected:
      manager. */
 
     NT* p = vi + di - 1;
-    while (p >= vi)  { allocator().destroy(p); p--; }  //af:  as proposed by sylvain
-allocator().deallocate(vi, di);
+    while (p >= vi)  {
+#ifdef CGAL_CXX11
+      std::allocator_traits<allocator_type>::destroy(allocator(),p);
+#else
+      allocator().destroy(p);
+#endif
+      p--;
+    }  //af:  as proposed by sylvain
+    allocator().deallocate(vi, di);
     vi = (NT*)0;
   }
 
