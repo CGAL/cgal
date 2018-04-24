@@ -25,6 +25,8 @@
 #include <vector>
 #include <CGAL/Random.h>
 
+#include <CGAL/Optimal_bounding_box/fitness_function.h>
+
 
 namespace CGAL {
 
@@ -76,7 +78,24 @@ public:
     return n;
   }
 
+
+  // access individual
+  Individual& operator[](std::size_t i)
+  {
+    CGAL_assertion(i < n);
+    return pop[i];
+  }
+
+  const Individual& operator[](std::size_t i) const
+  {
+    CGAL_assertion(i < n);
+    return pop[i];
+  }
+
+
 private:
+
+  // create random population
   void create_individual(Individual& member)
   {
     CGAL_assertion(member.size() == 4);

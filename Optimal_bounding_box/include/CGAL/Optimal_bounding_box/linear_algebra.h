@@ -38,7 +38,7 @@ void qr_factorization(Matrix& A, Matrix& Q)
 }
 
 template <typename Matrix>
-const Matrix reflection(Matrix& S_centroid, Matrix& S_worst)
+const Matrix reflection(const Matrix& S_centroid, const Matrix& S_worst)
 {
   CGAL_assertion(S_centroid.rows() == 3);
   CGAL_assertion(S_centroid.rows() == 3);
@@ -49,7 +49,7 @@ const Matrix reflection(Matrix& S_centroid, Matrix& S_worst)
 }
 
 template <typename Matrix>
-const Matrix expansion(Matrix& S_centroid, Matrix& S_worst, Matrix& S_reflection)
+const Matrix expansion(const Matrix& S_centroid, const Matrix& S_worst, const Matrix& S_reflection)
 {
   CGAL_assertion(S_centroid.rows() == 3);
   CGAL_assertion(S_centroid.rows() == 3);
@@ -62,15 +62,15 @@ const Matrix expansion(Matrix& S_centroid, Matrix& S_worst, Matrix& S_reflection
 }
 
 template <typename Matrix>
-const Matrix constraction(Matrix& S_centroid, Matrix& S_worst)
+Matrix mean(const Matrix& m1, const Matrix& m2) // mean
 {
   // same API for reduction
-  CGAL_assertion(S_centroid.rows() == 3);
-  CGAL_assertion(S_centroid.rows() == 3);
-  CGAL_assertion(S_worst.cols() == 3);
-  CGAL_assertion(S_worst.cols() == 3);
+  CGAL_assertion(m1.rows() == 3);
+  CGAL_assertion(m1.rows() == 3);
+  CGAL_assertion(m2.cols() == 3);
+  CGAL_assertion(m2.cols() == 3);
 
-  Matrix contract = 0.5 * S_centroid + 0.5 * S_worst;
+  Matrix contract = 0.5 * m1 + 0.5 * m2;
   Matrix Q;
   qr_factorization(contract, Q);
   double det = Q.determinant();

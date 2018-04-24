@@ -53,6 +53,7 @@ if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
 
   create_single_source_cgal_program("test_linear_algebra_functions.cpp")
+  create_single_source_cgal_program("test_optimization_algorithms.cpp")
   
 endif(EIGEN3_FOUND)
 

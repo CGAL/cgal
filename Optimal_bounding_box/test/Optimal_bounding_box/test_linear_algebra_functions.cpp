@@ -112,7 +112,7 @@ void test_simplex_operations()
          -0.653011,  -0.755415,   0.054087,
          -0.630234,   0.581624,   0.514314;
 
-  MatrixXf S_c = CGAL::Optimal_bounding_box::constraction(S_a, S_b);
+  MatrixXf S_c = CGAL::Optimal_bounding_box::mean(S_a, S_b);
   CGAL_assertion(assert_doubles(S_c(0,0), -0.35111, epsilon));
   CGAL_assertion(assert_doubles(S_c(0,1), 0.79308, epsilon));
   CGAL_assertion(assert_doubles(S_c(0,2), -0.49774, epsilon));
@@ -159,19 +159,6 @@ void test_centroid()
 
 
 
-void test_population()
-{
-
-  CGAL::Optimal_bounding_box::Population<MatrixXf> pop(5);
-
-  //pop.show_population();
-
-  CGAL_assertion(pop.size() == 5);
-
-
-
-}
-
 
 
 
@@ -183,7 +170,6 @@ int main()
   test_simplex_operations();
   test_centroid();
 
-  test_population();
 
 
   return 0;

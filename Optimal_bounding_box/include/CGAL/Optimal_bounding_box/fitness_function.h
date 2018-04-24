@@ -30,7 +30,7 @@ namespace CGAL {
 namespace Optimal_bounding_box {
 
 template<typename Matrix>
-const double compute_fitness(Matrix& R, Matrix& data)
+const double compute_fitness(const Matrix& R, const Matrix& data)
 {
 
   // R: rotation matrix
