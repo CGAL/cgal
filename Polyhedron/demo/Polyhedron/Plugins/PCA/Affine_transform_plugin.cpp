@@ -2,7 +2,7 @@
 #include <CGAL/bounding_box.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
-
+#include <CGAL/algorithm.h>
 #ifdef CGAL_USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
 #else
@@ -47,7 +47,7 @@ public:
     Point_set ps= *item->point_set();
     const Kernel::Point_3& p = ps.point(*(ps.begin()));
     CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
-    std::random_shuffle (ps.begin(), ps.end());
+    CGAL::cpp98::random_shuffle (ps.begin(), ps.end());
     std::vector<float> points;
     points.reserve(3*ps.size());
     for (Point_set::const_iterator it = ps.begin(); it != ps.first_selected(); it++)
