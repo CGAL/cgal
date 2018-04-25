@@ -3,6 +3,7 @@
 
 #include <CGAL/Optimal_bounding_box/optimization_algorithms.h>
 #include <CGAL/Optimal_bounding_box/population.h>
+#include <CGAL/Optimal_bounding_box/obb.h>
 
 #include <iostream>
 #include <fstream>
@@ -130,6 +131,19 @@ void test_genetic_algorithm()
   CGAL_assertion(pop.size() == 5);
 }
 
+void test_visualization()
+{
+  MatrixXf data_points(4, 3);
+  data_points << 0.866802, 0.740808, 0.895304,
+                 0.912651, 0.761565, 0.160330,
+                 0.093661, 0.892578, 0.737412,
+                 0.166461, 0.149912, 0.364944;
+
+
+  CGAL::Optimal_bounding_box::visualize_obb(data_points);
+
+
+}
 
 
 int main()
@@ -137,6 +151,9 @@ int main()
   test_population();
   test_nelder_mead();
   test_genetic_algorithm();
+
+
+  test_visualization();
 
 
 

@@ -299,22 +299,6 @@ void genetic_algorithm(Population<Simplex>& pop, Simplex& points)
 
 
 
-template <typename Simplex>
-void find_global_minimum(Population<Simplex>& pop, Simplex points)
-{
-
-  genetic_algorithm(pop, points);
-
-  std::size_t nelder_mead_iterations = 1;
-
-  for(Simplex s : pop)
-    nelder_mead(s, points, nelder_mead_iterations);
-
-  //optional random mutations
-
-
-}
-
 
 
 
