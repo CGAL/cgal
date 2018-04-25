@@ -53,7 +53,7 @@ with the regular triangulation and `p` as arguments.
 
 /*!
 The sample points \f$ \mathcal{P}\f$ are provided in the range
-`[first`, beyond)`.
+`[first, beyond)`.
 The value type of `InputIterator` is the point type
 `Kernel::Point_3`. The tangent plane is defined by the point
 `p` and the vector `normal`. The parameter `K`

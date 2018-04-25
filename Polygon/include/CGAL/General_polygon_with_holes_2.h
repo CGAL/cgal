@@ -55,6 +55,7 @@ public:
 /// \name Definition
 
 /// @{
+  /// polygon without hole type
   typedef Polygon_							General_polygon_2;
 /// @}
 
