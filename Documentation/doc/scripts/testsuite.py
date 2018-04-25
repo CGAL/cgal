@@ -137,8 +137,8 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
         result = [(basename, pretty_name, res)]
         results2.extend(result)
 
-        os.chdir(args.doc_log_dir_master)
-        logs=sorted(glob.glob('./*.log'))
+    os.chdir(args.doc_log_dir_master)
+    logs=sorted(glob.glob('./*.log'))
 
     for log in logs:
         res=count_errors_and_warnings(log)
