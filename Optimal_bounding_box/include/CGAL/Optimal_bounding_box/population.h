@@ -26,6 +26,7 @@
 #include <CGAL/Random.h>
 
 #include <CGAL/Optimal_bounding_box/fitness_function.h>
+#include <CGAL/Optimal_bounding_box/linear_algebra.h>
 
 
 namespace CGAL {
@@ -41,8 +42,10 @@ class Population
   typedef std::vector<Matrix> Individual;
 
 public:
-  Population(std::size_t size) : n(size)
+  Population(std::size_t size) : n(size), random_generator(CGAL::Random(1))
   {
+    //std::cout << "seed= " << random_generator.get_seed() << std::endl;
+
     // reserve pop space
     pop.reserve(n);
 
@@ -105,7 +108,9 @@ private:
       // create matrix
       Matrix R(3,3);
       create_simplex(R);
-      member[i] = R;
+      Matrix Q;
+      qr_factorization(R, Q);
+      member[i] = Q;
     }
 
     CGAL_assertion(member.size() == 4);
@@ -124,6 +129,8 @@ private:
       }
     }
   }
+
+
 
 
   CGAL::Random random_generator;

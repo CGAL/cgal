@@ -23,11 +23,13 @@
 #define CGAL_OPTIMAL_BOUNDING_BOX_OPTIMIZATION_ALGORITHMS_H
 
 #include <vector>
+#include <algorithm>
 #include <CGAL/Random.h>
 #include <boost/iterator/counting_iterator.hpp>
 
 #include <CGAL/Optimal_bounding_box/fitness_function.h>
 #include <CGAL/Optimal_bounding_box/linear_algebra.h>
+#include <CGAL/Optimal_bounding_box/population.h>
 
 
 namespace CGAL {
@@ -155,11 +157,163 @@ void nelder_mead(std::vector<Matrix>& simplex, Matrix& points, std::size_t nb_it
 
   } // iterations
 
+}
 
+struct Random_int_generator
+{
+  Random_int_generator(int l, int h) : low(l), high(h) {}
+
+  int operator() ()
+  {
+    return random_gen.get_int(low, high);
+  }
+
+  CGAL::Random random_gen;
+  int low;
+  int high;
+};
+
+
+template <typename Simplex>
+void genetic_algorithm(Population<Simplex>& pop, Simplex& points)
+{
+  // random permutations
+  std::size_t m = pop.size();
+
+  //groups 1,2 : size m/2  groups 3,4 : size (m - m/2).   m/2 is floored
+  std::size_t size_first_group = m/2;
+  std::size_t size_second_group = m - m/2;
+
+  std::vector<std::size_t> ids1(m/2), ids2(m/2);
+  std::vector<std::size_t> ids3(m - m/2), ids4(m - m/2);
+
+  CGAL::Random rng;
+
+  //Random_int_generator rgen(0, m);
+  //std::generate(indices.begin(), indices.end(), rgen);
+
+  std::generate(ids1.begin(), ids1.end(),
+                [&rng, &m] ()
+                { return rng.get_int(0, m); });
+
+  std::generate(ids2.begin(), ids2.end(),
+                [&rng, &m] ()
+                { return rng.get_int(0, m); });
+
+  std::generate(ids3.begin(), ids3.end(),
+                [&rng, &m] ()
+                { return rng.get_int(0, m); });
+
+  std::generate(ids4.begin(), ids4.end(),
+                [&rng, &m] ()
+                { return rng.get_int(0, m); });
+
+
+  Population<Simplex> group1(m/2), group2(m/2);
+  Population<Simplex> group3(m - m/2), group4(m - m/2);
+
+  for(std::size_t i = 0; i < ids1.size(); ++i)
+    group1[i] = pop[ids1[i]];
+
+  for(std::size_t i = 0; i < ids2.size(); ++i)
+    group2[i] = pop[ids2[i]];
+
+  for(std::size_t i = 0; i < ids3.size(); ++i)
+    group3[i] = pop[ids3[i]];
+
+  for(std::size_t i = 0; i < ids4.size(); ++i)
+    group4[i] = pop[ids4[i]];
+
+
+
+
+  // crossover I
+  Population<Simplex> offspringsA(size_first_group);
+  double bias = 0.1;
+
+  for(int i = 0; i < size_first_group; ++i)
+  {
+    std::vector<Simplex> offspring(4);
+    for(int j = 0; j < 4; ++j)
+    {
+      double r = rng.get_double();
+      double fitnessA = compute_fitness(group1[i][j], points);
+      double fitnessB = compute_fitness(group2[i][j], points);
+      double threshold;
+      if(fitnessA < fitnessB)
+        threshold = 0.5 + bias;
+      else
+        threshold = 0.5 - bias;
+      if(r < threshold) // choose A
+        offspring[j] = group1[i][j];
+      else // choose B
+        offspring[j] = group2[i][j];
+    }
+    offspringsA[i] = offspring;
+  }
+
+
+  // crossover II
+  Population<Simplex> offspringsB(size_second_group);
+  bias = 0.1;
+
+  for(int i = 0; i < size_second_group; ++i)
+  {
+    std::vector<Simplex> offspring(4);
+    for(int j = 0; j < 4; ++j)
+    {
+      double fitnessA = compute_fitness(group3[i][j], points);
+      double fitnessB = compute_fitness(group4[i][j], points);
+      double lambda;
+      if(fitnessA < fitnessB)
+        lambda = 0.5 + bias;
+      else
+        lambda = 0.5 - bias;
+      // combine information from A and B
+      offspring[j] = lambda * group3[i][j] + lambda * group4[i][j];
+
+    }
+    offspringsB[i] = offspring;
+  }
+
+
+  CGAL_assertion(offspringsA.size() == size_first_group);
+  CGAL_assertion(offspringsB.size() == size_second_group);
+  CGAL_assertion(offspringsA.size() + offspringsB.size() == pop.size());
+
+
+  // next generatrion
+  for(std::size_t i = 0; i < size_first_group; ++i)
+  {
+    pop[i] = offspringsA[i];
+  }
+
+  for(std::size_t i = 0; i < size_second_group; ++i)
+  {
+    pop[size_first_group + i] = offspringsB[i];
+  }
 
 
 }
 
+
+
+
+template <typename Simplex>
+void find_global_minimum(Population<Simplex>& pop, Simplex points)
+{
+
+  genetic_algorithm(pop, points);
+
+  std::size_t nelder_mead_iterations = 1;
+
+  for(Simplex s : pop)
+    nelder_mead(s, points, nelder_mead_iterations);
+
+  //optional random mutations
+
+
+}
 
 
 

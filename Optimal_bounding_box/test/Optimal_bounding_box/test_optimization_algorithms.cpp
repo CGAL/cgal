@@ -116,11 +116,32 @@ void test_nelder_mead()
 
 }
 
+void test_genetic_algorithm()
+{
+
+  MatrixXf data_points(4, 3);
+  data_points << 0.866802, 0.740808, 0.895304,
+                 0.912651, 0.761565, 0.160330,
+                 0.093661, 0.892578, 0.737412,
+                 0.166461, 0.149912, 0.364944;
+
+  CGAL::Optimal_bounding_box::Population<MatrixXf> pop(5);
+  CGAL::Optimal_bounding_box::genetic_algorithm(pop, data_points);
+  CGAL_assertion(pop.size() == 5);
+}
+
+
 
 int main()
 {
   test_population();
   test_nelder_mead();
+  test_genetic_algorithm();
+
+
+
+
+
 
 
   return 0;
