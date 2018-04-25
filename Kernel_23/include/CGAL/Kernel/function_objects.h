@@ -2881,6 +2881,28 @@ namespace CommonKernelFunctors {
       return closest_point_on_segment;
     }
 
+    typename K::Point_3
+    operator()(const typename K::Point_3& query,
+               const typename K::Ray_3& ray,
+               const K& k)
+    {
+      typedef typename K::Point_3 Point_3;
+      
+      typename K::Construct_projected_point_3 projection =
+          k.construct_projected_point_3_object();
+      
+      
+      
+      // Project query on segment supporting line
+      const Point_3 closest_point = projection(ray.supporting_line(), query);
+      
+      if ( ray.to_vector() * (closest_point-ray.source()) < 0)
+        closest_point = ray.source();
+      
+      //returns the constructed point
+      return closest_point;
+    }
+    
     // code for operator for plane and point is defined in
     // CGAL/Cartesian/function_objects.h and CGAL/Homogeneous/function_objects.h
   };
