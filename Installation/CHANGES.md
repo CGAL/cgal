@@ -24,12 +24,22 @@ Release date: April 2018
     to `Release` manually, to avoid using CGAL libraries without any
     compile-time optimization.
 
-### Header-only mode
+### Header-only Mode
 
-- Since CGAL-4.9, it has been possible to use CGAL by configuring it using
-  CMake, but without compiling the CGAL libraries. With CGAL-4.12, it is
-  now possible to use CGAL header-only, without even configuring it. CMake
-  is then used only to configure programs using CGAL.
+-   Since CGAL-4.9, it has been possible to use CGAL by configuring it
+    using CMake, but without compiling the CGAL libraries. With CGAL-4.12,
+    it is now possible to use CGAL header-only, without even configuring
+    it. CMake is then used only to configure programs using CGAL.
+
+### Compiler Support
+
+-   The Microsoft Visual C++ 2017 version 15.3 has introduced support for
+    C++17, with the compilation flag `/std:c++17`. CGAL 4.12 has an initial
+    support for that flag: the code will compile, but a lot of deprecation
+    warnings will remain. Note that Boost version 1.67 is the first version
+    of Boost supporting `/std:c++17`.
+
+-   The compilation flag `/permissive-` of Visual C++ is now supported.
 
 ### 2D Movable Separability of Sets (new package)
 
