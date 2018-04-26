@@ -131,7 +131,7 @@ Currently, 1-dimensional features may be defined as segments and polyline segmen
 \subsection Mesh_3OutputMesh Output Mesh
 
 The resulting mesh is output as a subcomplex of a
-\ref CGAL::Regular_triangulation_3 "weighted 3D triangulation",
+\ref CGAL::Regular_triangulation_3 "weighted Delaunay 3D triangulation",
 in a class providing various iterators
 on mesh elements.
 
@@ -148,10 +148,8 @@ Such mesh facets are called <I>surface facets</I> in the following.
 The 1-dimensional exposed features are approximated by sequences of mesh edges
 and the 0-dimensional exposed features are represented by mesh vertices.
 
-\subsubsection Mesh_3OutputFaceGraph Output FaceGraph
-
-This \cgal component also provides a function to extract the facets of the complex
-as a `FaceGraph`, namely `facets_in_complex_3_to_triangle_mesh()`.
+It is possible to extract the facets of the complex
+as a `FaceGraph`, using the function `facets_in_complex_3_to_triangle_mesh()`.
 
 \subsection Mesh_3DelaunayRefinement Delaunay Refinement
 \anchor introsecparam
@@ -322,6 +320,9 @@ of 0 and 1-dimensional features does not rely on Delaunay
 refinement, the function `refine_mesh_3()` has no parameter
 to preserve features.
 
+The following sections describe the different template parameters
+(and their requirements) of these two global functions.
+
 \subsection Mesh_3TheDataStructure The Data Structure
 
 The template parameter `C3T3` is required to be a model of
@@ -368,12 +369,10 @@ graph of 0, 1 and 2-dimensional features,
 and a member function to construct
 sample points on curves.
 
-Using the parameter of type `Features`, the user
-whose domain is a model of `MeshDomainWithFeatures_3`
+
+Users whose domain is a model of `MeshDomainWithFeatures_3`
 can choose to have the corners and curves of the domain
-represented in the mesh or not.
-The type `Features` of this parameter is an internal undescribed type.
-The library provides functions to construct appropriate values of that type.
+represented in the mesh or not, using the following parameters:
 <UL>
 <LI>\link parameters::features() `parameters::features(domain)` \endlink
 sets features according to the domain,

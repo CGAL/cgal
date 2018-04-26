@@ -102,6 +102,20 @@ that are called vertices, edges, facets and cells.
 Note that the input complex faces are not required to be linear nor smooth.
 Surface patches, for instance, may be smooth surface patches,
 or portions of surface meshes with boundaries.
+Curves may be for instance straight segments, parameterized curves
+or polylines. Each of those features will be accurately represented in the final mesh.
+
+The 0 and 1-dimensional features of the input domain are usually singular points
+of the subdomain boundaries, however this is not required. Furthermore, those features
+are not required to cover all the subdomains boundaries singularities
+but only those that need to be accurately represented in the final mesh.
+In the following, we say that a domain has <I>features</I> when it has 0 and
+1-dimensional features that need to be accurately represented in the mesh,
+and we call those features <I>exposed features</I>.
+Therefore, a domain may be without features either because all boundary surface patches
+are smooth closed surfaces, or simply because the curves joining different surface patches
+and the singularities of those patches need not be accurately approximated
+in the final mesh.
 
 Note also that input complex faces are not required to be connected.
 Faces of the input domain are identified by indices.
@@ -199,7 +213,7 @@ does not form a closed curve.
 \subsection Periodic_3_mesh_3OutputMesh Output Mesh
 
 The resulting mesh is output as a subcomplex of a
-\ref CGAL::Periodic_3_regular_triangulation_3 "weighted periodic 3D triangulation",
+\ref CGAL::Periodic_3_regular_triangulation_3 "weighted Delaunay periodic 3D triangulation",
 in a class that provides various iterators on mesh elements.
 
 This periodic 3D triangulation provides approximations of the subdomains,
@@ -213,10 +227,8 @@ whose dual Voronoi edges intersect the surface patch. Such mesh facets are calle
 are approximated by sequences of mesh edges and the 0-dimensional exposed features
 are represented by mesh vertices.
 
-\subsubsection Periodic_3_mesh_3OutputFaceGraph Output FaceGraph
-
-This \cgal component also provides a function to extract the facets of the complex
-as a `FaceGraph`, namely `facets_in_complex_3_to_triangle_mesh()`.
+It is possible to extract the facets of the complex (restricted to the canonical cube)
+as a `FaceGraph`, using the function `facets_in_complex_3_to_triangle_mesh()`.
 
 \subsection Periodic_3_mesh_3DelaunayRefinement Delaunay Refinement
 
@@ -315,6 +327,9 @@ function `refine_periodic_3_mesh_3()`. The underlying triangulation of a mesh
 complex obtained through `make_periodic_3_mesh_3()` or `refine_periodic_3_mesh_3()`
 will always satisfy this condition.
 
+The following sections describe the different template parameters
+(and their requirements) of these two global functions.
+
 \subsection Periodic_3_mesh_3TheDataStructure The Data Structure
 
 The template parameter `C3T3` is required to be a model of
@@ -353,12 +368,9 @@ The concept `Periodic_3MeshDomainWithFeatures_3` mainly provides the incidence
 graph of 0, 1 and 2-dimensional features, and a member function to construct
 sample points on curves.
 
-Using the parameter of type `Features`, the user
-whose domain is a model of `Periodic_3MeshDomainWithFeatures_3`
+Users whose domain is a model of `Periodic_3MeshDomainWithFeatures_3`
 can choose to have the corners and curves of the domain
-represented in the mesh or not.
-The type `Features` of this parameter is an internal undescribed type.
-The library provides functions to construct appropriate values of that type.
+represented in the mesh or not, using the following parameters:
 <UL>
 <LI>`parameters::features()` sets features according to the domain,
 i.e.\ 0 and 1-dimensional features are taken into account if `domain` is a
@@ -485,7 +497,7 @@ constructor of the `Mesh_criteria` instance.
 </center>
 \cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_implicit_shape}
 A single copy of a periodic mesh produced from an implicit domain (left).
-Cut view (middle). Another cut is shown, with 7 copies (right).
+Cut view (middle). Another cut is shown, using 8 copies (right).
 \cgalFigureCaptionEnd
 
 While the implicit function used in the previous example is defined and periodic
@@ -511,7 +523,7 @@ will yield the mesh shown on \cgalFigureRef{Periodic_3_mesh_3Periodic_implicit_s
 </center>
 \cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_implicit_sphere}
 Periodic mesh of an implicit sphere that is entirely contained in the input cube,
-shown with 7 copies (left). A cut view along one of the axes (right).
+shown with 8 copies (left). A cut view along one of the axes (right).
 \cgalFigureCaptionEnd
 
 \subsubsection Periodic_3_mesh_33DDomainsImplicitIsosurfacesBothSides Meshing the Interior and the Exterior of a Domain Bounded by an Isosurface
@@ -569,7 +581,7 @@ where `si` is the sign of the function `fi(p)` at a point `p` of the subdomain.
 <img src="periodic_implicit_multi_domain.jpg" style="max-width:90%;"/>
 </center>
 \cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_multi_domain}
-A periodic mesh produced by a combination of implicit functions (with 7 copies, left).
+A periodic mesh produced by a combination of implicit functions (with 8 copies, left).
 Cut view without (middle) and with (right) the internal tetrahedra.
 \cgalFigureCaptionEnd
 
@@ -590,7 +602,8 @@ before and after optimizations.
 <img src="periodic_implicit_optimizers.png" style="max-width:90%;"/>
 </center>
 \cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_optimizers}
-
+Compared effect of a mesh pre- and post-optimization using all available optimizers.
+The numbers under the histograms give the measure in degrees of the smallest and biggest dihedral angles in the mesh.
 \cgalFigureCaptionEnd
 
 \subsection Periodic_3_mesh_3MeshingDomainswithSharpFeatures Meshing Domains with Sharp Features
