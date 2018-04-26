@@ -539,7 +539,7 @@ template<class K1, class K2, class Vpm, class category = typename boost::propert
 Cartesian_converter_property_map<K1, K2, Vpm, category>
 make_cartesian_converter_property_map(Vpm vpm)
 {
-  return Kernel_converter_property_map<K1, K2, Vpm, category>(vpm);
+  return Cartesian_converter_property_map<K1, K2, Vpm, category>(vpm);
 }
 
 } // namespace CGAL
