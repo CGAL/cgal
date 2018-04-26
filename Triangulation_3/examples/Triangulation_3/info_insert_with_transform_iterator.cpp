@@ -35,12 +35,11 @@ int main()
   points.push_back(Point(2,2,2));
   points.push_back(Point(-1,0,1));
 
-  
   Delaunay T( boost::make_transform_iterator(points.begin(),Auto_count()),
               boost::make_transform_iterator(points.end(),  Auto_count() )  );
 
   CGAL_assertion( T.number_of_vertices() == 6 );
-  
+
   // check that the info was correctly set.
   Delaunay::Finite_vertices_iterator vit;
   for (vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit)
@@ -49,6 +48,6 @@ int main()
       exit(EXIT_FAILURE);
     }
   std::cout << "OK" << std::endl;
-  
+
   return 0;
 }

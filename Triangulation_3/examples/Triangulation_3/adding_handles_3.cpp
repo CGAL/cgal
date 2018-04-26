@@ -20,12 +20,8 @@ public:
   };
 
   My_vertex_base() {}
-
-  My_vertex_base(const Point& p)
-    : Vb(p) {}
-
-  My_vertex_base(const Point& p, Cell_handle c)
-    : Vb(p, c) {}
+  My_vertex_base(const Point& p) : Vb(p) {}
+  My_vertex_base(const Point& p, Cell_handle c) : Vb(p, c) {}
 
   Vertex_handle   vh;
   Cell_handle     ch;
