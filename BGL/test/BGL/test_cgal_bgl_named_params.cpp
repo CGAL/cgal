@@ -86,6 +86,7 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::weight_calculator).v == 39);
   assert(get_param(np, CGAL::internal_np::preserve_genus).v == 40);
   assert(get_param(np, CGAL::internal_np::verbosity_level).v == 41);
+  assert(get_param(np, CGAL::internal_np::apply_per_connected_component).v == 42);
 
 
   // Test types
@@ -150,6 +151,7 @@ void test(const NamedParameters& np)
   check_same_type<39>(get_param(np, CGAL::internal_np::weight_calculator));
   check_same_type<40>(get_param(np, CGAL::internal_np::preserve_genus));
   check_same_type<41>(get_param(np, CGAL::internal_np::verbosity_level));
+  check_same_type<42>(get_param(np, CGAL::internal_np::apply_per_connected_component));
 }
 
 int main()
@@ -199,6 +201,7 @@ int main()
                          .weight_calculator(A<39>(39))
                          .preserve_genus(A<40>(40))
                          .verbosity_level(A<41>(41))
+                         .apply_per_connected_component(A<42>(42))
        );
 
   return EXIT_SUCCESS;
