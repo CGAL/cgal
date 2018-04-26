@@ -55,6 +55,8 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/IO/File_scanner_OFF.h>
 #include <CGAL/Handle_hash_function.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/named_function_params.h>
 
 namespace CGAL {
 
@@ -1977,9 +1979,11 @@ private: //------------------------------------------------------- private data
   /// \relates Surface_mesh
   /// Inserts the surface mesh in an output stream in Ascii OFF format. 
   /// Only the \em point property is inserted in the stream.
+  /// If an alternative vertex_point map is given through `np`, 
+  /// then it  will be used instead of the default one.
   /// \pre `operator<<(std::ostream&,const P&)` must be defined.
-  template <typename P>
-  bool write_off(std::ostream& os, const Surface_mesh<P>& sm) {
+  template <typename P, typename NamedParameters>
+  bool write_off(std::ostream& os, const Surface_mesh<P>& sm, const NamedParameters& np) {
     typedef Surface_mesh<P> Mesh;
     typedef typename Mesh::Vertex_index Vertex_index;
     typedef typename Mesh::Face_index Face_index;
@@ -1996,10 +2000,14 @@ private: //------------------------------------------------------- private data
     else
       os << "COFF\n" << sm.number_of_vertices() << " " << sm.number_of_faces() << " 0\n";
     std::vector<int> reindex;
+    typename Polygon_mesh_processing::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::const_type
+        vpm = choose_param(get_param(np, internal_np::vertex_point),
+                           get_const_property_map(CGAL::vertex_point, sm));
     reindex.resize(sm.num_vertices());
     int n = 0;
     BOOST_FOREACH(Vertex_index v, sm.vertices()){
-      os << sm.point(v);
+      
+      os << get(vpm, v);
       if(has_vcolors)
       {
         CGAL::Color color = vcolors[v];
@@ -2058,12 +2066,14 @@ private: //------------------------------------------------------- private data
   /// format and appends it to the surface mesh `sm`.
   /// The operator reads the point property as well as "v:normal", "v:color", and "f:color".
   /// Vertex texture coordinates are ignored.
+  /// If an alternative vertex_point map is given through `np`, 
+  /// then it  will be used instead of the default one.
   /// \pre `operator>>(std::istream&,const P&)` must be defined.
   /// \pre The data in the stream must represent a two-manifold. If this is not the case
   ///      the `failbit` of `is` is set and the mesh cleared.
 
-  template <typename P>
-  bool read_off(std::istream& is, Surface_mesh<P>& sm)
+  template <typename P, typename NamedParameters>
+  bool read_off(std::istream& is, Surface_mesh<P>& sm, NamedParameters np)
   {
    typedef Surface_mesh<P> Mesh;
    typedef typename Kernel_traits<P>::Kernel K;
@@ -2071,6 +2081,9 @@ private: //------------------------------------------------------- private data
    typedef typename Mesh::Face_index Face_index;
    typedef typename Mesh::Vertex_index Vertex_index;
    typedef typename Mesh::size_type size_type;
+    typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::type
+        vpm = choose_param(get_param(np, CGAL::internal_np::vertex_point),
+                           get_property_map(CGAL::vertex_point, sm));
     int n, f, e;
     std::string off;
     is >> sm_skip_comments;
@@ -2097,7 +2110,11 @@ private: //------------------------------------------------------- private data
     for(int i=0; i < n; i++){
       is >> sm_skip_comments;
       is >> p;
-      Vertex_index vi= sm.add_vertex(p);
+      
+      Vertex_index vi = sm.add_vertex();
+      put(vpm, vi, p);
+      
+      
       vertexmap[i] = vi;
       if(v_has_normals){
         is >> v;
@@ -2167,6 +2184,11 @@ private: //------------------------------------------------------- private data
   }
 
 
+  template <typename P>
+  bool read_off(std::istream& is, Surface_mesh<P>& sm)
+  {
+    return read_off(is, sm, parameters::all_default());
+  }
  
   /// \relates Surface_mesh
   /// This operator calls `read_off(std::istream& is, CGAL::Surface_mesh& sm)`.

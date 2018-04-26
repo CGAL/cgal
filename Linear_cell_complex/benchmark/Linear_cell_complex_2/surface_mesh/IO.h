@@ -33,9 +33,13 @@
 
 
 bool read_mesh(Surface_mesh& mesh, const std::string& filename);
+template<typename NamedParameters>
+bool read_off(Surface_mesh& mesh, const std::string& filename, NamedParameters& np);
 bool read_off(Surface_mesh& mesh, const std::string& filename);
 
 bool write_mesh(const Surface_mesh& mesh, const std::string& filename);
+template<typename NamedParameters>
+bool write_off(const Surface_mesh& mesh, const std::string& filename, const NamedParameters& np);
 bool write_off(const Surface_mesh& mesh, const std::string& filename);
 
 
