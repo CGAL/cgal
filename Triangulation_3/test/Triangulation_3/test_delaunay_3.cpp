@@ -27,7 +27,7 @@
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
-#include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_with_circumcenter_3.h>
 
 bool del=true;
 
@@ -71,10 +71,10 @@ int main()
 #endif
 
   // Second version for the circumcenter storing cell base class.
-  typedef CGAL::Triangulation_vertex_base_3<K>                 Vb;
-  typedef CGAL::Triangulation_cell_base_with_circumcenter_3<K> Cb;
-  typedef CGAL::Triangulation_data_structure_3<Vb, Cb>         TDS;
-  typedef CGAL::Delaunay_triangulation_3<K, TDS>               Cls_circumcenter;
+  typedef CGAL::Triangulation_vertex_base_3<K>                          Vb;
+  typedef CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3<K> Cb;
+  typedef CGAL::Triangulation_data_structure_3<Vb, Cb>                  TDS;
+  typedef CGAL::Delaunay_triangulation_3<K, TDS>                        Cls_circumcenter;
 
   _test_cls_delaunay_3( Cls_circumcenter() );
 
