@@ -18,7 +18,6 @@ typedef CGAL::Surface_mesh<Point> Mesh;
 
 int main()
 {
-  // test open clipping with Surface_mesh
   Mesh m;
   CGAL::make_tetrahedron(Point(0,0,0), Point(0,0,1), Point(0,1,2), Point(1,0,3), m);
   CGAL::Aff_transformation_3<K> trans(0,0,0,1,0,1,0,0,0,0,1,1);

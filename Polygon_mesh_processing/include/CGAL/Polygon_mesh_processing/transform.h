@@ -18,9 +18,9 @@
 //
 //
 // Author(s)     : Maxime Gimeno
-#ifndef CGAL_TRANSFORM_H
-#define CGAL_TRANSFORM_H
-#include <CGAL/license/Polygon_mesh_processing/transform.h>
+#ifndef CGAL_POLYGON_MESH_PROCESSING_TRANSFORM_H
+#define CGAL_POLYGON_MESH_PROCESSING_TRANSFORM_H
+#include <CGAL/license/Polygon_mesh_processing/core.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -29,7 +29,7 @@ namespace CGAL{
 namespace Polygon_mesh_processing{
 /**
  * \ingroup PkgPolygonMeshProcessing
- * applies a `Transformation` to every vertex of a `Mesh`.
+ * applies a transformation to every vertex of a `Mesh`.
  * 
  * @tparam Transformation inherits from `CGAL::Aff_transformation_3`
  * @tparam Mesh a model of `VertexListGraph`
@@ -63,4 +63,4 @@ void transform(const Transformation& transformation,
 }
 }
 
-#endif // CGAL_TRANSFORM_H
+#endif
