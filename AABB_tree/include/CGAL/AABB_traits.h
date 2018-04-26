@@ -291,7 +291,8 @@ public:
    */
   class Sort_primitives
   {
-  const AABB_traits<GeomTraits,AABBPrimitive,BboxMap>& m_traits;
+    typedef AABB_traits<GeomTraits,AABBPrimitive,BboxMap> Traits;
+    const Traits& m_traits;
   public:
     Sort_primitives(const AABB_traits<GeomTraits,AABBPrimitive,BboxMap>& traits)
       : m_traits(traits) {}
@@ -302,7 +303,7 @@ public:
                     const typename AT::Bounding_box& bbox) const
       {
         PrimitiveIterator middle = first + (beyond - first)/2;
-        switch(longest_axis(bbox))
+        switch(Traits::longest_axis(bbox))
         {
         case AT::CGAL_AXIS_X: // sort along x
           std::nth_element(first, middle, beyond, boost::bind(less_x,_1,_2,m_traits));
