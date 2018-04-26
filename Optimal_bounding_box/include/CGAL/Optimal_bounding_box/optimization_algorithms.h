@@ -226,6 +226,13 @@ void genetic_algorithm(Population<Simplex>& pop, Simplex& points)
 
 
 
+  /*
+  check_det(group1);
+  check_det(group2);
+  check_det(group3);
+  check_det(group4);
+  */
+
 
   // crossover I
   Population<Simplex> offspringsA(size_first_group);
@@ -253,6 +260,14 @@ void genetic_algorithm(Population<Simplex>& pop, Simplex& points)
   }
 
 
+  /*
+  std::cout << "offspringsA: \n" ;
+  check_det(offspringsA);
+  std::cin.get();
+  */
+
+
+
   // crossover II
   Population<Simplex> offspringsB(size_second_group);
   bias = 0.1;
@@ -273,8 +288,20 @@ void genetic_algorithm(Population<Simplex>& pop, Simplex& points)
       offspring[j] = lambda * group3[i][j] + lambda * group4[i][j];
 
     }
+
+    // qr factorization of the offspring
+    qr_factorization(offspring);
     offspringsB[i] = offspring;
   }
+
+
+
+
+  /*
+  std::cout << "offspringsB: \n" ;
+  check_det(offspringsB);
+  std::cin.get();
+  */
 
 
   CGAL_assertion(offspringsA.size() == size_first_group);
@@ -297,6 +324,18 @@ void genetic_algorithm(Population<Simplex>& pop, Simplex& points)
 }
 
 
+template <typename Simplex>
+void check_det(Population<Simplex>& pop)
+{
+  for(int i = 0; i < pop.size(); ++i)
+  {
+    for(int j = 0; j < 4; ++j)
+    {
+      auto A = pop[i][j];
+      std::cout << A.determinant() << std::endl;
+    }
+  }
+}
 
 
 

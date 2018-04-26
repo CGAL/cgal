@@ -13,6 +13,9 @@
 
 typedef Eigen::MatrixXf MatrixXf;
 
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+
+
 bool assert_doubles(double d1, double d2, double epsilon)
 {
   return (d1 < d2 + epsilon && d1 > d2 - epsilon) ? true : false;
@@ -131,29 +134,144 @@ void test_genetic_algorithm()
   CGAL_assertion(pop.size() == 5);
 }
 
-void test_visualization()
+
+
+
+void find_obb()
 {
-  MatrixXf data_points(4, 3);
+
+  MatrixXf data_points(4, 3); // there are on the convex hull
   data_points << 0.866802, 0.740808, 0.895304,
                  0.912651, 0.761565, 0.160330,
                  0.093661, 0.892578, 0.737412,
                  0.166461, 0.149912, 0.364944;
 
 
-  CGAL::Optimal_bounding_box::visualize_obb(data_points);
+  CGAL::Optimal_bounding_box::visualize_obb(data_points, "/tmp/original.off");
+
+
+  MatrixXf rotation(3, 3);
+  CGAL::Optimal_bounding_box::evolution(rotation, data_points);
+
+  // rotate
+  MatrixXf rotated_points(4, 3);
+  rotated_points = data_points * rotation.transpose();
+
+  CGAL_assertion(rotated_points.cols() == data_points.cols());
+  CGAL_assertion(rotated_points.rows() == data_points.rows());
+
+  std::cout << "rotation matrix= \n" << rotation << std::endl << std::endl;
+  std::cout << "rotated_points= \n" << rotated_points << std::endl;
+
+  CGAL::Optimal_bounding_box::visualize_obb(rotated_points, "/tmp/rotated.off");
 
 
 }
 
 
+
+
+template <typename SurfaceMesh, typename Matrix>
+void sm_to_matrix(SurfaceMesh& sm, Matrix& mat)
+{
+  typedef typename boost::property_map<SurfaceMesh, boost::vertex_point_t>::const_type Vpm;
+  typedef typename boost::property_traits<Vpm>::reference Point_ref;
+  typedef typename boost::graph_traits<SurfaceMesh>::vertex_descriptor vertex_descriptor;
+  Vpm vpm = get(boost::vertex_point, sm);
+
+  mat.resize(vertices(sm).size(), 3);
+  std::size_t i = 0;
+  for(vertex_descriptor v : vertices(sm))
+  {
+    Point_ref p = get(vpm, v);
+    mat(i, 0) = p.x();
+    mat(i, 1) = p.y();
+    mat(i, 2) = p.z();
+    ++i;
+  }
+}
+
+
+void test_tetrahedron(const char* fname)
+{
+  std::ifstream input(fname);
+  CGAL::Surface_mesh<K::Point_3> mesh;
+  if (!input || !(input >> mesh) || mesh.is_empty()) {
+    std::cerr << fname << " is not a valid off file.\n";
+    exit(1);
+  }
+
+  // points in a matrix
+  MatrixXf points;
+  sm_to_matrix(mesh, points);
+
+  MatrixXf R(3, 3);
+  CGAL::Optimal_bounding_box::evolution(R, points);
+  std:: cout << "R= " << R << std::endl;
+  std:: cout << "det(evolution)= " << R.determinant() << std::endl;
+
+  // postprocessing
+  MatrixXf obb(8, 3);
+  CGAL::Optimal_bounding_box::post_processing(points, R, obb);
+  CGAL::Optimal_bounding_box::matrix_to_mesh_and_draw(obb, "data/OBB.off");
+
+
+}
+
+
+void rotate_tetrahedron(const char* fname, const char* Rname)
+{
+
+  std::ifstream input(fname);
+  CGAL::Surface_mesh<K::Point_3> mesh;
+  if (!input || !(input >> mesh) || mesh.is_empty()) {
+    std::cerr << fname << " is not a valid off file.\n";
+    exit(1);
+  }
+
+  MatrixXf R(3, 3);
+  std::ifstream input_R(Rname);
+  double x, y, z;
+  std::size_t i = 0;
+  while (input_R >> x >> y >> z)
+  {
+    R(i, 0) = x;
+    R(i, 1) = y;
+    R(i, 2) = z;
+    ++i;
+  }
+  std:: cout << "det(benchmark)= " << R.determinant() << std::endl;
+
+
+  // points in a matrix
+  MatrixXf points;
+  sm_to_matrix(mesh, points);
+
+  // just rotate once
+  //MatrixXf rotated_points = points * R.transpose();
+  //CGAL::Optimal_bounding_box::visualize_obb(rotated_points, "data/rotated_points_benchmark.off");
+
+
+  // postprocessing
+  MatrixXf obb(8, 3);
+  CGAL::Optimal_bounding_box::post_processing(points, R, obb);
+  CGAL::Optimal_bounding_box::matrix_to_mesh_and_draw(obb, "data/inverse_rotated.off");
+
+
+}
+
+
+
 int main()
 {
-  test_population();
-  test_nelder_mead();
-  test_genetic_algorithm();
+  //test_population();
+  //test_nelder_mead();
+  //test_genetic_algorithm();
+  //find_obb();
 
 
-  test_visualization();
+  test_tetrahedron("data/random_tetra.off");
+  //rotate_tetrahedron("data/random_tetra.off", "data/rotation.dat");
 
 
 

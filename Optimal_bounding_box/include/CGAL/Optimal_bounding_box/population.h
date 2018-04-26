@@ -82,7 +82,7 @@ public:
   }
 
 
-  // access individual
+  // access simplex
   Individual& operator[](std::size_t i)
   {
     CGAL_assertion(i < n);
@@ -94,7 +94,6 @@ public:
     CGAL_assertion(i < n);
     return pop[i];
   }
-
 
 private:
 
@@ -131,6 +130,8 @@ private:
   }
 
 
+
+  Individual somebody; //temp
 
 
   CGAL::Random random_generator;

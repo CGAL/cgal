@@ -24,6 +24,7 @@
 
 #include <CGAL/assertions.h>
 #include <Eigen/QR>
+#include <vector>
 
 
 namespace CGAL {
@@ -35,6 +36,17 @@ void qr_factorization(Matrix& A, Matrix& Q)
 {
   Eigen::HouseholderQR<Matrix> qr(A);
   Q = qr.householderQ();
+}
+
+template<typename Matrix>
+void qr_factorization(std::vector<Matrix>& Simplex)
+{
+  for(int i = 0; i < Simplex.size(); ++i)
+  {
+    Eigen::HouseholderQR<Matrix> qr(Simplex[i]);
+    Matrix Q = qr.householderQ();
+    Simplex[i] = Q;
+  }
 }
 
 template <typename Matrix>
