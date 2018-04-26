@@ -1,6 +1,9 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/point_generators_3.h>
+#include <CGAL/Triangulation_vertex_base_3.h>
 
 #include <iostream>
 #include <fstream>
@@ -13,13 +16,13 @@ int main()
 
   // Delaunay T3
   typedef CGAL::Triangulation_data_structure_3< 
-    CGAL::Triangulation_vertex_base_3<K>, 
-    CGAL::Triangulation_cell_base_3<K>, 
-    CGAL::Parallel_tag>                          Tds;
-  typedef CGAL::Delaunay_triangulation_3<K, Tds> Triangulation;
+            CGAL::Triangulation_vertex_base_3<K>,
+            CGAL::Delaunay_triangulation_cell_base_3<K>,
+            CGAL::Parallel_tag>                               Tds;
+  typedef CGAL::Delaunay_triangulation_3<K, Tds>              Triangulation;
 
-  typedef Triangulation::Point          Point;
-  
+  typedef Triangulation::Point                                Point;
+
   const int NUM_INSERTED_POINTS = 5000;
 
   CGAL::Random_points_in_cube_3<Point> rnd(1.);

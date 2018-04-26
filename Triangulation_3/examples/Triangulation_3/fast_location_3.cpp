@@ -5,9 +5,9 @@
 #include <vector>
 #include <cassert>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Delaunay_triangulation_3<K, CGAL::Fast_location> Delaunay;
-typedef Delaunay::Point Point;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
+typedef CGAL::Delaunay_triangulation_3<K, CGAL::Fast_location>  Delaunay;
+typedef Delaunay::Point                                         Point;
 
 int main()
 {

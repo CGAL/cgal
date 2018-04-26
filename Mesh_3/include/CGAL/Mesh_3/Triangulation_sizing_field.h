@@ -29,10 +29,11 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
-#include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Regular_triangulation_3.h>
+#include <CGAL/Regular_triangulation_cell_base_3.h>
+#include <CGAL/Regular_triangulation_vertex_base_3.h>
+#include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
@@ -54,8 +55,11 @@ class Triangulation_sizing_field
   typedef typename Tr::Weighted_point                     Weighted_point;
   typedef typename Gt::FT                                 FT;
 
-  typedef Triangulation_vertex_base_with_info_3<FT, Gt>   Vb;
-  typedef Triangulation_cell_base_3<Gt>                   Cb;
+  typedef Triangulation_vertex_base_with_info_3<FT, Gt>   Vbb;
+  typedef Regular_triangulation_vertex_base_3<Gt, Vb>     Vb;
+  typedef Triangulation_cell_base_3<Gt>                   Cbb;
+  typedef Regular_triangulation_cell_base_3<
+            Gt, Cbb, Discard_hidden_points>               Cb;
   typedef Triangulation_data_structure_3<Vb, Cb>          Tds;
   typedef Regular_triangulation_3<Gt,Tds>                 Compact_triangulation;
   typedef Compact_triangulation                           Ctr;

@@ -7,6 +7,7 @@
 #include "Color_ramp.h"
 
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
@@ -245,8 +246,9 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
 #endif
 
   // Compute neighborhood
-  typedef CGAL::Triangulation_vertex_base_with_info_3<int, Kernel> Vb;
-  typedef CGAL::Triangulation_data_structure_3<Vb>                    Tds;
+  typedef CGAL::Triangulation_vertex_base_with_info_3<int, Kernel>         Vb;
+  typedef CGAL::Delaunay_triangulation_cell_base_3<Kernel>                 Cb;
+  typedef CGAL::Triangulation_data_structure_3<Vb, Cb>                     Tds;
   typedef CGAL::Delaunay_triangulation_3<Kernel, Tds>                      Delaunay;
 
   Delaunay dt (boost::make_transform_iterator

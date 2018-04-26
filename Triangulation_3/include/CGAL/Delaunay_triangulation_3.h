@@ -28,20 +28,18 @@
 #include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/disable_warnings.h>
-
 #include <CGAL/basic.h>
+
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
+#include <CGAL/Triangulation_3.h>
+
+#include <CGAL/iterator.h>
+#include <CGAL/Location_policy.h>
 
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
 # define CGAL_PROFILE
 # include <CGAL/Profile_counter.h>
 #endif
-
-#include <utility>
-#include <vector>
-
-#include <CGAL/Triangulation_3.h>
-#include <CGAL/iterator.h>
-#include <CGAL/Location_policy.h>
 #ifdef CGAL_TRIANGULATION_3_PROFILING
 # include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
@@ -70,6 +68,9 @@
 #include <CGAL/point_generators_3.h>
 #endif
 
+#include <utility>
+#include <vector>
+
 namespace CGAL {
 
 // Here is the declaration of a class template with three arguments, one
@@ -83,19 +84,28 @@ class Delaunay_triangulation_3;
 // There is a specialization Delaunay_triangulation_3<Gt, Tds, Fast_location>
 // defined in <CGAL/internal/Delaunay_triangulation_hierarchy_3.h>.
 
-// Here is the specialization Delaunay_triangulation_3<Gt, Tds>, with two
+// Here is the specialization Delaunay_triangulation_3<Gt, Tds>, with three
 // arguments, that is if Location_policy being the default value 'Default'.
-template < class Gt, class Tds_,
-           class Lock_data_structure_ >
+template < class Gt, class Tds_, class Lock_data_structure_ >
 class Delaunay_triangulation_3<Gt, Tds_, Default, Lock_data_structure_>
-  : public Triangulation_3<Gt, Tds_, Lock_data_structure_>
+  : public Triangulation_3<Gt,
+                           typename Default::Get<Tds_,
+                                                 Triangulation_data_structure_3<
+                                                   Triangulation_vertex_base_3<Gt>,
+                                                   Delaunay_triangulation_cell_base_3<Gt> > >::type,
+                           Lock_data_structure_>
 {
+  typedef typename Default::Get<Tds_,
+                     Triangulation_data_structure_3 <
+                       Triangulation_vertex_base_3<Gt>,
+                       Delaunay_triangulation_cell_base_3<Gt> > >::type     Tds;
+
   typedef Delaunay_triangulation_3<Gt, Tds_, Default, Lock_data_structure_> Self;
 
 public:
-  typedef Triangulation_3<Gt,Tds_,Lock_data_structure_>     Tr_Base;
+  typedef Triangulation_3<Gt, Tds, Lock_data_structure_>    Tr_Base;
 
-  typedef typename Tr_Base::Triangulation_data_structure    Triangulation_data_structure;
+  typedef Tds                                               Triangulation_data_structure;
   typedef Gt                                                Geom_traits;
   typedef Compact_location                                  Location_policy;
 

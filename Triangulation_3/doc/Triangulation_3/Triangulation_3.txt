@@ -563,7 +563,7 @@ We will use the following types of triangulations, using
 <LI><B>Delaunay - %Fast location</B> : `Delaunay_triangulation_3` with `Fast_location`
 <LI><B>Regular</B> : `Regular_triangulation_3` (default setting : memorize hidden points)
 <LI><B>Regular - No hidden points</B> : `Regular_triangulation_3` with hidden points discarded (using
-`Triangulation_cell_base_3` instead of `Regular_triangulation_cell_base_3`).
+the template parameter `CGAL::Discard_hidden_points` for the cell base class).
 </UL>
 
 \cgalFigureRef{Triangulation3figbenchmarks} shows, for all these types of

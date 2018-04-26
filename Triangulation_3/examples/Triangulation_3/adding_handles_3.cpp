@@ -1,5 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 
 template < class GT, class Vb = CGAL::Triangulation_vertex_base_3<GT> >
@@ -32,11 +34,12 @@ public:
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-typedef CGAL::Triangulation_data_structure_3<My_vertex_base<K> >    Tds;
-typedef CGAL::Delaunay_triangulation_3<K, Tds>                      Delaunay;
+typedef CGAL::Delaunay_triangulation_cell_base_3<K>                  Cb;
+typedef CGAL::Triangulation_data_structure_3<My_vertex_base<K>, Cb>  Tds;
+typedef CGAL::Delaunay_triangulation_3<K, Tds>                       Delaunay;
 
-typedef Delaunay::Vertex_handle    Vertex_handle;
-typedef Delaunay::Point            Point;
+typedef Delaunay::Vertex_handle                                      Vertex_handle;
+typedef Delaunay::Point                                              Point;
 
 int main()
 {

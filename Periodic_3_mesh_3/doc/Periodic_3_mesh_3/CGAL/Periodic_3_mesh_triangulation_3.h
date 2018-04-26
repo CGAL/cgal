@@ -12,10 +12,10 @@ the triangulation type to be used for the 3D periodic triangulation embedding th
 `Default` may be used, with default value `Kernel_traits<MD>::%Kernel`.
 
 \tparam Vertex_base must be a model of `MeshVertexBase_3` and `Periodic_3TriangulationDSVertexBase_3`.
-`Default` may be used, with default value `Mesh_vertex_base_3<Gt, MD, Triangulation_vertex_base_3<Gt, Periodic_3_triangulation_ds_vertex_base_3> >`.
+`Default` may be used, with default value `Mesh_vertex_base_3<Gt, MD, Regular_triangulation_vertex_base_3<Gt, Periodic_3_triangulation_ds_vertex_base_3> >`.
 
 \tparam Cell_base must be a model of `MeshCellBase_3` and `Periodic_3TriangulationDSCellBase_3`.
-`Default` may be used, with default value `Mesh_cell_base_3<Gt, MD, Triangulation_cell_base_with_circumcenter_3<Gt, Triangulation_cell_base_3<Gt, Periodic_3_triangulation_ds_cell_base_3> > >`.
+`Default` may be used, with default value `Mesh_cell_base_3<Gt, MD, Regular_triangulation_cell_base_with_weighted_circumcenter_3<Gt, Regular_triangulation_cell_base_3<Gt, Periodic_3_triangulation_ds_cell_base_3> > >`.
 
 \warning The input traits `Gt` are wrapped multiple times to handle periodicity
          and to improve the robustness of the meshing process: for example,
