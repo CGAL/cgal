@@ -511,38 +511,35 @@ make_boolean_property_map(Set& set_)
 /// It means that `K1` and `K2` must be Cartesian Kernels.
 /// \cgalModels `ReadWritePropertyMap`
 template<class K1, class K2, class Vpm, class t_category = typename boost::property_traits<Vpm>::category>
-struct Kernel_converter_property_map
+struct Cartesian_converter_property_map
 {
   typedef typename boost::property_traits<Vpm>::key_type key_type;
   typedef typename K2::Point_3 value_type;
   typedef typename K2::Point_3 reference;
   typedef t_category category;
-  Vpm* vpm;
-  Kernel_converter_property_map(Vpm* vpm):vpm(vpm){}
-  Kernel_converter_property_map():vpm(NULL){}
+  Vpm vpm;
+  Cartesian_converter_property_map(Vpm vpm):vpm(vpm){}
 
-  friend value_type get(const Kernel_converter_property_map<K1, K2, Vpm, category>& pm, const key_type& k)
+  friend value_type get(const Cartesian_converter_property_map<K1, K2, Vpm, category>& pm, const key_type& k)
   {
-    CGAL_assertion(pm.vpm!=NULL);
     value_type res = 
-     CGAL::Cartesian_converter<K1, K2>()(get(*pm.vpm, k));
+     CGAL::Cartesian_converter<K1, K2>()(get(pm.vpm, k));
     return res;
   }
 
-  friend void put(Kernel_converter_property_map<K1, K2, Vpm, category>& pm, const key_type& k, const value_type& v)
+  friend void put(Cartesian_converter_property_map<K1, K2, Vpm, category>& pm, const key_type& k, const value_type& v)
   {
-    CGAL_assertion(pm.vpm!=NULL);
-    put(*pm.vpm, k, CGAL::Cartesian_converter<K2, K1>()(v));
+    put(pm.vpm, k, CGAL::Cartesian_converter<K2, K1>()(v));
   }
 };
 
 /// \ingroup PkgProperty_map
-/// returns `Kernel_converter_property_map<K1,K2, Vpm, category>(&vpm)`
+/// returns `Cartesian_converter_property_map<K1,K2, Vpm, category>(&vpm)`
 template<class K1, class K2, class Vpm, class category = typename boost::property_traits<Vpm>::category>
-Kernel_converter_property_map<K1, K2, Vpm, category>
-make_kernel_converter_property_map(Vpm& vpm)
+Cartesian_converter_property_map<K1, K2, Vpm, category>
+make_cartesian_converter_property_map(Vpm vpm)
 {
-  return Kernel_converter_property_map<K1, K2, Vpm, category>(&vpm);
+  return Kernel_converter_property_map<K1, K2, Vpm, category>(vpm);
 }
 
 } // namespace CGAL
