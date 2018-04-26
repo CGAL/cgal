@@ -85,7 +85,7 @@ odt_optimize_mesh_3_impl(C3T3& c3t3,
                          const bool do_freeze )
 {
   CGAL_precondition(
-    !internal::Mesh_3::has_non_protecting_weights(c3t3.triangulation(), domain));
+    !Mesh_3::internal::has_non_protecting_weights(c3t3.triangulation(), domain));
 
   typedef typename C3T3::Triangulation  Tr;
   

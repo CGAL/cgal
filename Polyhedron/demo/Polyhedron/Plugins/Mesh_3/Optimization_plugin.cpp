@@ -227,7 +227,7 @@ Mesh_3_optimization_plugin::odt()
   Ui::Smoother_dialog ui;
   ui.setupUi(&dialog);
   dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
-  dialog.setWindowTitle(tr("Odt-smoothing parameters"));
+  dialog.setWindowTitle(tr("ODT-smoothing parameters"));
 
   connect(ui.buttonBox, SIGNAL(accepted()),
           &dialog, SLOT(accept()));
