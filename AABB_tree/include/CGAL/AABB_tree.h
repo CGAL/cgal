@@ -91,7 +91,7 @@ namespace CGAL {
 		typedef typename Primitives::size_type size_type; 
     /// Type of bounding box.
 		typedef typename AABBTraits::Bounding_box Bounding_box;
-    /// 
+    /// 3D Point and Primitive Id type
 		typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
     /// \deprecated 
 		typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
@@ -412,12 +412,14 @@ public:
     boost::optional< typename Intersection_and_primitive_id<Ray>::Type >
     first_intersection(const Ray& query, const SkipFunctor& skip) const;
 
+    /// \cond
     template<typename Ray>
     boost::optional< typename Intersection_and_primitive_id<Ray>::Type >
     first_intersection(const Ray& query) const
     {
       return first_intersection(query, boost::lambda::constant(false));
     }
+    /// \endcond
 
     /// Returns the primitive id closest to the source point of the ray
     /// query.
@@ -435,12 +437,14 @@ public:
     boost::optional<Primitive_id>
     first_intersected_primitive(const Ray& query, const SkipFunctor& skip) const;
 
+    /// \cond
     template<typename Ray>
     boost::optional<Primitive_id>
     first_intersected_primitive(const Ray& query) const
     {
       return first_intersected_primitive(query, boost::lambda::constant(false));
     }
+    /// \endcond
     ///@}
 
     /// \name Distance Queries
