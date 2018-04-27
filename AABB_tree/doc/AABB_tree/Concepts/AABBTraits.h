@@ -42,15 +42,16 @@ Bounding box type.
 typedef unspecified_type Bounding_box; 
 
   /*!
+  enum required for axis selection
   */ 
   enum Axis { 
-    X_AXIS,
-    Y_AXIS,
-    Z_AXIS
+    CGAL_X_AXIS,
+    CGAL_Y_AXIS,
+    CGAL_Z_AXIS
   };
 
 /*!
-
+3D Point and Primitive Id type
 */ 
 typedef std::pair<Point_3, Primitive::Id> Point_and_primitive_id; 
 
