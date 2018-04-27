@@ -39,9 +39,15 @@ namespace Optimal_bounding_box {
 
 
 template <typename Matrix>
-void evolution(Matrix& R, Matrix& points)
+void evolution(Matrix& R, Matrix& points, std::size_t generations)
 {
-  std::size_t generations = 7;
+
+  CGAL_assertion(points.rows() >= 3);
+  CGAL_assertion(points.cols() = 3);
+  CGAL_assertion(R.rows() = 3);
+  CGAL_assertion(R.cols() = 3);
+
+
   std::size_t nelder_mead_iterations = 20;
 
   Population<Matrix> pop(50);
@@ -71,9 +77,12 @@ void evolution(Matrix& R, Matrix& points)
 
 
     // debugging
+    /*
     Fitness_map<Matrix> fitness_map(pop, points);
     Matrix R_now = fitness_map.get_best();
     std::cout << "det= " << R_now.determinant() << std::endl;
+    */
+
 
   }
 

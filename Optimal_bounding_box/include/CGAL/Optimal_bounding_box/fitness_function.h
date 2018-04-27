@@ -94,7 +94,6 @@ struct Fitness_map // -> a free function
           simplex_id = i;
           vertex_id = j;
           best_fitness = fitness;
-          std::cout << "best fitness = " << best_fitness << std::endl;
         }
 
       }

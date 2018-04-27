@@ -21,6 +21,25 @@ bool assert_doubles(double d1, double d2, double epsilon)
   return (d1 < d2 + epsilon && d1 > d2 - epsilon) ? true : false;
 }
 
+template <typename SurfaceMesh, typename Matrix>
+void sm_to_matrix(SurfaceMesh& sm, Matrix& mat)
+{
+  typedef typename boost::property_map<SurfaceMesh, boost::vertex_point_t>::const_type Vpm;
+  typedef typename boost::property_traits<Vpm>::reference Point_ref;
+  typedef typename boost::graph_traits<SurfaceMesh>::vertex_descriptor vertex_descriptor;
+  Vpm vpm = get(boost::vertex_point, sm);
+
+  mat.resize(vertices(sm).size(), 3);
+  std::size_t i = 0;
+  for(vertex_descriptor v : vertices(sm))
+  {
+    Point_ref p = get(vpm, v);
+    mat(i, 0) = p.x();
+    mat(i, 1) = p.y();
+    mat(i, 2) = p.z();
+    ++i;
+  }
+}
 
 void test_population()
 {
@@ -34,7 +53,6 @@ void test_population()
 
 void test_nelder_mead()
 {
-
   MatrixXf data_points(4, 3);
   data_points << 0.866802, 0.740808, 0.895304,
                  0.912651, 0.761565, 0.160330,
@@ -122,7 +140,6 @@ void test_nelder_mead()
 
 void test_genetic_algorithm()
 {
-
   MatrixXf data_points(4, 3);
   data_points << 0.866802, 0.740808, 0.895304,
                  0.912651, 0.761565, 0.160330,
@@ -134,65 +151,53 @@ void test_genetic_algorithm()
   CGAL_assertion(pop.size() == 5);
 }
 
-
-
-
-void find_obb()
+void test_random_unit_tetra()
 {
-
-  MatrixXf data_points(4, 3); // there are on the convex hull
+  MatrixXf data_points(4, 3); // points on their convex hull
   data_points << 0.866802, 0.740808, 0.895304,
                  0.912651, 0.761565, 0.160330,
                  0.093661, 0.892578, 0.737412,
                  0.166461, 0.149912, 0.364944;
 
+  typedef CGAL::Simple_cartesian<double> K;
+  typedef K::Point_3 Point;
+  typedef CGAL::Surface_mesh<Point> Mesh;
 
-  CGAL::Optimal_bounding_box::visualize_obb(data_points, "/tmp/original.off");
+  // make a mesh and export it
+  Mesh mesh;
+  Point p1(0.866802, 0.740808, 0.895304);
+  Point p2(0.912651, 0.761565, 0.160330);
+  Point p3(0.093661, 0.892578, 0.737412);
+  Point p4(0.166461, 0.149912, 0.364944);
+  CGAL::make_tetrahedron(p1, p2, p3, p4, mesh);
+  std::ofstream out("data/random_unit_tetra.off");
+  out << mesh;
+  out.close();
 
+  MatrixXf R(3, 3);
+  std::size_t generations = 10;
+  CGAL::Optimal_bounding_box::evolution(R, data_points, generations);
 
-  MatrixXf rotation(3, 3);
-  CGAL::Optimal_bounding_box::evolution(rotation, data_points);
+  std::cout << R << std::endl;
 
-  // rotate
-  MatrixXf rotated_points(4, 3);
-  rotated_points = data_points * rotation.transpose();
+  double epsilon = 1e-5;
+  CGAL_assertion(assert_doubles(R.determinant(), 1, epsilon));
+  CGAL_assertion(assert_doubles(R(0,0), -0.25791, epsilon));
+  CGAL_assertion(assert_doubles(R(0,1), 0.796512, epsilon));
+  CGAL_assertion(assert_doubles(R(0,2), -0.546855, epsilon));
+  CGAL_assertion(assert_doubles(R(1,0), -0.947128, epsilon));
+  CGAL_assertion(assert_doubles(R(1,1), -0.320242, epsilon));
+  CGAL_assertion(assert_doubles(R(1,2), -0.0197553, epsilon));
+  CGAL_assertion(assert_doubles(R(2,0), -0.190861, epsilon));
+  CGAL_assertion(assert_doubles(R(2,1), 0.512847, epsilon));
+  CGAL_assertion(assert_doubles(R(2,2), 0.836992, epsilon));
 
-  CGAL_assertion(rotated_points.cols() == data_points.cols());
-  CGAL_assertion(rotated_points.rows() == data_points.rows());
-
-  std::cout << "rotation matrix= \n" << rotation << std::endl << std::endl;
-  std::cout << "rotated_points= \n" << rotated_points << std::endl;
-
-  CGAL::Optimal_bounding_box::visualize_obb(rotated_points, "/tmp/rotated.off");
-
-
+  MatrixXf obb(8, 3);
+  CGAL::Optimal_bounding_box::post_processing(data_points, R, obb);
+  CGAL::Optimal_bounding_box::matrix_to_mesh_and_draw(obb, "data/random_unit_tetra_result.off");
 }
 
-
-
-
-template <typename SurfaceMesh, typename Matrix>
-void sm_to_matrix(SurfaceMesh& sm, Matrix& mat)
-{
-  typedef typename boost::property_map<SurfaceMesh, boost::vertex_point_t>::const_type Vpm;
-  typedef typename boost::property_traits<Vpm>::reference Point_ref;
-  typedef typename boost::graph_traits<SurfaceMesh>::vertex_descriptor vertex_descriptor;
-  Vpm vpm = get(boost::vertex_point, sm);
-
-  mat.resize(vertices(sm).size(), 3);
-  std::size_t i = 0;
-  for(vertex_descriptor v : vertices(sm))
-  {
-    Point_ref p = get(vpm, v);
-    mat(i, 0) = p.x();
-    mat(i, 1) = p.y();
-    mat(i, 2) = p.z();
-    ++i;
-  }
-}
-
-
-void test_tetrahedron(const char* fname)
+void test_reference_tetrahedron(const char* fname)
 {
   std::ifstream input(fname);
   CGAL::Surface_mesh<K::Point_3> mesh;
@@ -206,18 +211,55 @@ void test_tetrahedron(const char* fname)
   sm_to_matrix(mesh, points);
 
   MatrixXf R(3, 3);
-  CGAL::Optimal_bounding_box::evolution(R, points);
-  std:: cout << "R= " << R << std::endl;
-  std:: cout << "det(evolution)= " << R.determinant() << std::endl;
+  std::size_t generations = 10;
+  CGAL::Optimal_bounding_box::evolution(R, points, generations);
+  double epsilon = 1e-5;
+  std::cout << R << std::endl;
+  CGAL_assertion(assert_doubles(R.determinant(), 1, epsilon));
 
   // postprocessing
   MatrixXf obb(8, 3);
   CGAL::Optimal_bounding_box::post_processing(points, R, obb);
   CGAL::Optimal_bounding_box::matrix_to_mesh_and_draw(obb, "data/OBB.off");
 
-
 }
 
+void test_long_tetrahedron(std::string fname)
+{
+  std::ifstream input(fname);
+  CGAL::Surface_mesh<K::Point_3> mesh;
+  if (!input || !(input >> mesh) || mesh.is_empty()) {
+    std::cerr << fname << " is not a valid off file.\n";
+    exit(1);
+  }
+
+  // points in a matrix
+  MatrixXf points;
+  sm_to_matrix(mesh, points);
+
+  MatrixXf R(3, 3);
+  std::size_t generations = 10;
+  CGAL::Optimal_bounding_box::evolution(R, points, generations);
+  double epsilon = 1e-5;
+  std::cout << R << std::endl;
+  CGAL_assertion(assert_doubles(R.determinant(), 1, epsilon));
+  CGAL_assertion(assert_doubles(R(0,0), -1, epsilon));
+  CGAL_assertion(assert_doubles(R(0,1), 0, epsilon));
+  CGAL_assertion(assert_doubles(R(0,2), 0, epsilon));
+  CGAL_assertion(assert_doubles(R(1,0), 0, epsilon));
+  CGAL_assertion(assert_doubles(R(1,1), -0.707107, epsilon));
+  CGAL_assertion(assert_doubles(R(1,2), 0.707106, epsilon) ||
+                 assert_doubles(R(1,2), -0.707106, epsilon));
+  CGAL_assertion(assert_doubles(R(2,0), 0, epsilon));
+  CGAL_assertion(assert_doubles(R(2,1), 0.707106, epsilon) ||
+                 assert_doubles(R(1,2), -0.707106, epsilon));
+  CGAL_assertion(assert_doubles(R(2,2), 0.707107, epsilon));
+
+  // postprocessing
+  MatrixXf obb(8, 3);
+  CGAL::Optimal_bounding_box::post_processing(points, R, obb);
+  CGAL::Optimal_bounding_box::matrix_to_mesh_and_draw(obb, fname + "result.off");
+}
 
 void rotate_tetrahedron(const char* fname, const char* Rname)
 {
@@ -267,10 +309,11 @@ int main()
   //test_population();
   //test_nelder_mead();
   //test_genetic_algorithm();
-  //find_obb();
+  //test_random_unit_tetra();
 
 
-  test_tetrahedron("data/random_tetra.off");
+  test_reference_tetrahedron("data/reference_tetrahedron.off");
+  //test_long_tetrahedron("data/long_tetrahedron.off");
   //rotate_tetrahedron("data/random_tetra.off", "data/rotation.dat");
 
 
