@@ -2864,10 +2864,9 @@ namespace CommonKernelFunctors {
       if(is_degenerate(segment))
         return vertex(segment, 0);
 
-      //bool inside = is_inside_segment_3(proj,segment,closest_point_on_segment,k);
-      if(segment.to_vector() * (query-segment.source()) < 0)
+      if(segment.to_vector() * (query-segment.source()) <= 0)
         return segment.source();
-      if(segment.to_vector() * (query-segment.target()) > 0)
+      if(segment.to_vector() * (query-segment.target()) >= 0)
         return segment.target();
       // If proj is inside segment, returns it
       return k.construct_projected_point_3_object()(segment.supporting_line(), query);
@@ -2878,7 +2877,7 @@ namespace CommonKernelFunctors {
                const typename K::Ray_3& ray,
                const K& k)
     {
-      if ( ray.to_vector() * (query-ray.source()) < 0)
+      if ( ray.to_vector() * (query-ray.source()) <= 0)
         return ray.source();
       else
       {
