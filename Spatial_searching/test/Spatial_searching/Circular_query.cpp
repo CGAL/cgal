@@ -17,6 +17,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Origin.h>
 #include <CGAL/point_generators_2.h>
+#include <CGAL/Random.h>
 #include <CGAL/use.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
@@ -45,7 +46,8 @@ template <class SearchTraits>
 void run_with_fuzziness(std::list<Point> all_points, // intentional copy
                         const Point& center,
                         const FT radius,
-                        const FT fuzziness)
+                        const FT fuzziness,
+                        CGAL::Random& rnd)
 {
   typedef CGAL::Fuzzy_sphere<SearchTraits> Fuzzy_circle;
 
@@ -60,12 +62,12 @@ void run_with_fuzziness(std::list<Point> all_points, // intentional copy
   // (in general all the constructed points won't be exactly on the boundary,
   // but as long as some are, that's okay)
   std::size_t N = all_points.size();
-  Random_points_on_circle_iterator rpocit(inner_radius);
+  Random_points_on_circle_iterator rpocit(inner_radius, rnd);
   for(std::size_t i=0, max=N/10; i<max; ++i)
     all_points.push_back(*rpocit++ + Vector(CGAL::ORIGIN, center));
 
   // same for the outer approximation boundary
-  Random_points_on_circle_iterator rpocit2(outer_radius);
+  Random_points_on_circle_iterator rpocit2(outer_radius, rnd);
   for(std::size_t i=0, max = N/10; i<max; ++i)
     all_points.push_back(*rpocit2++ + Vector(CGAL::ORIGIN, center));
 
@@ -127,38 +129,41 @@ void run_with_fuzziness(std::list<Point> all_points, // intentional copy
 }
 
 template <class SearchTraits>
-void run(std::list<Point> all_points) // intentional copy
+void run(std::list<Point> all_points, // intentional copy
+         CGAL::Random& rnd)
 {
   Point center(0.25, 0.25);
 
   // add some interesting points
   all_points.push_back(center);
 
-  run_with_fuzziness<SearchTraits>(all_points, center, 0. /*radius*/, 0. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, center, 0.25 /*radius*/, 0. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, center, 0.25 /*radius*/, 0.125 /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, center, 0.25 /*radius*/, 0.25 /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, center, 0.25 /*radius*/, 1. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, center, 1. /*radius*/, 0. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, center, 1. /*radius*/, 0.25 /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, center, 10. /*radius*/, 0. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, center, 10. /*radius*/, 10. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, center, 10. /*radius*/, 100. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, center, 0. /*radius*/, 0. /*fuzziness*/, rnd);
+  run_with_fuzziness<SearchTraits>(all_points, center, 0.25 /*radius*/, 0. /*fuzziness*/, rnd);
+  run_with_fuzziness<SearchTraits>(all_points, center, 0.25 /*radius*/, 0.125 /*fuzziness*/, rnd);
+  run_with_fuzziness<SearchTraits>(all_points, center, 0.25 /*radius*/, 0.25 /*fuzziness*/, rnd);
+  run_with_fuzziness<SearchTraits>(all_points, center, 0.25 /*radius*/, 1. /*fuzziness*/, rnd);
+  run_with_fuzziness<SearchTraits>(all_points, center, 1. /*radius*/, 0. /*fuzziness*/, rnd);
+  run_with_fuzziness<SearchTraits>(all_points, center, 1. /*radius*/, 0.25 /*fuzziness*/, rnd);
+  run_with_fuzziness<SearchTraits>(all_points, center, 10. /*radius*/, 0. /*fuzziness*/, rnd);
+  run_with_fuzziness<SearchTraits>(all_points, center, 10. /*radius*/, 10. /*fuzziness*/, rnd);
+  run_with_fuzziness<SearchTraits>(all_points, center, 10. /*radius*/, 100. /*fuzziness*/, rnd);
 }
 
 int main()
 {
-  const int N=1000;
+  CGAL::Random rnd = CGAL::get_default_random();
+  std::cout << "seed: " << rnd.get_seed() << std::endl;
 
   // generator for random data points in the square ( (-1,-1), (1,1) )
   Random_points_iterator rpit(1.0);
 
   // construct list containing N random points
+  const int N=1000;
   std::list<Point> all_points(N_Random_points_iterator(rpit,0),
                               N_Random_points_iterator(N));
 
-  run<Traits>(all_points);
-  run<Traits_with_info>(all_points);
+  run<Traits>(all_points, rnd);
+  run<Traits_with_info>(all_points, rnd);
 
   return 0;
 }

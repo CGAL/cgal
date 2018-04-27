@@ -36,7 +36,8 @@ typedef CGAL::Search_traits_adapter<Point_with_info,Ppmap,Traits>     Traits_wit
 template <class SearchTraits>
 void run_with_fuzziness(std::list<Point> all_points,
                         const Point& p, const Point& q,
-                        const FT fuzziness)
+                        const FT fuzziness,
+                        CGAL::Random& rnd)
 {
   typedef CGAL::Fuzzy_iso_box<SearchTraits> Fuzzy_box;
 
@@ -54,14 +55,13 @@ void run_with_fuzziness(std::list<Point> all_points,
     std::cout << " (empty inner box)... ";
 
   // Insert a bunch of points on the boundary of the inner approximation
-  CGAL::Random random;
   std::size_t N = all_points.size();
 
   if(!is_inner_c_empty)
   {
     for(std::size_t i=0, max=N/10; i<max; ++i)
     {
-      double x = random.get_double(-1., 1.);
+      double x = rnd.get_double(-1., 1.);
       all_points.push_back(Point(x, p.y() + fuzziness));
       all_points.push_back(Point(p.x() + fuzziness, x));
     }
@@ -70,7 +70,7 @@ void run_with_fuzziness(std::list<Point> all_points,
   // same for the outer boundary
   for(std::size_t i=0, max=N/10; i<max; ++i)
   {
-    double x = random.get_double(-1., 1.);
+    double x = rnd.get_double(-1., 1.);
     all_points.push_back(Point(x, q.y() + fuzziness));
     all_points.push_back(Point(q.x() + fuzziness, x));
   }
@@ -120,7 +120,8 @@ void run_with_fuzziness(std::list<Point> all_points,
 }
 
 template <class SearchTraits>
-void run(std::list<Point> all_points) // intentional copy
+void run(std::list<Point> all_points, // intentional copy
+         CGAL::Random& rnd)
 {
   // bigger box
   Point p0(-10., -10.);
@@ -138,31 +139,34 @@ void run(std::list<Point> all_points) // intentional copy
   Point p3(0., 0.);
   Point q3(0., 0.);
 
-  run_with_fuzziness<SearchTraits>(all_points, p0, q0, 0. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, p0, q0, 0.1 /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, p0, q0, 1. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, p0, q0, 10. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, p0, q0, 0. /*fuzziness*/, rnd);
+  run_with_fuzziness<SearchTraits>(all_points, p0, q0, 0.1 /*fuzziness*/, rnd);
+  run_with_fuzziness<SearchTraits>(all_points, p0, q0, 1. /*fuzziness*/, rnd);
+  run_with_fuzziness<SearchTraits>(all_points, p0, q0, 10. /*fuzziness*/, rnd);
 
-  run_with_fuzziness<SearchTraits>(all_points, p1, q1, 0. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, p1, q1, 0.1 /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, p1, q1, 1. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, p1, q1, 10. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, p1, q1, 0. /*fuzziness*/, rnd);
+  run_with_fuzziness<SearchTraits>(all_points, p1, q1, 0.1 /*fuzziness*/, rnd);
+  run_with_fuzziness<SearchTraits>(all_points, p1, q1, 1. /*fuzziness*/, rnd);
+  run_with_fuzziness<SearchTraits>(all_points, p1, q1, 10. /*fuzziness*/, rnd);
 
-  run_with_fuzziness<SearchTraits>(all_points, p2, q2, 0. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, p2, q2, 0.1 /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, p2, q2, 0.4 /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, p2, q2, 0. /*fuzziness*/, rnd);
+  run_with_fuzziness<SearchTraits>(all_points, p2, q2, 0.1 /*fuzziness*/, rnd);
+  run_with_fuzziness<SearchTraits>(all_points, p2, q2, 0.4 /*fuzziness*/, rnd);
 
-  run_with_fuzziness<SearchTraits>(all_points, p3, q3, 0. /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, p3, q3, 0.33 /*fuzziness*/);
-  run_with_fuzziness<SearchTraits>(all_points, p3, q3, 1. /*fuzziness*/);
+  run_with_fuzziness<SearchTraits>(all_points, p3, q3, 0. /*fuzziness*/, rnd);
+  run_with_fuzziness<SearchTraits>(all_points, p3, q3, 0.33 /*fuzziness*/, rnd);
+  run_with_fuzziness<SearchTraits>(all_points, p3, q3, 1. /*fuzziness*/, rnd);
 }
 
 int main()
 {
   const int N=10000;
 
+  CGAL::Random rnd = CGAL::get_default_random();
+  std::cout << "seed: " << rnd.get_seed() << std::endl;
+
   // generator for random data points in the square ( (-1,-1), (1,1) )
-  Random_points_iterator rpit(1.0);
+  Random_points_iterator rpit(1.0, rnd);
 
   // construct list containing N random points
   std::list<Point> all_points(N_Random_points_iterator(rpit,0),
@@ -177,8 +181,8 @@ int main()
   all_points.push_back(Point(0.2, 0.3));
   all_points.push_back(Point(0., 0.1));
 
-  run<Traits>(all_points);
-  run<Traits_with_info>(all_points);
+  run<Traits>(all_points, rnd);
+  run<Traits_with_info>(all_points, rnd);
 
   return 0;
 }
