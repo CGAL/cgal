@@ -2032,13 +2032,17 @@ private: //------------------------------------------------------- private data
     return os.good();
   }
 
+  template <typename P>
+  bool write_off(std::ostream& os, const Surface_mesh<P>& sm) {
+    return write_off(os, sm, CGAL::parameters::all_default());
+  }
   /// \relates Surface_mesh
   /// 
   /// This operator calls `write_off(std::ostream& os, const CGAL::Surface_mesh& sm)`.
    template <typename P>
   std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
   {
-    write_off(os, sm);
+    write_off(os, sm, CGAL::parameters::all_default());
     return os;
   }
 

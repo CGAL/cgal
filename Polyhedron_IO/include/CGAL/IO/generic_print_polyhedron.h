@@ -24,6 +24,10 @@
 
 #include <CGAL/license/Polyhedron.h>
 
+#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/property_map.h>
+#include <boost/graph/graph_traits.hpp>
 #include <CGAL/basic.h>
 #include <CGAL/Inverse_index.h>
 #include <iostream>
