@@ -52,7 +52,7 @@ void run_with_fuzziness(std::list<Point> all_points, // intentional copy
   std::cout << "test with center: " << center << " radius: " << radius << " eps: " << fuzziness << "... ";
 
   const FT inner_radius = radius - fuzziness;
-  const FT sq_inner_radius = (inner_radius < 0) ? -1 : inner_radius * inner_radius;
+  const FT sq_inner_radius = (inner_radius < FT(0)) ? FT(-1) : inner_radius * inner_radius;
   const FT outer_radius = radius + fuzziness;
   const FT sq_outer_radius = outer_radius * outer_radius;
 
@@ -110,7 +110,7 @@ void run_with_fuzziness(std::list<Point> all_points, // intentional copy
 
   // note: if eps > r, the squared radius is set to '-1'. We cannot have missed
   // any point because there is no inner approximation.
-  if(sq_inner_radius >= 0.)
+  if(sq_inner_radius >= FT(0))
   {
     for(std::list<Point>::const_iterator pt=all_points.begin(); (pt != all_points.end()); ++pt)
     {
