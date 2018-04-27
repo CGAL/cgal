@@ -306,15 +306,14 @@ void rotate_tetrahedron(const char* fname, const char* Rname)
 
 int main()
 {
-  //test_population();
-  //test_nelder_mead();
-  //test_genetic_algorithm();
-  //test_random_unit_tetra();
-
+  test_population();
+  test_nelder_mead();
+  test_genetic_algorithm();
+  test_random_unit_tetra();
 
   test_reference_tetrahedron("data/reference_tetrahedron.off");
-  //test_long_tetrahedron("data/long_tetrahedron.off");
-  //rotate_tetrahedron("data/random_tetra.off", "data/rotation.dat");
+  test_long_tetrahedron("data/long_tetrahedron.off");
+  rotate_tetrahedron("data/random_tetra.off", "data/rotation.dat");
 
 
 

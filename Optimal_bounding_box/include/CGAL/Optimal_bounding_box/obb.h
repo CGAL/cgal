@@ -32,20 +32,24 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Iso_cuboid_3.h>
 
+#include <Eigen/Dense>
+
 
 namespace CGAL {
 namespace Optimal_bounding_box {
 
 
 
+
+
 template <typename Matrix>
-void evolution(Matrix& R, Matrix& points, std::size_t generations)
+void evolution(Matrix& R, Matrix& points, std::size_t generations) // todo: points is const
 {
 
   CGAL_assertion(points.rows() >= 3);
-  CGAL_assertion(points.cols() = 3);
-  CGAL_assertion(R.rows() = 3);
-  CGAL_assertion(R.cols() = 3);
+  CGAL_assertion(points.cols() == 3);
+  CGAL_assertion(R.rows() == 3);
+  CGAL_assertion(R.cols() == 3);
 
 
   std::size_t nelder_mead_iterations = 20;
@@ -91,6 +95,9 @@ void evolution(Matrix& R, Matrix& points, std::size_t generations)
   R = fitness_map.get_best();
 
 }
+
+
+
 
 
 
@@ -212,6 +219,45 @@ void post_processing(Matrix& points, Matrix& R, Matrix& obb)
 
 
 }
+
+
+
+template <typename Point>
+void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points)
+{
+  CGAL_assertion(points.size() >= 3);
+  CGAL_assertion(obb_points.size() == 8);
+
+  // points: vector -> matrix
+  typedef Eigen::MatrixXf MatrixXf;
+
+  MatrixXf points_mat(points.size(), 3);
+  for(std::size_t i = 0; i < points.size(); ++i)
+  {
+    Point p = points[i];
+    points_mat(i, 0) = p.x();
+    points_mat(i, 1) = p.y();
+    points_mat(i, 2) = p.z();
+  }
+
+
+  MatrixXf R(3, 3);
+  std::size_t generations = 10;
+  CGAL::Optimal_bounding_box::evolution(R, points_mat, generations);
+
+  MatrixXf obb(8, 3);
+  CGAL::Optimal_bounding_box::post_processing(points_mat, R, obb);
+
+  // matrix -> vector
+  for(std::size_t i = 0; i < 8; ++i)
+  {
+    Point p(obb(i, 0), obb(i, 1), obb(i, 2));
+    obb_points[i] = p;
+  }
+
+}
+
+
 
 template <typename Matrix>
 void matrix_to_mesh_and_draw(Matrix& data_points, std::string filename)
