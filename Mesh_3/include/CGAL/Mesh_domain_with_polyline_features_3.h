@@ -648,6 +648,8 @@ of the base class.
 
   /// @cond DEVELOPERS
   /// @{
+  Corner_index add_corner_with_context(const Point_3& p, const Surface_patch_index& index);
+
   /// Overloads where the last parameter \c out is not
   /// `CGAL::Emptyset_iterator()`.
   template <typename InputIterator, typename IndicesOutputIterator>
@@ -834,7 +836,7 @@ of the base class.
   /// @endcond
 
 private:
-  void register_corner(const Point_3& p, const Curve_index& index);
+  Corner_index register_corner(const Point_3& p, const Curve_index& index);
   void compute_corners_incidences();
 
   /// Returns Index associated to p (p must be the coordinates of a corner
@@ -1380,7 +1382,6 @@ compute_corners_incidences()
     }
 
     Surface_patch_index_set& incidences = corners_incidences_[id];
-    // That should be an empty set.
 
     BOOST_FOREACH(Curve_index curve_index, corner_tmp_incidences)
     {
@@ -1410,7 +1411,7 @@ get_incidences(Curve_index id) const
 
 
 template <class MD_>
-void
+typename Mesh_domain_with_polyline_features_3<MD_>::Corner_index
 Mesh_domain_with_polyline_features_3<MD_>::
 register_corner(const Point_3& p, const Curve_index& curve_index)
 {
@@ -1418,6 +1419,22 @@ register_corner(const Point_3& p, const Curve_index& curve_index)
   // return the Corner_index that has been assigned to this position.
   Corner_index index = add_corner(p);
   corners_tmp_incidences_[index].insert(curve_index);
+
+  return index;
+}
+
+
+template <class MD_>
+typename Mesh_domain_with_polyline_features_3<MD_>::Corner_index
+Mesh_domain_with_polyline_features_3<MD_>::
+add_corner_with_context(const Point_3& p, const Surface_patch_index& surface_patch_index)
+{
+  Corner_index index = add_corner(p);
+
+  Surface_patch_index_set& incidences = corners_incidences_[index];
+  incidences.insert(surface_patch_index);
+
+  return index;
 }
 
 
