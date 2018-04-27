@@ -3,6 +3,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/MP_Float.h>
+#include <CGAL/Cartesian_converter.h>
 #include <CGAL/property_map.h>
 
 typedef CGAL::Simple_cartesian<double> K1;

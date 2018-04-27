@@ -36,7 +36,7 @@
 
 #include <utility> // defines std::pair
 
-#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Cartesian_converter_fwd.h>
 
 namespace CGAL {
 
