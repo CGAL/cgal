@@ -180,6 +180,9 @@ Release date: April 2018
     -   `CGAL::Polygon_mesh_processing::detect_vertex_incident_patches()`
     -   `CGAL::Polygon_mesh_processing::sharp_edges_segmentation()`
 
+-   Added a function to apply a CGAL::Aff_transformation_3 to a mesh : 
+    - `CGAL::Polygon_mesh_processing::transform()`
+
 ### Point Set Shape Detection
 
 -   **Breaking change**:
