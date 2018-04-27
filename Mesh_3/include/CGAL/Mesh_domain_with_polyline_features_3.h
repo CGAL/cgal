@@ -869,17 +869,14 @@ private:
 public:
   /// @cond DEVELOPERS
   typedef CGAL::AABB_tree<AABB_curves_traits> Curves_AABB_tree;
-  typedef std::set<Surface_patch_index> Set_of_patch_ids;
-  typedef std::map<Point_3, Set_of_patch_ids> Corners_incidence_map;
 
 private:
-  Corners_incidence_map corners_incidence_map_;
   mutable Curves_AABB_tree curves_aabb_tree_;
   mutable bool curves_aabb_tree_is_built;
 
 public:
-  const Corners_incidence_map& corners_incidences_map() const
-  { return corners_incidence_map_; }
+  const Corners_incidences& corners_incidences_map() const
+  { return corners_incidences_; }
 
   const Curves_AABB_tree& curves_aabb_tree() const {
     if(!curves_aabb_tree_is_built) build_curves_aabb_tree();
@@ -1142,21 +1139,12 @@ add_features_and_incidences(InputIterator first, InputIterator end,
       polyline = get(polyline_pmap, *first);
     const typename boost::property_traits<IncidentPatchesIndicesPMap>::reference
       patches_ids = get(inc_patches_ind_pmap, *first);
-    const typename Gt::Point_3& p1 = *polyline.begin();
-    const typename Gt::Point_3& p2 = *boost::prior(polyline.end());
-    Set_of_patch_ids& ids_p1 = corners_incidence_map_[p1];
-    std::copy(patches_ids.begin(),
-              patches_ids.end(),
-              std::inserter(ids_p1, ids_p1.begin()));
-    Set_of_patch_ids& ids_p2 = corners_incidence_map_[p2];
-    std::copy(patches_ids.begin(),
-              patches_ids.end(),
-              std::inserter(ids_p2, ids_p2.begin()));
-    Curve_index curve_id =
-      insert_edge(polyline.begin(), polyline.end());
+
+    Curve_index curve_id = insert_edge(polyline.begin(), polyline.end());
     edges_incidences_[curve_id].insert(patches_ids.begin(), patches_ids.end());
     *indices_out++ = curve_id;
   }
+
   compute_corners_incidences();
   return indices_out;
 }
