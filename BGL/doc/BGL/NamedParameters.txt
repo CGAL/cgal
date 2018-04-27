@@ -114,6 +114,37 @@ as result of a partition algorithm; if it is not provided, this information is
 simply inaccessible.
 \cgalNPEnd
 
+
+\cgalNPBegin{vertex_to_vertex_it} \anchor BGL_vertex_to_vertex_it
+is a model of `OutputIterator` accepting `std::pair<vertex_descriptor, vertex_descriptor>`
+A typical use case is mapping the vertices from a source mesh to its copy's after a `copy_face_graph()`
+operation.\n
+<b>Type:</b>a class model of `OutputIterator` accepting 
+`std::pair<`boost::graph_traits<PolygonMesh>::%vertex_descriptor, `boost::graph_traits<PolygonMesh>::%vertex_descriptor>`.\n
+<b>Default:</b> Emptyset_iterator
+\cgalNPEnd
+
+\cgalNPBegin{halfedge_to_halfedge_it} \anchor BGL_halfedge_to_halfedge_it
+is a model of `OutputIterator` accepting `std::pair<halfedge_descriptor, halfedge_descriptor>`
+A typical use case is mapping the halfedges from a source mesh to its copy's after a `copy_face_graph()`
+operation.\n
+<b>Type:</b>a class model of `OutputIterator` accepting 
+`std::pair<`boost::graph_traits<PolygonMesh>::%halfedge_descriptor, `boost::graph_traits<PolygonMesh>::%halfedge_descriptor>`.\n
+<b>Default:</b> Emptyset_iterator
+\cgalNPEnd
+
+
+\cgalNPBegin{face_to_face_it} \anchor BGL_face_to_face_it
+is a model of `OutputIterator` accepting `std::pair<face_descriptor, face_descriptor>`
+A typical use case is mapping the faces from a source mesh to its copy's after a `copy_face_graph()`
+operation.\n
+<b>Type:</b>a class model of `OutputIterator` accepting 
+`std::pair<`boost::graph_traits<PolygonMesh>::%face_descriptor, `boost::graph_traits<PolygonMesh>::%face_descriptor>`.\n
+<b>Default:</b> Emptyset_iterator
+\cgalNPEnd
+
+
+
 \cgalNPTableEnd
 
 */

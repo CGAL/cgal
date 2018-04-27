@@ -43,6 +43,11 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::METIS_options).v == 800000001);
   assert(get_param(np, CGAL::internal_np::vertex_partition_id).v == 800000002);
   assert(get_param(np, CGAL::internal_np::face_partition_id).v == 800000003);
+  
+  assert(get_param(np, CGAL::internal_np::vertex_to_vertex_it).v == 800000004);
+  assert(get_param(np, CGAL::internal_np::halfedge_to_halfedge_it).v == 800000005);
+  assert(get_param(np, CGAL::internal_np::face_to_face_it).v == 800000006);
+ 
 
     // Named parameters that we use in the package 'Mesh_3'
   assert(get_param(np, CGAL::internal_np::vertex_feature_degree).v == 9);
@@ -107,6 +112,9 @@ void test(const NamedParameters& np)
   check_same_type<800000001>(get_param(np, CGAL::internal_np::METIS_options));
   check_same_type<800000002>(get_param(np, CGAL::internal_np::vertex_partition_id));
   check_same_type<800000003>(get_param(np, CGAL::internal_np::face_partition_id));
+  check_same_type<800000004>(get_param(np, CGAL::internal_np::vertex_to_vertex_it));
+  check_same_type<800000005>(get_param(np, CGAL::internal_np::halfedge_to_halfedge_it));
+  check_same_type<800000006>(get_param(np, CGAL::internal_np::face_to_face_it));
 
     // Named parameters that we use in the package 'Mesh_3'
   check_same_type<9>(get_param(np, CGAL::internal_np::vertex_feature_degree));
@@ -166,6 +174,9 @@ int main()
                          .METIS_options(A<800000001>(800000001))
                          .vertex_partition_id_map(A<800000002>(800000002))
                          .face_partition_id_map(A<800000003>(800000003))
+                         .vertex_to_vertex_it(A<800000004>(800000004))
+                         .halfedge_to_halfedge_it(A<800000005>(800000005))
+                         .face_to_face_it(A<800000006>(800000006))
                          .vertex_feature_degree_map(A<9>(9))
                          .geom_traits(A<10>(10))
                          .vertex_incident_patches_map(A<11>(11))

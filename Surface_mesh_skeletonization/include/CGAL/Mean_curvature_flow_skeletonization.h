@@ -845,7 +845,8 @@ private:
   {
     typedef std::pair<Input_vertex_descriptor, vertex_descriptor> Vertex_pair;
     std::vector<Vertex_pair> v2v;
-    copy_face_graph(tmesh, m_tmesh, std::back_inserter(v2v));
+    copy_face_graph(tmesh, m_tmesh, 
+                    CGAL::parameters::vertex_to_vertex_it(std::back_inserter(v2v)));
 
     // copy input vertices to keep correspondence
     BOOST_FOREACH(const Vertex_pair& vp, v2v)

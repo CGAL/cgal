@@ -302,21 +302,15 @@ boolean_operation(      TriangleMesh& tm1,
       if (&tm1 != *desired_output[Corefinement::UNION])
         copy_face_graph(tm1,
                         *(*desired_output[Corefinement::UNION]),
-                        Emptyset_iterator(),
-                        Emptyset_iterator(),
-                        Emptyset_iterator(),
-                        vpm1,
-                        vpm_out[Corefinement::UNION]);
+                        parameters::vertex_point_map(vpm1),
+                        parameters::vertex_point_map(vpm_out[Corefinement::UNION]));
 
     if (desired_output[Corefinement::INTER] != boost::none)
       if (&tm1 != *desired_output[Corefinement::INTER])
         copy_face_graph(tm1,
                         *(*desired_output[Corefinement::INTER]),
-                        Emptyset_iterator(),
-                        Emptyset_iterator(),
-                        Emptyset_iterator(),
-                        vpm1,
-                        vpm_out[Corefinement::INTER]);
+                        parameters::vertex_point_map(vpm1),
+                        parameters::vertex_point_map(vpm_out[Corefinement::INTER]));
 
     if (desired_output[Corefinement::TM1_MINUS_TM2] != boost::none)
       if (&tm1 == *desired_output[Corefinement::TM1_MINUS_TM2])

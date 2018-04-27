@@ -57,9 +57,9 @@ int main(int argc, char* argv[])
     boost::unordered_map<sm_halfedge_descriptor, tm_halfedge_descriptor> h2h;
     boost::unordered_map<sm_face_descriptor, tm_face_descriptor>         f2f;
     
-    CGAL::copy_face_graph(S, T2, std::inserter(v2v, v2v.end()),
-                                 std::inserter(h2h, h2h.end()),
-                                 std::inserter(f2f, f2f.end()));
+    CGAL::copy_face_graph(S, T2, CGAL::parameters::vertex_to_vertex_it(std::inserter(v2v, v2v.end()))
+                                 .halfedge_to_halfedge_it(std::inserter(h2h, h2h.end()))
+                                 .face_to_face_it(std::inserter(f2f, f2f.end())));
     OpenMesh::IO::write_mesh(T2, "om.off");
   }
 #endif

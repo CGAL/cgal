@@ -304,8 +304,8 @@ clip_to_bbox(const Plane_3& plane,
   Polyhedron_3<Geom_traits> P;
   CGAL::convex_hull_3(points.begin(), points.end(), P);
   copy_face_graph(P, tm_out,
-                  Emptyset_iterator(), Emptyset_iterator(), Emptyset_iterator(),
-                  get(vertex_point, P), vpm_out);
+                  parameters::all_default(),
+                  parameters::vertex_point_map(vpm_out));
   return ON_ORIENTED_BOUNDARY;
 }
 
