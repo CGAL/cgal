@@ -239,8 +239,8 @@ void isotropic_remeshing(const FaceRange& faces
     }
     remesher.equalize_valences();
     remesher.tangential_relaxation(smoothing_1d, nb_laplacian);
-    remesher.project_to_surface();
 
+    remesher.project_to_surface(get_param(np, internal_np::projection_functor));
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     std::cout << std::endl;
 #endif

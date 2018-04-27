@@ -1038,7 +1038,7 @@ namespace internal {
 
     // PMP book :
     // "maps the vertices back to the surface"
-    void project_to_surface()
+    void project_to_surface(boost::param_not_found)
     {
       //todo : handle the case of boundary vertices
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -1054,6 +1054,36 @@ namespace internal {
 
         Point proj = trees[patch_id_to_index_map[get_patch_id(face(halfedge(v, mesh_), mesh_))]]->closest_point(get(vpmap_, v));
         put(vpmap_, v, proj);
+      }
+      CGAL_assertion(is_valid(mesh_));
+      CGAL_assertion(is_triangle_mesh(mesh_));
+#ifdef CGAL_PMP_REMESHING_DEBUG
+      debug_self_intersections();
+#endif
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+      std::cout << "done." << std::endl;
+#endif
+
+#ifdef CGAL_DUMP_REMESHING_STEPS
+      dump("5-project.off");
+#endif
+    }
+
+    template <class ProjectionFunctor>
+    void project_to_surface(const ProjectionFunctor& proj)
+    {
+      //todo : handle the case of boundary vertices
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+      std::cout << "Project to surface...";
+      std::cout.flush();
+#endif
+
+      BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
+      {
+        if (is_constrained(v) || is_isolated(v) || !is_on_patch(v))
+          continue;
+        //note if v is constrained, it has not moved
+        put(vpmap_, v, proj(v, vpmap_));
       }
       CGAL_assertion(is_valid(mesh_));
       CGAL_assertion(is_triangle_mesh(mesh_));

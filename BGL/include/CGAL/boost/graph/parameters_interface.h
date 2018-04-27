@@ -64,6 +64,7 @@ CGAL_add_named_parameter(nb_points_per_distance_unit_t, nb_points_per_distance_u
 CGAL_add_named_parameter(outward_orientation_t, outward_orientation, outward_orientation)
 CGAL_add_named_parameter(overlap_test_t, overlap_test, do_overlap_test_of_bounded_sides)
 CGAL_add_named_parameter(preserve_genus_t, preserve_genus, preserve_genus)
+CGAL_add_named_parameter(projection_functor_t, projection_functor, projection_functor)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
