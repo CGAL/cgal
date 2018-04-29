@@ -132,9 +132,9 @@ bool poisson_reconstruct(FaceGraph* graph,
     std::cerr << "Surface meshing...\n";
 
     // Computes average spacing
-    Kernel::FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(points.begin_or_selection_begin(), points.end(),
-                                                                                points.point_map(),
-                                                                                6 /* knn = 1 ring */);
+    Kernel::FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(points.all_or_selection_if_not_empty(),
+                                                                                6 /* knn = 1 ring */,
+                                                                                points.parameters());
 
     // Gets one point inside the implicit surface
     Kernel::Point_3 inner_point = function.get_inner_point();

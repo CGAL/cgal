@@ -68,7 +68,7 @@ else()
   endif()
 endif()
 
-set(CGAL_CONFIGURED_LIBRARIES "@CGAL_CONFIGURED_LIBRARIES@")
+set(CGAL_CONFIGURED_LIBRARIES "@CGAL_ACTUAL_CONFIGURED_LIBRARIES@")
 
 macro(check_cgal_component COMPONENT)
 
@@ -82,6 +82,15 @@ macro(check_cgal_component COMPONENT)
     # include config file
     include(${CGAL_CONFIG_DIR}/CGALLibConfig.cmake)
     set( CHECK_CGAL_ERROR_TAIL "" )
+    get_property(CGAL_CGAL_is_imported TARGET CGAL::CGAL PROPERTY IMPORTED)
+    if(CGAL_CGAL_is_imported)
+      include("${CGAL_MODULES_DIR}/CGAL_SetupBoost.cmake")
+      get_property(CGAL_requires_Boost_libs
+        GLOBAL PROPERTY CGAL_requires_Boost_Thread)
+      if(CGAL_requires_Boost_libs AND TARGET Boost::thread)
+        set_property(TARGET CGAL::CGAL APPEND PROPERTY INTERFACE_LINK_LIBRARIES Boost::thread)
+      endif()
+    endif()
   else()
     if (EXISTS ${CGAL_CONFIG_DIR}/${CGAL_LIB}Exports.cmake)
       # include export files for requested component
@@ -149,8 +158,11 @@ include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 # Temporary? Change the CMAKE module path
 cgal_setup_module_path()
 
-if( RUNNING_CGAL_AUTO_TEST )
+if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST )
+  # Do not use -isystem for CGAL include paths
+  set(CMAKE_NO_SYSTEM_FROM_IMPORTED TRUE)
   # Ugly hack to be compatible with current CGAL testsuite process (as of
   # Nov. 2017). -- Laurent Rineau
   include(CGAL_SetupFlags)
 endif()
+include("${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake")

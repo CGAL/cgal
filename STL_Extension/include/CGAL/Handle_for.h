@@ -26,6 +26,8 @@
 #ifndef CGAL_HANDLE_FOR_H
 #define CGAL_HANDLE_FOR_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/config.h>
 #include <CGAL/assertions.h> // for CGAL_assume
 
@@ -49,8 +51,16 @@ class Handle_for
         unsigned int count;
     };
 
-    typedef typename Alloc::template rebind<RefCounted>::other  Allocator;
-    typedef typename Allocator::pointer                         pointer;
+
+#ifdef CGAL_CXX11
+    typedef std::allocator_traits<Alloc> Alloc_traits;
+    typedef typename Alloc_traits::template rebind_alloc<RefCounted>           Allocator;
+    typedef std::allocator_traits<Allocator> Allocator_traits;
+    typedef typename Alloc_traits::template rebind_traits<RefCounted>::pointer pointer;
+#else
+    typedef typename Alloc::template rebind<RefCounted>::other   Allocator;
+    typedef typename Allocator::pointer                          pointer;
+#endif
 
     static Allocator   allocator;
     pointer            ptr_;
@@ -189,7 +199,11 @@ public:
     ~Handle_for()
     {
       if (--(ptr_->count) == 0) {
+#ifdef CGAL_CXX11
+        Allocator_traits::destroy(allocator, ptr_);
+#else
           allocator.destroy( ptr_);
+#endif
           allocator.deallocate( ptr_, 1);
       }
     }
@@ -312,5 +326,7 @@ get_pointee_or_identity(const T &t)
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_HANDLE_FOR_H

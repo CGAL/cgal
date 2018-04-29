@@ -18,7 +18,7 @@ int main()
 #include <CGAL/Algebraic_kernel_d_1.h>             //Algebraic Kernel
 #include <CGAL/Arr_rational_function_traits_2.h>   //Traits
 #include <CGAL/Arrangement_2.h>                    //Arrangement
-#include <CGAL/Sweep_line_2_algorithms.h>
+#include <CGAL/Surface_sweep_2_algorithms.h>
 #include <boost/foreach.hpp>
 
 typedef CGAL::CORE_arithmetic_kernel::Integer      Number_type;
@@ -29,6 +29,7 @@ typedef Traits_2::Point_2                          Point_2;
 
 template <typename Cmp_object>
 struct Cmp {
+  Cmp<Cmp_object>& operator=(const  Cmp<Cmp_object>&);
   const Cmp_object& m_cmp_object;
   Cmp(const Cmp_object& cmp_object) : m_cmp_object(cmp_object) {}
   bool operator()(const Point_2& p1, const Point_2& p2) const

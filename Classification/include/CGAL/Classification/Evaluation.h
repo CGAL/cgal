@@ -25,6 +25,8 @@
 
 #include <CGAL/Classification/Label.h>
 #include <CGAL/Classification/Label_set.h>
+#include <map>
+#include <cmath> // for std::isnan
 
 namespace CGAL {
 
@@ -106,6 +108,8 @@ public:
 
     m_mean_iou = 0.;
     m_mean_f1 = 0.;
+
+    std::size_t correct_labels = 0;
     
     for (std::size_t j = 0; j < labels.size(); ++ j)
     {
@@ -113,13 +117,17 @@ public:
       m_recall[j] = true_positives[j] / float(true_positives[j] + false_negatives[j]);
       m_iou[j] = true_positives[j] / float(true_positives[j] + false_positives[j] + false_negatives[j]);
 
+      if (std::isnan(m_iou[j]))
+        continue;
+
+      ++ correct_labels;
       m_mean_iou += m_iou[j];
       m_mean_f1 += 2.f * (m_precision[j] * m_recall[j])
         / (m_precision[j] + m_recall[j]);
     }
 
-    m_mean_iou /= labels.size();
-    m_mean_f1 /= labels.size();
+    m_mean_iou /= correct_labels;
+    m_mean_f1 /= correct_labels;
     m_accuracy = sum_true_positives / float(total);
   }
 

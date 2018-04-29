@@ -18,13 +18,14 @@
 // Author(s)     : Sebastien Loriot
 //
 
-#ifndef CGAL_BOOST_GRAPH_KTH_SIMPLICIAL_NEIGHBORHOOD_H
-#define CGAL_BOOST_GRAPH_KTH_SIMPLICIAL_NEIGHBORHOOD_H
+#ifndef CGAL_BOOST_GRAPH_SELECTION_H
+#define CGAL_BOOST_GRAPH_SELECTION_H
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 #include <CGAL/boost/graph/iterator.h>
 #include <boost/unordered_set.hpp>
+
 
 namespace CGAL {
 
@@ -572,14 +573,14 @@ void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
     // set hd to the last selected face of a connected component
     // of selected faces around a vertex
     halfedge_descriptor hd = halfedge(vd, tm);
-    while( !get(is_selected, face(hd, tm)) )
+    while(is_border(hd,tm) || ( !get(is_selected, face(hd, tm))) )
     {
       hd = opposite( next(hd, tm), tm);
       CGAL_assertion( hd != halfedge(vd, tm) );
     }
     halfedge_descriptor start = hd;
     halfedge_descriptor next_around_vertex = opposite( next(hd, tm), tm);
-    while( get(is_selected, face(next_around_vertex, tm) ) )
+    while(is_border(next_around_vertex,tm) || get(is_selected, face(next_around_vertex, tm) ) )
     {
       hd = next_around_vertex;
       next_around_vertex = opposite( next(hd, tm), tm);
@@ -619,6 +620,29 @@ void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
     }
   }
 }
+
+//todo: take non-manifold vertices into account.
+template<class PolygonMesh, class FaceRange>
+bool is_selection_a_topological_disk(const FaceRange& face_selection,
+                                           PolygonMesh& pm)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
+  boost::unordered_set<vertex_descriptor> sel_vertices;
+  boost::unordered_set<edge_descriptor> sel_edges;
+  BOOST_FOREACH(face_descriptor f, face_selection)
+  {
+    BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f, pm), pm))
+    {
+      sel_vertices.insert(target(h, pm));
+      sel_edges.insert(edge(h,pm));
+    }
+  }
+  return (sel_vertices.size() - sel_edges.size() + face_selection.size() == 1); 
+}
 } //end of namespace CGAL
 
-#endif //CGAL_BOOST_GRAPH_KTH_SIMPLICIAL_NEIGHBORHOOD_H
+#endif //CGAL_BOOST_GRAPH_SELECTION_H
+

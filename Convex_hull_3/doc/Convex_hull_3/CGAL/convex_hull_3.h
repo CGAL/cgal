@@ -23,6 +23,8 @@ is a kernel with exact predicates but inexact constructions
 (in practice we check `R::Has_filtered_predicates_tag` is `Tag_true` and `R::FT` is a floating point type), 
 then the default traits class of `::convex_hull_3()` is `Convex_hull_traits_3<R>`, and `R` otherwise. 
 
+\attention The user must include the header file of the `Polygon_mesh` type.
+
 \cgalHeading{Implementation}
 
 The algorithm implemented by these functions is the quickhull algorithm of 
@@ -55,6 +57,7 @@ is a kernel with exact predicates but inexact constructions
 (in practice we check `R::Has_filtered_predicates_tag` is `Tag_true` and `R::FT` is a floating point type), 
 then the default traits class of `convex_hull_3()` is `Convex_hull_traits_3<R>`, and `R` otherwise. 
 
+\attention The user must include the header file of the `Polygon_mesh` type.
 */
 
 template <class InputIterator, class Traits>

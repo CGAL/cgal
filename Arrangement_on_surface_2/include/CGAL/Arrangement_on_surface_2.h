@@ -31,6 +31,7 @@
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The header file for the Arrangement_on_surface_2<Traits,Dcel> class.
@@ -72,6 +73,7 @@ class Arrangement_on_surface_2 {
 public:
   typedef GeomTraits_                                     Geometry_traits_2;
   typedef TopTraits_                                      Topology_traits;
+  typedef CGAL_ALLOCATOR(int)                             Allocator;
 
   // first define adaptor ...
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
@@ -1554,8 +1556,11 @@ protected:
   Point_2*_new_point(const Point_2& pt)
   {
     Point_2* p_pt = m_points_alloc.allocate(1);
-
+#ifdef CGAL_CXX11
+    std::allocator_traits<Points_alloc>::construct(m_points_alloc, p_pt, pt);
+#else
     m_points_alloc.construct(p_pt, pt);
+#endif
     return (p_pt);
   }
 
@@ -1563,8 +1568,11 @@ protected:
   void _delete_point(Point_2& pt)
   {
     Point_2* p_pt = &pt;
-
+#ifdef CGAL_CXX11
+    std::allocator_traits<Points_alloc>::destroy(m_points_alloc, p_pt);
+#else
     m_points_alloc.destroy(p_pt);
+#endif
     m_points_alloc.deallocate(p_pt, 1);
   }
 
@@ -1572,7 +1580,11 @@ protected:
   X_monotone_curve_2* _new_curve(const X_monotone_curve_2& cv)
   {
     X_monotone_curve_2* p_cv = m_curves_alloc.allocate(1);
+#ifdef CGAL_CXX11
+    std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, p_cv, cv);
+#else
     m_curves_alloc.construct(p_cv, cv);
+#endif
     return (p_cv);
   }
 
@@ -1580,8 +1592,11 @@ protected:
   void _delete_curve(X_monotone_curve_2& cv)
   {
     X_monotone_curve_2* p_cv = &cv;
-
+#ifdef CGAL_CXX11
+    std::allocator_traits<Curves_alloc>::destroy(m_curves_alloc, p_cv);
+#else      
     m_curves_alloc.destroy(p_cv);
+#endif
     m_curves_alloc.deallocate(p_cv, 1);
   }
   //@}
@@ -3009,4 +3024,5 @@ bool do_intersect(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
 #include <CGAL/Arrangement_2/Arrangement_on_surface_2_impl.h>
 #include <CGAL/Arrangement_2/Arrangement_on_surface_2_global.h>
 
+#include <CGAL/enable_warnings.h>
 #endif

@@ -70,10 +70,11 @@ void run_pca_estimate_normals(PointList& points, // input points + output normal
   // Estimates normals direction.
   // Note: pca_estimate_normals() requires an iterator over points
   // as well as property maps to access each point's position and normal.
-  CGAL::pca_estimate_normals<Concurrency_tag>(points.begin(), points.end(),
-                             CGAL::First_of_pair_property_map<PointVectorPair>(),
-                             CGAL::Second_of_pair_property_map<PointVectorPair>(),
-                             nb_neighbors_pca_normals);
+  CGAL::pca_estimate_normals<Concurrency_tag>(points,
+     nb_neighbors_pca_normals,
+     CGAL::parameters::point_map (CGAL::First_of_pair_property_map<PointVectorPair>()).
+     normal_map (CGAL::Second_of_pair_property_map<PointVectorPair>()));
+
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -92,10 +93,12 @@ void run_jet_estimate_normals(PointList& points, // input points + output normal
   // Estimates normals direction.
   // Note: jet_estimate_normals() requires an iterator over points
   // + property maps to access each point's position and normal.
-  CGAL::jet_estimate_normals<Concurrency_tag>(points.begin(), points.end(),
-                             CGAL::First_of_pair_property_map<PointVectorPair>(),
-                             CGAL::Second_of_pair_property_map<PointVectorPair>(),
-                             nb_neighbors_jet_fitting_normals);
+  CGAL::jet_estimate_normals<Concurrency_tag>
+    (points,
+     nb_neighbors_jet_fitting_normals,
+     CGAL::parameters::point_map (CGAL::First_of_pair_property_map<PointVectorPair>()).
+     normal_map (CGAL::Second_of_pair_property_map<PointVectorPair>()));
+
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -114,11 +117,9 @@ void run_vcm_estimate_normals(PointList &points, // input points + output normal
   // Estimates normals direction.
   // Note: vcm_estimate_normals() requires an iterator over points
   // + property maps to access each point's position and normal.
-    CGAL::vcm_estimate_normals(points.begin(), points.end(),
-                               CGAL::First_of_pair_property_map<PointVectorPair>(),
-                               CGAL::Second_of_pair_property_map<PointVectorPair>(),
-                               R,
-                               r);
+    CGAL::vcm_estimate_normals(points, R, r,
+                               CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
+                               normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
 
     std::size_t memory = CGAL::Memory_sizer().virtual_size();
     std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -138,10 +139,10 @@ void run_mst_orient_normals(PointList& points, // input points + input/output no
   // Note: mst_orient_normals() requires an iterator over points
   // as well as property maps to access each point's position and normal.
   PointList::iterator unoriented_points_begin =
-    CGAL::mst_orient_normals(points.begin(), points.end(),
-                             CGAL::First_of_pair_property_map<PointVectorPair>(),
-                             CGAL::Second_of_pair_property_map<PointVectorPair>(),
-                             nb_neighbors_mst);
+    CGAL::mst_orient_normals(points,
+                             nb_neighbors_mst,
+                             CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
+                             normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
 
   // Optional: delete points with an unoriented normal
   // if you plan to call a reconstruction algorithm that expects oriented normals.
@@ -260,7 +261,7 @@ int main(int argc, char * argv[])
       success = stream &&
                 CGAL::read_off_points(stream,
                                       std::back_inserter(points),
-                                      CGAL::First_of_pair_property_map<PointVectorPair>());
+                                      CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()));
     }
     // If XYZ file format
     else if (extension == ".xyz" || extension == ".XYZ" ||
@@ -270,7 +271,7 @@ int main(int argc, char * argv[])
       success = stream &&
                 CGAL::read_xyz_points(stream,
                                       std::back_inserter(points),
-                                      CGAL::First_of_pair_property_map<PointVectorPair>());
+                                      CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()));
     }
     if (!success)
     {
@@ -324,10 +325,10 @@ int main(int argc, char * argv[])
     {
       std::ofstream stream(output_filename.c_str());
       if (!stream ||
-          !CGAL::write_xyz_points_and_normals(stream,
-                                              points.begin(), points.end(),
-                                              CGAL::First_of_pair_property_map<PointVectorPair>(),
-                                              CGAL::Second_of_pair_property_map<PointVectorPair>()))
+          !CGAL::write_xyz_points(stream,
+                                  points,
+                                  CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
+                                  normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
       {
         std::cerr << "Error: cannot write file " << output_filename << std::endl;
         return EXIT_FAILURE;

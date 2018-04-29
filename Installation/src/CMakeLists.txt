@@ -135,7 +135,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CGAL_RUNTIME_DIR})
 
 # TODO: Seems useless, because it is called again in ../CMakeLists.txt
 #       Should probably be removed. -- Laurent Rineau, 2014/07/22
-create_CGALconfig_files()
+if(NOT CGAL_HEADER_ONLY)
+  create_CGALconfig_files()
+endif()
 
 set(CGAL_DIR ${CMAKE_BINARY_DIR})
 
@@ -212,6 +214,8 @@ CGAL_add_if_target(CGAL)
 CGAL_add_if_target(CGAL_Core)
 CGAL_add_if_target(CGAL_ImageIO)
 CGAL_add_if_target(CGAL_Qt5)
+
+cache_set(CGAL_ACTUAL_CONFIGURED_LIBRARIES "${CGAL_ACTUAL_CONFIGURED_LIBRARIES}")
 
 if (NOT CGAL_HEADER_ONLY)
   export(TARGETS ${CGAL_ACTUAL_CONFIGURED_LIBRARIES} NAMESPACE CGAL:: FILE "${CMAKE_BINARY_DIR}/CGALExports.cmake")

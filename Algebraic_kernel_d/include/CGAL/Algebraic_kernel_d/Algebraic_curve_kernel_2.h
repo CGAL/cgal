@@ -33,7 +33,7 @@
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_D_2_H
 
 #include <limits>
-
+#include <CGAL/iterator.h>
 #include <CGAL/assertions.h>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/optional.hpp>
@@ -224,14 +224,20 @@ protected:
     
     //! orders pair items by ids
     struct Pair_id_order {
-
+#ifdef CGAL_ALGEBRAIC_KERNEL_DONT_SWAP
+        template<class T1, class T2>
+        const std::pair<T1, T2>& operator()(const std::pair<T1, T2>& p) const {
+          return p;
+        }
+#else      
         template<class T1, class T2>
         std::pair<T1, T2> operator()(const std::pair<T1, T2>& p) const {
             
-            if(p.first.id() > p.second.id())
-                return std::make_pair(p.second, p.first);
-            return p;
+          if(p.first.id() > p.second.id())
+            return std::make_pair(p.second, p.first);
+          return p;
         }
+ #endif
     };
     
     class Curve_creator {
@@ -549,7 +555,7 @@ public:
             	  typename std::vector< Algebraic_real_1>::iterator>
 	  it_pair = std::equal_range(roots.begin(),roots.end(),y);
 	CGAL_assertion(std::distance(it_pair.first,it_pair.second)==1);
-	int index = std::distance(roots.begin(),it_pair.first);
+	int index = static_cast<int>(std::distance(roots.begin(),it_pair.first));
 	
 	int degree = CGAL::degree(y_pol);
 	std::vector<std::pair<CGAL::Exponent_vector,Coefficient> > coeffs;
@@ -1802,8 +1808,8 @@ public:
      */
     class X_critical_points_2 : 
         public CGAL::binary_function< Curve_analysis_2,
-            std::iterator<std::output_iterator_tag, Algebraic_real_2>,
-            std::iterator<std::output_iterator_tag, Algebraic_real_2> > {
+            CGAL::iterator<std::output_iterator_tag, Algebraic_real_2>,
+            CGAL::iterator<std::output_iterator_tag, Algebraic_real_2> > {
        
     public:
         
@@ -1881,8 +1887,8 @@ public:
      */
     class Y_critical_points_2 :
         public CGAL::binary_function< Curve_analysis_2,
-            std::iterator<std::output_iterator_tag, Algebraic_real_2>,
-            std::iterator<std::output_iterator_tag, Algebraic_real_2> > {
+            CGAL::iterator<std::output_iterator_tag, Algebraic_real_2>,
+            CGAL::iterator<std::output_iterator_tag, Algebraic_real_2> > {
         
 
     public:
@@ -2504,7 +2510,7 @@ public:
 
 	std::vector<std::pair<Algebraic_real_2,Multiplicity_type> > roots;
 	_m_kernel->solve_2_object()(f,g,std::back_inserter(roots));
-	return roots.size(); 
+	return static_cast<size_type>(roots.size()); 
       }
 
     protected:

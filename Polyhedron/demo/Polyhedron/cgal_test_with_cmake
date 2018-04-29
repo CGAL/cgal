@@ -194,7 +194,6 @@ polylines_io_plugin \
 p_sphere_function_plugin \
 p_tanglecube_function_plugin \
 random_perturbation_plugin \
-remeshing_plugin \
 repair_polyhedron_plugin \
 selection_io_plugin \
 selection_sm_io_plugin \

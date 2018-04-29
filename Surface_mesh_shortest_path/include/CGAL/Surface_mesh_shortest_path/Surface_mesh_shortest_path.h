@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Surface_mesh_shortest_path.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <iterator>
 #include <vector>
@@ -145,6 +146,7 @@ public:
 
 #ifndef CGAL_NO_DEPRECATED_CODE
   // deprecated in CGAL 4.10
+  /// \deprecated
   typedef Barycentric_coordinates Barycentric_coordinate;
 #endif
 
@@ -2059,7 +2061,6 @@ public:
       std::cout << "Final node count: " << m_currentNodeCount << std::endl;
     }
     return;
-    CGAL_assertion(m_currentNodeCount == 0);
 #endif
   }
 
@@ -2596,7 +2597,7 @@ public:
   /// \name Nearest Face Location Queries
   /// @{
 
-  /*
+  /*!
   \brief Returns the nearest face location to the given point.
     Note that this will (re-)build an `AABB_tree` on each call. If you need
     to  call this function more than once, use `build_aabb_tree()` to cache a
@@ -2661,7 +2662,7 @@ public:
 
   /// \endcond
 
-  /*
+  /*!
   \brief Returns the face location along `ray` nearest to its source point.
     Note that this will (re-)build an `AABB_tree` on each call. If you need
     to  call this function more than once, use `build_aabb_tree()` to cache a
@@ -2807,5 +2808,7 @@ public:
 };
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SURFACE_MESH_SHORTEST_PATH_SURFACE_MESH_SHORTEST_PATH_H

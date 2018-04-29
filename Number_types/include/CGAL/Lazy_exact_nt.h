@@ -30,7 +30,7 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/assertions.h>
 
-#include <boost/iterator/transform_iterator.hpp> // for Root_of functor
+#include <CGAL/boost/iterator/transform_iterator.hpp> // for Root_of functor
 #include <boost/operators.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_arithmetic.hpp>

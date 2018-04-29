@@ -27,6 +27,8 @@
 #ifndef CGAL_LINE_2_ISO_RECTANGLE_2_INTERSECTION_H
 #define CGAL_LINE_2_ISO_RECTANGLE_2_INTERSECTION_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Line_2.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Line_2.h>
@@ -222,5 +224,7 @@ CGAL_INTERSECTION_FUNCTION(Line_2, Iso_rectangle_2, 2)
 CGAL_DO_INTERSECT_FUNCTION(Line_2, Iso_rectangle_2, 2)
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

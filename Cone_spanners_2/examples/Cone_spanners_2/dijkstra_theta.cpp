@@ -83,7 +83,7 @@ int main(int argc, char ** argv)
   }
 
   // calculating the distances from v0 to other vertices
-  unsigned int n = num_vertices(g);
+  boost::graph_traits<Graph>::vertices_size_type n = num_vertices(g);
   // vector for storing the results
   std::vector<double> distances(n);
   // Calling the Dijkstra's algorithm implementation from boost.

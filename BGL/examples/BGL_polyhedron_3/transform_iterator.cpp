@@ -2,7 +2,7 @@
 #include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/boost/graph/iterator.h>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <fstream>
 #include <algorithm>

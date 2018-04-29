@@ -51,7 +51,9 @@ public:
     , m_side_of_ptr( new Side_of(*m_tree_ptr) )
     , m_offset_distance(offset_distance)
     , m_is_closed( is_closed(tm) )
-  {}
+  {
+    m_tree_ptr->accelerate_distance_queries();
+  }
 
   double operator()(const typename GeomTraits::Point_3& p) const
   {
@@ -315,9 +317,9 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
                       .arg(offset_value));
     new_item->setColor(Qt::magenta);
     new_item->setRenderingMode(item->renderingMode());
+    scene->addItem(new_item);
     item->setVisible(false);
     scene->itemChanged(index);
-    scene->addItem(new_item);
   }
 
   QApplication::restoreOverrideCursor();

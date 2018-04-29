@@ -25,6 +25,9 @@
 
 #include <sstream>
 
+// In the testsuite we do not want that pairs of Curve_analysis_2 are ordered
+#define CGAL_ALGEBRAIC_KERNEL_DONT_SWAP 1
+
 #if CGAL_ACK_USE_EXACUS
 #include <AcX/Algebraic_curve_2.h>
 #include <AcX/Algebraic_curve_pair_2.h>

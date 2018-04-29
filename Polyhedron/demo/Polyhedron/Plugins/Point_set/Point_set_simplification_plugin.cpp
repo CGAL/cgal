@@ -144,27 +144,20 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
 
       // Computes points to remove by random simplification
       first_point_to_remove =
-        CGAL::random_simplify_point_set(points->begin(), points->end(),
-                                        points->point_map(),
-                                        dialog.randomSimplificationPercentage(), Kernel());
+        CGAL::random_simplify_point_set(*points,
+                                        dialog.randomSimplificationPercentage());
     }
     else if (method == 1)
     {
       std::cerr << "Point set grid simplification (cell size = " << dialog.gridCellSize() <<" * average spacing)...\n";
 
       // Computes average spacing
-      double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
-                                      points->begin(), points->end(),
-                                      points->point_map(),
-                                      6 /* knn = 1 ring */,
-                                      Kernel());
+      double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(*points, 6 /* knn = 1 ring */);
 
       // Computes points to remove by Grid Clustering
       first_point_to_remove =
-        CGAL::grid_simplify_point_set(points->begin(), points->end(),
-                                      points->point_map(),
-                                      dialog.gridCellSize()*average_spacing,
-                                      Kernel());
+        CGAL::grid_simplify_point_set(*points,
+                                      dialog.gridCellSize()*average_spacing);
     }
     else
     {
@@ -173,12 +166,10 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
 
       // Computes points to remove by Grid Clustering
       first_point_to_remove =
-        CGAL::hierarchy_simplify_point_set(points->begin(), points->end(),
-                                           points->point_map(),
-					   dialog.maximumClusterSize(),
-					   dialog.maximumSurfaceVariation(),
-                                           CGAL::Default_diagonalize_traits<double, 3>(),
-                                           Kernel());
+        CGAL::hierarchy_simplify_point_set(*points,
+                                           points->parameters().
+                                           size(dialog.maximumClusterSize()).
+                                           maximum_variation(dialog.maximumSurfaceVariation()));
     }
 
     std::size_t nb_points_to_remove = std::distance(first_point_to_remove, points->end());

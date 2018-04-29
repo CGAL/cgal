@@ -22,6 +22,7 @@ NO_TESTUITE=""           # If set, the LATEST file is not updated
 NO_SCM=""                # If set, git pull is not called.
 SOURCES_DIR="$PWD/trunk" # SVN working copy directory, default is "$PWD/trunk"
 VERBOSE=""               # Verbose mode (displays log to standard err)
+BETA=""                  #If set, will change the release number and version number accordingly.
 SCM=svn
 
 SOURCES_DIR_HAS_BEEN_SET=
@@ -32,7 +33,7 @@ printerr() {
 }
 
 usage() {
-    printerr "Usage : $0 [--help] [--rpm] [--public] [--do-it] <packages dir> [<candidates dir>]"
+    printerr "Usage : $0 [--help] [--rpm] [--public] [--do-it] [--beta <n>] <packages dir> [<candidates dir>]"
     printerr
     printerr '  --help           : prints this usage help'
     printerr '  --rpm            : also build the corresponding SRPMs'
@@ -47,6 +48,8 @@ usage() {
     printerr '  --no-testsuite   : when used with --do-it, the tag is made, files are published,'
     printerr '                     but the LATEST file is not updated.'
     printerr '  --verbose        : print log to standard output, instead of the log file'
+    printerr '  --beta <n>       : followed by a number. When used with --public, will modify 
+    the release number and the release version name to include beta<n>'
     printerr '  <packages dir>   : the directory containing the packages [default is trunk]'
     printerr '  <candidates dir> : the directory containing the candidate packages [no default]'
 }
@@ -91,6 +94,16 @@ while [ $1 ]; do
             VERBOSE="y"
             shift; continue
         ;;
+        --beta)
+            shift;
+            BETA=$1
+            re='^[0-9]+$'
+            if ! [[ $BETA =~ $re ]] ; then
+               echo "error: --beta must be followed by an integer." >&2; exit 1
+            fi
+            shift;
+            continue
+        ;;
         -*)
             printerr "Unrecognized option : $1"
             exit
@@ -111,7 +124,6 @@ while [ $1 ]; do
         ;;
     esac
 done
-
 
 # The internal release number is extracted/updated from this file :
 VERSION_FILE="version_number"
@@ -221,6 +233,21 @@ if [ -n "$DO_IT" -a -e "${HTML_DIR}/${release_name}.tar.gz" ]; then
     exit 1
 fi
 
+function cleanup() {
+    # Remove local directory and tarball
+    rm -rf ./"${release_name}"
+    rm ${release_name}.tar.gz
+    if [ -n "$DO_PUBLIC" ]; then
+        [ -d "${public_release_name}" ] && rm -rf  ./"${public_release_name}"
+        rm -rf doc
+        #  rm -rf doc_tex
+        rm -rf doc_html
+        rm -f "${public_release_name}.tar.gz" "${public_release_name}.zip"
+    fi
+}
+
+trap cleanup EXIT
+
 # Create the release
 if [ -n "$CANDIDATES_DIR_HAS_BEEN_SET" ]; then
     ${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -a ${SOURCES_DIR} -c ${CANDIDATES_DIR} -r ${release_name} -n ${release_number}
@@ -275,14 +302,20 @@ fi
 # Build public release version
 if [ -n "$DO_PUBLIC" ]; then
     echo "Making the public version of the tarball"
-    public_release_number="1${major_nr}${minor_nr}${bugfix_nr}1000"
+    if [ -n "$BETA" ]; then
+      public_release_number="1${major_nr}${minor_nr}${bugfix_nr}09${BETA}0"
+    else
+      public_release_number="1${major_nr}${minor_nr}${bugfix_nr}1000"
+    fi
     public_release_version="${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}"
-    if [ -r "${NUMBERS_DIR}/public_release_name" ]; then
+    if [ -n "$BETA" ]; then
+	public_release_name="CGAL-${public_release_version}-beta${BETA}"
+    elif [ -r "${NUMBERS_DIR}/public_release_name" ]; then
 	public_release_name=`cat "${NUMBERS_DIR}/public_release_name"`
     else
 	public_release_name="CGAL-${public_release_version}"
     fi
-    mv ${release_name} $public_release_name
+    mv -T ${release_name} $public_release_name
 
     cd ${public_release_name}
     rm -rf bench* Bench* test package_info developer_scripts doc winutils include/CGAL/Test include/CGAL/Testsuite/
@@ -334,15 +367,4 @@ if [ -n "$DO_PUBLIC" ]; then
   docker start -a ${container_id}
   docker cp ${container_id}:/nsis_release/${public_release_name}-Setup.exe "${HTML_DIR}/${release_name}-public/"
   docker rm ${container_id}
-fi
-
-# Remove local directory and tarball
-rm -rf "${release_name}"
-rm ${release_name}.tar.gz
-if [ -n "$DO_PUBLIC" ]; then
-  rm -rf  ./"${public_release_name}"
-  rm -rf doc
-#  rm -rf doc_tex
-  rm -rf doc_html
-  rm  "${public_release_name}.tar.gz" "${public_release_name}.zip"
 fi

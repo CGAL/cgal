@@ -47,6 +47,7 @@ public :
   {
     setParent(parent);
   }
+  bool isFinite() const { return false; }
   void init_vectors(
       std::vector<float> *p_vertices,
       std::vector<float> *p_normals,
@@ -68,7 +69,7 @@ public :
   }
   // Indicates if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
-    return (m != Gouraud && m != PointsPlusNormals && m != Splatting && m != Points && m != ShadedPoints);
+    return (m != Gouraud && m != PointsPlusNormals && m != Points && m != ShadedPoints);
   }
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer)
   {
@@ -222,9 +223,9 @@ public :
       colors->push_back((float)color.green()/255);
       colors->push_back((float)color.blue()/255);
 
-      barycenters->push_back((pa[0]+pb[0]+pc[0])/3.0);
-      barycenters->push_back((pa[1]+pb[1]+pc[1])/3.0);
-      barycenters->push_back((pa[2]+pb[2]+pc[2])/3.0);
+      barycenters->push_back((pa[0]+pb[0]+pc[0])/3.0 + offset.x);
+      barycenters->push_back((pa[1]+pb[1]+pc[1])/3.0 + offset.y);
+      barycenters->push_back((pa[2]+pb[2]+pc[2])/3.0 + offset.z);
     }
   }
 
@@ -298,7 +299,6 @@ struct Scene_c3t3_item_priv {
     tree.clear();
     if(frame)
     {
-      static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->setManipulatedFrame(0);
       delete frame;
       frame = NULL;
       delete tet_Slider;
@@ -317,7 +317,7 @@ struct Scene_c3t3_item_priv {
     intersection = NULL;
     spheres_are_shown = false;
     cnc_are_shown = false;
-    show_tetrahedra = false;
+    show_tetrahedra = true;
     is_aabb_tree_built = false;
     are_intersection_buffers_filled = false;
     is_grid_shown = true;
@@ -915,6 +915,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   vaos[Scene_c3t3_item_priv::Facets]->release();
 
   if(d->show_tetrahedra){
+    ncthis->show_intersection(true);
     if(!d->frame->isManipulated())
       d->intersection->setFast(false);
     else
@@ -925,6 +926,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
       ncthis->d->computeIntersections();
       d->intersection->initialize_buffers(viewer);
       d->are_intersection_buffers_filled = true;
+      ncthis->show_intersection(true);
     }
   }
 
@@ -1094,9 +1096,9 @@ void Scene_c3t3_item_priv::draw_triangle(const Tr::Bare_point& pa,
 
   for(int i=0; i<3; ++i)
   {
-   positions_barycenter.push_back((pa[0]+pb[0]+pc[0])/3.0);
-   positions_barycenter.push_back((pa[1]+pb[1]+pc[1])/3.0);
-   positions_barycenter.push_back((pa[2]+pb[2]+pc[2])/3.0);
+   positions_barycenter.push_back((pa[0]+pb[0]+pc[0])/3.0 + offset.x);
+   positions_barycenter.push_back((pa[1]+pb[1]+pc[1])/3.0 + offset.y);
+   positions_barycenter.push_back((pa[2]+pb[2]+pc[2])/3.0 + offset.z);
   }
 
 
@@ -1671,7 +1673,8 @@ Scene_c3t3_item_priv::reset_cut_plane() {
   const float ycenter = static_cast<float>((bbox.ymax()+bbox.ymin())/2.);
   const float zcenter = static_cast<float>((bbox.zmax()+bbox.zmin())/2.);
  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-  frame->setPosition(qglviewer::Vec(xcenter+offset.x, ycenter+offset.y, zcenter+offset.z));
+ qglviewer::Vec center(xcenter+offset.x, ycenter+offset.y, zcenter+offset.z);
+  frame->setPosition(center);
 }
 
 void
@@ -1829,7 +1832,7 @@ bool Scene_c3t3_item::keyPressEvent(QKeyEvent *event)
    d->tet_Slider->setValue(d->tet_Slider->value() -5);
    itemChanged();
  }
- return true;
+ return false;
 }
 
 QString Scene_c3t3_item::computeStats(int type)
@@ -2048,6 +2051,7 @@ CGAL::Three::Scene_item::Header_data Scene_c3t3_item::header() const
 void Scene_c3t3_item::invalidateOpenGLBuffers()
 {
   are_buffers_filled = false;
+  resetCutPlane();
   compute_bbox();
   d->invalidate_stats();
 }

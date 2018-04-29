@@ -15,8 +15,8 @@ for p in ^*build*(/); do
       elif [ -z "`echo $l | grep -Ev '^L?GPL \(v3 or later\) *$'`" ]; then 
           echo 'GPL (v3 or later)' > "$licFile"
       else
-          echo "MULTIPLE!" > "$licFile"; 
-          echo $l >> "$licFile"
+#          echo "MULTIPLE!" > "$licFile";
+          echo $l > "$licFile"
       fi
   fi
 done

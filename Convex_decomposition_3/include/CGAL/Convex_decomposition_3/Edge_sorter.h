@@ -43,7 +43,7 @@ public:
 	typedef Point_comparison Compare_points;
 	Compare_points comp;
 	Compare_halfedges_in_reflex_edge_sorter() {}
-	bool operator()(Halfedge_handle e0, Halfedge_handle e1) 
+	bool operator()(Halfedge_handle e0, Halfedge_handle e1) const
 	{
 		return comp(e0->source()->point(), e1->source()->point());
 	}

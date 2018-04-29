@@ -16,7 +16,7 @@ bool test_scene() {
   typedef CGAL::Point_with_normal_3<K>                        Pwn;
   typedef std::vector<Pwn>                                    Pwn_vector;
   typedef CGAL::Identity_property_map<Pwn>                    Point_map;
-  typedef CGAL::Normal_of_point_with_normal_pmap<K>           Normal_map;
+  typedef CGAL::Normal_of_point_with_normal_map<K>            Normal_map;
 
   typedef CGAL::Shape_detection_3::Shape_detection_traits<
     K, Pwn_vector, Point_map, Normal_map>                     Traits;
@@ -40,10 +40,10 @@ bool test_scene() {
   std::ifstream stream("data/cube.pwn");
 
   if (!stream ||
-    !CGAL::read_xyz_points_and_normals(stream,
+    !CGAL::read_xyz_points(stream,
       std::back_inserter(points),
-      Point_map(),
-      Normal_map()))
+      CGAL::parameters::point_map(Point_map()).
+      normal_map(Normal_map())))
   {
     std::cerr << "Error: cannot read file cube.pwn" << std::endl;
     return EXIT_FAILURE;

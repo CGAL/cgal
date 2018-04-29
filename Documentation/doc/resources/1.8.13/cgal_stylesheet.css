@@ -2,6 +2,51 @@ body, table, div, p, dl {
     font: Lucida Grande,sans-serif;
 }
 
+.icon-namespace {
+    font-family: Arial, Helvetica;
+    font-weight: bold;
+    font-size: 12px;
+    height: 14px;
+    width: 16px;
+    display: inline-block;
+    background-color: #FF0000;
+    color: white;
+    text-align: center;
+    border-radius: 4px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.icon-class {
+    font-family: Arial, Helvetica;
+    font-weight: bold;
+    font-size: 12px;
+    height: 14px;
+    width: 16px;
+    display: inline-block;
+    background-color: #0000FF;
+    color: white;
+    text-align: center;
+    border-radius: 4px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.icon-concept {
+    font-family: Arial, Helvetica;
+    font-weight: bold;
+    font-size: 12px;
+    height: 14px;
+    width: 16px;
+    display: inline-block;
+    background-color: #67489A;
+    color: white;
+    text-align: center;
+    border-radius: 4px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
 .textsc {
     font-variant: small-caps;
 }
@@ -159,6 +204,14 @@ dl.requires dt a, dl.todo dt a, dl.bug dt a, dl.test dt a
 {
     font-weight: bold;
     color: black;
+}
+
+div.toc {
+    width: auto;
+}
+
+.ui-resizable-e {
+    background-repeat: repeat-y;
 }
 
 div.cgal_figure_caption {

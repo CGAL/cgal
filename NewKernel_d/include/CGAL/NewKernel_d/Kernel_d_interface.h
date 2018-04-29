@@ -100,7 +100,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	    return typename Get_functor<Base, Point_drop_weight_tag>::type(this->kernel())(std::move(wp));
 	  }
 	  template<class...T>
-# if __cplusplus >= 201402L
+# if CGAL_CXX14
 	  decltype(auto)
 # else
 	  Point_d
@@ -109,7 +109,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	    return CP(this->kernel())(std::forward<T>(t)...);
 	    //return CP(this->kernel())(t...);
 	  }
-#else
+#else // not CGAL_CXX11
 # define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
 	    Point_d operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t))const{ \
 	      return CP(this->kernel())(BOOST_PP_ENUM_PARAMS(N,t)); \
@@ -119,7 +119,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	  Point_d operator()()const{ \
 	    return CP(this->kernel())(); \
 	  }
-#endif
+#endif // not CGAL_CXX11
 	};
 	typedef typename Get_functor<Base, Construct_ttag<Vector_tag> >::type Construct_vector_d;
 	typedef typename Get_functor<Base, Construct_ttag<Segment_tag> >::type Construct_segment_d;

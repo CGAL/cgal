@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 
@@ -4731,7 +4732,6 @@ remove_3D(Vertex_handle v, VertexRemover &remover)
   size_t num_vertices = vertices.size();
   if (num_vertices >= 5)
   {
-    //std::random_shuffle(vertices.begin(), vertices.end());
     for (int j = 0 ; j < 4 ; ++j)
     {
       if (is_infinite(vertices[j]))
@@ -4907,7 +4907,6 @@ remove_3D(Vertex_handle v, VertexRemover &remover,
   size_t num_vertices = adj_vertices.size();
   if (num_vertices >= 5)
   {
-    //std::random_shuffle(adj_vertices.begin(), adj_vertices.end());
     for (int j = 0 ; j < 4 ; ++j)
     {
       if (is_infinite(adj_vertices[j]))
@@ -6790,5 +6789,7 @@ operator!=(const Triangulation_3<GT, Tds1> &t1,
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TRIANGULATION_3_H

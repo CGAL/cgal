@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Point_set_3.h>
 
+#include <CGAL/Point_set_3.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/read_off_points.h>
 #include <CGAL/IO/write_xyz_points.h>
@@ -171,6 +172,12 @@ public:
     : m_point_set (point_set), m_use_floats (false)
   { }
 
+  ~Point_set_3_filler()
+  {
+    for (std::size_t i = 0; i < m_properties.size(); ++ i)
+      delete m_properties[i];
+  }
+
   void instantiate_properties  (PLY_reader& reader)
   {
     const std::vector<PLY_read_number*>& readers
@@ -310,11 +317,11 @@ read_xyz_point_set(
 {
   point_set.add_normal_map();
 
-  bool out = CGAL::read_xyz_points_and_normals
+  bool out = CGAL::read_xyz_points
     (stream,
      point_set.index_back_inserter(),
-     point_set.point_push_map(),
-     point_set.normal_push_map());
+     CGAL::parameters::point_map(point_set.point_push_map()).
+     normal_map(point_set.normal_push_map()));
 
   bool has_normals = false;
   for (typename CGAL::Point_set_3<Point, Vector>::const_iterator it = point_set.begin();
@@ -342,11 +349,11 @@ read_off_point_set(
 {
   point_set.add_normal_map();
 
-  bool out = CGAL::read_off_points_and_normals
+  bool out = CGAL::read_off_points
     (stream,
      point_set.index_back_inserter(),
-     point_set.point_push_map(),
-     point_set.normal_push_map());
+     CGAL::parameters::point_map(point_set.point_push_map()).
+     normal_map(point_set.normal_push_map()));
 
   bool has_normals = false;
   for (typename CGAL::Point_set_3<Point, Vector>::const_iterator it = point_set.begin();
@@ -395,6 +402,8 @@ read_ply_point_set(
     *comments = reader.comments();
 
   filler.instantiate_properties (reader);
+
+  point_set.reserve (reader.m_nb_points);
   
   std::size_t points_read = 0;
   
@@ -556,6 +565,9 @@ write_ply_point_set(
       if (get_mode (stream) == IO::ASCII)
         stream << std::endl;
     }
+
+  for (std::size_t i = 0; i < printers.size(); ++ i)
+    delete printers[i];
   return true;
 }
 
@@ -794,7 +806,7 @@ write_las_point_set(
   
   bool okay
     = write_las_points_with_properties
-    (stream, point_set.begin(), point_set.end(),
+    (stream, point_set,
      make_las_point_writer (point_set.point_map()),
      std::make_pair (intensity, LAS_property::Intensity()),
      std::make_pair (return_number, LAS_property::Return_number()),
@@ -883,13 +895,14 @@ write_xyz_point_set(
   const CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
 {
   if (point_set.has_normal_map())
-    return CGAL::write_xyz_points_and_normals
-      (stream, point_set.begin(), point_set.end(),
-       point_set.point_map(), point_set.normal_map());
+    return CGAL::write_xyz_points
+      (stream, point_set,
+       CGAL::parameters::point_map(point_set.point_map()).
+       normal_map(point_set.normal_map()));
   
   return CGAL::write_xyz_points
-  (stream, point_set.begin(), point_set.end(),
-   point_set.point_map());
+    (stream, point_set,
+     CGAL::parameters::point_map(point_set.point_map()));
 }
 
 /*!
@@ -902,13 +915,14 @@ write_off_point_set(
   const CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
 {
   if (point_set.has_normal_map())
-    return CGAL::write_off_points_and_normals
-      (stream, point_set.begin(), point_set.end(),
-       point_set.point_map(), point_set.normal_map());
+    return CGAL::write_off_points
+      (stream, point_set,
+       CGAL::parameters::point_map(point_set.point_map()).
+       normal_map(point_set.normal_map()));
   
   return CGAL::write_off_points
-  (stream, point_set.begin(), point_set.end(),
-   point_set.point_map());
+    (stream, point_set,
+     CGAL::parameters::point_map(point_set.point_map()));
 }
 
   

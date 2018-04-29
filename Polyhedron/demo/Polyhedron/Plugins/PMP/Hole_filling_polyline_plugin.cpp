@@ -26,7 +26,7 @@
 #include <algorithm>
 
 #include <boost/function_output_iterator.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 
 struct Face : public CGAL::cpp11::array<int,3>
@@ -114,8 +114,14 @@ public Q_SLOTS:
       print_message(QString("Triangulated in %1 sec.").arg(timer.time()));
 
       if(patch.empty()) {
-        print_message("Warning: generating patch is not successful, please try it without 'Delaunay Triangulation'!");
-        continue;
+        if(use_DT){
+          print_message("Warning: generating patch is not successful, please try it without 'Delaunay Triangulation'!");
+          continue;
+        }
+        else{
+          print_message("Warning: generating patch is not successful, skipping.");
+          continue;
+        }
       }
 
       if(mw->property("is_polyhedron_mode").toBool()){

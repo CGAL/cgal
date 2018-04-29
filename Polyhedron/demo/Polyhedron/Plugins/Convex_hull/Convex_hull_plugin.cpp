@@ -16,7 +16,7 @@
 
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 using namespace CGAL::Three;
 class Polyhedron_demo_convex_hull_plugin : 
   public QObject,

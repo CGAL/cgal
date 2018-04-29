@@ -33,7 +33,7 @@ void compute_distances(void)
 void main(void)
 {
    color = vec4(colors, 1.0);
-   //
+
    if(is_clipbox_on)
     compute_distances();
    fP = mv_matrix * vertex;

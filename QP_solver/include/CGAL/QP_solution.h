@@ -27,6 +27,7 @@
 
 #include <CGAL/license/QP_solver.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <iostream>
 #include <vector>
@@ -39,7 +40,7 @@
 #include <boost/function.hpp>
 
 #include <CGAL/boost/iterator/counting_iterator.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 
@@ -838,5 +839,7 @@ namespace QP_solution_detail {
 } //namespace CGAL
 
 #include <CGAL/QP_solver/QP_solution_impl.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif// CGAL_QP_SOLUTION_H

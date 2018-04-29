@@ -32,9 +32,12 @@
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/squared_distance_3.h>
+#include <CGAL/function.h>
 
-#include <boost/iterator/counting_iterator.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <boost/iterator/filter_iterator.hpp>
+#include <boost/make_shared.hpp>
 
 namespace CGAL {
 namespace Shape_detection_3 {
@@ -169,7 +172,7 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
 
     
   private:
-
+    
     class My_point_map
     {
       Input_iterator input_iterator_first;
@@ -456,13 +459,26 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
 
     /// \name Detection 
     /// @{
+
     /*! 
       Performs the shape detection.
 
+      \param options %Parameters for shape detection.
+
+      \param callback can be omitted if the algorithm should be run
+      without any callback. It is called regularly when the algorithm
+      is running: the current advancement (between 0. and 1.) is
+      passed as parameter. If it returns `true`, then the algorithm
+      continues its execution normally; if it returns `false`, the
+      algorithm is stopped. Note that this interruption may leave the
+      class in an invalid state.
+
       \return `true` if shape types have been registered and
               input data has been set. Otherwise, `false` is returned.
-    */ 
-    bool detect(const Parameters &options = Parameters()) ///< %Parameters for shape detection.
+    */
+    bool detect(const Parameters &options = Parameters(),
+                const cpp11::function<bool(double)>& callback
+                = cpp11::function<bool(double)>())
     {
       // No shape types for detection or no points provided, exit
       if (m_shape_factories.size() == 0 ||
@@ -513,6 +529,9 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
       //Initialization structures
       int class_index = -1;
 
+      if (callback && !callback(0.))
+        return false;
+      
       std::vector<std::size_t> neighbors;
 
       std::vector<std::size_t> sorted_indices (m_num_total_points);
@@ -531,9 +550,13 @@ shape. The implementation follows \cgalCite{cgal:lm-clscm-12}.
       std::vector<std::size_t> index_container;
       std::vector<std::size_t> index_container_former_ring;
       std::set<std::size_t> index_container_current_ring;
-      
-      for (std::size_t I = 0; I < m_num_total_points; ++ I)
+
+      std::size_t num_to_test = 1 + m_num_total_points - m_options.min_points;
+      for (std::size_t I = 0; I < num_to_test; ++ I)
       {
+        if (callback && !callback(1. - (m_num_available_points / double(m_num_total_points))))
+          return false;
+
         std::size_t i = sorted_indices[I];
         
         Input_iterator it = m_input_iterator_first + i;

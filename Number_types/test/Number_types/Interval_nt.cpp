@@ -116,7 +116,7 @@ bool overflow_test()
   IA_nt c (-2,2), d(-2.1,2.1);
   IA_nt e (-2,2), f(2), g(-2);
 
-  DEBUG( std::cout << "+infinity = " << CGAL::internal::infinity << std::endl; )
+  DEBUG( std::cout << "+infinity = " << std::numeric_limits<double>::infinity() << std::endl; )
   DEBUG( std::cout << "maxdouble = " << CGAL_IA_MAX_DOUBLE << std::endl; )
   DEBUG( std::cout << "largest   = " << CGAL::Interval_nt_advanced::largest() << std::endl; )
   DEBUG( std::cout << "smallest  = " << CGAL::Interval_nt_advanced::smallest() << std::endl; )
@@ -139,12 +139,12 @@ bool overflow_test()
     DEBUG( std::cout << "f = " << f << std::endl; )
   }
 
-  return a.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, CGAL::internal::infinity)) &&
-         b.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, CGAL::internal::infinity)) &&
+  return a.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, std::numeric_limits<double>::infinity())) &&
+         b.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, std::numeric_limits<double>::infinity())) &&
          c.is_same(IA_nt::largest()) &&
          d.is_same(IA_nt::largest()) &&
 	 e.is_same(IA_nt::largest()) &&
-	 f.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, CGAL::internal::infinity)) &&
+	 f.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, std::numeric_limits<double>::infinity())) &&
 	 g.is_same(-f);
 }
 

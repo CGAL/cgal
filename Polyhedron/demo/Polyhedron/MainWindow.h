@@ -68,7 +68,7 @@ public:
    * Then it creates and initializes the scene and do the
    * connexions with the UI. Finally it loads the plugins.*/
 
-  MainWindow(QWidget* parent = 0);
+  MainWindow(bool verbose = false,QWidget* parent = 0);
   ~MainWindow();
 
   /*! Finds an IO plugin.
@@ -354,6 +354,8 @@ protected Q_SLOTS:
   void on_actionRecenterScene_triggered();
   //!Resizes the header of the scene view
   void resetHeader();
+  //!apply an action named `name` to all selected items
+  void propagate_action();
 protected:
   QList<QAction*> createSubMenus(QList<QAction*>);
   /*! For each objects in the Geometric Objects view, loads the associated plugins.
@@ -400,6 +402,7 @@ private:
   QTreeView* sceneView;
   Ui::MainWindow* ui;
   QVector<CGAL::Three::Polyhedron_demo_io_plugin_interface*> io_plugins;
+  QString last_saved_dir;
   QMap<QString,QString> default_plugin_selection;
   // typedef to make Q_FOREACH work
   typedef QPair<CGAL::Three::Polyhedron_demo_plugin_interface*, QString> PluginNamePair;
@@ -412,6 +415,7 @@ private:
 
   QDialog *statistics_dlg;
   Ui::Statistics_on_item_dialog* statistics_ui;
+  bool verbose;
   void insertActionBeforeLoadPlugin(QMenu*, QAction *actionToInsert);
 
 #ifdef QT_SCRIPT_LIB
@@ -427,7 +431,6 @@ public:
   void evaluate_script_quiet(QString script, 
                              const QString & fileName = QString());
 #endif
-
 private Q_SLOTS:
   void set_facegraph_mode_adapter(bool is_polyhedron);
 };

@@ -57,7 +57,7 @@ Principal_component_analysis
 STL_Extension
 Skin_surface_3
 Snap_rounding_2
-Sweep_line_2
+Surface_sweep_2
 Arrangement_on_surface_2
 Boolean_set_operations_2
 TDS_2
@@ -67,13 +67,11 @@ Three
 Triangulation_3
 Triangulation
 Ridges_3
-Point_set_3  
+Point_set_3
 Point_set_processing_3
 Point_set_shape_detection_3
 Polyline_simplification_2
 Property_map
-Kinetic_framework
-Kinetic_data_structures
 Periodic_2_triangulation_2
 Periodic_3_triangulation_3
 Scale_space_reconstruction_3

@@ -94,12 +94,12 @@ endif()
 
 
 # Activate concurrency ? (turned OFF by default)
-option(ACTIVATE_CONCURRENT_MESH_3
+option(CGAL_ACTIVATE_CONCURRENT_MESH_3
   "Activate parallelism in Mesh_3"
   OFF)
 
 # And add -DCGAL_CONCURRENT_MESH_3 if that option is ON
-if( ACTIVATE_CONCURRENT_MESH_3 OR ENV{ACTIVATE_CONCURRENT_MESH_3} )
+if( CGAL_ACTIVATE_CONCURRENT_MESH_3 OR ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3} )
   add_definitions( -DCGAL_CONCURRENT_MESH_3 )
   if(NOT TBB_FOUND)
     find_package( TBB REQUIRED )
@@ -108,7 +108,7 @@ if( ACTIVATE_CONCURRENT_MESH_3 OR ENV{ACTIVATE_CONCURRENT_MESH_3} )
     endif()
   endif()
 
-else( ACTIVATE_CONCURRENT_MESH_3 OR ENV{ACTIVATE_CONCURRENT_MESH_3} )
+else( CGAL_ACTIVATE_CONCURRENT_MESH_3 OR ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3} )
   option( LINK_WITH_TBB
     "Link with TBB anyway so we can use TBB timers for profiling"
     ON)
@@ -139,12 +139,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
 
   qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES Polyhedron_3.qrc )
-  qt5_add_resources(gl_splat_rc GlSplat/glsplat.qrc)
-  add_library(gl_splat SHARED
-    GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
-  target_link_libraries(gl_splat PUBLIC ${QGLVIEWER_LIBRARIES} Qt5::OpenGL Qt5::Gui)
-  target_link_libraries(gl_splat PRIVATE ${OPENGL_LIBRARIES} ${QGLVIEWER_LIBRARIES})
-
   find_path(CGAL_THREE_HEADERS_PATH
     NAME CGAL/Three/Scene_item.h
     HINTS ${CGAL_INCLUDE_DIRS}
@@ -189,7 +183,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(demo_framework
     PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui Qt5::Script
     ${QGLVIEWER_LIBRARIES}
-    gl_splat
     )
   if(CGAL_HEADER_ONLY)
     target_compile_definitions(demo_framework PRIVATE -DCGAL_USE_Qt5_RESOURCES)
@@ -204,7 +197,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     demo_framework
     ${CGAL_LIBRARIES}
     ${QGLVIEWER_LIBRARIES}
-    gl_splat
     Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
   add_library(scene_color_ramp SHARED Color_ramp.cpp)
   target_link_libraries(scene_color_ramp PRIVATE Qt5::Core)
@@ -224,6 +216,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_c2t3_item Scene_c2t3_item.cpp)
   add_item(scene_c3t3_item Scene_c3t3_item.cpp)
   target_link_libraries(scene_c3t3_item PUBLIC scene_polyhedron_item scene_polygon_soup_item scene_basic_objects ${TBB_LIBRARIES})
+  if(TBB_FOUND)
+    CGAL_target_use_TBB(scene_c3t3_item)
+  endif()
   add_item(scene_polyhedron_item Scene_polyhedron_item.cpp)
   add_item(scene_polyhedron_transform_item Plugins/PCA/Scene_facegraph_transform_item.cpp )
   add_item(scene_sm_transform_item Plugins/PCA/Scene_facegraph_transform_item.cpp )
@@ -231,9 +226,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp )
   add_item(scene_image_item Scene_image_item.cpp)
   add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
-  add_item(scene_mcf_poly_item Plugins/PMP/Scene_mcf_item.cpp)
-  add_item(scene_mcf_sm_item Plugins/PMP/Scene_mcf_item.cpp)
-  target_compile_definitions(scene_mcf_sm_item PUBLIC "-DUSE_SURFACE_MESH" )
 
   # special
 
@@ -278,6 +270,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       ${editionUI_FILES})
     target_link_libraries(scene_edit_polyhedron_item PUBLIC scene_polyhedron_item scene_surface_mesh_item scene_polyhedron_and_sm_item_k_ring_selection
       scene_basic_objects)
+    add_item(scene_mcf_poly_item Plugins/PMP/Scene_mcf_item.cpp)
+    add_item(scene_mcf_sm_item Plugins/PMP/Scene_mcf_item.cpp)
+    target_compile_definitions(scene_mcf_sm_item PUBLIC "-DUSE_SURFACE_MESH" )
   endif()
 
   add_item(scene_implicit_function_item Scene_implicit_function_item.cpp )
@@ -295,17 +290,16 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     include_directories(${LASLIB_INCLUDE_DIR})
     include_directories(${LASZIP_INCLUDE_DIR})
     add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
-    target_link_libraries( scene_points_with_normal_item PUBLIC gl_splat  ${LASLIB_LIBRARIES})
+    if (MSVC)
+      target_compile_definitions( scene_points_with_normal_item PUBLIC "-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS")
+    endif()
+    target_link_libraries( scene_points_with_normal_item PUBLIC ${LASLIB_LIBRARIES})
   else()
     add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
-    target_link_libraries( scene_points_with_normal_item PUBLIC gl_splat )
   endif()
   if(TBB_FOUND)
     CGAL_target_use_TBB(scene_points_with_normal_item)
   endif()
-
-  target_link_libraries( demo_framework PUBLIC gl_splat)
-
 
 
   foreach( lib 
@@ -399,10 +393,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   export(
     TARGETS
-    gl_splat
     NAMESPACE Polyhedron_
     APPEND FILE polyhedron_demo_targets.cmake)
-
   configure_file(CGAL_polyhedron_demoConfig.cmake.in  CGAL_polyhedron_demoConfig.cmake)
 #TO DO script the activation of all the plugins.
 

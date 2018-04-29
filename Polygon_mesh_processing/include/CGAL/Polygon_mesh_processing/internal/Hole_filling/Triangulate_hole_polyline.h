@@ -37,7 +37,7 @@
 #include <stack>
 #include <map>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/unordered_set.hpp>
 
 namespace CGAL {
@@ -480,7 +480,7 @@ struct Tracer_polyline_incomplete {
       }
 
       CGAL_assertion(la >= 0 && la < n);
-      CGAL_assertion(r.first < la && r.second > la);
+      CGAL_assertion( (r.first < la) && (r.second > la) );
       *out++ = OutputIteratorValueType(r.first, la, r.second);
 
       ranges.push(std::make_pair(r.first, la));
@@ -1142,7 +1142,7 @@ public:
     
     triangulate_all(P, Q, WC, std::make_pair(0,n-1), W, lambda);
 
-    if(W.get(0,n-1) == Weight::NOT_VALID()) {
+    if(W.get(0,n-1) == Weight::NOT_VALID() || n <= 2) {
       #ifndef CGAL_TEST_SUITE
       CGAL_warning(!"Returning no output. No possible triangulation is found!");
       #else

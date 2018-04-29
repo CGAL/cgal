@@ -23,13 +23,14 @@
 
 #include <CGAL/license/Triangulation.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/tss.h>
 #include <CGAL/Triangulation.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <algorithm>
 
@@ -933,5 +934,7 @@ Delaunay_triangulation<DCTraits, TDS>
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_DELAUNAY_COMPLEX_H

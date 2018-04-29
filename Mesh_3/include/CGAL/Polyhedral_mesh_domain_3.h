@@ -30,10 +30,10 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
-
-#include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/AABB_tree.h>
@@ -46,9 +46,7 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Mesh_3/Profile_counter.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/Mesh_3/properties.h>
-#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
-#include <CGAL/boost/graph/Graph_with_descriptor_with_graph_fwd.h>
+#include <CGAL/boost/graph/properties.h>
 
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
@@ -135,7 +133,7 @@ struct IGT_generator<Gt,CGAL::Tag_false>
 namespace internal { namespace Mesh_3 {
 
 template <typename Polyhedron_type,
-          bool = boost::graph_has_property<Polyhedron_type,
+          bool = CGAL::graph_has_property<Polyhedron_type,
                                            CGAL::face_index_t>::value>
 class Get_face_index_pmap {
 public:
@@ -910,5 +908,6 @@ Is_in_domain::operator()(const Point_3& p) const
 
 }  // end namespace CGAL
 
-
+#include <CGAL/enable_warnings.h>
+  
 #endif // POLYHEDRAL_MESH_TRAITS_3_H_

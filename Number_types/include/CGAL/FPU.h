@@ -121,15 +121,7 @@ extern "C" {
 double& get_static_minimin(); // Defined in Interval_arithmetic_impl.h
 #endif
 
-namespace CGAL {
-namespace internal {
-#ifdef __INTEL_COMPILER
-const double infinity = std::numeric_limits<double>::infinity();
-#else
-const double infinity = HUGE_VAL;
-#endif
-
-} // namespace internal
+namespace  CGAL {
 
 #ifdef CGAL_HEADER_ONLY
 // Defined in test_FPU_rounding_mode_impl.h

@@ -93,9 +93,9 @@ void Polyhedron_demo_point_set_average_spacing_plugin::on_actionAverageSpacing_t
 
     // Computes average spacing
     double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
-                                      points->begin_or_selection_begin(), points->end(),
-                                      points->point_map(),
-                                      nb_neighbors, Kernel());
+      points->all_or_selection_if_not_empty(),
+      nb_neighbors,
+      points->parameters());
 
     // Print result
     Kernel::Sphere_3 bsphere = points->bounding_sphere();

@@ -29,7 +29,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/iterator.h>
 
@@ -39,7 +39,7 @@
 #include <map>
 #include <boost/bimap/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/mpl/if.hpp>
 #include <CGAL/internal/Mesh_3/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>
@@ -289,6 +289,10 @@ public:
    * Returns the number of corners of c3t3
    */
   size_type number_of_vertices_in_complex() const
+  {
+    return corners_.size();
+  }
+  size_type number_of_corners() const
   {
     return corners_.size();
   }
@@ -792,5 +796,7 @@ operator>> (std::istream& is,
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_COMPLEX_3_IN_TRIANGULATION_3_H

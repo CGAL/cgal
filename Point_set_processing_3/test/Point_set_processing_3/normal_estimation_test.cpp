@@ -9,9 +9,6 @@
 //----------------------------------------------------------
 // normal_estimation_test points1.xyz points2.xyz...
 
-// With iterator debugging this testsuite takes to long and the process gets killed
-//#define _HAS_ITERATOR_DEBUGGING 0
-
 // CGAL
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
@@ -133,9 +130,10 @@ bool run_pca_estimate_normals(PointList& points, // input points + output normal
   std::cerr << "Estimates Normals Direction by PCA (k="
             << nb_neighbors_pca_normals << ")...\n";
 
-  CGAL::pca_estimate_normals<Concurrency_tag>(points.begin(), points.end(),
-                             CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type()), 
-                             nb_neighbors_pca_normals);
+  CGAL::pca_estimate_normals<Concurrency_tag>
+    (points, nb_neighbors_pca_normals,
+     CGAL::parameters::normal_map(CGAL::make_normal_of_point_with_normal_map(PointList::value_type())));
+                             
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -157,9 +155,10 @@ bool run_jet_estimate_normals(PointList& points, // input points + output normal
   std::cerr << "Estimates Normals Direction by Jet Fitting (k="
             << nb_neighbors_jet_fitting_normals << ")...\n";
 
-  CGAL::jet_estimate_normals<Concurrency_tag>(points.begin(), points.end(),
-                             CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type()), 
-                             nb_neighbors_jet_fitting_normals);
+  CGAL::jet_estimate_normals<Concurrency_tag>
+    (points, nb_neighbors_jet_fitting_normals,
+     CGAL::parameters::normal_map(CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))); 
+                             
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -246,9 +245,9 @@ bool run_mst_orient_normals(PointList& points, // input points + input/output no
   CGAL::Timer task_timer; task_timer.start();
 
   PointList::iterator unoriented_points_begin = 
-    CGAL::mst_orient_normals(points.begin(), points.end(),
-    CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type()), 
-                             nb_neighbors_mst);
+    CGAL::mst_orient_normals(points, nb_neighbors_mst,
+      CGAL::parameters::normal_map(CGAL::make_normal_of_point_with_normal_map(PointList::value_type())));
+                             
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -317,10 +316,11 @@ int main(int argc, char * argv[])
     {
       std::ifstream stream(input_filename.c_str());
       success = stream && 
-                CGAL::read_off_points_and_normals(stream,
-                                                  std::back_inserter(points),
-                                                  CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type()) 
-                                                  );
+                CGAL::read_off_points(stream,
+                                      std::back_inserter(points),
+                                      CGAL::parameters::normal_map
+                                      (CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))
+                  );
     }
     // If XYZ file format
     else if (extension == ".xyz" || extension == ".XYZ" ||
@@ -328,10 +328,11 @@ int main(int argc, char * argv[])
     {
       std::ifstream stream(input_filename.c_str());
       success = stream && 
-                CGAL::read_xyz_points_and_normals(stream,
-                                                  std::back_inserter(points),
-                                                  CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type())
-                                                  );
+                CGAL::read_xyz_points(stream,
+                                      std::back_inserter(points),
+                                      CGAL::parameters::normal_map
+                                      (CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))
+                  );
     }
     if (success)
     {

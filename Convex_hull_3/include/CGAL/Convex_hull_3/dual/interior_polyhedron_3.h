@@ -26,6 +26,7 @@
 
 #include <CGAL/license/Convex_hull_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 // LP solver to compute an interior point of a polyhedron
 #include <CGAL/QP_functions.h>
@@ -164,6 +165,8 @@ class Interior_polyhedron_3 {
 };
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_CH3_INTERIOR_POLYHEDRON_3_H
 

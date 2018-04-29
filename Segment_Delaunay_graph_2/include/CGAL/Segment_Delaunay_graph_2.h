@@ -26,6 +26,7 @@
 
 #include <CGAL/license/Segment_Delaunay_graph_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <iostream>
 #include <vector>
@@ -57,7 +58,7 @@
 #include <CGAL/assertions.h>
 
 #include <CGAL/boost/iterator/counting_iterator.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 /*
   Conventions:
@@ -710,7 +711,7 @@ public:
                           segment_indices.begin(),
                           segment_indices.end() );
     //insert non-input sites
-    std::random_shuffle( non_input_segments.begin(), non_input_segments.end() );
+    CGAL::cpp98::random_shuffle( non_input_segments.begin(), non_input_segments.end() );
     n += insert(non_input_segments.begin(),
                 non_input_segments.end(), Tag_false() );
     return n;
@@ -2030,5 +2031,6 @@ std::ostream& operator<<(std::ostream& os,
 
 #include <CGAL/Segment_Delaunay_graph_2/Segment_Delaunay_graph_2_impl.h>
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_H

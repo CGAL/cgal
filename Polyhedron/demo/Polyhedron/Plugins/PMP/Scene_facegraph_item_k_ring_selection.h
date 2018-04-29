@@ -14,6 +14,7 @@
 #include <QMouseEvent>
 #include <QMainWindow>
 #include <QObject>
+#include <CGAL/Three/Viewer_interface.h>
 
 #include <map>
 #include <queue>
@@ -204,7 +205,7 @@ public Q_SLOTS:
       // paint with mouse move event
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
       qglviewer::Camera* camera = viewer->camera();
-
+      viewer->makeCurrent();
       bool found = false;
       const qglviewer::Vec& point = camera->pointUnderPixel(paint_pos, found) - offset;
       if(found)
@@ -213,6 +214,7 @@ public Q_SLOTS:
         const qglviewer::Vec& dir = point - orig;
         poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
       }
+      viewer->doneCurrent();
       is_ready_to_paint_select = false;
     }
   }
@@ -224,7 +226,6 @@ public Q_SLOTS:
 
     qglviewer::Camera* camera = viewer->camera();
     const FaceGraph& poly = *poly_item->polyhedron();
-
     std::set<fg_face_descriptor> face_sel;
     boost::property_map<FaceGraph,CGAL::vertex_point_t>::const_type vpmap = get(boost::vertex_point, poly);
     //select all faces if their screen projection is inside the lasso
@@ -354,6 +355,7 @@ public Q_SLOTS:
       break;
     }
     contour_2d.clear();
+    qobject_cast<CGAL::Three::Viewer_interface*>(viewer)->set2DSelectionMode(false);
   }
 
   void highlight()
@@ -364,6 +366,7 @@ public Q_SLOTS:
       // highlight with mouse move event
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
       qglviewer::Camera* camera = viewer->camera();
+      viewer->makeCurrent();
       bool found = false;
       const qglviewer::Vec& point = camera->pointUnderPixel(hl_pos, found) - offset;
       if(found)
@@ -488,6 +491,7 @@ protected:
 
   bool eventFilter(QObject* target, QEvent *event)
   {
+    static QImage background;
     // This filter is both filtering events from 'viewer' and 'main window'
 
     // key events
@@ -560,7 +564,16 @@ protected:
       }
       else
       {
-        sample_mouse_path();
+        if (event->type() != QEvent::MouseMove)
+        {
+          //Create a QImage of the screen and paint the lasso on top of it
+#if QGLVIEWER_VERSION >= 0x020700
+          background = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin())->grabFramebuffer();
+#else
+          background = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin())->grabFrameBuffer();
+#endif
+        }
+        sample_mouse_path(background);
       }
     }
     //if in edit_mode and the mouse is moving without left button pressed :
@@ -610,28 +623,22 @@ protected:
     return true;
   }
 
-  void sample_mouse_path()
+  void sample_mouse_path(QImage& background)
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+    viewer->makeCurrent();
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
     contour_2d.push_back (FG_Traits::Point_2 (p.x(), p.y()));
-
     if (update_polyline ())
     {
       //update draw
-      QPainter *painter = viewer->getPainter();
       QPen pen;
       pen.setColor(QColor(Qt::green));
       pen.setWidth(3);
-      //Create a QImage of the screen and paint the lasso on top of it
-#if QGLVIEWER_VERSION >= 0x020700
-      QImage image = viewer->grabFramebuffer();
-#else
-      QImage image = viewer->grabFrameBuffer();
 
-#endif
-      painter->begin(viewer);
-      painter->drawImage(QPoint(0,0), image);
+      QImage temp(background);
+      QPainter *painter = new QPainter(&temp);
+      //painter->begin(&image);
       painter->setPen(pen);
       for(std::size_t i=0; i<polyline->size(); ++i)
       {
@@ -643,8 +650,14 @@ protected:
           }
       }
       painter->end();
+      delete painter;
+      viewer->set2DSelectionMode(true);
+      viewer->setStaticImage(temp);
+      viewer->update();
+
     }
   }
+
   void apply_path()
   {
     update_polyline ();

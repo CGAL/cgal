@@ -23,6 +23,11 @@
 
 #include <CGAL/license/Classification.h>
 
+#include <boost/shared_ptr.hpp>
+#include <map>
+
+#define CGAL_CLASSIFICATION_IMAGE_SIZE_LIMIT 100000000
+
 namespace CGAL {
 namespace Classification {
 
@@ -31,11 +36,20 @@ namespace Classification {
 template <typename Type>
 class Image
 {
+  typedef std::vector<Type> Vector;
+  typedef std::map<std::size_t, Type> Map;
+  
   std::size_t m_width;
   std::size_t m_height;
-  Type* m_raw;
+  boost::shared_ptr<Vector> m_raw;
+  boost::shared_ptr<Map> m_sparse;
+  Type m_default;
 
-
+  // Forbid using copy constructor
+  Image (const Image&)
+  {
+  }
+  
 public:
 
   Image () : m_width(0), m_height(0), m_raw (NULL)
@@ -47,50 +61,30 @@ public:
       m_height (height)
   {
     if (m_width * m_height > 0)
-      m_raw = new Type[width * height]();
-    else
-      m_raw = NULL;
+    {
+      if (m_width * m_height < CGAL_CLASSIFICATION_IMAGE_SIZE_LIMIT)
+        m_raw = boost::shared_ptr<Vector> (new Vector(m_width * m_height));
+      else
+        m_sparse = boost::shared_ptr<Map> (new Map());
+    }
   }
   
   ~Image ()
   {
-    free();
   }
 
   void free()
   {
-    if (m_raw != NULL)
-      delete[] m_raw;
-    m_raw = NULL;
+    m_raw = boost::shared_ptr<Vector>();
+    m_sparse = boost::shared_ptr<Map>();
   }
 
-  Image (const Image& other)
-    : m_width (other.width()),
-      m_height (other.height())
-
-  {
-    if (m_width * m_height > 0)
-    {
-      m_raw = new Type[m_width * m_height];
-      std::copy (other.m_raw, other.m_raw + (m_width * m_height), this->m_raw);
-    }
-    else
-      m_raw = NULL;
-  }
   Image& operator= (const Image& other)
   {
-    if (m_raw != NULL)
-      delete[] m_raw;
-
-    m_raw = NULL;
+    m_raw = other.m_raw;
+    m_sparse = other.m_sparse;
     m_width = other.width();
     m_height = other.height();
-    if (m_width * m_height > 0)
-    {
-      m_raw = new Type[m_width * m_height];
-      std::copy (other.m_raw, other.m_raw + (m_width * m_height), this->m_raw);
-    }
-    
     return *this;
   }
   
@@ -99,13 +93,25 @@ public:
 
   Type& operator() (const std::size_t& x, const std::size_t& y)
   {
-    //    return m_raw[y * m_width + x];
-    return m_raw[x * m_height + y];
+    if (m_raw == boost::shared_ptr<Vector>()) // sparse case
+    {
+      typename Map::iterator inserted = m_sparse->insert (std::make_pair (x * m_height + y, Type())).first;
+      return inserted->second;
+    }
+
+    return (*m_raw)[x * m_height + y];
   }
   const Type& operator() (const std::size_t& x, const std::size_t& y) const
   {
-    //    return m_raw[y * m_width + x];
-    return m_raw[x * m_height + y];
+    if (m_raw == boost::shared_ptr<Vector>()) // sparse case
+    {
+      typename Map::iterator found = m_sparse->find (x * m_height + y);
+      if (found != m_sparse->end())
+        return found->second;
+      return m_default;
+    }
+
+    return (*m_raw)[x * m_height + y];
   }
   
 

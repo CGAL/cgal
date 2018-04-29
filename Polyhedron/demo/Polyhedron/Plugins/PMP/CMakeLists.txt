@@ -30,6 +30,26 @@ if(EIGEN3_FOUND)
 
     polyhedron_demo_plugin(hole_filling_polyline_plugin Hole_filling_polyline_plugin)
     target_link_libraries(hole_filling_polyline_plugin PUBLIC scene_surface_mesh_item scene_polyhedron_item scene_polylines_item)
+    
+    qt5_wrap_ui( Mean_curvature_flow_skeleton_pluginUI_FILES  Mean_curvature_flow_skeleton_plugin.ui)
+    polyhedron_demo_plugin(mean_curvature_flow_skeleton_plugin Mean_curvature_flow_skeleton_plugin ${Mean_curvature_flow_skeleton_pluginUI_FILES})
+    target_link_libraries(mean_curvature_flow_skeleton_plugin PUBLIC
+        scene_polyhedron_item 
+        scene_points_with_normal_item
+        scene_polylines_item
+        scene_mcf_poly_item
+        demo_framework)
+        
+    qt5_wrap_ui( Mean_curvature_flow_skeleton_pluginUI_FILES  Mean_curvature_flow_skeleton_plugin.ui)
+    polyhedron_demo_plugin(mean_curvature_flow_skeleton_sm_plugin Mean_curvature_flow_skeleton_plugin ${Mean_curvature_flow_skeleton_pluginUI_FILES})
+    target_link_libraries(mean_curvature_flow_skeleton_sm_plugin
+      PUBLIC
+        scene_surface_mesh_item
+        scene_points_with_normal_item
+        scene_polylines_item
+        scene_mcf_sm_item
+        demo_framework)
+    target_compile_definitions(mean_curvature_flow_skeleton_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
   else()
     message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
   endif()
@@ -39,7 +59,7 @@ endif()
 
 
 polyhedron_demo_plugin(orient_soup_plugin Orient_soup_plugin)
-target_link_libraries(orient_soup_plugin PUBLIC scene_polygon_soup_item scene_polyhedron_item scene_surface_mesh_item)
+target_link_libraries(orient_soup_plugin PUBLIC scene_polygon_soup_item scene_polyhedron_item scene_surface_mesh_item scene_polylines_item scene_points_with_normal_item)
 
 
 polyhedron_demo_plugin(inside_out_plugin Inside_out_plugin)
@@ -52,27 +72,6 @@ polyhedron_demo_plugin(join_and_split_sm_plugin Join_and_split_polyhedra_plugin)
 target_link_libraries(join_and_split_sm_plugin PUBLIC scene_surface_mesh_item scene_surface_mesh_selection_item)
 target_compile_definitions(join_and_split_sm_plugin  PUBLIC "-DUSE_SURFACE_MESH")
 
-qt5_wrap_ui( Mean_curvature_flow_skeleton_pluginUI_FILES  Mean_curvature_flow_skeleton_plugin.ui)
-polyhedron_demo_plugin(mean_curvature_flow_skeleton_plugin Mean_curvature_flow_skeleton_plugin ${Mean_curvature_flow_skeleton_pluginUI_FILES})
-target_link_libraries(mean_curvature_flow_skeleton_plugin PUBLIC
-    scene_polyhedron_item 
-    scene_points_with_normal_item
-    scene_polylines_item
-    scene_mcf_poly_item
-    demo_framework)
-    
-
-
-qt5_wrap_ui( Mean_curvature_flow_skeleton_pluginUI_FILES  Mean_curvature_flow_skeleton_plugin.ui)
-polyhedron_demo_plugin(mean_curvature_flow_skeleton_sm_plugin Mean_curvature_flow_skeleton_plugin ${Mean_curvature_flow_skeleton_pluginUI_FILES})
-target_link_libraries(mean_curvature_flow_skeleton_sm_plugin
-  PUBLIC
-    scene_surface_mesh_item
-    scene_points_with_normal_item
-    scene_polylines_item
-    scene_mcf_sm_item
-    demo_framework)
-target_compile_definitions(mean_curvature_flow_skeleton_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
 
 qt5_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
@@ -110,10 +109,10 @@ polyhedron_demo_plugin(corefinement_plugin Corefinement_plugin)
 target_link_libraries(corefinement_plugin PUBLIC scene_surface_mesh_item scene_polyhedron_item)
 
 polyhedron_demo_plugin(surface_intersection_plugin Surface_intersection_plugin)
-target_link_libraries(surface_intersection_plugin PUBLIC scene_polyhedron_item scene_polylines_item)
+target_link_libraries(surface_intersection_plugin PUBLIC scene_polyhedron_item scene_polylines_item scene_points_with_normal_item)
 
 polyhedron_demo_plugin(surface_intersection_sm_plugin Surface_intersection_plugin)
-target_link_libraries(surface_intersection_sm_plugin PUBLIC scene_surface_mesh_item scene_polylines_item)
+target_link_libraries(surface_intersection_sm_plugin PUBLIC scene_surface_mesh_item scene_polylines_item scene_points_with_normal_item)
 target_compile_definitions(surface_intersection_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
 polyhedron_demo_plugin(repair_polyhedron_plugin Repair_polyhedron_plugin)

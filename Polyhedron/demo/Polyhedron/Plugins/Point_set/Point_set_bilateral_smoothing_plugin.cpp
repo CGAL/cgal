@@ -111,13 +111,10 @@ void Polyhedron_demo_point_set_bilateral_smoothing_plugin::on_actionBilateralSmo
       {
 	/* double error = */
 	CGAL::bilateral_smooth_point_set<Concurrency_tag>
-	  (points->begin_or_selection_begin(),
-	   points->end(),
-           points->point_map(),
-           points->normal_map(),
+	  (points->all_or_selection_if_not_empty(),
 	   dialog.neighborhood_size (),
-	   dialog.sharpness_angle (),
-           Kernel());
+           points->parameters().
+	   sharpness_angle(dialog.sharpness_angle ()));
       }
 
 

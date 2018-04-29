@@ -6,7 +6,6 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/Seam_mesh.h>
 
-#include <CGAL/Surface_mesh_parameterization/internal/shortest_path.h>
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/surface_mesh_parameterization.h>
 
@@ -420,9 +419,8 @@ int main(int, char**)
     const char* cone_filename = "data/fandisk.orbifold.selection.txt";
 
     // Read the cones and find the corresponding vertex_descriptor in the underlying mesh 'sm'
-    typedef std::vector<SM_vertex_descriptor>       Cones_in_smesh_container;
-    Cones_in_smesh_container cone_sm_vds;
-    SMP::internal::read_cones<SMesh>(sm, cone_filename, cone_sm_vds);
+    std::vector<SM_vertex_descriptor> cone_sm_vds;
+    SMP::read_cones<SMesh>(sm, cone_filename, std::back_inserter(cone_sm_vds));
 
     // Two property maps to store the seam edges and vertices
     SM_seam_edge_pmap seam_edge_pm = sm.add_property_map<SM_edge_descriptor, bool>("e:on_seam", false).first;
@@ -435,7 +433,7 @@ int main(int, char**)
     SM_halfedge_descriptor smhd = mesh.add_seams(cone_filename);
     if(smhd == SM_halfedge_descriptor() ) {
       std::list<SM_edge_descriptor> seam_edges;
-      SMP::internal::compute_shortest_paths_between_cones(sm, cone_sm_vds, seam_edges);
+      SMP::compute_shortest_paths_between_cones(sm, cone_sm_vds.begin(), cone_sm_vds.end(), seam_edges);
 
       // Add the seams to the seam mesh
       BOOST_FOREACH(SM_edge_descriptor e, seam_edges) {
@@ -453,11 +451,8 @@ int main(int, char**)
     }
 
     // Mark the cones in the seam mesh
-    typedef boost::unordered_map<SM_SE_vertex_descriptor, SMP::Cone_type>  Cones;
-    Cones cmap;
-    SMP::internal::locate_cones<SM_Seam_mesh,
-                                Cones_in_smesh_container,
-                                Cones>(mesh, cone_sm_vds, cmap);
+    boost::unordered_map<SM_SE_vertex_descriptor, SMP::Cone_type> cmap;
+    SMP::locate_cones(mesh, cone_sm_vds.begin(), cone_sm_vds.end(), cmap);
 
     // The 2D points of the uv parametrisation will be written into this map
     // Note that this is a halfedge property map, and that uv values

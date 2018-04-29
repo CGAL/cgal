@@ -430,7 +430,28 @@ Polyhedron_demo_c3t3_binary_io_plugin::
 try_load_a_cdt_3(std::istream& is, C3t3& c3t3)
 {
   std::cerr << "Try load a CDT_3...";
-  CGAL::set_binary_mode(is);
+  std::string s;
+  if(!(is >> s)) return false;
+  bool binary = (s == "binary");
+  if(binary) {
+    if(!(is >> s)) return false;
+  }
+  if (s != "CGAL" ||
+      !(is >> s) ||
+      s != "c3t3") 
+  {
+    return false;
+  }
+  std::getline(is, s);
+  if(s != "") {
+    if(s != std::string(" ") + CGAL::Get_io_signature<Fake_CDT_3>()()) {
+      std::cerr << "load_binary_file:"
+                << "\n  expected format: " << CGAL::Get_io_signature<Fake_CDT_3>()()
+                << "\n       got format:" << s << std::endl;
+      return false;
+    }
+  }
+  if(binary) CGAL::set_binary_mode(is);
   if(CGAL::file_input<
        Fake_CDT_3,
        C3t3::Triangulation,

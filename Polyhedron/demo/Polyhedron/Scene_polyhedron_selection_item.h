@@ -7,10 +7,8 @@
 
 #ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
-#include <CGAL/Mesh_3/properties_Surface_mesh.h>
 #else
 #include "Polyhedron_type.h"
-#include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 #endif
 #include "Scene_polyhedron_item_decorator.h"
 #include <CGAL/property_map.h>
@@ -440,6 +438,8 @@ public:
       break;
     }
   }
+
+  void select_boundary();
   void select_all_NT();
   // select all of vertex, facet or edge (use fg_vertex_descriptor, fg_face_descriptor, fg_edge_descriptor as template argument)
   template<class HandleType>
@@ -826,6 +826,7 @@ public Q_SLOTS:
   void validateMoveVertex();
   void compute_normal_maps();
   void clearHL();
+  QString toolTip() const;
 
   // slots are called by signals of polyhedron_k_ring_selector
   void selected(const std::set<fg_vertex_descriptor>& m)

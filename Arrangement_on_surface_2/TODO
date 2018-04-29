@@ -9,9 +9,9 @@
 
   - Incoorporate:
       BasicSweepLineVisitor_2.tex
-      Sweep_line_2.tex
+      Surface_sweep_2.tex
       SweepLineVisitor_2.tex
-      Basic_sweep_line_2.tex
+      Basic_surface_sweep_2.tex
      Into the documentation
 
 - Test RIC trapezoidal point locatoin
@@ -36,24 +36,24 @@
     	Trapezoidal_decomposition_2.h
     get_double()
 	Arr_lm_random_generator.h
-	Arr_point_location/Arr_lm_random_generator.h    
-    get_index() 
+	Arr_point_location/Arr_lm_random_generator.h
+    get_index()
 	Arr_circle_segment_traits_2.h
-	Arr_conic_traits_2.h    
+	Arr_conic_traits_2.h
     get_intersections()
     get_lb()
 	Td_X_trapezoid.h
 	Trapezoidal_decomposition_2.h
     get_level()
 	Arr_qdx_topology_traits_2_impl.h
-	Arr_torus_topology_traits_2_impl.h    
+	Arr_torus_topology_traits_2_impl.h
     get_lt()
 	Td_X_trapezoid.h
 	Trapezoidal_decomposition_2.h
     get_mode()
     get_node()
 	Td_X_trapezoid.h
-	Trapezoidal_decomposition_2.h    
+	Trapezoidal_decomposition_2.h
     get_originator()
     get_painter()
     get_parent()
@@ -62,10 +62,10 @@
 	Arr_trapezoid_ric_point_location.h
     get_rb()
 	Td_X_trapezoid.h
-	Trapezoidal_decomposition_2.h    
+	Trapezoidal_decomposition_2.h
     get_rt()
 	Td_X_trapezoid.h
-	Trapezoidal_decomposition_2.h    
+	Trapezoidal_decomposition_2.h
     get_size_threshold()
     	Trapezoidal_decomposition_2.h
     get_t_at_x()
@@ -108,10 +108,10 @@
     cases, the arrangement dimensions (V, E, F) must be the same ...
 
   - Add an example/test for I/O with arrangement of arcs of great circles.
-  
+
 - CORE related examples and test fail on the platforms below with a bus error
   - Darwin-8.10_g++-4.0.1_debug
-  - powerpc_Darwin-8.10_g++-4.0.1 
+  - powerpc_Darwin-8.10_g++-4.0.1
 
 - Arrangement with history is defficient in 2 ways: 1. It restricted to
   curves that do not result with (isolated) vertices, as the interface allows
@@ -133,7 +133,7 @@
   returned in arbitrary order. However, as a response to a user request for
   the edges induced by an x-monote curve, the range of edges are returned in
   order from left to right.
-  
+
   In the meantime we could disallow the insertion of curves that contain
   isolated points.
 
@@ -183,7 +183,7 @@
   value type of the input iterator to be X_monotone_curve_2 (and not the
   general Curve_2). This requires the introduction of a new visitor that
   does not call the make_x_monotone().
-  
+
 - The callback functions of the observers are const referenced. However,
   the documentation generator automatically removes the const reference when
   it generates the cods. The result is very misleading!
@@ -191,14 +191,14 @@
 - The documentation of ParameterSpaceInX_2 and ParameterSpaceInY_2 are
 missing the requirement for an operator that accepts a point. Is it really
 needed? Seems like it for isolated points.
-  
+
 - _offset_polygon() defined in Approx_offset_base_2.h has a local variable
   of type kernel. There should be an overloaded function that accepts a
   kernel as a parameter.
 
 - Make the Arr_circle_segment_traits_2 a model of the landmark concept. Need
   to add 2 required operations, which seems possible.
-  
+
 - Support Minkowski sum of a degenerate polygons (using convolution)
   * A polygon and a point
   * A polygon and a line

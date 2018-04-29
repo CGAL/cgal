@@ -25,6 +25,8 @@
 
 namespace CGAL {
 
+#include <CGAL/disable_warnings.h>
+  
 #include <CGAL/basic.h>
 
 #include <CGAL/Arithmetic_kernel.h>
@@ -226,5 +228,6 @@ public:
 
 } //namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_BITSTREAM_COEFFICIENT_KERNEL_AT_ALPHA_H

@@ -28,6 +28,8 @@
 #include <CGAL/license/Triangulation_3.h>
 
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
 
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
@@ -387,7 +389,7 @@ public:
       // Insert "num_points_seq" points sequentially
       // (or more if dim < 3 after that)
       size_t num_points_seq = (std::min)(num_points, (size_t)100);
-      while (dimension() < 3 || i < num_points_seq)
+      while (i < num_points_seq || (dimension() < 3 && i < num_points))
       {
         hint = insert(points[i], hint);
         ++i;
@@ -470,7 +472,7 @@ private:
         // Insert "num_points_seq" points sequentially
         // (or more if dim < 3 after that)
         size_t num_points_seq = (std::min)(num_points, (size_t)100);
-        while (dimension() < 3 || i < num_points_seq)
+        while (i < num_points_seq || (dimension() < 3 && i < num_points))
         {
           hint = insert(points[indices[i]], hint);
           if (hint != Vertex_handle()) hint->info() = infos[indices[i]];
@@ -2075,5 +2077,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
 } //namespace CGAL
 
 #include <CGAL/internal/Delaunay_triangulation_hierarchy_3.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_DELAUNAY_TRIANGULATION_3_H

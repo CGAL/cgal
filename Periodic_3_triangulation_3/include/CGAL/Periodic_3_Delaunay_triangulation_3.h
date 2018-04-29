@@ -34,7 +34,6 @@
 #include <CGAL/internal/Periodic_3_Delaunay_triangulation_remove_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 
-#include <algorithm>
 #include <iostream>
 #include <vector>
 #include <utility>
@@ -370,11 +369,10 @@ public:
             edge_to_delete = std::make_pair((*it)->vertex(k),(*it)->vertex(j));
           }
           Vertex_handle v_no = edge_to_delete.first;
-          sit = std::find(too_long_edges[v_no].begin(),
-              too_long_edges[v_no].end(),
-              edge_to_delete.second);
-          if(sit != too_long_edges[v_no].end()) {
-            too_long_edges[v_no].erase(sit);
+          std::list<Vertex_handle>& vl = too_long_edges[v_no];
+          sit = std::find(vl.begin(), vl.end(), edge_to_delete.second);
+          if(sit != vl.end()) {
+            vl.erase(sit);
             too_long_edge_counter--;
           }
         }
@@ -408,12 +406,12 @@ public:
           p1 = construct_point((*it)->vertex(j)->point(), get_offset(*it, j));
           p2 = construct_point((*it)->vertex(k)->point(), get_offset(*it, k));
 
+          std::list<Vertex_handle>& vl = too_long_edges[(*it)->vertex(j)];
+
           if((squared_distance(p1,p2) > edge_length_threshold)
-             && (find(too_long_edges[(*it)->vertex(j)].begin(),
-                      too_long_edges[(*it)->vertex(j)].end(),
-                      edge_to_add.second)
-                 == too_long_edges[(*it)->vertex(j)].end())) {
-            too_long_edges[(*it)->vertex(j)].push_back(edge_to_add.second);
+             && (find(vl.begin(), vl.end(), edge_to_add.second)
+                 == vl.end())) {
+            vl.push_back(edge_to_add.second);
             too_long_edge_counter++;
           }
         }
@@ -492,7 +490,7 @@ public:
       is_large_point_set = false;
 
     std::vector<Point> points(first, last);
-    std::random_shuffle (points.begin(), points.end());
+    CGAL::cpp98::random_shuffle (points.begin(), points.end());
     Cell_handle hint;
     std::vector<Vertex_handle> dummy_points, double_vertices;
     typename std::vector<Point>::iterator pbegin = points.begin();

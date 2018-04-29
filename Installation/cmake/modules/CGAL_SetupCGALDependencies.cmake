@@ -60,6 +60,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/CGAL_SetupBoost.cmake)
 #    Set to `TRUE` if the dependencies of CGAL were found.
 if(Boost_FOUND)
   set(CGAL_FOUND TRUE)
+  set_property(GLOBAL PROPERTY CGAL_FOUND TRUE)
 endif()
 
 #.rst:
@@ -107,12 +108,12 @@ function(CGAL_setup_CGAL_dependencies target)
       $<BUILD_INTERFACE:${dir}>)
   endforeach()
   target_include_directories(${target} ${keyword}
-    $<INSTALL_INTERFACE:include/CGAL>)
+    $<INSTALL_INTERFACE:include>)
 
   # Now setup compilation flags
   if(MSVC)
     target_compile_options(${target} ${keyword}
-      "-D_CRT_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_DEPRECATE;-D_CRT_SECURE_NO_WARNINGS;-D_SCL_SECURE_NO_WARNINGS"
+      "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS"
       "/fp:strict"
       "/fp:except-"
       "/wd4503"  # Suppress warnings C4503 about "decorated name length exceeded"
@@ -136,7 +137,11 @@ function(CGAL_setup_CGAL_dependencies target)
     endif()
     if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 3)
       message( STATUS "Using gcc version 4 or later. Adding -frounding-math" )
-      target_compile_options(${target} ${keyword} "-frounding-math")
+      if(CMAKE_VERSION VERSION_LESS 3.3)
+        target_compile_options(${target} ${keyword} "-frounding-math")
+      else()
+        target_compile_options(${target} ${keyword} "$<$<COMPILE_LANGUAGE:CXX>:-frounding-math>")
+      endif()
     endif()
     if ( "${GCC_VERSION}" MATCHES "^4.2" )
       message( STATUS "Using gcc version 4.2. Adding -fno-strict-aliasing" )

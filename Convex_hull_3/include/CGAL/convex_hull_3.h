@@ -26,6 +26,8 @@
 
 #include <CGAL/license/Convex_hull_3.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/algorithm.h> 
 #include <CGAL/convex_hull_2.h>
@@ -51,7 +53,7 @@
 #include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/Polyhedron_3_fwd.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 
 #include <boost/unordered_map.hpp>
@@ -63,6 +65,7 @@
 
 namespace CGAL {
 
+  
 namespace internal{  namespace Convex_hull_3{
 
 //struct to select the default traits class for computing convex hull
@@ -906,5 +909,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 }
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_CONVEX_HULL_3_H

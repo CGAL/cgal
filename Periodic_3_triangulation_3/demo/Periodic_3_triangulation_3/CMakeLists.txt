@@ -67,7 +67,7 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND TARGET Q
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS periodic_3_triangulation_3_demo)
 
   target_link_libraries(periodic_3_triangulation_3_demo PRIVATE
-    CGAL::CGAL CGAL::CGAL_Qt5 Qt5::OpenGL Qt5::Help ${QGLVIEWER_LIBRARIES})
+    CGAL::CGAL CGAL::CGAL_Qt5 Qt5::OpenGL  ${QGLVIEWER_LIBRARIES})
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(periodic_3_triangulation_3_demo)

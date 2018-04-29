@@ -129,8 +129,8 @@ private:
         return 1;
       case LEFT_TURN:
         return 2;
+      default: CGAL_assume(false);
       }
-
       return -1;
     }
 
@@ -207,6 +207,7 @@ private:
             return (Visibility_2::orientation_2(geom_traits, s2, t2, q)
                     == Visibility_2::orientation_2(geom_traits, s2, t2, s1));
         }
+        break;
       case RIGHT_TURN:
         switch (Visibility_2::orientation_2(geom_traits, s1, t1, s2)) {
         case COLLINEAR:
@@ -223,7 +224,9 @@ private:
                 == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
           else
             return true;
+        default: CGAL_assume(false);
         }
+        break;
       case LEFT_TURN:
         switch (Visibility_2::orientation_2(geom_traits, s1, t1, s2)) {
         case COLLINEAR:
@@ -240,9 +243,11 @@ private:
                 == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
           else
             return true;
+        default: CGAL_assume(false);
         }
       }
 
+      CGAL_assume(false);
       return false;
     }
 

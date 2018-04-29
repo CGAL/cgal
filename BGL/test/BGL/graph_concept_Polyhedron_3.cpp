@@ -52,14 +52,11 @@ void concept_check_polyhedron() {
 
   // null
   boost::graph_traits<Polyhedron>::null_vertex();
+  boost::graph_traits<Polyhedron>::null_halfedge();
   boost::graph_traits<Polyhedron>::null_face();
 }
 
-
-
-
-int
-main()
+int main()
 {
   concept_check_polyhedron<Polyhedron>();
 

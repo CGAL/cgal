@@ -380,7 +380,7 @@ This packages provides several predicates to be evaluated with respect to a tria
 Self intersections can be detected from a triangle mesh, by calling the predicate
 `CGAL::Polygon_mesh_processing::does_self_intersect()`.
 Additionally, the function `CGAL::Polygon_mesh_processing::self_intersections()`
-records all pairs of intersecting triangles.
+reports all pairs of intersecting triangles.
 
 \cgalFigureBegin{SelfIntersections, selfintersections.jpg}
 Detecting self-intersections on a triangle mesh.
@@ -412,6 +412,11 @@ input triangle mesh.
 \subsubsection InsideExample Inside Test Example
 \cgalExample{Polygon_mesh_processing/point_inside_example.cpp}
 
+\subsection PMPDoIntersect Intersections Detection
+Intersection tests between triangle meshes and/or polylines can be done using
+\link PMP_predicates_grp `CGAL::Polygon_mesh_processing::do_intersect()` \endlink.
+Additionally, the function `CGAL::Polygon_mesh_processing::intersecting_meshes()`
+records all pairs of intersecting meshes in a range.
 
 ****************************************
 \section PMPOrientation Orientation
@@ -429,6 +434,13 @@ As a consequence, the normal computed for each face (see Section
 \ref PMPNormalComp) is also reversed.
 
 The \ref PolygonSoupExample puts these functions at work on a polygon soup.
+
+The function `CGAL::Polygon_mesh_processing::orient()` makes each connected component
+of a closed polygon mesh outward or inward oriented.
+
+The function `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()` orients
+the connected components of a closed polygon mesh so that it bounds a volume
+(see \ref coref_def_subsec for the precise definition).
 
 
 ****************************************
@@ -456,7 +468,7 @@ with duplicated border edges.
 \cgalExample{Polygon_mesh_processing/stitch_borders_example.cpp}
 
 *******************
-<!---
+\cond
 \subsection DegenerateFaces Removing Degenerate Faces
 
 Some degenerate faces may be part of a given triangle mesh.
@@ -476,7 +488,7 @@ are removed, the connectivity is fixed, and the number of removed faces
 is output.
 
 \cgalExample{Polygon_mesh_processing/remove_degeneracies_example.cpp}
---->
+\endcond
 
 *******************
 \subsection PolygonSoups Polygon Soups

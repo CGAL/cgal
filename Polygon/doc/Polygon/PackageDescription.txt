@@ -38,6 +38,7 @@ The assertion flags for the polygons and polygon operations use
 ## Classes ##
 - `CGAL::Polygon_2<PolygonTraits_2, Container>`
 - `CGAL::Polygon_with_holes_2<PolygonTraits_2,Container>`
+- `CGAL::General_polygon_with_holes_2<General_polygon>`
 
 ## Global Functions ##
 - `CGAL::area_2()`

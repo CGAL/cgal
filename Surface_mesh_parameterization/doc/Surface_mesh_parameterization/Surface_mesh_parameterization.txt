@@ -43,7 +43,7 @@ of the mapping.
 
 The package proposes an interface for any model of the concept `FaceGraph`,
 such as the classes `Surface_mesh`, `Polyhedron_3`, `Seam_mesh`, or the mesh
-classes of OpenMesh.
+classes of <A HREF="https://www.openmesh.org">OpenMesh</A>.
 
 \remark The class `Seam_mesh` can be used to virtually cut a mesh,
 allowing to transform an input mesh in subdomain(s) that fit the

@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/measure.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -47,6 +48,8 @@
 
 namespace CGAL {
 
+namespace Polygon_mesh_processing {
+
 // workaround for area(face_range,tm) overload
 template<typename CGAL_PMP_NP_TEMPLATE_PARAMETERS, typename NP>
 class GetGeomTraits<CGAL_PMP_NP_CLASS, NP>
@@ -54,8 +57,6 @@ class GetGeomTraits<CGAL_PMP_NP_CLASS, NP>
 public:
   struct type{};
 };
-
-namespace Polygon_mesh_processing {
 
   /**
   * \ingroup measure_grp
@@ -538,5 +539,7 @@ volume(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
 
 }
 }
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_MEASURE_H

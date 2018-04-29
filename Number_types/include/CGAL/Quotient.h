@@ -91,7 +91,7 @@ class Quotient
   { Split_double<NT>()(n, num, den); }
 
   Quotient(const CGAL_int(NT) & n)
-    : num(n), den(1) {}
+    : num(n), den(NT(1)) {}
 
   template <class T>
   explicit Quotient(const T& n) : num(n), den(1) {}
@@ -403,8 +403,8 @@ quotient_cmp(const Quotient<NT>& x, const Quotient<NT>& y)
     if (diff == 0)
     {
         int msign = CGAL_NTS sign(x.den) * CGAL_NTS sign(y.den);
-        NT leftop  = x.num * y.den * msign;
-        NT rightop = y.num * x.den * msign;
+        NT leftop  = NT(x.num * y.den * msign);
+        NT rightop = NT(y.num * x.den * msign);
         return CGAL_NTS compare(leftop, rightop);
     }
     else

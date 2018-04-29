@@ -29,6 +29,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -78,7 +79,7 @@ namespace internal {
 #include <vector>
 #include <stack>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/optional.hpp>
 
 #include <CGAL/Mesh_3/utilities.h>
@@ -2001,5 +2002,7 @@ repopulate_edges_around_corner(const Vertex_handle& v, ErasedVeOutIt out)
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_PROTECT_EDGES_SIZING_FIELD_H

@@ -35,6 +35,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_torus_connected_component.cpp" )
   create_single_source_cgal_program( "test_torus_parameters.cpp" )
   create_single_source_cgal_program( "test_scene.cpp" )
+  create_single_source_cgal_program( "deprecated_test_scene.cpp" )
 
 else()
   

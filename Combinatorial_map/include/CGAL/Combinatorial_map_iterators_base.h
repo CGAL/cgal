@@ -21,6 +21,8 @@
 #ifndef CGAL_COMBINATORIAL_MAP_ITERATORS_BASE_HH
 #define CGAL_COMBINATORIAL_MAP_ITERATORS_BASE_HH 1
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Compact_container.h>
 #include <queue>
 #include <boost/mpl/if.hpp>
@@ -597,6 +599,9 @@ namespace CGAL {
   };
   //****************************************************************************
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
+
 //******************************************************************************
 #endif // CGAL_COMBINATORIAL_MAP_ITERATORS_BASE_HH
 //******************************************************************************

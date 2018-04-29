@@ -83,8 +83,8 @@ public:
   {
     const int n = dim;
 
-    const int MAX_ITER = 100;
-    static const FT EPSILON = (FT)0.00001;
+    const int max_iter = 100;
+    static const FT epsilon = (FT)0.00001;
 
     // number of entries in mat
     int nn = (n * (n+1)) / 2;
@@ -137,12 +137,12 @@ public:
 
     if(a_norm != 0.0)
     {
-      FT a_normEPS = a_norm * EPSILON;
+      FT a_normEPS = a_norm * epsilon;
       FT thr = a_norm;
 
       // rotations
       int nb_iter = 0;
-      while(thr > a_normEPS && nb_iter < MAX_ITER)
+      while(thr > a_normEPS && nb_iter < max_iter)
       {
         nb_iter++;
         FT thr_nn = thr / nn;

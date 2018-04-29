@@ -29,6 +29,9 @@
 #include <CGAL/Classification/Image.h>
 #include <CGAL/Classification/Planimetric_grid.h>
 #include <boost/algorithm/minmax_element.hpp>
+#include <CGAL/Classification/Feature_base.h>
+#include <CGAL/int.h>
+#include <boost/tuple/tuple.hpp>
 
 namespace CGAL {
 
@@ -99,7 +102,8 @@ public:
     
     for (std::size_t j = 0; j < grid.height(); j++)	
       for (std::size_t i = 0; i < grid.width(); i++)
-        Dispersion(i,j)=0;
+        if (grid.has_points(i,j))
+          Dispersion(i,j)=0;
     
     std::size_t square = (std::size_t)(0.5 * radius_neighbors / grid.resolution()) + 1;
     typename GeomTraits::Vector_3 verti (0., 0., 1.);

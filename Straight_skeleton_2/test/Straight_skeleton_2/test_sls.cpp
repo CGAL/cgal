@@ -793,7 +793,7 @@ int test_zone ( Zone& rZone )
       {
         if ( sOffsetAtEntry.size() > 0 )
         {
-          int lSize = std::distance(lTimes.begin(),lTimes.end());
+          std::ptrdiff_t lSize = std::distance(lTimes.begin(),lTimes.end());
           
           for ( std::vector<int>::const_iterator oi = sOffsetAtEntry.begin() ; oi != sOffsetAtEntry.end() ; ++ oi )
           {

@@ -269,7 +269,7 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
 #endif
 {
   internal::copy_face_graph(sm, tm,
-                            boost::graph_has_property<SourceMesh,boost::halfedge_index_t>(),
+                            CGAL::graph_has_property<SourceMesh,boost::halfedge_index_t>(),
                             v2v, h2h, f2f,
                             sm_vpm, tm_vpm);
 }

@@ -27,6 +27,7 @@
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
+#include <CGAL/disable_warnings.h>
 
 // STL headers.  
 #include <vector>
@@ -44,7 +45,7 @@ namespace CGAL {
 // Barycentric coordinates namespace.
 namespace Barycentric_coordinates {
 
-// Examples: see the User Manual here - http://doc.cgal.org/latest/Manual/index.html.
+// Examples: see the User Manual here - https://doc.cgal.org/latest/Manual/index.html.
 // [1] Reference: Weisstein, Eric W. "Barycentric Coordinates." From MathWorld--A Wolfram Web Resource. http://mathworld.wolfram.com/BarycentricCoordinates.html.
 
 /*!
@@ -262,5 +263,7 @@ template<class Traits>
 } // namespace Barycentric_coordinates
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TRIANGLE_COORDINATES_2_H

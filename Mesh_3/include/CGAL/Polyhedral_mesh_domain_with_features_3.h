@@ -30,6 +30,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -41,7 +42,6 @@
 #include <CGAL/Mesh_3/Detect_polylines_in_polyhedra.h>
 #include <CGAL/Mesh_3/Polyline_with_context.h>
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
-#include <CGAL/Mesh_3/properties_Polyhedron_3.h>
 
 #include <CGAL/enum.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -52,7 +52,7 @@
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/Default.h>
 
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/foreach.hpp>
 
 #include <string>
@@ -352,6 +352,12 @@ public:
   void detect_borders(std::vector<Polyhedron>& p);
   void detect_borders() { detect_borders(stored_polyhedra); };
 
+  // non-documented, provided to the FEniCS project
+  const std::vector<Polyhedron>& polyhedra()const
+  {
+    return stored_polyhedra;
+  }
+  
 private:
   void load_from_file(const char* filename) {
     // Create input polyhedron
@@ -602,5 +608,6 @@ add_featured_edges_to_graph(const Polyhedron& p,
 
 } //namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYHEDRAL_MESH_DOMAIN_WITH_FEATURES_3_H

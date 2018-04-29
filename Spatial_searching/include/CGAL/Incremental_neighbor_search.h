@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Spatial_searching.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <cstring>
 #include <list>
@@ -549,5 +550,7 @@ namespace CGAL {
   }; // class 
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif  // CGAL_INCREMENTAL_NEIGHBOR_SEARCH_H

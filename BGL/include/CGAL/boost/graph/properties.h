@@ -31,7 +31,29 @@
 #include <CGAL/basic.h>
 #include <string>
 
- 
+namespace CGAL{
+/// \ingroup PkgBGLProperties
+/// \brief graph_has_property is used to indicate if
+/// a model of `HalfedgeGraph` or `FaceGraph`
+/// has an internal property associated with the
+/// given `PropertyTag`.
+///
+/// It inherits from `CGAL::Tag_true` if there is a
+/// default internal property map for the
+/// corresponding property tag and from
+/// `CGAL::Tag_false` otherwise.
+///
+/// \tparam Graph a model of `HalfedgeGraph` or `FaceGraph`
+/// \tparam PropertyTag the type of a property tag
+/// referring to the property of interest.
+///
+template<typename Graph, typename PropertyTag>
+struct graph_has_property
+#ifndef DOXYGEN_RUNNING
+    : CGAL::Tag_false
+#endif
+{};
+}
 /// Boost Namespace
 namespace boost {
 
@@ -57,10 +79,6 @@ enum halfedge_external_index_t   { halfedge_external_index   } ;
 enum face_index_t            { face_index            };
 enum face_external_index_t   { face_external_index   } ;
 
-
-
-template<typename Graph, typename PropertyTag>
-struct graph_has_property : CGAL::Tag_false {};
   
 struct cgal_no_property
 {
@@ -222,6 +240,64 @@ void init_halfedge_indices(PolygonMesh& pm, HalfedgeIndexMap hid)
 }
 
 } //namespace helpers
+
+namespace internal {
+  
+  template<typename Polyhedron, typename Handle>
+struct Index_accessor
+    : boost::put_get_helper< std::size_t&, Index_accessor<Polyhedron,Handle> >
+{
+  typedef boost::lvalue_property_map_tag category;
+  typedef std::size_t&                   reference;
+  typedef std::size_t                    value_type;
+  typedef Handle                         key_type;
+
+  reference operator[](Handle h) const { return h->id(); }
+};
+
+template<typename Handle>
+struct Edge_index_accessor
+  : boost::put_get_helper< std::size_t, Edge_index_accessor<Handle> >
+{
+  typedef boost::readable_property_map_tag category;
+  typedef std::size_t                      reference;
+  typedef std::size_t                      value_type;
+  typedef Handle                           key_type;
+
+  reference operator[](Handle h) const { return h.id(); }
+};
+
+template<typename Handle, typename ValueType, typename Reference>
+struct Point_accessor
+  : boost::put_get_helper< Reference, Point_accessor<Handle, ValueType, Reference> >
+{
+  typedef boost::lvalue_property_map_tag category;
+  typedef Reference                      reference;
+  typedef ValueType                      value_type;
+  typedef Handle                         key_type;
+
+  reference operator[](Handle h) const { return h->point(); }
+};
+
+} // namespace internal
+
+// Needed by PMP::detec_features and Mesh_3
+enum vertex_feature_degree_t    { vertex_feature_degree };
+enum edge_is_feature_t          { edge_is_feature };
+
+enum vertex_time_stamp_t        { vertex_time_stamp};
+enum halfedge_time_stamp_t      { halfedge_time_stamp};
+enum face_time_stamp_t          { face_time_stamp};
+
+template <typename ID>
+struct vertex_incident_patches_t {
+  typedef ID type;
+};
+
+template <typename ID>
+struct face_patch_id_t {
+  typedef ID type;
+};
 
 } // namespace CGAL
 

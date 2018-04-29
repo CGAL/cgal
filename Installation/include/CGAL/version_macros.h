@@ -33,6 +33,11 @@
 #define CGAL_STR_STR(X) #X
 #endif
 
+#ifndef CGAL_str
+#define CGAL_xstr(s) #s
+#define CGAL_str(s) CGAL_xstr(s)
+#endif
+
 #define CGAL_VERSION_STR CGAL_STR(CGAL_VERSION)
 
 // The following macro definitions:

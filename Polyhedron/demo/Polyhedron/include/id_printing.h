@@ -85,8 +85,7 @@ void deleteIds(CGAL::Three::Viewer_interface* viewer,
                TextListItem* vitems,
                TextListItem* eitems,
                TextListItem* fitems,
-               std::vector<TextItem*>* targeted_ids,
-               bool *all_primitives_displayed)
+               std::vector<TextItem*>* targeted_ids)
 {
   TextRenderer *renderer = viewer->textRenderer();
   BOOST_FOREACH(TextItem* it, vitems->textList())
@@ -102,7 +101,6 @@ void deleteIds(CGAL::Three::Viewer_interface* viewer,
   fitems->clear();
   renderer->removeTextList(fitems);
   targeted_ids->clear();
-  *all_primitives_displayed = false;
   viewer->update();
 }
 
@@ -175,8 +173,7 @@ void compute_displayed_ids(Mesh& mesh,
                            TextListItem* vitems,
                            TextListItem* eitems,
                            TextListItem* fitems,
-                           std::vector<TextItem*>* targeted_ids,
-                           bool *all_primitives_displayed)
+                           std::vector<TextItem*>* targeted_ids)
 {
   typedef typename boost::graph_traits<Mesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
@@ -228,11 +225,11 @@ void compute_displayed_ids(Mesh& mesh,
     if(text_item->position() == point)
     {
       //hide and stop
-      deleteIds(viewer, vitems, eitems, fitems, targeted_ids, all_primitives_displayed);
+      deleteIds(viewer, vitems, eitems, fitems, targeted_ids);
       return;
     }
   }
-  deleteIds(viewer, vitems, eitems, fitems, targeted_ids, all_primitives_displayed);
+  deleteIds(viewer, vitems, eitems, fitems, targeted_ids);
   // test the midpoint of edges of the closest face
   BOOST_FOREACH(halfedge_descriptor e, halfedges_around_face(halfedge(selected_fh, mesh), mesh))
   {

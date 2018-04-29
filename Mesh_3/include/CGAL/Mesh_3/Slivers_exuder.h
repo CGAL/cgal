@@ -26,6 +26,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
@@ -39,7 +40,7 @@
 #include <algorithm>
 #include <iomanip> // std::setprecision
 #include <iostream> // std::cerr/cout
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/function_output_iterator.hpp>
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
@@ -1874,5 +1875,6 @@ check_ratios(const Sliver_values& criterion_values,
 
 } // end namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif // end CGAL_MESH_3_SLIVERS_EXUDER_H

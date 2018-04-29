@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/miscellaneous.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/Side_of_triangle_mesh/Point_inside_vertical_ray_cast.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
@@ -201,5 +202,7 @@ public:
 };
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif //CGAL_SIDE_OF_TRIANGLE_MESH_H

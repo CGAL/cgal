@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Triangulation.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/internal/Triangulation/utilities.h>
 #include <CGAL/Triangulation_data_structure.h>
@@ -36,7 +37,7 @@
 #include <CGAL/Random.h>
 
 #include <boost/iterator/filter_iterator.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 
@@ -1430,5 +1431,7 @@ operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_TRIANGULATION_H

@@ -234,7 +234,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
               // c is isolated on the negative side
               return t3r3_intersection_coplanar_aux(a,b,c,r,true,k);
 
-            case COLLINEAR:
+            default: // COLLINEAR
               // p,q,c are collinear
               if ( collinear_ordered(p,c,q) || collinear_ordered(p,q,c) )
                 return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>(c);
@@ -265,7 +265,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
               // an endpoint instead of computing an intersection)
               return t3r3_intersection_coplanar_aux(b,c,a,r,false,k);
 
-            case COLLINEAR:
+            default: // COLLINEAR
               // b,c,p,q are aligned, [p,q]&[b,c] have the same direction
               if ( collinear_ordered(p,b,c) )
                 return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>(segment(b,c));
@@ -303,7 +303,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
               // defined by the segment's supporting line.
               return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>();
 
-            case COLLINEAR:
+            default: // COLLINEAR:
               // p,q,c are collinear
               if ( collinear_ordered(p,c,q) || collinear_ordered(p,q,c) )
                 return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>(c);
@@ -325,7 +325,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
               else
                 return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>();
 
-            case COLLINEAR:
+            default: //  COLLINEAR
               // b,c,p,q are aligned, [p,q]&[c,b] have the same direction
               if ( collinear_ordered(p,c,b) )
                 return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>(segment(c,b));
@@ -357,7 +357,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
               // an endpoint instead of computing an intersection)
               return t3r3_intersection_coplanar_aux(c,a,b,r,false,k);
 
-            case COLLINEAR:
+            default: // COLLINEAR
               // a,c,p,q are aligned, [p,q]&[c,a] have the same direction
               if ( collinear_ordered(p,c,a) )
                 return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>(segment(c,a));
@@ -379,7 +379,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
               else
                 return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>();
 
-            case COLLINEAR:
+            default: // COLLINEAR
               // a,c,p,q are aligned, [p,q]&[a,c] have the same direction
               if ( collinear_ordered(p,a,c) )
                 return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>(segment(a,c));
@@ -403,7 +403,7 @@ intersection_coplanar(const typename K::Triangle_3 &t,
               else
                 return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>(segment(p,a));
 
-            case COLLINEAR:
+            default: // COLLINEAR
               // case pqc == COLLINEAR is impossible since the triangle is
               // assumed to be non flat
               CGAL_error();
@@ -498,12 +498,8 @@ intersection(const typename K::Triangle_3  &t,
           else
             return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>();
 
-        case COPLANAR:
+        default: // COPLANAR
           // The ray lie in a plane parallel to a,b,c support plane
-          return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>();
-
-        default: // should not happen.
-          CGAL_error();
           return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>();
       }
 
@@ -528,13 +524,10 @@ intersection(const typename K::Triangle_3  &t,
           // triangle's supporting plane
           return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>();
 
-        case COPLANAR:
+        default: // COPLANAR
           // The ray lie in a plane parallel to a,b,c support plane
           return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>();
 
-        default: // should not happen.
-          CGAL_error();
-          return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>();
       }
 
     case COPLANAR: // p belongs to the triangle's supporting plane
@@ -565,13 +558,9 @@ intersection(const typename K::Triangle_3  &t,
           else
             return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>();
 
-        case COPLANAR:
+        default: //  COPLANAR
           // The ray lies in the triangle supporting plane
           return intersection_coplanar(t,r,k);
-
-        default: // should not happen.
-          CGAL_error();
-          return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>();
       }
 
     default: // should not happen.

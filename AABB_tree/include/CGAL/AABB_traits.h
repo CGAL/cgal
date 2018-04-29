@@ -25,6 +25,8 @@
 
 #include <CGAL/license/AABB_tree.h>
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Default.h>
 #include <CGAL/intersections.h>
@@ -247,7 +249,7 @@ public:
   /// \bug This is not documented for now in the AABBTraits concept.
   typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
 
-  ///
+  /// Bounding box type.
   typedef typename CGAL::Bbox_3 Bounding_box;
 
   /// @}
@@ -540,5 +542,7 @@ private:
 /// @}
 
 }  // end namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_AABB_TRAITS_H_

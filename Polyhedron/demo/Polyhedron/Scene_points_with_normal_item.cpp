@@ -6,13 +6,13 @@
 #include <CGAL/Point_set_3/IO.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
-#include <CGAL/compute_average_spacing.h>
 
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
+#include <CGAL/algorithm.h>
 
 #include <QObject>
 #include <QApplication>
@@ -29,6 +29,11 @@
 #include <CGAL/boost/graph/properties_Surface_mesh.h>
 #include "Polyhedron_type.h"
 
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+#include <tbb/scalable_allocator.h>  
+#endif // CGAL_LINKED_WITH_TBB
 
 const std::size_t limit_fast_drawing = 300000; //arbitraty large value
 
@@ -143,6 +148,72 @@ struct Scene_points_with_normal_item_priv
   Scene_points_with_normal_item* item;
 };
 
+class Fill_buffers {
+
+  Point_set* point_set;
+  std::vector<CGAL_data_type>& positions_lines;
+  std::vector<CGAL_data_type>& positions_normals;
+  bool has_normals;
+  const qglviewer::Vec offset;
+  double length;
+  std::size_t size_p;
+  std::size_t offset_normal_indices;
+  
+public:
+  Fill_buffers(Point_set* point_set,
+               std::vector<CGAL_data_type>& positions_lines,
+               std::vector<CGAL_data_type>& positions_normals,
+               bool has_normals,
+               const qglviewer::Vec offset,
+               double length,
+               std::size_t offset_normal_indices = 0)
+    : point_set (point_set)
+    , positions_lines (positions_lines)
+    , positions_normals (positions_normals)
+    , has_normals (has_normals)
+    , offset (offset)
+    , length (length)
+    , offset_normal_indices (offset_normal_indices)
+  {
+    if (has_normals)
+      size_p = 6;
+    else
+      size_p = 3;
+  }
+
+#ifdef CGAL_LINKED_WITH_TBB
+  void operator()(const tbb::blocked_range<std::size_t>& r) const
+  {
+    for( std::size_t i = r.begin(); i != r.end(); ++i)
+      apply (i);
+  }
+#endif // CGAL_LINKED_WITH_TBB
+
+  void apply (std::size_t i) const
+  {
+    Point_set::const_iterator it = point_set->begin() + i;
+    const Kernel::Point_3& p = point_set->point(*it);
+    
+    positions_lines[i * size_p    ] = p.x() + offset.x;
+    positions_lines[i * size_p + 1] = p.y() + offset.y;
+    positions_lines[i * size_p + 2] = p.z() + offset.z;
+    
+    if(has_normals)
+    {
+      const Kernel::Vector_3& n = point_set->normal(*it);
+      Point_set_3<Kernel>::Point q = p + length * n;
+      positions_lines[i * size_p + 3] = q.x() + offset.x;
+      positions_lines[i * size_p + 4] = q.y() + offset.y;
+      positions_lines[i * size_p + 5] = q.z() + offset.z;
+
+      positions_normals[(i - offset_normal_indices) * 3    ] = n.x();
+      positions_normals[(i - offset_normal_indices) * 3 + 1] = n.y();
+      positions_normals[(i - offset_normal_indices) * 3 + 2] = n.z();
+    }
+  }
+};
+
+
 
 Scene_points_with_normal_item::Scene_points_with_normal_item()
     : Scene_item(Scene_points_with_normal_item_priv::NbOfVbos,Scene_points_with_normal_item_priv::NbOfVaos)
@@ -168,8 +239,11 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
         setRenderingMode(Points);
         is_selected = true;
     }
-
-    invalidateOpenGLBuffers();
+  if(d->m_points->number_of_points() < 30 )
+    d->point_Slider->setValue(5);
+  else
+    d->point_Slider->setValue(2);
+  invalidateOpenGLBuffers();
 }
 
 // Converts polyhedron to point set
@@ -182,6 +256,10 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const SMesh& input_
   d = new Scene_points_with_normal_item_priv(input_mesh, this);
   setRenderingMode(PointsPlusNormals);
   is_selected = true;
+  if(d->m_points->number_of_points() < 30 )
+    d->point_Slider->setValue(5);
+  else
+    d->point_Slider->setValue(2);
   invalidateOpenGLBuffers();
 }
 
@@ -193,6 +271,10 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& i
   d = new Scene_points_with_normal_item_priv(input_mesh, this);
   setRenderingMode(PointsPlusNormals);
   is_selected = true;
+  if(d->m_points->number_of_points() < 30 )
+    d->point_Slider->setValue(5);
+  else
+    d->point_Slider->setValue(2);
   invalidateOpenGLBuffers();
 }
 
@@ -369,14 +451,10 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
     normals.resize(0);
     colors_points.resize(0);
 
-    if(item->point_set()->number_of_points() < 30 )
-      point_Slider->setValue(5);
-    else
-      point_Slider->setValue(2);
     //Shuffle container to allow quick display random points
-    std::random_shuffle (m_points->begin(), m_points->first_selected());
+    CGAL::cpp98::random_shuffle (m_points->begin(), m_points->first_selected());
     if (m_points->nb_selected_points() != 0)
-      std::random_shuffle (m_points->first_selected(), m_points->end());
+      CGAL::cpp98::random_shuffle (m_points->first_selected(), m_points->end());
     //if item has normals, points will be one point out of two in the lines data.
     //else points will be lines and lines discarded.
     double average_spacing = 0;
@@ -384,69 +462,42 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
     double length_factor =0;
     if (item->has_normals())
     {
-
-#ifdef LINK_WITH_TBB
-      typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-      typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
-    // Store normals
-    Kernel::Sphere_3 region_of_interest = m_points->region_of_interest();
-      positions_lines.reserve(m_points->size() * 6);
-      positions_normals.reserve((m_points->size() - m_points->nb_selected_points()) * 3);
-      positions_selected_normals.reserve(m_points->nb_selected_points() * 3);
-      average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
-            m_points->begin(), m_points->end(), m_points->point_map(),
-            6);
+      // Store normals
+      Kernel::Sphere_3 region_of_interest = m_points->region_of_interest();
+      positions_lines.resize(m_points->size() * 6);
+      positions_normals.resize((m_points->size() - m_points->nb_selected_points()) * 3);
+      positions_selected_normals.resize(m_points->nb_selected_points() * 3);
+      
+      // we can't afford computing real average spacing just for display, 0.5% of bbox will do
+      average_spacing = 0.005 * item->diagonalBbox(); 
       normal_length = (std::min)(average_spacing, std::sqrt(region_of_interest.squared_radius() / 1000.));
       length_factor = 5.0/100*normal_Slider->value();
     }
     else
     {
-      positions_lines.reserve(m_points->size() * 3);
+      positions_lines.resize(m_points->size() * 3);
     }
 
-
+    Fill_buffers fill_buffers (m_points, positions_lines, positions_normals,
+                               item->has_normals(), offset, normal_length * length_factor);
+    Fill_buffers fill_buffers_2 (m_points, positions_lines, positions_selected_normals,
+                                 item->has_normals(), offset, normal_length * length_factor,
+                                 m_points->first_selected() - m_points->begin());
+     
+#ifdef CGAL_LINKED_WITH_TBB
+    tbb::parallel_for(tbb::blocked_range<size_t>(0,
+                                                 m_points->first_selected() - m_points->begin()),
+                      fill_buffers);
+    tbb::parallel_for(tbb::blocked_range<size_t>(m_points->first_selected() - m_points->begin(),
+                                                 m_points->size()),
+                      fill_buffers_2);
+#else
     for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->first_selected(); ++it)
-    {
-      const Kernel::Point_3& p = m_points->point(*it);
-      positions_lines.push_back(p.x()+offset.x);
-      positions_lines.push_back(p.y()+offset.y);
-      positions_lines.push_back(p.z()+offset.z);
-      if(item->has_normals())
-      {
-        const Kernel::Vector_3& n = m_points->normal(*it);
-        Point_set_3<Kernel>::Point q = p + normal_length * length_factor* n;
-        positions_lines.push_back(q.x()+offset.x);
-        positions_lines.push_back(q.y()+offset.y);
-        positions_lines.push_back(q.z()+offset.z);
-
-
-        positions_normals.push_back(n.x());
-        positions_normals.push_back(n.y());
-        positions_normals.push_back(n.z());
-      }
-    }
+      fill_buffers.apply (it - m_points->begin());
     for (Point_set_3<Kernel>::const_iterator it = m_points->first_selected(); it != m_points->end(); ++it)
-    {
-      const Kernel::Point_3& p = m_points->point(*it);
-      positions_lines.push_back(p.x()+offset.x);
-      positions_lines.push_back(p.y()+offset.y);
-      positions_lines.push_back(p.z()+offset.z);
-      if(item->has_normals())
-      {
-        const Kernel::Vector_3& n = m_points->normal(*it);
-        Point_set_3<Kernel>::Point q = p + normal_length * length_factor* n;
-        positions_lines.push_back(q.x()+offset.x);
-        positions_lines.push_back(q.y()+offset.y);
-        positions_lines.push_back(q.z()+offset.z);
-
-
-        positions_selected_normals.push_back(n.x());
-        positions_selected_normals.push_back(n.y());
-        positions_selected_normals.push_back(n.z());
-      }
-    }
+      fill_buffers_2.apply (it - m_points->begin());
+#endif
+    
     //The colors
     if (m_points->has_colors())
     {
@@ -596,7 +647,10 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
   bool ok = stream &&
     CGAL::read_ply_point_set (stream, *(d->m_points), &(d->m_comments)) &&
             !isEmpty();
-
+  if(d->m_points->number_of_points() < 30 )
+    d->point_Slider->setValue(5);
+  else
+    d->point_Slider->setValue(2);
   std::cerr << d->m_points->info();
 
   if (d->m_points->has_normal_map())
@@ -639,6 +693,10 @@ bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
   bool ok = stream &&
     CGAL::read_off_point_set(stream, *(d->m_points)) &&
             !isEmpty();
+  if(d->m_points->number_of_points() < 30 )
+    d->point_Slider->setValue(5);
+  else
+    d->point_Slider->setValue(2);
   invalidateOpenGLBuffers();
   return ok;
 }
@@ -664,7 +722,10 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
   bool ok = stream &&
     CGAL::read_xyz_point_set (stream, *(d->m_points)) &&
     !isEmpty();
-
+  if(d->m_points->number_of_points() < 30 )
+    d->point_Slider->setValue(5);
+  else
+    d->point_Slider->setValue(2);
   invalidateOpenGLBuffers();
   return ok;
 }
@@ -701,48 +762,11 @@ bool Scene_points_with_normal_item::supportsRenderingMode(RenderingMode m) const
     return true;
   case ShadedPoints:
   case PointsPlusNormals:
-  case Splatting:
     return has_normals();
 
   default:
     return false;
   }
-}
-
-void Scene_points_with_normal_item::drawSplats(CGAL::Three::Viewer_interface* viewer) const
-{
-  const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
- Kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
-
-   // TODO add support for selection
-   viewer->glBegin(GL_POINTS);
-   if (d->m_points->has_colors())
-     for ( Point_set_3<Kernel>::const_iterator it = d->m_points->begin(); it != d->m_points->end(); it++)
-       {
-         Point_set::Point p = d->m_points->point (*it) + offset;
-         const Point_set::Vector& n = d->m_points->normal (*it);
-         viewer->glColor4d(d->m_points->red(*it),
-                           d->m_points->green(*it),
-                           d->m_points->blue(*it),
-                           1.0);
-         viewer->glNormal3dv(&n.x());
-         viewer->glMultiTexCoord1d(GL_TEXTURE2, d->m_points->radius(*it));
-         viewer->glVertex3dv(&p.x());
-
-       }
-   else
-     for ( Point_set_3<Kernel>::const_iterator it = d->m_points->begin(); it != d->m_points->end(); it++)
-       {
-         const Point_set::Point p = d->m_points->point (*it) + offset;
-         const Point_set::Vector& n = d->m_points->normal (*it);
-         viewer->glNormal3dv(&n.x());
-         viewer->glMultiTexCoord1d(GL_TEXTURE2, d->m_points->radius(*it));
-         viewer->glVertex3dv(&p.x());
-
-       }
-     
-   viewer->glEnd();
-
 }
 
 void Scene_points_with_normal_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
@@ -974,15 +998,6 @@ QMenu* Scene_points_with_normal_item::contextMenu()
     return menu;
 }
 
-void Scene_points_with_normal_item::setRenderingMode(RenderingMode m)
-{
-    Scene_item::setRenderingMode(m);
-    if (rendering_mode==Splatting && (!d->m_points->are_radii_uptodate()))
-    {
-        computes_local_spacing(6); // default value = small
-    }
-}
-
 bool Scene_points_with_normal_item::has_normals() const { return d->m_points->has_normal_map(); }
 
 void Scene_points_with_normal_item::invalidateOpenGLBuffers()
@@ -1006,7 +1021,8 @@ void Scene_points_with_normal_item::copyProperties(Scene_item *item)
   Scene_points_with_normal_item* point_item = qobject_cast<Scene_points_with_normal_item*>(item);
   if(!point_item)
     return;
-  d->point_Slider->setValue(point_item->getPointSliderValue());
+  int value = point_item->getPointSliderValue();
+  setPointSize(value);
   if(has_normals())
     d->normal_Slider->setValue(point_item->getNormalSliderValue());
 }

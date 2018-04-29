@@ -42,6 +42,8 @@
 #  include <CGAL/CORE_Expr.h>
 #endif
 
+#include <CGAL/disable_warnings.h>
+
 // We should put these in a nested namespace and use it.
 using CGAL::compare; // for double
 using CGAL::sign;    // for double

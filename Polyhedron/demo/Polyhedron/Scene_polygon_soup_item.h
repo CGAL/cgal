@@ -108,6 +108,8 @@ public:
     typedef Kernel::Point_3 Point_3;
     typedef Polygon_soup::Points Points;
     typedef Polygon_soup::Polygons Polygons;
+    typedef Polygon_soup::Edges Edges;
+    typedef Polygon_soup::Edge Edge;
 
     Scene_polygon_soup_item();
     ~Scene_polygon_soup_item();
@@ -133,7 +135,7 @@ public:
     QString toolTip() const Q_DECL_OVERRIDE;
 
     // Indicate if rendering mode is supported
-    virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{ return ( m!=PointsPlusNormals && m!=Splatting && m!=ShadedPoints); }
+    virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{ return ( m!=PointsPlusNormals && m!=ShadedPoints); }
     // OpenGL drawing in a display list
     virtual void draw() const Q_DECL_OVERRIDE{}
     virtual void draw(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
@@ -151,6 +153,7 @@ public:
 
     const Points& points() const;
     const Polygons& polygons() const;
+    const Edges& non_manifold_edges() const;
 
 public Q_SLOTS:
     void shuffle_orientations();

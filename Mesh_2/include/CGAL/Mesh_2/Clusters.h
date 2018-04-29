@@ -30,7 +30,7 @@
 #include <CGAL/Unique_hash_map.h>
 
 #include <utility>
-#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 

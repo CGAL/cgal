@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_mesh_processing/intersection.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Visitor.h>
@@ -150,6 +151,7 @@ bool recursive_does_bound_a_volume(const TriangleMesh& tm,
  *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
+ * \see `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()`
  */
 template <class TriangleMesh, class NamedParameters>
 bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
@@ -978,5 +980,7 @@ autorefine_and_remove_self_intersections(TriangleMesh& tm)
 } // end of namespace experimental
 
 } }  // end of namespace CGAL::Polygon_mesh_processing
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_COREFINEMENT_H

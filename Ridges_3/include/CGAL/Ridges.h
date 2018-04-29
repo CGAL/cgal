@@ -28,13 +28,12 @@
 #include <map>
 
 #include <CGAL/basic.h>
-#include <CGAL/Min_sphere_d.h>
-#include <CGAL/Optimisation_d_traits_3.h>
 #include <CGAL/barycenter.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/assertions.h>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/foreach.hpp>
+#include <CGAL/Bbox_3.h>
 
 namespace CGAL {
  
@@ -356,11 +355,15 @@ Ridge_approximation(const TriangleMesh &p,
   BOOST_FOREACH(vertex_descriptor v, vertices(p)){
     points.push_back(get(vpm,v));
   }
-  
-  CGAL::Min_sphere_d<CGAL::Optimisation_d_traits_3<Kernel> > 
-    min_sphere(points.begin(), points.end());
-  squared_model_size = min_sphere.squared_radius();
-  //maybe better to use CGAL::Min_sphere_of_spheres_d ?? but need to create spheres?
+
+  Bbox_3 bb = bbox_3(points.begin(), points.end());
+  double width = bb.xmax() - bb.xmin();
+  double yw =  bb.ymax() - bb.ymin();
+  width = (std::max)(width,yw);
+  double zw =  bb.zmax() - bb.zmin();
+  width = (std::max)(width,zw);
+           
+  squared_model_size = (width*width)/4.0 ;
 
   tag_order = Ridge_order_3;
 }

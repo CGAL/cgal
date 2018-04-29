@@ -146,8 +146,6 @@ void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer) const  {
       child->drawPoints(viewer); break;
     default: break;
     }
-    if(child->renderingMode() == Splatting)
-      child->drawSplats(viewer);
   }
   already_drawn = true;
 }
@@ -210,15 +208,6 @@ void Scene_group_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
     }
   }
   already_drawn = true;
-}
-
-void Scene_group_item::drawSplats(CGAL::Three::Viewer_interface* viewer) const
-{
-  if(viewer->inDrawWithNames()) return;
-  Q_FOREACH(Scene_item* child, children) {
-    if(child->visible() && child->renderingMode() == Splatting)
-      child->drawSplats(viewer);
-  }
 }
 
 void Scene_group_item::lockChild(Scene_item *child)

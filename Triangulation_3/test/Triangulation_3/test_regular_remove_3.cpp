@@ -343,10 +343,10 @@ int main(int argc, char **argv)
     boost::int32_t seed0 = 42, seed1 = 43, seed2 = 42, seed3 = 42;
 
     // You can also pass seeds on the command line.
-    if (argc > 1) std::sscanf (argv[1], "%d", &seed0);
-    if (argc > 2) std::sscanf (argv[2], "%d", &seed1);
-    if (argc > 3) std::sscanf (argv[3], "%d", &seed2);
-    if (argc > 4) std::sscanf (argv[4], "%d", &seed3);
+    if (argc > 1) { std::istringstream iss(argv[1]); iss >>seed0; }
+    if (argc > 2) { std::istringstream iss(argv[2]); iss >>seed1; }
+    if (argc > 3) { std::istringstream iss(argv[3]); iss >>seed2; }
+    if (argc > 4) { std::istringstream iss(argv[4]); iss >>seed3; }
     
     Cls T;
     point_set points;

@@ -33,6 +33,7 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/Point_3.h>
 
 namespace CGAL {
 

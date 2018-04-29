@@ -30,6 +30,8 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Default_diagonalize_traits.h>
 #include <CGAL/centroid.h>
+#include <CGAL/squared_distance_3.h>
+#include <CGAL/array.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
@@ -111,6 +113,44 @@ private:
   };
 #endif
 
+  template <typename ClusterRange, typename PointMap, typename DiagonalizeTraits>
+  class Compute_clusters_eigen_values
+  {
+    Local_eigen_analysis& m_eigen;
+    const ClusterRange& m_input;
+    PointMap m_point_map;
+    
+  public:
+    
+    Compute_clusters_eigen_values (Local_eigen_analysis& eigen,
+                                   const ClusterRange& input,
+                                   PointMap point_map)
+      : m_eigen (eigen), m_input (input), m_point_map (point_map)
+    { }
+
+#ifdef CGAL_LINKED_WITH_TBB
+    void operator()(const tbb::blocked_range<std::size_t>& r) const
+    {
+      for (std::size_t i = r.begin(); i != r.end(); ++ i)
+        apply (i);
+    }
+#endif
+
+    inline void apply (std::size_t i) const
+    {
+      const typename ClusterRange::value_type& cluster = m_input[i];
+
+      std::vector<typename PointMap::value_type> points;
+      for (std::size_t j = 0; j < cluster.size(); ++ j)
+        points.push_back (get(m_point_map, cluster[j]));
+
+      m_eigen.compute<typename PointMap::value_type,
+                      DiagonalizeTraits> (i, typename PointMap::value_type(0.,0.,0.), points);
+    }
+
+  };
+
+  
   typedef CGAL::cpp11::array<float, 3> float3;
   std::vector<float3> m_eigenvalues;
   std::vector<float> m_sum_eigenvalues;
@@ -219,6 +259,62 @@ public:
     m_mean_range /= input.size();
   }
 
+  // Experimental feature, not used officially
+  /// \cond SKIP_IN_MANUAL
+  struct Input_is_clusters { };
+  
+  template <typename ClusterRange,
+            typename PointMap,
+#if defined(DOXYGEN_RUNNING)
+            typename ConcurrencyTag,
+#elif defined(CGAL_LINKED_WITH_TBB)
+            typename ConcurrencyTag = CGAL::Parallel_tag,
+#else
+            typename ConcurrencyTag = CGAL::Sequential_tag,
+#endif
+#if defined(DOXYGEN_RUNNING)
+            typename DiagonalizeTraits>
+#else
+            typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float, 3> >
+#endif
+  Local_eigen_analysis (const Input_is_clusters&,
+                        const ClusterRange& input,
+                        PointMap point_map,
+                        const ConcurrencyTag& = ConcurrencyTag(),
+                        const DiagonalizeTraits& = DiagonalizeTraits())
+  {
+    m_eigenvalues.resize (input.size());
+    m_sum_eigenvalues.resize (input.size());
+    m_centroids.resize (input.size());
+    m_smallest_eigenvectors.resize (input.size());
+#ifdef CGAL_CLASSIFICATION_EIGEN_FULL_STORAGE
+    m_middle_eigenvectors.resize (input.size());
+    m_largest_eigenvectors.resize (input.size());
+#endif
+    
+    m_mean_range = 0.;
+
+    Compute_clusters_eigen_values<ClusterRange, PointMap, DiagonalizeTraits>
+    f(*this, input, point_map);
+
+    
+#ifndef CGAL_LINKED_WITH_TBB
+    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                               "Parallel_tag is enabled but TBB is unavailable.");
+#else
+    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+    {
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, input.size ()), f);
+    }
+    else
+#endif
+    {
+      for (std::size_t i = 0; i < input.size(); ++ i)
+        f.apply (i);
+    }
+  }
+  /// \endcond
+
   /*!
     \brief Returns the estimated unoriented normal vector of the point at position `index`.
     \tparam GeomTraits model of \cgal Kernel.
@@ -270,21 +366,21 @@ private:
       
     if (neighbor_points.size() == 0)
     {
-      Eigenvalues v = {{ 0.f, 0.f, 0.f }};
+      Eigenvalues v = make_array( 0.f, 0.f, 0.f );
       m_eigenvalues[index] = v;
-      m_centroids[index] = {{ float(query.x()), float(query.y()), float(query.z()) }};
-      m_smallest_eigenvectors[index] = {{ 0.f, 0.f, 1.f }};
+      m_centroids[index] = make_array(float(query.x()), float(query.y()), float(query.z()) );
+      m_smallest_eigenvectors[index] = make_array( 0.f, 0.f, 1.f );
 #ifdef CGAL_CLASSIFICATION_EIGEN_FULL_STORAGE
-      m_middle_eigenvectors[index] = {{ 0.f, 1.f, 0.f }}; 
-      m_largest_eigenvectors[index] = {{ 1.f, 0.f, 0.f }};
+      m_middle_eigenvectors[index] = make_array( 0.f, 1.f, 0.f );
+      m_largest_eigenvectors[index] = make_array( 1.f, 0.f, 0.f );
 #endif
       return;
     }
 
     Point centroid = CGAL::centroid (neighbor_points.begin(), neighbor_points.end());
-    m_centroids[index] = {{ float(centroid.x()), float(centroid.y()), float(centroid.z()) }};
+    m_centroids[index] = make_array( float(centroid.x()), float(centroid.y()), float(centroid.z()) );
     
-    CGAL::cpp11::array<float, 6> covariance = {{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f }};
+    CGAL::cpp11::array<float, 6> covariance = make_array( 0.f, 0.f, 0.f, 0.f, 0.f, 0.f );
       
     for (std::size_t i = 0; i < neighbor_points.size(); ++ i)
     {
@@ -297,10 +393,10 @@ private:
       covariance[5] += float(d.z () * d.z ());
     }
 
-    CGAL::cpp11::array<float, 3> evalues = {{ 0.f, 0.f, 0.f }};
-    CGAL::cpp11::array<float, 9> evectors = {{ 0.f, 0.f, 0.f,
+    CGAL::cpp11::array<float, 3> evalues = make_array( 0.f, 0.f, 0.f );
+    CGAL::cpp11::array<float, 9> evectors = make_array( 0.f, 0.f, 0.f,
                                                0.f, 0.f, 0.f,
-                                               0.f, 0.f, 0.f }};
+                                               0.f, 0.f, 0.f );
 
     DiagonalizeTraits::diagonalize_selfadjoint_covariance_matrix
       (covariance, evalues, evectors);
@@ -311,11 +407,11 @@ private:
       for (std::size_t i = 0; i < 3; ++ i)
         evalues[i] = evalues[i] / sum;
     m_sum_eigenvalues[index] = float(sum);
-    m_eigenvalues[index] = {{ float(evalues[0]), float(evalues[1]), float(evalues[2]) }};
-    m_smallest_eigenvectors[index] = {{ float(evectors[0]), float(evectors[1]), float(evectors[2]) }};
+    m_eigenvalues[index] = make_array( float(evalues[0]), float(evalues[1]), float(evalues[2]) );
+    m_smallest_eigenvectors[index] = make_array( float(evectors[0]), float(evectors[1]), float(evectors[2]) );
 #ifdef CGAL_CLASSIFICATION_EIGEN_FULL_STORAGE
-    m_middle_eigenvectors[index] = {{ float(evectors[3]), float(evectors[4]), float(evectors[5]) }};
-    m_largest_eigenvectors[index] = {{ float(evectors[6]), float(evectors[7]), float(evectors[8]) }};
+    m_middle_eigenvectors[index] = make_array( float(evectors[3]), float(evectors[4]), float(evectors[5]) );
+    m_largest_eigenvectors[index] = make_array( float(evectors[6]), float(evectors[7]), float(evectors[8]) );
 #endif
   }
 

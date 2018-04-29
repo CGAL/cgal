@@ -52,6 +52,12 @@
 /// \defgroup PMP_detect_features_grp Feature Detection Functions
 /// Functions to detect sharp edges and surface patches of polygon meshes.
 /// \ingroup PkgPolygonMeshProcessing
+
+/// \defgroup PMP_predicates_grp Intersection Detection Functions
+/// Functions to detect intersections.
+/// Note that those functions will be exact as long as the underlying do-intersect predicates used are exact.
+/// In practice, it means that the 3D point type used must come from a \cgal kernel with exact predicates.
+/// \ingroup PkgPolygonMeshProcessing
 /*!
 \addtogroup PkgPolygonMeshProcessing
  
@@ -104,11 +110,15 @@ and provides a list of the parameters that are used in this package.
 ## Predicate Functions ##
 - `CGAL::Polygon_mesh_processing::does_self_intersect()`
 - `CGAL::Polygon_mesh_processing::self_intersections()`
+- \link PMP_predicates_grp `CGAL::Polygon_mesh_processing::do_intersect()` \endlink
+- `CGAL::Polygon_mesh_processing::intersecting_meshes()`
 
 ## Orientation Functions ##
 - `CGAL::Polygon_mesh_processing::is_outward_oriented()`
 - `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
+- `CGAL::Polygon_mesh_processing::orient()`
+- `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()`
 
 ## Combinatorial Repairing Functions ##
 - \link PMP_repairing_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink

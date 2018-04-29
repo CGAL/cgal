@@ -71,7 +71,7 @@ public:
 
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
-    return (m != Gouraud && m!=PointsPlusNormals && m!=Splatting && m!=ShadedPoints); // CHECK THIS!
+    return (m != Gouraud && m!=PointsPlusNormals && m!=ShadedPoints); // CHECK THIS!
   }
 
   void draw() const {

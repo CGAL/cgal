@@ -220,11 +220,13 @@ typedef boost::associative_property_map<Seam_edge_uhm>              Seam_edge_pm
 typedef boost::associative_property_map<Seam_vertex_uhm>            Seam_vertex_pmap;
 
 typedef CGAL::Seam_mesh<Base_face_graph,
-Seam_edge_pmap, Seam_vertex_pmap>                                   Seam_mesh;
+                        Seam_edge_pmap, Seam_vertex_pmap>           Seam_mesh;
 
 typedef boost::graph_traits<Seam_mesh>::vertex_descriptor           s_vertex_descriptor;
 typedef boost::graph_traits<Seam_mesh>::halfedge_descriptor         s_halfedge_descriptor;
 typedef boost::graph_traits<Seam_mesh>::face_descriptor             s_face_descriptor;
+
+typedef boost::graph_traits<Seam_mesh>::edges_size_type             s_edges_size_type;
 
 typedef boost::unordered_set<boost::graph_traits<Base_face_graph>::
 face_descriptor>                                                    Component;
@@ -317,7 +319,7 @@ uv = graph->add_property_map<halfedge_descriptor,std::pair<float, float> >("h:uv
     }
   }
 
-  int number_of_components()const{return components->size();}
+  int number_of_components()const{return static_cast<int>(components->size());}
   int current_component()const{return m_current_component;}
   void set_current_component(int n){m_current_component = n;}
 
@@ -383,9 +385,27 @@ public:
     autoConnectActions();
     Q_FOREACH(QAction *action, _actions)
       action->setProperty("subMenuName",
-                          "Triangulated Surface Mesh Parameterization");
-    dock_widget = new QDockWidget("UVMapping", mw);
+                    #ifdef USE_SURFACE_MESH
+                          "Triangulated Surface Mesh Parameterization"
+                    #else
+                          "Triangulated Surface Mesh Parameterization for Polyhedron"
+                    #endif
+                          );
+    dock_widget = new QDockWidget(
+      #ifdef USE_SURFACE_MESH
+          "UVMapping for Surface Mesh"
+      #else
+          "UVMapping for Polyhedron"
+      #endif
+          , mw);
     ui_widget.setupUi(dock_widget);
+    dock_widget->setWindowTitle(tr(
+                              #ifdef USE_SURFACE_MESH
+                                  "UVMapping for Surface Mesh"
+                              #else
+                                  "UVMapping for Polyhedron"
+                              #endif
+                                  ));
     graphics_scene = new QGraphicsScene(dock_widget);
     ui_widget.graphicsView->setScene(graphics_scene);
     ui_widget.graphicsView->setRenderHints(QPainter::Antialiasing);
@@ -748,7 +768,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   }
 #endif
   Seam_mesh sMesh(tMesh, seam_edge_pm, seam_vertex_pm);
-  sMesh.set_seam_edges_number(seam_edges.size());
+  sMesh.set_seam_edges_number(static_cast<s_edges_size_type>(seam_edges.size()));
 
   // The parameterized values
   UV_uhm uv_uhm;
@@ -948,12 +968,8 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       Parameterizer parameterizer(orb);
 
       // mark cones in the seam mesh
-      typedef boost::unordered_map<s_vertex_descriptor, SMP::Cone_type>  Cones;
-      Cones cmap;
-
-      if(!SMP::internal::locate_unordered_cones<Seam_mesh,
-                                                boost::unordered_set<T_vertex_descriptor>,
-                                                Cones>(sMesh, unordered_cones, cmap))
+      boost::unordered_map<s_vertex_descriptor, SMP::Cone_type> cmap;
+      if(!SMP::locate_unordered_cones(sMesh, unordered_cones.begin(), unordered_cones.end(), cmap))
         return;
 
       // vimap and uvmap

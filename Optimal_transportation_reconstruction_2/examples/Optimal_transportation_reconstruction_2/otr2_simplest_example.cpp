@@ -1,5 +1,5 @@
 // Simplest example for Optimal_transportation_reconstruction_2, with no mass
-// attributes for the input points
+// attributes for the input points and no Wasserstein tolerance
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/point_generators_2.h>
