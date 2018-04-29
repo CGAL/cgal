@@ -287,6 +287,7 @@ namespace internal {
 
     typedef typename boost::property_map<
       PM, CGAL::dynamic_halfedge_property_t<Halfedge_status> >::type Halfedge_status_pmap;
+    typedef boost::unordered_set<edge_descriptor> Edge_is_constrained_set;
 
   public:
     Incremental_remesher(PolygonMesh& pmesh
@@ -313,6 +314,13 @@ namespace internal {
                                   pmesh);
       BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh_))
         put(halfedge_status_pmap_, h, MESH);
+
+      /// \todo the following is not working in case the default map is passed (we need to have a way to detect it)
+      BOOST_FOREACH(edge_descriptor e, edges(pmesh))
+      {
+        if ( get(ecmap_, e) )
+          edge_is_constrained_set_.insert(e);
+      }
 
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
     }
@@ -413,6 +421,7 @@ namespace internal {
         Point refinement_point = this->midpoint(he);
         halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
         CGAL_assertion(he == next(hnew, mesh_));
+        if (edge_is_constrained_set_.count(edge(he, mesh_))!=0) edge_is_constrained_set_.insert(edge(hnew, mesh_));
         ++nb_splits;
 
         //move refinement point
@@ -511,6 +520,7 @@ namespace internal {
         Point refinement_point = this->midpoint(he);
         halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
         CGAL_assertion(he == next(hnew, mesh_));
+        if (edge_is_constrained_set_.count(edge(he, mesh_))!=0) edge_is_constrained_set_.insert(edge(hnew, mesh_));
         ++nb_splits;
 
         //move refinement point
@@ -1911,8 +1921,7 @@ private:
     {
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
       {
-        if (is_on_patch_border(halfedge(e, mesh_))
-          || is_on_patch_border(opposite(halfedge(e, mesh_), mesh_)))
+        if (edge_is_constrained_set_.count(e))
           put(ecmap_, e, true);
         else
           put(ecmap_, e, false);
@@ -1929,6 +1938,7 @@ private:
     Triangle_list input_triangles_;
     Patch_id_list input_patch_ids_;
     Halfedge_status_pmap halfedge_status_pmap_;
+    Edge_is_constrained_set edge_is_constrained_set_;
     bool protect_constraints_;
     FacePatchMap patch_ids_map_;
     EdgeIsConstrainedMap ecmap_;
