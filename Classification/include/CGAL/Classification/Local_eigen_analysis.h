@@ -158,19 +158,17 @@ private:
   };
 #endif
   
-  template <typename ClusterRange, typename PointMap, typename DiagonalizeTraits>
+  template <typename ClusterRange, typename DiagonalizeTraits>
   class Compute_clusters_eigen_values
   {
     Local_eigen_analysis& m_eigen;
     const ClusterRange& m_input;
-    PointMap m_point_map;
     
   public:
     
     Compute_clusters_eigen_values (Local_eigen_analysis& eigen,
-                                   const ClusterRange& input,
-                                   PointMap point_map)
-      : m_eigen (eigen), m_input (input), m_point_map (point_map)
+                                   const ClusterRange& input)
+      : m_eigen (eigen), m_input (input)
     { }
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -183,14 +181,15 @@ private:
 
     inline void apply (std::size_t i) const
     {
-      const typename ClusterRange::value_type& cluster = m_input[i];
+      typedef typename ClusterRange::value_type Cluster;
+      typedef typename Cluster::Item Item;
+      const Cluster& cluster = m_input[i];
 
-      std::vector<typename PointMap::value_type> points;
+      std::vector<typename ClusterRange::value_type::Item> points;
       for (std::size_t j = 0; j < cluster.size(); ++ j)
-        points.push_back (get(m_point_map, cluster[j]));
+        points.push_back (cluster[j]);
 
-      m_eigen.compute<typename PointMap::value_type,
-                      DiagonalizeTraits> (i, typename PointMap::value_type(0.,0.,0.), points);
+      m_eigen.compute<Item, DiagonalizeTraits> (i, Item(0.,0.,0.), points);
     }
 
   };
@@ -412,9 +411,6 @@ public:
     \tparam ClusterRange model of `ConstRange`. Its iterator type is
     `RandomAccessIterator` and its value type is the key type of
     `PointMap`.
-    \tparam PointMap model of `ReadablePropertyMap` whose key
-    type is the value type of the iterator of `PointRange` and value type
-    is `CGAL::Point_3`.
     \tparam ConcurrencyTag enables sequential versus parallel
     algorithm. Possible values are `Parallel_tag` (default value is %CGAL
     is linked with TBB) or `Sequential_tag` (default value otherwise).
@@ -429,7 +425,6 @@ public:
     \param neighbor_query object used to access neighborhoods of points.
   */
   template <typename ClusterRange,
-            typename PointMap,
 #if defined(DOXYGEN_RUNNING)
             typename ConcurrencyTag,
 #elif defined(CGAL_LINKED_WITH_TBB)
@@ -443,7 +438,6 @@ public:
             typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float, 3> >
 #endif
   static Local_eigen_analysis create_from_point_clusters (const ClusterRange& input,
-                                                          PointMap point_map,
                                                           const ConcurrencyTag& = ConcurrencyTag(),
                                                           const DiagonalizeTraits& = DiagonalizeTraits())
   {
@@ -461,8 +455,8 @@ public:
     
     out.m_content->mean_range = 0.;
 
-    Compute_clusters_eigen_values<ClusterRange, PointMap, DiagonalizeTraits>
-    f(out, input, point_map);
+    Compute_clusters_eigen_values<ClusterRange, DiagonalizeTraits>
+    f(out, input);
 
     
 #ifndef CGAL_LINKED_WITH_TBB
