@@ -97,91 +97,7 @@ void evolution(Matrix& R, Matrix& points, std::size_t generations) // todo: poin
 }
 
 
-
-
-
-
-template <typename Simplex>
-void visualize_obb(Simplex data_points, std::string filename)
-{
-
-  typedef CGAL::Simple_cartesian<double> K;
-  typedef K::Point_3 Point;
-  typedef CGAL::Surface_mesh<Point> Mesh;
-
-  // Simplex -> std::vector
-  std::vector<Point> points;
-
-  for(int i = 0; i < data_points.rows(); ++i)
-  {
-    Point p(data_points(i, 0), data_points(i, 1), data_points(i, 2));
-    points.push_back(p);
-  }
-
-
-  CGAL::Bbox_3 bbox;
-  bbox = bbox_3(points.begin(), points.end());
-  K::Iso_cuboid_3 ic(bbox);
-
-  Mesh mesh;
-  CGAL::make_hexahedron(ic[0], ic[1], ic[2], ic[3], ic[4], ic[5], ic[6], ic[7], mesh);
-
-  std::ofstream out(filename);
-  out << mesh;
-  out.close();
-
-
-}
-
-template <typename SurfaceMesh, typename Matrix>
-void find_and_rotate_aabb(SurfaceMesh& sm, Matrix& R, Matrix& OBB)
-{
-  // get vector<points>
-  typedef typename boost::property_map<SurfaceMesh, boost::vertex_point_t>::const_type Vpm;
-  typedef typename boost::property_traits<Vpm>::value_type Point;
-  typedef typename boost::graph_traits<SurfaceMesh>::vertex_descriptor vertex_descriptor;
-  Vpm vpm = get(boost::vertex_point, sm);
-
-  std::vector<Point> points;
-  points.resize(vertices(sm).size());
-  std::size_t i = 0;
-  for(vertex_descriptor v : vertices(sm))
-  {
-    Point p = get(vpm, v);
-    points[i] = p;
-    ++i;
-  }
-
-  CGAL_assertion(points.size() == vertices(sm).size());
-
-
-  // get AABB
-  typedef CGAL::Simple_cartesian<double> K;
-  CGAL::Bbox_3 bbox;
-  bbox = bbox_3(points.begin(), points.end());
-  K::Iso_cuboid_3 ic(bbox);
-
-
-
-  // rotate AABB -> OBB
-  Matrix aabb(8,3); //hexahedron
-  for(int i = 0; i < 8; ++i)
-  {
-    aabb(i, 0) = ic[i].x();
-    aabb(i, 1) = ic[i].y();
-    aabb(i, 2) = ic[i].z();
-  }
-
-
-
-  OBB = aabb * R.transpose();
-  CGAL_assertion(OBB.cols() == aabb.cols());
-  CGAL_assertion(OBB.rows() == aabb.rows());
-
-  //std::cout << OBB << std::endl;
-}
-
-
+// works on matrices only
 template <typename Matrix>
 void post_processing(Matrix& points, Matrix& R, Matrix& obb)
 {
@@ -221,11 +137,15 @@ void post_processing(Matrix& points, Matrix& R, Matrix& obb)
 }
 
 
-
+/// @param points point coordinates of the input mesh
+/// @param obb_points the 8 points of the obb.
 template <typename Point>
 void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points)
 {
   CGAL_assertion(points.size() >= 3);
+
+  if(obb_points.size() != 8) // temp sanity until the API is decided
+    obb_points.resize(8);
   CGAL_assertion(obb_points.size() == 8);
 
   // points: vector -> matrix
@@ -257,8 +177,7 @@ void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points)
 
 }
 
-
-
+// it is called after post processing
 template <typename Matrix>
 void matrix_to_mesh_and_draw(Matrix& data_points, std::string filename)
 {

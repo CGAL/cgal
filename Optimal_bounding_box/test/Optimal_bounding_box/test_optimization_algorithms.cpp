@@ -275,7 +275,7 @@ void rotate_tetrahedron(const char* fname, const char* Rname)
   std::ifstream input_R(Rname);
   double x, y, z;
   std::size_t i = 0;
-  while (input_R >> x >> y >> z)
+  while (input_R >> x >> y >> z) // not safe, but it's going away
   {
     R(i, 0) = x;
     R(i, 1) = y;
@@ -289,11 +289,6 @@ void rotate_tetrahedron(const char* fname, const char* Rname)
   MatrixXf points;
   sm_to_matrix(mesh, points);
 
-  // just rotate once
-  //MatrixXf rotated_points = points * R.transpose();
-  //CGAL::Optimal_bounding_box::visualize_obb(rotated_points, "data/rotated_points_benchmark.off");
-
-
   // postprocessing
   MatrixXf obb(8, 3);
   CGAL::Optimal_bounding_box::post_processing(points, R, obb);
@@ -306,6 +301,7 @@ void rotate_tetrahedron(const char* fname, const char* Rname)
 
 int main()
 {
+
   test_population();
   test_nelder_mead();
   test_genetic_algorithm();
@@ -313,7 +309,7 @@ int main()
 
   test_reference_tetrahedron("data/reference_tetrahedron.off");
   test_long_tetrahedron("data/long_tetrahedron.off");
-  rotate_tetrahedron("data/random_tetra.off", "data/rotation.dat");
+  rotate_tetrahedron("data/random_unit_tetra.off", "data/rotation.dat");
 
 
 
