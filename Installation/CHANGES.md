@@ -1,7 +1,6 @@
 Release History
 ===============
 
-
 Release 4.13
 ------------
 
@@ -28,6 +27,10 @@ Release date: September 2018
 -   The concepts `InterpolationTraits` and `GradientFittingTraits` have been updated
     to reflect the real needs of the code (some types and operators were used
     in the code but did not appear in the concepts).
+
+### Polygon Mesh Processing
+-   Added a function to apply a CGAL::Aff_transformation_3 to a mesh : 
+    - `CGAL::Polygon_mesh_processing::transform()`
 
 Release 4.12
 ------------
@@ -179,9 +182,6 @@ Release date: April 2018
     -   `CGAL::Polygon_mesh_processing::detect_sharp_edges()`
     -   `CGAL::Polygon_mesh_processing::detect_vertex_incident_patches()`
     -   `CGAL::Polygon_mesh_processing::sharp_edges_segmentation()`
-
--   Added a function to apply a CGAL::Aff_transformation_3 to a mesh : 
-    - `CGAL::Polygon_mesh_processing::transform()`
 
 ### Point Set Shape Detection
 
