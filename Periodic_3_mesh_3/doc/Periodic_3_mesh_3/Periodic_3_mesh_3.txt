@@ -199,15 +199,17 @@ Illustration in 2D (cut view) of a domain defined by an implicit function.
 Any value outside of the canonical cube is unused.
 \cgalFigureEnd
 
-For the resulting mesh to make sense, the input domain should behave
-"nicely" at the border of the canonical cube. For example, the isovalues of an
-implicit function should be continuous and without intersections.
-\cgalFigureRef{Periodic_3_mesh_3ContinuityIssue}
+Note also that it is the responsability of the user to provide an input function
+whose isovalues are <em>periodicially</em> continuous and without intersections.
+\cgalFigureRef{Periodic_3_mesh_3ContinuityIssue} is an example of a bad choice
+of input function and canonical cube: there is no continuity of the isovalues
+at the border of the canonical cube. In such configuration, the mesher might
+or might not finish and the result is likely to not be non-manifold and to
+contain self-intersections.
 
 \cgalFigureBegin{Periodic_3_mesh_3ContinuityIssue, periodicity_issue.svg}
 Illustration in 2D (cut view) of a domain defined by an implicit function.
-Note that the zero isovalue of the implicit function restricted to the canonical cube
-does not form a closed curve.
+The zero isovalue of the implicit function does not form a continuous curve.
 \cgalFigureEnd
 
 \subsection Periodic_3_mesh_3OutputMesh Output Mesh
