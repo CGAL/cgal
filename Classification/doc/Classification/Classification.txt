@@ -29,7 +29,7 @@ Organization of the package.
 
 This package is designed to be easily extended by users: more specifically, features and labels can be defined by users to handle any data they need to classify.
 
-Currently, \cgal only provides data structures to handle classification of point sets.
+Currently, \cgal provides data structures to handle classification of point sets, surfaces meshes and clusters.
 
 \section Classification_structures Data Structures
 
@@ -40,7 +40,8 @@ Currently, \cgal only provides data structures to handle classification of point
 \cgal provides the following structures:
 
 - [Point_set_neighborhood](@ref CGAL::Classification::Point_set_neighborhood) stores spatial searching structures and provides adapted queries for points;
-- [Local_eigen_analysis](@ref CGAL::Classification::Local_eigen_analysis) precomputes covariance matrices on local neighborhoods of points and stores the associated eigenvectors and eigenvalues;
+- [Mesh_neighborhood](@ref CGAL::Classification::Mesh_neighborhood) provides adapted queries for surface meshes;
+- [Local_eigen_analysis](@ref CGAL::Classification::Local_eigen_analysis) precomputes covariance matrices on local neighborhoods of points, clusters of points or local neighborhoods of triangles and stores the associated eigenvectors and eigenvalues;
 - [Planimetric_grid](@ref CGAL::Classification::Planimetric_grid) is a 2D grid used for digital terrain modeling.
 
 Most of these features depend on a scale parameter. \cgal provides a method to estimate the average spacing based on a number of neighbors (see [CGAL::compute_average_spacing()](@ref compute_average_spacing)), which usually provides satisfying results in the absence of noise. In the presence of noise, [CGAL::estimate_global_range_scale()](@ref estimate_global_range_scale) provides an estimation of the smallest scale such that the point set has the local dimension of a surface (this method is both robust to noise and outliers, see \ref Classification_sowf_result).
@@ -63,32 +64,25 @@ The following code snippet shows how to add labels to the classification object.
 
 Features are defined as scalar fields that associate each input item with a specific value. Note that in order to limit memory consumption, we use the type `float` for these scalar values (as well as for every floating point value in this package). A feature has a name and is identified by a [Feature_handle](@ref CGAL::Classification::Feature_handle).
 
-\cgal provides some predefined features that are relevant for classification of point sets:
+\cgal provides some predefined features:
 
 - [Distance_to_plane](@ref CGAL::Classification::Feature::Distance_to_plane) measures how far away a point is from a locally estimated plane;
+- [Eigenvalue](@ref CGAL::Classification::Feature::Eigenvalue) measures one of the three local eigenvalues;
 - [Elevation](@ref CGAL::Classification::Feature::Elevation) computes the local distance to an estimation of the ground;
 - [Vertical_dispersion](@ref CGAL::Classification::Feature::Vertical_dispersion) computes how noisy the point set is on a local Z-cylinder;
 - [Verticality](@ref CGAL::Classification::Feature::Verticality) compares the local normal vector to the vertical vector.
 
-For more details about how these different features can help to identify one label or the other, please refer to their associated reference manual pages. In addition, \cgal also provides features solely based on the eigenvalues \cgalCite{cgal:mbrsh-raofw-11} of the local covariance matrix:
+These features are designed for point sets but can easily be used with surface meshes as well. For more details about how these different features can help to identify one label or the other, please refer to their associated reference manual pages.
 
-- [Anisotropy](@ref CGAL::Classification::Feature::Anisotropy)
-- [Eigentropy](@ref CGAL::Classification::Feature::Eigentropy)
-- [Linearity](@ref CGAL::Classification::Feature::Linearity)
-- [Omnivariance](@ref CGAL::Classification::Feature::Omnivariance)
-- [Planarity](@ref CGAL::Classification::Feature::Planarity)
-- [Sphericity](@ref CGAL::Classification::Feature::Sphericity)
-- [Sum_eigenvalues](@ref CGAL::Classification::Feature::Sum_eigenvalues)
-- [Surface_variation](@ref CGAL::Classification::Feature::Surface_variation)
+In addition, if the input data set has additional properties, these can also be used as features. For example, \cgal provides the following features:
 
-Finally, if the input data set has additional properties, these can also be used as features. For example, \cgal provides the following features:
-
+- [Color_channel](@ref CGAL::Classification::Feature::Color_channel) uses input color information if available;
 - [Echo_scatter](@ref CGAL::Classification::Feature::Echo_scatter) uses the number of returns (echo) provided by most LIDAR scanners if available;
-- [Hsv](@ref CGAL::Classification::Feature::Hsv) uses input color information if available;
 - [Simple_feature](@ref CGAL::Classification::Feature::Simple_feature) uses any property map applicable to the input range and whose value type is castable to `float` (useful if an additional property of the input set should be used as is, for example and `intensity` measurement).
 
+The computation of features and their addition to the feature set is done in a single step using the [Feature_set::add<Feature>()](@ref CGAL::Classification::Feature_set::add) method. If \cgal was linked with \ref thirdpartyTBB, features can be computed in parallel (see below).
 
-In the following code snippet, a subset of these features are instantiated. Note that all the predefined features can also be automatically generated in multiple scales (see \ref Classification_feature_generator).
+In the following code snippet, a subset of the predefined features are instantiated (in parallel if \ref thirdpartyTBB is available). Note that all the predefined features can also be automatically generated in multiple scales (see \ref Classification_feature_generator).
 
 \snippet Classification/example_classification.cpp Features
 
@@ -102,6 +96,8 @@ points that lie inside a 2D box from the others:
 This feature can then be instantiated from the feature set the same way as the others:
 
 \snippet Classification/example_feature.cpp Addition
+
+\section Classification_feature_generator Feature Generators
 
 \subsection Classification_feature_generator Point Set Feature Generator
 
@@ -118,6 +114,10 @@ Note that using this class in order to generate features is not mandatory, as fe
 The following snippet shows how to use the feature generator:
 
 \snippet Classification/example_generation_and_training.cpp Generator
+
+\subsection Classification_mesh_feature_generator Mesh Feature Generator
+
+\todo
 
 \section Classification_classifiers Classifiers
 

@@ -77,7 +77,8 @@ int main (int argc, char** argv)
 
   Planimetric_grid grid (pts, Pmap(), bbox, grid_resolution);
   Neighborhood neighborhood (pts, Pmap());
-  Local_eigen_analysis eigen (pts, Pmap(), neighborhood.k_neighbor_query(6));
+  Local_eigen_analysis eigen
+    = Local_eigen_analysis::create_from_point_set (pts, Pmap(), neighborhood.k_neighbor_query(6));
 
   //! [Analysis]
   ///////////////////////////////////////////////////////////////////
@@ -87,6 +88,11 @@ int main (int argc, char** argv)
 
   std::cerr << "Computing features" << std::endl;
   Feature_set features;
+
+#ifdef CGAL_LINKED_WITH_TBB
+  features.begin_parallel_additions();
+#endif
+  
   Feature_handle distance_to_plane = features.add<Distance_to_plane> (pts, Pmap(), eigen);
   Feature_handle linearity = features.add<Linearity> (pts, eigen);
   Feature_handle omnivariance = features.add<Omnivariance> (pts, eigen);
@@ -97,6 +103,10 @@ int main (int argc, char** argv)
   Feature_handle elevation = features.add<Elevation> (pts, Pmap(), grid,
                                                       radius_dtm);
 
+#ifdef CGAL_LINKED_WITH_TBB
+  features.end_parallel_additions();
+#endif
+  
   //! [Features]
   ///////////////////////////////////////////////////////////////////
 

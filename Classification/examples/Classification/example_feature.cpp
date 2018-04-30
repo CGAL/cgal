@@ -79,7 +79,8 @@ int main (int argc, char** argv)
   }
 
   Neighborhood neighborhood (pts, Pmap());
-  Local_eigen_analysis eigen (pts, Pmap(), neighborhood.k_neighbor_query(6));
+  Local_eigen_analysis eigen
+    = Local_eigen_analysis::create_from_point_set (pts, Pmap(), neighborhood.k_neighbor_query(6));
 
   Label_set labels;
   Label_handle a = labels.add ("label_A");

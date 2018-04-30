@@ -69,11 +69,22 @@ int main (int, char**)
   }
 
   Feature_set features;
-  Feature_generator generator (features, pts, pts.point_map(),
-                               5,  // using 5 scales
-                               pts.normal_map(),
-                               color_map, echo_map);
+  
+#ifdef CGAL_LINKED_WITH_TBB
+  features.begin_parallel_additions();
+#endif
 
+  Feature_generator generator (features, pts, pts.point_map(), 5);  // using 5 scales
+
+  generator.generate_point_based_features();
+  generator.generate_normal_based_features(pts.normal_map());
+  generator.generate_color_based_features(color_map);
+  generator.generate_echo_based_features(echo_map);
+
+#ifdef CGAL_LINKED_WITH_TBB
+  features.end_parallel_additions();
+#endif
+  
   CGAL_assertion (generator.number_of_scales() == 5);
   CGAL_assertion (features.size() == 80);
 

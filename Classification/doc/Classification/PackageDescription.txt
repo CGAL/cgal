@@ -81,6 +81,8 @@ Features are defined as scalar fields that associates each input item with a spe
 - `CGAL::Classification::Planimetric_grid<Geom_traits, PointRange, PointMap>`
 - `CGAL::Classification::Point_set_feature_generator<Geom_traits, PointRange, PointMap, ConcurrencyTag, DiagonalizeTraits>`
 - `CGAL::Classification::Point_set_neighborhood<Geom_traits, PointRange, PointMap>`
+- `CGAL::Classification::Mesh_feature_generator<Geom_traits, FaceGraph, PointMap, ConcurrencyTag, DiagonalizeTraits>`
+- `CGAL::Classification::Mesh_neighborhood<FaceListGraph>`
 - `CGAL::Classification::Evaluation`
 
 ## Label ##
@@ -97,21 +99,25 @@ Features are defined as scalar fields that associates each input item with a spe
 
 ## Predefined Features ##
 
-- `CGAL::Classification::Feature::Anisotropy`
+- `CGAL::Classification::Feature::Color_channel<Geom_traits, PointRange, ColorMap>`
 - `CGAL::Classification::Feature::Distance_to_plane<PointRange, PointMap>`
 - `CGAL::Classification::Feature::Echo_scatter<Geom_traits, PointRange, PointMap, EchoMap>`
-- `CGAL::Classification::Feature::Eigentropy`
 - `CGAL::Classification::Feature::Elevation<Geom_traits, PointRange, PointMap>`
+- `CGAL::Classification::Feature::Simple_feature<InputRange, PropertyMap>`
+- `CGAL::Classification::Feature::Vertical_dispersion<Geom_traits, PointRange, PointMap>`
+- `CGAL::Classification::Feature::Verticality<Geom_traits>`
+
+## Outdated Features ##
+
+- `CGAL::Classification::Feature::Anisotropy`
+- `CGAL::Classification::Feature::Eigentropy`
 - `CGAL::Classification::Feature::Hsv<Geom_traits, PointRange, ColorMap>`
 - `CGAL::Classification::Feature::Linearity`
 - `CGAL::Classification::Feature::Omnivariance`
 - `CGAL::Classification::Feature::Planarity`
-- `CGAL::Classification::Feature::Simple_feature<InputRange, PropertyMap>`
 - `CGAL::Classification::Feature::Sphericity`
 - `CGAL::Classification::Feature::Sum_eigenvalues`
 - `CGAL::Classification::Feature::Surface_variation`
-- `CGAL::Classification::Feature::Vertical_dispersion<Geom_traits, PointRange, PointMap>`
-- `CGAL::Classification::Feature::Verticality<Geom_traits>`
 
 
 */
