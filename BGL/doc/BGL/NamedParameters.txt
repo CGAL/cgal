@@ -115,7 +115,7 @@ simply inaccessible.
 \cgalNPEnd
 
 
-\cgalNPBegin{vertex_to_vertex_it} \anchor BGL_vertex_to_vertex_it
+\cgalNPBegin{vertex_to_vertex_output_iterator} \anchor BGL_vertex_to_vertex_output_iterator
 is a model of `OutputIterator` accepting `std::pair<vertex_descriptor, vertex_descriptor>`
 A typical use case is mapping the vertices from a source mesh to its copy's after a `copy_face_graph()`
 operation.\n
@@ -124,7 +124,7 @@ operation.\n
 <b>Default:</b> Emptyset_iterator
 \cgalNPEnd
 
-\cgalNPBegin{halfedge_to_halfedge_it} \anchor BGL_halfedge_to_halfedge_it
+\cgalNPBegin{halfedge_to_halfedge_output_iterator} \anchor BGL_halfedge_to_halfedge_output_iterator
 is a model of `OutputIterator` accepting `std::pair<halfedge_descriptor, halfedge_descriptor>`
 A typical use case is mapping the halfedges from a source mesh to its copy's after a `copy_face_graph()`
 operation.\n
@@ -134,7 +134,7 @@ operation.\n
 \cgalNPEnd
 
 
-\cgalNPBegin{face_to_face_it} \anchor BGL_face_to_face_it
+\cgalNPBegin{face_to_face_output_iterator} \anchor BGL_face_to_face_output_iterator
 is a model of `OutputIterator` accepting `std::pair<face_descriptor, face_descriptor>`
 A typical use case is mapping the faces from a source mesh to its copy's after a `copy_face_graph()`
 operation.\n

@@ -33,9 +33,9 @@ CGAL_add_named_parameter(metis_options_t, METIS_options, METIS_options)
 CGAL_add_named_parameter(vertex_partition_id_t, vertex_partition_id, vertex_partition_id_map)
 CGAL_add_named_parameter(face_partition_id_t, face_partition_id, face_partition_id_map)
 
-CGAL_add_named_parameter(vertex_to_vertex_it_t, vertex_to_vertex_it, vertex_to_vertex_it)
-CGAL_add_named_parameter(halfedge_to_halfedge_it_t, halfedge_to_halfedge_it, halfedge_to_halfedge_it)
-CGAL_add_named_parameter(face_to_face_it_t, face_to_face_it, face_to_face_it)
+CGAL_add_named_parameter(vertex_to_vertex_output_iterator_t, vertex_to_vertex_output_iterator, vertex_to_vertex_output_iterator)
+CGAL_add_named_parameter(halfedge_to_halfedge_output_iterator_t, halfedge_to_halfedge_output_iterator, halfedge_to_halfedge_output_iterator)
+CGAL_add_named_parameter(face_to_face_output_iterator_t, face_to_face_output_iterator, face_to_face_output_iterator)
 
 // List of named parameters that we use in the package 'Mesh_3'
 CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_feature_degree_map)

@@ -35,11 +35,6 @@
 #include <boost/unordered_map.hpp>
 #include <boost/utility/enable_if.hpp>
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#endif
-
 namespace CGAL {
 
 namespace internal {
@@ -247,13 +242,13 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
       If this parameter is omitted, an internal property map for
       `CGAL::vertex_point_t` should be available in `SourceMesh` (`TargetMesh`)
     \cgalParamEnd
-    \cgalParamBegin{vertex_to_vertex_it} an `OutputIterator`containing the
+    \cgalParamBegin{vertex_to_vertex_output_iterator} an `OutputIterator`containing the
       pairs source-vertex, traget-vertex. 
     \cgalParamEnd
-    \cgalParamBegin{halfedge_to_halfedge_it} an `OutputIterator`containing the
+    \cgalParamBegin{halfedge_to_halfedge_output_iterator} an `OutputIterator`containing the
       pairs source-halfedge, traget-halfedge. 
     \cgalParamEnd
-    \cgalParamBegin{face_to_face_it} an `OutputIterator`containing the
+    \cgalParamBegin{face_to_face_output_iterator} an `OutputIterator`containing the
       pairs source-face, traget-face. 
     \cgalParamEnd
   \cgalNamedParamsEnd
@@ -293,13 +288,14 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                      #endif
                      )
 {
+  using boost::choose_param;
   internal::copy_face_graph(sm, tm,
                             CGAL::graph_has_property<SourceMesh,boost::halfedge_index_t>(),
-                            choose_param(get_param(np1, internal_np::vertex_to_vertex_it),
+                            choose_param(get_param(np1, internal_np::vertex_to_vertex_output_iterator),
                                          Emptyset_iterator()),
-                            choose_param(get_param(np1, internal_np::halfedge_to_halfedge_it),
+                            choose_param(get_param(np1, internal_np::halfedge_to_halfedge_output_iterator),
                                          Emptyset_iterator()),
-                            choose_param(get_param(np1, internal_np::face_to_face_it),
+                            choose_param(get_param(np1, internal_np::face_to_face_output_iterator),
                                          Emptyset_iterator()),
                             choose_param(get_param(np1, internal_np::vertex_point),
                                          get(vertex_point, sm)),
