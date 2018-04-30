@@ -25,6 +25,7 @@
 
 #include <vector>
 
+#include <CGAL/Classification/compressed_float.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -195,17 +196,14 @@ private:
   };
 
   typedef CGAL::cpp11::array<float, 3> float3;
+  typedef CGAL::cpp11::array<float, 2> float2;
+  typedef CGAL::cpp11::array<compressed_float, 2> cfloat2;
   
   struct Content
   {
-    std::vector<float3> eigenvalues;
-    std::vector<float> sum_eigenvalues;
+    std::vector<cfloat2> eigenvalues;
     std::vector<float3> centroids;
-    std::vector<float3> smallest_eigenvectors;
-#ifdef CGAL_CLASSIFICATION_EIGEN_FULL_STORAGE
-    std::vector<float3> middle_eigenvectors;
-    std::vector<float3> largest_eigenvectors;
-#endif
+    std::vector<float2> smallest_eigenvectors;
     float mean_range;
   };
 
@@ -267,13 +265,8 @@ public:
     Local_eigen_analysis out;
     out.m_content = boost::make_shared<Content>();
     out.m_content->eigenvalues.resize (input.size());
-    out.m_content->sum_eigenvalues.resize (input.size());
     out.m_content->centroids.resize (input.size());
     out.m_content->smallest_eigenvectors.resize (input.size());
-#ifdef CGAL_CLASSIFICATION_EIGEN_FULL_STORAGE
-    out.m_content->middle_eigenvectors.resize (input.size());
-    out.m_content->largest_eigenvectors.resize (input.size());
-#endif
     
     out.m_content->mean_range = 0.;
       
@@ -362,13 +355,8 @@ public:
     Face_range range (faces(input));
 
     out.m_content->eigenvalues.resize (range.size());
-    out.m_content->sum_eigenvalues.resize (range.size());
     out.m_content->centroids.resize (range.size());
     out.m_content->smallest_eigenvectors.resize (range.size());
-#ifdef CGAL_CLASSIFICATION_EIGEN_FULL_STORAGE
-    out.m_content->middle_eigenvectors.resize (range.size());
-    out.m_content->largest_eigenvectors.resize (range.size());
-#endif
     
     out.m_content->mean_range = 0.;
       
@@ -445,13 +433,8 @@ public:
     out.m_content = boost::make_shared<Content>();
     
     out.m_content->eigenvalues.resize (input.size());
-    out.m_content->sum_eigenvalues.resize (input.size());
     out.m_content->centroids.resize (input.size());
     out.m_content->smallest_eigenvectors.resize (input.size());
-#ifdef CGAL_CLASSIFICATION_EIGEN_FULL_STORAGE
-    out.m_content->middle_eigenvectors.resize (input.size());
-    out.m_content->largest_eigenvectors.resize (input.size());
-#endif
     
     out.m_content->mean_range = 0.;
 
@@ -490,8 +473,9 @@ public:
   typename GeomTraits::Vector_3 normal_vector (std::size_t index) const
   {
     return typename GeomTraits::Vector_3(double(m_content->smallest_eigenvectors[index][0]),
-                                          double(m_content->smallest_eigenvectors[index][1]),
-                                          double(m_content->smallest_eigenvectors[index][2]));
+                                         double(m_content->smallest_eigenvectors[index][1]),
+                                         double(1. - (m_content->smallest_eigenvectors[index][0] +
+                                                      m_content->smallest_eigenvectors[index][1])));
   }
 
   /*!
@@ -505,20 +489,21 @@ public:
       (typename GeomTraits::Point_3 (double(m_content->centroids[index][0]),
                                       double(m_content->centroids[index][1]),
                                       double(m_content->centroids[index][2])),
-       typename GeomTraits::Vector_3 (double(m_content->smallest_eigenvectors[index][0]),
-                                       double(m_content->smallest_eigenvectors[index][1]),
-                                       double(m_content->smallest_eigenvectors[index][2])));
+       normal_vector<GeomTraits>(index));
   }
 
   /*!
     \brief Returns the normalized eigenvalues of the point at position `index`.
   */
-  const Eigenvalues& eigenvalue (std::size_t index) const { return m_content->eigenvalues[index]; }
-
-  /*!
-    \brief Returns the sum of eigenvalues of the point at position `index`.
-  */
-  float sum_of_eigenvalues (std::size_t index) const { return m_content->sum_eigenvalues[index]; }
+  Eigenvalues eigenvalue (std::size_t index) const
+  {
+    const cfloat2& uc = m_content->eigenvalues[index];
+    Eigenvalues out;
+    out[1] = decompress_float(uc[0]);
+    out[2] = decompress_float(uc[1]);
+    out[0] = 1.f - (out[1] + out[2]);
+    return out;
+  }
 
   /// @}
 
@@ -551,14 +536,9 @@ private:
       
     if (neighbor_points.size() == 0)
     {
-      Eigenvalues v = make_array( 0.f, 0.f, 0.f );
-      m_content->eigenvalues[index] = v;
+      m_content->eigenvalues[index] = make_array (compressed_float(0), compressed_float(0));
       m_content->centroids[index] = make_array(float(query.x()), float(query.y()), float(query.z()) );
-      m_content->smallest_eigenvectors[index] = make_array( 0.f, 0.f, 1.f );
-#ifdef CGAL_CLASSIFICATION_EIGEN_FULL_STORAGE
-      m_content->middle_eigenvectors[index] = make_array( 0.f, 1.f, 0.f );
-      m_content->largest_eigenvectors[index] = make_array( 1.f, 0.f, 0.f );
-#endif
+      m_content->smallest_eigenvectors[index] = make_array( 0.f, 0.f );
       return;
     }
 
@@ -591,13 +571,15 @@ private:
     if (sum > 0.f)
       for (std::size_t i = 0; i < 3; ++ i)
         evalues[i] = evalues[i] / sum;
-    m_content->sum_eigenvalues[index] = float(sum);
-    m_content->eigenvalues[index] = make_array( float(evalues[0]), float(evalues[1]), float(evalues[2]) );
-    m_content->smallest_eigenvectors[index] = make_array( float(evectors[0]), float(evectors[1]), float(evectors[2]) );
-#ifdef CGAL_CLASSIFICATION_EIGEN_FULL_STORAGE
-    m_content->middle_eigenvectors[index] = make_array( float(evectors[3]), float(evectors[4]), float(evectors[5]) );
-    m_content->largest_eigenvectors[index] = make_array( float(evectors[6]), float(evectors[7]), float(evectors[8]) );
-#endif
+    
+    m_content->eigenvalues[index] = make_array(compress_float (evalues[1]),
+                                               compress_float (evalues[2]));
+    
+    sum = evectors[0] + evectors[1] + evectors[2];
+    if (sum > 0.f)
+      for (std::size_t i = 0; i < 3; ++ i)
+        evectors[i] = evectors[i] / sum;
+    m_content->smallest_eigenvectors[index] = make_array( float(evectors[0]), float(evectors[1]) );
   }
 
   template <typename FaceListGraph, typename DiagonalizeTraits>
@@ -614,8 +596,8 @@ private:
 
     if (neighbor_faces.size() == 0)
     {
-      Eigenvalues v = {{ 0.f, 0.f, 0.f }};
-      m_content->eigenvalues[get(get(CGAL::face_index,g), query)] = v;
+      m_content->eigenvalues[get(get(CGAL::face_index,g), query)]
+        = make_array(compressed_float(0), compressed_float(0));
 
       CGAL::cpp11::array<Triangle,1> tr
         = {{ Triangle (get(get (CGAL::vertex_point, g), target(halfedge(query, g), g)),
@@ -626,11 +608,7 @@ private:
 
       m_content->centroids[get(get(CGAL::face_index,g), query)] = {{ float(c.x()), float(c.y()), float(c.z()) }};
       
-      m_content->smallest_eigenvectors[get(get(CGAL::face_index,g), query)] = {{ 0.f, 0.f, 1.f }};
-#ifdef CGAL_CLASSIFICATION_EIGEN_FULL_STORAGE
-      m_content->middle_eigenvectors[get(get(CGAL::face_index,g), query)] = {{ 0.f, 1.f, 0.f }}; 
-      m_content->largest_eigenvectors[get(get(CGAL::face_index,g), query)] = {{ 1.f, 0.f, 0.f }};
-#endif
+      m_content->smallest_eigenvectors[get(get(CGAL::face_index,g), query)] = {{ 0.f, 0.f }};
       return;
     }
 
@@ -670,13 +648,16 @@ private:
     if (sum > 0.f)
       for (std::size_t i = 0; i < 3; ++ i)
         evalues[i] = evalues[i] / sum;
-    m_content->sum_eigenvalues[get(get(CGAL::face_index,g), query)] = float(sum);
-    m_content->eigenvalues[get(get(CGAL::face_index,g), query)] = {{ float(evalues[0]), float(evalues[1]), float(evalues[2]) }};
-    m_content->smallest_eigenvectors[get(get(CGAL::face_index,g), query)] = {{ float(evectors[0]), float(evectors[1]), float(evectors[2]) }};
-#ifdef CGAL_CLASSIFICATION_EIGEN_FULL_STORAGE
-    m_content->middle_eigenvectors[get(get(CGAL::face_index,g), query)] = {{ float(evectors[3]), float(evectors[4]), float(evectors[5]) }};
-    m_content->largest_eigenvectors[get(get(CGAL::face_index,g), query)] = {{ float(evectors[6]), float(evectors[7]), float(evectors[8]) }};
-#endif
+
+    m_content->eigenvalues[get(get(CGAL::face_index,g), query)]
+      = make_array(compress_float (evalues[1]),
+                   compress_float (evalues[2]));
+    
+    sum = evectors[0] + evectors[1] + evectors[2];
+    if (sum > 0.f)
+      for (std::size_t i = 0; i < 3; ++ i)
+        evectors[i] = evectors[i] / sum;
+    m_content->smallest_eigenvectors[get(get(CGAL::face_index,g), query)] = {{ float(evectors[0]), float(evectors[1]), }};
   }
   
 };

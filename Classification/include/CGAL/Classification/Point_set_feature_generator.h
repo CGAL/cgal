@@ -28,15 +28,11 @@
 #include <CGAL/Classification/Planimetric_grid.h>
 #include <CGAL/Classification/Local_eigen_analysis.h>
 #include <CGAL/Classification/Feature_base.h>
-#include <CGAL/Classification/Feature/Hsv.h>
 #include <CGAL/Classification/Feature/Distance_to_plane.h>
 #include <CGAL/Classification/Feature/Echo_scatter.h>
 #include <CGAL/Classification/Feature/Elevation.h>
 #include <CGAL/Classification/Feature/Vertical_dispersion.h>
 #include <CGAL/Classification/Feature/Verticality.h>
-#include <CGAL/Classification/Feature/Eigen.h>
-
-// New features
 #include <CGAL/Classification/Feature/Eigenvalue.h>
 #include <CGAL/Classification/Feature/Color_channel.h>
 
@@ -127,18 +123,10 @@ public:
   typedef Classification::Label                          Label;
   typedef Classification::Label_handle                   Label_handle;
 
-  typedef Classification::Feature::Anisotropy            Anisotropy;
   typedef Classification::Feature::Distance_to_plane
   <PointRange, PointMap>                                 Distance_to_plane;
-  typedef Classification::Feature::Eigentropy            Eigentropy;
   typedef Classification::Feature::Elevation
   <GeomTraits, PointRange, PointMap>                    Elevation;
-  typedef Classification::Feature::Linearity             Linearity;
-  typedef Classification::Feature::Omnivariance          Omnivariance;
-  typedef Classification::Feature::Planarity             Planarity;
-  typedef Classification::Feature::Sphericity            Sphericity;
-  typedef Classification::Feature::Sum_eigenvalues       Sum_eigen;
-  typedef Classification::Feature::Surface_variation     Surface_variation;
   typedef Classification::Feature::Vertical_dispersion
   <GeomTraits, PointRange, PointMap>                    Dispersion;
   typedef Classification::Feature::Verticality
@@ -358,30 +346,9 @@ public:
 
   void generate_point_based_features ()
   {
-#ifdef DO_NOT_USE_EIGEN_FEATURES
     for (int j = 0; j < 3; ++ j)
-    {
       for (std::size_t i = 0; i < m_scales.size(); ++ i)
         m_features.add_with_scale_id<Eigenvalue> (i, m_input, eigen(i), std::size_t(j));
-    }
-#else
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      m_features.add_with_scale_id<Anisotropy> (i, m_input, eigen(i));
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      m_features.add_with_scale_id<Eigentropy> (i, m_input, eigen(i));
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      m_features.add_with_scale_id<Linearity> (i, m_input, eigen(i));
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      m_features.add_with_scale_id<Omnivariance> (i, m_input, eigen(i));
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      m_features.add_with_scale_id<Planarity> (i, m_input, eigen(i));
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      m_features.add_with_scale_id<Sphericity> (i, m_input, eigen(i));
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      m_features.add_with_scale_id<Sum_eigen> (i, m_input, eigen(i));
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      m_features.add_with_scale_id<Surface_variation> (i, m_input, eigen(i));
-#endif
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       m_features.add_with_scale_id<Distance_to_plane> (i, m_input, m_point_map, eigen(i));
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
@@ -401,22 +368,9 @@ public:
   template <typename ColorMap>
   void generate_color_based_features(const ColorMap& color_map)
   {
-#ifdef DO_NOT_USE_HSV_FEATURES
     typedef Feature::Color_channel<GeomTraits, PointRange, ColorMap> Color_channel;
     for (std::size_t i = 0; i < 3; ++ i)
       m_features.add<Color_channel> (m_input, color_map, typename Color_channel::Channel(i));
-#else
-    typedef Feature::Hsv<GeomTraits, PointRange, ColorMap> Hsv;
-    
-    for (std::size_t i = 0; i <= 8; ++ i)
-      m_features.add<Hsv> (m_input, color_map, typename Hsv::Channel(0), 45.f * float(i), 22.5f);
-
-    for (std::size_t i = 0; i <= 4; ++ i)
-      m_features.add<Hsv> (m_input, color_map, typename Hsv::Channel(1), 25.f * float(i), 12.5f);
-    
-    for (std::size_t i = 0; i <= 4; ++ i)
-      m_features.add<Hsv> (m_input, color_map, typename Hsv::Channel(2), 25.f * float(i), 12.5f);
-#endif
   }
 
   template <typename EchoMap>
