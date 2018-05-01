@@ -107,6 +107,12 @@ namespace Polygon_mesh_processing {
 *    constrained in `edge_is_constrained_map` and boundary edges move along the
 *    constrained polylines they belong to.
 *  \cgalParamEnd
+*  \cgalParamBegin{projection_functor}
+*  A function object used to project vertices created. It must have
+*  `%Point_3 operator()(vertex_descriptor)`, `%Point_3` being the value type
+*  of the vertex point map.
+*  If not provided, vertices are projected on the input surface mesh.
+*  \cgalParamEnd
 * \cgalNamedParamsEnd
 *
 * @sa `split_long_edges()`

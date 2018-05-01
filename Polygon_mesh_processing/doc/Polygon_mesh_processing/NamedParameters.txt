@@ -299,15 +299,22 @@ If this parameter is not provided, the perturbation is not deterministic
 \cgalNPBegin{outward_orientation} \anchor PMP_outward_orientation
 Parameter used in orientation functions to choose between an outward or inward orientation.
 \n
-\b Type : `bool` \n
-\b Default value is `true`
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
 
 \cgalNPBegin{do_overlap_test_of_bounded_sides} \anchor PMP_do_overlap_test_of_bounded_sides
 Parameter used in intersection test functions to indicate whether overlapping tests of bounded sides
 of close meshes should be done in addition to surface intersection tests.
 \n
-\b Type : `bool` \n
-\b Default value is `false`
+<b>Type:</b> `bool` \n
+<b>Default:</b> `false`
+\cgalNPEnd
+
+\cgalNPBegin{projection_functor} \anchor PMP_projection_functor
+Parameter used in isotropic remeshing function to specify an alternative vertex projection method.
+\n
+<b>Type:</b> Unary function object with vertex descriptor as argument type. \n
+<b>Default:</b> A function object projecting vertices on the input surface.
 \cgalNPEnd
 
 \cgalNPTableEnd

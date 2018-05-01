@@ -1092,13 +1092,12 @@ namespace internal {
       std::cout << "Project to surface...";
       std::cout.flush();
 #endif
-
       BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
       {
         if (is_constrained(v) || is_isolated(v) || !is_on_patch(v))
           continue;
         //note if v is constrained, it has not moved
-        put(vpmap_, v, proj(v, vpmap_));
+        put(vpmap_, v,  proj(v));
       }
       CGAL_assertion(is_valid(mesh_));
       CGAL_assertion(is_triangle_mesh(mesh_));
