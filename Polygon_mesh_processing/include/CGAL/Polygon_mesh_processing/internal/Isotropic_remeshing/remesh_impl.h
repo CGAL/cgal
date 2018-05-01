@@ -105,7 +105,7 @@ namespace internal {
     friend void put(No_constraint_pmap& , const key_type& , const bool ) {}
   };
 
-  template <typename PM, typename FaceRange, typename FaceIndexMap>
+  template <typename PM, typename FaceIndexMap>
   struct Border_constraint_pmap
   {
     typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
@@ -125,6 +125,8 @@ namespace internal {
       : border_edges_ptr(new std::set<edge_descriptor>() )
       , pmesh_ptr_(NULL)
     {}
+
+    template <class FaceRange>
     Border_constraint_pmap(const PM& pmesh
                          , const FaceRange& faces
                          , const FIMap& fimap)
@@ -139,14 +141,14 @@ namespace internal {
         border_edges_ptr->insert(edge(h, *pmesh_ptr_));
     }
 
-    friend bool get(const Border_constraint_pmap<PM, FaceRange, FIMap>& map,
+    friend bool get(const Border_constraint_pmap<PM, FIMap>& map,
                     const edge_descriptor& e)
     {
       CGAL_assertion(map.pmesh_ptr_!=NULL);
       return map.border_edges_ptr->count(e)!=0;
     }
 
-    friend void put(Border_constraint_pmap<PM, FaceRange, FIMap>& map,
+    friend void put(Border_constraint_pmap<PM, FIMap>& map,
                     const edge_descriptor& e,
                     const bool is)
     {
@@ -315,11 +317,14 @@ namespace internal {
       BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh_))
         put(halfedge_status_pmap_, h, MESH);
 
-      /// \todo the following is not working in case the default map is passed (we need to have a way to detect it)
-      BOOST_FOREACH(edge_descriptor e, edges(pmesh))
+      if (!boost::is_same<EdgeIsConstrainedMap,
+                          Border_constraint_pmap<PolygonMesh, FaceIndexMap> >::value)
       {
-        if ( get(ecmap_, e) )
-          edge_is_constrained_set_.insert(e);
+        BOOST_FOREACH(edge_descriptor e, edges(pmesh))
+        {
+          if ( get(ecmap_, e) )
+            edge_is_constrained_set_.insert(e);
+        }
       }
 
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
@@ -1518,7 +1523,7 @@ private:
         }
       }
 
-      internal::Border_constraint_pmap<PM, FaceRange, FaceIndexMap>
+      internal::Border_constraint_pmap<PM, FaceIndexMap>
         border_map(mesh_, face_range, fimap_);
       //override the border of PATCH
       //tag PATCH_BORDER,//h belongs to the patch, hopp doesn't
@@ -1919,12 +1924,12 @@ private:
 
     void update_constraints_property_map()
     {
-      BOOST_FOREACH(edge_descriptor e, edges(mesh_))
+      if (!edge_is_constrained_set_.empty())
       {
-        if (edge_is_constrained_set_.count(e))
+        BOOST_FOREACH(edge_descriptor e, edge_is_constrained_set_)
+        {
           put(ecmap_, e, true);
-        else
-          put(ecmap_, e, false);
+        }
       }
     }
 

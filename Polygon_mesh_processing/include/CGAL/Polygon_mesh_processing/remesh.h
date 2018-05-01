@@ -158,14 +158,14 @@ void isotropic_remeshing(const FaceRange& faces
   typedef typename boost::lookup_named_param_def <
       internal_np::edge_is_constrained_t,
       NamedParameters,
-      internal::Border_constraint_pmap<PM, FaceRange, FIMap>//default
+      internal::Border_constraint_pmap<PM, FIMap>//default
     > ::type ECMap;
-  ECMap ecmap = (boost::is_same<ECMap, internal::Border_constraint_pmap<PM, FaceRange, FIMap> >::value)
+  ECMap ecmap = (boost::is_same<ECMap, internal::Border_constraint_pmap<PM, FIMap> >::value)
      //avoid constructing the Border_constraint_pmap if it's not used
     ? choose_param(get_param(np, internal_np::edge_is_constrained)
-                 , internal::Border_constraint_pmap<PM, FaceRange, FIMap>(pmesh, faces, fimap))
+                 , internal::Border_constraint_pmap<PM, FIMap>(pmesh, faces, fimap))
     : choose_param(get_param(np, internal_np::edge_is_constrained)
-                 , internal::Border_constraint_pmap<PM, FaceRange, FIMap>());
+                 , internal::Border_constraint_pmap<PM, FIMap>());
 
   typedef typename boost::lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
