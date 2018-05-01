@@ -145,6 +145,9 @@ void isotropic_remeshing(const FaceRange& faces
   t.start();
 #endif
 
+  static const bool need_aabb_tree =
+    boost::is_default_param(get_param(np, internal_np::projection_functor));
+
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
 
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
@@ -183,7 +186,8 @@ void isotropic_remeshing(const FaceRange& faces
   FPMap fpmap = choose_param(
     get_param(np, internal_np::face_patch),
     internal::Connected_components_pmap<PM, ECMap, FIMap>(pmesh, ecmap, fimap,
-        boost::is_default_param(get_param(np, internal_np::face_patch))));
+        boost::is_default_param(get_param(np, internal_np::face_patch)) &&
+        need_aabb_tree ));
 
   double low = 4. / 5. * target_edge_length;
   double high = 4. / 3. * target_edge_length;
@@ -208,7 +212,7 @@ void isotropic_remeshing(const FaceRange& faces
 #endif
 
   typename internal::Incremental_remesher<PM, VPMap, GT, ECMap, VCMap, FPMap, FIMap>
-    remesher(pmesh, vpmap, protect, ecmap, vcmap, fpmap, fimap);
+    remesher(pmesh, vpmap, protect, ecmap, vcmap, fpmap, fimap, need_aabb_tree);
   remesher.init_remeshing(faces);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
