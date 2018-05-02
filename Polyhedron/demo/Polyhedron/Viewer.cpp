@@ -38,6 +38,18 @@ public:
   QTimer messageTimer;
   QOpenGLFunctions_4_3_Compatibility* _recentFunctions;
   bool is_2d_selection_mode;
+  // D e p t h  P e e l i n g
+    // \param pass the current pass in the Depth Peeling (transparency) algorithm.
+    // -1 means that no depth peeling is applied.
+    // \param writing_depth means that the color of the faces will be drawn in a grayscale
+    // according to the depth of the fragment in the shader. It is used by the transparency.
+    // \param fbo contains the texture used by the Depth Peeling algorithm.
+    // Should be NULL if pass <= 0;
+    int current_pass;
+    bool writing_depth;
+    int total_pass;
+    int current_total_pass;
+    QOpenGLFramebufferObject* dp_fbo;
 
   //! The buffers used to draw the axis system
   QOpenGLBuffer buffer;
@@ -88,6 +100,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->shader_programs.resize(NB_OF_PROGRAMS);
   d->textRenderer = new TextRenderer();
   d->is_2d_selection_mode = false;
+  d->total_pass = 4;
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
   connect(&d->messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
@@ -434,6 +447,7 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
 {
   if(scene == 0)
     return;
+  current_total_pass = viewer->inFastDrawing() ? total_pass/2 : total_pass;
   viewer->glLineWidth(1.0f);
   viewer->glPointSize(2.f);
   viewer->glEnable(GL_POLYGON_OFFSET_FILL);
@@ -1025,3 +1039,18 @@ void Viewer::setStaticImage(QImage image) { d->static_image = image; }
 
 const QImage& Viewer:: staticImage() const { return d->static_image; }
 
+void Viewer::setCurrentPass(int pass) { d->current_pass = pass; }
+
+void Viewer::setDepthWriting(bool writing_depth) { d->writing_depth = writing_depth; }
+
+void Viewer::setDepthPeelingFbo(QOpenGLFramebufferObject* fbo) { d->dp_fbo = fbo; }
+
+int Viewer::currentPass()const{ return d->current_pass; }
+bool Viewer::isDepthWriting()const{ return d->writing_depth; }
+QOpenGLFramebufferObject *Viewer::depthPeelingFbo(){ return d->dp_fbo; }
+float Viewer::total_pass()
+{
+  return d->current_total_pass * 1.0f;
+}
+
+#include "Viewer.moc"

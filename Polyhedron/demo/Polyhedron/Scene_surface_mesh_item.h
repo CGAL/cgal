@@ -20,8 +20,8 @@
 #include "properties.h"
 
 
+class QSlider;
 struct Scene_surface_mesh_item_priv;
-
 class SCENE_SURFACE_MESH_ITEM_EXPORT Scene_surface_mesh_item
   : public CGAL::Three::Scene_item,
     public CGAL::Three::Scene_zoomable_item_interface,
@@ -129,6 +129,9 @@ public:
   void printAllIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
   bool shouldDisplayIds(CGAL::Three::Scene_item *current_item) const Q_DECL_OVERRIDE;
   bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
+  float alpha() const Q_DECL_OVERRIDE;
+  void setAlpha(int alpha) Q_DECL_OVERRIDE;
+  QSlider* alphaSlider();
 
 Q_SIGNALS:
   void item_is_about_to_be_changed();

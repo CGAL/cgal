@@ -1,7 +1,7 @@
 #version 120
 attribute highp vec4 vertex;
 attribute highp vec3 normals;
-attribute highp vec3 colors;
+attribute highp vec4 colors;
 uniform highp mat4 mvp_matrix;
 uniform highp mat4 mv_matrix; 
 varying highp vec4 fP; 
@@ -11,6 +11,7 @@ varying highp float dist[6];
 uniform bool is_clipbox_on;
 uniform highp mat4x4 clipbox1;
 uniform highp mat4x4 clipbox2;
+uniform highp float alpha;
 
 void compute_distances(void)
 {
@@ -32,8 +33,8 @@ void compute_distances(void)
 
 void main(void)
 {
-   color = vec4(colors, 1.0);
-
+   color = vec4(colors.xyz, alpha);
+   //
    if(is_clipbox_on)
     compute_distances();
    fP = mv_matrix * vertex;

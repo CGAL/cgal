@@ -11,6 +11,9 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QMenu>
+#include <QWidgetAction>
+#include <QSlider>
+#include <QOpenGLFramebufferObject>
 
 //#include <CGAL/boost/graph/properties_Surface_mesh.h>
 #include <CGAL/Surface_mesh.h>
@@ -91,6 +94,7 @@ struct Scene_surface_mesh_item_priv{
     vertices_displayed = false;
     edges_displayed = false;
     faces_displayed = false;
+    alphaSlider = NULL;
   }
 
   Scene_surface_mesh_item_priv(SMesh* sm, Scene_surface_mesh_item *parent):
@@ -102,10 +106,13 @@ struct Scene_surface_mesh_item_priv{
     vertices_displayed = false;
     edges_displayed = false;
     faces_displayed = false;
+    alphaSlider = NULL;
   }
 
   ~Scene_surface_mesh_item_priv()
   {
+    if(alphaSlider)
+         delete alphaSlider;
     if(smesh_)
     {
       delete smesh_;
@@ -199,6 +206,7 @@ struct Scene_surface_mesh_item_priv{
   unsigned int number_of_degenerated_faces;
   int genus;
   bool self_intersect;
+  QSlider* alphaSlider;
 };
 
 const char* aabb_property_name = "Scene_surface_mesh_item aabb tree";
@@ -313,7 +321,13 @@ void Scene_surface_mesh_item_priv::addFlatData(Point p, EPICK::Vector_3 n, CGAL:
 void Scene_surface_mesh_item_priv::compute_elements()
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
-
+  if(!alphaSlider)
+   {
+     alphaSlider = new QSlider(::Qt::Horizontal);
+     alphaSlider->setMinimum(0);
+     alphaSlider->setMaximum(255);
+     alphaSlider->setValue(255);
+   }
   smooth_vertices.clear();
   smooth_normals.clear();
   flat_vertices.clear();
@@ -652,6 +666,7 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
 void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
 {
   viewer->glShadeModel(GL_SMOOTH);
+  QOpenGLFramebufferObject* fbo = viewer->depthPeelingFbo();
   if(!are_buffers_filled)
   {
     d->compute_elements();
@@ -664,10 +679,16 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
   if(renderingMode() == Gouraud)
   {
     vaos[Scene_surface_mesh_item_priv::Smooth_facets]->bind();
-    if(is_selected)
-      d->program->setAttributeValue("is_selected", true);
-    else
-      d->program->setAttributeValue("is_selected", false);
+      d->program->setAttributeValue("is_selected", is_selected);
+      d->program->setUniformValue("comparing", viewer->currentPass() > 0);;
+      d->program->setUniformValue("width", viewer->width()*1.0f);         
+      d->program->setUniformValue("height", viewer->height()*1.0f);       
+      d->program->setUniformValue("near", (float)viewer->camera()->zNear());     
+      d->program->setUniformValue("far", (float)viewer->camera()->zFar());       
+      d->program->setUniformValue("writing", viewer->isDepthWriting());   
+      d->program->setUniformValue("alpha", alpha());                     
+            if( fbo)
+              viewer->glBindTexture(GL_TEXTURE_2D, fbo->texture());
     if(!d->has_vcolors)
       d->program->setAttributeValue("colors", this->color());
     viewer->glDrawElements(GL_TRIANGLES, static_cast<GLuint>(d->idx_data_.size()),
@@ -683,6 +704,15 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
       d->program->setAttributeValue("is_selected", false);
     if(!d->has_fcolors)
       d->program->setAttributeValue("colors", this->color());
+    d->program->setUniformValue("comparing", viewer->currentPass() > 0);
+    d->program->setUniformValue("width", viewer->width()*1.0f);
+    d->program->setUniformValue("height", viewer->height()*1.0f);
+    d->program->setUniformValue("near", (float)viewer->camera()->zNear());
+    d->program->setUniformValue("far", (float)viewer->camera()->zFar());
+    d->program->setUniformValue("writing", viewer->isDepthWriting());
+    d->program->setUniformValue("alpha", alpha());
+    if( fbo)
+      viewer->glBindTexture(GL_TEXTURE_2D, fbo->texture());
     viewer->glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(d->nb_flat/3));
     vaos[Scene_surface_mesh_item_priv::Flat_facets]->release();
   }
@@ -1719,6 +1749,15 @@ QMenu* Scene_surface_mesh_item::contextMenu()
     actionZoomToId->setObjectName("actionZoomToId");
     connect(actionZoomToId, &QAction::triggered,
             this, &Scene_surface_mesh_item::zoomToId);
+    
+    QMenu *container = new QMenu(tr("Alpha value"));
+    QWidgetAction *sliderAction = new QWidgetAction(0);
+    sliderAction->setDefaultWidget(d->alphaSlider);
+    connect(d->alphaSlider, &QSlider::valueChanged,
+            [this](){redraw();});
+    container->addAction(sliderAction);
+    menu->addMenu(container);
+    setProperty("menu_changed", true);
     menu->setProperty(prop_name, true);
   }
 
@@ -1970,4 +2009,19 @@ bool Scene_surface_mesh_item::shouldDisplayIds(CGAL::Three::Scene_item *current_
   return this == current_item;
 }
 
+float Scene_surface_mesh_item::alpha() const
+{
+  if(!d->alphaSlider)
+    return 1.0f;
+  return (float)d->alphaSlider->value() / 255.0f;
+}
 
+void Scene_surface_mesh_item::setAlpha(int alpha)
+{
+  if(!d->alphaSlider)
+    d->compute_elements();
+  d->alphaSlider->setValue(alpha);
+  redraw();
+}
+
+QSlider* Scene_surface_mesh_item::alphaSlider() { return d->alphaSlider; }

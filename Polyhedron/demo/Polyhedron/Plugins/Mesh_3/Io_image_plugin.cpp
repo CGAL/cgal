@@ -807,8 +807,9 @@ private Q_SLOTS:
                            this, SLOT(erase_group()));
         group_map.remove(img_item);
         QList<int> deletion;
-        Q_FOREACH(Scene_item* child, group->getChildren())
+        Q_FOREACH(Scene_interface::Item_id id, group->getChildren())
         {
+          Scene_item* child = group->getChild(id);
           group->unlockChild(child);
           deletion.append(scene->item_id(child));
         }

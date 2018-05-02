@@ -229,3 +229,15 @@ void CGAL::Three::Scene_item::compute_diag_bbox()const
         );
 
 }
+
+void Scene_item::setId(int id)         {cur_id = id; }
+int  Scene_item::getId() const         { return cur_id; }
+float Scene_item::alpha() const
+{
+  return 1.0f;
+}
+
+void Scene_item::setAlpha(int )
+{
+ 
+}
