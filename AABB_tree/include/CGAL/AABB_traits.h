@@ -306,13 +306,13 @@ public:
         switch(Traits::longest_axis(bbox))
         {
         case AT::CGAL_AXIS_X: // sort along x
-          std::nth_element(first, middle, beyond, boost::bind(less_x,_1,_2,m_traits));
+          std::nth_element(first, middle, beyond, boost::bind(Traits::less_x,_1,_2,m_traits));
           break;
         case AT::CGAL_AXIS_Y: // sort along y
-          std::nth_element(first, middle, beyond, boost::bind(less_y,_1,_2,m_traits));
+          std::nth_element(first, middle, beyond, boost::bind(Traits::less_y,_1,_2,m_traits));
           break;
         case AT::CGAL_AXIS_Z: // sort along z
-          std::nth_element(first, middle, beyond, boost::bind(less_z,_1,_2,m_traits));
+          std::nth_element(first, middle, beyond, boost::bind(Traits::less_z,_1,_2,m_traits));
           break;
         default:
           CGAL_error();
