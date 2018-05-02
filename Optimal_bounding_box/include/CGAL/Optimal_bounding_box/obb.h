@@ -26,14 +26,17 @@
 #include <CGAL/Optimal_bounding_box/population.h>
 #include <vector>
 #include <fstream>
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Iso_cuboid_3.h>
+#include <CGAL/convex_hull_3.h>
 
 #include <Eigen/Dense>
 
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 namespace CGAL {
 namespace Optimal_bounding_box {
@@ -136,11 +139,23 @@ void post_processing(Matrix& points, Matrix& R, Matrix& obb)
 
 }
 
+template <typename Matrix, typename Point>
+void fill_matrix(std::vector<Point>& v_points, Matrix& points_mat)
+{
+  points_mat.resize(v_points.size(), 3);
+  for(std::size_t i = 0; i < v_points.size(); ++i)
+  {
+    Point p = v_points[i];
+    points_mat(i, 0) = p.x();
+    points_mat(i, 1) = p.y();
+    points_mat(i, 2) = p.z();
+  }
+}
 
 /// @param points point coordinates of the input mesh
 /// @param obb_points the 8 points of the obb.
 template <typename Point>
-void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points)
+void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool use_ch)
 {
   CGAL_assertion(points.size() >= 3);
 
@@ -148,18 +163,27 @@ void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points)
     obb_points.resize(8);
   CGAL_assertion(obb_points.size() == 8);
 
-  // points: vector -> matrix
-  typedef Eigen::MatrixXf MatrixXf;
 
-  MatrixXf points_mat(points.size(), 3);
-  for(std::size_t i = 0; i < points.size(); ++i)
+  typedef Eigen::MatrixXf MatrixXf; // using eigen internally
+  MatrixXf points_mat;
+
+  // get the ch3
+  if(use_ch)
   {
-    Point p = points[i];
-    points_mat(i, 0) = p.x();
-    points_mat(i, 1) = p.y();
-    points_mat(i, 2) = p.z();
-  }
+    // find the ch - todo: template kernel
+    typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+    CGAL::Polyhedron_3<Kernel> poly;
+    convex_hull_3(points.begin(), points.end(), poly);
+    std::vector<Kernel::Point_3> ch_points(poly.points_begin(), poly.points_end());
 
+    // points: vector -> matrix
+    fill_matrix(ch_points, points_mat);
+  }
+  else
+  {
+    // points: vector -> matrix
+    fill_matrix(points, points_mat);
+  }
 
   MatrixXf R(3, 3);
   std::size_t generations = 10;

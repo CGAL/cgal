@@ -107,7 +107,7 @@ void Create_obb_mesh_plugin::obb()
 
   // find obb
   std::vector<Point_3> obb_points(8);
-  CGAL::Optimal_bounding_box::find_obb(points, obb_points);
+  CGAL::Optimal_bounding_box::find_obb(points, obb_points, true);
 
   Scene_item* item;
   if(mw->property("is_polyhedorn_mode").toBool()){
