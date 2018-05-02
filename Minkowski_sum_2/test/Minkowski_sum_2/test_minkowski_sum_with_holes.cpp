@@ -152,7 +152,7 @@ int main(int argc, char* argv[])
 
   std::list<Strategy> strategies;
 
-  size_t i(1);
+  int i(1);
   while (i < argc) {
     if (argv[i][0] == '-') {
       strategies.clear();
