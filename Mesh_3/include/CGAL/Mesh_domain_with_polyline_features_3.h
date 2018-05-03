@@ -642,6 +642,7 @@ of the base class.
   add_corners(InputIterator first, InputIterator end)
   { add_corners(first, end, CGAL::Emptyset_iterator()); }
 
+  Corner_index register_corner(const Point_3& p, const Curve_index& index);
   Corner_index add_corner_with_context(const Point_3& p, const Surface_patch_index& index);
 
   /// Overloads where the last parameter \c out is not
@@ -829,7 +830,6 @@ of the base class.
   Curve_index insert_edge(InputIterator first, InputIterator end);
   /// @endcond
 private:
-  Corner_index register_corner(const Point_3& p, const Curve_index& index);
   void compute_corners_incidences();
 
   /// Returns Index associated to p (p must be the coordinates of a corner
