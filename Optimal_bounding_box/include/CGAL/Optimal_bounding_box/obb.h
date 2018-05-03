@@ -46,7 +46,7 @@ namespace Optimal_bounding_box {
 
 
 template <typename Matrix>
-void evolution(Matrix& R, Matrix& points, std::size_t generations) // todo: points is const
+void evolution(Matrix& R, Matrix& points, std::size_t max_generations) // todo: points is const
 {
 
   CGAL_assertion(points.rows() >= 3);
@@ -59,12 +59,12 @@ void evolution(Matrix& R, Matrix& points, std::size_t generations) // todo: poin
 
   Population<Matrix> pop(50);
 
-  //std::cout << "initial pop" << std::endl;
-  //pop.show_population();
-  //std::cout << std::endl;
-  //std::cin.get();
+  double prev_fit_value = 0;
+  double new_fit_value = 0;
+  double tolerance = 1e-2;
+  int stale = 0;
 
-  for(std::size_t t = 0; t < generations; ++t)
+  for(std::size_t t = 0; t < max_generations; ++t)
   {
     genetic_algorithm(pop, points);
 
@@ -72,7 +72,6 @@ void evolution(Matrix& R, Matrix& points, std::size_t generations) // todo: poin
    // pop.show_population();
    // std::cout << std::endl;
     //std::cin.get();
-
 
     for(std::size_t s = 0; s < pop.size(); ++s)
       nelder_mead(pop[s], points, nelder_mead_iterations);
@@ -82,7 +81,6 @@ void evolution(Matrix& R, Matrix& points, std::size_t generations) // todo: poin
     //std::cout << std::endl;
     //std::cin.get();
 
-
     // debugging
     /*
     Fitness_map<Matrix> fitness_map(pop, points);
@@ -90,13 +88,23 @@ void evolution(Matrix& R, Matrix& points, std::size_t generations) // todo: poin
     std::cout << "det= " << R_now.determinant() << std::endl;
     */
 
+    // stopping criteria
+    Fitness_map<Matrix> fitness_map(pop, points);
+    new_fit_value = fitness_map.get_best_fitness_value(points);
 
+    double difference = new_fit_value - prev_fit_value;
+    if(abs(difference) < tolerance * new_fit_value)
+      stale++;
+
+    if(stale == 5)
+      break;
+
+    prev_fit_value = new_fit_value;
   }
 
   // compute fitness of entire population
   Fitness_map<Matrix> fitness_map(pop, points);
   R = fitness_map.get_best();
-
 }
 
 
@@ -152,8 +160,11 @@ void fill_matrix(std::vector<Point>& v_points, Matrix& points_mat)
   }
 }
 
-/// @param points point coordinates of the input mesh
+/// @param points point coordinates of the input mesh.
 /// @param obb_points the 8 points of the obb.
+/// @param use convex hull or not.
+///
+/// todo named parameters: max iterations
 template <typename Point>
 void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool use_ch)
 {
@@ -186,8 +197,8 @@ void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool u
   }
 
   MatrixXf R(3, 3);
-  std::size_t generations = 10;
-  CGAL::Optimal_bounding_box::evolution(R, points_mat, generations);
+  std::size_t max_generations = 100;
+  CGAL::Optimal_bounding_box::evolution(R, points_mat, max_generations);
 
   MatrixXf obb(8, 3);
   CGAL::Optimal_bounding_box::post_processing(points_mat, R, obb);

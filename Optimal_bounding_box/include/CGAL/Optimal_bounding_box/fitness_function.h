@@ -106,6 +106,13 @@ struct Fitness_map // -> a free function
   }
 
 
+  double get_best_fitness_value(const Matrix& data)
+  {
+    Matrix best_mat = get_best();
+    return compute_fitness(best_mat, data);
+  }
+
+
   const Matrix points;
   Population<Matrix> pop;
 };
