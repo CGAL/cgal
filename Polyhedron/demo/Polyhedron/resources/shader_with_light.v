@@ -11,7 +11,6 @@ varying highp float dist[6];
 uniform bool is_clipbox_on;
 uniform highp mat4x4 clipbox1;
 uniform highp mat4x4 clipbox2;
-uniform highp float alpha;
 
 void compute_distances(void)
 {
@@ -33,7 +32,7 @@ void compute_distances(void)
 
 void main(void)
 {
-   color = vec4(colors.xyz, alpha);
+   color = colors;
    //
    if(is_clipbox_on)
     compute_distances();

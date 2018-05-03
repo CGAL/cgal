@@ -18,6 +18,7 @@ uniform highp float height;
 uniform bool comparing;
 uniform bool writing;
 uniform sampler2D sampler;
+uniform highp float alpha;
 
 highp float depth(float z)
 {
@@ -35,7 +36,6 @@ void main(void) {
       dist[5]>0)
         discard;
 
-  float alpha = color.a;
   float d = depth(gl_FragCoord.z);
   float test = texture2D(sampler, vec2(gl_FragCoord.x/width, gl_FragCoord.y/height)).r;
   if(comparing && d <= test)

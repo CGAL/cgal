@@ -633,12 +633,24 @@ void Scene::renderPointScene(const QList<Scene_interface::Item_id> &items,
 void 
 Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 {
-  viewer->makeCurrent();
+    viewer->makeCurrent();
     QMap<float, int> picked_item_IDs;
     if(with_names)
     viewer->glEnable(GL_DEPTH_TEST);
     if(!gl_init)
         initializeGL(viewer);
+    //treat opaque items first to ensure that when two items are the same, but only one is opaque,
+    //the item stays opaque
+    QList<Item_id> opaque_items;
+    QList<Item_id> transparent_items;
+    Q_FOREACH(Item_id id, children)
+    {
+      Scene_item* item = m_entries[id];
+      if(item->alpha() == 1.0f)
+        opaque_items.push_back(id);
+      else
+        transparent_items.push_back(id);
+    }
     renderScene(children, viewer, picked_item_IDs, with_names, -1, false, NULL);
     if(!with_names && has_alpha())
     {
@@ -662,7 +674,9 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                            0.0f);
       viewer->glClearDepth(1);
       viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      renderScene(children, viewer, picked_item_IDs, false, 0,false, NULL);
+      //renderScene(children, viewer, picked_item_IDs, false, 0,false, NULL);
+      renderScene(opaque_items, viewer, picked_item_IDs, false, 0,false, NULL);
+      renderScene(transparent_items, viewer, picked_item_IDs, false, 0,false, NULL);
       fbos[0]->release();
       depth_test[0] = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth, GL_TEXTURE_2D, GL_RGBA32F);
       depth_test[0]->bind();
@@ -676,7 +690,9 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                            0.0f);
       viewer->glClearDepth(1);
       viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      renderScene(children, viewer, picked_item_IDs, false, 0,true, NULL);
+//      renderScene(children, viewer, picked_item_IDs, false, 0,true, NULL);
+      renderScene(opaque_items, viewer, picked_item_IDs, false, 0,true, NULL);
+      renderScene(transparent_items, viewer, picked_item_IDs, false, 0,true, NULL);
       depth_test[0]->release();
    
       //other passes
@@ -696,7 +712,9 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
         viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         renderWireScene(children, viewer, picked_item_IDs, false);
         renderPointScene(children, viewer, picked_item_IDs, false);
-        renderScene(children, viewer, picked_item_IDs, false, i, false, depth_test[i-1]);
+        //renderScene(children, viewer, picked_item_IDs, false, i, false, depth_test[i-1]);
+        renderScene(opaque_items     , viewer, picked_item_IDs, false, i, false, depth_test[i-1]);
+        renderScene(transparent_items, viewer, picked_item_IDs, false, i, false, depth_test[i-1]);
         fbos[i]->release();
    
         depth_test[i] = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth, GL_TEXTURE_2D, GL_RGBA32F);
@@ -711,7 +729,9 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                              0.0f);
         viewer->glClearDepth(1);
         viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        renderScene(children, viewer, picked_item_IDs, false, i, true, depth_test[i-1]);
+        //renderScene(children, viewer, picked_item_IDs, false, i, true, depth_test[i-1]);
+        renderScene(opaque_items     , viewer, picked_item_IDs, false, i, true, depth_test[i-1]);
+        renderScene(transparent_items, viewer, picked_item_IDs, false, i, true, depth_test[i-1]);
         depth_test[i]->release();
       }
    
@@ -729,7 +749,9 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                            0.0f);
       viewer->glClearDepth(1);
       viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      renderScene(children, viewer, picked_item_IDs, false, (int)viewer->total_pass()-1, false, depth_test[(int)viewer->total_pass()-2]);
+//      renderScene(children, viewer, picked_item_IDs, false, (int)viewer->total_pass()-1, false, depth_test[(int)viewer->total_pass()-2]);
+      renderScene(opaque_items     , viewer, picked_item_IDs, false, (int)viewer->total_pass()-1, false, depth_test[(int)viewer->total_pass()-2]);
+      renderScene(transparent_items, viewer, picked_item_IDs, false, (int)viewer->total_pass()-1, false, depth_test[(int)viewer->total_pass()-2]);
       fbos[(int)viewer->total_pass()-1]->release();
    
    
@@ -769,207 +791,6 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
     // Points OpenGL drawing
     renderPointScene(children, viewer, picked_item_IDs, with_names);
     
-    /*{
-    // Flat/Gouraud OpenGL drawing
-    for(int index = 0; index < m_entries.size(); ++index)
-    {
-        CGAL::Three::Scene_item& item = *m_entries[index];
-        if(index == selected_item || selected_items_list.contains(index))
-        {
-            item.selection_changed(true);
-        }
-        else
-
-        {
-            item.selection_changed(false);
-        }
-        if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
-        if(item.visible())
-        {
-            if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
-            {
-                if(with_names) {
-                    viewer->glClearDepth(1.0);
-                    viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                }
-                viewer->glEnable(GL_LIGHTING);
-                viewer->glPointSize(2.f);
-                viewer->glLineWidth(1.0f);
-                if(item.renderingMode() == Gouraud)
-                    viewer->glShadeModel(GL_SMOOTH);
-                else
-                    viewer->glShadeModel(GL_FLAT);
-                if(viewer)
-                    item.draw(viewer);
-                else
-                    item.draw();
-
-                if(with_names) {
-
-                    //    read depth buffer at pick location;
-                    float depth = 1.0;
-                    viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-                    if (depth != 1.0)
-                    {
-                        //add object to list of picked objects;
-                        picked_item_IDs[depth] = index;
-                    }
-                }
-            }
-        }
-    }
-    viewer->glDepthFunc(GL_LEQUAL);
-    // Wireframe OpenGL drawing
-    for(int index = 0; index < m_entries.size(); ++index)
-    {
-        CGAL::Three::Scene_item& item = *m_entries[index];
-        if(index == selected_item || selected_items_list.contains(index))
-        {
-            item.selection_changed(true);
-        }
-        else
-        {
-            item.selection_changed(false);
-        }
-
-        if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
-        if(item.visible())
-        {
-            if((item.renderingMode() == Wireframe || item.renderingMode() == PointsPlusNormals )
-                    && with_names)
-            {
-                viewer->glClearDepth(1.0);
-                viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            }
-            if((!with_names && item.renderingMode() == FlatPlusEdges )
-                    || item.renderingMode() == Wireframe)
-            {
-                viewer->glDisable(GL_LIGHTING);
-                viewer->glPointSize(2.f);
-                viewer->glLineWidth(1.0f);
-
-                if(viewer)
-                    item.drawEdges(viewer);
-                else
-                    item.drawEdges();
-            }
-            else{
-                if( item.renderingMode() == PointsPlusNormals ){
-                    viewer->glDisable(GL_LIGHTING);
-                    viewer->glPointSize(2.f);
-                    viewer->glLineWidth(1.0f);
-                    if(index == selected_item || selected_items_list.contains(index))
-                    {
-
-                        item.selection_changed(true);
-                    }
-                    else
-                    {
-
-                        item.selection_changed(false);
-                    }
-                    if(viewer)
-                        item.drawEdges(viewer);
-                    else
-                        item.drawEdges();
-                }
-            }
-            if((item.renderingMode() == Wireframe || item.renderingMode() == PointsPlusNormals )
-                    && with_names)
-            {
-
-                //    read depth buffer at pick location;
-                float depth = 1.0;
-                viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-                if (depth != 1.0)
-                {
-                    //add object to list of picked objects;
-                    picked_item_IDs[depth] = index;
-                }
-            }
-        }
-    }
-    // Points OpenGL drawing
-    for(int index = 0; index < m_entries.size(); ++index)
-    {
-        CGAL::Three::Scene_item& item = *m_entries[index];
-        if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
-        if(item.visible())
-        {
-            if(item.renderingMode() == Points && with_names) {
-                viewer->glClearDepth(1.0);
-                viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            }
-            if(item.renderingMode() == Points  ||
-                    (!with_names && item.renderingMode() == PointsPlusNormals)  ||
-                 (!with_names && item.renderingMode() == ShadedPoints))
-            {
-                viewer->glDisable(GL_LIGHTING);
-                viewer->glPointSize(2.0f);
-                viewer->glLineWidth(1.0f);
-
-                if(viewer)
-                    item.drawPoints(viewer);
-                else
-                    item.drawPoints();
-            }
-            if(item.renderingMode() == Points && with_names) {
-                //    read depth buffer at pick location;
-                float depth = 1.0;
-                viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-                if (depth != 1.0)
-                {
-                    //add object to list of picked objects;
-                    picked_item_IDs[depth] = index;
-                }
-            }
-        }
-    }
-
-    // Transparent OpenGL drawing
-    for(int index = 0; index < m_entries.size(); ++index)
-    {
-      CGAL::Three::Scene_item& item = *m_entries[index];
-      CGAL::Three::Scene_transparent_interface* trans_item = qobject_cast<CGAL::Three::Scene_transparent_interface*>(&item);
-      if(!trans_item)
-        continue;
-
-      if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
-      if(item.visible() &&
-         (item.renderingMode() == Flat ||
-         item.renderingMode() ==FlatPlusEdges ||
-          item.renderingMode() == Gouraud)
-         )
-      {
-        if(with_names) {
-          viewer->glClearDepth(1.0);
-          viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        }
-        viewer->glEnable(GL_LIGHTING);
-        viewer->glPointSize(2.f);
-        viewer->glLineWidth(1.0f);
-
-        viewer->glShadeModel(GL_SMOOTH);
-
-        if(viewer)
-          trans_item->drawTransparent(viewer);
-        else
-          item.draw();
-
-        if(with_names) {
-
-          //    read depth buffer at pick location;
-          float depth = 1.0;
-          viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-          if (depth != 1.0)
-          {
-            //add object to list of picked objects;
-            picked_item_IDs[depth] = index;
-          }
-        }
-      }
-    }
-//}*/
     if(with_names)
     {
         QList<float> depths = picked_item_IDs.keys();

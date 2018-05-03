@@ -76,6 +76,9 @@ public:
   bool has_cnc() const;
   bool has_tets() const;
   bool is_valid() const;//true if the c3t3 is correct, false if it was made from a .mesh, for example
+  float alpha() const Q_DECL_OVERRIDE;
+  void setAlpha(int alpha) Q_DECL_OVERRIDE;
+  QSlider* alphaSlider();
   ManipulatedFrame* manipulatedFrame() Q_DECL_OVERRIDE;
 
   void setPosition(float x, float y, float z) ;

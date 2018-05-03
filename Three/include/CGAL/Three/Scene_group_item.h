@@ -247,6 +247,18 @@ public Q_SLOTS:
     //! drawn several times. It is automatically called at the end of the scene's
     //! `draw()` function.
     void resetDraw() { already_drawn = false;}
+    //!
+    //! \brief adjustIds maintains the list of children up to date when an item has been erased.
+    //! \param removed_id the index of the item that has been erased.
+    //!
+    void adjustIds(Scene_interface::Item_id removed_id)
+    {
+      for(int i = 0; i < children.size(); ++i)
+      {
+        if(children[i] >= removed_id)
+          --children[i];
+      }
+    }
 private:
     void update_group_number(Scene_item* new_item, int n);
     bool expanded;

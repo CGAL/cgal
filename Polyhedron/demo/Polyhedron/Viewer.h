@@ -82,6 +82,8 @@ public:
   void set2DSelectionMode(bool) Q_DECL_OVERRIDE;
   void setStaticImage(QImage image) Q_DECL_OVERRIDE;
   const QImage& staticImage() const Q_DECL_OVERRIDE;
+  //!Set total number of depth peeling passes.
+   void setTotalPass(int);
 
 Q_SIGNALS:
   void sendMessage(QString);
@@ -111,7 +113,8 @@ public Q_SLOTS:
   {
     setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, CGAL::qglviewer::SELECT);
   }
-
+  //!Prompt a dialog to set the number of passes for the transparency.
+  void setTotalPass_clicked();
   virtual void setNoBinding() Q_DECL_OVERRIDE
   {
     setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, CGAL::qglviewer::NO_CLICK_ACTION);

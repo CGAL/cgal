@@ -1052,5 +1052,18 @@ float Viewer::total_pass()
 {
   return d->current_total_pass * 1.0f;
 }
+void Viewer::setTotalPass(int p)
+{
+  d->total_pass = p;
+  update();
+}
 
+void Viewer::setTotalPass_clicked()
+{
+  bool ok;
+  int passes = QInputDialog::getInt(0, QString("Set Number of Passes"), QString("Number of Depth Peeling Passes:  "), 4, 2,100, 1, &ok);
+  if(!ok)
+    return;
+  setTotalPass(passes);
+}
 #include "Viewer.moc"
