@@ -129,11 +129,6 @@ private:
     }
   }
 
-
-
-  Individual somebody; //temp
-
-
   CGAL::Random random_generator;
   std::size_t n;
   std::vector<Individual> pop;

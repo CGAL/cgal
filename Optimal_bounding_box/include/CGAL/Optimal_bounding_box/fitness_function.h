@@ -79,10 +79,10 @@ struct Fitness_map // -> a free function
     double best_fitness = std::numeric_limits<int>::max();
     for(std::size_t i = 0; i < pop.size(); ++i)
     {
-      const std::vector<Matrix> simplex = pop[i];
+      //const std::vector<Matrix> simplex = pop[i];
       for(std::size_t j =0; j < 4; ++j)
       {
-        const Matrix vertex = simplex[j];
+        const Matrix vertex = pop[i][j];
         //std::cout << "i= "<< i << " j=" << j<<"\n vertex= " << vertex << std::endl;
         ++count_vertices;
         //std::cout << "vertex = " << vertex << std::endl;
@@ -95,14 +95,13 @@ struct Fitness_map // -> a free function
           vertex_id = j;
           best_fitness = fitness;
         }
-
       }
     }
 
     std::vector<Matrix> best_simplex = pop[simplex_id];
-    Matrix temp = best_simplex[vertex_id];
+    //Matrix temp = best_simplex[vertex_id];
 
-    return temp;
+    return best_simplex[vertex_id];
   }
 
 

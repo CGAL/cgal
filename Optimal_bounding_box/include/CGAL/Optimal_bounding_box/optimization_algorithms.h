@@ -154,9 +154,7 @@ void nelder_mead(std::vector<Matrix>& simplex, Matrix& points, std::size_t nb_it
 
     CGAL_assertion(simplex.size() == 4); // tetrahedron
 
-
   } // iterations
-
 }
 
 struct Random_int_generator
@@ -224,15 +222,12 @@ void genetic_algorithm(Population<Simplex>& pop, Simplex& points)
   for(std::size_t i = 0; i < ids4.size(); ++i)
     group4[i] = pop[ids4[i]];
 
-
-
-  /*
+#ifdef OBB_DEBUG
   check_det(group1);
   check_det(group2);
   check_det(group3);
   check_det(group4);
-  */
-
+#endif
 
   // crossover I
   Population<Simplex> offspringsA(size_first_group);
@@ -259,14 +254,11 @@ void genetic_algorithm(Population<Simplex>& pop, Simplex& points)
     offspringsA[i] = offspring;
   }
 
-
-  /*
+#ifdef OBB_DEBUG
   std::cout << "offspringsA: \n" ;
   check_det(offspringsA);
   std::cin.get();
-  */
-
-
+#endif
 
   // crossover II
   Population<Simplex> offspringsB(size_second_group);
@@ -294,20 +286,14 @@ void genetic_algorithm(Population<Simplex>& pop, Simplex& points)
     offspringsB[i] = offspring;
   }
 
-
-
-
-  /*
+#ifdef OBB_DEBUG
   std::cout << "offspringsB: \n" ;
   check_det(offspringsB);
-  std::cin.get();
-  */
-
+#endif
 
   CGAL_assertion(offspringsA.size() == size_first_group);
   CGAL_assertion(offspringsB.size() == size_second_group);
   CGAL_assertion(offspringsA.size() + offspringsB.size() == pop.size());
-
 
   // next generatrion
   for(std::size_t i = 0; i < size_first_group; ++i)
@@ -320,10 +306,9 @@ void genetic_algorithm(Population<Simplex>& pop, Simplex& points)
     pop[size_first_group + i] = offspringsB[i];
   }
 
-
 }
 
-
+#ifdef OBB_DEBUG
 template <typename Simplex>
 void check_det(Population<Simplex>& pop)
 {
@@ -331,20 +316,12 @@ void check_det(Population<Simplex>& pop)
   {
     for(int j = 0; j < 4; ++j)
     {
-      auto A = pop[i][j];
+      auto A = pop[i][j]; // Simplex
       std::cout << A.determinant() << std::endl;
     }
   }
 }
-
-
-
-
-
-
-
-
-
+#endif
 
 } } // end namespaces
 

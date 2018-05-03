@@ -74,7 +74,7 @@ const Matrix expansion(const Matrix& S_centroid, const Matrix& S_worst, const Ma
 }
 
 template <typename Matrix>
-Matrix mean(const Matrix& m1, const Matrix& m2) // mean
+Matrix mean(const Matrix& m1, const Matrix& m2)
 {
   // same API for reduction
   CGAL_assertion(m1.rows() == 3);
@@ -98,13 +98,6 @@ const Matrix centroid(Matrix& S1, Matrix& S2, Matrix& S3)
   double det = Q.determinant();
   return Q / det;
 }
-
-
-
-
-
-
-
 
 
 }} // end namespaces

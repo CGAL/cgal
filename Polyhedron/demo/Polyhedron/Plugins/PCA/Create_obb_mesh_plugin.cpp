@@ -139,7 +139,6 @@ void Create_obb_mesh_plugin::gather_mesh_points(std::vector<Point_3>& points)
   }
 }
 
-
 void Create_obb_mesh_plugin::obb()
 {
   // gather point coordinates

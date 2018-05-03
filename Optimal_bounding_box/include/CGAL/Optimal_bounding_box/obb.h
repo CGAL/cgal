@@ -33,16 +33,13 @@
 
 #include <Eigen/Dense>
 
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Surface_mesh.h> // used draw mesh
+#include <CGAL/Polyhedron_3.h> // used to get the ch
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 namespace CGAL {
 namespace Optimal_bounding_box {
-
-
-
 
 
 template <typename Matrix>
@@ -54,10 +51,8 @@ void evolution(Matrix& R, Matrix& points, std::size_t max_generations) // todo: 
   CGAL_assertion(R.rows() == 3);
   CGAL_assertion(R.cols() == 3);
 
-
-  std::size_t nelder_mead_iterations = 20;
-
   Population<Matrix> pop(50);
+  std::size_t nelder_mead_iterations = 20;
 
   double prev_fit_value = 0;
   double new_fit_value = 0;
@@ -66,27 +61,32 @@ void evolution(Matrix& R, Matrix& points, std::size_t max_generations) // todo: 
 
   for(std::size_t t = 0; t < max_generations; ++t)
   {
+
+#ifdef OBB_DEBUG
+    std::cout << "generation= " << t << "\n";
+#endif
+
     genetic_algorithm(pop, points);
 
+#ifdef OBB_DEBUG
     //std::cout << "pop after genetic" << std::endl;
-   // pop.show_population();
-   // std::cout << std::endl;
-    //std::cin.get();
+    //pop.show_population();
+    //std::cout << std::endl;
+#endif
 
     for(std::size_t s = 0; s < pop.size(); ++s)
       nelder_mead(pop[s], points, nelder_mead_iterations);
 
+#ifdef OBB_DEBUG
     //std::cout << "pop after nelder mead: " << std::endl;
     //pop.show_population();
     //std::cout << std::endl;
-    //std::cin.get();
 
     // debugging
-    /*
     Fitness_map<Matrix> fitness_map(pop, points);
     Matrix R_now = fitness_map.get_best();
     std::cout << "det= " << R_now.determinant() << std::endl;
-    */
+#endif
 
     // stopping criteria
     Fitness_map<Matrix> fitness_map(pop, points);
@@ -102,7 +102,6 @@ void evolution(Matrix& R, Matrix& points, std::size_t max_generations) // todo: 
     prev_fit_value = new_fit_value;
   }
 
-  // compute fitness of entire population
   Fitness_map<Matrix> fitness_map(pop, points);
   R = fitness_map.get_best();
 }
@@ -164,7 +163,7 @@ void fill_matrix(std::vector<Point>& v_points, Matrix& points_mat)
 /// @param obb_points the 8 points of the obb.
 /// @param use convex hull or not.
 ///
-/// todo named parameters: max iterations
+/// todo named parameters: max iterations, population size, tolerance.
 template <typename Point>
 void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool use_ch)
 {
@@ -175,8 +174,8 @@ void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool u
   CGAL_assertion(obb_points.size() == 8);
 
 
-  typedef Eigen::MatrixXf MatrixXf; // using eigen internally
-  MatrixXf points_mat;
+  typedef Eigen::MatrixXd MatrixXd; // using eigen internally
+  MatrixXd points_mat;
 
   // get the ch3
   if(use_ch)
@@ -196,11 +195,11 @@ void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool u
     fill_matrix(points, points_mat);
   }
 
-  MatrixXf R(3, 3);
+  MatrixXd R(3, 3);
   std::size_t max_generations = 100;
   CGAL::Optimal_bounding_box::evolution(R, points_mat, max_generations);
 
-  MatrixXf obb(8, 3);
+  MatrixXd obb(8, 3);
   CGAL::Optimal_bounding_box::post_processing(points_mat, R, obb);
 
   // matrix -> vector
@@ -209,14 +208,12 @@ void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool u
     Point p(obb(i, 0), obb(i, 1), obb(i, 2));
     obb_points[i] = p;
   }
-
 }
 
 // it is called after post processing
 template <typename Matrix>
 void matrix_to_mesh_and_draw(Matrix& data_points, std::string filename)
 {
-
   typedef CGAL::Simple_cartesian<double> K;
   typedef K::Point_3 Point;
   typedef CGAL::Surface_mesh<Point> Mesh;
@@ -230,7 +227,6 @@ void matrix_to_mesh_and_draw(Matrix& data_points, std::string filename)
     points.push_back(p);
   }
 
-
   Mesh mesh;
   CGAL::make_hexahedron(points[0], points[1], points[2], points[3], points[4], points[5],
       points[6], points[7], mesh);
@@ -238,7 +234,6 @@ void matrix_to_mesh_and_draw(Matrix& data_points, std::string filename)
   std::ofstream out(filename);
   out << mesh;
   out.close();
-
 }
 
 
