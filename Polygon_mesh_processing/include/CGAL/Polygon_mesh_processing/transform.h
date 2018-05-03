@@ -32,8 +32,8 @@ namespace Polygon_mesh_processing{
  * applies a transformation to every vertex of a `Mesh`.
  * 
  * @tparam Transformation a functor that has an `operator()(Point_3)`, with `Point_3`
- * the `value_type` of `vertex_point_map` (see below). Such a dunctor can be a 
- * `CGAL::Aff_transformation_3`.
+ * the `value_type` of `vertex_point_map` (see below). Such a functor can be
+ * `CGAL::Aff_transformation_3` for example.
  * @tparam Mesh a model of `VertexListGraph`
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  * 
