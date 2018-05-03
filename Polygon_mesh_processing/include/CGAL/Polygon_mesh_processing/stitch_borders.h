@@ -122,11 +122,34 @@ void fill_pairs(const Halfedge& he,
       }
   }
 }
-template <typename PM, typename OutputIterator, typename LessHedge, typename VertexPointMap>
+
+template<typename Mesh,
+         typename CCMap,
+         typename FIMap>
+std::size_t num_component_wrapper(const Mesh& pmesh, 
+                      CCMap cc, 
+                      FIMap fim)
+{
+  return CGAL::Polygon_mesh_processing::connected_components(pmesh, cc, 
+                                                             CGAL::Polygon_mesh_processing::parameters::face_index_map(fim));
+}
+
+//specialization if there is no FIMap
+template<typename Mesh,
+         typename CCMap>
+std::size_t num_component_wrapper(const Mesh&, 
+                      CCMap, 
+                      bool)
+{
+  return 0;
+}
+
+template <typename PM, typename OutputIterator, typename LessHedge, typename VertexPointMap
+          , class CGAL_PMP_NP_TEMPLATE_PARAMETERS>
 OutputIterator
 collect_duplicated_stitchable_boundary_edges
-(PM& pmesh, OutputIterator out, LessHedge less_hedge, const VertexPointMap& vpmap,
- bool per_cc=false)
+(PM& pmesh, OutputIterator out, LessHedge less_hedge, 
+ const VertexPointMap& vpmap, const CGAL_PMP_NP_CLASS& np)
 {
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
   typedef std::map<halfedge_descriptor, std::pair<int, std::size_t>, LessHedge> Border_halfedge_map;
@@ -140,10 +163,15 @@ collect_duplicated_stitchable_boundary_edges
   Face_cc_map cc;
   std::size_t num_component;
   std::vector<std::vector<halfedge_descriptor> > border_edges_per_cc;
+  bool per_cc = boost::choose_param(get_param(np, internal_np::apply_per_connected_component),
+                                       false);
   if(per_cc)
   {
     cc = get(Face_property_tag(), pmesh);
-    num_component = CGAL::Polygon_mesh_processing::connected_components(pmesh, cc);
+    typedef typename GetFaceIndexMap<PM, CGAL_PMP_NP_CLASS>::const_type FIMap;
+    FIMap fim = choose_param(get_param(np, internal_np::face_index),
+                             get_const_property_map(face_index, pmesh));
+    num_component = num_component_wrapper(pmesh, cc, fim);
     border_edges_per_cc.resize(num_component);
   }
   
@@ -573,8 +601,13 @@ void stitch_borders(PolygonMesh& pmesh,
 /// \cgalParamBegin{apply_per_connected_component}
 ///  specifies if the borders should only be stitched inside their own connected component.
 /// Default value is `false`.\cgalParamEnd
+/// \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
+/// @attention A property map for `CGAL::face_index_t` should be either available as an internal property map 
+/// to `pmesh` or provided as one of the \ref pmp_namedparameters "Named Parameters" if `apply_per_connected_component`
+/// is `true`.
+
 template <typename PolygonMesh, class CGAL_PMP_NP_TEMPLATE_PARAMETERS>
 void stitch_borders(PolygonMesh& pmesh, const CGAL_PMP_NP_CLASS& np)
 {
@@ -588,14 +621,11 @@ void stitch_borders(PolygonMesh& pmesh, const CGAL_PMP_NP_CLASS& np)
   typedef typename GetVertexPointMap<PolygonMesh, CGAL_PMP_NP_CLASS>::const_type VPMap;
   VPMap vpm = choose_param(get_param(np, internal_np::vertex_point),
                            get_const_property_map(vertex_point, pmesh));
-  bool stitch_along_ccs = choose_param(get_param(np, internal_np::apply_per_connected_component),
-                                       false);
   
   internal::collect_duplicated_stitchable_boundary_edges(pmesh,
                                                          std::back_inserter(hedge_pairs_to_stitch),
                                                          internal::Less_for_halfedge<PolygonMesh, VPMap>(pmesh, vpm),
-                                                         vpm,
-                                                         stitch_along_ccs);
+                                                         vpm, np);
   
   stitch_borders(pmesh, hedge_pairs_to_stitch);
   internal::stitch_boundary_cycle_2(pmesh);

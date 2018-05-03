@@ -4,8 +4,8 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Surface_mesh.h>
-
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
+
 
 #include <iostream>
 #include <fstream>
@@ -51,8 +51,15 @@ void test_polyhedron_cc(const char* fname)
 
   assert(poly.size_of_vertices() > 0);
   
-  CGAL::Polygon_mesh_processing::stitch_borders(poly,
-                                                CGAL::Polygon_mesh_processing::parameters::apply_per_connected_component(true));
+  std::map<typename boost::graph_traits<Polyhedron>::face_descriptor, std::size_t> fim;
+  int i=0;
+  BOOST_FOREACH(typename boost::graph_traits<Polyhedron>::face_descriptor fd, faces(poly)){
+    fim[fd] = i++;
+  }
+  CGAL::Polygon_mesh_processing::
+      stitch_borders(poly,
+                     CGAL::Polygon_mesh_processing::parameters::apply_per_connected_component(true)
+                     .face_index_map(boost::make_assoc_property_map(fim)));
   poly.normalize_border();
 
   assert(poly.is_valid(false, 5));
@@ -107,31 +114,31 @@ void test_surface_mesh_cc(const char* fname)
 int main()
 {
   test_polyhedron<Epec>("data_stitching/full_border.off");
-  //
+  
   test_polyhedron<Epic>("data_stitching/full_border.off");
-  //test_polyhedron<Epic>("data_stitching/full_border_quads.off");
-  //test_polyhedron<Epic>("data_stitching/half_border.off");
-  //test_polyhedron<Epic>("data_stitching/mid_border.off");
-  //test_polyhedron<Epic>("data_stitching/multiple_incidence.off");
-  //test_polyhedron<Epic>("data_stitching/incidence_3.off");
-  //test_polyhedron<Epic>("data_stitching/incoherent_patch_orientation.off");
-  //test_polyhedron<Epic>("data_stitching/non_stitchable.off");
-  //test_polyhedron<Epic>("data_stitching/deg_border.off");
-  //test_polyhedron<Epic>("data_stitching/two_patches.off");
-  //test_polyhedron<Epic>("data_stitching/non_manifold.off");
-  //test_polyhedron<Epic>("data_stitching/non_manifold2.off");
-  //test_polyhedron_cc<Epic>("data_stitching/nm_cubes.off");
+  test_polyhedron<Epic>("data_stitching/full_border_quads.off");
+  test_polyhedron<Epic>("data_stitching/half_border.off");
+  test_polyhedron<Epic>("data_stitching/mid_border.off");
+  test_polyhedron<Epic>("data_stitching/multiple_incidence.off");
+  test_polyhedron<Epic>("data_stitching/incidence_3.off");
+  test_polyhedron<Epic>("data_stitching/incoherent_patch_orientation.off");
+  test_polyhedron<Epic>("data_stitching/non_stitchable.off");
+  test_polyhedron<Epic>("data_stitching/deg_border.off");
+  test_polyhedron<Epic>("data_stitching/two_patches.off");
+  test_polyhedron<Epic>("data_stitching/non_manifold.off");
+  test_polyhedron<Epic>("data_stitching/non_manifold2.off");
+  test_polyhedron_cc<Epic>("data_stitching/nm_cubes.off");
 
-  //test_surface_mesh("data_stitching/full_border.off");
-  //test_surface_mesh("data_stitching/full_border_quads.off");
-  //test_surface_mesh("data_stitching/half_border.off");
-  //test_surface_mesh("data_stitching/mid_border.off");
-  //test_surface_mesh("data_stitching/multiple_incidence.off");
-  //test_surface_mesh("data_stitching/incidence_3.off");
-  //test_surface_mesh("data_stitching/incoherent_patch_orientation.off");
-  //test_surface_mesh("data_stitching/non_stitchable.off");
-  //test_surface_mesh("data_stitching/deg_border.off");
-  //test_surface_mesh("data_stitching/non_manifold.off");
+  test_surface_mesh("data_stitching/full_border.off");
+  test_surface_mesh("data_stitching/full_border_quads.off");
+  test_surface_mesh("data_stitching/half_border.off");
+  test_surface_mesh("data_stitching/mid_border.off");
+  test_surface_mesh("data_stitching/multiple_incidence.off");
+  test_surface_mesh("data_stitching/incidence_3.off");
+  test_surface_mesh("data_stitching/incoherent_patch_orientation.off");
+  test_surface_mesh("data_stitching/non_stitchable.off");
+  test_surface_mesh("data_stitching/deg_border.off");
+  test_surface_mesh("data_stitching/non_manifold.off");
   test_surface_mesh_cc("data_stitching/nm_cubes.off");
 
   return 0;
