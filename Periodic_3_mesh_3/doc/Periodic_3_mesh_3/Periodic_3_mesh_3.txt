@@ -629,11 +629,12 @@ and corners that are specified by the user:
 - Two curves cannot intersect, except at a common endpoint.
 
 \warning For conveniency, curves and corners do not need to be restricted
-to the input cube, but users should be mindful that curves and corners will exist
+to the canonical cube, but users should be mindful that curves and corners will exist
 in all periodic copies and the requirements described above must be satisfied.
-For example, if considering the unit cube, it is not a valid input
-to prescribe a corner at the point `(1.5, 1.5, 1.5)` and the segment `(2,2,2)--(3,3,3)`
-because the corner intersects the curve in the middle.
+For example, if considering the unit cube as canonical cube, it is not valid
+to add the segment `(2,2,2)--(3,3,3)` as feature and the point `(1.5, 1.5, 1.5)`
+as corner: once the periodicity is taken in account, the point is actually the middle
+of the segment.
 
 \subsubsection Periodic_3_mesh_3ConeWithSharpFeatures Example of a Cone-like Periodic Domain
 
