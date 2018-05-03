@@ -29,7 +29,7 @@ Release date: September 2018
     in the code but did not appear in the concepts).
 
 ### Polygon Mesh Processing
--   Added a function to apply a CGAL::Aff_transformation_3 to a mesh : 
+-   Added a function to apply a transformation to a mesh : 
     - `CGAL::Polygon_mesh_processing::transform()`
 
 Release 4.12
