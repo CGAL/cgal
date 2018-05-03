@@ -12,6 +12,7 @@
 #include "Scene_polyhedron_item.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "Scene_polyhedron_selection_item.h"
+#include "Scene_points_with_normal_item.h"
 
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/Optimal_bounding_box/obb.h>
@@ -37,6 +38,7 @@ public:
 
   bool applicable(QAction*) const {
 
+    /*
     if (scene->selectionIndices().size() == 1)
     {
     return qobject_cast<Scene_facegraph_item*>(scene->item(scene->mainSelectionIndex()))
@@ -49,13 +51,12 @@ public:
         return true;
     }
     return false;
+    */
 
-    /*
     if(scene->mainSelectionIndex() != -1
        && scene->item(scene->mainSelectionIndex())->isFinite())
       return true;
   return false;
-  */
 
 }
 
@@ -103,6 +104,9 @@ void Create_obb_mesh_plugin::gather_mesh_points(std::vector<Point_3>& points)
   Scene_polyhedron_selection_item* selection_item =
     qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
 
+  Scene_points_with_normal_item* point_set_item =
+    qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
+
   if(poly_item || selection_item)
   {
     typedef typename boost::property_map<FaceGraph, boost::vertex_point_t>::type PointPMap;
@@ -117,7 +121,7 @@ void Create_obb_mesh_plugin::gather_mesh_points(std::vector<Point_3>& points)
       selected_vertices.assign(vertices(pmesh).begin(), vertices(pmesh).end());
       PointPMap pmap = get(CGAL::vertex_point, pmesh);
       BOOST_FOREACH(vertex_descriptor v, selected_vertices)
-        points.push_back(get(pmap, v ));
+        points.push_back(get(pmap, v));
 
     }
     else if(selection_item != NULL) // using selection of faces
@@ -137,6 +141,20 @@ void Create_obb_mesh_plugin::gather_mesh_points(std::vector<Point_3>& points)
     }
     CGAL_assertion(points.size() >= 3);
   }
+
+  if(point_set_item)
+  {
+    Point_set* points_set = point_set_item->point_set();
+    if(points_set == NULL)
+        return;
+
+    std::cout << "points_set->size()= " << points_set->size() << std::endl;
+    BOOST_FOREACH(Point_3 p, points_set->points())
+    {
+      points.push_back(p);
+    }
+  }
+
 }
 
 void Create_obb_mesh_plugin::obb()
