@@ -1425,8 +1425,6 @@ add_corner_with_context(const Point_3& p, const Surface_patch_index& surface_pat
   incidences.insert(surface_patch_index);
 
   return index;
-
-  return index;
 }
 
 /// @cond DEVELOPERS
