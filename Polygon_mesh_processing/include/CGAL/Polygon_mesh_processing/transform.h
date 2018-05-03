@@ -31,7 +31,9 @@ namespace Polygon_mesh_processing{
  * \ingroup PkgPolygonMeshProcessing
  * applies a transformation to every vertex of a `Mesh`.
  * 
- * @tparam Transformation inherits from `CGAL::Aff_transformation_3`
+ * @tparam Transformation a functor that has an `operator()(Point_3)`, with `Point_3`
+ * the `value_type` of `vertex_point_map` (see below). Such a dunctor can be a 
+ * `CGAL::Aff_transformation_3`.
  * @tparam Mesh a model of `VertexListGraph`
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  * 
@@ -57,7 +59,7 @@ void transform(const Transformation& transformation,
   
   BOOST_FOREACH(typename boost::graph_traits<Mesh>::vertex_descriptor vd, vertices(mesh))
   {
-    put(vpm, vd, transformation.transform(get(vpm, vd)));
+    put(vpm, vd, transformation(get(vpm, vd)));
   }
 }
 }
