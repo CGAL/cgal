@@ -28,19 +28,22 @@ do
   fi
 done
 
-cmake -DCGAL_ENABLE_CHECK_HEADERS=TRUE -DDOXYGEN_EXECUTABLE="$DOX_PATH" -DCGAL_COPY_DEPENDENCIES=TRUE -DCMAKE_CXX_FLAGS="-std=c++11" ..
+cmake -DCGAL_HEADER_ONLY=FALSE -DCGAL_ENABLE_CHECK_HEADERS=TRUE -DDOXYGEN_EXECUTABLE="$DOX_PATH" -DCGAL_COPY_DEPENDENCIES=TRUE -DCMAKE_CXX_FLAGS="-std=c++11" ..
 make -j$(nproc --all) packages_dependencies
 echo " Checks finished"
 for pkg_path in $CGAL_ROOT/*
 do
   pkg=$(basename $pkg_path)
   if [ -f "$pkg_path/package_info/$pkg/dependencies" ]; then
-    PKG_DIFF=$(diff -N -w  "$pkg_path/package_info/$pkg/dependencies.old" "$pkg_path/package_info/$pkg/dependencies" || true)
+    PKG_DIFF=$(grep -Fxv -f "$pkg_path/package_info/$pkg/dependencies.old" "$pkg_path/package_info/$pkg/dependencies" || true)
     if [ -n "$PKG_DIFF" ]; then
       HAS_DIFF=TRUE
-      echo "Differences in $pkg: $PKG_DIFF"
-    else
-      echo "No differencies in $pkg dependencies."
+      echo "Differences in $pkg: $PKG_DIFF are new and not committed."
+    fi
+    PKG_DIFF=$(grep -Fxv -f "$pkg_path/package_info/$pkg/dependencies" "$pkg_path/package_info/$pkg/dependencies.old" || true)
+    if [ -n "$PKG_DIFF" ]; then
+      HAS_DIFF=TRUE
+      echo "Differences in $pkg: $PKG_DIFF have disappeared."
     fi
     if [ -f $pkg_path/package_info/$pkg/dependencies.old ]; then
       rm $pkg_path/package_info/$pkg/dependencies.old
@@ -51,7 +54,8 @@ echo " Checks finished"
 cd $CGAL_ROOT
 rm -r dep_check_build
 if [ -n "$HAS_DIFF" ]; then
-  echo " You should run cmake with options CGAL_ENABLE_CHECK_HEADERS and CGAL_COPY_DEPENDENCIES ON, make the target packages_dependencies and commit the new dependencies files."
+  echo " You can run cmake with options CGAL_ENABLE_CHECK_HEADERS and CGAL_COPY_DEPENDENCIES ON, make the target packages_dependencies and commit the new dependencies files,"
+  echo " or simply manually edit the problematic files."
   exit 1
 else
   echo "The dependencies are up to date."
