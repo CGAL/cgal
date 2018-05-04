@@ -1,6 +1,13 @@
 Release History
 ===============
 
+Release 4.13
+------------
+### CGAL and Boost Property Maps
+
+-   Addition of a read-write property map to convert on-the-fly geometric 
+    object from Cartesian kernels
+
 Release 4.12
 ------------
 
