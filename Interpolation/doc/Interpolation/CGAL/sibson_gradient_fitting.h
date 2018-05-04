@@ -77,7 +77,7 @@ sibson_gradient_fitting(CoordinateInputIterator first, CoordinateInputIterator b
 /*!
 Estimates the function gradients at all vertices of the Delaunay triangulation `dt`
 that lie inside the convex hull, using the coordinates computed by the
-function `PkgInterpolationNaturalNeighborCoordinates2`.
+function \ref PkgInterpolationNaturalNeighborCoordinates2.
 
 \tparam Dt must be of type `Delaunay_triangulation_2<Dt_Traits, Tds>`.
         `Dt_Traits` must be a model of the concepts `DelaunayTriangulationTraits_2` and `PolygonTraits_2`.
@@ -115,7 +115,7 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
 /*!
 Estimates the function gradients at all vertices of `rt` that lie
 inside the convex hull using the coordinates computed by the
-functions `PkgInterpolationRegularNeighborCoordinates2`.
+functions \ref PkgInterpolationRegularNeighborCoordinates2.
 
 \tparam Rt must be of type `Regular_triangulation_2<Rt_Traits, Tds>`.
         `Rt_Traits` must be a model of the concepts `RegularTriangulationTraits_2` and `PolygonTraits_2`.
