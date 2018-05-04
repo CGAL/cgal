@@ -42,6 +42,27 @@ const double compute_fitness(const Vertex& R, const Matrix& data)
   CGAL_assertion(data.rows() >= 3);
 
   // rotate points
+
+#if 1
+  double xmin, xmax, ymin, ymax, zmin, zmax;
+  for(int i = 0; i < data.rows(); i++){
+    Eigen::Vector3d vec = data.row(i);
+    vec = R * vec;
+    if(i == 0){
+      xmin = xmax = vec.coeff(0);
+      ymin = ymax = vec.coeff(1);
+      zmin = zmax = vec.coeff(2);
+    }else {
+      if(vec.coeff(0) < xmin) xmin = vec.coeff(0);
+      if(vec.coeff(1) < ymin) ymin = vec.coeff(1);
+      if(vec.coeff(2) < zmin) zmin = vec.coeff(2);
+      if(vec.coeff(0) > xmax) xmax = vec.coeff(0);
+      if(vec.coeff(1) > ymax) ymax = vec.coeff(1);
+      if(vec.coeff(2) > zmax) zmax = vec.coeff(2);
+    }
+  }
+  
+#else
   Vertex RT = R.transpose();
   Matrix rotated_data;
   rotated_data = data * RT;
@@ -55,7 +76,9 @@ const double compute_fitness(const Vertex& R, const Matrix& data)
   double ymax = rotated_data.col(1).maxCoeff();
   double zmin = rotated_data.col(2).minCoeff();
   double zmax = rotated_data.col(2).maxCoeff();
-
+ 
+#endif
+  
   double x_dim = abs(xmax - xmin); // abs needed?
   double y_dim = abs(ymax - ymin);
   double z_dim = abs(zmax - zmin);

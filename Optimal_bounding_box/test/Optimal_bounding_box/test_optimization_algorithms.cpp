@@ -362,14 +362,14 @@ bench(const char* fname)
   std::cout << "number of points= " << sm_points.size() << std::endl;
 
 
-  CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points, true);
+  CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points, false);
 
-  /*
+  
   std::cout.precision(17);
   for(int i =0; i < obb_points.size(); i ++){
     std::cout << obb_points[i] << std::endl;
     }
-  */
+  /*
 
   CGAL::Surface_mesh<K::Point_3> mesh;
   CGAL::make_hexahedron(obb_points[0], obb_points[1], obb_points[2], obb_points[3], obb_points[4], obb_points[5],
@@ -378,7 +378,7 @@ bench(const char* fname)
   std::ofstream out("/tmp/result_obb.off");
   out << mesh;
   out.close();
-
+  */
 }
 
 
