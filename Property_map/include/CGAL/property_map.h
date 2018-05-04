@@ -542,7 +542,7 @@ struct Cartesian_converter_property_map
 };
 
 /// \ingroup PkgProperty_map
-/// returns `Cartesian_converter_property_map<K1,K2, Vpm>(&vpm)`
+/// returns `Cartesian_converter_property_map<GeomObject, Vpm>(vpm)`
 template<class GeomObject, class Vpm>
 Cartesian_converter_property_map<GeomObject, Vpm>
 make_cartesian_converter_property_map(Vpm vpm)
