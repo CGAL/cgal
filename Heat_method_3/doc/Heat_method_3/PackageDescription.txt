@@ -1,0 +1,46 @@
+// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
+
+/// \defgroup PkgHeatMethod Heat Method Reference
+/// \defgroup PkgHeatMethodConcepts Concepts
+/// \ingroup PkgHeatMethod
+
+/// \defgroup PkgHeatMethodAlgorithmClasses Algorithm Classes
+/// \ingroup PkgHeatMethod
+
+/// \defgroup PkgHeatMethodTraitsClasses Traits Classes
+/// \ingroup PkgHeatMethod
+
+/// \defgroup PkgHeatMethodMiscellaneous Miscellaneous
+/// \ingroup PkgHeatMethod
+
+/*!
+\addtogroup PkgHeatMethod
+
+\cgalPkgDescriptionBegin{The Heat Method,PkgHeatMethodSummary}
+\cgalPkgPicture{heatmethod-small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Keenan Crane, Christina Vaz, Andreas Fabri}
+\cgalPkgDesc{The package provides ... }
+\cgalPkgManuals{Chapter_HeatMethod,PkgHeatMethod}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.14}
+\cgalPkgDependsOn{\ref PkgDEPENDENCY}
+\cgalPkgBib{cgal:x-x}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+- `AA`
+
+## Classes ##
+- `CGAL::AA`
+
+*/

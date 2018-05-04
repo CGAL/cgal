@@ -1,0 +1,26 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Heat_Method
+\cgalAutoToc
+\author Keenan Crane, Christina Vaz, Andreas Fabri
+
+This chapter describes the ...
+
+\section sec_HM_definitions Definitions
+
+Section on definitions here ...
+
+\section sec_HM_examples Examples
+
+\subsection HM_FirstExample First Example
+
+The following example shows ...
+
+\section sec_HM_history Design and Implementation History
+
+This package ...
+
+*/
+} /* namespace CGAL */
