@@ -37,7 +37,7 @@ namespace Polygon_mesh_processing{
  * @tparam Mesh a model of `VertexListGraph`
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  * 
- * @param transformation the `Aff_transformation_3` to apply to `mesh`.
+ * @param transformation the `Transformation` to apply to `mesh`.
  * @param mesh the `Mesh` to transform.
  * @param np optional sequence of \ref pmp_namedparameters for `mesh`, among the ones listed below
  * 
