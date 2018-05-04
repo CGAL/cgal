@@ -32,6 +32,7 @@ namespace Heat_method_3 {
   /**
    * Class `Heat_method_3` is a ...
    *
+   * \tparam HMTraits must
    * \sa `AA`
    *
    */

@@ -2,7 +2,7 @@ namespace CGAL {
 /*!
 
 \mainpage User Manual
-\anchor Chapter_Heat_Method
+\anchor Chapter_HeatMethod
 \cgalAutoToc
 \author Keenan Crane, Christina Vaz, Andreas Fabri
 

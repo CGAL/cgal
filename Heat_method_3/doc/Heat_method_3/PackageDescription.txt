@@ -17,7 +17,7 @@
 \addtogroup PkgHeatMethod
 
 \cgalPkgDescriptionBegin{The Heat Method,PkgHeatMethodSummary}
-\cgalPkgPicture{heatmethod-small.png}
+\cgalPkgPicture{heat-method-small.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Keenan Crane, Christina Vaz, Andreas Fabri}
@@ -41,6 +41,6 @@
 - `AA`
 
 ## Classes ##
-- `CGAL::AA`
+- `CGAL::Heat_method_3::Heat_method_3`
 
 */
