@@ -32,9 +32,9 @@ void sm_to_matrix(SurfaceMesh& sm, Matrix& mat)
   for(vertex_descriptor v : vertices(sm))
   {
     Point_ref p = get(vpm, v);
-    mat(i, 0) = p.x();
-    mat(i, 1) = p.y();
-    mat(i, 2) = p.z();
+    mat.coeffRef(i, 0) = p.x();
+    mat.coeffRef(i, 1) = p.y();
+    mat.coeffRef(i, 2) = p.z();
     ++i;
   }
 }

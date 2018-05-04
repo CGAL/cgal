@@ -118,7 +118,7 @@ private:
     {
       for(std::size_t j = 0; j < 3; ++j)
       {
-        R(i, j) = random_generator.get_double();
+        R.coeffRef(i, j) = random_generator.get_double();
       }
     }
   }

@@ -126,7 +126,7 @@ void post_processing(Matrix_dynamic& points, Vertex& R, Matrix_fixed& obb)
   std::vector<Point> v_points; // Simplex -> std::vector
   for(std::size_t i = 0; i < rotated_points.rows(); ++i)
   {
-    Point p(rotated_points(i, 0), rotated_points(i, 1), rotated_points(i, 2));
+    Point p(rotated_points.coeff(i, 0), rotated_points.coeff(i, 1), rotated_points.coeff(i, 2));
     v_points.push_back(p);
   }
   CGAL::Bbox_3 bbox;
@@ -140,9 +140,9 @@ void post_processing(Matrix_dynamic& points, Vertex& R, Matrix_fixed& obb)
 
   for(std::size_t i = 0; i < 8; ++i)
   {
-    aabb(i, 0) = ic[i].x();
-    aabb(i, 1) = ic[i].y();
-    aabb(i, 2) = ic[i].z();
+    aabb.coeffRef(i, 0) = ic[i].x();
+    aabb.coeffRef(i, 1) = ic[i].y();
+    aabb.coeffRef(i, 2) = ic[i].z();
   }
 
   // 3) apply inverse rotation to rotated AABB
@@ -156,9 +156,9 @@ void fill_matrix(std::vector<Point>& v_points, Matrix& points_mat)
   for(std::size_t i = 0; i < v_points.size(); ++i)
   {
     Point p = v_points[i];
-    points_mat(i, 0) = p.x();
-    points_mat(i, 1) = p.y();
-    points_mat(i, 2) = p.z();
+    points_mat.coeffRef(i, 0) = p.x();
+    points_mat.coeffRef(i, 1) = p.y();
+    points_mat.coeffRef(i, 2) = p.z();
   }
 }
 
@@ -209,7 +209,7 @@ void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool u
   // matrix -> vector
   for(std::size_t i = 0; i < 8; ++i)
   {
-    Point p(obb(i, 0), obb(i, 1), obb(i, 2));
+    Point p(obb.coeff(i, 0), obb.coeff(i, 1), obb.coeff(i, 2));
     obb_points[i] = p;
   }
 }
