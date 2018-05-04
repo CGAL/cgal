@@ -600,13 +600,11 @@ void stitch_borders(PolygonMesh& pmesh,
 /// `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
 /// \cgalParamBegin{apply_per_connected_component}
 ///  specifies if the borders should only be stitched inside their own connected component.
+/// In that case, a property map for `CGAL::face_index_t` should be either available as an internal property map 
+/// to `pmesh` or provided as the \ref pmp_namedparameters "Named Parameter" `face_index_map`.
 /// Default value is `false`.\cgalParamEnd
 /// \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
 /// \cgalNamedParamsEnd
-///
-/// @attention A property map for `CGAL::face_index_t` should be either available as an internal property map 
-/// to `pmesh` or provided as one of the \ref pmp_namedparameters "Named Parameters" if `apply_per_connected_component`
-/// is `true`.
 
 template <typename PolygonMesh, class CGAL_PMP_NP_TEMPLATE_PARAMETERS>
 void stitch_borders(PolygonMesh& pmesh, const CGAL_PMP_NP_CLASS& np)

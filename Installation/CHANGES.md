@@ -1,6 +1,14 @@
 Release History
 ===============
 
+Release 4.13
+------------
+
+### Polygon Mesh Processing
+
+-   Added a new named parameter for stitching that allows to perform 
+    this operation per connected component instead of globally
+
 Release 4.12
 ------------
 
@@ -151,8 +159,6 @@ Release date: April 2018
     -   `CGAL::Polygon_mesh_processing::detect_vertex_incident_patches()`
     -   `CGAL::Polygon_mesh_processing::sharp_edges_segmentation()`
 
--   Added a new named parameter for stitching that allows to perform 
-    this operation per connected component instead of globally
 
 
 ### Point Set Shape Detection
