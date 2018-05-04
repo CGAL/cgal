@@ -49,12 +49,10 @@ struct Comparator
   std::vector<double> fitness;
 };
 
-
-
 // points: point coords
-// simplex: 4 roation matrices are its vertices
+// simplex: 4 rotation matrices are its vertices
 template<typename Vertex, typename Matrix>
-void nelder_mead(std::vector<Vertex>& simplex, Matrix& points, std::size_t nb_iterations)
+void nelder_mead(std::vector<Vertex>& simplex, const Matrix& points, std::size_t nb_iterations)
 {
 
   CGAL_assertion(simplex.size() == 4); // tetrahedron
@@ -63,38 +61,19 @@ void nelder_mead(std::vector<Vertex>& simplex, Matrix& points, std::size_t nb_it
   std::vector<std::size_t> indices( boost::counting_iterator<std::size_t>( 0 ),
                                     boost::counting_iterator<std::size_t>( simplex.size() ) );
 
-
   for(std::size_t t = 0; t < nb_iterations; ++t)
   {
-
     for(std::size_t i = 0; i < 4; ++i)
     {
       fitness[i] = compute_fitness(simplex[i], points);
     }
 
-    /*
-    for(const Matrix& v : simplex)
-      fitness.push_back(compute_fitness(v, points));
-    */
     CGAL_assertion(fitness.size() == 4);
     CGAL_assertion(indices.size() == 4);
-
 
     // get indices of sorted sequence
     Comparator compare_indices(fitness);
     std::sort(indices.begin(), indices.end(), compare_indices);
-
-
-    /*
-    for(int i =0 ; i < 4; ++i)
-    {
-      std::cout << simplex[i] << "\n";
-      std::cout << "fitness= " << fitness[i] << "\n";
-      std::cout << "index= " << indices[i] << "\n\n";
-    }
-    std::cout << std::endl;
-    */
-
 
     // new sorted simplex & fitness
     std::vector<Vertex> s_simplex(4);
@@ -105,7 +84,7 @@ void nelder_mead(std::vector<Vertex>& simplex, Matrix& points, std::size_t nb_it
       s_fitness[i] = fitness[indices[i]];
     }
 
-    simplex = s_simplex; // swap?
+    simplex = s_simplex;
     fitness = s_fitness;
 
     // centroid
@@ -172,7 +151,7 @@ struct Random_int_generator
 
 
 template <typename Simplex, typename Matrix>
-void genetic_algorithm(Population<Simplex>& pop, Matrix& points)
+void genetic_algorithm(Population<Simplex>& pop, const Matrix& points)
 {
   // random permutations
   std::size_t m = pop.size();

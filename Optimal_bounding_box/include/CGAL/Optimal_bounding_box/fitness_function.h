@@ -30,10 +30,9 @@
 namespace CGAL {
 namespace Optimal_bounding_box {
 
-template<typename Vertex, typename Matrix>
+template <typename Vertex, typename Matrix>
 const double compute_fitness(const Vertex& R, const Matrix& data)
 {
-
   // R: rotation matrix
   CGAL_assertion(R.cols() == 3);
   CGAL_assertion(R.rows() == 3);
@@ -41,13 +40,12 @@ const double compute_fitness(const Vertex& R, const Matrix& data)
   CGAL_assertion(data.cols() == 3);
   CGAL_assertion(data.rows() >= 3);
 
-  // rotate points
-
-#if 1
   double xmin, xmax, ymin, ymax, zmin, zmax;
   for(int i = 0; i < data.rows(); i++){
+
     Eigen::Vector3d vec = data.row(i);
     vec = R * vec;
+
     if(i == 0){
       xmin = xmax = vec.coeff(0);
       ymin = ymax = vec.coeff(1);
@@ -62,56 +60,30 @@ const double compute_fitness(const Vertex& R, const Matrix& data)
     }
   }
   
-#else
-  Vertex RT = R.transpose();
-  Matrix rotated_data;
-  rotated_data = data * RT;
-  CGAL_assertion(rotated_data.cols() == data.cols());
-  CGAL_assertion(rotated_data.rows() == data.rows());
-
-  // AABB: take mins and maxs
-  double xmin = rotated_data.col(0).minCoeff();
-  double xmax = rotated_data.col(0).maxCoeff();
-  double ymin = rotated_data.col(1).minCoeff();
-  double ymax = rotated_data.col(1).maxCoeff();
-  double zmin = rotated_data.col(2).minCoeff();
-  double zmax = rotated_data.col(2).maxCoeff();
- 
-#endif
-  
-  double x_dim = abs(xmax - xmin); // abs needed?
-  double y_dim = abs(ymax - ymin);
-  double z_dim = abs(zmax - zmin);
+  CGAL_assertion(xmax > xmin);
+  CGAL_assertion(ymax > ymin);
+  CGAL_assertion(zmax > zmin);
 
   // volume
-  return (x_dim * y_dim * z_dim);
-
+  return ((xmax - xmin) * (ymax - ymin) * (zmax - zmin));
 }
 
 template <typename Vertex, typename Matrix>
-struct Fitness_map // -> a free function
+struct Fitness_map
 {
   Fitness_map(Population<Vertex>& p, Matrix& points) : pop(p), points(points)
   {}
 
-  Vertex get_best()
+  const Vertex get_best()
   {
-    std::size_t count_vertices = 0;
-
-    std::size_t simplex_id;
-    std::size_t vertex_id;
+    std::size_t simplex_id, vertex_id;
     double best_fitness = std::numeric_limits<int>::max();
     for(std::size_t i = 0; i < pop.size(); ++i)
     {
       for(std::size_t j =0; j < 4; ++j)
       {
         const Vertex vertex = pop[i][j];
-        //std::cout << "i= "<< i << " j=" << j<<"\n vertex= " << vertex << std::endl;
-        ++count_vertices;
-        //std::cout << "vertex = " << vertex << std::endl;
-
         const double fitness = compute_fitness(vertex, points);
-        //std::cout << "fitness = " << fitness << std::endl;
         if (fitness < best_fitness)
         {
           simplex_id = i;
@@ -121,29 +93,18 @@ struct Fitness_map // -> a free function
       }
     }
 
-    std::vector<Vertex> best_simplex = pop[simplex_id];
-    //Matrix temp = best_simplex[vertex_id];
-
-    return best_simplex[vertex_id];
+    return pop[simplex_id][vertex_id];
   }
 
-
-  double get_best_fitness_value(const Matrix& data)
+  const double get_best_fitness_value(const Matrix& data)
   {
     Vertex best_mat = get_best();
     return compute_fitness(best_mat, data);
   }
 
-
-  const Matrix points; // or just a reference?
-  Population<Vertex> pop;
+  const Matrix& points;
+  Population<Vertex>& pop;
 };
-
-
-
-
-
-
 
 }} // end namespaces
 

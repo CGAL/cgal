@@ -30,13 +30,12 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Iso_cuboid_3.h>
 #include <CGAL/convex_hull_3.h>
-
-#include <Eigen/Dense>
-
-#include <CGAL/Surface_mesh.h> // used draw mesh
 #include <CGAL/Polyhedron_3.h> // used to get the ch
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <Eigen/Dense>
+
 
 namespace CGAL {
 namespace Optimal_bounding_box {
@@ -104,7 +103,6 @@ void evolution(Vertex& R, Matrix& points, std::size_t max_generations) // todo: 
   Fitness_map<Vertex, Matrix> fitness_map(pop, points);
   R = fitness_map.get_best();
 }
-
 
 // works on matrices only
 template <typename Vertex, typename Matrix_dynamic, typename Matrix_fixed>
@@ -179,6 +177,7 @@ void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool u
   // using eigen internally
   typedef Eigen::MatrixXd MatrixXd; // for point data
   typedef Eigen::Matrix3d Matrix3d; // for matrices in simplices
+
   MatrixXd points_mat;
 
   // get the ch3
@@ -214,33 +213,39 @@ void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool u
   }
 }
 
-// it is called after post processing
-template <typename Matrix>
-void matrix_to_mesh_and_draw(Matrix& data_points, std::string filename)
+/// @param pmesh the input mesh.
+/// @param obbmesh the obb in a hexahedron pmesh.
+/// @param use convex hull or not.
+///
+/// todo named parameters: max iterations, population size, tolerance.
+template <typename PolygonMesh>
+void find_obb(PolygonMesh& pmesh , PolygonMesh& obbmesh, bool use_ch)
 {
-  typedef CGAL::Simple_cartesian<double> K;
-  typedef K::Point_3 Point;
-  typedef CGAL::Surface_mesh<Point> Mesh;
+  CGAL_assertion(vertices(pmesh).size() >= 3);
 
-  // Simplex -> std::vector
-  std::vector<Point> points;
-
-  for(int i = 0; i < data_points.rows(); ++i)
+  if(vertices(pmesh).size() <= 3)
   {
-    Point p(data_points(i, 0), data_points(i, 1), data_points(i, 2));
-    points.push_back(p);
+    std::cerr << "Not enough points in the mesh!\n";
+    return;
   }
 
-  Mesh mesh;
-  CGAL::make_hexahedron(points[0], points[1], points[2], points[3], points[4], points[5],
-      points[6], points[7], mesh);
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type Vpm;
+  typedef typename boost::property_traits<Vpm>::value_type Point;
+  //typedef typename Kernel_traits<Point>::Kernel Kernel;
 
-  std::ofstream out(filename);
-  out << mesh;
-  out.close();
+  std::vector<Point> points;
+  Vpm pmap = get(boost::vertex_point, pmesh);
+  BOOST_FOREACH(vertex_descriptor v, vertices(pmesh))
+    points.push_back(get(pmap, v));
+
+  std::vector<Point> obb_points;
+  find_obb(points, obb_points, use_ch);
+
+  CGAL::make_hexahedron(obb_points[0], obb_points[1], obb_points[2], obb_points[3],
+      obb_points[4], obb_points[5],
+      obb_points[6], obb_points[7], obbmesh);
 }
-
-
 
 
 }} // end namespaces

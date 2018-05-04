@@ -7,7 +7,6 @@
 #include <fstream>
 #include <Eigen/Dense>
 
-
 typedef Eigen::MatrixXd MatrixXd;
 typedef Eigen::Matrix3d Matrix3d;
 
@@ -39,14 +38,30 @@ void sm_to_matrix(SurfaceMesh& sm, Matrix& mat)
   }
 }
 
-template <typename SurfaceMesh, typename Point>
-void gather_mesh_points(SurfaceMesh& mesh, std::vector<Point>& points)
+// it is called after post processing
+template <typename Matrix>
+void matrix_to_mesh_and_draw(Matrix& data_points, std::string filename)
 {
-  typedef typename boost::graph_traits<SurfaceMesh>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::property_map<SurfaceMesh, CGAL::vertex_point_t>::type PointPMap;
-  PointPMap pmap = get(boost::vertex_point, mesh);
-  BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
-    points.push_back(get(pmap, v));
+  typedef CGAL::Simple_cartesian<double> K;
+  typedef K::Point_3 Point;
+  typedef CGAL::Surface_mesh<Point> Mesh;
+
+  // Simplex -> std::vector
+  std::vector<Point> points;
+
+  for(int i = 0; i < data_points.rows(); ++i)
+  {
+    Point p(data_points(i, 0), data_points(i, 1), data_points(i, 2));
+    points.push_back(p);
+  }
+
+  Mesh mesh;
+  CGAL::make_hexahedron(points[0], points[1], points[2], points[3], points[4], points[5],
+      points[6], points[7], mesh);
+
+  std::ofstream out(filename);
+  out << mesh;
+  out.close();
 }
 
 template <typename Point>
@@ -210,7 +225,7 @@ void test_random_unit_tetra()
   // postprocessing
   MatrixXd obb(8, 3);
   CGAL::Optimal_bounding_box::post_processing(data_points, R, obb);
-  CGAL::Optimal_bounding_box::matrix_to_mesh_and_draw(obb, "data/random_unit_tetra_result.off");
+  matrix_to_mesh_and_draw(obb, "data/random_unit_tetra_result.off");
 #endif
 }
 
@@ -237,7 +252,7 @@ void test_reference_tetrahedron(const char* fname)
   // postprocessing
   MatrixXd obb(8, 3);
   CGAL::Optimal_bounding_box::post_processing(points, R, obb);
-  CGAL::Optimal_bounding_box::matrix_to_mesh_and_draw(obb, "data/OBB.off");
+  matrix_to_mesh_and_draw(obb, "data/OBB.off");
   #endif
 }
 
@@ -275,14 +290,15 @@ void test_long_tetrahedron(std::string fname)
   // postprocessing
   MatrixXd obb(8, 3);
   CGAL::Optimal_bounding_box::post_processing(points, R, obb);
-  CGAL::Optimal_bounding_box::matrix_to_mesh_and_draw(obb, fname + "result.off");
+  matrix_to_mesh_and_draw(obb, fname + "result.off");
   #endif
 }
 
 void test_find_obb(std::string fname)
 {
   std::ifstream input(fname);
-  CGAL::Surface_mesh<K::Point_3> mesh;
+  typedef CGAL::Surface_mesh<K::Point_3> SMesh;
+  SMesh mesh;
   if (!input || !(input >> mesh) || mesh.is_empty()) {
     std::cerr << fname << " is not a valid off file.\n";
     exit(1);
@@ -290,39 +306,16 @@ void test_find_obb(std::string fname)
 
   // get mesh points
   std::vector<K::Point_3> sm_points;
-  gather_mesh_points(mesh, sm_points);
+  typedef typename boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::property_map<SMesh, boost::vertex_point_t>::const_type PointPMap;
+  PointPMap pmap = get(boost::vertex_point, mesh);
+  BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
+    sm_points.push_back(get(pmap, v));
 
   std::vector<K::Point_3> obb_points;
   CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points, true);
 
   double epsilon = 1e-3;
-  /*
-  CGAL_assertion(assert_doubles(obb_points[0].x(), 1.01752, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[0].y(), 0.437675, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[0].z(), 0.382697, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[1].x(), 0.912648, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[1].y(), 0.761563, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[1].z(), 0.160329, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[2].x(), 0.0615854, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[2].y(), 0.473799, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[2].z(), 0.142574, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[3].x(), 0.166461, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[3].y(), 0.149911, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[3].z(), 0.364943, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[4].x(), 0.0316104, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[4].y(), 0.512247, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[4].z(), 0.956296, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[5].x(), 0.882673, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[5].y(), 0.800011, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[5].z(), 0.97405, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[6].x(), 0.777797, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[6].y(), 1.1239, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[6].z(), 0.751681, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[7].x(), -0.0732647, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[7].y(), 0.836134, epsilon));
-  CGAL_assertion(assert_doubles(obb_points[7].z(), 0.733927, epsilon));
-  */
-
   double vol = calculate_volume(obb_points);
   CGAL_assertion(assert_doubles(vol, 0.883371, epsilon));
 
@@ -341,52 +334,27 @@ void test_find_obb(std::string fname)
   #endif
 }
 
-void
-bench(const char* fname)
+void test_find_obb_mesh(std::string fname)
 {
-  std::vector<K::Point_3> sm_points, obb_points;
-  std::ifstream in(fname);
-  K::Point_3 p;
-  int i = 0;
-  while(in >> p){
-
-    if(i % 2 == 0)
-    {
-      sm_points.push_back(p);
-    }
-
-    ++i;
+  std::ifstream input(fname);
+  CGAL::Surface_mesh<K::Point_3> mesh;
+  if (!input || !(input >> mesh) || mesh.is_empty()) {
+    std::cerr << fname << " is not a valid off file.\n";
+    exit(1);
   }
 
-  std::cout << "input data (points + normals)= " << i << std::endl;
-  std::cout << "number of points= " << sm_points.size() << std::endl;
+  CGAL::Surface_mesh<K::Point_3> obbmesh;
+  CGAL::Optimal_bounding_box::find_obb(mesh, obbmesh, true);
 
-
-  CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points, false);
-
-  
-  std::cout.precision(17);
-  for(int i =0; i < obb_points.size(); i ++){
-    std::cout << obb_points[i] << std::endl;
-    }
-  /*
-
-  CGAL::Surface_mesh<K::Point_3> mesh;
-  CGAL::make_hexahedron(obb_points[0], obb_points[1], obb_points[2], obb_points[3], obb_points[4], obb_points[5],
-      obb_points[6], obb_points[7], mesh);
-
-  std::ofstream out("/tmp/result_obb.off");
-  out << mesh;
+  #ifdef OBB_DEBUG_TEST
+  std::ofstream out("/tmp/result_elephant.off");
+  out << obbmesh;
   out.close();
-  */
+  #endif
 }
-
-
 
 int main(int argc, char* argv[])
 {
-
-  /*
   test_population();
   test_nelder_mead();
   test_genetic_algorithm();
@@ -394,10 +362,7 @@ int main(int argc, char* argv[])
   test_reference_tetrahedron("data/reference_tetrahedron.off");
   test_long_tetrahedron("data/long_tetrahedron.off");
   test_find_obb("data/random_unit_tetra.off");
-  */
-
-
-  bench(argv[1]);
+  test_find_obb_mesh("data/elephant.off");
 
   return 0;
 }
