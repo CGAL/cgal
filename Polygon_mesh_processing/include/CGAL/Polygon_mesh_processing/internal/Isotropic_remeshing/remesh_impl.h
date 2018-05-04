@@ -668,12 +668,13 @@ namespace internal {
         // do not collapse edge with two constrained vertices
         if (is_va_constrained && is_vb_constrained) continue;
 
-        bool can_swap = !is_va_constrained || !is_vb_constrained;
+        bool can_swap = !is_vb_constrained;
         if (is_va_constrained)
         {
           he = opposite(he, mesh_);
           e=edge(he, mesh_);
           std::swap(va, vb);
+          can_swap=false;
         }
 
         if(!collapse_does_not_invert_face(he))
