@@ -30,8 +30,8 @@
 namespace CGAL {
 namespace Optimal_bounding_box {
 
-template<typename Matrix>
-const double compute_fitness(const Matrix& R, const Matrix& data)
+template<typename Vertex, typename Matrix>
+const double compute_fitness(const Vertex& R, const Matrix& data)
 {
 
   // R: rotation matrix
@@ -42,8 +42,9 @@ const double compute_fitness(const Matrix& R, const Matrix& data)
   CGAL_assertion(data.rows() >= 3);
 
   // rotate points
-  Matrix RT = R.transpose();
-  Matrix rotated_data = data * RT;
+  Vertex RT = R.transpose();
+  Matrix rotated_data;
+  rotated_data = data * RT;
   CGAL_assertion(rotated_data.cols() == data.cols());
   CGAL_assertion(rotated_data.rows() == data.rows());
 
@@ -64,13 +65,13 @@ const double compute_fitness(const Matrix& R, const Matrix& data)
 
 }
 
-template <typename Matrix>
+template <typename Vertex, typename Matrix>
 struct Fitness_map // -> a free function
 {
-  Fitness_map(Population<Matrix>& p, Matrix& points) : pop(p), points(points)
+  Fitness_map(Population<Vertex>& p, Matrix& points) : pop(p), points(points)
   {}
 
-  Matrix get_best()
+  Vertex get_best()
   {
     std::size_t count_vertices = 0;
 
@@ -79,10 +80,9 @@ struct Fitness_map // -> a free function
     double best_fitness = std::numeric_limits<int>::max();
     for(std::size_t i = 0; i < pop.size(); ++i)
     {
-      //const std::vector<Matrix> simplex = pop[i];
       for(std::size_t j =0; j < 4; ++j)
       {
-        const Matrix vertex = pop[i][j];
+        const Vertex vertex = pop[i][j];
         //std::cout << "i= "<< i << " j=" << j<<"\n vertex= " << vertex << std::endl;
         ++count_vertices;
         //std::cout << "vertex = " << vertex << std::endl;
@@ -98,7 +98,7 @@ struct Fitness_map // -> a free function
       }
     }
 
-    std::vector<Matrix> best_simplex = pop[simplex_id];
+    std::vector<Vertex> best_simplex = pop[simplex_id];
     //Matrix temp = best_simplex[vertex_id];
 
     return best_simplex[vertex_id];
@@ -107,13 +107,13 @@ struct Fitness_map // -> a free function
 
   double get_best_fitness_value(const Matrix& data)
   {
-    Matrix best_mat = get_best();
+    Vertex best_mat = get_best();
     return compute_fitness(best_mat, data);
   }
 
 
-  const Matrix points;
-  Population<Matrix> pop;
+  const Matrix points; // or just a reference?
+  Population<Vertex> pop;
 };
 
 

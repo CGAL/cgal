@@ -1,17 +1,15 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-
 #include <CGAL/Optimal_bounding_box/optimization_algorithms.h>
 #include <CGAL/Optimal_bounding_box/population.h>
 #include <CGAL/Optimal_bounding_box/obb.h>
-
 #include <iostream>
 #include <fstream>
-
 #include <Eigen/Dense>
 
 
 typedef Eigen::MatrixXd MatrixXd;
+typedef Eigen::Matrix3d Matrix3d;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -62,38 +60,38 @@ double calculate_volume(std::vector<Point> points)
 
 void test_population()
 {
-  CGAL::Optimal_bounding_box::Population<MatrixXd> pop(5);
+  CGAL::Optimal_bounding_box::Population<Matrix3d> pop(5);
   //pop.show_population();
   CGAL_assertion(pop.size() == 5);
 }
 
 void test_nelder_mead()
 {
-  MatrixXd data_points(4, 3);
+  Eigen::Matrix<double, 4, 3> data_points(4, 3);
   data_points << 0.866802, 0.740808, 0.895304,
                  0.912651, 0.761565, 0.160330,
                  0.093661, 0.892578, 0.737412,
                  0.166461, 0.149912, 0.364944;
 
   // one simplex
-  std::vector<MatrixXd> simplex(4);
+  std::vector<Matrix3d> simplex(4);
 
-  MatrixXd v0(3, 3);
+  Matrix3d v0;
   v0 <<  -0.2192721,   0.2792986,  -0.9348326,
           -0.7772152,  -0.6292092,  -0.0056861,
           -0.5897934,   0.7253193,   0.3550431;
 
-  MatrixXd v1(3, 3);
+  Matrix3d v1;
   v1 <<  -0.588443,   0.807140,  -0.047542,
           -0.786228,  -0.584933,  -0.199246,
           -0.188629,  -0.079867,   0.978795;
 
-  MatrixXd v2(3, 3);
+  Matrix3d v2;
   v2 << -0.277970,  0.953559,  0.116010,
          -0.567497,  -0.065576,   -0.820760,
          -0.775035,   -0.293982,   0.559370;
 
-  MatrixXd v3(3, 3);
+  Matrix3d v3;
   v3 <<   -0.32657,  -0.60013,  -0.73020,
            -0.20022,  -0.71110,   0.67398,
            -0.92372,   0.36630,   0.11207;
@@ -108,7 +106,7 @@ void test_nelder_mead()
 
   double epsilon = 1e-5;
 
-  MatrixXd v0_new = simplex[0];
+  Matrix3d v0_new = simplex[0];
   CGAL_assertion(assert_doubles(v0_new(0,0), -0.288975, epsilon));
   CGAL_assertion(assert_doubles(v0_new(0,1), 0.7897657, epsilon));
   CGAL_assertion(assert_doubles(v0_new(0,2), -0.541076, epsilon));
@@ -119,7 +117,7 @@ void test_nelder_mead()
   CGAL_assertion(assert_doubles(v0_new(2,1), 0.5111260, epsilon));
   CGAL_assertion(assert_doubles(v0_new(2,2), 0.84094, epsilon));
 
-  MatrixXd v1_new = simplex[1];
+  Matrix3d v1_new = simplex[1];
   CGAL_assertion(assert_doubles(v1_new(0,0), -0.458749, epsilon));
   CGAL_assertion(assert_doubles(v1_new(0,1), 0.823283, epsilon));
   CGAL_assertion(assert_doubles(v1_new(0,2), -0.334296, epsilon));
@@ -130,7 +128,7 @@ void test_nelder_mead()
   CGAL_assertion(assert_doubles(v1_new(2,1), 0.338040, epsilon));
   CGAL_assertion(assert_doubles(v1_new(2,2), 0.937987, epsilon));
 
-  MatrixXd v2_new = simplex[2];
+  Matrix3d v2_new = simplex[2];
   CGAL_assertion(assert_doubles(v2_new(0,0), -0.346582, epsilon));
   CGAL_assertion(assert_doubles(v2_new(0,1), 0.878534, epsilon));
   CGAL_assertion(assert_doubles(v2_new(0,2), -0.328724, epsilon));
@@ -141,7 +139,7 @@ void test_nelder_mead()
   CGAL_assertion(assert_doubles(v2_new(2,1), 0.334057, epsilon));
   CGAL_assertion(assert_doubles(v2_new(2,2), 0.941423, epsilon));
 
-  MatrixXd v3_new = simplex[3];
+  Matrix3d v3_new = simplex[3];
   CGAL_assertion(assert_doubles(v3_new(0,0), -0.394713, epsilon));
   CGAL_assertion(assert_doubles(v3_new(0,1), 0.791782, epsilon));
   CGAL_assertion(assert_doubles(v3_new(0,2), -0.466136, epsilon));
@@ -155,20 +153,20 @@ void test_nelder_mead()
 
 void test_genetic_algorithm()
 {
-  MatrixXd data_points(4, 3);
+  Eigen::Matrix<double, 4, 3> data_points(4, 3);
   data_points << 0.866802, 0.740808, 0.895304,
                  0.912651, 0.761565, 0.160330,
                  0.093661, 0.892578, 0.737412,
                  0.166461, 0.149912, 0.364944;
 
-  CGAL::Optimal_bounding_box::Population<MatrixXd> pop(5);
+  CGAL::Optimal_bounding_box::Population<Matrix3d> pop(5);
   CGAL::Optimal_bounding_box::genetic_algorithm(pop, data_points);
   CGAL_assertion(pop.size() == 5);
 }
 
 void test_random_unit_tetra()
 {
-  MatrixXd data_points(4, 3); // points on their convex hull
+  Eigen::Matrix<double, 4, 3> data_points(4, 3); // points on their convex hull
   data_points << 0.866802, 0.740808, 0.895304,
                  0.912651, 0.761565, 0.160330,
                  0.093661, 0.892578, 0.737412,
@@ -192,7 +190,7 @@ void test_random_unit_tetra()
   out.close();
 #endif
 
-  MatrixXd R(3, 3);
+  Matrix3d R;
   std::size_t generations = 10;
   CGAL::Optimal_bounding_box::evolution(R, data_points, generations);
 
@@ -229,7 +227,7 @@ void test_reference_tetrahedron(const char* fname)
   MatrixXd points;
   sm_to_matrix(mesh, points);
 
-  MatrixXd R(3, 3);
+  Matrix3d R(3, 3);
   std::size_t generations = 10;
   CGAL::Optimal_bounding_box::evolution(R, points, generations);
   double epsilon = 1e-5;
@@ -256,7 +254,7 @@ void test_long_tetrahedron(std::string fname)
   MatrixXd points;
   sm_to_matrix(mesh, points);
 
-  MatrixXd R(3, 3);
+  MatrixXd R(3, 3); // test with dynamic size
   std::size_t generations = 10;
   CGAL::Optimal_bounding_box::evolution(R, points, generations);
   double epsilon = 1e-3;
@@ -348,7 +346,6 @@ bench(const char* fname)
 {
   std::vector<K::Point_3> sm_points, obb_points;
   std::ifstream in(fname);
-  //double x,y,z;
   K::Point_3 p;
   int i = 0;
   while(in >> p){
@@ -365,20 +362,20 @@ bench(const char* fname)
   std::cout << "number of points= " << sm_points.size() << std::endl;
 
 
-  std::cout.precision(17);
   CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points, true);
 
-/*
+  /*
+  std::cout.precision(17);
   for(int i =0; i < obb_points.size(); i ++){
     std::cout << obb_points[i] << std::endl;
     }
-    */
+  */
 
   CGAL::Surface_mesh<K::Point_3> mesh;
   CGAL::make_hexahedron(obb_points[0], obb_points[1], obb_points[2], obb_points[3], obb_points[4], obb_points[5],
       obb_points[6], obb_points[7], mesh);
 
-  std::ofstream out("/tmp/octopus_result.off");
+  std::ofstream out("/tmp/result_obb.off");
   out << mesh;
   out.close();
 
@@ -388,6 +385,7 @@ bench(const char* fname)
 
 int main(int argc, char* argv[])
 {
+
   /*
   test_population();
   test_nelder_mead();
@@ -397,6 +395,7 @@ int main(int argc, char* argv[])
   test_long_tetrahedron("data/long_tetrahedron.off");
   test_find_obb("data/random_unit_tetra.off");
   */
+
 
   bench(argv[1]);
 

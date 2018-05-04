@@ -24,54 +24,47 @@
 
 #include <vector>
 #include <CGAL/Random.h>
-
 #include <CGAL/Optimal_bounding_box/fitness_function.h>
 #include <CGAL/Optimal_bounding_box/linear_algebra.h>
 
 
 namespace CGAL {
-
 namespace Optimal_bounding_box {
-
 
 
 template<typename Matrix>
 class Population
 {
-
-  typedef std::vector<Matrix> Individual;
+  typedef std::vector<Matrix> Simplex;
 
 public:
-  Population(std::size_t size) : n(size), random_generator(CGAL::Random(1))
+  Population(std::size_t size) : n(size), random_generator(CGAL::Random())
   {
-    //std::cout << "seed= " << random_generator.get_seed() << std::endl;
-
     // reserve pop space
     pop.reserve(n);
 
-    // create individuals
+    // create simplices
     for(std::size_t i = 0 ; i < n; ++i)
     {
-      Individual member(4);
-      create_individual(member);
-      CGAL_assertion(member.size() == 4);
-      pop.push_back(member);
+      Simplex simplex(4);
+      create_simplex(simplex);
+      CGAL_assertion(simplex.size() == 4);
+      pop.push_back(simplex);
     }
   }
 
   void show_population()
   {
     std::size_t id = 0;
-    for(const Individual i : pop)
+    for(const Simplex i : pop)
     {
       CGAL_assertion(i.size() == 4);
-      std:: cout << "Individual: "<< id++ << std::endl;
+      std:: cout << "Simplex: "<< id++ << std::endl;
       for(const Matrix R : i)
       {
         std::cout << R; // eigen out
         std::cout << "\n\n";
       }
-
       std:: cout << std:: endl;
     }
   }
@@ -81,15 +74,14 @@ public:
     return n;
   }
 
-
   // access simplex
-  Individual& operator[](std::size_t i)
+  Simplex& operator[](std::size_t i)
   {
     CGAL_assertion(i < n);
     return pop[i];
   }
 
-  const Individual& operator[](std::size_t i) const
+  const Simplex& operator[](std::size_t i) const
   {
     CGAL_assertion(i < n);
     return pop[i];
@@ -98,24 +90,26 @@ public:
 private:
 
   // create random population
-  void create_individual(Individual& member)
+  void create_simplex(Simplex& simplex)
   {
-    CGAL_assertion(member.size() == 4);
-
+    CGAL_assertion(simplex.size() == 4);
     for(std::size_t i = 0; i < 4; ++i)
     {
-      // create matrix
-      Matrix R(3,3);
-      create_simplex(R);
-      Matrix Q;
-      qr_factorization(R, Q);
-      member[i] = Q;
-    }
+      Matrix R;
+      // R may be preallocated, if Vertex is Matrix3d,
+      // but Vertex may not, if Vertex is MatrixXd and R is constructed with MatrixXd R(3,3)
+      if(R.cols() == 0 || R.rows() == 0)
+        R.resize(3, 3);
 
-    CGAL_assertion(member.size() == 4);
+      create_vertex(R);
+      Matrix Q; // no allocation
+      qr_factorization(R, Q);
+      simplex[i] = Q;
+    }
+    CGAL_assertion(simplex.size() == 4);
   }
 
-  void create_simplex(Matrix& R)
+  void create_vertex(Matrix& R)
   {
     CGAL_assertion(R.rows() == 3);
     CGAL_assertion(R.cols() == 3);
@@ -131,8 +125,7 @@ private:
 
   CGAL::Random random_generator;
   std::size_t n;
-  std::vector<Individual> pop;
-
+  std::vector<Simplex> pop;
 };
 
 

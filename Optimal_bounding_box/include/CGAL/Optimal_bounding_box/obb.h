@@ -42,16 +42,15 @@ namespace CGAL {
 namespace Optimal_bounding_box {
 
 
-template <typename Matrix>
-void evolution(Matrix& R, Matrix& points, std::size_t max_generations) // todo: points is const
+template <typename Vertex, typename Matrix>
+void evolution(Vertex& R, Matrix& points, std::size_t max_generations) // todo: points is const
 {
-
   CGAL_assertion(points.rows() >= 3);
   CGAL_assertion(points.cols() == 3);
   CGAL_assertion(R.rows() == 3);
   CGAL_assertion(R.cols() == 3);
 
-  Population<Matrix> pop(50);
+  Population<Vertex> pop(50);
   std::size_t nelder_mead_iterations = 20;
 
   double prev_fit_value = 0;
@@ -89,7 +88,7 @@ void evolution(Matrix& R, Matrix& points, std::size_t max_generations) // todo: 
 #endif
 
     // stopping criteria
-    Fitness_map<Matrix> fitness_map(pop, points);
+    Fitness_map<Vertex, Matrix> fitness_map(pop, points);
     new_fit_value = fitness_map.get_best_fitness_value(points);
 
     double difference = new_fit_value - prev_fit_value;
@@ -102,27 +101,30 @@ void evolution(Matrix& R, Matrix& points, std::size_t max_generations) // todo: 
     prev_fit_value = new_fit_value;
   }
 
-  Fitness_map<Matrix> fitness_map(pop, points);
+  Fitness_map<Vertex, Matrix> fitness_map(pop, points);
   R = fitness_map.get_best();
 }
 
 
 // works on matrices only
-template <typename Matrix>
-void post_processing(Matrix& points, Matrix& R, Matrix& obb)
+template <typename Vertex, typename Matrix_dynamic, typename Matrix_fixed>
+void post_processing(Matrix_dynamic& points, Vertex& R, Matrix_fixed& obb)
 {
+  CGAL_assertion(points.cols() == 3);
+  CGAL_assertion(R.rows() == 3);
+  CGAL_assertion(R.cols() == 3);
+  CGAL_assertion(obb.rows() == 8);
+  CGAL_assertion(obb.cols() == 3);
 
   // 1) rotate points with R
-
-  Matrix rotated_points(points.rows(), points.cols());
+  Matrix_dynamic rotated_points(points.rows(), points.cols());
   rotated_points = points * R.transpose();
 
   // 2) get AABB from rotated points
-
   typedef CGAL::Simple_cartesian<double> K;
   typedef K::Point_3 Point;
   std::vector<Point> v_points; // Simplex -> std::vector
-  for(int i = 0; i < rotated_points.rows(); ++i)
+  for(std::size_t i = 0; i < rotated_points.rows(); ++i)
   {
     Point p(rotated_points(i, 0), rotated_points(i, 1), rotated_points(i, 2));
     v_points.push_back(p);
@@ -131,8 +133,12 @@ void post_processing(Matrix& points, Matrix& R, Matrix& obb)
   bbox = bbox_3(v_points.begin(), v_points.end());
   K::Iso_cuboid_3 ic(bbox);
 
-  Matrix aabb(8, 3);
-  for(int i = 0; i < 8; ++i)
+  Matrix_fixed aabb;
+  // preallocate sanity: if Matrix is not preallocated in compile time
+  if(aabb.cols() != 3 && aabb.rows() != 8)
+    aabb.resize(8, 3);
+
+  for(std::size_t i = 0; i < 8; ++i)
   {
     aabb(i, 0) = ic[i].x();
     aabb(i, 1) = ic[i].y();
@@ -140,10 +146,7 @@ void post_processing(Matrix& points, Matrix& R, Matrix& obb)
   }
 
   // 3) apply inverse rotation to rotated AABB
-
   obb = aabb * R;
-
-
 }
 
 template <typename Matrix, typename Point>
@@ -173,8 +176,9 @@ void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool u
     obb_points.resize(8);
   CGAL_assertion(obb_points.size() == 8);
 
-
-  typedef Eigen::MatrixXd MatrixXd; // using eigen internally
+  // using eigen internally
+  typedef Eigen::MatrixXd MatrixXd; // for point data
+  typedef Eigen::Matrix3d Matrix3d; // for matrices in simplices
   MatrixXd points_mat;
 
   // get the ch3
@@ -195,11 +199,11 @@ void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool u
     fill_matrix(points, points_mat);
   }
 
-  MatrixXd R(3, 3);
+  Matrix3d R;
   std::size_t max_generations = 100;
   CGAL::Optimal_bounding_box::evolution(R, points_mat, max_generations);
 
-  MatrixXd obb(8, 3);
+  Eigen::Matrix<double, 8, 3> obb;
   CGAL::Optimal_bounding_box::post_processing(points_mat, R, obb);
 
   // matrix -> vector

@@ -37,7 +37,6 @@ namespace CGAL {
 namespace Optimal_bounding_box {
 
 
-template<typename Vertex>
 struct Comparator
 {
   Comparator(std::vector<double> in) : fitness(in) {}
@@ -54,8 +53,8 @@ struct Comparator
 
 // points: point coords
 // simplex: 4 roation matrices are its vertices
-template<typename Matrix>
-void nelder_mead(std::vector<Matrix>& simplex, Matrix& points, std::size_t nb_iterations)
+template<typename Vertex, typename Matrix>
+void nelder_mead(std::vector<Vertex>& simplex, Matrix& points, std::size_t nb_iterations)
 {
 
   CGAL_assertion(simplex.size() == 4); // tetrahedron
@@ -68,7 +67,7 @@ void nelder_mead(std::vector<Matrix>& simplex, Matrix& points, std::size_t nb_it
   for(std::size_t t = 0; t < nb_iterations; ++t)
   {
 
-    for(int i = 0; i < 4; ++i)
+    for(std::size_t i = 0; i < 4; ++i)
     {
       fitness[i] = compute_fitness(simplex[i], points);
     }
@@ -82,7 +81,7 @@ void nelder_mead(std::vector<Matrix>& simplex, Matrix& points, std::size_t nb_it
 
 
     // get indices of sorted sequence
-    Comparator<Matrix> compare_indices(fitness);
+    Comparator compare_indices(fitness);
     std::sort(indices.begin(), indices.end(), compare_indices);
 
 
@@ -98,7 +97,7 @@ void nelder_mead(std::vector<Matrix>& simplex, Matrix& points, std::size_t nb_it
 
 
     // new sorted simplex & fitness
-    std::vector<Matrix> s_simplex(4);
+    std::vector<Vertex> s_simplex(4);
     std::vector<double> s_fitness(4);
     for(int i = 0; i < 4; ++i)
     {
@@ -110,11 +109,11 @@ void nelder_mead(std::vector<Matrix>& simplex, Matrix& points, std::size_t nb_it
     fitness = s_fitness;
 
     // centroid
-    const Matrix v_centroid = centroid(simplex[0], simplex[1], simplex[2]);
+    const Vertex v_centroid = centroid(simplex[0], simplex[1], simplex[2]);
 
     // find worst's vertex reflection
-    const Matrix v_worst = simplex[3];
-    const Matrix v_refl = reflection(v_centroid, v_worst);
+    const Vertex v_worst = simplex[3];
+    const Vertex v_refl = reflection(v_centroid, v_worst);
     const double f_refl = compute_fitness(v_refl, points);
 
     if(f_refl < fitness[2])
@@ -127,7 +126,7 @@ void nelder_mead(std::vector<Matrix>& simplex, Matrix& points, std::size_t nb_it
       else
       {
         // expansion
-        const Matrix v_expand = expansion(v_centroid, v_worst, v_refl);
+        const Vertex v_expand = expansion(v_centroid, v_worst, v_refl);
         const double f_expand = compute_fitness(v_expand, points);
         if(f_expand < f_refl)
           simplex[3] = v_expand;
@@ -137,7 +136,7 @@ void nelder_mead(std::vector<Matrix>& simplex, Matrix& points, std::size_t nb_it
     }
     else // if reflected vertex is not better
     {
-      const Matrix v_mean = mean(v_centroid, v_worst);
+      const Vertex v_mean = mean(v_centroid, v_worst);
       const double f_mean = compute_fitness(v_mean, points);
       if(f_mean <= fitness[3])
         // contraction of worst
@@ -145,9 +144,9 @@ void nelder_mead(std::vector<Matrix>& simplex, Matrix& points, std::size_t nb_it
       else
       {
         // reduction: move all vertices towards the best
-        for(int i=1; i < 4; ++i)
+        for(std::size_t i=1; i < 4; ++i)
         {
-          simplex[i] = mean(simplex[i], simplex[0]); // todo: test order of addition
+          simplex[i] = mean(simplex[i], simplex[0]);
         }
       }
     }
@@ -172,8 +171,8 @@ struct Random_int_generator
 };
 
 
-template <typename Simplex>
-void genetic_algorithm(Population<Simplex>& pop, Simplex& points)
+template <typename Simplex, typename Matrix>
+void genetic_algorithm(Population<Simplex>& pop, Matrix& points)
 {
   // random permutations
   std::size_t m = pop.size();
@@ -205,7 +204,6 @@ void genetic_algorithm(Population<Simplex>& pop, Simplex& points)
   std::generate(ids4.begin(), ids4.end(),
                 [&rng, &m] ()
                 { return rng.get_int(0, m); });
-
 
   Population<Simplex> group1(m/2), group2(m/2);
   Population<Simplex> group3(m - m/2), group4(m - m/2);
