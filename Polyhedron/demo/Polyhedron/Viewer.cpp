@@ -50,6 +50,7 @@ public:
     int total_pass;
     int current_total_pass;
     QOpenGLFramebufferObject* dp_fbo;
+    QOpenGLFramebufferObject* stored_fbo;
 
   //! The buffers used to draw the axis system
   QOpenGLBuffer buffer;
@@ -101,6 +102,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->textRenderer = new TextRenderer();
   d->is_2d_selection_mode = false;
   d->total_pass = 4;
+  d->stored_fbo = NULL;
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
   connect(&d->messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
@@ -1134,6 +1136,7 @@ QImage* Viewer_impl::takeSnapshot(Viewer *viewer, int quality, int background_co
 
   //QOpenGLFramebufferObject fbo(size, QOpenGLFramebufferObject::CombinedDepthStencil);
   QOpenGLFramebufferObject fbo(size,QOpenGLFramebufferObject::CombinedDepthStencil, GL_TEXTURE_2D, GL_RGBA32F);
+  stored_fbo = &fbo;
   for (int i=0; i<nbX; i++)
     for (int j=0; j<nbY; j++)
     {
@@ -1163,6 +1166,7 @@ QImage* Viewer_impl::takeSnapshot(Viewer *viewer, int quality, int background_co
     }
   if(background_color !=0)
     viewer->setBackgroundColor(previousBGColor);
+  stored_fbo = NULL;
   return image;
 }
 void Viewer_impl::sendSnapshotToClipboard(Viewer *viewer)
@@ -1261,5 +1265,10 @@ void Viewer::setTotalPass_clicked()
   if(!ok)
     return;
   setTotalPass(passes);
+}
+
+QOpenGLFramebufferObject* Viewer::getStoredFrameBuffer()
+{
+  return d->stored_fbo;
 }
 #include "Viewer.moc"

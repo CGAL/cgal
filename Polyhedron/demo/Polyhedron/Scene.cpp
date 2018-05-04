@@ -660,7 +660,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
    
       fbos.resize((int)viewer->total_pass());
       depth_test.resize((int)viewer->total_pass()-1);
-   
+      
       //first pass
       fbos[0] = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth, GL_TEXTURE_2D, GL_RGBA32F);
       fbos[0]->bind();
@@ -753,7 +753,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       renderScene(opaque_items     , viewer, picked_item_IDs, false, (int)viewer->total_pass()-1, false, depth_test[(int)viewer->total_pass()-2]);
       renderScene(transparent_items, viewer, picked_item_IDs, false, (int)viewer->total_pass()-1, false, depth_test[(int)viewer->total_pass()-2]);
       fbos[(int)viewer->total_pass()-1]->release();
-   
+      if(viewer->getStoredFrameBuffer() != NULL)
+        viewer->getStoredFrameBuffer()->bind();
    
       //blending
       program.bind();
