@@ -1,3 +1,4 @@
+#include <boost/graph/graph_traits.hpp>
 #include <CGAL/property_map.h>
 #include <boost/optional.hpp>
 #include <vector>
