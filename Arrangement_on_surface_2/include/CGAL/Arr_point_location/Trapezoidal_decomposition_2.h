@@ -1758,11 +1758,7 @@ public:
 #endif
 
     Halfedge_container container;
-
-#ifdef CGAL_TD_DEBUG
     unsigned long rep = Halfedge_filter(container, &dag_root());
-#endif
-
     clear();
 
     //// initialize container to point to curves in Td_map_item Tree
