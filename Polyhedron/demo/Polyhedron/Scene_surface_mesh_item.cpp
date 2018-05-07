@@ -1239,6 +1239,7 @@ void Scene_surface_mesh_item::setItemIsMulticolor(bool b)
           d->smesh_->remove_property_map(pmap);
       d->has_vcolors = false;
     }
+    this->setProperty("NbPatchIds", 0); //for the joinandsplit_plugin
   }
 }
 
