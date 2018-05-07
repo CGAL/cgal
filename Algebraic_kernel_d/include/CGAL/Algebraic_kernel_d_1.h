@@ -202,7 +202,7 @@ public:
 
   }; // class Algebraic_real_traits
 
-  class Construct_algebraic_real_1;
+  struct Construct_algebraic_real_1;
   
   // Functors of Algebraic_kernel_d_1
   struct Solve_1 {
