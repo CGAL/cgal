@@ -23,7 +23,9 @@ according to the user requirements
 and available time.
 By default, only the perturber and the exuder are activated.
 Note that the benefits of the exuder will be lost if the mesh
-is further refined afterward.
+is further refined afterward, and that ODT-smoothing, Lloyd-smoothing,
+and sliver perturber should never be called after the sliver exuder.
+In the case of further refinement, only the sliver exuder can be used.
 
 The function outputs the mesh to an object which provides iterators to
 traverse the resulting mesh data structure or can be written to a file
