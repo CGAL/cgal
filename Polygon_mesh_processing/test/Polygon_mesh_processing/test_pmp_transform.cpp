@@ -25,7 +25,7 @@ int main()
   bool ok = true;
   for(std::size_t i = 0; i<m.vertices().size(); ++i)
   {
-    double z = m.point(Mesh::Vertex_index(i)).z();
+    double z = m.point(static_cast<Mesh::Vertex_index>(i)).z();
     ok &= z == i+1;
   }
   CGAL_assertion(ok);
