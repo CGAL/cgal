@@ -113,16 +113,13 @@ public:
   //only one not needed by gradient fitting:
   typedef typename Rep::Compute_squared_distance_2   Compute_squared_distance_d;
 
-
   //additional types for gradient computation:
-  typedef typename Rep::Aff_transformation_2         Aff_transformation_d;
+  typedef typename Rep::Aff_transformation_2                 Aff_transformation_d;
 
-  typedef Construct_null_matrix_2<Aff_transformation_d>
-      Construct_null_matrix_d;
-  typedef Construct_scaling_matrix_2<Aff_transformation_d>
-      Construct_scaling_matrix_d;
-  typedef Construct_sum_matrix_2<Aff_transformation_d> Construct_sum_matrix_d;
-  typedef Construct_outer_product_2<Rep>             Construct_outer_product_d;
+  typedef Construct_null_matrix_2<Aff_transformation_d>      Construct_null_matrix_d;
+  typedef Construct_scaling_matrix_2<Aff_transformation_d>   Construct_scaling_matrix_d;
+  typedef Construct_sum_matrix_2<Aff_transformation_d>       Construct_sum_matrix_d;
+  typedef Construct_outer_product_2<Rep>                     Construct_outer_product_d;
 
 
   Construct_outer_product_d
