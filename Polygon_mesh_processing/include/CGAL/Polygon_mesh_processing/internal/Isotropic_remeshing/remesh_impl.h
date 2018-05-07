@@ -778,14 +778,14 @@ namespace internal {
                 set_halfedge(face(ep_p, mesh_), ep_p, mesh_);
               if (face(en_p, mesh_) != boost::graph_traits<PM>::null_face())
                 set_halfedge(face(en_p, mesh_), en_p, mesh_);
-              CGAL_assertion(mesh_.is_valid());
+              CGAL_assertion(is_valid(mesh_));
             }
           }
 
           //perform collapse
           CGAL_assertion(target(halfedge(e, mesh_), mesh_) == vb);
           vertex_descriptor vkept = CGAL::Euler::collapse_edge(e, mesh_);
-          CGAL_assertion(mesh_.is_valid());
+          CGAL_assertion(is_valid(mesh_));
           CGAL_assertion(vkept == vb);//is the constrained point still here
           ++nb_collapses;
 

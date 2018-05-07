@@ -1021,21 +1021,21 @@ add_face_to_border(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
  *
  * \tparam Graph must be a model of `MutableFaceGraph`
  * Let `h` be the halfedge of `e`, and let `v0` and `v1` be the source and target vertices of `h`.
- * Let `ep` and `e'p` be respectively the edges of `prev(h,g)` and `prev(opposite(h, g), g)`.
+ * Let `hp` and `e'p` be respectively the edges of `prev(h,g)` and `prev(opposite(h, g), g)`.
  * Let `en` and `e'n` be respectively the edges of `opposite(next(h,g))` and `opposite(next(opposite(h, g), g))`.
  *
  * After the collapse of edge `e` the following holds:
  *   - The edge `e` is no longer in `g`.
- *   - The faces incident to edge `v0v1` are no longer in `g`.
+ *   - The faces incident to edge `e` are no longer in `g`.
  *   - `v0` is no longer in `g`.
- *   - If `h` is not a border halfedge, `ep` is no longer in `g` and is replaced by `en`.
+ *   - If `h` is not a border halfedge, `hp` is no longer in `g` and is replaced by `en`.
  *   - If the opposite of `h` is not a border halfedge, `e'p` is no longer in `g` and is replaced by `e'n`.
- *   - The halfedges kept in `g` that had `v0` as target now have `v1` as target, and similarly for the source.
+ *   - The halfedges kept in `g` that had that had v0 as target (resp. source) now have v1 as target (resp. source).
  *   - No other incidence information is changed in `g`.
  *
  * \returns vertex `v1`.
  * \pre g must be a triangulated graph
- * \pre `does_satisfy_link_condition(v0v1,g) == true`.
+ * \pre `does_satisfy_link_condition(e,g) == true`.
  */
 template<typename Graph>
 typename boost::graph_traits<Graph>::vertex_descriptor

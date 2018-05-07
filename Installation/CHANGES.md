@@ -37,14 +37,14 @@ Release date: September 2018
     - `CGAL::Polygon_mesh_processing::transform()`
 
 -  Fix a bug in `isotropic_remeshing()` making constrained vertices missing in the output
+-  Guarantee that constrained vertices are kept in the remeshed mesh, 
+   and not only constrained points like before.
 
 ### CGAL and the Boost Graph Library (BGL)
 
--   Update the function `CGAL::Euler::collapse_edge` so that the target
-    vertex of the edge collapsed is always kept after the collapse.
+-   Improve the function `CGAL::Euler::collapse_edge` so that the target
+    vertex of the collapsed edge is always kept after the collapse.
 
--   Guarantee that constrained vertices are kept in the remeshed mesh, 
-    and not only constrained points like before.
 
 Release 4.12
 ------------
