@@ -29,35 +29,35 @@ namespace CGAL{
 namespace Polygon_mesh_processing{
 /**
  * \ingroup PkgPolygonMeshProcessing
- * applies a transformation to every vertex of a `Mesh`.
+ * applies a transformation to every vertex of a `PolygonMesh`.
  * 
  * @tparam Transformation a functor that has an `operator()(Point_3)`, with `Point_3`
  * the `value_type` of `vertex_point_map` (see below). Such a functor can be
  * `CGAL::Aff_transformation_3` for example.
- * @tparam Mesh a model of `VertexListGraph`
+ * @tparam PolygonMesh a model of `VertexListGraph`
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  * 
  * @param transformation the transformation functor to apply to  the points of `mesh`.
- * @param mesh the `Mesh` to transform.
+ * @param mesh the `PolygonMesh` to transform.
  * @param np optional sequence of \ref pmp_namedparameters for `mesh`, among the ones listed below
  * 
  * * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `mesh`.
  *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` should be available in `Mesh`\cgalParamEnd
+ *   `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
  * \cgalNamedParamsEnd
  * 
  */
-template<class Transformation, class Mesh,class NamedParameters>
+template<class Transformation, class PolygonMesh,class NamedParameters>
 void transform(const Transformation& transformation, 
-               Mesh& mesh,
+               PolygonMesh& mesh,
                const NamedParameters& np)
 {
-  typedef typename GetVertexPointMap<Mesh, NamedParameters>::type VPMap;
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
   VPMap vpm = choose_param(get_param(np, internal_np::vertex_point),
                            get_property_map(vertex_point, mesh));
   
-  BOOST_FOREACH(typename boost::graph_traits<Mesh>::vertex_descriptor vd, vertices(mesh))
+  BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd, vertices(mesh))
   {
     put(vpm, vd, transformation(get(vpm, vd)));
   }
