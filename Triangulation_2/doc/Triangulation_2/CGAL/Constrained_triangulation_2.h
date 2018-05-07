@@ -46,9 +46,12 @@ There are three versions of constrained triangulations
 <LI>In the basic version, the constrained triangulation 
 does not handle intersecting constraints, and the set of input 
 constraints is required to be a set of polylines that do not intersect 
-except possibly at their endpoints. Any number of constrained edges 
-may share the same endpoint. Constrained edges may be vertical or
-have zero length. 
+except possibly at their endpoints.
+An exception of type `Intersection_of_constraints_exception`
+is thrown upon insertion of a constraint intersecting in
+its interior an already inserted constraint.
+Any number of constrained edges may share the same endpoint.
+Constrained edges may be vertical or have zero length.
 <LI>The two other versions support intersecting input constraints. 
 In those versions, input constraints may consist of 
 intersecting, overlapping or partially 
@@ -328,4 +331,10 @@ Note that `t` is first cleared.
 \relates Constrained_triangulation_2 
 */ 
 istream& operator>>(istream& is,Constrained_triangulation_2<Traits,Tds> Ct& t); 
+
+/*! Exception used by constrained triangulations configured with
+the tag `No_intersection_tag`. It is thrown upon insertion of a constraint
+that is intersecting an already inserted constraint in its interior.
+*/
+class Intersection_of_constraints_exception;
 } /* end namespace CGAL */

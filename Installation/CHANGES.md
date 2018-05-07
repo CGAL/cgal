@@ -1,6 +1,13 @@
 Release History
 ===============
 
+Release 4.13
+------------
+### 2D Triangulations
+
+-   Added a new type of intersection to deal with insertion of a constraints 
+    intersecting in a Constrained_triangulation_2.
+
 Release 4.12
 ------------
 
