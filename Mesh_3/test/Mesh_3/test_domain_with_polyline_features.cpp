@@ -113,7 +113,7 @@ public:
     domain_.get_corners(std::back_inserter(corners));
     assert(corners.size() == 4);
 
-    typename Corners_vector::const_iterator cit = corners.begin(), end = corners.end();
+    Corners_vector::const_iterator cit = corners.begin(), end = corners.end();
     for(; cit!=end; ++cit)
     {
       if(cit->second == p3_)
