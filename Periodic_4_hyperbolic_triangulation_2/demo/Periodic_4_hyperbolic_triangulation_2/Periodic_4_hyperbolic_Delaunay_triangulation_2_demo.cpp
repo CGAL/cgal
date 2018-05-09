@@ -261,7 +261,7 @@ MainWindow::processInput(CGAL::Object o)
       fi->tds_data().clear();
     }
     for (Triangulation::Vertex_iterator vi = dt.vertices_begin(); vi != dt.vertices_end(); vi++) {
-      vi->remove_translation();
+      vi->clear_translation();
     }
 
     Vertex_handle v = dt.insert(p);

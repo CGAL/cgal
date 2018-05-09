@@ -35,7 +35,11 @@ MainWindow::initialize_animation_parameters() {
   }
 
 	time = updateTime();
-	last_location = dt.periodic_locate(get_image(source, target, time), last_loc_translation); 
+    std::cout << "time = " << time << std::endl;
+    Point img = get_image(source, target, time);
+    std::cout << "img = " << img << std::endl;
+    std::cout << "last_loc_translation = " << last_loc_translation << std::endl;
+	last_location = dt.periodic_locate(img, last_loc_translation);
 }
 
 

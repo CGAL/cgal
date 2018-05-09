@@ -20,7 +20,7 @@ public:
   typedef typename DT::Face_handle  Face_handle;
   typedef typename DT::Point        Point;
   typedef typename DT::Hyperbolic_translation       Hyperbolic_translation;
-  typedef typename DT::Triangle_2   Triangle;
+  typedef typename DT::Triangle     Triangle;
 
   TriangulationConflictZone(QGraphicsScene* s, DT  * dt_, QObject* parent);
 
