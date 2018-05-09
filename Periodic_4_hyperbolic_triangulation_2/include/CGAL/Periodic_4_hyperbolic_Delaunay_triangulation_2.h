@@ -71,12 +71,12 @@ namespace CGAL {
 	//using Base::apply;
 
 	typedef typename Base::Locate_type                         	Locate_type;
-	typedef typename Base::Geometric_traits                    	Geometric_traits;
+	typedef typename Base::Geom_traits                    		Geom_traits;
 	typedef typename Base::Triangulation_data_structure        	Triangulation_data_structure;
 	typedef typename Base::Hyperbolic_translation              	Hyperbolic_translation;
 	typedef typename Base::Circle                            	Circle;
 	typedef typename Base::Point                             	Point;
-	typedef typename Geometric_traits::Voronoi_point 		   	Voronoi_point;
+	typedef typename Geom_traits::Voronoi_point 		   		Voronoi_point;
 	typedef typename Base::Segment                           	Segment;
 	typedef typename Base::Triangle 		                   	Triangle;
 
@@ -144,7 +144,7 @@ namespace CGAL {
 
   public:
 
-	Periodic_4_hyperbolic_Delaunay_triangulation_2( const Geometric_traits &gt = Geometric_traits() ) :
+	Periodic_4_hyperbolic_Delaunay_triangulation_2( const Geom_traits &gt = Geom_traits() ) :
 	Periodic_4_hyperbolic_triangulation_2<GT, TDS>(gt) { 
 		insert_dummy_points();
 		n_dpt = 14; 

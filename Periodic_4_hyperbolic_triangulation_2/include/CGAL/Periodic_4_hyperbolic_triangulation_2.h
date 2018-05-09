@@ -78,7 +78,7 @@ public:
   using Base::geom_traits;
 #endif
 
-	typedef GT 										        Geometric_traits;
+	typedef GT 										        Geom_traits;
 	typedef TDS 									        Triangulation_data_structure;
 	typedef typename GT::Hyperbolic_translation 			Hyperbolic_translation;
 	typedef typename GT::Circle_2 							Circle;
@@ -121,7 +121,7 @@ protected:
 public:
 	
 
-	Periodic_4_hyperbolic_triangulation_2( const Geometric_traits &gt = Geometric_traits() ) :
+	Periodic_4_hyperbolic_triangulation_2( const Geom_traits &gt = Geom_traits() ) :
 		_gt(gt), _tds()
 	{
 		init_tds();
@@ -156,7 +156,7 @@ private:
 	}
 
 public:
-	const Geometric_traits& geom_traits() const {
+	const Geom_traits& geom_traits() const {
 		return _gt;
 	}
 

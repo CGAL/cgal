@@ -45,7 +45,7 @@ namespace Qt {
 template <typename T>
 class TriangulationGraphicsItem : public GraphicsItem
 {
-  typedef typename T::Geometric_traits Geom_traits;
+  typedef typename T::Geom_traits Geom_traits;
 public:
   TriangulationGraphicsItem(T* t_);
 
