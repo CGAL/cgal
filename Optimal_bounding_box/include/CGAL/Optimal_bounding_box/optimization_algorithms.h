@@ -259,7 +259,9 @@ void genetic_algorithm(Population<Simplex>& pop, const Matrix& points)
     }
 
     // qr factorization of the offspring
-    qr_factorization(offspring);
+      qr_factorization(offspring);
+
+
     offspringsB[i] = offspring;
   }
 

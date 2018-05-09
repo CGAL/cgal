@@ -82,19 +82,26 @@ Matrix mean(const Matrix& m1, const Matrix& m2)
   CGAL_assertion(m2.cols() == 3);
   CGAL_assertion(m2.cols() == 3);
 
-  Matrix contract = 0.5 * m1 + 0.5 * m2;
+  Matrix reduction = 0.5 * m1 + 0.5 * m2;
   Matrix Q;
-  qr_factorization(contract, Q);
+  //qr_factorization(contract, Q);
+
+  reduction.qr_factorization(Q);
+
   double det = Q.determinant();
   return Q / det;
 }
 
 template <typename Matrix>
-const Matrix centroid(Matrix& S1, Matrix& S2, Matrix& S3)
+const Matrix centroid(Matrix& S1, Matrix& S2, Matrix& S3) // const?
 {
   Matrix mean = (S1 + S2 + S3) / 3.0;
   Matrix Q;
-  qr_factorization(mean, Q);
+  //qr_factorization(mean, Q);
+
+  mean.qr_factorization(Q);
+
+
   double det = Q.determinant();
   return Q / det;
 }

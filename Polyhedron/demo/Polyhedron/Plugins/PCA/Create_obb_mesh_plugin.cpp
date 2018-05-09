@@ -136,7 +136,7 @@ void Create_obb_mesh_plugin::gather_mesh_points(std::vector<Point_3>& points)
 
       PointPMap pmap = get(CGAL::vertex_point, pmesh);
       BOOST_FOREACH(vertex_descriptor v, selected_vertices)
-        points.push_back(get(pmap, v ));
+        points.push_back(get(pmap, v));
     }
     CGAL_assertion(points.size() >= 3);
   }

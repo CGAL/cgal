@@ -103,7 +103,8 @@ private:
 
       create_vertex(R);
       Matrix Q; // no allocation
-      qr_factorization(R, Q);
+      //qr_factorization(R, Q);
+      R.qr_factorization(Q);
       simplex[i] = Q;
     }
     CGAL_assertion(simplex.size() == 4);
@@ -118,7 +119,8 @@ private:
     {
       for(std::size_t j = 0; j < 3; ++j)
       {
-        R.coeffRef(i, j) = random_generator.get_double();
+        //R.coeffRef(i, j) = random_generator.get_double();
+        R.set_coef(i, j, random_generator.get_double());
       }
     }
   }

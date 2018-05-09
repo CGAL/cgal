@@ -43,7 +43,7 @@ const double compute_fitness(const Vertex& R, const Matrix& data)
   double xmin, xmax, ymin, ymax, zmin, zmax;
   for(int i = 0; i < data.rows(); i++){
 
-    Eigen::Vector3d vec = data.row(i);
+    Matrix vec = data.row(i);
     vec = R * vec;
 
     if(i == 0){

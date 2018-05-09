@@ -5,7 +5,6 @@
 #include <CGAL/Optimal_bounding_box/obb.h>
 #include <iostream>
 #include <fstream>
-#include <Eigen/Dense>
 
 #include <CGAL/subdivision_method_3.h>
 #include <CGAL/Timer.h>

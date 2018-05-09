@@ -5,15 +5,11 @@
 #include <CGAL/Optimal_bounding_box/obb.h>
 #include <iostream>
 #include <fstream>
-#include <Eigen/Dense>
 
 #include <CGAL/Timer.h>
 
 //#define OBB_DEBUG_BENCHMARK
 
-
-typedef Eigen::MatrixXd MatrixXd;
-typedef Eigen::Matrix3d Matrix3d;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 

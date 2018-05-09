@@ -5,10 +5,16 @@
 #include <CGAL/Optimal_bounding_box/obb.h>
 #include <iostream>
 #include <fstream>
-#include <Eigen/Dense>
 
-typedef Eigen::MatrixXd MatrixXd;
-typedef Eigen::Matrix3d Matrix3d;
+#include <Eigen/Dense>
+#include <CGAL/Eigen_linear_algebra_traits.h>
+
+//typedef Eigen::MatrixXd MatrixXd;
+//typedef Eigen::Matrix3d Matrix3d;
+
+// todo: sort this out
+typedef CGAL::Eigen_dense_matrix<double> MatrixXd;
+typedef CGAL::Eigen_dense_matrix<double> Matrix3d;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -31,9 +37,16 @@ void sm_to_matrix(SurfaceMesh& sm, Matrix& mat)
   for(vertex_descriptor v : vertices(sm))
   {
     Point_ref p = get(vpm, v);
+    /*
     mat.coeffRef(i, 0) = p.x();
     mat.coeffRef(i, 1) = p.y();
     mat.coeffRef(i, 2) = p.z();
+    */
+
+    mat.set_coef(i, 0, p.x());
+    mat.set_coef(i, 1, p.y());
+    mat.set_coef(i, 2, p.z());
+
     ++i;
   }
 }
@@ -82,34 +95,109 @@ void test_population()
 
 void test_nelder_mead()
 {
-  Eigen::Matrix<double, 4, 3> data_points(4, 3);
+  //Eigen::Matrix<double, 4, 3> data_points(4, 3);
+
+  CGAL::Eigen_dense_matrix<double> data_points(4,3);
+
+  /*
   data_points << 0.866802, 0.740808, 0.895304,
                  0.912651, 0.761565, 0.160330,
                  0.093661, 0.892578, 0.737412,
                  0.166461, 0.149912, 0.364944;
+                 */
+
+  data_points(0,0) = 0.866802;
+  data_points(0,1) = 0.740808,
+  data_points(0,2) = 0.895304,
+  data_points(1,0) = 0.912651;
+  data_points(1,1) = 0.761565;
+  data_points(1,2) = 0.160330;
+  data_points(2,0) = 0.093661;
+  data_points(2,1) = 0.892578;
+  data_points(2,2) = 0.737412;
+  data_points(3,0) = 0.166461;
+  data_points(3,1) = 0.149912,
+  data_points(3,2) = 0.364944;
 
   // one simplex
-  std::vector<Matrix3d> simplex(4);
+  //std::vector<Matrix3d> simplex(4);
+  std::vector<CGAL::Eigen_dense_matrix<double>> simplex(4);
 
-  Matrix3d v0;
+
+
+  //Matrix3d v0;
+  CGAL::Eigen_dense_matrix<double> v0(3,3);
+
+  /*
   v0 <<  -0.2192721,   0.2792986,  -0.9348326,
           -0.7772152,  -0.6292092,  -0.0056861,
           -0.5897934,   0.7253193,   0.3550431;
+          */
 
-  Matrix3d v1;
+  v0(0,0) = -0.2192721;
+  v0(0,1) = 0.2792986,
+  v0(0,2) = -0.9348326,
+  v0(1,0) = -0.7772152;
+  v0(1,1) = -0.6292092;
+  v0(1,2) = -0.0056861;
+  v0(2,0) = -0.5897934;
+  v0(2,1) = 0.7253193;
+  v0(2,2) = 0.3550431;
+
+
+  //Matrix3d v1;
+  //Matrix3d v2;
+  //Matrix3d v3;
+
+  CGAL::Eigen_dense_matrix<double> v1(3,3);
+  CGAL::Eigen_dense_matrix<double> v2(3,3);
+  CGAL::Eigen_dense_matrix<double> v3(3,3);
+
+
+  /*
   v1 <<  -0.588443,   0.807140,  -0.047542,
           -0.786228,  -0.584933,  -0.199246,
           -0.188629,  -0.079867,   0.978795;
 
-  Matrix3d v2;
   v2 << -0.277970,  0.953559,  0.116010,
          -0.567497,  -0.065576,   -0.820760,
          -0.775035,   -0.293982,   0.559370;
 
-  Matrix3d v3;
   v3 <<   -0.32657,  -0.60013,  -0.73020,
            -0.20022,  -0.71110,   0.67398,
            -0.92372,   0.36630,   0.11207;
+  */
+
+  v1(0,0) = -0.588443;
+  v1(0,1) = 0.807140;
+  v1(0,2) = -0.047542;
+  v1(1,0) = -0.786228;
+  v1(1,1) = -0.584933;
+  v1(1,2) = -0.199246;
+  v1(2,0) = -0.188629;
+  v1(2,1) = -0.079867;
+  v1(2,2) = 0.978795;
+
+  v2(0,0) = -0.277970;
+  v2(0,1) = 0.953559;
+  v2(0,2) = 0.116010;
+  v2(1,0) = -0.567497;
+  v2(1,1) = -0.065576;
+  v2(1,2) = -0.820760;
+  v2(2,0) = -0.775035;
+  v2(2,1) = -0.293982;
+  v2(2,2) = 0.559370;
+
+  v3(0,0) = -0.32657;
+  v3(0,1) = -0.60013;
+  v3(0,2) = -0.73020;
+  v3(1,0) = -0.20022;
+  v3(1,1) = -0.71110;
+  v3(1,2) = 0.67398;
+  v3(2,0) = -0.92372;
+  v3(2,1) = 0.36630;
+  v3(2,2) = 0.11207;
+
 
   simplex[0] = v0;
   simplex[1] = v1;
@@ -121,7 +209,7 @@ void test_nelder_mead()
 
   double epsilon = 1e-5;
 
-  Matrix3d v0_new = simplex[0];
+  CGAL::Eigen_dense_matrix<double> v0_new = simplex[0];
   CGAL_assertion(assert_doubles(v0_new(0,0), -0.288975, epsilon));
   CGAL_assertion(assert_doubles(v0_new(0,1), 0.7897657, epsilon));
   CGAL_assertion(assert_doubles(v0_new(0,2), -0.541076, epsilon));
@@ -132,7 +220,7 @@ void test_nelder_mead()
   CGAL_assertion(assert_doubles(v0_new(2,1), 0.5111260, epsilon));
   CGAL_assertion(assert_doubles(v0_new(2,2), 0.84094, epsilon));
 
-  Matrix3d v1_new = simplex[1];
+  CGAL::Eigen_dense_matrix<double> v1_new = simplex[1];
   CGAL_assertion(assert_doubles(v1_new(0,0), -0.458749, epsilon));
   CGAL_assertion(assert_doubles(v1_new(0,1), 0.823283, epsilon));
   CGAL_assertion(assert_doubles(v1_new(0,2), -0.334296, epsilon));
@@ -143,7 +231,7 @@ void test_nelder_mead()
   CGAL_assertion(assert_doubles(v1_new(2,1), 0.338040, epsilon));
   CGAL_assertion(assert_doubles(v1_new(2,2), 0.937987, epsilon));
 
-  Matrix3d v2_new = simplex[2];
+  CGAL::Eigen_dense_matrix<double> v2_new = simplex[2];
   CGAL_assertion(assert_doubles(v2_new(0,0), -0.346582, epsilon));
   CGAL_assertion(assert_doubles(v2_new(0,1), 0.878534, epsilon));
   CGAL_assertion(assert_doubles(v2_new(0,2), -0.328724, epsilon));
@@ -154,7 +242,7 @@ void test_nelder_mead()
   CGAL_assertion(assert_doubles(v2_new(2,1), 0.334057, epsilon));
   CGAL_assertion(assert_doubles(v2_new(2,2), 0.941423, epsilon));
 
-  Matrix3d v3_new = simplex[3];
+  CGAL::Eigen_dense_matrix<double> v3_new = simplex[3];
   CGAL_assertion(assert_doubles(v3_new(0,0), -0.394713, epsilon));
   CGAL_assertion(assert_doubles(v3_new(0,1), 0.791782, epsilon));
   CGAL_assertion(assert_doubles(v3_new(0,2), -0.466136, epsilon));
@@ -168,11 +256,27 @@ void test_nelder_mead()
 
 void test_genetic_algorithm()
 {
-  Eigen::Matrix<double, 4, 3> data_points(4, 3);
+  //Eigen::Matrix<double, 4, 3> data_points(4, 3);
+  CGAL::Eigen_dense_matrix<double> data_points(4, 3);
+  /*
   data_points << 0.866802, 0.740808, 0.895304,
                  0.912651, 0.761565, 0.160330,
                  0.093661, 0.892578, 0.737412,
                  0.166461, 0.149912, 0.364944;
+                 */
+
+  data_points(0,0) = 0.866802;
+  data_points(0,1) = 0.740808,
+  data_points(0,2) = 0.895304,
+  data_points(1,0) = 0.912651;
+  data_points(1,1) = 0.761565;
+  data_points(1,2) = 0.160330;
+  data_points(2,0) = 0.093661;
+  data_points(2,1) = 0.892578;
+  data_points(2,2) = 0.737412;
+  data_points(3,0) = 0.166461;
+  data_points(3,1) = 0.149912,
+  data_points(3,2) = 0.364944;
 
   CGAL::Optimal_bounding_box::Population<Matrix3d> pop(5);
   CGAL::Optimal_bounding_box::genetic_algorithm(pop, data_points);
@@ -181,11 +285,21 @@ void test_genetic_algorithm()
 
 void test_random_unit_tetra()
 {
-  Eigen::Matrix<double, 4, 3> data_points(4, 3); // points on their convex hull
-  data_points << 0.866802, 0.740808, 0.895304,
-                 0.912651, 0.761565, 0.160330,
-                 0.093661, 0.892578, 0.737412,
-                 0.166461, 0.149912, 0.364944;
+  CGAL::Eigen_dense_matrix<double> data_points(4, 3); // points on their convex hull
+
+  data_points(0,0) = 0.866802;
+  data_points(0,1) = 0.740808,
+  data_points(0,2) = 0.895304,
+  data_points(1,0) = 0.912651;
+  data_points(1,1) = 0.761565;
+  data_points(1,2) = 0.160330;
+  data_points(2,0) = 0.093661;
+  data_points(2,1) = 0.892578;
+  data_points(2,2) = 0.737412;
+  data_points(3,0) = 0.166461;
+  data_points(3,1) = 0.149912,
+  data_points(3,2) = 0.364944;
+
 
   typedef CGAL::Simple_cartesian<double> K;
   typedef K::Point_3 Point;
@@ -205,7 +319,9 @@ void test_random_unit_tetra()
   out.close();
 #endif
 
-  Matrix3d R;
+  //Matrix3d R; // have to sort this out - preallocation
+  Matrix3d R(3, 3);
+
   std::size_t generations = 10;
   CGAL::Optimal_bounding_box::evolution(R, data_points, generations);
 
@@ -334,7 +450,7 @@ void test_find_obb(std::string fname)
   #endif
 }
 
-void test_find_obb_mesh(std::string fname)
+void  test_find_obb_mesh(std::string fname)
 {
   std::ifstream input(fname);
   CGAL::Surface_mesh<K::Point_3> mesh;

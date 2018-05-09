@@ -34,7 +34,8 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <Eigen/Dense>
+//#include <Eigen/Dense>
+#include <CGAL/Eigen_linear_algebra_traits.h>
 
 
 namespace CGAL {
@@ -124,7 +125,8 @@ void post_processing(Matrix_dynamic& points, Vertex& R, Matrix_fixed& obb)
   std::vector<Point> v_points; // Simplex -> std::vector
   for(std::size_t i = 0; i < rotated_points.rows(); ++i)
   {
-    Point p(rotated_points.coeff(i, 0), rotated_points.coeff(i, 1), rotated_points.coeff(i, 2));
+    //Point p(rotated_points.coeff(i, 0), rotated_points.coeff(i, 1), rotated_points.coeff(i, 2));
+    Point p(rotated_points(i, 0), rotated_points(i, 1), rotated_points(i, 2));
     v_points.push_back(p);
   }
   CGAL::Bbox_3 bbox;
@@ -138,9 +140,17 @@ void post_processing(Matrix_dynamic& points, Vertex& R, Matrix_fixed& obb)
 
   for(std::size_t i = 0; i < 8; ++i)
   {
+    /*
     aabb.coeffRef(i, 0) = ic[i].x();
     aabb.coeffRef(i, 1) = ic[i].y();
     aabb.coeffRef(i, 2) = ic[i].z();
+    */
+
+    aabb.set_coef(i, 0, ic[i].x());
+    aabb.set_coef(i, 1, ic[i].y());
+    aabb.set_coef(i, 2, ic[i].z());
+
+
   }
 
   // 3) apply inverse rotation to rotated AABB
@@ -154,9 +164,16 @@ void fill_matrix(std::vector<Point>& v_points, Matrix& points_mat)
   for(std::size_t i = 0; i < v_points.size(); ++i)
   {
     Point p = v_points[i];
+    /*
     points_mat.coeffRef(i, 0) = p.x();
     points_mat.coeffRef(i, 1) = p.y();
     points_mat.coeffRef(i, 2) = p.z();
+    */
+
+    points_mat.set_coef(i, 0, p.x());
+    points_mat.set_coef(i, 1, p.y());
+    points_mat.set_coef(i, 2, p.z());
+
   }
 }
 
@@ -175,8 +192,12 @@ void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool u
   CGAL_assertion(obb_points.size() == 8);
 
   // using eigen internally
-  typedef Eigen::MatrixXd MatrixXd; // for point data
-  typedef Eigen::Matrix3d Matrix3d; // for matrices in simplices
+  //typedef Eigen::MatrixXd MatrixXd; // for point data
+  //typedef Eigen::Matrix3d Matrix3d; // for matrices in simplices
+
+  // todo: sort out typedefs
+  typedef CGAL::Eigen_dense_matrix<double> MatrixXd; // for point data
+  typedef CGAL::Eigen_dense_matrix<double> Matrix3d; // for matrices in simplices
 
   MatrixXd points_mat;
 
@@ -198,17 +219,23 @@ void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool u
     fill_matrix(points, points_mat);
   }
 
-  Matrix3d R;
+  //Matrix3d R; // todo: sort out preallocation
+  Matrix3d R(3, 3);
   std::size_t max_generations = 100;
   CGAL::Optimal_bounding_box::evolution(R, points_mat, max_generations);
 
-  Eigen::Matrix<double, 8, 3> obb;
+  //Eigen::Matrix<double, 8, 3> obb;
+
+  CGAL::Eigen_dense_matrix<double> obb; // compile time preallocation??
+  obb.resize(8, 3);
+
   CGAL::Optimal_bounding_box::post_processing(points_mat, R, obb);
 
   // matrix -> vector
   for(std::size_t i = 0; i < 8; ++i)
   {
-    Point p(obb.coeff(i, 0), obb.coeff(i, 1), obb.coeff(i, 2));
+    //Point p(obb.coeff(i, 0), obb.coeff(i, 1), obb.coeff(i, 2));
+    Point p(obb(i, 0), obb(i, 1), obb(i, 2));
     obb_points[i] = p;
   }
 }
