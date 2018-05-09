@@ -22,18 +22,14 @@
 #ifndef CGAL_INTERSECTIONS_3_POINT_3_TRIANGLE_3_H
 #define CGAL_INTERSECTIONS_3_POINT_3_TRIANGLE_3_H
 
+#include <CGAL/Triangle_3.h>
+#include <CGAL/Point_3.h>
+
 #include <CGAL/enum.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/Intersection_traits_3.h>
 
 namespace CGAL {
-
-
-  template <class K>
-  class Triangle_3;
-
-  template <class K>
-  class Point_3;
 
 namespace Intersections {
   

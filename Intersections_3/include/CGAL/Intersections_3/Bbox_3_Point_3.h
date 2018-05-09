@@ -24,6 +24,8 @@
 #define CGAL_INTERSECTIONS_3_BBOX_3_POINT_3_H
 
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Point_3.h>
+
 #include <CGAL/Intersections_3/internal/intersection_3_1_impl.h>
 #include <CGAL/Intersections_3/Iso_cuboid_3_Point_3.h>
 

@@ -68,7 +68,6 @@
 #include <CGAL/Intersections_3/Plane_3_Tetrahedron_3.h>
 #include <CGAL/Intersections_3/Plane_3_Triangle_3.h>
 
-#include <CGAL/Intersections_3/Point_3_Line_3.h>
 #include <CGAL/Intersections_3/Point_3_Point_3.h>
 #include <CGAL/Intersections_3/Point_3_Ray_3.h>
 #include <CGAL/Intersections_3/Point_3_Segment_3.h>

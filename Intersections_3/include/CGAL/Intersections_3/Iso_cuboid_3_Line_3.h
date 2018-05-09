@@ -24,6 +24,8 @@
 #define CGAL_INTERSECTIONS_3_ISO_CUBOID_3_LINE_3_H
 
 #include <CGAL/Intersections_3/internal/intersection_3_1_impl.h>
+#include <CGAL/Iso_cuboid_3.h>
+#include <CGAL/Line_3.h>
 
 namespace CGAL {
   CGAL_DO_INTERSECT_FUNCTION(Iso_cuboid_3,Line_3, 3)

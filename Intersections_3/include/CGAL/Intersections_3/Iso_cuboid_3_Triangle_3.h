@@ -23,6 +23,9 @@
 #ifndef CGAL_INTERSECTIONS_3_ISO_CUBOID_3_TRIANGLE_3_H
 #define CGAL_INTERSECTIONS_3_ISO_CUBOID_3_TRIANGLE_3_H
 
+#include <CGAL/Iso_cuboid_3.h>
+#include <CGAL/Triangle_3.h>
+
 #include <CGAL/Intersections_3/internal/Iso_cuboid_3_Triangle_3_do_intersect.h>
 
 namespace CGAL {

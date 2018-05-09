@@ -23,6 +23,9 @@
 #ifndef CGAL_INTERSECTIONS_3_RAY_3_SEGMENT_3_H
 #define CGAL_INTERSECTIONS_3_RAY_3_SEGMENT_3_H
 
+#include <CGAL/Ray_3.h>
+#include <CGAL/Segment_3.h>
+
 #include <CGAL/Intersections_3/internal/intersection_3_1_impl.h>
 
 namespace CGAL {

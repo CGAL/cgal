@@ -23,6 +23,8 @@
 #ifndef CGAL_INTERSECTIONS_3_LINE_3_LINE_3_H
 #define CGAL_INTERSECTIONS_3_LINE_3_LINE_3_H
 
+#include <CGAL/Line_3.h>
+
 #include <CGAL/Intersections_3/internal/intersection_3_1_impl.h>
 
 namespace CGAL {

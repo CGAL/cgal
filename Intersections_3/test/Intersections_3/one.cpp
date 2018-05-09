@@ -142,9 +142,7 @@ typedef CGAL::Plane_3<K> T1;
 typedef CGAL::Triangle_3<K> T2;
 
 #elif (SEL == 34)
-#include <CGAL/Intersections_3/Point_3_Line_3.h>
-typedef CGAL::Point_3<K> T1;
-typedef CGAL::Line_3<K> T2;
+// duplicate
 #elif (SEL == 35)
 #include <CGAL/Intersections_3/Point_3_Point_3.h>
 typedef CGAL::Point_3<K> T1;

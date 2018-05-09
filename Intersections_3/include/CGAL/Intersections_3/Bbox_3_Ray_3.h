@@ -23,6 +23,9 @@
 #ifndef CGAL_INTERSECTIONS_3_BBOX_3_RAY_3_H
 #define CGAL_INTERSECTIONS_3_BBOX_3_RAY_3_H
 
+#include <CGAL/Bbox_3.h>
+#include <CGAL/Ray_3.h>
+
 #include <CGAL/Intersections_3/internal/intersection_3_1_impl.h>
 #include <CGAL/Intersections_3/internal/Bbox_3_Ray_3_do_intersect.h>
 

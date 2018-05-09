@@ -23,6 +23,9 @@
 #ifndef CGAL_INTERSECTIONS_3_BBOX_3_ISO_CUBOID_3_H
 #define CGAL_INTERSECTIONS_3_BBOX_3_ISO_CUBOID_3_H
 
+#include <CGAL/Bbox_3.h>
+#include <CGAL/Iso_cuboid_3.h>
+
 #include <CGAL/Intersections_3/internal/Bbox_3_Iso_cuboid_3_do_intersect.h>
 
 namespace CGAL {
@@ -39,7 +42,6 @@ bool do_intersect(const Iso_cuboid_3<K>& a,
   return K().do_intersect_3_object()(b, a);
 }
 
-
 template<typename K>
 void intersection(const CGAL::Bbox_3&,
                   const Iso_cuboid_3<K>&) {}
@@ -47,6 +49,7 @@ void intersection(const CGAL::Bbox_3&,
 template<typename K>
 void intersection(const Iso_cuboid_3<K>& a,
                   const CGAL::Bbox_3& b) {}
+
 } // namespace CGAL
 
 #endif // CGAL_INTERSECTIONS_3_BBOX_3_ISO_CUBOID_3_H
