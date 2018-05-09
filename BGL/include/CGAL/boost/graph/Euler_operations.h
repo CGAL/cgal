@@ -1021,16 +1021,16 @@ add_face_to_border(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
  *
  * \tparam Graph must be a model of `MutableFaceGraph`
  * Let `h` be the halfedge of `e`, and let `v0` and `v1` be the source and target vertices of `h`.
- * Let `hp` and `e'p` be respectively the edges of `prev(h,g)` and `prev(opposite(h, g), g)`.
- * Let `en` and `e'n` be respectively the edges of `opposite(next(h,g))` and `opposite(next(opposite(h, g), g))`.
+ * Let `hp` and `h'p` be respectively the edges of `prev(h,g)` and `prev(opposite(h, g), g)`.
+ * Let `hn'` and `h'n'` be respectively the edges of `opposite(next(h,g))` and `opposite(next(opposite(h, g), g))`.
  *
  * After the collapse of edge `e` the following holds:
  *   - The edge `e` is no longer in `g`.
  *   - The faces incident to edge `e` are no longer in `g`.
  *   - `v0` is no longer in `g`.
- *   - If `h` is not a border halfedge, `hp` is no longer in `g` and is replaced by `en`.
- *   - If the opposite of `h` is not a border halfedge, `e'p` is no longer in `g` and is replaced by `e'n`.
- *   - The halfedges kept in `g` that had that had v0 as target (resp. source) now have v1 as target (resp. source).
+ *   - If `h` is not a border halfedge, `hp` is no longer in `g` and is replaced by `hn'`.
+ *   - If the opposite of `h` is not a border halfedge, `h'p` is no longer in `g` and is replaced by `h'n'`.
+ *   - The halfedges kept in `g` that had `v0` as target (resp. source) now have `v1` as target (resp. source).
  *   - No other incidence information is changed in `g`.
  *
  * \returns vertex `v1`.
