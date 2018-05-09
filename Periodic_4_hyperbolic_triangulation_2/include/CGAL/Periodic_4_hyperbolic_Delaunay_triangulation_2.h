@@ -68,22 +68,17 @@ namespace CGAL {
 	using Base::tds;
 #endif
 
-	using Base::apply;
+	//using Base::apply;
 
-	typedef typename Base::Locate_type                         Locate_type;
-	typedef typename Base::Geometric_traits                    Geometric_traits;
-	typedef typename Base::Triangulation_data_structure        Triangulation_data_structure;
-	//typedef typename Base::Int                                 Int;
-	typedef typename Base::Hyperbolic_translation              Hyperbolic_translation;
-	typedef typename Base::Circle_2                            Circle_2;
-	typedef Circle_2                                           Circle;
-	typedef typename Base::Point_2                             Point_2;
-	typedef Point_2                                            Point;
-	typedef typename Geometric_traits::Voronoi_point 		   Voronoi_point;
-	typedef typename Base::Segment_2                           Segment_2;
-	typedef Segment_2                                          Segment;
-	typedef typename Base::Triangle_2                          Triangle_2;
-	typedef Triangle_2                                         Triangle;
+	typedef typename Base::Locate_type                         	Locate_type;
+	typedef typename Base::Geometric_traits                    	Geometric_traits;
+	typedef typename Base::Triangulation_data_structure        	Triangulation_data_structure;
+	typedef typename Base::Hyperbolic_translation              	Hyperbolic_translation;
+	typedef typename Base::Circle                            	Circle;
+	typedef typename Base::Point                             	Point;
+	typedef typename Geometric_traits::Voronoi_point 		   	Voronoi_point;
+	typedef typename Base::Segment                           	Segment;
+	typedef typename Base::Triangle 		                   	Triangle;
 
 	typedef typename Base::Periodic_point                      Periodic_point;
 	typedef typename Base::Periodic_segment                    Periodic_segment;
@@ -106,7 +101,6 @@ namespace CGAL {
 	typedef typename Base::Edge_circulator                     Edge_circulator;
 	typedef typename Base::Vertex_circulator                   Vertex_circulator;
 	typedef typename Base::Line_face_circulator                Line_face_circulator;
-	// typedef typename GT::Construct_inexact_intersection_2 	   Construct_intersection_2;
 	typedef typename GT::Construct_hyperbolic_circumcenter_2   Construct_hyperbolic_circumcenter_2;
 	typedef typename GT::Construct_segment_2 				   Construct_segment_2;
 
@@ -149,16 +143,9 @@ namespace CGAL {
 	bool is_removable(Vertex_handle v, Delaunay_triangulation_2<GT, TDS>& dt, std::map<Vertex_handle, Vertex_handle>& vmap);
 
   public:
-	Periodic_4_hyperbolic_Delaunay_triangulation_2(Geometric_traits gt) : 
-	Periodic_4_hyperbolic_triangulation_2<GT, TDS>(gt) { 
-		insert_dummy_points();
-		n_dpt = 14; 
-	}  
 
-	Periodic_4_hyperbolic_Delaunay_triangulation_2(
-	  const Circle_2 domain = Circle_2(Point_2(FT(0),FT(0)), FT(1*1)), 
-	  const Geometric_traits &gt = Geometric_traits() ) :
-	Periodic_4_hyperbolic_triangulation_2<GT, TDS>(domain, gt) { 
+	Periodic_4_hyperbolic_Delaunay_triangulation_2( const Geometric_traits &gt = Geometric_traits() ) :
+	Periodic_4_hyperbolic_triangulation_2<GT, TDS>(gt) { 
 		insert_dummy_points();
 		n_dpt = 14; 
 	}
@@ -169,11 +156,11 @@ namespace CGAL {
 		n_dpt = 14;
 	}
 
-	Vertex_handle insert(const Point  &p, Face_handle start = Face_handle(), bool batch_insertion = false, bool verified_input = false);
+	Vertex_handle insert(const Point  &p, Face_handle start = Face_handle(), bool batch_insertion = false);
 
 	template < class InputIterator >
 	std::ptrdiff_t
-	insert(InputIterator first, InputIterator last, bool verified_input = false) {
+	insert(InputIterator first, InputIterator last) {
 	  size_type n_initial = this->number_of_vertices();
 	  std::vector<Point> points(first, last);
 	  spatial_sort(points.begin(), points.end(), geom_traits());
@@ -182,7 +169,7 @@ namespace CGAL {
 	  int cnt_good = 0;
 	  for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end(); p != end; ++p){
 		  cnt++;
-		  Vertex_handle v = insert(*p, f, true, verified_input);
+		  Vertex_handle v = insert(*p, f, true);
 	  	  if (v != Vertex_handle()) {
 	  	  	cnt_good++;
 	  	  	f = v->face();
@@ -253,7 +240,8 @@ namespace CGAL {
   	find_conflicts( Face_handle         d, 
 				  	const Point&        pt, 
 				  	const Hyperbolic_translation&       current_off,
-				  	OutputFaceIterator  it ) const;
+				  	OutputFaceIterator  it,
+				  	bool store_translations = false ) const;
 
 	Face_handle periodic_euclidean_locate(const Point& p, Hyperbolic_translation& o, const Face_handle fh = Face_handle()) const {
 		Locate_type lt;
@@ -269,7 +257,7 @@ namespace CGAL {
 	  return this->hyperbolic_locate(p, lo, fh);
 	}
 
-	Point_2 get_dummy_point(int i) const {
+	Point get_dummy_point(int i) const {
 		CGAL_triangulation_precondition(0 <= i && i <= dummy_points.size());
 	  	return dummy_points[i]();
 	}
@@ -336,15 +324,15 @@ protected:
 
 public:
 
-	Point_2	dual (Face_handle f, Hyperbolic_translation nboff = Hyperbolic_translation()) const {
-		Point_2 res = Construct_hyperbolic_circumcenter_2()(	f->vertex(0)->point(), 		f->vertex(1)->point(), 		f->vertex(2)->point(),
-				 						 						nboff * f->translation(0), nboff * f->translation(1), nboff * f->translation(2));
+	Point	dual (Face_handle f, Hyperbolic_translation nboff = Hyperbolic_translation()) const {
+		Point res = Construct_hyperbolic_circumcenter_2()(	f->vertex(0)->point(), 		f->vertex(1)->point(), 		f->vertex(2)->point(),
+				 						 					nboff * f->translation(0), nboff * f->translation(1), nboff * f->translation(2));
 		return res;
 	}
 
 
-	Segment_2 dual(const Edge &e) const {
-		Segment_2 res = Construct_segment_2()(dual(e.first), dual(e.first->neighbor(e.second), e.first->neighbor_translation(e.second)));
+	Segment dual(const Edge &e) const {
+		Segment res = Construct_segment_2()(dual(e.first), dual(e.first->neighbor(e.second), e.first->neighbor_translation(e.second)));
 		return res;
 	}
 
@@ -383,7 +371,7 @@ is_removable(Vertex_handle v, Delaunay_triangulation_2<Gt,Tds>& dt, std::map<Ver
 	off = off*nbf->translation(ccw(idx));
 	Vertex_handle thisv = nbf->vertex(ccw(idx));
 	bdry_verts.push_back(thisv);
-	Point pt = apply(thisv, off);
+	Point pt = this->construct_point(thisv->point(), off);
 	Vertex_handle new_v = dt.insert(pt);
 	vmap.insert(std::pair<Vertex_handle, Vertex_handle>(new_v, thisv));
   } while (++nbf != done);
@@ -437,15 +425,21 @@ Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt,Tds>::
 find_conflicts( Face_handle         d, 
 				const Point&        pt, 
 				const Hyperbolic_translation&       current_off,
-				OutputFaceIterator  it ) const {
+				OutputFaceIterator  it,
+				bool store_translations ) const {
   if (d->tds_data().is_clear()) {
 	if (_side_of_circle(d, pt, current_off) == ON_BOUNDED_SIDE) {
 	  d->tds_data().mark_in_conflict();
-	  d->store_translations(current_off);
+	  if (store_translations) {
+	  	for (int i = 0; i < 3; i++) {
+	  		d->vertex(i)->set_translation(current_off * d->translation(i));
+	  	}
+	  }
+	  //d->store_translations(current_off);
 	  it++ = d;
 	  for (int jj = 0; jj < 3; jj++) {
 		if (d->neighbor(jj)->tds_data().is_clear()) {
-		  find_conflicts(d->neighbor(jj), pt, current_off * d->neighbor_translation(jj), it);
+		  find_conflicts(d->neighbor(jj), pt, current_off * d->neighbor_translation(jj), it, store_translations);
 		}
 	  }
 	}
@@ -459,47 +453,59 @@ template < class Gt, class Tds >
 inline
 typename Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::Vertex_handle
 Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::
-insert(const Point  &p,  Face_handle hint, bool batch_insertion, bool verified_input) {
+insert(const Point  &p,  Face_handle hint, bool batch_insertion) {
 
-	Vertex_handle v;
+	// typedef typename Gt::Side_of_original_octagon Side_of_original_octagon;
 
-	typedef typename Gt::Side_of_original_octagon Side_of_original_octagon;
+	// CGAL::Bounded_side side = CGAL::ON_BOUNDED_SIDE;
 
-	CGAL::Bounded_side side = CGAL::ON_BOUNDED_SIDE;
+	
+	// Side_of_original_octagon check = Side_of_original_octagon();
+	// side = check(p);
+	
 
-	if (!verified_input) {
-		Side_of_original_octagon check = Side_of_original_octagon();
-		side = check(p);
-	}
-
-	if (side != CGAL::ON_UNBOUNDED_SIDE) {
+	// if (side != CGAL::ON_UNBOUNDED_SIDE) {
 
 		Hyperbolic_translation loff;
 		Locate_type lt;
 		int li;
-		Face_handle start = this->euclidean_locate(p, lt, li, loff, hint, true);
+		Face_handle start = this->euclidean_locate(p, lt, li, loff, hint);
+
+		// If the point is not located in a face of the triangulation, we have nothing to do
+		if (start == Face_handle()) {
+			return Vertex_handle();
+		}
+
 		if (lt == Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::VERTEX) {
 			return Vertex_handle();
 		}
 
 		std::vector<Face_handle> faces;
-		this->find_conflicts(start, p, loff, std::back_inserter(faces));
+		this->find_conflicts(start, p, loff, std::back_inserter(faces), true);
 
-		for (int i = 0; i < faces.size(); i++) {
-		}
+		// for (int i = 0; i < faces.size(); i++) {
+		// 	for (int j = 0; j < 3; j++) {
+		// 		Hyperbolic_translation trans = loff * faces[i]->translation(j);
+		// 		// If the vertex already stores a translation, it will _not_ be substituted
+		// 		faces[i]->vertex(j)->set_translation(trans);
+		// 	}
+		// }
 
-		v = this->insert_in_hole(p, faces.begin(), faces.end());
+		Vertex_handle v = this->_tds.insert_in_hole(faces.begin(), faces.end());
+ 		v->set_point(p);
 
 		Face_circulator ifc = tds().incident_faces(v), done(ifc);
 		do {
-			ifc->restore_translations(loff);
+			for (int i = 0; i < 3; i++) {
+				ifc->set_translation(i, ifc->vertex(i)->translation());
+			}
 			ifc->tds_data().clear();
 			ifc->make_canonical();
 		} while (++ifc != done);
 
 		Vertex_circulator ivc = tds().incident_vertices(v), done_v(ivc);
 		do {
-			ivc->remove_translation();
+			ivc->clear_translation();
 		} while (++ivc != done_v);
 		
 		if (!batch_insertion) {
@@ -521,9 +527,9 @@ insert(const Point  &p,  Face_handle hint, bool batch_insertion, bool verified_i
 		}
 
 		return v;
-	}
+	//}
 
-	return Vertex_handle();
+	//return Vertex_handle();
 }
 
 
@@ -533,6 +539,7 @@ template < class Gt, class Tds >
 void
 Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::
 remove(Vertex_handle v) {
+  
   typedef Delaunay_triangulation_2<Gt, Tds>           Delaunay;
   Delaunay dt;
   std::map<Vertex_handle, Vertex_handle> vmap;
@@ -562,7 +569,11 @@ remove(Vertex_handle v) {
 	  bdry_nbrs.insert(Edge_neighbor(e, Neighbor_pair(nbf, nidx)));
 	  bdry_verts.push_back(nb->vertex(ccw(idx)));
 
-	  nb->store_translations(nb->translation(idx).inverse());
+	  //nb->store_translations(nb->translation(idx).inverse());
+	  for (int i = 0; i < 3; i++) {
+	  	nb->vertex(i)->set_translation(nb->translation(idx).inverse() * nb->translation(i));
+	  }
+
 	  nbrs.push_back(nb);
 	  nb++;
 	} while(nb != done);
@@ -638,15 +649,17 @@ remove(Vertex_handle v) {
 	for (int j = 0; j < new_f.size(); j++) {
 	  for (int i = 0; i < 3; i++) {
 		new_f[j]->vertex(i)->set_face(new_f[j]);
+	  	new_f[j]->set_translation(i, new_f[j]->vertex(i)->translation());
 	  }
-	  new_f[j]->restore_translations();
+
+	  //new_f[j]->restore_translations();
 	  new_f[j]->make_canonical();
 	}
 
 	for (int j = 0; j < bdry_edges.size(); j++) {
 	  Face_handle f = bdry_edges[j].first;
 	  int i = bdry_edges[j].second;
-	  f->vertex(ccw(i))->remove_translation();
+	  f->vertex(ccw(i))->clear_translation();
 	}
 
 	for (int i = 0; i < nbrs.size(); i++) {
