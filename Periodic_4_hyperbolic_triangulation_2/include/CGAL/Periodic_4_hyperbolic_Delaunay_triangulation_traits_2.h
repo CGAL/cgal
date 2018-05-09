@@ -132,8 +132,8 @@ public:
 
 	Periodic_4_hyperbolic_construct_point_2() { }
 
-	template <typename PP>
-	Point operator() ( const PP& pt, const Hyperbolic_translation& tr ) const
+//	template <typename PP>
+	Point operator() ( const Point& pt, const Hyperbolic_translation& tr ) const
 	{
 		if (tr.is_identity()) {
 			return operator()(pt);
@@ -170,11 +170,11 @@ public:
 		return ret;
 	}
 
-	template <typename PP>
-	Point operator() ( const PP& p ) const {
-		//Point ret(NT(p.x()), NT(p.y()));
-		//return ret;
-		return p; 
+//	template <typename PP>
+	Point operator() ( const Point& p ) const {
+//		Point ret(NT(p.x()), NT(p.y()));
+//		return ret;
+        return p;
 	}
 
 };
@@ -217,8 +217,6 @@ public:
 	typedef typename Base::Euclidean_collinear_2 								Euclidean_collinear_2;
 	typedef typename Base::Compute_squared_Euclidean_distance_2 				Compute_squared_Euclidean_distance_2;
 	typedef typename Base::Has_on_bounded_side_2 								Has_on_bounded_side_2;
-	// typedef typename Base::Construct_hyperbolic_line_2 							Construct_hyperbolic_line_2;
-	// typedef typename Base::Construct_hyperbolic_circle_2						Construct_hyperbolic_circle_2;
 
 
 	// Wrappers for the translation adapter
@@ -230,6 +228,10 @@ public:
 			typename Base::Construct_hyperbolic_circumcenter_2> 				Construct_hyperbolic_circumcenter_2;
 	typedef Hyperbolic_traits_with_translations_2_adaptor<Self, 
 			Construct_hyperbolic_segment_2> 									Construct_segment_2;
+
+	typedef Hyperbolic_traits_with_translations_2_adaptor<Self, 
+			typename Base::Construct_triangle_2> 	 							Construct_triangle_2;
+
 	typedef Hyperbolic_traits_with_translations_2_adaptor<Self, 
 			typename Base::Compare_distance_2>      							Compare_distance_2;
 	typedef Periodic_4_hyperbolic_construct_point_2<Self, 		
@@ -239,6 +241,17 @@ public:
 
 
 public:
+
+	Construct_triangle_2 
+	construct_triangle_2_object() const {
+		return Construct_triangle_2();
+	}
+
+
+	Side_of_hyperbolic_triangle_2
+	side_of_hyperbolic_triangle_2_object() const {
+		return Side_of_hyperbolic_triangle_2();
+	}
 
 	class Compute_approximate_hyperbolic_diameter {
 	public:

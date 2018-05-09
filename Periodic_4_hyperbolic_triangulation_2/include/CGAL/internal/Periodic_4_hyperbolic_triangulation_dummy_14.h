@@ -180,9 +180,10 @@ namespace CGAL {
 
         Face_handle faces[32];
         for (int i = 0; i < fcount; i++) {
-            int x, y, z;
             faces[i] = tds().create_face(vertices[tri[i][0]], vertices[tri[i][1]], vertices[tri[i][2]]);
-            faces[i]->set_translations(      off[i][0],           off[i][1],           off[i][2]);
+            for (int j = 0; j < 3; j++) {
+                faces[i]->set_translation(j, off[i][j]);
+            }
         }
 
         tds().set_dimension(2);
