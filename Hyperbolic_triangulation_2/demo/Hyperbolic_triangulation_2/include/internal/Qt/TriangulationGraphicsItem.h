@@ -224,33 +224,7 @@ void
 TriangulationGraphicsItem<T>::updateBoundingBox()
 {
   prepareGeometryChange();
-  if(t->number_of_vertices() == 0){
-    bb = Bbox_2(0,0,0,0);
-    bb_initialized = false;
-    return;
-  } else if(! bb_initialized){
-    bb = t->finite_vertices_begin()->point().bbox();
-    bb_initialized = true;
-  }
-  
-  if(t->dimension() <2){
-    for(typename T::Finite_vertices_iterator it = t->finite_vertices_begin();
-	it != t->finite_vertices_end();
-	++it){
-      bb = bb + it->point().bbox();
-    }
-  } else {
-    typename T::Vertex_handle inf = t->infinite_vertex();
-    typename T::Vertex_circulator vc = t->incident_vertices(inf), done(vc);
-    do {
-      bb = bb + vc->point().bbox();
-      ++vc;
-    } while(vc != done);
-  }
-  bounding_rect = QRectF(bb.xmin(),
-                         bb.ymin(),
-                         bb.xmax()-bb.xmin(),
-                         bb.ymax()-bb.ymin());
+  bounding_rect = QRectF(-1,-1,2,2);
 }
 
 

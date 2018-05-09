@@ -33,7 +33,6 @@ protected:
 private:
 
   DT * dt;
-  typename DT::Vertex_handle hint;
   typename DT::Face_handle fh;
   QGraphicsScene *scene_;
   QGraphicsEllipseItem* circle;
@@ -46,7 +45,6 @@ TriangulationCircumcircle<T>::TriangulationCircumcircle(QGraphicsScene* s,
                                                               QObject* parent)
   :  GraphicsViewInput(parent), dt(dt_), scene_(s)
 {
-  hint = dt->infinite_vertex();
   circle = new QGraphicsEllipseItem();
   circle->hide();
   scene_->addItem(circle);
@@ -92,15 +90,20 @@ TriangulationCircumcircle<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     return;
   }
   typename T::Point p = typename T::Point(event->scenePos().x(), event->scenePos().y());
-  fh = dt->locate(p, hint->face());
-  hint = fh->vertex(0);
-  if(!dt->is_infinite(fh)){
-    typename T::Geom_traits::Circle_2 c(fh->vertex(0)->point(), 
-                                        fh->vertex(1)->point(), 
-                                        fh->vertex(2)->point());
-    CGAL::Bbox_2 bb = c.bbox();
-    circle->setRect(bb.xmin(), bb.ymin(), bb.xmax()-bb.xmin(), bb.ymax()-bb.ymin());
-    circle->show();
+  
+  typedef typename T::Face_handle Face_handle;
+  fh = dt->locate(p);
+  if (fh != Face_handle()) {  
+    if(!dt->is_infinite(fh)){
+      typename T::Geom_traits::Circle_2 c(fh->vertex(0)->point(), 
+                                          fh->vertex(1)->point(), 
+                                          fh->vertex(2)->point());
+      CGAL::Bbox_2 bb = c.bbox();
+      circle->setRect(bb.xmin(), bb.ymin(), bb.xmax()-bb.xmin(), bb.ymax()-bb.ymin());
+      circle->show();
+    } else {
+      circle->hide();
+    }
   } else {
     circle->hide();
   }

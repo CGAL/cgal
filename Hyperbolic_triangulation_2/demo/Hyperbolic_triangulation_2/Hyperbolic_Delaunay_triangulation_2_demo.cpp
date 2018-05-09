@@ -2,7 +2,7 @@
 
 // CGAL headers
 
-#define USE_CORE_EXPR_KERNEL
+//#define USE_CORE_EXPR_KERNEL
 
 #ifndef USE_CORE_EXPR_KERNEL
   #include <CGAL/Exact_circular_kernel_2.h>
@@ -28,9 +28,7 @@
 
 // GraphicsView items and event filters (input classes)
 #include <internal/Qt/TriangulationCircumcircle.h>
-#include <internal/Qt/TriangulationMovingPoint.h>
 #include <internal/Qt/TriangulationConflictZone.h>
-#include <internal/Qt/TriangulationRemoveVertex.h>
 #include <internal/Qt/TriangulationPointInputAndConflictZone.h>
 #include <internal/Qt/TriangulationGraphicsItem.h>
 #include <internal/Qt/HyperbolicVoronoiGraphicsItem.h>
@@ -45,12 +43,9 @@
 
 
 #ifndef USE_CORE_EXPR_KERNEL
-  typedef CGAL::Exact_circular_kernel_2 R;
-  typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<R> K;
+  typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<> K;
 #else
-  typedef CORE::Expr                                          NT;
-  typedef CGAL::Cartesian<NT>                                 R;
-  typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<R> K;
+  typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<> K;
 #endif
 
 
@@ -73,9 +68,9 @@ private:
   CGAL::Qt::TriangulationGraphicsItem<Delaunay> * dgi;
   CGAL::Qt::VoronoiGraphicsItem<Delaunay> * vgi;
 
-  CGAL::Qt::TriangulationMovingPoint<Delaunay> * mp;
+  //CGAL::Qt::TriangulationMovingPoint<Delaunay> * mp;
   CGAL::Qt::TriangulationConflictZone<Delaunay> * cz;
-  CGAL::Qt::TriangulationRemoveVertex<Delaunay> * trv;
+  //CGAL::Qt::TriangulationRemoveVertex<Delaunay> * trv;
   CGAL::Qt::TriangulationPointInputAndConflictZone<Delaunay> * pi;
   CGAL::Qt::TriangulationCircumcircle<Delaunay> *tcc;
 public:
@@ -84,8 +79,6 @@ public:
 public slots:
 
   void processInput(CGAL::Object o);
-
-  void on_actionMovingPoint_toggled(bool checked);
 
   void on_actionShowConflictZone_toggled(bool checked);
 
@@ -176,19 +169,8 @@ MainWindow::MainWindow()
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(processInput(CGAL::Object)));
 
-  mp = new CGAL::Qt::TriangulationMovingPoint<Delaunay>(&dt, this);
-  // TriangulationMovingPoint<Delaunay> emits a modelChanged() signal each
-  // time the moving point moves.
-  // The following connection is for the purpose of emitting changed().
-  QObject::connect(mp, SIGNAL(modelChanged()),
-		   this, SIGNAL(changed()));
-
-  trv = new CGAL::Qt::TriangulationRemoveVertex<Delaunay>(&dt, this);
-  QObject::connect(trv, SIGNAL(modelChanged()),
-		   this, SIGNAL(changed()));
-
   tcc = new CGAL::Qt::TriangulationCircumcircle<Delaunay>(&scene, &dt, this);
-  tcc->setPen(QPen(Qt::red, 7, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  tcc->setPen(QPen(Qt::red, 0.005, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
   cz = new CGAL::Qt::TriangulationConflictZone<Delaunay>(&scene, &dt, this);
 
@@ -202,7 +184,7 @@ MainWindow::MainWindow()
   // We put mutually exclusive actions in an QActionGroup
   QActionGroup* ag = new QActionGroup(this);
   ag->addAction(this->actionInsertPoint);
-  ag->addAction(this->actionMovingPoint);
+  //ag->addAction(this->actionMovingPoint);
   ag->addAction(this->actionCircumcenter);
   ag->addAction(this->actionShowConflictZone);
 
@@ -271,22 +253,8 @@ MainWindow::on_actionInsertPoint_toggled(bool checked)
 {
   if(checked){
     scene.installEventFilter(pi);
-    scene.installEventFilter(trv);
   } else {
     scene.removeEventFilter(pi);
-    scene.removeEventFilter(trv);
-  }
-}
-
-
-void
-MainWindow::on_actionMovingPoint_toggled(bool checked)
-{
-
-  if(checked){
-    scene.installEventFilter(mp);
-  } else {
-    scene.removeEventFilter(mp);
   }
 }
 
