@@ -44,6 +44,8 @@ public:
   typedef typename R::Line_2      Euclidean_line_2;
   typedef boost::variant<Circle_2,Euclidean_line_2>    Euclidean_circle_or_line_2; 
 
+  typedef typename R::Triangle_2             Triangle_2;
+
   typedef typename R::Circular_arc_2         Circular_arc_2;
   typedef typename R::Line_arc_2             Line_arc_2; 
   typedef typename R::Circular_arc_point_2   Circular_arc_point_2;

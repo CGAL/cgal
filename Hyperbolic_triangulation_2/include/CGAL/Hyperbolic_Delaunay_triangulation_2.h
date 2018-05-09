@@ -35,17 +35,16 @@ template < class Gt,
                            Triangulation_vertex_base_2<Gt>, 
                            Hyperbolic_triangulation_face_base_2<Gt> > >
   class Hyperbolic_Delaunay_triangulation_2 
-  : public Delaunay_triangulation_2<Gt,Tds>
+  : private Delaunay_triangulation_2<Gt,Tds>
 {
 public:
   typedef Hyperbolic_Delaunay_triangulation_2<Gt, Tds> Self;
   typedef Delaunay_triangulation_2<Gt,Tds> Base;
   
-  typedef typename Base::size_type             size_type;
-  
-  typedef typename Base::Vertex_handle Vertex_handle;
-  typedef typename Base::Face_handle   Face_handle;
-  typedef typename Base::Edge          Edge;
+  typedef typename Tds::size_type     size_type;
+  typedef typename Tds::Vertex_handle Vertex_handle;
+  typedef typename Tds::Face_handle   Face_handle;
+  typedef typename Tds::Edge          Edge;
   
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2  
   using Base::cw;
@@ -53,26 +52,43 @@ public:
   using Base::geom_traits;
 #endif
   
-  typedef typename Base::Edge_circulator       Edge_circulator;
-  typedef typename Base::Face_circulator       Face_circulator;
-  typedef typename Base::Vertex_circulator     Vertex_circulator;
+  typedef typename Tds::Edge_circulator       Edge_circulator;
+  typedef typename Tds::Face_circulator       Face_circulator;
+  typedef typename Tds::Vertex_circulator     Vertex_circulator;
   
   typedef typename Base::All_vertices_iterator    All_vertices_iterator;
   typedef typename Base::All_edges_iterator       All_edges_iterator;
   typedef typename Base::All_faces_iterator       All_faces_iterator;
- 
+
+  typedef typename Base::Finite_vertices_iterator Finite_vertices_iterator;
+
+  // Algebraic_kernel_for_circles_2 needs this for some reason
+  typedef typename Base::Line_face_circulator     Line_face_circulator;
+
   typedef Gt Geom_traits;
   typedef typename Geom_traits::FT                    FT;
   typedef typename Geom_traits::Point_2               Point;
   typedef typename Geom_traits::Voronoi_point_2       Voronoi_point;
   typedef typename Geom_traits::Hyperbolic_segment_2  Hyperbolic_segment;
+  typedef typename Geom_traits::Triangle_2            Triangle;
+
+  // Redeclaration of `Segment` that would have been inherited from DT2
+  typedef Hyperbolic_segment                          Segment;
   
+
+  // This is blatantly cheating, but it's the only way I found to have 
+  // consistent and same-type enums across DT2 and HDT2
   typedef typename Base::Locate_type                  Locate_type;
+  enum { 
+    VERTEX = 0, EDGE, FACE, OUTSIDE_CONVEX_HULL, 
+    OUTSIDE_AFFINE_HULL 
+  };
+
 
   typedef typename Geom_traits::Side_of_hyperbolic_triangle_2 Side_of_hyperbolic_triangle;
   typedef typename Geom_traits::Is_hyperbolic         Is_hyperbolic;
 
-  Hyperbolic_Delaunay_triangulation_2(const Gt& gt = Gt())
+  Hyperbolic_Delaunay_triangulation_2(const Geom_traits& gt = Geom_traits())
   : Delaunay_triangulation_2<Gt,Tds>(gt) {}
   
   Hyperbolic_Delaunay_triangulation_2(
@@ -80,14 +96,31 @@ public:
        : Delaunay_triangulation_2<Gt,Tds>(tr)
   {   CGAL_triangulation_postcondition( this->is_valid() );}
 
-  
+  template<class InputIterator>
+  Hyperbolic_Delaunay_triangulation_2(InputIterator first, 
+                                      InputIterator last, 
+                                      const Geom_traits& gt = Geom_traits()) :
+                                      Delaunay_triangulation_2<Gt,Tds>(gt) {
+    insert(first, last);
+  }
+
+  void clear() {
+    Base::clear();
+  }
+
   void mark_star(Vertex_handle v) const
   {
     if(!is_star_bounded(v)) {
       mark_star_faces(v);
     }
   }
+
   
+  template<class OutputItFaces>
+  OutputItFaces get_conflicts(const Point& p, OutputItFaces fit, Face_handle start = Face_handle()) const {
+    return Base::get_conflicts(p, fit, start);
+  }
+
   Vertex_handle insert(const Point  &p, 
                        Face_handle start = Face_handle() )
   {
@@ -463,6 +496,37 @@ public:
                                  Non_hyperbolic_tester(this) );
   }
 
+
+  Line_face_circulator line_walk(const Point& p, const Point& q, Face_handle f = Face_handle()) const {
+    return Base::line_walk(p, q, f);
+  }
+
+  Triangle triangle(Face_handle f) const {
+    return Base::triangle(f);
+  }
+
+  Segment segment(Face_handle f, int i) const {
+    return typename Geom_traits::Construct_hyperbolic_segment_2()(f->vertex(cw(i))->point(), f->vertex(ccw(i))->point());
+  }
+
+  Segment segment (const Edge& e) const {
+    Face_handle f = e.first;
+    int i = e.second;
+    return segment(f, i);
+  }
+
+  Segment segment(const Edge_circulator& e) const {
+    return segment(*e);
+  }
+
+  size_type number_of_vertices() const {
+    return Base::number_of_vertices();
+  }
+
+  Vertex_circulator incident_vertices(Vertex_handle v) const {
+    return Base::incident_vertices(v);
+  }
+
   size_type number_of_hyperbolic_faces() const
   {
     return std::distance(hyperbolic_faces_begin(), hyperbolic_faces_end());
@@ -471,6 +535,10 @@ public:
   size_type number_of_hyperbolic_edges() const
   {
     return std::distance(hyperbolic_edges_begin(), hyperbolic_edges_end());
+  }
+
+  int dimension() const {
+    return Base::dimension();
   }
 
   // Finite faces/edges iterators kept for the demo in order to reuse Triangulation_2 demo (see above)
@@ -482,6 +550,9 @@ public:
   Finite_edges_iterator finite_edges_begin() const { return hyperbolic_edges_begin(); }
   Finite_edges_iterator finite_edges_end() const { return hyperbolic_edges_end(); }
   
+  Finite_vertices_iterator finite_vertices_begin() const { return Base::finite_vertices_begin(); }
+  Finite_vertices_iterator finite_vertices_end() const { return Base::finite_vertices_end(); }
+
   Voronoi_point
   dual(Face_handle f) const
   {
