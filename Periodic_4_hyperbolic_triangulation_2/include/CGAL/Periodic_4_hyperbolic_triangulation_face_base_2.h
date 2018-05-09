@@ -26,7 +26,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Dummy_tds_2.h>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_data_structure_2.h>
+#include <CGAL/Triangulation_ds_face_base_2.h>
+
 
 namespace CGAL {
 
@@ -48,60 +49,44 @@ public:
 };
 
 
-template< typename GT, typename TDS = Triangulation_data_structure_2<> >
-class Periodic_4_hyperbolic_triangulation_face_base_2 {
+template< typename GT, typename FB = Triangulation_ds_face_base_2<> >
+class Periodic_4_hyperbolic_triangulation_face_base_2 : public FB {
+	
 public:
-	typedef TDS 							Triangulation_data_structure;
-	typedef typename TDS::Vertex_handle		Vertex_handle;
-	typedef typename TDS::Face_handle		Face_handle;
-	typedef typename TDS::Vertex 			Vertex;
-	typedef typename TDS::Edge 				Edge;
-	typedef typename TDS::Face 				Face;
+	typedef typename FB::Vertex_handle		Vertex_handle;
+	typedef typename FB::Face_handle		Face_handle;
 	typedef Face_data 						TDS_data;
 	typedef typename GT::Hyperbolic_translation				Hyperbolic_translation;
 
 	template< typename TDS2 >
 	struct Rebind_TDS {
-		typedef Periodic_4_hyperbolic_triangulation_face_base_2<GT, TDS2> Other;
+		typedef typename FB::template Rebind_TDS<TDS2>::Other 				FB2;
+		typedef Periodic_4_hyperbolic_triangulation_face_base_2<GT, FB2> 	Other;
 	};
 
 private:
-	Face_handle 	N[3];
-	Vertex_handle	V[3];
 	Hyperbolic_translation 			o[3];	// Hyperbolic_translations for vertices
-	TDS_data 		_tds_data;
-	int 			face_number;
+	TDS_data 						_tds_data;
 
 public:
 
 	Periodic_4_hyperbolic_triangulation_face_base_2() 
-#ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
-	: o{Hyperbolic_translation(), Hyperbolic_translation(), Hyperbolic_translation()}, face_number(-1)
-	{}
-#else
-	{
-		set_translations();
-		face_number = -1;
+	: FB()
+	{	
+		o[0] = Hyperbolic_translation();
+		o[1] = Hyperbolic_translation();
+		o[2] = Hyperbolic_translation();
 	}
-#endif
 
 	Periodic_4_hyperbolic_triangulation_face_base_2(
 		const Vertex_handle& v0, const Vertex_handle& v1,
 		const Vertex_handle& v2) 
-#ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
-	: V{v0, v1, v2},
-	  o{Hyperbolic_translation(), Hyperbolic_translation(), Hyperbolic_translation()}, face_number(-1)
+	: FB(v0, v1, v2)
 	{
-		set_neighbors();
+		o[0] = Hyperbolic_translation();
+		o[1] = Hyperbolic_translation();
+		o[2] = Hyperbolic_translation();
 	}
-#else
-	{
-		set_translations();
-		set_vertices(v0, v1, v2);
-		set_neighbors();
-		face_number = -1;
-	}
-#endif
 
 
 
@@ -109,60 +94,11 @@ public:
 		const Vertex_handle& v0, const Vertex_handle& v1,
 		const Vertex_handle& v2, const Face_handle&   n0,
 		const Face_handle&   n1, const Face_handle&   n2) 
-#ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
-	: V{v0, v1, v2},
-	  N{n0, n1, n2},
-	  o{Hyperbolic_translation(), Hyperbolic_translation(), Hyperbolic_translation()}, face_number(-1)
+	: FB(v0,v1,v2,n0,n1,n2)
 	{
-		set_neighbors();
-	}
-#else
-	{
-		set_translations();
-		set_vertices(v0, v1, v2);
-		set_neighbors(n0, n1, n2);
-		face_number = -1;
-	}
-#endif
-
-
-
-	// ACCESS
-
-	const Vertex_handle& vertex(int i) const {
-    	CGAL_triangulation_precondition( i >= 0 && i <= 2 );
-    	return V[i];
-	}
-
-
-	const Hyperbolic_translation opposite_translation(const Face_handle& fh) {
-		return o[opposite_index(fh)];
-	}
-
-	const Vertex_handle& opposite_vertex(const Face_handle& fh) {
-		return V[opposite_index(fh)];
-	}
-
-	int opposite_index(const Face_handle& fh) {
-		if (N[0] == fh) { return 0; }
-		if (N[1] == fh) { return 1; }
-		CGAL_triangulation_assertion( N[2] == fh );
-		return 2;
-	}
-
-
-	bool has_vertex(const Vertex_handle& v) const {
-		return (V[0] == v) || (V[1] == v) || (V[2]== v);
-	}
-
-
-	int index(const Vertex_handle& v) const {
-        //cout << "Index for face " << face_number << endl;
-    	//cout << "  Query is vertex " << v->idx() << endl;
-    	if (v == V[0]) { return 0; }
-    	if (v == V[1]) { return 1; }
-    	CGAL_triangulation_assertion( v == V[2] );
-    	return 2;
+		o[0] = Hyperbolic_translation();
+		o[1] = Hyperbolic_translation();
+		o[2] = Hyperbolic_translation();
 	}
 
 
@@ -170,30 +106,6 @@ public:
 		return _tds_data;
 	}
 
-	const Face_handle& neighbor(int i) const {
-    	CGAL_triangulation_precondition( i >= 0 && i <= 2);
-    	return N[i];
-	}
-
-
-	bool has_neighbor(const Face_handle& n) const {
-    	return (N[0] == n) || (N[1] == n) || (N[2] == n);
-	}
-
-
-	bool has_neighbor(const Face_handle& n, int & i) const {
-    	if(n == N[0]){ i = 0; return true; }
-    	if(n == N[1]){ i = 1; return true; }
-   	 	if(n == N[2]){ i = 2; return true; }
-    	return false;
-	}
-
-	int index(const Face_handle& n) const {
-    	if (n == N[0]) return 0;
-    	if (n == N[1]) return 1;
-    	CGAL_triangulation_assertion( n == N[2] );
-    	return 2;
-	}
 
 	Hyperbolic_translation translation(int i) const {
 		CGAL_triangulation_precondition( i >= 0 && i <= 2 );
@@ -209,8 +121,8 @@ public:
 		Hyperbolic_translation nbof;
 		bool did_it = false;
 		for (int c = 0; c < 3; c++) {
-			if (N[i]->vertex(c) == V[myi]) {
-				nbof = N[i]->translation(c);
+			if (this->neighbor(i)->vertex(c) == this->vertex(myi)) {
+				nbof = this->neighbor(i)->translation(c);
 				did_it = true;
 				break;
 			}
@@ -220,72 +132,11 @@ public:
 	}
 
 
-	bool has_id_translations() {
-		bool b = true;
-		for (int i = 0; i < 3 && b; i++) {
-			b = (b && o[i].is_identity());
-		}
-		return b;
-	}
-
-
-	// SETTING
-
-	void set_translations() {
-		o[0] = Hyperbolic_translation();
-		o[1] = Hyperbolic_translation();
-		o[2] = Hyperbolic_translation();
-	}
-
-	void set_translations(
-		const Hyperbolic_translation& o0, const Hyperbolic_translation& o1, 
-		const Hyperbolic_translation& o2) 
-	{
-		o[0] = o0;
-		o[1] = o1;
-		o[2] = o2;
-	}
-
 	void set_translation(int k, Hyperbolic_translation new_o) {
 		CGAL_triangulation_precondition( k >= 0 && k <= 2 );
 		o[k] = new_o;
 	}
 
-	void set_vertices() {
-		V[0] = V[1] = V[2] = Vertex_handle();
-	}
-
-	void set_vertex(int k, const Vertex_handle& vh) {
-		CGAL_triangulation_precondition( k >= 0 && k <= 2 );
-		V[k] = vh;
-	}
-
-	void set_vertices(
-		const Vertex_handle& v0, const Vertex_handle v1, 
-		const Vertex_handle& v2)
-	{
-		V[0] = v0;
-		V[1] = v1;
-		V[2] = v2;
-	}
-
-	void set_neighbors() {
-		N[0] = N[1] = N[2] = Face_handle();
-	}
-
-	void set_neighbors(
-		const Face_handle& n0, const Face_handle& n1,
-		const Face_handle& n2)
-	{
-		N[0] = n0;
-		N[1] = n1;
-		N[2] = n2;
-	}
-
-	void set_neighbor(int k, const Face_handle& nfh) {
-		CGAL_triangulation_precondition( k >= 0 && k <= 2 );
-		N[k] = nfh;
-	}
 
 	  // CHECKING
 
@@ -343,72 +194,16 @@ public:
   	}
 
 
-  	int dimension() {
-  		int d = 2;
-  		for (int i = 0; i < 3; i++)
-  			if (V[0] == Vertex_handle())
-  				d--;
-
-  		if (d < 0)
-  			d = 0;
-
-  		return d;
-  	} 
-
-
-  	void apply(Hyperbolic_translation io) {
-  		o[0] = io * o[0];
-  		o[1] = io * o[1];
-  		o[2] = io * o[2];
-  	}
-
-
-  	void store_translations(Hyperbolic_translation noff = Hyperbolic_translation()) {
-  		if (noff == Hyperbolic_translation()) {
-  			V[0]->store_translation(o[0]);
-  			V[1]->store_translation(o[1]);
-  			V[2]->store_translation(o[2]);
-  		} else {
-  			V[0]->store_translation(noff * o[0]);
-  			V[1]->store_translation(noff * o[1]);
-  			V[2]->store_translation(noff * o[2]);
-  		}
-  	}
-
-  	void restore_translations(Hyperbolic_translation loff = Hyperbolic_translation()) {
-  		for (int i = 0; i < 3; i++) {
-  			if (loff.is_identity()) {
-  				o[i] = V[i]->get_translation();
-  			} else {
-  				o[i] = loff.inverse()*V[i]->get_translation();
-  			}
-  		}  		
-  	}
-
   	void reorient() {
-  		// N(eighbors), V(ertices), o(ffsets), no (neighbor translations)
+  		
+  		// swaps vertex 0 with vertex 1, and neighbor 0 with neighbor 1
+  		FB::reorient();
 
-  		int idx0 = 0, idx1 = 1; // the indices to swap
-
-  		swap( N[idx0],  N[idx1]);
-  		swap( V[idx0],  V[idx1]);
-  		swap( o[idx0],  o[idx1]);
-
+  		// manually swap translation 0 with translation 1
+  		Hyperbolic_translation tmp = o[0];
+  		o[0] = o[1];
+  		o[1] = tmp;
   	}
-
-
-  	template <class T>
-  	void swap(T& a, T& b) {
-  		T tmp;
-  		tmp = a;
-  		a = b;
-  		b = tmp;
-  	}
-
-
-  	// For use by Compact_container.
-  	void * for_compact_container() const { return N[0].for_compact_container(); }
-  	void * & for_compact_container()     { return N[0].for_compact_container(); }
 
 };
 
@@ -431,20 +226,6 @@ operator<<(std::ostream &os,
 {
   return os;
 }
-
-// Specialization for void.
-template<typename GT>
-class Periodic_4_hyperbolic_triangulation_face_base_2<GT, void>
-{
-public:
-  typedef Dummy_tds_2                  					Triangulation_data_structure;
-  typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
-  typedef Triangulation_data_structure::Face_handle     Face_handle;
-  template <typename TDS2>
-  struct Rebind_TDS {
-    typedef Periodic_4_hyperbolic_triangulation_face_base_2<GT, TDS2> Other;
-  };
-};
 
 
 }  // namespace CGAL
