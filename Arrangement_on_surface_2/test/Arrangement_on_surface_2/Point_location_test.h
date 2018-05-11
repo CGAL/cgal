@@ -1,6 +1,19 @@
 #ifndef CGAL_POINT_LOCATION_TEST_H
 #define CGAL_POINT_LOCATION_TEST_H
 
+#define NAIVE_PL_ENABLED 1
+#define SIMPLE_PL_ENABLED 1
+#define WALK_PL_ENABLED 1
+#define LM_PL_ENABLED 1
+#define LM_RANDOM_PL_ENABLED 1
+#define LM_GRID_PL_ENABLED 1
+#define LM_HALTON_PL_ENABLED 1
+#define LM_MIDDLE_EDGES_PL_ENABLED 1
+#define LM_SPECIFIED_POINTS_PL_ENABLED 1
+#define TRIANGULATION_PL_ENABLED 1
+#define TRAPEZOID_RIC_PL_ENABLED 1
+#define TRAPEZOID_RIC_NO_GUARANTEE_PL_ENABLED 1
+
 #include <array>
 
 #include <CGAL/basic.h>
@@ -135,20 +148,6 @@ protected:
     TRAPEZOID_RIC_NO_GUARANTEE_PL,
     NUM_PL_STRATEGIES
   };
-
-#define NAIVE_PL_ACTIVE 1
-#define SIMPLE_PL_ACTIVE 1
-#define WALK_PL_ACTIVE 1
-#define LM_PL_ACTIVE 1
-#define LM_RANDOM_PL_ACTIVE 1
-#define LM_GRID_PL_ACTIVE 1
-#define LM_HALTON_PL_ACTIVE 1
-#define LM_MIDDLE_EDGES_PL_ACTIVE 1
-#define LM_SPECIFIED_POINTS_PL_ACTIVE 1
-#define TRIANGULATION_PL_ACTIVE 1
-#define TRAPEZOID_RIC_PL_ACTIVE 1
-#define TRAPEZOID_RIC_NO_GUARANTEE_PL_ACTIVE 1
-#define NUM_PL_STRATEGIE_ACTIVE 1
 
   struct Locator {
     typedef boost::variant<Naive_pl*,
@@ -340,6 +339,306 @@ private:
   }
 };
 
+// Naive
+#if (NAIVE_PL_ENABLED)
+#define INIT_PL_NATIVE()        init_pl<Naive_pl, NAIVE_PL>("Naive")
+#define ALLOCATE_PL_NATIVE()    allocate_pl<Naive_pl, NAIVE_PL>()
+#define CONSTRUCT_PL_NATIVE()   construct_pl<Naive_pl, NAIVE_PL>()
+#define DEALLOCATE_PL_NATIVE()  deallocate_pl<Naive_pl, NAIVE_PL>()
+#define ATTACH_PL_NATIVE()      attach_pl<Naive_pl, NAIVE_PL>()
+#define QUERY_PL_NATIVE(obj)    query_pl<Naive_pl, NAIVE_PL>(obj)
+#else
+#define INIT_PL_NATIVE()
+#define ALLOCATE_PL_NATIVE()
+#define CONSTRUCT_PL_NATIVE()
+#define DEALLOCATE_PL_NATIVE()
+#define ATTACH_PL_NATIVE()
+#define QUERY_PL_NATIVE(obj)
+#endif
+
+// Simple
+#if (SIMPLE_PL_ENABLED)
+#define INIT_PL_SIMPLE()        init_pl<Simple_pl, SIMPLE_PL>("Simple")
+#define ALLOCATE_PL_SIMPLE()    allocate_pl<Simple_pl, SIMPLE_PL>()
+#define CONSTRUCT_PL_SIMPLE()   construct_pl<Simple_pl, SIMPLE_PL>()
+#define DEALLOCATE_PL_SIMPLE()  deallocate_pl<Simple_pl, SIMPLE_PL>()
+#define ATTACH_PL_SIMPLE()      attach_pl<Simple_pl, SIMPLE_PL>()
+#define QUERY_PL_SIMPLE(obj)    query_pl<Simple_pl, SIMPLE_PL>(obj)
+#else
+#define INIT_PL_SIMPLE()
+#define ALLOCATE_PL_SIMPLE()
+#define CONSTRUCT_PL_SIMPLE()
+#define DEALLOCATE_PL_SIMPLE()
+#define ATTACH_PL_SIMPLE()
+#define QUERY_PL_SIMPLE(obj)
+#endif
+
+// Walk
+#if (WALK_PL_ENABLED)
+#define INIT_PL_WALK()          init_pl<Walk_pl, WALK_PL>("Walk")
+#define ALLOCATE_PL_WALK()      allocate_pl<Walk_pl, WALK_PL>()
+#define CONSTRUCT_PL_WALK()     construct_pl<Walk_pl, WALK_PL>()
+#define DEALLOCATE_PL_WALK()    deallocate_pl<Walk_pl, WALK_PL>()
+#define ATTACH_PL_WALK()        attach_pl<Walk_pl, WALK_PL>()
+#define QUERY_PL_WALK(obj)      query_pl<Walk_pl, WALK_PL>(obj)
+#else
+#define INIT_PL_WALK()
+#define ALLOCATE_PL_WALK()
+#define CONSTRUCT_PL_WALK()
+#define DEALLOCATE_PL_WALK()
+#define ATTACH_PL_WALK()
+#define QUERY_PL_WALK(obj)
+#endif
+
+// Landmarks (vertices)
+#if (LM_PL_ENABLED)
+#define INIT_PL_LM()            init_pl<Lm_pl, LM_PL>("Landmarks (vertices)");
+#define ALLOCATE_PL_LM()        allocate_pl<Lm_pl, LM_PL>()
+#define CONSTRUCT_PL_LM()       construct_pl<Lm_pl, LM_PL>()
+#define DEALLOCATE_PL_LM()      deallocate_pl<Lm_pl, LM_PL>()
+#define ATTACH_PL_LM()          attach_pl<Lm_pl, LM_PL>()
+#define QUERY_PL_LM(obj)        query_pl<Lm_pl, LM_PL>(obj)
+#else
+#define INIT_PL_LM()
+#define ALLOCATE_PL_LM()
+#define CONSTRUCT_PL_LM()
+#define DEALLOCATE_PL_LM()
+#define ATTACH_PL_LM()
+#define QUERY_PL_LM(obj)
+#endif
+
+// Landmarks random
+#if (LM_RANDOM_PL_ENABLED)
+#define INIT_PL_LM_RANDOM()       \
+  init_pl<Lm_random_pl, LM_RANDOM_PL>("Landmarks random");
+#define ALLOCATE_PL_LM_RANDOM()   \
+  allocate_pl<Lm_random_pl, LM_RANDOM_PL>()
+
+#define CONSTRUCT_PL_LM_RANDOM()                \
+  m_random_g = new Random_lm_generator(*m_arr); \
+  construct_pl<Lm_random_pl, LM_RANDOM_PL>(m_random_g)
+
+#define DEALLOCATE_PL_LM_RANDOM()               \
+  if (m_random_g) {                             \
+    delete m_random_g;                          \
+    m_random_g = nullptr;                       \
+  }                                             \
+  deallocate_pl<Lm_random_pl, LM_RANDOM_PL>()
+
+#define ATTACH_PL_LM_RANDOM()                   \
+  m_random_g = new Random_lm_generator(*m_arr); \
+  attach_pl<Lm_random_pl, LM_RANDOM_PL>(m_random_g)
+
+#define QUERY_PL_LM_RANDOM(obj)   query_pl<Lm_random_pl, LM_RANDOM_PL>(obj)
+#else
+#define INIT_PL_LM_RANDOM()
+#define ALLOCATE_PL_LM_RANDOM()
+#define CONSTRUCT_PL_LM_RANDOM()
+#define DEALLOCATE_PL_LM_RANDOM()
+#define ATTACH_PL_LM_RANDOM()
+#define QUERY_PL_LM_RANDOM(obj)
+#endif
+
+// Landmarks grid
+#if (LM_GRID_PL_ENABLED)
+#define INIT_PL_LM_GRID()       init_pl<Lm_grid_pl, LM_GRID_PL>("Landmarks grid")
+#define ALLOCATE_PL_LM_GRID()   allocate_pl<Lm_grid_pl, LM_GRID_PL>()
+
+#define CONSTRUCT_PL_LM_GRID()              \
+  m_grid_g = new Grid_lm_generator(*m_arr); \
+  construct_pl<Lm_grid_pl, LM_GRID_PL>(m_grid_g)
+
+#define DEALLOCATE_PL_LM_GRID() \
+  if (m_grid_g) {               \
+    delete m_grid_g;            \
+    m_grid_g = nullptr;         \
+  }                             \
+  deallocate_pl<Lm_grid_pl, LM_GRID_PL>()
+
+#define ATTACH_PL_LM_GRID()                 \
+  m_grid_g = new Grid_lm_generator(*m_arr); \
+  attach_pl<Lm_grid_pl, LM_GRID_PL>(m_grid_g)
+
+#define QUERY_PL_LM_GRID(obj)   query_pl<Lm_grid_pl, LM_GRID_PL>(obj)
+#else
+#define INIT_PL_LM_GRID()
+#define ALLOCATE_PL_LM_GRID()
+#define CONSTRUCT_PL_LM_GRID()
+#define DEALLOCATE_PL_LM_GRID()
+#define ATTACH_PL_LM_GRID()
+#define QUERY_PL_LM_GRID(obj)
+#endif
+
+// Landmarks Halton
+#if (LM_HALTON_PL_ENABLED)
+#define INIT_PL_LM_HALTON()       \
+  init_pl<Lm_halton_pl, LM_HALTON_PL>("Landmarks Halton")
+#define ALLOCATE_PL_LM_HALTON()   allocate_pl<Lm_halton_pl, LM_HALTON_PL>()
+
+#define CONSTRUCT_PL_LM_HALTON()                \
+  m_halton_g = new Halton_lm_generator(*m_arr); \
+  construct_pl<Lm_halton_pl, LM_HALTON_PL>(m_halton_g)
+
+#define DEALLOCATE_PL_LM_HALTON() \
+    if (m_halton_g) {             \
+    delete m_halton_g;            \
+    m_halton_g = nullptr;         \
+  }                               \
+  deallocate_pl<Lm_halton_pl, LM_HALTON_PL>()
+
+#define ATTACH_PL_LM_HALTON()                   \
+  m_halton_g = new Halton_lm_generator(*m_arr); \
+  attach_pl<Lm_halton_pl, LM_HALTON_PL>(m_halton_g)
+
+#define QUERY_PL_LM_HALTON(obj)   query_pl<Lm_halton_pl, LM_HALTON_PL>(obj)
+#else
+#define INIT_PL_LM_HALTON()
+#define ALLOCATE_PL_LM_HALTON()
+#define CONSTRUCT_PL_LM_HALTON()
+#define DEALLOCATE_PL_LM_HALTON()
+#define ATTACH_PL_LM_HALTON()
+#define QUERY_PL_LM_HALTON(obj)
+#endif
+
+// Landmarks middle edges
+#if (LM_MIDDLE_EDGES_PL_ENABLED)
+#define INIT_PL_LM_MIDDLE_EDGES()       \
+  init_pl<Lm_middle_edges_pl, LM_MIDDLE_EDGES_PL>("Landmarks middle edges")
+#define ALLOCATE_PL_LM_MIDDLE_EDGES()   \
+  allocate_pl<Lm_middle_edges_pl, LM_MIDDLE_EDGES_PL>()
+
+#define CONSTRUCT_PL_LM_MIDDLE_EDGES()                   \
+  m_middle_edges_g = new Middle_edges_generator(*m_arr); \
+  construct_pl<Lm_middle_edges_pl, LM_MIDDLE_EDGES_PL>(m_middle_edges_g)
+
+#define DEALLOCATE_PL_LM_MIDDLE_EDGES() \
+  if (m_middle_edges_g) {               \
+    delete m_middle_edges_g;            \
+    m_middle_edges_g = nullptr;         \
+  }                                     \
+  deallocate_pl<Lm_middle_edges_pl, LM_MIDDLE_EDGES_PL>()
+
+#define ATTACH_PL_LM_MIDDLE_EDGES()                      \
+  m_middle_edges_g = new Middle_edges_generator(*m_arr); \
+  attach_pl<Lm_middle_edges_pl, LM_MIDDLE_EDGES_PL>(m_middle_edges_g)
+
+#define QUERY_PL_LM_MIDDLE_EDGES(obj)   \
+  query_pl<Lm_middle_edges_pl, LM_MIDDLE_EDGES_PL>(obj)
+#else
+#define INIT_PL_LM_MIDDLE_EDGES()
+#define ALLOCATE_PL_LM_MIDDLE_EDGES()
+#define CONSTRUCT_PL_LM_MIDDLE_EDGES()
+#define DEALLOCATE_PL_LM_MIDDLE_EDGES()
+#define ATTACH_PL_LM_MIDDLE_EDGES()
+#define QUERY_PL_LM_MIDDLE_EDGES(obj)
+#endif
+
+// Landmarks specified points
+#if (LM_SPECIFIED_POINTS_PL_ENABLED)
+#define INIT_PL_LM_SPECIFIED_POINTS()       \
+  init_pl<Lm_specified_points_pl, LM_SPECIFIED_POINTS_PL>("Landmarks specified points");
+#define ALLOCATE_PL_LM_SPECIFIED_POINTS()   \
+  allocate_pl<Lm_specified_points_pl, LM_SPECIFIED_POINTS_PL>()
+
+#define CONSTRUCT_PL_LM_SPECIFIED_POINTS()                       \
+  m_specified_points_g = new Specified_points_generator(*m_arr); \
+  construct_pl<Lm_specified_points_pl, LM_SPECIFIED_POINTS_PL>(m_specified_points_g)
+
+#define DEALLOCATE_PL_LM_SPECIFIED_POINTS() \
+  if (m_specified_points_g) {               \
+    delete m_specified_points_g;            \
+    m_specified_points_g = nullptr;         \
+  }                                         \
+  deallocate_pl<Lm_specified_points_pl, LM_SPECIFIED_POINTS_PL>()
+
+#define ATTACH_PL_LM_SPECIFIED_POINTS()                          \
+  m_specified_points_g = new Specified_points_generator(*m_arr); \
+  attach_pl<Lm_specified_points_pl, LM_SPECIFIED_POINTS_PL>(m_specified_points_g)
+
+#define QUERY_PL_LM_SPECIFIED_POINTS(obj)   \
+  query_pl<Lm_specified_points_pl, LM_SPECIFIED_POINTS_PL>(obj)
+#else
+#define INIT_PL_LM_SPECIFIED_POINTS()
+#define ALLOCATE_PL_LM_SPECIFIED_POINTS()
+#define CONSTRUCT_PL_LM_SPECIFIED_POINTS()
+#define DEALLOCATE_PL_LM_SPECIFIED_POINTS()
+#define ATTACH_PL_LM_SPECIFIED_POINTS()
+#define QUERY_PL_LM_SPECIFIED_POINTS(obj)
+#endif
+
+// Triangulation_pl
+#if (TRIANGULATION_PL_ENABLED)
+#define INIT_PL_TRIANGULATION_PL()       \
+  init_pl<Triangulation_pl, TRIANGULATION_PL>("Triangulation")
+#define ALLOCATE_PL_TRIANGULATION_PL()   \
+  allocate_pl<Triangulation_pl, TRIANGULATION_PL>()
+#define CONSTRUCT_PL_TRIANGULATION_PL()  \
+  construct_pl<Triangulation_pl, TRIANGULATION_PL>()
+#define DEALLOCATE_PL_TRIANGULATION_PL() \
+  deallocate_pl<Triangulation_pl, TRIANGULATION_PL>()
+#define ATTACH_PL_TRIANGULATION_PL()     \
+  attach_pl<Triangulation_pl, TRIANGULATION_PL>()
+#define QUERY_PL_TRIANGULATION_PL(obj)   \
+  query_pl<Triangulation_pl, TRIANGULATION_PL>(obj);
+#else
+#define INIT_PL_TRIANGULATION_PL()
+#define ALLOCATE_PL_TRIANGULATION_PL()
+#define CONSTRUCT_PL_TRIANGULATION_PL()
+#define DEALLOCATE_PL_TRIANGULATION_PL()
+#define ATTACH_PL_TRIANGULATION_PL()
+#define QUERY_PL_TRIANGULATION_PL(obj)
+#endif
+
+// Trapezoidal RIC
+#if (TRAPEZOID_RIC_PL_ENABLED)
+#define INIT_PL_TRAPEZOID_RIC_PL()       \
+  init_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_PL>("Trapezoidal RIC")
+#define ALLOCATE_PL_TRAPEZOID_RIC_PL()   \
+  allocate_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_PL>()
+#define CONSTRUCT_PL_TRAPEZOID_RIC_PL()  \
+  construct_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_PL>()
+#define DEALLOCATE_PL_TRAPEZOID_RIC_PL() \
+  deallocate_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_PL>()
+#define ATTACH_PL_TRAPEZOID_RIC_PL()     \
+  attach_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_PL>()
+#define QUERY_PL_TRAPEZOID_RIC_PL(obj)   \
+  query_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_PL>(obj)
+#else
+#define INIT_PL_TRAPEZOID_RIC_PL()
+#define ALLOCATE_PL_TRAPEZOID_RIC_PL()
+#define CONSTRUCT_PL_TRAPEZOID_RIC_PL()
+#define DEALLOCATE_PL_TRAPEZOID_RIC_PL()
+#define ATTACH_PL_TRAPEZOID_RIC_PL()
+#define QUERY_PL_TRAPEZOID_RIC_PL(obj)
+#endif
+
+#if (TRAPEZOID_RIC_NO_GUARANTEE_PL_ENABLED)
+#define INIT_PL_TRAPEZOID_RIC_NO_GUARANTEE()       \
+  init_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>("Trapezoidal RIC without guarantees")
+#define ALLOCATE_PL_TRAPEZOID_RIC_NO_GUARANTEE()   \
+  allocate_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>()
+#define CONSTRUCT_PL_TRAPEZOID_RIC_NO_GUARANTEE()  \
+  construct_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>()
+#define DEALLOCATE_PL_TRAPEZOID_RIC_NO_GUARANTEE() \
+  deallocate_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>()
+
+#define ATTACH_PL_TRAPEZOID_RIC_NO_GUARANTEE()                     \
+  auto& var = m_locators[TRAPEZOID_RIC_NO_GUARANTEE_PL].m_variant; \
+  auto* strategy = boost::get<Trapezoid_ric_pl*>(var);             \
+  strategy->with_guarantees(false);                                \
+  attach_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>()
+
+#define QUERY_PL_TRAPEZOID_RIC_NO_GUARANTEE(obj)   \
+  query_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>(obj)
+#else
+#define INIT_PL_TRAPEZOID_RIC_NO_GUARANTEE()
+#define ALLOCATE_PL_TRAPEZOID_RIC_NO_GUARANTEE()
+#define CONSTRUCT_PL_TRAPEZOID_RIC_NO_GUARANTEE()
+#define DEALLOCATE_PL_TRAPEZOID_RIC_NO_GUARANTEE()
+#define ATTACH_PL_TRAPEZOID_RIC_NO_GUARANTEE()
+#define QUERY_PL_TRAPEZOID_RIC_NO_GUARANTEE(obj)
+#endif
+
 //! Constructor.
 template <typename GeomTraits, typename TopolTraits>
 Point_location_test<GeomTraits, TopolTraits>::
@@ -353,36 +652,35 @@ Point_location_test(const Geom_traits& geom_traits) :
   m_middle_edges_g(nullptr),
   m_specified_points_g(nullptr)
 {
-  init_pl<Naive_pl, NAIVE_PL>("Naive");
-  init_pl<Simple_pl, SIMPLE_PL>("Simple");
-  init_pl<Walk_pl, WALK_PL>("Walk");
+  INIT_PL_NATIVE();
+  INIT_PL_SIMPLE();
+  INIT_PL_WALK();
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
   (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
-  init_pl<Lm_pl, LM_PL>("Landmarks (vertices)");
-  init_pl<Lm_random_pl, LM_RANDOM_PL>("Landmarks random");
-  init_pl<Lm_grid_pl, LM_GRID_PL>("Landmarks grid");
-  init_pl<Lm_halton_pl, LM_HALTON_PL>("Landmarks Halton");
-  init_pl<Lm_middle_edges_pl, LM_MIDDLE_EDGES_PL>("Landmarks middle edges");
-  init_pl<Lm_specified_points_pl, LM_SPECIFIED_POINTS_PL>("Landmarks specified points");
+  INIT_PL_LM();
+  INIT_PL_LM_RANDOM();
+  INIT_PL_LM_GRID();
+  INIT_PL_LM_HALTON();
+  INIT_PL_LM_MIDDLE_EDGES();
+  INIT_PL_LM_SPECIFIED_POINTS();
+
 #endif
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
-  init_pl<Triangulation_pl, TRIANGULATION_PL>("Triangulation");
+  INIT_PL_TRIANGULATION_PL();
 #endif
 
-  init_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_PL>("Trapezoidal RIC");
-  init_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>("Trapezoidal RIC without guarantees");
+  INIT_PL_TRAPEZOID_RIC_PL();
+  INIT_PL_TRAPEZOID_RIC_NO_GUARANTEE();
 }
 
 //! Set the file names.
 template <typename GeomTraits, typename TopolTraits>
 void Point_location_test<GeomTraits, TopolTraits>::
-set_filenames(const char* points_filename,
-              const char* xcurves_filename,
-              const char* curves_filename,
-              const char* queries_filename)
+set_filenames(const char* points_filename, const char* xcurves_filename,
+              const char* curves_filename, const char* queries_filename)
 {
   Base::set_filenames(points_filename, xcurves_filename, curves_filename);
   m_filename_queries.assign(queries_filename);
@@ -414,49 +712,28 @@ void Point_location_test<GeomTraits, TopolTraits>::clear()
 template <typename GeomTraits, typename TopolTraits>
 void Point_location_test<GeomTraits, TopolTraits>::deallocate_pl_strategies()
 {
-  deallocate_pl<Naive_pl, NAIVE_PL>();
-  deallocate_pl<Simple_pl, SIMPLE_PL>();
-  deallocate_pl<Walk_pl, WALK_PL>();
+  ALLOCATE_PL_NATIVE();
+  ALLOCATE_PL_SIMPLE();
+  ALLOCATE_PL_WALK();
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
   (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
-  deallocate_pl<Lm_pl, LM_PL>();
-  deallocate_pl<Lm_random_pl, LM_RANDOM_PL>();
-  deallocate_pl<Lm_grid_pl, LM_GRID_PL>();
-  deallocate_pl<Lm_halton_pl, LM_HALTON_PL>();
-  deallocate_pl<Lm_middle_edges_pl, LM_MIDDLE_EDGES_PL>();
-  deallocate_pl<Lm_specified_points_pl, LM_SPECIFIED_POINTS_PL>();
+  DEALLOCATE_PL_LM();
+  DEALLOCATE_PL_LM_RANDOM();
+  DEALLOCATE_PL_LM_GRID();
+  DEALLOCATE_PL_LM_HALTON();
+  DEALLOCATE_PL_LM_MIDDLE_EDGES();
+  DEALLOCATE_PL_LM_SPECIFIED_POINTS();
 
-  // Free Generators
-  if (m_random_g) {
-    delete m_random_g;
-    m_random_g = nullptr;
-  }
-  if (m_grid_g) {
-    delete m_grid_g;
-    m_grid_g = nullptr;
-  }
-  if (m_halton_g) {
-    delete m_halton_g;
-    m_halton_g = nullptr;
-  }
-  if (m_middle_edges_g) {
-    delete m_middle_edges_g;
-    m_middle_edges_g = nullptr;
-  }
-  if (m_specified_points_g) {
-    delete m_specified_points_g;
-    m_specified_points_g = nullptr;
-  }
 #endif
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
-  deallocate_pl<Triangulation_pl, TRIANGULATION_PL>();
+  DEALLOCATE_PL_TRIANGULATION_PL();
 #endif
 
-  deallocate_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_PL>();
-  deallocate_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>();
+  DEALLOCATE_PL_TRAPEZOID_RIC_PL();
+  DEALLOCATE_PL_TRAPEZOID_RIC_NO_GUARANTEE();
 }
 
 template <typename GeomTraits, typename TopolTraits>
@@ -495,38 +772,34 @@ construct_arrangement()
 
 template <typename GeomTraits, typename TopolTraits>
 void Point_location_test<GeomTraits, TopolTraits>::clear_arrangement()
-{
-  if (m_arr) m_arr->clear();
-}
+{ if (m_arr) m_arr->clear(); }
 
 template <typename GeomTraits, typename TopolTraits>
 bool Point_location_test<GeomTraits, TopolTraits>::allocate_pl_strategies()
 {
   // Allocate all point location strategies.
-  if (! allocate_pl<Naive_pl, NAIVE_PL>()) return false;
-  if (! allocate_pl<Simple_pl, SIMPLE_PL>()) return false;
-  if (! allocate_pl<Walk_pl, WALK_PL>()) return false;
+  if (! ALLOCATE_PL_NATIVE()) return false;
+  if (! ALLOCATE_PL_SIMPLE()) return false;
+  if (! ALLOCATE_PL_WALK()) return false;
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
   (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
-  if (! allocate_pl<Lm_pl, LM_PL>()) return false;
-  if (! allocate_pl<Lm_random_pl, LM_RANDOM_PL>()) return false;
-  if (! allocate_pl<Lm_grid_pl, LM_GRID_PL>()) return false;
-  if (! allocate_pl<Lm_halton_pl, LM_HALTON_PL>()) return false;
-  if (! allocate_pl<Lm_middle_edges_pl, LM_MIDDLE_EDGES_PL>()) return false;
-  if (! allocate_pl<Lm_specified_points_pl, LM_SPECIFIED_POINTS_PL>())
-    return false;
+  if (! ALLOCATE_PL_LM()) return false;
+  if (! ALLOCATE_PL_LM_RANDOM()) return false;
+  if (! ALLOCATE_PL_LM_GRID()) return false;
+  if (! ALLOCATE_PL_LM_HALTON()) return false;
+  if (! ALLOCATE_PL_LM_MIDDLE_EDGES()) return false;
+  if (! ALLOCATE_PL_LM_SPECIFIED_POINTS()) return false;
 
 #endif
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
-  if (! allocate_pl<Triangulation_pl, TRIANGULATION_PL>()) return false;
+  if (! ALLOCATE_PL_TRIANGULATION_PL()) return false;
 #endif
 
-  if (! allocate_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_PL>()) return false;
-  if (! allocate_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>())
-    return false;
+  if (! ALLOCATE_PL_TRAPEZOID_RIC_PL()) return false;
+  if (! ALLOCATE_PL_TRAPEZOID_RIC_NO_GUARANTEE()) return false;
 
   return true;
 }
@@ -537,57 +810,31 @@ bool Point_location_test<GeomTraits, TopolTraits>::construct_pl_strategies()
   // Initialize all point location strategies.
   CGAL::Timer timer;
 
-  construct_pl<Naive_pl, NAIVE_PL>();
-  construct_pl<Simple_pl, SIMPLE_PL>();
-  construct_pl<Walk_pl, WALK_PL>();
+  CONSTRUCT_PL_NATIVE();
+  CONSTRUCT_PL_SIMPLE();
+  CONSTRUCT_PL_WALK();
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
   (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
-  measure<LM_PL>(timer, [&](){ construct_pl<Lm_pl, LM_PL>(); });
-  // auto op = std::bind(&Point_location_test::construct_pl<Lm_pl, LM_PL>, this);
-  // measure<LM_PL>(timer, op);
-
-  measure<LM_RANDOM_PL>(timer, [&](){
-      m_random_g = new Random_lm_generator(*m_arr);
-      construct_pl<Lm_random_pl, LM_RANDOM_PL>(m_random_g);
-    });
-
-  measure<LM_GRID_PL>(timer, [&](){
-      m_grid_g = new Grid_lm_generator(*m_arr);
-      construct_pl<Lm_grid_pl, LM_GRID_PL>(m_grid_g);
-    });
-
-  measure<LM_HALTON_PL>(timer, [&](){
-      m_halton_g = new Halton_lm_generator(*m_arr);
-      construct_pl<Lm_halton_pl, LM_HALTON_PL>(m_halton_g);
-    });
-
-  measure<LM_MIDDLE_EDGES_PL>(timer, [&](){
-      m_middle_edges_g = new Middle_edges_generator(*m_arr);
-      construct_pl<Lm_middle_edges_pl, LM_MIDDLE_EDGES_PL>(m_middle_edges_g);
-    });
-
+  measure<LM_PL>(timer, [&](){ CONSTRUCT_PL_LM(); });
+  measure<LM_RANDOM_PL>(timer, [&](){ CONSTRUCT_PL_LM_RANDOM(); });
+  measure<LM_GRID_PL>(timer, [&](){ CONSTRUCT_PL_LM_GRID(); });
+  measure<LM_HALTON_PL>(timer, [&](){ CONSTRUCT_PL_LM_HALTON(); });
+  measure<LM_MIDDLE_EDGES_PL>(timer, [&](){ CONSTRUCT_PL_LM_MIDDLE_EDGES(); });
   measure<LM_SPECIFIED_POINTS_PL>(timer, [&](){
-      m_specified_points_g = new Specified_points_generator(*m_arr);
-      construct_pl<Lm_specified_points_pl, LM_SPECIFIED_POINTS_PL>
-        (m_specified_points_g);
+      CONSTRUCT_PL_LM_SPECIFIED_POINTS();
     });
 
 #endif
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
-  measure<TRIANGULATION_PL>(timer, [&](){
-      construct_pl<Triangulation_pl, TRIANGULATION_PL>();
-    });
+  measure<TRIANGULATION_PL>(timer, [&](){ CONSTRUCT_PL_TRIANGULATION_PL(); });
 #endif
 
-  measure<TRAPEZOID_RIC_PL>(timer, [&](){
-      construct_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_PL>();
-    });
-
+  measure<TRAPEZOID_RIC_PL>(timer, [&](){ CONSTRUCT_PL_TRAPEZOID_RIC_PL(); });
   measure<TRAPEZOID_RIC_NO_GUARANTEE_PL>(timer, [&](){
-      construct_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>();
+      CONSTRUCT_PL_TRAPEZOID_RIC_NO_GUARANTEE();
     });
 
   std::cout << std::endl;
@@ -601,57 +848,30 @@ bool Point_location_test<GeomTraits, TopolTraits>::attach_pl_strategies()
   // Initialize all point location strategies.
   CGAL::Timer timer;
 
-  attach_pl<Naive_pl, NAIVE_PL>();
-  attach_pl<Simple_pl, SIMPLE_PL>();
-  attach_pl<Walk_pl, WALK_PL>();
+  ATTACH_PL_NATIVE();
+  ATTACH_PL_SIMPLE();
+  ATTACH_PL_WALK();
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
   (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
-  measure<LM_PL>(timer, [&](){ attach_pl<Lm_pl, LM_PL>(); });
-
-  measure<LM_RANDOM_PL>(timer, [&](){
-      m_random_g = new Random_lm_generator(*m_arr);
-      attach_pl<Lm_random_pl, LM_RANDOM_PL>(m_random_g);
-    });
-
-  measure<LM_GRID_PL>(timer, [&](){
-      m_grid_g = new Grid_lm_generator(*m_arr);
-      attach_pl<Lm_grid_pl, LM_GRID_PL>(m_grid_g);
-    });
-
-  measure<LM_HALTON_PL>(timer, [&](){
-      m_halton_g = new Halton_lm_generator(*m_arr);
-      attach_pl<Lm_halton_pl, LM_HALTON_PL>(m_halton_g);
-    });
-
-  measure<LM_MIDDLE_EDGES_PL>(timer, [&](){
-      m_middle_edges_g = new Middle_edges_generator(*m_arr);
-      attach_pl<Lm_middle_edges_pl, LM_MIDDLE_EDGES_PL>(m_middle_edges_g);
-    });
-
+  measure<LM_PL>(timer, [&](){ ATTACH_PL_LM(); });
+  measure<LM_RANDOM_PL>(timer, [&](){ ATTACH_PL_LM_RANDOM(); });
+  measure<LM_GRID_PL>(timer, [&](){ ATTACH_PL_LM_GRID(); });
+  measure<LM_HALTON_PL>(timer, [&](){ ATTACH_PL_LM_HALTON(); });
+  measure<LM_MIDDLE_EDGES_PL>(timer, [&](){ ATTACH_PL_LM_MIDDLE_EDGES(); });
   measure<LM_SPECIFIED_POINTS_PL>(timer, [&](){
-      m_specified_points_g = new Specified_points_generator(*m_arr);
-      attach_pl<Lm_specified_points_pl, LM_SPECIFIED_POINTS_PL>
-        (m_specified_points_g);
+      ATTACH_PL_LM_SPECIFIED_POINTS();
     });
 #endif
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
-  measure<TRIANGULATION_PL>(timer, [&](){
-      attach_pl<Triangulation_pl, TRIANGULATION_PL>();
-    });
+  measure<TRIANGULATION_PL>(timer, [&](){ ATTACH_PL_TRIANGULATION_PL(); });
 #endif
 
-  measure<TRAPEZOID_RIC_PL>(timer, [&](){
-      attach_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_PL>();
-    });
-
+  measure<TRAPEZOID_RIC_PL>(timer, [&](){ ATTACH_PL_TRAPEZOID_RIC_PL(); });
   measure<TRAPEZOID_RIC_NO_GUARANTEE_PL>(timer, [&](){
-      auto& var = m_locators[TRAPEZOID_RIC_NO_GUARANTEE_PL].m_variant;
-      auto* strategy = boost::get<Trapezoid_ric_pl*>(var);
-      strategy->with_guarantees(false);
-      attach_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>();
+      ATTACH_PL_TRAPEZOID_RIC_NO_GUARANTEE();
     });
 
   std::cout << std::endl;
@@ -677,28 +897,27 @@ bool Point_location_test<GeomTraits, TopolTraits>::perform()
 
   size_t pl_index = 0;
 
-  query_pl<Naive_pl, NAIVE_PL>(objs[pl_index++]);
-  query_pl<Simple_pl, SIMPLE_PL>(objs[pl_index++]);
-  query_pl<Walk_pl, WALK_PL>(objs[pl_index++]);
+  QUERY_PL_NATIVE(objs[pl_index++]);
+  QUERY_PL_SIMPLE(objs[pl_index++]);
+  QUERY_PL_WALK(objs[pl_index++]);
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
   (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
-  query_pl<Lm_pl, LM_PL>(objs[pl_index++]);
-  query_pl<Lm_random_pl, LM_RANDOM_PL>(objs[pl_index++]);
-  query_pl<Lm_grid_pl, LM_GRID_PL>(objs[pl_index++]);
-  query_pl<Lm_halton_pl, LM_HALTON_PL>(objs[pl_index++]);
-  query_pl<Lm_middle_edges_pl, LM_MIDDLE_EDGES_PL>(objs[pl_index++]);
-  query_pl<Lm_specified_points_pl, LM_SPECIFIED_POINTS_PL>(objs[pl_index++]);
-
+  QUERY_PL_LM(objs[pl_index++]);
+  QUERY_PL_LM_RANDOM(objs[pl_index++]);
+  QUERY_PL_LM_GRID(objs[pl_index++]);
+  QUERY_PL_LM_HALTON(objs[pl_index++]);
+  QUERY_PL_LM_MIDDLE_EDGES(objs[pl_index++]);
+  QUERY_PL_LM_SPECIFIED_POINTS(objs[pl_index++]);
 #endif
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
-  query_pl<Triangulation_pl, TRIANGULATION_PL>(objs[pl_index++]);
+  QUERY_PL_TRIANGULATION_PL(objs[pl_index++]);
 #endif
 
-  query_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_PL>(objs[pl_index++]);
-  query_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>(objs[pl_index++]);
+  QUERY_PL_TRAPEZOID_RIC_PL(objs[pl_index++]);
+  QUERY_PL_TRAPEZOID_RIC_NO_GUARANTEE(objs[pl_index++]);
 
   std::cout << std::endl;
 
