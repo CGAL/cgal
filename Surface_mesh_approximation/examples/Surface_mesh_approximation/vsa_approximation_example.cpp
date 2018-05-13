@@ -33,7 +33,7 @@ int main()
   if (is_manifold)
   {
     std::cout << "oriented, 2-manifold output." << std::endl;
-    // TODO: convert from soup to mesh
+    // TODO: convert from soup to polyhedron mesh
   }
 
   return EXIT_SUCCESS;

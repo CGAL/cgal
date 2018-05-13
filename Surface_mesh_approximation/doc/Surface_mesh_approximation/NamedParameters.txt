@@ -6,7 +6,7 @@
 
 The notion of named parameters was introduced in the BGL.
 Details can be found from: http://www.boost.org/libs/graph/doc/bgl_named_params.html.
-Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering not required.
+Named parameters enable the user to specify only those parameters which are really needed, by name, making the parameter ordering not required.
 
 We refer to the named parameters introduced in \ref PkgPolygonMeshProcessingSummary.
 
@@ -105,7 +105,7 @@ the number of relaxation iterations interleaved within seeding.\n
 \cgalNPEnd
 
 \cgalNPBegin{subdivision_ratio} \anchor VSA_subdivision_ratio
-the chord subdivision ratio threshold used in the meshing step.\n
+the chord subdivision ratio threshold used by the meshing step.\n
 \b Type : `GeomTraits::FT` \n
 \b Default value is `5.0`
 \cgalNPEnd
@@ -122,8 +122,7 @@ set the chord subdivision with dihedral angle weighting.\n
 \b Default value is `false`
 \cgalNPEnd
 
-\cgalNPBegin{optimize_anchor_location} \anchor VSA_optimize_anchor_location
-set if optimize the anchor position in the meshing step.\n
+\cgalNPBegin{optimize_anchor_location} \anchor VSA_optimize_anchor_location set if optimize the anchor position in the meshing step.\n
 \b Type : `bool` \n
 \b Default value is `true`
 \cgalNPEnd
