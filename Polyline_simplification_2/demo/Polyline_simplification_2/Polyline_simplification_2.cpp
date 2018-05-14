@@ -377,8 +377,9 @@ void MainWindow::loadWKT(QString fileName)
   typedef std::vector<Point_2> LineString;
   typedef std::deque<LineString> MultiLineString;
   
-  typedef CGAL::Polygon_with_holes_2<K> Polygon;
-  typedef std::deque<Polygon> MultiPolygon;
+  typedef CGAL::Polygon_2<K> Polygon_2;
+  typedef CGAL::Polygon_with_holes_2<K> Polygon_with_holes_2;
+  typedef std::deque<Polygon_with_holes_2> MultiPolygon;
   
   std::ifstream ifs(qPrintable(fileName));
   MultiPoint points;
@@ -397,8 +398,12 @@ void MainWindow::loadWKT(QString fileName)
       m_pct.insert_constraint(poly.begin(), poly.end());
     }
   }
- BOOST_FOREACH(Polygon poly, polygons){
+ BOOST_FOREACH(Polygon_with_holes_2 poly, polygons){
    m_pct.insert_constraint(poly.outer_boundary().vertices_begin(), poly.outer_boundary().vertices_end());
+   for(Polygon_with_holes_2::Hole_const_iterator it = poly.holes_begin(); it != poly.holes_end(); ++it){
+     const Polygon_2& hole = *it;
+      m_pct.insert_constraint(hole);
+    }
  }
    
   Q_EMIT( changed());
