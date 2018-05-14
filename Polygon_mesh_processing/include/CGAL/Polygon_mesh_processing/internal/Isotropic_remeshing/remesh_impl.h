@@ -655,7 +655,7 @@ namespace internal {
         std::cout.flush();
 #endif
 
-        edge_descriptor e = edge(he, mesh_);
+        const edge_descriptor e = edge(he, mesh_);
         if (!is_collapse_allowed(e))
           continue; //situation could have changed since it was added to the bimap
 
@@ -857,6 +857,7 @@ namespace internal {
 
         Patch_id pid = get_patch_id(face(he, mesh_));
 
+        CGAL_assertion( is_flip_topologically_allowed(edge(he, mesh_)) );
         CGAL::Euler::flip_edge(he, mesh_);
         vva -= 1;
         vvb -= 1;
@@ -894,6 +895,7 @@ namespace internal {
           || !check_normals(target(he, mesh_))
           || !check_normals(source(he, mesh_)))
         {
+          CGAL_assertion( is_flip_topologically_allowed(edge(he, mesh_)) );
           CGAL::Euler::flip_edge(he, mesh_);
           --nb_flips;
 
@@ -1322,10 +1324,23 @@ private:
       return true;//we already checked we're not pinching a hole in the patch
     }
 
+    bool is_flip_topologically_allowed(const edge_descriptor& e) const
+    {
+      halfedge_descriptor h=halfedge(e, mesh_);
+      return !halfedge(target(next(h, mesh_), mesh_),
+               target(next(opposite(h, mesh_), mesh_), mesh_),
+               mesh_).second;
+    }
+
     bool is_flip_allowed(const edge_descriptor& e) const
     {
-      return is_flip_allowed(halfedge(e, mesh_))
-          && is_flip_allowed(opposite(halfedge(e, mesh_), mesh_));
+      bool flip_possible = is_flip_allowed(halfedge(e, mesh_))
+                        && is_flip_allowed(opposite(halfedge(e, mesh_), mesh_));
+
+      if (!flip_possible) return false;
+
+      // the flip is not possible if the edge already exists
+      return is_flip_topologically_allowed(e);
     }
 
     bool is_flip_allowed(const halfedge_descriptor& h) const
@@ -1631,7 +1646,7 @@ private:
 
             short_edges.left.erase(hf);
             short_edges.left.erase(hfo);
-
+            CGAL_assertion( is_flip_topologically_allowed(edge(hf, mesh_)) );
             CGAL::Euler::flip_edge(hf, mesh_);
             CGAL_assertion_code(++nb_done);
 
