@@ -9,6 +9,7 @@
 #include <boost/foreach.hpp>
 
 #include <vector>
+#include <deque>
 
 //TODO : If FT is Gmpq, the output of writing will not be doubles.
 //typedef CGAL::Simple_cartesian<CGAL::Gmpq> Kernel;
@@ -19,7 +20,7 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 int main(int argc, char* argv[])
 {
   typedef CGAL::Polygon_with_holes_2<Kernel> Polygon;
-  typedef std::vector<Polygon> MultiPolygon;
+  typedef std::deque<Polygon> MultiPolygon;
 
   {
     std::ifstream is((argc>1)?argv[1]:"data/polygons.wkt");

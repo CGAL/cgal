@@ -2,12 +2,14 @@
 
 #include <fstream>
 #include <vector>
+#include <deque>
 
 // CGAL headers
 #include <CGAL/Bbox_2.h>
 #include <CGAL/assertions_behaviour.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h> 
+#include <CGAL/IO/WKT.h>
 
 //#define CGAL_TESTING_POLYLINE_SIMPLIFICATION
 //#define CGAL_POLYLINE_SIMPLIFICATION_TRACE_LEVEL 15
@@ -106,6 +108,7 @@ private:
 
   void loadPoly(QString);
   void loadOSM (QString);
+  void loadWKT (QString);
 
 protected Q_SLOTS:
 void open(QString);
@@ -333,14 +336,14 @@ void
 MainWindow::open(QString fileName)
 {
   if(! fileName.isEmpty()){
-    if(fileName.endsWith(".poly")){
-      loadPoly(fileName);
-      this->addToRecentFiles(fileName);
-    }  
-    else if(fileName.endsWith(".osm")){
+    if(fileName.endsWith(".osm")){
       loadOSM(fileName);
       this->addToRecentFiles(fileName);
-    }  
+    }
+    else if(fileName.endsWith(".wkt")){
+      loadWKT(fileName);
+      this->addToRecentFiles(fileName);
+    }
   }
 }
 
@@ -348,10 +351,10 @@ void
 MainWindow::on_actionLoadConstraints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						                                      tr("Open Constraint File"),
-						                                      "../data",
-						                                      tr("Polylines (*.osm *.poly)")
-						                                      );
+                                                  tr("Open Constraint File"),
+                                                  "../data",
+                                                  tr("Polylines (*.osm *.wkt);;")
+                                                  );
   open(fileName);
 }
 
@@ -367,90 +370,42 @@ std::string trim_right ( std::string str )
   return std::string("") ;  
 }
 
-enum { POLYGON, POLYLINE, POINT_2 } ;
-
-void MainWindow::loadPoly(QString fileName)
+void MainWindow::loadWKT(QString fileName)
 {
-  m_pct.clear();
-  mGI->modelChanged();
+    typedef std::vector<Point_2> MultiPoint;
+  
+  typedef std::vector<Point_2> LineString;
+  typedef std::deque<LineString> MultiLineString;
+  
+  typedef CGAL::Polygon_with_holes_2<K> Polygon;
+  typedef std::deque<Polygon> MultiPolygon;
   
   std::ifstream ifs(qPrintable(fileName));
-  
-  std::string line ;
-  
-  std::vector<Point_2> poly ;
-  
-  bool lIsClosed = true ;
-  
-  while ( std::getline(ifs,line) )
-  {
-    line = trim_right(line);
-    
-    if ( line.size() > 0 )
-    {
-      int lCode = POINT_2 ;
-      
-      if ( line == "POLYGON" )    
-      {
-        lCode = POLYGON ; 
-        lIsClosed = true ; 
-      }
-      else if ( line == "POLYLINE" )
-      {
-        lCode = POLYLINE ;
-        lIsClosed = false ; 
-      }
-      
-      if ( lCode == POINT_2 )
-      {
-        double x,y ;
-        
-        std::istringstream ss(line);
-        
-        ss >> x >> y ;
-        
-        poly.push_back( Point_2(x,y) );
-      }
-      else
-      {
-        if ( poly.size() > 0 )  
-        {
-          if ( lIsClosed )
-          {
-            if(poly.back() != poly.front()){
-              poly.push_back(poly.front());
-            }
-            m_pct.insert_constraint(poly.begin(), poly.end() ) ;
-          }
-          else
-          {
-            m_pct.insert_constraint(poly.begin(), poly.end() ) ;
-          }
-        }
-        poly.clear();
-      }
+  MultiPoint points;
+  MultiLineString polylines;
+  MultiPolygon polygons;
+  CGAL::read_WKT(ifs, points,polylines,polygons);
+
+  m_pct.clear();
+  mGI->modelChanged();
+
+  if(! points.empty()){
+    std::cout << "Ignore " << points.size() << " isolated points" << std::endl;
+  }
+  BOOST_FOREACH(LineString poly, polylines){
+    if ( poly.size() > 2 ){
+      m_pct.insert_constraint(poly.begin(), poly.end());
     }
   }
-  
-  if ( poly.size() > 0 )  
-  {
-    if ( lIsClosed )
-    {
-      if(poly.back() != poly.front()){
-        poly.push_back(poly.front());
-      }
-      m_pct.insert_constraint(poly.begin(), poly.end() ) ;
-    }
-    else
-    {
-      m_pct.insert_constraint(poly.begin(), poly.end() ) ;
-    }
-  }
-      
+ BOOST_FOREACH(Polygon poly, polygons){
+   m_pct.insert_constraint(poly.outer_boundary().vertices_begin(), poly.outer_boundary().vertices_end());
+ }
+   
   Q_EMIT( changed());
   
   actionRecenter->trigger();
 }
+
 
 void MainWindow::loadOSM(QString fileName)
 {
