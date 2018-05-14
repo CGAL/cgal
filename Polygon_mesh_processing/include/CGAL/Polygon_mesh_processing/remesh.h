@@ -108,8 +108,8 @@ namespace Polygon_mesh_processing {
 *    constrained polylines they belong to.
 *  \cgalParamEnd
 *  \cgalParamBegin{projection_functor}
-*  A function object used to project vertices created. It must have
-*  `%Point_3 operator()(vertex_descriptor)`, `%Point_3` being the value type
+*  A function object used to project input vertices (moved by the smoothing) and created vertices.
+*  It must have `%Point_3 operator()(vertex_descriptor)`, `%Point_3` being the value type
 *  of the vertex point map.
 *  If not provided, vertices are projected on the input surface mesh.
 *  \cgalParamEnd
@@ -249,7 +249,6 @@ void isotropic_remeshing(const FaceRange& faces
     }
     remesher.equalize_valences();
     remesher.tangential_relaxation(smoothing_1d, nb_laplacian);
-
     remesher.project_to_surface(get_param(np, internal_np::projection_functor));
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     std::cout << std::endl;

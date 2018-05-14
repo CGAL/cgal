@@ -311,7 +311,7 @@ of close meshes should be done in addition to surface intersection tests.
 \cgalNPEnd
 
 \cgalNPBegin{projection_functor} \anchor PMP_projection_functor
-Parameter used in isotropic remeshing function to specify an alternative vertex projection method.
+Parameter used in `isotropic_remeshing()` to specify an alternative vertex projection method.
 \n
 <b>Type:</b> Unary function object with vertex descriptor as argument type. \n
 <b>Default:</b> A function object projecting vertices on the input surface.
