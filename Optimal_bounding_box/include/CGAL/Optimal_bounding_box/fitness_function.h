@@ -27,11 +27,14 @@
 #include <CGAL/Optimal_bounding_box/population.h>
 #include <limits>
 
+#include <CGAL/Eigen_linear_algebra_traits.h>
+
 namespace CGAL {
 namespace Optimal_bounding_box {
 
-template <typename Vertex, typename Matrix>
-const double compute_fitness(const Vertex& R, const Matrix& data)
+template <typename Linear_algebra_traits>
+const double compute_fitness(const typename Linear_algebra_traits::Matrix3d& R,
+                                   typename Linear_algebra_traits::MatrixXd& data)
 {
   // R: rotation matrix
   CGAL_assertion(R.cols() == 3);
@@ -40,10 +43,12 @@ const double compute_fitness(const Vertex& R, const Matrix& data)
   CGAL_assertion(data.cols() == 3);
   CGAL_assertion(data.rows() >= 3);
 
+  typedef typename Linear_algebra_traits::Vector3d Vector3d;
+
   double xmin, xmax, ymin, ymax, zmin, zmax;
   for(int i = 0; i < data.rows(); i++){
 
-    Matrix vec = data.row(i);
+    Vector3d vec = data.row(i);
     vec = R * vec;
 
     if(i == 0){
@@ -59,7 +64,7 @@ const double compute_fitness(const Vertex& R, const Matrix& data)
       if(vec.coeff(2) > zmax) zmax = vec.coeff(2);
     }
   }
-  
+
   CGAL_assertion(xmax > xmin);
   CGAL_assertion(ymax > ymin);
   CGAL_assertion(zmax > zmin);
@@ -71,6 +76,8 @@ const double compute_fitness(const Vertex& R, const Matrix& data)
 template <typename Vertex, typename Matrix>
 struct Fitness_map
 {
+  typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits; // to be added as a parameter
+
   Fitness_map(Population<Vertex>& p, Matrix& points) : pop(p), points(points)
   {}
 
@@ -83,7 +90,7 @@ struct Fitness_map
       for(std::size_t j =0; j < 4; ++j)
       {
         const Vertex vertex = pop[i][j];
-        const double fitness = compute_fitness(vertex, points);
+        const double fitness = compute_fitness<Linear_algebra_traits>(vertex, points);
         if (fitness < best_fitness)
         {
           simplex_id = i;
@@ -96,13 +103,13 @@ struct Fitness_map
     return pop[simplex_id][vertex_id];
   }
 
-  const double get_best_fitness_value(const Matrix& data)
+  const double get_best_fitness_value(Matrix& data)
   {
-    Vertex best_mat = get_best();
-    return compute_fitness(best_mat, data);
+    const Vertex best_mat = get_best();
+    return compute_fitness<Linear_algebra_traits>(best_mat, data);
   }
 
-  const Matrix& points;
+  Matrix& points;
   Population<Vertex>& pop;
 };
 

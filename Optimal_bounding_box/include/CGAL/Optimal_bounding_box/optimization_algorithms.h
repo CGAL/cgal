@@ -36,7 +36,7 @@ namespace CGAL {
 
 namespace Optimal_bounding_box {
 
-
+/*
 struct Comparator
 {
   Comparator(std::vector<double> in) : fitness(in) {}
@@ -52,7 +52,7 @@ struct Comparator
 // points: point coords
 // simplex: 4 rotation matrices are its vertices
 template<typename Vertex, typename Matrix>
-void nelder_mead(std::vector<Vertex>& simplex, const Matrix& points, std::size_t nb_iterations)
+void nelder_mead(std::vector<Vertex>& simplex, Matrix& points, std::size_t nb_iterations)
 {
 
   CGAL_assertion(simplex.size() == 4); // tetrahedron
@@ -65,7 +65,7 @@ void nelder_mead(std::vector<Vertex>& simplex, const Matrix& points, std::size_t
   {
     for(std::size_t i = 0; i < 4; ++i)
     {
-      fitness[i] = compute_fitness(simplex[i], points);
+      fitness[i] = compute_fitness_old(simplex[i], points);
     }
 
     CGAL_assertion(fitness.size() == 4);
@@ -93,7 +93,7 @@ void nelder_mead(std::vector<Vertex>& simplex, const Matrix& points, std::size_t
     // find worst's vertex reflection
     const Vertex v_worst = simplex[3];
     const Vertex v_refl = reflection(v_centroid, v_worst);
-    const double f_refl = compute_fitness(v_refl, points);
+    const double f_refl = compute_fitness_old(v_refl, points);
 
     if(f_refl < fitness[2])
     {
@@ -106,7 +106,7 @@ void nelder_mead(std::vector<Vertex>& simplex, const Matrix& points, std::size_t
       {
         // expansion
         const Vertex v_expand = expansion(v_centroid, v_worst, v_refl);
-        const double f_expand = compute_fitness(v_expand, points);
+        const double f_expand = compute_fitness_old(v_expand, points);
         if(f_expand < f_refl)
           simplex[3] = v_expand;
         else
@@ -116,7 +116,7 @@ void nelder_mead(std::vector<Vertex>& simplex, const Matrix& points, std::size_t
     else // if reflected vertex is not better
     {
       const Vertex v_mean = mean(v_centroid, v_worst);
-      const double f_mean = compute_fitness(v_mean, points);
+      const double f_mean = compute_fitness_old(v_mean, points);
       if(f_mean <= fitness[3])
         // contraction of worst
         simplex[3] = v_mean;
@@ -216,8 +216,8 @@ void genetic_algorithm(Population<Simplex>& pop, const Matrix& points)
     for(int j = 0; j < 4; ++j)
     {
       double r = rng.get_double();
-      double fitnessA = compute_fitness(group1[i][j], points);
-      double fitnessB = compute_fitness(group2[i][j], points);
+      double fitnessA = compute_fitness_old(group1[i][j], points);
+      double fitnessB = compute_fitness_old(group2[i][j], points);
       double threshold;
       if(fitnessA < fitnessB)
         threshold = 0.5 + bias;
@@ -246,8 +246,8 @@ void genetic_algorithm(Population<Simplex>& pop, const Matrix& points)
     std::vector<Simplex> offspring(4);
     for(int j = 0; j < 4; ++j)
     {
-      double fitnessA = compute_fitness(group3[i][j], points);
-      double fitnessB = compute_fitness(group4[i][j], points);
+      double fitnessA = compute_fitness_old(group3[i][j], points);
+      double fitnessB = compute_fitness_old(group4[i][j], points);
       double lambda;
       if(fitnessA < fitnessB)
         lambda = 0.5 + bias;
@@ -286,6 +286,7 @@ void genetic_algorithm(Population<Simplex>& pop, const Matrix& points)
   }
 
 }
+*/
 
 #ifdef OBB_DEBUG
 template <typename Simplex>
@@ -301,6 +302,7 @@ void check_det(Population<Simplex>& pop)
   }
 }
 #endif
+
 
 } } // end namespaces
 

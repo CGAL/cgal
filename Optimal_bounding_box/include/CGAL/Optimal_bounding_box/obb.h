@@ -24,6 +24,7 @@
 
 #include <CGAL/Optimal_bounding_box/optimization_algorithms.h>
 #include <CGAL/Optimal_bounding_box/population.h>
+#include <CGAL/Optimal_bounding_box/evolution.h>
 #include <vector>
 #include <fstream>
 #include <CGAL/boost/graph/helpers.h>
@@ -34,9 +35,9 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-//#include <Eigen/Dense>
+#if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_linear_algebra_traits.h>
-
+#endif
 
 namespace CGAL {
 namespace Optimal_bounding_box {
@@ -107,7 +108,7 @@ void evolution(Vertex& R, Matrix& points, std::size_t max_generations) // todo: 
 
 // works on matrices only
 template <typename Vertex, typename Matrix_dynamic, typename Matrix_fixed>
-void post_processing(Matrix_dynamic& points, Vertex& R, Matrix_fixed& obb)
+void post_processing(const Matrix_dynamic& points, Vertex& R, Matrix_fixed& obb)
 {
   CGAL_assertion(points.cols() == 3);
   CGAL_assertion(R.rows() == 3);
@@ -157,6 +158,8 @@ void post_processing(Matrix_dynamic& points, Vertex& R, Matrix_fixed& obb)
   obb = aabb * R;
 }
 
+
+// to be moved into a helper
 template <typename Matrix, typename Point>
 void fill_matrix(std::vector<Point>& v_points, Matrix& points_mat)
 {
@@ -177,11 +180,8 @@ void fill_matrix(std::vector<Point>& v_points, Matrix& points_mat)
   }
 }
 
-/// @param points point coordinates of the input mesh.
-/// @param obb_points the 8 points of the obb.
-/// @param use convex hull or not.
-///
-/// todo named parameters: max iterations, population size, tolerance.
+
+// with linear algebra traits
 template <typename Point>
 void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool use_ch)
 {
@@ -191,13 +191,73 @@ void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool u
     obb_points.resize(8);
   CGAL_assertion(obb_points.size() == 8);
 
-  // using eigen internally
-  //typedef Eigen::MatrixXd MatrixXd; // for point data
-  //typedef Eigen::Matrix3d Matrix3d; // for matrices in simplices
+  // could be used from a t. parameter
+  typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
+  typedef typename Linear_algebra_traits::MatrixXd MatrixXd;
+  typedef typename Linear_algebra_traits::Matrix3d Matrix3d;
 
-  // todo: sort out typedefs
-  typedef CGAL::Eigen_dense_matrix<double> MatrixXd; // for point data
-  typedef CGAL::Eigen_dense_matrix<double> Matrix3d; // for matrices in simplices
+  MatrixXd points_mat;
+
+  // get the ch3
+  if(use_ch)
+  {
+    // find the ch - todo: template kernel
+    typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+    CGAL::Polyhedron_3<Kernel> poly;
+    convex_hull_3(points.begin(), points.end(), poly);
+    std::vector<Kernel::Point_3> ch_points(poly.points_begin(), poly.points_end());
+
+    // points: vector -> matrix
+    fill_matrix(ch_points, points_mat);
+  }
+  else
+  {
+    // points: vector -> matrix
+    fill_matrix(points, points_mat);
+  }
+
+  std::size_t max_generations = 100;
+  Population<Matrix3d> pop(50);
+  CGAL::Optimal_bounding_box::Evolution<Linear_algebra_traits>
+      search_solution(pop, points_mat);
+  search_solution.evolve(max_generations);
+  Matrix3d rotation = search_solution.get_best();
+
+  MatrixXd obb; // could be preallocated at compile time
+  obb.resize(8, 3);
+
+  post_processing(points_mat, rotation, obb);
+
+  // matrix -> vector
+  for(std::size_t i = 0; i < 8; ++i)
+  {
+    Point p(obb(i, 0), obb(i, 1), obb(i, 2));
+    obb_points[i] = p;
+  }
+
+}
+
+
+/*
+  //USES ::EVOLUTION
+
+/// @param points point coordinates of the input mesh.
+/// @param obb_points the 8 points of the obb.
+/// @param use convex hull or not.
+///
+/// todo named parameters: max iterations, population size, tolerance.
+template <typename Point>
+void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool use_ch, bool use_eigen)
+{
+  CGAL_assertion(points.size() >= 3);
+
+  if(obb_points.size() != 8) // temp sanity until the API is decided
+    obb_points.resize(8);
+  CGAL_assertion(obb_points.size() == 8);
+
+  // using eigen internally
+  typedef Eigen::MatrixXd MatrixXd; // for point data
+  typedef Eigen::Matrix3d Matrix3d; // for matrices in simplices
 
   MatrixXd points_mat;
 
@@ -226,7 +286,7 @@ void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool u
 
   //Eigen::Matrix<double, 8, 3> obb;
 
-  CGAL::Eigen_dense_matrix<double> obb; // compile time preallocation??
+  MatrixXd obb; // compile time preallocation??
   obb.resize(8, 3);
 
   CGAL::Optimal_bounding_box::post_processing(points_mat, R, obb);
@@ -240,13 +300,15 @@ void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool u
   }
 }
 
+*/
+
 /// @param pmesh the input mesh.
 /// @param obbmesh the obb in a hexahedron pmesh.
 /// @param use convex hull or not.
 ///
 /// todo named parameters: max iterations, population size, tolerance.
 template <typename PolygonMesh>
-void find_obb(PolygonMesh& pmesh , PolygonMesh& obbmesh, bool use_ch)
+void find_obb(PolygonMesh& pmesh, PolygonMesh& obbmesh, bool use_ch)
 {
   CGAL_assertion(vertices(pmesh).size() >= 3);
 
