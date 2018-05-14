@@ -563,11 +563,7 @@ protected:
         if (event->type() != QEvent::MouseMove)
         {
           //Create a QImage of the screen and paint the lasso on top of it
-#if QGLVIEWER_VERSION >= 0x020700
-          background = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin())->grabFramebuffer();
-#else
-          background = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin())->grabFrameBuffer();
-#endif
+          background = static_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin())->grabFramebuffer();
         }
         sample_mouse_path(background);
       }
