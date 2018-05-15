@@ -158,9 +158,9 @@ In order to build the \cgal libraries, you need a \cpp compiler.
 | Compiler | Operating System |
 | :------- | :--------------- |
 |\sc{Gnu} `g++` 4.1 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} | Linux / MacOS X |
-|          | \sc{MS} Windows 10 | 
+|          | \sc{MS} Windows | 
 | \sc{Intel} `C++` 15.0\cgalFootnote{<A HREF="http://software.intel.com/en-us/intel-compilers/">`http://software.intel.com/en-us/intel-compilers/`</A>} | Linux  |
-|\sc{MS} Visual `C++` 12.0, 14.0, 19.0 (\sc{Visual Studio} 2013, 2015, and 2017)\cgalFootnote{<A HREF="http://msdn.microsoft.com/en-us/vstudio/">`http://msdn.microsoft.com/en-us/vstudio/`</A>} | \sc{MS} Windows 10 |
+|\sc{MS} Visual `C++` 12.0, 14.0, 15.0 (\sc{Visual Studio} 2013, 2015, and 2017)\cgalFootnote{<A HREF="http://msdn.microsoft.com/en-us/vstudio/">`http://msdn.microsoft.com/en-us/vstudio/`</A>} | \sc{MS} Windows |
 | `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 3.5 and 3.6.2 | Linux / MacOS X |
 | Apple `Clang` compiler version 6.0 and 4.2 | MacOS X |
 
@@ -242,11 +242,11 @@ generators are added with each release.
 Since the choice of the generator determines the type of build files to generate, in some cases
 you choose a particular generator as a mean to choose a specific compiler (because they use different 
 build files). For example, the following generates solution files for
-use in Visual \cpp 11.0 on a 64bit machine:
+use in Visual \cpp 15.0 on a 64bit machine:
 
 <PRE>
 cd CGAL-\cgalReleaseNumber
-cmake -G"Visual Studio 11 Win64" . 
+cmake -G"Visual Studio 15 2017 Win64" . 
 </PRE>
 
 In other cases, however, the generator doesn't directly identify a
