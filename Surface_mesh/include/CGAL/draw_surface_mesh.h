@@ -51,7 +51,7 @@ namespace CGAL
 struct DefaultColorFunctorSM
 {
   template<typename SM>
-  static CGAL::Color run(const SM& amesh,
+  static CGAL::Color run(const SM&,
                          typename SM::Face_index fh)
   {
     if (fh==boost::graph_traits<SM>::null_face()) // use to get the mono color

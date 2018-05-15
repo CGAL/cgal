@@ -36,7 +36,7 @@ namespace CGAL
 struct DefaultColorFunctorPolyhedron
 {
   template<typename Polyhedron>
-  static CGAL::Color run(const Polyhedron& alcc,
+  static CGAL::Color run(const Polyhedron&,
                          typename Polyhedron::Facet_const_handle fh)
   {
     if (fh==boost::graph_traits<Polyhedron>::null_face()) // use to get the mono color

@@ -37,7 +37,7 @@ namespace CGAL
 struct DefaultColorFunctorT3
 {
   template<typename T3>
-  static CGAL::Color run(const T3& at3,
+  static CGAL::Color run(const T3&,
                          const typename T3::Finite_facets_iterator* fh)
   {
     if (fh==NULL) // use to get the mono color

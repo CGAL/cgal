@@ -70,7 +70,7 @@ namespace internal
     }
     
     assert(nb>0);
-    return (typename Local_kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
+    return (Local_kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
   }
 
   ////////////////////////////////////////////////////////////////
@@ -114,17 +114,17 @@ namespace internal
   template<>
   struct Geom_utils<Local_kernel>
   {
-    static Local_point get_local_point(const typename Local_kernel::Point_2& p)
+    static Local_point get_local_point(const Local_kernel::Point_2& p)
     { return Local_point(p.x(), 0, p.y()); }
-    static Local_point get_local_point(const typename Local_kernel::Weighted_point_2& p)
+    static Local_point get_local_point(const Local_kernel::Weighted_point_2& p)
     { return Local_point(p.point().x(), 0, p.point().y());}
-    static const Local_point & get_local_point(const typename Local_kernel::Point_3& p)
+    static const Local_point & get_local_point(const Local_kernel::Point_3& p)
     { return p; }
-    static Local_point get_local_point(const typename Local_kernel::Weighted_point_3& p)
+    static Local_point get_local_point(const Local_kernel::Weighted_point_3& p)
     { return Local_point(p);}
-    static Local_vector get_local_vector(const typename Local_kernel::Vector_2& v)
+    static Local_vector get_local_vector(const Local_kernel::Vector_2& v)
     { return Local_vector(v.x(), 0, v.y()); }
-    static const Local_vector& get_local_vector(const typename Local_kernel::Vector_3& v)
+    static const Local_vector& get_local_vector(const Local_kernel::Vector_3& v)
     { return v; }
   };    
 
@@ -157,10 +157,10 @@ public:
                  std::vector<BufferType>* gouraud_normal=NULL) :
     m_pos_buffer(pos),
     m_index_buffer(indices),
-    m_bb(bbox),
     m_color_buffer(color),
     m_flat_normal_buffer(flat_normal),
     m_gouraud_normal_buffer(gouraud_normal),
+    m_bb(bbox),
     m_face_started(false)
   {}
 

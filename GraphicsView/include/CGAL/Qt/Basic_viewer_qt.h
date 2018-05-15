@@ -203,7 +203,7 @@ public:
 
   ~Basic_viewer_qt()
   {
-    for (int i=0; i<NB_VBO_BUFFERS; ++i)
+    for (unsigned int i=0; i<NB_VBO_BUFFERS; ++i)
       buffers[i].destroy();
 
     for (int i=0; i<NB_VAO_BUFFERS; ++i)
@@ -309,7 +309,7 @@ protected:
     rendering_program_p_l.removeAllShaders();
     
     // Create the buffers
-    for (int i=0; i<NB_VBO_BUFFERS; ++i)
+    for (unsigned int i=0; i<NB_VBO_BUFFERS; ++i)
     {
       if(!buffers[i].isCreated() && !buffers[i].create())
       { std::cerr<<"VBO Creation number "<<i<<" FAILED"<<std::endl; }
@@ -363,7 +363,7 @@ protected:
     // 1.1) Mono points
     vao[VAO_MONO_POINTS].bind();
     
-    int bufn = 0;
+    unsigned int bufn = 0;
     assert(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[POS_MONO_POINTS].data(),

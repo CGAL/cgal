@@ -36,7 +36,7 @@ namespace CGAL
 struct DefaultColorFunctorT2
 {
   template<typename T2>
-  static CGAL::Color run(const T2& at2,
+  static CGAL::Color run(const T2&,
                          const typename T2::Finite_faces_iterator fh)
   {
     // Here dh is the smaller dart of its face
