@@ -295,6 +295,7 @@ namespace internal {
     Incremental_remesher(PolygonMesh& pmesh
                        , VertexPointMap& vpmap
                        , const bool protect_constraints
+                       , const bool collapse_constraints
                        , EdgeIsConstrainedMap ecmap
                        , VertexIsConstrainedMap vcmap
                        , FacePatchMap fpmap
@@ -307,6 +308,7 @@ namespace internal {
       , input_triangles_()
       , input_patch_ids_()
       , protect_constraints_(protect_constraints)
+      , collapse_constraints_(collapse_constraints)
       , patch_ids_map_(fpmap)
       , ecmap_(ecmap)
       , vcmap_(vcmap)
@@ -1267,7 +1269,7 @@ private:
       if (is_on_mesh(he) && is_on_mesh(hopp))
         return false;
 
-      if (protect_constraints_ && is_constrained(e))
+      if ( (protect_constraints_ || !collapse_constraints_) && is_constrained(e))
         return false;
       if (is_on_patch(he)) //hopp is also on patch
       {
@@ -1967,6 +1969,7 @@ private:
     Halfedge_status_pmap halfedge_status_pmap_;
     Edge_is_constrained_set edge_is_constrained_set_;
     bool protect_constraints_;
+    bool collapse_constraints_;
     FacePatchMap patch_ids_map_;
     EdgeIsConstrainedMap ecmap_;
     VertexIsConstrainedMap vcmap_;

@@ -57,6 +57,7 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::number_of_relaxation_steps).v == 16);
   assert(get_param(np, CGAL::internal_np::protect_constraints).v == 17);
   assert(get_param(np, CGAL::internal_np::relax_constraints).v == 18);
+  assert(get_param(np, CGAL::internal_np::collapse_constraints).v == 43);
   assert(get_param(np, CGAL::internal_np::vertex_is_constrained).v == 19);
   assert(get_param(np, CGAL::internal_np::face_patch).v == 20);
   assert(get_param(np, CGAL::internal_np::random_uniform_sampling).v == 21);
@@ -122,6 +123,7 @@ void test(const NamedParameters& np)
   check_same_type<16>(get_param(np, CGAL::internal_np::number_of_relaxation_steps));
   check_same_type<17>(get_param(np, CGAL::internal_np::protect_constraints));
   check_same_type<18>(get_param(np, CGAL::internal_np::relax_constraints));
+  check_same_type<43>(get_param(np, CGAL::internal_np::collapse_constraints));
   check_same_type<19>(get_param(np, CGAL::internal_np::vertex_is_constrained));
   check_same_type<20>(get_param(np, CGAL::internal_np::face_patch));
   check_same_type<21>(get_param(np, CGAL::internal_np::random_uniform_sampling));
@@ -178,6 +180,7 @@ int main()
                          .number_of_relaxation_steps(A<16>(16))
                          .protect_constraints(A<17>(17))
                          .relax_constraints(A<18>(18))
+                         .collapse_constraints(A<43>(43))
                          .vertex_is_constrained_map(A<19>(19))
                          .face_patch_map(A<20>(20))
                          .use_random_uniform_sampling(A<21>(21))

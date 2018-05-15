@@ -159,6 +159,15 @@ during the remeshing process.\n
 <b>Default:</b> `false`
 \cgalNPEnd
 
+\cgalNPBegin{collapse_constraints} \anchor PMP_collapse_constraints
+enables the collapse of constraints listed by \ref PMP_edge_is_constrained_map
+"edge_is_constrained_map" and boundary edges
+in `isotropic_remeshing()`. If `false`, constraint edges cannot be collapsed
+during the remeshing process.\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
+\cgalNPEnd
+
 \cgalNPBegin{relax_constraints} \anchor PMP_relax_constraints
 enables the tangential relaxation step in `isotropic_remeshing()`
 to be performed on vertices that are endpoints of constraints listed

@@ -97,6 +97,10 @@ namespace Polygon_mesh_processing {
 *     good quality results. It can even fail to terminate because of cascading vertex
 *     insertions.
 *  \cgalParamEnd
+*  \cgalParamBegin{collapse_constraints} If `true`, the edges set as constrained
+*     in `edge_is_constrained_map` (or by default the boundary edges)
+*     are collapsed during remeshing. This value is ignored if `protect_constraints` is true;
+*  \cgalParamEnd
 *  \cgalParamBegin{face_patch_map} a property map with the patch id's associated to the
      faces of `faces`. Instance of a class model of `ReadWritePropertyMap`. It gets
      updated during the remeshing process while new faces are created.
@@ -217,8 +221,9 @@ void isotropic_remeshing(const FaceRange& faces
   t.reset(); t.start();
 #endif
 
+  bool collapse_constraints = choose_param(get_param(np, internal_np::collapse_constraints), true);
   typename internal::Incremental_remesher<PM, VPMap, GT, ECMap, VCMap, FPMap, FIMap>
-    remesher(pmesh, vpmap, protect, ecmap, vcmap, fpmap, fimap, need_aabb_tree);
+    remesher(pmesh, vpmap, protect, collapse_constraints, ecmap, vcmap, fpmap, fimap, need_aabb_tree);
   remesher.init_remeshing(faces);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -352,7 +357,7 @@ void split_long_edges(const EdgeRange& edges
     internal::Connected_components_pmap<PM, ECMap, FIMap>,
     FIMap
   >
-    remesher(pmesh, vpmap, false/*protect constraints*/
+    remesher(pmesh, vpmap, false/*protect constraints*/, false /*collapse_constraints*/
            , ecmap
            , internal::No_constraint_pmap<vertex_descriptor>()
            , internal::Connected_components_pmap<PM, ECMap, FIMap>(pmesh, ecmap, fimap, false)
