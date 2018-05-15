@@ -23,9 +23,9 @@ int main()
   CGAL::Aff_transformation_3<K> trans(0,0,0,1,0,1,0,0,0,0,1,1);
   PMP::transform(trans, m, params::all_default());
   bool ok = true;
-  for(std::size_t i = 0; i<m.vertices().size(); ++i)
+  for(Mesh::size_type i = 0; i<m.vertices().size(); ++i)
   {
-    double z = m.point(static_cast<Mesh::Vertex_index>(i)).z();
+    double z = m.point(Mesh::Vertex_index(i)).z();
     ok &= z == i+1;
   }
   CGAL_assertion(ok);
