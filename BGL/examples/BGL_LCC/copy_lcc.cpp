@@ -2,8 +2,6 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 

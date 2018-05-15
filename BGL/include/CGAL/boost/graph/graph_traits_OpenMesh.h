@@ -34,7 +34,6 @@
 #include <CGAL/assertions.h>
 #include <CGAL/hash_openmesh.h>
 
-
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4267)

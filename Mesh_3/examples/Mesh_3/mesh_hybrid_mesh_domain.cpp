@@ -7,12 +7,10 @@
 #include <CGAL/Mesh_criteria_3.h>
 
 #include <CGAL/Implicit_mesh_domain_3.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/make_mesh_3.h>
-
-// IO
-#include <CGAL/IO/Polyhedron_iostream.h>
 
 // Ouput
 #include <CGAL/Mesh_3/Dump_c3t3.h>

@@ -18,7 +18,6 @@
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Triangulation_vertex_base_2.h>
 
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/point_generators_3.h>
 
