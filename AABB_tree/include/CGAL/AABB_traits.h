@@ -249,7 +249,7 @@ public:
   /// \bug This is not documented for now in the AABBTraits concept.
   typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
 
-  ///
+  /// Bounding box type.
   typedef typename CGAL::Bbox_3 Bounding_box;
 
   /// @}

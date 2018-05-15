@@ -31,12 +31,12 @@ namespace CGAL {
 namespace Surface_mesh_simplification
 {
 
-  template<class ECM_>
+  template<class TM_>
 class Midpoint_placement
 {
 public:
 
-  typedef ECM_ ECM;
+  typedef TM_ TM;
   
   Midpoint_placement()
   {}

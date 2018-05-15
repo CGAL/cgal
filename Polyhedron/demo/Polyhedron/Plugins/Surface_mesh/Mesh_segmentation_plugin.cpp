@@ -425,6 +425,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_segmentation(
         color_vector.push_back(aColor);
     }
     item->setItemIsMulticolor(true);
+    item->setProperty("NbPatchIds", static_cast<int>(max_segment + 1)); //for join_and_split plugin
 }
 
 #include "Mesh_segmentation_plugin.moc"

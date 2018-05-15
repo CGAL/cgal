@@ -9,3 +9,4 @@ export TBB_ARCH="intel64"
 export EIGEN3_DIR="C:/3rdPartyLibs/eigen-master-4-19-2018" 
 export OPENMESH_DIR="C:\3rdPartyLibs\openmesh-master-19-2018"
 source "${PLATFORM_REFERENCE}/setup_common"
+

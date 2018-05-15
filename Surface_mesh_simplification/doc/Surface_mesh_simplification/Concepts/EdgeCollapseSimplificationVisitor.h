@@ -16,9 +16,9 @@ public:
 /// @{
 
 /*!
-The type of the surface mesh to simplify. Must be a model of the `EdgeCollapsableSurfaceMesh` concept. 
+The type of the surface mesh to simplify. Must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 */ 
-typedef unspecified_type ECM; 
+typedef unspecified_type TriangleMesh; 
 
 /*!
 A field type representing the collapse cost 
@@ -49,19 +49,19 @@ typedef unspecified_type size_type;
 /*!
 Called before the algorithm starts. 
 */ 
-void OnStarted( ECM& surface_mesh ); 
+void OnStarted( TriangleMesh& surface_mesh ); 
 
 /*!
 Called after the algorithm finishes. 
 */ 
-void OnFinished ( ECM& surface_mesh ) ; 
+void OnFinished ( TriangleMesh& surface_mesh ) ; 
 
 /*!
 Called when the `StopPredicate` returned `true` 
 (but not if the algorithm terminates because the surface mesh could not be simplified any further). 
 
 */ 
-void OnStopConditionReached( ECM& surface_mesh ) ; 
+void OnStopConditionReached( TriangleMesh& surface_mesh ) ; 
 
 /*!
 Called during the <I>collecting phase</I> (when a cost is assigned to the edges), 

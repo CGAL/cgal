@@ -16,19 +16,23 @@
 //
 // Author(s)     : Julia Floetotto
 
+#include <CGAL/_test_interpolation_functions_2.cpp>
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Delaunay_triangulation_2.h>
 
-#include <CGAL/_test_interpolation_functions_2.cpp>
+#include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Regular_triangulation_2.h>
 
 #include <iostream>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel K;
-typedef CGAL::Delaunay_triangulation_2<K>            Dt;
+typedef CGAL::Delaunay_triangulation_2<K>                 Dt;
+typedef CGAL::Regular_triangulation_2<K>                  Rt;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K2;
-typedef CGAL::Delaunay_triangulation_2<K2>            Dt2;
+typedef CGAL::Delaunay_triangulation_2<K2>                  Dt2;
+typedef CGAL::Regular_triangulation_2<K2>                   Rt2;
 
 int main()
 {
@@ -36,14 +40,27 @@ int main()
             << std::endl;
   std::cout << " using Exact_predicates_exact_constructions_kernel: "
             << std::endl ;
-  _test_interpolation_functions_2_delaunay(Dt(), K::FT(1e-10));
+  _test_interpolation_functions_2_Delaunay(Dt(), K::FT(1e-10));
 
   std::cout << "Testing interpolation functions with 2D NN neighbors "
             << std::endl;
   std::cout << " using Exact_predicates_inexact_constructions_kernel: "
             << std::endl ;
-  _test_interpolation_functions_2_delaunay(Dt2(), K2::FT(1e-10));
+  _test_interpolation_functions_2_Delaunay(Dt2(), K2::FT(1e-10));
+
+  std::cout << "Testing interpolation functions with 2D RN neighbors "
+            << std::endl;
+  std::cout << " using Exact_predicates_exact_constructions_kernel: "
+            << std::endl ;
+  _test_interpolation_functions_2_regular(Rt(), K::FT(1e-10));
+
+  std::cout << "Testing interpolation functions with 2D RN neighbors "
+            << std::endl;
+  std::cout << " using Exact_predicates_inexact_constructions_kernel: "
+            << std::endl ;
+  _test_interpolation_functions_2_regular(Rt2(), K2::FT(1e-10));
 
   std::cout << "test_interpolation_functions_2 is finished" << std::endl;
-  return 0;
+
+  return EXIT_SUCCESS;
 }
