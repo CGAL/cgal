@@ -151,6 +151,7 @@ public:
   {}
 
   struct Coords {
+    Coords(double x, double y) : x(x), y(y) {}
     double x;
     double y;
   };
@@ -473,10 +474,10 @@ polylines_to_protect
   max_squared_distance *= max_squared_distance;
   max_squared_distance *= 2;
 
-  Insert_curve_in_graph<G_manip,
-                        vertex_descriptor,
-                        K> insert_curve_in_graph(g_manip, K(), prec,
-                                                 max_squared_distance);
+  typedef Insert_curve_in_graph<G_manip, vertex_descriptor, K> Insert_c_in_g;
+  Insert_c_in_g insert_curve_in_graph(g_manip, K(), prec,
+                                      max_squared_distance);
+  typedef typename Insert_c_in_g::Coords Coords;
 
   std::size_t
     case4 = 0, // 4 colors
@@ -718,8 +719,8 @@ case_1_2_1:
                 Isoline_equation(v00, v10, v01, v11);
               insert_curve_in_graph.insert_curve(equation,
                                                  left, bottom,
-                                                 {0., interpolate(v00, v01) },
-                                                 {interpolate(v00, v10), 0. },
+                                                 Coords(0., interpolate(v00, v01) ),
+                                                 Coords(interpolate(v00, v10), 0. ),
                                                  p00,
                                                  p10 - p00,
                                                  p01 - p00);
@@ -728,8 +729,8 @@ case_1_2_1:
               }
               insert_curve_in_graph.insert_curve(equation,
                                                  top, right,
-                                                 {interpolate(v01, v11), 1. },
-                                                 {1., interpolate(v10, v11) },
+                                                 Coords(interpolate(v01, v11), 1. ),
+                                                 Coords(1., interpolate(v10, v11) ),
                                                  p00,
                                                  p10 - p00,
                                                  p01 - p00);
@@ -791,15 +792,15 @@ case_1_2_1:
 
               insert_curve_in_graph.insert_curve(Isoline_equation(1, -1, 1, 0),
                                                  bottom, v_inter,
-                                                 { 0.5  , 0.  },
-                                                 { 2./3., 0.5 },
+                                                 Coords( 0.5  , 0.  ),
+                                                 Coords( 2./3., 0.5 ),
                                                  p00,
                                                  p10 - p00,
                                                  p01 - p00);
               insert_curve_in_graph.insert_curve(Isoline_equation(1, 0, 1, -1),
                                                  top, v_inter,
-                                                 { 0.5  , 1.  },
-                                                 { 2./3., 0.5 },
+                                                 Coords( 0.5  , 1.  ),
+                                                 Coords( 2./3., 0.5 ),
                                                  p00,
                                                  p10 - p00,
                                                  p01 - p00);
@@ -856,8 +857,8 @@ case_1_2_1:
                   insert_curve_in_graph.insert_curve(Isoline_equation(v00, v10,
                                                                       v01, v11),
                                                      top, bottom,
-                                                     {interpolate(v01,v11), 1.},
-                                                     {interpolate(v00,v10), 0.},
+                                                     Coords(interpolate(v01,v11), 1.),
+                                                     Coords(interpolate(v00,v10), 0.),
                                                      p00,
                                                      p10 - p00,
                                                      p01 - p00);
@@ -948,8 +949,8 @@ case_1_2_1:
 
               insert_curve_in_graph.insert_curve(equation,
                                                  bottom, right,
-                                                 {interpolate(v00, v10), 0. },
-                                                 {1., interpolate(v10, v11) },
+                                                 Coords(interpolate(v00, v10), 0. ),
+                                                 Coords(1., interpolate(v10, v11) ),
                                                  p00,
                                                  p10 - p00,
                                                  p01 - p00);
