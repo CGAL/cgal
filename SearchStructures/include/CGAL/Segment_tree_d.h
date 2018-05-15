@@ -107,7 +107,8 @@ protected:
   typedef Segment_tree_node<C_Data,C_Window,C_Interface> Segment_tree_node_t;
   typedef Segment_tree_node<C_Data,C_Window,C_Interface> *link_type;
   
-  std::allocator<Segment_tree_node_t> alloc;
+  typedef std::allocator<Segment_tree_node_t> allocator_type;
+  allocator_type alloc;
   
   C_Interface m_interface;
   bool is_built;
@@ -197,7 +198,11 @@ protected:
   {
     Segment_tree_node_t node(l,r,kl,kr);
     Segment_tree_node_t* node_ptr = alloc.allocate(1);
+#ifdef CGAL_CXX11
+    std::allocator_traits<allocator_type>::construct(alloc, node_ptr, node);
+#else    
     alloc.construct(node_ptr, node);
+#endif
     return node_ptr;
   }
 
@@ -205,7 +210,11 @@ protected:
   {
     Segment_tree_node_t node(kl,kr);
     Segment_tree_node_t* node_ptr = alloc.allocate(1);
+#ifdef CGAL_CXX11
+    std::allocator_traits<allocator_type>::construct(alloc, node_ptr, node);
+#else
     alloc.construct(node_ptr, node);
+#endif
     return node_ptr;
   }
 
@@ -213,7 +222,11 @@ protected:
   {
     Segment_tree_node_t node;
     Segment_tree_node_t* node_ptr = alloc.allocate(1);
+#ifdef CGAL_CXX11
+    std::allocator_traits<allocator_type>::construct(alloc, node_ptr, node);
+#else
     alloc.construct(node_ptr, node);
+#endif
     return node_ptr;
   }
 
@@ -298,7 +311,11 @@ protected:
 
   void delete_node(Segment_tree_node_t* node_ptr)
   {
+#ifdef CGAL_CXX11
+    std::allocator_traits<allocator_type>::destroy(alloc, node_ptr);
+#else
     alloc.destroy(node_ptr);
+#endif
     alloc.deallocate(node_ptr,1);
   }
 
