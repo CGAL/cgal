@@ -228,7 +228,7 @@ MainWindow::on_actionLoadPolygon_triggered()
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open Polygon File"),
 						  ".",
-                                                  tr( "Polyline files (*.polygon.cgal);;"
+                                                  tr( "Polyline files (*.polygons.cgal);;"
                                                       "WSL files (*.wsl);;"
                                                       "WKT files (*.wkt *.WKT);;"
                                                       "All file (*)"));
@@ -267,7 +267,7 @@ MainWindow::on_actionSavePolygon_triggered()
   QString fileName = QFileDialog::getSaveFileName(this,
 						  tr("Save Polygon"),
 						  ".",
-                                                  tr( "Polyline files (*.polygon.cgal);;"
+                                                  tr( "Polyline files (*.polygons.cgal);;"
                                                       "WKT files (*.wkt *.WKT);;"
                                                       "All file (*)"));
   if(! fileName.isEmpty()){

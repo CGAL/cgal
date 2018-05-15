@@ -514,7 +514,7 @@ MainWindow::open(QString fileName)
       else
         return;
     }
-    if(fileName.endsWith(".polygon.cgal")){
+    if(fileName.endsWith(".polygons.cgal")){
       loadPolygonConstraints(fileName);
     } else if(fileName.endsWith(".cpts.cgal")){
       loadFile(fileName);
@@ -538,7 +538,7 @@ MainWindow::on_actionLoadConstraints_triggered()
 						  tr("Open Constraint File"),
 						  ".",
 						  tr("Edge files (*.edg);;"
-                                                     "Polyline files (*.polygon.cgal);;"
+                                                     "Polyline files (*.polygons.cgal);;"
                                                      "Poly files (*.poly);;"
                                                      "CGAL files (*.cpts.cgal);;"
                                                      "WKT files (*.WKT *.wkt);;"
