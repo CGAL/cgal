@@ -39,6 +39,7 @@
 
 // Needed for Polygon_2
 
+#include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <list>
@@ -391,7 +392,7 @@ simplify(const CGAL::Polygon_with_holes_2<Traits,Container>& polygon,
   typedef Traits K;
   typedef typename K::Point_2 Point_2;
 
-  typedef typename Polygon_with_holes_2<Traits,Container> Polygon_with_holes_2;
+  typedef typename CGAL::Polygon_with_holes_2<Traits,Container> Polygon_with_holes_2;
   typedef typename Polygon_with_holes_2::Polygon_2 Polygon_2;
 
   typedef Vertex_base_2< K > Vb;
@@ -406,7 +407,7 @@ simplify(const CGAL::Polygon_with_holes_2<Traits,Container>& polygon,
 
   Constraint_id cid = pct.insert_constraint(polygon.outer_boundary());
   std::vector<Constraint_id> hole_id;
-  for(Polygon_with_holes_2::Hole_const_iterator it = polygon.holes_begin(); it != polygon.holes_end(); ++it){
+  for(typename Polygon_with_holes_2::Hole_const_iterator it = polygon.holes_begin(); it != polygon.holes_end(); ++it){
      const Polygon_2& hole = *it;
      hole_id.push_back(pct.insert_constraint(hole));
     }
