@@ -465,7 +465,8 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
                         bool writing_depth,
                         QOpenGLFramebufferObject *fbo)
 {
-  viewer->makeCurrent();
+  if(pass == -1)
+    viewer->makeCurrent();
   viewer->setCurrentPass(pass);
   viewer->setDepthWriting(writing_depth);
   viewer->setDepthPeelingFbo(fbo);
