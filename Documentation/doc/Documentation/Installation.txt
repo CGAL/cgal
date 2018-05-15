@@ -152,7 +152,7 @@ installation manual. The \cgal manual must be downloaded separately from
 \section seccompilers Supported Compilers 
 
 In order to build the \cgal libraries, you need a \cpp compiler. 
-\cgal \cgalReleaseNumber is supported for the following compilers/operating systems:
+\cgal \cgalReleaseNumber is supported, that is continuously tested, for the following compilers/operating systems:
 
 
 | Compiler | Operating System |
@@ -160,8 +160,10 @@ In order to build the \cgal libraries, you need a \cpp compiler.
 |\sc{Gnu} `g++` 4.1 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} | Linux / MacOS X |
 |          | \sc{MS} Windows | 
 |\sc{MS} Visual `C++` 12.0, 14.0, 15.0 (\sc{Visual Studio} 2013, 2015, and 2017)\cgalFootnote{<A HREF="http://msdn.microsoft.com/en-us/vstudio/">`http://msdn.microsoft.com/en-us/vstudio/`</A>} | \sc{MS} Windows |
-| `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 3.5 and 3.6.2 | Linux / MacOS X |
-| Apple `Clang` compiler version 6.0 and 4.2 | MacOS X |
+| `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 6.0.0 | Linux  |
+| Apple `Clang` compiler version 7.0.2 | MacOS X |
+
+It may work for older versions of the above listed compilers.
 
 
 \section secconfigwithcmake Configuring CGAL with CMake 
