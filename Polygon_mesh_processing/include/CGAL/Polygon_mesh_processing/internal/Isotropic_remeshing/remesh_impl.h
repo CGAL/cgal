@@ -776,6 +776,11 @@ namespace internal {
             set_constrained(vb, false);
           }
 
+          if (!protect_constraints_)
+            edge_is_constrained_set_.erase(e);
+          else
+            CGAL_assertion( edge_is_constrained_set_.count(e)==0 );
+
           //perform collapse
           Point target_point = get(vpmap_, vb);
           vertex_descriptor vkept = CGAL::Euler::collapse_edge(e, mesh_);
@@ -858,6 +863,7 @@ namespace internal {
         Patch_id pid = get_patch_id(face(he, mesh_));
 
         CGAL_assertion( is_flip_topologically_allowed(edge(he, mesh_)) );
+        CGAL_assertion( edge_is_constrained_set_.count(edge(he, mesh_))==0 );
         CGAL::Euler::flip_edge(he, mesh_);
         vva -= 1;
         vvb -= 1;
@@ -896,6 +902,7 @@ namespace internal {
           || !check_normals(source(he, mesh_)))
         {
           CGAL_assertion( is_flip_topologically_allowed(edge(he, mesh_)) );
+          CGAL_assertion( edge_is_constrained_set_.count(edge(he, mesh_))==0 );
           CGAL::Euler::flip_edge(he, mesh_);
           --nb_flips;
 
@@ -1647,6 +1654,7 @@ private:
             short_edges.left.erase(hf);
             short_edges.left.erase(hfo);
             CGAL_assertion( is_flip_topologically_allowed(edge(hf, mesh_)) );
+            CGAL_assertion( edge_is_constrained_set_.count(edge(hf, mesh_))==0 );
             CGAL::Euler::flip_edge(hf, mesh_);
             CGAL_assertion_code(++nb_done);
 
