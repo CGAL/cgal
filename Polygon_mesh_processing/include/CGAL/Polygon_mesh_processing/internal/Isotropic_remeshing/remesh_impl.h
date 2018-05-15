@@ -295,7 +295,6 @@ namespace internal {
     Incremental_remesher(PolygonMesh& pmesh
                        , VertexPointMap& vpmap
                        , const bool protect_constraints
-                       , const bool collapse_constraints
                        , EdgeIsConstrainedMap ecmap
                        , VertexIsConstrainedMap vcmap
                        , FacePatchMap fpmap
@@ -308,7 +307,6 @@ namespace internal {
       , input_triangles_()
       , input_patch_ids_()
       , protect_constraints_(protect_constraints)
-      , collapse_constraints_(collapse_constraints)
       , patch_ids_map_(fpmap)
       , ecmap_(ecmap)
       , vcmap_(vcmap)
@@ -614,7 +612,9 @@ namespace internal {
     // "collapses and thus removes all edges that are shorter than a
     // threshold `low`. [...] testing before each collapse whether the collapse
     // would produce an edge that is longer than `high`"
-    void collapse_short_edges(const double& low, const double& high)
+    void collapse_short_edges(const double& low,
+                              const double& high,
+                              const bool collapse_constraints)
     {
       typedef boost::bimap<
         boost::bimaps::set_of<halfedge_descriptor>,
@@ -636,7 +636,7 @@ namespace internal {
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
       {
         double sqlen = sqlength(e);
-        if( (sqlen < sq_low) && is_collapse_allowed(e) )
+        if ((sqlen < sq_low) && is_collapse_allowed(e, collapse_constraints))
           short_edges.insert(short_edge(halfedge(e, mesh_), sqlen));
       }
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
@@ -658,7 +658,7 @@ namespace internal {
 #endif
 
         const edge_descriptor e = edge(he, mesh_);
-        if (!is_collapse_allowed(e))
+        if (!is_collapse_allowed(e, collapse_constraints))
           continue; //situation could have changed since it was added to the bimap
 
         //handle the boundary case :
@@ -708,7 +708,7 @@ namespace internal {
             continue;//both directions invert a face
         }
         CGAL_assertion(collapse_does_not_invert_face(he));
-        CGAL_assertion(is_collapse_allowed(e));
+        CGAL_assertion(is_collapse_allowed(e, collapse_constraints));
 
         if (degree(va, mesh_) < 3
           || degree(vb, mesh_) < 3
@@ -793,7 +793,7 @@ namespace internal {
           if (constrained_case)//we have made sure that collapse goes to constrained vertex
             set_constrained(vkept, true);
 
-          fix_degenerate_faces(vkept, short_edges, sq_low);
+          fix_degenerate_faces(vkept, short_edges, sq_low, collapse_constraints);
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
           debug_status_map();
@@ -804,7 +804,7 @@ namespace internal {
           BOOST_FOREACH(halfedge_descriptor ht, halfedges_around_target(vkept, mesh_))
           {
             double sqlen = sqlength(ht);
-            if( (sqlen < sq_low) && is_collapse_allowed(edge(ht, mesh_)) )
+            if ((sqlen < sq_low) && is_collapse_allowed(edge(ht, mesh_), collapse_constraints))
               short_edges.insert(short_edge(ht, sqlen));
           }
         }//end if(collapse_ok)
@@ -1261,7 +1261,8 @@ private:
       }
     }
 
-    bool is_collapse_allowed(const edge_descriptor& e) const
+    bool is_collapse_allowed(const edge_descriptor& e
+                           , const bool collapse_constraints) const
     {
       halfedge_descriptor he = halfedge(e, mesh_);
       halfedge_descriptor hopp = opposite(he, mesh_);
@@ -1269,7 +1270,7 @@ private:
       if (is_on_mesh(he) && is_on_mesh(hopp))
         return false;
 
-      if ( (protect_constraints_ || !collapse_constraints_) && is_constrained(e))
+      if ( (protect_constraints_ || !collapse_constraints) && is_constrained(e))
         return false;
       if (is_on_patch(he)) //hopp is also on patch
       {
@@ -1611,7 +1612,8 @@ private:
     template<typename Bimap>
     void fix_degenerate_faces(const vertex_descriptor& v,
                               Bimap& short_edges,
-                              const double& sq_low)
+                              const double& sq_low,
+                              const bool collapse_constraints)
     {
       CGAL_assertion_code(std::size_t nb_done = 0);
       boost::unordered_set<halfedge_descriptor> degenerate_faces;
@@ -1673,7 +1675,7 @@ private:
 #endif
 
             //insert new edges in 'short_edges'
-            if (is_collapse_allowed(edge(hf, mesh_)))
+            if (is_collapse_allowed(edge(hf, mesh_), collapse_constraints))
             {
               double sqlen = sqlength(hf);
               if (sqlen < sq_low)
@@ -1969,7 +1971,6 @@ private:
     Halfedge_status_pmap halfedge_status_pmap_;
     Edge_is_constrained_set edge_is_constrained_set_;
     bool protect_constraints_;
-    bool collapse_constraints_;
     FacePatchMap patch_ids_map_;
     EdgeIsConstrainedMap ecmap_;
     VertexIsConstrainedMap vcmap_;

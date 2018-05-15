@@ -221,9 +221,8 @@ void isotropic_remeshing(const FaceRange& faces
   t.reset(); t.start();
 #endif
 
-  bool collapse_constraints = choose_param(get_param(np, internal_np::collapse_constraints), true);
   typename internal::Incremental_remesher<PM, VPMap, GT, ECMap, VCMap, FPMap, FIMap>
-    remesher(pmesh, vpmap, protect, collapse_constraints, ecmap, vcmap, fpmap, fimap, need_aabb_tree);
+    remesher(pmesh, vpmap, protect, ecmap, vcmap, fpmap, fimap, need_aabb_tree);
   remesher.init_remeshing(faces);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -231,6 +230,7 @@ void isotropic_remeshing(const FaceRange& faces
   std::cout << " done ("<< t.time() <<" sec)." << std::endl;
 #endif
 
+  bool collapse_constraints = choose_param(get_param(np, internal_np::collapse_constraints), true);
   unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
   bool smoothing_1d = choose_param(get_param(np, internal_np::relax_constraints), false);
   unsigned int nb_laplacian = choose_param(get_param(np, internal_np::number_of_relaxation_steps), 1);
@@ -250,7 +250,7 @@ void isotropic_remeshing(const FaceRange& faces
     if (target_edge_length>0)
     {
       remesher.split_long_edges(high);
-      remesher.collapse_short_edges(low, high);
+      remesher.collapse_short_edges(low, high, collapse_constraints);
     }
     remesher.equalize_valences();
     remesher.tangential_relaxation(smoothing_1d, nb_laplacian);
@@ -357,7 +357,7 @@ void split_long_edges(const EdgeRange& edges
     internal::Connected_components_pmap<PM, ECMap, FIMap>,
     FIMap
   >
-    remesher(pmesh, vpmap, false/*protect constraints*/, false /*collapse_constraints*/
+    remesher(pmesh, vpmap, false/*protect constraints*/
            , ecmap
            , internal::No_constraint_pmap<vertex_descriptor>()
            , internal::Connected_components_pmap<PM, ECMap, FIMap>(pmesh, ecmap, fimap, false)
