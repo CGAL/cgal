@@ -118,7 +118,6 @@ namespace Polygon_mesh_processing {
 *
 * @sa `split_long_edges()`
 *
-*@todo add possibility to provide a functor that projects to a prescribed surface
 *@todo Deal with exact constructions Kernel. The only thing that makes sense is to
 *      guarantee that the output vertices are exactly on the input surface.
 *      To do so, we can do every construction in `double`, and use an exact process for
