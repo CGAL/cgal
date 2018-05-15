@@ -75,20 +75,20 @@ In addition to these named parameters, this package offers the following named p
 \cgalNPBegin{get_cost} \anchor SMS_get_cost
 is the policy which returns the collapse cost for an edge.\n
 <b>Type:</b> a model of the concept `GetCost`\n
-<b>Default:</b> The cost policy `CGAL::Surface_mesh_simplification::LindstromTurk_cost<EdgeCollapsableSurfaceMesh>`
+<b>Default:</b> The cost policy `CGAL::Surface_mesh_simplification::LindstromTurk_cost<TriangleMesh>`
 \cgalNPEnd
 
 \cgalNPBegin{get_placement} \anchor SMS_get_placement
 is the policy which returns the placement (position of the replacemet vertex) for an edge.\n
 <b>Type:</b> a model of the concept `GetPlacement`\n
-<b>Default:</b> The cost policy `CGAL::Surface_mesh_simplification::LindstromTurk_placement<EdgeCollapsableSurfaceMesh>`
+<b>Default:</b> The cost policy `CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`
 \cgalNPEnd
 
 \cgalNPBegin{visitor} \anchor SMS_visitor
 is the visitor that is called by the `edge_collapse()` function in certain points
 to allow the user to track the simplification process.being marked or not.
 If you wish to provide your own visitor, you can derive from:
-`CGAL::Surface_mesh_simplification::Edge_collapse_visitor_base<EdgeCollapsableSurfaceMesh>`
+`CGAL::Surface_mesh_simplification::Edge_collapse_visitor_base<TriangleMesh>`
 and override only the callbacks you are interested in.\n
 <b>Type:</b> user specific\n
 <b>Default:</b> an implementation-defined dummy visitor

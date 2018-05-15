@@ -114,7 +114,9 @@ public:
   using Base::OUTSIDE_CONVEX_HULL;
   using Base::orientation;
   using Base::locate;
+#ifndef CGAL_NO_STRUCTURAL_FILTERING
   using Base::inexact_locate;
+#endif
   using Base::incident_faces;
   using Base::is_infinite;
   using Base::degree;

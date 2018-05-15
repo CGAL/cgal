@@ -80,6 +80,12 @@ if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
 endif(EIGEN3_FOUND)
 
+find_package( METIS )
+
+if( METIS_FOUND )
+  include_directories(${METIS_INCLUDE_DIRS} )
+endif()
+
 # Activate concurrency?
 option(POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY
   "Enable concurrency"

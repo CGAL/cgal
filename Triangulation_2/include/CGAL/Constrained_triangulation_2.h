@@ -28,6 +28,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <set>
+#include <exception>
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_2.h> 
@@ -99,6 +100,15 @@ public:
     bool operator()(const E& e) const
     {
       return ct.is_constrained(e);
+    }
+  };
+
+
+  class Intersection_of_constraints_exception : public std::exception
+  {
+    const char* what() const throw ()
+    {
+      return "Intersection of constraints while using No_intersection_tag";
     }
   };
 
@@ -853,22 +863,15 @@ intersect(Face_handle f, int i,
 }
 
 template <class Gt, class Tds, class Itag >
-typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle 
+typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds,Itag>::
-intersect(Face_handle , int , 
-	  Vertex_handle ,
-	  Vertex_handle ,
-	  No_intersection_tag)
+intersect(Face_handle , int ,
+          Vertex_handle ,
+          Vertex_handle ,
+          No_intersection_tag)
 {
-  //SL: I added that to be able to throw while we find a better solution
-  #ifdef CGAL_CT2_WANTS_TO_HAVE_EXTRA_ACTION_FOR_INTERSECTING_CONSTRAINTS
-  CGAL_CDT2_EXTRA_ACTION_FOR_INTERSECTING_CONSTRAINTS
-  #endif
-  
-  std::cerr << " sorry, this triangulation does not deal with" 
-	    <<    std::endl
-	    << " intersecting constraints" << std::endl;
-  CGAL_triangulation_assertion(false);
+
+  throw Intersection_of_constraints_exception();
   return Vertex_handle() ;
 }
 
@@ -885,10 +888,15 @@ intersect(Face_handle f, int i,
 // split constraint edge (f,i) 
 // and return the Vertex_handle of the new Vertex
 { 
-  std::cerr << "You are using an exact number types" << std::endl;
-  std::cerr << "using a Constrained_triangulation_plus_2 class" << std::endl;
-  std::cerr << "would avoid cascading intersection computation" << std::endl;
-  std::cerr << " and be much more efficient" << std::endl;
+#ifndef CGAL_NO_CDT_2_WARNING
+  CGAL_warning_msg(false,
+  "You are using an exact number type,\n"
+  "using a Constrained_triangulation_plus_2 class\n"
+  "would avoid cascading intersection computation\n"
+  " and be much more efficient\n"
+  "This message is shown only if CGAL_NO_CDT_2_WARNING"
+  "is not defined.\n");
+#endif
   const Point& pa = vaa->point();
   const Point& pb = vbb->point();
   const Point& pc = f->vertex(cw(i))->point();

@@ -1967,7 +1967,10 @@ int Scene_polyhedron_item::getNumberOfNullLengthEdges(){return d->number_of_null
 int Scene_polyhedron_item::getNumberOfDegeneratedFaces(){return d->number_of_degenerated_faces;}
 bool Scene_polyhedron_item::triangulated(){return d->poly->is_pure_triangle();}
 bool Scene_polyhedron_item::self_intersected(){return !(d->self_intersect);}
-void Scene_polyhedron_item::setItemIsMulticolor(bool b){ d->is_multicolor = b;}
+void Scene_polyhedron_item::setItemIsMulticolor(bool b){ 
+  d->is_multicolor = b; 
+  this->setProperty("NbPatchIds", 0);//for the joinandsplit_plugin
+}
 bool Scene_polyhedron_item::isItemMulticolor(){ return d->is_multicolor;}
 bool Scene_polyhedron_item::intersect_face(double orig_x,
                                            double orig_y,

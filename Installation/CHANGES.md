@@ -4,10 +4,35 @@ Release History
 Release 4.13
 ------------
 
+Release date: September 2018
+
+
+### 2D Triangulations
+
+-   Added a new type of intersection to deal with insertion of a constraints 
+    intersecting in a Constrained_triangulation_2.
+
+### Interpolation
+
+-   The output of the natural and regular neighbor functions (resp. the gradient
+    fitting functions) is no longer restricted to a Point/Coordinate pair
+    (resp. Point/Vector pair). Instead, users can provide their own functor
+    to format the output as they desire.
+-   The interpolation functions can now operate on any combination of Type/Coordinate,
+    provided that the values and gradients functors can also be evaluated using 'Type'.
+
+    The combination of these two changes allow, for example, to operate with Vertex/Coordinate
+    pairs, which enables a more efficient access to values and gradients by storing
+    information directly in the vertex.
+-   The concepts `InterpolationTraits` and `GradientFittingTraits` have been updated
+    to reflect the real needs of the code (some types and operators were used
+    in the code but did not appear in the concepts).
+
 ### Polygon Mesh Processing
 
 -   Added a new named parameter for stitching that allows to perform 
     this operation per connected component instead of globally
+
 
 Release 4.12
 ------------
