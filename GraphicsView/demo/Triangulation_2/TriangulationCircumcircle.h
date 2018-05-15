@@ -90,11 +90,11 @@ TriangulationCircumcircle<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   if(dt->dimension() != 2){
     circle->hide();
-	hint = Vertex_handle();
+    hint = Vertex_handle();
     return;
   }
   if (hint == Vertex_handle()){
-	  hint = dt->infinite_vertex();
+    hint = dt->infinite_vertex();
   }
   typename T::Point p = typename T::Point(event->scenePos().x(), event->scenePos().y());
   fh = dt->locate(p, hint->face());
