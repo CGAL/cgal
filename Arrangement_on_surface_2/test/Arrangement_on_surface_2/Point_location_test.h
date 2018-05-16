@@ -257,12 +257,11 @@ private:
 
   //! Allocate point location.
   template <typename Strategy, Pl_strategy id>
-  bool allocate_pl()
+  void allocate_pl()
   {
     auto* locator = new Strategy();
-    if (! locator) return false;
+    CGAL_assertion(locator);
     m_locators[id].m_variant = locator;
-    return true;
   }
 
   //! Construct point location.
@@ -712,9 +711,9 @@ void Point_location_test<GeomTraits, TopolTraits>::clear()
 template <typename GeomTraits, typename TopolTraits>
 void Point_location_test<GeomTraits, TopolTraits>::deallocate_pl_strategies()
 {
-  ALLOCATE_PL_NATIVE();
-  ALLOCATE_PL_SIMPLE();
-  ALLOCATE_PL_WALK();
+  DEALLOCATE_PL_NATIVE();
+  DEALLOCATE_PL_SIMPLE();
+  DEALLOCATE_PL_WALK();
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
   (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
@@ -778,28 +777,28 @@ template <typename GeomTraits, typename TopolTraits>
 bool Point_location_test<GeomTraits, TopolTraits>::allocate_pl_strategies()
 {
   // Allocate all point location strategies.
-  if (! ALLOCATE_PL_NATIVE()) return false;
-  if (! ALLOCATE_PL_SIMPLE()) return false;
-  if (! ALLOCATE_PL_WALK()) return false;
+  ALLOCATE_PL_NATIVE();
+  ALLOCATE_PL_SIMPLE();
+  ALLOCATE_PL_WALK();
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
   (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
-  if (! ALLOCATE_PL_LM()) return false;
-  if (! ALLOCATE_PL_LM_RANDOM()) return false;
-  if (! ALLOCATE_PL_LM_GRID()) return false;
-  if (! ALLOCATE_PL_LM_HALTON()) return false;
-  if (! ALLOCATE_PL_LM_MIDDLE_EDGES()) return false;
-  if (! ALLOCATE_PL_LM_SPECIFIED_POINTS()) return false;
+  ALLOCATE_PL_LM();
+  ALLOCATE_PL_LM_RANDOM();
+  ALLOCATE_PL_LM_GRID();
+  ALLOCATE_PL_LM_HALTON();
+  ALLOCATE_PL_LM_MIDDLE_EDGES();
+  ALLOCATE_PL_LM_SPECIFIED_POINTS();
 
 #endif
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
-  if (! ALLOCATE_PL_TRIANGULATION_PL()) return false;
+  ALLOCATE_PL_TRIANGULATION_PL();
 #endif
 
-  if (! ALLOCATE_PL_TRAPEZOID_RIC_PL()) return false;
-  if (! ALLOCATE_PL_TRAPEZOID_RIC_NO_GUARANTEE()) return false;
+  ALLOCATE_PL_TRAPEZOID_RIC_PL();
+  ALLOCATE_PL_TRAPEZOID_RIC_NO_GUARANTEE();
 
   return true;
 }
