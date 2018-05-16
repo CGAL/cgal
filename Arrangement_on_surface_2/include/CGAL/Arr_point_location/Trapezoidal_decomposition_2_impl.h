@@ -1456,17 +1456,14 @@ Trapezoidal_decomposition_2<Td_traits>::insert(Halfedge_const_handle he)
   // make sure that the two endpoints  are not the same point
   CGAL_precondition(!traits->equal_curve_end_2_object()(ce1, ce2));
 
-  Locate_type lt1, lt2;
-
-  //should hold the trapezoids in which the edge endpoints should be located
+  Locate_type lt1;
   Td_map_item item1;
-  Td_map_item item2;
 
 #ifndef CGAL_NO_TRAPEZOIDAL_DECOMPOSITION_2_OPTIMIZATION
-  locate_optimization(ce1,item1,lt1);
+  locate_optimization(ce1, item1, lt1);
 #else
   //location of the left endpoint of the edge we're inserting
-  item1 = locate(ce1,lt1);
+  item1 = locate(ce1, lt1);
 #endif
 
   //the inserted edge should not cut any existing edge
@@ -1482,27 +1479,30 @@ Trapezoidal_decomposition_2<Td_traits>::insert(Halfedge_const_handle he)
   // the new vertex. In this case, the the edge itself is the only incident
   // edge, and so it is a trivial operation.
   Td_map_item p1_item = (lt1 == POINT) ?
-    update_vtx_with_new_edge(he,ce1,item1,lt1) :
-    insert_curve_at_vtx_using_dag(he,v1,item1,lt1);
+    update_vtx_with_new_edge(he, ce1, item1, lt1) :
+    insert_curve_at_vtx_using_dag(he, v1, item1, lt1);
+
+  Locate_type lt2;
+  Td_map_item item2;
 
 #ifndef CGAL_NO_TRAPEZOIDAL_DECOMPOSITION_2_OPTIMIZATION
-  locate_optimization(ce2,item2,lt2);
+  locate_optimization(ce2, item2, lt2);
   locate_opt_empty();
 #else
   // TODO(oren): locating the second endpoint. this is not necessary,
   // and time consuming.
-  item2 = locate(ce2,lt2);
+  item2 = locate(ce2, lt2);
 #endif
 
   if (lt2 == CURVE) {
-    CGAL_precondition_msg(lt2!=CURVE,"Input is not planar as\
+    CGAL_precondition_msg(lt2 != CURVE, "Input is not planar as\
       one of the input point inside previously inserted Halfedge.");
     return Td_map_item(0);
   }
 
   Td_map_item p2_item = (lt2 == POINT) ?
-    update_vtx_with_new_edge(he,ce2,item2,lt2) :
-    insert_curve_at_vtx_using_dag(he,v2,item2,lt2);
+    update_vtx_with_new_edge(he,ce2, item2, lt2) :
+    insert_curve_at_vtx_using_dag(he, v2, item2, lt2);
 
   // locate and insert end points of the input halfedge to the Td_map_item
   // Dag if needed
@@ -1535,8 +1535,7 @@ Trapezoidal_decomposition_2<Td_traits>::insert(Halfedge_const_handle he)
     it++;             //this is the logic of the iterator.
                       // the iterator goes to the next trapezoid right-high.
     node = (*curr_trp).dag_node();
-    if(first_time)
-    {
+    if (first_time) {
       Halfedge_const_handle top_he((*curr_trp).top());
       if((top_he == he) || (top_he == he->twin())) {
         CGAL_warning((top_he != he) && (top_he != he->twin()));
@@ -1555,8 +1554,7 @@ Trapezoidal_decomposition_2<Td_traits>::insert(Halfedge_const_handle he)
       Td_map_item new_btm_item = node->left_child().get_data();
       CGAL_assertion(traits->is_td_trapezoid(new_btm_item) &&
                      traits->is_active(new_btm_item));
-      if(merge_if_possible(prev_bottom_tr, new_btm_item))
-      {
+      if (merge_if_possible(prev_bottom_tr, new_btm_item)) {
         Dag_node* left_child_node =
           boost::apply_visitor(dag_node_visitor(),prev_bottom_tr);
         node->set_left_child(*left_child_node);
@@ -1570,8 +1568,7 @@ Trapezoidal_decomposition_2<Td_traits>::insert(Halfedge_const_handle he)
       Td_map_item new_top_item = node->right_child().get_data();
       CGAL_assertion(traits->is_td_trapezoid(new_top_item) &&
                      traits->is_active(new_top_item));
-      if(merge_if_possible(prev_top_tr, new_top_item))
-      {
+      if (merge_if_possible(prev_top_tr, new_top_item)) {
         Dag_node* right_child_node = boost::apply_visitor(dag_node_visitor(),
                                                           prev_top_tr);
         node->set_right_child(*right_child_node);
@@ -1598,7 +1595,6 @@ Trapezoidal_decomposition_2<Td_traits>::insert(Halfedge_const_handle he)
 
       break;
     }
-
   }
   m_number_of_curves++;
 
