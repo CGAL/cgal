@@ -41,6 +41,7 @@
 
 #include <CGAL/CORE/extLong.h>
 #include <CGAL/atomic.h>
+#include <CGAL/disable_warnings.h>
 
 #ifdef CGAL_HEADER_ONLY
   
@@ -339,5 +340,7 @@ inline void setPositionalFormat(std::ostream& o = std::cout) {
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/CORE/CoreDefs_impl.h>
 #endif // CGAL_HEADER_ONLY
+
+#include <CGAL/enable_warnings.h>
 
 #endif // _CORE_COREDEFS_H_

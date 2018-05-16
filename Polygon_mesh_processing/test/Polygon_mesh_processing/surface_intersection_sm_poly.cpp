@@ -2,8 +2,6 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_for_bgl_combinatorial_map_helper.h>
 #include <CGAL/iterator.h>

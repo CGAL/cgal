@@ -496,7 +496,7 @@ private:
     launch_feature_computation (new Feature_adder_verticality<VectorMap> (this, normal_map, 0));
   }
 
-  void generate_normal_based_features(const CGAL::Default_property_map<Iterator, typename GeomTraits::Vector_3>&)
+  void generate_normal_based_features(const CGAL::Constant_property_map<Iterator, typename GeomTraits::Vector_3>&)
   {
     generate_multiscale_feature_variant_0<Verticality> ();
   }
@@ -544,7 +544,7 @@ private:
                                                                      2, 25.f * float(i), 12.5f));
   }
 
-  void generate_color_based_features(const CGAL::Default_property_map<Iterator, RGB_Color>&)
+  void generate_color_based_features(const CGAL::Constant_property_map<Iterator, RGB_Color>&)
   {
   }
 
@@ -581,7 +581,7 @@ private:
       launch_feature_computation (new Feature_adder_echo<EchoMap> (this, echo_map, i));
   }
 
-  void generate_echo_based_features(const CGAL::Default_property_map<Iterator, std::size_t>&)
+  void generate_echo_based_features(const CGAL::Constant_property_map<Iterator, std::size_t>&)
   {
   }
 
@@ -615,10 +615,10 @@ private:
   }
 
   template <typename T>
-  Default_property_map<Iterator, T>
+  Constant_property_map<Iterator, T>
   get_parameter (const Default&)
   {
-    return Default_property_map<Iterator, T>();
+    return Constant_property_map<Iterator, T>();
   }
 
   template<typename VectorMap, typename ColorMap, typename EchoMap>

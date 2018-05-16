@@ -8,7 +8,6 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh_deformation.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 
 typedef CGAL::Simple_cartesian<double>   Kernel;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3>  Polyhedron;

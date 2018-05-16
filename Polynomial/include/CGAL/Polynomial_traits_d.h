@@ -729,7 +729,9 @@ public:
       return gic( gc( p, exponent ), ev ); 
     }; 
   };
-     
+
+  typedef CGAL::internal::Monomial_representation<Polynomial_d> Monomial_representation;
+
   // Swap variable x_i with x_j
   struct Swap {
     typedef Polynomial_d        result_type;  
@@ -1536,10 +1538,6 @@ struct Construct_innermost_coefficient_const_iterator_range
     }  
   };
 
-
-  typedef
-  CGAL::internal::Monomial_representation<Polynomial_d> 
-  Monomial_representation;
 
   // returns the Exponten_vector of the innermost leading coefficient 
   struct Degree_vector{
