@@ -331,37 +331,12 @@ public:
     using BaseClass::Construct_point_2::operator();
 #else // CGAL_CFG_MATCHING_BUG_6
 
-#ifdef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-  template <class T> 
-    Point_2 operator()(const T& t) const
-    {
-      return BaseClass().construct_point_2_object()(t);
-    }
-
-    template <class T1, class T2> 
-    Point_2 operator()(const T1& t1, const T2& t2) const
-    {
-      return BaseClass().construct_point_2_object()(t1, t2);
-    }
-    
-    template <class T1, class T2, class T3> 
-    Point_2 operator()(const T1& t1, const T2& t2, const T3& t3) const
-    {
-      return BaseClass().construct_point_2_object()(t1, t2, t3);
-    }
-    
-    template <class T1, class T2, class T3, class T4> 
-    Point_2 operator()(const T1& t1, const T2& t2, const T3& t3, const T4& t4) const
-    {
-      return BaseClass().construct_point_2_object()(t1, t2, t3, t4);
-    }
-#else    
+   
     template <class ...  T> 
     Point_2 operator()(const T& ...t) const
     {
       return BaseClass().construct_point_2_object()(t...);
     }
-#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
     
 #endif // CGAL_CFG_MATCHING_BUG_6
     
@@ -404,43 +379,12 @@ public:
 #ifndef CGAL_CFG_MATCHING_BUG_6
   using BaseClass::Construct_point_3::operator();
 #else // CGAL_CFG_MATCHING_BUG_6
-
-#ifdef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-  template <class T> 
-    Point_3 operator()(const T& t) const
-    {
-      return BaseClass().construct_point_3_object()(t);
-    }
-
-    template <class T1, class T2> 
-    Point_3 operator()(const T1& t1, const T2& t2) const
-    {
-      return BaseClass().construct_point_3_object()(t1, t2);
-    }
-    
-    template <class T1, class T2, class T3> 
-    Point_3 operator()(const T1& t1, const T2& t2, const T3& t3) const
-    {
-      return BaseClass().construct_point_3_object()(t1, t2, t3);
-    }
-    
-    template <class T1, class T2, class T3, class T4> 
-    Point_3 operator()(const T1& t1, const T2& t2, const T3& t3, const T4& t4) const
-    {
-      return BaseClass().construct_point_3_object()(t1, t2, t3, t4);
-    }
-    template <class T1, class T2, class T3, class T4, class T5> 
-    Point_3 operator()(const T1& t1, const T2& t2, const T3& t3, const T4& t4, const T5& t5) const
-    {
-      return BaseClass().construct_point_3_object()(t1, t2, t3, t4, t5);
-    }
-#else    
+ 
     template <class ...  T> 
     Point_3 operator()(const T& ...t) const
     {
       return BaseClass().construct_point_3_object()(t...);
     }
-#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
     
 #endif // CGAL_CFG_MATCHING_BUG_6
     

@@ -55,6 +55,12 @@
 
 namespace CGAL {
 
+template <class E,
+          class A,
+          class E2A,
+          class K>
+class Lazy_kernel_base;
+  
 template <typename AT, typename ET, typename EFT, typename E2A> class Lazy;
 
 template <typename ET_>
@@ -420,11 +426,17 @@ public:
 
 #define CGAL_LAZY_REP(z, n, d)                                               \
   template< typename AT, typename ET, typename AC, typename EC, typename E2A, BOOST_PP_ENUM_PARAMS(n, typename L)> \
-struct Lazy_rep_##n :public Lazy_rep< AT, \
+class Lazy_rep_##n :public Lazy_rep< AT, \
                                      ET, \
                                      E2A >,                             \
                     private EC                                          \
 {                                                                       \
+  \
+  template <class Ei, \
+            class Ai, \
+            class E2Ai,\
+            class Ki> \
+    friend class Lazy_kernel_base; \
   BOOST_PP_REPEAT(n, CGAL_MLIST, _)                                          \
   const EC& ec() const { return *this; } \
 public: \
@@ -714,6 +726,17 @@ public:
 template <typename AT_, typename ET_, typename EFT, typename E2A>
 class Lazy : public Handle
 {
+  template <class Exact_kernel,
+            class Approximate_kernel,
+            class E2A>
+  friend struct Lazy_kernel;
+  
+  template <class E,
+            class A,
+            class E2A,
+            class K>
+  friend struct Lazy_kernel_base;
+  
 public :
 
   typedef Lazy<AT_, ET_, EFT, E2A>  Self;
@@ -784,7 +807,7 @@ public :
     ptr()->print_dag(os, level);
   }
 
-  //private:
+  private:
 
   // We have a static variable for optimizing the default constructor,
   // which is in particular heavily used for pruning DAGs.
