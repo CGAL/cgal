@@ -15,6 +15,7 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/Optimal_bounding_box/obb.h>
+#include <CGAL/Eigen_linear_algebra_traits.h>
 
 //typedef Scene_surface_mesh_item Scene_facegraph_item;
 //typedef Scene_facegraph_item Scene_facegraph_item;
@@ -163,8 +164,9 @@ void Create_obb_mesh_plugin::obb()
   gather_mesh_points(points);
 
   // find obb
+  CGAL::Eigen_linear_algebra_traits la_traits;
   std::vector<Point_3> obb_points(8);
-  CGAL::Optimal_bounding_box::find_obb(points, obb_points, true);
+  CGAL::Optimal_bounding_box::find_obb(points, obb_points, la_traits, true);
 
   Scene_item* item;
   if(mw->property("is_polyhedorn_mode").toBool())

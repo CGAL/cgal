@@ -332,8 +332,10 @@ void test_find_obb_evolution(std::string fname)
   BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
     sm_points.push_back(get(pmap, v));
 
+
+  CGAL::Eigen_linear_algebra_traits la_traits;
   std::vector<K::Point_3> obb_points;
-  CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points, true); // maybe use algebra parameter here
+  CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points, la_traits, true);
 
   CGAL_assertion_code(double epsilon = 1e-3);
   CGAL_assertion_code(double vol = CGAL::Optimal_bounding_box::calculate_volume(obb_points));
@@ -363,8 +365,9 @@ void test_find_obb_mesh(std::string fname)
     exit(1);
   }
 
+  CGAL::Eigen_linear_algebra_traits la_traits;
   CGAL::Surface_mesh< K::Point_3> obbmesh;
-  CGAL::Optimal_bounding_box::find_obb(mesh, obbmesh, true);
+  CGAL::Optimal_bounding_box::find_obb(mesh, obbmesh, la_traits, true);
 
   #ifdef OBB_DEBUG_TEST
   std::ofstream out("/tmp/result_elephant.off");

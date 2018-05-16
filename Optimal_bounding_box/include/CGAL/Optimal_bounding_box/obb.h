@@ -91,9 +91,11 @@ void post_processing(const Matrix_dynamic& points, Vertex& R, Matrix_fixed& obb)
   obb = aabb * R;
 }
 
-// with linear algebra traits
-template <typename Point>
-void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool use_ch)
+template <typename Point, typename LinearAlgebraTraits>
+void find_obb(std::vector<Point>& points,
+              std::vector<Point>& obb_points,
+              LinearAlgebraTraits&,
+              bool use_ch)
 {
   CGAL_assertion(points.size() >= 3);
 
@@ -101,10 +103,9 @@ void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool u
     obb_points.resize(8);
   CGAL_assertion(obb_points.size() == 8);
 
-  // could be used from a t. parameter
-  typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
-  typedef typename Linear_algebra_traits::MatrixXd MatrixXd;
-  typedef typename Linear_algebra_traits::Matrix3d Matrix3d;
+  // eigen linear algebra traits
+  typedef typename LinearAlgebraTraits::MatrixXd MatrixXd;
+  typedef typename LinearAlgebraTraits::Matrix3d Matrix3d;
 
   MatrixXd points_mat;
 
@@ -128,7 +129,7 @@ void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool u
 
   std::size_t max_generations = 100;
   Population<Matrix3d> pop(50);
-  CGAL::Optimal_bounding_box::Evolution<Linear_algebra_traits>
+  CGAL::Optimal_bounding_box::Evolution<LinearAlgebraTraits>
       search_solution(pop, points_mat);
   search_solution.evolve(max_generations);
   Matrix3d rotation = search_solution.get_best();
@@ -149,10 +150,11 @@ void find_obb(std::vector<Point>& points, std::vector<Point>& obb_points, bool u
 /// @param pmesh the input mesh.
 /// @param obbmesh the obb in a hexahedron pmesh.
 /// @param use convex hull or not.
-///
-/// todo named parameters: max iterations, population size, tolerance.
-template <typename PolygonMesh>
-void find_obb(PolygonMesh& pmesh, PolygonMesh& obbmesh, bool use_ch)
+template <typename PolygonMesh, typename LinearAlgrebraTraits>
+void find_obb(PolygonMesh& pmesh,
+              PolygonMesh& obbmesh,
+              LinearAlgrebraTraits& la_traits,
+              bool use_ch)
 {
   CGAL_assertion(vertices(pmesh).size() >= 3);
 
@@ -173,7 +175,7 @@ void find_obb(PolygonMesh& pmesh, PolygonMesh& obbmesh, bool use_ch)
     points.push_back(get(pmap, v));
 
   std::vector<Point> obb_points;
-  find_obb(points, obb_points, use_ch);
+  find_obb(points, obb_points, la_traits, use_ch);
 
   CGAL::make_hexahedron(obb_points[0], obb_points[1], obb_points[2], obb_points[3],
       obb_points[4], obb_points[5],

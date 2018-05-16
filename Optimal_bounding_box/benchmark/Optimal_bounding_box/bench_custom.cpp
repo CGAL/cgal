@@ -1,8 +1,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Optimal_bounding_box/optimization_algorithms.h>
 #include <CGAL/Optimal_bounding_box/population.h>
 #include <CGAL/Optimal_bounding_box/obb.h>
+#include <CGAL/Eigen_linear_algebra_traits.h>
 #include <iostream>
 #include <fstream>
 
@@ -33,7 +33,8 @@ bench(const char* fname)
   std::cout << "input data (points + normals)= " << i << std::endl;
   std::cout << "number of points= " << sm_points.size() << std::endl;
 
-  CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points, false);
+  CGAL::Eigen_linear_algebra_traits la_traits;
+  CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points, la_traits, false);
 
   std::cout << "done" << '\n';
 

@@ -1,8 +1,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Optimal_bounding_box/optimization_algorithms.h>
 #include <CGAL/Optimal_bounding_box/population.h>
 #include <CGAL/Optimal_bounding_box/obb.h>
+#include <CGAL/Eigen_linear_algebra_traits.h>
 #include <iostream>
 #include <fstream>
 
@@ -26,6 +26,7 @@ void bench_finding_obb(std::string fname)
 
   CGAL::Timer timer;
   std::size_t measurements = 4;
+  CGAL::Eigen_linear_algebra_traits la_traits;
 
   for (std::size_t t = 0; t < measurements; ++t)
   {
@@ -35,7 +36,7 @@ void bench_finding_obb(std::string fname)
 
     // 1) using convex hull
     CGAL::Surface_mesh<K::Point_3> obb_mesh1;
-    CGAL::Optimal_bounding_box::find_obb(mesh, obb_mesh1, true);
+    CGAL::Optimal_bounding_box::find_obb(mesh, obb_mesh1, la_traits, true);
 
     timer.stop();
     std::cout << " with ch: " << timer.time() << " s |";
@@ -45,7 +46,7 @@ void bench_finding_obb(std::string fname)
 
     // 2) without convex hull
     CGAL::Surface_mesh<K::Point_3> obb_mesh2;
-    CGAL::Optimal_bounding_box::find_obb(mesh, obb_mesh2, false);
+    CGAL::Optimal_bounding_box::find_obb(mesh, obb_mesh2, la_traits, false);
 
     timer.stop();
 

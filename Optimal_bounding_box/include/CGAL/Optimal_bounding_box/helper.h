@@ -29,7 +29,6 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-
 namespace CGAL {
 namespace Optimal_bounding_box {
 
