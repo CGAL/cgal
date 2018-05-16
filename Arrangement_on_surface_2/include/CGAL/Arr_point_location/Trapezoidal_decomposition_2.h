@@ -617,27 +617,34 @@ public:
     }
   };
 
-  class set_cw_he_visitor : public boost::static_visitor<void>
-  {
+  /*! A visitor to set the cw halfedge of a vertex node.
+   */
+  class set_cw_he_visitor : public boost::static_visitor<void> {
   public:
-    set_cw_he_visitor (Halfedge_const_handle he) : m_cw_he(he) {}
+    set_cw_he_visitor(Halfedge_const_handle he) : m_cw_he(he) {}
 
-    void operator()(Td_active_vertex& t) const
-    {
-      t.set_cw_he(m_cw_he);
-    }
+    void operator()(Td_active_vertex& t) const { t.set_cw_he(m_cw_he); }
+
     void operator()(Td_active_fictitious_vertex& t) const
-    {
-      t.set_cw_he(m_cw_he);
-    }
+    { t.set_cw_he(m_cw_he); }
 
-    template < typename T >
-    void operator()(T& /*t*/) const
-    {
-      CGAL_assertion(false);
-    }
+    template <typename T>
+    void operator()(T& /*t*/) const { CGAL_assertion(false); }
+
   private:
     Halfedge_const_handle m_cw_he;
+  };
+
+  /*! A visitor to reset the cw halfedge of a vertex node.
+   */
+  class reset_cw_he_visitor : public boost::static_visitor<void> {
+  public:
+    void operator()(Td_active_vertex& t) const { t.reset_cw_he(); }
+
+    void operator()(Td_active_fictitious_vertex& t) const { t.reset_cw_he(); }
+
+    template <typename T>
+    void operator()(T& /*t*/) const { CGAL_assertion(false); }
   };
 
   class dag_node_visitor : public boost::static_visitor<Dag_node*>
@@ -1150,6 +1157,11 @@ protected:
   void update_vtx_cw_he_after_merge(const X_monotone_curve_2& old_cv,
                                     Halfedge_const_handle new_he,
                                     Td_map_item& vtx_item);
+
+  /*! Update the cw halfedge of an active vertex after a halfedge is removed.
+   */
+  void update_vtx_cw_he_after_remove(Halfedge_const_handle old_he,
+                                     Td_map_item& vtx_item);
 
   ////MICHAL: currently not in use since split is implemented as: remove and insert two
   //void set_trp_params_after_split_halfedge_update(Halfedge_const_handle new_he,
