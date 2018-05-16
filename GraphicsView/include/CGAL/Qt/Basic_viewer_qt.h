@@ -969,7 +969,6 @@ private:
   bool m_flatShading;
   bool m_use_mono_color;
   bool m_inverse_normal;
-  bool m_empty;
   
   double m_size_points;
   double m_size_edges;
