@@ -106,7 +106,7 @@ namespace CGAL {
   namespace {
     
   template <typename T>
-  struct Return_min2 : CGAL::binary_function<T, T, T>
+  struct Return_min : CGAL::binary_function<T, T, T>
   {
     T operator()(const T& a, const T& b) const
     {
@@ -122,7 +122,7 @@ namespace CGAL {
     class Transform_functor_ = 
       typename Real_embeddable_traits<typename Surface::FT>::Sgn,
     class Surface_identifiers_generator_ = 
-      Return_min2<typename Transform_functor_::result_type>,
+      Return_min<typename Transform_functor_::result_type>,
     class Point_creator = Creator_uniform_3<typename GT::FT,
                                             typename GT::Point_3>,
     class Visitor = Null_oracle_visitor
