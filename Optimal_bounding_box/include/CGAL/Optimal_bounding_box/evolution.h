@@ -25,7 +25,7 @@
 
 #include <CGAL/Optimal_bounding_box/population.h>
 #include <CGAL/Optimal_bounding_box/fitness_function.h>
-
+#include <boost/iterator/counting_iterator.hpp>
 
 namespace CGAL {
 namespace Optimal_bounding_box {
@@ -34,7 +34,6 @@ namespace Optimal_bounding_box {
 template <typename Linear_algebra_traits>
 class Evolution
 {
-
   typedef typename Linear_algebra_traits::MatrixXd MatrixXd;
   typedef typename Linear_algebra_traits::Matrix3d Matrix3d;
   typedef typename Linear_algebra_traits::Vector3d Vector3d;
@@ -124,10 +123,8 @@ public:
       }
 
       CGAL_assertion(simplex.size() == 4); // tetrahedron
-
     } // iterations
   }
-
 
   void genetic_algorithm()
   {
@@ -222,14 +219,10 @@ public:
           lambda = 0.5 - bias;
         // combine information from A and B
         offspring[j] = lambda * group3[i][j] + lambda * group4[i][j];
-
       }
 
       // qr factorization of the offspring
-        //qr_factorization(offspring);
       Linear_algebra_traits::qr_factorization(offspring);
-
-
       offspringsB[i] = offspring;
     }
 
@@ -254,10 +247,8 @@ public:
     }
   }
 
-
   void evolve(std::size_t generations)
   {
-
     // hardcoded nelder_mead_iterations
     std::size_t nelder_mead_iterations = 20;
 
@@ -267,7 +258,6 @@ public:
     double tolerance = 1e-2;
     int stale = 0;
 
-    // evolve here
     for(std::size_t t = 0; t < generations; ++t)
     {
 
@@ -290,18 +280,14 @@ public:
       //std::cout << "pop after nelder mead: " << std::endl;
       //pop.show_population();
       //std::cout << std::endl;
-
-      // debugging
-      Fitness_map<Matrix> fitness_map(pop, point_data);
-      Matrix R_now = fitness_map.get_best();
-      //std::cout << "det= " << R_now.determinant() << std::endl;
-      std::cout << "det= " << determinant(R_now) << std::endl;
+      Fitness_map<Matrix3d, MatrixXd> fitness_map_debug(population, point_data);
+      Matrix3d R_now = fitness_map_debug.get_best();
+      std::cout << "det= " << Linear_algebra_traits::determinant(R_now) << std::endl;
   #endif
 
       // stopping criteria
       Fitness_map<Matrix3d, MatrixXd> fitness_map(population, point_data);
       new_fit_value = fitness_map.get_best_fitness_value(point_data);
-
       double difference = new_fit_value - prev_fit_value;
       if(abs(difference) < tolerance * new_fit_value)
         stale++;
@@ -313,15 +299,13 @@ public:
     }
   }
 
-  const Matrix3d get_best() // reference ??
+  const Matrix3d get_best()
   {
     Fitness_map<Matrix3d, MatrixXd> fitness_map(population, point_data);
     return fitness_map.get_best();
   }
 
-
 private:
-
   // needed in genetic algorithm
   struct Comparator
   {
@@ -331,17 +315,12 @@ private:
     {
       return fitness[i] < fitness[j];
     }
-
     std::vector<double> fitness;
   };
-
-
 
   // data
   Population<Matrix3d> population;
   MatrixXd point_data;
-
-
 };
 
 
@@ -349,13 +328,12 @@ private:
 template <typename Simplex>
 void check_det(Population<Simplex>& pop)
 {
-  for(int i = 0; i < pop.size(); ++i)
+  for(std::size_t i = 0; i < pop.size(); ++i)
   {
-    for(int j = 0; j < 4; ++j)
+    for(std::size_t j = 0; j < 4; ++j)
     {
       auto A = pop[i][j]; // Simplex
-      //std::cout << A.determinant() << std::endl;
-      std::cout << determinant(A) << std::endl;
+      std::cout << Linear_algebra_traits::determinant(A) << std::endl;
     }
   }
 }

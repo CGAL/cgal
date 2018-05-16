@@ -19,28 +19,6 @@ bool assert_doubles(double d1, double d2, double epsilon)
   return (d1 < d2 + epsilon && d1 > d2 - epsilon) ? true : false;
 }
 
-/*
-template <typename SurfaceMesh, typename Matrix>
-void sm_to_matrix(SurfaceMesh& sm, Matrix& mat)
-{
-  typedef typename boost::property_map<SurfaceMesh, boost::vertex_point_t>::const_type Vpm;
-  typedef typename boost::property_traits<Vpm>::reference Point_ref;
-  typedef typename boost::graph_traits<SurfaceMesh>::vertex_descriptor vertex_descriptor;
-  Vpm vpm = get(boost::vertex_point, sm);
-
-  mat.resize(vertices(sm).size(), 3);
-  std::size_t i = 0;
-  for(vertex_descriptor v : vertices(sm))
-  {
-    Point_ref p = get(vpm, v);
-    mat(i, 0) = p.x();
-    mat(i, 1) = p.y();
-    mat(i, 2) = p.z();
-    ++i;
-  }
-}
-*/
-
 template <typename SurfaceMesh, typename Point>
 void gather_mesh_points(SurfaceMesh& mesh, std::vector<Point>& points)
 {

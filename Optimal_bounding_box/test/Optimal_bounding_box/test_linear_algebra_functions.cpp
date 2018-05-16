@@ -6,8 +6,6 @@
 
 #include <CGAL/Eigen_linear_algebra_traits.h>
 
-typedef Eigen::Matrix3d Matrix3d;
-
 bool assert_doubles(double d1, double d2, double epsilon)
 {
   return (d1 < d2 + epsilon && d1 > d2 - epsilon) ? true : false;
@@ -16,12 +14,6 @@ bool assert_doubles(double d1, double d2, double epsilon)
 void test_qr_factorization()
 {
   CGAL::Eigen_dense_matrix<double, 3, 3> A(3, 3);
-  /*
-  A << 0.3011944, 0.9932761, 0.5483701,
-       0.5149142, 0.5973263, 0.5162336,
-       0.0039213, 0.0202949, 0.9240308;
-       */
-
   A.set_coef(0, 0, 0.3011944);
   A.set_coef(0, 1, 0.9932761);
   A.set_coef(0, 2, 0.5483701);
@@ -32,14 +24,8 @@ void test_qr_factorization()
   A.set_coef(2, 1, 0.0202949);
   A.set_coef(2, 2, 0.9240308);
 
-  //CGAL::Eigen_dense_matrix<double, 3, 3> Q;
-
-  //CGAL::Optimal_bounding_box::qr_factorization(A, Q);
-  //A.qr_factorization(Q);
   CGAL::Eigen_dense_matrix<double, 3, 3> Q =
       CGAL::Eigen_linear_algebra_traits::qr_factorization(A);
-
-
 
   CGAL_assertion_code(double epsilon = 1e-6);
   CGAL_assertion(assert_doubles(Q(0,0), -0.504895, epsilon));
@@ -55,7 +41,6 @@ void test_qr_factorization()
 
 void test_fitness_function()
 {
-
   typedef typename CGAL::Eigen_linear_algebra_traits::MatrixXd MatrixXd;
   MatrixXd data_points(4, 3);
 
@@ -75,7 +60,6 @@ void test_fitness_function()
   data_points.set_coef(3, 1, 0.149912);
   data_points.set_coef(3, 2, 0.364944);
 
-
   typedef typename CGAL::Eigen_linear_algebra_traits::Matrix3d Matrix3d;
   Matrix3d rotation;
   rotation.set_coef(0, 0, -0.809204);
@@ -91,20 +75,12 @@ void test_fitness_function()
   CGAL_assertion_code(typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits);
   CGAL_assertion_code(double fitness = CGAL::Optimal_bounding_box::
       compute_fitness<Linear_algebra_traits> (rotation, data_points));
-
   CGAL_assertion(assert_doubles(fitness, 0.58606, 1e-5));
 }
 
 void test_simplex_operations()
 {
-  //Matrix3d Sc(3, 3);
   CGAL::Eigen_dense_matrix<double, 3, 3> Sc(3, 3);
-  /*
-  Sc << -0.809204, 0.124296, 0.574230,
-        -0.574694, 0.035719, -0.817589,
-        -0.122134, -0.991602, 0.042528;
-        */
-
   Sc.set_coef(0, 0, -0.809204);
   Sc.set_coef(0, 1, 0.124296);
   Sc.set_coef(0, 2, 0.574230);
@@ -115,16 +91,7 @@ void test_simplex_operations()
   Sc.set_coef(2, 1, -0.991602);
   Sc.set_coef(2, 2, 0.042528);
 
-
-
   CGAL::Eigen_dense_matrix<double, 3, 3> S_worst(3, 3);
-  /*
-  S_worst << -0.45070,  -0.32769,  -0.83035,
-             -0.13619,  -0.89406,   0.42675,
-             -0.88222,   0.30543,   0.35833;
-             */
-
-
   S_worst.set_coef(0, 0, -0.45070);
   S_worst.set_coef(0, 1, -0.32769);
   S_worst.set_coef(0, 2, -0.83035);
@@ -134,7 +101,6 @@ void test_simplex_operations()
   S_worst.set_coef(2, 0, -0.88222);
   S_worst.set_coef(2, 1, 0.30543);
   S_worst.set_coef(2, 2, 0.35833);
-
 
   CGAL::Eigen_dense_matrix<double, 3, 3> Sr = CGAL::Optimal_bounding_box::reflection(Sc, S_worst);
   CGAL_assertion_code(double epsilon = 1e-5);
@@ -160,13 +126,6 @@ void test_simplex_operations()
   CGAL_assertion(assert_doubles(Se(2,2), 0.74300, epsilon));
 
   CGAL::Eigen_dense_matrix<double, 3, 3> S_a(3, 3);
-  /*
-  S_a << -0.277970,  0.953559,  0.116010,
-         -0.567497,  -0.065576,   -0.820760,
-         -0.775035,   -0.293982,   0.559370;
-         */
-
-
   S_a.set_coef(0, 0, -0.277970);
   S_a.set_coef(0, 1, 0.953559);
   S_a.set_coef(0, 2, 0.116010);
@@ -177,15 +136,7 @@ void test_simplex_operations()
   S_a.set_coef(2, 1, -0.293982);
   S_a.set_coef(2, 2, 0.559370);
 
-
   CGAL::Eigen_dense_matrix<double, 3, 3> S_b(3, 3);
-  /*
-  S_b << -0.419979,   0.301765,  -0.855894,
-         -0.653011,  -0.755415,   0.054087,
-         -0.630234,   0.581624,   0.514314;
-         */
-
-
   S_b.set_coef(0, 0, -0.419979);
   S_b.set_coef(0, 1, 0.301765);
   S_b.set_coef(0, 2, -0.8558940);
@@ -195,7 +146,6 @@ void test_simplex_operations()
   S_b.set_coef(2, 0, -0.630234);
   S_b.set_coef(2, 1, 0.581624);
   S_b.set_coef(2, 2, 0.514314);
-
 
   CGAL::Eigen_dense_matrix<double, 3, 3> S_c = CGAL::Optimal_bounding_box::mean(S_a, S_b);
   CGAL_assertion(assert_doubles(S_c(0,0), -0.35111, epsilon));
@@ -212,12 +162,6 @@ void test_simplex_operations()
 void test_centroid()
 {
   CGAL::Eigen_dense_matrix<double, 3, 3> S_a;
-  /*
-  S_a <<  -0.588443,   0.807140,  -0.047542,
-          -0.786228,  -0.584933,  -0.199246,
-          -0.188629,  -0.079867,   0.978795;
-          */
-
   S_a.set_coef(0, 0, -0.588443);
   S_a.set_coef(0, 1, 0.807140);
   S_a.set_coef(0, 2, -0.047542);
@@ -229,12 +173,6 @@ void test_centroid()
   S_a.set_coef(2, 2, 0.978795);
 
   CGAL::Eigen_dense_matrix<double, 3, 3> S_b(3, 3);
-  /*
-  S_b <<  -0.2192721,   0.2792986,  -0.9348326,
-          -0.7772152,  -0.6292092,  -0.0056861,
-          -0.5897934,   0.7253193,   0.3550431;
-          */
-
   S_b.set_coef(0, 0, -0.2192721);
   S_b.set_coef(0, 1, 0.2792986);
   S_b.set_coef(0, 2, -0.9348326);
@@ -246,12 +184,6 @@ void test_centroid()
   S_b.set_coef(2, 2, 0.3550431);
 
   CGAL::Eigen_dense_matrix<double, 3, 3> S_c(3, 3);
-  /*
-  S_c <<   -0.32657,  -0.60013,  -0.73020,
-           -0.20022,  -0.71110,   0.67398,
-           -0.92372,   0.36630,   0.11207;
-           */
-
   S_c.set_coef(0, 0, -0.32657);
   S_c.set_coef(0, 1, -0.60013);
   S_c.set_coef(0, 2, -0.730206);
@@ -276,7 +208,6 @@ void test_centroid()
   CGAL_assertion(assert_doubles(S_centroid(2,2), 0.514314, epsilon));
 }
 
-
 void test_eigen_matrix_interface()
 {
   CGAL::Eigen_dense_matrix<double, 3, 3> A(3, 3);
@@ -289,11 +220,8 @@ void test_eigen_matrix_interface()
   A.set_coef(2, 0, 0.7);
   A.set_coef(2, 1, 0.8);
   A.set_coef(2, 2, 0.9);
-  //CGAL::Eigen_dense_matrix<double, 3, 3> B = A.transpose();
   CGAL::Eigen_dense_matrix<double, 3, 3> B = CGAL::Eigen_linear_algebra_traits::transpose(A);
-
   CGAL::Eigen_dense_matrix<double, 3, 3> S = 0.5 * A;
-
   CGAL::Eigen_dense_matrix<double, 3, 3> C(3,3);
   C.set_coef(0, 0, 0.3011944);
   C.set_coef(0, 1, 0.9932761);
@@ -304,8 +232,6 @@ void test_eigen_matrix_interface()
   C.set_coef(2, 0, 0.0039213);
   C.set_coef(2, 1, 0.0202949);
   C.set_coef(2, 2, 0.9240308);
-
-  //C.qr_factorization(Q);
 
   CGAL::Eigen_dense_matrix<double, 3, 3> Q =
     CGAL::Eigen_linear_algebra_traits::qr_factorization(C);
@@ -357,7 +283,6 @@ void test_eigen_matrix_interface()
 
 int main()
 {
-
   test_qr_factorization();
   test_fitness_function();
   test_simplex_operations();

@@ -24,20 +24,15 @@
 
 #include <vector>
 #include <CGAL/Random.h>
-#include <CGAL/Optimal_bounding_box/fitness_function.h>
 #include <CGAL/Optimal_bounding_box/linear_algebra.h>
-
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_linear_algebra_traits.h>
 #endif
-
-
+//#define OBB_DEBUG
 
 namespace CGAL {
 namespace Optimal_bounding_box {
-
-
 
 
 template<typename Matrix>
@@ -66,26 +61,11 @@ public:
     }
   }
 
-  void show_population()
-  {
-    std::size_t id = 0;
-    for(const Simplex i : pop)
-    {
-      CGAL_assertion(i.size() == 4);
-      std:: cout << "Simplex: "<< id++ << std::endl;
-      for(const Matrix R : i)
-      {
-        std::cout << R; // eigen out
-        std::cout << "\n\n";
-      }
-      std:: cout << std:: endl;
-    }
-  }
+  #ifdef OBB_DEBUG
+  void show_population();
+  #endif
 
-  std::size_t size()
-  {
-    return n;
-  }
+  std::size_t size(){return n;}
 
   // access simplex
   Simplex& operator[](std::size_t i)
@@ -109,15 +89,10 @@ private:
     for(std::size_t i = 0; i < 4; ++i)
     {
       Matrix R;
-      // R may be preallocated, if Vertex is Matrix3d,
-      // but Vertex may not, if Vertex is MatrixXd and R is constructed with MatrixXd R(3,3)
       if(R.cols() == 0 || R.rows() == 0)
         R.resize(3, 3);
 
       create_vertex(R);
-      //Matrix Q; // no allocation
-      //qr_factorization(R, Q);
-      //R.qr_factorization(Q);
       Matrix Q = Linear_algebra_traits::qr_factorization(R);
 
       simplex[i] = Q;
@@ -134,7 +109,6 @@ private:
     {
       for(std::size_t j = 0; j < 3; ++j)
       {
-        //R.coeffRef(i, j) = random_generator.get_double();
         R.set_coef(i, j, random_generator.get_double());
       }
     }
@@ -144,6 +118,26 @@ private:
   CGAL::Random random_generator;
   std::vector<Simplex> pop;
 };
+
+
+#ifdef OBB_DEBUG
+template <typename Matrix>
+void Population<Matrix>::show_population()
+{
+  std::size_t id = 0;
+  for(const Simplex i : pop)
+  {
+    CGAL_assertion(i.size() == 4);
+    std:: cout << "Simplex: "<< id++ << std::endl;
+    for(const Matrix R : i)
+    {
+      std::cout << R; // eigen out
+      std::cout << "\n\n";
+    }
+    std:: cout << std:: endl;
+  }
+}
+#endif
 
 
 

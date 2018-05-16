@@ -34,7 +34,7 @@ namespace Optimal_bounding_box {
 
 template <typename Linear_algebra_traits>
 double compute_fitness(const typename Linear_algebra_traits::Matrix3d& R,
-                                   typename Linear_algebra_traits::MatrixXd& data)
+                             typename Linear_algebra_traits::MatrixXd& data)
 {
   // R: rotation matrix
   CGAL_assertion(R.cols() == 3);
@@ -49,7 +49,6 @@ double compute_fitness(const typename Linear_algebra_traits::Matrix3d& R,
   for(std::size_t i = 0; i < data.rows(); i++){
 
     Vector3d vec = Linear_algebra_traits::row(data, i);
-    //Vector3d vec = data.row(i);
     vec = R * vec;
 
     if(i == 0){
