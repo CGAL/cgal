@@ -297,7 +297,8 @@ void check_det(Population<Simplex>& pop)
     for(int j = 0; j < 4; ++j)
     {
       auto A = pop[i][j]; // Simplex
-      std::cout << A.determinant() << std::endl;
+      //std::cout << A.determinant() << std::endl;
+      std::cout << determinant(A) << std::endl;
     }
   }
 }

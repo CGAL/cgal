@@ -69,7 +69,7 @@ void bench_finding_obb(std::string fname)
 #endif
 }
 
-int main(int argc, char* argv[])
+int main()
 {
   bench_finding_obb("data/elephant.off");
 

@@ -28,13 +28,26 @@
 #include <CGAL/Optimal_bounding_box/linear_algebra.h>
 
 
+#if defined(CGAL_EIGEN3_ENABLED)
+#include <CGAL/Eigen_linear_algebra_traits.h>
+#endif
+
+
+
 namespace CGAL {
 namespace Optimal_bounding_box {
+
+
 
 
 template<typename Matrix>
 class Population
 {
+
+#if defined(CGAL_EIGEN3_ENABLED)
+  typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
+#endif
+
   typedef std::vector<Matrix> Simplex;
 
 public:
@@ -102,9 +115,11 @@ private:
         R.resize(3, 3);
 
       create_vertex(R);
-      Matrix Q; // no allocation
+      //Matrix Q; // no allocation
       //qr_factorization(R, Q);
-      R.qr_factorization(Q);
+      //R.qr_factorization(Q);
+      Matrix Q = Linear_algebra_traits::qr_factorization(R);
+
       simplex[i] = Q;
     }
     CGAL_assertion(simplex.size() == 4);
@@ -125,8 +140,8 @@ private:
     }
   }
 
-  CGAL::Random random_generator;
   std::size_t n;
+  CGAL::Random random_generator;
   std::vector<Simplex> pop;
 };
 

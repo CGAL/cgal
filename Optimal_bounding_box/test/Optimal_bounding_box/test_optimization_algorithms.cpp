@@ -152,7 +152,7 @@ void test_nelder_mead()
       evolution(pop, data_points);
   evolution.nelder_mead(simplex, nm_iterations);
 
-  double epsilon = 1e-5;
+  CGAL_assertion_code(double epsilon = 1e-5);
   Matrix3d v0_new = simplex[0];
   CGAL_assertion(assert_doubles(v0_new(0,0), -0.288975, epsilon));
   CGAL_assertion(assert_doubles(v0_new(0,1), 0.7897657, epsilon));
@@ -274,8 +274,8 @@ void test_random_unit_tetra()
   Matrix3d R = evolution.get_best();
 
 
-  double epsilon = 1e-3;
-  CGAL_assertion(assert_doubles(R.determinant(), 1, epsilon));
+  CGAL_assertion_code(double epsilon = 1e-3);
+  CGAL_assertion(assert_doubles(Linear_algebra_traits::determinant(R), 1, epsilon));
   CGAL_assertion(assert_doubles(R(0,0), -0.25791, epsilon));
   CGAL_assertion(assert_doubles(R(0,1), 0.796512, epsilon));
   CGAL_assertion(assert_doubles(R(0,2), -0.546855, epsilon));
@@ -319,8 +319,8 @@ void test_reference_tetrahedron(const char* fname)
 
   Matrix3d R = experiment.get_best();
 
-  double epsilon = 1e-5;
-  CGAL_assertion(assert_doubles(R.determinant(), 1, epsilon));
+  CGAL_assertion_code(double epsilon = 1e-5);
+  CGAL_assertion(assert_doubles(Linear_algebra_traits::determinant(R), 1, epsilon));
 
   #ifdef OBB_DEBUG_TEST
   // postprocessing
@@ -354,8 +354,8 @@ void test_long_tetrahedron(std::string fname)
 
   Matrix3d R = experiment.get_best();
 
-  double epsilon = 1e-3;
-  CGAL_assertion(assert_doubles(R.determinant(), 1, epsilon));
+  CGAL_assertion_code(double epsilon = 1e-3);
+  CGAL_assertion(assert_doubles(Linear_algebra_traits::determinant(R), 1, epsilon));
   CGAL_assertion(assert_doubles(R(0,0), -1, epsilon));
   CGAL_assertion(assert_doubles(R(0,1), 0, epsilon));
   CGAL_assertion(assert_doubles(R(0,2), 0, epsilon));
@@ -437,8 +437,8 @@ void test_find_obb_evolution(std::string fname)
   std::vector<K::Point_3> obb_points;
   CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points, true); // maybe use algebra parameter here
 
-  double epsilon = 1e-3;
-  double vol = calculate_volume(obb_points);
+  CGAL_assertion_code(double epsilon = 1e-3);
+  CGAL_assertion_code(double vol = calculate_volume(obb_points));
   CGAL_assertion(assert_doubles(vol, 0.883371, epsilon));
 
   #ifdef OBB_DEBUG_TEST
@@ -465,7 +465,7 @@ void test_find_obb_mesh(std::string fname)
     exit(1);
   }
 
-  CGAL::Surface_mesh<K::Point_3> obbmesh;
+  CGAL::Surface_mesh< K::Point_3> obbmesh;
   CGAL::Optimal_bounding_box::find_obb(mesh, obbmesh, true);
 
   #ifdef OBB_DEBUG_TEST
@@ -477,7 +477,7 @@ void test_find_obb_mesh(std::string fname)
 
 
 
-int main(int argc, char* argv[])
+int main()
 {
  // test_population();
   test_nelder_mead();

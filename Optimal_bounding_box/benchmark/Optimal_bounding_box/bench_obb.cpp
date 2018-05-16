@@ -98,9 +98,8 @@ void bench_finding_obb(std::string fname)
   timer.reset();
 
 
-  double epsilon = 1e-3;
-  double vol1 = calculate_volume(obb_points1);
-  double vol2 = calculate_volume(obb_points2);
+  //double vol1 = calculate_volume(obb_points1);
+  //  double vol2 = calculate_volume(obb_points2);
   //std::cout << "vol1= " << vol1 << " -- " << "vol2= " << vol2 << std::endl;
 
 
@@ -126,7 +125,7 @@ void bench_finding_obb(std::string fname)
 #endif
 }
 
-int main(int argc, char* argv[])
+int main()
 {
   bench_finding_obb("data/elephant.off");
 

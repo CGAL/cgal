@@ -177,7 +177,7 @@ public:
     Population<Matrix3d> offspringsA(size_first_group);
     double bias = 0.1;
 
-    for(int i = 0; i < size_first_group; ++i)
+    for(std::size_t i = 0; i < size_first_group; ++i)
     {
       std::vector<Matrix3d> offspring(4);
       for(int j = 0; j < 4; ++j)
@@ -208,7 +208,7 @@ public:
     Population<Matrix3d> offspringsB(size_second_group);
     bias = 0.1;
 
-    for(int i = 0; i < size_second_group; ++i)
+    for(std::size_t i = 0; i < size_second_group; ++i)
     {
       std::vector<Matrix3d> offspring(4);
       for(int j = 0; j < 4; ++j)
@@ -226,7 +226,8 @@ public:
       }
 
       // qr factorization of the offspring
-        qr_factorization(offspring);
+        //qr_factorization(offspring);
+      Linear_algebra_traits::qr_factorization(offspring);
 
 
       offspringsB[i] = offspring;
@@ -293,7 +294,8 @@ public:
       // debugging
       Fitness_map<Matrix> fitness_map(pop, point_data);
       Matrix R_now = fitness_map.get_best();
-      std::cout << "det= " << R_now.determinant() << std::endl;
+      //std::cout << "det= " << R_now.determinant() << std::endl;
+      std::cout << "det= " << determinant(R_now) << std::endl;
   #endif
 
       // stopping criteria
@@ -352,7 +354,8 @@ void check_det(Population<Simplex>& pop)
     for(int j = 0; j < 4; ++j)
     {
       auto A = pop[i][j]; // Simplex
-      std::cout << A.determinant() << std::endl;
+      //std::cout << A.determinant() << std::endl;
+      std::cout << determinant(A) << std::endl;
     }
   }
 }

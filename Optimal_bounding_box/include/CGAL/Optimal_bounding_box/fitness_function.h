@@ -33,7 +33,7 @@ namespace CGAL {
 namespace Optimal_bounding_box {
 
 template <typename Linear_algebra_traits>
-const double compute_fitness(const typename Linear_algebra_traits::Matrix3d& R,
+double compute_fitness(const typename Linear_algebra_traits::Matrix3d& R,
                                    typename Linear_algebra_traits::MatrixXd& data)
 {
   // R: rotation matrix
@@ -46,9 +46,10 @@ const double compute_fitness(const typename Linear_algebra_traits::Matrix3d& R,
   typedef typename Linear_algebra_traits::Vector3d Vector3d;
 
   double xmin, xmax, ymin, ymax, zmin, zmax;
-  for(int i = 0; i < data.rows(); i++){
+  for(std::size_t i = 0; i < data.rows(); i++){
 
-    Vector3d vec = data.row(i);
+    Vector3d vec = Linear_algebra_traits::row(data, i);
+    //Vector3d vec = data.row(i);
     vec = R * vec;
 
     if(i == 0){
@@ -103,14 +104,14 @@ struct Fitness_map
     return pop[simplex_id][vertex_id];
   }
 
-  const double get_best_fitness_value(Matrix& data)
+  double get_best_fitness_value(Matrix& data)
   {
     const Vertex best_mat = get_best();
     return compute_fitness<Linear_algebra_traits>(best_mat, data);
   }
 
-  Matrix& points;
   Population<Vertex>& pop;
+  Matrix& points;
 };
 
 }} // end namespaces
