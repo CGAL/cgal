@@ -496,6 +496,27 @@ update_vtx_cw_he_after_merge(const X_monotone_curve_2& old_cv,
     boost::apply_visitor(set_cw_he_visitor(new_he), vtx_item);
 }
 
+//-----------------------------------------------------------------------------
+// Description:
+// Update the cw he after a halfedge is removed.
+//
+template <typename Td_traits>
+void Trapezoidal_decomposition_2<Td_traits>::
+update_vtx_cw_he_after_remove(Halfedge_const_handle old_he,
+                              Td_map_item& vtx_item)
+{
+  CGAL_precondition(traits->is_td_vertex(vtx_item));
+  CGAL_precondition(traits->is_active(vtx_item));
+
+  Halfedge_const_handle cw_he(boost::apply_visitor(cw_he_visitor(), vtx_item));
+  if ((old_he == cw_he) || (old_he->twin() == cw_he)) {
+    Halfedge_const_handle new_he = cw_he->twin()->prev();
+    if (new_he != old_he)
+      boost::apply_visitor(set_cw_he_visitor(new_he), vtx_item);
+    else boost::apply_visitor(reset_cw_he_visitor(), vtx_item);
+  }
+}
+
 ////MICHAL: currently not in use since split is implemented as removed and insert two
 ////         in case the split is done differenty - this method would have to be rewritten since it is obsolete
 //template <typename Td_traits>
@@ -1626,16 +1647,19 @@ void Trapezoidal_decomposition_2<Td_traits>::remove(Halfedge_const_handle he)
   CGAL_warning(traits != NULL);
 
   //calculating leftmost and rightmost curve ends of he
-  const Curve_end leftmost(he,ARR_MIN_END);
-  const Curve_end rightmost(he,ARR_MAX_END);
+  const Curve_end leftmost(he, ARR_MIN_END);
+  const Curve_end rightmost(he, ARR_MAX_END);
 
   //locating leftmost & rightmost curve ends
-  Locate_type lt1,lt2;
-  Td_map_item p1_item = locate(leftmost,lt1);
-  Td_map_item p2_item = locate(rightmost,lt2);
+  Locate_type lt1, lt2;
+  Td_map_item p1_item = locate(leftmost, lt1);
+  Td_map_item p2_item = locate(rightmost, lt2);
+
+  update_vtx_cw_he_after_remove(he, p1_item);
+  update_vtx_cw_he_after_remove(he, p2_item);
 
   //both should be located on a point degenerate trapezoid
-  CGAL_warning(lt1==POINT && lt2==POINT);
+  CGAL_warning(lt1 == POINT && lt2 == POINT);
 
   if (lt1 != POINT || lt2 != POINT) return;
 
@@ -1881,6 +1905,8 @@ void Trapezoidal_decomposition_2<Td_traits>::remove(Halfedge_const_handle he)
 
   if (is_last_edge(he ,p2_item))
     undo_split_trapezoid_by_vertex(p2_node, rightmost);
+
+  locate_opt_empty();
 
   //-----------------------------------
   //6. reevaluating number of curves
