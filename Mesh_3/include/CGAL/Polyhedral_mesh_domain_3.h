@@ -67,6 +67,8 @@
 // default)
 #include <CGAL/internal/Mesh_3/Handle_IO_for_pair_of_int.h>
 
+#include <CGAL/internal/Mesh_3/indices_management.h>
+
 namespace CGAL {
 
 namespace Mesh_3 {
