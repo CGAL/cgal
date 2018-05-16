@@ -71,7 +71,6 @@ BOOST_PARAMETER_NAME( (mark, tag) mark_)
 
 namespace CGAL
 {
-  using namespace parameters;
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
