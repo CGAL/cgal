@@ -26,6 +26,8 @@
 #ifndef CGAL_INTERNAL_MESH_3_GET_INDEX_3_H
 #define CGAL_INTERNAL_MESH_3_GET_INDEX_3_H
 
+#include <CGAL/license/Mesh_3.h>
+
 #include <CGAL/internal/Mesh_3/indices_management.h>
 
 #endif // CGAL_INTERNAL_MESH_3_GET_INDEX_3_H
