@@ -55,7 +55,7 @@ public:
     { // replace with iterator_adaptor implementation -JGS
       typedef std::forward_iterator_tag Category;
       typedef ArrayBinaryTreeNode value_type;
-      typedef size_type difference_type
+      typedef size_type difference_type;
       typedef ArrayBinaryTreeNode* Pointer;
       typedef ArrayBinaryTreeNode& Reference;
 
