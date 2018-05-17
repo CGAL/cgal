@@ -35,25 +35,10 @@
 
 #include <fstream>
 
-#if ( defined( __clang__ ) || (BOOST_GCC >= 40600 ) ) && (BOOST_VERSION < 106000)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-variable"
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
-namespace CGAL
-{
-namespace parameters
-{
-  
-
-BOOST_PARAMETER_NAME( cdt )
-BOOST_PARAMETER_NAME( (seeds_begin, tag) seeds_begin_)
-BOOST_PARAMETER_NAME( (seeds_end, tag) seeds_end_)
-BOOST_PARAMETER_NAME( (mark, tag) mark_)
-
-}//end namespace parameters
-}//end namespace CGAL
+// see <CGAL/config.h>
+CGAL_PRAGMA_DIAG_PUSH
+// see <CGAL/boost/parameter.h>
+CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 
 
 namespace CGAL
@@ -165,11 +150,7 @@ namespace CGAL
 
 } //end namespace CGAL
 
-//CGAL_PRAGMA_DIAG_POP
-#if ( defined( __clang__ ) || (BOOST_GCC >= 40600 ) ) && (BOOST_VERSION < 106000)
-#pragma GCC diagnostic pop
-#endif
-
+CGAL_PRAGMA_DIAG_POP
 
 #include <CGAL/enable_warnings.h>
 
