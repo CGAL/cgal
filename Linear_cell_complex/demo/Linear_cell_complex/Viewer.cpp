@@ -24,6 +24,7 @@
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/bounding_box.h>
 #include <CGAL/Qt/CreateOpenGLContext.h>
+#include <CGAL/Qt/viewer_actions.h>
 
 #include <CGAL/Qt/vec.h>
 #include <QDebug>
