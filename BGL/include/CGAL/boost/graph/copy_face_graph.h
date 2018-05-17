@@ -229,15 +229,26 @@ struct Output_iterator_functor
   
 };
 
+struct Emptyset_iterator_functor
+{
+  Emptyset_iterator_functor()
+  {}
+              
+  template <class T>
+  void operator()(const T&)
+  {}
+  
+};
+
 template<typename PMAP>
 Output_iterator_functor<PMAP> make_functor(PMAP map)
 {
   return Output_iterator_functor<PMAP>(map);
 }
 
-Emptyset_iterator make_functor(const boost::param_not_found&)
+Emptyset_iterator_functor make_functor(const boost::param_not_found&)
 {
-  return Emptyset_iterator();
+  return Emptyset_iterator_functor();
 }
 
 
