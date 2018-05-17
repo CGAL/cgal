@@ -19,7 +19,6 @@
 //
 // Author(s)     : Konstantinos Katrioplas
 
-
 #ifndef CGAL_EVOLUTION_H
 #define CGAL_EVOLUTION_H
 
@@ -34,7 +33,7 @@ namespace Optimal_bounding_box {
 template <typename Linear_algebra_traits>
 class Evolution
 {
-  typedef typename Linear_algebra_traits::MatrixXd MatrixXd;
+  typedef typename Linear_algebra_traits::MatrixX3d MatrixXd;
   typedef typename Linear_algebra_traits::Matrix3d Matrix3d;
   typedef typename Linear_algebra_traits::Vector3d Vector3d;
 
@@ -280,14 +279,14 @@ public:
       //std::cout << "pop after nelder mead: " << std::endl;
       //pop.show_population();
       //std::cout << std::endl;
-      Fitness_map<Matrix3d, MatrixXd> fitness_map_debug(population, point_data);
+      Fitness_map<Linear_algebra_traits, Matrix3d, MatrixXd> fitness_map_debug(population, point_data);
       Matrix3d R_now = fitness_map_debug.get_best();
       std::cout << "det= " << Linear_algebra_traits::determinant(R_now) << std::endl;
   #endif
 
       // stopping criteria
-      Fitness_map<Matrix3d, MatrixXd> fitness_map(population, point_data);
-      new_fit_value = fitness_map.get_best_fitness_value(point_data);
+      Fitness_map<Linear_algebra_traits, Matrix3d, MatrixXd> fitness_map(population, point_data);
+      new_fit_value = fitness_map.get_best_fitness_value();
       double difference = new_fit_value - prev_fit_value;
       if(abs(difference) < tolerance * new_fit_value)
         stale++;
@@ -301,7 +300,7 @@ public:
 
   const Matrix3d get_best()
   {
-    Fitness_map<Matrix3d, MatrixXd> fitness_map(population, point_data);
+    Fitness_map<Linear_algebra_traits, Matrix3d, MatrixXd> fitness_map(population, point_data);
     return fitness_map.get_best();
   }
 

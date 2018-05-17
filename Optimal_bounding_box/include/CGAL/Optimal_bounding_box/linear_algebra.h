@@ -38,26 +38,6 @@ namespace Optimal_bounding_box {
 typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
 #endif
 
-/*
-template<typename Matrix>
-void qr_factorization(Matrix& A, Matrix& Q)
-{
-  Eigen::HouseholderQR<Matrix> qr(A);
-  Q = qr.householderQ();
-}
-
-template<typename Matrix>
-void qr_factorization(std::vector<Matrix>& Simplex)
-{
-  for(int i = 0; i < Simplex.size(); ++i)
-  {
-    Eigen::HouseholderQR<Matrix> qr(Simplex[i]);
-    Matrix Q = qr.householderQ();
-    Simplex[i] = Q;
-  }
-}
-*/
-
 template <typename Matrix>
 const Matrix reflection(const Matrix& S_centroid, const Matrix& S_worst)
 {
@@ -92,19 +72,15 @@ Matrix mean(const Matrix& m1, const Matrix& m2)
   CGAL_assertion(m2.cols() == 3);
 
   Matrix reduction = 0.5 * m1 + 0.5 * m2;
-  //Matrix Q;
-  //reduction.qr_factorization(Q);
   Matrix Q = Linear_algebra_traits::qr_factorization(reduction);
   double det = Linear_algebra_traits::determinant(Q);
   return Q / det;
 }
 
 template <typename Matrix>
-const Matrix centroid(Matrix& S1, Matrix& S2, Matrix& S3) // const?
+const Matrix centroid(const Matrix& S1, const Matrix& S2, const Matrix& S3)
 {
   Matrix mean = (S1 + S2 + S3) / 3.0;
-  //Matrix Q;
-  //mean.qr_factorization(Q);
   Matrix Q = Linear_algebra_traits::qr_factorization(mean);
   double det = Linear_algebra_traits::determinant(Q);
   return Q / det;

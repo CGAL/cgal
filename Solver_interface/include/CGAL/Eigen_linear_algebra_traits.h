@@ -38,7 +38,6 @@ class Eigen_dense_matrix
 {
 public:
   typedef Eigen::Matrix<T, D1, D2> EigenType;
-  typedef Eigen::Matrix<T, 3, 3> EigenType3;
 
   Eigen_dense_matrix(std::size_t nrows, std::size_t ncols)
     : m_matrix(static_cast<int>(nrows), static_cast<int>(ncols))
@@ -94,7 +93,6 @@ template <typename T, int D = Eigen::Dynamic>
 class Eigen_dense_vector
 {
 private:
-  //typedef Eigen::Vector3d EigenType;
   typedef Eigen::Matrix<T, D, 1> EigenType;
 
 public:
@@ -119,11 +117,14 @@ public:
   // dynamic size at run time
   typedef CGAL::Eigen_dense_matrix<NT> MatrixXd;
 
+  // dynamic rows in run time, fixed cols in compile time
+  typedef CGAL::Eigen_dense_matrix<NT, Eigen::Dynamic, 3> MatrixX3d;
+
   // fixed at compile time
   typedef CGAL::Eigen_dense_matrix<NT, 3, 3> Matrix3d;
 
   // fixed at compile time
-  typedef CGAL::Eigen_dense_vector<NT> Vector3d;
+  typedef CGAL::Eigen_dense_vector<NT, 3> Vector3d;
 
   template <class Matrix>
   static Matrix transpose(const Matrix& mat)
@@ -155,11 +156,11 @@ public:
   }
 
   template <class NT, int D1, int D2>
-  static CGAL::Eigen_dense_vector<NT, D1> row(CGAL::Eigen_dense_matrix<NT, D1, D2>& A, int i_)
+  static CGAL::Eigen_dense_vector<NT, 3> row(const CGAL::Eigen_dense_matrix<NT, D1, D2>& A,
+                                              int i)
   {
-    return CGAL::Eigen_dense_vector<NT, D1>(A.m_matrix.row(i_));
+    return CGAL::Eigen_dense_vector<NT, 3>(A.m_matrix.row(i));
   }
-
 };
 
 
@@ -214,7 +215,7 @@ const CGAL::Eigen_dense_matrix<NT, D1, D2> operator/ (const double& scalar,
   return CGAL::Eigen_dense_matrix<NT, D1, D2> (scalar / A.m_matrix);
 }
 
-// addition - subtraction
+// addition
 template <class NT, int D1, int D2>
 const CGAL::Eigen_dense_matrix<NT, D1, D2> operator+ (const CGAL::Eigen_dense_matrix<NT, D1, D2> & A,
                                                       const CGAL::Eigen_dense_matrix<NT, D1, D2> & B)
@@ -224,9 +225,10 @@ const CGAL::Eigen_dense_matrix<NT, D1, D2> operator+ (const CGAL::Eigen_dense_ma
 
 // vector - matrix multiplication
 template <class NT, int D1, int D2>
-const Eigen_dense_vector<NT> operator* (const CGAL::Eigen_dense_matrix<NT, D1, D2>& A, CGAL::Eigen_dense_vector<NT>& V)
+const Eigen_dense_vector<NT, D1> operator* (const CGAL::Eigen_dense_matrix<NT, D1, D2>& A,
+                                            const CGAL::Eigen_dense_vector<NT, D2>& V)
 {
-  return Eigen_dense_vector<NT>(A.m_matrix * V.m_vector);
+  return Eigen_dense_vector<NT, D1>(A.m_matrix * V.m_vector);
 }
 
 

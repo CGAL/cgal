@@ -27,14 +27,11 @@
 #include <CGAL/Optimal_bounding_box/population.h>
 #include <limits>
 
-#include <CGAL/Eigen_linear_algebra_traits.h>
-
 namespace CGAL {
 namespace Optimal_bounding_box {
 
-template <typename Linear_algebra_traits>
-double compute_fitness(const typename Linear_algebra_traits::Matrix3d& R,
-                             typename Linear_algebra_traits::MatrixXd& data)
+template <typename Linear_algebra_traits, typename Vertex, typename Matrix>
+double compute_fitness(const Vertex& R, const Matrix& data)
 {
   // R: rotation matrix
   CGAL_assertion(R.cols() == 3);
@@ -73,11 +70,9 @@ double compute_fitness(const typename Linear_algebra_traits::Matrix3d& R,
   return ((xmax - xmin) * (ymax - ymin) * (zmax - zmin));
 }
 
-template <typename Vertex, typename Matrix>
+template <typename Linear_algebra_traits, typename Vertex, typename Matrix>
 struct Fitness_map
 {
-  typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits; // to be added as a parameter
-
   Fitness_map(Population<Vertex>& p, Matrix& points) : pop(p), points(points)
   {}
 
@@ -103,14 +98,14 @@ struct Fitness_map
     return pop[simplex_id][vertex_id];
   }
 
-  double get_best_fitness_value(Matrix& data)
+  double get_best_fitness_value()
   {
     const Vertex best_mat = get_best();
-    return compute_fitness<Linear_algebra_traits>(best_mat, data);
+    return compute_fitness<Linear_algebra_traits>(best_mat, points);
   }
 
   Population<Vertex>& pop;
-  Matrix& points;
+  const Matrix& points;
 };
 
 }} // end namespaces

@@ -1,7 +1,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/convex_hull_3.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Optimal_bounding_box/population.h>
 #include <CGAL/Optimal_bounding_box/obb.h>
+#include <CGAL/Eigen_linear_algebra_traits.h>
 #include <iostream>
 #include <fstream>
 
@@ -41,6 +44,7 @@ void bench_finding_obb(std::string fname)
 {
   std::ifstream input(fname);
 
+  CGAL::Eigen_linear_algebra_traits la_traits;
   std::vector<K::Point_3> sm_points;
 
   // import a mesh
@@ -53,26 +57,29 @@ void bench_finding_obb(std::string fname)
   gather_mesh_points(mesh, sm_points);
 
   CGAL::Timer timer;
+
+  // 1) measure convex hull calculation
   timer.start();
-
-  CGAL::Eigen_linear_algebra_traits la_traits;
-
-  // 1) using convex hull
-  std::vector<K::Point_3> obb_points1;
-  CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points1, la_traits, true);
-
+  CGAL::Polyhedron_3<K> poly;
+  convex_hull_3(sm_points.begin(), sm_points.end(), poly);
+  std::vector<K::Point_3> ch_points(poly.points_begin(), poly.points_end());
   timer.stop();
-  std::cout << "found obb with convex hull: " << timer.time() << " seconds\n";
+  std::cout << "takes : " << timer.time() << " seconds to find the convex hull\n";
 
+  // 2) using convex hull
   timer.reset();
   timer.start();
+  std::vector<K::Point_3> obb_points1;
+  CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points1, la_traits, true);
+  timer.stop();
+  std::cout << "found obb using convex hull: " << timer.time() << " seconds\n";
 
-  // 2) without convex hull
+  // 3) without convex hull
+  timer.reset();
+  timer.start();
   std::vector<K::Point_3> obb_points2;
   CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points2, la_traits, false);
-
   timer.stop();
-
   std::cout << "found obb without convex hull: " <<  timer.time() << " seconds\n";
   timer.reset();
 

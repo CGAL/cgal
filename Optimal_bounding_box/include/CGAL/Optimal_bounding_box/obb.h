@@ -49,8 +49,8 @@ typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
 
 
 // works on matrices only
-template <typename Vertex, typename Matrix_dynamic, typename Matrix_fixed>
-void post_processing(const Matrix_dynamic& points, Vertex& R, Matrix_fixed& obb)
+template <typename Vertex, typename Matrix>
+void post_processing(const Matrix& points, Vertex& R, Matrix& obb)
 {
   CGAL_assertion(points.cols() == 3);
   CGAL_assertion(R.rows() == 3);
@@ -59,7 +59,7 @@ void post_processing(const Matrix_dynamic& points, Vertex& R, Matrix_fixed& obb)
   CGAL_assertion(obb.cols() == 3);
 
   // 1) rotate points with R
-  Matrix_dynamic rotated_points(points.rows(), points.cols());
+  Matrix rotated_points(points.rows(), points.cols());
   rotated_points = points * Linear_algebra_traits::transpose(R);
 
   // 2) get AABB from rotated points
@@ -75,10 +75,8 @@ void post_processing(const Matrix_dynamic& points, Vertex& R, Matrix_fixed& obb)
   bbox = bbox_3(v_points.begin(), v_points.end());
   K::Iso_cuboid_3 ic(bbox);
 
-  Matrix_fixed aabb;
-  // preallocate sanity: if Matrix is not preallocated in compile time
-  if(aabb.cols() != 3 && aabb.rows() != 8)
-    aabb.resize(8, 3);
+  // Matrix is [dynamic, 3] at compile time, so it needs allocation of rows at run time.
+  Matrix aabb(8, 3);
 
   for(std::size_t i = 0; i < 8; ++i)
   {
@@ -104,7 +102,7 @@ void find_obb(std::vector<Point>& points,
   CGAL_assertion(obb_points.size() == 8);
 
   // eigen linear algebra traits
-  typedef typename LinearAlgebraTraits::MatrixXd MatrixXd;
+  typedef typename LinearAlgebraTraits::MatrixX3d MatrixXd;
   typedef typename LinearAlgebraTraits::Matrix3d Matrix3d;
 
   MatrixXd points_mat;
