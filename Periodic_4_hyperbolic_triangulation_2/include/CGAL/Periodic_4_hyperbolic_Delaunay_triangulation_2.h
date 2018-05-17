@@ -100,7 +100,6 @@ namespace CGAL {
 	typedef typename Base::Face_circulator                     Face_circulator;
 	typedef typename Base::Edge_circulator                     Edge_circulator;
 	typedef typename Base::Vertex_circulator                   Vertex_circulator;
-	typedef typename Base::Line_face_circulator                Line_face_circulator;
 	typedef typename GT::Construct_hyperbolic_circumcenter_2   Construct_hyperbolic_circumcenter_2;
 	typedef typename GT::Construct_segment_2 				   Construct_segment_2;
 
@@ -212,17 +211,7 @@ namespace CGAL {
 	  return ret;
 	}
 
-	Face_handle locate(const Point& p, Locate_type& lt, int& li, const Face_handle fh = Face_handle()) const {
-	  Hyperbolic_translation lo;
-	  return this->hyperbolic_locate(p, lt, li, lo, fh);
-	}
-
-	Face_handle locate(const Point& p, const Face_handle fh = Face_handle()) const {
-	  Hyperbolic_translation lo;
-	  Locate_type lt;
-	  int li;
-	  return this->hyperbolic_locate(p, lt, li, lo, fh);
-	}
+	
 
  	
  	template<class OutputFaceIterator>
@@ -243,19 +232,9 @@ namespace CGAL {
 				  	OutputFaceIterator  it,
 				  	bool store_translations = false ) const;
 
-	Face_handle periodic_euclidean_locate(const Point& p, Hyperbolic_translation& o, const Face_handle fh = Face_handle()) const {
-		Locate_type lt;
-		int li;
-		return this->euclidean_locate(p, lt, li, o, fh);
-	}
+	
 
-	Face_handle periodic_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_translation& lo, const Face_handle fh = Face_handle()) const {
-	  return this->hyperbolic_locate(p, lt, li, lo, fh);
-	}
-
-	Face_handle periodic_locate(const Point& p, Hyperbolic_translation& lo, const Face_handle fh = Face_handle()) const {
-	  return this->hyperbolic_locate(p, lo, fh);
-	}
+	
 
 	Point get_dummy_point(int i) const {
 		CGAL_triangulation_precondition(0 <= i && i <= dummy_points.size());

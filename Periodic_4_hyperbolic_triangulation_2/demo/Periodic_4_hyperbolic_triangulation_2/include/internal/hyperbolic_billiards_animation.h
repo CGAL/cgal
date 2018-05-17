@@ -39,7 +39,7 @@ MainWindow::initialize_animation_parameters() {
     Point img = get_image(source, target, time);
     std::cout << "img = " << img << std::endl;
     std::cout << "last_loc_translation = " << last_loc_translation << std::endl;
-	last_location = dt.periodic_locate(img, last_loc_translation);
+	last_location = dt.hyperbolic_periodic_locate(img, last_loc_translation);
 }
 
 
@@ -165,7 +165,7 @@ MainWindow::animate() {
     std::cout << "  INSIDE!" << std::endl;
     Locate_type lt;
     int li;
-    last_location = dt.periodic_locate(p, lt, li, last_loc_translation, last_location);
+    last_location = dt.hyperbolic_periodic_locate(p, lt, li, last_loc_translation, last_location);
     dgi->setMovingPoint(p);
     dgi->setSource(source);
     dgi->setTarget(target);

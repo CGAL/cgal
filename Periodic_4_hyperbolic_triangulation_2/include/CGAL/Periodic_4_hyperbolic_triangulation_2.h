@@ -62,21 +62,14 @@ template < 	class GT,
 				Periodic_4_hyperbolic_triangulation_face_base_2<GT>
 			>
 		>
-class Periodic_4_hyperbolic_triangulation_2 : public Triangulation_2<GT, TDS> {
+class Periodic_4_hyperbolic_triangulation_2 {
 
 	typedef Periodic_4_hyperbolic_triangulation_2<GT, TDS> 		Self;
-	typedef Triangulation_2<GT, TDS>                          	Base;
 
 private:
 	typedef typename GT::FT                      				FT;
 
 public:
-
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2  
-  using Base::cw;
-  using Base::ccw;
-  using Base::geom_traits;
-#endif
 
 	typedef GT 										        Geom_traits;
 	typedef TDS 									        Triangulation_data_structure;
@@ -112,7 +105,11 @@ public:
 	typedef Point                                			value_type;
 	typedef const value_type&                    			const_reference;
 
-	typedef typename Base::Locate_type 						Locate_type;
+	enum Locate_type {
+		VERTEX = 0,
+		EDGE,
+		FACE
+	};
 
 protected:
 	GT       _gt;
@@ -148,6 +145,14 @@ public:
 		init_tds();
 	}
 
+
+	int cw(int i) const {
+		return _tds.cw(i);
+	}
+
+	int ccw(int i) const {
+		return _tds.ccw(i);
+	}
 
 
 private:
@@ -372,8 +377,6 @@ protected:
 	Face_handle inexact_euclidean_locate(const Point& p, Hyperbolic_translation& o, Face_handle fh = Face_handle()) const; 
 
 
-public:
-
 	Face_handle euclidean_locate(const Point& p, 
 								 Locate_type& lt, 
 								 int& li, 
@@ -388,18 +391,31 @@ public:
 		return euclidean_locate(p, lt, li, lo, f);		
 	}
 
-	Face_handle hyperbolic_locate(const Point& p, 
-								  Locate_type& lt, 
-								  int& li, 
-								  Hyperbolic_translation& lo, 
-								  Face_handle start = Face_handle()) const;
+public:
+
+	Face_handle hyperbolic_periodic_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_translation& lo, const Face_handle fh = Face_handle()) const; 
+
+	Face_handle hyperbolic_periodic_locate(const Point& p, Hyperbolic_translation& lo, const Face_handle fh = Face_handle()) const {
+	  Locate_type lt;
+	  int li;
+	  return hyperbolic_periodic_locate(p, lt, li, lo, fh);
+	}
+
 
 	Face_handle hyperbolic_locate(const Point& p, 
-								  Hyperbolic_translation& lo, 
+								  Locate_type& lt, 
+								  int& li,
 								  Face_handle start = Face_handle()) const {
+		Hyperbolic_translation lo;
+		return hyperbolic_periodic_locate(p, lt, li, lo, start);
+	}
+
+	Face_handle hyperbolic_locate(const Point& p, 
+								  Face_handle start = Face_handle()) const {
+		Hyperbolic_translation lo;
 		Locate_type lt;
 		int li;
-		return hyperbolic_locate(p, lt, li, lo, start);
+		return hyperbolic_periodic_locate(p, lt, li, lo, start);
 	}
 
 
@@ -820,19 +836,19 @@ euclidean_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_translatio
 	Point p1 = construct_point(f->vertex(1)->point(), loff * f->translation(1));
 	Point p2 = construct_point(f->vertex(2)->point(), loff * f->translation(2));
 
-	lt = Base::FACE;
+	lt = FACE;
 	li = -1;
 
 	if (p == p0) {
-		lt = Base::VERTEX;
+		lt = VERTEX;
 		li = 0;
 	} else {
 		if (p == p1) {
-			lt = Base::VERTEX;
+			lt = VERTEX;
 			li = 1;
 		} else {
 			if (p == p2) {
-				lt = Base::VERTEX;
+				lt = VERTEX;
 				li = 2;
 			}
 		}
@@ -846,7 +862,7 @@ euclidean_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_translatio
 
 template <class GT, class TDS>
 typename TDS::Face_handle Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
-hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_translation& lo, Face_handle start) const
+hyperbolic_periodic_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_translation& lo, Face_handle start) const
 {
 	// Get a hint of where the point is located. It's either in lf or in one of its neighbors.
 	Face_handle lf = euclidean_locate(p, lt, li, lo, start);
@@ -855,7 +871,7 @@ hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_translati
     }
     
 	// The input point has been located in a vertex, so we can just return here, nothing more to do.
-	if (lt == Base::VERTEX) {
+	if (lt == VERTEX) {
 		return lf;
 	}
 
@@ -868,9 +884,9 @@ hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_translati
     
 	Bounded_side bs = sf(p0, p1, p2, p, li);
 	if (bs == ON_BOUNDED_SIDE) {
-		lt = Base::FACE;
+		lt = FACE;
 	} else if (bs == ON_BOUNDARY) {
-		lt = Base::EDGE;
+		lt = EDGE;
 	} else {
 		// Here we have to find the face containing the point, it's one of the neighbors of lf.
 		Hyperbolic_translation tr = lo * lf->neighbor_translation(0);
@@ -882,7 +898,7 @@ hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_translati
 		if (bs1 == ON_BOUNDED_SIDE) {
 			lo = tr;
 			lf = nf;
-			lt = Base::FACE;
+			lt = FACE;
 		} else {
 			tr = lo * lf->neighbor_translation(1);
 			nf = lf->neighbor(1);
@@ -893,7 +909,7 @@ hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_translati
 			if (bs2 == ON_BOUNDED_SIDE) {
 				lo = tr;
 				lf = nf;
-				lt = Base::FACE;
+				lt = FACE;
 			} else {
 				tr = lo * lf->neighbor_translation(2);
 				nf = lf->neighbor(2);
@@ -904,7 +920,7 @@ hyperbolic_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_translati
 				CGAL_triangulation_assertion(bs3 == ON_BOUNDED_SIDE);
 				lo = tr;
 				lf = nf;
-				lt = Base::FACE;
+				lt = FACE;
 			}
 		}
 	}

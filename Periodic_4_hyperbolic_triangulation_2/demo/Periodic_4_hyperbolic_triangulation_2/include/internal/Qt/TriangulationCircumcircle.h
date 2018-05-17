@@ -98,7 +98,7 @@ TriangulationCircumcircle<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
   }
   typename T::Point p = typename T::Point(event->scenePos().x(), event->scenePos().y());
 
-  fh = dt->locate(p);
+  fh = dt->hyperbolic_locate(p);
   if (fh != typename T::Face_handle()) {
     hint = fh->vertex(0);
     typename T::Point p0, p1, p2;

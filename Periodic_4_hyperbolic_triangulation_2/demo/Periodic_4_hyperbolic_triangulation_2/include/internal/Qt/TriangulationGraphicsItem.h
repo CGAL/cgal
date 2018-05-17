@@ -138,7 +138,7 @@ public:
     target = tgt;
   }
 
-  void setMovingPoint(typename T::Point_2 mp) {
+  void setMovingPoint(typename T::Point mp) {
     this->moving_point = mp;
     for (typename std::list<typename T::Face_handle>::iterator it = cfaces.begin(); it != cfaces.end(); it++) {
       (*it)->tds_data().clear();
@@ -311,7 +311,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
     painterostream = PainterOstream<Geom_traits>(painter);
     int cnt = 0;
     for (typename std::list<typename T::Face_handle>::iterator it = cfaces.begin(); it != cfaces.end(); it++) {
-      painterostream << t->triangle(*it);
+      painterostream << t->construct_triangle(*it);
     }
     painter->setPen(oldpen);
   }
