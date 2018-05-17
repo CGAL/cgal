@@ -156,10 +156,10 @@ public:
   }
 
   template <class NT, int D1, int D2>
-  static CGAL::Eigen_dense_vector<NT, 3> row(const CGAL::Eigen_dense_matrix<NT, D1, D2>& A,
+  static CGAL::Eigen_dense_vector<NT, D2> row(const CGAL::Eigen_dense_matrix<NT, D1, D2>& A,
                                               int i)
   {
-    return CGAL::Eigen_dense_vector<NT, 3>(A.m_matrix.row(i));
+    return CGAL::Eigen_dense_vector<NT, D2>(A.m_matrix.row(i));
   }
 };
 
