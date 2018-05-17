@@ -15,6 +15,11 @@
 #include <CGAL/Intersections_2/Iso_rectangle_2_Line_2.h>
 #include <CGAL/Intersections_2/Iso_rectangle_2_Ray_2.h>
 
+#include <CGAL/Intersections_2/Bbox_2_Circle_2.h>
+#include <CGAL/Intersections_2/Bbox_2_Point_2.h>
+#include <CGAL/Intersections_2/Circle_2_Iso_rectangle_2.h>
+#include <CGAL/Intersections_2/Circle_2_Point_2.h>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
 
@@ -65,6 +70,7 @@ struct Test {
   typedef CGAL::Ray_2< K >            R;
   typedef CGAL::Triangle_2< K >       T;
   typedef CGAL::Iso_rectangle_2< K >  Rec;
+  typedef CGAL::Circle_2< K >         C;
   typedef std::vector<P>              Pol;
 
 
@@ -152,6 +158,17 @@ struct Test {
     return P(to_nt(x*w), to_nt(y*w), to_nt(w));
   }
 
+  void B_P()
+  {
+    CGAL::Bbox_2 bb(0,0,10,10);
+    P p(1,1), bl(0,0), tr(10,10);
+    C c(p,1);
+    Rec r(bl,tr);
+    check_intersection(bb,p,p,true);
+    check_intersection(c,p,p,true);
+    assert(do_intersect(r,c));
+  }
+  
   void L_L()
   {
     std::cout << "Line - Line\n";
@@ -330,6 +347,7 @@ check_no_intersection  (L(p(0, 0), p(10,10)), L(p(8,7), p(1, 0)));
   void run()
   {
     std::cout << "2D Intersection tests\n";
+    B_P();
     L_L();
     S_S();
     R_R();

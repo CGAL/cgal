@@ -54,4 +54,10 @@
 #include <CGAL/Intersections_2/Circle_2_Circle_2.h>
 #include <CGAL/Intersections_2/Circle_2_Line_2.h>
 
+#include <CGAL/Intersections_2/Bbox_2_Circle_2.h>
+#include <CGAL/Intersections_2/Bbox_2_Point_2.h>
+#include <CGAL/Intersections_2/Circle_2_Iso_rectangle_2.h>
+#include <CGAL/Intersections_2/Circle_2_Point_2.h>
+
+
 #endif // CGAL_INTERSECTION_2_H
