@@ -33,6 +33,19 @@ Release date: September 2018
     to reflect the real needs of the code (some types and operators were used
     in the code but did not appear in the concepts).
 
+### CGAL and the Boost Graph Library (BGL)
+
+-   The function `copy_face_graph()` now uses named parameters, some allowing it 
+    to use property maps instead of output iterators. 
+
+-   Addition of the following named parameters : 
+    -   vertex_to_vertex_output_iterator
+    -   halfedge_to_halfedge_output_iterator
+    -   face_to_face_output_iterator
+    -   vertex_to_vertex_map
+    -   halfedge_to_halfedge_map
+    -   face_to_face_map
+
 Release 4.12
 ------------
 
