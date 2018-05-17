@@ -23,6 +23,7 @@
 
 #include <CGAL/config.h>
 
+
 #ifdef BOOST_PARAMETER_MAX_ARITY
 #  if (BOOST_PARAMETER_MAX_ARITY < 12)
 #    error "BOOST_PARAMETER_MAX_ARITY must be at least 12 for CGAL::Mesh_3"
