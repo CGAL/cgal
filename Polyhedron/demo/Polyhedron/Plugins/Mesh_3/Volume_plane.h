@@ -16,6 +16,7 @@
 #include <QOpenGLShaderProgram>
 #include <QMouseEvent>
 #include <CGAL/Three/Viewer_interface.h>
+#include <CGAL/Qt/constraint.h>
 #include <CGAL/Qt/debug.h>
 
 using namespace CGAL::Three;

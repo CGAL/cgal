@@ -4,6 +4,7 @@
 #include "Scene_edit_polyhedron_item.h"
 #include "Scene_spheres_item.h"
 #include <CGAL/Three/Viewer_interface.h>
+#include <CGAL/Qt/constraint.h>
 #include <boost/foreach.hpp>
 #include <algorithm>
 #include <QTime>

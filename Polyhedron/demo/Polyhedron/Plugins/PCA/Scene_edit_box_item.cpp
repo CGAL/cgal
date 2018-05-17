@@ -2,6 +2,7 @@
 #include <QApplication>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Qt/manipulatedFrame.h>
+#include <CGAL/Qt/constraint.h>
 #include <QMouseEvent>
 #include <QOpenGLFramebufferObject>
 #include <QOpenGLShaderProgram>
