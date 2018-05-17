@@ -34,7 +34,10 @@ bench(const char* fname)
   std::cout << "number of points= " << sm_points.size() << std::endl;
 
   CGAL::Eigen_linear_algebra_traits la_traits;
-  CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points, la_traits, false);
+
+  // use convex hull - > true
+  // no convex hull - > false
+  CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points, la_traits, false); 
 
   std::cout << "done" << '\n';
 

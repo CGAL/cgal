@@ -24,6 +24,10 @@ void bench_finding_obb(std::string fname)
     exit(1);
   }
 
+  // export some times
+  std::ofstream outt("data/times.txt");
+  outt << "nb_vertices "<<  "with_ch " << "without_ch" << std::endl;
+
   CGAL::Timer timer;
   std::size_t measurements = 4;
   CGAL::Eigen_linear_algebra_traits la_traits;
@@ -32,31 +36,32 @@ void bench_finding_obb(std::string fname)
   {
     std::cout << "#vertices= " << vertices(mesh).size() << " |";
 
-    timer.start();
-
     // 1) using convex hull
+    timer.start();
     CGAL::Surface_mesh<K::Point_3> obb_mesh1;
     CGAL::Optimal_bounding_box::find_obb(mesh, obb_mesh1, la_traits, true);
-
     timer.stop();
+    double t_ch = timer.time();
     std::cout << " with ch: " << timer.time() << " s |";
 
+    // 2) without convex hull
     timer.reset();
     timer.start();
-
-    // 2) without convex hull
     CGAL::Surface_mesh<K::Point_3> obb_mesh2;
     CGAL::Optimal_bounding_box::find_obb(mesh, obb_mesh2, la_traits, false);
-
     timer.stop();
-
+    double t_no_ch = timer.time();
     std::cout << " without ch: " <<  timer.time() << " s\n";
     timer.reset();
+
+    outt << vertices(mesh).size() << " " << t_ch << " " << t_no_ch << std::endl;
 
     // 3) subdivision
     CGAL::Subdivision_method_3::CatmullClark_subdivision(mesh,
                                       CGAL::parameters::number_of_iterations(1));
   }
+
+  outt.close();
 
 
 #ifdef OBB_DEBUG_BENCHMARK
