@@ -3225,7 +3225,7 @@ void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Ve
   if(std::sqrt((dir.x()*dir.x()+dir.y()*dir.y())) > 1)
       angle = 90.0f;
   else
-      angle =acos(dir.y()/std::sqrt(dir.x()*dir.x()+dir.y()*dir.y()+dir.z()*dir.z()))*180.0/M_PI;
+      angle =acos(dir.y()/std::sqrt(dir.x()*dir.x()+dir.y()*dir.y()+dir.z()*dir.z()))*180.0/CGAL_PI;
 
   QVector3D axis;
   axis = QVector3D(dir.z(), 0, -dir.x());
@@ -3235,7 +3235,7 @@ void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Ve
   const float Rf = static_cast<float>(R);
   for(int d = 0; d<360; d+= 360/prec)
   {
-      float D = (float) (d * M_PI / 180.);
+      float D = (float) (d * CGAL_PI / 180.);
       float a = (float) std::atan(Rf / 0.33);
       QVector4D p(0., 1., 0, 1.);
       QVector4D n(Rf*sin(D), sin(a), Rf*cos(D), 1.);
@@ -3268,7 +3268,7 @@ void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Ve
       data.push_back((float)color.y);
       data.push_back((float)color.z);
       //point C1
-      D = (d+360/prec)*M_PI/180.0;
+      D = (d+360/prec)*CGAL_PI/180.0;
       p = QVector4D(Rf* sin(D), 0.66f, Rf* cos(D), 1.f);
       n = QVector4D(sin(D), sin(a), cos(D), 1.0);
       pR = mat*p;
@@ -3292,7 +3292,7 @@ void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Ve
   for(int d = 0; d<360; d+= 360/prec)
   {
       //point A1
-      double D = d*M_PI/180.0;
+      double D = d*CGAL_PI/180.0;
       QVector4D p(rf*sin(D), 0.66f, rf*cos(D), 1.f);
       QVector4D n(sin(D), 0.f, cos(D), 1.f);
       QVector4D pR = mat*p;
@@ -3324,7 +3324,7 @@ void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Ve
       data.push_back(color.y);
       data.push_back(color.z);
         //point C1
-      D = (d+360/prec)*M_PI/180.0;
+      D = (d+360/prec)*CGAL_PI/180.0;
       p = QVector4D(rf * sin(D),0,rf*cos(D), 1.0);
       n = QVector4D(sin(D), 0, cos(D), 1.0);
       pR = mat*p;
@@ -3339,7 +3339,7 @@ void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Ve
       data.push_back(color.y);
       data.push_back(color.z);
       //point A2
-      D = (d+360/prec)*M_PI/180.0;
+      D = (d+360/prec)*CGAL_PI/180.0;
 
       p = QVector4D(rf * sin(D),0,rf*cos(D), 1.0);
       n = QVector4D(sin(D), 0, cos(D), 1.0);
@@ -3369,7 +3369,7 @@ void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Ve
       data.push_back((float)color.y);
       data.push_back((float)color.z);
       //point C2
-      D = d*M_PI/180.0;
+      D = d*CGAL_PI/180.0;
       p = QVector4D(rf * sin(D), 0.66f, rf*cos(D), 1.f);
       n = QVector4D(sin(D), 0.f, cos(D), 1.f);
       pR = mat*p;

@@ -48,7 +48,7 @@ using namespace CGAL::qglviewer;
  focusDistance() documentations for default stereo parameter values. */
 CGAL_INLINE_FUNCTION
 Camera::Camera(QObject *parent)
-    : frame_(NULL), fieldOfView_(M_PI / 4.0), modelViewMatrixIsUpToDate_(false),
+    : frame_(NULL), fieldOfView_(CGAL_PI / 4.0), modelViewMatrixIsUpToDate_(false),
       projectionMatrixIsUpToDate_(false) {
   setParent(parent);
   // #CONNECTION# Camera copy constructor
@@ -394,7 +394,7 @@ void Camera::computeProjectionMatrix() const {
     projectionMatrix_[11] = -1.0;
     projectionMatrix_[14] = 2.0 * ZNear * ZFar / (ZNear - ZFar);
     projectionMatrix_[15] = 0.0;
-    // same as gluPerspective( 180.0*fieldOfView()/M_PI, aspectRatio(), zNear(),
+    // same as gluPerspective( 180.0*fieldOfView()/CGAL_PI, aspectRatio(), zNear(),
     // zFar() );
     break;
   }
@@ -889,7 +889,7 @@ qreal Camera::pixelGLRatio(const Vec &position) const {
  See the (soon available) shadowMap contribution example for a practical
  implementation.
 
- \attention The fieldOfView() is clamped to M_PI/2.0. This happens when the
+ \attention The fieldOfView() is clamped to CGAL_PI/2.0. This happens when the
  Camera is at a distance lower than sqrt(2.0) * sceneRadius() from the
  sceneCenter(). It optimizes the shadow map resolution, although it may miss
  some parts of the scene. */
@@ -898,7 +898,7 @@ void Camera::setFOVToFitScene() {
   if (distanceToSceneCenter() > sqrt(2.0) * sceneRadius())
     setFieldOfView(2.0 * asin(sceneRadius() / distanceToSceneCenter()));
   else
-    setFieldOfView(M_PI / 2.0);
+    setFieldOfView(CGAL_PI / 2.0);
 }
 
 /*! Makes the Camera smoothly zoom on the pointUnderPixel() \p pixel.
@@ -2250,7 +2250,7 @@ void Camera::initFromDOMElement(const QDomElement &element) {
   while (!child.isNull()) {
     if (child.tagName() == "Parameters") {
       // #CONNECTION# Default values set in constructor
-      setFieldOfView(DomUtils::qrealFromDom(child, "fieldOfView", M_PI / 4.0));
+      setFieldOfView(DomUtils::qrealFromDom(child, "fieldOfView", CGAL_PI / 4.0));
       setZNearCoefficient(
           DomUtils::qrealFromDom(child, "zNearCoefficient", 0.005));
       setZClippingCoefficient(

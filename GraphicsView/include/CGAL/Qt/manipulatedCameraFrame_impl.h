@@ -30,6 +30,7 @@
 #else
 #define CGAL_INLINE_FUNCTION
 #endif
+#include <CGAL/number_type_config.h>
 #include <CGAL/Qt/manipulatedCameraFrame.h>
 #include <CGAL/Qt/camera.h>
 #include <CGAL/Qt/domUtils.h>
@@ -347,7 +348,7 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
 
   case ROLL: {
     const qreal angle =
-        M_PI * (event->x() - prevPos_.x()) / camera->screenWidth();
+        CGAL_PI * (event->x() - prevPos_.x()) / camera->screenWidth();
     Quaternion rot(Vec(0.0, 0.0, 1.0), angle);
     rotate(rot);
     setSpinningQuaternion(rot);

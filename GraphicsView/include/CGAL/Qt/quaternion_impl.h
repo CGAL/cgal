@@ -30,7 +30,7 @@
 #else
 #define CGAL_INLINE_FUNCTION
 #endif
-
+#include <CGAL/number_type_config.h>
 #include <CGAL/Qt/quaternion.h>
 #include <CGAL/Qt/domUtils.h>
 #include <stdlib.h> // RAND_MAX
@@ -66,7 +66,7 @@ Quaternion::Quaternion(const Vec &from, const Vec &to) {
     qreal angle = asin(sqrt(axisSqNorm / (fromSqNorm * toSqNorm)));
 
     if (from * to < 0.0)
-      angle = M_PI - angle;
+      angle = CGAL_PI - angle;
 
     setAxisAngle(axis, angle);
   }
@@ -190,8 +190,8 @@ void Quaternion::getAxisAngle(Vec &axis, qreal &angle) const {
   if (sinus > 1E-8)
     axis /= sinus;
 
-  if (angle > M_PI) {
-    angle = 2.0 * qreal(M_PI) - angle;
+  if (angle > CGAL_PI) {
+    angle = 2.0 * qreal(CGAL_PI) - angle;
     axis = -axis;
   }
 }
@@ -206,7 +206,7 @@ Vec Quaternion::axis() const {
   const qreal sinus = res.norm();
   if (sinus > 1E-8)
     res /= sinus;
-  return (acos(q[3]) <= M_PI / 2.0) ? res : -res;
+  return (acos(q[3]) <= CGAL_PI / 2.0) ? res : -res;
 }
 
 /*! Returns the angle (in radians) of the rotation represented by the
@@ -219,7 +219,7 @@ Vec Quaternion::axis() const {
 CGAL_INLINE_FUNCTION
 qreal Quaternion::angle() const {
   const qreal angle = 2.0 * acos(q[3]);
-  return (angle <= M_PI) ? angle : 2.0 * M_PI - angle;
+  return (angle <= CGAL_PI) ? angle : 2.0 * CGAL_PI - angle;
 }
 
 /*! Returns an XML \c QDomElement that represents the Quaternion.
@@ -555,7 +555,7 @@ Quaternion Quaternion::randomQuaternion() {
   qreal seed = rand() / (qreal)RAND_MAX;
   qreal r1 = sqrt(1.0 - seed);
   qreal r2 = sqrt(seed);
-  qreal t1 = 2.0 * M_PI * (rand() / (qreal)RAND_MAX);
-  qreal t2 = 2.0 * M_PI * (rand() / (qreal)RAND_MAX);
+  qreal t1 = 2.0 * CGAL_PI * (rand() / (qreal)RAND_MAX);
+  qreal t2 = 2.0 * CGAL_PI * (rand() / (qreal)RAND_MAX);
   return Quaternion(sin(t1) * r1, cos(t1) * r1, sin(t2) * r2, cos(t2) * r2);
 }
