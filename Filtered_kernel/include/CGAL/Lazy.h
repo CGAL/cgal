@@ -726,15 +726,15 @@ public:
 template <typename AT_, typename ET_, typename EFT, typename E2A>
 class Lazy : public Handle
 {
-  template <class Exact_kernel,
-            class Approximate_kernel,
-            class E2A>
+  template <class Exact_kernel_,
+            class Approximate_kernel_,
+            class E2A_>
   friend struct Lazy_kernel;
   
-  template <class E,
-            class A,
-            class E2A,
-            class K>
+  template <class E_,
+            class A_,
+            class E2A_,
+            class K_>
   friend struct Lazy_kernel_base;
   
 public :
