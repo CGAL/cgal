@@ -333,57 +333,14 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                      )
 {
   using boost::choose_param;
-  if (boost::is_default_param(get_param(np1, internal_np::vertex_to_vertex_output_iterator)))
-  {
-    if (!boost::is_default_param(get_param(np1, internal_np::vertex_to_vertex_map))){
-      copy_face_graph(sm, tm, CGAL::parameters::
-                      vertex_to_vertex_output_iterator(
-                        impl::make_functor(get_param(np1, internal_np::vertex_to_vertex_map)))
-                      .halfedge_to_halfedge_output_iterator(get_param(np1, internal_np::halfedge_to_halfedge_output_iterator))
-                      .face_to_face_output_iterator(get_param(np1, internal_np::face_to_face_output_iterator))
-                      .halfedge_to_halfedge_map(get_param(np1, internal_np::halfedge_to_halfedge_map))
-                      .face_to_face_map(get_param(np1, internal_np::face_to_face_map))
-                      ,np2);
-      return;
-    }
-  }
-  if (boost::is_default_param(get_param(np1, internal_np::halfedge_to_halfedge_output_iterator)))
-  {
-    if (!boost::is_default_param(get_param(np1, internal_np::halfedge_to_halfedge_map))){
-      copy_face_graph(sm, tm, CGAL::parameters::
-                      vertex_to_vertex_output_iterator(get_param(np1, internal_np::vertex_to_vertex_output_iterator))
-                      .halfedge_to_halfedge_output_iterator(
-                        impl::make_functor(get_param(np1, internal_np::halfedge_to_halfedge_map)))
-                      .face_to_face_output_iterator(get_param(np1, internal_np::face_to_face_output_iterator))
-                      .vertex_to_vertex_map(get_param(np1, internal_np::vertex_to_vertex_map))
-                      .face_to_face_map(get_param(np1, internal_np::face_to_face_map))
-                      ,np2);
-      return;
-    }
-  }
-  if (boost::is_default_param(get_param(np1, internal_np::face_to_face_output_iterator)))
-  {
-    if (!boost::is_default_param(get_param(np1, internal_np::face_to_face_map)))
-    {
-      copy_face_graph(sm, tm, CGAL::parameters::
-                      vertex_to_vertex_output_iterator(get_param(np1, internal_np::vertex_to_vertex_output_iterator))
-                      .halfedge_to_halfedge_output_iterator(get_param(np1, internal_np::halfedge_to_halfedge_output_iterator))
-                      .face_to_face_output_iterator(
-                        impl::make_functor(get_param(np1, internal_np::face_to_face_map)))
-                      .vertex_to_vertex_map(get_param(np1, internal_np::vertex_to_vertex_map))
-                      .halfedge_to_halfedge_map(get_param(np1, internal_np::halfedge_to_halfedge_map))
-                      ,np2);
-      return;
-    }
-  }
   internal::copy_face_graph(sm, tm,
                             CGAL::graph_has_property<SourceMesh,boost::halfedge_index_t>(),
                             choose_param(get_param(np1, internal_np::vertex_to_vertex_output_iterator),
-                                         Emptyset_iterator()),
+                                         impl::make_functor(get_param(np1, internal_np::vertex_to_vertex_map))),
                             choose_param(get_param(np1, internal_np::halfedge_to_halfedge_output_iterator),
-                                         Emptyset_iterator()),
+                                         impl::make_functor(get_param(np1, internal_np::halfedge_to_halfedge_map))),
                             choose_param(get_param(np1, internal_np::face_to_face_output_iterator),
-                                         Emptyset_iterator()),
+                                         impl::make_functor(get_param(np1, internal_np::face_to_face_map))),
                             choose_param(get_param(np1, internal_np::vertex_point),
                                          get(vertex_point, sm)),
                             choose_param(get_param(np2, internal_np::vertex_point),
