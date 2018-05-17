@@ -31,7 +31,6 @@
 namespace CGAL {
   CGAL_DO_INTERSECT_FUNCTION(Sphere_3, Tetrahedron_3, 3)
 
-  CGAL_NO_INTERSECTION_FUNCTION(Sphere_3, Tetrahedron_3, 3)
 }
 
 #endif // CGAL_INTERSECTIONS_3_SPHERE_3_TETRAHEDRON_3_H

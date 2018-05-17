@@ -43,14 +43,6 @@ bool do_intersect(const Plane_3<K>& a,
   return K().do_intersect_3_object()(a, b);
 }
   
-template<typename K>
-void intersection(const CGAL::Bbox_3&,
-                  const Plane_3<K>&) {}
-
-template<typename K>
-void intersection(const Plane_3<K>&,
-                  const CGAL::Bbox_3&) {}
-
 }
 
 #endif // CGAL_INTERSECTIONS_3_BBOX_3_PLANE_3_H

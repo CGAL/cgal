@@ -41,15 +41,8 @@ bool do_intersect(const Triangle_3<K>& a,
                   const CGAL::Bbox_3& b) {
   return K().do_intersect_3_object()(a, b);
 }
-  
-template<typename K>
-void intersection(const CGAL::Bbox_3&,
-                  const Triangle_3<K>&) {}
 
-template<typename K>
-void intersection(const Triangle_3<K>&,
-                  const CGAL::Bbox_3&) {}
 
-} // mnamespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_INTERSECTIONS_3_BBOX_3_TRIANGLE_3_H

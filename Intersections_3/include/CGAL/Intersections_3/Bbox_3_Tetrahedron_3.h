@@ -41,14 +41,7 @@ bool do_intersect(const Tetrahedron_3<K>& a,
                   const CGAL::Bbox_3& b) {
   return K().do_intersect_3_object()(a, b);
 }
-  
-template<typename K>
-void intersection(const CGAL::Bbox_3&,
-                  const Tetrahedron_3<K>&) {}
 
-template<typename K>
-void intersection(const Tetrahedron_3<K>&,
-                  const CGAL::Bbox_3&) {}
 } // namespace CGAL
 
 #endif // CGAL_INTERSECTIONS_3_BBOX_3_TETRAHEDRON_3_H

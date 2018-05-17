@@ -31,7 +31,6 @@
 
 namespace CGAL {
   CGAL_DO_INTERSECT_FUNCTION(Iso_cuboid_3, Sphere_3, 3)
-  CGAL_NO_INTERSECTION_FUNCTION(Iso_cuboid_3, Sphere_3, 3)
 }
 
 

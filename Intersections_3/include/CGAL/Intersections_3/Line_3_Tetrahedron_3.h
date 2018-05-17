@@ -30,7 +30,6 @@
 
 namespace CGAL {
   CGAL_DO_INTERSECT_FUNCTION(Line_3, Tetrahedron_3, 3)
-  CGAL_NO_INTERSECTION_FUNCTION(Line_3, Tetrahedron_3, 3)
 }
 
 #endif // CGAL_INTERSECTIONS_3_LINE_3_TETRAHEDRON_3_H

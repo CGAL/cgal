@@ -42,14 +42,6 @@ bool do_intersect(const Iso_cuboid_3<K>& a,
   return K().do_intersect_3_object()(b, a);
 }
 
-template<typename K>
-void intersection(const CGAL::Bbox_3&,
-                  const Iso_cuboid_3<K>&) {}
-
-template<typename K>
-void intersection(const Iso_cuboid_3<K>& a,
-                  const CGAL::Bbox_3& b) {}
-
 } // namespace CGAL
 
 #endif // CGAL_INTERSECTIONS_3_BBOX_3_ISO_CUBOID_3_H

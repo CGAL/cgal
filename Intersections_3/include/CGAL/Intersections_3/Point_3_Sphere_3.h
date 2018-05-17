@@ -81,7 +81,6 @@ intersection(const typename K::Sphere_3 &sphere,
 } // namespace Intersections
   
 CGAL_INTERSECTION_FUNCTION(Point_3, Sphere_3, 3)
-CGAL_DO_INTERSECT_FUNCTION(Point_3, Sphere_3, 3)
 
 
 } //namespace CGAL
