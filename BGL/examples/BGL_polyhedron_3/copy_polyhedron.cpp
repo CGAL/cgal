@@ -83,7 +83,6 @@ int main(int argc, char* argv[])
     CGAL::copy_face_graph(T1, S, CGAL::parameters::vertex_to_vertex_map(boost::make_assoc_property_map(v2v))
                           .halfedge_to_halfedge_output_iterator(std::inserter(h2h, h2h.end()))
                           .face_to_face_map(boost::make_assoc_property_map(f2f)));
-    CGAL::copy_face_graph(T1, S);
   }
   return 0;
 }
