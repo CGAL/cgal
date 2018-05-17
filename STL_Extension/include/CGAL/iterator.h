@@ -113,6 +113,9 @@ struct iterator
 struct Emptyset_iterator
   : public CGAL::iterator< std::output_iterator_tag, void, void, void, void >
 {
+  template<class T>
+  void operator()(const T&) {}
+  
   template< class T >
   Emptyset_iterator& operator=(const T&) { return *this; }
 

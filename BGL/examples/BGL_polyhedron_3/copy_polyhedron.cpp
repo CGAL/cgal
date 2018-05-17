@@ -67,16 +67,23 @@ int main(int argc, char* argv[])
   {
     typedef boost::graph_traits<Target1>::vertex_descriptor   source_vertex_descriptor;
     typedef boost::graph_traits<Target1>::halfedge_descriptor source_halfedge_descriptor;
+    typedef boost::graph_traits<Target1>::face_descriptor source_face_descriptor;
 
     typedef boost::graph_traits<Source>::vertex_descriptor   tm_vertex_descriptor;
     typedef boost::graph_traits<Source>::halfedge_descriptor tm_halfedge_descriptor;
+    typedef boost::graph_traits<Source>::face_descriptor   tm_face_descriptor;
+    
 
     boost::unordered_map<source_vertex_descriptor, tm_vertex_descriptor> v2v;
     boost::unordered_map<source_halfedge_descriptor, tm_halfedge_descriptor> h2h;
-    
+    boost::unordered_map<source_face_descriptor, tm_face_descriptor> f2f;
     CGAL::copy_face_graph(T1, S, std::inserter(v2v, v2v.end()), std::inserter(h2h, h2h.end()));
     std::ofstream out("reverse.off");
     out << S;
+    CGAL::copy_face_graph(T1, S, CGAL::parameters::vertex_to_vertex_map(boost::make_assoc_property_map(v2v))
+                          .halfedge_to_halfedge_output_iterator(std::inserter(h2h, h2h.end()))
+                          .face_to_face_map(boost::make_assoc_property_map(f2f)));
+    CGAL::copy_face_graph(T1, S);
   }
   return 0;
 }

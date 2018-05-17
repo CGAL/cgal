@@ -34,6 +34,7 @@
 #include <CGAL/property_map.h>
 #include <boost/unordered_map.hpp>
 #include <boost/utility/enable_if.hpp>
+#include <boost/function_output_iterator.hpp>
 
 namespace CGAL {
 
@@ -211,6 +212,35 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                        sm_vpm, tm_vpm);
 }
 
+template<typename PMAP>
+struct Output_iterator_functor
+{
+  typedef typename boost::property_traits<PMAP>::key_type input_t;
+  typedef typename boost::property_traits<PMAP>::value_type output_t;
+  PMAP map;
+  Output_iterator_functor(PMAP map)
+    :map(map)
+  {
+  }
+  void operator()(const typename std::pair<input_t, output_t>& pair)
+  {
+    put(map, pair.first, pair.second);
+  }
+  
+};
+
+template<typename PMAP>
+Output_iterator_functor<PMAP> make_functor(PMAP map)
+{
+  return Output_iterator_functor<PMAP>(map);
+}
+
+Emptyset_iterator make_functor(const boost::param_not_found&)
+{
+  return Emptyset_iterator();
+}
+
+
 } // end of namespace internal
 
 
@@ -242,14 +272,26 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
       If this parameter is omitted, an internal property map for
       `CGAL::vertex_point_t` should be available in `SourceMesh` (`TargetMesh`)
     \cgalParamEnd
-    \cgalParamBegin{vertex_to_vertex_output_iterator} an `OutputIterator`containing the
-      pairs source-vertex, traget-vertex. 
+    \cgalParamBegin{vertex_to_vertex_output_iterator} an `OutputIterator` containing the
+      pairs source-vertex, target-vertex. If this parameter is given, then 
+      `vertex_to_vertex_map` cannot be used.
     \cgalParamEnd
-    \cgalParamBegin{halfedge_to_halfedge_output_iterator} an `OutputIterator`containing the
-      pairs source-halfedge, traget-halfedge. 
+    \cgalParamBegin{halfedge_to_halfedge_output_iterator} an `OutputIterator` containing the
+      pairs source-halfedge, target-halfedge. If this parameter is given, then 
+      `halfedge_to_halfedge_map` cannot be used.
     \cgalParamEnd
-    \cgalParamBegin{face_to_face_output_iterator} an `OutputIterator`containing the
-      pairs source-face, traget-face. 
+    \cgalParamBegin{face_to_face_output_iterator} an `OutputIterator` containing the
+      pairs source-face, target-face. If this parameter is given, then 
+      `face_to_face_map` cannot be used.
+    \cgalParamEnd
+    \cgalParamBegin{vertex_to_vertex_map} a `ReadWritePropertyMap` containing the
+      pairs source-vertex, target-vertex. 
+    \cgalParamEnd
+    \cgalParamBegin{halfedge_to_halfedge_map} a `ReadWritePropertyMap` containing the
+      pairs source-halfedge, target-halfedge. 
+    \cgalParamEnd
+    \cgalParamBegin{face_to_face_map} a `ReadWritePropertyMap` containing the
+      pairs source-face, target-face. 
     \cgalParamEnd
   \cgalNamedParamsEnd
   
@@ -289,6 +331,49 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                      )
 {
   using boost::choose_param;
+  if (boost::is_default_param(get_param(np1, internal_np::vertex_to_vertex_output_iterator)))
+  {
+    if (boost::is_default_param(get_param(np1, internal_np::vertex_to_vertex_map))){
+      copy_face_graph(sm, tm, CGAL::parameters::
+                      vertex_to_vertex_output_iterator(
+                        boost::make_function_output_iterator(internal::make_functor(get_param(np1, internal_np::vertex_to_vertex_map))))
+                      .halfedge_to_halfedge_output_iterator(get_param(np1, internal_np::halfedge_to_halfedge_output_iterator))
+                      .face_to_face_output_iterator(get_param(np1, internal_np::face_to_face_output_iterator))
+                      .halfedge_to_halfedge_map(get_param(np1, internal_np::halfedge_to_halfedge_map))
+                      .face_to_face_map(get_param(np1, internal_np::face_to_face_map))
+                      ,np2);
+      return;
+    }
+  }
+  else if (!boost::is_default_param(get_param(np1, internal_np::halfedge_to_halfedge_output_iterator)))
+  {
+    if (!boost::is_default_param(get_param(np1, internal_np::halfedge_to_halfedge_map))){
+      copy_face_graph(sm, tm, CGAL::parameters::
+                      vertex_to_vertex_output_iterator(get_param(np1, internal_np::vertex_to_vertex_output_iterator))
+                      .halfedge_to_halfedge_output_iterator(
+                        boost::make_function_output_iterator(internal::make_functor(get_param(np1, internal_np::halfedge_to_halfedge_map))))
+                      .face_to_face_output_iterator(get_param(np1, internal_np::face_to_face_output_iterator))
+                      .vertex_to_vertex_map(get_param(np1, internal_np::vertex_to_vertex_map))
+                      .face_to_face_map(get_param(np1, internal_np::face_to_face_map))
+                      ,np2);
+      return;
+    }
+  }
+  else if (!boost::is_default_param(get_param(np1, internal_np::face_to_face_output_iterator)))
+  {
+    if (!boost::is_default_param(get_param(np1, internal_np::face_to_face_map)))
+    {
+      copy_face_graph(sm, tm, CGAL::parameters::
+                      vertex_to_vertex_output_iterator(get_param(np1, internal_np::vertex_to_vertex_output_iterator))
+                      .halfedge_to_halfedge_output_iterator(get_param(np1, internal_np::halfedge_to_halfedge_output_iterator))
+                      .face_to_face_output_iterator(
+                        boost::make_function_output_iterator(internal::make_functor(get_param(np1, internal_np::face_to_face_map))))
+                      .vertex_to_vertex_map(get_param(np1, internal_np::vertex_to_vertex_map))
+                      .halfedge_to_halfedge_map(get_param(np1, internal_np::halfedge_to_halfedge_map))
+                      ,np2);
+      return;
+    }
+  }
   internal::copy_face_graph(sm, tm,
                             CGAL::graph_has_property<SourceMesh,boost::halfedge_index_t>(),
                             choose_param(get_param(np1, internal_np::vertex_to_vertex_output_iterator),
@@ -300,7 +385,7 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                             choose_param(get_param(np1, internal_np::vertex_point),
                                          get(vertex_point, sm)),
                             choose_param(get_param(np2, internal_np::vertex_point),
-                                                         get(vertex_point, tm)));
+                                         get(vertex_point, tm)));
 }
 
 template <typename SourceMesh, typename TargetMesh>

@@ -37,6 +37,10 @@ CGAL_add_named_parameter(vertex_to_vertex_output_iterator_t, vertex_to_vertex_ou
 CGAL_add_named_parameter(halfedge_to_halfedge_output_iterator_t, halfedge_to_halfedge_output_iterator, halfedge_to_halfedge_output_iterator)
 CGAL_add_named_parameter(face_to_face_output_iterator_t, face_to_face_output_iterator, face_to_face_output_iterator)
 
+CGAL_add_named_parameter(vertex_to_vertex_map_t, vertex_to_vertex_map, vertex_to_vertex_map)
+CGAL_add_named_parameter(halfedge_to_halfedge_map_t, halfedge_to_halfedge_map, halfedge_to_halfedge_map)
+CGAL_add_named_parameter(face_to_face_map_t, face_to_face_map, face_to_face_map)
+
 // List of named parameters that we use in the package 'Mesh_3'
 CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_feature_degree_map)
 
