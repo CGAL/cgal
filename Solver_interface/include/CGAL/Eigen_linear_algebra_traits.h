@@ -30,7 +30,7 @@
 namespace CGAL {
 
 
-template<typename T, int D>
+template<typename T, int D = Eigen::Dynamic>
 class Eigen_dense_vector;
 
 template<typename T, int D1 = Eigen::Dynamic, int D2 = Eigen::Dynamic>
@@ -57,8 +57,6 @@ public:
     : m_matrix(eigen_mat) {}
 
   Eigen_dense_matrix() : m_matrix() {}
-
-  ~Eigen_dense_matrix() {}
 
   T& operator() (int i_, int j_)
   {
@@ -89,7 +87,7 @@ public:
 };
 
 
-template <typename T, int D = Eigen::Dynamic>
+template <typename T, int D>
 class Eigen_dense_vector
 {
 private:
@@ -165,6 +163,7 @@ public:
 
 
 // matrix multiplication
+/*
 template <class NT, int D1, int D2>
 const CGAL::Eigen_dense_matrix<NT> operator* (const CGAL::Eigen_dense_matrix<NT>& A,
                                               const CGAL::Eigen_dense_matrix<NT, D1, D2 >& B)
@@ -178,6 +177,7 @@ const CGAL::Eigen_dense_matrix<NT> operator* (const CGAL::Eigen_dense_matrix<NT,
 {
   return CGAL::Eigen_dense_matrix<NT>(A.m_matrix * B.m_matrix);
 }
+*/
 
 template <class NT, int D1, int D2, int D3>
 const CGAL::Eigen_dense_matrix<NT, D1, D3> operator* (const CGAL::Eigen_dense_matrix<NT, D1, D2 >& A,
