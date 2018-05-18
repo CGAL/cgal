@@ -815,7 +815,9 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
     diagonal = item->diagonalBbox();
   else
     diagonal = 0.0;
-  FT triangulation(fd,normal,smesh_,diagonal);
+  const qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  EPICK::Vector_3 offset(off.x,off.y,off.z);
+  FT triangulation(fd,normal,smesh_,diagonal, offset);
   //iterates on the internal faces
   for(FT::CDT::Finite_faces_iterator
        ffit = triangulation.cdt->finite_faces_begin(),
@@ -834,14 +836,14 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
       else
         color = 0;
 
-      addFlatData(ffit->vertex(0)->point(),
+      addFlatData(ffit->vertex(0)->point()-offset,
                   (*fnormals)[fd],
                   color);
-      addFlatData(ffit->vertex(1)->point(),
+      addFlatData(ffit->vertex(1)->point()-offset,
                   (*fnormals)[fd],
                   color);
 
-      addFlatData(ffit->vertex(2)->point(),
+      addFlatData(ffit->vertex(2)->point()-offset,
                   (*fnormals)[fd],
                   color);
     }
