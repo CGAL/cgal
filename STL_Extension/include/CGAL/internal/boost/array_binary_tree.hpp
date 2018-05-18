@@ -53,11 +53,11 @@ public:
   struct children_type {
     struct iterator
     { // replace with iterator_adaptor implementation -JGS
-      typedef std::forward_iterator_tag Category;
+      typedef std::forward_iterator_tag iterator_category;
       typedef ArrayBinaryTreeNode value_type;
       typedef size_type difference_type;
-      typedef ArrayBinaryTreeNode* Pointer;
-      typedef ArrayBinaryTreeNode& Reference;
+      typedef ArrayBinaryTreeNode* pointer;
+      typedef ArrayBinaryTreeNode& reference;
 
       inline iterator() : i(0), n(0) { }
       inline iterator(const iterator& x) : r(x.r), i(x.i), n(x.n), id(x.id) { }
