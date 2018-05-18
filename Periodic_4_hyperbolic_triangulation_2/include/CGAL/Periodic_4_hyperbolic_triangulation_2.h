@@ -552,6 +552,63 @@ private:
 
 	bool has_cycles_length_2(Vertex_handle v) const;
 
+
+protected:
+	void make_canonical(Face_handle fh) const {
+
+  		// If all translation are the same, there is an image of the face
+  		// inside the original octagon. We store that one. This covers the
+  		// simplest case.
+  		if (fh->translation(0) == fh->translation(1) && 
+  			fh->translation(1) == fh->translation(2)) {
+  			fh->set_translation(0, Hyperbolic_translation());
+  			fh->set_translation(1, Hyperbolic_translation());
+  			fh->set_translation(2, Hyperbolic_translation());
+  			return;
+  		}
+
+  		// This covers the cases in which two vertices lie in the same domain.
+  		for (int i = 0; i < 3; i++) {
+  			int j = (i + 1) % 3;
+
+  			if (fh->translation(i) == fh->translation(j)) {
+  				int k = (i + 2) % 3;
+  				if ((fh->translation(i).inverse()*fh->translation(k)) < (fh->translation(k).inverse()*fh->translation(i))) {
+  					fh->set_translation(k, fh->translation(i).inverse() * fh->translation(k));
+  					fh->set_translation(i, Hyperbolic_translation());
+  					fh->set_translation(j, Hyperbolic_translation());
+  					return;
+  				} else {
+  					fh->set_translation(i, fh->translation(k).inverse() * fh->translation(i));
+  					fh->set_translation(j, fh->translation(k).inverse() * fh->translation(j));
+  					fh->set_translation(k, Hyperbolic_translation());
+  					return;
+  				}
+  			} else {
+  				continue;
+  			}
+  		}
+
+  		// Now we know that all vertices lie in different regions.
+  		Hyperbolic_translation min(7,2,5);
+  		Hyperbolic_translation trans;
+  		for (int i = 0; i < 3; i++) {
+  			int j = ( i + 1) % 3;  // the index of the 'next' vertex
+  			Hyperbolic_translation tmp = fh->translation(i).inverse() * fh->translation(j);
+  			if (tmp < min) {
+  				min = tmp;
+  				trans = fh->translation(i).inverse();
+  			}
+  		}
+
+  		if (!trans.is_identity()) {
+  			fh->set_translation(0, trans * fh->translation(0));
+  			fh->set_translation(1, trans * fh->translation(1));
+  			fh->set_translation(2, trans * fh->translation(2));
+  		}
+  	}
+
+
 public:
 	bool is_valid(bool verbose = false) const;
 	bool is_valid(Face_handle c, bool verbose = false) const;

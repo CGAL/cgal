@@ -74,7 +74,6 @@ private:
     for (typename DT::Face_iterator it = dt->faces_begin(); it != dt->faces_end(); it++) {
       cc[it] = Circumcenter()(*it);
     }
-    std::cout << "Circumcenters: " << cc.size() << std::endl;
   }
 
   typedef typename DT::Voronoi_point                                              Voronoi_point;
@@ -130,14 +129,6 @@ VoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem
     }
   }
 
-  // for (typename DT::Edge_iterator eit = dt->edges_begin(); eit != dt->edges_end(); eit++){
-  //   typename DT::Segment s = dt->dual(*eit);
-  //   cout << "dual of face " << eit->first->get_number() << endl;
-  //   pos << s; 
-  //   cout << "--> PAINTED!" << endl;
-  // }
-  // cout << "everything has been drawn!" << endl;
-  // delete
   painter->setPen(old);
 }
 

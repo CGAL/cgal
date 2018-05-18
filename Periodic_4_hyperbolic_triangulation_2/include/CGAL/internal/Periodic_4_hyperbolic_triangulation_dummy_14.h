@@ -257,7 +257,7 @@ namespace CGAL {
         }
 
         for (Face_iterator fit = tds().faces_begin(); fit != tds().faces_end(); fit++)
-            fit->make_canonical();
+            this->make_canonical(fit);
 
         CGAL_triangulation_assertion(is_valid(true));
 

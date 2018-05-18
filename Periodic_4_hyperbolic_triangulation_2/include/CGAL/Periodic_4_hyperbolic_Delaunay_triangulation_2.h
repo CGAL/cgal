@@ -480,7 +480,7 @@ insert(const Point  &p,  Face_handle hint, bool batch_insertion) {
 				ifc->set_translation(i, ifc->vertex(i)->translation());
 			}
 			ifc->tds_data().clear();
-			ifc->make_canonical();
+			this->make_canonical(ifc);
 		} while (++ifc != done);
 
 		Vertex_circulator ivc = tds().incident_vertices(v), done_v(ivc);
@@ -632,8 +632,7 @@ remove(Vertex_handle v) {
 	  	new_f[j]->set_translation(i, new_f[j]->vertex(i)->translation());
 	  }
 
-	  //new_f[j]->restore_translations();
-	  new_f[j]->make_canonical();
+	  this->make_canonical(new_f[j]);
 	}
 
 	for (int j = 0; j < bdry_edges.size(); j++) {

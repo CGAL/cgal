@@ -121,60 +121,6 @@ public:
 
 	  // CHECKING
 
-  	void make_canonical() {
-  		
-  		// If all translation are the same, there is an image of the face
-  		// inside the original octagon. We store that one. This covers the
-  		// simplest case.
-  		if (o[0] == o[1] && o[1] == o[2]) {
-  			o[0] = Hyperbolic_translation();
-  			o[1] = Hyperbolic_translation();
-  			o[2] = Hyperbolic_translation();
-  			return;
-  		}
-
-  		// This covers the cases in which two vertices lie in the same domain.
-  		for (int i = 0; i < 3; i++) {
-  			int j = (i + 1) % 3;
-
-  			if (o[i] == o[j]) {
-  				int k = (i + 2) % 3;
-  				if ((o[i].inverse()*o[k]) < (o[k].inverse()*o[i])) {
-  					o[k] = o[i].inverse() * o[k];
-  					o[i] = Hyperbolic_translation();
-  					o[j] = Hyperbolic_translation();
-  					return;
-  				} else {
-  					o[i] = o[k].inverse() * o[i];
-  					o[j] = o[k].inverse() * o[j];
-  					o[k] = Hyperbolic_translation();
-  					return;
-  				}
-  			} else {
-  				continue;
-  			}
-  		}
-
-  		// Now we know that all vertices lie in different regions.
-  		Hyperbolic_translation min(7,2,5);
-  		Hyperbolic_translation trans;
-  		for (int i = 0; i < 3; i++) {
-  			int j = ( i + 1) % 3;  // the index of the 'next' vertex
-  			Hyperbolic_translation tmp = o[i].inverse() * o[j];
-  			if (tmp < min) {
-  				min = tmp;
-  				trans = o[i].inverse();
-  			}
-  		}
-
-  		if (!trans.is_identity()) {
-  			o[0] = trans * o[0];
-  			o[1] = trans * o[1];
-  			o[2] = trans * o[2];
-  		}
-  	}
-
-
   	void reorient() {
   		
   		// swaps vertex 0 with vertex 1, and neighbor 0 with neighbor 1
