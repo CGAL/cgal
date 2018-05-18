@@ -383,6 +383,7 @@ namespace internal {
 
 
     // split edges of edge_range that have their length > high
+    // Note: only used to split a range of edges provided as input
     template<typename EdgeRange>
     void split_long_edges(const EdgeRange& edge_range,
                           const double& high)
@@ -404,12 +405,7 @@ namespace internal {
       {
         double sqlen = sqlength(e);
         if (sqlen > sq_high)
-        {
           long_edges.insert(long_edge(halfedge(e, mesh_), sqlen));
-          put(ecmap_, e, false);
-        }
-        else
-          put(ecmap_, e, true);
       }
 
       //split long edges
@@ -425,6 +421,8 @@ namespace internal {
         //split edge
         Point refinement_point = this->midpoint(he);
         halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
+        // propagate the constrained status
+        put(ecmap_, edge(hnew, mesh_), get(ecmap_, edge(he, mesh_)));
         CGAL_assertion(he == next(hnew, mesh_));
         if (edge_is_constrained_set_.count(edge(he, mesh_))!=0) edge_is_constrained_set_.insert(edge(hnew, mesh_));
         ++nb_splits;
@@ -443,11 +441,6 @@ namespace internal {
           //if it was more than twice the "long" threshold, insert them
           long_edges.insert(long_edge(hnew, sqlen_new));
           long_edges.insert(long_edge(next(hnew, mesh_), sqlen_new));
-        }
-        else
-        {
-          put(ecmap_, edge(hnew, mesh_), true);
-          put(ecmap_, edge(next(hnew, mesh_), mesh_), true);
         }
 
         //insert new edges to keep triangular faces, and update long_edges
