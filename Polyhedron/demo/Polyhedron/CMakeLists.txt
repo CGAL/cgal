@@ -153,6 +153,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
       "${CMAKE_CURRENT_BINARY_DIR}/Scene_item_moc.cpp" )
     qt5_generate_moc( "${CGAL_THREE_HEADERS_PATH}/CGAL/Three/Scene_group_item.h"
       "${CMAKE_CURRENT_BINARY_DIR}/Scene_group_item_moc.cpp" )
+    qt5_generate_moc( "${CGAL_THREE_HEADERS_PATH}/CGAL/Three/Scene_item_rendering_helper.h"
+         "${CMAKE_CURRENT_BINARY_DIR}/Scene_item_rendering_helper_moc.cpp" )
     qt5_generate_moc( "${CGAL_THREE_HEADERS_PATH}/CGAL/Three/TextRenderer.h"
       "${CMAKE_CURRENT_BINARY_DIR}/TextRenderer_moc.cpp" )
   else()
@@ -176,10 +178,16 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
     Viewer_interface_moc.cpp
     Scene_item_moc.cpp
     Scene_item.cpp
+    Triangle_container.cpp
+    Edge_container.cpp
+    Point_container.cpp
     Scene_group_item.cpp
     Scene_group_item_moc.cpp
     TextRenderer.cpp
     TextRenderer_moc.cpp
+    Scene_item_rendering_helper.cpp
+    Scene_item_rendering_helper_moc.cpp
+    Primitive_container.cpp
     Polyhedron_demo_plugin_helper.cpp)
   target_link_libraries(demo_framework
     PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui Qt5::Script

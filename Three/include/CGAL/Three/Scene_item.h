@@ -462,10 +462,6 @@ protected:
    */
   void initializeBuffers(){}
 
-  /*! Collects all the data for the shaders. Must be called in #invalidateOpenGLBuffers().
-   * @see invalidateOpenGLBuffers().
-   */
-  void computeElements(){}
   /*! Passes all the uniform data to the shaders.
    * According to program_name, this data may change.
    */

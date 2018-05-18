@@ -9,7 +9,7 @@
 #include <CGAL/Three/Scene_zoomable_item_interface.h>
 #include <CGAL/Three/Scene_print_item_interface.h>
 #include "SMesh_type.h"
-#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <vector>
 
@@ -23,7 +23,7 @@
 class QSlider;
 struct Scene_surface_mesh_item_priv;
 class SCENE_SURFACE_MESH_ITEM_EXPORT Scene_surface_mesh_item
-  : public CGAL::Three::Scene_item,
+    : public CGAL::Three::Scene_item_rendering_helper,
     public CGAL::Three::Scene_zoomable_item_interface,
     public CGAL::Three::Scene_print_item_interface{
   Q_INTERFACES(CGAL::Three::Scene_print_item_interface)
@@ -76,6 +76,7 @@ public:
 
   void invalidate_aabb_tree();
   void invalidateOpenGLBuffers()Q_DECL_OVERRIDE;
+  void invalidate(Gl_data_names name);
 
 
   void compute_bbox()const Q_DECL_OVERRIDE;
@@ -132,6 +133,7 @@ public:
   float alpha() const Q_DECL_OVERRIDE;
   void setAlpha(int alpha) Q_DECL_OVERRIDE;
   QSlider* alphaSlider();
+  void computeElements() const Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
   void item_is_about_to_be_changed();
