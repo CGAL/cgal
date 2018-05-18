@@ -732,7 +732,7 @@ void Viewer::init()
   restoreStateFromFile();
   initializeOpenGLFunctions();
   // Define 'Control+Q' as the new exit shortcut (default was 'Escape')
-  setShortcut(EXIT_VIEWER, Qt::CTRL+Qt::Key_Q);
+  setShortcut(CGAL::qglviewer::EXIT_VIEWER, Qt::CTRL+Qt::Key_Q);
 
   // Add custom key description (see keyPressEvent).
   setKeyDescription(Qt::Key_W, "Toggles wire frame display");
