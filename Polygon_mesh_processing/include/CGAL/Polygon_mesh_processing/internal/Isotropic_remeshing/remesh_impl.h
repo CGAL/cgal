@@ -162,15 +162,13 @@ namespace internal {
 
 
   template <typename PM,
-            typename EdgeIsConstrainedMap,
             typename FaceIndexMap>
   struct Connected_components_pmap
   {
     typedef typename boost::graph_traits<PM>::face_descriptor   face_descriptor;
     typedef std::size_t                                         Patch_id;
     typedef FaceIndexMap                                        FIMap;
-    typedef EdgeIsConstrainedMap                                ECMap;
-    typedef Connected_components_pmap<PM, ECMap, FIMap>         CCMap;
+    typedef Connected_components_pmap<PM, FIMap>                CCMap;
 
     typedef CGAL::dynamic_face_property_t<Patch_id> Face_property_tag;
     typedef typename boost::property_map<PM, Face_property_tag >::type Patch_ids_map;
@@ -185,7 +183,9 @@ namespace internal {
 
     //note pmesh is a non-const ref because properties are added and removed
     //modify the mesh data structure, but not the mesh itself
-    Connected_components_pmap(PM& pmesh
+    template <class FaceRange, class EdgeIsConstrainedMap>
+    Connected_components_pmap(const FaceRange& face_range
+                            , PM& pmesh
                             , EdgeIsConstrainedMap ecmap
                             , FIMap fimap
                             , const bool do_init = true)
@@ -196,15 +196,32 @@ namespace internal {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
         std::cout << "Compute connected components property map." << std::endl;
 #endif
-        nb_cc
-          = PMP::connected_components(pmesh,
-                                      patch_ids_map,
-                                      PMP::parameters::edge_is_constrained_map(ecmap)
-                                     .face_index_map(fimap));
+        if (boost::size(face_range) == boost::size(faces(pmesh)))
+        {
+          // applied on the whole mesh
+          nb_cc
+            = PMP::connected_components(pmesh,
+                                        patch_ids_map,
+                                        PMP::parameters::edge_is_constrained_map(ecmap)
+                                       .face_index_map(fimap));
+        }
+        else
+        {
+          // applied on a subset of the mesh
+          nb_cc
+            = PMP::connected_components(pmesh,
+                                        patch_ids_map,
+                                        PMP::parameters::edge_is_constrained_map(
+                                          make_OR_property_map(ecmap
+                                          , internal::Border_constraint_pmap<PM, FIMap>(pmesh, face_range, fimap) ) )
+                                       .face_index_map(fimap));
+        }
         if(nb_cc == 1){
           patch_ids_map = Patch_ids_map();
         }
       }
+      else
+        nb_cc=0; // default value
     }
 
 
@@ -318,7 +335,7 @@ namespace internal {
         put(halfedge_status_pmap_, h, MESH);
 
       if (!boost::is_same<EdgeIsConstrainedMap,
-                          Border_constraint_pmap<PolygonMesh, FaceIndexMap> >::value)
+                          No_constraint_pmap<edge_descriptor> >::value)
       {
         BOOST_FOREACH(edge_descriptor e, edges(pmesh))
         {
@@ -1517,8 +1534,9 @@ private:
     template<typename FaceRange>
     void tag_halfedges_status(const FaceRange& face_range)
     {
-      //tag MESH,        //h and hopp belong to the mesh, not the patch
-      //tag MESH_BORDER  //h belongs to the mesh, face(hopp, pmesh) == null_face()
+      //init halfedges as:
+      //  - MESH,        //h and hopp belong to the mesh, not the patch
+      //  - MESH_BORDER  //h belongs to the mesh, face(hopp, pmesh) == null_face()
       BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh_))
       {
         //being part of the border of the mesh is predominant
@@ -1540,33 +1558,40 @@ private:
         }
       }
 
-      internal::Border_constraint_pmap<PM, FaceIndexMap>
-        border_map(mesh_, face_range, fimap_);
-      //override the border of PATCH
-      //tag PATCH_BORDER,//h belongs to the patch, hopp doesn't
-      BOOST_FOREACH(edge_descriptor e, edges(mesh_))
+      // tag patch border halfedges
+      BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh_))
       {
-        if (get(ecmap_, e)
-          || get(border_map, e)
-          || get_patch_id(face(halfedge(e, mesh_), mesh_))
-              != get_patch_id(face(opposite(halfedge(e, mesh_), mesh_), mesh_)))
+        if (status(h)==PATCH && status(opposite(h, mesh_))!=PATCH)
         {
-          //deal with h and hopp for borders that are sharp edges to be preserved
-          halfedge_descriptor h = halfedge(e, mesh_);
-          if (status(h) == PATCH){
-            set_status(h, PATCH_BORDER);
-            has_border_ = true;
-          }
+          set_status(h, PATCH_BORDER);
+          has_border_ = true;
+        }
+      }
 
-          halfedge_descriptor hopp = opposite(h, mesh_);
-          if (status(hopp) == PATCH){
-            set_status(hopp, PATCH_BORDER);
-            has_border_ = true;
+      // update status using constrained edge map
+      if (!boost::is_same<EdgeIsConstrainedMap,
+                          No_constraint_pmap<edge_descriptor> >::value)
+      {
+        BOOST_FOREACH(edge_descriptor e, edges(mesh_))
+        {
+          if (get(ecmap_, e))
+          {
+            //deal with h and hopp for borders that are sharp edges to be preserved
+            halfedge_descriptor h = halfedge(e, mesh_);
+            if (status(h) == PATCH){
+              set_status(h, PATCH_BORDER);
+              has_border_ = true;
+            }
+
+            halfedge_descriptor hopp = opposite(h, mesh_);
+            if (status(hopp) == PATCH){
+              set_status(hopp, PATCH_BORDER);
+              has_border_ = true;
+            }
           }
         }
       }
     }
-
 
     // for a Surface_mesh::Property_map we make MESH the default value
     Halfedge_status status(const halfedge_descriptor& h) const

@@ -147,6 +147,7 @@ void isotropic_remeshing(const FaceRange& faces
 
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
   using boost::get_param;
   using boost::choose_param;
 
@@ -174,14 +175,10 @@ void isotropic_remeshing(const FaceRange& faces
   typedef typename boost::lookup_named_param_def <
       internal_np::edge_is_constrained_t,
       NamedParameters,
-      internal::Border_constraint_pmap<PM, FIMap>//default
+      internal::No_constraint_pmap<edge_descriptor>//default
     > ::type ECMap;
-  ECMap ecmap = (boost::is_same<ECMap, internal::Border_constraint_pmap<PM, FIMap> >::value)
-     //avoid constructing the Border_constraint_pmap if it's not used
-    ? choose_param(get_param(np, internal_np::edge_is_constrained)
-                 , internal::Border_constraint_pmap<PM, FIMap>(pmesh, faces, fimap))
-    : choose_param(get_param(np, internal_np::edge_is_constrained)
-                 , internal::Border_constraint_pmap<PM, FIMap>());
+  ECMap ecmap = choose_param(get_param(np, internal_np::edge_is_constrained)
+                            , internal::No_constraint_pmap<edge_descriptor>());
 
   typedef typename boost::lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
@@ -194,13 +191,12 @@ void isotropic_remeshing(const FaceRange& faces
   typedef typename boost::lookup_named_param_def <
       internal_np::face_patch_t,
       NamedParameters,
-      internal::Connected_components_pmap<PM, ECMap, FIMap>//default
+      internal::Connected_components_pmap<PM, FIMap>//default
     > ::type FPMap;
   FPMap fpmap = choose_param(
     get_param(np, internal_np::face_patch),
-    internal::Connected_components_pmap<PM, ECMap, FIMap>(pmesh, ecmap, fimap,
-        boost::is_default_param(get_param(np, internal_np::face_patch)) &&
-        need_aabb_tree ));
+    internal::Connected_components_pmap<PM, FIMap>(faces, pmesh, ecmap, fimap,
+      boost::is_default_param(get_param(np, internal_np::face_patch)) && need_aabb_tree) );
 
   double low = 4. / 5. * target_edge_length;
   double high = 4. / 3. * target_edge_length;
@@ -358,13 +354,13 @@ void split_long_edges(const EdgeRange& edges
   
   typename internal::Incremental_remesher<PM, VPMap, GT, ECMap,
     internal::No_constraint_pmap<vertex_descriptor>,
-    internal::Connected_components_pmap<PM, ECMap, FIMap>,
+    internal::Connected_components_pmap<PM, FIMap>,
     FIMap
   >
     remesher(pmesh, vpmap, false/*protect constraints*/
            , ecmap
            , internal::No_constraint_pmap<vertex_descriptor>()
-           , internal::Connected_components_pmap<PM, ECMap, FIMap>(pmesh, ecmap, fimap, false)
+           , internal::Connected_components_pmap<PM, FIMap>(faces(pmesh), pmesh, ecmap, fimap, false)
            , fimap
            , false/*need aabb_tree*/);
 
