@@ -20,51 +20,49 @@
 //                 
 
 
-#ifndef CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_VERTEX_BASE_2_H
-#define CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_VERTEX_BASE_2_H
+#ifndef CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_DS_VERTEX_BASE_2_H
+#define CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_DS_VERTEX_BASE_2_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
-#include <CGAL/Triangulation_vertex_base_2.h>
-
 
 namespace CGAL {
 
-template< class GT, class Vb = CGAL::Triangulation_vertex_base_2<GT, CGAL::Triangulation_ds_vertex_base_2<> > >
-class Periodic_4_hyperbolic_triangulation_vertex_base_2 : public Vb {
+template< class GT, class Vb = CGAL::Triangulation_ds_vertex_base_2<> >
+class Periodic_4_hyperbolic_triangulation_ds_vertex_base_2 : public Vb {
 public:
-  typedef Vb                                          Base;
+  	typedef Vb                                          Base;
 	typedef typename Vb::Triangulation_data_structure   Triangulation_data_structure;
 	typedef typename Triangulation_data_structure::Face_handle 		             
-                                                      Face_handle;
-	typedef typename GT::Point_2			                  Point;
-	typedef typename GT::Hyperbolic_translation 			  Hyperbolic_translation;
+        	                                            Face_handle;
+	typedef typename GT::Point_2			            Point;
+	typedef typename GT::Hyperbolic_translation 		Hyperbolic_translation;
 
 
 	template <typename TDS2>
   	struct Rebind_TDS {
-      typedef typename Vb::template Rebind_TDS<TDS2>::Other                  Vb2;
-    	typedef Periodic_4_hyperbolic_triangulation_vertex_base_2<GT, Vb2>     Other;
+      	typedef typename Vb::template Rebind_TDS<TDS2>::Other                  Vb2;
+    	typedef Periodic_4_hyperbolic_triangulation_ds_vertex_base_2<GT, Vb2>     Other;
   	};
 
 private:
 	Hyperbolic_translation 		_tr; 	// Used only during insert();
-	bool 		                  _stored_translation;
+	bool 		                _stored_translation;
 
 public:
-	Periodic_4_hyperbolic_triangulation_vertex_base_2() : 
-  Base(), _stored_translation(false)
+	Periodic_4_hyperbolic_triangulation_ds_vertex_base_2() : 
+  	Base(), _stored_translation(false)
 	{}
 
-	Periodic_4_hyperbolic_triangulation_vertex_base_2(const Point & p) : 
+	Periodic_4_hyperbolic_triangulation_ds_vertex_base_2(const Point & p) : 
 	Base(p), _stored_translation(false) 
 	{}
 
-  Periodic_4_hyperbolic_triangulation_vertex_base_2(const Point & p, Face_handle fh) : 
-  Base(p, fh), _stored_translation(false) 
-  {}
+  	Periodic_4_hyperbolic_triangulation_ds_vertex_base_2(const Point & p, Face_handle fh) : 
+  	Base(p, fh), _stored_translation(false) 
+  	{}
 
-	Periodic_4_hyperbolic_triangulation_vertex_base_2(const Face_handle& fh) :
+	Periodic_4_hyperbolic_triangulation_ds_vertex_base_2(const Face_handle& fh) :
 	Base(), _stored_translation(false) 
 	{}
 
@@ -93,14 +91,14 @@ public:
 template < class TDS >
 inline 
 std::istream&
-operator>>(std::istream &is, Periodic_4_hyperbolic_triangulation_vertex_base_2<TDS> &) {
+operator>>(std::istream &is, Periodic_4_hyperbolic_triangulation_ds_vertex_base_2<TDS> &) {
 	return is;
 }
 
 template < class TDS >
 inline
 std::ostream&
-operator<<(std::ostream &os, Periodic_4_hyperbolic_triangulation_vertex_base_2<TDS> &) {
+operator<<(std::ostream &os, Periodic_4_hyperbolic_triangulation_ds_vertex_base_2<TDS> &) {
 	return os;
 }
 

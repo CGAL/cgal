@@ -38,8 +38,10 @@
 #include <CGAL/use.h>
 
 #include <CGAL/Triangulation_2.h>
-#include <CGAL/Periodic_4_hyperbolic_triangulation_face_base_2.h>
-#include <CGAL/Periodic_4_hyperbolic_triangulation_vertex_base_2.h>
+#include <CGAL/Periodic_4_hyperbolic_triangulation_ds_face_base_2.h>
+#include <CGAL/Periodic_4_hyperbolic_triangulation_ds_vertex_base_2.h>
+#include <CGAL/Triangulation_vertex_base_2.h>
+#include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/NT_converter.h>
 
 
@@ -58,8 +60,8 @@ namespace CGAL {
 
 template < 	class GT,
 			class TDS = Triangulation_data_structure_2<
-				Periodic_4_hyperbolic_triangulation_vertex_base_2<GT>,
-				Periodic_4_hyperbolic_triangulation_face_base_2<GT>
+				Triangulation_vertex_base_2<GT, Periodic_4_hyperbolic_triangulation_ds_vertex_base_2<GT> >,
+				Triangulation_face_base_2<GT, Periodic_4_hyperbolic_triangulation_ds_face_base_2<GT> >
 			>
 		>
 class Periodic_4_hyperbolic_triangulation_2 {
