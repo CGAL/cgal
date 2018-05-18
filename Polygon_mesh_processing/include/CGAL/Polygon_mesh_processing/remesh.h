@@ -112,6 +112,9 @@ namespace Polygon_mesh_processing {
 *    constrained in `edge_is_constrained_map` and boundary edges move along the
 *    constrained polylines they belong to.
 *  \cgalParamEnd
+*  \cgalParamBegin{do_project} a boolean that sets whether vertices should be reprojected
+*    on the input surface after creation or displacement.
+*  \cgalParamEnd
 *  \cgalParamBegin{projection_functor}
 *  A function object used to project input vertices (moved by the smoothing) and created vertices.
 *  It must have `%Point_3 operator()(vertex_descriptor)`, `%Point_3` being the value type
@@ -254,7 +257,8 @@ void isotropic_remeshing(const FaceRange& faces
     }
     remesher.equalize_valences();
     remesher.tangential_relaxation(smoothing_1d, nb_laplacian);
-    remesher.project_to_surface(get_param(np, internal_np::projection_functor));
+    if ( choose_param(get_param(np, internal_np::do_project), true) )
+      remesher.project_to_surface(get_param(np, internal_np::projection_functor));
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     std::cout << std::endl;
 #endif
