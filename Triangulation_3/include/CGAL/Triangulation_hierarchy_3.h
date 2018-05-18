@@ -24,8 +24,17 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
+// Commented because the class is actually used by Delaunay_triangulation_hierarchy_3.h
 // #define CGAL_DEPRECATED_HEADER "<CGAL/Triangulation_hierarchy_3.h>"
 // #include <CGAL/internal/deprecation_warning.h>
+
+// This class is deprecated, but must be kept for backward compatibility.
+//
+// It would be better to move its content to the Delaunay_triangulation_3
+// specializations for Fast_location and make Triangulation_hierarchy_3 the
+// empty nutshell instead.
+//
+// Then, later, maybe merge the Compact/Fast codes in a cleaner factorized way.
 
 #include <CGAL/basic.h>
 #include <CGAL/internal/Has_nested_type_Bare_point.h>
@@ -54,14 +63,6 @@
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
 namespace CGAL {
-
-// This class is deprecated, but must be kept for backward compatibility.
-//
-// It would be better to move its content to the Delaunay_triangulation_3
-// specializations for Fast_location and make Triangulation_hierarchy_3 the
-// empty nutshell instead.
-//
-// Then, later, maybe merge the Compact/Fast codes in a cleaner factorized way.
 
 template < class Tr >
 class Triangulation_hierarchy_3

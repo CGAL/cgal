@@ -1,4 +1,4 @@
-#define CGAL_NO_DEPRECATION_WARNINGS 1
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Mesh_3/Implicit_to_labeled_function_wrapper.h>

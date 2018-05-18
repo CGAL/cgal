@@ -20,7 +20,7 @@
 //
 // Author(s)     : Mariette Yvinec
 
-#define CGAL_NO_DEPRECATION_WARNINGS
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
 #include <cassert>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
