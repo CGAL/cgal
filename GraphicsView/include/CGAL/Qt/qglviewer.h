@@ -44,6 +44,7 @@
 #include <QTimer>
 #include <QGLContext>
 #include <QOpenGLWidget>
+#include <QMouseEvent>
 
 
 class QTabWidget;
