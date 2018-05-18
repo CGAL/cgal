@@ -66,6 +66,7 @@ namespace CGAL {
 	using Base::ccw;
 	using Base::geom_traits;
 	using Base::tds;
+	using Base::neighbor_translation;
 #endif
 
 	//using Base::apply;
@@ -311,7 +312,7 @@ public:
 
 
 	Segment dual(const Edge &e) const {
-		Segment res = Construct_segment_2()(dual(e.first), dual(e.first->neighbor(e.second), e.first->neighbor_translation(e.second)));
+		Segment res = Construct_segment_2()(dual(e.first), dual(e.first->neighbor(e.second), neighbor_translation(e.first, e.second)));
 		return res;
 	}
 
@@ -418,7 +419,7 @@ find_conflicts( Face_handle         d,
 	  it++ = d;
 	  for (int jj = 0; jj < 3; jj++) {
 		if (d->neighbor(jj)->tds_data().is_clear()) {
-		  find_conflicts(d->neighbor(jj), pt, current_off * d->neighbor_translation(jj), it, store_translations);
+		  find_conflicts(d->neighbor(jj), pt, current_off * neighbor_translation(d, jj), it, store_translations);
 		}
 	  }
 	}

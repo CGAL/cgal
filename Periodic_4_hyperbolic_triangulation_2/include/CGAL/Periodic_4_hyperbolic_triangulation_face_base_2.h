@@ -113,25 +113,6 @@ public:
 	}
 
 
-	Hyperbolic_translation neighbor_translation(int i) const {
-		CGAL_triangulation_precondition( i >= 0 && i <= 2 );
-		int myi = Triangulation_cw_ccw_2::ccw(i);
-		Hyperbolic_translation myof = o[myi];
-
-		Hyperbolic_translation nbof;
-		bool did_it = false;
-		for (int c = 0; c < 3; c++) {
-			if (this->neighbor(i)->vertex(c) == this->vertex(myi)) {
-				nbof = this->neighbor(i)->translation(c);
-				did_it = true;
-				break;
-			}
-		}
-
-		return (myof - nbof);
-	}
-
-
 	void set_translation(int k, Hyperbolic_translation new_o) {
 		CGAL_triangulation_precondition( k >= 0 && k <= 2 );
 		o[k] = new_o;

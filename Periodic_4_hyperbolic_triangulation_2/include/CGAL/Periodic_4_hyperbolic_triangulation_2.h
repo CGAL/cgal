@@ -267,6 +267,11 @@ public:
 									f->translation(0), 		f->translation(0), 		f->translation(0)	);
 	}
 
+	Periodic_triangle periodic_triangle(const Face & f, const Hyperbolic_translation& tr) const {
+		return periodic_triangle(	f->vertex(0)->point(), 	f->vertex(1)->point(), 	f->vertex(2)->point(),
+									tr*f->translation(0), 	tr*f->translation(0), 	tr*f->translation(0)	);
+	}
+
 	Point construct_point(const Point& p, const Hyperbolic_translation& tr) const {
 		return geom_traits().construct_point_2_object()(p, tr);
 	}
@@ -506,6 +511,23 @@ public:
 
 	Edge mirror_edge(Edge e) const {
 		return _tds.mirror_edge(e);
+	}
+
+
+	Hyperbolic_translation neighbor_translation(const Face_handle fh, int i) const {
+		CGAL_triangulation_precondition( i >= 0 && i <= 2 );
+		int myi = ccw(i);
+		Hyperbolic_translation myof = fh->translation(myi);
+
+		Hyperbolic_translation nbof;
+		for (int c = 0; c < 3; c++) {
+			if (fh->neighbor(i)->vertex(c) == fh->vertex(myi)) {
+				nbof = fh->neighbor(i)->translation(c);
+				break;
+			}
+		}
+
+		return (myof - nbof);
 	}
 
 private:
@@ -813,7 +835,7 @@ euclidean_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_translatio
 	  	#endif	
 		  
 		if (o == NEGATIVE) {
-			loff = loff * f->neighbor_translation(cw(curr)); 
+			loff = loff * neighbor_translation(f, cw(curr)); 
 			f = f->neighbor(cw(curr));
 			curr = ccw(curr);
 			succ = ccw(curr);
@@ -889,7 +911,7 @@ hyperbolic_periodic_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_
 		lt = EDGE;
 	} else {
 		// Here we have to find the face containing the point, it's one of the neighbors of lf.
-		Hyperbolic_translation tr = lo * lf->neighbor_translation(0);
+		Hyperbolic_translation tr = lo * neighbor_translation(lf, 0);
 		Face_handle nf = lf->neighbor(0);
 		Point np0 = construct_point( construct_point(nf->vertex(0)->point(), nf->translation(0)) , tr );
 		Point np1 = construct_point( construct_point(nf->vertex(1)->point(), nf->translation(1)) , tr );
@@ -900,7 +922,7 @@ hyperbolic_periodic_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_
 			lf = nf;
 			lt = FACE;
 		} else {
-			tr = lo * lf->neighbor_translation(1);
+			tr = lo * neighbor_translation(lf, 1);
 			nf = lf->neighbor(1);
 			np0 = construct_point( construct_point(nf->vertex(0)->point(), nf->translation(0)) , tr );
 			np1 = construct_point( construct_point(nf->vertex(1)->point(), nf->translation(1)) , tr );
@@ -911,7 +933,7 @@ hyperbolic_periodic_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_
 				lf = nf;
 				lt = FACE;
 			} else {
-				tr = lo * lf->neighbor_translation(2);
+				tr = lo * neighbor_translation(lf, 2);
 				nf = lf->neighbor(2);
 				np0 = construct_point( construct_point(nf->vertex(0)->point(), nf->translation(0)) , tr );
 				np1 = construct_point( construct_point(nf->vertex(1)->point(), nf->translation(1)) , tr );

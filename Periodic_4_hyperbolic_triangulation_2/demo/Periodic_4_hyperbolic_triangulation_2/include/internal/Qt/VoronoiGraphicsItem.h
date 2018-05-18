@@ -125,7 +125,7 @@ VoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem
   
   for (typename DT::Face_iterator fit = dt->faces_begin(); fit != dt->faces_end(); fit++) {
     for (int i = 0; i < 3; i++) {
-      typename DT::Segment s =  Segment()(cc[fit], CP2()(cc[fit->neighbor(i)], fit->neighbor_translation(i))); //dt->dual(std::pair<typename DT::Face_handle, int>(fit, i));
+      typename DT::Segment s =  Segment()(cc[fit], CP2()(cc[fit->neighbor(i)], dt->neighbor_translation(fit, i))); //dt->dual(std::pair<typename DT::Face_handle, int>(fit, i));
       pos << s;
     }
   }
