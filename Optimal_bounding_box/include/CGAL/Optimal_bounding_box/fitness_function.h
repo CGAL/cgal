@@ -43,7 +43,7 @@ double compute_fitness(const Vertex& R, const Matrix& data)
   typedef typename Linear_algebra_traits::Vector3d Vector3d;
 
   double xmin, xmax, ymin, ymax, zmin, zmax;
-  for(std::size_t i = 0; i < data.rows(); i++){
+  for(int i = 0; i < data.rows(); ++i){
 
     Vector3d vec = Linear_algebra_traits::row(data, i);
     vec = R * vec;
