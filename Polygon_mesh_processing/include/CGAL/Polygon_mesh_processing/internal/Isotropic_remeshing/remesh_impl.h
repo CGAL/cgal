@@ -306,7 +306,6 @@ namespace internal {
 
     typedef typename boost::property_map<
       PM, CGAL::dynamic_halfedge_property_t<Halfedge_status> >::type Halfedge_status_pmap;
-    typedef boost::unordered_set<edge_descriptor> Edge_is_constrained_set;
 
   public:
     Incremental_remesher(PolygonMesh& pmesh
@@ -331,19 +330,6 @@ namespace internal {
     {
       halfedge_status_pmap_ = get(CGAL::dynamic_halfedge_property_t<Halfedge_status>(),
                                   pmesh);
-      BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh_))
-        put(halfedge_status_pmap_, h, MESH);
-
-      if (!boost::is_same<EdgeIsConstrainedMap,
-                          No_constraint_pmap<edge_descriptor> >::value)
-      {
-        BOOST_FOREACH(edge_descriptor e, edges(pmesh))
-        {
-          if ( get(ecmap_, e) )
-            edge_is_constrained_set_.insert(e);
-        }
-      }
-
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
     }
 
@@ -441,7 +427,6 @@ namespace internal {
         // propagate the constrained status
         put(ecmap_, edge(hnew, mesh_), get(ecmap_, edge(he, mesh_)));
         CGAL_assertion(he == next(hnew, mesh_));
-        if (edge_is_constrained_set_.count(edge(he, mesh_))!=0) edge_is_constrained_set_.insert(edge(hnew, mesh_));
         ++nb_splits;
 
         //move refinement point
@@ -463,14 +448,18 @@ namespace internal {
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_border(hnew, mesh_))
         {
-          CGAL::Euler::split_face(hnew, next(next(hnew, mesh_), mesh_), mesh_);
+          halfedge_descriptor hnew2 =
+            CGAL::Euler::split_face(hnew, next(next(hnew, mesh_), mesh_), mesh_);
+          put(ecmap_, edge(hnew2, mesh_), false);
         }
 
         //do it again on the other side if we're not on boundary
         halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
         if (!is_border(hnew_opp, mesh_))
         {
-          CGAL::Euler::split_face(prev(hnew_opp, mesh_), next(hnew_opp, mesh_), mesh_);
+          halfedge_descriptor hnew2 =
+            CGAL::Euler::split_face(prev(hnew_opp, mesh_), next(hnew_opp, mesh_), mesh_);
+          put(ecmap_, edge(hnew2, mesh_), false);
         }
       }
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -535,7 +524,7 @@ namespace internal {
         Point refinement_point = this->midpoint(he);
         halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
         CGAL_assertion(he == next(hnew, mesh_));
-        if (edge_is_constrained_set_.count(edge(he, mesh_))!=0) edge_is_constrained_set_.insert(edge(hnew, mesh_));
+        put(ecmap_, edge(hnew, mesh_), get(ecmap_, edge(he, mesh_)) );
         ++nb_splits;
 
         //move refinement point
@@ -565,6 +554,7 @@ namespace internal {
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(hnew,
                                                               next(next(hnew, mesh_), mesh_),
                                                               mesh_);
+          put(ecmap_, edge(hnew2, mesh_), false);
           Halfedge_status snew = (is_on_patch(hnew) || is_on_patch_border(hnew))
             ? PATCH
             : MESH;
@@ -587,6 +577,7 @@ namespace internal {
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(prev(hnew_opp, mesh_),
                                                               next(hnew_opp, mesh_),
                                                               mesh_);
+          put(ecmap_, edge(hnew2, mesh_), false);
           Halfedge_status snew = (is_on_patch(hnew_opp) || is_on_patch_border(hnew_opp))
              ? PATCH
             : MESH;
@@ -789,9 +780,9 @@ namespace internal {
           }
 
           if (!protect_constraints_)
-            edge_is_constrained_set_.erase(e);
+            put(ecmap_, e, false);
           else
-            CGAL_assertion( edge_is_constrained_set_.count(e)==0 );
+            CGAL_assertion( !get(ecmap_, e) );
 
           //perform collapse
           Point target_point = get(vpmap_, vb);
@@ -875,7 +866,7 @@ namespace internal {
         Patch_id pid = get_patch_id(face(he, mesh_));
 
         CGAL_assertion( is_flip_topologically_allowed(edge(he, mesh_)) );
-        CGAL_assertion( edge_is_constrained_set_.count(edge(he, mesh_))==0 );
+        CGAL_assertion( !get(ecmap_, edge(he, mesh_)) );
         CGAL::Euler::flip_edge(he, mesh_);
         vva -= 1;
         vvb -= 1;
@@ -914,7 +905,7 @@ namespace internal {
           || !check_normals(source(he, mesh_)))
         {
           CGAL_assertion( is_flip_topologically_allowed(edge(he, mesh_)) );
-          CGAL_assertion( edge_is_constrained_set_.count(edge(he, mesh_))==0 );
+          CGAL_assertion( !get(ecmap_, edge(he, mesh_)) );
           CGAL::Euler::flip_edge(he, mesh_);
           --nb_flips;
 
@@ -1593,7 +1584,6 @@ private:
       }
     }
 
-    // for a Surface_mesh::Property_map we make MESH the default value
     Halfedge_status status(const halfedge_descriptor& h) const
     {
       return get(halfedge_status_pmap_,h);
@@ -1676,7 +1666,7 @@ private:
             short_edges.left.erase(hf);
             short_edges.left.erase(hfo);
             CGAL_assertion( is_flip_topologically_allowed(edge(hf, mesh_)) );
-            CGAL_assertion( edge_is_constrained_set_.count(edge(hf, mesh_))==0 );
+            CGAL_assertion( !get(ecmap_, edge(hf, mesh_)) );
             CGAL::Euler::flip_edge(hf, mesh_);
             CGAL_assertion_code(++nb_done);
 
@@ -1966,17 +1956,6 @@ private:
       return input_patch_ids_;
     }
 
-    void update_constraints_property_map()
-    {
-      if (!edge_is_constrained_set_.empty())
-      {
-        BOOST_FOREACH(edge_descriptor e, edge_is_constrained_set_)
-        {
-          put(ecmap_, e, true);
-        }
-      }
-    }
-
   private:
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
@@ -1987,7 +1966,6 @@ private:
     Triangle_list input_triangles_;
     Patch_id_list input_patch_ids_;
     Halfedge_status_pmap halfedge_status_pmap_;
-    Edge_is_constrained_set edge_is_constrained_set_;
     bool protect_constraints_;
     FacePatchMap patch_ids_map_;
     EdgeIsConstrainedMap ecmap_;

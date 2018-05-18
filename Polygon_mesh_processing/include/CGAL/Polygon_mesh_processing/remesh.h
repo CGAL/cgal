@@ -260,8 +260,6 @@ void isotropic_remeshing(const FaceRange& faces
 #endif
   }
 
-  remesher.update_constraints_property_map();
-
 #ifdef CGAL_PMP_REMESHING_VERBOSE
   t.stop();
   std::cout << "Remeshing done (size = " << target_edge_length;
