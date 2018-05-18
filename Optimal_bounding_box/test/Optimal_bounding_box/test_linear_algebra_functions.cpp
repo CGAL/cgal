@@ -1,4 +1,4 @@
-#include <CGAL/Optimal_bounding_box/linear_algebra.h>
+#include <CGAL/Optimal_bounding_box/nelder_mead_functions.h>
 #include <CGAL/Optimal_bounding_box/fitness_function.h>
 #include <CGAL/Optimal_bounding_box/population.h>
 #include <iostream>

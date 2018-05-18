@@ -45,7 +45,7 @@ double compute_fitness(const Vertex& R, const Matrix& data)
   double xmin, xmax, ymin, ymax, zmin, zmax;
   for(int i = 0; i < data.rows(); ++i){
 
-    Vector3d vec = Linear_algebra_traits::row(data, i);
+    Vector3d vec = Linear_algebra_traits::row3(data, i);
     vec = R * vec;
 
     if(i == 0){

@@ -24,7 +24,7 @@
 
 #include <vector>
 #include <CGAL/Random.h>
-#include <CGAL/Optimal_bounding_box/linear_algebra.h>
+#include <CGAL/Optimal_bounding_box/nelder_mead_functions.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_linear_algebra_traits.h>

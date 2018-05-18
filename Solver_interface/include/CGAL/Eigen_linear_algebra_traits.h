@@ -153,32 +153,20 @@ public:
     }
   }
 
+  // CGAL::Eigen_dense_vector<NT, D2> : the returned type with D2 may be -1 in compile time,
+  // and may not be equal to the expected type.
+  // Eigen manages to return a precompiled row out of a dynamic matrix but I don't know how.
   template <class NT, int D1, int D2>
-  static CGAL::Eigen_dense_vector<NT, D2> row(const CGAL::Eigen_dense_matrix<NT, D1, D2>& A,
+  static CGAL::Eigen_dense_vector<NT, 3> row3(const CGAL::Eigen_dense_matrix<NT, D1, D2>& A,
                                               int i)
   {
-    return CGAL::Eigen_dense_vector<NT, D2>(A.m_matrix.row(i));
+    return CGAL::Eigen_dense_vector<NT, 3>(A.m_matrix.row(i));
   }
+
 };
 
 
 // matrix multiplication
-/*
-template <class NT, int D1, int D2>
-const CGAL::Eigen_dense_matrix<NT> operator* (const CGAL::Eigen_dense_matrix<NT>& A,
-                                              const CGAL::Eigen_dense_matrix<NT, D1, D2 >& B)
-{
-  return CGAL::Eigen_dense_matrix<NT>(A.m_matrix * B.m_matrix);
-}
-
-template <class NT, int D1, int D2>
-const CGAL::Eigen_dense_matrix<NT> operator* (const CGAL::Eigen_dense_matrix<NT, D1, D2 >& A,
-                                              const CGAL::Eigen_dense_matrix<NT>& B)
-{
-  return CGAL::Eigen_dense_matrix<NT>(A.m_matrix * B.m_matrix);
-}
-*/
-
 template <class NT, int D1, int D2, int D3>
 const CGAL::Eigen_dense_matrix<NT, D1, D3> operator* (const CGAL::Eigen_dense_matrix<NT, D1, D2 >& A,
                                                       const CGAL::Eigen_dense_matrix<NT, D2, D3 >& B)
