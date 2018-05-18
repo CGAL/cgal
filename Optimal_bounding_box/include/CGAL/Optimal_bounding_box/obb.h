@@ -52,6 +52,7 @@ typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
 
 
 // works on matrices only
+/// \cond SKIP_IN_MANUAL
 template <typename Vertex, typename Matrix>
 void post_processing(const Matrix& points, Vertex& R, Matrix& obb)
 {
@@ -91,7 +92,18 @@ void post_processing(const Matrix& points, Vertex& R, Matrix& obb)
   // 3) apply inverse rotation to rotated AABB
   obb = aabb * R;
 }
+/// \endcond
 
+/// \ingroup OBB_grp
+/// calculates the optimal bounding box.
+///
+/// @tparam Point the point type
+/// @tparam LinearAlgebraTraits a model of `LinearAlgebraTraits`
+///
+/// @param points the input points that are included in the optimal bounding box.
+/// @param obb_points the eight points of the optimal bounding box to be calculated.
+/// @param use_ch a bool flag to indicating whether to use the convex hull of the input points
+/// as an optimization step.
 template <typename Point, typename LinearAlgebraTraits>
 void find_obb(std::vector<Point>& points,
               std::vector<Point>& obb_points,
@@ -188,9 +200,17 @@ void find_obb(std::vector<Point>& points,
   }
 }
 
+/// \ingroup OBB_grp
+/// calculates the optimal bounding box.
+///
+/// @tparam PolygonMesh a model of `FaceListGraph` 
+/// @tparam LinearAlgebraTraits a model of `LinearAlgebraTraits`
+///
 /// @param pmesh the input mesh.
-/// @param obbmesh the obb in a hexahedron pmesh.
-/// @param use convex hull or not.
+/// @param obbmesh the hexaedron mesh to be built out of the optimal bounding box.
+/// @param la_traits an instance of the linear algebra traits.
+/// @param use_ch a bool flag to indicating whether to use the convex hull of the input points
+/// as an optimization step.
 template <typename PolygonMesh, typename LinearAlgrebraTraits>
 void find_obb(PolygonMesh& pmesh,
               PolygonMesh& obbmesh,

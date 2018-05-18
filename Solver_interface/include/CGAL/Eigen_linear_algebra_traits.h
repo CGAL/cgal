@@ -33,12 +33,28 @@ namespace CGAL {
 template<typename T, int D = Eigen::Dynamic>
 class Eigen_dense_vector;
 
+/*!
+\ingroup PkgSolver
+
+The class `Eigen_dense_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type
+<a href="http://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::DenseMatrix`</a>.
+
+\tparam T Number type.
+\tparam D1 Number of rows, or Dynamic.
+\tparam D1 Number of cols, or Dynamic.
+
+\sa `CGAL::Eigen_dense_vector<T, D>`
+\sa `CGAL::Eigen_linear_algebra_traits`
+*/
 template<typename T, int D1 = Eigen::Dynamic, int D2 = Eigen::Dynamic>
 class Eigen_dense_matrix
 {
 public:
+
+  /// The internal matrix type from \ref thirdpartyEigen "Eigen".
   typedef Eigen::Matrix<T, D1, D2> EigenType;
 
+  /// Create a dense matrix
   Eigen_dense_matrix(std::size_t nrows, std::size_t ncols)
     : m_matrix(static_cast<int>(nrows), static_cast<int>(ncols))
   {
@@ -46,6 +62,7 @@ public:
     CGAL_assertion(m_matrix.cols() > 0);
   }
 
+  /// Create a dense matrix
   Eigen_dense_matrix(int nrows, int ncols)
     : m_matrix(nrows, ncols)
   {
@@ -53,16 +70,25 @@ public:
     CGAL_assertion(m_matrix.cols() > 0);
   }
 
+  /// Create a dense matrix out of a \ref thirdpartyEigen "Eigen" matrix type
   Eigen_dense_matrix(const EigenType& eigen_mat)
     : m_matrix(eigen_mat) {}
 
   Eigen_dense_matrix() : m_matrix() {}
 
+  /// Read access to a matrix coefficient.
+  ///
+  /// \pre 0 <= i < row_dimension().
+  /// \pre 0 <= j < column_dimension().
   T& operator() (int i_, int j_)
   {
     return m_matrix(i_, j_);
   }
 
+  /// Write access to a matrix coefficient: a_ij <- val
+  ///
+  /// \pre 0 <= i < row_dimension().
+  /// \pre 0 <= j < column_dimension().
   void set_coef(std::size_t i_, std::size_t j_, T val)
   {
     int i = static_cast<int>(i_);
@@ -73,9 +99,12 @@ public:
     m_matrix.coeffRef(i,j) = val;
   }
 
+  /// Return the matrix number of rows
   std::size_t rows() const {return m_matrix.rows();}
+  /// Return the matrix number of cols
   std::size_t cols() const {return m_matrix.cols();}
 
+  /// Resize to i rows and j cols
   void resize(int i_, int j_) { m_matrix.resize(i_, j_);}
 
   const T& coeff(int i_) const
@@ -86,16 +115,36 @@ public:
   mutable EigenType m_matrix;
 };
 
+/*!
+\ingroup PkgSolver
 
+The class `Eigen_vector` is a wrapper around \ref thirdpartyEigen "Eigen" dense vector
+type <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1Matrix.html"> </a>,
+which is a simple array of numbers.
+
+\cgalModels `SvdTraits::Vector`
+\cgalModels `SparseLinearAlgebraTraits_d::Vector`.
+
+\tparam T Number type.
+\tparam D Number of colums, or Dynamic.
+
+\sa `CGAL::Eigen_dense_matrix<T>`
+\sa `CGAL::Eigen_linear_algebra_traits<T>`
+*/
 template <typename T, int D>
 class Eigen_dense_vector
 {
 private:
+
+  /// The internal vector type from \ref thirdpartyEigen "Eigen".
   typedef Eigen::Matrix<T, D, 1> EigenType;
 
 public:
+
+  /// Create a dense vector out of a \ref thirdpartyEigen "Eigen" vector type
   Eigen_dense_vector(const EigenType&  vec) : m_vector(vec) {}
 
+  /// Read and write and access to a vector coefficient: `a_i`
   const T& coeff(std::size_t i)
   {
     CGAL_assertion(i >= 0);
@@ -106,6 +155,35 @@ public:
   mutable EigenType m_vector;
 };
 
+
+/*!
+\ingroup PkgSolver
+
+The class `Eigen_linear_algebra_traits` provides an interface to linear algebra functionalities of \ref thirdpartyEigen "Eigen".
+\ref thirdpartyEigen "Eigen" version 3.1 (or later) must be available on the system.
+
+\sa `CGAL::Eigen_dense_matrix<T, D1, D2>`
+\sa `CGAL::Eigen_dense_vector<T, D>`
+\sa http://eigen.tuxfamily.org
+
+Example
+-------------- 
+
+\code{.cpp}
+
+typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
+
+// dynamic matrix at run time to store a large amount of data
+typedef Linear_algebra_traits::MatrixXd MatrixXd;
+
+// preallocated 3x3 matrix at compile time
+typedef Linear_algebra_traits::Matrix3d Matrix3d;
+
+// preallocated 3-cols vector at compile time
+typedef Linear_algebra_traits::Vector3d Vector3d;
+
+\endcode
+*/
 
 class Eigen_linear_algebra_traits
 {
@@ -124,18 +202,22 @@ public:
   // fixed at compile time
   typedef CGAL::Eigen_dense_vector<NT, 3> Vector3d;
 
+  /// Get the transpose of a `CGAL::Eigen_dense_matrix<T, D1, D2>` matrix
   template <class Matrix>
   static Matrix transpose(const Matrix& mat)
   {
     return Matrix(mat.m_matrix.transpose());
   }
 
+  /// Get the determinant of a `CGAL::Eigen_dense_matrix<T, D1, D2>` matrix
   template <class Matrix>
   static NT determinant(const Matrix& mat)
   {
     return mat.m_matrix.determinant();
   }
 
+  /// Performs QR decomposition of matrix A to a unitary matrix and an upper triagonal 
+  /// and returns the unitary matrix.
   template <class NT, int D1, int D2>
   static CGAL::Eigen_dense_matrix<NT, D1, D2> qr_factorization(const CGAL::Eigen_dense_matrix<NT, D1, D2>& A)
   {
@@ -156,6 +238,9 @@ public:
   // CGAL::Eigen_dense_vector<NT, D2> : the returned type with D2 may be -1 in compile time,
   // and may not be equal to the expected type.
   // Eigen manages to return a precompiled row out of a dynamic matrix but I don't know how.
+
+  /// Get the row vector out of a `CGAL::Eigen_dense_matrix<T, D1, D2>`. The result is stored in a 
+  /// preallocated at compile time 3-column `CGAL::Eigen_dense_vector<T, 3>`
   template <class NT, int D1, int D2>
   static CGAL::Eigen_dense_vector<NT, 3> row3(const CGAL::Eigen_dense_matrix<NT, D1, D2>& A,
                                               int i)
@@ -166,7 +251,9 @@ public:
 };
 
 
-// matrix multiplication
+/// Matrix multiplication. If the columns of A and the rows of B are equal at compile time, 
+/// the product is stored at a preallocated at compile time `CGAL::Eigen_dense_matrix`. Otherwise, 
+/// the product is stored in a dynamic at run time matrix.
 template <class NT, int D1, int D2, int D3>
 const CGAL::Eigen_dense_matrix<NT, D1, D3> operator* (const CGAL::Eigen_dense_matrix<NT, D1, D2 >& A,
                                                       const CGAL::Eigen_dense_matrix<NT, D2, D3 >& B)
