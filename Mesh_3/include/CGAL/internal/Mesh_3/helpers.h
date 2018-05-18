@@ -31,6 +31,7 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <iostream>
+#include <fstream>
 #include <boost/foreach.hpp>
 #include <CGAL/disable_warnings.h>
 
