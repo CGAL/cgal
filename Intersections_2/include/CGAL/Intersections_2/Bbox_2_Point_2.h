@@ -77,16 +77,16 @@ intersection(const CGAL::Bbox_2& b,
 } // namespace Intersections
 
 template<typename K>
-typename CGAL::Intersection_traits<K, CGAL::Bbox_2, typename Point_2<K> >::result_type
-intersection(const CGAL::Bbox_2& b,   
-             const typename Point_2<K>  & a)
+typename CGAL::Intersection_traits<K, Bbox_2, Point_2<K> >::result_type
+intersection(const Bbox_2& b,   
+             const Point_2<K>  & a)
 {
   return Intersections::internal::intersection(b,a,K());
 }
   template<typename K>
-typename CGAL::Intersection_traits<K, CGAL::Bbox_2, typename Point_2<K> >::result_type
-  intersection(const typename Point_2<K>  & a,
-               const CGAL::Bbox_2& b)
+typename CGAL::Intersection_traits<K, Bbox_2, Point_2<K> >::result_type
+  intersection(const Point_2<K>  & a,
+               const Bbox_2& b)
 {
   return Intersections::internal::intersection(b,a,K());
 }
