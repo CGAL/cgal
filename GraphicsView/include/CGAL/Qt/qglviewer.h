@@ -25,6 +25,7 @@
 #ifndef QGLVIEWER_QGLVIEWER_H
 #define QGLVIEWER_QGLVIEWER_H
 #include <CGAL/export/Qt.h>
+#include <CGAL/number_type_config.h>
 #include <CGAL/Qt/viewer_actions.h>
 #include <CGAL/Qt/vec.h>
 #include <CGAL/Qt/camera.h>

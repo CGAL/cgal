@@ -384,7 +384,7 @@ void Viewer::compute_elements()
         // normalize
         v = v / length;
         // compute the angle: cos theta = v.z/1.0
-        GLfloat angle = acos( v.y() ) / M_PI * 180;
+        GLfloat angle = acos( v.y() ) / CGAL_PI * 180;
         QMatrix4x4 matrix;
         matrix.setToIdentity();
         // move to "from" point
@@ -415,7 +415,7 @@ void Viewer::compute_elements()
             // normalize
             v = v / length;
             // compute the angle: cos theta = v.z/1.0
-            GLfloat angle = acos( v.y() ) / M_PI * 180;
+            GLfloat angle = acos( v.y() ) / CGAL_PI * 180;
             QMatrix4x4 matrix;
             matrix.setToIdentity();
             // move to "from" point
@@ -442,7 +442,7 @@ void Viewer::compute_elements()
             // normalize
             v = v / length;
             // compute the angle: cos theta = v.z/1.0
-            GLfloat angle = acos( v.y() ) / M_PI * 180;
+            GLfloat angle = acos( v.y() ) / CGAL_PI * 180;
             QMatrix4x4 matrix;
             matrix.setToIdentity();
             // move to "from" point
@@ -2440,8 +2440,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
 
 
 
-        P = rings*M_PI/180.0;
-        T = t*M_PI/180.0;
+        P = rings*CGAL_PI/180.0;
+        T = t*CGAL_PI/180.0;
         x[1] = sin(P) * cos(T) ;
         z[1] = sin(P) * sin(T) ;
         y[1] = cos(P);
@@ -2455,8 +2455,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
         normals->push_back(z[1]);
 
         //
-        P = rings*M_PI/180.0;
-        T = (t+sectors)*M_PI/180.0;
+        P = rings*CGAL_PI/180.0;
+        T = (t+sectors)*CGAL_PI/180.0;
         x[2] = sin(P) * cos(T) ;
         z[2] = sin(P) * sin(T) ;
         y[2] = cos(P);
@@ -2474,8 +2474,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
         for(int t=0; t<360; t+=sectors)
         {
             //A
-            P = p*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = p*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[0] = sin(P) * cos(T) ;
             z[0] = sin(P) * sin(T) ;
             y[0] = cos(P);
@@ -2490,8 +2490,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
             normals->push_back(z[0]);
 
             //B
-            P = (p+rings)*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = (p+rings)*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[1] = sin(P) * cos(T) ;
             z[1] = sin(P) * sin(T) ;
             y[1] = cos(P);
@@ -2505,8 +2505,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
             normals->push_back(z[1]);
 
             //C
-            P = p*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = p*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[2] = sin(P) * cos(T) ;
             z[2] = sin(P) * sin(T) ;
             y[2] = cos(P);
@@ -2519,8 +2519,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
             normals->push_back(y[2]);
             normals->push_back(z[2]);
             //D
-            P = (p+rings)*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = (p+rings)*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[3] = sin(P) * cos(T) ;
             z[3] = sin(P) * sin(T) ;
             y[3] = cos(P);
@@ -2561,7 +2561,7 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
     {
 
         //point A1
-        float D = d*M_PI/180.0;
+        float D = d*CGAL_PI/180.0;
         vertices->push_back(R * sin(D));
         vertices->push_back(0);
         vertices->push_back(R * cos(D));
@@ -2580,7 +2580,7 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
         normals->push_back(cos(D));
 
         //point C1
-        D = (d+360/prec)*M_PI/180.0;
+        D = (d+360/prec)*CGAL_PI/180.0;
         vertices->push_back(R * sin(D));
         vertices->push_back(1);
         vertices->push_back(R * cos(D));
@@ -2590,7 +2590,7 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
         normals->push_back(cos(D));
 
         //point A2
-        D = (d+360/prec)*M_PI/180.0;
+        D = (d+360/prec)*CGAL_PI/180.0;
         vertices->push_back(R * sin(D));
         vertices->push_back(1);
         vertices->push_back(R * cos(D));
@@ -2609,7 +2609,7 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
         normals->push_back(cos(D));
 
         //point C2
-        D = d*M_PI/180.0;
+        D = d*CGAL_PI/180.0;
         vertices->push_back(R * sin(D));
         vertices->push_back(0);
         vertices->push_back(R * cos(D));
@@ -2635,8 +2635,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
 
 
 
-           P = rings*M_PI/180.0;
-           T = t*M_PI/180.0;
+           P = rings*CGAL_PI/180.0;
+           T = t*CGAL_PI/180.0;
            x[1] = sin(P) * cos(T) ;
            z[1] = sin(P) * sin(T) ;
            y[1] = cos(P);
@@ -2650,8 +2650,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
            normals->push_back(z[1]);
 
            //
-           P = rings*M_PI/180.0;
-           T = (t+sectors)*M_PI/180.0;
+           P = rings*CGAL_PI/180.0;
+           T = (t+sectors)*CGAL_PI/180.0;
            x[2] = sin(P) * cos(T) ;
            z[2] = sin(P) * sin(T) ;
            y[2] = cos(P);
@@ -2669,8 +2669,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
            for(int t=0; t<360; t+=sectors)
            {
                //A
-               P = p*M_PI/180.0;
-               T = t*M_PI/180.0;
+               P = p*CGAL_PI/180.0;
+               T = t*CGAL_PI/180.0;
                x[0] = sin(P) * cos(T) ;
                z[0] = sin(P) * sin(T) ;
                y[0] = cos(P);
@@ -2685,8 +2685,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
                normals->push_back(z[0]);
 
                //B
-               P = (p+rings)*M_PI/180.0;
-               T = t*M_PI/180.0;
+               P = (p+rings)*CGAL_PI/180.0;
+               T = t*CGAL_PI/180.0;
                x[1] = sin(P) * cos(T) ;
                z[1] = sin(P) * sin(T) ;
                y[1] = cos(P);
@@ -2700,8 +2700,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
                normals->push_back(z[1]);
 
                //C
-               P = p*M_PI/180.0;
-               T = (t+sectors)*M_PI/180.0;
+               P = p*CGAL_PI/180.0;
+               T = (t+sectors)*CGAL_PI/180.0;
                x[2] = sin(P) * cos(T) ;
                z[2] = sin(P) * sin(T) ;
                y[2] = cos(P);
@@ -2714,8 +2714,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
                normals->push_back(y[2]);
                normals->push_back(z[2]);
                //D
-               P = (p+rings)*M_PI/180.0;
-               T = (t+sectors)*M_PI/180.0;
+               P = (p+rings)*CGAL_PI/180.0;
+               T = (t+sectors)*CGAL_PI/180.0;
                x[3] = sin(P) * cos(T) ;
                z[3] = sin(P) * sin(T) ;
                y[3] = cos(P);
@@ -2777,8 +2777,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
 
 
 
-        P = rings*M_PI/180.0;
-        T = t*M_PI/180.0;
+        P = rings*CGAL_PI/180.0;
+        T = t*CGAL_PI/180.0;
         x[1] = sin(P) * cos(T) ;
         y[1] = sin(P) * sin(T) ;
         z[1] = cos(P);
@@ -2792,8 +2792,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
         normals->push_back(z[1]);
 
         //
-        P = rings*M_PI/180.0;
-        T = (t+sectors)*M_PI/180.0;
+        P = rings*CGAL_PI/180.0;
+        T = (t+sectors)*CGAL_PI/180.0;
         x[2] = sin(P) * cos(T) ;
         y[2] = sin(P) * sin(T) ;
         z[2] = cos(P);
@@ -2812,8 +2812,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
         for(int t=0; t<360; t+=sectors)
         {
             //A
-            P = p*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = p*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[0] = sin(P) * cos(T) ;
             y[0] = sin(P) * sin(T) ;
             z[0] = cos(P);
@@ -2828,8 +2828,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
             normals->push_back(z[0]);
 
             //B
-            P = (p+rings)*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = (p+rings)*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[1] = sin(P) * cos(T) ;
             y[1] = sin(P) * sin(T) ;
             z[1] = cos(P);
@@ -2843,8 +2843,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
             normals->push_back(z[1]);
 
             //C
-            P = p*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = p*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[2] = sin(P) * cos(T) ;
             y[2] = sin(P) * sin(T) ;
             z[2] = cos(P);
@@ -2857,8 +2857,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
             normals->push_back(y[2]);
             normals->push_back(z[2]);
             //D
-            P = (p+rings)*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = (p+rings)*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[3] = sin(P) * cos(T) ;
             y[3] = sin(P) * sin(T) ;
             z[3] = cos(P);
@@ -2907,8 +2907,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
         normals->push_back(-1);
 
 
-        P = (180-rings)*M_PI/180.0;
-        T = t*M_PI/180.0;
+        P = (180-rings)*CGAL_PI/180.0;
+        T = t*CGAL_PI/180.0;
         x[1] = sin(P) * cos(T) ;
         y[1] = sin(P) * sin(T) ;
         z[1] = cos(P);
@@ -2922,8 +2922,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
         normals->push_back(z[1]);
 
 
-        P = (180-rings)*M_PI/180.0;
-        T = (t+sectors)*M_PI/180.0;
+        P = (180-rings)*CGAL_PI/180.0;
+        T = (t+sectors)*CGAL_PI/180.0;
         x[2] = sin(P) * cos(T) ;
         y[2] = sin(P) * sin(T) ;
         z[2] = cos(P);
