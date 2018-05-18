@@ -20,7 +20,7 @@ void test_nelder_mead()
 {
   typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
   typedef Linear_algebra_traits::Matrix3d Matrix3d;
-  typedef Linear_algebra_traits::MatrixX3d MatrixXd;
+  typedef Linear_algebra_traits::MatrixXd MatrixXd;
 
   MatrixXd data_points(4,3);
   data_points(0,0) = 0.866802;
@@ -143,7 +143,7 @@ void test_nelder_mead()
 
 void test_genetic_algorithm()
 {
-  CGAL::Eigen_dense_matrix<double, -1, 3> data_points(4, 3); // -1 : dynamic size at run time
+  CGAL::Eigen_dense_matrix<double, -1, -1> data_points(4, 3); // -1 : dynamic size at run time
   data_points(0,0) = 0.866802;
   data_points(0,1) = 0.740808,
   data_points(0,2) = 0.895304,
@@ -170,7 +170,7 @@ void test_genetic_algorithm()
 void test_random_unit_tetra()
 {
   // this is dynamic at run times
-  CGAL::Eigen_dense_matrix<double, -1, 3> data_points(4, 3);
+  CGAL::Eigen_dense_matrix<double, -1, -1> data_points(4, 3);
 
   // points are on their convex hull
   data_points(0,0) = 0.866802;
@@ -244,7 +244,7 @@ void test_reference_tetrahedron(const char* fname)
   }
 
   typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
-  typedef Linear_algebra_traits::MatrixX3d MatrixXd;
+  typedef Linear_algebra_traits::MatrixXd MatrixXd;
   typedef Linear_algebra_traits::Matrix3d Matrix3d;
 
   // points in a matrix
@@ -279,7 +279,7 @@ void test_long_tetrahedron(std::string fname)
   }
 
   typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
-  typedef Linear_algebra_traits::MatrixX3d MatrixXd;
+  typedef Linear_algebra_traits::MatrixXd MatrixXd;
   typedef Linear_algebra_traits::Matrix3d Matrix3d;
 
   // points in a matrix

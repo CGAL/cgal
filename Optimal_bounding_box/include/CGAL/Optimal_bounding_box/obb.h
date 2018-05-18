@@ -105,7 +105,7 @@ void find_obb(std::vector<Point>& points,
   CGAL_assertion(obb_points.size() == 8);
 
   // eigen linear algebra traits
-  typedef typename LinearAlgebraTraits::MatrixX3d MatrixXd;
+  typedef typename LinearAlgebraTraits::MatrixXd MatrixXd;
   typedef typename LinearAlgebraTraits::Matrix3d Matrix3d;
 
   MatrixXd points_mat;

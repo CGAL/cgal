@@ -174,6 +174,15 @@ const CGAL::Eigen_dense_matrix<NT, D1, D3> operator* (const CGAL::Eigen_dense_ma
   return CGAL::Eigen_dense_matrix<NT, D1, D3>(A.m_matrix * B.m_matrix);
 }
 
+// D2 and D3 may not be equal at compile time, but equal at run time!
+// This overload returns a dynamic matrix.
+template <class NT, int D1, int D2, int D3, int D4>
+const CGAL::Eigen_dense_matrix<NT> operator* (const CGAL::Eigen_dense_matrix<NT, D1, D2 >& A,
+                                              const CGAL::Eigen_dense_matrix<NT, D3, D4 >& B)
+{
+  return CGAL::Eigen_dense_matrix<NT>(A.m_matrix * B.m_matrix);
+}
+
 // scalar - matrix multiplication
 template <class NT, int D1, int D2>
 const CGAL::Eigen_dense_matrix<NT, D1, D2> operator* (const NT& scalar,

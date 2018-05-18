@@ -33,7 +33,7 @@ namespace Optimal_bounding_box {
 template <typename Linear_algebra_traits>
 class Evolution
 {
-  typedef typename Linear_algebra_traits::MatrixX3d MatrixXd;
+  typedef typename Linear_algebra_traits::MatrixXd MatrixXd;
   typedef typename Linear_algebra_traits::Matrix3d Matrix3d;
   typedef typename Linear_algebra_traits::Vector3d Vector3d;
 
