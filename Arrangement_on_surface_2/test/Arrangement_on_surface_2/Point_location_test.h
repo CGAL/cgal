@@ -14,7 +14,7 @@
 #define TRAPEZOID_RIC_PL_ENABLED 1
 #define TRAPEZOID_RIC_NO_GUARANTEE_PL_ENABLED 1
 
-#include <array>
+#include <vector>
 
 #include <CGAL/basic.h>
 #include <CGAL/Timer.h>
@@ -149,23 +149,24 @@ protected:
     NUM_PL_STRATEGIES
   };
 
-  struct Locator {
-    typedef boost::variant<Naive_pl*,
-                           Simple_pl*,
-                           Walk_pl*,
+  typedef boost::variant<Naive_pl*,
+                         Simple_pl*,
+                         Walk_pl*,
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
   (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
-                           Lm_pl*,
-                           Lm_random_pl*,
-                           Lm_grid_pl*,
-                           Lm_halton_pl*,
-                           Lm_middle_edges_pl*,
-                           Lm_specified_points_pl*,
+                         Lm_pl*,
+                         Lm_random_pl*,
+                         Lm_grid_pl*,
+                         Lm_halton_pl*,
+                         Lm_middle_edges_pl*,
+                         Lm_specified_points_pl*,
 #endif
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
-                           Triangulation_pl*,
+                         Triangulation_pl*,
 #endif
-                           Trapezoid_ric_pl*>       Pl_variant;
+                         Trapezoid_ric_pl*>       Pl_variant;
+
+  struct Locator {
     Pl_variant m_variant;
 
     //! The name of the locator.
@@ -174,7 +175,7 @@ protected:
     bool m_active;
   };
 
-  std::array<Locator, NUM_PL_STRATEGIES> m_locators;
+  std::vector<Locator> m_locators;
 
   // Landmark point-location generators
   Random_lm_generator* m_random_g;
@@ -238,9 +239,11 @@ public:
   void query(Point_location& pl, const char* type,
              InputIterator begin, InputIterator end, OutputIterator oi)
   {
+    typedef InputIterator               Input_iterator;
     CGAL::Timer timer;
     timer.reset(); timer.start();
-    for (auto piter = begin; piter != end; ++piter) *oi++ = pl.locate(*piter);
+    for (Input_iterator piter = begin; piter != end; ++piter)
+      *oi++ = pl.locate(*piter);
     timer.stop();
     std::cout << type << " location took " << timer.time() << std::endl;
   }
@@ -250,7 +253,7 @@ private:
   template <typename Strategy, Pl_strategy id>
   void init_pl(const std::string& name)
   {
-    m_locators[id].m_variant = static_cast<Strategy*>(nullptr);
+    m_locators[id].m_variant = static_cast<Strategy*>(NULL);
     m_locators[id].m_name = name;
     m_locators[id].m_active = true;
   }
@@ -259,7 +262,7 @@ private:
   template <typename Strategy, Pl_strategy id>
   void allocate_pl()
   {
-    auto* locator = new Strategy();
+    Strategy* locator = new Strategy();
     CGAL_assertion(locator);
     m_locators[id].m_variant = locator;
   }
@@ -268,7 +271,7 @@ private:
   template <typename Strategy, Pl_strategy id>
   bool construct_pl()
   {
-    auto* locator = new Strategy(*m_arr);
+    Strategy* locator = new Strategy(*m_arr);
     if (! locator) return false;
     m_locators[id].m_variant = locator;
     return true;
@@ -278,7 +281,7 @@ private:
   template <typename Strategy, Pl_strategy id, typename Generator>
   bool construct_pl(Generator* generator)
   {
-    auto* locator = new Strategy(*m_arr, generator);
+    Strategy* locator = new Strategy(*m_arr, generator);
     if (! locator) return false;
     m_locators[id].m_variant = locator;
     return true;
@@ -288,10 +291,10 @@ private:
   template <typename Strategy, Pl_strategy id>
   void deallocate_pl()
   {
-    auto* strategy = boost::get<Strategy*>(m_locators[id].m_variant);
+    Strategy* strategy = boost::get<Strategy*>(m_locators[id].m_variant);
     if (strategy) {
       delete strategy;
-      m_locators[id].m_variant = static_cast<Strategy*>(nullptr);
+      m_locators[id].m_variant = static_cast<Strategy*>(NULL);
     }
   }
 
@@ -300,7 +303,7 @@ private:
   void attach_pl()
   {
     if (! m_locators[id].m_active) return;
-    auto* strategy = boost::get<Strategy*>(m_locators[id].m_variant);
+    Strategy* strategy = boost::get<Strategy*>(m_locators[id].m_variant);
     strategy->attach(*m_arr);
   }
 
@@ -309,7 +312,7 @@ private:
   void attach_pl(Generator* generator)
   {
     if (! m_locators[id].m_active) return;
-    auto* strategy = boost::get<Strategy*>(m_locators[id].m_variant);
+    Strategy* strategy = boost::get<Strategy*>(m_locators[id].m_variant);
     strategy->attach(*m_arr, generator);
   }
 
@@ -318,8 +321,8 @@ private:
   void query_pl(T& objs)
   {
     if (! m_locators[id].m_active) return;
-    const auto& name = m_locators[id].m_name;
-    auto* strategy = boost::get<Strategy*>(m_locators[id].m_variant);
+    const std::string& name = m_locators[id].m_name;
+    Strategy* strategy = boost::get<Strategy*>(m_locators[id].m_variant);
     query(*strategy, name.c_str(), m_query_points.begin(), m_query_points.end(),
           std::back_inserter(objs));
   }
@@ -329,7 +332,7 @@ private:
   void measure(Timer& timer, UnaryOperation op)
   {
     if (! m_locators[id].m_active) return;
-    const auto& name = m_locators[id].m_name;
+    const std::string& name = m_locators[id].m_name;
     timer.reset();
     timer.start();
     op();
@@ -420,7 +423,7 @@ private:
 #define DEALLOCATE_PL_LM_RANDOM()               \
   if (m_random_g) {                             \
     delete m_random_g;                          \
-    m_random_g = nullptr;                       \
+    m_random_g = NULL;                          \
   }                                             \
   deallocate_pl<Lm_random_pl, LM_RANDOM_PL>()
 
@@ -450,7 +453,7 @@ private:
 #define DEALLOCATE_PL_LM_GRID() \
   if (m_grid_g) {               \
     delete m_grid_g;            \
-    m_grid_g = nullptr;         \
+    m_grid_g = NULL;            \
   }                             \
   deallocate_pl<Lm_grid_pl, LM_GRID_PL>()
 
@@ -481,7 +484,7 @@ private:
 #define DEALLOCATE_PL_LM_HALTON() \
     if (m_halton_g) {             \
     delete m_halton_g;            \
-    m_halton_g = nullptr;         \
+    m_halton_g = NULL;            \
   }                               \
   deallocate_pl<Lm_halton_pl, LM_HALTON_PL>()
 
@@ -513,7 +516,7 @@ private:
 #define DEALLOCATE_PL_LM_MIDDLE_EDGES() \
   if (m_middle_edges_g) {               \
     delete m_middle_edges_g;            \
-    m_middle_edges_g = nullptr;         \
+    m_middle_edges_g = NULL;            \
   }                                     \
   deallocate_pl<Lm_middle_edges_pl, LM_MIDDLE_EDGES_PL>()
 
@@ -546,7 +549,7 @@ private:
 #define DEALLOCATE_PL_LM_SPECIFIED_POINTS() \
   if (m_specified_points_g) {               \
     delete m_specified_points_g;            \
-    m_specified_points_g = nullptr;         \
+    m_specified_points_g = NULL;            \
   }                                         \
   deallocate_pl<Lm_specified_points_pl, LM_SPECIFIED_POINTS_PL>()
 
@@ -621,10 +624,10 @@ private:
 #define DEALLOCATE_PL_TRAPEZOID_RIC_NO_GUARANTEE() \
   deallocate_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>()
 
-#define ATTACH_PL_TRAPEZOID_RIC_NO_GUARANTEE()                     \
-  auto& var = m_locators[TRAPEZOID_RIC_NO_GUARANTEE_PL].m_variant; \
-  auto* strategy = boost::get<Trapezoid_ric_pl*>(var);             \
-  strategy->with_guarantees(false);                                \
+#define ATTACH_PL_TRAPEZOID_RIC_NO_GUARANTEE()                           \
+  Pl_variant& var = m_locators[TRAPEZOID_RIC_NO_GUARANTEE_PL].m_variant; \
+  Trapezoid_ric_pl* strategy = boost::get<Trapezoid_ric_pl*>(var);       \
+  strategy->with_guarantees(false);                                      \
   attach_pl<Trapezoid_ric_pl, TRAPEZOID_RIC_NO_GUARANTEE_PL>()
 
 #define QUERY_PL_TRAPEZOID_RIC_NO_GUARANTEE(obj)   \
@@ -638,19 +641,57 @@ private:
 #define QUERY_PL_TRAPEZOID_RIC_NO_GUARANTEE(obj)
 #endif
 
+#if defined(CGAL_CFG_NO_CPP0X_LAMBDAS)
+#define MEASURE_NAIVE_PL(timer, op) op
+#define MEASURE_SIMPLE_PL(timer, op) op
+#define MEASURE_WALK_PL(timer, op) op
+#define MEASURE_LM_PL(timer, op) op
+#define MEASURE_LM_RANDOM_PL(timer, op) op
+#define MEASURE_LM_GRID_PL(timer, op) op
+#define MEASURE_LM_HALTON_PL(timer, op) op
+#define MEASURE_LM_MIDDLE_EDGES_PL(timer, op) op
+#define MEASURE_LM_SPECIFIED_POINTS_PL(timer, op) op
+#define MEASURE_TRIANGULATION_PL(timer, op) op
+#define MEASURE_TRAPEZOID_RIC_PL(timer, op) op
+#define MEASURE_TRAPEZOID_RIC_NO_GUARANTEE_PL(timer, op) op
+#else
+#define MEASURE_NAIVE_PL(timer, op) measure<NAIVE_PL>(timer, [&](){ op; });
+#define MEASURE_SIMPLE_PL(timer, op) measure<SIMPLE_PL>(timer, [&](){ op; });
+#define MEASURE_WALK_PL(timer, op) measure<WALK_PL>(timer, [&](){ op; });
+#define MEASURE_LM_PL(timer, op) measure<LM_PL>(timer, [&](){ op; });
+#define MEASURE_LM_RANDOM_PL(timer, op) \
+  measure<LM_RANDOM_PL>(timer, [&](){ op; });
+#define MEASURE_LM_GRID_PL(timer, op) \
+  measure<LM_GRID_PL>(timer, [&](){ op; });
+#define MEASURE_LM_HALTON_PL(timer, op) \
+  measure<LM_HALTON_PL>(timer, [&](){ op; });
+#define MEASURE_LM_MIDDLE_EDGES_PL(timer, op) \
+  measure<LM_MIDDLE_EDGES_PL>(timer, [&](){ op; });
+#define MEASURE_LM_SPECIFIED_POINTS_PL(timer, op) \
+  measure<LM_SPECIFIED_POINTS_PL>(timer, [&](){ op; });
+#define MEASURE_TRIANGULATION_PL(timer, op) \
+  measure<TRIANGULATION_PL>(timer, [&](){ op; });
+#define MEASURE_TRAPEZOID_RIC_PL(timer, op) \
+  measure<TRAPEZOID_RIC_PL>(timer, [&](){ op; });
+#define MEASURE_TRAPEZOID_RIC_NO_GUARANTEE_PL(timer, op) \
+  measure<TRAPEZOID_RIC_NO_GUARANTEE_PL>(timer, [&](){ op; });
+#endif
+
 //! Constructor.
 template <typename GeomTraits, typename TopolTraits>
 Point_location_test<GeomTraits, TopolTraits>::
 Point_location_test(const Geom_traits& geom_traits) :
   Base(geom_traits),
   m_geom_traits(geom_traits),
-  m_arr(nullptr),
-  m_random_g(nullptr),
-  m_grid_g(nullptr),
-  m_halton_g(nullptr),
-  m_middle_edges_g(nullptr),
-  m_specified_points_g(nullptr)
+  m_arr(NULL),
+  m_random_g(NULL),
+  m_grid_g(NULL),
+  m_halton_g(NULL),
+  m_middle_edges_g(NULL),
+  m_specified_points_g(NULL)
 {
+  m_locators.resize(NUM_PL_STRATEGIES);
+
   INIT_PL_NATIVE();
   INIT_PL_SIMPLE();
   INIT_PL_WALK();
@@ -748,7 +789,7 @@ deallocate_arrangement()
 {
   if (m_arr) {
     delete m_arr;
-    m_arr = nullptr;
+    m_arr = NULL;
   }
 }
 
@@ -816,25 +857,22 @@ bool Point_location_test<GeomTraits, TopolTraits>::construct_pl_strategies()
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
   (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
-  measure<LM_PL>(timer, [&](){ CONSTRUCT_PL_LM(); });
-  measure<LM_RANDOM_PL>(timer, [&](){ CONSTRUCT_PL_LM_RANDOM(); });
-  measure<LM_GRID_PL>(timer, [&](){ CONSTRUCT_PL_LM_GRID(); });
-  measure<LM_HALTON_PL>(timer, [&](){ CONSTRUCT_PL_LM_HALTON(); });
-  measure<LM_MIDDLE_EDGES_PL>(timer, [&](){ CONSTRUCT_PL_LM_MIDDLE_EDGES(); });
-  measure<LM_SPECIFIED_POINTS_PL>(timer, [&](){
-      CONSTRUCT_PL_LM_SPECIFIED_POINTS();
-    });
+  MEASURE_LM_PL(timer, CONSTRUCT_PL_LM());
+  MEASURE_LM_RANDOM_PL(timer, CONSTRUCT_PL_LM_RANDOM());
+  MEASURE_LM_GRID_PL(timer, CONSTRUCT_PL_LM_GRID());
+  MEASURE_LM_HALTON_PL(timer, CONSTRUCT_PL_LM_HALTON());
+  MEASURE_LM_MIDDLE_EDGES_PL(timer, CONSTRUCT_PL_LM_MIDDLE_EDGES());
+  MEASURE_LM_SPECIFIED_POINTS_PL(timer, CONSTRUCT_PL_LM_SPECIFIED_POINTS());
 
 #endif
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
-  measure<TRIANGULATION_PL>(timer, [&](){ CONSTRUCT_PL_TRIANGULATION_PL(); });
+  MEASURE_TRIANGULATION_PL(timer, CONSTRUCT_PL_TRIANGULATION_PL());
 #endif
 
-  measure<TRAPEZOID_RIC_PL>(timer, [&](){ CONSTRUCT_PL_TRAPEZOID_RIC_PL(); });
-  measure<TRAPEZOID_RIC_NO_GUARANTEE_PL>(timer, [&](){
-      CONSTRUCT_PL_TRAPEZOID_RIC_NO_GUARANTEE();
-    });
+  MEASURE_TRAPEZOID_RIC_PL(timer, CONSTRUCT_PL_TRAPEZOID_RIC_PL());
+  MEASURE_TRAPEZOID_RIC_NO_GUARANTEE_PL(timer,
+                                        CONSTRUCT_PL_TRAPEZOID_RIC_NO_GUARANTEE());
 
   std::cout << std::endl;
 
@@ -854,24 +892,21 @@ bool Point_location_test<GeomTraits, TopolTraits>::attach_pl_strategies()
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
   (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
-  measure<LM_PL>(timer, [&](){ ATTACH_PL_LM(); });
-  measure<LM_RANDOM_PL>(timer, [&](){ ATTACH_PL_LM_RANDOM(); });
-  measure<LM_GRID_PL>(timer, [&](){ ATTACH_PL_LM_GRID(); });
-  measure<LM_HALTON_PL>(timer, [&](){ ATTACH_PL_LM_HALTON(); });
-  measure<LM_MIDDLE_EDGES_PL>(timer, [&](){ ATTACH_PL_LM_MIDDLE_EDGES(); });
-  measure<LM_SPECIFIED_POINTS_PL>(timer, [&](){
-      ATTACH_PL_LM_SPECIFIED_POINTS();
-    });
+  MEASURE_LM_PL(timer, ATTACH_PL_LM());
+  MEASURE_LM_RANDOM_PL(timer, ATTACH_PL_LM_RANDOM());
+  MEASURE_LM_GRID_PL(timer, ATTACH_PL_LM_GRID());
+  MEASURE_LM_HALTON_PL(timer, ATTACH_PL_LM_HALTON());
+  MEASURE_LM_MIDDLE_EDGES_PL(timer, ATTACH_PL_LM_MIDDLE_EDGES());
+  MEASURE_LM_SPECIFIED_POINTS_PL(timer, ATTACH_PL_LM_SPECIFIED_POINTS());
 #endif
 
 #if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
-  measure<TRIANGULATION_PL>(timer, [&](){ ATTACH_PL_TRIANGULATION_PL(); });
+  MEASURE_TRIANGULATION_PL(timer, ATTACH_PL_TRIANGULATION_PL());
 #endif
 
-  measure<TRAPEZOID_RIC_PL>(timer, [&](){ ATTACH_PL_TRAPEZOID_RIC_PL(); });
-  measure<TRAPEZOID_RIC_NO_GUARANTEE_PL>(timer, [&](){
-      ATTACH_PL_TRAPEZOID_RIC_NO_GUARANTEE();
-    });
+  MEASURE_TRAPEZOID_RIC_PL(timer, ATTACH_PL_TRAPEZOID_RIC_PL());
+  MEASURE_TRAPEZOID_RIC_NO_GUARANTEE_PL(timer,
+                                        ATTACH_PL_TRAPEZOID_RIC_NO_GUARANTEE());
 
   std::cout << std::endl;
 
@@ -1069,10 +1104,11 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
   // Assign and check results
   for (size_t qi = 0; qi < size; ++qi) {
     // Assign object to a face
-    auto* fh_ref = boost::get<Face_const_handle>(&(objs[0][qi]));
+    Face_const_handle* fh_ref = boost::get<Face_const_handle>(&(objs[0][qi]));
     if (fh_ref) {
       for (size_t pl = 1; pl < pls_num; ++pl) {
-	auto* fh_cur = boost::get<Face_const_handle>(&(objs[pl][qi]));
+	Face_const_handle* fh_cur =
+          boost::get<Face_const_handle>(&(objs[pl][qi]));
         if (fh_cur) {
           if ((*fh_cur) != (*fh_ref)) {
             std::cout << "Error: point location number " << pl << std::endl;
@@ -1086,12 +1122,14 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
         std::cout << "Error: point location number " << pl << std::endl;
         std::cout << "Expected: a face." << std::endl;
         result += -1;
-	auto* hh_cur = boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
+	Halfedge_const_handle* hh_cur =
+          boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
 	if (hh_cur) {
           std::cout << "Actual: a halfedge." << std::endl;
           continue;
         }
-	auto* vh_cur = boost::get<Vertex_const_handle>(&(objs[pl][qi]));
+	Vertex_const_handle* vh_cur =
+          boost::get<Vertex_const_handle>(&(objs[pl][qi]));
         if (vh_cur) {
           std::cout << "Actual: a vertex." << std::endl;
           continue;
@@ -1106,10 +1144,12 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
     }
 
     // Assign object to a halfedge
-    auto* hh_ref = boost::get<Halfedge_const_handle>(&(objs[0][qi]));
+    Halfedge_const_handle* hh_ref =
+      boost::get<Halfedge_const_handle>(&(objs[0][qi]));
     if (hh_ref) {
       for (size_t pl = 1; pl < pls_num; ++pl) {
-	auto* hh_cur = boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
+	Halfedge_const_handle* hh_cur =
+          boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
         if (hh_cur) {
           if (((*hh_cur) != (*hh_ref)) && ((*hh_cur)->twin() != (*hh_ref))) {
             std::cout << "Error: point location number " << pl << std::endl;
@@ -1125,12 +1165,14 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
         std::cout << "Expected: a halfedge, " << (*hh_ref)->curve()
                   << std::endl;
         result += -1;
-	auto* fh_cur = boost::get<Face_const_handle>(&(objs[pl][qi]));
+	Face_const_handle* fh_cur =
+          boost::get<Face_const_handle>(&(objs[pl][qi]));
         if (fh_cur) {
           std::cout << "Actual: a face." << std::endl;
           continue;
         }
-	auto* vh_cur = boost::get<Vertex_const_handle>(&(objs[pl][qi]));
+	Vertex_const_handle* vh_cur =
+          boost::get<Vertex_const_handle>(&(objs[pl][qi]));
         if (vh_cur) {
           std::cout << "Actual: a vertex." << std::endl;
           continue;
@@ -1141,10 +1183,12 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
     }
 
     // Assign object to a vertex
-    auto* vh_ref = boost::get<Vertex_const_handle>(&(objs[0][qi]));
+    Vertex_const_handle* vh_ref =
+      boost::get<Vertex_const_handle>(&(objs[0][qi]));
     if (vh_ref) {
       for (size_t pl = 1; pl < pls_num; ++pl) {
-	auto vh_cur = boost::get<Vertex_const_handle>(&(objs[pl][qi]));
+	Vertex_const_handle* vh_cur =
+          boost::get<Vertex_const_handle>(&(objs[pl][qi]));
         if (vh_cur) {
           if ((*vh_cur) != (*vh_ref)) {
             std::cout << "Error: point location number " << pl << std::endl;
@@ -1159,12 +1203,14 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
         std::cout << "Error: point location number " << pl << std::endl;
         std::cout << "Expected: a vertex: "<< (*vh_ref)->point() << std::endl;
         result += -1;
-	auto fh_cur = boost::get<Face_const_handle>(&(objs[pl][qi]));
+	Face_const_handle* fh_cur =
+          boost::get<Face_const_handle>(&(objs[pl][qi]));
         if (fh_cur) {
           std::cout << "Actual: a face." << std::endl;
           continue;
         }
-	auto hh_cur = boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
+	Halfedge_const_handle* hh_cur =
+          boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
         if (hh_cur) {
           std::cout << "Actual: a halfedge." << std::endl;
           continue;
