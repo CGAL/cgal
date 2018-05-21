@@ -415,6 +415,9 @@ inline
 typename Pointer_property_map<T>::type
 make_property_map(std::vector<T>& v)
 {
+  if(v.empty()){
+    return make_property_map(static_cast<T*>(NULL));
+  }
   return make_property_map(&v[0]);
 }
 
