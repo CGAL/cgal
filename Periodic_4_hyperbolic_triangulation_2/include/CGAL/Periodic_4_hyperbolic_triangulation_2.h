@@ -694,7 +694,7 @@ is_valid(bool verbose) const {
 		#endif
 
 			Orientation ori = orientation( cit->vertex(0)->point(), cit->vertex(1)->point(), cit->vertex(2)->point(), 
-						 				   cit->translation(0),          cit->translation(1),          cit->translation(2) );
+						 				   cit->translation(0),     cit->translation(1),     cit->translation(2) );
 
 		#if defined PROFILING_MODE
 		  	tmr.stop();

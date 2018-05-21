@@ -140,11 +140,8 @@ public:
 
   void setMovingPoint(typename T::Point mp) {
     this->moving_point = mp;
-    for (typename std::list<typename T::Face_handle>::iterator it = cfaces.begin(); it != cfaces.end(); it++) {
-      (*it)->tds_data().clear();
-    }
     cfaces.clear();
-    t->find_conflicts(moving_point, std::back_inserter(cfaces));
+    t->get_conflicts(moving_point, std::back_inserter(cfaces));
   }
 
   void initializeTranslations() {

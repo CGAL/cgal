@@ -35,6 +35,8 @@
 #include <CGAL/result_of.h>
 #include <CGAL/iterator.h>
 #include <boost/bind.hpp>
+#include <set>
+
 
 #include <CGAL/Timer.h>
 
@@ -216,26 +218,57 @@ namespace CGAL {
 
 	
 
- 	
- 	template<class OutputFaceIterator>
- 	void
-	find_conflicts(	const Point& 		p, 
-					OutputFaceIterator it) const {
-		Hyperbolic_translation lo;
-		Face_handle hint = this->euclidean_locate(p, lo);
-        if (hint != Face_handle()) 
-            find_conflicts(hint, p, lo, it);
+	template<class OutputFaceIterator>
+	void
+	get_conflicts(	const Point& p,
+					OutputFaceIterator it,
+					bool store_translations = false) const {
+
+		Hyperbolic_translation ltr;
+		Face_handle first = this->euclidean_locate(p, ltr);
+		if (first != Face_handle()) {
+			std::set<Face_handle> visited;
+			get_conflicts(p, first, ltr, visited, it);
+		}
+
 	}
 
-  	template<class OutputFaceIterator>
-  	void 
-  	find_conflicts( Face_handle         d, 
-				  	const Point&        pt, 
-				  	const Hyperbolic_translation&       current_off,
-				  	OutputFaceIterator  it,
-				  	bool store_translations = false ) const;
 
-	
+	template<class OutputFaceIterator>
+	void
+	get_conflicts(	const Point& p,
+					const Face_handle cf,
+					Hyperbolic_translation tr,
+					std::set<Face_handle>& visited,
+					OutputFaceIterator it,
+					bool store_translations = false) const {
+
+		// If the insertion of the face into the set is successful, then we examine the face. 
+		// Otherwise, we have already examined it in a previous call. This costs log(n) where
+		// n is the number of faces of the triangulation.
+		if (visited.insert(cf).second) {
+			if (_side_of_circle(cf, p, tr) == ON_BOUNDED_SIDE) {
+
+				it++ = cf;
+
+				// Store the translations in the vertices, if necessary.
+				// This is done in preparation for the insertion of the point `p` in 
+				// the triangulation -- the faces in conflict will be destroyed.
+				if (store_translations) {
+					for (int i = 0; i < 3; i++) {
+						cf->vertex(i)->set_translation(tr * cf->translation(i));
+					}
+				}
+
+				// Recursive call for the neighbors
+				for (int jj = 0; jj < 3; jj++) {
+					get_conflicts(p, cf->neighbor(jj), tr * neighbor_translation(cf, jj), visited, it, store_translations);
+				}
+			}
+		}
+
+	}
+
 
 	
 
@@ -400,53 +433,12 @@ is_removable(Vertex_handle v, Delaunay_triangulation_2<Gt,Tds>& dt, std::map<Ver
 /*********************************************************************************/
 
 
-template <class Gt, class Tds>
-template <class OutputFaceIterator>
-void
-Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt,Tds>::
-find_conflicts( Face_handle         d, 
-				const Point&        pt, 
-				const Hyperbolic_translation&       current_off,
-				OutputFaceIterator  it,
-				bool store_translations ) const {
-  if (d->tds_data().is_clear()) {
-	if (_side_of_circle(d, pt, current_off) == ON_BOUNDED_SIDE) {
-	  d->tds_data().mark_in_conflict();
-	  if (store_translations) {
-	  	for (int i = 0; i < 3; i++) {
-	  		d->vertex(i)->set_translation(current_off * d->translation(i));
-	  	}
-	  }
-	  //d->store_translations(current_off);
-	  it++ = d;
-	  for (int jj = 0; jj < 3; jj++) {
-		if (d->neighbor(jj)->tds_data().is_clear()) {
-		  find_conflicts(d->neighbor(jj), pt, current_off * neighbor_translation(d, jj), it, store_translations);
-		}
-	  }
-	}
-  }
-}
-
-
-
 
 template < class Gt, class Tds >
 inline
 typename Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::Vertex_handle
 Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::
 insert(const Point  &p,  Face_handle hint, bool batch_insertion) {
-
-	// typedef typename Gt::Side_of_original_octagon Side_of_original_octagon;
-
-	// CGAL::Bounded_side side = CGAL::ON_BOUNDED_SIDE;
-
-	
-	// Side_of_original_octagon check = Side_of_original_octagon();
-	// side = check(p);
-	
-
-	// if (side != CGAL::ON_UNBOUNDED_SIDE) {
 
 		Hyperbolic_translation loff;
 		Locate_type lt;
@@ -463,15 +455,11 @@ insert(const Point  &p,  Face_handle hint, bool batch_insertion) {
 		}
 
 		std::vector<Face_handle> faces;
-		this->find_conflicts(start, p, loff, std::back_inserter(faces), true);
+		std::set<Face_handle> visited;
 
-		// for (int i = 0; i < faces.size(); i++) {
-		// 	for (int j = 0; j < 3; j++) {
-		// 		Hyperbolic_translation trans = loff * faces[i]->translation(j);
-		// 		// If the vertex already stores a translation, it will _not_ be substituted
-		// 		faces[i]->vertex(j)->set_translation(trans);
-		// 	}
-		// }
+
+		get_conflicts(p, start, loff, visited, std::back_inserter(faces), true);
+
 
 		Vertex_handle v = this->_tds.insert_in_hole(faces.begin(), faces.end());
  		v->set_point(p);
@@ -481,7 +469,6 @@ insert(const Point  &p,  Face_handle hint, bool batch_insertion) {
 			for (int i = 0; i < 3; i++) {
 				ifc->set_translation(i, ifc->vertex(i)->translation());
 			}
-			ifc->tds_data().clear();
 			this->make_canonical(ifc);
 		} while (++ifc != done);
 

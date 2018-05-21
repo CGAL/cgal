@@ -31,23 +31,6 @@
 
 namespace CGAL {
 
-class Face_data {
-private:
-	bool in_conflict;
-	bool on_boundary;
-	bool cleared;
-
-public:
-	Face_data(): in_conflict(false), on_boundary(false), cleared(true) {}
-
-	void mark_in_conflict() { in_conflict = true; cleared = false;  						}
-	void mark_on_boundary() { on_boundary = true; cleared = false;  						}
-	void clear() 			{ on_boundary = false; in_conflict = false; cleared = true;  	}
-	bool is_in_conflict()	{ return in_conflict; }
-	bool is_on_boundary() 	{ return on_boundary; }
-	bool is_clear()			{ return cleared;     }
-};
-
 
 template< typename GT, typename FB = Triangulation_ds_face_base_2<> >
 class Periodic_4_hyperbolic_triangulation_ds_face_base_2 : public FB {
@@ -55,7 +38,6 @@ class Periodic_4_hyperbolic_triangulation_ds_face_base_2 : public FB {
 public:
 	typedef typename FB::Vertex_handle				Vertex_handle;
 	typedef typename FB::Face_handle				Face_handle;
-	typedef Face_data 								TDS_data;
 	typedef typename GT::Hyperbolic_translation		Hyperbolic_translation;
 
 	template< typename TDS2 >
@@ -66,7 +48,6 @@ public:
 
 private:
 	Hyperbolic_translation 			o[3];	// Hyperbolic_translations for vertices
-	TDS_data 						_tds_data;
 
 public:
 
@@ -99,11 +80,6 @@ public:
 		o[0] = Hyperbolic_translation();
 		o[1] = Hyperbolic_translation();
 		o[2] = Hyperbolic_translation();
-	}
-
-
-	TDS_data& tds_data() {
-		return _tds_data;
 	}
 
 

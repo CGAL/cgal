@@ -251,15 +251,6 @@ MainWindow::processInput(CGAL::Object o)
 
   Point p;
   if(CGAL::assign(p, o)){
-    if (last_location != Face_handle()) {
-      for (Triangulation::Face_iterator fit = dt.faces_begin(); fit != dt.faces_end(); fit++)
-        fit->tds_data().clear();
-    }
-
-    // make sure that the vertices and faces of the triangulation are clean
-    for (Triangulation::Face_iterator fi = dt.faces_begin(); fi != dt.faces_end(); fi++) {
-      fi->tds_data().clear();
-    }
     for (Triangulation::Vertex_iterator vi = dt.vertices_begin(); vi != dt.vertices_end(); vi++) {
       vi->clear_translation();
     }
