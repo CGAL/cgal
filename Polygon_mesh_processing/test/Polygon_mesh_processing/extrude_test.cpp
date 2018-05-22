@@ -7,7 +7,32 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3> SMesh;
 
+template<typename MAP>
+struct Bot
+{
+  Bot(MAP map):map(map){}
+  template<typename VD>
+  void operator()(VD vd)
+  {
+    put(map, vd, get(map, vd)+Kernel::Vector_3(-2.0,0.0,-1.0));
+  }
+  MAP map;
+  
+};
 
+template<typename MAP>
+struct Top
+{
+  Top(MAP map):map(map){}
+  
+  template<typename VD>
+  void operator()(VD vd)
+  {
+    put(map, vd, get(map, vd)+Kernel::Vector_3(0.0,2.0,1.0));
+  }
+  
+  MAP map;
+};
 
 int main(int argc, char* argv[])
 {
@@ -25,7 +50,16 @@ int main(int argc, char* argv[])
   CGAL::Polygon_mesh_processing::extrude_mesh(in, out, Kernel::Vector_3(0.0, 0.0, -1.0), 1.0);
   std::ofstream extruded_off("extruded.off");
   extruded_off << out;
-  extruded_off.close();
+  extruded_off.close();  
+  out.clear();
+  
+  typedef typename boost::property_map<SMesh, CGAL::vertex_point_t>::type VPMap;
+  Bot<VPMap> bot(get(CGAL::vertex_point, out));
+  Top<VPMap> top(get(CGAL::vertex_point, out));
+  CGAL::Polygon_mesh_processing::generic_extrude_mesh(in, out, bot, top);
+  std::ofstream gen_extruded_off("gen_extruded.off");
+  gen_extruded_off << out;
+  gen_extruded_off.close();
   std::cerr << "All done." << std::endl;
   
   return 0;

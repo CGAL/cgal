@@ -22,7 +22,10 @@
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_EXTRUDE_H
 #define CGAL_POLYGON_MESH_PROCESSING_EXTRUDE_H
+
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+
+
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/named_function_params.h>
@@ -34,36 +37,46 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal{
 
-template<typename PMAP>
+template<typename PMAP, typename Vector>
 struct ConstDistTranslation{
-  ConstDistTranslation(PMAP map)
-    :map(map){}
+  ConstDistTranslation(PMAP map, const Vector& dir, const double d)
+    :map(map), dir(dir), d(d){}
   
-  template<typename VertexDescriptor, class Vector>
-  void operator()(const VertexDescriptor vd, const Vector& dir, const double d)
+  template<typename VertexDescriptor>
+  void operator()(const VertexDescriptor vd)
   {
     typename boost::property_traits<PMAP>::value_type p = get(map, vd) + d*dir;
     put(map, vd, p);
   }
   
   PMAP map;
+  Vector dir;
+  double d;
+};
+
+struct IdentityFunctor
+{
+  template<typename T>
+  void operator()(const T&){}
 };
 }//end internal
 
 /**
  * \ingroup PMP_meshing_grp
- * Extrudes `input` into `output` following the direction given by `dir` and
- * at a distance `d`.
+ * Extrudes `input` into `output` using `bot` and `top`. It means that 
+ * `input` will be copied twice and transformed once using `bot`, once using `top`,
+ * and these two copies will be joined with triangle strips.
  * @tparam InputMesh a model of the concept `FaceListGraph`
  * @tparam OutputMesh a model of the concept `FaceListGraph`
  * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters" for `InputMesh`
  * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters" for `OutputMesh`
  * @tparam BottomFunctor a functor that will apply a transformation to all points of 
- * `input` in order to create the offsetted part of the extrusion. It must have a function 
- * `void operator()(boost::graph_traits<OutputMesh>::vertex_descriptor, Vector_3 dir, const FT d)`
- * The default is the 
- * translation along `dir` of the constant distance `d`.
- * @param input the closed triangulated `InputMesh` to extrude.
+ * `input` in order to create the first offsetted part of the extrusion. It must have a function 
+ * `void operator()(boost::graph_traits<OutputMesh>::vertex_descriptor);
+ * @tparam TopFunctor a functor that will apply a transformation to all points of 
+ * `input` in order to create the second offsetted part of the extrusion. It must have a function 
+ * `void operator()(boost::graph_traits<OutputMesh>::vertex_descriptor);
+ * @param input the open triangulated `InputMesh` to extrude.
  * @param output the `OutputMesh` containing the result of the extrusion.
  * @param np1 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
@@ -85,27 +98,19 @@ struct ConstDistTranslation{
  */
 template <class InputMesh,
           class OutputMesh,
+          class BottomFunctor,
+          class TopFunctor = internal::IdentityFunctor,
           class NamedParameters1,
-          class NamedParameters2,
-          #ifdef DOXYGEN_RUNNING
-          class BottomFunctor
-          #else
-          class BottomFunctor=internal::ConstDistTranslation<
-            typename GetVertexPointMap<OutputMesh, NamedParameters2>::type>
-          #endif
+          class NamedParameters2
           >
-void extrude_mesh(const InputMesh& input, 
-                  OutputMesh& output, 
-                  #ifdef DOXYGEN_RUNNING
-                  Vector_3 dir,
-                  const FT d, 
-                  #else
-                  typename GetGeomTraits<OutputMesh, NamedParameters2>::type::Vector_3 dir, 
-                  const typename GetGeomTraits<OutputMesh, NamedParameters2>::type::FT d,
-                  #endif
-                  const NamedParameters1& np1,
-                  const NamedParameters2& np2)
+void generic_extrude_mesh(const InputMesh& input, 
+                          OutputMesh& output, 
+                          BottomFunctor& bot,
+                          TopFunctor& top,
+                          const NamedParameters1& np1,
+                          const NamedParameters2& np2)
 {
+  typedef typename boost::graph_traits<InputMesh>::vertex_descriptor input_vertex_descriptor;
   typedef typename boost::graph_traits<InputMesh>::halfedge_descriptor input_halfedge_descriptor;
   
   typedef typename boost::graph_traits<OutputMesh>::vertex_descriptor   output_vertex_descriptor;
@@ -122,32 +127,36 @@ void extrude_mesh(const InputMesh& input,
   IVPMap input_vpm = choose_param(get_param(np1, internal_np::vertex_point),
                                    get_const_property_map(vertex_point, input));
   
-  boost::unordered_map<input_halfedge_descriptor, output_halfedge_descriptor> offset_h2h;
+  boost::unordered_map<input_halfedge_descriptor, output_halfedge_descriptor> bottom_h2h;
   copy_face_graph(input, output, Emptyset_iterator(),
-                        std::inserter(offset_h2h, offset_h2h.end()), Emptyset_iterator(),
+                        std::inserter(bottom_h2h, bottom_h2h.end()), Emptyset_iterator(),
                   input_vpm, output_vpm);
   
-  BottomFunctor bottom_functor(output_vpm);
   // create the offset for the other side
   BOOST_FOREACH(output_vertex_descriptor v, vertices(output))
   {
-    bottom_functor(v, dir, d);
+    bot(v);
   }
   CGAL::Polygon_mesh_processing::reverse_face_orientations(output);
   
   // collect border halfedges for the creation of the triangle strip
-  boost::unordered_map<input_halfedge_descriptor, output_halfedge_descriptor> h2h;
-  copy_face_graph(input, output, CGAL::Emptyset_iterator(),
-                        std::inserter(h2h, h2h.end()), Emptyset_iterator(),
+  boost::unordered_map<input_vertex_descriptor, output_vertex_descriptor> top_v2v;
+  boost::unordered_map<input_halfedge_descriptor, output_halfedge_descriptor> top_h2h;
+  copy_face_graph(input, output, std::inserter(top_v2v, top_v2v.end()),
+                        std::inserter(top_h2h, top_h2h.end()), Emptyset_iterator(),
                   input_vpm, output_vpm);
+  BOOST_FOREACH(input_vertex_descriptor v, vertices(input))
+  {
+    top(top_v2v[v]);
+  }
   std::vector<output_halfedge_descriptor> border_hedges;
   std::vector<output_halfedge_descriptor> offset_border_hedges;
   BOOST_FOREACH(input_halfedge_descriptor h, halfedges(input))
   {
     if( CGAL::is_border(h, input) )
     {
-      border_hedges.push_back(h2h[h]);
-      offset_border_hedges.push_back(offset_h2h[h]);
+      border_hedges.push_back(top_h2h[h]);
+      offset_border_hedges.push_back(bottom_h2h[h]);
       CGAL_assertion(is_border(border_hedges.back(), output));
       CGAL_assertion(is_border(offset_border_hedges.back(), output));
     }
@@ -222,6 +231,62 @@ void extrude_mesh(const InputMesh& input,
   }
 }
 
+
+/**
+ * \ingroup PMP_meshing_grp
+ * Extrudes `input` into `output` following the direction given by `dir` and
+ * at a distance `d`.
+ * @tparam InputMesh a model of the concept `FaceListGraph`
+ * @tparam OutputMesh a model of the concept `FaceListGraph`
+ * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters" for `InputMesh`
+ * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters" for `OutputMesh`
+ * @param input the open triangulated `InputMesh` to extrude.
+ * @param output the `OutputMesh` containing the result of the extrusion.
+ * @param np1 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map}
+ *    the property map that will contain the points associated to the vertices of `output`. 
+ * If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` 
+ * should be available for the vertices of `output` \cgalParamEnd
+ * \cgalNamedParamsEnd
+ * 
+ * * @param np2 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map}
+ *    the property map that contains the points associated to the vertices of `input`. 
+ * If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` 
+ * should be available for the vertices of `input` \cgalParamEnd
+ * \cgalNamedParamsEnd
+ */
+template <class InputMesh,
+          class OutputMesh,
+          class NamedParameters1,
+          class NamedParameters2>
+void extrude_mesh(const InputMesh& input, 
+                  OutputMesh& output, 
+                  #ifdef DOXYGEN_RUNNING
+                  Vector_3 dir,
+                  const FT d, 
+                  #else
+                  typename GetGeomTraits<OutputMesh, NamedParameters2>::type::Vector_3 dir, 
+                  const typename GetGeomTraits<OutputMesh, NamedParameters2>::type::FT d,
+                  #endif
+                  const NamedParameters1& np1,
+                  const NamedParameters2& np2)
+{
+  typedef typename GetVertexPointMap < OutputMesh, NamedParameters2>::type VPMap;
+  VPMap output_vpm = choose_param(get_param(np2, internal_np::vertex_point),
+                                   get_property_map(vertex_point, output));
+  
+  internal::ConstDistTranslation<
+      typename GetVertexPointMap<OutputMesh, NamedParameters2>::type,
+      typename GetGeomTraits<OutputMesh, NamedParameters2>::type::Vector_3> bot(output_vpm, 
+                                                                                  dir, d);
+  internal::IdentityFunctor top;
+  generic_extrude_mesh(input, output, bot,top, np1, np2);
+}
 //convenience overload
 template <class InputMesh,
           class OutputMesh,
@@ -234,6 +299,31 @@ void extrude_mesh(const InputMesh& input,
   extrude_mesh(input, output, dir, d, 
                parameters::all_default(),
                parameters::all_default());
+}
+
+template <class InputMesh,
+          class OutputMesh,
+          class BottomFunctor,
+          class TopFunctor>
+void generic_extrude_mesh(const InputMesh& input, 
+                          OutputMesh& output, 
+                          BottomFunctor& bot,
+                          TopFunctor& top)
+{
+  generic_extrude_mesh(input, output, bot, top, 
+                       parameters::all_default(), parameters::all_default());
+}
+
+template <class InputMesh,
+          class OutputMesh,
+          class BottomFunctor>
+void generic_extrude_mesh(const InputMesh& input, 
+                          OutputMesh& output, 
+                          BottomFunctor& bot)
+{
+  internal::IdentityFunctor top;
+  generic_extrude_mesh(input, output, bot, top, 
+                       parameters::all_default(), parameters::all_default());
 }
 
 }} //end CGAL::PMP
