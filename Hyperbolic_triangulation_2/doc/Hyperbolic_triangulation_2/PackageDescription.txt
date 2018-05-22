@@ -1,0 +1,80 @@
+/// \defgroup PkgHyperbolicTriangulation2 2D Hyperbolic Triangulations Reference
+
+/// \defgroup PkgHyperbolicTriangulation2Concepts Concepts
+/// \ingroup PkgHyperbolicTriangulation2
+
+/// \defgroup PkgHyperbolicTriangulation2MainClasses Main Classes
+/// \ingroup PkgHyperbolicTriangulation2
+
+/// \defgroup PkgHyperbolicTriangulation2TraitsClasses Traits Classes
+/// \ingroup PkgHyperbolicTriangulation2
+
+/// \defgroup PkgHyperbolicTriangulation2VertexFaceClasses Face Classes
+/// \ingroup PkgHyperbolicTriangulation2
+
+
+
+/*!
+\addtogroup PkgHyperbolicTriangulation2
+ 
+\cgalPkgDescriptionBegin{2D Hyperbolic Triangulations,PkgHyperbolicTriangulation2Summary}
+\cgalPkgPicture{Hyperbolic_triangulation_2/fig/htriangulation-120px.png}
+ 
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Monique Teillaud, Mikhail Bogdanov, and Iordan Iordanov}
+\cgalPkgDesc{This package allows to build and handle Delaunay triangulations of point sets 
+in the hyperbolic plane. Triangulations are built incrementally and can be modified by insertion or
+removal of vertices; point location facilities are also offered, as well as primitives to build the 
+dual Voronoi diagrams.}
+\cgalPkgManuals{Chapter_2D_Hyperbolic_Triangulations,PkgHyperbolicTriangulation2}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.10}
+\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
+\cgalPkgBib{cgal:bt-ht2-17}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Hyperbolic Delaunay Triangulation,Hyperbolic_Delaunay_triangulation_2.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+ 
+The main class of the 2D Hyperbolic Triangulation package is `CGAL::Hyperbolic_Delaunay_triangulation_2`. This class allows the constructions of Delaunay triangulations in the hyperbolic plane. `CGAL::Hyperbolic_Delaunay_triangulation_2` offers all the functionalities provided by `CGAL::Delaunay_triangulation_2`, such as point location, insertion and removal. Construction of the dual Voronoi diagram is also provided. The class takes a geometric traits and a triangulation data structure as template parameters.
+
+The geometric traits class must be a model of the concept
+`HyperbolicDelaunayTriangulationTraits_2`. It must contain all predicates and constructions
+that are needed by the functions in the triangulation class.
+
+The triangulation data structure must be a model of `TriangulationDataStructure_2`, templated by a base
+vertex and a base face class. The base face and base vertex classes must be models of the concepts `HyperbolicTriangulationFaceBase_2` and `TriangulationVertexBase_2`, respectively. 
+By default, the package uses `CGAL::Triangulation_data_structure_2< CGAL::Triangulation_vertex_base_2, CGAL::Hyperbolic_triangulation_face_base_2 >` to represent the triangulation data structure.
+
+The three vertices incident to a face are indexed with 0, 1, and 2 in positive (counter-clockwise) orientation. Each vertex stores a point, and gives access to one of its incident faces. Each face, on the other hand, stores its incident vertices and neighboring faces.
+
+
+# Concepts #
+
+- `HyperbolicDelaunayTriangulationTraits_2`
+- `HyperbolicTriangulationFaceBase_2`
+- `TriangulationVertexBase_2`
+- `TriangulationDataStructure_2`
+
+
+# Classes #
+
+## Main Classes ##
+
+- `CGAL::Hyperbolic_Delaunay_triangulation_2`
+
+## Traits Classes ##
+
+- `CGAL::Hyperbolic_Delaunay_triangulation_traits_2`
+- `CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2`
+
+## Face Classes ##
+
+- `CGAL::Hyperbolic_triangulation_face_base_2`
+- `CGAL::Hyperbolic_triangulation_face_base_with_info_2`
+
+*/
+

@@ -1,0 +1,31 @@
+
+\page Chapter_2D_Hyperbolic_Triangulations 2D Hyperbolic Triangulations
+
+namespace CGAL {
+/*!
+
+\mainpage User Manual 
+\anchor Chapter_Hyperbolic_Triangulations
+\anchor chapterHTriangulation2
+
+\cgalAutoToc
+\author Monique Teillaud, Mikhail Bogdanov, and Iordan Iordanov
+
+\image html htriangulation-350px.png 
+
+2D hyperbolic triangulations of \cgal are designed to represent triangulations of 
+the hyperbolic plane. The vertices of the triangulation are defined by an input set of points.
+The resulting triangulation is a connected <i>simplicial complex</i>,
+i.e.:
+<ul>
+  <li> it contains all incident \f$ j\f$-simplices (\f$ j<k\f$) of any \f$ k\f$-simplex, and 
+  <li> two \f$ k\f$-simplices either do not intersect or share a common \f$ j\f$-face, \f$ j<k\f$. 
+</ul>
+The resulting simplices of dimension 0, 1 and 2 are called <I>vertex</I>, <I>edge</I>, and
+<I>face</I> respectively.
+
+
+*/ 
+} /* namespace CGAL */
+
+\\\\\\\\\\\\
