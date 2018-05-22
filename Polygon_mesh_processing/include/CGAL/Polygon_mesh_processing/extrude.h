@@ -120,7 +120,7 @@ void generic_extrude_mesh(const InputMesh& input,
   
   CGAL_assertion(!CGAL::is_closed(input));
   typedef typename GetVertexPointMap < OutputMesh, NamedParameters2>::type VPMap;
-  typedef typename GetVertexPointMap < InputMesh, NamedParameters1>::type IVPMap;
+  typedef typename GetVertexPointMap < InputMesh, NamedParameters1>::const_type IVPMap;
   
   VPMap output_vpm = choose_param(get_param(np2, internal_np::vertex_point),
                                    get_property_map(vertex_point, output));
