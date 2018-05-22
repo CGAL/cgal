@@ -76,11 +76,11 @@ public:
   typedef Hyperbolic_segment                          Segment;
   
 
-  // This is blatantly cheating, but it's the only way I found to have 
-  // consistent and same-type enums across DT2 and HDT2
-  typedef typename Base::Locate_type                  Locate_type;
-  enum { 
-    VERTEX = 0, EDGE, FACE, OUTSIDE_CONVEX_HULL, 
+  enum Locate_type { 
+    VERTEX = 0, 
+    EDGE, 
+    FACE, 
+    OUTSIDE_CONVEX_HULL, 
     OUTSIDE_AFFINE_HULL 
   };
 
