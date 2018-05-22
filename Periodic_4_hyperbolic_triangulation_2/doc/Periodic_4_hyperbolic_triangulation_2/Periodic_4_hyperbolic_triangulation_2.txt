@@ -1,0 +1,252 @@
+
+\page Chapter_2D_Periodic_Hyperbolic_Triangulations 2D Periodic Hyperbolic Triangulations
+
+namespace CGAL {
+/*!
+
+\mainpage User Manual 
+\anchor Chapter_2D_Periodic_Hyperbolic_Triangulations
+\anchor chapterP4HTriangulation2
+
+\cgalAutoToc
+\author Iordan Iordanov & Monique Teillaud
+
+\image html triangulation-350px.png 
+
+2D periodic hyperbolic triangulations of \cgal are designed to represent triangulations of 
+sets of points on the Bolza surface. The Bolza surface is a closed orientable surface of genus-2 with constant negative curvature (i.e., it is a hyperbolic surface). It is the most symmetric among all genus-2
+surfaces. The triangulation forms a partition of the Bolza surface, and is a <i>simplicial complex</i>,
+i.e.:
+<ul>
+  <li> it contains all incident \f$ j\f$-simplices (\f$ j<k\f$) of any \f$ k\f$-simplex, and 
+  <li> two \f$ k\f$-simplices either do not intersect or share a common \f$ j\f$-face, \f$ j<k\f$. 
+</ul>
+The resulting simplices of dimension 0, 1 and 2 are called <I>vertex</I>, <I>edge</I>, and
+<I>face</I> respectively.
+
+
+\section P4HT2_thespace The Bolza surface
+
+The 2D Periodic Hyperbolic Triangulations package computes triangulations of the Bolza surface
+\f$\mathcal M\f$ defined as follows. Let \f$\mathbb{H}^2\f$ denote the hyperbolic plane, represented
+in the Poincaré disk model. Consider the four hyperbolic translations \f$ a,b,c,d\f$ that, together
+with their inverses \f$\overline{a},\overline{b},\overline{c},\overline{d}\f$, identify the opposite
+sides of the regular hyperbolic octagon with angles \f$ \pi/4\f$. The axes of these translations are
+diameters of the Poincaré disk. See Figure \cgalFigureRef{P4HTriangulationOctagonId} - Left. Let
+\f$\mathcal{G}\f$ denote the Fuchsian group (i.e., discrete group of orientation-preserving
+isometries) with finite presentation
+\f[ \mathcal{G} = \left< a,b,c,d \; \bigg| \; 
+    abcd\overline{a}\overline{b}\overline{c}\overline{d} = \mathbb 1 \right>. \f]
+The Bolza surface \f$\mathcal{M}\f$ is defined as \f$\mathcal{M} = \mathbb H^2 / \mathcal{G}\f$.
+
+\cgalFigureBegin{P4HTriangulationOctagonId, octagon_identification.png, original_domain.png}
+	<b>Left:</b> Hyperbolic translations \f$a,b,c,d\f$ and their inverses.
+	<b>Right:</b> The half-open octagon is an original domain for \f$\mathcal{M}\f$. Note that only one of the vertices of the octagon is included in the original domain.
+\cgalFigureEnd
+
+The elements of \f$\mathcal{M}\f$ are equivalence classes of elements in \f$\mathbb H^2\f$. We call
+the elements in \f$\mathbb H^2\f$ <i>representatives</i> of an element of \f$\mathcal{M}\f$. The
+implementation does not work directly on elements of \f$\mathcal{M}\f$, but on some representatives
+in \f$\mathbb H^2\f$. So, there need to be distinguished representatives to work with. The half-open
+octagon shown in Figure \cgalFigureRef{P4HTriangulationOctagonId} - Right contains exactly one
+representative of each element in \f$\mathcal{M}\f$, and we call that half-open octagon the
+<i>original domain</i>. From now on, whenever we talk about <i>points</i>, we will generally mean
+representatives of elements of \f$\mathcal{M}\f$ that lie inside the original domain. Note that any
+input point is required to be an element of the half-open octagon representing the original domain.
+
+There are simplices containing points inside the original domain but also points outside it. The
+points outside the original domain are images under some translation \f$g \in \mathcal{G}\f$ of
+points inside the original domain. So, to specify a simplex we need points together with some
+additional information that determines the respective periodic copy of each point. We address each
+representative by a hyperbolic translation that, when applied to the representative in the original
+domain, gives the specific representative. The identity translation \f$\mathbb 1\f$ corresponds to
+the representative in the original domain. To specify a \f$k\f$-simplex we need \f$k+1\f$ point-
+translation pairs.
+
+
+\section P4HT2_representation Representation 
+
+A triangulation is a collection of vertices and faces that are linked together through incidence and
+adjacency relations. Each face gives access to its three incident vertices, their corresponding
+translations, and to its three adjacent faces. Each vertex stores a point, and gives access to one
+of its incident faces.
+
+The three vertices of a face are indexed with 0, 1 and 2 in positive (counter-clockwise)
+orientation. The orientation of a simplex in \f$\mathcal{M}\f$ is defined as the orientation of the
+corresponding simplex in \f$\mathbb H^2\f$ given by representatives determined by the respective
+translations.
+
+As in the underlying combinatorial triangulation (see Chapter \ref Chapter_2D_Triangulation_Data_Structure), 
+the neighbors of a face are indexed with 0, 1, 2 in such a
+way that the neighbor indexed by \f$i\f$ is opposite to the vertex with the same index. Also edges
+are not explicitly represented: an edge is given by a face and the index of its opposite vertex in
+that face. See Figure  \cgalFigureRef{P4HTriangulationOrientationDS} - Left.
+
+\cgalFigureBegin{P4HTriangulationOrientationDS, P4T_ds_doc_300.png, periodic_face.png}
+	<b>Left:</b> Representation of a face \f$f\f$ stored in the triangulation data structure. 
+	<b>Right:</b> All input points are in \f$\mathcal{D}\f$. Applying every translation stored in 
+				a face to the point in the corresponding vertex produces the canonical representative of the face.
+\cgalFigureEnd
+
+In the data structure each vertex stores the input point to which it corresponds. For every face on
+\f$\mathcal{M}\f$, the data structure stores the <i>canonical representative</i> of that face in
+\f$\mathbb H^2\f$. All canonical representatives store at least one identity translation (i.e., at
+least one of their vertices lies in the original domain), and uniquely satisfy certain criteria
+described in detail in \cgalCite{cgal:it-idtbs-17}. See Figure
+\cgalFigureRef{P4HTriangulationOrientationDS} - Right.
+
+
+<b>Validity</b> <br>
+A periodic hyperbolic triangulation of \f$\mathcal{M}\f$ is said to be `valid` iff
+<ol>
+  <li> Its underlying combinatorial graph, the triangulation data structure, is `valid`
+        (see Chapter \ref Chapter_2D_Triangulation_Data_Structure).
+  <li> The vertices of any face are positively orientated. See \cgalFigureRef{P4HTriangulationOrientationDS}. 
+  <li> The 1-skeleton of the triangulation does not contain cycles of length 1 or 2.
+  <li> The Euler relation \f$V-E+F = -2\f$ is satisfied, where \f$V, E, F\f$ are the number of vertices, edges and faces of the triangulation, respectively.
+</ol>
+
+
+
+\section P4HT2_Delaunay Hyperbolic Delaunay triangulation
+
+The class `Periodic_4_hyperbolic_Delaunay_triangulation_2` implements Delaunay triangulations of 
+\f$\mathcal M\f$. The prefix "Periodic_4" emphasizes that the triangulation is periodic in the four
+directions defined by the hyperbolic translations \f$ a,b,c\f$ and \f$d\f$.
+
+Delaunay triangulations have the <I>empty circle property</I>, that is, the circumscribing
+hyperbolic circle of each face does not contain any other vertex of the triangulation in its
+interior. These triangulations are uniquely defined except in degenerate cases where four points are
+co-circular. Note however that  the \cgal implementation computes a unique triangulation even in
+these cases \cgalCite{cgal:dt-pvr3d-03}. Note also that since hyperbolic circles are represented as
+Euclidean circles in the Poincaré disk model, the implementation uses Euclidean predicates to ensure the
+Delaunay property. 
+
+This implementation is fully dynamic: it supports both insertions of points and vertex removal.
+Note, however, that the removal of a vertex is authorized only if the triangulation remains a
+simplicial complex after the removal of that vertex. If this condition is not satisfied, the vertex
+will <b>not</b> be removed from the triangulation.
+
+
+
+\section P4HT2_Dummy_points Dummy points
+
+Some point sets do not admit a triangulation of \f$\mathcal M\f$. For this reason, we initialize a
+triangulation of \f$\mathcal M\f$ with a predetermined set of 14 points, called <i>dummy points</i>,
+whose triangulation in \f$\mathbb H^2\f$ is a simplicial complex and has the empty circle property.
+The set of dummy points has been proposed in \cgalCite{cgal:btv-dtosl-16}, and is described in
+\cgalCite{cgal:it-idtbs-17}. After the triangulation has been initialized with the dummy points, new
+input points can be inserted. If sufficiently many well-distributed points are inserted, the dummy
+points become redundant, i.e., the triangulation remains valid even if we remove them. This package
+offers two strategies for removing dummy points: the dummy points in the triangulation are checked
+to be redundant (and potentially removed) either after the insertion of the whole set of input
+points, or after the insertion of each point. If the set of input points is not sufficiently large,
+or if the points it contains are not well-distributed on the surface, then the final triangulation
+will contain the necessary dummy points to guarantee the validity of the triangulation.
+
+Experiments have shown that, in general, all dummy points are removed from the triangulation with
+the insertion of less than 100 random points uniformly distributed in the hyperbolic metric.
+
+
+
+\section P4HT2_design Software Design 
+
+The two main classes `Periodic_4_hyperbolic_Delaunay_triangulation_2` and
+`Periodic_4_hyperbolic_triangulation_2` provide high-level geometric functionality and are
+responsible for the geometric validity. `Periodic_4_hyperbolic_Delaunay_triangulation_2` contains
+all the functionality that is special to Delaunay triangulations, such as point insertion and vertex
+removal, the side-of-circle test, finding the conflicting region of a given point, dual functions
+etc. `Periodic_4_hyperbolic_triangulation_2` contains all the functionality that is common to
+triangulations in general, such as location of a point in the triangulation 
+\cgalCite{cgal:dpt-wt-02}, and access functions.
+
+They are built as layers on top of a triangulation data structure, which stores their combinatorial
+structure. This separation between the geometry and the combinatorics is reflected in the software
+design by the fact that the triangulation classes take two template parameters:
+
+- the <B>geometric traits</B> class, which provides the type of points   to use as well as the
+elementary operations on them (predicates and constructions). Furthermore it contains the
+translation type. The concept for this parameter is `Periodic_4HyperbolicDelaunayTriangulationTraits_2` 
+and is described in more detail in Section \ref P4HT2_traits. 
+
+- the <B>triangulation data structure</B> class, which is described in Section \ref
+P4HT2_datastructure  and in more detail in Chapter \ref Chapter_2D_Triangulation_Data_Structure. The
+triangulation data structure needs models of the concepts
+`Periodic_4HyperbolicTriangulationFaceBase_2` and `Periodic_4HyperbolicTriangulationVertexBase_2` as
+template parameters.
+
+\subsection P4HT2_traits The Geometric Traits Parameter 
+
+The first template parameter of the periodic hyperbolic triangulation classes is the geometric
+traits class, described by the concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2`. This
+concept is different from the concepts `TriangulationTraits_2` and `DelaunayTriangulationTraits_2`
+(compare with Section \ref Triangulation_2TheGeometricTraits in the 2D Triangulation user manual),
+as it implements all objects, predicates and constructions in the Poincaré disk model for the
+hyperbolic plane.
+
+The class `Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel,
+HyperbolicOctagonTranslation>` is the default model of the concept
+`Periodic_4HyperbolicDelaunayTriangulationTraits_2`. It expects two template parameters:
+<ul>
+	<li> a `Kernel` with a number field type that guarantees exact computations on algebraic numbers with nested square roots; </li>
+	<li> a model of the concept `HyperbolicOctagonTranslation`. If this template parameter is omitted, it defaults to the class Hyperbolic_octagon_translation. The traits class internally templates this class with the number field type of the `Kernel`, to guarantee consistent numerical operations. </li>
+</ul>
+An example of a suitable `Kernel` with an appropriate field type provided by \cgal is `CGAL::Cartesian<CORE::Expr>`. Refer to Section \ref P4HT2_examples for a complete example.
+
+If the field type used in the `Kernel` provides exact operations with algebraic numbers, then
+`Periodic_4_hyperbolic_Delaunay_triangulation_traits_2` provides exact predicates and exact
+constructions.  Inexact constructions using `double` as number type are also provided.
+
+\subsection P4HT2_datastructure The Triangulation Data Structure Parameter 
+
+The second template parameter of the periodic hyperbolic triangulation classes is a triangulation
+data structure class. This class can be seen as a container for the faces and vertices maintaining
+incidence  and adjacency relations (see Chapter \ref Chapter_2D_Triangulation_Data_Structure). The
+corresponding concept is `TriangulationDataStructure_2`, for which \cgal offers the model 
+`Triangulation_data_structure_2`. This model is itself parameterized by a vertex base class
+and a face base class, which gives the possibility  to customize the vertices and faces used by the
+triangulation data structure, and hence by the geometric triangulation using it. To represent
+periodic hyperbolic triangulations the face base and vertex base classes must be models of the
+concepts `Periodic_4HyperbolicTriangulationFaceBase_2` and
+`Periodic_4HyperbolicTriangulationVertexBase_2`.
+
+The class `Triangulation_data_structure_2<Periodic_4_hyperbolic_triangulation_face_base_2, Periodic_4_hyperbolic_triangulation_vertex_base_2>` is provided as default value for the triangulation data structure parameter in the triangulation classes.
+
+\section P4HT2_examples Examples 
+
+\subsection P4HT2_basicexample Basic example
+
+This example shows the initialization of a periodic hyperbolic 2D Delaunay triangulation,  the
+insertion of random points uniformly distributed in the unit disk for the Euclidean metric, and the
+properties of the triangulation after the insertion. It uses the default parameter of the
+`Periodic_4_hyperbolic_Delaunay_triangulation_2` class for the triangulation data structure.
+
+\cgalExample{Periodic_4_hyperbolic_triangulation_2/p4ht2_example_insertion.cpp}
+
+\section P4HT2_Performance Performance
+
+The performance of the 2D periodic hyperbolic Delaunay triangulation is compared to the 2D Euclidean
+Delaunay triangulation. The points are inserted in the triangulations using spatial sorting. After all
+points have been inserted, any redundant dummy points are removed.
+
+Insertion of 1 million random points with `double` coordinates, uniformly distributed  in the unit
+disk with respect to the hyperbolic metric, takes around 1 second for the  2D Euclidean Delaunay
+triangulation with `double` number type. When using `CORE::Expr`  as number type, the insertion time
+for the same point set is around 13 seconds. The  hyperbolic periodic triangulation (using
+`CORE::Expr` by default) takes around 34 seconds.  These numbers are averaged over 10 executions.
+The tests were done on an Intel i5 @ 2.9GHz with 16GB RAM @ 1867MHz. The executables were built in
+Release mode using the Apple LLVM compiler version 7.0.2 (clang-700.1.81).
+
+\section P4HT2_Design Design and Implementation History
+
+This package implements the algorithm for the computation of Delaunay triangulation of the Bolza
+surface proposed by Mikhail Bogdanov,  Monique Teillaud and Gert Vegter 
+\cgalCite{cgal:btv-dtosl-16}. The implementation itself is described by Iordan Iordanov and Monique 
+Teillaud \cgalCite{cgal:it-idtbs-17}.
+
+In 2016, Iordanov started working on the 2D Periodic Hyperbolic Triangulations package. 
+
+*/ 
+} /* namespace CGAL */
+
+\\\\\\\\\\\\

@@ -1,0 +1,9 @@
+@INCLUDE 				= ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+EXAMPLE_PATH 			= ${CGAL_PACKAGE_DIR}/examples
+
+EXTRACT_ALL  			= YES
+EXTRACT_LOCAL_CLASSES  	= YES
+INHERIT_DOCS           	= YES
+
+PROJECT_NAME 			= "CGAL ${CGAL_DOC_VERSION} - 2D Periodic Hyperbolic Triangulations"
