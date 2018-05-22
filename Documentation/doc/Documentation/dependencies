@@ -97,3 +97,5 @@ Surface_mesh_shortest_path
 Polygon_mesh_processing
 Set_movable_separability_2
 Classification
+Hyperbolic_triangulation_2
+Periodic_4_hyperbolic_triangulation_2
