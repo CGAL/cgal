@@ -37,13 +37,11 @@ do
   if [ -f "$pkg_path/package_info/$pkg/dependencies" ]; then
     PKG_DIFF=$(grep -Fxv -f "$pkg_path/package_info/$pkg/dependencies.old" "$pkg_path/package_info/$pkg/dependencies" || true)
     if [ -n "$PKG_DIFF" ]; then
-      HAS_DIFF=TRUE
-      echo "Differences in $pkg: $PKG_DIFF are new and not committed."
+      TOTAL_RES="Differences in $pkg: $PKG_DIFF are new and not committed.\n $TOTAL_RES"
     fi
     PKG_DIFF=$(grep -Fxv -f "$pkg_path/package_info/$pkg/dependencies" "$pkg_path/package_info/$pkg/dependencies.old" || true)
     if [ -n "$PKG_DIFF" ]; then
-      HAS_DIFF=TRUE
-      echo "Differences in $pkg: $PKG_DIFF have disappeared."
+      TOTAL_RES="Differences in $pkg: $PKG_DIFF have disappeared.\n $TOTAL_RES"
     fi
     if [ -f $pkg_path/package_info/$pkg/dependencies.old ]; then
       rm $pkg_path/package_info/$pkg/dependencies.old
@@ -53,7 +51,8 @@ done
 echo " Checks finished"
 cd $CGAL_ROOT
 rm -r dep_check_build
-if [ -n "$HAS_DIFF" ]; then
+if [ -n "$TOTAL_RES" ]; then
+  echo "$TOTAL_RES"
   echo " You can run cmake with options CGAL_ENABLE_CHECK_HEADERS and CGAL_COPY_DEPENDENCIES ON, make the target packages_dependencies and commit the new dependencies files,"
   echo " or simply manually edit the problematic files."
   exit 1
