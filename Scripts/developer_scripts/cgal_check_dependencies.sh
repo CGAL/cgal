@@ -1,6 +1,6 @@
 #This script must be called from the CGAL root.
 set -e
-set -x
+[ -n "$CGAL_DEBUG_TRAVIS" ] && set -x
 while test $# -gt 0
 do
     case "$1" in

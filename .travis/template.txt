@@ -25,7 +25,7 @@ before_script:
 - cd ..
 script: 
 - cd ./.travis
-- bash -x -e ./build_package.sh $PACKAGE
+- if [ -n "$CGAL_DEBUG_TRAVIS" ]; then  bash -x -e ./build_package.sh $PACKAGE; else bash -e ./build_package.sh $PACKAGE; fi
 notifications:
   email:
     on_success: change # default: always
