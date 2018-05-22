@@ -218,6 +218,13 @@ namespace CGAL {
 
 	
 
+	/*!
+		This function returns the faces in conflict with `p` in the output iterator `it`. 
+		Note that the optional parameter `store_translations` is _not_ documented. This 
+		flag indicates whether the translations in the faces in conflict with `p` should
+		be stored in their incident vertices. The flag is `false` by default, and is set
+		to `true` only when the point `p` is going to be inserted in the triangulation.
+	*/
 	template<class OutputFaceIterator>
 	void
 	get_conflicts(	const Point& p,
@@ -234,6 +241,14 @@ namespace CGAL {
 	}
 
 
+	/*!
+		This function returns the faces in conflict with `p` in the output iterator `it`. 
+		This is the recursive version of the function.
+		Note that the optional parameter `store_translations` is _not_ documented. This 
+		flag indicates whether the translations in the faces in conflict with `p` should
+		be stored in their incident vertices. The flag is `false` by default, and is set
+		to `true` only when the point `p` is going to be inserted in the triangulation.
+	*/
 	template<class OutputFaceIterator>
 	void
 	get_conflicts(	const Point& p,
@@ -251,16 +266,13 @@ namespace CGAL {
 
 				it++ = cf;
 
-				// Store the translations in the vertices, if necessary.
-				// This is done in preparation for the insertion of the point `p` in 
-				// the triangulation -- the faces in conflict will be destroyed.
 				if (store_translations) {
 					for (int i = 0; i < 3; i++) {
 						cf->vertex(i)->set_translation(tr * cf->translation(i));
 					}
 				}
 
-				// Recursive call for the neighbors
+				// Recursive call for the neighbors of `cf`
 				for (int jj = 0; jj < 3; jj++) {
 					get_conflicts(p, cf->neighbor(jj), tr * neighbor_translation(cf, jj), visited, it, store_translations);
 				}
