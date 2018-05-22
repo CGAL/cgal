@@ -34,7 +34,7 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
 /**
- * \ingroup ???
+ * \ingroup PMP_meshing_grp
  * Extrudes `input` into `output` following the direction given by `dir` and
  * at a distance `d`.
  * @tparam InputMesh a model of the concept `FaceListGraph`

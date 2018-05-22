@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
     assert(false);
     return 1;
   }
-  CGAL::Polygon_mesh_processing::extrude_mesh(in, out, Kernel::Vector_3(0.0, 0.0, 1.0), 1.0);
+  CGAL::Polygon_mesh_processing::extrude_mesh(in, out, Kernel::Vector_3(0.0, 0.0, -1.0), 1.0);
   std::ofstream extruded_off("extruded.off");
   extruded_off << out;
   extruded_off.close();
