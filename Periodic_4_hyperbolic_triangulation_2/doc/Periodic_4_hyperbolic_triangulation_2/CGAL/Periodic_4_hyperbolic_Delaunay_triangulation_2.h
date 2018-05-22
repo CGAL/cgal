@@ -61,15 +61,11 @@ The class expects two template parameters.
 	 	/*!
 			Computes recursively the conflict zone induced by `p`.
 			The output iterator `it` contains all faces in conflict with `p`.
-			The optional parameter `store_translation` indicates whether the
-			translations in the faces in conflict with `p` should be stored
-			in their vertices.
 	 	*/
 	 	template<class OutputFaceIterator>
 		void
 		get_conflicts(	const Point& p,
-						OutputFaceIterator it,
-						bool store_translations = false) const;
+						OutputFaceIterator it) const;
  
 
 		/*!
@@ -80,11 +76,7 @@ The class expects two template parameters.
 			`(cf, tr)` is in the neighborhood in \f$\mathbb H^2\f$ of the triangle 
 			containing `p`. The set `visited` contains all faces that have already 
 			been examined so far, to avoid unnecessary controls. The faces in conflict 
-			with `p` are stored in the output iterator `it`. The optional flag 
-			`store_translations` indicates whether the translations in the faces in 
-			conflict with `p` should be stored in their vertices; this functionality 
-			is used internally only when the point `p` is about to be inserted into 
-			the triangulations.
+			with `p` are stored in the output iterator `it`.
 		*/
 	  	template<class OutputFaceIterator>
 		void
@@ -92,8 +84,7 @@ The class expects two template parameters.
 						const Face_handle cf,
 						Hyperbolic_translation tr,
 						std::set<Face_handle>& visited,
-						OutputFaceIterator it,
-						bool store_translations = false) const;
+						OutputFaceIterator it) const;
 
 	  	/*!
 			Returns the point stored in the `i`-th dummy vertex.
