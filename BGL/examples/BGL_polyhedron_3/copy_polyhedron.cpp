@@ -17,6 +17,7 @@
 #include <iterator>
 #include <boost/unordered_map.hpp>
 
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 typedef CGAL::Polyhedron_3<Kernel>                       Source;
