@@ -1,0 +1,147 @@
+iordanov@zababa:~/Documents/Code/builds/bench-misha$ ./test_insertion_with_different_kernels 1000000 10
+--> generating random points...  DONE!
+--> copying random points...     DONE!
+--> inserting into Euclidean triangulation with CK...           DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CK...          DONE! Triangulation vertices: 1000000
+--> inserting into Euclidean triangulation with CORE::Expr...   DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CORE::Expr...  DONE! Triangulation vertices: 1000000
+
+Time for Euclidean CK:    170.627
+Time for hyperbolic CK:   169.556
+Time for Euclidean CORE:  24.9678
+Time for hyperbolic CORE: 26.3069
+
+===========================================================
+
+--> generating random points...  DONE!
+--> copying random points...     DONE!
+--> inserting into Euclidean triangulation with CK...           DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CK...          DONE! Triangulation vertices: 1000000
+--> inserting into Euclidean triangulation with CORE::Expr...   DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CORE::Expr...  DONE! Triangulation vertices: 1000000
+
+Time for Euclidean CK:    169.512
+Time for hyperbolic CK:   169.033
+Time for Euclidean CORE:  25.6256
+Time for hyperbolic CORE: 26.9626
+
+===========================================================
+
+--> generating random points...  DONE!
+--> copying random points...     DONE!
+--> inserting into Euclidean triangulation with CK...           DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CK...          DONE! Triangulation vertices: 1000000
+--> inserting into Euclidean triangulation with CORE::Expr...   DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CORE::Expr...  DONE! Triangulation vertices: 1000000
+
+Time for Euclidean CK:    169.301
+Time for hyperbolic CK:   168.705
+Time for Euclidean CORE:  25.3268
+Time for hyperbolic CORE: 26.6332
+
+===========================================================
+
+--> generating random points...  DONE!
+--> copying random points...     DONE!
+--> inserting into Euclidean triangulation with CK...           DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CK...          DONE! Triangulation vertices: 1000000
+--> inserting into Euclidean triangulation with CORE::Expr...   DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CORE::Expr...  DONE! Triangulation vertices: 1000000
+
+Time for Euclidean CK:    168.208
+Time for hyperbolic CK:   169.394
+Time for Euclidean CORE:  27.5368
+Time for hyperbolic CORE: 27.9433
+
+===========================================================
+
+--> generating random points...  DONE!
+--> copying random points...     DONE!
+--> inserting into Euclidean triangulation with CK...           DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CK...          DONE! Triangulation vertices: 1000000
+--> inserting into Euclidean triangulation with CORE::Expr...   DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CORE::Expr...  DONE! Triangulation vertices: 1000000
+
+Time for Euclidean CK:    176.372
+Time for hyperbolic CK:   173.679
+Time for Euclidean CORE:  27.3384
+Time for hyperbolic CORE: 28.2083
+
+===========================================================
+
+--> generating random points...  DONE!
+--> copying random points...     DONE!
+--> inserting into Euclidean triangulation with CK...           DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CK...          DONE! Triangulation vertices: 1000000
+--> inserting into Euclidean triangulation with CORE::Expr...   DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CORE::Expr...  DONE! Triangulation vertices: 1000000
+
+Time for Euclidean CK:    172.435
+Time for hyperbolic CK:   173.389
+Time for Euclidean CORE:  27.3188
+Time for hyperbolic CORE: 27.9508
+
+===========================================================
+
+--> generating random points...  DONE!
+--> copying random points...     DONE!
+--> inserting into Euclidean triangulation with CK...           DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CK...          DONE! Triangulation vertices: 1000000
+--> inserting into Euclidean triangulation with CORE::Expr...   DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CORE::Expr...  DONE! Triangulation vertices: 1000000
+
+Time for Euclidean CK:    172.617
+Time for hyperbolic CK:   178.942
+Time for Euclidean CORE:  28.1969
+Time for hyperbolic CORE: 29.7344
+
+===========================================================
+
+--> generating random points...  DONE!
+--> copying random points...     DONE!
+--> inserting into Euclidean triangulation with CK...           DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CK...          DONE! Triangulation vertices: 1000000
+--> inserting into Euclidean triangulation with CORE::Expr...   DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CORE::Expr...  DONE! Triangulation vertices: 1000000
+
+Time for Euclidean CK:    176.287
+Time for hyperbolic CK:   175.15
+Time for Euclidean CORE:  27.5943
+Time for hyperbolic CORE: 28.5847
+
+===========================================================
+
+--> generating random points...  DONE!
+--> copying random points...     DONE!
+--> inserting into Euclidean triangulation with CK...           DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CK...          DONE! Triangulation vertices: 1000000
+--> inserting into Euclidean triangulation with CORE::Expr...   DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CORE::Expr...  DONE! Triangulation vertices: 1000000
+
+Time for Euclidean CK:    173.73
+Time for hyperbolic CK:   178.054
+Time for Euclidean CORE:  27.1537
+Time for hyperbolic CORE: 29.1486
+
+===========================================================
+
+--> generating random points...  DONE!
+--> copying random points...     DONE!
+--> inserting into Euclidean triangulation with CK...           DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CK...          DONE! Triangulation vertices: 1000000
+--> inserting into Euclidean triangulation with CORE::Expr...   DONE! Triangulation vertices: 1000000
+--> inserting into hyperbolic triangulation with CORE::Expr...  DONE! Triangulation vertices: 1000000
+
+Time for Euclidean CK:    178.159
+Time for hyperbolic CK:   176.271
+Time for Euclidean CORE:  27.98
+Time for hyperbolic CORE: 29.0716
+
+===========================================================
+
+######################################################################
+
+Average time for Euclidean with CK:    172.725
+Average time for hyperbolic with CK:   173.217
+Average time for Euclidean with CORE:  26.9039
+Average time for hyperbolic with CORE: 28.0544
