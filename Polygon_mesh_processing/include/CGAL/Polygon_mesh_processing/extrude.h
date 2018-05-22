@@ -20,10 +20,9 @@
 // Author(s)     : Sebastien Loriot, Maxime Gimeno
 
 
-#ifndef CGAL_EXTUR_POLYGON_MESH_H
-#define CGAL_EXTUR_POLYGON_MESH_H
-
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#ifndef POLYGON_MESH_PROCESSING_EXTRUDE_H
+#define POLYGON_MESH_PROCESSING_EXTRUDE_H
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/named_function_params.h>
@@ -58,14 +57,19 @@ void extrude_mesh(const InputMesh& input,
                   OutputMesh& output, 
                   #ifdef DOXYGEN_RUNNING
                   Vector_3 dir,
+                  const FT d, 
                   #else
                   typename CGAL::Kernel_traits<
                   typename boost::property_traits<
                   typename GetVertexPointMap <
                   OutputMesh, NamedParameters>::type>::
                   value_type>::Kernel::Vector_3 dir, 
+                  typename CGAL::Kernel_traits<
+                  typename boost::property_traits<
+                  typename GetVertexPointMap <
+                  OutputMesh, NamedParameters>::type>::
+                  value_type>::Kernel::FT d,
                   #endif
-                  const double d, 
                   const NamedParameters& np)
 {
   typedef typename boost::graph_traits<InputMesh>::halfedge_descriptor input_halfedge_descriptor;
@@ -192,4 +196,4 @@ void extrude_mesh(const InputMesh& input,
 }
 
 }} //end CGAL::PMP
-#endif //CGAL_EXTRUDE_POLYGON_MESH_H
+#endif //POLYGON_MESH_PROCESSING_EXTRUDE_H
