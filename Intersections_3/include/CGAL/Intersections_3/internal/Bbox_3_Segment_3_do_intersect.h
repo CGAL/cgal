@@ -25,6 +25,7 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/number_utils.h>
 #include <CGAL/Segment_3.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Kernel/Same_uncertainty.h>
