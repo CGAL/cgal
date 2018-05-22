@@ -365,6 +365,17 @@ should be considered as part of the clipping volume or not.
 \cgalNPEnd
 
 
+\cgalNPBegin{output_iterator} \anchor PMP_output_iterator
+Iterator where `std::vector<vertex_descriptor>` can be put.
+The first vertex of the vector is an input vertex that was non-manifold,
+the other vertices in the vertex are the new vertices created to fix
+the non-manifoldness.
+\n
+\b Type : `iterator` \n
+\b Default  `Emptyset_iterator`
+\cgalNPEnd
+
+
 \cgalNPTableEnd
 
 */
