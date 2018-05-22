@@ -112,7 +112,7 @@ public:
     return m_matrix.coeff(i_);
   }
 
-  mutable EigenType m_matrix;
+  EigenType m_matrix;
 };
 
 /*!
@@ -152,7 +152,7 @@ public:
     return m_vector.coeff(i);
   }
 
-  mutable EigenType m_vector;
+  EigenType m_vector;
 };
 
 
