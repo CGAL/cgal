@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-//
+// SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Maxime Gimeno
 
@@ -22,6 +22,8 @@
 #define PRIMITIVE_CONTAINER_H
 
 #include <CGAL/license/Three.h>
+
+
 #include <CGAL/Three/Buffer_objects.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Scene_item_rendering_helper.h>
