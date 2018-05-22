@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
   extruded_off.close();  
   out.clear();
   
-  typedef typename boost::property_map<SMesh, CGAL::vertex_point_t>::type VPMap;
+  typedef boost::property_map<SMesh, CGAL::vertex_point_t>::type VPMap;
   Bot<VPMap> bot(get(CGAL::vertex_point, out));
   Top<VPMap> top(get(CGAL::vertex_point, out));
   CGAL::Polygon_mesh_processing::generic_extrude_mesh(in, out, bot, top);
