@@ -31,6 +31,7 @@
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 #include <vector>
 
 namespace CGAL {
@@ -117,7 +118,6 @@ void generic_extrude_mesh(const InputMesh& input,
   
   typedef typename boost::graph_traits<OutputMesh>::vertex_descriptor   output_vertex_descriptor;
   typedef typename boost::graph_traits<OutputMesh>::halfedge_descriptor output_halfedge_descriptor;
-  typedef typename boost::graph_traits<OutputMesh>::edge_descriptor     output_edge_descriptor;
   typedef typename boost::graph_traits<OutputMesh>::face_descriptor     output_face_descriptor;
   
   CGAL_assertion(!CGAL::is_closed(input));
@@ -168,16 +168,6 @@ void generic_extrude_mesh(const InputMesh& input,
   // now create a quad strip
   for(std::size_t i=0; i< border_hedges.size(); ++i)
   {
-    //     before                 after
-    // -----  o  -------     -----  o  -------
-    // <----     <-----      <----  |   <-----
-    //  nh1        h1         nh1   |     h1
-    //                              |
-    //                        hnew  |  hnew_opp
-    //                              |
-    //   ph2       h2          ph2  |     h2
-    //  ---->    ----->       ----> |   ----->
-    // -----  o  -------     -----  o  -------
     output_halfedge_descriptor h1 = border_hedges[i], h2=offset_border_hedges[i],
         nh1 = next(h1, output), ph2 = prev(h2, output);
     output_halfedge_descriptor newh = halfedge(add_edge(output), output),
@@ -197,8 +187,7 @@ void generic_extrude_mesh(const InputMesh& input,
   {
     output_halfedge_descriptor h = border_hedges[i];
     
-    output_face_descriptor nf1 = add_face(output);
-    output_face_descriptor nf2 = add_face(output);
+    output_face_descriptor nf = add_face(output);
     
     CGAL::cpp11::array<output_halfedge_descriptor, 4> hedges;
     for (int k=0; k<4; ++k)
@@ -207,31 +196,12 @@ void generic_extrude_mesh(const InputMesh& input,
       h = next(h, output);
     }
     
-    //add a diagonal
-    output_edge_descriptor new_e = add_edge(output);
-    output_halfedge_descriptor new_h = halfedge(new_e, output),
-        new_h_opp = opposite(new_h, output);
-    // set vertex pointers
-    set_target(new_h_opp, target(hedges[0], output), output);
-    set_target(new_h, target(hedges[2], output), output);
-    
-    // set next pointers
-    set_next(hedges[0], new_h, output);
-    set_next(new_h, hedges[3], output);
-    set_next(hedges[2], new_h_opp, output);
-    set_next(new_h_opp, hedges[1], output);
-    
-    // set face halfedge pointers
-    set_face(hedges[0], nf1, output);
-    set_face(hedges[3], nf1, output);
-    set_face(new_h, nf1, output);
-    set_face(hedges[1], nf2, output);
-    set_face(hedges[2], nf2, output);
-    set_face(new_h_opp, nf2, output);
-    
-    // set halfedge face pointers
-    set_halfedge(nf1, hedges[0], output);
-    set_halfedge(nf2, hedges[2], output);
+    set_face(hedges[0], nf, output);
+    set_face(hedges[1], nf, output);
+    set_face(hedges[2], nf, output);
+    set_face(hedges[3], nf, output);
+    set_halfedge(nf, hedges[0], output);
+    Euler::split_face(hedges[0], hedges[2], output);
   }
 }
 
