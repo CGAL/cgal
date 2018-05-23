@@ -42,8 +42,8 @@ struct ConstDistTranslation{
   ConstDistTranslation(PMAP map, const Vector& dir, const double d)
     :map(map), dir(dir), d(d){}
   
-  template<typename VertexDescriptor>
-  void operator()(const VertexDescriptor vd)
+  template<typename VertexDescriptor, typename U>
+  void operator()(const VertexDescriptor vd, const U&)
   {
     typename boost::property_traits<PMAP>::value_type p = get(map, vd) + d*dir;
     put(map, vd, p);
@@ -56,8 +56,8 @@ struct ConstDistTranslation{
 
 struct IdentityFunctor
 {
-  template<typename T>
-  void operator()(const T&){}
+  template<typename T, typename U>
+  void operator()(const T&, const U&){}
 };
 }//end internal
 
@@ -72,10 +72,12 @@ struct IdentityFunctor
  * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters" for `OutputMesh`
  * @tparam BottomFunctor a functor that will apply a transformation to all points of 
  * `input` in order to create the first offsetted part of the extrusion. It must have a function 
- * `void operator()(boost::graph_traits<OutputMesh>::vertex_descriptor);
+ * `void operator()(boost::graph_traits<InputMesh>::vertex_descriptor,
+ * boost::graph_traits<OutputMesh>::vertex_descriptor);
  * @tparam TopFunctor a functor that will apply a transformation to all points of 
  * `input` in order to create the second offsetted part of the extrusion. It must have a function 
- * `void operator()(boost::graph_traits<OutputMesh>::vertex_descriptor);
+ * `void operator()(boost::graph_traits<InputMesh>::vertex_descriptor,
+ * boost::graph_traits<OutputMesh>::vertex_descriptor);
  * @param input the open triangulated `InputMesh` to extrude.
  * @param output the `OutputMesh` containing the result of the extrusion.
  * @param np1 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
@@ -127,36 +129,38 @@ void generic_extrude_mesh(const InputMesh& input,
   IVPMap input_vpm = choose_param(get_param(np1, internal_np::vertex_point),
                                    get_const_property_map(vertex_point, input));
   
-  boost::unordered_map<input_halfedge_descriptor, output_halfedge_descriptor> bottom_h2h;
-  copy_face_graph(input, output, Emptyset_iterator(),
-                        std::inserter(bottom_h2h, bottom_h2h.end()), Emptyset_iterator(),
+  std::vector<std::pair<input_vertex_descriptor, output_vertex_descriptor> > bottom_v2v;
+  std::vector<std::pair<input_halfedge_descriptor, output_halfedge_descriptor> > bottom_h2h;
+  copy_face_graph(input, output, std::back_inserter(bottom_v2v),
+                        std::back_inserter(bottom_h2h), Emptyset_iterator(),
                   input_vpm, output_vpm);
   
   // create the offset for the other side
-  BOOST_FOREACH(output_vertex_descriptor v, vertices(output))
+  for(std::size_t i = 0; i< bottom_v2v.size(); ++i)
   {
-    bot(v);
+    bot(bottom_v2v[i].first, bottom_v2v[i].second);
   }
   CGAL::Polygon_mesh_processing::reverse_face_orientations(output);
   
   // collect border halfedges for the creation of the triangle strip
-  boost::unordered_map<input_vertex_descriptor, output_vertex_descriptor> top_v2v;
-  boost::unordered_map<input_halfedge_descriptor, output_halfedge_descriptor> top_h2h;
+  std::vector<std::pair<input_vertex_descriptor, output_vertex_descriptor> > top_v2v;
+  std::vector<std::pair<input_halfedge_descriptor, output_halfedge_descriptor> > top_h2h;
   copy_face_graph(input, output, std::inserter(top_v2v, top_v2v.end()),
                         std::inserter(top_h2h, top_h2h.end()), Emptyset_iterator(),
                   input_vpm, output_vpm);
-  BOOST_FOREACH(input_vertex_descriptor v, vertices(input))
+  for(std::size_t i = 0; i< top_v2v.size(); ++i)
   {
-    top(top_v2v[v]);
+    top(top_v2v[i].first, top_v2v[i].second);
   }
   std::vector<output_halfedge_descriptor> border_hedges;
   std::vector<output_halfedge_descriptor> offset_border_hedges;
-  BOOST_FOREACH(input_halfedge_descriptor h, halfedges(input))
+  for(std::size_t i = 0; i< top_h2h.size(); ++i)
   {
+    input_halfedge_descriptor h = top_h2h[i].first;
     if( CGAL::is_border(h, input) )
     {
-      border_hedges.push_back(top_h2h[h]);
-      offset_border_hedges.push_back(bottom_h2h[h]);
+      border_hedges.push_back(top_h2h[i].second);
+      offset_border_hedges.push_back(bottom_h2h[i].second);
       CGAL_assertion(is_border(border_hedges.back(), output));
       CGAL_assertion(is_border(offset_border_hedges.back(), output));
     }
