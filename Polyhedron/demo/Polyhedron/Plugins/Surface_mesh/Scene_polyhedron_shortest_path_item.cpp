@@ -10,6 +10,8 @@
 
 #include <CGAL/Surface_mesh_shortest_path/function_objects.h>
 #include <QString>
+
+typedef Scene_polyhedron_shortest_path_item It;
 struct Scene_polyhedron_shortest_path_item_priv
 {
   typedef CGAL::Three::Scene_interface::Bbox Bbox;
@@ -59,20 +61,6 @@ struct Scene_polyhedron_shortest_path_item_priv
       m_sceneInterface = NULL;
     }
   }
-
-  enum Selection_mode
-  {
-    INSERT_POINTS_MODE = 0,
-    REMOVE_POINTS_MODE = 1,
-    SHORTEST_PATH_MODE = 2
-  };
-
-  enum Primitives_mode
-  {
-    VERTEX_MODE = 0,
-    EDGE_MODE = 1,
-    FACE_MODE = 2
-  };
 
   enum VAOs {
       Selected_Edges=0,
@@ -414,35 +402,35 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
         .arg(double(faceLocation.second[2])));
     switch (m_selectionMode)
     {
-    case INSERT_POINTS_MODE:
+    case It::INSERT_POINTS_MODE:
       switch (m_primitivesMode)
       {
-      case VERTEX_MODE:
+      case It::VERTEX_MODE:
         get_as_vertex_point(faceLocation);
         m_shortestPaths->add_source_point(faceLocation.first, faceLocation.second);
         break;
-      case EDGE_MODE:
+      case It::EDGE_MODE:
         get_as_edge_point(faceLocation);
         m_shortestPaths->add_source_point(faceLocation.first, faceLocation.second);
         break;
-      case FACE_MODE:
+      case It::FACE_MODE:
         m_shortestPaths->add_source_point(faceLocation.first, faceLocation.second);
         break;
       }
       break;
-    case REMOVE_POINTS_MODE:
+    case It::REMOVE_POINTS_MODE:
       remove_nearest_point(faceLocation);
       break;
-    case SHORTEST_PATH_MODE:
+    case It::SHORTEST_PATH_MODE:
       switch (m_primitivesMode)
       {
-      case VERTEX_MODE:
+      case It::VERTEX_MODE:
         get_as_vertex_point(faceLocation);
         break;
-      case EDGE_MODE:
+      case It::EDGE_MODE:
         get_as_edge_point(faceLocation);
         break;
-      case FACE_MODE:
+      case It::FACE_MODE:
         break;
       }
       
