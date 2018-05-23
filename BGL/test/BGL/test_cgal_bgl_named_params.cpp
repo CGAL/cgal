@@ -72,6 +72,7 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::number_of_points_on_edges).v == 31);
   assert(get_param(np, CGAL::internal_np::nb_points_per_area_unit).v == 32);
   assert(get_param(np, CGAL::internal_np::nb_points_per_distance_unit).v == 33);
+  assert(get_param(np, CGAL::internal_np::new_face_visitor).v == 42);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_param(np, CGAL::internal_np::get_cost_policy).v == 34);
@@ -136,6 +137,7 @@ void test(const NamedParameters& np)
   check_same_type<31>(get_param(np, CGAL::internal_np::number_of_points_on_edges));
   check_same_type<32>(get_param(np, CGAL::internal_np::nb_points_per_area_unit));
   check_same_type<33>(get_param(np, CGAL::internal_np::nb_points_per_distance_unit));
+  check_same_type<42>(get_param(np, CGAL::internal_np::new_face_visitor));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_param(np, CGAL::internal_np::get_cost_policy));
@@ -199,6 +201,7 @@ int main()
                          .weight_calculator(A<39>(39))
                          .preserve_genus(A<40>(40))
                          .verbosity_level(A<41>(41))
+                         .new_face_visitor(A<42>(42))
        );
 
   return EXIT_SUCCESS;

@@ -57,8 +57,9 @@ template <class TriangleMesh,
           class VertexPointMap,
           class FaceIdMap,
           class Kernel_=Default,
-          class EdgeMarkMapBind_=Default,
-          class EdgeMarkMapTuple_=Default >
+          class EdgeMarkMapBind_  = Default,
+          class EdgeMarkMapTuple_ = Default,
+          class NewFaceVisitor_   = Default>
 class Face_graph_output_builder
 {
 //Default typedefs
@@ -75,6 +76,8 @@ class Face_graph_output_builder
                   No_mark<TriangleMesh>,
                   No_mark<TriangleMesh>,
                   No_mark<TriangleMesh> > >::type     EdgeMarkMapTuple;
+  typedef typename Default::Get<
+    NewFaceVisitor_, Default_face_visitor<TriangleMesh> >::type  NewFaceVisitor;
 
 // graph_traits typedefs
   typedef TriangleMesh                                              TM;
@@ -109,6 +112,7 @@ class Face_graph_output_builder
   // property maps of output meshes
   const cpp11::array<VertexPointMap*, 4 >& output_vpms;
   EdgeMarkMapTuple& out_edge_mark_maps;
+  NewFaceVisitor& new_face_visitor;
   // output meshes
   const cpp11::array<boost::optional<TriangleMesh*>, 4>& desired_output;
   // input meshes closed ?
@@ -251,14 +255,14 @@ class Face_graph_output_builder
 
   template<class EdgeMarkMap>
   void mark_edges(const EdgeMarkMap& edge_mark_map,
-                 const std::vector<edge_descriptor>& edges)
+                  const std::vector<edge_descriptor>& edges)
   {
     BOOST_FOREACH(edge_descriptor ed, edges)
       put(edge_mark_map, ed, true);
   }
 
   void mark_edges(const No_mark<TriangleMesh>&,
-                 const std::vector<edge_descriptor>&)
+                  const std::vector<edge_descriptor>&)
   {} //nothing to do
 
   template<class EdgeMarkMapTuple>
@@ -338,6 +342,7 @@ public:
                                   EdgeMarkMapBind& marks_on_input_edges,
                             const cpp11::array<VertexPointMap*, 4>& output_vpms,
                                   EdgeMarkMapTuple& out_edge_mark_maps,
+                                  NewFaceVisitor& new_face_visitor,
                             const cpp11::array<
                               boost::optional<TriangleMesh*>, 4 >& desired_output)
     : tm1(tm1), tm2(tm2)
@@ -346,6 +351,7 @@ public:
     , marks_on_input_edges(marks_on_input_edges)
     , output_vpms(output_vpms)
     , out_edge_mark_maps(out_edge_mark_maps)
+    , new_face_visitor(new_face_visitor)
     , desired_output(desired_output)
     , is_tm1_closed( is_closed(tm1))
     , is_tm2_closed( is_closed(tm2))
@@ -1233,7 +1239,8 @@ public:
         marks_on_input_edges.ecm1,
         marks_on_input_edges.ecm2,
         CGAL_COREF_SELECT_OUT_ECM(operation),
-        shared_edges
+        shared_edges,
+        new_face_visitor
       );
       mark_edges(out_edge_mark_maps, shared_edges, operation);
     }
@@ -1312,7 +1319,8 @@ public:
           marks_on_input_edges.ecm1,
           marks_on_input_edges.ecm2,
           CGAL_COREF_SELECT_OUT_ECM(inplace_operation_tm1),
-          disconnected_patches_edge_to_tm2_edge);
+          disconnected_patches_edge_to_tm2_edge,
+          new_face_visitor);
         // Operation in tm2: discard patches and append the one from tm2
         CGAL_assertion( *desired_output[inplace_operation_tm2] == &tm2 );
         compute_inplace_operation( tm2, tm1,
@@ -1326,7 +1334,8 @@ public:
                                    marks_on_input_edges.ecm2,
                                    marks_on_input_edges.ecm1,
                                    CGAL_COREF_SELECT_OUT_ECM(inplace_operation_tm2),
-                                   disconnected_patches_edge_to_tm2_edge);
+                                   disconnected_patches_edge_to_tm2_edge,
+                                   new_face_visitor);
         // remove polylines only on the border of patches not kept in tm2
         if (polylines_in_tm2.to_skip.any())
           remove_unused_polylines(tm2,
@@ -1374,7 +1383,8 @@ public:
           marks_on_input_edges.ecm1,
           marks_on_input_edges.ecm2,
           CGAL_COREF_SELECT_OUT_ECM(inplace_operation_tm1),
-          polylines
+          polylines,
+          new_face_visitor
         );
         // remove polylines only on the border of patches not kept
         if (polylines.to_skip.any())
@@ -1413,7 +1423,8 @@ public:
                                    marks_on_input_edges.ecm2,
                                    marks_on_input_edges.ecm1,
                                    CGAL_COREF_SELECT_OUT_ECM(inplace_operation_tm2),
-                                   polylines);
+                                   polylines,
+                                   new_face_visitor);
 
         // remove polylines only on the border of patches not kept
         if (polylines.to_skip.any())

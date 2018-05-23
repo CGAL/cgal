@@ -374,26 +374,35 @@ boolean_operation(      TriangleMesh& tm1,
                                         get_property_map(boost::face_index, tm1));
   Fid_map fid_map2 = boost::choose_param(get_param(np2, internal_np::face_index),
                                          get_property_map(boost::face_index, tm2));
+// New face visitor
+  typedef typename boost::lookup_named_param_def <
+    internal_np::new_face_visitor_t,
+    NamedParameters1,
+    Corefinement::Default_face_visitor<TriangleMesh>//default
+  > ::type Nfv;
+  Nfv nfv( boost::choose_param( get_param(np1, internal_np::new_face_visitor),
+                                Corefinement::Default_face_visitor<TriangleMesh>() ) );
+
   // surface intersection algorithm call
   typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
-  typedef Corefinement::Default_face_visitor<TriangleMesh> Dfv;
+
   typedef Corefinement::Face_graph_output_builder<TriangleMesh,
                                                   Vpm,
                                                   Fid_map,
                                                   Default,
                                                   Ecm_in,
-                                                  Edge_mark_map_tuple > Ob;
+                                                  Edge_mark_map_tuple,
+                                                  Nfv> Ob;
 
-  typedef Corefinement::Visitor<TriangleMesh,Vpm,Ob,Ecm_in> Visitor;
+  typedef Corefinement::Visitor<TriangleMesh,Vpm,Ob,Ecm_in, Default, Nfv> Visitor;
   Dnv dnv;
-  Dfv dfv;
   Ecm_in ecm_in(tm1,tm2,ecm1,ecm2);
   Edge_mark_map_tuple ecms_out(ecm_out_0, ecm_out_1, ecm_out_2, ecm_out_3);
   Ob ob(tm1, tm2, vpm1, vpm2, fid_map1, fid_map2, ecm_in,
-        output_vpms, ecms_out, desired_output);
+        output_vpms, ecms_out, nfv, desired_output);
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm,Visitor >
-    functor(tm1, tm2, vpm1, vpm2, Visitor(dnv,dfv,ob,ecm_in));
+    functor(tm1, tm2, vpm1, vpm2, Visitor(dnv,nfv,ob,ecm_in));
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
 
 
@@ -658,17 +667,24 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
     return;
   }
 
+  // New face visitor
+  typedef typename boost::lookup_named_param_def <
+    internal_np::new_face_visitor_t,
+    NamedParameters1,
+    Corefinement::Default_face_visitor<TriangleMesh>//default
+  > ::type Nfv;
+  Nfv nfv( boost::choose_param( get_param(np1, internal_np::new_face_visitor),
+                                Corefinement::Default_face_visitor<TriangleMesh>() ) );
+
 // surface intersection algorithm call
   typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
-  typedef Corefinement::Default_face_visitor<TriangleMesh> Dfv;
   typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
-  typedef Corefinement::Visitor<TriangleMesh,Vpm,Ob,Ecm> Visitor;
+  typedef Corefinement::Visitor<TriangleMesh,Vpm,Ob,Ecm, Default, Nfv> Visitor;
   Dnv dnv;
-  Dfv dfv;
   Ob ob;
   Ecm ecm(tm1,tm2,ecm1,ecm2);
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm,Visitor >
-    functor(tm1, tm2, vpm1, vpm2, Visitor(dnv,dfv,ob,ecm));
+    functor(tm1, tm2, vpm1, vpm2, Visitor(dnv,nfv,ob,ecm));
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
 }
 
@@ -722,18 +738,26 @@ namespace experimental {
   Ecm ecm = boost::choose_param( get_param(np, internal_np::edge_is_constrained),
                                  Corefinement::No_mark<TriangleMesh>() );
 
+// New face visitor
+  typedef typename boost::lookup_named_param_def <
+    internal_np::new_face_visitor_t,
+    NamedParameters,
+    Corefinement::Default_face_visitor<TriangleMesh>//default
+  > ::type Nfv;
+  Nfv nfv( boost::choose_param( get_param(np, internal_np::new_face_visitor),
+                                Corefinement::Default_face_visitor<TriangleMesh>() ) );
+
+
 // surface intersection algorithm call
   typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
-  typedef Corefinement::Default_face_visitor<TriangleMesh> Dfv;
   typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
   typedef Default D;
-  typedef Corefinement::Visitor<TriangleMesh,Vpm,Ob,Ecm,D,D,true> Visitor;
+  typedef Corefinement::Visitor<TriangleMesh,Vpm,Ob,Ecm,D,Nfv,true> Visitor;
   Dnv dnv;
-  Dfv dfv;
   Ob ob;
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm,Visitor >
-    functor(tm, vpm, Visitor(dnv,dfv,ob,ecm) );
+    functor(tm, vpm, Visitor(dnv,nfv,ob,ecm) );
 
   functor(CGAL::Emptyset_iterator(), true);
 }
@@ -789,10 +813,17 @@ namespace experimental {
   > ::type Ecm;
   Ecm ecm = boost::choose_param( get_param(np, internal_np::edge_is_constrained),
                                  Corefinement::No_mark<TriangleMesh>() );
+// New face visitor
+  typedef typename boost::lookup_named_param_def <
+    internal_np::new_face_visitor_t,
+    NamedParameters,
+    Corefinement::Default_face_visitor<TriangleMesh>//default
+  > ::type Nfv;
+  Nfv nfv( boost::choose_param( get_param(np, internal_np::new_face_visitor),
+                               Corefinement::Default_face_visitor<TriangleMesh>() ) );
 
 // surface intersection algorithm call
   typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
-  typedef Corefinement::Default_face_visitor<TriangleMesh> Dfv;
   typedef Corefinement::Output_builder_for_autorefinement<TriangleMesh,
                                                           Vpm,
                                                           Fid_map,
@@ -800,13 +831,12 @@ namespace experimental {
                                                           Default > Ob;
 
   typedef Default D;
-  typedef Corefinement::Visitor<TriangleMesh,Vpm,Ob,Ecm,D,D,true> Visitor;
+  typedef Corefinement::Visitor<TriangleMesh,Vpm,Ob,Ecm,D,Nfv,true> Visitor;
   Dnv dnv;
-  Dfv dfv;
   Ob ob(tm, vpm, fid_map, ecm);
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm,Visitor >
-    functor(tm, vpm, Visitor(dnv,dfv,ob,ecm) );
+    functor(tm, vpm, Visitor(dnv,nfv,ob,ecm) );
 
   functor(CGAL::Emptyset_iterator(), true);
 

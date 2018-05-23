@@ -67,15 +67,6 @@ struct Default_node_visitor{
                         TriangleMesh& /*tm*/){}
 };
 
-template <class TriangleMesh>
-struct Default_face_visitor{
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::face_descriptor face_descriptor;
-
-  void before_subface_creations(face_descriptor /*f_old*/,TriangleMesh&){}
-  void after_subface_created(face_descriptor /*f_new*/,TriangleMesh&){}
-};
-
 //binds two edge constrained pmaps
 template <class G, class Ecm1, class Ecm2=Ecm1>
 struct Ecm_bind{
