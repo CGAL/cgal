@@ -68,7 +68,7 @@ before_script:
 - cd ..
 script: 
 - cd ./.travis
-- if [ -n "$CGAL_DEBUG_TRAVIS" ]; then  bash -x -e ./build_package.sh $PACKAGE; else bash -e ./build_package.sh $PACKAGE; fi
+- bash ./build_package.sh $PACKAGE
 notifications:
   email:
     on_success: change # default: always
