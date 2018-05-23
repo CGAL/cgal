@@ -1282,12 +1282,22 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
               # The header Algebraic_kernel_rs_gmpz_d_1.h is skipped on purpose: it
               # depends on RS.
               )
+            # CMD2 is CMD without the -H option
+            separate_arguments(CMD2
+              UNIX_COMMAND
+              "${CMAKE_CXX_COMPILER} ${compile_options_str}
+${include_options_str} -x c++ ${flag} \
+${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
+              # The header Algebraic_kernel_rs_gmpz_d_1.h is skipped on purpose: it
+              # depends on RS.
+              )
             set(chk_header_name
               ${CGAL_BINARY_DIR}/package_info/${package}/check_headers/check_${header2})
             add_custom_command(OUTPUT ${chk_header_name}
               COMMAND ${CMAKE_COMMAND}
               -DCERR:STRING=${chk_header_name}
               "-DCMD:STRING=${CMD}"
+              "-DCMD2:STRING=${CMD2}"
               -P "${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake"
               DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}
               DEPENDS ${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake
