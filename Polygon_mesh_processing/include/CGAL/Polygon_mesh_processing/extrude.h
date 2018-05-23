@@ -84,18 +84,18 @@ struct IdentityFunctor
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map}
- *    the property map that will contain the points associated to the vertices of `output`. 
+ *    the property map that contains the points associated to the vertices of `input`. 
  * If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` 
- * should be available for the vertices of `output` \cgalParamEnd
+ * should be available for the vertices of `input` \cgalParamEnd
  * \cgalNamedParamsEnd
  * 
  * * @param np2 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map}
- *    the property map that contains the points associated to the vertices of `input`. 
+ *    the property map that will contain the points associated to the vertices of `output`. 
  * If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` 
- * should be available for the vertices of `input` \cgalParamEnd
+ * should be available for the vertices of `output` \cgalParamEnd
  * \cgalNamedParamsEnd
  */
 template <class InputMesh,
