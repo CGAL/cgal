@@ -764,12 +764,6 @@ namespace internal {
           if (!mesh_border_case_opp)
             merge_status(en_p, s_epo_p, s_ep_p);
 
-          halfedge_and_opp_removed(he);
-          if (!mesh_border_case)
-            halfedge_and_opp_removed(prev(he, mesh_));
-          if (!mesh_border_case_opp)
-            halfedge_and_opp_removed(prev(opposite(he, mesh_), mesh_));
-
           //constrained case
           bool constrained_case = is_constrained(va) || is_constrained(vb);
           if (constrained_case)
@@ -786,7 +780,7 @@ namespace internal {
 
           //perform collapse
           Point target_point = get(vpmap_, vb);
-          vertex_descriptor vkept = CGAL::Euler::collapse_edge(e, mesh_);
+          vertex_descriptor vkept = CGAL::Euler::collapse_edge(e, mesh_, ecmap_);
           put(vpmap_, vkept, target_point);
           ++nb_collapses;
 
@@ -1824,12 +1818,6 @@ private:
                         const Halfedge_status& s)
     {
         set_status(h, s);
-    }
-
-    void halfedge_and_opp_removed(const halfedge_descriptor& h)
-    {
-      set_status(h,MESH);
-      set_status(opposite(h, mesh_),MESH);
     }
 
     std::size_t nb_valid_halfedges() const
