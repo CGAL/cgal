@@ -179,9 +179,18 @@ void detect_identical_mergeable_vertices(
 
 } // end of internal
 
-/// \todo document me
-/// It should probably go into BGL package
-/// It should make sense to also return the length of each cycle
+/// \ingroup PMP_repairing_grp
+/// extracts boundary cycles as a list of halfedges.
+/// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`.
+/// @tparam OutputIterator a model of `OutputIterator` holding objects of type
+///   `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
+///
+/// @param pm the polygon mesh.
+/// @param out an output iterator where the list of halfedges will be put.
+///
+/// @todo Maybe move to BGL
+/// @todo It should make sense to also return the length of each cycle.
+/// @todo It should probably go into BGL package.
 template <typename PolygonMesh, typename OutputIterator>
 OutputIterator
 extract_boundary_cycles(PolygonMesh& pm,
@@ -203,9 +212,16 @@ extract_boundary_cycles(PolygonMesh& pm,
 }
 
 /// \ingroup PMP_repairing_grp
-/// \todo document me
-/// we merge the all the target of the halfedges in `hedges`
-/// hedges must be sorted along the cycle
+/// merges target vertices of a list of halfedges.
+/// Halfedges must be sorted in the list.
+///
+/// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`.
+/// @tparam HalfedgeRange a range of halfedge descriptors of `PolygonMesh`, model of `Range`.
+///
+/// @param sorted_hedges a sorted list of halfedges.
+/// @param pm the polygon mesh which contains the list of halfedges.
+///
+/// @todo rename me to `merge_vertices_in_range` because I merge any king of vertices in the list.
 template <typename PolygonMesh, class HalfedgeRange>
 void merge_boundary_vertices_in_cycle(const HalfedgeRange& sorted_hedges,
                                             PolygonMesh& pm)
@@ -249,7 +265,22 @@ void merge_boundary_vertices_in_cycle(const HalfedgeRange& sorted_hedges,
 }
 
 /// \ingroup PMP_repairing_grp
-/// \todo document me
+/// merges identical vertices around a cycle of connected edges.
+///
+/// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`.
+/// @tparam NamedParameter a sequence of \ref pmp_namedparameters "Named Parameters".
+///
+/// @param h a halfedge that belongs to the cycle.
+/// @param pm the polygon mesh which containts the cycle.
+/// @param np optional parameter of \ref pmp_namedparameters "Named Parameters" listed below.
+///
+/// \cgalNamedParamsBegin
+/// \cgalParamBegin{vertex_point_map}
+///   the property map with the points associated to the vertices of `pm`.
+///    If this parameter is omitted, an internal property map for
+///  `CGAL::vertex_point_t` should be available in `PolygonMesh`
+/// \cgalParamEnd
+/// \cgalNamedParamsEnd
 template <class PolygonMesh, class NamedParameter>
 void merge_duplicated_vertices_in_boundary_cycle(
         typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
@@ -285,7 +316,22 @@ void merge_duplicated_vertices_in_boundary_cycle(
 }
 
 /// \ingroup PMP_repairing_grp
-/// \todo document me
+/// extracts boundary cycles and merges the duplicated
+/// vertices of each cycle.
+///
+/// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`.
+/// @tparam NamedParameter a sequence of \ref pmp_namedparameters "Named Parameters".
+///
+/// @param pm the polygon mesh which containts the cycle.
+/// @param np optional parameter of \ref pmp_namedparameters "Named Parameters" listed below.
+///
+/// \cgalNamedParamsBegin
+/// \cgalParamBegin{vertex_point_map}
+///   the property map with the points associated to the vertices of `pm`.
+///    If this parameter is omitted, an internal property map for
+///  `CGAL::vertex_point_t` should be available in `PolygonMesh`
+/// \cgalParamEnd
+/// \cgalNamedParamsEnd
 template <class PolygonMesh, class NamedParameter>
 void merge_duplicated_vertices_in_boundary_cycles(      PolygonMesh& pm,
                                                   const NamedParameter& np)
