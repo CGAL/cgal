@@ -25,21 +25,64 @@
 #include <CGAL/license/Heat_method_3.h>
 
 #include <CGAL/disable_warnings.h>
+#include <set>
+
+#include <Eigen/Cholesky>
 
 namespace CGAL {
 namespace Heat_method_3 {
 
   /**
    * Class `Heat_method_3` is a ...
-   *
-   * \tparam HMTraits must
-   * \sa `AA`
+   * \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
+   * \tparam Traits a model of HeatMethodTraits_3
+   * \tparam VertexPointMap a model of `ReadablePropertyMap` with
+   *        `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
+   *        `Traits::Point_3` as value type.
+   *        The default is `typename boost::property_map< TriangleMesh, vertex_point_t>::%type`.
    *
    */
-  template <typename HMTraits>
+  template <typename TriangleMesh,
+            typename Traits,
+            typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::type>
   class Heat_method_3
   {
+    /// Polygon_mesh typedefs
+    typedef typename boost::graph_traits<TriangleMesh>               graph_traits;
+    typedef typename graph_traits::vertex_descriptor            vertex_descriptor;
+    typedef typename graph_traits::edge_descriptor                edge_descriptor;
+    typedef typename graph_traits::halfedge_descriptor        halfedge_descriptor;
+    typedef typename graph_traits::face_descriptor                face_descriptor;
+
+    /// Geometric typedefs
+    typedef typename Traits::Point_3                                      Point_3;
+    typedef typename Traits::FT                                                FT;
     
+  public:
+    
+    Heat_method_3(const TriangleMesh& tm)
+      : tm(tm)
+    {}
+
+    /**
+     * add `vd` to the source set, returning `false` if `vd` is already in the set.
+     */
+    bool add_source(vertex_descriptor vd)
+    {
+      return sources.insert(vd).second;
+    }
+
+    /**
+     * get distance from the current source set to a vertex ` vd`. 
+     */
+    double distance(vertex_descriptor vd)
+    {
+      return 0;
+    }
+    
+  private:
+    const TriangleMesh& tm;
+    std::set<vertex_descriptor> sources;
   };
     
 } // namespace Heat_method_3
