@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 //               : Amol Prakash <prakash@mpi-sb.mpg.de>
@@ -29,7 +29,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/algorithm.h> 
+#include <CGAL/algorithm.h>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Projection_traits_xz_3.h>
@@ -50,6 +50,7 @@
 #include <boost/type_traits/is_floating_point.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/has_xxx.hpp>
+#include <boost/graph/graph_traits.hpp>
 #include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
@@ -63,9 +64,68 @@
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
 
+// first some internal stuff to avoid using a true Face_graph model for extreme_points_3
+namespace CGAL {
+namespace internal{  namespace Convex_hull_3{
+
+template <class OutputIterator>
+struct Output_iterator_wrapper
+{
+  OutputIterator out;
+  Output_iterator_wrapper(OutputIterator out)
+    : out(out)
+  {}
+};
+
+} } // internal::Convex_hull_3
+
+template <class OutputIterator>
+void clear(internal::Convex_hull_3::Output_iterator_wrapper<OutputIterator>&)
+{}
+
+template <class Point, class OutputIterator>
+void make_tetrahedron(const Point& p0, const Point& p1, const Point& p2, const Point& p3,
+                      internal::Convex_hull_3::Output_iterator_wrapper<OutputIterator>& w)
+{
+  *(w.out)++ = p0;
+  *(w.out)++ = p1;
+  *(w.out)++ = p2;
+  *(w.out)++ = p3;
+}
+
+template <class TDS, class OutputIterator>
+void copy_face_graph(const TDS& tds, internal::Convex_hull_3::Output_iterator_wrapper<OutputIterator>& wrapper)
+{
+  typedef typename boost::graph_traits<TDS>::vertex_descriptor vertex_descriptor;
+  typename boost::property_map<TDS, boost::vertex_point_t >::const_type vpm = get(boost::vertex_point, tds);
+  BOOST_FOREACH(vertex_descriptor vh, vertices(tds))
+  {
+    *wrapper.out++ = get(vpm, vh);
+  }
+}
+
+template <class Point_3, class OutputIterator>
+void copy_ch2_to_face_graph(const std::list<Point_3>& CH_2,
+                            internal::Convex_hull_3::Output_iterator_wrapper<OutputIterator>& w)
+{
+  BOOST_FOREACH(const Point_3& p, CH_2)
+    *(w.out)++ = p;
+}
+
+} // CGAL
+
+namespace boost{
+// needed so that the regular make_tetrahedron of CGAL does not complain when tried to be instantiated
+template <class OutputIterator>
+struct graph_traits<CGAL::internal::Convex_hull_3::Output_iterator_wrapper<OutputIterator> >
+{
+  typedef void* halfedge_descriptor;
+};
+}
+
 namespace CGAL {
 
-  
+
 namespace internal{  namespace Convex_hull_3{
 
 //struct to select the default traits class for computing convex hull
@@ -92,7 +152,7 @@ template <class K, class P, class Tag>
 struct Default_polyhedron_for_Chull_3<Convex_hull_traits_3<K, P, Tag> >{
   typedef typename  Convex_hull_traits_3<K, P, Tag>::Polygon_mesh type;
 };
- 
+
 //utility class to select the right version of internal predicate Is_on_positive_side_of_plane_3
 template <class Traits,
           class Is_floating_point=
@@ -125,13 +185,13 @@ public:
 
   Is_on_positive_side_of_plane_3(const Traits& traits,const Point_3& p,const Point_3& q,const Point_3& r)
   :plane(traits.construct_plane_3_object()(p,q,r)),has_on_positive_side(traits.has_on_positive_side_3_object()) {}
-    
-  bool operator() (const Point_3& s) const 
+
+  bool operator() (const Point_3& s) const
   {
     return has_on_positive_side(plane,s);
   }
 };
-  
+
 
 //This predicate uses copy of the code from the statically filtered version of
 //Orientation_3. The rational is that the plane is a member of the functor
@@ -142,21 +202,21 @@ public:
 template <class Kernel, class P>
 class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel, P, Tag_true>,Tag_true>{
   typedef Simple_cartesian<CGAL::internal::Exact_field_selector<double>::Type>  PK;
-  typedef Simple_cartesian<Interval_nt_advanced >                               CK;  
+  typedef Simple_cartesian<Interval_nt_advanced >                               CK;
   typedef Convex_hull_traits_3<Kernel, P, Tag_true>                             Traits;
   typedef typename Traits::Point_3                                              Point_3;
-  
+
   Cartesian_converter<Kernel,CK>                        to_CK;
   Cartesian_converter<Kernel,PK>                        to_PK;
 
   const Point_3& p,q,r;
   mutable typename CK::Plane_3* ck_plane;
   mutable typename PK::Plane_3* pk_plane;
- 
+
   double m10,m20,m21,Maxx,Maxy,Maxz;
-  
+
   static const int STATIC_FILTER_FAILURE = 555;
-  
+
   //this function is a made from the statically filtered version of Orientation_3
   int static_filtered(double psx,double psy, double psz) const{
 
@@ -170,7 +230,7 @@ class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel, P, Tag_true>,T
     double maxz = (Maxz < apsz)? apsz : Maxz;
 
     double det =  psx*m10 - m20*psy + m21*psz;
-    
+
     // Sort maxx < maxy < maxz.
     if (maxx > maxz)
         std::swap(maxx, maxz);
@@ -192,7 +252,7 @@ class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel, P, Tag_true>,T
     }
     return STATIC_FILTER_FAILURE;
   }
-  
+
 public:
   typedef typename Interval_nt_advanced::Protector           Protector;
 
@@ -204,13 +264,13 @@ public:
     double pqz = q.z() - p.z();
     double prx = r.x() - p.x();
     double pry = r.y() - p.y();
-    double prz = r.z() - p.z();   
+    double prz = r.z() - p.z();
 
 
     m10 = pqy*prz - pry*pqz;
     m20 = pqx*prz - prx*pqz;
     m21 = pqx*pry - prx*pqy;
-    
+
     double aprx = CGAL::abs(prx);
     double apry = CGAL::abs(pry);
     double aprz = CGAL::abs(prz);
@@ -227,17 +287,17 @@ public:
     if (ck_plane!=NULL) delete ck_plane;
     if (pk_plane!=NULL) delete pk_plane;
   }
-  
-  bool operator() (const Point_3& s) const 
+
+  bool operator() (const Point_3& s) const
   {
     double psx = s.x() - p.x();
     double psy = s.y() - p.y();
-    double psz = s.z() - p.z(); 
-    
+    double psz = s.z() - p.z();
+
     int static_res = static_filtered(psx,psy,psz);
     if (static_res != STATIC_FILTER_FAILURE)
       return static_res == 1;
-    
+
     try{
       if (ck_plane==NULL)
         ck_plane=new typename CK::Plane_3(to_CK(p),to_CK(q),to_CK(r));
@@ -282,41 +342,9 @@ struct Projection_traits<T,true>{
 
 } } //end of namespace internal::Convex_hull_3
 
-template <class InputIterator, class Point_3, class Polyhedron_3, class Traits>
-void coplanar_3_hull(InputIterator first, InputIterator beyond,
-                     const Point_3& p1, const Point_3& p2, const Point_3& p3, 
-                     Polyhedron_3& P, const Traits& /* traits */)
+template <class Point_3, class Polyhedron_3>
+void copy_ch2_to_face_graph(const std::list<Point_3>& CH_2, Polyhedron_3& P)
 {
-  typedef typename internal::Convex_hull_3::Projection_traits<Traits> PTraits;
-  typedef typename PTraits::Traits_xy_3 Traits_xy_3;
-  typedef typename PTraits::Traits_yz_3 Traits_yz_3;
-  typedef typename PTraits::Traits_xz_3 Traits_xz_3;
-
-  std::list<Point_3> CH_2;
- 
-  Traits_xy_3 traits_xy;
-  typename Traits_xy_3::Left_turn_2 left_turn_in_xy = traits_xy.left_turn_2_object();
-  if ( left_turn_in_xy(p1,p2,p3) || left_turn_in_xy(p2,p1,p3) )
-     convex_hull_points_2( first, beyond,
-                           std::back_inserter(CH_2),
-                           traits_xy );
-  else{
-    Traits_yz_3 traits_yz;
-    typename Traits_yz_3::Left_turn_2 left_turn_in_yz = traits_yz.left_turn_2_object();
-    if ( left_turn_in_yz(p1,p2,p3) || left_turn_in_yz(p2,p1,p3) )
-       convex_hull_points_2( first, beyond,
-                             std::back_inserter(CH_2),
-                             traits_yz );
-    else{
-      Traits_xz_3 traits_xz;
-      CGAL_assertion_code( typename Traits_xz_3::Left_turn_2 left_turn_in_xz = traits_xz.left_turn_2_object(); )
-      CGAL_assertion( left_turn_in_xz(p1,p2,p3) || left_turn_in_xz(p2,p1,p3) );
-         convex_hull_points_2( first, beyond,
-                               std::back_inserter(CH_2),
-                               traits_xz );
-    }
-  }
-
   typename boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type vpm
     = get(CGAL::vertex_point, P);
   typedef boost::graph_traits<Polyhedron_3> Graph_traits;
@@ -341,6 +369,43 @@ void coplanar_3_hull(InputIterator first, InputIterator beyond,
   }
 }
 
+template <class InputIterator, class Point_3, class Polyhedron_3, class Traits>
+void coplanar_3_hull(InputIterator first, InputIterator beyond,
+                     const Point_3& p1, const Point_3& p2, const Point_3& p3,
+                     Polyhedron_3& P, const Traits& /* traits */)
+{
+  typedef typename internal::Convex_hull_3::Projection_traits<Traits> PTraits;
+  typedef typename PTraits::Traits_xy_3 Traits_xy_3;
+  typedef typename PTraits::Traits_yz_3 Traits_yz_3;
+  typedef typename PTraits::Traits_xz_3 Traits_xz_3;
+
+  std::list<Point_3> CH_2;
+
+  Traits_xy_3 traits_xy;
+  typename Traits_xy_3::Left_turn_2 left_turn_in_xy = traits_xy.left_turn_2_object();
+  if ( left_turn_in_xy(p1,p2,p3) || left_turn_in_xy(p2,p1,p3) )
+     convex_hull_points_2( first, beyond,
+                           std::back_inserter(CH_2),
+                           traits_xy );
+  else{
+    Traits_yz_3 traits_yz;
+    typename Traits_yz_3::Left_turn_2 left_turn_in_yz = traits_yz.left_turn_2_object();
+    if ( left_turn_in_yz(p1,p2,p3) || left_turn_in_yz(p2,p1,p3) )
+       convex_hull_points_2( first, beyond,
+                             std::back_inserter(CH_2),
+                             traits_yz );
+    else{
+      Traits_xz_3 traits_xz;
+      CGAL_assertion_code( typename Traits_xz_3::Left_turn_2 left_turn_in_xz = traits_xz.left_turn_2_object(); )
+      CGAL_assertion( left_turn_in_xz(p1,p2,p3) || left_turn_in_xz(p2,p1,p3) );
+         convex_hull_points_2( first, beyond,
+                               std::back_inserter(CH_2),
+                               traits_xz );
+    }
+  }
+  copy_ch2_to_face_graph(CH_2, P);
+}
+
 
 //
 // visible is the set of facets visible from point  and reachable from
@@ -348,8 +413,8 @@ void coplanar_3_hull(InputIterator first, InputIterator beyond,
 //
 template <class TDS_2, class Traits>
 void
-find_visible_set(TDS_2& tds, 
-                 const typename Traits::Point_3& point, 
+find_visible_set(TDS_2& tds,
+                 const typename Traits::Point_3& point,
                  typename TDS_2::Face_handle start,
                  std::list<typename TDS_2::Face_handle>& visible,
                  std::map<typename TDS_2::Vertex_handle, typename TDS_2::Edge>& outside,
@@ -372,11 +437,11 @@ find_visible_set(TDS_2& tds,
    vertices.push_back(start->vertex(1));
    vertices.push_back(start->vertex(2));
    start->vertex(0)->info() = start->vertex(1)->info() = start->vertex(2)->info() = VISITED;
- 
+
    for (vis_it = visible.begin(); vis_it != visible.end(); vis_it++)
    {
-      // check all the neighbors of the current face to see if they have 
-      // already been visited or not and if not whether they are visible 
+      // check all the neighbors of the current face to see if they have
+      // already been visited or not and if not whether they are visible
       // or not.
 
       for(int i=0; i < 3; i++) {
@@ -393,21 +458,21 @@ find_visible_set(TDS_2& tds,
             if(vh->info() == 0){ vertices.push_back(vh); vh->info() = VISITED;}
           } else {
             f->info() = BORDER;
-            f->vertex(TDS_2::cw(ind))->info() = BORDER;            
+            f->vertex(TDS_2::cw(ind))->info() = BORDER;
             f->vertex(TDS_2::ccw(ind))->info() = BORDER;
             outside.insert(std::make_pair(f->vertex(TDS_2::cw(ind)),
                                           typename TDS_2::Edge(f,ind)));
           }
         } else if(f->info() == BORDER) {
           int ind = f->index(*vis_it);
-          f->vertex(TDS_2::cw(ind))->info() = BORDER;            
+          f->vertex(TDS_2::cw(ind))->info() = BORDER;
           f->vertex(TDS_2::ccw(ind))->info() = BORDER;
           outside.insert(std::make_pair(f->vertex(TDS_2::cw(ind)),
                                         typename TDS_2::Edge(f,ind)));
         }
       }
    }
- 
+
    for(typename std::vector<Vertex_handle>::iterator vit =  vertices.begin();
        vit != vertices.end();
        ++vit){
@@ -437,21 +502,21 @@ farthest_outside_point(Face_handle f, std::list<Point>& outside_set,
             traits.less_signed_distance_to_plane_3_object();
    Outside_set_iterator farthest_it =
           std::max_element(outside_set.begin(),
-                           outside_set.end(), 
+                           outside_set.end(),
                            boost::bind(less_dist_to_plane, plane, _1, _2));
    return farthest_it;
 }
 
 template <class Face_handle, class Traits, class Point>
-void     
+void
 partition_outside_sets(const std::list<Face_handle>& new_facets,
-                       std::list<Point>& vis_outside_set, 
+                       std::list<Point>& vis_outside_set,
                        std::list<Face_handle>& pending_facets,
                        const Traits& traits)
 {
   typename std::list<Face_handle>::const_iterator        f_list_it;
   typename std::list<Point>::iterator  point_it, to_splice;
-   
+
   // walk through all the new facets and check each unassigned outside point
   // to see if it belongs to the outside set of this new facet.
   for (f_list_it = new_facets.begin(); (f_list_it != new_facets.end()) && (! vis_outside_set.empty());
@@ -478,8 +543,8 @@ partition_outside_sets(const std::list<Face_handle>& new_facets,
       f->it = pending_facets.end();
     }
   }
-   
-   
+
+
    for (; f_list_it != new_facets.end();++f_list_it)
     (*f_list_it)->it = pending_facets.end();
 }
@@ -520,7 +585,7 @@ ch_quickhull_3_scan(TDS_2& tds,
      for (vis_set_it = visible_set.begin(); vis_set_it != visible_set.end();
           vis_set_it++)
      {
-       
+
         //   add its outside set to the global outside set list
        std::list<Point_3>& point_list = (*vis_set_it)->points;
        if(! point_list.empty()){
@@ -537,14 +602,14 @@ ch_quickhull_3_scan(TDS_2& tds,
      edges.reserve(border.size());
      typename Border_edges::iterator it = border.begin();
      Edge e = it->second;
-     e.first->info() = 0; 
+     e.first->info() = 0;
      edges.push_back(e);
      border.erase(it);
      while(! border.empty()){
        it = border.find(e.first->vertex(TDS_2::ccw(e.second)));
        CGAL_ch_assertion(it != border.end());
        e = it->second;
-       e.first->info() = 0; 
+       e.first->info() = 0;
        edges.push_back(e);
        border.erase(it);
      }
@@ -564,11 +629,11 @@ ch_quickhull_3_scan(TDS_2& tds,
      }
      Vertex_handle vh = tds.star_hole(edges.begin(), edges.end(), visible_set.begin(), visible_set.end());
      vh->point() = farthest_pt;
-     vh->info() = 0;     
-  
+     vh->info() = 0;
+
      // now partition the set of outside set points among the new facets.
-   
-     partition_outside_sets(visible_set, vis_outside_set, 
+
+     partition_outside_sets(visible_set, vis_outside_set,
                             pending_facets, traits);
 
   }
@@ -587,7 +652,7 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
   std::list<Face_handle> pending_facets;
 
   typename Is_on_positive_side_of_plane_3<Traits>::Protector p;
-  
+
   // for each facet, look at each unassigned point and decide if it belongs
   // to the outside set of this facet.
   for(Face_iterator fit = tds.faces_begin(); fit != tds.faces_end(); ++fit){
@@ -634,7 +699,7 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
                           InputIterator point3_it, Polyhedron_3& P,
                           const Traits& traits)
 {
-  typedef typename Traits::Point_3	  		  Point_3;  
+  typedef typename Traits::Point_3	  		  Point_3;
   typedef typename Traits::Plane_3		      	  Plane_3;
   typedef typename std::list<Point_3>::iterator           P3_iterator;
 
@@ -647,19 +712,19 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
 
   // found three points that are not collinear, so construct the plane defined
   // by these points and then find a point that has maximum distance from this
-  // plane.   
+  // plane.
   typename Traits::Construct_plane_3 construct_plane =
          traits.construct_plane_3_object();
   Plane_3 plane = construct_plane(*point3_it, *point2_it, *point1_it);
-  typedef typename Traits::Less_signed_distance_to_plane_3      Dist_compare; 
+  typedef typename Traits::Less_signed_distance_to_plane_3      Dist_compare;
   Dist_compare compare_dist = traits.less_signed_distance_to_plane_3_object();
-  
-  typename Traits::Coplanar_3  coplanar = traits.coplanar_3_object(); 
+
+  typename Traits::Coplanar_3  coplanar = traits.coplanar_3_object();
   // find both min and max here since using signed distance.  If all points
   // are on the negative side of the plane, the max element will be on the
   // plane.
   std::pair<P3_iterator, P3_iterator> min_max;
-  min_max = CGAL::min_max_element(points.begin(), points.end(), 
+  min_max = CGAL::min_max_element(points.begin(), points.end(),
                                   boost::bind(compare_dist, plane, _1, _2),
                                   boost::bind(compare_dist, plane, _1, _2));
   P3_iterator max_it;
@@ -677,7 +742,7 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
   // if the maximum distance point is on the plane then all are coplanar
   if (coplanar(*point1_it, *point2_it, *point3_it, *max_it)) {
      coplanar_3_hull(points.begin(), points.end(), *point1_it, *point2_it, *point3_it, P, traits);
-  } else {  
+  } else {
     Tds tds;
     Vertex_handle v0 = tds.create_vertex(); v0->set_point(*point1_it);
     Vertex_handle v1 = tds.create_vertex(); v1->set_point(*point2_it);
@@ -714,18 +779,17 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
       make_tetrahedron(v0->point(),v1->point(),v3->point(),v2->point(),P);
     }
   }
-  
+
 }
 
 } } //namespace internal::Convex_hull_3
 
-
 template <class InputIterator, class Traits>
 void
-convex_hull_3(InputIterator first, InputIterator beyond, 
+convex_hull_3(InputIterator first, InputIterator beyond,
               Object& ch_object, const Traits& traits)
-{  
-  typedef typename Traits::Point_3	  		  Point_3;  
+{
+  typedef typename Traits::Point_3	  		  Point_3;
   typedef std::list<Point_3>                              Point_3_list;
   typedef typename Point_3_list::iterator                 P3_iterator;
   typedef std::pair<P3_iterator,P3_iterator>              P3_iterator_pair;
@@ -743,36 +807,36 @@ convex_hull_3(InputIterator first, InputIterator beyond,
 
   typename Traits::Collinear_3 collinear = traits.collinear_3_object();
 
-  if ( size == 1 )                // 1 point 
+  if ( size == 1 )                // 1 point
   {
       ch_object = make_object(*points.begin());
       return;
   }
-  else if ( size == 2 )           // 2 points 
+  else if ( size == 2 )           // 2 points
   {
-      typedef typename Traits::Segment_3                 Segment_3;  
+      typedef typename Traits::Segment_3                 Segment_3;
       typename Traits::Construct_segment_3 construct_segment =
              traits.construct_segment_3_object();
       Segment_3 seg = construct_segment(*points.begin(), *(++points.begin()));
       ch_object = make_object(seg);
       return;
   }
-  else if ( ( size == 3 ) && (! collinear(*(points.begin()), 
+  else if ( ( size == 3 ) && (! collinear(*(points.begin()),
                                           *(++points.begin()),
-                                          *(--points.end()) ) ) )           // 3 points 
+                                          *(--points.end()) ) ) )           // 3 points
   {
-      typedef typename Traits::Triangle_3                Triangle_3;  
+      typedef typename Traits::Triangle_3                Triangle_3;
       typename Traits::Construct_triangle_3 construct_triangle =
              traits.construct_triangle_3_object();
-      Triangle_3 tri = construct_triangle(*(points.begin()), 
+      Triangle_3 tri = construct_triangle(*(points.begin()),
                                           *(++points.begin()),
                                           *(--points.end()));
       ch_object = make_object(tri);
       return;
   }
 
-  // at least 4 points 
-  
+  // at least 4 points
+
   P3_iterator point1_it = points.begin();
   P3_iterator point2_it = points.begin();
   point2_it++;
@@ -780,25 +844,25 @@ convex_hull_3(InputIterator first, InputIterator beyond,
   point3_it--;
 
   // find three that are not collinear
-  while (point2_it != points.end() && 
+  while (point2_it != points.end() &&
          collinear(*point1_it,*point2_it,*point3_it))
     point2_it++;
-  
+
 
   // all are collinear, so the answer is a segment
   if (point2_it == points.end())
   {
-     typedef typename Traits::Less_distance_to_point_3      Less_dist; 
+     typedef typename Traits::Less_distance_to_point_3      Less_dist;
 
      Less_dist less_dist = traits.less_distance_to_point_3_object();
-     P3_iterator_pair endpoints = 
-      min_max_element(points.begin(), points.end(), 
-                      boost::bind(less_dist, *points.begin(), _1, _2), 
+     P3_iterator_pair endpoints =
+      min_max_element(points.begin(), points.end(),
+                      boost::bind(less_dist, *points.begin(), _1, _2),
                       boost::bind(less_dist, *points.begin(), _1, _2));
 
      typename Traits::Construct_segment_3 construct_segment =
             traits.construct_segment_3_object();
-     typedef typename Traits::Segment_3                 Segment_3;  
+     typedef typename Traits::Segment_3                 Segment_3;
 
      Segment_3 seg = construct_segment(*endpoints.first, *endpoints.second);
      ch_object = make_object(seg);
@@ -817,7 +881,7 @@ convex_hull_3(InputIterator first, InputIterator beyond,
     if(it->x() > maxx->x()) maxx = it;
     if(it->y() < miny->y()) miny = it;
   }
-  if(! collinear(*minx, *maxx, *miny) ){  
+  if(! collinear(*minx, *maxx, *miny) ){
     internal::Convex_hull_3::ch_quickhull_polyhedron_3(points, minx, maxx, miny, P, traits);
   } else {
     internal::Convex_hull_3::ch_quickhull_polyhedron_3(points, point1_it, point2_it, point3_it, P, traits);
@@ -843,7 +907,7 @@ convex_hull_3(InputIterator first, InputIterator beyond,
 
 
 template <class InputIterator>
-void convex_hull_3(InputIterator first, InputIterator beyond, 
+void convex_hull_3(InputIterator first, InputIterator beyond,
 		   Object& ch_object)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
@@ -857,14 +921,14 @@ template <class InputIterator, class Polyhedron_3, class Traits>
 void convex_hull_3(InputIterator first, InputIterator beyond,
                    Polyhedron_3& polyhedron,  const Traits& traits)
 {
-  typedef typename Traits::Point_3                Point_3;  
+  typedef typename Traits::Point_3                Point_3;
   typedef std::list<Point_3>                      Point_3_list;
   typedef typename Point_3_list::iterator         P3_iterator;
 
   Point_3_list points(first, beyond);
   CGAL_ch_precondition(points.size() > 3);
 
-  // at least 4 points 
+  // at least 4 points
   typename Traits::Collinear_3 collinear = traits.collinear_3_object();
   typename Traits::Equal_3 equal = traits.equal_3_object();
 
@@ -876,21 +940,21 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
   while (point2_it != points.end() && equal(*point1_it,*point2_it))
     ++point2_it;
 
-  CGAL_ch_precondition_msg(point2_it != points.end(), 
+  CGAL_ch_precondition_msg(point2_it != points.end(),
         "All points are equal; cannot construct polyhedron.");
-  
+
   P3_iterator point3_it = point2_it;
   ++point3_it;
-  
-  CGAL_ch_precondition_msg(point3_it != points.end(), 
+
+  CGAL_ch_precondition_msg(point3_it != points.end(),
         "Only two points with different coordinates; cannot construct polyhedron.");
-  
+
   while (point3_it != points.end() && collinear(*point1_it,*point2_it,*point3_it))
     ++point3_it;
-  
-  CGAL_ch_precondition_msg(point3_it != points.end(), 
+
+  CGAL_ch_precondition_msg(point3_it != points.end(),
         "All points are collinear; cannot construct polyhedron.");
-  
+
   clear(polyhedron);
   // result will be a polyhedron
   internal::Convex_hull_3::ch_quickhull_polyhedron_3(points, point1_it, point2_it, point3_it,
@@ -906,6 +970,29 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
    typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
    typedef typename internal::Convex_hull_3::Default_traits_for_Chull_3<Point_3, Polyhedron_3>::type Traits;
    convex_hull_3(first, beyond, polyhedron, Traits());
+}
+
+
+template <class InputRange, class OutputIterator, class Traits>
+OutputIterator
+extreme_points_3(InputRange range,
+              OutputIterator out,
+              const Traits& traits)
+{
+  internal::Convex_hull_3::Output_iterator_wrapper<OutputIterator> wrapper(out);
+  convex_hull_3(range.begin(), range.end(), wrapper, traits);
+  return out;
+}
+
+template <class InputRange, class OutputIterator>
+OutputIterator
+extreme_points_3(InputRange range, OutputIterator out)
+{
+  typedef typename InputRange::const_iterator Iterator_type;
+  typedef typename std::iterator_traits<Iterator_type>::value_type Point_3;
+  typedef typename internal::Convex_hull_3::Default_traits_for_Chull_3<Point_3>::type Traits;
+
+  return extreme_points_3(range, out, Traits());
 }
 
 } // namespace CGAL
