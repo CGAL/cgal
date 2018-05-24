@@ -15,11 +15,16 @@ if(NOT CERR)
     "The variable `CERR` should be defined to the output error file!")
 endif()
 
+# Create the file before using it
+file(WRITE ${CERR})
+
+# Execute the command ${CMD} with stderr redirected to the file ${CERR}
 execute_process(
   COMMAND ${CMD}
   ERROR_FILE "${CERR}"
   OUTPUT_VARIABLE output
   RESULT_VARIABLE error_result)
+
 if(error_result)
   if(CMD2)
     file(REMOVE ${CERR})
