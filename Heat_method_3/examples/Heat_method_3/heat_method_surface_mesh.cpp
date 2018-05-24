@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 
+#include <boost/foreach.hpp>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
@@ -27,5 +28,7 @@ int main(int argc, char* argv[])
   BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
     std::cout << vd << "  is at distance " << hm.distance(vd) << " from " << source << std::endl;
   }
+
+  std::cout << "done" << std::endl;
   return 0;
 }

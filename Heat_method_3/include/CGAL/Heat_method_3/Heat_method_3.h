@@ -29,6 +29,8 @@
 
 #include <Eigen/Cholesky>
 
+#include <boost/foreach.hpp>
+
 namespace CGAL {
 namespace Heat_method_3 {
 
@@ -61,8 +63,16 @@ namespace Heat_method_3 {
   public:
     
     Heat_method_3(const TriangleMesh& tm)
-      : tm(tm)
-    {}
+      : tm(tm), vpm(get(vertex_point,tm))
+    {
+      build();
+    }
+    
+    Heat_method_3(const TriangleMesh& tm, VertexPointMap vpm)
+      : tm(tm), vpm(vpm)
+    {
+      build();
+    }
 
     /**
      * add `vd` to the source set, returning `false` if `vd` is already in the set.
@@ -81,7 +91,19 @@ namespace Heat_method_3 {
     }
     
   private:
+
+    void build()
+    {
+      BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
+        BOOST_FOREACH(vertex_descriptor one_ring_vd, vertices_around_target(halfedge(vd,tm),tm)){
+          Point_3 p = get(vpm,one_ring_vd);
+          std::cout << p << std::endl;
+        }
+      }
+    }
+    
     const TriangleMesh& tm;
+    VertexPointMap vpm;    
     std::set<vertex_descriptor> sources;
   };
     
