@@ -47,9 +47,8 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
-enum Boolean_operation {UNION = 0, INTER,
-                        TM1_MINUS_TM2, TM2_MINUS_TM1,
-                        NONE };
+enum Boolean_operation {UNION = 0, INTERSECTION,
+                        TM1_MINUS_TM2, TM2_MINUS_TM1, NONE };
 
 namespace PMP=Polygon_mesh_processing;
 namespace params=PMP::parameters;
@@ -115,7 +114,7 @@ class Face_graph_output_builder
   EdgeMarkMapTuple& out_edge_mark_maps;
   NewFaceVisitor& new_face_visitor;
   // output meshes
-  const cpp11::array<boost::optional<TriangleMesh*>, 4>& desired_output;
+  const cpp11::array<boost::optional<TriangleMesh*>, 4>& requested_output;
   // input meshes closed ?
   /// \todo do we really need this?
   bool is_tm1_closed;
@@ -345,7 +344,7 @@ public:
                                   EdgeMarkMapTuple& out_edge_mark_maps,
                                   NewFaceVisitor& new_face_visitor,
                             const cpp11::array<
-                              boost::optional<TriangleMesh*>, 4 >& desired_output)
+                              boost::optional<TriangleMesh*>, 4 >& requested_output)
     : tm1(tm1), tm2(tm2)
     , vpm1(vpm1), vpm2(vpm2)
     , fids1(fids1), fids2(fids2)
@@ -353,7 +352,7 @@ public:
     , output_vpms(output_vpms)
     , out_edge_mark_maps(out_edge_mark_maps)
     , new_face_visitor(new_face_visitor)
-    , desired_output(desired_output)
+    , requested_output(requested_output)
     , is_tm1_closed( is_closed(tm1))
     , is_tm2_closed( is_closed(tm2))
     , is_tm1_inside_out( is_tm1_closed && !PMP::is_outward_oriented(tm1) )
@@ -368,7 +367,7 @@ public:
   }
   bool intersection_is_valid() const
   {
-    return !impossible_operation[INTER];
+    return !impossible_operation[INTERSECTION];
   }
   bool tm1_minus_tm2_is_valid() const
   {
@@ -859,7 +858,7 @@ public:
                 // opposite( poly_first U poly_second ) = {O}
                 is_patch_inside_tm2.set(patch_id_p1);
                 is_patch_inside_tm2.set(patch_id_p2);
-                impossible_operation.set(INTER); // tm1 n tm2 is non-manifold
+                impossible_operation.set(INTERSECTION); // tm1 n tm2 is non-manifold
               }
             }
             else
@@ -1110,7 +1109,7 @@ public:
     std::vector< boost::dynamic_bitset<> > patches_of_tm2_used(4);
 
     /// handle the bitset for the union
-    if ( !impossible_operation.test(UNION) && desired_output[UNION] )
+    if ( !impossible_operation.test(UNION) && requested_output[UNION] )
     {
       //define patches to import from P
       patches_of_tm1_used[UNION] = ~is_patch_inside_tm2 - coplanar_patches_of_tm1;
@@ -1119,7 +1118,7 @@ public:
       //handle coplanar patches
       if (coplanar_patches_of_tm1.any())
       {
-        if (desired_output[UNION]==&tm2)
+        if (requested_output[UNION]==&tm2)
           patches_of_tm2_used[UNION] |= coplanar_patches_of_tm2_for_union_and_intersection;
         else
           patches_of_tm1_used[UNION] |= coplanar_patches_of_tm1_for_union_and_intersection;
@@ -1127,24 +1126,24 @@ public:
     }
 
     /// handle the bitset for the intersection
-    if ( !impossible_operation.test(INTER) && desired_output[INTER] )
+    if ( !impossible_operation.test(INTERSECTION) && requested_output[INTERSECTION] )
     {
       //define patches to import from P
-      patches_of_tm1_used[INTER] = is_patch_inside_tm2;
+      patches_of_tm1_used[INTERSECTION] = is_patch_inside_tm2;
       //define patches to import from Q
-      patches_of_tm2_used[INTER] = is_patch_inside_tm1;
+      patches_of_tm2_used[INTERSECTION] = is_patch_inside_tm1;
       //handle coplanar patches
       if (coplanar_patches_of_tm1.any())
       {
-        if (desired_output[INTER]==&tm2)
-          patches_of_tm2_used[INTER] |= coplanar_patches_of_tm2_for_union_and_intersection;
+        if (requested_output[INTERSECTION]==&tm2)
+          patches_of_tm2_used[INTERSECTION] |= coplanar_patches_of_tm2_for_union_and_intersection;
         else
-          patches_of_tm1_used[INTER] |= coplanar_patches_of_tm1_for_union_and_intersection;
+          patches_of_tm1_used[INTERSECTION] |= coplanar_patches_of_tm1_for_union_and_intersection;
       }
     }
 
     /// handle the bitset for P-Q
-    if ( !impossible_operation.test(TM1_MINUS_TM2) && desired_output[TM1_MINUS_TM2] )
+    if ( !impossible_operation.test(TM1_MINUS_TM2) && requested_output[TM1_MINUS_TM2] )
     {
       //define patches to import from P
       patches_of_tm1_used[TM1_MINUS_TM2] = (~is_patch_inside_tm2 - coplanar_patches_of_tm1);
@@ -1153,7 +1152,7 @@ public:
       //handle coplanar patches
       if (coplanar_patches_of_tm1.any())
       {
-        if (desired_output[TM1_MINUS_TM2]==&tm2)
+        if (requested_output[TM1_MINUS_TM2]==&tm2)
           patches_of_tm2_used[TM1_MINUS_TM2] |= ~coplanar_patches_of_tm2_for_union_and_intersection & coplanar_patches_of_tm2;
         else
           patches_of_tm1_used[TM1_MINUS_TM2] |= ~coplanar_patches_of_tm1_for_union_and_intersection & coplanar_patches_of_tm1;
@@ -1161,7 +1160,7 @@ public:
     }
 
     /// handle the bitset for Q-P
-    if ( !impossible_operation.test(TM2_MINUS_TM1) && desired_output[TM2_MINUS_TM1] )
+    if ( !impossible_operation.test(TM2_MINUS_TM1) && requested_output[TM2_MINUS_TM1] )
     {
       //define patches to import from P
       patches_of_tm1_used[TM2_MINUS_TM1] = is_patch_inside_tm2;
@@ -1170,7 +1169,7 @@ public:
       //handle coplanar patches
       if (coplanar_patches_of_tm1.any())
       {
-        if (desired_output[TM2_MINUS_TM1]==&tm2)
+        if (requested_output[TM2_MINUS_TM1]==&tm2)
           patches_of_tm2_used[TM2_MINUS_TM1] |= ~coplanar_patches_of_tm2_for_union_and_intersection & coplanar_patches_of_tm2;
         else
           patches_of_tm1_used[TM2_MINUS_TM1] |= ~coplanar_patches_of_tm1_for_union_and_intersection & coplanar_patches_of_tm1;
@@ -1181,8 +1180,8 @@ public:
     #ifdef CGAL_COREFINEMENT_DEBUG
     std::cout << "patches_of_tm1_used[UNION] " << patches_of_tm1_used[UNION] << "\n";
     std::cout << "patches_of_tm2_used[UNION] " << patches_of_tm2_used[UNION] << "\n";
-    std::cout << "patches_of_tm1_used[INTER] " << patches_of_tm1_used[INTER] << "\n";
-    std::cout << "patches_of_tm2_used[INTER] " << patches_of_tm2_used[INTER] << "\n";
+    std::cout << "patches_of_tm1_used[INTERSECTION] " << patches_of_tm1_used[INTERSECTION] << "\n";
+    std::cout << "patches_of_tm2_used[INTERSECTION] " << patches_of_tm2_used[INTERSECTION] << "\n";
     std::cout << "patches_of_tm1_used[TM1_MINUS_TM2] " << patches_of_tm1_used[TM1_MINUS_TM2] << "\n";
     std::cout << "patches_of_tm2_used[TM1_MINUS_TM2] " << patches_of_tm2_used[TM1_MINUS_TM2] << "\n";
     std::cout << "patches_of_tm1_used[TM2_MINUS_TM1] " << patches_of_tm1_used[TM2_MINUS_TM1] << "\n";
@@ -1199,13 +1198,13 @@ public:
     {
       Boolean_operation operation=enum_cast<Boolean_operation>(i);
 
-      if (!desired_output[operation] || impossible_operation.test(operation))
+      if (!requested_output[operation] || impossible_operation.test(operation))
         continue;
 
-      if (desired_output[operation]==&tm1)
+      if (requested_output[operation]==&tm1)
         inplace_operation_tm1=operation;
       else
-        if (desired_output[operation]==&tm2)
+        if (requested_output[operation]==&tm2)
           inplace_operation_tm2=operation;
         else
           out_of_place_operations.push_back(operation);
@@ -1214,7 +1213,7 @@ public:
     /// first handle operations in a mesh that is neither tm1 nor tm2
     BOOST_FOREACH(Boolean_operation operation, out_of_place_operations)
     {
-      TriangleMesh& output = *(*desired_output[operation]);
+      TriangleMesh& output = *(*requested_output[operation]);
       CGAL_assertion(&tm1!=&output && &tm2!=&output);
 
       Intersection_polylines polylines(tm1_polylines,
@@ -1256,7 +1255,7 @@ public:
                  mesh_to_intersection_edges[&tm1],
                  inplace_operation_tm1);
 
-      CGAL_assertion( *desired_output[inplace_operation_tm1] == &tm1 );
+      CGAL_assertion( *requested_output[inplace_operation_tm1] == &tm1 );
 
       if ( inplace_operation_tm2!=NONE)
       {
@@ -1323,7 +1322,7 @@ public:
           disconnected_patches_edge_to_tm2_edge,
           new_face_visitor);
         // Operation in tm2: discard patches and append the one from tm2
-        CGAL_assertion( *desired_output[inplace_operation_tm2] == &tm2 );
+        CGAL_assertion( *requested_output[inplace_operation_tm2] == &tm2 );
         compute_inplace_operation( tm2, tm1,
                                    patches_of_tm2_used[inplace_operation_tm2],
                                    patches_of_tm1_used[inplace_operation_tm2],
@@ -1363,7 +1362,7 @@ public:
       }
       else{
         /// handle the operation updating only tm1
-        CGAL_assertion( *desired_output[inplace_operation_tm1] == &tm1 );
+        CGAL_assertion( *requested_output[inplace_operation_tm1] == &tm1 );
         Intersection_polylines polylines(
           tm1_polylines, tm2_polylines, polyline_lengths);
         fill_polylines_to_skip(
@@ -1403,7 +1402,7 @@ public:
                    inplace_operation_tm2);
 
         /// handle the operation updating only tm2
-        CGAL_assertion( *desired_output[inplace_operation_tm2] == &tm2 );
+        CGAL_assertion( *requested_output[inplace_operation_tm2] == &tm2 );
         Intersection_polylines polylines(
           tm2_polylines, tm1_polylines, polyline_lengths);
         fill_polylines_to_skip(
