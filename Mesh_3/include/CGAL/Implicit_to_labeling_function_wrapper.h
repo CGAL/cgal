@@ -111,7 +111,13 @@ public:
 
   /// Constructor
   Implicit_vector_to_labeling_function_wrapper(const std::vector<Function_*>& v)
-    : function_vector_(v) {}
+    : function_vector_(v)
+  {
+    if ( v.size() > 8 )
+    {
+      CGAL_error_msg("We support at most 8 functions !");
+    }
+  }
 
   // Default copy constructor and assignment operator are ok
 
@@ -121,18 +127,13 @@ public:
   /// Operator ()
   return_type operator()(const Point_3& p, const bool = true) const
   {
-    int nb_func = function_vector_.size();
-    if ( nb_func > 8 )
-    {
-      CGAL_error_msg("We support at most 8 functions !");
-    }
-
+    const int nb_func = static_cast<int>(function_vector_.size());
     char bits = 0;
     for ( int i = 0 ; i < nb_func ; ++i )
     {
       // Insert value into bits : we compute fi(p) and insert result at
       // bit i of bits
-      bits |= ( ((*function_vector_[i])(p) < 0) << i );
+      bits = char(bits | ( ((*function_vector_[i])(p) < 0) << i ));
     }
 
     return ( static_cast<return_type>(bits) );
