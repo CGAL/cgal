@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+[ -n "$CGAL_DEBUG_TRAVIS" ] && set -x
 
 CXX_FLAGS="-DCGAL_NDEBUG"
 
