@@ -141,7 +141,7 @@ template<typename Mesh,
          typename CCMap>
 std::size_t num_component_wrapper(Mesh& pmesh, 
                       CCMap cc, 
-                      bool)
+                      boost::cgal_no_property::type)
 {
   
      boost::unordered_map<typename boost::graph_traits<Mesh>::face_descriptor, std::size_t> fim;
