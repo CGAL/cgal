@@ -288,7 +288,7 @@ public:
       Fitness_map<Linear_algebra_traits, Matrix3d, MatrixXd> fitness_map(population, point_data);
       new_fit_value = fitness_map.get_best_fitness_value();
       double difference = new_fit_value - prev_fit_value;
-      if(abs(difference) < tolerance * new_fit_value)
+      if(CGAL::abs(difference) < tolerance * new_fit_value)
         stale++;
 
       if(stale == 5)
