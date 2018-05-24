@@ -19,8 +19,8 @@
 //
 // Author(s)     : Konstantinos Katrioplas
 
-#ifndef CGAL_EVOLUTION_H
-#define CGAL_EVOLUTION_H
+#ifndef CGAL_OPTIMAL_BOUNDING_BOX_EVOLUTION_H
+#define CGAL_OPTIMAL_BOUNDING_BOX_EVOLUTION_H
 
 #include <CGAL/Optimal_bounding_box/population.h>
 #include <CGAL/Optimal_bounding_box/fitness_function.h>
@@ -344,12 +344,4 @@ void check_det(Population<Simplex>& pop)
 
 
 
-
-
-
-
-
-
-
-
-#endif
+#endif 

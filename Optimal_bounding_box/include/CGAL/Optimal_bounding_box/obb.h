@@ -19,14 +19,13 @@
 //
 // Author(s)     : Konstantinos Katrioplas
 
-#ifndef CGAL_OBB_H
-#define CGAL_OBB_H
+#ifndef CGAL_OPTIMAL_BOUNDING_BOX_OBB_H
+#define CGAL_OPTIMAL_BOUNDING_BOX_OBB_H
 
 #include <CGAL/Optimal_bounding_box/population.h>
 #include <CGAL/Optimal_bounding_box/evolution.h>
 #include <CGAL/Optimal_bounding_box/helper.h>
 #include <vector>
-#include <fstream>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Iso_cuboid_3.h>

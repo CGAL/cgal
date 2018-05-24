@@ -19,8 +19,8 @@
 //
 // Author(s)     : Konstantinos Katrioplas
 
-#ifndef CGAL_OPTIMAL_BOUNDING_BOX_H
-#define CGAL_OPTIMAL_BOUNDING_BOX_H
+#ifndef CGAL_OPTIMAL_BOUNDING_BOX_NEALDER_MEAD_FUNCTIONS_H
+#define CGAL_OPTIMAL_BOUNDING_BOX_NEALDER_MEAD_FUNCTIONS_H
 
 #include <CGAL/assertions.h>
 #include <vector>
@@ -94,6 +94,6 @@ const Matrix centroid(const Matrix& S1, const Matrix& S2, const Matrix& S3)
 
 
 
-#endif //CGAL_OPTIMAL_BOUNDING_BOX_H
+#endif
 
 

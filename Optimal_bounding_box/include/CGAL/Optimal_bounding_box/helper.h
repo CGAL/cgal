@@ -19,8 +19,8 @@
 //
 // Author(s)     : Konstantinos Katrioplas
 
-#ifndef CGAL_HELPER_H
-#define CGAL_HELPER_H
+#ifndef CGAL_OPTIMAL_BOUNDING_HELPER_H
+#define CGAL_OPTIMAL_BOUNDING_HELPER_H
 
 #include <vector>
 #include <fstream>

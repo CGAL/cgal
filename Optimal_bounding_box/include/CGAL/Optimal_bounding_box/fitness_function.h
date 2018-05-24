@@ -19,8 +19,8 @@
 //
 // Author(s)     : Konstantinos Katrioplas
 
-#ifndef CGAL_FITNESS_FUNCTION_H
-#define CGAL_FITNESS_FUNCTION_H
+#ifndef CGAL_OPTIMAL_BOUNDING_FITNESS_FUNCTION_H
+#define CGAL_OPTIMAL_BOUNDING_FITNESS_FUNCTION_H
 
 #include <CGAL/Bbox_3.h>
 #include <vector>
