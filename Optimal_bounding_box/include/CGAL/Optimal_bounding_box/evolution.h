@@ -308,13 +308,13 @@ private:
   // needed in genetic algorithm
   struct Comparator
   {
-    Comparator(std::vector<double> in) : fitness(in) {}
+    Comparator(const std::vector<double>& in) : fitness(in) {}
 
     inline bool operator() (std::size_t& i, std::size_t& j)
     {
       return fitness[i] < fitness[j];
     }
-    std::vector<double> fitness;
+    const std::vector<double>& fitness;
   };
 
   // data
