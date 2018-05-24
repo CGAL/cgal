@@ -23,6 +23,8 @@
 #define CGAL_OPTIMAL_BOUNDING_BOX_EVOLUTION_H
 
 #include <CGAL/Optimal_bounding_box/population.h>
+#include <CGAL/Optimal_bounding_box/nelder_mead_functions.h>
+
 #include <CGAL/Optimal_bounding_box/fitness_function.h>
 #include <boost/iterator/counting_iterator.hpp>
 

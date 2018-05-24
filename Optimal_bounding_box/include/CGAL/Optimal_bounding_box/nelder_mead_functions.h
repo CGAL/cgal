@@ -23,7 +23,7 @@
 #define CGAL_OPTIMAL_BOUNDING_BOX_NEALDER_MEAD_FUNCTIONS_H
 
 #include <CGAL/assertions.h>
-#include <vector>
+
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_linear_algebra_traits.h>
