@@ -6,6 +6,7 @@
 /// the creation of new faces.
 ///
 /// \cgalRefines `CopyConstructible`
+/// \cgalHasModel `CGAL::Polygon_mesh_processing::Corefinement::Default_new_face_visitor`.
 
 
 class PMPCorefinementNewFaceVisitor{

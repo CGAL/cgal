@@ -36,6 +36,7 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 
 namespace CGAL{
+namespace Polygon_mesh_processing {
 namespace Corefinement{
 
 // TODO option to ignore internal edges for patches of coplanar faces
@@ -150,7 +151,7 @@ class Visitor{
   typedef typename Default::Get<
     NewNodeVisitor_, Default_node_visitor<TriangleMesh> >::type  NewNodeVisitor;
   typedef typename Default::Get<
-    NewFaceVisitor_, Default_face_visitor<TriangleMesh> >::type  NewFaceVisitor;
+    NewFaceVisitor_, Default_new_face_visitor<TriangleMesh> >::type  NewFaceVisitor;
 
 // config flags
 public:
@@ -1071,7 +1072,7 @@ public:
   }
 };
 
-} } //end of namespace CGAL::Corefinement
+} } } // CGAL::Polygon_mesh_processing::Corefinement
 
 #include <CGAL/enable_warnings.h>
 

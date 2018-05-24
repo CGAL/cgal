@@ -1642,7 +1642,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
  *        given as a vector of points
  * @param throw_on_self_intersection if `true`, for each input triangle mesh,
  *        the set of triangles closed to the intersection of `tm1` and `tm2` will be
- *        checked for self-intersection and `CGAL::Corefinement::Self_intersection_exception`
+ *        checked for self-intersection and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
  *        will be thrown if at least one is found.
  * @param np1 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  * @param np2 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below

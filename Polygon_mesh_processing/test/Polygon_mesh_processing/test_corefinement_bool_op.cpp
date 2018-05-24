@@ -26,7 +26,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel              Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-namespace CFR = CGAL::Corefinement;
+namespace CFR = PMP::Corefinement;
 
 //includes typedefs for Operations on polyhedra
 typedef CGAL::Polyhedron_3<Kernel>                                   Polyhedron;

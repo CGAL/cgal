@@ -33,6 +33,7 @@
 #include <sstream>
 #include <set>
 namespace CGAL {
+namespace Polygon_mesh_processing {
 namespace Corefinement {
 
 template <typename G>
@@ -153,7 +154,7 @@ void copy_edge_mark(G&,
 {} // nothing to do
 
 template <class TriangleMesh>
-struct Default_face_visitor{
+struct Default_new_face_visitor{
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::face_descriptor face_descriptor;
 
@@ -1576,6 +1577,6 @@ void remove_disconnected_patches(
   }
 }
 
-} } // end of namespace CGAL::Corefinement
+} } } // CGAL::Polygon_mesh_processing::Corefinement
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_INTERNAL_FACE_GRAPH_UTILS_H

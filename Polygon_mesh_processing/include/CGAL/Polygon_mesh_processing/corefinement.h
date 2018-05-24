@@ -34,6 +34,13 @@
 #include <CGAL/iterator.h>
 
 namespace CGAL {
+
+#if !defined(CGAL_NO_DEPRECATED_CODE) && !defined(DOXYGEN_RUNNING)
+namespace Corefinement {
+using Polygon_mesh_processing::Corefinement::Self_intersection_exception;
+}
+#endif
+
 namespace Polygon_mesh_processing {
 
 namespace internal {
@@ -124,6 +131,19 @@ bool recursive_does_bound_a_volume(const TriangleMesh& tm,
 }
 
 } //end of namespace internal
+
+namespace Corefinement
+{
+/** \ingroup PMP_corefinement_grp
+ *  Default new-face visitor model of `PMPCorefinementNewFaceVisitor`.
+ *  All of its functions have an empty body. This class can be used as a
+ *  base class if only some of the functions of the concept require to be
+ *  overridden.
+ */
+template <class TriangleMesh>
+struct Default_new_face_visitor;
+}
+
 
 /** \ingroup PMP_corefinement_grp
  *
@@ -378,10 +398,10 @@ boolean_operation(      TriangleMesh& tm1,
   typedef typename boost::lookup_named_param_def <
     internal_np::new_face_visitor_t,
     NamedParameters1,
-    Corefinement::Default_face_visitor<TriangleMesh>//default
+    Corefinement::Default_new_face_visitor<TriangleMesh>//default
   > ::type Nfv;
   Nfv nfv( boost::choose_param( get_param(np1, internal_np::new_face_visitor),
-                                Corefinement::Default_face_visitor<TriangleMesh>() ) );
+                                Corefinement::Default_new_face_visitor<TriangleMesh>() ) );
 
   // surface intersection algorithm call
   typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
@@ -571,7 +591,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
                                 const NamedParametersOut& np_out)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
-  using namespace CGAL::Corefinement;
+  using namespace CGAL::Polygon_mesh_processing::Corefinement;
   cpp11::array< boost::optional<TriangleMesh*>,4> desired_output;
   desired_output[TM1_MINUS_TM2]=&tm_out;
 
@@ -603,7 +623,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  * @param np2 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  * @param throw_on_self_intersection if `true`, for each input triangle mesh,
  *        the set of triangles closed to the intersection of `tm1` and `tm2` will be
- *        checked for self-intersection and `CGAL::Corefinement::Self_intersection_exception`
+ *        checked for self-intersection and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
  *        will be thrown if at least one is found.
  *
  * \cgalNamedParamsBegin
@@ -678,10 +698,10 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
   typedef typename boost::lookup_named_param_def <
     internal_np::new_face_visitor_t,
     NamedParameters1,
-    Corefinement::Default_face_visitor<TriangleMesh>//default
+    Corefinement::Default_new_face_visitor<TriangleMesh>//default
   > ::type Nfv;
   Nfv nfv( boost::choose_param( get_param(np1, internal_np::new_face_visitor),
-                                Corefinement::Default_face_visitor<TriangleMesh>() ) );
+                                Corefinement::Default_new_face_visitor<TriangleMesh>() ) );
 
 // surface intersection algorithm call
   typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
@@ -752,10 +772,10 @@ namespace experimental {
   typedef typename boost::lookup_named_param_def <
     internal_np::new_face_visitor_t,
     NamedParameters,
-    Corefinement::Default_face_visitor<TriangleMesh>//default
+    Corefinement::Default_new_face_visitor<TriangleMesh>//default
   > ::type Nfv;
   Nfv nfv( boost::choose_param( get_param(np, internal_np::new_face_visitor),
-                                Corefinement::Default_face_visitor<TriangleMesh>() ) );
+                                Corefinement::Default_new_face_visitor<TriangleMesh>() ) );
 
 
 // surface intersection algorithm call
@@ -830,10 +850,10 @@ namespace experimental {
   typedef typename boost::lookup_named_param_def <
     internal_np::new_face_visitor_t,
     NamedParameters,
-    Corefinement::Default_face_visitor<TriangleMesh>//default
+    Corefinement::Default_new_face_visitor<TriangleMesh>//default
   > ::type Nfv;
   Nfv nfv( boost::choose_param( get_param(np, internal_np::new_face_visitor),
-                               Corefinement::Default_face_visitor<TriangleMesh>() ) );
+                               Corefinement::Default_new_face_visitor<TriangleMesh>() ) );
 
 // surface intersection algorithm call
   typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;

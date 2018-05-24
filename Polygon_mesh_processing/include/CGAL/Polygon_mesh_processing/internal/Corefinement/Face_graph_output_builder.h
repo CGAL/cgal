@@ -44,6 +44,7 @@
                             : cpp11::get<3>(out_edge_mark_maps))
 
 namespace CGAL {
+namespace Polygon_mesh_processing {
 namespace Corefinement {
 
 enum Boolean_operation {UNION = 0, INTER,
@@ -77,7 +78,7 @@ class Face_graph_output_builder
                   No_mark<TriangleMesh>,
                   No_mark<TriangleMesh> > >::type     EdgeMarkMapTuple;
   typedef typename Default::Get<
-    NewFaceVisitor_, Default_face_visitor<TriangleMesh> >::type  NewFaceVisitor;
+    NewFaceVisitor_, Default_new_face_visitor<TriangleMesh> >::type  NewFaceVisitor;
 
 // graph_traits typedefs
   typedef TriangleMesh                                              TM;
@@ -1436,7 +1437,7 @@ public:
 };
 
 
-} } // CGAL::Corefinement
+} } } // CGAL::Polygon_mesh_processing::Corefinement
 
 #undef CGAL_COREF_SELECT_OUT_ECM
 
