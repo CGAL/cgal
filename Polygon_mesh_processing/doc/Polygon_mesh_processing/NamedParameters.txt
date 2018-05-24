@@ -315,7 +315,7 @@ A class model of `PMPCorefinementNewFaceVisitor` that is used in corefinement-re
 to track the creation of new faces.
 \n
 \b Type : `A class` \n
-\b Default value is a model of `PMPCorefinementNewFaceVisitor` that is doing nothing
+\b Default `CGAL::Polygon_mesh_processing::Corefinement::Default_new_face_visitor`
 \cgalNPEnd
 
 

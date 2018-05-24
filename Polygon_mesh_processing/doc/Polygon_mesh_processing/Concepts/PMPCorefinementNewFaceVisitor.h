@@ -32,7 +32,7 @@ typedef unspecified_type face_descriptor;
   void after_subface_created(face_descriptor f_new, Triangle_mesh& tm);
 /// @}
 
-/// @name Functions used by functions computing Boolean operations using corefinement.
+/// @name Functions used by Boolean operations functions using corefinement.
 /// These functions are not needed if you only call `corefine()`.
 /// @{
   /// called before importing the face `f_src` of `tm_src` in `tm_tgt`
