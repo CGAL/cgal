@@ -85,6 +85,8 @@ struct Less_for_halfedge
   const VertexPointMap& vpmap;
 };
 
+//add a pair of border halfedges to be stitched. 
+//Specifies if they are manifold or not in the map.
 template<typename Halfedge,
          typename Border_halfedge_map,  
          typename Halfedge_pair,        
@@ -134,14 +136,24 @@ std::size_t num_component_wrapper(const Mesh& pmesh,
                                                              CGAL::Polygon_mesh_processing::parameters::face_index_map(fim));
 }
 
-//specialization if there is no FIMap
+//specialization if there is no default FIMap, create one
 template<typename Mesh,
          typename CCMap>
-std::size_t num_component_wrapper(const Mesh&, 
-                      CCMap, 
+std::size_t num_component_wrapper(Mesh& pmesh, 
+                      CCMap cc, 
                       bool)
 {
-  return 0;
+  
+     boost::unordered_map<typename boost::graph_traits<Mesh>::face_descriptor, std::size_t> fim;
+ 
+   //init the map
+   std::size_t i=-1;
+   BOOST_FOREACH(typename boost::graph_traits<Mesh>::face_descriptor f, faces(pmesh))
+     fim[f]=++i;
+ 
+   return CGAL::Polygon_mesh_processing::connected_components(pmesh,
+                                                              cc,
+                                                              parameters::face_index_map(boost::make_assoc_property_map(fim)));
 }
 
 template <typename PM, typename OutputIterator, typename LessHedge, typename VertexPointMap
@@ -194,8 +206,8 @@ collect_duplicated_stitchable_boundary_edges
     for(std::size_t i = 0; i < num_component; ++i)
     {
       Border_halfedge_map border_halfedge_map_in_cc(less_hedge);
-      halfedge_pairs.clear();
-      manifold_halfedge_pairs.clear();
+      CGAL_assertion(halfedge_pairs.empty());
+      CGAL_assertion(manifold_halfedge_pairs.empty());
       for(int j = 0; j < static_cast<int>(border_edges_per_cc[i].size()); ++j)
       {
         halfedge_descriptor he = border_edges_per_cc[i][j];
@@ -213,6 +225,8 @@ collect_duplicated_stitchable_boundary_edges
           *out++=halfedge_pairs[k];
         }
       }
+      halfedge_pairs.clear();
+      manifold_halfedge_pairs.clear();
     }
   }
   else
@@ -619,7 +633,7 @@ void stitch_borders(PolygonMesh& pmesh, const CGAL_PMP_NP_CLASS& np)
   typedef typename GetVertexPointMap<PolygonMesh, CGAL_PMP_NP_CLASS>::const_type VPMap;
   VPMap vpm = choose_param(get_param(np, internal_np::vertex_point),
                            get_const_property_map(vertex_point, pmesh));
-  
+
   internal::collect_duplicated_stitchable_boundary_edges(pmesh,
                                                          std::back_inserter(hedge_pairs_to_stitch),
                                                          internal::Less_for_halfedge<PolygonMesh, VPMap>(pmesh, vpm),

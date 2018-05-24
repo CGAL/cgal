@@ -51,15 +51,9 @@ void test_polyhedron_cc(const char* fname)
 
   assert(poly.size_of_vertices() > 0);
   
-  std::map<typename boost::graph_traits<Polyhedron>::face_descriptor, std::size_t> fim;
-  int i=0;
-  BOOST_FOREACH(typename boost::graph_traits<Polyhedron>::face_descriptor fd, faces(poly)){
-    fim[fd] = i++;
-  }
   CGAL::Polygon_mesh_processing::
       stitch_borders(poly,
-                     CGAL::Polygon_mesh_processing::parameters::apply_per_connected_component(true)
-                     .face_index_map(boost::make_assoc_property_map(fim)));
+                     CGAL::Polygon_mesh_processing::parameters::apply_per_connected_component(true));
   poly.normalize_border();
 
   assert(poly.is_valid(false, 5));
@@ -114,7 +108,7 @@ void test_surface_mesh_cc(const char* fname)
 int main()
 {
   test_polyhedron<Epec>("data_stitching/full_border.off");
-  
+
   test_polyhedron<Epic>("data_stitching/full_border.off");
   test_polyhedron<Epic>("data_stitching/full_border_quads.off");
   test_polyhedron<Epic>("data_stitching/half_border.off");
