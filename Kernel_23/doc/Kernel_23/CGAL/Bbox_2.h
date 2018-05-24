@@ -95,6 +95,11 @@ updates `b` to be the bounding box of `b` and `c` and returns itself.
 */
 Bbox_2& operator+=(const Bbox_2 &c);
 
+/*!
+dilates the bounding box by a specified number of ULP.
+*/
+void dilate(int dist);
+  
 /// @}
 
 }; /* end Bbox_2 */

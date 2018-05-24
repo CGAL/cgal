@@ -801,6 +801,7 @@ public:
   typedef typename Rp::Construct_scaled_vector_3              Construct_scaled_vector_2;
   typedef typename Rp::Construct_triangle_3                   Construct_triangle_2;
   typedef typename Rp::Construct_line_3                       Construct_line_2;
+  typedef typename Rp::Construct_bbox_3                       Construct_bbox_2;
 
   struct Less_xy_2 {
     typedef bool result_type;
@@ -984,6 +985,9 @@ public:
     
   Construct_line_2  construct_line_2_object() const
     {return Construct_line_2();}
+
+  Construct_bbox_2  construct_bbox_2_object() const
+    {return Construct_bbox_2();}
 
   Compute_scalar_product_2 compute_scalar_product_2_object() const
     {return Compute_scalar_product_2();}

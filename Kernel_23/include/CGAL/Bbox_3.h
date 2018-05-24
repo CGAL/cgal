@@ -30,6 +30,7 @@
 #include <CGAL/IO/io.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/array.h>
+#include <boost/math/special_functions/next.hpp>
 
 namespace CGAL {
 
@@ -77,6 +78,8 @@ public:
 
   Bbox_3  operator+(const Bbox_3& b) const;
   Bbox_3& operator+=(const Bbox_3& b);
+
+  void dilate(int dist);
 };
 
 inline
@@ -174,6 +177,20 @@ Bbox_3::operator+=(const Bbox_3& b)
   rep[5] = (std::max)(zmax(), b.zmax());
   return *this;
 }
+
+inline
+void
+Bbox_3::dilate(int dist)
+{
+  using boost::math::float_advance;
+  float_advance(rep[0],-dist);
+  float_advance(rep[1],-dist);
+  float_advance(rep[2],-dist);
+  float_advance(rep[3],dist);
+  float_advance(rep[4],dist);
+  float_advance(rep[5],dist);
+}
+
 
 inline
 bool

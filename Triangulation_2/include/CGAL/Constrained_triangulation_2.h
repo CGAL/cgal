@@ -37,7 +37,8 @@
 
 #include <boost/mpl/if.hpp>
 #include <boost/iterator/filter_iterator.hpp>
-#include <boost/math/special_functions/next.hpp>
+
+#include <boost/utility/result_of.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
 
 namespace CGAL {
@@ -1452,18 +1453,20 @@ intersection(const Gt& gt,
     return result;
   }
 
-  using boost::math::float_advance;
+
 #ifdef CGAL_CDT_2_INTERSECTION_SNAPPING_ULP_DISTANCE
   const int dist = CGAL_CDT_2_INTERSECTION_SNAPPING_ULP_DISTANCE;
 #else
   const int dist = 4;
 #endif
-  const Bbox_2 bbox(float_advance(pi.x(), -dist), float_advance(pi.y(), -dist),
-                    float_advance(pi.x(), +dist), float_advance(pi.y(), +dist));
-  if(do_overlap(bbox, pa.bbox())) pi = pa;
-  if(do_overlap(bbox, pb.bbox())) pi = pb;
-  if(do_overlap(bbox, pc.bbox())) pi = pc;
-  if(do_overlap(bbox, pd.bbox())) pi = pd;
+  typedef typename Gt::Construct_bbox_2 Construct_bbox_2;
+  Construct_bbox_2 bbox = gt.construct_bbox_2_object();
+  typename boost::result_of<const Construct_bbox_2(const typename Gt::Point_2&)>::type bb(bbox(pi));
+  bb.dilate(dist);
+  if(do_overlap(bb, bbox(pa))) pi = pa;
+  if(do_overlap(bb, bbox(pb))) pi = pb;
+  if(do_overlap(bb, bbox(pc))) pi = pc;
+  if(do_overlap(bb, bbox(pd))) pi = pd;
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   if(pi == pa || pi == pb || pi == pc || pi == pd) {
     std::cerr << "  CT_2::intersection: intersection SNAPPED to an existing point "

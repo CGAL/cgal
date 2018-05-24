@@ -379,6 +379,7 @@ public:
   typedef typename K::Construct_circumcenter_3      Construct_circumcenter_2;
 
   typedef typename K::Compute_area_3                Compute_area_2;
+  typedef typename K::Construct_bbox_3              Construct_bbox_2;
 
   Less_x_2
   less_x_2_object() const
@@ -464,6 +465,9 @@ public:
   Compute_area_2 compute_area_2_object() const
   {return Compute_area_2();}
 
+
+  Construct_bbox_2  construct_bbox_2_object() const
+    {return Construct_bbox_2();}
 
 
   // Special functor, not in the Kernel concept
