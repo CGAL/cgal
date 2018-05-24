@@ -300,6 +300,9 @@ public:
     : m_func(func), m_quality(quality)
   {}
 
+  virtual ~MeshRefinementWorkItem()
+  {}
+
   void run()
   {
     m_func();
