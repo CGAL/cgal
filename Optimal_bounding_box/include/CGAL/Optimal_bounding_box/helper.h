@@ -27,7 +27,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 namespace CGAL {
 namespace Optimal_bounding_box {
@@ -67,10 +66,11 @@ void sm_to_matrix(SurfaceMesh& sm, Matrix& mat)
 }
 
 template <typename Point>
-double calculate_volume(std::vector<Point> points)
+double calculate_volume(const std::vector<Point>& points)
 {
-  CGAL::Bbox_3 bbox;
-  bbox = bbox_3(points.begin(), points.end());
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+
+  CGAL::Bbox_3 bbox = bbox_3(points.begin(), points.end());
   K::Iso_cuboid_3 ic(bbox);
   return ic.volume();
 }
