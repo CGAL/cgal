@@ -605,6 +605,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *        the set of triangles closed to the intersection of `tm1` and `tm2` will be
  *        checked for self-intersection and `CGAL::Corefinement::Self_intersection_exception`
  *        will be thrown if at least one is found.
+ *
  * \cgalNamedParamsBegin
  *   \cgalParamBegin{vertex_point_map}
  *     the property map with the points associated to the vertices of `tm1` (`tm2`).
