@@ -12,6 +12,24 @@ typedef CGAL::Surface_mesh<K::Point_3>             Mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
+template <class TriangleMesh>
+struct My_new_face_visitor
+{
+  typedef boost::graph_traits<TriangleMesh> GT;
+  typedef typename GT::face_descriptor face_descriptor;
+
+  void before_subface_creations(face_descriptor /*f_old*/,TriangleMesh&){}
+  void after_subface_creations(TriangleMesh&){++(*i);}
+  void before_subface_created(TriangleMesh&){}
+  void after_subface_created(face_descriptor /*f_new*/,TriangleMesh&){}
+
+  My_new_face_visitor()
+    : i (new int(0) )
+  {}
+
+  boost::shared_ptr<int> i;
+};
+
 void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_points,
           std::size_t nb_vertices_after_autorefine, bool all_fixed, std::size_t nb_vertices_after_fix)
 {
@@ -36,8 +54,11 @@ void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_poin
   assert(total_nb_points == total_nb_pt);
 
 // Testing autorefine()
-  PMP::experimental::autorefine(mesh);
+  My_new_face_visitor<Mesh> visitor;
+  PMP::experimental::autorefine(mesh,
+    PMP::parameters::new_face_visitor(visitor));
   assert( nb_vertices_after_autorefine==num_vertices(mesh));
+  assert( *(visitor.i) != 0);
 
 // Testing autorefine_and_remove_self_intersections()
   input.open(fname);
