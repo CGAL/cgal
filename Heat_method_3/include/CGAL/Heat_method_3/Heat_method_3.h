@@ -29,11 +29,20 @@
 
 #include <Eigen/Cholesky>
 
+#include <Eigen/Dense>
+
 #include <boost/foreach.hpp>
 
 namespace CGAL {
 namespace Heat_method_3 {
 
+  // This class will later go into another file
+  // It encapsulates what we use from Eigen so that one potentially can use another LA library
+  struct Heat_method_Eigen_traits_3 {
+    typedef Eigen::Matrix3d Matrix;
+  };
+
+  
   /**
    * Class `Heat_method_3` is a ...
    * \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
@@ -46,7 +55,8 @@ namespace Heat_method_3 {
    */
   template <typename TriangleMesh,
             typename Traits,
-            typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::type>
+            typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::type,
+            typename LA = Heat_method_Eigen_traits_3>
   class Heat_method_3
   {
     /// Polygon_mesh typedefs
@@ -59,7 +69,8 @@ namespace Heat_method_3 {
     /// Geometric typedefs
     typedef typename Traits::Point_3                                      Point_3;
     typedef typename Traits::FT                                                FT;
-    
+
+    typedef typename LA::Matrix Matrix;
   public:
     
     Heat_method_3(const TriangleMesh& tm)
@@ -105,6 +116,8 @@ namespace Heat_method_3 {
     const TriangleMesh& tm;
     VertexPointMap vpm;    
     std::set<vertex_descriptor> sources;
+
+    Matrix m;
   };
     
 } // namespace Heat_method_3
