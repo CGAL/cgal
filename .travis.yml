@@ -68,7 +68,7 @@ before_script:
 - cd ..
 script: 
 - cd ./.travis
-- bash -x -e ./build_package.sh $PACKAGE
+- bash ./build_package.sh $PACKAGE
 notifications:
   email:
     on_success: change # default: always
