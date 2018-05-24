@@ -827,10 +827,6 @@ namespace CGAL {
       CGAL_triangulation_expensive_postcondition(is_valid());
     }
 
-
-    // DISPLACEMENT
-    Vertex_handle move_point(Vertex_handle v, const Weighted_point & p);
-
     // Displacement works only for regular triangulation
     // without hidden points at any time
     Vertex_handle move_if_no_collision(Vertex_handle v, const Weighted_point & p);
@@ -2431,30 +2427,6 @@ namespace CGAL {
     }
 
     return removed;
-  }
-
-  // Again, verbatim copy from Delaunay.
-  template < class Gt, class Tds, class Lds >
-  typename Regular_triangulation_3<Gt,Tds,Lds>::Vertex_handle
-    Regular_triangulation_3<Gt,Tds,Lds>::
-    move_point(Vertex_handle v, const Weighted_point & p)
-  {
-    CGAL_triangulation_precondition(! is_infinite(v));
-    CGAL_triangulation_expensive_precondition(is_vertex(v));
-
-    // Dummy implementation for a start.
-
-    // Remember an incident vertex to restart
-    // the point location after the removal.
-    Cell_handle c = v->cell();
-    Vertex_handle old_neighbor = c->vertex(c->index(v) == 0 ? 1 : 0);
-    CGAL_triangulation_assertion(old_neighbor != v);
-
-    remove(v);
-
-    if (dimension() <= 0)
-      return insert(p);
-    return insert(p, old_neighbor->cell());
   }
 
   // Displacement works only for regular triangulation
