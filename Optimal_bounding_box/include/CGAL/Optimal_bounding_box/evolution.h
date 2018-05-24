@@ -138,14 +138,15 @@ public:
     std::vector<std::size_t> ids3(m - m/2), ids4(m - m/2);
 
     CGAL::Random rng;
+    int im = static_cast<int>(m);
     std::generate(ids1.begin(), ids1.end(),
-                  [&rng, &m] () { return rng.get_int(0, m); });
+                  [&rng, &im] () { return rng.get_int(0, im); });
     std::generate(ids2.begin(), ids2.end(),
-                  [&rng, &m] () { return rng.get_int(0, m); });
+                  [&rng, &im] () { return rng.get_int(0, im); });
     std::generate(ids3.begin(), ids3.end(),
-                  [&rng, &m] () { return rng.get_int(0, m); });
+                  [&rng, &im] () { return rng.get_int(0, im); });
     std::generate(ids4.begin(), ids4.end(),
-                  [&rng, &m] () { return rng.get_int(0, m); });
+                  [&rng, &im] () { return rng.get_int(0, im); });
 
     Population<Matrix3d> group1(m/2), group2(m/2);
     Population<Matrix3d> group3(m - m/2), group4(m - m/2);
