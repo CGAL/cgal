@@ -210,10 +210,10 @@ void find_obb(std::vector<Point>& points,
 /// @param la_traits an instance of the linear algebra traits.
 /// @param use_ch a bool flag to indicating whether to use the convex hull of the input points
 /// as an optimization step.
-template <typename PolygonMesh, typename LinearAlgrebraTraits>
+template <typename PolygonMesh, typename LinearAlgebraTraits>
 void find_obb(PolygonMesh& pmesh,
               PolygonMesh& obbmesh,
-              LinearAlgrebraTraits& la_traits,
+              LinearAlgebraTraits& la_traits,
               bool use_ch)
 {
   CGAL_assertion(vertices(pmesh).size() >= 3);
@@ -247,7 +247,7 @@ void find_obb(PolygonMesh& pmesh,
 
 
 
-#endif //CGAL_OBB_H
+#endif //CGAL_OPTIMAL_BOUNDING_BOX_OBB_H
 
 
 
