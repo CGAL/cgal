@@ -471,6 +471,9 @@ boolean_operation(      TriangleMesh& tm1,
   *     Note that if the property map is writable, the indices of the faces
   *     of `tm1` and `tm2` will be set after the corefinement is done.
   *   \cgalParamEnd
+  *   \cgalParamBegin{new_face_visitor} a class model of `PMPCorefinementNewFaceVisitor`
+  *                                     that is used to track the creation of new faces  (`np1` only)
+  *   \cgalParamEnd
   * \cgalNamedParamsEnd
   *
   * @param np_out optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
@@ -611,6 +614,9 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
  *     constrained-or-not status of each edge of `tm1` (`tm2`)
  *   \cgalParamEnd
+ *   \cgalParamBegin{new_face_visitor} a class model of `PMPCorefinementNewFaceVisitor`
+ *                                     that is used to track the creation of new faces (`np1` only)
+ *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  */
@@ -711,6 +717,9 @@ namespace experimental {
  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
  *     constrained-or-not status of each edge of `tm`
  *   \cgalParamEnd
+ *   \cgalParamBegin{new_face_visitor} a class model of `PMPCorefinementNewFaceVisitor`
+ *                                     that is used to track the creation of new faces
+ *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  */
@@ -785,7 +794,10 @@ namespace experimental {
  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
  *     constrained-or-not status of each edge of `tm`
  *   \cgalParamEnd
-*   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm` \cgalParamEnd
+ *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm` \cgalParamEnd
+ *   \cgalParamBegin{new_face_visitor} a class model of `PMPCorefinementNewFaceVisitor`
+ *                                     that is used to track the creation of new faces
+ *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  */
