@@ -3,7 +3,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/mesh_approximation.h>
+#include <CGAL/approximate_mesh.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
@@ -26,7 +26,7 @@ int main()
   Facet_proxy_pmap fpxmap(fidx_map);
 
   // free function interface with named parameters
-  CGAL::mesh_approximation(input,
+  CGAL::approximate_mesh(input,
   CGAL::Surface_mesh_approximation::parameters::max_nb_proxies(200). // first stop criterion
     min_error_drop(0.05). // second stop criterion
     nb_of_iterations(30). // number of relaxation iterations after seeding

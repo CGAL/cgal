@@ -100,7 +100,7 @@ unspecified_type all_default();
  * \cgalNamedParamsEnd
  */
 template <typename TriangleMesh, typename NamedParameters>
-bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
+bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
 {
   using boost::get_param;
   using boost::choose_param;

@@ -35,7 +35,7 @@ and provides the list of parameters used in this package.
 - `ErrorMetricProxy`
 
 ## Main Functions ##
-- `CGAL::mesh_approximation()`
+- `CGAL::approximate_mesh()`
 
 ## Classes ##
 - `CGAL::VSA::L21_metric_vector_proxy`

@@ -26,7 +26,7 @@ See below a sample call of a function that uses the optional BGL named parameter
 // anchors: output anchor points
 // triangles: output triplets of indexed triangles
 
-CGAL::mesh_approximation(tm,
+CGAL::approximate_mesh(tm,
     CGAL::Surface_mesh_approximation::parameters::seeding_method(method).
         max_nb_proxies(nb_proxies).
         nb_of_iterations(nb_iterations).
