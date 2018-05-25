@@ -2120,6 +2120,8 @@ void MainWindow::insertActionBeforeLoadPlugin(QMenu* menu, QAction* actionToInse
 void MainWindow::colorItems()
 {
   std::size_t nb_files = scene->selectionIndices().size();
+  if(nb_files<2)
+    return;
   std::vector<QColor> colors_;
   colors_.reserve(nb_files);
   compute_color_map(scene->item(scene->selectionIndices().last())->color(),
