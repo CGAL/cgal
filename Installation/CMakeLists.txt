@@ -890,7 +890,9 @@ foreach (dir ${CGAL_CONFIGURED_PACKAGES})
     install(DIRECTORY ${dir}/include/CGAL              DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE)
   endif()
 endforeach()
-install(DIRECTORY ${CMAKE_BINARY_DIR}/include/CGAL     DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE)
+if(EXISTS ${CMAKE_BINARY_DIR}/include/CGAL)
+  install(DIRECTORY ${CMAKE_BINARY_DIR}/include/CGAL     DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE)
+endif()
 
 file(GLOB scripts "scripts/*")
 list(SORT scripts)
@@ -1122,13 +1124,13 @@ because IPE_FOUND is false.")
     endif()
 
     if(CGAL_ENABLE_CHECK_HEADERS)
-      set(falg "-fsyntax-only")
+      set(flag "-fsyntax-only")
     else()
-      set(falg "-E")
+      set(flag "-E")
     endif()
     if(NOT DEFINED CGAL_CHECK_SYNTAX_ONLY)
       execute_process(COMMAND 
-        ${CMAKE_CXX_COMPILER} -x c++ ${falg} ${CGAL_MODULES_DIR}/config/support/test_syntaxonly.cpp
+        ${CMAKE_CXX_COMPILER} -x c++ ${flag} ${CGAL_MODULES_DIR}/config/support/test_syntaxonly.cpp
         ERROR_QUIET
         RESULT_VARIABLE ok)
       if(ok EQUAL 0)
@@ -1139,7 +1141,7 @@ because IPE_FOUND is false.")
     endif(NOT DEFINED CGAL_CHECK_SYNTAX_ONLY)
 
     if(NOT CGAL_CHECK_SYNTAX_ONLY)
-      message(FATAL_ERROR "Your compiler does not seem to support ${falg}.
+      message(FATAL_ERROR "Your compiler does not seem to support ${flag}.
 You must disable CGAL_ENABLE_CHECK_HEADERS.")
     endif()
 
@@ -1277,7 +1279,16 @@ LEDA_FOUND is false.")
             separate_arguments(CMD
               UNIX_COMMAND
               "${CMAKE_CXX_COMPILER} ${compile_options_str}
-${include_options_str} -x c++ ${falg} -H \
+${include_options_str} -x c++ ${flag} -H \
+${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
+              # The header Algebraic_kernel_rs_gmpz_d_1.h is skipped on purpose: it
+              # depends on RS.
+              )
+            # CMD2 is CMD without the -H option
+            separate_arguments(CMD2
+              UNIX_COMMAND
+              "${CMAKE_CXX_COMPILER} ${compile_options_str}
+${include_options_str} -x c++ ${flag} \
 ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
               # The header Algebraic_kernel_rs_gmpz_d_1.h is skipped on purpose: it
               # depends on RS.
@@ -1288,6 +1299,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
               COMMAND ${CMAKE_COMMAND}
               -DCERR:STRING=${chk_header_name}
               "-DCMD:STRING=${CMD}"
+              "-DCMD2:STRING=${CMD2}"
               -P "${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake"
               DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}
               DEPENDS ${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake
