@@ -29,7 +29,7 @@ do
 done
 
 cmake -DCGAL_HEADER_ONLY=FALSE -DCGAL_ENABLE_CHECK_HEADERS=TRUE -DDOXYGEN_EXECUTABLE="$DOX_PATH" -DCGAL_COPY_DEPENDENCIES=TRUE -DCMAKE_CXX_FLAGS="-std=c++11" ..
-make -j$(nproc --all) packages_dependencies
+make -j$(nproc --all) -k packages_dependencies
 echo " Checks finished"
 for pkg_path in $CGAL_ROOT/*
 do
