@@ -284,9 +284,11 @@ corefine_and_compute_boolean_operations(
   const cpp11::tuple<NamedParametersOut0,
                      NamedParametersOut1,
                      NamedParametersOut2,
-                     NamedParametersOut3>& nps_out,
-  const bool throw_on_self_intersection = false )
+                     NamedParametersOut3>& nps_out)
 {
+  const bool throw_on_self_intersection =
+    boost::choose_param(get_param(np1, internal_np::throw_on_self_intersection), false);
+
 // Vertex point maps
   //for input meshes
   typedef typename GetVertexPointMap<TriangleMesh,
@@ -437,15 +439,13 @@ cpp11::array<bool,4>
 corefine_and_compute_boolean_operations(
         TriangleMesh& tm1,
         TriangleMesh& tm2,
-  const cpp11::array< boost::optional<TriangleMesh*>,4>& output,
-  const bool throw_on_self_intersection = false )
+  const cpp11::array< boost::optional<TriangleMesh*>,4>& output)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   return corefine_and_compute_boolean_operations(tm1, tm2, output,
                                                  all_default(), all_default(),
                                                  cpp11::make_tuple(all_default(), all_default(),
-                                                                   all_default(), all_default()),
-                                                 throw_on_self_intersection);
+                                                                   all_default(), all_default()));
 }
 
 #undef CGAL_COREF_SET_OUTPUT_VERTEX_POINT_MAP
@@ -494,6 +494,11 @@ corefine_and_compute_boolean_operations(
   *   \cgalParamEnd
   *   \cgalParamBegin{new_face_visitor} a class model of `PMPCorefinementNewFaceVisitor`
   *                                     that is used to track the creation of new faces  (`np1` only)
+  *   \cgalParamEnd
+  *   \cgalParamBegin{throw_on_self_intersection} if `true`, for each input triangle mesh,
+  *      the set of triangles closed to the intersection of `tm1` and `tm2` will be
+  *      checked for self-intersection and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
+  *      will be thrown if at least one is found (`np1` only).
   *   \cgalParamEnd
   * \cgalNamedParamsEnd
   *
@@ -623,10 +628,6 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  * @param tm2 second input triangulated surface mesh
  * @param np1 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  * @param np2 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
- * @param throw_on_self_intersection if `true`, for each input triangle mesh,
- *        the set of triangles closed to the intersection of `tm1` and `tm2` will be
- *        checked for self-intersection and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
- *        will be thrown if at least one is found.
  *
  * \cgalNamedParamsBegin
  *   \cgalParamBegin{vertex_point_map}
@@ -640,6 +641,11 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *   \cgalParamBegin{new_face_visitor} a class model of `PMPCorefinementNewFaceVisitor`
  *                                     that is used to track the creation of new faces (`np1` only)
  *   \cgalParamEnd
+ *   \cgalParamBegin{throw_on_self_intersection} if `true`, for each input triangle mesh,
+ *      the set of triangles closed to the intersection of `tm1` and `tm2` will be
+ *      checked for self-intersection and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
+ *      will be thrown if at least one is found (`np1` only).
+ *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  */
@@ -650,9 +656,11 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  corefine(      TriangleMesh& tm1,
                 TriangleMesh& tm2,
           const NamedParameters1& np1,
-          const NamedParameters2& np2,
-          const bool throw_on_self_intersection = false)
+          const NamedParameters2& np2)
 {
+  const bool throw_on_self_intersection =
+    boost::choose_param(get_param(np1, internal_np::throw_on_self_intersection), false);
+
 // Vertex point maps
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters1>::type Vpm;
@@ -1006,22 +1014,60 @@ template <class TriangleMesh, class NamedParameters1>
 void
 corefine(      TriangleMesh& tm1,
                TriangleMesh& tm2,
-         const NamedParameters1& np1,
-         const bool throw_on_self_intersection = false)
+         const NamedParameters1& np1)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
-  corefine(tm1, tm2, np1, all_default(), throw_on_self_intersection);
+  corefine(tm1, tm2, np1, all_default());
+}
+
+template <class TriangleMesh>
+void
+corefine(           TriangleMesh& tm1,
+                    TriangleMesh& tm2)
+{
+  using namespace CGAL::Polygon_mesh_processing::parameters;
+  corefine(tm1, tm2, all_default(), all_default());
+}
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+ template <class TriangleMesh,
+           class NamedParameters1,
+           class NamedParameters2>
+ void
+ corefine(      TriangleMesh& tm1,
+                TriangleMesh& tm2,
+          const NamedParameters1& np1,
+          const NamedParameters2& np2,
+          const bool throw_on_self_intersection)
+{
+  corefine(tm1, tm2, np1.throw_on_self_intersection(throw_on_self_intersection), np2);
+}
+
+template <class TriangleMesh, class NamedParameters1>
+void
+corefine(      TriangleMesh& tm1,
+               TriangleMesh& tm2,
+         const NamedParameters1& np1,
+         const bool throw_on_self_intersection)
+{
+  namespace params = CGAL::Polygon_mesh_processing::parameters;
+  corefine(tm1, tm2,
+           np1.throw_on_self_intersection(throw_on_self_intersection),
+           params::all_default());
 }
 
 template <class TriangleMesh>
 void
 corefine(           TriangleMesh& tm1,
                     TriangleMesh& tm2,
-         const bool throw_on_self_intersection = false)
+         const bool throw_on_self_intersection)
 {
-  using namespace CGAL::Polygon_mesh_processing::parameters;
-  corefine(tm1, tm2, all_default(), all_default(), throw_on_self_intersection);
+  namespace params = CGAL::Polygon_mesh_processing::parameters;
+  corefine(tm1, tm2,
+           params::throw_on_self_intersection(throw_on_self_intersection),
+           params::all_default());
 }
+#endif
 
 ///// autorefine /////
 namespace experimental {

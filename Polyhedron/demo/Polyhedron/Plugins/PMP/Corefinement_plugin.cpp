@@ -12,6 +12,8 @@
 using namespace CGAL::Three;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
+namespace params = PMP::parameters;
+
 class Polyhedron_demo_corefinement_sm_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
@@ -165,7 +167,7 @@ private:
     }
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    PMP::corefine(*item1->face_graph(), *item2->face_graph());
+    PMP::corefine(*item1->face_graph(), *item2->face_graph(), params::throw_on_self_intersection(true));
     item1->invalidateOpenGLBuffers();
     item2->invalidateOpenGLBuffers();
     scene->itemChanged(item2);
@@ -197,7 +199,7 @@ private:
     {
       case CRF_UNION:
         P = *first_item->face_graph(), Q = *item->face_graph();
-        if (! PMP::corefine_and_compute_union(P, Q, *new_poly) )
+        if (! PMP::corefine_and_compute_union(P, Q, *new_poly, params::throw_on_self_intersection(true)) )
         {
           delete new_poly;
           messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
@@ -209,7 +211,7 @@ private:
       break;
       case CRF_INTER:
         P = *first_item->polyhedron(), Q = *item->polyhedron();
-        if (! PMP::corefine_and_compute_intersection(P, Q, *new_poly) )
+        if (! PMP::corefine_and_compute_intersection(P, Q, *new_poly, params::throw_on_self_intersection(true)) )
         {
           delete new_poly;
           messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
@@ -224,7 +226,7 @@ private:
 	CGAL_FALLTHROUGH;
       case CRF_MINUS:
         P = *first_item->polyhedron(), Q = *item->polyhedron();
-        if (! PMP::corefine_and_compute_difference(P, Q, *new_poly) )
+        if (! PMP::corefine_and_compute_difference(P, Q, *new_poly, params::throw_on_self_intersection(true)) )
         {
           delete new_poly;
           messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));

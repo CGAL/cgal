@@ -1640,10 +1640,6 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
  * @param tm2 second input triangulated surface mesh
  * @param polyline_output output iterator of polylines. Each polyline will be
  *        given as a vector of points
- * @param throw_on_self_intersection if `true`, for each input triangle mesh,
- *        the set of triangles closed to the intersection of `tm1` and `tm2` will be
- *        checked for self-intersection and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
- *        will be thrown if at least one is found.
  * @param np1 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  * @param np2 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
@@ -1652,6 +1648,11 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
  *    a property map with the points associated to the vertices of `tm1`
  *    (`tm2`). The two property map types must be the same.
  *    \cgalParamEnd
+ *   \cgalParamBegin{throw_on_self_intersection} if `true`, for each input triangle mesh,
+ *      the set of triangles closed to the intersection of `tm1` and `tm2` will be
+ *      checked for self-intersection and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
+ *      will be thrown if at least one is found (`np1` only).
+ *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  */
@@ -1664,9 +1665,11 @@ surface_intersection(const TriangleMesh& tm1,
                      const TriangleMesh& tm2,
                      OutputIterator polyline_output,
                      const NamedParameters1& np1,
-                     const NamedParameters2& np2,
-                     const bool throw_on_self_intersection=false)
+                     const NamedParameters2& np2)
 {
+  const bool throw_on_self_intersection =
+    boost::choose_param(get_param(np1, internal_np::throw_on_self_intersection), false);
+
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters1>::const_type Vpm;
   typedef typename GetVertexPointMap<TriangleMesh,
@@ -1747,15 +1750,43 @@ template <class OutputIterator,
 OutputIterator
 surface_intersection(const TriangleMesh& tm1,
                      const TriangleMesh& tm2,
-                     OutputIterator polyline_output,
-                     const bool throw_on_self_intersection=false)
+                     OutputIterator polyline_output)
 {
   return surface_intersection(tm1, tm2, polyline_output,
     CGAL::Polygon_mesh_processing::parameters::all_default(),
-    CGAL::Polygon_mesh_processing::parameters::all_default(),
-    throw_on_self_intersection
-  );
+    CGAL::Polygon_mesh_processing::parameters::all_default());
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+template <class OutputIterator,
+          class TriangleMesh,
+          class NamedParameters1,
+          class NamedParameters2 >
+OutputIterator
+surface_intersection(const TriangleMesh& tm1,
+                     const TriangleMesh& tm2,
+                     OutputIterator polyline_output,
+                     const NamedParameters1& np1,
+                     const NamedParameters2& np2,
+                     const bool throw_on_self_intersection)
+{
+  return surface_intersection(tm1, tm2, polyline_output,
+                     np1.throw_on_self_intersection(throw_on_self_intersection), np2);
+}
+
+template <class OutputIterator,
+          class TriangleMesh >
+OutputIterator
+surface_intersection(const TriangleMesh& tm1,
+                     const TriangleMesh& tm2,
+                     OutputIterator polyline_output,
+                     const bool throw_on_self_intersection)
+{
+  return surface_intersection(tm1, tm2, polyline_output,
+    CGAL::Polygon_mesh_processing::parameters::throw_on_self_intersection(throw_on_self_intersection),
+    CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+#endif
 
 namespace experimental {
 template <class OutputIterator,

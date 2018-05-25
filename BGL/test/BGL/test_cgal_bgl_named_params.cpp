@@ -73,6 +73,7 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::nb_points_per_area_unit).v == 32);
   assert(get_param(np, CGAL::internal_np::nb_points_per_distance_unit).v == 33);
   assert(get_param(np, CGAL::internal_np::new_face_visitor).v == 42);
+  assert(get_param(np, CGAL::internal_np::throw_on_self_intersection).v == 43);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_param(np, CGAL::internal_np::get_cost_policy).v == 34);
@@ -138,6 +139,7 @@ void test(const NamedParameters& np)
   check_same_type<32>(get_param(np, CGAL::internal_np::nb_points_per_area_unit));
   check_same_type<33>(get_param(np, CGAL::internal_np::nb_points_per_distance_unit));
   check_same_type<42>(get_param(np, CGAL::internal_np::new_face_visitor));
+  check_same_type<43>(get_param(np, CGAL::internal_np::throw_on_self_intersection));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_param(np, CGAL::internal_np::get_cost_policy));
@@ -202,6 +204,7 @@ int main()
                          .preserve_genus(A<40>(40))
                          .verbosity_level(A<41>(41))
                          .new_face_visitor(A<42>(42))
+                         .throw_on_self_intersection(A<43>(43))
        );
 
   return EXIT_SUCCESS;

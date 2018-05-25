@@ -318,6 +318,15 @@ to track the creation of new faces.
 \b Default `CGAL::Polygon_mesh_processing::Corefinement::Default_new_face_visitor`
 \cgalNPEnd
 
+\cgalNPBegin{throw_on_self_intersection} \anchor PMP_throw_on_self_intersection
+Parameter used in corefinement-related functions to make the functions throw an exception in
+case some faces involved in the intersection of the input are self-intersecting
+and make the operation impossible with the current version of the code.
+\n
+\b Type : `bool` \n
+\b Default value is `false`
+\cgalNPEnd
+
 
 \cgalNPTableEnd
 
