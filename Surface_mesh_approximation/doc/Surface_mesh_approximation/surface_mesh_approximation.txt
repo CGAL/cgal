@@ -192,7 +192,7 @@ The free function can be used for retrieving the segmentation via proxy ids outp
 
 \subsection sma_example3 Class Interface
 
-The class interface `CGAL::Variational_shape_approximation` offers a flexible means to control of the algorithm. The following example uses the `CGAL::L2_metric_planar_proxy` to approximate the shape.
+The class interface `CGAL::Variational_shape_approximation` offers a flexible means to control of the algorithm. The following example uses the `CGAL::VSA::L2_metric_plane_proxy` to approximate the shape.
 
 \cgalExample{Surface_mesh_approximation/vsa_class_interface_example.cpp}
 
