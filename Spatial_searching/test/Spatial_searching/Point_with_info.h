@@ -1,4 +1,5 @@
-#include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <CGAL/functional.h>
+#include <CGAL/property_map.h>
 
 template <class Pt>
 struct My_point_with_info
