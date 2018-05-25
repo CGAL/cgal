@@ -36,11 +36,11 @@
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
-namespace internal{
+namespace extrude_impl{
 
 template<typename PMAP, typename Vector>
-struct ConstDistTranslation{
-  ConstDistTranslation(PMAP map, const Vector& dir, const double d)
+struct Const_dist_translation{
+  Const_dist_translation(PMAP map, const Vector& dir, const double d)
     :map(map), dir(dir), d(d){}
   
   template<typename VertexDescriptor, typename U>
@@ -55,32 +55,36 @@ struct ConstDistTranslation{
   double d;
 };
 
-struct IdentityFunctor
+struct Identity_functor
 {
   template<typename T, typename U>
   void operator()(const T&, const U&){}
 };
-}//end internal
+}//end extrude_impl
 
 /**
  * \ingroup PMP_meshing_grp
- * Extrudes `input` into `output` using `bot` and `top`. It means that 
- * `input` will be copied twice and transformed once using `bot`, once using `top`,
- * and these two copies will be joined with triangle strips.
+ * Extrudes the open mesh input and put the result in output. The mesh generated is a closed mesh with 
+ * a bottom and top part, both having the same graph combinatoric as input(except that the orientation 
+ * of the faces of the bottom part are reversed). The bottom and the top parts are connected by a 
+ * triangle strip between each boundary cycles. The coordinates of the points associated to the 
+ * vertices of the bottom and top part are first initialized to the same value as the corresponding 
+ * vertices of input. Then for each vertex, a call to bot and top is done for the vertices of the 
+ * bottom part and the top part, respectively.
  * @tparam InputMesh a model of the concept `FaceListGraph`
- * @tparam OutputMesh a model of the concept `FaceListGraph`
+ * @tparam OutputMesh a model of the concept `MutableFaceListGraph`
  * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters" for `InputMesh`
  * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters" for `OutputMesh`
- * @tparam BottomFunctor a functor that will apply a transformation to all points of 
- * `input` in order to create the first offsetted part of the extrusion. It must have a function 
+ * @tparam BottomFunctor a functor with a function 
  * `void operator()(boost::graph_traits<InputMesh>::vertex_descriptor,
  * boost::graph_traits<OutputMesh>::vertex_descriptor);
- * @tparam TopFunctor a functor that will apply a transformation to all points of 
- * `input` in order to create the second offsetted part of the extrusion. It must have a function 
- * `void operator()(boost::graph_traits<InputMesh>::vertex_descriptor,
- * boost::graph_traits<OutputMesh>::vertex_descriptor);
+ * @tparam TopFunctor a functor with a similar operator() as `BottomFunctor`.
  * @param input the open triangulated `InputMesh` to extrude.
  * @param output the `OutputMesh` containing the result of the extrusion.
+ * @param bot a `BottomFunctor` that will apply a transformation to all points of 
+ * `input` in order to create the first offsetted part of the extrusion. 
+ * @param top a `TopFunctor` that will apply a transformation to all points of 
+ * `input` in order to create the second offsetted part of the extrusion. 
  * @param np1 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -102,7 +106,7 @@ struct IdentityFunctor
 template <class InputMesh,
           class OutputMesh,
           class BottomFunctor,
-          class TopFunctor = internal::IdentityFunctor,
+          class TopFunctor,
           class NamedParameters1,
           class NamedParameters2
           >
@@ -208,8 +212,9 @@ void generic_extrude_mesh(const InputMesh& input,
 
 /**
  * \ingroup PMP_meshing_grp
- * Extrudes `input` into `output` following the direction given by `dir` and
- * at a distance `d`.
+ * Fills `output` with a close mesh bounding the volume swept by `input` when translating its 
+ * vertices by `dir` * `d`. The mesh is oriented so that the faces corresponding to `input`
+ * in `output` have the same orientation.
  * @tparam InputMesh a model of the concept `FaceListGraph`
  * @tparam OutputMesh a model of the concept `FaceListGraph`
  * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters" for `InputMesh`
@@ -254,11 +259,11 @@ void extrude_mesh(const InputMesh& input,
   VPMap output_vpm = choose_param(get_param(np2, internal_np::vertex_point),
                                    get_property_map(vertex_point, output));
   
-  internal::ConstDistTranslation<
+  extrude_impl::Const_dist_translation<
       typename GetVertexPointMap<OutputMesh, NamedParameters2>::type,
       typename GetGeomTraits<OutputMesh, NamedParameters2>::type::Vector_3> bot(output_vpm, 
                                                                                   dir, d);
-  internal::IdentityFunctor top;
+  extrude_impl::Identity_functor top;
   generic_extrude_mesh(input, output, bot,top, np1, np2);
 }
 //convenience overload
@@ -295,7 +300,7 @@ void generic_extrude_mesh(const InputMesh& input,
                           OutputMesh& output, 
                           BottomFunctor& bot)
 {
-  internal::IdentityFunctor top;
+  extrude_impl::Identity_functor top;
   generic_extrude_mesh(input, output, bot, top, 
                        parameters::all_default(), parameters::all_default());
 }
