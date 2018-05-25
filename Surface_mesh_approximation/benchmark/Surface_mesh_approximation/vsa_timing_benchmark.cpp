@@ -13,7 +13,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
 
-typedef CGAL::VSA_approximation<Polyhedron, Vertex_point_map> L21_apporx;
+typedef CGAL::Variational_shape_approximation<Polyhedron, Vertex_point_map> L21_apporx;
 typedef L21_approx::Error_metric L21_metric;
 
 typedef CGAL::Timer Timer;

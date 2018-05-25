@@ -113,7 +113,7 @@ bool mesh_approximation(const TriangleMesh &tm, const NamedParameters &np)
   Vertex_point_map point_pmap = choose_param(get_param(np, sma_np::vertex_point),
     get_property_map(vertex_point, const_cast<TriangleMesh &>(tm)));
 
-  typedef CGAL::VSA_approximation<TriangleMesh, Vertex_point_map> L21_approx;
+  typedef CGAL::Variational_shape_approximation<TriangleMesh, Vertex_point_map> L21_approx;
   typedef typename L21_approx::Error_metric L21_metric;
 
   const Approximation_verbose_level vl = choose_param(

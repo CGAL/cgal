@@ -164,7 +164,7 @@ Free function with \ref namedparameters options.
 - `CGAL::mesh_approximation()`: given a triangle mesh, approximate the geometry with default \f$ \mathcal{L}^{2,1} \f$ metric.
 
 Class interface:
-- `CGAL::VSA_approximation`: allowing more customization of the proxy, metric and approximation process.
+- `CGAL::Variational_shape_approximation`: allowing more customization of the proxy, metric and approximation process.
 
 The input of the algorithm is expected to be:
 - Triangulated
@@ -192,7 +192,7 @@ The free function can be used for retrieving the segmentation via proxy ids outp
 
 \subsection sma_example3 Class Interface
 
-The class interface `CGAL::VSA_approximation` offers a flexible means to control of the algorithm. The following example uses the `CGAL::L2_metric_planar_proxy` to approximate the shape.
+The class interface `CGAL::Variational_shape_approximation` offers a flexible means to control of the algorithm. The following example uses the `CGAL::L2_metric_planar_proxy` to approximate the shape.
 
 \cgalExample{Surface_mesh_approximation/vsa_class_interface_example.cpp}
 

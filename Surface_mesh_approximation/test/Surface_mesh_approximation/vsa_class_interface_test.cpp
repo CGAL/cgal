@@ -19,7 +19,7 @@ typedef boost::associative_property_map<std::map<Facet_handle, std::size_t> > Fa
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
 
 typedef CGAL::VSA::L2_metric_plane_proxy<Polyhedron> L2_metric_plane_proxy;
-typedef CGAL::VSA_approximation<Polyhedron, Vertex_point_map, L2_metric_plane_proxy> L2_approx;
+typedef CGAL::Variational_shape_approximation<Polyhedron, Vertex_point_map, L2_metric_plane_proxy> L2_approx;
 typedef L2_approx::Proxy Plane_proxy;
 
 /**

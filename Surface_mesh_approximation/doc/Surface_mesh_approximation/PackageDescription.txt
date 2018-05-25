@@ -40,7 +40,7 @@ and provides the list of parameters used in this package.
 ## Classes ##
 - `CGAL::VSA::L21_metric_vector_proxy`
 - `CGAL::VSA::L2_metric_plane_proxy`
-- `CGAL::VSA_approximation`
+- `CGAL::Variational_shape_approximation`
 
 \todo add option to enforce guarantee of 2-manifold and oriented output mesh
 \todo add option to smooth frontiers of the partition

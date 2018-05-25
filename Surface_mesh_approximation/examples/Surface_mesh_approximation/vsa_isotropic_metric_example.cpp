@@ -60,7 +60,7 @@ struct Compact_metric_point_proxy
   const Facet_area_map area_pmap;
 };
 
-typedef CGAL::VSA_approximation<
+typedef CGAL::Variational_shape_approximation<
   Polyhedron, Vertex_point_map, Compact_metric_point_proxy> Approximation;
 
 int main()

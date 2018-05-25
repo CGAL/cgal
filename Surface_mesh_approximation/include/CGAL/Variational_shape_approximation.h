@@ -1,5 +1,5 @@
-#ifndef CGAL_VSA_APPROXIMATION_H
-#define CGAL_VSA_APPROXIMATION_H
+#ifndef CGAL_VARIATIONAL_SHAPE_APPROXIMATION_H
+#define CGAL_VARIATIONAL_SHAPE_APPROXIMATION_H
 
 #include <CGAL/license/Surface_mesh_approximation.h>
 
@@ -69,7 +69,7 @@ template <typename TriangleMesh,
   typename ErrorMetricProxy = CGAL::Default,
   typename GeomTraits = CGAL::Default,
   typename Concurrency_tag = CGAL::Sequential_tag>
-class VSA_approximation {
+class Variational_shape_approximation {
 // public typedefs
 public:
 
@@ -278,7 +278,7 @@ public:
   /*!
    * @brief %Default empty constructor.
    */
-  VSA_approximation() :
+  Variational_shape_approximation() :
     m_ptm(NULL),
     m_metric(NULL),
     m_average_edge_length(0.0) {
@@ -297,7 +297,7 @@ public:
    * @param tm `CGAL TriangleMesh` on which approximation operates.
    * @param vpoint_map vertex point map of the mesh
    */
-  VSA_approximation(const TriangleMesh &tm, const VertexPointMap &vpoint_map) :
+  Variational_shape_approximation(const TriangleMesh &tm, const VertexPointMap &vpoint_map) :
     m_ptm(&tm),
     m_vpoint_map(vpoint_map),
     m_metric(NULL),
@@ -319,7 +319,7 @@ public:
   }
   /// @}
   
-  ~VSA_approximation() {
+  ~Variational_shape_approximation() {
     if (m_ptm) {
       CGAL::internal::remove_property(m_vanchor_map, *(const_cast<TriangleMesh *>(m_ptm)));
       CGAL::internal::remove_property(m_fproxy_map, *(const_cast<TriangleMesh *>(m_ptm)));
@@ -2114,4 +2114,4 @@ private:
 
 #undef CGAL_VSA_INVALID_TAG
 
-#endif // CGAL_VSA_APPROXIMATION_H
+#endif // CGAL_VARIATIONAL_SHAPE_APPROXIMATION_H
