@@ -4,7 +4,7 @@
 #include <CGAL/license/Surface_mesh_approximation.h>
 
 
-#include <CGAL/VSA_approximation.h>
+#include <CGAL/Variational_shape_approximation.h>
 #include <CGAL/internal/Surface_mesh_approximation/named_function_params.h>
 #include <CGAL/internal/Surface_mesh_approximation/named_params_helper.h>
 
