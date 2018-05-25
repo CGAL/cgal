@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ "$1" == '--help' ]; then
-  echo "Usage: $0 <path to CGAL> <path to output> <number of cores to dedicate>"
+  echo "Usage: $0 <path to CGAL release> <path to output> <number of cores to dedicate>"
   echo "Builds and packages the Polyhedron demo form the CGAL dir."
   exit 0
 fi
