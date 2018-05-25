@@ -6,22 +6,24 @@ namespace CGAL
 namespace internal
 {
 
-    template <class GeomTraits>
+    template <class TriangleMesh, class GeomTraits>
     class Concavity
     {
     public:
-        Concavity(const GeomTraits& traits)
-        : m_traits(traits)
+        Concavity(const TriangleMesh& mesh, const GeomTraits& traits)
+        : m_mesh(mesh)
+        , m_traits(traits)
         {}
 
-        template <class ClusterMesh>
-        double calc(const ClusterMesh& mesh)
+        template <class FacetPropertyMap>
+        double compute(FacetPropertyMap facet_ids, std::size_t cluster_id)
         {
             //TODO: implement
             return 5;
         }
 
     private:
+        const TriangleMesh& m_mesh;
         const GeomTraits& m_traits;
     };
 

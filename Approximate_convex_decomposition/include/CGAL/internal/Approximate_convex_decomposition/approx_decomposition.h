@@ -18,7 +18,7 @@ public:
     {}
 
     template <class FacetPropertyMap, class PointPropertyMap>
-    std::size_t decompose(FacetPropertyMap facet_ids, PointPropertyMap point_ids, double concavity_threshold)
+    std::size_t decompose(FacetPropertyMap facet_ids, PointPropertyMap point_ids, double concavity_threshold, std::size_t min_number_of_clusters)
     {
         //TODO: implement
         typedef typename TriangleMesh::Facet_const_iterator Iterator;
@@ -28,12 +28,6 @@ public:
         }
 
         return 0;
-    }
-
-    template <class ClusterMesh, class FacetPropertyMap>
-    void construct_clusters(std::vector<ClusterMesh>& clusters, FacetPropertyMap facet_ids)
-    {
-        //TODO: implement
     }
 
 private:

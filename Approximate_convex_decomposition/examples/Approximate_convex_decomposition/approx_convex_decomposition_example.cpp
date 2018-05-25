@@ -37,25 +37,16 @@ int main()
 
     // write cluster-ids for each facet
     std::cout << "Number of clusters: " << clusters_num << std::endl;
-    
     for (Polyhedron::Facet_const_iterator it = mesh.facets_begin(); it != mesh.facets_end(); ++it)
     {
         std::cout << facet_property_map[it] << " ";
     }
     std::cout << std::endl;
 
-    // construct clusters using precomputed per facet cluster-ids
+    // write concavity values for all clusters
+    for (std::size_t i = 0; i < clusters_num; ++i)
     {
-        std::vector<Polyhedron> clusters;
-        CGAL::convex_decomposition_clusters(mesh, clusters, facet_property_map);
-        CGAL_assertion(clusters.size() == clusters_num);
-    }
-
-    // construct clusters after implicitly computing decomposition
-    {
-        std::vector<Polyhedron> clusters;
-        CGAL::convex_decomposition_clusters(mesh, clusters);
-        CGAL_assertion(clusters.size() == clusters_num);
+        std::cout << "#" << i << ": " << CGAL::concavity_value(mesh, facet_property_map, i) << std::endl;
     }
 
     return EXIT_SUCCESS;

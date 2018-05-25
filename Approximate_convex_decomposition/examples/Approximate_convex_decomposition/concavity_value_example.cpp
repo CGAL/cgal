@@ -29,10 +29,10 @@ int main()
     }
 
     // computing concavity value
-    double concavity = CGAL::cluster_concavity_value(mesh);
+    //double concavity = CGAL::concavity_value(mesh);
 
     // writing result
-    std::cout << concavity << std::endl;
+    //std::cout << concavity << std::endl;
 
     return EXIT_SUCCESS;
 }
