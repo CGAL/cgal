@@ -9,6 +9,11 @@ namespace CGAL {
 \section sma_introduction Introduction
 
 This package implements the <em>Variational Shape Approximation</em> \cgalCite{cgal:cad-vsa-04} (%VSA) method to approximate an input surface mesh by a simpler surface triangle mesh.
+The input of the algorithm must be:
+- Triangulated
+- Combinatorially 2-manifold 
+
+The output is a triangle soup and can be built into a polygon surface mesh.
 
 Given an input surface triangle mesh, %VSA leverages a discrete clustering algorithm to approximate it by a set of local simple shapes referred to as proxies. Each cluster is represented as a connected set of triangles of the input mesh, and the output mesh is constructed by generating a surface triangle mesh which approximates the clusters.
 The approximation error is one-sided, defined between the clusters and their associated proxies. Two error metrics (\f$ \mathcal{L}^2 \f$, \f$ \mathcal{L}^{2,1} \f$) for planar proxies are provided via the classes `CGAL::VSA::L2_metric_plane_proxy` and `CGAL::VSA::L21_metric_vector_proxy`, and the algorithm design is generic to other user-defined metrics. The current proxies are planes or vectors, but the algorithm design is generic for future extensions to non-planar proxies \cgalCite{cgal:ywly-vmsqs-12}. A brief background about <em>%Proxy</em> and <em>%ErrorMetric</em> is provided in Section \ref sma_background.
@@ -165,10 +170,6 @@ Free function with \ref namedparameters options.
 
 Class interface:
 - `CGAL::Variational_shape_approximation`: allowing more customization of the proxy, metric and approximation process.
-
-The input of the algorithm is expected to be:
-- Triangulated
-- Combinatorially 2-manifold 
 
 \section sma_examples Examples
 
