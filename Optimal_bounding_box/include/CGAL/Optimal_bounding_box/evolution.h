@@ -40,7 +40,7 @@ class Evolution
   typedef typename Linear_algebra_traits::Vector3d Vector3d;
 
 public:
-  Evolution(Population<Matrix3d>& pop, MatrixXd& points) :
+  Evolution(Population<Linear_algebra_traits>& pop, MatrixXd& points) :
     population(pop),
     point_data(points)
   {}
@@ -81,11 +81,11 @@ public:
       fitness = s_fitness;
 
       // centroid
-      const Matrix3d v_centroid = centroid(simplex[0], simplex[1], simplex[2]);
+      const Matrix3d v_centroid = nm_centroid<Linear_algebra_traits>(simplex[0], simplex[1], simplex[2]);
 
       // find worst's vertex reflection
       const Matrix3d v_worst = simplex[3];
-      const Matrix3d v_refl = reflection(v_centroid, v_worst);
+      const Matrix3d v_refl = reflection<Linear_algebra_traits>(v_centroid, v_worst);
       const double f_refl = compute_fitness<Linear_algebra_traits>(v_refl, point_data);
 
       if(f_refl < fitness[2])
@@ -98,7 +98,7 @@ public:
         else
         {
           // expansion
-          const Matrix3d v_expand = expansion(v_centroid, v_worst, v_refl);
+          const Matrix3d v_expand = expansion<Linear_algebra_traits>(v_centroid, v_worst, v_refl);
           const double f_expand = compute_fitness<Linear_algebra_traits>(v_expand, point_data);
           if(f_expand < f_refl)
             simplex[3] = v_expand;
@@ -108,7 +108,7 @@ public:
       }
       else // if reflected vertex is not better
       {
-        const Matrix3d v_mean = mean(v_centroid, v_worst);
+        const Matrix3d v_mean = mean<Linear_algebra_traits>(v_centroid, v_worst);
         const double f_mean = compute_fitness<Linear_algebra_traits>(v_mean, point_data);
         if(f_mean <= fitness[3])
           // contraction of worst
@@ -118,7 +118,7 @@ public:
           // reduction: move all vertices towards the best
           for(std::size_t i=1; i < 4; ++i)
           {
-            simplex[i] = mean(simplex[i], simplex[0]);
+            simplex[i] = mean<Linear_algebra_traits>(simplex[i], simplex[0]);
           }
         }
       }
@@ -150,8 +150,8 @@ public:
     std::generate(ids4.begin(), ids4.end(),
                   [&rng, &im] () { return rng.get_int(0, im); });
 
-    Population<Matrix3d> group1(m/2), group2(m/2);
-    Population<Matrix3d> group3(m - m/2), group4(m - m/2);
+    Population<Linear_algebra_traits> group1(m/2), group2(m/2);
+    Population<Linear_algebra_traits> group3(m - m/2), group4(m - m/2);
 
     for(std::size_t i = 0; i < ids1.size(); ++i)
       group1[i] = population[ids1[i]];
@@ -173,7 +173,7 @@ public:
   #endif
 
     // crossover I
-    Population<Matrix3d> offspringsA(size_first_group);
+    Population<Linear_algebra_traits> offspringsA(size_first_group);
     double bias = 0.1;
 
     for(std::size_t i = 0; i < size_first_group; ++i)
@@ -204,7 +204,7 @@ public:
   #endif
 
     // crossover II
-    Population<Matrix3d> offspringsB(size_second_group);
+    Population<Linear_algebra_traits> offspringsB(size_second_group);
     bias = 0.1;
 
     for(std::size_t i = 0; i < size_second_group; ++i)
@@ -321,7 +321,7 @@ private:
   };
 
   // data
-  Population<Matrix3d> population;
+  Population<Linear_algebra_traits> population;
   MatrixXd point_data;
 };
 

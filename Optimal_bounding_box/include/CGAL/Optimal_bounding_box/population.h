@@ -25,23 +25,15 @@
 #include <vector>
 #include <CGAL/Random.h>
 
-#if defined(CGAL_EIGEN3_ENABLED)
-#include <CGAL/Eigen_linear_algebra_traits.h>
-#endif
-//#define OBB_DEBUG
 
 namespace CGAL {
 namespace Optimal_bounding_box {
 
 
-template<typename Matrix>
+template<typename Linear_algebra_traits>
 class Population
 {
-
-#if defined(CGAL_EIGEN3_ENABLED)
-  typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
-#endif
-
+  typedef typename Linear_algebra_traits::Matrix3d Matrix;
   typedef std::vector<Matrix> Simplex;
 
 public:

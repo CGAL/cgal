@@ -189,6 +189,7 @@ class Eigen_linear_algebra_traits
 {
 public:
   typedef double NT;
+  typedef int Index;
 
   // dynamic size at run time
   typedef CGAL::Eigen_dense_matrix<NT> MatrixXd;

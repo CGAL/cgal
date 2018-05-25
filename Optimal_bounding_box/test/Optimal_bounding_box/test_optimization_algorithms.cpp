@@ -88,7 +88,7 @@ void test_nelder_mead()
   simplex[2] = v2;
   simplex[3] = v3;
 
-  CGAL::Optimal_bounding_box::Population<Matrix3d> pop(1);
+  CGAL::Optimal_bounding_box::Population<Linear_algebra_traits> pop(1);
   std::size_t nm_iterations = 19;
 
   CGAL::Optimal_bounding_box::Evolution<Linear_algebra_traits>
@@ -158,9 +158,9 @@ void test_genetic_algorithm()
   data_points(3,2) = 0.364944;
 
   typedef CGAL::Eigen_dense_matrix<double, 3, 3> Matrix3d;
-  CGAL::Optimal_bounding_box::Population<Matrix3d> pop(5);
-
   typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
+
+  CGAL::Optimal_bounding_box::Population<Linear_algebra_traits> pop(5);
   CGAL::Optimal_bounding_box::Evolution<Linear_algebra_traits> evolution(pop, data_points);
   evolution.genetic_algorithm();
 
@@ -208,7 +208,7 @@ void test_random_unit_tetra()
   typedef Linear_algebra_traits::Matrix3d Matrix3d;
 
   std::size_t generations = 10;
-  CGAL::Optimal_bounding_box::Population<Matrix3d> pop(50);
+  CGAL::Optimal_bounding_box::Population<Linear_algebra_traits> pop(50);
   CGAL::Optimal_bounding_box::Evolution<Linear_algebra_traits> evolution(pop, data_points);
   evolution.evolve(generations);
 
@@ -252,7 +252,7 @@ void test_reference_tetrahedron(const char* fname)
   CGAL::Optimal_bounding_box::sm_to_matrix(mesh, points);
 
   std::size_t generations = 10;
-  CGAL::Optimal_bounding_box::Population<Matrix3d> pop(50);
+  CGAL::Optimal_bounding_box::Population<Linear_algebra_traits> pop(50);
   CGAL::Optimal_bounding_box::Evolution<Linear_algebra_traits> experiment(pop, points);
   experiment.evolve(generations);
 
@@ -287,7 +287,7 @@ void test_long_tetrahedron(std::string fname)
   CGAL::Optimal_bounding_box::sm_to_matrix(mesh, points);
 
   std::size_t max_generations = 10;
-  CGAL::Optimal_bounding_box::Population<Matrix3d> pop(50);
+  CGAL::Optimal_bounding_box::Population<Linear_algebra_traits> pop(50);
   CGAL::Optimal_bounding_box::Evolution<Linear_algebra_traits> experiment(pop, points);
   experiment.evolve(max_generations);
 
@@ -376,6 +376,43 @@ void test_find_obb_mesh(std::string fname)
   #endif
 }
 
+void test_function_defaults_traits(std::string fname1, std::string fname2)
+{
+  std::ifstream input1(fname1);
+  CGAL::Surface_mesh<K::Point_3> mesh1;
+  if (!input1 || !(input1 >> mesh1) || mesh1.is_empty()) {
+    std::cerr << fname1 << " is not a valid off file.\n";
+    exit(1);
+  }
+
+  std::ifstream input2(fname2);
+  CGAL::Surface_mesh<K::Point_3> mesh2;
+  if (!input2 || !(input2 >> mesh2) || mesh2.is_empty()) {
+    std::cerr << fname2 << " is not a valid off file.\n";
+    exit(1);
+  }
+
+  // test one
+  std::vector<K::Point_3> sm_points;
+  typedef CGAL::Surface_mesh<K::Point_3> SMesh;
+  typedef typename boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::property_map<SMesh, boost::vertex_point_t>::const_type PointPMap;
+  PointPMap pmap = get(boost::vertex_point, mesh1);
+  BOOST_FOREACH(vertex_descriptor v, vertices(mesh1))
+    sm_points.push_back(get(pmap, v));
+
+  std::vector<K::Point_3> obb_points;
+  CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points, true);
+
+  CGAL_assertion_code(double epsilon = 1e-3);
+  CGAL_assertion_code(double vol = CGAL::Optimal_bounding_box::calculate_volume(obb_points));
+  CGAL_assertion(assert_doubles(vol, 0.883371, epsilon));
+
+  // test two
+  CGAL::Surface_mesh< K::Point_3> obbmesh;
+  CGAL::Optimal_bounding_box::find_obb(mesh2, obbmesh, true);
+}
+
 int main()
 {
   test_nelder_mead();
@@ -385,6 +422,7 @@ int main()
   test_long_tetrahedron("data/long_tetrahedron.off");
   test_find_obb_evolution("data/random_unit_tetra.off");
   test_find_obb_mesh("data/elephant.off");
+  test_function_defaults_traits("data/random_unit_tetra.off", "data/elephant.off");
 
   return 0;
 }

@@ -39,9 +39,9 @@ void fill_matrix(std::vector<Point>& v_points, Matrix& points_mat)
   for(std::size_t i = 0; i < v_points.size(); ++i)
   {
     Point p = v_points[i];
-    points_mat.set_coef(i, 0, p.x());
-    points_mat.set_coef(i, 1, p.y());
-    points_mat.set_coef(i, 2, p.z());
+    points_mat.set_coef(i, 0, CGAL::to_double(p.x()));
+    points_mat.set_coef(i, 1, CGAL::to_double(p.y()));
+    points_mat.set_coef(i, 2, CGAL::to_double(p.z()));
   }
 }
 
@@ -58,9 +58,9 @@ void sm_to_matrix(SurfaceMesh& sm, Matrix& mat)
   for(vertex_descriptor v : vertices(sm))
   {
     Point_ref p = get(vpm, v);
-    mat.set_coef(i, 0, p.x());
-    mat.set_coef(i, 1, p.y());
-    mat.set_coef(i, 2, p.z());
+    mat.set_coef(i, 0, CGAL::to_double(p.x()));
+    mat.set_coef(i, 1, CGAL::to_double(p.y()));
+    mat.set_coef(i, 2, CGAL::to_double(p.z()));
     ++i;
   }
 }

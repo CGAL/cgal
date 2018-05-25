@@ -30,7 +30,6 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Iso_cuboid_3.h>
 #include <CGAL/convex_hull_3.h>
-#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #ifdef OBB_BENCHMARKS
@@ -45,14 +44,9 @@ namespace CGAL {
 namespace Optimal_bounding_box {
 
 
-#if defined(CGAL_EIGEN3_ENABLED)
-typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
-#endif
-
-
 // works on matrices only
 /// \cond SKIP_IN_MANUAL
-template <typename Vertex, typename Matrix>
+template <typename Linear_algebra_traits, typename Vertex, typename Matrix>
 void post_processing(const Matrix& points, Vertex& R, Matrix& obb)
 {
   CGAL_assertion(points.cols() == 3);
@@ -68,8 +62,11 @@ void post_processing(const Matrix& points, Vertex& R, Matrix& obb)
   // 2) get AABB from rotated points
   typedef CGAL::Simple_cartesian<double> K;
   typedef K::Point_3 Point;
-  std::vector<Point> v_points; // Simplex -> std::vector
-  for(std::size_t i = 0; i < rotated_points.rows(); ++i)
+  typedef typename Linear_algebra_traits::Index index;
+
+  // Simplex -> std::vector
+  std::vector<Point> v_points;
+  for(index i = 0; i < rotated_points.rows(); ++i)
   {
     Point p(rotated_points(i, 0), rotated_points(i, 1), rotated_points(i, 2));
     v_points.push_back(p);
@@ -78,9 +75,7 @@ void post_processing(const Matrix& points, Vertex& R, Matrix& obb)
   bbox = bbox_3(v_points.begin(), v_points.end());
   K::Iso_cuboid_3 ic(bbox);
 
-  // Matrix is [dynamic, 3] at compile time, so it needs allocation of rows at run time.
   Matrix aabb(8, 3);
-
   for(std::size_t i = 0; i < 8; ++i)
   {
     aabb.set_coef(i, 0, ic[i].x());
@@ -97,7 +92,8 @@ void post_processing(const Matrix& points, Vertex& R, Matrix& obb)
 /// calculates the optimal bounding box.
 ///
 /// @tparam Point the point type
-/// @tparam LinearAlgebraTraits a model of `LinearAlgebraTraits`
+/// @tparam LinearAlgebraTraits a model of `LinearAlgebraTraits`. If no instance of `LinearAlgebraTraits`
+/// is provided, then `CGAL::Eigen_linear_algebra_traits` is used.
 ///
 /// @param points the input points that are included in the optimal bounding box.
 /// @param obb_points the eight points of the optimal bounding box to be calculated.
@@ -111,31 +107,23 @@ void find_obb(std::vector<Point>& points,
 {
   CGAL_assertion(points.size() >= 3);
 
-  if(obb_points.size() != 8) // temp sanity until the API is decided
+  if(obb_points.size() != 8)
     obb_points.resize(8);
   CGAL_assertion(obb_points.size() == 8);
 
   // eigen linear algebra traits
   typedef typename LinearAlgebraTraits::MatrixXd MatrixXd;
   typedef typename LinearAlgebraTraits::Matrix3d Matrix3d;
-
   MatrixXd points_mat;
 
-  // get the ch3
-  if(use_ch)
+  if(use_ch) // get the ch3
   {
-    // find the ch - todo: template kernel
-    typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-    CGAL::Polyhedron_3<Kernel> poly;
-    convex_hull_3(points.begin(), points.end(), poly);
-    std::vector<Kernel::Point_3> ch_points(poly.points_begin(), poly.points_end());
-
-    // points: vector -> matrix
+    std::vector<Point> ch_points;
+    CGAL::extreme_points_3(points, std::back_inserter(ch_points));
     CGAL::Optimal_bounding_box::fill_matrix(ch_points, points_mat);
   }
   else
   {
-    // points: vector -> matrix
     CGAL::Optimal_bounding_box::fill_matrix(points, points_mat);
   }
 
@@ -144,7 +132,7 @@ void find_obb(std::vector<Point>& points,
 #endif
 
   std::size_t max_generations = 100;
-  Population<Matrix3d> pop(50);
+  Population<LinearAlgebraTraits> pop(50);
 
 #ifdef OBB_BENCHMARKS
   timer.start();
@@ -184,7 +172,7 @@ void find_obb(std::vector<Point>& points,
   timer.start();
 #endif
 
-  post_processing(points_mat, rotation, obb);
+  post_processing<LinearAlgebraTraits>(points_mat, rotation, obb);
 
 #ifdef OBB_BENCHMARKS
   timer.stop();
@@ -199,11 +187,28 @@ void find_obb(std::vector<Point>& points,
   }
 }
 
+template <typename Point>
+void find_obb(std::vector<Point>& points,
+              std::vector<Point>& obb_points,
+              bool use_ch)
+{
+#if defined(CGAL_EIGEN3_ENABLED)
+  typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
+#else
+  Linear_algebra_traits;
+#endif
+
+  Linear_algebra_traits la_traits;
+  find_obb(points, obb_points, la_traits, use_ch);
+
+}
+
 /// \ingroup OBB_grp
 /// calculates the optimal bounding box.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` 
-/// @tparam LinearAlgebraTraits a model of `LinearAlgebraTraits`
+/// @tparam LinearAlgebraTraits a model of `LinearAlgebraTraits`. If no instance of `LinearAlgebraTraits`
+/// is provided, then `CGAL::Eigen_linear_algebra_traits` is used.
 ///
 /// @param pmesh the input mesh.
 /// @param obbmesh the hexaedron mesh to be built out of the optimal bounding box.
@@ -242,6 +247,20 @@ void find_obb(PolygonMesh& pmesh,
       obb_points[6], obb_points[7], obbmesh);
 }
 
+template <typename PolygonMesh>
+void find_obb(PolygonMesh& pmesh,
+              PolygonMesh& obbmesh,
+              bool use_ch)
+{
+#if defined(CGAL_EIGEN3_ENABLED)
+  typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
+#else
+  Linear_algebra_traits;
+#endif
+
+  Linear_algebra_traits la_traits;
+  find_obb(pmesh, obbmesh, la_traits, use_ch);
+}
 
 }} // end namespaces
 

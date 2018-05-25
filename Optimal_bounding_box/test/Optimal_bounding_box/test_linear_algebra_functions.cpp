@@ -1,6 +1,5 @@
 #include <CGAL/Optimal_bounding_box/nelder_mead_functions.h>
 #include <CGAL/Optimal_bounding_box/fitness_function.h>
-#include <CGAL/Optimal_bounding_box/population.h>
 #include <iostream>
 #include <fstream>
 
@@ -80,6 +79,8 @@ void test_fitness_function()
 
 void test_simplex_operations()
 {
+  typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
+
   CGAL::Eigen_dense_matrix<double, 3, 3> Sc(3, 3);
   Sc.set_coef(0, 0, -0.809204);
   Sc.set_coef(0, 1, 0.124296);
@@ -102,7 +103,8 @@ void test_simplex_operations()
   S_worst.set_coef(2, 1, 0.30543);
   S_worst.set_coef(2, 2, 0.35833);
 
-  CGAL::Eigen_dense_matrix<double, 3, 3> Sr = CGAL::Optimal_bounding_box::reflection(Sc, S_worst);
+  CGAL::Eigen_dense_matrix<double, 3, 3> Sr =
+      CGAL::Optimal_bounding_box::reflection<Linear_algebra_traits>(Sc, S_worst);
   CGAL_assertion_code(double epsilon = 1e-5);
   CGAL_assertion(assert_doubles(Sr(0,0), -0.13359, epsilon));
   CGAL_assertion(assert_doubles(Sr(0,1), -0.95986, epsilon));
@@ -114,7 +116,8 @@ void test_simplex_operations()
   CGAL_assertion(assert_doubles(Sr(2,1), 0.25411, epsilon));
   CGAL_assertion(assert_doubles(Sr(2,2), -0.56300, epsilon));
 
-  CGAL::Eigen_dense_matrix<double, 3, 3> Se = CGAL::Optimal_bounding_box::expansion(Sc, S_worst, Sr);
+  CGAL::Eigen_dense_matrix<double, 3, 3> Se =
+      CGAL::Optimal_bounding_box::expansion<Linear_algebra_traits>(Sc, S_worst, Sr);
   CGAL_assertion(assert_doubles(Se(0,0), -0.87991, epsilon));
   CGAL_assertion(assert_doubles(Se(0,1), 0.36105, epsilon));
   CGAL_assertion(assert_doubles(Se(0,2), -0.30888, epsilon));
@@ -147,7 +150,8 @@ void test_simplex_operations()
   S_b.set_coef(2, 1, 0.581624);
   S_b.set_coef(2, 2, 0.514314);
 
-  CGAL::Eigen_dense_matrix<double, 3, 3> S_c = CGAL::Optimal_bounding_box::mean(S_a, S_b);
+  CGAL::Eigen_dense_matrix<double, 3, 3> S_c =
+      CGAL::Optimal_bounding_box::mean<Linear_algebra_traits>(S_a, S_b);
   CGAL_assertion(assert_doubles(S_c(0,0), -0.35111, epsilon));
   CGAL_assertion(assert_doubles(S_c(0,1), 0.79308, epsilon));
   CGAL_assertion(assert_doubles(S_c(0,2), -0.49774, epsilon));
@@ -161,6 +165,8 @@ void test_simplex_operations()
 
 void test_centroid()
 {
+  typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
+
   CGAL::Eigen_dense_matrix<double, 3, 3> S_a;
   S_a.set_coef(0, 0, -0.588443);
   S_a.set_coef(0, 1, 0.807140);
@@ -195,7 +201,7 @@ void test_centroid()
   S_c.set_coef(2, 2, 0.11207);
 
   CGAL::Eigen_dense_matrix<double, 3, 3> S_centroid =
-      CGAL::Optimal_bounding_box::centroid(S_a, S_b, S_c);
+      CGAL::Optimal_bounding_box::nm_centroid<Linear_algebra_traits>(S_a, S_b, S_c);
   CGAL_assertion_code(double epsilon = 1e-5);
   CGAL_assertion(assert_doubles(S_centroid(0,0), -0.419979, epsilon));
   CGAL_assertion(assert_doubles(S_centroid(0,1), 0.301765, epsilon));
@@ -210,6 +216,8 @@ void test_centroid()
 
 void test_eigen_matrix_interface()
 {
+  typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
+
   CGAL::Eigen_dense_matrix<double, 3, 3> A(3, 3);
   A.set_coef(0, 0, 0.1);
   A.set_coef(0, 1, 0.2);
@@ -269,7 +277,8 @@ void test_eigen_matrix_interface()
   E.set_coef(2, 1, 0.30543);
   E.set_coef(2, 2, 0.35833);
 
-  CGAL::Eigen_dense_matrix<double, 3, 3> Sr = CGAL::Optimal_bounding_box::reflection(D, E);
+  CGAL::Eigen_dense_matrix<double, 3, 3> Sr =
+      CGAL::Optimal_bounding_box::reflection<Linear_algebra_traits>(D, E);
   CGAL_assertion(assert_doubles(Sr(0,0), -0.13359, epsilon));
   CGAL_assertion(assert_doubles(Sr(0,1), -0.95986, epsilon));
   CGAL_assertion(assert_doubles(Sr(0,2), -0.24664, epsilon));

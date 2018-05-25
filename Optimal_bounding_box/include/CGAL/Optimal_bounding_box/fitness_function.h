@@ -41,9 +41,10 @@ double compute_fitness(const Vertex& R, const Matrix& data)
   CGAL_assertion(data.rows() >= 3);
 
   typedef typename Linear_algebra_traits::Vector3d Vector3d;
+  typedef typename Linear_algebra_traits::Index index;
 
   double xmin, xmax, ymin, ymax, zmin, zmax;
-  for(int i = 0; i < data.rows(); ++i){
+  for(index i = 0; i < data.rows(); ++i){
 
     Vector3d vec = Linear_algebra_traits::row3(data, i);
     vec = R * vec;
@@ -73,7 +74,7 @@ double compute_fitness(const Vertex& R, const Matrix& data)
 template <typename Linear_algebra_traits, typename Vertex, typename Matrix>
 struct Fitness_map
 {
-  Fitness_map(Population<Vertex>& p, Matrix& points) : pop(p), points(points)
+  Fitness_map(Population<Linear_algebra_traits>& p, Matrix& points) : pop(p), points(points)
   {}
 
   const Vertex get_best()
@@ -104,7 +105,7 @@ struct Fitness_map
     return compute_fitness<Linear_algebra_traits>(best_mat, points);
   }
 
-  Population<Vertex>& pop;
+  Population<Linear_algebra_traits>& pop;
   const Matrix& points;
 };
 
