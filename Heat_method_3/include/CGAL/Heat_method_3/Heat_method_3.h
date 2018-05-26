@@ -94,7 +94,7 @@ namespace Heat_method_3 {
     }
 
     /**
-     *remove 'vd' from the source set, returning 'true' if 'vd' was in the set
+     * remove 'vd' from the source set, returning 'true' if 'vd' was in the set
      */
     bool remove_source(vertex_descriptor vd)
     {
@@ -109,22 +109,33 @@ namespace Heat_method_3 {
       }
     }
 
+    /**
+     *return current source set
+    */
     vertex_descriptor getSources()
     {
       return sources;
     }
 
+    /**
+     * clear the current source set
+     */
     void clearSources()
     {
       sources.clear();
       return;
     }
 
+    /**
+     * return vertex_descriptor to first vertex in the source set
+     */
     vertex_descriptor sourcesBegin()
     {
       return sources.begin();
     }
-
+    /**
+     * return vertex_descriptor to last vertex in the source set
+     */
     vertex_descriptor sourcesEnd()
     {
       return sources.end();
