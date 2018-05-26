@@ -17,7 +17,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 //
-// Author(s) : Christina Cruz, Keenan Crane, Andreas Fabri
+// Author(s) : Christina Vaz, Keenan Crane, Andreas Fabri
 
 #ifndef CGAL_HEAT_METHOD_3_HEAT_METHOD_3_H
 #define CGAL_HEAT_METHOD_3_HEAT_METHOD_3_H
@@ -42,7 +42,7 @@ namespace Heat_method_3 {
     typedef Eigen::Matrix3d Matrix;
   };
 
-  
+
   /**
    * Class `Heat_method_3` is a ...
    * \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
@@ -72,13 +72,13 @@ namespace Heat_method_3 {
 
     typedef typename LA::Matrix Matrix;
   public:
-    
+
     Heat_method_3(const TriangleMesh& tm)
       : tm(tm), vpm(get(vertex_point,tm))
     {
       build();
     }
-    
+
     Heat_method_3(const TriangleMesh& tm, VertexPointMap vpm)
       : tm(tm), vpm(vpm)
     {
@@ -94,13 +94,50 @@ namespace Heat_method_3 {
     }
 
     /**
-     * get distance from the current source set to a vertex ` vd`. 
+     *remove 'vd' from the source set, returning 'true' if 'vd' was in the set
+     */
+    bool remove_source(vertex_descriptor vd)
+    {
+      if(sources.find(vd))
+      {
+        sources.erase(vd);
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
+
+    vertex_descriptor getSources()
+    {
+      return sources;
+    }
+
+    void clearSources()
+    {
+      sources.clear();
+      return;
+    }
+
+    vertex_descriptor sourcesBegin()
+    {
+      return sources.begin();
+    }
+
+    vertex_descriptor sourcesEnd()
+    {
+      return sources.end();
+    }
+
+    /**
+     * get distance from the current source set to a vertex ` vd`.
      */
     double distance(vertex_descriptor vd)
     {
       return 0;
     }
-    
+
   private:
 
     void build()
@@ -112,14 +149,14 @@ namespace Heat_method_3 {
         }
       }
     }
-    
+
     const TriangleMesh& tm;
-    VertexPointMap vpm;    
+    VertexPointMap vpm;
     std::set<vertex_descriptor> sources;
 
     Matrix m;
   };
-    
+
 } // namespace Heat_method_3
 } // namespace CGAL
 
