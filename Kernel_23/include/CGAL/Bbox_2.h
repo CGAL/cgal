@@ -164,8 +164,8 @@ Bbox_2::dilate(int dist)
   using boost::math::float_advance;
   float_advance(rep[0],-dist);
   float_advance(rep[1],-dist);
+  float_advance(rep[2],dist);
   float_advance(rep[3],dist);
-  float_advance(rep[4],dist);
 }
   
 inline
