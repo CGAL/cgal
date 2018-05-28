@@ -142,8 +142,15 @@ namespace Corefinement
  */
 template <class TriangleMesh>
 struct Default_new_face_visitor;
-}
 
+#ifdef DOXYGEN_RUNNING
+/** \ingroup PMP_corefinement_grp
+ *  Integer identifiers to refer to a particular Boolean operation in the function `corefine_and_compute_boolean_operations()`.
+ */
+enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
+                             TM1_MINUS_TM2=2, TM2_MINUS_TM1=3, NONE };
+#endif
+}
 
 /** \ingroup PMP_corefinement_grp
  *
@@ -241,6 +248,7 @@ bool does_bound_a_volume(const TriangleMesh& tm)
 {
   return does_bound_a_volume(tm, parameters::all_default());
 }
+/// \endcond
 
 #define CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(I) \
   typedef typename boost::lookup_named_param_def < \
@@ -254,8 +262,90 @@ bool does_bound_a_volume(const TriangleMesh& tm)
 
 
 /**
-    \todo document me
- */
+  * \ingroup PMP_corefinement_grp
+  * \link coref_def_subsec corefines \endlink `tm1` and `tm2` and for each triangle mesh `tm_out` passed
+  * as an optional in `output` different from `boost::none`, the triangulated surface mesh
+  * \link coref_def_subsec bounding \endlink  the result of a particular Boolean operation
+  * between the volumes bounded by `tm1` and `tm2` will be put in the corresponding triangle mesh.
+  * The position of the meshes in the array `output` are specific to the Boolean operation to compute
+  * and `Corefinement::Boolean_operation_type` encodes and describes the ordering. Constructing the default array
+  * means that no Boolean operation will be done. Overwritting a default value will trigger the corresponding
+  * operation. In such a case, the address to a valid surface mesh must be provided.
+  * The optional named parameters for all output meshes are provided as a `tuple` and follow the same
+  * order as the array `output`. A call to `corefine_and_compute_boolean_operations()` with optional
+  * named parameters passed for output meshes should be done using `make_tuple()` as the types of
+  * named parameters is unspecified.
+  *
+  * If `tm1` and/or `tm2` are one of the output surface meshes, they will be updated to
+  * contain the output (in-place operation), in any other case, the corresponding result will
+  * be inserted into the mesh without clearing it first.
+  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm1)` \endlink
+  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm2)` \endlink
+  * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm1)` \endlink
+  * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm2)` \endlink
+  *
+  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
+  *                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
+  *                      as a named parameter, then it must be initialized.
+  *
+  * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParametersOut0 a sequence of \ref pmp_namedparameters "Named Parameters" for computing the union of the volumes bounded by `tm1` and `tm2`
+  * @tparam NamedParametersOut1 a sequence of \ref pmp_namedparameters "Named Parameters" for computing the intersection of the volumes bounded by `tm1` and `tm2`
+  * @tparam NamedParametersOut2 a sequence of \ref pmp_namedparameters "Named Parameters" for computing the difference of the volumes bounded by `tm1` and `tm2`
+  * @tparam NamedParametersOut3 a sequence of \ref pmp_namedparameters "Named Parameters" for computing the difference of the volumes bounded by `tm2` and `tm1`
+  *
+  * @param tm1 first input triangulated surface mesh
+  * @param tm2 second input triangulated surface mesh
+  * @param output an array of output surface meshes
+  * @param np1 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np2 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  *
+  * \cgalNamedParamsBegin
+  *   \cgalParamBegin{vertex_point_map}
+  *     the property map with the points associated to the vertices of `tm1` (`tm2`).
+  *     If this parameter is omitted, an internal property map for
+  *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+  *   \cgalParamEnd
+  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
+  *     constrained-or-not status of each edge of `tm1` (`tm2`).
+  *   \cgalParamEnd
+  *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm1` (`tm2`).
+  *     Note that if the property map is writable, the indices of the faces
+  *     of `tm1` and `tm2` will be set after the corefinement is done.
+  *   \cgalParamEnd
+  *   \cgalParamBegin{new_face_visitor} a class model of `PMPCorefinementNewFaceVisitor`
+  *                                     that is used to track the creation of new faces  (`np1` only)
+  *   \cgalParamEnd
+  *   \cgalParamBegin{throw_on_self_intersection} if `true`, for each input triangle mesh,
+  *      the set of triangles closed to the intersection of `tm1` and `tm2` will be
+  *      checked for self-intersection and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
+  *      will be thrown if at least one is found (`np1` only).
+  *   \cgalParamEnd
+  * \cgalNamedParamsEnd
+  *
+  * @param nps_out tuple of optional sequences of \ref pmp_namedparameters "Named Parameters" each among the ones listed below
+  *        (`tm_out` being use to refer the output surface mesh in `output` corresponding to a given named parameter sequence)
+  *
+  * \cgalNamedParamsBegin
+  *   \cgalParamBegin{vertex_point_map}
+  *     the property map with the points associated to the vertices of `tm_out`.
+  *     If this parameter is omitted, an internal property map for
+  *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+  *   \cgalParamEnd
+  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
+  *     constrained-or-not status of each edge of `tm_out`. An edge of `tm_out` is constrained
+  *     if it is on the intersection of `tm1` and `tm2`, or if the edge corresponds to a
+  *     constrained edge in `tm1` or `tm2`.
+  *   \cgalParamEnd
+  * \cgalNamedParamsEnd
+  *
+  * @return an array filled as follow: for each operation computed, the position in the array
+  *         will contains `true` iff the output surface mesh is manifold, and it is put in the surface mesh
+  *         at the same position in `output`. Note that if a output surface mesh was also
+  *         an input mesh but the output operation was generating a non-manifold mesh, the surface mesh
+  *         will only be corefined.
+  */
 template <class TriangleMesh,
           class NamedParameters1,
           class NamedParameters2,
@@ -462,7 +552,7 @@ corefine_and_compute_boolean_operations(
 
 #undef CGAL_COREF_SET_OUTPUT_VERTEX_POINT_MAP
 #undef CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP
-/// \endcond
+
 
 /**
   * \ingroup PMP_corefinement_grp

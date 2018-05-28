@@ -42,6 +42,8 @@ Release date: September 2018
     (that replace the `bool` parameter in `corefine()`) that enables to check for
     self-intersections faces involved in the intersection before trying to corefine the
     input meshes.
+-   Document the function `corefine_and_compute_boolean_operations()` that can be used to
+    compute the result of several Boolean operations between 2 volumes at the same time.
 
 Release 4.12
 ------------
