@@ -69,7 +69,7 @@ VertexIndexMap vertex_id_map;
 typedef boost::associative_property_map<VertexIndexMap> VertexIdPropertyMap;
 VertexIdPropertyMap vertex_index_pmap(vertex_id_map);
 
-void mstIpelet::protected_run(int fn)
+void mstIpelet::protected_run(int /*fn*/)
 {
   std::list<Point_2> pt_list;
 

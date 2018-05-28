@@ -24,8 +24,17 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
+// Commented because the class is actually used by Delaunay_triangulation_hierarchy_3.h
 // #define CGAL_DEPRECATED_HEADER "<CGAL/Triangulation_hierarchy_3.h>"
 // #include <CGAL/internal/deprecation_warning.h>
+
+// This class is deprecated, but must be kept for backward compatibility.
+//
+// It would be better to move its content to the Delaunay_triangulation_3
+// specializations for Fast_location and make Triangulation_hierarchy_3 the
+// empty nutshell instead.
+//
+// Then, later, maybe merge the Compact/Fast codes in a cleaner factorized way.
 
 #include <CGAL/basic.h>
 #include <CGAL/internal/Has_nested_type_Bare_point.h>
@@ -54,14 +63,6 @@
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
 namespace CGAL {
-
-// This class is deprecated, but must be kept for backward compatibility.
-//
-// It would be better to move its content to the Delaunay_triangulation_3
-// specializations for Fast_location and make Triangulation_hierarchy_3 the
-// empty nutshell instead.
-//
-// Then, later, maybe merge the Compact/Fast codes in a cleaner factorized way.
 
 template < class Tr >
 class Triangulation_hierarchy_3
@@ -353,10 +354,6 @@ public:
     }
     return n - this->number_of_vertices();
   }
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-  CGAL_DEPRECATED Vertex_handle move_point(Vertex_handle v, const Point & p);
-#endif
 
   Vertex_handle move_if_no_collision(Vertex_handle v, const Point &p);
   Vertex_handle move(Vertex_handle v, const Point &p);
@@ -717,34 +714,6 @@ remove_and_give_new_cells(Vertex_handle v, OutputItCells fit)
     v = u;
   }
 }
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-template < class Tr >
-typename Triangulation_hierarchy_3<Tr>::Vertex_handle
-Triangulation_hierarchy_3<Tr>::
-move_point(Vertex_handle v, const Point & p)
-{
-  CGAL_triangulation_precondition(v != Vertex_handle());
-  Vertex_handle old, ret;
-
-  for (std::size_t l = 0; l < maxlevel; ++l) {
-    Vertex_handle u = v->up();
-    Vertex_handle w = hierarchy[l]->move_point(v, p);
-    if (l == 0) {
-	ret = w;
-    }
-    else {
-        set_up_down(w, old);
-    }
-    if (u == Vertex_handle())
-	break;
-    old = w;
-    v = u;
-  }
-
-  return ret;
-}
-#endif
 
 template <class Tr>
 typename Triangulation_hierarchy_3<Tr>::Vertex_handle
