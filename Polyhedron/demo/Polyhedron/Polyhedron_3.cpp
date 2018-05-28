@@ -1,6 +1,6 @@
 #include "Polyhedron_demo.h"
 #include <clocale>
-
+#include <CGAL/Qt/resources.h>
 /*!
  * \brief Defines the entry point of the demo.
  * Creates the application and sets a main window.

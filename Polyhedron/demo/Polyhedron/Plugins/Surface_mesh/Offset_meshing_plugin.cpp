@@ -16,7 +16,6 @@
 #include <QStringList>
 
 #include "C2t3_type.h"
-#include "Scene_c2t3_item.h"
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>

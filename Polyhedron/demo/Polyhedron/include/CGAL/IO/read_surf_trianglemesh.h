@@ -291,7 +291,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
     converter(mesh, false/*insert_isolated_vertices*/);
 
     CGAL_assertion(PMP::remove_isolated_vertices(mesh) == 0);
-    CGAL_assertion(is_valid(mesh));
+    CGAL_assertion(is_valid_polygon_mesh(mesh));
   } // end loop on patches
 
   return true;

@@ -1,8 +1,8 @@
 #include <QtCore/qglobal.h>
 #include <QFileDialog>
 #include <QColorDialog> 
-#include <QGLViewer/manipulatedCameraFrame.h>
-#include <QGLViewer/manipulatedFrame.h>
+#include <CGAL/Qt/manipulatedCameraFrame.h>
+#include <CGAL/Qt/manipulatedFrame.h>
 
 #include <fstream>
 #include "opengl_tools.h"
@@ -1018,29 +1018,18 @@ public Q_SLOTS:
     classif->select_random_region();
     item_changed(classif->item());
 
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
     CGAL::Bbox_3 bbox = classif->bbox();
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
     
-    viewer->camera()->fitBoundingBox(qglviewer::Vec (bbox.xmin(), bbox.ymin(), bbox.zmin()) + offset,
-                                     qglviewer::Vec (bbox.xmax(), bbox.ymax(), bbox.zmax()) + offset);
+    viewer->camera()->fitBoundingBox(CGAL::qglviewer::Vec (bbox.xmin(), bbox.ymin(), bbox.zmin()) + offset,
+                                     CGAL::qglviewer::Vec (bbox.xmax(), bbox.ymax(), bbox.zmax()) + offset);
     
-    // viewer->camera()->showEntireScene();
-    
-    // bbox = scene->bbox();
-    // viewer->setSceneBoundingBox(qglviewer::Vec (bbox.xmin(), bbox.ymin(), bbox.zmin()),
-    //                             qglviewer::Vec (bbox.xmax(), bbox.ymax(), bbox.zmax()));
 
-#if QGLVIEWER_VERSION >= 0x020502
-    viewer->camera()->setPivotPoint (qglviewer::Vec ((bbox.xmin() + bbox.xmax()) / 2.,
+
+    viewer->camera()->setPivotPoint (CGAL::qglviewer::Vec ((bbox.xmin() + bbox.xmax()) / 2.,
                                                      (bbox.ymin() + bbox.ymax()) / 2.,
                                                      (bbox.zmin() + bbox.zmax()) / 2.) + offset);
-#else
-    viewer->camera()->setRevolveAroundPoint (qglviewer::Vec ((bbox.xmin() + bbox.xmax()) / 2.,
-                                                             (bbox.ymin() + bbox.ymax()) / 2.,
-                                                             (bbox.zmin() + bbox.zmax()) / 2.) + offset);
-#endif
-
   }
 
   void on_train_clicked()

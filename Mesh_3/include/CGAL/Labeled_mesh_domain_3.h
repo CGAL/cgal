@@ -37,7 +37,7 @@
 
 #include <CGAL/point_generators_3.h>
 
-#include <CGAL/Mesh_3/global_parameters.h>
+#include <CGAL/boost/parameter.h>
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/parameter/name.hpp>
 #ifdef CGAL_MESH_3_VERBOSE

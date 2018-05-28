@@ -3,7 +3,7 @@
 
 #include "typedefs.h"
 #include <QMap>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 
 class Scene {
 
@@ -14,7 +14,7 @@ public:
   ~Scene() {  eraseOldData();  }
 
 public:
-  inline void setViewer(QGLViewer* v) {  m_viewer = v;  }
+  inline void setViewer(CGAL::QGLViewer* v) {  m_viewer = v;  }
   inline void showError(const QString & msg) {
     if(!m_viewer) m_viewer->displayMessage( msg );
   }
@@ -35,7 +35,7 @@ private:
   DT3 m_dt;
   QList<Vertex_handle> m_vhArray;
 
-  QGLViewer* m_viewer;
+  CGAL::QGLViewer* m_viewer;
 };
 
 #endif

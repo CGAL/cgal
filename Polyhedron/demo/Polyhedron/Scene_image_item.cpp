@@ -320,7 +320,7 @@ Vertex_buffer_helper::push_normal(std::size_t i, std::size_t j, std::size_t k)
 void
 Vertex_buffer_helper::push_vertex(std::size_t i, std::size_t j, std::size_t k)
 {
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   indices_.insert(std::make_pair(compute_position(i,j,k),
                                  vertices_.size()/3)); 
   //resize the "border vertices"
@@ -423,7 +423,7 @@ struct Scene_image_item_priv
   {
     item = parent;
     v_box = new std::vector<float>();
-    is_ogl_4_3 = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->isOpenGL_4_3();
+    is_ogl_4_3 = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->isOpenGL_4_3();
     is_hidden = hidden;
     compile_shaders();
     initializeBuffers();
@@ -845,7 +845,7 @@ void Scene_image_item::changed()
 
 void Scene_image_item_priv::draw_Bbox(Scene_item::Bbox bbox, std::vector<float> *vertices)
 {
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     vertices->push_back(bbox.xmin()+offset.x);
     vertices->push_back(bbox.ymin()+offset.y);
     vertices->push_back(bbox.zmin()+offset.z);

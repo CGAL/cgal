@@ -29,6 +29,7 @@
 #include <CGAL/boost/graph/internal/Has_member_clear.h>
 #include <CGAL/function_objects.h>
 #include <boost/unordered_set.hpp>
+#include <CGAL/IO/Verbose_ostream.h>
 
 
 namespace CGAL {
@@ -355,30 +356,292 @@ bool is_valid_face_descriptor( typename boost::graph_traits<FaceGraph>::face_des
   return true;
 }
 
-
-template <typename FaceGraph>
-bool is_valid_polygon_mesh(const FaceGraph& g)
+/*!
+  \ingroup PkgBGLHelperFct
+ * \brief checks the integrity of `g`.
+ * 
+ * `g` is valid if it follows the rules of the `HalfedgeListGraph` concept,
+ * and all of its associations are reciprocal.
+ * For example, `prev(next(h, g), g)` must be `h`, 
+ * and `next(prev(h, g), g)` must be `h`.
+ * \param g the `Graph` to test.
+ * \param verb : if `true`, the details of the check will be written in the standard output.
+ *
+ * \tparam `Graph` a model of `HalfedgeListGraph`
+ * \return `true` if `g` is valid, `false` otherwise.
+ * 
+ */
+template<typename Graph>
+bool is_valid_halfedge_graph(const Graph& g, bool verb = false)
 {
-  typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor   vertex_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor     face_descriptor;
-  BOOST_FOREACH(vertex_descriptor v, vertices(g)){
-    if(! is_valid_vertex_descriptor(v,g)){
-      return false;
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor     vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::vertices_size_type    vertex_size_type;
+  typedef typename boost::graph_traits<Graph>::halfedges_size_type   halfedges_size_type;
+  Verbose_ostream verr(verb);
+  std::size_t num_v(std::distance(boost::begin(vertices(g)), boost::end(vertices(g)))),
+  num_h(std::distance(boost::begin(halfedges(g)), boost::end(halfedges(g))));
+  bool valid = ( 1 != (num_h& 1));
+  if ( ! valid)
+    verr << "number of halfedges is odd." << std::endl;
+
+  // All halfedges.
+
+  halfedges_size_type  n = 0;
+  BOOST_FOREACH(halfedge_descriptor begin, halfedges(g)) {
+    if(!valid)
+      break;
+    verr << "halfedge " << n << std::endl;
+    // Pointer integrity.
+    valid = valid && ( next(begin, g) != boost::graph_traits<Graph>::null_halfedge());
+    valid = valid && ( opposite(begin, g) != boost::graph_traits<Graph>::null_halfedge());
+    if ( ! valid) {
+      verr << "    pointer integrity corrupted (ptr==0)."
+           << std::endl;
+      break;
     }
-  }
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(g)){
-    if(! is_valid_halfedge_descriptor(h,g)){
-      return false;
+    //edge integrity
+    valid = valid && ( halfedge(edge(begin, g), g) == begin);
+    // opposite integrity.
+    valid = valid && ( opposite(begin, g) != begin);
+    valid = valid && ( opposite(opposite(begin, g), g) == begin);
+    if ( ! valid) {
+      verr << "    opposite pointer integrity corrupted."
+           << std::endl;
+      break;
     }
-  }
-  BOOST_FOREACH(face_descriptor f, faces(g)){
-    if(! is_valid_face_descriptor(f,g)){
-      return false;
+    // previous integrity.
+    valid = valid && ( prev(next(begin, g), g) == begin);
+    valid = valid && ( next(prev(begin, g), g) == begin);
+    if ( ! valid) {
+      verr << "    previous pointer integrity corrupted."
+           << std::endl;
+      break;
     }
+    // vertex integrity.
+    valid = valid && ( target(begin, g) != boost::graph_traits<Graph>::null_vertex());
+    if ( ! valid) {
+      verr << "    vertex pointer integrity corrupted."
+           << std::endl;
+      break;
+    }
+    valid = valid && ( target(begin, g) ==
+                       target(opposite(next(begin, g), g), g));
+    if ( ! valid) {
+      verr << "    vertex pointer integrity2 corrupted."
+           << std::endl;
+      break;
+    }
+
+    ++n;
   }
-  return true;
+  if ( valid && n != num_h)
+    verr << "counting halfedges failed." << std::endl;
+  // All vertices.
+  vertex_size_type v = 0;
+  n = 0;
+  BOOST_FOREACH(vertex_descriptor vbegin, vertices(g)){
+    if(!valid)
+      break;
+    verr << "vertex " << v << std::endl;
+    // Pointer integrity.
+    if ( halfedge(vbegin, g) != boost::graph_traits<Graph>::null_halfedge())
+      valid = valid && (
+            target( halfedge(vbegin, g), g) == vbegin);
+    else
+      valid = false;
+    if ( ! valid) {
+      verr << "    halfedge pointer in vertex corrupted."
+           << std::endl;
+      break;
+    }
+    // cycle-around-vertex test.
+    halfedge_descriptor h = halfedge(vbegin, g);
+    if ( h != boost::graph_traits<Graph>::null_halfedge()) {
+      halfedge_descriptor ge = h;
+      do {
+        verr << "    halfedge " << n << std::endl;
+        ++n;
+        h = opposite(next(h, g), g);
+        valid = valid && ( n <= num_h && n!=0);
+        if ( ! valid)
+          verr << "    too many halfedges around vertices."
+               << std::endl;
+      } while ( valid && (h != ge));
+    }
+    ++v;
+  }
+  if ( valid && v != num_v)
+    verr << "counting vertices failed." << std::endl;
+  if ( valid && ( n  != num_h))
+    verr << "counting halfedges via vertices failed." << std::endl;
+  valid = valid && ( v == num_v);
+
+
+  // All halfedges.
+  n = 0;
+  BOOST_FOREACH(halfedge_descriptor i, halfedges(g)){
+      verr << "halfedge " << n << std::endl;
+  // At least triangular facets and distinct geometry.
+  valid = valid && ( next(i, g) != i);
+  valid = valid && ( target(i, g) != target(opposite(i, g), g));
+  if ( ! valid) {
+      verr << "    pointer validity corrupted."
+           << std::endl;
+      break;
+  }
+  ++n;
 }
+valid = valid && (n == num_h);
+if ( n != num_h)
+  verr << "counting halfedges failed." << std::endl;
+
+verr << "structure is "
+   << ( valid ? "valid." : "NOT VALID.") << std::endl;
+return valid;
+}
+
+/*!
+  \ingroup PkgBGLHelperFct
+ * \brief checks the integrity of `g`.
+ * 
+ * `g` is valid if it is a valid `HalfedgeListGraph`, if it follows the rules
+ * of the `FaceListGraph` concept, and all of its associations are reciprocal.
+ * For example, `face(halfedge(f,g),g)` must be `f`.
+ * calls `is_valid_halfedge_graph()`
+ * \param g the `Graph` to test.
+ * \param verb : if `true`, the details of the check will be written in the standard output.
+ *
+ * \tparam `Graph` a model of `FaceListGraph`
+ * \return `true` if `g` is valid, `false` otherwise.
+ * 
+ * \see `is_valid_halfedge_graph()` 
+ */
+template<typename Graph>
+bool is_valid_face_graph(const Graph& g, bool verb = false)
+{
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<Graph>::face_descriptor       face_descriptor;
+  typedef typename boost::graph_traits<Graph>::faces_size_type       faces_size_type;
+  typedef typename boost::graph_traits<Graph>::halfedges_size_type   halfedges_size_type;
+  std::size_t num_f(std::distance(boost::begin(faces(g)), boost::end(faces(g)))),
+      num_h(std::distance(boost::begin(halfedges(g)), boost::end(halfedges(g))));
+  
+  //is valid halfedge_graph ?
+  bool valid=is_valid_halfedge_graph(g, verb);
+  if ( ! valid) {
+    return false;
+  }
+  Verbose_ostream verr(verb);
+    
+  // All faces.
+  faces_size_type f = 0;
+  std::size_t n = 0;
+  halfedges_size_type nb = 0;
+  BOOST_FOREACH(face_descriptor fbegin, faces(g)){
+    if(!valid)
+      break;
+    verr << "face " << f << std::endl;
+    // Pointer integrity.
+    if ( halfedge(fbegin, g) != boost::graph_traits<Graph>::null_halfedge())
+      valid = valid && (
+            face(halfedge(fbegin, g), g) == fbegin);
+    else
+      valid = false;
+    if ( ! valid) {
+      verr << "    halfedge pointer in face corrupted." << std::endl;
+      break;
+    }
+    // cycle-around-face test.
+    halfedge_descriptor h = halfedge( fbegin, g);
+    if (h != boost::graph_traits<Graph>::null_halfedge()) {
+      halfedge_descriptor ge = h;
+      do {
+        verr << "    halfedge " << n << std::endl;
+        ++n;
+        h = next(h, g);
+        valid = valid && ( n <= num_h && n!=0);
+        if ( ! valid)
+          verr << "    too many halfedges around faces."
+               << std::endl;
+      } while ( valid && (h != ge));
+    }
+    ++f;
+  }
+  if ( valid && f != num_f)
+    verr << "counting faces failed." << std::endl;
+  
+  BOOST_FOREACH(halfedge_descriptor i, halfedges(g)){
+    //counting borders
+    if ( is_border(i, g))
+      ++nb;
+    // face integrity.
+    
+    valid = valid && ( face(i, g) == face(next(i, g), g));
+    if ( ! valid) {
+      verr << "    face pointer integrity2 corrupted."
+           << std::endl;
+      break;
+    }
+  }
+  verr << "sum border halfedges (2*nb) = " << 2 * nb << std::endl;
+  if ( valid && n + nb  != num_h)
+    verr << "counting halfedges via faces failed." << std::endl;
+  valid = valid && ( f == num_f);
+  valid = valid && ( n + nb  == num_h);
+  verr << "is_valid(): structure is " << ( valid ? "valid." :
+                                                   "NOT VALID.") << std::endl;
+  return valid;
+}
+/*!
+  \ingroup PkgBGLHelperFct
+ * \brief checks the integrity of `g`.
+ * 
+ * `g` is valid if it is a valid `FaceListGraph` and it has distinct faces on each side of an edge.
+ * calls `is_valid_face_graph()`.
+ * 
+ * \param g the `Mesh` to test.
+ * \param verb : if `true`, the details of the check will be written in the standard output.
+ *
+ * \tparam Mesh a model of `FaceListGraph` and `HalfedgeListGraph`, and follows 
+ * the definition of a \ref PMPDef "PolygonMesh"
+ * \return `true` if `g` is valid, `false` otherwise.
+ * 
+ * \see `is_valid_face_graph()`
+ * \see `is_valid_halfedge_graph()`
+ * 
+ */
+template <typename Mesh>
+bool is_valid_polygon_mesh(const Mesh& g, bool verb = false)
+{
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor   halfedge_descriptor;
+  Verbose_ostream verr(verb);
+ bool valid=is_valid_face_graph(g, verb);
+ //test for 2-manifoldness
+ // Distinct facets on each side of an halfedge.
+ BOOST_FOREACH(halfedge_descriptor i, halfedges(g)){
+   valid = valid && (face(i, g) != face(opposite(i, g), g));
+   if ( ! valid) {
+     verr << "    both incident facets are equal." << std::endl;
+     break;
+   }
+   valid = valid && ( next(next(i, g), g) != i);
+   valid = valid && ( target(i, g) != target(next(i, g), g));
+   valid = valid && ( target(i, g) != target(next(next(i, g), g), g));
+   if ( ! valid) {
+     verr << "    incident facet is not at least a triangle."
+          << std::endl;
+     break;
+   }
+   if ( ! valid) {
+       verr << "    incident facet is not at least a triangle."
+            << std::endl;
+       break;
+   }
+ }
+ return valid;
+}
+
 
   /*!
    \ingroup PkgBGLHelperFct

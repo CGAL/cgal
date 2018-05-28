@@ -53,8 +53,8 @@
 #include "Show_point_dialog.h"
 #include "File_loader_dialog.h"
 
-#include <QGLViewer/manipulatedCameraFrame.h>
-#include <QGLViewer/manipulatedFrame.h>
+#include <CGAL/Qt/manipulatedCameraFrame.h>
+#include <CGAL/Qt/manipulatedFrame.h>
 
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptEngine>
@@ -771,42 +771,34 @@ void MainWindow::viewerShow(float xmin,
                             float ymax,
                             float zmax)
 {
-  qglviewer::Vec
+  CGAL::qglviewer::Vec
     min_(xmin, ymin, zmin),
     max_(xmax, ymax, zmax);
 
   if(min_ == max_) return viewerShow(xmin, ymin, zmin);
 
-#if QGLVIEWER_VERSION >= 0x020502
   viewer->camera()->setPivotPoint((min_+max_)*0.5);
-#else
-  viewer->camera()->setRevolveAroundPoint((min_+max_)*0.5);
-#endif
 
-  qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
+  CGAL::qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
   viewer->camera()->fitBoundingBox(min_, max_);
-  qglviewer::ManipulatedCameraFrame new_frame(*viewer->camera()->frame());
+  CGAL::qglviewer::ManipulatedCameraFrame new_frame(*viewer->camera()->frame());
   *viewer->camera()->frame() = backup_frame;
   viewer->camera()->interpolateTo(new_frame, 1.f);
   viewer->setVisualHintsMask(1);
 }
 
 void MainWindow::viewerShow(float x, float y, float z) {
-  // viewer->camera()->lookAt(qglviewer::Vec(x, y, z));
+  // viewer->camera()->lookAt(CGAL::qglviewer::Vec(x, y, z));
 
-  qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
-  viewer->camera()->fitSphere(qglviewer::Vec(x, y, z),
+  CGAL::qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
+  viewer->camera()->fitSphere(CGAL::qglviewer::Vec(x, y, z),
                               viewer->camera()->sceneRadius()/100);
-  qglviewer::ManipulatedCameraFrame new_frame(*viewer->camera()->frame());
+  CGAL::qglviewer::ManipulatedCameraFrame new_frame(*viewer->camera()->frame());
   *viewer->camera()->frame() = backup_frame;
   viewer->camera()->interpolateTo(new_frame, 1.f);
   viewer->setVisualHintsMask(1);
 
-#if QGLVIEWER_VERSION >= 0x020502
-  viewer->camera()->setPivotPoint(qglviewer::Vec(x, y, z));
-#else
-  viewer->camera()->setRevolveAroundPoint(qglviewer::Vec(x, y, z));
-#endif
+  viewer->camera()->setPivotPoint(CGAL::qglviewer::Vec(x, y, z));
 }
 
 void MainWindow::message(QString message, QString colorName, QString font) {
@@ -840,11 +832,7 @@ void MainWindow::error(QString text) {
 void MainWindow::updateViewerBBox(bool recenter = true)
 {
   const Scene::Bbox bbox = scene->bbox();
-#if QGLVIEWER_VERSION >= 0x020502
-    qglviewer::Vec center = viewer->camera()->pivotPoint();
-#else
-    qglviewer::Vec center = viewer->camera()->revolveAroundPoint();
-#endif
+    CGAL::qglviewer::Vec center = viewer->camera()->pivotPoint();
   const double xmin = bbox.xmin();
   const double ymin = bbox.ymin();
   const double zmin = bbox.zmin();
@@ -853,11 +841,11 @@ void MainWindow::updateViewerBBox(bool recenter = true)
   const double zmax = bbox.zmax();
 
 
-  qglviewer::Vec
+  CGAL::qglviewer::Vec
     vec_min(xmin, ymin, zmin),
     vec_max(xmax, ymax, zmax),
     bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
-  qglviewer::Vec offset(0,0,0);
+  CGAL::qglviewer::Vec offset(0,0,0);
   double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
                       (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
                           (std::abs)(bbox_center.z - viewer->offset().z)));
@@ -886,11 +874,7 @@ void MainWindow::updateViewerBBox(bool recenter = true)
   }
   else
   {
-#if QGLVIEWER_VERSION >= 0x020502
     viewer->camera()->setPivotPoint(center);
-#else
-    viewer->camera()->setRevolveAroundPoint(center);
-#endif
   }
 }
 
@@ -1700,7 +1684,7 @@ void MainWindow::save(QString filename, CGAL::Three::Scene_item* item) {
 
 void MainWindow::on_actionSaveSnapshot_triggered()
 {
-  viewer->saveSnapshot(false);
+  viewer->saveSnapshot();
 }
 
 bool MainWindow::on_actionErase_triggered()

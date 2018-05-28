@@ -7,7 +7,7 @@
 #include <cassert>
 
 #include <QDebug>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 
 #include "Volume_plane_interface.h"
 #include "create_sphere.h"
@@ -16,6 +16,7 @@
 #include <QOpenGLShaderProgram>
 #include <QMouseEvent>
 #include <CGAL/Three/Viewer_interface.h>
+#include <CGAL/Qt/constraint.h>
 #include <CGAL/Qt/debug.h>
 
 using namespace CGAL::Three;
@@ -32,14 +33,14 @@ void printGlError(CGAL::Three::Viewer_interface*, unsigned int) {
 #endif
 
 template<int Dim>
-class Length_constraint : public qglviewer::WorldConstraint {
+class Length_constraint : public CGAL::qglviewer::WorldConstraint {
 public:
   Length_constraint(double max_) : max_(max_) { }
 
-  void constrainTranslation(qglviewer::Vec& t, qglviewer::Frame* const frame) {
+  void constrainTranslation(CGAL::qglviewer::Vec& t, CGAL::qglviewer::Frame* const frame) {
     WorldConstraint::constrainTranslation(t, frame);
-    qglviewer::Vec pos = frame->position();
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    CGAL::qglviewer::Vec pos = frame->position();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     double start = pos[Dim] - offset[Dim];
     double end = t[Dim];
     start += end;
@@ -63,7 +64,7 @@ public:
 
  void invalidateOpenGLBuffers()
  {
-     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+     const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
      mFrame_->setPosition(offset.x, offset.y, offset.z);
  }
  bool eventFilter(QObject *, QEvent *);
@@ -115,7 +116,7 @@ public:
   unsigned int bDim() const { return bdim_; }
   unsigned int cDim() const { return cdim_; }
 
-  qglviewer::Vec translationVector() const { return translationVector(*this); }
+  CGAL::qglviewer::Vec translationVector() const { return translationVector(*this); }
 
   unsigned int getCurrentCube() const { return currentCube; }
 
@@ -137,14 +138,14 @@ private:
   static const char* fragmentShader_bordures_source;
 
 
-  qglviewer::Vec translationVector(x_tag) const {
-    return qglviewer::Vec(xscale_, 0.0, 0.0);
+  CGAL::qglviewer::Vec translationVector(x_tag) const {
+    return CGAL::qglviewer::Vec(xscale_, 0.0, 0.0);
   }
-  qglviewer::Vec translationVector(y_tag) const {
-    return qglviewer::Vec(0.0, yscale_, 0.0);
+  CGAL::qglviewer::Vec translationVector(y_tag) const {
+    return CGAL::qglviewer::Vec(0.0, yscale_, 0.0);
   }
-  qglviewer::Vec translationVector(z_tag) const {
-    return qglviewer::Vec(0.0, 0.0, zscale_);
+  CGAL::qglviewer::Vec translationVector(z_tag) const {
+    return CGAL::qglviewer::Vec(0.0, 0.0, zscale_);
   }
 
   void initShaders();
@@ -266,24 +267,24 @@ private:
       c_spheres.push_back((adim_ - 1) * xscale_/2.0f-max_dim/15.0f); c_spheres.push_back(0.0f); c_spheres.push_back(0.0f);
   }
 
-  qglviewer::Constraint* setConstraint(x_tag) {
-    qglviewer::AxisPlaneConstraint* c = new Length_constraint<0>(cdim_ * xscale_);
-    c->setRotationConstraintType(qglviewer::AxisPlaneConstraint::FORBIDDEN);
-    c->setTranslationConstraint(qglviewer::AxisPlaneConstraint::AXIS, qglviewer::Vec(1.0f, 0.0f, 0.0f));
+  CGAL::qglviewer::Constraint* setConstraint(x_tag) {
+    CGAL::qglviewer::AxisPlaneConstraint* c = new Length_constraint<0>(cdim_ * xscale_);
+    c->setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FORBIDDEN);
+    c->setTranslationConstraint(CGAL::qglviewer::AxisPlaneConstraint::AXIS, CGAL::qglviewer::Vec(1.0f, 0.0f, 0.0f));
     return c;
   }
   
-  qglviewer::Constraint* setConstraint(y_tag) {
-    qglviewer::AxisPlaneConstraint* c = new Length_constraint<1>(cdim_ * yscale_);
-    c->setRotationConstraintType(qglviewer::AxisPlaneConstraint::FORBIDDEN);
-    c->setTranslationConstraint(qglviewer::AxisPlaneConstraint::AXIS, qglviewer::Vec(0.0f, 1.0f, 0.0f));
+  CGAL::qglviewer::Constraint* setConstraint(y_tag) {
+    CGAL::qglviewer::AxisPlaneConstraint* c = new Length_constraint<1>(cdim_ * yscale_);
+    c->setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FORBIDDEN);
+    c->setTranslationConstraint(CGAL::qglviewer::AxisPlaneConstraint::AXIS, CGAL::qglviewer::Vec(0.0f, 1.0f, 0.0f));
     return c;
   }
 
-  qglviewer::Constraint* setConstraint(z_tag) {
-    qglviewer::AxisPlaneConstraint* c = new Length_constraint<2>(cdim_ * zscale_);
-    c->setRotationConstraintType(qglviewer::AxisPlaneConstraint::FORBIDDEN);
-    c->setTranslationConstraint(qglviewer::AxisPlaneConstraint::AXIS, qglviewer::Vec(0.0f, 0.0f, 1.0f));
+  CGAL::qglviewer::Constraint* setConstraint(z_tag) {
+    CGAL::qglviewer::AxisPlaneConstraint* c = new Length_constraint<2>(cdim_ * zscale_);
+    c->setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FORBIDDEN);
+    c->setTranslationConstraint(CGAL::qglviewer::AxisPlaneConstraint::AXIS, CGAL::qglviewer::Vec(0.0f, 0.0f, 1.0f));
     return c;
   }
 
@@ -294,15 +295,15 @@ private:
 
   GLdouble getTranslation() const { return getTranslation(*this); }
   GLdouble getTranslation(x_tag) const {
-      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
       return (mFrame_->matrix()[12]  - offset.x)/ xscale_;
   }
   GLdouble getTranslation(y_tag) const {
-      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
       return (mFrame_->matrix()[13]  - offset.y)/ yscale_;
   }
   GLdouble getTranslation(z_tag) const {
-      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
       return (mFrame_->matrix()[14] - offset.z)/ zscale_ ;
   }
 
@@ -380,9 +381,9 @@ const char* Volume_plane<T>::fragmentShader_bordures_source =
 
 template<typename T>
 Volume_plane<T>::Volume_plane()
-  : Volume_plane_interface(new qglviewer::ManipulatedFrame)
+  : Volume_plane_interface(new CGAL::qglviewer::ManipulatedFrame)
  {
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     mFrame_->setPosition(offset.x, offset.y, offset.z);
     sphere_Slider = new QSlider(Qt::Horizontal);
     sphere_Slider->setValue(40);
@@ -624,7 +625,7 @@ void Volume_plane<T>::initShaders() {
 template<typename T>
 bool Volume_plane<T>::eventFilter(QObject *, QEvent *event)
 {
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
     if(event->type() == QEvent::MouseButtonPress)
     {
         QMouseEvent* e = static_cast<QMouseEvent*>(event);
@@ -633,18 +634,18 @@ bool Volume_plane<T>::eventFilter(QObject *, QEvent *event)
             //pick
             bool found = false;
             viewer->makeCurrent();
-            qglviewer::Vec pos = viewer->camera()->pointUnderPixel(e->pos(), found);
+            CGAL::qglviewer::Vec pos = viewer->camera()->pointUnderPixel(e->pos(), found);
             if(!found)
                 return false;
             found = false;
             //check the found point is on a sphere
             pos = manipulatedFrame()->inverse().inverseCoordinatesOf(pos);
             float sq_radius = sphere_radius * sphere_radius;
-            qglviewer::Vec center;
+            CGAL::qglviewer::Vec center;
             //is the picked point on the sphere ?
             for (int i=0; i<4; ++i)
             {
-                center = qglviewer::Vec(c_spheres[i*3], c_spheres[i*3+1], c_spheres[i*3+2]);
+                center = CGAL::qglviewer::Vec(c_spheres[i*3], c_spheres[i*3+1], c_spheres[i*3+2]);
                 if(
                         (center.x - pos.x) * (center.x - pos.x) +
                         (center.y - pos.y) * (center.y - pos.y) +
@@ -663,8 +664,8 @@ bool Volume_plane<T>::eventFilter(QObject *, QEvent *event)
             viewer->setMouseBinding(
                         Qt::NoModifier,
                         Qt::LeftButton,
-                        QGLViewer::FRAME,
-                        QGLViewer::TRANSLATE);
+                        CGAL::qglviewer::FRAME,
+                        CGAL::qglviewer::TRANSLATE);
         }
     }
     else if(event->type() == QEvent::MouseButtonRelease && is_grabbing)
@@ -673,8 +674,8 @@ bool Volume_plane<T>::eventFilter(QObject *, QEvent *event)
         viewer->setMouseBinding(
                     Qt::NoModifier,
                     Qt::LeftButton,
-                    QGLViewer::CAMERA,
-                    QGLViewer::ROTATE);
+                    CGAL::qglviewer::CAMERA,
+                    CGAL::qglviewer::ROTATE);
     }
     return false;
 }

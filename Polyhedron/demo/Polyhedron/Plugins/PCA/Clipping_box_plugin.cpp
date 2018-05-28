@@ -96,7 +96,7 @@ dock_widget->show();
   });
   item->setName("Clipping box");
   item->setRenderingMode(FlatPlusEdges);
-  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
   viewer->installEventFilter(item);
   scene->addItem(item);
   actionClipbox->setEnabled(false);
@@ -113,7 +113,7 @@ void Clipping_box_plugin::clip(bool b)
 {
   typedef CGAL::Epick Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Mesh;
-  Viewer_interface* viewer = static_cast<Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+  Viewer_interface* viewer = static_cast<Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin());
   if(b)
   {
     if(!item)

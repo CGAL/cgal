@@ -1021,7 +1021,7 @@ namespace internal {
           put(vpmap_, vp.first, initial_pos);//cancel move
       }
 
-      CGAL_assertion(is_valid(mesh_));
+      CGAL_assertion(is_valid_polygon_mesh(mesh_));
       CGAL_assertion(is_triangle_mesh(mesh_));
       }//end for loop (nit == nb_iterations)
 
@@ -1055,7 +1055,7 @@ namespace internal {
         Point proj = trees[patch_id_to_index_map[get_patch_id(face(halfedge(v, mesh_), mesh_))]]->closest_point(get(vpmap_, v));
         put(vpmap_, v, proj);
       }
-      CGAL_assertion(is_valid(mesh_));
+      CGAL_assertion(is_valid_polygon_mesh(mesh_));
       CGAL_assertion(is_triangle_mesh(mesh_));
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_self_intersections();
