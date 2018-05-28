@@ -1,7 +1,6 @@
 Release History
 ===============
 
-
 Release 4.13
 ------------
 
@@ -32,6 +31,10 @@ Release date: September 2018
 -   The concepts `InterpolationTraits` and `GradientFittingTraits` have been updated
     to reflect the real needs of the code (some types and operators were used
     in the code but did not appear in the concepts).
+
+### Polygon Mesh Processing
+-   Added a function to apply a transformation to a mesh : 
+    - `CGAL::Polygon_mesh_processing::transform()`
 
 Release 4.12
 ------------
