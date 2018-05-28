@@ -6,7 +6,7 @@ Release 4.13
 
 Release date: September 2018
 
-###Installation
+### Installation
 
 -   The library CGAL_Qt5 now contains a fork of the version 2.7.0 of libQGLViewer.
     The corresponding code is in the package GraphicsView.
