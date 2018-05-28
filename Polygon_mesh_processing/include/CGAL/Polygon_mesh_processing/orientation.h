@@ -176,7 +176,7 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
                          const NamedParameters& np)
 {
   CGAL_warning(CGAL::is_closed(pmesh));
-  CGAL_precondition(CGAL::is_valid(pmesh));
+  CGAL_precondition(CGAL::is_valid_polygon_mesh(pmesh));
 
   //check for empty pmesh
   CGAL_warning(faces(pmesh).first != faces(pmesh).second);
@@ -480,7 +480,7 @@ void orient(TriangleMesh& tm, const NamedParameters& np)
       NamedParameters>::const_type Fid_map;
 
   CGAL_assertion(is_triangle_mesh(tm));
-  CGAL_assertion(is_valid(tm));
+  CGAL_assertion(is_valid_polygon_mesh(tm));
   CGAL_assertion(is_closed(tm));
 
   using boost::choose_param;

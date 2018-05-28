@@ -207,7 +207,10 @@ Release date: April 2018
 
 ### CGAL and the Boost Graph Library (BGL)
 
--   Added helper function `CGAL::expand_face_selection_for_removal` that
+-   Add helper function `CGAL::is_valid_polygon_mesh` that checks the 
+    validity of a polygon mesh using BGL functions.
+
+-   Add helper function `CGAL::expand_face_selection_for_removal` that
     expands a face selection to avoid creating a non manifold mesh when
     removing the selected faces.
 
