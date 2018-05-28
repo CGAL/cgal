@@ -1272,6 +1272,7 @@ LEDA_FOUND is false.")
             endif()
           endif()
           if(NOT skip_hdr)
+            LIST( APPEND list_of_headers_to_test ${header})
             string(REPLACE "/" "__" header2 "${header}")
             string(REPLACE "." "_" header2 "${header2}")
             string(REPLACE ";" " " include_options_str "${include_options}")
@@ -1336,7 +1337,26 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
         list(REMOVE_DUPLICATES packages_deps)
       endif()
     endforeach() # loop on packages
-    add_custom_target(check_headers DEPENDS ${check_pkg_target_list})
+    
+    #Now check that a cpp file including all documented headers compiles
+    file(WRITE ${CGAL_BINARY_DIR}/test_headers.cpp "#define  BOOST_PARAMETER_MAX_ARITY 12 \n")
+    foreach(header ${list_of_headers_to_test})
+      file(APPEND ${CGAL_BINARY_DIR}/test_headers.cpp "#include <${header}>\n")
+    endforeach() #loop on headers to include in test file
+    file(APPEND ${CGAL_BINARY_DIR}/test_headers.cpp "int main(){}\n")
+
+    add_custom_target(check_headers 
+                       DEPENDS ${check_pkg_target_list})
+
+    string(REPLACE " " ";" compile_options ${compile_options})
+    string(REPLACE " " ";" include_options ${include_options_str})
+    add_custom_command(TARGET check_headers
+                       POST_BUILD
+                       COMMAND ${CMAKE_CXX_COMPILER}
+                        ${compile_options} ${include_options} 
+                        -x c++ -fsyntax-only ${CGAL_BINARY_DIR}/test_headers.cpp
+                    )
+
     add_custom_target(packages_dependencies DEPENDS ${packages_deps})
     message( "  \n\
   You can now check the headers with the target `check_headers`\n\

@@ -1,10 +1,9 @@
-// Copyright (c) 2009 INRIA Sophia-Antipolis (France).
-// All rights reserved.
+// Copyright (c) 2014  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -14,23 +13,16 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0+
+// 
 //
-//
-// Author(s)     : Stephane Tayeb
-//
-//******************************************************************************
-// File Description : 
-//******************************************************************************
+// Author(s)     : Andreas Fabri
 
-#ifndef CGAL_MESH_3_GLOBAL_PARAMETERS_H
-#define CGAL_MESH_3_GLOBAL_PARAMETERS_H
-
-#include <CGAL/license/Mesh_3.h>
-
+#ifndef CGAL_BOOST_PARAMETER_H
+#define CGAL_BOOST_PARAMETER_H
 
 #include <CGAL/config.h>
-#include <CGAL/Mesh_3/config.h>
+
 
 #ifdef BOOST_PARAMETER_MAX_ARITY
 #  if (BOOST_PARAMETER_MAX_ARITY < 12)
@@ -39,14 +31,34 @@
 #else
 #  define  BOOST_PARAMETER_MAX_ARITY 12
 #endif
-
 #include <boost/parameter.hpp>
+#include <boost/parameter/name.hpp>
 
 
-namespace CGAL {
+#if defined(__clang__) || (BOOST_GCC >= 40600)
+#  define CGAL_IGNORE_UNUSED_VARIABLES \
+    _Pragma("GCC diagnostic ignored \"-Wunused-variable\"") \
+    _Pragma("GCC diagnostic ignored \"-Wunused-parameter\"")
+#else
+#  define CGAL_IGNORE_UNUSED_VARIABLES
+#endif
+#if __has_warning("-Wunneeded-internal-declaration")
+#  define CGAL_IGNORE_UNUSED_INTERNAL_DECLARATION \
+     _Pragma("clang diagnostic ignored \"-Wunneeded-internal-declaration\"")
+#else
+#  define CGAL_IGNORE_UNUSED_INTERNAL_DECLARATION
+#endif
 
-namespace parameters {
+#define CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS \
+  CGAL_IGNORE_UNUSED_VARIABLES                    \
+  CGAL_IGNORE_UNUSED_INTERNAL_DECLARATION
 
+
+namespace CGAL
+{
+namespace parameters
+{
+  
 template <typename T>
 struct Base
 {
@@ -56,33 +68,39 @@ private:
   T t_;
 };
   
-#define CGAL_MESH_BOOLEAN_PARAMETER(Class, function_true, function_false)     \
+#define CGAL_BOOLEAN_PARAMETER(Class, function_true, function_false)     \
   struct Class : public Base<bool> { Class(bool b) : Base<bool>(b){} };       \
   inline Class function_true() { return Class(true); }                        \
   inline Class function_false() { return Class(false); }
 
-#define CGAL_MESH_DOUBLE_PARAMETER(Class, function, precondition)             \
+#define CGAL_DOUBLE_PARAMETER(Class, function, precondition)             \
   struct Class : public Base<double>                                          \
   { Class(double d) : Base<double>(d) { precondition(d); } };                 \
   inline Class function(double d) { return Class(d); }
 
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/Mesh_3/config.h>
-CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+// see <CGAL/boost/parameter.h>
+CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 
 BOOST_PARAMETER_NAME( c3t3 )
 BOOST_PARAMETER_NAME( domain )
 BOOST_PARAMETER_NAME( criteria )
-  
+BOOST_PARAMETER_NAME( cdt )
+
+BOOST_PARAMETER_NAME( (seeds_begin, tag) seeds_begin_)
+BOOST_PARAMETER_NAME( (seeds_end, tag) seeds_end_)
+BOOST_PARAMETER_NAME( (mark, tag) mark_)
+
 BOOST_PARAMETER_NAME( (time_limit, tag) time_limit_ )
+BOOST_PARAMETER_NAME( (convergence, tag) convergence_)
+BOOST_PARAMETER_NAME( (max_iteration_number, tag) max_iteration_number_ )
+BOOST_PARAMETER_NAME( (freeze_bound, tag) freeze_bound_)
+  
 BOOST_PARAMETER_NAME( (sliver_bound, tag) sliver_bound_)
 BOOST_PARAMETER_NAME( (sliver_criterion, tag) sliver_criterion_)
 BOOST_PARAMETER_NAME( (perturbation_vector, tag) perturbation_vector_) 
-BOOST_PARAMETER_NAME( (freeze_bound, tag) freeze_bound_)
 BOOST_PARAMETER_NAME( (do_freeze, tag) do_freeze_)
-BOOST_PARAMETER_NAME( (max_iteration_number, tag) max_iteration_number_ )
-BOOST_PARAMETER_NAME( (convergence, tag) convergence_)
 
 BOOST_PARAMETER_NAME( (mesh_topology, tag) mesh_topology_)
 
@@ -97,12 +115,8 @@ BOOST_PARAMETER_NAME( (maximal_number_of_vertices, tag ) maximal_number_of_verti
 BOOST_PARAMETER_NAME( (pointer_to_error_code, tag ) pointer_to_error_code_)
 
 CGAL_PRAGMA_DIAG_POP
-} // end namespace parameters
+} // parameters
+} // CGAL
 
 
-
-
-
-} //namespace CGAL
-
-#endif // CGAL_MESH_3_GLOBAL_PARAMETERS_H
+#endif // CGAL_BOOST_PARAMETER_H
