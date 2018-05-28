@@ -30,7 +30,7 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/Mesh_3/global_parameters.h>
+#include <CGAL/boost/parameter.h>
 #include <CGAL/Mesh_3/sliver_criteria.h>
 #include <CGAL/Mesh_3/Sliver_perturber.h>
 #include <CGAL/Mesh_optimization_return_code.h>
@@ -48,8 +48,8 @@ namespace CGAL {
 
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/Mesh_3/config.h>
-CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+// see <CGAL/boost/parameter.h>
+CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 
 BOOST_PARAMETER_FUNCTION(
   (Mesh_optimization_return_code),

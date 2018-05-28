@@ -32,7 +32,7 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/Mesh_3/global_parameters.h>
+#include <CGAL/boost/parameter.h>
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 
 #include <CGAL/Side_of_triangle_mesh.h>
