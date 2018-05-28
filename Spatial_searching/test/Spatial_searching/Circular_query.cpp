@@ -155,7 +155,7 @@ int main()
   std::cout << "seed: " << rnd.get_seed() << std::endl;
 
   // generator for random data points in the square ( (-1,-1), (1,1) )
-  Random_points_iterator rpit(1.0);
+  Random_points_iterator rpit(1.0, rnd);
 
   // construct list containing N random points
   const int N=1000;
