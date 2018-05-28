@@ -28,7 +28,9 @@
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/property_map.h>
 #include <boost/type_traits/is_const.hpp>
+#include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/remove_reference.hpp>
+#include <boost/mpl/if.hpp>
 #include <fstream>
 #include <sstream>
 #include <set>
@@ -152,6 +154,71 @@ void copy_edge_mark(G&,
                     const No_mark<G>&,
                           No_mark<G>&)
 {} // nothing to do
+
+// Parts to get default property maps for output meshes based on the value type
+// of input vertex point maps.
+template <typename Point_3, typename vertex_descriptor>
+struct Dummy_default_vertex_point_map
+{
+  typedef vertex_descriptor key_type;
+  typedef Point_3 value_type;
+  typedef Point_3 reference;
+  typedef boost::read_write_property_map_tag category;
+
+  inline friend
+  value_type
+  get(Dummy_default_vertex_point_map, key_type)
+  {
+    CGAL_assertion(false ||
+      !"This property map should not be used."
+       "Check the value type of the output vpm vs that of input");
+    return Point_3();
+  }
+
+  inline friend
+  void
+  put(Dummy_default_vertex_point_map, key_type, value_type)
+  {
+    CGAL_assertion(false ||
+      !"This property map should not be used."
+       "Check the value type of the output vpm vs that of input");
+  }
+};
+
+template <class Point_3, class NamedParameter, class PolygonMesh>
+struct TweakedGetVertexPointMap
+{
+  typedef typename GetVertexPointMap<PolygonMesh,
+                                     NamedParameter>::type Default_map;
+  typedef typename boost::is_same<Point_3,
+    typename boost::property_traits<Default_map>::value_type>::type Use_default_tag;
+
+  typedef typename boost::mpl::if_<
+    Use_default_tag,
+    Default_map,
+    Dummy_default_vertex_point_map<Point_3,
+      typename boost::graph_traits<PolygonMesh>::vertex_descriptor >
+  >::type type;
+};
+
+template <class PT, class NP, class PM>
+boost::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
+get_vpm(const NP& np, boost::optional<PM*> opm, boost::true_type)
+{
+  if (boost::none == opm) return boost::none;
+  return boost::choose_param(
+           boost::get_param(np, internal_np::vertex_point),
+           get_property_map(boost::vertex_point, *(*opm)) );
+}
+
+template <class PT, class NP, class PM>
+boost::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
+get_vpm(const NP&, boost::optional<PM*> opm, boost::false_type)
+{
+  if (boost::none == opm) return boost::none;
+  return typename TweakedGetVertexPointMap<PT, NP, PM>::type();
+}
+//
 
 template <class TriangleMesh>
 struct Default_new_face_visitor{
@@ -501,6 +568,7 @@ template <class PolygonMesh,
           class EdgeMap,
           class VertexMap,
           class VertexPointMap,
+          class VertexPointMapOut,
           class IntersectionEdgeMap>
 void import_polyline(
   PolygonMesh& output,
@@ -516,7 +584,7 @@ void import_polyline(
   const IntersectionEdgeMap& intersection_edges2,
   const VertexPointMap& vpm1,
   const VertexPointMap& /*vpm2*/,
-  const VertexPointMap& vpm_out,
+  const VertexPointMapOut& vpm_out,
   std::vector<typename boost::graph_traits<PolygonMesh>
                 ::edge_descriptor>& output_shared_edges)
 {
@@ -713,6 +781,7 @@ template < bool reverse_patch_orientation,
            class TriangleMesh,
            class PatchContainer,
            class VertexPointMap,
+           class VertexPointMapOut,
            class EdgeMarkMapOut,
            class EdgeMarkMapIn ,
            class NewFaceVisitor>
@@ -720,7 +789,7 @@ void append_patches_to_triangle_mesh(
   TriangleMesh& output,
   const boost::dynamic_bitset<>& patches_to_append,
   PatchContainer& patches,
-  const VertexPointMap& vpm_out,
+  const VertexPointMapOut& vpm_out,
   const VertexPointMap& vpm_tm,
   EdgeMarkMapOut& edge_mark_map_out,
   const EdgeMarkMapIn& edge_mark_map_in,
@@ -920,6 +989,7 @@ void append_patches_to_triangle_mesh(
 template < class TriangleMesh,
            class IntersectionEdgeMap,
            class VertexPointMap,
+           class VertexPointMapOut,
            class EdgeMarkMap1,
            class EdgeMarkMap2,
            class EdgeMarkMapOut,
@@ -939,7 +1009,7 @@ void fill_new_triangle_mesh(
   const IntersectionEdgeMap& intersection_edges2,
   const VertexPointMap& vpm1,
   const VertexPointMap& vpm2,
-  const VertexPointMap& vpm_out,
+  const VertexPointMapOut& vpm_out,
   const EdgeMarkMap1& edge_mark_map1,
   const EdgeMarkMap2& edge_mark_map2,
         EdgeMarkMapOut& edge_mark_map_out,

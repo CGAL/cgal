@@ -36,25 +36,39 @@
 
 #include <boost/dynamic_bitset.hpp>
 
-
-#define CGAL_COREF_SELECT_OUT_ECM(I) \
-  (I == 0 ? cpp11::get<0>(out_edge_mark_maps) \
-          : I == 1 ? cpp11::get<1>(out_edge_mark_maps) \
-                   : I == 2 ? cpp11::get<2>(out_edge_mark_maps) \
-                            : cpp11::get<3>(out_edge_mark_maps))
+// required to handle the multiple types of edge constrained maps
+// for the different output types. CGAL_COREF_FUNCTION_CALL_DEF
+// must be defined prior to using this macro.
+#define CGAL_COREF_FUNCTION_CALL(BO_type) \
+  switch(BO_type) \
+  { \
+    case UNION: \
+      CGAL_COREF_FUNCTION_CALL_DEF(UNION); \
+      break; \
+    case INTERSECTION: \
+      CGAL_COREF_FUNCTION_CALL_DEF(INTERSECTION); \
+      break; \
+    case TM1_MINUS_TM2: \
+      CGAL_COREF_FUNCTION_CALL_DEF(TM1_MINUS_TM2); \
+      break; \
+    default: \
+      CGAL_assertion( BO_type == TM2_MINUS_TM1 ); \
+      CGAL_COREF_FUNCTION_CALL_DEF(TM2_MINUS_TM1); \
+  }
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
-enum Boolean_operation {UNION = 0, INTERSECTION,
-                        TM1_MINUS_TM2, TM2_MINUS_TM1, NONE };
+enum Boolean_operation_type {UNION = 0, INTERSECTION,
+                             TM1_MINUS_TM2, TM2_MINUS_TM1, NONE };
 
 namespace PMP=Polygon_mesh_processing;
 namespace params=PMP::parameters;
 
 template <class TriangleMesh,
           class VertexPointMap,
+          class VpmOutTuple,
           class FaceIdMap,
           class Kernel_=Default,
           class EdgeMarkMapBind_  = Default,
@@ -110,7 +124,7 @@ class Face_graph_output_builder
   const FaceIdMap &fids1, &fids2;
   EdgeMarkMapBind& marks_on_input_edges;
   // property maps of output meshes
-  const cpp11::array<VertexPointMap*, 4 >& output_vpms;
+  const VpmOutTuple& output_vpms;
   EdgeMarkMapTuple& out_edge_mark_maps;
   NewFaceVisitor& new_face_visitor;
   // output meshes
@@ -340,7 +354,7 @@ public:
                             const FaceIdMap& fids1,
                             const FaceIdMap& fids2,
                                   EdgeMarkMapBind& marks_on_input_edges,
-                            const cpp11::array<VertexPointMap*, 4>& output_vpms,
+                            const VpmOutTuple& output_vpms,
                                   EdgeMarkMapTuple& out_edge_mark_maps,
                                   NewFaceVisitor& new_face_visitor,
                             const cpp11::array<
@@ -1191,12 +1205,12 @@ public:
     // should be done. First operations are those filling meshes
     // different from tm1 and tm2, then the one modifying tm1 and
     // finally the one modifying tm2.
-    std::vector<Boolean_operation> out_of_place_operations;
-    Boolean_operation inplace_operation_tm1=NONE,
-                      inplace_operation_tm2=NONE;
+    std::vector<Boolean_operation_type> out_of_place_operations;
+    Boolean_operation_type inplace_operation_tm1=NONE,
+                           inplace_operation_tm2=NONE;
     for (int i=0;i<4;++i)
     {
-      Boolean_operation operation=enum_cast<Boolean_operation>(i);
+      Boolean_operation_type operation=enum_cast<Boolean_operation_type>(i);
 
       if (!requested_output[operation] || impossible_operation.test(operation))
         continue;
@@ -1211,7 +1225,7 @@ public:
     }
 
     /// first handle operations in a mesh that is neither tm1 nor tm2
-    BOOST_FOREACH(Boolean_operation operation, out_of_place_operations)
+    BOOST_FOREACH(Boolean_operation_type operation, out_of_place_operations)
     {
       TriangleMesh& output = *(*requested_output[operation]);
       CGAL_assertion(&tm1!=&output && &tm2!=&output);
@@ -1228,20 +1242,24 @@ public:
       );
 
       std::vector<edge_descriptor> shared_edges;
-      fill_new_triangle_mesh(
-        output,
-        patches_of_tm1_used[operation], patches_of_tm2_used[operation],
-        patches_of_tm1, patches_of_tm2,
-        operation == TM2_MINUS_TM1, operation == TM1_MINUS_TM2,
-        polylines,
-        intersection_edges1, intersection_edges2,
-        vpm1, vpm2, *output_vpms[operation],
-        marks_on_input_edges.ecm1,
-        marks_on_input_edges.ecm2,
-        CGAL_COREF_SELECT_OUT_ECM(operation),
-        shared_edges,
-        new_face_visitor
-      );
+
+      #define CGAL_COREF_FUNCTION_CALL_DEF(BO_type) \
+        fill_new_triangle_mesh( \
+          output, \
+          patches_of_tm1_used[BO_type], patches_of_tm2_used[BO_type], \
+          patches_of_tm1, patches_of_tm2, \
+          BO_type == TM2_MINUS_TM1, BO_type == TM1_MINUS_TM2, \
+          polylines, \
+          intersection_edges1, intersection_edges2, \
+          vpm1, vpm2, *cpp11::get<BO_type>(output_vpms), \
+          marks_on_input_edges.ecm1, \
+          marks_on_input_edges.ecm2, \
+          cpp11::get<BO_type>(out_edge_mark_maps), \
+          shared_edges, \
+          new_face_visitor \
+        )
+      CGAL_COREF_FUNCTION_CALL(operation)
+      #undef CGAL_COREF_FUNCTION_CALL_DEF
       mark_edges(out_edge_mark_maps, shared_edges, operation);
     }
 
@@ -1306,36 +1324,44 @@ public:
           patches_of_tm1[i];
         }
         // Operation in tm1: disconnect patches not use and append the one from tm2
-        compute_inplace_operation_delay_removal_and_insideout(
-          tm1,
-          tm2,
-          patches_of_tm1_used[inplace_operation_tm1],
-          patches_of_tm2_used[inplace_operation_tm1],
-          patches_of_tm1, patches_of_tm2,
-          inplace_operation_tm1 == TM1_MINUS_TM2 ||
-            inplace_operation_tm1 == TM2_MINUS_TM1,
-          polylines_in_tm1,
-          vpm1, vpm2,
-          marks_on_input_edges.ecm1,
-          marks_on_input_edges.ecm2,
-          CGAL_COREF_SELECT_OUT_ECM(inplace_operation_tm1),
-          disconnected_patches_edge_to_tm2_edge,
-          new_face_visitor);
+        #define CGAL_COREF_FUNCTION_CALL_DEF(BO_type)\
+        compute_inplace_operation_delay_removal_and_insideout( \
+          tm1, \
+          tm2, \
+          patches_of_tm1_used[BO_type], \
+          patches_of_tm2_used[BO_type], \
+          patches_of_tm1, patches_of_tm2, \
+          BO_type == TM1_MINUS_TM2 || \
+            BO_type == TM2_MINUS_TM1, \
+          polylines_in_tm1, \
+          vpm1, vpm2, \
+          marks_on_input_edges.ecm1, \
+          marks_on_input_edges.ecm2, \
+          cpp11::get<BO_type>(out_edge_mark_maps), \
+          disconnected_patches_edge_to_tm2_edge, \
+          new_face_visitor)
+        CGAL_COREF_FUNCTION_CALL(inplace_operation_tm1)
+        #undef CGAL_COREF_FUNCTION_CALL_DEF
         // Operation in tm2: discard patches and append the one from tm2
         CGAL_assertion( *requested_output[inplace_operation_tm2] == &tm2 );
-        compute_inplace_operation( tm2, tm1,
-                                   patches_of_tm2_used[inplace_operation_tm2],
-                                   patches_of_tm1_used[inplace_operation_tm2],
-                                   patches_of_tm2, patches_of_tm1,
-                                   inplace_operation_tm2==TM1_MINUS_TM2,
-                                   inplace_operation_tm2==TM2_MINUS_TM1,
-                                   vpm2,
-                                   vpm1,
-                                   marks_on_input_edges.ecm2,
-                                   marks_on_input_edges.ecm1,
-                                   CGAL_COREF_SELECT_OUT_ECM(inplace_operation_tm2),
-                                   disconnected_patches_edge_to_tm2_edge,
-                                   new_face_visitor);
+
+        #define CGAL_COREF_FUNCTION_CALL_DEF(BO_type)\
+          compute_inplace_operation( tm2, tm1, \
+                                     patches_of_tm2_used[BO_type], \
+                                     patches_of_tm1_used[BO_type], \
+                                     patches_of_tm2, patches_of_tm1, \
+                                     BO_type==TM1_MINUS_TM2, \
+                                     BO_type==TM2_MINUS_TM1, \
+                                     vpm2, \
+                                     vpm1, \
+                                     marks_on_input_edges.ecm2, \
+                                     marks_on_input_edges.ecm1, \
+                                     cpp11::get<BO_type>(out_edge_mark_maps), \
+                                     disconnected_patches_edge_to_tm2_edge, \
+                                     new_face_visitor)
+        CGAL_COREF_FUNCTION_CALL(inplace_operation_tm2)
+        #undef CGAL_COREF_FUNCTION_CALL_DEF
+
         // remove polylines only on the border of patches not kept in tm2
         if (polylines_in_tm2.to_skip.any())
           remove_unused_polylines(tm2,
@@ -1348,8 +1374,12 @@ public:
                                     marks_on_input_edges.ecm1);
 
         // transfer marks of edges of patches kept to the output edge mark property
-        copy_edge_mark<TriangleMesh>(
-          tm1, marks_on_input_edges.ecm1, CGAL_COREF_SELECT_OUT_ECM(inplace_operation_tm1));
+        #define CGAL_COREF_FUNCTION_CALL_DEF(BO_type) \
+          copy_edge_mark<TriangleMesh>( \
+          tm1, marks_on_input_edges.ecm1, \
+          cpp11::get<BO_type>(out_edge_mark_maps))
+        CGAL_COREF_FUNCTION_CALL(inplace_operation_tm1)
+        #undef CGAL_COREF_FUNCTION_CALL_DEF
 
         // remove polylines only on the border of patches not kept in tm1
         if (polylines_in_tm1.to_skip.any())
@@ -1370,22 +1400,24 @@ public:
           patches_of_tm1_used[inplace_operation_tm1],
           patches_of_tm2_used[inplace_operation_tm1],
           fids1, fids2, tm1, tm2);
-
-        compute_inplace_operation(
-          tm1, tm2,
-          patches_of_tm1_used[inplace_operation_tm1],
-          patches_of_tm2_used[inplace_operation_tm1],
-          patches_of_tm1, patches_of_tm2,
-          inplace_operation_tm1 == TM2_MINUS_TM1,
-          inplace_operation_tm1 == TM1_MINUS_TM2,
-          vpm1,
-          vpm2,
-          marks_on_input_edges.ecm1,
-          marks_on_input_edges.ecm2,
-          CGAL_COREF_SELECT_OUT_ECM(inplace_operation_tm1),
-          polylines,
-          new_face_visitor
-        );
+        #define CGAL_COREF_FUNCTION_CALL_DEF(BO_type) \
+          compute_inplace_operation( \
+            tm1, tm2, \
+            patches_of_tm1_used[BO_type], \
+            patches_of_tm2_used[BO_type], \
+            patches_of_tm1, patches_of_tm2, \
+            BO_type == TM2_MINUS_TM1, \
+            BO_type == TM1_MINUS_TM2, \
+            vpm1, \
+            vpm2, \
+            marks_on_input_edges.ecm1, \
+            marks_on_input_edges.ecm2, \
+            cpp11::get<BO_type>(out_edge_mark_maps), \
+            polylines, \
+            new_face_visitor \
+          )
+        CGAL_COREF_FUNCTION_CALL(inplace_operation_tm1)
+        #undef CGAL_COREF_FUNCTION_CALL_DEF
         // remove polylines only on the border of patches not kept
         if (polylines.to_skip.any())
           remove_unused_polylines(tm1,
@@ -1411,21 +1443,22 @@ public:
           patches_of_tm1_used[inplace_operation_tm2],
           fids2, fids1, tm2, tm1
         );
-
-        compute_inplace_operation( tm2, tm1,
-                                   patches_of_tm2_used[inplace_operation_tm2],
-                                   patches_of_tm1_used[inplace_operation_tm2],
-                                   patches_of_tm2, patches_of_tm1,
-                                   inplace_operation_tm2==TM1_MINUS_TM2,
-                                   inplace_operation_tm2==TM2_MINUS_TM1,
-                                   vpm2,
-                                   vpm1,
-                                   marks_on_input_edges.ecm2,
-                                   marks_on_input_edges.ecm1,
-                                   CGAL_COREF_SELECT_OUT_ECM(inplace_operation_tm2),
-                                   polylines,
-                                   new_face_visitor);
-
+        #define CGAL_COREF_FUNCTION_CALL_DEF(BO_type) \
+          compute_inplace_operation( tm2, tm1, \
+                                     patches_of_tm2_used[BO_type], \
+                                     patches_of_tm1_used[BO_type], \
+                                     patches_of_tm2, patches_of_tm1, \
+                                     BO_type==TM1_MINUS_TM2, \
+                                     BO_type==TM2_MINUS_TM1, \
+                                     vpm2, \
+                                     vpm1, \
+                                     marks_on_input_edges.ecm2, \
+                                     marks_on_input_edges.ecm1, \
+                                     cpp11::get<BO_type>(out_edge_mark_maps), \
+                                     polylines, \
+                                     new_face_visitor);
+        CGAL_COREF_FUNCTION_CALL(inplace_operation_tm2)
+        #undef CGAL_COREF_FUNCTION_CALL_DEF
         // remove polylines only on the border of patches not kept
         if (polylines.to_skip.any())
           remove_unused_polylines(tm2,
@@ -1438,6 +1471,5 @@ public:
 
 } } } // CGAL::Polygon_mesh_processing::Corefinement
 
-#undef CGAL_COREF_SELECT_OUT_ECM
-
+#undef CGAL_COREF_FUNCTION_CALL
 #endif // CGAL_POLYGON_MESH_PROCESSING_INTERNAL_FACE_GRAPH_OUTPUT_BUILDER_H

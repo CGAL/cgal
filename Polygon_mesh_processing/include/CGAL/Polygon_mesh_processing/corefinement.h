@@ -242,17 +242,6 @@ bool does_bound_a_volume(const TriangleMesh& tm)
   return does_bound_a_volume(tm, parameters::all_default());
 }
 
-#define CGAL_COREF_SET_OUTPUT_VERTEX_POINT_MAP(i) \
-  if (output[i]!=boost::none) \
-  { \
-    vpm_out.push_back(  \
-        boost::choose_param(get_param(cpp11::get<i>(nps_out), internal_np::vertex_point), \
-                            get_property_map(boost::vertex_point, *(*output[i])))); \
-    output_vpms[i]=&vpm_out.back(); \
-  } \
-  else \
-    output_vpms[i]=NULL;
-
 #define CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(I) \
   typedef typename boost::lookup_named_param_def < \
     internal_np::edge_is_constrained_t, \
@@ -306,14 +295,36 @@ corefine_and_compute_boolean_operations(
   Vpm vpm2 = boost::choose_param(get_param(np2, internal_np::vertex_point),
                                  get_property_map(boost::vertex_point, tm2));
 
-  //for output meshes
-  cpp11::array<Vpm*, 4> output_vpms;
-  std::vector<Vpm> vpm_out;
-  vpm_out.reserve(4);
-  CGAL_COREF_SET_OUTPUT_VERTEX_POINT_MAP(0)
-  CGAL_COREF_SET_OUTPUT_VERTEX_POINT_MAP(1)
-  CGAL_COREF_SET_OUTPUT_VERTEX_POINT_MAP(2)
-  CGAL_COREF_SET_OUTPUT_VERTEX_POINT_MAP(3)
+  typedef typename boost::property_traits<Vpm>::value_type Point_3;
+
+  // for output meshes: here we have to use a trick so that if for a specific output
+  // that is not requested, the default vpm does not have the same value type as the
+  // input map, a dummy default vpm is used so that calls to get/put can be compiled
+  // (even if not used).
+  typedef cpp11::tuple<
+    Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut0, TriangleMesh>,
+    Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut1, TriangleMesh>,
+    Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut2, TriangleMesh>,
+    Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut3, TriangleMesh>
+  > Vpm_out_tuple_helper;
+
+  typedef cpp11::tuple<
+    boost::optional< typename cpp11::tuple_element<0, Vpm_out_tuple_helper>::type::type >,
+    boost::optional< typename cpp11::tuple_element<1, Vpm_out_tuple_helper>::type::type >,
+    boost::optional< typename cpp11::tuple_element<2, Vpm_out_tuple_helper>::type::type >,
+    boost::optional< typename cpp11::tuple_element<3, Vpm_out_tuple_helper>::type::type >
+  > Vpm_out_tuple;
+
+  Vpm_out_tuple vpm_out_tuple(
+    Corefinement::get_vpm<Point_3>(cpp11::get<0>(nps_out), output[0],
+                                   typename cpp11::tuple_element<0, Vpm_out_tuple_helper>::type::Use_default_tag()),
+    Corefinement::get_vpm<Point_3>(cpp11::get<1>(nps_out), output[1],
+                                   typename cpp11::tuple_element<1, Vpm_out_tuple_helper>::type::Use_default_tag()),
+    Corefinement::get_vpm<Point_3>(cpp11::get<2>(nps_out), output[2],
+                                   typename cpp11::tuple_element<2, Vpm_out_tuple_helper>::type::Use_default_tag()),
+    Corefinement::get_vpm<Point_3>(cpp11::get<3>(nps_out), output[3],
+                                   typename cpp11::tuple_element<3, Vpm_out_tuple_helper>::type::Use_default_tag())
+  );
 
   if (&tm1==&tm2)
   {
@@ -328,7 +339,7 @@ corefine_and_compute_boolean_operations(
                         Emptyset_iterator(),
                         Emptyset_iterator(),
                         vpm1,
-                        vpm_out[Corefinement::UNION]);
+                        *cpp11::get<Corefinement::UNION>(vpm_out_tuple));
 
     if (output[Corefinement::INTERSECTION] != boost::none)
       if (&tm1 != *output[Corefinement::INTERSECTION])
@@ -338,7 +349,7 @@ corefine_and_compute_boolean_operations(
                         Emptyset_iterator(),
                         Emptyset_iterator(),
                         vpm1,
-                        vpm_out[Corefinement::INTERSECTION]);
+                        *cpp11::get<Corefinement::INTERSECTION>(vpm_out_tuple));
 
     if (output[Corefinement::TM1_MINUS_TM2] != boost::none)
       if (&tm1 == *output[Corefinement::TM1_MINUS_TM2])
@@ -410,6 +421,7 @@ corefine_and_compute_boolean_operations(
 
   typedef Corefinement::Face_graph_output_builder<TriangleMesh,
                                                   Vpm,
+                                                  Vpm_out_tuple,
                                                   Fid_map,
                                                   Default,
                                                   Ecm_in,
@@ -421,7 +433,7 @@ corefine_and_compute_boolean_operations(
   Ecm_in ecm_in(tm1,tm2,ecm1,ecm2);
   Edge_mark_map_tuple ecms_out(ecm_out_0, ecm_out_1, ecm_out_2, ecm_out_3);
   Ob ob(tm1, tm2, vpm1, vpm2, fid_map1, fid_map2, ecm_in,
-        output_vpms, ecms_out, nfv, output);
+        vpm_out_tuple, ecms_out, nfv, output);
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm,Visitor >
     functor(tm1, tm2, vpm1, vpm2, Visitor(dnv,nfv,ob,ecm_in));
@@ -539,9 +551,9 @@ corefine_and_compute_union(      TriangleMesh& tm1,
   return
    corefine_and_compute_boolean_operations(tm1, tm2, output, np1, np2,
                                            cpp11::make_tuple(np_out,
-                                                             no_parameters(np_out),
-                                                             no_parameters(np_out),
-                                                             no_parameters(np_out)))
+                                                             all_default(),
+                                                             all_default(),
+                                                             all_default()))
                                                                 [Corefinement::UNION];
 }
 
@@ -570,10 +582,10 @@ corefine_and_compute_intersection(      TriangleMesh& tm1,
 
   return
     corefine_and_compute_boolean_operations(tm1, tm2, output, np1, np2,
-                                            cpp11::make_tuple(no_parameters(np_out),
+                                            cpp11::make_tuple(all_default(),
                                                               np_out,
-                                                              no_parameters(np_out),
-                                                              no_parameters(np_out)))
+                                                              all_default(),
+                                                              all_default()))
                                                                 [Corefinement::INTERSECTION];
 }
 
@@ -603,10 +615,10 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
 
   return
     corefine_and_compute_boolean_operations(tm1, tm2, output, np1, np2,
-                                            cpp11::make_tuple(no_parameters(np_out),
-                                                              no_parameters(np_out),
+                                            cpp11::make_tuple(all_default(),
+                                                              all_default(),
                                                               np_out,
-                                                              no_parameters(np_out)))
+                                                              all_default()))
                                                                 [TM1_MINUS_TM2];
 }
 
