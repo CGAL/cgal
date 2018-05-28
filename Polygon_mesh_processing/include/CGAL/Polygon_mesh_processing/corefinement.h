@@ -269,12 +269,12 @@ bool does_bound_a_volume(const TriangleMesh& tm)
   * between the volumes bounded by `tm1` and `tm2` will be put in the corresponding triangle mesh.
   * The position of the meshes in the array `output` are specific to the Boolean operation to compute
   * and `Corefinement::Boolean_operation_type` encodes and describes the ordering. Constructing the default array
-  * means that no Boolean operation will be done. Overwritting a default value will trigger the corresponding
+  * means that no Boolean operation will be done. Overwriting a default value will trigger the corresponding
   * operation. In such a case, the address to a valid surface mesh must be provided.
   * The optional named parameters for all output meshes are provided as a `tuple` and follow the same
   * order as the array `output`. A call to `corefine_and_compute_boolean_operations()` with optional
   * named parameters passed for output meshes should be done using `make_tuple()` as the types of
-  * named parameters is unspecified.
+  * named parameters are unspecified.
   *
   * If `tm1` and/or `tm2` are one of the output surface meshes, they will be updated to
   * contain the output (in-place operation), in any other case, the corresponding result will
@@ -340,9 +340,9 @@ bool does_bound_a_volume(const TriangleMesh& tm)
   *   \cgalParamEnd
   * \cgalNamedParamsEnd
   *
-  * @return an array filled as follow: for each operation computed, the position in the array
-  *         will contains `true` iff the output surface mesh is manifold, and it is put in the surface mesh
-  *         at the same position in `output`. Note that if a output surface mesh was also
+  * @return an array filled as follows: for each operation computed, the position in the array
+  *         will contain `true` iff the output surface mesh is manifold, and it is put in the surface mesh
+  *         at the same position in `output`. Note that if an output surface mesh was also
   *         an input mesh but the output operation was generating a non-manifold mesh, the surface mesh
   *         will only be corefined.
   */
