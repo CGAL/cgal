@@ -8,7 +8,7 @@ namespace CGAL {
 
 This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12} (section 2), generalized to handle different types of data, multiple features and multiple labels. It classifies a data set into a user-defined set of labels, such as _ground_, _vegetation_ and _buildings_. A flexible API is provided so that users can classify any type of data which they can index and for which they can compute relevant features, compute their own local features on the input data set and define their own labels.
 
-\note This component depends on the Boost libraries
+\note This component requires C++11 and depends on the Boost libraries
 [Serialization](http://www.boost.org/libs/serialization) and
 [IO Streams](http://www.boost.org/libs/iostreams) (compiled with the GZIP dependency).
 
@@ -37,7 +37,9 @@ Currently, \cgal provides data structures to handle classification of point sets
 
 A label represents how an item should be classified, for example: _vegetation_, _building_, _road_, etc. In \cgal, a label has a name and is simply identified by a [Label_handle](@ref CGAL::Classification::Label_handle). Note that names are not used for identification: two labels in the same set can have the same name (but not the same handle).
 
-The following code snippet shows how to add labels to the classification object.
+The following code snippet shows how to add labels to the classification object:
+
+\snippet Classification/example_classification.cpp Labels
 
 \subsection Classification_features Feature Set
 
@@ -60,8 +62,6 @@ This feature can then be instantiated from the feature set the same way as the o
 
 \snippet Classification/example_feature.cpp Addition
 
-\snippet Classification/example_classification.cpp Labels
-
 \section Classification_structures_specialized Specialized Data Structures
 
 %Classification is based on the computation of local features. These features can take advantage of shared data structures that are precomputed and stored separately. Both these features and the underlying data structures depend on the type of data that needs to be classified. \cgal provides data structures to classify point sets, surface meshes and clusters.
@@ -78,7 +78,7 @@ Most of these data structures depend on a scale parameter. \cgal provides a meth
 
 The eigen analysis can be used to estimate normals. Note however that this analysis (based on Principal Component Analysis) might not be robust to a high level of noise. \cgal also provides more robust normal estimation functions (see for example [CGAL::jet_estimate_normals()](@ref jet_estimate_normals)).
 
-The following code snippet shows how to instantiate such data structures from an input PLY point set (the full example is given at the end of the manual).
+The following code snippet shows how to instantiate such data structures from an input PLY point set (the [full example](@ref Classification_example_general) is given at the end of the manual).
 
 \snippet Classification/example_classification.cpp Analysis
 
@@ -136,6 +136,12 @@ The following snippet shows how to use the mesh feature generator:
 
 \snippet Classification/example_mesh_classification.cpp Generator
 
+The [full example](@ref Classification_example_mesh) is given at the end of the manual.
+
+\cgalFigureBegin{Classification_mesh_fig,mesh.png}
+Example of mesh classification mesh (left: input, right: output). _Ground_ is grey, _roofs_ are orange, _vegetation_ is green. 
+\cgalFigureEnd
+
 \subsection Classification_clusters Cluster Classification
 
 Classifying clusters of items instead of raw sets of items can have several advantages:
@@ -168,12 +174,18 @@ Some additional features are provided specifically for clusters:
 
 - [Cluster_size](@ref CGAL::Classification::Feature::Cluster_size) uses the number of items in a cluster;
 - [Cluster_vertical_extent](@ref CGAL::Classification::Feature::Cluster_size) computes the length of the smallest interval
-on the `Z` axis that contains all the items of a cluster.
+on the `Z` axis that contains all the items of a cluster;
 - [Eigenvalue](@ref CGAL::Classification::Feature::Eigenvalue), similarly to point sets and meshes, can use the [Local_eigen_analysis](@ref CGAL::Classification::Local_eigen_analysis) object computed on clusters.
 
 The following snippet shows, from a pointwise feature set, how to generate the statistical features from a pointwise feature set (along with these latest cluster features):
 
 \snippet Classification/example_cluster_classification.cpp Features
+
+The [full example](@ref Classification_example_cluster) is given at the end of the manual.
+
+\cgalFigureBegin{Classification_cluster_fig,clusters.png}
+Example of cluster classification mesh (left: input, middle: clusters computed from Region Growing, right: output). _Ground_ is grey, _roofs_ are orange, _vegetation_ is green, points not affected to a cluster are _black_.
+\cgalFigureEnd
 
 \section Classification_classifiers Classifiers
 
@@ -501,7 +513,7 @@ The following example:
 
 \section Classification_history History
 
-This package is based on a research code by [Florent Lafarge](https://www-sop.inria.fr/members/Florent.Lafarge/) that was generalized, extended and packaged by [Simon Giraudot](http://geometryfactory.com/who-we-are/).
+This package is based on a research code by [Florent Lafarge](https://www-sop.inria.fr/members/Florent.Lafarge/) that was generalized, extended and packaged by [Simon Giraudot](http://geometryfactory.com/who-we-are/) in \cgal 4.12. %Classification of surface meshes and of clusters were introduced in \cgal 4.13.
 
 
 
