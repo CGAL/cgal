@@ -57,10 +57,37 @@ namespace CGAL {
 namespace Classification {
 
 /*!
-  \ingroup PkgClassificationDataStructures
+  \ingroup PkgClassificationMesh
+
+  \brief Generates a set of generic features for surface mesh
+  classification.
+
+  This class takes care of computing all necessary data structures and
+  of generating a set of generic features at multiple scales to
+  increase the reliability of the classification.
+
+  A `PointMap` is required: this map should associate each face of the
+  mesh to a representative point (for example, the center of mass of
+  the face). It is used to generate point set features by considering
+  the mesh as a point set.
+
+  \tparam GeomTraits model of \cgal Kernel.
+  \tparam FaceListGraph model of `FaceListGraph`. 
+  \tparam PointMap model of `ReadablePropertyMap` whose key type is
+  `boost::graph_traits<FaceListGraph>::%face_descriptor` and value type
+  is `GeomTraits::Point_3`.
+  \tparam ConcurrencyTag enables sequential versus parallel
+  computation of `CGAL::Classification::Local_eigen_analysis`
+  objects. Possible values are `Parallel_tag` (default value is %CGAL
+  is linked with TBB) or `Sequential_tag` (default value otherwise).
+  \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
+  matrix diagonalization. It can be omitted: if Eigen 3 (or greater)
+  is available and `CGAL_EIGEN3_ENABLED` is defined then an overload
+  using `Eigen_diagonalize_traits` is provided. Otherwise, the
+  internal implementation `Diagonalize_traits` is used.
 
 */
-template <typename Geom_traits,
+template <typename GeomTraits,
           typename FaceListGraph,
           typename PointMap,
 #if defined(DOXYGEN_RUNNING)
@@ -75,7 +102,7 @@ class Mesh_feature_generator
 {
   
 public:
-  typedef typename Geom_traits::Iso_cuboid_3             Iso_cuboid_3;
+  typedef typename GeomTraits::Iso_cuboid_3             Iso_cuboid_3;
 
   /// \cond SKIP_IN_MANUAL
   typedef typename boost::graph_traits<FaceListGraph>::face_descriptor face_descriptor;
@@ -92,7 +119,7 @@ public:
 public:
   
   typedef Classification::Planimetric_grid
-  <Geom_traits, Face_range, PointMap>                    Planimetric_grid;
+  <GeomTraits, Face_range, PointMap>                    Planimetric_grid;
   typedef Classification::Mesh_neighborhood
   <FaceListGraph>                                        Neighborhood;
   typedef Classification::Local_eigen_analysis           Local_eigen_analysis;
@@ -103,11 +130,11 @@ public:
   typedef Classification::Feature::Distance_to_plane
   <Face_range, PointMap>                                 Distance_to_plane;
   typedef Classification::Feature::Elevation
-  <Geom_traits, Face_range, PointMap>                    Elevation;
+  <GeomTraits, Face_range, PointMap>                    Elevation;
   typedef Classification::Feature::Vertical_dispersion
-  <Geom_traits, Face_range, PointMap>                    Dispersion;
+  <GeomTraits, Face_range, PointMap>                    Dispersion;
   typedef Classification::Feature::Verticality
-  <Geom_traits>                                          Verticality;
+  <GeomTraits>                                          Verticality;
   typedef Classification::Feature::Eigenvalue           Eigenvalue;
 
   typedef typename Classification::RGB_Color RGB_Color;
@@ -193,21 +220,36 @@ private:
   const FaceListGraph& m_input;
   Face_range m_range;
   PointMap m_point_map;
-  Feature_set& m_features;
-  std::vector<std::pair<Feature_handle, std::size_t> > m_features_to_rename;
   
 public:
 
   
+  /// \name Constructor
+  /// @{
+  
   /*!
-    \brief Generates all possible features from an input range.
+    \brief Initializes a feature generator from an input range.
+
+    If not provided by the user, The size of the smallest scale is
+    automatically estimated using a method equivalent to
+    `CGAL::compute_average_spacing()` using 6 neighbors. The data
+    structures needed (`Neighborhood`, `Planimetric_grid` and
+    `Local_eigen_analysis`) are computed at `nb_scales` recursively
+    larger scales. 
+
+    \param input input mesh.
+    \param point_map property map to access a representative point of
+    each face.
+    \param nb_scales number of scales to compute.
+    \param voxel_size smallest scale used as a voxel size for the
+    planimetric grid (if the default value -1 is used, its value is
+    automatically estimated).
   */
-  Mesh_feature_generator(Feature_set& features,
-                         const FaceListGraph& input,
+  Mesh_feature_generator(const FaceListGraph& input,
                          PointMap point_map,
                          std::size_t nb_scales,
                          float voxel_size = -1.f)
-    : m_input (input), m_range(faces(input)), m_point_map (point_map), m_features (features)
+    : m_input (input), m_range(faces(input)), m_point_map (point_map)
   {
 
     m_bbox = CGAL::bounding_box
@@ -219,7 +261,10 @@ public:
     m_scales.reserve (nb_scales);
     
     m_scales.push_back (new Scale (m_input, m_range, m_point_map, m_bbox, voxel_size, 0));
-    voxel_size = m_scales[0]->grid_resolution();
+    
+    if (voxel_size == -1.f)
+      voxel_size = m_scales[0]->grid_resolution();
+    
     for (std::size_t i = 1; i < nb_scales; ++ i)
     {
       voxel_size *= 2;
@@ -230,6 +275,7 @@ public:
     t.reset();
   }
 
+  /// @}
   
   /// \cond SKIP_IN_MANUAL
   virtual ~Mesh_feature_generator()
@@ -247,20 +293,55 @@ public:
   /// \endcond
 
 
-  void generate_point_based_features ()
+  /// \name Feature Generation
+  /// @{
+
+
+  /*!
+    \brief Generate geometric features based on face information.
+
+    At each scale, the following features are generated:
+
+    - `CGAL::Classification::Feature::Eigenvalue` with indices 0, 1 and 2
+    - The version of `CGAL::Classification::Feature::Verticality` based on eigenvalues
+
+    \param features the feature set where the features are instantiated.
+   */
+  void generate_face_based_features (Feature_set& features)
   {
     for (int j = 0; j < 3; ++ j)
       for (std::size_t i = 0; i < m_scales.size(); ++ i)
-        m_features.add_with_scale_id<Eigenvalue> (i, m_range, eigen(i), std::size_t(j));
+        features.add_with_scale_id<Eigenvalue> (i, m_range, eigen(i), std::size_t(j));
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      m_features.add_with_scale_id<Distance_to_plane> (i, m_range, m_point_map, eigen(i));
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      m_features.add_with_scale_id<Dispersion> (i, m_range, m_point_map, grid(i), radius_neighbors(i));
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      m_features.add_with_scale_id<Elevation> (i, m_range, m_point_map, grid(i), radius_dtm(i));
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      m_features.add_with_scale_id<Verticality> (i, m_range, eigen(i));
+      features.add_with_scale_id<Verticality> (i, m_range, eigen(i));
   }
+
+  /*!
+    \brief Generate geometric features based on point position information.
+
+    At each scale, the following features are generated by considering
+    the mesh as a point cloud through `PointMap`:
+
+    - `CGAL::Classification::Feature::Distance_to_plane`
+    - `CGAL::Classification::Feature::Elevation`
+    - `CGAL::Classification::Feature::Vertical_dispersion`
+
+    \param features the feature set where the features are instantiated.
+   */
+  void generate_point_based_features (Feature_set& features)
+  {
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      features.add_with_scale_id<Distance_to_plane> (i, m_range, m_point_map, eigen(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      features.add_with_scale_id<Dispersion> (i, m_range, m_point_map, grid(i), radius_neighbors(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      features.add_with_scale_id<Elevation> (i, m_range, m_point_map, grid(i), radius_dtm(i));
+  }
+
+  /// @}
+
+  /// \name Data Structures Access
+  /// @{
 
   /*!
     \brief Returns the bounding box of the input point set.
@@ -278,6 +359,12 @@ public:
     \brief Returns the local eigen analysis structure at scale `scale`.
   */
   const Local_eigen_analysis& eigen(std::size_t scale = 0) const { return *(m_scales[scale]->eigen); }
+  
+  /// @}
+
+  /// \name Parameters
+  /// @{
+  
   /*!
     \brief Returns the number of scales that were computed.
   */
@@ -304,7 +391,7 @@ public:
   */
   float radius_dtm(std::size_t scale = 0) const { return m_scales[scale]->radius_dtm(); }
 
-
+  /// @}
     
 private:
 

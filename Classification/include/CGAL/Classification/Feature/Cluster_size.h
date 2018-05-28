@@ -32,12 +32,28 @@ namespace Classification {
 
 namespace Feature {
 
+  /*!
+    \ingroup PkgClassificationCluster
+
+    \brief %Feature that returns the size of each cluster.
+
+    Its default name is "cluster_size".
+  */
 class Cluster_size : public CGAL::Classification::Feature_base
 {
   std::vector<float> m_values;
     
 public:
 
+  /*!
+    \brief Constructs the feature.
+
+    \tparam PointRange model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator` and its value type is the key type of
+    `Cluster`.
+
+    \param clusters input range.
+  */
   template <typename ClusterRange>
   Cluster_size (ClusterRange& clusters)
   {
@@ -48,11 +64,12 @@ public:
       m_values.push_back (float(clusters[i].size()));
   }
 
+  /// \cond SKIP_IN_MANUAL
   virtual float value (std::size_t cluster_index)
   {
     return m_values[cluster_index];
   }
-    
+  /// \endcond
 };
 
 } // namespace Feature

@@ -23,9 +23,6 @@
 
 #include <CGAL/license/Classification.h>
 
-#define DO_NOT_USE_EIGEN_FEATURES
-#define DO_NOT_USE_HSV_FEATURES
-
 #include <CGAL/Classification/classify.h>
 #include <CGAL/Classification/Sum_of_weighted_features_classifier.h>
 #include <CGAL/Classification/ETHZ_random_forest_classifier.h>
@@ -47,6 +44,7 @@
 #include <CGAL/Classification/Point_set_neighborhood.h>
 #include <CGAL/Classification/Mesh_feature_generator.h>
 #include <CGAL/Classification/Mesh_neighborhood.h>
+#include <CGAL/Classification/property_maps.h>
 
 #include <CGAL/Classification/Feature/Cluster_mean_of_feature.h>
 #include <CGAL/Classification/Feature/Cluster_size.h>

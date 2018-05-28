@@ -29,20 +29,25 @@
 #include <CGAL/unordered.h>
 #include <CGAL/Handle_hash_function.h>
 
-/// \cond SKIP_IN_MANUAL
-
 namespace CGAL {
 
 namespace Classification {
 
   /*!
-    \ingroup PkgClassificationDataStructures
+    \ingroup PkgClassificationMesh
 
+    \brief Class that  generates models of `NeighborQuery` based on
+    an input mesh.
+
+    \tparam FaceListGraph model of `FaceListGraph`. 
   */
 template <typename FaceListGraph>
 class Mesh_neighborhood
 {
-  typedef typename boost::graph_traits<FaceListGraph>::face_descriptor face_descriptor;
+public:
+  typedef typename boost::graph_traits<FaceListGraph>::face_descriptor face_descriptor; ///<
+
+private:
   typedef typename boost::graph_traits<FaceListGraph>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<FaceListGraph>::vertex_descriptor vertex_descriptor;
   const FaceListGraph& m_mesh;
@@ -74,6 +79,11 @@ class Mesh_neighborhood
   
 public:
 
+  /*!
+    Functor that computes the 1-ring neighborhood of the face of an input mesh.
+
+    \cgalModels CGAL::Classification::NeighborQuery
+  */
   class One_ring_neighbor_query
   {
   public:
@@ -83,6 +93,10 @@ public:
 
   public:
 
+    /*!
+      \brief Constructs a 1-ring neighbor query object.
+      \param neighborhood mesh neighborhood object.
+    */
     One_ring_neighbor_query (const Mesh_neighborhood& neighborhood)
       : neighborhood (neighborhood) { }
 
@@ -96,6 +110,11 @@ public:
     /// \endcond
   };
 
+  /*!
+    Functor that computes the N-ring neighborhood of the face of an input mesh.
+
+    \cgalModels CGAL::Classification::NeighborQuery
+  */
   class N_ring_neighbor_query
   {
   public:
@@ -106,6 +125,11 @@ public:
 
   public:
 
+    /*!
+      \brief Constructs a N-ring neighbor query object.
+      \param neighborhood mesh neighborhood object.
+      \param n size of neighborhood.
+    */
     N_ring_neighbor_query (const Mesh_neighborhood& neighborhood, const std::size_t n)
       : neighborhood (neighborhood), n(n) { }
 
@@ -119,14 +143,24 @@ public:
     /// \endcond
   };
 
+  /// \cond SKIP_IN_MANUAL
   friend class One_ring_neighbor_query;
   friend class N_ring_neighbor_query;
+  /// \endcond
 
+  /// \name Constructor
+  /// @{
 
+  /*!
+    \brief Constructs a neighborhood object based on the input mesh.
+
+    \param mesh input mesh.
+  */
   Mesh_neighborhood (const FaceListGraph& mesh) : m_mesh (mesh)
   {
   }
 
+  /// @}
 
   /// \cond SKIP_IN_MANUAL
   ~Mesh_neighborhood ()
@@ -134,15 +168,26 @@ public:
   }
   /// \endcond
 
+  /// \name Queries
+  /// @{
+
+  /*!
+    \brief Returns a 1-ring neighbor query object.
+  */
   One_ring_neighbor_query one_ring_neighbor_query () const
   {
     return One_ring_neighbor_query (*this);
   }
 
+  /*!
+    \brief Returns an N-ring neighbor query object.
+  */
   N_ring_neighbor_query n_ring_neighbor_query (const std::size_t n) const
   {
     return N_ring_neighbor_query (*this, n);
   }
+
+  /// @}
 
 
 private:
@@ -184,6 +229,5 @@ private:
   
 }
 
-/// \endcond
 
 #endif // CGAL_CLASSIFICATION_MESH_NEIGHBORHOOD_H

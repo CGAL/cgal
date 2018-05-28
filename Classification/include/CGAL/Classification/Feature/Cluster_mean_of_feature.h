@@ -32,12 +32,31 @@ namespace Classification {
 
 namespace Feature {
 
+  /*!
+    \ingroup PkgClassificationCluster
+
+    \brief %Feature that computes the mean values of an itemwise
+    feature over the respective items of clusters.
+
+    Its default name is "mean_" + the name of the itemwise feature.
+  */
 class Cluster_mean_of_feature : public CGAL::Classification::Feature_base
 {
   std::vector<float> m_values;
     
 public:
 
+  /*!
+    \brief Constructs the feature.
+
+    \tparam PointRange model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator` and its value type is the key type of
+    `Cluster`.
+
+    \param clusters input range.
+    \param itemwise_feature feature that takes values on the range of
+    items from which `clusters` is a subset.
+  */
   template <typename ClusterRange>
   Cluster_mean_of_feature (ClusterRange& clusters,
                            Feature_handle itemwise_feature)
@@ -58,11 +77,12 @@ public:
     }
   }
 
+  /// \cond SKIP_IN_MANUAL
   virtual float value (std::size_t cluster_index)
   {
     return m_values[cluster_index];
   }
-    
+  /// \endcond
 };
 
 } // namespace Feature

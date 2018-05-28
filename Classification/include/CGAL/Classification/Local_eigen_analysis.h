@@ -408,9 +408,7 @@ public:
     using `Eigen_diagonalize_traits` is provided. Otherwise, the
     internal implementation `Diagonalize_traits` is used.
 
-    \param input point range.
-    \param point_map property map to access the input points.
-    \param neighbor_query object used to access neighborhoods of points.
+    \param input cluster range.
   */
   template <typename ClusterRange,
 #if defined(DOXYGEN_RUNNING)

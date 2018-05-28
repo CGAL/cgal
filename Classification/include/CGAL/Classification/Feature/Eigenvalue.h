@@ -43,7 +43,7 @@ protected:
 public:
 
   template <typename InputRange>
-  Eigenvalue (const InputRange& r,
+  Eigenvalue (const InputRange&,
               const Classification::Local_eigen_analysis& eigen,
               std::size_t idx)
     : eigen (eigen), m_idx (idx)

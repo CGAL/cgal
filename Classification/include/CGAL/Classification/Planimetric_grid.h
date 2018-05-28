@@ -227,13 +227,13 @@ public:
 
   /// \cond SKIP_IN_MANUAL
   Planimetric_grid (Planimetric_grid* lower_scale)
-    : m_resolution (lower_scale->resolution() * 2), m_lower_scale (lower_scale)
+      : m_resolution (lower_scale->resolution() * 2), m_lower_scale (lower_scale)
   {
     m_current_scale = lower_scale->m_current_scale + 1;
 
     m_width = (m_lower_scale->width() + 1) / 2;
     m_height = (m_lower_scale->height() + 1) / 2;
-    
+
     m_has_points.reserve(m_width * m_height);
     for (std::size_t x = 0; x < m_width; ++ x)
       for (std::size_t y = 0; y < m_height; ++ y)

@@ -32,12 +32,29 @@ namespace Classification {
 
 namespace Feature {
 
+  /*!
+    \ingroup PkgClassificationCluster
+
+    \brief %Feature that returns the length of the smallest interval
+    on the `Z` axis that contains all the items of a cluster.
+
+    Its default name is "cluster_vertical_extent".
+  */
 class Cluster_vertical_extent : public CGAL::Classification::Feature_base
 {
   std::vector<float> m_values;
   
 public:
 
+  /*!
+    \brief Constructs the feature.
+
+    \tparam PointRange model of `ConstRange`. Its iterator type
+    is `RandomAccessIterator` and its value type is the key type of
+    `Cluster`.
+
+    \param clusters input range.
+  */
   template <typename ClusterRange>
   Cluster_vertical_extent (const ClusterRange& clusters)
   {
@@ -62,7 +79,9 @@ public:
     }
   }
 
+  /// \cond SKIP_IN_MANUAL
   virtual float value (std::size_t cluster_index) { return m_values[cluster_index]; }
+  /// \endcond
     
 };
 

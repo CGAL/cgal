@@ -42,7 +42,7 @@ namespace CGAL {
 namespace Classification {
 
   /*!
-    \ingroup PkgClassificationDataStructures
+    \ingroup PkgClassificationPointSet
 
     \brief Class that precomputes spatial searching structures for an
     input point set and gives access to the local neighborhood of a
@@ -165,12 +165,15 @@ public:
     /// \endcond
   };
 
+  /// \cond SKIP_IN_MANUAL
   friend class K_neighbor_query;
   friend class Sphere_neighbor_query;
 
-  /// \cond SKIP_IN_MANUAL
   Point_set_neighborhood () : m_tree (NULL) { }
   /// \endcond
+
+  /// \name Constructors
+  /// @{
 
   /*!
     \brief Constructs a neighborhood object based on the input range.
@@ -220,6 +223,8 @@ public:
     m_tree->build();
   }
 
+  /// @}
+  
   /// \cond SKIP_IN_MANUAL
   ~Point_set_neighborhood ()
   {
@@ -227,6 +232,9 @@ public:
       delete m_tree;
   }
   /// \endcond
+
+  /// \name Queries
+  /// @{
 
   /*!
     \brief Returns a neighbor query object with fixed number of neighbors `k`.
@@ -243,6 +251,8 @@ public:
   {
     return Sphere_neighbor_query (*this, radius);
   }
+
+  /// @}
 
 private:
 

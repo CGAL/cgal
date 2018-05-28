@@ -59,14 +59,15 @@ public:
 
     \tparam InputRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator`.
-    \param input point range.
+    \param input input range.
     \param eigen class with precomputed eigenvectors and eigenvalues.
   */
   template <typename InputRange>
-  Verticality (const InputRange&,
+  Verticality (const InputRange& input,
                const Local_eigen_analysis& eigen)
     : vertical (0., 0., 1.), eigen (&eigen)
   {
+    CGAL_USE(input);
     this->set_name ("verticality");
   }
 
