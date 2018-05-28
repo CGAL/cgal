@@ -66,7 +66,9 @@ set(targets
   example_classification
   example_ethz_random_forest
   example_feature
-  example_generation_and_training)
+  example_generation_and_training
+  example_mesh_classification
+  example_cluster_classification)
 
 # Classification requires some C++11 features
 set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
@@ -75,6 +77,15 @@ set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
 set(classification_linked_libraries)
 set(classification_compile_definitions)
 
+
+# Use Eigen or BLAS and LAPACK (optional)
+find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+if (EIGEN3_FOUND)
+  include( ${EIGEN3_USE_FILE} )
+else()
+  message(STATUS "NOTICE: Eigen not found, no example will be compiled.")
+  return()
+endif()
 
 if (Boost_SERIALIZATION_FOUND AND Boost_IOSTREAMS_FOUND)
   set(classification_linked_libraries ${classification_linked_libraries}
