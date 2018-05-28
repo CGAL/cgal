@@ -450,7 +450,7 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales)
   if (!echo)
     boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("number_of_returns");
 
-  m_generator = new Generator (m_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales);
+  m_generator = new Generator (*(m_points->point_set()), m_points->point_set()->point_map(), nb_scales);
 
   CGAL::Real_timer t;
   t.start();
@@ -459,13 +459,13 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales)
   m_features.begin_parallel_additions();
 #endif
 
-  m_generator->generate_point_based_features();
+  m_generator->generate_point_based_features(m_features);
   if (normals)
-    m_generator->generate_normal_based_features (m_points->point_set()->normal_map());
+    m_generator->generate_normal_based_features (m_features, m_points->point_set()->normal_map());
   if (colors)
-    m_generator->generate_color_based_features (m_color);
+    m_generator->generate_color_based_features (m_features, m_color);
   if (echo)
-    m_generator->generate_echo_based_features (echo_map);
+    m_generator->generate_echo_based_features (m_features, echo_map);
   
   add_remaining_point_set_properties_as_features();
 

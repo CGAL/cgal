@@ -36,78 +36,9 @@ public:
 
   typedef CGAL::Classification::Mesh_neighborhood<Mesh> Neighborhood;
 
-  
-  template <typename FaceGraph, typename Point>
-  struct Face_graph_face_to_center_property_map
-  {
-    typedef typename boost::graph_traits<Mesh>::face_descriptor key_type;
-    typedef Point value_type;
-    typedef Point reference;
-    typedef boost::readable_property_map_tag category;
-
-    typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
-  
-    const FaceGraph* mesh;
-
-    Face_graph_face_to_center_property_map () : mesh (NULL) { }
-    Face_graph_face_to_center_property_map (const FaceGraph* mesh) : mesh (mesh) { }
-
-    friend reference get (const Face_graph_face_to_center_property_map& map, key_type f)
-    {
-      std::vector<Point> points;
-      BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, *(map.mesh)), *(map.mesh)))
-        {
-          points.push_back (map.mesh->point(v));
-        }
-      return CGAL::centroid (points.begin(), points.end());
-    }
-  };
-
-  template <typename FaceGraph>
-  struct Face_descriptor_with_bbox_property_map
-  {
-    typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
-    typedef typename boost::graph_traits<FaceGraph>::face_descriptor key_type;
-    typedef boost::readable_property_map_tag category;
-    
-    class value_type
-    {
-      key_type m_descriptor;
-      CGAL::Bbox_3 m_bbox;
-      
-    public:
-      value_type (const key_type& descriptor,
-                  const CGAL::Bbox_3& bbox)
-        : m_descriptor (descriptor), m_bbox (bbox)
-      { }
-
-      const CGAL::Bbox_3 bbox() const { return m_bbox; }
-
-      operator key_type() const { return m_descriptor; }
-
-    };
-    
-    typedef value_type reference;
-  
-    const FaceGraph* mesh;
-
-    Face_descriptor_with_bbox_property_map (const FaceGraph* mesh = NULL)
-      : mesh (mesh) { }
-
-    friend reference get (const Face_descriptor_with_bbox_property_map& map, key_type f)
-    {
-      CGAL::Bbox_3 bbox;
-      
-      BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, *(map.mesh)), *(map.mesh)))
-        bbox = bbox + map.mesh->point(v).bbox();
-
-      return value_type (f, bbox);
-    }
-  };
-
-  typedef Face_graph_face_to_center_property_map<Mesh, Point> Face_center_map;
-  typedef CGAL::Classification::Mesh_feature_generator<Kernel, Mesh, Face_center_map>             Generator;
-  typedef Face_descriptor_with_bbox_property_map<Mesh> Face_descriptor_with_bbox_map;
+  typedef CGAL::Classification::Face_descriptor_to_center_of_mass_map<Mesh> Face_center_map;
+  typedef CGAL::Classification::Face_descriptor_to_face_descriptor_with_bbox_map<Mesh> Face_descriptor_with_bbox_map;
+  typedef CGAL::Classification::Mesh_feature_generator<Kernel, Mesh, Face_center_map> Generator;
 
 public:
   

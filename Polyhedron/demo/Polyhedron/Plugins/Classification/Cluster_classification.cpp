@@ -549,7 +549,7 @@ void Cluster_classification::compute_features (std::size_t nb_scales)
 
   Feature_set pointwise_features;
 
-  Generator generator (pointwise_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales);
+  Generator generator (*(m_points->point_set()), m_points->point_set()->point_map(), nb_scales);
   
   CGAL::Real_timer t;
   t.start();
@@ -558,13 +558,13 @@ void Cluster_classification::compute_features (std::size_t nb_scales)
   pointwise_features.begin_parallel_additions();
 #endif
 
-  generator.generate_point_based_features();
+  generator.generate_point_based_features(pointwise_features);
   if (normals)
-    generator.generate_normal_based_features (m_points->point_set()->normal_map());
+    generator.generate_normal_based_features (pointwise_features, m_points->point_set()->normal_map());
   if (colors)
-    generator.generate_color_based_features (m_color);
+    generator.generate_color_based_features (pointwise_features, m_color);
   if (echo)
-    generator.generate_echo_based_features (echo_map);
+    generator.generate_echo_based_features (pointwise_features, echo_map);
   
   add_remaining_point_set_properties_as_features(pointwise_features);
 

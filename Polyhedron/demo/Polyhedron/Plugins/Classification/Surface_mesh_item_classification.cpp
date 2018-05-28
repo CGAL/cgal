@@ -161,13 +161,14 @@ void Surface_mesh_item_classification::compute_features (std::size_t nb_scales)
 
   Face_center_map fc_map (m_mesh->polyhedron());
   
-  m_generator = new Generator (m_features, *(m_mesh->polyhedron()), fc_map, nb_scales);
+  m_generator = new Generator (*(m_mesh->polyhedron()), fc_map, nb_scales);
   
 #ifdef CGAL_LINKED_WITH_TBB
   m_features.begin_parallel_additions();
 #endif
 
-  m_generator->generate_point_based_features();
+  m_generator->generate_point_based_features(m_features);
+  m_generator->generate_face_based_features(m_features);
 
 #ifdef CGAL_LINKED_WITH_TBB
   m_features.end_parallel_additions();
