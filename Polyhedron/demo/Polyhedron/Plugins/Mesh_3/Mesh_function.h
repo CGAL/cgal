@@ -361,7 +361,7 @@ tweak_criteria(Mesh_criteria& c, Mesh_fnt::Polyhedral_domain_tag) {
   typedef CGAL::Mesh_3::Facet_topological_criterion_with_adjacency<Tr,
        Domain, typename Facet_criteria::Visitor> New_topo_adj_crit;
 
-  if((int(c.facet_criteria().topology()) &
+  if((int(c.facet_criteria_object().topology()) &
       CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK) != 0)
   {
     c.add_facet_criterion(new New_topo_adj_crit(this->domain_));

@@ -1,4 +1,5 @@
-#define CGAL_NO_DEPRECATION_WARNINGS 1 // because CGAL::copy_n is deprecated
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h> // because CGAL::copy_n is deprecated
+
 #include <boost/config.hpp>
 
 #if defined(BOOST_MSVC)
@@ -21,10 +22,8 @@ int main()
   CGAL_USE(tuple);
   CGAL_USE(tuple2);
 
-#ifndef CGAL_NO_DEPRECATED_CODE
   CGAL::copy_n(arr.begin(), 3, arr2.begin());
-#endif // not CGAL_NO_DEPRECATED_CODE
-  
+
   CGAL::cpp0x::copy_n(arr.begin(), 3, arr2.begin());
   CGAL::cpp11::copy_n(arr.begin(), 3, arr2.begin());
   
