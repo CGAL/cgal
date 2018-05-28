@@ -117,6 +117,8 @@ The following snippet shows how to use the point set feature generator:
 
 %Classification of mesh is performed by considering the face of a mesh as an atomic element that should be assign one label or another. Some structures such as neighborhood or Eigen analysis are significantly different from their equivalent for point sets; other data structures from point sets can be directly used by viewing the mesh as a point set through the use of a property map that associates each face with a representative point.
 
+Hereafter, a _mesh_ refers to a model of `FaceListGraph`.
+
 \cgal provides the following structures:
 
 - [Face_descriptor_to_center_of_mass_map](@ref CGAL::Classification::Face_descriptor_to_center_of_mass_map) is a property map that takes the face of a mesh as key type and returns the `CGAL::Point_3` located at the center of mass of the face. It is useful to apply point set structures and features to surface meshes;
