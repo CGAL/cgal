@@ -818,6 +818,58 @@ void Scene_surface_mesh_item_priv::checkFloat()const
 #endif
 }
 
+void Scene_surface_mesh_item_priv::triangulate_convex_facet(face_descriptor fd,
+                                                            SMesh::Property_map<face_descriptor, EPICK::Vector_3> *fnormals,
+                                                            SMesh::Property_map<face_descriptor, CGAL::Color> *fcolors,
+                                                            boost::property_map< SMesh, boost::vertex_index_t >::type *im,
+                                                            Scene_item_rendering_helper::Gl_data_names name,
+                                                            bool index) const
+{
+  const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  EPICK::Vector_3 offset = EPICK::Vector_3(v_offset.x, v_offset.y, v_offset.z);
+  
+  Point p0,p1,p2;
+  SMesh::Halfedge_around_face_circulator he(halfedge(fd, *smesh_), *smesh_);
+  SMesh::Halfedge_around_face_circulator he_end = he;
+  
+  while(next(*he, *smesh_) != prev(*he, *smesh_))
+  {
+    ++he;
+    vertex_descriptor v0(target(*he_end, *smesh_)),
+        v1(target(*he, *smesh_)),
+        v2(target(next(*he, *smesh_), *smesh_));
+    p0 = smesh_->point(v0) + offset;
+    p1 = smesh_->point(v1) + offset;
+    p2 = smesh_->point(v2) + offset;
+    if(!index)
+    {
+      CGAL::Color* color;
+      if(has_fcolors)
+        color = &(*fcolors)[fd];
+      else
+        color = 0;
+      addFlatData(p0,
+                  (*fnormals)[fd],
+                  color,
+                  name);
+      addFlatData(p1,
+                  (*fnormals)[fd],
+                  color,
+                  name);
+      
+      addFlatData(p2,
+                  (*fnormals)[fd],
+                  color,
+                  name);
+    }
+    else if(name.testFlag(Scene_item_rendering_helper::GEOMETRY))
+    {
+      idx_data_.push_back((*im)[v0]);
+      idx_data_.push_back((*im)[v1]);
+      idx_data_.push_back((*im)[v2]);
+    }
+  }
+}
 void
 Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
                                            SMesh::Property_map<face_descriptor, EPICK::Vector_3> *fnormals,
