@@ -17,15 +17,12 @@ include( ${CGAL_USE_FILE} )
 # Find Qt5 itself
 find_package(Qt5 QUIET COMPONENTS Xml OpenGL Help Core)
 
-# Find QGLViewer
+
 if(Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
-  find_package(QGLViewer)
 endif(Qt5_FOUND)
 
-if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND TARGET Qt5::qcollectiongenerator)
-
-   include_directories( ${QGLVIEWER_INCLUDE_DIR} )
+if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND TARGET Qt5::qcollectiongenerator)
 
   # UI files (Qt Designer files)
   qt5_wrap_ui ( UI_FILES MainWindow.ui )
@@ -67,7 +64,7 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND TARGET Q
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS periodic_3_triangulation_3_demo)
 
   target_link_libraries(periodic_3_triangulation_3_demo PRIVATE
-    CGAL::CGAL CGAL::CGAL_Qt5 Qt5::OpenGL  ${QGLVIEWER_LIBRARIES})
+    CGAL::CGAL CGAL::CGAL_Qt5 Qt5::OpenGL)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(periodic_3_triangulation_3_demo)
@@ -81,10 +78,6 @@ else ()
 
   if(NOT Qt5_FOUND)
     set(PERIODIC_TRIANGULATION_MISSING_DEPS "Qt5, ${PERIODIC_TRIANGULATION_MISSING_DEPS}")
-  endif()
-
-  if(NOT QGLVIEWER_FOUND)
-    set(PERIODIC_TRIANGULATION_MISSING_DEPS "QGLViewer, ${PERIODIC_TRIANGULATION_MISSING_DEPS}")
   endif()
 
   if (NOT TARGET Qt5::qcollectiongenerator)

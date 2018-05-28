@@ -96,7 +96,7 @@ Scene_polylines_item_private::initializeBuffers(CGAL::Three::Viewer_interface *v
 void
 Scene_polylines_item_private::computeElements() const
 {
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_lines.resize(0);
     double mean = 0;
@@ -147,7 +147,7 @@ Scene_polylines_item_private::computeElements() const
 void
 Scene_polylines_item_private::computeSpheres()
 {
-  const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   K::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
 
       spheres->clear_spheres();

@@ -289,7 +289,7 @@ void Scene::compute_elements()
             if(std::sqrt(CGAL_NTS to_double(v.x()*v.x()+v.y()*v.y())) > 1)
                 angle = 90.0f;
             else
-                angle =acos(v.y()/std::sqrt(v.x()*v.x()+v.y()*v.y()+v.z()*v.z()))*180.0/M_PI;//asin(std::sqrt(CGAL_NTS to_double(v.x()*v.x()+v.y()*v.y())))/M_PI*180.0;
+                angle =acos(v.y()/std::sqrt(v.x()*v.x()+v.y()*v.y()+v.z()*v.z()))*180.0/CGAL_PI;//asin(std::sqrt(CGAL_NTS to_double(v.x()*v.x()+v.y()*v.y())))/CGAL_PI*180.0;
 
             Vector axis;
             axis = Vector(v.z(), 0, -v.x());
@@ -695,7 +695,7 @@ void Scene::initialize_buffers()
 
 }
 
-void Scene::attrib_buffers(QGLViewer* viewer)
+void Scene::attrib_buffers(CGAL::QGLViewer* viewer)
 {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -762,7 +762,7 @@ void Scene::attrib_buffers(QGLViewer* viewer)
 }
 
 void Scene::init() {
-    // undo from QGLViewer internal initializeGL function
+    // undo from CGAL::QGLViewer internal initializeGL function
     // glDisable(GL_COLOR_MATERIAL);
     initializeOpenGLFunctions();
     glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)ui->viewer->context()->getProcAddress("glDrawArraysInstancedARB");
@@ -790,7 +790,7 @@ void Scene::init() {
     ui->viewer->camera()->lookAt(Vec(0.5,0.5,0.5));
 
     // scene inits
-    ui->viewer->setSceneCenter(qglviewer::Vec(0.5,0.5,0.5));
+    ui->viewer->setSceneCenter(CGAL::qglviewer::Vec(0.5,0.5,0.5));
     ui->viewer->setSceneRadius(2.0);
     ui->viewer->setBackgroundColor(Qt::white);
     ui->viewer->setForegroundColor(Qt::red);
@@ -1717,8 +1717,8 @@ void Scene::draw_sphere(float R, int prec)
 
 
 
-        P = rings*M_PI/180.0;
-        T = t*M_PI/180.0;
+        P = rings*CGAL_PI/180.0;
+        T = t*CGAL_PI/180.0;
         x[1] = sin(P) * cos(T) ;
         y[1] = sin(P) * sin(T) ;
         z[1] = cos(P);
@@ -1732,8 +1732,8 @@ void Scene::draw_sphere(float R, int prec)
         normals_spheres.push_back(z[1]);
 
         //
-        P = rings*M_PI/180.0;
-        T = (t+sectors)*M_PI/180.0;
+        P = rings*CGAL_PI/180.0;
+        T = (t+sectors)*CGAL_PI/180.0;
         x[2] = sin(P) * cos(T) ;
         y[2] = sin(P) * sin(T) ;
         z[2] = cos(P);
@@ -1752,8 +1752,8 @@ void Scene::draw_sphere(float R, int prec)
         for(int t=0; t<360; t+=sectors)
         {
             //A
-            P = p*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = p*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[0] = sin(P) * cos(T) ;
             y[0] = sin(P) * sin(T) ;
             z[0] = cos(P);
@@ -1768,8 +1768,8 @@ void Scene::draw_sphere(float R, int prec)
             normals_spheres.push_back(z[0]);
 
             //B
-            P = (p+rings)*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = (p+rings)*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[1] = sin(P) * cos(T) ;
             y[1] = sin(P) * sin(T) ;
             z[1] = cos(P);
@@ -1783,8 +1783,8 @@ void Scene::draw_sphere(float R, int prec)
             normals_spheres.push_back(z[1]);
 
             //C
-            P = p*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = p*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[2] = sin(P) * cos(T) ;
             y[2] = sin(P) * sin(T) ;
             z[2] = cos(P);
@@ -1797,8 +1797,8 @@ void Scene::draw_sphere(float R, int prec)
             normals_spheres.push_back(y[2]);
             normals_spheres.push_back(z[2]);
             //D
-            P = (p+rings)*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = (p+rings)*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[3] = sin(P) * cos(T) ;
             y[3] = sin(P) * sin(T) ;
             z[3] = cos(P);
@@ -1847,8 +1847,8 @@ void Scene::draw_sphere(float R, int prec)
         normals_spheres.push_back(-1);
 
 
-        P = (180-rings)*M_PI/180.0;
-        T = t*M_PI/180.0;
+        P = (180-rings)*CGAL_PI/180.0;
+        T = t*CGAL_PI/180.0;
         x[1] = sin(P) * cos(T) ;
         y[1] = sin(P) * sin(T) ;
         z[1] = cos(P);
@@ -1862,8 +1862,8 @@ void Scene::draw_sphere(float R, int prec)
         normals_spheres.push_back(z[1]);
 
 
-        P = (180-rings)*M_PI/180.0;
-        T = (t+sectors)*M_PI/180.0;
+        P = (180-rings)*CGAL_PI/180.0;
+        T = (t+sectors)*CGAL_PI/180.0;
         x[2] = sin(P) * cos(T) ;
         y[2] = sin(P) * sin(T) ;
         z[2] = cos(P);
@@ -1902,8 +1902,8 @@ void Scene::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::
 
 
 
-        P = rings*M_PI/180.0;
-        T = t*M_PI/180.0;
+        P = rings*CGAL_PI/180.0;
+        T = t*CGAL_PI/180.0;
         x[1] = sin(P) * cos(T) ;
         z[1] = sin(P) * sin(T) ;
         y[1] = cos(P);
@@ -1917,8 +1917,8 @@ void Scene::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::
         normals->push_back(z[1]);
 
         //
-        P = rings*M_PI/180.0;
-        T = (t+sectors)*M_PI/180.0;
+        P = rings*CGAL_PI/180.0;
+        T = (t+sectors)*CGAL_PI/180.0;
         x[2] = sin(P) * cos(T) ;
         z[2] = sin(P) * sin(T) ;
         y[2] = cos(P);
@@ -1936,8 +1936,8 @@ void Scene::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::
         for(int t=0; t<360; t+=sectors)
         {
             //A
-            P = p*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = p*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[0] = sin(P) * cos(T) ;
             z[0] = sin(P) * sin(T) ;
             y[0] = cos(P);
@@ -1952,8 +1952,8 @@ void Scene::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::
             normals->push_back(z[0]);
 
             //B
-            P = (p+rings)*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = (p+rings)*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[1] = sin(P) * cos(T) ;
             z[1] = sin(P) * sin(T) ;
             y[1] = cos(P);
@@ -1967,8 +1967,8 @@ void Scene::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::
             normals->push_back(z[1]);
 
             //C
-            P = p*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = p*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[2] = sin(P) * cos(T) ;
             z[2] = sin(P) * sin(T) ;
             y[2] = cos(P);
@@ -1981,8 +1981,8 @@ void Scene::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::
             normals->push_back(y[2]);
             normals->push_back(z[2]);
             //D
-            P = (p+rings)*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = (p+rings)*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[3] = sin(P) * cos(T) ;
             z[3] = sin(P) * sin(T) ;
             y[3] = cos(P);
@@ -2023,7 +2023,7 @@ void Scene::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::
     {
 
         //point A1
-        float D = d*M_PI/180.0;
+        float D = d*CGAL_PI/180.0;
         vertices->push_back(R * sin(D));
         vertices->push_back(0);
         vertices->push_back(R * cos(D));
@@ -2042,7 +2042,7 @@ void Scene::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::
         normals->push_back(cos(D));
 
         //point C1
-        D = (d+360/prec)*M_PI/180.0;
+        D = (d+360/prec)*CGAL_PI/180.0;
         vertices->push_back(R * sin(D));
         vertices->push_back(1);
         vertices->push_back(R * cos(D));
@@ -2052,7 +2052,7 @@ void Scene::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::
         normals->push_back(cos(D));
 
         //point A2
-        D = (d+360/prec)*M_PI/180.0;
+        D = (d+360/prec)*CGAL_PI/180.0;
         vertices->push_back(R * sin(D));
         vertices->push_back(1);
         vertices->push_back(R * cos(D));
@@ -2071,7 +2071,7 @@ void Scene::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::
         normals->push_back(cos(D));
 
         //point C2
-        D = d*M_PI/180.0;
+        D = d*CGAL_PI/180.0;
         vertices->push_back(R * sin(D));
         vertices->push_back(0);
         vertices->push_back(R * cos(D));
@@ -2097,8 +2097,8 @@ void Scene::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::
 
 
 
-        P = rings*M_PI/180.0;
-        T = t*M_PI/180.0;
+        P = rings*CGAL_PI/180.0;
+        T = t*CGAL_PI/180.0;
         x[1] = sin(P) * cos(T) ;
         z[1] = sin(P) * sin(T) ;
         y[1] = cos(P);
@@ -2112,8 +2112,8 @@ void Scene::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::
         normals->push_back(z[1]);
 
         //
-        P = rings*M_PI/180.0;
-        T = (t+sectors)*M_PI/180.0;
+        P = rings*CGAL_PI/180.0;
+        T = (t+sectors)*CGAL_PI/180.0;
         x[2] = sin(P) * cos(T) ;
         z[2] = sin(P) * sin(T) ;
         y[2] = cos(P);
@@ -2131,8 +2131,8 @@ void Scene::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::
         for(int t=0; t<360; t+=sectors)
         {
             //A
-            P = p*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = p*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[0] = sin(P) * cos(T) ;
             z[0] = sin(P) * sin(T) ;
             y[0] = cos(P);
@@ -2147,8 +2147,8 @@ void Scene::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::
             normals->push_back(z[0]);
 
             //B
-            P = (p+rings)*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = (p+rings)*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[1] = sin(P) * cos(T) ;
             z[1] = sin(P) * sin(T) ;
             y[1] = cos(P);
@@ -2162,8 +2162,8 @@ void Scene::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::
             normals->push_back(z[1]);
 
             //C
-            P = p*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = p*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[2] = sin(P) * cos(T) ;
             z[2] = sin(P) * sin(T) ;
             y[2] = cos(P);
@@ -2176,8 +2176,8 @@ void Scene::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::
             normals->push_back(y[2]);
             normals->push_back(z[2]);
             //D
-            P = (p+rings)*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = (p+rings)*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[3] = sin(P) * cos(T) ;
             z[3] = sin(P) * sin(T) ;
             y[3] = cos(P);

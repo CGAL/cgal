@@ -471,7 +471,7 @@ private Q_SLOTS:
     {
       ::zoomToId(*item->face_graph(),
                      QString("f%1").arg(angles_min[item].second),
-                     qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first()),
+                     qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first()),
                      dummy_fd,
                      dummy_p);
     }
@@ -480,7 +480,7 @@ private Q_SLOTS:
     {
       ::zoomToId(*item->face_graph(),
                      QString("f%1").arg(jacobian_min[item].second),
-                     qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first()),
+                     qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first()),
                      dummy_fd,
                      dummy_p);
     }
@@ -504,7 +504,7 @@ private Q_SLOTS:
     {
       ::zoomToId(*item->face_graph(),
                  QString("f%1").arg(angles_max[item].second),
-                 qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first()),
+                 qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first()),
                  dummy_fd,
                  dummy_p);
     }
@@ -513,7 +513,7 @@ private Q_SLOTS:
     {
       ::zoomToId(*item->face_graph(),
                  QString("f%1").arg(jacobian_max[item].second),
-                 qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first()),
+                 qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first()),
                  dummy_fd,
                  dummy_p);
     }

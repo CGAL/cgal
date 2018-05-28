@@ -300,8 +300,8 @@ bool Polyhedral_surface::open(const QString& filename)
     % xcenter % ycenter % zcenter
             << boost::format("              span=(%1%,%2%,%3%)\n")
     % xdelta % ydelta % zdelta;
-  viewer->camera()->setSceneBoundingBox(qglviewer::Vec(xmin, ymin, zmin),
-                                        qglviewer::Vec(xmax, ymax, zmax));
+  viewer->camera()->setSceneBoundingBox(CGAL::qglviewer::Vec(xmin, ymin, zmin),
+                                        CGAL::qglviewer::Vec(xmax, ymax, zmax));
   viewer->setBackgroundColor(Qt::white);
   viewer->showEntireScene();
   

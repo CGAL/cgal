@@ -19,7 +19,7 @@ CGAL::Three::Scene_item::Scene_item(int buffers_size, int vaos_size)
     vaos(vaos_size)
 {
 
-  QGLViewer::QGLViewerPool().first()->makeCurrent();
+  CGAL::QGLViewer::QGLViewerPool().first()->makeCurrent();
   is_bbox_computed = false;
   is_diag_bbox_computed = false;
   for(int i=0; i<vaosSize; i++)
@@ -202,7 +202,7 @@ void CGAL::Three::Scene_item::attribBuffers(CGAL::Three::Viewer_interface* viewe
 QOpenGLShaderProgram* CGAL::Three::Scene_item::getShaderProgram(int name, CGAL::Three::Viewer_interface * viewer) const
 {
     if(viewer == 0)
-        viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+        viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin());
     return viewer->getShaderProgram(name);
 }
 

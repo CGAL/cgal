@@ -194,7 +194,7 @@ Scene_textured_polyhedron_item_priv::compute_normals_and_vertices(void) const
     typedef Base::Facet Facet;
     typedef Base::Facet_iterator Facet_iterator;
 
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
     //Facets
     Facet_iterator f = poly->facets_begin();

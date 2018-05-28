@@ -247,7 +247,7 @@ void compute_faces()
 }
 
 void dump(std::ostream& os, leda_node v, bool nl=true) const
-{  os << " ["<<::index(v)<<"] "<<G[v]; 
+{  os << " ["<< ::index(v)<<"] "<<G[v]; 
    if (nl) os << std::endl; }
 
 void dump(std::ostream& os) const
