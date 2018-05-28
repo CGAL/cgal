@@ -151,6 +151,8 @@ void run(std::list<Point> all_points, // intentional copy
 
 int main()
 {
+  CGAL::Set_ieee_double_precision pfr;
+
   CGAL::Random rnd = CGAL::get_default_random();
   std::cout << "seed: " << rnd.get_seed() << std::endl;
 
