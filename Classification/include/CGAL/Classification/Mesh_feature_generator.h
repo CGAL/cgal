@@ -402,19 +402,6 @@ private:
     m_scales.clear();
   }
 
-  template <typename T>
-  const T& get_parameter (const T& t)
-  {
-    return t;
-  }
-
-  template <typename T>
-  Default_property_map<face_iterator, T>
-  get_parameter (const Default&)
-  {
-    return Default_property_map<face_iterator, T>();
-  }
-
 };
 
 
