@@ -72,6 +72,7 @@ struct Identity_functor
  * vertices of the bottom and top part are first initialized to the same value as the corresponding 
  * vertices of `input`. Then for each vertex, a call to `bot` and `top` is done for the vertices of the 
  * bottom part and the top part, respectively.
+ * \attention `output` may be self intersecting.
  * @tparam InputMesh a model of `FaceListGraph` and `MutableFaceGraph`
  * @tparam OutputMesh a model of `FaceListGraph` and `MutableFaceGraph`
  * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters" for `InputMesh`
@@ -215,8 +216,9 @@ void extrude_mesh(const InputMesh& input,
 /**
  * \ingroup PMP_meshing_grp
  * fills `output` with a close mesh bounding the volume swept by `input` when translating its 
- * vertices by `dir` * `d`. The mesh is oriented so that the faces corresponding to `input`
+ * vertices by `dir`. The mesh is oriented so that the faces corresponding to `input`
  * in `output` have the same orientation.
+ * \attention `output` may be self intersecting.
  * @tparam InputMesh a model of the concept `MutableFaceGraph`
  * @tparam OutputMesh a model of the concept `MutableFaceGraph`
  * @tparam Vector_3 a type of Vector_3 from the kernel used by `OutputMesh`.
@@ -282,6 +284,20 @@ void extrude_mesh(const InputMesh& input,
 {
   extrude_mesh(input, output, dir,
                parameters::all_default(),
+               parameters::all_default());
+}
+
+template <class InputMesh,
+          class OutputMesh,
+          typename Vector,
+          typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+void extrude_mesh(const InputMesh& input, 
+                  OutputMesh& output, 
+                  Vector dir,
+                  const CGAL_PMP_NP_CLASS& np)
+{
+  extrude_mesh(input, output, dir,
+               np,
                parameters::all_default());
 }
 
