@@ -49,7 +49,7 @@ void test_mesh(const char* filename)
     assert(false);
     return ;
   }
-  CGAL::Polygon_mesh_processing::extrude_mesh(in, out, Kernel::Vector_3(0.0, 0.0, -1.0), 1.0);
+  CGAL::Polygon_mesh_processing::extrude_mesh(in, out, Kernel::Vector_3(0.0, 0.0, -1.0));
   std::ofstream extruded_off("extruded.off");
   extruded_off << out;
   extruded_off.close();  
@@ -58,7 +58,7 @@ void test_mesh(const char* filename)
   typedef typename boost::property_map<Mesh, CGAL::vertex_point_t>::type VPMap;
   Bot<VPMap> bot(get(CGAL::vertex_point, out));
   Top<VPMap> top(get(CGAL::vertex_point, out));
-  CGAL::Polygon_mesh_processing::generic_extrude_mesh(in, out, bot, top);
+  CGAL::Polygon_mesh_processing::extrude_mesh(in, out, bot, top);
   std::ofstream gen_extruded_off("gen_extruded.off");
   gen_extruded_off << out;
   gen_extruded_off.close();

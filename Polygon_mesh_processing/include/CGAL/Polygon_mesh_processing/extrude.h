@@ -40,19 +40,18 @@ namespace extrude_impl{
 
 template<typename PMAP, typename Vector>
 struct Const_dist_translation{
-  Const_dist_translation(PMAP map, const Vector& dir, const double d)
-    :map(map), dir(dir), d(d){}
+  Const_dist_translation(PMAP map, const Vector& dir)
+    :map(map), dir(dir){}
   
   template<typename VertexDescriptor, typename U>
   void operator()(const VertexDescriptor vd, const U&)
   {
-    typename boost::property_traits<PMAP>::value_type p = get(map, vd) + d*dir;
+    typename boost::property_traits<PMAP>::value_type p = get(map, vd) + dir;
     put(map, vd, p);
   }
   
   PMAP map;
   Vector dir;
-  double d;
 };
 
 struct Identity_functor
@@ -64,6 +63,8 @@ struct Identity_functor
 
 /**
  * \ingroup PMP_meshing_grp
+ * \brief this overload performs a generalized extrusion of `input`.
+ * 
  * extrudes the open surface mesh `input` and puts the result in `output`. The mesh generated is a closed 
  * surface mesh with a bottom and top part, both having the same graph combinatorics as `input` (except 
  * that the orientation of the faces of the bottom part is reversed). The bottom and the top parts are 
@@ -111,12 +112,12 @@ template <class InputMesh,
           class NamedParameters1,
           class NamedParameters2
           >
-void generic_extrude_mesh(const InputMesh& input, 
-                          OutputMesh& output, 
-                          BottomFunctor& bot,
-                          TopFunctor& top,
-                          const NamedParameters1& np_in,
-                          const NamedParameters2& np_out)
+void extrude_mesh(const InputMesh& input, 
+                  OutputMesh& output, 
+                  BottomFunctor& bot,
+                  TopFunctor& top,
+                  const NamedParameters1& np_in,
+                  const NamedParameters2& np_out)
 {
   typedef typename boost::graph_traits<InputMesh>::vertex_descriptor input_vertex_descriptor;
   typedef typename boost::graph_traits<InputMesh>::halfedge_descriptor input_halfedge_descriptor;
@@ -130,14 +131,14 @@ void generic_extrude_mesh(const InputMesh& input,
   typedef typename GetVertexPointMap < InputMesh, NamedParameters1>::const_type IVPMap;
   
   VPMap output_vpm = choose_param(get_param(np_out, internal_np::vertex_point),
-                                   get_property_map(vertex_point, output));
+                                  get_property_map(vertex_point, output));
   IVPMap input_vpm = choose_param(get_param(np_in, internal_np::vertex_point),
-                                   get_const_property_map(vertex_point, input));
+                                  get_const_property_map(vertex_point, input));
   
   std::vector<std::pair<input_vertex_descriptor, output_vertex_descriptor> > bottom_v2v;
   std::vector<std::pair<input_halfedge_descriptor, output_halfedge_descriptor> > bottom_h2h;
   copy_face_graph(input, output, std::back_inserter(bottom_v2v),
-                        std::back_inserter(bottom_h2h), Emptyset_iterator(),
+                  std::back_inserter(bottom_h2h), Emptyset_iterator(),
                   input_vpm, output_vpm);
   
   // create the offset for the other side
@@ -151,7 +152,7 @@ void generic_extrude_mesh(const InputMesh& input,
   std::vector<std::pair<input_vertex_descriptor, output_vertex_descriptor> > top_v2v;
   std::vector<std::pair<input_halfedge_descriptor, output_halfedge_descriptor> > top_h2h;
   copy_face_graph(input, output, std::inserter(top_v2v, top_v2v.end()),
-                        std::inserter(top_h2h, top_h2h.end()), Emptyset_iterator(),
+                  std::inserter(top_h2h, top_h2h.end()), Emptyset_iterator(),
                   input_vpm, output_vpm);
   for(std::size_t i = 0; i< top_v2v.size(); ++i)
   {
@@ -253,25 +254,23 @@ template <class InputMesh,
 void extrude_mesh(const InputMesh& input, 
                   OutputMesh& output, 
                   #ifdef DOXYGEN_RUNNING
-                  Vector_3 dir,
-                  const FT d, 
+                  Vector_3 v,
                   #else
-                  typename GetGeomTraits<OutputMesh, NamedParameters2>::type::Vector_3 dir, 
-                  const typename GetGeomTraits<OutputMesh, NamedParameters2>::type::FT d,
+                  typename GetGeomTraits<OutputMesh, NamedParameters2>::type::Vector_3 v, 
                   #endif
                   const NamedParameters1& np_in,
                   const NamedParameters2& np_out)
 {
   typedef typename GetVertexPointMap < OutputMesh, NamedParameters2>::type VPMap;
   VPMap output_vpm = choose_param(get_param(np_out, internal_np::vertex_point),
-                                   get_property_map(vertex_point, output));
+                                  get_property_map(vertex_point, output));
   
   extrude_impl::Const_dist_translation<
       typename GetVertexPointMap<OutputMesh, NamedParameters2>::type,
       typename GetGeomTraits<OutputMesh, NamedParameters2>::type::Vector_3> bot(output_vpm, 
-                                                                                  dir, d);
+                                                                                v);
   extrude_impl::Identity_functor top;
-  generic_extrude_mesh(input, output, bot,top, np_in, np_out);
+  extrude_mesh(input, output, bot,top, np_in, np_out);
 }
 //convenience overload
 template <class InputMesh,
@@ -279,10 +278,9 @@ template <class InputMesh,
           typename Vector>
 void extrude_mesh(const InputMesh& input, 
                   OutputMesh& output, 
-                  Vector dir, 
-                  const double d)
+                  Vector dir)
 {
-  extrude_mesh(input, output, dir, d, 
+  extrude_mesh(input, output, dir,
                parameters::all_default(),
                parameters::all_default());
 }
@@ -291,25 +289,13 @@ template <class InputMesh,
           class OutputMesh,
           class BottomFunctor,
           class TopFunctor>
-void generic_extrude_mesh(const InputMesh& input, 
-                          OutputMesh& output, 
-                          BottomFunctor& bot,
-                          TopFunctor& top)
+void extrude_mesh(const InputMesh& input, 
+                  OutputMesh& output, 
+                  BottomFunctor& bot,
+                  TopFunctor& top)
 {
-  generic_extrude_mesh(input, output, bot, top, 
-                       parameters::all_default(), parameters::all_default());
-}
-
-template <class InputMesh,
-          class OutputMesh,
-          class BottomFunctor>
-void generic_extrude_mesh(const InputMesh& input, 
-                          OutputMesh& output, 
-                          BottomFunctor& bot)
-{
-  extrude_impl::Identity_functor top;
-  generic_extrude_mesh(input, output, bot, top, 
-                       parameters::all_default(), parameters::all_default());
+  extrude_mesh(input, output, bot, top, 
+               parameters::all_default(), parameters::all_default());
 }
 
 }} //end CGAL::PMP
