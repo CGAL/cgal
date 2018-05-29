@@ -81,6 +81,19 @@ Release date: September 2018
     `<CGAL/Mesh_3/Labeled_mesh_domain_3.h>`, that were deprecated since
     CGAL 4.5, are now removed.
 
+-   **Breaking change**: `CGAL::lloyd_optimize_mesh_3` now depends on
+    the _Eigen_ library.
+
+### Estimation of Local Differential Properties of Point-Sampled Surfaces Reference
+
+-   **Breaking change**: `CGAL::Monge_via_jet_fitting` now depends on
+    the _Eigen_ library.
+
+### Bounding Volumes
+
+-   **Breaking change**: `CGAL::Approximate_min_ellipsoid_d` now
+    depends on the _Eigen_ library.
+
 ### CGAL and the Boost Graph Library (BGL)
 
 -   Add helper function `CGAL::is_valid_polygon_mesh` that checks the
@@ -88,6 +101,13 @@ Release date: September 2018
 
 -   Improve the function `CGAL::Euler::collapse_edge` so that the target
     vertex of the collapsed edge is always kept after the collapse.
+
+### CGAL and Solvers
+
+-   **Breaking change**: `CGAL::Diagonalize_traits` is now deprecated
+    and shouldn't be used, `CGAL::Eigen_diagonalize_traits` (along
+    with the _Eigen_ library) should be used instead.
+
 
 
 Release 4.12
