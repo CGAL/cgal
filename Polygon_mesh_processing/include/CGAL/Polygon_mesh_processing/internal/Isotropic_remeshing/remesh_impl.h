@@ -732,7 +732,6 @@ namespace internal {
           halfedge_descriptor epo_p = opposite(ep_p, mesh_);
           halfedge_descriptor en    = next(he, mesh_);
           halfedge_descriptor en_p  = next(he_opp, mesh_);
-          halfedge_descriptor eno_p = opposite(en_p, mesh_);
           Halfedge_status s_ep_p    = status(ep_p);
           Halfedge_status s_epo_p   = status(epo_p);
           Halfedge_status s_ep      = status(prev(he, mesh_));
@@ -755,29 +754,7 @@ namespace internal {
             else{
               // swap edges so as to keep constained edges:
               // replace en_p by epo_p and ep_p by eno_p
-              // (1) exchange next pointer
-              set_next(prev(epo_p, mesh_), en_p, mesh_);
-              set_next(en_p, next(epo_p, mesh_), mesh_);
-              set_next(prev(eno_p, mesh_), ep_p, mesh_);
-              set_next(ep_p, next(eno_p, mesh_), mesh_);
-              set_next(epo_p, eno_p, mesh_);
-              set_next(he_opp, epo_p, mesh_);
-              set_next(eno_p, he_opp, mesh_);
-              // (2) exchange vertex-halfedge pointer
-              set_target(ep_p, va, mesh_);
-              set_target(eno_p, vb, mesh_);
-              set_halfedge(va, ep_p, mesh_);
-              set_halfedge(vb, eno_p, mesh_);
-              // (3) exchange face-halfedge pointer
-              set_face(ep_p, face(eno_p, mesh_), mesh_);
-              set_face(en_p, face(epo_p, mesh_), mesh_);
-              set_face(epo_p, face(he_opp, mesh_), mesh_);
-              set_face(eno_p, face(he_opp, mesh_), mesh_);
-              set_halfedge(face(he_opp, mesh_), he_opp, mesh_);
-              if (face(ep_p, mesh_) != boost::graph_traits<PM>::null_face())
-                set_halfedge(face(ep_p, mesh_), ep_p, mesh_);
-              if (face(en_p, mesh_) != boost::graph_traits<PM>::null_face())
-                set_halfedge(face(en_p, mesh_), en_p, mesh_);
+              ::CGAL::internal::swap_edges(en_p, epo_p, mesh_);
               CGAL_assertion(is_valid(mesh_));
             }
           }
