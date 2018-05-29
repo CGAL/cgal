@@ -28,6 +28,8 @@
 #include <CGAL/Classification/Color.h>
 #include <CGAL/Classification/Feature_base.h>
 
+/// \cond SKIP_IN_MANUAL
+
 namespace CGAL {
 
 namespace Classification {
@@ -166,5 +168,7 @@ public:
 } // namespace Classification
 
 } // namespace CGAL
+
+/// \endcond
 
 #endif // CGAL_CLASSIFICATION_FEATURE_HSV_H

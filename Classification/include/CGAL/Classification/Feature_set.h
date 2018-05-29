@@ -68,11 +68,19 @@ class Feature_set
   
 public:
 
+  /// \name Constructor
+  /// @{
+
+  /*!
+    \brief Creates an empty feature set.
+  */
   Feature_set() :
 #ifdef CGAL_LINKED_WITH_TBB
     m_tasks(NULL)
 #endif
   { }
+
+  /// @}
   
   /// \cond SKIP_IN_MANUAL
   virtual ~Feature_set()
@@ -86,8 +94,20 @@ public:
   }
   /// \endcond
 
+  /// \name Modifications
+  /// @{
+  
   /*!
     \brief Instantiates a new feature and adds it to the set.
+
+    If several calls of `add()` are surrounded by
+    `begin_parallel_additions()` and `end_parallel_additions()`, they
+    are computed in parallel. They are still inserted in the specified
+    order in the feature set (the first call of `add()` creates a
+    feature at index 0, the second at index 1, etc.).
+
+    \sa `begin_parallel_additions()`
+    \sa `end_parallel_additions()`
 
     \tparam Feature type of the feature, inherited from
     `Feature_base`.
@@ -143,25 +163,8 @@ public:
     }
     return m_features.back();
   }
-  /// \end
+  /// \endcond
 
-#if defined(CGAL_LINKED_WITH_TBB) || defined(DOXYGEN_RUNNING)
-  void begin_parallel_additions()
-  {
-    m_tasks = new tbb::task_group;
-  }
-
-  void end_parallel_additions()
-  {
-    m_tasks->wait();
-    delete m_tasks;
-    m_tasks = NULL;
-    
-    for (std::size_t i = 0; i < m_adders.size(); ++ i)
-      delete m_adders[i];
-    m_adders.clear();
-  }
-#endif
     
   /*!
     \brief Removes a feature.
@@ -183,6 +186,76 @@ public:
   }
 
   /*!
+    \brief Removes all features.
+  */
+  void clear ()
+  {
+    m_features.clear();
+  }
+
+  /// @}
+
+  /// \name Parallel Processing
+  /// @{
+  
+
+#if defined(CGAL_LINKED_WITH_TBB) || defined(DOXYGEN_RUNNING)
+
+  /*!
+    \brief Initializes structures to compute features in parallel.
+
+    If the user wants to add features in parallel, this function
+    should be called before making several calls of `add()`. After the
+    calls of `add()`, `end_parallel_additions()` should be called.
+
+    \note This function requires \ref thirdpartyTBB.
+
+    \warning As arguments of `add()` are passed by reference and that new
+    threads are started if `begin_parallel_additions()` is used, it is
+    highly recommended to always call `begin_parallel_additions()`,
+    `add()` and `end_parallel_additions()` _within the same scope_, to
+    avoid keeping references to temporary objects that might be
+    deleted before the thread has terminated.
+
+    \sa `end_parallel_additions()`
+  */ 
+  void begin_parallel_additions()
+  {
+    m_tasks = new tbb::task_group;
+  }
+
+  /*!
+
+    \brief Waits for the end of parallel feature computation and
+    clears dedicated data structures afterwards.
+
+    If the user wants to add features in parallel, this function
+    should be called after `begin_parallel_additions()` and several
+    calls of `add()`.
+
+    \note This function requires \ref thirdpartyTBB.
+
+    \sa `begin_parallel_additions()`
+  */ 
+  void end_parallel_additions()
+  {
+    m_tasks->wait();
+    delete m_tasks;
+    m_tasks = NULL;
+    
+    for (std::size_t i = 0; i < m_adders.size(); ++ i)
+      delete m_adders[i];
+    m_adders.clear();
+  }
+#endif
+
+  /// @}
+
+
+  /// \name Access
+  /// @{
+  
+  /*!
     \brief Returns how many features are defined.
   */  
   std::size_t size() const
@@ -199,13 +272,7 @@ public:
     return m_features[i];
   }
 
-  /*!
-    \brief Removes all features.
-  */
-  void clear ()
-  {
-    m_features.clear();
-  }
+  /// @}
 
   /// \cond SKIP_IN_MANUAL
   void free_memory(std::size_t i)
@@ -218,8 +285,11 @@ public:
     std::sort (m_features.begin(), m_features.end(),
                Compare_name());               
   }
+  /// \endcond
 
 private:
+
+  /// \cond SKIP_IN_MANUAL
 
   struct Abstract_parallel_feature_adder
   {
@@ -276,13 +346,9 @@ private:
 
   };
 
-
   std::vector<Abstract_parallel_feature_adder*> m_adders;
 
-public:
-
   /// \endcond
-  
 };
 
 

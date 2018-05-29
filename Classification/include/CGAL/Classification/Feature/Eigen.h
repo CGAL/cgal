@@ -27,13 +27,14 @@
 #include <CGAL/Classification/Feature_base.h>
 #include <CGAL/Classification/Local_eigen_analysis.h>
 
+/// \cond SKIP_IN_MANUAL
+
 namespace CGAL {
 
 namespace Classification {
 
 namespace Feature {
 
-/// \cond SKIP_IN_MANUAL
 class Eigen_feature : public Feature_base
 {
 protected:
@@ -77,7 +78,6 @@ public:
   }
 
 };
-/// \endcond
   
   /*!
     \ingroup PkgClassificationFeatures
@@ -116,7 +116,6 @@ public:
     this->init(input.size(), eigen);
   }
 
-  /// \cond SKIP_IN_MANUAL
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
@@ -125,7 +124,6 @@ public:
     else
       return ((ev[2] - ev[1]) / ev[2]);
   }
-  /// \endcond
 };
 
   /*!
@@ -163,7 +161,7 @@ public:
     this->set_name("planarity");
     this->init(input.size(), eigen);
   }
-  /// \cond SKIP_IN_MANUAL
+
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
@@ -172,7 +170,6 @@ public:
     else
       return ((ev[1] - ev[0]) / ev[2]);
   }
-  /// \endcond
  
 };
 
@@ -211,7 +208,7 @@ public:
     this->set_name("sphericity");
     this->init(input.size(), eigen);
   }
-  /// \cond SKIP_IN_MANUAL
+
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
@@ -220,7 +217,7 @@ public:
     else
       return (ev[0] / ev[2]);
   }
-  /// \endcond
+
 };
 
   /*!
@@ -258,13 +255,13 @@ public:
     this->set_name("omnivariance");
     this->init(input.size(), eigen);
   }
-  /// \cond SKIP_IN_MANUAL
+
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
     return (std::pow (CGAL::abs(ev[0] * ev[1] * ev[2]), 0.333333333f));
   }
-  /// \endcond
+
 };
 
   /*!
@@ -302,7 +299,7 @@ public:
     this->set_name("anisotropy");
     this->init(input.size(), eigen);
   }
-  /// \cond SKIP_IN_MANUAL
+
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
@@ -311,7 +308,7 @@ public:
     else
       return ((ev[2] - ev[0]) / ev[2]);
   }
-  /// \endcond
+
 };
 
   /*!
@@ -349,7 +346,7 @@ public:
     this->set_name("eigentropy");
     this->init(input.size(), eigen);
   }
-  /// \cond SKIP_IN_MANUAL
+
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
@@ -362,7 +359,7 @@ public:
               - ev[1] * std::log(ev[1])
               - ev[2] * std::log(ev[2]));
   }
-  /// \endcond
+
 };
 
 
@@ -402,7 +399,7 @@ public:
     this->set_name("surface_variation");
     this->init(input.size(), eigen);
   }
-  /// \cond SKIP_IN_MANUAL
+
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
@@ -411,7 +408,7 @@ public:
     else
       return (ev[0] / (ev[0] + ev[1] + ev[2]));
   }
-  /// \endcond
+
 };
 
 } // namespace Feature
@@ -419,5 +416,7 @@ public:
 } // namespace Classification
 
 } // namespace CGAL
+
+/// \endcond
 
 #endif // CGAL_CLASSIFICATION_FEATURES_EIGEN_H
