@@ -863,10 +863,8 @@ endif()
 if(NOT CGAL_HEADER_ONLY)
   create_CGALconfig_files()
 else()
-  if(NOT EXISTS "${CMAKE_BINARY_DIR}/CGALConfig.cmake")
-    configure_file("${CGAL_MODULES_DIR}/CGALConfig_binary_header_only.cmake.in"
-      "${CMAKE_BINARY_DIR}/CGALConfig.cmake"  @ONLY)
-  endif()
+  configure_file("${CGAL_MODULES_DIR}/CGALConfig_binary_header_only.cmake.in"
+    "${CMAKE_BINARY_DIR}/CGALConfig.cmake"  @ONLY)
 endif()
 
 #--------------------------------------------------------------------------------------------------
