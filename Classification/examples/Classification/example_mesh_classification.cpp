@@ -45,17 +45,19 @@ int main (int argc, char** argv)
   std::cerr << "Reading input" << std::endl;
   in >> mesh;
 
-
+  std::cerr << "Generating features" << std::endl;
+  CGAL::Real_timer t;
+  t.start();
+  
   ///////////////////////////////////////////////////////////////////
   //! [Generator]
 
   Feature_set features;
   
-  std::cerr << "Generating features" << std::endl;
-  CGAL::Real_timer t;
-  t.start();
   Face_point_map face_point_map (&mesh); // Associates each face to its center of mass
-  Feature_generator generator (mesh, face_point_map, 5);  // using 5 scales
+
+  std::size_t number_of_scales = 5;
+  Feature_generator generator (mesh, face_point_map, number_of_scales);
   
 #ifdef CGAL_LINKED_WITH_TBB
   features.begin_parallel_additions();
@@ -68,11 +70,11 @@ int main (int argc, char** argv)
   features.end_parallel_additions();
 #endif
   
-  t.stop();
-  std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
-
   //! [Generator]
   ///////////////////////////////////////////////////////////////////
+
+  t.stop();
+  std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
 
   // Add types
   Label_set labels;

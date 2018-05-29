@@ -141,11 +141,12 @@ int main (int argc, char** argv)
   //! [Eigen]
   ///////////////////////////////////////////////////////////////////
 
+  t.start();
+  
   ///////////////////////////////////////////////////////////////////
   //! [Features]
   
   Feature_set features;
-  t.start();
   
 #ifdef CGAL_LINKED_WITH_TBB
   features.begin_parallel_additions();
@@ -178,6 +179,8 @@ int main (int argc, char** argv)
   
   //! [Features]
   ///////////////////////////////////////////////////////////////////
+  
+  t.stop();
   
   // Add types
   Label_set labels;

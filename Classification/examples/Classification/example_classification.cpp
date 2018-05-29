@@ -64,8 +64,7 @@ int main (int argc, char** argv)
   }
 
   float grid_resolution = 0.34f;
-  float radius_neighbors = 1.7f;
-  float radius_dtm = 15.0f;
+  unsigned int number_of_neighbors = 6;
 
   std::cerr << "Computing useful structures" << std::endl;
 
@@ -74,13 +73,17 @@ int main (int argc, char** argv)
   Planimetric_grid grid (pts, Pmap(), bbox, grid_resolution);
   Neighborhood neighborhood (pts, Pmap());
   Local_eigen_analysis eigen
-    = Local_eigen_analysis::create_from_point_set (pts, Pmap(), neighborhood.k_neighbor_query(6));
+    = Local_eigen_analysis::create_from_point_set
+    (pts, Pmap(), neighborhood.k_neighbor_query(number_of_neighbors));
 
   //! [Analysis]
   ///////////////////////////////////////////////////////////////////
   
   ///////////////////////////////////////////////////////////////////
   //! [Features]
+
+  float radius_neighbors = 1.7f;
+  float radius_dtm = 15.0f;
 
   std::cerr << "Computing features" << std::endl;
   Feature_set features;
