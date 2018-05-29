@@ -31,6 +31,7 @@
 #include <CGAL/Monge_via_jet_fitting.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/function.h>
 
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
