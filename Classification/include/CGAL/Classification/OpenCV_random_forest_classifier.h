@@ -237,7 +237,7 @@ public:
     }
 
     for (std::size_t i = 0; i < out.size(); ++ i)
-      out[i] = - std::log (out[i] / nb_trees);
+      out[i] = out[i] / nb_trees;
 #else
 
     std::vector<float> result (1, 0);
@@ -246,9 +246,9 @@ public:
     
     for (std::size_t i = 0; i < out.size(); ++ i)
       if (i == std::size_t(result[0]))
-        out[i] = 0.;
+        out[i] = 1.f;
       else
-        out[i] = 1.;
+        out[i] = 0.f;
 
 #endif
   }

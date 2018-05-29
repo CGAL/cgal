@@ -150,7 +150,6 @@ public:
     this->set_name (oss.str());
   }
 
-  /// \cond SKIP_IN_MANUAL
   virtual float value (std::size_t pt_index)
   {
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
@@ -162,7 +161,6 @@ public:
 #endif
   }
 
-  /// \endcond
 };
 
 } // namespace Feature

@@ -192,11 +192,7 @@ public:
     m_rfc->evaluate (ft.data(), prob.data());
     
     for (std::size_t i = 0; i < out.size(); ++ i)
-    {
-      out[i] = - std::log (prob[i]);
-      if (out[i] < 0.f)
-        out[i] = -out[i];
-    }
+      out[i] = (std::min) (1.f, (std::max) (0.f, prob[i]));
   }
   /// \endcond
   

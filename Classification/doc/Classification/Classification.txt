@@ -194,7 +194,7 @@ Example of cluster classification mesh (left: input, middle: clusters computed f
 
 \section Classification_classifiers Classifiers
 
-%Classification relies on a classifier: this classifier is an object that, from the set of values taken by the features at an input item, computes the energy that measures the likelihood of an input item to belong to one label or another. A model of the concept `CGAL::Classification::Classifier` must take the index of an input item and store the energies associated to each label in a vector. If a classifier returns the value 0 for a pair of label and input item, it means that this item belongs to this label with certainty; large values mean that this item is not likely to belong to this label.
+%Classification relies on a classifier: this classifier is an object that, from the set of values taken by the features at an input item, computes the probability that an input item belongs to one label or another. A model of the concept `CGAL::Classification::Classifier` must take the index of an input item and store the probability associated to each label in a vector. If a classifier returns the value 1 for a pair of label and input item, it means that this item belongs to this label with certainty; values close to 0 mean that this item is not likely to belong to this label.
 
 \cgal provides three models for this concept, [ETHZ_random_forest_classifier](@ref CGAL::Classification::ETHZ_random_forest_classifier), [OpenCV_random_forest_classifier](@ref CGAL::Classification::OpenCV_random_forest_classifier) and [Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier).
 
@@ -251,7 +251,7 @@ This latest classifier defines the following attributes:
 - a weight applied to each feature;
 - an effect applied to each pair of feature and label.
 
-For each label, the classifier computes the energy as a sum of features normalized with both their weight and the effect they have on this specific label.
+For each label, the classifier computes an energy as a sum of features normalized with both their weight and the effect they have on this specific label.
 
 The main advantage of this classifier is that it can be set up by hand. Nevertheless, it also embeds a training algorithm.
 
