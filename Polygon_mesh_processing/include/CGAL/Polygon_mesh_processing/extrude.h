@@ -67,7 +67,7 @@ struct Identity_functor
  * extrudes the open surface mesh `input` and puts the result in `output`. The mesh generated is a closed 
  * surface mesh with a bottom and top part, both having the same graph combinatorics as `input` (except 
  * that the orientation of the faces of the bottom part is reversed). The bottom and the top parts are 
- * connected by a triangle strip between each boundary cycles. The coordinates of the points associated to the 
+ * connected by a triangle strip between boundary cycles. The coordinates of the points associated to the 
  * vertices of the bottom and top part are first initialized to the same value as the corresponding 
  * vertices of `input`. Then for each vertex, a call to `bot` and `top` is done for the vertices of the 
  * bottom part and the top part, respectively.
