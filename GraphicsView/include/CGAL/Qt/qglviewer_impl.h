@@ -170,6 +170,7 @@ void CGAL::QGLViewer::defaultConstructor() {
   axisIsDrawn_ = true;
 
   _offset = CGAL::qglviewer::Vec(0,0,0);
+  stored_fbo = NULL;
 }
 
 CGAL_INLINE_FUNCTION
@@ -4008,7 +4009,8 @@ QImage* CGAL::QGLViewer::takeSnapshot( CGAL::qglviewer::SnapShotBackground  back
     nbY++;
   GLdouble frustum[6]; 
   camera()->getFrustum(frustum);
-  QOpenGLFramebufferObject fbo(size, QOpenGLFramebufferObject::CombinedDepthStencil);
+  QOpenGLFramebufferObject fbo(size,QOpenGLFramebufferObject::CombinedDepthStencil, GL_TEXTURE_2D, GL_RGBA32F);
+  stored_fbo = &fbo;
   for (int i=0; i<nbX; i++)
     for (int j=0; j<nbY; j++)
     {
@@ -4046,7 +4048,13 @@ QImage* CGAL::QGLViewer::takeSnapshot( CGAL::qglviewer::SnapShotBackground  back
   if(background_color !=0)
     setBackgroundColor(previousBGColor);
   camera()->setFrustum(frustum);
+  stored_fbo = NULL;
   return image;
+}
+
+QOpenGLFramebufferObject* CGAL::QGLViewer::getStoredFrameBuffer()
+{
+  return stored_fbo;
 }
 
 CGAL_INLINE_FUNCTION
@@ -4071,13 +4079,12 @@ void CGAL::QGLViewer::saveSnapshot()
   {
     return;
   }
-  QImage* image= takeSnapshot(static_cast<CGAL::qglviewer::SnapShotBackground>(imageInterface->color_comboBox->currentIndex()),
+  QImage* image= takeSnapshot(qglviewer::SnapShotBackground(imageInterface->color_comboBox->currentIndex()),
         finalSize, imageInterface->oversampling->value(), expand);
   if(image)
   {
     image->save(fileName);
     delete image;
   }
-
 }
 

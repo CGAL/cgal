@@ -84,8 +84,6 @@ public:
   const QImage& staticImage() const Q_DECL_OVERRIDE;
   //!Set total number of depth peeling passes.
    void setTotalPass(int);
-   
-   QOpenGLFramebufferObject* getStoredFrameBuffer() Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
   void sendMessage(QString);

@@ -321,7 +321,7 @@ Scene_surface_mesh_item::color_vector()
 
 void Scene_surface_mesh_item_priv::addFlatData(Point p, EPICK::Vector_3 n, CGAL::Color *c, Scene_item_rendering_helper::Gl_data_names name) const
 {
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   if(name.testFlag(Scene_item_rendering_helper::GEOMETRY))
   {
     flat_vertices.push_back((cgal_gl_data)(p.x()+offset[0]));
@@ -372,7 +372,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
   CGAL::Polygon_mesh_processing::compute_vertex_normals(*smesh_,vnormals);
   
-  const qglviewer::Vec o = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec o = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   EPICK::Vector_3 offset(o.x, o.y, o.z);
   
   SMesh::Property_map<vertex_descriptor, SMesh::Point> positions =
@@ -825,7 +825,7 @@ void Scene_surface_mesh_item_priv::triangulate_convex_facet(face_descriptor fd,
                                                             Scene_item_rendering_helper::Gl_data_names name,
                                                             bool index) const
 {
-  const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   EPICK::Vector_3 offset = EPICK::Vector_3(v_offset.x, v_offset.y, v_offset.z);
   
   Point p0,p1,p2;
@@ -1202,7 +1202,7 @@ void Scene_surface_mesh_item::invalidate(Gl_data_names name)
     d->invalidate_stats();
   }
   setBuffersFilled(false);
-  Q_FOREACH(QGLViewer* v, QGLViewer::QGLViewerPool())
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
     if(viewer == NULL)

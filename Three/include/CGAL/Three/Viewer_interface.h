@@ -217,8 +217,6 @@ public:
   //!The number of passes that are performed for the scene transparency.
   //! Customizable from the MainWindow or the SubViewer menu.
   virtual float total_pass() = 0;
-  //!The last stored FrameBuffer.
-  virtual QOpenGLFramebufferObject* getStoredFrameBuffer() = 0;
 Q_SIGNALS:
   //!Emit this to signal that the `id`th item has been picked.
   void selected(int id);
