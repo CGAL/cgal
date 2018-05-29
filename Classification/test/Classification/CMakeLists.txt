@@ -85,10 +85,17 @@ if( WIN32 )
 endif()
 
 create_single_source_cgal_program( "test_classification_point_set.cpp" CXX_FEATURES ${needed_cxx_features} )
-
 if(TARGET test_classification_point_set)
   target_link_libraries(test_classification_point_set PUBLIC ${classification_linked_libraries})
   if (TBB_FOUND)
     CGAL_target_use_TBB( test_classification_point_set )
+  endif()
+endif()
+
+create_single_source_cgal_program( "deprecated_test_classification_point_set.cpp" CXX_FEATURES ${needed_cxx_features} )
+if(TARGET deprecated_test_classification_point_set)
+  target_link_libraries(deprecated_test_classification_point_set PUBLIC ${classification_linked_libraries})
+  if (TBB_FOUND)
+    CGAL_target_use_TBB( deprecated_test_classification_point_set )
   endif()
 endif()

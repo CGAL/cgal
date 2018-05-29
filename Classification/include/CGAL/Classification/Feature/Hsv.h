@@ -29,6 +29,7 @@
 #include <CGAL/Classification/Feature_base.h>
 
 /// \cond SKIP_IN_MANUAL
+#ifndef CGAL_NO_DEPRECATED_CODE
 
 namespace CGAL {
 
@@ -83,6 +84,7 @@ namespace Feature {
     is `CGAL::Classification::RGB_Color`.
   */
 template <typename GeomTraits, typename PointRange, typename ColorMap>
+CGAL_DEPRECATED_MSG("you are using the deprecated feature Hsv, please update your code with Color_channel instead")
 class Hsv : public Feature_base
 {
 public:
@@ -169,6 +171,7 @@ public:
 
 } // namespace CGAL
 
+#endif
 /// \endcond
 
 #endif // CGAL_CLASSIFICATION_FEATURE_HSV_H

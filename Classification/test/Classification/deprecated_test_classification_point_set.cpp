@@ -1,3 +1,5 @@
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+
 #if defined (_MSC_VER) && !defined (_WIN64)
 #pragma warning(disable:4244) // boost::number_distance::distance()
                               // converts 64 to 32 bits integers
@@ -69,22 +71,11 @@ int main (int, char**)
   }
 
   Feature_set features;
-  
-#ifdef CGAL_LINKED_WITH_TBB
-  features.begin_parallel_additions();
-#endif
+  Feature_generator generator (features, pts, pts.point_map(),
+                               5,  // using 5 scales
+                               pts.normal_map(),
+                               color_map, echo_map);
 
-  Feature_generator generator (pts, pts.point_map(), 5);  // using 5 scales
-
-  generator.generate_point_based_features(features);
-  generator.generate_normal_based_features(features, pts.normal_map());
-  generator.generate_color_based_features(features, color_map);
-  generator.generate_echo_based_features(features, echo_map);
-
-#ifdef CGAL_LINKED_WITH_TBB
-  features.end_parallel_additions();
-#endif
-  
   CGAL_assertion (generator.number_of_scales() == 5);
   CGAL_assertion (features.size() == 80);
 

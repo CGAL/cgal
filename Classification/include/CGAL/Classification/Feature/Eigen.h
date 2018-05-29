@@ -28,6 +28,7 @@
 #include <CGAL/Classification/Local_eigen_analysis.h>
 
 /// \cond SKIP_IN_MANUAL
+#ifndef CGAL_NO_DEPRECATED_CODE
 
 namespace CGAL {
 
@@ -92,6 +93,7 @@ public:
 
     Its default name is "linearity".
   */
+CGAL_DEPRECATED_MSG("you are using the deprecated feature Linearity, please update your code with Eigenvalue instead")
 class Linearity
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
@@ -139,6 +141,7 @@ public:
 
     Its default name is "planarity".
   */
+CGAL_DEPRECATED_MSG("you are using the deprecated feature Planarity, please update your code with Eigenvalue instead")
 class Planarity
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
@@ -186,6 +189,7 @@ public:
 
     Its default name is "sphericity".
   */
+CGAL_DEPRECATED_MSG("you are using the deprecated feature Sphericity, please update your code with Eigenvalue instead")
 class Sphericity
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
@@ -233,6 +237,7 @@ public:
 
     Its default name is "omnivariance".
   */
+CGAL_DEPRECATED_MSG("you are using the deprecated feature Omnivariance, please update your code with Eigenvalue instead")
 class Omnivariance
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
@@ -277,6 +282,7 @@ public:
     
     Its default name is "anisotropy".
   */
+CGAL_DEPRECATED_MSG("you are using the deprecated feature Anisotropy, please update your code with Eigenvalue instead")
 class Anisotropy
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
@@ -324,6 +330,7 @@ public:
     
     Its default name is "eigentropy".
   */
+CGAL_DEPRECATED_MSG("you are using the deprecated feature Eigentropy, please update your code with Eigenvalue instead")
 class Eigentropy
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
@@ -377,6 +384,7 @@ public:
 
     Its default name is "surface_variation".
   */
+CGAL_DEPRECATED_MSG("you are using the deprecated feature Surface_variation, please update your code with Eigenvalue instead")
 class Surface_variation
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
@@ -417,6 +425,7 @@ public:
 
 } // namespace CGAL
 
+#endif
 /// \endcond
 
 #endif // CGAL_CLASSIFICATION_FEATURES_EIGEN_H
