@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage User Manual
 \anchor Chapter_Classification
 \cgalAutoToc
-\author Simon Giraudot, Florent Lafarge
+\authors Simon Giraudot, Florent Lafarge
 
 This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12} (section 2), generalized to handle different types of data, multiple features and multiple labels. It classifies a data set into a user-defined set of labels, such as _ground_, _vegetation_ and _buildings_. A flexible API is provided so that users can classify any type of data which they can index and for which they can compute relevant features, compute their own local features on the input data set and define their own labels.
 
