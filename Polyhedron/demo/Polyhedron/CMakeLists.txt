@@ -182,7 +182,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
     TextRenderer_moc.cpp
     Polyhedron_demo_plugin_helper.cpp)
   target_link_libraries(demo_framework
-    PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui Qt5::Script
+    PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui Qt5::Script Qt5::Xml
     )
   if(CGAL_HEADER_ONLY)
     target_compile_definitions(demo_framework PRIVATE -DCGAL_USE_Qt5_RESOURCES)
@@ -196,19 +196,19 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
     PUBLIC
     demo_framework
     ${CGAL_LIBRARIES}
-    Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
+    Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets Qt5::Xml)
   add_library(scene_color_ramp SHARED Color_ramp.cpp)
   target_link_libraries(scene_color_ramp PRIVATE Qt5::Core)
 
   add_library(point_dialog SHARED Show_point_dialog.cpp Show_point_dialog.ui ${Show_point_dialogUI_FILES})
   target_link_libraries(point_dialog
-    PUBLIC Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
+    PUBLIC Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets Qt5::Xml )
 
   macro(add_item item_name)
     add_library(${item_name} SHARED ${ARGN})
     target_link_libraries(${item_name}
       PUBLIC demo_framework ${CGAL_LIBRARIES} ${Boost_LIBRARIES}
-      Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
+      Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets Qt5::Xml)
     cgal_add_compilation_test(${item_name})
   endmacro(add_item)
 
