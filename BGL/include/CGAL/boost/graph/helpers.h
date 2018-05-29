@@ -1397,6 +1397,24 @@ clear_impl(FaceGraph& g)
   }
 }
 
+template <class FaceGraph>
+void swap_vertices(
+  typename boost::graph_traits<FaceGraph>::vertex_descriptor& p,
+  typename boost::graph_traits<FaceGraph>::vertex_descriptor& q,
+  FaceGraph& g)
+{
+ typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
+
+  halfedge_descriptor hq=halfedge(q, g);
+  halfedge_descriptor hp=halfedge(p, g);
+  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(hq, g))
+    set_target(h, p, g);
+  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(hp, g))
+    set_target(h, q, g);
+  set_halfedge(p, hq, g);
+  set_halfedge(q, hp, g);
+}
+
 } //end of internal namespace
 
 /**

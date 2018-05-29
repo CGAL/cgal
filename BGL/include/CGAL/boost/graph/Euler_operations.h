@@ -1115,14 +1115,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor e,
         lP_Erased = true ;
 
         // q will be removed, swap p and q
-        halfedge_descriptor hq=halfedge(q, g);
-        halfedge_descriptor hp=halfedge(p, g);
-        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(hq, g))
-          set_target(h, p, g);
-        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(hp, g))
-          set_target(h, q, g);
-        set_halfedge(p, hq, g);
-        set_halfedge(q, hp, g);
+        internal::swap_vertices(p, q, g);
       }
 
       remove_face(opposite(qb, g),g);
