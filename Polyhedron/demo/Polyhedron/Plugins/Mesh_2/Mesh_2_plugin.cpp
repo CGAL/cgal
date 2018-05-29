@@ -2,7 +2,7 @@
 // Needed for lloyd_optimize_mesh_2 which does it too late
 // (and we don't want to spend the time on finding out who
 // includes the header file that sets it too a value too low
-#define  BOOST_PARAMETER_MAX_ARITY 8
+#define  BOOST_PARAMETER_MAX_ARITY 12
 
 #include <stdexcept>
 

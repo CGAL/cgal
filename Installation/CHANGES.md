@@ -6,6 +6,10 @@ Release 4.13
 
 Release date: September 2018
 
+### 2D and 3D Linear Geometry Kernel
+-   An operator() that takes a Ray_3 has been added to the concept
+    ConstructProjectedPoint 3.
+
 
 ### CGAL and Boost Property Maps
 
@@ -33,6 +37,9 @@ Release date: September 2018
     to reflect the real needs of the code (some types and operators were used
     in the code but did not appear in the concepts).
 
+### Polygon Mesh Processing
+-   Added a function to apply a transformation to a mesh : 
+    - `CGAL::Polygon_mesh_processing::transform()`
 
 Release 4.12
 ------------
@@ -208,7 +215,10 @@ Release date: April 2018
 
 ### CGAL and the Boost Graph Library (BGL)
 
--   Added helper function `CGAL::expand_face_selection_for_removal` that
+-   Add helper function `CGAL::is_valid_polygon_mesh` that checks the 
+    validity of a polygon mesh using BGL functions.
+
+-   Add helper function `CGAL::expand_face_selection_for_removal` that
     expands a face selection to avoid creating a non manifold mesh when
     removing the selected faces.
 

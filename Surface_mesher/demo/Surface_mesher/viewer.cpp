@@ -1,10 +1,10 @@
 #include "viewer.h"
 #include "surface.h"
 #include <QAction>
-#include <QGLViewer/manipulatedCameraFrame.h>
+#include <CGAL/Qt/manipulatedCameraFrame.h>
 
 Viewer::Viewer(QWidget* parent)
-  : QGLViewer(parent), surface(0)
+  : CGAL::QGLViewer(parent), surface(0)
 {
   // Do not store state in a file
   setStateFileName("");
@@ -37,9 +37,9 @@ void Viewer::interpolateToFitBoundingBox(double xmin, double ymin, double zmin,
   Q_ASSERT_X(auto_resize, "Viewer::interpolateToFitBoundingBox", "cannot find action \"actionAuto_resize\"");
   if(auto_resize && auto_resize->isChecked())
   {
-    qglviewer::Camera new_camera = *(camera ());
-    new_camera.fitBoundingBox(qglviewer::Vec(xmin, ymin, zmin),
-                              qglviewer::Vec(xmax, ymax, zmax));
+    CGAL::qglviewer::Camera new_camera = *(camera ());
+    new_camera.fitBoundingBox(CGAL::qglviewer::Vec(xmin, ymin, zmin),
+                              CGAL::qglviewer::Vec(xmax, ymax, zmax));
     camera()->interpolateTo(*new_camera.frame(), 1.);
   }
 }

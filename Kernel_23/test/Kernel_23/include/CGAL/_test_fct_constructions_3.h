@@ -26,12 +26,13 @@
 
 template <class R>
 bool
-_test_fct_constructions_3(const R&)
+_test_fct_constructions_3(const R& r)
 {
   typedef typename R::RT               RT;
   typedef typename R::Point_3          Point;
   typedef typename R::Weighted_point_3 Weighted_point;
   typedef typename R::Segment_3        Segment;
+  typedef typename R::Ray_3        Ray;
   typedef typename R::Plane_3          Plane;
   typedef typename R::Vector_3         Vector;
   typedef typename R::Triangle_3       Triangle;
@@ -129,6 +130,12 @@ _test_fct_constructions_3(const R&)
   assert( CGAL::weighted_circumcenter( wp000_b, wp100_b, wp010_b) == wp000_b);
   assert( CGAL::weighted_circumcenter( wp000_b, wp100_b, wp010_b, wp001_b) == wp000_b);
 
+    // projected point
+  Ray ray(Point(0,0,0), Point (1,1,0));
+  Segment s(Point(0,0,0), Point (1,1,0));
+  assert( r.construct_projected_point_3_object()(ray, Point(-1,0,0)) == Point(0,0,0));
+  assert( r.construct_projected_point_3_object()(s, Point(-1,0,0)) == Point(0,0,0));
+  assert( r.construct_projected_point_3_object()(s, Point(2,0,0)) == Point(1,1,0));
   return true;
 }
 

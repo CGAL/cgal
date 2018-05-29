@@ -623,6 +623,28 @@ of the base class.
 
   /// @cond DEVELOPERS
   /// @{
+
+  /// Add a 0-dimensional feature in the domain.
+  Corner_index add_corner(const Point_3& p);
+
+  /// Overloads where the last parameter \c out is not `CGAL::Emptyset_iterator()`.
+  template <typename InputIterator, typename IndicesOutputIterator>
+  IndicesOutputIterator
+  add_corners(InputIterator first, InputIterator end,
+              IndicesOutputIterator out  /*= CGAL::Emptyset_iterator()*/);
+
+  /*!
+    Add 0-dimensional features in the domain. The value type of `InputIterator` must
+    be `Point_3`.
+  */
+  template <typename InputIterator>
+  void
+  add_corners(InputIterator first, InputIterator end)
+  { add_corners(first, end, CGAL::Emptyset_iterator()); }
+
+  Corner_index register_corner(const Point_3& p, const Curve_index& index);
+  Corner_index add_corner_with_context(const Point_3& p, const Surface_patch_index& index);
+
   /// Overloads where the last parameter \c out is not
   /// `CGAL::Emptyset_iterator()`.
   template <typename InputIterator, typename IndicesOutputIterator>
@@ -808,7 +830,6 @@ of the base class.
   Curve_index insert_edge(InputIterator first, InputIterator end);
   /// @endcond
 private:
-  void register_corner(const Point_3& p, const Curve_index& index);
   void compute_corners_incidences();
 
   /// Returns Index associated to p (p must be the coordinates of a corner
@@ -843,17 +864,14 @@ private:
 public:
   /// @cond DEVELOPERS
   typedef CGAL::AABB_tree<AABB_curves_traits> Curves_AABB_tree;
-  typedef std::set<Surface_patch_index> Set_of_patch_ids;
-  typedef std::map<Point_3, Set_of_patch_ids> Corners_incidence_map;
 
 private:
-  Corners_incidence_map corners_incidence_map_;
   mutable Curves_AABB_tree curves_aabb_tree_;
   mutable bool curves_aabb_tree_is_built;
 
 public:
-  const Corners_incidence_map& corners_incidences_map() const
-  { return corners_incidence_map_; }
+  const Corners_incidences& corners_incidences_map() const
+  { return corners_incidences_; }
 
   const Curves_AABB_tree& curves_aabb_tree() const {
     if(!curves_aabb_tree_is_built) build_curves_aabb_tree();
@@ -1013,6 +1031,67 @@ construct_point_on_curve(const Point_3& starting_point,
 }
 
 
+/// @cond DEVELOPERS
+template <class MD_>
+typename Mesh_domain_with_polyline_features_3<MD_>::Corner_index
+Mesh_domain_with_polyline_features_3<MD_>::
+add_corner(const Point_3& p)
+{
+  typename Corners::iterator cit = corners_.lower_bound(p);
+
+  // If the corner already exists, return its assigned Corner_index...
+  if(cit != corners_.end() && !(corners_.key_comp()(p, cit->first)))
+    return cit->second;
+
+  // ... otherwise, insert it!
+  const Corner_index index = current_corner_index_++;
+  corners_.insert(cit, std::make_pair(p, index));
+
+  return index;
+}
+
+
+template <class MD_>
+template <typename InputIterator, typename IndicesOutputIterator>
+IndicesOutputIterator
+Mesh_domain_with_polyline_features_3<MD_>::
+add_corners(InputIterator first, InputIterator end,
+            IndicesOutputIterator indices_out)
+{
+  while ( first != end )
+    *indices_out++ = add_corner(*first++);
+
+  return indices_out;
+}
+
+template <class MD_>
+typename Mesh_domain_with_polyline_features_3<MD_>::Corner_index
+Mesh_domain_with_polyline_features_3<MD_>::
+register_corner(const Point_3& p, const Curve_index& curve_index)
+{
+  // 'add_corner' will itself seek if 'p' is already a corner, and, in that case,
+  // return the Corner_index that has been assigned to this position.
+  Corner_index index = add_corner(p);
+  corners_tmp_incidences_[index].insert(curve_index);
+
+  return index;
+}
+
+
+template <class MD_>
+typename Mesh_domain_with_polyline_features_3<MD_>::Corner_index
+Mesh_domain_with_polyline_features_3<MD_>::
+add_corner_with_context(const Point_3& p, const Surface_patch_index& surface_patch_index)
+{
+  Corner_index index = add_corner(p);
+
+  Surface_patch_index_set& incidences = corners_incidences_[index];
+  incidences.insert(surface_patch_index);
+
+  return index;
+}
+/// @endcond
+
 
 template <class MD_>
 template <typename InputIterator, typename IndicesOutputIterator>
@@ -1080,21 +1159,12 @@ add_features_and_incidences(InputIterator first, InputIterator end,
       polyline = get(polyline_pmap, *first);
     const typename boost::property_traits<IncidentPatchesIndicesPMap>::reference
       patches_ids = get(inc_patches_ind_pmap, *first);
-    const typename Gt::Point_3& p1 = *polyline.begin();
-    const typename Gt::Point_3& p2 = *boost::prior(polyline.end());
-    Set_of_patch_ids& ids_p1 = corners_incidence_map_[p1];
-    std::copy(patches_ids.begin(),
-              patches_ids.end(),
-              std::inserter(ids_p1, ids_p1.begin()));
-    Set_of_patch_ids& ids_p2 = corners_incidence_map_[p2];
-    std::copy(patches_ids.begin(),
-              patches_ids.end(),
-              std::inserter(ids_p2, ids_p2.begin()));
-    Curve_index curve_id =
-      insert_edge(polyline.begin(), polyline.end());
+
+    Curve_index curve_id = insert_edge(polyline.begin(), polyline.end());
     edges_incidences_[curve_id].insert(patches_ids.begin(), patches_ids.end());
     *indices_out++ = curve_id;
   }
+
   compute_corners_incidences();
   return indices_out;
 }
@@ -1172,7 +1242,8 @@ get_incidences(Curve_index id,
 {
   typename Edges_incidences::const_iterator it = edges_incidences_.find(id);
 
-  if(it == edges_incidences_.end()) return indices_out;
+  if(it == edges_incidences_.end())
+    return indices_out;
 
   const Surface_patch_index_set& incidences = it->second;
 
@@ -1187,6 +1258,9 @@ get_corner_incidences(Corner_index id,
                       IndicesOutputIterator indices_out) const
 {
   typename Corners_incidences::const_iterator it = corners_incidences_.find(id);
+  if(it == corners_incidences_.end())
+    return indices_out;
+
   const Surface_patch_index_set& incidences = it->second;
   return std::copy(incidences.begin(), incidences.end(), indices_out);
 }
@@ -1198,8 +1272,10 @@ Mesh_domain_with_polyline_features_3<MD_>::
 get_corner_incident_curves(Corner_index id,
                            IndicesOutputIterator indices_out) const
 {
-  typename Corners_tmp_incidences::const_iterator it =
-    corners_tmp_incidences_.find(id);
+  typename Corners_tmp_incidences::const_iterator it = corners_tmp_incidences_.find(id);
+  if(it == corners_tmp_incidences_.end())
+    return indices_out;
+
   const std::set<Curve_index>& incidences = it->second;
   return std::copy(incidences.begin(), incidences.end(), indices_out);
 }
@@ -1323,7 +1399,6 @@ compute_corners_incidences()
     }
 
     Surface_patch_index_set& incidences = corners_incidences_[id];
-    // That should be an empty set.
 
     BOOST_FOREACH(Curve_index curve_index, corner_tmp_incidences)
     {
@@ -1347,34 +1422,11 @@ Mesh_domain_with_polyline_features_3<MD_>::
 get_incidences(Curve_index id) const
 {
   typename Edges_incidences::const_iterator it = edges_incidences_.find(id);
+  CGAL_assertion(it != edges_incidences_.end());
+
   return it->second;
 }
-/// @endcond
 
-template <class MD_>
-void
-Mesh_domain_with_polyline_features_3<MD_>::
-register_corner(const Point_3& p, const Curve_index& curve_index)
-{
-
-  typename Corners::iterator cit = corners_.lower_bound(p);
-
-  // If the corner already exists, returns...
-  if(cit != corners_.end() && !(corners_.key_comp()(p, cit->first))) {
-    corners_tmp_incidences_[cit->second].insert(curve_index);
-    return;
-  }
-
-  // ...else insert it!
-
-  const Corner_index index = current_corner_index_;
-  ++current_corner_index_;
-
-  corners_.insert(cit, std::make_pair(p, index));
-  corners_tmp_incidences_[index].insert(curve_index);
-}
-
-/// @cond DEVELOPERS
 template <class MD_>
 template <typename InputIterator>
 typename Mesh_domain_with_polyline_features_3<MD_>::Curve_index

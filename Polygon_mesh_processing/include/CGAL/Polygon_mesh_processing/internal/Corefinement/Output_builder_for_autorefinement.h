@@ -356,7 +356,7 @@ public:
       is_intersection(intersection_edges);
     std::size_t nb_patches =
       PMP::connected_components(tm,
-                                bind_property_maps(fids,make_property_map(&patch_ids[0])),
+                                bind_property_maps(fids,make_property_map(patch_ids)),
                                 params::edge_is_constrained_map(
                                     is_intersection)
                                 .face_index_map(fids));

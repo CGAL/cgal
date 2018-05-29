@@ -11,8 +11,8 @@
 #include <set>
 
 #include <QtCore/qglobal.h>
-#include <QGLViewer/manipulatedFrame.h>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/manipulatedFrame.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
@@ -33,7 +33,7 @@ using namespace CGAL::Three;
 {
   Q_OBJECT
 public:
-  typedef qglviewer::ManipulatedFrame ManipulatedFrame;
+  typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
 
   Scene_c3t3_item();
   Scene_c3t3_item(const C3t3& c3t3);
@@ -82,7 +82,7 @@ public:
 
   void setNormal(float x, float y, float z) ;
 
-  Geom_traits::Plane_3 plane(qglviewer::Vec offset = qglviewer::Vec(0,0,0)) const;
+  Geom_traits::Plane_3 plane(CGAL::qglviewer::Vec offset = CGAL::qglviewer::Vec(0,0,0)) const;
 
   bool isFinite() const Q_DECL_OVERRIDE { return true; }
   bool isEmpty() const Q_DECL_OVERRIDE {

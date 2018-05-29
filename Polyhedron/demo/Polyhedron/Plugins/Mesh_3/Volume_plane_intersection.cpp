@@ -48,7 +48,7 @@ void Volume_plane_intersection_priv::computeElements()
    a_vertex.resize(0);
    b_vertex.resize(0);
    c_vertex.resize(0);
-   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+   const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
    a_vertex.push_back(0.0-offset.x);
    a_vertex.push_back(0.0-offset.y);

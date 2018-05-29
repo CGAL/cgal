@@ -7,8 +7,8 @@
 
 #include "Scene_basic_objects_config.h"
 
-#include <QGLViewer/manipulatedFrame.h>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/manipulatedFrame.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <CGAL/Three/Viewer_interface.h>
 
 #include <cmath>
@@ -22,7 +22,7 @@ class SCENE_BASIC_OBJECTS_EXPORT Scene_plane_item
 {
   Q_OBJECT
 public:
-  typedef qglviewer::ManipulatedFrame ManipulatedFrame;
+  typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
 
   Scene_plane_item(const CGAL::Three::Scene_interface* scene_interface);
   ~Scene_plane_item();
@@ -77,7 +77,7 @@ public:
   }
   virtual void draw(CGAL::Three::Viewer_interface*) const;
  virtual void drawEdges(CGAL::Three::Viewer_interface* viewer)const;
-  Plane_3 plane(qglviewer::Vec offset = qglviewer::Vec(0,0,0)) const;
+  Plane_3 plane(CGAL::qglviewer::Vec offset = CGAL::qglviewer::Vec(0,0,0)) const;
 
 public Q_SLOTS:
   virtual void invalidateOpenGLBuffers();
@@ -98,7 +98,7 @@ protected:
   const CGAL::Three::Scene_interface* scene;
   bool manipulable;
   bool can_clone;
-  qglviewer::ManipulatedFrame* frame;
+  CGAL::qglviewer::ManipulatedFrame* frame;
 
   enum VAOs {
       Facets = 0,
