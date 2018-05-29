@@ -1136,15 +1136,18 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor e,
 }
 
 /**
- * Collapses the edge `v0v1` replacing it with v0 or v1, as described in the paragraph above
+ * collapses an edge in a graph having non-collapsable edges.
+ *
+ * Let `h` be the halfedge of `e`, and let `v0` and `v1` be the source and target vertices of `h`.
+ * Collapses the edge `e` replacing it with `v1`, as described in the paragraph above
  * and guarantees that an edge `e2`, for which `get(edge_is_constrained_map, e2)==true`, 
  * is not removed after the collapse.
  * 
- *
  * \tparam Graph must be a model of `MutableFaceGraph`
  * \tparam EdgeIsConstrainedMap mut be a model of `ReadablePropertyMap` with the edge descriptor of `Graph` 
  *       as key type and a Boolean as value type. It indicates if an edge is constrained or not. 
  *
+ * \returns vertex `v1`.
  * \pre This function requires `g` to be an oriented 2-manifold with or without boundaries. 
  *       Furthermore, the edge `v0v1` must satisfy the link condition, which guarantees that the surface mesh is also 2-manifold after the edge collapse. 
  * \pre `get(edge_is_constrained_map, v0v1)==false`. 
@@ -1218,10 +1221,13 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
       halfedge_descriptor edge =
         next(edges_to_erase[0],g) == edges_to_erase[1]?
           edges_to_erase[0]:edges_to_erase[1];
-      if (target(edge,g) == p)
-        lP_Erased = true;
+      if (target(edge,g) != p)
+      {
+        // q will be removed, swap it with p
+        internal::swap_vertices(p, q, g);
+      }
       remove_center_vertex(edge,g);
-      return lP_Erased? q : p;
+      return q;
     }
     else
     {
@@ -1246,19 +1252,29 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
           join_vertex(pq,g);
           return q;
         }
-        bool lQ_Erased = is_border(opposite(next(pq,g),g),g);
+        if( is_border(opposite(next(pq,g),g),g) )
+        {
+          // q will be removed, swap it with p
+          internal::swap_vertices(p, q, g);
+        }
         remove_face(opposite(edges_to_erase[0],g),g);
-        return lQ_Erased?p:q;
+        return q;
       }
 
       if (! (is_border(edges_to_erase[0],g))){
+        // q will be removed, swap it with p
+        internal::swap_vertices(p, q, g);
         join_face(edges_to_erase[0],g);
         join_vertex(qp,g);
-        return p;
+        return q;
       }
-      bool lP_Erased= is_border(opposite(next(qp,g),g),g);
+      if(!is_border(opposite(next(qp,g),g),g))
+      {
+        // q will be removed, swap it with p
+        internal::swap_vertices(p, q, g);
+      }
       remove_face(opposite(edges_to_erase[0],g),g);
-      return lP_Erased?q:p;
+      return q;
   };
 }
 
