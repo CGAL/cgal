@@ -1,4 +1,4 @@
-#define CGAL_NO_DEPRECATION_WARNINGS
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
 // test for the linear_least_square_fitting() functions.
 

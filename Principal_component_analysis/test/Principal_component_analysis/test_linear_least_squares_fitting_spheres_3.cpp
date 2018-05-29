@@ -1,6 +1,6 @@
 // Example program for the linear_least_square_fitting function
 
-#define CGAL_NO_DEPRECATION_WARNINGS
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
