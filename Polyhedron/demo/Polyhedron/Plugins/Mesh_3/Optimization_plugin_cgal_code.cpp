@@ -111,9 +111,14 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
     {
       return NULL;
     }
-    
-    Image_mesh_domain* p_domain = new Image_mesh_domain(*p_image, 1e-6);
-    
+
+    Image_mesh_domain* p_domain =
+      new Image_mesh_domain(Image_mesh_domain::create_labeled_image_mesh_domain
+                              (CGAL::parameters::image = *p_image,
+                               CGAL::parameters::relative_error_bound = 1e-6,
+                               CGAL::parameters::construct_surface_patch_index =
+                                    [](int i, int j) { return (i * 1000 + j); } ));
+
     // Create thread
     typedef Optimization_function<Image_mesh_domain,Parameters> Opt_function;
     Opt_function* p_opt_function = new Opt_function(p_result_item->c3t3(), p_domain, param);
@@ -182,8 +187,10 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
                            p_function->bbox().zmax());
     
     Function_mesh_domain* p_domain =
-      new Function_mesh_domain(Function_wrapper(*p_function), dom_bbox, 1e-7);
-    
+      new Function_mesh_domain(Function_wrapper(*p_function), dom_bbox, 1e-7,
+                               CGAL::parameters::construct_surface_patch_index =
+                                 [](int i, int j) { return (i * 1000 + j); } );
+
     // Create thread
     typedef Optimization_function<Function_mesh_domain,Parameters> Opt_function;
     Opt_function* p_opt_function = new Opt_function(p_result_item->c3t3(), p_domain, param);
