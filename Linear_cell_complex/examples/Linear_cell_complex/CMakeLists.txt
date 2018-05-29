@@ -12,10 +12,7 @@ endif()
 find_package(CGAL COMPONENTS Qt5)
 
 if(CGAL_Qt5_FOUND)
-  find_package(QGLViewer)
-  if (TARGET QGLViewer::QGLViewer)
     add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
-  endif()
 endif()
 
 # For Gprof.
@@ -43,8 +40,8 @@ if (CGAL_FOUND)
   create_single_source_cgal_program("voronoi_3.cpp")
 
   create_single_source_cgal_program("draw_linear_cell_complex.cpp")
-  if(CGAL_Qt5_FOUND AND TARGET QGLViewer::QGLViewer)
-    target_link_libraries(draw_linear_cell_complex CGAL::CGAL_Qt5 QGLViewer::QGLViewer)
+  if(CGAL_Qt5_FOUND)
+    target_link_libraries(draw_linear_cell_complex PUBLIC CGAL::CGAL_Qt5)
   endif()
 
 else()

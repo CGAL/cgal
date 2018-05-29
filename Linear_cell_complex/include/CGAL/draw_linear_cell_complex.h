@@ -88,10 +88,10 @@ public:
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
-  SimpleLCCViewerQt(const LCC& alcc, const char* title="", bool anofaces=false,
+  SimpleLCCViewerQt(QWidget* parent, const LCC& alcc, const char* title="", bool anofaces=false,
                     const ColorFunctor& fcolor=ColorFunctor()) :
     // First draw: vertices; edges, faces; multi-color; inverse normal
-    Base(title, true, true, true, false, true), 
+    Base(parent, title, true, true, true, false, true), 
     lcc(alcc),
     m_nofaces(anofaces),
     m_fcolor(fcolor)
@@ -207,7 +207,7 @@ void draw(const LCC& alcc,
   const char* argv[2]={"lccviewer","\0"};
   QApplication app(argc,const_cast<char**>(argv));
 
-  SimpleLCCViewerQt<LCC, ColorFunctor> mainwindow(alcc, title, nofill, fcolor);
+  SimpleLCCViewerQt<LCC, ColorFunctor> mainwindow(app.activeWindow(),alcc, title, nofill, fcolor);
 
 #if !defined(CGAL_TEST_SUITE)
   mainwindow.show();
