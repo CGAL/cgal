@@ -63,11 +63,11 @@ public:
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
-  SimplePolyhedronViewerQt(const Polyhedron& apoly, const char* title="",
+  SimplePolyhedronViewerQt(QWidget* parent,const Polyhedron& apoly, const char* title="",
                            bool anofaces=false,
                            const ColorFunctor& fcolor=ColorFunctor()) :
     // First draw: no vertex; edges, faces; mono-color; inverse normal
-    Base(title, false, true, true, true, false),
+    Base(parent, title, false, true, true, true, false),
     poly(apoly),
     m_nofaces(anofaces),
     m_fcolor(fcolor)
@@ -205,7 +205,7 @@ void draw(const Polyhedron& apoly,
   QApplication app(argc,const_cast<char**>(argv));
 
   SimplePolyhedronViewerQt<Polyhedron, ColorFunctor>
-    mainwindow(apoly, title, nofill, fcolor);
+    mainwindow(app.activeWindow(), apoly, title, nofill, fcolor);
 
 #if !defined(CGAL_TEST_SUITE)
   mainwindow.show();
