@@ -79,11 +79,11 @@ public:
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
-  SimpleSurfaceMeshViewerQt(const SM& amesh, const char* title="",
+  SimpleSurfaceMeshViewerQt(QWidget* parent, const SM& amesh, const char* title="",
                             bool anofaces=false,
                             const ColorFunctor& fcolor=ColorFunctor()) :
     // First draw: no vertex; edges, faces; mono-color; inverse normal
-    Base(title, false, true, true, true, false),
+    Base(parent, title, false, true, true, true, false),
     sm(amesh),
     m_nofaces(anofaces),
     m_fcolor(fcolor)
@@ -211,7 +211,7 @@ void draw(const SM& amesh,
   const char* argv[2]={"surface_mesh_viewer","\0"};
   QApplication app(argc,const_cast<char**>(argv));
 
-  SimpleSurfaceMeshViewerQt<SM, ColorFunctor> mainwindow(amesh, title,
+  SimpleSurfaceMeshViewerQt<SM, ColorFunctor> mainwindow(app.activeWindow(),amesh, title,
                                                          nofill, fcolor);
 
 #if !defined(CGAL_TEST_SUITE)
