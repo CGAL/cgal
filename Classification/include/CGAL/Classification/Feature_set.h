@@ -74,9 +74,9 @@ public:
   /*!
     \brief Creates an empty feature set.
   */
-  Feature_set() :
+  Feature_set()
 #ifdef CGAL_LINKED_WITH_TBB
-    m_tasks(NULL)
+    : m_tasks(NULL)
 #endif
   { }
 
