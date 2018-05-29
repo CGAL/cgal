@@ -66,11 +66,12 @@ public:
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
-  SimpleTriangulation3ViewerQt(const T3& at3, const char* title="",
+  SimpleTriangulation3ViewerQt(QWidget* parent,
+                               const T3& at3, const char* title="",
                                bool anofaces=false,
                                const ColorFunctor& fcolor=ColorFunctor()) :
     // First draw: vertices; edges, faces; multi-color; no inverse normal
-    Base(title, true, true, true, false, false), 
+    Base(parent, title, true, true, true, false, false), 
     t3(at3),
     m_nofaces(anofaces),
     m_fcolor(fcolor)
@@ -153,7 +154,7 @@ void draw(const T3& at3,
   const char* argv[2]={"t3_viewer","\0"};
   QApplication app(argc,const_cast<char**>(argv));
 
-  SimpleTriangulation3ViewerQt<T3, ColorFunctor> mainwindow(at3, title,
+  SimpleTriangulation3ViewerQt<T3, ColorFunctor> mainwindow(app.activeWindow(),at3, title,
                                                             nofill, fcolor);
 
 #if !defined(CGAL_TEST_SUITE)

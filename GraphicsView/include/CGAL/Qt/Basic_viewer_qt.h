@@ -27,7 +27,7 @@
 #include <QApplication>
 #include <QKeyEvent>
 
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <QKeyEvent>
 #include <QOpenGLFunctions_2_1>
 #include <QOpenGLVertexArrayObject>
@@ -134,7 +134,7 @@ inline CGAL::Color get_random_color(CGAL::Random& random)
   return res;
 }
 //------------------------------------------------------------------------------
-class Basic_viewer_qt : public QGLViewer, public QOpenGLFunctions_2_1
+class Basic_viewer_qt : public CGAL::QGLViewer
 {  
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
   typedef Local_kernel::Point_3  Local_point;
@@ -142,13 +142,14 @@ class Basic_viewer_qt : public QGLViewer, public QOpenGLFunctions_2_1
 
 public:
   // Constructor/Destructor
-  Basic_viewer_qt(const char* title="",
+  Basic_viewer_qt(QWidget* parent,
+                  const char* title="",
                   bool draw_vertices=false,
                   bool draw_edges=true,
                   bool draw_faces=true,
                   bool use_mono_color=false,
                   bool inverse_normal=false) :
-    QGLViewer(CGAL::Qt::createOpenGLContext()),
+    CGAL::QGLViewer(parent),
     m_draw_vertices(draw_vertices),
     m_draw_edges(draw_edges),
     m_draw_faces(draw_faces),
@@ -540,7 +541,7 @@ protected:
     m_are_buffers_initialized = true;
   }
 
-  void attrib_buffers(QGLViewer* viewer)
+  void attrib_buffers(CGAL::QGLViewer* viewer)
   {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -623,7 +624,7 @@ protected:
                     (double)m_vertices_mono_color.green()/(double)255,
                     (double)m_vertices_mono_color.blue()/(double)255);
       rendering_program_p_l.setAttributeValue("color",color);
-      ::glPointSize(m_size_points);
+      glPointSize(m_size_points);
       glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(arrays[POS_MONO_POINTS].size()/3));
       vao[VAO_MONO_POINTS].release();
       
@@ -640,7 +641,7 @@ protected:
       {
         rendering_program_p_l.enableAttributeArray("color");
       }
-      ::glPointSize(m_size_points);
+      glPointSize(m_size_points);
       glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(arrays[POS_COLORED_POINTS].size()/3));
       vao[VAO_COLORED_POINTS].release();
 
@@ -656,7 +657,7 @@ protected:
                     (double)m_edges_mono_color.green()/(double)255,
                     (double)m_edges_mono_color.blue()/(double)255);
       rendering_program_p_l.setAttributeValue("color",color);
-      ::glLineWidth(m_size_edges);
+      glLineWidth(m_size_edges);
       glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(arrays[POS_MONO_SEGMENTS].size()/3));
       vao[VAO_MONO_SEGMENTS].release();
 
@@ -673,7 +674,7 @@ protected:
       {
         rendering_program_p_l.enableAttributeArray("color");
       }
-      ::glLineWidth(m_size_edges);
+      glLineWidth(m_size_edges);
       glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(arrays[POS_COLORED_SEGMENTS].size()/3));
       vao[VAO_COLORED_SEGMENTS].release();
 
@@ -742,20 +743,20 @@ protected:
     setKeyDescription(::Qt::Key_PageUp, "Decrease light (all colors, use shift/alt/ctrl for one rgb component)");
 
     // Light default parameters
-    ::glLineWidth(m_size_edges);
-    ::glPointSize(m_size_points);
-    ::glEnable(GL_POLYGON_OFFSET_FILL);
-    ::glPolygonOffset(1.f,1.f);
-    ::glClearColor(1.0f,1.0f,1.0f,0.0f);
-    ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-    ::glEnable(GL_LIGHTING);
-    ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-    ::glShadeModel(GL_FLAT);
-    ::glDisable(GL_BLEND);
-    ::glEnable(GL_LINE_SMOOTH);
-    ::glDisable(GL_POLYGON_SMOOTH_HINT);
-    ::glBlendFunc(GL_ONE, GL_ZERO);
-    ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
+    glLineWidth(m_size_edges);
+    glPointSize(m_size_points);
+    glEnable(GL_POLYGON_OFFSET_FILL);
+    glPolygonOffset(1.f,1.f);
+    glClearColor(1.0f,1.0f,1.0f,0.0f);
+    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+    glEnable(GL_LIGHTING);
+    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+    glShadeModel(GL_FLAT);
+    glDisable(GL_BLEND);
+    glEnable(GL_LINE_SMOOTH);
+    glDisable(GL_POLYGON_SMOOTH_HINT);
+    glBlendFunc(GL_ONE, GL_ZERO);
+    glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
 
     compile_shaders();
 
@@ -767,10 +768,10 @@ protected:
     }
     else
     { bb=bounding_box(); }
-    this->camera()->setSceneBoundingBox(qglviewer::Vec(bb.xmin(),
+    this->camera()->setSceneBoundingBox(CGAL::qglviewer::Vec(bb.xmin(),
                                                        bb.ymin(),
                                                        bb.zmin()),
-                                        qglviewer::Vec(bb.xmax(),
+                                        CGAL::qglviewer::Vec(bb.xmax(),
                                                        bb.ymax(),
                                                        bb.zmax()));
 
@@ -927,7 +928,7 @@ protected:
       update();
     }
     else
-      QGLViewer::keyPressEvent(e);
+      CGAL::QGLViewer::keyPressEvent(e);
   }
 
   virtual QString helpString() const

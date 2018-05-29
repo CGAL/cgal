@@ -26,7 +26,7 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program("draw_triangulation_3.cpp")
   if(CGAL_Qt5_FOUND)
-    target_link_libraries(draw_triangulation_3 CGAL::CGAL_Qt5)
+    target_link_libraries(draw_triangulation_3 PUBLIC CGAL::CGAL_Qt5)
   endif()
 
 else()
