@@ -44,6 +44,10 @@ Release date: September 2018
     to reflect the real needs of the code (some types and operators were used
     in the code but did not appear in the concepts).
 
+### Convex hull 3
+-   Added the function `extreme_points_3()` computing the
+    points on the convex hull without underlying connectivity.
+
 ### Polygon Mesh Processing
 -   Added a function to apply a transformation to a mesh:
     - `CGAL::Polygon_mesh_processing::transform()`
@@ -82,7 +86,6 @@ Release date: September 2018
 
 -   Improve the function `CGAL::Euler::collapse_edge` so that the target
     vertex of the collapsed edge is always kept after the collapse.
-
 
 Release 4.12
 ------------

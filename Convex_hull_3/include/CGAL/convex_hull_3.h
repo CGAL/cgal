@@ -93,6 +93,15 @@ void make_tetrahedron(const Point& p0, const Point& p1, const Point& p2, const P
   *(w.out)++ = p3;
 }
 
+template <class Point_3, class OutputIterator>
+void make_triangle(const Point_3& p1, const Point_3& p2, const Point_3& p3,
+                   internal::Convex_hull_3::Output_iterator_wrapper<OutputIterator>& w)
+{
+  ++w.out++ = p1;
+  ++w.out++ = p2;
+  ++w.out++ = p3;
+}
+
 template <class TDS, class OutputIterator>
 void copy_face_graph(const TDS& tds, internal::Convex_hull_3::Output_iterator_wrapper<OutputIterator>& wrapper)
 {
@@ -102,6 +111,43 @@ void copy_face_graph(const TDS& tds, internal::Convex_hull_3::Output_iterator_wr
   {
     *wrapper.out++ = get(vpm, vh);
   }
+}
+
+template <class Point_3, class OutputIterator>
+void add_isolated_points(const Point_3& point,
+                         internal::Convex_hull_3::Output_iterator_wrapper<OutputIterator>& w)
+{
+    ++w.out++ = point;
+}
+
+template <class Point_3, class Polyhedron_3>
+void add_isolated_points(const Point_3& point, Polyhedron_3& P)
+{
+  typedef typename boost::graph_traits<Polyhedron_3>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type Vpmap;
+  Vpmap vpm = get(CGAL::vertex_point, P);
+  vertex_descriptor v = add_vertex(P);
+  put(vpm, v, point);
+}
+
+template <class Point_3, class OutputIterator>
+void add_isolated_points(const Point_3& p1, const Point_3& p2,
+                         internal::Convex_hull_3::Output_iterator_wrapper<OutputIterator>& w)
+{
+    ++w.out++ = p1;
+    ++w.out++ = p2;
+}
+
+template <class Point_3, class Polyhedron_3>
+void add_isolated_points(const Point_3& p1, const Point_3& p2, Polyhedron_3& P)
+{
+  typedef typename boost::graph_traits<Polyhedron_3>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type Vpmap;
+  Vpmap vpm = get(CGAL::vertex_point, P);
+  vertex_descriptor v1 = add_vertex(P);
+  vertex_descriptor v2 = add_vertex(P);
+  put(vpm, v1, p1);
+  put(vpm, v2, p2);
 }
 
 template <class Point_3, class OutputIterator>
@@ -689,9 +735,6 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
 //  CGAL_ch_postcondition(is_strongly_convex_3(P, traits));
 }
 
-
-
-
 template <class InputIterator, class Polyhedron_3, class Traits>
 void
 ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
@@ -907,8 +950,7 @@ convex_hull_3(InputIterator first, InputIterator beyond,
 
 
 template <class InputIterator>
-void convex_hull_3(InputIterator first, InputIterator beyond,
-		   Object& ch_object)
+void convex_hull_3(InputIterator first, InputIterator beyond, Object& ch_object)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
    typedef typename internal::Convex_hull_3::Default_traits_for_Chull_3<Point_3>::type Traits;
@@ -924,42 +966,69 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
   typedef typename Traits::Point_3                Point_3;
   typedef std::list<Point_3>                      Point_3_list;
   typedef typename Point_3_list::iterator         P3_iterator;
+  typedef std::pair<P3_iterator,P3_iterator>      P3_iterator_pair;
+
+  if(first == beyond)
+    return;
 
   Point_3_list points(first, beyond);
-  CGAL_ch_precondition(points.size() > 3);
+  clear(polyhedron);
 
-  // at least 4 points
   typename Traits::Collinear_3 collinear = traits.collinear_3_object();
   typename Traits::Equal_3 equal = traits.equal_3_object();
-
   P3_iterator point1_it = points.begin();
   P3_iterator point2_it = points.begin();
   point2_it++;
 
-  // find three that are not collinear
   while (point2_it != points.end() && equal(*point1_it,*point2_it))
     ++point2_it;
 
-  CGAL_ch_precondition_msg(point2_it != points.end(),
-        "All points are equal; cannot construct polyhedron.");
+  // if there is only one point or all points are equal
+  if(point2_it == points.end())
+  {
+    add_isolated_points(*point1_it, polyhedron);
+    return;
+  }
 
   P3_iterator point3_it = point2_it;
   ++point3_it;
 
-  CGAL_ch_precondition_msg(point3_it != points.end(),
-        "Only two points with different coordinates; cannot construct polyhedron.");
+  // if there are only two or only two points have different coordinates then return those.
+  if(point3_it == points.end())
+  {
+    add_isolated_points(*point1_it, *point2_it, polyhedron);
+    return;
+  }
 
-  while (point3_it != points.end() && collinear(*point1_it,*point2_it,*point3_it))
-    ++point3_it;
+  // if there are 3 points not equal, then the third is not at points.end()
+  if(points.size() == 3)
+  {
+    if(collinear(*point1_it,*point2_it,*point3_it))
+    {
+      typedef typename Traits::Less_distance_to_point_3 Less_dist;
+      Less_dist less_dist = traits.less_distance_to_point_3_object();
+      P3_iterator_pair endpoints =
+          min_max_element(points.begin(), points.end(),
+                       boost::bind(less_dist, *points.begin(), _1, _2),
+                       boost::bind(less_dist, *points.begin(), _1, _2));
 
-  CGAL_ch_precondition_msg(point3_it != points.end(),
-        "All points are collinear; cannot construct polyhedron.");
+      add_isolated_points(*endpoints.first, *endpoints.second, polyhedron);
+    }
+    else
+    {
+      make_triangle(*point1_it, *point2_it, *point3_it, polyhedron);
+    }
+    return;
+  }
+  else
+  {
+    while (point3_it != points.end() && collinear(*point1_it,*point2_it,*point3_it))
+      ++point3_it;
 
-  clear(polyhedron);
-  // result will be a polyhedron
-  internal::Convex_hull_3::ch_quickhull_polyhedron_3(points, point1_it, point2_it, point3_it,
-                                                     polyhedron, traits);
-
+    // result will be a polyhedron
+    internal::Convex_hull_3::ch_quickhull_polyhedron_3(points, point1_it, point2_it, point3_it,
+    polyhedron, traits);
+  }
 }
 
 
@@ -975,9 +1044,9 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 
 template <class InputRange, class OutputIterator, class Traits>
 OutputIterator
-extreme_points_3(InputRange range,
-              OutputIterator out,
-              const Traits& traits)
+extreme_points_3(const InputRange& range,
+                 OutputIterator out,
+                 const Traits& traits)
 {
   internal::Convex_hull_3::Output_iterator_wrapper<OutputIterator> wrapper(out);
   convex_hull_3(range.begin(), range.end(), wrapper, traits);
@@ -986,7 +1055,7 @@ extreme_points_3(InputRange range,
 
 template <class InputRange, class OutputIterator>
 OutputIterator
-extreme_points_3(InputRange range, OutputIterator out)
+extreme_points_3(const InputRange& range, OutputIterator out)
 {
   typedef typename InputRange::const_iterator Iterator_type;
   typedef typename std::iterator_traits<Iterator_type>::value_type Point_3;

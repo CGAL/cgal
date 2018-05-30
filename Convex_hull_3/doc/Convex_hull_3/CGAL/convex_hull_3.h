@@ -7,9 +7,7 @@ namespace CGAL {
 [`first`, `last`). The polyhedron `pm` is cleared, then
 the convex hull is stored in `pm`. Note that the convex hull will be triangulated,
 that is `pm` will contain only triangular facets.
-
-\pre There are at least four points in the range
-[`first`, `last`) not all of which are collinear.
+if the convex hull is a point or a segment, endpoints will be added in pm as isolated vertices.
 
 \tparam InputIterator must be an input iterator with a value type  equivalent to `Traits::Point_3`.
 \tparam PolygonMesh must be a model of `MutableFaceGraph`.
@@ -69,24 +67,20 @@ const Traits& ch_traits = Default_traits);
 /*!
 \ingroup PkgConvexHull3Functions
 
-\brief computes the convex hull of the set of points in the range.
-The result is put in an output iterator as a list of points.
+\brief copies in `out` the points on the convex hull of the points in `range`.
 
-\tparam InputRange a range of `Traits::Point_3`, model of `Range`.
+\tparam InputRange a range of `Traits::Point_3`, model of `ConstRange`.
+        Its iterator type is `ForwardIterator`.
 \tparam OutputIterator must be an output iterator with a value type  equivalent to `Traits::Point_3`.
 \tparam Traits must be model of the concept `ConvexHullTraits_3`.
-For the purposes of checking the postcondition that the convex hull
-is valid, `Traits` must also be a model of the concept
-`IsStronglyConvexTraits_3`.   Furthermore, `Traits` must define a type `Polygon_mesh` that is a model of
-`MutableFaceGraph`.
 
-If the kernel `R` of the points determined by the value type  of `InputIterator`
+If the kernel `R` of the points from `InputRange`
 is a kernel with exact predicates but inexact constructions
 (in practice we check `R::Has_filtered_predicates_tag` is `Tag_true` and `R::FT` is a floating point type),
 then the default traits class of `convex_hull_3()` is `Convex_hull_traits_3<R>`, and `R` otherwise.
 
 @param range the range of input points.
-@param out an output iterator where the list of points will be put.
+@param out an output iterator where the extreme points will be put.
 @param traits an instance of `Traits`.
 */
 template <class InputRange, class OutputIterator, class Traits>
