@@ -208,43 +208,50 @@ private:
                   scale(vy, y));
       v_int = g_manip.get_vertex(inter_p, false);
       g_manip.try_add_edge(old, v_int);
+
+#ifndef CGAL_CFG_NO_CPP0X_LAMBDAS
       CGAL_assertion_msg(max_squared_distance == 0 ||
                          CGAL::squared_distance(g_manip.g[old].point,
                                                 g_manip.g[v_int].point) <
                          max_squared_distance,
-#ifndef CGAL_CFG_NO_CPP0X_LAMBDAS
                        ([this, old, v_int] {
                          std::stringstream s;
                          s << "Problem at segment ("
                            << this->g_manip.g[old].point << ", "
                            << this->g_manip.g[v_int].point << ")";
                          return s.str();
-                       }().c_str())
+                       }().c_str()));
 #else // no C++ lamdbas
-                           ""
+      CGAL_assertion(max_squared_distance == 0 ||
+                     CGAL::squared_distance(g_manip.g[old].point,
+                                            g_manip.g[v_int].point) <
+                     max_squared_distance);
 #endif // no C++ lamdbas
-                     );
+
       old = v_int;
     }
     if(null_vertex != v_int) {
       // v_int can be null if the curve is degenerated into one point.
       g_manip.try_add_edge(v_int, end_v);
+#ifndef CGAL_CFG_NO_CPP0X_LAMBDAS
       CGAL_assertion_msg(max_squared_distance == 0 ||
                          CGAL::squared_distance(g_manip.g[end_v].point,
                                                 g_manip.g[v_int].point) <
                          max_squared_distance,
-#ifndef CGAL_CFG_NO_CPP0X_LAMBDAS
                          ([this, end_v, v_int] {
                            std::stringstream s;
                            s << "Problem at segment ("
                              << this->g_manip.g[end_v].point << ", "
                              << this->g_manip.g[v_int].point << ")";
                            return s.str();
-                         }().c_str())
+                         }().c_str()));
 #else // no C++ lamdbas
-                         ""
+      CGAL_assertion(max_squared_distance == 0 ||
+                     CGAL::squared_distance(g_manip.g[end_v].point,
+                                            g_manip.g[v_int].point) <
+                     max_squared_distance);                   
 #endif // no C++ lamdbas
-                         );
+
     }
   }
 };
