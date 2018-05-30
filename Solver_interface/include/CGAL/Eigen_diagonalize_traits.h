@@ -64,15 +64,16 @@ public:
 private:
   typedef Eigen::Matrix<FT, dim, dim>            EigenMatrix;
   typedef Eigen::Matrix<FT, dim, 1>              EigenVector;
-
+  typedef typename EigenVector::Index            EigenIndex;
+  
   /// Construct the covariance matrix
   static EigenMatrix construct_covariance_matrix(const Covariance_matrix& cov)
   {
     EigenMatrix m;
 
-    for(std::size_t i=0; i<dim; ++i)
+    for(EigenIndex i=0; i<dim; ++i)
     {
-      for(std::size_t j=i; j<dim; ++j)
+      for(EigenIndex j=i; j<dim; ++j)
       {
         m(i,j) = static_cast<float>(cov[(dim * i) + j - ((i * (i+1)) / 2)]);
 
@@ -150,11 +151,11 @@ public:
 
     if(res)
     {
-      for(std::size_t i=0; i<dim; ++i)
+      for(EigenIndex i=0; i<dim; ++i)
       {
         eigenvalues[i] = static_cast<FT>(eigenvalues_[i]);
 
-        for(std::size_t j=0; j<dim; ++j)
+        for(EigenIndex j=0; j<dim; ++j)
           eigenvectors[dim*i + j] = static_cast<FT>(eigenvectors_(j,i));
       }
     }

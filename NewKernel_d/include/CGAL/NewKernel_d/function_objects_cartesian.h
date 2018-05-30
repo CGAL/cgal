@@ -312,7 +312,7 @@ template<class R_> struct Contained_in_linear_hull : private Store_kernel<R_> {
 	result_type operator()(Iter f, Iter e,V const&w)const{
 		typename Get_functor<R, Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
 		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
-		std::ptrdiff_t n=std::distance(f,e);
+		int n= static_cast<int>(std::distance(f,e));
 		if (n==0) return false;
 		// FIXME: Uh? Using it on a vector ?!
 		int d=vd(w);
@@ -449,7 +449,7 @@ namespace CartesianDKernelFunctors {
       int col;
       Matrix_col_access(int r):col(r){}
       template<class Mat> Ref_ operator()(Mat const& m, std::ptrdiff_t row)const{
-	return m(row,col);
+	return m(static_cast<int>(row),col);
       }
     };
   }
