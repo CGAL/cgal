@@ -13,7 +13,7 @@
 #include <CGAL/Polygon_mesh_processing/extrude.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
-#include <QGLViewer/manipulatedFrame.h>
+#include <CGAL/Qt/manipulatedFrame.h>
 
 #include "Messages_interface.h"
 #ifdef USE_SURFACE_MESH
@@ -32,7 +32,7 @@ typedef Scene_polyhedron_item Scene_face_graph_item;
 #endif
 
 typedef Scene_face_graph_item::Face_graph Face_graph;
-typedef qglviewer::Vec Vec;
+typedef CGAL::qglviewer::Vec Vec;
 using namespace CGAL::Three;
 //use frame to get dist and dir.
 //fix frame in translation and use mousewheel to choose dist
@@ -51,7 +51,7 @@ public :
     :Scene_item(2, 1), center_(center_), length_(length_), R(r),
        frame(new Scene_item::ManipulatedFrame())
   {
-    const qglviewer::Vec offset = static_cast<Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
         frame->setPosition( center_+offset);
     nb_pos = 0;
     tick = length_/10.0f;
@@ -412,14 +412,14 @@ private Q_SLOTS:
     if(CGAL::scalar_product(Vector(dir.x, dir.y, dir.z), estimate_normals(triangles)) > 0)
       dir = -dir;
     
-    qglviewer::Quaternion orientation(qglviewer::Vec(0,1,0), dir);
+    CGAL::qglviewer::Quaternion orientation(CGAL::qglviewer::Vec(0,1,0), dir);
     oliver_queen->manipulatedFrame()->setOrientation(orientation);
-    constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
-    constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FORBIDDEN);
+    constraint.setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
+    constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FORBIDDEN);
     oliver_queen->manipulatedFrame()->setConstraint(&constraint);
     oliver_queen->setColor(QColor(Qt::green));
     oliver_queen->setName("Extrude item");
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(oliver_queen);
     mw->installEventFilter(oliver_queen);
     scene->addItem(oliver_queen);
@@ -448,13 +448,11 @@ private Q_SLOTS:
     rotate_matrix = transform_matrix;
     rotate_matrix.setColumn(3, QVector4D(0,0,0,1));
     QVector3D dir = rotate_matrix * QVector3D(0,1,0);
-    if(length < 0)
-    {
-      length = - length;
-      dir = -dir;
-    }
+    dir.normalize();
+    dir = length * dir;
+    
     CGAL::Polygon_mesh_processing::extrude_mesh(pMesh, *target->face_graph(),
-                                                Kernel::Vector_3(dir.x(), dir.y(), dir.z()),length);
+                                                Kernel::Vector_3(dir.x(), dir.y(), dir.z()));
     scene->erase(scene->item_id(oliver_queen));
     oliver_queen = NULL;
     target->invalidateOpenGLBuffers();
@@ -472,6 +470,6 @@ private:
   QAction *actionExtrude;
   Scene_arrow_item* oliver_queen;
   Scene_face_graph_item* target;
-  qglviewer::LocalConstraint constraint;
+  CGAL::qglviewer::LocalConstraint constraint;
 };
 #include "Extrude_plugin.moc"
