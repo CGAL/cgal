@@ -38,6 +38,51 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace extrude_impl{
 
+template<typename BorderHalfedgesRange, class PolygonMesh>
+void create_strip(const BorderHalfedgesRange& input_halfedges,
+                 const BorderHalfedgesRange& output_halfedges,
+                  PolygonMesh& mesh)
+{
+  CGAL_assertion(input_halfedges.size() == output_halfedges.size());
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  for(std::size_t i = 0; i < input_halfedges.size(); ++i)
+  {
+    halfedge_descriptor h1 = input_halfedges[i], h2=output_halfedges[i],
+        nh1 = next(h1, mesh), ph2 = prev(h2, mesh);
+    halfedge_descriptor newh = halfedge(add_edge(mesh), mesh),
+        newh_opp = opposite(newh, mesh);
+    // set target vertices of the new halfedges
+    set_target(newh, target(h1, mesh), mesh);
+    set_target(newh_opp, target(ph2, mesh), mesh);
+    // update next/prev pointers
+    set_next(h1, newh_opp, mesh);
+    set_next(newh_opp, h2, mesh);
+    set_next(ph2, newh, mesh);
+    set_next(newh, nh1, mesh);
+  }
+  for(std::size_t i = 0; i < input_halfedges.size(); ++i)
+  {
+    halfedge_descriptor h = input_halfedges[i];
+    
+    face_descriptor nf = add_face(mesh);
+    
+    CGAL::cpp11::array<halfedge_descriptor, 4> hedges;
+    for (int k=0; k<4; ++k)
+    {
+      hedges[k]=h;
+      h = next(h, mesh);
+    }
+    
+    set_face(hedges[0], nf, mesh);
+    set_face(hedges[1], nf, mesh);
+    set_face(hedges[2], nf, mesh);
+    set_face(hedges[3], nf, mesh);
+    set_halfedge(nf, hedges[0], mesh);
+    Euler::split_face(hedges[0], hedges[2], mesh);
+  }
+}
+
 template<typename PMAP, typename Vector>
 struct Const_dist_translation{
   Const_dist_translation(PMAP map, const Vector& dir)
@@ -125,7 +170,6 @@ void extrude_mesh(const InputMesh& input,
   
   typedef typename boost::graph_traits<OutputMesh>::vertex_descriptor   output_vertex_descriptor;
   typedef typename boost::graph_traits<OutputMesh>::halfedge_descriptor output_halfedge_descriptor;
-  typedef typename boost::graph_traits<OutputMesh>::face_descriptor     output_face_descriptor;
   
   CGAL_assertion(!CGAL::is_closed(input));
   typedef typename GetVertexPointMap < OutputMesh, NamedParameters2>::type VPMap;
@@ -173,43 +217,7 @@ void extrude_mesh(const InputMesh& input,
     }
   }
   // now create a triangle strip
-  for(std::size_t i=0; i< border_hedges.size(); ++i)
-  {
-    output_halfedge_descriptor h1 = border_hedges[i], h2=offset_border_hedges[i],
-        nh1 = next(h1, output), ph2 = prev(h2, output);
-    output_halfedge_descriptor newh = halfedge(add_edge(output), output),
-        newh_opp = opposite(newh, output);
-    // set target vertices of the new halfedges
-    set_target(newh, target(h1, output), output);
-    set_target(newh_opp, target(ph2, output), output);
-    // update next/prev pointers
-    set_next(h1, newh_opp, output);
-    set_next(newh_opp, h2, output);
-    set_next(ph2, newh, output);
-    set_next(newh, nh1, output);
-  }
-  
-  // create new faces
-  for(std::size_t i=0; i< border_hedges.size(); ++i)
-  {
-    output_halfedge_descriptor h = border_hedges[i];
-    
-    output_face_descriptor nf = add_face(output);
-    
-    CGAL::cpp11::array<output_halfedge_descriptor, 4> hedges;
-    for (int k=0; k<4; ++k)
-    {
-      hedges[k]=h;
-      h = next(h, output);
-    }
-    
-    set_face(hedges[0], nf, output);
-    set_face(hedges[1], nf, output);
-    set_face(hedges[2], nf, output);
-    set_face(hedges[3], nf, output);
-    set_halfedge(nf, hedges[0], output);
-    Euler::split_face(hedges[0], hedges[2], output);
-  }
+  extrude_impl::create_strip(border_hedges, offset_border_hedges, output);
 }
 
 
