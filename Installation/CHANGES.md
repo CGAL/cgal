@@ -32,6 +32,18 @@ Release date: September 2018
     to reflect the real needs of the code (some types and operators were used
     in the code but did not appear in the concepts).
 
+### Point Set Processing
+
+-   Added a callback mechanism for functions
+    `CGAL::bilateral_smooth_point_set()`,
+    `CGAL::compute_average_spacing()`,
+    `CGAL::grid_simplify_point_set()`,
+    `CGAL::hierarchy_simplify_point_set()`,
+    `CGAL::jet_estimate_normals()`, `CGAL::jet_smooth_point_set()`,
+    `CGAL::pca_estimate_normals()`, `CGAL::remove_outliers()` and
+    `CGAL::wlop_simplify_and_regularize_point_set()`.
+
+
 ### Polygon Mesh Processing
 -   Added a function to apply a transformation to a mesh : 
     - `CGAL::Polygon_mesh_processing::transform()`
