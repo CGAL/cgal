@@ -39,7 +39,7 @@ do_intersect(const typename K::Point_3 &pt,
              const typename K::Sphere_3 &sphere,
              const K&)
 {
-  return sphere.has_on(pt);
+  return sphere.has_on_boundary(pt);
 }
 
 
@@ -50,7 +50,7 @@ do_intersect(const typename K::Sphere_3 &sphere,
              const typename K::Point_3 &pt,
              const K&)
 {
-  return sphere.has_on(pt);
+  return sphere.has_on_boundary(pt);
 }
 
 
@@ -81,7 +81,7 @@ intersection(const typename K::Sphere_3 &sphere,
 } // namespace Intersections
   
 CGAL_INTERSECTION_FUNCTION(Point_3, Sphere_3, 3)
-
+CGAL_DO_INTERSECT_FUNCTION(Point_3, Sphere_3, 3)
 
 } //namespace CGAL
 #endif // CGAL_INTERSECTIONS_3_POINT_3_SPHERE_3_H
