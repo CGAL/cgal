@@ -550,6 +550,37 @@ corefine_and_compute_boolean_operations(
                                                                    all_default(), all_default()));
 }
 
+template <class TriangleMesh, class NamedParameters1>
+cpp11::array<bool,4>
+corefine_and_compute_boolean_operations(
+        TriangleMesh& tm1,
+        TriangleMesh& tm2,
+  const cpp11::array< boost::optional<TriangleMesh*>,4>& output,
+  const NamedParameters1& np1)
+{
+  using namespace CGAL::Polygon_mesh_processing::parameters;
+  return corefine_and_compute_boolean_operations(tm1, tm2, output,
+                                                 np1, all_default(),
+                                                 cpp11::make_tuple(all_default(), all_default(),
+                                                                   all_default(), all_default()));
+}
+
+template <class TriangleMesh, class NamedParameters1, class NamedParameters2>
+cpp11::array<bool,4>
+corefine_and_compute_boolean_operations(
+        TriangleMesh& tm1,
+        TriangleMesh& tm2,
+  const cpp11::array< boost::optional<TriangleMesh*>,4>& output,
+  const NamedParameters1& np1,
+  const NamedParameters2& np2)
+{
+  using namespace CGAL::Polygon_mesh_processing::parameters;
+  return corefine_and_compute_boolean_operations(tm1, tm2, output,
+                                                 np1, np2,
+                                                 cpp11::make_tuple(all_default(), all_default(),
+                                                                   all_default(), all_default()));
+}
+
 #undef CGAL_COREF_SET_OUTPUT_VERTEX_POINT_MAP
 #undef CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP
 
