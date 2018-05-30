@@ -2,23 +2,16 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/draw_polyhedron.h>
-
-#include <iostream>
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
 typedef CGAL::Polyhedron_3<Kernel>                       Polyhedron;
 
-int main()
+int main(int argc, char* argv[])
 {
-  std::cerr<<"Loading OFF file ... "<<std::endl;
   Polyhedron P;
-  std::string filename;
-  std::cin>>filename;
-  std::cout<<filename<<std::endl;
-  std::ifstream in(filename);
-  in >> P;
-
+  std::ifstream in1((argc>1)?argv[1]:"data/cross.off");
+  in1 >> P;
   CGAL::draw(P);
 
   return EXIT_SUCCESS;
