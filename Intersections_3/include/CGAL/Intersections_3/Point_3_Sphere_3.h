@@ -39,7 +39,7 @@ do_intersect(const typename K::Point_3 &pt,
              const typename K::Sphere_3 &sphere,
              const K&)
 {
-  return ! sphere.has_on_unbounded_side(pt);
+  return sphere.has_on(pt);
 }
 
 
@@ -50,7 +50,7 @@ do_intersect(const typename K::Sphere_3 &sphere,
              const typename K::Point_3 &pt,
              const K&)
 {
-  return sphere.has_on_unbounded_side(pt);
+  return sphere.has_on(pt);
 }
 
 

@@ -39,7 +39,7 @@ do_intersect(const typename K::Point_2 &pt,
              const typename K::Circle_2 &circle,
              const K&)
 {
-  return ! circle.has_on_unbounded_side(pt);
+  return circle.has_on_boundary(pt);
 }
 
 
@@ -50,7 +50,7 @@ do_intersect(const typename K::Circle_2 &circle,
              const typename K::Point_2 &pt,
              const K&)
 {
-  return circle.has_on_unbounded_side(pt);
+  return circle.has_on_boundary(pt);
 }
 
 

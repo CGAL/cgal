@@ -161,8 +161,8 @@ struct Test {
   void B_P()
   {
     CGAL::Bbox_2 bb(0,0,10,10);
-    P p(1,1), bl(0,0), tr(10,10);
-    C c(p,1);
+    P p(1,0), bl(0,0), tr(10,10);
+    C c(bl,1);
     Rec r(bl,tr);
     check_intersection(bb,p,p,true);
     check_intersection(c,p,p,true);
