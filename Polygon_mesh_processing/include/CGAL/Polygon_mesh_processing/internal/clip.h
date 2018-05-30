@@ -128,39 +128,6 @@ clip_open_impl(      TriangleMesh& tm,
   return true;
 }
 
-/// \TODO move this to property_map.h?
-template <class Set>
-struct Constrained_edge_map
-{
-  typedef boost::read_write_property_map_tag      category;
-  typedef bool                                  value_type;
-  typedef bool                                  reference;
-  typedef typename Set::value_type              key_type;
-
-  Constrained_edge_map()
-    : edge_set(NULL)
-  {}
-
-  Constrained_edge_map(Set& set)
-    : edge_set(&set)
-  {}
-
-  friend bool get(const Constrained_edge_map<Set>& map, key_type k)
-  {
-    return map.edge_set->count(k)!=0;
-  }
-
-  friend void put(Constrained_edge_map<Set>& map, key_type k, bool b)
-  {
-    if (b)
-      map.edge_set->insert(k);
-    else
-      map.edge_set->erase(k);
-  }
-private:
-  Set* edge_set;
-};
-
 template <class TriangleMesh,
           class NamedParameters1,
           class NamedParameters2>
@@ -174,7 +141,7 @@ clip_open_impl(      TriangleMesh& tm,
   typedef typename boost::graph_traits<TriangleMesh>
     ::edge_descriptor edge_descriptor;
   boost::unordered_set<edge_descriptor> constrained_edges;
-  Constrained_edge_map<boost::unordered_set<edge_descriptor> >
+  Boolean_property_map<boost::unordered_set<edge_descriptor> >
     cst_map(constrained_edges);
 
   return clip_open_impl(tm, clipper,
@@ -210,6 +177,7 @@ clip(      TriangleMesh& tm,
 }
 
 /// \todo document me
+/// \todo remove convex_hull_3
 template <class Plane_3,
           class TriangleMesh,
           class NamedParameters>
