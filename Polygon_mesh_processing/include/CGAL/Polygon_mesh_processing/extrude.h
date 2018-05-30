@@ -73,7 +73,7 @@ struct Identity_functor
  * vertices of `input`. Then for each vertex, a call to `bot` and `top` is done for the vertices of the 
  * bottom part and the top part, respectively.
  * \attention `output` may be self intersecting.
- * @tparam InputMesh a model of `FaceListGraph` and `MutableFaceGraph`
+ * @tparam InputMesh a model of `FaceListGraph`
  * @tparam OutputMesh a model of `FaceListGraph` and `MutableFaceGraph`
  * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters" for `InputMesh`
  * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters" for `OutputMesh`
@@ -219,14 +219,11 @@ void extrude_mesh(const InputMesh& input,
  * vertices by `dir`. The mesh is oriented so that the faces corresponding to `input`
  * in `output` have the same orientation.
  * \attention `output` may be self intersecting.
- * @tparam InputMesh a model of the concept `MutableFaceGraph`
- * @tparam OutputMesh a model of the concept `MutableFaceGraph`
+ * @tparam InputMesh a model of the concept `FaceListGraph`
+ * @tparam OutputMesh a model of the concept `FaceListGraph` and `MutableFaceGraph`
  * @tparam Vector_3 a type of Vector_3 from the kernel used by `OutputMesh`.
- * @tparam FT a type of floating type from the kernel used by `OutputMesh`.
  * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters" for `InputMesh`
  * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters" for `OutputMesh`
- * @tparam InputMesh a model of `FaceListGraph` and `MutableFaceGraph`
- * @tparam OutputMesh a model of `FaceListGraph` and `MutableFaceGraph`
  * @param input the open `InputMesh` to extrude.
  * @param output the `OutputMesh` containing the result of the extrusion.
  * @param dir the vector defining the direction of the extrusion

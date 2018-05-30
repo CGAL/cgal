@@ -7,9 +7,8 @@ Release 4.13
 Release date: September 2018
 
 ### Polygon Mesh Processing
-- Added two functions in Polygon Mesh Processing to perform an extrusion of an open polygon mesh: 
+- Added a function in Polygon Mesh Processing to perform an extrusion of an open polygon mesh: 
     -   `CGAL::Polygon_mesh_processing::extrude_mesh()`
-    -   `CGAL::Polygon_mesh_processing::generic_extrude_mesh()`
 
 ### 2D and 3D Linear Geometry Kernel
 -   An operator() that takes a Ray_3 has been added to the concept
