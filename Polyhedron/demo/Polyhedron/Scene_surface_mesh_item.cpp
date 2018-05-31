@@ -815,7 +815,7 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
     diagonal = item->diagonalBbox();
   else
     diagonal = 0.0;
-  const qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   EPICK::Vector_3 offset(off.x,off.y,off.z);
   FT triangulation(fd,normal,smesh_,diagonal, offset);
   //iterates on the internal faces

@@ -421,7 +421,7 @@ void
 Scene_polyhedron_selection_item_priv::triangulate_facet(fg_face_descriptor fit,const Vector normal,
                                                    std::vector<float> &p_facets,std::vector<float> &p_normals ) const
 {
-  const qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   Kernel::Vector_3 offset(off.x,off.y,off.z);
   
   typedef FacetTriangulator<Face_graph, Kernel, fg_vertex_descriptor> FT;

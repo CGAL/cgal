@@ -248,7 +248,7 @@ typedef Polygon_soup::Polygon_3 Facet;
 void
 Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int polygon_id) const
 {
-  const qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   EPICK::Vector_3 offset(off.x,off.y,off.z);
   
     //Computes the normal of the facet
