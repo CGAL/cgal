@@ -70,9 +70,9 @@ private:
   {
     EigenMatrix m;
 
-    for(int i=0; i<dim; ++i)
+    for(std::size_t i=0; i<dim; ++i)
     {
-      for(int j=i; j<dim; ++j)
+      for(std::size_t j=i; j<dim; ++j)
       {
         m(i,j) = static_cast<float>(cov[(dim * i) + j - ((i * (i+1)) / 2)]);
 
@@ -150,11 +150,11 @@ public:
 
     if(res)
     {
-      for(int i=0; i<dim; ++i)
+      for(std::size_t i=0; i<dim; ++i)
       {
         eigenvalues[i] = static_cast<FT>(eigenvalues_[i]);
 
-        for(int j=0; j<dim; ++j)
+        for(std::size_t j=0; j<dim; ++j)
           eigenvectors[dim*i + j] = static_cast<FT>(eigenvectors_(j,i));
       }
     }
