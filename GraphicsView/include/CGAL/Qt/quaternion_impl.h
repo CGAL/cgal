@@ -37,7 +37,6 @@
 
 // All the methods are declared inline in Quaternion.h
 using namespace CGAL::qglviewer;
-using namespace std;
 
 /*! Constructs a Quaternion that will rotate from the \p from direction to the
 \p to direction.
@@ -533,7 +532,7 @@ Quaternion Quaternion::squadTangent(const Quaternion &before,
 }
 
 CGAL_INLINE_FUNCTION
-ostream &operator<<(ostream &o, const Quaternion &Q) {
+std::ostream &operator<<(std::ostream &o, const Quaternion &Q) {
   return o << Q[0] << '\t' << Q[1] << '\t' << Q[2] << '\t' << Q[3];
 }
 

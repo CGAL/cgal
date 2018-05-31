@@ -34,7 +34,6 @@
 #include <CGAL/Qt/domUtils.h>
 
 using namespace CGAL::qglviewer;
-using namespace std;
 
 /*! Creates a KeyFrameInterpolator, with \p frame as associated frame().
 

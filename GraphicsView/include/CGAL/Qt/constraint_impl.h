@@ -36,7 +36,6 @@
 #include <CGAL/Qt/camera.h>
 
 using namespace CGAL::qglviewer;
-using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                  Constraint                                //
