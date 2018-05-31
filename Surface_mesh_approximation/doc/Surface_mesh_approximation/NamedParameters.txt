@@ -10,8 +10,8 @@ Named parameters enable the user to specify only those parameters which are real
 
 We refer to the named parameters introduced in \ref PkgPolygonMeshProcessingSummary.
 
-The sequence of named parameters should start with `CGAL::Surface_mesh_approximation::parameters::`.
-`#CGAL::Surface_mesh_approximation::parameters::all_default()` can be used to indicate
+The sequence of named parameters should start with `CGAL::VSA::parameters::`.
+`#CGAL::VSA::parameters::all_default()` can be used to indicate
 that default values of optional named parameters are used.
 
 \cgalHeading{Example}
@@ -27,7 +27,7 @@ See below a sample call of a function that uses the optional BGL named parameter
 // triangles: output triplets of indexed triangles
 
 CGAL::approximate_mesh(tm,
-    CGAL::Surface_mesh_approximation::parameters::seeding_method(method).
+    CGAL::VSA::parameters::seeding_method(method).
         max_nb_proxies(nb_proxies).
         nb_of_iterations(nb_iterations).
         anchors(std::back_inserter(anchors)).

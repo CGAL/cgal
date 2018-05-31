@@ -42,7 +42,7 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
   std::cout << "#proxies " << approx.proxies_size() << std::endl;
 
   // meshing
-  if (approx.extract_mesh(CGAL::Surface_mesh_approximation::parameters::subdivision_ratio(5.0))) {
+  if (approx.extract_mesh(CGAL::VSA::parameters::subdivision_ratio(5.0))) {
     std::cout << "Succeeded." << std::endl;
     return true;
   }

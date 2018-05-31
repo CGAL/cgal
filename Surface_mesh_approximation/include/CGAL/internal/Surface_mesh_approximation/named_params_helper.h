@@ -13,7 +13,7 @@
 #include <boost/mpl/if.hpp>
 
 namespace CGAL {
-namespace Surface_mesh_approximation {
+namespace VSA {
 namespace internal_np {
 
 // shortcut for accessing the value type of the property map
@@ -120,7 +120,7 @@ void triangles_helper(const Approximation &, internal_np::dummy_output_t)
 {}
 
 } // namespace internal_np
-} // namespace Surface_mesh_approximation
+} // namespace VSA
 } // namespace CGAL
 
 #endif //CGAL_SMA_NAMED_PARAMETERS_HELPERS_H

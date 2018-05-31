@@ -27,7 +27,7 @@ int main()
 
   // free function interface with named parameters
   CGAL::approximate_mesh(input,
-  CGAL::Surface_mesh_approximation::parameters::max_nb_proxies(200). // first stop criterion
+  CGAL::VSA::parameters::max_nb_proxies(200). // first stop criterion
     min_error_drop(0.05). // second stop criterion
     nb_of_iterations(30). // number of relaxation iterations after seeding
     facet_proxy_map(fpxmap)); // output facet-proxy map

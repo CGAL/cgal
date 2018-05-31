@@ -21,7 +21,7 @@ int main()
 
   // free function interface with named parameters
   bool is_manifold = CGAL::approximate_mesh(input,
-    CGAL::Surface_mesh_approximation::parameters::seeding_method(CGAL::Hierarchical). // hierarchical seeding
+    CGAL::VSA::parameters::seeding_method(CGAL::Hierarchical). // hierarchical seeding
     max_nb_proxies(200). // seeding with maximum number of proxies
     nb_of_iterations(30). // number of clustering iterations after seeding
     anchors(std::back_inserter(anchors)). // anchor vertices

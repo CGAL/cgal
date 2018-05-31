@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 
   t0.reset();
   t0.start();
-  approx.extract_mesh(CGAL::Surface_mesh_approximation::parameters::all_default());
+  approx.extract_mesh(CGAL::VSA::parameters::all_default());
   t0.stop();
   std::cerr << "meshing time " << t0.time() << " sec." << std::endl;
 

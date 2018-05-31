@@ -32,7 +32,7 @@ int main()
 
   // free function interface with named parameters
   CGAL::approximate_mesh(input,
-    CGAL::Surface_mesh_approximation::parameters::seeding_method(CGAL::Hierarchical). // hierarchical seeding
+    CGAL::VSA::parameters::seeding_method(CGAL::Hierarchical). // hierarchical seeding
     max_nb_proxies(200). // both maximum number of proxies stop criterion,
     min_error_drop(0.05). // and minimum error drop stop criterion are specified
     nb_of_iterations(30). // number of clustering iterations after seeding

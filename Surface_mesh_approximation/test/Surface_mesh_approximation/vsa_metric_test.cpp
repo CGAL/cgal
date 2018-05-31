@@ -106,7 +106,7 @@ int main()
 
   // extract the approximation
   std::cout << "meshing" << std::endl;
-  if (approx.extract_mesh(CGAL::Surface_mesh_approximation::parameters::subdivision_ratio(5.0)))
+  if (approx.extract_mesh(CGAL::VSA::parameters::subdivision_ratio(5.0)))
     std::cout << "manifold." << std::endl;
   else
     std::cout << "non-manifold" << std::endl;

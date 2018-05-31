@@ -31,7 +31,7 @@ enum Approximation_verbose_level {
 
 // the named parameter header being not documented the doc is put here for now
 #ifdef DOXYGEN_RUNNING
-namespace Surface_mesh_approximation {
+namespace VSA {
 namespace parameters {
 
 /*! \ingroup namedparameters
@@ -40,7 +40,7 @@ namespace parameters {
 unspecified_type all_default();
 
 } // namespace parameters
-} // namespace Surface_mesh_approximation
+} // namespace VSA
 #endif
 
 /*!
@@ -104,20 +104,20 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
 {
   using boost::get_param;
   using boost::choose_param;
-  namespace sma_np = CGAL::Surface_mesh_approximation::internal_np;
+  namespace vsa_np = CGAL::VSA::internal_np;
 
-  typedef typename sma_np::GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
+  typedef typename vsa_np::GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
   typedef typename Geom_traits::FT FT;
 
-  typedef typename sma_np::GetVertexPointMap<TriangleMesh, NamedParameters>::type Vertex_point_map;
-  Vertex_point_map point_pmap = choose_param(get_param(np, sma_np::vertex_point),
+  typedef typename vsa_np::GetVertexPointMap<TriangleMesh, NamedParameters>::type Vertex_point_map;
+  Vertex_point_map point_pmap = choose_param(get_param(np, vsa_np::vertex_point),
     get_property_map(vertex_point, const_cast<TriangleMesh &>(tm)));
 
   typedef CGAL::Variational_shape_approximation<TriangleMesh, Vertex_point_map> L21_approx;
   typedef typename L21_approx::Error_metric L21_metric;
 
   const Approximation_verbose_level vl = choose_param(
-    get_param(np, sma_np::verbose_level), CGAL::Main_steps);
+    get_param(np, vsa_np::verbose_level), CGAL::Main_steps);
 
   if (vl == CGAL::Main_steps || vl == CGAL::Verbose) {
     std::cout << "Variational shape approximation:"
@@ -131,12 +131,12 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
 
   // hierarchical seeding by default
   CGAL::Approximation_seeding_tag method = choose_param(
-    get_param(np, sma_np::seeding_method), CGAL::Hierarchical);
+    get_param(np, vsa_np::seeding_method), CGAL::Hierarchical);
   boost::optional<std::size_t> max_nb_proxies = choose_param(
-    get_param(np, sma_np::max_nb_proxies), boost::optional<std::size_t>());
+    get_param(np, vsa_np::max_nb_proxies), boost::optional<std::size_t>());
   boost::optional<FT> min_error_drop = choose_param(
-    get_param(np, sma_np::min_error_drop), boost::optional<FT>());
-  std::size_t nb_of_relaxations = choose_param(get_param(np, sma_np::nb_of_relaxations), 5);
+    get_param(np, vsa_np::min_error_drop), boost::optional<FT>());
+  std::size_t nb_of_relaxations = choose_param(get_param(np, vsa_np::nb_of_relaxations), 5);
 
   if (vl == CGAL::Verbose) {
     std::cout << (method == CGAL::Random ? "Random" :
@@ -156,7 +156,7 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
   nb_of_iterations_default = (std::min)((std::max)(
     nb_of_iterations_default, static_cast<std::size_t>(20)), static_cast<std::size_t>(60));
   const std::size_t nb_of_iterations = choose_param(
-    get_param(np, sma_np::nb_of_iterations), nb_of_iterations_default);
+    get_param(np, vsa_np::nb_of_iterations), nb_of_iterations_default);
 
   if (vl == CGAL::Verbose)
     std::cout << "\n#nb_of_iterations = " << nb_of_iterations << std::endl;
@@ -170,49 +170,49 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
 
   // get proxy map
   typedef typename boost::lookup_named_param_def<
-    sma_np::facet_proxy_map_t,
+    vsa_np::facet_proxy_map_t,
     NamedParameters,
-    sma_np::dummy_output_t>::type Face_proxy_map;
+    vsa_np::dummy_output_t>::type Face_proxy_map;
   Face_proxy_map fproxymap = choose_param(
-    get_param(np, sma_np::facet_proxy_map), sma_np::dummy_output);
-  sma_np::facet_proxy_map_helper(approx, fproxymap);
+    get_param(np, vsa_np::facet_proxy_map), vsa_np::dummy_output);
+  vsa_np::facet_proxy_map_helper(approx, fproxymap);
 
-  if (!boost::is_same<Face_proxy_map, sma_np::dummy_output_t>::value
+  if (!boost::is_same<Face_proxy_map, vsa_np::dummy_output_t>::value
     && (vl == CGAL::Main_steps || vl == CGAL::Verbose))
     std::cout << "Filling facet proxy map done." << std::endl;
 
   // get proxies
   typedef typename boost::lookup_named_param_def<
-    sma_np::proxies_t,
+    vsa_np::proxies_t,
     NamedParameters,
-    sma_np::dummy_output_t>::type Proxies_output_iterator;
+    vsa_np::dummy_output_t>::type Proxies_output_iterator;
   Proxies_output_iterator pxies_out_itr = choose_param(
-    get_param(np, sma_np::proxies), sma_np::dummy_output);
-  sma_np::proxies_helper(approx, pxies_out_itr);
+    get_param(np, vsa_np::proxies), vsa_np::dummy_output);
+  vsa_np::proxies_helper(approx, pxies_out_itr);
 
-  if (!boost::is_same<Proxies_output_iterator, sma_np::dummy_output_t>::value
+  if (!boost::is_same<Proxies_output_iterator, vsa_np::dummy_output_t>::value
     && (vl == CGAL::Main_steps || vl == CGAL::Verbose))
     std::cout << "Get proxies done." << std::endl;
 
   // meshing
   typedef typename boost::lookup_named_param_def<
-    sma_np::anchors_t,
+    vsa_np::anchors_t,
     NamedParameters,
-    sma_np::dummy_output_t>::type Anchors_output_iterator;
+    vsa_np::dummy_output_t>::type Anchors_output_iterator;
   typedef typename boost::lookup_named_param_def<
-    sma_np::triangles_t,
+    vsa_np::triangles_t,
     NamedParameters,
-    sma_np::dummy_output_t>::type Triangles_output_iterator;
+    vsa_np::dummy_output_t>::type Triangles_output_iterator;
 
   bool is_manifold = false;
-  if (!boost::is_same<Anchors_output_iterator, sma_np::dummy_output_t>::value
-    || !boost::is_same<Triangles_output_iterator, sma_np::dummy_output_t>::value) {
+  if (!boost::is_same<Anchors_output_iterator, vsa_np::dummy_output_t>::value
+    || !boost::is_same<Triangles_output_iterator, vsa_np::dummy_output_t>::value) {
     if (vl == CGAL::Verbose) {
-      const FT subdivision_ratio = choose_param(get_param(np, sma_np::subdivision_ratio), FT(5.0));
-      const bool relative_to_chord = choose_param(get_param(np, sma_np::relative_to_chord), false);
-      const bool with_dihedral_angle = choose_param(get_param(np, sma_np::with_dihedral_angle), false);
-      const bool optimize_anchor_location = choose_param(get_param(np, sma_np::optimize_anchor_location), true);
-      const bool pca_plane = choose_param(get_param(np, sma_np::pca_plane), false);
+      const FT subdivision_ratio = choose_param(get_param(np, vsa_np::subdivision_ratio), FT(5.0));
+      const bool relative_to_chord = choose_param(get_param(np, vsa_np::relative_to_chord), false);
+      const bool with_dihedral_angle = choose_param(get_param(np, vsa_np::with_dihedral_angle), false);
+      const bool optimize_anchor_location = choose_param(get_param(np, vsa_np::optimize_anchor_location), true);
+      const bool pca_plane = choose_param(get_param(np, vsa_np::pca_plane), false);
       std::cout << "Meshing: "
         << "\nchord_error = " << subdivision_ratio
         << "\nrelative_to_chord = " << relative_to_chord
@@ -230,19 +230,19 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
 
   // get anchor points
   Anchors_output_iterator apts_out_itr = choose_param(
-    get_param(np, sma_np::anchors) , sma_np::dummy_output);
-  sma_np::anchors_helper(approx, apts_out_itr);
+    get_param(np, vsa_np::anchors) , vsa_np::dummy_output);
+  vsa_np::anchors_helper(approx, apts_out_itr);
 
-  if (!boost::is_same<Anchors_output_iterator, sma_np::dummy_output_t>::value
+  if (!boost::is_same<Anchors_output_iterator, vsa_np::dummy_output_t>::value
     && (vl == CGAL::Main_steps || vl == CGAL::Verbose))
     std::cout << "Get anchors done." << std::endl;
 
   // get indexed triangles
   Triangles_output_iterator tris_out_itr = choose_param(
-    get_param(np, sma_np::triangles) , sma_np::dummy_output);
-  sma_np::triangles_helper(approx, tris_out_itr);
+    get_param(np, vsa_np::triangles) , vsa_np::dummy_output);
+  vsa_np::triangles_helper(approx, tris_out_itr);
 
-  if (!boost::is_same<Triangles_output_iterator, sma_np::dummy_output_t>::value
+  if (!boost::is_same<Triangles_output_iterator, vsa_np::dummy_output_t>::value
     && (vl == CGAL::Main_steps || vl == CGAL::Verbose))
     std::cout << "Get indexed triangles done." << std::endl;
 
