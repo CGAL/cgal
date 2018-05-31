@@ -170,8 +170,8 @@ void smooth_curvature_flow_explicit(const FaceRange& faces, PolygonMesh& pmesh, 
 *  \cgalParamEnd
 *  \cgalParamBegin{use_explicit_scheme} a normalized explicit scheme for smoothing along the curvature flow.
 *    It is not dependent on the time step parameter. Each vertex is moved sequentially without solving
-*    a linear system. It can be useful for subtle noise removal and the result
-*    does not converge to a sphere.
+*    a linear system. It can be useful for subtle noise removal and to avoid the result
+*    to converge to a sphere.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 */
@@ -320,6 +320,8 @@ void smooth_along_curvature_flow(PolygonMesh& pmesh, const double& time)
 }
 
 // API for Polyhedron demo plugin
+namespace internal{
+
 template<typename PolygonMesh, typename FaceRange, typename NamedParameters>
 void solve_mcf(const FaceRange& faces, PolygonMesh& mesh, const double& time,
                std::vector<CGAL::Triple<int, int, double> >& stiffness, bool compute_stiffness,
@@ -402,9 +404,9 @@ void solve_mcf(const FaceRange& faces, PolygonMesh& mesh, const double& time,
       smoother.update_mesh(Xx, Xy, Xz);
     }
   }
-
 }
 
+} // end internal namespace
 
 
 } //Polygon_mesh_processing

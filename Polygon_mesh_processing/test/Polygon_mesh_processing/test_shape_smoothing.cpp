@@ -173,18 +173,15 @@ void test_demo_helpers(Mesh mesh)
   std::cout << "-- test_demo_helpers --" << std::endl;
   #endif
 
-  typename boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap =
-          get(CGAL::vertex_point, mesh);
-
   const double time_step = 1e-2;
   std::vector<CGAL::Triple<int, int, double> > stiffness;
 
   bool compute_stiffness = true;
-  CGAL::Polygon_mesh_processing::solve_mcf(faces(mesh), mesh, time_step,
+  CGAL::Polygon_mesh_processing::internal::solve_mcf(faces(mesh), mesh, time_step,
                                            stiffness, compute_stiffness,
                                            CGAL::Polygon_mesh_processing::parameters::all_default());
   compute_stiffness = false;
-  CGAL::Polygon_mesh_processing::solve_mcf(faces(mesh), mesh, time_step,
+  CGAL::Polygon_mesh_processing::internal::solve_mcf(faces(mesh), mesh, time_step,
                                            stiffness, compute_stiffness,
                                            CGAL::Polygon_mesh_processing::parameters::all_default());
 

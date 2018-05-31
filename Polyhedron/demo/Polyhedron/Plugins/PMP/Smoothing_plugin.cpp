@@ -202,15 +202,17 @@ public Q_SLOTS:
       // If we changed item or if the stiffness cache is cleared (by the user hitting the button)
       if(index_id != last_index_id || stiffness_is_cleared)
       {
-        solve_mcf(faces(pmesh), pmesh, time_step, stiffness, true, parameters::vertex_is_constrained_map(vcmap));
+        internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, true,
+        parameters::vertex_is_constrained_map(vcmap));
         last_index_id = index_id;
 
         // reset the cache flag
         stiffness_is_cleared = false;
       }
 
-      solve_mcf(faces(pmesh), pmesh, time_step, stiffness, false, parameters::vertex_is_constrained_map(vcmap)
-                                                                    .number_of_iterations(nb_iter));
+      internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, false,
+                          parameters::vertex_is_constrained_map(vcmap)
+                          .number_of_iterations(nb_iter));
     }
 
     // recenter scene

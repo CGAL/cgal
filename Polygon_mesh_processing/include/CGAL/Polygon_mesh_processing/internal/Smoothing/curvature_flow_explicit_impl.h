@@ -31,7 +31,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
-
+#include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_helpers.h>
 #include <CGAL/property_map.h>
 #include <CGAL/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
@@ -100,12 +100,15 @@ public:
   {
     check_vertex_range(face_range);
     BOOST_FOREACH(face_descriptor f, face_range)
-      input_triangles_.push_back(triangle(f));
+    {
+      Triangle t;
+      construct_triangle(f, mesh_, t);
+      input_triangles_.push_back(t);
+    }
   }
 
   std::size_t remove_degenerate_faces()
   {
-    std::size_t nb_removed_faces = 0;
     return CGAL::Polygon_mesh_processing::remove_degenerate_faces(mesh_);
   }
 
@@ -163,16 +166,6 @@ public:
   }
 
 private:
-  // helper functions
-  // ----------------
-  Triangle triangle(face_descriptor f) const
-  {
-    halfedge_descriptor h = halfedge(f, mesh_);
-    vertex_descriptor v1 = target(h, mesh_);
-    vertex_descriptor v2 = target(next(h, mesh_), mesh_);
-    vertex_descriptor v3 = target(next(next(h, mesh_), mesh_), mesh_);
-    return Triangle(get(vpmap_, v1), get(vpmap_, v2), get(vpmap_, v3));
-  }
 
   // degeneracy removal
   // ------------------

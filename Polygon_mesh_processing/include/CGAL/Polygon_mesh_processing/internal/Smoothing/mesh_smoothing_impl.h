@@ -31,7 +31,7 @@
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
-
+#include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_helpers.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangle_primitive.h>
@@ -54,15 +54,14 @@ class Compatible_remesher
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_iterator vertex_iterator;
   typedef typename GeomTraits::Point_3 Point;
   typedef typename GeomTraits::Vector_3 Vector;
   typedef typename GeomTraits::Segment_3 Segment;
   typedef typename GeomTraits::Triangle_3 Triangle;
 
   typedef std::vector<Triangle> Triangle_list;
-  typedef std::pair<halfedge_descriptor, halfedge_descriptor> he_pair;
-  typedef std::map<halfedge_descriptor, he_pair> Edges_around_map;
+  typedef std::pair<halfedge_descriptor, halfedge_descriptor> He_pair;
+  typedef std::map<halfedge_descriptor, He_pair> Edges_around_map;
 
   typedef CGAL::AABB_triangle_primitive<GeomTraits, typename Triangle_list::iterator> AABB_Primitive;
   typedef CGAL::AABB_traits<GeomTraits, AABB_Primitive> AABB_Traits;
@@ -84,7 +83,11 @@ public:
     check_vertex_range(face_range);
 
     BOOST_FOREACH(face_descriptor f, face_range)
-      input_triangles_.push_back(triangle(f));
+    {
+      Triangle t;
+      construct_triangle(f, mesh_, t);
+      input_triangles_.push_back(t);
+    }
 
     tree_ptr_ = new Tree(input_triangles_.begin(), input_triangles_.end());
     tree_ptr_->accelerate_distance_queries();
@@ -116,7 +119,7 @@ public:
         Edges_around_map he_map;
         typename Edges_around_map::iterator it;
         BOOST_FOREACH(halfedge_descriptor hi, halfedges_around_source(v, mesh_))
-          he_map[hi] = he_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
+          he_map[hi] = He_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
 
         // measure initial angles
         measure_angles(he_map);
@@ -155,7 +158,7 @@ public:
 
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
     std::cout<<"moved: "<< moved_points <<" points based on angle."<<std::endl;
-    std::cout<<"not imporved min angle: "<< vrange_.size() - moved_points <<" times."<<std::endl;
+    std::cout<<"not improved min angle: "<< vrange_.size() - moved_points <<" times."<<std::endl;
 #endif
   }
 
@@ -191,33 +194,6 @@ public:
   }
 
 private:
-  // helper functions
-  // ----------------
-  Triangle triangle(face_descriptor f) const
-  {
-    halfedge_descriptor h = halfedge(f, mesh_);
-    vertex_descriptor v1 = target(h, mesh_);
-    vertex_descriptor v2 = target(next(h, mesh_), mesh_);
-    vertex_descriptor v3 = target(next(next(h, mesh_), mesh_), mesh_);
-    return Triangle(get(vpmap_, v1), get(vpmap_, v2), get(vpmap_, v3));
-  }
-
-  double sqlength(const vertex_descriptor& v1, const vertex_descriptor& v2) const
-  {
-    return to_double(CGAL::squared_distance(get(vpmap_, v1), get(vpmap_, v2)));
-  }
-
-  double sqlength(const halfedge_descriptor& h) const
-  {
-   vertex_descriptor v1 = target(h, mesh_);
-   vertex_descriptor v2 = source(h, mesh_);
-   return sqlength(v1, v2);
-  }
-
-  double sqlength(const edge_descriptor& e) const
-  {
-   return sqlength(halfedge(e, mesh_));
-  }
 
   // angle bisecting functions
   // -------------------------
@@ -229,7 +205,7 @@ private:
     for(it = he_map.begin(); it != he_map.end(); ++it)
     {
       halfedge_descriptor main_he = it->first;
-      he_pair incident_pair = it->second;
+      He_pair incident_pair = it->second;
 
       // avoid zero angles
       Point pt = get(vpmap_, source(incident_pair.first, mesh_));
@@ -257,7 +233,7 @@ private:
     return move;
   }
 
-  Vector rotate_edge(const halfedge_descriptor& main_he, const he_pair& incd_edges)
+  Vector rotate_edge(const halfedge_descriptor& main_he, const He_pair& incd_edges)
   {
     // get common vertex around which the edge is rotated
     Point pt = get(vpmap_, target(main_he, mesh_));
@@ -279,7 +255,7 @@ private:
 
     if ( edge1.squared_length()               < precision ||
        edge2.squared_length()                 < precision ||
-       sqlength(main_he)                      < precision ||
+       sqlength(main_he, mesh_)               < precision ||
        (edge1 - vec_main_he).squared_length() < precision ||
        (edge2 - vec_main_he).squared_length() < precision )
     {
@@ -318,7 +294,7 @@ private:
 
     correct_bisector(bisector, main_he);
 
-    double target_length = CGAL::sqrt(sqlength(main_he));
+    double target_length = CGAL::sqrt(sqlength(main_he, mesh_));
     double bisector_length = CGAL::sqrt(bisector.squared_length());
 
     CGAL_assertion(   ( target_length - precision    <   bisector_length     ) &&
@@ -335,7 +311,7 @@ private:
     Segment bisector(pt, pt + bisector_vec);
 
     // scale
-    double scale_factor = CGAL::sqrt(  sqlength(main_he) / bisector.squared_length() );
+    double scale_factor = CGAL::sqrt(  sqlength(main_he, mesh_) / bisector.squared_length() );
     typename GeomTraits::Aff_transformation_3 t_scale(CGAL::SCALING, scale_factor);
     bisector = bisector.transform(t_scale);
 
@@ -364,12 +340,12 @@ private:
     for(it = he_map.begin(); it != he_map.end(); ++it)
     {
       halfedge_descriptor main_he = it->first;
-      he_pair incident_pair = it->second;
+      He_pair incident_pair = it->second;
       calc_angles(main_he, incident_pair);
     }
   }
 
-  void calc_angles(const halfedge_descriptor& main_he, const he_pair& incd_edges)
+  void calc_angles(const halfedge_descriptor& main_he, const He_pair& incd_edges)
   {
     // get common vertex around which the edge is rotated
     Point pt = get(vpmap_, target(main_he, mesh_));
@@ -396,7 +372,7 @@ private:
     Edges_around_map he_map;
     typename Edges_around_map::iterator it;
     BOOST_FOREACH(halfedge_descriptor hi, halfedges_around_source(v, mesh_))
-      he_map[hi] = he_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
+      he_map[hi] = He_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
     return evaluate_angles(he_map, new_location);
   }
 
@@ -406,7 +382,7 @@ private:
     for(it = he_map.begin(); it != he_map.end(); ++it)
     {
       halfedge_descriptor main_he = it->first;
-      he_pair incd_edges = it->second;
+      He_pair incd_edges = it->second;
 
       // get common vertex around which the edge is rotated
       Point pt = get(vpmap_, target(main_he, mesh_));
@@ -434,7 +410,7 @@ private:
   {
     //double rad_to_deg = 180. / CGAL_PI;
     double cos_angle = (e1 * e2)
-     / std::sqrt(e1.squared_length() * e2.squared_length());
+     / CGAL::sqrt(e1.squared_length() * e2.squared_length());
 
     return std::acos(cos_angle); //* rad_to_deg;
   }

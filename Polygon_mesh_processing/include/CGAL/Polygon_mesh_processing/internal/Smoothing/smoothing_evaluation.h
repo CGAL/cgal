@@ -72,7 +72,9 @@ public:
         / std::sqrt(ba.squared_length() * bc.squared_length());
       angles_.push_back(std::acos(cos_angle) * rad_to_deg);
     }
+    #ifdef CGAL_PMP_SMOOTHING_VERBOSE
     std::cout<<"angles_ size= "<<angles_.size()<<std::endl;
+    #endif
   }
 
   void extract_angles(const char* filename)
@@ -88,7 +90,9 @@ public:
     BOOST_FOREACH(face_descriptor f, faces(mesh_))
       areas_.push_back(face_area(f, mesh_));
 
+    #ifdef CGAL_PMP_SMOOTHING_VERBOSE
     std::cout<<"areas_ size= "<<areas_.size()<<std::endl;
+    #endif
   }
 
   void extract_areas(const char* filename)
@@ -121,7 +125,9 @@ public:
       }
       aspect_ratios_.push_back(longest_edge / min_alt);
     }
+    #ifdef CGAL_PMP_SMOOTHING_VERBOSE
     std::cout<<"aspect_ratios_ size= "<<aspect_ratios_.size()<<std::endl;
+    #endif
   }
 
   void extract_aspect_ratios(const char* filename)

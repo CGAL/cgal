@@ -1,16 +1,11 @@
 #include <iostream>
 #include <fstream>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-
 #include <CGAL/Polygon_mesh_processing/mesh_smoothing.h>
-#include <CGAL/Polygon_mesh_processing/shape_smoothing.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
-
-namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[]){
 
@@ -43,7 +38,6 @@ int main(int argc, char* argv[]){
     std::ofstream output("data/eight_smoothed.off");
     output << mesh;
     output.close();
-
 
     return 0;
 }
