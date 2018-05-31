@@ -845,6 +845,7 @@ public Q_SLOTS:
       add_new_label (classif, n);
 
     add_label_button();
+    update_plugin_from_item(classif);
   }
 
   void on_use_config_building_clicked()
@@ -1244,7 +1245,7 @@ public Q_SLOTS:
       label_buttons.erase (label_buttons.begin() + position);
       add_label_button();
     }
-
+    update_plugin_from_item(classif);
     item_changed(classif->item());
   }
 

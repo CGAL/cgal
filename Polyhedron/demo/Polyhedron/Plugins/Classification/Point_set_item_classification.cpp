@@ -17,8 +17,8 @@
 #include <boost/array.hpp>
 
 Point_set_item_classification::Point_set_item_classification(Scene_points_with_normal_item* points)
-  : m_points (points),
-    m_generator (NULL)
+  : m_points (points)
+  , m_generator (NULL)
 {
   m_index_color = 1;
 
@@ -216,9 +216,9 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
   update_comments_of_point_set_item();
 
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
-  m_ethz = new ETHZ_random_forest (m_labels, m_features);
+  m_ethz = NULL;
 #ifdef CGAL_LINKED_WITH_OPENCV
-  m_random_forest = new Random_forest (m_labels, m_features);
+  m_random_forest = NULL;
 #endif
 }
 
@@ -381,24 +381,54 @@ void Point_set_item_classification::change_color (int index)
     }
   else
     {
-      Feature_handle feature = m_features[index_color - 3];
+      std::size_t corrected_index = index_color - 3;
+      if (corrected_index < m_labels.size()) // Display label probabilities
+      {
+        if (m_label_probabilities.size() <= corrected_index ||
+            m_label_probabilities[corrected_index].size() != m_points->point_set()->size())
+        {
+          for (Point_set::const_iterator it = m_points->point_set()->begin();
+               it != m_points->point_set()->first_selected(); ++ it)
+          {
+            m_red[*it] = 0;
+            m_green[*it] = 0;
+            m_blue[*it] = 0;
+          }
+        }
+        else
+        {
+          for (Point_set::const_iterator it = m_points->point_set()->begin();
+               it != m_points->point_set()->first_selected(); ++ it)
+          {
+            float v = std::max (0.f, std::min(1.f, m_label_probabilities[corrected_index][*it]));
+            m_red[*it] = (unsigned char)(ramp.r(v) * 255);
+            m_green[*it] = (unsigned char)(ramp.g(v) * 255);
+            m_blue[*it] = (unsigned char)(ramp.b(v) * 255);
+          }
+        }
+      }
+      else
+      {
+        corrected_index -= m_labels.size();
+        Feature_handle feature = m_features[corrected_index];
 
-      float max = 0.;
-      for (Point_set::const_iterator it = m_points->point_set()->begin();
-           it != m_points->point_set()->first_selected(); ++ it)
-        if (feature->value(*it) > max)
-          max = feature->value(*it);
+        float max = 0.;
+        for (Point_set::const_iterator it = m_points->point_set()->begin();
+             it != m_points->point_set()->first_selected(); ++ it)
+          if (feature->value(*it) > max)
+            max = feature->value(*it);
 
-      for (Point_set::const_iterator it = m_points->point_set()->begin();
-           it != m_points->point_set()->first_selected(); ++ it)
+        for (Point_set::const_iterator it = m_points->point_set()->begin();
+             it != m_points->point_set()->first_selected(); ++ it)
         {
           float v = std::max (0.f, feature->value(*it) / max);
           m_red[*it] = (unsigned char)(ramp.r(v) * 255);
           m_green[*it] = (unsigned char)(ramp.g(v) * 255);
           m_blue[*it] = (unsigned char)(ramp.b(v) * 255);
         }
+      }
     }
-
+  
   for (Point_set::const_iterator it = m_points->point_set()->first_selected();
        it != m_points->point_set()->end(); ++ it)
     {
@@ -480,12 +510,17 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales)
 
   delete m_sowf;
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
-  delete m_ethz;
-  m_ethz = new ETHZ_random_forest (m_labels, m_features);
-
+  if (m_ethz != NULL)
+  {
+    delete m_ethz;
+    m_ethz = NULL;
+  }
 #ifdef CGAL_LINKED_WITH_OPENCV
-  delete m_random_forest;
-  m_random_forest = new Random_forest (m_labels, m_features);
+  if (m_random_forest != NULL)
+  {
+    delete m_random_forest;
+    m_random_forest = NULL;
+  }
 #endif
 
   t.stop();
@@ -608,6 +643,8 @@ void Point_set_item_classification::train(int classifier, unsigned int nb_trials
     }
   reset_indices();
 
+  m_label_probabilities.clear();
+
   std::vector<int> training (m_points->point_set()->size(), -1);
   std::vector<int> indices (m_points->point_set()->size(), -1);
 
@@ -635,14 +672,17 @@ void Point_set_item_classification::train(int classifier, unsigned int nb_trials
       m_sowf->train<Concurrency_tag>(training, nb_trials);
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                        m_labels, *m_sowf,
-                                                       indices);
+                                                       indices, m_label_probabilities);
     }
   else if (classifier == 1)
   {
+    if (m_ethz != NULL)
+      delete m_ethz;
+    m_ethz = new ETHZ_random_forest (m_labels, m_features);
     m_ethz->train(training, true, num_trees, max_depth);
     CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                      m_labels, *m_ethz,
-                                                     indices);
+                                                     indices, m_label_probabilities);
   }
   else
     {
@@ -655,7 +695,7 @@ void Point_set_item_classification::train(int classifier, unsigned int nb_trials
       m_random_forest->train (training);
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                        m_labels, *m_random_forest,
-                                                       indices);
+                                                       indices, m_label_probabilities);
 #endif
     }
   for (Point_set::const_iterator it = m_points->point_set()->begin();
@@ -680,10 +720,24 @@ bool Point_set_item_classification::run (int method, int classifier,
   if (classifier == 0)
     run (method, *m_sowf, subdivisions, smoothing);
   else if (classifier == 1)
+  {
+    if (m_ethz == NULL)
+    {
+      std::cerr << "Error: ETHZ Random Forest must be trained or have a configuration loaded first" << std::endl;
+      return false;
+    }
     run (method, *m_ethz, subdivisions, smoothing);
+  }
 #ifdef CGAL_LINKED_WITH_OPENCV
   else
+  {
+    if (m_random_forest == NULL)
+    {
+      std::cerr << "Error: OpenCV Random Forest must be trained or have a configuration loaded first" << std::endl;
+      return false;
+    }
     run (method, *m_random_forest, subdivisions, smoothing);
+  }
 #endif
   
   return true;

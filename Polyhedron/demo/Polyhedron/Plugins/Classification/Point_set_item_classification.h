@@ -367,6 +367,8 @@ class Point_set_item_classification : public Item_classification_base
 
   std::vector<Cluster> m_clusters;
 
+  std::vector<std::vector<float> > m_label_probabilities;
+
   Point_set::Property_map<unsigned char> m_red;
   Point_set::Property_map<unsigned char> m_green;
   Point_set::Property_map<unsigned char> m_blue;

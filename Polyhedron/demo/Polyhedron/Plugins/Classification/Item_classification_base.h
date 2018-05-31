@@ -124,6 +124,13 @@ public:
 
   virtual void fill_display_combo_box (QComboBox* cb, QComboBox* cb1) const
   {
+    for (std::size_t i = 0; i < m_labels.size(); ++ i)
+      {
+        std::ostringstream oss;
+        oss << "Label " << m_labels[i]->name();
+        cb->addItem (oss.str().c_str());
+        cb1->addItem (oss.str().c_str());
+      }
     for (std::size_t i = 0; i < m_features.size(); ++ i)
       {
         std::ostringstream oss;
