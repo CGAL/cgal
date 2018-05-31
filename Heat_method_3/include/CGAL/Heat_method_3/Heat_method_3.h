@@ -27,6 +27,8 @@
 #include <CGAL/disable_warnings.h>
 #include <set>
 
+#include <CGAL/property_map.h>
+
 #include <Eigen/Cholesky>
 
 #include <Eigen/Dense>
@@ -70,6 +72,13 @@ namespace Heat_method_3 {
     typedef typename Traits::Point_3                                      Point_3;
     typedef typename Traits::FT                                                FT;
 
+    // The Vertex_id_map is a property map where you can associate an index to a vertex_descriptor
+    typedef typename boost::graph_traits<TriangleMesh>::vertices_size_type vertices_size_type;
+    
+    typedef CGAL::dynamic_vertex_property_t<vertices_size_type> Vertex_property_tag;
+    typedef typename boost::property_map<TriangleMesh, Vertex_property_tag >::type Vertex_id_map;
+    Vertex_id_map vertex_id_map;
+    
     typedef typename LA::Matrix Matrix;
   public:
 
@@ -153,7 +162,11 @@ namespace Heat_method_3 {
 
     void build()
     {
+      vertices_size_type n = 0;
       BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
+        put(vertex_id_map, vd, n*10);
+        ++n;
+        
         BOOST_FOREACH(vertex_descriptor one_ring_vd, vertices_around_target(halfedge(vd,tm),tm)){
           Point_3 p = get(vpm,one_ring_vd);
           std::cout << p << std::endl;
