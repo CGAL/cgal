@@ -45,6 +45,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_meshing_polyhedron.cpp" )
   create_single_source_cgal_program( "test_meshing_polylines_only.cpp" )
   create_single_source_cgal_program( "test_meshing_polyhedron_with_features.cpp" )
+  create_single_source_cgal_program( "test_meshing_verbose.cpp" )
   create_single_source_cgal_program( "test_meshing_unit_tetrahedron.cpp" )
   create_single_source_cgal_program( "test_meshing_with_default_edge_size.cpp" )
   create_single_source_cgal_program( "test_meshing_determinism.cpp" )
@@ -53,6 +54,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_mesh_polyhedral_domain_with_features_deprecated.cpp" )
 
   foreach(target
+      test_meshing_verbose
       test_meshing_polyhedron_with_features
       test_meshing_utilities.h
       test_mesh_implicit_domains
