@@ -96,59 +96,61 @@ namespace CGAL {
    
     public:
 
-    	// default constructor
-    	Fuzzy_iso_box(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}
+    // default constructor
+    Fuzzy_iso_box(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}
 
-        // constructor
-	Fuzzy_iso_box(const Point_d& p, const Point_d& q, FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits()) 
-	  : traits(traits_), eps(epsilon)
-        {
-          construct<Point_d,typename SearchTraits::Construct_iso_box_d>(p,q);
-        }
+    // constructor
+    Fuzzy_iso_box(const Point_d& p, const Point_d& q, FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits())
+      : traits(traits_), eps(epsilon)
+    {
+      CGAL_precondition(epsilon >= 0);
+      construct<Point_d,typename SearchTraits::Construct_iso_box_d>(p,q);
+    }
         
-        //additional constructor if SearchTraits = Search_traits_adapter
-        template <class Point>
-	Fuzzy_iso_box(const Point& p,const Point&q,FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits(),
-          typename boost::enable_if<typename internal::Is_from_point_from_adapter_traits<SearchTraits,Point>::type>::type* = 0) 
-	  : traits(traits_), eps(epsilon)
-        {
-          construct<Point,typename SearchTraits::Base::Construct_iso_box_d>(p,q);
-        }
+  //additional constructor if SearchTraits = Search_traits_adapter
+  template <class Point>
+  Fuzzy_iso_box(const Point& p,const Point&q,FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits(),
+                typename boost::enable_if<typename internal::Is_from_point_from_adapter_traits<SearchTraits,Point>::type>::type* = 0)
+    : traits(traits_), eps(epsilon)
+  {
+    CGAL_precondition(epsilon >= 0);
+    construct<Point,typename SearchTraits::Base::Construct_iso_box_d>(p,q);
+  }
 
-        bool contains(const Point_d& p) const {	
-	  Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
-	  Cartesian_const_iterator_d pit = construct_it(p);
-	  Cartesian_const_iterator_d minit= min_begin, maxit = max_begin; 
-		for (unsigned int i = 0; i < dim; ++i, ++pit, ++minit, ++maxit) {
-			if ( ((*pit) < (*minit)) || ((*pit) >= (*maxit)) ) return false;
-		}
-		return true; 
-        }
+  bool contains(const Point_d& p) const {
+    Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+    Cartesian_const_iterator_d pit = construct_it(p);
+    Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;
+    for (unsigned int i = 0; i < dim; ++i, ++pit, ++minit, ++maxit) {
+      if ( ((*pit) < (*minit)) || ((*pit) > (*maxit)) )
+        return false;
+    }
+    return true;
+  }
 
-	bool inner_range_intersects(const Kd_tree_rectangle<FT,Dimension>& rectangle) const { 
-	  Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;   
- 		for (unsigned int i = 0; i < dim; ++i, ++minit, ++maxit) {
-        		if ( ((*maxit)-eps < rectangle.min_coord(i)) 
-			|| ((*minit)+eps >= rectangle.max_coord(i)) ) return false;
-    		}
-    		return true;                                     
-	}
+  bool inner_range_intersects(const Kd_tree_rectangle<FT,Dimension>& rectangle) const {
+    // test whether the box eroded by 'eps' intersects 'rectangle'
+    Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;
+    for (unsigned int i = 0; i < dim; ++i, ++minit, ++maxit) {
+      if ( ((*maxit)-eps < rectangle.min_coord(i))
+           || ((*minit)+eps > rectangle.max_coord(i)) )
+        return false;
+    }
+    return true;
+  }
 
 
-	bool outer_range_contains(const Kd_tree_rectangle<FT,Dimension>& rectangle) const {  
-	  Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;   
-    		for (unsigned int i = 0; i < dim; ++i, ++minit, ++maxit) {
-        		if (  ((*maxit)+eps < rectangle.max_coord(i) ) 
-			|| ((*minit)-eps >= rectangle.min_coord(i)) ) return false;
-    		}
-    		return true;
-  	} 
-
-	
-
-	
-
-  }; // class Fuzzy_iso_box
+  bool outer_range_contains(const Kd_tree_rectangle<FT,Dimension>& rectangle) const {
+    // test whether the box dilated by 'eps' contains 'rectangle'
+    Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;
+    for (unsigned int i = 0; i < dim; ++i, ++minit, ++maxit) {
+      if (  ((*maxit)+eps < rectangle.max_coord(i) )
+            || ((*minit)-eps > rectangle.min_coord(i)) )
+        return false;
+    }
+    return true;
+  }
+}; // class Fuzzy_iso_box
 
 } // namespace CGAL
 #endif // FUZZY_ISO_BOX_H
