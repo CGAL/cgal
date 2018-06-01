@@ -36,7 +36,6 @@
 #include <CGAL/Qt/domUtils.h>
 #include <CGAL/Qt/keyFrameInterpolator.h>
 
-using namespace std;
 using namespace CGAL::qglviewer;
 
 /*! Default constructor.

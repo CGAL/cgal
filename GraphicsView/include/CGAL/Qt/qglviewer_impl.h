@@ -59,7 +59,6 @@
 #include <QOpenGLFramebufferObject>
 #include <QFileDialog>
 
-using namespace std;
 using namespace CGAL::qglviewer;
 
 // Static private variable

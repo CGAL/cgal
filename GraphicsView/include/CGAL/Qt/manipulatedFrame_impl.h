@@ -41,7 +41,6 @@
 #include <QMouseEvent>
 
 using namespace CGAL::qglviewer;
-using namespace std;
 
 /*! Default constructor.
 
