@@ -74,7 +74,7 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::nb_points_per_distance_unit).v == 33);
   assert(get_param(np, CGAL::internal_np::new_face_visitor).v == 42);
   assert(get_param(np, CGAL::internal_np::throw_on_self_intersection).v == 43);
-  assert(get_param(np, CGAL::internal_np::close_volumes).v == 44);
+  assert(get_param(np, CGAL::internal_np::clip_volumes).v == 44);
   assert(get_param(np, CGAL::internal_np::include_clipper_boundary).v == 45);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
@@ -142,7 +142,7 @@ void test(const NamedParameters& np)
   check_same_type<33>(get_param(np, CGAL::internal_np::nb_points_per_distance_unit));
   check_same_type<42>(get_param(np, CGAL::internal_np::new_face_visitor));
   check_same_type<43>(get_param(np, CGAL::internal_np::throw_on_self_intersection));
-  check_same_type<44>(get_param(np, CGAL::internal_np::close_volumes));
+  check_same_type<44>(get_param(np, CGAL::internal_np::clip_volumes));
   check_same_type<45>(get_param(np, CGAL::internal_np::include_clipper_boundary));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
@@ -209,7 +209,7 @@ int main()
                          .verbosity_level(A<41>(41))
                          .new_face_visitor(A<42>(42))
                          .throw_on_self_intersection(A<43>(43))
-                         .close_volumes(A<44>(44))
+                         .clip_volumes(A<44>(44))
                          .include_clipper_boundary(A<45>(45))
        );
 

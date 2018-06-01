@@ -30,7 +30,7 @@ int main()
   Constrained_edge_map ecm1 =
     tm1.add_property_map<Triangle_mesh::Edge_index,bool>("e:cst", false).first;
 
-  PMP::clip(tm1, tm2, params::close_volumes(false).edge_is_constrained_map(ecm1));
+  PMP::clip(tm1, tm2, params::clip_volumes(false).edge_is_constrained_map(ecm1));
   std::ofstream output("clipped_opened.off");
   output << tm1;
 
@@ -43,7 +43,7 @@ int main()
   input >> Q;
 
   PMP::clip(P, Q,
-            params::close_volumes(false)
+            params::clip_volumes(false)
             .face_index_map(get(CGAL::face_external_index, P))
             ,params::face_index_map(get(CGAL::face_external_index, Q)));
   assert(P.size_of_vertices() == tm1.number_of_vertices());
@@ -56,7 +56,7 @@ int main()
   input.open("data-coref/sphere.off");
   input >> tm2;
 
-  PMP::clip(tm1, tm2, PMP::parameters::close_volumes(true));
+  PMP::clip(tm1, tm2, PMP::parameters::clip_volumes(true));
   std::ofstream output("clipped_closed.off");
   output << tm1;
   }

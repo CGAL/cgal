@@ -66,7 +66,7 @@ CGAL_add_named_parameter(overlap_test_t, overlap_test, do_overlap_test_of_bounde
 CGAL_add_named_parameter(preserve_genus_t, preserve_genus, preserve_genus)
 CGAL_add_named_parameter(new_face_visitor_t, new_face_visitor, new_face_visitor)
 CGAL_add_named_parameter(throw_on_self_intersection_t, throw_on_self_intersection, throw_on_self_intersection)
-CGAL_add_named_parameter(close_volumes_t, close_volumes, close_volumes)
+CGAL_add_named_parameter(clip_volumes_t, clip_volumes, clip_volumes)
 CGAL_add_named_parameter(include_clipper_boundary_t, include_clipper_boundary, include_clipper_boundary)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'

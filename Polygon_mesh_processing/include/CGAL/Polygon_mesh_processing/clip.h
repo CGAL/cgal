@@ -271,7 +271,7 @@ clip_to_bbox(const Plane_3& plane,
   * \ingroup PMP_corefinement_grp
   * clips `tm` by keeping the part that is inside the volume \link coref_def_subsec bounded \endlink
   * by `clipper`.
-  * If `tm` is closed, the clipped part can be closed too if the named parameter `close_volumes` is set to `true`.
+  * If `tm` is closed, the clipped part can be closed too if the named parameter `clip_volumes` is set to `true`.
   * \attention With the current implementation, `clipper` will be modified (refined with the intersection with `tm`).
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm1)` \endlink
@@ -309,17 +309,17 @@ clip_to_bbox(const Plane_3& plane,
   *      checked for self-intersections and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *      will be thrown if at least one is found.
   *   \cgalParamEnd
-  *   \cgalParamBegin{close_volumes} if `true` and `tm` is closed, the clipping will be done on
+  *   \cgalParamBegin{clip_volumes} if `true` and `tm` is closed, the clipping will be done on
   *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
   *      (i.e. `tm` will be kept closed).
   *   \cgalParamEnd
-  *   \cgalParamBegin{include_clipper_boundary} if `false` and `close_volumes` is `false` and `tm` is open, the parts of `tm` coplanar with `clipper`
+  *   \cgalParamBegin{include_clipper_boundary} if `false` and `clip_volumes` is `false` and `tm` is open, the parts of `tm` coplanar with `clipper`
   *                                             will not be part of the output.
   *   \cgalParamEnd
   * \cgalNamedParamsEnd
   *
   * @return `true` if the output surface mesh is manifold.
-  *         If `false` is returned `tm` and `clipper` will be corefined.
+  *         If `false` is returned `tm` and `clipper` are only corefined.
   */
 template <class TriangleMesh,
           class NamedParameters1,
@@ -331,7 +331,7 @@ clip(      TriangleMesh& tm,
      const NamedParameters2& np_c)
 {
   const bool close =
-    boost::choose_param(boost::get_param(np_tm, internal_np::close_volumes), false);
+    boost::choose_param(boost::get_param(np_tm, internal_np::clip_volumes), false);
 
   if (close && is_closed(tm))
     return corefine_and_compute_intersection(tm, clipper, tm, np_tm, np_c);
@@ -342,7 +342,7 @@ clip(      TriangleMesh& tm,
 /**
   * \ingroup PMP_corefinement_grp
   * clips `tm` by keeping the part that is on the negative side of `plane` (side opposite to its normal vector).
-  * If `tm` is closed, the clipped part can be closed too if the named parameter `close_volumes` is set to `true`.
+  * If `tm` is closed, the clipped part can be closed too if the named parameter `clip_volumes` is set to `true`.
   *
   * \note In the current implementation it is not possible to set the vertex point map and the default will be used.
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
@@ -372,16 +372,16 @@ clip(      TriangleMesh& tm,
   *      checked for self-intersections and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *      will be thrown if at least one is found.
   *   \cgalParamEnd
-  *   \cgalParamBegin{close_volumes} if `true` and `tm` is closed, the clipping will be done on
+  *   \cgalParamBegin{clip_volumes} if `true` and `tm` is closed, the clipping will be done on
   *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
   *      (i.e. `tm` will be kept closed).
   *   \cgalParamEnd
-  *   \cgalParamBegin{include_clipper_boundary} if `false` and `close_volumes` is `false` and `tm` is open, the parts of `tm` coplanar with `plane`
+  *   \cgalParamBegin{include_clipper_boundary} if `false` and `clip_volumes` is `false` and `tm` is open, the parts of `tm` coplanar with `plane`
   *                                             will not be part of the output.
   * \cgalNamedParamsEnd
   *
   * @return `true` if the output surface mesh is manifold.
-  *         If `false` is returned `tm` will be refined by the intersection with `plane`.
+  *         If `false` is returned `tm` is only refined by the intersection with `plane`.
   */
 template <class TriangleMesh,
           class NamedParameters>

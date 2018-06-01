@@ -141,8 +141,9 @@ public :
 
     CGAL::Polygon_mesh_processing::clip(*neg_side,
                                         plane->plane(),
-                                        CGAL::Polygon_mesh_processing::parameters::close_volumes(
-                                          ui_widget.close_checkBox->isChecked()));
+                                        CGAL::Polygon_mesh_processing::parameters::clip_volumes(
+                                          ui_widget.close_checkBox->isChecked()).
+                                        throw_on_self_intersection(true));
     Item* new_item = new Item(neg_side);
     new_item->setName(QString("%1 on %2").arg(item->name()).arg("negative side"));
     new_item->setColor(item->color());
@@ -154,8 +155,9 @@ public :
     Mesh* pos_side = new Mesh(*item->face_graph());
     CGAL::Polygon_mesh_processing::clip(*pos_side,
                                         plane->plane().opposite(),
-                                        CGAL::Polygon_mesh_processing::parameters::close_volumes(
-                                          ui_widget.close_checkBox->isChecked()));
+                                        CGAL::Polygon_mesh_processing::parameters::clip_volumes(
+                                          ui_widget.close_checkBox->isChecked()).
+                                        throw_on_self_intersection(true));
 
     new_item = new Item(pos_side);
     new_item->setName(QString("%1 on %2").arg(item->name()).arg("positive side"));
@@ -237,15 +239,17 @@ public Q_SLOTS:
           {
             CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
                                                 plane->plane(),
-                                                CGAL::Polygon_mesh_processing::parameters::close_volumes(
-                                                  ui_widget.close_checkBox->isChecked()));
+                                                CGAL::Polygon_mesh_processing::parameters::clip_volumes(
+                                                  ui_widget.close_checkBox->isChecked()).
+                                                throw_on_self_intersection(true));
           }
           else
           {
             CGAL::Polygon_mesh_processing::clip(*(poly_item->face_graph()),
                                                 plane->plane(),
-                                                CGAL::Polygon_mesh_processing::parameters::close_volumes(
-                                                  ui_widget.close_checkBox->isChecked()));
+                                                CGAL::Polygon_mesh_processing::parameters::clip_volumes(
+                                                  ui_widget.close_checkBox->isChecked()).
+                                                throw_on_self_intersection(true));
 
           }
           item->invalidateOpenGLBuffers();
