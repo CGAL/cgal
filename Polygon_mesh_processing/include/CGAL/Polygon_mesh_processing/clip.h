@@ -64,8 +64,8 @@ clip_open_impl(      TriangleMesh& tm,
   // vector of clipper triangles
   Clipper_triangles clipper_triangles;
   clipper_triangles.reserve( num_faces(clipper) );
-  Vpm vpm_c = boost::choose_param(get_param(np_c, internal_np::vertex_point),
-                                get_property_map(vertex_point, clipper));
+  Vpm vpm_c = boost::choose_param(boost::get_param(np_c, internal_np::vertex_point),
+                                  get_property_map(vertex_point, clipper));
   BOOST_FOREACH(face_descriptor f, faces(clipper))
   {
     halfedge_descriptor h = halfedge(f, clipper);
@@ -90,9 +90,9 @@ clip_open_impl(      TriangleMesh& tm,
   typedef typename GetFaceIndexMap<TriangleMesh,
                                    NamedParameters1>::type Fid_map;
 
-  Fid_map fid_map = boost::choose_param(get_param(np_tm, internal_np::face_index),
+  Fid_map fid_map = boost::choose_param(boost::get_param(np_tm, internal_np::face_index),
                                         get_property_map(boost::face_index, tm));
-  Vpm vpm1 = boost::choose_param(get_param(np_tm, internal_np::vertex_point),
+  Vpm vpm1 = boost::choose_param(boost::get_param(np_tm, internal_np::vertex_point),
                                  get_property_map(vertex_point, tm));
 
   typedef CGAL::dynamic_vertex_property_t<std::size_t> Vid_tag;
@@ -181,7 +181,7 @@ clip_to_bbox(const Plane_3& plane,
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters>::type Vpm;
 
-  Vpm vpm_out = boost::choose_param(get_param(np, internal_np::vertex_point),
+  Vpm vpm_out = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
                                     get_property_map(boost::vertex_point, tm_out));
 
 
@@ -306,11 +306,12 @@ clip_to_bbox(const Plane_3& plane,
   *   \cgalParamEnd
   *   \cgalParamBegin{throw_on_self_intersection} if `true`,
   *      the set of triangles closed to the intersection of `tm` and `clipper` will be
-  *      checked for self-intersection and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
+  *      checked for self-intersections and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *      will be thrown if at least one is found.
   *   \cgalParamEnd
-  *   \cgalParamBegin{close_volumes} if `true` and `tm` is closed, the clipping considered will be
-  *      done on the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface (`tm` will be kept closed).
+  *   \cgalParamBegin{close_volumes} if `true` and `tm` is closed, the clipping will be done on
+  *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
+  *      (i.e. `tm` will be kept closed).
   *   \cgalParamEnd
   *   \cgalParamBegin{include_clipper_boundary} if `false` and `close_volumes` is `false` and `tm` is open, the parts of `tm` coplanar with `clipper`
   *                                             will not be part of the output.
@@ -354,7 +355,7 @@ clip(      TriangleMesh& tm,
   * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
   *
   * @param tm input triangulated surface mesh
-  * @param plane plane which negative side defines the half-space to intersect `tm` with.
+  * @param plane plane whose negative side defines the half-space to intersect `tm` with.
   *              `Plane_3` is the plane type for the same CGAL kernel as the point of the vertex point map of `tm`.
   * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
   *
@@ -368,11 +369,12 @@ clip(      TriangleMesh& tm,
   *   \cgalParamEnd
   *   \cgalParamBegin{throw_on_self_intersection} if `true`,
   *      the set of triangles closed to the intersection of `tm` and `plane` will be
-  *      checked for self-intersection and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
+  *      checked for self-intersections and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *      will be thrown if at least one is found.
   *   \cgalParamEnd
-  *   \cgalParamBegin{close_volumes} if `true` and `tm` is closed, the clipping considered will be
-  *      done on the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface (`tm` will be kept closed).
+  *   \cgalParamBegin{close_volumes} if `true` and `tm` is closed, the clipping will be done on
+  *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
+  *      (i.e. `tm` will be kept closed).
   *   \cgalParamEnd
   *   \cgalParamBegin{include_clipper_boundary} if `false` and `close_volumes` is `false` and `tm` is open, the parts of `tm` coplanar with `plane`
   *                                             will not be part of the output.
