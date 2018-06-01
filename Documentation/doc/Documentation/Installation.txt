@@ -18,13 +18,13 @@ make # build the \cgal libraries
 Compiling an example or a demo shipped with \cgal is similarly simple:
 
 <PRE>
-cd examples/Straight_skeleton_2 # go to an example directory
+cd examples/Triangulation_2 # go to an example directory
 cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . # configure the examples
 make # build the examples 
 </PRE>
 
 <PRE>
-cd demo/Straight_skeleton_2 # go to a demo directory
+cd demo/Triangulation_2 # go to a demo directory
 cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . # configure the demos
 make # build the demos 
 </PRE>
@@ -673,9 +673,6 @@ make examples
 # build all demos at once
 make demos
 
-# build only the Straight Skeleton demo
-make Straight_skeleton_2_demo
-
 </PRE>
 
 \cgalAdvancedBegin
@@ -757,7 +754,7 @@ Ideally, configuring and compiling a demo/example/program amounts to
 
 <PRE>
 
-cd CGAL-\cgalReleaseNumber/examples/Straight_skeleton_2
+cd CGAL-\cgalReleaseNumber/examples/Triangulation_2
 cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber .
 make
 
@@ -893,7 +890,7 @@ controlling variable right up front:
 <PRE>
 cd CGAL-\cgalReleaseNumber
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-g .
-cd CGAL-\cgalReleaseNumber/examples/Straight_skeleton_2
+cd CGAL-\cgalReleaseNumber/examples/Triangulation_2
 cmake -DCGAL_DIR=CGAL-\cgalReleaseNumber -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS=TRUE . 
 </PRE>
 \cgalAdvancedEnd
