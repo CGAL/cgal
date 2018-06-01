@@ -7,6 +7,12 @@ Release 4.13
 
 Release date: September 2018
 
+### Installation
+
+-   The library CGAL_Qt5 now contains a fork of the version 2.7.0 of libQGLViewer.
+    The corresponding code is in the package GraphicsView.
+    The dependency for the external library libQGLViewer is therefore dropped for all demos.
+
 ### 2D and 3D Linear Geometry Kernel
 -   An operator() that takes a Ray_3 has been added to the concept
     ConstructProjectedPoint 3.
