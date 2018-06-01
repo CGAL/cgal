@@ -1,6 +1,7 @@
 Release History
 ===============
 
+
 Release 4.13
 ------------
 
@@ -35,6 +36,13 @@ Release date: September 2018
 ### Polygon Mesh Processing
 -   Added a function to apply a transformation to a mesh : 
     - `CGAL::Polygon_mesh_processing::transform()`
+
+### CGAL and the Boost Graph Library (BGL)
+
+-   Add helper function `CGAL::is_valid_polygon_mesh` that checks the
+    validity of a polygon mesh using BGL functions.
+
+
 
 Release 4.12
 ------------
@@ -209,9 +217,6 @@ Release date: April 2018
     Processing). The old API is kept as deprecated.
 
 ### CGAL and the Boost Graph Library (BGL)
-
--   Add helper function `CGAL::is_valid_polygon_mesh` that checks the 
-    validity of a polygon mesh using BGL functions.
 
 -   Add helper function `CGAL::expand_face_selection_for_removal` that
     expands a face selection to avoid creating a non manifold mesh when
