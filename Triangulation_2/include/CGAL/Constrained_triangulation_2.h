@@ -37,6 +37,10 @@
 
 #include <boost/mpl/if.hpp>
 #include <boost/iterator/filter_iterator.hpp>
+
+#include <boost/utility/result_of.hpp>
+#include <boost/type_traits/is_floating_point.hpp>
+
 namespace CGAL {
 
 struct No_intersection_tag{};
@@ -1422,9 +1426,70 @@ intersection(const Gt& gt,
 	     const typename Gt::Point_2& pc, 
 	     const typename Gt::Point_2& pd,
 	     typename Gt::Point_2& pi,
-	     Exact_predicates_tag)
+	     Exact_predicates_tag,
+	     CGAL::Tag_false /* not a FT is not floating-point */)
 {
   return compute_intersection(gt,pa,pb,pc,pd,pi);
+}
+
+template<class Gt>
+inline bool
+intersection(const Gt& gt,
+	     const typename Gt::Point_2& pa,
+	     const typename Gt::Point_2& pb,
+	     const typename Gt::Point_2& pc,
+	     const typename Gt::Point_2& pd,
+	     typename Gt::Point_2& pi,
+	     Exact_predicates_tag,
+	     CGAL::Tag_true /* FT is a floating-point type */)
+{
+  const bool result = compute_intersection(gt,pa,pb,pc,pd,pi);
+  if(!result) return result;
+  if(pi == pa || pi == pb || pi == pc || pi == pd) {
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+    std::cerr << "  CT_2::intersection: intersection is an existing point "
+              << pi << std::endl;
+#endif
+    return result;
+  }
+
+
+#ifdef CGAL_CDT_2_INTERSECTION_SNAPPING_ULP_DISTANCE
+  const int dist = CGAL_CDT_2_INTERSECTION_SNAPPING_ULP_DISTANCE;
+#else
+  const int dist = 4;
+#endif
+  typedef typename Gt::Construct_bbox_2 Construct_bbox_2;
+  Construct_bbox_2 bbox = gt.construct_bbox_2_object();
+  typename boost::result_of<const Construct_bbox_2(const typename Gt::Point_2&)>::type bb(bbox(pi));
+  bb.dilate(dist);
+  if(do_overlap(bb, bbox(pa))) pi = pa;
+  if(do_overlap(bb, bbox(pb))) pi = pb;
+  if(do_overlap(bb, bbox(pc))) pi = pc;
+  if(do_overlap(bb, bbox(pd))) pi = pd;
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  if(pi == pa || pi == pb || pi == pc || pi == pd) {
+    std::cerr << "  CT_2::intersection: intersection SNAPPED to an existing point "
+              << pi << std::endl;
+  }
+#endif
+  return result;
+}
+
+template<class Gt>
+inline bool
+intersection(const Gt& gt,
+	     const typename Gt::Point_2& pa,
+	     const typename Gt::Point_2& pb,
+	     const typename Gt::Point_2& pc,
+	     const typename Gt::Point_2& pd,
+	     typename Gt::Point_2& pi,
+	     Exact_predicates_tag exact_predicates_tag)
+{
+  typedef typename Gt::FT FT;
+  return intersection(gt,pa,pb,pc,pd,pi,
+                      exact_predicates_tag,
+                      Boolean_tag<boost::is_floating_point<FT>::value>());
 }
 
 
