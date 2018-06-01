@@ -44,6 +44,8 @@ Release date: September 2018
     input meshes.
 -   Document the function `corefine_and_compute_boolean_operations()` that can be used to
     compute the result of several Boolean operations between 2 volumes at the same time.
+-   Document the function `clip()` that can be used to clip a triangulated surface mesh
+    by a plane or a clipping volume.
 
 Release 4.12
 ------------

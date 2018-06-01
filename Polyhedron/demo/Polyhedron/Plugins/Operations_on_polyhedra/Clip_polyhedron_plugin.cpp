@@ -8,7 +8,7 @@
 #include "Scene_plane_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-#include <CGAL/Polygon_mesh_processing/internal/clip.h>
+#include <CGAL/Polygon_mesh_processing/clip.h>
 
 #include "ui_Clip_polyhedron_plugin.h"
 #include "Viewer.h"
@@ -141,7 +141,8 @@ public :
 
     CGAL::Polygon_mesh_processing::clip(*neg_side,
                                         plane->plane(),
-                                        ui_widget.close_checkBox->isChecked());
+                                        CGAL::Polygon_mesh_processing::parameters::close_volumes(
+                                          ui_widget.close_checkBox->isChecked()));
     Item* new_item = new Item(neg_side);
     new_item->setName(QString("%1 on %2").arg(item->name()).arg("negative side"));
     new_item->setColor(item->color());
@@ -153,7 +154,9 @@ public :
     Mesh* pos_side = new Mesh(*item->face_graph());
     CGAL::Polygon_mesh_processing::clip(*pos_side,
                                         plane->plane().opposite(),
-                                        ui_widget.close_checkBox->isChecked());
+                                        CGAL::Polygon_mesh_processing::parameters::close_volumes(
+                                          ui_widget.close_checkBox->isChecked()));
+
     new_item = new Item(pos_side);
     new_item->setName(QString("%1 on %2").arg(item->name()).arg("positive side"));
     new_item->setColor(item->color());
@@ -234,13 +237,16 @@ public Q_SLOTS:
           {
             CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
                                                 plane->plane(),
-                                                ui_widget.close_checkBox->isChecked());
+                                                CGAL::Polygon_mesh_processing::parameters::close_volumes(
+                                                  ui_widget.close_checkBox->isChecked()));
           }
           else
           {
             CGAL::Polygon_mesh_processing::clip(*(poly_item->face_graph()),
                                                 plane->plane(),
-                                                ui_widget.close_checkBox->isChecked());
+                                                CGAL::Polygon_mesh_processing::parameters::close_volumes(
+                                                  ui_widget.close_checkBox->isChecked()));
+
           }
           item->invalidateOpenGLBuffers();
           viewer->update();
