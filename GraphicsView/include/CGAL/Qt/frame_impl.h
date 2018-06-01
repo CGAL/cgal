@@ -37,7 +37,6 @@
 #include <math.h>
 
 using namespace CGAL::qglviewer;
-using namespace std;
 
 /*! Creates a default Frame.
 
