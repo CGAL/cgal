@@ -23,6 +23,10 @@
 
 #include <CGAL/license/Classification.h>
 
+#include <CGAL/Bbox_3.h>
+#include <CGAL/property_map.h>
+
+#include <boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 

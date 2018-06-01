@@ -29,6 +29,7 @@
 #include <CGAL/Classification/Image.h>
 
 #include <boost/iterator/iterator_facade.hpp>
+#include <boost/cstdint.hpp>
 
 namespace CGAL {
 

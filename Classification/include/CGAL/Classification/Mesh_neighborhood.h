@@ -29,6 +29,9 @@
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/unordered.h>
 #include <CGAL/Handle_hash_function.h>
+#include <CGAL/property_map.h>
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/array.h>
 
 namespace CGAL {
 

@@ -24,6 +24,8 @@
 #include <CGAL/license/Classification.h>
 
 #include <vector>
+#include <sstream>
+
 #include <CGAL/Classification/Feature_base.h>
 
 namespace CGAL {

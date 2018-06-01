@@ -23,6 +23,12 @@
 
 #include <CGAL/license/Classification.h>
 
+#include <CGAL/centroid.h>
+#include <CGAL/Bbox_3.h>
+#include <CGAL/property_map.h>
+
+#include <CGAL/boost/graph/properties.h>
+
 namespace CGAL
 {
 

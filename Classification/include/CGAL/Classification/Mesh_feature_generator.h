@@ -28,6 +28,7 @@
 #include <CGAL/Classification/Planimetric_grid.h>
 #include <CGAL/Classification/Local_eigen_analysis.h>
 #include <CGAL/Classification/Feature_base.h>
+#include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Feature/Distance_to_plane.h>
 #include <CGAL/Classification/Feature/Echo_scatter.h>
 #include <CGAL/Classification/Feature/Elevation.h>
@@ -35,6 +36,7 @@
 #include <CGAL/Classification/Feature/Verticality.h>
 #include <CGAL/Classification/Feature/Eigenvalue.h>
 #include <CGAL/Classification/Feature/Color_channel.h>
+#include <CGAL/Classification/internal/verbosity.h>
 
 #include <CGAL/bounding_box.h>
 

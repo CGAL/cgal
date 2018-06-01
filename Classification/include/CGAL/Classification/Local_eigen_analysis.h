@@ -34,6 +34,10 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/array.h>
 #include <CGAL/PCA_util.h>
+#include <CGAL/boost/graph/properties.h>
+
+#include <boost/graph/graph_traits.hpp>
+#include <boost/make_shared.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
