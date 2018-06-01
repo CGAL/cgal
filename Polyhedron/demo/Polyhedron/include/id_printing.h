@@ -464,13 +464,13 @@ bool printFaceIds(const Mesh& mesh,
   BOOST_FOREACH(typename boost::graph_traits<Mesh>::face_descriptor fh, faces(mesh))
   {
     double x(0), y(0), z(0);
-    int total(0);
+    float total(0);
     BOOST_FOREACH(typename boost::graph_traits<Mesh>::vertex_descriptor vh, vertices_around_face(halfedge(fh, mesh), mesh))
     {
       x += get(ppmap, vh).x();
       y += get(ppmap, vh).y();
       z += get(ppmap, vh).z();
-      ++total;
+      total += 1.f;
     }
 
     fitems->append(new TextItem((float)x / total + offset.x,

@@ -40,15 +40,36 @@ Release date: September 2018
     in the code but did not appear in the concepts).
 
 ### Polygon Mesh Processing
--   Added a function to apply a transformation to a mesh : 
+-   Added a function to apply a transformation to a mesh:
     - `CGAL::Polygon_mesh_processing::transform()`
+
+### 3D Mesh Generation
+
+-   **Breaking change:** The template parameters of the class template
+    `Labeled_mesh_domain_3` have been simplified. The three constructors of
+    that class template have been replaced by a new unique constructor
+    using Boost named parameters. Three new static template member
+    functions that act as named constructors have been added:
+      - `create_gray_image_mesh_domain()`, to create a domain from a 3D
+        gray image,
+      - `create_labeled_image_mesh_domain()`, to create a domain from a 3D
+        labeled image, and
+      - `create_implicit_mesh_domain()`, to create a domain from an
+        implicit function.
+
+-   The class templates `Implicit_mesh_domain_3`,
+    `Gray_image_mesh_domain_3`, and `Labeled_image_mesh_domain_3` are now
+    deprecated.
+
+-   **Breaking change:** The headers
+    `<CGAL/Mesh_3/Implicit_to_labeled_function_wrapper.h>` and
+    `<CGAL/Mesh_3/Labeled_mesh_domain_3.h>`, that were deprecated since
+    CGAL 4.5, are now removed.
 
 ### CGAL and the Boost Graph Library (BGL)
 
 -   Add helper function `CGAL::is_valid_polygon_mesh` that checks the
     validity of a polygon mesh using BGL functions.
-
-
 
 Release 4.12
 ------------

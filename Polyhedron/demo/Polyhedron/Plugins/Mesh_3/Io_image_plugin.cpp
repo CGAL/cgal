@@ -71,8 +71,8 @@ struct IntConverter {
   std::pair<int, int> min_max;
 
   int operator()(float f) {
-    float s = f * (min_max.second - min_max.first);
-    return s + min_max.first;
+    float s = f * float((min_max.second - min_max.first));
+    return s + float(min_max.first);
   }
 };
 
@@ -163,7 +163,7 @@ public Q_SLOTS:
     float sum1 = float(a + b + c);
     float sum2 = float(v.x + v.y + v.z);
     sum1 /= sum2;
-    setValue(sum1 * scale);
+    setValue(sum1 * float(scale));
     ready_to_cut = false;
   }
 
@@ -642,9 +642,9 @@ private:
       CGAL_IMAGE_IO_CASE(img->image(), this->launchAdders<Word>(seg_img, seg_img->name()))
 
           Volume_plane_intersection* i
-          = new Volume_plane_intersection(img->xdim() * img->vx()-1,
-                                          img->ydim() * img->vy()-1,
-                                          img->zdim() * img->vz()-1);
+          = new Volume_plane_intersection(double(img->xdim()) * img->vx()-1,
+                                          double(img->ydim()) * img->vy()-1,
+                                          double(img->zdim()) * img->vz()-1);
       this->intersection_id = scene->addItem(i);
       scene->changeGroup(i, group);
       group->lockChild(i);

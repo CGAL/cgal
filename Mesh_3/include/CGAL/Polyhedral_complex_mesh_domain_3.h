@@ -885,7 +885,6 @@ add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
   std::vector<Polyline_with_context> polylines;
 
   internal::Mesh_3::Extract_polyline_with_context_visitor<
-    Polyhedral_complex_mesh_domain_3,
     Polyline_with_context,
     Featured_edges_copy_graph
     > visitor(g_copy, polylines);

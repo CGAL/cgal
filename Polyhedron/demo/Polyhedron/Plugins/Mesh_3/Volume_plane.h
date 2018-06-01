@@ -473,7 +473,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   cbuffer.bind();
   int colorLoc = program.attributeLocation("color");
   program.enableAttributeArray(colorLoc);
-  program.setAttributeBuffer(colorLoc, GL_FLOAT, (currentCube*sizeof(float)) * (bdim_) * (adim_), 1, 0 );
+  program.setAttributeBuffer(colorLoc, GL_FLOAT, (currentCube*int(sizeof(float))) * (bdim_) * (adim_), 1, 0 );
   cbuffer.release();
 
 
@@ -579,7 +579,10 @@ void Volume_plane<T>::init(Viewer_interface* viewer) {
   for(unsigned int i = 0; i < indices.size(); i+=slice)
   {
     QOpenGLBuffer ebo = QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
-    unsigned int left_over = (i + slice) > indices.size()  ? std::distance(indices.begin() + i, indices.end()) : slice;
+    unsigned int left_over =
+      (i + slice) > indices.size()  ?
+      (unsigned int)(std::distance(indices.begin() + i, indices.end())) :
+      slice;
     ebo.create();
     ebo.bind();
     ebo.allocate(&indices[i],static_cast<int>(sizeof(unsigned int) * left_over));

@@ -3,6 +3,11 @@ namespace CGAL {
 /*!
 \ingroup PkgMesh_3Domains
 
+\deprecated The class template `Gray_image_mesh_domain_3` is deprecated
+since CGAL-4.13, in favor of the class template `Labeled_mesh_domain_3` and
+its static function
+`Labeled_mesh_domain_3::create_gray_image_mesh_domain()`.
+
 The class `Gray_image_mesh_domain_3` implements a domain described by a 3D
 gray image. A 3D gray image is a grid of voxels, 
 where each voxel is associated with a gray level value.
@@ -24,8 +29,7 @@ length of the diagonal of the bounding box (in world coordinates) and
 
 
 \tparam Image is the type of the input image. 
-This parameter must be a model of the concept 
-`LabeledImage_3`. 
+This parameter must be `CGAL::Image_3`.
 
 \tparam BGT is a geometric traits class which provides 
 the basic operations to implement 

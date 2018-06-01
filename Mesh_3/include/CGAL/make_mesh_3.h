@@ -32,6 +32,7 @@
 
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/boost/parameter.h>
+#include <boost/parameter/preprocessor.hpp>
 #include <CGAL/refine_mesh_3.h>
 #include <CGAL/tags.h>
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h>

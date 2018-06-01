@@ -84,7 +84,7 @@ void Scene_plane_item::compute_normals_and_vertices(void) const
     float x = (2*diag)/10.0;
     float y = (2*diag)/10.0;
     {
-        for(int u = 0; u < 11; u++)
+        for(float u = 0; u < 11; u += 1.f)
         {
 
             positions_lines.push_back(-diag + x* u);
@@ -95,7 +95,7 @@ void Scene_plane_item::compute_normals_and_vertices(void) const
             positions_lines.push_back(diag        );
             positions_lines.push_back(0.0         );
         }
-        for(int v=0; v<11; v++)
+        for(float v=0; v<11; v += 1.f)
         {
 
             positions_lines.push_back(-diag        );
