@@ -158,8 +158,6 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
  * See \ref coref_def_subsec for details.
  *
  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
- *                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
- *                      as a named parameter, then it must be initialized.
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * @param tm a closed triangulated surface mesh
@@ -195,10 +193,10 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
   if (!is_closed(tm)) return false;
   if (!is_triangle_mesh(tm)) return false;
 
-  Vpm vpm = boost::choose_param(get_param(np, internal_np::vertex_point),
+  Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
                                 get_const_property_map(boost::vertex_point, tm));
 
-  Fid_map fid_map = boost::choose_param(get_param(np, internal_np::face_index),
+  Fid_map fid_map = boost::choose_param(boost::get_param(np, internal_np::face_index),
                                         get_const_property_map(boost::face_index, tm));
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
@@ -257,7 +255,7 @@ bool does_bound_a_volume(const TriangleMesh& tm)
     Corefinement::No_mark<TriangleMesh> \
   > ::type Ecm_out_##I; \
     Ecm_out_##I ecm_out_##I = \
-      boost::choose_param( get_param(cpp11::get<I>(nps_out), internal_np::edge_is_constrained),  \
+      boost::choose_param( boost::get_param(cpp11::get<I>(nps_out), internal_np::edge_is_constrained),  \
                            Corefinement::No_mark<TriangleMesh>() );
 
 
@@ -284,10 +282,7 @@ bool does_bound_a_volume(const TriangleMesh& tm)
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm1)` \endlink
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm2)` \endlink
   *
-  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
-  *                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
-  *                      as a named parameter, then it must be initialized.
-  *
+  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
   * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
   * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
   * @tparam NamedParametersOut0 a sequence of \ref pmp_namedparameters "Named Parameters" for computing the union of the volumes bounded by `tm1` and `tm2`
@@ -366,7 +361,7 @@ corefine_and_compute_boolean_operations(
                      NamedParametersOut3>& nps_out)
 {
   const bool throw_on_self_intersection =
-    boost::choose_param(get_param(np1, internal_np::throw_on_self_intersection), false);
+    boost::choose_param(boost::get_param(np1, internal_np::throw_on_self_intersection), false);
 
 // Vertex point maps
   //for input meshes
@@ -379,10 +374,10 @@ corefine_and_compute_boolean_operations(
     static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value); )
   CGAL_static_assertion(same_vpm);
 
-  Vpm vpm1 = boost::choose_param(get_param(np1, internal_np::vertex_point),
+  Vpm vpm1 = boost::choose_param(boost::get_param(np1, internal_np::vertex_point),
                                  get_property_map(boost::vertex_point, tm1));
 
-  Vpm vpm2 = boost::choose_param(get_param(np2, internal_np::vertex_point),
+  Vpm vpm2 = boost::choose_param(boost::get_param(np2, internal_np::vertex_point),
                                  get_property_map(boost::vertex_point, tm2));
 
   typedef typename boost::property_traits<Vpm>::value_type Point_3;
@@ -493,9 +488,9 @@ corefine_and_compute_boolean_operations(
     static const bool same_fidmap = (boost::is_same<Fid_map,Fid_map2>::value);)
   CGAL_static_assertion(same_fidmap);
 
-  Fid_map fid_map1 = boost::choose_param(get_param(np1, internal_np::face_index),
+  Fid_map fid_map1 = boost::choose_param(boost::get_param(np1, internal_np::face_index),
                                         get_property_map(boost::face_index, tm1));
-  Fid_map fid_map2 = boost::choose_param(get_param(np2, internal_np::face_index),
+  Fid_map fid_map2 = boost::choose_param(boost::get_param(np2, internal_np::face_index),
                                          get_property_map(boost::face_index, tm2));
 // New face visitor
   typedef typename boost::lookup_named_param_def <
@@ -503,7 +498,7 @@ corefine_and_compute_boolean_operations(
     NamedParameters1,
     Corefinement::Default_new_face_visitor<TriangleMesh>//default
   > ::type Nfv;
-  Nfv nfv( boost::choose_param( get_param(np1, internal_np::new_face_visitor),
+  Nfv nfv( boost::choose_param( boost::get_param(np1, internal_np::new_face_visitor),
                                 Corefinement::Default_new_face_visitor<TriangleMesh>() ) );
 
   // surface intersection algorithm call
@@ -598,10 +593,7 @@ corefine_and_compute_boolean_operations(
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm1)` \endlink
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm2)` \endlink
   *
-  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
-  *                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
-  *                      as a named parameter, then it must be initialized.
-  *
+  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
   * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
   * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
   * @tparam NamedParametersOut a sequence of \ref pmp_namedparameters "Named Parameters"
@@ -792,7 +784,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
           const NamedParameters2& np2)
 {
   const bool throw_on_self_intersection =
-    boost::choose_param(get_param(np1, internal_np::throw_on_self_intersection), false);
+    boost::choose_param(boost::get_param(np1, internal_np::throw_on_self_intersection), false);
 
 // Vertex point maps
   typedef typename GetVertexPointMap<TriangleMesh,
@@ -804,10 +796,10 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
     static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value);)
   CGAL_static_assertion(same_vpm);
 
-  Vpm vpm1 = boost::choose_param(get_param(np1, internal_np::vertex_point),
+  Vpm vpm1 = boost::choose_param(boost::get_param(np1, internal_np::vertex_point),
                                  get_property_map(boost::vertex_point, tm1));
 
-  Vpm vpm2 = boost::choose_param(get_param(np2, internal_np::vertex_point),
+  Vpm vpm2 = boost::choose_param(boost::get_param(np2, internal_np::vertex_point),
                                  get_property_map(boost::vertex_point, tm2));
 
 // Edge is-constrained maps
@@ -823,9 +815,9 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm2;
 
-  Ecm1 ecm1 = boost::choose_param( get_param(np1, internal_np::edge_is_constrained),
+  Ecm1 ecm1 = boost::choose_param( boost::get_param(np1, internal_np::edge_is_constrained),
                                    Corefinement::No_mark<TriangleMesh>() );
-  Ecm2 ecm2 = boost::choose_param( get_param(np2, internal_np::edge_is_constrained),
+  Ecm2 ecm2 = boost::choose_param( boost::get_param(np2, internal_np::edge_is_constrained),
                                    Corefinement::No_mark<TriangleMesh>() );
 
   typedef Corefinement::Ecm_bind<TriangleMesh, Ecm1, Ecm2> Ecm;
@@ -843,7 +835,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
     NamedParameters1,
     Corefinement::Default_new_face_visitor<TriangleMesh>//default
   > ::type Nfv;
-  Nfv nfv( boost::choose_param( get_param(np1, internal_np::new_face_visitor),
+  Nfv nfv( boost::choose_param( boost::get_param(np1, internal_np::new_face_visitor),
                                 Corefinement::Default_new_face_visitor<TriangleMesh>() ) );
 
 // surface intersection algorithm call
@@ -897,7 +889,7 @@ namespace experimental {
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters>::type Vpm;
 
-  Vpm vpm = boost::choose_param(get_param(np, internal_np::vertex_point),
+  Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
                                 get_property_map(boost::vertex_point, tm));
 
 // Edge is-constrained maps
@@ -908,7 +900,7 @@ namespace experimental {
   > ::type Ecm;
 
 
-  Ecm ecm = boost::choose_param( get_param(np, internal_np::edge_is_constrained),
+  Ecm ecm = boost::choose_param( boost::get_param(np, internal_np::edge_is_constrained),
                                  Corefinement::No_mark<TriangleMesh>() );
 
 // New face visitor
@@ -917,7 +909,7 @@ namespace experimental {
     NamedParameters,
     Corefinement::Default_new_face_visitor<TriangleMesh>//default
   > ::type Nfv;
-  Nfv nfv( boost::choose_param( get_param(np, internal_np::new_face_visitor),
+  Nfv nfv( boost::choose_param( boost::get_param(np, internal_np::new_face_visitor),
                                 Corefinement::Default_new_face_visitor<TriangleMesh>() ) );
 
 
@@ -974,12 +966,12 @@ namespace experimental {
 // Vertex point maps
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters>::type Vpm;
-  Vpm vpm = boost::choose_param(get_param(np, internal_np::vertex_point),
+  Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
                                 get_property_map(boost::vertex_point, tm));
 // Face index map
   typedef typename GetFaceIndexMap<TriangleMesh,
                                    NamedParameters>::type Fid_map;
-  Fid_map fid_map = boost::choose_param(get_param(np, internal_np::face_index),
+  Fid_map fid_map = boost::choose_param(boost::get_param(np, internal_np::face_index),
                                         get_property_map(boost::face_index, tm));
 // Edge is-constrained maps
   typedef typename boost::lookup_named_param_def <
@@ -987,7 +979,7 @@ namespace experimental {
     NamedParameters,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm;
-  Ecm ecm = boost::choose_param( get_param(np, internal_np::edge_is_constrained),
+  Ecm ecm = boost::choose_param( boost::get_param(np, internal_np::edge_is_constrained),
                                  Corefinement::No_mark<TriangleMesh>() );
 // New face visitor
   typedef typename boost::lookup_named_param_def <
@@ -995,7 +987,7 @@ namespace experimental {
     NamedParameters,
     Corefinement::Default_new_face_visitor<TriangleMesh>//default
   > ::type Nfv;
-  Nfv nfv( boost::choose_param( get_param(np, internal_np::new_face_visitor),
+  Nfv nfv( boost::choose_param( boost::get_param(np, internal_np::new_face_visitor),
                                Corefinement::Default_new_face_visitor<TriangleMesh>() ) );
 
 // surface intersection algorithm call
