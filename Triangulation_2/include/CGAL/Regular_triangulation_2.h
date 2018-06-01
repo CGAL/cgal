@@ -441,7 +441,8 @@ private:
   template<class Construct_bare_point, class Container>
   struct Index_to_Bare_point
   {
-    const Bare_point& operator()(const std::size_t& i) const
+    typename boost::result_of<const Construct_bare_point(const Weighted_point&)>::type
+    operator()(const std::size_t& i) const
     {
       return cp(c[i]);
     }
