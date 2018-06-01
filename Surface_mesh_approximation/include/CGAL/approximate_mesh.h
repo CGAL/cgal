@@ -34,7 +34,7 @@ enum Approximation_verbose_level {
 namespace VSA {
 namespace parameters {
 
-/*! \ingroup namedparameters
+/*! \ingroup vsa_namedparameters
  * This function is used when default parameters are just fine for approximation or meshing.
  */
 unspecified_type all_default();
@@ -52,10 +52,10 @@ unspecified_type all_default();
  * @tparam TriangleMesh model of `FaceListGraph`.
  *         If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
  *         and no `face_index_map` is given as a named parameter, then the internal one should be initialized.
- * @tparam NamedParameters a sequence of \ref namedparameters
+ * @tparam NamedParameters a sequence of \ref vsa_namedparameters
  *
  * @param tm triangle surface mesh to be approximated
- * @param np optional sequence of \ref namedparameters among the ones listed below
+ * @param np optional sequence of \ref vsa_namedparameters among the ones listed below
  * @return `true` if the indexed triangles represent a 2-manifold, oriented surface mesh, and `false` otherwise. 
  *
  * \cgalNamedParamsBegin

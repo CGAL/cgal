@@ -867,9 +867,9 @@ public:
   /// @{
   /*!
    * @brief Extracts the output mesh in the form of an indexed triangle set.
-   * @tparam NamedParameters a sequence of \ref namedparameters
+   * @tparam NamedParameters a sequence of \ref vsa_namedparameters
    *
-   * @param np optional sequence of \ref namedparameters among the ones listed below
+   * @param np optional sequence of \ref vsa_namedparameters among the ones listed below
    * @return `true` if the extracted surface mesh is manifold, `false` otherwise.
    *
    * \cgalNamedParamsBegin

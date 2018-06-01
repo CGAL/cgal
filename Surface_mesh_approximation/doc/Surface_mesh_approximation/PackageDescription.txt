@@ -28,7 +28,7 @@ The API is flexible and can be extended to user-defined proxies and error metric
 ## Parameters ##
 Optional parameters of the functions of this package
 are implemented as BGL named parameters.
-The page \ref namedparameters describes their usage
+The page \ref vsa_namedparameters describes their usage
 and provides the list of parameters used in this package.
 
 ## Concepts ##

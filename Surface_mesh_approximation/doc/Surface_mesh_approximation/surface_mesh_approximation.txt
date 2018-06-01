@@ -165,7 +165,7 @@ As there is no guarantee that the output mesh is 2-manifold and oriented, the ma
 
 This package can be used with any class model of the concept `FaceListGraph` described in \ref PkgBGL "CGAL and the Boost Graph Library".
 
-Free function with \ref namedparameters options.
+Free function with \ref vsa_namedparameters options.
 - `CGAL::approximate_mesh()`: given a triangle mesh, approximate the geometry with default \f$ \mathcal{L}^{2,1} \f$ metric.
 
 Class interface:
@@ -179,7 +179,7 @@ The following example calls the free function `CGAL::approximate_mesh()` on the 
 
 \cgalExample{Surface_mesh_approximation/vsa_approximation_example.cpp}
 
-The function parameters are provided through \ref namedparameters. Setting the non-default parameter values requires calling the functions with the required parameters, connected by a dot and in an arbitrary order. The following example shows a different configuration of parameters and retrieves the indexed face proxy map and the proxies:
+The function parameters are provided through \ref vsa_namedparameters. Setting the non-default parameter values requires calling the functions with the required parameters, connected by a dot and in an arbitrary order. The following example shows a different configuration of parameters and retrieves the indexed face proxy map and the proxies:
 
 \cgalExample{Surface_mesh_approximation/vsa_approximation_2_example.cpp}
 

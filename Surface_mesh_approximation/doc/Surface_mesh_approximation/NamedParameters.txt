@@ -1,5 +1,5 @@
 /*!
-\defgroup namedparameters Named Parameters
+\defgroup vsa_namedparameters Named Parameters
 \ingroup PkgTSMA
 
 \cgalHeading{How to use BGL Optional Named Parameters}
@@ -7,12 +7,12 @@
 The notion of named parameters was introduced in the BGL.
 Details can be found from: http://www.boost.org/libs/graph/doc/bgl_named_params.html.
 Named parameters enable the user to specify only those parameters which are really needed, by name, making the parameter ordering not required.
-
-We refer to the named parameters introduced in \ref PkgPolygonMeshProcessingSummary.
+See also \ref namedparameters introduced in the polygon mesh processing package.
 
 The sequence of named parameters should start with `CGAL::VSA::parameters::`.
 `#CGAL::VSA::parameters::all_default()` can be used to indicate
 that default values of optional named parameters are used.
+<!-- clashing tag with PMP named space -->
 
 \cgalHeading{Example}
 
