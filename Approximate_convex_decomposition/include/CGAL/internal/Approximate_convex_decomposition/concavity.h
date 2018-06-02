@@ -38,7 +38,7 @@ namespace internal
         typedef CGAL::AABB_face_graph_triangle_primitive<SM> AABB_primitive;
         typedef CGAL::AABB_tree<CGAL::AABB_traits<GeomTraits, AABB_primitive>> AABB_tree;
 
-        typedef boost::optional<AABB_tree::Intersection_and_primitive_id<Ray_3>::Type> Ray_intersection; // TODO: fix the compilation error
+//        typedef boost::optional<AABB_tree::Intersection_and_primitive_id<Ray_3>::Type> Ray_intersection; // TODO: fix the compilation error
     
     public:
         Concavity(const TriangleMesh& mesh, const GeomTraits& traits)
