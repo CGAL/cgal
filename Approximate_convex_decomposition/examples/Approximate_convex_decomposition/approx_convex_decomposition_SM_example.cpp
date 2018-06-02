@@ -1,20 +1,27 @@
 #include <CGAL/approx_decomposition.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <iostream>
 #include <fstream>
 
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef CGAL::Polyhedron_3<Kernel>     Polyhedron;
+//typedef CGAL::Simple_cartesian<double>      Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+
+typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
+
+typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
+typedef boost::graph_traits<Mesh>::face_iterator   face_iterator;
 
 int main()
 {
     // read mesh
-    Polyhedron mesh;
+    Mesh mesh;
     
-    std::ifstream input("data/elephant.off");
+    std::ifstream input("data/cube.off");
+//    std::ifstream input("data/cheese.off");
+//    std::ifstream input("data/lion-head.off");
+//    std::ifstream input("data/elephant.off");
     
     if (!input || !(input >> mesh))
     {
@@ -29,7 +36,7 @@ int main()
     }
 
     // create property map for cluster-ids
-    typedef std::map<Polyhedron::Facet_const_handle, int> Facet_int_map;
+    typedef std::map<face_descriptor, int> Facet_int_map;
     Facet_int_map facet_map;
     boost::associative_property_map<Facet_int_map> facet_property_map(facet_map);
 
@@ -38,16 +45,16 @@ int main()
 
     // write cluster-ids for each facet
     std::cout << "Number of clusters: " << clusters_num << std::endl;
-    for (Polyhedron::Facet_const_iterator it = mesh.facets_begin(); it != mesh.facets_end(); ++it)
+    BOOST_FOREACH(face_descriptor fd, faces(mesh))
     {
-        std::cout << facet_property_map[it] << " ";
+        std::cout << facet_property_map[fd] << " ";
     }
     std::cout << std::endl;
 
     // write concavity values for all clusters
     for (std::size_t i = 0; i < clusters_num; ++i)
     {
-//        std::cout << "#" << i << ": " << CGAL::concavity_value(mesh, facet_property_map, i) << std::endl;
+        std::cout << "Concavity value of #" << i << ": " << CGAL::concavity_value(mesh, facet_property_map, i) << std::endl;
     }
 
     return EXIT_SUCCESS;

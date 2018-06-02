@@ -36,9 +36,10 @@ endif()
 # include for local package
 include_directories( BEFORE ../../include )
 
-create_single_source_cgal_program( "test_example.cpp" )
-create_single_source_cgal_program( "concavity_value_example.cpp" )
-create_single_source_cgal_program( "approx_convex_decomposition_example.cpp" )
+#create_single_source_cgal_program( "test_example.cpp" )
+#create_single_source_cgal_program( "concavity_value_example.cpp" )
+#create_single_source_cgal_program( "approx_convex_decomposition_example.cpp" )
+create_single_source_cgal_program( "approx_convex_decomposition_SM_example.cpp" )
 
 
 # Creating entries for all C++ files with "main" routine
