@@ -289,7 +289,7 @@ namespace CGAL {
 	  	return dummy_points[i]();
 	}
 
-	void remove(Vertex_handle v);
+	bool remove(Vertex_handle v);
 
 	bool is_dummy_vertex(Vertex_handle vh) const {
 		for (int i = 0; i < dummy_points.size(); i++) {
@@ -517,7 +517,7 @@ insert(const Point  &p,  Face_handle hint, bool batch_insertion) {
 //------------------------------------------------------
 
 template < class Gt, class Tds >
-void
+bool
 Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::
 remove(Vertex_handle v) {
   
@@ -649,8 +649,12 @@ remove(Vertex_handle v) {
 
 	CGAL_triangulation_assertion(this->is_valid(true));
 
+	return true;
+
   } else { // is not removable
-	std::cout << "   -> vertex cannot be removed!" << std::endl;
+	
+	return false;
+
   }
 
 }
