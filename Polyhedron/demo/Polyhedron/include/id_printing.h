@@ -120,10 +120,22 @@ bool find_primitive_id(const QPoint& point,
   const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
   //find clicked facet
-  CGAL::qglviewer::Vec dir = point_under - viewer->camera()->position();
-  const Point ray_origin(viewer->camera()->position().x - offset.x,
-                         viewer->camera()->position().y - offset.y,
-                         viewer->camera()->position().z - offset.z);
+  CGAL::qglviewer::Vec dir;
+  Point ray_origin;
+  if(viewer->camera()->type() == CGAL::qglviewer::Camera::PERSPECTIVE)
+  {
+    dir = point_under - viewer->camera()->position();
+    ray_origin = Point(viewer->camera()->position().x - offset.x,
+                       viewer->camera()->position().y - offset.y,
+                       viewer->camera()->position().z - offset.z);
+  }
+  else
+  {
+    dir = viewer->camera()->viewDirection();
+    ray_origin = Point(point_under.x - dir.x,
+                       point_under.y - dir.y,
+                       point_under.z - dir.z);
+  }
 
   const typename Traits::Vector_3 ray_dir(dir.x, dir.y, dir.z);
   const typename Traits::Ray_3 ray(ray_origin, ray_dir);

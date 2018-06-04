@@ -489,8 +489,17 @@ void Viewer::postSelection(const QPoint& pixel)
     Q_EMIT selectedPoint(point.x,
                        point.y,
                        point.z);
-    const CGAL::qglviewer::Vec orig = camera()->position() - offset();
-    const CGAL::qglviewer::Vec dir = point - orig;
+    CGAL::qglviewer::Vec dir;
+    CGAL::qglviewer::Vec orig;
+    if(d->projection_is_ortho)
+    {
+      dir = camera()->viewDirection();
+      orig = point;
+    }
+    else{
+      orig = camera()->position() - offset();
+      dir = point - orig;
+    }
     Q_EMIT selectionRay(orig.x, orig.y, orig.z,
                       dir.x, dir.y, dir.z);
   }

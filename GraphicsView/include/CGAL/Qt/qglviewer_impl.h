@@ -3168,8 +3168,10 @@ void CGAL::QGLViewer::drawVisualHints() {
     mvpMatrix.ortho(-1,1,-1,1,-1,1);
     size=30*devicePixelRatio();
     rendering_program.setUniformValue("mvp_matrix", mvpMatrix);  
-    glViewport((camera()->projectedCoordinatesOf(camera()->pivotPoint()).x-size/2)*devicePixelRatio(), (height() - camera()->projectedCoordinatesOf(camera()->pivotPoint()).y-size/2)*devicePixelRatio(), size, size);
-    glScissor ((camera()->projectedCoordinatesOf(camera()->pivotPoint()).x-size/2)*devicePixelRatio(), (height() - camera()->projectedCoordinatesOf(camera()->pivotPoint()).y-size/2)*devicePixelRatio(), size, size);
+    Vec pivot = camera()->pivotPoint();
+    Vec proj_c = camera()->projectedCoordinatesOf(pivot);
+    glViewport((proj_c.x-size/2)*devicePixelRatio(), (height() - proj_c.y-size/2)*devicePixelRatio(), size, size);
+    glScissor ((proj_c.x-size/2)*devicePixelRatio(), (height() - proj_c.y-size/2)*devicePixelRatio(), size, size);
     rendering_program.setUniformValue("color", QColor(::Qt::black));
     glLineWidth(3.0);
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(4));
