@@ -272,6 +272,7 @@ clip_to_bbox(const Plane_3& plane,
   * clips `tm` by keeping the part that is inside the volume \link coref_def_subsec bounded \endlink
   * by `clipper`.
   * If `tm` is closed, the clipped part can be closed too if the named parameter `clip_volumes` is set to `true`.
+  * See subsection \ref coref_clip for more details.
   * \attention With the current implementation, `clipper` will be modified (refined with the intersection with `tm`).
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm1)` \endlink
@@ -342,6 +343,7 @@ clip(      TriangleMesh& tm,
   * \ingroup PMP_corefinement_grp
   * clips `tm` by keeping the part that is on the negative side of `plane` (side opposite to its normal vector).
   * If `tm` is closed, the clipped part can be closed too if the named parameter `clip_volumes` is set to `true`.
+  * See subsection \ref coref_clip for more details.
   *
   * \note In the current implementation it is not possible to set the vertex point map and the default will be used.
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
