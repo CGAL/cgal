@@ -611,7 +611,7 @@ double approximate_Hausdorff_distance(
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm2`
- *      If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` `must be available in `TriangleMesh`
+ *      If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `TriangleMesh`
  *      and in all places where `vertex_point_map` is used.
  *    \cgalParamEnd
  * \cgalNamedParamsEnd
