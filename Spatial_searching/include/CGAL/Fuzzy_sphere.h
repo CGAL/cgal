@@ -144,7 +144,7 @@ class Fuzzy_sphere< Search_traits_adapter<K,PM,Base_traits> >
   typedef typename Base_traits::FT FT;
 public:
   // constructors
-  Fuzzy_sphere(const SearchTraits& traits_=SearchTraits()):Base(traits_){};
+  Fuzzy_sphere(const SearchTraits& traits_=SearchTraits()):Base(traits_){}
 
   // Constructor for any point type that is not `SearchTraits::Point_d`
   template <typename Point> // boost::disable_if requires a template argument to work
