@@ -138,10 +138,11 @@ The class expects two template parameters.
 			Removes the vertex `v` from the triangulation.
 			The triangulation is fixed locally by triangulating the resulting hole. 
 			Note that `v` is removed from the triangulation only if the resulting
-			triangulation would be a simplicial complex. For more details, see
-			\cgalCite{cgal:it-idtbs-17}.
+			triangulation would be a simplicial complex. The function returns `true`
+			if the vertex `v` is removed from the triangulation, otherwise it returns 
+			`false`.
 		*/
-		void remove(Vertex_handle v);
+		bool remove(Vertex_handle v);
 	/// @}
 	
 
