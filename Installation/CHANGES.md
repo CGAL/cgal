@@ -36,11 +36,11 @@ Release date: September 2018
 -   Added a function to apply a transformation to a mesh : 
     - `CGAL::Polygon_mesh_processing::transform()`
 -   Added in corefinement-related functions a new named parameter `new_face_visitor`
-    that make it possible to pass a visitor to the function in order to track
+    that makes it possible to pass a visitor to the function in order to track
     the creation of new faces.
 -   Added in all corefinement-related functions a named parameter `throw_on_self_intersection`
-    (that replace the `bool` parameter in `corefine()`) that enables to check for
-    self-intersections faces involved in the intersection before trying to corefine the
+    (that replaces the `bool` parameter in `corefine()`) that enables to check for
+    self-intersecting faces involved in the intersection before trying to corefine the
     input meshes.
 -   Added the function `corefine_and_compute_boolean_operations()` that can be used to
     compute the result of several Boolean operations between 2 volumes at the same time.

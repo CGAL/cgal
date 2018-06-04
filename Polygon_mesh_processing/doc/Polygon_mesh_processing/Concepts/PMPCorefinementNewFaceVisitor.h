@@ -21,7 +21,7 @@ typedef unspecified_type face_descriptor;
   /// called before the triangulation of `f_split` in `tm`. Note that `f_split`
   /// will be one of the faces of the triangulation. Each subsequent call to
   /// `before_subface_created()`/`after_subface_created()` will correspond to
-  /// the creation of a new face of triangulating `f_split`.
+  /// the creation of a new face of the triangulation of `f_split`.
   void before_subface_creations(face_descriptor f_split, Triangle_mesh& tm);
   /// called when the triangulation of a face in `tm` is finished
   void after_subface_creations(Triangle_mesh& tm);

@@ -313,14 +313,14 @@ bool does_bound_a_volume(const TriangleMesh& tm)
   *                                     that is used to track the creation of new faces  (`np1` only)
   *   \cgalParamEnd
   *   \cgalParamBegin{throw_on_self_intersection} if `true`, for each input triangle mesh,
-  *      the set of triangles closed to the intersection of `tm1` and `tm2` will be
+  *      the set of triangles close to the intersection of `tm1` and `tm2` will be
   *      checked for self-intersection and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *      will be thrown if at least one is found (`np1` only).
   *   \cgalParamEnd
   * \cgalNamedParamsEnd
   *
   * @param nps_out tuple of optional sequences of \ref pmp_namedparameters "Named Parameters" each among the ones listed below
-  *        (`tm_out` being use to refer the output surface mesh in `output` corresponding to a given named parameter sequence)
+  *        (`tm_out` being used to refer to the output surface mesh in `output` corresponding to a given named parameter sequence)
   *
   * \cgalNamedParamsBegin
   *   \cgalParamBegin{vertex_point_map}
@@ -337,7 +337,7 @@ bool does_bound_a_volume(const TriangleMesh& tm)
   *
   * @return an array filled as follows: for each operation computed, the position in the array
   *         will contain `true` iff the output surface mesh is manifold, and it is put in the surface mesh
-  *         at the same position in `output`. Note that if an output surface mesh was also
+  *         at the same position as in `output`. Note that if an output surface mesh also was
   *         an input mesh but the output operation was generating a non-manifold mesh, the surface mesh
   *         will only be corefined.
   */
@@ -621,7 +621,7 @@ corefine_and_compute_boolean_operations(
   *                                     that is used to track the creation of new faces  (`np1` only)
   *   \cgalParamEnd
   *   \cgalParamBegin{throw_on_self_intersection} if `true`, for each input triangle mesh,
-  *      the set of triangles closed to the intersection of `tm1` and `tm2` will be
+  *      the set of triangles close to the intersection of `tm1` and `tm2` will be
   *      checked for self-intersection and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *      will be thrown if at least one is found (`np1` only).
   *   \cgalParamEnd
@@ -767,7 +767,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *                                     that is used to track the creation of new faces (`np1` only)
  *   \cgalParamEnd
  *   \cgalParamBegin{throw_on_self_intersection} if `true`, for each input triangle mesh,
- *      the set of triangles closed to the intersection of `tm1` and `tm2` will be
+ *      the set of triangles close to the intersection of `tm1` and `tm2` will be
  *      checked for self-intersection and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
  *      will be thrown if at least one is found (`np1` only).
  *   \cgalParamEnd

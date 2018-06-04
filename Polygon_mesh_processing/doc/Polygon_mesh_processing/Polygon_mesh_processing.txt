@@ -216,7 +216,7 @@ a volume, the functions `CGAL::Polygon_mesh_processing::corefine_and_compute_uni
 `CGAL::Polygon_mesh_processing::corefine_and_compute_intersection()` and
 `CGAL::Polygon_mesh_processing::corefine_and_compute_difference()` respectively compute the union,
 the intersection and the difference of the two volumes. If several Boolean operations must be
-computed at the same type, the function `corefine_and_compute_boolean_operations()` should be used.
+computed at the same time, the function `corefine_and_compute_boolean_operations()` should be used.
 
 There is no restriction on the topology of the input volumes.
 However, there are some requirements on the input to guarantee that
