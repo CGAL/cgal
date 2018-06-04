@@ -5,7 +5,7 @@
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <CGAL/point_generators_2.h>
-#include <CGAL/Hyperbolic_random_points_in_disc_2.h>
+//#include <CGAL/Random_points_in_disc_2.h>
 
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
@@ -44,10 +44,10 @@ int main(int argc, char** argv) {
     int max = -1;
     double mean = 0.0;
     for (int j = 0; j < iter; j++) {
-        cout << "Iteration " << (j+1) << "/" << iter << "..." << endl;
+        //cout << "Iteration " << (j+1) << "/" << iter << "..." << endl;
         
         std::vector<Point_double> v;
-        Hyperbolic_random_points_in_disc_2_double(v, N, -1, 0.159);
+        CGAL::Random_points_in_disc_2<Point_double, Creator> g(0.85);
 
         Triangulation tr;  
         assert(tr.is_valid(true));
@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
         int cnt = 0;
         int idx = 0;
         do {
-            Point_double pt = v[idx++];
+            Point_double pt = *(++g);
             if (pred(pt) != CGAL::ON_UNBOUNDED_SIDE) {
                 tr.insert(Point(pt.x(), pt.y()));
                 cnt++;
@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
             continue;
         }
         assert(tr.is_valid());
-
+        std::cout << cnt << std::endl;
         if (cnt > max)
             max = cnt;
         if (cnt < min)

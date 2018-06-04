@@ -4,7 +4,7 @@
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <CGAL/point_generators_2.h>
-#include <CGAL/Hyperbolic_random_points_in_disc_2.h>
+//#include <CGAL/Hyperbolic_random_points_in_disc_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_octagon_translation.h>
@@ -61,21 +61,18 @@ int main(int argc, char** argv) {
 
     for (int exec = 1; exec <= iters; exec++) {
 
-        std::vector<Point_double> v;
         std::vector<Point> pts;
-
-        Hyperbolic_random_points_in_disc_2_double(v, 5*N, -1, 0.159);
+        CGAL::Random_points_in_disc_2<Point_double, Creator> g(0.85);
 
         int cnt = 0;
-        int idx = 0;
         do {    
-            Point pt = Point(v[idx].x(), v[idx].y());
+            Point_double pd = *(++g);
+            Point pt = Point(pd.x(), pd.y());
             if (pred(pt) != CGAL::ON_UNBOUNDED_SIDE) {
                 pts.push_back(pt);
                 cnt++;
             } 
-            idx++;
-        } while (cnt < N && idx < v.size());
+        } while (cnt < N);
 
         if (cnt < N) {
             cout << "I failed to generate all the random points! Exiting..." << endl;

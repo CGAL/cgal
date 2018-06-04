@@ -23,7 +23,7 @@ int main(void) {
     Triangulation tr;
     CGAL_assertion(tr.is_valid());
 
-    cout << "triangulation works!" << 
+    cout << "triangulation works!" << std::endl;
     cout << "nb of vertices: " << tr.number_of_vertices() << endl;
     cout << "nb of faces: " << tr.number_of_faces() << endl;
 

@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
 
         CGAL::Timer tt;
         tt.start();
-        tr.insert(pts.begin(), pts.end(), true);
+        tr.insert(pts.begin(), pts.end());
         tt.stop();
         cout << "DONE! (# of vertices = " << tr.number_of_vertices() << ", time = " << tt.time() << " secs)" << endl;
         extime += tt.time();

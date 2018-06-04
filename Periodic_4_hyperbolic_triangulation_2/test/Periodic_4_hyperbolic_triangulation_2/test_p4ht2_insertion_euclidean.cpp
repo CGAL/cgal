@@ -8,7 +8,8 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/determinant.h>
-
+#include <CGAL/CORE_Expr.h>
+#include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Timer.h>
 
 typedef double                                                                  NT;
@@ -17,6 +18,13 @@ typedef CGAL::Delaunay_triangulation_2<Kernel>                                  
 typedef Kernel::Point_2                                                         Point;
 typedef Triangulation::Vertex_handle                                            Vertex_handle;
 typedef CGAL::Creator_uniform_2<double, Point>                                  Creator;
+
+
+typedef CORE::Expr                                                              NT2;
+typedef CGAL::Cartesian<NT2>                                                    Kernel2;
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel2,
+                                      CGAL::Hyperbolic_octagon_translation>     Traits2;
+typedef Traits2::Side_of_original_octagon                                       Side_of_original_octagon;
 
 using std::cout;
 using std::endl;
@@ -37,23 +45,27 @@ int main(int argc, char** argv) {
     cout << "---- for best results, make sure that you have compiled me in Release mode ----" << endl;
     
     double extime = 0.0;
+    Side_of_original_octagon pred;
 
     for (int exec = 1; exec <= iters; exec++) {
         std::vector<Point> pts;
-        pts.reserve(N);
-        CGAL::Random_points_in_disc_2<Point, Creator> g(1.0);
-        CGAL::cpp11::copy_n( g, N, std::back_inserter(pts));
+        CGAL::Random_points_in_disc_2<Point, Creator> g(0.85);
+
+        int cnt = 0;
+        do {    
+            Point pt = *(++g);
+            if (pred(pt) != CGAL::ON_UNBOUNDED_SIDE) {
+                pts.push_back(pt);
+                cnt++;
+            } 
+        } while (cnt < N);
 
         cout << "iteration " << exec << ": inserting into triangulation (rational dummy points)... "; cout.flush();
         Triangulation tr;
-        //tr.insert_dummy_points(true);  
 
         CGAL::Timer tt;
         tt.start();
         tr.insert(pts.begin(), pts.end());
-        //for (int j = 0; j < pts.size(); j++) {
-        //    tr.insert(pts[j]);
-        //}
         tt.stop();
         cout << "DONE! (# of vertices = " << tr.number_of_vertices() << ", time = " << tt.time() << " secs)" << endl;
         extime += tt.time();

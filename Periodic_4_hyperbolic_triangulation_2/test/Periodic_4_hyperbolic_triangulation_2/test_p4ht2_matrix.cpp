@@ -3,8 +3,8 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/Circle_2.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Exact_complex.h>
-#include <CGAL/Hyperbolic_octagon_translation_matrix.h>
+#include <CGAL/internal/Exact_complex.h>
+#include <CGAL/internal/Hyperbolic_octagon_translation_matrix.h>
 #include <vector>
 
 using namespace CGAL;
