@@ -220,6 +220,9 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
 #ifdef CGAL_LINKED_WITH_OPENCV
   m_random_forest = NULL;
 #endif
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+  m_neural_network = NULL;
+#endif
 }
 
 
@@ -232,6 +235,10 @@ Point_set_item_classification::~Point_set_item_classification()
 #ifdef CGAL_LINKED_WITH_OPENCV
   if (m_random_forest != NULL)
     delete m_random_forest;
+#endif
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+  if (m_neural_network != NULL)
+    delete m_neural_network;
 #endif
   if (m_generator != NULL)
     delete m_generator;
@@ -522,6 +529,13 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales)
     m_random_forest = NULL;
   }
 #endif
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+  if (m_neural_network != NULL)
+  {
+    delete m_neural_network;
+    m_neural_network = NULL;
+  }
+#endif
 
   t.stop();
   std::cerr << m_features.size() << " feature(s) computed in " << t.time() << " second(s)" << std::endl;
@@ -684,20 +698,33 @@ void Point_set_item_classification::train(int classifier, unsigned int nb_trials
                                                      m_labels, *m_ethz,
                                                      indices, m_label_probabilities);
   }
-  else
-    {
+  else if (classifier == 2)
+  {
 #ifdef CGAL_LINKED_WITH_OPENCV
-      if (m_random_forest != NULL)
-        delete m_random_forest;
-      m_random_forest = new Random_forest (m_labels, m_features,
-                                           int(max_depth), 5, 15,
-                                           int(num_trees));
-      m_random_forest->train (training);
-      CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
-                                                       m_labels, *m_random_forest,
-                                                       indices, m_label_probabilities);
+    if (m_random_forest != NULL)
+      delete m_random_forest;
+    m_random_forest = new Random_forest (m_labels, m_features,
+                                         int(max_depth), 5, 15,
+                                         int(num_trees));
+    m_random_forest->train (training);
+    CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
+                                                     m_labels, *m_random_forest,
+                                                     indices, m_label_probabilities);
+  }
+  else
+  {
 #endif
-    }
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+    if (m_neural_network != NULL)
+      delete m_neural_network;
+    m_neural_network = new Neural_network (m_labels, m_features);
+    m_neural_network->train (training, nb_trials);
+    CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
+                                                     m_labels, *m_neural_network,
+                                                     indices, m_label_probabilities);
+#endif
+  }
+  
   for (Point_set::const_iterator it = m_points->point_set()->begin();
        it != m_points->point_set()->first_selected(); ++ it)
     m_classif[*it] = indices[*it];
@@ -728,9 +755,9 @@ bool Point_set_item_classification::run (int method, int classifier,
     }
     run (method, *m_ethz, subdivisions, smoothing);
   }
-#ifdef CGAL_LINKED_WITH_OPENCV
-  else
+  else if (classifier == 2)
   {
+#ifdef CGAL_LINKED_WITH_OPENCV
     if (m_random_forest == NULL)
     {
       std::cerr << "Error: OpenCV Random Forest must be trained or have a configuration loaded first" << std::endl;
@@ -738,7 +765,18 @@ bool Point_set_item_classification::run (int method, int classifier,
     }
     run (method, *m_random_forest, subdivisions, smoothing);
   }
+  else
+  {
 #endif
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+    if (m_neural_network == NULL)
+    {
+      std::cerr << "Error: TensorFlow Neural Network must be trained or have a configuration loaded first" << std::endl;
+      return false;
+    }
+    run (method, *m_neural_network, subdivisions, smoothing);
+#endif
+  }
   
   return true;
 }

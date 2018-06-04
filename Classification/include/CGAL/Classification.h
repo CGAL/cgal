@@ -31,6 +31,10 @@
 #include <CGAL/Classification/OpenCV_random_forest_classifier.h>
 #endif
 
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+#include <CGAL/Classification/TensorFlow_neural_network_classifier.h>
+#endif
+
 #include <CGAL/Classification/Cluster.h>
 #include <CGAL/Classification/Color.h>
 #include <CGAL/Classification/Evaluation.h>

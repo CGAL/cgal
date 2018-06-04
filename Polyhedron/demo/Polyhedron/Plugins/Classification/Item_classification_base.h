@@ -13,6 +13,9 @@
 #ifdef CGAL_LINKED_WITH_OPENCV
 #include <CGAL/Classification/OpenCV_random_forest_classifier.h>
 #endif
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+#include <CGAL/Classification/TensorFlow_neural_network_classifier.h>
+#endif
 
 class Item_classification_base
 {
@@ -26,6 +29,9 @@ public:
 
 #ifdef CGAL_LINKED_WITH_OPENCV
   typedef CGAL::Classification::OpenCV_random_forest_classifier Random_forest;
+#endif
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+  typedef CGAL::Classification::TensorFlow_neural_network_classifier Neural_network;
 #endif
   
 public:
@@ -84,6 +90,11 @@ public:
     delete m_random_forest;
     m_random_forest = new Random_forest (m_labels, m_features);
 #endif
+
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+    delete m_neural_network;
+    m_neural_network = new Neural_network (m_labels, m_features);
+#endif
     
     return m_label_colors.back();
   }
@@ -102,7 +113,13 @@ public:
     delete m_random_forest;
     m_random_forest = new Random_forest (m_labels, m_features);
 #endif
+
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+    delete m_neural_network;
+    m_neural_network = new Neural_network (m_labels, m_features);
+#endif
   }
+  
   virtual void clear_labels ()
   {
     m_labels.clear();
@@ -117,6 +134,11 @@ public:
 #ifdef CGAL_LINKED_WITH_OPENCV
     delete m_random_forest;
     m_random_forest = new Random_forest (m_labels, m_features);
+#endif
+
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+    delete m_neural_network;
+    m_neural_network = new Neural_network (m_labels, m_features);
 #endif
   }
   std::size_t number_of_labels() const { return m_labels.size(); }
@@ -254,6 +276,9 @@ protected:
   ETHZ_random_forest* m_ethz;
 #ifdef CGAL_LINKED_WITH_OPENCV
   Random_forest* m_random_forest;
+#endif
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+  Neural_network* m_neural_network;
 #endif
   
 };

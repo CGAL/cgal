@@ -191,6 +191,10 @@ public:
                                    .arg(CV_MINOR_VERSION));
 #endif
 
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+    ui_widget.classifier->addItem (tr("Neural Network (TensorFlow)"));
+#endif
+
     color_att = QColor (75, 75, 77);
 
     ui_widget.menu->setMenu (new QMenu("Classification Menu", ui_widget.menu));
@@ -1080,7 +1084,7 @@ public Q_SLOTS:
     int num_trees = 0;
     int max_depth = 0;
 
-    if (ui_widget.classifier->currentIndex() == 0)
+    if (ui_widget.classifier->currentIndex() == 0 || ui_widget.classifier->currentIndex() == 3)
     {
       bool ok = false;
       nb_trials = QInputDialog::getInt((QWidget*)mw,
