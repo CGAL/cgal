@@ -54,7 +54,7 @@ typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>  Self;
 private:
 
 
-	class Circular_arc_2 {
+	class Circular_arc_2_base {
 		typedef typename Kernel::FT 	  		FT;
 		typedef Exact_complex<FT> 		  		Cplx;
 		typedef typename Kernel::Point_2 	  	Point;
@@ -66,13 +66,13 @@ private:
 		Point _s, _t;
 
 	public:
-		Circular_arc_2() :
+		Circular_arc_2_base() :
 			_c(Point(FT(0),FT(0)), FT(0)), _s(FT(0),FT(0)), _t(FT(0),FT(0)) {}
 		
-		Circular_arc_2(Circle c, Point source, Point target) :
+		Circular_arc_2_base(Circle c, Point source, Point target) :
 			_c(c), _s(source), _t(target) {}
 
-		Circular_arc_2(Point p1, Point p2) {
+		Circular_arc_2_base(Point p1, Point p2) {
 			Cplx p(p1), q(p2);
 			Cplx O(0,0);
 			Cplx inv;
@@ -131,7 +131,7 @@ public:
 	typedef typename Kernel::Circle_2    								        Circle_2;
 	typedef typename Kernel::Line_2      								        Euclidean_line_2;
 	typedef boost::variant<Circle_2,Euclidean_line_2>    			  Euclidean_circle_or_line_2; 
-	typedef Self::Circular_arc_2										            Circular_arc_2;
+	typedef Self::Circular_arc_2_base								            Circular_arc_2;
 	typedef typename Kernel::Segment_2                       	  Euclidean_segment_2; //only used internally here
 	typedef boost::variant<Circular_arc_2, Euclidean_segment_2>	Hyperbolic_segment_2;
 
