@@ -171,6 +171,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
   add_library(demo_framework SHARED
     Scene.cpp
     Viewer.cpp
+    Three.cpp
     ${ViewerUI_FILES}
     ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES}
     Viewer_interface_moc.cpp

@@ -44,6 +44,7 @@
 #  endif
 #endif
 
+#include <CGAL/Three/Three.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Scene_item_with_properties.h>
@@ -131,6 +132,7 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
   ui = new Ui::MainWindow;
   ui->setupUi(this);
   menuBar()->setNativeMenuBar(false);
+  CGAL::Three::Three::s_mainwindow = this;
   menu_map[ui->menuOperations->title()] = ui->menuOperations;
   this->verbose = verbose;
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
@@ -147,6 +149,8 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
   scene = new Scene(this);
   viewer->textRenderer()->setScene(scene);
   viewer->setScene(scene);
+  CGAL::Three::Three::s_scene = scene;
+   CGAL::Three::Three::s_connectable_scene = scene;
   ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(viewer->textRenderer()->getMax_textItems()));
   {
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
