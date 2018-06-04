@@ -609,8 +609,8 @@ bool Volume::open(const QString& filename)
 void Volume::finish_open()
 {
   m_image.finish_open();
-  mw->viewer->camera()->setSceneBoundingBox(qglviewer::Vec(0, 0, 0),
-                                            qglviewer::Vec(m_image.xmax(),
+  mw->viewer->camera()->setSceneBoundingBox(CGAL::qglviewer::Vec(0, 0, 0),
+                                            CGAL::qglviewer::Vec(m_image.xmax(),
                                                            m_image.ymax(),
                                                            m_image.zmax()));
 

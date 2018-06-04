@@ -426,7 +426,8 @@ namespace CGAL {
     template<class Construct_bare_point, class Container>
     struct Index_to_Bare_point
     {
-      const Bare_point& operator()(const std::size_t& i) const
+      typename boost::result_of<const Construct_bare_point(const Weighted_point&)>::type
+      operator()(const std::size_t& i) const
       {
         return cp(c[i]);
       }
@@ -826,10 +827,6 @@ namespace CGAL {
 
       CGAL_triangulation_expensive_postcondition(is_valid());
     }
-
-
-    // DISPLACEMENT
-    Vertex_handle move_point(Vertex_handle v, const Weighted_point & p);
 
     // Displacement works only for regular triangulation
     // without hidden points at any time
@@ -2431,30 +2428,6 @@ namespace CGAL {
     }
 
     return removed;
-  }
-
-  // Again, verbatim copy from Delaunay.
-  template < class Gt, class Tds, class Lds >
-  typename Regular_triangulation_3<Gt,Tds,Lds>::Vertex_handle
-    Regular_triangulation_3<Gt,Tds,Lds>::
-    move_point(Vertex_handle v, const Weighted_point & p)
-  {
-    CGAL_triangulation_precondition(! is_infinite(v));
-    CGAL_triangulation_expensive_precondition(is_vertex(v));
-
-    // Dummy implementation for a start.
-
-    // Remember an incident vertex to restart
-    // the point location after the removal.
-    Cell_handle c = v->cell();
-    Vertex_handle old_neighbor = c->vertex(c->index(v) == 0 ? 1 : 0);
-    CGAL_triangulation_assertion(old_neighbor != v);
-
-    remove(v);
-
-    if (dimension() <= 0)
-      return insert(p);
-    return insert(p, old_neighbor->cell());
   }
 
   // Displacement works only for regular triangulation

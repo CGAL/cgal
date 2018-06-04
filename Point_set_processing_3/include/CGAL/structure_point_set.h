@@ -36,7 +36,6 @@
 
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Fuzzy_sphere.h>
-#include <CGAL/Fuzzy_iso_box.h>
 #include <CGAL/Search_traits_d.h>
 #include <CGAL/Search_traits_3.h>
 

@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+[ -n "$CGAL_DEBUG_TRAVIS" ] && set -x
 
 CXX_FLAGS="-DCGAL_NDEBUG"
 
@@ -53,6 +54,10 @@ ROOT="$PWD/.."
 NEED_3D=0
 for ARG in $(echo "$@")
 do
+#skip package maintenance
+  if [ "$ARG" = "Maintenance" ]; then
+    continue
+  fi
 cd $ROOT
 #install openmesh only if necessary
   if [ "$ARG" = "CHECK" ] || [ "$ARG" = BGL ] || [ "$ARG" = Convex_hull_3 ] ||\

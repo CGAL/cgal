@@ -6,7 +6,7 @@ project( Arrangement_on_surface_2_Tests )
 
 enable_testing()
 
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 3.1)
 
 find_package(CGAL QUIET COMPONENTS Core)
 
@@ -33,8 +33,7 @@ if ( CGAL_FOUND )
   endif()
 
 else()
-  
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
-endif()
 
+    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+
+endif()

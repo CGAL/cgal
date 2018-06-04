@@ -55,7 +55,7 @@ int main()
   }
 
   assert(index == 25);
-  assert(is_valid(sm));
+  assert(is_valid_polygon_mesh(sm));
   return 0;
 }
 

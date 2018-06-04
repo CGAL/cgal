@@ -6,16 +6,16 @@
 #include <QMenu>
 #include <QSlider>
 #include <QWidgetAction>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <iostream>
-#include <QGLViewer/manipulatedFrame.h>
+#include <CGAL/Qt/manipulatedFrame.h>
 using namespace CGAL::Three;
 class Volume_plane_interface : public Scene_item {
 Q_OBJECT
 public:
-  Volume_plane_interface(qglviewer::ManipulatedFrame* f) : mFrame_(f) { 
+  Volume_plane_interface(CGAL::qglviewer::ManipulatedFrame* f) : mFrame_(f) { 
     connect(mFrame_, SIGNAL(manipulated()), this, SLOT(propagateManipulation()));
   }
 
@@ -29,7 +29,7 @@ public:
   virtual unsigned int aDim() const = 0;
   virtual unsigned int bDim() const = 0;
   virtual unsigned int cDim() const = 0;
-  virtual qglviewer::Vec translationVector() const = 0;
+  virtual CGAL::qglviewer::Vec translationVector() const = 0;
   void itemAboutToBeDestroyed(CGAL::Three::Scene_item* item) {
     if(this == item) {
       Q_EMIT planeDestructionIncoming(this);
@@ -40,7 +40,7 @@ public:
   virtual unsigned int getCurrentCube() const = 0;
   void emitSelection()  { Q_EMIT selected(this); }
 
-  virtual qglviewer::ManipulatedFrame* manipulatedFrame() { return mFrame_; }
+  virtual CGAL::qglviewer::ManipulatedFrame* manipulatedFrame() { return mFrame_; }
 
   QMenu* contextMenu()
   {
@@ -74,7 +74,7 @@ private Q_SLOTS:
     Q_EMIT manipulated(getCurrentCube());
   }
 protected:
-  qglviewer::ManipulatedFrame* mFrame_;
+  CGAL::qglviewer::ManipulatedFrame* mFrame_;
   bool hide_spheres;
   QSlider* sphere_Slider;
 };

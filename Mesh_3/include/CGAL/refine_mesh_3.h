@@ -31,9 +31,10 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/config.h>
+#include <CGAL/boost/parameter.h>
+#include <boost/parameter/preprocessor.hpp>
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/Dump_c3t3.h>
-#include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_3/Mesher_3.h>
 #include <CGAL/Mesh_error_code.h>
 #include <CGAL/optimize_mesh_3.h>
@@ -236,8 +237,8 @@ namespace parameters {
   
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/Mesh_3/config.h>
-CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+// see <CGAL/boost/parameter.h>
+CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 
 
   // -----------------------------------
@@ -412,14 +413,14 @@ CGAL_PRAGMA_DIAG_POP
   // -----------------------------------
   // Reset_c3t3 (undocumented)
   // -----------------------------------
-  CGAL_MESH_BOOLEAN_PARAMETER(Reset,reset_c3t3,no_reset_c3t3)
-  // CGAL_MESH_BOOLEAN_PARAMETER defined in <CGAL/Mesh_3/global_parameters.h>
+  CGAL_BOOLEAN_PARAMETER(Reset,reset_c3t3,no_reset_c3t3)
+  // CGAL_BOOLEAN_PARAMETER defined in <CGAL/boost/parameter.h>
   
 
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/Mesh_3/config.h>
-CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+// see <CGAL/boost/parameter.h>
+CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 
   // -----------------------------------
   // Parameters
@@ -445,8 +446,8 @@ CGAL_PRAGMA_DIAG_POP
 
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/Mesh_3/config.h>
-CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+// see <CGAL/boost/parameter.h>
+CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 
 BOOST_PARAMETER_FUNCTION(
   (void),

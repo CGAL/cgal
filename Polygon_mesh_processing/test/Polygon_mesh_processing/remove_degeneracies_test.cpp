@@ -26,7 +26,7 @@ void fix(const char* fname)
   }
   CGAL::Polygon_mesh_processing::remove_degenerate_faces(mesh);
 
-  assert( CGAL::is_valid(mesh) );
+  assert( CGAL::is_valid_polygon_mesh(mesh) );
 }
 
 int main()

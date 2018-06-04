@@ -348,7 +348,7 @@ Scene_polygon_soup_item_priv::compute_normals_and_vertices() const{
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
     //get the vertices and normals
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
     typedef Polygon_soup::Polygons::size_type size_type;
     positions_poly.resize(0);

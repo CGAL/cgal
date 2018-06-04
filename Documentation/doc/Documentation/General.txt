@@ -17,6 +17,11 @@ class CopyConstructible {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
+/// See http://en.cppreference.com/w/cpp/concept/Callable
+class Callable {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
 /// See http://en.cppreference.com/w/cpp/concept/EqualityComparable
 class EqualityComparable {};
 

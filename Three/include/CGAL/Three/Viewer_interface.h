@@ -25,7 +25,7 @@
 #include <CGAL/license/Three.h>
 
 #include <QMap>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <QWidget>
 #include <QPoint>
 #include <QOpenGLFunctions_2_1>
@@ -47,7 +47,7 @@ namespace Three{
 class Scene_draw_interface;
 class Scene_item;
 //! Base class to interact with the viewer from the plugins, the items and the scene.
-class VIEWER_EXPORT Viewer_interface : public QGLViewer, public QOpenGLFunctions_2_1 {
+class VIEWER_EXPORT Viewer_interface : public CGAL::QGLViewer{
 
   Q_OBJECT
 
@@ -104,7 +104,7 @@ public:
   //!
   //! Creates a valid context for OpenGL 2.1.
   //! \param parent the parent widget. It usually is the MainWindow.
-  Viewer_interface(QWidget* parent) : QGLViewer(CGAL::Qt::createOpenGLContext(), parent) {}
+  Viewer_interface(QWidget* parent) : CGAL::QGLViewer(parent) {}
   virtual ~Viewer_interface() {}
 
   //! \brief Sets the scene for the viewer.
@@ -123,12 +123,12 @@ public:
   //! \param frame is the frame that will be moved
   //! @returns true if it worked.
   //! @see moveCameraToCoordinates()
-  static bool readFrame(QString s, qglviewer::Frame& frame);
+  static bool readFrame(QString s, CGAL::qglviewer::Frame& frame);
   //! \brief Gives information about a frame.
   //! @see readFrame
   //! @see dumpCameraCoordinates()
   //!@returns a QString containing the position and orientation of a frame.
-  static QString dumpFrame(const qglviewer::Frame&);
+  static QString dumpFrame(const CGAL::qglviewer::Frame&);
   //! \brief The fastDrawing state.
   //!
   //! In fast drawing mode, some items will be simplified while the camera is moving
@@ -187,8 +187,6 @@ public:
   //! \brief Used by the items to avoid SEGFAULT.
   //!@returns true if glVertexAttribDivisor, and glDrawArraysInstanced are found.
   virtual bool isExtensionFound() = 0;
-  //!Returns the scene's offset
-  virtual qglviewer::Vec offset()const = 0;
   //!\brief Allows to perform picking from the keyboard and mouse
   //!
   //! Sets the combination SHIFT+LEFT CLICK to perform a selection on the screen.
@@ -251,10 +249,7 @@ public Q_SLOTS:
   virtual bool moveCameraToCoordinates(QString target,
                                        float animation_duration = 0.5f) = 0;
 public:
-  //! Is used to know if the openGL context is 4.3 or 2.1.
-  //! @returns `true` if the context is 4.3.
-  //! @returns `false` if the context is 2.1.
-  virtual bool isOpenGL_4_3() const = 0;
+  
   //! Gives acces to recent openGL(4.3) features, allowing use of things like
   //! Geometry Shaders or Depth Textures.
   //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Compatibility if `isOpenGL_4_3()` is `true`
