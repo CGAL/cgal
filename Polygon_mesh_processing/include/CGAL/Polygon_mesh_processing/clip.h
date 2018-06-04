@@ -146,7 +146,7 @@ clip_open_impl(      TriangleMesh& tm,
   {
     // A patch without no vertex incident to a non-constrained edges
     //  is a coplanar patch: drop it or keep it!
-    if (!boost::choose_param(boost::get_param(np_tm, internal_np::include_clipper_boundary), true))
+    if (!boost::choose_param(boost::get_param(np_tm, internal_np::use_compact_clipper), true))
     {
       for (std::size_t cc_id = cc_not_handled.find_first();
                        cc_id < cc_not_handled.npos;
@@ -312,8 +312,8 @@ clip_to_bbox(const Plane_3& plane,
   *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
   *      (i.e. `tm` will be kept closed).
   *   \cgalParamEnd
-  *   \cgalParamBegin{include_clipper_boundary} if `false` and `clip_volumes` is `false` and `tm` is open, the parts of `tm` coplanar with `clipper`
-  *                                             will not be part of the output.
+  *   \cgalParamBegin{use_compact_clipper} if `false` and `clip_volumes` is `false` and `tm` is open, the parts of `tm` coplanar with `clipper`
+  *                                        will not be part of the output.
   *   \cgalParamEnd
   * \cgalNamedParamsEnd
   *
@@ -375,8 +375,8 @@ clip(      TriangleMesh& tm,
   *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
   *      (i.e. `tm` will be kept closed).
   *   \cgalParamEnd
-  *   \cgalParamBegin{include_clipper_boundary} if `false` and `clip_volumes` is `false` and `tm` is open, the parts of `tm` coplanar with `plane`
-  *                                             will not be part of the output.
+  *   \cgalParamBegin{use_compact_clipper} if `false` and `clip_volumes` is `false` and `tm` is open, the parts of `tm` coplanar with `plane`
+  *                                        will not be part of the output.
   * \cgalNamedParamsEnd
   *
   * @return `true` if the output surface mesh is manifold.

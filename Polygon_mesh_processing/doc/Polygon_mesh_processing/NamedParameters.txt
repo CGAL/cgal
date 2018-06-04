@@ -334,9 +334,9 @@ Parameter used in `clip()` functions to clip a volume rather than a surface.
 \b Default value is `false`
 \cgalNPEnd
 
-\cgalNPBegin{include_clipper_boundary} \anchor PMP_include_clipper_boundary
+\cgalNPBegin{use_compact_clipper} \anchor PMP_use_compact_clipper
 Parameter used in `clip()` functions to indicate whether the boundary of the clipper
-should be considered as part of the volume or not.
+should be considered as part of the clipping volume or not.
 \n
 \b Type : `bool` \n
 \b Default value is `true`

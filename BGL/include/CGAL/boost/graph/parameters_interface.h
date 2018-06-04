@@ -67,7 +67,7 @@ CGAL_add_named_parameter(preserve_genus_t, preserve_genus, preserve_genus)
 CGAL_add_named_parameter(new_face_visitor_t, new_face_visitor, new_face_visitor)
 CGAL_add_named_parameter(throw_on_self_intersection_t, throw_on_self_intersection, throw_on_self_intersection)
 CGAL_add_named_parameter(clip_volumes_t, clip_volumes, clip_volumes)
-CGAL_add_named_parameter(include_clipper_boundary_t, include_clipper_boundary, include_clipper_boundary)
+CGAL_add_named_parameter(use_compact_clipper_t, use_compact_clipper, use_compact_clipper)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
