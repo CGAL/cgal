@@ -326,7 +326,7 @@ bool does_bound_a_volume(const TriangleMesh& tm)
   *   \cgalParamBegin{vertex_point_map}
   *     the property map with the points associated to the vertices of `tm_out`.
   *     If this parameter is omitted, an internal property map for
-  *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+  *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
   *   \cgalParamEnd
   *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
   *     constrained-or-not status of each edge of `tm_out`. An edge of `tm_out` is constrained

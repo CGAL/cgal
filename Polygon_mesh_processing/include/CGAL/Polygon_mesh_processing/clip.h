@@ -281,7 +281,6 @@ clip_to_bbox(const Plane_3& plane,
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
   *                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
   *                      as a named parameter, then it must be initialized.
-  *                      An internal property map for `CGAL::vertex_point_t` should be available.
   *
   * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
   * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
@@ -295,7 +294,7 @@ clip_to_bbox(const Plane_3& plane,
   *   \cgalParamBegin{vertex_point_map}
   *     the property map with the points associated to the vertices of `tm` (`clipper`).
   *     If this parameter is omitted, an internal property map for
-  *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+  *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
   *   \cgalParamEnd
   *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm` (`clipper`).
   *     Note that if the property map is writable, the indices of the faces
@@ -350,7 +349,7 @@ clip(      TriangleMesh& tm,
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
   *                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
   *                      as a named parameter, then it must be initialized.
-  *                      An internal property map for `CGAL::vertex_point_t` should be available.
+  *                      An internal property map for `CGAL::vertex_point_t` must be available.
   *
   * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
   *
