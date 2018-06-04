@@ -26,7 +26,15 @@
 #include <CGAL/config.h>
 #include <stdexcept>
 #include <string>
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable: 4003)
+#endif
 #include <boost/lexical_cast.hpp> 
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 
 namespace CGAL {
 
