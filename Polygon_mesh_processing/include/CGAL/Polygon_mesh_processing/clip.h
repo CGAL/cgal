@@ -223,10 +223,8 @@ clip_to_bbox(const Plane_3& plane,
     if (orientations[i2]==ON_ORIENTED_BOUNDARY) continue;
     if (orientations[i1]!=orientations[i2])
       points.push_back(
-        boost::get<Point_3>(
-          *intersection(plane, Segment_3(corners[i1], corners[i2]) )
-        )
-      );
+        Geom_traits::Construct_plane_line_intersection_point_3()
+          (plane, Segment_3(corners[i1], corners[i2])) );
   }
 
 
