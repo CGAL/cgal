@@ -109,11 +109,10 @@ struct IGT_generator<Gt,CGAL::Tag_false>
 };
 
 }  // end namespace details
-
 }  // end namespace Mesh_3
 
-
-namespace internal { namespace Mesh_3 {
+namespace Mesh_3 {
+namespace internal {
 
 template <typename Polyhedron_type,
           bool = CGAL::graph_has_property<Polyhedron_type,
@@ -150,8 +149,8 @@ private:
   Map face_ids;
 };
 
-} // end namespace Mesh_3
 } // end namespace internal
+} // end namespace Mesh_3
 
 /**
  * @class Polyhedral_mesh_domain_3
@@ -196,7 +195,7 @@ public:
   typedef boost::optional<Surface_patch_index>            Surface_patch;
   /// Type of indexes to characterize the lowest dimensional face of the input
   /// complex on which a vertex lie
-  typedef typename internal::Mesh_3::Index_generator<
+  typedef typename Mesh_3::internal::Index_generator<
     Subdomain_index, Surface_patch_index>::type           Index;
 
   typedef CGAL::cpp11::tuple<Point_3,Index,int> Intersection;

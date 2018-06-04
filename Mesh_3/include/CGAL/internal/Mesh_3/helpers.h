@@ -30,16 +30,18 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/disable_warnings.h>
+
+#include <boost/foreach.hpp>
+
 #include <iostream>
 #include <fstream>
-#include <boost/foreach.hpp>
-#include <CGAL/disable_warnings.h>
 
 namespace CGAL {
 
 /// @cond DEVELOPERS
-namespace internal {
 namespace Mesh_3 {
+namespace internal {
 
 template <typename Graph>
 void dump_graph_edges(std::ostream& out, const Graph& g)
@@ -181,11 +183,11 @@ struct Extract_polyline_with_context_visitor
 };
 
 
-} // end CGAL::internal::Mesh_3
-} // end CGAL::internal
+} // end CGAL::Mesh_3::internal
+} // end CGAL::Mesh_3
 
 /// @endcond
-  
+
 } // end CGAL
 
 #include <CGAL/enable_warnings.h>

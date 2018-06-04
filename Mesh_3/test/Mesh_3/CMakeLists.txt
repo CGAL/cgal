@@ -19,7 +19,6 @@ if ( CGAL_FOUND )
   include_directories (BEFORE ../../include)
   include_directories (BEFORE ../../../AABB_tree/include)
 
-  create_single_source_cgal_program( "test_backward_compatibility.cpp" )
   create_single_source_cgal_program( "test_boost_has_xxx.cpp" )
   create_single_source_cgal_program( "test_c3t3.cpp" )
   create_single_source_cgal_program( "test_mesh_capsule_var_distance_bound.cpp" )

@@ -94,7 +94,6 @@ is opposite to the vertex with the same index. See
 - `CGAL::Triangulation_vertex_base_with_info_3<Info, TriangulationTraits_3, TriangulationVertexBase_3>`
 - `CGAL::Triangulation_cell_base_3<TriangulationTraits_3, TriangulationDSCellBase_3>`
 - `CGAL::Triangulation_cell_base_with_info_3<Info, TriangulationTraits_3, TriangulationCellBase_3>`
-- `CGAL::Triangulation_cell_base_with_circumcenter_3<DelaunayTriangulationTraits_3, TriangulationCellBase_3>` (deprecated)
 - `CGAL::Delaunay_triangulation_cell_base_3<DelaunayTriangulationTraits_3,Cb>`
 - `CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3<DelaunayTriangulationTraits_3,Cb>`
 - `CGAL::Regular_triangulation_vertex_base_3<RegularTriangulationTraits_3,Vb>`

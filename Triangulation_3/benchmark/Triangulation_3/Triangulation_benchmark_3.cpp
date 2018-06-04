@@ -95,7 +95,7 @@ typedef CGAL::Spatial_lock_grid_3<CGAL::Tag_priority_blocking>    Lock_ds;
 // Delaunay T3
 typedef CGAL::Triangulation_data_structure_3<
   CGAL::Triangulation_vertex_base_3<K>,
-  CGAL::Triangulation_cell_base_3<K>,
+  CGAL::Delaunay_triangulation_cell_base_3<K>,
   CGAL::Parallel_tag >                                            DT_Tds;
 typedef CGAL::Delaunay_triangulation_3<
   K, DT_Tds, CGAL::Default, Lock_ds>                              DT3;
