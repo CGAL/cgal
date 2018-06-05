@@ -2,8 +2,10 @@
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include "SMesh_type.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_spheres_item.h"
+#include "Scene_facegraph_item_k_ring_selection.h"
 
 #include <CGAL/compute_average_spacing.h>
 
@@ -23,12 +25,15 @@
 #include "ui_Color_spheres_widget.h"
 
 using namespace CGAL::Three;
+
+//   I t e m - C l a s s
 class Colored_spheres_item
     :public Scene_spheres_item
+    
 {
   Q_OBJECT
 public :
-  Colored_spheres_item(Scene_group_item *parent, double radius);
+  Colored_spheres_item(Scene_surface_mesh_item *parent, double radius);
   ~Colored_spheres_item()
   {
     delete radius_slider;
@@ -39,13 +44,17 @@ public :
   }
   Scene_item* clone() const Q_DECL_OVERRIDE {return 0;}
   QString toolTip() const Q_DECL_OVERRIDE {return QString();}
-  QMenu* contextMenu() Q_DECL_OVERRIDE;   
+  QMenu* contextMenu() Q_DECL_OVERRIDE;
+  void select(double orig_x, double orig_y, double orig_z, 
+              double dir_x, double dir_y, double dir_z) Q_DECL_OVERRIDE;
+  
   
 public Q_SLOTS:
   void resize_spheres();
   
 private:
   QSlider* radius_slider;
+  Scene_surface_mesh_item* parent;
   double radius;
 };
 
@@ -62,7 +71,7 @@ public:
   }
 };
 
-
+//   P l u g i n - C l a s s
 class Colored_spheres_plugin :
     public QObject,
     public Polyhedron_demo_plugin_helper
@@ -92,15 +101,17 @@ public Q_SLOTS:
   void pop();
   void addColor();
   void invalidateDisplay();
+  void selected(const std::set<fg_vertex_descriptor> &m);
 private:
   DockWidget* dock_widget;
   QAction* actionBubbles;
-  mutable std::vector<SMesh::Vertex_index> vertices;
+  mutable boost::unordered_map<fg_vertex_descriptor, std::size_t> vertex_sphere_map;
   std::vector<QColor> colors;
   Colored_spheres_item* spheres;
+  Scene_facegraph_item_k_ring_selection k_ring_selector;
 }; // end Colored_spheres_plugin
 
-
+//   P l u g i n - D e f i n i t i o n s
 void Colored_spheres_plugin::init(QMainWindow *mainWindow, 
                                   Scene_interface *scene_interface, Messages_interface *)
 {
@@ -178,7 +189,7 @@ void Colored_spheres_plugin::pop()
     return;
   SMesh& mesh = *smitem->face_graph();
   double radius = 0.15 * CGAL::compute_average_spacing<CGAL::Sequential_tag>(mesh.points(), 3);
-  Colored_spheres_item* spheres = new Colored_spheres_item(NULL, radius);
+  Colored_spheres_item* spheres = new Colored_spheres_item(smitem, radius);
   QColor c;
   std::size_t max_deg = 0;
   BOOST_FOREACH(SMesh::Vertex_index vi, mesh.vertices())
@@ -196,6 +207,7 @@ void Colored_spheres_plugin::pop()
       c = spheres->color();
       c = QColor::fromHsv((c.hue()+ 55*deg)%360, (deg*25)%155+100,c.lightness(), c.alpha());
       colors[deg] = c;
+      vertex_sphere_map[fg_vertex_descriptor(vi)] = spheres->numberOfSpheres();
       const CGAL::qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
       const EPICK::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
       EPICK::Point_3 center(mesh.point(vi) + offset);
@@ -203,7 +215,6 @@ void Colored_spheres_plugin::pop()
       typedef unsigned char UC;
       spheres->add_sphere(EPICK::Sphere_3(center, radius),
                           CGAL::Color(UC(c.red()), UC(c.green()), UC(c.blue())));
-      vertices.push_back(vi);
     }
   }
   spheres->invalidateOpenGLBuffers();
@@ -216,16 +227,33 @@ void Colored_spheres_plugin::pop()
   dock_widget->show();
   scene->addItem(spheres);
   this->spheres = spheres;
+  
+  connect(&k_ring_selector, SIGNAL(selected(const std::set<fg_vertex_descriptor>&)), this,
+          SLOT(selected(const std::set<fg_vertex_descriptor>&)));
+  k_ring_selector.init(smitem, mw, Scene_facegraph_item_k_ring_selection::Active_handle::VERTEX, -1);
+  k_ring_selector.k_ring = 0;
 }
 
-Colored_spheres_item::Colored_spheres_item(Scene_group_item *parent, double radius)
-  :Scene_spheres_item(parent),
+void Colored_spheres_plugin::selected(const std::set<fg_vertex_descriptor> &m)
+{
+  fg_vertex_descriptor sel_v = *m.begin();
+  std::size_t id = vertex_sphere_map[sel_v];
+  spheres->setColor(CGAL::Color(255,255,255), id);
+  spheres->invalidateOpenGLBuffers();
+  spheres->redraw();
+}
+
+
+//   I t e m - D e f i n i t i o n s
+Colored_spheres_item::Colored_spheres_item(Scene_surface_mesh_item *parent, double radius)
+  :Scene_spheres_item(NULL),
+    parent(parent),
     radius(radius)
 {
   radius_slider = new QSlider(Qt::Horizontal);
   radius_slider->setMinimum(1);
   radius_slider->setValue(100);
-  radius_slider->setMaximum(200);
+  radius_slider->setMaximum(200);  
 }
 
 QMenu* Colored_spheres_item::contextMenu()
@@ -265,4 +293,8 @@ void Colored_spheres_item::resize_spheres()
   }
 }
 
+void Colored_spheres_item::select(double orig_x, double orig_y, double orig_z, double dir_x, double dir_y, double dir_z)
+{
+  parent->select(orig_x, orig_y, orig_z, dir_x, dir_y, dir_z); 
+}
 #include "Colored_spheres_plugin.moc"
