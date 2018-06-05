@@ -105,7 +105,7 @@ public :
     plane = NULL;
     //creates and link the actions
     actionClipPolyhedra = new QAction("Clip Polyhedra", mw);
-    actionClipPolyhedra->setProperty("subMenuName","Operations on Polyhedra");
+    actionClipPolyhedra->setProperty("subMenuName","Polygon Mesh Processing/Corefinement");
     dock_widget = new QDockWidget("Polyhedra Clipping", mw);
     dock_widget->setVisible(false); // do not show at the beginning
     ui_widget.setupUi(dock_widget);
