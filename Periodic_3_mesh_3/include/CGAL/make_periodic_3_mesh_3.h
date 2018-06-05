@@ -35,13 +35,11 @@
 #include <CGAL/refine_periodic_3_mesh_3.h>
 
 #include <CGAL/assertions.h>
+#include <CGAL/boost/parameter.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Mesh_3/C3T3_helpers.h>
-#include <CGAL/Mesh_3/global_parameters.h>
 
 #include <boost/parameter/preprocessor.hpp>
-
-#include <iterator>
 
 namespace CGAL {
 namespace Periodic_3_mesh_3 {
@@ -98,7 +96,7 @@ struct C3t3_initializer_base
                   bool nonlinear = false,
                   const int nb_initial_points = -1)
   {
-    c3t3.triangulation().set_domain(domain.canonical_periodic_domain());
+    c3t3.triangulation().set_domain(domain.bounding_box());
     c3t3.triangulation().insert_dummy_points();
     mark_dummy_points(c3t3);
 
@@ -249,8 +247,8 @@ C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc,
 
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/Mesh_3/config.h>
-CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+// see <CGAL/boost/parameter.h>
+CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 
 BOOST_PARAMETER_FUNCTION(
   (void),

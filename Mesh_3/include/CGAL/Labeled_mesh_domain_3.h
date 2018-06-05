@@ -923,13 +923,11 @@ protected:
     return functor;
   }
 
+public:
   /// Returns bounding box
   const Iso_cuboid_3& bounding_box() const { return this->bbox_; }
 
 };  // end class Labeled_mesh_domain_3
-
-
-
 
 //-------------------------------------------------------
 // Method implementation

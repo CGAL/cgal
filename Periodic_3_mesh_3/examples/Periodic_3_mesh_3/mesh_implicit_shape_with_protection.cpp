@@ -2,11 +2,12 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Periodic_3_mesh_3/IO/File_medit.h>
-#include <CGAL/Implicit_periodic_3_mesh_domain_3.h>
 #include <CGAL/make_periodic_3_mesh_3.h>
+#include <CGAL/Periodic_3_mesh_3/IO/File_medit.h>
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
+#include <CGAL/Periodic_3_wrapper.h>
 
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
@@ -28,21 +29,20 @@ typedef K::Point_3                                                  Point;
 typedef K::Iso_cuboid_3                                             Iso_cuboid;
 
 typedef FT (Function)(const Point&);
-typedef CGAL::Mesh_domain_with_polyline_features_3<
-          CGAL::Implicit_periodic_3_mesh_domain_3<Function,K> >     Mesh_domain;
+typedef CGAL::Mesh_domain_with_polyline_features_3<CGAL::Labeled_mesh_domain_3<K> > Periodic_mesh_domain;
 
 // Polyline
 typedef std::vector<Point>                                          Polyline_3;
 typedef std::list<Polyline_3>                                       Polylines;
 
 // Triangulation
-typedef CGAL::Periodic_3_mesh_triangulation_3<Mesh_domain>::type    Tr;
+typedef CGAL::Periodic_3_mesh_triangulation_3<Periodic_mesh_domain>::type             Tr;
 
 typedef CGAL::Mesh_complex_3_in_triangulation_3<
-          Tr, Mesh_domain::Corner_index, Mesh_domain::Curve_index>  C3t3;
+          Tr, Periodic_mesh_domain::Corner_index, Periodic_mesh_domain::Curve_index>  C3t3;
 
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr>                                   Mesh_criteria;
+typedef CGAL::Mesh_criteria_3<Tr>                                   Periodic_mesh_criteria;
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
@@ -67,7 +67,7 @@ void cone_polylines(Polylines& polylines)
   const FT radius_at_z = CGAL::sqrt(scale * cz * cz);
 
   Polyline_3 polyline;
-  for(int i = 0; i < 360; ++i)
+  for(int i=0; i<360; ++i)
   {
     polyline.push_back(Point(cx + radius_at_z * std::sin(i*CGAL_PI/180),
                              cy + radius_at_z * std::cos(i*CGAL_PI/180),
@@ -84,14 +84,18 @@ int main(int argc, char** argv)
 
   // Domain
   const int domain_size = 1;
-  Mesh_domain domain(cone_function,
-                     CGAL::Iso_cuboid_3<K>(0, 0, 0, domain_size, domain_size, domain_size));
+  Iso_cuboid canonical_cube(0, 0, 0, domain_size, domain_size, domain_size);
+
+  Periodic_mesh_domain domain =
+    Periodic_mesh_domain::create_implicit_mesh_domain(
+      CGAL::make_periodic_3_wrapper<K>(cone_function, canonical_cube), canonical_cube);
 
   // Mesh criteria
-  Mesh_criteria criteria(edge_size = 0.02 * domain_size,
-                         facet_angle = 0.05 * domain_size,
-                         facet_size = 0.02 * domain_size,
-                         cell_radius_edge_ratio = 2, cell_size = 0.5);
+  Periodic_mesh_criteria criteria(edge_size = 0.02 * domain_size,
+                                  facet_angle = 0.05 * domain_size,
+                                  facet_size = 0.02 * domain_size,
+                                  cell_radius_edge_ratio = 2,
+                                  cell_size = 0.5);
 
   // Create the features that we want to preserve
   Polylines polylines;

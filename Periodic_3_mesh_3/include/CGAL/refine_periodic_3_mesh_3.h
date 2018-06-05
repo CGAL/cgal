@@ -40,6 +40,8 @@
 #include <boost/unordered_set.hpp>
 
 #include <algorithm>
+#include <iostream>
+#include <iterator>
 
 namespace CGAL {
 
@@ -144,8 +146,8 @@ void project_points(C3T3& c3t3,
 
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/Mesh_3/config.h>
-CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+// see <CGAL/boost/parameter.h>
+CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 
 BOOST_PARAMETER_FUNCTION(
   (void),

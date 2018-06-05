@@ -2,12 +2,13 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Periodic_3_mesh_3/IO/File_medit.h>
-#include <CGAL/Implicit_periodic_3_mesh_domain_3.h>
 #include <CGAL/make_periodic_3_mesh_3.h>
 #include <CGAL/optimize_periodic_3_mesh_3.h>
+#include <CGAL/Periodic_3_mesh_3/IO/File_medit.h>
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
+#include <CGAL/Periodic_3_wrapper.h>
 
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
@@ -17,25 +18,28 @@
 #include <iostream>
 #include <fstream>
 
-// Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT                                               FT;
 typedef K::Point_3                                          Point;
+typedef K::Iso_cuboid_3                                     Iso_cuboid;
+
+// Domain
 typedef FT (Function)(const Point&);
-typedef CGAL::Implicit_periodic_3_mesh_domain_3<Function,K> Periodic_mesh_domain;
+typedef CGAL::Labeled_mesh_domain_3<K>                      Periodic_mesh_domain;
 
 // Triangulation
 typedef CGAL::Periodic_3_mesh_triangulation_3<Periodic_mesh_domain>::type Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr>                       C3t3;
 
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Periodic_mesh_criteria;
+typedef CGAL::Mesh_criteria_3<Tr>                           Periodic_mesh_criteria;
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
 // Implicit function
-FT schwarz_p(const Point& p) {
+FT schwarz_p(const Point& p)
+{
   const FT x2 = std::cos( p.x() * 2 * CGAL_PI ),
            y2 = std::cos( p.y() * 2 * CGAL_PI ),
            z2 = std::cos( p.z() * 2 * CGAL_PI );
@@ -49,7 +53,10 @@ int main(int argc, char** argv)
   int domain_size = (argc > 1) ? atoi(argv[1]) : 1;
   int number_of_copies_in_output = (argc > 2) ? atoi(argv[2]) : 4; // can be 1, 2, 4, or 8
 
-  Periodic_mesh_domain domain(schwarz_p, CGAL::Iso_cuboid_3<K>(0, 0, 0, domain_size, domain_size, domain_size));
+  Iso_cuboid canonical_cube(0, 0, 0, domain_size, domain_size, domain_size);
+
+  Periodic_mesh_domain domain =
+    Periodic_mesh_domain::create_implicit_mesh_domain(schwarz_p, canonical_cube);
 
   Periodic_mesh_criteria criteria(facet_angle = 30,
                                   facet_size = 0.05 * domain_size,

@@ -51,6 +51,7 @@ public:
   /// Operator ()
   return_type operator()(const Point_3& p, const bool = true) const
   {
+    // here is the important part : both > 0 ---> mesh both the interior and the exterior
     return ( (r_f_(p)<0) ? 1 : 2 );
   }
 

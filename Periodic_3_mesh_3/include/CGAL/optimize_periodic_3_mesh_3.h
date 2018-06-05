@@ -35,8 +35,8 @@ namespace CGAL {
 
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/Mesh_3/config.h>
-CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+// see <CGAL/boost/parameter.h>
+CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 
 // ---------------------------------- pertuber ---------------------------------
 

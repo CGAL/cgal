@@ -2,12 +2,12 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Periodic_3_mesh_3/IO/File_medit.h>
-#include <CGAL/Implicit_periodic_3_mesh_domain_3.h>
 #include <CGAL/make_periodic_3_mesh_3.h>
 #include <CGAL/optimize_periodic_3_mesh_3.h>
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
+#include <CGAL/Periodic_3_mesh_3/IO/File_medit.h>
 
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
@@ -17,19 +17,21 @@
 #include <iostream>
 #include <fstream>
 
-// Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT                                               FT;
 typedef K::Point_3                                          Point;
+typedef K::Iso_cuboid_3                                     Iso_cuboid;
+
+// Domain
 typedef FT (Function)(const Point&);
-typedef CGAL::Implicit_periodic_3_mesh_domain_3<Function,K> Periodic_mesh_domain;
+typedef CGAL::Labeled_mesh_domain_3<K>                      Periodic_mesh_domain;
 
 // Triangulation
 typedef CGAL::Periodic_3_mesh_triangulation_3<Periodic_mesh_domain>::type Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr>                       C3t3;
 
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Periodic_mesh_criteria;
+typedef CGAL::Mesh_criteria_3<Tr>                           Periodic_mesh_criteria;
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
@@ -43,7 +45,8 @@ FT double_p(const Point& p)
   const FT c2x = std::cos(4 * CGAL_PI * p.x()),
            c2y = std::cos(4 * CGAL_PI * p.y()),
            c2z = std::cos(4 * CGAL_PI * p.z());
-  return 0.5 * (cx * cy  + cy * cz + cz * cx ) + 0.2*(c2x + c2y + c2z);
+
+  return 0.5 * (cx*cy + cy*cz + cz*cx) + 0.2 * (c2x + c2y + c2z);
 }
 
 int main(int argc, char** argv)
@@ -53,7 +56,11 @@ int main(int argc, char** argv)
   int domain_size = (argc > 1) ? atoi(argv[1]) : 1;
   int number_of_copies_in_output = (argc > 2) ? atoi(argv[2]) : 8; // can be 1, 2, 4, or 8
 
-  Periodic_mesh_domain domain(double_p, CGAL::Iso_cuboid_3<K>(0, 0, 0, domain_size, domain_size, domain_size));
+  Iso_cuboid canonical_cube(0, 0, 0, domain_size, domain_size, domain_size);
+
+  // there is no need for periodicity... ?
+  Periodic_mesh_domain domain =
+    Periodic_mesh_domain::create_implicit_mesh_domain(double_p, canonical_cube);
 
   Periodic_mesh_criteria criteria(facet_angle = 30,
                                   facet_size = 0.05 * domain_size,
@@ -68,7 +75,7 @@ int main(int argc, char** argv)
                                                  perturb(sliver_bound=10, time_limit=30),
                                                  exude(sliver_bound=10, time_limit=0));
 
-  std::ofstream medit_file("output_implicit_shape.mesh");
+  std::ofstream medit_file("output_implicit_shape_optimized.mesh");
   CGAL::output_to_medit(medit_file, c3t3);
 
   // Below, the mesh generation and the optimizations are done in several calls

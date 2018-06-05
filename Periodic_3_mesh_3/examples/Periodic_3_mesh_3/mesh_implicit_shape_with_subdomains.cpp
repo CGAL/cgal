@@ -2,12 +2,12 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Periodic_3_mesh_3/IO/File_medit.h>
-#include <CGAL/Implicit_periodic_3_mesh_domain_3.h>
 #include <CGAL/Implicit_to_labeled_subdomains_function_wrapper.h>
 #include <CGAL/make_periodic_3_mesh_3.h>
+#include <CGAL/Periodic_3_mesh_3/IO/File_medit.h>
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
 
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_constant_domain_field_3.h>
@@ -21,11 +21,12 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT                                               FT;
 typedef K::Point_3                                          Point;
+typedef K::Iso_cuboid_3                                     Iso_cuboid;
 
 // Domain
 typedef FT (Function)(const Point&);
 typedef CGAL::Implicit_to_labeled_subdomains_function_wrapper<Function, K> Function_wrapper;
-typedef CGAL::Implicit_periodic_3_mesh_domain_3<Function, K, Function_wrapper> Periodic_mesh_domain;
+typedef CGAL::Labeled_mesh_domain_3<K>                                     Periodic_mesh_domain;
 
 // Triangulation
 typedef CGAL::Periodic_3_mesh_triangulation_3<Periodic_mesh_domain>::type Tr;
@@ -38,10 +39,12 @@ typedef CGAL::Mesh_criteria_3<Tr> Periodic_mesh_criteria;
 using namespace CGAL::parameters;
 
 // Function
-FT schwarz_p(const Point& p) {
+FT schwarz_p(const Point& p)
+{
   const FT x2 = std::cos( p.x() * 2 * CGAL_PI ),
            y2 = std::cos( p.y() * 2 * CGAL_PI ),
            z2 = std::cos( p.z() * 2 * CGAL_PI );
+
   return x2 + y2 + z2;
 }
 
@@ -53,7 +56,10 @@ int main(int argc, char** argv)
 {
   int number_of_copies_in_output = (argc > 1) ? atoi(argv[1]) : 4; // can be 1, 2, 4, or 8
 
-  Periodic_mesh_domain domain(schwarz_p, CGAL::Iso_cuboid_3<K>(0, 0, 0, 1, 1, 1));
+  Iso_cuboid canonical_cube(0, 0, 0, 1, 1, 1);
+
+  Function_wrapper wrapper(schwarz_p);
+  Periodic_mesh_domain domain(wrapper, canonical_cube);
 
   // Write the two different sizing fields for cells
   int volume_dimension = 3;
