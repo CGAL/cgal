@@ -104,7 +104,6 @@ public:
   typedef typename Tr_Base::Lock_data_structure Lock_data_structure;
 
   typedef typename Gt::Point_3       Point;
-    typedef typename Gt::Point_3       Point_;
   typedef typename Gt::Segment_3     Segment;
   typedef typename Gt::Triangle_3    Triangle;
   typedef typename Gt::Tetrahedron_3 Tetrahedron;
@@ -183,12 +182,12 @@ public:
 protected:
 
   Oriented_side
-  side_of_oriented_sphere(const Point_ &p0, const Point_ &p1, const Point_ &p2,
-         const Point_ &p3, const Point_ &t, bool perturb = false) const;
+  side_of_oriented_sphere(const Point &p0, const Point &p1, const Point &p2,
+         const Point &p3, const Point &t, bool perturb = false) const;
 
   Bounded_side
-  coplanar_side_of_bounded_circle(const Point_ &p, const Point_ &q,
-                  const Point_ &r, const Point_ &s, bool perturb = false) const;
+  coplanar_side_of_bounded_circle(const Point &p, const Point &q,
+                  const Point &r, const Point &s, bool perturb = false) const;
 
   // for dual:
   Point
@@ -1409,8 +1408,8 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
 template < class Gt, class Tds, class Lds >
 Oriented_side
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
-side_of_oriented_sphere(const Point_ &p0, const Point_ &p1, const Point_ &p2,
-                        const Point_ &p3, const Point_ &p, bool perturb) const
+side_of_oriented_sphere(const Point &p0, const Point &p1, const Point &p2,
+                        const Point &p3, const Point &p, bool perturb) const
 {
     CGAL_triangulation_precondition( orientation(p0, p1, p2, p3) == POSITIVE );
 
@@ -1451,8 +1450,8 @@ side_of_oriented_sphere(const Point_ &p0, const Point_ &p1, const Point_ &p2,
 template < class Gt, class Tds, class Lds >
 Bounded_side
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
-coplanar_side_of_bounded_circle(const Point_ &p0, const Point_ &p1,
-               const Point_ &p2, const Point_ &p, bool perturb) const
+coplanar_side_of_bounded_circle(const Point &p0, const Point &p1,
+               const Point &p2, const Point &p, bool perturb) const
 {
     // In dim==2, we should even be able to assert orient == POSITIVE.
     CGAL_triangulation_precondition( coplanar_orientation(p0, p1, p2)
