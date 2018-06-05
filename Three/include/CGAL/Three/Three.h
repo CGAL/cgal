@@ -1,5 +1,8 @@
 #ifndef THREE_H
 #define THREE_H
+
+#include <CGAL/license/Three.h>
+
 #include <QString>
 #include <QObject>
 #include <CGAL/Three/Scene_interface.h>
