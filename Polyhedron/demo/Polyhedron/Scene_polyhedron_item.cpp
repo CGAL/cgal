@@ -1,5 +1,7 @@
 #include "Scene_polyhedron_item.h"
 #include <CGAL/Three/Viewer_interface.h>
+
+#ifndef Q_MOC_RUN
 #include <CGAL/intersections.h>
 #include "Kernel_type.h"
 #include <CGAL/IO/File_writer_wavefront.h>
@@ -22,6 +24,7 @@
 #include <list>
 #include <iostream>
 #include <limits>
+#endif // Q_MOC_RUN
 
 #include <QVariant>
 #include <QDebug>
@@ -33,10 +36,12 @@
 #include <QMenu>
 #include <QAction>
 
+#ifndef Q_MOC_RUN
 #include <boost/foreach.hpp>
 #include "triangulate_primitive.h"
 #include "Color_map.h"
 #include "id_printing.h"
+#endif // Q_MOC_RUN
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 typedef Polyhedron::Traits Traits;

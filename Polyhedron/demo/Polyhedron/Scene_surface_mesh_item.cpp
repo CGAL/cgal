@@ -2,8 +2,10 @@
 
 #include "Color_map.h"
 
+#ifndef Q_MOC_RUN
 #include <boost/graph/properties.hpp>
 #include <boost/graph/graph_traits.hpp>
+#endif
 
 #include <QOpenGLShaderProgram>
 #include <QInputDialog>
@@ -13,6 +15,7 @@
 #include <QMessageBox>
 #include <QMenu>
 
+#ifndef Q_MOC_RUN
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh/IO.h>
 #include <CGAL/intersections.h>
@@ -33,6 +36,7 @@
 #include <CGAL/statistics_helpers.h>
 
 #include "id_printing.h"
+#endif
 
 //Used to triangulate the AABB_Tree
 class Primitive
