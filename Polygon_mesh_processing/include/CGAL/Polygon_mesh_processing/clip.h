@@ -558,11 +558,9 @@ bool clip(      TriangleMesh& tm,
 /// \cond SKIP_IN_MANUAL
 
 // convenience overloads
-template <class TriangleMesh,
-          class NamedParameters>
+template <class TriangleMesh>
 bool clip(      TriangleMesh& tm,
-          const typename GetGeomTraits<TriangleMesh,
-                                       NamedParameters>::type::Plane_3& plane)
+          const typename GetGeomTraits<TriangleMesh>::type::Plane_3& plane)
 {
   return clip(tm, plane, parameters::all_default());
 }
