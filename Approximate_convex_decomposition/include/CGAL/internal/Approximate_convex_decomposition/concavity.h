@@ -30,15 +30,15 @@ namespace internal
         typedef typename GeomTraits::Vector_3 Vector_3;
         typedef typename GeomTraits::Ray_3 Ray_3;
         
-        typedef CGAL::Surface_mesh<Point_3> SM;
+        typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
         
-        typedef typename boost::graph_traits<SM>::vertex_descriptor vertex_descriptor;
+        typedef typename boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
 
-        typedef CGAL::Face_filtered_graph<SM> Filtered_graph;
-        typedef CGAL::AABB_face_graph_triangle_primitive<SM> AABB_primitive;
+        typedef CGAL::Face_filtered_graph<Surface_mesh> Filtered_graph;
+        typedef CGAL::AABB_face_graph_triangle_primitive<Surface_mesh> AABB_primitive;
         typedef CGAL::AABB_tree<CGAL::AABB_traits<GeomTraits, AABB_primitive>> AABB_tree;
 
-//        typedef boost::optional<AABB_tree::Intersection_and_primitive_id<Ray_3>::Type> Ray_intersection; // TODO: fix the compilation error
+        typedef boost::optional<typename AABB_tree::template Intersection_and_primitive_id<Ray_3>::Type> Ray_intersection;
     
     public:
         Concavity(const TriangleMesh& mesh, const GeomTraits& traits)
@@ -51,7 +51,7 @@ namespace internal
         {
             Filtered_graph filtered_mesh(m_mesh, cluster_id, facet_ids);
 
-            SM cluster;
+            Surface_mesh cluster;
             CGAL::copy_face_graph(filtered_mesh, cluster);
 //            {
 //                std::ofstream os("cluster_" + std::to_string(cluster_id) + ".off");
@@ -66,7 +66,7 @@ namespace internal
         {
             CGAL_assertion(!CGAL::is_empty(m_mesh));
 
-            SM conv_hull;
+            Surface_mesh conv_hull;
             std::vector<Point_3> pts;
 
             BOOST_FOREACH(vertex_descriptor vert, CGAL::vertices(m_mesh))
@@ -84,7 +84,7 @@ namespace internal
             return compute(conv_hull);
         }
 
-        double compute(const SM& conv_hull)
+        double compute(const Surface_mesh& conv_hull)
         {
             typedef std::map<vertex_descriptor, Vector_3> Normals_map;
             Normals_map normals_map;
@@ -100,7 +100,7 @@ namespace internal
 //                std::cout << m_mesh.point(vert) << " " << normals_map[vert] << " " << normals_map[vert].squared_length() << " -> ";
                 Ray_3 ray(m_mesh.point(vert), normals_map[vert]);
                 
-                auto intersection = tree.first_intersection(ray);
+                Ray_intersection intersection = tree.first_intersection(ray);
                 if (intersection)
                 {
                     const Point_3* p =  boost::get<Point_3>(&(intersection->first));
@@ -113,7 +113,7 @@ namespace internal
 //                std::cout << std::endl;
             }
 
-            return result;
+            return CGAL::sqrt(result);
         }
 
     private:

@@ -19,7 +19,6 @@ namespace CGAL
  * @return concativity value (the largest squared distance from a point in a cluster to the projected point onto the convex hull of a mesh).
  */
 template <class TriangleMesh, class FacePropertyMap,
-//          class GeomTraits = CGAL::Simple_cartesian<double>
           class GeomTraits = CGAL::Exact_predicates_inexact_constructions_kernel
           >
 double
@@ -45,21 +44,19 @@ concavity_value(const TriangleMesh& mesh,
  * @return number of clusters.
  */
 template <class TriangleMesh, class FacePropertyMap,
-          class PointPropertyMap = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
-          class GeomTraits = typename Kernel_traits<typename boost::property_traits<PointPropertyMap>::value_type>::Kernel
+          class GeomTraits = CGAL::Exact_predicates_inexact_constructions_kernel
           >
 std::size_t
 convex_decomposition(const TriangleMesh& mesh,
                      FacePropertyMap face_ids,
                      double concavity_threshold = 100,
                      std::size_t min_number_of_clusters = 1,
-                     PointPropertyMap ppmap = PointPropertyMap(),
                      const GeomTraits& traits = GeomTraits())
 {
     CGAL_precondition(CGAL::is_triangle_mesh(mesh));
 
     internal::Approx_decomposition<TriangleMesh, GeomTraits> algorithm(mesh, traits);
-    return algorithm.decompose(face_ids, ppmap, concavity_threshold, min_number_of_clusters);
+    return algorithm.decompose(face_ids, concavity_threshold, min_number_of_clusters);
 }
 
 

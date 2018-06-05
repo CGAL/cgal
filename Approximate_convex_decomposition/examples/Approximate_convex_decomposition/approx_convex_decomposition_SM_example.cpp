@@ -19,6 +19,8 @@ int main()
     Mesh mesh;
     
     std::ifstream input("data/cube.off");
+//    std::ifstream input("data/mushroom.off");
+//    std::ifstream input("data/cactus.off");
 //    std::ifstream input("data/cheese.off");
 //    std::ifstream input("data/lion-head.off");
 //    std::ifstream input("data/elephant.off");
@@ -41,7 +43,7 @@ int main()
     boost::associative_property_map<Facet_int_map> facet_property_map(facet_map);
 
     // decompose mesh with default parameters
-    std::size_t clusters_num = CGAL::convex_decomposition(mesh, facet_property_map);
+    std::size_t clusters_num = CGAL::convex_decomposition(mesh, facet_property_map, 100, 2);
 
     // write cluster-ids for each facet
     std::cout << "Number of clusters: " << clusters_num << std::endl;
