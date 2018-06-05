@@ -223,7 +223,7 @@ clip_to_bbox(const Plane_3& plane,
 
   std::vector<Point_3> points;
 
-  // description of faces
+  // description of faces of the bbox
   cpp11::array<int, 24> face_indices =
     {{ 0, 1, 2, 3,
        2, 1, 5, 6,
