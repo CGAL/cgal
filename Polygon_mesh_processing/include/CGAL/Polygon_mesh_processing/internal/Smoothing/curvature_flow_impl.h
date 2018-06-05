@@ -80,7 +80,7 @@ public:
   template<typename FaceRange>
   void init_smoothing(const FaceRange& face_range)
   {
-    check_face_range(face_range);
+    set_face_range(face_range);
   }
 
   void setup_system(Eigen_matrix& A,
@@ -94,11 +94,10 @@ public:
 
   void solve_system(const Eigen_matrix& A,
                     Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz,
-                    const Eigen_vector& bx, const Eigen_vector& by, const Eigen_vector& bz)
+                    const Eigen_vector& bx, const Eigen_vector& by, const Eigen_vector& bz,
+                    SparseLinearSolver& solver)
   {
-    SparseLinearSolver solver;
     NT D;
-
     // calls compute once to factorize with the preconditioner
     if(!solver.factor(A, D))
     {
@@ -267,11 +266,11 @@ private:
   }
 
   template<typename FaceRange>
-  void check_face_range(const FaceRange& face_range)
+  void set_face_range(const FaceRange& face_range)
   {
+    frange_.assign(face_range.begin(), face_range.end());
     BOOST_FOREACH(face_descriptor f, face_range)
     {
-      frange_.insert(f);
       BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, mesh_), mesh_))
         vrange_.insert(v);
     }
@@ -290,7 +289,7 @@ private:
   std::vector<double> diagonal_; // index of vector -> index of vimap_
   std::vector<bool> constrained_flags_;
 
-  std::set<face_descriptor> frange_;
+  std::vector<face_descriptor> frange_;
   std::set<vertex_descriptor> vrange_;
   Edge_cotangent_weight<PolygonMesh, VertexPointMap> weight_calculator_;
 };

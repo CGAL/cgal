@@ -19,8 +19,8 @@
 //
 // Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_CONSTRAINTS_MAP_H
-#define CGAL_POLYGON_MESH_PROCESSING_CONSTRAINTS_MAP_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_INTERNAL_CONSTRAINTS_MAP_H
+#define CGAL_POLYGON_MESH_PROCESSING_INTERNAL_CONSTRAINTS_MAP_H
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
@@ -30,30 +30,6 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
-template<typename Descriptor>
-struct Constrained_vertices_map
-{
-  typedef Descriptor                          key_type;
-  typedef bool                                value_type;
-  typedef value_type&                         reference;
-  typedef boost::read_write_property_map_tag  category;
-
-  boost::shared_ptr<std::set<Descriptor> > constrained_data;
-
-public:
-  Constrained_vertices_map() : constrained_data(new std::set<Descriptor>) {}
-
-  friend bool get(const Constrained_vertices_map& map, const key_type& d)
-  {
-    typename std::set<Descriptor>::iterator it = map.constrained_data->find(d);
-    return it != map.constrained_data->end() ? true : false;
-  }
-
-  friend void put(Constrained_vertices_map& map, const key_type& d)
-  {
-    map.constrained_data->insert(d);
-  }
-};
 
 template<typename PolygonMesh, typename VertexPointMap,
          typename CotangentValue = CGAL::internal::Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
@@ -97,4 +73,4 @@ struct Edge_cotangent_weight : CotangentValue
 }
 }
 
-#endif //CGAL_POLYGON_MESH_PROCESSING_CONSTRAINTS_MAP_H
+#endif //CGAL_POLYGON_MESH_PROCESSING_INTERNAL_CONSTRAINTS_MAP_H

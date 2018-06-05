@@ -199,11 +199,18 @@ int main(int argc, char* argv[])
 
   std::ifstream input1(filename_devil);
   SurfaceMesh mesh_devil;
-  input1 >> mesh_devil;
+  if (!input1 || !(input1 >> mesh_devil)){
+    std::cerr << "Error: can not read file.";
+    return 1;
+  }
   input1.close();
 
   std::ifstream input2(filename_pyramid);
   SurfaceMesh mesh_pyramid;
+  if (!input2 || !(input2 >> mesh_pyramid)){
+    std::cerr << "Error: can not read file.";
+    return 1;
+  }
   input2.close();
 
   test_demo_helpers<SurfaceMesh>(mesh_devil);
@@ -215,12 +222,18 @@ int main(int argc, char* argv[])
 
   input1.open(filename_devil);
   Mesh_with_id pl_mesh_devil;
-  input1 >> pl_mesh_devil;
+  if (!input1 || !(input1 >> pl_mesh_devil)){
+    std::cerr << "Error: can not read file.";
+    return 1;
+  }
   input1.close();
 
   input2.open(filename_pyramid);
   Mesh_with_id pl_mesh_pyramid;
-  input2 >> pl_mesh_pyramid;
+  if (!input2 || !(input2 >> pl_mesh_pyramid)){
+    std::cerr << "Error: can not read file.";
+    return 1;
+  }
   input2.close();
 
   set_halfedgeds_items_id(pl_mesh_devil);

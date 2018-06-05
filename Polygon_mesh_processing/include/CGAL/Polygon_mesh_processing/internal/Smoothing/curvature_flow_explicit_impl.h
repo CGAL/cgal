@@ -19,8 +19,8 @@
 //
 // Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_EXPLICIT_IMPL_H
-#define CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_EXPLICIT_IMPL_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_INTERNAL_CURVATURE_FLOW_EXPLICIT_IMPL_H
+#define CGAL_POLYGON_MESH_PROCESSING_INTERNAL_CURVATURE_FLOW_EXPLICIT_IMPL_H
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
@@ -98,7 +98,7 @@ public:
   template<typename FaceRange>
   void init_smoothing(const FaceRange& face_range)
   {
-    check_vertex_range(face_range);
+    set_vertex_range(face_range);
     BOOST_FOREACH(face_descriptor f, face_range)
     {
       Triangle t;
@@ -114,7 +114,7 @@ public:
 
   void curvature_smoothing()
   {
-    std::map<vertex_descriptor, Point> barycenters;
+    boost::unordered_map<vertex_descriptor, Point> barycenters;
     BOOST_FOREACH(vertex_descriptor v, vrange)
     {
       if(!is_border(v, mesh_) && !is_constrained(v))
@@ -160,60 +160,19 @@ public:
     } // all vertices
 
     // update location
-    typedef typename std::map<vertex_descriptor, Point>::value_type VP;
+    typedef typename boost::unordered_map<vertex_descriptor, Point>::value_type VP;
     BOOST_FOREACH(const VP& vp, barycenters)
       put(vpmap_, vp.first, vp.second);
   }
 
 private:
-
-  // degeneracy removal
-  // ------------------
-  void check_degeneracy(halfedge_descriptor h1)
-  {
-    halfedge_descriptor h2 = next(h1, mesh_);
-    halfedge_descriptor h3 = next(h2, mesh_);
-
-    double a1 = get_angle(h1, h2);
-    double a2 = get_angle(h2, h3);
-    double a3 = get_angle(h3, h1);
-
-    double angle_min_threshold = 0.05; // rad
-    double angle_max_threshold = CGAL_PI - 0.05;
-
-    if(a1 < angle_min_threshold || a2 < angle_min_threshold || a3 < angle_min_threshold)
-    {
-      Euler::remove_face(h1, mesh_);
-    }
-
-    if(a1 > angle_max_threshold || a2 > angle_max_threshold || a3 > angle_max_threshold)
-    {
-      Euler::remove_face(h1, mesh_);
-    }
-  }
-
-  double get_angle(halfedge_descriptor ha, halfedge_descriptor hb)
-  {
-    Vector a(get(vpmap_, source(ha, mesh_)), get(vpmap_, target(ha, mesh_)));
-    Vector b(get(vpmap_, source(hb, mesh_)), get(vpmap_, target(hb, mesh_)));
-    return get_angle(a, b);
-  }
-
-  double get_angle(const Vector& e1, const Vector& e2)
-  {
-    //double rad_to_deg = 180. / CGAL_PI;
-    double cos_angle = (e1 * e2)
-        / std::sqrt(e1.squared_length() * e2.squared_length());
-    return std::acos(cos_angle); //* rad_to_deg;
-  }
-
   bool is_constrained(const vertex_descriptor& v)
   {
     return get(vcmap_, v);
   }
 
   template<typename FaceRange>
-  void check_vertex_range(const FaceRange& face_range)
+  void set_vertex_range(const FaceRange& face_range)
   {
     BOOST_FOREACH(face_descriptor f, face_range)
     {
@@ -240,4 +199,4 @@ private:
 } // CGAL
 
 
-#endif // CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_EXPLICIT_IMPL_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_INTERNAL_CURVATURE_FLOW_EXPLICIT_IMPL_H

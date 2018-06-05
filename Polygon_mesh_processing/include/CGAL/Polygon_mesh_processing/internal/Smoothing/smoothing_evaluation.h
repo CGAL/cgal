@@ -68,8 +68,8 @@ public:
       Point c = get(vpmap_, target(next(hi, mesh_), mesh_));
       Vector ba(b, a);
       Vector bc(b, c);
-      double cos_angle = (ba * bc)
-        / std::sqrt(ba.squared_length() * bc.squared_length());
+      double cos_angle = CGAL::to_double((ba * bc))
+        / CGAL::approximate_sqrt(ba.squared_length() * bc.squared_length());
       angles_.push_back(std::acos(cos_angle) * rad_to_deg);
     }
     #ifdef CGAL_PMP_SMOOTHING_VERBOSE
@@ -118,8 +118,8 @@ public:
 
       for(int i=0; i<3; ++i)
       {
-        double alt = CGAL::sqrt(CGAL::squared_distance(points[(0+i)%3], Line(points[(1+i)%3], points[(2+i)%3])));
-        double edge =  CGAL::sqrt(CGAL::squared_distance(points[(1+i)%3], points[(2+i)%3]));
+        double alt = CGAL::approximate_sqrt(CGAL::squared_distance(points[(0+i)%3], Line(points[(1+i)%3], points[(2+i)%3])));
+        double edge =  CGAL::approximate_sqrt(CGAL::squared_distance(points[(1+i)%3], points[(2+i)%3]));
         if(alt < min_alt) { min_alt = alt; }
         if(edge > longest_edge) { longest_edge = edge; }
       }

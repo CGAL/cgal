@@ -136,12 +136,15 @@ and C<sup>2</sup> continuity.\n
 \cgalNPEnd
 
 \cgalNPBegin{sparse_linear_solver} \anchor PMP_sparse_linear_solver
-is the solver used in `fair()`.\n
+is the solver used.\n
 <b>Type:</b> a class model of `SparseLinearAlgebraWithFactorTraits_d`.\n
 <b>Default:</b> if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and
 `CGAL_EIGEN3_ENABLED` is defined, then the following overload of `Eigen_solver_traits`
 is provided as default value:\n
+in `fair()`:\n
 \code CGAL::Eigen_solver_traits<Eigen::SparseLU<CGAL::Eigen_sparse_matrix<double>::EigenType, Eigen::COLAMDOrdering<int> > > \endcode
+in `smooth_along_curvature_flow()`:\n
+\code CGAL::Eigen_solver_traits<Eigen::BiCGSTAB<CGAL::Eigen_sparse_matrix<double>::EigenType, Eigen::IncompleteLUT<double> > > \endcode
 \cgalNPEnd
 
 \cgalNPBegin{number_of_iterations} \anchor PMP_number_of_iterations

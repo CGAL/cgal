@@ -19,8 +19,8 @@
 //
 // Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_MESH_SMOOTHING_IMPL_H
-#define CGAL_POLYGON_MESH_PROCESSING_MESH_SMOOTHING_IMPL_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_INTERNAL_MESH_SMOOTHING_IMPL_H
+#define CGAL_POLYGON_MESH_PROCESSING_INTERNAL_MESH_SMOOTHING_IMPL_H
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
@@ -48,31 +48,32 @@ namespace Polygon_mesh_processing {
 namespace internal {
 
 template<typename PolygonMesh, typename VertexPointMap, typename VertexConstraintMap, typename GeomTraits>
-class Compatible_remesher
+class Compatible_smoother
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
-  typedef typename GeomTraits::Point_3 Point;
+  typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
+  typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
   typedef typename GeomTraits::Vector_3 Vector;
   typedef typename GeomTraits::Segment_3 Segment;
   typedef typename GeomTraits::Triangle_3 Triangle;
 
   typedef std::vector<Triangle> Triangle_list;
   typedef std::pair<halfedge_descriptor, halfedge_descriptor> He_pair;
-  typedef std::map<halfedge_descriptor, He_pair> Edges_around_map;
+  typedef std::vector<halfedge_descriptor> Hedges;
 
   typedef CGAL::AABB_triangle_primitive<GeomTraits, typename Triangle_list::iterator> AABB_Primitive;
   typedef CGAL::AABB_traits<GeomTraits, AABB_Primitive> AABB_Traits;
   typedef CGAL::AABB_tree<AABB_Traits> Tree;
 
 public:
-  Compatible_remesher(PolygonMesh& pmesh, VertexPointMap& vpmap, VertexConstraintMap& vcmap) :
+  Compatible_smoother(PolygonMesh& pmesh, VertexPointMap& vpmap, VertexConstraintMap& vcmap) :
     mesh_(pmesh), vpmap_(vpmap), vcmap_(vcmap)
   {}
 
-  ~Compatible_remesher()
+  ~Compatible_smoother()
   {
     delete tree_ptr_;
   }
@@ -80,7 +81,7 @@ public:
   template<typename FaceRange>
   void init_smoothing(const FaceRange& face_range)
   {
-    check_vertex_range(face_range);
+    set_vertex_range(face_range);
 
     BOOST_FOREACH(face_descriptor f, face_range)
     {
@@ -102,9 +103,10 @@ public:
 
   void angle_relaxation()
   {
-    std::map<vertex_descriptor, Point> barycenters;
-    std::map<vertex_descriptor, Vector> n_map;
-
+    std::map<vertex_descriptor, Point_3> barycenters;
+    typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<Vector> >::type
+        NormalsMap;
+    NormalsMap n_map = get(CGAL::dynamic_vertex_property_t<Vector>(), mesh_);
 
     BOOST_FOREACH(vertex_descriptor v, vrange_)
     {
@@ -114,33 +116,34 @@ public:
         Vector vn = compute_vertex_normal(v, mesh_,
                          Polygon_mesh_processing::parameters::vertex_point_map(vpmap_)
                          .geom_traits(traits_));
-        n_map[v] = vn;
+        put(n_map, v, vn);
 
-        Edges_around_map he_map;
-        typename Edges_around_map::iterator it;
+        Hedges hedges;
+        typename Hedges::iterator it;
         BOOST_FOREACH(halfedge_descriptor hi, halfedges_around_source(v, mesh_))
-          he_map[hi] = He_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
+        {
+          hedges.reserve(halfedges_around_source(v, mesh_).size());
+          hedges.push_back(hi);
+        }
 
         // measure initial angles
-        measure_angles(he_map);
+        measure_angles(hedges);
 
         // calculate movement
-        Vector move = calc_move(he_map);
-
-        barycenters[v] = (get(vpmap_, v) + move) ;
+        Vector move = calc_move(hedges);
+        barycenters[v] = (get(vpmap_, v) + move);
 
       } // not on border
     } // for each v
 
     // compute locations on tangent plane
-    typedef typename std::map<vertex_descriptor, Point>::value_type VP;
-    std::map<vertex_descriptor, Point> new_locations;
+    typedef typename std::map<vertex_descriptor, Point_3>::value_type VP;
+    std::map<vertex_descriptor, Point_3> new_locations;
     BOOST_FOREACH(const VP& vp, barycenters)
     {
-      Point p = get(vpmap_, vp.first);
-      Point q = vp.second;
-      Vector n = n_map[vp.first];
-
+      Point_ref p = get(vpmap_, vp.first);
+      Point_3 q = vp.second;
+      Vector n = get(n_map, vp.first);
       new_locations[vp.first] = q + ( n * Vector(q, p) ) * n ;
     }
 
@@ -186,8 +189,8 @@ public:
     {
       if(!is_border(v, mesh_) && !is_constrained(v))
       {
-        Point p_query = get(vpmap_, v);
-        Point projected = tree_ptr_->closest_point(p_query);
+        Point_ref p_query = get(vpmap_, v);
+        Point_3 projected = tree_ptr_->closest_point(p_query);
         put(vpmap_, v, projected);
       }
     }
@@ -197,20 +200,20 @@ private:
 
   // angle bisecting functions
   // -------------------------
-  Vector calc_move(const Edges_around_map& he_map)
+  Vector calc_move(const Hedges& hedges)
   {
     Vector move = CGAL::NULL_VECTOR;
     double weights_sum = 0;
-    typename Edges_around_map::const_iterator it;
-    for(it = he_map.begin(); it != he_map.end(); ++it)
+    typename Hedges::const_iterator it;
+    for(it = hedges.begin(); it != hedges.end(); ++it)
     {
-      halfedge_descriptor main_he = it->first;
-      He_pair incident_pair = it->second;
+      halfedge_descriptor main_he = *it;
+      He_pair incident_pair = std::make_pair(next(main_he, mesh_), prev(opposite(main_he, mesh_), mesh_));
 
       // avoid zero angles
-      Point pt = get(vpmap_, source(incident_pair.first, mesh_));
-      Point p1 = get(vpmap_, target(incident_pair.first, mesh_));
-      Point p2 = get(vpmap_, source(incident_pair.second, mesh_));
+      Point_ref pt = get(vpmap_, source(incident_pair.first, mesh_));
+      Point_ref p1 = get(vpmap_, target(incident_pair.first, mesh_));
+      Point_ref p2 = get(vpmap_, source(incident_pair.second, mesh_));
       CGAL_assertion(target(incident_pair.second, mesh_) == source(incident_pair.first, mesh_));
       Vector e1(pt, p1);
       Vector e2(pt, p2);
@@ -236,14 +239,14 @@ private:
   Vector rotate_edge(const halfedge_descriptor& main_he, const He_pair& incd_edges)
   {
     // get common vertex around which the edge is rotated
-    Point pt = get(vpmap_, target(main_he, mesh_));
+    Point_ref pt = get(vpmap_, target(main_he, mesh_));
 
     // ps is the vertex that is being moved
-    Point ps = get(vpmap_, source(main_he, mesh_));
+    Point_ref ps = get(vpmap_, source(main_he, mesh_));
 
     // get "equidistant" points - in fact they are at equal angles
-    Point equidistant_p1 = get(vpmap_, target(incd_edges.first, mesh_));
-    Point equidistant_p2 = get(vpmap_, source(incd_edges.second, mesh_));
+    Point_ref equidistant_p1 = get(vpmap_, target(incd_edges.first, mesh_));
+    Point_ref equidistant_p2 = get(vpmap_, source(incd_edges.second, mesh_));
     CGAL_assertion(target(incd_edges.second, mesh_) == source(incd_edges.first, mesh_));
 
     Vector edge1(pt, equidistant_p1);
@@ -283,7 +286,7 @@ private:
       CGAL_assertion(CGAL::scalar_product(edge1, normal_vec) < precision);
 
       Segment b_segment(pt, pt + normal_vec);
-      Point b_segment_end = b_segment.target();
+      Point_3 b_segment_end = b_segment.target();
 
       if(CGAL::angle(b_segment_end, pt, ps) == CGAL::OBTUSE)
       {
@@ -298,14 +301,14 @@ private:
     double bisector_length = CGAL::sqrt(bisector.squared_length());
 
     CGAL_assertion(   ( target_length - precision    <   bisector_length     ) &&
-             ( bisector_length        <   target_length + precision )    );
+                      ( bisector_length        <   target_length + precision )    );
     return bisector;
   }
 
   void correct_bisector(Vector& bisector_vec, const halfedge_descriptor& main_he)
   {
     // get common vertex around which the edge is rotated
-    Point pt = get(vpmap_, target(main_he, mesh_));
+    Point_ref pt = get(vpmap_, target(main_he, mesh_));
 
     // create a segment to be able to translate
     Segment bisector(pt, pt + bisector_vec);
@@ -316,15 +319,16 @@ private:
     bisector = bisector.transform(t_scale);
 
     // translate
-    Vector vec(bisector.source(), pt);
-    typename GeomTraits::Aff_transformation_3 t_translate(CGAL::TRANSLATION, vec);
+    //Vector vec(bisector.source(), pt);
+    typename GeomTraits::Aff_transformation_3 t_translate(CGAL::TRANSLATION,
+                                                          Vector(bisector.source(), pt));
     bisector = bisector.transform(t_translate);
 
     // take the opposite so that their sum is the overall displacement
     bisector_vec = -Vector(bisector);
   }
 
-  Vector find_perpendicular(const Vector& input_vec, const Point& s, const Point& pv)
+  Vector find_perpendicular(const Vector& input_vec, const Point_3& s, const Point_3& pv)
   {
     Vector s_pv(s, pv);
     Vector aux_normal = CGAL::cross_product(input_vec, s_pv);
@@ -333,27 +337,28 @@ private:
 
   // angle measurement & evaluation
   // ------------------------------
-  void measure_angles(const Edges_around_map& he_map)
+  void measure_angles(const Hedges& hedges)
   {
     min_angle_ = 2 * CGAL_PI;
-    typename Edges_around_map::const_iterator it;
-    for(it = he_map.begin(); it != he_map.end(); ++it)
+    typename Hedges::const_iterator it;
+    for(it = hedges.begin(); it != hedges.end(); ++it)
     {
-      halfedge_descriptor main_he = it->first;
-      He_pair incident_pair = it->second;
-      calc_angles(main_he, incident_pair);
+      halfedge_descriptor hi = *it;
+      He_pair incident_pair = std::make_pair(next(hi, mesh_), prev(opposite(hi, mesh_), mesh_));
+
+      calc_angles(hi, incident_pair);
     }
   }
 
   void calc_angles(const halfedge_descriptor& main_he, const He_pair& incd_edges)
   {
     // get common vertex around which the edge is rotated
-    Point pt = get(vpmap_, target(main_he, mesh_));
+    Point_ref pt = get(vpmap_, target(main_he, mesh_));
     // ps is the vertex that is being moved
-    Point ps = get(vpmap_, source(main_he, mesh_));
+    Point_ref ps = get(vpmap_, source(main_he, mesh_));
     // get "equidistant" points - in fact they are at equal angles
-    Point equidistant_p1 = get(vpmap_, target(incd_edges.first, mesh_));
-    Point equidistant_p2 = get(vpmap_, source(incd_edges.second, mesh_));
+    Point_ref equidistant_p1 = get(vpmap_, target(incd_edges.first, mesh_));
+    Point_ref equidistant_p2 = get(vpmap_, source(incd_edges.second, mesh_));
     CGAL_assertion(target(incd_edges.second, mesh_) == source(incd_edges.first, mesh_));
 
     Vector edge1(pt, equidistant_p1);
@@ -367,30 +372,33 @@ private:
     min_angle_ = std::min(min_angle_, std::min(a1, a2));
   }
 
-  bool does_it_impove(const vertex_descriptor& v, const Point& new_location)
+  bool does_it_impove(const vertex_descriptor& v, const Point_3& new_location)
   {
-    Edges_around_map he_map;
-    typename Edges_around_map::iterator it;
+    Hedges hedges;
+    typename Hedges::iterator it;
     BOOST_FOREACH(halfedge_descriptor hi, halfedges_around_source(v, mesh_))
-      he_map[hi] = He_pair( next(hi, mesh_), prev(opposite(hi, mesh_), mesh_) );
-    return evaluate_angles(he_map, new_location);
+    {
+      hedges.reserve(halfedges_around_source(v, mesh_).size());
+      hedges.push_back(hi);
+    }
+    return evaluate_angles(hedges, new_location);
   }
 
-  bool evaluate_angles(const Edges_around_map& he_map, const Point& new_location)
+  bool evaluate_angles(const Hedges& hedges, const Point_3& new_location)
   {
-    typename Edges_around_map::const_iterator it;
-    for(it = he_map.begin(); it != he_map.end(); ++it)
+    typename Hedges::const_iterator it;
+    for(it = hedges.begin(); it != hedges.end(); ++it)
     {
-      halfedge_descriptor main_he = it->first;
-      He_pair incd_edges = it->second;
+      halfedge_descriptor main_he = *it;
+      He_pair incd_edges = std::make_pair(next(main_he, mesh_), prev(opposite(main_he, mesh_), mesh_));
 
       // get common vertex around which the edge is rotated
-      Point pt = get(vpmap_, target(main_he, mesh_));
+      Point_ref pt = get(vpmap_, target(main_he, mesh_));
       // ps is the vertex that is being moved
-      Point new_point = new_location;
+      Point_3 new_point = new_location;
       // get "equidistant" points
-      Point equidistant_p1 = get(vpmap_, target(incd_edges.first, mesh_));
-      Point equidistant_p2 = get(vpmap_, source(incd_edges.second, mesh_));
+      Point_ref equidistant_p1 = get(vpmap_, target(incd_edges.first, mesh_));
+      Point_ref equidistant_p2 = get(vpmap_, source(incd_edges.second, mesh_));
       CGAL_assertion(target(incd_edges.second, mesh_) == source(incd_edges.first, mesh_));
 
       Vector edge1(pt, equidistant_p1);
@@ -449,7 +457,7 @@ private:
       y_new = y - eta * drdy;
       z_new = z - eta * drdz;
 
-      Point moved(x_new, y_new, z_new);
+      Point_3 moved(x_new, y_new, z_new);
       energy_new = measure_energy(v, S_av, moved);
 
       if(energy_new < energy)
@@ -469,7 +477,7 @@ private:
       energy = energy_new;
       t++;
 
-      //eta = eta0 / pow(t, power_t);
+      // could use eta = eta0 / pow(t, power_t);
       eta = eta0 / (1 + t0 * t);
     }
 
@@ -513,7 +521,7 @@ private:
                   get(vpmap_, p3))));
   }
 
-  double element_area(const Point& P,
+  double element_area(const Point_3& P,
             const vertex_descriptor& p2,
             const vertex_descriptor& p3) const
   {
@@ -561,7 +569,7 @@ private:
     return to_double( energy / number_of_edges );
   }
 
-  double measure_energy(const vertex_descriptor& v, const double& S_av, const Point& new_P)
+  double measure_energy(const vertex_descriptor& v, const double& S_av, const Point_3& new_P)
   {
     double energy = 0;
     unsigned int number_of_edges = 0;
@@ -584,7 +592,7 @@ private:
   }
 
   template<typename FaceRange>
-  void check_vertex_range(const FaceRange& face_range)
+  void set_vertex_range(const FaceRange& face_range)
   {
    BOOST_FOREACH(face_descriptor f, face_range)
    {
@@ -613,4 +621,4 @@ private:
 } // namespace CGAL
 
 
-#endif // CGAL_POLYGON_MESH_PROCESSING_MESH_SMOOTHING_IMPL_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_INTERNAL_MESH_SMOOTHING_IMPL_H

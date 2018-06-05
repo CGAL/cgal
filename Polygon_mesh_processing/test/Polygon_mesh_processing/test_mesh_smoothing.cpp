@@ -51,7 +51,10 @@ void test_angle_smoothing(const char* filename)
 {
   std::ifstream input(filename);
   Mesh mesh;
-  input >> mesh;
+  if (!input || !(input >> mesh)){
+    std::cerr << "Error: can not read file.";
+    return;
+  }
   input.close();
 
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
@@ -78,7 +81,10 @@ void test_area_smoothing(const char* filename)
 {
   std::ifstream input(filename);
   Mesh mesh;
-  input >> mesh;
+  if (!input || !(input >> mesh)){
+    std::cerr << "Error: can not read file.";
+    return;
+  }
   input.close();
 
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
@@ -105,7 +111,10 @@ void test_angle_smoothing_without_projection(const char* filename)
 {
   std::ifstream input(filename);
   Mesh mesh;
-  input >> mesh;
+  if (!input || !(input >> mesh)){
+    std::cerr << "Error: can not read file.";
+    return;
+  }
   input.close();
 
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
@@ -132,7 +141,10 @@ void test_area_smoothing_without_projection(const char* filename)
 {
   std::ifstream input(filename);
   Mesh mesh;
-  input >> mesh;
+  if (!input || !(input >> mesh)){
+    std::cerr << "Error: can not read file.";
+    return;
+  }
   input.close();
 
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
@@ -159,7 +171,10 @@ void test_constrained_vertices(const char* filename)
 {
   std::ifstream input(filename);
   Mesh mesh;
-  input >> mesh;
+  if (!input || !(input >> mesh)){
+    std::cerr << "Error: can not read file.";
+    return;
+  }
   input.close();
 
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
