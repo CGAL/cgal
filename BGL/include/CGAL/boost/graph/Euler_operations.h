@@ -1217,7 +1217,6 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
     {
       // the vertex is of valence 3 and we simply need to remove the vertex
       // and its indicent edges
-      bool lP_Erased = false;
       halfedge_descriptor edge =
         next(edges_to_erase[0],g) == edges_to_erase[1]?
           edges_to_erase[0]:edges_to_erase[1];
