@@ -463,10 +463,13 @@ polylines_to_protect
 
   Graph graph;
 
-  typedef Mesh_3::internal::Graph_manipulations<Graph,
-                                                Point_3,
-                                                Image_word_type,
-                                                InterpolationFunctor> G_manip;
+  using namespace CGAL::Mesh_3::internal;
+
+  typedef Graph_manipulations<Graph,
+                              Point_3,
+                              Image_word_type,
+                              InterpolationFunctor> G_manip;
+
   G_manip g_manip(graph, interpolate);
 
   const float& tx = cgal_image.image()->tx;
@@ -530,11 +533,11 @@ polylines_to_protect
 #endif // CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
             continue;
           }
-          typedef Mesh_3::internal::Enriched_pixel<Pixel,
-                                                   Point_3,
-                                                   Domain_type,
-                                                   Image_word_type
-                                                   > Enriched_pixel;
+
+          typedef Enriched_pixel<Pixel,
+                                 Point_3,
+                                 Domain_type,
+                                 Image_word_type> Enriched_pixel;
 
           array<array<Enriched_pixel, 2>, 2> square =
             {{ {{ { pix00, Point_3(), Domain_type(), 0, false },
