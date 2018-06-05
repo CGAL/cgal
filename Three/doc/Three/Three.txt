@@ -124,6 +124,9 @@ Add it to the project in the CMakeLists.txt :
     qt5_wrap_ui( dockUI_FILES Basic_dock_widget.ui )
     polyhedron_demo_plugin(dock_widget_plugin Dock_widget_plugin ${dockUI_FILES})
 
+\attention If you are using a version ssuperior to 4.5 of QtCreator, you will need to manually add 
+<widget class="QWidget" name="dockWidgetContents"/> to the .ui file, under the declaration of the QDockWidget, to be able to edit it.
+
 Edit the ui file with the editor, then add the following line to your plugin file:
 ~~~~~~~~~~~~~{.cpp}
     #include "ui_Basic_dock_widget.h"
