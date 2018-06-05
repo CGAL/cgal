@@ -17,6 +17,8 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QColorDialog>
+#include <QInputDialog>
+
 
 #include "ui_Color_spheres_widget.h"
 
@@ -84,16 +86,18 @@ public:
   }
   void closure()
   {
-    //  dock_widget->hide();
+    dock_widget->hide();
   }
 public Q_SLOTS:
   void pop();
+  void addColor();
+  void invalidateDisplay();
 private:
   DockWidget* dock_widget;
   QAction* actionBubbles;
   mutable std::vector<SMesh::Vertex_index> vertices;
-  mutable std::set<QColor> colors;
-  //ColoredSpheresWidget* dock_widget;
+  std::vector<QColor> colors;
+  Colored_spheres_item* spheres;
 }; // end Colored_spheres_plugin
 
 
@@ -105,9 +109,65 @@ void Colored_spheres_plugin::init(QMainWindow *mainWindow,
   actionBubbles = new QAction(tr("Put Some Colors Inside Your Eyes"), mainWindow);
   connect(actionBubbles, SIGNAL(triggered()),
           this, SLOT(pop()));
-  dock_widget = new ColoredSpheresWidget("Bubbles Party", mw);
+  dock_widget = new DockWidget("Bubbles Party", mw);
   dock_widget->setVisible(false); // do not show at the beginning
   addDockWidget(dock_widget);
+  spheres = NULL;
+}
+
+void Colored_spheres_plugin::invalidateDisplay()
+{
+  QGridLayout* layout = dock_widget->gridLayout;
+  //clear existing layout
+  if ( layout != NULL )
+  {
+    QLayoutItem* item;
+    while ( ( item = layout->takeAt( 0 ) ) != NULL )
+    {
+      delete item->widget();
+      delete item;
+    }
+  }
+  //fill it up again
+  for(std::size_t i = 0; i < colors.size(); ++i)
+  {
+    if(colors[i].isValid())
+    {
+      QLabel* text = new QLabel(dock_widget);
+      text->setText(QString("degree: %1").arg(i));
+      QPushButton* color_button = new QPushButton(dock_widget);
+      QPalette palette;
+      palette.setColor(QPalette::Button,colors[i]);
+      color_button->setPalette(palette);
+      layout->addWidget(color_button, i, 0);
+      layout->addWidget(text, i, 1);
+    }
+  }
+  layout->setColumnStretch(0,0);
+  layout->setColumnStretch(1,1);
+  
+  dock_widget->update();
+}
+
+void Colored_spheres_plugin::addColor()
+{
+  int new_deg = QInputDialog::getInt(mw, "Add a new degree", "Degree:", 3);
+  if(new_deg < static_cast<int>(colors.size()))
+  {
+    if(colors[new_deg].isValid())
+    {
+      QMessageBox::warning(mw, "Warning", "This degree is already there.");
+      return;
+    }
+  }
+  else
+  {
+    colors.resize(new_deg+1, QColor());
+  }
+  QColor color = spheres->color();
+  color = QColor::fromHsv((color.hue()+55*new_deg)%360, (new_deg*25)%155+100,color.lightness(), color.alpha());
+  colors[new_deg] = color;
+  invalidateDisplay();
 }
 
 void Colored_spheres_plugin::pop()
@@ -120,15 +180,22 @@ void Colored_spheres_plugin::pop()
   double radius = 0.15 * CGAL::compute_average_spacing<CGAL::Sequential_tag>(mesh.points(), 3);
   Colored_spheres_item* spheres = new Colored_spheres_item(NULL, radius);
   QColor c;
-  
+  std::size_t max_deg = 0;
+  BOOST_FOREACH(SMesh::Vertex_index vi, mesh.vertices())
+  {
+    std::size_t deg = smitem->face_graph()->degree(vi);
+    if(deg > max_deg)
+      max_deg = deg;
+  }
+  colors.resize(max_deg + 1);
   BOOST_FOREACH(SMesh::Vertex_index vi, mesh.vertices())
   {
     std::size_t deg = smitem->face_graph()->degree(vi);
     if(deg != 4)
     {
       c = spheres->color();
-      c = QColor::fromHsv((c.hue()+75*deg)%360, c.saturation(),c.lightness(), c.alpha());
-      colors.insert(c);
+      c = QColor::fromHsv((c.hue()+ 55*deg)%360, (deg*25)%155+100,c.lightness(), c.alpha());
+      colors[deg] = c;
       const CGAL::qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
       const EPICK::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
       EPICK::Point_3 center(mesh.point(vi) + offset);
@@ -143,14 +210,12 @@ void Colored_spheres_plugin::pop()
   spheres->setName("Bubbles");
   spheres->setRenderingMode(Gouraud);
   //add colors to dock widget
-  BOOST_FOREACH(QColor col, colors)
-  {
-    QLabel * text = new QLabel(QString("degree: "));
-    QPushButton* color_button = new QPushButton();
-    
-  }
+  invalidateDisplay();
+  connect(dock_widget->pushButton, &QPushButton::clicked,
+          this, &Colored_spheres_plugin::addColor);
   dock_widget->show();
   scene->addItem(spheres);
+  this->spheres = spheres;
 }
 
 Colored_spheres_item::Colored_spheres_item(Scene_group_item *parent, double radius)
