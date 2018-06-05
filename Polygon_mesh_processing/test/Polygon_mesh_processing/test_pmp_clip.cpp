@@ -81,6 +81,21 @@ void test()
   PMP::clip(tm1, K::Plane_3(-0.236474, 0.437732, 0.867451, -0.838791), params::clip_volumes(true));
   assert(CGAL::is_closed(tm1));
   assert(!CGAL::is_empty(tm1));
+  CGAL::clear(tm1);
+
+  input.open("data-coref/cube.off");
+  input >> tm1;
+  input.close();
+  PMP::clip(tm1, K::Plane_3(0, 0, 1, 2));
+  assert(CGAL::is_empty(tm1));
+  CGAL::clear(tm1);
+
+  input.open("data-coref/cube.off");
+  input >> tm1;
+  input.close();
+  PMP::clip(tm1, K::Plane_3(0, 0, 1, -2));
+  assert(!CGAL::is_empty(tm1));
+  CGAL::clear(tm1);
 }
 
 int main()
