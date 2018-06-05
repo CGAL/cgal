@@ -379,7 +379,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
           Linear_interpolator<Kernel, Image_word_type>(),
           0,
           0,
-          iso_value,
+          Image_word_type(iso_value),
           (std::max)(10, int(10 * (std::min)((std::min)(pImage->vx(),
                                                         pImage->vy()),
                                              pImage->vz())
