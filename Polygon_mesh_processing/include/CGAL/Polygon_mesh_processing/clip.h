@@ -28,10 +28,9 @@
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
 #include <CGAL/AABB_triangle_primitive.h>
-
-#include <CGAL/convex_hull_3.h>
 
 namespace CGAL{
 namespace Polygon_mesh_processing {
@@ -165,7 +164,24 @@ clip_open_impl(      TriangleMesh& tm,
   return true;
 }
 
-/// \todo remove convex_hull_3
+template <class Geom_traits, class Plane_3, class Point_3>
+int
+inter_pt_index(int i, int j,
+               const Plane_3& plane,
+               std::vector<Point_3>& points,
+               std::map<std::pair<int,int>, int>& id_map)
+{
+  std::pair<std::map<std::pair<int,int>, int>::iterator, bool> res =
+    id_map.insert(std::make_pair(make_sorted_pair(i,j),
+                  static_cast<int> (points.size())));
+  if (res.second)
+    points.push_back(
+      typename Geom_traits::Construct_plane_line_intersection_point_3()
+        (plane, points[i], points[j]) );
+
+  return res.first->second;
+}
+
 template <class Plane_3,
           class TriangleMesh,
           class NamedParameters>
@@ -177,7 +193,6 @@ clip_to_bbox(const Plane_3& plane,
 {
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
   typedef typename Geom_traits::Point_3 Point_3;
-  typedef typename Geom_traits::Segment_3 Segment_3;
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters>::type Vpm;
 
@@ -185,16 +200,15 @@ clip_to_bbox(const Plane_3& plane,
                                     get_property_map(boost::vertex_point, tm_out));
 
 
-  cpp11::array<Point_3,8> corners= {{
-    Point_3(bbox.xmin(),bbox.ymin(),bbox.zmin()),
-    Point_3(bbox.xmin(),bbox.ymax(),bbox.zmin()),
-    Point_3(bbox.xmax(),bbox.ymax(),bbox.zmin()),
-    Point_3(bbox.xmax(),bbox.ymin(),bbox.zmin()),
-    Point_3(bbox.xmin(),bbox.ymin(),bbox.zmax()),
-    Point_3(bbox.xmin(),bbox.ymax(),bbox.zmax()),
-    Point_3(bbox.xmax(),bbox.ymax(),bbox.zmax()),
-    Point_3(bbox.xmax(),bbox.ymin(),bbox.zmax())
-  }};
+  std::vector<Point_3> corners(8);
+  corners[0] = Point_3(bbox.xmin(),bbox.ymin(),bbox.zmin());
+  corners[1] = Point_3(bbox.xmin(),bbox.ymax(),bbox.zmin());
+  corners[2] = Point_3(bbox.xmax(),bbox.ymax(),bbox.zmin());
+  corners[3] = Point_3(bbox.xmax(),bbox.ymin(),bbox.zmin());
+  corners[4] = Point_3(bbox.xmin(),bbox.ymin(),bbox.zmax());
+  corners[5] = Point_3(bbox.xmin(),bbox.ymax(),bbox.zmax());
+  corners[6] = Point_3(bbox.xmax(),bbox.ymax(),bbox.zmax());
+  corners[7] = Point_3(bbox.xmax(),bbox.ymin(),bbox.zmax());
 
   cpp11::array<CGAL::Oriented_side,8> orientations = {{
     plane.oriented_side(corners[0]),
@@ -209,57 +223,162 @@ clip_to_bbox(const Plane_3& plane,
 
   std::vector<Point_3> points;
 
-  // look for intersections on edges
-  cpp11::array<int,24> edge_indices = {{ // 2 *12 edges
-    0,1, 1,2, 2,3, 3,0, // bottom face edges
-    4,5, 5,6, 6,7, 7,4, // top face edges
-    0,4, 1,5, 2,6, 3,7
-  }};
+  // description of faces
+  cpp11::array<int, 24> face_indices =
+    {{ 0, 1, 2, 3,
+       2, 1, 5, 6,
+       3, 2, 6, 7,
+       1, 0, 4, 5,
+       4, 0, 3, 7,
+       6, 5, 4, 7 }};
 
-  for (int i=0; i<12; ++i)
+  std::map<std::pair<int,int>, int> id_map;
+  std::vector< std::vector<int> > output_faces(6);
+  bool all_in = true;
+  bool all_out = true;
+  std::set<int> in_point_ids; // to collect the set of points in the clipped bbox
+
+  // for each face of the bbox, we look for intersection of the plane with its edges
+  for (int i=0; i<6; ++i)
   {
-    int i1=edge_indices[2*i], i2=edge_indices[2*i+1];
-    if (orientations[i1]==ON_ORIENTED_BOUNDARY) continue;
-    if (orientations[i2]==ON_ORIENTED_BOUNDARY) continue;
-    if (orientations[i1]!=orientations[i2])
-      points.push_back(
-        Geom_traits::Construct_plane_line_intersection_point_3()
-          (plane, Segment_3(corners[i1], corners[i2])) );
-  }
-
-
-  Oriented_side last_os = ON_ORIENTED_BOUNDARY;
-  for (int i=0; i<8; ++i)
-    if (orientations[i]!=ON_ORIENTED_BOUNDARY)
+    for (int k=0; k< 4; ++k)
     {
-      if (last_os==ON_ORIENTED_BOUNDARY)
-        last_os=orientations[i];
+      int current_id = face_indices[4*i + k];
+      int next_id = face_indices[4*i + (k+1)%4];
+
+      if ( orientations[ current_id ] != ON_POSITIVE_SIDE )
+      {
+        all_out=false;
+        // point on or on the negative side
+        output_faces[i].push_back( current_id );
+        in_point_ids.insert( output_faces[i].back() );
+        // check for intersection of the edge
+        if (orientations[ current_id ] == ON_NEGATIVE_SIDE &&
+            orientations[ next_id ] == ON_POSITIVE_SIDE)
+        {
+          output_faces[i].push_back(
+            inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map) );
+          in_point_ids.insert( output_faces[i].back() );
+        }
+      }
       else
       {
-        if(last_os!=orientations[i])
+        all_in = false;
+        // check for intersection of the edge
+        if ( orientations[ next_id ] == ON_NEGATIVE_SIDE )
         {
-          last_os=ON_ORIENTED_BOUNDARY;
-          break;
+          output_faces[i].push_back(
+            inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map) );
+          in_point_ids.insert( output_faces[i].back() );
         }
       }
     }
+    CGAL_assertion( output_faces[i].empty() || output_faces[i].size() >= 3 );
+  }
 
   // the intersection is the full bbox
-  if (last_os!=ON_ORIENTED_BOUNDARY)
-    return last_os;
+  if (all_in) return ON_NEGATIVE_SIDE;
+  if (all_out) return ON_POSITIVE_SIDE;
 
-  //add points on negative side and on the plane
-  for (int i=0; i<8; ++i)
-    if (orientations[i]!=ON_POSITIVE_SIDE)
-      points.push_back(corners[i]);
+  // build the clipped bbox
+  typedef boost::graph_traits<TriangleMesh> graph_traits;
+  typedef typename graph_traits::vertex_descriptor vertex_descriptor;
+  typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
+  typedef typename graph_traits::face_descriptor face_descriptor;
 
-  // take the convex hull of the points on the negative side+intersection points
-  // overkill...
-  TriangleMesh ch_tm;
-  CGAL::convex_hull_3(points.begin(), points.end(), ch_tm);
-  copy_face_graph(ch_tm, tm_out,
-                  Emptyset_iterator(), Emptyset_iterator(), Emptyset_iterator(),
-                  get(vertex_point, ch_tm), vpm_out);
+  std::map<int, vertex_descriptor> out_vertices;
+  BOOST_FOREACH(int i, in_point_ids)
+  {
+    vertex_descriptor v = add_vertex(tm_out);
+    out_vertices.insert( std::make_pair(i, v ) );
+    put(vpm_out, v, corners[i]);
+  }
+
+  std::map< std::pair<int,int>, halfedge_descriptor> hedge_map;
+  const halfedge_descriptor null_hedge = graph_traits::null_halfedge();
+  const face_descriptor null_fd = graph_traits::null_face();
+  BOOST_FOREACH( const std::vector<int>& findices, output_faces)
+  {
+    if (findices.empty()) continue;
+    const face_descriptor fd=add_face(tm_out);
+    int prev_id = findices.back();
+
+    // create of recover face boundary halfedges
+    std::vector<halfedge_descriptor> hedges;
+    hedges.reserve(findices.size());
+    BOOST_FOREACH( int current_id, findices)
+    {
+      vertex_descriptor src = out_vertices[prev_id], tgt = out_vertices[current_id];
+
+      std::pair<typename std::map< std::pair<int,int>,
+                halfedge_descriptor>::iterator, bool> res =
+        hedge_map.insert( std::make_pair(std::make_pair(prev_id, current_id), null_hedge) );
+      if (res.second)
+      {
+        res.first->second = halfedge( add_edge(tm_out), tm_out);
+        hedge_map.insert( std::make_pair(std::make_pair(current_id, prev_id),
+                            opposite(res.first->second, tm_out) ) );
+        set_face(opposite(res.first->second, tm_out), null_fd, tm_out);
+
+      }
+      hedges.push_back(res.first->second);
+      // set edge source and target
+      set_target(hedges.back(), tgt, tm_out);
+      set_target(opposite(hedges.back(), tm_out), src, tm_out);
+      // set face pointer of halfedges
+      set_face(hedges.back(), fd, tm_out);
+      // set vertex halfedge
+      set_halfedge(src, opposite(hedges.back(), tm_out), tm_out);
+      set_halfedge(tgt, hedges.back(), tm_out);
+
+      if (current_id==findices.front())
+        set_halfedge(fd, hedges.back(), tm_out);
+
+      prev_id = current_id;
+    }
+    CGAL_assertion(hedges.size() == findices.size());
+
+    // set next/prev relationship
+    halfedge_descriptor prev_h=hedges.back();
+    BOOST_FOREACH(halfedge_descriptor h, hedges)
+    {
+      set_next(prev_h, h, tm_out);
+      prev_h = h;
+    }
+  }
+
+  // handle the face of the plane:
+  // look for a border halfedge and reconstruct the face of the plane
+  // by turning around vertices inside the mesh constructed above
+  // until we reach another border halfedge
+  BOOST_FOREACH(halfedge_descriptor h, halfedges(tm_out))
+  {
+    if (face(h, tm_out) == null_fd)
+    {
+      face_descriptor fd = add_face(tm_out);
+      set_halfedge(fd, h, tm_out);
+
+      halfedge_descriptor h_prev=h;
+      halfedge_descriptor h_curr=h;
+      do{
+        h_curr=opposite(h_curr, tm_out);
+        do{
+          h_curr=opposite(prev(h_curr, tm_out), tm_out);
+        } while(face(h_curr, tm_out) != null_fd && h_curr!=h);
+        set_face(h_prev, fd, tm_out);
+        set_next(h_prev, h_curr, tm_out);
+        if (h_curr==h)
+          break;
+        h_prev=h_curr;
+      } while(true);
+      break;
+    }
+  }
+  CGAL_assertion(is_valid_polygon_mesh(tm_out));
+
+  // triangulate the faces
+  CGAL::Polygon_mesh_processing::triangulate_faces(tm_out, np);
+
   return ON_ORIENTED_BOUNDARY;
 }
 
