@@ -726,7 +726,7 @@ protected:
     initializeOpenGLFunctions();
 
     // Define 'Control+Q' as the new exit shortcut (default was 'Escape')
-    setShortcut(EXIT_VIEWER, ::Qt::CTRL+::Qt::Key_Q);
+    setShortcut(qglviewer::EXIT_VIEWER, ::Qt::CTRL+::Qt::Key_Q);
 
     // Add custom key description (see keyPressEvent).
     setKeyDescription(::Qt::Key_E, "Toggles edges display");
