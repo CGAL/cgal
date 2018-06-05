@@ -15,7 +15,7 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
   create_single_source_cgal_program( "test_implicit_shapes_bunch.cpp" )
-  create_single_source_cgal_program( "test_implicit_shapes_with_protection.cpp" )
+  create_single_source_cgal_program( "test_implicit_shapes_with_features.cpp" )
   create_single_source_cgal_program( "test_triply_periodic_minimal_surfaces.cpp" )
 
 else()

@@ -646,7 +646,7 @@ the same domain meshed with the same criteria when protection is disabled and en
 
 Note the use of a more complex intrinsically non-periodic implicit function as input domain.
 
-\cgalExample{Periodic_3_mesh_3/mesh_implicit_shape_with_protection.cpp}
+\cgalExample{Periodic_3_mesh_3/mesh_implicit_shape_with_features.cpp}
 
 \cgalFigureAnchor{Periodic_3_mesh_3Periodic_protection}
 <center>
