@@ -3,7 +3,7 @@ namespace CGAL {
 /// \ingroup PkgPeriodic_3_mesh_3IOFunctions
 ///
 /// \brief Outputs a periodic mesh to the medit (`.mesh`) file format.
-///        See \cgalCite{frey:inria-00069921} for a detailed presentation of this file format.
+///        See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
 ///
 /// \param os the output stream
 /// \param c3t3 the mesh complex
@@ -16,11 +16,11 @@ namespace CGAL {
 ///                     using the label of each adjacent cell.
 ///
 template <class C3T3>
-void output_to_medit(std::ostream& os,
-                     const C3T3& c3t3,
-                     int occurrence_count = 8,
-                     bool distinguish_copies = true,
-                     bool rebind = false,
-                     bool show_patches = false);
+void output_periodic_mesh_to_medit(std::ostream& os,
+                                   const C3T3& c3t3,
+                                   int occurrence_count = 8,
+                                   bool distinguish_copies = true,
+                                   bool rebind = false,
+                                   bool show_patches = false);
 
 } // namespace CGAL

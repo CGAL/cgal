@@ -353,15 +353,12 @@ void output_to_medit(std::ostream& os,
  *                     each adjacent cell.
  */
 template <class C3T3>
-void output_to_medit(std::ostream& os,
-                     const C3T3& c3t3,
-                     const int occurrence_count = 8,
-                     const bool distinguish_copies = true,
-                     bool rebind = false,
-                     bool show_patches = false,
-                     typename boost::enable_if_c<
-                                boost::is_same<typename C3T3::Triangulation::Periodic_tag,
-                                               Tag_true>::value>::type* = NULL)
+void output_periodic_mesh_to_medit(std::ostream& os,
+                                   const C3T3& c3t3,
+                                   const int occurrence_count = 8,
+                                   const bool distinguish_copies = true,
+                                   bool rebind = false,
+                                   bool show_patches = false)
 {
   if(rebind)
   {

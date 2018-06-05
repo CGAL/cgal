@@ -2,8 +2,8 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Periodic_3_mesh_3/IO/File_medit.h>
 #include <CGAL/make_periodic_3_mesh_3.h>
+#include <CGAL/Periodic_3_mesh_3/IO/File_medit.h>
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
 #include <CGAL/Periodic_3_wrapper.h>
 
@@ -97,7 +97,7 @@ void test_protected_sphere()
 
   // Output
   std::ofstream medit_file_bis("protected_sphere.mesh");
-  CGAL::output_to_medit(medit_file_bis, c3t3_bis);
+  CGAL::output_periodic_mesh_to_medit(medit_file_bis, c3t3_bis);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -162,7 +162,7 @@ void test_protected_squary_cylinder()
 
   // Output
   std::ofstream medit_file_bis("squary_cylinder.mesh");
-  CGAL::output_to_medit(medit_file_bis, c3t3_bis);
+  CGAL::output_periodic_mesh_to_medit(medit_file_bis, c3t3_bis);
 }
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -275,7 +275,7 @@ void test_protected_squary_cylinder_2()
 
   // Output
   std::ofstream medit_file_bis("squary_cylinder_2.mesh");
-  CGAL::output_to_medit(medit_file_bis, c3t3_bis);
+  CGAL::output_periodic_mesh_to_medit(medit_file_bis, c3t3_bis);
 }
 ////////////////////////////////////////////////////////////////////////////////
 

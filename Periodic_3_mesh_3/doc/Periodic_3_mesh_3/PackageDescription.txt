@@ -103,7 +103,7 @@ Many classes and functions used by this package are defined within the package
 and \ref PkgMesh_3Parameters.
 
 ## Input/Output Functions ##
-- \link PkgPeriodic_3_mesh_3IOFunctions `CGAL::output_to_medit()` \endlink
+- \link PkgPeriodic_3_mesh_3IOFunctions `CGAL::output_periodic_mesh_to_medit()` \endlink
 
 
 */

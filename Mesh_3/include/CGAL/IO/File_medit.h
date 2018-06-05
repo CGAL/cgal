@@ -879,10 +879,7 @@ void
 output_to_medit(std::ostream& os,
                 const C3T3& c3t3,
                 bool rebind = false,
-                bool show_patches = false,
-                typename boost::enable_if_c<
-                           boost::is_same<typename C3T3::Triangulation::Periodic_tag,
-                                          Tag_false>::value>::type* = NULL)
+                bool show_patches = false)
 {
   if ( rebind )
   {
