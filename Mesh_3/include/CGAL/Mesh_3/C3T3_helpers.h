@@ -1252,11 +1252,6 @@ private:
           facet.first->set_facet_surface_center(facet.second,surface_center);
           facet_m.first->set_facet_surface_center(facet_m.second,surface_center);
         }
-        else
-        {
-          facet.first->set_facet_surface_center(facet.second,Bare_point());
-          facet_m.first->set_facet_surface_center(facet_m.second,Bare_point());
-        }
       }
 
       return surface;
