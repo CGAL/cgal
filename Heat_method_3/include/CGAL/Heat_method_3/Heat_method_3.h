@@ -82,13 +82,13 @@ namespace Heat_method_3 {
     typedef typename LA::Matrix Matrix;
   public:
 
-    Heat_method_3(const TriangleMesh& tm)
+    Heat_method_3(const TriangleMesh& tm_)
       : tm(tm), vpm(get(vertex_point,tm))
     {
       build();
     }
 
-    Heat_method_3(const TriangleMesh& tm, VertexPointMap vpm)
+    Heat_method_3(const TriangleMesh& tm_, VertexPointMap vpm)
       : tm(tm), vpm(vpm)
     {
       build();
@@ -162,6 +162,7 @@ namespace Heat_method_3 {
 
     void build()
     {
+      vertex_id_map = get(Vertex_property_tag(),const_cast<TriangleMesh&>(tm));
       vertices_size_type n = 0;
       BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
         put(vertex_id_map, vd, n*10);
