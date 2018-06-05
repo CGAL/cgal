@@ -221,8 +221,6 @@ clip_to_bbox(const Plane_3& plane,
     plane.oriented_side(corners[7])
   }};
 
-  std::vector<Point_3> points;
-
   // description of faces of the bbox
   cpp11::array<int, 24> face_indices =
     {{ 0, 1, 2, 3,
