@@ -2,15 +2,17 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Periodic_3_mesh_3/IO/File_medit.h>
-#include <CGAL/Implicit_periodic_3_mesh_domain_3.h>
 #include <CGAL/make_periodic_3_mesh_3.h>
+#include <CGAL/Periodic_3_mesh_3/IO/File_medit.h>
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
+#include <CGAL/Periodic_3_wrapper.h>
 
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_constant_domain_field_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
+#include <CGAL/array.h>
 #include <CGAL/number_type_config.h> // CGAL_PI
 
 #include <cmath>
@@ -22,17 +24,20 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT                                               FT;
 typedef K::Point_3                                          Point;
+typedef K::Iso_cuboid_3                                     Iso_cuboid;
 
 // Domain
 typedef FT (Function)(const Point&);
-typedef CGAL::Implicit_periodic_3_mesh_domain_3<Function, K> Periodic_mesh_domain;
+  // the wrapper is needed because not all the functions are triply periodic
+typedef CGAL::Periodic_3_wrapper<Function, K>               Periodic_function;
+typedef CGAL::Labeled_mesh_domain_3<K>                      Periodic_mesh_domain;
 
 // Triangulation
 typedef CGAL::Periodic_3_mesh_triangulation_3<Periodic_mesh_domain>::type   Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr>                         C3t3;
 
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Periodic_mesh_criteria;
+typedef CGAL::Mesh_criteria_3<Tr>                           Periodic_mesh_criteria;
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
@@ -61,7 +66,8 @@ FT scherk(const Point& p)
 }
 
 // Triply Implicit Periodic Functions for meshing
-FT schwarz_p_transl (const Point& p) {
+FT schwarz_p_transl (const Point& p)
+{
   assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
   const FT x2 = std::cos(p.x() * 2 * CGAL_PI + CGAL_PI / 2.0),
            y2 = std::cos(p.y() * 2 * CGAL_PI + CGAL_PI / 2.0),
@@ -69,7 +75,8 @@ FT schwarz_p_transl (const Point& p) {
   return x2 + y2 + z2;
 }
 
-FT gyroid (const Point& p) {
+FT gyroid (const Point& p)
+{
   assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
   const FT cx = std::cos(p.x() * 2 * CGAL_PI),
            cy = std::cos(p.y() * 2 * CGAL_PI),
@@ -80,7 +87,8 @@ FT gyroid (const Point& p) {
   return cx * sy + cy * sz + cz * sx;
 }
 
-FT diamond (const Point& p) {
+FT diamond (const Point& p)
+{
   assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
   const FT cx = std::cos(p.x() * 2 * CGAL_PI),
            cy = std::cos(p.y() * 2 * CGAL_PI),
@@ -91,7 +99,8 @@ FT diamond (const Point& p) {
   return sx * sy * sz + sx * cy * cz + cx * sy * cz + cx * cy * sz;
 }
 
-FT double_p (const Point& p) {
+FT double_p (const Point& p)
+{
   assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
   const FT cx = std::cos(p.x() * 2 * CGAL_PI),
            cy = std::cos(p.y() * 2 * CGAL_PI),
@@ -102,7 +111,8 @@ FT double_p (const Point& p) {
   return 0.5 * (cx * cy  + cy * cz + cz * cx ) + 0.2 * (c2x + c2y + c2z);
 }
 
-FT G_prime (const Point& p) {
+FT G_prime (const Point& p)
+{
   assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
   const FT cx = std::cos(p.x() * 2 * CGAL_PI),
            cy = std::cos(p.y() * 2 * CGAL_PI),
@@ -120,7 +130,8 @@ FT G_prime (const Point& p) {
            + 1 * (c2x * c2y + c2y * c2z + c2z * c2x);
 }
 
-FT lidinoid (const Point& p) {
+FT lidinoid (const Point& p)
+{
   assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
   const FT cx = std::cos(p.x() * 2 * CGAL_PI),
            cy = std::cos(p.y() * 2 * CGAL_PI),
@@ -138,7 +149,8 @@ FT lidinoid (const Point& p) {
            - 1 * (c2x * c2y + c2y * c2z + c2z * c2x) + 0.3;
 }
 
-FT D_prime (const Point& p) {
+FT D_prime (const Point& p)
+{
   assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
   const FT cx = std::cos(p.x() * 2 * CGAL_PI),
            cy = std::cos(p.y() * 2 * CGAL_PI),
@@ -153,7 +165,8 @@ FT D_prime (const Point& p) {
            - 1 * ( c2x * c2y + c2y * c2z + c2z * c2x) - 0.4;
 }
 
-FT split_p (const Point& p) {
+FT split_p (const Point& p)
+{
   assert(p.x() >= 0 && p.y() >= 0 && p.z() >= 0 && p.x() < 1 && p.y() < 1 && p.z() < 1);
   const FT cx = std::cos(p.x() * 2 * CGAL_PI),
            cy = std::cos(p.y() * 2 * CGAL_PI),
@@ -167,9 +180,9 @@ FT split_p (const Point& p) {
   const FT s2x = std::sin(2 * p.x() * 2 * CGAL_PI),
            s2y = std::sin(2 * p.y() * 2 * CGAL_PI),
            s2z = std::sin(2 * p.z() * 2 * CGAL_PI);
-  return  1.1 * (s2x * sz * cy + s2y * sx * cz + s2z * sy * cx)
-            - 0.2 * (c2x * c2y + c2y * c2z + c2z * c2x)
-            - 0.4 * (cx + cy + cz);
+  return 1.1 * (s2x * sz * cy + s2y * sx * cz + s2z * sy * cx)
+             - 0.2 * (c2x * c2y + c2y * c2z + c2z * c2x)
+             - 0.4 * (cx + cy + cz);
 }
 
 FT cylinder(const Point& p)
@@ -185,28 +198,33 @@ typedef CGAL::Mesh_constant_domain_field_3<Periodic_mesh_domain::R,
 
 int main()
 {
-  const int functions_count = 11;
+  int domain_size = 1;
+  Iso_cuboid canonical_cube(0, 0, 0, domain_size, domain_size, domain_size);
+
   // Array of the functions
-  Function* implicit_function[functions_count] =
-  {
-    &cylinder,
-    &D_prime,
-    &diamond,
-    &double_p,
-    &G_prime,
-    &gyroid,
-    &lidinoid,
-    &scherk,
-    &schwarz_p,
-    &sphere,
-    &split_p
-  };
+  const int functions_count = 11;
+
+  CGAL::cpp11::array<Periodic_function, functions_count> implicit_functions =
+  {{
+    CGAL::make_periodic_3_wrapper<K>(cylinder, canonical_cube),
+    CGAL::make_periodic_3_wrapper<K>(D_prime, canonical_cube),
+    CGAL::make_periodic_3_wrapper<K>(diamond, canonical_cube),
+    CGAL::make_periodic_3_wrapper<K>(double_p, canonical_cube),
+    CGAL::make_periodic_3_wrapper<K>(G_prime, canonical_cube),
+    CGAL::make_periodic_3_wrapper<K>(gyroid, canonical_cube),
+    CGAL::make_periodic_3_wrapper<K>(lidinoid, canonical_cube),
+    CGAL::make_periodic_3_wrapper<K>(scherk, canonical_cube),
+    CGAL::make_periodic_3_wrapper<K>(schwarz_p, canonical_cube),
+    CGAL::make_periodic_3_wrapper<K>(sphere, canonical_cube),
+    CGAL::make_periodic_3_wrapper<K>(split_p, canonical_cube)
+  }};
 
   for(int i=0; i<functions_count; ++i)
   {
-    // Periodic mesh domain (Warning: Sphere_3 constructor uses squared radius !)
-    Periodic_mesh_domain domain(*implicit_function[i],
-                                CGAL::Iso_cuboid_3<K>(0, 0, 0, 1, 1, 1));
+    // Periodic mesh domain
+    Periodic_mesh_domain domain =
+      Periodic_mesh_domain::create_implicit_mesh_domain(
+        implicit_functions[i], canonical_cube);
 
     // Mesh criteria
     Periodic_mesh_criteria criteria(facet_angle = 30,
@@ -232,4 +250,3 @@ int main()
   std::cout << "EXIT SUCCESS" << std::endl;
   return 0;
 }
-

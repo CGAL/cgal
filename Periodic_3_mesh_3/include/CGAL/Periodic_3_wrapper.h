@@ -51,10 +51,8 @@ public:
   typedef typename details::Periodic_3_mesh_geom_traits_generator<BGT_>::type Geom_traits;
 
   /// Constructor
-  // the domain is not marked 'const' only to prevent a temporary from being passed
-  // @todo test that
-  // @todo count copies of the domain
-  Periodic_3_wrapper(const Function_& f, Iso_cuboid_3& domain) : f_(f), gt_(domain) { }
+  Periodic_3_wrapper() { }
+  Periodic_3_wrapper(const Function_& f, const Iso_cuboid_3& domain) : f_(f), gt_(domain) { }
 
   /// Operator ()
   return_type operator()(const Point_3& p) const {

@@ -2,15 +2,17 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Periodic_3_mesh_3/IO/File_medit.h>
-#include <CGAL/Labeled_periodic_3_mesh_domain_3.h>
 #include <CGAL/make_periodic_3_mesh_3.h>
+#include <CGAL/Periodic_3_mesh_3/IO/File_medit.h>
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
+#include <CGAL/Periodic_3_wrapper.h>
 
-#include <CGAL/functional.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
+
+#include <CGAL/functional.h>
 
 #include <algorithm>
 #include <cmath>
@@ -25,27 +27,29 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT                                               FT;
 typedef K::Point_3                                          Point;
 typedef K::Segment_3                                        Segment;
-
-// Function
-typedef FT (*Function)(const Point&);
-typedef CGAL::Implicit_multi_domain_to_labeling_function_wrapper<Function> Labeling_function;
+typedef K::Iso_cuboid_3                                     Iso_cuboid;
 
 // Domain
-typedef CGAL::Labeled_periodic_3_mesh_domain_3<Labeling_function, K> Periodic_mesh_domain;
+typedef FT (Function)(const Point&);
+typedef CGAL::Periodic_3_wrapper<Function, K>               Periodic_function;
+typedef CGAL::Implicit_multi_domain_to_labeling_function_wrapper<Periodic_function>
+                                                            Labeling_function;
+typedef CGAL::Labeled_mesh_domain_3<K>                      Periodic_mesh_domain;
 
 // Triangulation
 typedef CGAL::Periodic_3_mesh_triangulation_3<Periodic_mesh_domain>::type  Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr>                        C3t3;
 
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Periodic_mesh_criteria;
+typedef CGAL::Mesh_criteria_3<Tr>                           Periodic_mesh_criteria;
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
 const FT PI = CGAL_PI;
 
-FT schwarz_p(const Point& p) {
+FT schwarz_p(const Point& p)
+{
   assert(p.x() >= 1 && p.y() >= 1 && p.z() >= 1 && p.x() < 3 && p.y() < 3 && p.z() < 3);
   const FT x2 = std::cos( p.x() * 2*PI ),
            y2 = std::cos( p.y() * 2*PI ),
@@ -53,7 +57,8 @@ FT schwarz_p(const Point& p) {
   return x2 + y2 + z2;
 }
 
-FT schwarz_p_transl (const Point& p) {
+FT schwarz_p_transl (const Point& p)
+{
   assert(p.x() >= 1 && p.y() >= 1 && p.z() >= 1 && p.x() < 3 && p.y() < 3 && p.z() < 3);
   const FT x2 = std::cos(p.x() * 2 * PI + PI / 2.0),
            y2 = std::cos(p.y() * 2 * PI + PI / 2.0),
@@ -61,7 +66,8 @@ FT schwarz_p_transl (const Point& p) {
   return x2 + y2 + z2;
 }
 
-FT gyroid (const Point& p) {
+FT gyroid (const Point& p)
+{
   assert(p.x() >= 1 && p.y() >= 1 && p.z() >= 1 && p.x() < 3 && p.y() < 3 && p.z() < 3);
   const FT cx = std::cos(p.x() * 2 * PI),
            cy = std::cos(p.y() * 2 * PI),
@@ -72,7 +78,8 @@ FT gyroid (const Point& p) {
   return cx * sy + cy * sz + cz * sx;
 }
 
-FT diamond (const Point& p) {
+FT diamond (const Point& p)
+{
   assert(p.x() >= 1 && p.y() >= 1 && p.z() >= 1 && p.x() < 3 && p.y() < 3 && p.z() < 3);
   const FT cx = std::cos(p.x() * 2 * PI),
            cy = std::cos(p.y() * 2 * PI),
@@ -83,7 +90,8 @@ FT diamond (const Point& p) {
   return sx * sy * sz + sx * cy * cz + cx * sy * cz + cx * cy * sz;
 }
 
-FT double_p (const Point& p) {
+FT double_p (const Point& p)
+{
   assert(p.x() >= 1 && p.y() >= 1 && p.z() >= 1 && p.x() < 3 && p.y() < 3 && p.z() < 3);
   const FT cx = std::cos(p.x() * 2 * PI),
            cy = std::cos(p.y() * 2 * PI),
@@ -94,7 +102,8 @@ FT double_p (const Point& p) {
   return 0.5 * (cx * cy  + cy * cz + cz * cx ) + 0.2*(c2x + c2y + c2z);
 }
 
-FT G_prime (const Point& p) {
+FT G_prime (const Point& p)
+{
   assert(p.x() >= 1 && p.y() >= 1 && p.z() >= 1 && p.x() < 3 && p.y() < 3 && p.z() < 3);
   const FT cx = std::cos(p.x() * 2 * PI),
            cy = std::cos(p.y() * 2 * PI),
@@ -109,10 +118,11 @@ FT G_prime (const Point& p) {
            s2y = std::sin(2 * p.y() * 2 * PI),
            s2z = std::sin(2 * p.z() * 2 * PI);
   return 5 * (s2x * sz * cy  + s2y * sx * cz  + s2z * sy * cx)
-         + 1*(c2x * c2y  + c2y * c2z  + c2z * c2x);
+           + 1*(c2x * c2y  + c2y * c2z  + c2z * c2x);
 }
 
-FT lidinoid (const Point& p) {
+FT lidinoid (const Point& p)
+{
   assert(p.x() >= 1 && p.y() >= 1 && p.z() >= 1 && p.x() < 3 && p.y() < 3 && p.z() < 3);
   const FT cx = std::cos(p.x() * 2 * PI),
            cy = std::cos(p.y() * 2 * PI),
@@ -127,10 +137,11 @@ FT lidinoid (const Point& p) {
            s2y = std::sin(2 * p.y() * 2 * PI),
            s2z = std::sin(2 * p.z() * 2 * PI);
   return 1 * (s2x * sz * cy  + s2y * sx * cz  + s2z * sy * cx)
-         - 1 * (c2x * c2y  + c2y * c2z  + c2z * c2x) + 0.3;
+           - 1 * (c2x * c2y  + c2y * c2z  + c2z * c2x) + 0.3;
 }
 
-FT D_prime (const Point& p) {
+FT D_prime (const Point& p)
+{
   assert(p.x() >= 1 && p.y() >= 1 && p.z() >= 1 && p.x() < 3 && p.y() < 3 && p.z() < 3);
   const FT cx = std::cos(p.x() * 2 * PI),
            cy = std::cos(p.y() * 2 * PI),
@@ -142,10 +153,11 @@ FT D_prime (const Point& p) {
            sy = std::sin(p.y() * 2 * PI),
            sz = std::sin(p.z() * 2 * PI);
   return 1 * ( sx * sy * sz) + 1 * ( cx * cy * cz)
-         - 1 * ( c2x * c2y  + c2y * c2z  + c2z * c2x) - 0.4;
+           - 1 * ( c2x * c2y  + c2y * c2z  + c2z * c2x) - 0.4;
 }
 
-FT split_p (const Point& p) {
+FT split_p (const Point& p)
+{
   assert(p.x() >= 1 && p.y() >= 1 && p.z() >= 1 && p.x() < 3 && p.y() < 3 && p.z() < 3);
   const FT cx = std::cos(p.x() * 2 * PI),
            cy = std::cos(p.y() * 2 * PI),
@@ -160,8 +172,8 @@ FT split_p (const Point& p) {
            s2y = std::sin(2 * p.y() * 2 * PI),
            s2z = std::sin(2 * p.z() * 2 * PI);
   return  1.1 * (s2x * sz * cy  + s2y * sx * cz  + s2z * sy * cx)
-          - 0.2 * (c2x * c2y  + c2y * c2z  + c2z * c2x)
-          - 0.4 * (cx + cy + cz);
+              - 0.2 * (c2x * c2y  + c2y * c2z  + c2z * c2x)
+              - 0.4 * (cx + cy + cz);
 }
 
 struct Segments_function
@@ -220,9 +232,9 @@ std::vector<std::string> make_vps_in_out ()
   return vps;
 }
 
-C3t3 make_mesh(const Labeling_function& labeling_function)
+C3t3 make_mesh(const Labeling_function& labeling_function, const Iso_cuboid& canonical_cube)
 {
-  Periodic_mesh_domain domain(labeling_function, CGAL::Iso_cuboid_3<K>(1, 1, 1, 3, 3, 3));
+  Periodic_mesh_domain domain(labeling_function, canonical_cube);
 
   Periodic_mesh_criteria criteria(facet_angle = 30.,
                                   facet_size = 0.03 * 2 /*domain's edge length*/,
@@ -237,20 +249,22 @@ typedef std::vector<std::string> Position_vector;
 
 int main(int, char**)
 {
-  std::map<std::string, Function> functions;
+  Iso_cuboid canonical_cube(1, 1, 1, 3, 3, 3);
+
+  std::map<std::string, Periodic_function> functions;
 #ifdef CGAL_NDEBUG
   // Only test those when not in debug (otherwise it takes too long)
-  functions["D_prime"] = &D_prime;
-  functions["G_prime"] = &G_prime;
-  functions["diamond"] = &diamond;
-  functions["double_p"] = &double_p;
-  functions["gyroid"] = &gyroid;
-  functions["lidinoid"] = &lidinoid;
+  functions["D_prime"] = CGAL::make_periodic_3_wrapper<K>(D_prime, canonical_cube);
+  functions["G_prime"] = CGAL::make_periodic_3_wrapper<K>(G_prime, canonical_cube);
+  functions["diamond"] = CGAL::make_periodic_3_wrapper<K>(diamond, canonical_cube);
+  functions["double_p"] = CGAL::make_periodic_3_wrapper<K>(double_p, canonical_cube);
+  functions["gyroid"] = CGAL::make_periodic_3_wrapper<K>(gyroid, canonical_cube);
+  functions["lidinoid"] = CGAL::make_periodic_3_wrapper<K>(lidinoid, canonical_cube);
 #endif
-  functions["schwarz_p"] = &schwarz_p;
-  functions["schwarz_p_transl"] = &schwarz_p_transl;
-  functions["segments"] = &segments;
-  functions["split_p"] = &split_p;
+  functions["schwarz_p"] = CGAL::make_periodic_3_wrapper<K>(schwarz_p, canonical_cube);
+  functions["schwarz_p_transl"] = CGAL::make_periodic_3_wrapper<K>(schwarz_p_transl, canonical_cube);
+  functions["segments"] = CGAL::make_periodic_3_wrapper<K>(segments, canonical_cube);
+  functions["split_p"] = CGAL::make_periodic_3_wrapper<K>(split_p, canonical_cube);
 
   std::map<std::string, Position_vector> v_vps;
   v_vps["in"] = make_vps_in();
@@ -258,11 +272,11 @@ int main(int, char**)
 
   std::vector<unsigned> v_ncopy;
   v_ncopy.push_back(1);
-//  v_ncopy.push_back(2);
+//  v_ncopy.push_back(2); // if you wish to print more copies
 //  v_ncopy.push_back(4);
 //  v_ncopy.push_back(8);
 
-  for (std::map<std::string, Function>::iterator iter = functions.begin();
+  for (std::map<std::string, Periodic_function>::iterator iter = functions.begin();
        iter != functions.end(); ++iter)
   {
     for (std::map<std::string, Position_vector>::iterator it = v_vps.begin();
@@ -274,11 +288,11 @@ int main(int, char**)
 
       std::cout << "Meshing " << mesh_id << "..." << std::flush;
 
-      std::vector<Function> funcs;
+      std::vector<Periodic_function> funcs;
       funcs.push_back(iter->second);
 
       Labeling_function labeling_function(funcs, it->second);
-      C3t3 c3t3 = make_mesh(labeling_function);
+      C3t3 c3t3 = make_mesh(labeling_function, canonical_cube);
 
       CGAL_postcondition(c3t3.is_valid());
       CGAL_postcondition(c3t3.triangulation().is_valid());
