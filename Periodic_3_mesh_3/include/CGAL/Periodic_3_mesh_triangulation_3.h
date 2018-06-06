@@ -601,9 +601,6 @@ public:
           offset_of_nearest = min_dist_offset;
           const Weighted_point& vswp = this->point(tmp);
           min_sq_dist = csd(canonical_p, cp(vswp), query_offset, min_dist_offset);
-          std::cout << "new closest: " << point(tmp)
-                    << " offset: " << offset_of_nearest << std::endl
-                    << " sq dist: " << min_sq_dist << std::endl;
         }
       }
 

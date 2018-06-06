@@ -1301,7 +1301,7 @@ move_dummy_vertex_away_from_corner_with_direction(Vertex_handle& protection_vert
 #endif
       if(try_to_remove_dummy_vertex(moved_dummy_vertex))
       {
-        std::cout << "Error: Failed to remove moved dummy vertex" << std::endl;
+        std::cerr << "Error: Failed to remove moved dummy vertex" << std::endl;
         CGAL_assertion(false); // do not allow the removal of the moved vertex to fail
       }
       continue;

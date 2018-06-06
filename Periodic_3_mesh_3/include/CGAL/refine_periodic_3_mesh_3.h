@@ -121,10 +121,10 @@ void project_points(C3T3& c3t3,
     const FT sq_d = CGAL::squared_distance(new_point, vh_p);
 
 #ifdef CGAL_PERIODIC_3_MESH_3_DEBUG_DUMMY_PROJECTION
-    std::cout << "vh: " << &*vh << std::endl;
-    std::cout << "vhp: " << vh_p << std::endl;
-    std::cout << "projected: " << new_point << std::endl;
-    std::cout << "squared distance from dummy to surface: " << sq_d << std::endl;
+    std::cerr << "vh: " << &*vh << std::endl;
+    std::cerr << "vhp: " << vh_p << std::endl;
+    std::cerr << "projected: " << new_point << std::endl;
+    std::cerr << "squared distance from dummy to surface: " << sq_d << std::endl;
 #endif
 
     // Skip tiny moves for efficiency

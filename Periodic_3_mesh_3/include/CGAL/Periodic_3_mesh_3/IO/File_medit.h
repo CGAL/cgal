@@ -144,12 +144,12 @@ void output_to_medit(std::ostream& os,
   int occ_mult = Ox_rn * Oy_rn * Oz_rn;
 
 #ifdef CGAL_PERIODIC_3_MESH_3_VERBOSE
-  std::cout << "Outputting mesh to medit... " << std::endl;
-  std::cout << "occurrences over each axis: "
+  std::cerr << "Outputting mesh to medit... " << std::endl;
+  std::cerr << "occurrences over each axis: "
             << Ox_rn << " " << Oy_rn << " " << Oz_rn << std::endl;
-  std::cout << number_of_vertices << " vertices" << std::endl;
-  std::cout << number_of_facets << " facets" << std::endl;
-  std::cout << number_of_cells << " cells" << std::endl;
+  std::cerr << number_of_vertices << " vertices" << std::endl;
+  std::cerr << number_of_facets << " facets" << std::endl;
+  std::cerr << number_of_cells << " cells" << std::endl;
 #endif
 
   os << std::setprecision(17);
