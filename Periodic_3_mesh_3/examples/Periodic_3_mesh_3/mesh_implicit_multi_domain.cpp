@@ -5,7 +5,7 @@
 #include <CGAL/make_periodic_3_mesh_3.h>
 #include <CGAL/Periodic_3_mesh_3/IO/File_medit.h>
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
-#include <CGAL/Periodic_3_wrapper.h>
+#include <CGAL/Periodic_3_function_wrapper.h>
 
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
@@ -29,7 +29,7 @@ typedef K::Iso_cuboid_3                                     Iso_cuboid;
 // Domain
 typedef FT (*Function)(const Point&);
   // This wrapper is needed to make 'sphere_function' periodic.
-typedef CGAL::Periodic_3_wrapper<Function, K>               Periodic_function;
+typedef CGAL::Periodic_3_function_wrapper<Function, K>      Periodic_function;
 typedef CGAL::Implicit_multi_domain_to_labeling_function_wrapper<Periodic_function> Multi_domain_wrapper;
 typedef CGAL::Labeled_mesh_domain_3<K>                      Periodic_mesh_domain;
 
@@ -66,8 +66,8 @@ int main(int argc, char** argv)
   Iso_cuboid canonical_cube(0, 0, 0, domain_size, domain_size, domain_size);
 
   std::vector<Periodic_function> funcs;
-  funcs.push_back(CGAL::make_periodic_3_wrapper<K>(&schwarz_p, canonical_cube));
-  funcs.push_back(CGAL::make_periodic_3_wrapper<K>(&sphere_function, canonical_cube));
+  funcs.push_back(Periodic_function(&schwarz_p, canonical_cube));
+  funcs.push_back(Periodic_function(&sphere_function, canonical_cube));
 
   // The vector of vectors of sign is passed as a vector of strings (since a string
   // is a vector of chars)

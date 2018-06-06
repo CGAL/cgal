@@ -5,7 +5,7 @@
 #include <CGAL/make_periodic_3_mesh_3.h>
 #include <CGAL/Periodic_3_mesh_3/IO/File_medit.h>
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
-#include <CGAL/Periodic_3_wrapper.h>
+#include <CGAL/Periodic_3_function_wrapper.h>
 
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
@@ -28,6 +28,7 @@ typedef K::Point_3                                                  Point;
 typedef K::Iso_cuboid_3                                             Iso_cuboid;
 
 typedef FT (Function)(const Point&);
+typedef CGAL::Periodic_3_function_wrapper<Function, K>              Periodic_function;
 typedef CGAL::Mesh_domain_with_polyline_features_3<CGAL::Labeled_mesh_domain_3<K> > Periodic_mesh_domain;
 
 // Polyline
@@ -87,7 +88,7 @@ int main(int argc, char** argv)
 
   Periodic_mesh_domain domain =
     Periodic_mesh_domain::create_implicit_mesh_domain(
-      CGAL::make_periodic_3_wrapper<K>(cone_function, canonical_cube), canonical_cube);
+      Periodic_function(cone_function, canonical_cube), canonical_cube);
 
   // Mesh criteria
   Periodic_mesh_criteria criteria(edge_size = 0.02 * domain_size,

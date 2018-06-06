@@ -5,7 +5,7 @@
 #include <CGAL/make_periodic_3_mesh_3.h>
 #include <CGAL/Periodic_3_mesh_3/IO/File_medit.h>
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
-#include <CGAL/Periodic_3_wrapper.h>
+#include <CGAL/Periodic_3_function_wrapper.h>
 
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
@@ -28,6 +28,7 @@ typedef K::Iso_cuboid_3                                             Iso_cuboid;
 
 // Domain
 typedef FT (Function)(const Point&);
+typedef CGAL::Periodic_3_function_wrapper<Function, K>              Periodic_function;
 typedef CGAL::Mesh_domain_with_polyline_features_3<
           CGAL::Labeled_mesh_domain_3<K> >                          Periodic_mesh_domain;
 
@@ -77,7 +78,7 @@ void test_protected_sphere()
 
   Periodic_mesh_domain domain =
     Periodic_mesh_domain::create_implicit_mesh_domain(
-      CGAL::make_periodic_3_wrapper<K>(sphere_function, canonical_cube), canonical_cube);
+      Periodic_function(sphere_function, canonical_cube), canonical_cube);
 
   // Mesh criteria
   Periodic_mesh_criteria criteria(edge_size = 0.02 * domain_size,
@@ -142,7 +143,7 @@ void test_protected_squary_cylinder()
 
   Periodic_mesh_domain domain =
     Periodic_mesh_domain::create_implicit_mesh_domain(
-      CGAL::make_periodic_3_wrapper<K>(squary_cylinder_function, canonical_cube), canonical_cube);
+      Periodic_function(squary_cylinder_function, canonical_cube), canonical_cube);
 
   // Mesh criteria
   Periodic_mesh_criteria criteria(edge_size = 0.02 * domain_size,
@@ -254,7 +255,7 @@ void test_protected_squary_cylinder_2()
 
   Periodic_mesh_domain domain =
     Periodic_mesh_domain::create_implicit_mesh_domain(
-      CGAL::make_periodic_3_wrapper<K>(squary_cylinder_function_2, canonical_cube), canonical_cube);
+      Periodic_function(squary_cylinder_function_2, canonical_cube), canonical_cube);
 
   // Mesh criteria
   Periodic_mesh_criteria criteria(edge_size = 0.02 * domain_size,

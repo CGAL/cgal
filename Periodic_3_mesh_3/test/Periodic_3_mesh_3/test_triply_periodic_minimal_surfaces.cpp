@@ -5,7 +5,7 @@
 #include <CGAL/make_periodic_3_mesh_3.h>
 #include <CGAL/Periodic_3_mesh_3/IO/File_medit.h>
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
-#include <CGAL/Periodic_3_wrapper.h>
+#include <CGAL/Periodic_3_function_wrapper.h>
 
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
@@ -31,7 +31,7 @@ typedef K::Iso_cuboid_3                                     Iso_cuboid;
 
 // Domain
 typedef FT (Function)(const Point&);
-typedef CGAL::Periodic_3_wrapper<Function, K>               Periodic_function;
+typedef CGAL::Periodic_3_function_wrapper<Function, K>      Periodic_function;
 typedef CGAL::Implicit_multi_domain_to_labeling_function_wrapper<Periodic_function>
                                                             Labeling_function;
 typedef CGAL::Labeled_mesh_domain_3<K>                      Periodic_mesh_domain;
@@ -254,17 +254,17 @@ int main(int, char**)
   std::map<std::string, Periodic_function> functions;
 #ifdef CGAL_NDEBUG
   // Only test those when not in debug (otherwise it takes too long)
-  functions["D_prime"] = CGAL::make_periodic_3_wrapper<K>(D_prime, canonical_cube);
-  functions["G_prime"] = CGAL::make_periodic_3_wrapper<K>(G_prime, canonical_cube);
-  functions["diamond"] = CGAL::make_periodic_3_wrapper<K>(diamond, canonical_cube);
-  functions["double_p"] = CGAL::make_periodic_3_wrapper<K>(double_p, canonical_cube);
-  functions["gyroid"] = CGAL::make_periodic_3_wrapper<K>(gyroid, canonical_cube);
-  functions["lidinoid"] = CGAL::make_periodic_3_wrapper<K>(lidinoid, canonical_cube);
+  functions["D_prime"] = Periodic_function(D_prime, canonical_cube);
+  functions["G_prime"] = Periodic_function(G_prime, canonical_cube);
+  functions["diamond"] = Periodic_function(diamond, canonical_cube);
+  functions["double_p"] = Periodic_function(double_p, canonical_cube);
+  functions["gyroid"] = Periodic_function(gyroid, canonical_cube);
+  functions["lidinoid"] = Periodic_function(lidinoid, canonical_cube);
 #endif
-  functions["schwarz_p"] = CGAL::make_periodic_3_wrapper<K>(schwarz_p, canonical_cube);
-  functions["schwarz_p_transl"] = CGAL::make_periodic_3_wrapper<K>(schwarz_p_transl, canonical_cube);
-  functions["segments"] = CGAL::make_periodic_3_wrapper<K>(segments, canonical_cube);
-  functions["split_p"] = CGAL::make_periodic_3_wrapper<K>(split_p, canonical_cube);
+  functions["schwarz_p"] = Periodic_function(schwarz_p, canonical_cube);
+  functions["schwarz_p_transl"] = Periodic_function(schwarz_p_transl, canonical_cube);
+  functions["segments"] = Periodic_function(segments, canonical_cube);
+  functions["split_p"] = Periodic_function(split_p, canonical_cube);
 
   std::map<std::string, Position_vector> v_vps;
   v_vps["in"] = make_vps_in();

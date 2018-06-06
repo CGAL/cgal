@@ -18,8 +18,8 @@
 //
 // Author(s)     : Mael Rouxel-Labbé
 //
-#ifndef CGAL_PERIODIC_3_MESH_3_PERIODIC_3_WRAPPER_H
-#define CGAL_PERIODIC_3_MESH_3_PERIODIC_3_WRAPPER_H
+#ifndef CGAL_PERIODIC_3_MESH_3_PERIODIC_3_FUNCTION_WRAPPER_H
+#define CGAL_PERIODIC_3_MESH_3_PERIODIC_3_FUNCTION_WRAPPER_H
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
@@ -28,16 +28,12 @@
 
 #include <boost/type_traits/is_function.hpp>
 #include <boost/mpl/if.hpp>
+#include <CGAL/result_of.h>
 
 namespace CGAL {
 
-/**
- * @class Periodic_3_wrapper
- *
- * @todo
- */
 template<class Function_, typename BGT_>
-class Periodic_3_wrapper
+class Periodic_3_function_wrapper
 {
 public:
   // Types
@@ -51,8 +47,8 @@ public:
   typedef typename details::Periodic_3_mesh_geom_traits_generator<BGT_>::type Geom_traits;
 
   /// Constructor
-  Periodic_3_wrapper() { }
-  Periodic_3_wrapper(const Function_& f, const Iso_cuboid_3& domain) : f_(f), gt_(domain) { }
+  Periodic_3_function_wrapper() { }
+  Periodic_3_function_wrapper(const Function_& f, const Iso_cuboid_3& domain) : f_(f), gt_(domain) { }
 
   /// Operator ()
   return_type operator()(const Point_3& p) const {
@@ -69,13 +65,6 @@ private:
   Geom_traits gt_;
 };
 
-template<typename BGT_, typename Function_>
-Periodic_3_wrapper<Function_, BGT_>
-make_periodic_3_wrapper(const Function_& f, typename BGT_::Iso_cuboid_3& domain)
-{
-  return Periodic_3_wrapper<Function_, BGT_>(f, domain);
-}
-
 } // namespace CGAL
 
-#endif // CGAL_PERIODIC_3_MESH_3_PERIODIC_3_WRAPPER_H
+#endif // CGAL_PERIODIC_3_MESH_3_PERIODIC_3_FUNCTION_WRAPPER_H

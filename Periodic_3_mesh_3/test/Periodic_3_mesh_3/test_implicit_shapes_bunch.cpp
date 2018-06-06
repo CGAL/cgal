@@ -5,7 +5,7 @@
 #include <CGAL/make_periodic_3_mesh_3.h>
 #include <CGAL/Periodic_3_mesh_3/IO/File_medit.h>
 #include <CGAL/Periodic_3_mesh_triangulation_3.h>
-#include <CGAL/Periodic_3_wrapper.h>
+#include <CGAL/Periodic_3_function_wrapper.h>
 
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
@@ -29,7 +29,7 @@ typedef K::Iso_cuboid_3                                     Iso_cuboid;
 // Domain
 typedef FT (Function)(const Point&);
   // the wrapper is needed because not all the functions are triply periodic
-typedef CGAL::Periodic_3_wrapper<Function, K>               Periodic_function;
+typedef CGAL::Periodic_3_function_wrapper<Function, K>      Periodic_function;
 typedef CGAL::Labeled_mesh_domain_3<K>                      Periodic_mesh_domain;
 
 // Triangulation
@@ -206,17 +206,17 @@ int main()
 
   CGAL::cpp11::array<Periodic_function, functions_count> implicit_functions =
   {{
-    CGAL::make_periodic_3_wrapper<K>(cylinder, canonical_cube),
-    CGAL::make_periodic_3_wrapper<K>(D_prime, canonical_cube),
-    CGAL::make_periodic_3_wrapper<K>(diamond, canonical_cube),
-    CGAL::make_periodic_3_wrapper<K>(double_p, canonical_cube),
-    CGAL::make_periodic_3_wrapper<K>(G_prime, canonical_cube),
-    CGAL::make_periodic_3_wrapper<K>(gyroid, canonical_cube),
-    CGAL::make_periodic_3_wrapper<K>(lidinoid, canonical_cube),
-    CGAL::make_periodic_3_wrapper<K>(scherk, canonical_cube),
-    CGAL::make_periodic_3_wrapper<K>(schwarz_p, canonical_cube),
-    CGAL::make_periodic_3_wrapper<K>(sphere, canonical_cube),
-    CGAL::make_periodic_3_wrapper<K>(split_p, canonical_cube)
+    Periodic_function(cylinder, canonical_cube),
+    Periodic_function(D_prime, canonical_cube),
+    Periodic_function(diamond, canonical_cube),
+    Periodic_function(double_p, canonical_cube),
+    Periodic_function(G_prime, canonical_cube),
+    Periodic_function(gyroid, canonical_cube),
+    Periodic_function(lidinoid, canonical_cube),
+    Periodic_function(scherk, canonical_cube),
+    Periodic_function(schwarz_p, canonical_cube),
+    Periodic_function(sphere, canonical_cube),
+    Periodic_function(split_p, canonical_cube)
   }};
 
   for(int i=0; i<functions_count; ++i)
