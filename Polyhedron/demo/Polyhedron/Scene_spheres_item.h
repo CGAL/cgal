@@ -40,7 +40,7 @@ public:
   void setPrecision(int prec);
   void setRadius(const double& radius, const std::size_t& sphere_id);
   void setColor(const CGAL::Color& color, const std::size_t& sphere_id);
-
+  void setCenter(const Kernel::Point_3& center, const std::size_t& sphere_id);
   void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;

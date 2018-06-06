@@ -287,6 +287,14 @@ void Scene_spheres_item::setColor(const CGAL::Color& color, const std::size_t& s
   
 }
 
+void Scene_spheres_item::setCenter(const Kernel::Point_3 &center, const size_t &sphere_id)
+{
+  CGAL_assertion(sphere_id < d->radius.size());
+  d->centers[3*sphere_id]   = center.x();
+  d->centers[3*sphere_id+1] = center.y();
+  d->centers[3*sphere_id+2] = center.z();
+}
+
 std::size_t Scene_spheres_item::numberOfSpheres()
 {
   return d->radius.size();
