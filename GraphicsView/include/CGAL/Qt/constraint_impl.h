@@ -31,7 +31,9 @@
 #include <CGAL/Qt/manipulatedCameraFrame.h>
 #include <CGAL/Qt/camera.h>
 
-using namespace CGAL::qglviewer;
+namespace CGAL{
+namespace qglviewer{
+
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                  Constraint                                //
@@ -296,3 +298,5 @@ void CameraConstraint::constrainRotation(Quaternion &rotation,
     break;
   }
 }
+
+}}//end namespace

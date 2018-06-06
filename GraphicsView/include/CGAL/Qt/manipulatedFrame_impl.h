@@ -36,7 +36,9 @@
 
 #include <QMouseEvent>
 
-using namespace CGAL::qglviewer;
+namespace CGAL{
+namespace qglviewer{
+
 
 /*! Default constructor.
 
@@ -587,3 +589,4 @@ ManipulatedFrame::deformedBallQuaternion(int x, int y, qreal cx, qreal cy,
   return Quaternion(axis, angle);
 }
 #endif // DOXYGEN
+}}

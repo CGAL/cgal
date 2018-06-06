@@ -34,7 +34,8 @@
 
 #include <QMouseEvent>
 
-using namespace CGAL::qglviewer;
+namespace CGAL{
+namespace qglviewer{
 
 /*! Default constructor.
 
@@ -483,3 +484,5 @@ ManipulatedCameraFrame::pitchYawQuaternion(int x, int y,
                             camera->screenWidth());
   return rotY * rotX;
 }
+
+}}

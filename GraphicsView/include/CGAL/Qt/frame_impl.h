@@ -32,7 +32,9 @@
 #include <CGAL/Qt/domUtils.h>
 #include <math.h>
 
-using namespace CGAL::qglviewer;
+namespace CGAL{
+namespace qglviewer{
+
 
 /*! Creates a default Frame.
 
@@ -1181,3 +1183,4 @@ void Frame::projectOnLine(const Vec &origin, const Vec &direction) {
   proj.projectOnAxis(direction);
   translate(shift - proj);
 }
+}}

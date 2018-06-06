@@ -32,7 +32,8 @@
 #include <CGAL/Qt/domUtils.h>
 #include <CGAL/Qt/keyFrameInterpolator.h>
 
-using namespace CGAL::qglviewer;
+namespace CGAL{
+namespace qglviewer{
 
 /*! Default constructor.
 
@@ -2534,4 +2535,4 @@ void Camera::getFrustum(double frustum[6])
   frustum[4] = n;
   frustum[5] = f;
 }
-
+}}//end of namespace

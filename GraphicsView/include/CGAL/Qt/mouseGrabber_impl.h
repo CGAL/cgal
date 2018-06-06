@@ -29,7 +29,9 @@
 
 #include <CGAL/Qt/mouseGrabber.h>
 
-using namespace CGAL::qglviewer;
+namespace CGAL{
+namespace qglviewer{
+
 
 // Static private variable
 CGAL_INLINE_FUNCTION
@@ -91,3 +93,4 @@ void MouseGrabber::clearMouseGrabberPool(bool autoDelete) {
     qDeleteAll(MouseGrabber::MouseGrabberPool());
   MouseGrabber::MouseGrabberPool().clear();
 }
+}}

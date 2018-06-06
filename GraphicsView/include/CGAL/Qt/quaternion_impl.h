@@ -32,7 +32,9 @@
 #include <stdlib.h> // RAND_MAX
 
 // All the methods are declared inline in Quaternion.h
-using namespace CGAL::qglviewer;
+namespace CGAL{
+namespace qglviewer{
+
 
 /*! Constructs a Quaternion that will rotate from the \p from direction to the
 \p to direction.
@@ -554,3 +556,4 @@ Quaternion Quaternion::randomQuaternion() {
   qreal t2 = 2.0 * CGAL_PI * (rand() / (qreal)RAND_MAX);
   return Quaternion(sin(t1) * r1, cos(t1) * r1, sin(t2) * r2, cos(t2) * r2);
 }
+}}

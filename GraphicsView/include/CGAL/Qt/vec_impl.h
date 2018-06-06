@@ -32,7 +32,9 @@
 
 // Most of the methods are declared inline in vec.h
 
-using namespace CGAL::qglviewer;
+namespace CGAL{
+namespace qglviewer{
+
 
 /*! Projects the Vec on the axis of direction \p direction that passes through
 the origin.
@@ -176,3 +178,4 @@ CGAL_INLINE_FUNCTION
 std::ostream &operator<<(std::ostream &o, const Vec &v) {
   return o << v.x << '\t' << v.y << '\t' << v.z;
 }
+}}

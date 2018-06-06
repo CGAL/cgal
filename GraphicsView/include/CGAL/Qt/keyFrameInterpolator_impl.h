@@ -29,7 +29,9 @@
 #include <CGAL/Qt/keyFrameInterpolator.h>
 #include <CGAL/Qt/domUtils.h>
 
-using namespace CGAL::qglviewer;
+namespace CGAL{
+namespace qglviewer{
+
 
 /*! Creates a KeyFrameInterpolator, with \p frame as associated frame().
 
@@ -579,5 +581,6 @@ void KeyFrameInterpolator::KeyFrame::flipOrientationIfNeeded(
   if (Quaternion::dot(prev, q_) < 0.0)
     q_.negate();
 }
-
 #endif // DOXYGEN
+
+}}
