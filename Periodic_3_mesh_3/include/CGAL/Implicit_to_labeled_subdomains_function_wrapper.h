@@ -23,6 +23,9 @@
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
+#include <boost/type_traits/is_function.hpp>
+#include <boost/mpl/if.hpp>
+
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4180) // qualifier applied to function type has no meaning; ignored
@@ -39,27 +42,28 @@ public:
   typedef typename BGT::Point_3   Point_3;
 
   /// Constructor
-  Implicit_to_labeled_subdomains_function_wrapper(Function_& f)
-    : r_f_(f)
+  Implicit_to_labeled_subdomains_function_wrapper(const Function_& f)
+    : f_(f)
   { }
-
-  // Default copy constructor and assignment operator are ok
 
   /// Destructor
   ~Implicit_to_labeled_subdomains_function_wrapper() { }
 
   /// Operator ()
-  return_type operator()(const Point_3& p, const bool = true) const
+  return_type operator()(const Point_3& p) const
   {
-    // here is the important part : both > 0 ---> mesh both the interior and the exterior
-    return ( (r_f_(p)<0) ? 1 : 2 );
+    // here is the important part : both > 0 ---> both the interior and the exterior are meshed
+    return ( (f_(p)<0) ? 1 : 2 );
   }
 
 private:
-  /// Function to wrap
-  Function_& r_f_;
+  typedef typename boost::mpl::if_<boost::is_function<Function_>,
+                                   Function_*,
+                                   Function_>::type Stored_function;
 
-};  // end class Implicit_to_labeled_subdomains_function_wrapper
+  /// Function to wrap
+  Stored_function f_;
+};
 
 }  // end namespace CGAL
 
