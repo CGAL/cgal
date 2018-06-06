@@ -13,17 +13,12 @@ typedef CGAL::Surface_mesh<K::Point_3>             Mesh;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 template <class TriangleMesh>
-struct My_new_face_visitor
+struct My_visitor :
+  public CGAL::Polygon_mesh_processing::Corefinement::Default_visitor<TriangleMesh>
 {
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::face_descriptor face_descriptor;
-
-  void before_subface_creations(face_descriptor /*f_old*/,TriangleMesh&){}
   void after_subface_creations(TriangleMesh&){++(*i);}
-  void before_subface_created(TriangleMesh&){}
-  void after_subface_created(face_descriptor /*f_new*/,TriangleMesh&){}
 
-  My_new_face_visitor()
+  My_visitor()
     : i (new int(0) )
   {}
 
@@ -54,9 +49,9 @@ void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_poin
   assert(total_nb_points == total_nb_pt);
 
 // Testing autorefine()
-  My_new_face_visitor<Mesh> visitor;
+  My_visitor<Mesh> visitor;
   PMP::experimental::autorefine(mesh,
-    PMP::parameters::new_face_visitor(visitor));
+    PMP::parameters::visitor(visitor));
   assert( nb_vertices_after_autorefine==num_vertices(mesh));
   assert( *(visitor.i) != 0);
 

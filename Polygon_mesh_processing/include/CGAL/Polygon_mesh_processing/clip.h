@@ -416,8 +416,8 @@ clip_to_bbox(const Plane_3& plane,
   *     Note that if the property map is writable, the indices of the faces
   *     of `tm` and `clipper` will be set after the refining `tm` with the intersection with `plane`.
   *   \cgalParamEnd
-  *   \cgalParamBegin{new_face_visitor} a class model of `PMPCorefinementNewFaceVisitor`
-  *                                     that is used to track the creation of new faces.
+  *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
+  *                            that is used to track the creation of new faces.
   *   \cgalParamEnd
   *   \cgalParamBegin{throw_on_self_intersection} if `true`,
   *      the set of triangles closed to the intersection of `tm` and `clipper` will be
@@ -496,8 +496,8 @@ bool dispatch_clip_call(TriangleMesh& tm, TriangleMesh& clipper,
   * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{new_face_visitor} a class model of `PMPCorefinementNewFaceVisitor`
-  *                                     that is used to track the creation of new faces.
+  *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
+  *                            that is used to track the creation of new faces.
   *   \cgalParamEnd
   *   \cgalParamBegin{throw_on_self_intersection} if `true`,
   *      the set of triangles closed to the intersection of `tm` and `plane` will be

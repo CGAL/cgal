@@ -35,7 +35,7 @@ Release date: September 2018
 ### Polygon Mesh Processing
 -   Added a function to apply a transformation to a mesh : 
     - `CGAL::Polygon_mesh_processing::transform()`
--   Added in corefinement-related functions a new named parameter `new_face_visitor`
+-   Added in corefinement-related functions a new named parameter `visitor`
     that makes it possible to pass a visitor to the function in order to track
     the creation of new faces.
 -   Added in all corefinement-related functions a named parameter `throw_on_self_intersection`

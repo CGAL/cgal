@@ -11,17 +11,12 @@ typedef CGAL::Surface_mesh<K::Point_3> Surface_mesh;
 typedef CGAL::Polyhedron_3<K> Polyhedron_3;
 
 template <class TriangleMesh>
-struct My_new_face_visitor
+struct My_visitor :
+  public CGAL::Polygon_mesh_processing::Corefinement::Default_visitor<TriangleMesh>
 {
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::face_descriptor face_descriptor;
-
-  void before_subface_creations(face_descriptor /*f_old*/,TriangleMesh&){}
   void after_subface_creations(TriangleMesh&){++(*i);}
-  void before_subface_created(TriangleMesh&){}
-  void after_subface_created(face_descriptor /*f_new*/,TriangleMesh&){}
 
-  My_new_face_visitor()
+  My_visitor()
     : i (new int(0) )
   {}
 
@@ -43,10 +38,10 @@ void test(const char* f1, const char* f2)
   assert(input);
   input >> sm2;
   input.close();
-  My_new_face_visitor<Surface_mesh> sm_v;
+  My_visitor<Surface_mesh> sm_v;
 
   CGAL::Polygon_mesh_processing::corefine(sm1, sm2,
-    CGAL::Polygon_mesh_processing::parameters::new_face_visitor(sm_v));
+    CGAL::Polygon_mesh_processing::parameters::visitor(sm_v));
 
   assert(sm1.is_valid());
   assert(sm2.is_valid());
@@ -61,10 +56,10 @@ void test(const char* f1, const char* f2)
   input.open(f2);
   assert(input);
   input >> Q;
-  My_new_face_visitor<Polyhedron_3> sm_p;
+  My_visitor<Polyhedron_3> sm_p;
 
   CGAL::Polygon_mesh_processing::corefine(P, Q,
-    CGAL::Polygon_mesh_processing::parameters::new_face_visitor(sm_p));
+    CGAL::Polygon_mesh_processing::parameters::visitor(sm_p));
   assert(*(sm_p.i) != 0);
 
   assert(*(sm_v.i) == *(sm_p.i));

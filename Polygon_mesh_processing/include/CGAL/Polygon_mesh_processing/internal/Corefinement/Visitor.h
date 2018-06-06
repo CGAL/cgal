@@ -151,7 +151,7 @@ class Visitor{
   typedef typename Default::Get<
     NewNodeVisitor_, Default_node_visitor<TriangleMesh> >::type  NewNodeVisitor;
   typedef typename Default::Get<
-    NewFaceVisitor_, Default_new_face_visitor<TriangleMesh> >::type  NewFaceVisitor;
+    NewFaceVisitor_, Default_visitor<TriangleMesh> >::type  NewFaceVisitor;
 
 // config flags
 public:

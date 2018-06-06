@@ -91,7 +91,7 @@ class Face_graph_output_builder
                   No_mark<TriangleMesh>,
                   No_mark<TriangleMesh> > >::type     EdgeMarkMapTuple;
   typedef typename Default::Get<
-    NewFaceVisitor_, Default_new_face_visitor<TriangleMesh> >::type  NewFaceVisitor;
+    NewFaceVisitor_, Default_visitor<TriangleMesh> >::type  NewFaceVisitor;
 
 // graph_traits typedefs
   typedef TriangleMesh                                              TM;

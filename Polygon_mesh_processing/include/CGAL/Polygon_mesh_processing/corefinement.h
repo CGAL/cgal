@@ -135,13 +135,13 @@ bool recursive_does_bound_a_volume(const TriangleMesh& tm,
 namespace Corefinement
 {
 /** \ingroup PMP_corefinement_grp
- *  Default new-face visitor model of `PMPCorefinementNewFaceVisitor`.
+ *  Default new-face visitor model of `PMPCorefinementVisitor`.
  *  All of its functions have an empty body. This class can be used as a
  *  base class if only some of the functions of the concept require to be
  *  overridden.
  */
 template <class TriangleMesh>
-struct Default_new_face_visitor;
+struct Default_visitor;
 
 #ifdef DOXYGEN_RUNNING
 /** \ingroup PMP_corefinement_grp
@@ -309,8 +309,8 @@ bool does_bound_a_volume(const TriangleMesh& tm)
   *     Note that if the property map is writable, the indices of the faces
   *     of `tm1` and `tm2` will be set after the corefinement is done.
   *   \cgalParamEnd
-  *   \cgalParamBegin{new_face_visitor} a class model of `PMPCorefinementNewFaceVisitor`
-  *                                     that is used to track the creation of new faces  (`np1` only)
+  *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
+  *                            that is used to track the creation of new faces  (`np1` only)
   *   \cgalParamEnd
   *   \cgalParamBegin{throw_on_self_intersection} if `true`, for each input triangle mesh,
   *      the set of triangles close to the intersection of `tm1` and `tm2` will be
@@ -494,12 +494,12 @@ corefine_and_compute_boolean_operations(
                                          get_property_map(boost::face_index, tm2));
 // New face visitor
   typedef typename boost::lookup_named_param_def <
-    internal_np::new_face_visitor_t,
+    internal_np::graph_visitor_t,
     NamedParameters1,
-    Corefinement::Default_new_face_visitor<TriangleMesh>//default
+    Corefinement::Default_visitor<TriangleMesh>//default
   > ::type Nfv;
-  Nfv nfv( boost::choose_param( boost::get_param(np1, internal_np::new_face_visitor),
-                                Corefinement::Default_new_face_visitor<TriangleMesh>() ) );
+  Nfv nfv( boost::choose_param( boost::get_param(np1, internal_np::graph_visitor),
+                                Corefinement::Default_visitor<TriangleMesh>() ) );
 
   // surface intersection algorithm call
   typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
@@ -617,8 +617,8 @@ corefine_and_compute_boolean_operations(
   *     Note that if the property map is writable, the indices of the faces
   *     of `tm1` and `tm2` will be set after the corefinement is done.
   *   \cgalParamEnd
-  *   \cgalParamBegin{new_face_visitor} a class model of `PMPCorefinementNewFaceVisitor`
-  *                                     that is used to track the creation of new faces  (`np1` only)
+  *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
+  *                            that is used to track the creation of new faces  (`np1` only)
   *   \cgalParamEnd
   *   \cgalParamBegin{throw_on_self_intersection} if `true`, for each input triangle mesh,
   *      the set of triangles close to the intersection of `tm1` and `tm2` will be
@@ -763,8 +763,8 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
  *     constrained-or-not status of each edge of `tm1` (`tm2`)
  *   \cgalParamEnd
- *   \cgalParamBegin{new_face_visitor} a class model of `PMPCorefinementNewFaceVisitor`
- *                                     that is used to track the creation of new faces (`np1` only)
+ *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
+ *                            that is used to track the creation of new faces (`np1` only)
  *   \cgalParamEnd
  *   \cgalParamBegin{throw_on_self_intersection} if `true`, for each input triangle mesh,
  *      the set of triangles close to the intersection of `tm1` and `tm2` will be
@@ -829,14 +829,14 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
     return;
   }
 
-  // New face visitor
+  // User visitor
   typedef typename boost::lookup_named_param_def <
-    internal_np::new_face_visitor_t,
+    internal_np::graph_visitor_t,
     NamedParameters1,
-    Corefinement::Default_new_face_visitor<TriangleMesh>//default
+    Corefinement::Default_visitor<TriangleMesh>//default
   > ::type Nfv;
-  Nfv nfv( boost::choose_param( boost::get_param(np1, internal_np::new_face_visitor),
-                                Corefinement::Default_new_face_visitor<TriangleMesh>() ) );
+  Nfv nfv( boost::choose_param( boost::get_param(np1, internal_np::graph_visitor),
+                                Corefinement::Default_visitor<TriangleMesh>() ) );
 
 // surface intersection algorithm call
   typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
@@ -873,8 +873,8 @@ namespace experimental {
  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
  *     constrained-or-not status of each edge of `tm`
  *   \cgalParamEnd
- *   \cgalParamBegin{new_face_visitor} a class model of `PMPCorefinementNewFaceVisitor`
- *                                     that is used to track the creation of new faces
+ *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
+ *                            that is used to track the creation of new faces
  *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
@@ -905,12 +905,12 @@ namespace experimental {
 
 // New face visitor
   typedef typename boost::lookup_named_param_def <
-    internal_np::new_face_visitor_t,
+    internal_np::graph_visitor_t,
     NamedParameters,
-    Corefinement::Default_new_face_visitor<TriangleMesh>//default
+    Corefinement::Default_visitor<TriangleMesh>//default
   > ::type Nfv;
-  Nfv nfv( boost::choose_param( boost::get_param(np, internal_np::new_face_visitor),
-                                Corefinement::Default_new_face_visitor<TriangleMesh>() ) );
+  Nfv nfv( boost::choose_param( boost::get_param(np, internal_np::graph_visitor),
+                                Corefinement::Default_visitor<TriangleMesh>() ) );
 
 
 // surface intersection algorithm call
@@ -951,8 +951,8 @@ namespace experimental {
  *     constrained-or-not status of each edge of `tm`
  *   \cgalParamEnd
  *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm` \cgalParamEnd
- *   \cgalParamBegin{new_face_visitor} a class model of `PMPCorefinementNewFaceVisitor`
- *                                     that is used to track the creation of new faces
+ *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
+ *                            that is used to track the creation of new faces
  *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
@@ -983,12 +983,12 @@ namespace experimental {
                                  Corefinement::No_mark<TriangleMesh>() );
 // New face visitor
   typedef typename boost::lookup_named_param_def <
-    internal_np::new_face_visitor_t,
+    internal_np::graph_visitor_t,
     NamedParameters,
-    Corefinement::Default_new_face_visitor<TriangleMesh>//default
+    Corefinement::Default_visitor<TriangleMesh>//default
   > ::type Nfv;
-  Nfv nfv( boost::choose_param( boost::get_param(np, internal_np::new_face_visitor),
-                               Corefinement::Default_new_face_visitor<TriangleMesh>() ) );
+  Nfv nfv( boost::choose_param( boost::get_param(np, internal_np::graph_visitor),
+                               Corefinement::Default_visitor<TriangleMesh>() ) );
 
 // surface intersection algorithm call
   typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;

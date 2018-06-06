@@ -221,7 +221,7 @@ get_vpm(const NP&, boost::optional<PM*> opm, boost::false_type)
 //
 
 template <class TriangleMesh>
-struct Default_new_face_visitor{
+struct Default_visitor{
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::face_descriptor face_descriptor;
 

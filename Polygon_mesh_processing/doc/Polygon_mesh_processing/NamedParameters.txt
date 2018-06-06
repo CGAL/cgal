@@ -310,12 +310,11 @@ of close meshes should be done in addition to surface intersection tests.
 \b Default value is `false`
 \cgalNPEnd
 
-\cgalNPBegin{new_face_visitor} \anchor PMP_new_face_visitor
-A class model of `PMPCorefinementNewFaceVisitor` that is used in corefinement-related functions
-to track the creation of new faces.
+\cgalNPBegin{visitor} \anchor PMP_visitor
+Parameter used to pass a visitor class to a function. Its type and behavior depend on the visited function.
 \n
 \b Type : `A class` \n
-\b Default `CGAL::Polygon_mesh_processing::Corefinement::Default_new_face_visitor`
+\b Default Specific to the function visited
 \cgalNPEnd
 
 \cgalNPBegin{throw_on_self_intersection} \anchor PMP_throw_on_self_intersection

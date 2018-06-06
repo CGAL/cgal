@@ -1,15 +1,15 @@
 /// \ingroup PkgPolygonMeshProcessingConcepts
 /// \cgalConcept
 ///
-/// The concept `PMPCorefinementNewFaceVisitor` defines the requirements for the visitor
+/// The concept `PMPCorefinementVisitor` defines the requirements for the visitor
 /// used in \link PMP_corefinement_grp corefinement-related functions \endlink to track
 /// the creation of new faces.
 ///
 /// \cgalRefines `CopyConstructible`
-/// \cgalHasModel `CGAL::Polygon_mesh_processing::Corefinement::Default_new_face_visitor`.
+/// \cgalHasModel `CGAL::Polygon_mesh_processing::Corefinement::Default_visitor`.
 
 
-class PMPCorefinementNewFaceVisitor{
+class PMPCorefinementVisitor{
 public:
 /// Mesh type
 typedef unspecified_type Triangle_mesh;

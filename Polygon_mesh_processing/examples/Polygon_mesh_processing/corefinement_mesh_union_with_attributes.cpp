@@ -10,24 +10,21 @@ typedef CGAL::Surface_mesh<K::Point_3>             Mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-struct New_face_visitor
+struct Visitor :
+  public PMP::Corefinement::Default_visitor<Mesh>
 {
   typedef typename Mesh::Face_index face_descriptor;
 
   boost::container::flat_map<const Mesh*, Mesh::Property_map<Mesh::Face_index, int> > properties;
   int face_id;
 
-  New_face_visitor()
+  Visitor()
   {
     properties.reserve(3);
     face_id=-1;
   }
 
-// required visitor API
-  void after_subface_creations(Mesh&){}
-  void before_subface_created(Mesh&){}
-  void before_face_copy(face_descriptor, Mesh&, Mesh&){}
-
+// visitor API overloaded
   void before_subface_creations(face_descriptor f_split,Mesh& tm)
   {
     face_id = properties[&tm][f_split];
@@ -79,12 +76,12 @@ int main(int argc, char* argv[])
   BOOST_FOREACH(Mesh::Face_index f, faces(mesh2))
     mesh2_id[f] = 2;
 
-  New_face_visitor nfv;
-  nfv.properties[&mesh1] = mesh1_id;
-  nfv.properties[&mesh2] = mesh2_id;
-  nfv.properties[&out] = out_id;
+  Visitor visitor;
+  visitor.properties[&mesh1] = mesh1_id;
+  visitor.properties[&mesh2] = mesh2_id;
+  visitor.properties[&out] = out_id;
 
-  bool valid_union = PMP::corefine_and_compute_union(mesh1, mesh2, out, PMP::parameters::new_face_visitor(nfv));
+  bool valid_union = PMP::corefine_and_compute_union(mesh1, mesh2, out, PMP::parameters::visitor(visitor));
 
   BOOST_FOREACH(Mesh::Face_index f, faces(mesh1))
     assert( mesh1_id[f] == 1 );
