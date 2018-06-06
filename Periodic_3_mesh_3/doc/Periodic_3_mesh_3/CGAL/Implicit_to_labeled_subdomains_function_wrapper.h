@@ -19,6 +19,11 @@ thus yielding a periodic mesh of the entire canonical cube.
         This parameter stands for a model of the concept `ImplicitFunction`
         described in the surface mesh generation package.
         The number types `Function::FT` and `BGT::FT` are required to match.
+\tparam BGT is a geometric traits class that provides
+        the basic operations to implement
+        intersection tests and intersection computations
+        through a bisection method. This parameter must be instantiated
+        with a model of the concept `BisectionGeometricTraits_3`.
 
 \sa `Implicit_multi_domain_to_labeling_function_wrapper`.
 
@@ -38,16 +43,16 @@ public:
   /*!
    * \brief Construction from an implicit function.
    */
-  Implicit_to_labeled_subdomains_function_wrapper (const Function_& f);
+  Implicit_to_labeled_subdomains_function_wrapper (const Function& f);
 /// @}
 
 /// \name Operations
 /// @{
 
   /*!
-   * Returns 1 or 2, depending on whether f(p) is negative or not.
+   * Returns `1` or `2`, depending on whether \f$ f(p) \f$ is negative or not.
    */
-  int operator()(const Point_3& p, const bool = true) const;
+  int operator()(const Point_3& p) const;
 
 /// @}
 
