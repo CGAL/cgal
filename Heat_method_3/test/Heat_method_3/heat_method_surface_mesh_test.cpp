@@ -6,20 +6,24 @@
 #include <vector>
 #include <iostream>
 #include <cassert>
-
+#include <Eigen/Sparse>
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
 typedef CGAL::Surface_mesh<Point>                            Mesh;
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef CGAL::Heat_method_3::Heat_method_3<Mesh,Kernel> Heat_method;
-
+typedef CGAL::Heat_method_3::Heat_method_Eigen_traits_3::SparseMatrix SparseMatrix;
 
 int main()
 {
   Mesh sm;
-  std::ifstream in("data/pyramid.off");
+  std::ifstream in("data/pyramid0.off");
   in >> sm;
+  if(!in || num_vertices(sm) == 0) {
+    std::cerr << "Problem loading the input data" << std::endl;
+    return 1;
+  }
   //source set tests
   Heat_method hm(sm);
   vertex_descriptor source = *(vertices(sm).first);
@@ -38,14 +42,18 @@ int main()
   assert(!(hm.add_source(source)));
   assert(hm.remove_source(*(std::next(vertices(sm).first,3))));
   //cotan matrix tests
+  SparseMatrix M = hm.get_mass_matrix();
+  SparseMatrix c = hm.get_cotan_matrix();
 
-
+  double time_step = hm.get_time_step();
+  double length_sum = hm.summation_of_edges();
+  //there are 6 edges in pyramid
+  double time_step_computed = (1./6)*length_sum;
+  assert(time_step_computed ==time_step);
 
   //mass matrix tests
 
 
-
-
-
+  std::cout<<"SUCCESS";
   return 0;
 }

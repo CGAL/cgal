@@ -41,6 +41,10 @@
 #include <CGAL/Vector_3.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
+#include <CGAL/number_utils.h>
+
+
+
 namespace CGAL {
 namespace Heat_method_3 {
 
@@ -75,7 +79,7 @@ namespace Heat_method_3 {
     typedef typename graph_traits::edge_descriptor                edge_descriptor;
     typedef typename graph_traits::halfedge_descriptor        halfedge_descriptor;
     typedef typename graph_traits::face_descriptor                face_descriptor;
-    typedef typename std::set<vertex_descriptor>::iterator                 vertex_iterator;
+    typedef typename std::set<vertex_descriptor>::iterator        vertex_iterator;
     /// Geometric typedefs
     typedef typename Traits::Point_3                                      Point_3;
     typedef typename Traits::FT                                                FT;
@@ -110,6 +114,17 @@ namespace Heat_method_3 {
     /**
      * add `vd` to the source set, returning `false` if `vd` is already in the set.
      */
+
+     Matrix get_mass_matrix()
+     {
+       return mass_matrix;
+     }
+
+     Matrix get_cotan_matrix()
+     {
+       return cotan_matrix;
+     }
+
     bool add_source(vertex_descriptor vd)
     {
       return sources.insert(vd).second;
@@ -171,6 +186,21 @@ namespace Heat_method_3 {
       return 0;
     }
 
+    double summation_of_edges()
+    {
+      double edge_sum = 0;
+      BOOST_FOREACH(edge_descriptor ed, edges(tm))
+      {
+        edge_sum += Polygon_mesh_processing::edge_length(halfedge(ed,tm), tm);
+      }
+      return edge_sum;
+    }
+
+    double get_time_step()
+    {
+      return time_step;
+    }
+
   private:
 
     void build()
@@ -184,12 +214,16 @@ namespace Heat_method_3 {
       }
 
       int m = num_vertices(tm);
+      //cotan matrix
       Matrix c(m,m);
+      //Mass matrix
       Matrix A(m,m);
       std::vector<triplet> A_matrix_entries;
       std::vector<triplet> c_matrix_entries;
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend;
+      //Go through each face on the mesh
       BOOST_FOREACH(face_descriptor f, faces(tm)) {
+        //Prior assumption that it is a triangle mesh
         boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
         vertex_descriptor current = *(vbegin);
         vertex_descriptor neighbor_one = *(vbegin++);
@@ -203,8 +237,8 @@ namespace Heat_method_3 {
         //If the passed in mesh is not a triangle mesh, the algorithm breaks here
         vector cross = CGAL::cross_product((p_j-p_i), (p_k-p_i));
         double dot = to_double((p_j-p_i)*(p_k-p_i));
-        double squared_cross = to_double(CGAL::approximate_sqrt(cross*cross));
-        double cotan_i = dot/squared_cross;
+        double norm_cross = (CGAL::sqrt(cross*cross));
+        double cotan_i = dot/norm_cross;
         c_matrix_entries.push_back(triplet(j,k ,-.5*cotan_i));
         c_matrix_entries.push_back(triplet(k,j,-.5* cotan_i));
         c_matrix_entries.push_back(triplet(j,j,.5* cotan_i));
@@ -212,8 +246,8 @@ namespace Heat_method_3 {
 
         cross = CGAL::cross_product((p_i-p_j), (p_k-p_j));
         dot = to_double((p_i-p_j)*(p_k-p_j));
-        squared_cross = to_double(CGAL::approximate_sqrt(cross*cross));
-        double cotan_j = dot/squared_cross;
+        //squared_cross = to_double(CGAL::approximate_sqrt(cross*cross));
+        double cotan_j = dot/norm_cross;
         c_matrix_entries.push_back(triplet(i,k ,-.5*cotan_j));
         c_matrix_entries.push_back(triplet(k,i,-.5* cotan_j));
         c_matrix_entries.push_back(triplet(i,i,.5* cotan_j));
@@ -221,32 +255,42 @@ namespace Heat_method_3 {
 
         cross = CGAL::cross_product((p_i-p_k), (p_j-p_k));
         dot = to_double((p_i-p_k)*(p_j-p_k));
-        squared_cross = to_double(CGAL::approximate_sqrt(cross*cross));
-        double cotan_k = dot/squared_cross;
+        //squared_cross = to_double(CGAL::approximate_sqrt(cross*cross));
+        double cotan_k = dot/norm_cross;
         c_matrix_entries.push_back(triplet(i,j,-.5*cotan_k));
         c_matrix_entries.push_back(triplet(j,i,-.5* cotan_k));
         c_matrix_entries.push_back(triplet(i,i,.5* cotan_k));
         c_matrix_entries.push_back(triplet(j,j,.5* cotan_k));
 
-        double area_face = CGAL::Polygon_mesh_processing::face_area(f,tm);
-        A_matrix_entries.push_back(triplet(i,i, (1./3.)*area_face));
-        A_matrix_entries.push_back(triplet(j,j, (1./3.)*area_face));
-        A_matrix_entries.push_back(triplet(k,k, (1./3.)*area_face));
+        //double area_face = CGAL::Polygon_mesh_processing::face_area(f,tm);
+        //cross is 2*area
+        A_matrix_entries.push_back(triplet(i,i, (1./6.)*norm_cross));
+        A_matrix_entries.push_back(triplet(j,j, (1./6.)*norm_cross));
+        A_matrix_entries.push_back(triplet(k,k, (1./6.)*norm_cross));
       }
+
+
 
       A.setFromTriplets(A_matrix_entries.begin(), A_matrix_entries.end());
       c.setFromTriplets(c_matrix_entries.begin(), c_matrix_entries.end());
-
+      mass_matrix = A;
+      cotan_matrix = c;
+      time_step = 1./(tm.number_of_edges());
+      std::cout<<"number of edges is " << tm.number_of_edges();
+      time_step = time_step*summation_of_edges();
 
 
 
     }
 
+
+
+
     const TriangleMesh& tm;
     VertexPointMap vpm;
     std::set<vertex_descriptor> sources;
-
-    Matrix m;
+    double time_step;
+    Matrix mass_matrix, cotan_matrix;
   };
 
 } // namespace Heat_method_3
