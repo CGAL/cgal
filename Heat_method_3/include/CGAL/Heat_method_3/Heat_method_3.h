@@ -92,13 +92,13 @@ namespace Heat_method_3 {
     typedef typename LA::T triplet;
   public:
 
-    Heat_method_3(const TriangleMesh& tm_)
+    Heat_method_3(const TriangleMesh& tm)
       : tm(tm), vpm(get(vertex_point,tm))
     {
       build();
     }
 
-    Heat_method_3(const TriangleMesh& tm_, VertexPointMap vpm)
+    Heat_method_3(const TriangleMesh& tm, VertexPointMap vpm)
       : tm(tm), vpm(vpm)
     {
       build();
