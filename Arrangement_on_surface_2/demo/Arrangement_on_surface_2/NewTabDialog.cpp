@@ -21,6 +21,7 @@
 #include "NewTabDialog.h"
 #include "ArrangementDemoWindow.h"
 #include "ui_NewTabDialog.h"
+#include <QButtonGroup>
 
 NewTabDialog::NewTabDialog( QWidget* parent, Qt::WindowFlags f ) :
   QDialog( parent, f ),

@@ -2251,7 +2251,7 @@ void Scene_polyhedron_selection_item::select_boundary()
 QString 
 Scene_polyhedron_selection_item::toolTip() const
 {
-  if(!poly_item->polyhedron())
+  if(!poly_item || !poly_item->polyhedron())
     return QString();
 
   return QObject::tr("<p>Selection <b>%1</b> (mode: %5, color: %6)</p>"
