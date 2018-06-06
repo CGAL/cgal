@@ -73,7 +73,7 @@ template <class TriangleMesh,
           class Kernel_=Default,
           class EdgeMarkMapBind_  = Default,
           class EdgeMarkMapTuple_ = Default,
-          class NewFaceVisitor_   = Default>
+          class UserVisitor_      = Default>
 class Face_graph_output_builder
 {
 //Default typedefs
@@ -91,7 +91,7 @@ class Face_graph_output_builder
                   No_mark<TriangleMesh>,
                   No_mark<TriangleMesh> > >::type     EdgeMarkMapTuple;
   typedef typename Default::Get<
-    NewFaceVisitor_, Default_visitor<TriangleMesh> >::type  NewFaceVisitor;
+    UserVisitor_, Default_visitor<TriangleMesh> >::type  UserVisitor;
 
 // graph_traits typedefs
   typedef TriangleMesh                                              TM;
@@ -126,7 +126,7 @@ class Face_graph_output_builder
   // property maps of output meshes
   const VpmOutTuple& output_vpms;
   EdgeMarkMapTuple& out_edge_mark_maps;
-  NewFaceVisitor& new_face_visitor;
+  UserVisitor& user_visitor;
   // output meshes
   const cpp11::array<boost::optional<TriangleMesh*>, 4>& requested_output;
   // input meshes closed ?
@@ -356,7 +356,7 @@ public:
                                   EdgeMarkMapBind& marks_on_input_edges,
                             const VpmOutTuple& output_vpms,
                                   EdgeMarkMapTuple& out_edge_mark_maps,
-                                  NewFaceVisitor& new_face_visitor,
+                                  UserVisitor& user_visitor,
                             const cpp11::array<
                               boost::optional<TriangleMesh*>, 4 >& requested_output)
     : tm1(tm1), tm2(tm2)
@@ -365,7 +365,7 @@ public:
     , marks_on_input_edges(marks_on_input_edges)
     , output_vpms(output_vpms)
     , out_edge_mark_maps(out_edge_mark_maps)
-    , new_face_visitor(new_face_visitor)
+    , user_visitor(user_visitor)
     , requested_output(requested_output)
     , is_tm1_closed( is_closed(tm1))
     , is_tm2_closed( is_closed(tm2))
@@ -1256,7 +1256,7 @@ public:
           marks_on_input_edges.ecm2, \
           cpp11::get<BO_type>(out_edge_mark_maps), \
           shared_edges, \
-          new_face_visitor \
+          user_visitor \
         )
       CGAL_COREF_FUNCTION_CALL(operation)
       #undef CGAL_COREF_FUNCTION_CALL_DEF
@@ -1339,7 +1339,7 @@ public:
           marks_on_input_edges.ecm2, \
           cpp11::get<BO_type>(out_edge_mark_maps), \
           disconnected_patches_edge_to_tm2_edge, \
-          new_face_visitor)
+          user_visitor)
         CGAL_COREF_FUNCTION_CALL(inplace_operation_tm1)
         #undef CGAL_COREF_FUNCTION_CALL_DEF
         // Operation in tm2: discard patches and append the one from tm2
@@ -1358,7 +1358,7 @@ public:
                                      marks_on_input_edges.ecm1, \
                                      cpp11::get<BO_type>(out_edge_mark_maps), \
                                      disconnected_patches_edge_to_tm2_edge, \
-                                     new_face_visitor)
+                                     user_visitor)
         CGAL_COREF_FUNCTION_CALL(inplace_operation_tm2)
         #undef CGAL_COREF_FUNCTION_CALL_DEF
 
@@ -1414,7 +1414,7 @@ public:
             marks_on_input_edges.ecm2, \
             cpp11::get<BO_type>(out_edge_mark_maps), \
             polylines, \
-            new_face_visitor \
+            user_visitor \
           )
         CGAL_COREF_FUNCTION_CALL(inplace_operation_tm1)
         #undef CGAL_COREF_FUNCTION_CALL_DEF
@@ -1456,7 +1456,7 @@ public:
                                      marks_on_input_edges.ecm1, \
                                      cpp11::get<BO_type>(out_edge_mark_maps), \
                                      polylines, \
-                                     new_face_visitor);
+                                     user_visitor);
         CGAL_COREF_FUNCTION_CALL(inplace_operation_tm2)
         #undef CGAL_COREF_FUNCTION_CALL_DEF
         // remove polylines only on the border of patches not kept

@@ -232,6 +232,30 @@ struct Default_visitor{
   void before_face_copy(face_descriptor /*f_old*/, TriangleMesh&, TriangleMesh&){}
   void after_face_copy(face_descriptor /*f_old*/, TriangleMesh&,
                        face_descriptor /* f_new */, TriangleMesh&){}
+
+// calls commented in the code and probably incomplete due to the migration
+// see NODE_VISITOR_TAG
+/*
+  void new_node_added(  std::size_t node_id,
+                        Intersection_type type,
+                        halfedge_descriptor principal_edge,
+                        halfedge_descriptor additional_edge,
+                        bool is_target_coplanar,
+                        bool is_source_coplanar)
+  {}
+
+  // autorefinement only
+  void new_node_added_triple_face(std::size_t node_id,
+                                  face_descriptor f1,
+                                  face_descriptor f2,
+                                  face_descriptor f3,
+                                  const TriangleMesh& tm)
+  {}
+
+  void new_vertex_added(std::size_tnode_id,
+                        vertex_descriptor vh,
+                        TriangleMesh& tm){}
+*/
 };
 
 template < class TriangleMesh,
@@ -239,8 +263,7 @@ template < class TriangleMesh,
            class Node_id,
            class Node_vector,
            class CDT,
-           class NewNodeVisitor,
-           class NewFaceVisitor  >
+           class UserVisitor>
 void
 triangulate_a_face(
   typename boost::graph_traits<TriangleMesh>::face_descriptor current_face,
@@ -254,8 +277,7 @@ triangulate_a_face(
                 ::halfedge_descriptor>& edge_to_hedge,
   const CDT& cdt,
   const VertexPointMap& vpm,
-  NewNodeVisitor& new_node_visitor,
-  NewFaceVisitor& new_face_visitor)
+  UserVisitor& user_visitor)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::vertex_descriptor vertex_descriptor;
@@ -268,7 +290,7 @@ triangulate_a_face(
   BOOST_FOREACH(Node_id node_id, node_ids)
   {
     vertex_descriptor v=add_vertex(tm);
-    new_node_visitor.new_vertex_added(node_id, v, tm);
+//    user_visitor.new_vertex_added(node_id, v, tm); // NODE_VISITOR_TAG
     nodes.call_put(vpm, v, node_id, tm);
     CGAL_assertion(node_id_to_vertex.size()>node_id);
     node_id_to_vertex[node_id]=v;
@@ -308,7 +330,7 @@ triangulate_a_face(
   }
 
   //grab triangles.
-  new_face_visitor.before_subface_creations(current_face,tm);
+  user_visitor.before_subface_creations(current_face,tm);
   for (typename CDT::Finite_faces_iterator it=cdt.finite_faces_begin(),
                                            it_end=cdt.finite_faces_end();;)
   {
@@ -344,14 +366,14 @@ triangulate_a_face(
 
     if ( ++it!=it_end )
     {
-      new_face_visitor.before_subface_created(tm);
+      user_visitor.before_subface_created(tm);
       current_face=add_face(tm);
-      new_face_visitor.after_subface_created(current_face,tm);
+      user_visitor.after_subface_created(current_face,tm);
     }
     else
       break;
   }
-  new_face_visitor.after_subface_creations(tm);
+  user_visitor.after_subface_creations(tm);
 }
 
 template <class PolygonMesh>
@@ -784,7 +806,7 @@ template < bool reverse_patch_orientation,
            class VertexPointMapOut,
            class EdgeMarkMapOut,
            class EdgeMarkMapIn ,
-           class NewFaceVisitor>
+           class UserVisitor>
 void append_patches_to_triangle_mesh(
   TriangleMesh& output,
   const boost::dynamic_bitset<>& patches_to_append,
@@ -797,7 +819,7 @@ void append_patches_to_triangle_mesh(
     typename boost::graph_traits<TriangleMesh>::edge_descriptor,
     typename boost::graph_traits<TriangleMesh>::edge_descriptor
   >& tm_to_output_edges,
-  NewFaceVisitor& new_face_visitor)
+  UserVisitor& user_visitor)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
@@ -869,9 +891,9 @@ void append_patches_to_triangle_mesh(
     {
       cpp11::array<halfedge_descriptor,3> hedges = helper.halfedges(f);
 
-      new_face_visitor.before_face_copy(f, patches.pm, output);
+      user_visitor.before_face_copy(f, patches.pm, output);
       face_descriptor new_f = add_face(output);
-      new_face_visitor.after_face_copy(f, patches.pm, new_f, output);
+      user_visitor.after_face_copy(f, patches.pm, new_f, output);
       set_halfedge(new_f, hedges[0], output);
 
       for (int i=0;i<3;++i)
@@ -995,7 +1017,7 @@ template < class TriangleMesh,
            class EdgeMarkMapOut,
            class IntersectionPolylines,
            class PatchContainer,
-           class NewFaceVisitor>
+           class UserVisitor>
 void fill_new_triangle_mesh(
   TriangleMesh& output,
   const boost::dynamic_bitset<>& patches_of_tm1_to_import,
@@ -1015,7 +1037,7 @@ void fill_new_triangle_mesh(
         EdgeMarkMapOut& edge_mark_map_out,
   std::vector< typename boost::graph_traits<TriangleMesh>::edge_descriptor>&
                                                             output_shared_edges,
-  NewFaceVisitor& new_face_visitor)
+  UserVisitor& user_visitor)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::vertex_descriptor vertex_descriptor;
@@ -1055,7 +1077,7 @@ void fill_new_triangle_mesh(
                                           edge_mark_map_out,
                                           edge_mark_map1,
                                           tm1_to_output_edges,
-                                          new_face_visitor);
+                                          user_visitor);
   else
     append_patches_to_triangle_mesh<false>(output,
                                            patches_of_tm1_to_import,
@@ -1065,7 +1087,7 @@ void fill_new_triangle_mesh(
                                            edge_mark_map_out,
                                            edge_mark_map1,
                                            tm1_to_output_edges,
-                                           new_face_visitor);
+                                           user_visitor);
 
   //import patches from tm2
   if (reverse_orientation_of_patches_from_tm2)
@@ -1077,7 +1099,7 @@ void fill_new_triangle_mesh(
                                           edge_mark_map_out,
                                           edge_mark_map2,
                                           tm2_to_output_edges,
-                                          new_face_visitor);
+                                          user_visitor);
   else
     append_patches_to_triangle_mesh<false>(output,
                                            patches_of_tm2_to_import,
@@ -1087,7 +1109,7 @@ void fill_new_triangle_mesh(
                                            edge_mark_map_out,
                                            edge_mark_map2,
                                            tm2_to_output_edges,
-                                           new_face_visitor);
+                                           user_visitor);
 }
 
 template <class TriangleMesh,
@@ -1247,7 +1269,7 @@ template <class TriangleMesh,
           class EdgeMarkMapIn1,
           class EdgeMarkMapIn2,
           class EdgeMarkMapOut,
-          class NewFaceVisitor>
+          class UserVisitor>
 void compute_inplace_operation_delay_removal_and_insideout(
   TriangleMesh& tm1,
   TriangleMesh& tm2,
@@ -1263,7 +1285,7 @@ void compute_inplace_operation_delay_removal_and_insideout(
   const EdgeMarkMapIn2& edge_mark_map2,
   const EdgeMarkMapOut& edge_mark_map_out1,
   EdgeMap& disconnected_patches_edge_to_tm2_edge,
-  NewFaceVisitor& new_face_visitor)
+  UserVisitor& user_visitor)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::edge_descriptor edge_descriptor;
@@ -1314,7 +1336,7 @@ void compute_inplace_operation_delay_removal_and_insideout(
                                           edge_mark_map_out1,
                                           edge_mark_map2,
                                           tm2_edge_to_tm1_edge,
-                                          new_face_visitor);
+                                          user_visitor);
   else
     append_patches_to_triangle_mesh<false>(tm1,
                                            patches_of_tm2_to_import,
@@ -1324,7 +1346,7 @@ void compute_inplace_operation_delay_removal_and_insideout(
                                            edge_mark_map_out1,
                                            edge_mark_map2,
                                            tm2_edge_to_tm1_edge,
-                                           new_face_visitor);
+                                           user_visitor);
 }
 
 template <class TriangleMesh,
@@ -1405,7 +1427,7 @@ template <class TriangleMesh,
           class EdgeMarkMapIn1,
           class EdgeMarkMapIn2,
           class EdgeMarkMapOut1,
-          class NewFaceVisitor>
+          class UserVisitor>
 void compute_inplace_operation(
         TriangleMesh& tm1,
   const TriangleMesh& /*tm2*/,
@@ -1424,7 +1446,7 @@ void compute_inplace_operation(
     typename boost::graph_traits<TriangleMesh>::edge_descriptor,
     typename boost::graph_traits<TriangleMesh>::edge_descriptor
   >& tm2_edge_to_tm1_edge,
-  NewFaceVisitor& new_face_visitor)
+  UserVisitor& user_visitor)
 {
   typedef boost::unordered_map<
       typename boost::graph_traits<TriangleMesh>::edge_descriptor,
@@ -1454,7 +1476,7 @@ void compute_inplace_operation(
                                           edge_mark_map_out1,
                                           edge_mark_map_in2,
                                           tm2_edge_to_tm1_edge,
-                                          new_face_visitor);
+                                          user_visitor);
   else
     append_patches_to_triangle_mesh<false>(tm1,
                                            patches_of_tm2_to_import,
@@ -1464,7 +1486,7 @@ void compute_inplace_operation(
                                            edge_mark_map_out1,
                                            edge_mark_map_in2,
                                            tm2_edge_to_tm1_edge,
-                                           new_face_visitor);
+                                           user_visitor);
 }
 
 template <class TriangleMesh,
@@ -1510,7 +1532,7 @@ template <class TriangleMesh,
           class EdgeMarkMapIn1,
           class EdgeMarkMapIn2,
           class EdgeMarkMapOut1,
-          class NewFaceVisitor>
+          class UserVisitor>
 void compute_inplace_operation(
         TriangleMesh& tm1,
   const TriangleMesh& tm2,
@@ -1526,7 +1548,7 @@ void compute_inplace_operation(
   const EdgeMarkMapIn2& edge_mark_map_in2,
   const EdgeMarkMapOut1& edge_mark_map_out1,
   const IntersectionPolylines& polylines,
-        NewFaceVisitor& new_face_visitor)
+        UserVisitor& user_visitor)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::edge_descriptor edge_descriptor;
@@ -1550,7 +1572,7 @@ void compute_inplace_operation(
                             edge_mark_map_in2,
                             edge_mark_map_out1,
                             tm2_edge_to_tm1_edge,
-                            new_face_visitor);
+                            user_visitor);
 }
 
 // function used to remove polylines imported or kept that are incident only

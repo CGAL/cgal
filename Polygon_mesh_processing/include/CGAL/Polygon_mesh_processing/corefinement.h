@@ -492,18 +492,16 @@ corefine_and_compute_boolean_operations(
                                         get_property_map(boost::face_index, tm1));
   Fid_map fid_map2 = boost::choose_param(boost::get_param(np2, internal_np::face_index),
                                          get_property_map(boost::face_index, tm2));
-// New face visitor
+// User visitor
   typedef typename boost::lookup_named_param_def <
     internal_np::graph_visitor_t,
     NamedParameters1,
     Corefinement::Default_visitor<TriangleMesh>//default
-  > ::type Nfv;
-  Nfv nfv( boost::choose_param( boost::get_param(np1, internal_np::graph_visitor),
-                                Corefinement::Default_visitor<TriangleMesh>() ) );
+  > ::type User_visitor;
+  User_visitor uv( boost::choose_param( boost::get_param(np1, internal_np::graph_visitor),
+                   Corefinement::Default_visitor<TriangleMesh>() ) );
 
   // surface intersection algorithm call
-  typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
-
   typedef Corefinement::Face_graph_output_builder<TriangleMesh,
                                                   Vpm,
                                                   Vpm_out_tuple,
@@ -511,18 +509,17 @@ corefine_and_compute_boolean_operations(
                                                   Default,
                                                   Ecm_in,
                                                   Edge_mark_map_tuple,
-                                                  Nfv> Ob;
+                                                  User_visitor> Ob;
 
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
-    TriangleMesh, Vpm, Ob, Ecm_in, Default, Nfv> Algo_visitor;
-  Dnv dnv;
+    TriangleMesh, Vpm, Ob, Ecm_in, User_visitor> Algo_visitor;
   Ecm_in ecm_in(tm1,tm2,ecm1,ecm2);
   Edge_mark_map_tuple ecms_out(ecm_out_0, ecm_out_1, ecm_out_2, ecm_out_3);
   Ob ob(tm1, tm2, vpm1, vpm2, fid_map1, fid_map2, ecm_in,
-        vpm_out_tuple, ecms_out, nfv, output);
+        vpm_out_tuple, ecms_out, uv, output);
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Algo_visitor >
-    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(dnv,nfv,ob,ecm_in));
+    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm_in));
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
 
 
@@ -835,20 +832,18 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
     internal_np::graph_visitor_t,
     NamedParameters1,
     Corefinement::Default_visitor<TriangleMesh>//default
-  > ::type Nfv;
-  Nfv nfv( boost::choose_param( boost::get_param(np1, internal_np::graph_visitor),
-                                Corefinement::Default_visitor<TriangleMesh>() ) );
+  > ::type User_visitor;
+  User_visitor uv( boost::choose_param( boost::get_param(np1, internal_np::graph_visitor),
+                   Corefinement::Default_visitor<TriangleMesh>() ) );
 
 // surface intersection algorithm call
-  typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
   typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
-    TriangleMesh, Vpm, Ob, Ecm, Default, Nfv> Algo_visitor;
-  Dnv dnv;
+    TriangleMesh, Vpm, Ob, Ecm, User_visitor> Algo_visitor;
   Ob ob;
   Ecm ecm(tm1,tm2,ecm1,ecm2);
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Algo_visitor>
-    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(dnv,nfv,ob,ecm));
+    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm));
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
 }
 
@@ -910,22 +905,19 @@ namespace experimental {
     internal_np::graph_visitor_t,
     NamedParameters,
     Corefinement::Default_visitor<TriangleMesh>//default
-  > ::type Nfv;
-  Nfv nfv( boost::choose_param( boost::get_param(np, internal_np::graph_visitor),
-                                Corefinement::Default_visitor<TriangleMesh>() ) );
+  > ::type User_visitor;
+  User_visitor uv( boost::choose_param( boost::get_param(np, internal_np::graph_visitor),
+                   Corefinement::Default_visitor<TriangleMesh>() ) );
 
 
 // surface intersection algorithm call
-  typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
   typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
-  typedef Default D;
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
-    TriangleMesh, Vpm, Ob, Ecm, D, Nfv, true> Algo_visitor;
-  Dnv dnv;
+    TriangleMesh, Vpm, Ob, Ecm, User_visitor,true> Algo_visitor;
   Ob ob;
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Algo_visitor>
-    functor(tm, vpm, Algo_visitor(dnv,nfv,ob,ecm) );
+    functor(tm, vpm, Algo_visitor(uv,ob,ecm) );
 
   functor(CGAL::Emptyset_iterator(), true);
 }
@@ -989,26 +981,23 @@ namespace experimental {
     internal_np::graph_visitor_t,
     NamedParameters,
     Corefinement::Default_visitor<TriangleMesh>//default
-  > ::type Nfv;
-  Nfv nfv( boost::choose_param( boost::get_param(np, internal_np::graph_visitor),
-                               Corefinement::Default_visitor<TriangleMesh>() ) );
+  > ::type User_visitor;
+  User_visitor uv( boost::choose_param( boost::get_param(np, internal_np::graph_visitor),
+                   Corefinement::Default_visitor<TriangleMesh>() ) );
 
 // surface intersection algorithm call
-  typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
   typedef Corefinement::Output_builder_for_autorefinement<TriangleMesh,
                                                           Vpm,
                                                           Fid_map,
                                                           Ecm,
                                                           Default > Ob;
 
-  typedef Default D;
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
-    TriangleMesh, Vpm, Ob, Ecm, D, Nfv, true> Algo_visitor;
-  Dnv dnv;
+    TriangleMesh, Vpm, Ob, Ecm, User_visitor,true> Algo_visitor;
   Ob ob(tm, vpm, fid_map, ecm);
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Algo_visitor>
-    functor(tm, vpm, Algo_visitor(dnv,nfv,ob,ecm) );
+    functor(tm, vpm, Algo_visitor(uv,ob,ecm) );
 
   functor(CGAL::Emptyset_iterator(), true);
 
