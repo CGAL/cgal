@@ -25,7 +25,16 @@
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
+#if defined(CGAL_PERIODIC_3_MESH_3_VERBOSE) && !defined(CGAL_MESH_3_VERBOSE)
+  #define CGAL_MESH_3_VERBOSE
+#endif
+
 #include <CGAL/Mesh_3/config.h>
+
+// Whether to remove dummy points or not during the protection of sharp features
+// (if in doubt about what it means, it should be left defined)
+#define CGAL_PERIODIC_PROTECTION_ATTEMPT_TO_REMOVE_DUMMY_PTS
+
 
 // Since we are sure that we are always in 1-cover, we can use the visited
 // memory boolean in the vertex base

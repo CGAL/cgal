@@ -26,8 +26,6 @@
 #ifndef CGAL_PERIODIC_3_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
 #define CGAL_PERIODIC_3_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
 
-#define CGAL_PERIODIC_PROTECTION_ATTEMPT_TO_REMOVE_DUMMY_PTS
-
 // Main differences with Mesh_3's version:
 // - A map [Vertex_handle] --> [position in full space] because:
 //   * This position might not be (in full space coordinates) in the canonical instance
