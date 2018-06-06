@@ -43,6 +43,10 @@ Release date: September 2018
 -   Added a function to apply a transformation to a mesh:
     - `CGAL::Polygon_mesh_processing::transform()`
 
+-  Fix a bug in `isotropic_remeshing()` making constrained vertices missing in the output
+-  Guarantee that constrained vertices are kept in the mesh after calling `isotropic_remeshing()`
+   (and not only the points associated to constrained vertices as it was before).
+
 ### 3D Mesh Generation
 
 -   **Breaking change:** The template parameters of the class template
@@ -70,6 +74,10 @@ Release date: September 2018
 
 -   Add helper function `CGAL::is_valid_polygon_mesh` that checks the
     validity of a polygon mesh using BGL functions.
+
+-   Improve the function `CGAL::Euler::collapse_edge` so that the target
+    vertex of the collapsed edge is always kept after the collapse.
+
 
 Release 4.12
 ------------
