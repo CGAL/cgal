@@ -52,16 +52,16 @@ triangulation `C3T3::Triangulation` are required to be models of the
 concepts `MeshVertexBase_3` and `Periodic_3TriangulationDSVertexBase_3`, and of
 the concepts `MeshCellBase_3` and `Periodic_3TriangulationDSCellBase_3`, respectively.
 
-\tparam Periodic_3MeshDomain is required to be a model of
+\tparam MD is required to be a model of
 the concept `Periodic_3MeshDomain_3` or of the refined concept
 `Periodic_3MeshDomainWithFeatures_3` if 0 and 1-dimensional features
 of the input complex have to be accurately represented in the mesh.
 The argument `domain` is the sole link through which the domain
 to be discretized is known by the mesh generation algorithm.
 
-\tparam MeshCriteria has to be a model of the concept `MeshCriteria_3`,
+\tparam MC has to be a model of the concept `MeshCriteria_3`,
 or a model of the refined concept `MeshCriteriaWithFeatures_3` if the domain
-has exposed features. The argument `criteria` of type `MeshCriteria` specifies the
+has exposed features. The argument `criteria` of type `MC` specifies the
 size and shape requirements for mesh tetrahedra and surface facets. These criteria
 form the rules which drive the refinement process. All mesh elements
 satisfy those criteria at the end of the refinement process.
@@ -130,15 +130,13 @@ optimization processes.
 \sa `parameters::odt`
 \sa `parameters::no_odt`
 */
-template <class C3T3,
-          class Periodic_3MeshDomain,
-          class MeshCriteria>
+template <class C3T3, class MD, class MeshCriteria>
 void refine_periodic_3_mesh_3(C3T3& c3t3,
-    Periodic_3MeshDomain mesh_domain,
-    MeshCriteria mesh_criteria,
-    parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
-    parameters::internal::Odt_options odt = parameters::no_odt(),
-    parameters::internal::Perturb_options perturb = parameters::perturb(),
-    parameters::internal::Exude_options exude = parameters::exude());
+                              const MD& mesh_domain,
+                              const MC& mesh_criteria,
+                              parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
+                              parameters::internal::Odt_options odt = parameters::no_odt(),
+                              parameters::internal::Perturb_options perturb = parameters::perturb(),
+                              parameters::internal::Exude_options exude = parameters::exude());
 
 } /* namespace CGAL */

@@ -257,8 +257,8 @@ to one of the two following functions:
 
 \code{.cpp}
 template <class C3T3, class PeriodicMeshDomain, class MeshCriteria>
-C3T3 make_periodic_3_mesh_3(PeriodicMeshDomain domain,
-                            MeshCriteria criteria,
+C3T3 make_periodic_3_mesh_3(const PeriodicMeshDomain& domain,
+                            const MeshCriteria& criteria,
                             parameters::internal::Features_options features = parameters::features(domain),
                             parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
                             parameters::internal::Odt_options odt = parameters::no_odt(),
@@ -267,8 +267,8 @@ C3T3 make_periodic_3_mesh_3(PeriodicMeshDomain domain,
 
 template <class C3T3, class MeshDomain, class MeshCriteria>
 void refine_periodic_3_mesh_3(C3T3& c3t3,
-                              PeriodicMeshDomain domain,
-                              MeshCriteria criteria,
+                              const PeriodicMeshDomain& domain,
+                              const MeshCriteria& criteria,
                               parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
                               parameters::internal::Odt_options odt = parameters::no_odt(),
                               parameters::internal::Perturb_options perturb = parameters::perturb(),

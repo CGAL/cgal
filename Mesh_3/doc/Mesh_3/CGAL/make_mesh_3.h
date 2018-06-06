@@ -41,7 +41,7 @@ triangulation `C3T3::Triangulation` are required to be models of the
 concepts `MeshVertexBase_3` and `MeshCellBase_3`
 respectively.
 
-\tparam MeshDomain is required to be a model of
+\tparam MD is required to be a model of
 the concept `MeshDomain_3`, or of the refined concept
 `MeshDomainWithFeatures_3`
 if the domain has corners and curves that need to be accurately represented in the mesh.
@@ -50,10 +50,9 @@ is the sole link through which the domain
 to be discretized is known by the mesh generation algorithm.
 
 
-\tparam MeshCriteria has to be a model of the concept
+\tparam MC has to be a model of the concept
 `MeshCriteria_3`, or a model of the refined concept `MeshCriteriaWithFeatures_3` if the domain has exposed features.
-The argument `criteria` of
-type `MeshCriteria` specifies the
+The argument `criteria` of type `MC` specifies the
 size and shape requirements for mesh tetrahedra
 and surface facets. These criteria
 form the rules which drive the refinement process. All mesh elements
@@ -155,16 +154,14 @@ optimization processes.
 
 */
 
-template <class C3T3,
-class MeshDomain,
-class MeshCriteria>
-C3T3 make_mesh_3(MeshDomain domain,
-MeshCriteria criteria,
-parameters::internal::Features_options features = parameters::features(domain),
-parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
-parameters::internal::Odt_options odt = parameters::no_odt(),
-parameters::internal::Perturb_options perturb = parameters::perturb(),
-parameters::internal::Exude_options exude = parameters::exude(),
-parameters::internal::Manifold_options manifold = parameters::non_manifold());
+template <class C3T3, class MD, class MC>
+C3T3 make_mesh_3(const MD& domain,
+                 const MC& criteria,
+                 parameters::internal::Features_options features = parameters::features(domain),
+                 parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
+                 parameters::internal::Odt_options odt = parameters::no_odt(),
+                 parameters::internal::Perturb_options perturb = parameters::perturb(),
+                 parameters::internal::Exude_options exude = parameters::exude(),
+                 parameters::internal::Manifold_options manifold = parameters::non_manifold());
 
 } /* namespace CGAL */

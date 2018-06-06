@@ -138,15 +138,12 @@ optimization processes.
 \sa `parameters::no_odt()`
 */
 
-template <class C3T3,
-          class MD,
-          class MC>
-C3T3 make_periodic_3_mesh_3(
-    MD domain,
-    MC criteria,
-    parameters::internal::Features_options features = parameters::features(domain),
-    parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
-    parameters::internal::Odt_options odt = parameters::no_odt(),
-    parameters::internal::Perturb_options perturb = parameters::perturb(),
-    parameters::internal::Exude_options exude = parameters::exude());
+template <class C3T3, class MD, class MC>
+C3T3 make_periodic_3_mesh_3(const MD& domain,
+                            const MC& criteria,
+                            parameters::internal::Features_options features = parameters::features(domain),
+                            parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
+                            parameters::internal::Odt_options odt = parameters::no_odt(),
+                            parameters::internal::Perturb_options perturb = parameters::perturb(),
+                            parameters::internal::Exude_options exude = parameters::exude());
 } /* namespace CGAL */

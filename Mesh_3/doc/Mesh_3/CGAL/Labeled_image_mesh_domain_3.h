@@ -54,8 +54,8 @@ public:
 Construction from an image. 
 The parameter `error_bound` is relative to the size of the image. 
 */ 
-Labeled_Image_mesh_domain_3( Image image, 
-BGT::FT error_bound = FT(1e-3)); 
+  Labeled_Image_mesh_domain_3(const Image& image,
+                              const BGT::FT& error_bound = FT(1e-3));
 
 /// @}
 

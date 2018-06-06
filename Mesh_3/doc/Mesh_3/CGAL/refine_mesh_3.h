@@ -148,18 +148,15 @@ optimization processes.
 
 */
 
-template <class C3T3,
-          class MD,
-          class MC>
+template <class C3T3, class MD, class MC>
 void refine_mesh_3(C3T3& c3t3,
-                   MD mesh_domain,
-                   MC mesh_criteria,
+                   const MD& mesh_domain,
+                   const MC& mesh_criteria,
                    parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
                    parameters::internal::Odt_options odt = parameters::no_odt(),
                    parameters::internal::Perturb_options perturb = parameters::perturb(),
                    parameters::internal::Exude_options exude = parameters::exude(),
-                   parameters::internal::Manifold_options manifold = parameters::non_manifold()
-                                                                     );
+                   parameters::internal::Manifold_options manifold = parameters::non_manifold());
 
 namespace parameters {
 

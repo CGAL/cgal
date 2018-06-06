@@ -12,7 +12,7 @@ Further information can be found on the documentation of the function `lloyd_opt
 template<typename C3T3, typename MD>
 CGAL::Mesh_optimization_return_code
 lloyd_optimize_periodic_3_mesh_3(C3T3& c3t3,
-                                 MD domain,
+                                 const MD& domain,
                                  double parameters::time_limit=0,
                                  std::size_t parameters::max_iteration_number=0,
                                  double parameters::convergence=0.02,
@@ -32,7 +32,7 @@ Further information can be found on the documentation of the function `odt_optim
 template<typename C3T3, typename MD>
 Mesh_optimization_return_code
 odt_optimize_periodic_3_mesh_3(C3T3& c3t3,
-                               MD domain,
+                               const MD& domain,
                                double parameters::time_limit=0,
                                std::size_t parameters::max_iteration_number=0,
                                double parameters::convergence=0.02,
@@ -51,7 +51,7 @@ Further information can be found on the documentation of the function `perturb_m
 template<typename C3T3, typename MD>
 CGAL::Mesh_optimization_return_code
 perturb_periodic_3_mesh_3(C3T3& c3t3,
-                          MD domain,
+                          const MD& domain,
                           double parameters::time_limit=0,
                           double parameters::sliver_bound=0);
 

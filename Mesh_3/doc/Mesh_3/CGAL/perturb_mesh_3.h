@@ -23,8 +23,8 @@ reference, provides the initial mesh
 and is modified by the algorithm
 to represent the final optimized mesh.
 
-\tparam MeshDomain_3 is required to be a model of the concept
-`MeshDomain_3`. The argument `domain` must be the `MeshDomain_3`
+\tparam MD is required to be a model of the concept
+`MeshDomain_3`. The argument `domain` must be the `MD`
 object used to create the `c3t3` parameter.
 
 The function has two optional parameters which are named parameters (we use the Boost.Parameter library).
@@ -81,10 +81,10 @@ perturb_mesh_3(c3t3,
 
 */
 
-template<typename C3T3, typename MeshDomain_3>
+template<typename C3T3, typename MD>
 Mesh_optimization_return_code
 perturb_mesh_3(C3T3& c3t3,
-               MeshDomain_3 domain,
+               const MD& domain,
                double parameters::time_limit=0,
                double parameters::sliver_bound=0);
 
