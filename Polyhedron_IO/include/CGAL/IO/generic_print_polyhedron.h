@@ -28,6 +28,7 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/property_map.h>
 #include <boost/graph/graph_traits.hpp>
+
 #include <CGAL/basic.h>
 #include <CGAL/Inverse_index.h>
 #include <iostream>
@@ -80,7 +81,7 @@ generic_print_polyhedron( std::ostream&     out,
                           Writer&           writer) 
 {
   generic_print_polyhedron(out, P, writer,
-                           get_property_map(CGAL::vertex_point, P));
+                           get(CGAL::vertex_point, P));
 }
 } //namespace CGAL
 #endif // CGAL_IO_GENERIC_PRINT_POLYHEDRON_H //
