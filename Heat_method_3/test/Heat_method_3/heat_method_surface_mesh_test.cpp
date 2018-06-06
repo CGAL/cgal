@@ -53,6 +53,9 @@ int main()
 
   //mass matrix tests
 
+  SparseMatrix K = hm.get_kronecker_delta();
+  assert(K.nonZeros()==1);
+
 
   std::cout<<"SUCCESS";
   return 0;

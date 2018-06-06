@@ -201,6 +201,20 @@ namespace Heat_method_3 {
       return time_step;
     }
 
+    Matrix kronecker_delta(Index x)
+    {
+      //currently just working with a single vertex in source set
+      Matrix K(num_vertices(tm), 1);
+      K.insert(1,x) = 1;
+      return K;
+    }
+
+
+    Matrix get_kronecker_delta()
+    {
+      return kronecker;
+    }
+
   private:
 
     void build()
@@ -276,10 +290,9 @@ namespace Heat_method_3 {
       mass_matrix = A;
       cotan_matrix = c;
       time_step = 1./(tm.number_of_edges());
-      std::cout<<"number of edges is " << tm.number_of_edges();
       time_step = time_step*summation_of_edges();
 
-
+      kronecker = kronecker_delta(get(vertex_id_map,*(sources.begin())));
 
     }
 
@@ -290,6 +303,8 @@ namespace Heat_method_3 {
     VertexPointMap vpm;
     std::set<vertex_descriptor> sources;
     double time_step;
+    Matrix kronecker;
+
     Matrix mass_matrix, cotan_matrix;
   };
 
