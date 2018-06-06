@@ -265,7 +265,7 @@ bool does_bound_a_volume(const TriangleMesh& tm)
   * as an optional in `output` different from `boost::none`, the triangulated surface mesh
   * \link coref_def_subsec bounding \endlink  the result of a particular Boolean operation
   * between the volumes bounded by `tm1` and `tm2` will be put in the corresponding triangle mesh.
-  * The position of the meshes in the array `output` are specific to the Boolean operation to compute
+  * The positions of the meshes in the array `output` are specific to the Boolean operation to compute
   * and `Corefinement::Boolean_operation_type` encodes and describes the ordering. Constructing the default array
   * means that no Boolean operation will be done. Overwriting a default value will trigger the corresponding
   * operation. In such a case, the address to a valid surface mesh must be provided.
@@ -274,7 +274,7 @@ bool does_bound_a_volume(const TriangleMesh& tm)
   * named parameters passed for output meshes should be done using `make_tuple()` as the types of
   * named parameters are unspecified.
   *
-  * If `tm1` and/or `tm2` are one of the output surface meshes, they will be updated to
+  * If `tm1` and/or `tm2` are part of the output surface meshes, they will be updated to
   * contain the output (in-place operation), in any other case, the corresponding result will
   * be inserted into the mesh without clearing it first.
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm1)` \endlink
@@ -900,7 +900,7 @@ namespace experimental {
   Ecm ecm = boost::choose_param( boost::get_param(np, internal_np::edge_is_constrained),
                                  Corefinement::No_mark<TriangleMesh>() );
 
-// New face visitor
+// User visitor
   typedef typename boost::lookup_named_param_def <
     internal_np::graph_visitor_t,
     NamedParameters,
@@ -976,7 +976,7 @@ namespace experimental {
   > ::type Ecm;
   Ecm ecm = boost::choose_param( boost::get_param(np, internal_np::edge_is_constrained),
                                  Corefinement::No_mark<TriangleMesh>() );
-// New face visitor
+// User visitor
   typedef typename boost::lookup_named_param_def <
     internal_np::graph_visitor_t,
     NamedParameters,
