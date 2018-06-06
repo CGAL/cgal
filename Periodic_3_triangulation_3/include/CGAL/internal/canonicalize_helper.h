@@ -288,10 +288,6 @@ snap_to_domain_border(const typename Gt_::Point_3& p, const Gt_& gt)
   if(CGAL::abs(pz - dzm) < eps) sz = dzm;
   if(CGAL::abs(pz - dzM) < eps) sz = dzM;
 
-  std::cout << "epsilon: " << eps << std::endl;
-  std::cout.precision(20);
-  std::cout << "snapped " << p << " to " << sx << " " << sy << " " << sz << std::endl;
-
   return gt.construct_point_3_object()(sx, sy, sz);
 }
 
