@@ -75,14 +75,14 @@ namespace Heat_method_3 {
     typedef typename graph_traits::edge_descriptor                edge_descriptor;
     typedef typename graph_traits::halfedge_descriptor        halfedge_descriptor;
     typedef typename graph_traits::face_descriptor                face_descriptor;
-    typedef typename graph_traits::vertex_iterator                vertex_iterator;
+    typedef typename std::set<vertex_descriptor>::iterator                 vertex_iterator;
     /// Geometric typedefs
     typedef typename Traits::Point_3                                      Point_3;
     typedef typename Traits::FT                                                FT;
 
     typedef typename Simple_cartesian<double>::Vector_3                    vector;
 
-    
+
     typedef typename LA::SparseMatrix Matrix;
     typedef typename LA::Index Index;
     typedef typename LA::T triplet;
@@ -120,7 +120,7 @@ namespace Heat_method_3 {
      */
     bool remove_source(vertex_descriptor vd)
     {
-      if(sources.find(vd))
+      if(*(sources.find(vd)) != *(sources.end()) || vd == *(sources.end()))
       {
         sources.erase(vd);
         return true;
@@ -134,7 +134,7 @@ namespace Heat_method_3 {
     /**
      *return current source set
     */
-    vertex_descriptor get_sources()
+    std::set<vertex_descriptor> get_sources()
     {
       return sources;
     }
@@ -158,7 +158,7 @@ namespace Heat_method_3 {
     /**
      * return vertex_descriptor to last vertex in the source set
      */
-    vertex_descriptor sources_end()
+    vertex_iterator sources_end()
     {
       return sources.end();
     }
@@ -176,7 +176,7 @@ namespace Heat_method_3 {
     void build()
     {
       CGAL_precondition(is_triangle_mesh(tm));
-      
+
       vertex_id_map = get(Vertex_property_tag(),const_cast<TriangleMesh&>(tm));
       Index i = 0;
       BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){

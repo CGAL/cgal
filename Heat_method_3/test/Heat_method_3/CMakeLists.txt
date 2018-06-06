@@ -40,7 +40,7 @@ else()
   message(STATUS "This project requires the Boost library, and will not be compiled.")
 
   return()
-#endif()
+endif()
 
 # include for local directory
 include_directories( BEFORE include )
