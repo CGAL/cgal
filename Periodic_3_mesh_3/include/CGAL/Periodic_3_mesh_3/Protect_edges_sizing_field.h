@@ -818,7 +818,7 @@ get_positions_with_vertex_at_extremity(const Bare_point& known_point,
 
     CGAL_assertion(distance_to_extr_pt != distance_to_other_extr_pt);
 
-    if(std::abs(distance_to_extr_pt) > std::abs(distance_to_other_extr_pt))
+    if(CGAL::abs(distance_to_extr_pt) > CGAL::abs(distance_to_other_extr_pt))
     {
       // 'other_extr_pt' is closer
       if(inverted_return_order)
