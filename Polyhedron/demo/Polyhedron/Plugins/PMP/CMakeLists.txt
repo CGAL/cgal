@@ -163,4 +163,4 @@ target_compile_definitions(degenerated_faces_sm_plugin PUBLIC "-DUSE_SURFACE_MES
 
 qt5_wrap_ui( bubblesUI_FILES Color_spheres_widget.ui )
 polyhedron_demo_plugin(colored_spheres_plugin Colored_spheres_plugin ${bubblesUI_FILES})
-target_link_libraries(colored_spheres_plugin PUBLIC  scene_surface_mesh_item scene_basic_objects scene_sm_item_k_ring_selection)
+target_link_libraries(colored_spheres_plugin PUBLIC  scene_surface_mesh_item scene_basic_objects)
