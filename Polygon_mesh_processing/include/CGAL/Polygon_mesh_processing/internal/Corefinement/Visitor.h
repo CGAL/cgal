@@ -142,7 +142,7 @@ template< class TriangleMesh,
           class NewNodeVisitor_ = Default,
           class NewFaceVisitor_ = Default,
           bool doing_autorefinement = false >
-class Visitor{
+class Surface_intersection_visitor_for_corefinement{
 //default template parameters
   typedef typename Default::Get<EdgeMarkMapBind_,
     Ecm_bind<TriangleMesh, No_mark<TriangleMesh> > >::type      EdgeMarkMapBind;
@@ -237,8 +237,8 @@ private:
 
 // visitor public functions
 public:
-  Visitor(NewNodeVisitor& v, NewFaceVisitor& f,
-          OutputBuilder& o, const EdgeMarkMapBind& emm)
+  Surface_intersection_visitor_for_corefinement(
+    NewNodeVisitor& v, NewFaceVisitor& f, OutputBuilder& o, const EdgeMarkMapBind& emm)
     : new_node_visitor(v)
     , new_face_visitor(f)
     , output_builder(o)
