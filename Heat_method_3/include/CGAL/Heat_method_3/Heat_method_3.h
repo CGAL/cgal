@@ -49,6 +49,7 @@ namespace Heat_method_3 {
   struct Heat_method_Eigen_traits_3 {
     typedef Eigen::SparseMatrix<double> SparseMatrix;
     typedef Eigen::Triplet<double> T;
+    typedef int Index;
   };
 
 
@@ -81,15 +82,17 @@ namespace Heat_method_3 {
 
     typedef typename Simple_cartesian<double>::Vector_3                    vector;
 
+    
+    typedef typename LA::SparseMatrix Matrix;
+    typedef typename LA::Index Index;
+    typedef typename LA::T triplet;
+
     // The Vertex_id_map is a property map where you can associate an index to a vertex_descriptor
     typedef typename boost::graph_traits<TriangleMesh>::vertices_size_type vertices_size_type;
 
-    typedef CGAL::dynamic_vertex_property_t<vertices_size_type> Vertex_property_tag;
+    typedef CGAL::dynamic_vertex_property_t<Index> Vertex_property_tag;
     typedef typename boost::property_map<TriangleMesh, Vertex_property_tag >::type Vertex_id_map;
     Vertex_id_map vertex_id_map;
-
-    typedef typename LA::SparseMatrix Matrix;
-    typedef typename LA::T triplet;
   public:
 
     Heat_method_3(const TriangleMesh& tm)
@@ -173,15 +176,9 @@ namespace Heat_method_3 {
     void build()
     {
       vertex_id_map = get(Vertex_property_tag(),const_cast<TriangleMesh&>(tm));
-      vertices_size_type n = 0;
+      Index i = 0;
       BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
-        put(vertex_id_map, vd, n*10);
-        ++n;
-
-        BOOST_FOREACH(vertex_descriptor one_ring_vd, vertices_around_target(halfedge(vd,tm),tm)){
-          Point_3 p = get(vpm,one_ring_vd);
-          std::cout << p << std::endl;
-        }
+        put(vertex_id_map, vd, i++);
       }
 
       int m = num_vertices(tm);
@@ -195,9 +192,9 @@ namespace Heat_method_3 {
         vertex_descriptor current = *(vbegin);
         vertex_descriptor neighbor_one = *(vbegin++);
         vertex_descriptor neighbor_two = *(vend);
-        double i = get(vertex_id_map, current);
-        double j = get(vertex_id_map, neighbor_one);
-        double k = get(vertex_id_map, neighbor_two);
+        Index i = get(vertex_id_map, current);
+        Index j = get(vertex_id_map, neighbor_one);
+        Index k = get(vertex_id_map, neighbor_two);
         Point_3 p_i = get(vpm,current);
         Point_3 p_j = get(vpm, neighbor_one);
         Point_3 p_k = get(vpm, neighbor_two);
