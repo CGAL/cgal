@@ -294,8 +294,8 @@ int main(int, char**)
       Labeling_function labeling_function(funcs, it->second);
       C3t3 c3t3 = make_mesh(labeling_function, canonical_cube);
 
-      CGAL_postcondition(c3t3.is_valid());
-      CGAL_postcondition(c3t3.triangulation().is_valid());
+      assert(c3t3.is_valid());
+      assert(c3t3.triangulation().is_valid());
 
       std::cout << " Done" << std::flush;
 
