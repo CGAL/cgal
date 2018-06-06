@@ -1016,4 +1016,4 @@ Construct_initial_points::operator()(OutputIterator pts,
 
 #include <CGAL/enable_warnings.h>
 
-#endif // LABELLED_MESH_TRAITS_3_H_
+#endif // CGAL_LABELED_MESH_DOMAIN_3_H
