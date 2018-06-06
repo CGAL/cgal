@@ -62,7 +62,7 @@ by a mesh optimization phase to remove slivers and provide a good quality mesh.
 
 This package is fundamentally linked to the package \ref PkgMesh_3Summary,
 which is devoted to the generation of isotropic simplicial
-meshes discretizing (non-periodic) 3D domains and %CGAL's \ref PkgPeriodic3Triangulation3Summary,
+meshes discretizing (non-periodic) 3D domains and to the \ref PkgPeriodic3Triangulation3Summary of %CGAL,
 which are used as underlying triangulation structures of the mesh.
 
 A periodic mesh extends, by definition, infinitely in space. We consider the flat torus \f$ \mathbb T_c^3\f$,
@@ -73,9 +73,10 @@ are inserted at the beginning of the meshing process, ensuring that the projecti
 of the periodic triangulation into the flat torus \f$ \mathbb T_c^3\f$ forms at all times a simplicial complex
 (see Sections \ref P3Triangulation3secspace and \ref P3Triangulation3secintro
 of the manual of 3D periodic triangulations).
-The meshing process can be exclusively conducted within the canonical cube.
-The mesh is created using the \ref PkgMesh_3Summary package of %CGAL,
-which originally aims to mesh non-periodic domains of \f$ \mathbb R^3\f$, and so, an interface
+Thanks to this "scaffholding" structure, the meshing process can be exclusively conducted
+within the canonical cube.
+The mesh can then be created using the \ref PkgMesh_3Summary package of %CGAL.
+As this package originally aims to mesh non-periodic domains of \f$ \mathbb R^3\f$, an interface
 is necessary between the packages \ref PkgMesh_3Summary and \ref PkgPeriodic3Triangulation3Summary.
 This package provides this interface.
 
@@ -102,7 +103,7 @@ that are called vertices, edges, facets and cells.
 Note that the input complex faces are not required to be linear nor smooth.
 Surface patches, for instance, may be smooth surface patches,
 or portions of surface meshes with boundaries.
-Curves may be for instance straight segments, parameterized curves
+Curves may be for instance straight segments, parameterized curves,
 or polylines. Each of those features will be accurately represented in the final mesh.
 
 The 0 and 1-dimensional features of the input domain are usually singular points
@@ -153,64 +154,21 @@ of the flat torus \f$ \mathbb T_c^3\f$. The origin (given by three coordinates \
 and \f$ \gamma\f$) of this cube and the period `c` are input parameters chosen
 by the user. The cube \f$ [\alpha,\alpha+c)\times[\beta,\beta+c)\times[\gamma,\gamma+c)\f$
 contains exactly one representative of each element in \f$ \mathbb T_c^3\f$.
+Although the mesh is only constructed over the canonical cube, some of the oracles
+used during the generation of the mesh must sometimes be evaluated outside of the canonical cube.
+The implicit function describing the domain to be meshed must thus be defined
+over the whole Euclidean space and be periodic, with a period compatible with the canonical cube.
 
-The mesh is only constructed over the canonical cube and periodicity
-is handled internally: oracles described above evaluate queries at a point
-by instead evaluating at the representative that belongs in the canonical cube.
-More precisely, if `f` is a real function defined either over \f$ \mathbb R^3\f$
-or over the canonical cube, we define the periodic real function `f^{\ast}` defined over
-\f$ \mathbb R^3\f$ as follows:
-- For any point \f$(x,y,z)\f$ in the canonical cube, \f$ f^{\ast}(x,y,z) = f(x,y,z)\f$
-- For any point \f$(x,y,z)\f$ outside the canonical cube, there is a unique canonical representative
-\f$(x_0,y_0,z_0)\f$ of \f$(x,y,z)\f$ in the canonical cube, i.e.,
-\f$(x,y,z)=(x_0 + k_x c, y_0 + k_y c, z_0 + k_z c)\f$ with \f$(k_x,k_y,k_z)\f$ in \f$ \mathbb Z^3\f$,
-and \f$ f^{\ast}(x,y,z) = f(x_0,y_0,z_0) \f$.
+\subsubsection Periodic_3_mesh_3ArtificialPeriodicity Artifical Domain Periodicity
 
-For example, if considering the unit cube as canonical cube, an oracle answering a
-query such as <I>"what is the value of the implicit function at this point?"</I>
-at the point `(2.5, 2.5, 2.5)` will be in fact evaluated at the canonical position,
-`(0.5, 0.5, 0.5)`.
-Consequently It is thus not required to provide an input domain that is periodic over the
-whole space or oracles that can answer queries for all points of \f$ \mathbb R^3\f$, but only
-for points in the canonical cube.
-
-This approach allows to construct periodic meshes of domains that are not intrinsically
-periodic, for example a sphere (see
-\cgalFigureRef{Periodic_3_mesh_3FromCanonicalToWholeDiscard}
-and \cgalFigureRef{Periodic_3_mesh_3Periodic_implicit_sphere}) or a cone
-(see Section \ref Periodic_3_mesh_3ConeWithSharpFeatures).
-
-\cgalFigureBegin{Periodic_3_mesh_3FromCanonicalToWhole, periodicity_base.svg}
-Illustration in 2D (cut view) of a domain defined by an implicit function.
-Only the values of the implicit function that are in the canonical cube matter:
-the values of the implicit function at `P` and `Q` are obtained by evaluating
-instead at `P'` and `Q'`, as shown on the right.
-\cgalFigureEnd
-
-In practice, the implicit function provided by the user is likely defined
-over a larger domain than the canonical cube (in general, it is even \f$ \mathbb R^3\f$).
-Note that since queries are always answered by looking at the canonical
-position, all information provided by the input domain that is outside this
-canonical cube is unused. \cgalFigureRef{Periodic_3_mesh_3FromCanonicalToWholeDiscard}
-gives an example of such domain where some information is discarded.
-
-\cgalFigureBegin{Periodic_3_mesh_3FromCanonicalToWholeDiscard, periodicity.svg}
-Illustration in 2D (cut view) of a domain defined by an implicit function.
-Any value outside of the canonical cube is unused.
-\cgalFigureEnd
-
-Note also that it is the responsability of the user to provide an input function
-whose isovalues are <em>periodicially</em> continuous and without intersections.
-\cgalFigureRef{Periodic_3_mesh_3ContinuityIssue} is an example of a bad choice
-of input function and canonical cube: there is no continuity of the isovalues
-at the border of the canonical cube. In such configuration, the mesher might
-or might not finish and the result is likely to not be non-manifold and to
-contain self-intersections.
-
-\cgalFigureBegin{Periodic_3_mesh_3ContinuityIssue, periodicity_issue.svg}
-Illustration in 2D (cut view) of a domain defined by an implicit function.
-The zero isovalue of the implicit function does not form a continuous curve.
-\cgalFigureEnd
+The specifications of the input implicit function described in the previous section are quite restrictive.
+To relax these requirements, this package also offers a wrapper class,
+`CGAL::Periodic_3_function_wrapper`, to artifically construct
+periodic functions compatible with the user-defined canonical cube,
+from the values of an implicit function over the canonical cube.
+It is thus possible to construct periodic domains described by implicit functions
+that are not intrinsically periodic, for example a sphere (see \cgalFigureRef{Periodic_3_mesh_3Periodic_implicit_sphere})
+or a cone (see Section \ref Periodic_3_mesh_3ConeWithSharpFeatures).
 
 \subsection Periodic_3_mesh_3OutputMesh Output Mesh
 
@@ -365,10 +323,9 @@ the point lies, if inside.
 If the domain description includes 0 and 1-dimensional features
 that have to be accurately represented in the final mesh,
 the template parameter `PeriodicMeshDomain` is required to be
-of a model of the refined concept `Periodic_3MeshDomainWithFeatures_3`.
-The concept `Periodic_3MeshDomainWithFeatures_3` mainly provides the incidence
-graph of 0, 1 and 2-dimensional features, and a member function to construct
-sample points on curves.
+of a model of the refined concept `Periodic_3MeshDomainWithFeatures_3`,
+which mainly provides the incidence graph of 0, 1 and 2-dimensional features,
+and a member function to construct sample points on curves.
 
 Users whose domain is a model of `Periodic_3MeshDomainWithFeatures_3`
 can choose to have the corners and curves of the domain
@@ -456,10 +413,10 @@ protecting ball centers that are consecutive on a 1-feature. This parameter has 
 
 This section presents various use cases of the periodic mesh generator.
 
-\subsection Periodic_3_mesh_3SubMultipleCopies Outputting Multiple Copies of a Periodic Mesh
+\subsection Periodic_3_mesh_3SubMultipleCopies Visualizing Multiple Copies of a Periodic Mesh
 
-Generated meshes can be output to the `.mesh` file format, which can be read
-with `medit`. The function \link PkgPeriodic_3_mesh_3IOFunctions `CGAL::output_periodic_mesh_to_medit()` \endlink
+Generated meshes can be output to the `.mesh` file format, which can be visualized with the demo
+of the package \ref PkgPolyhedronSummary. The function \link PkgPeriodic_3_mesh_3IOFunctions `CGAL::output_periodic_mesh_to_medit()` \endlink
 takes a stream, a mesh complex, and - optionally - the number of periodic copies that should be drawn,
 making it easier to observe the periodicity of the result.
 \cgalFigureRef{Periodic_3_mesh_3Periodic_copies} illustrates the different output
@@ -503,17 +460,23 @@ Cut view (middle). Another cut is shown, using 8 copies (right).
 \cgalFigureCaptionEnd
 
 While the implicit function used in the previous example is defined and periodic
-over the complete space, it is also possible to consider an implicit function
-defined entirely within the canonical cube. It will then be periodically
-duplicated. For example, replacing the previous domain and with the following
-implicit function (a sphere):
+over the complete space, it is also possible to consider non-periodic implicit functions
+defined entirely within the canonical cube (or over the whole space) by using the wrapper class
+`CGAL::Periodic_3_function_wrapper`. Values will then be periodically duplicated, creating
+a periodic function. For example, replacing the previous domain with the following
+non-periodic implicit function (a sphere):
 
 \code{.cpp}
+...
+typedef CGAL::Periodic_3_function_wrapper<Function, K>              Periodic_function;
 ...
 // A sphere centered on (0.5, 0.5, 0.5) with radius sqrt(0.2)
 FT sphere_function (const Point& p) { return CGAL::squared_distance(p, Point(0.5, 0.5, 0.5)) - 0.2; }
 ...
-Periodic_mesh_domain domain(sphere_function, CGAL::Iso_cuboid_3<K>(0, 0, 0, 1, 1, 1));
+Iso_cuboid_3 canonical_cube(0, 0, 0, 1, 1, 1);
+Periodic_mesh_domain domain =
+  Periodic_mesh_domain::create_implicit_mesh_domain(
+    Periodic_3_function(sphere_function, canonical_cube), canonical_cube );
 ...
 \endcode
 
@@ -533,18 +496,18 @@ In the case of periodic mesh generation, the exterior of an isosurface defined b
 an implicit function can also be meshed because it is a finite space.
 The class `Implicit_to_labeled_subdomains_function_wrapper` is a convenient wrapper
 to achieve this by internally transforming the interior and the exterior as simply
-two subdomains to be meshed. It can be simply plugged in the definition of the domain,
-replacing the line
-\code{.cpp}
-...
-typedef CGAL::Implicit_periodic_3_mesh_domain_3<Function, K> Periodic_mesh_domain;
-...
-\endcode
-in the previous example, with:
+two subdomains to be meshed. Compared to the previous example, it can be simply achieved
+by adding the line
 \code{.cpp}
 ...
 typedef CGAL::Implicit_to_labeled_subdomains_function_wrapper<Function, K> Function_wrapper;
-typedef CGAL::Implicit_periodic_3_mesh_domain_3<Function, K, Function_wrapper> Periodic_mesh_domain;
+...
+\endcode
+and wrapping the function as follows:
+\code{.cpp}
+...
+Function_wrapper wrapper(schwarz_p);
+Periodic_mesh_domain domain(wrapper, canonical_cube);
 ...
 \endcode
 
@@ -570,7 +533,7 @@ The following code produces a 3D periodic mesh for a domain consisting of a comb
 of the two implicit functions used in the previous example: a sphere is encompassed
 within the implicit domain of \cgalFigureRef{Periodic_3_mesh_3Periodic_implicit_shape}.
 The class `Implicit_multi_domain_to_labeling_function_wrapper` is used as model
-of `ImplicitFunction`, required by the class `Labeled_periodic_3_mesh_domain_3`.
+of `ImplicitFunction`, required by the class `Labeled_mesh_domain_3`.
 The set of subdomains is given by a vector of vector of signs.
 Each subdomain corresponds to a sign vector `[s1, s2, ..., sn]`,
 where `si` is the sign of the function `fi(p)` at a point `p` of the subdomain.

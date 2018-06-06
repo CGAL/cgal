@@ -23,9 +23,9 @@ Wrapping any model of `Periodic_3MeshDomain_3` with the class
 of `Periodic_3MeshDomainWithFeatures_3`.
 
 \cgalHasModel `CGAL::Mesh_domain_with_polyline_features_3<
-                 CGAL::Implicit_periodic_3_mesh_domain_3<Function,BGT> >`
-\cgalHasModel `CGAL::Mesh_domain_with_polyline_features_3<
-                 CGAL::Labeled_periodic_3_mesh_domain_3<LabelingFunction,BGT> >`
+                 CGAL::Labeled_mesh_domain_3<BGT> >`
+
+\sa `CGAL::Periodic_3_function_wrapper<Function,BGT>`
 
 \sa `CGAL::make_periodic_3_mesh_3()`
 \sa `CGAL::refine_periodic_3_mesh_3()`
