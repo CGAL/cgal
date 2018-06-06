@@ -18,7 +18,7 @@
 //
 // Author(s)     : Laurent Rineau
 
-#ifndef CGAL_NO_DEPRECATED_CODE
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
 #include <boost/optional.hpp>
 
@@ -155,11 +155,3 @@ int main()
 
   return 0;
 }
-
-#else // CGAL_NO_DEPRECATED_CODE
-#include <iostream>
-int main() { 
-  std::cerr << "CGAL_NO_DEPRECATED_CODE is defined. Nothing to test.\n";
-  return 0; 
-}
-#endif // CGAL_NO_DEPRECATED_CODE

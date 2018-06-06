@@ -42,6 +42,8 @@ the exposed type `General_polygon_2`. This type represents the
 outer boundary of the general polygon and the outer boundaries of
 each hole.
 
+\tparam Polygon_ must have input and output operators.
+
 \cgalModels `GeneralPolygonWithHoles_2`
 
 */
@@ -53,6 +55,7 @@ public:
 /// \name Definition
 
 /// @{
+  /// polygon without hole type
   typedef Polygon_							General_polygon_2;
 /// @}
 
@@ -168,10 +171,9 @@ be free of comments. The default for writing is ASCII without
 comments.
 
 The number of curves of the outer boundary is exported followed by the
-curves themselves in counterclockwise order. Then, the number of holes
+curves themselves. Then, the number of holes
 is exported, and for each hole, the number of curves on its outer
-boundary is exported followed by the curves themselves in clockwise
-order.
+boundary is exported followed by the curves themselves.
 
 \relates General_polygon_with_holes_2
 */
@@ -218,10 +220,9 @@ An ASCII and a binary format exist. The stream detects the format
 automatically and can read both.
 
 The format consists of the number of curves of the outer boundary
-followed by the curves themselves in counterclockwise order, followed
+followed by the curves themselves, followed
 by the number of holes, and for each hole, the number of curves on its
-outer boundary is followed by the curves themselves in clockwise
-order.
+outer boundary is followed by the curves themselves.
 
 \relates General_polygon_with_holes_2
 */

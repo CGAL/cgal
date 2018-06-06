@@ -173,7 +173,7 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   for (std::size_t i = 0; i < num_v; i++, ++vitr)
     put(vpm, *vitr, vertex_point_buffer[i]);
 
-//  CGAL_postcondition(p.is_valid());
+  CGAL_postcondition(CGAL::is_valid_polygon_mesh(p));
   delete []vertex_point_buffer;
 }
 
@@ -277,7 +277,7 @@ void PTQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   for (std::size_t i = 0; i < num_v; i++, ++vitr)
     put(vpm, *vitr, vertex_point_buffer[i]);
 
-//  CGAL_postcondition(p.is_valid());
+  CGAL_postcondition(CGAL::is_valid_polygon_mesh(p));
   delete []vertex_point_buffer;
 }
 
@@ -527,7 +527,7 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
     }
   }
 
-//  CGAL_postcondition(p.is_valid());
+  CGAL_postcondition(CGAL::is_valid_polygon_mesh(p));
   delete []cpt;
 }
 

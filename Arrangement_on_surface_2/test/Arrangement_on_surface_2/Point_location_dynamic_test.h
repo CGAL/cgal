@@ -132,7 +132,7 @@ read_perform_opts(std::istream& is)
       rc = false;
       continue;
     }
-    if (cmd == 'i') insert(*(this->m_arr), this->m_xcurves[id]);
+    if (cmd == 'i') CGAL::insert(*(this->m_arr), this->m_xcurves[id]);
 
     if (cmd == 'd') {
       if (!remove(this->m_xcurves[id])) rc = false;

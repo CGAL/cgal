@@ -113,6 +113,44 @@ private:
   };
 #endif
 
+  template <typename ClusterRange, typename PointMap, typename DiagonalizeTraits>
+  class Compute_clusters_eigen_values
+  {
+    Local_eigen_analysis& m_eigen;
+    const ClusterRange& m_input;
+    PointMap m_point_map;
+    
+  public:
+    
+    Compute_clusters_eigen_values (Local_eigen_analysis& eigen,
+                                   const ClusterRange& input,
+                                   PointMap point_map)
+      : m_eigen (eigen), m_input (input), m_point_map (point_map)
+    { }
+
+#ifdef CGAL_LINKED_WITH_TBB
+    void operator()(const tbb::blocked_range<std::size_t>& r) const
+    {
+      for (std::size_t i = r.begin(); i != r.end(); ++ i)
+        apply (i);
+    }
+#endif
+
+    inline void apply (std::size_t i) const
+    {
+      const typename ClusterRange::value_type& cluster = m_input[i];
+
+      std::vector<typename PointMap::value_type> points;
+      for (std::size_t j = 0; j < cluster.size(); ++ j)
+        points.push_back (get(m_point_map, cluster[j]));
+
+      m_eigen.compute<typename PointMap::value_type,
+                      DiagonalizeTraits> (i, typename PointMap::value_type(0.,0.,0.), points);
+    }
+
+  };
+
+  
   typedef CGAL::cpp11::array<float, 3> float3;
   std::vector<float3> m_eigenvalues;
   std::vector<float> m_sum_eigenvalues;
@@ -220,6 +258,62 @@ public:
     }
     m_mean_range /= input.size();
   }
+
+  // Experimental feature, not used officially
+  /// \cond SKIP_IN_MANUAL
+  struct Input_is_clusters { };
+  
+  template <typename ClusterRange,
+            typename PointMap,
+#if defined(DOXYGEN_RUNNING)
+            typename ConcurrencyTag,
+#elif defined(CGAL_LINKED_WITH_TBB)
+            typename ConcurrencyTag = CGAL::Parallel_tag,
+#else
+            typename ConcurrencyTag = CGAL::Sequential_tag,
+#endif
+#if defined(DOXYGEN_RUNNING)
+            typename DiagonalizeTraits>
+#else
+            typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float, 3> >
+#endif
+  Local_eigen_analysis (const Input_is_clusters&,
+                        const ClusterRange& input,
+                        PointMap point_map,
+                        const ConcurrencyTag& = ConcurrencyTag(),
+                        const DiagonalizeTraits& = DiagonalizeTraits())
+  {
+    m_eigenvalues.resize (input.size());
+    m_sum_eigenvalues.resize (input.size());
+    m_centroids.resize (input.size());
+    m_smallest_eigenvectors.resize (input.size());
+#ifdef CGAL_CLASSIFICATION_EIGEN_FULL_STORAGE
+    m_middle_eigenvectors.resize (input.size());
+    m_largest_eigenvectors.resize (input.size());
+#endif
+    
+    m_mean_range = 0.;
+
+    Compute_clusters_eigen_values<ClusterRange, PointMap, DiagonalizeTraits>
+    f(*this, input, point_map);
+
+    
+#ifndef CGAL_LINKED_WITH_TBB
+    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                               "Parallel_tag is enabled but TBB is unavailable.");
+#else
+    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+    {
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, input.size ()), f);
+    }
+    else
+#endif
+    {
+      for (std::size_t i = 0; i < input.size(); ++ i)
+        f.apply (i);
+    }
+  }
+  /// \endcond
 
   /*!
     \brief Returns the estimated unoriented normal vector of the point at position `index`.

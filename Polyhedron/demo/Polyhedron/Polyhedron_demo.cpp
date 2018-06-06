@@ -56,12 +56,14 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   QCommandLineOption no_autostart("no-autostart",
                                   tr("Ignore the autostart.js file, if any."));
   parser.addOption(no_autostart);
+  QCommandLineOption verbose("verbose",
+                                   tr("Print the paths explored byt the application searching for plugins."));
+  parser.addOption(verbose);
   parser.addPositionalArgument("files", tr("Files to open"), "[files...]");
   parser.process(*this);
-
-  d_ptr->mainWindow.reset(new MainWindow);
+  d_ptr->mainWindow.reset(new MainWindow(parser.isSet(verbose)));
   MainWindow& mainWindow = *d_ptr->mainWindow;
-
+  
   mainWindow.setWindowTitle(main_window_title);
   mainWindow.show();
 

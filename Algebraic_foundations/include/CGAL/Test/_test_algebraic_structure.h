@@ -922,18 +922,20 @@ void test_algebraic_structure(){
         w[0]= AS (10);
         w[1]= AS (-8);
         w[2]= AS (-2);
-        std::pair<int,int> equal_pair(0,0);
-        // functor
-        // find_only_equal_pair is not yet implemented
-//        equal_pair = find_only_equal_pair(v.begin(),v.end(),
+
+//      functor
+//      find_only_equal_pair is not yet implemented
+//      std::pair<int,int> equal_pair(0,0);
+//
+//      equal_pair = find_only_equal_pair(v.begin(),v.end(),
 //                                          w.begin(),w.end());
-//        assert(1 == equal_pair.first);
-//        assert(2 == equal_pair.second);
+//      assert(1 == equal_pair.first);
+//      assert(2 == equal_pair.second);
         //function
-//        equal_pair = NiX::find_only_equal_pair(v.begin(),v.end(),
+//      equal_pair = NiX::find_only_equal_pair(v.begin(),v.end(),
 //                                               w.begin(),w.end());
-//        assert(1 == equal_pair.first);
-//        assert(2 == equal_pair.second);
+//      assert(1 == equal_pair.first);
+//      assert(2 == equal_pair.second);
         
     } 
 }

@@ -7,7 +7,7 @@
 
 #include <CGAL/Mesh_3/initialize_triangulation_from_labeled_image.h>
 
-#include <CGAL/Labeled_image_mesh_domain_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Image_3.h>
 
@@ -15,7 +15,7 @@
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Labeled_image_mesh_domain_3<CGAL::Image_3,K> Mesh_domain;
+typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
 
 #ifdef CGAL_CONCURRENT_MESH_3
 typedef CGAL::Parallel_tag Concurrency_tag;
@@ -41,7 +41,7 @@ int main()
   /// [Create the image]
 
   // Domain
-  Mesh_domain domain(image);
+  Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image);
 
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_size=3, facet_distance=1,

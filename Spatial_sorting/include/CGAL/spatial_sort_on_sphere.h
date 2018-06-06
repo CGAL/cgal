@@ -48,7 +48,7 @@ void spatial_sort_on_sphere (
 
     boost::rand48 random;
     boost::random_number_generator<boost::rand48, Diff_t> rng(random);
-    std::random_shuffle(begin,end, rng);
+    CGAL::cpp98::random_shuffle(begin,end, rng);
 
             if (threshold_hilbert==0) threshold_hilbert=4;
             if (threshold_multiscale==0) threshold_multiscale=16;

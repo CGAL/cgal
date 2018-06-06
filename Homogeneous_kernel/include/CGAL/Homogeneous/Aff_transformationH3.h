@@ -553,6 +553,7 @@ homogeneous(int i, int j) const
               case 3: return t03;
               default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return t10;
@@ -561,6 +562,7 @@ homogeneous(int i, int j) const
               case 3: return t13;
               default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return t20;
@@ -569,6 +571,7 @@ homogeneous(int i, int j) const
               case 3: return t23;
               default: CGAL_assume(false);
             }
+            break;
     case 3: switch (j)
             {
               case 0: return RT0;
@@ -702,6 +705,7 @@ Translation_repH3<R>::homogeneous(int i, int j) const
               case 3: return tv.hx();
               default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return RT0;
@@ -710,6 +714,7 @@ Translation_repH3<R>::homogeneous(int i, int j) const
               case 3: return tv.hy();
               default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return RT0;
@@ -718,6 +723,7 @@ Translation_repH3<R>::homogeneous(int i, int j) const
               case 3: return tv.hz();
               default: CGAL_assume(false);
             }
+            break;
     case 3: switch (j)
             {
               case 0: return RT0;

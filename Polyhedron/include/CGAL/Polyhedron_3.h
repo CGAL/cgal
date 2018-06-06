@@ -24,7 +24,7 @@
 
 #include <CGAL/license/Polyhedron.h>
 
-
+#include <CGAL/Polyhedron_3_fwd.h>
 #include <CGAL/basic.h>
 #include <algorithm>
 #include <cstddef>
@@ -465,10 +465,10 @@ public:
 
 
 template < class PolyhedronTraits_3,
-           class PolyhedronItems_3 = Polyhedron_items_3,
+           class PolyhedronItems_3,
            template < class T, class I, class A>
-           class T_HDS = HalfedgeDS_default,
-           class Alloc = CGAL_ALLOCATOR(int)>
+           class T_HDS,
+           class Alloc>
 class Polyhedron_3 {
     //
     // DEFINITION
@@ -553,11 +553,15 @@ public:
     typedef Iterator_project<Face_const_iterator, Proj_plane,
         const Plane_3&, const Plane_3*>           Plane_const_iterator;
 
+  typedef typename HDS::Edge_iterator Edge_iterator;
+    typedef typename HDS::Edge_const_iterator Edge_const_iterator;
+  /*
     typedef N_step_adaptor_derived<Halfedge_iterator, 2>
                                                   Edge_iterator;
     typedef N_step_adaptor_derived<Halfedge_const_iterator, 2>
                                                   Edge_const_iterator;
-
+  */
+  
     // All face related types get a related facet type name.
     typedef Face                                  Facet;
     typedef Face_handle                           Facet_handle;

@@ -5,6 +5,7 @@
 #include <vector>
 #include <fstream>
 
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
 typedef CGAL::Polyhedron_3<K>                     Polyhedron_3;
 typedef K::Point_3                                Point_3;
@@ -27,14 +28,11 @@ int main(int argc, char* argv[])
   CGAL::convex_hull_3(points.begin(), points.end(), poly);
 
   std::cout << "The convex hull contains " << poly.size_of_vertices() << " vertices" << std::endl;
-
-  Surface_mesh sm;
   
+  Surface_mesh sm;
   CGAL::convex_hull_3(points.begin(), points.end(), sm);
 
   std::cout << "The convex hull contains " << num_vertices(sm) << " vertices" << std::endl;
-
-  
 
   return 0;
 }

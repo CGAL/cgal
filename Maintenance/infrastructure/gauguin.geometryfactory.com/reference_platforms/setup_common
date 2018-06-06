@@ -18,7 +18,6 @@ export PATH="/cygdrive/c/dev/CMake/bin":$PATH
 
 #Header only
 export BOOST_INCLUDEDIR="C:/3rdPartyLibs/boost/boost_${BOOST_VERSION}"
-export EIGEN3_DIR="C:/3rdPartyLibs/eigen-eigen-f562a193118d"
 
 #paths depending on the architecture
 export BOOST_LIBRARYDIR="C:/3rdPartyLibs/boost/boost_${BOOST_VERSION}/lib${ARCH}_msvc${VC_VERSION}"
@@ -47,7 +46,9 @@ elif [ -d /cygdrive/c/3rdPartyLibs/VC-${ARCH}/libQGLViewer-2.6.2  ]; then
    export QGLVIEWERROOT="C:\3rdPartyLibs/VC-${ARCH}/libQGLViewer-2.6.2"
 fi
 
-export OPENMESH_DIR="C:\3rdPartyLibs\OpenMesh-6.3"
+if [ -z "$OPENMESH_DIR" ]; then
+  export OPENMESH_DIR="C:\3rdPartyLibs\OpenMesh-6.3"
+fi
 export OPENMESH_INC_DIR="${OPENMESH_DIR}\src"
 export OPENMESH_LIB_DIR="${OPENMESH_DIR}\build_vs${VC_VERSION_YEAR}-${ARCH}\Build\lib"
 

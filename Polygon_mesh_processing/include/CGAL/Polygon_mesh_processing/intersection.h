@@ -1056,14 +1056,14 @@ bool is_mesh2_in_mesh1_impl(const AABB_tree& tree1,
   return false;
 }
 
-template <class TriangleMesh, class VPM, class GT>
+template <class TriangleMesh, class VPM1, class VPM2, class GT>
 bool is_mesh2_in_mesh1(const TriangleMesh& tm1,
                        const TriangleMesh& tm2,
-                       const VPM& vpm1,
-                       const VPM& vpm2,
+                       const VPM1& vpm1,
+                       const VPM2& vpm2,
                        const GT& gt)
 {
-  typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
+  typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM1> Primitive;
   typedef CGAL::AABB_traits<GT, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> AABBTree;
 
@@ -1071,7 +1071,7 @@ bool is_mesh2_in_mesh1(const TriangleMesh& tm1,
   std::vector<typename GT::Point_3> points_of_interest2;
   get_one_point_per_cc<GT>(tm2, vpm2, points_of_interest2);
 
-  return is_mesh2_in_mesh1_impl<TriangleMesh, VPM>(tree1, points_of_interest2, gt);
+  return is_mesh2_in_mesh1_impl<TriangleMesh, VPM1>(tree1, points_of_interest2, gt);
 }
 
 
@@ -1187,7 +1187,7 @@ bool do_intersect(const Polyline& polyline1,
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm1` (tm2`).
- *   The two property map types must be the same.
+ *   \attention The two property maps must have the same `value_type`.
  *   If this parameter is omitted, an internal property map for
  *   `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
@@ -1685,8 +1685,7 @@ surface_intersection(const TriangleMesh& tm1,
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm>
     functor(tm1, tm2, vpm1, vpm2);
-  polyline_output=functor(polyline_output, throw_on_self_intersection, true);
-  return polyline_output;
+  return functor(polyline_output, throw_on_self_intersection, true);
 }
 
 namespace experimental {

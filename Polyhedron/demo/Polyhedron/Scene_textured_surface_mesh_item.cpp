@@ -148,7 +148,7 @@ Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void) const
 
   typedef boost::graph_traits<SMesh>::face_iterator face_iterator;
   typedef boost::graph_traits<SMesh>::face_iterator face_iterator;
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
   //Faces
   SMesh::Property_map<vertex_descriptor, Point> positions =

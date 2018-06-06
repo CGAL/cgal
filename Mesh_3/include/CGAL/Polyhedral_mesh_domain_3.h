@@ -32,7 +32,6 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 
 #include <CGAL/Side_of_triangle_mesh.h>
@@ -68,6 +67,8 @@
 // default)
 #include <CGAL/internal/Mesh_3/Handle_IO_for_pair_of_int.h>
 
+#include <CGAL/internal/Mesh_3/indices_management.h>
+
 namespace CGAL {
 
 namespace Mesh_3 {
@@ -81,24 +82,6 @@ max_length(const Bbox_3& b)
   return (std::max)(b.xmax()-b.xmin(),
                     (std::max)(b.ymax()-b.ymin(),b.zmax()-b.zmin()) );
 }
-
-// -----------------------------------
-// Index_generator
-// Don't use boost::variant if types are the same type
-// -----------------------------------
-template < typename Subdomain_index, typename Surface_patch_index >
-struct Index_generator
-{
-  typedef boost::variant<Subdomain_index,Surface_patch_index> Index;
-  typedef Index                                         type;
-};
-
-template < typename T >
-struct Index_generator<T, T>
-{
-  typedef T       Index;
-  typedef Index   type;
-};
 
 // -----------------------------------
 // Geometric traits generator
@@ -213,7 +196,7 @@ public:
   typedef boost::optional<Surface_patch_index>            Surface_patch;
   /// Type of indexes to characterize the lowest dimensional face of the input
   /// complex on which a vertex lie
-  typedef typename Mesh_3::details::Index_generator<
+  typedef typename internal::Mesh_3::Index_generator<
     Subdomain_index, Surface_patch_index>::type           Index;
 
   typedef CGAL::cpp11::tuple<Point_3,Index,int> Intersection;

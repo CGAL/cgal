@@ -790,20 +790,26 @@ Aff_transformation_repH2<R>::homogeneous(int i, int j) const
               case 0: return a;
               case 1: return b;
               case 2: return c;
+              default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return d;
               case 1: return e;
               case 2: return f;
+              default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return RT(0);
               case 1: return RT(0);
               case 2: return g;
+              default: CGAL_assume(false);
             }
   }
+  CGAL_assume(false);
   return RT(0);
 }
 
@@ -828,20 +834,26 @@ Translation_repH2<R>::homogeneous(int i, int j) const
               case 0: return _tv.hw();
               case 1: return RT(0);
               case 2: return _tv.hx();
+              default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return RT(0);
               case 1: return _tv.hw();
               case 2: return _tv.hy();
+              default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return RT(0);
               case 1: return RT(0);
               case 2: return _tv.hw();
+              default: CGAL_assume(false);
             }
   }
+  CGAL_assume(false);
   return RT(0);
 }
 
@@ -857,20 +869,26 @@ Translation_repH2<R>::cartesian(int i, int j) const
               case 0: return FT(1);
               case 1: return FT(0);
               case 2: return _tv.x();
+              default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(1);
               case 2: return _tv.y();
+              default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(0);
               case 2: return FT(1);
+              default: CGAL_assume(false);
             }
   }
+  CGAL_assume(false);
   return FT(0);
 }
 
@@ -887,20 +905,26 @@ homogeneous(int i, int j) const
               case 0: return _cos;
               case 1: return - _sin;
               case 2: return RT(0);
+              default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return _sin;
               case 1: return _cos;
               case 2: return RT(0);
+              default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return RT(0);
               case 1: return RT(0);
               case 2: return _den;
+              default: CGAL_assume(false);
             }
   }
+  CGAL_assume(false);
   return RT(0);
 }
 
@@ -919,6 +943,7 @@ cartesian(int i, int j) const
               case 2: return FT(0);
               default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return FT(_sin) / FT(_den);
@@ -926,6 +951,7 @@ cartesian(int i, int j) const
               case 2: return FT(0);
               default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return FT(0);
@@ -953,6 +979,7 @@ homogeneous(int i, int j) const
               case 2: return RT(0);
               default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return RT(0);
@@ -960,6 +987,7 @@ homogeneous(int i, int j) const
               case 2: return RT(0);
               default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return RT(0);
@@ -987,6 +1015,7 @@ cartesian(int i, int j) const
               case 2: return FT(0);
               default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return FT(0);
@@ -994,6 +1023,7 @@ cartesian(int i, int j) const
               case 2: return FT(0);
               default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return FT(0);
@@ -1002,8 +1032,8 @@ cartesian(int i, int j) const
               default: CGAL_assume(false);
             }
   }
- CGAL_assume(false);
- return FT(0);
+  CGAL_assume(false);
+  return FT(0);
 }
 
 template < class R >
@@ -1022,6 +1052,7 @@ homogeneous(int i, int j) const
               case 2: return l.a()*l.c()*mRT2;
               default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return l.a()*l.b()*mRT2;
@@ -1029,6 +1060,7 @@ homogeneous(int i, int j) const
               case 2: return l.b()*l.c()*mRT2;
               default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return RT(0);
@@ -1057,6 +1089,7 @@ cartesian(int i, int j) const
               case 2: return FT( homogeneous(0,2)) / de;
               default: CGAL_assume(false);
             }
+            break;
     case 1: switch (j)
             {
               case 0: return FT( homogeneous(1,0)) / de;
@@ -1064,6 +1097,7 @@ cartesian(int i, int j) const
               case 2: return FT( homogeneous(1,2)) / de;
               default: CGAL_assume(false);
             }
+            break;
     case 2: switch (j)
             {
               case 0: return FT(0);

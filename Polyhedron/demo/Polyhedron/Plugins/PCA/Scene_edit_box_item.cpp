@@ -1,7 +1,8 @@
 #include "Scene_edit_box_item.h"
 #include <QApplication>
 #include <CGAL/Three/Viewer_interface.h>
-#include <QGLViewer/manipulatedFrame.h>
+#include <CGAL/Qt/manipulatedFrame.h>
+#include <CGAL/Qt/constraint.h>
 #include <QMouseEvent>
 #include <QOpenGLFramebufferObject>
 #include <QOpenGLShaderProgram>
@@ -78,7 +79,7 @@ struct Scene_edit_box_item_priv{
 
   Scene_edit_box_item_priv(const Scene_interface *scene_interface, Scene_edit_box_item* ebi)
   {
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     ready_to_hl = true;
     scene = scene_interface;
     item = ebi;
@@ -87,16 +88,16 @@ struct Scene_edit_box_item_priv{
     double x=(bb.xmin()+bb.xmax())/2;
     double y=(bb.ymin()+bb.ymax())/2;
     double z=(bb.zmin()+bb.zmax())/2;
-    center_ = qglviewer::Vec(x,y,z);
-    relative_center_ = qglviewer::Vec(0,0,0);
+    center_ = CGAL::qglviewer::Vec(x,y,z);
+    relative_center_ = CGAL::qglviewer::Vec(0,0,0);
     remodel_frame = new Scene_item::ManipulatedFrame();
     remodel_frame->setTranslationSensitivity(1.0);
     frame = new Scene_item::ManipulatedFrame();
     frame->setPosition(center_+offset);
     frame->setSpinningSensitivity(100.0); //forbid spinning
-    constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::AXIS);
-    constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
-    constraint.setRotationConstraintDirection(qglviewer::Vec(.0,.0,.1));
+    constraint.setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::AXIS);
+    constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
+    constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec(.0,.0,.1));
     frame->setConstraint(&constraint);
     //create the sphere model
     pool[0] = bb.xmin(); pool[3] = bb.xmax();
@@ -298,12 +299,12 @@ struct Scene_edit_box_item_priv{
   bool ready_to_hl;
 
 
-  qglviewer::ManipulatedFrame* frame;
-  qglviewer::ManipulatedFrame* remodel_frame;
-  qglviewer::Vec rf_last_pos;
-  qglviewer::LocalConstraint constraint;
-  qglviewer::Vec center_;
-  qglviewer::Vec relative_center_;
+  CGAL::qglviewer::ManipulatedFrame* frame;
+  CGAL::qglviewer::ManipulatedFrame* remodel_frame;
+  CGAL::qglviewer::Vec rf_last_pos;
+  CGAL::qglviewer::LocalConstraint constraint;
+  CGAL::qglviewer::Vec center_;
+  CGAL::qglviewer::Vec relative_center_;
 
   mutable QOpenGLShaderProgram pick_sphere_program;
   mutable QOpenGLShaderProgram transparent_face_program;
@@ -346,7 +347,7 @@ Scene_edit_box_item::Scene_edit_box_item(const Scene_interface *scene_interface)
   d = new Scene_edit_box_item_priv(scene_interface, this);
 
   are_buffers_filled = false;
-  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
   viewer->setMouseTracking(true);
 }
 QString Scene_edit_box_item::toolTip() const {
@@ -438,7 +439,7 @@ void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
 
 void Scene_edit_box_item::compute_bbox() const
 {
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
 
   QVector3D min(d->pool[0], d->pool[1], d->pool[2]);
@@ -605,7 +606,7 @@ Scene_edit_box_item_priv::initializeBuffers(Viewer_interface *viewer)const
 
 void push_xyz(std::vector<float> &v,
               const Scene_edit_box_item::Kernel::Point_3& p,
-              qglviewer::Vec center_ = qglviewer::Vec(0,0,0))
+              CGAL::qglviewer::Vec center_ = CGAL::qglviewer::Vec(0,0,0))
 {
   v.push_back(p.x()-center_.x);
   v.push_back(p.y()-center_.y);
@@ -744,7 +745,7 @@ void Scene_edit_box_item_priv::computeElements() const
 
 Scene_edit_box_item::~Scene_edit_box_item()
 {
-  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
   viewer->setMouseTracking(false);
 
   delete d;
@@ -763,7 +764,7 @@ Scene_edit_box_item::manipulatedFrame()
 
 double Scene_edit_box_item::point(short i, short j) const
 {
-  qglviewer::Vec pos(d->vertices[i].position().x()-d->center_.x,
+  CGAL::qglviewer::Vec pos(d->vertices[i].position().x()-d->center_.x,
                      d->vertices[i].position().y()-d->center_.y,
                      d->vertices[i].position().z()-d->center_.z);
   return (d->frame->inverseCoordinatesOf(pos))[j];
@@ -909,7 +910,7 @@ void Scene_edit_box_item::highlight(Viewer_interface *viewer)
 
 void Scene_edit_box_item::clearHL()
 {
-  Viewer_interface* viewer = dynamic_cast<Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+  Viewer_interface* viewer = dynamic_cast<Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin());
   viewer->makeCurrent();
   d->hl_normal.clear();
   d->hl_vertex.clear();
@@ -986,10 +987,10 @@ void Scene_edit_box_item::clearHL()
 void Scene_edit_box_item_priv::reset_selection()
 {
   selection_on = false;
-  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
   viewer->setManipulatedFrame(frame);
-  viewer->setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, QGLViewer::SELECT);
-  constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
+  viewer->setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, CGAL::qglviewer::SELECT);
+  constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
   selected_vertices.clear();
 }
 
@@ -1015,7 +1016,7 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
       {
         bool found = false;
         QApplication::setOverrideCursor(Qt::DragMoveCursor);
-        qglviewer::Vec pos = viewer->camera()->pointUnderPixel(d->picked_pixel, found);
+        CGAL::qglviewer::Vec pos = viewer->camera()->pointUnderPixel(d->picked_pixel, found);
         if(found)
         {
           d->rf_last_pos = pos;
@@ -1028,7 +1029,7 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
         if(type == 0)
         {
           d->selected_vertices.push_back(&d->vertices[picked]);
-          d->constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
+          d->constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
           d->remodel_frame->setConstraint(&d->constraint);
         }
         else if(type == 1)
@@ -1037,8 +1038,8 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
           d->selected_vertices.push_back(d->edges[picked].target);
           Kernel::Point_3 s(d->edges[picked].source->position()), t(d->edges[picked].target->position());
 
-          qglviewer::Vec normal(t.x()-s.x(), t.y()-s.y(), t.z()-s.z());
-          d->constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::PLANE);
+          CGAL::qglviewer::Vec normal(t.x()-s.x(), t.y()-s.y(), t.z()-s.z());
+          d->constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::PLANE);
           d->constraint.setTranslationConstraintDirection(normal);
           d->remodel_frame->setConstraint(&d->constraint);
         }
@@ -1052,16 +1053,16 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
           QVector3D n = QVector3D::crossProduct(a,b);
 
           d->remodel_frame->setConstraint(&d->constraint);
-          d->constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::AXIS);
-          d->constraint.setTranslationConstraintDirection(qglviewer::Vec(n.x(), n.y(), n.z()));
+          d->constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::AXIS);
+          d->constraint.setTranslationConstraintDirection(CGAL::qglviewer::Vec(n.x(), n.y(), n.z()));
         }
 
         viewer->setManipulatedFrame(d->remodel_frame);
         viewer->setMouseBinding(
                     Qt::NoModifier,
                     Qt::LeftButton,
-                    QGLViewer::FRAME,
-                    QGLViewer::TRANSLATE);
+                    CGAL::qglviewer::FRAME,
+                    CGAL::qglviewer::TRANSLATE);
       }
       else
       {
@@ -1078,7 +1079,7 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
       if(d->selection_on)
       {
         d->remodel_frame->setOrientation(d->frame->orientation());
-        qglviewer::Vec td(d->remodel_frame->transformOf(d->remodel_frame->position() - d->rf_last_pos));
+        CGAL::qglviewer::Vec td(d->remodel_frame->transformOf(d->remodel_frame->position() - d->rf_last_pos));
         QVector3D dir(td.x, td.y, td.z);
         d->remodel_box(dir);
       }
@@ -1108,8 +1109,8 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
     viewer->setMouseBinding(
                 Qt::NoModifier,
                 Qt::LeftButton,
-                QGLViewer::CAMERA,
-                QGLViewer::ROTATE);
+                CGAL::qglviewer::CAMERA,
+                CGAL::qglviewer::ROTATE);
   }
   else if(event->type() == QEvent::KeyRelease)
   {
@@ -1180,8 +1181,8 @@ void Scene_edit_box_item_priv::draw_picking(Viewer_interface* viewer)
 
 void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
 {
-  qglviewer::AxisPlaneConstraint::Type prev_cons = constraint.translationConstraintType();
-  constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
+  CGAL::qglviewer::AxisPlaneConstraint::Type prev_cons = constraint.translationConstraintType();
+  constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
   Q_FOREACH(Scene_edit_box_item::vertex*  selected_vertex, selected_vertices )
   {
     int id = selected_vertex->id;

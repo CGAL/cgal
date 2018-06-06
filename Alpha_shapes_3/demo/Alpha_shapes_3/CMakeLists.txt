@@ -21,15 +21,11 @@ include(${CGAL_USE_FILE})
 
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
 
-find_package(QGLViewer)
-
-if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND )
+if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
   add_definitions(-DQT_NO_KEYWORDS)
 
  # include(${QT_USE_FILE})
-
-  include_directories (${QGLVIEWER_INCLUDE_DIR})
   include_directories (BEFORE ../../include ./ )
 
   # ui file, created wih Qt Designer
@@ -43,14 +39,13 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND )
 
   target_link_libraries( Alpha_shape_3 PRIVATE
     CGAL::CGAL CGAL::CGAL_Qt5
-    Qt5::OpenGL Qt5::Gui
-    ${QGLVIEWER_LIBRARIES} )
+    Qt5::OpenGL Qt5::Gui  )
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Alpha_shape_3)
 
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL, the QGLViewer, and Qt5, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL, and Qt5, and will not be compiled.")
 
 endif()

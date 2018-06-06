@@ -54,4 +54,3 @@ if [ -n "${TBB_ARCH}" ]; then
   export PATH=$PATH:"${TBBROOT}\bin\\${TBB_ARCH}\vc${VC_VERSION}"
 fi
 
-

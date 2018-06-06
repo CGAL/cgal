@@ -43,7 +43,7 @@ struct Kernel : public Kernel1 {
 };
 
 typedef Kernel::FT FT;
-typedef Kernel::Point_3 Point;
+typedef Kernel::Point_3 Point_3;
 typedef Kernel::Sphere_3 Sphere;
 typedef Kernel::Vector_3 Vector;
 typedef Kernel::Triangle_3 Triangle_3;
@@ -53,7 +53,7 @@ typedef Kernel::Segment_3 Segment_3;
 
 typedef boost::tuple<Triangle_3,Vector,const QTreeWidgetItem*> Facet;
 
-typedef CBinary_image_3<FT,Point> Binary_image;
+typedef CBinary_image_3<FT,Point_3> Binary_image;
 
 class QTreeWidgetItem;
 

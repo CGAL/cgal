@@ -56,11 +56,7 @@ public:
   {
     std::cout << filename << std::endl;
 
-    Skin_surface_3 skin_surface = create_skin_surface(filename, .5);
-
-    Polyhedron p;
-    //construct_and_subdivide_mesh(skin_surface, p);
-    //p.clear();
+    Skin_surface_3 skin_surface = create_skin_surface(filename, s);
 
     Polyhedron_skin p_skin;
     construct_and_subdivide_mesh(skin_surface, p_skin);

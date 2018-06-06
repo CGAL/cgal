@@ -8,6 +8,7 @@ out VS_OUT
   vec4 fP;
   vec4 out_color;
   float dist[6];
+  vec4 vertex;
 }vs_out;
 
 uniform mat4 mvp_matrix;
@@ -39,5 +40,6 @@ void main(void)
     compute_distances();
    vs_out.out_color=colors;
    vs_out.fP = mv_matrix * vertex;
+   vs_out.vertex = vertex;
    gl_Position = mvp_matrix * vertex;
 }

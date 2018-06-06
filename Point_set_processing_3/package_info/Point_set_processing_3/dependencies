@@ -18,14 +18,11 @@ Interval_support
 Jet_fitting_3
 Kernel_23
 Kernel_d
-Modifier
 Modular_arithmetic
 Number_types
 Point_set_2
 Point_set_processing_3
 Polygon
-Polyhedron
-Polyhedron_IO
 Principal_component_analysis
 Principal_component_analysis_LGPL
 Profiling_tools

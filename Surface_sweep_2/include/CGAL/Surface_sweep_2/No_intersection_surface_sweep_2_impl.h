@@ -93,7 +93,11 @@ No_intersection_surface_sweep_2<Vis>::~No_intersection_surface_sweep_2()
   Allocated_events_iterator iter = m_allocated_events.begin();
   for (; iter != m_allocated_events.end(); ++iter) {
     p_event = *iter;
+#ifdef CGAL_CXX11
+    std::allocator_traits<Event_alloc>::destroy(m_eventAlloc, p_event);
+#else
     m_eventAlloc.destroy(p_event);
+#endif
     m_eventAlloc.deallocate(p_event,1);
   }
 }
@@ -137,7 +141,11 @@ void No_intersection_surface_sweep_2<Vis>::deallocate_event(Event* event)
   m_allocated_events.erase(event);
 
   // Perfrom the actual deallocation.
+#ifdef CGAL_CXX11
+  std::allocator_traits<Event_alloc>::destroy(m_eventAlloc, event);
+#else
   m_eventAlloc.destroy(event);
+#endif
   m_eventAlloc.deallocate(event, 1);
 }
 
@@ -226,8 +234,13 @@ void No_intersection_surface_sweep_2<Vis>::_complete_sweep()
   CGAL_assertion((m_statusLine.size() == 0));
 
   // Free all subcurve objects.
-  for (unsigned int i = 0; i < m_num_of_subCurves; ++i)
+  for (unsigned int i = 0; i < m_num_of_subCurves; ++i){
+#ifdef CGAL_CXX11
+    std::allocator_traits<Subcurve_alloc>::destroy(m_subCurveAlloc, m_subCurves + i);
+#else
     m_subCurveAlloc.destroy(m_subCurves + i);
+#endif
+  }
 
   if (m_num_of_subCurves > 0)
     m_subCurveAlloc.deallocate(m_subCurves, m_num_of_subCurves);
@@ -257,7 +270,11 @@ void No_intersection_surface_sweep_2<Vis>::
 _init_curve(const X_monotone_curve_2& curve, unsigned int index)
 {
   // Construct and initialize a subcurve object.
+#ifdef CGAL_CXX11
+  std::allocator_traits<Subcurve_alloc>::construct(m_subCurveAlloc, m_subCurves + index, m_masterSubcurve );
+#else
   m_subCurveAlloc.construct(m_subCurves + index, m_masterSubcurve);
+#endif
   (m_subCurves + index)->set_hint(this->m_statusLine.end());
   (m_subCurves + index)->init(curve);
 
@@ -597,7 +614,11 @@ No_intersection_surface_sweep_2<Vis>::_allocate_event(const Point_2& pt,
 {
   // Allocate the event.
   Event* e =  m_eventAlloc.allocate(1);
+#ifdef CGAL_CXX11
+  std::allocator_traits<Event_alloc>::construct(m_eventAlloc, e, m_masterEvent);
+#else
   m_eventAlloc.construct(e, m_masterEvent);
+#endif
   e->init(pt, type, ps_x, ps_y);
 
   // Insert it to the set of allocated events.
@@ -617,7 +638,11 @@ _allocate_event_at_open_boundary(Attribute type,
                                  Arr_parameter_space ps_y)
 {
   Event* e =  m_eventAlloc.allocate(1);
+#ifdef CGAL_CXX11
+  std::allocator_traits<Event_alloc>::construct(m_eventAlloc, e, m_masterEvent);
+#else
   m_eventAlloc.construct(e, m_masterEvent);
+#endif
   e->init_at_open_boundary(type, ps_x, ps_y);
 
   m_allocated_events.insert(e);

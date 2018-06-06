@@ -446,7 +446,11 @@ namespace internal {
                       m_properties = &m_face_properties;
                     }
                   else
-                    continue;
+                    {
+                      reading_faces = false;
+                      reading_vertices = false;
+                      continue;
+                    }
                 }
             
             }

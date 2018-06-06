@@ -37,6 +37,8 @@
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
 #endif
 
+#include <CGAL/HalfedgeDS_default.h>
+
 /// \cond SKIP_IN_MANUAL
 
 namespace CGAL {
@@ -144,7 +146,7 @@ namespace CGAL {
                     typedef typename K::Plane_3 Plane;
                     typedef typename K::Point_3 Point;
                     typedef typename K::Vector_3 Vector;
-                    typedef typename CGAL::Convex_hull_traits_3<K> Traits;
+                    typedef typename CGAL::Convex_hull_traits_3<K, HalfedgeDS_default<K,HalfedgeDS_items_3> > Traits;
                     typedef typename Traits::Polygon_mesh Polyhedron;
 
                     std::list<Vertex_handle> vertices;
@@ -176,16 +178,15 @@ namespace CGAL {
                        boost::make_optional(Point(CGAL::ORIGIN)));
 
                     // apply f to the triangles on the boundary of P
-                    for (typename Polyhedron::Facet_iterator it = P.facets_begin();
-                         it != P.facets_end(); ++it)
+                    BOOST_FOREACH(typename boost::graph_traits<Polyhedron>::face_descriptor fd, faces(P))
                     {
-                        typename Polyhedron::Halfedge_around_facet_circulator
-                            h0 = it->facet_begin(), hf = h0--, hs = cpp11::next(hf);
+                      Halfedge_around_face_circulator<Polyhedron>
+                        h0(halfedge(fd,P),P), hf = h0--, hs = cpp11::next(hf);
 
                         while(hs != h0)
                         {
-                            f (h0->vertex()->point(), hf->vertex()->point(),
-                               hs->vertex()->point());
+                          f ((*h0)->vertex()->point(), (*hf)->vertex()->point(),
+                             (*hs)->vertex()->point());
                             ++hs; ++hf;
                         }
                     }
