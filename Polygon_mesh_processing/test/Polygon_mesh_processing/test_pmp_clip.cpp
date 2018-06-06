@@ -26,7 +26,7 @@ void test()
   input.close();
 
   PMP::clip(tm1, tm2,
-            params::clip_volumes(false)
+            params::clip_volume(false)
               .face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm1)),
             params::face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm2))
   );
@@ -42,7 +42,7 @@ void test()
   input >> tm2;
   input.close();
 
-  PMP::clip(tm1, tm2, params::clip_volumes(true)
+  PMP::clip(tm1, tm2, params::clip_volume(true)
               .face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm1)),
             params::face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm2)));
   assert(CGAL::is_closed(tm1));
@@ -55,14 +55,14 @@ void test()
 
   K::Plane_3 plane(0, 0, 1, -1);
 
-  PMP::clip(tm1, plane, params::clip_volumes(true));
+  PMP::clip(tm1, plane, params::clip_volume(true));
   assert(CGAL::is_closed(tm1));
   CGAL::clear(tm1);
 
   input.open("data-coref/cube.off");
   input >> tm1;
   input.close();
-  PMP::clip(tm1, plane, params::clip_volumes(false)
+  PMP::clip(tm1, plane, params::clip_volume(false)
               .use_compact_clipper(false));
   assert(!CGAL::is_closed(tm1));
   CGAL::clear(tm1);
@@ -70,7 +70,7 @@ void test()
   input.open("data-coref/cube.off");
   input >> tm1;
   input.close();
-  PMP::clip(tm1, plane, params::clip_volumes(false)
+  PMP::clip(tm1, plane, params::clip_volume(false)
                         .use_compact_clipper(true));
   assert(CGAL::is_closed(tm1));
   CGAL::clear(tm1);
@@ -78,7 +78,7 @@ void test()
   input.open("data-coref/cube.off");
   input >> tm1;
   input.close();
-  PMP::clip(tm1, K::Plane_3(-0.236474, 0.437732, 0.867451, -0.838791), params::clip_volumes(true));
+  PMP::clip(tm1, K::Plane_3(-0.236474, 0.437732, 0.867451, -0.838791), params::clip_volume(true));
   assert(CGAL::is_closed(tm1));
   assert(!CGAL::is_empty(tm1));
   CGAL::clear(tm1);

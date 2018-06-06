@@ -69,5 +69,5 @@ int main(int argc, char* argv[])
   else
     std::cout << "Intersection could not be computed\n";
 
-  return 1;
+  return 0;
 }

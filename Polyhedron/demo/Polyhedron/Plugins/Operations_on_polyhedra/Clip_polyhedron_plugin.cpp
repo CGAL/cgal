@@ -142,7 +142,7 @@ public :
     try {
       CGAL::Polygon_mesh_processing::clip(*neg_side,
                                           plane->plane(),
-                                          CGAL::Polygon_mesh_processing::parameters::clip_volumes(
+                                          CGAL::Polygon_mesh_processing::parameters::clip_volume(
                                             ui_widget.close_checkBox->isChecked()).
                                           throw_on_self_intersection(true));
       Item* new_item = new Item(neg_side);
@@ -156,7 +156,7 @@ public :
       Mesh* pos_side = new Mesh(*item->face_graph());
       CGAL::Polygon_mesh_processing::clip(*pos_side,
                                           plane->plane().opposite(),
-                                          CGAL::Polygon_mesh_processing::parameters::clip_volumes(
+                                          CGAL::Polygon_mesh_processing::parameters::clip_volume(
                                             ui_widget.close_checkBox->isChecked()).
                                           throw_on_self_intersection(true));
 
@@ -246,7 +246,7 @@ public Q_SLOTS:
             {
               CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
                                                   plane->plane(),
-                                                  CGAL::Polygon_mesh_processing::parameters::clip_volumes(
+                                                  CGAL::Polygon_mesh_processing::parameters::clip_volume(
                                                     ui_widget.close_checkBox->isChecked()).
                                                   throw_on_self_intersection(true));
             }
@@ -254,7 +254,7 @@ public Q_SLOTS:
             {
               CGAL::Polygon_mesh_processing::clip(*(poly_item->face_graph()),
                                                   plane->plane(),
-                                                  CGAL::Polygon_mesh_processing::parameters::clip_volumes(
+                                                  CGAL::Polygon_mesh_processing::parameters::clip_volume(
                                                     ui_widget.close_checkBox->isChecked()).
                                                   throw_on_self_intersection(true));
 

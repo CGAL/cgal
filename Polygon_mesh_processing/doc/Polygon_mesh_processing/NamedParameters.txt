@@ -326,7 +326,7 @@ and make the operation impossible with the current version of the code.
 \b Default value is `false`
 \cgalNPEnd
 
-\cgalNPBegin{clip_volumes} \anchor PMP_clip_volumes
+\cgalNPBegin{clip_volume} \anchor PMP_clip_volume
 Parameter used in `clip()` functions to clip a volume rather than a surface.
 \n
 \b Type : `bool` \n
