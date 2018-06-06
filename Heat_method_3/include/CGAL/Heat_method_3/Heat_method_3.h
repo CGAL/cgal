@@ -227,9 +227,9 @@ namespace Heat_method_3 {
         c_matrix_entries.push_back(triplet(j,j,.5* cotan_k));
 
         double area_face = CGAL::Polygon_mesh_processing::face_area(f,tm);
-        A_matrix_entries.push_back(triplet(i,i, (1/3)*area_face));
-        A_matrix_entries.push_back(triplet(j,j, (1/3)*area_face));
-        A_matrix_entries.push_back(triplet(k,k, (1/3)*area_face));
+        A_matrix_entries.push_back(triplet(i,i, (1./3.)*area_face));
+        A_matrix_entries.push_back(triplet(j,j, (1./3.)*area_face));
+        A_matrix_entries.push_back(triplet(k,k, (1./3.)*area_face));
       }
 
       A.setFromTriplets(A_matrix_entries.begin(), A_matrix_entries.end());
