@@ -18,6 +18,11 @@ Release date: September 2018
     ConstructProjectedPoint 3.
 
 
+### CGAL and Boost Property Maps
+
+-   Addition of a read-write property map to convert on-the-fly geometric 
+    object from Cartesian kernels
+
 ### 2D Triangulations
 
 -   Added a new type of intersection to deal with insertion of a constraints 
