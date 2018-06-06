@@ -777,7 +777,7 @@ void Volume::display_marchin_cube()
         const Vector v = t[2] - t[0];
         Vector n = CGAL::cross_product(u,v);
         n = n / std::sqrt(n*n);
-        m_surface_mc.push_back(Facet(t,n,values_list->item(value_id)));
+        m_surface_mc.push_back(Facet_(t,n,values_list->item(value_id)));
       }
       nbs_of_mc_triangles[value_id]=m_surface_mc.size();
       mc_timer.start();
@@ -791,7 +791,7 @@ void Volume::display_marchin_cube()
     list_draw_marching_cube_is_valid = false;
   }
   CGAL::Bbox_3 bbox(0,0,0,0,0,0);
-  for(std::vector<Facet>::const_iterator
+  for(std::vector<Facet_>::const_iterator
         it = m_surface_mc.begin(), end = m_surface_mc.end();
       it != end; ++it)
   {
@@ -1056,13 +1056,13 @@ void Volume::display_surface_mesher_result()
       n = n / std::sqrt(n*n);
       if(mw->labellizedRadioButton->isChecked()) 
       {
-	m_surface.push_back(Facet(t,
+	m_surface.push_back(Facet_(t,
 				  n,
 				  values_list->search((std::max)(surface(left_circumcenter), 
 								 surface(right_circumcenter)))));
       }
       else {
-	m_surface.push_back(Facet(t,n,cell->vertex(del.vertex_triple_index(index, 0))->point().element_index()));
+	m_surface.push_back(Facet_(t,n,cell->vertex(del.vertex_triple_index(index, 0))->point().element_index()));
       }
     }
 
@@ -1072,7 +1072,7 @@ void Volume::display_surface_mesher_result()
   }
 
   CGAL::Bbox_3 bbox(0,0,0,0,0,0);
-  for(std::vector<Facet>::const_iterator
+  for(std::vector<Facet_>::const_iterator
         it = m_surface.begin(), end = m_surface.end();
       it != end; ++it)
   {
@@ -1480,7 +1480,7 @@ void Volume::gl_draw_surface(Iterator begin, Iterator end, const QTreeWidgetItem
   unsigned int counter = 0;
   for(Iterator it = begin; it != end; ++it)
   {
-    const Facet& f = *it;
+    const Facet_& f = *it;
 
     if(f.get<2>() != i) continue;
 
