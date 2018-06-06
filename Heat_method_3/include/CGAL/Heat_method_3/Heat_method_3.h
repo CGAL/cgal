@@ -175,6 +175,8 @@ namespace Heat_method_3 {
 
     void build()
     {
+      CGAL_precondition(is_triangle_mesh(tm));
+      
       vertex_id_map = get(Vertex_property_tag(),const_cast<TriangleMesh&>(tm));
       Index i = 0;
       BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
