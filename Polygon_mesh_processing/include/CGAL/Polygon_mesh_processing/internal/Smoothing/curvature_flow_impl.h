@@ -19,8 +19,8 @@
 //
 // Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_NEW_IMPL_H
-#define CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_NEW_IMPL_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_INTERNAL_CURVATURE_FLOW_IMPL_H
+#define CGAL_POLYGON_MESH_PROCESSING_INTERNAL_CURVATURE_FLOW_IMPL_H
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
@@ -28,7 +28,7 @@
 #include <CGAL/Polygon_mesh_processing/Weights.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
-#include <CGAL/Polygon_mesh_processing/internal/Smoothing/constraints_map.h>
+#include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_helpers.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <CGAL/utility.h>
@@ -53,6 +53,7 @@ private:
 
   typedef typename GeomTraits::FT NT;
   typedef typename GeomTraits::Point_3 Point;
+  typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
   typedef CGAL::Triple<int, int, double> Triplet;
 
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
@@ -233,7 +234,7 @@ private:
     BOOST_FOREACH(vertex_descriptor vi, vrange_)
     {
       int index = vimap_[vi];
-      Point p = get(vpmap_, vi);
+      Point_ref p = get(vpmap_, vi);
       bx.set(index, p.x());
       by.set(index, p.y());
       bz.set(index, p.z());
@@ -299,4 +300,4 @@ private:
 } // PMP
 } // CGAL
 
-#endif // CGAL_POLYGON_MESH_PROCESSING_CURVATURE_FLOW_NEW_IMPL_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_INTERNAL_CURVATURE_FLOW_NEW_IMPL_H

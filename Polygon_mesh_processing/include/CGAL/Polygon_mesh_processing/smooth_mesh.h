@@ -19,8 +19,8 @@
 //
 // Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_MESH_SMOOTHING_H
-#define CGAL_POLYGON_MESH_PROCESSING_MESH_SMOOTHING_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_SMOOTH_MESH_H
+#define CGAL_POLYGON_MESH_PROCESSING_SMOOTH_MESH_H
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
@@ -28,8 +28,8 @@
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_evaluation.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
-#include <CGAL/Polygon_mesh_processing/internal/Smoothing/constraints_map.h>
 #include <CGAL/Polygon_mesh_processing/distance.h>
+#include <CGAL/property_map.h>
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
 #include <CGAL/Timer.h>
@@ -341,4 +341,4 @@ void aspect_ratio_evaluation(PolygonMesh& pmesh, const char* filename)
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 
-#endif // CGAL_POLYGON_MESH_PROCESSING_MESH_SMOOTHING_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_SMOOTH_MESH_H

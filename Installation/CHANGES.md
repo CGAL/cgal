@@ -20,12 +20,12 @@ Release date: September 2018
 
 ### CGAL and Boost Property Maps
 
--   Addition of a read-write property map to convert on-the-fly geometric 
+-   Addition of a read-write property map to convert on-the-fly geometric
     object from Cartesian kernels
 
 ### 2D Triangulations
 
--   Added a new type of intersection to deal with insertion of a constraints 
+-   Added a new type of intersection to deal with insertion of a constraints
     intersecting in a Constrained_triangulation_2.
 
 ### Interpolation
@@ -51,6 +51,12 @@ Release date: September 2018
 -  Fix a bug in `isotropic_remeshing()` making constrained vertices missing in the output
 -  Guarantee that constrained vertices are kept in the mesh after calling `isotropic_remeshing()`
    (and not only the points associated to constrained vertices as it was before).
+
+-  Mesh smoothing functionality which improves the quality of triangle elements
+   based on geometric characteristics.
+
+-  Shape smoothing functionality that smoothes the surface of a triangle mesh
+   using the mean curvature flow to perform noise removal.
 
 ### 3D Mesh Generation
 
@@ -96,7 +102,7 @@ Release date: April 2018
     introduced by CMake 2.8.12 and CMake 3.0: instead of setting CMake
     variables, the script now defines imported targets and uses link
     interfaces.
-    
+
     That is mostly backward-compatible with existing usages of CGAL CMake
     scripts. The only non-compatible effect is that the `CMAKE_BUILD_TYPE`
     and compilation flags are no longer copied from the `CGAL_DIR` to the

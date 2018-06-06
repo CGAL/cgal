@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polygon_mesh_processing/mesh_smoothing.h>
+#include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
 #include <boost/graph/graph_traits.hpp>
 #include <fstream>
 

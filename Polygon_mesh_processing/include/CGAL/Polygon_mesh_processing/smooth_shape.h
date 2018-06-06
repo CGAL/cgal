@@ -19,13 +19,10 @@
 //
 // Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_SHAPE_SMOOTHING_H
-#define CGAL_POLYGON_MESH_PROCESSING_sHAPE_SMOOTHING_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_SMOOTH_SHAPE_H
+#define CGAL_POLYGON_MESH_PROCESSING_SMOOTH_SHAPE_H
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
-
-#include <boost/graph/graph_traits.hpp>
-#include <boost/property_map/property_map.hpp>
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
@@ -33,8 +30,8 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/curvature_flow_explicit_impl.h>
-#include <CGAL/Polygon_mesh_processing/internal/Smoothing/constraints_map.h>
 #include <CGAL/utility.h>
+#include <CGAL/property_map.h>
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
 #include <CGAL/Timer.h>
@@ -415,4 +412,4 @@ void solve_mcf(const FaceRange& faces, PolygonMesh& mesh, const double time,
 } //Polygon_mesh_processing
 } //CGAL
 
-#endif // CGAL_POLYGON_MESH_PROCESSING_SHAPE_SMOOTHING_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_SMOOTH_SHAPE_H

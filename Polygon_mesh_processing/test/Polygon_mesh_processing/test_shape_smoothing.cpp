@@ -3,7 +3,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/utility.h>
-#include <CGAL/Polygon_mesh_processing/shape_smoothing.h>
+#include <CGAL/Polygon_mesh_processing/smooth_shape.h>
 #include <boost/graph/graph_traits.hpp>
 #include <fstream>
 
