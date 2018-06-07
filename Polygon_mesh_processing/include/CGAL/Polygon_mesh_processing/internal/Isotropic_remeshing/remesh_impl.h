@@ -761,20 +761,16 @@ namespace internal {
           bool mesh_border_case     = is_on_border(he);
           bool mesh_border_case_opp = is_on_border(he_opp);
           halfedge_descriptor ep_p  = prev(he_opp, mesh_);
-          halfedge_descriptor epo_p = opposite(ep_p, mesh_);
           halfedge_descriptor en    = next(he, mesh_);
+          halfedge_descriptor ep    = prev(he, mesh_);
           halfedge_descriptor en_p  = next(he_opp, mesh_);
-          Halfedge_status s_ep_p    = status(ep_p);
-          Halfedge_status s_epo_p   = status(epo_p);
-          Halfedge_status s_ep      = status(prev(he, mesh_));
-          Halfedge_status s_epo     = status(opposite(prev(he, mesh_), mesh_));
 
           // merge halfedge_status to keep the more important on both sides
           //do it before collapse is performed to be sure everything is valid
           if (!mesh_border_case)
-            merge_status(en, s_epo, s_ep);
+            merge_and_update_status(en, ep);
           if (!mesh_border_case_opp)
-            merge_status(en_p, s_epo_p, s_ep_p);
+            merge_and_update_status(en_p, ep_p);
 
           if (!protect_constraints_)
             put(ecmap_, e, false);
@@ -1550,17 +1546,16 @@ private:
       put(halfedge_status_pmap_,h,s);
     }
 
-    void merge_status(const halfedge_descriptor& en,
-                      const Halfedge_status& s_epo,
-                      const Halfedge_status& s_ep)
+    void merge_and_update_status(halfedge_descriptor en,
+                                 halfedge_descriptor ep)
     {
-      //get missing data
+
       halfedge_descriptor eno = opposite(en, mesh_);
+      halfedge_descriptor epo = opposite(ep, mesh_);
       Halfedge_status s_eno = status(eno);
+      Halfedge_status s_epo = status(epo);
 
-      if (s_epo == MESH_BORDER && s_eno == MESH_BORDER)
-        return;
-
+      Halfedge_status s_ep = status(ep);
       if(s_epo == MESH_BORDER
         || s_ep == MESH_BORDER
         || s_epo == PATCH_BORDER
@@ -1568,6 +1563,18 @@ private:
       {
         set_status(en, s_epo);
         set_status(eno, s_ep);
+      }
+      else
+      {
+        Halfedge_status s_en = status(en);
+        if(s_eno == MESH_BORDER
+          || s_en == MESH_BORDER
+          || s_eno == PATCH_BORDER
+          || s_en == PATCH_BORDER)
+        {
+          set_status(ep, s_epo);
+          set_status(epo, s_ep);
+        }
       }
       // else keep current status for en and eno
     }
