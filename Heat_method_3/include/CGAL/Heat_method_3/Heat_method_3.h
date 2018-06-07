@@ -307,7 +307,8 @@ namespace Heat_method_3 {
       time_step = 1./(tm.number_of_edges());
       time_step = time_step*summation_of_edges();
 
-      kronecker = kronecker_delta(get(vertex_id_map,*(sources.begin())));
+      // AF: This segfaults as sources is empty
+      // kronecker = kronecker_delta(get(vertex_id_map,*(sources.begin())));
 
     }
 
