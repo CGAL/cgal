@@ -7,6 +7,7 @@
 #include <iostream>
 #include <cassert>
 #include <Eigen/Sparse>
+#include <Eigen/Dense>
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
 typedef CGAL::Surface_mesh<Point>                            Mesh;
@@ -18,7 +19,7 @@ typedef CGAL::Heat_method_3::Heat_method_Eigen_traits_3::SparseMatrix SparseMatr
 int main()
 {
   Mesh sm;
-  std::ifstream in("data/pyramid0.off");
+  std::ifstream in("../data/pyramid0.off");
   in >> sm;
   if(!in || num_vertices(sm) == 0) {
     std::cerr << "Problem loading the input data" << std::endl;
@@ -44,6 +45,27 @@ int main()
   //cotan matrix tests
   SparseMatrix M = hm.get_mass_matrix();
   SparseMatrix c = hm.get_cotan_matrix();
+  double sum = 0;
+  for(int k = 0; k<c.outerSize(); ++k)
+  {
+    for(SparseMatrix::InnerIterator it(c,k); it; ++it)
+    {
+      sum +=it.value();
+    }
+  }
+  //Every row should sum up to 0
+  assert(sum == 0);
+
+  for(int k = 0; k<M.outerSize(); ++k)
+  {
+    for(SparseMatrix::InnerIterator it(M,k); it; ++it)
+    {
+      sum +=it.value();
+    }
+  }
+  //total Area matrix should be equal to the sum of all faces on the mesh
+  //have to allow for the error because of rounding issues: Andreas might be able to help with this?
+  assert((sum-1.866025)<=0.000005);
 
   double time_step = hm.get_time_step();
   double length_sum = hm.summation_of_edges();
