@@ -52,10 +52,10 @@ Release date: September 2018
 -  Guarantee that constrained vertices are kept in the mesh after calling `isotropic_remeshing()`
    (and not only the points associated to constrained vertices as it was before).
 
--  Mesh smoothing functionality which improves the quality of triangle elements
+-  Added mesh smoothing functions `smooth_areas()` and `smooth_angles()` improving the quality of triangle elements
    based on geometric characteristics.
 
--  Shape smoothing functionality that smoothes the surface of a triangle mesh
+-  Added shape smoothing function `smooth_along_curvature_flow()` smoothing the surface of a triangle mesh
    using the mean curvature flow to perform noise removal.
 
 ### 3D Mesh Generation

@@ -35,7 +35,7 @@ int main(int argc, char* argv[]){
         PMP::parameters::number_of_iterations(nb_iterations));
     }
 
-    std::ofstream output("data/eight_smoothed.off");
+    std::ofstream output("mesh_smoothed.off");
     output << mesh;
     output.close();
 

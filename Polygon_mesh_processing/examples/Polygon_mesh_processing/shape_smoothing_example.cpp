@@ -25,7 +25,7 @@ int main(int argc, char* argv[]){
     PMP::smooth_along_curvature_flow(mesh, time,
         PMP::parameters::number_of_iterations(nb_iterations));
 
-    std::ofstream output("data/pig_smoothed_to_sphere.off");
+    std::ofstream output("mesh_shape_smoothed.off");
     output << mesh;
     output.close();
 
