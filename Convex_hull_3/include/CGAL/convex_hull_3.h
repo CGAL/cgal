@@ -57,6 +57,9 @@
 #include <CGAL/Polyhedron_3_fwd.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 
+#include <boost/call_traits.hpp>
+#include <CGAL/property_map.h>
+
 #include <boost/unordered_map.hpp>
 
 #ifndef CGAL_CH_NO_POSTCONDITIONS
@@ -67,6 +70,118 @@
 // first some internal stuff to avoid using a true Face_graph model for extreme_points_3
 namespace CGAL {
 namespace internal{  namespace Convex_hull_3{
+
+template<class Base_traits,class VertexPointMap>
+class Vertex_to_point_traits_adapter
+    :public Base_traits
+{
+  VertexPointMap vpm_;
+public:
+  Vertex_to_point_traits_adapter(const VertexPointMap& vpmap, Base_traits base=Base_traits())
+    :Base_traits(base), vpm_(vpmap)
+  {}
+  //typedef typename boost::property_traits<VertexPointMap>::key_type Vertex;
+  //typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
+  typedef typename boost::property_traits<VertexPointMap>::key_type Point_3;
+ 
+  class Compute_x_3:public Base_traits::Compute_x_3
+  {
+    VertexPointMap vpm_;
+    typedef typename Base_traits::FT             FT;
+  public:
+    Compute_x_3(const VertexPointMap& map,const typename Base_traits::Compute_x_3& base):
+      Base_traits::Compute_x_3(base),vpm_(map){}
+    typedef const FT&                  result_type;
+
+    result_type
+    operator()(const Point_3& v) const
+    {
+      return ::get(vpm_, v).x();
+    }
+
+  };
+  class Compute_y_3:public Base_traits::Compute_y_3
+  {
+    VertexPointMap vpm_;
+    typedef typename Base_traits::FT             FT;
+  public:
+    Compute_y_3(const VertexPointMap& map,const typename Base_traits::Compute_y_3& base):
+      Base_traits::Compute_y_3(base),vpm_(map){}
+    typedef const FT&                  result_type;
+
+    result_type
+    operator()(const Point_3& v) const
+    {
+      return ::get(vpm_, v).y();
+    }
+
+  };
+  class Compute_z_3:public Base_traits::Compute_z_3
+  {
+    VertexPointMap vpm_;
+    typedef typename Base_traits::FT             FT;
+  public:
+    Compute_z_3(const VertexPointMap& map,const typename Base_traits::Compute_z_3& base):
+      Base_traits::Compute_z_3(base),vpm_(map){}
+    typedef const FT&                  result_type;
+
+    result_type
+    operator()(const Point_3& v) const
+    {
+      return ::get(vpm_, v).z();
+    }
+  };
+  
+  class Equal_3:public Base_traits::Equal_3
+  {
+    typedef typename boost::property_traits<VertexPointMap>::value_type Real_point;
+    VertexPointMap vpm_;
+  public:
+    Equal_3(const VertexPointMap& map,const typename Base_traits::Equal_3& base):
+      Base_traits::Equal_3(base),vpm_(map){}
+   typedef bool       result_type;
+
+    result_type
+    operator()(const Point_3 &p, const Point_3 &q) const
+    {
+      Real_point rp(::get(vpm_, p)),
+                 rq(::get(vpm_, q));
+      return rp.z() == rq.x()
+          && rp.y() == rq.y()
+          && rp.z() == rq.z();
+    }
+  };
+  
+  class Collinear_3:public Base_traits::Collinear_3
+  {
+    typedef typename boost::property_traits<VertexPointMap>::value_type Real_point;
+    VertexPointMap vpm_;
+  public:
+    Collinear_3(const VertexPointMap& map,const typename Base_traits::Collinear_3& base):
+      Base_traits::Collinear_3(base),vpm_(map){}
+    typedef bool    result_type;
+    result_type
+    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    {
+      Real_point rp(::get(vpm_, p)),
+                 rq(::get(vpm_, q)),
+                 rr(::get(vpm_, r));
+      
+      return collinearC3(rp.x(), rp.y(), rp.z(),
+			 rq.x(), rq.y(), rq.z(),
+			 rr.x(), rr.y(), rr.z());
+    }
+  };
+
+  
+  Compute_x_3 compute_x_3_object () const {return Compute_x_3(vpm_,static_cast<const Base_traits*>(this)->compute_x_3_object() );}
+  Compute_y_3 compute_y_3_object () const {return Compute_y_3(vpm_,static_cast<const Base_traits*>(this)->compute_y_3_object() );}
+  Compute_z_3 compute_z_3_object () const {return Compute_z_3(vpm_,static_cast<const Base_traits*>(this)->compute_z_3_object() );}
+  Equal_3 equal_3_object () const {return Equal_3(vpm_,static_cast<const Base_traits*>(this)->equal_3_object() );}
+  Collinear_3 collinear_3_object () const {return Collinear_3(vpm_,static_cast<const Base_traits*>(this)->collinear_3_object() );}
+  
+};
+
 
 // wrapper used as a MutableFaceGraph to extract extreme points
 template <class OutputIterator>
