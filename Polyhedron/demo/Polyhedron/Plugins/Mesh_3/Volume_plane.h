@@ -383,8 +383,8 @@ const char* Volume_plane<T>::fragmentShader_bordures_source =
 
 template<typename T>
 Volume_plane<T>::Volume_plane(float tx, float ty, float tz)
-  :tx(tx), ty(ty), tz(tz),
-    Volume_plane_interface(new CGAL::qglviewer::ManipulatedFrame)
+  :Volume_plane_interface(new CGAL::qglviewer::ManipulatedFrame),
+    tx(tx), ty(ty), tz(tz)    
  {
     const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     mFrame_->setPosition(offset.x, offset.y, offset.z);

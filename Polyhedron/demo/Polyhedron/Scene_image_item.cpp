@@ -324,7 +324,6 @@ Vertex_buffer_helper::push_normal(std::size_t i, std::size_t j, std::size_t k)
 void
 Vertex_buffer_helper::push_vertex(std::size_t i, std::size_t j, std::size_t k)
 {
-  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   indices_.insert(std::make_pair(compute_position(i,j,k),
                                  vertices_.size()/3)); 
   //resize the "border vertices"
