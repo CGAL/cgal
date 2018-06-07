@@ -29,11 +29,13 @@
 
 #include <CGAL/Mesh_3/config.h>
 
-#include <CGAL/internal/Mesh_3/helpers.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Mesh_polyhedron_3.h>
 #include <CGAL/Mesh_3/Polyline_with_context.h>
+
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/internal/Mesh_3/helpers.h>
 
 #include <CGAL/enum.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -41,7 +43,6 @@
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
-#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Random.h>
 #include <CGAL/Union_find.h>
 

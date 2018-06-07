@@ -32,7 +32,12 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/enum.h>
+#include <CGAL/Kernel/global_functions.h>
+#include <CGAL/property_map.h>
+
 #include <boost/foreach.hpp>
+#include <boost/graph/graph_traits.hpp>
 
 #include <iostream>
 #include <fstream>

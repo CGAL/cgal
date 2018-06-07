@@ -34,32 +34,35 @@
 
 #include <CGAL/Mesh_3/config.h>
 
-#include <CGAL/Random.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Mesh_polyhedron_3.h>
-
 #include <CGAL/Mesh_3/Detect_polylines_in_polyhedra.h>
 #include <CGAL/Mesh_3/Polyline_with_context.h>
-#include <CGAL/Polygon_mesh_processing/detect_features.h>
 
-#include <CGAL/enum.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/helpers.h>
-#include <boost/graph/filtered_graph.hpp>
-#include <boost/graph/adjacency_list.hpp>
-#include <CGAL/boost/graph/split_graph_into_polylines.h>
-#include <CGAL/Default.h>
 #include <CGAL/internal/Mesh_3/helpers.h>
 
+#include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/enum.h>
+#include <CGAL/Default.h>
+#include <CGAL/Polygon_mesh_processing/detect_features.h>
+#include <CGAL/Random.h>
+
 #include <boost/foreach.hpp>
+#include <boost/graph/filtered_graph.hpp>
+#include <boost/graph/adjacency_list.hpp>
 
-#include <string>
-#include <vector>
 #include <fstream>
-
+#include <iostream>
+#include <map>
+#include <string>
+#include <set>
+#include <vector>
+#include <utility>
 
 namespace CGAL {
 
