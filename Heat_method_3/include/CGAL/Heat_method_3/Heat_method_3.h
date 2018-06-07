@@ -69,7 +69,7 @@ namespace Heat_method_3 {
    */
   template <typename TriangleMesh,
             typename Traits,
-            typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::type,
+            typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type,
             typename FacePointMap = typename boost::property_map< TriangleMesh, face_index_t>::type,
             typename LA = Heat_method_Eigen_traits_3>
   class Heat_method_3
@@ -249,7 +249,7 @@ namespace Heat_method_3 {
         put(face_id_map, fd, face_i++);
       }
 
-      int m = num_vertices(tm);
+      int m = static_cast<int>(num_vertices(tm));
       //cotan matrix
       Matrix c(m,m);
       //Mass matrix
@@ -312,7 +312,7 @@ namespace Heat_method_3 {
       c.setFromTriplets(c_matrix_entries.begin(), c_matrix_entries.end());
       mass_matrix = A;
       cotan_matrix = c;
-      time_step = 1./(tm.number_of_edges());
+      time_step = 1./(num_edges(tm));
       time_step = time_step*summation_of_edges();
 
       // AF: This segfaults as sources is empty
