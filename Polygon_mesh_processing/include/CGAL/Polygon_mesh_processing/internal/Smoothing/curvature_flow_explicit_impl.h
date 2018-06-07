@@ -115,7 +115,7 @@ public:
   void curvature_smoothing()
   {
     boost::unordered_map<vertex_descriptor, Point> barycenters;
-    BOOST_FOREACH(vertex_descriptor v, vrange)
+    BOOST_FOREACH(vertex_descriptor v, vrange_)
     {
       if(!is_border(v, mesh_) && !is_constrained(v))
       {
@@ -174,11 +174,15 @@ private:
   template<typename FaceRange>
   void set_vertex_range(const FaceRange& face_range)
   {
+    vrange_.reserve(3 * face_range.size());
     BOOST_FOREACH(face_descriptor f, face_range)
     {
       BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, mesh_), mesh_))
-        vrange.insert(v);
+        vrange_.push_back(v);
     }
+    // get rid of duplicate vertices
+    std::sort(vrange_.begin(), vrange_.end());
+    vrange_.erase(std::unique(vrange_.begin(), vrange_.end()), vrange_.end());
   }
 
 private:
@@ -189,7 +193,7 @@ private:
   VertexConstraintMap vcmap_;
   Triangle_list input_triangles_;
   GeomTraits traits_;
-  std::set<vertex_descriptor> vrange;
+  std::vector<vertex_descriptor> vrange_;
   Weight_calculator weight_calculator_;
 };
 

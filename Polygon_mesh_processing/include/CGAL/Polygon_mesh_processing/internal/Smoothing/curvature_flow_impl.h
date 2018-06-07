@@ -270,11 +270,15 @@ private:
   void set_face_range(const FaceRange& face_range)
   {
     frange_.assign(face_range.begin(), face_range.end());
+    vrange_.reserve(3 * face_range.size());
     BOOST_FOREACH(face_descriptor f, face_range)
     {
       BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, mesh_), mesh_))
-        vrange_.insert(v);
+        vrange_.push_back(v);
     }
+    // get rid of duplicate vertices
+    std::sort(vrange_.begin(), vrange_.end());
+    vrange_.erase(std::unique(vrange_.begin(), vrange_.end()), vrange_.end());
   }
 
   private:
@@ -291,7 +295,7 @@ private:
   std::vector<bool> constrained_flags_;
 
   std::vector<face_descriptor> frange_;
-  std::set<vertex_descriptor> vrange_;
+  std::vector<vertex_descriptor> vrange_;
   Edge_cotangent_weight<PolygonMesh, VertexPointMap> weight_calculator_;
 };
 
