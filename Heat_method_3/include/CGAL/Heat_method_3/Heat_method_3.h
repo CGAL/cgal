@@ -152,7 +152,7 @@ namespace Heat_method_3 {
       // sources.find(vd) returns the past-the-end iterator of vd cannot be found
       // Otherwise it returns the iterator it with *it == vd
       // So the test would be if(sources.find() != sources,end()
-      if(*(sources.find(vd)) != *(sources.end()) || vd == *(sources.end()))
+      if((sources.find(vd)) != (sources.end()) || vd == *(sources.end()))
       {
         sources.erase(vd);
         return true;
@@ -218,11 +218,21 @@ namespace Heat_method_3 {
       return time_step;
     }
 
-    Matrix kronecker_delta(Index x)
+    Matrix kronecker_delta(std::set<vertex_descriptor> sources)
     {
-      //currently just working with a single vertex in source set
+      //currently just working with a single vertex in source set, add the first one for now
+      Index i;
+      if(sources.empty())
+      {
+        add_source(*(vertices(tm).begin()));
+        i = 0;
+      }
+      else
+      {
+        i = get(vertex_id_map, *(sources.begin()));
+      }
       Matrix K(num_vertices(tm), 1);
-      K.insert(1,x) = 1;
+      K.insert(i,0) = 1;
       return K;
     }
 
@@ -230,6 +240,29 @@ namespace Heat_method_3 {
     const Matrix& get_kronecker_delta()
     {
       return kronecker;
+    }
+
+
+
+    Eigen::VectorXd solve_cotan_laplace(Matrix M, Matrix c, Matrix x, double time_step, int dimension)
+    {
+      Eigen::VectorXd u;
+      Matrix A = (M+ time_step*c);
+      Eigen::SimplicialLLT<Matrix> solver;
+      solver.compute(A);
+      if(solver.info()!=Eigen::Success) {
+        // decomposition failed
+        CGAL_error_msg("Eigen Decomposition failed");
+        CGAL_error();
+      }
+      u = solver.solve(x);
+      if(solver.info()!=Eigen::Success) {
+        // solving failed
+        CGAL_error_msg("Eigen Solving failed");
+        CGAL_error();
+      }
+      // solve for another right hand side:
+      return u;
     }
 
   private:
@@ -250,11 +283,10 @@ namespace Heat_method_3 {
       }
 
       int m = static_cast<int>(num_vertices(tm));
-      //cotan matrix
-      Matrix c(m,m);
-      //Mass matrix
-      Matrix A(m,m);
+
+      //mass matrix entries
       std::vector<triplet> A_matrix_entries;
+      //cotan matrix entries
       std::vector<triplet> c_matrix_entries;
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
       //Go through each face on the mesh
@@ -305,18 +337,19 @@ namespace Heat_method_3 {
         A_matrix_entries.push_back(triplet(j,j, (1./6.)*norm_cross));
         A_matrix_entries.push_back(triplet(k,k, (1./6.)*norm_cross));
       }
+      mass_matrix.resize(m,m);
+      mass_matrix.setFromTriplets(A_matrix_entries.begin(), A_matrix_entries.end());
+      cotan_matrix.resize(m,m);
+      cotan_matrix.setFromTriplets(c_matrix_entries.begin(), c_matrix_entries.end());
 
-
-
-      A.setFromTriplets(A_matrix_entries.begin(), A_matrix_entries.end());
-      c.setFromTriplets(c_matrix_entries.begin(), c_matrix_entries.end());
-      mass_matrix = A;
-      cotan_matrix = c;
       time_step = 1./(num_edges(tm));
       time_step = time_step*summation_of_edges();
 
       // AF: This segfaults as sources is empty
-      // kronecker = kronecker_delta(get(vertex_id_map,*(sources.begin())));
+      sources = get_sources();
+      kronecker = kronecker_delta(sources);
+      solved_u = solve_cotan_laplace(mass_matrix, cotan_matrix, kronecker, time_step, m);
+
 
     }
 
@@ -329,7 +362,7 @@ namespace Heat_method_3 {
     std::set<vertex_descriptor> sources;
     double time_step;
     Matrix kronecker;
-
+    Eigen::VectorXd solved_u;
     Matrix mass_matrix, cotan_matrix;
   };
 

@@ -79,9 +79,14 @@ int main()
 
   const SparseMatrix& K = hm.get_kronecker_delta();
   // AF: I commented the assert as I commented in build()
-  //assert(K.nonZeros()==1);
-
-
+  assert(K.nonZeros()==1);
+  Eigen::VectorXd solved_u = hm.solve_cotan_laplace(M,c,K,time_step,4);
+  Eigen::VectorXd check_for_zero = ((M+time_step*c)*solved_u)-K;
+  for(int c_i = 0; c_i<4; c_i++)
+  {
+      assert(check_for_zero(c_i,0)<0.00001);
+  }
+  std::cout<<"PHASE 1 DONE \n";
   std::cout<<"SUCCESS";
   return 0;
 }
