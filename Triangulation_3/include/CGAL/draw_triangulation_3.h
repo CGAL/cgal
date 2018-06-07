@@ -44,7 +44,7 @@ struct DefaultColorFunctorT3
       return CGAL::Color(100, 125, 200); // R G B between 0-255
 
     // Here dh is the smaller dart of its face
-    CGAL::Random random((unsigned long int)(&*((*fh)->first))+(*fh)->second);
+    CGAL::Random random(((std::size_t))(&*((*fh)->first))+(*fh)->second);
     return get_random_color(random);
   }
 };

@@ -42,7 +42,7 @@ struct DefaultColorFunctorPolyhedron
     if (fh==boost::graph_traits<Polyhedron>::null_face()) // use to get the mono color
       return CGAL::Color(100, 125, 200); // R G B between 0-255
 
-    CGAL::Random random((unsigned long int)&(*fh));
+    CGAL::Random random((std::size_t)&(*fh));
      return get_random_color(random);
   }
 };

@@ -39,7 +39,7 @@ struct DefaultColorFunctorT2
                          const typename T2::Finite_faces_iterator fh)
   {
     // Here dh is the smaller dart of its face
-    CGAL::Random random((unsigned long int)(&*fh));
+    CGAL::Random random(((std::size_t))(&*fh));
     return get_random_color(random);
   }
 };
