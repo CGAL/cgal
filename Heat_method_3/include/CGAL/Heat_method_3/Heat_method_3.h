@@ -144,6 +144,14 @@ namespace Heat_method_3 {
      */
     bool remove_source(vertex_descriptor vd)
     {
+      return (sources.erase(vd) == 1);
+
+      // The following code is not only longer but has a bug.
+      // sources.end() does not return an iterator to the last element but is a past-the-end iterator
+      // that is you cannot dereference it.
+      // sources.find(vd) returns the past-the-end iterator of vd cannot be found
+      // Otherwise it returns the iterator it with *it == vd
+      // So the test would be if(sources.find() != sources,end()
       if(*(sources.find(vd)) != *(sources.end()) || vd == *(sources.end()))
       {
         sources.erase(vd);
