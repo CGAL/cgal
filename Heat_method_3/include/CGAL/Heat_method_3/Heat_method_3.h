@@ -70,7 +70,7 @@ namespace Heat_method_3 {
   template <typename TriangleMesh,
             typename Traits,
             typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type,
-            typename FacePointMap = typename boost::property_map< TriangleMesh, face_index_t>::type,
+            typename FaceIndexMap = typename boost::property_map< TriangleMesh, face_index_t>::const_type,
             typename LA = Heat_method_Eigen_traits_3>
   class Heat_method_3
   {
@@ -114,7 +114,7 @@ namespace Heat_method_3 {
       build();
     }
 
-    Heat_method_3(const TriangleMesh& tm, VertexPointMap vpm, FacePointMap fpm)
+    Heat_method_3(const TriangleMesh& tm, VertexPointMap vpm, FaceIndexMap fpm)
       : tm(tm), vpm(vpm), fpm(fpm)
     {
       build();
@@ -245,6 +245,47 @@ namespace Heat_method_3 {
       return u;
     }
 
+    Eigen::VectorXd compute_unit_gradient(Eigen::VectorXd u)
+    {
+      Eigen::VectorXd X(num_faces(tm));
+      CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
+      BOOST_FOREACH(face_descriptor f, faces(tm)) {
+        boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
+        vertex_descriptor current = *(vbegin);
+        vertex_descriptor neighbor_one = *(++vbegin);
+        vertex_descriptor neighbor_two = *(++vbegin);
+        Index i = get(vertex_id_map, current);
+        Index j = get(vertex_id_map, neighbor_one);
+        Index k = get(vertex_id_map, neighbor_two);
+        Point_3 p_i = get(vpm,current);
+        Point_3 p_j = get(vpm, neighbor_one);
+        Point_3 p_k = get(vpm, neighbor_two);
+        Index face_i = get(face_id_map, f);
+        //get area of face_i
+        //get outward unit normal
+        //cross that with eij, ejk, eki
+        //so (Ncross eij) *uk and so on
+        //sum all of those then multiply by 1./(2a)
+        vector cross = CGAL::cross_product((p_j-p_i), (p_k-p_i));
+        double N_cross = (CGAL::sqrt(cross*cross));
+        vector unit_cross = cross/N_cross;
+        double area_face = N_cross * (1./2);
+
+        vector edge_sums = u(k) * CGAL::cross_product(unit_cross,(p_j-p_i));
+        edge_sums += u(i) * CGAL::cross_product(unit_cross, (p_k-p_j));
+        edge_sums += u(j) * CGAL::cross_product(unit_cross, (p_i-p_k));
+
+        edge_sums = edge_sums * (1./area_face);
+        double e_magnitude = CGAL::sqrt(edge_sums*edge_sums);
+        X(face_i) = edge_sums/e_magnitude;        
+      }
+      return X;
+    }
+
+
+
+
+
   private:
 
     void build()
@@ -335,12 +376,14 @@ namespace Heat_method_3 {
 
     const TriangleMesh& tm;
     VertexPointMap vpm;
-    FacePointMap fpm;
+    FaceIndexMap fpm;
     std::set<vertex_descriptor> sources;
     double time_step;
     Matrix kronecker;
-    Eigen::VectorXd solved_u;
     Matrix mass_matrix, cotan_matrix;
+    Eigen::VectorXd solved_u;
+
+
   };
 
 } // namespace Heat_method_3
