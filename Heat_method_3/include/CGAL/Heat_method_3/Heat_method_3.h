@@ -124,12 +124,12 @@ namespace Heat_method_3 {
      * add `vd` to the source set, returning `false` if `vd` is already in the set.
      */
 
-     Matrix get_mass_matrix()
+     const Matrix& get_mass_matrix()
      {
        return mass_matrix;
      }
 
-     Matrix get_cotan_matrix()
+     const Matrix& get_cotan_matrix()
      {
        return cotan_matrix;
      }
@@ -158,7 +158,7 @@ namespace Heat_method_3 {
     /**
      *return current source set
     */
-    std::set<vertex_descriptor> get_sources()
+    const std::set<vertex_descriptor>& get_sources()
     {
       return sources;
     }
@@ -188,7 +188,7 @@ namespace Heat_method_3 {
     }
 
     /**
-     * get distance from the current source set to a vertex ` vd`.
+     * get distance from the current source set to a vertex `vd`.
      */
     double distance(vertex_descriptor vd)
     {
@@ -219,7 +219,7 @@ namespace Heat_method_3 {
     }
 
 
-    Matrix get_kronecker_delta()
+    const Matrix& get_kronecker_delta()
     {
       return kronecker;
     }

@@ -43,8 +43,8 @@ int main()
   assert(!(hm.add_source(source)));
   assert(hm.remove_source(*(std::next(vertices(sm).first,3))));
   //cotan matrix tests
-  SparseMatrix M = hm.get_mass_matrix();
-  SparseMatrix c = hm.get_cotan_matrix();
+  const SparseMatrix& M = hm.get_mass_matrix();
+  const SparseMatrix& c = hm.get_cotan_matrix();
   double sum = 0;
   for(int k = 0; k<c.outerSize(); ++k)
   {
@@ -75,7 +75,7 @@ int main()
 
   //mass matrix tests
 
-  SparseMatrix K = hm.get_kronecker_delta();
+  const SparseMatrix& K = hm.get_kronecker_delta();
   assert(K.nonZeros()==1);
 
 
