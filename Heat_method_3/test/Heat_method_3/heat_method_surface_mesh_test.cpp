@@ -18,6 +18,61 @@ typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef CGAL::Heat_method_3::Heat_method_3<Mesh,Kernel> Heat_method;
 typedef CGAL::Heat_method_3::Heat_method_Eigen_traits_3::SparseMatrix SparseMatrix;
 
+void source_set_tests(Heat_method hm, Mesh sm)
+{
+  vertex_descriptor source = *(vertices(sm).first);
+  hm.add_source(source);
+  const std::set<vertex_descriptor>& source_copy = hm.get_sources();
+  assert(*(source_copy.begin()) == source);;
+  assert(*(hm.sources_begin()) == source);
+  assert(hm.remove_source(source));
+  assert((hm.get_sources()).empty());
+  assert(hm.add_source(*(vertices(sm).first)));
+  assert(*(hm.sources_begin()) == source);
+  assert(hm.add_source(*(std::next(vertices(sm).first,3))));
+  assert(source != *(std::next(vertices(sm).first,3)));
+  assert(*(hm.sources_begin()) == source);
+  assert(!(hm.add_source(source)));
+  assert(hm.remove_source(*(std::next(vertices(sm).first,3))));
+}
+
+void cotan_matrix_test(SparseMatrix c)
+{
+  double sum = 0;
+  for(int k = 0; k<c.outerSize(); ++k)
+  {
+    for(SparseMatrix::InnerIterator it(c,k); it; ++it)
+    {
+      sum +=it.value();
+    }
+  }
+  //Every row should sum up to 0
+  assert(sum == 0);
+}
+
+void mass_matrix_test(SparseMatrix M)
+{
+  double sum = 0;
+  for(int k = 0; k<M.outerSize(); ++k)
+    {
+      for(SparseMatrix::InnerIterator it(M,k); it; ++it)
+      {
+        sum +=it.value();
+      }
+    }
+    //total Area matrix should be equal to the sum of all faces on the mesh
+    //have to allow for the error because of rounding issues: Andreas might be able to help with this?
+    assert((sum-1.866025)<=0.000005);
+}
+
+void check_for_zero(Eigen::VectorXd u)
+{
+  for(int c_i = 0; c_i<4; c_i++)
+  {
+      assert(u(c_i,0)<0.00001);
+  }
+}
+
 int main()
 {
   Mesh sm;
@@ -29,45 +84,13 @@ int main()
   }
   //source set tests
   Heat_method hm(sm);
-  vertex_descriptor source = *(vertices(sm).first);
-  hm.add_source(source);
-  const std::set<vertex_descriptor>& source_copy = hm.get_sources();
-  assert(*(source_copy.begin()) == source);;
-  assert(*(hm.sources_begin()) == source);
-  assert(hm.remove_source(source));
-  assert((hm.get_sources()).empty());
-  assert(hm.add_source(*(vertices(sm).first)));
-  //assert(*(hm.sources_end()) == source);
-  assert(*(hm.sources_begin()) == source);
-  assert(hm.add_source(*(std::next(vertices(sm).first,3))));
-  assert(source != *(std::next(vertices(sm).first,3)));
-  assert(*(hm.sources_begin()) == source);
-  assert(!(hm.add_source(source)));
-  assert(hm.remove_source(*(std::next(vertices(sm).first,3))));
+  source_set_tests(hm,sm);
   //cotan matrix tests
   const SparseMatrix& M = hm.get_mass_matrix();
   const SparseMatrix& c = hm.get_cotan_matrix();
-  double sum = 0;
-  for(int k = 0; k<c.outerSize(); ++k)
-  {
-    for(SparseMatrix::InnerIterator it(c,k); it; ++it)
-    {
-      sum +=it.value();
-    }
-  }
-  //Every row should sum up to 0
-  assert(sum == 0);
+  cotan_matrix_test(c);
+  mass_matrix_test(M);
 
-  for(int k = 0; k<M.outerSize(); ++k)
-  {
-    for(SparseMatrix::InnerIterator it(M,k); it; ++it)
-    {
-      sum +=it.value();
-    }
-  }
-  //total Area matrix should be equal to the sum of all faces on the mesh
-  //have to allow for the error because of rounding issues: Andreas might be able to help with this?
-  assert((sum-1.866025)<=0.000005);
 
   double time_step = hm.get_time_step();
   double length_sum = hm.summation_of_edges();
@@ -75,17 +98,14 @@ int main()
   double time_step_computed = (1./6)*length_sum;
   assert(time_step_computed ==time_step);
 
-  //mass matrix tests
 
   const SparseMatrix& K = hm.get_kronecker_delta();
   // AF: I commented the assert as I commented in build()
   assert(K.nonZeros()==1);
   Eigen::VectorXd solved_u = hm.solve_cotan_laplace(M,c,K,time_step,4);
-  Eigen::VectorXd check_for_zero = ((M+time_step*c)*solved_u)-K;
-  for(int c_i = 0; c_i<4; c_i++)
-  {
-      assert(check_for_zero(c_i,0)<0.00001);
-  }
+  Eigen::VectorXd check_u = ((M+time_step*c)*solved_u)-K;
+  check_for_zero(check_u);
+
   std::cout<<"PHASE 1 DONE \n";
   std::cout<<"SUCCESS";
   return 0;
