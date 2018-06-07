@@ -202,9 +202,14 @@ void draw(const LCC& alcc,
           bool nofill=false,
           const ColorFunctor& fcolor=ColorFunctor())
 {
+#if defined(CGAL_TEST_SUITE)
+  int argc=3;
+  const char* argv[4]={"lccviewer","-platform","minimal","\0"};
+#else
   int argc=1;
-
   const char* argv[2]={"lccviewer","\0"};
+#endif
+
   QApplication app(argc,const_cast<char**>(argv));
 
   SimpleLCCViewerQt<LCC, ColorFunctor> mainwindow(app.activeWindow(),alcc, title, nofill, fcolor);

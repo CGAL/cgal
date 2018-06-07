@@ -6,6 +6,11 @@ project( Surface_mesh_Examples )
 
 cmake_minimum_required(VERSION 2.8.11)
 
+if(NOT POLICY CMP0070 AND POLICY CMP0053)
+  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
+  cmake_policy(SET CMP0053 OLD)
+endif()
+
 find_package(CGAL COMPONENTS Qt5)
 
 if(CGAL_Qt5_FOUND)
@@ -33,7 +38,7 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program("draw_surface_mesh.cpp")
   if(CGAL_Qt5_FOUND )
-    target_link_libraries(draw_surface_mesh CGAL::CGAL_Qt5)
+    target_link_libraries(draw_surface_mesh PUBLIC CGAL::CGAL_Qt5)
   endif()
 
 else()

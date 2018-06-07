@@ -198,10 +198,14 @@ void draw(const Polyhedron& apoly,
           const char* title="Polyhedron Viewer",
           bool nofill=false,
           const ColorFunctor& fcolor=ColorFunctor())
-{
+{  
+#if defined(CGAL_TEST_SUITE)
+  int argc=3;
+  const char* argv[4]={"polyhedron_viewer","-platform","minimal","\0"};
+#else
   int argc=1;
-
   const char* argv[2]={"polyhedron_viewer","\0"};
+#endif
   QApplication app(argc,const_cast<char**>(argv));
 
   SimplePolyhedronViewerQt<Polyhedron, ColorFunctor>

@@ -149,9 +149,14 @@ void draw(const T3& at3,
           bool nofill=false,
           const ColorFunctor& fcolor=ColorFunctor())
 {
+#if defined(CGAL_TEST_SUITE)
+  int argc=3;
+  const char* argv[4]={"t3_viewer","-platform","minimal","\0"};
+#else
   int argc=1;
-
   const char* argv[2]={"t3_viewer","\0"};
+#endif
+
   QApplication app(argc,const_cast<char**>(argv));
 
   SimpleTriangulation3ViewerQt<T3, ColorFunctor> mainwindow(app.activeWindow(),at3, title,

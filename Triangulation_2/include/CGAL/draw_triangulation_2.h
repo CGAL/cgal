@@ -20,7 +20,6 @@
 
 #ifndef CGAL_DRAW_T2_H
 #define CGAL_DRAW_T2_H
-
 #include <iostream>
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -143,9 +142,13 @@ void draw(const T2& at2,
           bool nofill=false,
           const ColorFunctor& fcolor=ColorFunctor())
 {
+#if defined(CGAL_TEST_SUITE)
+  int argc=3;
+  const char* argv[4]={"t2_viewer","-platform","minimal","\0"};
+#else
   int argc=1;
-
   const char* argv[2]={"t2_viewer","\0"};
+#endif
   QApplication app(argc,const_cast<char**>(argv));
 
   SimpleTriangulation2ViewerQt<T2, ColorFunctor> mainwindow(app.activeWindow(), at2, title,

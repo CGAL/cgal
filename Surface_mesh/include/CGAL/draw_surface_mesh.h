@@ -206,9 +206,14 @@ void draw(const SM& amesh,
           bool nofill=false,
           const ColorFunctor& fcolor=ColorFunctor())
 {
+#if defined(CGAL_TEST_SUITE)
+  int argc=3;
+  const char* argv[4]={"surface_mesh_viewer","-platform","minimal","\0"};
+#else
   int argc=1;
-
   const char* argv[2]={"surface_mesh_viewer","\0"};
+#endif
+  
   QApplication app(argc,const_cast<char**>(argv));
 
   SimpleSurfaceMeshViewerQt<SM, ColorFunctor> mainwindow(app.activeWindow(),amesh, title,
