@@ -24,9 +24,10 @@
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/property_map.h>
 
-#include <CGAL/Polygon_mesh_processing/mesh_smoothing.h>
-#include <CGAL/Polygon_mesh_processing/shape_smoothing.h>
+#include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
+#include <CGAL/Polygon_mesh_processing/smooth_shape.h>
 
 #include "ui_Smoothing_plugin.h"
 
@@ -202,8 +203,16 @@ public Q_SLOTS:
       // If we changed item or if the stiffness cache is cleared (by the user hitting the button)
       if(index_id != last_index_id || stiffness_is_cleared)
       {
-        internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, true,
-        parameters::vertex_is_constrained_map(vcmap));
+        if(border_collected)
+        {
+          internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, true,
+          parameters::vertex_is_constrained_map(vcmap));
+        }
+        else
+        {
+          internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, true,
+          parameters::all_default());
+        }
         last_index_id = index_id;
 
         // reset the cache flag
@@ -211,8 +220,7 @@ public Q_SLOTS:
       }
 
       internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, false,
-                          parameters::vertex_is_constrained_map(vcmap)
-                          .number_of_iterations(nb_iter));
+                          parameters::number_of_iterations(nb_iter));
     }
 
     // recenter scene
@@ -239,7 +247,10 @@ public Q_SLOTS:
     for (vertex_descriptor v : vertices(pmesh))
     {
       if(is_border(v, pmesh))
-        put(vcmap, v);
+      {
+        put(vcmap, v, true);
+        border_collected = true;
+      }
     }
   }
 
@@ -255,7 +266,8 @@ private:
   std::vector<CGAL::Triple<int, int, double> > stiffness;
   bool stiffness_is_cleared;
 
-  CGAL::Polygon_mesh_processing::internal::Constrained_vertices_map<vertex_descriptor> vcmap;
+  CGAL::Boolean_property_map<std::set<vertex_descriptor> > vcmap;
+  bool border_collected;
 
 };
 

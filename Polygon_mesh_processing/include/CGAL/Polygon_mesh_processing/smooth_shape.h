@@ -74,13 +74,13 @@ void smooth_curvature_flow_explicit(const FaceRange& faces, PolygonMesh& pmesh, 
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   t.stop();
   std::cout << "\rSmoothing parameters done ("<< t.time() <<" sec)" << std::endl;
-  std::cout << "Remesher construction...";
+  std::cout << "smoother construction...";
   std::cout.flush();
   t.reset(); t.start();
   #endif
 
   internal::Curvature_flow<PolygonMesh, VertexPointMap, VCMap, GeomTraits>
-          curvature_remesher(pmesh, vpmap, vcmap);
+          curvature_smoother(pmesh, vpmap, vcmap);
 
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   t.stop();
@@ -89,7 +89,7 @@ void smooth_curvature_flow_explicit(const FaceRange& faces, PolygonMesh& pmesh, 
   t.reset(); t.start();
   #endif
 
-  curvature_remesher.remove_degenerate_faces();
+  curvature_smoother.remove_degenerate_faces();
 
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   t.stop();
@@ -98,7 +98,7 @@ void smooth_curvature_flow_explicit(const FaceRange& faces, PolygonMesh& pmesh, 
   t.reset(); t.start();
   #endif
 
-  curvature_remesher.init_smoothing(faces);
+  curvature_smoother.init_smoothing(faces);
 
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
   t.stop();
@@ -115,7 +115,7 @@ void smooth_curvature_flow_explicit(const FaceRange& faces, PolygonMesh& pmesh, 
         std::cout << " * Iteration " << (i + 1) << " *" << std::endl;
     #endif
 
-    curvature_remesher.curvature_smoothing();
+    curvature_smoother.curvature_smoothing();
 
   }
 
