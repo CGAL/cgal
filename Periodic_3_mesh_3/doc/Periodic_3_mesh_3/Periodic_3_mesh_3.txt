@@ -9,7 +9,7 @@ namespace CGAL {
 
 \cgalFigureAnchor{Periodic_3_mesh_3Banner}
 <center>
-<img src="periodic_banner.png" style="max-width:76%;"/>
+<img src="periodic_banner.png" style="max-width:60%;"/>
 </center>
 \cgalFigureCaptionBegin{Periodic_3_mesh_3Banner}
 A cut view of a periodic mesh.
