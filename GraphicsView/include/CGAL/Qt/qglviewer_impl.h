@@ -508,9 +508,6 @@ void CGAL::QGLViewer::postDraw() {
   if (displayMessage_)
     drawText(10, height() - 10, message_);
 
-  // Restore GL state
-  glPopAttrib();
-  glPopMatrix();
 }
 
 /*! Called before draw() (instead of preDraw()) when viewer displaysInStereo().

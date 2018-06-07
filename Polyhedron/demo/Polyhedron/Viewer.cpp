@@ -206,11 +206,8 @@ void Viewer::init()
       connect(d->logger, SIGNAL(messageLogged(QOpenGLDebugMessage)), this, SLOT(messageLogged(QOpenGLDebugMessage)));
       d->logger->startLogging();
     }
-    
-    if(isOpenGL_4_3())
-    {
-      d->_recentFunctions->initializeOpenGLFunctions();
-    }
+    d->_recentFunctions->initializeOpenGLFunctions();
+  }
   glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
   if(!glDrawArraysInstanced)
   {
