@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <chrono>
 
 //typedef CGAL::Simple_cartesian<double>      Kernel;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -18,8 +19,9 @@ int main()
     // read mesh
     Mesh mesh;
     
-    std::ifstream input("data/cube.off");
-//    std::ifstream input("data/mushroom.off");
+//    std::ifstream input("data/cube.off");
+//    std::ifstream input("data/teapot.off");
+    std::ifstream input("data/sword.off");
 //    std::ifstream input("data/cactus.off");
 //    std::ifstream input("data/cheese.off");
 //    std::ifstream input("data/lion-head.off");
@@ -43,7 +45,11 @@ int main()
     boost::associative_property_map<Facet_int_map> facet_property_map(facet_map);
 
     // decompose mesh with default parameters
-    std::size_t clusters_num = CGAL::convex_decomposition(mesh, facet_property_map, 100, 2);
+    auto start = std::chrono::system_clock::now();
+    std::size_t clusters_num = CGAL::convex_decomposition(mesh, facet_property_map, 0.05, 5);
+    auto end = std::chrono::system_clock::now();
+
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000. << " s" << std::endl;
 
     // write cluster-ids for each facet
     std::cout << "Number of clusters: " << clusters_num << std::endl;

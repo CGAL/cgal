@@ -54,6 +54,7 @@ convex_decomposition(const TriangleMesh& mesh,
                      const GeomTraits& traits = GeomTraits())
 {
     CGAL_precondition(CGAL::is_triangle_mesh(mesh));
+    CGAL_precondition(CGAL::num_faces(mesh) >= min_number_of_clusters);
 
     internal::Approx_decomposition<TriangleMesh, GeomTraits> algorithm(mesh, traits);
     return algorithm.decompose(face_ids, concavity_threshold, min_number_of_clusters);

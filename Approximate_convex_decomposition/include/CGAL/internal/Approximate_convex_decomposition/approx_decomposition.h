@@ -72,13 +72,16 @@ class Approx_decomposition
     typedef boost::property<cluster_props_t, Cluster_properties> VertexProperty;
     typedef boost::property<decimation_props_t, Decimation_properties> EdgeProperty;
 
-    typedef boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS, VertexProperty, EdgeProperty> Graph;
+    typedef boost::adjacency_list<boost::setS, boost::listS, boost::undirectedS, VertexProperty, EdgeProperty> Graph;
     
     typedef typename boost::graph_traits<Graph>::vertex_descriptor graph_vertex_descriptor;
     typedef typename boost::graph_traits<Graph>::edge_descriptor graph_edge_descriptor;
 
     typedef typename boost::property_map<Graph, cluster_props_t>::type Graph_cluster_map;
     typedef typename boost::property_map<Graph, decimation_props_t>::type Graph_decimation_map;
+
+    // constants
+    const double CONCAVITY_FACTOR = 0.1;
 
 public:
     Approx_decomposition(const TriangleMesh& mesh, const GeomTraits& traits)
@@ -121,7 +124,7 @@ public:
 
         BOOST_FOREACH(graph_edge_descriptor edge, edges(m_graph))
         {
-            update_edge(edge, concavity_threshold, 0.1);
+            update_edge(edge, concavity_threshold, CONCAVITY_FACTOR);
         }
 
         while (num_vertices(m_graph) > min_number_of_clusters)
@@ -129,6 +132,8 @@ public:
             bool found_edge = false;
 
             graph_edge_descriptor optimal_edge;
+
+
             BOOST_FOREACH(graph_edge_descriptor edge, edges(m_graph))
             {
                 Decimation_properties& decimation_props = m_decimation_map[edge];
@@ -145,14 +150,14 @@ public:
             if (!found_edge) break;
 
             std::cout << std::endl << "Optimal edge for decimation: " << optimal_edge << " " << m_decimation_map[optimal_edge].decimation_cost << " " << m_decimation_map[optimal_edge].new_cluster_props.concavity << std::endl;
-            std::cout << "Vertices left: " << num_vertices(m_graph) << std::endl;
-            BOOST_FOREACH(graph_edge_descriptor edge, edges(m_graph))
-            {
+            std::cout << "Vertices: " << num_vertices(m_graph) << " Edges: " << num_edges(m_graph) << std::endl;
+//            BOOST_FOREACH(graph_edge_descriptor edge, edges(m_graph))
+//            {
 //                std::cout << source(edge, m_graph) << " " << target(edge, m_graph) << std::endl;
-                std::cout << edge << std::endl;
-            }
+////                std::cout << edge << std::endl;
+//            }
 
-            decimate_edge(optimal_edge, concavity_threshold, 0.1);
+            decimate_edge(optimal_edge, concavity_threshold, CONCAVITY_FACTOR);
         }
 
         int cluster_id = 0;
@@ -160,7 +165,7 @@ public:
         {
             Cluster_properties& cluster_props = m_cluster_map[vert];
 
-            if (cluster_props.faces.size() <= 1) continue;
+//            if (cluster_props.faces.size() <= 1) continue;
 
             BOOST_FOREACH(face_descriptor face, cluster_props.faces)
             {
@@ -182,6 +187,8 @@ private:
     Graph_cluster_map m_cluster_map;
     Graph_decimation_map m_decimation_map;
 
+    std::priority_queue<graph_edge_descriptor> m_candidates;
+
     template <class Mesh>
     struct Noborder_predicate
     {
@@ -198,6 +205,13 @@ private:
         double concavity;
         std::vector<face_descriptor> faces;
         std::vector<Point_3> conv_hull_pts;
+
+//        void operator=(const Cluster_properties&& r)
+//        {
+//            concavity = r.concavity;
+//            faces = std::move(r.faces);
+//            conv_hull_pts = std::move(r.conv_hull_pts);
+//        }
     };
 
     struct Decimation_properties
@@ -224,6 +238,7 @@ private:
             {
                 props.conv_hull_pts.push_back(m_mesh.point(vert));
             }
+            CGAL_assertion(props.conv_hull_pts.size() >= 3);
 
             face_graph_map[face] = add_vertex(props, m_graph);
         }
@@ -238,7 +253,7 @@ private:
 
     void update_edge(graph_edge_descriptor edge, double concavity_threshold, double alpha_factor)
     {
-        std::cout << std::endl << "Update edge: " << edge << std::endl;
+//        std::cout << std::endl << "Update edge: " << edge << std::endl;
 
         Decimation_properties& decimation_props = m_decimation_map[edge];
 
@@ -248,6 +263,9 @@ private:
         Cluster_properties& cluster_2_props = m_cluster_map[vert_2];
 
         std::vector<Point_3> common_hull_pts;
+//        std::cout << cluster_1_props.conv_hull_pts.size() << " " << cluster_2_props.conv_hull_pts.size() << std::endl;
+        CGAL_assertion(cluster_1_props.conv_hull_pts.size() >= 3);
+        CGAL_assertion(cluster_2_props.conv_hull_pts.size() >= 3);
         BOOST_FOREACH(Point_3 p, cluster_1_props.conv_hull_pts)
         {
             common_hull_pts.push_back(p);
@@ -257,6 +275,8 @@ private:
             common_hull_pts.push_back(p);
         }
 
+        CGAL_assertion(common_hull_pts.size() > 3);
+
         Surface_mesh conv_hull;
         CGAL::convex_hull_3(common_hull_pts.begin(), common_hull_pts.end(), conv_hull);
 
@@ -265,6 +285,7 @@ private:
         {
             decimation_props.new_cluster_props.conv_hull_pts.push_back(conv_hull.point(vert));
         }
+        CGAL_warning(decimation_props.new_cluster_props.conv_hull_pts.size() > 3);
 
         decimation_props.new_cluster_props.faces.clear();
         BOOST_FOREACH(face_descriptor face, cluster_1_props.faces)
@@ -303,11 +324,15 @@ private:
 
     void decimate_edge(graph_edge_descriptor edge, double concavity_threshold, double alpha_factor)
     {
-        std::cout << "Decimate edge: " << edge << std::endl;
+//        std::cout << "Decimate edge: " << edge << std::endl;
 
         graph_vertex_descriptor vert_1 = source(edge, m_graph), vert_2 = target(edge, m_graph);
 
+        CGAL_assertion(vert_1 != vert_2);
+
+        CGAL_assertion(m_decimation_map[edge].new_cluster_props.conv_hull_pts.size() > 3);
         m_cluster_map[vert_1] = m_decimation_map[edge].new_cluster_props;
+        CGAL_assertion(m_cluster_map[vert_1].conv_hull_pts.size() > 3);
 
         BOOST_FOREACH(graph_vertex_descriptor vert, boost::adjacent_vertices(vert_2, m_graph))
         {
@@ -318,12 +343,16 @@ private:
 
         clear_vertex(vert_2, m_graph);
         remove_vertex(vert_2, m_graph);
-//        remove_edge(edge, m_graph);
 
+        CGAL_assertion(m_cluster_map[vert_1].conv_hull_pts.size() > 3);
+       
+        int cnt = 0;
         BOOST_FOREACH(graph_edge_descriptor edge, boost::out_edges(vert_1, m_graph))
         {
             update_edge(edge, concavity_threshold, alpha_factor);
+            ++cnt;
         }
+        std::cout << "Updated edges: " << cnt << std::endl;
     }
 
     double compute_aspect_ratio(const Surface_mesh& mesh)

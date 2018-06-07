@@ -53,10 +53,30 @@ namespace internal
 
             Surface_mesh cluster;
             CGAL::copy_face_graph(filtered_mesh, cluster);
-//            {
-//                std::ofstream os("cluster_" + std::to_string(cluster_id) + ".off");
-//                os << cluster;
-//            }
+            {
+                std::ofstream os("cluster_" + std::to_string(cluster_id) + ".off");
+                os << cluster;
+            }
+            {            
+                Surface_mesh conv_hull;
+                std::vector<Point_3> pts;
+
+                if (CGAL::num_vertices(cluster) > 3)
+                { 
+                    BOOST_FOREACH(vertex_descriptor vert, CGAL::vertices(cluster))
+                    {
+                        pts.push_back(cluster.point(vert));
+                    }
+
+                    CGAL::convex_hull_3(pts.begin(), pts.end(), conv_hull); 
+                }
+                else
+                {
+                    conv_hull = cluster;
+                }
+                std::ofstream os("ch_cluster_" + std::to_string(cluster_id) + ".off");
+                os << conv_hull;
+            }
 
             Concavity concavity(cluster, m_traits);
             return concavity.compute();
@@ -68,6 +88,8 @@ namespace internal
 
             Surface_mesh conv_hull;
             std::vector<Point_3> pts;
+
+            if (CGAL::num_vertices(m_mesh) <= 3) return 0;
 
             BOOST_FOREACH(vertex_descriptor vert, CGAL::vertices(m_mesh))
             {
