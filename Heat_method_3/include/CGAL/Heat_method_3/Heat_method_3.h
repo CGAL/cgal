@@ -70,6 +70,7 @@ namespace Heat_method_3 {
   template <typename TriangleMesh,
             typename Traits,
             typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::type,
+            typename FacePointMap = typename boost::property_map< TriangleMesh, face_index_t>::type,
             typename LA = Heat_method_Eigen_traits_3>
   class Heat_method_3
   {
@@ -97,6 +98,14 @@ namespace Heat_method_3 {
     typedef CGAL::dynamic_vertex_property_t<Index> Vertex_property_tag;
     typedef typename boost::property_map<TriangleMesh, Vertex_property_tag >::type Vertex_id_map;
     Vertex_id_map vertex_id_map;
+
+
+    typedef typename boost::graph_traits<TriangleMesh>::faces_size_type face_size_type;
+
+    typedef CGAL::dynamic_face_property_t<Index> Face_property_tag;
+    typedef typename boost::property_map<TriangleMesh, Face_property_tag >::type Face_id_map;
+    Face_id_map face_id_map;
+
   public:
 
     Heat_method_3(const TriangleMesh& tm)
@@ -105,8 +114,8 @@ namespace Heat_method_3 {
       build();
     }
 
-    Heat_method_3(const TriangleMesh& tm, VertexPointMap vpm)
-      : tm(tm), vpm(vpm)
+    Heat_method_3(const TriangleMesh& tm, VertexPointMap vpm, FacePointMap fpm)
+      : tm(tm), vpm(vpm), fpm(fpm)
     {
       build();
     }
@@ -226,6 +235,11 @@ namespace Heat_method_3 {
       BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
         put(vertex_id_map, vd, i++);
       }
+      face_id_map = get(Face_property_tag(), const_cast<TriangleMesh&>(tm));
+      Index face_i = 0;
+      BOOST_FOREACH(face_descriptor fd, faces(tm)){
+        put(face_id_map, fd, face_i++);
+      }
 
       int m = num_vertices(tm);
       //cotan matrix
@@ -302,6 +316,7 @@ namespace Heat_method_3 {
 
     const TriangleMesh& tm;
     VertexPointMap vpm;
+    FacePointMap fpm;
     std::set<vertex_descriptor> sources;
     double time_step;
     Matrix kronecker;

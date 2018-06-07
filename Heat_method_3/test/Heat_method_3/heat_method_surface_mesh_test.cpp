@@ -19,7 +19,7 @@ typedef CGAL::Heat_method_3::Heat_method_Eigen_traits_3::SparseMatrix SparseMatr
 int main()
 {
   Mesh sm;
-  std::ifstream in("../data/pyramid0.off");
+  std::ifstream in("data/pyramid0.off");
   in >> sm;
   if(!in || num_vertices(sm) == 0) {
     std::cerr << "Problem loading the input data" << std::endl;
