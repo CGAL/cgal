@@ -175,6 +175,20 @@ namespace internal {
     Patch_ids_map patch_ids_map;
     std::size_t nb_cc;
 
+    template <class Range>
+    bool same_range(const Range& r1, const Range& r2)
+    {
+      return boost::begin(r1)==boost::begin(r2) &&
+             boost::end(r1)==boost::end(r2);
+    }
+
+    template <class Range1, class Range2>
+    bool same_range(const Range1& r1, const Range2& r2)
+    {
+      return std::distance(boost::begin(r1), boost::end(r1)) ==
+             std::distance(boost::begin(r2), boost::end(r2));
+    }
+
   public:
     typedef face_descriptor                     key_type;
     typedef Patch_id                            value_type;
@@ -196,7 +210,7 @@ namespace internal {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
         std::cout << "Compute connected components property map." << std::endl;
 #endif
-        if (boost::size(face_range) == boost::size(faces(pmesh)))
+        if ( same_range(face_range, (faces(pmesh))) )
         {
           // applied on the whole mesh
           nb_cc
