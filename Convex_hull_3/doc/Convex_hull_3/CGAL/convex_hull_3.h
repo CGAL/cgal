@@ -7,7 +7,7 @@ namespace CGAL {
 [`first`, `last`). The polyhedron `pm` is cleared, then
 the convex hull is stored in `pm`. Note that the convex hull will be triangulated,
 that is `pm` will contain only triangular facets.
-if the convex hull is a point or a segment, endpoints will be added in pm as isolated vertices.
+if the convex hull is a point or a segment, endpoints will be added in `pm` as isolated vertices.
 
 \tparam InputIterator must be an input iterator with a value type  equivalent to `Traits::Point_3`.
 \tparam PolygonMesh must be a model of `MutableFaceGraph`.
@@ -70,14 +70,14 @@ const Traits& ch_traits = Default_traits);
 \brief copies in `out` the points on the convex hull of the points in `range`.
 
 \tparam InputRange a range of `Traits::Point_3`, model of `ConstRange`.
-        Its iterator type is `ForwardIterator`.
-\tparam OutputIterator must be an output iterator with a value type  equivalent to `Traits::Point_3`.
+        Its iterator type is `InputIterator`.
+\tparam OutputIterator must be an output iterator where points of type `Traits::Point_3` can be put.
 \tparam Traits must be model of the concept `ConvexHullTraits_3`.
 
 If the kernel `R` of the points from `InputRange`
 is a kernel with exact predicates but inexact constructions
 (in practice we check `R::Has_filtered_predicates_tag` is `Tag_true` and `R::FT` is a floating point type),
-then the default traits class of `convex_hull_3()` is `Convex_hull_traits_3<R>`, and `R` otherwise.
+then the default traits class used is `Convex_hull_traits_3<R>`, and `R` otherwise.
 
 @param range the range of input points.
 @param out an output iterator where the extreme points will be put.

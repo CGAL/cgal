@@ -74,6 +74,7 @@ defining `CGAL_CH_CHECK_EXPENSIVE`.
 ## Convex Hull Functions ##
 
 - `CGAL::convex_hull_3`
+- `CGAL::extreme_points_3`
 
 ## Convexity Checking Function ##
 
