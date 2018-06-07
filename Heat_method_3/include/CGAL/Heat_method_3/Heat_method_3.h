@@ -152,7 +152,7 @@ namespace Heat_method_3 {
       // sources.find(vd) returns the past-the-end iterator of vd cannot be found
       // Otherwise it returns the iterator it with *it == vd
       // So the test would be if(sources.find() != sources,end()
-      if((sources.find(vd)) != (sources.end()) || vd == *(sources.end()))
+      if((sources.find(vd)) != (sources.end()))
       {
         sources.erase(vd);
         return true;
