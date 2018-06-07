@@ -145,22 +145,6 @@ namespace Heat_method_3 {
     bool remove_source(vertex_descriptor vd)
     {
       return (sources.erase(vd) == 1);
-
-      // The following code is not only longer but has a bug.
-      // sources.end() does not return an iterator to the last element but is a past-the-end iterator
-      // that is you cannot dereference it.
-      // sources.find(vd) returns the past-the-end iterator of vd cannot be found
-      // Otherwise it returns the iterator it with *it == vd
-      // So the test would be if(sources.find() != sources,end()
-      if((sources.find(vd)) != (sources.end()))
-      {
-        sources.erase(vd);
-        return true;
-      }
-      else
-      {
-        return false;
-      }
     }
 
     /**
@@ -218,7 +202,7 @@ namespace Heat_method_3 {
       return time_step;
     }
 
-    Matrix kronecker_delta(std::set<vertex_descriptor> sources)
+    Matrix kronecker_delta(const std::set<vertex_descriptor>& sources)
     {
       //currently just working with a single vertex in source set, add the first one for now
       Index i;
@@ -242,8 +226,6 @@ namespace Heat_method_3 {
       return kronecker;
     }
 
-
-
     Eigen::VectorXd solve_cotan_laplace(Matrix M, Matrix c, Matrix x, double time_step, int dimension)
     {
       Eigen::VectorXd u;
@@ -253,13 +235,11 @@ namespace Heat_method_3 {
       if(solver.info()!=Eigen::Success) {
         // decomposition failed
         CGAL_error_msg("Eigen Decomposition failed");
-        CGAL_error();
       }
       u = solver.solve(x);
       if(solver.info()!=Eigen::Success) {
         // solving failed
         CGAL_error_msg("Eigen Solving failed");
-        CGAL_error();
       }
       // solve for another right hand side:
       return u;
@@ -352,9 +332,6 @@ namespace Heat_method_3 {
 
 
     }
-
-
-
 
     const TriangleMesh& tm;
     VertexPointMap vpm;
