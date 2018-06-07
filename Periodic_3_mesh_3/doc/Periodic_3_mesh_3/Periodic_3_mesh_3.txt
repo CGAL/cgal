@@ -73,7 +73,7 @@ are inserted at the beginning of the meshing process, ensuring that the projecti
 of the periodic triangulation into the flat torus \f$ \mathbb T_c^3\f$ forms at all times a simplicial complex
 (see Sections \ref P3Triangulation3secspace and \ref P3Triangulation3secintro
 of the manual of 3D periodic triangulations).
-Thanks to this "scaffholding" structure, the meshing process can be exclusively conducted
+Thanks to this construction, the meshing process can be exclusively conducted
 within the canonical cube.
 The mesh can then be created using the \ref PkgMesh_3Summary package of %CGAL.
 As this package originally aims to mesh non-periodic domains of \f$ \mathbb R^3\f$, an interface
