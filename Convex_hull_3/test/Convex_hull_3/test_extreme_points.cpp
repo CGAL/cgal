@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/convex_hull_3.h>
+#include <CGAL/Vertex_to_point_traits_adapter_3.h>
 #include <CGAL/Convex_hull_traits_3.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
@@ -215,7 +216,7 @@ extreme_vertices(const InputRange& range,
                  VertexPointMap vpm,
                  const Traits& traits)
 {
-  CGAL::internal::Convex_hull_3::Vertex_to_point_traits_adapter<Traits, VertexPointMap> traits_adapter(vpm, traits);
+  CGAL::Vertex_to_point_traits_adapter<Traits, VertexPointMap> traits_adapter(vpm, traits);
   CGAL::extreme_points_3(range, out,traits_adapter);
   return out;
 }

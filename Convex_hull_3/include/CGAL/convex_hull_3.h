@@ -57,9 +57,6 @@
 #include <CGAL/Polyhedron_3_fwd.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 
-#include <boost/call_traits.hpp>
-#include <CGAL/property_map.h>
-
 #include <boost/unordered_map.hpp>
 
 #ifndef CGAL_CH_NO_POSTCONDITIONS
@@ -70,118 +67,6 @@
 // first some internal stuff to avoid using a true Face_graph model for extreme_points_3
 namespace CGAL {
 namespace internal{  namespace Convex_hull_3{
-
-template<class Base_traits,class VertexPointMap>
-class Vertex_to_point_traits_adapter
-    :public Base_traits
-{
-  VertexPointMap vpm_;
-public:
-  Vertex_to_point_traits_adapter(const VertexPointMap& vpmap, Base_traits base=Base_traits())
-    :Base_traits(base), vpm_(vpmap)
-  {}
-  //typedef typename boost::property_traits<VertexPointMap>::key_type Vertex;
-  //typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
-  typedef typename boost::property_traits<VertexPointMap>::key_type Point_3;
- 
-  class Compute_x_3:public Base_traits::Compute_x_3
-  {
-    VertexPointMap vpm_;
-    typedef typename Base_traits::FT             FT;
-  public:
-    Compute_x_3(const VertexPointMap& map,const typename Base_traits::Compute_x_3& base):
-      Base_traits::Compute_x_3(base),vpm_(map){}
-    typedef const FT&                  result_type;
-
-    result_type
-    operator()(const Point_3& v) const
-    {
-      return ::get(vpm_, v).x();
-    }
-
-  };
-  class Compute_y_3:public Base_traits::Compute_y_3
-  {
-    VertexPointMap vpm_;
-    typedef typename Base_traits::FT             FT;
-  public:
-    Compute_y_3(const VertexPointMap& map,const typename Base_traits::Compute_y_3& base):
-      Base_traits::Compute_y_3(base),vpm_(map){}
-    typedef const FT&                  result_type;
-
-    result_type
-    operator()(const Point_3& v) const
-    {
-      return ::get(vpm_, v).y();
-    }
-
-  };
-  class Compute_z_3:public Base_traits::Compute_z_3
-  {
-    VertexPointMap vpm_;
-    typedef typename Base_traits::FT             FT;
-  public:
-    Compute_z_3(const VertexPointMap& map,const typename Base_traits::Compute_z_3& base):
-      Base_traits::Compute_z_3(base),vpm_(map){}
-    typedef const FT&                  result_type;
-
-    result_type
-    operator()(const Point_3& v) const
-    {
-      return ::get(vpm_, v).z();
-    }
-  };
-  
-  class Equal_3:public Base_traits::Equal_3
-  {
-    typedef typename boost::property_traits<VertexPointMap>::value_type Real_point;
-    VertexPointMap vpm_;
-  public:
-    Equal_3(const VertexPointMap& map,const typename Base_traits::Equal_3& base):
-      Base_traits::Equal_3(base),vpm_(map){}
-   typedef bool       result_type;
-
-    result_type
-    operator()(const Point_3 &p, const Point_3 &q) const
-    {
-      Real_point rp(::get(vpm_, p)),
-                 rq(::get(vpm_, q));
-      return rp.z() == rq.x()
-          && rp.y() == rq.y()
-          && rp.z() == rq.z();
-    }
-  };
-  
-  class Collinear_3:public Base_traits::Collinear_3
-  {
-    typedef typename boost::property_traits<VertexPointMap>::value_type Real_point;
-    VertexPointMap vpm_;
-  public:
-    Collinear_3(const VertexPointMap& map,const typename Base_traits::Collinear_3& base):
-      Base_traits::Collinear_3(base),vpm_(map){}
-    typedef bool    result_type;
-    result_type
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
-    {
-      Real_point rp(::get(vpm_, p)),
-                 rq(::get(vpm_, q)),
-                 rr(::get(vpm_, r));
-      
-      return collinearC3(rp.x(), rp.y(), rp.z(),
-			 rq.x(), rq.y(), rq.z(),
-			 rr.x(), rr.y(), rr.z());
-    }
-  };
-
-  
-  Compute_x_3 compute_x_3_object () const {return Compute_x_3(vpm_,static_cast<const Base_traits*>(this)->compute_x_3_object() );}
-  Compute_y_3 compute_y_3_object () const {return Compute_y_3(vpm_,static_cast<const Base_traits*>(this)->compute_y_3_object() );}
-  Compute_z_3 compute_z_3_object () const {return Compute_z_3(vpm_,static_cast<const Base_traits*>(this)->compute_z_3_object() );}
-  Equal_3 equal_3_object () const {return Equal_3(vpm_,static_cast<const Base_traits*>(this)->equal_3_object() );}
-  Collinear_3 collinear_3_object () const {return Collinear_3(vpm_,static_cast<const Base_traits*>(this)->collinear_3_object() );}
-  
-};
-
 
 // wrapper used as a MutableFaceGraph to extract extreme points
 template <class OutputIterator>
@@ -283,25 +168,31 @@ struct Default_polyhedron_for_Chull_3<Convex_hull_traits_3<K, P, Tag> >{
 };
 
 //utility class to select the right version of internal predicate Is_on_positive_side_of_plane_3
-template <class Traits,
-          class Is_floating_point=
-            typename boost::is_floating_point<typename Kernel_traits<typename Traits::Point_3>::Kernel::FT>::type,
-          class Has_filtered_predicates_tag=typename Kernel_traits<typename Traits::Point_3>::Kernel::Has_filtered_predicates_tag,
-          class Has_cartesian_tag=typename Kernel_traits<typename Traits::Point_3>::Kernel::Kernel_tag,
-          class Has_classical_point_type =
-              typename boost::is_same<
-                typename Kernel_traits<typename Traits::Point_3>::Kernel::Point_3,
-                typename Traits::Point_3  >::type
-         >
+//template <class Traits,
+//          class Is_floating_point=
+//            typename boost::is_floating_point<typename Kernel_traits<typename Traits::Point_3>::Kernel::FT>::type,
+//          class Has_filtered_predicates_tag=typename Kernel_traits<typename Traits::Point_3>::Kernel::Has_filtered_predicates_tag,
+//          class Has_cartesian_tag=typename Kernel_traits<typename Traits::Point_3>::Kernel::Kernel_tag,
+//          class Has_classical_point_type =
+//              typename boost::is_same<
+//                typename Kernel_traits<typename Traits::Point_3>::Kernel::Point_3,
+//                typename Traits::Point_3  >::type
+//         >
+//struct Use_advanced_filtering{
+//  typedef CGAL::Tag_false type;
+//};
+
+template <class Traits>
 struct Use_advanced_filtering{
+  
   typedef CGAL::Tag_false type;
 };
 
-template <class Traits>
+/*template <class Traits>
 struct Use_advanced_filtering<Traits,boost::true_type,Tag_true,Cartesian_tag,boost::true_type>{
   typedef typename Kernel_traits<typename Traits::Point_3>::Kernel K;
   typedef CGAL::Boolean_tag<K::Has_static_filters> type;
-};
+};*/
 
 //Predicates internally used
 template <class Traits,class Tag_use_advanced_filtering=typename Use_advanced_filtering<Traits>::type >
@@ -451,17 +342,33 @@ template <class T,bool has_projection_traits=
   Traits_has_typedef_Traits_xz_3<T>::value
 >
 struct Projection_traits{
+    Projection_traits(const T&){}
   typedef typename Kernel_traits<typename T::Point_3>::Kernel K;
   typedef CGAL::Projection_traits_xy_3<K> Traits_xy_3;
   typedef CGAL::Projection_traits_yz_3<K> Traits_yz_3;
   typedef CGAL::Projection_traits_xz_3<K> Traits_xz_3;
+    
+    Traits_xy_3 construct_traits_xy_3_object()const
+    {return Traits_xy_3();}
+    Traits_yz_3 construct_traits_yz_3_object()const
+    {return Traits_yz_3();}
+    Traits_xz_3 construct_traits_xz_3_object()const
+    {return Traits_xz_3();}
 };
 
 template <class T>
 struct Projection_traits<T,true>{
+  const T& traits;
+  Projection_traits(const T& t):traits(t){}
   typedef typename T::Traits_xy_3 Traits_xy_3;
   typedef typename T::Traits_yz_3 Traits_yz_3;
   typedef typename T::Traits_xz_3 Traits_xz_3;
+  Traits_xy_3 construct_traits_xy_3_object()const
+  {return traits.construct_traits_xy_3_object();}
+  Traits_yz_3 construct_traits_yz_3_object()const
+  {return traits.construct_traits_yz_3_object();}
+  Traits_xz_3 construct_traits_xz_3_object()const
+  {return traits.construct_traits_xz_3_object();}
 };
 
 template <class Point_3, class Polyhedron_3>
@@ -495,30 +402,32 @@ void copy_ch2_to_face_graph(const std::list<Point_3>& CH_2, Polyhedron_3& P)
 template <class InputIterator, class Point_3, class Polyhedron_3, class Traits>
 void coplanar_3_hull(InputIterator first, InputIterator beyond,
                      const Point_3& p1, const Point_3& p2, const Point_3& p3,
-                     Polyhedron_3& P, const Traits& /* traits */)
+                     Polyhedron_3& P, const Traits&  traits )
 {
   typedef typename internal::Convex_hull_3::Projection_traits<Traits> PTraits;
   typedef typename PTraits::Traits_xy_3 Traits_xy_3;
   typedef typename PTraits::Traits_yz_3 Traits_yz_3;
   typedef typename PTraits::Traits_xz_3 Traits_xz_3;
+  
+  PTraits ptraits(traits);
 
   std::list<Point_3> CH_2;
 
-  Traits_xy_3 traits_xy;
+  Traits_xy_3 traits_xy = ptraits.construct_traits_xy_3_object();
   typename Traits_xy_3::Left_turn_2 left_turn_in_xy = traits_xy.left_turn_2_object();
   if ( left_turn_in_xy(p1,p2,p3) || left_turn_in_xy(p2,p1,p3) )
      convex_hull_points_2( first, beyond,
                            std::back_inserter(CH_2),
                            traits_xy );
   else{
-    Traits_yz_3 traits_yz;
+    Traits_yz_3 traits_yz = ptraits.construct_traits_yz_3_object();
     typename Traits_yz_3::Left_turn_2 left_turn_in_yz = traits_yz.left_turn_2_object();
     if ( left_turn_in_yz(p1,p2,p3) || left_turn_in_yz(p2,p1,p3) )
        convex_hull_points_2( first, beyond,
                              std::back_inserter(CH_2),
                              traits_yz );
     else{
-      Traits_xz_3 traits_xz;
+      Traits_xz_3 traits_xz = ptraits.construct_traits_xz_3_object();
       CGAL_assertion_code( typename Traits_xz_3::Left_turn_2 left_turn_in_xz = traits_xz.left_turn_2_object(); )
       CGAL_assertion( left_turn_in_xz(p1,p2,p3) || left_turn_in_xz(p2,p1,p3) );
          convex_hull_points_2( first, beyond,
@@ -573,7 +482,10 @@ find_visible_set(TDS_2& tds,
         // if haven't already seen this facet
         if (f->info() == 0) {
           f->info() = VISITED;
-          Plane_3 plane(f->vertex(0)->point(),f->vertex(1)->point(),f->vertex(2)->point());
+          Plane_3 plane = 
+              traits.construct_plane_3_object()(f->vertex(0)->point(),
+                                                f->vertex(1)->point(),
+                                                f->vertex(2)->point());
           int ind = f->index(*vis_it);
           if ( has_on_positive_side(plane, point) ){  // is visible
             visible.push_back(f);
@@ -619,7 +531,10 @@ farthest_outside_point(Face_handle f, std::list<Point>& outside_set,
    typedef typename std::list<Point>::iterator Outside_set_iterator;
    CGAL_ch_assertion(!outside_set.empty());
 
-   typename Traits::Plane_3 plane(f->vertex(0)->point(),f->vertex(1)->point(),f->vertex(2)->point());
+   typename Traits::Plane_3 plane = 
+       traits.construct_plane_3_object()(f->vertex(0)->point(),
+                                         f->vertex(1)->point(),
+                                         f->vertex(2)->point());
 
    typename Traits::Less_signed_distance_to_plane_3 less_dist_to_plane =
             traits.less_signed_distance_to_plane_3_object();
