@@ -46,9 +46,6 @@ namespace Polygon_mesh_processing {
 * after each iteration.
 *
 * @tparam PolygonMesh model of `MutableFaceGraph`.
-*         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
-*         and no `face_index_map` is given
-*         as a named parameter, then the internal one should be initialized.
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters".
@@ -182,9 +179,6 @@ void smooth_angles(PolygonMesh& pmesh)
 * Optionally, the points are reprojected after each iteration.
 *
 * @tparam PolygonMesh model of `MutableFaceGraph`.
-*         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
-*         and no `face_index_map` is given
-*         as a named parameter, then the internal one should be initialized.
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
@@ -313,30 +307,32 @@ void smooth_areas(PolygonMesh& pmesh)
 }
 
 
-// not documented
-template<typename PolygonMesh, typename GeomTraits>
-void angles_evaluation(PolygonMesh& pmesh, const char* filename)
+///\cond SKIP_IN_MANUAL
+template<typename PolygonMesh, typename GeomTraits, typename Stream>
+void angles_evaluation(PolygonMesh& pmesh, GeomTraits, Stream& output)
 {
   internal::Quality_evaluator<PolygonMesh, GeomTraits> evaluator(pmesh);
   evaluator.gather_angles();
-  evaluator.extract_angles(filename);
+  evaluator.extract_angles(output);
 }
 
-template<typename PolygonMesh, typename GeomTraits>
-void areas_evaluation(PolygonMesh& pmesh, const char* filename)
+template<typename PolygonMesh, typename GeomTraits, typename Stream>
+void areas_evaluation(PolygonMesh& pmesh, GeomTraits, Stream& output)
 {
   internal::Quality_evaluator<PolygonMesh, GeomTraits> evaluator(pmesh);
   evaluator.measure_areas();
-  evaluator.extract_areas(filename);
+  evaluator.extract_areas(output);
 }
 
-template<typename PolygonMesh, typename GeomTraits>
-void aspect_ratio_evaluation(PolygonMesh& pmesh, const char* filename)
+template<typename PolygonMesh, typename GeomTraits, typename Stream>
+void aspect_ratio_evaluation(PolygonMesh& pmesh, GeomTraits, Stream& output)
 {
   internal::Quality_evaluator<PolygonMesh, GeomTraits> evaluator(pmesh);
   evaluator.calc_aspect_ratios();
-  evaluator.extract_aspect_ratios(filename);
+  evaluator.extract_aspect_ratios(output);
 }
+///\cond SKIP_IN_MANUAL
+
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

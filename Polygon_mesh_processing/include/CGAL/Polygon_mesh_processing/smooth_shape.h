@@ -136,9 +136,6 @@ void smooth_curvature_flow_explicit(const FaceRange& faces, PolygonMesh& pmesh, 
 *
 *
 * @tparam PolygonMesh model of `MutableFaceGraph`.
-*         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
-*         and no `face_index_map` is given
-*         as a named parameter, then the internal one should be initialized.
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
 *         model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"

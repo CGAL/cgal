@@ -26,8 +26,6 @@
 
 #include <vector>
 #include <set>
-#include <fstream>
-#include <string>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 #include <boost/property_map/property_map.hpp>
@@ -77,9 +75,9 @@ public:
     #endif
   }
 
-  void extract_angles(const char* filename)
+  template <typename Stream>
+  void extract_angles(Stream& output)
   {
-    std::ofstream output(filename);
     for(unsigned int i=0; i!=angles_.size(); ++i)
       output << angles_[i] << std::endl;
     output.close();
@@ -95,9 +93,9 @@ public:
     #endif
   }
 
-  void extract_areas(const char* filename)
+  template <typename Stream>
+  void extract_areas(Stream& output)
   {
-    std::ofstream output(filename);
     for(unsigned int i=0; i!=areas_.size(); ++i)
       output << areas_[i] << std::endl;
     output.close();
@@ -130,9 +128,9 @@ public:
     #endif
   }
 
-  void extract_aspect_ratios(const char* filename)
+  template <typename Stream>
+  void extract_aspect_ratios(Stream& output)
   {
-    std::ofstream output(filename);
     for(unsigned int i=0; i!=aspect_ratios_.size(); ++i)
       output << aspect_ratios_[i] << std::endl;
     output.close();

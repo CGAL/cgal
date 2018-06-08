@@ -3,6 +3,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
 #include <boost/graph/graph_traits.hpp>
+#include <CGAL/property_map.h>
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -10,41 +11,6 @@ typedef Kernel::Point_3 Point;
 typedef CGAL::Surface_mesh<Point> SurfaceMesh;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
-template<typename Mesh>
-struct Constraints_pmap
-{
-  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-
-  typedef vertex_descriptor                   key_type;
-  typedef bool                                value_type;
-  typedef value_type&                         reference;
-  typedef boost::read_write_property_map_tag  category;
-
-  std::set<vertex_descriptor>* set_ptr_;
-
-  public:
-  Constraints_pmap(std::set<vertex_descriptor>* set_ptr)
-    : set_ptr_(set_ptr)
-  {}
-  Constraints_pmap()
-    : set_ptr_(NULL)
-  {}
-
-  friend value_type get(const Constraints_pmap& map, const key_type& v)
-  {
-    CGAL_assertion(map.set_ptr_ != NULL);
-    return !map.set_ptr_->empty()
-         && map.set_ptr_->count(v);
-  }
-
-  friend void put(Constraints_pmap& map
-                , const key_type& v, const value_type is)
-  {
-    CGAL_assertion(map.set_ptr_ != NULL);
-    if (is)                map.set_ptr_->insert(v);
-    else if(get(map, v))   map.set_ptr_->erase(v);
-  }
- };
 
 template <typename Mesh>
 void test_angle_smoothing(const char* filename)
@@ -193,7 +159,7 @@ void test_constrained_vertices(const char* filename)
       z_init = get(vpmap, v).z();
     }
   }
-  Constraints_pmap<Mesh> vcmap(&selected_vertices);
+  CGAL::Boolean_property_map<std::set<vertex_descriptor> > vcmap(selected_vertices);
 
   CGAL::Polygon_mesh_processing::smooth_angles(mesh,
         CGAL::Polygon_mesh_processing::parameters::vertex_is_constrained_map(vcmap));
