@@ -735,7 +735,7 @@ class Lazy : public Handle
             class A_,
             class E2A_,
             class K_>
-  friend struct Lazy_kernel_base;
+  friend class Lazy_kernel_base;
   
 public :
 
