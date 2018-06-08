@@ -159,7 +159,7 @@ used during the generation of the mesh must sometimes be evaluated outside of th
 The implicit function describing the domain to be meshed must thus be defined
 over the whole Euclidean space and be periodic, with a period compatible with the canonical cube.
 
-\subsubsection Periodic_3_mesh_3ArtificialPeriodicity Artifical Domain Periodicity
+\subsubsection Periodic_3_mesh_3ArtificialPeriodicity Enforcing Domain Periodicity
 
 The specifications of the input implicit function described in the previous section are quite restrictive.
 To relax these requirements, this package also offers a wrapper class,
@@ -476,7 +476,7 @@ FT sphere_function (const Point& p) { return CGAL::squared_distance(p, Point(0.5
 Iso_cuboid_3 canonical_cube(0, 0, 0, 1, 1, 1);
 Periodic_mesh_domain domain =
   Periodic_mesh_domain::create_implicit_mesh_domain(
-    Periodic_3_function(sphere_function, canonical_cube), canonical_cube );
+    Periodic_function(sphere_function, canonical_cube), canonical_cube );
 ...
 \endcode
 
