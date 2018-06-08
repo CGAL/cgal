@@ -351,6 +351,36 @@ public:
   };
   
   
+  struct Compute_weight_3 : public BaseClass::Compute_weight_3
+  {
+    typedef typename Kernel_::FT FT;
+    typedef typename Kernel_::Point_3 Point_3;
+    typedef typename Kernel_::Weighted_point_3 Weighted_point_3;
+
+    FT operator()(const Weighted_point_3& p) const
+    {
+
+      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_3,
+                         typename Exact_kernel::Weighted_point_3,
+                         typename Approximate_kernel::Construct_weighted_point_3,
+                         typename Exact_kernel::Construct_weighted_point_3,
+                         E2A_,
+                         Return_base_tag,
+                         Point_3,
+                         FT
+                         > LR;
+
+            
+      LR * lr = dynamic_cast<LR*>(p.ptr());
+      if(lr){
+        return lr->l2;
+      }
+      return BaseClass().compute_weight_3_object()(p);
+    }
+    
+  };
+
+  
   struct Construct_point_2 : public BaseClass::Construct_point_2
   {
     typedef typename Kernel_::FT FT;
@@ -490,6 +520,11 @@ public:
   Compute_weight_2 compute_weight_2_object() const
   {
     return Compute_weight_2();
+  }
+  
+  Compute_weight_3 compute_weight_3_object() const
+  {
+    return Compute_weight_3();
   }
   
 
