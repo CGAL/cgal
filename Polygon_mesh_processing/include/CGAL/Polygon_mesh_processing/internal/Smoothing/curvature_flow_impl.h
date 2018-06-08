@@ -74,7 +74,6 @@ public:
       vpmap_(vpmap),
       vcmap_(vcmap),
       weight_calculator_(mesh, vpmap),
-      nb_vert_(static_cast<int>(vertices(mesh).size())),
       vimap_(get(boost::vertex_index, mesh_))
   {}
 
@@ -82,6 +81,7 @@ public:
   void init_smoothing(const FaceRange& face_range)
   {
     set_face_range(face_range);
+    nb_vert_ = vrange_.size();
   }
 
   void setup_system(Eigen_matrix& A,
@@ -154,7 +154,7 @@ public:
 
   void update_mesh(Eigen_vector& Xx, Eigen_vector& Xy, Eigen_vector& Xz)
   {
-    BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
+    BOOST_FOREACH(vertex_descriptor v, vrange_)
     {
       int index = get(vimap_, v);
       NT x_new = Xx[index];

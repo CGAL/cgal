@@ -177,11 +177,11 @@ void test_constrained_vertices(const char* filename)
   }
 }
 
-
 int main(){
 
   const char* filename_polygon = "data/simple_polygon.off";
   const char* filename_pyramid = "data/simple_pyramid.off";
+  const char* filename_elephant = "data/elephant.off";
   test_angle_smoothing<SurfaceMesh>(filename_polygon);
   test_area_smoothing<SurfaceMesh>(filename_polygon);
   test_constrained_vertices<SurfaceMesh>(filename_polygon);

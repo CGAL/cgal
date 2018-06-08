@@ -143,12 +143,27 @@ public Q_SLOTS:
 
     const unsigned int nb_iter = ui_widget.angles_iter_spinBox->value();
     bool projection = ui_widget.projection_checkBox->isChecked();
-
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    smooth_angles(pmesh, parameters::number_of_iterations(nb_iter).do_project(projection));
 
-    poly_item->invalidateOpenGLBuffers();
-    poly_item->itemChanged();
+    if(poly_item)
+    {
+      smooth_angles(pmesh,
+                    parameters::number_of_iterations(nb_iter).do_project(projection));
+
+      poly_item->invalidateOpenGLBuffers();
+      poly_item->itemChanged();
+    }
+
+    else if(selection_item)
+    {
+      smooth_angles(selection_item->selected_facets, pmesh,
+                    parameters::number_of_iterations(nb_iter)
+                    .do_project(projection));
+
+      selection_item->poly_item_changed();
+      selection_item->changed_with_poly_item();
+    }
+
     QApplication::restoreOverrideCursor();
    }
 
@@ -162,14 +177,30 @@ public Q_SLOTS:
     unsigned int nb_iter = ui_widget.areas_iter_spinBox->value();
     bool projection = ui_widget.projection_checkBox->isChecked();
     const double precision = ui_widget.precision_spinBox->value();
-
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    smooth_areas(pmesh, parameters::number_of_iterations(nb_iter)
-                                    .do_project(projection)
-                                    .gradient_descent_precision(precision));
 
-    poly_item->invalidateOpenGLBuffers();
-    poly_item->itemChanged();
+    if(poly_item)
+    {
+      smooth_areas(pmesh, parameters::number_of_iterations(nb_iter)
+                                      .do_project(projection)
+                                      .gradient_descent_precision(precision));
+      poly_item->invalidateOpenGLBuffers();
+      poly_item->itemChanged();
+    }
+
+    else if(selection_item)
+    {
+      smooth_areas(selection_item->selected_facets, pmesh, parameters::number_of_iterations(nb_iter)
+                                                          .do_project(projection)
+                                                          .gradient_descent_precision(precision));
+      selection_item->poly_item_changed();
+      selection_item->changed_with_poly_item();
+    }
+    else
+    {
+      std::cerr<< "Something's gone wrong.\n";
+    }
+
     QApplication::restoreOverrideCursor();
    }
 
@@ -194,40 +225,85 @@ public Q_SLOTS:
     // explicit scheme
     if(ui_widget.explicit_checkBox->isChecked())
     {
-      smooth_along_curvature_flow(pmesh, time_step, parameters::use_explicit_scheme(true)
-                                                               .number_of_iterations(nb_iter));
+      if(poly_item)
+      {
+        smooth_along_curvature_flow(pmesh, time_step, parameters::use_explicit_scheme(true)
+                                                                 .number_of_iterations(nb_iter));
+        poly_item->invalidateOpenGLBuffers();
+        poly_item->itemChanged();
+      }
+      else if(selection_item)
+      {
+        smooth_along_curvature_flow(selection_item->selected_facets,
+                                    pmesh, time_step, parameters::use_explicit_scheme(true)
+                                                                 .number_of_iterations(nb_iter));
+        selection_item->poly_item_changed();
+        selection_item->changed_with_poly_item();
+      }
+      else
+      {
+        std::cerr<< "Something's gone wrong.\n";
+      }
     }
     else // implicit scheme
-    {
-      // calculate stiffness matrix only once before solving repeatedly
-      // If we changed item or if the stiffness cache is cleared (by the user hitting the button)
-      if(index_id != last_index_id || stiffness_is_cleared)
-      {
-        if(border_collected)
-        {
-          internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, true,
-          parameters::vertex_is_constrained_map(vcmap));
-        }
-        else
-        {
-          internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, true,
-          parameters::all_default());
-        }
-        last_index_id = index_id;
+    { // Calculate stiffness matrix only once before solving repeatedly
 
-        // reset the cache flag
-        stiffness_is_cleared = false;
+      if(poly_item)
+      {
+        if(index_id != last_index_id || stiffness_is_cleared){
+          // If we changed item or if the stiffness cache is cleared (by the user hitting the button)
+          if(border_collected){
+            internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, true,
+            parameters::vertex_is_constrained_map(vcmap));
+          }
+          else{
+            internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, true,
+            parameters::all_default());
+          }
+          last_index_id = index_id;
+          // reset the cache flag
+          stiffness_is_cleared = false;
+        }
+
+        internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, false,
+                            parameters::number_of_iterations(nb_iter));
+
+        poly_item->invalidateOpenGLBuffers();
+        poly_item->itemChanged();
       }
 
-      internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, false,
-                          parameters::number_of_iterations(nb_iter));
+      else if(selection_item)
+      {
+        if(index_id != last_index_id || stiffness_is_cleared){
+          if(border_collected)
+          {
+            internal::solve_mcf(selection_item->selected_facets, pmesh, time_step, stiffness, true,
+            parameters::vertex_is_constrained_map(vcmap));
+          }
+          else{
+            internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, true,
+            parameters::all_default());
+          }
+          last_index_id = index_id;
+          stiffness_is_cleared = false;
+        }
+
+        internal::solve_mcf(selection_item->selected_facets, pmesh, time_step, stiffness, false,
+                            parameters::number_of_iterations(nb_iter));
+
+        selection_item->poly_item_changed();
+        selection_item->changed_with_poly_item();
+      }
+
+      else
+      {
+        std::cerr<< "Something's gone wrong.\n";
+      }
     }
 
     // recenter scene
     //poly_item->compute_bbox();
     //static_cast<Scene*>(scene)->updated_bbox(true);
-    poly_item->invalidateOpenGLBuffers();
-    poly_item->itemChanged();
     QApplication::restoreOverrideCursor();
   }
 

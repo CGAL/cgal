@@ -185,7 +185,7 @@ public:
 
   void project_to_surface()
   {
-    BOOST_FOREACH( vertex_descriptor v, vertices(mesh_))
+    BOOST_FOREACH( vertex_descriptor v, vrange_)
     {
       if(!is_border(v, mesh_) && !is_constrained(v))
       {
