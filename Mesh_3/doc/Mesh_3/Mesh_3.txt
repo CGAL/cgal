@@ -358,7 +358,7 @@ if inside.
 If the domain description includes 0 and 1-dimensional features
 that have to be accurately represented in the final mesh,
 the template parameter `MeshDomain` is required to be
-of a model of the refined concept
+of a model of the concept
 `MeshDomainWithFeatures_3`. The concept `MeshDomainWithFeatures_3` mainly
 provides the incidence
 graph of 0, 1 and 2-dimensional features,

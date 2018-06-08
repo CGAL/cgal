@@ -34,25 +34,25 @@ instead at \f$ P' \f$ and \f$ Q' \f$, as shown on the right.
 
 In practice, the implicit function provided by the user is likely defined
 over a larger domain than the canonical cube (in general, it is \f$ \mathbb R^3\f$).
-Note that -- when constructing artifically periodic functions -- all the values of the implicit function
+Note that -- when constructing artificially periodic functions -- all the values of the implicit function
 for points outside this canonical cube are unused since queries are always answered by looking at the canonical representative.
 \cgalFigureRef{Periodic_3_mesh_3FromCanonicalToWholeDiscard} gives an example of such domain where some information is discarded.
 
 \cgalFigureBegin{Periodic_3_mesh_3FromCanonicalToWholeDiscard, periodicity.svg}
-Illustration in 2D (cut view) of a domain defined by an implicit function made artifically periodic.
+Illustration in 2D (cut view) of a domain defined by an implicit function artificially made periodic.
 Any value of the function outside of the canonical cube is ignored.
 \cgalFigureEnd
 
 Note also that when constructing artificially periodic functions, it is the responsability of the user
 to provide an input function that is compatible with the canonical cube (that is, whose isovalues
-are <em>periodicially</em> continuous and without intersections).
+are <em>periodically</em> continuous and without intersections).
 \cgalFigureRef{Periodic_3_mesh_3ContinuityIssue} is an example of a bad choice
 of input function and canonical cube: there is no continuity of the isovalues
 at the border of the canonical cube. In such configuration, the mesher might
 or might not finish and the result is likely to be non-manifold and to contain self-intersections.
 
 \cgalFigureBegin{Periodic_3_mesh_3ContinuityIssue, periodicity_issue.svg}
-Illustration in 2D (cut view) of a domain defined by an implicit function made artifically periodic.
+Illustration in 2D (cut view) of a domain defined by an implicit function artificially made periodic.
 The zero isovalue of the implicit function does not form a continuous curve.
 \cgalFigureEnd
 

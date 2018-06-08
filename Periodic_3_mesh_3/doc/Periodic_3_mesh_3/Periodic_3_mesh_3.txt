@@ -163,7 +163,7 @@ over the whole Euclidean space and be periodic, with a period compatible with th
 
 The specifications of the input implicit function described in the previous section are quite restrictive.
 To relax these requirements, this package also offers a wrapper class,
-`CGAL::Periodic_3_function_wrapper`, to artifically construct
+`CGAL::Periodic_3_function_wrapper`, to artificially construct
 periodic functions compatible with the user-defined canonical cube,
 from the values of an implicit function over the canonical cube.
 It is thus possible to construct periodic domains described by implicit functions
@@ -323,7 +323,7 @@ the point lies, if inside.
 If the domain description includes 0 and 1-dimensional features
 that have to be accurately represented in the final mesh,
 the template parameter `PeriodicMeshDomain` is required to be
-of a model of the refined concept `Periodic_3MeshDomainWithFeatures_3`,
+of a model of the concept `Periodic_3MeshDomainWithFeatures_3`,
 which mainly provides the incidence graph of 0, 1 and 2-dimensional features,
 and a member function to construct sample points on curves.
 
