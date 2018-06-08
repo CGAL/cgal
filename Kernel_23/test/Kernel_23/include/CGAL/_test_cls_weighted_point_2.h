@@ -67,17 +67,15 @@ bool _test_cls_weighted_point_2(const R& )
 
   // accessors
   CGAL::Point_2<R> p1;
-  // p1 = wp1.point();
+  p1 = wp1.point();
 
   p1 = wp2.point();
   assert(p1 == p0);
-
-  std::cout << "\nA"<< std::endl;
+  
   p1 =  wp3.point();
+
   FT w = wp3.weight();
   assert(w == iw);
-
-  std::cout << "\nB"<< std::endl;
   w = wp7.weight();
   
   // no need to test the other operations as they use Point_2 operations (which
