@@ -251,57 +251,13 @@ private:
 
     Vector edge1(pt, equidistant_p1);
     Vector edge2(pt, equidistant_p2);
-    Vector vec_main_he(pt, ps);
-
-    // check degenerate cases
-    double precision = 1e-3;
-
-    if ( edge1.squared_length()               < precision ||
-       edge2.squared_length()                 < precision ||
-       sqlength(main_he, mesh_)               < precision ||
-       (edge1 - vec_main_he).squared_length() < precision ||
-       (edge2 - vec_main_he).squared_length() < precision )
-    {
-      return CGAL::NULL_VECTOR;
-    }
-
-    CGAL_assertion(vec_main_he.squared_length() > precision);
 
     // find bisector
     Vector bisector = CGAL::NULL_VECTOR;
     internal::normalize(edge1, traits_);
     internal::normalize(edge2, traits_);
     bisector = edge1 + edge2;
-
-    // special case in angle bisecting: If no edge is actually degenerate
-    // but edge1 and edge2 are almost parallel, then by adding them the bisector is
-    // almost zero.
-    if( bisector.squared_length() < precision )
-    {
-      // angle is (almost) 180 degrees, take the perpendicular
-      // which is normal to edge and tangent to the surface
-      Vector normal_vec = find_perpendicular(edge1, pt, ps);
-
-      CGAL_assertion(normal_vec != CGAL::NULL_VECTOR);
-      CGAL_assertion(CGAL::scalar_product(edge1, normal_vec) < precision);
-
-      Segment b_segment(pt, pt + normal_vec);
-      Point_3 b_segment_end = b_segment.target();
-
-      if(CGAL::angle(b_segment_end, pt, ps) == CGAL::OBTUSE)
-      {
-        b_segment = b_segment.opposite();
-      }
-      bisector = Vector(b_segment);
-    }
-
     correct_bisector(bisector, main_he);
-
-    double target_length = CGAL::sqrt(sqlength(main_he, mesh_));
-    double bisector_length = CGAL::sqrt(bisector.squared_length());
-
-    CGAL_assertion(   ( target_length - precision    <   bisector_length     ) &&
-                      ( bisector_length        <   target_length + precision )    );
     return bisector;
   }
 
