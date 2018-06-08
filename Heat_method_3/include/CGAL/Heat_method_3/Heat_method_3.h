@@ -245,9 +245,9 @@ namespace Heat_method_3 {
       return u;
     }
 
-    Eigen::VectorXd compute_unit_gradient(Eigen::VectorXd u)
+    Eigen::MatrixXd compute_unit_gradient(const Eigen::VectorXd& u)
     {
-      Eigen::VectorXd X(num_faces(tm));
+      Eigen::MatrixXd X(num_faces(tm), 3);
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
       BOOST_FOREACH(face_descriptor f, faces(tm)) {
         boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
@@ -270,14 +270,15 @@ namespace Heat_method_3 {
         double N_cross = (CGAL::sqrt(cross*cross));
         vector unit_cross = cross/N_cross;
         double area_face = N_cross * (1./2);
-
         vector edge_sums = u(k) * CGAL::cross_product(unit_cross,(p_j-p_i));
-        edge_sums += u(i) * CGAL::cross_product(unit_cross, (p_k-p_j));
-        edge_sums += u(j) * CGAL::cross_product(unit_cross, (p_i-p_k));
-
+        edge_sums = edge_sums + u(i) * (CGAL::cross_product(unit_cross, (p_k-p_j)));
+        edge_sums = edge_sums + u(j) * CGAL::cross_product(unit_cross, (p_i-p_k));
         edge_sums = edge_sums * (1./area_face);
         double e_magnitude = CGAL::sqrt(edge_sums*edge_sums);
-        X(face_i) = edge_sums/e_magnitude;        
+        vector unit_grad = edge_sums*(1./e_magnitude);
+        X(face_i, 0) = unit_grad.x();
+        X(face_i, 1) = unit_grad.y();
+        X(face_i, 2) = unit_grad.z();
       }
       return X;
     }
@@ -370,7 +371,7 @@ namespace Heat_method_3 {
       sources = get_sources();
       kronecker = kronecker_delta(sources);
       solved_u = solve_cotan_laplace(mass_matrix, cotan_matrix, kronecker, time_step, m);
-
+      X = compute_unit_gradient(solved_u);
 
     }
 
@@ -382,7 +383,7 @@ namespace Heat_method_3 {
     Matrix kronecker;
     Matrix mass_matrix, cotan_matrix;
     Eigen::VectorXd solved_u;
-
+    Eigen::MatrixXd X;
 
   };
 

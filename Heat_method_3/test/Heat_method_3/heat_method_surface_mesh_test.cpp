@@ -73,6 +73,15 @@ void check_for_zero(Eigen::VectorXd u)
   }
 }
 
+void check_for_unit(Eigen::MatrixXd X, int dimension)
+{
+  for(int k = 0; k<dimension; k++)
+  {
+    double sum = CGAL::sqrt(X(k,0)*X(k,0) + X(k,1)*X(k,1) + X(k,2)*X(k,2));
+    assert((sum-1)<0.00001);
+  }
+}
+
 int main()
 {
   Mesh sm;
@@ -105,8 +114,11 @@ int main()
   Eigen::VectorXd solved_u = hm.solve_cotan_laplace(M,c,K,time_step,4);
   Eigen::VectorXd check_u = ((M+time_step*c)*solved_u)-K;
   check_for_zero(check_u);
+  Eigen::MatrixXd X = hm.compute_unit_gradient(solved_u);
+  check_for_unit(X,3);
 
   std::cout<<"PHASE 1 DONE \n";
+  std::cout<<"PHASE 2 DONE \n";
   std::cout<<"SUCCESS";
   return 0;
 }
