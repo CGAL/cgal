@@ -234,14 +234,13 @@ namespace Heat_method_3 {
       solver.compute(A);
       if(solver.info()!=Eigen::Success) {
         // decomposition failed
-        CGAL_error_msg("Eigen Decomposition failed");
+        CGAL_error_msg("Eigen Decomposition in cotan failed");
       }
       u = solver.solve(x);
       if(solver.info()!=Eigen::Success) {
         // solving failed
-        CGAL_error_msg("Eigen Solving failed");
+        CGAL_error_msg("Eigen Solving in cotan failed");
       }
-      // solve for another right hand side:
       return u;
     }
 
@@ -283,9 +282,92 @@ namespace Heat_method_3 {
       return X;
     }
 
+    double dot_eigen_vector(Eigen::Vector3d a, vector b)
+    {
+      return (a(0)*b.x() + a(1)*b.y() + a(2)*b.z());
+    }
 
 
+    Matrix compute_divergence(const Eigen::MatrixXd& X, int rows)
+    {
+      Matrix indexD;
+      std::vector<triplet> d_matrix_entries;
+      CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
+      BOOST_FOREACH(face_descriptor f, faces(tm)) {
+        boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
+        vertex_descriptor current = *(vbegin);
+        vertex_descriptor neighbor_one = *(++vbegin);
+        vertex_descriptor neighbor_two = *(++vbegin);
+        Index i = get(vertex_id_map, current);
+        Index j = get(vertex_id_map, neighbor_one);
+        Index k = get(vertex_id_map, neighbor_two);
+        Point_3 p_i = get(vpm,current);
+        Point_3 p_j = get(vpm, neighbor_one);
+        Point_3 p_k = get(vpm, neighbor_two);
+        Index face_i = get(face_id_map, f);
 
+        vector cross = CGAL::cross_product((p_j-p_i), (p_k-p_i));
+        double norm_cross = (CGAL::sqrt(cross*cross));
+        double dot = (p_j-p_i)*(p_k-p_i);
+        double cotan_i = dot/norm_cross;
+
+        cross = CGAL::cross_product((p_i-p_j), (p_k-p_j));
+        dot = to_double((p_i-p_j)*(p_k-p_j));
+        double cotan_j = dot/norm_cross;
+
+        cross = CGAL::cross_product((p_i-p_k), (p_j-p_k));
+        dot = to_double((p_i-p_k)*(p_j-p_k));
+        double cotan_k = dot/norm_cross;
+
+        Eigen::VectorXd a = X.row(face_i);
+        double i_entry = cotan_k*(dot_eigen_vector(a,(p_j-p_i))) + cotan_j*(dot_eigen_vector(a,(p_k-p_i)));
+        double j_entry = cotan_i*(dot_eigen_vector(a,(p_k-p_j))) + cotan_k*(dot_eigen_vector(a,(p_i-p_j)));
+        double k_entry = cotan_j*(dot_eigen_vector(a,(p_i-p_k))) + cotan_i*(dot_eigen_vector(a,(p_j-p_k)));
+
+        d_matrix_entries.push_back(triplet(i,0, (1./2)*i_entry));
+        d_matrix_entries.push_back(triplet(j,0, (1./2)*j_entry));
+        d_matrix_entries.push_back(triplet(k,0, (1./2)*k_entry));
+      }
+      indexD.resize(rows,1);
+      indexD.setFromTriplets(d_matrix_entries.begin(), d_matrix_entries.end());
+      return indexD;
+    }
+
+    Eigen::VectorXd value_at_source_set(double a, int dimension)
+    {
+      Eigen::VectorXd source_set_val(dimension,1);
+      for(int k = 0; k<dimension; k++)
+      {
+        source_set_val(k,0) = a;
+      }
+      return source_set_val;
+    }
+
+
+    Eigen::VectorXd solve_phi(Matrix c, Matrix divergence, int dimension)
+    {
+
+      Eigen::VectorXd phi;
+      Eigen::SimplicialLDLT<Matrix> solver;
+      solver.compute(c);
+      if(solver.info()!=Eigen::Success) {
+        // decomposition failed
+        CGAL_error_msg("Eigen Decomposition in phi failed");
+      }
+      phi = solver.solve(divergence);
+      if(solver.info()!=Eigen::Success) {
+        // solving failed
+        CGAL_error_msg("Eigen Solving in phi failed");
+      }
+      return (phi - value_at_source_set(phi.coeff(0,0), dimension));
+    }
+
+    //currently, this function will return a (number of vertices)x1 vector where
+    //the ith index has the distance from the first vertex to the ith vertex
+    const Eigen::VectorXd& get_distances()
+    {
+      return solved_phi;
+    }
 
   private:
 
@@ -313,7 +395,6 @@ namespace Heat_method_3 {
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
       //Go through each face on the mesh
       BOOST_FOREACH(face_descriptor f, faces(tm)) {
-        //Prior assumption that it is a triangle mesh
         boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
         vertex_descriptor current = *(vbegin);
         vertex_descriptor neighbor_one = *(++vbegin);
@@ -325,7 +406,6 @@ namespace Heat_method_3 {
         Point_3 p_j = get(vpm, neighbor_one);
         Point_3 p_k = get(vpm, neighbor_two);
 
-        //If the passed in mesh is not a triangle mesh, the algorithm breaks here
         vector cross = CGAL::cross_product((p_j-p_i), (p_k-p_i));
         double dot = (p_j-p_i)*(p_k-p_i);
 
@@ -367,14 +447,13 @@ namespace Heat_method_3 {
       time_step = 1./(num_edges(tm));
       time_step = time_step*summation_of_edges();
 
-      // AF: This segfaults as sources is empty
       sources = get_sources();
       kronecker = kronecker_delta(sources);
       solved_u = solve_cotan_laplace(mass_matrix, cotan_matrix, kronecker, time_step, m);
       X = compute_unit_gradient(solved_u);
-
+      index_divergence = compute_divergence(X, m);
+      solved_phi = solve_phi(cotan_matrix, index_divergence, m);
     }
-
     const TriangleMesh& tm;
     VertexPointMap vpm;
     FaceIndexMap fpm;
@@ -384,7 +463,8 @@ namespace Heat_method_3 {
     Matrix mass_matrix, cotan_matrix;
     Eigen::VectorXd solved_u;
     Eigen::MatrixXd X;
-
+    Matrix index_divergence;
+    Eigen::VectorXd solved_phi;
   };
 
 } // namespace Heat_method_3

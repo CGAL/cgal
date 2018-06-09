@@ -46,8 +46,8 @@ void cotan_matrix_test(SparseMatrix c)
       sum +=it.value();
     }
   }
-  //Every row should sum up to 0
-  assert(sum == 0);
+  //Every row should sum up to 0, allow for slight error for large meshes
+  assert(sum < 0.000000001);
 }
 
 void mass_matrix_test(SparseMatrix M)
@@ -62,6 +62,7 @@ void mass_matrix_test(SparseMatrix M)
     }
     //total Area matrix should be equal to the sum of all faces on the mesh
     //have to allow for the error because of rounding issues: Andreas might be able to help with this?
+    //this will only work for the pyramid mesh
     assert((sum-1.866025)<=0.000005);
 }
 
@@ -117,8 +118,42 @@ int main()
   Eigen::MatrixXd X = hm.compute_unit_gradient(solved_u);
   check_for_unit(X,3);
 
+  SparseMatrix XD = hm.compute_divergence(X,4);
+
+  Eigen::VectorXd solved_dist = hm.solve_phi(c, XD,4);
+
   std::cout<<"PHASE 1 DONE \n";
   std::cout<<"PHASE 2 DONE \n";
-  std::cout<<"SUCCESS";
+  std::cout<<"PHASE 3 DONE \n";
+
+  Mesh sm2;
+  std::ifstream llets("data/sphere.off");
+  llets>>sm2;
+  if(!llets|| num_vertices(sm2) == 0) {
+    std::cerr << "Problem loading the input data" << std::endl;
+    return 1;
+  }
+  Heat_method hm2(sm2);
+  //Eigen::VectorXd solved_dist_sphere = hm2.get_distances();
+  const SparseMatrix& M2 = hm2.get_mass_matrix();
+  const SparseMatrix& c2 = hm2.get_cotan_matrix();
+  cotan_matrix_test(c2);
+  //mass_matrix_test(M2);
+  const SparseMatrix& K2 = hm2.get_kronecker_delta();
+  // AF: I commented the assert as I commented in build()
+  assert(K2.nonZeros()==1);
+  double time_step_2 = hm2.get_time_step();
+
+  Eigen::VectorXd solved_u2 = hm2.solve_cotan_laplace(M2,c2,K2,time_step_2,43562);
+  Eigen::VectorXd check_u2 = ((M2+time_step_2*c2)*solved_u2)-K2;
+  check_for_zero(check_u2);
+  Eigen::MatrixXd X2 = hm2.compute_unit_gradient(solved_u2);
+  check_for_unit(X2, 87120);
+  SparseMatrix XD2 = hm.compute_divergence(X2,43562);
+  Eigen::VectorXd solved_dist2 = hm.solve_phi(c2, XD2,43562);
+  //verified a few of the actual values against the estimated values, avg. error was 0.0001
+  //In future, want to check performance against other solver
+
+
   return 0;
 }
