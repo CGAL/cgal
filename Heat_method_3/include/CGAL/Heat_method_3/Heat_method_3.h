@@ -83,7 +83,7 @@ namespace Heat_method_3 {
     typedef typename Traits::Point_3                                      Point_3;
     typedef typename Traits::FT                                                FT;
 
-    typedef typename Traits::Vector_3                    vector;
+    typedef typename Traits::Vector_3                    Vector_3;
 
 
     typedef typename LA::SparseMatrix Matrix;
@@ -263,16 +263,16 @@ namespace Heat_method_3 {
         //cross that with eij, ejk, eki
         //so (Ncross eij) *uk and so on
         //sum all of those then multiply by 1./(2a)
-        vector cross = CGAL::cross_product((p_j-p_i), (p_k-p_i));
+        Vector_3 cross = CGAL::cross_product((p_j-p_i), (p_k-p_i));
         double N_cross = (CGAL::sqrt(cross*cross));
-        vector unit_cross = cross/N_cross;
+        Vector_3 unit_cross = cross/N_cross;
         double area_face = N_cross * (1./2);
-        vector edge_sums = u(k) * CGAL::cross_product(unit_cross,(p_j-p_i));
+        Vector_3 edge_sums = u(k) * CGAL::cross_product(unit_cross,(p_j-p_i));
         edge_sums = edge_sums + u(i) * (CGAL::cross_product(unit_cross, (p_k-p_j)));
         edge_sums = edge_sums + u(j) * CGAL::cross_product(unit_cross, (p_i-p_k));
         edge_sums = edge_sums * (1./area_face);
         double e_magnitude = CGAL::sqrt(edge_sums*edge_sums);
-        vector unit_grad = edge_sums*(1./e_magnitude);
+        Vector_3 unit_grad = edge_sums*(1./e_magnitude);
         X(face_i, 0) = unit_grad.x();
         X(face_i, 1) = unit_grad.y();
         X(face_i, 2) = unit_grad.z();
@@ -280,7 +280,7 @@ namespace Heat_method_3 {
       return X;
     }
 
-    double dot_eigen_vector(Eigen::Vector3d a, vector b)
+    double dot_eigen_vector(const Eigen::Vector3d& a, const Vector_3& b)
     {
       return (a(0)*b.x() + a(1)*b.y() + a(2)*b.z());
     }
@@ -304,7 +304,7 @@ namespace Heat_method_3 {
         Point_3 p_k = get(vpm, neighbor_two);
         Index face_i = get(face_id_map, f);
 
-        vector cross = CGAL::cross_product((p_j-p_i), (p_k-p_i));
+        Vector_3 cross = CGAL::cross_product((p_j-p_i), (p_k-p_i));
         double norm_cross = (CGAL::sqrt(cross*cross));
         double dot = (p_j-p_i)*(p_k-p_i);
         double cotan_i = dot/norm_cross;
@@ -414,7 +414,7 @@ namespace Heat_method_3 {
         Point_3 p_j = get(vpm, neighbor_one);
         Point_3 p_k = get(vpm, neighbor_two);
 
-        vector cross = CGAL::cross_product((p_j-p_i), (p_k-p_i));
+        Vector_3 cross = CGAL::cross_product((p_j-p_i), (p_k-p_i));
         double dot = (p_j-p_i)*(p_k-p_i);
 
         double norm_cross = (CGAL::sqrt(cross*cross));
