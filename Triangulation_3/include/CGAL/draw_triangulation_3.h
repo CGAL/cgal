@@ -21,13 +21,11 @@
 #ifndef CGAL_DRAW_T3_H
 #define CGAL_DRAW_T3_H
 
-#include <iostream>
+#include <CGAL/license/Triangulation_3.h>
+#include <CGAL/Qt/Basic_viewer_qt.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
-#include <CGAL/license/Triangulation_3.h>
-
-#include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
@@ -43,8 +41,7 @@ struct DefaultColorFunctorT3
     if (fh==NULL) // use to get the mono color
       return CGAL::Color(100, 125, 200); // R G B between 0-255
 
-    // Here dh is the smaller dart of its face
-    CGAL::Random random(((std::size_t))(&*((*fh)->first))+(*fh)->second);
+    CGAL::Random random((std::size_t)(&*((*fh)->first))+(*fh)->second);
     return get_random_color(random);
   }
 };
@@ -67,7 +64,8 @@ public:
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
   SimpleTriangulation3ViewerQt(QWidget* parent,
-                               const T3& at3, const char* title="",
+                               const T3& at3,
+                               const char* title="Basic T3 Viewer",
                                bool anofaces=false,
                                const ColorFunctor& fcolor=ColorFunctor()) :
     // First draw: vertices; edges, faces; multi-color; no inverse normal
@@ -145,9 +143,9 @@ protected:
   
 template<class T3, class ColorFunctor>
 void draw(const T3& at3,
-          const char* title="T3 Viewer",
-          bool nofill=false,
-          const ColorFunctor& fcolor=ColorFunctor())
+          const char* title,
+          bool nofill,
+          const ColorFunctor& fcolor)
 {
 #if defined(CGAL_TEST_SUITE)
   int argc=3;
@@ -159,8 +157,11 @@ void draw(const T3& at3,
 
   QApplication app(argc,const_cast<char**>(argv));
 
-  SimpleTriangulation3ViewerQt<T3, ColorFunctor> mainwindow(app.activeWindow(),at3, title,
-                                                            nofill, fcolor);
+  SimpleTriangulation3ViewerQt<T3, ColorFunctor> mainwindow(app.activeWindow(),
+                                                            at3,
+                                                            title,
+                                                            nofill,
+                                                            fcolor);
 
 #if !defined(CGAL_TEST_SUITE)
   mainwindow.show();
@@ -169,37 +170,20 @@ void draw(const T3& at3,
 }
 
 template<class T3>
-void draw(const T3& at3,
-          const char* title="T3 Viewer",
-          bool nofill=false)
-{ draw<T3, DefaultColorFunctorT3>(at3, title, nofill); }
-
-} // End namespace CGAL
-
-#else // CGAL_USE_BASIC_VIEWER
-
-namespace CGAL 
+void draw(const T3& at3, const char* title, bool nofill)
 {
-
-template<class T3, class ColorFunctor>
-void draw(const T3&,
-          const char* ="T3 Viewer",
-          bool=false,
-          const ColorFunctor& =ColorFunctor())
-{
-  std::cerr<<"Impossible to draw a Triangulation_3 because CGAL_USE_BASIC_VIEWER is not defined."
-           <<std::endl;
+  DefaultColorFunctorT3 c;
+  draw(at3, title, nofill, c);
 }
-  
+
 template<class T3>
-void draw(const T3&,
-          const char* ="T3 Viewer",
-          bool=false)
-{
-  std::cerr<<"Impossible to draw a Triangulation_3 because CGAL_USE_BASIC_VIEWER is not defined."
-           <<std::endl;
-}
-  
+void draw(const T3& at3, const char* title)
+{ draw(at3, title, false); }
+
+template<class T3>
+void draw(const T3& at3)
+{ draw(at3, "Basic T3 Viewer"); }
+
 } // End namespace CGAL
 
 #endif // CGAL_USE_BASIC_VIEWER

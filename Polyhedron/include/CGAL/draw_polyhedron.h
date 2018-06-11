@@ -21,14 +21,13 @@
 #ifndef CGAL_DRAW_POLYHEDRON_H
 #define CGAL_DRAW_POLYHEDRON_H
 
-#include <iostream>
+#include <CGAL/license/Polyhedron.h>
+#include <CGAL/Qt/Basic_viewer_qt.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
-#include <CGAL/license/Polyhedron.h>
-
-#include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Random.h>
+
 namespace CGAL
 {
   
@@ -43,7 +42,7 @@ struct DefaultColorFunctorPolyhedron
       return CGAL::Color(100, 125, 200); // R G B between 0-255
 
     CGAL::Random random((std::size_t)&(*fh));
-     return get_random_color(random);
+    return get_random_color(random);
   }
 };
 
@@ -63,7 +62,9 @@ public:
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
-  SimplePolyhedronViewerQt(QWidget* parent,const Polyhedron& apoly, const char* title="",
+  SimplePolyhedronViewerQt(QWidget* parent,
+                           const Polyhedron& apoly,
+                           const char* title="Basic Polyhedron Viewer",
                            bool anofaces=false,
                            const ColorFunctor& fcolor=ColorFunctor()) :
     // First draw: no vertex; edges, faces; mono-color; inverse normal
@@ -195,9 +196,9 @@ protected:
   
 template<class Polyhedron, class ColorFunctor>
 void draw(const Polyhedron& apoly,
-          const char* title="Polyhedron Viewer",
-          bool nofill=false,
-          const ColorFunctor& fcolor=ColorFunctor())
+          const char* title,
+          bool nofill,
+          const ColorFunctor& fcolor)
 {  
 #if defined(CGAL_TEST_SUITE)
   int argc=3;
@@ -218,39 +219,19 @@ void draw(const Polyhedron& apoly,
 }
 
 template<class Polyhedron>
-void draw(const Polyhedron& apoly,
-          const char* title="Polyhedron Viewer",
-          bool nofill=false)
+void draw(const Polyhedron& apoly, const char* title, bool nofill)
 {
-  return draw<Polyhedron, DefaultColorFunctorPolyhedron>
-    (apoly, title, nofill);
-}
-
-} // End namespace CGAL
-
-#else // CGAL_USE_BASIC_VIEWER
-
-namespace CGAL 
-{
-  
-template<class Polyhedron, class ColorFunctor>
-void draw(const Polyhedron&,
-          const char* ="Polyhedron Viewer",
-          bool=false,
-          const ColorFunctor& =ColorFunctor())
-{
-  std::cerr<<"Impossible to draw a Polyhedron_3 because CGAL_USE_BASIC_VIEWER is not defined."
-           <<std::endl;
+  DefaultColorFunctorPolyhedron c;
+  draw(apoly, title, nofill, c);
 }
 
 template<class Polyhedron>
-void draw(const Polyhedron&,
-          const char* ="Polyhedron Viewer",
-          bool=false)
-{
-  std::cerr<<"Impossible to draw a Polyhedron_3 because CGAL_USE_BASIC_VIEWER is not defined."
-           <<std::endl;
-}
+void draw(const Polyhedron& apoly, const char* title)
+{ draw(apoly, title, false); }
+
+template<class Polyhedron>
+void draw(const Polyhedron& apoly)
+{ draw(apoly, "Basic Polyhedron Viewer"); }
 
 } // End namespace CGAL
 

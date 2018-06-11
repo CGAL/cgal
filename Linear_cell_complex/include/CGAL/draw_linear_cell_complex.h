@@ -21,12 +21,12 @@
 #ifndef CGAL_DRAW_LCC_H
 #define CGAL_DRAW_LCC_H
 
-#include <iostream>
+#include <CGAL/Qt/Basic_viewer_qt.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
-#include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Random.h>
+
 namespace CGAL
 {
   
@@ -40,7 +40,6 @@ struct DefaultColorFunctorLCC
     if (dh==alcc.null_handle) // use to get the mono color
       return CGAL::Color(100, 125, 200); // R G B between 0-255
 
-    // Here dh is the smaller dart of its face
     CGAL::Random random(alcc.darts().index(dh));
     return get_random_color(random);
   }
@@ -88,7 +87,10 @@ public:
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
-  SimpleLCCViewerQt(QWidget* parent, const LCC& alcc, const char* title="", bool anofaces=false,
+  SimpleLCCViewerQt(QWidget* parent,
+                    const LCC& alcc,
+                    const char* title="Basic LCC Viewer",
+                    bool anofaces=false,
                     const ColorFunctor& fcolor=ColorFunctor()) :
     // First draw: vertices; edges, faces; multi-color; inverse normal
     Base(parent, title, true, true, true, false, true), 
@@ -198,9 +200,9 @@ protected:
   
 template<class LCC, class ColorFunctor>
 void draw(const LCC& alcc,
-          const char* title="LCC Viewer",
-          bool nofill=false,
-          const ColorFunctor& fcolor=ColorFunctor())
+          const char* title,
+          bool nofill,
+          const ColorFunctor& fcolor)
 {
 #if defined(CGAL_TEST_SUITE)
   int argc=3;
@@ -212,7 +214,11 @@ void draw(const LCC& alcc,
 
   QApplication app(argc,const_cast<char**>(argv));
 
-  SimpleLCCViewerQt<LCC, ColorFunctor> mainwindow(app.activeWindow(),alcc, title, nofill, fcolor);
+  SimpleLCCViewerQt<LCC, ColorFunctor> mainwindow(app.activeWindow(),
+                                                  alcc,
+                                                  title,
+                                                  nofill,
+                                                  fcolor);
 
 #if !defined(CGAL_TEST_SUITE)
   mainwindow.show();
@@ -221,37 +227,20 @@ void draw(const LCC& alcc,
 }
 
 template<class LCC>
-void draw(const LCC& alcc,
-          const char* title="LCC Viewer",
-          bool nofill=false)
-{ return draw<LCC, DefaultColorFunctorLCC>(alcc, title, nofill); }
-
-} // End namespace CGAL
-
-#else // CGAL_USE_BASIC_VIEWER
-
-namespace CGAL 
+void draw(const LCC& alcc, const char* title, bool nofill)
 {
+  DefaultColorFunctorLCC c;
+  draw(alcc, title, nofill, c);
+}
   
-template<class LCC, class ColorFunctor>
-void draw(const LCC&,
-          const char* ="LCC Viewer",
-          bool=false,
-          const ColorFunctor& =ColorFunctor())
-{
-  std::cerr<<"Impossible to draw a Linear_cell_complex because CGAL_USE_BASIC_VIEWER is not defined."
-           <<std::endl;
-}
-
 template<class LCC>
-void draw(const LCC&,
-          const char* ="LCC Viewer",
-          bool=false)
-{
-  std::cerr<<"Impossible to draw a Linear_cell_complex because CGAL_USE_BASIC_VIEWER is not defined."
-           <<std::endl;
-}
-
+void draw(const LCC& alcc, const char* title)
+{ draw(alcc, title, false); }
+  
+template<class LCC>
+void draw(const LCC& alcc)
+{ draw(alcc, "Basic LCC Viewer"); }
+  
 } // End namespace CGAL
 
 #endif // CGAL_USE_BASIC_VIEWER

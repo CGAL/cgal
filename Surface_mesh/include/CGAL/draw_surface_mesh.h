@@ -36,14 +36,13 @@ void draw(const SM& asm);
 
 #else // DOXYGEN_RUNNING
   
-#include <iostream>
+#include <CGAL/license/Surface_mesh.h>
+#include <CGAL/Qt/Basic_viewer_qt.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
-#include <CGAL/license/Surface_mesh.h>
-
-#include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Random.h>
+
 namespace CGAL
 {
 
@@ -79,7 +78,9 @@ public:
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
-  SimpleSurfaceMeshViewerQt(QWidget* parent, const SM& amesh, const char* title="",
+  SimpleSurfaceMeshViewerQt(QWidget* parent,
+                            const SM& amesh,
+                            const char* title="Basic Surface_mesh Viewer",
                             bool anofaces=false,
                             const ColorFunctor& fcolor=ColorFunctor()) :
     // First draw: no vertex; edges, faces; mono-color; inverse normal
@@ -202,9 +203,9 @@ protected:
 
 template<class SM, class ColorFunctor>
 void draw(const SM& amesh,
-          const char* title="Surface Mesh Viewer",
-          bool nofill=false,
-          const ColorFunctor& fcolor=ColorFunctor())
+          const char* title,
+          bool nofill,
+          const ColorFunctor& fcolor)
 {
 #if defined(CGAL_TEST_SUITE)
   int argc=3;
@@ -216,8 +217,11 @@ void draw(const SM& amesh,
   
   QApplication app(argc,const_cast<char**>(argv));
 
-  SimpleSurfaceMeshViewerQt<SM, ColorFunctor> mainwindow(app.activeWindow(),amesh, title,
-                                                         nofill, fcolor);
+  SimpleSurfaceMeshViewerQt<SM, ColorFunctor> mainwindow(app.activeWindow(),
+                                                         amesh,
+                                                         title,
+                                                         nofill,
+                                                         fcolor);
 
 #if !defined(CGAL_TEST_SUITE)
   mainwindow.show();
@@ -226,36 +230,19 @@ void draw(const SM& amesh,
 }
 
 template<class SM>
-void draw(const SM& amesh,
-          const char* title="Surface Mesh Viewer",
-          bool nofill=false)
-{ return draw<SM, DefaultColorFunctorSM>(amesh, title, nofill); }
-
-} // End namespace CGAL
-
-#else // CGAL_USE_BASIC_VIEWER
-
-namespace CGAL 
+void draw(const SM& amesh, const char* title, bool nofill)
 {
-  
-template<class SM, class ColorFunctor>
-void draw(const SM&,
-          const char* ="Surface Mesh Viewer",
-          bool=false,
-          const ColorFunctor& =ColorFunctor())
-{
-  std::cerr<<"Impossible to draw a Surface mesh because CGAL_USE_BASIC_VIEWER is not defined."
-           <<std::endl;
+  DefaultColorFunctorSM c;
+  draw(amesh, title, nofill, c);
 }
 
 template<class SM>
-void draw(const SM&,
-          const char* ="Surface Mesh Viewer",
-          bool=false)
-{
-  std::cerr<<"Impossible to draw a Surface mesh because CGAL_USE_BASIC_VIEWER is not defined."
-           <<std::endl;
-}
+void draw(const SM& amesh, const char* title)
+{ draw(amesh, title, false); }
+
+template<class SM>
+void draw(const SM& amesh)
+{ draw(amesh, "Basic Surface_mesh Viewer"); }
 
 } // End namespace CGAL
 
