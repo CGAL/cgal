@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Optimal_bounding_box/obb.h>
+#include <CGAL/Optimal_bounding_box/optimal_bounding_box.h>
 #include <CGAL/Eigen_linear_algebra_traits.h>
 #include <iostream>
 #include <fstream>

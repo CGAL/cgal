@@ -3,7 +3,7 @@
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Optimal_bounding_box/population.h>
-#include <CGAL/Optimal_bounding_box/obb.h>
+#include <CGAL/Optimal_bounding_box/optimal_bounding_box.h>
 #include <CGAL/Eigen_linear_algebra_traits.h>
 #include <iostream>
 #include <fstream>

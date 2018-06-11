@@ -14,7 +14,7 @@
 #include "Scene_points_with_normal_item.h"
 
 #include <boost/graph/graph_traits.hpp>
-#include <CGAL/Optimal_bounding_box/obb.h>
+#include <CGAL/Optimal_bounding_box/optimal_bounding_box.h>
 #include <CGAL/Eigen_linear_algebra_traits.h>
 
 //typedef Scene_surface_mesh_item Scene_facegraph_item;

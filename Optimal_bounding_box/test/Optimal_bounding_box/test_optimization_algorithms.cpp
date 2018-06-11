@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Optimal_bounding_box/population.h>
-#include <CGAL/Optimal_bounding_box/obb.h>
+#include <CGAL/Optimal_bounding_box/optimal_bounding_box.h>
 #include <CGAL/Optimal_bounding_box/helper.h>
 #include <iostream>
 #include <fstream>
