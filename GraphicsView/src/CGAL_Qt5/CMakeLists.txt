@@ -13,6 +13,14 @@ if(CGAL_HEADER_ONLY)
   cache_set(CGAL_Qt5_3RD_PARTY_LIBRARIES Qt5::OpenGL Qt5::Svg )
 else(CGAL_HEADER_ONLY)
   find_package(Qt5 QUIET COMPONENTS OpenGL Svg)
+
+  if(NOT COMMAND qt5_use_modules)
+    message(WARNING "libCGAL_Qt5 from CGAL-4.11 cannot be compiled with Qt 5.11.
+If you want to compile CGAL Qt5 demos, you must either upgrade to CGAL-4.12
+or later, or downgrade Qt5 to 5.10 or before.")
+    return()
+  endif()
+
   find_package(OpenGL QUIET)
 
   set(CGAL_Qt5_MISSING_DEPS "")

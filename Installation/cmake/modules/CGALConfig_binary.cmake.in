@@ -149,6 +149,13 @@ macro(check_cgal_component COMPONENT)
             set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} OpenGL")
           endif()
 
+          if(NOT COMMAND qt5_use_modules)
+            message(WARNING "libCGAL_Qt5 from CGAL-4.11 cannot be compiled with Qt 5.11.
+If you want to compile CGAL Qt5 demos, you must either upgrade to CGAL-4.12
+or later, or downgrade Qt5 to 5.10 or before.")
+            set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} Qt5<=5.10")
+          endif()
+
           if(CGAL_Qt5_MISSING_DEPS)
             set( ${CGAL_LIB}_FOUND FALSE )
             message(STATUS "libCGAL_Qt5 is missing the dependencies: ${CGAL_Qt5_MISSING_DEPS} cannot be configured.")
