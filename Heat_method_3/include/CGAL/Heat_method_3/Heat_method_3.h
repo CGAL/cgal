@@ -124,12 +124,12 @@ namespace Heat_method_3 {
      * add `vd` to the source set, returning `false` if `vd` is already in the set.
      */
 
-     const Matrix& mass_matrix()
+     const Matrix& mass_matrix() const
      {
        return m_mass_matrix;
      }
 
-     const Matrix& cotan_matrix()
+     const Matrix& cotan_matrix() const
      {
        return m_cotan_matrix;
      }
@@ -150,7 +150,7 @@ namespace Heat_method_3 {
     /**
      *return current source set
     */
-    const std::set<vertex_descriptor>& get_sources()
+    const std::set<vertex_descriptor>& get_sources() const
     {
       return sources;
     }
@@ -182,12 +182,12 @@ namespace Heat_method_3 {
     /**
      * get distance from the current source set to a vertex `vd`.
      */
-    double distance(vertex_descriptor vd)
+    double distance(vertex_descriptor vd) const
     {
       return 0;
     }
 
-    double summation_of_edges()
+    double summation_of_edges() const
     {
       double edge_sum = 0;
       BOOST_FOREACH(edge_descriptor ed, edges(tm))
@@ -197,12 +197,12 @@ namespace Heat_method_3 {
       return edge_sum;
     }
 
-    double time_step()
+    double time_step() const
     {
       return m_time_step;
     }
 
-    Matrix kronecker_delta(const std::set<vertex_descriptor>& sources)
+    Matrix kronecker_delta(const std::set<vertex_descriptor>& sources) // AF: should become const
     {
       //currently just working with a single vertex in source set, add the first one for now
       Index i;
@@ -221,12 +221,12 @@ namespace Heat_method_3 {
     }
 
 
-    const Matrix& kronecker_delta()
+    const Matrix& kronecker_delta() const
     {
       return kronecker;
     }
 
-    Eigen::VectorXd solve_cotan_laplace(Matrix M, Matrix c, Matrix x, double a_time_step, int dimension)
+    Eigen::VectorXd solve_cotan_laplace(Matrix M, Matrix c, Matrix x, double a_time_step, int dimension) const
     {
       Eigen::VectorXd u;
       Matrix A = (M+ a_time_step*c);
@@ -244,7 +244,7 @@ namespace Heat_method_3 {
       return u;
     }
 
-    Eigen::MatrixXd compute_unit_gradient(const Eigen::VectorXd& u)
+    Eigen::MatrixXd compute_unit_gradient(const Eigen::VectorXd& u) const
     {
       Eigen::MatrixXd X(num_faces(tm), 3);
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
@@ -282,13 +282,13 @@ namespace Heat_method_3 {
       return X;
     }
 
-    double dot_eigen_vector(const Eigen::Vector3d& a, const Vector_3& b)
+    double dot_eigen_vector(const Eigen::Vector3d& a, const Vector_3& b) const
     {
       return (a(0)*b.x() + a(1)*b.y() + a(2)*b.z());
     }
 
 
-    Matrix compute_divergence(const Eigen::MatrixXd& X, int rows)
+    Matrix compute_divergence(const Eigen::MatrixXd& X, int rows) const
     {
       Matrix indexD;
       std::vector<triplet> d_matrix_entries;
@@ -333,7 +333,7 @@ namespace Heat_method_3 {
       return indexD;
     }
 
-    Eigen::VectorXd value_at_source_set(double a, int dimension)
+    Eigen::VectorXd value_at_source_set(double a, int dimension) const
     {
       Eigen::VectorXd source_set_val(dimension,1);
       for(int k = 0; k<dimension; k++)
@@ -344,7 +344,7 @@ namespace Heat_method_3 {
     }
 
 
-    Eigen::VectorXd solve_phi(Matrix c, Matrix divergence, int dimension)
+    Eigen::VectorXd solve_phi(Matrix c, Matrix divergence, int dimension) const
     {
 
       Eigen::VectorXd phi;
@@ -364,7 +364,7 @@ namespace Heat_method_3 {
 
     //currently, this function will return a (number of vertices)x1 vector where
     //the ith index has the distance from the first vertex to the ith vertex
-    const Eigen::VectorXd& distances()
+    const Eigen::VectorXd& distances() const
     {
       return solved_phi;
     }
