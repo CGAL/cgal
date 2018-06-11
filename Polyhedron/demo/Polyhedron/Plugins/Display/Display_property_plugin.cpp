@@ -10,6 +10,7 @@
 #include <QMessageBox>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Heat_method_3/Heat_method_3.h>
 
 #include "Scene_points_with_normal_item.h"
 #include "Messages_interface.h"
@@ -22,6 +23,7 @@
 
 #define ARBITRARY_DBL_MIN 1.0E-30
 #define ARBITRARY_DBL_MAX 1.0E+30
+
 
 class DockWidget :
     public QDockWidget,
@@ -45,6 +47,9 @@ class DisplayPropertyPlugin :
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  typedef SMesh::Property_map<boost::graph_traits<SMesh>::vertex_descriptor, double> Vertex_distance_map;
+  typedef CGAL::Heat_method_3::Heat_method_3<SMesh,EPICK,Vertex_distance_map> Heat_method;
+  
 public:
 
   bool applicable(QAction*) const Q_DECL_OVERRIDE
@@ -427,13 +432,29 @@ private Q_SLOTS:
     dock_widget->maxBox->setValue(angles_max[item].first);
   }
 
+  // AF: This function gets called when we click on the button "Colorize"
   void displayHeatIntensity(Scene_surface_mesh_item* item)
-  {
+  { 
     SMesh& mesh = *item->face_graph();
-    //compute and store smallest angle per face
+
+    Heat_method * hm;
+    SMesh::Property_map<vertex_descriptor, double> heat_intensity;
+    if(mesh_heat_method_map.find(item) != mesh_heat_method_map.end()){
+      hm = mesh_heat_method_map[item];
+      heat_intensity = mesh.property_map<vertex_descriptor, double>("v:heat_intensity").first;
+    }else {
+      heat_intensity = mesh.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
+      hm = new Heat_method(mesh,heat_intensity);
+      mesh_heat_method_map[item] = hm;
+    }
+    connect(item, &Scene_surface_mesh_item::aboutToBeDestroyed,
+            [this,item](){
+              mesh_heat_method_map.erase(item);
+            }
+            );
+
     int i = 0;
-    SMesh::Property_map<vertex_descriptor, double> heat_intensity 
-        = mesh.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
+   
     bool found = false;
     SMesh::Property_map<vertex_descriptor, bool> is_source ;
     boost::tie(is_source, found)=
@@ -444,23 +465,26 @@ private Q_SLOTS:
       QMessageBox::warning(mw, "Warning","Source vertices are needed for this property.");
       return;
     }
+
+
+    // AF: So far we only deal with adding sources
+    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
+      if(is_source[vd]){
+        hm->add_source(vd);
+      }
+    }
+
+    hm->update();
+
     double max = 0;
-    double min = std::numeric_limits<double>::max();
+    double min = (std::numeric_limits<double>::max)();
     
-    //source vertices are in is_source
-    //replace this by heat_method function {
-    for(boost::graph_traits<SMesh>::vertex_iterator vit = vertices(mesh).begin();
-        vit != vertices(mesh).end();
-        ++vit)
-    {
-      double res = ++i*2.0;
-      if(is_source[*vit])
-        res = 0.0;
-      if(res < min)
-        min = res;
-      if(res > max)
-        max = res;
-      heat_intensity[*vit] = res; //<- replace this value 
+    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
+      double hi = heat_intensity[vd];
+      if(hi < min)
+        min = hi;
+      if(hi > max)
+        max = hi;
     }
     
     color_ramp = Color_ramp(rm, rM, gm, gM, bm, bM);
@@ -786,6 +810,7 @@ private:
   boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_min;
   boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_max;
 
+  
   double minBox;
   double maxBox;
   QPixmap legend_;
@@ -793,6 +818,8 @@ private:
   Scene_surface_mesh_item* current_item;
   Scene_points_with_normal_item* source_points;
   boost::unordered_map<Scene_surface_mesh_item*, Scene_points_with_normal_item*> mesh_sources_map;
+  
+  boost::unordered_map<Scene_surface_mesh_item*, Heat_method*> mesh_heat_method_map;
 };
 
   /// Code based on the verdict module of vtk
