@@ -41,10 +41,10 @@ double compute_fitness(const Vertex& R, const Matrix& data)
   CGAL_assertion(data.rows() >= 3);
 
   typedef typename Linear_algebra_traits::Vector3d Vector3d;
-  typedef typename Linear_algebra_traits::Index index;
+  typedef typename Linear_algebra_traits::Index Index;
 
   double xmin, xmax, ymin, ymax, zmin, zmax;
-  for(index i = 0; i < data.rows(); ++i){
+  for(Index i = 0; i < static_cast<Index>(data.rows()); ++i){
 
     Vector3d vec = Linear_algebra_traits::row3(data, i);
     vec = R * vec;

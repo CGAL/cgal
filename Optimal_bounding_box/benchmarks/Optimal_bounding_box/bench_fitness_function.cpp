@@ -35,13 +35,14 @@ int main()
   // 2) fill a Matrix with them
   typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
   typedef Linear_algebra_traits::MatrixX3d MatrixX3d;
+  typedef Linear_algebra_traits::Matrix3d Matrix3d;
+
   MatrixX3d points_mat(nb_points, 3);
   CGAL::Optimal_bounding_box::sm_to_matrix(mesh, points_mat);
 
 
   // 3) create a population of simplices
-  typedef Linear_algebra_traits::Matrix3d Matrix3d;
-  CGAL::Optimal_bounding_box::Population<Matrix3d> pop(50);
+  CGAL::Optimal_bounding_box::Population<Linear_algebra_traits> pop(50);
 
 
   CGAL::Timer timer;

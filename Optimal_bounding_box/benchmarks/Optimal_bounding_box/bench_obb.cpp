@@ -83,12 +83,6 @@ void bench_finding_obb(std::string fname)
   std::cout << "found obb without convex hull: " <<  timer.time() << " seconds\n";
   timer.reset();
 
-
-  //double vol1 = calculate_volume(obb_points1);
-  //  double vol2 = calculate_volume(obb_points2);
-  //std::cout << "vol1= " << vol1 << " -- " << "vol2= " << vol2 << std::endl;
-
-
 #ifdef OBB_DEBUG_BENCHMARK
   CGAL::Surface_mesh<K::Point_3> result_mesh1;
   CGAL::make_hexahedron(obb_points1[0], obb_points1[1], obb_points1[2], obb_points1[3],

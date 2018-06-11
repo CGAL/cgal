@@ -96,7 +96,7 @@ void test_nelder_mead()
   evolution.nelder_mead(simplex, nm_iterations);
 
   CGAL_assertion_code(double epsilon = 1e-5);
-  Matrix3d v0_new = simplex[0];
+  CGAL_assertion_code(Matrix3d v0_new = simplex[0]);
   CGAL_assertion(assert_doubles(v0_new(0,0), -0.288975, epsilon));
   CGAL_assertion(assert_doubles(v0_new(0,1), 0.7897657, epsilon));
   CGAL_assertion(assert_doubles(v0_new(0,2), -0.541076, epsilon));
@@ -107,7 +107,7 @@ void test_nelder_mead()
   CGAL_assertion(assert_doubles(v0_new(2,1), 0.5111260, epsilon));
   CGAL_assertion(assert_doubles(v0_new(2,2), 0.84094, epsilon));
 
-  Matrix3d v1_new = simplex[1];
+  CGAL_assertion_code(Matrix3d v1_new = simplex[1]);
   CGAL_assertion(assert_doubles(v1_new(0,0), -0.458749, epsilon));
   CGAL_assertion(assert_doubles(v1_new(0,1), 0.823283, epsilon));
   CGAL_assertion(assert_doubles(v1_new(0,2), -0.334296, epsilon));
@@ -118,7 +118,7 @@ void test_nelder_mead()
   CGAL_assertion(assert_doubles(v1_new(2,1), 0.338040, epsilon));
   CGAL_assertion(assert_doubles(v1_new(2,2), 0.937987, epsilon));
 
-  Matrix3d v2_new = simplex[2];
+  CGAL_assertion_code(Matrix3d v2_new = simplex[2]);
   CGAL_assertion(assert_doubles(v2_new(0,0), -0.346582, epsilon));
   CGAL_assertion(assert_doubles(v2_new(0,1), 0.878534, epsilon));
   CGAL_assertion(assert_doubles(v2_new(0,2), -0.328724, epsilon));
@@ -129,7 +129,7 @@ void test_nelder_mead()
   CGAL_assertion(assert_doubles(v2_new(2,1), 0.334057, epsilon));
   CGAL_assertion(assert_doubles(v2_new(2,2), 0.941423, epsilon));
 
-  Matrix3d v3_new = simplex[3];
+  CGAL_assertion_code(Matrix3d v3_new = simplex[3]);
   CGAL_assertion(assert_doubles(v3_new(0,0), -0.394713, epsilon));
   CGAL_assertion(assert_doubles(v3_new(0,1), 0.791782, epsilon));
   CGAL_assertion(assert_doubles(v3_new(0,2), -0.466136, epsilon));
@@ -157,13 +157,10 @@ void test_genetic_algorithm()
   data_points(3,1) = 0.149912,
   data_points(3,2) = 0.364944;
 
-  typedef CGAL::Eigen_dense_matrix<double, 3, 3> Matrix3d;
   typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
-
   CGAL::Optimal_bounding_box::Population<Linear_algebra_traits> pop(5);
   CGAL::Optimal_bounding_box::Evolution<Linear_algebra_traits> evolution(pop, data_points);
   evolution.genetic_algorithm();
-
   CGAL_assertion(pop.size() == 5);
 }
 
@@ -205,15 +202,13 @@ void test_random_unit_tetra()
 #endif
 
   typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
-  typedef Linear_algebra_traits::Matrix3d Matrix3d;
-
+  CGAL_assertion_code(typedef Linear_algebra_traits::Matrix3d Matrix3d);
   std::size_t generations = 10;
   CGAL::Optimal_bounding_box::Population<Linear_algebra_traits> pop(50);
   CGAL::Optimal_bounding_box::Evolution<Linear_algebra_traits> evolution(pop, data_points);
   evolution.evolve(generations);
 
-  Matrix3d R = evolution.get_best();
-
+  CGAL_assertion_code(Matrix3d R = evolution.get_best());
   CGAL_assertion_code(double epsilon = 1e-3);
   CGAL_assertion(assert_doubles(Linear_algebra_traits::determinant(R), 1, epsilon));
   CGAL_assertion(assert_doubles(R(0,0), -0.25791, epsilon));
@@ -245,7 +240,7 @@ void test_reference_tetrahedron(const char* fname)
 
   typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
   typedef Linear_algebra_traits::MatrixXd MatrixXd;
-  typedef Linear_algebra_traits::Matrix3d Matrix3d;
+  CGAL_assertion_code(typedef Linear_algebra_traits::Matrix3d Matrix3d);
 
   // points in a matrix
   MatrixXd points;
@@ -256,8 +251,7 @@ void test_reference_tetrahedron(const char* fname)
   CGAL::Optimal_bounding_box::Evolution<Linear_algebra_traits> experiment(pop, points);
   experiment.evolve(generations);
 
-  Matrix3d R = experiment.get_best();
-
+  CGAL_assertion_code(Matrix3d R = experiment.get_best());
   CGAL_assertion_code(double epsilon = 1e-5);
   CGAL_assertion(assert_doubles(Linear_algebra_traits::determinant(R), 1, epsilon));
 
@@ -280,7 +274,7 @@ void test_long_tetrahedron(std::string fname)
 
   typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
   typedef Linear_algebra_traits::MatrixXd MatrixXd;
-  typedef Linear_algebra_traits::Matrix3d Matrix3d;
+  CGAL_assertion_code(typedef Linear_algebra_traits::Matrix3d Matrix3d);
 
   // points in a matrix
   MatrixXd points;
@@ -291,8 +285,7 @@ void test_long_tetrahedron(std::string fname)
   CGAL::Optimal_bounding_box::Evolution<Linear_algebra_traits> experiment(pop, points);
   experiment.evolve(max_generations);
 
-  Matrix3d R = experiment.get_best();
-
+  CGAL_assertion_code(Matrix3d R = experiment.get_best());
   CGAL_assertion_code(double epsilon = 1e-3);
   CGAL_assertion(assert_doubles(Linear_algebra_traits::determinant(R), 1, epsilon));
   CGAL_assertion(assert_doubles(R(0,0), -1, epsilon));

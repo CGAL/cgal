@@ -66,7 +66,7 @@ void post_processing(const Matrix& points, Vertex& R, Matrix& obb)
 
   // Simplex -> std::vector
   std::vector<Point> v_points;
-  for(index i = 0; i < rotated_points.rows(); ++i)
+  for(index i = 0; i < static_cast<index>(rotated_points.rows()); ++i)
   {
     Point p(rotated_points(i, 0), rotated_points(i, 1), rotated_points(i, 2));
     v_points.push_back(p);
