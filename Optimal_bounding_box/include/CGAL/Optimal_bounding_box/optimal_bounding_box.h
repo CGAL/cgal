@@ -25,24 +25,30 @@
 #include <CGAL/Optimal_bounding_box/population.h>
 #include <CGAL/Optimal_bounding_box/evolution.h>
 #include <CGAL/Optimal_bounding_box/helper.h>
-#include <vector>
-#include <CGAL/boost/graph/helpers.h>
+
+#include <CGAL/assertions.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Iso_cuboid_3.h>
+#include <CGAL/boost/graph/helpers.h>
 #include <CGAL/convex_hull_3.h>
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#ifdef OBB_BENCHMARKS
-#include <CGAL/Timer.h>
+#include <CGAL/Iso_cuboid_3.h>
+#include <CGAL/Simple_cartesian.h>
+
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
+  #include <CGAL/Timer.h>
 #endif
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_linear_algebra_traits.h>
 #endif
 
-namespace CGAL {
-namespace Optimal_bounding_box {
+#include <iostream>
+#include <iterator>
+#include <vector>
 
+namespace CGAL {
+
+namespace Optimal_bounding_box {
 
 // works on matrices only
 /// \cond SKIP_IN_MANUAL
@@ -127,21 +133,20 @@ void find_obb(const std::vector<Point>& points,
     CGAL::Optimal_bounding_box::fill_matrix(points, points_mat);
   }
 
-#ifdef OBB_BENCHMARKS
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
   CGAL::Timer timer;
 #endif
 
   std::size_t max_generations = 100;
   Population<LinearAlgebraTraits> pop(50);
 
-#ifdef OBB_BENCHMARKS
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
   timer.start();
 #endif
 
-  CGAL::Optimal_bounding_box::Evolution<LinearAlgebraTraits>
-      search_solution(pop, points_mat);
+  CGAL::Optimal_bounding_box::Evolution<LinearAlgebraTraits> search_solution(pop, points_mat);
 
-#ifdef OBB_BENCHMARKS
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
   timer.stop();
   std::cout << "constructor: " << timer.time() << std::endl;
   timer.reset();
@@ -150,7 +155,7 @@ void find_obb(const std::vector<Point>& points,
 
   search_solution.evolve(max_generations);
 
-#ifdef OBB_BENCHMARKS
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
   timer.stop();
   std::cout << "evolve: " << timer.time() << std::endl;
   timer.reset();
@@ -159,7 +164,7 @@ void find_obb(const std::vector<Point>& points,
 
   Matrix3d rotation = search_solution.get_best();
 
-#ifdef OBB_BENCHMARKS
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
   timer.stop();
   std::cout << "get best: " << timer.time() << std::endl;
 #endif
@@ -167,14 +172,14 @@ void find_obb(const std::vector<Point>& points,
   MatrixXd obb; // may be preallocated at compile time
   obb.resize(8, 3);
 
-#ifdef OBB_BENCHMARKS
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
   timer.reset();
   timer.start();
 #endif
 
   post_processing<LinearAlgebraTraits>(points_mat, rotation, obb);
 
-#ifdef OBB_BENCHMARKS
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
   timer.stop();
   std::cout << "post porcessing: " << timer.time() << std::endl;
 #endif
@@ -242,8 +247,7 @@ void find_obb(const PolygonMesh& pmesh,
   find_obb(points, obb_points, la_traits, use_ch);
 
   CGAL::make_hexahedron(obb_points[0], obb_points[1], obb_points[2], obb_points[3],
-      obb_points[4], obb_points[5],
-      obb_points[6], obb_points[7], obbmesh);
+                        obb_points[4], obb_points[5], obb_points[6], obb_points[7], obbmesh);
 }
 
 template <typename PolygonMesh>
@@ -261,11 +265,7 @@ void find_obb(const PolygonMesh& pmesh,
   find_obb(pmesh, obbmesh, la_traits, use_ch);
 }
 
-}} // end namespaces
+} // end namespace Optimal_bounding_box
+} // end namespace CGAL
 
-
-
-#endif //CGAL_OPTIMAL_BOUNDING_BOX_OBB_H
-
-
-
+#endif // CGAL_OPTIMAL_BOUNDING_BOX_OBB_H

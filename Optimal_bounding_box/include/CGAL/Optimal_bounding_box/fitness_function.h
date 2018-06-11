@@ -16,18 +16,19 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-//
 // Author(s)     : Konstantinos Katrioplas
 
 #ifndef CGAL_OPTIMAL_BOUNDING_FITNESS_FUNCTION_H
 #define CGAL_OPTIMAL_BOUNDING_FITNESS_FUNCTION_H
 
-#include <CGAL/Bbox_3.h>
-#include <vector>
 #include <CGAL/Optimal_bounding_box/population.h>
+
+#include <CGAL/assertions.h>
+
 #include <limits>
 
 namespace CGAL {
+
 namespace Optimal_bounding_box {
 
 template <typename Linear_algebra_traits, typename Vertex, typename Matrix>
@@ -74,7 +75,8 @@ double compute_fitness(const Vertex& R, const Matrix& data)
 template <typename Linear_algebra_traits, typename Vertex, typename Matrix>
 struct Fitness_map
 {
-  Fitness_map(Population<Linear_algebra_traits>& p, Matrix& points) : pop(p), points(points)
+  Fitness_map(Population<Linear_algebra_traits>& p, Matrix& points)
+    : pop(p), points(points)
   {}
 
   const Vertex get_best()
@@ -109,14 +111,7 @@ struct Fitness_map
   const Matrix& points;
 };
 
-}} // end namespaces
+} // end namespace Optimal_bounding_box
+} // end namespace CGAL
 
-
-
-
-
-
-#endif //CGAL_FITNESS_FUNCTION_H
-
-
-
+#endif // CGAL_OPTIMAL_BOUNDING_FITNESS_FUNCTION_H

@@ -16,7 +16,6 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-//
 // Author(s)     : Konstantinos Katrioplas
 
 #ifndef CGAL_OPTIMAL_BOUNDING_BOX_EVOLUTION_H
@@ -24,13 +23,20 @@
 
 #include <CGAL/Optimal_bounding_box/population.h>
 #include <CGAL/Optimal_bounding_box/nelder_mead_functions.h>
-
 #include <CGAL/Optimal_bounding_box/fitness_function.h>
+
+#include <CGAL/Random.h>
+#include <CGAL/number_utils.h>
+
 #include <boost/iterator/counting_iterator.hpp>
 
-namespace CGAL {
-namespace Optimal_bounding_box {
+#include <algorithm>
+#include <iostream>
+#include <vector>
 
+namespace CGAL {
+
+namespace Optimal_bounding_box {
 
 template <typename Linear_algebra_traits>
 class Evolution
@@ -40,19 +46,19 @@ class Evolution
   typedef typename Linear_algebra_traits::Vector3d Vector3d;
 
 public:
-  Evolution(Population<Linear_algebra_traits>& pop, MatrixXd& points) :
-    population(pop),
-    point_data(points)
+  Evolution(Population<Linear_algebra_traits>& pop, MatrixXd& points)
+    : population(pop), point_data(points)
   {}
 
   // simplex: 4 rotation matrices are its vertices
-  void nelder_mead(std::vector<Matrix3d>& simplex, std::size_t nelder_mead_iterations)
+  void nelder_mead(std::vector<Matrix3d>& simplex,
+                   std::size_t nelder_mead_iterations)
   {
     CGAL_assertion(simplex.size() == 4); // tetrahedron
 
     std::vector<double> fitness(4);
-    std::vector<std::size_t> indices( boost::counting_iterator<std::size_t>( 0 ),
-                                      boost::counting_iterator<std::size_t>( simplex.size() ) );
+    std::vector<std::size_t> indices(boost::counting_iterator<std::size_t>(0),
+                                     boost::counting_iterator<std::size_t>(simplex.size()));
 
     for(std::size_t t = 0; t < nelder_mead_iterations; ++t)
     {
@@ -165,12 +171,12 @@ public:
     for(std::size_t i = 0; i < ids4.size(); ++i)
       group4[i] = population[ids4[i]];
 
-  #ifdef OBB_DEBUG
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
     check_det(group1);
     check_det(group2);
     check_det(group3);
     check_det(group4);
-  #endif
+#endif
 
     // crossover I
     Population<Linear_algebra_traits> offspringsA(size_first_group);
@@ -185,10 +191,12 @@ public:
         double fitnessA = compute_fitness<Linear_algebra_traits>(group1[i][j], point_data);
         double fitnessB = compute_fitness<Linear_algebra_traits>(group2[i][j], point_data);
         double threshold;
+
         if(fitnessA < fitnessB)
           threshold = 0.5 + bias;
         else
           threshold = 0.5 - bias;
+
         if(r < threshold) // choose A
           offspring[j] = group1[i][j];
         else // choose B
@@ -197,11 +205,11 @@ public:
       offspringsA[i] = offspring;
     }
 
-  #ifdef OBB_DEBUG
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
     std::cout << "offspringsA: \n" ;
     check_det(offspringsA);
     std::cin.get();
-  #endif
+#endif
 
     // crossover II
     Population<Linear_algebra_traits> offspringsB(size_second_group);
@@ -228,10 +236,10 @@ public:
       offspringsB[i] = offspring;
     }
 
-  #ifdef OBB_DEBUG
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
     std::cout << "offspringsB: \n" ;
     check_det(offspringsB);
-  #endif
+#endif
 
     CGAL_assertion(offspringsA.size() == size_first_group);
     CGAL_assertion(offspringsB.size() == size_second_group);
@@ -239,14 +247,10 @@ public:
 
     // next generatrion
     for(std::size_t i = 0; i < size_first_group; ++i)
-    {
       population[i] = offspringsA[i];
-    }
 
     for(std::size_t i = 0; i < size_second_group; ++i)
-    {
       population[size_first_group + i] = offspringsB[i];
-    }
   }
 
   void evolve(std::size_t generations)
@@ -262,35 +266,35 @@ public:
 
     for(std::size_t t = 0; t < generations; ++t)
     {
-
-  #ifdef OBB_DEBUG
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
       std::cout << "generation= " << t << "\n";
-  #endif
+#endif
 
       genetic_algorithm();
 
-  #ifdef OBB_DEBUG
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
       //std::cout << "pop after genetic" << std::endl;
       //pop.show_population();
       //std::cout << std::endl;
-  #endif
+#endif
 
       for(std::size_t s = 0; s < population.size(); ++s)
         nelder_mead(population[s], nelder_mead_iterations);
 
-  #ifdef OBB_DEBUG
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
       //std::cout << "pop after nelder mead: " << std::endl;
       //pop.show_population();
       //std::cout << std::endl;
       Fitness_map<Linear_algebra_traits, Matrix3d, MatrixXd> fitness_map_debug(population, point_data);
       Matrix3d R_now = fitness_map_debug.get_best();
       std::cout << "det= " << Linear_algebra_traits::determinant(R_now) << std::endl;
-  #endif
+#endif
 
       // stopping criteria
       Fitness_map<Linear_algebra_traits, Matrix3d, MatrixXd> fitness_map(population, point_data);
       new_fit_value = fitness_map.get_best_fitness_value();
       double difference = new_fit_value - prev_fit_value;
+
       if(CGAL::abs(difference) < tolerance * new_fit_value)
         stale++;
 
@@ -313,10 +317,10 @@ private:
   {
     Comparator(const std::vector<double>& in) : fitness(in) {}
 
-    inline bool operator() (std::size_t& i, std::size_t& j)
-    {
+    inline bool operator() (std::size_t& i, std::size_t& j) {
       return fitness[i] < fitness[j];
     }
+
     const std::vector<double>& fitness;
   };
 
@@ -325,8 +329,7 @@ private:
   MatrixXd point_data;
 };
 
-
-#ifdef OBB_DEBUG
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
 template <typename Simplex>
 void check_det(Population<Simplex>& pop)
 {
@@ -341,10 +344,7 @@ void check_det(Population<Simplex>& pop)
 }
 #endif
 
+} // end namespace Optimal_bounding_box
+} // end namespace CGAL
 
-
-}} // end namespaces
-
-
-
-#endif 
+#endif // CGAL_OPTIMAL_BOUNDING_BOX_EVOLUTION_H

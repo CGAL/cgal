@@ -1,20 +1,21 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/convex_hull_3.h>
 #include <CGAL/Polyhedron_3.h>
+
+#include <CGAL/Eigen_linear_algebra_traits.h>
 #include <CGAL/Optimal_bounding_box/population.h>
 #include <CGAL/Optimal_bounding_box/optimal_bounding_box.h>
-#include <CGAL/Eigen_linear_algebra_traits.h>
+
+#include <CGAL/convex_hull_3.h>
+#include <CGAL/Timer.h>
+
 #include <iostream>
 #include <fstream>
 
-#include <CGAL/Timer.h>
-
-//#define OBB_DEBUG_BENCHMARK
-
+//#define CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_BENCHMARK
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-
 
 bool assert_doubles(double d1, double d2, double epsilon)
 {
@@ -49,10 +50,12 @@ void bench_finding_obb(std::string fname)
 
   // import a mesh
   CGAL::Surface_mesh<K::Point_3> mesh;
-  if (!input || !(input >> mesh) || mesh.is_empty()) {
+  if (!input || !(input >> mesh) || mesh.is_empty())
+  {
     std::cerr << fname << " is not a valid off file.\n";
-    exit(1);
+    std::exit(1);
   }
+
   // get mesh points
   gather_mesh_points(mesh, sm_points);
 
@@ -83,12 +86,11 @@ void bench_finding_obb(std::string fname)
   std::cout << "found obb without convex hull: " <<  timer.time() << " seconds\n";
   timer.reset();
 
-#ifdef OBB_DEBUG_BENCHMARK
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_BENCHMARK
   CGAL::Surface_mesh<K::Point_3> result_mesh1;
   CGAL::make_hexahedron(obb_points1[0], obb_points1[1], obb_points1[2], obb_points1[3],
                         obb_points1[4], obb_points1[5], obb_points1[6], obb_points1[7],
                         result_mesh1);
-
 
   CGAL::Surface_mesh<K::Point_3> result_mesh2;
   CGAL::make_hexahedron(obb_points2[0], obb_points2[1], obb_points2[2], obb_points2[3],

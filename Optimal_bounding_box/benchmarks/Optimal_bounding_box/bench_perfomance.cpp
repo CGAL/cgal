@@ -1,14 +1,17 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Optimal_bounding_box/optimal_bounding_box.h>
+
 #include <CGAL/Eigen_linear_algebra_traits.h>
-#include <iostream>
-#include <fstream>
+#include <CGAL/Optimal_bounding_box/optimal_bounding_box.h>
 
 #include <CGAL/subdivision_method_3.h>
 #include <CGAL/Timer.h>
 
-//#define OBB_DEBUG_BENCHMARK
+#include <fstream>
+#include <iostream>
+
+//#define CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_BENCHMARK
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -18,9 +21,10 @@ void bench_finding_obb(std::string fname)
 
   // import a mesh
   CGAL::Surface_mesh<K::Point_3> mesh;
-  if (!input || !(input >> mesh) || mesh.is_empty()) {
+  if (!input || !(input >> mesh) || mesh.is_empty())
+  {
     std::cerr << fname << " is not a valid off file.\n";
-    exit(1);
+    std::exit(1);
   }
 
   // export some times
@@ -62,8 +66,7 @@ void bench_finding_obb(std::string fname)
 
   outt.close();
 
-
-#ifdef OBB_DEBUG_BENCHMARK
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_BENCHMARK
   std::ofstream out1("data/obb_result1.off");
   out1 << obb_points1;
   out1.close();

@@ -1,13 +1,14 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Eigen_linear_algebra_traits.h>
 #include <CGAL/Optimal_bounding_box/population.h>
 #include <CGAL/Optimal_bounding_box/optimal_bounding_box.h>
 #include <CGAL/Optimal_bounding_box/helper.h>
+
 #include <iostream>
 #include <fstream>
-
-#include <CGAL/Eigen_linear_algebra_traits.h>
-
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -195,7 +196,7 @@ void test_random_unit_tetra()
   Point p4(0.166461, 0.149912, 0.364944);
   CGAL::make_tetrahedron(p1, p2, p3, p4, mesh);
 
-#ifdef OBB_DEBUG_TEST
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_TEST
   std::ofstream out("data/random_unit_tetra.off");
   out << mesh;
   out.close();
@@ -221,7 +222,7 @@ void test_random_unit_tetra()
   CGAL_assertion(assert_doubles(R(2,1), 0.512847, epsilon));
   CGAL_assertion(assert_doubles(R(2,2), 0.836992, epsilon));
 
-#ifdef OBB_DEBUG_TEST
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_TEST
   // postprocessing
   CGAL::Eigen_dense_matrix<double> obb(8, 3);
   CGAL::Optimal_bounding_box::post_processing(data_points, R, obb);
@@ -235,7 +236,7 @@ void test_reference_tetrahedron(const char* fname)
   CGAL::Surface_mesh<K::Point_3> mesh;
   if (!input || !(input >> mesh) || mesh.is_empty()) {
     std::cerr << fname << " is not a valid off file.\n";
-    exit(1);
+    std::exit(1);
   }
 
   typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
@@ -255,7 +256,7 @@ void test_reference_tetrahedron(const char* fname)
   CGAL_assertion_code(double epsilon = 1e-5);
   CGAL_assertion(assert_doubles(Linear_algebra_traits::determinant(R), 1, epsilon));
 
-  #ifdef OBB_DEBUG_TEST
+  #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_TEST
   // postprocessing
   MatrixXd obb(8, 3);
   CGAL::Optimal_bounding_box::post_processing(points, R, obb);
@@ -269,7 +270,7 @@ void test_long_tetrahedron(std::string fname)
   CGAL::Surface_mesh<K::Point_3> mesh;
   if (!input || !(input >> mesh) || mesh.is_empty()) {
     std::cerr << fname << " is not a valid off file.\n";
-    exit(1);
+    std::exit(1);
   }
 
   typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
@@ -300,7 +301,7 @@ void test_long_tetrahedron(std::string fname)
                  assert_doubles(R(1,2), -0.707106, epsilon));
   CGAL_assertion(assert_doubles(R(2,2), 0.707107, epsilon));
 
-  #ifdef OBB_DEBUG_TEST
+  #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_TEST
   // postprocessing
   MatrixXd obb(8, 3);
   CGAL::Optimal_bounding_box::post_processing(points, R, obb);
@@ -315,7 +316,7 @@ void test_find_obb_evolution(std::string fname)
   SMesh mesh;
   if (!input || !(input >> mesh) || mesh.is_empty()) {
     std::cerr << fname << " is not a valid off file.\n";
-    exit(1);
+    std::exit(1);
   }
   // get mesh points
   std::vector<K::Point_3> sm_points;
@@ -334,7 +335,7 @@ void test_find_obb_evolution(std::string fname)
   CGAL_assertion_code(double vol = CGAL::Optimal_bounding_box::calculate_volume(obb_points));
   CGAL_assertion(assert_doubles(vol, 0.883371, epsilon));
 
-  #ifdef OBB_DEBUG_TEST
+  #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_TEST
   /*
   for(int i = 0; i < 8; ++i)
     std::cout << obb_points[i].x() << " " << obb_points[i].y() << " " << obb_points[i].z() << "\n" ;
@@ -353,16 +354,17 @@ void test_find_obb_mesh(std::string fname)
 {
   std::ifstream input(fname);
   CGAL::Surface_mesh<K::Point_3> mesh;
-  if (!input || !(input >> mesh) || mesh.is_empty()) {
+  if (!input || !(input >> mesh) || mesh.is_empty())
+  {
     std::cerr << fname << " is not a valid off file.\n";
-    exit(1);
+    std::exit(1);
   }
 
   CGAL::Eigen_linear_algebra_traits la_traits;
   CGAL::Surface_mesh< K::Point_3> obbmesh;
   CGAL::Optimal_bounding_box::find_obb(mesh, obbmesh, la_traits, true);
 
-  #ifdef OBB_DEBUG_TEST
+  #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_TEST
   std::ofstream out("/tmp/result_elephant.off");
   out << obbmesh;
   out.close();
@@ -373,16 +375,18 @@ void test_function_defaults_traits(std::string fname1, std::string fname2)
 {
   std::ifstream input1(fname1);
   CGAL::Surface_mesh<K::Point_3> mesh1;
-  if (!input1 || !(input1 >> mesh1) || mesh1.is_empty()) {
+  if (!input1 || !(input1 >> mesh1) || mesh1.is_empty())
+  {
     std::cerr << fname1 << " is not a valid off file.\n";
-    exit(1);
+    std::exit(1);
   }
 
   std::ifstream input2(fname2);
   CGAL::Surface_mesh<K::Point_3> mesh2;
-  if (!input2 || !(input2 >> mesh2) || mesh2.is_empty()) {
+  if (!input2 || !(input2 >> mesh2) || mesh2.is_empty())
+  {
     std::cerr << fname2 << " is not a valid off file.\n";
-    exit(1);
+    std::exit(1);
   }
 
   // test one
@@ -391,6 +395,7 @@ void test_function_defaults_traits(std::string fname1, std::string fname2)
   typedef typename boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::property_map<SMesh, boost::vertex_point_t>::const_type PointPMap;
   PointPMap pmap = get(boost::vertex_point, mesh1);
+
   BOOST_FOREACH(vertex_descriptor v, vertices(mesh1))
     sm_points.push_back(get(pmap, v));
 

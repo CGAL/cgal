@@ -22,13 +22,14 @@
 #ifndef CGAL_OPTIMAL_BOUNDING_BOX_POPULATION_H
 #define CGAL_OPTIMAL_BOUNDING_BOX_POPULATION_H
 
-#include <vector>
+#include <CGAL/assertions.h>
 #include <CGAL/Random.h>
 
+#include <vector>
 
 namespace CGAL {
-namespace Optimal_bounding_box {
 
+namespace Optimal_bounding_box {
 
 template<typename Linear_algebra_traits>
 class Population
@@ -37,7 +38,8 @@ class Population
   typedef std::vector<Matrix> Simplex;
 
 public:
-  Population(std::size_t size) : n(size), random_generator(CGAL::Random())
+  Population(std::size_t size)
+    : n(size), random_generator(CGAL::Random())
   {
     // reserve pop space
     pop.reserve(n);
@@ -52,9 +54,9 @@ public:
     }
   }
 
-  #ifdef OBB_DEBUG
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
   void show_population();
-  #endif
+#endif
 
   std::size_t size(){return n;}
 
@@ -72,7 +74,6 @@ public:
   }
 
 private:
-
   // create random population
   void create_simplex(Simplex& simplex)
   {
@@ -110,8 +111,7 @@ private:
   std::vector<Simplex> pop;
 };
 
-
-#ifdef OBB_DEBUG
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
 template <typename Matrix>
 void Population<Matrix>::show_population()
 {
@@ -130,14 +130,7 @@ void Population<Matrix>::show_population()
 }
 #endif
 
+} // end namespace Optimal_bounding_box
+} // end namespace CGAL
 
-
-} } // end namespaces
-
-
-
-
-
-
-
-#endif //CGAL_OPTIMAL_BOUNDING_BOX_POPULATION_H
+#endif // CGAL_OPTIMAL_BOUNDING_BOX_POPULATION_H

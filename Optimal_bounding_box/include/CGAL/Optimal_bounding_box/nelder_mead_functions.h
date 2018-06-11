@@ -16,7 +16,6 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-//
 // Author(s)     : Konstantinos Katrioplas
 
 #ifndef CGAL_OPTIMAL_BOUNDING_BOX_NEALDER_MEAD_FUNCTIONS_H
@@ -25,8 +24,8 @@
 #include <CGAL/assertions.h>
 
 namespace CGAL {
-namespace Optimal_bounding_box {
 
+namespace Optimal_bounding_box {
 
 template <typename Linear_algebra_traits, typename Matrix>
 const Matrix reflection(const Matrix& S_centroid, const Matrix& S_worst)
@@ -76,7 +75,7 @@ const Matrix nm_centroid(const Matrix& S1, const Matrix& S2, const Matrix& S3)
   return Q / det;
 }
 
-}} // end namespaces
-
+} // end namespace Optimal_bounding_box
+} // end namespace CGAL
 
 #endif

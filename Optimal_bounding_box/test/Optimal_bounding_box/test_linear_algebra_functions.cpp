@@ -1,9 +1,8 @@
+#include <CGAL/Eigen_linear_algebra_traits.h>
 #include <CGAL/Optimal_bounding_box/nelder_mead_functions.h>
 #include <CGAL/Optimal_bounding_box/fitness_function.h>
+
 #include <CGAL/assertions.h>
-#include <iostream>
-#include <fstream>
-#include <CGAL/Eigen_linear_algebra_traits.h>
 
 bool assert_doubles(double d1, double d2, double epsilon)
 {

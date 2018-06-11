@@ -19,18 +19,24 @@
 //
 // Author(s)     : Konstantinos Katrioplas
 
-#ifndef CGAL_OPTIMAL_BOUNDING_HELPER_H
-#define CGAL_OPTIMAL_BOUNDING_HELPER_H
+#ifndef CGAL_OPTIMAL_BOUNDING_BOX_HELPER_H
+#define CGAL_OPTIMAL_BOUNDING_BOX_HELPER_H
 
-#include <vector>
-#include <fstream>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <CGAL/Bbox_3.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 
+#include <fstream>
+#include <string>
+#include <vector>
 
 namespace CGAL {
-namespace Optimal_bounding_box {
 
+namespace Optimal_bounding_box {
 
 template <typename Matrix, typename Point>
 void fill_matrix(const std::vector<Point>& v_points, Matrix& points_mat)
@@ -93,16 +99,15 @@ void matrix_to_mesh_and_draw(Matrix& data_points, std::string filename)
   }
 
   Mesh mesh;
-  CGAL::make_hexahedron(points[0], points[1], points[2], points[3], points[4], points[5],
-      points[6], points[7], mesh);
+  CGAL::make_hexahedron(points[0], points[1], points[2], points[3],
+                        points[4], points[5], points[6], points[7], mesh);
 
   std::ofstream out(filename);
   out << mesh;
   out.close();
 }
 
-}} // end namespaces
+} // end namespace Optimal_bounding_box
+} // end namespace CGAL
 
-
-
-#endif
+#endif // CGAL_OPTIMAL_BOUNDING_BOX_HELPER_H
