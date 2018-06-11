@@ -7,11 +7,15 @@
 #include <QColorDialog>
 #include <QPalette>
 #include <QColor>
+#include <QMessageBox>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
+
+#include "Scene_points_with_normal_item.h"
 #include "Messages_interface.h"
 #include "Scene_surface_mesh_item.h"
 #include "Color_ramp.h"
-#include <CGAL/boost/graph/helpers.h>
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <boost/unordered_map.hpp>
 #include "ui_Display_property.h"
 #include "id_printing.h"
 #include "Scene.h"
@@ -66,7 +70,8 @@ public:
   {
     this->scene = sc;
     this->mw = mw;
-
+    this->current_item = NULL;
+    
     QAction *actionDisplayAngles= new QAction(QString("Display Properties"), mw);
 
     rm = 1.0;
@@ -130,6 +135,8 @@ public:
       dock_widget->maxColorButton->setPalette(palette);
       dock_widget->maxColorButton->update();
     });
+    connect(dock_widget->sourcePointsButton, SIGNAL(toggled(bool)),
+            this, SLOT(on_sourcePointsButton_toggled(bool)));
     dock_widget->zoomToMaxButton->setEnabled(false);
     dock_widget->zoomToMinButton->setEnabled(false);
     Scene* scene_obj =static_cast<Scene*>(scene);
@@ -158,15 +165,21 @@ private Q_SLOTS:
     case 0:
       displayAngles(item);
       break;
-    default:
+    case 1:
       displayScaledJacobian(item);
+      break;
+    default:
+      
+      displayHeatIntensity(item);
+      item->setRenderingMode(Gouraud);
       break;
     }
     QApplication::restoreOverrideCursor();
     item->invalidateOpenGLBuffers();
     item->redraw();
-    dock_widget->zoomToMinButton->setEnabled(true);
-    dock_widget->zoomToMaxButton->setEnabled(true);
+    if(dock_widget->propertyBox->currentIndex() != 2){
+      dock_widget->zoomToMinButton->setEnabled(true);
+      dock_widget->zoomToMaxButton->setEnabled(true);}
   }
 
   void enableButtons()
@@ -213,6 +226,12 @@ private Q_SLOTS:
     if(found)
     {
       smesh.remove_property_map(angles);
+    }
+    SMesh::Property_map<vertex_descriptor, bool> is_source;
+    boost::tie(is_source, found) = smesh.property_map<vertex_descriptor,bool>("v:heat_source");
+    if(found)
+    {
+      smesh.remove_property_map(is_source);
     }
   }
 
@@ -408,6 +427,53 @@ private Q_SLOTS:
     dock_widget->maxBox->setValue(angles_max[item].first);
   }
 
+  void displayHeatIntensity(Scene_surface_mesh_item* item)
+  {
+    SMesh& mesh = *item->face_graph();
+    //compute and store smallest angle per face
+    int i = 0;
+    SMesh::Property_map<vertex_descriptor, double> heat_intensity 
+        = mesh.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
+    
+    double max = 0;
+    double min = std::numeric_limits<double>::max();
+    
+    //source vertices are in mesh_.property_map<vertex_descriptor, bool >("v:heat_source")
+    //replace this by heat_method function {
+    for(boost::graph_traits<SMesh>::vertex_iterator vit = vertices(mesh).begin();
+        vit != vertices(mesh).end();
+        ++vit)
+    {
+      double res = ++i*2.0;
+      if(res < min)
+        min = res;
+      if(res > max)
+        max = res;
+      heat_intensity[*vit] = res;
+    }
+    
+    color_ramp.build_thermal();
+    dock_widget->minBox->setValue(min);
+    dock_widget->maxBox->setValue(max);
+  
+    //}
+    SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
+        mesh.add_property_map<vertex_descriptor, CGAL::Color >("v:color", CGAL::Color()).first;
+    for(boost::graph_traits<SMesh>::vertex_iterator vit = vertices(mesh).begin();
+        vit != vertices(mesh).end();
+        ++vit)
+    {
+      double h =(heat_intensity[*vit]-min)/(max-min);      
+      
+      CGAL::Color color(
+            255*color_ramp.r(h),
+            255*color_ramp.g(h),
+            255*color_ramp.b(h));
+      vcolors[*vit] = color;
+    }
+    displayLegend();
+  }
+  
   void replaceRamp()
   {
     color_ramp = Color_ramp(rm, rM, gm, gM, bm, bM);
@@ -422,6 +488,12 @@ private Q_SLOTS:
     {
     case 0:
     {
+      dock_widget->groupBox->  setEnabled(true);
+      dock_widget->groupBox_2->setEnabled(true);
+      dock_widget->groupBox_3->setEnabled(true);
+      dock_widget->rampButton->setEnabled(true);
+      dock_widget->sourcePointsButton->setEnabled(false);
+      
       dock_widget->minBox->setMinimum(0);
       dock_widget->minBox->setMaximum(360);
       dock_widget->minBox->setValue(0);
@@ -438,7 +510,13 @@ private Q_SLOTS:
         dock_widget->maxBox->setValue(90);
       break;
     }
-    default:
+    case 1:
+      dock_widget->groupBox->  setEnabled(true);
+      dock_widget->groupBox_2->setEnabled(true);
+      dock_widget->groupBox_3->setEnabled(true);
+      dock_widget->rampButton->setEnabled(true);
+      dock_widget->sourcePointsButton->setEnabled(false);
+      
       dock_widget->minBox->setMinimum(-1000);
       dock_widget->minBox->setMaximum(1000);
       dock_widget->minBox->setValue(0);
@@ -447,6 +525,13 @@ private Q_SLOTS:
       dock_widget->maxBox->setMaximum(1000);
       dock_widget->maxBox->setValue(2);
       break;
+    default:
+      dock_widget->groupBox->  setEnabled(false);
+      dock_widget->groupBox_2->setEnabled(false);
+      dock_widget->groupBox_3->setEnabled(false);
+      dock_widget->rampButton->setEnabled(false);
+      dock_widget->sourcePointsButton->setEnabled(true);
+      
     }
     replaceRamp();
     enableButtons();
@@ -522,7 +607,98 @@ private Q_SLOTS:
       break;
     }
   }
-
+  
+  void on_sourcePointsButton_toggled(bool b)
+  {
+    if(b)
+    {
+      Scene_surface_mesh_item* item =
+          qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+      if(!item)
+      {
+        QMessageBox::warning(mw, "Warning", "You must select a Surface_mesh_item to make this work. Aborting.");
+        dock_widget->sourcePointsButton->setChecked(false);
+        return;
+      }
+      current_item = item;
+      if(mesh_sources_map.find(item) == mesh_sources_map.end())
+      {
+        source_points = new Scene_points_with_normal_item();
+        source_points->setName(QString("Source vertices for %1").arg(current_item->name()));
+        source_points->setColor(QColor(Qt::red));
+        source_points->setPointSize(5);
+        scene->addItem(source_points);
+        connect(source_points, &Scene_points_with_normal_item::aboutToBeDestroyed,
+                [this](){
+          boost::unordered_map<Scene_surface_mesh_item*, Scene_points_with_normal_item*>::iterator it;
+          for(it = mesh_sources_map.begin();
+              it != mesh_sources_map.end();
+              ++it)
+          {
+            if(it->second == source_points)
+            {
+              mesh_sources_map.erase(it);
+              break;
+            }
+          }
+        });
+      mesh_sources_map[current_item] = source_points;
+      }
+      else
+      {
+        source_points=mesh_sources_map[current_item];
+      }
+      connect(item, SIGNAL(selected_vertex(void*)), this, SLOT(on_vertex_selected(void*)));
+      bool non_init;
+      SMesh::Property_map<vertex_descriptor, bool> is_source;
+      boost::tie(is_source, non_init) = current_item->face_graph()->add_property_map<vertex_descriptor, bool>("v:heat_source", false);
+      if(non_init)
+      {
+        connect(item, &Scene_surface_mesh_item::itemChanged,
+                this, &DisplayPropertyPlugin::resetProperty);
+      }
+    }
+    else
+    {
+      if(!current_item)
+        return;
+      disconnect(current_item, SIGNAL(selected_vertex(void*)), this, SLOT(on_vertex_selected(void*)));
+      current_item = NULL;
+    }
+  }
+  
+  void on_vertex_selected(void* void_ptr)
+  {
+    typedef boost::graph_traits<SMesh>::vertices_size_type size_type;
+    size_type h = static_cast<size_type>(reinterpret_cast<std::size_t>(void_ptr));
+    vertex_descriptor vd = static_cast<vertex_descriptor>(h) ;
+    bool found;
+    SMesh::Property_map<vertex_descriptor, bool> is_source;
+    boost::tie(is_source, found) = current_item->face_graph()->property_map<vertex_descriptor,bool>("v:heat_source");
+    if(found)
+    {
+      if(!is_source[vd])
+      {
+        is_source[vd]=true;
+        source_points->point_set()->insert(current_item->face_graph()->point(vd));
+      }
+      else
+      {
+        is_source[vd]=false;
+        Point_set::iterator it;
+        for(it = source_points->point_set()->begin(); it != source_points->point_set()->end(); ++it)
+          if(source_points->point_set()->point(*it) == current_item->face_graph()->point(vd))
+          {
+            source_points->point_set()->remove(it);
+            source_points->point_set()->collect_garbage();
+            break;
+          }
+      }
+    }
+    
+   source_points->invalidateOpenGLBuffers();
+   source_points->itemChanged();
+  }
 private:
   void displayLegend()
   {
@@ -594,15 +770,19 @@ private:
   double gM;
   double bm;
   double bM;
-  std::map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_min;
-  std::map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_max;
+  boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_min;
+  boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_max;
 
-  std::map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_min;
-  std::map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_max;
+  boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_min;
+  boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_max;
 
   double minBox;
   double maxBox;
   QPixmap legend_;
+  
+  Scene_surface_mesh_item* current_item;
+  Scene_points_with_normal_item* source_points;
+  boost::unordered_map<Scene_surface_mesh_item*, Scene_points_with_normal_item*> mesh_sources_map;
 };
 
   /// Code based on the verdict module of vtk

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>292</width>
-    <height>456</height>
+    <height>461</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -132,6 +132,16 @@
           </property>
          </widget>
         </item>
+        <item row="6" column="1">
+         <widget class="QPushButton" name="sourcePointsButton">
+          <property name="text">
+           <string>Select Source Points</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>
@@ -148,6 +158,11 @@
         <item>
          <property name="text">
           <string>Scaled Jacobian</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Heat Intensity</string>
          </property>
         </item>
        </widget>
