@@ -23,6 +23,9 @@
 #define CGAL_BASIC_VIEWER_QT_H
 
 #include <CGAL/license/GraphicsView.h>
+#include <iostream>
+
+#ifdef CGAL_USE_BASIC_VIEWER
 
 #include <QApplication>
 #include <QKeyEvent>
@@ -610,7 +613,7 @@ protected:
   {
     glEnable(GL_DEPTH_TEST);
     if(!m_are_buffers_initialized)
-      initialize_buffers();
+    { initialize_buffers(); }
 
     QColor color;
     attrib_buffers(this);
@@ -680,7 +683,7 @@ protected:
 
       rendering_program_p_l.release();
     }
-    
+
     if (m_draw_faces)
     {
       rendering_program_face.bind();
@@ -710,7 +713,7 @@ protected:
       vao[VAO_COLORED_FACES].release();
 
       rendering_program_face.release();
-      }
+    }
   }
 
   virtual void redraw()
@@ -1037,5 +1040,42 @@ private:
 };
 
 } // End namespace CGAL
+
+#else // CGAL_USE_BASIC_VIEWER
+
+namespace CGAL 
+{
+
+template<class T, class ColorFunctor>
+void draw(const T&, const char*, bool, const ColorFunctor&)
+{
+  std::cerr<<"Impossible to draw because CGAL_USE_BASIC_VIEWER is not defined."
+           <<std::endl;
+}
+  
+template<class T>
+void draw(const T&, const char*, bool)
+{
+  std::cerr<<"Impossible to draw because CGAL_USE_BASIC_VIEWER is not defined."
+           <<std::endl;
+}
+  
+template<class T>
+void draw(const T&, const char*)
+{
+  std::cerr<<"Impossible to draw because CGAL_USE_BASIC_VIEWER is not defined."
+           <<std::endl;
+}
+  
+template<class T>
+void draw(const T&)
+{
+  std::cerr<<"Impossible to draw because CGAL_USE_BASIC_VIEWER is not defined."
+           <<std::endl;
+}
+
+} // End namespace CGAL
+
+#endif // CGAL_USE_BASIC_VIEWER
 
 #endif // CGAL_BASIC_VIEWER_QT_H
