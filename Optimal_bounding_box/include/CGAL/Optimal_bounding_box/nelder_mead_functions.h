@@ -22,6 +22,7 @@
 #ifndef CGAL_OPTIMAL_BOUNDING_BOX_NEALDER_MEAD_FUNCTIONS_H
 #define CGAL_OPTIMAL_BOUNDING_BOX_NEALDER_MEAD_FUNCTIONS_H
 
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 namespace Optimal_bounding_box {

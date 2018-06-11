@@ -33,7 +33,7 @@ namespace Optimal_bounding_box {
 
 
 template <typename Matrix, typename Point>
-void fill_matrix(std::vector<Point>& v_points, Matrix& points_mat)
+void fill_matrix(const std::vector<Point>& v_points, Matrix& points_mat)
 {
   points_mat.resize(v_points.size(), 3);
   for(std::size_t i = 0; i < v_points.size(); ++i)

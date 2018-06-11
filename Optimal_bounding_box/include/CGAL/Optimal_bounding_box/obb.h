@@ -100,7 +100,7 @@ void post_processing(const Matrix& points, Vertex& R, Matrix& obb)
 /// @param use_ch a bool flag to indicating whether to use the convex hull of the input points
 /// as an optimization step.
 template <typename Point, typename LinearAlgebraTraits>
-void find_obb(std::vector<Point>& points,
+void find_obb(const std::vector<Point>& points,
               std::vector<Point>& obb_points,
               LinearAlgebraTraits&,
               bool use_ch)
@@ -164,7 +164,7 @@ void find_obb(std::vector<Point>& points,
   std::cout << "get best: " << timer.time() << std::endl;
 #endif
 
-  MatrixXd obb; // could be preallocated at compile time
+  MatrixXd obb; // may be preallocated at compile time
   obb.resize(8, 3);
 
 #ifdef OBB_BENCHMARKS
@@ -188,7 +188,7 @@ void find_obb(std::vector<Point>& points,
 }
 
 template <typename Point>
-void find_obb(std::vector<Point>& points,
+void find_obb(const std::vector<Point>& points,
               std::vector<Point>& obb_points,
               bool use_ch)
 {
@@ -200,7 +200,6 @@ void find_obb(std::vector<Point>& points,
 
   Linear_algebra_traits la_traits;
   find_obb(points, obb_points, la_traits, use_ch);
-
 }
 
 /// \ingroup OBB_grp
@@ -216,7 +215,7 @@ void find_obb(std::vector<Point>& points,
 /// @param use_ch a bool flag to indicating whether to use the convex hull of the input points
 /// as an optimization step.
 template <typename PolygonMesh, typename LinearAlgebraTraits>
-void find_obb(PolygonMesh& pmesh,
+void find_obb(const PolygonMesh& pmesh,
               PolygonMesh& obbmesh,
               LinearAlgebraTraits& la_traits,
               bool use_ch)
@@ -232,12 +231,12 @@ void find_obb(PolygonMesh& pmesh,
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type Vpm;
   typedef typename boost::property_traits<Vpm>::value_type Point;
-  //typedef typename Kernel_traits<Point>::Kernel Kernel;
 
   std::vector<Point> points;
   Vpm pmap = get(boost::vertex_point, pmesh);
   BOOST_FOREACH(vertex_descriptor v, vertices(pmesh))
     points.push_back(get(pmap, v));
+
 
   std::vector<Point> obb_points;
   find_obb(points, obb_points, la_traits, use_ch);
@@ -248,7 +247,7 @@ void find_obb(PolygonMesh& pmesh,
 }
 
 template <typename PolygonMesh>
-void find_obb(PolygonMesh& pmesh,
+void find_obb(const PolygonMesh& pmesh,
               PolygonMesh& obbmesh,
               bool use_ch)
 {
