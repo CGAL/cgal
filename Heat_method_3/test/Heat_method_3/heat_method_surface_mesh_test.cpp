@@ -104,20 +104,20 @@ int main()
   Heat_method hm(sm, vertex_distance_map);
   source_set_tests(hm,sm);
   //cotan matrix tests
-  const SparseMatrix& M = hm.get_mass_matrix();
-  const SparseMatrix& c = hm.get_cotan_matrix();
+  const SparseMatrix& M = hm.mass_matrix();
+  const SparseMatrix& c = hm.cotan_matrix();
   cotan_matrix_test(c);
   mass_matrix_test(M);
 
 
-  double time_step = hm.get_time_step();
+  double time_step = hm.time_step();
   double length_sum = hm.summation_of_edges();
   //there are 6 edges in pyramid
   double time_step_computed = (1./6)*length_sum;
   assert(time_step_computed ==time_step);
 
 
-  const SparseMatrix& K = hm.get_kronecker_delta();
+  const SparseMatrix& K = hm.kronecker_delta();
   // AF: I commented the assert as I commented in build()
   assert(K.nonZeros()==1);
   Eigen::VectorXd solved_u = hm.solve_cotan_laplace(M,c,K,time_step,4);
@@ -144,15 +144,15 @@ int main()
     return 1;
   }
   Heat_method hm2(sm2, vertex_distance_map2);
-  //Eigen::VectorXd solved_dist_sphere = hm2.get_distances();
-  const SparseMatrix& M2 = hm2.get_mass_matrix();
-  const SparseMatrix& c2 = hm2.get_cotan_matrix();
+  //Eigen::VectorXd solved_dist_sphere = hm2.distances();
+  const SparseMatrix& M2 = hm2.mass_matrix();
+  const SparseMatrix& c2 = hm2.cotan_matrix();
   cotan_matrix_test(c2);
   //mass_matrix_test(M2);
-  const SparseMatrix& K2 = hm2.get_kronecker_delta();
+  const SparseMatrix& K2 = hm2.kronecker_delta();
   // AF: I commented the assert as I commented in build()
   assert(K2.nonZeros()==1);
-  double time_step_2 = hm2.get_time_step();
+  double time_step_2 = hm2.time_step();
 
   Eigen::VectorXd solved_u2 = hm2.solve_cotan_laplace(M2,c2,K2,time_step_2,43562);
   Eigen::VectorXd check_u2 = ((M2+time_step_2*c2)*solved_u2)-K2;

@@ -124,14 +124,14 @@ namespace Heat_method_3 {
      * add `vd` to the source set, returning `false` if `vd` is already in the set.
      */
 
-     const Matrix& get_mass_matrix()
+     const Matrix& mass_matrix()
      {
-       return mass_matrix;
+       return m_mass_matrix;
      }
 
-     const Matrix& get_cotan_matrix()
+     const Matrix& cotan_matrix()
      {
-       return cotan_matrix;
+       return m_cotan_matrix;
      }
 
     bool add_source(vertex_descriptor vd)
@@ -197,9 +197,9 @@ namespace Heat_method_3 {
       return edge_sum;
     }
 
-    double get_time_step()
+    double time_step()
     {
-      return time_step;
+      return m_time_step;
     }
 
     Matrix kronecker_delta(const std::set<vertex_descriptor>& sources)
@@ -221,15 +221,15 @@ namespace Heat_method_3 {
     }
 
 
-    const Matrix& get_kronecker_delta()
+    const Matrix& kronecker_delta()
     {
       return kronecker;
     }
 
-    Eigen::VectorXd solve_cotan_laplace(Matrix M, Matrix c, Matrix x, double time_step, int dimension)
+    Eigen::VectorXd solve_cotan_laplace(Matrix M, Matrix c, Matrix x, double a_time_step, int dimension)
     {
       Eigen::VectorXd u;
-      Matrix A = (M+ time_step*c);
+      Matrix A = (M+ a_time_step*c);
       Eigen::SimplicialLLT<Matrix> solver;
       solver.compute(A);
       if(solver.info()!=Eigen::Success) {
@@ -364,7 +364,7 @@ namespace Heat_method_3 {
 
     //currently, this function will return a (number of vertices)x1 vector where
     //the ith index has the distance from the first vertex to the ith vertex
-    const Eigen::VectorXd& get_distances()
+    const Eigen::VectorXd& distances()
     {
       return solved_phi;
     }
@@ -449,29 +449,29 @@ namespace Heat_method_3 {
         A_matrix_entries.push_back(triplet(j,j, (1./6.)*norm_cross));
         A_matrix_entries.push_back(triplet(k,k, (1./6.)*norm_cross));
       }
-      mass_matrix.resize(m,m);
-      mass_matrix.setFromTriplets(A_matrix_entries.begin(), A_matrix_entries.end());
-      cotan_matrix.resize(m,m);
-      cotan_matrix.setFromTriplets(c_matrix_entries.begin(), c_matrix_entries.end());
+      m_mass_matrix.resize(m,m);
+      m_mass_matrix.setFromTriplets(A_matrix_entries.begin(), A_matrix_entries.end());
+      m_cotan_matrix.resize(m,m);
+      m_cotan_matrix.setFromTriplets(c_matrix_entries.begin(), c_matrix_entries.end());
 
-      time_step = 1./(num_edges(tm));
-      time_step = time_step*summation_of_edges();
+      m_time_step = 1./(num_edges(tm));
+      m_time_step = m_time_step*summation_of_edges();
 
       sources = get_sources();
       kronecker = kronecker_delta(sources);
-      solved_u = solve_cotan_laplace(mass_matrix, cotan_matrix, kronecker, time_step, m);
+      solved_u = solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, m_time_step, m);
       X = compute_unit_gradient(solved_u);
       index_divergence = compute_divergence(X, m);
-      solved_phi = solve_phi(cotan_matrix, index_divergence, m);
+      solved_phi = solve_phi(m_cotan_matrix, index_divergence, m);
     }
     const TriangleMesh& tm;
     VertexDistanceMap vdm;
     VertexPointMap vpm;
     FaceIndexMap fpm;
     std::set<vertex_descriptor> sources;
-    double time_step;
+    double m_time_step;
     Matrix kronecker;
-    Matrix mass_matrix, cotan_matrix;
+    Matrix m_mass_matrix, m_cotan_matrix;
     Eigen::VectorXd solved_u;
     Eigen::MatrixXd X;
     Matrix index_divergence;
