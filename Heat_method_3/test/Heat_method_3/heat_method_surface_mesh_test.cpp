@@ -1,6 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Heat_method_3/Heat_method_3.h>
 #include <iostream>
 #include <fstream>
@@ -9,13 +10,17 @@
 #include <cassert>
 #include <Eigen/Sparse>
 #include <Eigen/Dense>
+
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
 typedef CGAL::Surface_mesh<Point>                            Mesh;
 //typedef CGAL::Polyhedron_3<Kernel> Mesh;
 
+typedef CGAL::dynamic_vertex_property_t<double> Vertex_distance_tag;
+typedef boost::property_map<Mesh, Vertex_distance_tag >::type Vertex_distance_map;
+ 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-typedef CGAL::Heat_method_3::Heat_method_3<Mesh,Kernel> Heat_method;
+typedef CGAL::Heat_method_3::Heat_method_3<Mesh,Kernel,Vertex_distance_map> Heat_method;
 typedef CGAL::Heat_method_3::Heat_method_Eigen_traits_3::SparseMatrix SparseMatrix;
 
 void source_set_tests(Heat_method hm, Mesh sm)
@@ -86,6 +91,9 @@ void check_for_unit(Eigen::MatrixXd X, int dimension)
 int main()
 {
   Mesh sm;
+  Vertex_distance_map vertex_distance_map = get(Vertex_distance_tag(),sm);
+  
+  
   std::ifstream in("data/pyramid0.off");
   in >> sm;
   if(!in || num_vertices(sm) == 0) {
@@ -93,7 +101,7 @@ int main()
     return 1;
   }
   //source set tests
-  Heat_method hm(sm);
+  Heat_method hm(sm, vertex_distance_map);
   source_set_tests(hm,sm);
   //cotan matrix tests
   const SparseMatrix& M = hm.get_mass_matrix();
@@ -127,13 +135,15 @@ int main()
   std::cout<<"PHASE 3 DONE \n";
 
   Mesh sm2;
+  Vertex_distance_map vertex_distance_map2 = get(Vertex_distance_tag(),sm2);
+  
   std::ifstream llets("data/sphere.off");
   llets>>sm2;
   if(!llets|| num_vertices(sm2) == 0) {
     std::cerr << "Problem loading the input data" << std::endl;
     return 1;
   }
-  Heat_method hm2(sm2);
+  Heat_method hm2(sm2, vertex_distance_map2);
   //Eigen::VectorXd solved_dist_sphere = hm2.get_distances();
   const SparseMatrix& M2 = hm2.get_mass_matrix();
   const SparseMatrix& c2 = hm2.get_cotan_matrix();

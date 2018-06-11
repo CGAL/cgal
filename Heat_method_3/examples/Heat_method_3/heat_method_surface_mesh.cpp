@@ -10,17 +10,20 @@
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
 typedef CGAL::Surface_mesh<Point>                            Mesh;
-typedef CGAL::Heat_method_3::Heat_method_3<Mesh,Kernel> Heat_method;
-
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+typedef Mesh::Property_map<vertex_descriptor, double> Vertex_distance_map; 
+typedef CGAL::Heat_method_3::Heat_method_3<Mesh,Kernel,Vertex_distance_map> Heat_method;
+
+
 
 int main(int argc, char* argv[]) 
 {
   Mesh sm;
   std::ifstream in(argv[1]);
   in >> sm;
-  
-  Heat_method hm(sm);
+  Vertex_distance_map heat_intensity =
+    sm.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first; 
+  Heat_method hm(sm, heat_intensity);
 
   vertex_descriptor source = *(vertices(sm).first);
   hm.add_source(source);

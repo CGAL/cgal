@@ -34,7 +34,6 @@
 
 #include <boost/foreach.hpp>
 #include <CGAL/boost/graph/properties.h>
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <vector>
@@ -69,6 +68,7 @@ namespace Heat_method_3 {
    */
   template <typename TriangleMesh,
             typename Traits,
+            typename VertexDistanceMap,
             typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type,
             typename FaceIndexMap = typename boost::property_map< TriangleMesh, face_index_t>::const_type,
             typename LA = Heat_method_Eigen_traits_3>
@@ -85,7 +85,7 @@ namespace Heat_method_3 {
     typedef typename Traits::Point_3                                      Point_3;
     typedef typename Traits::FT                                                FT;
 
-    typedef typename Simple_cartesian<double>::Vector_3                    vector;
+    typedef typename Traits::Vector_3                    vector;
 
 
     typedef typename LA::SparseMatrix Matrix;
@@ -108,14 +108,14 @@ namespace Heat_method_3 {
 
   public:
 
-    Heat_method_3(const TriangleMesh& tm)
-      : tm(tm), vpm(get(vertex_point,tm))
+    Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm)
+      : tm(tm), vdm(vdm), vpm(get(vertex_point,tm))
     {
       build();
     }
 
-    Heat_method_3(const TriangleMesh& tm, VertexPointMap vpm, FaceIndexMap fpm)
-      : tm(tm), vpm(vpm), fpm(fpm)
+    Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm, VertexPointMap vpm, FaceIndexMap fpm)
+      : tm(tm), vdm(vdm), vpm(vpm), fpm(fpm)
     {
       build();
     }
@@ -369,6 +369,10 @@ namespace Heat_method_3 {
       return solved_phi;
     }
 
+
+    void update()
+    {}
+    
   private:
 
     void build()
@@ -455,6 +459,7 @@ namespace Heat_method_3 {
       solved_phi = solve_phi(cotan_matrix, index_divergence, m);
     }
     const TriangleMesh& tm;
+    VertexDistanceMap vdm;
     VertexPointMap vpm;
     FaceIndexMap fpm;
     std::set<vertex_descriptor> sources;
