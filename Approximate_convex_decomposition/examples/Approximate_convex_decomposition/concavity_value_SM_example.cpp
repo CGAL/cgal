@@ -1,17 +1,16 @@
 #include <CGAL/approx_decomposition.h>
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Surface_mesh.h>
 
 #include <iostream>
 #include <fstream>
 
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef CGAL::Polyhedron_3<Kernel>     Polyhedron;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 
 int main()
 {
     // read mesh
-    Polyhedron mesh;
+    Surface_mesh mesh;
     
     std::ifstream input("data/elephant.off");
     
@@ -28,10 +27,10 @@ int main()
     }
 
     // compute concavity value
-//    double concavity = CGAL::concavity_value(mesh);
+    double concavity = CGAL::concavity_value(mesh);
 
     // write result
-//    std::cout << "Concavity value: " << concavity << std::endl;
+    std::cout << "Concavity value: " << concavity << std::endl;
 
     return EXIT_SUCCESS;
 }

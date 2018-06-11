@@ -51,6 +51,7 @@ namespace internal
         {
             Filtered_graph filtered_mesh(m_mesh, cluster_id, facet_ids);
 
+            /// DEBUG OUTPUT ///
             Surface_mesh cluster;
             CGAL::copy_face_graph(filtered_mesh, cluster);
             {
@@ -77,6 +78,7 @@ namespace internal
                 std::ofstream os("ch_cluster_" + std::to_string(cluster_id) + ".off");
                 os << conv_hull;
             }
+            /// DEBUG OUTPUT ///
 
             Concavity concavity(cluster, m_traits);
             return concavity.compute();
@@ -93,15 +95,10 @@ namespace internal
 
             BOOST_FOREACH(vertex_descriptor vert, CGAL::vertices(m_mesh))
             {
-//                std::cout << typeid(vert).name() << " " << vert << " " << m_mesh.point(vert) << std::endl;
                 pts.push_back(m_mesh.point(vert));
             }
 
             CGAL::convex_hull_3(pts.begin(), pts.end(), conv_hull); 
-//            {
-//                std::ofstream os("ch.off");
-//                os << conv_hull;
-//            }
             
             return compute(conv_hull);
         }
@@ -119,7 +116,6 @@ namespace internal
 
             BOOST_FOREACH(vertex_descriptor vert, CGAL::vertices(m_mesh))
             {
-//                std::cout << m_mesh.point(vert) << " " << normals_map[vert] << " " << normals_map[vert].squared_length() << " -> ";
                 Ray_3 ray(m_mesh.point(vert), normals_map[vert]);
                 
                 Ray_intersection intersection = tree.first_intersection(ray);
@@ -128,11 +124,9 @@ namespace internal
                     const Point_3* p =  boost::get<Point_3>(&(intersection->first));
                     if (p)
                     {
-//                        std::cout << *p << std::endl;
                         result = std::max(result, CGAL::squared_distance(m_mesh.point(vert), *p));
                     }
                 }
-//                std::cout << std::endl;
             }
 
             return CGAL::sqrt(result);

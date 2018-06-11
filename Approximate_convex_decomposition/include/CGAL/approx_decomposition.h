@@ -6,7 +6,6 @@
 #include <CGAL/internal/Approximate_convex_decomposition/approx_decomposition.h>
 #include <CGAL/internal/Approximate_convex_decomposition/concavity.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <map>
 
 namespace CGAL
 {
@@ -14,9 +13,11 @@ namespace CGAL
 
 /*
  * @brief Function computing concavity value of a cluster.
+ * 
  * Cluster is a subset of connected faces in a triangle mesh.
+ * Concavity value is the largest distance from a vertex in a cluster to the projected point onto the convex hull of a mesh.
  *
- * @return concativity value (the largest squared distance from a point in a cluster to the projected point onto the convex hull of a mesh).
+ * @return concativity value.
  */
 template <class TriangleMesh, class FacePropertyMap,
           class GeomTraits = CGAL::Exact_predicates_inexact_constructions_kernel
@@ -35,11 +36,31 @@ concavity_value(const TriangleMesh& mesh,
 
 
 /*
- * @brief Function computing the approximate convex decomposition of a triangular mesh.
+ * @brief Function computing concavity value of a triangle mesh.
+ * 
+ * Concavity value is the largest distance from a vertex in a mesh to the projected point onto the convex hull of a mesh.
  *
- * This function fills a property map which associates a cluster-id (in [0, 'number_of_clusters'-1] or -1) to each face.
- * If a face doesn't belong to any cluster, it's cluster-id is set to -1.
- * Clusters are subsets of connected faces in a triangular mesh which concavity values satisfy 'concavity_threshold'.
+ * @return concativity value.
+ */
+template <class TriangleMesh,
+          class GeomTraits = CGAL::Exact_predicates_inexact_constructions_kernel
+          >
+double
+concavity_value(const TriangleMesh& mesh,
+                const GeomTraits& traits = GeomTraits())
+{
+    CGAL_precondition(CGAL::is_triangle_mesh(mesh));
+
+    internal::Concavity<TriangleMesh, GeomTraits> algorithm(mesh, traits);
+    return algorithm.compute();
+}
+
+
+/*
+ * @brief Function computing the approximate convex decomposition of a triangle mesh.
+ *
+ * This function fills a property map which associates a cluster-id (in the range [0, 'number_of_clusters'-1]) to each face.
+ * Clusters are subsets of connected faces in a triangle mesh which concavity values are less than 'concavity_threshold'.
  *
  * @return number of clusters.
  */
@@ -49,7 +70,7 @@ template <class TriangleMesh, class FacePropertyMap,
 std::size_t
 convex_decomposition(const TriangleMesh& mesh,
                      FacePropertyMap face_ids,
-                     double concavity_threshold = 100,
+                     double concavity_threshold = 0.05,
                      std::size_t min_number_of_clusters = 1,
                      const GeomTraits& traits = GeomTraits())
 {
