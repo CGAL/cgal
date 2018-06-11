@@ -638,30 +638,50 @@ public:
   Face_handle locate(const Point& query, Locate_type& lt, int &li, Face_handle hint = Face_handle()) const {
     
     // Perform an Euclidean location first and get close to the hyperbolic face containing the query point
-    Face_handle fh = Base::locate(query, lt, li, hint);
+    typename Base::Locate_type blt;
+    Face_handle fh = Base::locate(query, blt, li, hint);
     
-    if (lt == Base::VERTEX) {
+    if (blt == Base::VERTEX) {
+      lt = VERTEX;
+    } else {
+      if (blt == Base::EDGE) {
+        lt = EDGE;
+      } else {
+        if (blt == Base::FACE) {
+          lt = FACE;
+        } else {
+          if (blt == OUTSIDE_CONVEX_HULL) {
+            lt = OUTSIDE_CONVEX_HULL;
+          } else {
+            lt = OUTSIDE_AFFINE_HULL;
+          }
+        }
+      }
+    }
+    
+
+    if (lt == VERTEX) {
       return fh;
     }
 
-    if (lt == Base::OUTSIDE_CONVEX_HULL ||
-        lt == Base::OUTSIDE_AFFINE_HULL) {
+    if (lt == OUTSIDE_CONVEX_HULL ||
+        lt == OUTSIDE_AFFINE_HULL) {
       return Face_handle();
     }
     
     // This case corresponds to when the point is located on an Euclidean edge.
-    if (lt == Base::EDGE) {
+    if (lt == EDGE) {
       Point p = fh->vertex(0)->point();
       Point q = fh->vertex(1)->point();
       Point r = fh->vertex(2)->point();
       if (Is_hyperbolic()(p, q, r)) {
         Bounded_side side = Side_of_hyperbolic_triangle()(p, q, r, query, li);
         if (side == ON_BOUNDARY) {
-          lt = Base::EDGE;
+          lt = EDGE;
           return fh;
         } else {
           if (side == ON_BOUNDED_SIDE) {
-            lt = Base::FACE;
+            lt = FACE;
             return fh;
           } else {
             // do nothing -- we still have to check the neighboring face
@@ -675,15 +695,15 @@ public:
       if (Is_hyperbolic()(p, q, r)) {
         Bounded_side side = Side_of_hyperbolic_triangle()(p, q, r, query, li);
         if (side == ON_BOUNDARY) {
-          lt = Base::EDGE;
+          lt = EDGE;
           return fh;
         } else {
           if (side == ON_BOUNDED_SIDE) {
-            lt = Base::FACE;
+            lt = FACE;
             return fh;
           } else {
             // There is nothing to be done now -- the point is outside the convex hull of the triangulation
-            lt = Base::OUTSIDE_CONVEX_HULL;
+            lt = OUTSIDE_CONVEX_HULL;
             return Face_handle();
           }
         }
@@ -695,17 +715,17 @@ public:
     Point q = fh->vertex(1)->point();
     Point r = fh->vertex(2)->point();
     if (!Is_hyperbolic()(p, q, r)) {
-      lt = Base::OUTSIDE_CONVEX_HULL;
+      lt = OUTSIDE_CONVEX_HULL;
       return Face_handle();
     }
 
     Bounded_side side = Side_of_hyperbolic_triangle()(p, q, r, query, li);
     if (side == ON_BOUNDED_SIDE) {
-      lt = Base::FACE;
+      lt = FACE;
       return fh;
     } else {
       if (side == ON_BOUNDARY) {
-        lt = Base::EDGE;
+        lt = EDGE;
         return fh;
       } else {
         // Here, the point lies in a face that is a neighbor to fh
@@ -714,10 +734,10 @@ public:
           if (Is_hyperbolic()(nfh->vertex(0)->point(),nfh->vertex(1)->point(),nfh->vertex(2)->point())) {
             Bounded_side nside = Side_of_hyperbolic_triangle()(nfh->vertex(0)->point(),nfh->vertex(1)->point(),nfh->vertex(2)->point(), query, li);
             if (nside == ON_BOUNDED_SIDE) {
-              lt = Base::FACE;
+              lt = FACE;
               return nfh;
             } else if (nside == ON_BOUNDARY) {
-              lt = Base::EDGE;
+              lt = EDGE;
               return nfh;
             }
           }
@@ -725,13 +745,13 @@ public:
 
         // At this point, the point lies outside of the convex hull of the triangulation,
         // since it has not been found in any of the hyperbolic faces adjacent to fh.
-        lt = Base::OUTSIDE_CONVEX_HULL;
+        lt = OUTSIDE_CONVEX_HULL;
         return Face_handle();
       }
     }
 
     // We never reach this point, but we have to make the compiler happy
-    lt = Base::OUTSIDE_CONVEX_HULL;
+    lt = OUTSIDE_CONVEX_HULL;
     return Face_handle();
   }
 

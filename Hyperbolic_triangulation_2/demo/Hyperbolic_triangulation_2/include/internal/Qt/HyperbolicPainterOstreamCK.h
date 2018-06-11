@@ -41,9 +41,9 @@ namespace Qt {
     typedef typename Gt::Hyperbolic_segment_2      Hyperbolic_segment_2;
 
     typedef typename Gt::Point_2    Point_2;
-    typedef Line_arc_2<K>           Line_arc_2;
-    typedef Circular_arc_2<K>       Circular_arc_2;
-    typedef Circular_arc_point_2<K> Circular_arc_point_2;
+    typedef Line_arc_2<K>           Line_arc;
+    typedef Circular_arc_2<K>       Circular_arc;
+    typedef Circular_arc_point_2<K> Circular_arc_point;
     
     PainterOstream(QPainter* p, QRectF rect = QRectF())
       : Base(p, rect), qp(p), convert(rect) 
@@ -53,12 +53,12 @@ namespace Qt {
     
     PainterOstream& operator << (Hyperbolic_segment_2 s)
       {
-	if (const Line_arc_2* seg = boost::get<Line_arc_2>(&s)) {
+	if (const Line_arc* seg = boost::get<Line_arc>(&s)) {
 	  operator << (*seg);
 	  return *this;
 	}
       
-	Circular_arc_2* arc = boost::get<Circular_arc_2>(&s);
+	Circular_arc* arc = boost::get<Circular_arc>(&s);
 
 	if (arc->squared_radius() > 10 )
 	  // due to rounding, the arc drawn does not look like it 
@@ -67,7 +67,7 @@ namespace Qt {
 	  {
 	    Point_2 source(to_double(arc->source().x()),to_double(arc->source().y()));
 	    Point_2 target(to_double(arc->target().x()),to_double(arc->target().y()));	    
-	    const Line_arc_2 seg(source,target);
+	    const Line_arc seg(source,target);
 	    operator << (seg);
 	    return *this;
 	  }
