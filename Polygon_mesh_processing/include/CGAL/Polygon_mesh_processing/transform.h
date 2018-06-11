@@ -62,6 +62,15 @@ void transform(const Transformation& transformation,
     put(vpm, vd, transformation(get(vpm, vd)));
   }
 }
+
+/// \cond SKIP_IN_MANUAL
+template<class Transformation, class PolygonMesh>
+void transform(const Transformation& transformation,
+               PolygonMesh& mesh)
+{
+  transform(transformation, mesh, parameters::all_default());
+}
+/// \endcond
 }
 }
 
