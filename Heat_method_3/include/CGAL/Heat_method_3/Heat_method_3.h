@@ -82,8 +82,10 @@ namespace Heat_method_3 {
     /// Geometric typedefs
     typedef typename Traits::Point_3                                      Point_3;
     typedef typename Traits::FT                                                FT;
+    typedef typename Traits::Vector_3                                    Vector_3;
 
-    typedef typename Traits::Vector_3                    Vector_3;
+    // Property map typedefs
+    typedef typename boost::property_traits<VertexPointMap>::reference VertexPointMap_reference;
 
 
     typedef typename LA::SparseMatrix Matrix;
@@ -254,9 +256,9 @@ namespace Heat_method_3 {
         Index i = get(vertex_id_map, current);
         Index j = get(vertex_id_map, neighbor_one);
         Index k = get(vertex_id_map, neighbor_two);
-        Point_3 p_i = get(vpm,current);
-        Point_3 p_j = get(vpm, neighbor_one);
-        Point_3 p_k = get(vpm, neighbor_two);
+        VertexPointMap_reference p_i = get(vpm,current);
+        VertexPointMap_reference p_j = get(vpm, neighbor_one);
+        VertexPointMap_reference p_k = get(vpm, neighbor_two);
         Index face_i = get(face_id_map, f);
         //get area of face_i
         //get outward unit normal
@@ -299,9 +301,9 @@ namespace Heat_method_3 {
         Index i = get(vertex_id_map, current);
         Index j = get(vertex_id_map, neighbor_one);
         Index k = get(vertex_id_map, neighbor_two);
-        Point_3 p_i = get(vpm,current);
-        Point_3 p_j = get(vpm, neighbor_one);
-        Point_3 p_k = get(vpm, neighbor_two);
+        VertexPointMap_reference p_i = get(vpm,current);
+        VertexPointMap_reference p_j = get(vpm, neighbor_one);
+        VertexPointMap_reference p_k = get(vpm, neighbor_two);
         Index face_i = get(face_id_map, f);
 
         Vector_3 cross = CGAL::cross_product((p_j-p_i), (p_k-p_i));
@@ -410,9 +412,9 @@ namespace Heat_method_3 {
         Index i = get(vertex_id_map, current);
         Index j = get(vertex_id_map, neighbor_one);
         Index k = get(vertex_id_map, neighbor_two);
-        Point_3 p_i = get(vpm,current);
-        Point_3 p_j = get(vpm, neighbor_one);
-        Point_3 p_k = get(vpm, neighbor_two);
+        VertexPointMap_reference p_i = get(vpm,current);
+        VertexPointMap_reference p_j = get(vpm, neighbor_one);
+        VertexPointMap_reference p_k = get(vpm, neighbor_two);
 
         Vector_3 cross = CGAL::cross_product((p_j-p_i), (p_k-p_i));
         double dot = (p_j-p_i)*(p_k-p_i);
