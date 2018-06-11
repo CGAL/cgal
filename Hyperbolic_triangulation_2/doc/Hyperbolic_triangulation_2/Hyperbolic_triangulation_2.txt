@@ -25,6 +25,10 @@ The resulting simplices of dimension 0, 1 and 2 are called <I>vertex</I>, <I>edg
 <I>face</I> respectively.
 
 
+\section HT2_Design Design and Implementation History
+
+This package implements the algorithm for computing Delaunay complexes in the hyperbolic plane, described by Mikhail Bogdanov, Olivier Devillers, and Monique Teillaud \cgalCite{cgal:bdt-hdcvd-14}.
+
 */ 
 } /* namespace CGAL */
 
