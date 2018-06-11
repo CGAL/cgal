@@ -434,25 +434,36 @@ private Q_SLOTS:
     int i = 0;
     SMesh::Property_map<vertex_descriptor, double> heat_intensity 
         = mesh.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
-    
+    bool found = false;
+    SMesh::Property_map<vertex_descriptor, bool> is_source ;
+    boost::tie(is_source, found)=
+        mesh.property_map<vertex_descriptor,bool>("v:heat_source");
+    if(!found)
+    {
+      QApplication::restoreOverrideCursor();
+      QMessageBox::warning(mw, "Warning","Source vertices are needed for this property.");
+      return;
+    }
     double max = 0;
     double min = std::numeric_limits<double>::max();
     
-    //source vertices are in mesh_.property_map<vertex_descriptor, bool >("v:heat_source")
+    //source vertices are in is_source
     //replace this by heat_method function {
     for(boost::graph_traits<SMesh>::vertex_iterator vit = vertices(mesh).begin();
         vit != vertices(mesh).end();
         ++vit)
     {
       double res = ++i*2.0;
+      if(is_source[*vit])
+        res = 0.0;
       if(res < min)
         min = res;
       if(res > max)
         max = res;
-      heat_intensity[*vit] = res;
+      heat_intensity[*vit] = res; //<- replace this value 
     }
     
-    color_ramp.build_thermal();
+    color_ramp = Color_ramp(rm, rM, gm, gM, bm, bM);
     dock_widget->minBox->setValue(min);
     dock_widget->maxBox->setValue(max);
   
@@ -489,7 +500,6 @@ private Q_SLOTS:
     case 0:
     {
       dock_widget->groupBox->  setEnabled(true);
-      dock_widget->groupBox_2->setEnabled(true);
       dock_widget->groupBox_3->setEnabled(true);
       dock_widget->rampButton->setEnabled(true);
       dock_widget->sourcePointsButton->setEnabled(false);
@@ -512,7 +522,6 @@ private Q_SLOTS:
     }
     case 1:
       dock_widget->groupBox->  setEnabled(true);
-      dock_widget->groupBox_2->setEnabled(true);
       dock_widget->groupBox_3->setEnabled(true);
       dock_widget->rampButton->setEnabled(true);
       dock_widget->sourcePointsButton->setEnabled(false);
@@ -526,8 +535,9 @@ private Q_SLOTS:
       dock_widget->maxBox->setValue(2);
       break;
     default:
+      dock_widget->maxBox->setMinimum(0);
+      dock_widget->maxBox->setMaximum(99999999);
       dock_widget->groupBox->  setEnabled(false);
-      dock_widget->groupBox_2->setEnabled(false);
       dock_widget->groupBox_3->setEnabled(false);
       dock_widget->rampButton->setEnabled(false);
       dock_widget->sourcePointsButton->setEnabled(true);
