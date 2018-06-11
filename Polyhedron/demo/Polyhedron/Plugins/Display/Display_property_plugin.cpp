@@ -466,7 +466,6 @@ private Q_SLOTS:
       return;
     }
 
-
     // AF: So far we only deal with adding sources
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
       if(is_source[vd]){
@@ -486,7 +485,6 @@ private Q_SLOTS:
       if(hi > max)
         max = hi;
     }
-    
     color_ramp = Color_ramp(rm, rM, gm, gM, bm, bM);
     dock_widget->minBox->setValue(min);
     dock_widget->maxBox->setValue(max);

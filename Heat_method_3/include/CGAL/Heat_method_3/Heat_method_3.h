@@ -371,7 +371,13 @@ namespace Heat_method_3 {
 
 
     void update()
-    {}
+    {
+      double d=0;
+      BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
+        put(vdm,vd,d);
+        d += 0.2;
+      }
+    }
     
   private:
 
