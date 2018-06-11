@@ -11,6 +11,7 @@
 #include <cassert>
 #include <algorithm>
 #include <fstream>
+#include <iostream>
 
 
 typedef CGAL::Exact_rational                          NT;
@@ -231,6 +232,7 @@ void test_extreme_vertices(const char* fname)
   }  
   std::vector<boost::graph_traits<Polyhedron_3>::vertex_descriptor> verts;
   extreme_vertices(vertices(P), std::back_inserter(verts) , get(CGAL::vertex_point, P), Traits());
+  std::cout<<verts.size()<<std::endl;
 }
 
 int main()
@@ -243,7 +245,7 @@ int main()
   test_coplanar_points("data/coplanar_points.xyz");
   test_equal_points();*/
   
-  test_extreme_vertices("data/cube_meshed.off");
+  test_extreme_vertices("data/cross.off");
 
   return 0;
 }
