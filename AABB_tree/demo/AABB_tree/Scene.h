@@ -17,9 +17,8 @@
 
 #include <QtCore/qglobal.h>
 #include <QMap>
-#include <QGLViewer/manipulatedFrame.h>
-#include <QGLViewer/qglviewer.h>
-#include <QOpenGLFunctions_2_1>
+#include <CGAL/Qt/manipulatedFrame.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
@@ -71,7 +70,7 @@ private:
     typedef CGAL::AABB_traits<Kernel, Edge_Primitive>                   Edge_Traits;
     typedef CGAL::AABB_tree<Edge_Traits>                                Edge_tree;
     
-    typedef qglviewer::ManipulatedFrame ManipulatedFrame;
+    typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
     
     enum Cut_planes_types {
         NONE, UNSIGNED_FACETS, SIGNED_FACETS, UNSIGNED_EDGES, CUT_SEGMENTS
@@ -79,7 +78,7 @@ private:
   
 public:
     QGLContext* context;
-    void draw(QGLViewer*);
+    void draw(CGAL::QGLViewer*);
     void update_bbox();
     Bbox bbox() { return m_bbox; }
     ManipulatedFrame* manipulatedFrame() const { return m_frame; }
@@ -171,7 +170,7 @@ private:
     QOpenGLShaderProgram rendering_program;
     void initialize_buffers();
     void compute_elements(int mode);
-    void attrib_buffers(QGLViewer*);
+    void attrib_buffers(CGAL::QGLViewer*);
     void compile_shaders();
     void compute_texture(int, int, Color_ramp, Color_ramp);
 

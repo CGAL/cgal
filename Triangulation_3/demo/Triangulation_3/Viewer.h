@@ -3,7 +3,7 @@
 
 #include "Scene.h"
 #include <QMap>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QSettings>
@@ -15,17 +15,17 @@
 #include <QOpenGLShaderProgram>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 #include <iostream>
-using namespace qglviewer;
+using namespace CGAL::qglviewer;
 
 class MainWindow;
 
-class Viewer : public QGLViewer, QOpenGLFunctions_2_1 {
+class Viewer : public CGAL::QGLViewer{
 
   Q_OBJECT
 
 public:
   Viewer(QWidget* parent)
-    : QGLViewer(CGAL::Qt::createOpenGLContext(),parent)
+    : CGAL::QGLViewer(parent)
     , m_showAxis(false)
     , m_showVertex(true)
     , m_showDEdge(true)
@@ -100,13 +100,7 @@ public:
     m_isMoving = false;
     m_hasEmptyS = false;
     m_nearestNb = NULL;
-#if QGLVIEWER_VERSION >= 0x020700
     update();
-#else
-    updateGL();
-
-#endif
-
   }
 
   // set selectBuffer size (if necessary)
@@ -202,52 +196,22 @@ public Q_SLOTS:
   // show options
   inline void toggleShowAxis(bool flag)  {
     m_showAxis = flag;
-#if QGLVIEWER_VERSION >= 0x020700
     update();
-#else
-    updateGL();
-
-#endif
   }
   inline void toggleShowVertex(bool flag)  { m_showVertex = flag;
-                                         #if QGLVIEWER_VERSION >= 0x020700
                                              update();
-                                         #else
-                                             updateGL();
-
-                                         #endif
                                            }
   inline void toggleShowDEdge(bool flag)  { m_showDEdge = flag;
-                                        #if QGLVIEWER_VERSION >= 0x020700
                                             update();
-                                        #else
-                                            updateGL();
-
-                                        #endif
                                           }
   inline void toggleShowVEdge(bool flag)  { m_showVEdge = flag;
-                                        #if QGLVIEWER_VERSION >= 0x020700
                                             update();
-                                        #else
-                                            updateGL();
-
-                                        #endif
                                           }
   inline void toggleShowFacet(bool flag)  { m_showFacet = flag;
-                                        #if QGLVIEWER_VERSION >= 0x020700
                                             update();
-                                        #else
-                                            updateGL();
-
-                                        #endif
                                           }
   inline void toggleFlat(bool flag)  { m_isFlat = flag;
-                                   #if QGLVIEWER_VERSION >= 0x020700
                                        update();
-                                   #else
-                                       updateGL();
-
-                                   #endif
                                      }
 
   // set preferences
@@ -275,18 +239,13 @@ public Q_SLOTS:
     m_iStep = m_pDlgPrefer->m_iStep*40;
     m_colorEmptySphere = m_pDlgPrefer->m_colorEmptySphere;
     // redraw
-#if QGLVIEWER_VERSION >= 0x020700
     update();
-#else
-    updateGL();
-
-#endif
   }
 
   Q_SIGNALS:
   void stopIncAnimation();
 
-// overloading QGLViewer virtual functions
+// overloading CGAL::QGLViewer virtual functions
 protected:
   // initialize Viewer OpenGL context
   // Note: the default implement is empty and this is overloading.
@@ -448,7 +407,7 @@ private:
       PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
       void initialize_buffers();
       void compute_elements();
-      void attrib_buffers(QGLViewer*);
+      void attrib_buffers(CGAL::QGLViewer*);
       void compile_shaders();
       void draw_cylinder(float R, int prec, std::vector<float> *vertices, std::vector<float> *normals);
       void draw_sphere(float R, int prec, std::vector<float> *vertices, std::vector<float> *normals);

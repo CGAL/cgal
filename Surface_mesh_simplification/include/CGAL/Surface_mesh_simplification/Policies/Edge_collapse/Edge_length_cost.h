@@ -34,14 +34,14 @@ namespace Surface_mesh_simplification
 //
 // Edge-length cost: the squared length of the collapsing edge
 //
-  template<class ECM>
+  template<class TM>
 class Edge_length_cost
 {
 public:
   /*  
-  typedef ECM_ ECM ;
+  typedef TM_ TM ;
   
-  typedef Edge_profile<ECM> Profile ;
+  typedef Edge_profile<TM> Profile ;
   typedef typename Profile::Point Point;  
   typedef typename Kernel_traits<Point>::Kernel Kernel ;
   typedef typename Kernel::FT FT ;

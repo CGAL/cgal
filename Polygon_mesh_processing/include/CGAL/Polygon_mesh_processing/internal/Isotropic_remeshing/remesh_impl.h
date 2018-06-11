@@ -331,8 +331,6 @@ namespace internal {
     {
       tag_halfedges_status(face_range); //called first
 
-      constrain_patch_corners(face_range);
-
       BOOST_FOREACH(face_descriptor f, face_range)
       {
         if (is_degenerate_triangle_face(halfedge(f,mesh_),mesh_,vpmap_,GeomTraits())){
@@ -663,29 +661,30 @@ namespace internal {
         vertex_descriptor va = source(he, mesh_);
         vertex_descriptor vb = target(he, mesh_);
 
-        bool swap_done = false;
-        if (is_on_patch_border(va) && !is_on_patch_border(vb))
+        bool is_va_constrained = is_constrained(va) || is_on_patch_border(va);
+        bool is_vb_constrained = is_constrained(vb) || is_on_patch_border(vb);
+
+
+        // do not collapse edge with two constrained vertices
+        if (is_va_constrained && is_vb_constrained) continue;
+
+        bool can_swap = !is_vb_constrained;
+        if (is_va_constrained)
         {
           he = opposite(he, mesh_);
-          va = source(he, mesh_);
-          vb = target(he, mesh_);
-          swap_done = true;
-          CGAL_assertion(is_on_patch_border(vb) && !is_on_patch_border(va));
+          e=edge(he, mesh_);
+          std::swap(va, vb);
+          can_swap=false;
         }
 
         if(!collapse_does_not_invert_face(he))
         {
-          if (!swap_done//if swap has already been done, don't re-swap
-           && collapse_does_not_invert_face(opposite(he, mesh_)))
+          if (can_swap//if swap allowed (no constrained vertices)
+              && collapse_does_not_invert_face(opposite(he, mesh_)))
           {
             he = opposite(he, mesh_);
-            va = source(he, mesh_);
-            vb = target(he, mesh_);
-
-            if (is_on_patch_border(va) && !is_on_patch_border(vb))
-              continue;//we cannot swap again. It would lead to a face inversion
-            else if (is_corner(va) && !is_corner(vb))
-              continue;//idem
+            e=edge(he, mesh_);
+            std::swap(va, vb);
           }
           else
             continue;//both directions invert a face
@@ -693,9 +692,7 @@ namespace internal {
         CGAL_assertion(collapse_does_not_invert_face(he));
         CGAL_assertion(is_collapse_allowed(e));
 
-        if (degree(va, mesh_) < 3
-          || degree(vb, mesh_) < 3
-          || !CGAL::Euler::does_satisfy_link_condition(e, mesh_))//necessary to collapse
+        if (!CGAL::Euler::does_satisfy_link_condition(e, mesh_))//necessary to collapse
           continue;
 
         //check that collapse would not create an edge with length > high
@@ -710,9 +707,9 @@ namespace internal {
             break;
           }
         }
-        //before collapsing va into vb, check that it does not break a corner
-        //if it is allowed, perform the collapse
-        if (collapse_ok && !is_constrained(va) && !is_corner(va))
+        // before collapsing va into vb, check that it does not break a corner
+        // or a constrained vertex
+        if (collapse_ok)
         {
           //"collapse va into vb along e"
           // remove edges incident to va and vb, because their lengths will change
@@ -728,12 +725,13 @@ namespace internal {
           }
 
           //before collapse
+          halfedge_descriptor he_opp= opposite(he, mesh_);
           bool mesh_border_case     = is_on_border(he);
-          bool mesh_border_case_opp = is_on_border(opposite(he, mesh_));
-          halfedge_descriptor ep_p  = prev(opposite(he, mesh_), mesh_);
+          bool mesh_border_case_opp = is_on_border(he_opp);
+          halfedge_descriptor ep_p  = prev(he_opp, mesh_);
           halfedge_descriptor epo_p = opposite(ep_p, mesh_);
           halfedge_descriptor en    = next(he, mesh_);
-          halfedge_descriptor en_p  = next(opposite(he, mesh_), mesh_);
+          halfedge_descriptor en_p  = next(he_opp, mesh_);
           Halfedge_status s_ep_p    = status(ep_p);
           Halfedge_status s_epo_p   = status(epo_p);
           Halfedge_status s_ep      = status(prev(he, mesh_));
@@ -743,34 +741,33 @@ namespace internal {
           //do it before collapse is performed to be sure everything is valid
           if (!mesh_border_case)
             merge_status(en, s_epo, s_ep);
-          if (!mesh_border_case_opp)
+          if (!mesh_border_case_opp && s_ep_p!=PATCH_BORDER)
             merge_status(en_p, s_epo_p, s_ep_p);
 
           halfedge_and_opp_removed(he);
           if (!mesh_border_case)
             halfedge_and_opp_removed(prev(he, mesh_));
           if (!mesh_border_case_opp)
-            halfedge_and_opp_removed(prev(opposite(he, mesh_), mesh_));
-
-          //constrained case
-          bool constrained_case = is_constrained(va) || is_constrained(vb);
-          if (constrained_case)
           {
-            CGAL_assertion(is_constrained(va) ^ is_constrained(vb));//XOR
-            set_constrained(va, false);
-            set_constrained(vb, false);
+            if (s_ep_p!=PATCH_BORDER)
+              halfedge_and_opp_removed(prev(he_opp, mesh_));
+            else{
+              // swap edges so as to keep constained edges:
+              // replace en_p by epo_p and ep_p by eno_p
+              ::CGAL::internal::swap_edges(en_p, epo_p, mesh_);
+              CGAL_assertion(is_valid(mesh_));
+            }
           }
 
           //perform collapse
-          Point target_point = get(vpmap_, vb);
+          CGAL_assertion(target(halfedge(e, mesh_), mesh_) == vb);
           vertex_descriptor vkept = CGAL::Euler::collapse_edge(e, mesh_);
-          put(vpmap_, vkept, target_point);
+          CGAL_assertion(is_valid(mesh_));
+          CGAL_assertion(vkept == vb);//is the constrained point still here
           ++nb_collapses;
 
           //fix constrained case
-          if (constrained_case)//we have made sure that collapse goes to constrained vertex
-            set_constrained(vkept, true);
-
+          CGAL_assertion((is_constrained(vkept) || is_on_patch_border(vb)) == (is_va_constrained || is_vb_constrained));
           fix_degenerate_faces(vkept, short_edges, sq_low);
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
@@ -944,10 +941,10 @@ namespace internal {
 
         else if (is_on_patch(v))
         {
-        Vector_3 vn = PMP::compute_vertex_normal(v, mesh_
-                            , PMP::parameters::vertex_point_map(vpmap_)
-                            .geom_traits(GeomTraits()));
-        put(propmap_normals, v, vn);
+          Vector_3 vn = PMP::compute_vertex_normal(v, mesh_
+                              , PMP::parameters::vertex_point_map(vpmap_)
+                              .geom_traits(GeomTraits()));
+          put(propmap_normals, v, vn);
 
           Vector_3 move = CGAL::NULL_VECTOR;
           unsigned int star_size = 0;
@@ -1021,7 +1018,7 @@ namespace internal {
           put(vpmap_, vp.first, initial_pos);//cancel move
       }
 
-      CGAL_assertion(is_valid(mesh_));
+      CGAL_assertion(is_valid_polygon_mesh(mesh_));
       CGAL_assertion(is_triangle_mesh(mesh_));
       }//end for loop (nit == nb_iterations)
 
@@ -1055,7 +1052,7 @@ namespace internal {
         Point proj = trees[patch_id_to_index_map[get_patch_id(face(halfedge(v, mesh_), mesh_))]]->closest_point(get(vpmap_, v));
         put(vpmap_, v, proj);
       }
-      CGAL_assertion(is_valid(mesh_));
+      CGAL_assertion(is_valid_polygon_mesh(mesh_));
       CGAL_assertion(is_triangle_mesh(mesh_));
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_self_intersections();
@@ -1369,10 +1366,6 @@ private:
     {
       return get(vcmap_, v);
     }
-    void set_constrained(const vertex_descriptor& v, const bool b)
-    {
-      put(vcmap_, v, b);
-    }
     bool is_isolated(const vertex_descriptor& v) const
     {
       return halfedges_around_target(v, mesh_).empty();
@@ -1413,43 +1406,6 @@ private:
         return CGAL::NULL_VECTOR;
       else
         return PMP::compute_face_normal(f, mesh_, parameters::vertex_point_map(vpmap_));
-    }
-
-    template <typename FaceRange>
-    void constrain_patch_corners(const FaceRange& face_range)
-    {
-      boost::container::flat_set<vertex_descriptor> visited;
-
-      BOOST_FOREACH(face_descriptor f, face_range)
-      {
-        BOOST_FOREACH(halfedge_descriptor h,
-                      halfedges_around_face(halfedge(f, mesh_), mesh_))
-        {
-          vertex_descriptor vt = target(h, mesh_);
-          //treat target(h, mesh_)
-          if (visited.find(vt) != visited.end())
-            continue;//already treated
-
-          if (status(h) == PATCH)//h not on patch boundary
-            continue;            //so neither is target(h, mesh_)
-
-          //count incident MESH_BORDER edges
-          unsigned int nb_incident_borders = 0;
-          BOOST_FOREACH(halfedge_descriptor hv,
-                        halfedges_around_target(h, mesh_))
-          {
-            CGAL_assertion(vt == target(hv, mesh_));
-            if ( (status(hv) == PATCH_BORDER && status(opposite(hv, mesh_)) == MESH_BORDER)
-              || (status(hv) == MESH_BORDER && status(opposite(hv, mesh_)) == PATCH_BORDER))
-            nb_incident_borders++;
-          }
-
-          if (nb_incident_borders == 1) //this is a special corner
-            set_constrained(vt, true);
-
-          visited.insert(vt);
-        }
-      }
     }
 
     template<typename FaceRange>

@@ -23,56 +23,29 @@
 
 #include <CGAL/license/Interpolation.h>
 
+#include <CGAL/Interpolation/internal/helpers.h>
+
+#include <CGAL/function_objects.h>
+#include <CGAL/is_iterator.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/utility.h>
 
+#include <boost/utility/enable_if.hpp>
+
+#include <iterator>
 #include <list>
+#include <map>
 #include <utility>
+#include <vector>
 
 namespace CGAL {
-
-// the struct "Project_vertex_output_iterator"
-// is used in the (next two) functions
-// as well as in regular_neighbor_coordinates_2 and
-// in surface_neighbor_coordinates_3
-//
-//projection of iterator over std::pair <Vertex_handle, T>
-//to iterator over std::pair< Point, T>
-template < class OutputIterator>
-struct Project_vertex_output_iterator
-{
-  // this class wraps the OutputIterator with value type
-  // std::pair<Vertex_handle,T>
-  // into an output iterator with value type std::pair<Point, T>
-  // Conditions: OutputIterator has value type std::pair<Vertex_handle, T>
-  //             and Vertex_handle has a function ->point()
-  //             with return type const Point&
-
-  OutputIterator _base;
-
-  //creation:
-  Project_vertex_output_iterator(OutputIterator o)
-    : _base(o) {}
-
-  OutputIterator base() {return _base;}
-
-  Project_vertex_output_iterator& operator++(){_base++; return *this;}
-  Project_vertex_output_iterator& operator++(int){_base++; return *this;}
-  Project_vertex_output_iterator& operator*(){return *this;}
-
-  template<class Vertex_pair>
-  Project_vertex_output_iterator&
-  operator=(const Vertex_pair& x){
-    *_base=std::make_pair(x.first->point(), x.second);
-    return *this;
-  }
-};
 
 // The following natural_neighbor_coordinate_2 functions fix the
 // traits class to be Dt::Geom_traits. The following signatures could
 // be used if one wants to pass a traits class as argument:
+//
 // template <class Dt, class OutputIterator, class Traits>
 // Triple< OutputIterator, typename Traits::FT, bool >
 // natural_neighbor_coordinates_2(const Dt& dt,
@@ -88,15 +61,14 @@ struct Project_vertex_output_iterator
 //                               OutputIterator out, const Traits& traits)
 
 //the following two functions suppose that
-// OutputIterator has value type
-//   std::pair<Dt::Vertex_handle, Dt::Geom_traits::FT>
+// OutputIterator has value type `pair<Dt::Vertex_handle, Dt::Geom_traits::FT>`
 //!!!they are not documented!!!
 template < class Dt, class OutputIterator >
 Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
-natural_neighbor_coordinates_vertex_2(const Dt& dt,
-                                      const typename Dt::Geom_traits::Point_2& p,
-                                      OutputIterator out, typename Dt::Face_handle start
-                                      = typename Dt::Face_handle())
+natural_neighbors_2(const Dt& dt,
+                    const typename Dt::Geom_traits::Point_2& p,
+                    OutputIterator out,
+                    typename Dt::Face_handle start = typename Dt::Face_handle())
 {
   typedef typename Dt::Geom_traits       Traits;
   typedef typename Traits::FT            Coord_type;
@@ -131,13 +103,13 @@ natural_neighbor_coordinates_vertex_2(const Dt& dt,
     Equal_x_2 equal_x_2;
     if(!equal_x_2(p1,p2))
     {
-      coef1 =  (p.x() - p2.x()) / (p1.x() - p2.x());
+      coef1 = (p.x() - p2.x()) / (p1.x() - p2.x());
       coef2 = 1 - coef1;
       *out++ = std::make_pair(v1,coef1);
       *out++ = std::make_pair(v2,coef2);
     } else {
       coef1 = (p.y() - p2.y()) / (p1.y() - p2.y());
-      coef2 = 1-coef1;
+      coef2 = 1 - coef1;
       *out++ = std::make_pair(v1,coef1);
       *out++ = std::make_pair(v2,coef2);
     }
@@ -154,23 +126,22 @@ natural_neighbor_coordinates_vertex_2(const Dt& dt,
   std::list<Edge> hole;
   dt.get_boundary_of_conflicts(p, std::back_inserter(hole), fh, false);
 
-  return natural_neighbor_coordinates_vertex_2
-      (dt, p, out, hole.begin(), hole.end());
+  return natural_neighbors_2(dt, p, out, hole.begin(), hole.end());
 }
 
-//function call if the conflict zone is known:
-// OutputIterator has value type
-//        std::pair<Dt::Vertex_handle, Dt::Geom_traits::FT>
+
+// This function is called when the conflict zone is known.
+// OutputIterator has value type `pair<Dt::Vertex_handle, Dt::Geom_traits::FT>`
+//
+// \pre p must lie inside the hole (=^ inside convex hull of neighbors)
 template < class Dt, class OutputIterator, class EdgeIterator >
 Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
-natural_neighbor_coordinates_vertex_2(const Dt& dt,
-                                      const typename Dt::Geom_traits::Point_2& p,
-                                      OutputIterator out, EdgeIterator
-                                      hole_begin, EdgeIterator hole_end)
+natural_neighbors_2(const Dt& dt,
+                    const typename Dt::Geom_traits::Point_2& p,
+                    OutputIterator out,
+                    EdgeIterator hole_begin, EdgeIterator hole_end)
 {
-  CGAL_precondition(dt.dimension()==2);
-  //precondition: p must lie inside the hole
-  //             (=^ inside convex hull of neighbors)
+  CGAL_precondition(dt.dimension() == 2);
   typedef typename Dt::Geom_traits       Traits;
   typedef typename Traits::FT            Coord_type;
   typedef typename Traits::Point_2       Point_2;
@@ -183,8 +154,9 @@ natural_neighbor_coordinates_vertex_2(const Dt& dt,
   Coord_type area_sum(0);
   EdgeIterator hit = hole_end;
   --hit;
-  //in the beginning: prev is the "last" vertex of the hole:
-  // later: prev is the last vertex processed (previously)
+
+  // At the beginning, `prev` is the "last" vertex of the hole.
+  // Later, `prev` is the last vertex processed (previously).
   Vertex_handle prev = hit->first->vertex(dt.cw(hit->second));
   hit = hole_begin;
 
@@ -225,96 +197,171 @@ natural_neighbor_coordinates_vertex_2(const Dt& dt,
   return make_triple(out, area_sum, true);
 }
 
-/////////////////////////////////////////////////////////////
-//the cast from vertex to point:
-// the following functions return an Output_iterator over
-// std::pair<Point, FT>
-//=> OutputIterator has value type
-//   std::pair< Dt::Geom_traits::Point_2, Dt::Geom_traits::FT>
-/////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+
+// This function is called when the conflict zone is known.
+// OutputIterator has value type `pair< Dt::Geom_traits::Point_2, Dt::Geom_traits::FT>`
+template < class Dt, class OutputIterator, class OutputFunctor, class EdgeIterator >
+Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
+natural_neighbor_coordinates_2(const Dt& dt,
+                               const typename Dt::Geom_traits::Point_2& p,
+                               OutputIterator out,
+                               OutputFunctor fct,
+                               EdgeIterator hole_begin, EdgeIterator hole_end)
+{
+  CGAL_precondition(dt.dimension() == 2);
+
+  typedef Interpolation::internal::
+            Project_vertex_output_iterator<OutputIterator, OutputFunctor> OutputIteratorWithFunctor;
+  typedef typename Dt::Geom_traits::FT                                    FT;
+
+  OutputIteratorWithFunctor op(out, fct);
+  Triple<OutputIteratorWithFunctor, FT, bool > result = natural_neighbors_2(dt, p, op, hole_begin, hole_end);
+
+  return make_triple(result.first.base(), result.second, result.third);
+}
+
+
+// Same as above but without OutputFunctor. Default to extracting the point, for backward compatibility.
+template < class Dt, class OutputIterator, class EdgeIterator >
+Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
+natural_neighbor_coordinates_2(const Dt& dt,
+                               const typename Dt::Geom_traits::Point_2& p,
+                               OutputIterator out,
+                               EdgeIterator hole_begin, EdgeIterator hole_end)
+{
+  typedef typename Dt::Geom_traits::FT                            FT;
+  typedef Interpolation::internal::Extract_point_in_pair<Dt, FT>  OutputFunctor;
+
+  return natural_neighbor_coordinates_2(dt, p, out, OutputFunctor(), hole_begin, hole_end);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+
+// Function with a point. Can take a default starting face.
+template < class Dt, class OutputIterator, class OutputFunctor >
+Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
+natural_neighbor_coordinates_2(const Dt& dt,
+                               const typename Dt::Geom_traits::Point_2& p,
+                               OutputIterator out,
+                               OutputFunctor fct,
+                               typename Dt::Face_handle start = CGAL_TYPENAME_DEFAULT_ARG Dt::Face_handle(),
+                               typename boost::disable_if_c<
+                                          is_iterator<OutputFunctor>::value
+                                        >::type* = 0)
+{
+  CGAL_precondition(dt.dimension() == 2);
+
+  typedef Interpolation::internal::
+            Project_vertex_output_iterator<OutputIterator, OutputFunctor> OutputIteratorWithFunctor;
+  typedef typename Dt::Geom_traits::FT                                    FT;
+
+  OutputIteratorWithFunctor op(out, fct);
+  Triple<OutputIteratorWithFunctor, FT, bool > result = natural_neighbors_2(dt, p, op, start);
+
+  return make_triple(result.first.base(), result.second, result.third);
+}
+
+// Same as above but without OutputFunctor. Default to extracting the point, for backward compatibility.
 template < class Dt, class OutputIterator >
 Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
 natural_neighbor_coordinates_2(const Dt& dt,
                                const typename Dt::Geom_traits::Point_2& p,
                                OutputIterator out,
-                               typename Dt::Face_handle start =
-    CGAL_TYPENAME_DEFAULT_ARG Dt::Face_handle() )
+                               typename Dt::Face_handle start = CGAL_TYPENAME_DEFAULT_ARG Dt::Face_handle())
 
 {
-  CGAL_precondition(dt.dimension() == 2);
+  typedef typename Dt::Geom_traits::FT                            FT;
+  typedef Interpolation::internal::Extract_point_in_pair<Dt, FT>  OutputFunctor;
 
-  Project_vertex_output_iterator<OutputIterator> op(out);
-
-  Triple<Project_vertex_output_iterator<OutputIterator>,
-         typename Dt::Geom_traits::FT, bool > result =
-      natural_neighbor_coordinates_vertex_2(dt, p, op, start);
-
-  return make_triple(result.first.base(), result.second, result.third);
+  return natural_neighbor_coordinates_2(dt, p, out, OutputFunctor(), start);
 }
 
-//OutputIterator has value type
-//   std::pair< Dt::Geom_traits::Point_2, Dt::Geom_traits::FT>
-//function call if the conflict zone is known:
-template < class Dt, class OutputIterator, class EdgeIterator >
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+
+// Function with a Vertex_handle
+template <class Dt, class OutputIterator, class OutputFunctor>
 Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
 natural_neighbor_coordinates_2(const Dt& dt,
-                               const typename Dt::Geom_traits::Point_2& p,
-                               OutputIterator out, EdgeIterator
-                               hole_begin, EdgeIterator hole_end)
+                               typename Dt::Vertex_handle vh,
+                               OutputIterator out,
+                               OutputFunctor fct)
 {
+  // This function creates a small triangulation of the incident vertices of this vertex
+  // and computes the natural neighbor coordinates of ch->point() w.r.t. it.
+  typedef typename Dt::Vertex_circulator     Vertex_circulator;
+  typedef typename Dt::Vertex_handle         Vertex_handle;
+
   CGAL_precondition(dt.dimension() == 2);
 
-  Project_vertex_output_iterator<OutputIterator> op(out);
+  Dt t2;
+  Vertex_circulator vc = dt.incident_vertices(vh), done(vc);
 
-  Triple<Project_vertex_output_iterator<OutputIterator>,
-         typename Dt::Geom_traits::FT, bool > result =
-      natural_neighbor_coordinates_vertex_2(dt, p, op, hole_begin,hole_end);
+  typedef std::map<Vertex_handle /*t2*/, Vertex_handle/*dt*/> Correspondence_map;
+  Correspondence_map cm;
 
-  return make_triple(result.first.base(), result.second, result.third);
+  do
+  {
+    if(dt.is_infinite(vc))
+      continue;
+
+    Vertex_handle t2_vh = t2.insert(vc->point());
+    cm[t2_vh] = vc;
+  }
+  while(++vc != done);
+
+  // Before applying the output functor, we need to switch back from vertices of `t2`
+  // to the vertices of `dt`
+  typedef typename Dt::Geom_traits::FT                                    FT;
+  typedef Interpolation::internal::Pair_mapper<Correspondence_map, FT>    Mapper;
+  Mapper pair_mapper(cm);
+  CGAL::Unary_compose_1<OutputFunctor, Mapper> composed_fct(fct, pair_mapper);
+
+  return natural_neighbor_coordinates_2(t2, vh->point(), out, composed_fct);
 }
 
-/**********************************************************/
-//compute the coordinates for a vertex of the triangulation
-// with respect to the other points in the triangulation
-//OutputIterator has value type
-//   std::pair< Dt::Geom_traits::Point_2, Dt::Geom_traits::FT>
+
+// Same as above but without OutputFunctor. Default to extracting the point, for backward compatibility.
 template <class Dt, class OutputIterator>
 Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
 natural_neighbor_coordinates_2(const Dt& dt,
                                typename Dt::Vertex_handle vh,
                                OutputIterator out)
 {
-  //this functions creates a small triangulation of the
-  // incident vertices of this vertex and computes the
-  // natural neighbor coordinates of ch->point() wrt. it.
-  typedef typename Dt::Vertex_circulator     Vertex_circulator;
+  typedef typename Dt::Geom_traits::FT                            FT;
+  typedef Interpolation::internal::Extract_point_in_pair<Dt, FT>  OutputFunctor;
 
-  CGAL_precondition(dt.dimension() == 2);
-
-  Dt t2;
-  Vertex_circulator vc = dt.incident_vertices(vh),
-      done(vc);
-  do{
-    CGAL_assertion(!dt.is_infinite(vc));
-    t2.insert(vc->point());
-  }
-  while(++vc!=done);
-  return natural_neighbor_coordinates_2(t2, vh->point(), out);
+  return natural_neighbor_coordinates_2(dt, vh, out, OutputFunctor());
 }
 
-//class providing a function object:
-//OutputIterator has value type
-//   std::pair< Dt::Geom_traits::Point_2, Dt::Geom_traits::FT>
-template < class Dt, class OutputIterator >
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+
+// OutputIterator has value type `std::pair< Dt::Geom_traits::Point_2, Dt::Geom_traits::FT>`
+template < class Dt, class OutputIterator, class OutputFunctor >
 class natural_neighbor_coordinates_2_object
 {
 public:
+  typedef OutputFunctor                                       Function;
+
   Triple< OutputIterator, typename Dt::Geom_traits::FT, bool >
   operator()(const Dt& dt,
              typename Dt::Vertex_handle vh,
-             OutputIterator out) const
+             OutputIterator out,
+             OutputFunctor fct) const
   {
-    return natural_neighbor_coordinates_2(dt, vh, out);
+    return natural_neighbor_coordinates_2(dt, vh, out, fct);
   }
 };
 

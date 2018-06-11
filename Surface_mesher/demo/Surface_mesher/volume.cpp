@@ -609,8 +609,8 @@ bool Volume::open(const QString& filename)
 void Volume::finish_open()
 {
   m_image.finish_open();
-  mw->viewer->camera()->setSceneBoundingBox(qglviewer::Vec(0, 0, 0),
-                                            qglviewer::Vec(m_image.xmax(),
+  mw->viewer->camera()->setSceneBoundingBox(CGAL::qglviewer::Vec(0, 0, 0),
+                                            CGAL::qglviewer::Vec(m_image.xmax(),
                                                            m_image.ymax(),
                                                            m_image.zmax()));
 
@@ -769,9 +769,9 @@ void Volume::display_marchin_cube()
       const unsigned int nbt = facets.size() / 9;
       for(unsigned int i=begin;i<nbt;i++)
       {
-        const Point a(facets[9*i],   facets[9*i+1], facets[9*i+2]);
-        const Point b(facets[9*i+3], facets[9*i+4], facets[9*i+5]);
-        const Point c(facets[9*i+6], facets[9*i+7], facets[9*i+8]);
+        const Point_3 a(facets[9*i],   facets[9*i+1], facets[9*i+2]);
+        const Point_3 b(facets[9*i+3], facets[9*i+4], facets[9*i+5]);
+        const Point_3 c(facets[9*i+6], facets[9*i+7], facets[9*i+8]);
         const Triangle_3 t(a,b,c);
         const Vector u = t[1] - t[0];
         const Vector v = t[2] - t[0];
@@ -876,7 +876,7 @@ void Volume::display_surface_mesher_result()
 
     if(mw->searchSeedsCheckBox->isChecked())
     {
-      typedef std::vector<std::pair<Point, double> > Seeds;
+      typedef std::vector<std::pair<Point_3, double> > Seeds;
       Seeds seeds;
       {
 	std::cerr << "Search seeds...\n";
@@ -905,13 +905,13 @@ void Volume::display_surface_mesher_result()
 	  it != end; ++it)
       {
         seeds_out << it->first << std::endl;
-	CGAL::Random_points_on_sphere_3<Point> random_points_on_sphere_3(it->second);
+	CGAL::Random_points_on_sphere_3<Point_3> random_points_on_sphere_3(it->second);
 	Oracle::Intersect_3 intersect = oracle.intersect_3_object();
 	for(int i = 0; i < 20; ++i)
 	{
-	  const Point test = it->first + (*random_points_on_sphere_3++ - CGAL::ORIGIN);
+	  const Point_3 test = it->first + (*random_points_on_sphere_3++ - CGAL::ORIGIN);
 	  CGAL::Object o = intersect(surface, Segment_3(it->first, test));
-	  if (const Point* intersection = CGAL::object_cast<Point>(&o)) {
+	  if (const Point_3* intersection = CGAL::object_cast<Point_3>(&o)) {
             segments_out << "2 " << it->first << " " << *intersection << std::endl;
 	    del.insert(*intersection);
           }
@@ -1043,8 +1043,8 @@ void Volume::display_surface_mesher_result()
       const int index = fit->second;
 
       // here "left" means nothing
-      const Point left_circumcenter = cell->circumcenter();
-      const Point right_circumcenter = cell->neighbor(index)->circumcenter();
+      const Point_3 left_circumcenter = cell->circumcenter();
+      const Point_3 right_circumcenter = cell->neighbor(index)->circumcenter();
 
       const Triangle_3 t = 
         Triangle_3(cell->vertex(del.vertex_triple_index(index, 0))->point(),
@@ -1253,8 +1253,8 @@ void Volume::draw()
           end = del.finite_edges_end();
         eit != end; ++eit) 
     {
-      const Point p1 = eit->first->vertex(eit->second)->point();
-      const Point p2 = eit->first->vertex(eit->third)->point();
+      const Point_3 p1 = eit->first->vertex(eit->second)->point();
+      const Point_3 p2 = eit->first->vertex(eit->third)->point();
       ::glVertex3d(p1.x(),p1.y(),p1.z());
       ::glVertex3d(p2.x(),p2.y(),p2.z());
     }
@@ -1354,9 +1354,9 @@ void Volume::gl_draw_surface()
 	if(c2t3.face_status(facet_cell, facet_index) == C2t3::NOT_IN_COMPLEX) {
 	  continue;
 	}
-	const Point& a = facet_cell->vertex(del.vertex_triple_index(facet_index, 0))->point();
-	const Point& b = facet_cell->vertex(del.vertex_triple_index(facet_index, 1))->point();
-	const Point& c = facet_cell->vertex(del.vertex_triple_index(facet_index, 2))->point();
+	const Point_3& a = facet_cell->vertex(del.vertex_triple_index(facet_index, 0))->point();
+	const Point_3& b = facet_cell->vertex(del.vertex_triple_index(facet_index, 1))->point();
+	const Point_3& c = facet_cell->vertex(del.vertex_triple_index(facet_index, 2))->point();
 	Vector n = CGAL::cross_product(b-a,c-a);
 	n = n / std::sqrt(n*n); // unit normal
 	if(m_inverse_normals) {
@@ -1443,9 +1443,9 @@ void Volume::gl_draw_surface()
 	    else 
 	      continue; // go to next facet
 	  }
-	  const Point& a = opposite_cell->vertex(del.vertex_triple_index(opposite_index, 0))->point();
-	  const Point& b = opposite_cell->vertex(del.vertex_triple_index(opposite_index, 1))->point();
-	  const Point& c = opposite_cell->vertex(del.vertex_triple_index(opposite_index, 2))->point();
+	  const Point_3& a = opposite_cell->vertex(del.vertex_triple_index(opposite_index, 0))->point();
+	  const Point_3& b = opposite_cell->vertex(del.vertex_triple_index(opposite_index, 1))->point();
+	  const Point_3& c = opposite_cell->vertex(del.vertex_triple_index(opposite_index, 2))->point();
 	  Vector n = CGAL::cross_product(b-a,c-a);
 	  n = n / std::sqrt(n*n); // unit normal
 	  if(m_inverse_normals) {
@@ -1492,9 +1492,9 @@ void Volume::gl_draw_surface(Iterator begin, Iterator end, const QTreeWidgetItem
       ::glNormal3d(n.x(),n.y(),n.z());
 
     const Triangle_3& t = f.get<0>();
-    const Point& a = t[0];
-    const Point& b = t[1];
-    const Point& c = t[2];
+    const Point_3& a = t[0];
+    const Point_3& b = t[1];
+    const Point_3& c = t[2];
 
     ::glVertex3d(a.x(),a.y(),a.z());
     ::glVertex3d(b.x(),b.y(),b.z());

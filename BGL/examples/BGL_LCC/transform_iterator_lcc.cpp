@@ -1,5 +1,4 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <fstream>

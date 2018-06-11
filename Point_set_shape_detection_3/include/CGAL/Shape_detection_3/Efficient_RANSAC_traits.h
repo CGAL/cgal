@@ -25,6 +25,12 @@
 
 #include <CGAL/license/Point_set_shape_detection_3.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Efficient_RANSAC_traits.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/Shape_detection_traits.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "CGAL::Shape_detection_3::Efficient_RANSAC_traits<> has been replaced by the class "\
+  "CGAL::Shape_detection_3::Shape_detection_traits<>."
+#include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/Search_traits_3.h>
 
@@ -51,9 +57,7 @@ namespace CGAL {
             class InputRange,
             class InputPointMap,
             class InputNormalMap>
-  struct
-  CGAL_DEPRECATED_MSG("CGAL::Shape_detection_3::Efficient_RANSAC_traits<> is now called CGAL::Shape_detection_3::Shape_detection_traits<>, please update your code")
-  Efficient_RANSAC_traits {
+  struct Efficient_RANSAC_traits {
     ///
     typedef typename Gt::FT FT;
     ///

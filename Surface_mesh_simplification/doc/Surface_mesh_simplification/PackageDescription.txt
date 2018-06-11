@@ -22,8 +22,6 @@
 \cgalClassifedRefPages
 
 ## Concepts ##
-- `EdgeCollapsableSurfaceMesh`
-- `EdgeCollapsableSurfaceMeshWithConstraints`
 - `EdgeProfile`
 - `StopPredicate`
 - `GetCost`
@@ -34,16 +32,16 @@
 - `CGAL::Surface_mesh_simplification::edge_collapse()`
 
 ## Classes ##
-- `CGAL::Surface_mesh_simplification::Edge_collapse_visitor_base<ECM>`
-- `CGAL::Surface_mesh_simplification::Edge_profile<ECM>`
-- `CGAL::Surface_mesh_simplification::Count_stop_predicate<ECM>`
-- `CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<ECM>`
-- `CGAL::Surface_mesh_simplification::Edge_length_stop_predicate<ECM>`
-- `CGAL::Surface_mesh_simplification::Edge_length_cost<ECM>`
-- `CGAL::Surface_mesh_simplification::Midpoint_placement<ECM>`
-- `CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>`
-- `CGAL::Surface_mesh_simplification::LindstromTurk_placement<ECM>`
-- `CGAL::Surface_mesh_simplification::Constrained_placement<Placement,ECM>`
+- `CGAL::Surface_mesh_simplification::Edge_collapse_visitor_base<TriangleMesh>`
+- `CGAL::Surface_mesh_simplification::Edge_profile<TriangleMesh>`
+- `CGAL::Surface_mesh_simplification::Count_stop_predicate<TriangleMesh>`
+- `CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<TriangleMesh>`
+- `CGAL::Surface_mesh_simplification::Edge_length_stop_predicate<TriangleMesh>`
+- `CGAL::Surface_mesh_simplification::Edge_length_cost<TriangleMesh>`
+- `CGAL::Surface_mesh_simplification::Midpoint_placement<TriangleMesh>`
+- `CGAL::Surface_mesh_simplification::LindstromTurk_cost<TriangleMesh>`
+- `CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`
+- `CGAL::Surface_mesh_simplification::Constrained_placement<Placement,TriangleMesh>`
 - `CGAL::Surface_mesh_simplification::Bounded_normal_change_placement<Placement>`
 */
 

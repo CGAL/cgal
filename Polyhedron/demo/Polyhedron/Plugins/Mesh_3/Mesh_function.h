@@ -218,12 +218,14 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Labeled_image_domain_tag)
 // for a labeled image
 {
   if(p_.detect_connected_components) {
-    initialize_triangulation_from_labeled_image(c3t3_
-                                                , *domain_
-                                                , *p_.image_3_ptr
-                                                , criteria
-                                                , typename D_::Image_word_type()
-                                                , p_.protect_features);
+    CGAL_IMAGE_IO_CASE(p_.image_3_ptr->image(),
+            initialize_triangulation_from_labeled_image(c3t3_
+                                                        , *domain_
+                                                        , *p_.image_3_ptr
+                                                        , criteria
+                                                        , Word()
+                                                        , p_.protect_features);
+                       );
   } else {
     initialize(criteria, Mesh_fnt::Domain_tag());
   }
@@ -361,7 +363,7 @@ tweak_criteria(Mesh_criteria& c, Mesh_fnt::Polyhedral_domain_tag) {
   typedef CGAL::Mesh_3::Facet_topological_criterion_with_adjacency<Tr,
        Domain, typename Facet_criteria::Visitor> New_topo_adj_crit;
 
-  if((int(c.facet_criteria().topology()) &
+  if((int(c.facet_criteria_object().topology()) &
       CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK) != 0)
   {
     c.add_facet_criterion(new New_topo_adj_crit(this->domain_));

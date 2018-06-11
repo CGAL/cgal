@@ -496,11 +496,6 @@ namespace CGAL {
 
   };  // end Implicit_surface_oracle_3
 
-template <typename FT>
-FT approximate_sqrt(const FT x) {
-  return FT (CGAL_NTS sqrt(CGAL_NTS to_double(x)));
-}
-
   }  // namespace Surface_mesher
 
 } // namespace CGAL

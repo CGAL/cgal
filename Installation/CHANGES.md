@@ -1,6 +1,89 @@
 Release History
 ===============
 
+
+Release 4.13
+------------
+
+Release date: September 2018
+
+### Installation
+
+-   The library CGAL_Qt5 now contains a fork of the version 2.7.0 of libQGLViewer.
+    The corresponding code is in the package GraphicsView.
+    The dependency for the external library libQGLViewer is therefore dropped for all demos.
+
+### 2D and 3D Linear Geometry Kernel
+-   An operator() that takes a Ray_3 has been added to the concept
+    ConstructProjectedPoint 3.
+
+
+### CGAL and Boost Property Maps
+
+-   Addition of a read-write property map to convert on-the-fly geometric 
+    object from Cartesian kernels
+
+### 2D Triangulations
+
+-   Added a new type of intersection to deal with insertion of a constraints 
+    intersecting in a Constrained_triangulation_2.
+
+### Interpolation
+
+-   The output of the natural and regular neighbor functions (resp. the gradient
+    fitting functions) is no longer restricted to a Point/Coordinate pair
+    (resp. Point/Vector pair). Instead, users can provide their own functor
+    to format the output as they desire.
+-   The interpolation functions can now operate on any combination of Type/Coordinate,
+    provided that the values and gradients functors can also be evaluated using 'Type'.
+
+    The combination of these two changes allow, for example, to operate with Vertex/Coordinate
+    pairs, which enables a more efficient access to values and gradients by storing
+    information directly in the vertex.
+-   The concepts `InterpolationTraits` and `GradientFittingTraits` have been updated
+    to reflect the real needs of the code (some types and operators were used
+    in the code but did not appear in the concepts).
+
+### Polygon Mesh Processing
+-   Added a function to apply a transformation to a mesh:
+    - `CGAL::Polygon_mesh_processing::transform()`
+
+-  Fix a bug in `isotropic_remeshing()` making constrained vertices missing in the output
+-  Guarantee that constrained vertices are kept in the mesh after calling `isotropic_remeshing()`
+   (and not only the points associated to constrained vertices as it was before).
+
+### 3D Mesh Generation
+
+-   **Breaking change:** The template parameters of the class template
+    `Labeled_mesh_domain_3` have been simplified. The three constructors of
+    that class template have been replaced by a new unique constructor
+    using Boost named parameters. Three new static template member
+    functions that act as named constructors have been added:
+      - `create_gray_image_mesh_domain()`, to create a domain from a 3D
+        gray image,
+      - `create_labeled_image_mesh_domain()`, to create a domain from a 3D
+        labeled image, and
+      - `create_implicit_mesh_domain()`, to create a domain from an
+        implicit function.
+
+-   The class templates `Implicit_mesh_domain_3`,
+    `Gray_image_mesh_domain_3`, and `Labeled_image_mesh_domain_3` are now
+    deprecated.
+
+-   **Breaking change:** The headers
+    `<CGAL/Mesh_3/Implicit_to_labeled_function_wrapper.h>` and
+    `<CGAL/Mesh_3/Labeled_mesh_domain_3.h>`, that were deprecated since
+    CGAL 4.5, are now removed.
+
+### CGAL and the Boost Graph Library (BGL)
+
+-   Add helper function `CGAL::is_valid_polygon_mesh` that checks the
+    validity of a polygon mesh using BGL functions.
+
+-   Improve the function `CGAL::Euler::collapse_edge` so that the target
+    vertex of the collapsed edge is always kept after the collapse.
+
+
 Release 4.12
 ------------
 
@@ -175,7 +258,7 @@ Release date: April 2018
 
 ### CGAL and the Boost Graph Library (BGL)
 
--   Added helper function `CGAL::expand_face_selection_for_removal` that
+-   Add helper function `CGAL::expand_face_selection_for_removal` that
     expands a face selection to avoid creating a non manifold mesh when
     removing the selected faces.
 

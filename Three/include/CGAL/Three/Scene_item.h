@@ -40,8 +40,10 @@ namespace Three {
   class Viewer_interface;
 }
 }
+namespace CGAL{
 namespace qglviewer {
   class ManipulatedFrame;
+}
 }
 
 class QMenu;
@@ -88,7 +90,7 @@ public:
   NB_OF_PROGRAMS               /** Holds the number of different programs in this enum.*/
  };
   typedef CGAL::Bbox_3 Bbox;
-  typedef qglviewer::ManipulatedFrame ManipulatedFrame;
+  typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
   //! \brief The default color of a scene_item.
   //!
   //! This color is the one that will be displayed if none is specified after its creation.

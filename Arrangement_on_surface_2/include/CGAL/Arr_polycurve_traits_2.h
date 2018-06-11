@@ -163,6 +163,9 @@ public:
   /// \name Construction functors(based on the subcurve traits).
   //@{
 
+#ifndef DOXYGEN_RUNNING
+  class Push_back_2;
+#endif  
   /*! \class
    * A functor that divides an arc into x-monotone arcs. That are, arcs that
    * do not cross the identification arc.
