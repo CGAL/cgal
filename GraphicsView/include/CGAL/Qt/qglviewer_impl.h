@@ -817,7 +817,7 @@ void CGAL::QGLViewer::renderText(int x, int y, const QString &str,
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::renderText(double x, double y, double z, const QString &str,
                            const QFont &font) {
-  const Vec proj = camera_->projectedCoordinatesOf(Vec(x, y, z));
+  const CGAL::qglviewer::Vec proj = camera_->projectedCoordinatesOf(Vec(x, y, z));
   renderText(int(proj.x), int(proj.y), str, font);
 }
 #endif
@@ -3167,7 +3167,8 @@ void CGAL::QGLViewer::drawVisualHints() {
     mvpMatrix.setToIdentity();
     mvpMatrix.ortho(-1,1,-1,1,-1,1);
     size=30*devicePixelRatio();
-    rendering_program.setUniformValue("mvp_matrix", mvpMatrix);  
+    rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
+    using CGAL::qglviewer::Vec;
     Vec pivot = camera()->pivotPoint();
     Vec proj_c = camera()->projectedCoordinatesOf(pivot);
     glViewport(GLint((proj_c.x-size/2)*devicePixelRatio()), GLint((height() - proj_c.y-size/2)*devicePixelRatio()), size, size);
