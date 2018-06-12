@@ -571,11 +571,11 @@ and store them in property maps provided by the class `Surface_mesh`.
 
 \cgalExample{Polygon_mesh_processing/compute_normals_example.cpp}
 
-\subsubsection NormalsExampleP Normals Computation for a Poyhedron_3
+\subsubsection NormalsExampleP Normals Computation for a Polyhedron_3
 
 The following example illustrates how to
 compute the normals to faces and vertices
-and store them in ordered or unordered maps as the class `Polyhedron` does
+and store them in ordered or unordered maps as the class `Polyhedron_3` does
 not provide storage for the normals.
 
 \cgalExample{Polygon_mesh_processing/compute_normals_example_Polyhedron.cpp}
