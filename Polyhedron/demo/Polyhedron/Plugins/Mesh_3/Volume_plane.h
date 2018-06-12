@@ -59,8 +59,10 @@ struct z_tag {};
 
 template<typename Tag>
 class Volume_plane : public Volume_plane_interface, public Tag {
+private : 
+  float tx, ty, tz;
 public:
- Volume_plane();
+ Volume_plane(float tx, float ty, float tz);
 
  void invalidateOpenGLBuffers()
  {
@@ -75,20 +77,20 @@ public:
 
  void compute_bbox(x_tag)const
  {
-   _bbox = Bbox(0,0,0,
-               0, (adim_ - 1) * yscale_, (bdim_ - 1) * zscale_);
+   _bbox = Bbox(tx,ty,tz,
+               tx, ty+(adim_ - 1) * yscale_, tz+(bdim_ - 1) * zscale_);
  }
 
  void compute_bbox(y_tag)const
  {
-   _bbox = Bbox(0,0,0,
-               (adim_ - 1) * xscale_, 0, (bdim_ - 1) * zscale_);
+   _bbox = Bbox(tx,ty,tz,
+               tx+(adim_ - 1) * xscale_, ty, tz+(bdim_ - 1) * zscale_);
  }
 
  void compute_bbox(z_tag)const
  {
-   _bbox = Bbox(0,0,0,
-               (adim_ - 1) * xscale_, (bdim_ - 1) * yscale_, 0);
+   _bbox = Bbox(tx,ty,tz,
+               tx+(adim_ - 1) * xscale_,ty+ (bdim_ - 1) * yscale_, tz);
  }
 
  void setData(unsigned int adim, unsigned int bdim, unsigned int cdim,
@@ -380,8 +382,9 @@ const char* Volume_plane<T>::fragmentShader_bordures_source =
 
 
 template<typename T>
-Volume_plane<T>::Volume_plane()
-  : Volume_plane_interface(new CGAL::qglviewer::ManipulatedFrame)
+Volume_plane<T>::Volume_plane(float tx, float ty, float tz)
+  : Volume_plane_interface(new CGAL::qglviewer::ManipulatedFrame),
+    tx(tx), ty(ty), tz(tz)    
  {
     const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     mFrame_->setPosition(offset.x, offset.y, offset.z);
@@ -432,6 +435,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
       mvp.data()[i] = (float)mat[i];
       f.data()[i] = (float)mFrame_->matrix()[i];
   }
+  mvp.translate(QVector3D(tx, ty, tz));
 
 
   program_bordures.bind();
@@ -645,7 +649,7 @@ bool Volume_plane<T>::eventFilter(QObject *, QEvent *event)
             //is the picked point on the sphere ?
             for (int i=0; i<4; ++i)
             {
-                center = CGAL::qglviewer::Vec(c_spheres[i*3], c_spheres[i*3+1], c_spheres[i*3+2]);
+                center = CGAL::qglviewer::Vec(c_spheres[i*3]+tx, c_spheres[i*3+1]+ty, c_spheres[i*3+2]+tz);
                 if(
                         (center.x - pos.x) * (center.x - pos.x) +
                         (center.y - pos.y) * (center.y - pos.y) +
