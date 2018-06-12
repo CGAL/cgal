@@ -342,7 +342,7 @@ public:
 
             
       LR * lr = dynamic_cast<LR*>(p.ptr());
-      if(lr){
+      if(lr && (! lr->et)){
         return lr->l2;
       }
       return BaseClass().compute_weight_2_object()(p);
@@ -372,7 +372,7 @@ public:
 
             
       LR * lr = dynamic_cast<LR*>(p.ptr());
-      if(lr){
+      if(lr && (! lr->et)){
         return lr->l2;
       }
       return BaseClass().compute_weight_3_object()(p);
@@ -429,11 +429,11 @@ public:
                          > LRint;
 
       LR * lr = dynamic_cast<LR*>(p.ptr());
-      if(lr){
+      if(lr && (! lr->et)){
         return lr->l1;
       } else {
         LRint* lrint = dynamic_cast<LRint*>(p.ptr());
-        if(lrint){
+        if(lrint && (! lrint->et)){
           return lrint->l1;
         }
       }
@@ -492,11 +492,11 @@ public:
 
       
       LR * lr = dynamic_cast<LR*>(p.ptr());
-      if(lr){
+      if(lr && (! lr->et)){
         return lr->l1;
       }else{
         LRint* lrint = dynamic_cast<LRint*>(p.ptr());
-        if(lrint){
+        if(lrint && (! lrint->et)){
           return lrint->l1;
         }
       }
