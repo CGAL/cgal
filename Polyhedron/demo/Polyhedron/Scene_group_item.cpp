@@ -24,9 +24,9 @@ bool Scene_group_item::isFinite() const
 bool Scene_group_item::isEmpty() const {
   Q_FOREACH(Scene_interface::Item_id id, children)
     if(!getChild(id)->isEmpty()){
-            return true;
-        }
-    return true;
+      return false;
+    }
+  return true;
 }
 
 Scene_group_item::Bbox Scene_group_item::bbox() const
@@ -39,8 +39,8 @@ bool Scene_group_item::supportsRenderingMode(RenderingMode m) const {
 
   Q_FOREACH(Scene_interface::Item_id id, children)
     if(!getChild(id)->supportsRenderingMode(m))
-            return false;
-    return true;
+      return false;
+  return true;
 
 }
 
