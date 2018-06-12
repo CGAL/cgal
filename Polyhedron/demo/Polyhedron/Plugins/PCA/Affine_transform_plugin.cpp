@@ -680,9 +680,9 @@ void Polyhedron_demo_affine_transform_plugin::applySingleTransformation()
                         ui.lineEditZ->text().toDouble());
 
     if(!is_point_set)
-      transform_item->manipulatedFrame()->rotate(CGAL::qglviewer::Quaternion(axis, ui.lineEditA->text().toDouble()*M_PI/180.0));
+      transform_item->manipulatedFrame()->rotate(CGAL::qglviewer::Quaternion(axis, ui.lineEditA->text().toDouble()*CGAL_PI/180.0));
     else
-      transform_points_item->manipulatedFrame()->rotate(CGAL::qglviewer::Quaternion(axis, ui.lineEditA->text().toDouble()*M_PI/180.0));
+      transform_points_item->manipulatedFrame()->rotate(CGAL::qglviewer::Quaternion(axis, ui.lineEditA->text().toDouble()*CGAL_PI/180.0));
     break;
   }
     //translation

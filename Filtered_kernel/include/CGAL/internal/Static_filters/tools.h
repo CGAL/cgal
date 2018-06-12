@@ -31,6 +31,9 @@ namespace CGAL {
 template < typename ET >
 class Lazy_exact_nt;
 
+template <bool Protected>
+class Interval_nt;
+
 namespace internal {
 
 // Utility function to check a posteriori that a subtraction was performed
@@ -150,6 +153,66 @@ inline void init_double(double& d0, double& d1, double& d2, double& d3, double& 
 
 template < typename ET >
 inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, double& d10, double& d11, double& d12, double& d13, double& d14, Lazy_exact_nt<ET>* )
+{d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = d9 = d10 = d11 = d12 = d13 = d14 = 0;}
+
+template < bool P >
+inline void init_double(double& d0, Interval_nt<P>* )
+{d0 = 0;}
+
+template < bool P >
+inline void init_double(double& d0, double& d1, Interval_nt<P>* )
+{d0 = d1 = 0;}
+
+template < bool P >
+inline void init_double(double& d0, double& d1, double& d2, Interval_nt<P>* )
+{d0 = d1 = d2 = 0;}
+
+template < bool P >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, Interval_nt<P>* )
+{d0 = d1 = d2 = d3 = 0;}
+
+template < bool P >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, Interval_nt<P>* )
+{d0 = d1 = d2 = d3 = d4 = 0;}
+
+template < bool P >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, Interval_nt<P>* )
+{d0 = d1 = d2 = d3 = d4 = d5 = 0;}
+
+template < bool P >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, Interval_nt<P>* )
+{d0 = d1 = d2 = d3 = d4 = d5 = d6 = 0;}
+
+template < bool P >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, Interval_nt<P>* )
+{d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = 0;}
+
+template < bool P >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double& d8, Interval_nt<P>* )
+{d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = 0;}
+
+template < bool P >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, Interval_nt<P>* )
+{d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = d9 = 0;}
+
+template < bool P >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, double& d10, Interval_nt<P>* )
+{d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = d9 = d10 = 0;}
+
+template < bool P >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, double& d10, double& d11, Interval_nt<P>* )
+{d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = d9 = d10 = d11 = 0;}
+
+template < bool P >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, double& d10, double& d11, double& d12, Interval_nt<P>* )
+{d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = d9 = d10 = d11 = d12 = 0;}
+
+template < bool P >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, double& d10, double& d11, double& d12, double& d13, Interval_nt<P>* )
+{d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = d9 = d10 = d11 = d12 = d13 = 0;}
+
+template < bool P >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, double& d10, double& d11, double& d12, double& d13, double& d14, Interval_nt<P>* )
 {d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = d9 = d10 = d11 = d12 = d13 = d14 = 0;}
 
 

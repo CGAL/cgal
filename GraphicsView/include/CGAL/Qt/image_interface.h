@@ -56,14 +56,14 @@ private Q_SLOTS:
   {
     if(currentlyFocused == imgHeight
        && ratioCheckBox->isChecked())
-    {imgWidth->setValue(i*ratio);}
+    {imgWidth->setValue(int(i*ratio));}
   }
 
   void imgWidthValueChanged(int i)
   {
     if(currentlyFocused == imgWidth
        && ratioCheckBox->isChecked())
-    {imgHeight->setValue(i/ratio);}
+    {imgHeight->setValue(int(i/ratio));}
   }
 
   void onFocusChanged(QWidget*, QWidget* now)

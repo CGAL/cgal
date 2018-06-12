@@ -503,7 +503,7 @@ Image_3::labellized_trilinear_interpolation
     static_cast<unsigned int>(lc));
 
   if(lc == 1) {
-    return labels[0];
+    return static_cast<Target_type>(labels[0]);
   }
     
   double best_value = 0.;
@@ -521,7 +521,7 @@ Image_3::labellized_trilinear_interpolation
     }
   }
 //   CGAL_assertion(best_value > 0.5);
-  return best;
+  return static_cast<Target_type>(best);
 }
 
 } // end namespace CGAL

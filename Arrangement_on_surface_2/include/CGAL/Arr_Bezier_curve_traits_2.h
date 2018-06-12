@@ -784,7 +784,7 @@ public:
      * \return SMALLER if the curve is directed right;
      *         LARGER if the curve is directed left.
      */
-    Comparison_result operator() (const X_monotone_curve_2& cv)
+    Comparison_result operator() (const X_monotone_curve_2& cv) const
     {
       if (cv.is_directed_right())
         return (SMALLER);

@@ -184,16 +184,18 @@ void CGAL::Three::Scene_item::attribBuffers(CGAL::Three::Viewer_interface* viewe
        if(is_selected) c = c.lighter(120);
        viewer->getShaderProgram(program_name)->setAttributeValue
          ("color_facets",
-          c.redF(),
-          c.greenF(),
-          c.blueF());
+          GLfloat(c.redF()),
+          GLfloat(c.greenF()),
+          GLfloat(c.blueF()));
     }
     else if(program_name == PROGRAM_WITH_TEXTURED_EDGES)
     {
         if(is_selected) c = c.lighter(50);
         viewer->getShaderProgram(program_name)->setUniformValue
           ("color_lines",
-           QVector3D(c.redF(), c.greenF(), c.blueF()));
+           QVector3D(float(c.redF()),
+                     float(c.greenF()),
+                     float(c.blueF())));
     }
     viewer->getShaderProgram(program_name)->release();
 }

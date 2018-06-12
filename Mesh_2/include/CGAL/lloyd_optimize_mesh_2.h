@@ -32,6 +32,7 @@
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/iterator.h>
 #include <CGAL/boost/parameter.h>
+#include <boost/parameter/preprocessor.hpp>
 
 #include <fstream>
 

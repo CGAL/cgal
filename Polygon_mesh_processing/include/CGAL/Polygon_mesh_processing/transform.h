@@ -44,7 +44,7 @@ namespace Polygon_mesh_processing{
  * * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `mesh`.
  *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
+ *   `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
  * \cgalNamedParamsEnd
  * 
  */

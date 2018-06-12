@@ -24,7 +24,7 @@
 //******************************************************************************
 
 #include "test_meshing_utilities.h"
-#include <CGAL/Implicit_mesh_domain_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 
 #include <CGAL/disable_warnings.h>
 
@@ -42,9 +42,7 @@ struct Implicit_tester : public Tester<K>
   void implicit() const
   {
     
-    typedef FT (Function)(const Point&);
-    
-    typedef CGAL::Implicit_mesh_domain_3<Function, K> Mesh_domain;
+    typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
     
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,
@@ -65,10 +63,14 @@ struct Implicit_tester : public Tester<K>
     //-------------------------------------------------------
     std::cout << "\tSeed is\t" 
       << CGAL::get_default_random().get_seed() << std::endl;
-    Mesh_domain domain(Implicit_tester<K>::sphere_function,
-                       Sphere_3(CGAL::ORIGIN,2.),
-                       1e-3,
-                       &CGAL::get_default_random());
+
+    namespace p = CGAL::parameters;
+    Mesh_domain domain =
+      Mesh_domain::create_implicit_mesh_domain
+      (p::function = Implicit_tester<K>::sphere_function,
+       p::bounding_object = Sphere_3(CGAL::ORIGIN,2.),
+       p::p_rng = &CGAL::get_default_random(),
+       p::relative_error_bound = 1e-3);
     
     // Set mesh criteria
     Facet_criteria facet_criteria(0, 0, 0.3);

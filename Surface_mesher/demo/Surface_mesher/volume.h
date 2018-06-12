@@ -43,7 +43,7 @@ struct Kernel : public Kernel1 {
 };
 
 typedef Kernel::FT FT;
-typedef Kernel::Point_3 Point;
+typedef Kernel::Point_3 Point_3;
 typedef Kernel::Sphere_3 Sphere;
 typedef Kernel::Vector_3 Vector;
 typedef Kernel::Triangle_3 Triangle_3;
@@ -51,9 +51,10 @@ typedef Kernel::Segment_3 Segment_3;
 
 // typedef CGAL::Triple<Triangle_3,Vector,const QTreeWidgetItem*> Facet;
 
-typedef boost::tuple<Triangle_3,Vector,const QTreeWidgetItem*> Facet;
+typedef boost::tuple<Triangle_3,Vector,const QTreeWidgetItem*> Facet_;
 
-typedef CBinary_image_3<FT,Point> Binary_image;
+
+typedef CBinary_image_3<FT,Point_3> Binary_image;
 
 class QTreeWidgetItem;
 
@@ -112,7 +113,7 @@ private:
   bool use_gouraud;
   bool show_bbox;
 
-  std::vector<Facet> m_surface;
+  std::vector<Facet_> m_surface;
   Tr del;            // 3D-Delaunay triangulation
   C2t3 c2t3;         // 2D complex in 3D triangulation
 
@@ -132,7 +133,7 @@ private:
   int sm_total_time;
 
 #ifdef CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
-  std::vector<Facet> m_surface_mc;
+  std::vector<Facet_> m_surface_mc;
   MarchingCubes<unsigned char> mc ;
   std::vector<int> nbs_of_mc_triangles;
   std::vector<GLint> lists_draw_surface_mc;

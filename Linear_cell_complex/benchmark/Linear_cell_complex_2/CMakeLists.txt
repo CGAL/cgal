@@ -48,11 +48,11 @@ SET(QT_USE_QTSVG TRUE)
 SET(QT_USE_QTXML TRUE )
 INCLUDE(${QT_USE_FILE})
 ADD_DEFINITIONS(${QT_DEFINITIONS})
-SET (CGoGN_EXT_INCLUDES ${CGoGN_EXT_INCLUDES} ${QT_INCLUDE_DIR} ${QGLVIEWER_INCLUDE_DIR} )
-SET (CGoGN_EXT_LIBS ${CGoGN_EXT_LIBS} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} )
+SET (CGoGN_EXT_INCLUDES ${CGoGN_EXT_INCLUDES} ${QT_INCLUDE_DIR} )
+SET (CGoGN_EXT_LIBS ${CGoGN_EXT_LIBS} ${QT_LIBRARIES} )
 
 add_executable(cgogn_performance_2 performance_2.h cgogn_performance_2.h cgogn_performance_2.cpp)
-target_link_libraries(cgogn_performance_2 algo assimp container nl topology utils Zinri z ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} )
+target_link_libraries(cgogn_performance_2 algo assimp container nl topology utils Zinri z ${QT_LIBRARIES} )
 
 # Performance_2
 add_executable(performance_2
@@ -68,6 +68,6 @@ add_executable(performance_2
 target_link_libraries(performance_2
   ${CGAL_LIBRARIES}
   surface_mesh
-  algo assimp container nl topology utils Zinri z ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES}
+  algo assimp container nl topology utils Zinri z ${QT_LIBRARIES} 
   ${OPENMESH_LIBRARIES}
 )

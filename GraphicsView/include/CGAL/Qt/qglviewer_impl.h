@@ -493,10 +493,10 @@ void CGAL::QGLViewer::postDraw() {
   }
 
   // Restore foregroundColor
-  float color[4];
-  color[0] = foregroundColor().red() / 255.0f;
-  color[1] = foregroundColor().green() / 255.0f;
-  color[2] = foregroundColor().blue() / 255.0f;
+  GLfloat color[4];
+  color[0] = GLfloat(foregroundColor().red()) / 255.0f;
+  color[1] = GLfloat(foregroundColor().green()) / 255.0f;
+  color[2] = GLfloat(foregroundColor().blue()) / 255.0f;
   color[3] = 1.0f;
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
   glDisable(GL_LIGHTING);
@@ -818,7 +818,7 @@ CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::renderText(double x, double y, double z, const QString &str,
                            const QFont &font) {
   const Vec proj = camera_->projectedCoordinatesOf(Vec(x, y, z));
-  renderText(proj.x, proj.y, str, font);
+  renderText(int(proj.x), int(proj.y), str, font);
 }
 #endif
 
@@ -2817,7 +2817,7 @@ void CGAL::QGLViewer::getWheelActionBinding(MouseHandler handler, MouseAction ac
       return;
     }
 
-  key = ::Qt::Key(-1);
+  key = ::Qt::Key_unknown;
   modifiers = ::Qt::NoModifier;
 }
 
@@ -3094,7 +3094,7 @@ void CGAL::QGLViewer::drawVisualHints() {
   QMatrix4x4 mvMatrix;
   for(int i=0; i < 16; i++)
   {
-    mvMatrix.data()[i] = camera()->orientation().inverse().matrix()[i];
+    mvMatrix.data()[i] = float(camera()->orientation().inverse().matrix()[i]);
   }
   rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
   rendering_program.setUniformValue("color", QColor(::Qt::lightGray));
@@ -3117,7 +3117,7 @@ void CGAL::QGLViewer::drawVisualHints() {
   camera()->setType(CGAL::qglviewer::Camera::ORTHOGRAPHIC);
   for(int i=0; i < 16; i++)
   {
-    mvMatrix.data()[i] = camera()->orientation().inverse().matrix()[i];
+    mvMatrix.data()[i] = float(camera()->orientation().inverse().matrix()[i]);
   }
   mvpMatrix.setToIdentity();
   mvpMatrix.ortho(-1,1,-1,1,-1,1);
@@ -3151,8 +3151,8 @@ void CGAL::QGLViewer::drawVisualHints() {
     std::vector<float> vertices;
     for(int i=0; i< 4; ++i)
     {
-      float x = (pow(-1, i)*(1-i/2));
-      float y = (pow(-1, i)*(i/2));
+      float x = float(std::pow(-1, i)*(1-i/2));
+      float y = float(std::pow(-1, i)*(i/2));
       vertices.push_back(x);
       vertices.push_back(y);
       vertices.push_back(0);
@@ -3170,8 +3170,8 @@ void CGAL::QGLViewer::drawVisualHints() {
     rendering_program.setUniformValue("mvp_matrix", mvpMatrix);  
     Vec pivot = camera()->pivotPoint();
     Vec proj_c = camera()->projectedCoordinatesOf(pivot);
-    glViewport((proj_c.x-size/2)*devicePixelRatio(), (height() - proj_c.y-size/2)*devicePixelRatio(), size, size);
-    glScissor ((proj_c.x-size/2)*devicePixelRatio(), (height() - proj_c.y-size/2)*devicePixelRatio(), size, size);
+    glViewport(GLint((proj_c.x-size/2)*devicePixelRatio()), GLint((height() - proj_c.y-size/2)*devicePixelRatio()), size, size);
+    glScissor (GLint((proj_c.x-size/2)*devicePixelRatio()), GLint((height() - proj_c.y-size/2)*devicePixelRatio()), size, size);
     rendering_program.setUniformValue("color", QColor(::Qt::black));
     glLineWidth(3.0);
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(4));
@@ -3216,18 +3216,21 @@ CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Vec from,
                           CGAL::qglviewer::Vec to, CGAL::qglviewer::Vec color, 
                           std::vector<float> &data) {
+  using std::cos;
+  using std::sin;
+  using std::acos;
   CGAL::qglviewer::Vec temp = to-from;
-  QVector3D dir = QVector3D(temp.x, temp.y, temp.z);
+  QVector3D dir = QVector3D(float(temp.x), float(temp.y), float(temp.z));
   QMatrix4x4 mat;
   mat.setToIdentity();
-  mat.translate(from.x, from.y, from.z);
+  mat.translate(float(from.x), float(from.y), float(from.z));
   mat.scale(dir.length());
   dir.normalize();
   float angle = 0.0;
   if(std::sqrt((dir.x()*dir.x()+dir.y()*dir.y())) > 1)
       angle = 90.0f;
   else
-      angle =acos(dir.y()/std::sqrt(dir.x()*dir.x()+dir.y()*dir.y()+dir.z()*dir.z()))*180.0/CGAL_PI;
+      angle = float(acos(dir.y()/std::sqrt(dir.lengthSquared()))*180.0/CGAL_PI);
 
   QVector3D axis;
   axis = QVector3D(dir.z(), 0, -dir.x());
@@ -3270,7 +3273,7 @@ void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Ve
       data.push_back((float)color.y);
       data.push_back((float)color.z);
       //point C1
-      D = (d+360/prec)*CGAL_PI/180.0;
+      D = float((d+360/prec)*CGAL_PI/180.0);
       p = QVector4D(Rf* sin(D), 0.66f, Rf* cos(D), 1.f);
       n = QVector4D(sin(D), sin(a), cos(D), 1.0);
       pR = mat*p;
@@ -3294,7 +3297,7 @@ void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Ve
   for(int d = 0; d<360; d+= 360/prec)
   {
       //point A1
-      double D = d*CGAL_PI/180.0;
+      float D = float(d*CGAL_PI/180.0);
       QVector4D p(rf*sin(D), 0.66f, rf*cos(D), 1.f);
       QVector4D n(sin(D), 0.f, cos(D), 1.f);
       QVector4D pR = mat*p;
@@ -3306,9 +3309,9 @@ void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Ve
       data.push_back(nR.x());
       data.push_back(nR.y());
       data.push_back(nR.z());
-      data.push_back(color.x);
-      data.push_back(color.y);
-      data.push_back(color.z);
+      data.push_back(float(color.x));
+      data.push_back(float(color.y));
+      data.push_back(float(color.z));
       //point B1
       p = QVector4D(rf * sin(D),0,rf*cos(D), 1.0);
       n = QVector4D(sin(D), 0, cos(D), 1.0);
@@ -3322,11 +3325,11 @@ void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Ve
       data.push_back(nR.x());
       data.push_back(nR.y());
       data.push_back(nR.z());
-      data.push_back(color.x);
-      data.push_back(color.y);
-      data.push_back(color.z);
+      data.push_back(float(color.x));
+      data.push_back(float(color.y));
+      data.push_back(float(color.z));
         //point C1
-      D = (d+360/prec)*CGAL_PI/180.0;
+      D = float((d+360/prec)*CGAL_PI/180.0);
       p = QVector4D(rf * sin(D),0,rf*cos(D), 1.0);
       n = QVector4D(sin(D), 0, cos(D), 1.0);
       pR = mat*p;
@@ -3337,11 +3340,11 @@ void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Ve
       data.push_back(nR.x());
       data.push_back(nR.y());
       data.push_back(nR.z());
-      data.push_back(color.x);
-      data.push_back(color.y);
-      data.push_back(color.z);
+      data.push_back(float(color.x));
+      data.push_back(float(color.y));
+      data.push_back(float(color.z));
       //point A2
-      D = (d+360/prec)*CGAL_PI/180.0;
+      D = float((d+360/prec)*CGAL_PI/180.0);
 
       p = QVector4D(rf * sin(D),0,rf*cos(D), 1.0);
       n = QVector4D(sin(D), 0, cos(D), 1.0);
@@ -3353,9 +3356,9 @@ void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Ve
       data.push_back(nR.x());
       data.push_back(nR.y());
       data.push_back(nR.z());
-      data.push_back((float)color.x);
-      data.push_back((float)color.y);
-      data.push_back((float)color.z);
+      data.push_back(float(color.x));
+      data.push_back(float(color.y));
+      data.push_back(float(color.z));
       //point B2
       p = QVector4D(rf * sin(D), 0.66f, rf*cos(D), 1.f);
       n = QVector4D(sin(D), 0, cos(D), 1.0);
@@ -3367,11 +3370,11 @@ void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Ve
       data.push_back(nR.x());
       data.push_back(nR.y());
       data.push_back(nR.z());
-      data.push_back((float)color.x);
-      data.push_back((float)color.y);
-      data.push_back((float)color.z);
+      data.push_back(float(color.x));
+      data.push_back(float(color.y));
+      data.push_back(float(color.z));
       //point C2
-      D = d*CGAL_PI/180.0;
+      D = float(d*CGAL_PI/180.0);
       p = QVector4D(rf * sin(D), 0.66f, rf*cos(D), 1.f);
       n = QVector4D(sin(D), 0.f, cos(D), 1.f);
       pR = mat*p;
@@ -3382,9 +3385,9 @@ void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Ve
       data.push_back(nR.x());
       data.push_back(nR.y());
       data.push_back(nR.z());
-      data.push_back(color.x);
-      data.push_back(color.y);
-      data.push_back(color.z);
+      data.push_back(float(color.x));
+      data.push_back(float(color.y));
+      data.push_back(float(color.z));
 
   }
 }
@@ -3405,7 +3408,7 @@ void CGAL::QGLViewer::drawAxis(qreal length) {
   rendering_program_light.bind();
   vaos[AXIS].bind();
   vbos[Axis].bind();
-  vbos[Axis].allocate(data.data(), static_cast<int>(data.size()) * sizeof(float));
+  vbos[Axis].allocate(data.data(), static_cast<int>(data.size() * sizeof(float)));
   rendering_program_light.enableAttributeArray("vertex");
   rendering_program_light.setAttributeBuffer("vertex",GL_FLOAT,0,3,
                                              static_cast<int>(9*sizeof(float)));
@@ -3434,22 +3437,22 @@ void CGAL::QGLViewer::drawGrid(qreal size, int nbSubdivisions) {
   std::vector<float> v_Grid;
   for (int i=0; i<=nbSubdivisions; ++i)
   {
-          const float pos = size*(2.0*i/nbSubdivisions-1.0);
+          const float pos = float(size*(2.0*i/nbSubdivisions-1.0));
           v_Grid.push_back(pos);
-          v_Grid.push_back(-size);
-          v_Grid.push_back(0.0);
+          v_Grid.push_back(float(-size));
+          v_Grid.push_back(0.f);
 
           v_Grid.push_back(pos);
-          v_Grid.push_back(+size);
-          v_Grid.push_back(0.0);
+          v_Grid.push_back(float(+size));
+          v_Grid.push_back(0.f);
 
-          v_Grid.push_back(-size);
+          v_Grid.push_back(float(-size));
           v_Grid.push_back(pos);
-          v_Grid.push_back(0.0);
+          v_Grid.push_back(0.f);
 
-          v_Grid.push_back( size);
+          v_Grid.push_back( float(size));
           v_Grid.push_back( pos);
-          v_Grid.push_back( 0.0);
+          v_Grid.push_back( 0.f);
   }
   rendering_program.bind();
   vaos[GRID].bind();
@@ -3473,7 +3476,7 @@ void CGAL::QGLViewer::drawGrid(qreal size, int nbSubdivisions) {
   rendering_program_light.bind();
   vaos[GRID_AXIS].bind();
   vbos[Grid_axis].bind();
-  vbos[Grid_axis].allocate(d_axis.data(), static_cast<int>(d_axis.size()) * sizeof(float));
+  vbos[Grid_axis].allocate(d_axis.data(), static_cast<int>(d_axis.size() * sizeof(float)));
   rendering_program_light.enableAttributeArray("vertex");
   rendering_program_light.setAttributeBuffer("vertex",GL_FLOAT,0,3,
                                              static_cast<int>(9*sizeof(float)));
@@ -4015,7 +4018,10 @@ QImage* CGAL::QGLViewer::takeSnapshot( CGAL::qglviewer::SnapShotBackground  back
     for (int j=0; j<nbY; j++)
     {
       fbo.bind();
-      glClearColor(backgroundColor().redF(), backgroundColor().greenF(), backgroundColor().blueF(), alpha);
+      glClearColor(GLfloat(backgroundColor().redF()),
+                   GLfloat(backgroundColor().greenF()),
+                   GLfloat(backgroundColor().blueF()),
+                   alpha);
       double frustum[6];
       frustum[0]= -xMin + i*deltaX;
       frustum[1]= -xMin + (i+1)*deltaX ;

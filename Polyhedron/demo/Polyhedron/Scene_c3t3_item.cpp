@@ -790,9 +790,11 @@ Scene_c3t3_item::build_histogram()
 
 
   // draw min value and max value
-  const int min_tr_width = static_cast<int>(2 * (std::floor(min_value)*cell_width + left_margin));
-  const int max_tr_width = static_cast<int>(
-    2 * ((histo_data.size() - std::floor(max_value))*cell_width + left_margin));
+  const int min_tr_width =
+    static_cast<int>(2 * (std::floor(min_value)*cell_width + left_margin));
+  const int max_tr_width =
+    static_cast<int>(2 * ((double(histo_data.size()) -
+                           std::floor(max_value))*cell_width + left_margin));
   const int tr_y = drawing_height + top_margin + text_margin;
 
   painter.setPen(get_histogram_color(min_value));
@@ -828,20 +830,20 @@ Scene_c3t3_item_priv::compute_color_map(const QColor& c)
   typedef Indices::size_type size_type;
 
   const size_type nb_domains = subdomain_indices_.size();
-  size_type i = 0;
+  double i = 0;
   for (Indices::iterator it = subdomain_indices_.begin(),
-         end = subdomain_indices_.end(); it != end; ++it, ++i)
+         end = subdomain_indices_.end(); it != end; ++it, i += 1.)
   {
-    double hue = c.hueF() + 1. / nb_domains * i;
+    double hue = c.hueF() + 1. / double(nb_domains) * i;
     if (hue > 1) { hue -= 1.; }
     colors_subdomains[*it] = QColor::fromHsvF(hue, c.saturationF(), c.valueF());
   }
   const size_type nb_patch_indices = surface_patch_indices_.size();
   i = 0;
   for (Indices::iterator it = surface_patch_indices_.begin(),
-         end = surface_patch_indices_.end(); it != end; ++it, ++i)
+         end = surface_patch_indices_.end(); it != end; ++it, i += 1.)
   {
-    double hue = c.hueF() + 1. / nb_patch_indices * i;
+    double hue = c.hueF() + 1. / double(nb_patch_indices) * i;
     if (hue > 1) { hue -= 1.; }
     colors[*it] = QColor::fromHsvF(hue, c.saturationF(), c.valueF());
   }
@@ -1422,6 +1424,7 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
   Geom_traits::Construct_point_3 wp2p
     = c3t3.triangulation().geom_traits().construct_point_3_object();
 
+  typedef unsigned char UC;
   Tr::Cell_handle ch = facet.id().first;
   if(intersected_cells.find(ch) == intersected_cells.end())
   {
@@ -1432,7 +1435,7 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
     const Tr::Bare_point& pc = wp2p(ch->vertex(2)->point());
     const Tr::Bare_point& pd = wp2p(ch->vertex(3)->point());
 
-    CGAL::Color color(c.red(), c.green(), c.blue());
+    CGAL::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
 
     intersection->addTriangle(pb, pa, pc, color);
     intersection->addTriangle(pa, pb, pd, color);
@@ -1452,7 +1455,7 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
 
         QColor c = this->colors_subdomains[nh->subdomain_index()].light(50);
 
-        CGAL::Color color(c.red(), c.green(), c.blue());
+        CGAL::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
 
         intersection->addTriangle(pb, pa, pc, color);
         intersection->addTriangle(pa, pb, pd, color);
@@ -1545,8 +1548,9 @@ void Scene_c3t3_item_priv::computeSpheres()
                           wp2p(vit->point()).y() + offset.y,
                           wp2p(vit->point()).z() + offset.z);
     float radius = vit->point().weight() ;
+    typedef unsigned char UC;
     spheres->add_sphere(Geom_traits::Sphere_3(center, radius),
-                        CGAL::Color(c.red(), c.green(), c.blue()));
+                        CGAL::Color(UC(c.red()), UC(c.green()), UC(c.blue())));
   }
   spheres->invalidateOpenGLBuffers();
 }
@@ -1568,7 +1572,7 @@ void Scene_c3t3_item_priv::computeElements()
 
     float x = (2 * (float)complex_diag()) / 10.0;
     float y = (2 * (float)complex_diag()) / 10.0;
-    for (int u = 0; u < 11; u++)
+    for (float u = 0; u < 11; u += 1.f)
     {
 
       positions_grid.push_back(-(float)complex_diag() + x* u);
@@ -1579,7 +1583,7 @@ void Scene_c3t3_item_priv::computeElements()
       positions_grid.push_back((float)complex_diag());
       positions_grid.push_back(0.0);
     }
-    for (int v = 0; v<11; v++)
+    for (float v = 0; v<11; v += 1.f)
     {
 
       positions_grid.push_back(-(float)complex_diag());
@@ -1818,7 +1822,7 @@ void Scene_c3t3_item::set_valid(bool b)
 }
 float Scene_c3t3_item::getShrinkFactor() const
 {
- return d->tet_Slider->value()/100.0f;
+  return float(d->tet_Slider->value())/100.0f;
 }
 bool Scene_c3t3_item::keyPressEvent(QKeyEvent *event)
 {
