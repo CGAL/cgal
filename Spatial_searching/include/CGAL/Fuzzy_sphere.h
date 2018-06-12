@@ -146,13 +146,17 @@ class Fuzzy_sphere< Search_traits_adapter<K,PM,Base_traits> >
 public:
   // constructors
   Fuzzy_sphere(const SearchTraits& traits_=SearchTraits()):Base(traits_){}
-  Fuzzy_sphere(const typename Base_traits::Point_d& center, FT radius, FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits()) :
-    Base(center,radius,epsilon,traits_) {}
-  Fuzzy_sphere(const typename SearchTraits::Point_d& center, FT radius, FT epsilon=FT(0),
-               const SearchTraits& traits_=SearchTraits(),
+
+  // Constructor for any point type that is not `SearchTraits::Point_d`
+  template <typename Point> // boost::disable_if requires a template argument to work
+  Fuzzy_sphere(const Point& center, FT radius, FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits(),
                typename boost::disable_if<
-                 boost::is_same<typename Base_traits::Point_d,
-                                typename SearchTraits::Point_d> >::type* = 0)
+               boost::is_same<typename SearchTraits::Point_d,
+               Point> >::type* = 0)
+    : Base(center,radius,epsilon,traits_) {}
+
+  Fuzzy_sphere(const typename SearchTraits::Point_d& center, FT radius, FT epsilon=FT(0),
+               const SearchTraits& traits_=SearchTraits())
     : Base(get(traits_.point_property_map(),center),radius,epsilon,traits_) {}
 };
 
