@@ -1098,4 +1098,3 @@ void Viewer::messageLogged(QOpenGLDebugMessage msg)
   error += ")";
   qDebug() << qPrintable(error) << "\n" << qPrintable(msg.message()) << "\n";
 }
- #include "Viewer.moc"
