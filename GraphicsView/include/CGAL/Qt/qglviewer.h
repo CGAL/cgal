@@ -214,7 +214,10 @@ public Q_SLOTS:
      also setForegroundColor(). */
   void setBackgroundColor(const QColor &color) {
     backgroundColor_ = color;
-    glClearColor(color.redF(), color.greenF(), color.blueF(), color.alphaF());
+    glClearColor(GLclampf(color.redF()),
+                 GLclampf(color.greenF()),
+                 GLclampf(color.blueF()),
+                 GLclampf(color.alphaF()));
   }
   /*! Sets the foregroundColor() of the viewer, used to draw visual hints. See
    * also setBackgroundColor(). */

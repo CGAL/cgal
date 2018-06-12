@@ -641,7 +641,10 @@ protected:
         if(!poly.empty())
           for(std::size_t j=0; j<poly.size()-1; ++j)
           {
-            painter->drawLine(poly[j].x(), poly[j].y(), poly[j+1].x(), poly[j+1].y());
+            painter->drawLine(int(poly[j].x()),
+                              int(poly[j].y()),
+                              int(poly[j+1].x()),
+                              int(poly[j+1].y()));
           }
       }
       painter->end();

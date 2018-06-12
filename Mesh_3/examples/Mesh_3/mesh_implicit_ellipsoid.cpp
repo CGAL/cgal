@@ -4,7 +4,7 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/Implicit_mesh_domain_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/perturb_mesh_3.h>
 #include <CGAL/exude_mesh_3.h>
@@ -14,7 +14,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT FT;
 typedef K::Point_3 Point;
 typedef FT (Function)(const Point&);
-typedef CGAL::Implicit_mesh_domain_3<Function,K> Mesh_domain;
+typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
@@ -41,7 +41,9 @@ using namespace CGAL::parameters;
 int main()
 {
   // Domain (Warning: Sphere_3 constructor uses square radius !)
-  Mesh_domain domain(ellipsoid_function, K::Sphere_3(CGAL::ORIGIN, 2.));
+  Mesh_domain domain =
+    Mesh_domain::create_implicit_mesh_domain(ellipsoid_function,
+                                             K::Sphere_3(CGAL::ORIGIN, 2.));
   
   // Criteria
   Facet_criteria facet_criteria(30, 0.08, 0.025); // angle, size, approximation

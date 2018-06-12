@@ -1134,7 +1134,7 @@ void Frame::alignWithFrame(const Frame *const frame, bool move,
     rotate(rotation().inverse() * Quaternion(axis, angle) * orientation());
 
     // Try to align an other axis direction
-    unsigned short d = (index[1] + 1) % 3;
+    unsigned short d = (unsigned short)((index[1] + 1) % 3);
     Vec dir((d == 0) ? 1.0 : 0.0, (d == 1) ? 1.0 : 0.0, (d == 2) ? 1.0 : 0.0);
     dir = inverseTransformOf(dir);
 

@@ -71,8 +71,8 @@ struct IntConverter {
   std::pair<int, int> min_max;
 
   int operator()(float f) {
-    float s = f * (min_max.second - min_max.first);
-    return s + min_max.first;
+    float s = f * float((min_max.second - min_max.first));
+    return s + float(min_max.first);
   }
 };
 
@@ -163,7 +163,7 @@ public Q_SLOTS:
     float sum1 = float(a + b + c);
     float sum2 = float(v.x + v.y + v.z);
     sum1 /= sum2;
-    setValue(sum1 * scale);
+    setValue(sum1 * float(scale));
     ready_to_cut = false;
   }
 
@@ -644,7 +644,10 @@ private:
           Volume_plane_intersection* i
           = new Volume_plane_intersection(img->xdim() * img->vx()-1,
                                           img->ydim() * img->vy()-1,
-                                          img->zdim() * img->vz()-1);
+                                          img->zdim() * img->vz()-1,
+                                          img->image()->tx,
+                                          img->image()->ty,
+                                          img->image()->tz);
       this->intersection_id = scene->addItem(i);
       scene->changeGroup(i, group);
       group->lockChild(i);
@@ -667,9 +670,9 @@ private:
 
     switchReaderConverter< Word >(minmax);
 
-    Volume_plane<x_tag> *x_item = new Volume_plane<x_tag>();
-    Volume_plane<y_tag> *y_item = new Volume_plane<y_tag>();
-    Volume_plane<z_tag> *z_item = new Volume_plane<z_tag>();
+    Volume_plane<x_tag> *x_item = new Volume_plane<x_tag>(img->image()->tx,img->image()->ty, img->image()->tz);
+    Volume_plane<y_tag> *y_item = new Volume_plane<y_tag>(img->image()->tx,img->image()->ty, img->image()->tz);
+    Volume_plane<z_tag> *z_item = new Volume_plane<z_tag>(img->image()->tx,img->image()->ty, img->image()->tz);
 
     x_item->setProperty("img",qVariantFromValue((void*)seg_img));
     y_item->setProperty("img",qVariantFromValue((void*)seg_img));

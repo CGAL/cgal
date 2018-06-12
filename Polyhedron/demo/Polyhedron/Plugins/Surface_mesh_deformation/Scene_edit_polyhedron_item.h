@@ -162,9 +162,6 @@ typedef CGAL::Surface_mesh_deformation<SMesh, CGAL::Default, CGAL::Default, CGAL
   ,CGAL::Default, CGAL::Default, CGAL::Default,
   Array_based_vertex_point_map<SMesh> > Deform_sm_mesh;
 
-typedef Deform_mesh::Point  Point;
-typedef Deform_sm_mesh::Point  SM_Point;
-
 /// For storing associated data with a group of control vertices
 template<typename Mesh>
 class Control_vertices_data
