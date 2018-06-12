@@ -34,17 +34,18 @@ namespace CGAL {
 // The default Construct_point_3 inherited by Periodic_3_triangulation_remove_traits_3
 // must be overwritten by a custom Construct_point_3 that offers:
 // - pair<K::Point_3, offset> --> pair<K::Point_3, offset> (identity)
-template<class Gt, typename Construct_point_3_base>
+template<class Gt_, typename Construct_point_3_base_>
 class Construct_point_from_pair_3
-  : public Construct_point_3_base
+  : public Construct_point_3_base_
 {
-  typedef Construct_point_3_base         Base;
+  typedef Construct_point_3_base_        Base;
+  typedef Gt_                            Geom_traits;
 
   // Gt::Point_3 is actually a pair <K::Point_3, offset>
-  typedef typename Gt::Point_3           Point_3;
+  typedef typename Geom_traits::Point_3  Point_3;
 
 public:
-  Construct_point_from_pair_3(const Construct_point_3_base& cp) : Base(cp) { }
+  Construct_point_from_pair_3(const Base& cp) : Base(cp) { }
 
   using Base::operator();
 
@@ -90,44 +91,44 @@ public:
   }
 };
 
-template < class Gt, class Off = typename CGAL::Periodic_3_offset_3 >
+template < class Gt_, class Off_ = typename CGAL::Periodic_3_offset_3 >
 class Periodic_3_Delaunay_triangulation_remove_traits_3
-    : public Gt
+  : public Gt_
 {
-  typedef Periodic_3_Delaunay_triangulation_remove_traits_3<Gt, Off>  Self;
-  typedef Gt                                                          Base;
+  typedef Periodic_3_Delaunay_triangulation_remove_traits_3<Gt_, Off_>  Self;
+  typedef Gt_                                                           Base;
 
 public:
-  typedef Gt                                                    Geom_traits;
-  typedef Off                                                   Offset;
+  typedef Gt_                                                    Geom_traits;
+  typedef Off_                                                   Offset;
 
-  typedef typename Gt::RT                                       RT;
-  typedef typename Gt::FT                                       FT;
-  typedef std::pair<typename Gt::Point_3, Offset>               Point_3;
+  typedef typename Geom_traits::RT                               RT;
+  typedef typename Geom_traits::FT                               FT;
+  typedef std::pair<typename Geom_traits::Point_3, Offset>       Point_3;
 
   // not allowing a default value for `gt` because we need to have
   // an initialized domain in `gt`
-  Periodic_3_Delaunay_triangulation_remove_traits_3(const Gt& gt) : Base(gt) { }
+  Periodic_3_Delaunay_triangulation_remove_traits_3(const Geom_traits& gt) : Base(gt) { }
 
   // Construct point
-  typedef Construct_point_from_pair_3<Self, typename Gt::Construct_point_3> Construct_point_3;
+  typedef Construct_point_from_pair_3<Self, typename Geom_traits::Construct_point_3> Construct_point_3;
 
   // Triangulation predicates
-  typedef Functor_with_point_offset_pair_adaptor<Self, typename Gt::Compare_xyz_3>
+  typedef Functor_with_point_offset_pair_adaptor<Self, typename Geom_traits::Compare_xyz_3>
       Compare_xyz_3;
-  typedef Functor_with_point_offset_pair_adaptor<Self, typename Gt::Orientation_3>
+  typedef Functor_with_point_offset_pair_adaptor<Self, typename Geom_traits::Orientation_3>
       Orientation_3;
 
   // Delaunay Triangulation predicates
-  typedef Functor_with_point_offset_pair_adaptor<Self, typename Gt::Compare_distance_3>
+  typedef Functor_with_point_offset_pair_adaptor<Self, typename Geom_traits::Compare_distance_3>
       Compare_distance_3;
-  typedef Functor_with_point_offset_pair_adaptor<Self, typename Gt::Side_of_oriented_sphere_3>
+  typedef Functor_with_point_offset_pair_adaptor<Self, typename Geom_traits::Side_of_oriented_sphere_3>
       Side_of_oriented_sphere_3;
 
   // Degenerate dimension predicates
-  typedef Functor_with_point_offset_pair_adaptor<Self, typename Gt::Coplanar_orientation_3>
+  typedef Functor_with_point_offset_pair_adaptor<Self, typename Geom_traits::Coplanar_orientation_3>
       Coplanar_orientation_3;
-  typedef Functor_with_point_offset_pair_adaptor<Self, typename Gt::Coplanar_side_of_bounded_circle_3>
+  typedef Functor_with_point_offset_pair_adaptor<Self, typename Geom_traits::Coplanar_side_of_bounded_circle_3>
       Coplanar_side_of_bounded_circle_3;
 
   // Operations

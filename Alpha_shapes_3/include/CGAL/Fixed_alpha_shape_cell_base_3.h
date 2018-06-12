@@ -28,12 +28,12 @@
 
 #include <vector>
 #include <CGAL/Compact_container.h>
-#include <CGAL/Triangulation_cell_base_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/internal/Classification_type.h>
 
 namespace CGAL {
 
-template < class Gt, class Cb = Triangulation_cell_base_3<Gt> >
+template < class Gt, class Cb = Delaunay_triangulation_cell_base_3<Gt> >
 class Fixed_alpha_shape_cell_base_3
   : public Cb
 {

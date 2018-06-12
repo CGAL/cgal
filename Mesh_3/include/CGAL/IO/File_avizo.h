@@ -106,7 +106,7 @@ output_to_avizo(std::ostream& os,
         end = tr.finite_vertices_end();
       vit != end; ++vit)
   {
-    const Weighted_point& p = vit->point();
+    const Weighted_point& p = tr.point(vit);
     const double x = CGAL::to_double(p.x());
     const double y = CGAL::to_double(p.y());
     const double z = CGAL::to_double(p.z());

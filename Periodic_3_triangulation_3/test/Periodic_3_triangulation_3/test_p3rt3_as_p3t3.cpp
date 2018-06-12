@@ -14,7 +14,6 @@ typedef CGAL::Periodic_3_regular_triangulation_traits_3<Epeck>    PRTT_Exact;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel       Epick;
 typedef CGAL::Periodic_3_regular_triangulation_traits_3<Epick>    PRTT_Inexact;
-
 int main(int, char**)
 {
   CGAL::Timer t;
