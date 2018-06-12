@@ -101,16 +101,6 @@ public:
   */
   bool operator!=(const Weighted_point_3<Kernel> &q) const;
 
-  /*!
-  translates the point by the vector `v`.
-  */
-  Weighted_point_3<Kernel>& operator+=(const Vector_3<Kernel> &v);
-
-  /*!
-  translates the point by the vector -`v`.
-  */
-  Weighted_point_3<Kernel>& operator-=(const Vector_3<Kernel> &v);
-
   /// @}
 
   /// \name Coordinate Access
