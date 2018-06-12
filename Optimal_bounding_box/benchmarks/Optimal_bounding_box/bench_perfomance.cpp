@@ -42,7 +42,7 @@ void bench_finding_obb(std::string fname)
     // 1) using convex hull
     timer.start();
     CGAL::Surface_mesh<K::Point_3> obb_mesh1;
-    CGAL::Optimal_bounding_box::find_obb(mesh, obb_mesh1, la_traits, true);
+    CGAL::Optimal_bounding_box::compute_optimal_bounding_box(mesh, obb_mesh1, la_traits, true);
     timer.stop();
     double t_ch = timer.time();
     std::cout << " with ch: " << timer.time() << " s |";
@@ -51,7 +51,7 @@ void bench_finding_obb(std::string fname)
     timer.reset();
     timer.start();
     CGAL::Surface_mesh<K::Point_3> obb_mesh2;
-    CGAL::Optimal_bounding_box::find_obb(mesh, obb_mesh2, la_traits, false);
+    CGAL::Optimal_bounding_box::compute_optimal_bounding_box(mesh, obb_mesh2, la_traits, false);
     timer.stop();
     double t_no_ch = timer.time();
     std::cout << " without ch: " <<  timer.time() << " s\n";

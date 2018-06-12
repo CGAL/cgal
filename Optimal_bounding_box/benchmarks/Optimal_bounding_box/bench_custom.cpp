@@ -37,7 +37,7 @@ void bench(const char* fname)
 
   // use convex hull - > true
   // no convex hull - > false
-  CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points, la_traits, false); 
+  CGAL::Optimal_bounding_box::compute_optimal_bounding_box(sm_points, obb_points, la_traits, false);
 
   std::cout << "done" << '\n';
 

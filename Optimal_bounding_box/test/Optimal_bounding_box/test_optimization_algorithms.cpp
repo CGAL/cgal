@@ -306,7 +306,7 @@ void test_long_tetrahedron(std::string fname)
   #endif
 }
 
-void test_find_obb_evolution(std::string fname)
+void test_compute_obb_evolution(std::string fname)
 {
   std::ifstream input(fname);
   typedef CGAL::Surface_mesh<K::Point_3> SMesh;
@@ -326,7 +326,7 @@ void test_find_obb_evolution(std::string fname)
 
   CGAL::Eigen_linear_algebra_traits la_traits;
   std::vector<K::Point_3> obb_points;
-  CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points, la_traits, true);
+  CGAL::Optimal_bounding_box::compute_optimal_bounding_box(sm_points, obb_points, la_traits, true);
 
   CGAL_assertion_code(double epsilon = 1e-3);
   CGAL_assertion_code(double vol = CGAL::Optimal_bounding_box::calculate_volume(obb_points));
@@ -347,7 +347,7 @@ void test_find_obb_evolution(std::string fname)
   #endif
 }
 
-void test_find_obb_mesh(std::string fname)
+void test_compute_obb_mesh(std::string fname)
 {
   std::ifstream input(fname);
   CGAL::Surface_mesh<K::Point_3> mesh;
@@ -359,7 +359,7 @@ void test_find_obb_mesh(std::string fname)
 
   CGAL::Eigen_linear_algebra_traits la_traits;
   CGAL::Surface_mesh< K::Point_3> obbmesh;
-  CGAL::Optimal_bounding_box::find_obb(mesh, obbmesh, la_traits, true);
+  CGAL::Optimal_bounding_box::compute_optimal_bounding_box(mesh, obbmesh, la_traits, true);
 
   #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_TEST
   std::ofstream out("/tmp/result_elephant.off");
@@ -397,7 +397,7 @@ void test_function_defaults_traits(std::string fname1, std::string fname2)
     sm_points.push_back(get(pmap, v));
 
   std::vector<K::Point_3> obb_points;
-  CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points, true);
+  CGAL::Optimal_bounding_box::compute_optimal_bounding_box(sm_points, obb_points, true);
 
   CGAL_assertion_code(double epsilon = 1e-3);
   CGAL_assertion_code(double vol = CGAL::Optimal_bounding_box::calculate_volume(obb_points));
@@ -405,7 +405,7 @@ void test_function_defaults_traits(std::string fname1, std::string fname2)
 
   // test two
   CGAL::Surface_mesh< K::Point_3> obbmesh;
-  CGAL::Optimal_bounding_box::find_obb(mesh2, obbmesh, true);
+  CGAL::Optimal_bounding_box::compute_optimal_bounding_box(mesh2, obbmesh, true);
 }
 
 int main()
@@ -415,8 +415,8 @@ int main()
   test_random_unit_tetra();
   test_reference_tetrahedron("data/reference_tetrahedron.off");
   test_long_tetrahedron("data/long_tetrahedron.off");
-  test_find_obb_evolution("data/random_unit_tetra.off");
-  test_find_obb_mesh("data/elephant.off");
+  test_compute_obb_evolution("data/random_unit_tetra.off");
+  test_compute_obb_mesh("data/elephant.off");
   test_function_defaults_traits("data/random_unit_tetra.off", "data/elephant.off");
 
   return 0;

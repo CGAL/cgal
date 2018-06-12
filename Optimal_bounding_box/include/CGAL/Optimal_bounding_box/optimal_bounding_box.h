@@ -106,10 +106,10 @@ void post_processing(const Matrix& points, Vertex& R, Matrix& obb)
 /// @param use_ch a bool flag to indicating whether to use the convex hull of the input points
 /// as an optimization step.
 template <typename Point, typename LinearAlgebraTraits>
-void find_obb(const std::vector<Point>& points,
-              std::vector<Point>& obb_points,
-              LinearAlgebraTraits&,
-              bool use_ch)
+void compute_optimal_bounding_box(const std::vector<Point>& points,
+                                  std::vector<Point>& obb_points,
+                                  LinearAlgebraTraits&,
+                                  bool use_ch)
 {
   CGAL_assertion(points.size() >= 3);
 
@@ -193,9 +193,9 @@ void find_obb(const std::vector<Point>& points,
 }
 
 template <typename Point>
-void find_obb(const std::vector<Point>& points,
-              std::vector<Point>& obb_points,
-              bool use_ch)
+void compute_optimal_bounding_box(const std::vector<Point>& points,
+                                  std::vector<Point>& obb_points,
+                                  bool use_ch)
 {
 #if defined(CGAL_EIGEN3_ENABLED)
   typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
@@ -204,7 +204,7 @@ void find_obb(const std::vector<Point>& points,
 #endif
 
   Linear_algebra_traits la_traits;
-  find_obb(points, obb_points, la_traits, use_ch);
+  compute_optimal_bounding_box(points, obb_points, la_traits, use_ch);
 }
 
 /// \ingroup OBB_grp
@@ -220,10 +220,10 @@ void find_obb(const std::vector<Point>& points,
 /// @param use_ch a bool flag to indicating whether to use the convex hull of the input points
 /// as an optimization step.
 template <typename PolygonMesh, typename LinearAlgebraTraits>
-void find_obb(const PolygonMesh& pmesh,
-              PolygonMesh& obbmesh,
-              LinearAlgebraTraits& la_traits,
-              bool use_ch)
+void compute_optimal_bounding_box(const PolygonMesh& pmesh,
+                                  PolygonMesh& obbmesh,
+                                  LinearAlgebraTraits& la_traits,
+                                  bool use_ch)
 {
   CGAL_assertion(vertices(pmesh).size() >= 3);
 
@@ -244,16 +244,16 @@ void find_obb(const PolygonMesh& pmesh,
 
 
   std::vector<Point> obb_points;
-  find_obb(points, obb_points, la_traits, use_ch);
+  compute_optimal_bounding_box(points, obb_points, la_traits, use_ch);
 
   CGAL::make_hexahedron(obb_points[0], obb_points[1], obb_points[2], obb_points[3],
                         obb_points[4], obb_points[5], obb_points[6], obb_points[7], obbmesh);
 }
 
 template <typename PolygonMesh>
-void find_obb(const PolygonMesh& pmesh,
-              PolygonMesh& obbmesh,
-              bool use_ch)
+void compute_optimal_bounding_box(const PolygonMesh& pmesh,
+                                  PolygonMesh& obbmesh,
+                                  bool use_ch)
 {
 #if defined(CGAL_EIGEN3_ENABLED)
   typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
@@ -262,7 +262,7 @@ void find_obb(const PolygonMesh& pmesh,
 #endif
 
   Linear_algebra_traits la_traits;
-  find_obb(pmesh, obbmesh, la_traits, use_ch);
+  compute_optimal_bounding_box(pmesh, obbmesh, la_traits, use_ch);
 }
 
 } // end namespace Optimal_bounding_box

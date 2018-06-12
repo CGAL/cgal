@@ -73,7 +73,7 @@ void bench_finding_obb(std::string fname)
   timer.reset();
   timer.start();
   std::vector<K::Point_3> obb_points1;
-  CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points1, la_traits, true);
+  CGAL::Optimal_bounding_box::compute_optimal_bounding_box(sm_points, obb_points1, la_traits, true);
   timer.stop();
   std::cout << "found obb using convex hull: " << timer.time() << " seconds\n";
 
@@ -81,7 +81,7 @@ void bench_finding_obb(std::string fname)
   timer.reset();
   timer.start();
   std::vector<K::Point_3> obb_points2;
-  CGAL::Optimal_bounding_box::find_obb(sm_points, obb_points2, la_traits, false);
+  CGAL::Optimal_bounding_box::compute_optimal_bounding_box(sm_points, obb_points2, la_traits, false);
   timer.stop();
   std::cout << "found obb without convex hull: " <<  timer.time() << " seconds\n";
   timer.reset();
