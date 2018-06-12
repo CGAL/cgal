@@ -70,6 +70,7 @@ public:
 public:
   //  constructors
   BigFloatRep(int=0);           //inline
+  BigFloatRep(unsigned int);           //inline
   BigFloatRep(short);           //inline
   BigFloatRep(float);           //inline
   BigFloatRep(long);          //inline
@@ -246,6 +247,9 @@ inline BigFloatRep::BigFloatRep(float n)
 
 //  Chee (8/8/04) -- introduced constructor from int
 inline BigFloatRep::BigFloatRep(int n)
+  : m(n), err(0), exp(0) {}
+
+inline BigFloatRep::BigFloatRep(unsigned int n)
   : m(n), err(0), exp(0) {}
 
 //  Chee (8/8/04) -- introduced constructor from long
