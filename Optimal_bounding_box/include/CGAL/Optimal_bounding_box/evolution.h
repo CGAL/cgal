@@ -28,8 +28,6 @@
 #include <CGAL/Random.h>
 #include <CGAL/number_utils.h>
 
-#include <boost/iterator/counting_iterator.hpp>
-
 #include <algorithm>
 #include <iostream>
 #include <vector>
@@ -49,89 +47,6 @@ public:
   Evolution(Population<Linear_algebra_traits>& pop, MatrixXd& points)
     : population(pop), point_data(points)
   {}
-
-  // simplex: 4 rotation matrices are its vertices
-  void nelder_mead(std::vector<Matrix3d>& simplex,
-                   std::size_t nelder_mead_iterations)
-  {
-    CGAL_assertion(simplex.size() == 4); // tetrahedron
-
-    std::vector<double> fitness(4);
-    std::vector<std::size_t> indices(boost::counting_iterator<std::size_t>(0),
-                                     boost::counting_iterator<std::size_t>(simplex.size()));
-
-    for(std::size_t t = 0; t < nelder_mead_iterations; ++t)
-    {
-      for(std::size_t i = 0; i < 4; ++i)
-      {
-        fitness[i] = compute_fitness<Linear_algebra_traits>(simplex[i], point_data);
-      }
-
-      CGAL_assertion(fitness.size() == 4);
-      CGAL_assertion(indices.size() == 4);
-
-      // get indices of sorted sequence
-      Comparator compare_indices(fitness);
-      std::sort(indices.begin(), indices.end(), compare_indices);
-
-      // new sorted simplex & fitness
-      std::vector<Matrix3d> s_simplex(4);
-      std::vector<double> s_fitness(4);
-      for(int i = 0; i < 4; ++i)
-      {
-        s_simplex[i] = simplex[indices[i]];
-        s_fitness[i] = fitness[indices[i]];
-      }
-
-      simplex = s_simplex;
-      fitness = s_fitness;
-
-      // centroid
-      const Matrix3d v_centroid = nm_centroid<Linear_algebra_traits>(simplex[0], simplex[1], simplex[2]);
-
-      // find worst's vertex reflection
-      const Matrix3d v_worst = simplex[3];
-      const Matrix3d v_refl = reflection<Linear_algebra_traits>(v_centroid, v_worst);
-      const double f_refl = compute_fitness<Linear_algebra_traits>(v_refl, point_data);
-
-      if(f_refl < fitness[2])
-      {
-        if(f_refl >= fitness[0]) // if reflected point is not better than the best
-        {
-          // do reflection
-          simplex[3] = v_refl;
-        }
-        else
-        {
-          // expansion
-          const Matrix3d v_expand = expansion<Linear_algebra_traits>(v_centroid, v_worst, v_refl);
-          const double f_expand = compute_fitness<Linear_algebra_traits>(v_expand, point_data);
-          if(f_expand < f_refl)
-            simplex[3] = v_expand;
-          else
-            simplex[3] = v_refl;
-        }
-      }
-      else // if reflected vertex is not better
-      {
-        const Matrix3d v_mean = mean<Linear_algebra_traits>(v_centroid, v_worst);
-        const double f_mean = compute_fitness<Linear_algebra_traits>(v_mean, point_data);
-        if(f_mean <= fitness[3])
-          // contraction of worst
-          simplex[3] = v_mean;
-        else
-        {
-          // reduction: move all vertices towards the best
-          for(std::size_t i=1; i < 4; ++i)
-          {
-            simplex[i] = mean<Linear_algebra_traits>(simplex[i], simplex[0]);
-          }
-        }
-      }
-
-      CGAL_assertion(simplex.size() == 4); // tetrahedron
-    } // iterations
-  }
 
   void genetic_algorithm()
   {
@@ -279,7 +194,7 @@ public:
 #endif
 
       for(std::size_t s = 0; s < population.size(); ++s)
-        nelder_mead(population[s], nelder_mead_iterations);
+        nelder_mead<Linear_algebra_traits>(population[s], point_data, nelder_mead_iterations);
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
       //std::cout << "pop after nelder mead: " << std::endl;
@@ -312,18 +227,6 @@ public:
   }
 
 private:
-  // needed in genetic algorithm
-  struct Comparator
-  {
-    Comparator(const std::vector<double>& in) : fitness(in) {}
-
-    inline bool operator() (std::size_t& i, std::size_t& j) {
-      return fitness[i] < fitness[j];
-    }
-
-    const std::vector<double>& fitness;
-  };
-
   // data
   Population<Linear_algebra_traits> population;
   MatrixXd point_data;

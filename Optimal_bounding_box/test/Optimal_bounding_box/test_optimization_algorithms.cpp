@@ -6,6 +6,7 @@
 #include <CGAL/Optimal_bounding_box/population.h>
 #include <CGAL/Optimal_bounding_box/optimal_bounding_box.h>
 #include <CGAL/Optimal_bounding_box/helper.h>
+#include <CGAL/Optimal_bounding_box/nelder_mead_functions.h>
 
 #include <iostream>
 #include <fstream>
@@ -89,12 +90,8 @@ void test_nelder_mead()
   simplex[2] = v2;
   simplex[3] = v3;
 
-  CGAL::Optimal_bounding_box::Population<Linear_algebra_traits> pop(1);
   std::size_t nm_iterations = 19;
-
-  CGAL::Optimal_bounding_box::Evolution<Linear_algebra_traits>
-      evolution(pop, data_points);
-  evolution.nelder_mead(simplex, nm_iterations);
+  CGAL::Optimal_bounding_box::nelder_mead<Linear_algebra_traits>(simplex, data_points, nm_iterations);
 
   CGAL_assertion_code(double epsilon = 1e-5);
   CGAL_assertion_code(Matrix3d v0_new = simplex[0]);
@@ -144,7 +141,7 @@ void test_nelder_mead()
 
 void test_genetic_algorithm()
 {
-  CGAL::Eigen_dense_matrix<double, -1, -1> data_points(4, 3); // -1 : dynamic size at run time
+  CGAL::Eigen_dense_matrix<double, -1, -1> data_points(4, 3); // -1 = dynamic size at run time
   data_points(0,0) = 0.866802;
   data_points(0,1) = 0.740808,
   data_points(0,2) = 0.895304,
