@@ -18,7 +18,7 @@ typedef CGAL::Surface_mesh<Point>                            Mesh;
 
 typedef CGAL::dynamic_vertex_property_t<double> Vertex_distance_tag;
 typedef boost::property_map<Mesh, Vertex_distance_tag >::type Vertex_distance_map;
- 
+
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef CGAL::Heat_method_3::Heat_method_3<Mesh,Kernel,Vertex_distance_map> Heat_method;
 typedef CGAL::Heat_method_3::Heat_method_Eigen_traits_3::SparseMatrix SparseMatrix;
@@ -88,12 +88,17 @@ void check_for_unit(Eigen::MatrixXd X, int dimension)
   }
 }
 
+
+
+
+
+
 int main()
 {
   Mesh sm;
   Vertex_distance_map vertex_distance_map = get(Vertex_distance_tag(),sm);
-  
-  
+
+
   std::ifstream in("data/pyramid0.off");
   in >> sm;
   if(!in || num_vertices(sm) == 0) {
@@ -136,7 +141,7 @@ int main()
 
   Mesh sm2;
   Vertex_distance_map vertex_distance_map2 = get(Vertex_distance_tag(),sm2);
-  
+
   std::ifstream llets("data/sphere.off");
   llets>>sm2;
   if(!llets|| num_vertices(sm2) == 0) {
@@ -159,10 +164,32 @@ int main()
   check_for_zero(check_u2);
   Eigen::MatrixXd X2 = hm2.compute_unit_gradient(solved_u2);
   check_for_unit(X2, 87120);
-  SparseMatrix XD2 = hm.compute_divergence(X2,43562);
-  Eigen::VectorXd solved_dist2 = hm.solve_phi(c2, XD2,43562);
+  SparseMatrix XD2 = hm2.compute_divergence(X2,43562);
+  Eigen::VectorXd solved_dist2 = hm2.solve_phi(c2, XD2,43562);
   //verified a few of the actual values against the estimated values, avg. error was 0.0001
   //In future, want to check performance against other solver
+
+
+  Mesh sm3;
+  Vertex_distance_map vertex_distance_map3 = get(Vertex_distance_tag(),sm3);
+
+
+  std::ifstream in2("data/disk.off");
+  in2>>sm3;
+  if(!in2|| num_vertices(sm3) == 0) {
+    std::cerr << "Problem loading the input data" << std::endl;
+    return 1;
+  }
+  Heat_method hm3(sm3, vertex_distance_map3);
+  //Eigen::VectorXd solved_dist_sphere = hm2.distances();
+  const SparseMatrix& M3 = hm3.mass_matrix();
+  const SparseMatrix& c3 = hm3.cotan_matrix();
+  cotan_matrix_test(c3);
+  const SparseMatrix& K3= hm3.kronecker_delta();
+  // AF: I commented the assert as I commented in build()
+  assert(K3.nonZeros()==1);
+
+
 
 
   return 0;

@@ -134,6 +134,18 @@ namespace Heat_method_3 {
        return m_cotan_matrix;
      }
 
+     const VertexPointMap& vertex_point_map() const
+     {
+        return vpm;
+     }
+
+     const Vertex_id_map& get_vertex_id_map() const
+     {
+       return vertex_id_map;
+     }
+
+
+
     bool add_source(vertex_descriptor vd)
     {
       return sources.insert(vd).second;
@@ -210,10 +222,13 @@ namespace Heat_method_3 {
       {
         add_source(*(vertices(tm).begin()));
         i = 0;
+        source_index=0;
       }
       else
       {
-        i = get(vertex_id_map, *(sources.begin()));
+        vertex_descriptor current = *(++sources.begin());
+        i = get(vertex_id_map, current);
+        source_index = i;
       }
       Matrix K(num_vertices(tm), 1);
       K.insert(i,0) = 1;
@@ -359,7 +374,7 @@ namespace Heat_method_3 {
         // solving failed
         CGAL_error_msg("Eigen Solving in phi failed");
       }
-      return (phi - value_at_source_set(phi.coeff(0,0), dimension));
+      return (phi - value_at_source_set(phi.coeff(source_index,0), dimension));
     }
 
     //currently, this function will return a (number of vertices)x1 vector where
@@ -373,18 +388,19 @@ namespace Heat_method_3 {
     void update()
     {
       double d=0;
+      build();
       BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
+        Index i_d = get(vertex_id_map, vd);
+        d =solved_phi(i_d,0);
         put(vdm,vd,d);
-        d += 0.2;
       }
     }
-    
+
   private:
 
     void build()
     {
       CGAL_precondition(is_triangle_mesh(tm));
-
       vertex_id_map = get(Vertex_property_tag(),const_cast<TriangleMesh&>(tm));
       Index i = 0;
       BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
@@ -395,7 +411,6 @@ namespace Heat_method_3 {
       BOOST_FOREACH(face_descriptor fd, faces(tm)){
         put(face_id_map, fd, face_i++);
       }
-
       int m = static_cast<int>(num_vertices(tm));
 
       //mass matrix entries
@@ -476,6 +491,7 @@ namespace Heat_method_3 {
     Eigen::MatrixXd X;
     Matrix index_divergence;
     Eigen::VectorXd solved_phi;
+    Index source_index;
   };
 
 } // namespace Heat_method_3

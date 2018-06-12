@@ -49,7 +49,7 @@ class DisplayPropertyPlugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
   typedef SMesh::Property_map<boost::graph_traits<SMesh>::vertex_descriptor, double> Vertex_distance_map;
   typedef CGAL::Heat_method_3::Heat_method_3<SMesh,EPICK,Vertex_distance_map> Heat_method;
-  
+
 public:
 
   bool applicable(QAction*) const Q_DECL_OVERRIDE
@@ -76,7 +76,7 @@ public:
     this->scene = sc;
     this->mw = mw;
     this->current_item = NULL;
-    
+
     QAction *actionDisplayAngles= new QAction(QString("Display Properties"), mw);
 
     rm = 1.0;
@@ -174,7 +174,7 @@ private Q_SLOTS:
       displayScaledJacobian(item);
       break;
     default:
-      
+
       displayHeatIntensity(item);
       item->setRenderingMode(Gouraud);
       break;
@@ -434,7 +434,7 @@ private Q_SLOTS:
 
   // AF: This function gets called when we click on the button "Colorize"
   void displayHeatIntensity(Scene_surface_mesh_item* item)
-  { 
+  {
     SMesh& mesh = *item->face_graph();
 
     Heat_method * hm;
@@ -454,7 +454,7 @@ private Q_SLOTS:
             );
 
     int i = 0;
-   
+
     bool found = false;
     SMesh::Property_map<vertex_descriptor, bool> is_source ;
     boost::tie(is_source, found)=
@@ -477,7 +477,7 @@ private Q_SLOTS:
 
     double max = 0;
     double min = (std::numeric_limits<double>::max)();
-    
+
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
       double hi = heat_intensity[vd];
       if(hi < min)
@@ -488,7 +488,7 @@ private Q_SLOTS:
     color_ramp = Color_ramp(rm, rM, gm, gM, bm, bM);
     dock_widget->minBox->setValue(min);
     dock_widget->maxBox->setValue(max);
-  
+
     //}
     SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
         mesh.add_property_map<vertex_descriptor, CGAL::Color >("v:color", CGAL::Color()).first;
@@ -496,8 +496,8 @@ private Q_SLOTS:
         vit != vertices(mesh).end();
         ++vit)
     {
-      double h =(heat_intensity[*vit]-min)/(max-min);      
-      
+      double h =(heat_intensity[*vit]-min)/(max-min);
+
       CGAL::Color color(
             255*color_ramp.r(h),
             255*color_ramp.g(h),
@@ -506,7 +506,7 @@ private Q_SLOTS:
     }
     displayLegend();
   }
-  
+
   void replaceRamp()
   {
     color_ramp = Color_ramp(rm, rM, gm, gM, bm, bM);
@@ -525,7 +525,7 @@ private Q_SLOTS:
       dock_widget->groupBox_3->setEnabled(true);
       dock_widget->rampButton->setEnabled(true);
       dock_widget->sourcePointsButton->setEnabled(false);
-      
+
       dock_widget->minBox->setMinimum(0);
       dock_widget->minBox->setMaximum(360);
       dock_widget->minBox->setValue(0);
@@ -547,7 +547,7 @@ private Q_SLOTS:
       dock_widget->groupBox_3->setEnabled(true);
       dock_widget->rampButton->setEnabled(true);
       dock_widget->sourcePointsButton->setEnabled(false);
-      
+
       dock_widget->minBox->setMinimum(-1000);
       dock_widget->minBox->setMaximum(1000);
       dock_widget->minBox->setValue(0);
@@ -563,7 +563,7 @@ private Q_SLOTS:
       dock_widget->groupBox_3->setEnabled(false);
       dock_widget->rampButton->setEnabled(false);
       dock_widget->sourcePointsButton->setEnabled(true);
-      
+
     }
     replaceRamp();
     enableButtons();
@@ -639,7 +639,7 @@ private Q_SLOTS:
       break;
     }
   }
-  
+
   void on_sourcePointsButton_toggled(bool b)
   {
     if(b)
@@ -698,7 +698,7 @@ private Q_SLOTS:
       current_item = NULL;
     }
   }
-  
+
   void on_vertex_selected(void* void_ptr)
   {
     typedef boost::graph_traits<SMesh>::vertices_size_type size_type;
@@ -727,7 +727,7 @@ private Q_SLOTS:
           }
       }
     }
-    
+
    source_points->invalidateOpenGLBuffers();
    source_points->itemChanged();
   }
@@ -808,15 +808,15 @@ private:
   boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_min;
   boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_max;
 
-  
+
   double minBox;
   double maxBox;
   QPixmap legend_;
-  
+
   Scene_surface_mesh_item* current_item;
   Scene_points_with_normal_item* source_points;
   boost::unordered_map<Scene_surface_mesh_item*, Scene_points_with_normal_item*> mesh_sources_map;
-  
+
   boost::unordered_map<Scene_surface_mesh_item*, Heat_method*> mesh_heat_method_map;
 };
 
