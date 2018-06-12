@@ -456,7 +456,7 @@ void recursive_orient_volume_ccs( TriangleMesh& tm,
 *   \cgalParamBegin{vertex_point_map}
 *     the property map with the points associated to the vertices of `tm`.
 *     If this parameter is omitted, an internal property map for
-*     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+*     `CGAL::vertex_point_t` must be available in `TriangleMesh`
 *   \cgalParamEnd
 *   \cgalParamBegin{face_index_map}
 *     a property map containing the index of each face of `tm`.
@@ -561,7 +561,7 @@ void orient(TriangleMesh& tm)
  *   \cgalParamBegin{vertex_point_map}
  *     the property map with the points associated to the vertices of `tm`.
  *     If this parameter is omitted, an internal property map for
- *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+ *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
  *   \cgalParamEnd
  *   \cgalParamBegin{face_index_map}
  *     a property map containing the index of each face of `tm`.
