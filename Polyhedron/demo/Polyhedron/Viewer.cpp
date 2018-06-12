@@ -1138,5 +1138,3 @@ void Viewer::setTotalPass_clicked()
   setTotalPass(passes);
 }
 
-
-#include "Viewer.moc"
