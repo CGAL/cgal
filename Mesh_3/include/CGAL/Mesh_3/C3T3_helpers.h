@@ -723,8 +723,9 @@ public:
 
   /**
    * @brief tries to move \c old_vertex to \c new_position in the mesh
-   * @param new_position the new position of \c old_vertex
    * @param old_vertex the old vertex
+   * @param move the translation from the old position to the new
+   * @param new_position the new position of \c old_vertex
    * @param criterion the criterion which will be used to verify the new
    *    position is ok. c3t3 minimal value of new criterion shall not decrease.
    * @param modified_vertices contains the vertices incident to cells which
@@ -809,8 +810,8 @@ public:
 
   /**
    * @brief Project \c p on surface, using incident facets of \c v
-   * @param p The point to project
    * @param v The vertex from which p was moved
+   * @param p The point to project
    * @param index The index of the surface patch where v lies, if known.
    * @return the projected point
    *
@@ -1703,10 +1704,10 @@ private:
    * @param v The vertex from which p was moved
    * @param p The point to project
    * @param index The index of the surface patch where v lies, if known.
-   * @return a boost::optional with the projected point if the projection
-   * was possible, or boost::none
+   * @return a `boost::optional` with the projected point if the projection
+   * was possible, or `boost::none`.
    *
-   * \c p is projected as follows using normal of least square fitting plane
+   * \c p is projected using the normal of least square fitting plane
    * on \c v incident surface points. If \c index is specified, only
    * surface points that are on the same surface patch are used to compute
    * the fitting plane.
