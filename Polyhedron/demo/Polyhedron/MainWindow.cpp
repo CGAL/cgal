@@ -150,7 +150,7 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
   viewer->textRenderer()->setScene(scene);
   viewer->setScene(scene);
   CGAL::Three::Three::s_scene = scene;
-   CGAL::Three::Three::s_connectable_scene = scene;
+  CGAL::Three::Three::s_connectable_scene = scene;
   ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(viewer->textRenderer()->getMax_textItems()));
   {
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
