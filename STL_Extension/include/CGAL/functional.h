@@ -28,24 +28,27 @@
 
 namespace CGAL {
 
+namespace cpp98 {
+
   /// Replacement for `std::unary_function` that is deprecated since C++11,
-  /// and removed from C++17
+  /// and removed from C++17.
   template < typename ArgumentType, typename ResultType>
   struct unary_function {
     typedef ArgumentType argument_type;
     typedef ResultType result_type;
   };
 
-
   /// Replacement for `std::binary_function` that is deprecated since C++11,
-  /// and removed from C++17
+  /// and removed from C++17.
   template < typename Arg1, typename Arg2, typename Result>
   struct binary_function {
     typedef Arg1 first_argument_type;
     typedef Arg2 second_argument_type;
     typedef Result result_type;
   };
-  
+
+} // namespace cpp98
+
 } // namespace CGAL
 
 #endif // CGAL_UNARY_FUNCTION_H

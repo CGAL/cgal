@@ -64,7 +64,7 @@ is_nan_by_mask_long_double(unsigned int h, unsigned int l)
 
 template<>
 class Is_valid< long double >
-  : public CGAL::unary_function< long double, bool > {
+  : public CGAL::cpp98::unary_function< long double, bool > {
   public :
     bool operator()( const long double& x ) const {
       double d = x;
@@ -77,7 +77,7 @@ class Is_valid< long double >
 
 template<>
 class Is_valid< long double >
-  : public CGAL::unary_function< long double, bool > {
+  : public CGAL::cpp98::unary_function< long double, bool > {
   public :
     bool operator()( const long double& x ) const {
       return (x == x);
@@ -97,7 +97,7 @@ template <> class Algebraic_structure_traits< long double >
     typedef Tag_true             Is_numerical_sensitive;
 
     class Sqrt
-      : public CGAL::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return std::sqrt( x );
@@ -105,7 +105,7 @@ template <> class Algebraic_structure_traits< long double >
     };
 
     class Kth_root
-      :public CGAL::binary_function<int, Type, Type > {
+      :public CGAL::cpp98::binary_function<int, Type, Type > {
       public:
         Type operator()( int k,
                                         const Type& x) const {
@@ -122,7 +122,7 @@ template <> class Real_embeddable_traits< long double >
   public:
 
     class To_interval
-      : public CGAL::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
           // The conversion long double to double does not always follow the
@@ -147,7 +147,7 @@ template <> class Real_embeddable_traits< long double >
 
 // Is_finite depends on platform
     class Is_finite
-      : public CGAL::unary_function< Type, bool > {
+      : public CGAL::cpp98::unary_function< Type, bool > {
       public:
         bool operator()( const Type& x ) const {
 #ifdef CGAL_CFG_IEEE_754_BUG
