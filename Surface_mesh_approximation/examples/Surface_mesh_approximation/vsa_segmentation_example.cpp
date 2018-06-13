@@ -32,7 +32,9 @@ int main()
     nb_of_iterations(30). // number of relaxation iterations after seeding
     facet_proxy_map(fpxmap)); // output facet-proxy map
 
-  // TODO: iterates over segments and outputs to console
+  // iterates over facets and outputs segment id to console
+  BOOST_FOREACH(Face_descriptor f, faces(input))
+    std::cout << fpxmap[f] << std::endl;
 
   return EXIT_SUCCESS;
 }
