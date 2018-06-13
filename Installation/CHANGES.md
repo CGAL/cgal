@@ -8,6 +8,7 @@ Release 4.13
 Release date: September 2018
 
 ### 3D Periodic Mesh Generation (new package)
+
 -   This package generates 3-dimensional periodic meshes. It computes isotropic simplicial meshes
     for domains described through implicit functional boundaries over the flat torus (which can also seen
     in the Euclidean space as a periodic cube). The output is a periodic 3D mesh of the domain
@@ -35,11 +36,13 @@ Release date: September 2018
 -   Added a new type of intersection to handle the insertion of intersecting constraints
     in a `Constrained_triangulation_2`.
 
--   The long-deprecated class `Triangulation_cell_base_with_circumcenter_3` and its associated
-    concept have been removed. Users should use the classes `Delaunay_cell_base_with_circumcenter_3`
-    or `Regular_cell_base_with_circumcenter_3`, depending on which type of triangulation they are using.
--   The deprecated functions `mirror_index` and `mirror_vertex` of the class `Triangulation_face_base_2`
-    have been removed. Users should use the equivalent functions from the class `Triangulation_2`.
+-   **Breaking change:** The long-deprecated class `Triangulation_cell_base_with_circumcenter_3`
+    and its associated concept have been removed. Users should use the classes
+    `Delaunay_cell_base_with_circumcenter_3` or `Regular_cell_base_with_circumcenter_3`,
+    depending on which type of triangulation they are using.
+-   **Breaking change:** The deprecated functions `mirror_index` and `mirror_vertex`
+    of the class `Triangulation_face_base_2` have been removed. Users should use the
+    equivalent functions from the class `Triangulation_2`.
 
 ### Interpolation
 
@@ -87,11 +90,11 @@ Release date: September 2018
     `<CGAL/Mesh_3/Labeled_mesh_domain_3.h>`, that were deprecated since
     CGAL 4.5, have been removed.
 
--   **Breaking change**: the concepts `MeshCellCriteria_3` and `MeshFacetCriteria_3`
+-   **Breaking change:** the concepts `MeshCellCriteria_3` and `MeshFacetCriteria_3`
     now require the triangulation to be passed in their `operator()`.
     Models of these concepts that are provided by CGAL have been modified accordingly.
 
--   **Breaking change**: It is no longer possible to use the deprecated, pre-CGAL 3.8 specifications
+-   **Breaking change:** It is no longer possible to use the deprecated, pre-CGAL 3.8 specifications
     in `MeshCellCriteria_3` and `MeshFacetCriteria_3` (that is, using `Facet_badness`
     and `Cell_badness` instead of `Is_facet_bad` and `Is_cell_bad`).
 
