@@ -36,6 +36,7 @@
 #include <QStandardItem>
 #include <QTreeWidgetItem>
 #include <QTreeWidget>
+#include <QDockWidget>
 #include <stdexcept>
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
@@ -309,7 +310,7 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
     QDockWidget* dock = new QDockWidget(debug_widgets_names[i], this);
     dock->setObjectName(debug_widgets_names[i]);
     dock->setWidget(debugger->widget(debug_widgets[i]));
-    this->addDockWidget(Qt::BottomDockWidgetArea, dock);
+    this->QMainWindow::addDockWidget(Qt::BottomDockWidgetArea, dock);
     dock->hide();
   }
   debugger->setAutoShowStandardWindow(false);

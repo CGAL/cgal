@@ -26,6 +26,7 @@
 
 #include <QString>
 #include <QObject>
+#include <QDockWidget>
 #include <CGAL/Three/Scene_interface.h>
 #include <QMainWindow>
 
