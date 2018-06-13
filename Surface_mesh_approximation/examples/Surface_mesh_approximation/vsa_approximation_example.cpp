@@ -5,6 +5,10 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/approximate_mesh.h>
 
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
@@ -33,7 +37,17 @@ int main()
   if (is_manifold)
   {
     std::cout << "oriented, 2-manifold output." << std::endl;
-    // TODO: convert from soup to polyhedron mesh
+
+    // convert from soup to polyhedron mesh
+    CGAL::Polygon_mesh_processing::orient_polygon_soup(anchors, triangles);
+    Polyhedron mesh;
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(anchors, triangles, mesh);
+    if (CGAL::is_closed(mesh) && (!CGAL::Polygon_mesh_processing::is_outward_oriented(mesh)))
+      CGAL::Polygon_mesh_processing::reverse_face_orientations(mesh);
+
+    std::ofstream out("mask-dump.off");
+    out << mesh;
+    out.close();
   }
 
   return EXIT_SUCCESS;
