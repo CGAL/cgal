@@ -40,12 +40,14 @@ void test(const char* f1, const char* f2)
   input.close();
   My_visitor<Surface_mesh> sm_v;
 
+  std::size_t nb_v_before = num_vertices(sm1) + num_vertices(sm2);
   CGAL::Polygon_mesh_processing::corefine(sm1, sm2,
     CGAL::Polygon_mesh_processing::parameters::visitor(sm_v));
+  std::size_t nb_v_after = num_vertices(sm1) + num_vertices(sm2);
 
   assert(sm1.is_valid());
   assert(sm2.is_valid());
-  assert(*(sm_v.i) != 0);
+  assert((*(sm_v.i) != 0) == (nb_v_before!=nb_v_after));
 
   std::cout << "  with Polyhedron_3\n";
   Polyhedron_3 P, Q;
@@ -58,9 +60,12 @@ void test(const char* f1, const char* f2)
   input >> Q;
   My_visitor<Polyhedron_3> sm_p;
 
+  nb_v_before = num_vertices(P) + num_vertices(Q);
   CGAL::Polygon_mesh_processing::corefine(P, Q,
     CGAL::Polygon_mesh_processing::parameters::visitor(sm_p));
-  assert(*(sm_p.i) != 0);
+  nb_v_after = num_vertices(P) + num_vertices(Q);
+
+  assert((*(sm_p.i) != 0)  == (nb_v_before!=nb_v_after));
 
   assert(*(sm_v.i) == *(sm_p.i));
   assert(P.is_valid());
