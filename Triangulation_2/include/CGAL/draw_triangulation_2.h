@@ -38,7 +38,7 @@ struct DefaultColorFunctorT2
   static CGAL::Color run(const T2&,
                          const typename T2::Finite_faces_iterator fh)
   {
-    CGAL::Random random((unsigned int)(&*fh));
+    CGAL::Random random((unsigned int)(std::size_t)(&*fh));
     return get_random_color(random);
   }
 };

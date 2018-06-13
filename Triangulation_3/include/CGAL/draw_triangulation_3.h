@@ -41,7 +41,8 @@ struct DefaultColorFunctorT3
     if (fh==NULL) // use to get the mono color
       return CGAL::Color(100, 125, 200); // R G B between 0-255
 
-    CGAL::Random random((unsigned int)(&*((*fh)->first))+(unsigned int)((*fh)->second));
+    CGAL::Random random((unsigned int)((std::size_t)(&*((*fh)->first))+
+                                       (std::size_t)((*fh)->second)));
     return get_random_color(random);
   }
 };
