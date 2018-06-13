@@ -715,8 +715,9 @@ public:
     
   //     Get_innermost_coefficient;
   struct Get_innermost_coefficient
-    : public 
-    cgal::cpp98::binary_function< Polynomial_d, Exponent_vector, Innermost_coefficient_type >
+    : public CGAL::cpp98::binary_function< Polynomial_d,
+                                           Exponent_vector,
+                                           Innermost_coefficient_type >
   {
         
     const Innermost_coefficient_type& 
@@ -1368,10 +1369,11 @@ struct Construct_innermost_coefficient_const_iterator_range
     }
   };
 
-  struct Scale 
-    : public 
-    cgal::cpp98::binary_function< Polynomial_d, Innermost_coefficient_type, Polynomial_d > {
-        
+  struct Scale
+    : public CGAL::cpp98::binary_function< Polynomial_d,
+                                           Innermost_coefficient_type,
+                                           Polynomial_d >
+  {
     Polynomial_d operator()( Polynomial_d p, const Innermost_coefficient_type& c,
         int i = (PT::d-1) ) const  {
       CGAL_precondition( i <= d-1 );

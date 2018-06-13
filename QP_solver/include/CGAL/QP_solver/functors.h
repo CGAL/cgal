@@ -184,7 +184,7 @@ class Value_by_basic_index : public CGAL::cpp98::unary_function<
 
   public:
     typedef typename
-    cgal::cpp98::unary_function<
+    CGAL::cpp98::unary_function<
       int, typename std::iterator_traits
          <RndAccIt>::value_type >::result_type
     result_type;
