@@ -8,6 +8,7 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/boost/graph/properties.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Bbox_3.h>
@@ -24,7 +25,7 @@
 #include <vector>
 #include <utility>
 
-#include "concavity.h"
+#include <CGAL/internal/Approximate_convex_decomposition/concavity.h>
 
 namespace CGAL
 {
@@ -56,11 +57,8 @@ class Approx_decomposition
     
     // typedefs
     typedef typename GeomTraits::Point_3 Point_3;
-    typedef typename GeomTraits::Vector_3 Vector_3;
  
-    typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
-
-    typedef CGAL::Face_filtered_graph<Surface_mesh> Face_filtered_mesh;
+    typedef CGAL::Face_filtered_graph<TriangleMesh> Face_filtered_mesh;
 
     typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
@@ -80,6 +78,8 @@ class Approx_decomposition
     typedef typename boost::property_map<Graph, cluster_props_t>::type Graph_cluster_map;
     typedef typename boost::property_map<Graph, decimation_props_t>::type Graph_decimation_map;
 
+    typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type Vertex_point_map;
+
     // constants
     const double CONCAVITY_FACTOR = 0.1;
 
@@ -87,9 +87,7 @@ public:
     Approx_decomposition(const TriangleMesh& mesh, const GeomTraits& traits)
     : m_mesh(mesh)
     , m_traits(traits)
-    {}
-
-    ~Approx_decomposition()
+    , m_concavity_calc(mesh, traits)
     {}
 
     template <class FacePropertyMap>
@@ -97,7 +95,10 @@ public:
     {
         Dual_graph dual(m_mesh);
         Filtered_dual_graph filtered_dual(dual, Noborder_predicate<TriangleMesh>(m_mesh));
-        
+
+//        m_points_map = get(CGAL::vertex_point, m_mesh);
+        auto m = get(CGAL::vertex_point, m_mesh);
+
         setup_graph(filtered_dual);
 
         BOOST_FOREACH(graph_edge_descriptor edge, edges(m_graph))
@@ -125,7 +126,8 @@ public:
             }
 
             if (!found_edge) break;
-            
+
+#ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE            
 //            std::cout << std::endl;
             std::cout << "#" << num_vertices(m_graph) << " Optimal edge for decimation: " << optimal_edge << std::endl;
             std::cout << "Decimation cost: " << m_decimation_map[optimal_edge].decimation_cost << ", Concavity value: " << m_decimation_map[optimal_edge].new_cluster_props.concavity << std::endl;
@@ -134,6 +136,7 @@ public:
 //            {
 //                std::cout << source(edge, m_graph) << " " << target(edge, m_graph) << std::endl;
 //            }
+#endif
 
             decimate_edge(optimal_edge, concavity_threshold, CONCAVITY_FACTOR);
         }
@@ -153,7 +156,7 @@ public:
             ++cluster_id;
         }
 
-        BOOST_FOREACH(face_descriptor face, CGAL::faces(m_mesh))
+        BOOST_FOREACH(face_descriptor face, faces(m_mesh))
         {
             CGAL_assertion(face_ids[face] >= 0 && face_ids[face] < num_clusters);
         }
@@ -170,12 +173,15 @@ private:
     Graph_cluster_map m_cluster_map;
     Graph_decimation_map m_decimation_map;
 
-    std::priority_queue<graph_edge_descriptor> m_candidates;
+    Vertex_point_map m_points_map;
+
+//    std::priority_queue<graph_edge_descriptor> m_candidates;
+
+    Concavity<TriangleMesh, GeomTraits> m_concavity_calc;
 
     template <class Mesh>
     struct Noborder_predicate
     {
-        Noborder_predicate() : m_mesh(NULL) {}
         Noborder_predicate(const Mesh& mesh) : m_mesh(mesh) {}
         
         bool operator()(const edge_descriptor& edge) const { return !CGAL::is_border(edge, m_mesh); }
@@ -217,9 +223,10 @@ private:
             props.concavity = 0;
             props.faces.push_back(face);
 
-            BOOST_FOREACH(vertex_descriptor vert, CGAL::vertices_around_face(CGAL::halfedge(face, m_mesh), m_mesh))
+            BOOST_FOREACH(vertex_descriptor vert, vertices_around_face(halfedge(face, m_mesh), m_mesh))
             {
-                props.conv_hull_pts.push_back(m_mesh.point(vert));
+//                props.conv_hull_pts.push_back(m_points_map[vert]);
+                props.conv_hull_pts.push_back(get(CGAL::vertex_point, m_mesh)[vert]);
             }
 
             face_graph_map[face] = add_vertex(props, m_graph);
@@ -235,8 +242,6 @@ private:
 
     void update_edge(graph_edge_descriptor edge, double concavity_threshold, double alpha_factor)
     {
-//        std::cout << std::endl << "Update edge: " << edge << std::endl;
-
         Decimation_properties& decimation_props = m_decimation_map[edge];
 
         graph_vertex_descriptor vert_1 = source(edge, m_graph), vert_2 = target(edge, m_graph);
@@ -258,13 +263,13 @@ private:
             common_hull_pts.push_back(p);
         }
 
-        Surface_mesh conv_hull;
+        TriangleMesh conv_hull;
         CGAL::convex_hull_3(common_hull_pts.begin(), common_hull_pts.end(), conv_hull);
 
         decimation_props.new_cluster_props.conv_hull_pts.clear();
-        BOOST_FOREACH(vertex_descriptor vert, CGAL::vertices(conv_hull))
+        BOOST_FOREACH(vertex_descriptor vert, vertices(conv_hull))
         {
-            decimation_props.new_cluster_props.conv_hull_pts.push_back(conv_hull.point(vert));
+            decimation_props.new_cluster_props.conv_hull_pts.push_back(get(CGAL::vertex_point, conv_hull)[vert]);
         }
         CGAL_warning(decimation_props.new_cluster_props.conv_hull_pts.size() > 3);
 
@@ -278,25 +283,33 @@ private:
             decimation_props.new_cluster_props.faces.push_back(face);
         }
 
-        Surface_mesh new_cluster;
+        TriangleMesh new_cluster;
         Face_filtered_mesh selected_faces(m_mesh, decimation_props.new_cluster_props.faces);
         CGAL::copy_face_graph(selected_faces, new_cluster);
 
-        Concavity<Surface_mesh, GeomTraits> concavity_calc(new_cluster, m_traits);
-        decimation_props.new_cluster_props.concavity = concavity_calc.compute(conv_hull);
+//        Concavity<TriangleMesh, GeomTraits> concavity_calc(new_cluster, m_traits);
+        decimation_props.new_cluster_props.concavity = m_concavity_calc.compute(vertices(new_cluster), conv_hull);
 
+//        decimation_props.new_cluster_props.concavity = m_concavity_calc.compute(decimation_props.new_cluster_props.faces, conv_hull);
+
+#ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
 //        std::cout << "Concavity: " << decimation_props.new_cluster_props.concavity << std::endl;
+#endif
 
         double aspect_ratio = compute_aspect_ratio(new_cluster);
         double d = compute_normalization_factor(new_cluster);
 
+#ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
 //        std::cout << "Aspect ratio & normalization factor: " << aspect_ratio << " " << d << std::endl;
+#endif
 
         double alpha = alpha_factor * concavity_threshold / d;
 
         decimation_props.decimation_cost = decimation_props.new_cluster_props.concavity / d + alpha * aspect_ratio;
 
+#ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
 //        std::cout << "Decimation cost: " << decimation_props.decimation_cost << std::endl;
+#endif
     }
 
     void decimate_edge(graph_edge_descriptor edge, double concavity_threshold, double alpha_factor)
@@ -321,10 +334,12 @@ private:
             update_edge(edge, concavity_threshold, alpha_factor);
             ++cnt;
         }
+#ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
         std::cout << "Updated edges: " << cnt << std::endl;
+#endif
     }
 
-    double compute_aspect_ratio(const Surface_mesh& mesh)
+    double compute_aspect_ratio(const TriangleMesh& mesh)
     {
         double perimeter = 0;
         double area = 0;
@@ -341,12 +356,14 @@ private:
             area += CGAL::Polygon_mesh_processing::face_area(face, mesh); 
         }
 
+#ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
 //        std::cout << "Perimeter & area: " << perimeter << " " << area << std::endl;
+#endif
 
         return perimeter * perimeter / (4. * boost::math::constants::pi<double>() * area);
     }
 
-    double compute_normalization_factor(const Surface_mesh& mesh)
+    double compute_normalization_factor(const TriangleMesh& mesh)
     {
         CGAL::Bbox_3 bbox = CGAL::Polygon_mesh_processing::bbox(mesh);
 

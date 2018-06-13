@@ -3,9 +3,10 @@
 
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/internal/Approximate_convex_decomposition/approx_decomposition.h>
 #include <CGAL/internal/Approximate_convex_decomposition/concavity.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 namespace CGAL
 {
@@ -75,7 +76,7 @@ convex_decomposition(const TriangleMesh& mesh,
                      const GeomTraits& traits = GeomTraits())
 {
     CGAL_precondition(CGAL::is_triangle_mesh(mesh));
-    CGAL_precondition(CGAL::num_faces(mesh) >= min_number_of_clusters);
+    CGAL_precondition(num_faces(mesh) >= min_number_of_clusters);
 
     internal::Approx_decomposition<TriangleMesh, GeomTraits> algorithm(mesh, traits);
     return algorithm.decompose(face_ids, concavity_threshold, min_number_of_clusters);

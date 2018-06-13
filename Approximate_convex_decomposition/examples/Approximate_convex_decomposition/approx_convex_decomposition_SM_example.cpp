@@ -1,3 +1,5 @@
+#define CGAL_APPROX_DECOMPOSITION_VERBOSE
+
 #include <CGAL/approx_decomposition.h>
 #include <CGAL/Surface_mesh.h>
 
@@ -6,11 +8,8 @@
 #include <chrono>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-
 typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
-
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
-typedef boost::graph_traits<Mesh>::face_iterator   face_iterator;
 
 int main()
 {
@@ -38,9 +37,8 @@ int main()
     }
 
     // create property map for cluster-ids
-    typedef std::map<face_descriptor, int> Facet_int_map;
-    Facet_int_map facet_map;
-    boost::associative_property_map<Facet_int_map> facet_property_map(facet_map);
+    Mesh::Property_map<face_descriptor, int> facet_property_map;
+    facet_property_map = mesh.add_property_map<face_descriptor, int>("f:cluster").first;
 
     // decompose mesh
     auto start = std::chrono::system_clock::now();
