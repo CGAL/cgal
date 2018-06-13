@@ -38,6 +38,7 @@ void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_poin
     exit(EXIT_FAILURE);
   }
   input.close();
+  std::size_t nb_vertices_before_autorefine = num_vertices(mesh);
 
 // Testing surface_self_intersection()
   std::vector< std::vector<K::Point_3> >polylines;
@@ -53,7 +54,7 @@ void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_poin
   PMP::experimental::autorefine(mesh,
     PMP::parameters::visitor(visitor));
   assert( nb_vertices_after_autorefine==num_vertices(mesh));
-  assert( *(visitor.i) != 0);
+  assert( (nb_vertices_before_autorefine!=nb_vertices_after_autorefine)== (*(visitor.i) != 0) );
 
 // Testing autorefine_and_remove_self_intersections()
   input.open(fname);
