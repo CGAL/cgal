@@ -2,13 +2,12 @@
 
 #include <CGAL/approx_decomposition.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Simple_cartesian.h>
 
 #include <iostream>
 #include <fstream>
+#include <chrono>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-//typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 int main()
@@ -37,10 +36,15 @@ int main()
     boost::associative_property_map<Facet_int_map> facet_property_map(facet_map);
 
     // decompose mesh with default parameters
+    auto start = std::chrono::system_clock::now();
+    
     std::size_t clusters_num = CGAL::convex_decomposition(mesh, facet_property_map);
 
-    // write cluster-ids for each facet
-//    std::cout << "Number of clusters: " << clusters_num << std::endl;
+    auto end = std::chrono::system_clock::now();
+    std::cout << "Elapsed time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000. << " seconds" << std::endl;
+
+     // write cluster-ids for each facet
+    std::cout << "Number of clusters: " << clusters_num << std::endl;
     for (Polyhedron::Facet_const_iterator it = mesh.facets_begin(); it != mesh.facets_end(); ++it)
     {
         std::cout << facet_property_map[it] << " ";

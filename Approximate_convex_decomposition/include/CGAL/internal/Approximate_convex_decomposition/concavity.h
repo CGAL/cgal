@@ -13,6 +13,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <unordered_set>
 #include <algorithm>
 
 namespace CGAL
@@ -55,30 +56,30 @@ namespace internal
             CGAL::copy_face_graph(filtered_mesh, cluster);
 
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
-//            {
-//                std::ofstream os("cluster_" + std::to_string(cluster_id) + ".off");
-//                os << cluster;
-//            }
-//            {
-//                TriangleMesh conv_hull;
-//                std::vector<Point_3> pts;
+            {
+                std::ofstream os("cluster_" + std::to_string(cluster_id) + ".off");
+                os << cluster;
+            }
+            {
+                TriangleMesh conv_hull;
+                std::vector<Point_3> pts;
 
-//                if (CGAL::num_vertices(cluster) > 3)
-//                {
-//                    BOOST_FOREACH(vertex_descriptor vert, CGAL::vertices(cluster))
-//                    {
-//                        pts.push_back(cluster.point(vert));
-//                    }
+                if (CGAL::num_vertices(cluster) > 3)
+                {
+                    BOOST_FOREACH(vertex_descriptor vert, CGAL::vertices(cluster))
+                    {
+                        pts.push_back(cluster.point(vert));
+                    }
 
-//                    CGAL::convex_hull_3(pts.begin(), pts.end(), conv_hull);
-//                }
-//                else
-//                {
-//                    conv_hull = cluster;
-//                }
-//                std::ofstream os("ch_cluster_" + std::to_string(cluster_id) + ".off");
-//                os << conv_hull;
-//            }
+                    CGAL::convex_hull_3(pts.begin(), pts.end(), conv_hull);
+                }
+                else
+                {
+                    conv_hull = cluster;
+                }
+                std::ofstream os("ch_cluster_" + std::to_string(cluster_id) + ".off");
+                os << conv_hull;
+            }
 #endif
 
             Concavity concavity(cluster, m_traits);
@@ -106,10 +107,21 @@ namespace internal
 
         double compute(const std::vector<face_descriptor>& faces, const TriangleMesh& conv_hull)
         {
-            return 0;
+            std::unordered_set<vertex_descriptor> pts;
+
+            BOOST_FOREACH(face_descriptor face, faces)
+            {
+                BOOST_FOREACH(vertex_descriptor vert, vertices_around_face(halfedge(face, m_mesh), m_mesh))
+                {
+                    pts.insert(vert);
+                }
+            }
+
+            return compute(std::make_pair(pts.begin(), pts.end()), conv_hull);
         }
 
-        double compute(const std::pair<vertex_iterator, vertex_iterator>& verts, const TriangleMesh& conv_hull)
+        template <class iterator>
+        double compute(const std::pair<iterator, iterator>& verts, const TriangleMesh& conv_hull)
         {
             compute_normals();
 

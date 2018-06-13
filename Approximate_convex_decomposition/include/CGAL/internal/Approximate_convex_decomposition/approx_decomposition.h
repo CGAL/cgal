@@ -57,8 +57,6 @@ class Approx_decomposition
     
     // typedefs
     typedef typename GeomTraits::Point_3 Point_3;
- 
-    typedef CGAL::Face_filtered_graph<TriangleMesh> Face_filtered_mesh;
 
     typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
@@ -97,7 +95,7 @@ public:
         Filtered_dual_graph filtered_dual(dual, Noborder_predicate<TriangleMesh>(m_mesh));
 
 //        m_points_map = get(CGAL::vertex_point, m_mesh);
-        auto m = get(CGAL::vertex_point, m_mesh);
+//        auto m = get(CGAL::vertex_point, m_mesh);
 
         setup_graph(filtered_dual);
 
@@ -194,6 +192,7 @@ private:
         double concavity;
         std::vector<face_descriptor> faces;
         std::vector<Point_3> conv_hull_pts;
+        CGAL::Bbox_3 bbox;
 
 //        void operator=(const Cluster_properties&& r)
 //        {
@@ -225,9 +224,10 @@ private:
 
             BOOST_FOREACH(vertex_descriptor vert, vertices_around_face(halfedge(face, m_mesh), m_mesh))
             {
-//                props.conv_hull_pts.push_back(m_points_map[vert]);
                 props.conv_hull_pts.push_back(get(CGAL::vertex_point, m_mesh)[vert]);
             }
+
+            props.bbox = CGAL::Polygon_mesh_processing::face_bbox(face, m_mesh);
 
             face_graph_map[face] = add_vertex(props, m_graph);
         }
@@ -283,21 +283,16 @@ private:
             decimation_props.new_cluster_props.faces.push_back(face);
         }
 
-        TriangleMesh new_cluster;
-        Face_filtered_mesh selected_faces(m_mesh, decimation_props.new_cluster_props.faces);
-        CGAL::copy_face_graph(selected_faces, new_cluster);
-
-//        Concavity<TriangleMesh, GeomTraits> concavity_calc(new_cluster, m_traits);
-        decimation_props.new_cluster_props.concavity = m_concavity_calc.compute(vertices(new_cluster), conv_hull);
-
-//        decimation_props.new_cluster_props.concavity = m_concavity_calc.compute(decimation_props.new_cluster_props.faces, conv_hull);
+        decimation_props.new_cluster_props.concavity = m_concavity_calc.compute(decimation_props.new_cluster_props.faces, conv_hull);
 
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
 //        std::cout << "Concavity: " << decimation_props.new_cluster_props.concavity << std::endl;
 #endif
 
-        double aspect_ratio = compute_aspect_ratio(new_cluster);
-        double d = compute_normalization_factor(new_cluster);
+        decimation_props.new_cluster_props.bbox = cluster_1_props.bbox + cluster_2_props.bbox;
+
+        double aspect_ratio = compute_aspect_ratio(decimation_props.new_cluster_props.faces);
+        double d = compute_normalization_factor(decimation_props.new_cluster_props.bbox);
 
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
 //        std::cout << "Aspect ratio & normalization factor: " << aspect_ratio << " " << d << std::endl;
@@ -339,21 +334,32 @@ private:
 #endif
     }
 
-    double compute_aspect_ratio(const TriangleMesh& mesh)
+    double compute_aspect_ratio(const std::vector<face_descriptor>& faces)
     {
+        CGAL_assertion(!faces.empty());
+
         double perimeter = 0;
         double area = 0;
 
-        BOOST_FOREACH(edge_descriptor edge, edges(mesh))
-        {
-            if (!CGAL::is_border(edge, mesh)) continue;
-            
-            perimeter += CGAL::Polygon_mesh_processing::edge_length(edge, mesh);
-        }
+//        BOOST_FOREACH(edge_descriptor edge, edges(mesh))
+//        {
+//            if (!CGAL::is_border(edge, mesh)) continue;
 
-        BOOST_FOREACH(face_descriptor face, faces(mesh))
+//            perimeter += CGAL::Polygon_mesh_processing::edge_length(edge, mesh);
+//        }
+
+        std::set<edge_descriptor> used_edges;
+
+        BOOST_FOREACH(face_descriptor face, faces)
         {
-            area += CGAL::Polygon_mesh_processing::face_area(face, mesh); 
+            area += CGAL::Polygon_mesh_processing::face_area(face, m_mesh);
+
+            BOOST_FOREACH(edge_descriptor edge, edges_around_face(halfedge(face, m_mesh), m_mesh))
+            {
+                int found = used_edges.find(edge) == used_edges.end() ? 1 : -1;
+                perimeter += found * CGAL::Polygon_mesh_processing::edge_length(edge, m_mesh);
+                used_edges.insert(edge);    
+            }
         }
 
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
@@ -363,10 +369,8 @@ private:
         return perimeter * perimeter / (4. * boost::math::constants::pi<double>() * area);
     }
 
-    double compute_normalization_factor(const TriangleMesh& mesh)
+    double compute_normalization_factor(const CGAL::Bbox_3& bbox)
     {
-        CGAL::Bbox_3 bbox = CGAL::Polygon_mesh_processing::bbox(mesh);
-
         Point_3 min_p(bbox.xmin(), bbox.ymin(), bbox.zmin());
         Point_3 max_p(bbox.xmax(), bbox.ymax(), bbox.zmax());
 
