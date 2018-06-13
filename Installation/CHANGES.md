@@ -9,24 +9,24 @@ Release date: September 2018
 
 ### Installation
 
--   The library CGAL_Qt5 now contains a fork of the version 2.7.0 of libQGLViewer.
+-   The library `CGAL_Qt5` now contains a fork of the version 2.7.0 of `libQGLViewer`.
     The corresponding code is in the package GraphicsView.
-    The dependency for the external library libQGLViewer is therefore dropped for all demos.
+    The dependency for the external library `libQGLViewer` is therefore dropped for all demos.
 
 ### 2D and 3D Linear Geometry Kernel
--   An operator() that takes a Ray_3 has been added to the concept
-    ConstructProjectedPoint 3.
 
+-   An `operator()` that takes a `Ray_3` has been added to the concept
+    `ConstructProjectedPoint_3`.
 
 ### CGAL and Boost Property Maps
 
--   Addition of a read-write property map to convert on-the-fly geometric 
-    object from Cartesian kernels
+-   Added a read-write property map to convert on-the-fly geometric
+    objects from Cartesian kernels.
 
 ### 2D Triangulations
 
--   Added a new type of intersection to deal with insertion of a constraints 
-    intersecting in a Constrained_triangulation_2.
+-   Added a new type of intersection to handle the insertion of intersecting constraints
+    in a `Constrained_triangulation_2`.
 
 ### Interpolation
 
@@ -45,12 +45,11 @@ Release date: September 2018
     in the code but did not appear in the concepts).
 
 ### Polygon Mesh Processing
--   Added a function to apply a transformation to a mesh:
-    - `CGAL::Polygon_mesh_processing::transform()`
 
--  Fix a bug in `isotropic_remeshing()` making constrained vertices missing in the output
--  Guarantee that constrained vertices are kept in the mesh after calling `isotropic_remeshing()`
-   (and not only the points associated to constrained vertices as it was before).
+-   Added a function, `CGAL::Polygon_mesh_processing::transform()`, to apply a transformation to a mesh.
+
+-   Constrained vertices are now guaranteed to be kept in the mesh after calling `isotropic_remeshing()`
+    (and not only the points associated to constrained vertices, as it was before).
 
 ### 3D Mesh Generation
 
@@ -73,15 +72,15 @@ Release date: September 2018
 -   **Breaking change:** The headers
     `<CGAL/Mesh_3/Implicit_to_labeled_function_wrapper.h>` and
     `<CGAL/Mesh_3/Labeled_mesh_domain_3.h>`, that were deprecated since
-    CGAL 4.5, are now removed.
+    CGAL 4.5, have been removed.
 
 ### CGAL and the Boost Graph Library (BGL)
 
--   Add helper function `CGAL::is_valid_polygon_mesh` that checks the
+-   Added a helper function, `CGAL::is_valid_polygon_mesh`, that checks the
     validity of a polygon mesh using BGL functions.
 
--   Improve the function `CGAL::Euler::collapse_edge` so that the target
-    vertex of the collapsed edge is always kept after the collapse.
+-   Improved the function `CGAL::Euler::collapse_edge` such that the target
+    vertex of the collapsed edge is now always kept after the collapse.
 
 
 Release 4.12
