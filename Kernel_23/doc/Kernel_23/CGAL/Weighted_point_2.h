@@ -180,8 +180,7 @@ public:
   int dimension() const;
 
   /*!
-  returns a bounding box containing `p`. Note that bounding boxes
-  are not parameterized with whatsoever.
+  returns a bounding box containing `p`.
   */
   Bbox_2 bbox() const;
 
