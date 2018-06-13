@@ -880,7 +880,7 @@ public:
   Join_input_iterator_3& operator=(const Join_input_iterator_3& it)
   {
     i1 = it.i1;
-    i2 = it.i1;
+    i2 = it.i2;
     i3 = it.i3;
     op = it.op;
     return *this;
