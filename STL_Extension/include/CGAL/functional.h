@@ -23,8 +23,8 @@
 //
 // Author(s)     : Andreas Fabri
 
-#ifndef CGAL_UNARY_FUNCTION_H
-#define CGAL_UNARY_FUNCTION_H
+#ifndef CGAL_FUNCTIONAL_H
+#define CGAL_FUNCTIONAL_H
 
 namespace CGAL {
 
@@ -51,4 +51,4 @@ namespace cpp98 {
 
 } // namespace CGAL
 
-#endif // CGAL_UNARY_FUNCTION_H
+#endif // CGAL_FUNCTIONAL_H
