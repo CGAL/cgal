@@ -203,8 +203,7 @@ protected:
   //! This value is between 0.0f and 1.0f.
   float alpha() const Q_DECL_OVERRIDE;
 
-  /*! Fills the `Vbo`s with data. Must be called after each call to #computeElements().
-     * @see computeElements()
+  /*! Fills the `Vbo`s with data.
      */
   virtual void initializeBuffers(Viewer_interface*)const{}
 

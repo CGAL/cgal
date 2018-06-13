@@ -457,8 +457,7 @@ protected:
       vaos[i] = n_vao;
   }
 
-  /*! Fills the VBOs with data. Must be called after each call to #computeElements().
-   * @see compute_elements()
+  /*! Fills the VBOs with data.
    */
   void initializeBuffers(){}
 

@@ -74,7 +74,6 @@ public:
   //! \brief draw is the function that actually renders the data.
   //! \param viewer the active `Viewer_interface`.
   //! \param is_color_uniform should be `true` if the item is unicolor.
-  //! \param fbo holds the texture that is used for transparency.
   //!
   virtual void draw(CGAL::Three::Viewer_interface* viewer,
                     bool is_color_uniform)  = 0;

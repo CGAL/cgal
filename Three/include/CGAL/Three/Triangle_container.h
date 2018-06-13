@@ -78,7 +78,6 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
   //! \brief draw is the function that actually renders the data.
   //! \param viewer the active `Viewer_interface`.
   //! \param is_color_uniform must be `false` if the color buffers are not empty, `true` otherwise.
-  //! \param fbo holds the texture that is used for transparency.
   //!
   void draw(CGAL::Three::Viewer_interface* viewer,
             bool is_color_uniform)  Q_DECL_OVERRIDE;
