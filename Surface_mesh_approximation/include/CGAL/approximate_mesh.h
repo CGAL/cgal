@@ -59,7 +59,7 @@ unspecified_type all_default();
  * @return `true` if the indexed triangles represent a 2-manifold, oriented surface mesh, and `false` otherwise. 
  *
  * \cgalNamedParamsBegin
- *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
+ *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of \cgal Kernel.
  *    Exact constructions kernels are not supported by this function.
  *  \cgalParamEnd
  *  \cgalParamBegin{vertex_point_map} the property map with the points associated

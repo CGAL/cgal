@@ -23,7 +23,7 @@ namespace VSA {
 /// @tparam TriangleMesh a triangle `FaceListGraph`
 /// @tparam VertexPointMap a property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 ///    as key type, GeomTraits::Point_3 as value type
-/// @tparam GeomTraits geometric traits
+/// @tparam GeomTraits model of \cgal Kernel
 template <typename TriangleMesh,
   typename VertexPointMap
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,

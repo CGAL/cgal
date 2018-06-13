@@ -50,7 +50,7 @@ Here is the list of the named parameters available in this package:
 \cgalNPTableBegin
 
 \cgalNPBegin{geom_traits} \anchor VSA_geom_traits
- the geometric traits instance in which the mesh processing operation should be performed.\n
+ the geometric traits instance in which the mesh approximation operation should be performed.\n
 \b Type: a Geometric traits class.\n
 \b Default type is
 \code

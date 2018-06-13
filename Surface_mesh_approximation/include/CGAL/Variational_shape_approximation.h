@@ -62,7 +62,7 @@ enum Approximation_seeding_tag {
 /// @tparam TriangleMesh CGAL TriangleMesh
 /// @tparam VertexPointMap vertex point map
 /// @tparam ErrorMetricProxy approximation metric type
-/// @tparam GeomTraits geometric traits type
+/// @tparam GeomTraits model of \cgal Kernel
 /// @tparam Concurrency_tag concurrency tag
 template <typename TriangleMesh,
   typename VertexPointMap,
