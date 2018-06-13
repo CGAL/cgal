@@ -7,6 +7,13 @@ Release 4.13
 
 Release date: September 2018
 
+### 3D Periodic Mesh Generation (new package)
+-   This package generates 3-dimensional periodic meshes. It computes isotropic simplicial meshes
+    for domains described through implicit functional boundaries over the flat torus (which can also seen
+    in the Euclidean space as a periodic cube). The output is a periodic 3D mesh of the domain
+    volume and conformal surface meshes for all the boundary and subdividing surfaces.
+    The package is closely related to the 3D Mesh Generation package, with similar concepts, classes, and API.
+
 ### Installation
 
 -   The library `CGAL_Qt5` now contains a fork of the version 2.7.0 of `libQGLViewer`.
@@ -23,10 +30,16 @@ Release date: September 2018
 -   Added a read-write property map to convert on-the-fly geometric
     objects from Cartesian kernels.
 
-### 2D Triangulations
+### 2D and 3D Triangulations
 
 -   Added a new type of intersection to handle the insertion of intersecting constraints
     in a `Constrained_triangulation_2`.
+
+-   The long-deprecated class `Triangulation_cell_base_with_circumcenter_3` and its associated
+    concept have been removed. Users should use the classes `Delaunay_cell_base_with_circumcenter_3`
+    or `Regular_cell_base_with_circumcenter_3`, depending on which type of triangulation they are using.
+-   The deprecated functions `mirror_index` and `mirror_vertex` of the class `Triangulation_face_base_2`
+    have been removed. Users should use the equivalent functions from the class `Triangulation_2`.
 
 ### Interpolation
 
@@ -73,6 +86,26 @@ Release date: September 2018
     `<CGAL/Mesh_3/Implicit_to_labeled_function_wrapper.h>` and
     `<CGAL/Mesh_3/Labeled_mesh_domain_3.h>`, that were deprecated since
     CGAL 4.5, have been removed.
+
+-   **Breaking change**: the concepts `MeshCellCriteria_3` and `MeshFacetCriteria_3`
+    now require the triangulation to be passed in their `operator()`.
+    Models of these concepts that are provided by CGAL have been modified accordingly.
+
+-   **Breaking change**: It is no longer possible to use the deprecated, pre-CGAL 3.8 specifications
+    in `MeshCellCriteria_3` and `MeshFacetCriteria_3` (that is, using `Facet_badness`
+    and `Cell_badness` instead of `Is_facet_bad` and `Is_cell_bad`).
+
+-   The concept `MeshFacetCriteria_3` no longer requires the function `operator()(Cell_handle c, int i)`.
+-   The concept `MeshEdgeCriteria_3` no longer requires the function `operator()(const Edge& e)`.
+-   The concept `MeshComplexWithFeatures_3InTriangulation_3` no longer requires the functions
+    `number_of_edges(Curve_index index)` and `number_of_corners(Corner_index index)`.
+
+-   Introduced the concept `MeshTriangulationTraits_3`, which covers the needs of the traits
+    class used in `Mesh_3` (and `Periodic_3_mesh_3`). The traits class used as template parameter
+    of `Mesh_triangulation_3` and `Periodic_3_mesh_triangulation_3` must be a model of this concept.
+
+-   Added the function `Mesh_domain_with_polyline_features_3::add_corner()`, which allows users
+    to add a single corner (that is not incident to any polyline) to the mesh complex.
 
 ### CGAL and the Boost Graph Library (BGL)
 
