@@ -52,7 +52,12 @@ struct Compact_metric_point_proxy
       center = center + (center_pmap[f] - CGAL::ORIGIN) * area_pmap[f];
       sum_areas += area_pmap[f];
     }
-    center = center / sum_areas; // TODO: deal with case where sum = 0
+    // deal with case where sum = 0
+    if (center == CGAL::NULL_VECTOR || sum_areas <= FT(0.0)) {
+      std::cerr << "Error: degenerate geometry." << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    center = center / sum_areas;
     return CGAL::ORIGIN + center;
   }
 
