@@ -50,9 +50,9 @@ create_single_source_cgal_program( "vsa_error_decrease_test.cpp" )
 
 create_single_source_cgal_program( "vsa_kernel_test.cpp" )
 
-create_single_source_cgal_program( "vsa_mesh_approximation_test.cpp" )
+create_single_source_cgal_program( "vsa_approximation_test.cpp" )
 
-create_single_source_cgal_program( "vsa_mesh_segmentation_test.cpp" )
+create_single_source_cgal_program( "vsa_segmentation_test.cpp" )
 
 create_single_source_cgal_program( "vsa_meshing_manifold_test.cpp" )
 
