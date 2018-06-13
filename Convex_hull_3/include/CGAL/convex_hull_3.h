@@ -66,6 +66,10 @@
 
 // first some internal stuff to avoid using a true Face_graph model for extreme_points_3
 namespace CGAL {
+
+// Forward declaration
+template<class Base_traits,class VertexPointMap> class Vertex_to_point_traits_adapter;
+
 namespace internal{  namespace Convex_hull_3{
 
 // wrapper used as a MutableFaceGraph to extract extreme points
@@ -167,35 +171,23 @@ struct Default_polyhedron_for_Chull_3<Convex_hull_traits_3<K, P, Tag> >{
   typedef typename  Convex_hull_traits_3<K, P, Tag>::Polygon_mesh type;
 };
 
-//utility class to select the right version of internal predicate Is_on_positive_side_of_plane_3
-//template <class Traits,
-//          class Is_floating_point=
-//            typename boost::is_floating_point<typename Kernel_traits<typename Traits::Point_3>::Kernel::FT>::type,
-//          class Has_filtered_predicates_tag=typename Kernel_traits<typename Traits::Point_3>::Kernel::Has_filtered_predicates_tag,
-//          class Has_cartesian_tag=typename Kernel_traits<typename Traits::Point_3>::Kernel::Kernel_tag,
-//          class Has_classical_point_type =
-//              typename boost::is_same<
-//                typename Kernel_traits<typename Traits::Point_3>::Kernel::Point_3,
-//                typename Traits::Point_3  >::type
-//         >
-//struct Use_advanced_filtering{
-//  typedef CGAL::Tag_false type;
-//};
-
-template <class Traits>
-struct Use_advanced_filtering{
-  
-  typedef CGAL::Tag_false type;
+template <class T>
+struct Is_cartesian_kernel
+{
+  typedef boost::false_type type;
 };
 
-/*template <class Traits>
-struct Use_advanced_filtering<Traits,boost::true_type,Tag_true,Cartesian_tag,boost::true_type>{
-  typedef typename Kernel_traits<typename Traits::Point_3>::Kernel K;
-  typedef CGAL::Boolean_tag<K::Has_static_filters> type;
-};*/
+template <class Kernel, class PolygonMesh>
+struct Is_cartesian_kernel< Convex_hull_traits_3<Kernel, PolygonMesh, Tag_true> >
+{
+  // Rational here is that Tag_true can only be passed by us since it is not documented
+  // so we can assume that Kernel is a CGAL Kernel
+  typedef boost::is_same<typename Kernel::Kernal_tag, Cartesian_tag> type;
+};
 
-//Predicates internally used
-template <class Traits,class Tag_use_advanced_filtering=typename Use_advanced_filtering<Traits>::type >
+// Predicate internally used as a wrapper around has_on_positive_side
+// We provide a partial specialization restricted to the case of CGAL Cartesian Kernels with inexact constructions below
+template <class Traits, class Is_CK = Is_cartesian_kernel<Traits> >
 class Is_on_positive_side_of_plane_3{
   typedef typename Traits::Point_3 Point_3;
   typename Traits::Plane_3 plane;
@@ -212,6 +204,28 @@ public:
   }
 };
 
+template <class Base_traits, class VPM, class Is_CK>
+class Is_on_positive_side_of_plane_3< Vertex_to_point_traits_adapter<Base_traits, VPM>, Is_CK>
+  : public Is_on_positive_side_of_plane_3< Base_traits >
+{
+  typedef Vertex_to_point_traits_adapter<Base_traits, VPM> Traits;
+  typedef Is_on_positive_side_of_plane_3< Base_traits > Base;
+  typedef typename Traits::Point_3 Point_3;
+  const Traits& m_traits;
+public:
+  typedef typename Base::Protector Protector;
+
+  Is_on_positive_side_of_plane_3(const Traits& traits,
+                                 const Point_3& p,const Point_3& q,const Point_3& r)
+    : Base(static_cast<const Base_traits&>(traits), traits.get_point(p), traits.get_point(q), traits.get_point(r))
+    , m_traits(traits)
+  {}
+
+  bool operator() (const Point_3& s) const
+  {
+    return static_cast<const Base*>(this)->operator()(m_traits.get_point(s));
+  }
+};
 
 //This predicate uses copy of the code from the statically filtered version of
 //Orientation_3. The rational is that the plane is a member of the functor
@@ -220,7 +234,7 @@ public:
 //interval arithmetic (the protector must be created before using this predicate)
 //and in case of failure, exact arithmetic is used.
 template <class Kernel, class P>
-class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel, P, Tag_true>,Tag_true>{
+class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel, P, Tag_true>, boost::true_type >{
   typedef Simple_cartesian<CGAL::internal::Exact_field_selector<double>::Type>  PK;
   typedef Simple_cartesian<Interval_nt_advanced >                               CK;
   typedef Convex_hull_traits_3<Kernel, P, Tag_true>                             Traits;

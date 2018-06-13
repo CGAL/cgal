@@ -14,11 +14,9 @@
 #include <iostream>
 
 
-typedef CGAL::Exact_rational                          NT;
-typedef CGAL::Cartesian<NT>                           K;
-typedef CGAL::Convex_hull_traits_3<K>                 Traits;
-typedef Traits::Polygon_mesh                          Polyhedron_3;
-typedef K::Point_3                                    Point_3;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Polyhedron_3<K> Polyhedron_3;
+typedef K::Point_3 Point_3;
 
 
 void test_function_overload()
@@ -231,7 +229,8 @@ void test_extreme_vertices(const char* fname)
     exit(1);
   }  
   std::vector<boost::graph_traits<Polyhedron_3>::vertex_descriptor> verts;
-  extreme_vertices(vertices(P), std::back_inserter(verts) , get(CGAL::vertex_point, P), Traits());
+  extreme_vertices(vertices(P), std::back_inserter(verts) , get(CGAL::vertex_point, P),
+                   CGAL::Convex_hull_traits_3<K, Polyhedron_3, CGAL::Tag_true>());
   std::cout<<verts.size()<<std::endl;
 }
 

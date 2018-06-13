@@ -361,7 +361,13 @@ public:
   {return Traits_yz_3(vpm_, static_cast<const Base_traits*>(this)->construct_traits_yz_3_object());}
   Traits_xz_3 construct_traits_xz_3_object()const
   {return Traits_xz_3(vpm_, static_cast<const Base_traits*>(this)->construct_traits_xz_3_object());}
-  
+
+  typename boost::property_traits<VertexPointMap>::reference
+  get_point(const typename boost::property_traits<VertexPointMap>::key_type& k) const
+  {
+    return get(vpm_, k);
+  }
+
 };
 
 }//end CGAL
