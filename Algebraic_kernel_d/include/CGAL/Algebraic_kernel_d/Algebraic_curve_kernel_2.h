@@ -1808,8 +1808,8 @@ public:
      */
     class X_critical_points_2 : 
         public CGAL::binary_function< Curve_analysis_2,
-            CGAL::iterator<std::output_iterator_tag, Algebraic_real_2>,
-            CGAL::iterator<std::output_iterator_tag, Algebraic_real_2> > {
+            CGAL::cpp98::iterator<std::output_iterator_tag, Algebraic_real_2>,
+            CGAL::cpp98::iterator<std::output_iterator_tag, Algebraic_real_2> > {
        
     public:
         
@@ -1887,8 +1887,8 @@ public:
      */
     class Y_critical_points_2 :
         public CGAL::binary_function< Curve_analysis_2,
-            CGAL::iterator<std::output_iterator_tag, Algebraic_real_2>,
-            CGAL::iterator<std::output_iterator_tag, Algebraic_real_2> > {
+            CGAL::cpp98::iterator<std::output_iterator_tag, Algebraic_real_2>,
+            CGAL::cpp98::iterator<std::output_iterator_tag, Algebraic_real_2> > {
         
 
     public:

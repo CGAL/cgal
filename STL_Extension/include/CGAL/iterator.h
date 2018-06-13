@@ -88,6 +88,8 @@ Iterator_range<Prevent_deref<I> > make_prevent_deref_range(const I& begin, const
   return Iterator_range<Prevent_deref<I> >(make_prevent_deref(begin), make_prevent_deref(end));
 }
 
+namespace cpp98 {
+
 template<typename Category, typename Tp, typename Distance = std::ptrdiff_t,
          typename Pointer = Tp*, typename Reference = Tp&>
 struct iterator
@@ -104,7 +106,8 @@ struct iterator
   typedef Reference reference;
 };
 
-  
+} // end namespace cpp98
+
 // +----------------------------------------------------------------+
 // | Emptyset_iterator
 // +----------------------------------------------------------------+
@@ -112,7 +115,7 @@ struct iterator
 // +----------------------------------------------------------------+
 
 struct Emptyset_iterator
-  : public CGAL::iterator< std::output_iterator_tag, void, void, void, void >
+  : public CGAL::cpp98::iterator< std::output_iterator_tag, void, void, void, void >
 {
   template< class T >
   Emptyset_iterator& operator=(const T&) { return *this; }
@@ -132,7 +135,7 @@ struct Emptyset_iterator
 
 template < class Container >
 class Insert_iterator
-  : public CGAL::iterator< std::output_iterator_tag, void, void, void, void >
+  : public CGAL::cpp98::iterator< std::output_iterator_tag, void, void, void, void >
 {
 protected:
   Container *container;
@@ -173,8 +176,8 @@ inserter(Container &x)
 
 template < class T >
 class Oneset_iterator
-  : public CGAL::iterator< std::bidirectional_iterator_tag,
-			  void, void, void, void >
+  : public CGAL::cpp98::iterator< std::bidirectional_iterator_tag,
+                                  void, void, void, void >
 {
   T* t;
   
@@ -280,7 +283,7 @@ private:
 
 // Undocumented, because there is some hope to merge it into Counting_iterator
 class Counting_output_iterator
-  : public CGAL::iterator< std::output_iterator_tag, void, void, void, void >
+  : public CGAL::cpp98::iterator< std::output_iterator_tag, void, void, void, void >
 {
   std::size_t *c;
 public:
@@ -1216,7 +1219,7 @@ public:
 
 template<typename _Iterator, typename Predicate>
     class Filter_output_iterator
-    : public CGAL::iterator<std::output_iterator_tag, void, void, void, void>
+      : public CGAL::cpp98::iterator<std::output_iterator_tag, void, void, void, void>
     {
     protected:
       _Iterator iterator;

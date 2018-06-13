@@ -58,8 +58,8 @@ template < class CurvedKernelViaAnalysis_2,
            typename CurvedKernelViaAnalysis_2::Construct_arc_2 >
 struct Make_x_monotone_2 :
     public CGAL::binary_function< typename CurvedKernelViaAnalysis_2::Curve_2,
-            CGAL::iterator<std::output_iterator_tag, CGAL::Object>,
-            CGAL::iterator<std::output_iterator_tag, CGAL::Object> > {
+            CGAL::cpp98::iterator<std::output_iterator_tag, CGAL::Object>,
+            CGAL::cpp98::iterator<std::output_iterator_tag, CGAL::Object> > {
 
     //!\name Public types
     //!@{
