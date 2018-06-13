@@ -135,9 +135,9 @@ void test_join_input_iterator_3()
   assert(join_ter.current_iterator1() == first);
   assert(join_ter.current_iterator2() == second);
   assert(join_ter.current_iterator3() == third);
-  assert(*join_ter); // calls Collinear_3
-  assert(join_ter[0]); // calls Collinear_3
-  assert(!(join_ter[1])); // calls Collinear_3
+  assert(*join_ter); // calls Collinear_2
+  assert(join_ter[0]); // calls Collinear_2
+  assert(!(join_ter[1])); // calls Collinear_2
 
   const Join join_quinquies(second, third, fourth, Collinear_2());
   assert(join_ter != join_quinquies);
