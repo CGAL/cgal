@@ -309,8 +309,15 @@ bool write_inp(std::ostream& os,
   os << "*End Part"<< std::endl;
   return os.good();
 }
-
-
+// conveniance overload
+template <typename FaceGraph>
+bool write_inp(std::ostream& os,
+               const FaceGraph& g,
+               std::string name,
+               std::string type)
+{
+  return write_inp(os, g, name, type, parameters::all_default());
+}
 } // namespace CGAL
 
 #endif // CGAL_BOOST_GRAPH_IO_H
