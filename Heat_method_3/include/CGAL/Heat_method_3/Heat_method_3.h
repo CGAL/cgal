@@ -214,24 +214,30 @@ namespace Heat_method_3 {
       return m_time_step;
     }
 
-    Matrix kronecker_delta(const std::set<vertex_descriptor>& sources) // AF: should become const
+    Matrix kronecker_delta(const std::set<vertex_descriptor>& sources)
     {
       //currently just working with a single vertex in source set, add the first one for now
       Index i;
+      Matrix K(num_vertices(tm), 1);
       if(sources.empty())
       {
-        add_source(*(vertices(tm).begin()));
         i = 0;
-        source_index=0;
+        K.insert(i,0) = 1;
+        source_index.insert(0);
       }
       else
       {
-        vertex_descriptor current = *(++sources.begin());
+        vertex_descriptor current = *(sources.begin());
         i = get(vertex_id_map, current);
-        source_index = i;
+        vertex_iterator vd =sources.begin();
+        while(vd!=sources.end())
+        {
+
+          i = get(vertex_id_map, *(vd));
+          K.insert(i,0) = 1;
+          vd = ++vd;
+        }
       }
-      Matrix K(num_vertices(tm), 1);
-      K.insert(i,0) = 1;
       return K;
     }
 
@@ -241,7 +247,7 @@ namespace Heat_method_3 {
       return kronecker;
     }
 
-    Eigen::VectorXd solve_cotan_laplace(Matrix M, Matrix c, Matrix x, double a_time_step, int dimension) const
+    Eigen::VectorXd solve_cotan_laplace(const Matrix& M, const Matrix& c, const Matrix& x, double a_time_step, int dimension) const
     {
       Eigen::VectorXd u;
       Matrix A = (M+ a_time_step*c);
@@ -348,12 +354,37 @@ namespace Heat_method_3 {
       return indexD;
     }
 
-    Eigen::VectorXd value_at_source_set(double a, int dimension) const
+    Eigen::VectorXd value_at_source_set(const Eigen::VectorXd& phi, int dimension) const
     {
       Eigen::VectorXd source_set_val(dimension,1);
-      for(int k = 0; k<dimension; k++)
+      if(!(sources.empty()))
       {
-        source_set_val(k,0) = a;
+        for(int k = 0; k<dimension; k++)
+        {
+          source_set_val(k,0) = phi.coeff(0,0);
+        }
+        source_set_val = phi-source_set_val;
+      }
+      else
+      {
+        for(int i = 0; i<dimension; i++)
+        {
+          int min_val = INT_MAX;
+          vertex_iterator current;
+          Index current_Index;
+          current = sources.begin();
+          //go through the distances to the sources and leave the minimum distance;
+          for(int j = 0; j<sources.size(); j++)
+          {
+            current_Index = get(vertex_id_map, *current);
+            if(std::abs(phi.coeff(i,0)-phi.coeff(current_Index,0))< min_val)
+            {
+              min_val = std::abs(phi.coeff(i,0)-phi.coeff(current_Index,0));
+            }
+            current = ++current;
+          }
+          source_set_val(i,0) = min_val;
+        }
       }
       return source_set_val;
     }
@@ -374,7 +405,7 @@ namespace Heat_method_3 {
         // solving failed
         CGAL_error_msg("Eigen Solving in phi failed");
       }
-      return (phi - value_at_source_set(phi.coeff(source_index,0), dimension));
+      return value_at_source_set(phi, dimension);
     }
 
     //currently, this function will return a (number of vertices)x1 vector where
@@ -491,7 +522,7 @@ namespace Heat_method_3 {
     Eigen::MatrixXd X;
     Matrix index_divergence;
     Eigen::VectorXd solved_phi;
-    Index source_index;
+    std::set<Index> source_index;
   };
 
 } // namespace Heat_method_3
