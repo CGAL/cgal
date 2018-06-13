@@ -40,7 +40,7 @@ struct DefaultColorFunctorLCC
     if (dh==alcc.null_handle) // use to get the mono color
       return CGAL::Color(100, 125, 200); // R G B between 0-255
 
-    CGAL::Random random(alcc.darts().index(dh));
+    CGAL::Random random((unsigned int)(alcc.darts().index(dh)));
     return get_random_color(random);
   }
 };
@@ -145,9 +145,9 @@ protected:
   {
     clear();
 
-    unsigned int markfaces    = lcc.get_new_mark();
-    unsigned int markedges    = lcc.get_new_mark();
-    unsigned int markvertices = lcc.get_new_mark();
+    typename LCC::size_type markfaces    = lcc.get_new_mark();
+    typename LCC::size_type markedges    = lcc.get_new_mark();
+    typename LCC::size_type markvertices = lcc.get_new_mark();
 
     for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
          itend=lcc.darts().end(); it!=itend; ++it )
@@ -205,25 +205,24 @@ void draw(const LCC& alcc,
           const ColorFunctor& fcolor)
 {
 #if defined(CGAL_TEST_SUITE)
-  int argc=3;
-  const char* argv[4]={"lccviewer","-platform","minimal","\0"};
+  bool cgal_test_suite=true;
 #else
-  int argc=1;
-  const char* argv[2]={"lccviewer","\0"};
+  bool cgal_test_suite=false;
 #endif
 
-  QApplication app(argc,const_cast<char**>(argv));
-
-  SimpleLCCViewerQt<LCC, ColorFunctor> mainwindow(app.activeWindow(),
-                                                  alcc,
-                                                  title,
-                                                  nofill,
-                                                  fcolor);
-
-#if !defined(CGAL_TEST_SUITE)
-  mainwindow.show();
-  app.exec();
-#endif
+  if (!cgal_test_suite)
+  {
+    int argc=1;
+    const char* argv[2]={"lccviewer","\0"};
+    QApplication app(argc,const_cast<char**>(argv));
+    SimpleLCCViewerQt<LCC, ColorFunctor> mainwindow(app.activeWindow(),
+                                                    alcc,
+                                                    title,
+                                                    nofill,
+                                                    fcolor);
+    mainwindow.show();
+    app.exec();
+  }
 }
 
 template<class LCC>

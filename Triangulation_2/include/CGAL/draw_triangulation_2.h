@@ -38,7 +38,7 @@ struct DefaultColorFunctorT2
   static CGAL::Color run(const T2&,
                          const typename T2::Finite_faces_iterator fh)
   {
-    CGAL::Random random((std::size_t)(&*fh));
+    CGAL::Random random((unsigned int)(&*fh));
     return get_random_color(random);
   }
 };
@@ -143,24 +143,24 @@ void draw(const T2& at2,
           const ColorFunctor& fcolor)
 {
 #if defined(CGAL_TEST_SUITE)
-  int argc=3;
-  const char* argv[4]={"t2_viewer","-platform","minimal","\0"};
+  bool cgal_test_suite=true;
 #else
-  int argc=1;
-  const char* argv[2]={"t2_viewer","\0"};
+  bool cgal_test_suite=false;
 #endif
-  QApplication app(argc,const_cast<char**>(argv));
 
-  SimpleTriangulation2ViewerQt<T2, ColorFunctor> mainwindow(app.activeWindow(),
-                                                            at2,
-                                                            title,
-                                                            nofill,
-                                                            fcolor);
-
-#if !defined(CGAL_TEST_SUITE)
-  mainwindow.show();
-  app.exec();
-#endif
+  if (!cgal_test_suite)
+  {
+    int argc=1;
+    const char* argv[2]={"t2_viewer","\0"};
+    QApplication app(argc,const_cast<char**>(argv)); 
+    SimpleTriangulation2ViewerQt<T2, ColorFunctor> mainwindow(app.activeWindow(),
+                                                              at2,
+                                                              title,
+                                                              nofill,
+                                                              fcolor);
+    mainwindow.show();
+    app.exec();
+  }
 }
 
 template<class T2>

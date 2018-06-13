@@ -41,7 +41,7 @@ struct DefaultColorFunctorT3
     if (fh==NULL) // use to get the mono color
       return CGAL::Color(100, 125, 200); // R G B between 0-255
 
-    CGAL::Random random((std::size_t)(&*((*fh)->first))+(*fh)->second);
+    CGAL::Random random((unsigned int)(&*((*fh)->first))+(unsigned int)((*fh)->second));
     return get_random_color(random);
   }
 };
@@ -147,26 +147,26 @@ void draw(const T3& at3,
           bool nofill,
           const ColorFunctor& fcolor)
 {
+
 #if defined(CGAL_TEST_SUITE)
-  int argc=3;
-  const char* argv[4]={"t3_viewer","-platform","minimal","\0"};
+  bool cgal_test_suite=true;
 #else
-  int argc=1;
-  const char* argv[2]={"t3_viewer","\0"};
+  bool cgal_test_suite=false;
 #endif
 
-  QApplication app(argc,const_cast<char**>(argv));
-
-  SimpleTriangulation3ViewerQt<T3, ColorFunctor> mainwindow(app.activeWindow(),
-                                                            at3,
-                                                            title,
-                                                            nofill,
-                                                            fcolor);
-
-#if !defined(CGAL_TEST_SUITE)
-  mainwindow.show();
-  app.exec();
-#endif
+  if (!cgal_test_suite)
+  {
+    int argc=1;
+    const char* argv[2]={"t3_viewer","\0"};
+    QApplication app(argc,const_cast<char**>(argv));
+    SimpleTriangulation3ViewerQt<T3, ColorFunctor> mainwindow(app.activeWindow(),
+                                                              at3,
+                                                              title,
+                                                              nofill,
+                                                              fcolor);
+    mainwindow.show();
+    app.exec();
+  }
 }
 
 template<class T3>

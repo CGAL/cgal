@@ -56,7 +56,7 @@ struct DefaultColorFunctorSM
     if (fh==boost::graph_traits<SM>::null_face()) // use to get the mono color
       return CGAL::Color(100, 125, 200); // R G B between 0-255
 
-    CGAL::Random random(fh);
+    CGAL::Random random((unsigned int)fh);
     return get_random_color(random);
   }
 };
@@ -208,25 +208,24 @@ void draw(const SM& amesh,
           const ColorFunctor& fcolor)
 {
 #if defined(CGAL_TEST_SUITE)
-  int argc=3;
-  const char* argv[4]={"surface_mesh_viewer","-platform","minimal","\0"};
+  bool cgal_test_suite=true;
 #else
-  int argc=1;
-  const char* argv[2]={"surface_mesh_viewer","\0"};
+  bool cgal_test_suite=false;
 #endif
-  
-  QApplication app(argc,const_cast<char**>(argv));
 
-  SimpleSurfaceMeshViewerQt<SM, ColorFunctor> mainwindow(app.activeWindow(),
-                                                         amesh,
-                                                         title,
-                                                         nofill,
-                                                         fcolor);
-
-#if !defined(CGAL_TEST_SUITE)
-  mainwindow.show();
-  app.exec();
-#endif
+  if (!cgal_test_suite)
+  {
+    int argc=1;
+    const char* argv[2]={"surface_mesh_viewer","\0"};
+    QApplication app(argc,const_cast<char**>(argv));
+    SimpleSurfaceMeshViewerQt<SM, ColorFunctor> mainwindow(app.activeWindow(),
+                                                           amesh,
+                                                           title,
+                                                           nofill,
+                                                           fcolor);
+    mainwindow.show();
+    app.exec();
+  }
 }
 
 template<class SM>
