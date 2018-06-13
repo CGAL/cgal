@@ -380,7 +380,27 @@ does_satisfy_link_condition()
   assert(CGAL::Euler::does_satisfy_link_condition(*edges(f.m).first,f.m));
 }
 
-
+template <typename Graph>
+void
+test_swap_edges()
+{
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
+  std::size_t nbh=12;
+  Kernel::Point_3 pt(0,0,0);
+  // test all possible pairs of halfedges
+  for (std::size_t i=0; i<nbh-1; ++i)
+  {
+    for(std::size_t j=i+1; j<nbh; ++j)
+    {
+      Graph g;
+      CGAL::make_tetrahedron(pt,pt,pt,pt,g);
+      halfedge_descriptor h1 = *CGAL::cpp11::next(boost::begin(halfedges(g)), i);
+      halfedge_descriptor h2 = *CGAL::cpp11::next(boost::begin(halfedges(g)), j);
+      CGAL::internal::swap_edges(h1, h2, g);
+      CGAL_assertion(CGAL::is_valid_polygon_mesh(g));
+    }
+  }
+}
 
 template <typename Graph>
 void
@@ -400,6 +420,7 @@ test_Euler_operations()
   remove_center_vertex_test<Graph>();
   join_split_inverse<Graph>();
   does_satisfy_link_condition<Graph>();
+  test_swap_edges<Graph>();
 }
 
 int main()

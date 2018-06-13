@@ -51,7 +51,7 @@ namespace CGAL {
     * \cgalNamedParamsBegin
     *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
     *       If this parameter is omitted, an internal property map for
-    *       `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
+    *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
     *    \cgalParamBegin{geom_traits} an instance of a geometric traits class,
     *       providing the functor `Construct_bbox_3` and the function
     *       `Construct_bbox_3 construct_bbox_3_object()`. `Construct_bbox_3`
@@ -101,7 +101,7 @@ namespace CGAL {
     * \cgalNamedParamsBegin
     *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
     *       If this parameter is omitted, an internal property map for
-    *       `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
+    *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
     *    \cgalParamBegin{geom_traits} an instance of a geometric traits class,
     *       providing the functor `Construct_bbox_3` and the function
     *       `Construct_bbox_3 construct_bbox_3_object()`. `Construct_bbox_3`
@@ -144,7 +144,7 @@ namespace CGAL {
     * \cgalNamedParamsBegin
     *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
     *       If this parameter is omitted, an internal property map for
-    *       `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
+    *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
     *    \cgalParamBegin{geom_traits} an instance of a geometric traits class,
     *       providing the functor `Construct_bbox_3` and the function
     *       `Construct_bbox_3 construct_bbox_3_object()`. `Construct_bbox_3`
@@ -188,7 +188,7 @@ namespace CGAL {
     * \cgalNamedParamsBegin
     *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
     *       If this parameter is omitted, an internal property map for
-    *       `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
+    *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
     *    \cgalParamBegin{geom_traits} an instance of a geometric traits class,
     *       providing the functor `Construct_bbox_3` and the function
     *       `Construct_bbox_3 construct_bbox_3_object()`. `Construct_bbox_3`

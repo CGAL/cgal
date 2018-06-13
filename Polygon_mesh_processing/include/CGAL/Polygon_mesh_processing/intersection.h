@@ -383,7 +383,7 @@ struct Throw_at_first_output {
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
  *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
+ *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
  * \cgalNamedParamsEnd
  * \return `out`
@@ -503,7 +503,7 @@ compute_face_face_intersection(const FaceRange& face_range1,
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
  *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
+ *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
  * \cgalNamedParamsEnd
  * \return `out`
@@ -627,7 +627,7 @@ compute_face_polyline_intersection( const FaceRange& face_range,
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
  *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
+ *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
  * \cgalNamedParamsEnd
  * \return `out`
@@ -934,7 +934,7 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
  *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
+ *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
  * \cgalNamedParamsEnd
  * \return `out`
@@ -983,7 +983,7 @@ compute_face_face_intersection(const TriangleMesh& tm1,
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
  *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
+ *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
  * \cgalNamedParamsEnd
  * \return `out`
@@ -1189,7 +1189,7 @@ bool do_intersect(const Polyline& polyline1,
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm1` (tm2`).
  *   \attention The two property maps must have the same `value_type`.
  *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
+ *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
  *    \cgalParamBegin{do_overlap_test_of_bounded_sides} if set to `true` tests also the overlap of the bounded sides of `tm1` and `tm2`.
  *                                                      If `false` (default), only the intersection of surface triangles are tested.
@@ -1273,7 +1273,7 @@ bool do_intersect(const TriangleMesh& tm1,
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
  *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
+ *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
  * \cgalNamedParamsEnd
  *
@@ -1329,7 +1329,7 @@ bool do_intersect(const TriangleMesh& tm,
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tn`.
  *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
+ *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
  * \cgalNamedParamsEnd
  *
@@ -1550,13 +1550,13 @@ struct Mesh_callback
  *     \cgalParamEnd
  * \cgalNamedParamsEnd
  * \param nps an optional range of `vertex_point_map` named parameters containing the `VertexPointMap` of each mesh in `range`, in the same order.
- * If this parameter is omitted, then an internal property map for `CGAL::vertex_point_t` should be available for every mesh in the range.
+ * If this parameter is omitted, then an internal property map for `CGAL::vertex_point_t` must be available for every mesh in the range.
  * All the vertex point maps must be of the same type.
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of a mesh.
  *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` should be available in the triangle mesh type used in the range
+ *   `CGAL::vertex_point_t` must be available in the triangle mesh type used in the range
  *     \cgalParamEnd
  * \cgalNamedParamsEnd
  */

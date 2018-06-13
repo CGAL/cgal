@@ -34,6 +34,10 @@ public:
   double vy() const { return im_.vy(); }
   double vz() const { return im_.vz(); }
   
+  double tx() const { return im_.image()->tx; }
+  double ty() const { return im_.image()->ty; }
+  double tz() const { return im_.image()->tz; }
+  
 private:
   unsigned char non_null_neighbor_data(std::size_t i,
                                        std::size_t j,
@@ -320,7 +324,6 @@ Vertex_buffer_helper::push_normal(std::size_t i, std::size_t j, std::size_t k)
 void
 Vertex_buffer_helper::push_vertex(std::size_t i, std::size_t j, std::size_t k)
 {
-  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   indices_.insert(std::make_pair(compute_position(i,j,k),
                                  vertices_.size()/3)); 
   //resize the "border vertices"
@@ -338,9 +341,9 @@ Vertex_buffer_helper::push_vertex(std::size_t i, std::size_t j, std::size_t k)
   if (dk == double(data_.zdim()))
     dk = double(data_.zdim())-0.5;
 
-  vertices_.push_back( (di - 0.5) * data_.vx()+offset.x);
-  vertices_.push_back( (dj - 0.5) * data_.vy()+offset.y);
-  vertices_.push_back( (dk - 0.5) * data_.vz()+offset.z);
+  vertices_.push_back( (di - 0.5) * data_.vx() + data_.tx());
+  vertices_.push_back( (dj - 0.5) * data_.vy() + data_.ty());
+  vertices_.push_back( (dk - 0.5) * data_.vz() + data_.tz());
 }
 
 void
@@ -675,12 +678,12 @@ Scene_image_item::compute_bbox() const
   if(!m_image)
     _bbox = Bbox();
   else
-   _bbox = Bbox(0,
-                0,
-                0,
-              (double(m_image->xdim()-1)) * m_image->vx(),
-              (double(m_image->ydim()-1)) * m_image->vy(),
-              (double(m_image->zdim()-1)) * m_image->vz());
+   _bbox = Bbox(m_image->image()->tx,
+                m_image->image()->ty,
+                m_image->image()->tz,
+                m_image->image()->tx+(m_image->xdim()-1) * m_image->vx(),
+                m_image->image()->ty+(m_image->ydim()-1) * m_image->vy(),
+                m_image->image()->tz+(m_image->zdim()-1) * m_image->vz());
 }
 
 void
@@ -845,7 +848,7 @@ void Scene_image_item::changed()
 
 void Scene_image_item_priv::draw_Bbox(Scene_item::Bbox bbox, std::vector<float> *vertices)
 {
-  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     vertices->push_back(bbox.xmin()+offset.x);
     vertices->push_back(bbox.ymin()+offset.y);
     vertices->push_back(bbox.zmin()+offset.z);

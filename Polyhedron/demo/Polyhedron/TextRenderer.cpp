@@ -23,15 +23,15 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
           if(viewer->testDisplayId(src.x, src.y, src.z))
           {
             if(item->is_3D())
-              rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
-                           camera->projectedCoordinatesOf(src).y-item->height()/2,
-                           item->width(),
-                           item->height());
+              rect = QRect(int(camera->projectedCoordinatesOf(src).x-item->width()/2),
+                           int(camera->projectedCoordinatesOf(src).y-item->height()/2),
+                           int(item->width()),
+                           int(item->height()));
             else
-              rect = QRect(src.x-item->width()/2,
-                           src.y-item->height()/2,
-                           item->width(),
-                           item->height());
+              rect = QRect(int(src.x-item->width()/2),
+                           int(src.y-item->height()/2),
+                           int(item->width()),
+                           int(item->height()));
 
             painter->setFont(item->font());
             painter->setPen(QPen(item->color()));
@@ -48,18 +48,18 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
       {
         if(item->is_always_visible() || viewer->testDisplayId(src.x, src.y, src.z))
         {
-            rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
-                       camera->projectedCoordinatesOf(src).y-item->height()/2,
-                       item->width(),
-                       item->height());
+            rect = QRect(int(camera->projectedCoordinatesOf(src).x-item->width()/2),
+                         int(camera->projectedCoordinatesOf(src).y-item->height()/2),
+                         int(item->width()),
+                         int(item->height()));
         }
       }
       else
       {
-          rect = QRect(src.x-item->width()/2,
-                     src.y-item->height()/2,
-                     item->width(),
-                     item->height());
+          rect = QRect(int(src.x-item->width()/2),
+                       int(src.y-item->height()/2),
+                       int(item->width()),
+                       int(item->height()));
       }
       painter->setFont(item->font());
       painter->setPen(QPen(item->color()));

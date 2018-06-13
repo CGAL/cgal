@@ -1948,7 +1948,7 @@ int unProject(GLdouble winx, GLdouble winy, GLdouble winz, GLdouble *modelview, 
 CGAL_INLINE_FUNCTION
 Vec Camera::projectedCoordinatesOf(const Vec& src, const Frame* frame) const
 {
-        GLdouble x,y,z;
+    GLdouble x = 0.f, y = 0.f, z = 0.f;
     static GLint viewport[4];
     getViewport(viewport);
 
@@ -1990,7 +1990,7 @@ Vec Camera::projectedCoordinatesOf(const Vec& src, const Frame* frame) const
 CGAL_INLINE_FUNCTION
 Vec Camera::unprojectedCoordinatesOf(const Vec& src, const Frame* frame) const
 {
-    GLdouble x,y,z;
+    GLdouble x = 0.f, y = 0.f, z = 0.f;
     static GLint viewport[4];
     getViewport(viewport);
     unProject(src.x,src.y,src.z, modelViewMatrix_,  projectionMatrix_,  viewport,  &x,&y,&z);
@@ -2480,8 +2480,8 @@ void Camera::setFrustum(double frustum[6])
     double B = (r+l)/(r-l);
     double C = 2*n/(t-b);
     double D = (t+b)/(t-b);
-    float E = -(f+n)/(f-n);
-    float F = -2*(f*n)/(f-n);
+    double E = -(f+n)/(f-n);
+    double F = -2*(f*n)/(f-n);
     projectionMatrix_[0] = A; projectionMatrix_[4] = 0; projectionMatrix_[8] = B ; projectionMatrix_[12] = 0;
     projectionMatrix_[1] = 0; projectionMatrix_[5] = C; projectionMatrix_[9] = D ; projectionMatrix_[13] = 0;
     projectionMatrix_[2] = 0; projectionMatrix_[6] = 0; projectionMatrix_[10] = E ; projectionMatrix_[14] = F;
@@ -2493,8 +2493,8 @@ void Camera::setFrustum(double frustum[6])
     double B = -(r+l)/(r-l);
     double C = 2/(t-b);
     double D = -(t+b)/(t-b);
-    float E = -(f+n)/(f-n);
-    float F = -2/(f-n);
+    double E = -(f+n)/(f-n);
+    double F = -2/(f-n);
     projectionMatrix_[0] = A; projectionMatrix_[1] = 0; projectionMatrix_[2] = 0 ; projectionMatrix_[3] = 0;
     projectionMatrix_[4] = 0; projectionMatrix_[5] = C; projectionMatrix_[6] = 0 ; projectionMatrix_[7] = 0;
     projectionMatrix_[8] = 0; projectionMatrix_[9] = 0; projectionMatrix_[10] = F ; projectionMatrix_[11] = 0;

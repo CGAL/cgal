@@ -721,7 +721,10 @@ void Viewer::drawVisualHints()
     //Prints the displayMessage
     QFont font = QFont();
     QFontMetrics fm(font);
-    TextItem *message_text = new TextItem(10 + fm.width(d->message)/2, height()-20, 0, d->message, false, QFont(), Qt::gray );
+    TextItem *message_text = new TextItem(float(10 + fm.width(d->message)/2),
+                                          float(height()-20),
+                                          0, d->message, false,
+                                          QFont(), Qt::gray );
     if (d->_displayMessage)
     {
       d->textRenderer->addText(message_text);
@@ -933,7 +936,10 @@ void Viewer::paintGL()
   else
   {
     d->painter->beginNativePainting();
-    glClearColor(backgroundColor().redF(), backgroundColor().greenF(), backgroundColor().blueF(), 1.0);
+    glClearColor(GLfloat(backgroundColor().redF()),
+                 GLfloat(backgroundColor().greenF()),
+                 GLfloat(backgroundColor().blueF()),
+                 1.f);
     glClearDepth(1.0f);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     //set the default frustum
@@ -992,8 +998,8 @@ void Viewer_impl::showDistance(QPoint pixel)
         // fills the buffers
         std::vector<float> v;
         v.resize(6);
-        v[0] = APoint.x; v[1] = APoint.y; v[2] = APoint.z;
-        v[3] = BPoint.x; v[4] = BPoint.y; v[5] = BPoint.z;
+        v[0] = float(APoint.x); v[1] = float(APoint.y); v[2] = float(APoint.z);
+        v[3] = float(BPoint.x); v[4] = float(BPoint.y); v[5] = float(BPoint.z);
         rendering_program_dist.bind();
         vao.bind();
         buffer.bind();
@@ -1007,12 +1013,21 @@ void Viewer_impl::showDistance(QPoint pixel)
         double dist = std::sqrt((BPoint.x-APoint.x)*(BPoint.x-APoint.x) + (BPoint.y-APoint.y)*(BPoint.y-APoint.y) + (BPoint.z-APoint.z)*(BPoint.z-APoint.z));
         QFont font;
         font.setBold(true);
-        TextItem *ACoord = new TextItem(APoint.x, APoint.y, APoint.z,QString("A(%1,%2,%3)").arg(APoint.x-viewer->offset().x).arg(APoint.y-viewer->offset().y).arg(APoint.z-viewer->offset().z), true, font, Qt::red, true);
+        TextItem *ACoord = new TextItem(float(APoint.x),
+                                        float(APoint.y),
+                                        float(APoint.z),
+                                        QString("A(%1,%2,%3)").arg(APoint.x-viewer->offset().x).arg(APoint.y-viewer->offset().y).arg(APoint.z-viewer->offset().z), true, font, Qt::red, true);
         distance_text.append(ACoord);
-        TextItem *BCoord = new TextItem(BPoint.x, BPoint.y, BPoint.z,QString("B(%1,%2,%3)").arg(BPoint.x-viewer->offset().x).arg(BPoint.y-viewer->offset().y).arg(BPoint.z-viewer->offset().z), true, font, Qt::red, true);
+        TextItem *BCoord = new TextItem(float(BPoint.x),
+                                        float(BPoint.y),
+                                        float(BPoint.z),
+                                        QString("B(%1,%2,%3)").arg(BPoint.x-viewer->offset().x).arg(BPoint.y-viewer->offset().y).arg(BPoint.z-viewer->offset().z), true, font, Qt::red, true);
         distance_text.append(BCoord);
         CGAL::qglviewer::Vec centerPoint = 0.5*(BPoint+APoint);
-        TextItem *centerCoord = new TextItem(centerPoint.x, centerPoint.y, centerPoint.z,QString(" distance: %1").arg(dist), true, font, Qt::red, true);
+        TextItem *centerCoord = new TextItem(float(centerPoint.x),
+                                             float(centerPoint.y),
+                                             float(centerPoint.z),
+                                             QString(" distance: %1").arg(dist), true, font, Qt::red, true);
 
         distance_text.append(centerCoord);
         Q_FOREACH(TextItem* ti, distance_text)

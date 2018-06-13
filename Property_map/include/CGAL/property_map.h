@@ -36,6 +36,9 @@
 
 #include <utility> // defines std::pair
 
+#include <CGAL/Cartesian_converter_fwd.h>
+#include <CGAL/Kernel_traits_fwd.h>
+
 namespace CGAL {
 
 /// \cond SKIP_DOXYGEN
@@ -469,7 +472,7 @@ struct Constant_property_map
 };
 
 /// \ingroup PkgProperty_map
-/// Read-write Property map turning a set (such a `std::set`,
+/// Read-write property map turning a set (such a `std::set`,
 /// `boost::unordered_set`, `std::unordered_set`) into a property map
 /// associating a Boolean to the value type of the set. The function `get` will
 /// return `true` if the key is inside the set and `false` otherwise. The `put`
@@ -513,6 +516,50 @@ Boolean_property_map<Set>
 make_boolean_property_map(Set& set_)
 {
   return Boolean_property_map<Set>(set_);
+}
+
+/// \ingroup PkgProperty_map
+/// Read-write property map doing on-the-fly conversions between two default constructible \cgal %Cartesian kernels.
+/// Its value type is `GeomObject` and its key type is the same as `Vpm`.
+/// `GeomObject` must be a geometric object from a \cgal kernel.
+/// `Vpm` is a model `of ReadWritePropertyMap` and its value type must be
+/// a geometric object of the same type as `GeomObject` but possibly from
+/// another kernel.
+/// Conversions between the two geometric objects are done using `Cartesian_converter`.
+/// \cgalModels `ReadWritePropertyMap`
+template<class GeomObject, class Vpm>
+struct Cartesian_converter_property_map
+{
+  typedef typename boost::property_traits<Vpm>::key_type key_type;
+  typedef GeomObject value_type;
+  typedef value_type reference;
+  typedef boost::read_write_property_map_tag category;
+  Vpm vpm;
+
+  typedef typename Kernel_traits<GeomObject>::type K2;
+  typedef typename Kernel_traits<typename boost::property_traits<Vpm>::value_type>::type K1;
+
+  Cartesian_converter_property_map(Vpm vpm):vpm(vpm){}
+
+  friend value_type get(const Cartesian_converter_property_map<GeomObject, Vpm>& pm, const key_type& k)
+  {
+    return
+     CGAL::Cartesian_converter<K1, K2>()(get(pm.vpm, k));
+  }
+
+  friend void put(Cartesian_converter_property_map<GeomObject, Vpm>& pm, const key_type& k, const value_type& v)
+  {
+    put(pm.vpm, k, CGAL::Cartesian_converter<K2, K1>()(v));
+  }
+};
+
+/// \ingroup PkgProperty_map
+/// returns `Cartesian_converter_property_map<GeomObject, Vpm>(vpm)`
+template<class GeomObject, class Vpm>
+Cartesian_converter_property_map<GeomObject, Vpm>
+make_cartesian_converter_property_map(Vpm vpm)
+{
+  return Cartesian_converter_property_map<GeomObject, Vpm>(vpm);
 }
 
 } // namespace CGAL

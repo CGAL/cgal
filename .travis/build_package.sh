@@ -77,7 +77,8 @@ cd $ROOT
     zsh $ROOT/Scripts/developer_scripts/test_merge_of_branch HEAD
     #test dependencies 
     cd $ROOT
-    bash Scripts/developer_scripts/cgal_check_dependencies.sh /usr/bin/doxygen
+    bash Scripts/developer_scripts/cgal_check_dependencies.sh --check_headers /usr/bin/doxygen
+
     cd .travis
   	#parse current matrix and check that no package has been forgotten
 

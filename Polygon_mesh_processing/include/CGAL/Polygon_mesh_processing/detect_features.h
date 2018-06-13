@@ -252,7 +252,7 @@ template<typename GT,
  * or from the geometric traits class deduced from the point property map
  * of `PolygonMesh`.
  * \tparam EdgeIsFeatureMap a model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
- *  as key type and `bool` as value type. It should be default constructible.
+ *  as key type and `bool` as value type. It must be default constructible.
  * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * \param pmesh the polygon mesh
@@ -380,7 +380,7 @@ namespace internal
  * computing a
  * surface patch id for each face.
  *
- * A property map for `CGAL::face_index_t`should be either available
+ * A property map for `CGAL::face_index_t` must be either available
  * as an internal property map to `pmesh` or provided as one of the Named Parameters.
  *
  * \tparam PolygonMesh a model of `FaceGraph`
