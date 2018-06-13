@@ -50,15 +50,16 @@ public:
 
   //Constructor
   FacetTriangulator(typename boost::graph_traits<Mesh>::face_descriptor fd,
-                  const Vector& normal,
+                    const Vector& normal,
                     Mesh *poly,
-                  const double item_diag)
+                    const double item_diag,
+                    Vector offset = Vector(0,0,0))
   {
     std::vector<PointAndId> idPoints;
     BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fd, *poly), *poly))
     {
       PointAndId idPoint;
-      idPoint.point = get(boost::vertex_point,*poly,source(he_circ, *poly));
+      idPoint.point = get(boost::vertex_point,*poly,source(he_circ, *poly))+offset;
       idPoint.id = source(he_circ, *poly);
       idPoints.push_back(idPoint);
 
@@ -70,13 +71,14 @@ public:
                     const std::vector<typename Kernel::Point_3>& more_points,
                     const Vector& normal,
                     Mesh *poly,
-                    const double item_diag)
+                    const double item_diag,
+                    Vector offset = Vector(0,0,0))
   {
    std::vector<PointAndId> idPoints;
    BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fd, *poly), *poly))
    {
     PointAndId idPoint;
-    idPoint.point = get(boost::vertex_point,*poly,source(he_circ, *poly));
+    idPoint.point = get(boost::vertex_point,*poly,source(he_circ, *poly))+offset;
     idPoint.id = source(he_circ, *poly);
     idPoints.push_back(idPoint);
 

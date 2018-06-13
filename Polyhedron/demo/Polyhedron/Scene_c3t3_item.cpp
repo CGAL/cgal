@@ -18,8 +18,8 @@
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Real_timer.h>
 
-#include <QGLViewer/manipulatedFrame.h>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/manipulatedFrame.h>
+#include <CGAL/Qt/qglviewer.h>
 
 #include <boost/function_output_iterator.hpp>
 #include <boost/foreach.hpp>
@@ -170,7 +170,7 @@ public :
   void addTriangle(const Tr::Bare_point& pa, const Tr::Bare_point& pb,
                    const Tr::Bare_point& pc, const CGAL::Color color)
   {
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     Geom_traits::Vector_3 n = cross_product(pb - pa, pc - pa);
     n = n / CGAL::sqrt(n*n);
 
@@ -260,7 +260,7 @@ private:
 
 
 struct Scene_c3t3_item_priv {
-  typedef qglviewer::ManipulatedFrame ManipulatedFrame;
+  typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
   Scene_c3t3_item_priv(Scene_c3t3_item* item)
     : item(item), c3t3()
     , frame(new ManipulatedFrame())
@@ -436,7 +436,7 @@ struct Scene_c3t3_item_priv {
   Scene_c3t3_item* item;
   C3t3 c3t3;
   bool is_grid_shown;
-  qglviewer::ManipulatedFrame* frame;
+  CGAL::qglviewer::ManipulatedFrame* frame;
   bool need_changed;
   mutable bool are_intersection_buffers_filled;
   Scene_spheres_item *spheres;
@@ -790,9 +790,11 @@ Scene_c3t3_item::build_histogram()
 
 
   // draw min value and max value
-  const int min_tr_width = static_cast<int>(2 * (std::floor(min_value)*cell_width + left_margin));
-  const int max_tr_width = static_cast<int>(
-    2 * ((histo_data.size() - std::floor(max_value))*cell_width + left_margin));
+  const int min_tr_width =
+    static_cast<int>(2 * (std::floor(min_value)*cell_width + left_margin));
+  const int max_tr_width =
+    static_cast<int>(2 * ((double(histo_data.size()) -
+                           std::floor(max_value))*cell_width + left_margin));
   const int tr_y = drawing_height + top_margin + text_margin;
 
   painter.setPen(get_histogram_color(min_value));
@@ -828,30 +830,30 @@ Scene_c3t3_item_priv::compute_color_map(const QColor& c)
   typedef Indices::size_type size_type;
 
   const size_type nb_domains = subdomain_indices_.size();
-  size_type i = 0;
+  double i = 0;
   for (Indices::iterator it = subdomain_indices_.begin(),
-         end = subdomain_indices_.end(); it != end; ++it, ++i)
+         end = subdomain_indices_.end(); it != end; ++it, i += 1.)
   {
-    double hue = c.hueF() + 1. / nb_domains * i;
+    double hue = c.hueF() + 1. / double(nb_domains) * i;
     if (hue > 1) { hue -= 1.; }
     colors_subdomains[*it] = QColor::fromHsvF(hue, c.saturationF(), c.valueF());
   }
   const size_type nb_patch_indices = surface_patch_indices_.size();
   i = 0;
   for (Indices::iterator it = surface_patch_indices_.begin(),
-         end = surface_patch_indices_.end(); it != end; ++it, ++i)
+         end = surface_patch_indices_.end(); it != end; ++it, i += 1.)
   {
-    double hue = c.hueF() + 1. / nb_patch_indices * i;
+    double hue = c.hueF() + 1. / double(nb_patch_indices) * i;
     if (hue > 1) { hue -= 1.; }
     colors[*it] = QColor::fromHsvF(hue, c.saturationF(), c.valueF());
   }
 }
 
-Geom_traits::Plane_3 Scene_c3t3_item::plane(qglviewer::Vec offset) const
+Geom_traits::Plane_3 Scene_c3t3_item::plane(CGAL::qglviewer::Vec offset) const
 {
-  const qglviewer::Vec& pos = d->frame->position() - offset;
-  const qglviewer::Vec& n =
-    d->frame->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
+  const CGAL::qglviewer::Vec& pos = d->frame->position() - offset;
+  const CGAL::qglviewer::Vec& n =
+    d->frame->inverseTransformOf(CGAL::qglviewer::Vec(0.f, 0.f, 1.f));
   return Geom_traits::Plane_3(n[0], n[1], n[2], -n * pos);
 }
 
@@ -1074,7 +1076,7 @@ void Scene_c3t3_item_priv::draw_triangle(const Tr::Bare_point& pa,
 #undef darker
   Geom_traits::Vector_3 n = cross_product(pb - pa, pc - pa);
   n = n / CGAL::sqrt(n*n);
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
   for (int i = 0; i<3; i++)
   {
@@ -1109,7 +1111,7 @@ void Scene_c3t3_item_priv::draw_triangle_edges(const Tr::Bare_point& pa,
                                                const Tr::Bare_point& pc) const
 {
 #undef darker
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   positions_lines.push_back(pa.x()+offset.x);
   positions_lines.push_back(pa.y()+offset.y);
   positions_lines.push_back(pa.z()+offset.z);
@@ -1140,7 +1142,7 @@ void Scene_c3t3_item_priv::draw_triangle_edges_cnc(const Tr::Bare_point& pa,
                                                    const Tr::Bare_point& pc) const
 {
 #undef darker
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   positions_lines_not_in_complex.push_back(pa.x()+offset.x);
   positions_lines_not_in_complex.push_back(pa.y()+offset.y);
   positions_lines_not_in_complex.push_back(pa.z()+offset.z);
@@ -1422,6 +1424,7 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
   Geom_traits::Construct_point_3 wp2p
     = c3t3.triangulation().geom_traits().construct_point_3_object();
 
+  typedef unsigned char UC;
   Tr::Cell_handle ch = facet.id().first;
   if(intersected_cells.find(ch) == intersected_cells.end())
   {
@@ -1432,7 +1435,7 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
     const Tr::Bare_point& pc = wp2p(ch->vertex(2)->point());
     const Tr::Bare_point& pd = wp2p(ch->vertex(3)->point());
 
-    CGAL::Color color(c.red(), c.green(), c.blue());
+    CGAL::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
 
     intersection->addTriangle(pb, pa, pc, color);
     intersection->addTriangle(pa, pb, pd, color);
@@ -1452,7 +1455,7 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
 
         QColor c = this->colors_subdomains[nh->subdomain_index()].light(50);
 
-        CGAL::Color color(c.red(), c.green(), c.blue());
+        CGAL::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
 
         intersection->addTriangle(pb, pa, pc, color);
         intersection->addTriangle(pa, pb, pd, color);
@@ -1479,7 +1482,7 @@ struct ComputeIntersection {
 
 void Scene_c3t3_item_priv::computeIntersections()
 {
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   if(!is_aabb_tree_built) fill_aabb_tree();
 
   positions_poly.clear();
@@ -1540,13 +1543,14 @@ void Scene_c3t3_item_priv::computeSpheres()
       c.setRgb(50,50,50,255);
     }
 
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     Tr::Bare_point center(wp2p(vit->point()).x() + offset.x,
                           wp2p(vit->point()).y() + offset.y,
                           wp2p(vit->point()).z() + offset.z);
     float radius = vit->point().weight() ;
+    typedef unsigned char UC;
     spheres->add_sphere(Geom_traits::Sphere_3(center, radius),
-                        CGAL::Color(c.red(), c.green(), c.blue()));
+                        CGAL::Color(UC(c.red()), UC(c.green()), UC(c.blue())));
   }
   spheres->invalidateOpenGLBuffers();
 }
@@ -1568,7 +1572,7 @@ void Scene_c3t3_item_priv::computeElements()
 
     float x = (2 * (float)complex_diag()) / 10.0;
     float y = (2 * (float)complex_diag()) / 10.0;
-    for (int u = 0; u < 11; u++)
+    for (float u = 0; u < 11; u += 1.f)
     {
 
       positions_grid.push_back(-(float)complex_diag() + x* u);
@@ -1579,7 +1583,7 @@ void Scene_c3t3_item_priv::computeElements()
       positions_grid.push_back((float)complex_diag());
       positions_grid.push_back(0.0);
     }
-    for (int v = 0; v<11; v++)
+    for (float v = 0; v<11; v += 1.f)
     {
 
       positions_grid.push_back(-(float)complex_diag());
@@ -1654,7 +1658,7 @@ bool Scene_c3t3_item::load_binary(std::istream& is)
 {
   if(!CGAL::Mesh_3::load_binary_file(is, c3t3())) return false;
   if(is && d->frame == 0) {
-    d->frame = new qglviewer::ManipulatedFrame();
+    d->frame = new CGAL::qglviewer::ManipulatedFrame();
   }
   d->reset_cut_plane();
   if(is.good()) {
@@ -1672,8 +1676,8 @@ Scene_c3t3_item_priv::reset_cut_plane() {
   const float xcenter = static_cast<float>((bbox.xmax()+bbox.xmin())/2.);
   const float ycenter = static_cast<float>((bbox.ymax()+bbox.ymin())/2.);
   const float zcenter = static_cast<float>((bbox.zmax()+bbox.zmin())/2.);
- const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
- qglviewer::Vec center(xcenter+offset.x, ycenter+offset.y, zcenter+offset.z);
+ const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+ CGAL::qglviewer::Vec center(xcenter+offset.x, ycenter+offset.y, zcenter+offset.z);
   frame->setPosition(center);
 }
 
@@ -1774,7 +1778,7 @@ CGAL::Three::Scene_item::ManipulatedFrame* Scene_c3t3_item::manipulatedFrame() {
 }
 
 void Scene_c3t3_item::setPosition(float x, float y, float z) {
-   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+   const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   d->frame->setPosition(x+offset.x, y+offset.y, z+offset.z);
 }
 
@@ -1795,7 +1799,7 @@ void Scene_c3t3_item::copyProperties(Scene_item *item)
   Scene_c3t3_item* c3t3_item = qobject_cast<Scene_c3t3_item*>(item);
   if(!c3t3_item)
     return;
-   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+   const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   d->frame->setPositionAndOrientation(c3t3_item->manipulatedFrame()->position() - offset,
                                       c3t3_item->manipulatedFrame()->orientation());
 
@@ -1818,7 +1822,7 @@ void Scene_c3t3_item::set_valid(bool b)
 }
 float Scene_c3t3_item::getShrinkFactor() const
 {
- return d->tet_Slider->value()/100.0f;
+  return float(d->tet_Slider->value())/100.0f;
 }
 bool Scene_c3t3_item::keyPressEvent(QKeyEvent *event)
 {
@@ -2072,7 +2076,7 @@ void Scene_c3t3_item::itemAboutToBeDestroyed(Scene_item *item)
     d->tree.clear();
     if(d->frame)
     {
-      static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->setManipulatedFrame(0);
+      static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->setManipulatedFrame(0);
       delete d->frame;
       d->frame = NULL;
       delete d->tet_Slider;

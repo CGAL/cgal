@@ -272,7 +272,7 @@ void test_read(const Graph& g)
   std::map<g_face_descriptor, std::size_t> map;
   CGAL::Polygon_mesh_processing::connected_components(g, boost::make_assoc_property_map(map), CGAL::Polygon_mesh_processing::parameters::all_default());
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
-  assert(CGAL::is_valid(fg));
+  assert(CGAL::is_valid_polygon_mesh(fg));
 }
 
 template <typename Graph>
@@ -357,7 +357,7 @@ void test_mesh(Adapter fga)
 
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   //check that there is the right number of simplices in fga
-  CGAL_assertion(CGAL::is_valid(fga));
+  CGAL_assertion(CGAL::is_valid_polygon_mesh(fga));
   CGAL_assertion(num_faces(fga) == 2);
   CGAL_assertion(num_edges(fga) == 5);
   CGAL_assertion(num_halfedges(fga) == 10);

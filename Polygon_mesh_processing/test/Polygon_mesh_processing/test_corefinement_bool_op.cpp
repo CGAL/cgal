@@ -7,7 +7,6 @@
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <iostream>
 #include <vector>

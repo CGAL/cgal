@@ -6,7 +6,7 @@
 #include "Scene_implicit_function_item_config.h"
 #include "implicit_functions/Implicit_function_interface.h"
 #include "Color_ramp.h"
-#include <QGLViewer/manipulatedFrame.h>
+#include <CGAL/Qt/manipulatedFrame.h>
 #include <Viewer.h>
 
 #define SCENE_IMPLICIT_GRID_SIZE 120
@@ -42,7 +42,7 @@ class SCENE_IMPLICIT_FUNCTION_ITEM_EXPORT Scene_implicit_function_item
 {
   Q_OBJECT
   
-  typedef qglviewer::ManipulatedFrame ManipulatedFrame;
+  typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
   
 public:
   Scene_implicit_function_item(Implicit_function_interface*);

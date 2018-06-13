@@ -61,7 +61,7 @@ public:
   /*!
   introduces a weighted point with coordinates `x`, `y`, `z` and weight `0`.
   */
-  Weighted_point_3(const Kernel::FT& x, const Kernel::FT& y, const Kernel::FT& Z);
+  Weighted_point_3(const Kernel::FT& x, const Kernel::FT& y, const Kernel::FT& z);
 
   /// @}
 

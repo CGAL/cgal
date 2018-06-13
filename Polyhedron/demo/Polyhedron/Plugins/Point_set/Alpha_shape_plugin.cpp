@@ -278,7 +278,7 @@ Scene_alpha_shape_item::Scene_alpha_shape_item(Scene_points_with_normal_item *po
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   _bbox = point_set_item->bbox();
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   vertices.reserve(point_set.size() * 3);
   CGAL::Timer timer;
   timer.start();

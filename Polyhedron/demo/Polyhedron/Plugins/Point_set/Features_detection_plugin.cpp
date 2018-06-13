@@ -1,3 +1,4 @@
+#include <QAction>
 #include <QApplication>
 #include <QMessageBox>
 #include <QMainWindow>

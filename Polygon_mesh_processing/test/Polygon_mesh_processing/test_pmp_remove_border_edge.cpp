@@ -1,8 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <fstream>
@@ -32,7 +30,7 @@ void test_middle_edge()
   CGAL_assertion( h!=GT::null_halfedge() );
   CGAL::Polygon_mesh_processing::remove_a_border_edge(edge(h,tm), tm);
   
-  CGAL_assertion(is_valid(tm));
+  CGAL_assertion(is_valid_polygon_mesh(tm));
   CGAL_assertion(is_triangle_mesh(tm));
   std::ofstream out("edge_middle_out.off");
   out << tm;
@@ -58,7 +56,7 @@ void test_edge_border_case1()
   CGAL_assertion( h!=GT::null_halfedge() );
   CGAL::Polygon_mesh_processing::remove_a_border_edge(edge(h,tm), tm);
   
-  CGAL_assertion(is_valid(tm));
+  CGAL_assertion(is_valid_polygon_mesh(tm));
   CGAL_assertion(is_triangle_mesh(tm));
   std::ofstream out("edge_border_case1_out.off");
   out << tm;
@@ -84,7 +82,7 @@ void test_edge_border_case2()
   CGAL_assertion( h!=GT::null_halfedge() );
   CGAL::Polygon_mesh_processing::remove_a_border_edge(edge(h,tm), tm);
   
-  CGAL_assertion(is_valid(tm));
+  CGAL_assertion(is_valid_polygon_mesh(tm));
   CGAL_assertion(is_triangle_mesh(tm));
   std::ofstream out("edge_border_case2_out.off");
   out << tm;

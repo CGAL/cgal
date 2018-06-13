@@ -17,7 +17,6 @@ using namespace std;
 
 void Viewer::init()
 {
-    initializeOpenGLFunctions();
     glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
     if(!glDrawArraysInstanced)
     {
@@ -44,7 +43,7 @@ void Viewer::init()
     /* Scene inits */
     setBackgroundColor(::Qt::white);
     // scene are defined by a sphere of 2.0, camera at the center, i.e. (0, 0, 0)
-    setSceneCenter( qglviewer::Vec(-0.,-0.,-0.) );
+    setSceneCenter( CGAL::qglviewer::Vec(-0.,-0.,-0.) );
     setSceneRadius( 2. );
     // show text message
     setTextIsEnabled(true);
@@ -89,7 +88,7 @@ void Viewer::init()
                        tr("Cancel insertion in <u>Input-Point</u> mode;<br>")
                        + tr("Cancel current selection in <u>Select</u> mode") );
     setKeyDescription( Qt::Key_Delete, tr("Delete selected vertices in <u>Select</u> mode") );
-#if QGLVIEWER_VERSION >= 0x020500
+
     setMouseBindingDescription(Qt::NoModifier, Qt::LeftButton,
                                tr("Hold to move new point in <u>Input-Point</u> mode;<br>")
                                + tr("Hold to move a vertex in <u>Move</u> mode") );
@@ -101,19 +100,7 @@ void Viewer::init()
                                + tr("Click to place a query point in <u>Show-Empty-Sphere</u> mode") );
     setMouseBindingDescription(Qt::ControlModifier, Qt::LeftButton,
                                tr("Drag to add vertices to current selection in <u>Select</u> mode") );
-#else
-    setMouseBindingDescription( Qt::LeftButton,
-                                tr("Hold to move new point in <u>Input-Point</u> mode;<br>")
-                                + tr("Hold to move a vertex in <u>Move</u> mode") );
-    setMouseBindingDescription( Qt::SHIFT + Qt::LeftButton,
-                                tr("Click to insert a vertex in <u>Input-Vertex</u> mode;<br>")
-                                + tr("Click to insert a point in <u>Input-Point</u> mode;<br>")
-                                + tr("Click or Drag to select multiple points in <u>Select</u> mode;<br>")
-                                + tr("Click to place a query point in <u>Find-Nearest-Neighbor</u> mode;<br>")
-                                + tr("Click to place a query point in <u>Show-Empty-Sphere</u> mode") );
-    setMouseBindingDescription( Qt::CTRL + Qt::LeftButton,
-                                tr("Drag to add vertices to current selection in <u>Select</u> mode") );
-#endif
+
     compile_shaders();
     are_buffers_initialized = false;
 }
@@ -397,7 +384,7 @@ void Viewer::compute_elements()
         // normalize
         v = v / length;
         // compute the angle: cos theta = v.z/1.0
-        GLfloat angle = acos( v.y() ) / M_PI * 180;
+        GLfloat angle = acos( v.y() ) / CGAL_PI * 180;
         QMatrix4x4 matrix;
         matrix.setToIdentity();
         // move to "from" point
@@ -428,7 +415,7 @@ void Viewer::compute_elements()
             // normalize
             v = v / length;
             // compute the angle: cos theta = v.z/1.0
-            GLfloat angle = acos( v.y() ) / M_PI * 180;
+            GLfloat angle = acos( v.y() ) / CGAL_PI * 180;
             QMatrix4x4 matrix;
             matrix.setToIdentity();
             // move to "from" point
@@ -455,7 +442,7 @@ void Viewer::compute_elements()
             // normalize
             v = v / length;
             // compute the angle: cos theta = v.z/1.0
-            GLfloat angle = acos( v.y() ) / M_PI * 180;
+            GLfloat angle = acos( v.y() ) / CGAL_PI * 180;
             QMatrix4x4 matrix;
             matrix.setToIdentity();
             // move to "from" point
@@ -1105,7 +1092,7 @@ void Viewer::initialize_buffers()
     are_buffers_initialized = true;
 }
 
-void Viewer::attrib_buffers(QGLViewer* viewer)
+void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
 {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -1621,10 +1608,13 @@ void Viewer::draw()
         rendering_program_spheres.bind();
         vao[11].bind();
         rendering_program_spheres.setUniformValue(colorLocation[1], m_colorTrackball);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         if(extension_is_found)
             glDrawArraysInstanced(GL_TRIANGLES, 0, points_trackBall->size()/3, 1);
         else
             glDrawArrays(GL_TRIANGLES, 0, points_trackBall->size()/3);
+        glDisable(GL_BLEND);
         vao[11].release();
         rendering_program_spheres.release();
     }
@@ -1800,16 +1790,11 @@ void Viewer::mousePressEvent(QMouseEvent *event)
                 // redraw window
             {  changed();
 
-#if QGLVIEWER_VERSION >= 0x020700
               update();
-#else
-              updateGL();
-
-#endif
             }
             else
                 // if no point is selected, then regular action (rotation) will be performed
-                QGLViewer::mousePressEvent(event);
+                CGAL::QGLViewer::mousePressEvent(event);
         }//end-if-shift
     }//end-if-inspt
 
@@ -1822,12 +1807,7 @@ void Viewer::mousePressEvent(QMouseEvent *event)
             // initialize multiple selection window
             m_rectSel = QRect( event->pos(), event->pos() );
             // redraw window
-#if QGLVIEWER_VERSION >= 0x020700
             update();
-#else
-            updateGL();
-
-#endif
             break;
         case Qt::CTRL : // add selection
             m_isPress = true;
@@ -1835,15 +1815,10 @@ void Viewer::mousePressEvent(QMouseEvent *event)
             // initialize multiple selection window
             m_rectSel = QRect( event->pos(), event->pos() );
             // redraw window
-#if QGLVIEWER_VERSION >= 0x020700
               update();
-#else
-              updateGL();
-
-#endif
             break;
         default: // rotate
-            QGLViewer::mousePressEvent(event);
+            CGAL::QGLViewer::mousePressEvent(event);
             break;
         }
     }//end-if-select
@@ -1857,15 +1832,10 @@ void Viewer::mousePressEvent(QMouseEvent *event)
         select( event->pos() );
         if( m_isMoving ) // redraw window
         {  changed();
-#if QGLVIEWER_VERSION >= 0x020700
               update();
-#else
-              updateGL();
-
-#endif
         }
         else // if no point is selected, then regular action (rotation) will be performed
-            QGLViewer::mousePressEvent(event);
+            CGAL::QGLViewer::mousePressEvent(event);
     }//end-if-move
 
     else if( m_curMode == FINDNB
@@ -1886,7 +1856,7 @@ void Viewer::mousePressEvent(QMouseEvent *event)
     }//end-if-emptyS
 
     else
-        QGLViewer::mousePressEvent(event);
+        CGAL::QGLViewer::mousePressEvent(event);
 
 }
 
@@ -1900,12 +1870,7 @@ void Viewer::mouseMoveEvent(QMouseEvent *event)
             computeConflict( m_newPt );
             // redraw
             changed();
-#if QGLVIEWER_VERSION >= 0x020700
               update();
-#else
-              updateGL();
-
-#endif
         }//end-if-compute
     }//end-if-inspt
 
@@ -1943,7 +1908,7 @@ void Viewer::mouseMoveEvent(QMouseEvent *event)
     }//end-if-move
 
     else
-        QGLViewer::mouseMoveEvent(event);
+        CGAL::QGLViewer::mouseMoveEvent(event);
 }
 
 void Viewer::mouseReleaseEvent(QMouseEvent *event)
@@ -1958,12 +1923,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
               update();
-#else
-              updateGL();
-
-#endif
     }//end-if-ins
 
     /* INS_PT mode - Shift+Left: compute and insert a point */
@@ -1979,12 +1939,8 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
+        update();
 
-#endif
     }//end-if-inspt
 
     /* INS_PT mode - Left: compute and insert a point */
@@ -1999,12 +1955,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-inspt
 
     /* SEL mode - Left: terminate multiple point selection */
@@ -2047,12 +1998,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 
         // update display to show
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-select
 
     /* MOVE mode - Left: terminate point moving */
@@ -2080,13 +2026,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
-
+        update();
     }//end-if-move
 
     /* FindNb mode - Shift+Left: find the nearest neighbor of the point */
@@ -2100,12 +2040,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-findnb
 
     /* EmptySphere mode - Shift+Left: show the empty sphere of the cell */
@@ -2131,16 +2066,11 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
         }//end-if-compute
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-emptysphere
 
     else
-        QGLViewer::mouseReleaseEvent(event);
+        CGAL::QGLViewer::mouseReleaseEvent(event);
 
 }
 
@@ -2161,12 +2091,7 @@ void Viewer::wheelEvent(QWheelEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-insv
 
     else if( m_curMode == INSERT_PT && modifiers == Qt::SHIFT ) {
@@ -2188,12 +2113,7 @@ void Viewer::wheelEvent(QWheelEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-inspt
 
     // resize the trackball when moving a point
@@ -2224,16 +2144,11 @@ void Viewer::wheelEvent(QWheelEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-move
 
     else
-        QGLViewer::wheelEvent(event);
+        CGAL::QGLViewer::wheelEvent(event);
 }
 
 void Viewer::keyPressEvent(QKeyEvent *event)
@@ -2266,12 +2181,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-insVertex
 
     /* Cancel the newly inserted point and its conflict region */
@@ -2284,12 +2194,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-escapeIns
 
     /* Delete selected points */
@@ -2307,12 +2212,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-del
 
     /* Cancel the selection */
@@ -2326,12 +2226,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-escapeSel
 
 
@@ -2341,26 +2236,16 @@ void Viewer::keyPressEvent(QKeyEvent *event)
         m_showTrackball = !m_showTrackball;
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-showBall
 
     else
-        QGLViewer::keyPressEvent(event);
+        CGAL::QGLViewer::keyPressEvent(event);
 
 
     // redraw
     changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+    update();
 }
 
 /*************************************************************/
@@ -2442,12 +2327,7 @@ void Viewer::toggleIncremental(bool on) {
 
     // redraw
     changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+    update();
 }
 
 void Viewer::stopIncremental() {
@@ -2472,12 +2352,7 @@ void Viewer::stopIncremental() {
 
     // redraw
     changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+    update();
 }
 
 void Viewer::incremental_insert() {
@@ -2537,12 +2412,7 @@ void Viewer::incremental_insert() {
 
     // redraw
     changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+    update();
 }
 
 
@@ -2570,8 +2440,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
 
 
 
-        P = rings*M_PI/180.0;
-        T = t*M_PI/180.0;
+        P = rings*CGAL_PI/180.0;
+        T = t*CGAL_PI/180.0;
         x[1] = sin(P) * cos(T) ;
         z[1] = sin(P) * sin(T) ;
         y[1] = cos(P);
@@ -2585,8 +2455,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
         normals->push_back(z[1]);
 
         //
-        P = rings*M_PI/180.0;
-        T = (t+sectors)*M_PI/180.0;
+        P = rings*CGAL_PI/180.0;
+        T = (t+sectors)*CGAL_PI/180.0;
         x[2] = sin(P) * cos(T) ;
         z[2] = sin(P) * sin(T) ;
         y[2] = cos(P);
@@ -2604,8 +2474,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
         for(int t=0; t<360; t+=sectors)
         {
             //A
-            P = p*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = p*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[0] = sin(P) * cos(T) ;
             z[0] = sin(P) * sin(T) ;
             y[0] = cos(P);
@@ -2620,8 +2490,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
             normals->push_back(z[0]);
 
             //B
-            P = (p+rings)*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = (p+rings)*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[1] = sin(P) * cos(T) ;
             z[1] = sin(P) * sin(T) ;
             y[1] = cos(P);
@@ -2635,8 +2505,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
             normals->push_back(z[1]);
 
             //C
-            P = p*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = p*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[2] = sin(P) * cos(T) ;
             z[2] = sin(P) * sin(T) ;
             y[2] = cos(P);
@@ -2649,8 +2519,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
             normals->push_back(y[2]);
             normals->push_back(z[2]);
             //D
-            P = (p+rings)*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = (p+rings)*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[3] = sin(P) * cos(T) ;
             z[3] = sin(P) * sin(T) ;
             y[3] = cos(P);
@@ -2691,7 +2561,7 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
     {
 
         //point A1
-        float D = d*M_PI/180.0;
+        float D = d*CGAL_PI/180.0;
         vertices->push_back(R * sin(D));
         vertices->push_back(0);
         vertices->push_back(R * cos(D));
@@ -2710,7 +2580,7 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
         normals->push_back(cos(D));
 
         //point C1
-        D = (d+360/prec)*M_PI/180.0;
+        D = (d+360/prec)*CGAL_PI/180.0;
         vertices->push_back(R * sin(D));
         vertices->push_back(1);
         vertices->push_back(R * cos(D));
@@ -2720,7 +2590,7 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
         normals->push_back(cos(D));
 
         //point A2
-        D = (d+360/prec)*M_PI/180.0;
+        D = (d+360/prec)*CGAL_PI/180.0;
         vertices->push_back(R * sin(D));
         vertices->push_back(1);
         vertices->push_back(R * cos(D));
@@ -2739,7 +2609,7 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
         normals->push_back(cos(D));
 
         //point C2
-        D = d*M_PI/180.0;
+        D = d*CGAL_PI/180.0;
         vertices->push_back(R * sin(D));
         vertices->push_back(0);
         vertices->push_back(R * cos(D));
@@ -2765,8 +2635,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
 
 
 
-           P = rings*M_PI/180.0;
-           T = t*M_PI/180.0;
+           P = rings*CGAL_PI/180.0;
+           T = t*CGAL_PI/180.0;
            x[1] = sin(P) * cos(T) ;
            z[1] = sin(P) * sin(T) ;
            y[1] = cos(P);
@@ -2780,8 +2650,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
            normals->push_back(z[1]);
 
            //
-           P = rings*M_PI/180.0;
-           T = (t+sectors)*M_PI/180.0;
+           P = rings*CGAL_PI/180.0;
+           T = (t+sectors)*CGAL_PI/180.0;
            x[2] = sin(P) * cos(T) ;
            z[2] = sin(P) * sin(T) ;
            y[2] = cos(P);
@@ -2799,8 +2669,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
            for(int t=0; t<360; t+=sectors)
            {
                //A
-               P = p*M_PI/180.0;
-               T = t*M_PI/180.0;
+               P = p*CGAL_PI/180.0;
+               T = t*CGAL_PI/180.0;
                x[0] = sin(P) * cos(T) ;
                z[0] = sin(P) * sin(T) ;
                y[0] = cos(P);
@@ -2815,8 +2685,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
                normals->push_back(z[0]);
 
                //B
-               P = (p+rings)*M_PI/180.0;
-               T = t*M_PI/180.0;
+               P = (p+rings)*CGAL_PI/180.0;
+               T = t*CGAL_PI/180.0;
                x[1] = sin(P) * cos(T) ;
                z[1] = sin(P) * sin(T) ;
                y[1] = cos(P);
@@ -2830,8 +2700,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
                normals->push_back(z[1]);
 
                //C
-               P = p*M_PI/180.0;
-               T = (t+sectors)*M_PI/180.0;
+               P = p*CGAL_PI/180.0;
+               T = (t+sectors)*CGAL_PI/180.0;
                x[2] = sin(P) * cos(T) ;
                z[2] = sin(P) * sin(T) ;
                y[2] = cos(P);
@@ -2844,8 +2714,8 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
                normals->push_back(y[2]);
                normals->push_back(z[2]);
                //D
-               P = (p+rings)*M_PI/180.0;
-               T = (t+sectors)*M_PI/180.0;
+               P = (p+rings)*CGAL_PI/180.0;
+               T = (t+sectors)*CGAL_PI/180.0;
                x[3] = sin(P) * cos(T) ;
                z[3] = sin(P) * sin(T) ;
                y[3] = cos(P);
@@ -2907,8 +2777,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
 
 
 
-        P = rings*M_PI/180.0;
-        T = t*M_PI/180.0;
+        P = rings*CGAL_PI/180.0;
+        T = t*CGAL_PI/180.0;
         x[1] = sin(P) * cos(T) ;
         y[1] = sin(P) * sin(T) ;
         z[1] = cos(P);
@@ -2922,8 +2792,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
         normals->push_back(z[1]);
 
         //
-        P = rings*M_PI/180.0;
-        T = (t+sectors)*M_PI/180.0;
+        P = rings*CGAL_PI/180.0;
+        T = (t+sectors)*CGAL_PI/180.0;
         x[2] = sin(P) * cos(T) ;
         y[2] = sin(P) * sin(T) ;
         z[2] = cos(P);
@@ -2942,8 +2812,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
         for(int t=0; t<360; t+=sectors)
         {
             //A
-            P = p*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = p*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[0] = sin(P) * cos(T) ;
             y[0] = sin(P) * sin(T) ;
             z[0] = cos(P);
@@ -2958,8 +2828,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
             normals->push_back(z[0]);
 
             //B
-            P = (p+rings)*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = (p+rings)*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[1] = sin(P) * cos(T) ;
             y[1] = sin(P) * sin(T) ;
             z[1] = cos(P);
@@ -2973,8 +2843,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
             normals->push_back(z[1]);
 
             //C
-            P = p*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = p*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[2] = sin(P) * cos(T) ;
             y[2] = sin(P) * sin(T) ;
             z[2] = cos(P);
@@ -2987,8 +2857,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
             normals->push_back(y[2]);
             normals->push_back(z[2]);
             //D
-            P = (p+rings)*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = (p+rings)*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[3] = sin(P) * cos(T) ;
             y[3] = sin(P) * sin(T) ;
             z[3] = cos(P);
@@ -3037,8 +2907,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
         normals->push_back(-1);
 
 
-        P = (180-rings)*M_PI/180.0;
-        T = t*M_PI/180.0;
+        P = (180-rings)*CGAL_PI/180.0;
+        T = t*CGAL_PI/180.0;
         x[1] = sin(P) * cos(T) ;
         y[1] = sin(P) * sin(T) ;
         z[1] = cos(P);
@@ -3052,8 +2922,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
         normals->push_back(z[1]);
 
 
-        P = (180-rings)*M_PI/180.0;
-        T = (t+sectors)*M_PI/180.0;
+        P = (180-rings)*CGAL_PI/180.0;
+        T = (t+sectors)*CGAL_PI/180.0;
         x[2] = sin(P) * cos(T) ;
         y[2] = sin(P) * sin(T) ;
         z[2] = cos(P);

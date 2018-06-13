@@ -63,7 +63,7 @@ namespace Polygon_mesh_processing {
 *        If `0` is passed then only the edge-flip, tangential relaxation, and projection steps will be done.
 * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 *
-* @pre if constraints protection is activated, the constrained edges should
+* @pre if constraints protection is activated, the constrained edges must
 * not be longer than 4/3*`target_edge_length`
 *
 * \cgalNamedParamsBegin

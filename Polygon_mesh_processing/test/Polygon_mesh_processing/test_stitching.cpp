@@ -1,8 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 
@@ -77,7 +75,7 @@ void test_surface_mesh(const char* fname)
   CGAL::Polygon_mesh_processing::stitch_borders(m);
   //todo : add a validity test
 
-  assert(is_valid(m));
+  assert(is_valid_polygon_mesh(m));
 
   std::cout << "OK\n";
 }

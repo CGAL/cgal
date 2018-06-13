@@ -176,7 +176,7 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
                          const NamedParameters& np)
 {
   CGAL_warning(CGAL::is_closed(pmesh));
-  CGAL_precondition(CGAL::is_valid(pmesh));
+  CGAL_precondition(CGAL::is_valid_polygon_mesh(pmesh));
 
   //check for empty pmesh
   CGAL_warning(faces(pmesh).first != faces(pmesh).second);
@@ -456,7 +456,7 @@ void recursive_orient_volume_ccs( TriangleMesh& tm,
 *   \cgalParamBegin{vertex_point_map}
 *     the property map with the points associated to the vertices of `tm`.
 *     If this parameter is omitted, an internal property map for
-*     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+*     `CGAL::vertex_point_t` must be available in `TriangleMesh`
 *   \cgalParamEnd
 *   \cgalParamBegin{face_index_map}
 *     a property map containing the index of each face of `tm`.
@@ -480,7 +480,7 @@ void orient(TriangleMesh& tm, const NamedParameters& np)
       NamedParameters>::const_type Fid_map;
 
   CGAL_assertion(is_triangle_mesh(tm));
-  CGAL_assertion(is_valid(tm));
+  CGAL_assertion(is_valid_polygon_mesh(tm));
   CGAL_assertion(is_closed(tm));
 
   using boost::choose_param;
@@ -561,7 +561,7 @@ void orient(TriangleMesh& tm)
  *   \cgalParamBegin{vertex_point_map}
  *     the property map with the points associated to the vertices of `tm`.
  *     If this parameter is omitted, an internal property map for
- *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+ *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
  *   \cgalParamEnd
  *   \cgalParamBegin{face_index_map}
  *     a property map containing the index of each face of `tm`.

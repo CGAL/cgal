@@ -66,7 +66,8 @@ typedef unspecified_type Construct_sphere_3;
 
 /*!
 A functor object to compute the point on a geometric primitive which is closest from a query. Provides the operator: 
-`Point_3 operator()(const Type_2& type_2, const Point_3& p);` where `Type_2` is any type among `Segment_3` and `Triangle_3`. The operator returns the point on `type_2` which is closest to `p`. 
+`Point_3 operator()(const Type_2& type_2, const Point_3& p);` where `Type_2` can be any of the following types : `Segment_3`, `Ray_3`, or `Triangle_3`. 
+The operator returns the point on `type_2` which is closest to `p`. 
 */ 
 typedef unspecified_type Construct_projected_point_3;
 
