@@ -28,7 +28,7 @@
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Primitive_container.h>
 
-using namespace CGAL::Three;
+
 #ifdef demo_framework_EXPORTS
 #  define DEMO_FRAMEWORK_EXPORT Q_DECL_EXPORT
 #else
@@ -94,8 +94,8 @@ struct DEMO_FRAMEWORK_EXPORT Point_container :public Primitive_container
   ///@}
 
 private:
-  friend struct Point_d;
-  mutable Point_d* d;
+  friend struct ::Point_d;
+  mutable ::Point_d* d;
 }; //end of class Triangle_container
 }
 }
