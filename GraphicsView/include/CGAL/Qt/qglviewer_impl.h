@@ -215,6 +215,7 @@ void CGAL::QGLViewer::initializeGL() {
   format.setVersion(4,3);
   format.setProfile(QSurfaceFormat::CompatibilityProfile);
   format.setSamples(0);
+  format.setOption(QSurfaceFormat::DebugContext);
   context()->setFormat(format);
   bool created = context()->create();
   if(!created || context()->format().profile() != QSurfaceFormat::CompatibilityProfile) {
@@ -501,9 +502,6 @@ void CGAL::QGLViewer::postDraw() {
   if (displayMessage_)
     drawText(10, height() - 10, message_);
 
-  // Restore GL state
-  glPopAttrib();
-  glPopMatrix();
 }
 
 /*! Called before draw() (instead of preDraw()) when viewer displaysInStereo().
