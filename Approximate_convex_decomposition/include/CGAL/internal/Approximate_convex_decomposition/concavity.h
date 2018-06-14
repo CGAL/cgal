@@ -47,6 +47,9 @@ namespace internal
         , m_traits(traits)
         {}
 
+        /**
+         * Computes concavity value of a cluster of the mesh which id is specified.
+         */
         template <class FacetPropertyMap>
         double compute(FacetPropertyMap facet_ids, std::size_t cluster_id)
         {
@@ -55,37 +58,13 @@ namespace internal
             TriangleMesh cluster;
             CGAL::copy_face_graph(filtered_mesh, cluster);
 
-#ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
-            {
-                std::ofstream os("cluster_" + std::to_string(cluster_id) + ".off");
-                os << cluster;
-            }
-            {
-                TriangleMesh conv_hull;
-                std::vector<Point_3> pts;
-
-                if (CGAL::num_vertices(cluster) > 3)
-                {
-                    BOOST_FOREACH(vertex_descriptor vert, CGAL::vertices(cluster))
-                    {
-                        pts.push_back(cluster.point(vert));
-                    }
-
-                    CGAL::convex_hull_3(pts.begin(), pts.end(), conv_hull);
-                }
-                else
-                {
-                    conv_hull = cluster;
-                }
-                std::ofstream os("ch_cluster_" + std::to_string(cluster_id) + ".off");
-                os << conv_hull;
-            }
-#endif
-
             Concavity concavity(cluster, m_traits);
             return concavity.compute();
         }
 
+        /**
+         * Computes concavity value of the whole mesh.
+         */
         double compute()
         {
             CGAL_assertion(!CGAL::is_empty(m_mesh));
@@ -95,16 +74,22 @@ namespace internal
 
             if (CGAL::num_vertices(m_mesh) <= 3) return 0;
 
+            // extract the list points of the mesh
             BOOST_FOREACH(vertex_descriptor vert, vertices(m_mesh))
             {
                 pts.push_back(get(CGAL::vertex_point, m_mesh)[vert]);
             }
 
+            // compute convex hull
             CGAL::convex_hull_3(pts.begin(), pts.end(), conv_hull); 
             
             return compute(vertices(m_mesh), conv_hull);
         }
 
+        /**
+         * Constructs list of vertices from the list of faces and computes concavity value with the convex hull provided.
+         * Faces list is a subset of all faces in the mesh.
+         */
         double compute(const std::vector<face_descriptor>& faces, const TriangleMesh& conv_hull)
         {
             std::unordered_set<vertex_descriptor> pts;
@@ -120,15 +105,22 @@ namespace internal
             return compute(std::make_pair(pts.begin(), pts.end()), conv_hull);
         }
 
+        /**
+         * Computes concavity value projecting vertices from a list onto a convex hull.
+         * Vertices list a subset of all vertices in the mesh.
+         */
         template <class iterator>
         double compute(const std::pair<iterator, iterator>& verts, const TriangleMesh& conv_hull)
         {
+            // compute normals if normals are not computed
             compute_normals();
 
+            // construct AABB for fast computations of intersections between ray and convex hull
             AABB_tree tree(faces(conv_hull).begin(), faces(conv_hull).end(), conv_hull);
 
             double result = 0;
 
+            // compute intersections and select the largest segment length
             BOOST_FOREACH(vertex_descriptor vert, verts)
             {
                 Point_3 origin = get(CGAL::vertex_point, m_mesh)[vert];
@@ -157,7 +149,7 @@ namespace internal
 
         void compute_normals()
         {
-            if (m_normals_computed) return;
+            if (m_normals_computed) return; // if normals are computed, then skip
 
             CGAL::Polygon_mesh_processing::compute_vertex_normals(m_mesh, boost::associative_property_map<Normals_map>(m_normals_map));
             m_normals_computed = true;
