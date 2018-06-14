@@ -58,12 +58,12 @@ enum Approximation_seeding_tag {
 };
 
 /// \ingroup PkgTSMA
-/// @brief Main class for Variational Shape Approximation algorithm.
-/// @tparam TriangleMesh CGAL TriangleMesh
-/// @tparam VertexPointMap vertex point map
-/// @tparam ErrorMetricProxy approximation metric type
+/// @brief Main class for Variational Shape Approximation algorithm described in \cgalCite{cgal:cad-vsa-04}.
+/// @tparam TriangleMesh a model of `FaceListGraph`
+/// @tparam VertexPointMap a `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and `GeomTraits::Point_3` as value type
+/// @tparam ErrorMetricProxy a model of `ErrorMetricProxy`
 /// @tparam GeomTraits model of \cgal Kernel
-/// @tparam Concurrency_tag concurrency tag
+/// @tparam Concurrency_tag concurrency tag.
 template <typename TriangleMesh,
   typename VertexPointMap,
   typename ErrorMetricProxy = CGAL::Default,

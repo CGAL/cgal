@@ -46,7 +46,7 @@ unspecified_type all_default();
 /*!
  * \ingroup PkgTSMA
  * @brief Approximates the input mesh by fitting it with proxies.
- * This function uses the Variational Shape Approximation algorithm 
+ * This function uses the Variational Shape Approximation algorithm described in \cgalCite{cgal:cad-vsa-04}
  * to approximate a triangle surface mesh, with indexed triangles as output.
  *
  * @tparam TriangleMesh model of `FaceListGraph`.
