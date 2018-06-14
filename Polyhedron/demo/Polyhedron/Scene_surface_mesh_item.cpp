@@ -1559,11 +1559,23 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
     const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     //find clicked facet
     bool found = false;
-    const EPICK::Point_3 ray_origin(viewer->camera()->position().x - offset.x,
-                                     viewer->camera()->position().y - offset.y,
-                                     viewer->camera()->position().z - offset.z);
     CGAL::qglviewer::Vec point_under = viewer->camera()->pointUnderPixel(point,found);
-    CGAL::qglviewer::Vec dir = point_under - viewer->camera()->position();
+    EPICK::Point_3 ray_origin;
+    CGAL::qglviewer::Vec dir; 
+    if(viewer->camera()->type() == CGAL::qglviewer::Camera::PERSPECTIVE)
+    {
+      ray_origin = EPICK::Point_3(viewer->camera()->position().x - offset.x,
+                                  viewer->camera()->position().y - offset.y,
+                                  viewer->camera()->position().z - offset.z);
+      dir = point_under - viewer->camera()->position();
+    }
+    else
+    {
+      dir = viewer->camera()->viewDirection();
+      ray_origin = EPICK::Point_3(point_under.x - dir.x, 
+                                  point_under.y - dir.y,
+                                  point_under.z - dir.z);
+    }
     const EPICK::Vector_3 ray_dir(dir.x, dir.y, dir.z);
     const EPICK::Ray_3 ray(ray_origin, ray_dir);
     typedef std::list<Intersection_and_primitive_id> Intersections;
