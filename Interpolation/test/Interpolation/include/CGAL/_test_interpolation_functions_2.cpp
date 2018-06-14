@@ -561,6 +561,8 @@ void _test_interpolation_functions_2_Delaunay_with_OutputFunctor(const Dt&, cons
 template <class Rt>
 void _test_interpolation_functions_2_regular_without_OutputFunctor(const Rt&, const typename Rt::Geom_traits::FT& tolerance)
 {
+  std::cout << "Testing backward compatibility..." << std::endl;
+
   CGAL::Set_ieee_double_precision pfr;
   Rt T;
 
@@ -582,7 +584,7 @@ void _test_interpolation_functions_2_regular_without_OutputFunctor(const Rt&, co
 
   typedef std::vector<std::pair<Weighted_point, Coord_type> >  Point_coordinate_vector;
 
-  std::cout << "NN2: Testing random points." << std::endl;
+  std::cout << "RN2: Testing random points." << std::endl;
 
   // test random points in a square of length r:
   std::vector<Weighted_point> points;
@@ -782,7 +784,7 @@ void _test_interpolation_functions_2_regular_with_OutputFunctor(const Rt&, const
 
   Identity_output_functor vh_fct;
 
-  std::cout << "NN2: Testing random points." << std::endl;
+  std::cout << "RN2: Testing random points." << std::endl;
 
   // test random points in a square of length r:
   std::vector<Weighted_point> points;
