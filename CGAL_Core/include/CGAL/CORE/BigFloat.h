@@ -61,6 +61,8 @@ public:
   BigFloat(float i) : RCBigFloat(new BigFloatRep(i)) {}
   /// constructor for <tt>int</tt>
   BigFloat(int i) : RCBigFloat(new BigFloatRep(i)) {}
+  /// constructor for <tt>unsigned int</tt>
+  BigFloat(unsigned int i) : RCBigFloat(new BigFloatRep(i)) {}
   /// constructor for <tt>long</tt>
   BigFloat(long l) : RCBigFloat(new BigFloatRep(l)) {}
   /// constructor for <tt>double</tt>
