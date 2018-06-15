@@ -105,6 +105,8 @@ public:
     fixed number of neighbors.
 
     \cgalModels CGAL::Classification::NeighborQuery
+
+    \sa Point_set_neighborhood
   */
   class K_neighbor_query
   {
@@ -138,6 +140,8 @@ public:
     input point.
 
     \cgalModels CGAL::Classification::NeighborQuery
+
+    \sa Point_set_neighborhood
   */
   class Sphere_neighbor_query
   {

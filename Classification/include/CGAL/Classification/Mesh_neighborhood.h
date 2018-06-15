@@ -87,6 +87,8 @@ public:
     Functor that computes the 1-ring neighborhood of the face of an input mesh.
 
     \cgalModels CGAL::Classification::NeighborQuery
+
+    \sa Mesh_neighborhood
   */
   class One_ring_neighbor_query
   {
@@ -118,6 +120,8 @@ public:
     Functor that computes the N-ring neighborhood of the face of an input mesh.
 
     \cgalModels CGAL::Classification::NeighborQuery
+
+    \sa Mesh_neighborhood
   */
   class N_ring_neighbor_query
   {
