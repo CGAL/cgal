@@ -36,6 +36,8 @@
 #include <CGAL/Random.h>
 #include <CGAL/squared_distance_2.h>
 
+#include <boost/utility/result_of.hpp>
+
 #include <iostream>
 #include <cassert>
 #include <utility>
@@ -47,6 +49,8 @@ struct Extract_point
   typedef typename Traits::Point_2              Point_2;
   typedef typename Traits::Weighted_point_2     Weighted_point_2;
 
+  typedef typename Traits::Construct_point_2    Construct_point_2;
+
   Extract_point(const Traits& traits = Traits()) : traits(traits) {}
 
   const Point_2& operator()(const Point_2& p) const { return p; }
@@ -56,7 +60,8 @@ struct Extract_point
   }
 
   template <typename VH>
-  const Point_2& operator()(const VH& vh) const {
+  typename boost::result_of<const Construct_point_2(const Point_2&)>::type
+  operator()(const VH& vh) const {
     return traits.construct_point_2_object()(vh->point());
   }
 
