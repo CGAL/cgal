@@ -48,7 +48,7 @@ class Eigenvalue : public Feature_base
 protected:
 
   const Classification::Local_eigen_analysis& eigen;
-  std::size_t m_idx;
+  unsigned int m_idx;
   
 public:
 
@@ -64,7 +64,7 @@ public:
   template <typename InputRange>
   Eigenvalue (const InputRange& input,
               const Classification::Local_eigen_analysis& eigen,
-              std::size_t idx)
+              unsigned int idx)
     : eigen (eigen), m_idx (idx)
   {
     CGAL_USE(input);
@@ -76,7 +76,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   virtual float value (std::size_t pt_index)
   {
-    return eigen.eigenvalue(pt_index)[m_idx];
+    return eigen.eigenvalue(pt_index)[std::size_t(m_idx)];
   }
   /// \endcond
 
