@@ -232,8 +232,8 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
                              // of the value functor is 'DT::Point' or 'DT::Vertex_handle'
                              typename boost::enable_if_c<
                                boost::is_constructible<
-                               cpp11::function<boost::any(typename Dt::Point)>,
-                               ValueFunctor
+                                 cpp11::function<boost::any(typename Dt::Point)>,
+                                 ValueFunctor
                              >::value>::type* = NULL)
 {
   typedef typename Traits::FT                                        FT;
@@ -258,8 +258,8 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
                              const Traits& traits,
                              typename boost::enable_if_c<
                                boost::is_constructible<
-                               cpp11::function<boost::any(typename Dt::Vertex_handle)>,
-                               ValueFunctor
+                                 cpp11::function<boost::any(typename Dt::Vertex_handle)>,
+                                 ValueFunctor
                              >::value>::type* = NULL)
 {
   typedef typename Traits::FT                                        FT;
@@ -301,8 +301,8 @@ sibson_gradient_fitting_rn_2(const Rt& rt,
                              // of the value functor is 'Rt::Point' (weighted point) or 'Rt::Vertex_handle'
                              typename boost::enable_if_c<
                                boost::is_constructible<
-                               cpp11::function<boost::any(typename Rt::Point)>,
-                               ValueFunctor
+                                 cpp11::function<boost::any(typename Rt::Point)>,
+                                 ValueFunctor
                              >::value>::type* = NULL)
 {
   typedef typename Traits::FT                                        FT;
@@ -327,8 +327,8 @@ sibson_gradient_fitting_rn_2(const Rt& rt,
                              const Traits& traits,
                              typename boost::enable_if_c<
                                boost::is_constructible<
-                               cpp11::function<boost::any(typename Rt::Vertex_handle)>,
-                               ValueFunctor
+                                 cpp11::function<boost::any(typename Rt::Vertex_handle)>,
+                                 ValueFunctor
                              >::value>::type* = NULL)
 {
   typedef typename Traits::FT                                        FT;
