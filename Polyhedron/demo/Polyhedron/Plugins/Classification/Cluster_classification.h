@@ -202,8 +202,7 @@ class Cluster_classification : public Item_classification_base
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
   }
-  void train(int classifier, unsigned int nb_trials,
-             std::size_t num_trees, std::size_t max_depth);
+  void train(int classifier, const QMultipleInputDialog& dialog);
   bool run (int method, int classifier, std::size_t subdivisions, double smoothing);
 
   void update_color () { change_color (m_index_color); }

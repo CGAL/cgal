@@ -696,8 +696,7 @@ void Cluster_classification::add_remaining_point_set_properties_as_features(Feat
   }
 }
 
-void Cluster_classification::train(int classifier, unsigned int nb_trials,
-                                   std::size_t num_trees, std::size_t max_depth)
+void Cluster_classification::train(int classifier, const QMultipleInputDialog& dialog)
 {
   if (m_features.size() == 0)
   {
@@ -730,14 +729,16 @@ void Cluster_classification::train(int classifier, unsigned int nb_trials,
 
   if (classifier == 0)
   {
-    m_sowf->train<Concurrency_tag>(training, nb_trials);
+    m_sowf->train<Concurrency_tag>(training, dialog.get<QSpinBox>("trials")->value());
     CGAL::Classification::classify<Concurrency_tag> (m_clusters,
                                                      m_labels, *m_sowf,
                                                      indices);
   }
   else if (classifier == 1)
   {
-    m_ethz->train(training, true, num_trees, max_depth);
+    m_ethz->train(training, true,
+                  dialog.get<QSpinBox>("num_trees")->value(),
+                  dialog.get<QSpinBox>("max_depth")->value());
     CGAL::Classification::classify<Concurrency_tag> (m_clusters,
                                                      m_labels, *m_ethz,
                                                      indices);
@@ -748,8 +749,8 @@ void Cluster_classification::train(int classifier, unsigned int nb_trials,
     if (m_random_forest != NULL)
       delete m_random_forest;
     m_random_forest = new Random_forest (m_labels, m_features,
-                                         int(max_depth), 5, 15,
-                                         int(num_trees));
+                                         dialog.get<QSpinBox>("max_depth")->value(), 5, 15,
+                                         dialog.get<QSpinBox>("num_trees")->value());
     m_random_forest->train (training);
     CGAL::Classification::classify<Concurrency_tag> (m_clusters,
                                                      m_labels, *m_random_forest,

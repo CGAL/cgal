@@ -71,6 +71,8 @@ class TensorFlow_neural_network_classifier
 #elif defined(USE_SIGMOID)
   typedef TFops::Sigmoid Activation_function;
 #endif
+
+  bool m_verbose;
   
   const Label_set& m_labels;
   const Feature_set& m_features;
@@ -80,12 +82,26 @@ class TensorFlow_neural_network_classifier
   TF::Scope* m_root;
   TFops::Placeholder* m_ph_ft;
   TFops::Placeholder* m_ph_gt;
+
+//#define USE_IOU
+#ifdef USE_IOU
   TFops::ReduceMean* m_loss;
+#else
+  TFops::ReduceMean* m_loss;
+#endif
+  
   std::vector<std::vector<float> > m_weights;
   std::vector<std::vector<float> > m_bias;
   float m_learning_rate;
   std::vector<TF::Output> m_layers;
+
+#define USE_ADAM
+#ifdef USE_ADAM
+  std::vector<TFops::ApplyAdam> m_gradient_descent;
+#else
   std::vector<TFops::ApplyGradientDescent> m_gradient_descent;
+#endif
+  
   TF::ClientSession* m_session;
 
   
@@ -100,7 +116,7 @@ public:
   */
   TensorFlow_neural_network_classifier (const Label_set& labels,
                                         const Feature_set& features)
-    : m_labels (labels), m_features (features)
+    : m_verbose (true), m_labels (labels), m_features (features)
     , m_root (NULL), m_ph_ft (NULL), m_ph_gt (NULL), m_loss(NULL), m_session (NULL)
   { }
   
@@ -114,7 +130,7 @@ public:
 
   void clear()
   {
-    CGAL_CLASSTRAINING_CERR << "(Clearing Neural Network classifier)" << std::endl;
+    if (m_verbose) std::cerr << "(Clearing Neural Network classifier)" << std::endl;
     clear (m_ph_gt);
     clear (m_ph_ft);
     clear (m_loss);
@@ -170,6 +186,9 @@ public:
         m_feature_means[f] = 0.f;
       if (std::isnan(m_feature_sd[f]))
         m_feature_sd[f] = 1.f;
+
+      std::cerr << "#" << f << ": " << m_features[f]->name() << " = "
+                << m_feature_means[f] << " +/- " << m_feature_sd[f] << std::endl;
     }
 #endif
   }
@@ -193,7 +212,7 @@ public:
               const std::vector<std::size_t>& hidden_layers
               = std::vector<std::size_t>())
   {
-    CGAL_CLASSTRAINING_CERR << "[Training Neural Network]" << std::endl;
+    if (m_verbose) std::cerr << "[Training Neural Network]" << std::endl;
     if (restart_from_scratch)
       clear();
 
@@ -213,7 +232,7 @@ public:
         indices.push_back (i);
         raw_gt.push_back (gc);
 #ifdef EQUAL_DISTRIBUTION
-        random_indices[std::size_t(gc)].push_back (i);
+        random_indices[std::size_t(gc)].push_back (indices.size() - 1);
 #endif
       }
     }
@@ -222,11 +241,11 @@ public:
     {
       m_learning_rate = learning_rate;
       build_architecture (hidden_layers);
-      CGAL_CLASSTRAINING_CERR << "II - NORMALIZING FEATURES" << std::endl;
+      if (m_verbose) std::cerr << "II - NORMALIZING FEATURES" << std::endl;
       compute_normalization_coefficients (indices);
     }
     
-    CGAL_CLASSTRAINING_CERR << "III - TRAINING NEURAL NETWORK" << std::endl;
+    if (m_verbose) std::cerr << "III - TRAINING NEURAL NETWORK" << std::endl;
     
 #ifndef EQUAL_DISTRIBUTION
     batch_size = std::min (std::size_t(batch_size), indices.size());
@@ -244,6 +263,9 @@ public:
 
     m_weights.clear();
     m_bias.clear();
+    // std::ofstream log ("loss.log");
+    // log.precision(18);
+
     for (std::size_t i = 0; i < number_of_iterations; ++ i)
     {
 #ifdef EQUAL_DISTRIBUTION
@@ -259,7 +281,7 @@ public:
 
         if (i == 0)
         {
-          CGAL_CLASSTRAINING_CERR << "   * Size of batch for " << m_labels[j]->name() << ": "
+          if (m_verbose) std::cerr << "   * Size of batch for " << m_labels[j]->name() << ": "
                                   << local_batch_size << std::endl;
         }
       }
@@ -333,9 +355,10 @@ public:
       
       TF_CHECK_OK (m_session->Run ({{*m_ph_ft, ft}, {*m_ph_gt, gt}}, {*m_loss}, &outputs));
 
+//      log << outputs[0].scalar<float>() << std::endl;
       if ((i+1) % (number_of_iterations / 20) == 0)
       {
-        CGAL_CLASSTRAINING_CERR << "   * Step " << i+1 << "/" << number_of_iterations << ": loss = "
+        if (m_verbose) std::cerr << "   * Step " << i+1 << "/" << number_of_iterations << ": loss = "
                                 << outputs[0].scalar<float>() << std::endl;
       }
       if (!std::isfinite(*outputs[0].scalar<float>().data()))
@@ -636,7 +659,8 @@ private:
   {
     m_root = new TF::Scope (TF::Scope::NewRootScope());
 
-    CGAL_CLASSTRAINING_CERR << "I - BUILDING NEURAL NETWORK ARCHITECTURE" << std::endl;
+    
+    if (m_verbose) std::cerr << "I - BUILDING NEURAL NETWORK ARCHITECTURE" << std::endl;
     
     // Get layers and sizes or init with default values
     std::vector<std::size_t> hl = hidden_layers;
@@ -646,20 +670,20 @@ private:
       hl.push_back ((m_features.size() + m_labels.size()) / 2);
     }
     
-    CGAL_CLASSTRAINING_CERR << " 1) Initializing architecture:" << std::endl
+    if (m_verbose) std::cerr << " 1) Initializing architecture:" << std::endl
                             << "   * Layer 0: " << m_features.size() << " neuron(s) (input features)" << std::endl;
       
     if (!CGAL_CLASSTRAINING_SILENT)
       for (std::size_t i = 0; i < hl.size(); ++ i)
         std::cerr << "   * Layer " << i+1 << ": " << hl[i] << " neuron(s)" << std::endl;
     
-    CGAL_CLASSTRAINING_CERR << "   * Layer " << hl.size() + 1 << ": "
+    if (m_verbose) std::cerr << "   * Layer " << hl.size() + 1 << ": "
                             << m_labels.size() << " neuron(s) (output labels)" << std::endl;
     
     m_ph_ft = new TFops::Placeholder (*m_root, TF::DT_FLOAT);
     m_ph_gt = new TFops::Placeholder (*m_root, TF::DT_FLOAT);
     
-    CGAL_CLASSTRAINING_CERR << " 2) Creating weight matrices and bias" << std::endl;
+    if (m_verbose) std::cerr << " 2) Creating weight matrices and bias" << std::endl;
     
     // create weight matrices and bias for each layer transition
     std::vector<TFops::Variable> weights;
@@ -687,7 +711,7 @@ private:
         size_to = hl[i];
       }
 
-      CGAL_CLASSTRAINING_CERR << "   * Weight matrix " << i << " [" << size_from << ";" << size_to << "]" << std::endl;
+      if (m_verbose) std::cerr << "   * Weight matrix " << i << " [" << size_from << ";" << size_to << "]" << std::endl;
       weights.push_back (TFops::Variable (*m_root, { size_from, size_to }, TF::DT_FLOAT));
 
       if (m_weights.empty())
@@ -718,7 +742,7 @@ private:
         assign_weights.push_back (TFops::Assign (*m_root, weights.back(), init_weight));
       }
       
-      CGAL_CLASSTRAINING_CERR << "   * Bias " << i << " [" << size_to << "]" << std::endl;
+      if (m_verbose) std::cerr << "   * Bias " << i << " [" << size_to << "]" << std::endl;
       bias.push_back (TFops::Variable (*m_root, { (long long)(1), size_to }, TF::DT_FLOAT));
 
       TF::Tensor init_bias
@@ -736,11 +760,11 @@ private:
 
     if (!m_root->status().ok())
     {
-      CGAL_CLASSTRAINING_CERR << "Error: " << m_root->status().ToString() << std::endl;
+      if (m_verbose) std::cerr << "Error: " << m_root->status().ToString() << std::endl;
       return;
     }
     
-    CGAL_CLASSTRAINING_CERR << " 3) Creating layers" << std::endl;
+    if (m_verbose) std::cerr << " 3) Creating layers" << std::endl;
     
     for (std::size_t i = 0; i < weights.size(); ++ i)
     {
@@ -760,31 +784,50 @@ private:
 
     if (!m_root->status().ok())
     {
-      CGAL_CLASSTRAINING_CERR << "Error: " << m_root->status().ToString() << std::endl;
+      if (m_verbose) std::cerr << "Error: " << m_root->status().ToString() << std::endl;
       return;
     }
 
-    CGAL_CLASSTRAINING_CERR << " 4) Setting up loss calculation" << std::endl;
+    if (m_verbose) std::cerr << " 4) Setting up loss calculation" << std::endl;
     
     // loss calculation based on cross-entropy
       
 //      TFops::Log log_ypred = TFops::Log (*m_root, m_layers.back());
 
+#ifdef USE_IOU
+
+    TFops::Mul ygt_times_ypred = TFops::Mul (*m_root, *m_ph_gt, m_layers.back());
+    TFops::ReduceSum intersection = TFops::ReduceSum(*m_root, ygt_times_ypred, {1});
+
+    TFops::Add ygt_plus_ypred = TFops::Add (*m_root, *m_ph_gt, m_layers.back());
+    TFops::Mul ygt_times_ypred_2 = TFops::Mul (*m_root, *m_ph_gt, m_layers.back());
+    TFops::Sub sum_minus_product = TFops::Sub (*m_root, ygt_plus_ypred, ygt_times_ypred_2);
+    TFops::ReduceSum my_union = TFops::ReduceSum(*m_root, sum_minus_product, {1});
+
+    TFops::Div IoU = TFops::Div(*m_root, intersection, my_union);
+    TFops::Sub one_minus_IoU = TFops::Sub (*m_root, TFops::Const(*m_root, 1.f), IoU);
+    m_loss = new TFops::ReduceMean (*m_root, one_minus_IoU, {0});
+
+    // TFops::ReduceMean mean_IoU = TFops::ReduceMean (*m_root, IoU, {0});
+    // m_loss = new TFops::Sub (*m_root, TFops::Const(*m_root, 1.f), mean_IoU);
+    
+#else
     TFops::Maximum truncated_ypred = TFops::Maximum (*m_root, TFops::Const(*m_root, 0.0001f), m_layers.back());
     TFops::Log log_ypred = TFops::Log (*m_root, truncated_ypred);
     TFops::Mul ygt_times_log_ypred = TFops::Mul (*m_root, *m_ph_gt, log_ypred);
     TFops::ReduceSum sum_ygt_times_log_ypred = TFops::ReduceSum(*m_root, ygt_times_log_ypred, {1});
     TFops::Mul minus_sum_ygt_times_log_ypred = TFops::Mul (*m_root, TFops::Const(*m_root, -1.f), sum_ygt_times_log_ypred);
-    
+
     m_loss = new TFops::ReduceMean (*m_root, minus_sum_ygt_times_log_ypred, {0});
+#endif
     
     if (!m_root->status().ok())
     {
-      CGAL_CLASSTRAINING_CERR << "Error: " << m_root->status().ToString() << std::endl;
+      if (m_verbose) std::cerr << "Error: " << m_root->status().ToString() << std::endl;
       return;
     }
 
-    CGAL_CLASSTRAINING_CERR << " 5) Setting up gradient descent" << std::endl;
+    if (m_verbose) std::cerr << " 5) Setting up gradient descent" << std::endl;
     
     std::vector<TF::Output> weights_and_bias;
     for (std::size_t i = 0; i < weights.size(); ++ i)
@@ -797,13 +840,114 @@ private:
     TF_CHECK_OK(TF::AddSymbolicGradients(*m_root, {*m_loss},
                                          weights_and_bias,
                                          &gradients));
-
+  
     if (!m_root->status().ok())
     {
-      CGAL_CLASSTRAINING_CERR << "Error: " << m_root->status().ToString() << std::endl;
+      if (m_verbose) std::cerr << "Error: " << m_root->status().ToString() << std::endl;
       return;
     }
+  
+    std::vector<TF::Output> assigners;
+  
+#ifdef USE_ADAM
+    for (std::size_t i = 0; i < weights.size(); ++ i)
+    {
+      long long size_from = 0;
+      long long size_to = 0;
+      if (i == 0)
+      {
+        size_from = m_features.size();
+        size_to = hl[0];
+      }
+      else if (i == weights.size() - 1)
+      {
+        size_from = hl.back();
+        size_to = m_labels.size();
+      }
+      else
+      {
+        size_from = hl[i-1];
+        size_to = hl[i];
+      }
 
+      TFops::Variable m (*m_root, { size_from, size_to}, TF::DT_FLOAT);
+      TF::Tensor init_m
+        (TF::DataTypeToEnum<float>::v(), 
+         TF::TensorShape {(long long)(size_from), (long long)(size_to)});
+      float* init_m_data = init_m.flat<float>().data();
+      for (std::size_t s = 0; s < size_from; ++ s)
+        for (std::size_t ss = 0; ss < size_to; ++ ss)
+          init_m_data[ss * size_from + s] = 0.f;
+      assigners.push_back (TFops::Assign (*m_root, m, init_m));
+
+      TFops::Variable v (*m_root, { size_from, size_to}, TF::DT_FLOAT);
+      TF::Tensor init_v
+        (TF::DataTypeToEnum<float>::v(), 
+         TF::TensorShape {(long long)(size_from), (long long)(size_to)});
+      float* init_v_data = init_v.flat<float>().data();
+      for (std::size_t s = 0; s < size_from; ++ s)
+        for (std::size_t ss = 0; ss < size_to; ++ ss)
+          init_v_data[ss * size_from + s] = 0.f;
+      assigners.push_back (TFops::Assign (*m_root, v, init_v));
+
+      m_gradient_descent.push_back (TFops::ApplyAdam
+                                    (*m_root,
+                                     weights[i],
+                                     m,
+                                     v,
+                                     TFops::Cast(*m_root, 0.9, TF::DT_FLOAT),
+                                     TFops::Cast(*m_root, 0.999, TF::DT_FLOAT),
+                                     TFops::Cast(*m_root, m_learning_rate, TF::DT_FLOAT),
+                                     TFops::Cast(*m_root, 0.9, TF::DT_FLOAT),
+                                     TFops::Cast(*m_root, 0.999, TF::DT_FLOAT),
+                                     TFops::Cast(*m_root, 1e-8, TF::DT_FLOAT),
+                                     {gradients[i]}));
+    }
+    
+    for (std::size_t i = 0; i < bias.size(); ++ i)
+    {
+      long long size_from = 0;
+      long long size_to = 0;
+      if (i == 0)
+        size_to = hl[0];
+      else if (i == bias.size() - 1)
+        size_to = m_labels.size();
+      else
+        size_to = hl[i];
+
+      TFops::Variable m (*m_root, { 1, size_to}, TF::DT_FLOAT);
+      TF::Tensor init_m
+        (TF::DataTypeToEnum<float>::v(), 
+         TF::TensorShape {(long long)(1), (long long)(size_to)});
+      float* init_m_data = init_m.flat<float>().data();
+      for (std::size_t s = 0; s < size_to; ++ s)
+        init_m_data[s] = 0.f;
+      assigners.push_back (TFops::Assign (*m_root, m, init_m));
+
+      TFops::Variable v (*m_root, { 1, size_to}, TF::DT_FLOAT);
+      TF::Tensor init_v
+        (TF::DataTypeToEnum<float>::v(), 
+         TF::TensorShape {(long long)(1), (long long)(size_to)});
+      float* init_v_data = init_v.flat<float>().data();
+      for (std::size_t s = 0; s < size_to; ++ s)
+        init_v_data[s] = 0.f;
+      assigners.push_back (TFops::Assign (*m_root, v, init_v));
+
+      m_gradient_descent.push_back (TFops::ApplyAdam
+                                    (*m_root,
+                                     bias[i],
+                                     m,
+                                     v,
+                                     TFops::Cast(*m_root, 0.9, TF::DT_FLOAT),
+                                     TFops::Cast(*m_root, 0.999, TF::DT_FLOAT),
+                                     TFops::Cast(*m_root, m_learning_rate, TF::DT_FLOAT),
+                                     TFops::Cast(*m_root, 0.9, TF::DT_FLOAT),
+                                     TFops::Cast(*m_root, 0.999, TF::DT_FLOAT),
+                                     TFops::Cast(*m_root, 1e-8, TF::DT_FLOAT),
+                                     {gradients[weights.size() + i]}));
+    }
+    
+#else
     for (std::size_t i = 0; i < weights.size(); ++ i)
       m_gradient_descent.push_back (TFops::ApplyGradientDescent
                                     (*m_root, weights[i],
@@ -812,28 +956,32 @@ private:
       m_gradient_descent.push_back (TFops::ApplyGradientDescent
                                     (*m_root, bias[i],
                                      TFops::Cast(*m_root, m_learning_rate, TF::DT_FLOAT), {gradients[weights.size() + i]}));
-    
+#endif
     if (!m_root->status().ok())
     {
-      CGAL_CLASSTRAINING_CERR << "Error: " << m_root->status().ToString() << std::endl;
+      if (m_verbose) std::cerr << "Error: " << m_root->status().ToString() << std::endl;
       return;
     }
 
-    CGAL_CLASSTRAINING_CERR << " 6) Starting session" << std::endl;
+    if (m_verbose) std::cerr << " 6) Starting session" << std::endl;
     
     m_session = new TF::ClientSession (*m_root);
+    if (!m_root->status().ok())
+    {
+      if (m_verbose) std::cerr << "Error: " << m_root->status().ToString() << std::endl;
+      return;
+    }
     std::vector<TF::Tensor> outputs;
 
-    std::vector<TF::Output> assign_weights_and_bias;
     for (std::size_t i = 0; i < assign_weights.size(); ++ i)
-      assign_weights_and_bias.push_back (TF::Output(assign_weights[i]));
+      assigners.push_back (TF::Output(assign_weights[i]));
     for (std::size_t i = 0; i < assign_bias.size(); ++ i)
-      assign_weights_and_bias.push_back (TF::Output(assign_bias[i]));
-    TF_CHECK_OK (m_session->Run(assign_weights_and_bias, nullptr));
+      assigners.push_back (TF::Output(assign_bias[i]));
+    TF_CHECK_OK (m_session->Run(assigners, nullptr));
 
     if (!m_root->status().ok())
     {
-      CGAL_CLASSTRAINING_CERR << "Error: " << m_root->status().ToString() << std::endl;
+      if (m_verbose) std::cerr << "Error: " << m_root->status().ToString() << std::endl;
       return;
     }
   }

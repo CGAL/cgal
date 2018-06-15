@@ -11,6 +11,8 @@
 
 #include <CGAL/Three/Viewer_interface.h>
 
+#include <QLineEdit>
+
 #include <set>
 #include <stack>
 #include <algorithm>
@@ -417,18 +419,30 @@ void Point_set_item_classification::change_color (int index)
       else
       {
         corrected_index -= m_labels.size();
+        if (corrected_index >= m_features.size())
+        {
+          std::cerr << "Error: trying to access feature " << corrected_index << " out of " << m_features.size() << std::endl;
+          return;
+        }
         Feature_handle feature = m_features[corrected_index];
 
-        float max = 0.;
+        float min = std::numeric_limits<float>::max();
+        float max = -std::numeric_limits<float>::max();
+        
         for (Point_set::const_iterator it = m_points->point_set()->begin();
              it != m_points->point_set()->first_selected(); ++ it)
+        {
           if (feature->value(*it) > max)
             max = feature->value(*it);
+          if (feature->value(*it) < min)
+            min = feature->value(*it);
+        }
+        std::cerr << "[Feature " << feature->name() << "] between " << min << " and " << max << std::endl;
 
         for (Point_set::const_iterator it = m_points->point_set()->begin();
              it != m_points->point_set()->first_selected(); ++ it)
         {
-          float v = std::max (0.f, feature->value(*it) / max);
+          float v = (feature->value(*it) - min) / (max - min);
           m_red[*it] = (unsigned char)(ramp.r(v) * 255);
           m_green[*it] = (unsigned char)(ramp.g(v) * 255);
           m_blue[*it] = (unsigned char)(ramp.b(v) * 255);
@@ -647,8 +661,7 @@ void Point_set_item_classification::add_remaining_point_set_properties_as_featur
   }
 }
 
-void Point_set_item_classification::train(int classifier, unsigned int nb_trials,
-                                          std::size_t num_trees, std::size_t max_depth)
+void Point_set_item_classification::train(int classifier, const QMultipleInputDialog& dialog)
 {
   if (m_features.size() == 0)
     {
@@ -683,7 +696,7 @@ void Point_set_item_classification::train(int classifier, unsigned int nb_trials
 
   if (classifier == 0)
     {
-      m_sowf->train<Concurrency_tag>(training, nb_trials);
+      m_sowf->train<Concurrency_tag>(training, dialog.get<QSpinBox>("trials")->value());
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                        m_labels, *m_sowf,
                                                        indices, m_label_probabilities);
@@ -693,7 +706,9 @@ void Point_set_item_classification::train(int classifier, unsigned int nb_trials
     if (m_ethz != NULL)
       delete m_ethz;
     m_ethz = new ETHZ_random_forest (m_labels, m_features);
-    m_ethz->train(training, true, num_trees, max_depth);
+    m_ethz->train(training, true,
+                  dialog.get<QSpinBox>("num_trees")->value(),
+                  dialog.get<QSpinBox>("max_depth")->value());
     CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                      m_labels, *m_ethz,
                                                      indices, m_label_probabilities);
@@ -704,21 +719,54 @@ void Point_set_item_classification::train(int classifier, unsigned int nb_trials
     if (m_random_forest != NULL)
       delete m_random_forest;
     m_random_forest = new Random_forest (m_labels, m_features,
-                                         int(max_depth), 5, 15,
-                                         int(num_trees));
+                                         dialog.get<QSpinBox>("max_depth")->value(), 5, 15,
+                                         dialog.get<QSpinBox>("num_trees")->value());
     m_random_forest->train (training);
     CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                      m_labels, *m_random_forest,
                                                      indices, m_label_probabilities);
-  }
-  else
-  {
 #endif
+  }
+  else if (classifier == 3)
+  {
 #ifdef CGAL_LINKED_WITH_TENSORFLOW
     if (m_neural_network != NULL)
-      delete m_neural_network;
-    m_neural_network = new Neural_network (m_labels, m_features);
-    m_neural_network->train (training, nb_trials);
+    {
+      if (m_neural_network->initialized())
+      {
+        if (dialog.get<QCheckBox>("restart")->isChecked())
+        {
+          delete m_neural_network;
+          m_neural_network = new Neural_network (m_labels, m_features);
+        }
+      }
+      else
+      {
+        delete m_neural_network;
+        m_neural_network = new Neural_network (m_labels, m_features);
+      }
+    }
+    else
+      m_neural_network = new Neural_network (m_labels, m_features);
+
+    std::vector<std::size_t> hidden_layers;
+
+    std::string hl_input = dialog.get<QLineEdit>("hidden_layers")->text().toStdString();
+    if (hl_input != "")
+    {
+      std::istringstream iss(hl_input);
+      int s;
+      while (iss >> s)
+        hidden_layers.push_back (std::size_t(s));
+    }
+    
+    m_neural_network->train (training,
+                             dialog.get<QCheckBox>("restart")->isChecked(),
+                             dialog.get<QSpinBox>("trials")->value(),
+                             dialog.get<QDoubleSpinBox>("learning_rate")->value(),
+                             dialog.get<QSpinBox>("batch_size")->value(),
+                             hidden_layers);
+      
     CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                      m_labels, *m_neural_network,
                                                      indices, m_label_probabilities);
@@ -764,10 +812,10 @@ bool Point_set_item_classification::run (int method, int classifier,
       return false;
     }
     run (method, *m_random_forest, subdivisions, smoothing);
-  }
-  else
-  {
 #endif
+  }
+  else if (classifier == 3)
+  {
 #ifdef CGAL_LINKED_WITH_TENSORFLOW
     if (m_neural_network == NULL)
     {

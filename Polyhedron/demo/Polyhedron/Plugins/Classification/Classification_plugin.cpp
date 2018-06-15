@@ -185,15 +185,19 @@ public:
     addDockWidget(dock_widget);
     addDockWidget(dock_widget_adv);
 
+    ui_widget.classifier->addItem (tr("Random Forest (ETHZ)"));
+    
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+    ui_widget.classifier->addItem (tr("Neural Network (TensorFlow)"));
+#endif
+    
 #ifdef CGAL_LINKED_WITH_OPENCV
     ui_widget.classifier->addItem (tr("Random Forest (OpenCV %1.%2)")
                                    .arg(CV_MAJOR_VERSION)
                                    .arg(CV_MINOR_VERSION));
 #endif
+    ui_widget.classifier->addItem (tr("Sum of Weighted Features"));
 
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-    ui_widget.classifier->addItem (tr("Neural Network (TensorFlow)"));
-#endif
 
     color_att = QColor (75, 75, 77);
 
@@ -508,12 +512,27 @@ public Q_SLOTS:
     update_plugin_from_item(classif);
     return classif;
   }
+
+  int get_classifier ()
+  {
+    if (ui_widget.classifier->currentText() == QString("Random Forest (ETHZ)"))
+      return 1;
+    if (ui_widget.classifier->currentText() == QString("Neural Network (TensorFlow)"))
+      return 3;
+    if (ui_widget.classifier->currentText() == QString("Random Forest (OpenCV"))
+      return 2;
+    if (ui_widget.classifier->currentText() == QString("Sum of Weighted Features"))
+      return 0;
+
+    std::cerr << "Error: unknown classifier" << std::endl;
+    return -1;
+  }
   
   void run (Item_classification_base* classif, int method,
             std::size_t subdivisions = 1,
             double smoothing = 0.5)
   {
-    classif->run (method, ui_widget.classifier->currentIndex(), subdivisions, smoothing);
+    classif->run (method, get_classifier(), subdivisions, smoothing);
   }
 
   void on_classifier_changed (int index)
@@ -566,18 +585,19 @@ public Q_SLOTS:
 
     QString filename;
 
-    if (ui_widget.classifier->currentIndex() == 0)
+    int classifier = get_classifier();
+    if (classifier == 0) // Sum of Weighted Featuers
       filename = QFileDialog::getSaveFileName(mw,
                                               tr("Save classification configuration"),
                                               tr("%1 (CGAL classif config).xml").arg(classif->item()->name()),
                                               "CGAL classification configuration (*.xml);;");
-    else if (ui_widget.classifier->currentIndex() == 1)
+    else if (classifier == 1) // Random Forest (ETHZ)
       filename = QFileDialog::getSaveFileName(mw,
                                               tr("Save classification configuration"),
                                               tr("%1 (ETHZ random forest config).gz").arg(classif->item()->name()),
                                               "Compressed ETHZ random forest configuration (*.gz);;");
 #ifdef CGAL_LINKED_WITH_OPENCV
-    else if (ui_widget.classifier->currentIndex() == 2)
+    else if (classifier == 2) // Random Forest (OpenCV)
       filename = QFileDialog::getSaveFileName(mw,
                                               tr("Save classification configuration"),
                                               tr("%1 (OpenCV %2.%3 random forest config).xml")
@@ -588,6 +608,13 @@ public Q_SLOTS:
                                               .arg(CV_MAJOR_VERSION)
                                               .arg(CV_MINOR_VERSION));
 #endif
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+    else if (classifier == 3) // Neural Network (TensorFlow)
+      filename = QFileDialog::getSaveFileName(mw,
+                                              tr("Save classification configuration"),
+                                              tr("%1 (CGAL Neural Network config).xml").arg(classif->item()->name()),
+                                              "CGAL TensorFlow Neural Network classification configuration (*.xml);;");
+#endif
     
     if (filename == QString())
       return;
@@ -595,8 +622,7 @@ public Q_SLOTS:
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    classif->save_config (filename.toStdString().c_str(),
-                          ui_widget.classifier->currentIndex());
+    classif->save_config (filename.toStdString().c_str(), classifier);
     
     QApplication::restoreOverrideCursor();
 
@@ -613,18 +639,19 @@ public Q_SLOTS:
       }
     QString filename;
 
-    if (ui_widget.classifier->currentIndex() == 0)
+    int classifier = get_classifier();
+    if (classifier == 0) // SOWF
       filename = QFileDialog::getOpenFileName(mw,
                                               tr("Open CGAL classification configuration"),
                                               ".",
                                               "CGAL classification configuration (*.xml);;All Files (*)");
-    else if (ui_widget.classifier->currentIndex() == 1)
+    else if (classifier == 1) // ETHZ
       filename = QFileDialog::getOpenFileName(mw,
                                               tr("Open ETHZ random forest configuration"),
                                               ".",
                                               "Compressed ETHZ random forest configuration (*.gz);;All Files (*)");
 #ifdef CGAL_LINKED_WITH_OPENCV
-    else if (ui_widget.classifier->currentIndex() == 2)
+    else if (classifier == 2) // OpenCV
       filename = QFileDialog::getOpenFileName(mw,
                                               tr("Open OpenCV %2.%3 random forest configuration")
                                               .arg(CV_MAJOR_VERSION)
@@ -634,14 +661,21 @@ public Q_SLOTS:
                                               .arg(CV_MAJOR_VERSION)
                                               .arg(CV_MINOR_VERSION));
 #endif
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+    else if (classifier == 3) // TensorFlow
+      filename = QFileDialog::getOpenFileName(mw,
+                                              tr("Open CGAL Neural Network classification configuration"),
+                                              ".",
+                                              tr("CGAL Neural Network classification configuration (*.xml);;All Files (*)"));
+#endif
 
     if (filename == QString())
       return;
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    classif->load_config (filename.toStdString().c_str(),
-                          ui_widget.classifier->currentIndex());
+    classif->load_config (filename.toStdString().c_str(), classifier);
+
     update_plugin_from_item(classif);
     run (classif, 0);
     
@@ -1084,37 +1118,48 @@ public Q_SLOTS:
     int num_trees = 0;
     int max_depth = 0;
 
-    if (ui_widget.classifier->currentIndex() == 0 || ui_widget.classifier->currentIndex() == 3)
+    QMultipleInputDialog dialog ("Train Classifier", mw);
+    
+    int classifier = get_classifier();
+    if (classifier == 0) // SOWF
     {
-      bool ok = false;
-      nb_trials = QInputDialog::getInt((QWidget*)mw,
-                                       tr("Train Classifier"), // dialog title
-                                       tr("Number of trials:"), // field label
-                                       800, 1, 99999, 50, &ok);
-      if (!ok)
-        return;
+      QSpinBox* trials = dialog.add<QSpinBox> ("Number of trials: ", "trials");
+      trials->setRange (1, 99999);
+      trials->setValue (800);
     }
-    else
+    else if (classifier == 1 || classifier == 2) // random forest
     {
-      QMultipleInputDialog dialog ("Train Random Forest Classifier", mw);
-      QSpinBox* trees = dialog.add<QSpinBox> ("Number of trees: ");
+      QSpinBox* trees = dialog.add<QSpinBox> ("Number of trees: ", "num_trees");
       trees->setRange (1, 9999);
       trees->setValue (25);
-      QSpinBox* depth = dialog.add<QSpinBox> ("Maximum depth of tree: ");
+      QSpinBox* depth = dialog.add<QSpinBox> ("Maximum depth of tree: ", "max_depth");
       depth->setRange (1, 9999);
       depth->setValue (20);
-
-      if (dialog.exec() != QDialog::Accepted)
-        return;
-      num_trees = trees->value();
-      max_depth = depth->value();
     }
+    else if (classifier == 3) // neural network
+    {
+      QSpinBox* trials = dialog.add<QSpinBox> ("Number of trials: ", "trials");
+      trials->setRange (1, 99999);
+      trials->setValue (5000);
+      QDoubleSpinBox* rate = dialog.add<QDoubleSpinBox> ("Learning rate: ", "learning_rate");
+      rate->setRange (0.00001, 10000.0);
+      rate->setValue (0.1);
+      rate->setDecimals (5);
+      QSpinBox* batch = dialog.add<QSpinBox> ("Batch size: ", "batch_size");
+      batch->setRange (1, 2000000000);
+      batch->setValue (1000);
+      QLineEdit* layers = dialog.add<QLineEdit> ("Hidden layer size(s): ", "hidden_layers");
+      QCheckBox* restart = dialog.add<QCheckBox> ("Restart from scratch: ", "restart");
+      restart->setChecked (false);
+    }
+    
+    if (dialog.exec() != QDialog::Accepted)
+      return;
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
     CGAL::Real_timer t;
     t.start();
-    classif->train(ui_widget.classifier->currentIndex(), nb_trials,
-                   num_trees, max_depth);
+    classif->train(classifier, dialog);
     t.stop();
     std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
     QApplication::restoreOverrideCursor();

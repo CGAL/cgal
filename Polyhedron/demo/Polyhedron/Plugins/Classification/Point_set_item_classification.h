@@ -130,8 +130,12 @@ class Point_set_item_classification : public Item_classification_base
     Pmap pmap;
     boost::tie (pmap, okay) = m_points->point_set()->template property_map<Type>(name.c_str());
     if (okay)
+    {
+      std::cerr << "Adding property<" << CGAL::demangle(typeid(Type).name()) << ">("
+                << name << ") as feature" << std::endl;
       m_features.template add<CGAL::Classification::Feature::Simple_feature <Point_set, Pmap> >
         (*(m_points->point_set()), pmap, name.c_str());
+    }
 
     return okay;
   }
@@ -187,8 +191,7 @@ class Point_set_item_classification : public Item_classification_base
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
   }
-  void train(int classifier, unsigned int nb_trials,
-             std::size_t num_trees, std::size_t max_depth);
+  void train(int classifier, const QMultipleInputDialog& dialog);
   bool run (int method, int classifier, std::size_t subdivisions, double smoothing);
 
   void update_color () { change_color (m_index_color); }

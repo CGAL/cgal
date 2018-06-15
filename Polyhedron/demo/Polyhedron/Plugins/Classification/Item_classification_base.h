@@ -4,6 +4,7 @@
 #include <CGAL/Three/Scene_item.h>
 
 #include <QComboBox>
+#include <QMultipleInputDialog.h>
 
 #include <CGAL/Classification/Feature_set.h>
 #include <CGAL/Classification/Label_set.h>
@@ -53,8 +54,7 @@ public:
 
   virtual void select_random_region() = 0;
   virtual void validate_selection () = 0;
-  virtual void train(int classifier, unsigned int nb_trials,
-                     std::size_t num_trees, std::size_t max_depth) = 0;
+  virtual void train(int classifier, const QMultipleInputDialog&) = 0;
   virtual bool run (int method, int classifier, std::size_t subdivisions, double smoothing) = 0;
   
   virtual void update_color () = 0;
@@ -180,10 +180,17 @@ public:
       std::ofstream f (filename, std::ios_base::out | std::ios_base::binary);
       m_ethz->save_configuration (f);
     }
-    else
+    else if (classifier == 2)
     {
 #ifdef CGAL_LINKED_WITH_OPENCV
       m_random_forest->save_configuration (filename);
+#endif
+    }
+    else if (classifier == 3)
+    {
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+      std::ofstream f (filename);
+      m_neural_network->save_configuration (f);
 #endif
     }
   }
@@ -205,10 +212,19 @@ public:
       std::ifstream f (filename, std::ios_base::in | std::ios_base::binary);
       m_ethz->load_configuration (f);
     }
-    else
+    else if (classifier == 2)
     {
 #ifdef CGAL_LINKED_WITH_OPENCV
       m_random_forest->load_configuration (filename);
+#endif
+    }
+    else if (classifier == 3)
+    {
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+      if (m_neural_network == NULL)
+        m_neural_network = new Neural_network (m_labels, m_features);
+      std::ifstream f (filename);
+      m_neural_network->load_configuration (f, true);
 #endif
     }
   }
