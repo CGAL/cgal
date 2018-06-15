@@ -498,13 +498,46 @@ private: //------------------------------------------------------ iterator types
         void advance(std::ptrdiff_t n)
         {
             CGAL_assertion(mesh_ != NULL);
-            CGAL_assertion(!(mesh_->has_garbage()));
-            hnd_ += n;
+            
+            if (mesh_->has_garbage())
+            {
+              if (n > 0)
+                for (std::ptrdiff_t i = 0; i < n; ++ i)
+                  increment();
+              else
+                for (std::ptrdiff_t i = 0; i < -n; ++ i)
+                  decrement();
+            }
+            else
+              hnd_ += n;
         }
 
         std::ptrdiff_t distance_to(const Index_iterator& other) const
         {
-          return std::ptrdiff_t(other.hnd_) - std::ptrdiff_t(this->hnd_);
+            if (mesh_->has_garbage())
+            {
+              bool forward = (other.hnd_ > hnd_);
+              
+              std::ptrdiff_t out = 0;
+              Index_iterator it = *this;
+              while (!it.equal(other))
+              {
+                if (forward)
+                {
+                  ++ it;
+                  ++ out;
+                }
+                else
+                {
+                  -- it;
+                  -- out;
+                }
+              }
+              return out;
+            }
+
+            // else
+            return std::ptrdiff_t(other.hnd_) - std::ptrdiff_t(this->hnd_);
         }
       
         bool equal(const Index_iterator& other) const
