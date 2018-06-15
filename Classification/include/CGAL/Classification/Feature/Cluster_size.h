@@ -48,7 +48,7 @@ public:
   /*!
     \brief Constructs the feature.
 
-    \tparam PointRange model of `ConstRange`. Its iterator type
+    \tparam ClusterRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator` and its value type is the key type of
     `Cluster`.
 
