@@ -51,9 +51,9 @@ int main (int, char**)
   Color_map color_map;
 
   boost::tie (echo_map, map_added) = pts.add_property_map<std::size_t> ("echo");
-  CGAL_assertion (map_added);
+  assert (map_added);
   boost::tie (color_map, map_added) = pts.add_property_map<Classification::RGB_Color> ("color");
-  CGAL_assertion (map_added);
+  assert (map_added);
 
   for (std::size_t i = 0; i < 1000; ++ i)
   {
@@ -76,8 +76,8 @@ int main (int, char**)
                                pts.normal_map(),
                                color_map, echo_map);
 
-  CGAL_assertion (generator.number_of_scales() == 5);
-  CGAL_assertion (features.size() == 44);
+  assert (generator.number_of_scales() == 5);
+  assert (features.size() == 44);
 
   Label_set labels;
 
@@ -91,7 +91,7 @@ int main (int, char**)
     for (std::size_t j = 0; j < 10; ++ j)
       training_set[std::size_t(CGAL::get_default_random().get_int(0, int(training_set.size())))] = int(i);
   }
-  CGAL_assertion (labels.size() == 20);
+  assert (labels.size() == 20);
   
   Classifier classifier (labels, features);
   
