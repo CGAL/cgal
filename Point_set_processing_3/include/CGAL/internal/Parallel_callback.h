@@ -98,15 +98,13 @@ public:
 
   void operator()()
   {
-    cpp11::chrono::seconds sleeping_time(0.00001);
-
     while (*m_advancement != m_size)
     {
       if (!m_callback (*m_advancement / double(m_size)))
         *m_interrupted = true;
       if (*m_interrupted)
         return;
-      cpp11::this_thread::sleep_for(sleeping_time);
+      cpp11::sleep_for (0.00001);
     }
     m_callback (1.);
   }

@@ -26,14 +26,17 @@
 /*
   This file defines the following:
   - CGAL::cpp11::thread
-  - CGAL::cpp11::this_thread::sleep_for
   - CGAL::cpp11::atomic
-  - CGAL::cpp11::chrono::seconds
+  - CGAL::cpp11::sleep_for
 
   It uses either TBB or STD depending on what's available: as TBB can
   quite often override `std::thread`, it is possible that TBB will be
   used instead of STD even if the real CXX11 `std::thread` is
   available.
+
+  As the conflicting API between TBB and STD can be quite complicated,
+  we offer a more generic `sleep_for()` function that takes
+  double-typed seconds as argument and deals with it.
 */
 
 #if defined(CGAL_LINKED_WITH_TBB)
@@ -72,30 +75,35 @@ namespace CGAL {
 namespace cpp11 {
 
 #if CGAL_USE_TBB_THREADS
+  
   using std::thread; // std::thread is declared by TBB if TBB_IMPLEMENT_CPP0X == 1
-  namespace this_thread
-  {
-    using std::this_thread::sleep_for;  // std::this_thread::sleep_for is declared by TBB if TBB_IMPLEMENT_CPP0X == 1
-  }
   using tbb::atomic;
-  namespace chrono
+
+  void sleep_for (double seconds)
   {
-    typedef tbb::tick_count::interval_t seconds;
+    // std::this_thread::sleep_for is declared by TBB if TBB_IMPLEMENT_CPP0X == 1
+    // It takes interval_t types as argument (!= from the std norm)
+    std::this_thread::sleep_for(tbb::tick_count::interval_t(seconds));
   }
+  
 #elif CGAL_USE_STD_THREADS
+  
   using std::thread;
-  namespace this_thread
-  {
-    using std::this_thread::sleep_for;
-  }
   using std::atomic;
-  namespace chrono
+
+  void sleep_for (double seconds)
   {
-    typedef std::chrono::duration<double, std::ratio<1> > seconds;
+    // MSVC2013 cannot call `sleep_for()` with other types than
+    // std::chrono::nanoseconds (bug in the implementation of the norm).
+    typedef std::chrono::nanoseconds nanoseconds;
+    nanoseconds ns (nanoseconds::rep (1000000000.0 * seconds));
+    std::this_thread::sleep_for(ns);
   }
+  
 #endif
 
 } // cpp11
+
 
 } //namespace CGAL
 

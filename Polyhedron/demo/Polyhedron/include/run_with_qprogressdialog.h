@@ -122,7 +122,7 @@ void run_with_qprogressdialog (Functor& functor,
     while (*signal_callback->latest_adv != 1. &&
            *signal_callback->state)
     {
-      CGAL::cpp11::this_thread::sleep_for(CGAL::cpp11::chrono::seconds(0.1));
+      CGAL::cpp11::sleep_for (0.1);
       QApplication::processEvents ();
     }
     
