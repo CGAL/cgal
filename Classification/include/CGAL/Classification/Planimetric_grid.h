@@ -84,7 +84,10 @@ public:
   typedef unspecified_type iterator; ///< A forward iterator with value type `std::size_t`.
 #else
   class iterator
-    : public boost::iterator_facade<iterator, boost::uint32_t, std::forward_iterator_tag>
+    : public boost::iterator_facade<iterator,
+                                    std::size_t,
+                                    std::forward_iterator_tag,
+                                    std::size_t> // Return value instead of reference
   {
   public:
     friend class boost::iterator_core_access;
@@ -168,9 +171,9 @@ public:
               m_idx == other.m_idx);
     }
 
-    boost::uint32_t& dereference() const
+    std::size_t dereference() const
     {
-      return const_cast<boost::uint32_t&>(m_lowest_scale->m_grid(m_pos_x, m_pos_y)[m_idx]);
+      return static_cast<std::size_t>(m_lowest_scale->m_grid(m_pos_x, m_pos_y)[m_idx]);
     }
 
   private:
@@ -222,7 +225,7 @@ public:
       const Point_3& p = get(point_map, *(input.begin()+i));
       std::size_t x = (boost::uint32_t)((p.x() - bbox.xmin()) / grid_resolution);
       std::size_t y = (boost::uint32_t)((p.y() - bbox.ymin()) / grid_resolution);
-      m_grid(x,y).push_back (i);
+      m_grid(x,y).push_back (boost::uint32_t(i));
     }
   }
 
