@@ -114,7 +114,7 @@ public:
       for (std::size_t x = xmin; x < m_xmax; ++ x)
       {
         for (std::size_t y = m_ymin; y < m_ymax; ++ y)
-          if (m_lowest_scale->has_points(x,y))
+          if (lowest_scale_has_points(x,y))
           {
             m_pos_x = x;
             m_pos_y = y;
@@ -154,7 +154,7 @@ public:
               
           }
         }
-        while (!(m_lowest_scale->has_points(m_pos_x, m_pos_y)));
+        while (!(lowest_scale_has_points(m_pos_x, m_pos_y)));
       }
     }
 
@@ -179,6 +179,13 @@ public:
     std::size_t m_idx;
     std::size_t m_pos_x;
     std::size_t m_pos_y;
+
+    bool lowest_scale_has_points (std::size_t x, std::size_t y) const
+    {
+      if (x >= m_lowest_scale->width() || y >= m_lowest_scale->height())
+        return false;
+      return m_lowest_scale->has_points (x, y);
+    }
 
   };
 #endif
@@ -213,7 +220,6 @@ public:
       m_y.push_back ((std::size_t)((p.y() - bbox.ymin()) / grid_resolution));
       m_grid(m_x.back(), m_y.back()).push_back (i);
     }
-//    std::cerr << "Grid size = " << width << " " << height << std::endl;
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -229,12 +235,32 @@ public:
     for (std::size_t x = 0; x < m_width; ++ x)
       for (std::size_t y = 0; y < m_height; ++ y)
       {
-        m_has_points.push_back ((m_lower_scale->has_points(x*2, y*2)
-                                 || m_lower_scale->has_points(x*2, y*2 + 1)
-                                 || m_lower_scale->has_points(x*2 + 1, y*2 + 1)
-                                 || m_lower_scale->has_points(x*2 + 1, y*2)));
+        bool has_points = false;
+
+        for (std::size_t i = 0; i <= 1; ++ i)
+        {
+          std::size_t xi = x*2 + i;
+          if (xi >= m_lower_scale->width())
+            continue;
+
+          for (std::size_t j = 0; j <= 1; ++ j)
+          {
+            std::size_t yi = y*2 + j;
+            if (yi >= m_lower_scale->height())
+              continue;
+
+            if (m_lower_scale->has_points(xi,yi))
+            {
+              has_points = true;
+              break;
+            }
+          }
+          if (has_points)
+            break;
+        }
+
+        m_has_points.push_back (has_points);
       }
-//    std::cerr << "Grid size = " << width() << " " << height() << std::endl;
   }
   /// \endcond
 
@@ -267,8 +293,9 @@ public:
   {
     if (m_current_scale == 0)
       return this;
-    else
-      return m_lower_scale->lowest_scale();
+
+    // else
+    return m_lower_scale->lowest_scale();
   }
   /// \endcond
 
@@ -278,6 +305,8 @@ public:
   */
   iterator indices_begin(std::size_t x, std::size_t y) const
   {
+    CGAL_assertion (x < m_width && y < m_height);
+
     return iterator (lowest_scale(), m_current_scale, x, y);
   }
 
@@ -287,6 +316,8 @@ public:
   */
   iterator indices_end(std::size_t x, std::size_t y) const
   {
+    CGAL_assertion (x < m_width && y < m_height);
+
     return iterator (lowest_scale(), m_current_scale, x, y, true);
   }
 
@@ -295,14 +326,13 @@ public:
   */
   bool has_points(std::size_t x, std::size_t y) const
   {
+    CGAL_assertion (x < m_width && y < m_height);
+    
     if (m_current_scale == 0)
-    {
-      if (x >= m_grid.width() || y >= m_grid.height())
-        return false;
       return (!(m_grid(x,y).empty()));
-    }
-    else
-      return m_has_points[x * m_height + y];
+
+    // else
+    return m_has_points[x * m_height + y];
   }
 
   /*!
@@ -312,8 +342,9 @@ public:
   {
     if (m_lower_scale == NULL)
       return m_x[index];
-    else
-      return m_lower_scale->x(index) / 2;
+
+    // else
+    return m_lower_scale->x(index) / 2;
   }
   /*!
     \brief Returns the `y` grid coordinate of the point at position `index`.
@@ -322,8 +353,9 @@ public:
   {
     if (m_lower_scale == NULL)
       return m_y[index];
-    else
-      return m_lower_scale->y(index) / 2;
+
+    // else
+    return m_lower_scale->y(index) / 2;
   }
 };
   
