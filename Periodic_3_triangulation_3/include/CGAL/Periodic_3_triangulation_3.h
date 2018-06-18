@@ -258,7 +258,6 @@ protected:
   /// conflict region.
   mutable std::vector<Vertex_handle> v_offsets;
 
-public:
   /// Determines if we currently compute in 3-cover or 1-cover.
   Covering_sheets _cover;
 
@@ -290,7 +289,7 @@ public:
   // Copy constructor duplicates vertices and cells
   Periodic_3_triangulation_3(const Periodic_3_triangulation_3& tr)
     : _gt(tr.geom_traits()),
-      _cover(tr._cover)
+      _cover(tr.number_of_sheets())
   { }
 
   virtual ~Periodic_3_triangulation_3() {}
@@ -4046,7 +4045,7 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS>& tr)
 
   std::vector< Cell_handle > C;
   std::size_t m;
-  tr._tds.read_cells(is, V, m, C);
+  tr.tds().read_cells(is, V, m, C);
 
   // read offsets
   int off[4] = {0,0,0,0};
@@ -4155,7 +4154,9 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS>& tr)
       }
     }
   }
-  CGAL_triangulation_postcondition(i==tr._cover[0]*tr._cover[1]*tr._cover[2]*n);
+  CGAL_triangulation_postcondition(i == tr.number_of_sheets()[0] *
+                                        tr.number_of_sheets()[1] *
+                                        tr.number_of_sheets()[2] * n);
 
   // asks the tds for the combinatorial information
   tr.tds().print_cells(os, V);
