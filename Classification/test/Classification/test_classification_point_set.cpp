@@ -86,7 +86,7 @@ int main (int, char**)
 #endif
   
   CGAL_assertion (generator.number_of_scales() == 5);
-  CGAL_assertion (features.size() == 80);
+  CGAL_assertion (features.size() == 44);
 
   Label_set labels;
 

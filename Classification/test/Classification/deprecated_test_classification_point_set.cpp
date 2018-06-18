@@ -77,7 +77,7 @@ int main (int, char**)
                                color_map, echo_map);
 
   CGAL_assertion (generator.number_of_scales() == 5);
-  CGAL_assertion (features.size() == 80);
+  CGAL_assertion (features.size() == 44);
 
   Label_set labels;
 
