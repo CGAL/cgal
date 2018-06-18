@@ -13,7 +13,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 struct Visitor :
   public PMP::Corefinement::Default_visitor<Mesh>
 {
-  typedef typename Mesh::Face_index face_descriptor;
+  typedef Mesh::Face_index face_descriptor;
 
   boost::container::flat_map<const Mesh*, Mesh::Property_map<Mesh::Face_index, int> > properties;
   int face_id;
