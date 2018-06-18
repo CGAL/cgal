@@ -123,7 +123,7 @@ namespace CGAL {
         /// decrement.
         SM_Index operator--(int) { SM_Index tmp(*this); --idx_; return tmp; }
 
-        SM_Index operator+=(std::ptrdiff_t n) { idx_ += n; return *this; }
+        SM_Index operator+=(std::ptrdiff_t n) { idx_ = size_type(std::ptrdiff_t(idx_) + n); return *this; }
       
     private:
         size_type idx_;
