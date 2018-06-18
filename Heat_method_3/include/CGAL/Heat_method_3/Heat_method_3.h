@@ -28,7 +28,7 @@
 #include <set>
 
 #include <CGAL/property_map.h>
-
+#include <CGAL/double.h>
 #include <Eigen/Cholesky>
 #include <Eigen/Sparse>
 
@@ -357,7 +357,7 @@ namespace Heat_method_3 {
     Eigen::VectorXd value_at_source_set(const Eigen::VectorXd& phi, int dimension) const
     {
       Eigen::VectorXd source_set_val(dimension,1);
-      if(!(sources.empty()))
+      if(sources.empty())
       {
         for(int k = 0; k<dimension; k++)
         {
@@ -369,7 +369,7 @@ namespace Heat_method_3 {
       {
         for(int i = 0; i<dimension; i++)
         {
-          int min_val = INT_MAX;
+          double min_val = INT_MAX;
           vertex_iterator current;
           Index current_Index;
           current = sources.begin();
@@ -377,9 +377,10 @@ namespace Heat_method_3 {
           for(int j = 0; j<sources.size(); j++)
           {
             current_Index = get(vertex_id_map, *current);
-            if(std::abs(phi.coeff(i,0)-phi.coeff(current_Index,0))< min_val)
+            double new_d = fabs(-phi.coeff(current_Index,0)+phi.coeff(i,0));
+            if(new_d < min_val)
             {
-              min_val = std::abs(phi.coeff(i,0)-phi.coeff(current_Index,0));
+              min_val = new_d;
             }
             current = ++current;
           }
@@ -422,7 +423,8 @@ namespace Heat_method_3 {
       build();
       BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
         Index i_d = get(vertex_id_map, vd);
-        d =solved_phi(i_d,0);
+        d = solved_phi(i_d,0);
+        std::cout<<d<<"\n";
         put(vdm,vd,d);
       }
     }
