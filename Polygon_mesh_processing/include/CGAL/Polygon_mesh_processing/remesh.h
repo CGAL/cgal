@@ -188,6 +188,7 @@ void isotropic_remeshing(const FaceRange& faces
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
                              internal::No_constraint_pmap<vertex_descriptor>());
 
+  bool protect = choose_param(get_param(np, internal_np::protect_constraints), false);
   typedef typename boost::lookup_named_param_def <
       internal_np::face_patch_t,
       NamedParameters,
@@ -196,21 +197,26 @@ void isotropic_remeshing(const FaceRange& faces
   FPMap fpmap = choose_param(
     get_param(np, internal_np::face_patch),
     internal::Connected_components_pmap<PM, FIMap>(faces, pmesh, ecmap, fimap,
-      boost::is_default_param(get_param(np, internal_np::face_patch)) && need_aabb_tree) );
+      boost::is_default_param(get_param(np, internal_np::face_patch)) && (need_aabb_tree
+#if !defined(CGAL_NO_PRECONDITIONS)
+      || protect // face patch map is used to identify patch border edges to check protected edges are short enough
+#endif
+    ) ) );
 
   double low = 4. / 5. * target_edge_length;
   double high = 4. / 3. * target_edge_length;
 
-  bool protect = choose_param(get_param(np, internal_np::protect_constraints), false);
+#if !defined(CGAL_NO_PRECONDITIONS)
   if(protect)
   {
     std::string msg("Isotropic remeshing : protect_constraints cannot be set to");
     msg.append(" true with constraints larger than 4/3 * target_edge_length.");
     msg.append(" Remeshing aborted.");
     CGAL_precondition_msg(
-      internal::constraints_are_short_enough(pmesh, ecmap, vpmap, high),
+      internal::constraints_are_short_enough(pmesh, ecmap, vpmap, fpmap, high),
       msg.c_str());
   }
+#endif
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
   t.stop();

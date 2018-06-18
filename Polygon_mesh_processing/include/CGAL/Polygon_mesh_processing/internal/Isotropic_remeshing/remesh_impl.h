@@ -230,9 +230,6 @@ namespace internal {
                                           , internal::Border_constraint_pmap<PM, FIMap>(pmesh, face_range, fimap) ) )
                                        .face_index_map(fimap));
         }
-        if(nb_cc == 1){
-          patch_ids_map = Patch_ids_map();
-        }
       }
       else
         nb_cc=0; // default value
@@ -254,10 +251,12 @@ namespace internal {
 
   template<typename PM,
            typename EdgeConstraintMap,
-           typename VertexPointMap>
+           typename VertexPointMap,
+           typename FacePatchMap>
   bool constraints_are_short_enough(const PM& pmesh,
                                     EdgeConstraintMap ecmap,
                                     VertexPointMap vpmap,
+                                    const FacePatchMap& fpm,
                                     const double& high)
   {
     double sqh = high*high;
@@ -265,9 +264,11 @@ namespace internal {
     typedef typename boost::graph_traits<PM>::edge_descriptor     edge_descriptor;
     BOOST_FOREACH(edge_descriptor e, edges(pmesh))
     {
-      if (get(ecmap, e))
+      halfedge_descriptor h = halfedge(e, pmesh);
+      if (  is_border(e, pmesh) ||
+            get(ecmap, e) ||
+            get(fpm, face(h,pmesh))!=get(fpm, face(opposite(h,pmesh),pmesh)) )
       {
-        halfedge_descriptor h = halfedge(e, pmesh);
         if (sqh < CGAL::squared_distance(get(vpmap, source(h, pmesh)),
                                          get(vpmap, target(h, pmesh))))
         {
