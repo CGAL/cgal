@@ -104,7 +104,8 @@ if ( CGAL_FOUND )
       average_spacing_example
       normals_example
       jet_smoothing_example
-      normal_estimation)
+      normal_estimation
+      callback_example)
     if(TBB_FOUND AND TARGET ${target})
       CGAL_target_use_TBB(${target})
     endif()
