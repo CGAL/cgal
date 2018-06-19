@@ -374,7 +374,7 @@ public:
   {
     for (int j = 0; j < 3; ++ j)
       for (std::size_t i = 0; i < m_scales.size(); ++ i)
-        features.add_with_scale_id<Eigenvalue> (i, m_input, eigen(i), std::size_t(j));
+        features.add_with_scale_id<Eigenvalue> (i, m_input, eigen(i), (unsigned int)(j));
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       features.add_with_scale_id<Distance_to_plane> (i, m_input, m_point_map, eigen(i));
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
