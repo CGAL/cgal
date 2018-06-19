@@ -23,7 +23,7 @@ typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef CGAL::Heat_method_3::Heat_method_3<Mesh,Kernel,Vertex_distance_map> Heat_method;
 typedef CGAL::Heat_method_3::Heat_method_Eigen_traits_3::SparseMatrix SparseMatrix;
 
-void source_set_tests(Heat_method hm, Mesh sm)
+void source_set_tests(Heat_method hm, const Mesh& sm)
 {
   vertex_descriptor source = *(vertices(sm).first);
   hm.add_source(source);
@@ -41,7 +41,7 @@ void source_set_tests(Heat_method hm, Mesh sm)
   assert(hm.remove_source(*(std::next(vertices(sm).first,3))));
 }
 
-void cotan_matrix_test(SparseMatrix c)
+void cotan_matrix_test(const SparseMatrix& c)
 {
   double sum = 0;
   for(int k = 0; k<c.outerSize(); ++k)
@@ -55,7 +55,7 @@ void cotan_matrix_test(SparseMatrix c)
   assert(sum < 0.000000001);
 }
 
-void mass_matrix_test(SparseMatrix M)
+void mass_matrix_test(const SparseMatrix& M)
 {
   double sum = 0;
   for(int k = 0; k<M.outerSize(); ++k)
@@ -66,12 +66,12 @@ void mass_matrix_test(SparseMatrix M)
       }
     }
     //total Area matrix should be equal to the sum of all faces on the mesh
-    //have to allow for the error because of rounding issues: Andreas might be able to help with this?
+    //have to allow for the error because of rounding
     //this will only work for the pyramid mesh
     assert((sum-1.866025)<=0.000005);
 }
 
-void check_for_zero(Eigen::VectorXd u)
+void check_for_zero(const Eigen::VectorXd& u)
 {
   for(int c_i = 0; c_i<4; c_i++)
   {
@@ -79,7 +79,7 @@ void check_for_zero(Eigen::VectorXd u)
   }
 }
 
-void check_for_unit(Eigen::MatrixXd X, int dimension)
+void check_for_unit(const Eigen::MatrixXd& X, int dimension)
 {
   for(int k = 0; k<dimension; k++)
   {
@@ -88,10 +88,13 @@ void check_for_unit(Eigen::MatrixXd X, int dimension)
   }
 }
 
-
-
-
-
+void check_no_update(const Mesh& sm, const Vertex_distance_map& original, const Vertex_distance_map& updated)
+{
+  BOOST_FOREACH(vertex_descriptor vd, vertices(sm))
+  {
+    assert(get(original, vd) == get(updated,vd));
+  }
+}
 
 int main()
 {
@@ -135,9 +138,6 @@ int main()
 
   Eigen::VectorXd solved_dist = hm.solve_phi(c, XD,4);
 
-  std::cout<<"PHASE 1 DONE \n";
-  std::cout<<"PHASE 2 DONE \n";
-  std::cout<<"PHASE 3 DONE \n";
 
   Mesh sm2;
   Vertex_distance_map vertex_distance_map2 = get(Vertex_distance_tag(),sm2);
@@ -169,7 +169,6 @@ int main()
   //verified a few of the actual values against the estimated values, avg. error was 0.0001
   //In future, want to check performance against other solver
 
-
   Mesh sm3;
   Vertex_distance_map vertex_distance_map3 = get(Vertex_distance_tag(),sm3);
 
@@ -186,11 +185,18 @@ int main()
   const SparseMatrix& c3 = hm3.cotan_matrix();
   cotan_matrix_test(c3);
   const SparseMatrix& K3= hm3.kronecker_delta();
-  // AF: I commented the assert as I commented in build()
   assert(K3.nonZeros()==1);
 
-
-
+  hm3.add_source(*(++(++(vertices(sm3).first))));
+  hm3.add_source(*(vertices(sm3).first));
+  const Vertex_distance_map& old_vdm = hm3.get_vertex_distance_map();
+  hm3.update();
+  const Vertex_distance_map& original_vdm = hm3.get_vertex_distance_map();
+  hm.update();
+  const Vertex_distance_map& new_vdm = hm3.get_vertex_distance_map();
+  check_no_update(sm3, original_vdm, new_vdm);
+  const SparseMatrix& K4 = hm3.kronecker_delta();
+  assert(K4.nonZeros()==2);
 
   return 0;
 }

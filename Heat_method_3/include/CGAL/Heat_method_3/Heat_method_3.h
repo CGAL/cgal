@@ -124,6 +124,11 @@ namespace Heat_method_3 {
      * add `vd` to the source set, returning `false` if `vd` is already in the set.
      */
 
+     const VertexDistanceMap& get_vertex_distance_map() const
+     {
+       return vdm;
+     }
+
      const Matrix& mass_matrix() const
      {
        return m_mass_matrix;
@@ -148,6 +153,7 @@ namespace Heat_method_3 {
 
     bool add_source(vertex_descriptor vd)
     {
+      source_change_flag = true;
       return sources.insert(vd).second;
     }
 
@@ -156,6 +162,7 @@ namespace Heat_method_3 {
      */
     bool remove_source(vertex_descriptor vd)
     {
+      source_change_flag = true;
       return (sources.erase(vd) == 1);
     }
 
@@ -172,6 +179,7 @@ namespace Heat_method_3 {
      */
     void clear_sources()
     {
+      source_change_flag = true;
       sources.clear();
       return;
     }
@@ -420,11 +428,20 @@ namespace Heat_method_3 {
     void update()
     {
       double d=0;
-      build();
+      if(source_change_flag)
+      {
+        //don't need to recompute Mass matrix, cotan matrix or timestep reflect that in this function
+        sources = get_sources();
+        kronecker = kronecker_delta(sources);
+        solved_u = solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, m_time_step, dimension);
+        X = compute_unit_gradient(solved_u);
+        index_divergence = compute_divergence(X, dimension);
+        solved_phi = solve_phi(m_cotan_matrix, index_divergence, dimension);
+        source_change_flag = false;
+      }
       BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
         Index i_d = get(vertex_id_map, vd);
         d = solved_phi(i_d,0);
-        std::cout<<d<<"\n";
         put(vdm,vd,d);
       }
     }
@@ -433,6 +450,7 @@ namespace Heat_method_3 {
 
     void build()
     {
+      source_change_flag = false;
       CGAL_precondition(is_triangle_mesh(tm));
       vertex_id_map = get(Vertex_property_tag(),const_cast<TriangleMesh&>(tm));
       Index i = 0;
@@ -445,7 +463,7 @@ namespace Heat_method_3 {
         put(face_id_map, fd, face_i++);
       }
       int m = static_cast<int>(num_vertices(tm));
-
+      dimension = m;
       //mass matrix entries
       std::vector<triplet> A_matrix_entries;
       //cotan matrix entries
@@ -512,6 +530,7 @@ namespace Heat_method_3 {
       index_divergence = compute_divergence(X, m);
       solved_phi = solve_phi(m_cotan_matrix, index_divergence, m);
     }
+    int dimension;
     const TriangleMesh& tm;
     VertexDistanceMap vdm;
     VertexPointMap vpm;
@@ -525,11 +544,10 @@ namespace Heat_method_3 {
     Matrix index_divergence;
     Eigen::VectorXd solved_phi;
     std::set<Index> source_index;
+    bool source_change_flag;
   };
 
 } // namespace Heat_method_3
 } // namespace CGAL
-
 #include <CGAL/enable_warnings.h>
-
 #endif CGAL_HEAT_METHOD_3_HEAT_METHOD_3_H
