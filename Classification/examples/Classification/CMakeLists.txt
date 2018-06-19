@@ -37,7 +37,7 @@ endif()
 
 find_package(TBB QUIET)
 
-find_package(OpenCV QUIET)
+find_package(OpenCV QUIET COMPONENTS core ml) # Need core + machine learning
 
 # Use Eigen
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)

@@ -26,7 +26,7 @@ if(EIGEN3_FOUND)
       ${Boost_SERIALIZATION_LIBRARY}
       ${Boost_IOSTREAMS_LIBRARY})
     
-    find_package(OpenCV QUIET)
+    find_package(OpenCV QUIET COMPONENTS core ml) # Need core + machine learning
     if (OpenCV_FOUND)
       message(STATUS "Found OpenCV ${OpenCV_VERSION}")
       include_directories(${OpenCV_INCLUDE_DIRS})
