@@ -54,20 +54,9 @@
 #endif
 
 #if !CGAL_USE_TBB_THREADS
-#  if !defined(CGAL_CFG_NO_STD_THREAD)
-#    include <thread>
-#    include <atomic>
-#    include <chrono>
-#    define CGAL_USE_STD_THREADS 1
-#  else
-#    define CGAL_USE_STD_THREADS 0
-#  endif
-#else
-#  define CGAL_USE_STD_THREADS 0
-#endif
-
-#if CGAL_USE_STD_THREADS || CGAL_USE_TBB_THREADS
-#  define CGAL_HAS_STD_THREADS // Useful define
+#  include <thread>
+#  include <atomic>
+#  include <chrono>
 #endif
 
 namespace CGAL {
@@ -86,8 +75,8 @@ namespace cpp11 {
     std::this_thread::sleep_for(tbb::tick_count::interval_t(seconds));
   }
   
-#elif CGAL_USE_STD_THREADS
-  
+#else
+
   using std::thread;
   using std::atomic;
 
@@ -99,7 +88,7 @@ namespace cpp11 {
     nanoseconds ns (nanoseconds::rep (1000000000.0 * seconds));
     std::this_thread::sleep_for(ns);
   }
-  
+
 #endif
 
 } // cpp11
@@ -107,7 +96,6 @@ namespace cpp11 {
 
 } //namespace CGAL
 
-#undef CGAL_USE_STD_THREADS
 #undef CGAL_USE_TBB_THREADS
 
 #endif // CGAL_THREAD_H
