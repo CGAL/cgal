@@ -42,7 +42,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}
-\cgalPkgDependsOn{\ref PkgTriangulation3Summary}
+\cgalPkgDependsOn{\ref PkgTriangulation3Summary and \ref thirdpartyEigen}
 \cgalPkgBib{cgal:rty-m3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
