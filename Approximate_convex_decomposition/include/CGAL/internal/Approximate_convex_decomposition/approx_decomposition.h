@@ -278,30 +278,7 @@ private:
         Cluster_properties& cluster_1_props = m_cluster_map[vert_1];
         Cluster_properties& cluster_2_props = m_cluster_map[vert_2];
 
-        // convex hull points
-        std::vector<Point_3> common_hull_pts(cluster_1_props.conv_hull_pts.size() + cluster_2_props.conv_hull_pts.size()); // merged list of the lists of the convex hull points of two clusters
-        
-        CGAL_assertion(cluster_1_props.conv_hull_pts.size() >= 3);
-        CGAL_assertion(cluster_2_props.conv_hull_pts.size() >= 3);
-        
-        // add the convex hull points of the first cluster
-        std::copy(cluster_1_props.conv_hull_pts.begin(), cluster_1_props.conv_hull_pts.end(), common_hull_pts.begin());
-        // add the convex hull points of the second cluster
-        std::copy(cluster_2_props.conv_hull_pts.begin(), cluster_2_props.conv_hull_pts.end(), common_hull_pts.begin() + cluster_1_props.conv_hull_pts.size());
-
-        // compute convex hull on the merged list of points
-        TriangleMesh conv_hull;
-        CGAL::convex_hull_3(common_hull_pts.begin(), common_hull_pts.end(), conv_hull);
-
-        // fill up the list of the convex hull points of produced cluster after decimation
-        decimation_props.new_cluster_props.conv_hull_pts.clear();
-        BOOST_FOREACH(vertex_descriptor vert, vertices(conv_hull))
-        {
-            decimation_props.new_cluster_props.conv_hull_pts.push_back(get(CGAL::vertex_point, conv_hull)[vert]);
-        }
-        CGAL_warning(decimation_props.new_cluster_props.conv_hull_pts.size() > 3);
-
-        // faces
+        // faces 
         decimation_props.new_cluster_props.faces.resize(cluster_1_props.faces.size() + cluster_2_props.faces.size());
 
         // add faces from the first cluster
@@ -309,8 +286,36 @@ private:
         // add faces from the second cluster
         std::copy(cluster_2_props.faces.begin(), cluster_2_props.faces.end(), decimation_props.new_cluster_props.faces.begin() + cluster_1_props.faces.size());
 
-        // compute concavity value of the produced cluster using concavity calculator of the input mesh, faces, and convex hull of the produced cluster
-        decimation_props.new_cluster_props.concavity = m_concavity_calc.compute(decimation_props.new_cluster_props.faces, conv_hull);
+        // convex hull points
+        std::vector<Point_3> common_hull_pts(cluster_1_props.conv_hull_pts.size() + cluster_2_props.conv_hull_pts.size()); // merged list of the lists of the convex hull points of two clusters
+        
+        // add the convex hull points of the first cluster
+        std::copy(cluster_1_props.conv_hull_pts.begin(), cluster_1_props.conv_hull_pts.end(), common_hull_pts.begin());
+        // add the convex hull points of the second cluster
+        std::copy(cluster_2_props.conv_hull_pts.begin(), cluster_2_props.conv_hull_pts.end(), common_hull_pts.begin() + cluster_1_props.conv_hull_pts.size());
+
+        // if can construct convex hull
+        if (common_hull_pts.size() > 3) //TODO: add collinearity check
+        {
+            // compute convex hull on the merged list of points
+            TriangleMesh conv_hull;
+            CGAL::convex_hull_3(common_hull_pts.begin(), common_hull_pts.end(), conv_hull);
+
+            // fill up the list of the convex hull points of produced cluster after decimation
+            decimation_props.new_cluster_props.conv_hull_pts.clear();
+            BOOST_FOREACH(vertex_descriptor vert, vertices(conv_hull))
+            {
+                decimation_props.new_cluster_props.conv_hull_pts.push_back(get(CGAL::vertex_point, conv_hull)[vert]);
+            }
+
+            // compute concavity value of the produced cluster using concavity calculator of the input mesh, faces, and convex hull of the produced cluster
+            decimation_props.new_cluster_props.concavity = m_concavity_calc.compute(decimation_props.new_cluster_props.faces, conv_hull);
+        }
+        else
+        {
+            decimation_props.new_cluster_props.conv_hull_pts = std::move(common_hull_pts);
+            decimation_props.new_cluster_props.concavity = 0;
+        }
 
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
 //        std::cout << "Concavity: " << decimation_props.new_cluster_props.concavity << std::endl;

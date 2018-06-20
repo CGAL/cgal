@@ -25,7 +25,6 @@ int main()
     Mesh mesh;
     
     std::ifstream input("data/cube.off");
-//    std::ifstream input("data/teapot.off");
 //    std::ifstream input("data/sword.off");
 //    std::ifstream input("data/cactus.off");
 //    std::ifstream input("data/cheese.off");
