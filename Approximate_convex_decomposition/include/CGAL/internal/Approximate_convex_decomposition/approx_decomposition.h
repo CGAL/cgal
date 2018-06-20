@@ -231,7 +231,7 @@ private:
      */
     void setup_graph(const Filtered_dual_graph& dual)
     {
-        std::map<face_descriptor, graph_vertex_descriptor> face_graph_map; // maps faces of the input mesh to vetices of the adjacency list 
+        std::unordered_map<face_descriptor, graph_vertex_descriptor> face_graph_map; // maps faces of the input mesh to vetices of the adjacency list 
         
         // extract property maps of the adjacency list
         m_cluster_map = boost::get(cluster_props_t(), m_graph);
@@ -368,9 +368,14 @@ private:
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
         int cnt = 0;
 #endif
+        std::vector<graph_edge_descriptor> invalid_edges;
         BOOST_FOREACH(graph_edge_descriptor edge, boost::out_edges(vert_1, m_graph))
         {
             update_edge(edge, concavity_threshold, alpha_factor);
+            if (m_decimation_map[edge].new_cluster_props.concavity > concavity_threshold)
+            {
+                invalid_edges.push_back(edge);
+            }
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
             ++cnt;
 #endif
@@ -378,6 +383,11 @@ private:
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
         std::cout << "Updated edges: " << cnt << std::endl;
 #endif
+
+        BOOST_FOREACH(graph_edge_descriptor edge, invalid_edges)
+        {
+            remove_edge(edge, m_graph);
+        }
     }
 
     /**
