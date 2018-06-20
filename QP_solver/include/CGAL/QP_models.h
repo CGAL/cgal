@@ -396,7 +396,7 @@ namespace QP_model_detail {
   // maps a container to its begin-iterator, as specified by HowToBegin
   template<typename Container, typename Iterator, typename HowToBegin>
   struct Begin
-    : public CGAL::unary_function< Container, Iterator >
+    : public CGAL::cpp98::unary_function< Container, Iterator >
   {
     typedef Iterator result_type;
     result_type operator () ( const Container& v) const 

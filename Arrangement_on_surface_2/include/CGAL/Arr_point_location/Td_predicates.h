@@ -35,7 +35,7 @@ template < class Td_traits> class Trapezoidal_decomposition_2;
 
 ////MICHAL: not in use
 //template <class map_item>
-//struct Td_active_map_item : public CGAL::unary_function<map_item,bool>
+//struct Td_active_map_item : public CGAL::cpp98::unary_function<map_item,bool>
 //{
 //  bool operator()(const map_item& item) const
 //  {
@@ -46,7 +46,7 @@ template < class Td_traits> class Trapezoidal_decomposition_2;
 ////MICHAL: not in use
 //template <class X_trapezoid,class Traits>
 //struct Td_active_non_degenerate_trapezoid : 
-//public CGAL::unary_function<X_trapezoid,bool>
+//public CGAL::cpp98::unary_function<X_trapezoid,bool>
 //{
 //  Td_active_non_degenerate_trapezoid(Traits& t) : traits(t) {}
 //  bool operator()(const X_trapezoid& tr) const
@@ -59,7 +59,7 @@ template < class Td_traits> class Trapezoidal_decomposition_2;
 
 template <class map_item,class Traits>
 struct Td_active_edge_item:
-  public CGAL::unary_function<map_item,bool>
+  public CGAL::cpp98::unary_function<map_item,bool>
 {
   Td_active_edge_item(const Traits& t) : traits(t) {}
   bool operator()(const map_item& item) const
@@ -71,7 +71,7 @@ struct Td_active_edge_item:
 };
 
 template <class _Tp>
-struct Td_map_item_handle_less : public CGAL::binary_function<_Tp, _Tp, bool>
+struct Td_map_item_handle_less : public CGAL::cpp98::binary_function<_Tp, _Tp, bool>
 {
   bool operator()(const _Tp& __x, const _Tp& __y) const { 
     return __x->id() < __y->id(); }

@@ -1068,7 +1068,7 @@ namespace std {
   
   template < class CCC, bool Const >
   struct hash<CGAL::CCC_internal::CCC_iterator<CCC, Const> >
-    : public CGAL::unary_function<CGAL::CCC_internal::CCC_iterator<CCC, Const>, std::size_t> {
+    : public CGAL::cpp98::unary_function<CGAL::CCC_internal::CCC_iterator<CCC, Const>, std::size_t> {
 
     std::size_t operator()(const CGAL::CCC_internal::CCC_iterator<CCC, Const>& i) const
     {

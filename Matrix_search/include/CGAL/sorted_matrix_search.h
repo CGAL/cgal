@@ -125,7 +125,7 @@ private:
 };
 template < class Cell >
 struct Cell_min
-: public CGAL::unary_function< Cell, typename Cell::Value >
+: public CGAL::cpp98::unary_function< Cell, typename Cell::Value >
 {
   typename Cell::Value
   operator()( const Cell& c) const
@@ -134,7 +134,7 @@ struct Cell_min
 
 template < class Cell >
 struct Cell_max
-: public CGAL::unary_function< Cell, typename Cell::Value > {
+: public CGAL::cpp98::unary_function< Cell, typename Cell::Value > {
 
   Cell_max( int offset) : ofs( offset) {}
 
