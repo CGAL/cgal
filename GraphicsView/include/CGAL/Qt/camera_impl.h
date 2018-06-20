@@ -677,6 +677,26 @@ void Camera::getProjectionMatrix(GLfloat m[16]) const {
     m[i] = float(mat[i]);
 }
 
+CGAL_INLINE_FUNCTION
+void Camera::getViewportMatrix(GLdouble m[]) const
+{
+  int v[4];
+  getViewport(v);
+  m[0]=0.5f*v[2]; m[4]=0        ;m[8]=0    ;m[12]=0.5f*v[2]+v[0];
+  m[1]=0        ; m[5]=0.5f*v[3];m[9]=0    ;m[13]=0.5*v[3]+v[1];
+  m[2]=0        ; m[6]=0        ;m[10]=0.5f;m[14]=0.5f;
+  m[3]=0        ; m[7]=0        ;m[11]=0   ;m[15]=1.0f;
+}
+
+CGAL_INLINE_FUNCTION
+void Camera::getViewportMatrix(GLfloat m[]) const
+{
+  static GLdouble mat[16];
+  getViewportMatrix(mat);
+  for (unsigned short i = 0; i < 16; ++i)
+    m[i] = float(mat[i]);
+}
+
 /*! Fills \p m with the Camera modelView matrix values.
 
  First calls computeModelViewMatrix() to define the Camera modelView matrix.

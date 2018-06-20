@@ -393,13 +393,10 @@ Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_SOLID_WIREFRAME);
     program->bind();
     QMatrix4x4 viewport_matrix;
-    int v[4];
-    
-    viewer->camera()->getViewport(v);
-    viewport_matrix.setRow(0,QVector4D(0.5f*v[2],0,0,0.5f*v[2]+v[0]));
-    viewport_matrix.setRow(1,QVector4D(0,0.5f*v[3],0,0.5*v[3]+v[1]));
-    viewport_matrix.setRow(2,QVector4D(0,0,0.5f,0.5f));
-    viewport_matrix.setRow(3,QVector4D(0,0,0,1.0f));
+    GLfloat mat[16];
+    viewer->camera()->getViewportMatrix(mat);
+    for(int i=0; i<16; ++i)
+      viewport_matrix.data()[i] = mat[i];
     
     program->setUniformValue("viewport_matrix", viewport_matrix);
     program->setUniformValue("viewport_matrix_inv", viewport_matrix.inverted());

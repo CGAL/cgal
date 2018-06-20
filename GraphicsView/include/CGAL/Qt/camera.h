@@ -401,6 +401,8 @@ public:
 
   void getProjectionMatrix(GLfloat m[16]) const;
   void getProjectionMatrix(GLdouble m[16]) const;
+  void getViewportMatrix(GLfloat m[16]) const;
+  void getViewportMatrix(GLdouble m[16]) const;
 
   void getModelViewMatrix(GLfloat m[16]) const;
   void getModelViewMatrix(GLdouble m[16]) const;
