@@ -44,7 +44,7 @@ struct Progress_to_std_cerr_callback
     // Avoid calling time() at every single iteration, which could
     // impact performances very badly
     ++ nb;
-    if (advancement != 1 && nb % 1000 != 0)
+    if (advancement != 1 && nb % 10000 != 0)
       return true;
 
     double t = timer.time();
@@ -55,6 +55,7 @@ struct Progress_to_std_cerr_callback
       
       if (advancement == 1)
         std::cerr << std::endl;
+      t_latest = t;
     }
 
     return true;
