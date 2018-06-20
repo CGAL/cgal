@@ -205,17 +205,11 @@ private:
     // all the necessary information to describe a cluster 
     struct Cluster_properties
     {
+        int id; // needed to prevent dupblications of edges
         double concavity;
         std::vector<face_descriptor> faces; // list of faces of the input mesh
         std::vector<Point_3> conv_hull_pts; // list of points on the convex hull of the cluster
         CGAL::Bbox_3 bbox; // bounding box of the cluster
-
-//        void operator=(const Cluster_properties&& r)
-//        {
-//            concavity = r.concavity;
-//            faces = std::move(r.faces);
-//            conv_hull_pts = std::move(r.conv_hull_pts);
-//        }
     };
 
     // all the necessary information to describe a decimation operation of two clusters
@@ -239,10 +233,12 @@ private:
 
         // add vertices
         // fill up cluster properties (single face) for all vertices
+        int id = 0;
         BOOST_FOREACH(face_descriptor face, vertices(dual))
         {
             Cluster_properties props;
-            
+           
+            props.id = id++;
             props.concavity = 0;
             props.faces.push_back(face);
 
@@ -277,6 +273,8 @@ private:
 
         Cluster_properties& cluster_1_props = m_cluster_map[vert_1];
         Cluster_properties& cluster_2_props = m_cluster_map[vert_2];
+
+        decimation_props.new_cluster_props.id = -1;
 
         // faces 
         decimation_props.new_cluster_props.faces.resize(cluster_1_props.faces.size() + cluster_2_props.faces.size());
@@ -348,16 +346,22 @@ private:
     {
         graph_vertex_descriptor vert_1 = source(edge, m_graph), vert_2 = target(edge, m_graph);
 
-        CGAL_assertion(m_decimation_map[edge].new_cluster_props.conv_hull_pts.size() > 3);
-        
+        CGAL_assertion(vert_1 != vert_2);
+
+        // id of the produced cluster after decimation
+        int result_id = m_cluster_map[vert_1].id;
+
         // assign cluster properties of the produced cluster to the first vertex of the edge
         m_cluster_map[vert_1] = m_decimation_map[edge].new_cluster_props;
+        m_cluster_map[vert_1].id = result_id;
 
         // connect the first vertex to all adjacent vertices of the second one except self
         BOOST_FOREACH(graph_vertex_descriptor vert, boost::adjacent_vertices(vert_2, m_graph))
         {
-            if (vert == vert_1) continue;
-            std::pair<graph_edge_descriptor, bool> result = add_edge(vert_1, vert, m_graph);
+            if (vert == vert_1) continue; // backward edge
+            if (m_cluster_map[vert].id == result_id) continue; // no need to add edge between the same cluster
+
+            add_edge(vert_1, vert, m_graph);
         }
 
         // remove adjacent edges incident to the second vertex and remove the vertex
