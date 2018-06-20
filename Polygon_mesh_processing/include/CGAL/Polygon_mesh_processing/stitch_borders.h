@@ -173,7 +173,7 @@ collect_duplicated_stitchable_boundary_edges
   typedef CGAL::dynamic_face_property_t<int>                        Face_property_tag;
   typedef typename boost::property_map<PM, Face_property_tag>::type Face_cc_map;
   Face_cc_map cc;
-  std::size_t num_component;
+  std::size_t num_component = 0;
   std::vector<std::vector<halfedge_descriptor> > border_edges_per_cc;
   bool per_cc = boost::choose_param(get_param(np, internal_np::apply_per_connected_component),
                                        false);
