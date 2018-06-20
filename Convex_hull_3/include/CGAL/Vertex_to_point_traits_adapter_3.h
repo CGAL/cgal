@@ -28,150 +28,69 @@
 #include <CGAL/Kernel_traits.h>
 
 #include <CGAL/convex_hull_3.h>
+#include <CGAL/result_of.h>
+
 
 
 namespace CGAL {
 
+namespace Convex_hull_impl{
+template <class F, class VertexPointMap>
+struct Forward_functor
+  : public F
+{
+  VertexPointMap vpm_;
+  
+  Forward_functor(const VertexPointMap& vpm,
+                  const F& f) : F(f), vpm_(vpm) {}
+  
+  
+  template <class Vertex>
+  typename cpp11::result_of<F(const Vertex&, const Vertex&)>::type
+  operator() (const Vertex& p, const Vertex& q) const
+  {
+    return static_cast<const F*>(this)->operator()(get(vpm_,p),get(vpm_,q));
+  }
+
+  template <class Vertex>
+  typename cpp11::result_of<F(const Vertex&, const Vertex&, const Vertex&)>::type
+  operator() (const Vertex& p, const Vertex& q, const Vertex& r) const
+  {
+    return static_cast<const F*>(this)->operator()(
+          get(vpm_,p),
+          get(vpm_,q),
+          get(vpm_,r));
+  }
+
+  template <class Vertex>
+  typename cpp11::result_of<F(const Vertex&, const Vertex&, const Vertex&, const Vertex&)>::type
+  operator() (const Vertex& p, const Vertex& q, const Vertex& r, const Vertex& s) const
+  {
+    return static_cast<const F*>(this)->operator()(
+          get(vpm_,p), 
+          get(vpm_,q),
+          get(vpm_,r), 
+          get(vpm_,s));
+  }
+};
+}//end Convex_hull_impl
 template<class Base_traits,class VertexPointMap>
 class Vertex_to_point_traits_adapter
     :public Base_traits
 {
   VertexPointMap vpm_;
   
+  
 public:
   Vertex_to_point_traits_adapter(const VertexPointMap& vpmap, Base_traits base=Base_traits())
     :Base_traits(base), vpm_(vpmap)
   {}
-  //typedef typename boost::property_traits<VertexPointMap>::key_type Vertex;
-  //typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   typedef typename boost::property_traits<VertexPointMap>::key_type Vertex;
   typedef Vertex Point_3;
-  class Compute_x_3:public Base_traits::Compute_x_3
-  {
-    VertexPointMap vpm_;
-    const typename Base_traits::Compute_x_3& base;
-    typedef typename Base_traits::FT             FT;
-  public:
-    Compute_x_3(const VertexPointMap& map,const typename Base_traits::Compute_x_3& base):
-      Base_traits::Compute_x_3(base),vpm_(map),base(base){}
-    typedef const FT&                  result_type;
-    
-    result_type
-    operator()(const Point_3& v) const
-    {
-      return base(get(vpm_, v));
-    }
-    
-  };
-  Compute_x_3 compute_x_3_object () const {return Compute_x_3(vpm_,static_cast<const Base_traits*>(this)->compute_x_3_object() );}
-  
-  class Compute_y_3:public Base_traits::Compute_y_3
-  {
-    VertexPointMap vpm_;
-    const typename Base_traits::Compute_y_3& base;
-    typedef typename Base_traits::FT             FT;
-  public:
-    Compute_y_3(const VertexPointMap& map,const typename Base_traits::Compute_y_3& base):
-      Base_traits::Compute_y_3(base),vpm_(map), base(base){}
-    typedef const FT&                  result_type;
-    
-    result_type
-    operator()(const Point_3& v) const
-    {
-      return base(get(vpm_, v));
-    }
-    
-  };
-  Compute_y_3 compute_y_3_object () const {return Compute_y_3(vpm_,static_cast<const Base_traits*>(this)->compute_y_3_object() );}
-  
-  class Compute_z_3:public Base_traits::Compute_z_3
-  {
-    VertexPointMap vpm_;
-    const typename Base_traits::Compute_z_3& base;
-    typedef typename Base_traits::FT             FT;
-  public:
-    Compute_z_3(const VertexPointMap& map,const typename Base_traits::Compute_z_3& base):
-      Base_traits::Compute_z_3(base),vpm_(map), base(base){}
-    typedef const FT&                  result_type;
-    
-    result_type
-    operator()(const Point_3& v) const
-    {
-      return base(get(vpm_, v));
-    }
-  };
-  Compute_z_3 compute_z_3_object () const {return Compute_z_3(vpm_,static_cast<const Base_traits*>(this)->compute_z_3_object() );}
-  
-  class Equal_3:public Base_traits::Equal_3
-  {
-    VertexPointMap vpm_;
-    const typename Base_traits::Equal_3& base;
-  public:
-    Equal_3(const VertexPointMap& map,const typename Base_traits::Equal_3& base):
-      Base_traits::Equal_3(base),vpm_(map), base(base){}
-    typedef bool       result_type;
-    
-    result_type
-    operator()(const Point_3 &p, const Point_3 &q) const
-    {
-      return base(get(vpm_, p), get(vpm_, q));
-    }
-  };
-  Equal_3 equal_3_object () const {return Equal_3(vpm_,static_cast<const Base_traits*>(this)->equal_3_object() );}
-  
-  class Collinear_3:public Base_traits::Collinear_3
-  {
-    VertexPointMap vpm_;
-    const typename Base_traits::Collinear_3& base;
-  public:
-    Collinear_3(const VertexPointMap& map,const typename Base_traits::Collinear_3& base):
-      Base_traits::Collinear_3(base),vpm_(map), base(base){}
-    typedef bool    result_type;
-    result_type
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
-    {
-      
-      return base(get(vpm_,p), get(vpm_,q), get(vpm_,r));
-    }
-  };
-  Collinear_3 collinear_3_object () const {return Collinear_3(vpm_,static_cast<const Base_traits*>(this)->collinear_3_object() );}
-  
-  class Coplanar_3:public Base_traits::Coplanar_3
-  {
-    VertexPointMap vpm_;
-    typename Base_traits::Orientation_3 o;
-    const typename Base_traits::Coplanar_3& base;
-  public:
-    Coplanar_3(const VertexPointMap& map,const typename Base_traits::Coplanar_3& base):
-      Base_traits::Coplanar_3(base),vpm_(map),base(base){}
-    typedef bool    result_type;
-    result_type
-    operator()( const Point_3& p, const Point_3& q,
-                const Point_3& r, const Point_3& s) const
-    {
-      return base(get(vpm_,p), get(vpm_,q), get(vpm_,r), get(vpm_,s));
-    }
-  };
-  Coplanar_3 coplanar_3_object () const {return Coplanar_3(vpm_,static_cast<const Base_traits*>(this)->coplanar_3_object() );}
-  
-  class Less_distance_to_point_3:public Base_traits::Less_distance_to_point_3
-  {
-    VertexPointMap vpm_;
-    const typename Base_traits::Less_distance_to_point_3& base;
-  public:
-    Less_distance_to_point_3(const VertexPointMap& map,const typename Base_traits::Less_distance_to_point_3& base):
-      Base_traits::Less_distance_to_point_3(base),vpm_(map),base(base){}
-    typedef bool       result_type;
-    
-    result_type
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
-    {
-      return base(get(vpm_,p), get(vpm_,q), get(vpm_,r));
-    }
-  };
-  Less_distance_to_point_3 less_distance_to_point_3_object() const 
-  {return Less_distance_to_point_3(vpm_,static_cast<const Base_traits*>(this)->less_distance_to_point_3_object() );}
-  
+  typedef Convex_hull_impl::Forward_functor<typename Base_traits::Equal_3, VertexPointMap> Equal_3;
+  typedef Convex_hull_impl::Forward_functor<typename Base_traits::Collinear_3, VertexPointMap> Collinear_3;
+  typedef Convex_hull_impl::Forward_functor<typename Base_traits::Coplanar_3, VertexPointMap> Coplanar_3;
+  typedef Convex_hull_impl::Forward_functor<typename Base_traits::Less_distance_to_point_3, VertexPointMap> Less_distance_to_point_3; 
   class Less_signed_distance_to_plane_3
       :public Base_traits::Less_signed_distance_to_plane_3
   {  
@@ -193,9 +112,17 @@ public:
       return base(h, get(vpm_,p), get(vpm_,q));
     }
   };
-  Less_signed_distance_to_plane_3 less_signed_distance_to_plane_3_object() const 
-  {return Less_signed_distance_to_plane_3(
-          vpm_,static_cast<const Base_traits*>(this)->less_signed_distance_to_plane_3_object() );}
+  
+  
+  Equal_3 equal_3_object () const {return Equal_3(vpm_,static_cast<const Base_traits*>(this)->equal_3_object() );}
+  Collinear_3 collinear_3_object () const {return Collinear_3(vpm_,static_cast<const Base_traits*>(this)->collinear_3_object() );}
+  Coplanar_3 coplanar_3_object () const {return Coplanar_3(vpm_,static_cast<const Base_traits*>(this)->coplanar_3_object() );}
+  Less_distance_to_point_3 less_distance_to_point_3_object() const {
+    return Less_distance_to_point_3(vpm_,static_cast<const Base_traits*>(this)->less_distance_to_point_3_object() );}
+  Less_signed_distance_to_plane_3 less_signed_distance_to_plane_3_object() const {
+    return Less_signed_distance_to_plane_3(
+          vpm_,static_cast<const Base_traits*>(this)->less_signed_distance_to_plane_3_object() );
+  }
   
   class Construct_plane_3:public Base_traits::Construct_plane_3
   {  
@@ -242,67 +169,11 @@ public:
     Proj_traits_3(const VertexPointMap& map,const Btt& base):
       Base_proj_traits(base),vpm_(map){}
     typedef Point_3 Point_2;
-    
-    class Equal_2:public Btt::Equal_2
-    {
-      VertexPointMap vpm_;
-      const typename Btt::Equal_2& base;
-    public:
-      Equal_2(const VertexPointMap& map,const typename Btt::Equal_2& base):
-        Btt::Equal_2(base),vpm_(map), base(base){}
-    public:      
-      bool operator()(Point_2 p, Point_2 q) const
-      { 
-        return base(get(vpm_, p), get(vpm_, q));
-      }
-    };
-    Equal_2 equal_2_object () const {return Equal_2(vpm_,static_cast<const Btt*>(this)->equal_2_object() );}
-    
-    class Less_xy_2:public Btt::Less_xy_2
-    {
-      VertexPointMap vpm_;
-      const typename Btt::Less_xy_2& base;
-    public:
-      Less_xy_2(const VertexPointMap& map,const typename Btt::Less_xy_2& base):
-        Btt::Less_xy_2(base),vpm_(map), base(base){}
-    public:      
-      bool operator()(Point_2 p, Point_2 q) const
-      { 
-        return base(get(vpm_, p), get(vpm_, q));
-      }
-    };
-    Less_xy_2 less_xy_2_object ()const{return Less_xy_2(vpm_,static_cast<const Btt*>(this)->less_xy_2_object() );}
-    
-    class Less_yx_2:public Btt::Less_yx_2
-    {
-      VertexPointMap vpm_;
-      const typename Btt::Less_yx_2& base;
-    public:
-      Less_yx_2(const VertexPointMap& map,const typename Btt::Less_yx_2& base):
-        Btt::Less_yx_2(base),vpm_(map), base(base){}
-    public:      
-      bool operator()(Point_2 p, Point_2 q) const
-      { 
-        return base(get(vpm_, p), get(vpm_, q));
-      }
-    };
-    Less_yx_2 less_yx_2_object ()const{return Less_yx_2(vpm_,static_cast<const Btt*>(this)->less_yx_2_object() );}
-    
-    class Less_signed_distance_to_line_2:public Btt::Less_signed_distance_to_line_2
-    {
-      VertexPointMap vpm_;
-      const typename Btt::Less_signed_distance_to_line_2& base;
-    public:
-      Less_signed_distance_to_line_2(const VertexPointMap& map,const typename Btt::Less_signed_distance_to_line_2& base):
-        Btt::Less_signed_distance_to_line_2(base),vpm_(map), base(base){}
-    public:      
-      bool operator()(Point_2 p, Point_2 q, Point_2 r,Point_2 s) const
-      { 
-        return base(get(vpm_, p), get(vpm_, q), get(vpm_, r), get(vpm_, s));
-      }
-    };
-    Less_signed_distance_to_line_2 less_signed_distance_to_line_2_object ()const
-    {return Less_signed_distance_to_line_2(vpm_,static_cast<const Btt*>(this)->Less_signed_distance_to_line_2() );}
+    typedef Convex_hull_impl::Forward_functor<typename Btt::Equal_2, VertexPointMap> Equal_2;
+    typedef Convex_hull_impl::Forward_functor<typename Btt::Less_xy_2, VertexPointMap> Less_xy_2;
+    typedef Convex_hull_impl::Forward_functor<typename Btt::Less_yx_2, VertexPointMap> Less_yx_2;
+    typedef Convex_hull_impl::Forward_functor<typename Btt::Less_signed_distance_to_line_2, VertexPointMap> Less_signed_distance_to_line_2;
+    typedef Convex_hull_impl::Forward_functor<typename Btt::Left_turn_2, VertexPointMap> Left_turn_2;
     
     class Less_rotate_ccw_2:public Btt::Less_rotate_ccw_2
     {
@@ -317,22 +188,14 @@ public:
         return base(get(vpm_, e), get(vpm_, p), get(vpm_, q));
       }
     };
+    
+    Equal_2 equal_2_object () const {return Equal_2(vpm_,static_cast<const Btt*>(this)->equal_2_object() );}
+    Less_xy_2 less_xy_2_object ()const{return Less_xy_2(vpm_,static_cast<const Btt*>(this)->less_xy_2_object() );}
+    Less_yx_2 less_yx_2_object ()const{return Less_yx_2(vpm_,static_cast<const Btt*>(this)->less_yx_2_object() );}
+    Less_signed_distance_to_line_2 less_signed_distance_to_line_2_object ()const
+    {return Less_signed_distance_to_line_2(vpm_,static_cast<const Btt*>(this)->Less_signed_distance_to_line_2() );}
     Less_rotate_ccw_2 less_rotate_ccw_2_object ()const
     {return Less_rotate_ccw_2(vpm_,static_cast<const Btt*>(this)->less_rotate_ccw_2_object() );}
-    
-    class Left_turn_2:public Btt::Left_turn_2
-    {
-      VertexPointMap vpm_;                                                           
-      const typename Btt::Left_turn_2& base;                                   
-    public:                                                                          
-      Left_turn_2(const VertexPointMap& map,const typename Btt::Left_turn_2& base):
-        Btt::Left_turn_2(base),vpm_(map), base(base){}                         
-    public:                                                                          
-      bool operator()(Point_2 p, Point_2 q, Point_2 r) const                                    
-      {                                                                              
-        return base(get(vpm_, p), get(vpm_, q), get(vpm_, r));
-      }
-    };
     Left_turn_2 left_turn_2_object ()const{return Left_turn_2(vpm_,static_cast<const Btt*>(this)->left_turn_2_object() );}
     
     class Orientation_2:public Btt::Orientation_2
