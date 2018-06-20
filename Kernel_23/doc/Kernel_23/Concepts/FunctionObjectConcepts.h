@@ -5980,7 +5980,7 @@ public:
   /*!
     returns the point of `t` that is the closest to `p`.
   */
-  Kernel::Point_3 operator()(const Kernel::Triangle_3& h,
+  Kernel::Point_3 operator()(const Kernel::Triangle_3& t,
                              const Kernel::Point_3& p);
 
   /// @}
