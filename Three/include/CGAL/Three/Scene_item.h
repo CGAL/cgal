@@ -87,6 +87,7 @@ public:
   PROGRAM_SPHERES,             /** Used to render one or several spheres.*/
   PROGRAM_FLAT,                /** Used to render flat shading without pre computing normals*/
   PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
+  PROGRAM_SOLID_WIREFRAME,     //! Used to render edges with width superior to 1.
   NB_OF_PROGRAMS               /** Holds the number of different programs in this enum.*/
  };
   typedef CGAL::Bbox_3 Bbox;
