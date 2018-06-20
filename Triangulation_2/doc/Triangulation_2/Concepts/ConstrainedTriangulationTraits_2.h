@@ -76,6 +76,15 @@ between `p` and `l`.
 */ 
 typedef unspecified_type Compute_squared_distance_2; 
 
+/*!
+A function object whose
+`operator()` computes the bounding box of a point.
+
+`unspecified_type operator()(Point_2 p);` Returns the bounding box of `p`.
+The result type is either `Bbox_2` or `Bbox_3` (for projection traits classes).
+*/ 
+typedef unspecified_type Compute_bounding_box_2; 
+
 /// @} 
 
 /// \name Access to Constructor Objects 

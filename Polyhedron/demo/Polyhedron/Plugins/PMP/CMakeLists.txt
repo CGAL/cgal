@@ -87,11 +87,13 @@ polyhedron_demo_plugin(polyhedron_stitching_plugin Polyhedron_stitching_plugin)
 target_link_libraries(polyhedron_stitching_plugin PUBLIC scene_polyhedron_item scene_surface_mesh_item scene_polylines_item)
 
 qt5_wrap_ui( selectionUI_FILES Selection_widget.ui)
-polyhedron_demo_plugin(selection_plugin Selection_plugin ${selectionUI_FILES})
+add_library(selection_plugin SHARED Selection_plugin.cpp ${selectionUI_FILES})
+#polyhedron_demo_plugin(selection_plugin Selection_plugin ${selectionUI_FILES})
 target_link_libraries(selection_plugin PUBLIC scene_polyhedron_selection_item scene_points_with_normal_item scene_polylines_item)
 
 qt5_wrap_ui( selectionUI_FILES Selection_widget.ui)
-polyhedron_demo_plugin(selection_sm_plugin Selection_plugin ${selectionUI_FILES})
+add_library(selection_sm_plugin SHARED Selection_plugin.cpp ${selectionUI_FILES})
+#polyhedron_demo_plugin(selection_sm_plugin Selection_plugin ${selectionUI_FILES})
 target_link_libraries(selection_sm_plugin PUBLIC scene_surface_mesh_selection_item scene_points_with_normal_item scene_polylines_item)
 target_compile_definitions(selection_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 

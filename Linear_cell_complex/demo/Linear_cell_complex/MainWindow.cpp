@@ -25,6 +25,7 @@
 #include <CGAL/Polyhedron_3_to_lcc.h>
 #include <CGAL/Triangulation_3_to_lcc.h>
 #include <QSettings>
+#include <QHeaderView>
 #include <CGAL/Timer.h>
 #include <CGAL/ipower.h>
 #include "import_moka.h"

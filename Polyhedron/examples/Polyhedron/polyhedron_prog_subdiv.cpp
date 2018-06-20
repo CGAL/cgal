@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <vector>
 #include <cmath>
+#include <fstream>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Vector_3                                     Vector;
@@ -90,9 +91,10 @@ void subdiv( Polyhedron& P) {
     CGAL_postcondition( P.is_valid());
 }
 
-int main() {
+int main(int argc, char* argv[]) {
     Polyhedron P;
-    std::cin >> P;
+    std::ifstream in1((argc>1)?argv[1]:"data/cube.off");
+    in1 >> P;
     P.normalize_border();
     if ( P.size_of_border_edges() != 0) {
         std::cerr << "The input object has border edges. Cannot subdivide."

@@ -138,6 +138,8 @@ public:
     this->build();
   }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
   CGAL_DEPRECATED
   Polyhedral_mesh_domain_with_features_3(const std::string& filename,
                                          CGAL::Random* p_rng = NULL)
@@ -156,6 +158,7 @@ public:
   {
     load_from_file(filename);
   }
+#endif // not CGAL_NO_DEPRECATED_CODE
 
   Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
                                          const Polyhedron& bounding_p,
@@ -392,7 +395,6 @@ add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
   std::vector<Polyline_with_context> polylines;
 
   internal::Mesh_3::Extract_polyline_with_context_visitor<
-    Polyhedral_mesh_domain_with_features_3,
     Polyline_with_context,
     Featured_edges_copy_graph
     > visitor(g_copy, polylines);

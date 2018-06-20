@@ -107,6 +107,17 @@
 #  define BOOST_TT_HAS_POST_INCREMENT_HPP_INCLUDED
 #endif
 
+// Macro used by Boost Parameter. Mesh_3 needs at least 12, before the
+// Boost Parameter headers are included: <boost/parameter/config.hpp>
+// defines the value to 8, if it is not yet defined.
+// The CGAL BGL properties mechanism includes
+// <boost/graph/named_function_params.hpp>, that includes
+// <boost/parameter/name.hpp>, and maybe other Boost libraries may use
+// Boost Parameter as well.
+// That is why that is important to define that macro as early as possible,
+// in <CGAL/config.h>
+#define BOOST_PARAMETER_MAX_ARITY 12
+
 // The following header file defines among other things  BOOST_PREVENT_MACRO_SUBSTITUTION
 #include <boost/config.hpp>
 #include <boost/version.hpp>

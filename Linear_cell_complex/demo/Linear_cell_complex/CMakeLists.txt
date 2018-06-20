@@ -58,7 +58,6 @@ qt5_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui
 # qrc files (resources files, that contain icons, at least)
 qt5_add_resources (CGAL_Qt5_RESOURCE_FILES ./Linear_cell_complex_3.qrc)
 
-
 add_executable(Linear_cell_complex_3_demo
   Linear_cell_complex_3_demo.cpp MainWindow.cpp
   Viewer.cpp Linear_cell_complex_3_subdivision.cpp
