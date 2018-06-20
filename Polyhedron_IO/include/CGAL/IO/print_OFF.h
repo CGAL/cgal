@@ -49,7 +49,7 @@ void print_polyhedron_with_header_OFF( std::ostream& out,
                                        const Polyhedron& P,
                                        const File_header_OFF& header) 
 {
-  print_polyhedron_with_header_OFF(out, P, header);
+  print_polyhedron_with_header_OFF(out, P, header, get(CGAL::vertex_point, P));
 }
 
 template <class Polyhedron>
