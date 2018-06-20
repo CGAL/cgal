@@ -122,7 +122,9 @@ struct Identity_functor
  * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters" for `InputMesh`
  * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters" for `OutputMesh`
  * @tparam BottomFunctor a functor providing
- * `void operator()(boost::graph_traits<InputMesh>::vertex_descriptor input_v,boost::graph_traits<OutputMesh>::vertex_descriptor output_v)`
+ * \code {.cpp}
+ * void operator()`(boost::graph_traits<InputMesh>::vertex_descriptor input_v,boost::graph_traits<OutputMesh>::vertex_descriptor output_v)
+ * \endcode
  *  where `output_v` is the copy of `input_v` from `input` into the bottom part of `output`.
  *
  * @tparam TopFunctor a functor providing a similar `operator()` as `BottomFunctor`.
@@ -223,7 +225,7 @@ void extrude_mesh(const InputMesh& input,
 /**
  * \ingroup PMP_meshing_grp
  * fills `output` with a closed mesh bounding the volume swept by `input` when translating its
- * vertices by `dir`. The mesh is oriented so that the faces corresponding to `input`
+ * vertices by `v`. The mesh is oriented so that the faces corresponding to `input`
  * in `output` have the same orientation.
  * \attention `output` may be self intersecting.
  * @tparam InputMesh a model of the concept `FaceListGraph`
@@ -233,7 +235,7 @@ void extrude_mesh(const InputMesh& input,
  * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters" for `OutputMesh`
  * @param input an open surface mesh to extrude.
  * @param output a surface mesh that will contain the result of the extrusion.
- * @param dir the vector defining the direction of the extrusion
+ * @param v the vector defining the direction of the extrusion
  * @param np_in an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
