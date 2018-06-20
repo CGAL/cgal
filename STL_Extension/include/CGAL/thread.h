@@ -68,7 +68,7 @@ namespace cpp11 {
   using std::thread; // std::thread is declared by TBB if TBB_IMPLEMENT_CPP0X == 1
   using tbb::atomic;
 
-  void sleep_for (double seconds)
+  inline void sleep_for (double seconds)
   {
     // std::this_thread::sleep_for is declared by TBB if TBB_IMPLEMENT_CPP0X == 1
     // It takes interval_t types as argument (!= from the std norm)
@@ -80,7 +80,7 @@ namespace cpp11 {
   using std::thread;
   using std::atomic;
 
-  void sleep_for (double seconds)
+  inline void sleep_for (double seconds)
   {
     // MSVC2013 cannot call `sleep_for()` with other types than
     // std::chrono::nanoseconds (bug in the implementation of the norm).
