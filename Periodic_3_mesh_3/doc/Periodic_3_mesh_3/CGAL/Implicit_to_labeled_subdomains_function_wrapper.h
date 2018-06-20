@@ -43,7 +43,7 @@ public:
   /*!
    * \brief Construction from an implicit function.
    */
-  Implicit_to_labeled_subdomains_function_wrapper(const Function& f);
+  Implicit_to_labeled_subdomains_function_wrapper(Function f);
 /// @}
 
 /// \name Operations

@@ -42,8 +42,7 @@ public:
   typedef typename BGT::Point_3   Point_3;
 
   /// Constructor
-  Implicit_to_labeled_subdomains_function_wrapper(const Function_& f)
-    : f_(f)
+  Implicit_to_labeled_subdomains_function_wrapper(Function_ f) : f_(f)
   { }
 
   /// Destructor

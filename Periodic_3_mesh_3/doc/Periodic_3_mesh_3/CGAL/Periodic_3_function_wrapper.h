@@ -84,7 +84,7 @@ public:
   /*!
    * \brief Construction from an implicit function and the canonical cube.
    */
-  Periodic_3_function_wrapper(const Function& f, const Iso_cuboid_3& domain);
+  Periodic_3_function_wrapper(Function f, const Iso_cuboid_3& domain);
   /// @}
 
   /// \name Operations

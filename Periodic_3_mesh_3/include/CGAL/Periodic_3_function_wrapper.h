@@ -47,7 +47,7 @@ public:
 
   /// Constructor
   Periodic_3_function_wrapper() { }
-  Periodic_3_function_wrapper(const Function_& f, const Iso_cuboid_3& domain) : f_(f), gt_(domain) { }
+  Periodic_3_function_wrapper(Function_ f, const Iso_cuboid_3& domain) : f_(f), gt_(domain) { }
 
   /// Operator ()
   return_type operator()(const Point_3& p) const {

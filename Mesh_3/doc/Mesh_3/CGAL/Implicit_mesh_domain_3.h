@@ -70,7 +70,7 @@ bisection is stopped when the length of the intersected
 segment is less than the product of `error_bound` by the 
 radius of `bounding_sphere`. 
 */ 
-  Implicit_mesh_domain_3(const Function& f,
+  Implicit_mesh_domain_3(Function f,
                          const BGT::Sphere_3& bounding_sphere,
                          const BGT::FT& error_bound = FT(1e-3));
 

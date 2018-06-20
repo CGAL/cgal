@@ -67,8 +67,7 @@ public:
   typedef typename BGT::Point_3   Point_3;
 
   /// Constructor
-  Implicit_to_labeling_function_wrapper(const Function_& f)
-    : f_(f) {}
+  Implicit_to_labeling_function_wrapper(Function_ f) : f_(f) {}
 
   // Default copy constructor, assignment operator, and destructor are ok
 
@@ -89,7 +88,7 @@ private:
 
 template <typename BGT, typename Function>
 Implicit_to_labeling_function_wrapper<Function, BGT>
-make_implicit_to_labeling_function_wrapper(const Function& f)
+make_implicit_to_labeling_function_wrapper(Function f)
 {
   return Implicit_to_labeling_function_wrapper<Function, BGT>(f);
 }
