@@ -28,7 +28,6 @@
 
 #include <boost/type_traits/is_function.hpp>
 #include <boost/mpl/if.hpp>
-#include <CGAL/result_of.h>
 
 namespace CGAL {
 
