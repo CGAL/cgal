@@ -4,7 +4,7 @@
 #include <QObject>
 
 #include <QtCore/qglobal.h>
-#ifdef scene_color_ramp_EXPORTS
+#ifdef scene_callback_signaler_EXPORTS
 #  define SCENE_CALLBACK_SIGNALER_EXPORT Q_DECL_EXPORT
 #else
 #  define SCENE_CALLBACK_SIGNALER_EXPORT Q_DECL_IMPORT
