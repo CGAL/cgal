@@ -769,6 +769,13 @@ QOpenGLShaderProgram* Viewer::declare_program(int name,
         std::cerr<<"adding geometry shader FAILED"<<std::endl;
       }
     }
+    if(strcmp(f_shader,":/cgal/Polyhedron_3/resources/solid_wireframe_shader.f" ) == 0)
+    {
+      if(!program->addShaderFromSourceFile(QOpenGLShader::Geometry,":/cgal/Polyhedron_3/resources/solid_wireframe_shader.g" ))
+      {
+        std::cerr<<"adding geometry shader FAILED"<<std::endl;
+      }
+    }
     program->bindAttributeLocation("colors", 1);
     program->link();
     d->shader_programs[name] = program;
@@ -820,6 +827,10 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     case PROGRAM_OLD_FLAT:
       return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_light.v", ":/cgal/Polyhedron_3/resources/shader_old_flat.f");
       break;
+    case PROGRAM_SOLID_WIREFRAME:
+      return declare_program(name, ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.v", ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.f");
+      break;
+      
 
     default:
         std::cerr<<"ERROR : Program not found."<<std::endl;

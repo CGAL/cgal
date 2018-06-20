@@ -73,6 +73,9 @@
         <file>resources/shader_flat.g</file>
         <file>resources/shader_flat.v</file>
         <file>resources/shader_old_flat.f</file>
+        <file>resources/solid_wireframe_shader.v</file>
+        <file>resources/solid_wireframe_shader.f</file>
+        <file>resources/solid_wireframe_shader.g</file>
     </qresource>
     <qresource prefix="/cgal/cursors">
         <file>resources/rotate_around_cursor.png</file>
