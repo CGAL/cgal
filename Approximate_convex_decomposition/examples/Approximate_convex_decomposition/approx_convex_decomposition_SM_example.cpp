@@ -51,7 +51,7 @@ int main()
     // decompose mesh
     auto start = std::chrono::system_clock::now();
 
-    std::size_t clusters_num = CGAL::convex_decomposition(mesh, facet_property_map, CGAL::Polygon_mesh_processing::parameters::all_default(), 0.3, 1);
+    std::size_t clusters_num = CGAL::convex_decomposition(mesh, facet_property_map, 0.3, 1);
 
     auto end = std::chrono::system_clock::now();
     std::cout << "Elapsed time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000. << " seconds" << std::endl;
@@ -67,7 +67,7 @@ int main()
     // write concavity values for all clusters
     for (std::size_t i = 0; i < clusters_num; ++i)
     {
-        std::cout << "Concavity value of #" << i << " cluster: " << CGAL::concavity_value(mesh, facet_property_map, i, CGAL::Polygon_mesh_processing::parameters::all_default()) << std::endl;
+        std::cout << "Concavity value of #" << i << " cluster: " << CGAL::concavity_value(mesh, facet_property_map, i) << std::endl;
     }
 
     // write clusters to .off files

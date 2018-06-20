@@ -28,7 +28,7 @@ int main()
     }
 
     // compute concavity value
-    double concavity = CGAL::concavity_value(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+    double concavity = CGAL::concavity_value(mesh);
 
     // write result
     std::cout << "Concavity value: " << concavity << std::endl;
