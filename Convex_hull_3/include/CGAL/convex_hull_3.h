@@ -1031,10 +1031,28 @@ extreme_vertices(const InputRange& range,
                  OutputIterator out,
                  const Traits& traits)
 {
+  
   Vertex_to_point_traits_adapter<Traits, PointPropertyMap> traits_adapter(map, traits);
   extreme_points_3(range, out,traits_adapter);
   return out;
 }
+
+template <class InputRange,
+          class PointPropertyMap,
+          class OutputIterator>
+OutputIterator
+extreme_vertices(const InputRange& range,
+                 PointPropertyMap map, 
+                 OutputIterator out)
+{
+  typedef typename boost::property_traits<PointPropertyMap>::value_type Point_3;
+  typedef typename internal::Convex_hull_3::Default_traits_for_Chull_3<Point_3>::type Traits;
+  
+  Vertex_to_point_traits_adapter<Traits, PointPropertyMap> traits_adapter(map, Traits());
+  extreme_points_3(range, out,traits_adapter);
+  return out;
+}
+
 
 template <class InputIterator, class Polyhedron_3>
 void convex_hull_3(InputIterator first, InputIterator beyond,

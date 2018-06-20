@@ -204,22 +204,6 @@ void test_equal_points()
 }
 
 
-
-template <class InputRange,
-          class OutputIterator,
-          class VertexPointMap,
-          class Traits>
-OutputIterator
-extreme_vertices(const InputRange& range, 
-                 OutputIterator out,
-                 VertexPointMap vpm,
-                 const Traits& traits)
-{
-  CGAL::Vertex_to_point_traits_adapter<Traits, VertexPointMap> traits_adapter(vpm, traits);
-  CGAL::extreme_points_3(range, out,traits_adapter);
-  return out;
-}
-
 void test_extreme_vertices(const char* fname)
 {
   std::ifstream input(fname);
@@ -229,21 +213,19 @@ void test_extreme_vertices(const char* fname)
     exit(1);
   }  
   std::vector<boost::graph_traits<Polyhedron_3>::vertex_descriptor> verts;
-  extreme_vertices(vertices(P), std::back_inserter(verts) , get(CGAL::vertex_point, P),
+  CGAL::extreme_vertices(vertices(P), get(CGAL::vertex_point, P), std::back_inserter(verts) ,
                    CGAL::Convex_hull_traits_3<K, Polyhedron_3, CGAL::Tag_true>());
-  std::cout<<verts.size()<<std::endl;
 }
 
 int main()
-{/*
+{
   test_function_overload();
   test_3_points();
   test_up_to_3_extreme_points();
   test_3_collinear();
   test_triangulated_cube("data/cube_meshed.off");
   test_coplanar_points("data/coplanar_points.xyz");
-  test_equal_points();*/
-  
+  test_equal_points();
   test_extreme_vertices("data/cross.off");
 
   return 0;
