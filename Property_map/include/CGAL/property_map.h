@@ -85,6 +85,8 @@ class OR_property_map {
   PM2 pm2;
 
  public:
+  OR_property_map() {} // required by boost::connected_components
+
   OR_property_map(PM1 pm1, PM2 pm2)
     : pm1(pm1),pm2(pm2)
   {}
@@ -103,8 +105,14 @@ class OR_property_map {
     put(pm.pm1,k, v);
     put(pm.pm2,k, v);
   }
-
 };
+
+template <class PM1, class PM2>
+OR_property_map<PM1, PM2>
+make_OR_property_map(const PM1& pm1, const PM2& pm2)
+{
+  return OR_property_map<PM1, PM2>(pm1, pm2);
+}
 
 // A property map that uses the result of a property map as key.
 template <class KeyMap, class ValueMap>
