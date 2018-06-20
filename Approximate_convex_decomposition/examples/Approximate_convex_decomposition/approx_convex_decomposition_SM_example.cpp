@@ -5,6 +5,7 @@
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/convex_hull_3.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <iostream>
 #include <fstream>
@@ -50,7 +51,7 @@ int main()
     // decompose mesh
     auto start = std::chrono::system_clock::now();
 
-    std::size_t clusters_num = CGAL::convex_decomposition(mesh, facet_property_map, 0.3, 1);
+    std::size_t clusters_num = CGAL::convex_decomposition(mesh, facet_property_map, CGAL::Polygon_mesh_processing::parameters::all_default(), 0.3, 1);
 
     auto end = std::chrono::system_clock::now();
     std::cout << "Elapsed time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000. << " seconds" << std::endl;
@@ -66,7 +67,7 @@ int main()
     // write concavity values for all clusters
     for (std::size_t i = 0; i < clusters_num; ++i)
     {
-        std::cout << "Concavity value of #" << i << " cluster: " << CGAL::concavity_value(mesh, facet_property_map, i) << std::endl;
+        std::cout << "Concavity value of #" << i << " cluster: " << CGAL::concavity_value(mesh, facet_property_map, i, CGAL::Polygon_mesh_processing::parameters::all_default()) << std::endl;
     }
 
     // write clusters to .off files
@@ -89,7 +90,6 @@ int main()
                 BOOST_FOREACH(vertex_descriptor vert, CGAL::vertices(cluster))
                 {
                     pts.push_back(cluster.point(vert));
-                   
                 }
 
                 CGAL::convex_hull_3(pts.begin(), pts.end(), conv_hull);

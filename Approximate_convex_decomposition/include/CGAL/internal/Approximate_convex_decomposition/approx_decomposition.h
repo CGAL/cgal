@@ -3,6 +3,7 @@
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/convex_hull_3.h>
+#include <CGAL/Bbox_3.h>
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
@@ -11,12 +12,13 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
-#include <CGAL/Bbox_3.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/copy.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <boost/foreach.hpp>
-#include <boost/graph/copy.hpp>
+#include <boost/function_output_iterator.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -59,6 +61,7 @@ class Approx_decomposition
     typedef typename GeomTraits::Point_3 Point_3;
 
     typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+    typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
     typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
@@ -90,7 +93,7 @@ public:
      * Computes approximate convex decomposition of a triangle mesh and fills up face property map with cluster-ids.
      * @param face_ids which associates each face of a triangle mesh to a cluster-id [0, 'number_of_clusters'-1]
      * @param concavity_threshold concavity value each cluster must satisfy
-     * @param min_number_of_clusters minimal number of cluster that can be produced, except the case when number of faces is less
+     * @param min_number_of_clusters minimal number of cluster that can be produced
      */
     template <class FacePropertyMap>
     std::size_t decompose(FacePropertyMap face_ids, double concavity_threshold, std::size_t min_number_of_clusters)
@@ -135,7 +138,6 @@ public:
             if (!found_edge) break;
 
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE            
-//            std::cout << std::endl;
             std::cout << "#" << num_vertices(m_graph) << " Optimal edge for decimation: " << optimal_edge << std::endl;
             std::cout << "Decimation cost: " << m_decimation_map[optimal_edge].decimation_cost << ", Concavity value: " << m_decimation_map[optimal_edge].new_cluster_props.concavity << std::endl;
             std::cout << "Total edges: " << num_edges(m_graph) << std::endl;
@@ -162,7 +164,7 @@ public:
             // assign id to all current cluster's faces
             BOOST_FOREACH(face_descriptor face, cluster_props.faces)
             {
-                face_ids[face] = cluster_id;
+                put(face_ids, face, cluster_id);
             }
 
             ++cluster_id;
@@ -171,7 +173,7 @@ public:
         // post check if all faces are assigned to any cluster
         BOOST_FOREACH(face_descriptor face, faces(m_mesh))
         {
-            CGAL_assertion(face_ids[face] >= 0 && face_ids[face] < num_clusters);
+            CGAL_assertion(get(face_ids, face) >= 0 && get(face_ids, face) < num_clusters);
         }
 
         return num_clusters;
@@ -200,6 +202,7 @@ private:
         const Mesh& m_mesh;
     };
 
+    // all the necessary information to describe a cluster 
     struct Cluster_properties
     {
         double concavity;
@@ -215,6 +218,8 @@ private:
 //        }
     };
 
+    // all the necessary information to describe a decimation operation of two clusters
+    // while computing the decimation_cost, information about the merged cluster is computed and is stored in the new_cluster_props
     struct Decimation_properties
     {
         double decimation_cost;
@@ -274,21 +279,15 @@ private:
         Cluster_properties& cluster_2_props = m_cluster_map[vert_2];
 
         // convex hull points
-        std::vector<Point_3> common_hull_pts; // merged list of the lists of the convex hull points of two clusters
+        std::vector<Point_3> common_hull_pts(cluster_1_props.conv_hull_pts.size() + cluster_2_props.conv_hull_pts.size()); // merged list of the lists of the convex hull points of two clusters
         
         CGAL_assertion(cluster_1_props.conv_hull_pts.size() >= 3);
         CGAL_assertion(cluster_2_props.conv_hull_pts.size() >= 3);
         
         // add the convex hull points of the first cluster
-        BOOST_FOREACH(Point_3 p, cluster_1_props.conv_hull_pts)
-        {
-            common_hull_pts.push_back(p);
-        }
+        std::copy(cluster_1_props.conv_hull_pts.begin(), cluster_1_props.conv_hull_pts.end(), common_hull_pts.begin());
         // add the convex hull points of the second cluster
-        BOOST_FOREACH(Point_3 p, cluster_2_props.conv_hull_pts)
-        {
-            common_hull_pts.push_back(p);
-        }
+        std::copy(cluster_2_props.conv_hull_pts.begin(), cluster_2_props.conv_hull_pts.end(), common_hull_pts.begin() + cluster_1_props.conv_hull_pts.size());
 
         // compute convex hull on the merged list of points
         TriangleMesh conv_hull;
@@ -303,18 +302,12 @@ private:
         CGAL_warning(decimation_props.new_cluster_props.conv_hull_pts.size() > 3);
 
         // faces
-        decimation_props.new_cluster_props.faces.clear();
+        decimation_props.new_cluster_props.faces.resize(cluster_1_props.faces.size() + cluster_2_props.faces.size());
 
         // add faces from the first cluster
-        BOOST_FOREACH(face_descriptor face, cluster_1_props.faces)
-        {
-            decimation_props.new_cluster_props.faces.push_back(face);
-        }
+        std::copy(cluster_1_props.faces.begin(), cluster_1_props.faces.end(), decimation_props.new_cluster_props.faces.begin());
         // add faces from the second cluster
-        BOOST_FOREACH(face_descriptor face, cluster_2_props.faces)
-        {
-            decimation_props.new_cluster_props.faces.push_back(face);
-        }
+        std::copy(cluster_2_props.faces.begin(), cluster_2_props.faces.end(), decimation_props.new_cluster_props.faces.begin() + cluster_1_props.faces.size());
 
         // compute concavity value of the produced cluster using concavity calculator of the input mesh, faces, and convex hull of the produced cluster
         decimation_props.new_cluster_props.concavity = m_concavity_calc.compute(decimation_props.new_cluster_props.faces, conv_hull);
@@ -367,11 +360,15 @@ private:
         remove_vertex(vert_2, m_graph);
 
         // update decimation costs of all modified edges (only adjacent edges to the first vertex)
+#ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
         int cnt = 0;
+#endif
         BOOST_FOREACH(graph_edge_descriptor edge, boost::out_edges(vert_1, m_graph))
         {
             update_edge(edge, concavity_threshold, alpha_factor);
+#ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
             ++cnt;
+#endif
         }
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
         std::cout << "Updated edges: " << cnt << std::endl;
@@ -388,21 +385,29 @@ private:
         double perimeter = 0;
         double area = 0;
 
-        std::set<edge_descriptor> used_edges;
-
+        // sum up area
         BOOST_FOREACH(face_descriptor face, faces)
         {
-            // sum up area
             area += CGAL::Polygon_mesh_processing::face_area(face, m_mesh);
-
-            // sum up lengths of edges except internal edges (they are processed twice)
-            BOOST_FOREACH(edge_descriptor edge, edges_around_face(halfedge(face, m_mesh), m_mesh))
-            {
-                int found = used_edges.find(edge) == used_edges.end() ? 1 : -1;
-                perimeter += found * CGAL::Polygon_mesh_processing::edge_length(edge, m_mesh);
-                used_edges.insert(edge);    
-            }
         }
+
+        // sum up lengths of border edges
+        struct Perimeter_calculator 
+        {
+            Perimeter_calculator(const TriangleMesh& mesh, double& perimeter)
+            : m_mesh(mesh), m_perimeter(perimeter)
+            {}
+
+            void operator() (const halfedge_descriptor& h) const
+            {
+                m_perimeter += CGAL::Polygon_mesh_processing::edge_length(edge(h, m_mesh), m_mesh);
+            }
+            
+            const TriangleMesh& m_mesh;
+            double& m_perimeter;
+        };
+
+        CGAL::Polygon_mesh_processing::border_halfedges(faces, m_mesh, boost::make_function_output_iterator(Perimeter_calculator(m_mesh, perimeter)));
 
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
 //        std::cout << "Perimeter & area: " << perimeter << " " << area << std::endl;

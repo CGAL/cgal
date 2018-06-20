@@ -21,7 +21,7 @@ namespace CGAL
 namespace internal
 {
 
-    template <class TriangleMesh, class GeomTraits>
+    template <class TriangleMesh, class GeomTraits, class Mesh = TriangleMesh>
     class Concavity
     {
         typedef typename GeomTraits::Point_3 Point_3;
@@ -36,7 +36,8 @@ namespace internal
         typedef std::map<vertex_descriptor, Vector_3> Normals_map;
 
         typedef CGAL::Face_filtered_graph<TriangleMesh> Filtered_graph;
-        typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh> AABB_primitive;
+
+        typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> AABB_primitive;
         typedef CGAL::AABB_tree<CGAL::AABB_traits<GeomTraits, AABB_primitive>> AABB_tree;
 
         typedef boost::optional<typename AABB_tree::template Intersection_and_primitive_id<Ray_3>::Type> Ray_intersection;
@@ -55,10 +56,7 @@ namespace internal
         {
             Filtered_graph filtered_mesh(m_mesh, cluster_id, facet_ids);
 
-            TriangleMesh cluster;
-            CGAL::copy_face_graph(filtered_mesh, cluster);
-
-            Concavity concavity(cluster, m_traits);
+            Concavity<Filtered_graph, GeomTraits, TriangleMesh> concavity(filtered_mesh, m_traits);
             return concavity.compute();
         }
 
@@ -69,10 +67,10 @@ namespace internal
         {
             CGAL_assertion(!CGAL::is_empty(m_mesh));
 
-            TriangleMesh conv_hull;
+            Mesh conv_hull;
             std::vector<Point_3> pts;
 
-            if (CGAL::num_vertices(m_mesh) <= 3) return 0;
+            if (num_vertices(m_mesh) <= 3) return 0;
 
             // extract the list points of the mesh
             BOOST_FOREACH(vertex_descriptor vert, vertices(m_mesh))
@@ -90,7 +88,7 @@ namespace internal
          * Constructs list of vertices from the list of faces and computes concavity value with the convex hull provided.
          * Faces list is a subset of all faces in the mesh.
          */
-        double compute(const std::vector<face_descriptor>& faces, const TriangleMesh& conv_hull)
+        double compute(const std::vector<face_descriptor>& faces, const Mesh& conv_hull)
         {
             std::unordered_set<vertex_descriptor> pts;
 
@@ -110,7 +108,7 @@ namespace internal
          * Vertices list a subset of all vertices in the mesh.
          */
         template <class iterator>
-        double compute(const std::pair<iterator, iterator>& verts, const TriangleMesh& conv_hull)
+        double compute(const std::pair<iterator, iterator>& verts, const Mesh& conv_hull)
         {
             // compute normals if normals are not computed
             compute_normals();

@@ -2,6 +2,7 @@
 
 #include <CGAL/approx_decomposition.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <iostream>
 #include <fstream>
@@ -9,6 +10,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 
 int main()
 {
@@ -31,30 +33,29 @@ int main()
     }
 
     // create property map for cluster-ids
-    typedef std::map<Polyhedron::Facet_const_handle, int> Facet_int_map;
-    Facet_int_map facet_map;
-    boost::associative_property_map<Facet_int_map> facet_property_map(facet_map);
+    typedef boost::property_map<Polyhedron, CGAL::dynamic_face_property_t<int> >::type Facet_property_map;
+    Facet_property_map facet_property_map = get(CGAL::dynamic_face_property_t<int>(), mesh);
 
     // decompose mesh with default parameters
     auto start = std::chrono::system_clock::now();
     
-    std::size_t clusters_num = CGAL::convex_decomposition(mesh, facet_property_map);
+    std::size_t clusters_num = CGAL::convex_decomposition(mesh, facet_property_map, CGAL::Polygon_mesh_processing::parameters::all_default());
 
     auto end = std::chrono::system_clock::now();
     std::cout << "Elapsed time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000. << " seconds" << std::endl;
 
      // write cluster-ids for each facet
     std::cout << "Number of clusters: " << clusters_num << std::endl;
-    for (Polyhedron::Facet_const_iterator it = mesh.facets_begin(); it != mesh.facets_end(); ++it)
+    BOOST_FOREACH(face_descriptor face, faces(mesh))
     {
-        std::cout << facet_property_map[it] << " ";
+        std::cout << get(facet_property_map, face) << " ";
     }
     std::cout << std::endl;
 
     // write concavity values for all clusters
 //    for (std::size_t i = 0; i < clusters_num; ++i)
 //    {
-//        std::cout << "#" << i << ": " << CGAL::concavity_value(mesh, facet_property_map, i) << std::endl;
+//        std::cout << "#" << i << ": " << CGAL::concavity_value(mesh, facet_property_map, i, CGAL::Polygon_mesh_processing::parameters::all_default()) << std::endl;
 //    }
 
     return EXIT_SUCCESS;

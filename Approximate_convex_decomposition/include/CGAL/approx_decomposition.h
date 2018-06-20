@@ -1,10 +1,6 @@
 #ifndef CGAL_APPROXIMATE_CONVEX_DECOMPOSITION_APPROX_DECOMPOSITION_H
 #define CGAL_APPROXIMATE_CONVEX_DECOMPOSITION_APPROX_DECOMPOSITION_H
 
-#include <CGAL/Kernel_traits.h>
-#include <CGAL/boost/graph/helpers.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
 #include <CGAL/internal/Approximate_convex_decomposition/approx_decomposition.h>
 #include <CGAL/internal/Approximate_convex_decomposition/concavity.h>
 
@@ -20,18 +16,19 @@ namespace CGAL
  *
  * @return concativity value.
  */
-template <class TriangleMesh, class FacePropertyMap,
-          class GeomTraits = CGAL::Exact_predicates_inexact_constructions_kernel
-          >
+template <class TriangleMesh, class FacePropertyMap, class NamedParameters>
 double
 concavity_value(const TriangleMesh& mesh,
                 FacePropertyMap face_ids,
                 std::size_t cluster_id,
-                const GeomTraits& traits = GeomTraits())
+                const NamedParameters& np)
 {
-    CGAL_precondition(CGAL::is_triangle_mesh(mesh));
+    typedef typename Polygon_mesh_processing::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
+    typedef typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::Kernel GeomTraits;
 
-    internal::Concavity<TriangleMesh, GeomTraits> algorithm(mesh, traits);
+    CGAL_precondition(is_triangle_mesh(mesh));
+
+    internal::Concavity<TriangleMesh, GeomTraits> algorithm(mesh, GeomTraits());
     return algorithm.compute(face_ids, cluster_id);
 }
 
@@ -43,16 +40,17 @@ concavity_value(const TriangleMesh& mesh,
  *
  * @return concativity value.
  */
-template <class TriangleMesh,
-          class GeomTraits = CGAL::Exact_predicates_inexact_constructions_kernel
-          >
+template <class TriangleMesh, class NamedParameters>
 double
 concavity_value(const TriangleMesh& mesh,
-                const GeomTraits& traits = GeomTraits())
+                const NamedParameters& np)
 {
-    CGAL_precondition(CGAL::is_triangle_mesh(mesh));
+    typedef typename Polygon_mesh_processing::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
+    typedef typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::Kernel GeomTraits;
 
-    internal::Concavity<TriangleMesh, GeomTraits> algorithm(mesh, traits);
+    CGAL_precondition(is_triangle_mesh(mesh));
+
+    internal::Concavity<TriangleMesh, GeomTraits> algorithm(mesh, GeomTraits());
     return algorithm.compute();
 }
 
@@ -65,20 +63,21 @@ concavity_value(const TriangleMesh& mesh,
  *
  * @return number of clusters.
  */
-template <class TriangleMesh, class FacePropertyMap,
-          class GeomTraits = CGAL::Exact_predicates_inexact_constructions_kernel
-          >
+template <class TriangleMesh, class FacePropertyMap, class NamedParameters>
 std::size_t
 convex_decomposition(const TriangleMesh& mesh,
                      FacePropertyMap face_ids,
+                     const NamedParameters& np,
                      double concavity_threshold = 0.05,
-                     std::size_t min_number_of_clusters = 1,
-                     const GeomTraits& traits = GeomTraits())
+                     std::size_t min_number_of_clusters = 1)
 {
-    CGAL_precondition(CGAL::is_triangle_mesh(mesh));
+    typedef typename Polygon_mesh_processing::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
+    typedef typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::Kernel GeomTraits;
+
+    CGAL_precondition(is_triangle_mesh(mesh));
     CGAL_precondition(num_faces(mesh) >= min_number_of_clusters);
 
-    internal::Approx_decomposition<TriangleMesh, GeomTraits> algorithm(mesh, traits);
+    internal::Approx_decomposition<TriangleMesh, GeomTraits> algorithm(mesh, GeomTraits());
     return algorithm.decompose(face_ids, concavity_threshold, min_number_of_clusters);
 }
 

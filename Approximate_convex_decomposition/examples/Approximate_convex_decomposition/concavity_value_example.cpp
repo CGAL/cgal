@@ -1,12 +1,12 @@
 #include <CGAL/approx_decomposition.h>
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <iostream>
 #include <fstream>
 
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef CGAL::Polyhedron_3<Kernel>     Polyhedron;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 int main()
 {
@@ -28,10 +28,10 @@ int main()
     }
 
     // compute concavity value
-//    double concavity = CGAL::concavity_value(mesh);
+    double concavity = CGAL::concavity_value(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
 
     // write result
-//    std::cout << "Concavity value: " << concavity << std::endl;
+    std::cout << "Concavity value: " << concavity << std::endl;
 
     return EXIT_SUCCESS;
 }

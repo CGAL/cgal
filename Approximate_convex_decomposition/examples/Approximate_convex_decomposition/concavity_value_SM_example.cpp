@@ -1,5 +1,6 @@
 #include <CGAL/approx_decomposition.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <iostream>
 #include <fstream>
@@ -27,7 +28,7 @@ int main()
     }
 
     // compute concavity value
-    double concavity = CGAL::concavity_value(mesh);
+    double concavity = CGAL::concavity_value(mesh, CGAL::Polygon_mesh_processing::parameters::all_default());
 
     // write result
     std::cout << "Concavity value: " << concavity << std::endl;
