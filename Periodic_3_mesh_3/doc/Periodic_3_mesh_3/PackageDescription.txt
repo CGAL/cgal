@@ -36,7 +36,7 @@ flexibility that is offered in the \ref PkgMesh_3Summary package.}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.13}
-\cgalPkgDependsOn{\ref PkgPeriodic3Triangulation3Summary, \ref PkgMesh_3Summary}
+\cgalPkgDependsOn{\ref PkgPeriodic3Triangulation3Summary, \ref PkgMesh_3Summary, and \ref thirdpartyEigen}
 \cgalPkgBib{cgal:btprl-p3m3}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd

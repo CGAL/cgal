@@ -19,6 +19,15 @@ include( ${CGAL_USE_FILE} )
 # include for local package
 include_directories( BEFORE ../../include )
 
+# Use Eigen
+find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
+if (NOT EIGEN3_FOUND)
+  message(STATUS "This project requires the Eigen library, and will not be compiled.")
+  return()
+else()
+  include( ${EIGEN3_USE_FILE} )
+endif()
+
 # Boost and its components
 find_package( Boost )
 

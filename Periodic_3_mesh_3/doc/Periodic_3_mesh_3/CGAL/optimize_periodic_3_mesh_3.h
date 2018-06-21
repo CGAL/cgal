@@ -8,6 +8,8 @@ process based on the minimization of a global energy function.
 
 This function directly calls `lloyd_optimize_mesh_3()`, but is provided for convenience.
 Further information can be found on the documentation of the function `lloyd_optimize_mesh_3()`.
+
+\note This function requires the \ref thirdpartyEigen library.
 */
 template<typename C3T3, typename MD>
 CGAL::Mesh_optimization_return_code
