@@ -73,8 +73,8 @@ public:
       mesh_(mesh),
       vpmap_(vpmap),
       vcmap_(vcmap),
-      weight_calculator_(mesh, vpmap),
-      vimap_(get(boost::vertex_index, mesh_))
+      vimap_(get(boost::vertex_index, mesh_)),
+      weight_calculator_(mesh, vpmap)
   {}
 
   template<typename FaceRange>
@@ -174,8 +174,8 @@ private:
   {
     CGAL_assertion(A.row_dimension() != 0);
     CGAL_assertion(A.column_dimension() != 0);
-    CGAL_assertion(A.row_dimension() == nb_vert_);
-    CGAL_assertion(A.column_dimension() == nb_vert_);
+    CGAL_assertion(std::size_t(A.row_dimension()) == nb_vert_);
+    CGAL_assertion(std::size_t(A.column_dimension()) == nb_vert_);
 
     calculate_D_diagonal(diagonal_);
     CGAL_assertion(diagonal_.size() == nb_vert_);
@@ -227,9 +227,9 @@ private:
   void compute_rhs(Eigen_vector& bx, Eigen_vector& by, Eigen_vector& bz)
   {
     CGAL_assertion(diagonal_.size() == nb_vert_);
-    CGAL_assertion(bx.size() == nb_vert_);
-    CGAL_assertion(by.size() == nb_vert_);
-    CGAL_assertion(bz.size() == nb_vert_);
+    CGAL_assertion(std::size_t(bx.size()) == nb_vert_);
+    CGAL_assertion(std::size_t(by.size()) == nb_vert_);
+    CGAL_assertion(std::size_t(bz.size()) == nb_vert_);
 
     BOOST_FOREACH(vertex_descriptor vi, vrange_)
     {
@@ -241,7 +241,7 @@ private:
     }
 
     // multiply D * b
-    for(int i = 0; i < nb_vert_; ++i)
+    for(std::size_t i = 0; i < nb_vert_; ++i)
     {
       bx[i] *= diagonal_[i];
       by[i] *= diagonal_[i];
@@ -254,7 +254,7 @@ private:
   void apply_constraints(Eigen_matrix& A)
   {
     CGAL_assertion(constrained_flags_.size() == nb_vert_);
-    for(int i = 0; i < nb_vert_; ++i)
+    for(std::size_t i = 0; i < nb_vert_; ++i)
     {
       if(constrained_flags_[i] == true)
         A.set_coef(i, i, 1.0, true);

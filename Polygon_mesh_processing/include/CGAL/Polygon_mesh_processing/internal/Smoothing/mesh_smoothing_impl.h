@@ -241,9 +241,6 @@ private:
     // get common vertex around which the edge is rotated
     Point_ref pt = get(vpmap_, target(main_he, mesh_));
 
-    // ps is the vertex that is being moved
-    Point_ref ps = get(vpmap_, source(main_he, mesh_));
-
     // get "equidistant" points - in fact they are at equal angles
     Point_ref equidistant_p1 = get(vpmap_, target(incd_edges.first, mesh_));
     Point_ref equidistant_p2 = get(vpmap_, source(incd_edges.second, mesh_));

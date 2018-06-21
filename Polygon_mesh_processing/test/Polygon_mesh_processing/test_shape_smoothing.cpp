@@ -191,7 +191,7 @@ void test_demo_helpers(Mesh mesh)
   #endif
 }
 
-int main(int argc, char* argv[])
+int main()
 {
   const char* filename_devil = "data/mannequin-devil.off";
   const char* filename_pyramid = "data/simple_pyramid.off";
