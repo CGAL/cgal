@@ -24,7 +24,7 @@
        <item row="0" column="0">
         <widget class="QPushButton" name="angle_button">
          <property name="text">
-          <string>angle smoothing</string>
+          <string>Angle Smoothing</string>
          </property>
         </widget>
        </item>
@@ -33,7 +33,7 @@
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>iterations: </string>
+            <string>#Iterations: </string>
            </property>
           </widget>
          </item>
@@ -45,7 +45,7 @@
        <item row="1" column="0">
         <widget class="QPushButton" name="area_button">
          <property name="text">
-          <string>area smoothing</string>
+          <string>Area Smoothing</string>
          </property>
         </widget>
        </item>
@@ -54,7 +54,7 @@
          <item>
           <widget class="QLabel" name="label_2">
            <property name="text">
-            <string>iterations: </string>
+            <string>#Iterations: </string>
            </property>
           </widget>
          </item>
@@ -66,7 +66,7 @@
        <item row="2" column="0">
         <widget class="QCheckBox" name="projection_checkBox">
          <property name="text">
-          <string>projection</string>
+          <string> Re-project Vertices</string>
          </property>
         </widget>
        </item>
@@ -75,7 +75,7 @@
          <item>
           <widget class="QLabel" name="label_4">
            <property name="text">
-            <string>precision:</string>
+            <string>Precision:</string>
            </property>
           </widget>
          </item>
@@ -100,7 +100,7 @@
        <item row="0" column="0">
         <widget class="QPushButton" name="curvature_flow_button">
          <property name="text">
-          <string>smooth along curvature flow</string>
+          <string>Smooth Along Curvature Flow</string>
          </property>
         </widget>
        </item>
@@ -109,7 +109,7 @@
          <item>
           <widget class="QLabel" name="label_3">
            <property name="text">
-            <string>iterations: </string>
+            <string>#Iterations: </string>
            </property>
           </widget>
          </item>
@@ -123,7 +123,7 @@
          <item>
           <widget class="QLabel" name="time_step_label">
            <property name="text">
-            <string>time step:</string>
+            <string>Time Step:</string>
            </property>
           </widget>
          </item>
@@ -139,21 +139,21 @@
        <item row="2" column="0">
         <widget class="QCheckBox" name="explicit_checkBox">
          <property name="text">
-          <string>normalized scheme</string>
+          <string>Use Normalized Scheme</string>
          </property>
         </widget>
        </item>
        <item row="3" column="0">
         <widget class="QCheckBox" name="border_button">
          <property name="text">
-          <string>constrain border vertices</string>
+          <string>Constrain Border Vertices</string>
          </property>
         </widget>
        </item>
        <item row="3" column="2">
         <widget class="QPushButton" name="cache_button">
          <property name="text">
-          <string>clear cache</string>
+          <string>Clear Cache</string>
          </property>
         </widget>
        </item>
