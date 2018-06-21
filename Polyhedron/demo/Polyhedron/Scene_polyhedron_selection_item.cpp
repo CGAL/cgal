@@ -636,7 +636,7 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
 
   viewer->glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &offset_factor);
   viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
-  viewer->glPolygonOffset(0.5f, 0.9f);
+  viewer->glPolygonOffset(0.9f, 0.9f);
 
   vaos[Scene_polyhedron_selection_item_priv::HLFacets]->bind();
   d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
@@ -676,11 +676,9 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
   d->program->release();
   vaos[Scene_polyhedron_selection_item_priv::Facets]->release();
 
-  viewer->glEnable(GL_POLYGON_OFFSET_LINE);
   viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-  viewer->glPolygonOffset(0.0f, 1.5f);
+  viewer->glPolygonOffset(0.3f, 0.3f);
   drawEdges(viewer);
-  viewer->glDisable(GL_POLYGON_OFFSET_LINE);
   viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
   viewer->glPolygonOffset(offset_factor, offset_units);
   drawPoints(viewer);
@@ -707,7 +705,7 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
   
   d->program->setUniformValue("viewport_matrix", viewport_matrix);
   d->program->setUniformValue("viewport_matrix_inv", viewport_matrix.inverted());
-  d->program->setUniformValue("width", 3.0f);
+  d->program->setUniformValue("width", 1.0f);
   d->program->setAttributeValue("colors",QColor(255,153,51));
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_HL_lines.size()/3));
   d->program->release();
@@ -741,8 +739,8 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
   d->program = getShaderProgram(PROGRAM_SOLID_WIREFRAME);
   attribBuffers(viewer,PROGRAM_SOLID_WIREFRAME);
   d->program->bind();
-  d->program->setUniformValue("viewport_matrix", viewport_matrix);
-  d->program->setUniformValue("viewport_matrix_inv", viewport_matrix.inverted());
+  QVector2D vp(viewer->width(), viewer->height());
+  d->program->setUniformValue("viewport", vp);
   d->program->setUniformValue("width", 1.0f);
   d->program->setAttributeValue("colors",QColor(255,
                                                 color().blue()/2,
