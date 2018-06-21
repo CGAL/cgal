@@ -43,7 +43,6 @@
 #include <boost/mpl/identity.hpp>
 #include <boost/unordered_set.hpp>
 
-#include <algorithm>
 #include <cstdlib>
 #include <functional>
 #include <iterator>
@@ -188,7 +187,7 @@ public:
 
 private:
   struct Cell_handle_hash
-    : public CGAL::unary_function<Cell_handle, std::size_t>
+    : public CGAL::cpp98::unary_function<Cell_handle, std::size_t>
   {
     std::size_t operator()(const Cell_handle& ch) const {
       return boost::hash<typename Cell_handle::pointer>()(&*ch);
@@ -520,7 +519,7 @@ public:
       is_large_point_set = false;
 
     std::vector<Weighted_point> points(first, last);
-    std::random_shuffle(points.begin(), points.end());
+    CGAL::cpp98::random_shuffle(points.begin(), points.end());
     Cell_handle hint;
     std::vector<Vertex_handle> dummy_points_vhs, double_vertices;
     std::vector<Weighted_point> dummy_points;

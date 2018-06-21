@@ -238,13 +238,23 @@ public:
   // Note: the standard requires the following types to be equivalent
   // to T, T*, const T*, T&, const T&, size_t, and ptrdiff_t, respectively.
   // So we don't pass these types to the iterators explicitly.
+
+#ifdef CGAL_CXX11
+  typedef typename std::allocator_traits<Allocator>::value_type            value_type;
+  typedef typename std::allocator_traits<Allocator>::pointer               pointer;
+  typedef typename std::allocator_traits<Allocator>::const_pointer         const_pointer;
+  typedef typename std::allocator_traits<Allocator>::size_type             size_type;
+  typedef typename std::allocator_traits<Allocator>::difference_type       difference_type;
+#else
   typedef typename Allocator::value_type          value_type;
   typedef typename Allocator::pointer             pointer;
   typedef typename Allocator::const_pointer       const_pointer;
-  typedef typename Allocator::reference           reference;
-  typedef typename Allocator::const_reference     const_reference;
   typedef typename Allocator::size_type           size_type;
   typedef typename Allocator::difference_type     difference_type;
+#endif
+
+  typedef value_type&       reference;
+  typedef const value_type& const_reference;
 
   typedef internal::In_place_list_iterator<T, Alloc> iterator;
   typedef internal::In_place_list_const_iterator<T, Alloc> const_iterator;
@@ -273,7 +283,11 @@ protected:
   pointer get_node( const T& t) {
     pointer p = allocator.allocate(1);
 #ifdef CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY
+#ifdef CGAL_CXX11
+    std::allocator_traits<Allocator>::construct(allocator, p, t);
+#else
     allocator.construct(p, t);
+    #endif
 #else
     new (p) value_type(t);
 #endif
@@ -281,8 +295,12 @@ protected:
   }
   void put_node( pointer p) {
 #ifdef CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY  
+#  ifdef CGAL_CXX11
+    std::allocator_traits<Allocator>::destroy(allocator, p);
+#  else
     allocator.destroy( p);
-#else 
+#  endif
+#else // not CGAL_USE_ALLOCATOR_CONSTRUCT_DESTROY
    p->~value_type();
 #endif
     allocator.deallocate( p, 1);
@@ -785,7 +803,7 @@ namespace std {
 
   template < class T, class Alloc >
   struct hash<CGAL::internal::In_place_list_iterator<T, Alloc> >
-    : public CGAL::unary_function<CGAL::internal::In_place_list_iterator<T, Alloc>, std::size_t>  {
+    : public CGAL::cpp98::unary_function<CGAL::internal::In_place_list_iterator<T, Alloc>, std::size_t>  {
 
     std::size_t operator()(const CGAL::internal::In_place_list_iterator<T, Alloc>& i) const
     {
@@ -796,7 +814,7 @@ namespace std {
 
   template < class T, class Alloc >
   struct hash<CGAL::internal::In_place_list_const_iterator<T, Alloc> >
-    : public CGAL::unary_function<CGAL::internal::In_place_list_const_iterator<T, Alloc>, std::size_t> {
+    : public CGAL::cpp98::unary_function<CGAL::internal::In_place_list_const_iterator<T, Alloc>, std::size_t> {
 
     std::size_t operator()(const CGAL::internal::In_place_list_const_iterator<T, Alloc>& i) const
     {

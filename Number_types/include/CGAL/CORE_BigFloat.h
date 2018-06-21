@@ -46,7 +46,7 @@ public:
     typedef CGAL::Tag_true Is_bigfloat_interval; 
   
  
-    struct Lower :public CGAL::unary_function<Interval,Bound>{
+    struct Lower :public CGAL::cpp98::unary_function<Interval,Bound>{
         Bound operator() ( Interval x ) const {   
             CORE::BigFloat result = ::CORE::BigFloat(x.m()-x.err(),0,x.exp());
             CGAL_postcondition(result <= x);
@@ -54,7 +54,7 @@ public:
         }
     };
     
-    struct Upper :public CGAL::unary_function<Interval,Bound>{
+    struct Upper :public CGAL::cpp98::unary_function<Interval,Bound>{
         Bound operator() ( Interval x ) const {     
             CORE::BigFloat result = ::CORE::BigFloat(x.m()+x.err(),0,x.exp());
             CGAL_postcondition(result >= x);
@@ -62,7 +62,7 @@ public:
         }
     };
 
-    struct Width :public CGAL::unary_function<Interval,Bound>{
+    struct Width :public CGAL::cpp98::unary_function<Interval,Bound>{
          
         Bound operator() ( Interval x ) const {    
             unsigned long err = 2*x.err();
@@ -70,52 +70,52 @@ public:
         }
     };
 
-    struct Median :public CGAL::unary_function<Interval,Bound>{
+    struct Median :public CGAL::cpp98::unary_function<Interval,Bound>{
          
         Bound operator() ( Interval x ) const {   
             return Bound(x.m(),0,x.exp());
         }
     };
 
-    struct Norm :public CGAL::unary_function<Interval,Bound>{
+    struct Norm :public CGAL::cpp98::unary_function<Interval,Bound>{
         Bound operator() ( Interval x ) const {
           BOOST_USING_STD_MAX();
           return max BOOST_PREVENT_MACRO_SUBSTITUTION (Upper()(x).abs(),Lower()(x).abs());
         }
     };
     
-    struct Zero_in :public CGAL::unary_function<Interval,bool>{
+    struct Zero_in :public CGAL::cpp98::unary_function<Interval,bool>{
         bool operator() ( Interval x ) const {      
             return x.isZeroIn(); 
         }
     };
 
-    struct In :public CGAL::binary_function<Bound,Interval,bool>{
+    struct In :public CGAL::cpp98::binary_function<Bound,Interval,bool>{
         bool operator()( Bound x, const Interval& a ) const {    
             CGAL_precondition(CGAL::singleton(x));
             return (Lower()(a) <= x && x <= Upper()(a));
         }
     };
 
-    struct Equal :public CGAL::binary_function<Interval,Interval,bool>{
+    struct Equal :public CGAL::cpp98::binary_function<Interval,Interval,bool>{
         bool operator()( const Interval& a, const Interval& b ) const { 
             return (Upper()(a) == Upper()(b) &&  Lower()(a) == Lower()(b));
         }
     };
     
-    struct Subset :public CGAL::binary_function<Interval,Interval,bool>{
+    struct Subset :public CGAL::cpp98::binary_function<Interval,Interval,bool>{
         bool operator()( const Interval& a, const Interval& b ) const {   
             return Lower()(b) <= Lower()(a) && Upper()(a) <= Upper()(b);
         }
     };
     
-    struct Proper_subset :public CGAL::binary_function<Interval,Interval,bool>{
+    struct Proper_subset :public CGAL::cpp98::binary_function<Interval,Interval,bool>{
         bool operator()( const Interval& a, const Interval& b ) const { 
             return Subset()(a,b) && (!Equal()(a,b));
         }
     };
     
-    struct Intersection :public CGAL::binary_function<Interval,Interval,Interval>{
+    struct Intersection :public CGAL::cpp98::binary_function<Interval,Interval,Interval>{
       Interval operator()( const Interval& a, const Interval& b ) const {
             BOOST_USING_STD_MAX();
             BOOST_USING_STD_MIN();
@@ -129,7 +129,7 @@ public:
     };
  
 
-    struct Overlap :public CGAL::binary_function<Interval,Interval,bool>{
+    struct Overlap :public CGAL::cpp98::binary_function<Interval,Interval,bool>{
         bool operator() ( Interval x, Interval y ) const {       
             Self::Zero_in Zero_in;
             bool result = Zero_in(x-y);
@@ -137,7 +137,7 @@ public:
         }
     };
    
-    struct Hull :public CGAL::binary_function<Interval,Interval,Interval>{
+    struct Hull :public CGAL::cpp98::binary_function<Interval,Interval,Interval>{
 
       // for debugging
 /*      void print_bf(CORE::BigFloat bf, std::string s) const {
@@ -229,13 +229,13 @@ public:
         }
     };
 
-    struct Singleton :public CGAL::unary_function<Interval,bool> {
+    struct Singleton :public CGAL::cpp98::unary_function<Interval,bool> {
         bool operator() ( Interval x ) const {       
             return (x.err() == 0); 
         }
     };
 
-    struct Construct :public CGAL::binary_function<Bound,Bound,Interval>{
+    struct Construct :public CGAL::cpp98::binary_function<Bound,Bound,Interval>{
         Interval operator()( const Bound& l,const Bound& r) const {
             CGAL_precondition( l < r ); 
             return Hull()(l,r);
@@ -376,7 +376,7 @@ template <> class Algebraic_structure_traits< CORE::BigFloat >
     typedef Tag_true           Is_numerical_sensitive;
 
     class Sqrt
-      : public CGAL::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             // What I want is a sqrt computed with 
@@ -406,7 +406,7 @@ template <> class Algebraic_structure_traits< CORE::BigFloat >
     };
 
     class Kth_root
-      : public CGAL::binary_function<int, Type, Type> {
+      : public CGAL::cpp98::binary_function<int, Type, Type> {
       public:
         Type operator()( int k,
                                         const Type& x) const {
@@ -429,7 +429,7 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
   : public INTERN_RET::Real_embeddable_traits_base< CORE::BigFloat , CGAL::Tag_true  > {
   public:
     class Abs
-      : public CGAL::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             Type result; 
@@ -462,7 +462,7 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
     };
 
     class Sgn
-      : public CGAL::unary_function< Type, ::CGAL::Sign > {
+      : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
             ::CGAL::Sign result =  sign( x.sign());
@@ -471,7 +471,7 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
     };
 
     class Compare
-      : public CGAL::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
@@ -483,7 +483,7 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
     };
 
     class To_double
-      : public CGAL::unary_function< Type, double > {
+      : public CGAL::cpp98::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           // this call is required to get reasonable values for the double
@@ -493,7 +493,7 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
     };
 
     class To_interval
-      : public CGAL::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
     public:
         std::pair<double, double> operator()( const Type& x ) const {
                         

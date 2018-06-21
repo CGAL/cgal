@@ -28,6 +28,7 @@
 #include <list>
 #include <set>
 #include <vector>
+#include <CGAL/algorithm.h>
 #include <CGAL/Random_polygon_2_sweep.h>
 #include <CGAL/Kernel_traits.h>
 
@@ -55,7 +56,7 @@ OutputIterator random_polygon_2(std::size_t n,  OutputIterator result,
    CGAL_assertion(!duplicate_points(vertices.begin(), vertices.end(), traits));
 
 #ifndef CGAL_DONT_SHUFFLE_IN_RANDOM_POLYGON_2
-   std::random_shuffle(vertices.begin(), vertices.end());
+   CGAL::cpp98::random_shuffle(vertices.begin(), vertices.end());
 #endif
 
    make_simple_polygon(vertices.begin(), vertices.end(), traits);

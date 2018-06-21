@@ -114,7 +114,9 @@ public:
   using Base::OUTSIDE_CONVEX_HULL;
   using Base::orientation;
   using Base::locate;
+#ifndef CGAL_NO_STRUCTURAL_FILTERING
   using Base::inexact_locate;
+#endif
   using Base::incident_faces;
   using Base::is_infinite;
   using Base::degree;
@@ -441,7 +443,8 @@ private:
   template<class Construct_bare_point, class Container>
   struct Index_to_Bare_point
   {
-    const Bare_point& operator()(const std::size_t& i) const
+    typename boost::result_of<const Construct_bare_point(const Weighted_point&)>::type
+    operator()(const std::size_t& i) const
     {
       return cp(c[i]);
     }

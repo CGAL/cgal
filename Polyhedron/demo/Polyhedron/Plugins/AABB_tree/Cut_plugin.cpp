@@ -83,11 +83,11 @@ class FillGridSize {
   std::vector<Tree*>&trees;
   std::vector<SM_Tree*>&sm_trees;
   bool is_signed;
-  qglviewer::ManipulatedFrame* frame;
+  CGAL::qglviewer::ManipulatedFrame* frame;
 public:
   FillGridSize(std::size_t grid_size, FT diag, Point_distance (&distance_function)[100][100],
   FT& max_distance_function, std::vector<Tree*>& trees, std::vector<SM_Tree*>& sm_trees,
-  bool is_signed, qglviewer::ManipulatedFrame* frame)
+  bool is_signed, CGAL::qglviewer::ManipulatedFrame* frame)
   : grid_size(grid_size), distance_function (distance_function), diag(diag),
     max_distance_function(max_distance_function),
     trees(trees), sm_trees(sm_trees), is_signed(is_signed), frame(frame)
@@ -112,7 +112,7 @@ public:
       FT x = -diag/fd + FT(i)/FT(grid_size) * dx;
       {
         FT y = -diag/fd + FT(j)/FT(grid_size) * dy;
-        const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+        const CGAL::qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
         Simple_kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
         Point query = transfo( Point(x,y,z))-offset;
         FT min = DBL_MAX;
@@ -256,7 +256,7 @@ class Q_DECL_EXPORT Scene_aabb_item : public CGAL::Three::Scene_item
 public:
   Scene_aabb_item(const Facet_tree& tree) : CGAL::Three::Scene_item(1,1)
   {
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     positions_lines.clear();
 
     CGAL::AABB_drawing_traits<Facet_primitive, CGAL::AABB_node<Facet_traits> > traits;
@@ -281,7 +281,7 @@ public:
 
   Scene_aabb_item(const Facet_sm_tree& tree) : CGAL::Three::Scene_item(1,1)
   {
-      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
       positions_lines.clear();
 
       CGAL::AABB_drawing_traits<Facet_sm_primitive, CGAL::AABB_node<Facet_sm_traits> > traits;
@@ -476,7 +476,7 @@ private:
     }
     void computeElements() const
     {
-       const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+       const CGAL::qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
        Simple_kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
        QApplication::setOverrideCursor(Qt::WaitCursor);
        positions_lines.clear();
@@ -1225,7 +1225,7 @@ void Polyhedron_demo_cut_plugin::init(QMainWindow* mainWindow,
     connect(real_scene, SIGNAL(newItem(int)),
             this, SLOT(updateTrees(int)));
 
-  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
   viewer->installEventFilter(this);
 
   _actions << actionIntersection
@@ -1443,10 +1443,10 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
     scene->addItem(edges_item);
   }
 
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
-  const qglviewer::Vec& pos = plane_item->manipulatedFrame()->position() - offset;
-  const qglviewer::Vec& n =
-      plane_item->manipulatedFrame()->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec& pos = plane_item->manipulatedFrame()->position() - offset;
+  const CGAL::qglviewer::Vec& n =
+      plane_item->manipulatedFrame()->inverseTransformOf(CGAL::qglviewer::Vec(0.f, 0.f, 1.f));
   Simple_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * pos);
   //std::cerr << plane << std::endl;
   edges_item->edges.clear();

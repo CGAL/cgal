@@ -45,15 +45,15 @@ namespace CGAL {
 namespace Surface_mesh_simplification
 {
 
-  template<class ECM_, class Profile_>
+  template<class TM_, class Profile_>
 class LindstromTurkCore
 {
 public:
     
-  typedef ECM_    ECM ;
+  typedef TM_    TM ;
   typedef Profile_ Profile ;
   
-  typedef boost::graph_traits<ECM> GraphTraits ;
+  typedef boost::graph_traits<TM> GraphTraits ;
   
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor ;
   typedef typename GraphTraits::halfedge_descriptor   halfedge_descriptor ;
@@ -63,9 +63,9 @@ public:
   typedef typename Profile::Point Point ;
 
   typedef typename Profile::VertexPointMap Vertex_point_pmap;
-  typedef typename boost::property_traits<Vertex_point_pmap>::value_type ECM_Point;
+  typedef typename boost::property_traits<Vertex_point_pmap>::value_type TM_Point;
   
-  typedef typename Kernel_traits<ECM_Point>::Kernel ECM_Kernel ;
+  typedef typename Kernel_traits<TM_Point>::Kernel TM_Kernel ;
   
   typedef typename Kernel_traits<Point>::Kernel Kernel;
   typedef typename Kernel::Vector_3 Vector ;
@@ -164,7 +164,7 @@ private :
   template<class T>
   static optional<T> filter_infinity ( T const& n ) { return is_finite(n) ? optional<T>(n) : optional<T>() ; }
 
-  ECM& surface() const { return mProfile.surface() ; }
+  TM& surface() const { return mProfile.surface() ; }
   
 private:    
 
@@ -184,7 +184,7 @@ private:
   Matrix mConstraints_A ;
   Vector mConstraints_b ;
 
-  Cartesian_converter<ECM_Kernel,Kernel> convert ;
+  Cartesian_converter<TM_Kernel,Kernel> convert ;
 
   FT mSquared_cos_alpha;
   FT mSquared_sin_alpha;

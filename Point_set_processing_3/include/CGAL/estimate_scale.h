@@ -71,7 +71,7 @@ class Quick_multiscale_approximate_knn_distance<Kernel, typename Kernel::Point_3
   typedef typename Neighbor_search::iterator Iterator;
 
   template <typename ValueType, typename PointMap>
-  struct Pmap_unary_function : public CGAL::unary_function<ValueType, typename Kernel::Point_3>
+  struct Pmap_unary_function : public CGAL::cpp98::unary_function<ValueType, typename Kernel::Point_3>
   {
     PointMap point_map;
     Pmap_unary_function (PointMap point_map) : point_map (point_map) { }
@@ -236,7 +236,7 @@ class Quick_multiscale_approximate_knn_distance<Kernel, typename Kernel::Point_2
   typedef typename Point_set::Vertex_handle Vertex_handle;
 
   template <typename ValueType, typename PointMap>
-  struct Pmap_unary_function : public CGAL::unary_function<ValueType, typename Kernel::Point_2>
+  struct Pmap_unary_function : public CGAL::cpp98::unary_function<ValueType, typename Kernel::Point_2>
   {
     PointMap point_map;
     Pmap_unary_function (PointMap point_map) : point_map (point_map) { }
@@ -570,8 +570,11 @@ estimate_global_k_neighbor_scale(
   const PointRange& points,
   const NamedParameters& np)
 {
+  using boost::choose_param;
+  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
+  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
   std::vector<std::size_t> scales;
-  estimate_local_k_neighbor_scales (points, points, std::back_inserter (scales), np);
+  estimate_local_k_neighbor_scales (points, points, std::back_inserter (scales), np.query_point_map(point_map));
   std::sort (scales.begin(), scales.end());
   return scales[scales.size() / 2];
 }
@@ -723,8 +726,11 @@ estimate_global_range_scale(
   const PointRange& points,
   const NamedParameters& np)
 {
+  using boost::choose_param;
   std::vector<double> scales;
-  estimate_local_range_scales (points, points, std::back_inserter (scales), np);
+  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
+  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+  estimate_local_range_scales (points, points, std::back_inserter (scales), np.query_point_map(point_map));
   std::sort (scales.begin(), scales.end());
   return std::sqrt (scales[scales.size() / 2]);
 }

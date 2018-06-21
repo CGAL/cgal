@@ -418,7 +418,7 @@ template <> class Algebraic_structure_traits< MP_Float >
     typedef Tag_true            Is_numerical_sensitive;
 
     struct Unit_part
-      : public CGAL::unary_function< Type , Type >
+      : public CGAL::cpp98::unary_function< Type , Type >
     {
       Type operator()(const Type &x) const {
         return x.unit_part();
@@ -426,7 +426,7 @@ template <> class Algebraic_structure_traits< MP_Float >
     };
 
     struct Integral_division
-        : public CGAL::binary_function< Type,
+        : public CGAL::cpp98::binary_function< Type,
                                  Type,
                                  Type > {
     public:
@@ -442,7 +442,7 @@ template <> class Algebraic_structure_traits< MP_Float >
 
 
     class Square
-      : public CGAL::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return INTERN_MP_FLOAT::square(x);
@@ -450,7 +450,7 @@ template <> class Algebraic_structure_traits< MP_Float >
     };
 
     class Gcd
-      : public CGAL::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x,
@@ -460,7 +460,7 @@ template <> class Algebraic_structure_traits< MP_Float >
     };
 
     class Div
-      : public CGAL::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x,
@@ -473,7 +473,7 @@ template <> class Algebraic_structure_traits< MP_Float >
 // Default implementation of Divides functor for unique factorization domains
   // x divides y if gcd(y,x) equals x up to inverses 
   class Divides 
-    : public CGAL::binary_function<Type,Type,bool>{
+    : public CGAL::cpp98::binary_function<Type,Type,bool>{
   public:
     bool operator()( const Type& x,  const Type& y) const {  
       return internal::division(y,x).second == 0 ;
@@ -495,7 +495,7 @@ template <> class Real_embeddable_traits< MP_Float >
   public:
 
     class Sgn
-      : public CGAL::unary_function< Type, ::CGAL::Sign > {
+      : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
           return x.sign();
@@ -503,7 +503,7 @@ template <> class Real_embeddable_traits< MP_Float >
     };
 
     class Compare
-      : public CGAL::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
@@ -513,7 +513,7 @@ template <> class Real_embeddable_traits< MP_Float >
     };
 
     class To_double
-      : public CGAL::unary_function< Type, double > {
+      : public CGAL::cpp98::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           return INTERN_MP_FLOAT::to_double( x );
@@ -521,7 +521,7 @@ template <> class Real_embeddable_traits< MP_Float >
     };
 
     class To_interval
-      : public CGAL::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
           return INTERN_MP_FLOAT::to_interval( x );
@@ -853,14 +853,14 @@ class Real_embeddable_traits< Quotient<MP_Float> >
     : public INTERN_QUOTIENT::Real_embeddable_traits_quotient_base<
 Quotient<MP_Float> >{
 public:
-    struct To_double: public CGAL::unary_function<Quotient<MP_Float>, double>{
+    struct To_double: public CGAL::cpp98::unary_function<Quotient<MP_Float>, double>{
          inline
          double operator()(const Quotient<MP_Float>& q) const {
             return INTERN_MP_FLOAT::to_double(q);
         }
     };
     struct To_interval
-        : public CGAL::unary_function<Quotient<MP_Float>, std::pair<double,double> > {
+        : public CGAL::cpp98::unary_function<Quotient<MP_Float>, std::pair<double,double> > {
         inline
         std::pair<double,double> operator()(const Quotient<MP_Float>& q) const {
             return INTERN_MP_FLOAT::to_interval(q);

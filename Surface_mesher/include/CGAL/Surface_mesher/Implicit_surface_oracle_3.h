@@ -106,7 +106,7 @@ namespace CGAL {
   namespace {
     
   template <typename T>
-  struct Return_min : CGAL::binary_function<T, T, T>
+  struct Return_min : CGAL::cpp98::binary_function<T, T, T>
   {
     T operator()(const T& a, const T& b) const
     {
@@ -495,11 +495,6 @@ namespace CGAL {
     }
 
   };  // end Implicit_surface_oracle_3
-
-template <typename FT>
-FT approximate_sqrt(const FT x) {
-  return FT (CGAL_NTS sqrt(CGAL_NTS to_double(x)));
-}
 
   }  // namespace Surface_mesher
 

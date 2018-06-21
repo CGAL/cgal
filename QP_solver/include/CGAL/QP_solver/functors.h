@@ -65,12 +65,12 @@ class Map_with_default;
 // QP_vector_accessor
 // -------------------
 template < class VectorIt, bool check_lower, bool check_upper >
-class QP_vector_accessor : public CGAL::unary_function<
+class QP_vector_accessor : public CGAL::cpp98::unary_function<
     int, typename std::iterator_traits<VectorIt>::value_type > {
 
   public:
     typedef typename 
-        CGAL::unary_function<
+        CGAL::cpp98::unary_function<
            int, 
            typename std::iterator_traits<VectorIt>::value_type >::result_type
     result_type;
@@ -179,12 +179,12 @@ private:
 // Value_by_basic_index
 // --------------------
 template < class RndAccIt >
-class Value_by_basic_index : public CGAL::unary_function<
+class Value_by_basic_index : public CGAL::cpp98::unary_function<
     int, typename std::iterator_traits<RndAccIt>::value_type > {
 
   public:
     typedef typename
-    CGAL::unary_function<
+    CGAL::cpp98::unary_function<
       int, typename std::iterator_traits
          <RndAccIt>::value_type >::result_type
     result_type;

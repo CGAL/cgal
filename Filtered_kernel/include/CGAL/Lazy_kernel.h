@@ -304,6 +304,7 @@ public:
   typedef EK_   Exact_kernel;
   typedef E2A_  E2A;
 
+  typedef Lazy_kernel_generic_base<EK_, AK_, E2A_, Kernel_> BaseClass;
   template < typename Kernel2 >
   struct Base { typedef Lazy_kernel_base<Exact_kernel, Approximate_kernel, E2A, Kernel2>  Type; };
 
@@ -320,6 +321,213 @@ public:
   // typedef void Compute_z_3; // to detect where .z() is called
   // typedef void Construct_point_3; // to detect where the ctor is called
   
+  struct Compute_weight_2 : public BaseClass::Compute_weight_2
+  {
+    typedef typename Kernel_::FT FT;
+    typedef typename Kernel_::Point_2 Point_2;
+    typedef typename Kernel_::Weighted_point_2 Weighted_point_2;
+
+    FT operator()(const Weighted_point_2& p) const
+    {
+
+      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_2,
+                         typename Exact_kernel::Weighted_point_2,
+                         typename Approximate_kernel::Construct_weighted_point_2,
+                         typename Exact_kernel::Construct_weighted_point_2,
+                         E2A_,
+                         Return_base_tag,
+                         Point_2,
+                         FT
+                         > LR;
+
+            
+      LR * lr = dynamic_cast<LR*>(p.ptr());
+      if(lr && (! lr->et)){
+        return lr->l2;
+      }
+      return BaseClass().compute_weight_2_object()(p);
+    }
+    
+  };
+  
+  
+  struct Compute_weight_3 : public BaseClass::Compute_weight_3
+  {
+    typedef typename Kernel_::FT FT;
+    typedef typename Kernel_::Point_3 Point_3;
+    typedef typename Kernel_::Weighted_point_3 Weighted_point_3;
+
+    FT operator()(const Weighted_point_3& p) const
+    {
+
+      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_3,
+                         typename Exact_kernel::Weighted_point_3,
+                         typename Approximate_kernel::Construct_weighted_point_3,
+                         typename Exact_kernel::Construct_weighted_point_3,
+                         E2A_,
+                         Return_base_tag,
+                         Point_3,
+                         FT
+                         > LR;
+
+            
+      LR * lr = dynamic_cast<LR*>(p.ptr());
+      if(lr && (! lr->et)){
+        return lr->l2;
+      }
+      return BaseClass().compute_weight_3_object()(p);
+    }
+    
+  };
+
+  
+  struct Construct_point_2 : public BaseClass::Construct_point_2
+  {
+    typedef typename Kernel_::FT FT;
+    typedef typename Kernel_::Point_2 Point_2;
+    typedef typename Kernel_::Weighted_point_2 Weighted_point_2;
+    
+#ifndef CGAL_CFG_MATCHING_BUG_6
+    using BaseClass::Construct_point_2::operator();
+#else // CGAL_CFG_MATCHING_BUG_6
+
+   
+    template <class ...  T> 
+    Point_2 operator()(const T& ...t) const
+    {
+      return BaseClass().construct_point_2_object()(t...);
+    }
+    
+#endif // CGAL_CFG_MATCHING_BUG_6
+    
+    const Point_2& operator()(const Point_2& p) const
+    {
+      return p;
+    }
+
+    
+    Point_2 operator()(const Weighted_point_2& p) const
+    {
+      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_2,
+                         typename Exact_kernel::Weighted_point_2,
+                         typename Approximate_kernel::Construct_weighted_point_2,
+                         typename Exact_kernel::Construct_weighted_point_2,
+                         E2A_,
+                         Return_base_tag,
+                         Point_2,
+                         FT
+                         > LR;
+
+      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_2,
+                         typename Exact_kernel::Weighted_point_2,
+                         typename Approximate_kernel::Construct_weighted_point_2,
+                         typename Exact_kernel::Construct_weighted_point_2,
+                         E2A_,
+                         Return_base_tag,
+                         Point_2,
+                         int
+                         > LRint;
+
+      LR * lr = dynamic_cast<LR*>(p.ptr());
+      if(lr && (! lr->et)){
+        return lr->l1;
+      } else {
+        LRint* lrint = dynamic_cast<LRint*>(p.ptr());
+        if(lrint && (! lrint->et)){
+          return lrint->l1;
+        }
+      }
+
+      return BaseClass().construct_point_2_object()(p);
+    }
+    
+  };
+
+
+  
+  struct Construct_point_3 : public BaseClass::Construct_point_3
+  {
+    typedef typename Kernel_::FT FT;
+    typedef typename Kernel_::Point_3 Point_3;
+    typedef typename Kernel_::Weighted_point_3 Weighted_point_3;
+    
+#ifndef CGAL_CFG_MATCHING_BUG_6
+  using BaseClass::Construct_point_3::operator();
+#else // CGAL_CFG_MATCHING_BUG_6
+ 
+    template <class ...  T> 
+    Point_3 operator()(const T& ...t) const
+    {
+      return BaseClass().construct_point_3_object()(t...);
+    }
+    
+#endif // CGAL_CFG_MATCHING_BUG_6
+    
+    const Point_3& operator()(const Point_3& p) const
+    {
+      return p;
+    }
+    
+    Point_3 operator()(const Weighted_point_3& p) const
+    {
+      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_3,
+                         typename Exact_kernel::Weighted_point_3,
+                         typename Approximate_kernel::Construct_weighted_point_3,
+                         typename Exact_kernel::Construct_weighted_point_3,
+                         E2A_,
+                         Return_base_tag,
+                         Point_3,
+                         FT
+                         > LR;
+      
+      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_3,
+                         typename Exact_kernel::Weighted_point_3,
+                         typename Approximate_kernel::Construct_weighted_point_3,
+                         typename Exact_kernel::Construct_weighted_point_3,
+                         E2A_,
+                         Return_base_tag,
+                         Point_3,
+                         int
+                         > LRint;
+
+      
+      LR * lr = dynamic_cast<LR*>(p.ptr());
+      if(lr && (! lr->et)){
+        return lr->l1;
+      }else{
+        LRint* lrint = dynamic_cast<LRint*>(p.ptr());
+        if(lrint && (! lrint->et)){
+          return lrint->l1;
+        }
+      }
+      return BaseClass().construct_point_3_object()(p);
+    }
+    
+  };
+
+  
+  Construct_point_2 construct_point_2_object() const
+  {
+    return Construct_point_2();
+  }
+
+  Construct_point_3 construct_point_3_object() const
+  {
+    return Construct_point_3();
+  }
+  
+  
+  Compute_weight_2 compute_weight_2_object() const
+  {
+    return Compute_weight_2();
+  }
+  
+  Compute_weight_3 compute_weight_3_object() const
+  {
+    return Compute_weight_3();
+  }
+  
+
   Assign_2
   assign_2_object() const
   { return Assign_2(); }

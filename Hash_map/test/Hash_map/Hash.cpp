@@ -9,7 +9,6 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/boost/graph/graph_traits_Arrangement_2.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_2.h>
 #include <map>
 #include <boost/unordered_map.hpp>

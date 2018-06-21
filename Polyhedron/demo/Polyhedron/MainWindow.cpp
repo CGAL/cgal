@@ -53,8 +53,8 @@
 #include "Show_point_dialog.h"
 #include "File_loader_dialog.h"
 
-#include <QGLViewer/manipulatedCameraFrame.h>
-#include <QGLViewer/manipulatedFrame.h>
+#include <CGAL/Qt/manipulatedCameraFrame.h>
+#include <CGAL/Qt/manipulatedFrame.h>
 
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptEngine>
@@ -125,13 +125,14 @@ MainWindow::~MainWindow()
   delete ui;
   delete statistics_ui;
 }
-MainWindow::MainWindow(QWidget* parent)
+MainWindow::MainWindow(bool verbose, QWidget* parent)
   : CGAL::Qt::DemosMainWindow(parent)
 {
   ui = new Ui::MainWindow;
   ui->setupUi(this);
   menuBar()->setNativeMenuBar(false);
   menu_map[ui->menuOperations->title()] = ui->menuOperations;
+  this->verbose = verbose;
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
   ui->menuBar->removeAction(ui->actionLoadScript);
@@ -540,7 +541,8 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
         }
       }
       QDebug qdebug = qDebug();
-      qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
+      if(verbose)
+        qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
       QPluginLoader loader;
       loader.setFileName(fileinfo.absoluteFilePath());
       QObject *obj = loader.instance();
@@ -560,6 +562,7 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
       else {
         //qdebug << "error: " << qPrintable(loader.errorString());
         pluginsStatus_map[name] = loader.errorString();
+
       }
       PathNames_map[fileinfo.absoluteDir().absolutePath()].push_back(name);
       return true;
@@ -621,8 +624,9 @@ void MainWindow::loadPlugins()
 
   QSet<QString> loaded;
   Q_FOREACH (QDir pluginsDir, plugins_directories) {
-    qDebug("# Looking for plugins in directory \"%s\"...",
-           qPrintable(pluginsDir.absolutePath()));
+    if(verbose)
+      qDebug("# Looking for plugins in directory \"%s\"...",
+             qPrintable(pluginsDir.absolutePath()));
     Q_FOREACH(QString fileName, pluginsDir.entryList(QDir::Files))
     {
       QString abs_name = pluginsDir.absoluteFilePath(fileName);
@@ -767,42 +771,34 @@ void MainWindow::viewerShow(float xmin,
                             float ymax,
                             float zmax)
 {
-  qglviewer::Vec
+  CGAL::qglviewer::Vec
     min_(xmin, ymin, zmin),
     max_(xmax, ymax, zmax);
 
   if(min_ == max_) return viewerShow(xmin, ymin, zmin);
 
-#if QGLVIEWER_VERSION >= 0x020502
   viewer->camera()->setPivotPoint((min_+max_)*0.5);
-#else
-  viewer->camera()->setRevolveAroundPoint((min_+max_)*0.5);
-#endif
 
-  qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
+  CGAL::qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
   viewer->camera()->fitBoundingBox(min_, max_);
-  qglviewer::ManipulatedCameraFrame new_frame(*viewer->camera()->frame());
+  CGAL::qglviewer::ManipulatedCameraFrame new_frame(*viewer->camera()->frame());
   *viewer->camera()->frame() = backup_frame;
   viewer->camera()->interpolateTo(new_frame, 1.f);
   viewer->setVisualHintsMask(1);
 }
 
 void MainWindow::viewerShow(float x, float y, float z) {
-  // viewer->camera()->lookAt(qglviewer::Vec(x, y, z));
+  // viewer->camera()->lookAt(CGAL::qglviewer::Vec(x, y, z));
 
-  qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
-  viewer->camera()->fitSphere(qglviewer::Vec(x, y, z),
+  CGAL::qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
+  viewer->camera()->fitSphere(CGAL::qglviewer::Vec(x, y, z),
                               viewer->camera()->sceneRadius()/100);
-  qglviewer::ManipulatedCameraFrame new_frame(*viewer->camera()->frame());
+  CGAL::qglviewer::ManipulatedCameraFrame new_frame(*viewer->camera()->frame());
   *viewer->camera()->frame() = backup_frame;
   viewer->camera()->interpolateTo(new_frame, 1.f);
   viewer->setVisualHintsMask(1);
 
-#if QGLVIEWER_VERSION >= 0x020502
-  viewer->camera()->setPivotPoint(qglviewer::Vec(x, y, z));
-#else
-  viewer->camera()->setRevolveAroundPoint(qglviewer::Vec(x, y, z));
-#endif
+  viewer->camera()->setPivotPoint(CGAL::qglviewer::Vec(x, y, z));
 }
 
 void MainWindow::message(QString message, QString colorName, QString font) {
@@ -836,11 +832,7 @@ void MainWindow::error(QString text) {
 void MainWindow::updateViewerBBox(bool recenter = true)
 {
   const Scene::Bbox bbox = scene->bbox();
-#if QGLVIEWER_VERSION >= 0x020502
-    qglviewer::Vec center = viewer->camera()->pivotPoint();
-#else
-    qglviewer::Vec center = viewer->camera()->revolveAroundPoint();
-#endif
+    CGAL::qglviewer::Vec center = viewer->camera()->pivotPoint();
   const double xmin = bbox.xmin();
   const double ymin = bbox.ymin();
   const double zmin = bbox.zmin();
@@ -849,11 +841,11 @@ void MainWindow::updateViewerBBox(bool recenter = true)
   const double zmax = bbox.zmax();
 
 
-  qglviewer::Vec
+  CGAL::qglviewer::Vec
     vec_min(xmin, ymin, zmin),
     vec_max(xmax, ymax, zmax),
     bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
-  qglviewer::Vec offset(0,0,0);
+  CGAL::qglviewer::Vec offset(0,0,0);
   double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
                       (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
                           (std::abs)(bbox_center.z - viewer->offset().z)));
@@ -882,11 +874,7 @@ void MainWindow::updateViewerBBox(bool recenter = true)
   }
   else
   {
-#if QGLVIEWER_VERSION >= 0x020502
     viewer->camera()->setPivotPoint(center);
-#else
-    viewer->camera()->setRevolveAroundPoint(center);
-#endif
   }
 }
 
@@ -1518,8 +1506,11 @@ void MainWindow::on_actionLoad_triggered()
     Q_FOREACH(const QString& filter, split_filters) {
       FilterPluginMap::iterator it = filterPluginMap.find(filter);
       if(it != filterPluginMap.end()) {
-        qDebug() << "Duplicate Filter: " << it.value()->name();
-        qDebug() << "This filter will not be available.";
+        if(verbose)
+        {
+          qDebug() << "Duplicate Filter: " << it.value()->name();
+          qDebug() << "This filter will not be available.";
+        }
       } else {
         filterPluginMap[filter] = plugin;
       }
@@ -1604,11 +1595,14 @@ void MainWindow::on_actionSaveAs_triggered()
                            .arg(item->name()));
       return;
     }
-    Q_FOREACH(QString s, filters.first().split(";;"))
+    Q_FOREACH(QString string, filters)
     {
-      int pos = extensions.indexIn(s);
-      if( pos >-1)
-        filter_ext.append(extensions.capturedTexts());
+      QStringList sl = string.split(";;");
+      Q_FOREACH(QString s, sl){
+        int pos = extensions.indexIn(s);
+        if( pos >-1)
+          filter_ext.append(extensions.capturedTexts());
+      }
     }
     filters << tr("All files (*)");
     if(canSavePlugins.isEmpty()) {
@@ -1633,28 +1627,30 @@ void MainWindow::on_actionSaveAs_triggered()
     
     last_saved_dir = QFileInfo(dir).absoluteDir().path();
     extensions.indexIn(sf.split(";;").first());
-    ext1 = extensions.cap();
-    //remove `)`
-    ext1.chop(1);
-    //remove `(*`
-    ext1 = ext1.right(ext1.size()-2);
+    ext1 = extensions.cap().split(" ").first();// in case of syntax like (*.a *.b)
+    
+    ext1.remove(")");
+    ext1.remove("(");
+    //remove *
+    ext1=ext1.right(ext1.size()-1);
     if(filename.isEmpty())
       continue;
 
     QStringList filename_split = filename.split(".");
-    int fs_size = filename_split.size();
-    ext2 = filename_split.last();
-    
-    if(fs_size > 2 &&
-       ext2 == filename_split[filename.split(".").size()-2])
-      filename.chop(ext2.size()+1);
+    filename_split.removeFirst();
+    ext2 = filename_split.join(".");
+    ext2.push_front(".");
+   
     QStringList final_extensions;
-    Q_FOREACH(QString s, filter_ext)
+    Q_FOREACH(QString string, filter_ext)
     {
-      //remove `)`
-      s.chop(1);
-      //remove `(*.`
-      final_extensions.append(s.right(s.size()-3));
+      Q_FOREACH(QString s, string.split(" ")){// in case of syntax like (*.a *.b) 
+          s.remove(")");
+          s.remove("(");
+          //remove *
+          s=s.right(s.size()-1);
+          final_extensions.append(s);
+      }
     }
     if(!final_extensions.contains(ext2))
     {
@@ -1688,7 +1684,7 @@ void MainWindow::save(QString filename, CGAL::Three::Scene_item* item) {
 
 void MainWindow::on_actionSaveSnapshot_triggered()
 {
-  viewer->saveSnapshot(false);
+  viewer->saveSnapshot();
 }
 
 bool MainWindow::on_actionErase_triggered()
@@ -2113,6 +2109,8 @@ void MainWindow::insertActionBeforeLoadPlugin(QMenu* menu, QAction* actionToInse
 void MainWindow::colorItems()
 {
   std::size_t nb_files = scene->selectionIndices().size();
+  if(nb_files<2)
+    return;
   std::vector<QColor> colors_;
   colors_.reserve(nb_files);
   compute_color_map(scene->item(scene->selectionIndices().last())->color(),

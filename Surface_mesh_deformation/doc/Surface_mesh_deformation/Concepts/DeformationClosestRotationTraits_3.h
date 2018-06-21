@@ -7,6 +7,8 @@ The definition of close depends on the model.
 The fact that some basic operations are hidden behind a function is to allow to benefit from optimizations like expression template from libraries used
 to implement models of this concept.
 
+\cgalRefines `DefaultConstructible`
+
 \cgalHasModel `CGAL::Deformation_Eigen_closest_rotation_traits_3`
 \cgalHasModel `CGAL::Deformation_Eigen_polar_closest_rotation_traits_3`
 
@@ -19,12 +21,6 @@ public:
   typedef unspecified_type Matrix;
   /// 3D vector type having a copy constructor
   typedef unspecified_type Vector;
-/// @}
-
-/// \name Creation
-/// @{
-/// Default constructor.
-  DeformationClosestRotationTraits_3();
 /// @}
 
 /// \name Operations

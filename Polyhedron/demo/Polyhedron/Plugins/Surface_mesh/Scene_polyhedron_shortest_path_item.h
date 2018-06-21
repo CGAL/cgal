@@ -11,7 +11,7 @@
 
 #include "opengl_tools.h"
 
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QMainWindow>

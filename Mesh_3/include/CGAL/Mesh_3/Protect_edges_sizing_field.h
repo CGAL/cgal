@@ -44,9 +44,12 @@
 #  include <sstream>
 #endif
 #ifdef CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
-#include <CGAL/IO/File_binary_mesh_3.h>
+#  include <CGAL/IO/File_binary_mesh_3.h>
 #endif
 #include <CGAL/Has_timestamp.h>
+#if CGAL_MESH_3_PROTECTION_DEBUG
+#  include <CGAL/Mesh_3/Dump_c3t3.h>
+#endif
 
 namespace CGAL {
 namespace Mesh_3 {

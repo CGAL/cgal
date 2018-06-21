@@ -68,7 +68,7 @@ public:
    * Then it creates and initializes the scene and do the
    * connexions with the UI. Finally it loads the plugins.*/
 
-  MainWindow(QWidget* parent = 0);
+  MainWindow(bool verbose = false,QWidget* parent = 0);
   ~MainWindow();
 
   /*! Finds an IO plugin.
@@ -418,6 +418,7 @@ private:
 
   QDialog *statistics_dlg;
   Ui::Statistics_on_item_dialog* statistics_ui;
+  bool verbose;
   void insertActionBeforeLoadPlugin(QMenu*, QAction *actionToInsert);
 
 #ifdef QT_SCRIPT_LIB
@@ -433,7 +434,6 @@ public:
   void evaluate_script_quiet(QString script, 
                              const QString & fileName = QString());
 #endif
-
 private Q_SLOTS:
   void set_facegraph_mode_adapter(bool is_polyhedron);
 };

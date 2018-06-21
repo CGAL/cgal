@@ -1,4 +1,5 @@
-#include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <CGAL/functional.h>
+#include <CGAL/property_map.h>
 
 template <class Pt>
 struct My_point_with_info
@@ -22,11 +23,11 @@ struct Point_property_map{
   typedef Point value_type;
   typedef const value_type& reference;
   typedef const My_point_with_info<Point>& key_type;
-  typedef boost::lvalue_property_map_tag category;  
+  typedef boost::lvalue_property_map_tag category;
 
   reference operator[](key_type k) const {return k.point();}
 
-  friend reference get(const Point_property_map& ppmap, key_type i) 
+  friend reference get(const Point_property_map& ppmap, key_type i)
   {return ppmap[i];}
 };
 
@@ -37,11 +38,11 @@ template <class Point>
 const Point& get_point(const My_point_with_info<Point>& p) {return get(Point_property_map<Point>(),p);}
 
 template <class Point>
-struct Create_point_with_info : public CGAL::unary_function<Point,Point>{
+struct Create_point_with_info : public CGAL::cpp98::unary_function<Point,Point>{
   const Point& operator() (const Point& p) const { return p; }
 };
 
 template <class Point>
-struct Create_point_with_info<My_point_with_info<Point> > : public CGAL::unary_function<Point,My_point_with_info<Point> >{
+struct Create_point_with_info<My_point_with_info<Point> > : public CGAL::cpp98::unary_function<Point,My_point_with_info<Point> >{
   My_point_with_info<Point> operator() (const Point& p) const { return My_point_with_info<Point>(p); }
 };

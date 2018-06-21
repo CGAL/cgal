@@ -461,6 +461,18 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
     % r_tr.number_of_vertices()
     % nbsteps % cells_mesher_.debug_info()
     % (nbsteps / timer.time());
+    if(refinement_stage == REFINE_FACETS &&
+       facets_mesher_.is_algorithm_done())
+    {
+      facets_mesher_.scan_edges();
+      refinement_stage = REFINE_FACETS_AND_EDGES;
+    }
+    if(refinement_stage == REFINE_FACETS_AND_EDGES &&
+       facets_mesher_.is_algorithm_done())
+    {
+      facets_mesher_.scan_vertices();
+      refinement_stage = REFINE_FACETS_AND_EDGES_AND_VERTICES;
+    }
     ++nbsteps;
   }
   std::cerr << std::endl;

@@ -468,7 +468,7 @@ with duplicated border edges.
 \cgalExample{Polygon_mesh_processing/stitch_borders_example.cpp}
 
 *******************
-<!---
+\cond
 \subsection DegenerateFaces Removing Degenerate Faces
 
 Some degenerate faces may be part of a given triangle mesh.
@@ -488,7 +488,7 @@ are removed, the connectivity is fixed, and the number of removed faces
 is output.
 
 \cgalExample{Polygon_mesh_processing/remove_degeneracies_example.cpp}
---->
+\endcond
 
 *******************
 \subsection PolygonSoups Polygon Soups
@@ -571,11 +571,11 @@ and store them in property maps provided by the class `Surface_mesh`.
 
 \cgalExample{Polygon_mesh_processing/compute_normals_example.cpp}
 
-\subsubsection NormalsExampleP Normals Computation for a Poyhedron_3
+\subsubsection NormalsExampleP Normals Computation for a Polyhedron_3
 
 The following example illustrates how to
 compute the normals to faces and vertices
-and store them in ordered or unordered maps as the class `Polyhedron` does
+and store them in ordered or unordered maps as the class `Polyhedron_3` does
 not provide storage for the normals.
 
 \cgalExample{Polygon_mesh_processing/compute_normals_example_Polyhedron.cpp}

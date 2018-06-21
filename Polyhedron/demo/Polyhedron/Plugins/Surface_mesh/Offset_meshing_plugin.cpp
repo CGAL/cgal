@@ -16,7 +16,6 @@
 #include <QStringList>
 
 #include "C2t3_type.h"
-#include "Scene_c2t3_item.h"
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -51,7 +50,9 @@ public:
     , m_side_of_ptr( new Side_of(*m_tree_ptr) )
     , m_offset_distance(offset_distance)
     , m_is_closed( is_closed(tm) )
-  {}
+  {
+    m_tree_ptr->accelerate_distance_queries();
+  }
 
   double operator()(const typename GeomTraits::Point_3& p) const
   {

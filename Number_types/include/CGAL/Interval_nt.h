@@ -446,7 +446,7 @@ relative_precision(const Interval_nt<Protected> & d)
 
 template< bool Protected >
 class Is_valid< Interval_nt<Protected> >
-  : public CGAL::unary_function< Interval_nt<Protected>, bool > {
+  : public CGAL::cpp98::unary_function< Interval_nt<Protected>, bool > {
   public :
     bool operator()( const Interval_nt<Protected>& x ) const {
       return is_valid(x.inf()) &&
@@ -683,7 +683,7 @@ operator/ (const Interval_nt<Protected> & a, double b)
 // TODO: What about these two guys? Where do they belong to?
 template <bool Protected>
 struct Min <Interval_nt<Protected> >
-    : public CGAL::binary_function<Interval_nt<Protected>,
+    : public CGAL::cpp98::binary_function<Interval_nt<Protected>,
                              Interval_nt<Protected>,
                              Interval_nt<Protected> >
 {
@@ -698,7 +698,7 @@ struct Min <Interval_nt<Protected> >
 
 template <bool Protected>
 struct Max <Interval_nt<Protected> >
-    : public CGAL::binary_function<Interval_nt<Protected>,
+    : public CGAL::cpp98::binary_function<Interval_nt<Protected>,
                              Interval_nt<Protected>,
                              Interval_nt<Protected> >
 {
@@ -745,7 +745,7 @@ ldexp(const Interval_nt<b> &i, int e)
 // TODO: To which concept do these functors belong? Can we remove them??
 template < bool b >
 struct Equal_to < Interval_nt<b>, Interval_nt<b> >
-  : public CGAL::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+  : public CGAL::cpp98::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
 {
   Uncertain<bool> operator()( const Interval_nt<b>& x,
                               const Interval_nt<b>& y) const
@@ -754,7 +754,7 @@ struct Equal_to < Interval_nt<b>, Interval_nt<b> >
 
 template < bool b >
 struct Not_equal_to < Interval_nt<b>, Interval_nt<b> >
-  : public CGAL::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+  : public CGAL::cpp98::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
 {
   Uncertain<bool> operator()( const Interval_nt<b>& x,
                               const Interval_nt<b>& y) const
@@ -763,7 +763,7 @@ struct Not_equal_to < Interval_nt<b>, Interval_nt<b> >
 
 template < bool b >
 struct Greater < Interval_nt<b>, Interval_nt<b> >
-  : public CGAL::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+  : public CGAL::cpp98::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
 {
   Uncertain<bool> operator()( const Interval_nt<b>& x,
                               const Interval_nt<b>& y) const
@@ -772,7 +772,7 @@ struct Greater < Interval_nt<b>, Interval_nt<b> >
 
 template < bool b >
 struct Less < Interval_nt<b>, Interval_nt<b> >
-  : public CGAL::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+  : public CGAL::cpp98::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
 {
   Uncertain<bool> operator()( const Interval_nt<b>& x,
                               const Interval_nt<b>& y) const
@@ -781,7 +781,7 @@ struct Less < Interval_nt<b>, Interval_nt<b> >
 
 template < bool b >
 struct Greater_equal < Interval_nt<b>, Interval_nt<b> >
-  : public CGAL::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+  : public CGAL::cpp98::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
 {
   Uncertain<bool> operator()( const Interval_nt<b>& x,
                               const Interval_nt<b>& y) const
@@ -790,7 +790,7 @@ struct Greater_equal < Interval_nt<b>, Interval_nt<b> >
 
 template < bool b >
 struct Less_equal < Interval_nt<b>, Interval_nt<b> >
-  : public CGAL::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+  : public CGAL::cpp98::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
 {
   Uncertain<bool> operator()( const Interval_nt<b>& x,
                               const Interval_nt<b>& y) const
@@ -943,7 +943,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
   typedef Uncertain<CGAL::Comparison_result> Comparison_result; 
 
     class Abs
-      : public CGAL::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             return INTERN_INTERVAL_NT::abs( x );
@@ -951,7 +951,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class Sgn
-        : public CGAL::unary_function< Type, Uncertain< ::CGAL::Sign > > {
+        : public CGAL::cpp98::unary_function< Type, Uncertain< ::CGAL::Sign > > {
       public:
         Uncertain< ::CGAL::Sign > operator()( const Type& x ) const {
             return INTERN_INTERVAL_NT::sign( x );
@@ -959,7 +959,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class Is_positive
-      : public CGAL::unary_function< Type, Uncertain<bool> > {
+      : public CGAL::cpp98::unary_function< Type, Uncertain<bool> > {
       public:
         Uncertain<bool> operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::is_positive( x );
@@ -967,7 +967,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class Is_negative
-      : public CGAL::unary_function< Type, Uncertain<bool> > {
+      : public CGAL::cpp98::unary_function< Type, Uncertain<bool> > {
       public:
         Uncertain<bool> operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::is_negative( x );
@@ -975,7 +975,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class Compare
-      : public CGAL::binary_function< Type, Type, Comparison_result > {
+      : public CGAL::cpp98::binary_function< Type, Type, Comparison_result > {
       public:
       Comparison_result operator()( const Type& x, const Type& y ) const {
         return INTERN_INTERVAL_NT::compare( x, y );
@@ -985,7 +985,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class To_double
-      : public CGAL::unary_function< Type, double > {
+      : public CGAL::cpp98::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
             return INTERN_INTERVAL_NT::to_double( x );
@@ -993,7 +993,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class To_interval
-      : public CGAL::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
             return INTERN_INTERVAL_NT::to_interval( x );
@@ -1001,7 +1001,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class Is_finite
-      : public CGAL::unary_function< Type, Boolean > {
+      : public CGAL::cpp98::unary_function< Type, Boolean > {
       public :
         Boolean operator()( const Type& x ) const {
           return CGAL_NTS is_finite( x.inf() ) && CGAL_NTS is_finite( x.sup() );
@@ -1022,7 +1022,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
     typedef Uncertain<bool>     Boolean; 
 
     class Is_zero
-      : public CGAL::unary_function< Type, Boolean > {
+      : public CGAL::cpp98::unary_function< Type, Boolean > {
       public:
         Boolean operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::is_zero( x );
@@ -1030,7 +1030,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
     };
 
     class Is_one
-      : public CGAL::unary_function< Type, Boolean > {
+      : public CGAL::cpp98::unary_function< Type, Boolean > {
       public:
         Boolean operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::is_one( x );
@@ -1038,7 +1038,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
     };
 
     class Square
-      : public CGAL::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::square( x );
@@ -1046,7 +1046,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
     };
 
     class Sqrt
-      : public CGAL::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::sqrt( x );
@@ -1054,7 +1054,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
     };
 
     struct Is_square
-        :public CGAL::binary_function<Interval_nt<B>,Interval_nt<B>&,Boolean >
+        :public CGAL::cpp98::binary_function<Interval_nt<B>,Interval_nt<B>&,Boolean >
     {
         Boolean operator()(const Interval_nt<B>& x) const {
             return INTERN_INTERVAL_NT::is_positive( x );
@@ -1077,7 +1077,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
     };
 
   class Divides
-    : public CGAL::binary_function< Type, Type, Boolean > {
+    : public CGAL::cpp98::binary_function< Type, Type, Boolean > {
   public:
     Boolean operator()( const Type& x, const Type&) const {
       return ! Is_zero()(x);
@@ -1138,86 +1138,86 @@ public:
   typedef CGAL::Tag_false With_empty_interval; 
   typedef CGAL::Tag_true  Is_interval; 
 
- struct Construct :public CGAL::binary_function<Bound,Bound,Interval>{
+ struct Construct :public CGAL::cpp98::binary_function<Bound,Bound,Interval>{
     Interval operator()( const Bound& l,const Bound& r) const {
       CGAL_precondition( l < r ); 
       return Interval(l,r);
     }
   };
 
-  struct Lower :public CGAL::unary_function<Interval,Bound>{
+  struct Lower :public CGAL::cpp98::unary_function<Interval,Bound>{
     Bound operator()( const Interval& a ) const {
       return a.inf();
     }
   };
 
-  struct Upper :public CGAL::unary_function<Interval,Bound>{
+  struct Upper :public CGAL::cpp98::unary_function<Interval,Bound>{
     Bound operator()( const Interval& a ) const {
       return a.sup();
     }
   };
 
-  struct Width :public CGAL::unary_function<Interval,Bound>{
+  struct Width :public CGAL::cpp98::unary_function<Interval,Bound>{
     Bound operator()( const Interval& a ) const {
       return width(a); 
     }
   };
 
-  struct Median :public CGAL::unary_function<Interval,Bound>{
+  struct Median :public CGAL::cpp98::unary_function<Interval,Bound>{
     Bound operator()( const Interval& a ) const {
       return (Lower()(a)+Upper()(a))/2.0;
     }
   };
     
-  struct Norm :public CGAL::unary_function<Interval,Bound>{
+  struct Norm :public CGAL::cpp98::unary_function<Interval,Bound>{
     Bound operator()( const Interval& a ) const {
       return magnitude(a);
     }
   };
 
-  struct Singleton :public CGAL::unary_function<Interval,bool>{
+  struct Singleton :public CGAL::cpp98::unary_function<Interval,bool>{
     bool operator()( const Interval& a ) const {
       return Lower()(a) == Upper()(a);
     }
   };
 
-  struct Zero_in :public CGAL::unary_function<Interval,bool>{
+  struct Zero_in :public CGAL::cpp98::unary_function<Interval,bool>{
     bool operator()( const Interval& a ) const {
       return Lower()(a) <= 0  &&  0 <= Upper()(a);
     }
   };
 
-  struct In :public CGAL::binary_function<Bound,Interval,bool>{
+  struct In :public CGAL::cpp98::binary_function<Bound,Interval,bool>{
     bool operator()( Bound x, const Interval& a ) const {
       return Lower()(a) <= x && x <= Upper()(a);
     }
   };
 
-  struct Equal :public CGAL::binary_function<Interval,Interval,bool>{
+  struct Equal :public CGAL::cpp98::binary_function<Interval,Interval,bool>{
     bool operator()( const Interval& a, const Interval& b ) const {
       return a.is_same(b);
     }
   };
     
-  struct Overlap :public CGAL::binary_function<Interval,Interval,bool>{
+  struct Overlap :public CGAL::cpp98::binary_function<Interval,Interval,bool>{
     bool operator()( const Interval& a, const Interval& b ) const {
       return a.do_overlap(b);
     }
   };
     
-  struct Subset :public CGAL::binary_function<Interval,Interval,bool>{
+  struct Subset :public CGAL::cpp98::binary_function<Interval,Interval,bool>{
     bool operator()( const Interval& a, const Interval& b ) const {
       return Lower()(b) <= Lower()(a) && Upper()(a) <= Upper()(b) ;  
     }
   };
     
-  struct Proper_subset :public CGAL::binary_function<Interval,Interval,bool>{
+  struct Proper_subset :public CGAL::cpp98::binary_function<Interval,Interval,bool>{
     bool operator()( const Interval& a, const Interval& b ) const {
       return Subset()(a,b) && ! Equal()(a,b); 
     }
   };
     
-  struct Hull :public CGAL::binary_function<Interval,Interval,Interval>{
+  struct Hull :public CGAL::cpp98::binary_function<Interval,Interval,Interval>{
     Interval operator()( const Interval& a, const Interval& b ) const {
       BOOST_USING_STD_MAX();
       BOOST_USING_STD_MIN();
@@ -1231,7 +1231,7 @@ public:
   
 //  struct Empty is Null_functor 
   
-  struct Intersection :public CGAL::binary_function<Interval,Interval,Interval>{
+  struct Intersection :public CGAL::cpp98::binary_function<Interval,Interval,Interval>{
     Interval operator()( const Interval& a, const Interval& b ) const {
       BOOST_USING_STD_MAX();
       BOOST_USING_STD_MIN();

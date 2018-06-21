@@ -76,7 +76,7 @@ void MainWindow::updateViewerBBox()
 	const double xmax = bbox.xmax();
 	const double ymax = bbox.ymax();
 	const double zmax = bbox.zmax();
-	qglviewer::Vec 
+	CGAL::qglviewer::Vec 
 		vec_min(xmin, ymin, zmin),
 		vec_max(xmax, ymax, zmax);
 	m_pViewer->setSceneBoundingBox(vec_min,vec_max);
@@ -411,27 +411,18 @@ void MainWindow::on_actionRefine_loop_triggered()
 
 void MainWindow::on_actionSave_snapshot_triggered()
 {
-	// save snapshot to file
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-  QString filename = QFileDialog::getSaveFileName(this,tr("Save snapshot to file..."),"snapshot00.png","*.png");
-  m_pViewer->saveSnapshot(filename);
-	QApplication::restoreOverrideCursor();
+  return;
 }
 void MainWindow::on_actionCopy_snapshot_triggered()
 {
   // copy snapshot to clipboard
-	QApplication::setOverrideCursor(Qt::WaitCursor);
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   QClipboard *qb = QApplication::clipboard();
   m_pViewer->makeCurrent();
   m_pViewer->raise();
-#if QGLVIEWER_VERSION >= 0x020700
   QImage snapshot = m_pViewer->grabFramebuffer();
-#else
-  QImage snapshot = m_pViewer->grabFrameBuffer(true);
-
-#endif
   qb->setImage(snapshot);
-	QApplication::restoreOverrideCursor();
+  QApplication::restoreOverrideCursor();
 }
 
 

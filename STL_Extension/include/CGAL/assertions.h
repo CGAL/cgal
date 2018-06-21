@@ -100,7 +100,7 @@ inline bool possibly(Uncertain<bool> c);
 #else // no CGAL_NO_ASSERTIONS
 #  define CGAL_assertion(EX) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
-#  if __cpp_lib_uncaught_exceptions // C++17
+#  if __cpp_lib_uncaught_exceptions || ( _MSVC_LANG >= 201703L )  // C++17
 #    define CGAL_destructor_assertion(EX) \
      (CGAL::possibly(EX)||(std::uncaught_exceptions() > 0)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  else // use C++03 `std::uncaught_exception()`

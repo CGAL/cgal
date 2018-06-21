@@ -2,13 +2,12 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/Timer.h>
 
 #include <fstream>
@@ -86,7 +85,7 @@ void shuffle_off(const char* fname_in, const char* fname_out)
     for (int k=0;k<n;++k)
       input >> indices[k];
 
-    std::random_shuffle(indices.begin(), indices.end());
+    CGAL::cpp98::random_shuffle(indices.begin(), indices.end());
 
     output << n;
     for (int k=0;k<n;++k)

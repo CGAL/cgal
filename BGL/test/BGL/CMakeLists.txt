@@ -98,6 +98,8 @@ create_single_source_cgal_program( "test_Face_filtered_graph.cpp" )
 
 create_single_source_cgal_program( "test_Euler_operations.cpp" )
 
+create_single_source_cgal_program( "test_Collapse_edge.cpp" )
+
 create_single_source_cgal_program( "test_graph_traits.cpp" )
 
 create_single_source_cgal_program( "test_Properties.cpp" )
@@ -105,6 +107,7 @@ create_single_source_cgal_program( "test_Properties.cpp" )
 if(OpenMesh_FOUND)
   target_link_libraries( test_clear PRIVATE ${OPENMESH_LIBRARIES})
   target_link_libraries( test_Euler_operations PRIVATE ${OPENMESH_LIBRARIES})
+  target_link_libraries( test_Collapse_edge PRIVATE ${OPENMESH_LIBRARIES})
   target_link_libraries( test_Face_filtered_graph PRIVATE ${OPENMESH_LIBRARIES})
   target_link_libraries( test_graph_traits PRIVATE ${OPENMESH_LIBRARIES} )
   target_link_libraries( test_Properties PRIVATE ${OPENMESH_LIBRARIES})

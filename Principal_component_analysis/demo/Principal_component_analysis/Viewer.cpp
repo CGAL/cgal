@@ -2,7 +2,7 @@
 #include "Scene.h"
 
 Viewer::Viewer(QWidget* parent)
-  : QGLViewer(parent),
+  : CGAL::QGLViewer(parent),
     m_pScene(NULL)
 {
 }
@@ -14,7 +14,7 @@ void Viewer::setScene(Scene* pScene)
 
 void Viewer::draw()
 {
-  QGLViewer::draw();
+  CGAL::QGLViewer::draw();
   if(m_pScene != NULL)
   {
         glClearColor(1.0f,1.0f,1.0f,1.0f);
@@ -24,7 +24,7 @@ void Viewer::draw()
 
 void Viewer::initializeGL()
 {
-  QGLViewer::initializeGL();
+  CGAL::QGLViewer::initializeGL();
   makeCurrent();
   initializeOpenGLFunctions();
   setBackgroundColor(::Qt::white);

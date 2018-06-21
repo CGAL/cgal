@@ -422,14 +422,24 @@ namespace CGAL
       // defines as type Compact_container<T>
       template <class T>
       struct Add_compact_container{
+#ifdef CGAL_CXX11
+        typedef std::allocator_traits<typename CMap::Alloc> Allocator_traits;
+        typedef typename Allocator_traits::template rebind_alloc<T> Attr_allocator;
+#else
         typedef typename CMap::Alloc::template rebind<T>::other Attr_allocator;
+#endif
         typedef typename CMap::template Container_for_attributes<T> type;
       };
 
       // defines as type Compact_container<T>::iterator
       template <class T>
       struct Add_compact_container_iterator{
+#ifdef CGAL_CXX11
+        typedef std::allocator_traits<typename CMap::Alloc> Allocator_traits;
+        typedef typename Allocator_traits::template rebind_alloc<T> Attr_allocator;
+#else
         typedef typename CMap::Alloc::template rebind<T>::other Attr_allocator;
+#endif
         typedef typename CMap::template Container_for_attributes<T>::iterator
         iterator_type;
 
@@ -442,7 +452,12 @@ namespace CGAL
       // defines as type Compact_container<T>::const_iterator
       template <class T>
       struct Add_compact_container_const_iterator{
+#ifdef CGAL_CXX11
+        typedef std::allocator_traits<typename CMap::Alloc> Allocator_traits;
+        typedef typename Allocator_traits::template rebind_alloc<T> Attr_allocator;
+#else
         typedef typename CMap::Alloc::template rebind<T>::other Attr_allocator;
+#endif
         typedef typename CMap::template Container_for_attributes<T>::
         const_iterator iterator_type;
 

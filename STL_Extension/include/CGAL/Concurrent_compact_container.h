@@ -176,12 +176,22 @@ class Concurrent_compact_container
 public:
   typedef T                                         value_type;
   typedef Allocator                                 allocator_type;
-  typedef typename Allocator::reference             reference;
-  typedef typename Allocator::const_reference       const_reference;
+
+  typedef value_type&                               reference;
+  typedef const value_type&                         const_reference;
+
+#ifdef CGAL_CXX11
+  typedef typename std::allocator_traits<Allocator>::pointer               pointer;
+  typedef typename std::allocator_traits<Allocator>::const_pointer         const_pointer;
+  typedef typename std::allocator_traits<Allocator>::size_type             size_type;
+  typedef typename std::allocator_traits<Allocator>::difference_type       difference_type;
+#else
   typedef typename Allocator::pointer               pointer;
   typedef typename Allocator::const_pointer         const_pointer;
   typedef typename Allocator::size_type             size_type;
   typedef typename Allocator::difference_type       difference_type;
+#endif
+
   typedef CCC_internal::CCC_iterator<Self, false>   iterator;
   typedef CCC_internal::CCC_iterator<Self, true>    const_iterator;
   typedef std::reverse_iterator<iterator>           reverse_iterator;
@@ -394,7 +404,11 @@ public:
   {
     FreeList * fl = get_free_list();
     pointer ret = init_insert(fl);
+#ifdef CGAL_CXX11
+    std::allocator_traits<allocator_type>::construct(m_alloc, ret, t);
+#else
     m_alloc.construct(ret, t);
+#endif
     return finalize_insert(ret, fl);
   }
 
@@ -420,7 +434,13 @@ private:
 
     CGAL_precondition(type(x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
+
+#ifdef CGAL_CXX11
+    std::allocator_traits<allocator_type>::destroy(m_alloc, &*x);
+#else
     m_alloc.destroy(&*x);
+#endif
+
 /* WE DON'T DO THAT BECAUSE OF THE ERASE COUNTER
 #ifndef CGAL_NO_ASSERTIONS
     std::memset(&*x, 0, sizeof(T));
@@ -460,7 +480,11 @@ public:
 
   size_type max_size() const
   {
+#ifdef CGAL_CXX11
+    return std::allocator_traits<allocator_type>::max_size(m_alloc);
+#else
     return m_alloc.max_size();
+#endif
   }
 
   size_type capacity() const
@@ -1044,7 +1068,7 @@ namespace std {
   
   template < class CCC, bool Const >
   struct hash<CGAL::CCC_internal::CCC_iterator<CCC, Const> >
-    : public CGAL::unary_function<CGAL::CCC_internal::CCC_iterator<CCC, Const>, std::size_t> {
+    : public CGAL::cpp98::unary_function<CGAL::CCC_internal::CCC_iterator<CCC, Const>, std::size_t> {
 
     std::size_t operator()(const CGAL::CCC_internal::CCC_iterator<CCC, Const>& i) const
     {

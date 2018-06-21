@@ -4,7 +4,7 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/Implicit_mesh_domain_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/make_mesh_3.h>
 
@@ -16,7 +16,7 @@ typedef K::FT FT;
 typedef K::Point_3 Point;
 typedef FT (Function)(const Point&);
 typedef CGAL::Mesh_domain_with_polyline_features_3<
-  CGAL::Implicit_mesh_domain_3<Function,K> >              Mesh_domain;
+  CGAL::Labeled_mesh_domain_3<K> > Mesh_domain;
 
 // Polyline
 typedef std::vector<Point>        Polyline_3;
@@ -60,8 +60,9 @@ FT sphere_function (const Point& p)
 int main()
 {
   // Domain (Warning: Sphere_3 constructor uses squared radius !)
-  Mesh_domain domain(sphere_function,
-                     K::Sphere_3(Point(1, 0, 0), 6.));
+  Mesh_domain domain =
+    Mesh_domain::create_implicit_mesh_domain(sphere_function,
+                                             K::Sphere_3(Point(1, 0, 0), 6.));
 
   // Mesh criteria
   Mesh_criteria criteria(edge_size = 0.15,
