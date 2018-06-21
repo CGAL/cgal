@@ -43,6 +43,12 @@
 namespace CGAL {
 namespace Intrinsic_Delaunay_Triangulation_3 {
 
+    struct Intrinsic_Delaunay_Triangulation_Eigen_traits_3 {
+      typedef Eigen::SparseMatrix<double> SparseMatrix;
+      typedef Eigen::Triplet<double> T;
+      typedef int Index;
+    };
+
 
     /**
      * Class `Intrinsic_Delaunay_Triangulation_3` is a ...
@@ -60,8 +66,99 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
                typename FaceAreaMap,
                typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type,
                typename FaceIndexMap = typename boost::property_map< TriangleMesh, face_index_t>::const_type,
+               typename EdgeIndexMap = typename boost::property_map< TriangleMesh, edge_index_t>::const_type,
+               typename LA = Intrinsic_Delaunay_Triangulation_Eigen_Traits_3>
      class Intrinsic_Delaunay_Triangulation_3
      {
+       typedef typename boost::graph_traits<TriangleMesh>               graph_traits;
+       typedef typename graph_traits::vertex_descriptor            vertex_descriptor;
+       typedef typename graph_traits::edge_descriptor                edge_descriptor;
+       typedef typename graph_traits::halfedge_descriptor        halfedge_descriptor;
+       typedef typename graph_traits::face_descriptor                face_descriptor;
+       typedef typename std::set<vertex_descriptor>::iterator        vertex_iterator;
+       /// Geometric typedefs
+       typedef typename Traits::Point_3                                      Point_3;
+       typedef typename Traits::FT                                                FT;
+       typedef typename Traits::Vector_3                                    Vector_3;
+
+       typedef int Index;
+       typedef typename boost::property_traits<VertexPointMap>::reference VertexPointMap_reference;
+
+       typedef typename boost::graph_traits<TriangleMesh>::vertices_size_type vertices_size_type;
+
+       typedef CGAL::dynamic_vertex_property_t<Index> Vertex_property_tag;
+       typedef typename boost::property_map<TriangleMesh, Vertex_property_tag >::type Vertex_id_map;
+       Vertex_id_map vertex_id_map;
+
+
+       typedef typename boost::graph_traits<TriangleMesh>::faces_size_type face_size_type;
+
+       typedef CGAL::dynamic_face_property_t<Index> Face_property_tag;
+       typedef typename boost::property_map<TriangleMesh, Face_property_tag >::type Face_id_map;
+       Face_id_map face_id_map;
+
+
+       typedef CGAL::dynamic_edge_property_t<Index> Edge_property_tag;
+       typedef typename boost::property_map<TriangleMesh, Edge_property_tag >::type Edge_id_map;
+       Edge_id_map edge_id_map;
+
+     public:
+
+       //return true if edge is locally delaunay (opposing angles are less than pi)
+       bool is_edge_locally_delaunay(edge_descriptor ed)
+       {
+         //two ways of doing this: taking angles directly (not good with virtual edges)
+         //OR: taking edge length and using law of cosines
+         //the second way also finds cotan weights which can be used to populate c
+         return true;
+       }
+
+       //law of cosines
+       double new_edge_length(double side_A, double side_B, double angle)
+       {
+         return CGAL::sqrt(side_A*side_A + side_B*side_B - 2*side_A*side_B*std::cos(angle));
+       }
+
+       //Heron's formula
+       double face_area(double a, double b, double c)
+       {
+         double S = (a+b+c)./2;
+         return CGAL::sqrt(S*(S-a)*(S-b)*(S-c));
+       }
+
+
+
+     private:
+
+       void build()
+       {
+         CGAL_precondition(is_triangle_mesh(tm));
+         vertex_id_map = get(Vertex_property_tag(),const_cast<TriangleMesh&>(tm));
+         Index i = 0;
+         BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
+           put(vertex_id_map, vd, i++);
+         }
+         face_id_map = get(Face_property_tag(), const_cast<TriangleMesh&>(tm));
+         Index face_i = 0;
+         BOOST_FOREACH(face_descriptor fd, faces(tm)){
+           put(face_id_map, fd, face_i++);
+         }
+         edge_id_map = get(Edge_property_tag(), const_cast<TriangleMesh&>(tm));
+         Index edge_i = 0;
+         BOOST_FOREACH(edge_descriptor ed, edges(tm)){
+           put(edge_id_map, ed, edge_i++);
+         }
+
+
+       }
+       TriangleMesh tm;
+       VertexPointMap vpm;
+       FaceIndexMap fpm;
+       EdgeIndexMap epm;
+
+
+
+
 
      };
 
