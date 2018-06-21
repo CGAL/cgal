@@ -39,6 +39,8 @@
 #include <vector>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/number_utils.h>
+#include <stack>
+
 
 namespace CGAL {
 namespace Intrinsic_Delaunay_Triangulation_3 {
@@ -62,12 +64,11 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
      */
      template <typename TriangleMesh,
                typename Traits,
-               typename EdgeLengthMap,
-               typename FaceAreaMap,
+               typename VertexDistanceMap,
                typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type,
                typename FaceIndexMap = typename boost::property_map< TriangleMesh, face_index_t>::const_type,
-               typename EdgeIndexMap = typename boost::property_map< TriangleMesh, edge_index_t>::const_type,
-               typename LA = Intrinsic_Delaunay_Triangulation_Eigen_Traits_3>
+               typename EdgeIndexMap = typename boost::property_map< TriangleMesh, boost::edge_index_t>::const_type,
+               typename LA = Intrinsic_Delaunay_Triangulation_Eigen_traits_3>
      class Intrinsic_Delaunay_Triangulation_3
      {
        typedef typename boost::graph_traits<TriangleMesh>               graph_traits;
@@ -76,6 +77,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
        typedef typename graph_traits::halfedge_descriptor        halfedge_descriptor;
        typedef typename graph_traits::face_descriptor                face_descriptor;
        typedef typename std::set<vertex_descriptor>::iterator        vertex_iterator;
+       typedef typename std::set<edge_descriptor>::iterator            edge_iterator;
        /// Geometric typedefs
        typedef typename Traits::Point_3                                      Point_3;
        typedef typename Traits::FT                                                FT;
@@ -102,7 +104,24 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
        typedef typename boost::property_map<TriangleMesh, Edge_property_tag >::type Edge_id_map;
        Edge_id_map edge_id_map;
 
+       std::stack<edge_iterator, std::list<edge_iterator> > stack;
+
      public:
+
+      Intrinsic_Delaunay_Triangulation_3(TriangleMesh tm, VertexDistanceMap vdm)
+        : tm(tm), vdm(vdm), vpm(get(vertex_point,tm))
+      {
+        build();
+      }
+
+
+
+       Intrinsic_Delaunay_Triangulation_3(TriangleMesh tm, VertexDistanceMap vdm, VertexPointMap vpm, FaceIndexMap fpm, EdgeIndexMap epm)
+         : tm(tm), vdm(vdm), vpm(vpm), fpm(fpm), epm(epm)
+       {
+         build();
+       }
+
 
        //return true if edge is locally delaunay (opposing angles are less than pi)
        bool is_edge_locally_delaunay(edge_descriptor ed)
@@ -110,6 +129,8 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
          //two ways of doing this: taking angles directly (not good with virtual edges)
          //OR: taking edge length and using law of cosines
          //the second way also finds cotan weights which can be used to populate c
+
+
          return true;
        }
 
@@ -122,7 +143,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
        //Heron's formula
        double face_area(double a, double b, double c)
        {
-         double S = (a+b+c)./2;
+         double S = (a+b+c)/2;
          return CGAL::sqrt(S*(S-a)*(S-b)*(S-c));
        }
 
@@ -155,6 +176,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
        VertexPointMap vpm;
        FaceIndexMap fpm;
        EdgeIndexMap epm;
+       VertexDistanceMap vdm;
 
 
 

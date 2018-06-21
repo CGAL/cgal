@@ -52,5 +52,4 @@ include_directories( BEFORE include )
 include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "heat_method_surface_mesh_test.cpp" )
-
-
+create_single_source_cgal_program( "intrinsic_delaunay_triangulation_test.cpp" )
