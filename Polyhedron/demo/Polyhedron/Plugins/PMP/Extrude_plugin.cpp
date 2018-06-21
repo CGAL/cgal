@@ -14,6 +14,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/Qt/manipulatedFrame.h>
+#include <CGAL/Qt/constraint.h>
 
 #include "Messages_interface.h"
 #ifdef USE_SURFACE_MESH
