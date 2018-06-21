@@ -73,6 +73,9 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::number_of_points_on_edges).v == 31);
   assert(get_param(np, CGAL::internal_np::nb_points_per_area_unit).v == 32);
   assert(get_param(np, CGAL::internal_np::nb_points_per_distance_unit).v == 33);
+  assert(get_param(np, CGAL::internal_np::throw_on_self_intersection).v == 43);
+  assert(get_param(np, CGAL::internal_np::clip_volume).v == 44);
+  assert(get_param(np, CGAL::internal_np::use_compact_clipper).v == 45);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_param(np, CGAL::internal_np::get_cost_policy).v == 34);
@@ -139,6 +142,9 @@ void test(const NamedParameters& np)
   check_same_type<31>(get_param(np, CGAL::internal_np::number_of_points_on_edges));
   check_same_type<32>(get_param(np, CGAL::internal_np::nb_points_per_area_unit));
   check_same_type<33>(get_param(np, CGAL::internal_np::nb_points_per_distance_unit));
+  check_same_type<43>(get_param(np, CGAL::internal_np::throw_on_self_intersection));
+  check_same_type<44>(get_param(np, CGAL::internal_np::clip_volume));
+  check_same_type<45>(get_param(np, CGAL::internal_np::use_compact_clipper));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_param(np, CGAL::internal_np::get_cost_policy));
@@ -205,6 +211,9 @@ int main()
                          .preserve_genus(A<40>(40))
                          .verbosity_level(A<41>(41))
                          .projection_functor(A<42>(42))
+                         .throw_on_self_intersection(A<43>(43))
+                         .clip_volume(A<44>(44))
+                         .use_compact_clipper(A<45>(45))
        );
 
   return EXIT_SUCCESS;
