@@ -6,6 +6,7 @@
 #include <CGAL/Three/Viewer_config.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <QOpenGLBuffer>
+#include <QOpenGLDebugMessage>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLShaderProgram>
 #include <CGAL/Three/Viewer_interface.h>
@@ -119,6 +120,7 @@ public Q_SLOTS:
   {
     setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, CGAL::qglviewer::NO_CLICK_ACTION);
   }
+  void messageLogged(QOpenGLDebugMessage);
 
 protected:
   void paintEvent(QPaintEvent *)Q_DECL_OVERRIDE;

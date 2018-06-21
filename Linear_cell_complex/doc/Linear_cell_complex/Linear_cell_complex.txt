@@ -241,7 +241,7 @@ point: 1 0 0, color: 19
 
 Before applying the sew operation, the eight vertices of the first cube are colored by `1`, and the eight vertices of the second cube by `19`. After the sew operation, there are eight vertices which are merged two by two, and due to the average functor, the color of the four resulting vertices is now 10. Then we insert a vertex in the center of the common 2-cell between the two cubes. The coordinates of this vertex are initialized with the barycenter of the 2-cell (-1,0.5,0.5), and its color is not initialized by the method, thus we set its color manually by using the result of \link LinearCellComplex::insert_barycenter_in_cell `insert_barycenter_in_cell<2>`\endlink which is a dart incident to the new vertex.
 
-\subsection Linear_cell_complexAutomaticAttributesManagement Automatic attributes management
+\subsection Linear_cell_complexAutomaticAttributesManagement Automatic Attribute Management
 \anchor ssecAttributesManagement
 
 The following example illustrates the use of the automatic attributes management for a linear cell complex. An off file is loaded into a 2D linear cell complex embedded in 3D. Then, a certain percentage of edges is removed from the linear cell complex. The same method is applied twice: the first time by using the automatic attributes management (which is the default behaviour) and the second time by calling first  \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink to disable the automatic updating of attributes.
@@ -249,6 +249,19 @@ The following example illustrates the use of the automatic attributes management
 We can observe that the second run is faster than the first one. Indeed, updating attribute for each edge removal give a bigger complexity. Moreover, the gain increases when the percentage of removed edges increases.
 
 \cgalExample{Linear_cell_complex/linear_cell_complex_3_attributes_management.cpp}
+
+\subsection Linear_cell_complexDraw Draw a Linear Cell Complex
+\anchor ssecDrawLCC
+
+A linear cell complex can be visualized by calling the `CGAL::draw()` function as shown in the following example. This function opens a new window showing the given linear cell complex. The function is blocking, that is the program continues as soon as the user closes the window.
+
+\cgalExample{Linear_cell_complex/draw_linear_cell_complex.cpp}
+
+This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
+
+\cgalFigureBegin{fig_draw_lcc,draw_lcc.png}
+Result of the run of the draw_linear_cell_complex program. A window shows two 3D cubes and allows to navigate through the 3D scene.
+\cgalFigureEnd
 
 \section Linear_cell_complexDesign Design and Implementation History
 

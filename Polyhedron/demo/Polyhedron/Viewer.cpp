@@ -12,6 +12,7 @@
 #include <QInputDialog>
 #include <cmath>
 #include <QApplication>
+#include <QOpenGLDebugLogger>
 
 #if defined(_WIN32)
 #include <QMimeData>
@@ -38,18 +39,21 @@ public:
   QTimer messageTimer;
   QOpenGLFunctions_4_3_Compatibility* _recentFunctions;
   bool is_2d_selection_mode;
+
   // D e p t h  P e e l i n g
-    // \param pass the current pass in the Depth Peeling (transparency) algorithm.
-    // -1 means that no depth peeling is applied.
-    // \param writing_depth means that the color of the faces will be drawn in a grayscale
-    // according to the depth of the fragment in the shader. It is used by the transparency.
-    // \param fbo contains the texture used by the Depth Peeling algorithm.
-    // Should be NULL if pass <= 0;
-    int current_pass;
-    bool writing_depth;
-    int total_pass;
-    int current_total_pass;
-    QOpenGLFramebufferObject* dp_fbo;
+  // \param pass the current pass in the Depth Peeling (transparency) algorithm.
+  // -1 means that no depth peeling is applied.
+  // \param writing_depth means that the color of the faces will be drawn in a grayscale
+  // according to the depth of the fragment in the shader. It is used by the transparency.
+  // \param fbo contains the texture used by the Depth Peeling algorithm.
+  // Should be NULL if pass <= 0;
+  int current_pass;
+  bool writing_depth;
+  int total_pass;
+  int current_total_pass;
+  QOpenGLFramebufferObject* dp_fbo;
+  QOpenGLDebugLogger *logger;
+
 
   //! The buffers used to draw the axis system
   QOpenGLBuffer buffer;
@@ -211,6 +215,13 @@ void Viewer::init()
   else
   {
     d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
+    d->logger = new QOpenGLDebugLogger(this);
+    if(!d->logger->initialize())
+      qDebug()<<"logger could not init.";
+    else{
+      connect(d->logger, SIGNAL(messageLogged(QOpenGLDebugMessage)), this, SLOT(messageLogged(QOpenGLDebugMessage)));
+      d->logger->startLogging();
+    }
     d->_recentFunctions->initializeOpenGLFunctions();
   }
   glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
@@ -504,8 +515,17 @@ void Viewer::postSelection(const QPoint& pixel)
     Q_EMIT selectedPoint(point.x,
                        point.y,
                        point.z);
-    const CGAL::qglviewer::Vec orig = camera()->position() - offset();
-    const CGAL::qglviewer::Vec dir = point - orig;
+    CGAL::qglviewer::Vec dir;
+    CGAL::qglviewer::Vec orig;
+    if(d->projection_is_ortho)
+    {
+      dir = camera()->viewDirection();
+      orig = point;
+    }
+    else{
+      orig = camera()->position() - offset();
+      dir = point - orig;
+    }
     Q_EMIT selectionRay(orig.x, orig.y, orig.z,
                       dir.x, dir.y, dir.z);
   }
@@ -1125,6 +1145,7 @@ void Viewer::setStaticImage(QImage image) { d->static_image = image; }
 
 const QImage& Viewer:: staticImage() const { return d->static_image; }
 
+
 void Viewer::setCurrentPass(int pass) { d->current_pass = pass; }
 
 void Viewer::setDepthWriting(bool writing_depth) { d->writing_depth = writing_depth; }
@@ -1153,3 +1174,67 @@ void Viewer::setTotalPass_clicked()
   setTotalPass(passes);
 }
 
+void Viewer::messageLogged(QOpenGLDebugMessage msg)
+{
+  QString error;
+
+  // Format based on severity
+  switch (msg.severity())
+  {
+  case QOpenGLDebugMessage::NotificationSeverity:
+    return;
+    break;
+  case QOpenGLDebugMessage::HighSeverity:
+    error += "GL ERROR :";
+    break;
+  case QOpenGLDebugMessage::MediumSeverity:
+    error += "GL WARNING :";
+    break;
+  case QOpenGLDebugMessage::LowSeverity:
+    error += "GL NOTE :";
+    break;
+  default:
+    break;
+  }
+
+  error += " (";
+
+  // Format based on source
+#define CASE(c) case QOpenGLDebugMessage::c: error += #c; break
+  switch (msg.source())
+  {
+  CASE(APISource);
+  CASE(WindowSystemSource);
+  CASE(ShaderCompilerSource);
+  CASE(ThirdPartySource);
+  CASE(ApplicationSource);
+  CASE(OtherSource);
+  CASE(InvalidSource);
+  default:
+    break;
+  }
+#undef CASE
+
+  error += " : ";
+
+  // Format based on type
+#define CASE(c) case QOpenGLDebugMessage::c: error += #c; break
+  switch (msg.type())
+  {
+  CASE(ErrorType);
+  CASE(DeprecatedBehaviorType);
+  CASE(UndefinedBehaviorType);
+  CASE(PortabilityType);
+  CASE(PerformanceType);
+  CASE(OtherType);
+  CASE(MarkerType);
+  CASE(GroupPushType);
+  CASE(GroupPopType);
+  default:
+    break;
+  }
+#undef CASE
+
+  error += ")";
+  qDebug() << qPrintable(error) << "\n" << qPrintable(msg.message()) << "\n";
+}
