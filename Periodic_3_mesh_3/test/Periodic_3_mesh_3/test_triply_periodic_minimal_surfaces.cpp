@@ -177,7 +177,7 @@ FT split_p (const Point& p)
 }
 
 struct Segments_function
-  : public CGAL::unary_function<Point, FT>
+  : public CGAL::cpp98::unary_function<Point, FT>
 {
   typedef std::vector<Segment> Segments;
 

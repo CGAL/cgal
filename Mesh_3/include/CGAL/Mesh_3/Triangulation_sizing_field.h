@@ -36,6 +36,8 @@
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
+#include <CGAL/functional.h>
+
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
@@ -121,7 +123,7 @@ private:
    * Used by boost transform iterator
    */
   struct Extract_point :
-    public CGAL::unary_function<typename Tr::Vertex, Weighted_point>
+    public CGAL::cpp98::unary_function<typename Tr::Vertex, Weighted_point>
   {
     Weighted_point operator()(const typename Tr::Vertex& v) const { return v.point(); }
   };

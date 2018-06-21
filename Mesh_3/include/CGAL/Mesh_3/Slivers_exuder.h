@@ -38,6 +38,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Double_map.h>
 #include <CGAL/enum.h>
+#include <CGAL/functional.h>
 #include <CGAL/internal/Has_member_visited.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Real_timer.h>
@@ -86,11 +87,11 @@ namespace details { // various function objects
 // to use them. -- Laurent Rineau, 2007/07/27
 template <typename Map>
 struct Second_of
-  : public CGAL::unary_function<typename Map::value_type,
-                                const typename Map::mapped_type&>
+  : public CGAL::cpp98::unary_function<typename Map::value_type,
+                                       const typename Map::mapped_type&>
 {
-  typedef CGAL::unary_function<typename Map::value_type,
-                               const typename Map::mapped_type&> Base;
+  typedef CGAL::cpp98::unary_function<typename Map::value_type,
+                                      const typename Map::mapped_type&> Base;
   typedef typename Base::result_type                             result_type;
   typedef typename Base::argument_type                           argument_type;
 
