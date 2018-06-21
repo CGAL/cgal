@@ -38,14 +38,16 @@ public:
   void add_sphere(const CGAL::Sphere_3<Kernel> &sphere, CGAL::Color = CGAL::Color(120,120,120));
   void clear_spheres();
   void setPrecision(int prec);
-
+  void setRadius(const double& radius, const std::size_t& sphere_id);
+  void setColor(const CGAL::Color& color, const std::size_t& sphere_id);
+  void setCenter(const Kernel::Point_3& center, const std::size_t& sphere_id);
   void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
-  void computeElements() const;
   void setPlane(Kernel::Plane_3 p_plane);
   void setToolTip(QString s);
   void setColor(QColor c) Q_DECL_OVERRIDE;
+  std::size_t numberOfSpheres();
 Q_SIGNALS:
   void on_color_changed();
 protected:

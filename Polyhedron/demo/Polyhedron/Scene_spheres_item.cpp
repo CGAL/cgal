@@ -165,14 +165,6 @@ void Scene_spheres_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *v
   program->release();
 
   nb_centers = static_cast<int>(centers.size());
-  centers.clear();
-  centers.swap(centers);
-  colors.clear();
-  colors.swap(colors);
-  radius.clear();
-  radius.swap(radius);
-  edges_colors.clear();
-  edges_colors.swap(edges_colors);
 
   item->are_buffers_filled = true;
 }
@@ -274,4 +266,36 @@ void Scene_spheres_item::setColor(QColor c)
 {
   CGAL::Three::Scene_item::setColor(c);
   this->on_color_changed();
+}
+
+void Scene_spheres_item::setRadius(const double& radius, const std::size_t& sphere_id)
+{
+  CGAL_assertion(sphere_id < d->radius.size());
+  d->radius[sphere_id] = radius;
+}
+
+void Scene_spheres_item::setColor(const CGAL::Color& color, const std::size_t& sphere_id)
+{
+  CGAL_assertion(sphere_id < d->radius.size());
+  d->colors[3*sphere_id]   = (float)color.red()/255;
+  d->colors[3*sphere_id+1] = (float)color.green()/255;
+  d->colors[3*sphere_id+2] = (float)color.blue()/255;
+
+  d->edges_colors[3*sphere_id]   = (float)color.red()/255;
+  d->edges_colors[3*sphere_id+1] = (float)color.green()/255;
+  d->edges_colors[3*sphere_id+2] = (float)color.blue()/255;
+  
+}
+
+void Scene_spheres_item::setCenter(const Kernel::Point_3 &center, const size_t &sphere_id)
+{
+  CGAL_assertion(sphere_id < d->radius.size());
+  d->centers[3*sphere_id]   = center.x();
+  d->centers[3*sphere_id+1] = center.y();
+  d->centers[3*sphere_id+2] = center.z();
+}
+
+std::size_t Scene_spheres_item::numberOfSpheres()
+{
+  return d->radius.size();
 }
