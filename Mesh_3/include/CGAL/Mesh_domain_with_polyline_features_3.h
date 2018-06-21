@@ -55,8 +55,8 @@
 namespace CGAL {
 
 /// @cond DEVELOPERS
-namespace internal {
 namespace Mesh_3 {
+namespace internal {
 
 template <typename Kernel>
 class Polyline
@@ -512,8 +512,8 @@ struct Display_incidences_to_curves_aux<MDwPF, false> {
                   const Container&) const;
 };
 
-} // end of namespace CGAL::internal::Mesh_3
-} // end of namespace CGAL::internal
+} // end of namespace CGAL::Mesh_3::internal
+} // end of namespace CGAL::Mesh_3
 /// @endcond
 
 /*!
@@ -844,13 +844,13 @@ private:
 private:
   typedef std::map<Point_3,Corner_index> Corners;
 
-  typedef internal::Mesh_3::Polyline<Gt> Polyline;
+  typedef Mesh_3::internal::Polyline<Gt> Polyline;
   typedef std::map<Curve_index, Polyline> Edges;
   typedef std::map<Curve_index, Surface_patch_index_set > Edges_incidences;
   typedef std::map<Corner_index, std::set<Curve_index> > Corners_tmp_incidences;
   typedef std::map<Corner_index, Surface_patch_index_set > Corners_incidences;
 
-  typedef internal::Mesh_3::Mesh_domain_segment_of_curve_primitive<
+  typedef Mesh_3::internal::Mesh_domain_segment_of_curve_primitive<
     Gt,
     typename Edges::const_iterator> Curves_primitives;
 
@@ -1285,7 +1285,8 @@ get_corner_incident_curves(Corner_index id,
 /// @endcond
 
 /// @cond DEVELOPERS
-namespace internal { namespace Mesh_3 {
+namespace Mesh_3 {
+namespace internal {
 
 template <typename MDwPF_, bool curve_id_is_streamable>
 // here 'curve_id_is_streamable' is true
@@ -1350,7 +1351,8 @@ operator()(std::ostream& os, Point p, typename MDwPF_::Curve_index id,
      << " surface patch(es).\n";
 }
 
-}} // end namespaces internal::Mesh_3:: and internal::
+} // end namespace Mesh_3::internal
+} // end namespace Mesh_3
 /// @endcond
 
 /// @cond DEVELOPERS
@@ -1363,9 +1365,8 @@ display_corner_incidences(std::ostream& os, Point_3 p, Corner_index id)
   typedef is_streamable<Surface_patch_index> i_s_spi;
   typedef is_streamable<Curve_index> i_s_csi;
 
-  using namespace internal::Mesh_3;
-  typedef Display_incidences_to_curves_aux<Mdwpf,i_s_csi::value> D_i_t_c;
-  typedef Display_incidences_to_patches_aux<Mdwpf,i_s_spi::value> D_i_t_p;
+  typedef Mesh_3::internal::Display_incidences_to_curves_aux<Mdwpf,i_s_csi::value> D_i_t_c;
+  typedef Mesh_3::internal::Display_incidences_to_patches_aux<Mdwpf,i_s_spi::value> D_i_t_p;
   D_i_t_c()(os, p, id, corners_tmp_incidences_[id]);
   D_i_t_p()(os, p, id, corners_incidences_[id]);
 }

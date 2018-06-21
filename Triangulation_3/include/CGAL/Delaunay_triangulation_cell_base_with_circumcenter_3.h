@@ -31,11 +31,11 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_cell_base_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
 
 namespace CGAL {
 
-template < typename GT, typename Cb = Triangulation_cell_base_3<GT> >
+template < typename GT, typename Cb = Delaunay_triangulation_cell_base_3<GT> >
 class Delaunay_triangulation_cell_base_with_circumcenter_3
   : public Cb
 {
