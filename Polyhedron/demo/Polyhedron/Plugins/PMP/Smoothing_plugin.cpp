@@ -12,14 +12,11 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 
-#include "Scene_polyhedron_item.h"
 #include "Scene_polyhedron_selection_item.h"
 #include "Polyhedron_type.h"
 #include "Scene.h"
 
 #include <CGAL/iterator.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/utility.h>
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/property_map.h>
@@ -31,6 +28,19 @@
 
 #include "ui_Smoothing_plugin.h"
 
+#ifdef USE_SURFACE_MESH
+#include "Scene_surface_mesh_item.h"
+typedef Scene_surface_mesh_item Scene_face_graph_item;
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+#include <CGAL/boost/graph/properties_Surface_mesh.h>
+#else
+#include "Scene_polyhedron_item.h"
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3.h>
+typedef Scene_polyhedron_item Scene_face_graph_item;
+#endif
+
+typedef Scene_face_graph_item::Face_graph Face_graph;
 
 using namespace CGAL::Polygon_mesh_processing;
 using namespace CGAL::Three;
@@ -73,7 +83,7 @@ public:
   bool applicable(QAction*) const
   {
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
-    if (qobject_cast<Scene_polyhedron_item*>(scene->item(index)))
+    if (qobject_cast<Scene_face_graph_item*>(scene->item(index)))
       return true;
     else if (qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index)))
       return true;
@@ -123,7 +133,7 @@ public Q_SLOTS:
     dock_widget->raise();
 
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
-    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+    Scene_face_graph_item* poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(index));
 
     Scene_polyhedron_selection_item* selection_item =
       qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
@@ -137,9 +147,9 @@ public Q_SLOTS:
   void on_angle_smoothing_clicked()
   {
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
-    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+    Scene_face_graph_item* poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(index));
     Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
-    Polyhedron& pmesh = (poly_item != NULL) ? * poly_item->polyhedron() : * selection_item->polyhedron();
+    Face_graph& pmesh = (poly_item != NULL) ? * poly_item->polyhedron() : * selection_item->polyhedron();
 
     const unsigned int nb_iter = ui_widget.angles_iter_spinBox->value();
     bool projection = ui_widget.projection_checkBox->isChecked();
@@ -170,9 +180,9 @@ public Q_SLOTS:
   void on_area_smoothing_clicked()
   {
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
-    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+    Scene_face_graph_item* poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(index));
     Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
-    Polyhedron& pmesh = (poly_item != NULL) ? * poly_item->polyhedron() : * selection_item->polyhedron();
+    Face_graph& pmesh = (poly_item != NULL) ? * poly_item->polyhedron() : * selection_item->polyhedron();
 
     unsigned int nb_iter = ui_widget.areas_iter_spinBox->value();
     bool projection = ui_widget.projection_checkBox->isChecked();
@@ -207,9 +217,9 @@ public Q_SLOTS:
   void on_curvature_flow_clicked()
   {
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
-    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+    Scene_face_graph_item* poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(index));
     Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
-    Polyhedron& pmesh = (poly_item != NULL) ? * poly_item->polyhedron() : * selection_item->polyhedron();
+    Face_graph& pmesh = (poly_item != NULL) ? * poly_item->polyhedron() : * selection_item->polyhedron();
 
     int index_id = scene->item_id(poly_item);
     const double time_step = ui_widget.time_step_spinBox->value();
@@ -328,7 +338,7 @@ public Q_SLOTS:
   }
 
 private:
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<Face_graph>::vertex_descriptor vertex_descriptor;
 
   template<class TriangleMesh>
   typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<bool> >::type
