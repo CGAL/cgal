@@ -215,10 +215,8 @@ public Q_SLOTS:
     const double time_step = ui_widget.time_step_spinBox->value();
     const unsigned int nb_iter = ui_widget.curvature_iter_spinBox->value();
 
-    if(ui_widget.border_button->isChecked())
-    {
-      collect_border_vertices(pmesh);
-    }
+    const bool use_constrained_vertex_map = ui_widget.border_button->isChecked()
+                                            && !CGAL::is_closed(pmesh);
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -227,16 +225,27 @@ public Q_SLOTS:
     {
       if(poly_item)
       {
-        smooth_along_curvature_flow(pmesh, time_step, parameters::use_explicit_scheme(true)
-                                                                 .number_of_iterations(nb_iter));
+        if(use_constrained_vertex_map)
+          smooth_along_curvature_flow(pmesh, time_step, parameters::use_explicit_scheme(true)
+                                                                   .number_of_iterations(nb_iter)
+                                                                   .vertex_is_constrained_map(get_border_constrained_map(pmesh)) );
+        else
+          smooth_along_curvature_flow(pmesh, time_step, parameters::use_explicit_scheme(true)
+                                                                   .number_of_iterations(nb_iter));
         poly_item->invalidateOpenGLBuffers();
         poly_item->itemChanged();
       }
       else if(selection_item)
       {
-        smooth_along_curvature_flow(selection_item->selected_facets,
-                                    pmesh, time_step, parameters::use_explicit_scheme(true)
-                                                                 .number_of_iterations(nb_iter));
+        if(use_constrained_vertex_map)
+          smooth_along_curvature_flow(selection_item->selected_facets,
+                                      pmesh, time_step, parameters::use_explicit_scheme(true)
+                                                                   .number_of_iterations(nb_iter)
+                                                                   .vertex_is_constrained_map(get_border_constrained_map(pmesh)) );
+        else
+          smooth_along_curvature_flow(selection_item->selected_facets,
+                                      pmesh, time_step, parameters::use_explicit_scheme(true)
+                                                                   .number_of_iterations(nb_iter));
         selection_item->poly_item_changed();
         selection_item->changed_with_poly_item();
       }
@@ -252,9 +261,9 @@ public Q_SLOTS:
       {
         if(index_id != last_index_id || stiffness_is_cleared){
           // If we changed item or if the stiffness cache is cleared (by the user hitting the button)
-          if(border_collected){
+          if(use_constrained_vertex_map){
             internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, true,
-            parameters::vertex_is_constrained_map(vcmap));
+            parameters::vertex_is_constrained_map(get_border_constrained_map(pmesh)) );
           }
           else{
             internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, true,
@@ -275,10 +284,10 @@ public Q_SLOTS:
       else if(selection_item)
       {
         if(index_id != last_index_id || stiffness_is_cleared){
-          if(border_collected)
+          if(use_constrained_vertex_map)
           {
             internal::solve_mcf(selection_item->selected_facets, pmesh, time_step, stiffness, true,
-            parameters::vertex_is_constrained_map(vcmap));
+            parameters::vertex_is_constrained_map(get_border_constrained_map(pmesh)) );
           }
           else{
             internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, true,
@@ -318,20 +327,24 @@ public Q_SLOTS:
     last_index_id= -1;
   }
 
-  void collect_border_vertices(Polyhedron& pmesh)
-  {
-    for (vertex_descriptor v : vertices(pmesh))
-    {
-      if(is_border(v, pmesh))
-      {
-        put(vcmap, v, true);
-        border_collected = true;
-      }
-    }
-  }
-
 private:
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+
+  template<class TriangleMesh>
+  typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<bool> >::type
+  get_border_constrained_map(TriangleMesh& tm)
+  {
+    typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<bool> >::type vcm =
+      get(CGAL::dynamic_vertex_property_t<bool>(), tm);
+    BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v, vertices(tm))
+      put(vcm, v, false);
+    BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h, halfedges(tm))
+    {
+      if (CGAL::is_border(h, tm))
+        put(vcm, target(h, tm), true);
+    }
+    return vcm;
+  }
 
 private:
   QAction* actionSmoothing_;
@@ -341,9 +354,6 @@ private:
   int last_index_id = -1;
   std::vector<CGAL::Triple<int, int, double> > stiffness;
   bool stiffness_is_cleared;
-
-  CGAL::Boolean_property_map<std::set<vertex_descriptor> > vcmap;
-  bool border_collected;
 
 };
 
