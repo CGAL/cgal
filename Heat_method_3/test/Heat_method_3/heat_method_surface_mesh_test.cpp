@@ -23,6 +23,8 @@ typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef CGAL::Heat_method_3::Heat_method_3<Mesh,Kernel,Vertex_distance_map> Heat_method;
 typedef CGAL::Heat_method_3::Heat_method_Eigen_traits_3::SparseMatrix SparseMatrix;
 
+
+
 void source_set_tests(Heat_method hm, const Mesh& sm)
 {
   vertex_descriptor source = *(vertices(sm).first);
@@ -66,7 +68,7 @@ void mass_matrix_test(const SparseMatrix& M)
       }
     }
     //total Area matrix should be equal to the sum of all faces on the mesh
-    //have to allow for the error because of rounding
+    //have to allow for the error because of rounding issues: Andreas might be able to help with this?
     //this will only work for the pyramid mesh
     assert((sum-1.866025)<=0.000005);
 }
@@ -95,6 +97,9 @@ void check_no_update(const Mesh& sm, const Vertex_distance_map& original, const 
     assert(get(original, vd) == get(updated,vd));
   }
 }
+
+
+
 
 int main()
 {

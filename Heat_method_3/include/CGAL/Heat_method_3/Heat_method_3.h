@@ -99,9 +99,6 @@ namespace Heat_method_3 {
     typedef typename boost::property_map<TriangleMesh, Vertex_property_tag >::type Vertex_id_map;
     Vertex_id_map vertex_id_map;
 
-
-    typedef typename boost::graph_traits<TriangleMesh>::faces_size_type face_size_type;
-
     typedef CGAL::dynamic_face_property_t<Index> Face_property_tag;
     typedef typename boost::property_map<TriangleMesh, Face_property_tag >::type Face_id_map;
     Face_id_map face_id_map;
@@ -438,10 +435,12 @@ namespace Heat_method_3 {
         index_divergence = compute_divergence(X, dimension);
         solved_phi = solve_phi(m_cotan_matrix, index_divergence, dimension);
         source_change_flag = false;
+        std::cout<<"sources changed, recompute\n";
       }
       BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
         Index i_d = get(vertex_id_map, vd);
         d = solved_phi(i_d,0);
+        std::cout<<d<<"\n";
         put(vdm,vd,d);
       }
     }
