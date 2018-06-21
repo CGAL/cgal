@@ -12,6 +12,7 @@
 #include <QInputDialog>
 #include <cmath>
 #include <QApplication>
+#include <QOpenGLDebugLogger>
 
 #if defined(_WIN32)
 #include <QMimeData>
@@ -38,6 +39,7 @@ public:
   QTimer messageTimer;
   QOpenGLFunctions_4_3_Compatibility* _recentFunctions;
   bool is_2d_selection_mode;
+  QOpenGLDebugLogger *logger;
 
   //! The buffers used to draw the axis system
   QOpenGLBuffer buffer;
@@ -197,6 +199,13 @@ void Viewer::init()
   else
   {
     d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
+    d->logger = new QOpenGLDebugLogger(this);
+    if(!d->logger->initialize())
+      qDebug()<<"logger could not init.";
+    else{
+      connect(d->logger, SIGNAL(messageLogged(QOpenGLDebugMessage)), this, SLOT(messageLogged(QOpenGLDebugMessage)));
+      d->logger->startLogging();
+    }
     d->_recentFunctions->initializeOpenGLFunctions();
   }
   glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
@@ -489,8 +498,17 @@ void Viewer::postSelection(const QPoint& pixel)
     Q_EMIT selectedPoint(point.x,
                        point.y,
                        point.z);
-    const CGAL::qglviewer::Vec orig = camera()->position() - offset();
-    const CGAL::qglviewer::Vec dir = point - orig;
+    CGAL::qglviewer::Vec dir;
+    CGAL::qglviewer::Vec orig;
+    if(d->projection_is_ortho)
+    {
+      dir = camera()->viewDirection();
+      orig = point;
+    }
+    else{
+      orig = camera()->position() - offset();
+      dir = point - orig;
+    }
     Q_EMIT selectionRay(orig.x, orig.y, orig.z,
                       dir.x, dir.y, dir.z);
   }
@@ -1040,3 +1058,67 @@ void Viewer::setStaticImage(QImage image) { d->static_image = image; }
 
 const QImage& Viewer:: staticImage() const { return d->static_image; }
 
+void Viewer::messageLogged(QOpenGLDebugMessage msg)
+{
+  QString error;
+
+  // Format based on severity
+  switch (msg.severity())
+  {
+  case QOpenGLDebugMessage::NotificationSeverity:
+    return;
+    break;
+  case QOpenGLDebugMessage::HighSeverity:
+    error += "GL ERROR :";
+    break;
+  case QOpenGLDebugMessage::MediumSeverity:
+    error += "GL WARNING :";
+    break;
+  case QOpenGLDebugMessage::LowSeverity:
+    error += "GL NOTE :";
+    break;
+  default:
+    break;
+  }
+
+  error += " (";
+
+  // Format based on source
+#define CASE(c) case QOpenGLDebugMessage::c: error += #c; break
+  switch (msg.source())
+  {
+  CASE(APISource);
+  CASE(WindowSystemSource);
+  CASE(ShaderCompilerSource);
+  CASE(ThirdPartySource);
+  CASE(ApplicationSource);
+  CASE(OtherSource);
+  CASE(InvalidSource);
+  default:
+    break;
+  }
+#undef CASE
+
+  error += " : ";
+
+  // Format based on type
+#define CASE(c) case QOpenGLDebugMessage::c: error += #c; break
+  switch (msg.type())
+  {
+  CASE(ErrorType);
+  CASE(DeprecatedBehaviorType);
+  CASE(UndefinedBehaviorType);
+  CASE(PortabilityType);
+  CASE(PerformanceType);
+  CASE(OtherType);
+  CASE(MarkerType);
+  CASE(GroupPushType);
+  CASE(GroupPopType);
+  default:
+    break;
+  }
+#undef CASE
+
+  error += ")";
+  qDebug() << qPrintable(error) << "\n" << qPrintable(msg.message()) << "\n";
+}

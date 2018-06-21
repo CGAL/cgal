@@ -4,6 +4,15 @@
 
 /// \defgroup PkgPolyhedronIOFunc I/O Functions
 /// \ingroup PkgPolyhedron
+
+/*! Draw.
+  \code
+   #include <CGAL/draw_polyhedron.h>
+  \endcode
+*/
+/// \defgroup PkgDrawPolyhedron Draw a Polyhedron 3
+/// \ingroup PkgPolyhedron
+
 /*!
 \addtogroup PkgPolyhedron
 \todo check generated documentation
@@ -62,5 +71,9 @@ surface can be used without knowing the halfedge data structure.
 - \link PkgPolyhedronIOFunc `CGAL::operator>>()` \endlink
 - \link PkgPolyhedronIOFunc `write_off()` \endlink   
 - \link PkgPolyhedronIOFunc `read_off()` \endlink
+
+### Draw a Polyhedron 3 ###
+- `CGAL::draw<POLY>`
+
 */
 

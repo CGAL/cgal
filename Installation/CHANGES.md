@@ -12,6 +12,12 @@ Release date: September 2018
     The corresponding code is in the package GraphicsView.
     The dependency for the external library libQGLViewer is therefore dropped for all demos.
 
+### General
+
+ -  A new function `CGAL::draw()` is added in the packages Polyhedral
+    Surface, Surface Mesh, Linear Cell Complex, 2D Triangulations, and 3D
+    Triangulations, enabling to draw the corresponding data structures.
+
 ### 2D and 3D Linear Geometry Kernel
 -   An operator() that takes a Ray_3 has been added to the concept
     ConstructProjectedPoint 3.

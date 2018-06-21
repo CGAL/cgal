@@ -57,7 +57,7 @@ echo " Checks finished"
 cd $CGAL_ROOT
 rm -r dep_check_build
 if [ -n "$TOTAL_RES" ]; then
-  echo "$TOTAL_RES"
+  printf "$TOTAL_RES"
   echo " You can run cmake with options CGAL_ENABLE_CHECK_HEADERS and CGAL_COPY_DEPENDENCIES ON, make the target packages_dependencies and commit the new dependencies files,"
   echo " or simply manually edit the problematic files."
   exit 1

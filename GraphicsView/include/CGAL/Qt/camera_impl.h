@@ -3,16 +3,12 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of the CGAL::QGLViewer library version 2.7.0.
-
+ This file is part of a fork of the QGLViewer library version 2.7.0.
  http://www.libqglviewer.com - contact@libqglviewer.com
 
  This file may be used under the terms of the GNU General Public License 
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
-
- libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -36,8 +32,8 @@
 #include <CGAL/Qt/domUtils.h>
 #include <CGAL/Qt/keyFrameInterpolator.h>
 
-using namespace std;
-using namespace CGAL::qglviewer;
+namespace CGAL{
+namespace qglviewer{
 
 /*! Default constructor.
 
@@ -1602,12 +1598,10 @@ int project(qreal objx, qreal objy, qreal objz, GLdouble *modelview,
       fTempo[1]=modelview[1]*objx+modelview[5]*objy+modelview[9]*objz+modelview[13];
       fTempo[2]=modelview[2]*objx+modelview[6]*objy+modelview[10]*objz+modelview[14];
       fTempo[3]=modelview[3]*objx+modelview[7]*objy+modelview[11]*objz+modelview[15];
-      //Projection transform, the final row of projection matrix is always [0 0 -1 0]
-      //so we optimize for that.
       fTempo[4]=projection[0]*fTempo[0]+projection[4]*fTempo[1]+projection[8]*fTempo[2]+projection[12]*fTempo[3];
       fTempo[5]=projection[1]*fTempo[0]+projection[5]*fTempo[1]+projection[9]*fTempo[2]+projection[13]*fTempo[3];
       fTempo[6]=projection[2]*fTempo[0]+projection[6]*fTempo[1]+projection[10]*fTempo[2]+projection[14]*fTempo[3];
-      fTempo[7]=-fTempo[2];
+      fTempo[7]=projection[3]*fTempo[0]+projection[7]*fTempo[1]+projection[11]*fTempo[2]+projection[15]*fTempo[3];
       //The result normalizes between -1 and 1
       if(fTempo[7]==0.0)	//The w value
          return 0;
@@ -2539,4 +2533,4 @@ void Camera::getFrustum(double frustum[6])
   frustum[4] = n;
   frustum[5] = f;
 }
-
+}}//end of namespace

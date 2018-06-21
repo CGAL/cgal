@@ -400,6 +400,7 @@ public Q_SLOTS:
                  *selection_item->polyhedron(),
                  selection_item->constrained_edges_pmap(),
                  get(CGAL::vertex_point, *selection_item->polyhedron()),
+                 CGAL::Static_property_map<face_descriptor, std::size_t>(1),
                  4. / 3. * target_length))
             {
               QApplication::restoreOverrideCursor();
