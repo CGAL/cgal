@@ -67,7 +67,7 @@ void smooth_curvature_flow_explicit(const FaceRange& faces, PolygonMesh& pmesh, 
       Constant_property_map<vertex_descriptor, bool>
     > ::type VCMap;
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
-                             Constant_property_map<vertex_descriptor, bool>());
+                             Constant_property_map<vertex_descriptor, bool>(false));
 
   std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
@@ -202,7 +202,7 @@ void smooth_along_curvature_flow(const FaceRange& faces, PolygonMesh& pmesh, con
       Constant_property_map<vertex_descriptor, bool>
     > ::type VCMap;
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
-                             Constant_property_map<vertex_descriptor, bool>());
+                             Constant_property_map<vertex_descriptor, bool>(false));
 
   std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
 
@@ -342,7 +342,7 @@ void solve_mcf(const FaceRange& faces, PolygonMesh& mesh, const double time,
       Constant_property_map<vertex_descriptor, bool>
     > ::type VCMap;
   VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
-                             Constant_property_map<vertex_descriptor, bool>());
+                             Constant_property_map<vertex_descriptor, bool>(false));
 
   // nb_iterations
   std::size_t nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
