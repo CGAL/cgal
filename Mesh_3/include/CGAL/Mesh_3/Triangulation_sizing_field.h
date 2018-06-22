@@ -117,7 +117,7 @@ private:
    * Used by boost transform iterator
    */
   struct Extract_point :
-  public CGAL::unary_function<typename Tr::Vertex,Weighted_point>
+  public CGAL::cpp98::unary_function<typename Tr::Vertex,Weighted_point>
   {
     Weighted_point operator()(const typename Tr::Vertex& v) const { return v.point(); }
   };

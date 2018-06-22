@@ -101,16 +101,6 @@ public:
   */
   bool operator!=(const Weighted_point_3<Kernel> &q) const;
 
-  /*!
-  translates the point by the vector `v`.
-  */
-  Weighted_point_3<Kernel>& operator+=(const Vector_3<Kernel> &v);
-
-  /*!
-  translates the point by the vector -`v`.
-  */
-  Weighted_point_3<Kernel>& operator-=(const Vector_3<Kernel> &v);
-
   /// @}
 
   /// \name Coordinate Access
@@ -200,8 +190,7 @@ public:
   int dimension() const;
 
   /*!
-  returns a bounding box containing `p`. Note that bounding boxes
-  are not parameterized with whatsoever.
+  returns a bounding box containing `p`.
   */
   Bbox_3 bbox() const;
 

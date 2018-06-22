@@ -803,7 +803,7 @@ namespace std {
 
   template < class T, class Alloc >
   struct hash<CGAL::internal::In_place_list_iterator<T, Alloc> >
-    : public CGAL::unary_function<CGAL::internal::In_place_list_iterator<T, Alloc>, std::size_t>  {
+    : public CGAL::cpp98::unary_function<CGAL::internal::In_place_list_iterator<T, Alloc>, std::size_t>  {
 
     std::size_t operator()(const CGAL::internal::In_place_list_iterator<T, Alloc>& i) const
     {
@@ -814,7 +814,7 @@ namespace std {
 
   template < class T, class Alloc >
   struct hash<CGAL::internal::In_place_list_const_iterator<T, Alloc> >
-    : public CGAL::unary_function<CGAL::internal::In_place_list_const_iterator<T, Alloc>, std::size_t> {
+    : public CGAL::cpp98::unary_function<CGAL::internal::In_place_list_const_iterator<T, Alloc>, std::size_t> {
 
     std::size_t operator()(const CGAL::internal::In_place_list_const_iterator<T, Alloc>& i) const
     {
