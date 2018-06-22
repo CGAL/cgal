@@ -79,7 +79,16 @@ public:
   
   void reset_training_set_of_selection ()
   {
-    // TODO
+    for (Selection::iterator it = m_selection->selected_facets.begin();
+         it != m_selection->selected_facets.end(); ++ it)
+    {
+      m_training[*it] = -1;
+      m_classif[*it] = -1;
+    }
+    m_selection->clear_all();
+    
+    if (m_index_color == 1 || m_index_color == 2)
+      change_color (m_index_color);
   }
   
   void reset_training_sets()
@@ -92,6 +101,7 @@ public:
   void select_random_region()
   {
     // TODO
+    std::cerr << "Warning: operation not yet available for meshes." << std::endl;
   }
   void validate_selection ()
   {
@@ -112,16 +122,18 @@ public:
 
   void update_color() { change_color (m_index_color); }
   void change_color (int index);
-  CGAL::Three::Scene_item* generate_one_item (const char* name,
-                                              int label) const
+  CGAL::Three::Scene_item* generate_one_item (const char* /* name */,
+                                              int /* label */) const
   {
     // TODO
+    std::cerr << "Warning: operation not yet available for meshes." << std::endl;
     return NULL;
   }
   void generate_one_item_per_label(std::vector<CGAL::Three::Scene_item*>&,
                                    const char*) const
   {
     // TODO
+    std::cerr << "Warning: operation not yet available for meshes." << std::endl;
   }
 
   bool write_output(std::ostream& out);
