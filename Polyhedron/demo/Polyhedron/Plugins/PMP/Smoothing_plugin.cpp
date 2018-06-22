@@ -338,7 +338,7 @@ public Q_SLOTS:
   }
 
 private:
-  typedef typename boost::graph_traits<Face_graph>::vertex_descriptor vertex_descriptor;
+  typedef boost::graph_traits<Face_graph>::vertex_descriptor vertex_descriptor;
 
   template<class TriangleMesh>
   typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<bool> >::type

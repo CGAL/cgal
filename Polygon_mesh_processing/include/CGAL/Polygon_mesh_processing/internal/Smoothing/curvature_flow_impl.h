@@ -120,7 +120,7 @@ public:
     CGAL_assertion(stiffness_elements.empty());
     stiffness_elements.reserve(8 * nb_vert_); //estimation
 
-    boost::unordered_map<std::size_t, NT> diag_coeff;
+    boost::unordered_map<int, NT> diag_coeff;
     BOOST_FOREACH(face_descriptor f, frange_)
     {
       BOOST_FOREACH(halfedge_descriptor hi, halfedges_around_face(halfedge(f, mesh_), mesh_))
@@ -132,8 +132,8 @@ public:
 
         if(!is_constrained(v_source) && !is_constrained(v_target))
         {
-          int i_source = vimap_[v_source];
-          int i_target = vimap_[v_target];
+          int i_source = static_cast<int>(vimap_[v_source]);
+          int i_target = static_cast<int>(vimap_[v_target]);
           NT Lij = weight_calculator_(hi);
           if (!is_border(hi_opp, mesh_))
             Lij+= weight_calculator_(hi_opp);
@@ -145,7 +145,7 @@ public:
       }
     }
 
-    for(typename boost::unordered_map<std::size_t, NT>::iterator p = diag_coeff.begin();
+    for(typename boost::unordered_map<int, NT>::iterator p = diag_coeff.begin();
         p != diag_coeff.end(); ++p)
     {
       stiffness_elements.push_back(Triplet(p->first, p->first, p->second));
@@ -156,7 +156,7 @@ public:
   {
     BOOST_FOREACH(vertex_descriptor v, vrange_)
     {
-      int index = get(vimap_, v);
+      std::size_t index = get(vimap_, v);
       NT x_new = Xx[index];
       NT y_new = Xy[index];
       NT z_new = Xz[index];
@@ -210,7 +210,7 @@ private:
       double area = face_area(f, mesh_);
       BOOST_FOREACH(vertex_descriptor v, vertices_around_face(halfedge(f, mesh_), mesh_))
       {
-        int idx = vimap_[v];
+        std::size_t idx = vimap_[v];
         if(!is_constrained(v))
         {
           diagonal[idx] += area / 6.0; // 2*area/12
@@ -233,7 +233,7 @@ private:
 
     BOOST_FOREACH(vertex_descriptor vi, vrange_)
     {
-      int index = vimap_[vi];
+      std::size_t index = vimap_[vi];
       Point_ref p = get(vpmap_, vi);
       bx.set(index, p.x());
       by.set(index, p.y());
