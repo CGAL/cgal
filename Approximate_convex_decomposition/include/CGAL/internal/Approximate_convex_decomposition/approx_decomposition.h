@@ -122,8 +122,11 @@ public:
         while (num_vertices(m_graph) > min_number_of_clusters)
         {
             CGAL_assertion(m_candidates.size() == num_edges(m_graph));
+  
+            // if no valid edges left than stop
             if (m_candidates.empty()) break;
 
+            // pop edge with the lowest decimation cost (optimal edge)
             graph_edge_descriptor optimal_edge = *m_candidates.begin();
             m_candidates.erase(m_candidates.begin());
             
@@ -176,6 +179,7 @@ private:
        
     std::vector<graph_edge_descriptor> m_invalid_edges; // list of edges to be removed
 
+    // comparator that orders candidate edges by their decimation costs
     struct CandidateComparator
     {
         bool operator() (const graph_edge_descriptor& a, const graph_edge_descriptor& b) const
@@ -361,11 +365,13 @@ private:
             add_edge(vert_1, vert, m_graph);
         }
 
-        // remove adjacent edges incident to the second vertex and remove the vertex
+        // remove edges are going to be removed from candidates
         BOOST_FOREACH(graph_edge_descriptor edge, boost::out_edges(vert_2, m_graph))
         {
             remove_candidate(edge);
         }
+        
+        // remove adjacent edges incident to the second vertex and remove the vertex
         clear_vertex(vert_2, m_graph);
         remove_vertex(vert_2, m_graph);
 
@@ -375,9 +381,11 @@ private:
 #endif
         BOOST_FOREACH(graph_edge_descriptor edge, boost::out_edges(vert_1, m_graph))
         {
-            remove_candidate(edge);
-            update_edge(edge, concavity_threshold, alpha_factor);
-            add_candidate(edge, concavity_threshold);
+            remove_candidate(edge); // remove candidate with old value of decimation cost
+
+            update_edge(edge, concavity_threshold, alpha_factor); // recomputedecimation cost
+            
+            add_candidate(edge, concavity_thresholdi); // add candidate edge with new value of decimation cost
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
             ++cnt;
 #endif
@@ -442,6 +450,9 @@ private:
         return CGAL::sqrt(CGAL::squared_distance(min_p, max_p));
     }
 
+    /**
+     * Adds an edge to the candidates list if its concavity value satisfies the threshold, otherwise adds it to the list of edges to be removed
+     */
     void add_candidate(graph_edge_descriptor edge, double concavity_threshold)
     {
         if (m_decimation_map[edge].new_cluster_props.concavity > concavity_threshold)
@@ -453,11 +464,17 @@ private:
         m_candidates.insert(edge);
     }
 
+    /**
+     * Removes an edge from the candidates list
+     */
     void remove_candidate(graph_edge_descriptor edge)
     {
         m_candidates.erase(edge);
     }
 
+    /**
+     * Removes edges from the adjacency list that were marked to be removed
+     */
     void remove_invalid_edges()
     {
         BOOST_FOREACH(graph_edge_descriptor edge, m_invalid_edges)
