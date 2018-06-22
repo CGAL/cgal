@@ -286,13 +286,7 @@ class Cluster_classification : public Item_classification_base
   void fill_display_combo_box (QComboBox* cb, QComboBox* cb1) const
   {
     cb->addItem ("Clusters");
-    for (std::size_t i = 0; i < m_features.size(); ++ i)
-      {
-        std::ostringstream oss;
-        oss << "Feature " << m_features[i]->name();
-        cb->addItem (oss.str().c_str());
-        cb1->addItem (oss.str().c_str());
-      }
+    Item_classification_base::fill_display_combo_box(cb, cb1);
   }
 
   int real_index_color() const;
@@ -397,6 +391,8 @@ class Cluster_classification : public Item_classification_base
   Point_set::Property_map<int> m_cluster_id;
   Point_set::Property_map<int> m_training;
   Point_set::Property_map<int> m_classif;
+  
+  std::vector<std::vector<float> > m_label_probabilities;
   
   int m_index_color;
 

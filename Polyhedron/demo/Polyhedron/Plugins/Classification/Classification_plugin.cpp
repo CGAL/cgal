@@ -1140,10 +1140,10 @@ public Q_SLOTS:
     {
       QSpinBox* trials = dialog.add<QSpinBox> ("Number of trials: ", "trials");
       trials->setRange (1, 99999);
-      trials->setValue (5000);
+      trials->setValue (500);
       QDoubleSpinBox* rate = dialog.add<QDoubleSpinBox> ("Learning rate: ", "learning_rate");
       rate->setRange (0.00001, 10000.0);
-      rate->setValue (0.1);
+      rate->setValue (0.001);
       rate->setDecimals (5);
       QSpinBox* batch = dialog.add<QSpinBox> ("Batch size: ", "batch_size");
       batch->setRange (1, 2000000000);

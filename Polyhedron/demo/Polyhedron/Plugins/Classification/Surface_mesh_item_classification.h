@@ -209,6 +209,8 @@ protected:
   Mesh::Property_map<face_descriptor, CGAL::Color> m_color;
   Mesh::Property_map<face_descriptor, CGAL::Color> m_real_color;
 
+  std::vector<std::vector<float> > m_label_probabilities;
+
   Generator* m_generator;
   int m_index_color;
 };
