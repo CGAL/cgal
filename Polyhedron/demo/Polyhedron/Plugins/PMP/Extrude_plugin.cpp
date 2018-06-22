@@ -16,6 +16,8 @@
 #include <CGAL/Qt/manipulatedFrame.h>
 #include <CGAL/Qt/constraint.h>
 
+#include <CGAL/number_type_config.h>
+
 #include "Messages_interface.h"
 #ifdef USE_SURFACE_MESH
 #include "Kernel_type.h"
@@ -140,7 +142,7 @@ private:
     const float Rf = static_cast<float>(R);
     for(int d = 0; d<360; d+= 360/prec)
     {
-      float D = (float) (d * M_PI / 180.);
+      float D = (float) (d * CGAL_PI / 180.);
       float a = (float) std::atan(Rf / 0.33);
       QVector4D pR(0., 1.*length_, 0, 1.);
       QVector4D nR(Rf*2.*sin(D), sin(a), Rf*2.*cos(D), 1.);
@@ -163,7 +165,7 @@ private:
       normals.push_back(nR.y());
       normals.push_back(nR.z());
       //point C1
-      D = (d+360/prec)*M_PI/180.0;
+      D = (d+360/prec)*CGAL_PI/180.0;
       pR = QVector4D(Rf*2.* sin(D), 0.66f*length_, Rf *2.* cos(D), 1.f);
       nR = QVector4D(sin(D), sin(a), cos(D), 1.0);
       
@@ -180,7 +182,7 @@ private:
     for(int d = 0; d<360; d+= 360/prec)
     {
       //point A1
-      double D = d*M_PI/180.0;
+      double D = d*CGAL_PI/180.0;
       QVector4D pR(Rf*sin(D), 0.66f*length_, Rf*cos(D), 1.f);
       QVector4D nR(sin(D), 0.f, cos(D), 1.f);
       
@@ -201,7 +203,7 @@ private:
       normals.push_back(nR.y());
       normals.push_back(nR.z());
       //point C1
-      D = (d+360/prec)*M_PI/180.0;
+      D = (d+360/prec)*CGAL_PI/180.0;
       pR = QVector4D(Rf * sin(D),0,Rf*cos(D), 1.0);
       nR = QVector4D(sin(D), 0, cos(D), 1.0);
       vertices.push_back(pR.x());
@@ -211,7 +213,7 @@ private:
       normals.push_back(nR.y());
       normals.push_back(nR.z());
       //point A2
-      D = (d+360/prec)*M_PI/180.0;
+      D = (d+360/prec)*CGAL_PI/180.0;
       
       pR = QVector4D(Rf * sin(D),0,Rf*cos(D), 1.0);
       nR = QVector4D(sin(D), 0, cos(D), 1.0);
@@ -233,7 +235,7 @@ private:
       normals.push_back(nR.y());
       normals.push_back(nR.z());
       //point C2
-      D = d*M_PI/180.0;
+      D = d*CGAL_PI/180.0;
       pR = QVector4D(Rf * sin(D), 0.66f*length_, Rf*cos(D), 1.f);
       nR = QVector4D(sin(D), 0.f, cos(D), 1.f);
       
