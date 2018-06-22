@@ -181,7 +181,7 @@ collect_duplicated_stitchable_boundary_edges
   {
     cc = get(Face_property_tag(), pmesh);
     typedef typename GetFaceIndexMap<PM, CGAL_PMP_NP_CLASS>::const_type FIMap;
-    FIMap fim = choose_param(get_param(np, internal_np::face_index),
+    FIMap fim = boost::choose_param(get_param(np, internal_np::face_index),
                              get_const_property_map(face_index, pmesh));
     num_component = num_component_wrapper(pmesh, cc, fim);
     border_edges_per_cc.resize(num_component);
