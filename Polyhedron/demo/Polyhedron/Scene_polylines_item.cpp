@@ -394,6 +394,8 @@ Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     program->bind();
     QVector2D vp(viewer->width(), viewer->height());
     program->setUniformValue("viewport", vp);
+    program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
+    program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
     program->setUniformValue("width", GLfloat(d->line_Slider->value()));
     
     program->setAttributeValue("colors", this->color());

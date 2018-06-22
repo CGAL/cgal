@@ -674,7 +674,6 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->nb_facets/3));
   d->program->release();
   vaos[Scene_polyhedron_selection_item_priv::Facets]->release();
-
   viewer->glPolygonOffset(0.3f, 0.3f);
   drawEdges(viewer);
   viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
@@ -696,7 +695,7 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
   attribBuffers(viewer,PROGRAM_SOLID_WIREFRAME);
   d->program->bind();
   QVector2D vp(viewer->width(), viewer->height());
-  
+  d->program->setUniformValue("viewport", vp);
   d->program->setUniformValue("width", 3.0f);
   d->program->setAttributeValue("colors",QColor(255,153,51));
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_HL_lines.size()/3));
@@ -729,6 +728,8 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
   attribBuffers(viewer,PROGRAM_SOLID_WIREFRAME);
   d->program->bind();
   d->program->setUniformValue("viewport", vp);
+  d->program->setUniformValue("near", (GLfloat)viewer->camera()->zNear());
+  d->program->setUniformValue("far" , (GLfloat)viewer->camera()->zFar());
   d->program->setUniformValue("width", 3.0f);
   d->program->setAttributeValue("colors",QColor(255,
                                                 color().blue()/2,
