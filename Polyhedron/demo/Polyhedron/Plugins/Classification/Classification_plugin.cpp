@@ -203,8 +203,8 @@ public:
 
     ui_widget.menu->setMenu (new QMenu("Classification Menu", ui_widget.menu));
 
-    connect(ui_widget.classifier,  SIGNAL(currentIndexChanged(int)), this,
-            SLOT(on_classifier_changed(int)));
+    connect(ui_widget.classifier,  SIGNAL(currentTextChanged(QString)), this,
+            SLOT(on_classifier_changed(QString)));
     
     QAction* compute_features = ui_widget.menu->menu()->addAction ("Compute features");
     connect(compute_features,  SIGNAL(triggered()), this,
@@ -535,9 +535,9 @@ public Q_SLOTS:
     classif->run (method, get_classifier(), subdivisions, smoothing);
   }
 
-  void on_classifier_changed (int index)
+  void on_classifier_changed (const QString& name)
   {
-    if (index == 0)
+    if (name == QString("Sum of Weighted Features"))
     {
       dock_widget_adv->show();
       dock_widget_adv->raise();
