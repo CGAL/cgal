@@ -51,6 +51,8 @@ class Approx_decomposition
     };
 
     // predefined structs
+    struct Candidate;
+    
     template <class Graph>
     struct Noborder_predicate;
 
@@ -109,42 +111,26 @@ public:
         BOOST_FOREACH(graph_edge_descriptor edge, edges(m_graph))
         {
             update_edge(edge, concavity_threshold, CONCAVITY_FACTOR);
+            add_candidate(edge, concavity_threshold);
         }
+        
+        // remove edges that can not become candidates
+        remove_invalid_edges();
 
         // main loop that stops when all edges with concavities lower that `concavity_threshold` (valid edges)
         // are decimated or the constraint of minimum number of cluster is met
         while (num_vertices(m_graph) > min_number_of_clusters)
         {
-            bool found_edge = false;
+            CGAL_assertion(m_candidates.size() == num_edges(m_graph));
+            if (m_candidates.empty()) break;
 
-            graph_edge_descriptor optimal_edge;
-
-            BOOST_FOREACH(graph_edge_descriptor edge, edges(m_graph))
-            {
-                Decimation_properties& decimation_props = m_decimation_map[edge];
-
-                // concavity of new cluster too large (not valid)
-                if (decimation_props.new_cluster_props.concavity > concavity_threshold) continue; 
-
-                // found first valid edge or the decimation cost of new valid edge is better than the decimation cost of current optimal valid edge
-                if (!found_edge || decimation_props.decimation_cost < m_decimation_map[optimal_edge].decimation_cost)
-                {
-                    optimal_edge = edge;
-                    found_edge = true;
-                }
-            }
-
-            // if no valid edges then stop
-            if (!found_edge) break;
-
+            graph_edge_descriptor optimal_edge = *m_candidates.begin();
+            m_candidates.erase(m_candidates.begin());
+            
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE            
             std::cout << "#" << num_vertices(m_graph) << " Optimal edge for decimation: " << optimal_edge << std::endl;
             std::cout << "Decimation cost: " << m_decimation_map[optimal_edge].decimation_cost << ", Concavity value: " << m_decimation_map[optimal_edge].new_cluster_props.concavity << std::endl;
             std::cout << "Total edges: " << num_edges(m_graph) << std::endl;
-//            BOOST_FOREACH(graph_edge_descriptor edge, edges(m_graph))
-//            {
-//                std::cout << source(edge, m_graph) << " " << target(edge, m_graph) << std::endl;
-//            }
 #endif
 
             // decimate optimal valid edge and update the decimation costs of modified edges
@@ -186,12 +172,23 @@ private:
     Graph m_graph; // adjacency list
 
     Graph_cluster_map m_cluster_map; // vertex property map of the adjacency list
-    Graph_decimation_map m_decimation_map; // edge property map of the adjacency list
+    static Graph_decimation_map m_decimation_map; // edge property map of the adjacency list
+       
+    std::vector<graph_edge_descriptor> m_invalid_edges; // list of edges to be removed
 
-//    std::priority_queue<graph_edge_descriptor> m_candidates;
+    struct CandidateComparator
+    {
+        bool operator() (const graph_edge_descriptor& a, const graph_edge_descriptor& b) const
+        {
+            return m_decimation_map[a].decimation_cost < m_decimation_map[b].decimation_cost;
+        }
+    };
+    
+    std::set<graph_edge_descriptor, CandidateComparator> m_candidates; // ordered by decimation cost list of edges
 
     Concavity<TriangleMesh, GeomTraits> m_concavity_calc; // concavity calculator that computes concavity values for any subset of faces of the input mesh
 
+    // a predicate for border edges removal
     template <class Mesh>
     struct Noborder_predicate
     {
@@ -365,6 +362,10 @@ private:
         }
 
         // remove adjacent edges incident to the second vertex and remove the vertex
+        BOOST_FOREACH(graph_edge_descriptor edge, boost::out_edges(vert_2, m_graph))
+        {
+            remove_candidate(edge);
+        }
         clear_vertex(vert_2, m_graph);
         remove_vertex(vert_2, m_graph);
 
@@ -372,14 +373,11 @@ private:
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
         int cnt = 0;
 #endif
-        std::vector<graph_edge_descriptor> invalid_edges;
         BOOST_FOREACH(graph_edge_descriptor edge, boost::out_edges(vert_1, m_graph))
         {
+            remove_candidate(edge);
             update_edge(edge, concavity_threshold, alpha_factor);
-            if (m_decimation_map[edge].new_cluster_props.concavity > concavity_threshold)
-            {
-                invalid_edges.push_back(edge);
-            }
+            add_candidate(edge, concavity_threshold);
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
             ++cnt;
 #endif
@@ -388,10 +386,8 @@ private:
         std::cout << "Updated edges: " << cnt << std::endl;
 #endif
 
-        BOOST_FOREACH(graph_edge_descriptor edge, invalid_edges)
-        {
-            remove_edge(edge, m_graph);
-        }
+        // remove edges that can not become candidates
+        remove_invalid_edges();
     }
 
     /**
@@ -444,6 +440,31 @@ private:
         Point_3 max_p(bbox.xmax(), bbox.ymax(), bbox.zmax());
 
         return CGAL::sqrt(CGAL::squared_distance(min_p, max_p));
+    }
+
+    void add_candidate(graph_edge_descriptor edge, double concavity_threshold)
+    {
+        if (m_decimation_map[edge].new_cluster_props.concavity > concavity_threshold)
+        {
+            m_invalid_edges.push_back(edge);
+            return;
+        }
+        
+        m_candidates.insert(edge);
+    }
+
+    void remove_candidate(graph_edge_descriptor edge)
+    {
+        m_candidates.erase(edge);
+    }
+
+    void remove_invalid_edges()
+    {
+        BOOST_FOREACH(graph_edge_descriptor edge, m_invalid_edges)
+        {
+            remove_edge(edge, m_graph);
+        }
+        m_invalid_edges.clear();
     }
 };    
 
