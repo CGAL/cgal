@@ -72,7 +72,6 @@ public:
     connect(ui_widget.angle_button,  SIGNAL(clicked()), this, SLOT(on_angle_smoothing_clicked()));
     connect(ui_widget.area_button,  SIGNAL(clicked()), this, SLOT(on_area_smoothing_clicked()));
     connect(ui_widget.curvature_flow_button,  SIGNAL(clicked()), this, SLOT(on_curvature_flow_clicked()));
-    connect(ui_widget.cache_button,  SIGNAL(clicked()), this, SLOT(on_clean_cache_clicked()));
   }
 
   QList<QAction*> actions() const
@@ -120,10 +119,6 @@ public:
     ui_widget.explicit_checkBox->setChecked(false);
 
     ui_widget.curvature_iter_spinBox->setValue(1);
-
-    QObject* scene_object = dynamic_cast<QObject*>(scene);
-    connect(scene_object, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
-            this, SLOT(on_actionItemAboutToBeDestroyed()));
   }
 
 public Q_SLOTS:
@@ -227,114 +222,46 @@ public Q_SLOTS:
 
     const bool use_constrained_vertex_map = ui_widget.border_button->isChecked()
                                             && !CGAL::is_closed(pmesh);
+    const bool use_explicit = ui_widget.explicit_checkBox->isChecked();
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    // explicit scheme
-    if(ui_widget.explicit_checkBox->isChecked())
+    if(poly_item)
     {
-      if(poly_item)
-      {
-        if(use_constrained_vertex_map)
-          smooth_along_curvature_flow(pmesh, time_step, parameters::use_explicit_scheme(true)
-                                                                   .number_of_iterations(nb_iter)
-                                                                   .vertex_is_constrained_map(get_border_constrained_map(pmesh)) );
-        else
-          smooth_along_curvature_flow(pmesh, time_step, parameters::use_explicit_scheme(true)
-                                                                   .number_of_iterations(nb_iter));
-        poly_item->invalidateOpenGLBuffers();
-        poly_item->itemChanged();
-      }
-      else if(selection_item)
-      {
-        if(use_constrained_vertex_map)
-          smooth_along_curvature_flow(selection_item->selected_facets,
-                                      pmesh, time_step, parameters::use_explicit_scheme(true)
-                                                                   .number_of_iterations(nb_iter)
-                                                                   .vertex_is_constrained_map(get_border_constrained_map(pmesh)) );
-        else
-          smooth_along_curvature_flow(selection_item->selected_facets,
-                                      pmesh, time_step, parameters::use_explicit_scheme(true)
-                                                                   .number_of_iterations(nb_iter));
-        selection_item->poly_item_changed();
-        selection_item->changed_with_poly_item();
-      }
+      if(use_constrained_vertex_map)
+        smooth_along_curvature_flow(pmesh, time_step, parameters::use_explicit_scheme(use_explicit)
+                                                                  .number_of_iterations(nb_iter)
+                                                                  .vertex_is_constrained_map(get_border_constrained_map(pmesh)) );
       else
-      {
-        std::cerr<< "Something's gone wrong.\n";
-      }
+        smooth_along_curvature_flow(pmesh, time_step, parameters::use_explicit_scheme(use_explicit)
+                                                                  .number_of_iterations(nb_iter));
+      poly_item->invalidateOpenGLBuffers();
+      poly_item->itemChanged();
     }
-    else // implicit scheme
-    { // Calculate stiffness matrix only once before solving repeatedly
-
-      if(poly_item)
-      {
-        if(index_id != last_index_id || stiffness_is_cleared){
-          // If we changed item or if the stiffness cache is cleared (by the user hitting the button)
-          if(use_constrained_vertex_map){
-            internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, true,
-            parameters::vertex_is_constrained_map(get_border_constrained_map(pmesh)) );
-          }
-          else{
-            internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, true,
-            parameters::all_default());
-          }
-          last_index_id = index_id;
-          // reset the cache flag
-          stiffness_is_cleared = false;
-        }
-
-        internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, false,
-                            parameters::number_of_iterations(nb_iter));
-
-        poly_item->invalidateOpenGLBuffers();
-        poly_item->itemChanged();
-      }
-
-      else if(selection_item)
-      {
-        if(index_id != last_index_id || stiffness_is_cleared){
-          if(use_constrained_vertex_map)
-          {
-            internal::solve_mcf(selection_item->selected_facets, pmesh, time_step, stiffness, true,
-            parameters::vertex_is_constrained_map(get_border_constrained_map(pmesh)) );
-          }
-          else{
-            internal::solve_mcf(faces(pmesh), pmesh, time_step, stiffness, true,
-            parameters::all_default());
-          }
-          last_index_id = index_id;
-          stiffness_is_cleared = false;
-        }
-
-        internal::solve_mcf(selection_item->selected_facets, pmesh, time_step, stiffness, false,
-                            parameters::number_of_iterations(nb_iter));
-
-        selection_item->poly_item_changed();
-        selection_item->changed_with_poly_item();
-      }
-
+    else if(selection_item)
+    {
+      if(use_constrained_vertex_map)
+        smooth_along_curvature_flow(selection_item->selected_facets,
+                                    pmesh, time_step, parameters::use_explicit_scheme(use_explicit)
+                                                                  .number_of_iterations(nb_iter)
+                                                                  .vertex_is_constrained_map(get_border_constrained_map(pmesh)) );
       else
-      {
-        std::cerr<< "Something's gone wrong.\n";
-      }
+        smooth_along_curvature_flow(selection_item->selected_facets,
+                                    pmesh, time_step, parameters::use_explicit_scheme(use_explicit)
+                                                                  .number_of_iterations(nb_iter));
+      selection_item->poly_item_changed();
+      selection_item->changed_with_poly_item();
+    }
+    else
+    {
+      std::cerr<< "Something's gone wrong.\n";
+      CGAL_assertion(false);
     }
 
     // recenter scene
     //poly_item->compute_bbox();
     //static_cast<Scene*>(scene)->updated_bbox(true);
     QApplication::restoreOverrideCursor();
-  }
-
-  void on_clean_cache_clicked()
-  {
-    stiffness.clear();
-    stiffness_is_cleared = true;
-  }
-
-  void on_actionItemAboutToBeDestroyed()
-  {
-    last_index_id= -1;
   }
 
 private:
@@ -360,11 +287,6 @@ private:
   QAction* actionSmoothing_;
   QDockWidget* dock_widget;
   Ui::Smoothing ui_widget;
-
-  int last_index_id = -1;
-  std::vector<CGAL::Triple<int, int, double> > stiffness;
-  bool stiffness_is_cleared;
-
 };
 
 #include "Smoothing_plugin.moc"
