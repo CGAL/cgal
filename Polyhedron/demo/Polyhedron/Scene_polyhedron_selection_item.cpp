@@ -665,7 +665,6 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
     d->computeElements();
     d->initializeBuffers(viewer);
   }
-  viewer->makeCurrent();
   vaos[Scene_polyhedron_selection_item_priv::Facets]->bind();
 
   attribBuffers(viewer,PROGRAM_WITH_LIGHT);
@@ -696,14 +695,8 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
   d->program = getShaderProgram(PROGRAM_SOLID_WIREFRAME);
   attribBuffers(viewer,PROGRAM_SOLID_WIREFRAME);
   d->program->bind();
-  QMatrix4x4 viewport_matrix;
-  GLfloat mat[16];
-  viewer->camera()->getViewportMatrix(mat);
-  for(int i=0; i<16; ++i)
-    viewport_matrix.data()[i] = mat[i];
+  QVector2D vp(viewer->width(), viewer->height());
   
-  d->program->setUniformValue("viewport_matrix", viewport_matrix);
-  d->program->setUniformValue("viewport_matrix_inv", viewport_matrix.inverted());
   d->program->setUniformValue("width", 3.0f);
   d->program->setAttributeValue("colors",QColor(255,153,51));
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_HL_lines.size()/3));
@@ -720,8 +713,7 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
   d->program = getShaderProgram(PROGRAM_SOLID_WIREFRAME);
   attribBuffers(viewer,PROGRAM_SOLID_WIREFRAME);
   d->program->bind();
-  d->program->setUniformValue("viewport_matrix", viewport_matrix);
-  d->program->setUniformValue("viewport_matrix_inv", viewport_matrix.inverted());
+  d->program->setUniformValue("viewport", vp);
   d->program->setUniformValue("width", 3.0f);
   d->program->setAttributeValue("colors",QColor(0,200,0));
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_temp_lines/3));
@@ -732,12 +724,10 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
     d->computeElements();
     d->initializeBuffers(viewer);
   }
-  viewer->makeCurrent();
   vaos[Scene_polyhedron_selection_item_priv::Edges]->bind();
   d->program = getShaderProgram(PROGRAM_SOLID_WIREFRAME);
   attribBuffers(viewer,PROGRAM_SOLID_WIREFRAME);
   d->program->bind();
-  QVector2D vp(viewer->width(), viewer->height());
   d->program->setUniformValue("viewport", vp);
   d->program->setUniformValue("width", 3.0f);
   d->program->setAttributeValue("colors",QColor(255,
@@ -790,7 +780,6 @@ void Scene_polyhedron_selection_item::drawPoints(CGAL::Three::Viewer_interface* 
     d->computeElements();
     d->initializeBuffers(viewer);
   }
-  viewer->makeCurrent();
   vaos[Scene_polyhedron_selection_item_priv::Points]->bind();
   d->program = getShaderProgram(PROGRAM_NO_SELECTION);
   attribBuffers(viewer,PROGRAM_NO_SELECTION);
