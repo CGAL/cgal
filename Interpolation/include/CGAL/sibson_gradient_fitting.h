@@ -31,13 +31,19 @@
 #include <CGAL/Origin.h>
 #include <CGAL/function.h>
 
-#include <boost/mpl/if.hpp>
-#include <boost/type_traits/is_constructible.hpp>
 #include <boost/any.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/utility/enable_if.hpp>
+#include <boost/utility/result_of.hpp>
 
 #include <iterator>
 #include <utility>
 #include <vector>
+
+#ifdef CGAL_CXX11
+  #include <type_traits>
+  #include <functional>
+#endif
 
 namespace CGAL {
 
@@ -221,6 +227,12 @@ sibson_gradient_fitting_internal(const Tr& tr,
 // -> _nn2: natural_neighbor_coordinates_2
 // -> _rn2: regular_neighbor_coordinates_2
 // -> _sn2_3: surface_neighbor_coordinates_2_3
+
+// The ugly distinction below is needed to make it work with lambdas for C++11 because std::is_constructible
+// is used, which is C++11 (there is a boost equivalent, but it is said (by boost) to be relying on C++11 features
+// to properly work...)
+#ifdef CGAL_CXX11
+
 template < class Dt, class OutputIterator, class OutputFunctor, class ValueFunctor, class Traits >
 OutputIterator
 sibson_gradient_fitting_nn_2(const Dt& dt,
@@ -231,8 +243,8 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
                              // Some SFINAE to distinguish whether the argument type
                              // of the value functor is 'DT::Point' or 'DT::Vertex_handle'
                              typename boost::enable_if_c<
-                               boost::is_constructible<
-                                 cpp11::function<boost::any(typename Dt::Point)>,
+                               std::is_constructible<
+                                 std::function<boost::any(typename Dt::Point)>,
                                  ValueFunctor
                              >::value>::type* = NULL)
 {
@@ -257,8 +269,8 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
                              ValueFunctor value_function,
                              const Traits& traits,
                              typename boost::enable_if_c<
-                               boost::is_constructible<
-                                 cpp11::function<boost::any(typename Dt::Vertex_handle)>,
+                               std::is_constructible<
+                                 std::function<boost::any(typename Dt::Vertex_handle)>,
                                  ValueFunctor
                              >::value>::type* = NULL)
 {
@@ -275,6 +287,38 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
                                                        traits);
 }
 
+#else // not CGAL_CXX11
+
+template < class Dt, class OutputIterator, class OutputFunctor, class ValueFunctor, class Traits >
+OutputIterator
+sibson_gradient_fitting_nn_2(const Dt& dt,
+                             OutputIterator out,
+                             OutputFunctor fct,
+                             ValueFunctor value_function,
+                             const Traits& traits)
+{
+  typedef typename Traits::FT                                        FT;
+  typedef typename ValueFunctor::argument_type                       VF_arg_type;
+  typedef typename std::back_insert_iterator<std::vector<
+                     std::pair<VF_arg_type, FT> > >                  CoordInserter;
+
+  // If the functor evaluates at points (and not vertices), then we must convert
+  // the output of the coordinates computations - a pair<vertex_handle, FT> -
+  // to a pair<point, FT>
+  typedef typename boost::mpl::if_<
+    boost::is_same<VF_arg_type, typename Dt::Point>,
+    Interpolation::internal::Extract_point_in_pair<Dt, FT>,
+    CGAL::Identity<std::pair<VF_arg_type, FT> >
+  >::type                                                            Coord_OutputFunctor;
+
+  return sibson_gradient_fitting_internal<VF_arg_type>(dt, out, fct, value_function,
+                                                       natural_neighbor_coordinates_2_object<Dt,
+                                                                                             CoordInserter,
+                                                                                             Coord_OutputFunctor>(),
+                                                       traits);
+}
+#endif // CGAL_CXX11
+
 // Same as above but without OutputFunctor.
 // Defaults to extracting the point, for backward compatibility.
 template < class Dt, class OutputIterator, class ValueFunctor, class Traits >
@@ -290,6 +334,9 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
   return sibson_gradient_fitting_nn_2(dt, out, OutputFunctor(), value_function, traits);
 }
 
+// See above for the explanation.
+#ifdef CGAL_CXX11
+
 template < class Rt, class OutputIterator, class OutputFunctor, class ValueFunctor, class Traits >
 OutputIterator
 sibson_gradient_fitting_rn_2(const Rt& rt,
@@ -300,8 +347,8 @@ sibson_gradient_fitting_rn_2(const Rt& rt,
                              // Some SFINAE to distinguish whether the argument type
                              // of the value functor is 'Rt::Point' (weighted point) or 'Rt::Vertex_handle'
                              typename boost::enable_if_c<
-                               boost::is_constructible<
-                                 cpp11::function<boost::any(typename Rt::Point)>,
+                               std::is_constructible<
+                                 std::function<boost::any(typename Rt::Point)>,
                                  ValueFunctor
                              >::value>::type* = NULL)
 {
@@ -326,8 +373,8 @@ sibson_gradient_fitting_rn_2(const Rt& rt,
                              ValueFunctor value_function,
                              const Traits& traits,
                              typename boost::enable_if_c<
-                               boost::is_constructible<
-                                 cpp11::function<boost::any(typename Rt::Vertex_handle)>,
+                               std::is_constructible<
+                                 std::function<boost::any(typename Rt::Vertex_handle)>,
                                  ValueFunctor
                              >::value>::type* = NULL)
 {
@@ -343,6 +390,39 @@ sibson_gradient_fitting_rn_2(const Rt& rt,
                                                                                              Coord_OutputFunctor>(),
                                                        traits);
 }
+
+#else // CGAL_CXX11
+
+template < class Rt, class OutputIterator, class OutputFunctor, class ValueFunctor, class Traits >
+OutputIterator
+sibson_gradient_fitting_rn_2(const Rt& rt,
+                             OutputIterator out,
+                             OutputFunctor fct,
+                             ValueFunctor value_function,
+                             const Traits& traits)
+{
+  typedef typename Traits::FT                                        FT;
+  typedef typename ValueFunctor::argument_type                       VF_arg_type;
+  typedef typename std::back_insert_iterator<std::vector<
+                       std::pair<VF_arg_type, FT> > >                CoordInserter;
+
+  // If the functor evaluates at points (and not vertices), then we must convert
+  // the output of the coordinates computations - a pair<vertex_handle, FT> -
+  // to a pair<point, FT>
+  typedef typename boost::mpl::if_<
+    boost::is_same<VF_arg_type, typename Rt::Weighted_point>,
+    Interpolation::internal::Extract_point_in_pair<Rt, FT>,
+    CGAL::Identity<std::pair<VF_arg_type, FT> >
+  >::type                                                            Coord_OutputFunctor;
+
+  return sibson_gradient_fitting_internal<VF_arg_type>(rt, out, fct, value_function,
+                                                       regular_neighbor_coordinates_2_object<Rt,
+                                                                                             CoordInserter,
+                                                                                             Coord_OutputFunctor>(),
+                                                       traits);
+}
+
+#endif
 
 // Same as above but without OutputFunctor. Default to extracting the point, for backward compatibility.
 template < class Rt, class OutputIterator, class ValueFunctor, class Traits >
