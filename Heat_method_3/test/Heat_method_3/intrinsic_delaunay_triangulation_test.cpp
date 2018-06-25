@@ -27,7 +27,7 @@ int main()
   Mesh sm;
   Vertex_distance_map vertex_distance_map = get(Vertex_distance_tag(),sm);
 
-  std::ifstream in("data/pyramid.off");
+  std::ifstream in("data/spot_badmesh.off");
   in >> sm;
   if(!in || num_vertices(sm) == 0) {
     std::cerr << "Problem loading the input data" << std::endl;

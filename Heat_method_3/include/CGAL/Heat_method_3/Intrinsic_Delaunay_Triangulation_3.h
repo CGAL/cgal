@@ -40,7 +40,11 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/boost/graph/helpers.h>
 #include <stack>
+#include <boost/graph/filtered_graph.hpp>
+#include <fstream>
+
 
 
 namespace CGAL {
@@ -131,19 +135,21 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
           Index a_i = get(edge_id_map, ed);
           Index b_i = get(edge_id_map, edge(hd2,tm));
           Index c_i = get(edge_id_map, edge(hd3,tm));
-          double a = edge_lengths(a_i,0);
-          double b = edge_lengths(b_i,0);
-          double c = edge_lengths(c_i,0);
-          double tan2 = CGAL::sqrt(((a-b+c)*(a+b-c))/((a+b-c)*(-a+b+c)));
+          double a = edge_lengths(a_i,0) + 0.0;
+          double b = edge_lengths(b_i,0) + 0.0;
+          double c = edge_lengths(c_i,0) + 0.0;
+
+          double tan2 = CGAL::sqrt(CGAL::abs(((a-b+c)*(a+b-c))/((a+b+c)*(-a+b+c))));
           cotan_weight+=(1-(tan2*tan2))/(2*tan2);
+
           hd = opposite(hd,tm);
           hd2 =next(hd,tm);
           hd3 = next(hd2,tm);
           b_i = get(edge_id_map, edge(hd2,tm));
           c_i = get(edge_id_map, edge(hd3,tm));
-          b = edge_lengths(b_i,0);
-          c = edge_lengths(c_i,0);
-          tan2 = CGAL::sqrt(((a-b+c)*(a+b-c))/((a+b-c)*(-a+b+c)));
+          b = edge_lengths(b_i,0) + 0.0;
+          c = edge_lengths(c_i,0) + 0.0;
+          tan2 = CGAL::sqrt(CGAL::abs(((a-b+c)*(a+b-c))/((a+b+c)*(-a+b+c))));
           cotan_weight+=(1-(tan2*tan2))/(2*tan2);
           return cotan_weight;
         }
@@ -164,11 +170,32 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
           }
         }
 
-         //law of cosines
-        double new_edge_length(double side_A, double side_B, double angle)
+        void change_edge_length(Index i, edge_descriptor ed)
         {
-          return CGAL::sqrt(side_A*side_A + side_B*side_B - 2*side_A*side_B*std::cos(angle));
+          halfedge_descriptor hd = halfedge(ed,tm);
+          halfedge_descriptor hd2 = next(hd,tm);
+          halfedge_descriptor hd3 = next(hd2,tm);
+          Index b_i = get(edge_id_map, edge(hd2,tm));
+          Index c_i = get(edge_id_map, edge(hd3,tm));
+          double a = edge_lengths(i,0);
+          double b = edge_lengths(b_i,0);
+          double c1 = edge_lengths(c_i,0);
+          double tan2a = CGAL::sqrt(std::abs(((-a+b+c1)*(a+b-c1))/((a+b+c1)*(-b+a+c1))));
+          hd = opposite(hd,tm);
+          hd2 =next(hd,tm);
+          hd3 = next(hd2,tm);
+          b_i = get(edge_id_map, edge(hd2,tm));
+          c_i = get(edge_id_map, edge(hd3,tm));
+          b = edge_lengths(b_i,0);
+          double c2 = edge_lengths(c_i,0);
+
+          double tan2d = CGAL::sqrt(std::abs(((-a+b+c2)*(a+b-c2))/((a+b+c2)*(a-b+c2))));
+          double tan2ad = (tan2a + tan2d)/(1-tan2a*tan2d);
+          double cosad = (1-tan2ad*tan2ad)/(1+tan2ad*tan2ad);
+          double new_length = CGAL::sqrt( CGAL::abs(c1*c1 + c2*c2 - 2*cosad));
+          edge_lengths(i,0) = new_length;
         }
+
 
          //Heron's formula
         double face_area(double a, double b, double c)
@@ -179,21 +206,56 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
 
         void loop_over_edges(edge_stack stack, Eigen::VectorXd marked_edges)
         {
+          int a = 0;
           while(!stack.empty())
           {
             edge_descriptor ed = stack.top();
             stack.pop();
+
             Index edge_i = get(edge_id_map,ed);
             marked_edges(edge_i,0)=0;
-            if(!(is_edge_locally_delaunay(ed)))
+            //if the edge itself is not locally delaunay, go back
+            if(!(is_edge_locally_delaunay(ed))) // && !CGAL::is_boundary(ed,tm)) need to fix this
             {
-               //todo:
-               //flip edge, compute new edge length
-               //for all edges in the local tetrahedron, if they aren't marked, mark and push
-               halfedge_descriptor hd1 = (halfedge(ed, tm));
-               CGAL::Euler::flip_edge(hd1, tm);
+               a++;
+               change_edge_length(edge_i,ed);
+               halfedge_descriptor hd = (halfedge(ed, tm));
+               CGAL::Euler::flip_edge(hd, tm);
+
+               edge_descriptor next_edge= edge(next(hd,tm),tm);
+               Index next_edge_i =  get(edge_id_map, next_edge);
+               //if edge was already checked, go back and check again
+               //for the 4 surrounding edges, since local 'geometry' changed,
+               if(!(marked_edges(next_edge_i,0)))
+               {
+                 stack.push(next_edge);
+                 marked_edges(next_edge_i,0) = 1;
+               }
+               next_edge = edge(prev(hd,tm),tm);
+               next_edge_i = get(edge_id_map,next_edge);
+               if(!(marked_edges(next_edge_i,0)))
+               {
+                 stack.push(next_edge);
+                 marked_edges(next_edge_i,0) = 1;
+               }
+               next_edge = edge(next(opposite(hd,tm),tm),tm);
+               next_edge_i = get(edge_id_map,next_edge);
+               if(!(marked_edges(next_edge_i,0)))
+               {
+                 stack.push(next_edge);
+                 marked_edges(next_edge_i,0) = 1;
+               }
+               next_edge = edge(prev(opposite(hd,tm),tm),tm);
+               next_edge_i = get(edge_id_map,next_edge);
+               if(!(marked_edges(next_edge_i,0)))
+               {
+                 stack.push(next_edge);
+                 marked_edges(next_edge_i,0) = 1;
+               }
+               //then go back to top of the stack
             }
           }
+          std::cout<<"this many edges were flipped: "<< a <<"\n";
        }
 
        private:
@@ -231,7 +293,6 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
          FaceIndexMap fpm;
          EdgeIndexMap epm;
          VertexDistanceMap vdm;
-         Matrix cotan_matrix;
          int number_of_edges = num_edges(tm);
          Eigen::VectorXd edge_lengths;
          Eigen::VectorXd mark_edges;
