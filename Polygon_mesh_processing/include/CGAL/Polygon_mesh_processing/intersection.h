@@ -1757,6 +1757,19 @@ surface_intersection(const TriangleMesh& tm1,
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
+template <class OutputIterator,
+          class TriangleMesh,
+          class NamedParameters1>
+OutputIterator
+surface_intersection(const TriangleMesh& tm1,
+                     const TriangleMesh& tm2,
+                     OutputIterator polyline_output,
+                     const NamedParameters1& np)
+{
+  return surface_intersection(tm1, tm2, polyline_output, np,
+    CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+
 #ifndef CGAL_NO_DEPRECATED_CODE
 template <class OutputIterator,
           class TriangleMesh,
