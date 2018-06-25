@@ -443,18 +443,10 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
 {
   if(scene == 0)
     return;
-  viewer->glLineWidth(1.0f);
   viewer->glPointSize(2.f);
   viewer->glEnable(GL_POLYGON_OFFSET_FILL);
   viewer->glPolygonOffset(1.0f,1.0f);
   viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-
-  viewer->glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
-
-  if(twosides)
-    viewer->glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-  else
-    viewer->glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
 
   if(!with_names && antialiasing)
   {
@@ -576,7 +568,6 @@ QString Viewer::dumpCameraCoordinates()
 }
 
 void Viewer::attribBuffers(int program_name) const {
-    GLint is_both_sides = 0;
     //ModelViewMatrix used for the transformation of the camera.
     QMatrix4x4 mvp_mat;
     // ModelView Matrix used for the lighting system
@@ -594,10 +585,6 @@ void Viewer::attribBuffers(int program_name) const {
     this->camera()->getModelViewProjectionMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mvp_mat.data()[i] = GLfloat(d_mat[i]);
-   
-
-    const_cast<Viewer*>(this)->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE,
-                                             &is_both_sides);
 
     QVector4D position(0.0f,0.0f,1.0f, 1.0f );
     QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
@@ -637,7 +624,7 @@ void Viewer::attribBuffers(int program_name) const {
         program->setUniformValue("light_spec", specular);
         program->setUniformValue("light_amb", ambient);
         program->setUniformValue("spec_power", 51.8f);
-        program->setUniformValue("is_two_side", is_both_sides);
+        program->setUniformValue("is_two_side", d->twosides);
         break;
     }
     switch(program_name)
@@ -691,7 +678,6 @@ void Viewer::drawVisualHints()
     {
         glDisable(GL_DEPTH_TEST);
 
-        glLineWidth(3.0f);
         glPointSize(6.0f);
         //draws the distance
         QMatrix4x4 mvpMatrix;
@@ -712,7 +698,6 @@ void Viewer::drawVisualHints()
         d->rendering_program_dist.release();
         glEnable(GL_DEPTH_TEST);
         glPointSize(1.0f);
-        glLineWidth(1.0f);
 
     }
     if (!d->painter->isActive())

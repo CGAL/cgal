@@ -42,34 +42,6 @@ class Frame;
   Frame of your application (which will be interpolated). When the user
   startInterpolation(), the KeyFrameInterpolator regularly updates the frame()
   position and orientation along the path.
-
-  Here is a typical utilization example (see also the <a
-  href="../examples/keyFrames.html">keyFrames example</a>): \code
-
-
-  init()
-  {
-        // The KeyFrameInterpolator kfi is given the Frame that it will drive
-  over time. kfi = new KeyFrameInterpolator( new Frame() ); kfi->addKeyFrame(
-  Frame( Vec(1,0,0), Quaternion() ) ); kfi->addKeyFrame( new Frame( Vec(2,1,0),
-  Quaternion() ) );
-        // ...and so on for all the keyFrames.
-
-        // Ask for a display update after each update of the
-  KeyFrameInterpolator connect(kfi, SIGNAL(interpolated()), SLOT(update()));
-
-        kfi->startInterpolation();
-  }
-
-  draw()
-  {
-        glPushMatrix();
-        glMultMatrixd( kfi->frame()->matrix() );
-        // Draw your object here. Its position and orientation are interpolated.
-        glPopMatrix();
-  }
-  \endcode
-
   The keyFrames are defined by a Frame and a time, expressed in seconds. The
   Frame can be provided as a const reference or as a pointer to a Frame (see the
   addKeyFrame() methods). In the latter case, the path will automatically be

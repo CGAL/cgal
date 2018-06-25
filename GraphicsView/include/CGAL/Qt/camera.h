@@ -383,7 +383,7 @@ public Q_SLOTS:
   /*! @name OpenGL matrices */
   //@{
 public:
-  virtual void loadProjectionMatrix(bool reset = true) const;
+  virtual void loadProjectionMatrix(bool = true) const;
   virtual void loadModelViewMatrix(bool reset = true) const;
   void computeProjectionMatrix() const;
   void computeModelViewMatrix() const;

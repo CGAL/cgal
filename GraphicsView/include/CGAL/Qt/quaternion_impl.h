@@ -286,8 +286,7 @@ Quaternion::Quaternion(const QDomElement &element) {
 
 /*! Returns the Quaternion associated 4x4 OpenGL rotation matrix.
 
- Use \c glMultMatrixd(q.matrix()) to apply the rotation represented by
- Quaternion \c q to the current OpenGL matrix.
+ 
 
  See also getMatrix(), getRotationMatrix() and inverseMatrix().
 
@@ -378,9 +377,7 @@ void Quaternion::getRotationMatrix(qreal m[3][3]) const {
 /*! Returns the associated 4x4 OpenGL \e inverse rotation matrix. This is simply
   the matrix() of the inverse().
 
-  \attention The result is only valid until the next call to inverseMatrix().
-  Use it immediately (as in \c glMultMatrixd(q.inverseMatrix())) or use
-  getInverseMatrix() instead.
+  
 
   \attention The matrix is given in OpenGL format (row-major order) and is the
   transpose of the actual mathematical European representation. Consider using
