@@ -171,6 +171,8 @@ Free function with \ref vsa_namedparameters options.
 Class interface:
 - `CGAL::Variational_shape_approximation`: allowing more customization of the proxy, metric and approximation process.
 
+One thing to note is that some parameters depend heavily on the input, like the number of proxies. Although we can approximate a geometry with any number of proxies regardless of the quality, it is not recommended to use all the defaults without any consideration of the input.
+
 \section sma_examples Examples
 
 \subsection sma_example1 Free Function Approximation
