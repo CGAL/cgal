@@ -37,7 +37,7 @@ public:
   QString message;
   bool _displayMessage;
   QTimer messageTimer;
-  QOpenGLFunctions_4_3_Compatibility* _recentFunctions;
+  QOpenGLFunctions_3_2_Core* _recentFunctions;
   bool is_2d_selection_mode;
   QOpenGLDebugLogger *logger;
 
@@ -198,7 +198,7 @@ void Viewer::init()
   }
   else
   {
-    d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
+    d->_recentFunctions = new QOpenGLFunctions_3_2_Core();
     d->logger = new QOpenGLDebugLogger(this);
     if(!d->logger->initialize())
       qDebug()<<"logger could not init.";
@@ -1046,7 +1046,7 @@ void Viewer::enableClippingBox(QVector4D box[6])
     d->clipbox[i] = box[i];
 }
 
-QOpenGLFunctions_4_3_Compatibility* Viewer::openGL_4_3_functions() { return d->_recentFunctions; }
+QOpenGLFunctions_3_2_Core* Viewer::openGL_4_3_functions() { return d->_recentFunctions; }
 
 void Viewer::set2DSelectionMode(bool b) { d->is_2d_selection_mode = b; }
 

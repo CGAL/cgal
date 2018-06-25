@@ -140,7 +140,7 @@ protected:
   double prev_radius;
 
 public:
-  QOpenGLFunctions_4_3_Compatibility* openGL_4_3_functions() Q_DECL_OVERRIDE;
+  QOpenGLFunctions_3_2_Core* openGL_4_3_functions() Q_DECL_OVERRIDE;
 
 }; // end class Viewer
 
