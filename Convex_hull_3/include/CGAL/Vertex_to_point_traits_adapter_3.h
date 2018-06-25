@@ -91,6 +91,7 @@ public:
   typedef Convex_hull_impl::Forward_functor<typename Base_traits::Collinear_3, VertexPointMap> Collinear_3;
   typedef Convex_hull_impl::Forward_functor<typename Base_traits::Coplanar_3, VertexPointMap> Coplanar_3;
   typedef Convex_hull_impl::Forward_functor<typename Base_traits::Less_distance_to_point_3, VertexPointMap> Less_distance_to_point_3; 
+  
   class Less_signed_distance_to_plane_3
       :public Base_traits::Less_signed_distance_to_plane_3
   {  
@@ -113,7 +114,66 @@ public:
     }
   };
   
+  class Compare_x_3:public Base_traits::Compare_x_3
+  {
+    VertexPointMap vpm_;
+    const typename Base_traits::Compare_x_3& base;
+  public:    
+    typedef CGAL::Comparison_result         result_type;
+    
+    Compare_x_3(
+        const VertexPointMap& map,
+        const typename Base_traits::Compare_x_3& base):
+      Base_traits::Compare_x_3(base),vpm_(map), base(base){}
+    
+    result_type
+    operator()( const Point_3& p, const Point_3& q) const
+    {
+      return base( get(vpm_,p), get(vpm_,q));
+    }
+  };
   
+  class Compare_y_3:public Base_traits::Compare_y_3
+  {
+    VertexPointMap vpm_;
+    const typename Base_traits::Compare_y_3& base;
+  public:    
+    typedef CGAL::Comparison_result         result_type;
+    
+    Compare_y_3(
+        const VertexPointMap& map,
+        const typename Base_traits::Compare_y_3& base):
+      Base_traits::Compare_y_3(base),vpm_(map), base(base){}
+    
+    result_type
+    operator()( const Point_3& p, const Point_3& q) const
+    {
+      return base( get(vpm_,p), get(vpm_,q));
+    }
+  };
+  
+  class Compare_z_3:public Base_traits::Compare_z_3
+  {
+    VertexPointMap vpm_;
+    const typename Base_traits::Compare_z_3& base;
+  public:    
+    typedef CGAL::Comparison_result         result_type;
+    
+    Compare_z_3(
+        const VertexPointMap& map,
+        const typename Base_traits::Compare_z_3& base):
+      Base_traits::Compare_z_3(base),vpm_(map), base(base){}
+    
+    result_type
+    operator()( const Point_3& p, const Point_3& q) const
+    {
+      return base( get(vpm_,p), get(vpm_,q));
+    }
+  };
+  
+  Compare_x_3 compare_x_3_object () const {return Compare_x_3(vpm_, static_cast<const Base_traits*>(this)->compare_x_3_object() );}
+  Compare_y_3 compare_y_3_object () const {return Compare_y_3(vpm_, static_cast<const Base_traits*>(this)->compare_y_3_object() );}
+  Compare_z_3 compare_z_3_object () const {return Compare_z_3(vpm_, static_cast<const Base_traits*>(this)->compare_z_3_object() );}
   Equal_3 equal_3_object () const {return Equal_3(vpm_,static_cast<const Base_traits*>(this)->equal_3_object() );}
   Collinear_3 collinear_3_object () const {return Collinear_3(vpm_,static_cast<const Base_traits*>(this)->collinear_3_object() );}
   Coplanar_3 coplanar_3_object () const {return Coplanar_3(vpm_,static_cast<const Base_traits*>(this)->coplanar_3_object() );}
@@ -232,7 +292,6 @@ public:
   }
 
 };
-
 }//end CGAL
 
 #endif // CGAL_VERTEX_TO_POINT_TRAITS_ADAPTER_3_H

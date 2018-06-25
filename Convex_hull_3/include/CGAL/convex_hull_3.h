@@ -831,6 +831,60 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
 
 }
 
+template <class P3_iterator, 
+          class Point_3_list ,
+          class Traits>
+void init_iterators(P3_iterator& minx, 
+                    P3_iterator& maxx, 
+                    P3_iterator& miny,
+                    const P3_iterator& start,
+                    const Point_3_list& points,
+                    const Traits& traits)
+{
+  typename Traits::Compare_x_3 compare_x_3 = traits.compare_x_3_object();
+  typename Traits::Compare_y_3 compare_y_3 = traits.compare_y_3_object();
+  typename Traits::Compare_z_3 compare_z_3 = traits.compare_z_3_object();
+  P3_iterator it = start;
+  for(; it != points.end(); ++it){
+    if(compare_x_3(*it, *minx) == CGAL::SMALLER) minx = it;
+    else if(compare_x_3(*it, *minx) == CGAL::EQUAL)
+    {
+      if(compare_y_3(*it, *minx) == CGAL::SMALLER) minx = it;
+      else if(compare_y_3(*it, *minx) == CGAL::EQUAL)
+      {
+        if(compare_z_3(*it, *minx) == CGAL::SMALLER) minx = it;
+      }
+    }
+  }
+  it = start;
+  for(; it != points.end(); ++it){
+    if(it == minx )
+      continue;
+    if(compare_x_3(*it, *maxx) == CGAL::LARGER) maxx = it;
+    else if(compare_x_3(*it, *maxx) == CGAL::EQUAL )
+    {
+      if(compare_y_3(*it, *maxx) == CGAL::LARGER) maxx = it;
+      else if(compare_y_3(*it, *maxx) == CGAL::EQUAL)
+      {
+        if(compare_z_3(*it, *maxx) == CGAL::LARGER) maxx = it;
+      }
+    }
+  }
+  it = start;
+  for(; it != points.end(); ++it){
+    if(it == minx || it == maxx)
+      continue;
+    if(compare_y_3(*it, *miny) == CGAL::SMALLER) miny = it;
+    else if(compare_y_3(*it, *miny) == CGAL::EQUAL)
+    {
+      if(compare_x_3(*it, *miny) == CGAL::LARGER) miny = it;
+      else if(compare_x_3(*it, *miny) == CGAL::EQUAL)
+      {
+        if(compare_z_3(*it, *miny) == CGAL::SMALLER) miny = it;
+      }
+    }
+  }
+}
 } } //namespace internal::Convex_hull_3
 
 template <class InputIterator, class Traits>
@@ -925,11 +979,8 @@ convex_hull_3(InputIterator first, InputIterator beyond,
   P3_iterator minx, maxx, miny, it;
   minx = maxx = miny = it = points.begin();
   ++it;
-  for(; it != points.end(); ++it){
-    if(it->x() < minx->x()) minx = it;
-    if(it->x() > maxx->x()) maxx = it;
-    if(it->y() < miny->y()) miny = it;
-  }
+  //take extreme points to begin with.
+  internal::Convex_hull_3::init_iterators(minx, maxx, miny, it, points, traits);
   if(! collinear(*minx, *maxx, *miny) ){
     internal::Convex_hull_3::ch_quickhull_polyhedron_3(points, minx, maxx, miny, P, traits);
   } else {
@@ -1016,10 +1067,21 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
     return;
   }
 
-  internal::Convex_hull_3::ch_quickhull_polyhedron_3(points, point1_it, point2_it, point3_it,
-    polyhedron, traits);
+  P3_iterator minx, maxx, miny, it;
+  minx = maxx = miny = it = points.begin();
+  ++it;
+  
+      
+  //take extreme points to begin with.
+  internal::Convex_hull_3::init_iterators(minx, maxx, miny, it, points, traits);
+  if(! collinear(*minx, *maxx, *miny) ){
+    internal::Convex_hull_3::ch_quickhull_polyhedron_3(points, minx, maxx, miny,
+      polyhedron, traits);
+  } else {//to do : this case leads to bad init a risk of non minimal convex hull
+    internal::Convex_hull_3::ch_quickhull_polyhedron_3(points, point1_it, point2_it, point3_it,
+                                                       polyhedron, traits);
+  }
 }
-
 
 template <class InputRange,
           class PointPropertyMap,

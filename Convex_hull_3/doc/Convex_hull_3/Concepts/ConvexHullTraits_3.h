@@ -102,6 +102,28 @@ returns true iff the signed distance from `q` to `p` is smaller
 than the signed distance from `r` to `p` 
 */ 
 typedef unspecified_type Less_signed_distance_to_plane_3; 
+  
+/*!
+Predicate object type that provides:
+Comparison_result operator()(const Kernel::Point_3&p, const Kernel::Point_3&q), 
+which compares the Cartesian \f$ x\f$-coordinates of points `p` and `q` 
+*/ 
+typedef unspecified_type Compare_x_3; 
+  
+  /*!
+  Predicate object type that provides:
+  Comparison_result operator()(const Kernel::Point_3&p, const Kernel::Point_3&q), 
+  which compares the Cartesian \f$ y\f$-coordinates of points `p` and `q` 
+  */ 
+  typedef unspecified_type Compare_y_3; 
+  
+  /*!
+  Predicate object type that provides:
+  Comparison_result operator()(const Kernel::Point_3&p, const Kernel::Point_3&q), 
+  which compares the Cartesian \f$ z\f$-coordinates of points `p` and `q` 
+  */ 
+  typedef unspecified_type Compare_z_3; 
+  
 
 /*!
 A traits class providing the requirements of the template parameter `Traits` of
