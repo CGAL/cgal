@@ -703,6 +703,7 @@ void Viewer::drawVisualHints()
     if (!d->painter->isActive())
       d->painter->begin(this);
     //So that the text is drawn in front of everything
+    glEnableVertexAttribArray(0);
     d->painter->beginNativePainting();
     glDisable(GL_DEPTH_TEST);
     d->painter->endNativePainting();
@@ -864,7 +865,9 @@ void Viewer::paintGL()
   }
   else
   {
+    glEnableVertexAttribArray(0);
     d->painter->beginNativePainting();
+    
     glClearColor(GLfloat(backgroundColor().redF()),
                  GLfloat(backgroundColor().greenF()),
                  GLfloat(backgroundColor().blueF()),
