@@ -26,7 +26,7 @@ template <typename TriangleMesh,
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
   typename GeomTraits
     = typename TriangleMesh::Traits>
-class L21_metric_vector_proxy {
+class L21_metric_plane_proxy {
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Vector_3 Vector_3;
   typedef typename GeomTraits::Point_3 Point_3;
@@ -55,7 +55,7 @@ public:
    * @param tm triangle mesh
    * @param vpmap vertex point map
    */
-  L21_metric_vector_proxy(const TriangleMesh &tm, const VertexPointMap &vpmap) {
+  L21_metric_plane_proxy(const TriangleMesh &tm, const VertexPointMap &vpmap) {
     GeomTraits traits;
     m_scalar_product_functor = traits.compute_scalar_product_3_object();
     m_sum_functor = traits.construct_sum_of_vectors_3_object();

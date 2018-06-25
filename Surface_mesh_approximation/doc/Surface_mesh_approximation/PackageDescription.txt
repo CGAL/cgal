@@ -38,7 +38,7 @@ and provides the list of parameters used in this package.
 - `CGAL::approximate_mesh()`
 
 ## Classes ##
-- `CGAL::VSA::L21_metric_vector_proxy`
+- `CGAL::VSA::L21_metric_plane_proxy`
 - `CGAL::VSA::L2_metric_plane_proxy`
 - `CGAL::Variational_shape_approximation`
 
