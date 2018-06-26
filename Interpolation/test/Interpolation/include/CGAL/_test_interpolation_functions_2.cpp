@@ -88,7 +88,7 @@ private:
 
 template <typename V, typename G>
 struct Gradient_function
-  : public CGAL::iterator<std::output_iterator_tag, void, void, void, void>
+  : public CGAL::cpp98::iterator<std::output_iterator_tag, void, void, void, void>
 {
 
   typedef V                                                 argument_type;
