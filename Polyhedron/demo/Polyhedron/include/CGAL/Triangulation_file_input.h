@@ -24,7 +24,9 @@
 #ifndef CGAL_TRIANGULATION_FILE_INPUT_3_H
 #define CGAL_TRIANGULATION_FILE_INPUT_3_H
 
-#include <CGAL/basic.h>
+#include <iostream>
+#include <CGAL/function.h>
+#include <CGAL/callback.h>
 
 namespace CGAL {
 
@@ -34,8 +36,11 @@ template <typename Tr1,
           typename Update_cell>
 std::istream& file_input(std::istream& is, Tr2 &tr,
                          Update_vertex update_vertex = Update_vertex(),
-                         Update_cell update_cell = Update_cell())
-  // reads
+                         Update_cell update_cell = Update_cell(),
+                         CGAL_CALLBACK_PARAM(cpp11::function<void(std::istream&,
+                                                                  const typename Tr2::Triangulation_data_structure&,
+                                                                  const char*)> call_back = nullptr))
+// reads
   // the dimension
   // the number of finite vertices
   // the non combinatorial information on vertices (point, etc)
@@ -78,12 +83,14 @@ std::istream& file_input(std::istream& is, Tr2 &tr,
       is.setstate(std::ios_base::failbit);
       return is;
     }
+    CGAL_CALLBACK(call_back, is, tr.tds(), 0);
   }
 
   std::vector< Cell_handle > C;
 
   std::size_t m;
-  tr.tds().read_cells(is, V, m, C);
+  tr.tds().read_cells(is, V, m, C,
+                      CGAL_CALLBACK_VAR(call_back));
 
   for (std::size_t j=0 ; j < m; j++) {
     Cell1 c;
@@ -92,9 +99,12 @@ std::istream& file_input(std::istream& is, Tr2 &tr,
       is.setstate(std::ios_base::failbit);
       return is;
     }
+    CGAL_CALLBACK(call_back, is, tr.tds(), 0);
   }
 
+  CGAL_CALLBACK(call_back, is, tr.tds(), "tr.is_valid()...");
   CGAL_triangulation_assertion( tr.is_valid(false) );
+  CGAL_CALLBACK(call_back, is, tr.tds(), " DONE\n");
   return is;
 }
 

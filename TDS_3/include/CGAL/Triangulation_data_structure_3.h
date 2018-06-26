@@ -41,6 +41,8 @@
 #include <boost/unordered_set.hpp>
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
+#include <CGAL/callback.h>
+#include <CGAL/function.h>
 
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/triangulation_assertions.h>
@@ -340,7 +342,10 @@ public:
 
   // not documented
   void read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
-                  std::size_t & m, std::vector< Cell_handle > &C);
+                  std::size_t & m, std::vector< Cell_handle > &C,
+                  cpp11::function<void(std::istream&,
+                                       const Tds&,
+                                       const char*)> call_back = nullptr);
   // not documented
   void print_cells(std::ostream& os,
                    const Unique_hash_map<Vertex_handle, std::size_t> &V ) const;
@@ -2273,7 +2278,10 @@ template <class Vb, class Cb, class Ct>
 void
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
-           std::size_t & m, std::vector< Cell_handle > &C)
+           std::size_t & m, std::vector< Cell_handle > &C,
+           cpp11::function<void(std::istream&,
+                                const Tds&,
+                                const char*)> call_back)
 {
   // creation of the cells and neighbors
   switch (dimension()) {
@@ -2300,6 +2308,7 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
             V[ik]->set_cell(c);
         }
         C[i] = c;
+        CGAL_CALLBACK(call_back, is, *this, 0);
       }
       for(std::size_t j = 0; j < m; j++) {
         Cell_handle c = C[j];
@@ -2311,6 +2320,7 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
               read(is, ik);
             c->set_neighbor(k, C[ik]);
         }
+        CGAL_CALLBACK(call_back, is, *this, 0);
       }
       break;
     }
@@ -2323,10 +2333,12 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
         Cell_handle c = create_face(V[i], Vertex_handle(), Vertex_handle());
         C[i] = c;
         V[i]->set_cell(c);
+        CGAL_CALLBACK(call_back, is, *this, 0);
       }
       for (int j=0; j < 2; j++) {
         Cell_handle c = C[j];
         c->set_neighbor(0, C[1-j]);
+        CGAL_CALLBACK(call_back, is, *this, 0);
       }
       break;
     }
@@ -2338,6 +2350,7 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
       Cell_handle c = create_face(V[0], Vertex_handle(), Vertex_handle());
       C[0] = c;
       V[0]->set_cell(c);
+      CGAL_CALLBACK(call_back, is, *this, 0);
       break;
     }
   }
