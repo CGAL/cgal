@@ -119,6 +119,79 @@ namespace CGAL
           typedef Has_on_positive_side_3_dual_point<R>      Has_on_positive_side_3;
           typedef Less_distance_to_point_3_dual_point<R>    Less_distance_to_point_3;
           typedef Less_signed_distance_to_plane_3_dual_point<R> Less_signed_distance_to_plane_3;
+          struct Compare_x_3
+          {
+            typedef CGAL::Comparison_result result_type;
+            CGAL::Comparison_result operator()(const Point_3& p,
+                                               const Point_3& q)
+            {
+              RT diffa = q.d() * p.a() - p.d() * q.a();
+              if (CGAL::is_positive(p.d() * q.d())) {
+                if(CGAL::is_positive(diffa))
+                  return CGAL::LARGER;
+                else if(CGAL::is_negative(diffa))
+                  return CGAL::SMALLER;
+              }
+              else
+              {
+                if(CGAL::is_positive(diffa))
+                  return CGAL::SMALLER;
+                else if(CGAL::is_negative(diffa))
+                  return CGAL::LARGER;
+              }
+              
+              return CGAL::EQUAL;
+            }
+          };
+          struct Compare_y_3
+          {
+            typedef CGAL::Comparison_result result_type;
+            CGAL::Comparison_result operator()(const Point_3& p,
+                                               const Point_3& q)
+            {
+              RT diffb = q.d() * p.b() - p.d() * q.b();
+              if (CGAL::is_positive(p.d() * q.d())) {
+                if(CGAL::is_positive(diffb))
+                  return CGAL::LARGER;
+                else if(CGAL::is_negative(diffb))
+                  return CGAL::SMALLER;
+              }
+              else
+              {
+                if(CGAL::is_positive(diffb))
+                  return CGAL::SMALLER;
+                else if(CGAL::is_negative(diffb))
+                  return CGAL::LARGER;
+              }
+              
+              return CGAL::EQUAL;
+            }
+          };
+          
+          struct Compare_z_3
+          {
+            typedef CGAL::Comparison_result result_type;
+            CGAL::Comparison_result operator()(const Point_3& p,
+                                               const Point_3& q)
+            {
+              RT diffc = q.d() * p.c() - p.d() * q.c();
+              if (CGAL::is_positive(p.d() * q.d())) {
+                if(CGAL::is_positive(diffc))
+                  return CGAL::LARGER;
+                else if(CGAL::is_negative(diffc))
+                  return CGAL::SMALLER;
+              }
+              else
+              {
+                if(CGAL::is_positive(diffc))
+                  return CGAL::SMALLER;
+                else if(CGAL::is_negative(diffc))
+                  return CGAL::LARGER;
+              }
+              
+              return CGAL::EQUAL;
+            }
+          };
 
           Construct_segment_3
               construct_segment_3_object() const
@@ -155,6 +228,18 @@ namespace CGAL
           Less_signed_distance_to_plane_3
               less_signed_distance_to_plane_3_object() const
               { return Less_signed_distance_to_plane_3(origin); }
+          
+          Compare_x_3
+          compare_x_3_object() const
+          { return Compare_x_3(); }
+          
+          Compare_y_3
+          compare_y_3_object() const
+          { return Compare_y_3(); }
+          
+          Compare_z_3
+          compare_z_3_object() const
+          { return Compare_z_3(); }
 
       };
 
