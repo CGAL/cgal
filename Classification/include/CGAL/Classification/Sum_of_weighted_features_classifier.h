@@ -311,7 +311,7 @@ public:
     std::vector<std::vector<std::size_t> > training_sets (m_labels.size());
     std::size_t nb_tot = 0;
     for (std::size_t i = 0; i < ground_truth.size(); ++ i)
-      if (ground_truth[i] != -1)
+      if (int(ground_truth[i]) != -1)
       {
         training_sets[std::size_t(ground_truth[i])].push_back (i);
         ++ nb_tot;

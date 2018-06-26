@@ -202,9 +202,9 @@ void Surface_mesh_item_classification::train
   BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
   {
     training[fd] = m_training[fd];
-    if (training[fd] != -1)
+    if (training[fd] != std::size_t(-1))
     {
-      nb_label[std::size_t(training[fd])] ++;
+      nb_label[training[fd]] ++;
       ++ nb_total;
     }
   }
