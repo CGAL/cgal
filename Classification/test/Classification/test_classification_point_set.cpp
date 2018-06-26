@@ -8,6 +8,8 @@
 #include <iostream>
 #include <string>
 
+#define CGAL_CLASSIFICATION_VERBOSE
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Classification.h>
 #include <CGAL/Point_set_3.h>
@@ -33,6 +35,7 @@ typedef Classification::Sum_of_weighted_features_classifier                     
 
 typedef Classification::Point_set_feature_generator<Kernel, Point_set, Point_map> Feature_generator;
 
+typedef Point_set::Vector_map Vector_map;
 typedef Point_set::Property_map<std::size_t> Size_t_map;
 typedef Point_set::Property_map<Classification::RGB_Color> Color_map;
 
@@ -41,13 +44,15 @@ typedef Point_set::Property_map<Classification::RGB_Color> Color_map;
 int main (int, char**)
 {
   Point_set pts;
-
-  pts.add_normal_map();
   
   bool map_added = false;
+  Vector_map normal_map;
   Size_t_map echo_map;
   Color_map color_map;
 
+  map_added = pts.add_normal_map();
+  assert (map_added);
+  normal_map = pts.normal_map();
   boost::tie (echo_map, map_added) = pts.add_property_map<std::size_t> ("echo");
   assert (map_added);
   boost::tie (color_map, map_added) = pts.add_property_map<Classification::RGB_Color> ("color");
@@ -70,14 +75,14 @@ int main (int, char**)
 
   Feature_set features;
   
+  Feature_generator generator (pts, pts.point_map(), 5);  // using 5 scales
+
 #ifdef CGAL_LINKED_WITH_TBB
   features.begin_parallel_additions();
 #endif
 
-  Feature_generator generator (pts, pts.point_map(), 5);  // using 5 scales
-
   generator.generate_point_based_features(features);
-  generator.generate_normal_based_features(features, pts.normal_map());
+  generator.generate_normal_based_features(features, normal_map);
   generator.generate_color_based_features(features, color_map);
   generator.generate_echo_based_features(features, echo_map);
 
