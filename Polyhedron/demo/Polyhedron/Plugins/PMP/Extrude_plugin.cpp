@@ -266,7 +266,7 @@ private:
     buffers[1].release();
     vaos[0]->release();
     program->release();
-    //once the buffers are fill, we can empty the vectors to optimize memory consumption
+    //once the buffers are filled, we can empty the vectors to optimize memory consumption
     nb_pos = vertices.size();
     _bbox = Bbox(0,0,0,0,0,0);
     for(std::size_t i = 0; i< vertices.size(); i+=3)
@@ -279,7 +279,7 @@ private:
     are_buffers_filled = true;
   }
   
-  mutable int nb_pos;
+  mutable std::size_t nb_pos;
   Vec center_;
   double length_;
   double tick;
