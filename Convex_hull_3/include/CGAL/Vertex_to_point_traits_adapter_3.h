@@ -21,6 +21,9 @@
 
 #ifndef CGAL_VERTEX_TO_POINT_TRAITS_ADAPTER_3_H
 #define CGAL_VERTEX_TO_POINT_TRAITS_ADAPTER_3_H
+
+#include <CGAL/license/Convex_hull_3.h>
+
 #include <boost/call_traits.hpp>
 #include <CGAL/property_map.h>
 #include <CGAL/tags.h>
