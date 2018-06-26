@@ -24,7 +24,7 @@
 #define CGAL_INTRINSIC_DELAUNAY_TRIANGULATION_3_H
 
 #include <CGAL/license/Heat_method_3.h>
-
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/disable_warnings.h>
 #include <set>
 
@@ -217,6 +217,8 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
             //if the edge itself is not locally delaunay, go back
             if(!(is_edge_locally_delaunay(ed))) // && !CGAL::is_boundary(ed,tm)) need to fix this
             {
+              if(!(is_border(ed,tm)))
+              {
                a++;
                change_edge_length(edge_i,ed);
                halfedge_descriptor hd = (halfedge(ed, tm));
@@ -252,6 +254,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
                  stack.push(next_edge);
                  marked_edges(next_edge_i,0) = 1;
                }
+             }
                //then go back to top of the stack
             }
           }
@@ -285,6 +288,8 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
              stack.push(ed);
            }
            loop_over_edges(stack, mark_edges);
+
+
 
          }
          //todo:: determine which can be const
