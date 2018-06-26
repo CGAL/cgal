@@ -1,4 +1,4 @@
-#define CGAL_APPROX_DECOMPOSITION_VERBOSE
+//#define CGAL_APPROX_DECOMPOSITION_VERBOSE
 
 #include <CGAL/approx_decomposition.h>
 #include <CGAL/Surface_mesh.h>
@@ -25,11 +25,9 @@ int main()
     Mesh mesh;
     
 //    std::ifstream input("data/cube.off");
-    std::ifstream input("data/sword.off");
-//    std::ifstream input("data/cactus.off");
-//    std::ifstream input("data/cheese.off");
-//    std::ifstream input("data/lion-head.off");
-//    std::ifstream input("data/elephant.off");
+    std::ifstream input("data/sword.off"); // 0.3
+//    std::ifstream input("data/cactus.off"); // 0.05
+//    std::ifstream input("data/elephant.off"); // 0.02
     
     if (!input || !(input >> mesh))
     {
@@ -44,14 +42,14 @@ int main()
     }
 
     // create property map for cluster-ids
-    Mesh::Property_map<face_descriptor, int> facet_property_map;
-    facet_property_map = mesh.add_property_map<face_descriptor, int>("f:cluster").first;
+    typedef Mesh::Property_map<face_descriptor, int> Facet_property_map;
+    Facet_property_map facet_property_map = mesh.add_property_map<face_descriptor, int>("f:cluster").first;
 
     // decompose mesh
     auto start = std::chrono::system_clock::now();
 
-    std::size_t clusters_num = CGAL::convex_decomposition(mesh, facet_property_map, 0.3, 1);
-
+    std::size_t clusters_num = CGAL::convex_decomposition<Mesh, Facet_property_map, CGAL::Parallel_tag>(mesh, facet_property_map, 0.3, 1);
+ 
     auto end = std::chrono::system_clock::now();
     std::cout << "Elapsed time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000. << " seconds" << std::endl;
 

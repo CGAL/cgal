@@ -9,11 +9,12 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <boost/foreach.hpp>
+#include <boost/unordered_set.hpp>
+#include <tbb/parallel_for_each.h>
 
 #include <fstream>
 #include <iostream>
 #include <vector>
-#include <unordered_set>
 #include <algorithm>
 
 namespace CGAL
@@ -21,9 +22,13 @@ namespace CGAL
 namespace internal
 {
 
-    template <class TriangleMesh, class GeomTraits, class Mesh = TriangleMesh>
+    template <class TriangleMesh, class GeomTraits, class ConcurrencyTag, class Mesh = TriangleMesh>
     class Concavity
     {
+        // predefined structs
+        struct Intersection_functor;
+
+        // typedefs
         typedef typename GeomTraits::Point_3 Point_3;
         typedef typename GeomTraits::Vector_3 Vector_3;
         typedef typename GeomTraits::Ray_3 Ray_3;
@@ -56,7 +61,7 @@ namespace internal
         {
             Filtered_graph filtered_mesh(m_mesh, cluster_id, facet_ids);
 
-            Concavity<Filtered_graph, GeomTraits, TriangleMesh> concavity(filtered_mesh, m_traits);
+            Concavity<Filtered_graph, GeomTraits, ConcurrencyTag, TriangleMesh> concavity(filtered_mesh, m_traits);
             return concavity.compute();
         }
 
@@ -90,7 +95,7 @@ namespace internal
          */
         double compute(const std::vector<face_descriptor>& faces, const Mesh& conv_hull)
         {
-            std::unordered_set<vertex_descriptor> pts;
+            boost::unordered_set<vertex_descriptor> pts;
 
             BOOST_FOREACH(face_descriptor face, faces)
             {
@@ -116,22 +121,51 @@ namespace internal
             // construct AABB for fast computations of intersections between ray and convex hull
             AABB_tree tree(faces(conv_hull).begin(), faces(conv_hull).end(), conv_hull);
 
+            // compute intersections and select the largest projection length
             double result = 0;
 
-            // compute intersections and select the largest segment length
-            BOOST_FOREACH(vertex_descriptor vert, verts)
+            // functor that computes intersection, its projection length from a vertex and maximizes the result variable
+            struct Intersection_functor
             {
-                Point_3 origin = get(CGAL::vertex_point, m_mesh)[vert];
-                Ray_3 ray(origin, m_normals_map[vert]);
-                
-                Ray_intersection intersection = tree.first_intersection(ray);
-                if (intersection)
+                Intersection_functor(const TriangleMesh& mesh, const Normals_map& normals_map, const AABB_tree& tree, double& result)
+                : m_mesh(mesh), m_normals_map(normals_map), m_tree(tree), m_result(result) {}
+
+                void operator() (const vertex_descriptor& vert) const
                 {
-                    const Point_3* p =  boost::get<Point_3>(&(intersection->first));
-                    if (p)
+                    Point_3 origin = get(CGAL::vertex_point, m_mesh)[vert];
+                    Ray_3 ray(origin, m_normals_map.at(vert));
+                    
+                    Ray_intersection intersection = m_tree.first_intersection(ray);
+                    if (intersection)
                     {
-                        result = std::max(result, CGAL::squared_distance(origin, *p));
+                        const Point_3* intersection_point =  boost::get<Point_3>(&(intersection->first));
+                        if (intersection_point)
+                        {
+                            m_result = std::max(m_result, CGAL::squared_distance(origin, *intersection_point));
+                        }
                     }
+                }
+
+            private:
+                const TriangleMesh& m_mesh;
+                const Normals_map& m_normals_map;
+                const AABB_tree& m_tree;
+                double& m_result;
+            };
+
+            Intersection_functor intersection_functor(m_mesh, m_normals_map, tree, result);
+
+#ifdef CGAL_LINKED_WITH_TBB
+            if (boost::is_convertible<ConcurrencyTag, Parallel_tag>::value)
+            {
+                tbb::parallel_for_each(verts.first, verts.second, intersection_functor);
+            }
+            else
+#endif
+            {
+                BOOST_FOREACH(vertex_descriptor vert, verts)
+                {
+                    intersection_functor(vert);
                 }
             }
 
@@ -147,13 +181,12 @@ namespace internal
 
         void compute_normals()
         {
-            if (m_normals_computed) return; // if normals are computed, then skip
+            if (m_normals_computed) return; // if the normals are already computed, then skip
 
             CGAL::Polygon_mesh_processing::compute_vertex_normals(m_mesh, boost::associative_property_map<Normals_map>(m_normals_map));
             m_normals_computed = true;
         }
     };
-
 }
 }
 

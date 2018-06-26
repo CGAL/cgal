@@ -19,11 +19,13 @@
 #include <boost/math/constants/constants.hpp>
 #include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
+#include <boost/move/move.hpp>
+#include <boost/unordered_map.hpp>
+#include <tbb/parallel_for_each.h>
 
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-#include <map>
 #include <vector>
 #include <utility>
 
@@ -35,7 +37,8 @@ namespace internal
 {
 
 template < class TriangleMesh,
-           class GeomTraits
+           class GeomTraits,
+           class ConcurrencyTag
            >
 class Approx_decomposition
 {
@@ -190,7 +193,7 @@ private:
     
     std::set<graph_edge_descriptor, CandidateComparator> m_candidates; // ordered by decimation cost list of edges
 
-    Concavity<TriangleMesh, GeomTraits> m_concavity_calc; // concavity calculator that computes concavity values for any subset of faces of the input mesh
+    Concavity<TriangleMesh, GeomTraits, ConcurrencyTag> m_concavity_calc; // concavity calculator that computes concavity values for any subset of faces of the input mesh
 
     // a predicate for border edges removal
     template <class Mesh>
@@ -226,7 +229,7 @@ private:
      */
     void setup_graph(const Filtered_dual_graph& dual)
     {
-        std::unordered_map<face_descriptor, graph_vertex_descriptor> face_graph_map; // maps faces of the input mesh to vetices of the adjacency list 
+        boost::unordered_map<face_descriptor, graph_vertex_descriptor> face_graph_map; // maps faces of the input mesh to vetices of the adjacency list 
         
         // extract property maps of the adjacency list
         m_cluster_map = boost::get(cluster_props_t(), m_graph);
@@ -272,8 +275,8 @@ private:
 
         graph_vertex_descriptor vert_1 = source(edge, m_graph), vert_2 = target(edge, m_graph);
 
-        Cluster_properties& cluster_1_props = m_cluster_map[vert_1];
-        Cluster_properties& cluster_2_props = m_cluster_map[vert_2];
+        const Cluster_properties& cluster_1_props = m_cluster_map[vert_1];
+        const Cluster_properties& cluster_2_props = m_cluster_map[vert_2];
 
         decimation_props.new_cluster_props.id = -1;
 
@@ -312,7 +315,7 @@ private:
         }
         else
         {
-            decimation_props.new_cluster_props.conv_hull_pts = std::move(common_hull_pts);
+            decimation_props.new_cluster_props.conv_hull_pts = boost::move(common_hull_pts);
             decimation_props.new_cluster_props.concavity = 0;
         }
 
@@ -365,7 +368,7 @@ private:
             add_edge(vert_1, vert, m_graph);
         }
 
-        // remove edges are going to be removed from candidates
+        // remove edges from candidates that are going to be removed
         BOOST_FOREACH(graph_edge_descriptor edge, boost::out_edges(vert_2, m_graph))
         {
             remove_candidate(edge);
@@ -375,21 +378,60 @@ private:
         clear_vertex(vert_2, m_graph);
         remove_vertex(vert_2, m_graph);
 
-        // update decimation costs of all modified edges (only adjacent edges to the first vertex)
+        // remove candidate edges with old value of decimation cost
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
         int cnt = 0;
 #endif
         BOOST_FOREACH(graph_edge_descriptor edge, boost::out_edges(vert_1, m_graph))
         {
-            remove_candidate(edge); // remove candidate with old value of decimation cost
-
-            update_edge(edge, concavity_threshold, alpha_factor); // recomputedecimation cost
-            
-            add_candidate(edge, concavity_thresholdi); // add candidate edge with new value of decimation cost
+            remove_candidate(edge); 
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
-            ++cnt;
+                ++cnt;
 #endif
         }
+
+        // update decimation costs of all modified edges (only adjacent edges to the first vertex)
+
+#ifdef CGAL_LINKED_WITH_TBB
+
+        // functor that calls update_edge method
+        struct Update_edge_functor
+        {
+            Update_edge_functor(Approx_decomposition& alg, double& concavity_threshold, double& alpha_factor)
+            : m_alg(alg), m_concavity_threshold(concavity_threshold), m_alpha_factor(alpha_factor) {}
+
+            void operator() (const graph_edge_descriptor& edge) const
+            {
+                m_alg.update_edge(edge, m_concavity_threshold, m_alpha_factor);
+            }
+
+        private:
+            Approx_decomposition& m_alg;
+            double& m_concavity_threshold;
+            double& m_alpha_factor;
+        };
+
+        if (boost::is_convertible<ConcurrencyTag, Parallel_tag>::value)
+        {
+            Update_edge_functor update_functor(*this, concavity_threshold, alpha_factor);
+            
+            tbb::parallel_for_each(boost::out_edges(vert_1, m_graph).first, boost::out_edges(vert_1, m_graph).second, update_functor);
+        }
+        else
+#endif
+        {
+            BOOST_FOREACH(graph_edge_descriptor edge, boost::out_edges(vert_1, m_graph))
+            {
+                update_edge(edge, concavity_threshold, alpha_factor);
+            }
+        }
+
+        // add candidate edges with new value of decimation cost
+        BOOST_FOREACH(graph_edge_descriptor edge, boost::out_edges(vert_1, m_graph))
+        {
+            add_candidate(edge, concavity_threshold);
+        }
+        
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
         std::cout << "Updated edges: " << cnt << std::endl;
 #endif
@@ -455,12 +497,14 @@ private:
      */
     void add_candidate(graph_edge_descriptor edge, double concavity_threshold)
     {
+        // if concavity value of the produced cluster doesn't satisfy the threshold then mark the edge as invalid (for further removal)
         if (m_decimation_map[edge].new_cluster_props.concavity > concavity_threshold)
         {
             m_invalid_edges.push_back(edge);
             return;
         }
         
+        // otherwise the edge is a candidate for decimation operator
         m_candidates.insert(edge);
     }
 

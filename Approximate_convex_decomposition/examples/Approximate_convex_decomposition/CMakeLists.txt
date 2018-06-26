@@ -3,7 +3,6 @@
 
 project( Approximate_convex_decomposition )
 
-
 cmake_minimum_required(VERSION 2.8.11)
 
 # CGAL and its components
@@ -29,6 +28,17 @@ if ( NOT Boost_FOUND )
 
   return()  
 
+endif()
+
+# Activate concurrency option
+option(ACTIVATE_CONCURRENCY "Enable concurrency" ON)
+if ( ACTIVATE_CONCURRENCY )
+    find_package( TBB REQUIRED )
+    
+    if ( TBB_FOUND )
+        include(${TBB_USE_FILE})
+        list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
+    endif()
 endif()
 
 # include for local directory
