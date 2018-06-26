@@ -141,7 +141,10 @@ public:
   //!
   //! \name Setters for the shaders parameters.
   //!@{
+  
+  //! Setter for the "selected" uniform parameter.
   void setSelected(bool);
+  //! Setter for the "color" parameter.
   void setColor(QColor);
   //!@}
 protected:
@@ -200,7 +203,10 @@ protected:
   std::size_t getCenterSize()const;
   //! \name Getters for the shaders parameters.
   //!@{
+  
+  //! getter for the "selected" parameter
   bool isSelected()const;
+  //! getter for the "color" parameter
   QColor getColor()const;
   //! @}
   //!

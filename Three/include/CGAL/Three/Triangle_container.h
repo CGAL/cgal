@@ -89,12 +89,17 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
   /// If the shaders of this program doesn't need one, you can ignore it.
   /// The others should be filled at each `draw()` from the item.
   ///@{
+  //! getter for the "shrink_factor" parameter
   float getShrinkFactor();
+  //! getter for the "plane" parameter
   QVector4D getPlane();
+  //! getter for the "alpha" parameter
   float getAlpha();
-
+//! setter for the "shrink_factor" parameter
   void setShrinkFactor(const float&);
+  //! setter for the "plane" parameter
   void setPlane       (const QVector4D&);
+  //! setter for the "alpha" parameter
   void setAlpha       (const float&);
   ///@}
 

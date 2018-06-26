@@ -87,9 +87,12 @@ struct DEMO_FRAMEWORK_EXPORT Point_container :public Primitive_container
   /// If the shaders of this program doesn't need one, you can ignore it.
   /// The others should be filled at each `draw()` from the item.
   ///@{
+  
+  //! getter for the "plane" parameter
   QVector4D getPlane()const;
+  //! getter for the "f_matrix" parameter
   QMatrix4x4 getFrameMatrix()const;
-
+//! setter for the "f_matrix" parameter
   void setFrameMatrix(const QMatrix4x4&);
   ///@}
 
