@@ -294,7 +294,7 @@ istream& operator>>(istream& is, Class c);
 //! \brief `read_point_WKT()` fills a `Point` from a  WKT stream. The first line starting with POINT 
 //! in the stream will be used. 
 //! 
-//! \tparam Point must inherit from `CGAL::Point_2` or `CGAL::Point_3`.
+//! \tparam Point can be a `CGAL::Point_2` or `CGAL::Point_3`.
 //! 
 //! \see `CGAL::Point_2`
 //! \see `CGAL::Point_3`
@@ -344,7 +344,7 @@ read_multi_linestring_WKT( std::istream& in,
 //! \brief `read_polygon_WKT()` fills `Polygon` from a WKT stream.
 //! The first line starting with POLYGON in the stream will be used.
 //! 
-//! \tparam Polygon must inherit `CGAL::General_polygon_with_holes_2`.
+//! \tparam Polygon is a `CGAL::General_polygon_with_holes_2`.
 //! 
 //! \see `CGAL::General_polygon_with_holes_2`
 template<typename Polygon>
@@ -366,7 +366,7 @@ read_multi_polygon_WKT( std::istream& in,
 
 //! \ingroup PkgIOstreams
 //! \brief `write_point_WKT()` writes `point` into a WKT stream.
-//! \tparam Point must inherit from `CGAL::Point_2`
+//! \tparam Point is a `CGAL::Point_2`
 //! \see `CGAL::Point_2`
 template<typename Point>
 std::ostream&
@@ -421,10 +421,9 @@ template<typename MultiLineString>
 std::ostream&
 write_multi_linestring_WKT( std::ostream& out,
                             MultiLineString& mls );
-}
 
 //! \ingroup PkgIOstreams
-//! \brief `read_WKT()` reads the content of a WKT stream and fills 
+//!  reads the content of a WKT stream and fills 
 //! `points`, `polylines` and `polygons` with all the POINT, MULTIPOINT, 
 //! LINESTRING, MULTILINESTRING, POLYGON and MULTIPOLYGON it finds in `input`.
 //! \tparam MultiPoint must be a model of `RandomAccessRange` of `CGAL::Point_2` or `CGAL::Point_3`.
@@ -439,3 +438,4 @@ read_WKT( std::istream& input,
                         MultiPoint& points,   
                         MultiLineString& polylines,
                         MultiPolygon& polygons);
+}
