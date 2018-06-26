@@ -187,6 +187,7 @@ struct Is_cartesian_kernel< Convex_hull_traits_3<Kernel, PolygonMesh, Tag_true> 
 
 // Predicate internally used as a wrapper around has_on_positive_side
 // We provide a partial specialization restricted to the case of CGAL Cartesian Kernels with inexact constructions below
+//template <class Traits,class Tag_use_advanced_filtering=typename Use_advanced_filtering<Traits>::type >
 template <class Traits, class Is_CK = Is_cartesian_kernel<Traits> >
 class Is_on_positive_side_of_plane_3{
   typedef typename Traits::Point_3 Point_3;
