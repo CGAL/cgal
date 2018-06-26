@@ -36,8 +36,8 @@ namespace CGAL {
 // Functor class for accessing the function values/gradients
 template< class Map >
 struct Data_access
-  : public CGAL::unary_function<typename Map::key_type,
-                                std::pair<typename Map::mapped_type, bool> >
+  : public CGAL::cpp98::unary_function<typename Map::key_type,
+                                       std::pair<typename Map::mapped_type, bool> >
 {
   typedef typename Map::mapped_type   Data_type;
   typedef typename Map::key_type      Key_type;

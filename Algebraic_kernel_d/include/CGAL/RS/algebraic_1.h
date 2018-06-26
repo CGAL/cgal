@@ -259,39 +259,39 @@ public INTERN_RET::Real_embeddable_traits_base<
                                                         Base;
         typedef typename Base::Compare                  Compare;
 
-        class Sgn:public CGAL::unary_function<Type,CGAL::Sign>{
+        class Sgn:public CGAL::cpp98::unary_function<Type,CGAL::Sign>{
                 public:
                 CGAL::Sign operator()(const Type &a)const{
                         return Compare()(a,Type(0));
                 }
         };
 
-        class To_double:public CGAL::unary_function<Type,double>{
+        class To_double:public CGAL::cpp98::unary_function<Type,double>{
                 public:
                 double operator()(const Type &a)const{return a.to_double();}
         };
 
         class To_interval:
-        public CGAL::unary_function<Type,std::pair<double,double> >{
+        public CGAL::cpp98::unary_function<Type,std::pair<double,double> >{
                 public:
                 std::pair<double,double> operator()(const Type &a)const{
                         return a.to_interval();
                 }
         };
 
-        class Is_zero:public CGAL::unary_function<Type,Boolean>{
+        class Is_zero:public CGAL::cpp98::unary_function<Type,Boolean>{
                 public:
                 bool operator()(const Type &a)const{
                         return Sgn()(a)==CGAL::ZERO;
                 }
         };
 
-        class Is_finite:public CGAL::unary_function<Type,Boolean>{
+        class Is_finite:public CGAL::cpp98::unary_function<Type,Boolean>{
                 public:
                 bool operator()(const Type&)const{return true;}
         };
 
-        class Abs:public CGAL::unary_function<Type,Type>{
+        class Abs:public CGAL::cpp98::unary_function<Type,Type>{
                 public:
                 Type operator()(const Type &a)const{
                         return Sgn()(a)==CGAL::NEGATIVE?-a:a;

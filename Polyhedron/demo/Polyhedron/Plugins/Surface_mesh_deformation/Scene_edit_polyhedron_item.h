@@ -19,9 +19,9 @@
 #include <iostream>
 #include <fstream>
 
-#include <QGLViewer/manipulatedFrame.h>
-#include <QGLViewer/qglviewer.h>
-#include <QGLViewer/camera.h>
+#include <CGAL/Qt/manipulatedFrame.h>
+#include <CGAL/Qt/qglviewer.h>
+#include <CGAL/Qt/camera.h>
 
 #include "ui_Deform_mesh.h"
 
@@ -162,9 +162,6 @@ typedef CGAL::Surface_mesh_deformation<SMesh, CGAL::Default, CGAL::Default, CGAL
   ,CGAL::Default, CGAL::Default, CGAL::Default,
   Array_based_vertex_point_map<SMesh> > Deform_sm_mesh;
 
-typedef Deform_mesh::Point  Point;
-typedef Deform_sm_mesh::Point  SM_Point;
-
 /// For storing associated data with a group of control vertices
 template<typename Mesh>
 class Control_vertices_data
@@ -176,16 +173,16 @@ public:
     Array_based_vertex_point_map<Mesh> > M_Deform_mesh;
 
   std::vector<mesh_vd> ctrl_vertices_group;
-  qglviewer::ManipulatedFrame* frame;  // manframe assoc with a group of control vertices
-  qglviewer::Vec frame_initial_center; // initial center of frame
+  CGAL::qglviewer::ManipulatedFrame* frame;  // manframe assoc with a group of control vertices
+  CGAL::qglviewer::Vec frame_initial_center; // initial center of frame
   CGAL::Three::Scene_interface::Bbox bbox;          // bbox of control vertices inside group
-  qglviewer::Vec rot_direction;        // vector for constraint rotation
+  CGAL::qglviewer::Vec rot_direction;        // vector for constraint rotation
 private:
-  std::vector<qglviewer::Vec> initial_positions;
+  std::vector<CGAL::qglviewer::Vec> initial_positions;
   M_Deform_mesh* deform_mesh;
 
 public:
-  Control_vertices_data(M_Deform_mesh* deform_mesh, qglviewer::ManipulatedFrame* frame = 0)
+  Control_vertices_data(M_Deform_mesh* deform_mesh, CGAL::qglviewer::ManipulatedFrame* frame = 0)
     : frame(frame), bbox(0,0,0,0,0,0), rot_direction(0.,0.,1.), deform_mesh(deform_mesh)
   { }
 
@@ -204,30 +201,30 @@ public:
 
     bool oldState = frame->blockSignals(true); // do not let it Q_EMIT modified, which will cause a deformation
                                   // but we are just adjusting the center so it does not require a deformation
-    frame->setOrientation(qglviewer::Quaternion());
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    frame->setOrientation(CGAL::qglviewer::Quaternion());
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     frame->setPosition(frame_initial_center+offset);
     frame->blockSignals(oldState);
   }
   void set_target_positions()
   {
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     typename std::vector<mesh_vd>::iterator hb = ctrl_vertices_group.begin();
-    for( std::vector<qglviewer::Vec>::iterator it = initial_positions.begin(); it != initial_positions.end(); ++it, ++hb)
+    for( std::vector<CGAL::qglviewer::Vec>::iterator it = initial_positions.begin(); it != initial_positions.end(); ++it, ++hb)
     {
-      qglviewer::Vec dif_from_initial_center = (*it) - frame_initial_center;
-      qglviewer::Vec rotated = frame->orientation() * dif_from_initial_center;
-      qglviewer::Vec rotated_and_translated = rotated + frame->position();
+      CGAL::qglviewer::Vec dif_from_initial_center = (*it) - frame_initial_center;
+      CGAL::qglviewer::Vec rotated = frame->orientation() * dif_from_initial_center;
+      CGAL::qglviewer::Vec rotated_and_translated = rotated + frame->position();
 
       deform_mesh->set_target_position(*hb, typename M_Deform_mesh::Point(rotated_and_translated.x-offset.x, rotated_and_translated.y-offset.y, rotated_and_translated.z-offset.z) );
     }
   }
-  qglviewer::Vec calculate_initial_center() const
+  CGAL::qglviewer::Vec calculate_initial_center() const
   {
-    qglviewer::Vec center_acc(0, 0, 0);
+    CGAL::qglviewer::Vec center_acc(0, 0, 0);
     if (initial_positions.empty()) { return center_acc; }
 
-    for (std::vector<qglviewer::Vec>::const_iterator it = initial_positions.begin();
+    for (std::vector<CGAL::qglviewer::Vec>::const_iterator it = initial_positions.begin();
          it != initial_positions.end(); ++it)
     {
       center_acc += (*it);
@@ -245,7 +242,7 @@ private:
     {
 
       typename M_Deform_mesh::Point p = get(pmap, (*hb));
-      qglviewer::Vec point(p.x(), p.y(), p.z() );
+      CGAL::qglviewer::Vec point(p.x(), p.y(), p.z() );
       initial_positions.push_back(point);
     }
   }
@@ -253,12 +250,12 @@ private:
   {    
     if(initial_positions.empty()) {return CGAL::Three::Scene_interface::Bbox(0,0,0,0,0,0); }
 
-    const qglviewer::Vec& p_i = *(initial_positions.begin());
+    const CGAL::qglviewer::Vec& p_i = *(initial_positions.begin());
     CGAL::Three::Scene_interface::Bbox bbox(p_i.x, p_i.y, p_i.z, p_i.x, p_i.y, p_i.z);
 
-    for(std::vector<qglviewer::Vec>::iterator it = initial_positions.begin(); it != initial_positions.end(); ++it)
+    for(std::vector<CGAL::qglviewer::Vec>::iterator it = initial_positions.begin(); it != initial_positions.end(); ++it)
     {
-      const qglviewer::Vec& p_i = (*it);
+      const CGAL::qglviewer::Vec& p_i = (*it);
       CGAL::Three::Scene_interface::Bbox bbox_it(p_i.x, p_i.y, p_i.z, p_i.x, p_i.y, p_i.z);
       bbox = bbox + bbox_it;
     }
@@ -323,7 +320,7 @@ public:
   void draw_bbox(const CGAL::Three::Scene_interface::Bbox&) const;
   void draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface *viewer) const;
   template<typename Mesh>
-  void draw_frame_plane(QGLViewer *, Mesh *mesh) const;
+  void draw_frame_plane(CGAL::QGLViewer *, Mesh *mesh) const;
 
   // Get wrapped polyhedron
   Polyhedron*       polyhedron();

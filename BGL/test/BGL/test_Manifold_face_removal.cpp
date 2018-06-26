@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/Surface_mesh/IO.h>
 
 #include <boost/unordered_map.hpp>
@@ -56,7 +55,7 @@ int main()
   }
 
   assert(index == 25);
-  assert(is_valid(sm));
+  assert(is_valid_polygon_mesh(sm));
   return 0;
 }
 

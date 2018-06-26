@@ -26,7 +26,19 @@
 #include <CGAL/config.h>
 #include <stdexcept>
 #include <string>
+
+// Address the warning C4003: not enough actual parameters for macro 'BOOST_PP_SEQ_DETAIL_IS_NOT_EMPTY'
+// lexical_cast.hpp includes files from boost/preprocessor
+// This concerns boost 1_67_0
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable: 4003)
+#endif
 #include <boost/lexical_cast.hpp> 
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 
 namespace CGAL {
 

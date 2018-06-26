@@ -16,8 +16,9 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Oren Nechushtan <theoren@math.tau.ac.il>
-//                 Iddo Hanniel <hanniel@math.tau.ac.il>
+// Author(s): Oren Nechushtan <theoren@math.tau.ac.il>
+//            Iddo Hanniel <hanniel@math.tau.ac.il>
+//            Efi Fogel <efifogel@gmail.com>
 
 #ifndef CGAL_TRAPEZOIDAL_DECOMPOSITION_2_H
 #define CGAL_TRAPEZOIDAL_DECOMPOSITION_2_H
@@ -617,27 +618,34 @@ public:
     }
   };
 
-  class set_cw_he_visitor : public boost::static_visitor<void>
-  {
+  /*! A visitor to set the cw halfedge of a vertex node.
+   */
+  class set_cw_he_visitor : public boost::static_visitor<void> {
   public:
-    set_cw_he_visitor (Halfedge_const_handle he) : m_cw_he(he) {}
+    set_cw_he_visitor(Halfedge_const_handle he) : m_cw_he(he) {}
 
-    void operator()(Td_active_vertex& t) const
-    {
-      t.set_cw_he(m_cw_he);
-    }
+    void operator()(Td_active_vertex& t) const { t.set_cw_he(m_cw_he); }
+
     void operator()(Td_active_fictitious_vertex& t) const
-    {
-      t.set_cw_he(m_cw_he);
-    }
+    { t.set_cw_he(m_cw_he); }
 
-    template < typename T >
-    void operator()(T& /*t*/) const
-    {
-      CGAL_assertion(false);
-    }
+    template <typename T>
+    void operator()(T& /*t*/) const { CGAL_assertion(false); }
+
   private:
     Halfedge_const_handle m_cw_he;
+  };
+
+  /*! A visitor to reset the cw halfedge of a vertex node.
+   */
+  class reset_cw_he_visitor : public boost::static_visitor<void> {
+  public:
+    void operator()(Td_active_vertex& t) const { t.reset_cw_he(); }
+
+    void operator()(Td_active_fictitious_vertex& t) const { t.reset_cw_he(); }
+
+    template <typename T>
+    void operator()(T& /*t*/) const { CGAL_assertion(false); }
   };
 
   class dag_node_visitor : public boost::static_visitor<Dag_node*>
@@ -1150,6 +1158,11 @@ protected:
   void update_vtx_cw_he_after_merge(const X_monotone_curve_2& old_cv,
                                     Halfedge_const_handle new_he,
                                     Td_map_item& vtx_item);
+
+  /*! Update the cw halfedge of an active vertex after a halfedge is removed.
+   */
+  void update_vtx_cw_he_after_remove(Halfedge_const_handle old_he,
+                                     Td_map_item& vtx_item);
 
   ////MICHAL: currently not in use since split is implemented as: remove and insert two
   //void set_trp_params_after_split_halfedge_update(Halfedge_const_handle new_he,
@@ -1758,22 +1771,20 @@ public:
 #endif
 
     Halfedge_container container;
-
 #ifdef CGAL_TD_DEBUG
     unsigned long rep = Halfedge_filter(container, &dag_root());
+#else
+    Halfedge_filter(container, &dag_root());
 #endif
-
     clear();
 
     //// initialize container to point to curves in Td_map_item Tree
-    //if (rep>0)
-    //{
+    //if (rep>0) {
     //  bool o = set_with_guarantees(false);
     //  typename std::vector<Halfedge_const_handle>::iterator
     //    it = container.begin(),
     //    it_end = container.end();
-    //  while(it!=it_end)
-    //  {
+    //  while (it != it_end) {
     //    insert(*it);
     //    ++it;
     //  }
@@ -1787,8 +1798,7 @@ public:
 #ifdef CGAL_TD_DEBUG
     CGAL_assertion(is_valid());
     unsigned long sz = number_of_curves();
-    if (sz != rep)
-    {
+    if (sz != rep) {
       std::cerr << "\nnumber_of_curves()=" << sz;
       std::cerr << "\nrepresentatives.size()=" << rep;
       CGAL_assertion(number_of_curves() == rep);
@@ -1832,46 +1842,37 @@ public:
   //  return container.size();
   //}
 
+  /* Return a container for all active curves.
+   */
   template <typename Halfedge_container>
   unsigned long Halfedge_filter(Halfedge_container& container,
                                 const Dag_node* ds) const
-  /* Return a container for all active curves */
   {
     unsigned long sz = number_of_curves();
     std::list<Td_map_item> representatives;
-    //X_trapezoid_list representatives;
     ds->filter(representatives, Td_active_edge_item(*traits));
 
 #ifndef CGAL_TD_DEBUG
-
-    CGAL_warning(sz==representatives.size());
-
+    CGAL_warning(sz == representatives.size());
 #else
 
-    unsigned long rep=representatives.size();
-    if (sz != rep)
-    {
+    unsigned long rep = representatives.size();
+    if (sz != rep) {
       std::cerr << "\nnumber_of_curves()=" << sz;
       std::cerr << "\nrepresentatives.size()=" << rep;
       CGAL_assertion(number_of_curves()==representatives.size());
     }
-
 #endif
 
-    if (sz > 0)
-    {
-      typename std::list<Td_map_item>::iterator it = representatives.begin(),
-        it_end = representatives.end();
-      //typename X_trapezoid_list::iterator it = representatives.begin(),
-      //  it_end = representatives.end();
-      while(!(it==it_end))
+    if (sz > 0) {
+      for (typename std::list<Td_map_item>::iterator it =
+             representatives.begin(); it != representatives.end(); ++it)
       {
-        Td_active_edge e (boost::get<Td_active_edge>(*it));
+        Td_active_edge e(boost::get<Td_active_edge>(*it));
         container.push_back(e.halfedge()); //it represents an active trapezoid
-        ++it;
       }
     }
-    if(! container.empty()) {
+    if (! container.empty()) {
       CGAL::cpp98::random_shuffle(container.begin(),container.end());
     }
     return sz;
@@ -2010,7 +2011,6 @@ public:
                                          true, *m_dag_root, *m_dag_root);
   }
 
-
 protected:
 
   //Trapezoidal Decomposition data members
@@ -2138,7 +2138,6 @@ private:
 
 #endif
 
-
   void print_cv_data(const X_monotone_curve_2& cv,
                      std::ostream& out = std::cout) const
   {
@@ -2205,7 +2204,6 @@ private:
 
     }
   }
-
 
   void print_dag_addresses(const Dag_node& curr) const
   {

@@ -1,12 +1,12 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <iostream>
 #include <algorithm>
 #include <vector>
 #include <cstdlib>
 #include <cctype>
 #include <cmath>
+#include <fstream>
 
 typedef CGAL::Simple_cartesian<double>                              Kernel;
 typedef Kernel::Vector_3                                     Vector;
@@ -173,21 +173,22 @@ void subdiv_border( Polyhedron& P) {
 using namespace std;
 
 int main( int argc, char* argv[]) {
-    if ( argc > 2 || (argc == 2 && ! isdigit( argv[1][0]))) {
-        cerr << "Usage: " << argv[0] << " [<n>]" << endl;
-        cerr << "    subdivides <n> times the polyhedron read from stdin."
+    if ( argc > 3 || (argc == 3 && ! isdigit( argv[2][0]))) {
+        cerr << "Usage: " << argv[0] << " [offfile] [<n>]]" << endl;
+        cerr << "    subdivides <n> times the polyhedron read from offfile."
              << endl;
         exit(1);
     }
     int n = 1;
-    if ( argc >= 2)
-        n = atoi( argv[1]);
+    std::ifstream in1((argc>1)?argv[1]:"data/lshape_with_boundary.off");
+    if ( argc == 3)
+        n = atoi( argv[2]);
     if ( n < 1 || n > 12) {
         cerr << "Error: Choose reasonable value for <n> in [1..12]" << endl;
         exit(1);
     }
     Polyhedron P;
-    cin >> P;
+    in1 >> P;
 
     for ( int i = 0; i != n; ++i) {
         cerr << "Subdivision " << i+1 << " ..." << endl;

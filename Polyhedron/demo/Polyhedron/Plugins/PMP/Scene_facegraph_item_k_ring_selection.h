@@ -9,7 +9,7 @@
 #include "Polyhedron_type.h"
 #endif
 #include <set>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QMainWindow>
@@ -109,7 +109,7 @@ public:
   void setEditMode(bool b)
   {
     is_edit_mode = b;
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
     //for highlighting
     viewer->setMouseTracking(true);
   }
@@ -130,14 +130,10 @@ public:
     poly_item->enable_facets_picking(true);
     poly_item->set_color_vector_read_only(true);
 #endif
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(this);
     mw->installEventFilter(this);
-#if QGLVIEWER_VERSION >= 0x020501
     viewer->setMouseBindingDescription(Qt::Key_D, Qt::ShiftModifier, Qt::LeftButton, "(When in selection plugin) Removes the clicked primitive from the selection. ");
-#else
-    viewer->setMouseBindingDescription(Qt::SHIFT + Qt::LeftButton,  "(When in selection plugin) When D is pressed too, removes the clicked primitive from the selection. ");
-#endif
     connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
     connect(poly_item, SIGNAL(selected_facet(void*)), this, SLOT(facet_has_been_selected(void*)));
     connect(poly_item, SIGNAL(selected_edge(void*)), this, SLOT(edge_has_been_selected(void*)));
@@ -201,17 +197,30 @@ public Q_SLOTS:
   {
     if(is_ready_to_paint_select)
     {
-      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
       // paint with mouse move event
-      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-      qglviewer::Camera* camera = viewer->camera();
+      CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
+      CGAL::qglviewer::Camera* camera = viewer->camera();
       viewer->makeCurrent();
       bool found = false;
-      const qglviewer::Vec& point = camera->pointUnderPixel(paint_pos, found) - offset;
+      const CGAL::qglviewer::Vec& point = camera->pointUnderPixel(paint_pos, found) - offset;
       if(found)
       {
-        const qglviewer::Vec& orig = camera->position() - offset;
-        const qglviewer::Vec& dir = point - orig;
+       CGAL::qglviewer::Vec orig; 
+       CGAL::qglviewer::Vec dir;
+       if(camera->type() == CGAL::qglviewer::Camera::PERSPECTIVE)
+       {
+         orig = camera->position() - offset;
+         dir = point - orig;
+       }
+       else
+       {
+         dir = camera->viewDirection();
+         orig = CGAL::qglviewer::Vec(point.x - dir.x, 
+                                     point.y - dir.y,
+                                     point.z - dir.z);
+         
+       }
         poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
       }
       viewer->doneCurrent();
@@ -221,10 +230,10 @@ public Q_SLOTS:
 
   void lasso_selection()
   {
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
+    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
 
-    qglviewer::Camera* camera = viewer->camera();
+    CGAL::qglviewer::Camera* camera = viewer->camera();
     const FaceGraph& poly = *poly_item->polyhedron();
     std::set<fg_face_descriptor> face_sel;
     boost::property_map<FaceGraph,CGAL::vertex_point_t>::const_type vpmap = get(boost::vertex_point, poly);
@@ -234,8 +243,8 @@ public Q_SLOTS:
       BOOST_FOREACH(fg_vertex_descriptor v, CGAL::vertices_around_face(halfedge(f, poly), poly))
       {
         FG_Traits::Point_3 p = get(vpmap, v);
-        qglviewer::Vec vp(p.x(), p.y(), p.z());
-        qglviewer::Vec vsp = camera->projectedCoordinatesOf(vp+offset);
+        CGAL::qglviewer::Vec vp(p.x(), p.y(), p.z());
+        CGAL::qglviewer::Vec vsp = camera->projectedCoordinatesOf(vp+offset);
         if(is_vertex_selected(vsp))
         {
           face_sel.insert(f);
@@ -272,7 +281,6 @@ public Q_SLOTS:
 
     BOOST_FOREACH(fg_face_descriptor f, face_sel)
     {
-
       int cc_id = get(fccmap, f);
       if(is_cc_done[cc_id])
       {
@@ -290,15 +298,27 @@ public Q_SLOTS:
       }
       if(total == 0)
         continue;
-      qglviewer::Vec center(x/(double)total, y/(double)total, z/(double)total);
-      const qglviewer::Vec& orig = camera->position() - offset;
-      qglviewer::Vec direction = center - orig;
+      CGAL::qglviewer::Vec center(x/(double)total, y/(double)total, z/(double)total);
+      CGAL::qglviewer::Vec orig;
+      CGAL::qglviewer::Vec dir;
+      if(camera->type() == CGAL::qglviewer::Camera::PERSPECTIVE)
+      {
+        orig = camera->position() - offset;
+        dir = center - orig;
+      }
+      else
+      {
+        dir = camera->viewDirection();
+        orig = CGAL::qglviewer::Vec(center.x - dir.x, 
+                                    center.y - dir.y,
+                                    center.z - dir.z);
+      }
       if(poly_item->intersect_face(orig.x,
                                    orig.y,
                                    orig.z,
-                                   direction.x,
-                                   direction.y,
-                                   direction.z,
+                                   dir.x,
+                                   dir.y,
+                                   dir.z,
                                    f))
       {
         is_cc_done[cc_id] = true;
@@ -322,11 +342,11 @@ public Q_SLOTS:
         BOOST_FOREACH(fg_halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(f, poly), poly))
         {
           FG_Traits::Point_3 p = get(vpmap, target(h, poly));
-          qglviewer::Vec vp1(p.x(), p.y(), p.z());
-          qglviewer::Vec vsp1 = camera->projectedCoordinatesOf(vp1+offset);
+          CGAL::qglviewer::Vec vp1(p.x(), p.y(), p.z());
+          CGAL::qglviewer::Vec vsp1 = camera->projectedCoordinatesOf(vp1+offset);
           p = get(vpmap, target(opposite(h, poly), poly));
-          qglviewer::Vec vp2(p.x(), p.y(), p.z());
-          qglviewer::Vec vsp2 = camera->projectedCoordinatesOf(vp2+offset);
+          CGAL::qglviewer::Vec vp2(p.x(), p.y(), p.z());
+          CGAL::qglviewer::Vec vsp2 = camera->projectedCoordinatesOf(vp2+offset);
           if(is_vertex_selected(vsp1) || is_vertex_selected(vsp2))
             e_sel.insert(edge(h, poly));
         }
@@ -342,8 +362,8 @@ public Q_SLOTS:
         BOOST_FOREACH(fg_vertex_descriptor v, CGAL::vertices_around_face(halfedge(f, poly), poly))
         {
           FG_Traits::Point_3 p = get(vpmap, v);
-          qglviewer::Vec vp(p.x(), p.y(), p.z());
-          qglviewer::Vec vsp = camera->projectedCoordinatesOf(vp+offset);
+          CGAL::qglviewer::Vec vp(p.x(), p.y(), p.z());
+          CGAL::qglviewer::Vec vsp = camera->projectedCoordinatesOf(vp+offset);
           if(is_vertex_selected(vsp))
             v_sel.insert(v);
         }
@@ -360,19 +380,32 @@ public Q_SLOTS:
 
   void highlight()
   {
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     if(is_ready_to_highlight)
     {
       // highlight with mouse move event
-      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-      qglviewer::Camera* camera = viewer->camera();
+      CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
+      CGAL::qglviewer::Camera* camera = viewer->camera();
       viewer->makeCurrent();
       bool found = false;
-      const qglviewer::Vec& point = camera->pointUnderPixel(hl_pos, found) - offset;
+      const CGAL::qglviewer::Vec& point = camera->pointUnderPixel(hl_pos, found) - offset;
       if(found)
       {
-        const qglviewer::Vec& orig = camera->position() - offset;
-        const qglviewer::Vec& dir = point - orig;
+        CGAL::qglviewer::Vec orig;
+        CGAL::qglviewer::Vec dir;
+        if(camera->type() == CGAL::qglviewer::Camera::PERSPECTIVE)
+        {
+          orig = camera->position() - offset;
+          dir = point - orig;
+        }
+        else
+        {
+          dir = camera->viewDirection();
+          orig = CGAL::qglviewer::Vec(point.x - dir.x, 
+                                      point.y - dir.y,
+                                      point.z - dir.z);
+          
+        }
         is_highlighting = true;
         poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
         is_highlighting = false;
@@ -548,7 +581,7 @@ protected:
         return false;
       if(target == mainwindow)
       {
-        QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+        CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
         viewer->setFocus();
         return false;
       }
@@ -567,11 +600,7 @@ protected:
         if (event->type() != QEvent::MouseMove)
         {
           //Create a QImage of the screen and paint the lasso on top of it
-#if QGLVIEWER_VERSION >= 0x020700
-          background = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin())->grabFramebuffer();
-#else
-          background = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin())->grabFrameBuffer();
-#endif
+          background = static_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin())->grabFramebuffer();
         }
         sample_mouse_path(background);
       }
@@ -582,7 +611,7 @@ protected:
     {
       if(target == mainwindow)
       {
-        QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+        CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
         viewer->setFocus();
         return false;
       }
@@ -625,7 +654,7 @@ protected:
 
   void sample_mouse_path(QImage& background)
   {
-    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin());
     viewer->makeCurrent();
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
     contour_2d.push_back (FG_Traits::Point_2 (p.x(), p.y()));
@@ -636,8 +665,11 @@ protected:
       pen.setColor(QColor(Qt::green));
       pen.setWidth(3);
 
+      //Create a QImage of the screen and paint the lasso on top of it
       QImage temp(background);
       QPainter *painter = new QPainter(&temp);
+
+
       //painter->begin(&image);
       painter->setPen(pen);
       for(std::size_t i=0; i<polyline->size(); ++i)
@@ -646,7 +678,10 @@ protected:
         if(!poly.empty())
           for(std::size_t j=0; j<poly.size()-1; ++j)
           {
-            painter->drawLine(poly[j].x(), poly[j].y(), poly[j+1].x(), poly[j+1].y());
+            painter->drawLine(int(poly[j].x()),
+                              int(poly[j].y()),
+                              int(poly[j+1].x()),
+                              int(poly[j+1].y()));
           }
       }
       painter->end();
@@ -665,7 +700,7 @@ protected:
     lasso = Polygon_2 (contour_2d.begin (), contour_2d.end ());
   }
 
-  bool is_vertex_selected (qglviewer::Vec& p)
+  bool is_vertex_selected (CGAL::qglviewer::Vec& p)
   {
     if (domain_rectangle.xmin () < p.x &&
         p.x < domain_rectangle.xmax () &&

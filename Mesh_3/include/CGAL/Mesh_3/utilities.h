@@ -70,9 +70,9 @@ struct Debug_messages_tools {
  */
 template <typename Pair>
 struct First_of :
-  public CGAL::unary_function<Pair, const typename Pair::first_type&>
+  public CGAL::cpp98::unary_function<Pair, const typename Pair::first_type&>
 {
-  typedef CGAL::unary_function<Pair, const typename Pair::first_type&> Base;
+  typedef CGAL::cpp98::unary_function<Pair, const typename Pair::first_type&> Base;
   typedef typename Base::result_type                                  result_type;
   typedef typename Base::argument_type                                argument_type;
   

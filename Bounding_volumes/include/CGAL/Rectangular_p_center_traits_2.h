@@ -34,7 +34,7 @@
 namespace CGAL {
 
 template < class A, class S >
-struct Select : public CGAL::binary_function< A, A, A > {
+struct Select : public CGAL::cpp98::binary_function< A, A, A > {
   Select() {}
   Select(const S& s) : s_(s) {}
   A operator()(const A& a, const A& b) const
@@ -47,7 +47,7 @@ protected:
 
 template < class R >
 struct I_Signed_x_distance_2
-: public CGAL::binary_function<
+: public CGAL::cpp98::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
   typename R::FT
@@ -56,7 +56,7 @@ struct I_Signed_x_distance_2
 };
 template < class R >
 struct I_Signed_y_distance_2
-: public CGAL::binary_function<
+: public CGAL::cpp98::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
   typename R::FT
@@ -65,7 +65,7 @@ struct I_Signed_y_distance_2
 };
 template < class R >
 struct I_Infinity_distance_2
-: public CGAL::binary_function<
+: public CGAL::cpp98::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
   typename R::FT
@@ -77,7 +77,7 @@ struct I_Infinity_distance_2
 
 template < class R >
 struct I_Signed_infinity_distance_2
-: public CGAL::binary_function<
+: public CGAL::cpp98::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
   typename R::FT

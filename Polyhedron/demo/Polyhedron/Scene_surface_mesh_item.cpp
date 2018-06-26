@@ -116,7 +116,7 @@ struct Scene_surface_mesh_item_priv{
   void fillTargetedIds(const face_descriptor& selected_fh,
                        const EPICK::Point_3 &point_under,
                        CGAL::Three::Viewer_interface *viewer,
-                       const qglviewer::Vec &offset);
+                       const CGAL::qglviewer::Vec &offset);
 
   void initialize_colors();
   void invalidate_stats();
@@ -292,7 +292,7 @@ Scene_surface_mesh_item::color_vector()
 
 void Scene_surface_mesh_item_priv::addFlatData(Point p, EPICK::Vector_3 n, CGAL::Color *c) const
 {
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
   flat_vertices.push_back((cgal_gl_data)(p.x()+offset[0]));
   flat_vertices.push_back((cgal_gl_data)(p.y()+offset[1]));
@@ -395,7 +395,7 @@ void Scene_surface_mesh_item_priv::compute_elements()
   }
   idx_edge_data_.shrink_to_fit();
 
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
   SMesh::Property_map<vertex_descriptor, SMesh::Point> positions =
     smesh_->points();
@@ -584,7 +584,7 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
   //vao containing the data for the smooth facets
   item->vaos[Scene_surface_mesh_item_priv::Smooth_facets]->bind();
   item->buffers[Scene_surface_mesh_item_priv::Smooth_vertices].bind();
-  if(!(floated||viewer->offset() == qglviewer::Vec(0,0,0)))
+  if(!(floated||viewer->offset() == CGAL::qglviewer::Vec(0,0,0)))
   {
     item->buffers[Scene_surface_mesh_item_priv::Smooth_vertices].allocate(positions.data(),
                              static_cast<int>(num_vertices(*smesh_)*3*sizeof(cgal_gl_data)));
@@ -815,7 +815,9 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
     diagonal = item->diagonalBbox();
   else
     diagonal = 0.0;
-  FT triangulation(fd,normal,smesh_,diagonal);
+  const CGAL::qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+  EPICK::Vector_3 offset(off.x,off.y,off.z);
+  FT triangulation(fd,normal,smesh_,diagonal, offset);
   //iterates on the internal faces
   for(FT::CDT::Finite_faces_iterator
        ffit = triangulation.cdt->finite_faces_begin(),
@@ -834,14 +836,14 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
       else
         color = 0;
 
-      addFlatData(ffit->vertex(0)->point(),
+      addFlatData(ffit->vertex(0)->point()-offset,
                   (*fnormals)[fd],
                   color);
-      addFlatData(ffit->vertex(1)->point(),
+      addFlatData(ffit->vertex(1)->point()-offset,
                   (*fnormals)[fd],
                   color);
 
-      addFlatData(ffit->vertex(2)->point(),
+      addFlatData(ffit->vertex(2)->point()-offset,
                   (*fnormals)[fd],
                   color);
     }
@@ -872,7 +874,7 @@ void delete_aabb_tree(Scene_surface_mesh_item* item)
 Scene_surface_mesh_item::~Scene_surface_mesh_item()
 {
   delete_aabb_tree(this);
-  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
   if(viewer)
   {
     CGAL::Three::Viewer_interface* v = qobject_cast<CGAL::Three::Viewer_interface*>(viewer);
@@ -1554,14 +1556,26 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
   Tree* aabb_tree = static_cast<Input_facets_AABB_tree*>(d->get_aabb_tree());
   if(aabb_tree) {
 
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     //find clicked facet
     bool found = false;
-    const EPICK::Point_3 ray_origin(viewer->camera()->position().x - offset.x,
-                                     viewer->camera()->position().y - offset.y,
-                                     viewer->camera()->position().z - offset.z);
-    qglviewer::Vec point_under = viewer->camera()->pointUnderPixel(point,found);
-    qglviewer::Vec dir = point_under - viewer->camera()->position();
+    CGAL::qglviewer::Vec point_under = viewer->camera()->pointUnderPixel(point,found);
+    EPICK::Point_3 ray_origin;
+    CGAL::qglviewer::Vec dir; 
+    if(viewer->camera()->type() == CGAL::qglviewer::Camera::PERSPECTIVE)
+    {
+      ray_origin = EPICK::Point_3(viewer->camera()->position().x - offset.x,
+                                  viewer->camera()->position().y - offset.y,
+                                  viewer->camera()->position().z - offset.z);
+      dir = point_under - viewer->camera()->position();
+    }
+    else
+    {
+      dir = viewer->camera()->viewDirection();
+      ray_origin = EPICK::Point_3(point_under.x - dir.x, 
+                                  point_under.y - dir.y,
+                                  point_under.z - dir.z);
+    }
     const EPICK::Vector_3 ray_dir(dir.x, dir.y, dir.z);
     const EPICK::Ray_3 ray(ray_origin, ray_dir);
     typedef std::list<Intersection_and_primitive_id> Intersections;
@@ -1632,8 +1646,8 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
                                  y/total + offset.y,
                                  z/total + offset.z);
 
-        qglviewer::Quaternion new_orientation(qglviewer::Vec(0,0,-1),
-                                              qglviewer::Vec(-face_normal.x(), -face_normal.y(), -face_normal.z()));
+        CGAL::qglviewer::Quaternion new_orientation(CGAL::qglviewer::Vec(0,0,-1),
+                                              CGAL::qglviewer::Vec(-face_normal.x(), -face_normal.y(), -face_normal.z()));
         double max_side = (std::max)((std::max)(xmax-xmin, ymax-ymin),
                                      zmax-zmin);
         //put the camera in way we are sure the longest side is entirely visible on the screen
@@ -1642,7 +1656,7 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
                                         (viewer->camera()->fieldOfView()/2))));
 
         EPICK::Point_3 new_pos = centroid + factor*face_normal ;
-        viewer->camera()->setSceneCenter(qglviewer::Vec(centroid.x(),
+        viewer->camera()->setSceneCenter(CGAL::qglviewer::Vec(centroid.x(),
                                                         centroid.y(),
                                                         centroid.z()));
         viewer->moveCameraToCoordinates(QString("%1 %2 %3 %4 %5 %6 %7").arg(new_pos.x())
@@ -1738,7 +1752,7 @@ void Scene_surface_mesh_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer
     return;
   face_descriptor selected_fh;
   EPICK::Point_3 pt_under;
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   if(find_primitive_id(point, aabb_tree, viewer, selected_fh, pt_under))
     d->fillTargetedIds(selected_fh, pt_under, viewer, offset);
 
@@ -1746,7 +1760,7 @@ void Scene_surface_mesh_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer
 void Scene_surface_mesh_item_priv::fillTargetedIds(const face_descriptor &selected_fh,
                                                  const EPICK::Point_3& pt_under,
                                                  CGAL::Three::Viewer_interface *viewer,
-                                                 const qglviewer::Vec& offset)
+                                                 const CGAL::qglviewer::Vec& offset)
 {
   compute_displayed_ids(*smesh_,
                         viewer,
@@ -1807,7 +1821,7 @@ bool Scene_surface_mesh_item::printFaceIds(CGAL::Three::Viewer_interface *viewer
 void Scene_surface_mesh_item_priv::killIds()
 {
   CGAL::Three::Viewer_interface* viewer =
-      qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
+      qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
   deleteIds(viewer,
             textVItems,
             textEItems,
@@ -1836,7 +1850,7 @@ void Scene_surface_mesh_item::printAllIds(CGAL::Three::Viewer_interface *viewer)
 
 bool Scene_surface_mesh_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)const
 {
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   EPICK::Point_3 src(x - offset.x,
                       y - offset.y,
                       z - offset.z);
@@ -1855,7 +1869,7 @@ bool Scene_surface_mesh_item::testDisplayId(double x, double y, double z, CGAL::
 void Scene_surface_mesh_item::showVertices(bool b)
 {
   CGAL::Three::Viewer_interface* viewer =
-      qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
+      qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
   TextRenderer *renderer = viewer->textRenderer();
   if(b)
     if(d->textVItems->isEmpty())
@@ -1874,7 +1888,7 @@ void Scene_surface_mesh_item::showVertices(bool b)
 void Scene_surface_mesh_item::showEdges(bool b)
 {
   CGAL::Three::Viewer_interface* viewer =
-      qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
+      qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
   TextRenderer *renderer = viewer->textRenderer();
   if(b)
   {
@@ -1895,7 +1909,7 @@ void Scene_surface_mesh_item::showEdges(bool b)
 void Scene_surface_mesh_item::showFaces(bool b)
 {
   CGAL::Three::Viewer_interface* viewer =
-      qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
+      qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
   TextRenderer *renderer = viewer->textRenderer();
   if(b)
   {
@@ -1916,7 +1930,7 @@ void Scene_surface_mesh_item::showFaces(bool b)
 void Scene_surface_mesh_item::showPrimitives(bool)
 {
   CGAL::Three::Viewer_interface* viewer =
-      qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
+      qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
   printAllIds(viewer);
 }
 void Scene_surface_mesh_item::zoomToId()
@@ -1930,7 +1944,7 @@ void Scene_surface_mesh_item::zoomToId()
     return;
 
   CGAL::Three::Viewer_interface* viewer =
-      qobject_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first());
+      qobject_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
   Point_3 p;
   QString id = text.right(text.length()-1);
   int return_value = ::zoomToId(*d->smesh_, text, viewer, selected_fh, p);

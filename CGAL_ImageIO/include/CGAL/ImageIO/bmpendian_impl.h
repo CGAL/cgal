@@ -56,7 +56,7 @@ int readINT8little(FILE *f, CGAL_INT8 *i)
     
     rc = fgetc(f);
     if (rc == EOF)
-	return rc;
+	return EOF;
     
     *i = CGAL_INT8(rc & 0xff);
     return 0;
@@ -69,7 +69,7 @@ int readUINT8little(FILE *f, CGAL_UINT8 *i)
     
     rc = fgetc(f);
     if (rc == EOF)
-	return rc;
+	return EOF;
     
     *i = CGAL_UINT8(rc & 0xff);
     return 0;
@@ -91,7 +91,7 @@ int readINT16little(FILE *f, CGAL_INT16 *i)
     
     rc = fgetc(f);
     if (rc == EOF)
-	return rc;
+	return EOF;
     
     temp = temp | CGAL_INT16((rc & 0xff) << 8);
     *i = temp;
@@ -108,7 +108,7 @@ int readUINT16little(FILE *f, CGAL_UINT16 *i)
     
     rc = fgetc(f);
     if (rc == EOF)
-	return rc;
+	return EOF;
     
     temp = CGAL_INT16(temp | ((rc & 0xff) << 8));
     *i = temp;
@@ -132,7 +132,7 @@ int readINT32little(FILE *f, CGAL_INT32 *i)
     
     rc = fgetc(f);
     if (rc == EOF)
-	return rc;
+	return EOF;
     
     temp = CGAL_INT32(temp | (((long)rc & 0xff) << 24));
     *i = temp;
@@ -151,7 +151,7 @@ int readUINT32little(FILE *f, CGAL_UINT32 *i)
     
     rc = fgetc(f);
     if (rc == EOF)
-	return rc;
+	return EOF;
     
     temp = CGAL_UINT32(temp | (((long)rc & 0xff) << 24));
     *i = temp;
@@ -185,7 +185,7 @@ int writeINT16little(FILE *f, CGAL_INT16 i)
     
     rc = fputc((i & 0xff), f);
     if (rc == EOF)
-	return rc;
+	return EOF;
     
     return fputc(((i >> 8) & 0xff), f);
 }
@@ -197,7 +197,7 @@ int writeUINT16little(FILE *f, CGAL_UINT16 i)
     
     rc = fputc((i & 0xff), f);
     if (rc == EOF)
-	return rc;
+	return EOF;
     
     return fputc(((i >> 8) & 0xff), f);
 }
@@ -209,15 +209,15 @@ int writeINT32little(FILE *f, CGAL_INT32 i)
     
     rc = fputc((i & 0xff), f);
     if (rc == EOF)
-	return rc;
+	return EOF;
     
     rc = fputc(((i >> 8) & 0xff), f);
     if (rc == EOF)
-	return rc;
+	return EOF;
     
     rc = fputc(((i >> 16) & 0xff), f);
     if (rc == EOF)
-	return rc;
+	return EOF;
     
     return fputc(((i >> 24) & 0xff), f);
 }
@@ -230,15 +230,15 @@ int writeUINT32little(FILE *f, CGAL_UINT32 i)
     
     rc = fputc((i & 0xff), f);
     if (rc == EOF)
-	return rc;
+	return EOF;
     
     rc = fputc(((i >> 8) & 0xff), f);
     if (rc == EOF)
-	return rc;
+	return EOF;
     
     rc = fputc(((i >> 16) & 0xff), f);
     if (rc == EOF)
-	return rc;
+	return EOF;
     
     return fputc(((i >> 24) & 0xff), f);
 }

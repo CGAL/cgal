@@ -81,7 +81,7 @@ void MainWindow::connectActions()
 
   // Viewer signals
   QObject::connect(this, SIGNAL(sceneChanged()),
-	   this->viewer, SLOT(updateGL()));
+	   this->viewer, SLOT(update()));
 }
 
 void MainWindow::closeEvent(QCloseEvent * /*event*/)

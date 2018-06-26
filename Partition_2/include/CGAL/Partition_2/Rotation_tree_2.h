@@ -36,6 +36,8 @@
 #ifndef  CGAL_ROTATION_TREE_H
 #define  CGAL_ROTATION_TREE_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/license/Partition_2.h>
 
 
@@ -177,6 +179,8 @@ private:
 }
 
 #include <CGAL/Partition_2/Rotation_tree_2_impl.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_ROTATION_TREE_H
 

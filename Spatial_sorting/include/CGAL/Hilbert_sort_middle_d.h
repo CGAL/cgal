@@ -33,7 +33,7 @@ namespace internal {
 
     template <class K>
     struct Fixed_hilbert_cmp_d
-        : public CGAL::binary_function<typename K::Point_d,
+        : public CGAL::cpp98::binary_function<typename K::Point_d,
                                       typename K::Point_d, bool>
     {
         typedef typename K::Point_d Point;

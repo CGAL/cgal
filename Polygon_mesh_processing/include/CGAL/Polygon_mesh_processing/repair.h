@@ -644,7 +644,7 @@ std::size_t remove_null_edges(
         if ( traits.equal_3_object()(get(vpmap, target(hd, tmesh)), get(vpmap, source(hd, tmesh))) )
           null_edges_to_remove.insert(edge(hd, tmesh));
 
-      CGAL_assertion( is_valid(tmesh) );
+      CGAL_assertion( is_valid_polygon_mesh(tmesh) );
     }
   }
 
@@ -676,7 +676,7 @@ std::size_t remove_null_edges(
 /// \cgalNamedParamsBegin
 ///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`.
 /// If this parameter is omitted, an internal property map for
-/// `CGAL::vertex_point_t` should be available in `TriangleMesh`
+/// `CGAL::vertex_point_t` must be available in `TriangleMesh`
 /// \cgalParamEnd
 ///    \cgalParamBegin{geom_traits} a geometric traits class instance.
 ///       The traits class must provide the nested type `Point_3`,
@@ -1409,10 +1409,11 @@ remove_self_intersections_one_step(TriangleMesh& tm,
   // some boundary cycle of halfedges
   bool topology_issue = false;
   if (verbose)
+
   {
     std::cout << "  DEBUG: is_valid in one_step(tm)? ";
     std::cout.flush();
-    std::cout << is_valid(tm) << "\n";
+    std::cout << is_valid_polygon_mesh(tm) << "\n";
   }
 
   if(!faces_to_remove.empty()){
@@ -1693,7 +1694,7 @@ remove_self_intersections_one_step(TriangleMesh& tm,
       if (verbose)
       {
         std::cout << "  DEBUG: is_valid(tm) in one_step, before mesh changes? ";
-        std::cout << is_valid(tm) << std::endl;
+        std::cout << is_valid_polygon_mesh(tm) << std::endl;
       }
 
       //try hole_filling.
@@ -1858,7 +1859,7 @@ remove_self_intersections_one_step(TriangleMesh& tm,
         std::cout << "  DEBUG: " << cc_faces.size() << " triangles removed, "
                   << patch.size() << " created\n";
 
-      CGAL_assertion(is_valid(tm));
+      CGAL_assertion(is_valid_polygon_mesh(tm));
 
       something_was_done = true;
     }
@@ -1888,13 +1889,13 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np)
   bool preserve_genus = boost::choose_param(boost::get_param(np, internal_np::preserve_genus), true);
 
   if (verbose)
-    std::cout << "DEBUG: Starting remove_self_intersections, is_valid(tm)? " << is_valid(tm) << "\n";
+    std::cout << "DEBUG: Starting remove_self_intersections, is_valid(tm)? " << is_valid_polygon_mesh(tm) << "\n";
 
   // first handle the removal of degenerate faces
   remove_degenerate_faces(tm, np);
 
   if (verbose)
-    std::cout << "DEBUG: After degenerate faces removal, is_valid(tm)? " << is_valid(tm) << "\n";
+    std::cout << "DEBUG: After degenerate faces removal, is_valid(tm)? " << is_valid_polygon_mesh(tm) << "\n";
 
   // Look for self-intersections in the polyhedron and remove them
   int step=-1;

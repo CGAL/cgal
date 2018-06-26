@@ -1,7 +1,7 @@
 #include "Viewer.h"
 #include <vector>
 #include <CGAL/bounding_box.h>
-#include <QGLViewer/vec.h>
+#include <CGAL/Qt/vec.h>
 
 
 void
@@ -10,8 +10,8 @@ Viewer::init()
   initializeOpenGLFunctions();
   setBackgroundColor(::Qt::white);
   this->camera()->setSceneBoundingBox(
-      qglviewer::Vec(-1.,-1.,-1.),
-      qglviewer::Vec( 1., 1., 1.));
+      CGAL::qglviewer::Vec(-1.,-1.,-1.),
+      CGAL::qglviewer::Vec( 1., 1., 1.));
   glEnable(GL_LINE_SMOOTH);
   compile_shaders();
   are_buffers_initialized = false;
@@ -102,29 +102,6 @@ Viewer::next_around_circle(const float& phi, const Vec& pos, const Vec& ori) {
   
   Vec new_cam = ori + (cam_norm*cos(phi) + y_norm*sin(phi)) * cam.norm();
   return new_cam;  
-}
-
-void
-Viewer::render_video()
-{
-  setSnapshotFormat("PNG");
-  for (int alpha=0 ; alpha <= 100 ; alpha++ ) {
-    emit (valueChanged(alpha));
-    std::cout<<alpha<<std::endl;
-    QString alpha_str;
-    alpha_str.setNum(alpha);
-    displayMessage(QString("alpha: ") + alpha_str + QString("%"),10000);
-    
-    for (int fr=0 ; fr < 50 ; fr++) {
-      Vec cam = camera()->position();
-      Vec ori = sceneCenter();
-      Vec new_cam = next_around_circle(0.01f,cam,ori);
-      camera()->setPosition(new_cam);
-      camera()->lookAt(ori);
-      this->showEntireScene();
-      saveSnapshot(true);
-    }
-  }
 }
 
 void Viewer::initialize_buffers()
@@ -233,7 +210,7 @@ void Viewer::compute_elements()
     }
 }
 
-void Viewer::attrib_buffers(QGLViewer* viewer)
+void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
 {
     QMatrix4x4 mvpMatrix;
     double mat[16];
