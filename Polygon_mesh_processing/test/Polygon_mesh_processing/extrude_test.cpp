@@ -14,7 +14,7 @@ struct Bot
 {
   Bot(MAP map):map(map){}
   template<typename VD, typename T>
-  void operator()(const T&,VD vd)
+  void operator()(const T&,VD vd) const
   {
     put(map, vd, get(map, vd)+Kernel::Vector_3(-2.0,0.0,1.0));
   }
@@ -28,7 +28,7 @@ struct Top
   Top(MAP map):map(map){}
   
   template<typename VD, typename T>
-  void operator()(const T&, VD vd)
+  void operator()(const T&, VD vd) const
   {
     put(map, vd, get(map, vd)+Kernel::Vector_3(0.0,2.0,-1.0));
   }

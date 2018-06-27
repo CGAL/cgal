@@ -88,7 +88,7 @@ struct Const_dist_translation{
     :map(map), dir(dir){}
 
   template<typename VertexDescriptor, typename U>
-  void operator()(const VertexDescriptor vd, const U&)
+  void operator()(const VertexDescriptor vd, const U&) const
   {
     typename boost::property_traits<PMAP>::value_type p = get(map, vd) + dir;
     put(map, vd, p);
@@ -101,7 +101,7 @@ struct Const_dist_translation{
 struct Identity_functor
 {
   template<typename T, typename U>
-  void operator()(const T&, const U&){}
+  void operator()(const T&, const U&) const {}
 };
 }//end extrude_impl
 
@@ -161,8 +161,8 @@ template <class InputMesh,
           >
 void extrude_mesh(const InputMesh& input,
                   OutputMesh& output,
-                  BottomFunctor& bot,
-                  TopFunctor& top,
+                  const BottomFunctor& bot,
+                  const TopFunctor& top,
                   const NamedParameters1& np_in,
                   const NamedParameters2& np_out)
 {
@@ -312,8 +312,8 @@ template <class InputMesh,
           class TopFunctor>
 void extrude_mesh(const InputMesh& input,
                   OutputMesh& output,
-                  BottomFunctor& bot,
-                  TopFunctor& top)
+                  const BottomFunctor& bot,
+                  const TopFunctor& top)
 {
   extrude_mesh(input, output, bot, top,
                parameters::all_default(), parameters::all_default());
