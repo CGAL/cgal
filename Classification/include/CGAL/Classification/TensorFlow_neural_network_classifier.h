@@ -128,9 +128,10 @@ public:
 
   bool initialized() const { return (m_root != NULL); }
 
+  bool& verbose() { return m_verbose; }
+
   void clear()
   {
-    if (m_verbose) std::cerr << "(Clearing Neural Network classifier)" << std::endl;
     clear (m_ph_gt);
     clear (m_ph_ft);
     clear (m_loss);
@@ -187,8 +188,9 @@ public:
       if (std::isnan(m_feature_sd[f]))
         m_feature_sd[f] = 1.f;
 
-      std::cerr << "#" << f << ": " << m_features[f]->name() << " = "
-                << m_feature_means[f] << " +/- " << m_feature_sd[f] << std::endl;
+      // if (m_verbose)
+      //   std::cerr << "#" << f << ": " << m_features[f]->name() << " = "
+      //             << m_feature_means[f] << " +/- " << m_feature_sd[f] << std::endl;
     }
 #endif
   }
@@ -212,7 +214,6 @@ public:
               const std::vector<std::size_t>& hidden_layers
               = std::vector<std::size_t>())
   {
-    if (m_verbose) std::cerr << "[Training Neural Network]" << std::endl;
     if (restart_from_scratch)
       clear();
 
@@ -363,7 +364,8 @@ public:
       }
       if (!std::isfinite(*outputs[0].scalar<float>().data()))
       {
-        std::cerr << "Loss is " << outputs[0].scalar<float>() << ", aborting" << std::endl;
+        if (m_verbose)
+          std::cerr << "Loss is " << outputs[0].scalar<float>() << ", aborting" << std::endl;
         return;
       }
 
@@ -673,12 +675,14 @@ private:
     if (m_verbose) std::cerr << " 1) Initializing architecture:" << std::endl
                             << "   * Layer 0: " << m_features.size() << " neuron(s) (input features)" << std::endl;
       
-    if (!CGAL_CLASSTRAINING_SILENT)
+    if (m_verbose)
       for (std::size_t i = 0; i < hl.size(); ++ i)
         std::cerr << "   * Layer " << i+1 << ": " << hl[i] << " neuron(s)" << std::endl;
     
     if (m_verbose) std::cerr << "   * Layer " << hl.size() + 1 << ": "
                             << m_labels.size() << " neuron(s) (output labels)" << std::endl;
+
+
     
     m_ph_ft = new TFops::Placeholder (*m_root, TF::DT_FLOAT);
     m_ph_gt = new TFops::Placeholder (*m_root, TF::DT_FLOAT);
@@ -965,12 +969,24 @@ private:
 
     if (m_verbose) std::cerr << " 6) Starting session" << std::endl;
     
-    m_session = new TF::ClientSession (*m_root);
+    TF::SessionOptions options = TF::SessionOptions();
+    
+    // options.config.mutable_gpu_options()->set_visible_device_list("0");
+    // options.config.mutable_gpu_options()->set_per_process_gpu_memory_fraction(0.3);
+    // options.config.mutable_gpu_options()->set_operation_timeout_in_ms(15000);
+
+//    options.config.mutable_gpu_options()->set_visible_device_list("");
+    options.config.mutable_gpu_options()->set_per_process_gpu_memory_fraction(0.3);
+    options.config.mutable_gpu_options()->set_allow_growth(true);
+    options.config.mutable_gpu_options()->set_force_gpu_compatible(true);
+
+    m_session = new TF::ClientSession (*m_root, options);
     if (!m_root->status().ok())
     {
       if (m_verbose) std::cerr << "Error: " << m_root->status().ToString() << std::endl;
       return;
     }
+
     std::vector<TF::Tensor> outputs;
 
     for (std::size_t i = 0; i < assign_weights.size(); ++ i)
@@ -985,6 +1001,7 @@ private:
       return;
     }
   }
+
 };
 
 }
