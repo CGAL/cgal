@@ -26,6 +26,8 @@
 #include <CGAL/Diagonalize_traits.h>
 #endif
 
+/// \cond SKIP_IN_MANUAL
+
 namespace CGAL {
 
 /// \ingroup PkgSolver
@@ -83,5 +85,7 @@ public:
 };
 
 } // namespace CGAL
+
+/// \endcond
 
 #endif // CGAL_DEFAULT_DIAGONALIZE_TRAITS_H

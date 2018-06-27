@@ -19,6 +19,15 @@ if ( CGAL_FOUND )
   include_directories (BEFORE ../../include)
   include_directories (BEFORE ../../../AABB_tree/include)
 
+  # Use Eigen
+  find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
+  if (NOT EIGEN3_FOUND)
+    message(STATUS "This project requires the Eigen library, and will not be compiled.")
+    return()
+  else()
+    include( ${EIGEN3_USE_FILE} )
+  endif()
+  
   create_single_source_cgal_program( "test_boost_has_xxx.cpp" )
   create_single_source_cgal_program( "test_c3t3.cpp" )
   create_single_source_cgal_program( "test_mesh_capsule_var_distance_bound.cpp" )

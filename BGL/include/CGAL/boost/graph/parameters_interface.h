@@ -65,6 +65,7 @@ CGAL_add_named_parameter(nb_points_per_distance_unit_t, nb_points_per_distance_u
 CGAL_add_named_parameter(outward_orientation_t, outward_orientation, outward_orientation)
 CGAL_add_named_parameter(overlap_test_t, overlap_test, do_overlap_test_of_bounded_sides)
 CGAL_add_named_parameter(preserve_genus_t, preserve_genus, preserve_genus)
+CGAL_add_named_parameter(apply_per_connected_component_t, apply_per_connected_component, apply_per_connected_component)
 CGAL_add_named_parameter(projection_functor_t, projection_functor, projection_functor)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
@@ -85,6 +86,7 @@ CGAL_add_named_parameter(query_point_t, query_point_map, query_point_map)
 CGAL_add_named_parameter(normal_t, normal_map, normal_map)
 CGAL_add_named_parameter(diagonalize_traits_t, diagonalize_traits, diagonalize_traits)
 CGAL_add_named_parameter(svd_traits_t, svd_traits, svd_traits)
+CGAL_add_named_parameter(callback_t, callback, callback)
 CGAL_add_named_parameter(sharpness_angle_t, sharpness_angle, sharpness_angle)
 CGAL_add_named_parameter(edge_sensitivity_t, edge_sensitivity, edge_sensitivity)
 CGAL_add_named_parameter(neighbor_radius_t, neighbor_radius, neighbor_radius)

@@ -1,7 +1,6 @@
 Release History
 ===============
 
-
 Release 4.13
 ------------
 
@@ -66,7 +65,22 @@ Release date: September 2018
     to reflect the real needs of the code (some types and operators were used
     in the code but did not appear in the concepts).
 
+### Point Set Processing
+
+-   Added a callback mechanism for functions
+    `CGAL::bilateral_smooth_point_set()`,
+    `CGAL::compute_average_spacing()`,
+    `CGAL::grid_simplify_point_set()`,
+    `CGAL::hierarchy_simplify_point_set()`,
+    `CGAL::jet_estimate_normals()`, `CGAL::jet_smooth_point_set()`,
+    `CGAL::pca_estimate_normals()`, `CGAL::remove_outliers()` and
+    `CGAL::wlop_simplify_and_regularize_point_set()`.
+
+
 ### Polygon Mesh Processing
+
+-   Added a new named parameter for stitching that allows to perform 
+    this operation per connected component instead of globally
 
 -   Added a function, `CGAL::Polygon_mesh_processing::transform()`, to apply a transformation to a mesh.
 
@@ -116,6 +130,19 @@ Release date: September 2018
 -   Added the function `Mesh_domain_with_polyline_features_3::add_corner()`, which allows users
     to add a single corner (that is not incident to any polyline) to the mesh complex.
 
+-   **Breaking change**: `CGAL::lloyd_optimize_mesh_3` now depends on
+    the _Eigen_ library.
+
+### Estimation of Local Differential Properties of Point-Sampled Surfaces Reference
+
+-   **Breaking change**: `CGAL::Monge_via_jet_fitting` now depends on
+    the _Eigen_ library.
+
+### Bounding Volumes
+
+-   **Breaking change**: `CGAL::Approximate_min_ellipsoid_d` now
+    depends on the _Eigen_ library.
+
 ### CGAL and the Boost Graph Library (BGL)
 
 -   Added a helper function, `CGAL::is_valid_polygon_mesh`, that checks the
@@ -123,6 +150,13 @@ Release date: September 2018
 
 -   Improved the function `CGAL::Euler::collapse_edge` such that the target
     vertex of the collapsed edge is now always kept after the collapse.
+
+### CGAL and Solvers
+
+-   **Breaking change**: `CGAL::Diagonalize_traits` is now deprecated
+    and shouldn't be used, `CGAL::Eigen_diagonalize_traits` (along
+    with the _Eigen_ library) should be used instead.
+
 
 
 Release 4.12

@@ -29,6 +29,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/function.h>
 
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -132,6 +133,13 @@ compute_avg_knn_sq_distance_3(
      \cgalParamBegin{threshold_percent} maximum percentage of points to remove.\cgalParamEnd
      \cgalParamBegin{threshold_distance} minimum distance for a point to be considered as outlier
      (distance here is the square root of the average squared distance to K nearest neighbors).\cgalParamEnd
+     \cgalParamBegin{callback} an instance of
+      `cpp11::function<bool(double)>`. It is called regularly when the
+      algorithm is running: the current advancement (between 0. and
+      1.) is passed as parameter. If it returns `true`, then the
+      algorithm continues its execution normally; if it returns
+      `false`, the algorithm is stopped, all points are left unchanged
+      and the function return `points.end()`.\cgalParamEnd
      \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 
@@ -163,6 +171,8 @@ remove_outliers(
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
   double threshold_percent = choose_param(get_param(np, internal_np::threshold_percent), 10.);
   double threshold_distance = choose_param(get_param(np, internal_np::threshold_distance), 0.);
+  const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+                                                               cpp11::function<bool(double)>());
   
   typedef typename Kernel::FT FT;
   
@@ -198,12 +208,15 @@ remove_outliers(
 
   // iterate over input points and add them to multimap sorted by distance to k
   std::multimap<FT,Enriched_point> sorted_points;
-  for(it = points.begin(); it != points.end(); it++)
+  std::size_t nb = 0;
+  for(it = points.begin(); it != points.end(); it++, ++ nb)
   {
     FT sq_distance = internal::compute_avg_knn_sq_distance_3<Kernel>(
       get(point_map,*it),
       tree, k);
     sorted_points.insert( std::make_pair(sq_distance, *it) );
+    if (callback && !callback ((nb+1) / double(kd_tree_points.size())))
+      return points.end();
   }
 
   // Replaces [points.begin(), points.end()) range by the multimap content.
