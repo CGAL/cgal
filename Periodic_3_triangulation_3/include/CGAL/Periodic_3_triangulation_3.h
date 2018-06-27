@@ -3033,8 +3033,6 @@ inline void Periodic_3_triangulation_3<GT,TDS>::make_hole(Vertex_handle v,
                                       std::map<Vertex_triple,Facet>& outer_map,
                                       std::vector<Cell_handle>& hole)
 {
-  //CGAL_triangulation_precondition( all_vertices_begin()++ != all_vertices_end() );
-
   incident_cells(v, std::back_inserter(hole));
 
   for(typename std::vector<Cell_handle>::iterator cit = hole.begin();
@@ -3158,14 +3156,13 @@ periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_mana
       if((*cit)->vertex(j) != v) {
         tmp_vertices.insert((*cit)->vertex(j));
         vh_off_map[(*cit)->vertex(j)] = int_to_off((*cit)->offset(j))
-            - int_to_off((*cit)->offset((*cit)->index(v)));
+                                        - int_to_off((*cit)->offset((*cit)->index(v)));
       }
     }
   }
 
   // Now output the vertices.
-  std::copy(tmp_vertices.begin(), tmp_vertices.end(),
-      std::back_inserter(vertices));
+  std::copy(tmp_vertices.begin(), tmp_vertices.end(), std::back_inserter(vertices));
 
   // create a Delaunay/regular triangulation of the points on the boundary
   // in Euclidean space and make a map from the vertices in remover.tmp
