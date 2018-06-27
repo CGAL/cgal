@@ -1,7 +1,6 @@
 Release History
 ===============
 
-
 Release 4.13
 ------------
 
@@ -51,6 +50,10 @@ Release date: September 2018
     in the code but did not appear in the concepts).
 
 ### Polygon Mesh Processing
+
+-   Added a new named parameter for stitching that allows to perform 
+    this operation per connected component instead of globally
+
 -   Added a function to apply a transformation to a mesh:
     - `CGAL::Polygon_mesh_processing::transform()`
 
