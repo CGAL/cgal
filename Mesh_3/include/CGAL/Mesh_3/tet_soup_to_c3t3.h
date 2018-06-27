@@ -47,7 +47,7 @@ void build_vertices(Tr& tr,
   typedef typename Tr::Vertex_handle            Vertex_handle;
 
   vertex_handle_vector[0] = tr.tds().create_vertex(); // creates the infinite vertex
-  tr.infinite_vertex() = vertex_handle_vector[0];
+  tr.set_infinite_vertex(vertex_handle_vector[0]);
 
   // build vertices
   for(std::size_t i=0; i<points.size(); ++i)
