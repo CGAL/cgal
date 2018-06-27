@@ -20,6 +20,14 @@ include_directories( ./ )
 find_package(CGAL COMPONENTS Qt5)
 include( ${CGAL_USE_FILE} )
 
+find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+if (EIGEN3_FOUND)
+  include( ${EIGEN3_USE_FILE} )
+else()
+  message(STATUS "NOTICE: This project requires the Eigen library, and will not be compiled.")
+  return()
+endif()
+
 # Find Qt5 itself
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL)
 

@@ -23,12 +23,18 @@ if ( CGAL_FOUND )
 
   include_directories (BEFORE "../../include")
 
-  create_single_source_cgal_program( "shape_detection_basic.cpp" )
-  create_single_source_cgal_program( "shape_detection_with_callback.cpp" )
+  # Use Eigen
+  find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+  if (EIGEN3_FOUND)
+    include( ${EIGEN3_USE_FILE} )
+    create_single_source_cgal_program( "shape_detection_basic.cpp" )
+    create_single_source_cgal_program( "shape_detection_with_callback.cpp" )
+    create_single_source_cgal_program( "plane_regularization.cpp" )
+  endif()
+
   create_single_source_cgal_program( "efficient_RANSAC_custom_shape.cpp" )
   create_single_source_cgal_program( "efficient_RANSAC_parameters.cpp" )
   create_single_source_cgal_program( "efficient_RANSAC_point_access.cpp" )
-  create_single_source_cgal_program( "plane_regularization.cpp" )
 
 else()
   

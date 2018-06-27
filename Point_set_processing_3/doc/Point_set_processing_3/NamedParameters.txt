@@ -49,7 +49,7 @@ No default value.
 \cgalNPBegin{diagonalize_traits} \anchor PSP_diagonalize_traits
  is the solver used for diagonalizing covariance matrices.\n
 \b Type: a class model of `DiagonalizeTraits`.\n
-\b Default: if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined, then `CGAL::Eigen_diagonalize_traits` is used. Otherwise, the fallback `CGAL::Diagonalize_traits` is used (note that it is significantly slower, so using Eigen is strongly advised).\n
+\b Default: `CGAL::Eigen_diagonalize_traits` if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined.\n
 \cgalNPEnd
 
 \cgalNPBegin{svd_traits} \anchor PSP_svd_traits

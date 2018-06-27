@@ -13,6 +13,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{1.1}
+\cgalPkgDependsOn{\ref thirdpartyEigen}
 \cgalPkgBib{cgal:fghhs-bv}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{2D Bounding Volumes,bounding_volumes_2.zip}
