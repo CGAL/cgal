@@ -206,6 +206,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
   add_library(scene_color_ramp SHARED Color_ramp.cpp)
   target_link_libraries(scene_color_ramp PRIVATE Qt5::Core)
 
+  add_library(scene_callback_signaler SHARED Callback_signaler.cpp)
+  target_link_libraries(scene_callback_signaler PRIVATE Qt5::Core)
+
   add_library(point_dialog SHARED Show_point_dialog.cpp Show_point_dialog.ui ${Show_point_dialogUI_FILES})
   target_link_libraries(point_dialog
     PUBLIC Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)

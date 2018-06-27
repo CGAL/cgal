@@ -15,6 +15,8 @@
 #include <QtPlugin>
 #include <QMessageBox>
 
+#include "run_with_qprogressdialog.h"
+
 #include "ui_Point_set_wlop_plugin.h"
 
 // Concurrency
@@ -23,6 +25,53 @@ typedef CGAL::Parallel_tag Concurrency_tag;
 #else
 typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
+
+struct Compute_average_spacing_functor
+  : public Functor_with_signal_callback
+{
+  Point_set* points;
+  const int nb_neighbors;
+  boost::shared_ptr<double> result;
+
+  Compute_average_spacing_functor (Point_set* points, const int nb_neighbors)
+    : points (points), nb_neighbors (nb_neighbors), result (new double(0)) { }
+
+  void operator()()
+  {
+    *result = CGAL::compute_average_spacing<Concurrency_tag>(
+      points->all_or_selection_if_not_empty(),
+      nb_neighbors,
+      points->parameters().
+      callback (*(this->callback())));
+  }
+};
+
+struct Wlop_functor
+  : public Functor_with_signal_callback
+{
+  Point_set* points;
+  double select_percentage;
+  double neighbor_radius;
+  Scene_points_with_normal_item* new_item;
+  
+  Wlop_functor (Point_set* points, double select_percentage, double neighbor_radius,
+                Scene_points_with_normal_item* new_item)
+    : points (points), select_percentage (select_percentage)
+    , neighbor_radius (neighbor_radius), new_item (new_item)
+  { }
+
+  void operator()()
+  {
+    CGAL::wlop_simplify_and_regularize_point_set<Concurrency_tag>
+      (points->all_or_selection_if_not_empty(),
+       new_item->point_set()->point_back_inserter(),
+       points->parameters().
+       select_percentage (select_percentage).
+       neighbor_radius (neighbor_radius).
+       callback (*(this->callback())));
+  }
+};
+
 
 using namespace CGAL::Three;
 class Polyhedron_demo_point_set_wlop_plugin :
@@ -38,6 +87,7 @@ class Polyhedron_demo_point_set_wlop_plugin :
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
+    mw = mainWindow;
     actionSimplifyAndRegularize = new QAction(tr("WLOP Simplification and Regularization Selection"), mainWindow);
     actionSimplifyAndRegularize->setProperty("subMenuName","Point Set Processing");
     actionSimplifyAndRegularize->setObjectName("actionSimplifyAndRegularize");
@@ -89,7 +139,7 @@ void Polyhedron_demo_point_set_wlop_plugin::on_actionSimplifyAndRegularize_trigg
     if(!dialog.exec())
       return;
 
-    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::setOverrideCursor(Qt::BusyCursor);
 
     CGAL::Timer task_timer; task_timer.start();
 
@@ -98,9 +148,9 @@ void Polyhedron_demo_point_set_wlop_plugin::on_actionSimplifyAndRegularize_trigg
 	      << dialog.neighborhoodRadius() <<" * average spacing)...\n";
 
     // Computes average spacing
-    double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(points->all_or_selection_if_not_empty(),
-                                                                            6 /* knn = 1 ring */,
-                                                                            points->parameters());
+    Compute_average_spacing_functor functor_as (points, 6);
+    run_with_qprogressdialog (functor_as, "WLOP: computing average spacing...", mw);
+    double average_spacing = *functor_as.result;
 
     Scene_points_with_normal_item* new_item
       = new Scene_points_with_normal_item();
@@ -108,13 +158,10 @@ void Polyhedron_demo_point_set_wlop_plugin::on_actionSimplifyAndRegularize_trigg
     new_item->setVisible(true);
     item->setVisible(false);
     scene->addItem(new_item);
-    
-    CGAL::wlop_simplify_and_regularize_point_set<Concurrency_tag>
-      (points->all_or_selection_if_not_empty(),
-       new_item->point_set()->point_back_inserter(),
-       points->parameters().
-       select_percentage (dialog.retainedPercentage()).
-       neighbor_radius (dialog.neighborhoodRadius()*average_spacing));
+
+    Wlop_functor functor (points, dialog.retainedPercentage(),
+                          dialog.neighborhoodRadius() * average_spacing, new_item);
+    run_with_qprogressdialog (functor, "WLOP simplification and regularization...", mw);
 
     std::size_t memory = CGAL::Memory_sizer().virtual_size();
     std::cerr << "Simplification and regularization: "

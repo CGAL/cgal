@@ -57,11 +57,7 @@
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
-#  if TBB_IMPLEMENT_CPP0X
-#   include <tbb/compat/thread>
-#  else
-#   include <thread>
-#  endif
+#  include <tbb/task_scheduler_init.h>
 #endif
 
 #include <boost/format.hpp>
