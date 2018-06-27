@@ -206,8 +206,21 @@ public Q_SLOTS:
       const CGAL::qglviewer::Vec& point = camera->pointUnderPixel(paint_pos, found) - offset;
       if(found)
       {
-        const CGAL::qglviewer::Vec& orig = camera->position() - offset;
-        const CGAL::qglviewer::Vec& dir = point - orig;
+       CGAL::qglviewer::Vec orig; 
+       CGAL::qglviewer::Vec dir;
+       if(camera->type() == CGAL::qglviewer::Camera::PERSPECTIVE)
+       {
+         orig = camera->position() - offset;
+         dir = point - orig;
+       }
+       else
+       {
+         dir = camera->viewDirection();
+         orig = CGAL::qglviewer::Vec(point.x - dir.x, 
+                                     point.y - dir.y,
+                                     point.z - dir.z);
+         
+       }
         poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
       }
       viewer->doneCurrent();
@@ -268,7 +281,6 @@ public Q_SLOTS:
 
     BOOST_FOREACH(fg_face_descriptor f, face_sel)
     {
-
       int cc_id = get(fccmap, f);
       if(is_cc_done[cc_id])
       {
@@ -287,14 +299,26 @@ public Q_SLOTS:
       if(total == 0)
         continue;
       CGAL::qglviewer::Vec center(x/(double)total, y/(double)total, z/(double)total);
-      const CGAL::qglviewer::Vec& orig = camera->position() - offset;
-      CGAL::qglviewer::Vec direction = center - orig;
+      CGAL::qglviewer::Vec orig;
+      CGAL::qglviewer::Vec dir;
+      if(camera->type() == CGAL::qglviewer::Camera::PERSPECTIVE)
+      {
+        orig = camera->position() - offset;
+        dir = center - orig;
+      }
+      else
+      {
+        dir = camera->viewDirection();
+        orig = CGAL::qglviewer::Vec(center.x - dir.x, 
+                                    center.y - dir.y,
+                                    center.z - dir.z);
+      }
       if(poly_item->intersect_face(orig.x,
                                    orig.y,
                                    orig.z,
-                                   direction.x,
-                                   direction.y,
-                                   direction.z,
+                                   dir.x,
+                                   dir.y,
+                                   dir.z,
                                    f))
       {
         is_cc_done[cc_id] = true;
@@ -367,8 +391,21 @@ public Q_SLOTS:
       const CGAL::qglviewer::Vec& point = camera->pointUnderPixel(hl_pos, found) - offset;
       if(found)
       {
-        const CGAL::qglviewer::Vec& orig = camera->position() - offset;
-        const CGAL::qglviewer::Vec& dir = point - orig;
+        CGAL::qglviewer::Vec orig;
+        CGAL::qglviewer::Vec dir;
+        if(camera->type() == CGAL::qglviewer::Camera::PERSPECTIVE)
+        {
+          orig = camera->position() - offset;
+          dir = point - orig;
+        }
+        else
+        {
+          dir = camera->viewDirection();
+          orig = CGAL::qglviewer::Vec(point.x - dir.x, 
+                                      point.y - dir.y,
+                                      point.z - dir.z);
+          
+        }
         is_highlighting = true;
         poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
         is_highlighting = false;
@@ -641,7 +678,10 @@ protected:
         if(!poly.empty())
           for(std::size_t j=0; j<poly.size()-1; ++j)
           {
-            painter->drawLine(poly[j].x(), poly[j].y(), poly[j+1].x(), poly[j+1].y());
+            painter->drawLine(int(poly[j].x()),
+                              int(poly[j].y()),
+                              int(poly[j+1].x()),
+                              int(poly[j+1].y()));
           }
       }
       painter->end();

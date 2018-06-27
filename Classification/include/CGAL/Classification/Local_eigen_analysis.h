@@ -184,10 +184,9 @@ public:
     algorithm. Possible values are `Parallel_tag` (default value is %CGAL
     is linked with TBB) or `Sequential_tag` (default value otherwise).
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
-    matrix diagonalization. It can be omitted: if Eigen 3 (or greater)
-    is available and `CGAL_EIGEN3_ENABLED` is defined then an overload
-    using `Eigen_diagonalize_traits` is provided. Otherwise, the
-    internal implementation `Diagonalize_traits` is used.
+    matrix diagonalization. It can be omitted if Eigen 3 (or greater)
+    is available and `CGAL_EIGEN3_ENABLED` is defined. In that case,
+    an overload using `Eigen_diagonalize_traits` is provided.
 
     \param input point range.
     \param point_map property map to access the input points.

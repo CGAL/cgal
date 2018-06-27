@@ -3,16 +3,12 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of a fork of the CGAL::QGLViewer library version 2.7.0.
-
+ This file is part of a fork of the QGLViewer library version 2.7.0.
  http://www.libqglviewer.com - contact@libqglviewer.com
 
  This file may be used under the terms of the GNU General Public License 
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
-
- libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -36,8 +32,9 @@
 #include <CGAL/Qt/domUtils.h>
 #include <math.h>
 
-using namespace CGAL::qglviewer;
-using namespace std;
+namespace CGAL{
+namespace qglviewer{
+
 
 /*! Creates a default Frame.
 
@@ -1137,7 +1134,7 @@ void Frame::alignWithFrame(const Frame *const frame, bool move,
     rotate(rotation().inverse() * Quaternion(axis, angle) * orientation());
 
     // Try to align an other axis direction
-    unsigned short d = (index[1] + 1) % 3;
+    unsigned short d = (unsigned short)((index[1] + 1) % 3);
     Vec dir((d == 0) ? 1.0 : 0.0, (d == 1) ? 1.0 : 0.0, (d == 2) ? 1.0 : 0.0);
     dir = inverseTransformOf(dir);
 
@@ -1186,3 +1183,4 @@ void Frame::projectOnLine(const Vec &origin, const Vec &direction) {
   proj.projectOnAxis(direction);
   translate(shift - proj);
 }
+}}

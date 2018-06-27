@@ -761,6 +761,9 @@ public Q_SLOTS:
                              tr("Degenerated faces have been detected. Problems may occur "
                                 "for operations other tha \"Move point\". "));
       }
+      //remove lasso mode
+      selection_item->set_lasso_mode(false);
+      ui_widget.lassoCheckBox->setChecked(false);
       Q_EMIT save_handleType();
       on_editionBox_changed(ui_widget.editionBox->currentIndex());
       break;

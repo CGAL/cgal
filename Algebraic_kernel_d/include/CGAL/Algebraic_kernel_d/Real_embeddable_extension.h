@@ -103,7 +103,7 @@ template<>
 class Real_embeddable_extension< long > {            
 public:      
   struct Ceil_log2_abs
-    : public CGAL::unary_function< long, long > {
+    : public CGAL::cpp98::unary_function< long, long > {
     long operator()( long x ) {
       if (x < 0) x = -x;
       CGAL_precondition(x > 0);
@@ -113,7 +113,7 @@ public:
   };
 
   struct Floor_log2_abs
-    : public CGAL::unary_function< long, long > {
+    : public CGAL::cpp98::unary_function< long, long > {
   private:          
     signed char floor_log2_4bit[16];
   public:
@@ -149,11 +149,11 @@ public:
   };
 
   struct Floor
-    : public CGAL::unary_function< long, long > {
+    : public CGAL::cpp98::unary_function< long, long > {
     long operator() (long x) { return x;}
   };
   struct Ceil
-    : public CGAL::unary_function< long, long > {
+    : public CGAL::cpp98::unary_function< long, long > {
     long operator() (long x) { return x;}
   };
 };
@@ -168,7 +168,7 @@ public:
   typedef leda_integer Type;
 
   struct Ceil_log2_abs
-    : public CGAL::unary_function< leda_integer, long > {
+    : public CGAL::cpp98::unary_function< leda_integer, long > {
     long operator()( const leda_integer& x ) const {
       CGAL_precondition(x != leda_integer(0));
       ::leda::digit_sz ldgzeros = ::leda::digLeadingZeros(x.highword());
@@ -188,7 +188,7 @@ public:
   };
 
   struct Floor_log2_abs
-    : public CGAL::unary_function< leda_integer, long > {
+    : public CGAL::cpp98::unary_function< leda_integer, long > {
     long operator()( const leda_integer& x ) const {
       CGAL_precondition(x != leda_integer(0));
       ::leda::digit_sz ldgzeros 
@@ -200,11 +200,11 @@ public:
   };
 
   struct Floor
-    : public CGAL::unary_function< leda_integer, leda_integer > {
+    : public CGAL::cpp98::unary_function< leda_integer, leda_integer > {
     leda_integer operator() (const leda_integer& x) const { return x;}
   };
   struct Ceil
-    : public CGAL::unary_function< leda_integer, leda_integer > {
+    : public CGAL::cpp98::unary_function< leda_integer, leda_integer > {
     leda_integer operator() (const leda_integer& x) const { return x;}
   };
 };
@@ -216,7 +216,7 @@ public:
   typedef leda_bigfloat Type;
 
   struct Floor_log2_abs
-    : public CGAL::unary_function< leda_bigfloat, long > {
+    : public CGAL::cpp98::unary_function< leda_bigfloat, long > {
     long operator()( const leda_bigfloat& x ) const {
       CGAL_precondition(CGAL::sign(x) != CGAL::ZERO);
       ::leda::integer abs_sign = abs(x.get_significant());
@@ -226,7 +226,7 @@ public:
   };
         
   struct Ceil_log2_abs
-    : public CGAL::unary_function< leda_bigfloat, long > {
+    : public CGAL::cpp98::unary_function< leda_bigfloat, long > {
     long operator()( const leda_bigfloat& x ) const {
       CGAL_precondition(CGAL::sign(x) != CGAL::ZERO);
       return ::leda::ilog2(x).to_long();                
@@ -234,14 +234,14 @@ public:
   };
 
   struct Floor
-    : public CGAL::unary_function< leda_bigfloat, leda_integer > {
+    : public CGAL::cpp98::unary_function< leda_bigfloat, leda_integer > {
     leda_integer operator() ( const leda_bigfloat& x ) const { 
       return leda::to_integer( x, leda::TO_N_INF );
     }
   };
         
   struct Ceil
-    : public CGAL::unary_function< leda_bigfloat, leda_integer > {
+    : public CGAL::cpp98::unary_function< leda_bigfloat, leda_integer > {
     leda_integer operator() ( const leda_bigfloat& x ) const { 
       return leda::to_integer( x, leda::TO_P_INF );
     }
@@ -255,7 +255,7 @@ public:
   typedef leda_bigfloat_interval Type;
 
   struct Floor_log2_abs
-    : public CGAL::unary_function< leda_bigfloat_interval, long > {
+    : public CGAL::cpp98::unary_function< leda_bigfloat_interval, long > {
               
     result_type operator() (const argument_type& x) const {
       CGAL_precondition(! ::boost::numeric::in_zero(x));
@@ -264,7 +264,7 @@ public:
   };
         
   struct Ceil_log2_abs
-    : public CGAL::unary_function< leda_bigfloat_interval, long > {
+    : public CGAL::cpp98::unary_function< leda_bigfloat_interval, long > {
     long operator()( const leda_bigfloat_interval& x ) const {
       CGAL_precondition(!(::boost::numeric::in_zero(x) && 
               ::boost::numeric::singleton(x)));
@@ -273,7 +273,7 @@ public:
   };
 
   struct Floor
-    : public CGAL::unary_function< leda_bigfloat_interval, leda_integer > {
+    : public CGAL::cpp98::unary_function< leda_bigfloat_interval, leda_integer > {
     leda_integer operator() ( const leda_bigfloat_interval& x ) 
       const { 
       return internal::floor( x.lower() );
@@ -281,7 +281,7 @@ public:
   };
         
   struct Ceil
-    : public CGAL::unary_function< leda_bigfloat_interval, leda_integer > {
+    : public CGAL::cpp98::unary_function< leda_bigfloat_interval, leda_integer > {
     leda_integer operator() ( const leda_bigfloat_interval& x ) 
       const { 
       return internal::ceil( x.upper() );
@@ -299,27 +299,27 @@ class Real_embeddable_extension< CORE::BigInt > {
 public:
   typedef CORE::BigInt Type;
   struct Floor_log2_abs
-    : public CGAL::unary_function< CORE::BigInt, long > {
+    : public CGAL::cpp98::unary_function< CORE::BigInt, long > {
     long operator()( const CORE::BigInt& x ) const {
       return CORE::floorLg(x);
     }            
   };
         
   struct Ceil_log2_abs
-    : public CGAL::unary_function< CORE::BigInt, long > {
+    : public CGAL::cpp98::unary_function< CORE::BigInt, long > {
     long operator()( const CORE::BigInt& x ) const {
       return CORE::ceilLg(x);
     }
   };
 
   struct Floor
-    : public CGAL::unary_function< CORE::BigInt, CORE::BigInt > {
+    : public CGAL::cpp98::unary_function< CORE::BigInt, CORE::BigInt > {
     CORE::BigInt operator() (const CORE::BigInt& x) const { 
       return x;
     }
   };
   struct Ceil
-    : public CGAL::unary_function< CORE::BigInt, CORE::BigInt > {
+    : public CGAL::cpp98::unary_function< CORE::BigInt, CORE::BigInt > {
     CORE::BigInt operator() (const CORE::BigInt& x) const { 
       return x;
     }
@@ -332,7 +332,7 @@ class Real_embeddable_extension< CORE::BigFloat > {
 public:
   typedef CORE::BigFloat Type;
   struct Floor_log2_abs
-    : public CGAL::unary_function< CORE::BigFloat, long > {
+    : public CGAL::cpp98::unary_function< CORE::BigFloat, long > {
     long operator()( CORE::BigFloat x ) const {
       CGAL_precondition(!CGAL::zero_in(x));
       x = CGAL::abs(x);
@@ -341,7 +341,7 @@ public:
   };
         
   struct Ceil_log2_abs
-    : public CGAL::unary_function< CORE::BigFloat, long > {
+    : public CGAL::cpp98::unary_function< CORE::BigFloat, long > {
     long operator()( CORE::BigFloat x ) const {
       // (already commented out in EXACUS)...
       //   NiX_precond(!(NiX::in_zero(x) && NiX::singleton(x)));
@@ -351,7 +351,7 @@ public:
   };
 
   struct Floor
-    : public CGAL::unary_function< CORE::BigFloat, CORE::BigInt > {
+    : public CGAL::cpp98::unary_function< CORE::BigFloat, CORE::BigInt > {
     CORE::BigInt operator() ( const CORE::BigFloat& x ) const { 
       CORE::BigInt xi = x.BigIntValue();
       if(x.sign() < 0 && x.cmp(xi)!=0) {
@@ -362,7 +362,7 @@ public:
   };
         
   struct Ceil
-    : public CGAL::unary_function< CORE::BigFloat, CORE::BigInt > {
+    : public CGAL::cpp98::unary_function< CORE::BigFloat, CORE::BigInt > {
     CORE::BigInt operator() ( const CORE::BigFloat& x ) const { 
       CORE::BigInt xi = x.BigIntValue();
       if(x.sign() >0 && x.cmp(xi)!=0) {
@@ -385,7 +385,7 @@ public:
   typedef Gmpz Type;
 
   struct Floor_log2_abs
-    : public CGAL::unary_function< Gmpz, long > {
+    : public CGAL::cpp98::unary_function< Gmpz, long > {
     long operator()( const Gmpz& x ) const {
       CGAL_precondition(!CGAL::is_zero(x));
       return static_cast<long>(mpz_sizeinbase(x.mpz(),2)-1);
@@ -393,7 +393,7 @@ public:
   };
         
   struct Ceil_log2_abs
-    : public CGAL::unary_function< Gmpz, long > {
+    : public CGAL::cpp98::unary_function< Gmpz, long > {
     long operator()( const Gmpz& x ) const {
       long pos  = mpz_scan1(x.mpz(),0);
       long size = static_cast<long>(mpz_sizeinbase(x.mpz(),2));
@@ -405,13 +405,13 @@ public:
   };
 
   struct Floor
-    : public CGAL::unary_function< Gmpz, Gmpz > {
+    : public CGAL::cpp98::unary_function< Gmpz, Gmpz > {
     Gmpz operator() (const Gmpz& x) const { 
       return x;
     }
   };
   struct Ceil
-    : public CGAL::unary_function< Gmpz, Gmpz > {
+    : public CGAL::cpp98::unary_function< Gmpz, Gmpz > {
     Gmpz operator() (const Gmpz& x) const { 
       return x;
     }
@@ -427,7 +427,7 @@ public:
   typedef Gmpfr Type;
 
   struct Floor_log2_abs
-    : public CGAL::unary_function< Gmpfr, long > {
+    : public CGAL::cpp98::unary_function< Gmpfr, long > {
     long operator()( const Gmpfr& x ) const {
       Float_traits<Gmpfr>::Get_mantissa get_mantissa; 
       Float_traits<Gmpfr>::Get_exponent get_exponent; 
@@ -438,7 +438,7 @@ public:
   };
         
   struct Ceil_log2_abs
-    : public CGAL::unary_function< Gmpfr, long > {
+    : public CGAL::cpp98::unary_function< Gmpfr, long > {
     long operator()( const Gmpfr& x ) const {
       Float_traits<Gmpfr>::Get_mantissa get_mantissa; 
       Float_traits<Gmpfr>::Get_exponent get_exponent; 
@@ -449,7 +449,7 @@ public:
   };
 
   struct Floor
-    : public CGAL::unary_function< Gmpfr, Gmpz > {
+    : public CGAL::cpp98::unary_function< Gmpfr, Gmpz > {
     Gmpz operator() ( const Gmpfr& x ) const {  
       Gmpz result; 
       mpfr_get_z (result.mpz(),x.fr(),GMP_RNDD);
@@ -458,7 +458,7 @@ public:
   };
         
   struct Ceil
-    : public CGAL::unary_function< Gmpfr, Gmpz > {
+    : public CGAL::cpp98::unary_function< Gmpfr, Gmpz > {
     Gmpz operator() ( const Gmpfr& x ) const { 
       Gmpz result; 
       mpfr_get_z (result.mpz(),x.fr(),GMP_RNDU);
@@ -476,7 +476,7 @@ public:
   typedef Gmpfi Type;
 
   struct Floor_log2_abs
-    : public CGAL::unary_function< Gmpfi, long > {
+    : public CGAL::cpp98::unary_function< Gmpfi, long > {
     result_type operator() (const argument_type& x) const {
       CGAL_precondition(!x.is_zero());
       return internal::floor_log2_abs(x.abs().inf());
@@ -484,7 +484,7 @@ public:
   };
         
   struct Ceil_log2_abs
-    : public CGAL::unary_function< Gmpfi, long > {
+    : public CGAL::cpp98::unary_function< Gmpfi, long > {
     long operator()( const Gmpfi& x ) const {
       CGAL_precondition(!x.inf().is_zero() || !x.sup().is_zero());
       return internal::ceil_log2_abs(x.abs().sup());                    
@@ -492,7 +492,7 @@ public:
   };
 
   struct Floor
-    : public CGAL::unary_function< Gmpfi, Gmpz > {
+    : public CGAL::cpp98::unary_function< Gmpfi, Gmpz > {
     Gmpz operator() ( const Gmpfi& x ) 
       const { 
       return internal::floor( x.inf() );
@@ -500,7 +500,7 @@ public:
   };
         
   struct Ceil
-    : public CGAL::unary_function< Gmpfi, Gmpz > {
+    : public CGAL::cpp98::unary_function< Gmpfi, Gmpz > {
     Gmpz operator() ( const Gmpfi& x ) 
       const { 
       return internal::ceil( x.sup() );

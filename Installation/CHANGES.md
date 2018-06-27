@@ -1,7 +1,6 @@
 Release History
 ===============
 
-
 Release 4.13
 ------------
 
@@ -12,6 +11,12 @@ Release date: September 2018
 -   The library CGAL_Qt5 now contains a fork of the version 2.7.0 of libQGLViewer.
     The corresponding code is in the package GraphicsView.
     The dependency for the external library libQGLViewer is therefore dropped for all demos.
+
+### General
+
+ -  A new function `CGAL::draw()` is added in the packages Polyhedral
+    Surface, Surface Mesh, Linear Cell Complex, 2D Triangulations, and 3D
+    Triangulations, enabling to draw the corresponding data structures.
 
 ### 2D and 3D Linear Geometry Kernel
 -   An operator() that takes a Ray_3 has been added to the concept
@@ -45,10 +50,26 @@ Release date: September 2018
     in the code but did not appear in the concepts).
 
 ### Convex hull 3
+
 -   Added the function `extreme_points_3()` computing the
     points on the convex hull without underlying connectivity.
 
+### Point Set Processing
+
+-   Added a callback mechanism for functions
+    `CGAL::bilateral_smooth_point_set()`,
+    `CGAL::compute_average_spacing()`,
+    `CGAL::grid_simplify_point_set()`,
+    `CGAL::hierarchy_simplify_point_set()`,
+    `CGAL::jet_estimate_normals()`, `CGAL::jet_smooth_point_set()`,
+    `CGAL::pca_estimate_normals()`, `CGAL::remove_outliers()` and
+    `CGAL::wlop_simplify_and_regularize_point_set()`.
+
 ### Polygon Mesh Processing
+
+-   Added a new named parameter for stitching that allows to perform 
+    this operation per connected component instead of globally
+
 -   Added a function to apply a transformation to a mesh:
     - `CGAL::Polygon_mesh_processing::transform()`
 
@@ -79,6 +100,19 @@ Release date: September 2018
     `<CGAL/Mesh_3/Labeled_mesh_domain_3.h>`, that were deprecated since
     CGAL 4.5, are now removed.
 
+-   **Breaking change**: `CGAL::lloyd_optimize_mesh_3` now depends on
+    the _Eigen_ library.
+
+### Estimation of Local Differential Properties of Point-Sampled Surfaces Reference
+
+-   **Breaking change**: `CGAL::Monge_via_jet_fitting` now depends on
+    the _Eigen_ library.
+
+### Bounding Volumes
+
+-   **Breaking change**: `CGAL::Approximate_min_ellipsoid_d` now
+    depends on the _Eigen_ library.
+
 ### CGAL and the Boost Graph Library (BGL)
 
 -   Add helper function `CGAL::is_valid_polygon_mesh` that checks the
@@ -86,6 +120,13 @@ Release date: September 2018
 
 -   Improve the function `CGAL::Euler::collapse_edge` so that the target
     vertex of the collapsed edge is always kept after the collapse.
+
+### CGAL and Solvers
+
+-   **Breaking change**: `CGAL::Diagonalize_traits` is now deprecated
+    and shouldn't be used, `CGAL::Eigen_diagonalize_traits` (along
+    with the _Eigen_ library) should be used instead.
+
 
 Release 4.12
 ------------

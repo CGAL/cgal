@@ -16,6 +16,39 @@
 #include <QMessageBox>
 
 #include "ui_Point_set_outliers_removal_plugin.h"
+
+#include "run_with_qprogressdialog.h"
+
+struct Outlier_removal_functor
+  : public Functor_with_signal_callback
+{
+  Point_set* points;
+  int nb_neighbors;
+  double removed_percentage;
+  double distance_threshold;
+  boost::shared_ptr<Point_set::iterator> result;
+
+  Outlier_removal_functor  (Point_set* points,
+                            int nb_neighbors,
+                            double removed_percentage,
+                            double distance_threshold)
+    : points (points), nb_neighbors (nb_neighbors)
+    , removed_percentage (removed_percentage), distance_threshold (distance_threshold)
+    , result (new Point_set::iterator) { }
+
+  void operator()()
+  {
+    // Computes outliers
+    *result = 
+      CGAL::remove_outliers(*points,
+                            nb_neighbors,
+                            points->parameters().
+                            threshold_percent(removed_percentage).
+                            threshold_distance(distance_threshold).
+                            callback (*(this->callback())));
+  }
+};
+
 using namespace CGAL::Three;
 class Polyhedron_demo_point_set_outliers_removal_plugin :
   public QObject,
@@ -31,6 +64,7 @@ private:
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
+    mw = mainWindow;
     actionOutlierRemoval = new QAction(tr("Outliers Selection"), mainWindow);
     actionOutlierRemoval->setProperty("subMenuName","Point Set Processing");
     actionOutlierRemoval->setObjectName("actionOutlierRemoval");
@@ -87,27 +121,23 @@ void Polyhedron_demo_point_set_outliers_removal_plugin::on_actionOutlierRemoval_
     const double distance_threshold = dialog.distance();
     const int nb_neighbors = dialog.nbNeighbors();
 
-    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::setOverrideCursor(Qt::BusyCursor);
 
     CGAL::Timer task_timer; task_timer.start();
     std::cerr << "Select outliers (" << removed_percentage <<"% with distance threshold "
               << distance_threshold << ")...\n";
 
     // Computes outliers
-    Point_set::iterator first_point_to_remove =
-      CGAL::remove_outliers(*points,
-                            nb_neighbors,
-                            points->parameters().
-                            threshold_percent(removed_percentage).
-                            threshold_distance(distance_threshold));
-
+    Outlier_removal_functor functor (points, nb_neighbors, removed_percentage, distance_threshold);
+    run_with_qprogressdialog<CGAL::Sequential_tag> (functor, "Selecting outliers...", mw);
+    Point_set::iterator first_point_to_remove = *functor.result;
 
     std::size_t nb_points_to_remove = std::distance(first_point_to_remove, points->end());
     std::size_t memory = CGAL::Memory_sizer().virtual_size();
-    std::cerr << "Simplification: " << nb_points_to_remove << " point(s) are selected ("
-                                    << task_timer.time() << " seconds, "
-                                    << (memory>>20) << " Mb allocated)"
-                                    << std::endl;
+    std::cerr << "Outliers: " << nb_points_to_remove << " point(s) are selected ("
+              << task_timer.time() << " seconds, "
+              << (memory>>20) << " Mb allocated)"
+              << std::endl;
 
     // Selects points to delete
     points->set_first_selected (first_point_to_remove);

@@ -210,7 +210,7 @@ struct Real_embeddable_traits< Custom_traits_Hausdorff::FT >
   : public INTERN_RET::Real_embeddable_traits_base< Custom_traits_Hausdorff::FT , CGAL::Tag_true>
 {
   class To_double
-    : public CGAL::unary_function< Custom_traits_Hausdorff::FT, double > {
+    : public CGAL::cpp98::unary_function< Custom_traits_Hausdorff::FT, double > {
     public:
       double operator()( const Custom_traits_Hausdorff::FT&  ) const { return 0; }
   };

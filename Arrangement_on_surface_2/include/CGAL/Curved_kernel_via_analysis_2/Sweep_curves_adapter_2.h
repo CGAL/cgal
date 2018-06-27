@@ -693,7 +693,7 @@ class Make_x_monotone_2
     typedef typename SweepCurvesAdapter_2::Generic_arc_2 Generic_arc_2;
    
 public:
-    typedef CGAL::iterator<std::output_iterator_tag, Generic_arc_2> 
+    typedef CGAL::cpp98::iterator<std::output_iterator_tag, Generic_arc_2>
       result_type;
     
     //! standard constructor

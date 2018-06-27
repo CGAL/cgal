@@ -24,5 +24,6 @@ int main()
    std::cout << rt.number_of_vertices() << std::endl;
    std::cout << "number of hidden vertices :  " ;
    std::cout << rt.number_of_hidden_vertices() << std::endl;
+
    return 0;
 }

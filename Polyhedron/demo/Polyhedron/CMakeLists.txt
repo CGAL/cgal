@@ -171,6 +171,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
   add_library(demo_framework SHARED
     Scene.cpp
     Viewer.cpp
+    Three.cpp
     ${ViewerUI_FILES}
     ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES}
     Viewer_interface_moc.cpp
@@ -184,6 +185,11 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
   target_link_libraries(demo_framework
     PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui Qt5::Script
     )
+  # Let's define `three_EXPORT` during the compilation of `demo_framework`,
+  # in addition of `demo_framework_EXPORT` (defined automatically by
+  # CMake). That is to deal with the visibility of symbols of
+  # `Three.h`/`Three.cpp`.
+  target_compile_definitions(demo_framework PRIVATE three_EXPORTS=1)
   if(CGAL_HEADER_ONLY)
     target_compile_definitions(demo_framework PRIVATE -DCGAL_USE_Qt5_RESOURCES)
   endif()
@@ -199,6 +205,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
     Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
   add_library(scene_color_ramp SHARED Color_ramp.cpp)
   target_link_libraries(scene_color_ramp PRIVATE Qt5::Core)
+
+  add_library(scene_callback_signaler SHARED Callback_signaler.cpp)
+  target_link_libraries(scene_callback_signaler PRIVATE Qt5::Core)
 
   add_library(point_dialog SHARED Show_point_dialog.cpp Show_point_dialog.ui ${Show_point_dialogUI_FILES})
   target_link_libraries(point_dialog

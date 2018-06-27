@@ -1250,7 +1250,7 @@ namespace CGAL {
     /** Test if the map is valid.
      * @return true iff the map is valid.
      */
-    bool is_valid() const
+    bool is_valid(bool show_errors=true) const
     {
       bool valid = true;
       unsigned int i = 0, j = 0;
@@ -1276,9 +1276,11 @@ namespace CGAL {
           if ((!is_free(it, 0) && beta(it, 0, 1)!=it) ||
               (!is_free(it, 1) && beta(it, 1, 0)!=it ))
           {
-            std::cerr << "Map not valid: beta(0) "
-              "is not the inverse of beta(1) for dart "
-                      <<darts().index(it) << std::endl;
+            if (show_errors)
+            { std::cerr << "Map not valid: beta(0) "
+                "is not the inverse of beta(1) for dart "
+                        <<darts().index(it) << std::endl;
+            }
             valid = false;
           }
 
@@ -1286,9 +1288,11 @@ namespace CGAL {
           for ( i = 2; i <= dimension; ++i)
             if (!is_free(it, i) && beta(it, i, i)!=it)
             {
-              std::cerr << "Map not valid: beta(" << i
-                        << ") is not an involution for dart "
-                        <<darts().index(it)<< std::endl;
+              if (show_errors)
+              { std::cerr << "Map not valid: beta(" << i
+                          << ") is not an involution for dart "
+                          <<darts().index(it)<< std::endl;
+              }
               valid = false;
             }
 
@@ -1299,9 +1303,12 @@ namespace CGAL {
               if ((is_free(it, i) != is_free(beta(it, 0), i)) ||
                   (!is_free(it, i) && beta(it, 0, i)!=beta(it, i, 1)))
               {
-                std::cerr << "Map not valid: beta(0) o beta(" << i
-                          << ") is not an involution for dart "
-                          <<darts().index(it)<< std::endl;
+                if (show_errors)
+                {
+                  std::cerr << "Map not valid: beta(0) o beta(" << i
+                            << ") is not an involution for dart "
+                            <<darts().index(it)<< std::endl;
+                }
                 valid = false;
               }
           }
@@ -1311,9 +1318,12 @@ namespace CGAL {
               if ((is_free(it, i) != is_free(beta(it, 1), i)) ||
                   (!is_free(it, i) && beta(it, 1, i)!=beta(it, i, 0)))
               {
-                std::cerr << "Map not valid: beta(1) o beta(" << i
-                          << ") is not an involution for dart "
-                          <<darts().index(it)<< std::endl;
+                if (show_errors)
+                {
+                  std::cerr << "Map not valid: beta(1) o beta(" << i
+                            << ") is not an involution for dart "
+                            <<darts().index(it)<< std::endl;
+                }
                 valid = false;
               }
           }
@@ -1327,10 +1337,13 @@ namespace CGAL {
                 if ((is_free(it, j)!=is_free(beta(it, i), j)) ||
                     (!is_free(it, j) && beta(it, i, j)!=beta(it, j, i)))
                 {
-                  std::cerr << "Map not valid: beta(" << i
-                            << ") o beta(" << j
-                            << ") is not an involution for dart "
-                            << darts().index(it)<< std::endl;
+                  if (show_errors)
+                  {
+                    std::cerr << "Map not valid: beta(" << i
+                              << ") o beta(" << j
+                              << ") is not an involution for dart "
+                              << darts().index(it)<< std::endl;
+                  }
                   valid = false;
                 }
             }
