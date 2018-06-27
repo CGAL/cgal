@@ -1,8 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/convex_hull_3.h>
-#include <CGAL/convexity_check_3.h>
-
 #include <fstream>
 #include <cassert>
 
@@ -20,8 +18,6 @@ int main()
 
   CGAL::Polyhedron_3<K> r;
   CGAL::convex_hull_3(pointset.begin(), pointset.end(), r);
-
-  assert( CGAL::is_strongly_convex_3(r) );
 
   assert(r.size_of_vertices()==82);
 
