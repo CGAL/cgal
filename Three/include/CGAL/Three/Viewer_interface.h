@@ -29,7 +29,7 @@
 #include <QWidget>
 #include <QPoint>
 #include <QOpenGLFunctions_2_1>
-#include <QOpenGLFunctions_4_3_Compatibility>
+#include <QOpenGLFunctions_3_2_Core>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 // forward declarations
 class QWidget;
@@ -75,6 +75,7 @@ public:
    PROGRAM_SPHERES,             //! Used to render one or several spheres.
    PROGRAM_FLAT,                /** Used to render flat shading without pre computing normals*/
    PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
+   PROGRAM_SOLID_WIREFRAME,     //! Used to render edges with width superior to 1.
    NB_OF_PROGRAMS               //! Holds the number of different programs in this enum.
   };
 
@@ -254,7 +255,7 @@ public:
   //! Geometry Shaders or Depth Textures.
   //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Compatibility if `isOpenGL_4_3()` is `true`
   //! @returns NULL if `isOpenGL_4_3()` is `false`
-  virtual QOpenGLFunctions_4_3_Compatibility* openGL_4_3_functions() = 0;
+  virtual QOpenGLFunctions_3_2_Core* openGL_4_3_functions() = 0;
 }; // end class Viewer_interface
 }
 }

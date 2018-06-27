@@ -468,11 +468,9 @@ CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::postDraw() {
   // Pivot point, line when camera rolls, zoom region
   if (gridIsDrawn()) {
-    glLineWidth(1.0);
     drawGrid(camera()->sceneRadius());
   }
   if (axisIsDrawn()) {
-    glLineWidth(2.0);
     drawAxis(1.0);
   }
   
@@ -488,15 +486,13 @@ void CGAL::QGLViewer::postDraw() {
   }
 
   // Restore foregroundColor
-  GLfloat color[4];
+  /*GLfloat color[4];
   color[0] = GLfloat(foregroundColor().red()) / 255.0f;
   color[1] = GLfloat(foregroundColor().green()) / 255.0f;
   color[2] = GLfloat(foregroundColor().blue()) / 255.0f;
   color[3] = 1.0f;
-  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
-  glDisable(GL_LIGHTING);
   glDisable(GL_DEPTH_TEST);
-
+*/
   if (FPSIsDisplayed())
     displayFPS();
   if (displayMessage_)
@@ -775,8 +771,6 @@ void CGAL::QGLViewer::connectAllCameraKFIInterpolatedSignals(bool connection) {
 Called in draw(), this method is useful to debug or display your light setup.
 Light drawing depends on the type of light (point, spot, directional).
 
-The method retrieves the light setup using \c glGetLightfv. Position and define
-your lights before calling this method.
 
 Light is drawn using its diffuse color. Disabled lights are not displayed.
 
@@ -785,7 +779,6 @@ Drawing size is proportional to sceneRadius(). Use \p scale to rescale it.
 See the <a href="../examples/drawLight.html">drawLight example</a> for an
 illustration.
 
-\attention You need to enable \c GL_COLOR_MATERIAL before calling this method.
 \c glColor is set to the light diffuse color. */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::drawLight(GLenum, qreal ) const {
@@ -821,7 +814,7 @@ pixels, origin in the upper left corner of the widget).
 The default QApplication::font() is used to render the text when no \p fnt is
 specified. Use QApplication::setFont() to define this default font.
 
-You should disable \c GL_LIGHTING and \c GL_DEPTH_TEST before this method so
+You should disable \c GL_DEPTH_TEST before this method so
 that colors are properly rendered.
 
 This method can be used in conjunction with the
@@ -917,15 +910,14 @@ representations using \c newY = height() - \c y.
 You need to call stopScreenCoordinatesSystem() at the end of the drawing block
 to restore the previous camera matrix.
 
-In practice, this method should be used in draw(). It sets an appropriate
-orthographic projection matrix and then sets \c glMatrixMode to \c GL_MODELVIEW.
+In practice, this method should be used in draw(). 
 
 See the <a href="../examples/screenCoordSystem.html">screenCoordSystem</a>, <a
 href="../examples/multiSelect.html">multiSelect</a> and <a
 href="../examples/contribs.html#backgroundImage">backgroundImage</a> examples
 for an illustration.
 
-You may want to disable \c GL_LIGHTING, to enable \c GL_LINE_SMOOTH or \c
+You may want to enable \c GL_LINE_SMOOTH or \c
 GL_BLEND to draw when this method is used.
 
 If you want to link 2D drawings to 3D objects, use
@@ -947,9 +939,7 @@ void CGAL::QGLViewer::startScreenCoordinatesSystem(bool ) const {
 /*! Stops the pixel coordinate drawing block started by
 startScreenCoordinatesSystem().
 
-The \c GL_MODELVIEW and \c GL_PROJECTION matrices modified in
-startScreenCoordinatesSystem() are restored. \c glMatrixMode is set to \c
-GL_MODELVIEW. */
+*/
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::stopScreenCoordinatesSystem() const {
 }
@@ -3166,12 +3156,9 @@ void CGAL::QGLViewer::drawVisualHints() {
     glScissor (GLint((camera()->projectedCoordinatesOf(camera()->pivotPoint()).x-size/2)*devicePixelRatio()),
                GLint((height() - camera()->projectedCoordinatesOf(camera()->pivotPoint()).y-size/2)*devicePixelRatio()), size, size);
     rendering_program.setUniformValue("color", QColor(::Qt::black));
-    glLineWidth(3.0);
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(4));
     rendering_program.setUniformValue("color", QColor(::Qt::white));
-    glLineWidth(3.0);
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(4));
-    glLineWidth(1.0);
     // The viewport and the scissor are restored.
     glScissor(scissor[0],scissor[1],scissor[2],scissor[3]);
     glViewport(viewport[0],viewport[1],viewport[2],viewport[3]);

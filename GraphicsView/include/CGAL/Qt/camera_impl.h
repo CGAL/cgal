@@ -473,8 +473,7 @@ void Camera::computeModelViewMatrix() const {
 
  The Camera projection matrix is computed using computeProjectionMatrix().
 
- When \p reset is \c true (default), the method clears the previous projection
- matrix by calling \c glLoadIdentity before setting the matrix. Setting \p reset
+ Setting \p reset
  to \c false is useful for \c GL_SELECT mode, to combine the pushed matrix with
  a picking matrix. See CGAL::QGLViewer::beginSelection() for details.
 
@@ -486,22 +485,15 @@ void Camera::computeModelViewMatrix() const {
  want your Camera to use an exotic projection matrix. See also
  loadModelViewMatrix().
 
- \attention \c glMatrixMode is set to \c GL_PROJECTION.
 
  \attention If you use several OpenGL contexts and bypass the Qt main refresh
  loop, you should call QOpenGLWidget::makeCurrent() before this method in order
  to activate the right OpenGL context. */
 CGAL_INLINE_FUNCTION
-void Camera::loadProjectionMatrix(bool reset) const {
+void Camera::loadProjectionMatrix(bool ) const {
   // WARNING: makeCurrent must be called by every calling method
-  gl()->glMatrixMode(GL_PROJECTION);
-
-  if (reset)
-    gl()->glLoadIdentity();
 
   computeProjectionMatrix();
-
-  gl()->glMultMatrixd(projectionMatrix_);
 }
 
 /*! Loads the OpenGL \c GL_MODELVIEW matrix with the modelView matrix
@@ -518,30 +510,16 @@ void Camera::loadProjectionMatrix(bool reset) const {
  converted to the Camera coordinate system, before getting projected using the
  \c GL_PROJECTION matrix (see loadProjectionMatrix()).
 
- When \p reset is \c true (default), the method loads (overwrites) the \c
- GL_MODELVIEW matrix. Setting \p reset to \c false simply calls \c glMultMatrixd
- (might be useful for some applications).
-
- Overload this method or simply call glLoadMatrixd() at the beginning of
- CGAL::QGLViewer::draw() if you want your Camera to use an exotic modelView matrix.
- See also loadProjectionMatrix().
-
  getModelViewMatrix() returns the 4x4 modelView matrix.
 
- \attention glMatrixMode is set to \c GL_MODELVIEW
 
  \attention If you use several OpenGL contexts and bypass the Qt main refresh
  loop, you should call QOpenGLWidget::makeCurrent() before this method in order
  to activate the right OpenGL context. */
 CGAL_INLINE_FUNCTION
-void Camera::loadModelViewMatrix(bool reset) const {
+void Camera::loadModelViewMatrix(bool ) const {
   // WARNING: makeCurrent must be called by every calling method
-  gl()->glMatrixMode(GL_MODELVIEW);
   computeModelViewMatrix();
-  if (reset)
-    gl()->glLoadMatrixd(modelViewMatrix_);
-  else
-    gl()->glMultMatrixd(modelViewMatrix_);
 }
 
 /*! Same as loadProjectionMatrix() but for a stereo setup.
@@ -559,24 +537,13 @@ void Camera::loadModelViewMatrix(bool reset) const {
  href="../examples/contribs.html#anaglyph">anaglyph</a> examples for an
  illustration.
 
- To retrieve this matrix, use a code like:
- \code
- glMatrixMode(GL_PROJECTION);
- glPushMatrix();
- loadProjectionMatrixStereo(left_or_right);
- glGetDoublev(GL_PROJECTION_MATRIX, m);
- glPopMatrix();
- \endcode
- Note that getProjectionMatrix() always returns the mono-vision matrix.
 
- \attention glMatrixMode is set to \c GL_PROJECTION. */
+ Note that getProjectionMatrix() always returns the mono-vision matrix.*/
+
 CGAL_INLINE_FUNCTION
 void Camera::loadProjectionMatrixStereo(bool leftBuffer) const {
   qreal left, right, bottom, top;
   qreal screenHalfWidth, halfWidth, side, shift, delta;
-
-  gl()->glMatrixMode(GL_PROJECTION);
-  gl()->glLoadIdentity();
 
   switch (type()) {
   case Camera::PERSPECTIVE:
@@ -623,13 +590,10 @@ void Camera::loadProjectionMatrixStereo(bool leftBuffer) const {
 
  See the <a href="../examples/stereoViewer.html">stereoViewer</a> and the <a
  href="../examples/contribs.html#anaglyph">anaglyph</a> examples for an
- illustration.
-
- \attention glMatrixMode is set to \c GL_MODELVIEW. */
+ illustration.*/
 CGAL_INLINE_FUNCTION
 void Camera::loadModelViewMatrixStereo(bool leftBuffer) const {
   // WARNING: makeCurrent must be called by every calling method
-  gl()->glMatrixMode(GL_MODELVIEW);
 
   qreal halfWidth = focusDistance() * tan(horizontalFieldOfView() / 2.0);
   qreal shift =
@@ -641,7 +605,7 @@ void Camera::loadModelViewMatrixStereo(bool leftBuffer) const {
     modelViewMatrix_[12] -= shift;
   else
     modelViewMatrix_[12] += shift;
-  gl()->glLoadMatrixd(modelViewMatrix_);
+ 
 }
 
 /*! Fills \p m with the Camera projection matrix values.
@@ -656,8 +620,7 @@ void Camera::loadModelViewMatrixStereo(bool leftBuffer) const {
  CGAL::QGLViewer::draw(). If you modified the \c GL_PROJECTION matrix (for instance
  using CGAL::QGLViewer::startScreenCoordinatesSystem()), the two results differ.
 
- The result is an OpenGL 4x4 matrix, which is given in \e column-major order
- (see \c glMultMatrix man page for details).
+ The result is an OpenGL 4x4 matrix, which is given in \e column-major order.
 
  See also getModelViewMatrix() and setFromProjectionMatrix(). */
 CGAL_INLINE_FUNCTION
@@ -677,6 +640,26 @@ void Camera::getProjectionMatrix(GLfloat m[16]) const {
     m[i] = float(mat[i]);
 }
 
+CGAL_INLINE_FUNCTION
+void Camera::getViewportMatrix(GLdouble m[]) const
+{
+  int v[4];
+  getViewport(v);
+  m[0]=0.5f*v[2]; m[4]=0        ;m[8]=0    ;m[12]=0.5f*v[2]+v[0];
+  m[1]=0        ; m[5]=0.5f*v[3];m[9]=0    ;m[13]=0.5*v[3]+v[1];
+  m[2]=0        ; m[6]=0        ;m[10]=0.5f;m[14]=0.5f;
+  m[3]=0        ; m[7]=0        ;m[11]=0   ;m[15]=1.0f;
+}
+
+CGAL_INLINE_FUNCTION
+void Camera::getViewportMatrix(GLfloat m[]) const
+{
+  static GLdouble mat[16];
+  getViewportMatrix(mat);
+  for (unsigned short i = 0; i < 16; ++i)
+    m[i] = float(mat[i]);
+}
+
 /*! Fills \p m with the Camera modelView matrix values.
 
  First calls computeModelViewMatrix() to define the Camera modelView matrix.
@@ -689,7 +672,6 @@ void Camera::getProjectionMatrix(GLfloat m[16]) const {
  (using glTranslate, glRotate... or similar methods), the two matrices differ.
 
  The result is an OpenGL 4x4 matrix, which is given in \e column-major order
- (see \c glMultMatrix man page for details).
 
  See also getProjectionMatrix() and setFromModelViewMatrix(). */
 CGAL_INLINE_FUNCTION

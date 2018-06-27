@@ -42,18 +42,6 @@ namespace qglviewer {
   selection, its MouseGrabber properties and a dynamic update of the scene, the
   ManipulatedFrame introduces a great reactivity in your applications.
 
-  A ManipulatedFrame is attached to a CGAL::QGLViewer using
-  CGAL::QGLViewer::setManipulatedFrame(): \code init() { setManipulatedFrame( new
-  ManipulatedFrame() ); }
-
-  draw()
-  {
-        glPushMatrix();
-        glMultMatrixd(manipulatedFrame()->matrix());
-        // draw the manipulated object here
-        glPopMatrix();
-  }
-  \endcode
   See the <a href="../examples/manipulatedFrame.html">manipulatedFrame
   example</a> for a complete application.
 

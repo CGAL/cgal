@@ -37,7 +37,7 @@ public:
   QString message;
   bool _displayMessage;
   QTimer messageTimer;
-  QOpenGLFunctions_4_3_Compatibility* _recentFunctions;
+  QOpenGLFunctions_3_2_Core* _recentFunctions;
   bool is_2d_selection_mode;
   QOpenGLDebugLogger *logger;
 
@@ -198,7 +198,7 @@ void Viewer::init()
   }
   else
   {
-    d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
+    d->_recentFunctions = new QOpenGLFunctions_3_2_Core();
     d->logger = new QOpenGLDebugLogger(this);
     if(!d->logger->initialize())
       qDebug()<<"logger could not init.";
@@ -443,18 +443,10 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
 {
   if(scene == 0)
     return;
-  viewer->glLineWidth(1.0f);
   viewer->glPointSize(2.f);
   viewer->glEnable(GL_POLYGON_OFFSET_FILL);
   viewer->glPolygonOffset(1.0f,1.0f);
   viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-
-  viewer->glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
-
-  if(twosides)
-    viewer->glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-  else
-    viewer->glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
 
   if(!with_names && antialiasing)
   {
@@ -576,7 +568,6 @@ QString Viewer::dumpCameraCoordinates()
 }
 
 void Viewer::attribBuffers(int program_name) const {
-    GLint is_both_sides = 0;
     //ModelViewMatrix used for the transformation of the camera.
     QMatrix4x4 mvp_mat;
     // ModelView Matrix used for the lighting system
@@ -594,10 +585,6 @@ void Viewer::attribBuffers(int program_name) const {
     this->camera()->getModelViewProjectionMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mvp_mat.data()[i] = GLfloat(d_mat[i]);
-   
-
-    const_cast<Viewer*>(this)->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE,
-                                             &is_both_sides);
 
     QVector4D position(0.0f,0.0f,1.0f, 1.0f );
     QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
@@ -637,7 +624,7 @@ void Viewer::attribBuffers(int program_name) const {
         program->setUniformValue("light_spec", specular);
         program->setUniformValue("light_amb", ambient);
         program->setUniformValue("spec_power", 51.8f);
-        program->setUniformValue("is_two_side", is_both_sides);
+        program->setUniformValue("is_two_side", d->twosides);
         break;
     }
     switch(program_name)
@@ -691,7 +678,6 @@ void Viewer::drawVisualHints()
     {
         glDisable(GL_DEPTH_TEST);
 
-        glLineWidth(3.0f);
         glPointSize(6.0f);
         //draws the distance
         QMatrix4x4 mvpMatrix;
@@ -712,12 +698,12 @@ void Viewer::drawVisualHints()
         d->rendering_program_dist.release();
         glEnable(GL_DEPTH_TEST);
         glPointSize(1.0f);
-        glLineWidth(1.0f);
 
     }
     if (!d->painter->isActive())
       d->painter->begin(this);
     //So that the text is drawn in front of everything
+    glEnableVertexAttribArray(0);
     d->painter->beginNativePainting();
     glDisable(GL_DEPTH_TEST);
     d->painter->endNativePainting();
@@ -765,6 +751,13 @@ QOpenGLShaderProgram* Viewer::declare_program(int name,
     if(strcmp(f_shader,":/cgal/Polyhedron_3/resources/shader_flat.f" ) == 0)
     {
       if(!program->addShaderFromSourceFile(QOpenGLShader::Geometry,":/cgal/Polyhedron_3/resources/shader_flat.g" ))
+      {
+        std::cerr<<"adding geometry shader FAILED"<<std::endl;
+      }
+    }
+    if(strcmp(f_shader,":/cgal/Polyhedron_3/resources/solid_wireframe_shader.f" ) == 0)
+    {
+      if(!program->addShaderFromSourceFile(QOpenGLShader::Geometry,":/cgal/Polyhedron_3/resources/solid_wireframe_shader.g" ))
       {
         std::cerr<<"adding geometry shader FAILED"<<std::endl;
       }
@@ -820,6 +813,10 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     case PROGRAM_OLD_FLAT:
       return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_light.v", ":/cgal/Polyhedron_3/resources/shader_old_flat.f");
       break;
+    case PROGRAM_SOLID_WIREFRAME:
+      return declare_program(name, ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.v", ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.f");
+      break;
+      
 
     default:
         std::cerr<<"ERROR : Program not found."<<std::endl;
@@ -868,7 +865,9 @@ void Viewer::paintGL()
   }
   else
   {
+    glEnableVertexAttribArray(0);
     d->painter->beginNativePainting();
+    
     glClearColor(GLfloat(backgroundColor().redF()),
                  GLfloat(backgroundColor().greenF()),
                  GLfloat(backgroundColor().blueF()),
@@ -1050,7 +1049,7 @@ void Viewer::enableClippingBox(QVector4D box[6])
     d->clipbox[i] = box[i];
 }
 
-QOpenGLFunctions_4_3_Compatibility* Viewer::openGL_4_3_functions() { return d->_recentFunctions; }
+QOpenGLFunctions_3_2_Core* Viewer::openGL_4_3_functions() { return d->_recentFunctions; }
 
 void Viewer::set2DSelectionMode(bool b) { d->is_2d_selection_mode = b; }
 

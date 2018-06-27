@@ -202,9 +202,10 @@ void Scene_polyhedron_selection_item_priv::initializeBuffers(CGAL::Three::Viewer
       item->buffers[VertexPoints].release();
       program->disableAttributeArray("colors");
     item->vaos[Points]->release();
-
+  program->release();
   //vao containing the data for the  lines
-
+  program = item->getShaderProgram(Scene_polyhedron_selection_item::PROGRAM_SOLID_WIREFRAME, viewer);
+  program->bind();
     item->vaos[Edges]->bind();
       item->buffers[VertexEdges].bind();
         item->buffers[VertexEdges].allocate(positions_lines.data(),
@@ -251,8 +252,6 @@ void Scene_polyhedron_selection_item_priv::initialize_temp_buffers(CGAL::Three::
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
     item->buffers[VertexTempFacets].release();
 
-
-
     item->buffers[NormalTempFacets].bind();
     item->buffers[NormalTempFacets].allocate(temp_normals.data(),
                         static_cast<int>(temp_normals.size()*sizeof(float)));
@@ -265,7 +264,7 @@ void Scene_polyhedron_selection_item_priv::initialize_temp_buffers(CGAL::Three::
   }
   //vao containing the data for the temp lines
   {
-    program = item->getShaderProgram(Scene_polyhedron_selection_item::PROGRAM_NO_SELECTION, viewer);
+    program = item->getShaderProgram(Scene_polyhedron_selection_item::PROGRAM_SOLID_WIREFRAME, viewer);
     program->bind();
     item->vaos[TempEdges]->bind();
 
@@ -366,7 +365,7 @@ void Scene_polyhedron_selection_item_priv::initialize_HL_buffers(CGAL::Three::Vi
   }
   //vao containing the data for the temp lines
   {
-    program = item->getShaderProgram(Scene_polyhedron_selection_item::PROGRAM_NO_SELECTION, viewer);
+    program = item->getShaderProgram(Scene_polyhedron_selection_item::PROGRAM_SOLID_WIREFRAME, viewer);
     program->bind();
     item->vaos[HLEdges]->bind();
 
@@ -637,7 +636,7 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
 
   viewer->glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &offset_factor);
   viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
-  viewer->glPolygonOffset(0.5f, 0.9f);
+  viewer->glPolygonOffset(0.9f, 0.9f);
 
   vaos[Scene_polyhedron_selection_item_priv::HLFacets]->bind();
   d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
@@ -661,27 +660,22 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->nb_temp_facets/3));
   d->program->release();
   vaos[Scene_polyhedron_selection_item_priv::TempFacets]->release();
-  d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
   if(!are_buffers_filled)
   {
     d->computeElements();
     d->initializeBuffers(viewer);
   }
-  viewer->makeCurrent();
   vaos[Scene_polyhedron_selection_item_priv::Facets]->bind();
 
   attribBuffers(viewer,PROGRAM_WITH_LIGHT);
+  d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
   d->program->bind();
   d->program->setAttributeValue("colors",this->color());
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->nb_facets/3));
   d->program->release();
   vaos[Scene_polyhedron_selection_item_priv::Facets]->release();
-
-  viewer->glEnable(GL_POLYGON_OFFSET_LINE);
-  viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-  viewer->glPolygonOffset(0.0f, 1.5f);
+  viewer->glPolygonOffset(0.3f, 0.3f);
   drawEdges(viewer);
-  viewer->glDisable(GL_POLYGON_OFFSET_LINE);
   viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
   viewer->glPolygonOffset(offset_factor, offset_units);
   drawPoints(viewer);
@@ -690,8 +684,6 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
 
 void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
-  viewer->glLineWidth(3.f);
-
   if(!d->are_HL_buffers_filled)
   {
     d->compute_HL_elements();
@@ -699,10 +691,12 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
   }
 
   vaos[Scene_polyhedron_selection_item_priv::HLEdges]->bind();
-  d->program = getShaderProgram(PROGRAM_NO_SELECTION);
-  attribBuffers(viewer,PROGRAM_NO_SELECTION);
+  d->program = getShaderProgram(PROGRAM_SOLID_WIREFRAME);
+  attribBuffers(viewer,PROGRAM_SOLID_WIREFRAME);
   d->program->bind();
-
+  QVector2D vp(viewer->width(), viewer->height());
+  d->program->setUniformValue("viewport", vp);
+  d->program->setUniformValue("width", 3.0f);
   d->program->setAttributeValue("colors",QColor(255,153,51));
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_HL_lines.size()/3));
   d->program->release();
@@ -715,35 +709,34 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
   }
 
   vaos[Scene_polyhedron_selection_item_priv::TempEdges]->bind();
-  d->program = getShaderProgram(PROGRAM_NO_SELECTION);
-  attribBuffers(viewer,PROGRAM_NO_SELECTION);
+  d->program = getShaderProgram(PROGRAM_SOLID_WIREFRAME);
+  attribBuffers(viewer,PROGRAM_SOLID_WIREFRAME);
   d->program->bind();
-
+  d->program->setUniformValue("viewport", vp);
+  d->program->setUniformValue("width", 3.0f);
   d->program->setAttributeValue("colors",QColor(0,200,0));
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_temp_lines/3));
   d->program->release();
   vaos[Scene_polyhedron_selection_item_priv::TempEdges]->release();
-  viewer->glLineWidth(3.0f);
   if(!are_buffers_filled)
   {
     d->computeElements();
     d->initializeBuffers(viewer);
   }
-  viewer->makeCurrent();
   vaos[Scene_polyhedron_selection_item_priv::Edges]->bind();
-  d->program = getShaderProgram(PROGRAM_NO_SELECTION);
-  attribBuffers(viewer,PROGRAM_NO_SELECTION);
+  d->program = getShaderProgram(PROGRAM_SOLID_WIREFRAME);
+  attribBuffers(viewer,PROGRAM_SOLID_WIREFRAME);
   d->program->bind();
-
+  d->program->setUniformValue("viewport", vp);
+  d->program->setUniformValue("near", (GLfloat)viewer->camera()->zNear());
+  d->program->setUniformValue("far" , (GLfloat)viewer->camera()->zFar());
+  d->program->setUniformValue("width", 3.0f);
   d->program->setAttributeValue("colors",QColor(255,
                                                 color().blue()/2,
                                                 color().green()/2));
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_lines/3));
   d->program->release();
   vaos[Scene_polyhedron_selection_item_priv::Edges]->release();
-
-
-  viewer->glLineWidth(1.f);
 }
 
 void Scene_polyhedron_selection_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
@@ -788,7 +781,6 @@ void Scene_polyhedron_selection_item::drawPoints(CGAL::Three::Viewer_interface* 
     d->computeElements();
     d->initializeBuffers(viewer);
   }
-  viewer->makeCurrent();
   vaos[Scene_polyhedron_selection_item_priv::Points]->bind();
   d->program = getShaderProgram(PROGRAM_NO_SELECTION);
   attribBuffers(viewer,PROGRAM_NO_SELECTION);

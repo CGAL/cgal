@@ -74,7 +74,7 @@ Scene_polylines_item_private::initializeBuffers(CGAL::Three::Viewer_interface *v
     QOpenGLShaderProgram *program;
    //vao for the lines
     {
-        program = item->getShaderProgram(Scene_polylines_item::PROGRAM_NO_SELECTION, viewer);
+        program = item->getShaderProgram(Scene_polylines_item::PROGRAM_SOLID_WIREFRAME, viewer);
         program->bind();
 
         item->vaos[Edges]->bind();
@@ -388,11 +388,16 @@ Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
         d->initializeBuffers(viewer);
     }
 
-    viewer->glLineWidth(GLfloat(d->line_Slider->value()));
     vaos[Scene_polylines_item_private::Edges]->bind();
-    attribBuffers(viewer, PROGRAM_NO_SELECTION);
-    QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_NO_SELECTION);
+    attribBuffers(viewer, PROGRAM_SOLID_WIREFRAME);
+    QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_SOLID_WIREFRAME);
     program->bind();
+    QVector2D vp(viewer->width(), viewer->height());
+    program->setUniformValue("viewport", vp);
+    program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
+    program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+    program->setUniformValue("width", GLfloat(d->line_Slider->value()));
+    
     program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_lines/4));
     program->release();
@@ -401,11 +406,12 @@ Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     {
        Scene_group_item::drawEdges(viewer);
     }
-    viewer->glLineWidth(1.0f);
+    //viewer->glLineWidth(1.0f);
 }
 
 void 
 Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
+  
     if(!are_buffers_filled)
     {
         d->computeElements();

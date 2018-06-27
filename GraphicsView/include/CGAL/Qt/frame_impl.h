@@ -80,37 +80,7 @@ Frame::Frame(const Frame &frame) : QObject() { (*this) = frame; }
 
 /*! Returns the 4x4 OpenGL transformation matrix represented by the Frame.
 
-  This method should be used in conjunction with \c glMultMatrixd() to modify
-  the OpenGL modelview matrix from a Frame hierarchy. With this Frame hierarchy:
-  \code
-  Frame* body     = new Frame();
-  Frame* leftArm  = new Frame();
-  Frame* rightArm = new Frame();
-  leftArm->setReferenceFrame(body);
-  rightArm->setReferenceFrame(body);
-  \endcode
-
-  The associated OpenGL drawing code should look like:
-  \code
-  void Viewer::draw()
-  {
-        glPushMatrix();
-        glMultMatrixd(body->matrix());
-        drawBody();
-
-        glPushMatrix();
-        glMultMatrixd(leftArm->matrix());
-        drawArm();
-        glPopMatrix();
-
-        glPushMatrix();
-        glMultMatrixd(rightArm->matrix());
-        drawArm();
-        glPopMatrix();
-
-        glPopMatrix();
-  }
-  \endcode
+  
   Note the use of nested \c glPushMatrix() and \c glPopMatrix() blocks to
   represent the frame hierarchy: \c leftArm and \c rightArm are both correctly
   drawn with respect to the \c body coordinate system.
@@ -183,16 +153,7 @@ Frame Frame::inverse() const {
 
 /*! Returns the 4x4 OpenGL transformation matrix represented by the Frame.
 
-  This method should be used in conjunction with \c glMultMatrixd() to modify
-  the OpenGL modelview matrix from a Frame:
-  \code
-  // The modelview here corresponds to the world coordinate system.
-  Frame fr(pos, Quaternion(from, to));
-  glPushMatrix();
-  glMultMatrixd(fr.worldMatrix());
-  // draw object in the fr coordinate system.
-  glPopMatrix();
-  \endcode
+  
 
   This matrix represents the global Frame transformation: the entire
   referenceFrame() hierarchy is taken into account to define the Frame
@@ -264,17 +225,7 @@ void Frame::setFromMatrix(const GLdouble m[4][4]) {
 /*! Sets the Frame from an OpenGL matrix representation (rotation in the upper
  left 3x3 matrix and translation on the last line).
 
- Hence, if a code fragment looks like:
- \code
- GLdouble m[16]={...};
- glMultMatrixd(m);
- \endcode
- It is equivalent to write:
- \code
- Frame fr;
- fr.setFromMatrix(m);
- glMultMatrixd(fr.matrix());
- \endcode
+ 
 
  Using this conversion, you can benefit from the powerful Frame transformation
  methods to translate points and vectors to and from the Frame coordinate system

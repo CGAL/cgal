@@ -306,22 +306,8 @@ Scene::duplicate(Item_id index)
         return -1;
 }
 
-void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
+void Scene::initializeGL(CGAL::Three::Viewer_interface* )
 {
-
-    //Setting the light options
-
-    // Create light components
-    GLfloat ambientLight[] = { 0.4f, 0.4f, 0.4f, 1.0f };
-    GLfloat diffuseLight[] = { 1.0f, 1.0f, 1.0, 1.0f };
-    GLfloat specularLight[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    GLfloat position[] = { 0.0f, 0.0f, 1.0f, 1.0f };
-
-    // Assign created components to GL_LIGHT0
-    viewer->glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-    viewer->glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-    viewer->glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-    viewer->glLightfv(GL_LIGHT0, GL_POSITION, position);
 
     gl_init = true;
 }
@@ -398,9 +384,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                     viewer->glClearDepth(1.0);
                     viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 }
-                viewer->glEnable(GL_LIGHTING);
                 viewer->glPointSize(2.f);
-                viewer->glLineWidth(1.0f);
                 if(item.renderingMode() == Gouraud)
                     viewer->glShadeModel(GL_SMOOTH);
                 else
@@ -450,9 +434,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
             if((!with_names && item.renderingMode() == FlatPlusEdges )
                     || item.renderingMode() == Wireframe)
             {
-                viewer->glDisable(GL_LIGHTING);
                 viewer->glPointSize(2.f);
-                viewer->glLineWidth(1.0f);
 
                 if(viewer)
                     item.drawEdges(viewer);
@@ -461,9 +443,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
             }
             else{
                 if( item.renderingMode() == PointsPlusNormals ){
-                    viewer->glDisable(GL_LIGHTING);
                     viewer->glPointSize(2.f);
-                    viewer->glLineWidth(1.0f);
                     if(index == selected_item || selected_items_list.contains(index))
                     {
 
@@ -510,9 +490,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                     (!with_names && item.renderingMode() == PointsPlusNormals)  ||
                  (!with_names && item.renderingMode() == ShadedPoints))
             {
-                viewer->glDisable(GL_LIGHTING);
                 viewer->glPointSize(2.0f);
-                viewer->glLineWidth(1.0f);
 
                 if(viewer)
                     item.drawPoints(viewer);
@@ -551,9 +529,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
           viewer->glClearDepth(1.0);
           viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
-        viewer->glEnable(GL_LIGHTING);
         viewer->glPointSize(2.f);
-        viewer->glLineWidth(1.0f);
 
         viewer->glShadeModel(GL_SMOOTH);
 

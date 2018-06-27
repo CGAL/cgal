@@ -37,18 +37,7 @@ class Constraint;
   orientation(). The order of these transformations is important: the Frame is
   first translated \e and \e then rotated around the new translated origin.
 
-  A Frame is useful to define the position and orientation of a 3D rigid object,
-  using its matrix() method, as shown below: \code
-  // Builds a Frame at position (0.5,0,0) and oriented such that its Y axis is
-  along the (1,1,1)
-  // direction. One could also have used setPosition() and setOrientation().
-  Frame fr(Vec(0.5,0,0), Quaternion(Vec(0,1,0), Vec(1,1,1)));
-  glPushMatrix();
-  glMultMatrixd(fr.matrix());
-  // Draw your object here, in the local fr coordinate system.
-  glPopMatrix();
-  \endcode
-
+  
   Many functions are provided to transform a 3D point from one coordinate system
   (Frame) to an other: see coordinatesOf(), inverseCoordinatesOf(),
   coordinatesOfIn(), coordinatesOfFrom()...
