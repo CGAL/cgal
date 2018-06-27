@@ -43,7 +43,7 @@ namespace internal
         typedef CGAL::Face_filtered_graph<TriangleMesh> Filtered_graph;
 
         typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> AABB_primitive;
-        typedef CGAL::AABB_tree<CGAL::AABB_traits<GeomTraits, AABB_primitive>> AABB_tree;
+        typedef CGAL::AABB_tree<CGAL::AABB_traits<GeomTraits, AABB_primitive> > AABB_tree;
 
         typedef boost::optional<typename AABB_tree::template Intersection_and_primitive_id<Ray_3>::Type> Ray_intersection;
     

@@ -71,7 +71,7 @@ class Approx_decomposition
     typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
     typedef CGAL::Dual<TriangleMesh> Dual_graph;
-    typedef boost::filtered_graph<Dual_graph, Noborder_predicate<TriangleMesh>> Filtered_dual_graph;
+    typedef boost::filtered_graph<Dual_graph, Noborder_predicate<TriangleMesh> > Filtered_dual_graph;
     
     typedef boost::property<cluster_props_t, Cluster_properties> VertexProperty;
     typedef boost::property<decimation_props_t, Decimation_properties> EdgeProperty;

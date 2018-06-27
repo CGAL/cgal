@@ -3,14 +3,16 @@
 #include <CGAL/approx_decomposition.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Real_timer.h>
 
 #include <iostream>
 #include <fstream>
-#include <chrono>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+
+typedef CGAL::Real_timer Timer;
 
 int main()
 {
@@ -37,12 +39,13 @@ int main()
     Facet_property_map facet_property_map = get(CGAL::dynamic_face_property_t<int>(), mesh);
 
     // decompose mesh with default parameters
-    auto start = std::chrono::system_clock::now();
-    
-    std::size_t clusters_num = CGAL::convex_decomposition(mesh, facet_property_map);
+    Timer timer;
 
-    auto end = std::chrono::system_clock::now();
-    std::cout << "Elapsed time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000. << " seconds" << std::endl;
+    timer.start(); 
+    std::size_t clusters_num = CGAL::convex_decomposition(mesh, facet_property_map);
+    timer.stop();
+
+    std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
 
      // write cluster-ids for each facet
     std::cout << "Number of clusters: " << clusters_num << std::endl;

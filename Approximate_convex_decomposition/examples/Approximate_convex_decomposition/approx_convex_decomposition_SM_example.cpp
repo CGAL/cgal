@@ -6,10 +6,10 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Real_timer.h>
 
 #include <iostream>
 #include <fstream>
-#include <chrono>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point_3;
@@ -18,6 +18,8 @@ typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
 typedef CGAL::Face_filtered_graph<Mesh> Filtered_graph;
+
+typedef CGAL::Real_timer Timer;
 
 int main()
 {
@@ -46,12 +48,13 @@ int main()
     Facet_property_map facet_property_map = mesh.add_property_map<face_descriptor, int>("f:cluster").first;
 
     // decompose mesh
-    auto start = std::chrono::system_clock::now();
-
+    Timer timer;
+    
+    timer.start();
     std::size_t clusters_num = CGAL::convex_decomposition<Mesh, Facet_property_map, CGAL::Parallel_tag>(mesh, facet_property_map, 0.3, 1);
- 
-    auto end = std::chrono::system_clock::now();
-    std::cout << "Elapsed time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000. << " seconds" << std::endl;
+    timer.stop();
+
+    std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
 
     // write cluster-ids for each facet
     std::cout << "Number of clusters: " << clusters_num << std::endl;
