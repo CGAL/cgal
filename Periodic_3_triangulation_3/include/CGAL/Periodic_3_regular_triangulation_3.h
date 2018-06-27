@@ -394,22 +394,23 @@ public:
     return cells_with_too_big_orthoball.empty();
   }
 
+  // returns 'true/false' depending on whether the cover would (or has, if 'abort_if_cover_change'
+  // is set to 'false') change.
   bool update_cover_data_during_management (Cell_handle new_ch,
                                             const std::vector<Cell_handle>& new_cells,
                                             const bool abort_if_cover_change)
   {
-    bool result = false;
-
     if(compare_orthsphere_radius_to_threshold(new_ch, orthosphere_radius_threshold) != CGAL::SMALLER)
     {
       if(is_1_cover())
       {
-        if(abort_if_cover_change)
-          return true;
-
+        // Whether we are changing the cover or simply aborting, we need to get rid of the new cells
         tds().delete_cells(new_cells.begin(), new_cells.end());
-        this->convert_to_27_sheeted_covering();
-        result = true;
+
+        if(!abort_if_cover_change)
+          this->convert_to_27_sheeted_covering();
+
+        return true;
       }
       else
       {
@@ -417,7 +418,7 @@ public:
       }
     }
 
-    return result;
+    return false;
   }
 
   virtual void update_cover_data_after_converting_to_27_sheeted_covering ()
