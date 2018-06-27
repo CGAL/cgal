@@ -515,6 +515,12 @@ void Cluster_classification::change_color (int index)
     else
     {
       corrected_index -= m_labels.size();
+      if (corrected_index >= m_features.size())
+      {
+        std::cerr << "Error: trying to access feature " << corrected_index << " out of " << m_features.size() << std::endl;
+        return;
+      }
+
       Feature_handle feature = m_features[corrected_index];
 
       float min = std::numeric_limits<float>::max();
@@ -528,7 +534,7 @@ void Cluster_classification::change_color (int index)
         {
           if (feature->value(cid) > max)
             max = feature->value(cid);
-          if (feature->value(*it) < min)
+          if (feature->value(cid) < min)
             min = feature->value(cid);
         }
       }

@@ -209,6 +209,8 @@ public:
     }
     else if (classifier == 1)
     {
+      if (m_ethz == NULL)
+        m_ethz = new ETHZ_random_forest (m_labels, m_features);
       std::ifstream f (filename, std::ios_base::in | std::ios_base::binary);
       m_ethz->load_configuration (f);
     }
