@@ -82,6 +82,8 @@ then the default traits class used is `Convex_hull_traits_3<R>`, and `R` otherwi
 @param range the range of input points.
 @param out an output iterator where the extreme points will be put.
 @param traits an instance of `Traits`.
+
+\sa CGAL::Extreme_points_traits_adapter_3
 */
 template <class InputRange, class OutputIterator, class Traits>
 OutputIterator

@@ -1,8 +1,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/convex_hull_3.h>
-#include <CGAL/Vertex_to_point_traits_adapter_3.h>
 #include <CGAL/Convex_hull_traits_3.h>
+#include <CGAL/Extreme_points_traits_adapter_3.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
@@ -212,9 +212,12 @@ void test_extreme_vertices(const char* fname)
     std::cerr << fname << " is not a valid off file.\n";
     exit(1);
   }  
+  CGAL::Extreme_points_traits_adapter_3<CGAL::Convex_hull_traits_3<K, Polyhedron_3, CGAL::Tag_true>
+      ,boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type >
+      traits(get(CGAL::vertex_point, P));
   std::vector<boost::graph_traits<Polyhedron_3>::vertex_descriptor> verts;
-  CGAL::extreme_vertices(vertices(P), get(CGAL::vertex_point, P), std::back_inserter(verts) ,
-                   CGAL::Convex_hull_traits_3<K, Polyhedron_3, CGAL::Tag_true>());
+  CGAL::extreme_points_3(vertices(P), std::back_inserter(verts) ,
+                   traits);
 }
 
 int main()
