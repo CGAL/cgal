@@ -23,14 +23,6 @@
 
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Origin.h>
-#include <CGAL/Default_diagonalize_traits.h>
-
-#if defined(CGAL_EIGEN3_ENABLED)
-#include <CGAL/Eigen_svd.h>
-#elif defined(CGAL_LAPACK_ENABLED)
-#include <CGAL/Lapack_svd.h>
-#endif
-
 
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/properties.h>
@@ -41,6 +33,15 @@
 #include <boost/version.hpp>
 
 namespace CGAL {
+
+  // forward declarations to avoid dependency to Solver_interface
+  template <typename FT, unsigned int dim>
+  class Default_diagonalize_traits;
+  class Eigen_svd;
+  class Lapack_svd;
+  //
+  
+  
   //helper classes
   template<typename PolygonMesh, typename PropertyTag>
   class property_map_selector
