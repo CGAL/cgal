@@ -227,9 +227,6 @@ class Convex_hull_traits_3 :
   typedef typename R::Collinear_3                Collinear_3;
   typedef typename R::Coplanar_3                 Coplanar_3;
   typedef typename R::Less_distance_to_point_3   Less_distance_to_point_3;
-  typedef typename R::Compare_x_3                Compare_x_3;
-  typedef typename R::Compare_y_3                Compare_y_3;
-  typedef typename R::Compare_z_3                Compare_z_3;
 
   typedef typename Convex_hull_traits_base_3<R_, Has_filtered_predicates_tag>
     ::Has_on_positive_side_3 Has_on_positive_side_3;
@@ -324,17 +321,6 @@ class Convex_hull_traits_3 :
   construct_vector_3_object() const
   { return Construct_vector_3(); }
 
-  Compare_x_3
-  compare_x_3_object() const
-  { return Compare_x_3(); }
-  
-  Compare_y_3
-  compare_y_3_object() const
-  { return Compare_y_3(); }
-  
-  Compare_z_3
-  compare_z_3_object() const
-  { return Compare_z_3(); }
 };
 
 } // namespace CGAL
