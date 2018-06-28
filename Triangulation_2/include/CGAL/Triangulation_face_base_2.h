@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Mariette Yvinec
 
@@ -29,10 +29,10 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_ds_face_base_2.h>
 
-namespace CGAL { 
+namespace CGAL {
 
 template < typename Gt, typename Fb = Triangulation_ds_face_base_2<> >
-class Triangulation_face_base_2 
+class Triangulation_face_base_2
   : public Fb
 {
 public:
@@ -50,57 +50,23 @@ public:
   Triangulation_face_base_2()
        : Fb() {}
 
-  Triangulation_face_base_2(Vertex_handle v0, 
-			    Vertex_handle v1, 
-			    Vertex_handle v2)
+  Triangulation_face_base_2(Vertex_handle v0,
+                            Vertex_handle v1,
+                            Vertex_handle v2)
     : Fb(v0,v1,v2) {}
 
-  Triangulation_face_base_2(Vertex_handle v0, 
-			    Vertex_handle v1, 
-			    Vertex_handle v2,
-			    Face_handle n0, 
-			    Face_handle n1, 
-			    Face_handle n2)
+  Triangulation_face_base_2(Vertex_handle v0,
+                            Vertex_handle v1,
+                            Vertex_handle v2,
+                            Face_handle n0,
+                            Face_handle n1,
+                            Face_handle n2)
     : Fb(v0,v1,v2,n0,n1,n2) {}
 
   static int ccw(int i) {return Triangulation_cw_ccw_2::ccw(i);}
   static int  cw(int i) {return Triangulation_cw_ccw_2::cw(i);}
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-  Vertex_handle mirror_vertex(int i) const;
-  int mirror_index(int i) const;
-#endif
-
 };
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-template < class Gt, class Fb >
-inline
-typename Triangulation_face_base_2<Gt,Fb>::Vertex_handle
-Triangulation_face_base_2<Gt,Fb>::
-mirror_vertex(int i) const
-{
-  CGAL_triangulation_precondition ( this->neighbor(i) != Face_handle()
-				    && this->dimension() >= 1);
-  //return neighbor(i)->vertex(neighbor(i)->index(this->handle()));
-  return this->neighbor(i)->vertex(mirror_index(i));
-}
-
-template < class Gt, class Fb >
-inline int
-Triangulation_face_base_2<Gt,Fb>::
-mirror_index(int i) const
-{
-  // return the index of opposite vertex in neighbor(i);
-  CGAL_triangulation_precondition (this->neighbor(i) != Face_handle() &&
-	                           this->dimension() >= 1);
-  if (this->dimension() == 1) {
-    return 1 - (this->neighbor(i)->index(this->vertex(1-i)));
-  }
-  return this->ccw( this->neighbor(i)->index(this->vertex(this->ccw(i))));
-}
-#endif
-
-} //namespace CGAL 
+} //namespace CGAL
 
 #endif //CGAL_TRIANGULATION_FACE_BASE_2_H

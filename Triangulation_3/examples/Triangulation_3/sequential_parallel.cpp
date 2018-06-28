@@ -1,7 +1,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/Triangulation_vertex_base_3.h>
 
 #include <iostream>
 #include <fstream>
@@ -34,10 +37,10 @@ int main()
   
 // Parallel Delaunay T3
 #ifdef CGAL_LINKED_WITH_TBB
-  typedef CGAL::Triangulation_data_structure_3< 
-    CGAL::Triangulation_vertex_base_3<K>, 
-    CGAL::Triangulation_cell_base_3<K>, 
-    CGAL::Parallel_tag>                          ParallelTds;
+  typedef CGAL::Triangulation_data_structure_3<
+            CGAL::Triangulation_vertex_base_3<K>,
+            CGAL::Delaunay_triangulation_cell_base_3<K>,
+            CGAL::Parallel_tag>                          ParallelTds;
   typedef CGAL::Delaunay_triangulation_3<K, ParallelTds> ParallelTriangulation;
 
   t.reset();
