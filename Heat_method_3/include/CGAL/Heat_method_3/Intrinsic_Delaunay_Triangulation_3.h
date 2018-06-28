@@ -44,6 +44,7 @@
 #include <stack>
 #include <boost/graph/filtered_graph.hpp>
 #include <fstream>
+#include <array>
 
 
 
@@ -108,6 +109,15 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
        Edge_id_map edge_id_map;
 
        typedef typename std::stack<edge_descriptor, std::list<edge_descriptor> > edge_stack;
+
+       typedef typename std::array<vertex_descriptor, 3> vertex_for_face;
+       typedef typename std::array<vertex_for_face,1> Face_Vertex_Array;
+
+       //all z coords will be 0 though
+       typedef typename std::array<Point_3, 3> coords_for_face;
+       typedef typename std::array<coords_for_face,1> Face_Coords_Array;
+
+
 
 
      public:
@@ -178,21 +188,20 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
           Index b_i = get(edge_id_map, edge(hd2,tm));
           Index c_i = get(edge_id_map, edge(hd3,tm));
           double a = edge_lengths(i,0);
-          double b = edge_lengths(b_i,0);
+          double b1 = edge_lengths(b_i,0);
           double c1 = edge_lengths(c_i,0);
-          double tan2a = CGAL::sqrt(std::abs(((-a+b+c1)*(a+b-c1))/((a+b+c1)*(-b+a+c1))));
+          double tan2a = CGAL::sqrt(CGAL::abs(((c1-a+b1)*(-b1+a+c1))/((a+b1+c1)*(b1+a-c1))));
           hd = opposite(hd,tm);
           hd2 =next(hd,tm);
           hd3 = next(hd2,tm);
           b_i = get(edge_id_map, edge(hd2,tm));
           c_i = get(edge_id_map, edge(hd3,tm));
-          b = edge_lengths(b_i,0);
+          double b2 = edge_lengths(b_i,0);
           double c2 = edge_lengths(c_i,0);
-
-          double tan2d = CGAL::sqrt(std::abs(((-a+b+c2)*(a+b-c2))/((a+b+c2)*(a-b+c2))));
+          double tan2d = CGAL::sqrt(CGAL::abs(((-a+b2+c2)*(a+b2-c2))/((a+b2+c2)*(a-b2+c2))));
           double tan2ad = (tan2a + tan2d)/(1-tan2a*tan2d);
           double cosad = (1-tan2ad*tan2ad)/(1+tan2ad*tan2ad);
-          double new_length = CGAL::sqrt( CGAL::abs(c1*c1 + c2*c2 - 2*cosad));
+          double new_length = CGAL::sqrt( CGAL::abs(b1*b1 + c2*c2 - 2*cosad));
           edge_lengths(i,0) = new_length;
         }
 
@@ -213,9 +222,10 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
             stack.pop();
 
             Index edge_i = get(edge_id_map,ed);
+
             marked_edges(edge_i,0)=0;
             //if the edge itself is not locally delaunay, go back
-            if(!(is_edge_locally_delaunay(ed))) // && !CGAL::is_boundary(ed,tm)) need to fix this
+            if(!(is_edge_locally_delaunay(ed)))
             {
               if(!(is_border(ed,tm)))
               {
@@ -223,9 +233,9 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
                change_edge_length(edge_i,ed);
                halfedge_descriptor hd = (halfedge(ed, tm));
                CGAL::Euler::flip_edge(hd, tm);
-
                edge_descriptor next_edge= edge(next(hd,tm),tm);
                Index next_edge_i =  get(edge_id_map, next_edge);
+
                //if edge was already checked, go back and check again
                //for the 4 surrounding edges, since local 'geometry' changed,
                if(!(marked_edges(next_edge_i,0)))
@@ -289,7 +299,21 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
            }
            loop_over_edges(stack, mark_edges);
 
+            //now that edges are calculated, go through and for each face, calculate the vertex positions around it
 
+            BOOST_FOREACH(face_descriptor f, faces(tm))
+            {
+              CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
+              Index face_i = get(face_id_map, f);
+              boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
+              vertex_descriptor current = *(vbegin);
+              vertex_descriptor n_two = *(++vbegin);
+              vertex_descriptor n_three = *(++vbegin);
+              //fill in Face_Vertex_Array with these descriptors
+              //fill in face_coord_array with (0,0),(length,0)) and then (lki(costheta, sintheta))
+              //use those to compute in heat method
+
+            }
 
          }
          //todo:: determine which can be const
@@ -299,8 +323,12 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
          EdgeIndexMap epm;
          VertexDistanceMap vdm;
          int number_of_edges = num_edges(tm);
+         int number_of_faces = num_faces(tm);
          Eigen::VectorXd edge_lengths;
          Eigen::VectorXd mark_edges;
+         Face_Coords_Array *face_coords_array = new Face_Coords_Array[number_of_faces];
+         Face_Vertex_Array *face_vertex_array = new Face_Vertex_Array[number_of_faces];
+
 
       };
 } // namespace Intrinsic_Delaunay_Triangulation_3
