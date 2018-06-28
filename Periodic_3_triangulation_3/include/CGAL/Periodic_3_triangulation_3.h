@@ -267,7 +267,6 @@ public:
                              const Geometric_traits& gt = Geometric_traits())
     : _gt(gt), _tds()
   {
-    set_domain(domain);
     typedef typename internal::Exact_field_selector<FT>::Type EFT;
     typedef NT_converter<FT,EFT> NTC;
     CGAL_USE_TYPE(NTC);
@@ -278,6 +277,8 @@ public:
                                     == ntc(domain.zmax())-ntc(domain.zmin()));
     CGAL_triangulation_precondition(ntc(domain.zmax())-ntc(domain.zmin())
                                     == ntc(domain.xmax())-ntc(domain.xmin()));
+
+    _gt.set_domain(domain);
     _cover = CGAL::make_array(3,3,3);
     init_tds();
   }
@@ -285,14 +286,70 @@ public:
 protected:
   // Copy constructor helpers
   class Finder;
+
 public:
   // Copy constructor duplicates vertices and cells
   Periodic_3_triangulation_3(const Periodic_3_triangulation_3& tr)
     : _gt(tr.geom_traits()),
       _cover(tr.number_of_sheets())
-  { }
+  {
+    if(is_1_cover())
+      tds() = tr.tds();
+    else
+      copy_multiple_covering(tr);
+
+    CGAL_triangulation_expensive_postcondition(*this == tr);
+    CGAL_triangulation_expensive_postcondition(is_valid());
+  }
 
   virtual ~Periodic_3_triangulation_3() {}
+
+  void copy_multiple_covering(const Periodic_3_triangulation_3& tr)
+  {
+    // Write the respective offsets in the vertices to make them
+    // automatically copy with the tds.
+    for(Vertex_iterator vit = tr.vertices_begin(); vit != tr.vertices_end(); ++vit)
+      vit->set_offset(tr.get_offset(vit));
+
+    // copy the tds
+    tds() = tr.tds();
+
+    // make a list of all vertices that belong to the original
+    // domain and initialize the basic structure of
+    // virtual_vertices_reverse
+    std::list<Vertex_handle> vlist;
+    for(Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++vit)
+    {
+      if(vit->offset() == Offset())
+      {
+        vlist.push_back(vit);
+        virtual_vertices_reverse.insert(std::make_pair(vit,std::vector<Vertex_handle>(26)));
+        CGAL_triangulation_assertion(virtual_vertices_reverse.find(vit)->second.size() == 26);
+      }
+    }
+
+    // Iterate over all vertices that are not in the original domain
+    // and construct the respective entries to virtual_vertices and
+    // virtual_vertices_reverse
+    for(Vertex_iterator vit2 = vertices_begin(); vit2 != vertices_end(); ++vit2)
+    {
+      if(vit2->offset() != Offset())
+      {
+        typename std::list<Vertex_handle>::iterator vlist_it
+          = std::find_if(vlist.begin(), vlist.end(), Finder(this,vit2->point()));
+        Offset off = vit2->offset();
+        virtual_vertices.insert(std::make_pair(vit2, std::make_pair(*vlist_it,off)));
+        virtual_vertices_reverse.find(*vlist_it)->second[9*off[0]+3*off[1]+off[2]-1] = vit2;
+        CGAL_triangulation_assertion(get_offset(vit2) == off);
+      }
+    }
+
+    // Cleanup vertex offsets
+    for(Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++vit)
+      vit->clear_offset();
+    for(Vertex_iterator vit = tr.vertices_begin(); vit != tr.vertices_end(); ++vit)
+      vit->clear_offset();
+  }
 
   /** @name Assignment */ //@{
   Periodic_3_triangulation_3& operator=(Periodic_3_triangulation_3 tr)
@@ -310,18 +367,19 @@ public:
     std::swap(_cover, tr._cover);
   }
 
-  /// Clears the triangulation and initializes it again.
   virtual void clear_covering_data() { }
 
+  /// Clears the triangulation and initializes it again.
   void clear()
   {
     _tds.clear();
-    init_tds();
     clear_covering_data();
     virtual_vertices.clear();
     virtual_vertices_reverse.clear();
-    _cover = CGAL::make_array(3,3,3);
     v_offsets.clear();
+
+    _cover = CGAL::make_array(3,3,3);
+    init_tds();
   }
   //@}
 
