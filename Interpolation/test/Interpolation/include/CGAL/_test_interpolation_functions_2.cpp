@@ -544,7 +544,7 @@ void _test_interpolation_functions_2_Delaunay_with_OutputFunctor(const Dt&, cons
     is_equal = test_barycenter<Dt>(coords.begin(), coords.end(), norm, points[j], tolerance);
     assert(is_equal);
 
-#ifndef CGAL_CFG_NO_CPP0X_LAMBDAS
+#ifdef CGAL_CXX11
       assert(test_interpolation(coords.begin(), coords.end(), norm,
                                 points[j], exact_values[0][points[j]],
                                 [](const Vertex_handle vh) -> std::pair<Coord_type, bool> { return std::make_pair(vh->info()[0].value, true); },
@@ -593,7 +593,7 @@ void _test_interpolation_functions_2_Delaunay_with_OutputFunctor(const Dt&, cons
 
   Point_vector_map approx_gradients[2];
 
-#ifndef CGAL_CFG_NO_CPP0X_LAMBDAS
+#ifdef CGAL_CXX11
   {
     CGAL::sibson_gradient_fitting_nn_2(T,
                                        std::inserter(approx_gradients[0], approx_gradients[0].begin()), // OutputIterator
@@ -668,7 +668,7 @@ void _test_interpolation_functions_2_Delaunay_with_OutputFunctor(const Dt&, cons
   ci++;
   assert(ci == coords.end());
 
-#ifndef CGAL_CFG_NO_CPP0X_LAMBDAS
+#ifdef CGAL_CXX11
   Value_function<Vertex_handle, Coord_type> value_function_0(0);
   Value_function<Vertex_handle, Coord_type> value_function_2(2);
 
