@@ -117,14 +117,14 @@ sibson_gradient_fitting(ForwardIterator first,
 // types of arguments and pass a final (bare) point + value to the function above.
 template < class ForwardIterator, class ValueFunctor, class Traits, class VH >
 typename Traits::Vector_d
-sibson_gradient_fitting_internal(ForwardIterator first,
-                                 ForwardIterator beyond,
-                                 const typename std::iterator_traits<
-                                                  ForwardIterator>::value_type::second_type& norm,
-                                 VH vh,
-                                 ValueFunctor value_function,
-                                 const Traits& traits,
-                                 const typename Traits::Point_d& /*dummy*/)
+sibson_gradient_fitting_internal_with_dummy(ForwardIterator first,
+                                            ForwardIterator beyond,
+                                            const typename std::iterator_traits<
+                                            ForwardIterator>::value_type::second_type& norm,
+                                            VH vh,
+                                            ValueFunctor value_function,
+                                            const Traits& traits,
+                                            const typename Traits::Point_d& /*dummy*/)
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
   typedef typename boost::result_of<ValueFunctor(arg_type)>::type                 value_functor_result_type;
@@ -139,14 +139,14 @@ sibson_gradient_fitting_internal(ForwardIterator first,
 
 template < class ForwardIterator, class ValueFunctor, class Traits, class VH >
 typename Traits::Vector_d
-sibson_gradient_fitting_internal(ForwardIterator first,
-                                 ForwardIterator beyond,
-                                 const typename std::iterator_traits<
-                                                  ForwardIterator>::value_type::second_type& norm,
-                                 VH vh,
-                                 ValueFunctor value_function,
-                                 const Traits& traits,
-                                 const typename Traits::Weighted_point_d& /*dummy*/)
+sibson_gradient_fitting_internal_with_dummy(ForwardIterator first,
+                                            ForwardIterator beyond,
+                                            const typename std::iterator_traits<
+                                            ForwardIterator>::value_type::second_type& norm,
+                                            VH vh,
+                                            ValueFunctor value_function,
+                                            const Traits& traits,
+                                            const typename Traits::Weighted_point_d& /*dummy*/)
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
   typedef typename boost::result_of<ValueFunctor(arg_type)>::type                 value_functor_result_type;
@@ -160,14 +160,14 @@ sibson_gradient_fitting_internal(ForwardIterator first,
 
 template < class ForwardIterator, class ValueFunctor, class Traits, class VH >
 typename Traits::Vector_d
-sibson_gradient_fitting_internal(ForwardIterator first,
-                                 ForwardIterator beyond,
-                                 const typename std::iterator_traits<
-                                                  ForwardIterator>::value_type::second_type& norm,
-                                 VH vh,
-                                 ValueFunctor value_function,
-                                 const Traits& traits,
-                                 VH /*dummy*/)
+sibson_gradient_fitting_internal_with_dummy(ForwardIterator first,
+                                            ForwardIterator beyond,
+                                            const typename std::iterator_traits<
+                                            ForwardIterator>::value_type::second_type& norm,
+                                            VH vh,
+                                            ValueFunctor value_function,
+                                            const Traits& traits,
+                                            VH /*dummy*/)
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type::first_type  arg_type;
   typedef typename boost::result_of<ValueFunctor(arg_type)>::type                 value_functor_result_type;
@@ -207,13 +207,13 @@ sibson_gradient_fitting_internal(const Tr& tr,
       norm = compute_coordinates(tr, vit, std::back_inserter(coords), Coord_OutputFunctor()).second;
 
       *out++ = fct(std::make_pair(vit,
-                                  sibson_gradient_fitting_internal(coords.begin(),
-                                                                   coords.end(),
-                                                                   norm,
-                                                                   Vertex_handle(vit),
-                                                                   value_function,
-                                                                   traits,
-                                                                   ValueFunctorArgType())));
+                                  sibson_gradient_fitting_internal_with_dummy(coords.begin(),
+                                                                              coords.end(),
+                                                                              norm,
+                                                                              Vertex_handle(vit),
+                                                                              value_function,
+                                                                              traits,
+                                                                              ValueFunctorArgType())));
 
       coords.clear();
     }
