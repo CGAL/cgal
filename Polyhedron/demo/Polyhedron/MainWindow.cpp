@@ -189,6 +189,9 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
 
   connect(scene, SIGNAL(updated()),
           viewer, SLOT(update()));
+  
+  connect(ui->actionSet_Transparency_Pass_Number, SIGNAL(triggered()),
+              viewer, SLOT(setTotalPass_clicked()));
 
   connect(scene, SIGNAL(updated()),
           this, SLOT(selectionChanged()));

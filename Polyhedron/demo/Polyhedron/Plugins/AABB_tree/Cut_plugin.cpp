@@ -645,7 +645,7 @@ public:
   {
     this->edge_sm_trees = edge_trees;
   }
-  void draw(CGAL::Three::Viewer_interface* viewer) const
+  void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE
   {
     if(!are_buffers_filled)
       initializeBuffers(viewer);
@@ -688,7 +688,7 @@ public:
       break;
     }
   }
-  void drawEdges(CGAL::Three::Viewer_interface *viewer) const
+  void drawEdges(CGAL::Three::Viewer_interface *viewer) const Q_DECL_OVERRIDE
   {
     if(m_cut_plane != CUT_SEGMENTS)
       return;
@@ -707,7 +707,7 @@ public:
     vaos[Edges]->release();
   }
 
-  void invalidateOpenGLBuffers()
+  void invalidateOpenGLBuffers()Q_DECL_OVERRIDE
   {
     computeElements();
     are_buffers_filled = false;
