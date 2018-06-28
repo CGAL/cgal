@@ -120,23 +120,33 @@ public:
     specularButton->setPalette(palette);
     spec_powrSlider->setValue(static_cast<int>(d->spec_power));
     
+    connect(&ambient_dial, &QColorDialog::currentColorChanged, this, &LightingDialog::ambient_changed );
+    connect(&diffuse_dial, &QColorDialog::currentColorChanged, this, &LightingDialog::diffuse_changed );
+    connect(&spec_dial, &QColorDialog::currentColorChanged, this,    &LightingDialog::specular_changed);
+    
     connect(ambientButton, &QPushButton::clicked, 
             [this](){
-      ambient = QColorDialog::getColor(ambient);
+      ambient_dial.setCurrentColor(ambient);
+      ambient_dial.exec();
+      ambient = ambient_dial.selectedColor();
       QPalette palette;
       palette.setColor(QPalette::Button, ambient);
       ambientButton->setPalette(palette);
     });
     connect(diffuseButton, &QPushButton::clicked, 
             [this](){
-      diffuse = QColorDialog::getColor(diffuse);
+      diffuse_dial.setCurrentColor(diffuse);
+      diffuse_dial.exec();
+      diffuse = diffuse_dial.selectedColor();
       QPalette palette;
       palette.setColor(QPalette::Button, diffuse);
       diffuseButton->setPalette(palette);
     });
     connect(specularButton, &QPushButton::clicked, 
             [this](){
-      specular = QColorDialog::getColor(specular);
+      spec_dial.setCurrentColor(specular);
+      spec_dial.exec();
+      specular = spec_dial.selectedColor();
       QPalette palette;
       palette.setColor(QPalette::Button, specular);
       specularButton->setPalette(palette);
@@ -160,6 +170,30 @@ public:
       
     });
   }
+private Q_SLOTS:
+  void diffuse_changed()
+  {
+    diffuse = diffuse_dial.currentColor();
+    s_diffuse_changed(); 
+  }
+  void ambient_changed()
+  {
+    ambient = ambient_dial.currentColor();
+    s_ambient_changed(); 
+  }
+  void specular_changed()
+  {
+    specular = spec_dial.currentColor();
+    s_specular_changed();
+  }
+Q_SIGNALS:
+  void s_diffuse_changed();
+  void s_ambient_changed();
+  void s_specular_changed();
+private:
+  QColorDialog diffuse_dial;
+  QColorDialog ambient_dial;
+  QColorDialog spec_dial;
 };
 
 Viewer::Viewer(QWidget* parent, bool antialiasing)
@@ -755,10 +789,11 @@ void Viewer::attribBuffers(int program_name) const {
       program->setUniformValue("clipbox1", clipbox1);
       program->setUniformValue("clipbox2", clipbox2);
     }
-    QVector4D light_pos(camera()->position().x+d->position.x(),
-                        camera()->position().y+d->position.y(),
-                        camera()->position().z+d->position.z(),
+    QVector4D light_pos(d->position.x(),
+                        d->position.y(),
+                        d->position.z(),
                         1.0f);
+    light_pos = mv_mat * light_pos;
     switch(program_name)
     {
     case PROGRAM_WITH_LIGHT:
@@ -1263,52 +1298,93 @@ void Viewer::messageLogged(QOpenGLDebugMessage msg)
 
 void Viewer::setLighting()
 {
+  
+  //save current settings;
+  float prev_spec = d->spec_power;
+  QVector4D prev_pos = d->position;
+  QVector4D prev_ambient = d->ambient;
+  QVector4D prev_diffuse = d->diffuse;
+  QVector4D prev_spec_color = d->specular;
+  //open dialog
   LightingDialog* dialog = new LightingDialog(d);
-  if(!dialog->exec())
-        return;
+  //set specular
+  connect(dialog->spec_powrSlider, &QSlider::valueChanged,
+          [this, dialog]()
+  {
+    d->spec_power = dialog->spec_powrSlider->value();
+    update();
+  });
   //set position
-  QStringList list = dialog->position_lineEdit->text().split(QRegExp(","), QString::SkipEmptyParts);
-  if (list.isEmpty()) return;
-  if (list.size()!=3){
-    QMessageBox *msgBox = new QMessageBox;
-    msgBox->setWindowTitle("Error");
-    msgBox->setText("ERROR : Input should consists of 3 floats.");
-    msgBox->exec();
+  connect(dialog->position_lineEdit, &QLineEdit::editingFinished,
+          [this, dialog]()
+  {
+    QStringList list = dialog->position_lineEdit->text().split(QRegExp(","), QString::SkipEmptyParts);
+    if (list.isEmpty()) return;
+    if (list.size()!=3){
+      QMessageBox *msgBox = new QMessageBox;
+      msgBox->setWindowTitle("Error");
+      msgBox->setText("ERROR : Input should consists of 3 floats.");
+      msgBox->exec();
+      return;
+    }
+    double coords[3];
+    for(int j=0; j<3; ++j)
+    {
+      bool ok;
+      coords[j] = list.at(j).toFloat(&ok);
+      if(!ok)
+      {
+          QMessageBox *msgBox = new QMessageBox;
+          msgBox->setWindowTitle("Error");
+          msgBox->setText("ERROR : Coordinates are invalid.");
+          msgBox->exec();
+          return;
+      }
+    }
+    d->position = QVector4D(coords[0], coords[1], coords[2], 1.0f);
+    update();
+  });
+  
+
+  //set ambient
+  connect(dialog, &LightingDialog::s_ambient_changed,
+          [this, dialog](){
+    d->ambient=QVector4D(dialog->ambient.redF(), 
+                         dialog->ambient.greenF(), 
+                         dialog->ambient.blueF(), 
+                         1.0f);
+    update();
+  });
+          
+  //set diffuse
+  connect(dialog, &LightingDialog::s_diffuse_changed,
+          [this, dialog](){
+    d->diffuse=QVector4D(dialog->diffuse.redF(), 
+                         dialog->diffuse.greenF(), 
+                         dialog->diffuse.blueF(), 
+                         1.0f);
+    update();
+  });
+  //set specular
+  connect(dialog, &LightingDialog::s_specular_changed,
+          [this, dialog](){
+    d->specular=QVector4D(dialog->specular.redF() , 
+                         dialog->specular.greenF(), 
+                         dialog->specular.blueF() , 
+                         1.0f);
+    update();
+    
+  });
+  if(!dialog->exec())
+  {
+    //restore previous settings
+    d->spec_power = prev_spec;
+    d->position = prev_pos;
+    d->ambient = prev_ambient;
+    d->diffuse = prev_diffuse;
+    d->specular = prev_spec_color;
     return;
   }
-  double coords[3];
-  for(int j=0; j<3; ++j)
-  {
-    bool ok;
-    coords[j] = list.at(j).toFloat(&ok);
-    if(!ok)
-    {
-        QMessageBox *msgBox = new QMessageBox;
-        msgBox->setWindowTitle("Error");
-        msgBox->setText("ERROR : Coordinates are invalid.");
-        msgBox->exec();
-        return;
-    }
-  }
-  d->position = QVector4D(coords[0], coords[1], coords[2], 1.0f);
-  //set ambient
-  d->ambient=QVector4D(dialog->ambient.redF(), 
-                       dialog->ambient.greenF(), 
-                       dialog->ambient.blueF(), 
-                       1.0f);
-  //set diffuse
-  d->diffuse=QVector4D(dialog->diffuse.redF(), 
-                       dialog->diffuse.greenF(), 
-                       dialog->diffuse.blueF(), 
-                       1.0f);
-  //set specular
-  d->specular=QVector4D(dialog->specular.redF() , 
-                       dialog->specular.greenF(), 
-                       dialog->specular.blueF() , 
-                       1.0f);
-  d->spec_power = dialog->spec_powrSlider->value();
-  //update display
-  update();
 }
 
 #include "Viewer.moc"
