@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <vector>
 #include <utility>
+#include <functional>
 
 #include <CGAL/internal/Approximate_convex_decomposition/concavity.h>
 
@@ -54,7 +55,7 @@ class Approx_decomposition
     };
 
     // predefined structs
-    struct Candidate;
+    struct CandidateComparator;
     
     template <class Graph>
     struct Noborder_predicate;
@@ -92,6 +93,7 @@ public:
     : m_mesh(mesh)
     , m_traits(traits)
     , m_concavity_calc(mesh, traits)
+    , m_candidates(CandidateComparator(*this))
     {}
 
     /**
@@ -110,7 +112,7 @@ public:
         // fill up adjacency list and its properties
         setup_graph(filtered_dual);
 
-        // compute initial decimation costs and concavity values for all edges
+		// compute initial decimation costs and concavity values for all edges
         BOOST_FOREACH(graph_edge_descriptor edge, edges(m_graph))
         {
             update_edge(edge, concavity_threshold, CONCAVITY_FACTOR);
@@ -178,18 +180,27 @@ private:
     Graph m_graph; // adjacency list
 
     Graph_cluster_map m_cluster_map; // vertex property map of the adjacency list
-    static Graph_decimation_map m_decimation_map; // edge property map of the adjacency list
+    Graph_decimation_map m_decimation_map; // edge property map of the adjacency list
        
     std::vector<graph_edge_descriptor> m_invalid_edges; // list of edges to be removed
 
     // comparator that orders candidate edges by their decimation costs
-    struct CandidateComparator
-    {
-        bool operator() (const graph_edge_descriptor& a, const graph_edge_descriptor& b) const
-        {
-            return m_decimation_map[a].decimation_cost < m_decimation_map[b].decimation_cost;
-        }
-    };
+	struct CandidateComparator
+	{
+		CandidateComparator(Approx_decomposition& alg) : m_alg(alg) {}
+
+		bool operator() (const graph_edge_descriptor& a, const graph_edge_descriptor& b) const
+		{
+			if (m_alg.m_decimation_map[a].decimation_cost != m_alg.m_decimation_map[b].decimation_cost)
+			{
+				return m_alg.m_decimation_map[a].decimation_cost < m_alg.m_decimation_map[b].decimation_cost;
+			}
+			return a < b;
+		}
+
+	private:
+		Approx_decomposition& m_alg;
+	};
     
     std::set<graph_edge_descriptor, CandidateComparator> m_candidates; // ordered by decimation cost list of edges
 

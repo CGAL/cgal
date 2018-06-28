@@ -1,4 +1,4 @@
-#define CGAL_APPROX_DECOMPOSITION_VERBOSE
+//#define CGAL_APPROX_DECOMPOSITION_VERBOSE
 
 #include <CGAL/approx_decomposition.h>
 #include <CGAL/Polyhedron_3.h>
@@ -19,7 +19,8 @@ int main()
     // read mesh
     Polyhedron mesh;
    
-    std::ifstream input("data/cube.off"); 
+//    std::ifstream input("data/cube.off");
+	std::ifstream input("data/sword.off");
 //    std::ifstream input("data/elephant.off");
     
     if (!input || !(input >> mesh))
@@ -42,7 +43,7 @@ int main()
     Timer timer;
 
     timer.start(); 
-    std::size_t clusters_num = CGAL::convex_decomposition(mesh, facet_property_map);
+    std::size_t clusters_num = CGAL::convex_decomposition<Polyhedron, Facet_property_map, CGAL::Parallel_tag>(mesh, facet_property_map, 0.3, 1);
     timer.stop();
 
     std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
