@@ -73,6 +73,9 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::number_of_points_on_edges).v == 31);
   assert(get_param(np, CGAL::internal_np::nb_points_per_area_unit).v == 32);
   assert(get_param(np, CGAL::internal_np::nb_points_per_distance_unit).v == 33);
+  assert(get_param(np, CGAL::internal_np::throw_on_self_intersection).v == 43);
+  assert(get_param(np, CGAL::internal_np::clip_volume).v == 44);
+  assert(get_param(np, CGAL::internal_np::use_compact_clipper).v == 45);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_param(np, CGAL::internal_np::get_cost_policy).v == 34);
@@ -87,8 +90,8 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::weight_calculator).v == 39);
   assert(get_param(np, CGAL::internal_np::preserve_genus).v == 40);
   assert(get_param(np, CGAL::internal_np::verbosity_level).v == 41);
-  assert(get_param(np, CGAL::internal_np::apply_per_connected_component).v == 42);
-  assert(get_param(np, CGAL::internal_np::projection_functor).v == 43);
+  assert(get_param(np, CGAL::internal_np::projection_functor).v == 42);
+  assert(get_param(np, CGAL::internal_np::apply_per_connected_component).v == 46);
 
 
   // Test types
@@ -140,6 +143,9 @@ void test(const NamedParameters& np)
   check_same_type<31>(get_param(np, CGAL::internal_np::number_of_points_on_edges));
   check_same_type<32>(get_param(np, CGAL::internal_np::nb_points_per_area_unit));
   check_same_type<33>(get_param(np, CGAL::internal_np::nb_points_per_distance_unit));
+  check_same_type<43>(get_param(np, CGAL::internal_np::throw_on_self_intersection));
+  check_same_type<44>(get_param(np, CGAL::internal_np::clip_volume));
+  check_same_type<45>(get_param(np, CGAL::internal_np::use_compact_clipper));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_param(np, CGAL::internal_np::get_cost_policy));
@@ -154,8 +160,8 @@ void test(const NamedParameters& np)
   check_same_type<39>(get_param(np, CGAL::internal_np::weight_calculator));
   check_same_type<40>(get_param(np, CGAL::internal_np::preserve_genus));
   check_same_type<41>(get_param(np, CGAL::internal_np::verbosity_level));
-  check_same_type<42>(get_param(np, CGAL::internal_np::apply_per_connected_component));
-  check_same_type<43>(get_param(np, CGAL::internal_np::projection_functor));
+  check_same_type<42>(get_param(np, CGAL::internal_np::projection_functor));
+  check_same_type<46>(get_param(np, CGAL::internal_np::apply_per_connected_component));
 }
 
 int main()
@@ -206,8 +212,11 @@ int main()
                          .weight_calculator(A<39>(39))
                          .preserve_genus(A<40>(40))
                          .verbosity_level(A<41>(41))
-                         .apply_per_connected_component(A<42>(42))
-                         .projection_functor(A<43>(43))
+                         .projection_functor(A<42>(42))
+                         .throw_on_self_intersection(A<43>(43))
+                         .clip_volume(A<44>(44))
+                         .use_compact_clipper(A<45>(45))
+                         .apply_per_connected_component(A<46>(46))
        );
 
   return EXIT_SUCCESS;
