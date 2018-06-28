@@ -627,7 +627,7 @@ private:
                    get(get (CGAL::vertex_point, g), target(next(next(halfedge(fd, g), g), g), g))));
     }
 
-    CGAL::cpp11::array<double, 6> covariance = {{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f }};
+    CGAL::cpp11::array<float, 6> covariance = {{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f }};
     Point c = CGAL::centroid(triangles.begin(),
                              triangles.end(), Kernel(), CGAL::Dimension_tag<2>());
 
@@ -637,8 +637,8 @@ private:
       
     m_content->centroids[get(get(CGAL::face_index,g), query)] = {{ float(c.x()), float(c.y()), float(c.z()) }};
     
-    CGAL::cpp11::array<double, 3> evalues = {{ 0.f, 0.f, 0.f }};
-    CGAL::cpp11::array<double, 9> evectors = {{ 0.f, 0.f, 0.f,
+    CGAL::cpp11::array<float, 3> evalues = {{ 0.f, 0.f, 0.f }};
+    CGAL::cpp11::array<float, 9> evectors = {{ 0.f, 0.f, 0.f,
                                                0.f, 0.f, 0.f,
                                                0.f, 0.f, 0.f }};
 

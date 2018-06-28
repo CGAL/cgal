@@ -100,7 +100,7 @@ template <typename GeomTraits,
 #else
           typename ConcurrencyTag = CGAL::Sequential_tag,
 #endif
-          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
+          typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
 class Mesh_feature_generator
 {
   
