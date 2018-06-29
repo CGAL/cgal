@@ -3,6 +3,8 @@
 
 #include <CGAL/internal/Approximate_convex_decomposition/approx_decomposition.h>
 #include <CGAL/internal/Approximate_convex_decomposition/concavity.h>
+#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL
 {
@@ -10,7 +12,7 @@ namespace CGAL
 
 /*
  * @brief Function computing concavity value of a cluster.
- * 
+ *
  * Cluster is a subset of connected faces in a triangle mesh.
  * Concavity value is the largest distance from a vertex in a cluster to the projected point onto the convex hull of a mesh.
  *
@@ -23,12 +25,17 @@ concavity_value(const TriangleMesh& mesh,
                 std::size_t cluster_id,
                 const NamedParameters& np)
 {
-    typedef typename Polygon_mesh_processing::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
-    typedef typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::Kernel GeomTraits;
+    typedef typename Polygon_mesh_processing::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
+    typedef typename Polygon_mesh_processing::GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
+
+    Geom_traits geom_traits = boost::choose_param(boost::get_param(np, internal_np::geom_traits), Geom_traits());
+    Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+                                  get_const_property_map(boost::vertex_point, mesh));
+
 
     CGAL_precondition(is_triangle_mesh(mesh));
 
-    internal::Concavity<TriangleMesh, GeomTraits, ConcurrencyTag> algorithm(mesh, GeomTraits());
+    internal::Concavity<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits);
     return algorithm.compute(face_ids, cluster_id);
 }
 
@@ -45,22 +52,29 @@ concavity_value(const TriangleMesh& mesh,
 
 /*
  * @brief Function computing concavity value of a triangle mesh.
- * 
+ *
  * Concavity value is the largest distance from a vertex in a mesh to the projected point onto the convex hull of a mesh.
  *
  * @return concativity value.
  */
+
+
 template <class ConcurrencyTag, class TriangleMesh, class NamedParameters>
 double
 concavity_value(const TriangleMesh& mesh,
                 const NamedParameters& np)
 {
-    typedef typename Polygon_mesh_processing::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
-    typedef typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::Kernel GeomTraits;
+    typedef typename Polygon_mesh_processing::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
+    typedef typename Polygon_mesh_processing::GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
+
+    Geom_traits geom_traits = boost::choose_param(boost::get_param(np, internal_np::geom_traits), Geom_traits());
+    Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+                                  get_const_property_map(boost::vertex_point, mesh));
+
 
     CGAL_precondition(is_triangle_mesh(mesh));
 
-    internal::Concavity<TriangleMesh, GeomTraits, ConcurrencyTag> algorithm(mesh, GeomTraits());
+    internal::Concavity<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits);
     return algorithm.compute();
 }
 
@@ -89,13 +103,17 @@ convex_decomposition(const TriangleMesh& mesh,
                      std::size_t min_number_of_clusters,
                      const NamedParameters& np)
 {
-    typedef typename Polygon_mesh_processing::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
-    typedef typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::Kernel GeomTraits;
+    typedef typename Polygon_mesh_processing::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
+    typedef typename Polygon_mesh_processing::GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
+
+    Geom_traits geom_traits = boost::choose_param(boost::get_param(np, internal_np::geom_traits), Geom_traits());
+    Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+                                  get_const_property_map(boost::vertex_point, mesh));
 
     CGAL_precondition(is_triangle_mesh(mesh));
     CGAL_precondition(num_faces(mesh) >= min_number_of_clusters);
 
-    internal::Approx_decomposition<TriangleMesh, GeomTraits, ConcurrencyTag> algorithm(mesh, GeomTraits());
+    internal::Approx_decomposition<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits);
     return algorithm.decompose(face_ids, concavity_threshold, min_number_of_clusters);
 }
 

@@ -38,6 +38,7 @@ namespace internal
 {
 
 template < class TriangleMesh,
+           class Vpm,
            class GeomTraits,
            class ConcurrencyTag
            >
@@ -89,11 +90,12 @@ class Approx_decomposition
     const double CONCAVITY_FACTOR = 0.1;
 
 public:
-    Approx_decomposition(const TriangleMesh& mesh, const GeomTraits& traits)
+    Approx_decomposition(const TriangleMesh& mesh, const Vpm& vpm, const GeomTraits& traits)
     : m_mesh(mesh)
+    , m_vpm(vpm)
     , m_traits(traits)
-    , m_concavity_calc(mesh, traits)
     , m_candidates(CandidateComparator(*this))
+    , m_concavity_calc(mesh, vpm, traits)
     {}
 
     /**
@@ -175,6 +177,7 @@ public:
 
 private:
     const TriangleMesh& m_mesh;
+    Vpm m_vpm;
     const GeomTraits& m_traits;
     
     Graph m_graph; // adjacency list
@@ -204,7 +207,7 @@ private:
     
     std::set<graph_edge_descriptor, CandidateComparator> m_candidates; // ordered by decimation cost list of edges
 
-    Concavity<TriangleMesh, GeomTraits, ConcurrencyTag> m_concavity_calc; // concavity calculator that computes concavity values for any subset of faces of the input mesh
+    Concavity<TriangleMesh, Vpm, GeomTraits, ConcurrencyTag> m_concavity_calc; // concavity calculator that computes concavity values for any subset of faces of the input mesh
 
     // a predicate for border edges removal
     template <class Mesh>
@@ -259,7 +262,7 @@ private:
 
             BOOST_FOREACH(vertex_descriptor vert, vertices_around_face(halfedge(face, m_mesh), m_mesh))
             {
-                props.conv_hull_pts.push_back(get(CGAL::vertex_point, m_mesh)[vert]);
+                props.conv_hull_pts.push_back(get(m_vpm, vert));
             }
 
             props.bbox = CGAL::Polygon_mesh_processing::face_bbox(face, m_mesh);
@@ -318,7 +321,7 @@ private:
             decimation_props.new_cluster_props.conv_hull_pts.clear();
             BOOST_FOREACH(vertex_descriptor vert, vertices(conv_hull))
             {
-                decimation_props.new_cluster_props.conv_hull_pts.push_back(get(CGAL::vertex_point, conv_hull)[vert]);
+                decimation_props.new_cluster_props.conv_hull_pts.push_back(get(CGAL::vertex_point, conv_hull, vert));
             }
 
             // compute concavity value of the produced cluster using concavity calculator of the input mesh, faces, and convex hull of the produced cluster

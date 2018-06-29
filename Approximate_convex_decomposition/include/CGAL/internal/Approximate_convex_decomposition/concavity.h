@@ -22,7 +22,7 @@ namespace CGAL
 namespace internal
 {
 
-    template <class TriangleMesh, class GeomTraits, class ConcurrencyTag, class Mesh = TriangleMesh>
+    template <class TriangleMesh, class Vpm, class GeomTraits, class ConcurrencyTag, class Mesh = TriangleMesh>
     class Concavity
     {
         // predefined structs
@@ -48,8 +48,9 @@ namespace internal
         typedef boost::optional<typename AABB_tree::template Intersection_and_primitive_id<Ray_3>::Type> Ray_intersection;
     
     public:
-        Concavity(const TriangleMesh& mesh, const GeomTraits& traits)
+        Concavity(const TriangleMesh& mesh, const Vpm& vpm, const GeomTraits& traits)
         : m_mesh(mesh)
+        , m_vpm(vpm)
         , m_traits(traits)
         {}
 
@@ -61,7 +62,7 @@ namespace internal
         {
             Filtered_graph filtered_mesh(m_mesh, cluster_id, facet_ids);
 
-            Concavity<Filtered_graph, GeomTraits, ConcurrencyTag, TriangleMesh> concavity(filtered_mesh, m_traits);
+            Concavity<Filtered_graph, Vpm, GeomTraits, ConcurrencyTag, TriangleMesh> concavity(filtered_mesh, m_vpm, m_traits);
             return concavity.compute();
         }
 
@@ -80,7 +81,7 @@ namespace internal
             // extract the list points of the mesh
             BOOST_FOREACH(vertex_descriptor vert, vertices(m_mesh))
             {
-                pts.push_back(get(CGAL::vertex_point, m_mesh)[vert]);
+                pts.push_back(get(m_vpm, vert));
             }
 
             // compute convex hull
@@ -127,12 +128,12 @@ namespace internal
             // functor that computes intersection, its projection length from a vertex and maximizes the result variable
             struct Intersection_functor
             {
-                Intersection_functor(const TriangleMesh& mesh, const Normals_map& normals_map, const AABB_tree& tree, double& result)
-                : m_mesh(mesh), m_normals_map(normals_map), m_tree(tree), m_result(result) {}
+                Intersection_functor(const TriangleMesh& mesh, const Vpm& vpm, const Normals_map& normals_map, const AABB_tree& tree, double& result)
+                : m_mesh(mesh), m_vpm(vpm), m_normals_map(normals_map), m_tree(tree), m_result(result) {}
 
                 void operator() (const vertex_descriptor& vert) const
                 {
-                    Point_3 origin = get(CGAL::vertex_point, m_mesh)[vert];
+                    Point_3 origin = get(m_vpm, vert);
                     Ray_3 ray(origin, m_normals_map.at(vert));
                     
                     Ray_intersection intersection = m_tree.first_intersection(ray);
@@ -148,12 +149,13 @@ namespace internal
 
             private:
                 const TriangleMesh& m_mesh;
+                const Vpm& m_vpm;
                 const Normals_map& m_normals_map;
                 const AABB_tree& m_tree;
                 double& m_result;
             };
 
-            Intersection_functor intersection_functor(m_mesh, m_normals_map, tree, result);
+            Intersection_functor intersection_functor(m_mesh, m_vpm, m_normals_map, tree, result);
 
 #ifdef CGAL_LINKED_WITH_TBB
             if (boost::is_convertible<ConcurrencyTag, Parallel_tag>::value)
@@ -174,6 +176,7 @@ namespace internal
 
     private:
         const TriangleMesh& m_mesh;
+        Vpm m_vpm;
         const GeomTraits& m_traits;
 
         Normals_map m_normals_map;
