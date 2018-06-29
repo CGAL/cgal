@@ -100,6 +100,7 @@ lloyd_optimize_mesh_3(c3t3,
 \sa `CGAL::perturb_mesh_3()` 
 \sa `CGAL::odt_optimize_mesh_3()` 
 
+\note This function requires the \ref thirdpartyEigen library.
 */
 
 template<typename C3T3, typename MeshDomain_3>

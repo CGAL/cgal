@@ -57,11 +57,7 @@
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
-#  if TBB_IMPLEMENT_CPP0X
-#   include <tbb/compat/thread>
-#  else
-#   include <thread>
-#  endif
+#  include <tbb/task_scheduler_init.h>
 #endif
 
 #include <boost/format.hpp>
@@ -461,6 +457,18 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
     % r_tr.number_of_vertices()
     % nbsteps % cells_mesher_.debug_info()
     % (nbsteps / timer.time());
+    if(refinement_stage == REFINE_FACETS &&
+       facets_mesher_.is_algorithm_done())
+    {
+      facets_mesher_.scan_edges();
+      refinement_stage = REFINE_FACETS_AND_EDGES;
+    }
+    if(refinement_stage == REFINE_FACETS_AND_EDGES &&
+       facets_mesher_.is_algorithm_done())
+    {
+      facets_mesher_.scan_vertices();
+      refinement_stage = REFINE_FACETS_AND_EDGES_AND_VERTICES;
+    }
     ++nbsteps;
   }
   std::cerr << std::endl;

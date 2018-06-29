@@ -183,7 +183,7 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
  * \ingroup keep_connected_components_grp
  *  computes for each face the index of the corresponding connected component.
  *
- *  A property map for `CGAL::face_index_t` should be either available as an internal property map 
+ *  A property map for `CGAL::face_index_t` must be either available as an internal property map 
  *  to `pmesh` or provided as one of the \ref pmp_namedparameters "Named Parameters".
  *
  *  \tparam PolygonMesh a model of `FaceListGraph`
@@ -269,7 +269,7 @@ void keep_connected_components(PolygonMesh& pmesh
  *  Keep `nb_components_to_keep` largest connected components. 
  *
  * Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
- * should be either available as internal property maps 
+ * must be either available as internal property maps 
  * to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
  *
  * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
@@ -352,7 +352,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  *  removes connected components with less than a given number of faces.
  *
  * Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
- * should be either available as internal property maps 
+ * must be either available as internal property maps 
  * to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
  *
  * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
@@ -567,7 +567,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 * then the behavior of this function is undefined.
 *
 * Property maps for `CGAL::vertex_index_t`
-* should be either available as internal property map
+* must be either available as internal property map
 * to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
 *
 * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
@@ -610,7 +610,7 @@ void keep_connected_components(PolygonMesh& pmesh
 * then the behavior of this function is undefined.
 *
 * Property maps for `CGAL::vertex_index_t`
-* should be either available as internal property map
+* must be either available as internal property map
 * to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
 *
 *
@@ -651,7 +651,7 @@ void remove_connected_components(PolygonMesh& pmesh
 *  and removes the other connected components and all isolated vertices.
 *
 * Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
-* should be either available as internal property maps
+* must be either available as internal property maps
 * to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
 *
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
@@ -709,7 +709,7 @@ void remove_connected_components(PolygonMesh& pmesh
 *  and removes the other connected components and all isolated vertices.
 *
 * Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
-* should be either available as internal property maps
+* must be either available as internal property maps
 * to `pmesh` or provided as \ref pmp_namedparameters "Named Parameters".
 *
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,

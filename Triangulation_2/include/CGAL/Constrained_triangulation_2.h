@@ -417,7 +417,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
   
 
   class Less_edge 
-    :  public CGAL::binary_function<Edge, Edge, bool>
+    :  public CGAL::cpp98::binary_function<Edge, Edge, bool>
   {
   public:
     Less_edge() {}

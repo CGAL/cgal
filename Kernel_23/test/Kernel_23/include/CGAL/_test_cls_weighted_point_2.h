@@ -45,7 +45,7 @@ bool _test_cls_weighted_point_2(const R& )
   RT  n2( 50 );
   RT n4(  5);
   FT iw = -1;
-
+  int int_w = 1;
   CGAL::Point_2<R> p0(n1, n2, n4);
 
   // constructions
@@ -57,6 +57,7 @@ bool _test_cls_weighted_point_2(const R& )
   CGAL::Weighted_point_2<R> wp4(iwp); // with R::Weighted_point_2
   CGAL::Weighted_point_2<R> wp5(wp3); // with CGAL::Weighted_point_2< R >
   CGAL::Weighted_point_2<R> wp6(n1, n2); // with coordinates
+  CGAL::Weighted_point_2<R> wp7(p0, int_w);
   use(wp0); use(wp4); use(wp5);
 
   // assignement
@@ -65,12 +66,18 @@ bool _test_cls_weighted_point_2(const R& )
   std::cout << ".";
 
   // accessors
-  CGAL::Point_2<R> p1 = wp2.point();
+  CGAL::Point_2<R> p1;
+  p1 = wp1.point();
+
+  p1 = wp2.point();
   assert(p1 == p0);
+  
+  p1 =  wp3.point();
 
   FT w = wp3.weight();
   assert(w == iw);
-
+  w = wp7.weight();
+  
   // no need to test the other operations as they use Point_2 operations (which
   // are tested in _test_cls_point_2.h)
 

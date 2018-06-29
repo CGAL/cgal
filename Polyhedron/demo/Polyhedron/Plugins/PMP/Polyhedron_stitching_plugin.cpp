@@ -46,17 +46,23 @@ class Polyhedron_demo_polyhedron_stitching_plugin :
 
   QAction* actionDetectBorders;
   QAction* actionStitchBorders;
+  QAction* actionStitchByCC;
 public:
-  QList<QAction*> actions() const { return QList<QAction*>() << actionDetectBorders << actionStitchBorders; }
+  QList<QAction*> actions() const { return QList<QAction*>() << actionDetectBorders << actionStitchBorders << actionStitchByCC; }
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* /* m */)
   {
     scene = scene_interface;
     actionDetectBorders= new QAction(tr("Detect Boundaries"), mainWindow);
-    actionStitchBorders= new QAction(tr("Stitch Duplicated Boundaries"), mainWindow);
     actionDetectBorders->setObjectName("actionDetectBorders");
+    actionDetectBorders->setProperty("subMenuName", "Polygon Mesh Processing");
+    actionStitchBorders= new QAction(tr("Stitch Duplicated Boundaries"), mainWindow);
     actionStitchBorders->setObjectName("actionStitchBorders");
     actionStitchBorders->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
-    actionDetectBorders->setProperty("subMenuName", "Polygon Mesh Processing");
+    
+    actionStitchByCC= new QAction(tr("Stitch Borders Per Connected Components"), mainWindow);
+    actionStitchByCC->setObjectName("actionStitchByCC");
+    actionStitchByCC->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
+    
     autoConnectActions();
   }
 
@@ -75,10 +81,14 @@ public:
 
   template <typename Item>
   void on_actionStitchBorders_triggered(Scene_interface::Item_id index);
+  
+  template <typename Item>
+  void on_actionStitchByCC_triggered(Scene_interface::Item_id index);
 
 public Q_SLOTS:
   void on_actionDetectBorders_triggered();
   void on_actionStitchBorders_triggered();
+  void on_actionStitchByCC_triggered();
 
 }; // end Polyhedron_demo_polyhedron_stitching_plugin
 
@@ -174,6 +184,29 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchBorders_trigger
   Q_FOREACH(int index, scene->selectionIndices()){
     on_actionStitchBorders_triggered<Scene_polyhedron_item>(index);
     on_actionStitchBorders_triggered<Scene_surface_mesh_item>(index);
+  }
+}
+
+template <typename Item>
+void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchByCC_triggered(Scene_interface::Item_id index)
+{
+  Item* item =
+      qobject_cast<Item*>(scene->item(index));
+  
+  if(!item)
+    return;
+  CGAL::Polygon_mesh_processing::stitch_borders(*item->polyhedron(),
+                                                CGAL::Polygon_mesh_processing::parameters::apply_per_connected_component(true));
+  item->invalidateOpenGLBuffers();
+  scene->itemChanged(item);
+}
+
+
+void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchByCC_triggered()
+{
+  Q_FOREACH(int index, scene->selectionIndices()){
+    on_actionStitchByCC_triggered<Scene_polyhedron_item>(index);
+    on_actionStitchByCC_triggered<Scene_surface_mesh_item>(index);
   }
 }
 #include "Polyhedron_stitching_plugin.moc"

@@ -10,4 +10,5 @@
 \example Polyhedron/polyhedron_prog_subdiv.cpp
 \example Polyhedron/polyhedron_prog_tetra.cpp
 \example Polyhedron/polyhedron_prog_vector.cpp
+\example Polyhedron/draw_polyhedron.cpp
 */

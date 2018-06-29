@@ -12,6 +12,7 @@
 #include <QInputDialog>
 #include <cmath>
 #include <QApplication>
+#include <QOpenGLDebugLogger>
 
 #if defined(_WIN32)
 #include <QMimeData>
@@ -38,6 +39,21 @@ public:
   QTimer messageTimer;
   QOpenGLFunctions_4_3_Compatibility* _recentFunctions;
   bool is_2d_selection_mode;
+
+  // D e p t h  P e e l i n g
+  // \param pass the current pass in the Depth Peeling (transparency) algorithm.
+  // -1 means that no depth peeling is applied.
+  // \param writing_depth means that the color of the faces will be drawn in a grayscale
+  // according to the depth of the fragment in the shader. It is used by the transparency.
+  // \param fbo contains the texture used by the Depth Peeling algorithm.
+  // Should be NULL if pass <= 0;
+  int current_pass;
+  bool writing_depth;
+  int total_pass;
+  int current_total_pass;
+  QOpenGLFramebufferObject* dp_fbo;
+  QOpenGLDebugLogger *logger;
+
 
   //! The buffers used to draw the axis system
   QOpenGLBuffer buffer;
@@ -88,6 +104,8 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->shader_programs.resize(NB_OF_PROGRAMS);
   d->textRenderer = new TextRenderer();
   d->is_2d_selection_mode = false;
+  d->total_pass = 4;
+  
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
   connect(&d->messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
@@ -197,6 +215,13 @@ void Viewer::init()
   else
   {
     d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
+    d->logger = new QOpenGLDebugLogger(this);
+    if(!d->logger->initialize())
+      qDebug()<<"logger could not init.";
+    else{
+      connect(d->logger, SIGNAL(messageLogged(QOpenGLDebugMessage)), this, SLOT(messageLogged(QOpenGLDebugMessage)));
+      d->logger->startLogging();
+    }
     d->_recentFunctions->initializeOpenGLFunctions();
   }
   glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
@@ -434,6 +459,7 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
 {
   if(scene == 0)
     return;
+  current_total_pass = viewer->inFastDrawing() ? total_pass/2 : total_pass;
   viewer->glLineWidth(1.0f);
   viewer->glPointSize(2.f);
   viewer->glEnable(GL_POLYGON_OFFSET_FILL);
@@ -489,8 +515,17 @@ void Viewer::postSelection(const QPoint& pixel)
     Q_EMIT selectedPoint(point.x,
                        point.y,
                        point.z);
-    const CGAL::qglviewer::Vec orig = camera()->position() - offset();
-    const CGAL::qglviewer::Vec dir = point - orig;
+    CGAL::qglviewer::Vec dir;
+    CGAL::qglviewer::Vec orig;
+    if(d->projection_is_ortho)
+    {
+      dir = camera()->viewDirection();
+      orig = point;
+    }
+    else{
+      orig = camera()->position() - offset();
+      dir = point - orig;
+    }
     Q_EMIT selectionRay(orig.x, orig.y, orig.z,
                       dir.x, dir.y, dir.z);
   }
@@ -706,7 +741,10 @@ void Viewer::drawVisualHints()
     //Prints the displayMessage
     QFont font = QFont();
     QFontMetrics fm(font);
-    TextItem *message_text = new TextItem(10 + fm.width(d->message)/2, height()-20, 0, d->message, false, QFont(), Qt::gray );
+    TextItem *message_text = new TextItem(float(10 + fm.width(d->message)/2),
+                                          float(height()-20),
+                                          0, d->message, false,
+                                          QFont(), Qt::gray );
     if (d->_displayMessage)
     {
       d->textRenderer->addText(message_text);
@@ -756,55 +794,125 @@ QOpenGLShaderProgram* Viewer::declare_program(int name,
 }
 QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
 {
-    switch(name)
-    {
-    case PROGRAM_C3T3:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3.v" , ":/cgal/Polyhedron_3/resources/shader_c3t3.f");
-        break;
-    case PROGRAM_C3T3_EDGES:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3_edges.v" , ":/cgal/Polyhedron_3/resources/shader_c3t3_edges.f");
-        break;
-    case PROGRAM_WITH_LIGHT:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_light.v" , ":/cgal/Polyhedron_3/resources/shader_with_light.f");
-        break;
-    case PROGRAM_WITHOUT_LIGHT:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_without_light.v" , ":/cgal/Polyhedron_3/resources/shader_without_light.f");
-       break;
-    case PROGRAM_NO_SELECTION:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_without_light.v" , ":/cgal/Polyhedron_3/resources/shader_no_light_no_selection.f");
-        break;
-    case PROGRAM_WITH_TEXTURE:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_texture.v" , ":/cgal/Polyhedron_3/resources/shader_with_texture.f");
-      break;
-    case PROGRAM_PLANE_TWO_FACES:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_without_light.v" , ":/cgal/Polyhedron_3/resources/shader_plane_two_faces.f");
-        break;
-    case PROGRAM_WITH_TEXTURED_EDGES:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_textured_edges.v" , ":/cgal/Polyhedron_3/resources/shader_with_textured_edges.f");
-        break;
-    case PROGRAM_INSTANCED:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_instanced.v" , ":/cgal/Polyhedron_3/resources/shader_with_light.f");
-        break;
-    case PROGRAM_INSTANCED_WIRE:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_instanced.v" , ":/cgal/Polyhedron_3/resources/shader_without_light.f");
-        break;
-    case PROGRAM_CUTPLANE_SPHERES:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3_spheres.v" , ":/cgal/Polyhedron_3/resources/shader_c3t3.f");
-     break;
-    case PROGRAM_SPHERES:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_spheres.v" , ":/cgal/Polyhedron_3/resources/shader_with_light.f");
-      break;
-    case PROGRAM_FLAT:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_flat.v", ":/cgal/Polyhedron_3/resources/shader_flat.f");
-    case PROGRAM_OLD_FLAT:
-      return declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_light.v", ":/cgal/Polyhedron_3/resources/shader_old_flat.f");
-      break;
-
-    default:
-        std::cerr<<"ERROR : Program not found."<<std::endl;
-        return 0;
-    }
+  switch(name)
+  {
+  case PROGRAM_C3T3:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3.v" , ":/cgal/Polyhedron_3/resources/shader_c3t3.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    program->setProperty("hasCutPlane", true);
+    program->setProperty("hasTransparency", true);
+    return program;
+  }
+  case PROGRAM_C3T3_EDGES:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3_edges.v" , ":/cgal/Polyhedron_3/resources/shader_c3t3_edges.f");
+    program->setProperty("hasCutPlane", true);
+    return program;
+  }
+  case PROGRAM_WITH_LIGHT:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_light.v" , ":/cgal/Polyhedron_3/resources/shader_with_light.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    program->setProperty("hasTransparency", true);
+    return program;
+  }
+  case PROGRAM_WITHOUT_LIGHT:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_without_light.v" , ":/cgal/Polyhedron_3/resources/shader_without_light.f");
+    program->setProperty("hasFMatrix", true);
+    return program;
+  }
+  case PROGRAM_NO_SELECTION:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_without_light.v" , ":/cgal/Polyhedron_3/resources/shader_no_light_no_selection.f");
+    program->setProperty("hasFMatrix", true);
+    return program;
+  }
+  case PROGRAM_WITH_TEXTURE:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_texture.v" , ":/cgal/Polyhedron_3/resources/shader_with_texture.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    program->setProperty("hasFMatrix", true);
+    program->setProperty("hasTexture", true);
+    return program;
+  }
+  case PROGRAM_PLANE_TWO_FACES:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_without_light.v" , ":/cgal/Polyhedron_3/resources/shader_plane_two_faces.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    return program;
+  }
+  case PROGRAM_WITH_TEXTURED_EDGES:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_textured_edges.v" , ":/cgal/Polyhedron_3/resources/shader_with_textured_edges.f");
+    program->setProperty("hasFMatrix", true);
+    program->setProperty("hasTexture", true);
+    return program;
+  }
+  case PROGRAM_INSTANCED:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_instanced.v" , ":/cgal/Polyhedron_3/resources/shader_with_light.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    program->setProperty("isInstanced", true);
+    return program;
+  }
+  case PROGRAM_INSTANCED_WIRE:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_instanced.v" , ":/cgal/Polyhedron_3/resources/shader_without_light.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    program->setProperty("hasBarycenter", true);
+    program->setProperty("isInstanced", true);
+    return program;
+  }
+  case PROGRAM_CUTPLANE_SPHERES:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3_spheres.v" , ":/cgal/Polyhedron_3/resources/shader_c3t3.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    program->setProperty("hasBarycenter", true);
+    program->setProperty("hasRadius", true);
+    program->setProperty("isInstanced", true);
+    return program;
+  }
+  case PROGRAM_SPHERES:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_spheres.v" , ":/cgal/Polyhedron_3/resources/shader_with_light.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    program->setProperty("hasBarycenter", true);
+    program->setProperty("hasRadius", true);
+    program->setProperty("hasTransparency", true);
+    program->setProperty("isInstanced", true);
+    return program;
+  }
+  case PROGRAM_FLAT:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_flat.v", ":/cgal/Polyhedron_3/resources/shader_flat.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    return program;
+  }
+  case PROGRAM_OLD_FLAT:
+  {
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_light.v", ":/cgal/Polyhedron_3/resources/shader_old_flat.f");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    return program;
+  }
+    
+  default:
+    std::cerr<<"ERROR : Program not found."<<std::endl;
+    return 0;
+  }
 }
+
 void Viewer::wheelEvent(QWheelEvent* e)
 {
     if(e->modifiers().testFlag(Qt::ShiftModifier))
@@ -848,7 +956,10 @@ void Viewer::paintGL()
   else
   {
     d->painter->beginNativePainting();
-    glClearColor(backgroundColor().redF(), backgroundColor().greenF(), backgroundColor().blueF(), 1.0);
+    glClearColor(GLfloat(backgroundColor().redF()),
+                 GLfloat(backgroundColor().greenF()),
+                 GLfloat(backgroundColor().blueF()),
+                 1.f);
     glClearDepth(1.0f);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     //set the default frustum
@@ -907,8 +1018,8 @@ void Viewer_impl::showDistance(QPoint pixel)
         // fills the buffers
         std::vector<float> v;
         v.resize(6);
-        v[0] = APoint.x; v[1] = APoint.y; v[2] = APoint.z;
-        v[3] = BPoint.x; v[4] = BPoint.y; v[5] = BPoint.z;
+        v[0] = float(APoint.x); v[1] = float(APoint.y); v[2] = float(APoint.z);
+        v[3] = float(BPoint.x); v[4] = float(BPoint.y); v[5] = float(BPoint.z);
         rendering_program_dist.bind();
         vao.bind();
         buffer.bind();
@@ -922,12 +1033,21 @@ void Viewer_impl::showDistance(QPoint pixel)
         double dist = std::sqrt((BPoint.x-APoint.x)*(BPoint.x-APoint.x) + (BPoint.y-APoint.y)*(BPoint.y-APoint.y) + (BPoint.z-APoint.z)*(BPoint.z-APoint.z));
         QFont font;
         font.setBold(true);
-        TextItem *ACoord = new TextItem(APoint.x, APoint.y, APoint.z,QString("A(%1,%2,%3)").arg(APoint.x-viewer->offset().x).arg(APoint.y-viewer->offset().y).arg(APoint.z-viewer->offset().z), true, font, Qt::red, true);
+        TextItem *ACoord = new TextItem(float(APoint.x),
+                                        float(APoint.y),
+                                        float(APoint.z),
+                                        QString("A(%1,%2,%3)").arg(APoint.x-viewer->offset().x).arg(APoint.y-viewer->offset().y).arg(APoint.z-viewer->offset().z), true, font, Qt::red, true);
         distance_text.append(ACoord);
-        TextItem *BCoord = new TextItem(BPoint.x, BPoint.y, BPoint.z,QString("B(%1,%2,%3)").arg(BPoint.x-viewer->offset().x).arg(BPoint.y-viewer->offset().y).arg(BPoint.z-viewer->offset().z), true, font, Qt::red, true);
+        TextItem *BCoord = new TextItem(float(BPoint.x),
+                                        float(BPoint.y),
+                                        float(BPoint.z),
+                                        QString("B(%1,%2,%3)").arg(BPoint.x-viewer->offset().x).arg(BPoint.y-viewer->offset().y).arg(BPoint.z-viewer->offset().z), true, font, Qt::red, true);
         distance_text.append(BCoord);
         CGAL::qglviewer::Vec centerPoint = 0.5*(BPoint+APoint);
-        TextItem *centerCoord = new TextItem(centerPoint.x, centerPoint.y, centerPoint.z,QString(" distance: %1").arg(dist), true, font, Qt::red, true);
+        TextItem *centerCoord = new TextItem(float(centerPoint.x),
+                                             float(centerPoint.y),
+                                             float(centerPoint.z),
+                                             QString(" distance: %1").arg(dist), true, font, Qt::red, true);
 
         distance_text.append(centerCoord);
         Q_FOREACH(TextItem* ti, distance_text)
@@ -1025,3 +1145,96 @@ void Viewer::setStaticImage(QImage image) { d->static_image = image; }
 
 const QImage& Viewer:: staticImage() const { return d->static_image; }
 
+
+void Viewer::setCurrentPass(int pass) { d->current_pass = pass; }
+
+void Viewer::setDepthWriting(bool writing_depth) { d->writing_depth = writing_depth; }
+
+void Viewer::setDepthPeelingFbo(QOpenGLFramebufferObject* fbo) { d->dp_fbo = fbo; }
+
+int Viewer::currentPass()const{ return d->current_pass; }
+bool Viewer::isDepthWriting()const{ return d->writing_depth; }
+QOpenGLFramebufferObject *Viewer::depthPeelingFbo(){ return d->dp_fbo; }
+float Viewer::total_pass()
+{
+  return d->current_total_pass * 1.0f;
+}
+void Viewer::setTotalPass(int p)
+{
+  d->total_pass = p;
+  update();
+}
+
+void Viewer::setTotalPass_clicked()
+{
+  bool ok;
+  int passes = QInputDialog::getInt(0, QString("Set Number of Passes"), QString("Number of Depth Peeling Passes:  "), 4, 2,100, 1, &ok);
+  if(!ok)
+    return;
+  setTotalPass(passes);
+}
+
+void Viewer::messageLogged(QOpenGLDebugMessage msg)
+{
+  QString error;
+
+  // Format based on severity
+  switch (msg.severity())
+  {
+  case QOpenGLDebugMessage::NotificationSeverity:
+    return;
+    break;
+  case QOpenGLDebugMessage::HighSeverity:
+    error += "GL ERROR :";
+    break;
+  case QOpenGLDebugMessage::MediumSeverity:
+    error += "GL WARNING :";
+    break;
+  case QOpenGLDebugMessage::LowSeverity:
+    error += "GL NOTE :";
+    break;
+  default:
+    break;
+  }
+
+  error += " (";
+
+  // Format based on source
+#define CASE(c) case QOpenGLDebugMessage::c: error += #c; break
+  switch (msg.source())
+  {
+  CASE(APISource);
+  CASE(WindowSystemSource);
+  CASE(ShaderCompilerSource);
+  CASE(ThirdPartySource);
+  CASE(ApplicationSource);
+  CASE(OtherSource);
+  CASE(InvalidSource);
+  default:
+    break;
+  }
+#undef CASE
+
+  error += " : ";
+
+  // Format based on type
+#define CASE(c) case QOpenGLDebugMessage::c: error += #c; break
+  switch (msg.type())
+  {
+  CASE(ErrorType);
+  CASE(DeprecatedBehaviorType);
+  CASE(UndefinedBehaviorType);
+  CASE(PortabilityType);
+  CASE(PerformanceType);
+  CASE(OtherType);
+  CASE(MarkerType);
+  CASE(GroupPushType);
+  CASE(GroupPopType);
+  default:
+    break;
+  }
+#undef CASE
+
+  error += ")";
+  qDebug() << qPrintable(error) << "\n" << qPrintable(msg.message()) << "\n";
+}

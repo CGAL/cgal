@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>978</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -101,6 +101,8 @@
     <addaction name="actionSetBackgroundColor"/>
     <addaction name="menuDockWindows"/>
     <addaction name="menuCamera"/>
+    <addaction name="separator"/>
+    <addaction name="actionSet_Transparency_Pass_Number"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -296,7 +298,7 @@
             <x>0</x>
             <y>0</y>
             <width>541</width>
-            <height>173</height>
+            <height>176</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -538,6 +540,11 @@
     <string>In Polyhedron Mode, the default type for facegraphs is Polyhedron, by opposition to Surface_mesh.</string>
    </property>
   </action>
+  <action name="actionSet_Transparency_Pass_Number">
+   <property name="text">
+    <string>Set Transparency &amp;Pass Number</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -547,6 +554,9 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="Polyhedron_3.qrc"/>
+  <include location="Polyhedron_3.qrc"/>
+  <include location="Polyhedron_3.qrc"/>
   <include location="Polyhedron_3.qrc"/>
  </resources>
  <connections/>

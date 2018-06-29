@@ -77,7 +77,7 @@ public :
   void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   void drawPoints(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   void invalidateOpenGLBuffers()Q_DECL_OVERRIDE;
-  void computeElements() const;
+  void computeElements() const ;
   Scene_item* clone() const Q_DECL_OVERRIDE{return 0;}
   QString toolTip() const Q_DECL_OVERRIDE{return QString();}
   bool isEmpty() const Q_DECL_OVERRIDE{ return false;}

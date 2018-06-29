@@ -13,6 +13,13 @@
 /// \defgroup PkgTriangulation3VertexCellClasses Vertex and Cell Classes
 /// \ingroup PkgTriangulation3
 
+/*! Draw.
+  \code
+   #include <CGAL/draw_triangulation_3.h>
+  \endcode
+*/
+/// \defgroup PkgDrawTriangulation3 Draw a Triangulation 3
+/// \ingroup PkgTriangulation3
 
 /*!
 \addtogroup PkgTriangulation3
@@ -111,6 +118,8 @@ is opposite to the vertex with the same index. See
 
 - `CGAL::Triangulation_3::Locate_type`
 
+### Draw a Triangulation 3 ###
+- `CGAL::draw<T3>`
 
 */
 

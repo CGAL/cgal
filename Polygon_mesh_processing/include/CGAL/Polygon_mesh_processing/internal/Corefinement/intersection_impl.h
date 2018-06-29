@@ -41,6 +41,7 @@
 #include <boost/dynamic_bitset.hpp>
 
 namespace CGAL{
+namespace Polygon_mesh_processing {
 namespace Corefinement {
 
 struct Self_intersection_exception{};
@@ -1364,6 +1365,6 @@ public:
 
 };
 
-} } // end of namespace CGAL::Corefinement
+} } } // CGAL::Polygon_mesh_processing::Corefinement
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_INTERNAL_COREFINEMENT_INTERSECTION_IMPL_H

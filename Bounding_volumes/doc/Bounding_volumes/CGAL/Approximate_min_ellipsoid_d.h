@@ -137,6 +137,8 @@ for display in Maplesoft's Maple.
 
 \cgalExample{Approximate_min_ellipsoid_d/ellipsoid_for_maple.cpp} 
 
+\note This class requires the \ref thirdpartyEigen library.
+
 */
 template< typename Traits >
 class Approximate_min_ellipsoid_d {

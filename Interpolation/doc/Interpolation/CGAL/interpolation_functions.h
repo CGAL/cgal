@@ -21,8 +21,8 @@ The class
 */
 template< typename Map >
 struct Data_access
-  : public CGAL::unary_function<typename Map::key_type,
-                                std::pair<typename Map::mapped_type, bool> >
+  : public CGAL::cpp98::unary_function<typename Map::key_type,
+                                       std::pair<typename Map::mapped_type, bool> >
 {
 public:
 

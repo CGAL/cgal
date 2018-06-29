@@ -20,8 +20,8 @@ void read(const char* fname, std::size_t v, std::size_t f)
                   true);
 
   assert(points.size() == v);
-    assert(faces.size() == f);
-    
+  assert(faces.size() == f);
+
   std::cout << "OFF version of file " << fname << std::endl;
 
   std::cout.precision(17);
@@ -33,8 +33,6 @@ void read(const char* fname, std::size_t v, std::size_t f)
   for(std::size_t i=0; i < faces.size(); i++){
     std::cout << "3 " << faces[i][0] << " " << faces[i][1] << " " << faces[i][2] << std::endl;
   }
-
-
 }
 
 
@@ -43,7 +41,6 @@ int main()
   read("data/cube.stl", 8, 12);
   read("data/triangle.stl", 3, 1);
 
-  
   read("data/ascii-tetrahedron.stl", 4, 4);
   read("data/binary-tetrahedron-nice-header.stl", 4, 4);
   read("data/binary-tetrahedron-non-standard-header-1.stl", 4, 4);
@@ -51,5 +48,6 @@ int main()
   read("data/binary-tetrahedron-non-standard-header-3.stl", 4, 4);
   read("data/binary-tetrahedron-non-standard-header-4.stl", 4, 4);
   read("data/binary-tetrahedron-non-standard-header-5.stl", 4, 4);
+
   return 0;
 }

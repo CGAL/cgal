@@ -12,6 +12,8 @@
 using namespace CGAL::Three;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
+namespace params = PMP::parameters;
+
 class Polyhedron_demo_corefinement_sm_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
@@ -165,11 +167,17 @@ private:
     }
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    PMP::corefine(*item1->face_graph(), *item2->face_graph());
-    item1->invalidateOpenGLBuffers();
-    item2->invalidateOpenGLBuffers();
-    scene->itemChanged(item2);
-    scene->itemChanged(item1);
+    try{
+      PMP::corefine(*item1->face_graph(), *item2->face_graph(), params::throw_on_self_intersection(true));
+      item1->invalidateOpenGLBuffers();
+      item2->invalidateOpenGLBuffers();
+      scene->itemChanged(item2);
+      scene->itemChanged(item1);
+    }
+    catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
+    {
+      messages->warning(tr("The requested operation is not possible due to the presence of self-intersections in the neighborhood of the intersection."));
+    }
     // default cursor
     QApplication::restoreOverrideCursor();
   }
@@ -193,46 +201,53 @@ private:
     FaceGraph* new_poly = new FaceGraph();
     QString str_op;
     FaceGraph P, Q;
-    switch(op)
+    try{
+      switch(op)
+      {
+        case CRF_UNION:
+          P = *first_item->face_graph(), Q = *item->face_graph();
+          if (! PMP::corefine_and_compute_union(P, Q, *new_poly, params::throw_on_self_intersection(true)) )
+          {
+            delete new_poly;
+            messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
+            // default cursor
+            QApplication::restoreOverrideCursor();
+            return;
+          }
+          str_op = "Union";
+        break;
+        case CRF_INTER:
+          P = *first_item->polyhedron(), Q = *item->polyhedron();
+          if (! PMP::corefine_and_compute_intersection(P, Q, *new_poly, params::throw_on_self_intersection(true)) )
+          {
+            delete new_poly;
+            messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
+            // default cursor
+            QApplication::restoreOverrideCursor();
+            return;
+          }
+          str_op = "Intersection";
+        break;
+        case CRF_MINUS_OP:
+          std::swap(first_item, item);
+          CGAL_FALLTHROUGH;
+        case CRF_MINUS:
+          P = *first_item->polyhedron(), Q = *item->polyhedron();
+          if (! PMP::corefine_and_compute_difference(P, Q, *new_poly, params::throw_on_self_intersection(true)) )
+          {
+            delete new_poly;
+            messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
+            // default cursor
+            QApplication::restoreOverrideCursor();
+            return;
+          }
+          str_op = "Difference";
+      }
+    }
+    catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
     {
-      case CRF_UNION:
-        P = *first_item->face_graph(), Q = *item->face_graph();
-        if (! PMP::corefine_and_compute_union(P, Q, *new_poly) )
-        {
-          delete new_poly;
-          messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
-          // default cursor
-          QApplication::restoreOverrideCursor();
-          return;
-        }
-        str_op = "Union";
-      break;
-      case CRF_INTER:
-        P = *first_item->polyhedron(), Q = *item->polyhedron();
-        if (! PMP::corefine_and_compute_intersection(P, Q, *new_poly) )
-        {
-          delete new_poly;
-          messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
-          // default cursor
-          QApplication::restoreOverrideCursor();
-          return;
-        }
-        str_op = "Intersection";
-      break;
-      case CRF_MINUS_OP:
-        std::swap(first_item, item);
-	CGAL_FALLTHROUGH;
-      case CRF_MINUS:
-        P = *first_item->polyhedron(), Q = *item->polyhedron();
-        if (! PMP::corefine_and_compute_difference(P, Q, *new_poly) )
-        {
-          delete new_poly;
-          messages->warning(tr("The result of the requested operation is not manifold and has not been computed."));
-          // default cursor
-          QApplication::restoreOverrideCursor();
-          return;
-        }
-        str_op = "Difference";
+      messages->warning(tr("The requested operation is not possible due to the presence of self-intersections in the neighborhood of the intersection."));
+      QApplication::restoreOverrideCursor();
     }
 
     first_item->invalidateOpenGLBuffers();
