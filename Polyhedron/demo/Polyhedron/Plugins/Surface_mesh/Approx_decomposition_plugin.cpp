@@ -119,20 +119,16 @@ private:
         double concavity_threshold = m_ui_widget.concavity_threshold_spin_box->value();
         bool extract_segmentation = m_ui_widget.segmentation_check_box->isChecked();
         bool use_concavity_colors = m_ui_widget.concavity_colors_check_box->isChecked();
-        bool retain_mesh = m_ui_widget.retain_mesh_check_box->isChecked();
 
-        FacegraphItem* cur_item = item;
+        FacegraphItem* segmentation_item = item;
 
-        if (retain_mesh)
-        {
-            // create new item
-            FacegraphItem* new_item = new FacegraphItem(*item->face_graph());
-            new_item->setFlatPlusEdgesMode();
-            cur_item = new_item;
-        }
+        // create new item and use it for segmentation if the flag is set
+        FacegraphItem* new_item = new FacegraphItem(*item->face_graph());
+        new_item->setFlatPlusEdgesMode();
+        segmentation_item = new_item;
         
         // decompose mesh
-        Facegraph& mesh = *cur_item->face_graph();
+        Facegraph& mesh = *segmentation_item->face_graph();
 
         typedef typename boost::graph_traits<Facegraph>::face_descriptor face_descriptor;
         typedef std::map<face_descriptor, std::size_t> Clusters_id_map;
@@ -152,17 +148,15 @@ private:
         
         std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
         std::cout << "Number of clusters: " << clusters_num << std::endl;
-        
+      
         // extract segmentation if the flag is set
         if (extract_segmentation)
         {
-            cur_item->setVisible(false);
-
             // colorize segmentation
             typedef typename boost::property_map<Facegraph, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
             Patch_id_pmap patch_pmap = get(CGAL::face_patch_id_t<int>(), mesh);
 
-            std::vector<QColor>& colors = cur_item->color_vector();
+            std::vector<QColor>& colors = segmentation_item->color_vector();
             colors.clear();
 
             BOOST_FOREACH(face_descriptor face, faces(mesh))
@@ -176,35 +170,24 @@ private:
                              CGAL::get_default_random().get_int(41, 255));
                 colors.push_back(color);
             }
-            cur_item->setItemIsMulticolor(true);
+            segmentation_item->setItemIsMulticolor(true);
+            segmentation_item->setName(tr("%1-segmentation-[%2,%3]").arg(clusters_num).arg(concavity_threshold).arg(min_number_of_clusters));
 
+            // add to the scene
+            scene->addItem(segmentation_item);
+            
             // refresh item
-            cur_item->invalidateOpenGLBuffers();
-            scene->itemChanged(scene->item_id(cur_item));
-
-            cur_item->setName(tr("%1-segmentation-[%2,%3]").arg(clusters_num).arg(concavity_threshold).arg(min_number_of_clusters));
+            segmentation_item->invalidateOpenGLBuffers();
+            scene->itemChanged(scene->item_id(segmentation_item));
         }
 
-        if (retain_mesh)
-        {
-            item->setVisible(false);
-            scene->itemChanged(item);
-       
-            if (extract_segmentation)
-            {    
-                Scene::Item_id index = scene->addItem(cur_item);
-                scene->setSelectedItem(index);
-            }
-            else
-            {
-                delete cur_item;
-            }
-        }
+        // extract decomposition
 
-        if (!retain_mesh && !extract_segmentation)
-        {
-//            scene->removeItem(scene->item_id(item));
-        }
+
+        // setup default view        
+        item->setVisible(false);
+        segmentation_item->setVisible(false);
+        scene->setSelectedItem(scene->item_id(segmentation_item));
 
         QApplication::restoreOverrideCursor();
     }
