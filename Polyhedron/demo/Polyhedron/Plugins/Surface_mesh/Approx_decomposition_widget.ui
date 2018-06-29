@@ -42,11 +42,14 @@
        </item>
        <item row="0" column="1">
         <widget class="QDoubleSpinBox" name="concavity_threshold_spin_box">
+         <property name="decimals">
+          <number>5</number>
+         </property>
          <property name="maximum">
           <double>10000.000000000000000</double>
          </property>
          <property name="singleStep">
-          <double>0.010000000000000</double>
+          <double>0.001000000000000</double>
          </property>
          <property name="value">
           <double>0.300000000000000</double>
@@ -128,6 +131,9 @@
          </property>
          <property name="text">
           <string/>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
          </property>
          <property name="checked">
           <bool>false</bool>
