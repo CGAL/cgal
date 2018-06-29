@@ -18,6 +18,8 @@
 #include <QInputDialog>
 #include <QMessageBox>
 
+#include "run_with_qprogressdialog.h"
+
 #include "ui_Point_set_normal_estimation_plugin.h"
 
 #if BOOST_VERSION == 105700
@@ -32,6 +34,49 @@ typedef CGAL::Parallel_tag Concurrency_tag;
 #else
 typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
+
+struct PCA_estimate_normals_functor
+  : public Functor_with_signal_callback
+{
+  Point_set* points;
+  int neighborhood_size;
+  unsigned int sharpness_angle;
+
+  PCA_estimate_normals_functor  (Point_set* points,
+                                 int neighborhood_size)
+    : points (points), neighborhood_size (neighborhood_size)
+  { }
+
+  void operator()()
+  {
+    CGAL::pca_estimate_normals<Concurrency_tag>(points->all_or_selection_if_not_empty(),
+                                                neighborhood_size,
+                                                points->parameters().
+                                                callback (*(this->callback())));
+  }
+};
+
+struct Jet_estimate_normals_functor
+  : public Functor_with_signal_callback
+{
+  Point_set* points;
+  int neighborhood_size;
+  unsigned int sharpness_angle;
+
+  Jet_estimate_normals_functor  (Point_set* points,
+                                 int neighborhood_size)
+    : points (points), neighborhood_size (neighborhood_size)
+  { }
+
+  void operator()()
+  {
+    CGAL::jet_estimate_normals<Concurrency_tag>(points->all_or_selection_if_not_empty(),
+                                                neighborhood_size,
+                                                points->parameters().
+                                                callback (*(this->callback())));
+  }
+};
+
 using namespace CGAL::Three;
 
 class Polyhedron_demo_point_set_normal_estimation_plugin :
@@ -49,6 +94,7 @@ public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
 
     scene = scene_interface;
+    mw = mainWindow;
     actionNormalEstimation = new QAction(tr("Normal Estimation"), mainWindow);
     actionNormalEstimation->setObjectName("actionNormalEstimation");
     actionNormalEstimation->setProperty("subMenuName","Point Set Processing");
@@ -160,7 +206,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
     if(!dialog.exec())
       return;
       
-    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::setOverrideCursor(Qt::BusyCursor);
     QApplication::processEvents();
 
     // First point to delete
@@ -175,9 +221,8 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
       std::cerr << "Estimates normal direction by PCA (k=" << dialog.pca_neighbors() <<")...\n";
 
       // Estimates normals direction.
-      CGAL::pca_estimate_normals<Concurrency_tag>(points->all_or_selection_if_not_empty(),
-                                                  dialog.pca_neighbors(),
-                                                  points->parameters());
+      PCA_estimate_normals_functor functor (points, dialog.pca_neighbors());
+      run_with_qprogressdialog (functor, "Estimating normals by PCA...", mw);
 
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << "Estimates normal direction: " << task_timer.time() << " seconds, "
@@ -190,9 +235,8 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
       std::cerr << "Estimates normal direction by Jet Fitting (k=" << dialog.jet_neighbors() <<")...\n";
 
       // Estimates normals direction.
-      CGAL::jet_estimate_normals<Concurrency_tag>(points->all_or_selection_if_not_empty(),
-                                                  dialog.jet_neighbors(),
-                                                  points->parameters());
+      Jet_estimate_normals_functor functor (points, dialog.pca_neighbors());
+      run_with_qprogressdialog (functor, "Estimating normals by jet fitting...", mw);
 
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << "Estimates normal direction: " << task_timer.time() << " seconds, "

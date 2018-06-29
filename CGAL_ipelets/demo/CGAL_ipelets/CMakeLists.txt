@@ -25,6 +25,14 @@ find_package(CGAL QUIET COMPONENTS Core)
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
 
+  find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+  if (EIGEN3_FOUND)
+    include( ${EIGEN3_USE_FILE} )
+  else()
+    message(STATUS "NOTICE: This project requires the Eigen library, and will not be compiled.")
+    return()
+  endif()
+
   find_package(IPE 6)
 
   if ( IPE_FOUND )

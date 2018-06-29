@@ -56,6 +56,7 @@
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/parallel_do.h>
+# include <tbb/mutex.h>
 #endif
 
 #include <functional>

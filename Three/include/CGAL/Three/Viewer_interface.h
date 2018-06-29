@@ -37,6 +37,7 @@ class QImage;
 class QMouseEvent;
 class QKeyEvent;
 class QOpenGLShaderProgram;
+class QOpenGLFramebufferObject;
 class TextRenderer;
 class TextListItem;
 
@@ -213,6 +214,9 @@ public:
   //! Returns the static image to be displayed in 2D selection mode.
   virtual const QImage& staticImage() const = 0;
 
+  //!The number of passes that are performed for the scene transparency.
+  //! Customizable from the MainWindow or the SubViewer menu.
+  virtual float total_pass() = 0;
 Q_SIGNALS:
   //!Emit this to signal that the `id`th item has been picked.
   void selected(int id);
@@ -255,6 +259,13 @@ public:
   //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Compatibility if `isOpenGL_4_3()` is `true`
   //! @returns NULL if `isOpenGL_4_3()` is `false`
   virtual QOpenGLFunctions_4_3_Compatibility* openGL_4_3_functions() = 0;
+  virtual void setCurrentPass(int pass) = 0;
+  virtual void setDepthWriting(bool writing_depth) = 0;
+  virtual void setDepthPeelingFbo(QOpenGLFramebufferObject* fbo) = 0;
+  
+  virtual int currentPass()const = 0;
+  virtual bool isDepthWriting()const = 0;
+  virtual QOpenGLFramebufferObject* depthPeelingFbo() = 0;
 }; // end class Viewer_interface
 }
 }

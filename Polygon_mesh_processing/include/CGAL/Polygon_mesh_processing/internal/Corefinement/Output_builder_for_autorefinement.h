@@ -40,6 +40,7 @@
 #include <boost/dynamic_bitset.hpp>
 
 namespace CGAL {
+namespace Polygon_mesh_processing {
 namespace Corefinement {
 
 namespace PMP=Polygon_mesh_processing;
@@ -1012,7 +1013,7 @@ public:
 };
 
 
-} } // CGAL::Corefinement
+} } } // CGAL::Corefinement
 
 #include <CGAL/enable_warnings.h>
 
