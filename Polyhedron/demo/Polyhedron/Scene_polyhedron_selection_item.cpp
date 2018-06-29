@@ -677,15 +677,15 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
   d->program->release();
   vaos[Scene_polyhedron_selection_item_priv::Facets]->release();
 
-  viewer->glEnable(GL_POLYGON_OFFSET_LINE);
+ /* viewer->glEnable(GL_POLYGON_OFFSET_LINE);
   viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-  viewer->glPolygonOffset(0.0f, 1.5f);
-  drawEdges(viewer);
+  viewer->glPolygonOffset(0.0f, 1.5f);*/
+  drawEdges(viewer);/*
   viewer->glDisable(GL_POLYGON_OFFSET_LINE);
   viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
-  viewer->glPolygonOffset(offset_factor, offset_units);
-  drawPoints(viewer);
-  viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+  viewer->glPolygonOffset(offset_factor, offset_units);*/
+  drawPoints(viewer);/*
+  viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);*/
 }
 
 void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
@@ -749,7 +749,7 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
 void Scene_polyhedron_selection_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 {
 
-  viewer->glPointSize(5.5f);
+  //viewer->glPointSize(5.5f);
 
   if(!d->are_HL_buffers_filled)
   {
@@ -800,7 +800,7 @@ void Scene_polyhedron_selection_item::drawPoints(CGAL::Three::Viewer_interface* 
   d->program->release();
   vaos[Points]->release();
 
-  viewer->glPointSize(1.f);
+  //viewer->glPointSize(1.f);
 }
 
 

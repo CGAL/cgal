@@ -700,7 +700,7 @@ void Viewer::drawVisualHints()
         glDisable(GL_DEPTH_TEST);
 
         glLineWidth(3.0f);
-        glPointSize(6.0f);
+        //glPointSize(6.0f);
         //draws the distance
         QMatrix4x4 mvpMatrix;
         double mat[16];
@@ -719,7 +719,7 @@ void Viewer::drawVisualHints()
         d->vao.release();
         d->rendering_program_dist.release();
         glEnable(GL_DEPTH_TEST);
-        glPointSize(1.0f);
+       // glPointSize(1.0f);
         glLineWidth(1.0f);
 
     }
@@ -951,7 +951,7 @@ void Viewer::paintGL()
                  GLfloat(backgroundColor().greenF()),
                  GLfloat(backgroundColor().blueF()),
                  1.f);
-    glClearDepth(1.0f);
+    glClearDepthf(1.0f);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     //set the default frustum
     if(d->projection_is_ortho)

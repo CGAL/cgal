@@ -1,6 +1,6 @@
 //#define CGAL_PMP_REMESHING_VERBOSE
 
-#include "opengl_tools.h"
+
 #include "Scene_edit_polyhedron_item.h"
 #include "Scene_spheres_item.h"
 #include <CGAL/Three/Viewer_interface.h>
@@ -1399,7 +1399,7 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
   return false;
 }
 
-#include "opengl_tools.h"
+
 void Scene_edit_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {

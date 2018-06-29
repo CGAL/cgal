@@ -74,7 +74,7 @@ libCGAL::QGLViewer is a free C++ library based on Qt that enables the quick crea
 of OpenGL 3D viewers. It features a powerful camera trackball and simple
 applications simply require an implementation of the <code>draw()</code> method.
 This makes it a tool of choice for OpenGL beginners and assignments. It provides
-mouse manipulated frames, stereo display, interpolated
+mouse manipulated frames, interpolated
 keyFrames, object selection, and much more. It is fully
 customizable and easy to extend to create complex applications, with a possible
 Qt GUI.
@@ -136,7 +136,6 @@ void CGAL::QGLViewer::defaultConstructor() {
   setFPSIsDisplayed(false);
   setCameraIsEdited(false);
   setTextIsEnabled(true);
-  setStereoDisplay(false);
   // Make sure move() is not called, which would call initializeGL()
   fullScreen_ = false;
   setFullScreen(false);
@@ -398,34 +397,21 @@ void CGAL::QGLViewer::initializeGL() {
 /*! Main paint method, inherited from \c QOpenGLWidget.
 
 Calls the following methods, in that order:
-\arg preDraw() (or preDrawStereo() if viewer displaysInStereo()) : places the
+\arg preDraw() : places the
 camera in the world coordinate system. \arg draw() (or fastDraw() when the
 camera is manipulated) : main drawing method. Should be overloaded. \arg
 postDraw() : display of visual hints (world axis, FPS...) */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::paintGL() {
-  if (displaysInStereo()) {
-    for (int view = 1; view >= 0; --view) {
-      // Clears screen, set model view matrix with shifted matrix for ith buffer
-      preDrawStereo(view);
-      // Used defined method. Default is empty
-      if (camera()->frame()->isManipulated())
-        fastDraw();
-      else
-        draw();
-      postDraw();
-    }
-  } else {
-    // Clears screen, set model view matrix...
-    preDraw();
-    // Used defined method. Default calls draw()
-    if (camera()->frame()->isManipulated())
-      fastDraw();
-    else
-      draw();
-    // Add visual hints: axis, camera, grid...
-    postDraw();
-  }
+  // Clears screen, set model view matrix...
+  preDraw();
+  // Used defined method. Default calls draw()
+  if (camera()->frame()->isManipulated())
+    fastDraw();
+  else
+    draw();
+  // Add visual hints: axis, camera, grid...
+  postDraw();
   Q_EMIT drawFinished(true);
 }
 
@@ -489,14 +475,7 @@ void CGAL::QGLViewer::postDraw() {
     fpsCounter_ = 0;
   }
 
-  // Restore foregroundColor
-  GLfloat color[4];
-  color[0] = GLfloat(foregroundColor().red()) / 255.0f;
-  color[1] = GLfloat(foregroundColor().green()) / 255.0f;
-  color[2] = GLfloat(foregroundColor().blue()) / 255.0f;
-  color[3] = 1.0f;
-  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
-  glDisable(GL_LIGHTING);
+  
   glDisable(GL_DEPTH_TEST);
 
   if (FPSIsDisplayed())
@@ -506,31 +485,6 @@ void CGAL::QGLViewer::postDraw() {
 
 }
 
-/*! Called before draw() (instead of preDraw()) when viewer displaysInStereo().
-
-Same as preDraw() except that the glDrawBuffer() is set to \c GL_BACK_LEFT or \c
-GL_BACK_RIGHT depending on \p leftBuffer, and it uses
-CGAL::qglviewer::Camera::loadProjectionMatrixStereo() and
-CGAL::qglviewer::Camera::loadModelViewMatrixStereo() instead. */
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::preDrawStereo(bool leftBuffer) {
-  // Set buffer to draw in
-  // Seems that SGI and Crystal Eyes are not synchronized correctly !
-  // That's why we don't draw in the appropriate buffer...
-  if (!leftBuffer)
-    glDrawBuffer(GL_BACK_LEFT);
-  else
-    glDrawBuffer(GL_BACK_RIGHT);
-
-  // Clear the buffer where we're going to draw
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  // GL_PROJECTION matrix
-  camera()->loadProjectionMatrixStereo(leftBuffer);
-  // GL_MODELVIEW matrix
-  camera()->loadModelViewMatrixStereo(leftBuffer);
-
-  Q_EMIT drawNeeded();
-}
 
 /*! Draws a simplified version of the scene to guarantee interactive camera
 displacements.
@@ -581,7 +535,6 @@ void CGAL::QGLViewer::setDefaultShortcuts() {
   setShortcut(qglviewer::EXIT_VIEWER, ::Qt::Key_Escape);
   setShortcut(qglviewer::CAMERA_MODE, ::Qt::Key_Space);
   setShortcut(qglviewer::FULL_SCREEN, ::Qt::ALT + ::Qt::Key_Return);
-  setShortcut(qglviewer::STEREO, ::Qt::Key_S);
   setShortcut(qglviewer::ANIMATION, ::Qt::Key_Return);
   setShortcut(qglviewer::HELP, ::Qt::Key_H);
   setShortcut(qglviewer::EDIT_CAMERA, ::Qt::Key_C);
@@ -602,8 +555,6 @@ void CGAL::QGLViewer::setDefaultShortcuts() {
       tr("Toggles the display of the XY grid", "DRAW_GRID action description");
   keyboardActionDescription_[qglviewer::CAMERA_MODE] = tr(
       "Changes camera mode (observe or fly)", "CAMERA_MODE action description");
-  keyboardActionDescription_[qglviewer::STEREO] =
-      tr("Toggles stereo display", "STEREO action description");
   keyboardActionDescription_[qglviewer::HELP] =
       tr("Opens this help window", "HELP action description");
   keyboardActionDescription_[qglviewer::ANIMATION] =
@@ -1484,33 +1435,6 @@ void CGAL::QGLViewer::mouseDoubleClickEvent(QMouseEvent *e) {
     e->ignore();
 }
 
-/*! Sets the state of displaysInStereo(). See also toggleStereoDisplay().
-
-First checks that the display is able to handle stereovision using
-CGAL_INLINE_FUNCTION
-QOpenGLWidget::format(). Opens a warning message box in case of failure. Emits
-the stereoChanged() signal otherwise. */
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::setStereoDisplay(bool stereo) {
-  if (format().stereo()) {
-    stereo_ = stereo;
-    if (!displaysInStereo()) {
-      glDrawBuffer(GL_BACK_LEFT);
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      glDrawBuffer(GL_BACK_RIGHT);
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-
-    Q_EMIT stereoChanged(stereo_);
-
-    update();
-  } else if (stereo)
-    QMessageBox::warning(this,
-                         tr("Stereo not supported", "Message box window title"),
-                         tr("Stereo is not supported on this display."));
-  else
-    stereo_ = false;
-}
 
 /*! Sets the isFullScreen() state.
 
@@ -2289,9 +2213,6 @@ void CGAL::QGLViewer::handleKeyboardAction(qglviewer::KeyboardAction id) {
     break;
   case qglviewer::FULL_SCREEN:
     toggleFullScreen();
-    break;
-  case qglviewer::STEREO:
-    toggleStereoDisplay();
     break;
   case qglviewer::ANIMATION:
     toggleAnimation();
@@ -3104,7 +3025,7 @@ void CGAL::QGLViewer::drawVisualHints() {
   rendering_program_light.setUniformValue("mv_matrix", mvMatrix);
   glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(g_axis_size/9));
   vaos[GRID_AXIS].release();
-  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+//  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
   glEnable(GL_POLYGON_OFFSET_FILL);
   glPolygonOffset(3.0f,-3.0f);
   //A x i s
@@ -3701,7 +3622,6 @@ QDomElement CGAL::QGLViewer::domElement(const QString &name,
       foregroundColor(), "foregroundColor", document));
   stateNode.appendChild(DomUtils::QColorDomElement(
       backgroundColor(), "backgroundColor", document));
-  DomUtils::setBoolAttribute(stateNode, "stereo", displaysInStereo());
   // Revolve or fly camera mode is not saved
   de.appendChild(stateNode);
 
@@ -3788,7 +3708,6 @@ void CGAL::QGLViewer::initFromDOMElement(const QDomElement &element) {
     if (child.tagName() == "State") {
       // #CONNECTION# default values from defaultConstructor()
       // setMouseTracking(DomUtils::boolFromDom(child, "mouseTracking", false));
-      setStereoDisplay(DomUtils::boolFromDom(child, "stereo", false));
       // if ((child.attribute("cameraMode", "revolve") == "fly") &&
       // (cameraIsInRevolveMode())) 	toggleCameraMode();
 

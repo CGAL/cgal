@@ -378,26 +378,7 @@ public:
   Note that if the QGLViewer is embedded in an other QWidget, it returns \c true
   when the top level widget is in full screen mode. */
   bool isFullScreen() const { return fullScreen_; }
-  /*! Returns \c true if the viewer displays in stereo.
-
-  The QGLViewer object must be created with a stereo format to handle
-  stereovision: \code QGLFormat format; format.setStereoDisplay( TRUE );
-  QGLViewer viewer(format);
-  \endcode
-  The hardware needs to support stereo display. Try the <a
-  href="../examples/stereoViewer.html">stereoViewer example</a> to check.
-
-  Set by setStereoDisplay() or toggleStereoDisplay(). Default value is \c false.
-
-  Stereo is performed using the Parallel axis asymmetric frustum perspective
-  projection method. See Camera::loadProjectionMatrixStereo() and
-  Camera::loadModelViewMatrixStereo().
-
-  The stereo parameters are defined by the camera(). See
-  qglviewer::Camera::setIODistance(),
-  qglviewer::Camera::setPhysicalScreenWidth() and
-  qglviewer::Camera::setFocusDistance(). */
-  bool displaysInStereo() const { return stereo_; }
+  
   /*! Returns the recommended size for the QGLViewer. Default value is 600x400
    * pixels. */
   virtual QSize sizeHint() const { return QSize(600, 400); }
@@ -420,11 +401,8 @@ public:
 
 public Q_SLOTS:
   void setFullScreen(bool fullScreen = true);
-  void setStereoDisplay(bool stereo = true);
   /*! Toggles the state of isFullScreen(). See also setFullScreen(). */
   void toggleFullScreen() { setFullScreen(!isFullScreen()); }
-  /*! Toggles the state of displaysInStereo(). See setStereoDisplay(). */
-  void toggleStereoDisplay() { setStereoDisplay(!stereo_); }
   void toggleCameraMode();
 
 protected:
@@ -626,8 +604,6 @@ Q_SIGNALS:
   void textIsEnabledChanged(bool enabled);
   /*! This signal is emitted whenever cameraIsEdited() changes value.. */
   void cameraIsEditedChanged(bool edited);
-  /*! This signal is emitted whenever displaysInStereo() changes value. */
-  void stereoChanged(bool on);
   /*! Signal emitted by select().
 
   Connect this signal to your selection method or overload select(), or more
@@ -706,7 +682,6 @@ protected:
 
   virtual void paintGL();
   virtual void preDraw();
-  virtual void preDrawStereo(bool leftBuffer = true);
 
   /*! The core method of the viewer, that draws the scene.
 
@@ -1048,7 +1023,6 @@ protected:
   bool gridIsDrawn_;    // world XY grid
   bool FPSIsDisplayed_; // Frame Per Seconds
   bool textIsEnabled_;  // drawText() actually draws text or not
-  bool stereo_;         // stereo display
   bool fullScreen_;     // full screen mode
   QPoint prevPos_;      // Previous window position, used for full screen mode
 
