@@ -1458,14 +1458,12 @@ public:
 
   inline bool is_extensible_triangulation_in_1_sheet_h2() const
   {
-    FT threshold = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin());
-
     for(Periodic_tetrahedron_iterator tit = this->periodic_tetrahedra_begin(Tr_Base::UNIQUE);
         tit != this->periodic_tetrahedra_end(Tr_Base::UNIQUE); ++tit)
     {
       if(compare_orthsphere_radius_to_threshold(tit->at(0), tit->at(1),
-                                                 tit->at(2), tit->at(3),
-                                                 threshold) != CGAL::SMALLER)
+                                                tit->at(2), tit->at(3),
+                                                orthosphere_radius_threshold) != CGAL::SMALLER)
         return false;
     }
     return true;
