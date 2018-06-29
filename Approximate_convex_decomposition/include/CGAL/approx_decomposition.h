@@ -16,7 +16,7 @@ namespace CGAL
  *
  * @return concativity value.
  */
-template <class TriangleMesh, class FacePropertyMap, class ConcurrencyTag, class NamedParameters>
+template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap, class NamedParameters>
 double
 concavity_value(const TriangleMesh& mesh,
                 FacePropertyMap face_ids,
@@ -33,13 +33,13 @@ concavity_value(const TriangleMesh& mesh,
 }
 
 
-template <class TriangleMesh, class FacePropertyMap, class ConcurrencyTag = Sequential_tag>
+template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap>
 double
 concavity_value(const TriangleMesh& mesh,
                 FacePropertyMap face_ids,
                 std::size_t cluster_id)
 {
-    return concavity_value<TriangleMesh, FacePropertyMap, ConcurrencyTag>(mesh, face_ids, cluster_id, Polygon_mesh_processing::parameters::all_default());
+    return concavity_value<ConcurrencyTag>(mesh, face_ids, cluster_id, Polygon_mesh_processing::parameters::all_default());
 }
 
 
@@ -50,7 +50,7 @@ concavity_value(const TriangleMesh& mesh,
  *
  * @return concativity value.
  */
-template <class TriangleMesh, class ConcurrencyTag, class NamedParameters>
+template <class ConcurrencyTag, class TriangleMesh, class NamedParameters>
 double
 concavity_value(const TriangleMesh& mesh,
                 const NamedParameters& np)
@@ -65,11 +65,11 @@ concavity_value(const TriangleMesh& mesh,
 }
 
 
-template <class TriangleMesh, class ConcurrencyTag = Sequential_tag>
+template <class ConcurrencyTag, class TriangleMesh>
 double
 concavity_value(const TriangleMesh& mesh)
 {
-    return concavity_value<TriangleMesh, ConcurrencyTag>(mesh, Polygon_mesh_processing::parameters::all_default());
+    return concavity_value<ConcurrencyTag>(mesh, Polygon_mesh_processing::parameters::all_default());
 }
 
 
@@ -81,7 +81,7 @@ concavity_value(const TriangleMesh& mesh)
  *
  * @return number of clusters.
  */
-template <class TriangleMesh, class FacePropertyMap, class ConcurrencyTag, class NamedParameters>
+template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap, class NamedParameters>
 std::size_t
 convex_decomposition(const TriangleMesh& mesh,
                      FacePropertyMap face_ids,
@@ -100,14 +100,14 @@ convex_decomposition(const TriangleMesh& mesh,
 }
 
 
-template <class TriangleMesh, class FacePropertyMap, class ConcurrencyTag = Sequential_tag>
+template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap>
 std::size_t
 convex_decomposition(const TriangleMesh& mesh,
                      FacePropertyMap face_ids,
                      double concavity_threshold = 0.05,
                      std::size_t min_number_of_clusters = 1)
 {
-    return convex_decomposition<TriangleMesh, FacePropertyMap, ConcurrencyTag>(mesh, face_ids, concavity_threshold, min_number_of_clusters, Polygon_mesh_processing::parameters::all_default());
+    return convex_decomposition<ConcurrencyTag>(mesh, face_ids, concavity_threshold, min_number_of_clusters, Polygon_mesh_processing::parameters::all_default());
 }
 
 

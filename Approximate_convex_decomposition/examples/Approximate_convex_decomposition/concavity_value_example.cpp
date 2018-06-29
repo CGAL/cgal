@@ -8,6 +8,12 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
+#ifndef CGAL_LINKED_WITH_TBB
+typedef CGAL::Sequential_tag Concurrency_tag;
+#else
+typedef CGAL::Parallel_tag Concurrency_tag;
+#endif
+
 int main()
 {
     // read mesh
@@ -28,7 +34,7 @@ int main()
     }
 
     // compute concavity value
-    double concavity = CGAL::concavity_value(mesh);
+    double concavity = CGAL::concavity_value<Concurrency_tag>(mesh);
 
     // write result
     std::cout << "Concavity value: " << concavity << std::endl;

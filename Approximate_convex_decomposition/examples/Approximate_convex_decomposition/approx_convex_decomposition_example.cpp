@@ -14,6 +14,12 @@ typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descripto
 
 typedef CGAL::Real_timer Timer;
 
+#ifndef CGAL_LINKED_WITH_TBB
+typedef CGAL::Sequential_tag Concurrency_tag;
+#else
+typedef CGAL::Parallel_tag Concurrency_tag;
+#endif
+
 int main()
 {
     // read mesh
@@ -43,7 +49,7 @@ int main()
     Timer timer;
 
     timer.start(); 
-    std::size_t clusters_num = CGAL::convex_decomposition<Polyhedron, Facet_property_map, CGAL::Parallel_tag>(mesh, facet_property_map, 0.3, 1);
+    std::size_t clusters_num = CGAL::convex_decomposition<Concurrency_tag>(mesh, facet_property_map, 0.3, 1);
     timer.stop();
 
     std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;

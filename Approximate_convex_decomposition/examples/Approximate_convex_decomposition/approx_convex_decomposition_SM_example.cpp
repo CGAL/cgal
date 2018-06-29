@@ -21,6 +21,12 @@ typedef CGAL::Face_filtered_graph<Mesh> Filtered_graph;
 
 typedef CGAL::Real_timer Timer;
 
+#ifndef CGAL_LINKED_WITH_TBB
+typedef CGAL::Sequential_tag Concurrency_tag;
+#else
+typedef CGAL::Parallel_tag Concurrency_tag;
+#endif
+
 int main()
 {
     // read mesh
@@ -51,7 +57,7 @@ int main()
     Timer timer;
     
     timer.start();
-    std::size_t clusters_num = CGAL::convex_decomposition<Mesh, Facet_property_map, CGAL::Parallel_tag>(mesh, facet_property_map, 0.3, 1);
+    std::size_t clusters_num = CGAL::convex_decomposition<Concurrency_tag>(mesh, facet_property_map, 0.3, 1);
     timer.stop();
 
     std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
@@ -67,7 +73,7 @@ int main()
     // write concavity values for all clusters
     for (std::size_t i = 0; i < clusters_num; ++i)
     {
-        std::cout << "Concavity value of #" << i << " cluster: " << CGAL::concavity_value(mesh, facet_property_map, i) << std::endl;
+        std::cout << "Concavity value of #" << i << " cluster: " << CGAL::concavity_value<Concurrency_tag>(mesh, facet_property_map, i) << std::endl;
     }
 
     // write clusters to .off files

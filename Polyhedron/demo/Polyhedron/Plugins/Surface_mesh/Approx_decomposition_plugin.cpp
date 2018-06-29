@@ -140,10 +140,13 @@ private:
 
 #ifndef CGAL_LINKED_WITH_TBB
         std::cout << "Running sequentially. For performance reasons it's recommended to run in parralel using TBB." << std::endl;
+        typedef CGAL::Sequential_tag Concurrency_tag;
+#else
+        typedef CGAL::Parallel_tag Concurrency_tag;
 #endif
 
         timer.start();
-        std::size_t clusters_num = CGAL::convex_decomposition<Facegraph, Clusters_id_pmap, CGAL::Parallel_tag>(mesh, clusters_pmap, concavity_threshold, min_number_of_clusters);
+        std::size_t clusters_num = CGAL::convex_decomposition<Concurrency_tag>(mesh, clusters_pmap, concavity_threshold, min_number_of_clusters);
         timer.stop();
         
         std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
