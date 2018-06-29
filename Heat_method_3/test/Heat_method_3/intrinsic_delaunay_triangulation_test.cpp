@@ -33,6 +33,7 @@ int main()
     std::cerr << "Problem loading the input data" << std::endl;
     return 1;
   }
+  int a = num_faces(sm);
   IDT im(sm, vertex_distance_map);
 
   std::cout<<"success \n";

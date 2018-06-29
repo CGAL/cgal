@@ -45,6 +45,7 @@
 #include <boost/graph/filtered_graph.hpp>
 #include <fstream>
 #include <array>
+#include <math.h>
 
 
 
@@ -111,11 +112,10 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
        typedef typename std::stack<edge_descriptor, std::list<edge_descriptor> > edge_stack;
 
        typedef typename std::array<vertex_descriptor, 3> vertex_for_face;
-       typedef typename std::array<vertex_for_face,1> Face_Vertex_Array;
+
 
        //all z coords will be 0 though
        typedef typename std::array<Point_3, 3> coords_for_face;
-       typedef typename std::array<coords_for_face,1> Face_Coords_Array;
 
 
 
@@ -201,7 +201,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
           double tan2d = CGAL::sqrt(CGAL::abs(((-a+b2+c2)*(a+b2-c2))/((a+b2+c2)*(a-b2+c2))));
           double tan2ad = (tan2a + tan2d)/(1-tan2a*tan2d);
           double cosad = (1-tan2ad*tan2ad)/(1+tan2ad*tan2ad);
-          double new_length = CGAL::sqrt( CGAL::abs(b1*b1 + c2*c2 - 2*cosad));
+          double new_length = CGAL::sqrt( CGAL::abs(b1*b1 + c2*c2 - 2*b1*c2*cosad));
           edge_lengths(i,0) = new_length;
         }
 
@@ -300,7 +300,8 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
            loop_over_edges(stack, mark_edges);
 
             //now that edges are calculated, go through and for each face, calculate the vertex positions around it
-
+            face_coords_array = new coords_for_face[number_of_faces];
+            face_vertex_array = new vertex_for_face[number_of_faces];
             BOOST_FOREACH(face_descriptor f, faces(tm))
             {
               CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
@@ -309,12 +310,38 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
               vertex_descriptor current = *(vbegin);
               vertex_descriptor n_two = *(++vbegin);
               vertex_descriptor n_three = *(++vbegin);
+              vertex_for_face a = {current, n_two, n_three};
+
+              face_vertex_array[face_i] = a;
               //fill in Face_Vertex_Array with these descriptors
               //fill in face_coord_array with (0,0),(length,0)) and then (lki(costheta, sintheta))
               //use those to compute in heat method
-
+              halfedge_descriptor hd = halfedge(f,tm);
+              if(face(hd,tm) != f)
+              {
+                hd = opposite(hd,tm);
+              }
+              hd = next(hd,tm);
+              edge_descriptor ed1 = edge(hd, tm);
+              hd = next(hd,tm);
+              edge_descriptor ed2 = edge(hd, tm);
+              hd = next(hd,tm);
+              edge_descriptor ed3 = edge(hd, tm);
+              Index e1 = get(edge_id_map, ed1);
+              Index e2 = get(edge_id_map, ed2);
+              Index e3 = get(edge_id_map, ed3);
+              double e1_len = edge_lengths(e1,0);
+              double e2_len = edge_lengths(e2,0);
+              double e3_len = edge_lengths(e3,0);
+              //(0,0), (e1_len,0) and then l3(costheta,sintheta)
+              double angle_a = -(e2_len*e2_len) + e3_len*e3_len + e1_len*e1_len;
+              angle_a = angle_a/(2*e3_len*e1_len);
+              Point_3 p2(e3_len*std::cos(angle_a), e3_len*std::sin(angle_a),0,1);
+              Point_3 p0(0,0,0,1);
+              Point_3 p1(e1_len,0,0,1);
+              coords_for_face local_points= {p0,p1,p2};
+              face_coords_array[face_i] = local_points;
             }
-
          }
          //todo:: determine which can be const
          TriangleMesh tm;
@@ -326,9 +353,8 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
          int number_of_faces = num_faces(tm);
          Eigen::VectorXd edge_lengths;
          Eigen::VectorXd mark_edges;
-         Face_Coords_Array *face_coords_array = new Face_Coords_Array[number_of_faces];
-         Face_Vertex_Array *face_vertex_array = new Face_Vertex_Array[number_of_faces];
-
+         coords_for_face *face_coords_array;
+         vertex_for_face *face_vertex_array;
 
       };
 } // namespace Intrinsic_Delaunay_Triangulation_3
