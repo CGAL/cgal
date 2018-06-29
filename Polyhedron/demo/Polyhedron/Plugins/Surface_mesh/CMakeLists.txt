@@ -39,3 +39,7 @@ endif()
 qt5_wrap_ui( shortestPathUI_FILES Shortest_path_widget.ui )
 polyhedron_demo_plugin(shortest_path_plugin Shortest_path_plugin ${shortestPathUI_FILES})
 target_link_libraries(shortest_path_plugin PUBLIC scene_surface_mesh_item scene_shortest_path_item scene_basic_objects)
+
+if(TBB_FOUND)
+  CGAL_target_use_TBB(approx_decomposition_plugin)
+endif()
