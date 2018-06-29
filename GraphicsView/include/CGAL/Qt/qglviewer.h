@@ -30,7 +30,7 @@
 #include <CGAL/Qt/manipulatedCameraFrame.h>
 
 #include <QClipboard>
-#include <QOpenGLFunctions_2_1>
+#include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
@@ -75,7 +75,7 @@ href="../examples/callback.html">callback example</a> for a complete
 implementation.
 
 \nosubgrouping */
-class CGAL_QT_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions_2_1 {
+class CGAL_QT_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions {
   Q_OBJECT
 
 public:  

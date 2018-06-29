@@ -494,14 +494,7 @@ void Camera::computeModelViewMatrix() const {
 CGAL_INLINE_FUNCTION
 void Camera::loadProjectionMatrix(bool reset) const {
   // WARNING: makeCurrent must be called by every calling method
-  gl()->glMatrixMode(GL_PROJECTION);
-
-  if (reset)
-    gl()->glLoadIdentity();
-
   computeProjectionMatrix();
-
-  gl()->glMultMatrixd(projectionMatrix_);
 }
 
 /*! Loads the OpenGL \c GL_MODELVIEW matrix with the modelView matrix
@@ -536,12 +529,7 @@ void Camera::loadProjectionMatrix(bool reset) const {
 CGAL_INLINE_FUNCTION
 void Camera::loadModelViewMatrix(bool reset) const {
   // WARNING: makeCurrent must be called by every calling method
-  gl()->glMatrixMode(GL_MODELVIEW);
   computeModelViewMatrix();
-  if (reset)
-    gl()->glLoadMatrixd(modelViewMatrix_);
-  else
-    gl()->glMultMatrixd(modelViewMatrix_);
 }
 
 /*! Same as loadProjectionMatrix() but for a stereo setup.
@@ -574,9 +562,6 @@ CGAL_INLINE_FUNCTION
 void Camera::loadProjectionMatrixStereo(bool leftBuffer) const {
   qreal left, right, bottom, top;
   qreal screenHalfWidth, halfWidth, side, shift, delta;
-
-  gl()->glMatrixMode(GL_PROJECTION);
-  gl()->glLoadIdentity();
 
   switch (type()) {
   case Camera::PERSPECTIVE:
@@ -629,7 +614,6 @@ void Camera::loadProjectionMatrixStereo(bool leftBuffer) const {
 CGAL_INLINE_FUNCTION
 void Camera::loadModelViewMatrixStereo(bool leftBuffer) const {
   // WARNING: makeCurrent must be called by every calling method
-  gl()->glMatrixMode(GL_MODELVIEW);
 
   qreal halfWidth = focusDistance() * tan(horizontalFieldOfView() / 2.0);
   qreal shift =
@@ -641,7 +625,6 @@ void Camera::loadModelViewMatrixStereo(bool leftBuffer) const {
     modelViewMatrix_[12] -= shift;
   else
     modelViewMatrix_[12] += shift;
-  gl()->glLoadMatrixd(modelViewMatrix_);
 }
 
 /*! Fills \p m with the Camera projection matrix values.

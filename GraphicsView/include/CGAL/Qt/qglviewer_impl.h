@@ -210,7 +210,7 @@ If a 4.3 context could not be set, a 2.1 context will be used instead.
 */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::initializeGL() {
-  QSurfaceFormat format;
+  /*QSurfaceFormat format;
   format.setDepthBufferSize(24);
   format.setStencilBufferSize(8);
   format.setVersion(4,3);
@@ -229,9 +229,10 @@ void CGAL::QGLViewer::initializeGL() {
   else
   {
     is_ogl_4_3 = true;
-  }
+  }*/
+  is_ogl_4_3 = false;
   makeCurrent();
-  QOpenGLFunctions_2_1::initializeOpenGLFunctions();
+  QOpenGLFunctions::initializeOpenGLFunctions();
   // Default colors
   setForegroundColor(QColor(180, 180, 180));
   setBackgroundColor(QColor(51, 51, 51));

@@ -490,13 +490,9 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
       if( group || item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
       {
         if(with_names) {
-          viewer->glClearDepth(1.0);
+          viewer->glClearDepthf(1.0);
           viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
-        if(item.renderingMode() == Gouraud)
-          viewer->glShadeModel(GL_SMOOTH);
-        else
-          viewer->glShadeModel(GL_FLAT);
         item.draw(viewer);
       }
 
@@ -543,14 +539,14 @@ void Scene::renderWireScene(const QList<Scene_interface::Item_id> &items,
           || item.renderingMode() == PointsPlusNormals)
        {
          viewer->glDisable(GL_LIGHTING);
-         viewer->glPointSize(2.f);
+         //viewer->glPointSize(2.f);
          viewer->glLineWidth(1.0f);
          item.drawEdges(viewer);
        }
        else{
            if( item.renderingMode() == PointsPlusNormals ){
                viewer->glDisable(GL_LIGHTING);
-               viewer->glPointSize(2.f);
+               //viewer->glPointSize(2.f);
                viewer->glLineWidth(1.0f);
                if(index == selected_item || selected_items_list.contains(index))
                {
@@ -596,7 +592,7 @@ void Scene::renderPointScene(const QList<Scene_interface::Item_id> &items,
     if(group ||item.visible())
     {
       if(item.renderingMode() == Points && with_names) {
-          viewer->glClearDepth(1.0);
+          viewer->glClearDepthf(1.0);
           viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       }
 
@@ -605,7 +601,7 @@ void Scene::renderPointScene(const QList<Scene_interface::Item_id> &items,
          (item.renderingMode() == ShadedPoints))
       {
         viewer->glDisable(GL_LIGHTING);
-        viewer->glPointSize(3.0f);
+        //viewer->glPointSize(3.0f);
         viewer->glLineWidth(1.0f);
         item.drawPoints(viewer);
       }
@@ -673,7 +669,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                            0.0f,
                            0.0f,
                            0.0f);
-      viewer->glClearDepth(1);
+      viewer->glClearDepthf(1);
       viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       //renderScene(children, viewer, picked_item_IDs, false, 0,false, NULL);
       renderScene(opaque_items, viewer, picked_item_IDs, false, 0,false, NULL);
@@ -689,7 +685,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                            0.0f,
                            0.0f,
                            0.0f);
-      viewer->glClearDepth(1);
+      viewer->glClearDepthf(1);
       viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 //      renderScene(children, viewer, picked_item_IDs, false, 0,true, NULL);
       renderScene(opaque_items, viewer, picked_item_IDs, false, 0,true, NULL);
@@ -709,7 +705,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                              0.0f,
                              0.0f,
                              0.0f);
-        viewer->glClearDepth(1);
+        viewer->glClearDepthf(1);
         viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         renderWireScene(children, viewer, picked_item_IDs, false);
         renderPointScene(children, viewer, picked_item_IDs, false);
@@ -728,7 +724,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                              0.0f,
                              0.0f,
                              0.0f);
-        viewer->glClearDepth(1);
+        viewer->glClearDepthf(1);
         viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         //renderScene(children, viewer, picked_item_IDs, false, i, true, depth_test[i-1]);
         renderScene(opaque_items     , viewer, picked_item_IDs, false, i, true, depth_test[i-1]);
@@ -748,7 +744,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                            0.0f,
                            0.0f,
                            0.0f);
-      viewer->glClearDepth(1);
+      viewer->glClearDepthf(1);
       viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 //      renderScene(children, viewer, picked_item_IDs, false, (int)viewer->total_pass()-1, false, depth_test[(int)viewer->total_pass()-2]);
       renderScene(opaque_items     , viewer, picked_item_IDs, false, (int)viewer->total_pass()-1, false, depth_test[(int)viewer->total_pass()-2]);

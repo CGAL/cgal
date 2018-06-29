@@ -461,17 +461,9 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
     return;
   current_total_pass = viewer->inFastDrawing() ? total_pass/2 : total_pass;
   viewer->glLineWidth(1.0f);
-  viewer->glPointSize(2.f);
+  //viewer->glPointSize(2.f);
   viewer->glEnable(GL_POLYGON_OFFSET_FILL);
   viewer->glPolygonOffset(1.0f,1.0f);
-  viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-
-  viewer->glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
-
-  if(twosides)
-    viewer->glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-  else
-    viewer->glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
 
   if(!with_names && antialiasing)
   {
@@ -493,7 +485,6 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
   else
     scene->draw(viewer);
   viewer->glDisable(GL_POLYGON_OFFSET_FILL);
-  viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 }
 
 bool Viewer::inDrawWithNames() const {

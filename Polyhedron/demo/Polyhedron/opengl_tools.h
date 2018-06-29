@@ -42,7 +42,7 @@ public:
     set_point_size(ps);
   }
   void set_point_size(GLfloat v) {
-    viewer->glPointSize(v);
+    //viewer->glPointSize(v);
   }
 }; // end class Point_size
 
