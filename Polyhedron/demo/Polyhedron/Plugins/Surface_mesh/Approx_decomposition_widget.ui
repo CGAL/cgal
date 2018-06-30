@@ -12,7 +12,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>633</width>
+    <width>649</width>
     <height>437</height>
    </size>
   </property>
@@ -107,7 +107,7 @@
           <string/>
          </property>
          <property name="checked">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -117,7 +117,7 @@
           <enum>Qt::LeftToRight</enum>
          </property>
          <property name="text">
-          <string>Use concavity value for cluster's color:</string>
+          <string>Use concavity values for decomposition colors:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -133,7 +133,7 @@
           <string/>
          </property>
          <property name="checkable">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="checked">
           <bool>false</bool>

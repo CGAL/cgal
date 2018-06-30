@@ -62,6 +62,9 @@ public:
 
         autoConnectActions();
 
+		// colors
+		init_gradient_colors();
+
         // ui
         m_dock_widget = new QDockWidget("Approximate convex decomposition widget", mw);
         m_dock_widget->setVisible(false); // do not show at the beginning
@@ -108,6 +111,8 @@ private:
     QAction* m_decomposition_action;
     QDockWidget* m_dock_widget;
     Ui::decomposition_widget m_ui_widget;
+
+	std::vector<QColor> m_gradient_colors;
 
     template <class FacegraphItem>
     void decompose(FacegraphItem* item)
@@ -168,6 +173,7 @@ private:
                 put(patch_pmap, face, static_cast<int>(clusters_map[face]));
             }
 
+            set_color_read_only(segmentation_item);
             segmentation_item->color_vector() = colors;
             segmentation_item->setItemIsMulticolor(true);
             segmentation_item->setName(tr("%1-segmentation-[%2,%3]").arg(clusters_num).arg(concavity_threshold).arg(min_number_of_clusters));
@@ -212,7 +218,7 @@ private:
                 {
                     conv_hull = cluster;
                 }
-            
+
                 boost::unordered_map<face_descriptor, face_descriptor> f2f;
                 typedef std::pair<face_descriptor, face_descriptor> Faces_pair;
 
@@ -227,8 +233,23 @@ private:
                     put(patch_pmap, faces_pair.second, static_cast<int>(i));
                 }
             }
-           
-            decomposition_item->color_vector() = colors;
+          
+            set_color_read_only(decomposition_item);
+            if (use_concavity_colors)
+            {
+
+                std::vector<QColor>& colors = decomposition_item->color_vector();
+                for (std::size_t i = 0; i < clusters_num; ++i)
+                {
+                    double concavity = CGAL::concavity_value<Concurrency_tag>(mesh, clusters_pmap, i);
+					int step = std::min(255, int(concavity / concavity_threshold * 255));
+                    colors.push_back(m_gradient_colors[step]);
+                } 
+            }
+            else
+            {
+                decomposition_item->color_vector() = colors;
+            }
             decomposition_item->setItemIsMulticolor(true);
             decomposition_item->setName(tr("%1-decomposition-[%2,%3]").arg(clusters_num).arg(concavity_threshold).arg(min_number_of_clusters));
 
@@ -256,14 +277,56 @@ private:
     void generate_colors(std::vector<QColor>& colors, std::size_t cnt)
     {
         colors.clear();
-        for (std::size_t i = 0; i < cnt; ++i)
+
+        const std::size_t custom_cnt = 14;
+        colors.push_back(QColor(173, 35, 35));
+        colors.push_back(QColor(87, 87, 87));
+        colors.push_back(QColor(42, 75, 215));
+        colors.push_back(QColor(29, 105, 20));
+        colors.push_back(QColor(129, 74, 25));
+        colors.push_back(QColor(129, 38, 192));
+        colors.push_back(QColor(160, 160, 160));
+        colors.push_back(QColor(129, 197, 122));
+        colors.push_back(QColor(157, 175, 255));
+        colors.push_back(QColor(41, 208, 208));
+        colors.push_back(QColor(255, 146, 51));
+        colors.push_back(QColor(255, 238, 51));
+        colors.push_back(QColor(233, 222, 187));
+        colors.push_back(QColor(255, 205, 243));
+
+        colors.resize(std::min(cnt, custom_cnt));
+
+        for (std::size_t i = custom_cnt; i < cnt; ++i)
         {
             QColor color(CGAL::get_default_random().get_int(41, 255),
                          CGAL::get_default_random().get_int(41, 255),
                          CGAL::get_default_random().get_int(41, 255));
             colors.push_back(color);
         }
+		
+  	}
+
+	void init_gradient_colors()
+	{
+		m_gradient_colors.resize(256);
+		int r = 0, g = 0, b = 255;
+		for (int i = 0; i <= 255; ++i)
+		{
+			if (i > 128 && i <= 192) { r = static_cast<int>( ((i - 128) / (192.0 - 128)) * 255 ); }
+			if (i > 0 && i <= 98)    { g = static_cast<int>( ((i) / (98.0)) * 255 ); }
+			if (i > 191 && i <=255)  { g = 255 - static_cast<int>( ((i - 191) / (255.0 - 191)) * 255 ); }
+			if (i > 64 && i <= 127)  { b = 255 - static_cast<int>( ((i - 64) / (127.0 - 64)) * 255 ); }
+			m_gradient_colors[i] = QColor(r, g, b);
+		}
+	}
+
+    void set_color_read_only(Scene_polyhedron_item* poly)
+    {
+        poly->set_color_vector_read_only(true);
     }
+
+    void set_color_read_only(Scene_surface_mesh_item*)
+    {}
 };
 
 #include "Approx_decomposition_plugin.moc"
