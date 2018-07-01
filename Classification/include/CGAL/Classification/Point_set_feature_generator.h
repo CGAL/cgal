@@ -87,10 +87,8 @@ namespace Classification {
   is linked with TBB) or `Sequential_tag` (default value otherwise).
   \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
   matrix diagonalization. It can be omitted: if Eigen 3 (or greater)
-  is available and `CGAL_EIGEN3_ENABLED` is defined then an overload
-  using `Eigen_diagonalize_traits` is provided. Otherwise, the
-  internal implementation `Diagonalize_traits` is used.
-
+  is available and `CGAL_EIGEN3_ENABLED` is defined: in that case, an
+  overload using `Eigen_diagonalize_traits` is provided.
 */
 template <typename GeomTraits,
           typename PointRange,

@@ -55,7 +55,7 @@
 #else // CGAL_HEADER_ONLY
 
   #define CGAL_GLOBAL_STATE_VAR(TYPE, NAME, VALUE)  \
-    CGAL_EXPORT extern TYPE NAME;                   \
+    CGAL_CORE_EXPORT extern TYPE NAME;              \
     inline TYPE& get_static_##NAME()                \
     {                                               \
       return NAME;                                  \

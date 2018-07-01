@@ -31,7 +31,9 @@
 #include <CGAL/Mesh_3/Mesher_level_default_implementations.h>
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
 #ifdef CGAL_LINKED_WITH_TBB
-  #include <tbb/tbb.h>
+  #include <tbb/enumerable_thread_specific.h>
+  #include <tbb/blocked_range.h>
+  #include <tbb/parallel_for.h>
 #endif
 
 #include <CGAL/Meshes/Filtered_deque_container.h>

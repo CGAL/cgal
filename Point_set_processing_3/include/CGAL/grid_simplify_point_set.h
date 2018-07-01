@@ -30,6 +30,7 @@
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/unordered.h>
 #include <CGAL/Iterator_range.h>
+#include <CGAL/function.h>
 #include <boost/functional/hash.hpp>
 
 #include <CGAL/boost/graph/named_function_params.h>
@@ -188,6 +189,13 @@ public:
    \cgalNamedParamsBegin
      \cgalParamBegin{point_map} a model of `ReadWritePropertyMap` with value type `geom_traits::Point_3`.
      If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{callback} an instance of
+      `cpp11::function<bool(double)>`. It is called regularly when the
+      algorithm is running: the current advancement (between 0. and
+      1.) is passed as parameter. If it returns `true`, then the
+      algorithm continues its execution normally; if it returns
+      `false`, the algorithm is stopped and simplification stops with
+      no guarantee on the output.\cgalParamEnd
      \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 
@@ -204,6 +212,8 @@ grid_simplify_point_set(
   
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
   PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
+  const cpp11::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+                                                               cpp11::function<bool(double)>());
 
   // actual type of input points
   typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Enriched_point;
@@ -214,12 +224,15 @@ grid_simplify_point_set(
   // points_to_keep[] will contain 1 point per cell; the others will be in points_to_remove[].
   Epsilon_point_set_3<Enriched_point, PointMap> points_to_keep(epsilon, point_map);
   std::deque<Enriched_point> points_to_remove;
-  for (typename PointRange::iterator it = points.begin(); it != points.end(); it++)
+  std::size_t nb = 0, nb_points = points.size();
+  for (typename PointRange::iterator it = points.begin(); it != points.end(); it++, ++ nb)
   {
     std::pair<typename Epsilon_point_set_3<Enriched_point, PointMap>::iterator,bool> result;
     result = points_to_keep.insert(*it);
     if (!result.second) // if not inserted
       points_to_remove.push_back(*it);
+    if (callback && !callback ((nb+1) / double(nb_points)))
+      break;
   }
 
   // Replaces `[first, beyond)` range by the content of points_to_keep, then points_to_remove.

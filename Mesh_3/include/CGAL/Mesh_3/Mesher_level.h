@@ -43,7 +43,6 @@
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/task.h>
-# include <tbb/tbb.h>
 #endif
 
 #include <string>

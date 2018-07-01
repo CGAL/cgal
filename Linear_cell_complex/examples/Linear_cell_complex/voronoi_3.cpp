@@ -5,11 +5,6 @@
 #include <iostream>
 #include <fstream>
 
-/* If you want to use a viewer, you can use one qglviewer. */
-#ifdef CGAL_USE_BASIC_VIEWER
-#include "linear_cell_complex_3_viewer_qt.h"
-#endif
-
 /* // If you want to use exact constructions.
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 typedef CGAL::Linear_cell_complex<3,3,
@@ -59,10 +54,6 @@ void display_voronoi(LCC_3& alcc, Dart_handle adart)
   alcc.display_characteristics(std::cout) << ", valid=" 
                                           << alcc.is_valid()
                                           << std::endl;
-
-#ifdef CGAL_USE_BASIC_VIEWER
-  display_lcc(alcc);
-#endif // CGAL_USE_BASIC_VIEWER
 }
 
 template<typename LCC, typename TR>

@@ -480,7 +480,7 @@ Scene_polyhedron_item_priv::triangulate_facet(Scene_polyhedron_item::Facet_itera
     diagonal = item->diagonalBbox();
   else
     diagonal = 0.0;
-  FT triangulation(fit,normal,poly,diagonal);
+  FT triangulation(fit,normal,poly,diagonal,offset);
 
   if(triangulation.cdt->dimension() != 2 )
   {
@@ -515,9 +515,9 @@ Scene_polyhedron_item_priv::triangulate_facet(Scene_polyhedron_item::Facet_itera
 
     if(is_multicolor || !no_flat || !is_recent)
     {
-      push_back_xyz(ffit->vertex(0)->point()+offset, positions_facets);
-      push_back_xyz(ffit->vertex(1)->point()+offset, positions_facets);
-      push_back_xyz(ffit->vertex(2)->point()+offset, positions_facets);
+      push_back_xyz(ffit->vertex(0)->point(), positions_facets);
+      push_back_xyz(ffit->vertex(1)->point(), positions_facets);
+      push_back_xyz(ffit->vertex(2)->point(), positions_facets);
       if(!draw_two_sides)
       {
         push_back_xyz(normal, normals_flat);

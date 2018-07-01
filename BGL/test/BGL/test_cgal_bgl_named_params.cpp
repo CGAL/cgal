@@ -57,6 +57,7 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::number_of_relaxation_steps).v == 16);
   assert(get_param(np, CGAL::internal_np::protect_constraints).v == 17);
   assert(get_param(np, CGAL::internal_np::relax_constraints).v == 18);
+  assert(get_param(np, CGAL::internal_np::collapse_constraints).v == 43);
   assert(get_param(np, CGAL::internal_np::vertex_is_constrained).v == 19);
   assert(get_param(np, CGAL::internal_np::face_patch).v == 20);
   assert(get_param(np, CGAL::internal_np::random_uniform_sampling).v == 21);
@@ -72,8 +73,11 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::number_of_points_on_edges).v == 31);
   assert(get_param(np, CGAL::internal_np::nb_points_per_area_unit).v == 32);
   assert(get_param(np, CGAL::internal_np::nb_points_per_distance_unit).v == 33);
-  assert(get_param(np, CGAL::internal_np::gradient_descent_precision).v == 34);
-  assert(get_param(np, CGAL::internal_np::use_explicit_scheme).v == 35);
+  assert(get_param(np, CGAL::internal_np::throw_on_self_intersection).v == 43);
+  assert(get_param(np, CGAL::internal_np::clip_volume).v == 44);
+  assert(get_param(np, CGAL::internal_np::use_compact_clipper).v == 45);
+  assert(get_param(np, CGAL::internal_np::gradient_descent_precision).v == 47);
+  assert(get_param(np, CGAL::internal_np::use_explicit_scheme).v == 48);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_param(np, CGAL::internal_np::get_cost_policy).v == 36);
@@ -85,9 +89,11 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::do_project).v == 40);
 
     // Internal named parameters
-  assert(get_param(np, CGAL::internal_np::weight_calculator).v == 41);
-  assert(get_param(np, CGAL::internal_np::preserve_genus).v == 42);
-  assert(get_param(np, CGAL::internal_np::verbosity_level).v == 43);
+  assert(get_param(np, CGAL::internal_np::weight_calculator).v == 39);
+  assert(get_param(np, CGAL::internal_np::preserve_genus).v == 40);
+  assert(get_param(np, CGAL::internal_np::verbosity_level).v == 41);
+  assert(get_param(np, CGAL::internal_np::projection_functor).v == 42);
+  assert(get_param(np, CGAL::internal_np::apply_per_connected_component).v == 46);
 
 
   // Test types
@@ -123,6 +129,7 @@ void test(const NamedParameters& np)
   check_same_type<16>(get_param(np, CGAL::internal_np::number_of_relaxation_steps));
   check_same_type<17>(get_param(np, CGAL::internal_np::protect_constraints));
   check_same_type<18>(get_param(np, CGAL::internal_np::relax_constraints));
+  check_same_type<43>(get_param(np, CGAL::internal_np::collapse_constraints));
   check_same_type<19>(get_param(np, CGAL::internal_np::vertex_is_constrained));
   check_same_type<20>(get_param(np, CGAL::internal_np::face_patch));
   check_same_type<21>(get_param(np, CGAL::internal_np::random_uniform_sampling));
@@ -138,8 +145,11 @@ void test(const NamedParameters& np)
   check_same_type<31>(get_param(np, CGAL::internal_np::number_of_points_on_edges));
   check_same_type<32>(get_param(np, CGAL::internal_np::nb_points_per_area_unit));
   check_same_type<33>(get_param(np, CGAL::internal_np::nb_points_per_distance_unit));
-  check_same_type<34>(get_param(np, CGAL::internal_np::gradient_descent_precision));
-  check_same_type<35>(get_param(np, CGAL::internal_np::use_explicit_scheme));
+  check_same_type<43>(get_param(np, CGAL::internal_np::throw_on_self_intersection));
+  check_same_type<44>(get_param(np, CGAL::internal_np::clip_volume));
+  check_same_type<45>(get_param(np, CGAL::internal_np::use_compact_clipper));
+  check_same_type<47>(get_param(np, CGAL::internal_np::gradient_descent_precision));
+  check_same_type<48>(get_param(np, CGAL::internal_np::use_explicit_scheme));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<36>(get_param(np, CGAL::internal_np::get_cost_policy));
@@ -151,9 +161,11 @@ void test(const NamedParameters& np)
   check_same_type<40>(get_param(np, CGAL::internal_np::do_project));
 
     // Internal named parameters
-  check_same_type<41>(get_param(np, CGAL::internal_np::weight_calculator));
-  check_same_type<42>(get_param(np, CGAL::internal_np::preserve_genus));
-  check_same_type<43>(get_param(np, CGAL::internal_np::verbosity_level));
+  check_same_type<39>(get_param(np, CGAL::internal_np::weight_calculator));
+  check_same_type<40>(get_param(np, CGAL::internal_np::preserve_genus));
+  check_same_type<41>(get_param(np, CGAL::internal_np::verbosity_level));
+  check_same_type<42>(get_param(np, CGAL::internal_np::projection_functor));
+  check_same_type<46>(get_param(np, CGAL::internal_np::apply_per_connected_component));
 }
 
 int main()
@@ -180,6 +192,7 @@ int main()
                          .number_of_relaxation_steps(A<16>(16))
                          .protect_constraints(A<17>(17))
                          .relax_constraints(A<18>(18))
+                         .collapse_constraints(A<43>(43))
                          .vertex_is_constrained_map(A<19>(19))
                          .face_patch_map(A<20>(20))
                          .use_random_uniform_sampling(A<21>(21))
@@ -195,16 +208,21 @@ int main()
                          .number_of_points_on_edges(A<31>(31))
                          .number_of_points_per_area_unit(A<32>(32))
                          .number_of_points_per_distance_unit(A<33>(33))
-                         .gradient_descent_precision(A<34>(34))
-                         .use_explicit_scheme(A<35>(35))
-                         .get_cost(A<36>(36))
-                         .get_placement(A<37>(37))
-                         .face_normal_map(A<38>(38))
-                         .random_seed(A<39>(39))
-                         .do_project(A<40>(40))
-                         .weight_calculator(A<41>(41))
-                         .preserve_genus(A<42>(42))
-                         .verbosity_level(A<43>(43))
+                         .get_cost(A<34>(34))
+                         .get_placement(A<35>(35))
+                         .face_normal_map(A<36>(36))
+                         .random_seed(A<37>(37))
+                         .do_project(A<38>(38))
+                         .weight_calculator(A<39>(39))
+                         .preserve_genus(A<40>(40))
+                         .verbosity_level(A<41>(41))
+                         .projection_functor(A<42>(42))
+                         .throw_on_self_intersection(A<43>(43))
+                         .clip_volume(A<44>(44))
+                         .use_compact_clipper(A<45>(45))
+                         .apply_per_connected_component(A<46>(46))
+                         .gradient_descent_precision(A<47>(47))
+                         .use_explicit_scheme(A<48>(48))
        );
 
   return EXIT_SUCCESS;

@@ -37,7 +37,8 @@
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
 
-#include <tbb/tbb.h>
+#include <tbb/enumerable_thread_specific.h>
+#include <tbb/queuing_mutex.h>
 
 #include <boost/mpl/if.hpp>
 
@@ -1068,7 +1069,7 @@ namespace std {
   
   template < class CCC, bool Const >
   struct hash<CGAL::CCC_internal::CCC_iterator<CCC, Const> >
-    : public CGAL::unary_function<CGAL::CCC_internal::CCC_iterator<CCC, Const>, std::size_t> {
+    : public CGAL::cpp98::unary_function<CGAL::CCC_internal::CCC_iterator<CCC, Const>, std::size_t> {
 
     std::size_t operator()(const CGAL::CCC_internal::CCC_iterator<CCC, Const>& i) const
     {

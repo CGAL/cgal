@@ -545,7 +545,7 @@ polylines_to_protect
                {{ { pix10, Point_3(), Domain_type(), 0, false },
                   { pix11, Point_3(), Domain_type(), 0, false } }} }};
 
-          std::map<Image_word_type, int> pixel_values_set;
+          std::map<Domain_type, int> pixel_values_set;
           for(int ii = 0; ii < 2; ++ii) {
             for(int jj = 0; jj < 2; ++jj) {
               const Pixel& pixel = square[ii][jj].pixel;
@@ -902,7 +902,7 @@ case_1_2_1:
             }
             else {
               // case of two colors with one pixel green and three red
-              Image_word_type value_alone;
+              Domain_type value_alone;
               if(pixel_values_set.begin()->second == 1) {
                 value_alone = pixel_values_set.begin()->first;
               } else {

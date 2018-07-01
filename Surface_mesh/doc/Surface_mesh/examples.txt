@@ -10,4 +10,5 @@
 \example Surface_mesh/sm_do_intersect.cpp
 \example Surface_mesh/sm_aabbtree.cpp
 @endcond
+\example Surface_mesh/draw_surface_mesh.cpp
 */

@@ -55,8 +55,8 @@ class Cluster_classification : public Item_classification_base
   };
 
   struct Point_set_with_cluster_info
-    : public CGAL::unary_function<const Point_set::Index&,
-                                  std::pair<Kernel::Point_3, int> >
+    : public CGAL::cpp98::unary_function<const Point_set::Index&,
+                                         std::pair<Kernel::Point_3, int> >
   {
     Point_set* point_set;
     Point_set::Property_map<int>* cluster_id;

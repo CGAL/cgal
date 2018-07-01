@@ -34,8 +34,8 @@ namespace internal {
 
     template <class K, int x>
     struct Fixed_hilbert_cmp_2<K,x,true>
-        : public CGAL::binary_function<typename K::Point_2,
-                                      typename K::Point_2, bool>
+        : public CGAL::cpp98::binary_function<typename K::Point_2,
+                                              typename K::Point_2, bool>
     {
         typedef typename K::Point_2 Point;
         K k;
@@ -49,8 +49,8 @@ namespace internal {
     
     template <class K>
     struct Fixed_hilbert_cmp_2<K,0,false>
-        : public CGAL::binary_function<typename K::Point_2,
-                                      typename K::Point_2, bool>
+        : public CGAL::cpp98::binary_function<typename K::Point_2,
+                                              typename K::Point_2, bool>
     {
         typedef typename K::Point_2 Point;
         K k;
@@ -64,8 +64,8 @@ namespace internal {
     
     template <class K>
     struct Fixed_hilbert_cmp_2<K,1,false>
-        : public CGAL::binary_function<typename K::Point_2,
-                                      typename K::Point_2, bool>
+        : public CGAL::cpp98::binary_function<typename K::Point_2,
+                                              typename K::Point_2, bool>
     {
         typedef typename K::Point_2 Point;
         K k;

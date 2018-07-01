@@ -472,6 +472,19 @@ and inserted in the triangulation.
 Finally points on the convex hull are written to <TT>cout</TT>. 
 \cgalExample{Triangulation_2/triangulation_prog1.cpp}
 
+\subsection Triangulation2Draw Draw a 2D Triangulation
+\anchor ssecDrawT2
+
+A 2D triangulation can be visualized by calling the `CGAL::draw()` function as shown in the following example. This function opens a new window showing the given 2D triangulation. The function is blocking, that is the program continues as soon as the user closes the window.
+
+\cgalExample{Triangulation_2/draw_triangulation_2.cpp}
+
+This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
+
+\cgalFigureBegin{fig_draw_triangulation_2,draw_triangulation_2.png}
+Result of the run of the draw_triangulation_2 program. A window shows the 2D triangulation and allows to navigate through the scene.
+\cgalFigureEnd
+
 \section Section_2D_Triangulations_Delaunay Delaunay Triangulations 
 
 \subsection Subsection_2D_Triangulations_Delaunay_Description Description 

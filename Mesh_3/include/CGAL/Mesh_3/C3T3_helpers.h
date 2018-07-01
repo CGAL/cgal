@@ -56,6 +56,7 @@
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/parallel_do.h>
+# include <tbb/mutex.h>
 #endif
 
 #include <functional>
@@ -1030,7 +1031,7 @@ private:
    * A functor which returns true if a given handle is in c3t3
    */
   template <typename Handle>
-  class Is_in_c3t3 : public CGAL::unary_function<Handle, bool>
+  class Is_in_c3t3 : public CGAL::cpp98::unary_function<Handle, bool>
   {
   public:
     Is_in_c3t3(const C3T3& c3t3) : c3t3_(c3t3) { }
@@ -1047,7 +1048,7 @@ private:
    * A functor which answers true if a Cell_handle is a sliver
    */
   template <typename SliverCriterion>
-  struct Is_sliver : public CGAL::unary_function<Cell_handle,bool>
+  struct Is_sliver : public CGAL::cpp98::unary_function<Cell_handle,bool>
   {
     Is_sliver(const C3T3& c3t3,
               const SliverCriterion& criterion,
@@ -1252,11 +1253,6 @@ private:
           facet.first->set_facet_surface_center(facet.second,surface_center);
           facet_m.first->set_facet_surface_center(facet_m.second,surface_center);
         }
-        else
-        {
-          facet.first->set_facet_surface_center(facet.second,Bare_point());
-          facet_m.first->set_facet_surface_center(facet_m.second,Bare_point());
-        }
       }
 
       return surface;
@@ -1320,7 +1316,7 @@ private:
    */
   template <typename SliverCriterion>
   class Sliver_criterion_value
-    : public CGAL::unary_function<Cell_handle, double>
+    : public CGAL::cpp98::unary_function<Cell_handle, double>
   {
   public:
     Sliver_criterion_value(const Tr& tr,
@@ -1687,9 +1683,27 @@ private:
   /**
    * Returns the least square plane from v, using adjacent surface points
    */
-  Plane_3 get_least_square_surface_plane(const Vertex_handle& v,
-                                         Bare_point& ref_point,
-                                         Surface_patch_index index = Surface_patch_index()) const;
+  boost::optional<Plane_3>
+  get_least_square_surface_plane(const Vertex_handle& v,
+                                 Bare_point& ref_point,
+                                 Surface_patch_index index = Surface_patch_index()) const;
+
+  /**
+   * @brief Project \c p on surface, using incident facets of \c v
+   * @param p The point to project
+   * @param v The vertex from which p was moved
+   * @param index The index of the surface patch where v lies, if known.
+   * @return a boost::optional with the projected point if the projection
+   * was possible, or boost::none
+   *
+   * \c p is projected as follows using normal of least square fitting plane
+   * on \c v incident surface points. If \c index is specified, only
+   * surface points that are on the same surface patch are used to compute
+   * the fitting plane.
+   */
+  boost::optional<Bare_point>
+  project_on_surface_if_possible(const Bare_point& p, const Vertex_handle& v,
+                                 Surface_patch_index index = Surface_patch_index()) const;
 
   /**
    * @brief Returns the projection of \c p, using direction of
@@ -2667,7 +2681,6 @@ C3T3_helpers<C3T3,MD>::
 rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
                             Moving_vertices_set& moving_vertices)
 {
-  typename Gt::Equal_3 equal = tr_.geom_traits().equal_3_object();
   typename OutdatedCells::iterator first_cell = outdated_cells.begin();
   typename OutdatedCells::iterator last_cell = outdated_cells.end();
   Update_c3t3 updater(domain_,c3t3_);
@@ -2766,15 +2779,16 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
        it != vertex_to_proj.end() ;
        ++it )
   {
-    Bare_point new_pos = project_on_surface(wp2p_((*it)->point()),*it);
+    boost::optional<Bare_point> opt_new_pos =
+      project_on_surface(wp2p_((*it)->point()),*it);
 
-    if ( ! equal(new_pos, Bare_point()) )
+    if ( opt_new_pos )
     {
       //freezing needs 'erase' to be done before the vertex is actually destroyed
       // Update moving vertices (it becomes new_vertex)
       moving_vertices.erase(*it);
 
-      Vertex_handle new_vertex = update_mesh(p2wp_(new_pos),*it);
+      Vertex_handle new_vertex = update_mesh(p2wp_(*opt_new_pos),*it);
       c3t3_.set_dimension(new_vertex,2);
 
       moving_vertices.insert(new_vertex);
@@ -2873,15 +2887,16 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
         it != vertex_to_proj.end() ;
         ++it )
   {
-    Bare_point new_pos = project_on_surface(wp2p_((it->first)->point()),it->first,it->second);
+    boost::optional<Bare_point> opt_new_pos =
+      project_on_surface(wp2p_((it->first)->point()),it->first,it->second);
 
-    if ( ! equal(new_pos, Bare_point()) )
+    if ( opt_new_pos )
     {
       //freezing needs 'erase' to be done before the vertex is actually destroyed
       // Update moving vertices (it becomes new_vertex)
       moving_vertices.erase(it->first);
 
-      Vertex_handle new_vertex = update_mesh(p2wp_(new_pos), it->first);
+      Vertex_handle new_vertex = update_mesh(p2wp_(*opt_new_pos), it->first);
       c3t3_.set_dimension(new_vertex,2);
 
       moving_vertices.insert(new_vertex);
@@ -3333,7 +3348,7 @@ project_on_surface_aux(const Bare_point& p,
 
 
 template <typename C3T3, typename MD>
-typename C3T3_helpers<C3T3,MD>::Plane_3
+boost::optional<typename C3T3_helpers<C3T3,MD>::Plane_3>
 C3T3_helpers<C3T3,MD>::
 get_least_square_surface_plane(const Vertex_handle& v,
                                Bare_point& reference_point,
@@ -3373,7 +3388,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
 
   // In some cases point is not a real surface point
   if ( surface_point_vector.empty() )
-    return Plane_3();
+    return boost::none;
 
   // Compute least square fitting plane
   Plane_3 plane;
@@ -3400,24 +3415,38 @@ project_on_surface(const Bare_point& p,
                    const Vertex_handle& v,
                    Surface_patch_index index) const
 {
+  boost::optional<Bare_point> opt_point =
+    project_on_surface_if_possible(p, v, index);
+  if(opt_point) return *opt_point;
+  else return p;
+}
+
+
+template <typename C3T3, typename MD>
+boost::optional<typename C3T3_helpers<C3T3,MD>::Bare_point>
+C3T3_helpers<C3T3,MD>::
+project_on_surface_if_possible(const Bare_point& p,
+                               const Vertex_handle& v,
+                               Surface_patch_index index) const
+{
   typename Gt::Equal_3 equal = tr_.geom_traits().equal_3_object();
   // return domain_.project_on_surface(p);
   // Get plane
-  Bare_point reference_point(CGAL::ORIGIN);
-  Plane_3 plane = get_least_square_surface_plane(v,reference_point, index);
+  Bare_point reference_point;
+  boost::optional<Plane_3> opt_plane =
+    get_least_square_surface_plane(v,reference_point, index);
 
-  if ( equal(reference_point, CGAL::ORIGIN) )
-    return p;
+  if(!opt_plane) return boost::none;
 
   // Project
   if ( ! equal(p, wp2p_(v->point())) )
     return project_on_surface_aux(p,
                                   wp2p_(v->point()),
-                                  plane.orthogonal_vector());
+                                  opt_plane->orthogonal_vector());
   else
     return project_on_surface_aux(p,
                                   reference_point,
-                                  plane.orthogonal_vector());
+                                  opt_plane->orthogonal_vector());
 }
 
 

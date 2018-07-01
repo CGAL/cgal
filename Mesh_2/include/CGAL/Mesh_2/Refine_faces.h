@@ -385,8 +385,8 @@ class Refine_faces :
   typedef typename Tr::Geom_traits Geom_traits;
 
   template <class Pair>
-  struct Pair_get_first: public CGAL::unary_function<Pair,
-                                                    typename Pair::first_type>
+  struct Pair_get_first
+    : public CGAL::cpp98::unary_function<Pair, typename Pair::first_type>
   {
     typedef typename Pair::first_type result;
     const result& operator()(const Pair& p) const
