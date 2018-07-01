@@ -29,6 +29,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/distance.h>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/property_map.h>
 
 #ifdef CGAL_PMP_SMOOTHING_VERBOSE
@@ -148,7 +149,14 @@ void smooth_angles(const FaceRange& faces, PolygonMesh& pmesh, const NamedParame
 
     smoother.angle_relaxation();
     if(do_project)
+    {
+      if(does_self_intersect(pmesh))
+      {
+        std::cerr << "Can't do re-projection, there are self-intersections in the mesh!\n";
+        break;
+      }
       smoother.project_to_surface();
+    }
   }
 
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
@@ -283,7 +291,14 @@ void smooth_areas(const FaceRange& faces, PolygonMesh& pmesh, const NamedParamet
 
     smoother.area_relaxation(gd_precision);
     if(do_project)
+    {
+      if(does_self_intersect(pmesh))
+      {
+        std::cerr << "Can't do re-projection, there are self-intersections in the mesh!\n";
+        break;
+      }
       smoother.project_to_surface();
+    }
   }
 
   #ifdef CGAL_PMP_SMOOTHING_VERBOSE
