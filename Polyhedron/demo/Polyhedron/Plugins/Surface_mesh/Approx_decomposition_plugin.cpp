@@ -62,8 +62,8 @@ public:
 
         autoConnectActions();
 
-		// colors
-		init_gradient_colors();
+        // colors
+        init_gradient_colors();
 
         // ui
         m_dock_widget = new QDockWidget("Approximate convex decomposition widget", mw);
@@ -112,7 +112,7 @@ private:
     QDockWidget* m_dock_widget;
     Ui::decomposition_widget m_ui_widget;
 
-	std::vector<QColor> m_gradient_colors;
+    std::vector<QColor> m_gradient_colors;
 
     template <class FacegraphItem>
     void decompose(FacegraphItem* item)
@@ -242,7 +242,7 @@ private:
                 for (std::size_t i = 0; i < clusters_num; ++i)
                 {
                     double concavity = CGAL::concavity_value<Concurrency_tag>(mesh, clusters_pmap, i);
-					int step = std::min(255, int(concavity / concavity_threshold * 255));
+                    int step = std::min(255, int(concavity / concavity_threshold * 255));
                     colors.push_back(m_gradient_colors[step]);
                 } 
             }
@@ -266,7 +266,7 @@ private:
         segmentation_item->setVisible(false);
         scene->setSelectedItem(scene->item_id(item));
 
-		if (!extract_segmentation)
+        if (!extract_segmentation)
         {
             delete segmentation_item;
         }
@@ -303,22 +303,22 @@ private:
                          CGAL::get_default_random().get_int(41, 255));
             colors.push_back(color);
         }
-		
-  	}
+        
+    }
 
-	void init_gradient_colors()
-	{
-		m_gradient_colors.resize(256);
-		int r = 0, g = 0, b = 255;
-		for (int i = 0; i <= 255; ++i)
-		{
-			if (i > 128 && i <= 192) { r = static_cast<int>( ((i - 128) / (192.0 - 128)) * 255 ); }
-			if (i > 0 && i <= 98)    { g = static_cast<int>( ((i) / (98.0)) * 255 ); }
-			if (i > 191 && i <=255)  { g = 255 - static_cast<int>( ((i - 191) / (255.0 - 191)) * 255 ); }
-			if (i > 64 && i <= 127)  { b = 255 - static_cast<int>( ((i - 64) / (127.0 - 64)) * 255 ); }
-			m_gradient_colors[i] = QColor(r, g, b);
-		}
-	}
+    void init_gradient_colors()
+    {
+        m_gradient_colors.resize(256);
+        int r = 0, g = 0, b = 255;
+        for (int i = 0; i <= 255; ++i)
+        {
+            if (i > 128 && i <= 192) { r = static_cast<int>( ((i - 128) / (192.0 - 128)) * 255 ); }
+            if (i > 0 && i <= 98)    { g = static_cast<int>( ((i) / (98.0)) * 255 ); }
+            if (i > 191 && i <=255)  { g = 255 - static_cast<int>( ((i - 191) / (255.0 - 191)) * 255 ); }
+            if (i > 64 && i <= 127)  { b = 255 - static_cast<int>( ((i - 64) / (127.0 - 64)) * 255 ); }
+            m_gradient_colors[i] = QColor(r, g, b);
+        }
+    }
 
     void set_color_read_only(Scene_polyhedron_item* poly)
     {

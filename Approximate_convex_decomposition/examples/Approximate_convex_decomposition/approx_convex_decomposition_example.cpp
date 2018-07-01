@@ -26,7 +26,7 @@ int main()
     Polyhedron mesh;
    
 //    std::ifstream input("data/cube.off");
-	std::ifstream input("data/sword.off");
+    std::ifstream input("data/sword.off");
 //    std::ifstream input("data/elephant.off");
     
     if (!input || !(input >> mesh))

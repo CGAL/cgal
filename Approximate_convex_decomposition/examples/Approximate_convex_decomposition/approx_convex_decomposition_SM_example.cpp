@@ -33,7 +33,7 @@ int main()
     Mesh mesh;
     
 //    std::ifstream input("data/cube.off");
-    std::ifstream input("data/sword.off"); // 0.3
+    std::ifstream input("data/sword.off"); // 7.
 //    std::ifstream input("data/cactus.off"); // 0.05
 //    std::ifstream input("data/elephant.off"); // 0.03
     
