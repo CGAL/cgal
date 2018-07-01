@@ -53,8 +53,12 @@
 #include <vector>
 #include <utility>
 
-namespace CGAL
-{
+namespace CGAL {
+
+template < class GT, class TDS > class Periodic_3_regular_triangulation_3;
+template < class GT, class TDS > std::istream& operator>>
+    (std::istream& is, Periodic_3_regular_triangulation_3<GT,TDS> &tr);
+
 template < class Gt,
            class Tds =
              Triangulation_data_structure_3 <
@@ -67,6 +71,9 @@ template < class Gt,
 class Periodic_3_regular_triangulation_3
   : public Periodic_3_triangulation_3<Gt, Tds>
 {
+  friend std::istream& operator>> <>
+  (std::istream& is, Periodic_3_regular_triangulation_3<Gt, Tds> &tr);
+
   typedef Periodic_3_regular_triangulation_3<Gt, Tds>      Self;
 
 public:
@@ -1746,8 +1753,12 @@ operator>> (std::istream& is, Periodic_3_regular_triangulation_3<GT, TDS>& tr)
 {
   typedef Periodic_3_regular_triangulation_3<GT,TDS>   P3RT3;
   typedef typename P3RT3::Tr_Base                      Tr_Base;
+  typedef typename GT::FT                              FT;
 
   is >> static_cast<Tr_Base&>(tr);
+
+  tr.orthosphere_radius_threshold = FT(0.015625) * (tr.domain().xmax() - tr.domain().xmin())
+                                                 * (tr.domain().xmax() - tr.domain().xmin());
 
   tr.insert_cells_with_too_big_orthoball(tr.cells_begin(), tr.cells_end());
 
