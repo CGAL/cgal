@@ -461,7 +461,8 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
   if(scene == 0)
     return;
   current_total_pass = viewer->inFastDrawing() ? total_pass/2 : total_pass;
-  viewer->glLineWidth(1.0f);
+  if(!viewer->isOpenGL_4_3())
+    viewer->glLineWidth(1.0f);
   viewer->setGlPointSize(2.f);
   viewer->glEnable(GL_POLYGON_OFFSET_FILL);
   viewer->glPolygonOffset(1.0f,1.0f);
@@ -663,6 +664,7 @@ void Viewer::attribBuffers(int program_name) const {
       program->setUniformValue("mv_matrix", mv_mat);
       break;
     case PROGRAM_WITHOUT_LIGHT:
+    case PROGRAM_SOLID_WIREFRAME:
       program->setUniformValue("f_matrix",f_mat);
       break;
     case PROGRAM_WITH_TEXTURE:
@@ -700,29 +702,59 @@ void Viewer::drawVisualHints()
     if(d->distance_is_displayed)
     {
         glDisable(GL_DEPTH_TEST);
-
-        glLineWidth(3.0f);
-        //glPointSize(6.0f);
-        //draws the distance
         QMatrix4x4 mvpMatrix;
         double mat[16];
-        //camera()->frame()->rotation().getMatrix(mat);
         camera()->getModelViewProjectionMatrix(mat);
-        //nullifies the translation
         for(int i=0; i < 16; i++)
         {
-            mvpMatrix.data()[i] = (float)mat[i];
+          mvpMatrix.data()[i] = (float)mat[i];
         }
-        d->rendering_program_dist.bind();
-        d->rendering_program_dist.setUniformValue("mvp_matrix", mvpMatrix);
-        d->vao.bind();
-        glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(2));
-        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(2));
-        d->vao.release();
-        d->rendering_program_dist.release();
-        glEnable(GL_DEPTH_TEST);
-       // glPointSize(1.0f);
-        glLineWidth(1.0f);
+        if(!isOpenGL_4_3())
+        {
+          glLineWidth(3.0f);
+          //draws the distance
+          //nullifies the translation
+          d->rendering_program_dist.bind();
+          d->rendering_program_dist.setUniformValue("mvp_matrix", mvpMatrix);
+          d->rendering_program_dist.setUniformValue("point_size", GLfloat(6.0f));
+          d->vao.bind();
+          glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(2));
+          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(2));
+          d->vao.release();
+          d->rendering_program_dist.release();
+          glEnable(GL_DEPTH_TEST);
+          glLineWidth(1.0f);
+        }
+        else
+        {          
+          QOpenGLShaderProgram* program = getShaderProgram(PROGRAM_SOLID_WIREFRAME);
+          program->bind();
+          QVector2D vp(width(), height());
+          program->setUniformValue("viewport", vp);
+          program->setUniformValue("near",(GLfloat)camera()->zNear());
+          program->setUniformValue("far",(GLfloat)camera()->zFar());
+          program->setUniformValue("width", GLfloat(3.0f));
+          program->setAttributeValue("colors", QColor(Qt::black));
+          program->setUniformValue("mvp_matrix", mvpMatrix);
+          QMatrix4x4 f_mat;
+          f_mat.setToIdentity();
+          program->setUniformValue("f_matrix", f_mat);
+          d->vao.bind();
+          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(2));
+          d->vao.release();
+          program->release();
+          
+          program = getShaderProgram(PROGRAM_NO_SELECTION);
+          program->bind();
+          program->setAttributeValue("colors", QColor(Qt::black));
+          program->setAttributeValue("point_size", 6.0f);
+          program->setUniformValue("mvp_matrix", mvpMatrix);
+          program->setUniformValue("f_matrix", f_mat);
+          d->vao.bind();
+          glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(2));
+          d->vao.release();
+          program->release();
+        }
 
     }
     if (!d->painter->isActive())
@@ -772,11 +804,21 @@ QOpenGLShaderProgram* Viewer::declare_program(int name,
     {
       std::cerr<<"adding fragment shader FAILED"<<std::endl;
     }
-    if(strcmp(f_shader,":/cgal/Polyhedron_3/resources/shader_flat.f" ) == 0)
+    if(isOpenGL_4_3())
     {
-      if(!program->addShaderFromSourceFile(QOpenGLShader::Geometry,":/cgal/Polyhedron_3/resources/shader_flat.g" ))
+      if(strcmp(f_shader,":/cgal/Polyhedron_3/resources/shader_flat.f" ) == 0)
       {
-        std::cerr<<"adding geometry shader FAILED"<<std::endl;
+        if(!program->addShaderFromSourceFile(QOpenGLShader::Geometry,":/cgal/Polyhedron_3/resources/shader_flat.g" ))
+        {
+          std::cerr<<"adding geometry shader FAILED"<<std::endl;
+        }
+      }
+      if(strcmp(f_shader,":/cgal/Polyhedron_3/resources/solid_wireframe_shader.f" ) == 0)
+      {
+        if(!program->addShaderFromSourceFile(QOpenGLShader::Geometry,":/cgal/Polyhedron_3/resources/solid_wireframe_shader.g" ))
+        {
+          std::cerr<<"adding geometry shader FAILED"<<std::endl;
+        }
       }
     }
     program->bindAttributeLocation("colors", 1);
@@ -887,6 +929,11 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   }
   case PROGRAM_FLAT:
   {
+    if(!isOpenGL_4_3())
+    {
+      std::cerr<<"An OpenGL context of version 4.3 is required for the program ("<<name<<")."<<std::endl;
+      return 0;
+    }
     QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_flat.v", ":/cgal/Polyhedron_3/resources/shader_flat.f");
     program->setProperty("hasLight", true);
     program->setProperty("hasNormals", true);
@@ -899,7 +946,14 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     program->setProperty("hasNormals", true);
     return program;
   }
-    
+  case PROGRAM_SOLID_WIREFRAME:
+    if(!isOpenGL_4_3())
+    {
+      std::cerr<<"An OpenGL context of version 4.3 is required for the program ("<<name<<")."<<std::endl;
+      return 0;
+    }
+    return declare_program(name, ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.v", ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.f");
+    break; 
   default:
     std::cerr<<"ERROR : Program not found."<<std::endl;
     return 0;
@@ -1013,7 +1067,7 @@ void Viewer_impl::showDistance(QPoint pixel)
         v.resize(6);
         v[0] = float(APoint.x); v[1] = float(APoint.y); v[2] = float(APoint.z);
         v[3] = float(BPoint.x); v[4] = float(BPoint.y); v[5] = float(BPoint.z);
-        rendering_program_dist.bind();
+       
         vao.bind();
         buffer.bind();
         buffer.allocate(v.data(),6*sizeof(float));
@@ -1021,7 +1075,7 @@ void Viewer_impl::showDistance(QPoint pixel)
         rendering_program_dist.setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffer.release();
         vao.release();
-        rendering_program_dist.release();
+        
         distance_is_displayed = true;
         double dist = std::sqrt((BPoint.x-APoint.x)*(BPoint.x-APoint.x) + (BPoint.y-APoint.y)*(BPoint.y-APoint.y) + (BPoint.z-APoint.z)*(BPoint.z-APoint.z));
         QFont font;
@@ -1235,3 +1289,4 @@ void Viewer::messageLogged(QOpenGLDebugMessage msg)
 void Viewer::setGlPointSize(const GLfloat &p) { d->gl_point_size = p; }
 
 const GLfloat& Viewer::getGlPointSize() const { return d->gl_point_size; }
+

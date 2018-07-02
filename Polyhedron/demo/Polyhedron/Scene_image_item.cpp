@@ -818,15 +818,34 @@ Scene_image_item_priv::draw_gl(Viewer_interface* viewer) const
     vao[0].release();
   }
   rendering_program.release();
-  item->attribBuffers(viewer,Scene_item::PROGRAM_NO_SELECTION);
-  QOpenGLShaderProgram* line_program = item->getShaderProgram(Scene_item::PROGRAM_NO_SELECTION);
-  line_program->bind();
+  QOpenGLShaderProgram* line_program;
   vao[1].bind();
-  viewer->glLineWidth(3);
+  if(!viewer->isOpenGL_4_3())
+  {
+    item->attribBuffers(viewer,Scene_item::PROGRAM_NO_SELECTION);
+    line_program = item->getShaderProgram(Scene_item::PROGRAM_NO_SELECTION);
+    line_program->bind();
+    viewer->glLineWidth(3);
+  }
+  else
+  {
+    item->attribBuffers(viewer,Scene_item::PROGRAM_SOLID_WIREFRAME);
+    line_program = item->getShaderProgram(Scene_item::PROGRAM_SOLID_WIREFRAME);
+    line_program->bind();
+    QVector2D vp(viewer->width(), viewer->height());
+    line_program->setUniformValue("viewport", vp);
+    line_program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
+    line_program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+    line_program->setUniformValue("width", 3.0f);
+  }
   line_program->setAttributeValue("colors", QColor(Qt::black));
+  viewer->glDepthRangef(0.00001f, 0.99999f);
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_box->size()/3));
+  viewer->glDepthRangef(0.0f, 1.0f);
   vao[1].release();
   line_program->release();
+  if(!viewer->isOpenGL_4_3())
+    viewer->glLineWidth(1.0f);
 }
 
 GLint

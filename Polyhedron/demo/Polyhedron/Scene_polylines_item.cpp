@@ -74,22 +74,25 @@ Scene_polylines_item_private::initializeBuffers(CGAL::Three::Viewer_interface *v
     QOpenGLShaderProgram *program;
    //vao for the lines
     {
+      if(viewer->isOpenGL_4_3())
+        program = item->getShaderProgram(Scene_polylines_item::PROGRAM_SOLID_WIREFRAME, viewer);
+      else
         program = item->getShaderProgram(Scene_polylines_item::PROGRAM_NO_SELECTION, viewer);
-        program->bind();
-
-        item->vaos[Edges]->bind();
-        item->buffers[Edges_Vertices].bind();
-        item->buffers[Edges_Vertices].allocate(positions_lines.data(),
-                            static_cast<int>(positions_lines.size()*sizeof(float)));
-        program->enableAttributeArray("vertex");
-        program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
-        item->buffers[Edges_Vertices].release();
-        item->vaos[Edges]->release();
-        program->release();
-
-        nb_lines = positions_lines.size();
-        positions_lines.clear();
-        positions_lines.swap(positions_lines);
+      program->bind();
+      
+      item->vaos[Edges]->bind();
+      item->buffers[Edges_Vertices].bind();
+      item->buffers[Edges_Vertices].allocate(positions_lines.data(),
+                                             static_cast<int>(positions_lines.size()*sizeof(float)));
+      program->enableAttributeArray("vertex");
+      program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
+      item->buffers[Edges_Vertices].release();
+      item->vaos[Edges]->release();
+      program->release();
+      
+      nb_lines = positions_lines.size();
+      positions_lines.clear();
+      positions_lines.swap(positions_lines);
     }
     item->are_buffers_filled = true;
 }
@@ -388,11 +391,27 @@ Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
         d->initializeBuffers(viewer);
     }
 
-    viewer->glLineWidth(GLfloat(d->line_Slider->value()));
     vaos[Scene_polylines_item_private::Edges]->bind();
-    attribBuffers(viewer, PROGRAM_NO_SELECTION);
-    QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_NO_SELECTION);
+    if(!viewer->isOpenGL_4_3())
+    {
+      viewer->glLineWidth(GLfloat(d->line_Slider->value()));
+      attribBuffers(viewer, PROGRAM_NO_SELECTION);
+    }
+    else
+    {
+      attribBuffers(viewer, PROGRAM_SOLID_WIREFRAME);
+    }
+    QOpenGLShaderProgram *program = viewer->isOpenGL_4_3() ? getShaderProgram(PROGRAM_SOLID_WIREFRAME)
+                                                           : getShaderProgram(PROGRAM_NO_SELECTION);
     program->bind();
+    if(viewer->isOpenGL_4_3())
+    {
+      QVector2D vp(viewer->width(), viewer->height());
+      program->setUniformValue("viewport", vp);
+      program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
+      program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+      program->setUniformValue("width", GLfloat(d->line_Slider->value()));
+    }
     program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_lines/4));
     program->release();
@@ -694,4 +713,10 @@ CGAL::Three::Scene_item::Header_data Scene_polylines_item::header() const
   data.titles.append(QString("Longest Segment Edge Length"));
   data.titles.append(QString("Average Segment Edge Length"));
   return data;
+}
+
+void Scene_polylines_item::setWidth(const int& i)
+{
+  d->line_Slider->setValue(i);
+  redraw();
 }

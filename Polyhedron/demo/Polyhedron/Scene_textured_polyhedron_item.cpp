@@ -392,13 +392,28 @@ void Scene_textured_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* vi
     d->program->release();
 
     vaos[Scene_textured_polyhedron_item_priv::Border_edges]->bind();
-    attribBuffers(viewer, PROGRAM_NO_SELECTION);
-    d->program=getShaderProgram(PROGRAM_NO_SELECTION);
-    d->program->bind();
-    viewer->glLineWidth(4.0);
+    if(!viewer->isOpenGL_4_3())
+    {
+      attribBuffers(viewer, PROGRAM_NO_SELECTION);
+      d->program=getShaderProgram(PROGRAM_NO_SELECTION);
+      d->program->bind();
+      viewer->glLineWidth(4.0);
+    }
+    else
+    {
+      attribBuffers(viewer, PROGRAM_SOLID_WIREFRAME);
+      d->program=getShaderProgram(PROGRAM_SOLID_WIREFRAME);
+      d->program->bind();
+      QVector2D vp(viewer->width(), viewer->height());
+      d->program->setUniformValue("viewport", vp);
+      d->program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
+      d->program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+      d->program->setUniformValue("width", 4.0f);
+    }
     d->program->setAttributeValue("colors", QColor(Qt::blue));
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_border/3));
-    viewer->glLineWidth(1.0);
+    if(!viewer->isOpenGL_4_3())
+      viewer->glLineWidth(1.0);
     //Clean-up
     d->program->release();
     vaos[Scene_textured_polyhedron_item_priv::Border_edges]->release();
@@ -446,11 +461,14 @@ Scene_textured_polyhedron_item::selection_changed(bool p_is_selected)
     else
         is_selected = p_is_selected;
 }
-void Scene_textured_polyhedron_item::add_border_edges(std::vector<float> border_edges)
+void Scene_textured_polyhedron_item::add_border_edges(std::vector<float> border_edges,
+                                                      bool is_opengl_4_3)
 {
   d->positions_border = border_edges;
   d->nb_border = border_edges.size();
-  d->program=getShaderProgram(PROGRAM_NO_SELECTION);
+  d->program=is_opengl_4_3 
+      ? getShaderProgram(PROGRAM_SOLID_WIREFRAME)
+      : getShaderProgram(PROGRAM_NO_SELECTION);
   d->program->bind();
   vaos[Scene_textured_polyhedron_item_priv::Border_edges]->bind();
   buffers[Scene_textured_polyhedron_item_priv::Edges_border].bind();

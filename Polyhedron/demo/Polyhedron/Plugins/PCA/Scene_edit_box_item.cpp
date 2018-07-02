@@ -383,6 +383,7 @@ void Scene_edit_box_item::drawSpheres(Viewer_interface *viewer, const QMatrix4x4
   d->program->setUniformValue("mv_matrix", mv_mat);
   d->program->setUniformValue("light_pos", light_pos);
   d->program->setUniformValue("is_clipbox_on", false);
+  d->program->setUniformValue("alpha", 1.0f);
   d->program->setAttributeValue("radius",radius);
   d->program->setAttributeValue("colors", QColor(Qt::red));
   viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
@@ -405,6 +406,8 @@ void Scene_edit_box_item::draw(Viewer_interface *viewer) const
   }
 
   drawSpheres(viewer, f_matrix);
+  
+  drawTransparent(viewer);
 }
 
 void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
@@ -419,15 +422,30 @@ void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
     f_matrix.data()[i] = (float)d->frame->matrix()[i];
   }
   vaos[Scene_edit_box_item_priv::Edges]->bind();
-  viewer->glLineWidth(6.0f);
-  d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-  attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
-  d->program->bind();
+  if(!viewer->isOpenGL_4_3())
+  {
+    viewer->glLineWidth(6.0f);
+    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    d->program->bind();
+    d->program->setUniformValue("is_clipbox_on", false);
+  }
+  else
+  {
+    attribBuffers(viewer, PROGRAM_SOLID_WIREFRAME);
+    d->program = getShaderProgram(PROGRAM_SOLID_WIREFRAME);
+    d->program->bind();
+    QVector2D vp(viewer->width(), viewer->height());
+    d->program->setUniformValue("viewport", vp);
+    d->program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
+    d->program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+    d->program->setUniformValue("width", 6.0f);
+  }
   d->program->setUniformValue("f_matrix", f_matrix);
-  d->program->setUniformValue("is_clipbox_on", false);
   d->program->setAttributeValue("colors", QColor(Qt::black));
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->vertex_edges.size()/3));
-  viewer->glLineWidth(1.0f);
+  if(!viewer->isOpenGL_4_3())
+    viewer->glLineWidth(1.0f);
   vaos[Scene_edit_box_item_priv::Edges]->release();
   d->program->release();
   if(renderingMode() == Wireframe)
@@ -461,7 +479,10 @@ Scene_edit_box_item_priv::initializeBuffers(Viewer_interface *viewer)const
 
   //vao containing the data for the lines
   {
-    program = item->getShaderProgram(Scene_edit_box_item::PROGRAM_WITHOUT_LIGHT, viewer);
+    if(viewer->isOpenGL_4_3())
+      program = item->getShaderProgram(Scene_edit_box_item::PROGRAM_SOLID_WIREFRAME, viewer);
+    else
+      program = item->getShaderProgram(Scene_edit_box_item::PROGRAM_WITHOUT_LIGHT, viewer);
     program->bind();
 
     item->vaos[Edges]->bind();
@@ -841,7 +862,9 @@ void Scene_edit_box_item::highlight(Viewer_interface *viewer)
       d->hl_vertex.push_back(d->edges[d->last_picked_id].target->position().z()-d->center_.z);
 
       //fill buffers
-      d->program = getShaderProgram(Scene_edit_box_item::PROGRAM_WITHOUT_LIGHT, viewer);
+      d->program = viewer->isOpenGL_4_3() 
+          ? getShaderProgram(Scene_edit_box_item::PROGRAM_SOLID_WIREFRAME, viewer)
+          : getShaderProgram(Scene_edit_box_item::PROGRAM_WITHOUT_LIGHT, viewer);
       d->program->bind();
 
       vaos[Scene_edit_box_item_priv::S_Edges]->bind();
@@ -1159,7 +1182,7 @@ void Scene_edit_box_item_priv::draw_picking(Viewer_interface* viewer)
   item->vaos[P_Spheres]->bind();
   pick_sphere_program.bind();
   pick_sphere_program.setUniformValue("mvp_matrix", mvp_mat);
-  program->setUniformValue("is_clipbox_on", false);
+  pick_sphere_program.setUniformValue("is_clipbox_on", GLboolean(false));
   viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
                                 static_cast<GLsizei>(vertex_spheres.size()/3),
                                 static_cast<GLsizei>(8));
@@ -1167,14 +1190,29 @@ void Scene_edit_box_item_priv::draw_picking(Viewer_interface* viewer)
   item->vaos[P_Spheres]->release();
 
   item->vaos[P_Edges]->bind();
-  viewer->glLineWidth(6.0f);
-  program = item->getShaderProgram(Scene_item::PROGRAM_WITHOUT_LIGHT);
-  item->attribBuffers(viewer, Scene_item::PROGRAM_WITHOUT_LIGHT);
-  program->bind();
+  if(!viewer->isOpenGL_4_3())
+  {
+    viewer->glLineWidth(6.0f);
+    item->attribBuffers(viewer, Scene_item::PROGRAM_WITHOUT_LIGHT);
+    program = item->getShaderProgram(Scene_item::PROGRAM_WITHOUT_LIGHT);
+    program->bind();
+    program->setUniformValue("is_clipbox_on", false);
+  }
+  else
+  {
+    item->attribBuffers(viewer, Scene_item::PROGRAM_SOLID_WIREFRAME);
+    program = item->getShaderProgram(Scene_item::PROGRAM_SOLID_WIREFRAME);
+    program->bind();
+    QVector2D vp(viewer->width(), viewer->height());
+    program->setUniformValue("viewport", vp);
+    program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
+    program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+    program->setUniformValue("width", 6.0f);
+  }
   program->setUniformValue("f_matrix", f_matrix);
-  program->setUniformValue("is_clipbox_on", false);
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(vertex_edges.size()/3));
-  viewer->glLineWidth(1.0f);
+  if(!viewer->isOpenGL_4_3())
+    viewer->glLineWidth(1.0f);
   item->vaos[P_Edges]->release();
   program->release();
 }
@@ -1384,15 +1422,30 @@ void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
   else if(d->hl_type == Scene_edit_box_item_priv::EDGE)
   {
     vaos[Scene_edit_box_item_priv::S_Edges]->bind();
-    viewer->glLineWidth(6.0f);
-    d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
-    d->program->bind();
+    if(!viewer->isOpenGL_4_3())
+    {
+      viewer->glLineWidth(6.0f);
+      d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+      attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
+      d->program->bind();
+      d->program->setUniformValue("is_clipbox_on", false);
+    }
+    else
+    {
+      attribBuffers(viewer, PROGRAM_SOLID_WIREFRAME);
+      d->program = getShaderProgram(PROGRAM_SOLID_WIREFRAME);
+      d->program->bind();
+      QVector2D vp(viewer->width(), viewer->height());
+      d->program->setUniformValue("viewport", vp);
+      d->program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
+      d->program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+      d->program->setUniformValue("width", 6.0f);
+    }
     d->program->setUniformValue("f_matrix", f_matrix);
     d->program->setAttributeValue("colors", QColor(Qt::yellow));
-    d->program->setUniformValue("is_clipbox_on", false);
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->hl_vertex.size()/3));
-    viewer->glLineWidth(1.0f);
+    if(!viewer->isOpenGL_4_3())
+      viewer->glLineWidth(1.0f);
     vaos[Scene_edit_box_item_priv::S_Edges]->release();
     d->program->release();
   }
