@@ -28,7 +28,7 @@
 #include <CGAL/Qt/qglviewer.h>
 #include <QWidget>
 #include <QPoint>
-#include <QOpenGLFunctions_2_1>
+#include <QOpenGLFunctions>
 #include <QOpenGLFunctions_4_3_Compatibility>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 // forward declarations
