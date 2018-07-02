@@ -10,8 +10,10 @@ uniform highp float shrink_factor;
 varying highp vec4 fP; 
 varying highp vec3 fN; 
 varying highp vec4 color; 
+uniform highp float point_size;
 void main(void)
 {
+  gl_PointSize = point_size;
   color = vec4(colors, vertex.x * cutplane.x  + vertex.y * cutplane.y  + vertex.z * cutplane.z  +  cutplane.w);
   fP = mv_matrix * vertex; 
   fN = mat3(mv_matrix)* normals; 

@@ -259,6 +259,10 @@ public:
   //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Compatibility if `isOpenGL_4_3()` is `true`
   //! @returns NULL if `isOpenGL_4_3()` is `false`
   virtual QOpenGLFunctions_4_3_Compatibility* openGL_4_3_functions() = 0;
+  //! getter for point size under old openGL context;
+  virtual const GLfloat& getGlPointSize()const = 0;
+  //! setter for point size under old openGL context;
+  virtual void setGlPointSize(const GLfloat& p) = 0;
   virtual void setCurrentPass(int pass) = 0;
   virtual void setDepthWriting(bool writing_depth) = 0;
   virtual void setDepthPeelingFbo(QOpenGLFramebufferObject* fbo) = 0;

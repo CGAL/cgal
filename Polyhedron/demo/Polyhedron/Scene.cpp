@@ -539,14 +539,14 @@ void Scene::renderWireScene(const QList<Scene_interface::Item_id> &items,
           || item.renderingMode() == PointsPlusNormals)
        {
          viewer->glDisable(GL_LIGHTING);
-         //viewer->glPointSize(2.f);
+         viewer->setGlPointSize(2.f);
          viewer->glLineWidth(1.0f);
          item.drawEdges(viewer);
        }
        else{
            if( item.renderingMode() == PointsPlusNormals ){
                viewer->glDisable(GL_LIGHTING);
-               //viewer->glPointSize(2.f);
+               viewer->setGlPointSize(2.f);
                viewer->glLineWidth(1.0f);
                if(index == selected_item || selected_items_list.contains(index))
                {
@@ -601,7 +601,7 @@ void Scene::renderPointScene(const QList<Scene_interface::Item_id> &items,
          (item.renderingMode() == ShadedPoints))
       {
         viewer->glDisable(GL_LIGHTING);
-        //viewer->glPointSize(3.0f);
+        viewer->setGlPointSize(3.0f);
         viewer->glLineWidth(1.0f);
         item.drawPoints(viewer);
       }

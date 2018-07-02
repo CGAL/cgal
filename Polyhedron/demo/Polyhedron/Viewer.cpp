@@ -31,6 +31,7 @@ public:
   bool inDrawWithNames;
   bool clipping;
   bool projection_is_ortho;
+  GLfloat gl_point_size;
   QVector4D clipbox[6];
   QPainter *painter;
   // M e s s a g e s
@@ -210,7 +211,7 @@ void Viewer::init()
   if(!isOpenGL_4_3())
   {
     std::cerr<<"The openGL context initialization failed "
-    "and the default context (2.1) will be used" <<std::endl;
+    "and the default context (2.0 ES) will be used" <<std::endl;
   }
   else
   {
@@ -461,7 +462,7 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
     return;
   current_total_pass = viewer->inFastDrawing() ? total_pass/2 : total_pass;
   viewer->glLineWidth(1.0f);
-  //viewer->glPointSize(2.f);
+  viewer->setGlPointSize(2.f);
   viewer->glEnable(GL_POLYGON_OFFSET_FILL);
   viewer->glPolygonOffset(1.0f,1.0f);
 
@@ -615,6 +616,7 @@ void Viewer::attribBuffers(int program_name) const {
     QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
     QOpenGLShaderProgram* program = getShaderProgram(program_name);
     program->bind();
+    program->setUniformValue("point_size", getGlPointSize());
     program->setUniformValue("mvp_matrix", mvp_mat);
     program->setUniformValue("is_clipbox_on", d->clipping);
     if(d->clipping)
@@ -1229,3 +1231,7 @@ void Viewer::messageLogged(QOpenGLDebugMessage msg)
   error += ")";
   qDebug() << qPrintable(error) << "\n" << qPrintable(msg.message()) << "\n";
 }
+
+void Viewer::setGlPointSize(const GLfloat &p) { d->gl_point_size = p; }
+
+const GLfloat& Viewer::getGlPointSize() const { return d->gl_point_size; }

@@ -749,7 +749,7 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
 void Scene_polyhedron_selection_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 {
 
-  //viewer->glPointSize(5.5f);
+  viewer->setGlPointSize(5.0f);
 
   if(!d->are_HL_buffers_filled)
   {
@@ -800,7 +800,7 @@ void Scene_polyhedron_selection_item::drawPoints(CGAL::Three::Viewer_interface* 
   d->program->release();
   vaos[Points]->release();
 
-  //viewer->glPointSize(1.f);
+  viewer->setGlPointSize(1.f);
 }
 
 

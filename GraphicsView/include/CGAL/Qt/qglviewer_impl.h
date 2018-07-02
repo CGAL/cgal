@@ -220,7 +220,7 @@ void CGAL::QGLViewer::initializeGL() {
   bool created = context()->create();
   if(!created || context()->format().profile() != QSurfaceFormat::CompatibilityProfile) {
     // impossible to get a 4.3 compatibility profile, retry with 2.0
-    format.setVersion(2,1);
+    format = QSurfaceFormat::defaultFormat();
     context()->setFormat(format);
     created = context()->create();
     is_ogl_4_3 = false;
@@ -231,6 +231,7 @@ void CGAL::QGLViewer::initializeGL() {
   }
   makeCurrent();
   QOpenGLFunctions::initializeOpenGLFunctions();
+  glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
   // Default colors
   setForegroundColor(QColor(180, 180, 180));
   setBackgroundColor(QColor(51, 51, 51));

@@ -8,10 +8,12 @@ uniform highp mat4 mv_matrix;
 varying highp vec4 fP;
 varying highp vec3 fN;
 varying highp vec4 color;
+uniform highp float point_size;
 
 
 void main(void)
 {
+  gl_PointSize = point_size;
 color = vec4(colors, 1.0);
 vec4 my_vertex = vec4(vertex.x + center.x, vertex.y + center.y, vertex.z + center.z, 1.0);
 fP = mv_matrix * my_vertex;

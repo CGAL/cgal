@@ -16,8 +16,10 @@ uniform highp float spec_power;
 varying highp vec3 fColors; 
 varying highp vec2 f_texCoord; 
        
-void main(void) 
-{ 
+uniform highp float point_size;
+void main(void)
+{
+  gl_PointSize = point_size;
    vec4 P = mv_matrix * vertex; 
    vec3 N = mat3(mv_matrix)* normal; 
    vec3 L = light_pos.xyz - P.xyz; 

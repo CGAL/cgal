@@ -10,10 +10,11 @@ varying highp vec4 fP;
 varying highp vec3 fN;
 varying highp vec4 color;
 varying highp float dist[6];
-
+uniform highp float point_size;
 
 void main(void)
 {
+  gl_PointSize = point_size;
  for(int i=0; i<6; ++i)
   dist[i] = 1;
   color = vec4(colors, 1.0);

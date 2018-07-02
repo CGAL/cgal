@@ -16,6 +16,7 @@ uniform mat4 mv_matrix;
 uniform bool is_clipbox_on;
 uniform highp mat4x4 clipbox1;
 uniform highp mat4x4 clipbox2;
+uniform highp float point_size;
 
 void compute_distances(void)
 {
@@ -36,6 +37,7 @@ void compute_distances(void)
 
 void main(void)
 {
+  gl_PointSize = point_size;
   if(is_clipbox_on)
     compute_distances();
    vs_out.out_color=colors;

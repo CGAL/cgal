@@ -151,6 +151,8 @@ public:
    bool isDepthWriting()const Q_DECL_OVERRIDE;
    QOpenGLFramebufferObject* depthPeelingFbo()Q_DECL_OVERRIDE;
    float total_pass()Q_DECL_OVERRIDE;
+   const GLfloat& getGlPointSize()const Q_DECL_OVERRIDE;
+   void setGlPointSize(const GLfloat& p) Q_DECL_OVERRIDE;
 }; // end class Viewer
 
 

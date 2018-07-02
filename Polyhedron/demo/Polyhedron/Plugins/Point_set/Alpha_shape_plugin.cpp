@@ -278,7 +278,8 @@ Scene_alpha_shape_item::Scene_alpha_shape_item(Scene_points_with_normal_item *po
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   _bbox = point_set_item->bbox();
-  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+  CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
+  const CGAL::qglviewer::Vec offset = viewer->offset();
   vertices.reserve(point_set.size() * 3);
   CGAL::Timer timer;
   timer.start();
@@ -297,24 +298,25 @@ Scene_alpha_shape_item::Scene_alpha_shape_item(Scene_points_with_normal_item *po
     vertices.push_back(it->point().y()+offset.y);
     vertices.push_back(it->point().z()+offset.z);
   }
-
-  const char vertex_source[] =
-  {
-    "#version 120 \n"
-    "attribute highp vec4 vertex;\n"
-    "attribute highp vec3 colors;\n"
-    "uniform highp mat4 mvp_matrix;\n"
-    "uniform highp mat4 mv_matrix; \n"
-    "varying highp vec4 fP; \n"
-    "varying highp vec4 color;; \n"
-    "void main(void)\n"
-    "{\n"
-    "   color = vec4(colors, 1.0); \n"
-    "   fP = mv_matrix * vertex; \n"
-    "   gl_Position = mvp_matrix * vertex;\n"
-    "}"
-  };
-
+    const char vertex_source[] =
+    {
+      "#version 120 \n"
+      "attribute highp vec4 vertex;\n"
+      "attribute highp vec3 colors;\n"
+      "uniform highp mat4 mvp_matrix;\n"
+      "uniform highp mat4 mv_matrix; \n"
+      "uniform highp float point_size; \n"
+      "varying highp vec4 fP; \n"
+      "varying highp vec4 color; \n"
+      "void main(void)\n"
+      "{\n"
+      " gl_PointSize = point_size; \n"
+      "   color = vec4(colors, 1.0); \n"
+      "   fP = mv_matrix * vertex; \n"
+      "   gl_Position = mvp_matrix * vertex;\n"
+      "}"
+    };
+    
   facet_program.addShaderFromSourceCode(QOpenGLShader::Vertex, vertex_source);
   facet_program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/cgal/Polyhedron_3/resources/shader_flat.f");
   facet_program.link();

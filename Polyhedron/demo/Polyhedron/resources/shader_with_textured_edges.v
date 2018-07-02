@@ -6,8 +6,10 @@
  varying highp vec3 fColors; 
  varying highp vec2 f_texCoord; 
   
- void main(void) 
- { 
+  uniform highp float point_size;
+  void main(void)
+  {
+    gl_PointSize = point_size;
     f_texCoord = v_texCoord; 
     fColors = color_lines; 
     gl_Position = mvp_matrix * vertex; 
