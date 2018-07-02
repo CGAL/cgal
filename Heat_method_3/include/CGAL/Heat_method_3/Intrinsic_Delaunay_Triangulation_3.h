@@ -319,10 +319,10 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
              put(hcm, hd,p11);
              edge_descriptor ed1 = edge(hd, tm);
              hd = next(hd,tm);
-
              //the second local coordinate will be edge_length(first edge),0
              Point_2 p21(edge_lengths(ed1,0),0);
              put(hcm,hd,p21);
+
 
              //use basic trigonometry to compute third coordinate
              edge_descriptor ed2 = edge(hd, tm);
@@ -338,6 +338,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
              angle_a = angle_a/(2*e3_len*e1_len);
              Point_2 p31(e3_len*std::cos(angle_a), e3_len*std::sin(angle_a));
              put(hcm,hd,p31);
+
            }
          }
          //todo:: determine which can be const

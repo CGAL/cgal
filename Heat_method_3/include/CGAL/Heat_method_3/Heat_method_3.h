@@ -488,29 +488,73 @@ namespace Heat_method_3 {
       std::vector<triplet> c_matrix_entries;
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
       //Go through each face on the mesh
-      BOOST_FOREACH(face_descriptor f, faces(tm)) {
-        boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
-        vertex_descriptor current = *(vbegin);
-        vertex_descriptor neighbor_one = *(++vbegin);
-        vertex_descriptor neighbor_two = *(++vbegin);
-        Index i = get(vertex_id_map, current);
-        Index j = get(vertex_id_map, neighbor_one);
-        Index k = get(vertex_id_map, neighbor_two);
-        Point_3 pi, pj, pk;
-        if(!idf)
-        {
+      if(!idf)
+      {
+        BOOST_FOREACH(face_descriptor f, faces(tm)) {
+          boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
+          vertex_descriptor current = *(vbegin);
+          vertex_descriptor neighbor_one = *(++vbegin);
+          vertex_descriptor neighbor_two = *(++vbegin);
+          Index i = get(vertex_id_map, current);
+          Index j = get(vertex_id_map, neighbor_one);
+          Index k = get(vertex_id_map, neighbor_two);
+          Point_3 pi, pj, pk;
+
           VertexPointMap_reference p_i = get(vpm,current);
           VertexPointMap_reference p_j = get(vpm, neighbor_one);
           VertexPointMap_reference p_k = get(vpm, neighbor_two);
           pi = p_i;
           pj = p_j;
           pk = p_k;
+
+          Vector_3 cross = CGAL::cross_product((pj-pi), (pk-pi));
+          double dot = (pj-pi)*(pk-pi);
+
+          double norm_cross = (CGAL::sqrt(cross*cross));
+
+          double cotan_i = dot/norm_cross;
+          c_matrix_entries.push_back(triplet(j,k ,-(1./2)*cotan_i));
+          c_matrix_entries.push_back(triplet(k,j,-(1./2)* cotan_i));
+          c_matrix_entries.push_back(triplet(j,j,(1./2)*cotan_i));
+          c_matrix_entries.push_back(triplet(k,k,(1./2)* cotan_i));
+
+          cross = CGAL::cross_product((pi-pj), (pk-pj));
+          dot = to_double((pi-pj)*(pk-pj));
+          double cotan_j = dot/norm_cross;
+          c_matrix_entries.push_back(triplet(i,k ,-(1./2)*cotan_j));
+          c_matrix_entries.push_back(triplet(k,i,-(1./2)* cotan_j));
+          c_matrix_entries.push_back(triplet(i,i,(1./2)* cotan_j));
+          c_matrix_entries.push_back(triplet(k,k,(1./2)* cotan_j));
+
+          cross = CGAL::cross_product((pi-pk), (pj-pk));
+          dot = to_double((pi-pk)*(pj-pk));
+          double cotan_k = dot/norm_cross;
+          c_matrix_entries.push_back(triplet(i,j,-(1./2)*cotan_k));
+          c_matrix_entries.push_back(triplet(j,i,-(1./2)* cotan_k));
+          c_matrix_entries.push_back(triplet(i,i,(1./2)* cotan_k));
+          c_matrix_entries.push_back(triplet(j,j,(1./2)* cotan_k));
+
+          //double area_face = CGAL::Polygon_mesh_processing::face_area(f,tm);
+          //cross is 2*area
+          A_matrix_entries.push_back(triplet(i,i, (1./6.)*norm_cross));
+          A_matrix_entries.push_back(triplet(j,j, (1./6.)*norm_cross));
+          A_matrix_entries.push_back(triplet(k,k, (1./6.)*norm_cross));
         }
-        else
-        {
-          halfedge_descriptor first_h = halfedge(current, tm);
-          halfedge_descriptor second_h = halfedge(neighbor_one, tm);
-          halfedge_descriptor third_h = halfedge(neighbor_two, tm);
+      }
+      else
+      {
+        BOOST_FOREACH(face_descriptor f, faces(idt_copy)) {
+          boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
+          vertex_descriptor current = *(vbegin);
+          vertex_descriptor neighbor_one = *(++vbegin);
+          vertex_descriptor neighbor_two = *(++(vbegin));
+          Index i = get(vertex_id_map, current);
+          Index j = get(vertex_id_map, neighbor_one);
+          Index k = get(vertex_id_map, neighbor_two);
+          halfedge_descriptor first_h = next(halfedge(f, idt_copy), idt_copy);
+          halfedge_descriptor second_h = next(first_h, idt_copy);
+          halfedge_descriptor third_h = next(second_h, idt_copy);
+
           //add a check to make sure halfedge->face is the face we are looking at
           Point_2 p_i = get(halfedge_coord_map, first_h);
           Point_2 p_j = get(halfedge_coord_map, second_h);
@@ -518,41 +562,39 @@ namespace Heat_method_3 {
           Point_3 pi(p_i.x(), p_i.y(),0);
           Point_3 pj(p_j.x(), p_j.y(),0);
           Point_3 pk(p_k.x(), p_k.y(),0);
-          std::cout<<"and pi is: "<< pi<< " and pj is:" << pj << "and pk is: "<< pk << "\n";
+
+          Vector_3 cross = CGAL::cross_product((pj-pi), (pk-pi));
+          double dot = (pj-pi)*(pk-pi);
+          double norm_cross = (CGAL::sqrt(cross*cross));
+
+          double cotan_i = dot/norm_cross;
+          c_matrix_entries.push_back(triplet(j,k ,-(1./2)*cotan_i));
+          c_matrix_entries.push_back(triplet(k,j,-(1./2)* cotan_i));
+          c_matrix_entries.push_back(triplet(j,j,(1./2)*cotan_i));
+          c_matrix_entries.push_back(triplet(k,k,(1./2)* cotan_i));
+
+          cross = CGAL::cross_product((pi-pj), (pk-pj));
+          dot = to_double((pi-pj)*(pk-pj));
+          double cotan_j = dot/norm_cross;
+          c_matrix_entries.push_back(triplet(i,k ,-(1./2)*cotan_j));
+          c_matrix_entries.push_back(triplet(k,i,-(1./2)* cotan_j));
+          c_matrix_entries.push_back(triplet(i,i,(1./2)* cotan_j));
+          c_matrix_entries.push_back(triplet(k,k,(1./2)* cotan_j));
+
+          cross = CGAL::cross_product((pi-pk), (pj-pk));
+          dot = to_double((pi-pk)*(pj-pk));
+          double cotan_k = dot/norm_cross;
+          c_matrix_entries.push_back(triplet(i,j,-(1./2)*cotan_k));
+          c_matrix_entries.push_back(triplet(j,i,-(1./2)* cotan_k));
+          c_matrix_entries.push_back(triplet(i,i,(1./2)* cotan_k));
+          c_matrix_entries.push_back(triplet(j,j,(1./2)* cotan_k));
+          //double area_face = CGAL::Polygon_mesh_processing::face_area(f,tm);
+          //cross is 2*area
+          A_matrix_entries.push_back(triplet(i,i, (1./6.)*norm_cross));
+          A_matrix_entries.push_back(triplet(j,j, (1./6.)*norm_cross));
+          A_matrix_entries.push_back(triplet(k,k, (1./6.)*norm_cross));
         }
 
-        Vector_3 cross = CGAL::cross_product((pj-pi), (pk-pi));
-        double dot = (pj-pi)*(pk-pi);
-
-        double norm_cross = (CGAL::sqrt(cross*cross));
-
-        double cotan_i = dot/norm_cross;
-        c_matrix_entries.push_back(triplet(j,k ,-(1./2)*cotan_i));
-        c_matrix_entries.push_back(triplet(k,j,-(1./2)* cotan_i));
-        c_matrix_entries.push_back(triplet(j,j,(1./2)*cotan_i));
-        c_matrix_entries.push_back(triplet(k,k,(1./2)* cotan_i));
-
-        cross = CGAL::cross_product((pi-pj), (pk-pj));
-        dot = to_double((pi-pj)*(pk-pj));
-        double cotan_j = dot/norm_cross;
-        c_matrix_entries.push_back(triplet(i,k ,-(1./2)*cotan_j));
-        c_matrix_entries.push_back(triplet(k,i,-(1./2)* cotan_j));
-        c_matrix_entries.push_back(triplet(i,i,(1./2)* cotan_j));
-        c_matrix_entries.push_back(triplet(k,k,(1./2)* cotan_j));
-
-        cross = CGAL::cross_product((pi-pk), (pj-pk));
-        dot = to_double((pi-pk)*(pj-pk));
-        double cotan_k = dot/norm_cross;
-        c_matrix_entries.push_back(triplet(i,j,-(1./2)*cotan_k));
-        c_matrix_entries.push_back(triplet(j,i,-(1./2)* cotan_k));
-        c_matrix_entries.push_back(triplet(i,i,(1./2)* cotan_k));
-        c_matrix_entries.push_back(triplet(j,j,(1./2)* cotan_k));
-
-        //double area_face = CGAL::Polygon_mesh_processing::face_area(f,tm);
-        //cross is 2*area
-        A_matrix_entries.push_back(triplet(i,i, (1./6.)*norm_cross));
-        A_matrix_entries.push_back(triplet(j,j, (1./6.)*norm_cross));
-        A_matrix_entries.push_back(triplet(k,k, (1./6.)*norm_cross));
       }
       m_mass_matrix.resize(m,m);
       m_mass_matrix.setFromTriplets(A_matrix_entries.begin(), A_matrix_entries.end());

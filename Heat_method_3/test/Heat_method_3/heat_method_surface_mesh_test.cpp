@@ -54,6 +54,7 @@ void cotan_matrix_test(const SparseMatrix& c)
     }
   }
   //Every row should sum up to 0, allow for slight error for large meshes
+  std::cout<<"sum is: "<< sum << "\n";
   assert(sum < 0.000000001);
 }
 
@@ -118,6 +119,7 @@ int main()
   source_set_tests(hm,sm);
   //cotan matrix tests
   const SparseMatrix& M = hm.mass_matrix();
+  //std::cout<<"and M is: "<< Eigen::MatrixXd(M) << "\n";
   const SparseMatrix& c = hm.cotan_matrix();
   cotan_matrix_test(c);
   mass_matrix_test(M);
