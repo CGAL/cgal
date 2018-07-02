@@ -25,14 +25,12 @@ typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef CGAL::dynamic_halfedge_property_t<Point_2> Halfedge_coordinate_tag;
 typedef boost::property_map<Mesh, Halfedge_coordinate_tag >::type Halfedge_coordinate_map;
 
-
-typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<Mesh,Kernel,Vertex_distance_map, Halfedge_coordinate_map> IDT;
+typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<Mesh,Kernel, Halfedge_coordinate_map> IDT;
 
 
 int main()
 {
   Mesh sm;
-  Vertex_distance_map vertex_distance_map = get(Vertex_distance_tag(),sm);
   Halfedge_coordinate_map halfedge_coord_map = get(Halfedge_coordinate_tag(), sm);
 
   std::ifstream in("data/brain100k.off");
@@ -42,9 +40,10 @@ int main()
     return 1;
   }
   int a = num_faces(sm);
-  IDT im(sm, vertex_distance_map, halfedge_coord_map);
+  IDT im(sm, halfedge_coord_map);
 
   std::cout<<"success \n";
   return 0;
 
+  //tests to add: for all edges, angles opposite edge sum up to less than pi
 }

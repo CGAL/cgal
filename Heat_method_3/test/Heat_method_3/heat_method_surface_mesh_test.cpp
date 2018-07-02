@@ -105,7 +105,7 @@ int main()
 {
   Mesh sm;
   Vertex_distance_map vertex_distance_map = get(Vertex_distance_tag(),sm);
-
+  bool idf = false;
 
   std::ifstream in("data/pyramid0.off");
   in >> sm;
@@ -114,7 +114,7 @@ int main()
     return 1;
   }
   //source set tests
-  Heat_method hm(sm, vertex_distance_map);
+  Heat_method hm(sm, vertex_distance_map, idf);
   source_set_tests(hm,sm);
   //cotan matrix tests
   const SparseMatrix& M = hm.mass_matrix();
@@ -153,7 +153,7 @@ int main()
     std::cerr << "Problem loading the input data" << std::endl;
     return 1;
   }
-  Heat_method hm2(sm2, vertex_distance_map2);
+  Heat_method hm2(sm2, vertex_distance_map2, idf);
   //Eigen::VectorXd solved_dist_sphere = hm2.distances();
   const SparseMatrix& M2 = hm2.mass_matrix();
   const SparseMatrix& c2 = hm2.cotan_matrix();
@@ -184,7 +184,7 @@ int main()
     std::cerr << "Problem loading the input data" << std::endl;
     return 1;
   }
-  Heat_method hm3(sm3, vertex_distance_map3);
+  Heat_method hm3(sm3, vertex_distance_map3,idf);
   //Eigen::VectorXd solved_dist_sphere = hm2.distances();
   const SparseMatrix& M3 = hm3.mass_matrix();
   const SparseMatrix& c3 = hm3.cotan_matrix();
@@ -197,7 +197,7 @@ int main()
   const Vertex_distance_map& old_vdm = hm3.get_vertex_distance_map();
   hm3.update();
   const Vertex_distance_map& original_vdm = hm3.get_vertex_distance_map();
-  hm.update();
+  hm3.update();
   const Vertex_distance_map& new_vdm = hm3.get_vertex_distance_map();
   check_no_update(sm3, original_vdm, new_vdm);
   const SparseMatrix& K4 = hm3.kronecker_delta();

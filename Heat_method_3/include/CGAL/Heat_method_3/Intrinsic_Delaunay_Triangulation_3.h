@@ -80,7 +80,6 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
      */
      template <typename TriangleMesh,
                typename Traits,
-               typename VertexDistanceMap,
                typename HalfedgeCoordinateMap,
                typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type,
                typename FaceIndexMap = typename boost::property_map< TriangleMesh, face_index_t>::const_type,
@@ -124,16 +123,16 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
 
 
      public:
-       Intrinsic_Delaunay_Triangulation_3(TriangleMesh tm, VertexDistanceMap vdm, HalfedgeCoordinateMap hcm)
-        : tm(tm), vdm(vdm), vpm(get(vertex_point,tm)), hcm(hcm)
+       Intrinsic_Delaunay_Triangulation_3(TriangleMesh tm, HalfedgeCoordinateMap hcm)
+        : tm(tm), hcm(hcm)
         {
           build();
         }
 
 
 
-       Intrinsic_Delaunay_Triangulation_3(TriangleMesh tm, VertexDistanceMap vdm, HalfedgeCoordinateMap hcm, VertexPointMap vpm, FaceIndexMap fpm, EdgeIndexMap epm)
-         : tm(tm), vdm(vdm), hcm(hcm), vpm(vpm), fpm(fpm), epm(epm)
+       Intrinsic_Delaunay_Triangulation_3(TriangleMesh tm, HalfedgeCoordinateMap hcm, FaceIndexMap fpm, EdgeIndexMap epm)
+         : tm(tm), hcm(hcm), fpm(fpm), epm(epm)
        {
          build();
        }
@@ -302,7 +301,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
            }
            loop_over_edges(stack, mark_edges);
            //now that edges are calculated, go through and for each face, calculate the vertex positions around it
-  
+
            BOOST_FOREACH(face_descriptor f, faces(tm))
            {
              CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
@@ -346,7 +345,6 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
          VertexPointMap vpm;
          FaceIndexMap fpm;
          EdgeIndexMap epm;
-         VertexDistanceMap vdm;
          HalfedgeCoordinateMap hcm;
          int number_of_edges = num_edges(tm);
          int number_of_faces = num_faces(tm);
