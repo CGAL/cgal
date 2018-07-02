@@ -311,6 +311,7 @@ void Scene_textured_surface_mesh_item::draw(CGAL::Three::Viewer_interface* viewe
   attribBuffers(viewer, PROGRAM_WITH_TEXTURE);
   d->program=getShaderProgram(PROGRAM_WITH_TEXTURE);
   d->program->bind();
+  
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->faces_buffer.size()/8));
   //Clean-up
   d->program->release();
