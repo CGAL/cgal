@@ -38,7 +38,6 @@
 #include <CGAL/Dynamic_property_map.h>
 #include <vector>
 #include <CGAL/squared_distance_3.h>
-#include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <stack>
@@ -46,6 +45,16 @@
 #include <fstream>
 #include <array>
 #include <math.h>
+
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Surface_mesh_parameterization/IO/File_off.h>
+#include <CGAL/Surface_mesh_parameterization/Circular_border_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/Discrete_authalic_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/Error_code.h>
+#include <CGAL/Surface_mesh_parameterization/parameterize.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
+
 
 
 
@@ -72,6 +81,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
      template <typename TriangleMesh,
                typename Traits,
                typename VertexDistanceMap,
+               typename HalfedgeCoordinateMap,
                typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type,
                typename FaceIndexMap = typename boost::property_map< TriangleMesh, face_index_t>::const_type,
                typename EdgeIndexMap = typename boost::property_map< TriangleMesh, boost::edge_index_t>::const_type,
@@ -89,6 +99,8 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
        typedef typename Traits::Point_3                                      Point_3;
        typedef typename Traits::FT                                                FT;
        typedef typename Traits::Vector_3                                    Vector_3;
+
+       typedef typename Traits::Point_2                                     Point_2;
 
        typedef typename LA::SparseMatrix Matrix;
        typedef typename LA::Index Index;
@@ -108,29 +120,20 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
        typedef CGAL::dynamic_edge_property_t<Index> Edge_property_tag;
        typedef typename boost::property_map<TriangleMesh, Edge_property_tag >::type Edge_id_map;
        Edge_id_map edge_id_map;
-
        typedef typename std::stack<edge_descriptor, std::list<edge_descriptor> > edge_stack;
-
-       typedef typename std::array<vertex_descriptor, 3> vertex_for_face;
-
-
-       //all z coords will be 0 though
-       typedef typename std::array<Point_3, 3> coords_for_face;
-
-
 
 
      public:
-       Intrinsic_Delaunay_Triangulation_3(TriangleMesh tm, VertexDistanceMap vdm)
-        : tm(tm), vdm(vdm), vpm(get(vertex_point,tm))
+       Intrinsic_Delaunay_Triangulation_3(TriangleMesh tm, VertexDistanceMap vdm, HalfedgeCoordinateMap hcm)
+        : tm(tm), vdm(vdm), vpm(get(vertex_point,tm)), hcm(hcm)
         {
           build();
         }
 
 
 
-       Intrinsic_Delaunay_Triangulation_3(TriangleMesh tm, VertexDistanceMap vdm, VertexPointMap vpm, FaceIndexMap fpm, EdgeIndexMap epm)
-         : tm(tm), vdm(vdm), vpm(vpm), fpm(fpm), epm(epm)
+       Intrinsic_Delaunay_Triangulation_3(TriangleMesh tm, VertexDistanceMap vdm, HalfedgeCoordinateMap hcm, VertexPointMap vpm, FaceIndexMap fpm, EdgeIndexMap epm)
+         : tm(tm), vdm(vdm), hcm(hcm), vpm(vpm), fpm(fpm), epm(epm)
        {
          build();
        }
@@ -298,50 +301,45 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
              stack.push(ed);
            }
            loop_over_edges(stack, mark_edges);
+           //now that edges are calculated, go through and for each face, calculate the vertex positions around it
+  
+           BOOST_FOREACH(face_descriptor f, faces(tm))
+           {
+             CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
+             Index face_i = get(face_id_map, f);
 
-            //now that edges are calculated, go through and for each face, calculate the vertex positions around it
-            face_coords_array = new coords_for_face[number_of_faces];
-            face_vertex_array = new vertex_for_face[number_of_faces];
-            BOOST_FOREACH(face_descriptor f, faces(tm))
-            {
-              CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
-              Index face_i = get(face_id_map, f);
-              boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
-              vertex_descriptor current = *(vbegin);
-              vertex_descriptor n_two = *(++vbegin);
-              vertex_descriptor n_three = *(++vbegin);
-              vertex_for_face a = {current, n_two, n_three};
+             boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
+             halfedge_descriptor hd = halfedge(f,tm);
+             if(face(hd,tm) != f)
+             {
+               hd = opposite(hd,tm);
+             }
+             hd = next(hd,tm);
+             //each 'local' set of coordinates will have 0,0 at the first vertex/halfedge
+             Point_2 p11(0,0);
+             put(hcm, hd,p11);
+             edge_descriptor ed1 = edge(hd, tm);
+             hd = next(hd,tm);
 
-              face_vertex_array[face_i] = a;
-              //fill in Face_Vertex_Array with these descriptors
-              //fill in face_coord_array with (0,0),(length,0)) and then (lki(costheta, sintheta))
-              //use those to compute in heat method
-              halfedge_descriptor hd = halfedge(f,tm);
-              if(face(hd,tm) != f)
-              {
-                hd = opposite(hd,tm);
-              }
-              hd = next(hd,tm);
-              edge_descriptor ed1 = edge(hd, tm);
-              hd = next(hd,tm);
-              edge_descriptor ed2 = edge(hd, tm);
-              hd = next(hd,tm);
-              edge_descriptor ed3 = edge(hd, tm);
-              Index e1 = get(edge_id_map, ed1);
-              Index e2 = get(edge_id_map, ed2);
-              Index e3 = get(edge_id_map, ed3);
-              double e1_len = edge_lengths(e1,0);
-              double e2_len = edge_lengths(e2,0);
-              double e3_len = edge_lengths(e3,0);
-              //(0,0), (e1_len,0) and then l3(costheta,sintheta)
-              double angle_a = -(e2_len*e2_len) + e3_len*e3_len + e1_len*e1_len;
-              angle_a = angle_a/(2*e3_len*e1_len);
-              Point_3 p2(e3_len*std::cos(angle_a), e3_len*std::sin(angle_a),0,1);
-              Point_3 p0(0,0,0,1);
-              Point_3 p1(e1_len,0,0,1);
-              coords_for_face local_points= {p0,p1,p2};
-              face_coords_array[face_i] = local_points;
-            }
+             //the second local coordinate will be edge_length(first edge),0
+             Point_2 p21(edge_lengths(ed1,0),0);
+             put(hcm,hd,p21);
+
+             //use basic trigonometry to compute third coordinate
+             edge_descriptor ed2 = edge(hd, tm);
+             hd = next(hd,tm);
+             edge_descriptor ed3 = edge(hd, tm);
+             Index e1 = get(edge_id_map, ed1);
+             Index e2 = get(edge_id_map, ed2);
+             Index e3 = get(edge_id_map, ed3);
+             double e1_len = edge_lengths(e1,0);
+             double e2_len = edge_lengths(e2,0);
+             double e3_len = edge_lengths(e3,0);
+             double angle_a = -(e2_len*e2_len) + e3_len*e3_len + e1_len*e1_len;
+             angle_a = angle_a/(2*e3_len*e1_len);
+             Point_2 p31(e3_len*std::cos(angle_a), e3_len*std::sin(angle_a));
+             put(hcm,hd,p31);
+           }
          }
          //todo:: determine which can be const
          TriangleMesh tm;
@@ -349,13 +347,11 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
          FaceIndexMap fpm;
          EdgeIndexMap epm;
          VertexDistanceMap vdm;
+         HalfedgeCoordinateMap hcm;
          int number_of_edges = num_edges(tm);
          int number_of_faces = num_faces(tm);
          Eigen::VectorXd edge_lengths;
          Eigen::VectorXd mark_edges;
-         coords_for_face *face_coords_array;
-         vertex_for_face *face_vertex_array;
-
       };
 } // namespace Intrinsic_Delaunay_Triangulation_3
 } // namespace CGAL
