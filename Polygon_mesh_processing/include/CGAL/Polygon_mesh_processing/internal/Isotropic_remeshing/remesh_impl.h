@@ -365,7 +365,7 @@ namespace internal {
 
       BOOST_FOREACH(face_descriptor f, face_range)
       {
-        if (is_degenerate_triangle_face(f, mesh_,)){
+        if (is_degenerate_triangle_face(f, mesh_)){
           continue;
         }
         Patch_id pid = get_patch_id(f);
