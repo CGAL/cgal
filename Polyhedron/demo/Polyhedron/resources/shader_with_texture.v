@@ -1,4 +1,4 @@
-#version 120
+
 attribute highp vec4 vertex;
 attribute highp vec3 normal;
 attribute highp vec2 v_texCoord; 

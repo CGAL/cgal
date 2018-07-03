@@ -255,7 +255,7 @@ void Viewer::init()
          //Vertex source code
          const char vertex_source_dist[] =
          {
-             "#version 120 \n"
+             " \n"
              "attribute highp vec4 vertex;\n"
              "uniform highp mat4 mvp_matrix;\n"
              "uniform highp float point_size;\n"
@@ -269,7 +269,7 @@ void Viewer::init()
          //Fragment source code
          const char fragment_source_dist[] =
          {
-             "#version 120 \n"
+             " \n"
              "void main(void) { \n"
              "gl_FragColor = vec4(0.0,0.0,0.0,1.0); \n"
              "} \n"

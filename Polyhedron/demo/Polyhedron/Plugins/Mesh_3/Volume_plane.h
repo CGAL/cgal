@@ -376,7 +376,7 @@ private:
 
 template<typename T>
 const char* Volume_plane<T>::vertexShader_source =
-      "#version 120 \n"
+      " \n"
       "attribute highp vec4 vertex; \n"
       "attribute highp float color; \n"
       "uniform highp mat4 mvp_matrix; \n"
@@ -388,13 +388,13 @@ const char* Volume_plane<T>::vertexShader_source =
 
 template<typename T>
 const char* Volume_plane<T>::fragmentShader_source =
-      "#version 120\n"
+      "\n"
       "varying highp vec4 fullColor; \n"
       "void main() { gl_FragColor = fullColor; } \n";
 
 template<typename T>
 const char* Volume_plane<T>::vertexShader_bordures_source =
-      "#version 120 \n"
+      " \n"
       "attribute highp vec4 vertex; \n"
       "attribute highp vec4 colors; \n"
       "uniform highp mat4 mvp_matrix; \n"
@@ -406,7 +406,7 @@ const char* Volume_plane<T>::vertexShader_bordures_source =
 
 template<typename T>
 const char* Volume_plane<T>::fragmentShader_bordures_source =
-      "#version 120\n"
+      "\n"
       "varying highp vec4 fullColor; \n"
       "void main() { gl_FragColor = fullColor; } \n";
 

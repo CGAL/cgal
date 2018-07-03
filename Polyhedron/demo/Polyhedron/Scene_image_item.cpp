@@ -505,7 +505,7 @@ void Scene_image_item_priv::compile_shaders()
     //Vertex source code
     const char vertex_source[] =
     {
-      "#version 120 \n"
+      " \n"
       "attribute highp vec4 vertex;\n"
       "attribute highp vec3 normal;\n"
       "attribute highp vec4 inColor;\n"
@@ -526,7 +526,7 @@ void Scene_image_item_priv::compile_shaders()
     //Fragment source code
     const char fragment_source[] =
     {
-      "#version 120 \n"
+      " \n"
       "varying highp vec4 fP; \n"
       "varying highp vec3 fN; \n"
       "varying highp vec4 color; \n"

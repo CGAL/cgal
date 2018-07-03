@@ -1,4 +1,4 @@
-#version 120
+
 varying highp vec4 color;
 uniform highp vec3 dirView;
 uniform highp vec3 plane_normal;

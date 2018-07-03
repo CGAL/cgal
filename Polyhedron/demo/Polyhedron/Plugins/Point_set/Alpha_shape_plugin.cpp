@@ -300,7 +300,7 @@ Scene_alpha_shape_item::Scene_alpha_shape_item(Scene_points_with_normal_item *po
   }
     const char vertex_source[] =
     {
-      "#version 120 \n"
+      " \n"
       "attribute highp vec4 vertex;\n"
       "attribute highp vec3 colors;\n"
       "uniform highp mat4 mvp_matrix;\n"

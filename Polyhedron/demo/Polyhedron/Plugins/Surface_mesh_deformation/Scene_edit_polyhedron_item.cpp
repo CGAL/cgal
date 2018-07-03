@@ -305,7 +305,7 @@ void Scene_edit_polyhedron_item_priv::init_values()
 
     const char vertex_shader_source_bbox[] =
     {
-        "#version 120 \n"
+        " \n"
         "attribute highp vec3 vertex; \n"
         "attribute highp vec3 colors; \n"
 
@@ -324,7 +324,7 @@ void Scene_edit_polyhedron_item_priv::init_values()
     };
     const char fragment_shader_source[]=
     {
-        "#version 120 \n"
+        " \n"
         "varying vec3 fColors; \n"
         " \n"
         "void main(void) \n"
@@ -339,7 +339,7 @@ void Scene_edit_polyhedron_item_priv::init_values()
     //Vertex source code
     const char vertex_source[] =
     {
-      "#version 120                                     \n"
+      "                                     \n"
       "attribute highp vec4 vertex;                     \n"
       "attribute highp vec4 colors;                     \n"
       "uniform highp mat4 mvp_matrix;                   \n"
@@ -379,7 +379,7 @@ void Scene_edit_polyhedron_item_priv::init_values()
     //Fragment source code
     const char fragment_source[] =
     {
-      "#version 120                 \n"
+      "                 \n"
       "varying highp vec4 color;    \n"
       "varying highp float dist[6]; \n"
       "uniform bool is_clipbox_on;  \n"
