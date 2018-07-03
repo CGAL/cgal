@@ -39,12 +39,28 @@ namespace CGAL
 
 /*!
  * \ingroup PkgSurfaceSegmentation
- * @brief Function computing concavity value of a cluster.
+ * @brief Function computing concavity value of a cluster described by an id in a triangle mesh.
  *
  * Cluster is a subset of connected faces in a triangle mesh.
- * Concavity value is the largest distance from a vertex in a cluster to the projected point onto the convex hull of a mesh.
  *
- * @return concativity value.
+ * @pre `is_triangle_mesh(mesh)`
+ *
+ * @tparam ConcurrencyTag enables sequential versus parallel algorithm (possible values are `Sequential_tag` and `Parallel_tag`)
+ * @tparam TriangleMesh a model of `FaceListGraph`
+ * @tparam FacePropertyMap a `ReadWritePropertyMap` with the `boost::graph_traits<TriangleMesh>::%face_descriptor` key type and an integer value type
+ * @tparam NamedParameters a sequence of Named Parameters
+ *
+ * @param mesh clustered triangle mesh
+ * @param face_ids property map with per face cluster ids
+ * @param cluster_id id of the target cluster on which concavity value is computed
+ * @param np optional sequence of `Named Parameters` among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `mesh` \cgalParamEnd
+ *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+ * \cgalNamedParamsEnd
+ *
+ * @return concativity value, the largest distance from a vertex in a cluster to its projection onto the convex hull of a triangle mesh
  */
 template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap, class NamedParameters>
 double
@@ -59,7 +75,6 @@ concavity_value(const TriangleMesh& mesh,
     Geom_traits geom_traits = boost::choose_param(boost::get_param(np, internal_np::geom_traits), Geom_traits());
     Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
                                   get_const_property_map(boost::vertex_point, mesh));
-
 
     CGAL_precondition(is_triangle_mesh(mesh));
 
@@ -84,9 +99,21 @@ concavity_value(const TriangleMesh& mesh,
  * \ingroup PkgSurfaceSegmentation
  * @brief Function computing concavity value of a triangle mesh.
  *
- * Concavity value is the largest distance from a vertex in a mesh to the projected point onto the convex hull of a mesh.
+ * @pre `is_triangle_mesh(mesh)`
  *
- * @return concativity value.
+ * @tparam ConcurrencyTag enables sequential versus parallel algorithm (possible values are `Sequential_tag` and `Parallel_tag`)
+ * @tparam TriangleMesh a model of `FaceListGraph`
+ * @tparam NamedParameters a sequence of Named Parameters
+ *
+ * @param mesh triangle mesh on which concavity value is computed
+ * @param np optional sequence of `Named Parameters` among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `mesh` \cgalParamEnd
+ *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+ * \cgalNamedParamsEnd
+ *
+ * @return concativity value, the largest distance from a vertex in a cluster to its projection onto the convex hull of a triangle mesh
  */
 template <class ConcurrencyTag, class TriangleMesh, class NamedParameters>
 double
@@ -99,7 +126,6 @@ concavity_value(const TriangleMesh& mesh,
     Geom_traits geom_traits = boost::choose_param(boost::get_param(np, internal_np::geom_traits), Geom_traits());
     Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
                                   get_const_property_map(boost::vertex_point, mesh));
-
 
     CGAL_precondition(is_triangle_mesh(mesh));
 
@@ -120,12 +146,32 @@ concavity_value(const TriangleMesh& mesh)
 
 /*!
  * \ingroup PkgSurfaceSegmentation
- * @brief Function computing the approximate convex decomposition of a triangle mesh.
+ * @brief Function computing approximate convex decomposition of a triangle mesh, which is the smallest set of clusters satisfying concavity constraint. 
+ *
+ * Clusters are subsets of connected faces in a triangle mesh which concavity values are less or equal to 'concavity_threshold'.
  *
  * This function fills a property map which associates a cluster-id (in the range [0, 'number_of_clusters'-1]) to each face.
- * Clusters are subsets of connected faces in a triangle mesh which concavity values are less than 'concavity_threshold'.
  *
- * @return number of clusters.
+ * @pre `is_triangle_mesh(mesh)`
+ * @pre `num_face(mesh) >= min_number_of_clusters`
+ *
+ * @tparam ConcurrencyTag enables sequential versus parallel algorithm (possible values are `Sequential_tag` and `Parallel_tag`)
+ * @tparam TriangleMesh a model of `FaceListGraph`
+ * @tparam FacePropertyMap a `ReadWritePropertyMap` with the `boost::graph_traits<TriangleMesh>::%face_descriptor` key type and an integer value type
+ * @tparam NamedParameters a sequence of Named Parameters
+ *
+ * @param mesh triangle mesh on which approximate convex decomposition is computed
+ * @param[out] face_ids property map with per face cluster ids
+ * @param concavity_threshold maximal concavity value of a cluster constraint
+ * @param min_number_of_clusters minimal number of clusters constraint (default=1)
+ * @param np optional sequence of `Named Parameters` among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `mesh` \cgalParamEnd
+ *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+ * \cgalNamedParamsEnd
+ *
+ * @return number of clusters
  */
 template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap, class NamedParameters>
 std::size_t
