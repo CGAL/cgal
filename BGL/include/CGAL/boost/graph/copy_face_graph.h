@@ -240,7 +240,7 @@ boost::function_output_iterator<Output_iterator_functor<PMAP> > make_functor(PMA
   return boost::make_function_output_iterator(Output_iterator_functor<PMAP>(map));
 }
 
-Emptyset_iterator make_functor(const boost::param_not_found&)
+inline Emptyset_iterator make_functor(const boost::param_not_found&)
 {
   return Emptyset_iterator();
 }
@@ -270,9 +270,9 @@ Emptyset_iterator make_functor(const boost::param_not_found&)
   
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map}
-      the property map with the points associated to the vertices of `sm` (`tm`).
+      the property map with the points associated to the vertices of `sm` .
       If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `SourceMesh` (`TargetMesh`)
+      `CGAL::vertex_point_t` should be available in `SourceMesh`
     \cgalParamEnd
     \cgalParamBegin{vertex_to_vertex_output_iterator} an `OutputIterator` containing the
       pairs source-vertex, target-vertex. If this parameter is given, then 
@@ -301,9 +301,9 @@ Emptyset_iterator make_functor(const boost::param_not_found&)
   
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map}
-      the property map with the points associated to the vertices of `sm` (`tm`).
+      the property map with the points associated to the vertices of `tm`.
       If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `SourceMesh` (`TargetMesh`)
+      `CGAL::vertex_point_t` should be available in `TargetMesh`
     \cgalParamEnd
   \cgalNamedParamsEnd
 
