@@ -38,7 +38,7 @@ public:
   QString message;
   bool _displayMessage;
   QTimer messageTimer;
-  QOpenGLFunctions_4_3_Compatibility* _recentFunctions;
+  QOpenGLFunctions_4_3_Core* _recentFunctions;
   bool is_2d_selection_mode;
 
   // D e p t h  P e e l i n g
@@ -208,6 +208,7 @@ void Viewer::fastDraw()
 
 void Viewer::init()
 {
+ 
   if(!isOpenGL_4_3())
   {
     std::cerr<<"The openGL context initialization failed "
@@ -215,15 +216,15 @@ void Viewer::init()
   }
   else
   {
-    d->_recentFunctions = new QOpenGLFunctions_4_3_Compatibility();
-    d->logger = new QOpenGLDebugLogger(this);
-    if(!d->logger->initialize())
-      qDebug()<<"logger could not init.";
-    else{
-      connect(d->logger, SIGNAL(messageLogged(QOpenGLDebugMessage)), this, SLOT(messageLogged(QOpenGLDebugMessage)));
-      d->logger->startLogging();
-    }
+    d->_recentFunctions = new QOpenGLFunctions_4_3_Core();
     d->_recentFunctions->initializeOpenGLFunctions();
+  }
+  d->logger = new QOpenGLDebugLogger(this);
+  if(!d->logger->initialize())
+    qDebug()<<"logger could not init.";
+  else{
+    connect(d->logger, SIGNAL(messageLogged(QOpenGLDebugMessage)), this, SLOT(messageLogged(QOpenGLDebugMessage)));
+    d->logger->startLogging();
   }
   glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
   if(!glDrawArraysInstanced)
@@ -255,7 +256,7 @@ void Viewer::init()
          //Vertex source code
          const char vertex_source_dist[] =
          {
-             "#version 120 \n"
+             "//#version 100  \n"
              "attribute highp vec4 vertex;\n"
              "uniform highp mat4 mvp_matrix;\n"
              "uniform highp float point_size;\n"
@@ -269,7 +270,7 @@ void Viewer::init()
          //Fragment source code
          const char fragment_source_dist[] =
          {
-             "#version 120 \n"
+             "//#version 100  \n"
              "void main(void) { \n"
              "gl_FragColor = vec4(0.0,0.0,0.0,1.0); \n"
              "} \n"
@@ -1186,7 +1187,7 @@ void Viewer::enableClippingBox(QVector4D box[6])
     d->clipbox[i] = box[i];
 }
 
-QOpenGLFunctions_4_3_Compatibility* Viewer::openGL_4_3_functions() { return d->_recentFunctions; }
+QOpenGLFunctions_4_3_Core *Viewer::openGL_4_3_functions() { return d->_recentFunctions; }
 
 void Viewer::set2DSelectionMode(bool b) { d->is_2d_selection_mode = b; }
 

@@ -143,7 +143,7 @@ protected:
   double prev_radius;
 
 public:
-  QOpenGLFunctions_4_3_Compatibility* openGL_4_3_functions() Q_DECL_OVERRIDE;
+  QOpenGLFunctions_4_3_Core* openGL_4_3_functions() Q_DECL_OVERRIDE;
   void setCurrentPass(int pass) Q_DECL_OVERRIDE;
    void setDepthWriting(bool writing_depth) Q_DECL_OVERRIDE;
    void setDepthPeelingFbo(QOpenGLFramebufferObject *fbo) Q_DECL_OVERRIDE;

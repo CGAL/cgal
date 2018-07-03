@@ -562,7 +562,7 @@ public:
     //Vertex source code
     const char tex_vertex_source[] =
     {
-        "#version 120 \n"
+        "//#version 100  \n"
         "attribute highp vec4 vertex;\n"
         "attribute highp vec2 tex_coord; \n"
         "uniform highp mat4 mvp_matrix;\n"
@@ -577,7 +577,7 @@ public:
     //Vertex source code
     const char tex_fragment_source[] =
     {
-        "#version 120 \n"
+        "//#version 100  \n"
         "uniform sampler2D texture;\n"
         "varying highp vec2 texc;\n"
         "void main(void) { \n"

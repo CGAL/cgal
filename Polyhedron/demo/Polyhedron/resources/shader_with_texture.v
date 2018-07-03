@@ -1,4 +1,4 @@
-#version 120
+//#version 100 
 attribute highp vec4 vertex;
 attribute highp vec3 normal;
 attribute highp vec2 v_texCoord; 
@@ -20,7 +20,11 @@ void main(void)
 {
   gl_PointSize = point_size;
    vec4 P = mv_matrix * vertex; 
-   vec3 N = mat3(mv_matrix)* normal; 
+   mat3 mv_matrix_3;                    
+   mv_matrix_3[0] = mv_matrix[0].xyz;   
+   mv_matrix_3[1] = mv_matrix[1].xyz;   
+   mv_matrix_3[2] = mv_matrix[2].xyz;   
+   vec3 N = mv_matrix_3* normal; 
    vec3 L = light_pos.xyz - P.xyz; 
    N = normalize(N); 
    L = normalize(L); 
@@ -30,6 +34,6 @@ void main(void)
    else 
        diffuse = max(dot(N,L), 0.0) * light_diff.xyz; 
    f_texCoord = v_texCoord; 
-   fColors = vec3(1.0f, 1.0f, 1.0f) * (light_amb.xyz + diffuse);
+   fColors = vec3(1.0, 1.0, 1.0) * (light_amb.xyz + diffuse);
    gl_Position =  mvp_matrix * f_matrix * vertex; 
 }  

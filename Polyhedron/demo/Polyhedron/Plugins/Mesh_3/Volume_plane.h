@@ -376,7 +376,7 @@ private:
 
 template<typename T>
 const char* Volume_plane<T>::vertexShader_source =
-      "#version 120 \n"
+      "//#version 100  \n"
       "attribute highp vec4 vertex; \n"
       "attribute highp float color; \n"
       "uniform highp mat4 mvp_matrix; \n"
@@ -388,13 +388,13 @@ const char* Volume_plane<T>::vertexShader_source =
 
 template<typename T>
 const char* Volume_plane<T>::fragmentShader_source =
-      "#version 120\n"
+      "//#version 100 \n"
       "varying highp vec4 fullColor; \n"
       "void main() { gl_FragColor = fullColor; } \n";
 
 template<typename T>
 const char* Volume_plane<T>::vertexShader_bordures_source =
-      "#version 120 \n"
+      "//#version 100  \n"
       "attribute highp vec4 vertex; \n"
       "attribute highp vec4 colors; \n"
       "uniform highp mat4 mvp_matrix; \n"
@@ -406,7 +406,7 @@ const char* Volume_plane<T>::vertexShader_bordures_source =
 
 template<typename T>
 const char* Volume_plane<T>::fragmentShader_bordures_source =
-      "#version 120\n"
+      "//#version 100 \n"
       "varying highp vec4 fullColor; \n"
       "void main() { gl_FragColor = fullColor; } \n";
 
@@ -469,7 +469,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   }
   mvp.translate(QVector3D(tx, ty, tz));
 
-  if(!program_bordures)
+ if(!program_bordures)
   {
     if(viewer->isOpenGL_4_3())
       program_bordures = viewer->getShaderProgram(PROGRAM_SOLID_WIREFRAME);
@@ -498,6 +498,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   drawRectangle(*this, !viewer->isOpenGL_4_3());
 
   program_bordures->bind();
+  vaos[2]->bind();
   rectBuffer.create();
   rectBuffer.bind();
   rectBuffer.allocate(v_rec.data(), static_cast<int>(v_rec.size()*sizeof(float)));
@@ -509,6 +510,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   {
     viewer->glLineWidth(4.0f);
     viewer->glDrawArrays(GL_LINE_LOOP, 0, static_cast<GLsizei>(v_rec.size()/3));
+    viewer->glLineWidth(1.0f);
   }
   else
   {
@@ -522,10 +524,11 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
     viewer->glDepthRangef(0.0,1.0);
   }
   rectBuffer.release();
+  vaos[1]->release();
   program_bordures->release();
-  viewer->glLineWidth(1.0f);
 
   program.bind();
+  vaos[1]->bind();
   int mvpLoc = program.uniformLocation("mvp_matrix");
   int fLoc = program.uniformLocation("f_matrix");
   program.setUniformValue(mvpLoc, mvp);
@@ -535,7 +538,6 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   program.enableAttributeArray(vloc);
   program.setAttributeBuffer(vloc, GL_FLOAT, 0, 3);
   vVBO.release();
-
   cbuffer.bind();
   int colorLoc = program.attributeLocation("color");
   program.enableAttributeArray(colorLoc);
@@ -555,6 +557,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
 
   cbuffer.release();
   printGlError(viewer, __LINE__);
+  vaos[1]->release();
   program.release();
 
   printGlError(viewer, __LINE__);
@@ -605,9 +608,11 @@ void Volume_plane<T>::init(Viewer_interface* viewer) {
   assert(vertices.size() == (3 * adim_ * bdim_));
 
   vVBO.create();
+  vaos[1]->bind();
   vVBO.bind();
   vVBO.allocate(vertices.data(),static_cast<int>(sizeof(float) * vertices.size()));
   vVBO.release();
+  vaos[1]->release();
   printGlError(viewer, __LINE__);
 
   // for each patch

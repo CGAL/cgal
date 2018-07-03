@@ -1,4 +1,4 @@
-#version 120
+//#version 100 
 attribute highp vec4 vertex;
 attribute highp vec3 normals;
 attribute highp vec3 colors;
@@ -14,9 +14,13 @@ uniform highp float point_size;
 void main(void)
 {
   gl_PointSize = point_size;
-color = vec4(colors, 1.0);
-vec4 my_vertex = vec4(vertex.x + center.x, vertex.y + center.y, vertex.z + center.z, 1.0);
-fP = mv_matrix * my_vertex;
-fN = mat3(mv_matrix)* normals;
+  color = vec4(colors, 1.0);
+  vec4 my_vertex = vec4(vertex.x + center.x, vertex.y + center.y, vertex.z + center.z, 1.0);
+  fP = mv_matrix * my_vertex;
+  mat3 mv_matrix_3;                    
+  mv_matrix_3[0] = mv_matrix[0].xyz;   
+  mv_matrix_3[1] = mv_matrix[1].xyz;   
+  mv_matrix_3[2] = mv_matrix[2].xyz;   
+  fN = mv_matrix_3* normals;           
    gl_Position =  mvp_matrix * my_vertex;
 }

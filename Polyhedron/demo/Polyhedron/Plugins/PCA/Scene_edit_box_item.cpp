@@ -210,7 +210,6 @@ struct Scene_edit_box_item_priv{
     //Vertex source code
     const char vertex_source[] =
     {
-      "#version 120 \n                         "
       "attribute highp vec4 vertex;            "
       "attribute highp vec3 normals;           "
       "attribute highp vec4 colors;            "
@@ -221,9 +220,13 @@ struct Scene_edit_box_item_priv{
       "varying highp vec4 color;               "
       "void main(void)                         "
       "{                                       "
-      "   color = colors;                       "
+      "   color = colors;                      "
       "   fP = mv_matrix * vertex;             "
-      "   fN = mat3(mv_matrix)* normals;       "
+      "   mat3 mv_matrix_3;                    "
+      "   mv_matrix_3[0] = mv_matrix[0].xyz;   "
+      "   mv_matrix_3[1] = mv_matrix[1].xyz;   "
+      "   mv_matrix_3[2] = mv_matrix[2].xyz;   "
+      "   fN = mv_matrix_3* normals;           "
       "   gl_Position = mvp_matrix * vertex;   "
       "}\n                                     "
       "\n                                      "
@@ -232,7 +235,7 @@ struct Scene_edit_box_item_priv{
     //Fragment source code
     const char fragment_source[] =
     {
-      "#version 120 \n"
+      "//#version 100  \n"
       "varying highp vec4 color;"
       "varying highp vec4 fP; "
       "varying highp vec3 fN; "
@@ -407,7 +410,6 @@ void Scene_edit_box_item::draw(Viewer_interface *viewer) const
 
   drawSpheres(viewer, f_matrix);
   
-  drawTransparent(viewer);
 }
 
 void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
@@ -453,6 +455,7 @@ void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
     drawSpheres(viewer, f_matrix);
   }
   drawHl(viewer);
+  drawTransparent(viewer);
 }
 
 void Scene_edit_box_item::compute_bbox() const

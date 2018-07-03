@@ -519,13 +519,13 @@ struct Scene_c3t3_item_priv {
   std::set<Tr::Cell_handle> intersected_cells;
   QSlider* tet_Slider;
 
-  //!Allows OpenGL 2.1 context to get access to glDrawArraysInstanced.
+  //!Allows OpenGL 2.0 context to get access to glDrawArraysInstanced.
   typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
-  //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
+  //!Allows OpenGL 2.0 context to get access to glVertexAttribDivisor.
   typedef void (APIENTRYP PFNGLVERTEXATTRIBDIVISORARBPROC) (GLuint index, GLuint divisor);
-  //!Allows OpenGL 2.1 context to get access to gkFrameBufferTexture2D.
+  //!Allows OpenGL 2.0 context to get access to gkFrameBufferTexture2D.
   PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
-  //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
+  //!Allows OpenGL 2.0 context to get access to glVertexAttribDivisor.
   PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
 
   mutable std::size_t positions_poly_size;

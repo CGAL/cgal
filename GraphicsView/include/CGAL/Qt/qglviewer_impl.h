@@ -204,7 +204,7 @@ This method is automatically called once, before the first call to paintGL().
 
 Overload init() instead of this method to modify viewer specific OpenGL state.
 
-If a 4.3 context could not be set, a 2.1 context will be used instead. 
+If a 4.3 context could not be set, a ES 2.0 context will be used instead. 
  \see `isOpenGL_4_3()`
 */
 CGAL_INLINE_FUNCTION
@@ -213,13 +213,13 @@ void CGAL::QGLViewer::initializeGL() {
   format.setDepthBufferSize(24);
   format.setStencilBufferSize(8);
   format.setVersion(4,3);
-  format.setProfile(QSurfaceFormat::CompatibilityProfile);
+  format.setProfile(QSurfaceFormat::CoreProfile);
   format.setSamples(0);
   format.setOption(QSurfaceFormat::DebugContext);
   context()->setFormat(format);
   bool created = context()->create();
-  if(!created || context()->format().profile() != QSurfaceFormat::CompatibilityProfile) {
-    // impossible to get a 4.3 compatibility profile, retry with 2.0
+  if(!created || context()->format().profile() != QSurfaceFormat::CoreProfile) {
+    // impossible to get a 4.3 core profile, retry with ES 2.0
     format = QSurfaceFormat::defaultFormat();
     context()->setFormat(format);
     created = context()->create();
@@ -456,11 +456,11 @@ CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::postDraw() {
   // Pivot point, line when camera rolls, zoom region
   if (gridIsDrawn()) {
-    glLineWidth(1.0);
+    if(!is_ogl_4_3)
+      glLineWidth(1.0);
     drawGrid(camera()->sceneRadius());
   }
   if (axisIsDrawn()) {
-    glLineWidth(2.0);
     drawAxis(1.0);
   }
   

@@ -719,11 +719,11 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
   {
     d->program = getShaderProgram(PROGRAM_SOLID_WIREFRAME);
     attribBuffers(viewer,PROGRAM_SOLID_WIREFRAME);
+    d->program->bind();
     d->program->setUniformValue("viewport", vp);
     d->program->setUniformValue("width", 3.0f);
     d->program->setUniformValue("near", (GLfloat)viewer->camera()->zNear());
     d->program->setUniformValue("far" , (GLfloat)viewer->camera()->zFar());
-    d->program->bind();
   }
 
   d->program->setAttributeValue("colors",QColor(255,153,51));
@@ -759,7 +759,7 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_temp_lines/3));
   d->program->release();
   vaos[Scene_polyhedron_selection_item_priv::TempEdges]->release();
-  viewer->glLineWidth(3.0f);
+ 
   if(!are_buffers_filled)
   {
     d->computeElements();
@@ -772,6 +772,7 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
     d->program = getShaderProgram(PROGRAM_NO_SELECTION);
     attribBuffers(viewer,PROGRAM_NO_SELECTION);
     d->program->bind();
+    viewer->glLineWidth(3.0f);
   }
   else
   {

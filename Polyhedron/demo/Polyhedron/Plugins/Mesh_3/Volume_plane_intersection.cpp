@@ -222,7 +222,7 @@ void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
   }
   if(!viewer->isOpenGL_4_3())
     viewer->glLineWidth(1.0f);
-    viewer->glDepthRangef(0.0f,1.0f);
+  viewer->glDepthRangef(0.0f,1.0f);
 }
 
 Volume_plane_intersection::Volume_plane_intersection(float x, float y, float z,

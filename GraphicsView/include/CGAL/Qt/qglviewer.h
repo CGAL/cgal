@@ -1204,9 +1204,9 @@ protected:
   //C o n t e x t
   bool is_ogl_4_3;
 public:
-  //! Is used to know if the openGL context is 4.3 or 2.1.
+  //! Is used to know if the openGL context is 4.3 or ES 2.0.
   //! @returns `true` if the context is 4.3.
-  //! @returns `false` if the context is 2.1.  
+  //! @returns `false` if the context is ES 2.0.  
   bool isOpenGL_4_3()const {return is_ogl_4_3; }
   
 };

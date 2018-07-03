@@ -1,4 +1,4 @@
-#version 120
+//#version 100 
 attribute highp vec4 vertex;
 attribute highp vec3 normals;
 attribute highp vec3 colors;
@@ -17,6 +17,10 @@ void main(void)
   color = vec4(colors, center.x * cutplane.x  + center.y * cutplane.y  + center.z * cutplane.z  +  cutplane.w);
   vec4 my_vertex = vec4(radius*vertex.x + center.x, radius* vertex.y + center.y, radius*vertex.z + center.z, 1.0) ;
   fP = mv_matrix * my_vertex;
-  fN = mat3(mv_matrix)* normals;
+  mat3 mv_matrix_3;                    
+  mv_matrix_3[0] = mv_matrix[0].xyz;   
+  mv_matrix_3[1] = mv_matrix[1].xyz;   
+  mv_matrix_3[2] = mv_matrix[2].xyz;   
+  fN = mv_matrix_3* normals;           
   gl_Position =  mvp_matrix * my_vertex;
 }

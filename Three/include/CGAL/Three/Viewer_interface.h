@@ -29,7 +29,7 @@
 #include <QWidget>
 #include <QPoint>
 #include <QOpenGLFunctions>
-#include <QOpenGLFunctions_4_3_Compatibility>
+#include <QOpenGLFunctions_4_3_Core>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 // forward declarations
 class QWidget;
@@ -104,7 +104,7 @@ public:
   virtual bool hasText() const { return false; }
   //! \brief Constructor
   //!
-  //! Creates a valid context for OpenGL 2.1.
+  //! Creates a valid context for OpenGL ES 2.0.
   //! \param parent the parent widget. It usually is the MainWindow.
   Viewer_interface(QWidget* parent) : CGAL::QGLViewer(parent) {}
   virtual ~Viewer_interface() {}
@@ -175,11 +175,11 @@ public:
   //! The textRenderer uses the painter to display 2D text over the 3D Scene.
   //! \returns the viewer's TextRender
   virtual TextRenderer* textRenderer() = 0;
-  //!Allows OpenGL 2.1 context to get access to glDrawArraysInstanced.
+  //!Allows OpenGL ES 2.0 context to get access to glDrawArraysInstanced.
   typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
-  //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
+  //!Allows OpenGL ES 2.0 context to get access to glVertexAttribDivisor.
   typedef void (APIENTRYP PFNGLVERTEXATTRIBDIVISORARBPROC) (GLuint index, GLuint divisor);
-  //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
+  //!Allows OpenGL ES 2.0 context to get access to glVertexAttribDivisor.
   typedef void (APIENTRYP PFNGLFRAMEBUFFERTEXTURE2DEXTPROC) (GLuint target, GLuint attachment, GLuint textarget, GLuint texture, GLint level);
 
   PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
@@ -257,9 +257,9 @@ public:
   
   //! Gives acces to recent openGL(4.3) features, allowing use of things like
   //! Geometry Shaders or Depth Textures.
-  //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Compatibility if `isOpenGL_4_3()` is `true`
+  //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Core if `isOpenGL_4_3()` is `true`
   //! @returns NULL if `isOpenGL_4_3()` is `false`
-  virtual QOpenGLFunctions_4_3_Compatibility* openGL_4_3_functions() = 0;
+  virtual QOpenGLFunctions_4_3_Core* openGL_4_3_functions() = 0;
   //! getter for point size under old openGL context;
   virtual const GLfloat& getGlPointSize()const = 0;
   //! setter for point size under old openGL context;

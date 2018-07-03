@@ -505,7 +505,6 @@ void Scene_image_item_priv::compile_shaders()
     //Vertex source code
     const char vertex_source[] =
     {
-      "#version 120 \n"
       "attribute highp vec4 vertex;\n"
       "attribute highp vec3 normal;\n"
       "attribute highp vec4 inColor;\n"
@@ -519,14 +518,18 @@ void Scene_image_item_priv::compile_shaders()
       "{\n"
       "   color=inColor; \n"
       "   fP = mv_matrix * vertex; \n"
-      "   fN = mat3(mv_matrix)* normal; \n"
+      "   mat3 mv_matrix_3;                    "
+      "   mv_matrix_3[0] = mv_matrix[0].xyz;   "
+      "   mv_matrix_3[1] = mv_matrix[1].xyz;   "
+      "   mv_matrix_3[2] = mv_matrix[2].xyz;   "
+      "   fN = mv_matrix_3* normals;           "
       "   gl_Position = mvp_matrix * vertex; \n"
       "}"
     };
     //Fragment source code
     const char fragment_source[] =
     {
-      "#version 120 \n"
+      "//#version 100  \n"
       "varying highp vec4 fP; \n"
       "varying highp vec3 fN; \n"
       "varying highp vec4 color; \n"

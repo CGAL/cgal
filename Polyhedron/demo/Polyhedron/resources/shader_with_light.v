@@ -1,4 +1,4 @@
-#version 120
+//#version 100 
 attribute highp vec4 vertex;
 attribute highp vec3 normals;
 attribute highp vec4 colors;
@@ -9,8 +9,8 @@ varying highp vec3 fN;
 varying highp vec4 color;
 varying highp float dist[6];
 uniform bool is_clipbox_on;
-uniform highp mat4x4 clipbox1;
-uniform highp mat4x4 clipbox2;
+uniform highp mat4 clipbox1;
+uniform highp mat4 clipbox2;
 uniform highp float point_size;
 
 void compute_distances(void)
@@ -39,6 +39,10 @@ void main(void)
    if(is_clipbox_on)
     compute_distances();
    fP = mv_matrix * vertex;
-   fN = mat3(mv_matrix)* normals; 
+   mat3 mv_matrix_3;
+   mv_matrix_3[0] = mv_matrix[0].xyz;
+   mv_matrix_3[1] = mv_matrix[1].xyz;
+   mv_matrix_3[2] = mv_matrix[2].xyz;
+   fN = mv_matrix_3* normals; 
    gl_Position = mvp_matrix * vertex;
 }

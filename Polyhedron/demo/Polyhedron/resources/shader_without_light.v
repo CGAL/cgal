@@ -1,4 +1,4 @@
-#version 120
+//#version 100 
 attribute highp vec4 vertex;
 attribute highp vec3 colors;
 uniform highp mat4 mvp_matrix;
@@ -6,8 +6,8 @@ uniform highp mat4 f_matrix;
 varying highp vec4 color; 
 varying highp float dist[6];
 uniform bool is_clipbox_on;
-uniform highp mat4x4 clipbox1;
-uniform highp mat4x4 clipbox2;
+uniform highp mat4 clipbox1;
+uniform highp mat4 clipbox2;
 uniform highp float point_size;
 
 void compute_distances(void)
