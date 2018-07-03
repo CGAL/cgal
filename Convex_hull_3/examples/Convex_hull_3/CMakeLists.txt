@@ -64,6 +64,8 @@ create_single_source_cgal_program( "quickhull_3.cpp" )
 
 create_single_source_cgal_program( "quickhull_any_dim_3.cpp" )
 
+create_single_source_cgal_program( "extreme_points_3_sm.cpp" )
+
 
 if(OpenMesh_FOUND)
   create_single_source_cgal_program( "quickhull_OM_3.cpp" )

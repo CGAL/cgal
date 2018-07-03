@@ -53,6 +53,10 @@ Release date: September 2018
 
 -   Added the function `extreme_points_3()` computing the
     points on the convex hull without underlying connectivity.
+-   Added a traits adapter for `extreme_points_3()` called 
+    `Extreme_points_traits_adapter_3` that permits the use of 
+    the function with something else than just points, if 
+    providing the right property map.
 
 ### Point Set Processing
 

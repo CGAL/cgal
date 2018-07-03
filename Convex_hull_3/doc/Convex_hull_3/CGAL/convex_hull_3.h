@@ -83,7 +83,7 @@ then the default traits class used is `Convex_hull_traits_3<R>`, and `R` otherwi
 @param out an output iterator where the extreme points will be put.
 @param traits an instance of `Traits`.
 
-\sa CGAL::Extreme_points_traits_adapter_3
+\sa `CGAL::Extreme_points_traits_adapter_3`
 */
 template <class InputRange, class OutputIterator, class Traits>
 OutputIterator
@@ -91,38 +91,6 @@ extreme_points_3(InputRange range,
               OutputIterator out,
               const Traits& traits);
 
-/*!
-\ingroup PkgConvexHull3Functions
 
-\brief copies in `out` the `vertices` on the convex hull of the vertices in `range`.
-
-The type of `vertex` is the PointPropertyMap's key_type. 
-
-\tparam InputRange a range of `vertex`, model of `ConstRange`.
-        Its iterator type is `InputIterator`.
-\tparam PointPropertyMap a model of `ReadablePropertyMap` with `vertex` as key_type and 
-`Traits::Point_3` as value_type.
-\tparam OutputIterator must be an output iterator where vertices can be put.
-\tparam Traits must be model of the concept `ConvexHullTraits_3`.
-
-If the kernel `R` of the points from `PointPropertyMap`
-is a kernel with exact predicates but inexact constructions
-(in practice we check `R::Has_filtered_predicates_tag` is `Tag_true` and `R::FT` is a floating point type),
-then the default traits class used is `Convex_hull_traits_3<R>`, and `R` otherwise.
-
-@param range the range of input vertices.
-@param map the map containing the Vertices and their associated points.
-@param out an output iterator where the extreme vertices will be put.
-@param traits an instance of `Traits`.
-*/
-template <class InputRange,
-          class OutputIterator,
-          class PointPropertyMap,
-          class Traits>
-OutputIterator
-extreme_vertices(const InputRange& range, 
-                 PointPropertyMap map,
-                 OutputIterator out,
-                 const Traits& traits);
 
 } /* namespace CGAL */

@@ -77,7 +77,11 @@ struct Forward_functor
   }
 };
 }//end Convex_hull_impl
-template<class Base_traits,class PointPropertyMap>
+template<
+    class PointPropertyMap,
+    class Base_traits=internal::Convex_hull_3::Default_traits_for_Chull_3<
+      typename boost::property_traits<PointPropertyMap>::type>
+         >
 class Extreme_points_traits_adapter_3
     :public Base_traits
 {
@@ -235,6 +239,13 @@ public:
   }
 
 };
+template<class PointPropertyMap,class Base_traits>
+Extreme_points_traits_adapter_3<PointPropertyMap, Base_traits>
+make_extreme_points_traits_adapter(const PointPropertyMap& pmap, Base_traits traits)
+{
+  return Extreme_points_traits_adapter_3<PointPropertyMap, Base_traits>(pmap, traits);
+}
+//helper function
 
 }//end CGAL
 

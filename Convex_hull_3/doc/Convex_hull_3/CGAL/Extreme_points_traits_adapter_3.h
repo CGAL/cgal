@@ -7,14 +7,18 @@ namespace CGAL {
  * `extreme_points_3()`. It permits the use of this function for accessing vertices, indices,
  * or anything that can be used as `key_type` for `PointPropertyMap`.
  * 
- * \tparam Base_traits a model of `ConvexHullTraits_3` and `IsStronglyConvexTraits_3`
  * \tparam PointPropertyMap a model of `ReadablePropertyMap` with `CGAL::Point_3` 
  * as value_type.
+ * \tparam Base_traits a model of `ConvexHullTraits_3` and `IsStronglyConvexTraits_3`.
+ * If the kernel `R` of the points from `PointPropertyMap`
+ * is a kernel with exact predicates but inexact constructions
+ * (in practice we check `R::Has_filtered_predicates_tag` is `Tag_true` and `R::FT` is a floating point type),
+ * then the default traits class used is `Convex_hull_traits_3<R>`, and `R` otherwise.
  * 
  * \cgalModels `ConvexHullTraits_3`
  * \cgalModels `IsStronglyConvexTraits_3` 
  */
-template<class Base_traits,class PointPropertyMap>
+template<class PointPropertyMap, class Base_traits>
 class Extreme_points_traits_adapter_3
 {
 public:
@@ -39,4 +43,12 @@ public:
   get_point(const typename boost::property_traits<PointPropertyMap>::key_type& k) const;
       
 };
+
+/*!
+ * \ingroup PkgConvexHull3Functions
+ * Returns `Extreme_points_traits_adapter_3<PointPropertyMap, Base_traits>(pmap, traits)`.
+ */
+template<class PointPropertyMap,class Base_traits>
+Extreme_points_traits_adapter_3<PointPropertyMap, Base_traits>
+make_extreme_points_traits_adapter(const PointPropertyMap& pmap, Base_traits traits);
 }//end CGAL

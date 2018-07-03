@@ -68,7 +68,7 @@
 namespace CGAL {
 
 // Forward declaration
-template<class Base_traits,class VertexPointMap> class Extreme_points_traits_adapter_3;
+template<class VertexPointMap,class Base_traits> class Extreme_points_traits_adapter_3;
 
 namespace internal{  namespace Convex_hull_3{
 
@@ -206,10 +206,10 @@ public:
 };
 
 template <class Base_traits, class VPM, class Is_CK>
-class Is_on_positive_side_of_plane_3< Extreme_points_traits_adapter_3<Base_traits, VPM>, Is_CK>
+class Is_on_positive_side_of_plane_3< Extreme_points_traits_adapter_3<VPM,Base_traits>, Is_CK>
   : public Is_on_positive_side_of_plane_3< Base_traits >
 {
-  typedef Extreme_points_traits_adapter_3<Base_traits, VPM> Traits;
+  typedef Extreme_points_traits_adapter_3<VPM, Base_traits> Traits;
   typedef Is_on_positive_side_of_plane_3< Base_traits > Base;
   typedef typename Traits::Point_3 Point_3;
   const Traits& m_traits;
@@ -1021,22 +1021,6 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
     polyhedron, traits);
 }
 
-
-template <class InputRange,
-          class PointPropertyMap,
-          class OutputIterator,
-          class Traits>
-OutputIterator
-extreme_vertices(const InputRange& range,
-                 PointPropertyMap map, 
-                 OutputIterator out,
-                 const Traits& traits)
-{
-  
-  Extreme_points_traits_adapter_3<Traits, PointPropertyMap> traits_adapter(map, traits);
-  extreme_points_3(range, out,traits_adapter);
-  return out;
-}
 
 template <class InputIterator, class Polyhedron_3>
 void convex_hull_3(InputIterator first, InputIterator beyond,
