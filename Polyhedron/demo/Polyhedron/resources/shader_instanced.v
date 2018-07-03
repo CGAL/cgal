@@ -22,5 +22,5 @@ void main(void)
   mv_matrix_3[1] = mv_matrix[1].xyz;   
   mv_matrix_3[2] = mv_matrix[2].xyz;   
   fN = mv_matrix_3* normals;           
-   gl_Position =  mvp_matrix * my_vertex;
+  gl_Position =  mvp_matrix * my_vertex;
 }

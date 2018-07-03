@@ -386,7 +386,6 @@ void Scene_edit_box_item::drawSpheres(Viewer_interface *viewer, const QMatrix4x4
   d->program->setUniformValue("mv_matrix", mv_mat);
   d->program->setUniformValue("light_pos", light_pos);
   d->program->setUniformValue("is_clipbox_on", false);
-  d->program->setUniformValue("alpha", 1.0f);
   d->program->setAttributeValue("radius",radius);
   d->program->setAttributeValue("colors", QColor(Qt::red));
   viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,

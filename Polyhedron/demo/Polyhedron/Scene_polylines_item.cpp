@@ -69,7 +69,13 @@ void
 Scene_polylines_item_private::initializeBuffers(CGAL::Three::Viewer_interface *viewer = 0) const
 {
   float lineWidth[2];
-  viewer->glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidth);
+  if(!viewer->isOpenGL_4_3())
+    viewer->glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidth);
+  else
+  {
+    lineWidth[0] = 0;
+    lineWidth[1] = 10;
+  }
   line_Slider->setMaximum(lineWidth[1]);
     QOpenGLShaderProgram *program;
    //vao for the lines

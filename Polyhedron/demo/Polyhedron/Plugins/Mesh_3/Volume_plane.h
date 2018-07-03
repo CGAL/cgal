@@ -580,7 +580,6 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   spheres_program->disableAttributeArray("colors");
   spheres_program->setAttributeValue("colors", this->color());
   spheres_program->setUniformValue("mvp_matrix", mvp);
-  spheres_program->setUniformValue("alpha", 1.0f);
   viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
                                 static_cast<GLsizei>(v_spheres.size()/3),
                                 static_cast<GLsizei>(4));
