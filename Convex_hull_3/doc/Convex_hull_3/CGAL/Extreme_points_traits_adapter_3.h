@@ -18,7 +18,7 @@ namespace CGAL {
  * \cgalModels `ConvexHullTraits_3`
  * \cgalModels `IsStronglyConvexTraits_3` 
  */
-template<class PointPropertyMap, class Base_traits>
+template<class PointPropertyMap, class Base_traits=Default>
 class Extreme_points_traits_adapter_3
 {
 public:

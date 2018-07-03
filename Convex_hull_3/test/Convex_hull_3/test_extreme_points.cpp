@@ -225,6 +225,8 @@ void test_extreme_vertices(const char* fname)
   std::vector<boost::graph_traits<Polyhedron_3>::vertex_descriptor> verts;
   CGAL::extreme_points_3(vertices(P), std::back_inserter(verts) ,
                    CGAL::make_extreme_points_traits_adapter(pmap, traits));
+  CGAL::extreme_points_3(vertices(P), std::back_inserter(verts) ,
+                   CGAL::make_extreme_points_traits_adapter(pmap));
 }
 
 int main()
