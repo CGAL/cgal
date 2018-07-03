@@ -1,4 +1,4 @@
-#ifndef CGAL_APPROX_DECOMPOSITION_H
+#ifndef CGAL_DECOMPOSITION_H
 
 // Copyright (c) 2018  GeometryFactory Sarl (France).
 // All rights reserved.
@@ -20,7 +20,9 @@
 //
 // Author(s)     : Liubomyr Piadyk
 
-#define CGAL_APPROX_DECOMPOSITION_H
+#define CGAL_DECOMPOSITION_H
+
+#include <CGAL/license/Surface_mesh_segmentation.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/convex_hull_3.h>
@@ -567,4 +569,4 @@ private:
 }
 }
 
-#endif // CGAL_APPROX_DECOMPOSITION_H
+#endif // CGAL_DECOMPOSITION_H

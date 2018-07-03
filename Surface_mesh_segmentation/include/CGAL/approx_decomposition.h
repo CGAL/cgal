@@ -1,4 +1,4 @@
-#ifndef CGAL_APPROXIMATE_CONVEX_DECOMPOSITION_APPROX_DECOMPOSITION_H
+#ifndef CGAL_SURFACE_MESH_SEGMENTATION_APPROX_DECOMPOSITION_H
 
 // Copyright (c) 2018  GeometryFactory Sarl (France).
 // All rights reserved.
@@ -20,9 +20,15 @@
 //
 // Author(s)     : Liubomyr Piadyk
 
-#define CGAL_APPROXIMATE_CONVEX_DECOMPOSITION_APPROX_DECOMPOSITION_H
+#define CGAL_SURFACE_MESH_SEGMENTATION_APPROX_DECOMPOSITION_H
 
-#include <CGAL/internal/Approximate_convex_decomposition/approx_decomposition.h>
+#include <CGAL/license/Surface_mesh_segmentation.h>
+
+/**
+ * @file approx_decomposition.h
+ * @brief The API which contains template functions for concavity value computation and approximate convex decomposition
+ */
+#include <CGAL/internal/Approximate_convex_decomposition/decomposition.h>
 #include <CGAL/internal/Approximate_convex_decomposition/concavity.h>
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -31,7 +37,8 @@ namespace CGAL
 {
 
 
-/*
+/*!
+ * \ingroup PkgSurfaceSegmentation
  * @brief Function computing concavity value of a cluster.
  *
  * Cluster is a subset of connected faces in a triangle mesh.
@@ -61,6 +68,7 @@ concavity_value(const TriangleMesh& mesh,
 }
 
 
+#ifndef DOXYGEN_RUNNING
 template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap>
 double
 concavity_value(const TriangleMesh& mesh,
@@ -69,17 +77,17 @@ concavity_value(const TriangleMesh& mesh,
 {
     return concavity_value<ConcurrencyTag>(mesh, face_ids, cluster_id, Polygon_mesh_processing::parameters::all_default());
 }
+#endif
 
 
-/*
+/*!
+ * \ingroup PkgSurfaceSegmentation
  * @brief Function computing concavity value of a triangle mesh.
  *
  * Concavity value is the largest distance from a vertex in a mesh to the projected point onto the convex hull of a mesh.
  *
  * @return concativity value.
  */
-
-
 template <class ConcurrencyTag, class TriangleMesh, class NamedParameters>
 double
 concavity_value(const TriangleMesh& mesh,
@@ -100,15 +108,18 @@ concavity_value(const TriangleMesh& mesh,
 }
 
 
+#ifndef DOXYGEN_RUNNING
 template <class ConcurrencyTag, class TriangleMesh>
 double
 concavity_value(const TriangleMesh& mesh)
 {
     return concavity_value<ConcurrencyTag>(mesh, Polygon_mesh_processing::parameters::all_default());
 }
+#endif
 
 
-/*
+/*!
+ * \ingroup PkgSurfaceSegmentation
  * @brief Function computing the approximate convex decomposition of a triangle mesh.
  *
  * This function fills a property map which associates a cluster-id (in the range [0, 'number_of_clusters'-1]) to each face.
@@ -139,6 +150,7 @@ convex_decomposition(const TriangleMesh& mesh,
 }
 
 
+#ifndef DOXYGEN_RUNNING
 template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap>
 std::size_t
 convex_decomposition(const TriangleMesh& mesh,
@@ -148,8 +160,9 @@ convex_decomposition(const TriangleMesh& mesh,
 {
     return convex_decomposition<ConcurrencyTag>(mesh, face_ids, concavity_threshold, min_number_of_clusters, Polygon_mesh_processing::parameters::all_default());
 }
+#endif
 
 
 } //namespace CGAL
 
-#endif //CGAL_APPROXIMATE_CONVEX_DECOMPOSITION_APPROX_DECOMPOSITION_H
+#endif //CGAL_SURFACE_MESH_SEGMENTATION_APPROX_DECOMPOSITION_H

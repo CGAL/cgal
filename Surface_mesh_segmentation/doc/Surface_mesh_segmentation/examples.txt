@@ -4,3 +4,7 @@
 /// \example Surface_mesh_segmentation/segmentation_via_sdf_values_example.cpp
 /// \example Surface_mesh_segmentation/segmentation_with_facet_ids_example.cpp
 /// \example Surface_mesh_segmentation/extract_segmentation_into_mesh_example.cpp
+/// \example Approximate_convex_decomposition/approx_convex_decomposition_example.cpp
+/// \example Approximate_convex_decomposition/approx_convex_decomposition_SM_example.cpp
+/// \example Approximate_convex_decomposition/concavity_value_example.cpp
+/// \example Approximate_convex_decomposition/concavity_value_SM_example.cpp

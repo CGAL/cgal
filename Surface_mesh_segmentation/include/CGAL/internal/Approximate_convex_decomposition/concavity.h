@@ -22,6 +22,8 @@
 
 #define CGAL_CONCAVITY_H
 
+#include <CGAL/license/Surface_mesh_segmentation.h>
+
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/convex_hull_3.h>
