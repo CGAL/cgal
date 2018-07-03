@@ -210,7 +210,7 @@ struct Scene_edit_box_item_priv{
     //Vertex source code
     const char vertex_source[] =
     {
-      " \n                         "
+      "#version 120 \n                         "
       "attribute highp vec4 vertex;            "
       "attribute highp vec3 normals;           "
       "attribute highp vec4 colors;            "
@@ -232,7 +232,7 @@ struct Scene_edit_box_item_priv{
     //Fragment source code
     const char fragment_source[] =
     {
-      " \n"
+      "#version 120 \n"
       "varying highp vec4 color;"
       "varying highp vec4 fP; "
       "varying highp vec3 fN; "
