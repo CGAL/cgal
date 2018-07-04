@@ -49,6 +49,7 @@ Release date: September 2018
     to reflect the real needs of the code (some types and operators were used
     in the code but did not appear in the concepts).
 
+
 ### Point Set Processing
 
 -   Added a callback mechanism for functions
@@ -59,7 +60,6 @@ Release date: September 2018
     `CGAL::jet_estimate_normals()`, `CGAL::jet_smooth_point_set()`,
     `CGAL::pca_estimate_normals()`, `CGAL::remove_outliers()` and
     `CGAL::wlop_simplify_and_regularize_point_set()`.
-
 
 ### Polygon Mesh Processing
 
@@ -109,6 +109,7 @@ Release date: September 2018
     `<CGAL/Mesh_3/Labeled_mesh_domain_3.h>`, that were deprecated since
     CGAL 4.5, are now removed.
 
+
 -   **Breaking change**: `CGAL::lloyd_optimize_mesh_3` now depends on
     the _Eigen_ library.
 
@@ -129,6 +130,17 @@ Release date: September 2018
 
 -   Improve the function `CGAL::Euler::collapse_edge` so that the target
     vertex of the collapsed edge is always kept after the collapse.
+
+-   The function `copy_face_graph()` now uses named parameters, some allowing it 
+    to use property maps instead of output iterators. 
+
+-   Addition of the following named parameters : 
+    -   vertex_to_vertex_output_iterator
+    -   halfedge_to_halfedge_output_iterator
+    -   face_to_face_output_iterator
+    -   vertex_to_vertex_map
+    -   halfedge_to_halfedge_map
+    -   face_to_face_map
 
 ### CGAL and Solvers
 
