@@ -332,6 +332,39 @@ of a mesh independently.\n
 \b Type : `bool` \n
 \b Default value is `false`
 \cgalNPEnd
+
+\cgalNPBegin{visitor} \anchor PMP_visitor
+Parameter used to pass a visitor class to a function. Its type and behavior depend on the visited function.
+\n
+\b Type : `A class` \n
+\b Default Specific to the function visited
+\cgalNPEnd
+
+\cgalNPBegin{throw_on_self_intersection} \anchor PMP_throw_on_self_intersection
+Parameter used in corefinement-related functions to make the functions throw an exception in
+case some faces involved in the intersection of the input are self-intersecting
+and make the operation impossible with the current version of the code.
+\n
+\b Type : `bool` \n
+\b Default value is `false`
+\cgalNPEnd
+
+\cgalNPBegin{clip_volume} \anchor PMP_clip_volume
+Parameter used in `clip()` functions to clip a volume rather than a surface.
+\n
+\b Type : `bool` \n
+\b Default value is `false`
+\cgalNPEnd
+
+\cgalNPBegin{use_compact_clipper} \anchor PMP_use_compact_clipper
+Parameter used in `clip()` functions to indicate whether the boundary of the clipper
+should be considered as part of the clipping volume or not.
+\n
+\b Type : `bool` \n
+\b Default value is `true`
+\cgalNPEnd
+
+
 \cgalNPTableEnd
 
 */

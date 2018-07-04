@@ -45,6 +45,7 @@
 
 class QTabWidget;
 class QImage;
+class QOpenGLFramebufferObject;
 
 namespace CGAL{
 /*! \brief A versatile 3D OpenGL viewer based on QOpenGLWidget.
@@ -1005,6 +1006,7 @@ public:
 public:
   virtual void setVisualHintsMask(int mask, int delay = 2000);
   virtual void drawVisualHints();
+  QOpenGLFramebufferObject* getStoredFrameBuffer();
 
 public Q_SLOTS:
   virtual void resetVisualHints();
@@ -1216,7 +1218,7 @@ protected:
   std::size_t grid_size;
   std::size_t g_axis_size;
   std::size_t axis_size;
-
+  QOpenGLFramebufferObject* stored_fbo;
   //S n a p s h o t
   QImage* takeSnapshot(qglviewer::SnapShotBackground  background_color, 
                        QSize finalSize, double oversampling, bool expand);
@@ -1225,7 +1227,6 @@ protected:
   
   // O f f s e t
   qglviewer::Vec _offset;
-  
   //C o n t e x t
   bool is_ogl_4_3;
 public:

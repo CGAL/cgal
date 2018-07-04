@@ -33,6 +33,14 @@ CGAL_add_named_parameter(metis_options_t, METIS_options, METIS_options)
 CGAL_add_named_parameter(vertex_partition_id_t, vertex_partition_id, vertex_partition_id_map)
 CGAL_add_named_parameter(face_partition_id_t, face_partition_id, face_partition_id_map)
 
+CGAL_add_named_parameter(vertex_to_vertex_output_iterator_t, vertex_to_vertex_output_iterator, vertex_to_vertex_output_iterator)
+CGAL_add_named_parameter(halfedge_to_halfedge_output_iterator_t, halfedge_to_halfedge_output_iterator, halfedge_to_halfedge_output_iterator)
+CGAL_add_named_parameter(face_to_face_output_iterator_t, face_to_face_output_iterator, face_to_face_output_iterator)
+
+CGAL_add_named_parameter(vertex_to_vertex_map_t, vertex_to_vertex_map, vertex_to_vertex_map)
+CGAL_add_named_parameter(halfedge_to_halfedge_map_t, halfedge_to_halfedge_map, halfedge_to_halfedge_map)
+CGAL_add_named_parameter(face_to_face_map_t, face_to_face_map, face_to_face_map)
+
 // List of named parameters that we use in the package 'Mesh_3'
 CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_feature_degree_map)
 
@@ -67,6 +75,9 @@ CGAL_add_named_parameter(overlap_test_t, overlap_test, do_overlap_test_of_bounde
 CGAL_add_named_parameter(preserve_genus_t, preserve_genus, preserve_genus)
 CGAL_add_named_parameter(apply_per_connected_component_t, apply_per_connected_component, apply_per_connected_component)
 CGAL_add_named_parameter(projection_functor_t, projection_functor, projection_functor)
+CGAL_add_named_parameter(throw_on_self_intersection_t, throw_on_self_intersection, throw_on_self_intersection)
+CGAL_add_named_parameter(clip_volume_t, clip_volume, clip_volume)
+CGAL_add_named_parameter(use_compact_clipper_t, use_compact_clipper, use_compact_clipper)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)

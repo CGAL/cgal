@@ -78,10 +78,23 @@ Release date: September 2018
 
 -   Added a function to apply a transformation to a mesh:
     - `CGAL::Polygon_mesh_processing::transform()`
+-   Added in corefinement-related functions a new named parameter `visitor`
+    that makes it possible to pass a visitor to the function in order to track
+    the creation of new faces.
+-   Added in all corefinement-related functions a named parameter `throw_on_self_intersection`
+    (that replaces the `bool` parameter in `corefine()`) that enables to check for
+    self-intersecting faces involved in the intersection before trying to corefine the
+    input meshes.
+-   Added the function `corefine_and_compute_boolean_operations()` that can be used to
+    compute the result of several Boolean operations between 2 volumes at the same time.
+-   Added the function `clip()` that can be used to clip a triangulated surface mesh
+    by a plane or a clipping volume.
 
 -  Fix a bug in `isotropic_remeshing()` making constrained vertices missing in the output
 -  Guarantee that constrained vertices are kept in the mesh after calling `isotropic_remeshing()`
    (and not only the points associated to constrained vertices as it was before).
+-  Added a function in Polygon Mesh Processing to perform an extrusion of an open polygon mesh: 
+   -   `CGAL::Polygon_mesh_processing::extrude_mesh()`
 
 ### 3D Mesh Generation
 
@@ -106,6 +119,7 @@ Release date: September 2018
     `<CGAL/Mesh_3/Labeled_mesh_domain_3.h>`, that were deprecated since
     CGAL 4.5, are now removed.
 
+
 -   **Breaking change**: `CGAL::lloyd_optimize_mesh_3` now depends on
     the _Eigen_ library.
 
@@ -126,6 +140,17 @@ Release date: September 2018
 
 -   Improve the function `CGAL::Euler::collapse_edge` so that the target
     vertex of the collapsed edge is always kept after the collapse.
+
+-   The function `copy_face_graph()` now uses named parameters, some allowing it 
+    to use property maps instead of output iterators. 
+
+-   Addition of the following named parameters : 
+    -   vertex_to_vertex_output_iterator
+    -   halfedge_to_halfedge_output_iterator
+    -   face_to_face_output_iterator
+    -   vertex_to_vertex_map
+    -   halfedge_to_halfedge_map
+    -   face_to_face_map
 
 ### CGAL and Solvers
 
