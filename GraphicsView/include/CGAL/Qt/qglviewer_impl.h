@@ -211,9 +211,6 @@ CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::initializeGL() {
   QSurfaceFormat format = context()->format();
   context()->format().setOption(QSurfaceFormat::DebugContext);
-  int vM = format.majorVersion(),
-    vm = format.minorVersion();
-  QSurfaceFormat::RenderableType rt = format.renderableType();
   if (! context()->isValid()
     || format.majorVersion() != 4)
   {

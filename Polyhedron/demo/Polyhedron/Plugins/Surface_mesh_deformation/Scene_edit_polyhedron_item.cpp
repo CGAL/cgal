@@ -386,12 +386,12 @@ void Scene_edit_polyhedron_item_priv::init_values()
       "void main(void)              \n"
       "{                            \n"
       "if(is_clipbox_on)            \n"
-      "  if(dist[0]>0 ||            \n"
-      "     dist[1]>0 ||            \n"
-      "     dist[2]>0 ||            \n"
-      "     dist[3]>0 ||            \n"
-      "     dist[4]>0 ||            \n"
-      "     dist[5]>0)              \n"
+      "  if(dist[0]>0.0 ||            \n"
+      "     dist[1]>0.0 ||            \n"
+      "     dist[2]>0.0 ||            \n"
+      "     dist[3]>0.0 ||            \n"
+      "     dist[4]>0.0 ||            \n"
+      "     dist[5]>0.0)              \n"
       "    discard;                 \n"
       "  gl_FragColor = color;      \n"
       "}                            \n"
@@ -1573,7 +1573,7 @@ void Scene_edit_polyhedron_item_priv::draw_ROI_and_control_vertices(CGAL::Three:
 }
 void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface* viewer) const {
 
-  CGAL::GL::Point_size point_size(viewer); point_size.set_point_size(5);
+  viewer->setGlPointSize(5);
 
   //Draw the points
   if(d->ui_widget->ShowROICheckBox->isChecked()) {
@@ -1631,7 +1631,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
       }
     }
 
-
+    viewer->setGlPointSize(1);
 }
 
 
