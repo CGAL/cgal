@@ -348,6 +348,53 @@ void generate_g2_torus(Path& p, std::size_t i)
   }
 }
 
+template<typename Path>
+void generate_g1_v0_double_torus(Path& p)
+{ // 1st generator
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[16]));
+  extend_straight_negative(p, 2);
+}
+
+template<typename Path>
+void generate_g1_v1_double_torus(Path& p)
+{ // 1st generator
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[4]));
+  extend_straight_negative(p, 2);
+}
+
+template<typename Path>
+void generate_g1_v2_double_torus(Path& p)
+{ // 1st generator
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[2]));
+  extend_straight_negative(p, 2);
+  p.reverse();
+}
+
+template<typename Path>
+void generate_g2_v1_double_torus(Path& p)
+{ // 2nd generator
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[10]));
+  extend_straight_negative(p, 2);
+  extend_uturn_negative(p, 1);
+}
+
+template<typename Path>
+void generate_g1_double_torus(Path& p, std::size_t i)
+{
+  assert(i<3);
+  switch(i)
+  {
+    case 0: generate_g1_v0_double_torus(p); break;
+    case 1: generate_g1_v1_double_torus(p); break;
+    case 2: generate_g1_v2_double_torus(p); break;
+    default: assert(false);
+  }
+}
+
 } // namespace CGAL
 
 #endif // CGAL_CREATION_OF_TEST_CASES_FOR_PATHS_H //

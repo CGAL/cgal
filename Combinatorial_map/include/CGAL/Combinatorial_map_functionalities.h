@@ -26,6 +26,7 @@
 #include <boost/unordered_map.hpp>
 #include <CGAL/Random.h>
 #include <CGAL/Path_on_surface.h>
+#include <CGAL/Combinatorial_map_basic_operations.h>
 
 namespace CGAL {
   
@@ -129,6 +130,27 @@ namespace CGAL {
 
       std::cout<<"Paths are all valid ? "<<(are_paths_valid()?"YES":"NO")
                <<std::endl;
+      auto marktemp=m_map.get_new_mark();
+      Dart_handle dh2=NULL;
+      for (auto it=m_map.darts().begin(); it!=m_map.darts().end(); ++it)
+      {
+        if (!m_map.is_marked(it, marktemp))
+        {
+          std::cout<<"Degree="<<CGAL::template degree<Map, 0>(m_map, it)<<std::endl;
+          std::cout<<"Co-degree="<<CGAL::template codegree<Map, 2>(m_map, it)<<std::endl;
+          dh2=it;
+          do
+          {
+            m_map.mark(dh2, marktemp);
+            std::cout<<m_map.darts().index(dh2)<<"   "
+                    <<m_map.darts().index(m_map.template beta<0>(dh2))<<std::endl;
+            dh2=m_map.template beta<0,2>(dh2);
+          }
+          while(dh2!=it);
+        }
+      }
+      m_map.free_mark(marktemp);
+      m_map.display_darts(std::cout);
 #endif
     }
     

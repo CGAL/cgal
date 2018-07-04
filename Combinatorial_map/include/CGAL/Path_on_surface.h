@@ -571,6 +571,14 @@ public:
       else
       { CGAL::extend_straight_positive(new_path, 1); }
     }
+
+    if (begin==middle && next_index(middle)==end)
+    { // TODO: check if we need to do also something for !case_seven ?
+      // if (case_seven)
+      { CGAL::extend_uturn_positive(new_path, 1); }
+      /* else
+      { assert(false); } // We think (?) that this case is not possible */
+    }
   }
 
   void push_l_shape_cycle_2()
@@ -583,9 +591,29 @@ public:
     CGAL::extend_straight_positive_until(*this, d1);
   }
 
+  bool push_l_shape_2darts()
+  {
+    Dart_const_handle d1=NULL;
+
+    if (next_negative_turn(0)==1)
+      d1=m_map.template beta<2,1>(get_ith_dart(0));
+    else if (next_negative_turn(1)==1)
+      d1=m_map.template beta<2,1>(get_ith_dart(1));
+    else return false;
+
+    clear();
+    push_back(d1);
+    CGAL::extend_uturn_positive(*this, 1);
+    //push_back(m_map.template beta<1>(d1));
+    return true;
+  }
+
   bool right_push_one_step()
   {
     if (is_empty()) { return false; }
+
+    if (length()==2)
+    { return push_l_shape_2darts(); }
 
     std::size_t begin, middle, end;
     std::size_t lastturn=m_path.size()-(is_closed()?0:1);
@@ -626,7 +654,8 @@ public:
       else
       {
         if (next_turn==1)
-        { // Here middle is a real middle; we already know begin (or we know
+        {
+          // Here middle is a real middle; we already know begin (or we know
           // that there is no -2 before if !prev2), we only need to compute
           // end.
           if (!prev2) { begin=middle; } // There is no -2 before this -1
@@ -676,7 +705,11 @@ public:
   {
     bool res=false;
     while(right_push_one_step())
-    { res=true; }
+    { res=true;
+      
+      std::cout<<"RP "; display();  display_pos_and_neg_turns();
+      std::cout<<std::endl;
+    }
     return res;
   }
 
@@ -686,18 +719,32 @@ public:
     if (!is_closed())
     { return; }
 
+    std::cout<<"##########################################"<<std::endl;
+    std::cout<<"Init "; display();
+    std::cout<<std::endl;
+    display_pos_and_neg_turns();
+    
     bool modified=false;
+    std::cout<<"RS "; remove_spurs_one_step();
+
+    display();
+    std::cout<<std::endl;
+
     do
     {
       modified=bracket_flattening_one_step();
-      if (!modified)
-      {
-        modified=remove_spurs_one_step();
-        if (!modified)
-        { modified=right_push_one_step(); }
-      }
+
+      std::cout<<"BF "; display();
+      std::cout<<std::endl;
+
+      modified=modified || remove_spurs_one_step();
+
+      std::cout<<"RS "; display();
+      std::cout<<std::endl;
     }
     while(modified);
+
+    right_push();
   }
 
   std::vector<std::size_t> compute_positive_turns() const
@@ -824,8 +871,8 @@ public:
       std::cout<<m_map.darts().index(get_ith_dart(i));
       if (i<length()-1) { std::cout<<" "; }
     }
-    if (is_closed())
-    { std::cout<<" "<<m_map.darts().index(get_ith_dart(0)); }
+     if (is_closed())
+     { std::cout<<" c "; } //<<m_map.darts().index(get_ith_dart(0)); }
   }
 
 protected:

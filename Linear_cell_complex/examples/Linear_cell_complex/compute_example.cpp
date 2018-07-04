@@ -17,7 +17,7 @@
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
 typedef CGAL::Linear_cell_complex_for_generalized_map<2,3> LCC_3_gmap;
 
-#define NB_TESTS 23 // 0 ... 22
+#define NB_TESTS 24 // 0 ... 23
 int nbtests=0;
 
 enum Transformation // enum for the type of transformations
@@ -402,8 +402,8 @@ bool test_some_random_paths_on_cube(bool draw, int testtorun)
   { res=false; }
 
   generate_random_bracket(path, 5, 12, 8, random); // Test 20
-  if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^4 1 2^12 1 2^8 ...)",
-                   "2", draw, testtorun))
+  if (!unit_test(path, PUSH, 0, "(2^4 1 2^12 1 2^8 ...)",
+                   "2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 0 2 2 2 2 0 2 2 2 2 1 2 1", draw, testtorun))
   { res=false; }
 
   return true;
@@ -455,7 +455,7 @@ bool test_torus_quad(bool draw, int testtorun)
   { res=false; }
 
   // Test 23 (3 g2 cycles) TODO BUG IN TEST 23 !!!
-  /* paths.clear(); transformed_paths.clear();
+  paths.clear(); transformed_paths.clear();
   for (int i=0; i<3; ++i)
   {
     paths.push_back(CGAL::Path_on_surface<LCC_3_cmap>(lcc));
@@ -468,11 +468,40 @@ bool test_torus_quad(bool draw, int testtorun)
                           "canonize paths on torus gen2",
                           draw, testtorun))
   { res=false; }
-  */
 
   return res;
 }
+///////////////////////////////////////////////////////////////////////////////
+bool test_double_torus_quad(bool draw, int testtorun)
+{
+  bool res=true;
 
+  LCC_3_cmap lcc;
+  if (!CGAL::load_off(lcc, "./data/double-torus.off"))
+  {
+    std::cout<<"PROBLEM reading file ./data/double-torus.off"<<std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  CGAL::Combinatorial_map_tools<LCC_3_cmap> cmt(lcc);
+
+  std::vector<CGAL::Path_on_surface<LCC_3_cmap> > paths;
+  std::vector<CGAL::Path_on_surface<LCC_3_cmap> > transformed_paths;
+
+  // Test 21 (3 g1 cycles)
+  for (int i=0; i<3; ++i)
+  {
+    paths.push_back(CGAL::Path_on_surface<LCC_3_cmap>(lcc));
+    CGAL::generate_g1_double_torus(paths[i], i);
+    transformed_paths.push_back
+        (cmt.transform_original_path_into_quad_surface(paths[i]));
+  }
+
+  if (!unit_test_canonize(paths, transformed_paths,
+                          "canonize paths on double torus gen1",
+                          draw, testtorun))
+  { res=false; }
+}
 ///////////////////////////////////////////////////////////////////////////////
 bool test_elephant(bool draw, int testtorun) // TODO LATER
 {
@@ -600,11 +629,17 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  if (!test_torus_quad(draw, testN))
+  if (!test_double_torus_quad(draw, testN))
+  {
+    std::cout<<"TEST DOUBLE TORUS FAILED."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
+  /* if (!test_torus_quad(draw, testN))
   {
     std::cout<<"TEST TORUS FAILED."<<std::endl;
     return EXIT_FAILURE;
-  }
+  } */
 
   /* TODO LATER if (!test_file(draw, testN))
   {
