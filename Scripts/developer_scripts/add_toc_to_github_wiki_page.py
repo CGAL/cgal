@@ -38,7 +38,7 @@ def get_anchor(s):
   s = s.lstrip(" ")
   s = s.rstrip("\n")
   s = s.rstrip(" ")
-  s = s.replace(" ","-")
+  s = re.sub(r'\s+','-',s)
   if not args.codebase:
     s = s.lower()
   if args.codebase:
