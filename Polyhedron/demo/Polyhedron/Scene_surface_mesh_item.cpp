@@ -832,7 +832,7 @@ void Scene_surface_mesh_item_priv::triangulate_convex_facet(face_descriptor fd,
   SMesh::Halfedge_around_face_circulator he(halfedge(fd, *smesh_), *smesh_);
   SMesh::Halfedge_around_face_circulator he_end = he;
   
-  while(next(*he, *smesh_) != prev(*he, *smesh_))
+  while(next(*he, *smesh_) != prev(*he_end, *smesh_))
   {
     ++he;
     vertex_descriptor v0(target(*he_end, *smesh_)),
