@@ -28,9 +28,24 @@ typedef boost::property_map<Mesh, Halfedge_coordinate_tag >::type Halfedge_coord
 typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<Mesh,Kernel, Halfedge_coordinate_map> IDT;
 
 
+void bglstyle(const IDT& idt)
+{
+  typedef boost::graph_traits<IDT>::vertex_descriptor IDT_vertex_descriptor;
+  typedef boost::graph_traits<IDT>::halfedge_descriptor IDT_halfedge_descriptor;
+
+  std::cout << num_vertices(idt) << std::endl;
+  vertices(idt);
+  IDT_halfedge_descriptor hd = *(halfedges(idt).first);
+  IDT_vertex_descriptor vd = vertex(hd,idt);
+
+  get(idt, CGAL::vertex_point);
+}
+
+
 int main()
 {
   Mesh sm;
+
   Halfedge_coordinate_map halfedge_coord_map = get(Halfedge_coordinate_tag(), sm);
 
   std::ifstream in("data/brain100k.off");
