@@ -6,6 +6,39 @@
 
 #include <QCommandLineParser>
 #include <QCommandLineOption>
+#include <QSurfaceFormat>
+#include <QOpenGLContext>
+
+//taken from the Qt example opengl/computegles31
+bool OGLSupports(int major, int minor, bool gles = false, QSurfaceFormat::OpenGLContextProfile profile = QSurfaceFormat::NoProfile)
+{
+  QOpenGLContext ctx;
+  QSurfaceFormat fmt;
+  fmt.setVersion(major, minor);
+  if (gles) {
+    fmt.setRenderableType(QSurfaceFormat::OpenGLES);
+  }
+  else {
+    fmt.setRenderableType(QSurfaceFormat::OpenGL);
+    fmt.setProfile(profile);
+  }
+
+  ctx.setFormat(fmt);
+  ctx.create();
+  if (!ctx.isValid())
+    return false;
+  int ctxMajor = ctx.format().majorVersion();
+  int ctxMinor = ctx.format().minorVersion();
+  bool isGles = (ctx.format().renderableType() == QSurfaceFormat::OpenGLES);
+
+  if (isGles != gles) return false;
+  if (ctxMajor < major) return false;
+  if (ctxMajor == major && ctxMinor < minor)
+    return false;
+  if (!gles && ctx.format().profile() != profile)
+    return false;
+  return true;
+}
 
 struct Polyhedron_demo_impl {
   bool catch_exceptions;
@@ -65,6 +98,12 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   MainWindow& mainWindow = *d_ptr->mainWindow;
   
   mainWindow.setWindowTitle(main_window_title);
+
+  //find a suitable context
+  if (OGLSupports(4, 3, false, QSurfaceFormat::CoreProfile))
+  {
+    
+  }
   mainWindow.show();
 
   // On Apple, the first time the application is launched, the menus are unclicable, and

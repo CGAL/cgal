@@ -209,27 +209,29 @@ If a 4.3 context could not be set, a ES 2.0 context will be used instead.
 */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::initializeGL() {
-  QSurfaceFormat format;
-  format.setDepthBufferSize(24);
-  format.setStencilBufferSize(8);
-  format.setVersion(4,3);
-  format.setProfile(QSurfaceFormat::CoreProfile);
-  format.setSamples(0);
-  format.setOption(QSurfaceFormat::DebugContext);
-  context()->setFormat(format);
-  bool created = context()->create();
-  if(!created || context()->format().profile() != QSurfaceFormat::CoreProfile) {
-    // impossible to get a 4.3 core profile, retry with ES 2.0
-    format = QSurfaceFormat::defaultFormat();
+  QSurfaceFormat format = context()->format();
+  context()->format().setOption(QSurfaceFormat::DebugContext);
+  int vM = format.majorVersion(),
+    vm = format.minorVersion();
+  QSurfaceFormat::RenderableType rt = format.renderableType();
+  if (! context()->isValid()
+    || format.majorVersion() != 4)
+  {
+    format.setDepthBufferSize(24);
+    format.setStencilBufferSize(8);
+    format.setVersion(2,0);
+    format.setRenderableType(QSurfaceFormat::DefaultRenderableType);
+    format.setSamples(0);
+    format.setOption(QSurfaceFormat::DebugContext);
     context()->setFormat(format);
-    created = context()->create();
+    context()->create();
     is_ogl_4_3 = false;
   }
   else
   {
     is_ogl_4_3 = true;
   }
-  makeCurrent();
+
   QOpenGLFunctions::initializeOpenGLFunctions();
   glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
   // Default colors
