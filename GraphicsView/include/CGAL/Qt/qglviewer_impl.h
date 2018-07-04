@@ -211,17 +211,19 @@ CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::initializeGL() {
   QSurfaceFormat format = context()->format();
   context()->format().setOption(QSurfaceFormat::DebugContext);
-  if (! context()->isValid()
-    || format.majorVersion() != 4)
+  if ( !context()->isValid()
+    || format.majorVersion() != 4
+    || QCoreApplication::arguments().contains(QStringLiteral("--old")))
+
   {
     format.setDepthBufferSize(24);
     format.setStencilBufferSize(8);
-    format.setVersion(2,0);
-    format.setRenderableType(QSurfaceFormat::DefaultRenderableType);
+    format.setVersion(2,1);
+    format.setRenderableType(QSurfaceFormat::OpenGL);
     format.setSamples(0);
     format.setOption(QSurfaceFormat::DebugContext);
-    context()->setFormat(format);
-    context()->create();
+    QSurfaceFormat::setDefaultFormat(format);
+    needNewContext();
     is_ogl_4_3 = false;
   }
   else

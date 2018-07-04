@@ -920,6 +920,8 @@ public:
   QString stateFileName() const;
   virtual QDomElement domElement(const QString &name,
                                  QDomDocument &document) const;
+Q_SIGNALS:
+  void needNewContext();
 
 public Q_SLOTS:
   virtual void initFromDOMElement(const QDomElement &element);
