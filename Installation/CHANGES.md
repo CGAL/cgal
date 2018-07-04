@@ -83,6 +83,8 @@ Release date: September 2018
 -  Fix a bug in `isotropic_remeshing()` making constrained vertices missing in the output
 -  Guarantee that constrained vertices are kept in the mesh after calling `isotropic_remeshing()`
    (and not only the points associated to constrained vertices as it was before).
+-  Added a function in Polygon Mesh Processing to perform an extrusion of an open polygon mesh: 
+   -   `CGAL::Polygon_mesh_processing::extrude_mesh()`
 
 ### 3D Mesh Generation
 
