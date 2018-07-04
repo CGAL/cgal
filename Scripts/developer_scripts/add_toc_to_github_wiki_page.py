@@ -2,6 +2,18 @@ from sys import argv
 from sys import exit
 import codecs
 import re
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("filename",
+                    help="the Mardown file to process")
+parser.add_argument("--codebase",
+                    help="for a Markdown file of Codebase instead of Github",
+                    action="store_true")
+parser.add_argument("--h1",
+                    help="support level one sections (h1)",
+                    action="store_true")
+args = parser.parse_args()
 
 # a probably incomplete version to generate an anchor from a section name
 def get_anchor(s):
@@ -13,7 +25,10 @@ def get_anchor(s):
   s = s.replace(":","")
   s = s.replace(",","")
   s = s.replace(";","")
-  s = s.replace("/","")
+  if args.codebase:
+    s = s.replace("/","-")
+  else:
+    s = s.replace("/","")
   s = s.replace("<","")
   s = s.replace(">","")
   s = s.replace("+","")
@@ -23,8 +38,11 @@ def get_anchor(s):
   s = s.lstrip(" ")
   s = s.rstrip("\n")
   s = s.rstrip(" ")
-  s = s.replace(" ","-")
-  s = s.lower()
+  s = re.sub(r'\s+','-',s)
+  if not args.codebase:
+    s = s.lower()
+  if args.codebase:
+    s = s.replace("'","-and-39-")
   return "#"+s
 
 # indices the nesting level (first level allowed is ##)
@@ -45,11 +63,14 @@ def get_name(s):
 #generate the entry for one section
 def get_toc_entry(s):
   name = get_name(s)
-  level = get_level(s)-2
+  if args.h1:
+    level = get_level(s)-1
+  else:
+    level = get_level(s)-2
   anchor = get_anchor(s)
 
   if level<0:
-    return "ERROR: h1 section are not allowed"
+    return "ERROR: h1 sections are not allowed"
 
   res="* ["+name+"]("+anchor+")"
   for i in range(0,level):
@@ -57,11 +78,7 @@ def get_toc_entry(s):
   return res
 
 #now the main
-if len(argv) < 2:
-  print("Nothing done, no input file provided")
-  exit()
-
-input = argv[1]
+input = args.filename
 
 f = codecs.open(input, 'r', encoding='utf-8')
 

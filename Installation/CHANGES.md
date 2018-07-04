@@ -66,6 +66,7 @@ Release date: September 2018
     to reflect the real needs of the code (some types and operators were used
     in the code but did not appear in the concepts).
 
+
 ### Point Set Processing
 
 -   Added a callback mechanism to the following functions:
@@ -76,7 +77,6 @@ Release date: September 2018
     `CGAL::jet_estimate_normals()`, `CGAL::jet_smooth_point_set()`,
     `CGAL::pca_estimate_normals()`, `CGAL::remove_outliers()` and
     `CGAL::wlop_simplify_and_regularize_point_set()`.
-
 
 ### Polygon Mesh Processing
 
@@ -99,6 +99,8 @@ Release date: September 2018
 
 -   Constrained vertices are now guaranteed to be kept in the mesh after calling `isotropic_remeshing()`
     (and not only the points associated to constrained vertices, as it was before).
+
+-   Added a function, `CGAL::Polygon_mesh_processing::extrude_mesh()`, to perform an extrusion of an open polygon mesh.
 
 ### 3D Mesh Generation
 
@@ -143,6 +145,7 @@ Release date: September 2018
 -   Added the function `Mesh_domain_with_polyline_features_3::add_corner()`, which allows users
     to add a single corner (that is not incident to any polyline) to the mesh complex.
 
+
 -   **Breaking change**: `CGAL::lloyd_optimize_mesh_3` now depends on
     the _Eigen_ library.
 
@@ -163,6 +166,17 @@ Release date: September 2018
 
 -   Improved the function `CGAL::Euler::collapse_edge` such that the target
     vertex of the collapsed edge is now always kept after the collapse.
+
+-   The function `copy_face_graph()` now uses named parameters, some allowing it 
+    to use property maps instead of output iterators. 
+
+-   Addition of the following named parameters : 
+    -   vertex_to_vertex_output_iterator
+    -   halfedge_to_halfedge_output_iterator
+    -   face_to_face_output_iterator
+    -   vertex_to_vertex_map
+    -   halfedge_to_halfedge_map
+    -   face_to_face_map
 
 ### CGAL and Solvers
 

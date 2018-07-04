@@ -130,7 +130,7 @@ void compute_shortest_paths_between_two_cones(const TriangleMesh& mesh,
                                               EdgeOutputIterator oi)
 {
   if(source == target) {
-    std::cout << "Warning: the source and target are identical in 'shortest_path' " << std::endl;
+    std::cerr << "Warning: the source and target are identical in 'shortest_path' " << std::endl;
     return;
   }
 
@@ -150,7 +150,7 @@ void compute_shortest_paths_between_two_cones(const TriangleMesh& mesh,
   try {
     boost::dijkstra_shortest_paths(mesh, source, boost::predecessor_map(pred_pmap).visitor(vis));
   } catch (const std::exception& e) {
-    std::cout << e.what() << std::endl;
+    std::cerr << e.what() << std::endl;
   }
 
   // Draw the path from target to source and collect the edges along the way

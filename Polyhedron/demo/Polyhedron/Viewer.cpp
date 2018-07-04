@@ -638,6 +638,10 @@ void Viewer::attribBuffers(int program_name) const {
       program->setUniformValue("clipbox1", clipbox1);
       program->setUniformValue("clipbox2", clipbox2);
     }
+    if(program_name == PROGRAM_WITH_LIGHT)
+    {
+      program->setUniformValue("alpha", 1.0f); //overriden in item draw() if necessary
+    }
     switch(program_name)
     {
     case PROGRAM_WITH_LIGHT:
