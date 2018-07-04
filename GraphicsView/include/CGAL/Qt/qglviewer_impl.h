@@ -218,8 +218,8 @@ void CGAL::QGLViewer::initializeGL() {
   {
     format.setDepthBufferSize(24);
     format.setStencilBufferSize(8);
-    format.setVersion(2,1);
-    format.setRenderableType(QSurfaceFormat::OpenGL);
+    format.setVersion(2,0);
+    format.setRenderableType(QSurfaceFormat::OpenGLES);
     format.setSamples(0);
     format.setOption(QSurfaceFormat::DebugContext);
     QSurfaceFormat::setDefaultFormat(format);

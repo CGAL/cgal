@@ -348,8 +348,6 @@ void Scene_alpha_shape_item::draw(CGAL::Three::Viewer_interface* viewer) const
   // Specular
   QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
   int is_both_sides;
-  viewer->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE,
-                        &is_both_sides);
   program = &facet_program;
   program->bind();
   program->setUniformValue("mvp_matrix", mvp_mat);
@@ -359,7 +357,7 @@ void Scene_alpha_shape_item::draw(CGAL::Three::Viewer_interface* viewer) const
   program->setUniformValue("light_spec", specular);
   program->setUniformValue("light_amb", ambient);
   program->setUniformValue("spec_power", 51.8f);
-  program->setUniformValue("is_two_side", is_both_sides);
+  program->setUniformValue("is_two_side", viewer->property("draw_two_sides").toBool());
   program->setUniformValue("is_selected", false);
 
   vaos[0]->bind();

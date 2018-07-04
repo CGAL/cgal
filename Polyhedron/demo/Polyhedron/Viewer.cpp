@@ -608,10 +608,6 @@ void Viewer::attribBuffers(int program_name) const {
     for (int i=0; i<16; ++i)
         mvp_mat.data()[i] = GLfloat(d_mat[i]);
    
-
-    const_cast<Viewer*>(this)->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE,
-                                             &is_both_sides);
-
     QVector4D position(0.0f,0.0f,1.0f, 1.0f );
     QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
     // Diffuse
@@ -657,7 +653,7 @@ void Viewer::attribBuffers(int program_name) const {
         program->setUniformValue("light_spec", specular);
         program->setUniformValue("light_amb", ambient);
         program->setUniformValue("spec_power", 51.8f);
-        program->setUniformValue("is_two_side", is_both_sides);
+        program->setUniformValue("is_two_side", d->twosides);
         break;
     }
     switch(program_name)
