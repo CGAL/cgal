@@ -341,7 +341,6 @@ void Scene_textured_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface* 
     attribBuffers(viewer, PROGRAM_NO_SELECTION);
     d->program=getShaderProgram(PROGRAM_NO_SELECTION);
     d->program->bind();
-    viewer->glLineWidth(4.0);
   }
   else
   {
@@ -356,8 +355,6 @@ void Scene_textured_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface* 
   }
   d->program->setAttributeValue("colors", QColor(Qt::blue));
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->border_edges_buffer.size()/3));
-  if(!viewer->isOpenGL_4_3())
-    viewer->glLineWidth(1.0);
   //Clean-up
   d->program->release();
   vaos[Scene_textured_surface_mesh_item_priv::Border_edges]->release();

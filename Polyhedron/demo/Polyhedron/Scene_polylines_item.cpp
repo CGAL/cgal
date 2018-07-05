@@ -400,7 +400,6 @@ Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     vaos[Scene_polylines_item_private::Edges]->bind();
     if(!viewer->isOpenGL_4_3())
     {
-      viewer->glLineWidth(GLfloat(d->line_Slider->value()));
       attribBuffers(viewer, PROGRAM_NO_SELECTION);
     }
     else
@@ -426,7 +425,6 @@ Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     {
        Scene_group_item::drawEdges(viewer);
     }
-    viewer->glLineWidth(1.0f);
 }
 
 void 

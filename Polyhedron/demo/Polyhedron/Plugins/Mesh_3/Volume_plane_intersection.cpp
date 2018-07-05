@@ -124,7 +124,6 @@ void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
   if(!viewer->isOpenGL_4_3())
   {
     attribBuffers(viewer, PROGRAM_NO_SELECTION);
-    viewer->glLineWidth(4.0f);
   }
   else
   {
@@ -221,7 +220,6 @@ void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
       vaos[Volume_plane_intersection_priv::CArray]->release();
   }
   if(!viewer->isOpenGL_4_3())
-    viewer->glLineWidth(1.0f);
   viewer->glDepthRangef(0.0f,1.0f);
 }
 

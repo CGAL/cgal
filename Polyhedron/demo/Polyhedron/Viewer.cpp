@@ -212,7 +212,9 @@ void Viewer::init()
   if(!isOpenGL_4_3())
   {
     std::cerr<<"The openGL context initialization failed "
-    "and the default context (2.0 ES) will be used" <<std::endl;
+    "and the default context (2.0 ES) will be used. \n"
+    " This means, among other things, that no widelines can be displayed,"
+    " which makes selected edges harder to see." <<std::endl;
   }
   else
   {
@@ -464,8 +466,6 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
   if(scene == 0)
     return;
   current_total_pass = viewer->inFastDrawing() ? total_pass/2 : total_pass;
-  if(!viewer->isOpenGL_4_3())
-    viewer->glLineWidth(1.0f);
   viewer->setGlPointSize(2.f);
   viewer->glEnable(GL_POLYGON_OFFSET_FILL);
   viewer->glPolygonOffset(1.0f,1.0f);
@@ -589,7 +589,6 @@ QString Viewer::dumpCameraCoordinates()
 }
 
 void Viewer::attribBuffers(int program_name) const {
-    GLint is_both_sides = 0;
     //ModelViewMatrix used for the transformation of the camera.
     QMatrix4x4 mvp_mat;
     // ModelView Matrix used for the lighting system
@@ -716,7 +715,6 @@ void Viewer::drawVisualHints()
         }
         if(!isOpenGL_4_3())
         {
-          glLineWidth(3.0f);
           //draws the distance
           //nullifies the translation
           d->rendering_program_dist.bind();
@@ -728,7 +726,6 @@ void Viewer::drawVisualHints()
           d->vao.release();
           d->rendering_program_dist.release();
           glEnable(GL_DEPTH_TEST);
-          glLineWidth(1.0f);
         }
         else
         {          

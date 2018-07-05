@@ -457,8 +457,6 @@ CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::postDraw() {
   // Pivot point, line when camera rolls, zoom region
   if (gridIsDrawn()) {
-    if(!is_ogl_4_3)
-      glLineWidth(1.0);
     drawGrid(camera()->sceneRadius());
   }
   if (axisIsDrawn()) {
@@ -3090,12 +3088,9 @@ void CGAL::QGLViewer::drawVisualHints() {
     glScissor (GLint((camera()->projectedCoordinatesOf(camera()->pivotPoint()).x-size/2)*devicePixelRatio()),
                GLint((height() - camera()->projectedCoordinatesOf(camera()->pivotPoint()).y-size/2)*devicePixelRatio()), size, size);
     rendering_program.setUniformValue("color", QColor(::Qt::black));
-    glLineWidth(3.0);
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(4));
     rendering_program.setUniformValue("color", QColor(::Qt::white));
-    glLineWidth(3.0);
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(4));
-    glLineWidth(1.0);
     // The viewport and the scissor are restored.
     glScissor(scissor[0],scissor[1],scissor[2],scissor[3]);
     glViewport(viewport[0],viewport[1],viewport[2],viewport[3]);

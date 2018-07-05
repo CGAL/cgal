@@ -508,9 +508,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   program_bordures->setAttributeValue("colors",this->color());
   if(!viewer->isOpenGL_4_3())
   {
-    viewer->glLineWidth(4.0f);
     viewer->glDrawArrays(GL_LINE_LOOP, 0, static_cast<GLsizei>(v_rec.size()/3));
-    viewer->glLineWidth(1.0f);
   }
   else
   {

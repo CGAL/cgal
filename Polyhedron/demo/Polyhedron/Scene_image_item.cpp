@@ -828,7 +828,6 @@ Scene_image_item_priv::draw_gl(Viewer_interface* viewer) const
     item->attribBuffers(viewer,Scene_item::PROGRAM_NO_SELECTION);
     line_program = item->getShaderProgram(Scene_item::PROGRAM_NO_SELECTION);
     line_program->bind();
-    viewer->glLineWidth(3);
   }
   else
   {
@@ -847,8 +846,6 @@ Scene_image_item_priv::draw_gl(Viewer_interface* viewer) const
   viewer->glDepthRangef(0.0f, 1.0f);
   vao[1].release();
   line_program->release();
-  if(!viewer->isOpenGL_4_3())
-    viewer->glLineWidth(1.0f);
 }
 
 GLint

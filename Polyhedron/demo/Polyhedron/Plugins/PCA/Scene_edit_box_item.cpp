@@ -425,7 +425,6 @@ void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
   vaos[Scene_edit_box_item_priv::Edges]->bind();
   if(!viewer->isOpenGL_4_3())
   {
-    viewer->glLineWidth(6.0f);
     attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
     d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     d->program->bind();
@@ -445,8 +444,6 @@ void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
   d->program->setUniformValue("f_matrix", f_matrix);
   d->program->setAttributeValue("colors", QColor(Qt::black));
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->vertex_edges.size()/3));
-  if(!viewer->isOpenGL_4_3())
-    viewer->glLineWidth(1.0f);
   vaos[Scene_edit_box_item_priv::Edges]->release();
   d->program->release();
   if(renderingMode() == Wireframe)
@@ -1194,7 +1191,6 @@ void Scene_edit_box_item_priv::draw_picking(Viewer_interface* viewer)
   item->vaos[P_Edges]->bind();
   if(!viewer->isOpenGL_4_3())
   {
-    viewer->glLineWidth(6.0f);
     item->attribBuffers(viewer, Scene_item::PROGRAM_WITHOUT_LIGHT);
     program = item->getShaderProgram(Scene_item::PROGRAM_WITHOUT_LIGHT);
     program->bind();
@@ -1213,8 +1209,6 @@ void Scene_edit_box_item_priv::draw_picking(Viewer_interface* viewer)
   }
   program->setUniformValue("f_matrix", f_matrix);
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(vertex_edges.size()/3));
-  if(!viewer->isOpenGL_4_3())
-    viewer->glLineWidth(1.0f);
   item->vaos[P_Edges]->release();
   program->release();
 }
@@ -1426,7 +1420,6 @@ void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
     vaos[Scene_edit_box_item_priv::S_Edges]->bind();
     if(!viewer->isOpenGL_4_3())
     {
-      viewer->glLineWidth(6.0f);
       d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
       attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
       d->program->bind();
@@ -1446,8 +1439,6 @@ void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
     d->program->setUniformValue("f_matrix", f_matrix);
     d->program->setAttributeValue("colors", QColor(Qt::yellow));
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->hl_vertex.size()/3));
-    if(!viewer->isOpenGL_4_3())
-      viewer->glLineWidth(1.0f);
     vaos[Scene_edit_box_item_priv::S_Edges]->release();
     d->program->release();
   }
