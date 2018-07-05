@@ -1,4 +1,4 @@
-#version 430
+#version 430 core
 in vec4 color;
 in float dist[6];
 uniform bool is_clipbox_on;

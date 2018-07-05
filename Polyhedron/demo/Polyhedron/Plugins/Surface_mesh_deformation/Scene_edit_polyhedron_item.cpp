@@ -305,7 +305,7 @@ void Scene_edit_polyhedron_item_priv::init_values()
 
     const char vertex_shader_source_bbox[] =
     {
-        "#version 430  \n"
+        "#version 430 core  \n"
         "in vec3 vertex; \n"
         "in vec3 colors; \n"
 
@@ -343,7 +343,7 @@ void Scene_edit_polyhedron_item_priv::init_values()
     };
     const char fragment_shader_source[]=
     {
-        "#version 430  \n"
+        "#version 430 core  \n"
         "in vec3 fColors; \n"
         "out vec4 out_color; \n"
         "void main(void) \n"
@@ -375,7 +375,7 @@ void Scene_edit_polyhedron_item_priv::init_values()
     //Vertex source code
     const char vertex_source[] =
     {
-      "#version 430                                      \n"
+      "#version 430 core                                      \n"
       "in vec4 vertex;                     \n"
       "in vec4 colors;                     \n"
       "uniform  mat4 mvp_matrix;                   \n"
@@ -453,7 +453,7 @@ void Scene_edit_polyhedron_item_priv::init_values()
     //Fragment source code
     const char fragment_source[] =
     {
-      "#version 430                  \n"
+      "#version 430 core                  \n"
       "in vec4 color;    \n"
       "in float dist[6]; \n"
       "uniform bool is_clipbox_on;  \n"

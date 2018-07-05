@@ -1,4 +1,4 @@
-#version 430
+#version 430 core
 in vec4 vertex;
 in vec3 normals;
 in vec4 colors;

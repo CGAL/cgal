@@ -1,4 +1,4 @@
-#version 430
+#version 430 core
 in vec4 color;
 in vec4 fP;
 in vec3 fN;

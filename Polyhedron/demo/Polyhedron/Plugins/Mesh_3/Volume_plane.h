@@ -379,7 +379,7 @@ private:
 
 template<typename T>
 const char* Volume_plane<T>::vertexShader_source =
-      "#version 430  \n"
+      "#version 430 core  \n"
       "in vec4 vertex; \n"
       "in float color; \n"
       "uniform mat4 mvp_matrix; \n"
@@ -401,7 +401,7 @@ const char* Volume_plane<T>::vertexShader_source_comp =
 
 template<typename T>
 const char* Volume_plane<T>::fragmentShader_source =
-      "#version 430 \n"
+      "#version 430 core \n"
       "in vec4 fullColor; \n"
       "out vec4 out_color; \n"
       "void main() { out_color = fullColor; } \n";

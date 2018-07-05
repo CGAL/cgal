@@ -1,4 +1,4 @@
-#version 430
+#version 430 core
 in vec4 color;
 uniform vec3 dirView;
 uniform vec3 plane_normal;

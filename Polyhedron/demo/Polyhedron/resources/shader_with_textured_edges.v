@@ -1,4 +1,4 @@
-#version 430
+#version 430 core
  in vec4 vertex;
  in vec2 v_texCoord; 
  uniform vec3 color_lines; 

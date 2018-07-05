@@ -218,7 +218,7 @@ struct Scene_edit_box_item_priv{
     //Vertex source code
     const char vertex_source[] =
     {
-      "#version 430 \n"
+      "#version 430 core \n"
       "in vec4 vertex;            "
       "in vec3 normals;           "
       "in vec4 colors;            "
@@ -268,7 +268,7 @@ struct Scene_edit_box_item_priv{
     //Fragment source code
     const char fragment_source[] =
     {
-      "#version 430 \n"
+      "#version 430 core \n"
       "in vec4 color;"
       "in vec4 fP; "
       "in vec3 fN; "
