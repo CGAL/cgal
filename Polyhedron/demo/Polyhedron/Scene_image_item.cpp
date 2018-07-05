@@ -564,24 +564,24 @@ void Scene_image_item_priv::compile_shaders()
       "} \n"
       "\n"
     };
-    QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
-    if(!vertex_shader->compileSourceCode(vertex_source))
+    QOpenGLShader vertex_shader(QOpenGLShader::Vertex);
+    if(!vertex_shader.compileSourceCode(vertex_source))
     {
       std::cerr<<"Compiling vertex source FAILED"<<std::endl;
     }
 
-    QOpenGLShader *fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
-    if(!fragment_shader->compileSourceCode(fragment_source))
+    QOpenGLShader fragment_shader(QOpenGLShader::Fragment);
+    if(!fragment_shader.compileSourceCode(fragment_source))
     {
       std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
     }
 
-    if(!rendering_program.addShader(vertex_shader))
+    if(!rendering_program.addShader(&vertex_shader))
     {
       std::cerr<<"adding vertex shader FAILED"<<std::endl;
     }
 
-    if(!rendering_program.addShader(fragment_shader))
+    if(!rendering_program.addShader(&fragment_shader))
     {
       std::cerr<<"adding fragment shader FAILED"<<std::endl;
     }

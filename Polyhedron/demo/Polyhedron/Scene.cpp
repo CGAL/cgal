@@ -375,38 +375,38 @@ void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
   };
   
   
-  QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
-  QOpenGLShader *fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
+  QOpenGLShader vertex_shader(QOpenGLShader::Vertex);
+  QOpenGLShader fragment_shader(QOpenGLShader::Fragment);
   if(viewer->isOpenGL_4_3())
   {
-    if(!vertex_shader->compileSourceCode(vertex_source))
+    if(!vertex_shader.compileSourceCode(vertex_source))
     {
       std::cerr<<"Compiling vertex source FAILED"<<std::endl;
     }
     
-    if(!fragment_shader->compileSourceCode(fragment_source))
+    if(!fragment_shader.compileSourceCode(fragment_source))
     {
       std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
     }
   }
   else
   {
-    if(!vertex_shader->compileSourceCode(vertex_source_comp))
+    if(!vertex_shader.compileSourceCode(vertex_source_comp))
     {
       std::cerr<<"Compiling vertex source FAILED"<<std::endl;
     }
     
-    if(!fragment_shader->compileSourceCode(fragment_source_comp))
+    if(!fragment_shader.compileSourceCode(fragment_source_comp))
     {
       std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
     }
   }
   
-  if(!program.addShader(vertex_shader))
+  if(!program.addShader(&vertex_shader))
   {
     std::cerr<<"adding vertex shader FAILED"<<std::endl;
   }
-  if(!program.addShader(fragment_shader))
+  if(!program.addShader(&fragment_shader))
   {
     std::cerr<<"adding fragment shader FAILED"<<std::endl;
   }

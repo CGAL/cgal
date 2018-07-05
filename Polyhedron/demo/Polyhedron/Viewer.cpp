@@ -250,8 +250,6 @@ void Viewer::init()
   setBackgroundColor(::Qt::white);
   d->vao.create();
   d->buffer.create();
-
-  QOpenGLShader *vertex_shader, *fragment_shader;
   
   //setting the program used for the distance
      {
@@ -298,36 +296,37 @@ void Viewer::init()
              "} \n"
              "\n"
          };
-         vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
-         fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
+         QOpenGLShader vertex_shader(QOpenGLShader::Vertex);
+         QOpenGLShader fragment_shader(QOpenGLShader::Fragment);
          if(isOpenGL_4_3())
          {
-           if(!vertex_shader->compileSourceCode(vertex_source_dist))
+           if(!vertex_shader.compileSourceCode(vertex_source_dist))
            {
              std::cerr<<"Compiling vertex source FAILED"<<std::endl;
            }
            
-           if(!fragment_shader->compileSourceCode(fragment_source_dist))
+           if(!fragment_shader.compileSourceCode(fragment_source_dist))
            {
              std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
            }
          }
          else
-         {          if(!vertex_shader->compileSourceCode(vertex_source_comp_dist))
+         {
+           if(!vertex_shader.compileSourceCode(vertex_source_comp_dist))
            {
              std::cerr<<"Compiling vertex source FAILED"<<std::endl;
            }
            
-           if(!fragment_shader->compileSourceCode(fragment_source_comp_dist))
+           if(!fragment_shader.compileSourceCode(fragment_source_comp_dist))
            {
              std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
            }
          }
-         if(!d->rendering_program_dist.addShader(vertex_shader))
+         if(!d->rendering_program_dist.addShader(&vertex_shader))
          {
              std::cerr<<"adding vertex shader FAILED"<<std::endl;
          }
-         if(!d->rendering_program_dist.addShader(fragment_shader))
+         if(!d->rendering_program_dist.addShader(&fragment_shader))
          {
              std::cerr<<"adding fragment shader FAILED"<<std::endl;
          }
