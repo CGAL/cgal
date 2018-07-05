@@ -1030,8 +1030,8 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
       return 0;
     }
     return declare_program(name,
-                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/solid_wireframe_shader.v", 
-                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/solid_wireframe_shader.f");
+                           ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.v", 
+                           ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.f");
     break; 
   default:
     std::cerr<<"ERROR : Program not found."<<std::endl;

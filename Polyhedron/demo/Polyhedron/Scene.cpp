@@ -358,10 +358,10 @@ void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
     "#version 150                                                            \n"
     "in vec2 f_texCoord;                                         \n"
     "out vec4 out_color ; \n"
-    "uniform sampler2D texture;                                             \n"
+    "uniform sampler2D s_texture;                                             \n"
     "void main(void)                                                        \n"
     "{                                                                      \n"
-    "  out_color = texture2D(texture, f_texCoord); \n"
+    "  out_color = texture(s_texture, f_texCoord); \n"
     "}                                                                      \n"
   };
   const char fragment_source_comp[] =

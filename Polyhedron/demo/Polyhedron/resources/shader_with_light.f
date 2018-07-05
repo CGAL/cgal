@@ -38,7 +38,7 @@ void main(void) {
         discard;
 
   float d = depth(gl_FragCoord.z);
-  float test = texture2D(sampler, vec2(gl_FragCoord.x/width, gl_FragCoord.y/height)).r;
+  float test = texture(sampler, vec2(gl_FragCoord.x/width, gl_FragCoord.y/height)).r;
   if(comparing && d <= test)
     discard;
   if(writing)

@@ -6,5 +6,5 @@ out vec4 out_color;
  
 void main(void) 
 { 
-  out_color = vec4(vec3(texture2D(s_texture, f_texCoord))*fColors, 1.0);
+  out_color = vec4(vec3(texture(s_texture, f_texCoord))*fColors, 1.0);
 }  

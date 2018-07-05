@@ -592,11 +592,11 @@ public:
     const char tex_fragment_source[] =
     {
         "#version 150 \n"
-        "uniform sampler2D texture;\n"
+        "uniform sampler2D s_texture;\n"
         "in vec2 texc;\n"
         "out vec4 out_color; \n"
         "void main(void) { \n"
-        "out_color = texture2D(texture, texc.st);\n"
+        "out_color = texture(s_texture, texc.st);\n"
         "} \n"
         "\n"
     };
