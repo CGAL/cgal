@@ -201,14 +201,47 @@ struct Scene_edit_box_item_priv{
       for(int j=0; j<3; ++j)
         last_pool[i][j] = vertices[i][j];
 
-    pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_spheres.v");
-    pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_without_light.f");
+    if(QOpenGLContext::currentContext()->format().majorVersion() >= 3)
+    {
+      pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_spheres.v");
+      pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_without_light.f");
+    }
+    else
+    {
+      pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_spheres.v");
+      pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_without_light.f");
+    }
     pick_sphere_program.bindAttributeLocation("colors", 1);
     pick_sphere_program.link();
 
 
     //Vertex source code
     const char vertex_source[] =
+    {
+      "#version 430 \n"
+      "in vec4 vertex;            "
+      "in vec3 normals;           "
+      "in vec4 colors;            "
+      "uniform mat4 mvp_matrix;          "
+      "uniform mat4 mv_matrix;           "
+      "out vec4 fP;                  "
+      "out vec3 fN;                  "
+      "out vec4 color;               "
+      "void main(void)                         "
+      "{                                       "
+      "   color = colors;                      "
+      "   fP = mv_matrix * vertex;             "
+      "   mat3 mv_matrix_3;                    "
+      "   mv_matrix_3[0] = mv_matrix[0].xyz;   "
+      "   mv_matrix_3[1] = mv_matrix[1].xyz;   "
+      "   mv_matrix_3[2] = mv_matrix[2].xyz;   "
+      "   fN = mv_matrix_3* normals;           "
+      "   gl_Position = mvp_matrix * vertex;   "
+      "}\n                                     "
+      "\n                                      "
+    };
+    
+    const char vertex_source_comp[] =
     {
       "attribute highp vec4 vertex;            "
       "attribute highp vec3 normals;           "
@@ -235,7 +268,45 @@ struct Scene_edit_box_item_priv{
     //Fragment source code
     const char fragment_source[] =
     {
-      "//#version 100  \n"
+      "#version 430 \n"
+      "in vec4 color;"
+      "in vec4 fP; "
+      "in vec3 fN; "
+      "uniform vec4 light_pos;  "
+      "uniform vec4 light_diff; "
+      "uniform vec4 light_spec; "
+      "uniform vec4 light_amb;  "
+      "uniform float spec_power ; "
+      "uniform int is_two_side; "
+      "uniform bool is_selected;"
+      "out vec4 out_color; \n"
+      "void main(void) {"
+      " vec3 L = light_pos.xyz - fP.xyz;"
+      " vec3 V = -fP.xyz;"
+      " vec3 N;"
+      "if(fN == vec3(0.0,0.0,0.0)) "
+      "N = vec3(0.0,0.0,0.0);"
+      "else "
+      "N = normalize(fN);"
+      "L = normalize(L);"
+      "V = normalize(V);"
+      "vec3 R = reflect(-L, N);"
+      "vec4 diffuse;"
+      "if(is_two_side == 1) "
+      "diffuse = abs(dot(N,L)) * light_diff * color;"
+      "else "
+      "diffuse = max(dot(N,L), 0.0) * light_diff * color;"
+      "vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec;"
+      "vec4 ret_color = vec4((color*light_amb).xyz + diffuse.xyz + specular.xyz,1);"
+      "if(is_selected) "
+      "  out_color = vec4(ret_color.r+70.0/255.0, ret_color.g+70.0/255.0, ret_color.b+70.0/255.0, color.a);"
+      "else "
+      "  out_color = vec4(ret_color.rgb, color.a); }\n"
+      "\n"
+    };
+    //Fragment source code
+    const char fragment_source_comp[] =
+    {
       "varying highp vec4 color;"
       "varying highp vec4 fP; "
       "varying highp vec3 fN; "
@@ -270,8 +341,17 @@ struct Scene_edit_box_item_priv{
       "gl_FragColor = vec4(ret_color.rgb, color.a); }\n"
       "\n"
     };
-    transparent_face_program.addShaderFromSourceCode(QOpenGLShader::Vertex,vertex_source);
-    transparent_face_program.addShaderFromSourceCode(QOpenGLShader::Fragment,fragment_source);
+    
+    if(QOpenGLContext::currentContext()->format().majorVersion() >= 3)
+    {
+      transparent_face_program.addShaderFromSourceCode(QOpenGLShader::Vertex,vertex_source);
+      transparent_face_program.addShaderFromSourceCode(QOpenGLShader::Fragment,fragment_source);
+    }
+    else
+    {
+      transparent_face_program.addShaderFromSourceCode(QOpenGLShader::Vertex,vertex_source_comp);
+      transparent_face_program.addShaderFromSourceCode(QOpenGLShader::Fragment,fragment_source_comp);
+    }
     transparent_face_program.bindAttributeLocation("colors", 1);
     transparent_face_program.link();
     reset_selection();

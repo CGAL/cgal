@@ -1,21 +1,21 @@
-#version 430
-in vec4 vertex;
-in vec3 normal;
-in vec2 v_texCoord; 
+//#version 100 
+attribute highp vec4 vertex;
+attribute highp vec3 normal;
+attribute highp vec2 v_texCoord; 
 
-uniform mat4 mvp_matrix;
-uniform mat4 mv_matrix; 
-uniform mat4 f_matrix; 
-uniform int is_two_side; 
-uniform vec4 light_pos;  
-uniform vec4 light_diff; 
-uniform vec3 light_spec; 
-uniform vec4 light_amb;  
-uniform float spec_power; 
-out vec3 fColors; 
-out vec2 f_texCoord; 
+uniform highp mat4 mvp_matrix;
+uniform highp mat4 mv_matrix; 
+uniform highp mat4 f_matrix; 
+uniform highp int is_two_side; 
+uniform highp vec4 light_pos;  
+uniform highp vec4 light_diff; 
+uniform highp vec3 light_spec; 
+uniform highp vec4 light_amb;  
+uniform highp float spec_power; 
+varying highp vec3 fColors; 
+varying highp vec2 f_texCoord; 
        
-uniform float point_size;
+uniform highp float point_size;
 void main(void)
 {
   gl_PointSize = point_size;

@@ -522,14 +522,13 @@ void Scene_image_item_priv::compile_shaders()
       "   mv_matrix_3[0] = mv_matrix[0].xyz;   "
       "   mv_matrix_3[1] = mv_matrix[1].xyz;   "
       "   mv_matrix_3[2] = mv_matrix[2].xyz;   "
-      "   fN = mv_matrix_3* normals;           "
+      "   fN = mv_matrix_3* normal;           "
       "   gl_Position = mvp_matrix * vertex; \n"
       "}"
     };
     //Fragment source code
     const char fragment_source[] =
     {
-      "//#version 100  \n"
       "varying highp vec4 fP; \n"
       "varying highp vec3 fN; \n"
       "varying highp vec4 color; \n"
@@ -556,9 +555,9 @@ void Scene_image_item_priv::compile_shaders()
       "   vec3 R = reflect(-L, N); \n"
       "   vec4 diffuse; \n"
       "   if(!is_two_side) \n"
-      "       diffuse = max(dot(N,L),0) * light_diff*color; \n"
+      "       diffuse = max(dot(N,L),0.0) * light_diff*color; \n"
       "   else \n"
-      "       diffuse = max(abs(dot(N,L)),0) * light_diff*color; \n"
+      "       diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
       "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
 
       "gl_FragColor = color*light_amb + diffuse + specular; \n"

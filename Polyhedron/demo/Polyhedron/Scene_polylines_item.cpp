@@ -719,7 +719,7 @@ CGAL::Three::Scene_item::Header_data Scene_polylines_item::header() const
   return data;
 }
 
-void Scene_polylines_item::setWidth(const int& i)
+void Scene_polylines_item::setWidth( int i)
 {
   d->line_Slider->setValue(i);
   redraw();

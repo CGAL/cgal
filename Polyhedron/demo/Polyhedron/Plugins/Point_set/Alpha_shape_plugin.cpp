@@ -300,7 +300,24 @@ Scene_alpha_shape_item::Scene_alpha_shape_item(Scene_points_with_normal_item *po
   }
     const char vertex_source[] =
     {
-      "//#version 100  \n"
+      "#version 430 \n"
+      "in vec4 vertex;\n"
+      "in vec3 colors;\n"
+      "uniform  mat4 mvp_matrix;\n"
+      "uniform  mat4 mv_matrix; \n"
+      "uniform  float point_size; \n"
+      "out  vec4 fP; \n"
+      "out  vec4 color; \n"
+      "void main(void)\n"
+      "{\n"
+      "   gl_PointSize = point_size; \n"
+      "   color = vec4(colors, 1.0); \n"
+      "   fP = mv_matrix * vertex; \n"
+      "   gl_Position = mvp_matrix * vertex;\n"
+      "}"
+    };
+    const char vertex_source_comp[] =
+    {
       "attribute highp vec4 vertex;\n"
       "attribute highp vec3 colors;\n"
       "uniform highp mat4 mvp_matrix;\n"
@@ -310,17 +327,22 @@ Scene_alpha_shape_item::Scene_alpha_shape_item(Scene_points_with_normal_item *po
       "varying highp vec4 color; \n"
       "void main(void)\n"
       "{\n"
-      " gl_PointSize = point_size; \n"
+      "   gl_PointSize = point_size; \n"
       "   color = vec4(colors, 1.0); \n"
       "   fP = mv_matrix * vertex; \n"
       "   gl_Position = mvp_matrix * vertex;\n"
       "}"
     };
-    
-  facet_program.addShaderFromSourceCode(QOpenGLShader::Vertex, vertex_source);
-  facet_program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/cgal/Polyhedron_3/resources/shader_flat.f");
+  if(QOpenGLContext::currentContext()->format().majorVersion() >= 3)
+  {
+    facet_program.addShaderFromSourceCode(QOpenGLShader::Vertex, vertex_source);
+  }
+  else
+  {
+    facet_program.addShaderFromSourceCode(QOpenGLShader::Vertex, vertex_source_comp);
+  }
+  facet_program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_old_flat.f");
   facet_program.link();
-  facet_program.bind();
   invalidateOpenGLBuffers();
   alpha_changed(alpha);
   QApplication::restoreOverrideCursor();
@@ -347,7 +369,6 @@ void Scene_alpha_shape_item::draw(CGAL::Three::Viewer_interface* viewer) const
   QVector4D diffuse(1.0f, 1.0f, 1.0f, 1.0f);
   // Specular
   QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
-  int is_both_sides;
   program = &facet_program;
   program->bind();
   program->setUniformValue("mvp_matrix", mvp_mat);

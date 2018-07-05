@@ -305,7 +305,26 @@ void Scene_edit_polyhedron_item_priv::init_values()
 
     const char vertex_shader_source_bbox[] =
     {
-        "//#version 100  \n"
+        "#version 430  \n"
+        "in vec3 vertex; \n"
+        "in vec3 colors; \n"
+
+        "uniform mat4 mvp_matrix; \n"
+        "uniform mat4 rotations; \n"
+        "uniform vec3 translation; \n"
+        "uniform vec3 translation_2; \n"
+        "out vec3 fColors; \n"
+        " \n"
+
+        "void main(void) \n"
+        "{ \n"
+        "   fColors = colors; \n"
+        "   gl_Position = mvp_matrix * (rotations *(vec4(translation_2,0.0)+vec4(vertex,1.0) )+ vec4(translation,0.0)) ; \n"
+        "} \n"
+    };
+    
+    const char vertex_shader_source_comp_bbox[] =
+    {
         "attribute highp vec3 vertex; \n"
         "attribute highp vec3 colors; \n"
 
@@ -324,7 +343,16 @@ void Scene_edit_polyhedron_item_priv::init_values()
     };
     const char fragment_shader_source[]=
     {
-        "//#version 100  \n"
+        "#version 430  \n"
+        "in vec3 fColors; \n"
+        "out vec4 out_color; \n"
+        "void main(void) \n"
+        "{ \n"
+        " out_color = vec4(fColors, 1.0); \n"
+        "} \n"
+    };
+    const char fragment_shader_source_comp[]=
+    {
         "varying vec3 fColors; \n"
         " \n"
         "void main(void) \n"
@@ -332,14 +360,60 @@ void Scene_edit_polyhedron_item_priv::init_values()
         " gl_FragColor = vec4(fColors, 1.0); \n"
         "} \n"
     };
-    bbox_program.addShaderFromSourceCode(QOpenGLShader::Vertex,vertex_shader_source_bbox);
-    bbox_program.addShaderFromSourceCode(QOpenGLShader::Fragment,fragment_shader_source);
+    if(QOpenGLContext::currentContext()->format().majorVersion() >= 3)
+    {
+      bbox_program.addShaderFromSourceCode(QOpenGLShader::Vertex,vertex_shader_source_bbox);
+      bbox_program.addShaderFromSourceCode(QOpenGLShader::Fragment,fragment_shader_source);
+    }
+    else
+    {
+      bbox_program.addShaderFromSourceCode(QOpenGLShader::Vertex,vertex_shader_source_comp_bbox);
+      bbox_program.addShaderFromSourceCode(QOpenGLShader::Fragment,fragment_shader_source_comp);
+    }
     bbox_program.link();
 
     //Vertex source code
     const char vertex_source[] =
     {
-      "//#version 100                                      \n"
+      "#version 430                                      \n"
+      "in vec4 vertex;                     \n"
+      "in vec4 colors;                     \n"
+      "uniform  mat4 mvp_matrix;                   \n"
+      "uniform  mat4 f_matrix;                     \n"
+      "out vec4 color;                        \n"
+      "out float dist[6];                     \n"
+      "uniform bool is_clipbox_on;                      \n"
+      "uniform mat4 clipbox1;                   \n"
+      "uniform mat4 clipbox2;                   \n"
+      "                                                 \n"
+      "void compute_distances(void)                     \n"
+      "{                                                \n"
+      "  for(int i=0; i<3; ++i)                         \n"
+      "  {                                              \n"
+      "    dist[i]=                                     \n"
+      "    clipbox1[i][0]*vertex.x+                     \n"
+      "    clipbox1[i][1]*vertex.y+                     \n"
+      "    clipbox1[i][2]*vertex.z +                    \n"
+      "    clipbox1[i][3];                              \n"
+      "    dist[i+3]=                                   \n"
+      "    clipbox2[i][0]*vertex.x+                     \n"
+      "    clipbox2[i][1]*vertex.y+                     \n"
+      "    clipbox2[i][2]*vertex.z +                    \n"
+      "    clipbox2[i][3];                              \n"
+      "  }                                              \n"
+      "}                                                \n"
+      "                                                 \n"
+      "void main(void)                                  \n"
+      "{                                                \n"
+      "   color = colors;                               \n"
+      "   if(is_clipbox_on)                             \n"
+      "    compute_distances();                         \n"
+      "   gl_Position = mvp_matrix * f_matrix * vertex; \n"
+      "}                                                \n"
+    };
+    
+    const char vertex_source_comp[] =
+    {
       "attribute highp vec4 vertex;                     \n"
       "attribute highp vec4 colors;                     \n"
       "uniform highp mat4 mvp_matrix;                   \n"
@@ -379,7 +453,28 @@ void Scene_edit_polyhedron_item_priv::init_values()
     //Fragment source code
     const char fragment_source[] =
     {
-      "//#version 100                  \n"
+      "#version 430                  \n"
+      "in vec4 color;    \n"
+      "in float dist[6]; \n"
+      "uniform bool is_clipbox_on;  \n"
+      "out vec4 out_color; \n"
+      
+      "void main(void)              \n"
+      "{                            \n"
+      "if(is_clipbox_on)            \n"
+      "  if(dist[0]>0.0 ||            \n"
+      "     dist[1]>0.0 ||            \n"
+      "     dist[2]>0.0 ||            \n"
+      "     dist[3]>0.0 ||            \n"
+      "     dist[4]>0.0 ||            \n"
+      "     dist[5]>0.0)              \n"
+      "    discard;                 \n"
+      "  out_color = color;      \n"
+      "}                            \n"
+      "                             \n"
+    };
+    const char fragment_source_comp[] =
+    {
       "varying highp vec4 color;    \n"
       "varying highp float dist[6]; \n"
       "uniform bool is_clipbox_on;  \n"
@@ -397,8 +492,17 @@ void Scene_edit_polyhedron_item_priv::init_values()
       "}                            \n"
       "                             \n"
     };
-    transparent_plane_program.addShaderFromSourceCode(QOpenGLShader::Vertex,vertex_source);
-    transparent_plane_program.addShaderFromSourceCode(QOpenGLShader::Fragment,fragment_source);
+    
+    if(QOpenGLContext::currentContext()->format().majorVersion() >= 3)
+    {
+      transparent_plane_program.addShaderFromSourceCode(QOpenGLShader::Vertex,vertex_source);
+      transparent_plane_program.addShaderFromSourceCode(QOpenGLShader::Fragment,fragment_source);
+    }
+    else
+    {
+      transparent_plane_program.addShaderFromSourceCode(QOpenGLShader::Vertex,vertex_source_comp);
+      transparent_plane_program.addShaderFromSourceCode(QOpenGLShader::Fragment,fragment_source_comp);
+    }
     transparent_plane_program.bindAttributeLocation("colors", 1);
     transparent_plane_program.link();
     ui_widget->remeshing_iterations_spinbox->setValue(1);
@@ -1444,7 +1548,7 @@ void Scene_edit_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) con
   drawEdges(viewer);
   draw_ROI_and_control_vertices(viewer);
 
-
+  drawTransparent(viewer);
 
 }
 

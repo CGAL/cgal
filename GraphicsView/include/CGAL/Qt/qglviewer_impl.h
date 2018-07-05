@@ -257,7 +257,17 @@ void CGAL::QGLViewer::initializeGL() {
     //Vertex source code
     const char v_s[] =
     {
-      "#version 120 \n"
+      "#version 430 \n"
+      "in vec4 vertex;\n"
+      "uniform mat4 mvp_matrix;\n"
+      "void main(void)\n"
+      "{\n"
+      "   gl_Position = mvp_matrix * vertex; \n"
+      "} \n"
+      "\n"
+    };
+    const char v_source_comp[] =
+    {
       "attribute highp vec4 vertex;\n"
       "uniform highp mat4 mvp_matrix;\n"
       "void main(void)\n"
@@ -269,7 +279,16 @@ void CGAL::QGLViewer::initializeGL() {
     //Fragment source code
     const char f_s[] =
     {
-      "#version 120 \n"
+      "#version 430 \n"
+      "uniform vec4 color; \n"
+      "out vec4 out_color; \n"
+      "void main(void) { \n"
+      "out_color = color; \n"
+      "} \n"
+      "\n"
+    };
+    const char f_source_comp[] =
+    {
       "uniform highp vec4 color; \n"
       "void main(void) { \n"
       "gl_FragColor = color; \n"
@@ -280,18 +299,33 @@ void CGAL::QGLViewer::initializeGL() {
     //It is said in the doc that a QOpenGLShader is 
     // only destroyed with the QOpenGLShaderProgram 
     //it has been linked with.
+    
     QOpenGLShader vertex_shader(QOpenGLShader::Vertex);
-    if(!vertex_shader.compileSourceCode(v_s))
-    {
-      std::cerr<<"Compiling vertex source FAILED"<<std::endl;
-    }
-    
     QOpenGLShader fragment_shader(QOpenGLShader::Fragment);
-    if(!fragment_shader.compileSourceCode(f_s))
+    if(is_ogl_4_3)
     {
-      std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+      if(!vertex_shader.compileSourceCode(v_s))
+      {
+        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+      }
+      
+      if(!fragment_shader.compileSourceCode(f_s))
+      {
+        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+      }
     }
-    
+    else
+    {
+      if(!vertex_shader.compileSourceCode(v_source_comp))
+      {
+        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+      }
+      
+      if(!fragment_shader.compileSourceCode(f_source_comp))
+      {
+        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+      }
+    }
     if(!rendering_program.addShader(&vertex_shader))
     {
       std::cerr<<"adding vertex shader FAILED"<<std::endl;
@@ -310,7 +344,28 @@ void CGAL::QGLViewer::initializeGL() {
     //Vertex source code
     const char vertex_source[] =
     {
-      "#version 120 \n"
+      "#version 430 \n"
+      "in vec4 vertex;\n"
+      "in vec3 normal;\n"
+      "in vec4 colors;\n"
+      "uniform highp mat4 mvp_matrix;\n"
+      "uniform highp mat4 mv_matrix; \n"
+      "out vec4 fP; \n"
+      "out vec3 fN; \n"
+      "out vec4 color; \n"
+      "void main(void)\n"
+      "{\n"
+      "   color = vec4(colors.xyz, 1.0f); \n"
+      "   fP = mv_matrix * vertex; \n"
+      "   fN = mat3(mv_matrix)* normal; \n"
+      "   gl_Position = vec4(mvp_matrix * vertex); \n"
+      "} \n"
+      "\n"
+    };
+    //Vertex source code
+    const char vertex_source_comp[] =
+    {
+
       "attribute highp vec4 vertex;\n"
       "attribute highp vec3 normal;\n"
       "attribute highp vec4 colors;\n"
@@ -321,9 +376,13 @@ void CGAL::QGLViewer::initializeGL() {
       "varying highp vec4 color; \n"
       "void main(void)\n"
       "{\n"
-      "   color = vec4(colors.xyz, 1.0f); \n"
+      "   color = vec4(colors.xyz, 1.0); \n"
       "   fP = mv_matrix * vertex; \n"
-      "   fN = mat3(mv_matrix)* normal; \n"
+      "   highp mat3 mv_matrix_3;                 \n"
+      "   mv_matrix_3[0] = mv_matrix[0].xyz;\n"
+      "   mv_matrix_3[1] = mv_matrix[1].xyz;\n"
+      "   mv_matrix_3[2] = mv_matrix[2].xyz;\n"
+      "   fN = mv_matrix_3* normal; \n"
       "   gl_Position = vec4(mvp_matrix * vertex); \n"
       "} \n"
       "\n"
@@ -331,16 +390,47 @@ void CGAL::QGLViewer::initializeGL() {
     //Fragment source code
     const char fragment_source[] =
     {
-      "#version 120 \n"
+      "#version 430 \n"
+      "in vec4 color; \n"
+      "in vec4 fP; \n"
+      "in vec3 fN; \n"  
+      " out vec4 out_color; \n"
+      "void main(void) { \n"
+      "   vec4 light_pos = vec4(0.0f, 0.0f, 1.0f, 1.0f);  \n"
+      "   vec4 light_diff = vec4(1.0f, 1.0f, 1.0f, 1.0f); \n"
+      "   vec4 light_spec = vec4(0.0f, 0.0f, 0.0f, 1.0f); \n"
+      "   vec4 light_amb = vec4(0.4f, 0.4f, 0.4f, 0.4f);  \n"
+      "   float spec_power = 51.8f ; \n"
+      "   vec3 L = light_pos.xyz - fP.xyz; \n"
+      "   vec3 V = -fP.xyz; \n"
+      "   vec3 N; \n"
+      "   if(fN == vec3(0.0,0.0,0.0)) \n"
+      "       N = vec3(0.0,0.0,0.0); \n"
+      "   else \n"
+      "       N = normalize(fN); \n"
+      "   L = normalize(L); \n"
+      "   V = normalize(V); \n"
+      "   vec3 R = reflect(-L, N); \n"
+      "   vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
+      "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+      
+      "out_color = color*light_amb + diffuse + specular; \n"
+      "out_color = vec4(out_color.xyz, 1.0f); \n"
+      "} \n"
+      "\n"
+    };
+    
+    const char fragment_source_comp[] =
+    {
       "varying highp vec4 color; \n"
       "varying highp vec4 fP; \n"
       "varying highp vec3 fN; \n"  
       "void main(void) { \n"
-      "   highp vec4 light_pos = vec4(0.0f, 0.0f, 1.0f, 1.0f);  \n"
-      "   highp vec4 light_diff = vec4(1.0f, 1.0f, 1.0f, 1.0f); \n"
-      "   highp vec4 light_spec = vec4(0.0f, 0.0f, 0.0f, 1.0f); \n"
-      "   highp vec4 light_amb = vec4(0.4f, 0.4f, 0.4f, 0.4f);  \n"
-      "   highp float spec_power = 51.8f ; \n"
+      "   highp vec4 light_pos = vec4(0.0, 0.0, 1.0, 1.0);  \n"
+      "   highp vec4 light_diff = vec4(1.0, 1.0, 1.0, 1.0); \n"
+      "   highp vec4 light_spec = vec4(0.0, 0.0, 0.0, 1.0); \n"
+      "   highp vec4 light_amb = vec4(0.4, 0.4, 0.4, 0.4);  \n"
+      "   highp float spec_power = 51.8 ; \n"
       "   vec3 L = light_pos.xyz - fP.xyz; \n"
       "   vec3 V = -fP.xyz; \n"
       "   vec3 N; \n"
@@ -355,7 +445,7 @@ void CGAL::QGLViewer::initializeGL() {
       "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
       
       "gl_FragColor = color*light_amb + diffuse + specular; \n"
-      "gl_FragColor = vec4(gl_FragColor.xyz, 1.0f); \n"
+      "gl_FragColor = vec4(gl_FragColor.xyz, 1.0); \n"
       "} \n"
       "\n"
     };
@@ -364,17 +454,31 @@ void CGAL::QGLViewer::initializeGL() {
     // only destroyed with the QOpenGLShaderProgram 
     //it has been linked with.
     QOpenGLShader vertex_shader(QOpenGLShader::Vertex);
-    if(!vertex_shader.compileSourceCode(vertex_source))
-    {
-      std::cerr<<"Compiling vertex source FAILED"<<std::endl;
-    }
-    
     QOpenGLShader fragment_shader(QOpenGLShader::Fragment);
-    if(!fragment_shader.compileSourceCode(fragment_source))
+    if(is_ogl_4_3)
     {
-      std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+      if(!vertex_shader.compileSourceCode(vertex_source))
+      {
+        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+      }
+      
+      if(!fragment_shader.compileSourceCode(fragment_source))
+      {
+        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+      }
     }
-    
+    else
+    {
+      if(!vertex_shader.compileSourceCode(vertex_source_comp))
+      {
+        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+      }
+      
+      if(!fragment_shader.compileSourceCode(fragment_source_comp))
+      {
+        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+      }
+    }
     if(!rendering_program_light.addShader(&vertex_shader))
     {
       std::cerr<<"adding vertex shader FAILED"<<std::endl;

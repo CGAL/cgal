@@ -138,7 +138,10 @@ private:
   static const char* vertexShader_bordures_source;
 
   static const char* fragmentShader_bordures_source;
+  
+  static const char* vertexShader_source_comp;
 
+  static const char* fragmentShader_source_comp;
 
   CGAL::qglviewer::Vec translationVector(x_tag) const {
     return CGAL::qglviewer::Vec(xscale_, 0.0, 0.0);
@@ -376,7 +379,17 @@ private:
 
 template<typename T>
 const char* Volume_plane<T>::vertexShader_source =
-      "//#version 100  \n"
+      "#version 430  \n"
+      "in vec4 vertex; \n"
+      "in float color; \n"
+      "uniform mat4 mvp_matrix; \n"
+      "uniform mat4 f_matrix; \n"
+      "out vec4 fullColor; \n"
+      "void main() \n"
+      "{ gl_Position = mvp_matrix * f_matrix * vertex; \n"
+      " fullColor = vec4(color, color, color, 1.0); } \n";
+template<typename T>
+const char* Volume_plane<T>::vertexShader_source_comp =
       "attribute highp vec4 vertex; \n"
       "attribute highp float color; \n"
       "uniform highp mat4 mvp_matrix; \n"
@@ -388,13 +401,17 @@ const char* Volume_plane<T>::vertexShader_source =
 
 template<typename T>
 const char* Volume_plane<T>::fragmentShader_source =
-      "//#version 100 \n"
+      "#version 430 \n"
+      "in vec4 fullColor; \n"
+      "out vec4 out_color; \n"
+      "void main() { out_color = fullColor; } \n";
+template<typename T>
+const char* Volume_plane<T>::fragmentShader_source_comp =
       "varying highp vec4 fullColor; \n"
       "void main() { gl_FragColor = fullColor; } \n";
 
 template<typename T>
 const char* Volume_plane<T>::vertexShader_bordures_source =
-      "//#version 100  \n"
       "attribute highp vec4 vertex; \n"
       "attribute highp vec4 colors; \n"
       "uniform highp mat4 mvp_matrix; \n"
@@ -404,12 +421,11 @@ const char* Volume_plane<T>::vertexShader_bordures_source =
       "{ gl_Position = mvp_matrix * f_matrix * vertex; \n"
       " fullColor = colors; } \n";
 
+
 template<typename T>
 const char* Volume_plane<T>::fragmentShader_bordures_source =
-      "//#version 100 \n"
       "varying highp vec4 fullColor; \n"
       "void main() { gl_FragColor = fullColor; } \n";
-
 
 
 template<typename T>
@@ -457,7 +473,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   updateCurrentCube();
 
 
-  viewer->glDepthRangef(0.01f,0.99f);
+  viewer->glDepthRangef(0.00001f,0.99999f);
   GLdouble mat[16];
   viewer->camera()->getModelViewProjectionMatrix(mat);
   QMatrix4x4 mvp;
@@ -476,13 +492,9 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
     else
     {
       program_bordures = new QOpenGLShaderProgram(viewer);
-      QOpenGLShader *vertex_bordures = new QOpenGLShader(QOpenGLShader::Vertex);
+      program_bordures->addShaderFromSourceCode(QOpenGLShader::Vertex,vertexShader_bordures_source);
+      program_bordures->addShaderFromSourceCode(QOpenGLShader::Fragment,fragmentShader_bordures_source);
       
-      vertex_bordures->compileSourceCode(vertexShader_bordures_source);
-      QOpenGLShader *fragment_bordures= new QOpenGLShader(QOpenGLShader::Fragment);
-      fragment_bordures->compileSourceCode(fragmentShader_bordures_source);
-      program_bordures->addShader(vertex_bordures);
-      program_bordures->addShader(fragment_bordures);
       program_bordures->link();
     }
   }
@@ -517,7 +529,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
     program_bordures->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
     program_bordures->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
     program_bordures->setUniformValue("width", 4.0f);
-    viewer->glDepthRangef(0.0005f, 0.9995f);
+    viewer->glDepthRangef(0.00005f, 0.99995f);
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_rec.size()/3));
     viewer->glDepthRangef(0.0,1.0);
   }
@@ -670,13 +682,16 @@ void Volume_plane<T>::init(Viewer_interface* viewer) {
 
 template<typename T>
 void Volume_plane<T>::initShaders() {
-  QOpenGLShader *vertex = new QOpenGLShader(QOpenGLShader::Vertex);
-
-  vertex->compileSourceCode(vertexShader_source);
-  QOpenGLShader *fragment= new QOpenGLShader(QOpenGLShader::Fragment);
-  fragment->compileSourceCode(fragmentShader_source);
-  program.addShader(vertex);
-  program.addShader(fragment);
+  if(QOpenGLContext::currentContext()->format().majorVersion() >= 3)
+  {
+    program.addShaderFromSourceCode(QOpenGLShader::Vertex, vertexShader_source  );
+    program.addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentShader_source);
+  }
+  else
+  {
+    program.addShaderFromSourceCode(QOpenGLShader::Vertex, vertexShader_source_comp  );
+    program.addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentShader_source_comp);
+  }
   program.link();
 
 }

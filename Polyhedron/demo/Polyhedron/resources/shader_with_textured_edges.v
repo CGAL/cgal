@@ -1,12 +1,12 @@
-//#version 100 
- attribute highp vec4 vertex;
- attribute highp vec2 v_texCoord; 
- uniform highp vec3 color_lines; 
- uniform highp mat4 mvp_matrix; 
- varying highp vec3 fColors; 
- varying highp vec2 f_texCoord; 
+#version 430
+ in vec4 vertex;
+ in vec2 v_texCoord; 
+ uniform vec3 color_lines; 
+ uniform mat4 mvp_matrix; 
+ out vec3 fColors; 
+ out vec2 f_texCoord; 
   
-  uniform highp float point_size;
+  uniform float point_size;
   void main(void)
   {
     gl_PointSize = point_size;
