@@ -58,10 +58,10 @@ void test_triangulated_cube(const char* fname)
   }
 
   std::vector<Point_3> mesh_points;
-  typedef typename boost::property_map<SurfaceMesh, boost::vertex_point_t>::type Pmap;
+  typedef boost::property_map<SurfaceMesh, boost::vertex_point_t>::type Pmap;
   Pmap vpmap = get_property_map(boost::vertex_point, mesh);
 
-  typedef typename boost::graph_traits<SurfaceMesh>::vertex_descriptor vertex_descriptor;
+  typedef boost::graph_traits<SurfaceMesh>::vertex_descriptor vertex_descriptor;
   BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
   {
     Point_3 p = get(vpmap, v);
