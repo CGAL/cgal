@@ -1,4 +1,4 @@
-#version 430 core
+#version 150
 in vec4 color;
 in float dist[6];
 uniform bool is_selected;

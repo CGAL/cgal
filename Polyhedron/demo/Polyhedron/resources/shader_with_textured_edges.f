@@ -1,4 +1,4 @@
-#version 430 core
+#version 150
 in vec3 fColors;
 in vec2 f_texCoord; 
 uniform sampler2D s_texture; 

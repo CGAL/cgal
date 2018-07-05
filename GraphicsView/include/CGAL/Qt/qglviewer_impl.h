@@ -257,7 +257,7 @@ void CGAL::QGLViewer::initializeGL() {
     //Vertex source code
     const char v_s[] =
     {
-      "#version 430 core \n"
+      "#version 150 \n"
       "in vec4 vertex;\n"
       "uniform mat4 mvp_matrix;\n"
       "void main(void)\n"
@@ -279,7 +279,7 @@ void CGAL::QGLViewer::initializeGL() {
     //Fragment source code
     const char f_s[] =
     {
-      "#version 430 core \n"
+      "#version 150 \n"
       "uniform vec4 color; \n"
       "out vec4 out_color; \n"
       "void main(void) { \n"
@@ -344,7 +344,7 @@ void CGAL::QGLViewer::initializeGL() {
     //Vertex source code
     const char vertex_source[] =
     {
-      "#version 430 core \n"
+      "#version 150 \n"
       "in vec4 vertex;\n"
       "in vec3 normal;\n"
       "in vec4 colors;\n"
@@ -390,7 +390,7 @@ void CGAL::QGLViewer::initializeGL() {
     //Fragment source code
     const char fragment_source[] =
     {
-      "#version 430 core \n"
+      "#version 150 \n"
       "in vec4 color; \n"
       "in vec4 fP; \n"
       "in vec3 fN; \n"  

@@ -326,7 +326,7 @@ void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
   //Vertex source code
   const char vertex_source[] =
   {
-    "#version 430 core                                 \n"
+    "#version 150                                 \n"
     "in vec4 vertex;                \n"
     "in vec2 v_texCoord;            \n"
     "uniform mat4 projection_matrix;       \n"
@@ -355,7 +355,7 @@ void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
   //Fragment source code
   const char fragment_source[] =
   {
-    "#version 430 core                                                            \n"
+    "#version 150                                                            \n"
     "in vec2 f_texCoord;                                         \n"
     "out vec4 out_color ; \n"
     "uniform sampler2D texture;                                             \n"

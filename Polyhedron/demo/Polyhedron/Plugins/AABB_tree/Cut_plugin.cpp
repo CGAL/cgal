@@ -562,7 +562,7 @@ public:
     //Vertex source code
     const char tex_vertex_source[] =
     {
-        "#version 430 core \n"
+        "#version 150 \n"
         "in vec4 vertex;\n"
         "in vec2 tex_coord; \n"
         "uniform mat4 mvp_matrix;\n"
@@ -591,7 +591,7 @@ public:
     //Vertex source code
     const char tex_fragment_source[] =
     {
-        "#version 430 core \n"
+        "#version 150 \n"
         "uniform sampler2D texture;\n"
         "in vec2 texc;\n"
         "out vec4 out_color; \n"

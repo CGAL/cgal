@@ -256,7 +256,7 @@ void Viewer::init()
          //Vertex source code
          const char vertex_source_dist[] =
          {
-             "#version 430 core  \n"
+             "#version 150  \n"
              "in vec4 vertex;\n"
              "uniform mat4 mvp_matrix;\n"
              "uniform float point_size;\n"
@@ -282,7 +282,7 @@ void Viewer::init()
          //Fragment source code
          const char fragment_source_dist[] =
          {
-             "#version 430 core  \n"
+             "#version 150  \n"
              "out vec4 out_color; \n"
              "void main(void) { \n"
              "out_color = vec4(0.0,0.0,0.0,1.0); \n"

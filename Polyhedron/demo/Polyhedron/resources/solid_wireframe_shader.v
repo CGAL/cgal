@@ -1,4 +1,4 @@
-#version 430 core
+#version 150
 
 in vec4 vertex;
 in vec4 colors;

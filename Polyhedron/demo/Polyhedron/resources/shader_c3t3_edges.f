@@ -1,4 +1,4 @@
-#version 430 core
+#version 150
 in vec4 color;
 out vec4 out_color;
 void main(void) 
