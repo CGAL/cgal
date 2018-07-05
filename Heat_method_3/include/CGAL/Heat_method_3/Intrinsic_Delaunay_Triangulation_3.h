@@ -141,7 +141,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
        };
 
      public:
-       Intrinsic_Delaunay_Triangulation_3(TriangleMesh tm, HalfedgeCoordinateMap hcm)
+       Intrinsic_Delaunay_Triangulation_3(TriangleMesh& tm, HalfedgeCoordinateMap hcm)
         : tm(tm), hcm(hcm)
         {
           build();
@@ -149,7 +149,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
 
 
 
-       Intrinsic_Delaunay_Triangulation_3(TriangleMesh tm, HalfedgeCoordinateMap hcm, FaceIndexMap fpm, EdgeIndexMap epm)
+       Intrinsic_Delaunay_Triangulation_3(TriangleMesh& tm, HalfedgeCoordinateMap hcm, FaceIndexMap fpm, EdgeIndexMap epm)
          : tm(tm), hcm(hcm), fpm(fpm), epm(epm)
        {
          build();
@@ -372,7 +372,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
            }
          }
          //todo:: determine which can be const
-         TriangleMesh tm;
+         TriangleMesh& tm;
          VertexPointMap vpm;
          FaceIndexMap fpm;
          EdgeIndexMap epm;
