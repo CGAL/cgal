@@ -97,7 +97,7 @@ bool read_vertices(const PolyMesh& mesh,
   return true;
 }
 
-int main(int argc, char * argv[])
+int main(int argc, char** argv)
 {
   std::ifstream in((argc>1) ? argv[1] : "data/nefertiti.off");
   if(!in){
@@ -118,7 +118,7 @@ int main(int argc, char * argv[])
   Vd_array vda;
   if(!read_vertices(sm, filename, vda)) {
     std::cerr << "Error: problem loading the square corners" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   typedef SMP::Square_border_uniform_parameterizer_3<PolyMesh> Border_parameterizer;
@@ -138,5 +138,5 @@ int main(int argc, char * argv[])
   std::ofstream out("result.off");
   SMP::IO::output_uvmap_to_off(sm, bhd, uv_map, out);
 
-  return 0;
+  return EXIT_SUCCESS;
 }
