@@ -32,15 +32,14 @@ void test_function_overload()
 
   std::vector<Point_3> extreme_points;
   CGAL::extreme_points_3(points, std::back_inserter(extreme_points));
-  CGAL_assertion(extreme_points.size() == 5);
+  assert(extreme_points.size() == 5);
 
   Polyhedron_3 polyhedron;
   CGAL::convex_hull_3(points.begin(), points.end(), polyhedron);
   typedef Polyhedron_3::Point_iterator Point_iterator;
   for (Point_iterator p_it = polyhedron.points_begin(); p_it != polyhedron.points_end(); ++p_it)
   {
-    Point_3 p = *p_it;
-    CGAL_assertion(std::find(extreme_points.begin(), extreme_points.end(), p) != extreme_points.end());
+    assert(std::find(extreme_points.begin(), extreme_points.end(), *p_it) != extreme_points.end());
   }
 }
 
@@ -70,7 +69,7 @@ void test_triangulated_cube(const char* fname)
 
   std::vector<Point_3> extreme_points;
   CGAL::extreme_points_3(mesh_points, std::back_inserter(extreme_points)) ;
-  CGAL_assertion(extreme_points.size() == 8);
+  assert(extreme_points.size() == 8);
 }
 
 void test_coplanar_points(const char* fname)
@@ -96,10 +95,10 @@ void test_coplanar_points(const char* fname)
   else
     std::cerr << "error loading file\n";
 
-  CGAL_assertion(points.size() == 289);
+  assert(points.size() == 289);
   std::vector<Point_3> convex_hull;
   CGAL::extreme_points_3(points, std::back_inserter(convex_hull));
-  CGAL_assertion(convex_hull.size() == 4);
+  assert(convex_hull.size() == 4);
 }
 
 void test_3_points()
@@ -112,17 +111,16 @@ void test_3_points()
   Polyhedron_3 polyhedron;
   CGAL::convex_hull_3(points.begin(), points.end(), polyhedron);
   std::vector<Point_3> convex_polyhedron(polyhedron.points_begin(), polyhedron.points_end());
-  CGAL_assertion(convex_polyhedron.size() == 3);
+  assert(convex_polyhedron.size() == 3);
 
   std::vector<Point_3> extreme_points;
   CGAL::extreme_points_3(points, std::back_inserter(extreme_points));
-  CGAL_assertion(convex_polyhedron.size() == 3);
+  assert(convex_polyhedron.size() == 3);
 
   typedef Polyhedron_3::Point_iterator Point_iterator;
   for (Point_iterator p_it = polyhedron.points_begin(); p_it != polyhedron.points_end(); ++p_it)
   {
-    Point_3 p = *p_it;
-    CGAL_assertion(std::find(extreme_points.begin(), extreme_points.end(), p) != extreme_points.end());
+    assert(std::find(extreme_points.begin(), extreme_points.end(), *p_it) != extreme_points.end());
   }
 }
 
@@ -136,17 +134,16 @@ void test_3_collinear()
   Polyhedron_3 polyhedron;
   CGAL::convex_hull_3(points.begin(), points.end(), polyhedron);
   std::vector<Point_3> convex_polyhedron(polyhedron.points_begin(), polyhedron.points_end());
-  CGAL_assertion(convex_polyhedron.size() == 2);
+  assert(convex_polyhedron.size() == 2);
 
   std::vector<Point_3> extreme_points;
   CGAL::extreme_points_3(points, std::back_inserter(extreme_points));
-  CGAL_assertion(convex_polyhedron.size() == 2);
+  assert(convex_polyhedron.size() == 2);
 
   typedef Polyhedron_3::Point_iterator Point_iterator;
   for (Point_iterator p_it = polyhedron.points_begin(); p_it != polyhedron.points_end(); ++p_it)
   {
-    Point_3 p = *p_it;
-    CGAL_assertion(std::find(extreme_points.begin(), extreme_points.end(), p) != extreme_points.end());
+    assert(std::find(extreme_points.begin(), extreme_points.end(), *p_it) != extreme_points.end());
   }
 }
 
@@ -155,25 +152,25 @@ void test_up_to_3_extreme_points()
   std::vector<Point_3> points;
   std::vector<Point_3> extreme_points;
   CGAL::extreme_points_3(points, std::back_inserter(extreme_points));
-  CGAL_assertion(extreme_points.empty());
+  assert(extreme_points.empty());
 
   Point_3 p1(0, 0, 0);
   points.push_back(p1);
   extreme_points.clear();
   CGAL::extreme_points_3(points, std::back_inserter(extreme_points));
-  CGAL_assertion(extreme_points.size() == 1);
+  assert(extreme_points.size() == 1);
 
   Point_3 p2(1, 0, 0);
   points.push_back(p2);
   extreme_points.clear();
   CGAL::extreme_points_3(points, std::back_inserter(extreme_points));
-  CGAL_assertion(extreme_points.size() == 2);
+  assert(extreme_points.size() == 2);
 
   Point_3 p3(1, 1, 0);
   points.push_back(p3);
   extreme_points.clear();
   CGAL::extreme_points_3(points, std::back_inserter(extreme_points));
-  CGAL_assertion(extreme_points.size() == 3);
+  assert(extreme_points.size() == 3);
 }
 
 void test_equal_points()
@@ -186,21 +183,21 @@ void test_equal_points()
   points.push_back(p1);
   points.push_back(p1);
   CGAL::extreme_points_3(points, std::back_inserter(extreme_points));
-  CGAL_assertion(extreme_points.size() == 1);
+  assert(extreme_points.size() == 1);
 
   // test many equal
   extreme_points.clear();
   for(int i = 0; i < 10; ++i)
     points.push_back(p1);
   CGAL::extreme_points_3(points, std::back_inserter(extreme_points));
-  CGAL_assertion(extreme_points.size() == 1);
+  assert(extreme_points.size() == 1);
 
   // test with only 2 different
   extreme_points.clear();
   Point_3 p3(0.1, 0, 0);
   points.push_back(p3);
   CGAL::extreme_points_3(points, std::back_inserter(extreme_points));
-  CGAL_assertion(extreme_points.size() == 2);
+  assert(extreme_points.size() == 2);
 }
 
 
