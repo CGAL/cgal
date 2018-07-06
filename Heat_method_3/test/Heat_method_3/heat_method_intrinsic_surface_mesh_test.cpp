@@ -20,13 +20,16 @@ typedef boost::property_map<BaseMesh, Halfedge_coordinate_tag >::type Halfedge_c
 
 typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<BaseMesh,Kernel, Halfedge_coordinate_map> Mesh;
 
+
 typedef CGAL::dynamic_vertex_property_t<double> Vertex_distance_tag;
 typedef boost::property_map<Mesh, Vertex_distance_tag >::type Vertex_distance_map;
 
+
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+/*
 typedef CGAL::Heat_method_3::Heat_method_3<Mesh,Kernel,Vertex_distance_map> Heat_method;
 typedef CGAL::Heat_method_3::Heat_method_Eigen_traits_3::SparseMatrix SparseMatrix;
-
+*/
 
 #if 0
 void source_set_tests(Heat_method hm, const Mesh& sm)
@@ -109,7 +112,10 @@ void check_no_update(const Mesh& sm, const Vertex_distance_map& original, const 
 int main()
 {
   BaseMesh bm;
-  Vertex_distance_map vertex_distance_map = get(Vertex_distance_tag(),bm);
+  Halfedge_coordinate_map hcm;
+  Mesh sm(bm,hcm);
+
+  Vertex_distance_map vertex_distance_map = get(Vertex_distance_tag(),sm);
   bool idf = false;
 
   std::ifstream in("data/pyramid0.off");
@@ -119,11 +125,7 @@ int main()
     return 1;
   }
 
-  Halfedge_coordinate_map hcm;
-  Mesh sm(bm,hcm);
-
 #if 0
-  
   //source set tests
   Heat_method hm(sm, vertex_distance_map, idf);
 
