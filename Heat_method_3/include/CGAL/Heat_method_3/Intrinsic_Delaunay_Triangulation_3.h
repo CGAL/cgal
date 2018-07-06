@@ -163,6 +163,11 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
          return tm;
        }
 
+       Triangle_mesh& triangle_mesh()
+       {
+         return tm;
+       }
+
        const HalfedgeCoordinateMap& hcmap() const
        {
          return hcm;
@@ -532,7 +537,7 @@ next(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VP
     friend value_type get(const IDT_vertex_point_property_map<IDT>& pm,
                           key_type vd)
     {
-      IDT::Point_2 p = get(pm.idt.hcmap(), vd.hd);
+      typename IDT::Point_2 p = get(pm.idt.hcmap(), vd.hd);
       return value_type(p.x(), p.y(), 0);
     }
   };
@@ -553,7 +558,7 @@ next(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VP
     friend value_type get(const IDT_vertex_index_property_map<IDT>& pm,
                           key_type vd)
     {
-      typename TM::vertex_descriptor tm_vd = target(vd.hd,idt.triangle_mesh());
+      typename TM::vertex_descriptor tm_vd = target(vd.hd,pm.idt.triangle_mesh());
       
       return 0;// AF todo: return the index of tm_vd
     }
@@ -586,8 +591,8 @@ template <typename TM,
           typename EIM,
           typename LA>
 CGAL::Intrinsic_Delaunay_Triangulation_3::IDT_vertex_point_property_map<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA> >
-get(const CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>& idt,
-    CGAL::vertex_point_t)
+get(CGAL::vertex_point_t,
+    const CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>& idt)
 {
   return CGAL::Intrinsic_Delaunay_Triangulation_3::IDT_vertex_point_property_map<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA> >(idt);
 }
@@ -601,8 +606,8 @@ template <typename TM,
           typename EIM,
           typename LA>
 CGAL::Intrinsic_Delaunay_Triangulation_3::IDT_vertex_index_property_map<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA> >
-get(const CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>& idt,
-    boost::vertex_index_t)
+get(boost::vertex_index_t,
+    const CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>& idt)
 {
   return CGAL::Intrinsic_Delaunay_Triangulation_3::IDT_vertex_index_property_map<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA> >(idt);
 }
@@ -620,7 +625,7 @@ template <typename TM,
                      CGAL::dynamic_vertex_property_t<dT> > {
   typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA> IDT;
   typedef typename property_map<TM, CGAL::dynamic_vertex_property_t<dT> >::type type;
-  typedef type const_type;
+  typedef typename property_map<TM, CGAL::dynamic_vertex_property_t<dT> >::const_type const_type;
  };
 
 } // namespace boost
@@ -637,8 +642,23 @@ template <typename TM,
           typename LA,
           typename dT>
 typename boost::property_map<TM, CGAL::dynamic_vertex_property_t<dT> >::const_type
-get(const CGAL::dynamic_vertex_property_t<dT>& dvp,
+get(CGAL::dynamic_vertex_property_t<dT> dvp,
     const CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>& idt)
+{
+  return get(dvp,idt.triangle_mesh());
+}
+
+template <typename TM,
+          typename T,
+          typename HCM,
+          typename VPM,
+          typename FIM,
+          typename EIM,
+          typename LA,
+          typename dT>
+typename boost::property_map<TM, CGAL::dynamic_vertex_property_t<dT> >::type
+get(CGAL::dynamic_vertex_property_t<dT> dvp,
+    CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>& idt)
 {
   return get(dvp,idt.triangle_mesh());
 }
@@ -647,4 +667,4 @@ get(const CGAL::dynamic_vertex_property_t<dT>& dvp,
 } // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
-#endif CGAL_HEAT_METHOD_3_HEAT_METHOD_3_H
+#endif // CGAL_HEAT_METHOD_3_HEAT_METHOD_3_H

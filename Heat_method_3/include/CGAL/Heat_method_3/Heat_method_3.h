@@ -632,4 +632,4 @@ namespace Heat_method_3 {
 } // namespace Heat_method_3
 } // namespace CGAL
 #include <CGAL/enable_warnings.h>
-#endif CGAL_HEAT_METHOD_3_HEAT_METHOD_3_H
+#endif // CGAL_HEAT_METHOD_3_HEAT_METHOD_3_H
