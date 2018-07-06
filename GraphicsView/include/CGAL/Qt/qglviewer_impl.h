@@ -223,7 +223,9 @@ void CGAL::QGLViewer::initializeGL() {
     format.setSamples(0);
     format.setOption(QSurfaceFormat::DebugContext);
     QSurfaceFormat::setDefaultFormat(format);
+              
     needNewContext();
+    qDebug()<<"GL 4.3 context initialization failed. ";
     is_ogl_4_3 = false;
   }
   else
@@ -231,6 +233,11 @@ void CGAL::QGLViewer::initializeGL() {
     is_ogl_4_3 = true;
   }
 
+  QSurfaceFormat cur_f = QOpenGLContext::currentContext()->format();
+  const char* rt =(cur_f.renderableType() == QSurfaceFormat::OpenGLES) ? "GLES" : "GL";
+  qDebug()<<"Using context "
+         <<cur_f.majorVersion()<<"."<<cur_f.minorVersion()
+        << rt;
   QOpenGLFunctions::initializeOpenGLFunctions();
   glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
   // Default colors
