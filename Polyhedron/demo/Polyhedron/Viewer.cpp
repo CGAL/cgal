@@ -222,13 +222,13 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
                           cam_pos.split(",").at(2).toFloat(),
                           1.0f);
   
-  QString ambient = viewer_settings.value("ambient", QString("0.3,0.3,0.3")).toString();
+  QString ambient = viewer_settings.value("ambient", QString("0.4,0.4,0.4")).toString();
   d->ambient = QVector4D(ambient.split(",").at(0).toFloat(),
                          ambient.split(",").at(1).toFloat(),
                          ambient.split(",").at(2).toFloat(),
                          1.0f);
   
-  QString diffuse = viewer_settings.value("diffuse", QString("0.8,0.8,0.8")).toString();
+  QString diffuse = viewer_settings.value("diffuse", QString("1.0,1.0,1.0")).toString();
   d->diffuse = QVector4D(diffuse.split(",").at(0).toFloat(),
                          diffuse.split(",").at(1).toFloat(),
                          diffuse.split(",").at(2).toFloat(),
@@ -240,7 +240,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
                           specular.split(",").at(2).toFloat(),
                           1.0f);
   
-  d->spec_power = viewer_settings.value("spec_power", 51.0).toFloat();
+  d->spec_power = viewer_settings.value("spec_power", 51.8).toFloat();
   d->scene = 0;
   d->projection_is_ortho = false;
   d->initialized = false;
