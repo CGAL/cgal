@@ -222,12 +222,14 @@ public:
   void update_is_closed()
   {
     if (is_empty()) { m_is_closed=false; } // or true by vacuity ?
-    if (!is_valid()) { m_is_closed=false; } // Interest ??
-
-    Dart_const_handle pend=m_map.other_extremity(back());
-    if (pend==Map::null_handle) { m_is_closed=false; }
-
-    m_is_closed=CGAL::belong_to_same_cell<Map,0>(m_map, m_path[0], pend);
+    else if (!is_valid()) { m_is_closed=false; } // Interest ??
+    else
+    {
+      Dart_const_handle pend=m_map.other_extremity(back());
+      if (pend==Map::null_handle) { m_is_closed=false; }
+      else 
+      { m_is_closed=CGAL::belong_to_same_cell<Map,0>(m_map, m_path[0], pend); }
+    }
   }
 
   // @return true iff the path does not pass twice through a same edge
@@ -271,6 +273,18 @@ public:
       new_path[m_path.size()-1-i]=m_map.template beta<2>(m_path[i]);
     }
     new_path.swap(m_path);
+  }
+
+  /// If the given path is opened, close it by doing the same path that the
+  /// first one in reverse direction.
+  void close()
+  {
+    if (!is_closed())
+    {
+      for (int i=m_path.size()-1; i>=0; --i)
+      { m_path.push_back(=m_map.template beta<2>(get_ith_dart(i))); }
+      m_is_closed=true;
+    }
   }
 
   /// @return the turn between dart number i and dart number i+1.
