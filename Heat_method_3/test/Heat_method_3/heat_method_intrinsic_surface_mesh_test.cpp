@@ -125,6 +125,8 @@ int main()
     return 1;
   }
 
+  put(vertex_distance_map, * vertices(sm).first, 1.0);
+  
 #if 0
   //source set tests
   Heat_method hm(sm, vertex_distance_map, idf);

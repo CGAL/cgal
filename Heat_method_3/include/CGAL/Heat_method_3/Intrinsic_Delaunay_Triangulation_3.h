@@ -612,6 +612,30 @@ get(boost::vertex_index_t,
   return CGAL::Intrinsic_Delaunay_Triangulation_3::IDT_vertex_index_property_map<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA> >(idt);
 }
 
+
+  template <typename IDT, typename PM, typename K, typename V>
+class IDT_dynamic_vertex_property_map {
+  PM pm;
+public:
+    typedef IDT_dynamic_vertex_property_map<IDT,PM,K,V> Self;
+    
+  IDT_dynamic_vertex_property_map(PM pm)
+    : pm(pm)
+  {}
+
+    friend V get(const Self& idpm, const K&k)
+    {
+      std::cout << "get" << std::endl;
+      return get(idpm.pm, k);
+    }
+
+    friend void put(const Self& idpm, const K&k, const V& v)
+    {
+      std::cout << "put" << std::endl;
+      put(idpm.pm, k, v); // todo : put into target(k.hd)  of idt.triangle_mesh()
+    }
+};
+
   
 template <typename TM,
           typename T,
@@ -624,8 +648,14 @@ template <typename TM,
  struct property_map<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>,
                      CGAL::dynamic_vertex_property_t<dT> > {
   typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA> IDT;
-  typedef typename property_map<TM, CGAL::dynamic_vertex_property_t<dT> >::type type;
-  typedef typename property_map<TM, CGAL::dynamic_vertex_property_t<dT> >::const_type const_type;
+  typedef IDT_dynamic_vertex_property_map<IDT,
+                                          typename property_map<TM, CGAL::dynamic_vertex_property_t<dT> >::type,
+                                          typename boost::graph_traits<IDT>::vertex_descriptor,
+                                          dT> type;
+  typedef IDT_dynamic_vertex_property_map<IDT,
+                                          typename property_map<TM, CGAL::dynamic_vertex_property_t<dT> >::const_type,
+                                          typename boost::graph_traits<IDT>::vertex_descriptor,
+                                          dT> const_type;
  };
 
 } // namespace boost
