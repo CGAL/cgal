@@ -11,4 +11,3 @@ ALIASES += "cgalNamedParamsBegin=<dl class=\"params\"><dt>Named Parameters</dt><
 ALIASES += "cgalNamedParamsEnd=</table> </dd> </dl>"
 ALIASES += "cgalParamBegin{1}=<tr><td class=\"paramname\">\ref PMP_\1 \"\1\"</td><td>"
 ALIASES += "cgalParamEnd=</td></tr>"
-ALIASES += "cgalDescribePolylineType=A polyline is defined as a sequence of points, each pair of contiguous points defines a segment of the polyline. If the first and last points of the polyline are identical, the polyline is closed."

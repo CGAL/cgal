@@ -28,8 +28,8 @@
  * @file approx_decomposition.h
  * @brief The API which contains template functions for concavity value computation and approximate convex decomposition
  */
-#include <CGAL/internal/Approximate_convex_decomposition/decomposition.h>
-#include <CGAL/internal/Approximate_convex_decomposition/concavity.h>
+#include <CGAL/internal/Approximate_convex_decomposition/Approx_decomposition.h>
+#include <CGAL/internal/Approximate_convex_decomposition/Concavity.h>
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
@@ -48,12 +48,12 @@ namespace CGAL
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm (possible values are `Sequential_tag` and `Parallel_tag`)
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam FacePropertyMap a `ReadWritePropertyMap` with the `boost::graph_traits<TriangleMesh>::%face_descriptor` key type and an integer value type
- * @tparam NamedParameters a sequence of Named Parameters
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * @param mesh clustered triangle mesh
  * @param face_ids property map with per face cluster ids
  * @param cluster_id id of the target cluster on which concavity value is computed
- * @param np optional sequence of `Named Parameters` among the ones listed below
+ * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `mesh` \cgalParamEnd
@@ -103,10 +103,10 @@ concavity_value(const TriangleMesh& mesh,
  *
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm (possible values are `Sequential_tag` and `Parallel_tag`)
  * @tparam TriangleMesh a model of `FaceListGraph`
- * @tparam NamedParameters a sequence of Named Parameters
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * @param mesh triangle mesh on which concavity value is computed
- * @param np optional sequence of `Named Parameters` among the ones listed below
+ * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `mesh` \cgalParamEnd
@@ -150,7 +150,9 @@ concavity_value(const TriangleMesh& mesh)
  *
  * Clusters are subsets of connected faces in a triangle mesh which concavity values are less or equal to 'concavity_threshold'.
  *
- * This function fills a property map which associates a cluster-id (in the range [0, 'number_of_clusters'-1]) to each face.
+ * This function fills a property map which associates a cluster-id (in the range [0, `number_of_clusters`-1]) to each face.
+ *
+ * \note For verbose output define CGAL_APPROX_DECOMPOSITION_VERBOSE before the include derective
  *
  * @pre `is_triangle_mesh(mesh)`
  * @pre `num_face(mesh) >= min_number_of_clusters`
@@ -158,13 +160,13 @@ concavity_value(const TriangleMesh& mesh)
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm (possible values are `Sequential_tag` and `Parallel_tag`)
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam FacePropertyMap a `ReadWritePropertyMap` with the `boost::graph_traits<TriangleMesh>::%face_descriptor` key type and an integer value type
- * @tparam NamedParameters a sequence of Named Parameters
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * @param mesh triangle mesh on which approximate convex decomposition is computed
  * @param[out] face_ids property map with per face cluster ids
  * @param concavity_threshold maximal concavity value of a cluster constraint
- * @param min_number_of_clusters minimal number of clusters constraint (default=1)
- * @param np optional sequence of `Named Parameters` among the ones listed below
+ * @param min_number_of_clusters optional minimal number of clusters constraint (default=1)
+ * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `mesh` \cgalParamEnd
@@ -201,7 +203,7 @@ template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap>
 std::size_t
 convex_decomposition(const TriangleMesh& mesh,
                      FacePropertyMap face_ids,
-                     double concavity_threshold = 0.05,
+                     double concavity_threshold,
                      std::size_t min_number_of_clusters = 1)
 {
     return convex_decomposition<ConcurrencyTag>(mesh, face_ids, concavity_threshold, min_number_of_clusters, Polygon_mesh_processing::parameters::all_default());
