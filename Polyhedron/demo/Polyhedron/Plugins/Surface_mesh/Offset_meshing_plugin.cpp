@@ -164,8 +164,8 @@ class Polygon_soup_offset_function {
   }; // end struct template AABB_primitive
 
 
-  typedef typename CGAL::AABB_traits<Kernel, AABB_primitive> AABB_traits;
-  typedef typename CGAL::AABB_tree<AABB_traits> AABB_tree;
+  typedef CGAL::AABB_traits<Kernel, AABB_primitive> AABB_traits;
+  typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
 
   std::shared_ptr<AABB_tree> m_tree_ptr;
   double m_offset_distance;
