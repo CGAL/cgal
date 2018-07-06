@@ -666,7 +666,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
     viewer->makeCurrent();
     QMap<float, int> picked_item_IDs;
     if(with_names)
-    viewer->glEnable(GL_DEPTH_TEST);
+      viewer->glEnable(GL_DEPTH_TEST);
     if(!gl_init)
         initializeGL(viewer);
     //treat opaque items first to ensure that when two items are the same, but only one is opaque,
