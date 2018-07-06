@@ -34,7 +34,7 @@ if( WIN32 )
 # to avoid a warning with old cmake 
   set(_Boost_BZIP2_HEADERS             "boost/iostreams/filter/bzip2.hpp")
   set(_Boost_ZLIB_HEADERS              "boost/iostreams/filter/zlib.hpp")
-  find_package( Boost OPTIONAL_COMPONENTS zlib)
+  find_package( Boost OPTIONAL_COMPONENTS bzip2 zlib)
 endif()
 
 # Use Eigen
@@ -80,11 +80,11 @@ else()
 endif()
 
 if( WIN32 )
-  if (Boost_ZLIB_FOUND)
+  if (Boost_ZLIB_FOUND AND Boost_BZIP2_FOUND)
     set(classification_linked_libraries ${classification_linked_libraries}
-      ${Boost_ZLIB_LIBRARY})
+      ${Boost_ZLIB_LIBRARY} ${Boost_BZIP2_LIBRARY})
   else()
-    message(STATUS "NOTICE: This project requires Boost ZLIB, and will not be compiled.")
+    message(STATUS "NOTICE: This project requires Boost ZLIB and Boost BZIP2, and will not be compiled.")
     return()
   endif()
 endif()

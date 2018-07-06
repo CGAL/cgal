@@ -11,10 +11,10 @@ if(EIGEN3_FOUND)
 # to avoid a warning with old cmake
     set(_Boost_BZIP2_HEADERS             "boost/iostreams/filter/bzip2.hpp")
     set(_Boost_ZLIB_HEADERS              "boost/iostreams/filter/zlib.hpp")
-    find_package( Boost OPTIONAL_COMPONENTS zlib)
-    if( Boost_ZLIB_FOUND )
+    find_package( Boost OPTIONAL_COMPONENTS bzip2 zlib)
+    if( Boost_ZLIB_FOUND AND Boost_BZIP2_FOUND)
       set(classification_linked_libraries ${classification_linked_libraries}
-        ${Boost_ZLIB_LIBRARY})
+        ${Boost_ZLIB_LIBRARY} ${Boost_BZIP2_LIBRARY})
     endif()
   endif()
 
