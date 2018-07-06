@@ -150,8 +150,18 @@ public:
   { return m_map; }
 
   void clear()
-  { m_path.clear(); }
+  {
+    m_path.clear();
+    m_is_closed=false;
+  }
   
+  void cut(std::size_t n, bool update_isclosed=true)
+  {
+    if (n>=length()) return;
+    m_path.resize(n);
+    if (update_isclosed) { update_is_closed(); }
+  }
+
   std::size_t next_index(std::size_t i) const
   { return (is_closed() && i==m_path.size()-1?0:i+1); }
 
@@ -160,14 +170,25 @@ public:
 
   Dart_const_handle get_ith_dart(std::size_t i) const
   {
-    assert(i<=m_path.size());
-    return m_path[(i==m_path.size()?0:i)];
+    assert(i<m_path.size());
+    return m_path[i];
   }
   
   Dart_const_handle operator[] (std::size_t i) const
+  { return get_ith_dart(i); }
+
+  Dart_const_handle get_prev_dart(std::size_t i) const
   {
-    assert(i<=m_path.size());
-    return m_path[((is_closed() && i==m_path.size())?0:i)];
+    assert(i<m_path.size());
+    if (i==0 && !is_closed()) return NULL;
+    return m_path[prev_index(i)];
+  }
+
+  Dart_const_handle get_next_dart(std::size_t i) const
+  {
+    assert(i<m_path.size());
+    if (i==m_path.size()-1 && !is_closed()) return NULL;
+    return m_path[next_index(i)];
   }
 
   Dart_const_handle back() const
@@ -176,15 +197,16 @@ public:
     return m_path.back();
   }
   
-  void push_back(Dart_const_handle dh)
+  void push_back(Dart_const_handle dh, bool update_isclosed=true)
   {
     assert(dh!=NULL && dh!=m_map.null_dart_handle);
-    assert((is_empty() ||
+    /* This assert is too long...
+     assert((is_empty() ||
            CGAL::template belong_to_same_cell<Map, 0>
-           (m_map, m_map.other_extremity(back()), dh)));
+           (m_map, m_map.other_extremity(back()), dh))); */
 
     m_path.push_back(dh);
-    update_is_closed();
+    if (update_isclosed) { update_is_closed(); }
   }
 
   // @return true iff the path is valid; i.e. a sequence of edges two by
@@ -282,7 +304,7 @@ public:
     if (!is_closed())
     {
       for (int i=m_path.size()-1; i>=0; --i)
-      { m_path.push_back(=m_map.template beta<2>(get_ith_dart(i))); }
+      { m_path.push_back(m_map.template beta<2>(get_ith_dart(i))); }
       m_is_closed=true;
     }
   }
@@ -299,8 +321,8 @@ public:
     if (!is_closed() && i==length()-1)
     { return 0; }
 
-    Dart_const_handle d1=m_path[i];
-    Dart_const_handle d2=get_ith_dart(i+1); // Work also for the last dart for cycles
+    Dart_const_handle d1=get_ith_dart(i);
+    Dart_const_handle d2=get_next_dart(i);
     assert(d1!=d2);
 
     std::size_t res=1;
@@ -322,8 +344,8 @@ public:
     if (!is_closed() && i==length()-1)
     { return 0; }
 
-    Dart_const_handle d1=m_map.template beta<2>(m_path[i]);
-    Dart_const_handle d2=m_map.template beta<2>(get_ith_dart(i+1)); // Work also for the last dart for cycles
+    Dart_const_handle d1=m_map.template beta<2>(get_ith_dart(i));
+    Dart_const_handle d2=m_map.template beta<2>(get_next_dart(i));
     assert(d1!=d2);
 
     std::size_t res=1;
@@ -721,8 +743,8 @@ public:
     while(right_push_one_step())
     { res=true;
       
-      std::cout<<"RP "; display();  display_pos_and_neg_turns();
-      std::cout<<std::endl;
+      /*std::cout<<"RP "; display();  display_pos_and_neg_turns();
+      std::cout<<std::endl;*/
     }
     return res;
   }
@@ -733,28 +755,29 @@ public:
     if (!is_closed())
     { return; }
 
-    std::cout<<"##########################################"<<std::endl;
+    /* std::cout<<"##########################################"<<std::endl;
     std::cout<<"Init "; display();
     std::cout<<std::endl;
-    display_pos_and_neg_turns();
+    display_pos_and_neg_turns(); */
     
     bool modified=false;
-    std::cout<<"RS "; remove_spurs_one_step();
+    // std::cout<<"RS ";
+    remove_spurs_one_step();
 
-    display();
-    std::cout<<std::endl;
+    /* display();
+    std::cout<<std::endl; */
 
     do
     {
       modified=bracket_flattening_one_step();
 
-      std::cout<<"BF "; display();
-      std::cout<<std::endl;
+      /* std::cout<<"BF "; display();
+      std::cout<<std::endl; */
 
       modified=modified || remove_spurs_one_step();
 
-      std::cout<<"RS "; display();
-      std::cout<<std::endl;
+      /* std::cout<<"RS "; display();
+      std::cout<<std::endl; */
     }
     while(modified);
 

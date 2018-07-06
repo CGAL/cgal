@@ -149,7 +149,7 @@ bool unit_test_canonize(std::vector<CGAL::Path_on_surface<LCC_3_cmap> >& paths,
                         const char* msg,
                         bool draw, int testtorun)
 {
-  assert(paths.size()==transformed_paths.size());
+  // Wrong assert !! assert(paths.size()==transformed_paths.size());
 
   std::vector<const CGAL::Path_on_surface<LCC_3_cmap>*> v;
   bool res=true;
@@ -388,22 +388,22 @@ bool test_some_random_paths_on_cube(bool draw, int testtorun)
 
   generate_random_bracket(path, 2, 6, 3, random); // Test 17
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^1 1 2^6 1 2^3 ... )",
-                 "2 2 2 1", draw, testtorun))
+                 "2 2", draw, testtorun))
   { res=false; }
 
   generate_random_bracket(path, 3, 8, 4, random); // Test 18
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^2 1 2^8 1 2^4 ... )",
-                   "2 2", draw, testtorun))
+                   "", draw, testtorun))
   { res=false; }
 
   generate_random_bracket(path, 5, 12, 8, random); // Test 19
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^4 1 2^12 1 2^8 ...)",
-                 "2 2 2 2 2 2 2 2 2", draw, testtorun))
+                 "1", draw, testtorun))
   { res=false; }
 
   generate_random_bracket(path, 5, 12, 8, random); // Test 20
-  if (!unit_test(path, PUSH, 0, "(2^4 1 2^12 1 2^8 ...)",
-                   "2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 0 2 2 2 2 0 2 2 2 2 1 2 1", draw, testtorun))
+  if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^4 1 2^12 1 2^8 ...)",
+                   "2", draw, testtorun))
   { res=false; }
 
   return true;
@@ -501,6 +501,34 @@ bool test_double_torus_quad(bool draw, int testtorun)
                           "canonize paths on double torus gen1",
                           draw, testtorun))
   { res=false; }
+
+  // Test 22 (one random path, deformed randomly)
+  paths.clear();
+  transformed_paths.clear();
+  if (testtorun==-1 || nbtests==testtorun)
+  {
+    CGAL::Random random(1); // fix seed
+    CGAL::Path_on_surface<LCC_3_cmap> p(lcc);
+    generate_random_path(p, random.get_int(30, 500), random); // random path, length between 30 and 500
+    p.close();
+    paths.push_back(p);
+    update_path_randomly(p, random);
+    paths.push_back(p);
+    update_path_randomly(p, random);
+    paths.push_back(p);
+    for (int i=0; i<3; ++i)
+    {
+      transformed_paths.push_back
+          (cmt.transform_original_path_into_quad_surface(paths[i]));
+    }
+  }
+
+  if (!unit_test_canonize(paths, transformed_paths,
+                          "random canonize paths on double torus",
+                          draw, testtorun))
+  { res=false; }
+
+  return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
 bool test_elephant(bool draw, int testtorun) // TODO LATER
