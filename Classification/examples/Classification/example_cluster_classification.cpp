@@ -171,7 +171,7 @@ int main (int argc, char** argv)
   features.add<Classification::Feature::Cluster_vertical_extent> (clusters);
   
   for (std::size_t i = 0; i < 3; ++ i)
-    features.add<Classification::Feature::Eigenvalue> (clusters, eigen, i);
+    features.add<Classification::Feature::Eigenvalue> (clusters, eigen, (unsigned int)(i));
   
 #ifdef CGAL_LINKED_WITH_TBB
   features.end_parallel_additions();
