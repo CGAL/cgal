@@ -1,6 +1,5 @@
-//#define CGAL_APPROX_DECOMPOSITION_VERBOSE
-
 #include <CGAL/approx_decomposition.h>
+
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Real_timer.h>
@@ -25,9 +24,7 @@ int main()
     // read mesh
     Polyhedron mesh;
    
-//    std::ifstream input("data/cube.off");
     std::ifstream input("data/sword.off");
-//    std::ifstream input("data/elephant.off");
     
     if (!input || !(input >> mesh))
     {
@@ -54,19 +51,13 @@ int main()
 
     std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
 
-     // write cluster-ids for each facet
+    // write cluster-ids for each facet
     std::cout << "Number of clusters: " << clusters_num << std::endl;
     BOOST_FOREACH(face_descriptor face, faces(mesh))
     {
         std::cout << get(facet_property_map, face) << " ";
     }
     std::cout << std::endl;
-
-    // write concavity values for all clusters
-//    for (std::size_t i = 0; i < clusters_num; ++i)
-//    {
-//        std::cout << "#" << i << ": " << CGAL::concavity_value(mesh, facet_property_map, i) << std::endl;
-//    }
 
     return EXIT_SUCCESS;
 }

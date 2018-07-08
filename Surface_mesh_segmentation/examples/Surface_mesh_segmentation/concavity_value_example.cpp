@@ -1,4 +1,5 @@
 #include <CGAL/approx_decomposition.h>
+
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -19,7 +20,7 @@ int main()
     // read mesh
     Polyhedron mesh;
     
-    std::ifstream input("data/elephant.off");
+    std::ifstream input("data/sword.off");
     
     if (!input || !(input >> mesh))
     {
