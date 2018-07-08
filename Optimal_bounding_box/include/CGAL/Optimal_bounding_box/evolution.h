@@ -123,7 +123,6 @@ public:
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
     std::cout << "offspringsA: \n" ;
     check_det(offspringsA);
-    std::cin.get();
 #endif
 
     // crossover II

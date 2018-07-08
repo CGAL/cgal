@@ -200,7 +200,8 @@ void compute_optimal_bounding_box(const std::vector<Point>& points,
 #if defined(CGAL_EIGEN3_ENABLED)
   typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
 #else
-  Linear_algebra_traits;
+  #pragma message("Error: You must either provide linear traits or link CGAL with the Eigen library")
+  Linear_algebra_traits; // no parameter provided, and Eigen is not enabled --> don't compile!
 #endif
 
   Linear_algebra_traits la_traits;
@@ -258,7 +259,8 @@ void compute_optimal_bounding_box(const PolygonMesh& pmesh,
 #if defined(CGAL_EIGEN3_ENABLED)
   typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
 #else
-  Linear_algebra_traits;
+  #pragma message("Error: You must either provide linear traits or link CGAL with the Eigen library")
+  Linear_algebra_traits; // no parameter provided, and Eigen is not enabled --> don't compile!
 #endif
 
   Linear_algebra_traits la_traits;
