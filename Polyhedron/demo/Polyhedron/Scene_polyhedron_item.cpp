@@ -79,7 +79,6 @@ public:
   /// Returns a point on the primitive
   Point reference_point() const { return m_datum.vertex(0); }
 };
-
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits> Input_facets_AABB_tree;
 
@@ -124,6 +123,12 @@ struct Scene_polyhedron_item_priv{
     vertices_displayed = false;
     edges_displayed = false;
     faces_displayed = false;
+    face_idx_buffer = QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
+    face_idx_buffer.create();
+    edge_idx_buffer = QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
+    edge_idx_buffer.create();
+    f_edge_idx_buffer = QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
+    f_edge_idx_buffer.create();
     invalidate_stats();
     CGAL::set_halfedgeds_items_id(*poly);
   }
@@ -180,6 +185,10 @@ struct Scene_polyhedron_item_priv{
   mutable std::size_t nb_lines;
   mutable std::size_t nb_f_lines;
   mutable QOpenGLShaderProgram *program;
+  mutable QOpenGLBuffer face_idx_buffer;
+  mutable QOpenGLBuffer edge_idx_buffer;
+  mutable QOpenGLBuffer f_edge_idx_buffer;
+  
   unsigned int number_of_null_length_edges;
   unsigned int number_of_degenerated_faces;
   int genus;
@@ -545,42 +554,6 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
       {
         program = item->getShaderProgram(Scene_polyhedron_item::PROGRAM_WITH_LIGHT, viewer);
       }
-      item->vaos[Facets]->bind();
-      item->buffers[Facets_vertices].bind();
-      item->buffers[Facets_vertices].allocate(positions_facets.data(),
-                                              static_cast<int>(positions_facets.size()*sizeof(float)));
-      program->enableAttributeArray("vertex");
-      program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-      item->buffers[Facets_vertices].release();
-      if(viewer->property("draw_two_sides").toBool())
-      {
-        //computed in the fragment shader
-        program->disableAttributeArray("normals");
-      }
-      else
-      {
-        //use computed flat normals
-        item->buffers[Facets_normals_flat].bind();
-        item->buffers[Facets_normals_flat].allocate(normals_flat.data(),
-                                                    static_cast<int>(normals_flat.size()*sizeof(float)));
-        program->enableAttributeArray("normals");
-        program->setAttributeBuffer("normals",GL_FLOAT,0,3);
-        item->buffers[Facets_normals_flat].release();
-      }
-      if(is_multicolor)
-      {
-        item->buffers[Facets_color].bind();
-        item->buffers[Facets_color].allocate(color_facets.data(),
-                                             static_cast<int>(color_facets.size()*sizeof(float)));
-        program->enableAttributeArray("colors");
-        program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-        item->buffers[Facets_color].release();
-      }
-      else
-      {
-        program->disableAttributeArray("colors");
-      }
-      item->vaos[Facets]->release();
     }
   program = item->getShaderProgram(Scene_polyhedron_item::PROGRAM_WITH_LIGHT, viewer);
   program->bind();
@@ -592,6 +565,11 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
   program->enableAttributeArray("vertex");
   program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
   item->buffers[Edges_vertices].release();
+  face_idx_buffer.bind();
+  face_idx_buffer.allocate(idx_faces.data(),
+                      static_cast<int>(idx_faces.size()*sizeof(unsigned int)));
+  face_idx_buffer.release();
+  
 
   item->buffers[Facets_normals_gouraud].bind();
   item->buffers[Facets_normals_gouraud].allocate(normals_gouraud.data(),
@@ -624,7 +602,6 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
     item->buffers[Edges_vertices].release();
-
     if(is_multicolor)
     {
       item->buffers[Facets_color].bind();
@@ -649,6 +626,10 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
     item->buffers[Edges_vertices].release();
+    edge_idx_buffer.bind();
+    edge_idx_buffer.allocate(idx_lines.data(),
+                        static_cast<int>(idx_lines.size()*sizeof(unsigned int)));
+    edge_idx_buffer.release();
 
     program->disableAttributeArray("colors");
     program->release();
@@ -666,6 +647,11 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
     item->buffers[Edges_vertices].release();
+    
+    f_edge_idx_buffer.bind();
+    f_edge_idx_buffer.allocate(idx_feature_lines.data(),
+                       static_cast<int>(idx_feature_lines.size()*sizeof(unsigned int)));
+    f_edge_idx_buffer.release();
     program->disableAttributeArray("colors");
     program->release();
 
@@ -685,6 +671,7 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
   normals_gouraud.shrink_to_fit();
   normals_flat.resize(0);
   normals_flat.shrink_to_fit();
+
 
   if (viewer->hasText())
     viewer->updateIds(item);
@@ -1256,8 +1243,10 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
                 d->program->setUniformValue("is_selected", true);
         else
                 d->program->setUniformValue("is_selected", false);
+        d->face_idx_buffer.bind();
         viewer->glDrawElements(GL_TRIANGLES, static_cast<GLuint>(d->idx_faces.size()),
-                               GL_UNSIGNED_INT, d->idx_faces.data());
+                               GL_UNSIGNED_INT, 0);
+        d->face_idx_buffer.release();
         d->program->release();
         vaos[Scene_polyhedron_item_priv::Gouraud_Facets]->release();
     }
@@ -1302,9 +1291,10 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
                 d->program->setUniformValue("is_selected", true);
         else
                 d->program->setUniformValue("is_selected", false);
-
+        d->face_idx_buffer.bind();
         viewer->glDrawElements(GL_TRIANGLES, static_cast<GLuint>(d->idx_faces.size()),
-                               GL_UNSIGNED_INT, d->idx_faces.data());
+                               GL_UNSIGNED_INT, 0);
+        d->face_idx_buffer.release();
         d->program->release();
         vaos[Scene_polyhedron_item_priv::Gouraud_Facets]->release();
     }
@@ -1334,8 +1324,10 @@ void Scene_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) con
           d->program->setUniformValue("is_selected", true);
         else
           d->program->setUniformValue("is_selected", false);
+        d->edge_idx_buffer.bind();
         viewer->glDrawElements(GL_LINES, static_cast<GLuint>(d->idx_lines.size()),
-                               GL_UNSIGNED_INT, d->idx_lines.data());
+                               GL_UNSIGNED_INT, 0);
+        d->edge_idx_buffer.release();
         d->program->release();
         vaos[Scene_polyhedron_item_priv::Edges]->release();
     }
@@ -1354,8 +1346,10 @@ void Scene_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) con
         else
             d->program->setAttributeValue("colors",QColor(0,0,0));
     }
+    d->f_edge_idx_buffer.bind();
     viewer->glDrawElements(GL_LINES, static_cast<GLuint>(d->idx_feature_lines.size()),
                            GL_UNSIGNED_INT, d->idx_feature_lines.data());
+    d->f_edge_idx_buffer.release();
     d->program->release();
     vaos[Scene_polyhedron_item_priv::Feature_edges]->release();
     }
