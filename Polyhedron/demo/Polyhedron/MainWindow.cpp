@@ -621,9 +621,18 @@ void MainWindow::loadPlugins()
       }
   }
   QString env_path = qgetenv("POLYHEDRON_DEMO_PLUGINS_PATH");
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+  QChar separator = QDir::listSeparator();
+#else
+  #if defined(_WIN32)
+    QChar separator = ';';
+  #else 
+    QChar separator = ':';
+  #endif
+#endif
   if(!env_path.isEmpty()) {
     Q_FOREACH (QString pluginsDir,
-               env_path.split(":", QString::SkipEmptyParts)) {
+               env_path.split(separator, QString::SkipEmptyParts)) {
       QDir dir(pluginsDir);
       if(dir.isReadable())
         plugins_directories << dir;
