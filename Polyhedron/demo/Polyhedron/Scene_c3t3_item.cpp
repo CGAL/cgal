@@ -1,6 +1,7 @@
 #include "config.h"
 #include "Scene_spheres_item.h"
 #include "Scene_c3t3_item.h"
+#include "Scene_surface_mesh_item.h"
 
 #include <QVector>
 #include <QColor>
@@ -1308,7 +1309,7 @@ void Scene_c3t3_item::export_facets_in_complex()
   }
 
   namespace PMP = CGAL::Polygon_mesh_processing;
-  Polyhedron outmesh;
+  SMesh outmesh;
 
   if (PMP::is_polygon_soup_a_polygon_mesh(polygons))
   {
@@ -1317,7 +1318,7 @@ void Scene_c3t3_item::export_facets_in_complex()
     CGAL_assertion(orientable);
 
     PMP::polygon_soup_to_polygon_mesh(points, polygons, outmesh);
-    Scene_polyhedron_item* item = new Scene_polyhedron_item(outmesh);
+    Scene_surface_mesh_item* item = new Scene_surface_mesh_item(outmesh);
     item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
     scene->addItem(item);
   }

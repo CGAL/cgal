@@ -230,7 +230,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
   endmacro(add_item)
 
   add_item(scene_c3t3_item Scene_c3t3_item.cpp)
-  target_link_libraries(scene_c3t3_item PUBLIC scene_polyhedron_item scene_polygon_soup_item scene_basic_objects ${TBB_LIBRARIES})
+  target_link_libraries(scene_c3t3_item PUBLIC scene_surface_mesh_item scene_polygon_soup_item scene_basic_objects ${TBB_LIBRARIES})
   if(TBB_FOUND)
     CGAL_target_use_TBB(scene_c3t3_item)
   endif()
