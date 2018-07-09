@@ -502,25 +502,43 @@ bool test_double_torus_quad(bool draw, int testtorun)
                           draw, testtorun))
   { res=false; }
 
+
+  std::vector<const CGAL::Path_on_surface<LCC_3_cmap>*> v; // TEMPO POUR DEBUG
+
   // Test 22 (one random path, deformed randomly)
+  LCC_3_cmap lcc2;
+  if (!CGAL::load_off(lcc2, "./data/double-torus-smooth.off"))
+  {
+    std::cout<<"PROBLEM reading file ./data/double-torus-smooth.off"<<std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  CGAL::Combinatorial_map_tools<LCC_3_cmap> cmt2(lcc2);
+
   paths.clear();
   transformed_paths.clear();
   if (testtorun==-1 || nbtests==testtorun)
   {
     CGAL::Random random(1); // fix seed
-    CGAL::Path_on_surface<LCC_3_cmap> p(lcc);
-    generate_random_path(p, random.get_int(30, 500), random); // random path, length between 30 and 500
-    p.close();
+    CGAL::Path_on_surface<LCC_3_cmap> p(lcc2);
+    generate_random_closed_path(p, random.get_int(5, 20), random); // random path, length between 30 and 500
+    // p.close();
     paths.push_back(p);
-    update_path_randomly(p, random);
+    /*update_path_randomly(p, random);
     paths.push_back(p);
     update_path_randomly(p, random);
     paths.push_back(p);
     for (int i=0; i<3; ++i)
     {
       transformed_paths.push_back
-          (cmt.transform_original_path_into_quad_surface(paths[i]));
-    }
+          (cmt2.transform_original_path_into_quad_surface(paths[i]));
+    }*/
+
+    v.push_back(&paths[0]);
+    /* v.push_back(&paths[1]);
+    v.push_back(&paths[2]); */
+    display(paths[0].get_map(), v);
+
   }
 
   if (!unit_test_canonize(paths, transformed_paths,
