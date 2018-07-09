@@ -26,10 +26,10 @@ typedef boost::property_map<Mesh, Vertex_distance_tag >::type Vertex_distance_ma
 
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-/*
+
 typedef CGAL::Heat_method_3::Heat_method_3<Mesh,Kernel,Vertex_distance_map> Heat_method;
 typedef CGAL::Heat_method_3::Heat_method_Eigen_traits_3::SparseMatrix SparseMatrix;
-*/
+
 
 #if 0
 void source_set_tests(Heat_method hm, const Mesh& sm)
@@ -126,11 +126,12 @@ int main()
   }
 
   put(vertex_distance_map, * vertices(sm).first, 1.0);
+  put(vertex_distance_map, * halfedges(sm).first, 1.0);
   
-#if 0
-  //source set tests
-  Heat_method hm(sm, vertex_distance_map, idf);
 
+  //source set tests
+  Heat_method hm(sm, vertex_distance_map);
+#if 0
   source_set_tests(hm,sm);
   //cotan matrix tests
   const SparseMatrix& M = hm.mass_matrix();

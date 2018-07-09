@@ -111,20 +111,20 @@ namespace Heat_method_3 {
     typedef CGAL::dynamic_vertex_property_t<double> Vertex_distance_tag;
     typedef typename boost::property_map<TriangleMesh, Vertex_distance_tag >::type Vertex_distance_map;
 
-    typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TriangleMesh,Traits, Halfedge_coordinate_map> IDT;
+    // AF    typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TriangleMesh,Traits, Halfedge_coordinate_map> IDT;
 
   public:
 
-    Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm, bool idf)
-      : tm(tm), vdm(vdm), vpm(get(vertex_point,tm))
+    Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm)
+      : tm(tm), vdm(vdm), vpm(get(vertex_point,tm)), fpm(get(boost::face_index,tm))
     {
-      build(idf);
+      build();
     }
 
-    Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm, bool idf, VertexPointMap vpm, FaceIndexMap fpm)
+    Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm, VertexPointMap vpm, FaceIndexMap fpm)
       : tm(tm), vdm(vdm), vpm(vpm), fpm(fpm)
     {
-      build(idf);
+      build();
     }
 
     /**
@@ -455,19 +455,19 @@ namespace Heat_method_3 {
 
   private:
 
-    void build(bool idf)
+    void build()
     {
       source_change_flag = false;
       TriangleMesh idt_copy;
-
+      /*
       if(idf)
       {
         CGAL::copy_face_graph(tm, idt_copy);
         std::cout<<"copied graph\n";
         halfedge_coord_map = get(Halfedge_coordinate_tag(), idt_copy);
-        IDT im(idt_copy, halfedge_coord_map);
+        AF        IDT im(idt_copy, halfedge_coord_map);
       }
-
+      */
 
       CGAL_precondition(is_triangle_mesh(tm));
       vertex_id_map = get(Vertex_property_tag(),const_cast<TriangleMesh&>(tm));
@@ -488,7 +488,7 @@ namespace Heat_method_3 {
       std::vector<triplet> c_matrix_entries;
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
       //Go through each face on the mesh
-      if(!idf)
+      //if(!idf)
       {
         BOOST_FOREACH(face_descriptor f, faces(tm)) {
           boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
@@ -541,6 +541,7 @@ namespace Heat_method_3 {
           A_matrix_entries.push_back(triplet(k,k, (1./6.)*norm_cross));
         }
       }
+      /*
       else
       {
         BOOST_FOREACH(face_descriptor f, faces(idt_copy)) {
@@ -593,9 +594,9 @@ namespace Heat_method_3 {
           A_matrix_entries.push_back(triplet(i,i, (1./6.)*norm_cross));
           A_matrix_entries.push_back(triplet(j,j, (1./6.)*norm_cross));
           A_matrix_entries.push_back(triplet(k,k, (1./6.)*norm_cross));
-        }
-
-      }
+        
+   } 
+      */
       m_mass_matrix.resize(m,m);
       m_mass_matrix.setFromTriplets(A_matrix_entries.begin(), A_matrix_entries.end());
       m_cotan_matrix.resize(m,m);
@@ -611,6 +612,7 @@ namespace Heat_method_3 {
       index_divergence = compute_divergence(X, m);
       solved_phi = solve_phi(m_cotan_matrix, index_divergence, m);
     }
+    
     int dimension;
     const TriangleMesh& tm;
     VertexDistanceMap vdm;
@@ -626,7 +628,7 @@ namespace Heat_method_3 {
     Eigen::VectorXd solved_phi;
     std::set<Index> source_index;
     bool source_change_flag;
-    Halfedge_coordinate_map halfedge_coord_map;
+    // AF    Halfedge_coordinate_map halfedge_coord_map;
   };
 
 } // namespace Heat_method_3
