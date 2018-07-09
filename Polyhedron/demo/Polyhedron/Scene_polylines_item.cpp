@@ -376,7 +376,8 @@ Scene_polylines_item::supportsRenderingMode(RenderingMode m) const {
 // Shaded OpenGL drawing: only draw spheres
 void
 Scene_polylines_item::draw(CGAL::Three::Viewer_interface* viewer) const {
-
+  if(!visible())
+    return;
     if(!are_buffers_filled)
     {
         d->computeElements();
@@ -391,12 +392,17 @@ Scene_polylines_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 // Wireframe OpenGL drawing
 void 
 Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
+  if(!visible())
+    return;
+  if(renderingMode() == Wireframe
+     || renderingMode() == FlatPlusEdges)
+  {
     if(!are_buffers_filled)
     {
-        d->computeElements();
-        d->initializeBuffers(viewer);
+      d->computeElements();
+      d->initializeBuffers(viewer);
     }
-
+    
     vaos[Scene_polylines_item_private::Edges]->bind();
     if(!viewer->isOpenGL_4_3())
     {
@@ -421,6 +427,7 @@ Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_lines/4));
     program->release();
     vaos[Scene_polylines_item_private::Edges]->release();
+  }
     if(d->draw_extremities)
     {
        Scene_group_item::drawEdges(viewer);
@@ -429,12 +436,16 @@ Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
 
 void 
 Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
+  if(!visible())
+    return;
+  if(renderingMode() == Points)
+  {
     if(!are_buffers_filled)
     {
-        d->computeElements();
-        d->initializeBuffers(viewer);
+      d->computeElements();
+      d->initializeBuffers(viewer);
     }
-
+    
     vaos[Scene_polylines_item_private::Edges]->bind();
     attribBuffers(viewer, PROGRAM_NO_SELECTION);
     QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_NO_SELECTION);
@@ -443,8 +454,9 @@ Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
     program->setAttributeValue("colors", temp);
     viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->nb_lines/4));
     // Clean-up
-   vaos[Scene_polylines_item_private::Edges]->release();
-   program->release();
+    vaos[Scene_polylines_item_private::Edges]->release();
+    program->release();
+  }
    if(d->draw_extremities)
    {
       Scene_group_item::drawPoints(viewer);
