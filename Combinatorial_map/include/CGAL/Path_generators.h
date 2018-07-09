@@ -22,6 +22,7 @@
 #define CGAL_PATH_GENERATORS_H 1
 
 #include<CGAL/Random.h>
+#include <unordered_set>
 
 namespace CGAL {
 
@@ -338,6 +339,88 @@ void update_path_randomly(Path& p, bool update_isclosed=true)
 {
   CGAL::Random random;
   update_path_randomly(p, random, update_isclosed);
+}
+
+template<typename LCC>
+void generate_random_connected_set_of faces(LCC& lcc, std::size_t nb,
+                                            CGAL::Random& random,
+                                            std::unordered_set<typename LCC::Dart_handle>& set)
+{
+  set.clear();
+  if (lcc.is_empty()) { return; }
+
+  std::unordered_map<std::size_t, typename LCC::Dart_handle>& border_faces;
+  typename LCC::size_type m=lcc.get_new_mark();
+  
+  unsigned int index=random.get_int(0, lcc.darts().capacity());
+  while (!lcc.darts().is_used(index))
+  {
+    ++index;
+    if (index==lcc.darts().capacity()) { index=0; }
+  }
+
+  border_faces[0]=lcc.darts()[index];
+  set.insert(lcc.darts())[index];
+  CGAL::mark_cell<LCC, 2>(lcc, lcc.darts()[index], m);
+  
+  for (std::size_t i=1; i<nb; ++i)
+  {
+    std::size_t facenumber=(std::size_t)(random.get_int(0, border_faces.size()));
+    std::size_t nbborder=0;
+    
+    typename LCC::Dart_handle dh1_init=border_faces[facenumber];
+    typename LCC::Dart_handle dh1=dh1_init;
+    do
+    {
+      if (!lcc.template is_free<2>(dh1) &&
+          !lcc.is_marked(lcc.template beta<2>(dh1), m))
+      { ++nbborder; }
+      dh1=lcc.template beta<1>(dh1);
+    }
+    while (dh1!=dh1_init);
+
+    std::size_t dartnumber=(std::size_t)(random.get_int(0, nbborder));
+    for (std::size_t j=0; j<dartnumber; ++j)
+    { dh1=lcc.template beta<1>(dh1); }
+
+    // Here we have a new face
+    set.insert(lcc.template beta<2>(dh1));
+    CGAL::mark_cell<LCC, 2>(lcc, lcc.template beta<2>(dh1), m);
+
+    if (nbborder==1)
+    { border_faces[facenumber]=lcc.template beta<2>(dh1); }
+    else
+    {
+      bool isborder=false;
+      typename LCC::Dart_handle dh2=lcc.template beta<2>(dh1);
+      do
+      {
+        if (!lcc.template is_free<2>(dh2) &&
+            !lcc.is_marked(lcc.template beta<2>(dh2), m))
+        { isborder=true; }
+        dh2=lcc.template beta<1>(dh2);
+      }
+      while(!isborder && dh2!=lcc.template beta<2>(dh1));
+
+      if (isborder)
+      { border_faces[border_faces.size()]=lcc.template beta<2>(dh1); }
+      else
+      {
+        if (border_faces.size()==1) { border_faces.clear(); }
+        else
+        {
+          border_faces[facenumber]=border_faces.size()-1;
+          border_faces.erase(border_faces.size()-1);
+        }
+      }
+    }
+  }
+
+  for (std::unordered_set<typename LCC::Dart_handle>::iterator it=set.begin(),
+         itend=set.end(); ++it)
+  { CGAL::unmark_cell<LCC, 2>(lcc, *it, m); }
+
+  lcc.free_mark(m);
 }
 
 } // namespace CGAL
