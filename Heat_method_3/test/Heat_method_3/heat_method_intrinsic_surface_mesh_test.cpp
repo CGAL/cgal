@@ -129,7 +129,6 @@ int main()
   put(vertex_distance_map, * halfedges(sm).first, 1.0);
   
 
-  get(boost::face_index,sm);
   //source set tests
   Heat_method hm(sm, vertex_distance_map);
 #if 0
