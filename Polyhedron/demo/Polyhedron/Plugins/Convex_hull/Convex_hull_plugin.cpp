@@ -143,23 +143,11 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
     }
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 
-    if(mw->property("is_polyhedron_mode").toBool()){
-      Polyhedron *poly = new Polyhedron;
-      CGAL::copy_face_graph(*pConvex_hull,*poly);
-      delete pConvex_hull;
-
-      Scene_polyhedron_item* new_item = new Scene_polyhedron_item(poly);
-      new_item->setName(tr("%1 (convex hull)").arg(scene->item(index)->name()));
-      new_item->setColor(Qt::magenta);
-      new_item->setRenderingMode(FlatPlusEdges);
-      scene->addItem(new_item);
-    } else {
-       Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(pConvex_hull);
-       new_item->setName(tr("%1 (convex hull)").arg(scene->item(index)->name()));
-       new_item->setColor(Qt::magenta);
-       new_item->setRenderingMode(FlatPlusEdges);
-       scene->addItem(new_item);
-    }
+    Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(pConvex_hull);
+    new_item->setName(tr("%1 (convex hull)").arg(scene->item(index)->name()));
+    new_item->setColor(Qt::magenta);
+    new_item->setRenderingMode(FlatPlusEdges);
+    scene->addItem(new_item);
 
     // default cursor
     QApplication::restoreOverrideCursor();

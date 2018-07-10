@@ -82,36 +82,17 @@ Polyhedron_demo_stl_plugin::load(QFileInfo fileinfo) {
   }
 
   try{
-    if(this->mw->property("is_polyhedron_mode").toBool())
-    {
-      // Try building a polyhedron
-      Polyhedron P;
-      if (CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(triangles))
-        CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, P);
-
-      if(! P.is_valid() || P.empty()){
-        std::cerr << "Error: Invalid facegraph" << std::endl;
-      }
-      else{
-        Scene_polyhedron_item* item = new Scene_polyhedron_item(P);
-        item->setName(fileinfo.completeBaseName());
-        return item;
-      }
+    // Try building a surface_mesh
+    SMesh* SM = new SMesh();
+    if (CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(triangles))
+      CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, *SM);
+    if(!SM->is_valid() || SM->is_empty()){
+      std::cerr << "Error: Invalid facegraph" << std::endl;
     }
-    else
-    {
-      // Try building a surface_mesh
-      SMesh* SM = new SMesh();
-      if (CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(triangles))
-        CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, *SM);
-      if(!SM->is_valid() || SM->is_empty()){
-        std::cerr << "Error: Invalid facegraph" << std::endl;
-      }
-      else{
-        Scene_surface_mesh_item* item = new Scene_surface_mesh_item(SM);
-        item->setName(fileinfo.completeBaseName());
-        return item;
-      }
+    else{
+      Scene_surface_mesh_item* item = new Scene_surface_mesh_item(SM);
+      item->setName(fileinfo.completeBaseName());
+      return item;
     }
   }
   catch(...){}

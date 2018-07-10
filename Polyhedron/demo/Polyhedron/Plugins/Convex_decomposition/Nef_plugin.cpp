@@ -216,17 +216,6 @@ Polyhedron_demo_nef_plugin::on_actionToPoly_triggered()
       QApplication::restoreOverrideCursor();
       return;
     }
-    if(this->mw->property("is_polyhedron_mode").toBool())
-    {
-      Scene_polyhedron_item* new_item = item->convert_to_polyhedron();
-      new_item->setName(tr("%1 (from nef)").arg(item->name()));
-      new_item->setRenderingMode(item->renderingMode());
-      item->setVisible(false);
-      scene->itemChanged(index);
-      scene->addItem(new_item);
-    }
-    else
-    {
         Scene_surface_mesh_item* new_item = item->convert_to_surface_mesh();
         new_item->setName(tr("%1 (from nef)").arg(item->name()));
         new_item->setRenderingMode(item->renderingMode());
@@ -236,7 +225,6 @@ Polyhedron_demo_nef_plugin::on_actionToPoly_triggered()
     }
     std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
     QApplication::restoreOverrideCursor();
-  }
 }
 
 void Polyhedron_demo_nef_plugin::on_actionUnion_triggered()

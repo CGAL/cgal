@@ -123,47 +123,26 @@ public Q_SLOTS:
           continue;
         }
       }
-
-      if(mw->property("is_polyhedron_mode").toBool()){
-        Polyhedron* poly = new Polyhedron;
-        CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(*it,
-                                                                    patch,
-                                                                    *poly);
-
-        if(also_refine) {
-          timer.reset();
-          CGAL::Polygon_mesh_processing::refine(*poly, faces(*poly),
-                                                Nop_out(), Nop_out(),
-                                                CGAL::Polygon_mesh_processing::parameters::density_control_factor(density_control_factor));
-          print_message(QString("Refined in %1 sec.").arg(timer.time()));
-        }
-
-        Scene_polyhedron_item* poly_item = new Scene_polyhedron_item(poly);
-        poly_item->setName(tr("%1-filled-%2").arg(polylines_item->name()).arg(counter));
-        poly_item->setRenderingMode(FlatPlusEdges);
-        scene->setSelectedItem(scene->addItem(poly_item));
-      } else {
-        SMesh* poly = new SMesh;
-        CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(*it,
-                                                                    patch,
-                                                                    *poly);
-
-        if(also_refine) {
-          timer.reset();
-          CGAL::Polygon_mesh_processing::refine(*poly, faces(*poly),
-                                                Nop_out(), Nop_out(),
-                                                CGAL::Polygon_mesh_processing::parameters::density_control_factor(density_control_factor));
-          print_message(QString("Refined in %1 sec.").arg(timer.time()));
-        }
-
-        Scene_surface_mesh_item* poly_item = new Scene_surface_mesh_item(poly);
-        poly_item->setName(tr("%1-filled-%2").arg(polylines_item->name()).arg(counter));
-        poly_item->setRenderingMode(FlatPlusEdges);
-        scene->setSelectedItem(scene->addItem(poly_item));
+      SMesh* poly = new SMesh;
+      CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(*it,
+                                                                  patch,
+                                                                  *poly);
+      
+      if(also_refine) {
+        timer.reset();
+        CGAL::Polygon_mesh_processing::refine(*poly, faces(*poly),
+                                              Nop_out(), Nop_out(),
+                                              CGAL::Polygon_mesh_processing::parameters::density_control_factor(density_control_factor));
+        print_message(QString("Refined in %1 sec.").arg(timer.time()));
       }
+      
+      Scene_surface_mesh_item* poly_item = new Scene_surface_mesh_item(poly);
+      poly_item->setName(tr("%1-filled-%2").arg(polylines_item->name()).arg(counter));
+      poly_item->setRenderingMode(FlatPlusEdges);
+      scene->setSelectedItem(scene->addItem(poly_item));
     }
     QApplication::restoreOverrideCursor();
-    }
+  }
 
 private:
   QMainWindow* mw;

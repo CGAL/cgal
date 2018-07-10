@@ -341,26 +341,15 @@ private:
       QString("2dmesh_");
     iname+=QString::number(target_length);
     if (runLloyd) iname+=QString("_Lloyd_")+QString::number(nb_iter);
+    Scene_surface_mesh_item* poly_item = new Scene_surface_mesh_item();
+    poly_item->setName(iname);
+    cdt2_to_face_graph(cdt,
+                       *poly_item->polyhedron(),
+                       constant_coordinate_index,
+                       constant_coordinate);
+    scene->addItem(poly_item);
+    poly_item->invalidateOpenGLBuffers();
     
-    if(mw->property("is_polyhedron_mode").toBool()){
-      Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
-      poly_item->setName(iname);
-      cdt2_to_face_graph(cdt,
-                         *poly_item->polyhedron(),
-                         constant_coordinate_index,
-                         constant_coordinate);
-      scene->addItem(poly_item);
-      poly_item->invalidateOpenGLBuffers();
-    }else{
-      Scene_surface_mesh_item* poly_item = new Scene_surface_mesh_item();
-      poly_item->setName(iname);
-      cdt2_to_face_graph(cdt,
-                         *poly_item->polyhedron(),
-                         constant_coordinate_index,
-                         constant_coordinate);
-      scene->addItem(poly_item);
-      poly_item->invalidateOpenGLBuffers();
-    }
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
     // default cursor
     QApplication::restoreOverrideCursor();

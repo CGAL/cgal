@@ -55,10 +55,7 @@ public:
 
 CGAL::Three::Scene_item* Surf_io_plugin::load(QFileInfo fileinfo)
 {
-  if(mw->property("is_polyhedron_mode").toBool())
-    return actual_load<Scene_polyhedron_item>(fileinfo);
-  else
-    return actual_load<Scene_surface_mesh_item>(fileinfo);
+  return actual_load<Scene_surface_mesh_item>(fileinfo);
 }
 template< class FaceGraphItem>
 CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)

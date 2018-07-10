@@ -404,11 +404,8 @@ private:
               // If plane, build alpha shape
               Scene_polyhedron_item* poly_item = NULL;
               Scene_surface_mesh_item* sm_item = NULL;
-              if(mw->property("is_polyhedron_mode").toBool()){
-                poly_item = new Scene_polyhedron_item;
-              } else {
-                sm_item = new Scene_surface_mesh_item;
-              }
+              sm_item = new Scene_surface_mesh_item;
+              
 
               build_alpha_shape (*(point_item->point_set()), pshape,
                                  poly_item, sm_item, dialog.cluster_epsilon());

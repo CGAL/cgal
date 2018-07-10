@@ -1409,7 +1409,6 @@ void MainWindow::readSettings()
     // read plugin blacklist
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
-    set_facegraph_mode_adapter(settings.value("polyhedron_mode", true).toBool());
 }
 
 void MainWindow::writeSettings()
@@ -1424,8 +1423,6 @@ void MainWindow::writeSettings()
     Q_FOREACH(QString name,plugin_blacklist){ blacklist << name; }
     if ( !blacklist.isEmpty() ) settings.setValue("plugin_blacklist",blacklist);
     else settings.remove("plugin_blacklist");
-    //setting polyhedron mode
-    settings.setValue("polyhedron_mode", this->property("is_polyhedron_mode").toBool());
   }
   std::cerr << "Write setting... done.\n";
 }
@@ -1745,15 +1742,7 @@ void MainWindow::on_actionPreferences_triggered()
   QDialog dialog(this);
   Ui::PreferencesDialog prefdiag;
   prefdiag.setupUi(&dialog);
-  if(this->property("is_polyhedron_mode").toBool())
-    prefdiag.polyRadioButton->setChecked(true);
-  else
-    prefdiag.smRadioButton->setChecked(true);
-  connect(prefdiag.polyRadioButton, &QRadioButton::toggled,
-          this, &MainWindow::set_facegraph_mode_adapter);
-
-  //QStandardItemModel* iStandardModel = new QStandardItemModel(this);
-
+  
   std::vector<QTreeWidgetItem*> items;
   QBrush successBrush(Qt::green),
       errorBrush(Qt::red),
@@ -2126,20 +2115,7 @@ void MainWindow::colorItems()
   }
   viewer->update();
 }
-// Only used to make the doc clearer. Only the adapter is actueally used in the code,
-// for signal/slots reasons.
-void MainWindow::set_face_graph_default_type(Face_graph_mode m)
-{
-  this->setProperty("is_polyhedron_mode", m);
-}
 
-void MainWindow::set_facegraph_mode_adapter(bool is_polyhedron)
-{
-  if(is_polyhedron)
-   set_face_graph_default_type(POLYHEDRON);
-  else
-    set_face_graph_default_type(SURFACE_MESH);
-}
 
 void MainWindow::exportStatistics()
 {

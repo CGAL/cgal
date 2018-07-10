@@ -239,11 +239,6 @@ public Q_SLOTS:
   void throw_exception();
 
   /*!
-   * set_face_graph_default_type sets the global state of the application to `Polyhedron mode` or `Surface_mesh mode`.
-   */
-  void set_face_graph_default_type(MainWindow::Face_graph_mode m);
-
-  /*!
    * Writes the statistics dialog content in a text file.
    */
   void exportStatistics();
@@ -434,8 +429,6 @@ public:
   void evaluate_script_quiet(QString script, 
                              const QString & fileName = QString());
 #endif
-private Q_SLOTS:
-  void set_facegraph_mode_adapter(bool is_polyhedron);
 };
 
 #endif // ifndef MAINWINDOW_H

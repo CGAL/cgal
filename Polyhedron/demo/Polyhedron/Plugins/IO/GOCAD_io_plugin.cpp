@@ -69,64 +69,32 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo) {
 
   CGAL::Timer t;
   t.start();
-  if(this->mw->property("is_polyhedron_mode").toBool())
-  {
-    // Try to read GOCAD file in a polyhedron
-
-    Scene_polyhedron_item* item = new Scene_polyhedron_item(Polyhedron());
-    Polyhedron& P = * const_cast<Polyhedron*>(item->polyhedron());
-
-    std::string name, color;
-    if(! read_gocad(P, in, name, color)){
-      std::cerr << "Error: Invalid polyhedron" << std::endl;
-      delete item;
-      return 0;
-    }
-
-    t.stop();
-    std::cerr << "Reading took " << t.time() << " sec." << std::endl;
-    if(name.size() == 0){
-      item->setName(fileinfo.baseName());
-    } else {
-      item->setName(name.c_str());
-    }
-    QColor qcolor(color.c_str());
-    if(qcolor.isValid())
-    {
-      item->setColor(qcolor);
-      item->invalidateOpenGLBuffers();
-    }
-    return item;
+  // Try to read GOCAD file in a surface_mesh
+  Scene_surface_mesh_item* item = new Scene_surface_mesh_item(new SMesh());
+  SMesh& P = * const_cast<SMesh*>(item->polyhedron());
+  
+  std::string name, color;
+  if(! read_gocad(P, in, name, color)){
+    std::cerr << "Error: Invalid polyhedron" << std::endl;
+    delete item;
+    return 0;
   }
-  else
-  {
-
-    // Try to read GOCAD file in a surface_mesh
-    Scene_surface_mesh_item* item = new Scene_surface_mesh_item(new SMesh());
-    SMesh& P = * const_cast<SMesh*>(item->polyhedron());
-
-    std::string name, color;
-    if(! read_gocad(P, in, name, color)){
-      std::cerr << "Error: Invalid polyhedron" << std::endl;
-      delete item;
-      return 0;
-    }
-
-    t.stop();
-    std::cerr << "Reading took " << t.time() << " sec." << std::endl;
-    if(name.size() == 0){
-      item->setName(fileinfo.baseName());
-    } else {
-      item->setName(name.c_str());
-    }
-    QColor qcolor(color.c_str());
-    if(qcolor.isValid())
-    {
-      item->setColor(qcolor);
-      item->invalidateOpenGLBuffers();
-    }
-    return item;
+  
+  t.stop();
+  std::cerr << "Reading took " << t.time() << " sec." << std::endl;
+  if(name.size() == 0){
+    item->setName(fileinfo.baseName());
+  } else {
+    item->setName(name.c_str());
   }
+  QColor qcolor(color.c_str());
+  if(qcolor.isValid())
+  {
+    item->setColor(qcolor);
+    item->invalidateOpenGLBuffers();
+  }
+  return item;
+  
 return NULL;
 }
 

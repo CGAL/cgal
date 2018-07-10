@@ -285,53 +285,34 @@ void Basic_generator_plugin::on_tab_changed()
 //generate
 void Basic_generator_plugin::on_generate_clicked()
 {
-  bool is_polyhedron = mw->property("is_polyhedron_mode").toBool();
   switch(dock_widget->selector_tabWidget->currentIndex())
   {
   case PRISM:
-    if(is_polyhedron)
-      generatePrism<Scene_polyhedron_item>();
-    else
-      generatePrism<Scene_surface_mesh_item>();
+    generatePrism<Scene_surface_mesh_item>();
     ++nbs[PRISM];
     break;
 
   case SPHERE:
-    if(is_polyhedron)
-      generateSphere<Scene_polyhedron_item>();
-    else
-      generateSphere<Scene_surface_mesh_item>();
+    generateSphere<Scene_surface_mesh_item>();
     ++nbs[SPHERE];
     break;
 
   case PYRAMID:
-    if(is_polyhedron)
-      generatePyramid<Scene_polyhedron_item>();
-    else
-      generatePyramid<Scene_surface_mesh_item>();
+    generatePyramid<Scene_surface_mesh_item>();
     ++nbs[PYRAMID];
     break;
 
   case HEXAHEDRON:
-    if(is_polyhedron)
-      generateCube<Scene_polyhedron_item>();
-    else
-      generateCube<Scene_surface_mesh_item>();
+    generateCube<Scene_surface_mesh_item>();
     ++nbs[HEXAHEDRON];
     break;
 
   case TETRAHEDRON:
-    if(is_polyhedron)
-      generateTetrahedron<Scene_polyhedron_item>();
-    else
-      generateTetrahedron<Scene_surface_mesh_item>();
+    generateTetrahedron<Scene_surface_mesh_item>();
     ++nbs[TETRAHEDRON];
     break;
   case GRID:
-    if(is_polyhedron)
-      generateGrid<Scene_polyhedron_item>();
-    else
-      generateGrid<Scene_surface_mesh_item>();
+    generateGrid<Scene_surface_mesh_item>();
     ++nbs[GRID];
     break;
   case POINT_SET:
