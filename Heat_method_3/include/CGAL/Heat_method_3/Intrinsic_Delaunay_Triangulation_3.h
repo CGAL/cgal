@@ -705,7 +705,7 @@ typename property_map<TM,boost::vertex_index_t>::type
 get(boost::vertex_index_t vi,
     const CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>& idt)
 {
-  return CGAL::Intrinsic_Delaunay_Triangulation_3::IDT_vertex_index_property_map<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA> >(idt, get(vi, idt.triangle_mesh()));
+  return CGAL::Intrinsic_Delaunay_Triangulation_3::IDT_vertex_index_property_map<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>, VPM >(idt, get(vi, idt.triangle_mesh()));
 }
 
 } // boost
