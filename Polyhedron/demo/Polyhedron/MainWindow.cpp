@@ -631,6 +631,11 @@ void MainWindow::loadPlugins()
   #endif
 #endif
   if(!env_path.isEmpty()) {
+#if defined(_WIN32)
+    QString path = qgetenv("PATH");
+    QByteArray new_path = path.append(env_path.prepend(separator)).toUtf8();
+    qputenv("PATH", new_path);
+#endif
     Q_FOREACH (QString pluginsDir,
                env_path.split(separator, QString::SkipEmptyParts)) {
       QDir dir(pluginsDir);
