@@ -140,12 +140,25 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
          Vertex_descriptor(const halfedge_descriptor& hd)
            : hd(hd)
          {}
-
-         Vertex_descriptor(const vertex_descriptor& hd)
-           : hd(hd)
-         {}
        };
 
+     struct Vertex_iterator_functor
+     {
+       typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor argument_type;
+       typedef vertex_descriptor result_type;
+       const TriangleMesh& tm;
+       
+        Vertex_iterator_functor(const TriangleMesh& tm)
+          :tm(tm)
+       {}
+
+       Vertex_descriptor
+       operator()(typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd) const
+       {
+         return Vertex_descriptor(halfedge(vd, tm));
+       }
+     };
+       
      public:
        Intrinsic_Delaunay_Triangulation_3(TriangleMesh& tm, HalfedgeCoordinateMap hcm)
         : tm(tm), hcm(hcm)
@@ -410,6 +423,10 @@ struct graph_traits<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay
 
   typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA> Mesh;
   typedef typename Mesh::Vertex_descriptor vertex_descriptor;
+  typedef boost::transform_iterator<
+    typename Mesh::Vertex_iterator_functor,
+    typename boost::graph_traits<TM>::vertex_iterator> vertex_iterator;
+  
   typedef typename boost::graph_traits<TM>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<TM>::halfedge_iterator halfedge_iterator;
   typedef typename boost::graph_traits<TM>::edge_descriptor edge_descriptor;
@@ -472,11 +489,18 @@ template <typename TM,
           typename FIM,
           typename EIM,
           typename LA>
-typename std::pair<typename boost::graph_traits<TM>::vertex_iterator,
-                   typename boost::graph_traits<TM>::vertex_iterator>
+typename std::pair<typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>>::vertex_iterator,
+                   typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>>::vertex_iterator>
 vertices(const Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>& idt)
  {
-   return vertices(idt.triangle_mesh());
+   std::pair<typename boost::graph_traits<TM>::vertex_iterator,
+             typename boost::graph_traits<TM>::vertex_iterator> p = vertices(idt.triangle_mesh());
+
+  typedef typename boost::graph_traits<TM>::vertex_iterator vertex_iterator;
+  typedef Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>::Vertex_iterator_functor Fct;
+  Fct fct(idt.triangle_mesh());
+  return std::make_pair(boost::make_transform_iterator(p.first, fct),
+                        boost::make_transform_iterator(p.second,fct));
  }
   
 template <typename TM,
