@@ -292,7 +292,7 @@ public:
         return;
       }
       if (doing_autorefinement)
-        tm2_vertices[i]==vd;
+        tm2_vertices[i] = vd;
     }
     else
       tm2_vertices[i] = vd;
