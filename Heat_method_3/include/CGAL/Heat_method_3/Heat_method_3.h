@@ -116,7 +116,7 @@ namespace Heat_method_3 {
   public:
 
     Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm)
-      : tm(tm), vdm(vdm), vpm(get(vertex_point,tm)), fpm(get(boost::face_index,tm))
+      : vertex_id_map(get(Vertex_property_tag(),const_cast<TriangleMesh&>(tm))), face_id_map(get(Face_property_tag(),tm)), tm(tm), vdm(vdm), vpm(get(vertex_point,tm)), fpm(get(boost::face_index,tm))
     {
       build();
     }
@@ -217,7 +217,7 @@ namespace Heat_method_3 {
       double edge_sum = 0;
       BOOST_FOREACH(edge_descriptor ed, edges(tm))
       {
-        edge_sum += Polygon_mesh_processing::edge_length(halfedge(ed,tm), tm);
+        edge_sum += Polygon_mesh_processing::edge_length(halfedge(ed,tm), tm, CGAL::parameters::vertex_point_map(vpm));
       }
       return edge_sum;
     }
@@ -458,8 +458,8 @@ namespace Heat_method_3 {
     void build()
     {
       source_change_flag = false;
-      TriangleMesh idt_copy;
       /*
+      TriangleMesh idt_copy;
       if(idf)
       {
         CGAL::copy_face_graph(tm, idt_copy);
@@ -470,12 +470,12 @@ namespace Heat_method_3 {
       */
 
       CGAL_precondition(is_triangle_mesh(tm));
-      vertex_id_map = get(Vertex_property_tag(),const_cast<TriangleMesh&>(tm));
+      //vertex_id_map = get(Vertex_property_tag(),const_cast<TriangleMesh&>(tm));
       Index i = 0;
       BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
         put(vertex_id_map, vd, i++);
       }
-      face_id_map = get(Face_property_tag(), const_cast<TriangleMesh&>(tm));
+      //face_id_map = get(Face_property_tag(), const_cast<TriangleMesh&>(tm));
       Index face_i = 0;
       BOOST_FOREACH(face_descriptor fd, faces(tm)){
         put(face_id_map, fd, face_i++);

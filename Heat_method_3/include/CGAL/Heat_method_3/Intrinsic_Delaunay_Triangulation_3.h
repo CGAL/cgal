@@ -34,6 +34,7 @@
 #include <Eigen/Sparse>
 
 #include <boost/foreach.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <vector>
@@ -90,7 +91,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
                typename FaceIndexMap = typename boost::property_map< TriangleMesh, face_index_t>::const_type,
                typename EdgeIndexMap = typename boost::property_map< TriangleMesh, boost::edge_index_t>::const_type,
                typename LA = Intrinsic_Delaunay_Triangulation_Eigen_traits_3>
-     class Intrinsic_Delaunay_Triangulation_3
+     struct Intrinsic_Delaunay_Triangulation_3 // AF was class fix later
      {
        typedef Intrinsic_Delaunay_Triangulation_3<TriangleMesh,Traits,HalfedgeCoordinateMap,VertexPointMap,FaceIndexMap,EdgeIndexMap,LA> Self;
        
@@ -114,6 +115,8 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
        typedef typename boost::property_traits<VertexPointMap>::reference VertexPointMap_reference;
 
        typedef typename boost::graph_traits<TriangleMesh>::vertices_size_type vertices_size_type;
+              typedef typename boost::graph_traits<TriangleMesh>::edges_size_type edges_size_type;
+       typedef typename boost::graph_traits<TriangleMesh>::faces_size_type faces_size_type;
 
        typedef CGAL::dynamic_vertex_property_t<Index> Vertex_property_tag;
        typedef typename boost::property_map<TriangleMesh, Vertex_property_tag >::type Vertex_id_map;
@@ -129,13 +132,16 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
        typedef typename std::stack<edge_descriptor, std::list<edge_descriptor> > edge_stack;
 
        friend struct IDT_vertex_point_property_map<Self>;
-
        
      public: // for the BGL functions below. They should maybe become friend?
        struct Vertex_descriptor {
          halfedge_descriptor hd;
 
          Vertex_descriptor(const halfedge_descriptor& hd)
+           : hd(hd)
+         {}
+
+         Vertex_descriptor(const vertex_descriptor& hd)
            : hd(hd)
          {}
        };
@@ -440,6 +446,32 @@ template <typename TM,
           typename FIM,
           typename EIM,
           typename LA>
+typename boost::graph_traits<TM>::edges_size_type
+num_edges(const Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>& idt)
+{
+  return num_edges(idt.triangle_mesh());
+}
+  
+template <typename TM,
+          typename T,
+          typename HCM,
+          typename VPM,
+          typename FIM,
+          typename EIM,
+          typename LA>
+typename boost::graph_traits<TM>::faces_size_type
+num_faces(const Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>& idt)
+{
+  return num_faces(idt.triangle_mesh());
+}
+   
+template <typename TM,
+          typename T,
+          typename HCM,
+          typename VPM,
+          typename FIM,
+          typename EIM,
+          typename LA>
 typename std::pair<typename boost::graph_traits<TM>::vertex_iterator,
                    typename boost::graph_traits<TM>::vertex_iterator>
 vertices(const Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>& idt)
@@ -484,6 +516,20 @@ template <typename TM,
           typename FIM,
           typename EIM,
           typename LA>
+typename std::pair<typename boost::graph_traits<TM>::face_iterator,
+                   typename boost::graph_traits<TM>::face_iterator>
+faces(const Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>& idt)
+ {
+   return faces(idt.triangle_mesh());
+ }
+
+template <typename TM,
+          typename T,
+          typename HCM,
+          typename VPM,
+          typename FIM,
+          typename EIM,
+          typename LA>
 typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA> >::vertex_descriptor
 vertex(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA> >::halfedge_descriptor hd,
        const Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>& )
@@ -504,6 +550,20 @@ halfedge(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,HC
        const Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>& idt)
 {
   return halfedge(fd, idt.triangle_mesh());
+}
+  
+template <typename TM,
+          typename T,
+          typename HCM,
+          typename VPM,
+          typename FIM,
+          typename EIM,
+          typename LA>
+typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA> >::halfedge_descriptor
+halfedge(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA> >::edge_descriptor ed,
+       const Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VPM,FIM,EIM,LA>& idt)
+{
+  return halfedge(ed, idt.triangle_mesh());
 }
 
   
@@ -538,7 +598,7 @@ next(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,HCM,VP
     friend value_type get(const IDT_vertex_point_property_map<IDT>& pm,
                           key_type vd)
     {
-      typename IDT::Point_2 p = get(pm.idt.hcmap(), vd.hd);
+      const typename IDT::Point_2& p = get(pm.idt.hcmap(), vd.hd);
       return value_type(p.x(), p.y(), 0);
     }
   };
