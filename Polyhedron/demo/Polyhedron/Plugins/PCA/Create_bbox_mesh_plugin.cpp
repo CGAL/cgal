@@ -7,7 +7,6 @@
 #include <QMainWindow>
 #include <QApplication>
 
-#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Polyhedron_type.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
@@ -77,7 +76,7 @@ void Create_bbox_mesh_plugin::bbox(bool extended)
 {
   Scene_interface::Bbox bbox;
   bool initialized = false;
-
+  
   Q_FOREACH(int index, scene->selectionIndices()) {
     Scene_item* item = scene->item(index);
     if(item->isFinite() && ! item->isEmpty()) {
@@ -93,33 +92,26 @@ void Create_bbox_mesh_plugin::bbox(bool extended)
             << "\n                 " << bbox.ymax() - bbox.ymin()
             << "\n                 " << bbox.zmax() - bbox.zmin()
             << std::endl;
-
+  
   if(extended) {
     const double delta_x = ( bbox.xmax() - bbox.xmin() ) / 20.;
     const double delta_y = ( bbox.ymax() - bbox.ymin() ) / 20.;
     const double delta_z = ( bbox.zmax() - bbox.zmin() ) / 20.;
-bbox = Scene_interface::Bbox(
-    bbox.xmin() - delta_x,
-    bbox.ymin() - delta_y,
-    bbox.zmin() - delta_z,
-    bbox.xmax() + delta_x,
-    bbox.ymax() + delta_y,
-    bbox.zmax() + delta_z);
+    bbox = Scene_interface::Bbox(
+          bbox.xmin() - delta_x,
+          bbox.ymin() - delta_y,
+          bbox.zmin() - delta_z,
+          bbox.xmax() + delta_x,
+          bbox.ymax() + delta_y,
+          bbox.zmax() + delta_z);
   }
   
   Scene_item* item;
   Kernel::Iso_cuboid_3 ic(bbox);
-  if(mw->property("is_polyhedorn_mode").toBool()){
-    Polyhedron* p = new Polyhedron;
-    CGAL::make_hexahedron(ic[0], ic[1], ic[2], ic[3], ic[4], ic[5], ic[6], ic[7],*p);
-    item = new Scene_polyhedron_item(p);
-  } else {
-    SMesh* p = new SMesh;
-    CGAL::make_hexahedron(ic[0], ic[1], ic[2], ic[3], ic[4], ic[5], ic[6], ic[7],*p);
-
-    item = new Scene_surface_mesh_item(p);
-  }
-
+  SMesh* p = new SMesh;
+  CGAL::make_hexahedron(ic[0], ic[1], ic[2], ic[3], ic[4], ic[5], ic[6], ic[7],*p);
+  
+  item = new Scene_surface_mesh_item(p);
   item->setName("Scene bbox mesh");
   item->setRenderingMode(Wireframe);
   scene->addItem(item);

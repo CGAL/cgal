@@ -1,4 +1,3 @@
-#include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
 #include "Scene_surface_mesh_item.h"
 
@@ -92,6 +91,7 @@ CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
   compute_color_map(QColor(100, 100, 255), static_cast<unsigned>(patches.size()),
                     std::back_inserter(colors_));
   Scene_group_item* group = new Scene_group_item(fileinfo.completeBaseName());
+  group->setScene(scene);
   for(std::size_t i=0; i<patches.size(); ++i)
   {
     FaceGraphItem *patch = new FaceGraphItem(patches[i]);

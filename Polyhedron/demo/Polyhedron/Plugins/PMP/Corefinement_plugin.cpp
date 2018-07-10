@@ -4,8 +4,6 @@
 #include "Messages_interface.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include "Scene_surface_mesh_item.h"
-#include "Scene_polyhedron_item.h"
-#include "Polyhedron_type.h"
 
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 
@@ -77,11 +75,6 @@ public:
       if(!qobject_cast<Scene_surface_mesh_item*>(item2))
         return false;
     }
-    else if( qobject_cast<Scene_polyhedron_item*>(item1))
-    {
-      if(!qobject_cast<Scene_polyhedron_item*>(item2))
-        return false;
-    }
     else
       return false;
     return true;
@@ -99,11 +92,6 @@ public Q_SLOTS:
        apply_corefine(qobject_cast<Scene_surface_mesh_item*>(item1),
                       qobject_cast<Scene_surface_mesh_item*>(item2));
      }
-     else
-     {
-       apply_corefine(qobject_cast<Scene_polyhedron_item*>(item1),
-                      qobject_cast<Scene_polyhedron_item*>(item2));
-     }
   }
 
   void corefine_and_bool_op(bool_op op)
@@ -117,12 +105,6 @@ public Q_SLOTS:
     {
       apply_corefine_and_bool_op(qobject_cast<Scene_surface_mesh_item*>(item1),
                      qobject_cast<Scene_surface_mesh_item*>(item2),
-                     op);
-    }
-    else
-    {
-      apply_corefine_and_bool_op(qobject_cast<Scene_polyhedron_item*>(item1),
-                     qobject_cast<Scene_polyhedron_item*>(item2),
                      op);
     }
   }

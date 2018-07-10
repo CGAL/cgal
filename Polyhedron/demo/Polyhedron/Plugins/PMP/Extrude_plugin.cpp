@@ -19,21 +19,11 @@
 #include <CGAL/number_type_config.h>
 
 #include "Messages_interface.h"
-#ifdef USE_SURFACE_MESH
 #include "Kernel_type.h"
 #include "Scene_surface_mesh_item.h"
-#else
-#include "Scene_polyhedron_item.h"
-#include "Polyhedron_type.h"
-#endif
 #include "Scene_polyhedron_selection_item.h"
 #include "Scene.h"
-#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_face_graph_item;
-#else
-typedef Scene_polyhedron_item Scene_face_graph_item;
-#endif
-
 typedef Scene_face_graph_item::Face_graph Face_graph;
 typedef CGAL::qglviewer::Vec Vec;
 using namespace CGAL::Three;

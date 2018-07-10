@@ -3,7 +3,6 @@
 #include  <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_interface.h>
 #include "Scene_edit_box_item.h"
-#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -115,10 +114,10 @@ void Edit_box_plugin::exportToPoly()
     }
   }
 
-  Polyhedron::Point_3 points[8];
+  EPICK::Point_3 points[8];
   for(int i=0; i<8; ++i)
   {
-    points[i] = Polyhedron::Point_3(item->point(i,0),item->point(i,1), item->point(i,2))-offset;
+    points[i] = EPICK::Point_3(item->point(i,0),item->point(i,1), item->point(i,2))-offset;
   }
 
  Scene_surface_mesh_item* poly_item = new Scene_surface_mesh_item();

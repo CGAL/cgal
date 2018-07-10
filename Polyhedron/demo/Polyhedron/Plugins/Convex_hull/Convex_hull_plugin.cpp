@@ -5,12 +5,11 @@
 #include <QStringList>
 
 #include "opengl_tools.h"
-#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polylines_item.h"
 #include "Scene_polyhedron_selection_item.h"
-#include "Polyhedron_type.h"
+#include "SMesh_type.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
@@ -42,7 +41,6 @@ public:
 
   bool applicable(QAction*) const {
     return 
-      qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
       qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())) ||
       qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex())) ||
       qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex())) ||
@@ -67,11 +65,7 @@ struct Get_point {
 void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polyhedron_item* poly_item = 
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-
-  Scene_points_with_normal_item* pts_item =
+    Scene_points_with_normal_item* pts_item =
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
   
   Scene_polylines_item* lines_item = 
@@ -83,7 +77,7 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
   Scene_surface_mesh_item* sm_item = 
     qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
 
-  if(poly_item || pts_item || lines_item || selection_item || sm_item)
+  if( pts_item || lines_item || selection_item || sm_item)
   {
     // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -94,21 +88,20 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
 
     // add convex hull as new polyhedron
     SMesh *pConvex_hull  = new SMesh;
+    typedef boost::property_map<SMesh,CGAL::vertex_point_t>::type Vpmap;
+    typedef CGAL::Property_map_to_unary_function<Vpmap> Vpmap_fct;
     if(selection_item) {
+      SMesh* pMesh = selection_item->polyhedron();
+      Vpmap vpm = get(CGAL::vertex_point,*pMesh);
+      
+      Vpmap_fct v2p(vpm);
       CGAL::convex_hull_3(
-        boost::make_transform_iterator(selection_item->selected_vertices.begin(), Get_point()),
-        boost::make_transform_iterator(selection_item->selected_vertices.end(), Get_point()),
+        boost::make_transform_iterator(selection_item->selected_vertices.begin(), v2p),
+        boost::make_transform_iterator(selection_item->selected_vertices.end(), v2p),
         *pConvex_hull);
-    }
-    else if ( poly_item ){
-      Polyhedron* pMesh = poly_item->polyhedron();  
-      CGAL::convex_hull_3(pMesh->points_begin(),pMesh->points_end(),*pConvex_hull);
     }
     else if ( sm_item ){
       SMesh* pMesh = sm_item->polyhedron();
-      typedef boost::property_map<SMesh,CGAL::vertex_point_t>::type Vpmap;
-      
-      typedef CGAL::Property_map_to_unary_function<Vpmap> Vpmap_fct;
       Vpmap vpm = get(CGAL::vertex_point,*pMesh);
       
       Vpmap_fct v2p(vpm);

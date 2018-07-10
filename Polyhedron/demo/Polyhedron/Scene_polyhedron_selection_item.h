@@ -5,11 +5,7 @@
 #include "Plugins/PMP/Scene_facegraph_item_k_ring_selection.h"
 #include "Travel_isolated_components.h"
 
-#ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
-#else
-#include "Polyhedron_type.h"
-#endif
 #include "Scene_polyhedron_item_decorator.h"
 #include <CGAL/property_map.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
@@ -37,11 +33,7 @@
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_face_graph_item;
-#else
-typedef Scene_polyhedron_item Scene_face_graph_item;
-#endif
 
 typedef Scene_face_graph_item::Face_graph Face_graph;
 typedef boost::property_map<Face_graph,CGAL::vertex_point_t>::type VPmap;

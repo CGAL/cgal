@@ -5,11 +5,7 @@
 #include "opengl_tools.h"
 #include "Kernel_type.h"
 #include "Polyhedron_type.h"
-#ifdef USE_SURFACE_MESH
 #include "Scene_surface_mesh_item.h"
-#else
-#include "Scene_polyhedron_item.h"
-#endif
 #include "Scene_polyhedron_selection_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
@@ -19,11 +15,7 @@
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Make_triangle_soup.h>
 #include <CGAL/Kernel_traits.h>
-#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_facegraph_item;
-#else
-typedef Scene_polyhedron_item Scene_facegraph_item;
-#endif
 typedef Scene_facegraph_item::Face_graph Face_graph;
 using namespace CGAL::Three;
 class Degenerated_faces_plugin :

@@ -2,7 +2,7 @@ include( polyhedron_demo_macros )
 if(EIGEN3_FOUND)
   qt5_wrap_ui( surface_reconstructionUI_FILES Surface_reconstruction_plugin.ui)
   polyhedron_demo_plugin(surface_reconstruction_plugin Surface_reconstruction_plugin Surface_reconstruction_plugin_impl ${surface_reconstructionUI_FILES})
-  target_link_libraries(surface_reconstruction_plugin PUBLIC scene_polygon_soup_item scene_polyhedron_item scene_surface_mesh_item scene_points_with_normal_item)
+  target_link_libraries(surface_reconstruction_plugin PUBLIC scene_polygon_soup_item scene_surface_mesh_item scene_points_with_normal_item)
 
   qt5_wrap_ui( point_set_normal_estimationUI_FILES Point_set_normal_estimation_plugin.ui)
   polyhedron_demo_plugin(point_set_normal_estimation_plugin Point_set_normal_estimation_plugin ${point_set_normal_estimationUI_FILES})
@@ -41,7 +41,7 @@ endif()
 
   qt5_wrap_ui(point_set_shape_detectionUI_FILES Point_set_shape_detection_plugin.ui)
   polyhedron_demo_plugin(point_set_shape_detection_plugin Point_set_shape_detection_plugin ${point_set_shape_detectionUI_FILES})
-  target_link_libraries(point_set_shape_detection_plugin PUBLIC scene_surface_mesh_item scene_polyhedron_item scene_points_with_normal_item scene_polygon_soup_item scene_callback_signaler)
+  target_link_libraries(point_set_shape_detection_plugin PUBLIC scene_surface_mesh_item scene_points_with_normal_item scene_polygon_soup_item scene_callback_signaler)
 
   qt5_wrap_ui(point_set_simplificationUI_FILES Point_set_simplification_plugin.ui)
   polyhedron_demo_plugin(point_set_simplification_plugin Point_set_simplification_plugin ${point_set_simplificationUI_FILES})
@@ -67,7 +67,7 @@ endif()
 
   qt5_wrap_ui( distanceUI_FILES Point_set_to_mesh_distance_widget.ui )
   polyhedron_demo_plugin(point_set_to_mesh_distance_plugin Point_set_to_mesh_distance_plugin ${distanceUI_FILES})
-  target_link_libraries(point_set_to_mesh_distance_plugin PUBLIC scene_points_with_normal_item scene_surface_mesh_item scene_polyhedron_item scene_color_ramp)
+  target_link_libraries(point_set_to_mesh_distance_plugin PUBLIC scene_points_with_normal_item scene_surface_mesh_item scene_color_ramp)
 
   if(TBB_FOUND)
     foreach(plugin

@@ -15,11 +15,10 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
-#include "Scene_polyhedron_item.h"
+
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polylines_item.h"
 #include "Scene_points_with_normal_item.h"
-#include "Polyhedron_type.h"
 
 #include <CGAL/iterator.h>
 
@@ -334,7 +333,7 @@ private:
       std::cout << " done (" << ltime.elapsed() << " ms)" << std::endl;
     }
 
-    // export result as a polyhedron item
+    // export result as a surface_mesh item
     QString iname =
       polylines_items.size()==1?
       polylines_items.front()->name()+QString("_meshed_"):

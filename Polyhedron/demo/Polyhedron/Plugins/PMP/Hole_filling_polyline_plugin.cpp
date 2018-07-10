@@ -1,13 +1,11 @@
 #include <QtCore/qglobal.h>
 
 #include "Messages_interface.h"
-#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polylines_item.h"
 #include <CGAL/Three/Scene_interface.h>
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-#include "Polyhedron_type.h"
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/refine.h>
@@ -68,12 +66,6 @@ private:
   };
   typedef boost::function_output_iterator<Nop_functor> Nop_out;
 
-  struct Get_handle {
-    typedef Polyhedron::Facet_handle result_type;
-    result_type operator()(Polyhedron::Facet& f) const
-    { return f.halfedge()->facet(); }
-  };
-  
 public Q_SLOTS:
   void hole_filling_polyline_action() {
     Scene_polylines_item* polylines_item = qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex()));

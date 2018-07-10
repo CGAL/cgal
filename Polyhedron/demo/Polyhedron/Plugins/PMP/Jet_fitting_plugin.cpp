@@ -1,6 +1,4 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-#include "Polyhedron_type.h"
-#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polylines_item.h"
 
@@ -40,8 +38,7 @@ public:
   }
 
   bool applicable(QAction*) const { 
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
-      qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+    return qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
 public Q_SLOTS:
@@ -125,11 +122,9 @@ void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
   // get active polyhedron
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   QString name = scene->item(index)->name();
-  Scene_polyhedron_item* poly_item = 
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Scene_surface_mesh_item* sm_item = 
     qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
-  if((!poly_item) && (! sm_item)){
+  if(! sm_item){
     return;
   }
   // wait cursor
@@ -143,14 +138,9 @@ void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
   min_curv->setColor(Qt::green);
   min_curv->setName(tr("%1 (min curvatures)").arg(name));
 
-  if(poly_item){
-    Polyhedron* pMesh = poly_item->polyhedron();
-    compute(pMesh, min_curv, max_curv);
-  } else {
-    
-    SMesh* pMesh = sm_item->polyhedron();
-    compute(pMesh, min_curv, max_curv);
-  }
+  SMesh* pMesh = sm_item->polyhedron();
+  compute(pMesh, min_curv, max_curv);
+  
   scene->addItem(max_curv);
   scene->addItem(min_curv);
   max_curv->invalidateOpenGLBuffers();

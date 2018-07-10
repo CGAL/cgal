@@ -4,14 +4,10 @@
 #include "Scene_facegraph_transform_item_config.h"
 #include "Kernel_type.h"
 
-#ifdef CGAL_USE_SURFACE_MESH
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Scene_item.h>
-#else
-#include "Scene_polyhedron_item.h"
-#endif
 
 #include <CGAL/Qt/manipulatedFrame.h>
 #include <CGAL/Qt/qglviewer.h>
@@ -22,11 +18,7 @@
 
 using namespace CGAL::Three;
 struct Scene_facegraph_transform_item_priv;
-#ifdef CGAL_USE_SURFACE_MESH
 typedef CGAL::Surface_mesh<Kernel::Point_3> FaceGraph;
-#else
-typedef Polyhedron FaceGraph;
-#endif
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_FACEGRAPH_TRANSFORM_ITEM_EXPORT Scene_facegraph_transform_item
         : public Scene_item {

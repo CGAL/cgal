@@ -9,7 +9,7 @@ if ( Boost_VERSION GREATER 103400 )
   polyhedron_demo_plugin(mesh_3_plugin Mesh_3_plugin
                          Mesh_3_plugin_cgal_code.cpp Meshing_thread.cpp split_polylines.cpp
                          ${meshingUI_FILES})
-  target_link_libraries(mesh_3_plugin PUBLIC scene_polyhedron_item scene_polygon_soup_item scene_polylines_item scene_implicit_function_item scene_image_item
+  target_link_libraries(mesh_3_plugin PUBLIC scene_polygon_soup_item scene_polylines_item scene_implicit_function_item scene_image_item
                         scene_surface_mesh_item scene_c3t3_item ${OPENGL_gl_LIBRARY} )
 
   set(VTK_LIBS "")
@@ -41,7 +41,7 @@ if ( Boost_VERSION GREATER 103400 )
   polyhedron_demo_plugin(mesh_3_optimization_plugin Optimization_plugin
     Optimization_plugin_cgal_code.cpp Optimizer_thread.cpp
     ${meshingUI_FILES})
-  target_link_libraries(mesh_3_optimization_plugin PUBLIC scene_c3t3_item scene_polyhedron_item scene_surface_mesh_item scene_image_item scene_implicit_function_item )
+  target_link_libraries(mesh_3_optimization_plugin PUBLIC scene_c3t3_item scene_surface_mesh_item scene_image_item scene_implicit_function_item )
 
 
 

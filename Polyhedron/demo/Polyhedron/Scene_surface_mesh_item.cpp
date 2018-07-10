@@ -252,6 +252,7 @@ Scene_surface_mesh_item::Scene_surface_mesh_item()
   d->textFItems = new TextListItem(this);
 
   are_buffers_filled = false;
+  invalidate(ALL);
 }
 
 Scene_surface_mesh_item::Scene_surface_mesh_item(const Scene_surface_mesh_item& other)
@@ -279,6 +280,7 @@ void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
   d->textFItems = new TextListItem(this);
 
   are_buffers_filled = false;
+  invalidate(ALL);
 }
 Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
 {
