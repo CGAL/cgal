@@ -1101,7 +1101,7 @@ CGAL::Three::Scene_item* MainWindow::loadItem(QFileInfo fileinfo, CGAL::Three::P
   //test if the file is empty.
   QFile test(fileinfo.absoluteFilePath());
 
-  test.open( QIODevice::WriteOnly|QIODevice::Append);
+  test.open( QIODevice::ReadOnly|QIODevice::Append);
   if (test.pos() == 0) {
     QMessageBox::warning(this, tr("Error"),
                          tr("The file you are trying to load is empty.\n"));
