@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_3D_SurfaceSegmentation
 
 \cgalAutoToc
-\author Ilker %O. Yaz and Sébastien Loriot
+\author Ilker %O. Yaz, Liubomyr Piadyk and Sébastien Loriot
 
 \cgalFigureBegin{Segmentation_Elephant_main,elephant_sdf_partition.png}
 The shape diameter function applied to the elephant and the corresponding segmentation (using 6 clusters).
@@ -25,6 +25,12 @@ together with the result of the soft clustering.
 This package offers the computation of the SDF values and the mesh segmentation result as independent functions.
 This allows an alternative implementation of the SDF to be directly plugged into the segmentation algorithm,
 and also to reuse the SDF values several times with different parameters for the segmentation algorithm.
+
+Also this package provides an implementation of the algorithm proposed by Khaled Mamou and Faouzi Ghorbel \cgalCite{2010ApproxConvexDecomposition} that for any 3-dimentional mesh finds a set of nearly convex clusters.
+
+There are available separate functions for the computation of concavity values, so that users can estimate the concavity of produced clusters or any other meshes they have.
+The algorithm starts with the creation of dual graph, in which vertices describe the clusters of a mesh (initially, each triangle corresponds to a separate cluster) and edges descibe potential merges of two adjacent clusters
+After that a decimation operator is successively applied, while minimizing a cost function related to the concavity and the aspect ratio of the produced clusters.
 
 \section Surface_mesh_segmentationOverviewoftheSegmentation Overview of the Segmentation Process
 
@@ -149,10 +155,29 @@ It assigns to each facet the id of its cluster when `output_cluster_ids` is set 
 Clusters and segments. The input number of clusters is set to 5. <b>(a)</b> Result of the hard-clustering. <b>(b)</b> Segments are extracted from the computed clusters.
 \cgalFigureEnd
 
+\subsection Surface_mesh_segmentationConcavity Concavity value
+The choice of the way how concavity value is going to be be computed is crucial in the approximate convex decomposition algorithm, as it is used in the decimation operator, the decimation cost computation procedure and, thus, affects the order in which clusters are merged, the produced decomposition.
 
+The concavity of a triangle mesh \f$ S \f$ is defined as the maximal distance from the point of a vertex in the mesh to its projection on the convex hull of the mesh:
+
+\f$ Concavity(S) = arg \max\limits_{M \in S} ||M - Proj(M)|| \f$, where \f$ Proj(M) \f$ is the projection of the point \f$ M \f$ on the convex hull.
+
+The projection is computed in the direction normal to the surface of the mesh at \f$ M \f$.
+
+\cgalFigureBegin{Concavity_value,concavity_value.png}
+Distance computation from the point \f$ M_0 \f$ to its projection \f$ Proj(M_0) \f$ on the convex hull \f$ CH(S) \f$ of \f$ S \f$ in the direction \f$ N_0 \f$.
+\cgalFigureEnd
+
+\subsection Surface_mesh_segmentationDecimation Decimation procedure
+
+Some result of the approximate convex decomposition algorithm:
+
+\cgalFigureBegin{DecomposedSword,approx_decomp_examples.png}
+Decomposed a sword into 5 clusters (concavity_threshold=7.0), a cactus into 7 clusters (concavity_threshold=0.03), and an elephant into 33 clusters (concavity_threshold=0.02).
+\cgalFigureEnd
 
 \subsection Surface_mesh_segmentationAPI Summary
-Four functions are provided:
+6 functions are provided:
 	- `sdf_values()` : computes the SDF value of each facet of an input mesh in either raw or post-processed form.
            SDF values are associated to facets using a property map (see \ref Chapter_CGAL_and_Boost_Property_Maps
 "CGAL and Boost Property Maps").
@@ -163,18 +188,20 @@ Four functions are provided:
             This function allows using the same SDF values with different parameters for the segmentation stage.
             The segment or cluster ids are associated to the facets using a property map.
 	- `segmentation_via_sdf_values()` : combines the three functions above.
+    - `concavity_value()` : computes the concavity value of a cluster described by an id in a triangle mesh or the concavity value of the triangle mesh itself.
+    - `convex_decomposition()` : computes approximate convex decomposition of a triangle mesh, which is the smallest set of clusters satisfying concavity constraint.
 
 These functions expect as input a triangulated surface mesh bounding a 3D solid object, with
 the following properties:
 - Combinatorially 2-manifold;
-- The vertices of the facets are oriented counterclockwise when seen from outside of the object;
 - Intersection-free;
-- Boundary free.
+- The vertices of the facets are oriented counterclockwise when seen from outside of the object; (the first 4 only)
+- Boundary free. (the first 4 only)
 
-\note The current implementation executes fine on meshes that do not match
+\note The current implementations executes fine on meshes that do not match
 some of these properties but may produce unreliable or meaningless segmentations.
 
-The current implementation of the computation of the SDF values relies on the \ref PkgAABBTree package.
+The current implementation of the computation of the SDF and concavity values relies on the \ref PkgAABBTree package.
 This operation is reliable when the `AABBTraits` model provided has exact predicates.
 `::CGAL::Exact_predicates_inexact_constructions_kernel` is recommended as geometric traits for this algorithm.
 
@@ -210,6 +237,24 @@ When using a `Surface_mesh`, you can use the built-in property mechanism.
  It is possible to consider each segment as an independant triangle mesh, like in the following example, where the area of each segment is computed.
 
 \cgalExample{Surface_mesh_segmentation/extract_segmentation_into_mesh_example.cpp}
+
+\subsection Concavity_value_polyhedron Computation of concavity value
+\cgalExample{Surface_mesh_segmentation/concavity_value_example.cpp}
+
+\subsubsection Concavity_value_SM Using a Surface_mesh
+The same example as the previous one but uses a `Surface_mesh` datatype.
+\cgalExample{Surface_mesh_segmentation/concavity_value_SM_example.cpp}
+
+\subsection Approx_convex_decomposition_polyhedron Approximate convex decomposition
+\cgalExample{Surface_mesh_segmentation/approx_convex_decomposition_example.cpp}
+
+\subsubsection Approx_convex_decomposition_SM Using built-in properties of a Surface_mesh
+This example uses the `Surface_mesh` datatype instead of `Polyhedron_3` together with its built-in property mechanism. 
+\cgalExample{Surface_mesh_segmentation/approx_convex_decomposition_SM_example.cpp}
+
+\subsubsection Approx_convex_decomposition_convex_hulls Extracting convex hulls
+Extends the base example with the computation of convex hull per cluster.
+\cgalExample{Surface_mesh_segmentation/approx_convex_decomposition_convex_hulls_example.cpp}
 
 <BR>
 \section Performances Performances
@@ -251,6 +296,30 @@ Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of
 88,928               |   314                 | 1,260                 |  2,736                 |   4,239
 </center>
 
+<!-- \subsection ACDRuntime Runtime of the functions concavity_value() and convex_decomposition() -->
+
+The following tables describe the runtimes of `concavity_value()` and `convex_decomposition()` functions.
+All the runtimes were produced using the release build of \cgal 4.12 on an Intel i7 laptop, compiled by g++ 7.2.0 under VMware.
+In all the benchmarks `%Exact_predicates_inexact_constructions_kernel` (`EPICK`) was used as the kernel.
+Used meshes: sword.off (1036 triangles), cactus.off (1236 triangles), elephant.off (5558 triangles).
+
+<center>
+Number of triangles  |  Runtime in milliseconds
+---------------------| ----------------: 
+ 1,036               |  3                      
+ 1,236               |  3                     
+ 5,558               |  23 
+</center>
+
+Each cell of the next table contains runtime in seconds and the number of produced clusters in parentheses.
+
+<center>
+Number of triangles  | Concavity threshold = 0.05 | Concavity threshold = 0.3 | Concavity threshold = 7
+---------------------| ------------------------:  | -----------------------:  | ---------------------: 
+ 1,036               | 3.8 (12)                   | 3.8 (12)                  | 11 (5)
+ 1,236               | 14 (6)                     | 14.8 (3)                  | 41 (1)              
+ 5,558               | 72 (19)                    | 185 (12)                  | -              
+</center>
 
 <!-- Internal for developers:
 These are the runtimes in case CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE is defined, in which

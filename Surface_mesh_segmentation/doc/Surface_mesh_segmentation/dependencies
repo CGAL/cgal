@@ -9,3 +9,5 @@ BGL
 Property_map
 Surface_mesh
 Polygon_mesh_processing
+Convex_hull_3
+Polyhedron

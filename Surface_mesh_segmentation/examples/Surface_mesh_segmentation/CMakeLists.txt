@@ -78,3 +78,4 @@ create_single_source_cgal_program( "concavity_value_SM_example.cpp" )
 create_single_source_cgal_program( "approx_convex_decomposition_example.cpp" )
 create_single_source_cgal_program( "approx_convex_decomposition_SM_example.cpp" )
 
+create_single_source_cgal_program( "approx_convex_decomposition_convex_hulls_example.cpp" )

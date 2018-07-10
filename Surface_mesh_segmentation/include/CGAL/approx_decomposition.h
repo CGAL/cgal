@@ -39,7 +39,7 @@ namespace CGAL
 
 /*!
  * \ingroup PkgSurfaceSegmentation
- * @brief Function computing concavity value of a cluster described by an id in a triangle mesh.
+ * @brief Function computing the concavity value of a cluster described by an id in a triangle mesh.
  *
  * Cluster is a subset of connected faces in a triangle mesh.
  *
@@ -97,7 +97,7 @@ concavity_value(const TriangleMesh& mesh,
 
 /*!
  * \ingroup PkgSurfaceSegmentation
- * @brief Function computing concavity value of a triangle mesh.
+ * @brief Function computing the concavity value of a triangle mesh.
  *
  * @pre `is_triangle_mesh(mesh)`
  *
