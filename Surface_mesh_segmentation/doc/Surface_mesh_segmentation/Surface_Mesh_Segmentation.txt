@@ -29,7 +29,7 @@ and also to reuse the SDF values several times with different parameters for the
 Also this package provides an implementation of the algorithm proposed by Khaled Mamou and Faouzi Ghorbel \cgalCite{2010ApproxConvexDecomposition} that for any 3-dimentional mesh finds a set of nearly convex clusters.
 
 There are available separate functions for the computation of concavity values, so that users can estimate the concavity of produced clusters or any other meshes they have.
-The algorithm starts with the creation of dual graph, in which vertices describe the clusters of a mesh (initially, each triangle corresponds to a separate cluster) and edges descibe potential merges of two adjacent clusters
+The algorithm starts with the creation of dual graph, in which vertices describe the clusters of a mesh (initially, each triangle corresponds to a separate cluster) and edges descibe potential merges of two adjacent clusters.
 After that a decimation operator is successively applied, while minimizing a cost function related to the concavity and the aspect ratio of the produced clusters.
 
 \section Surface_mesh_segmentationOverviewoftheSegmentation Overview of the Segmentation Process
@@ -156,11 +156,12 @@ Clusters and segments. The input number of clusters is set to 5. <b>(a)</b> Resu
 \cgalFigureEnd
 
 \subsection Surface_mesh_segmentationConcavity Concavity value
-The choice of the way how concavity value is going to be be computed is crucial in the approximate convex decomposition algorithm, as it is used in the decimation operator, the decimation cost computation procedure and, thus, affects the order in which clusters are merged, the produced decomposition.
+The concavity value is used in the decimation cost computation, affects the order in which edges are decimated, the produced decomposition, and as a result is crucial in the approximate convex decomposition.
+The implemented function computing the concavity value is just one of many approaches to estimate quality of a surface mesh being concave.
 
 The concavity of a triangle mesh \f$ S \f$ is defined as the maximal distance from the point of a vertex in the mesh to its projection on the convex hull of the mesh:
 
-\f$ Concavity(S) = arg \max\limits_{M \in S} ||M - Proj(M)|| \f$, where \f$ Proj(M) \f$ is the projection of the point \f$ M \f$ on the convex hull.
+\f$ C(S) = arg \max\limits_{M \in S} ||M - Proj(M)|| \f$, where \f$ Proj(M) \f$ is the projection of the point \f$ M \f$ on the convex hull.
 
 The projection is computed in the direction normal to the surface of the mesh at \f$ M \f$.
 
@@ -168,12 +169,42 @@ The projection is computed in the direction normal to the surface of the mesh at
 Distance computation from the point \f$ M_0 \f$ to its projection \f$ Proj(M_0) \f$ on the convex hull \f$ CH(S) \f$ of \f$ S \f$ in the direction \f$ N_0 \f$.
 \cgalFigureEnd
 
-\subsection Surface_mesh_segmentationDecimation Decimation procedure
 
-Some result of the approximate convex decomposition algorithm:
+\subsection Surface_mesh_segmentationDecimation Decomposition procedure
+
+The approximate convex decomposition is an iterative algorithm, at each step an edge \f$ (v, w) \f$ with the lowest decimation cost is selected and decimated.
+The decimation process consists of merging vertices \f$ v, w \f$ (clusters), updating decimation costs of all modified, new edges, and producing new segmentation.
+The algoririthm is provided with the maximal allowed concavity value constraint and if no edges that satisfy the constraint are left, it terminates returning the segmentation produced on the last iteration.
+
+The decimation cost of the edge between vertices \f$ v \f$ and \f$ w \f$ is computed as follows:
+<table border="0">
+    <tr>
+        <td>
+            \f$ E(v, w) = \frac{C(S(v, w))}{D} + \alpha E_{shape}(S(v, w)) \f$
+        </td>
+        <td>
+            where:
+            - \f$ S(v, w) \f$ denotes the merged cluster of the two smaller ones described by vertices \f$ v \f$ and \f$ w \f$,
+            - \f$ C(S(v, w)) \f$ denotes the concavity of \f$ S \f$,
+            - \f$ D \f$ denotes a normalization factor equal to the diagonal of the bounding box of \f$ S \f$,
+            - \f$ \alpha \f$ denotes a parameter controlling the contribution of the aspect ratio \f$ E_{shape}(v, w) \f$ with respect to the concavity cost.
+        </td>
+    </tr>
+</table>
+
+The aspect ratio of a surface S is defined as follows:
+
+\f$ E_{shape}(S) = \frac{\rho^2(S)}{4 \pi \times \sigma(S)} \f$,
+where \f$ \rho(S) \f$ denotes perimeter, \f$ \sigma(S) \f$ denotes area of the \f$ S \f$.
+
+The cost \f$ E_{shape} \f$ was introduced in order to favor the generation of compact clusters.
+In the case of a disk this cost equals to one.
+The more irregular a surface is the highier its aspect ratio.
+
+Some results of the approximate convex decomposition algorithm:
 
 \cgalFigureBegin{DecomposedSword,approx_decomp_examples.png}
-Decomposed a sword into 5 clusters (concavity_threshold=7.0), a cactus into 7 clusters (concavity_threshold=0.03), and an elephant into 33 clusters (concavity_threshold=0.02).
+Decomposed a sword into 5 clusters (concavity_threshold=7.0), a cactus into 7 clusters (concavity_threshold=0.03), and an elephant into 33 clusters (concavity_threshold=0.02). All images depict convex hulls of every cluster in the segmentations.
 \cgalFigureEnd
 
 \subsection Surface_mesh_segmentationAPI Summary
