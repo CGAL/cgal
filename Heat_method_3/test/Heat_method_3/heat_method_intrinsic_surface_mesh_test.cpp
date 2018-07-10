@@ -131,6 +131,8 @@ int main()
 
   //source set tests
   Heat_method hm(sm, vertex_distance_map);
+  hm.add_source(* vertices(sm).first);
+  hm.update();
 #if 0
   source_set_tests(hm,sm);
   //cotan matrix tests

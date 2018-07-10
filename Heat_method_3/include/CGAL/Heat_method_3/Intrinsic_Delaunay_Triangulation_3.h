@@ -137,6 +137,11 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
        struct Vertex_descriptor {
          halfedge_descriptor hd;
 
+         bool operator<(const Vertex_descriptor& other) const
+         {
+           return hd < other.hd;
+         }
+         
          Vertex_descriptor(const halfedge_descriptor& hd)
            : hd(hd)
          {}
