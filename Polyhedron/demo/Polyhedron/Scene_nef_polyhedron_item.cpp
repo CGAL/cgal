@@ -1,9 +1,8 @@
 #include "Scene_nef_polyhedron_item.h"
 #include <CGAL/Three/Viewer_interface.h>
-#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Nef_type.h"
-#include "Polyhedron_type.h"
+#include "SMesh_type.h"
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
@@ -663,18 +662,19 @@ private:
 template <class Poly_A, class Poly_B>
 void copy_to(const Poly_A& poly_a, Poly_B& poly_b)
 {
-    Copy_polyhedron_to<Poly_A, Poly_B> modifier(poly_a);
-    poly_b.delegate(modifier);
+    //Copy_polyhedron_to<Poly_A, Poly_B> modifier(poly_a);
+    //poly_b.delegate(modifier);
+  CGAL::copy_face_graph(poly_a, poly_b);
 }
 
 void from_exact(Exact_polyhedron& in,
-                Polyhedron& out)
+                SMesh& out)
 {
     copy_to(in, out);
     CGAL_assertion(out.is_valid());
 }
 
-void to_exact(Polyhedron& in,
+void to_exact(SMesh& in,
               Exact_polyhedron& out)
 {
     copy_to(in, out);
@@ -698,19 +698,6 @@ struct Face_index_pmap
 };
 // [static]
 Scene_nef_polyhedron_item*
-Scene_nef_polyhedron_item::from_polygon_mesh(Scene_polyhedron_item *item)
-{
-  //return from_templated_polygon_mesh(item);
-  Polyhedron* poly = item->polyhedron();
-  if(!poly) return 0;
-  CGAL::Polyhedron_3<Exact_Kernel> exact_poly;
-  CGAL::copy_face_graph(*poly, exact_poly);
-  Nef_polyhedron* nef_poly = new Nef_polyhedron(exact_poly);
-
-  return new Scene_nef_polyhedron_item(nef_poly);
-}
-
-Scene_nef_polyhedron_item*
 Scene_nef_polyhedron_item::from_polygon_mesh(Scene_surface_mesh_item* item)
 {
   SMesh* sm = item->polyhedron();
@@ -721,13 +708,7 @@ Scene_nef_polyhedron_item::from_polygon_mesh(Scene_surface_mesh_item* item)
 
   return new Scene_nef_polyhedron_item(nef_poly);
 }
-Scene_polyhedron_item* Scene_nef_polyhedron_item::convert_to_polyhedron() const
-{
-  Polyhedron* poly = new Polyhedron();
-  CGAL::convert_nef_polyhedron_to_polygon_mesh(*this->nef_polyhedron(), *poly);
-  CGAL::Polygon_mesh_processing::triangulate_faces(*poly);
-  return new Scene_polyhedron_item(poly);
-}
+
 Scene_surface_mesh_item* Scene_nef_polyhedron_item::convert_to_surface_mesh() const
 {
   SMesh* poly = new SMesh();
@@ -771,7 +752,7 @@ sum(const Scene_nef_polyhedron_item& a,
 
 void
 Scene_nef_polyhedron_item::
-convex_decomposition(std::list< Scene_polyhedron_item*>& convex_parts)
+convex_decomposition(std::list< Scene_surface_mesh_item*>& convex_parts)
 {
     // copy the Nef polyhedron, as markers are added
     Nef_polyhedron N(*d->nef_poly);
@@ -784,9 +765,9 @@ convex_decomposition(std::list< Scene_polyhedron_item*>& convex_parts)
         if(ci->mark()) {
             Exact_polyhedron P;
             N.convert_inner_shell_to_polyhedron(ci->shells_begin(), P);
-            Polyhedron* poly = new Polyhedron;
+            SMesh* poly = new SMesh;
             from_exact(P, *poly);
-            Scene_polyhedron_item *spoly = new Scene_polyhedron_item(poly);
+            Scene_surface_mesh_item *spoly = new Scene_surface_mesh_item(poly);
             convex_parts.push_back(spoly);
             spoly->invalidateOpenGLBuffers();
         }

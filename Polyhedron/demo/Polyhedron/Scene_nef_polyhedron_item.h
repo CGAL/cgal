@@ -5,7 +5,6 @@
 #include "Nef_type_fwd.h"
 #include <iostream>
 #include <queue>
-class Scene_polyhedron_item;
 class Scene_surface_mesh_item;
 struct Scene_nef_polyhedron_item_priv;
 class SCENE_NEF_POLYHEDRON_ITEM_EXPORT Scene_nef_polyhedron_item
@@ -50,11 +49,8 @@ public:
   bool is_simple() const;
   bool is_Triangle;
   // conversion operations
-  static Scene_nef_polyhedron_item* from_polygon_mesh(Scene_polyhedron_item *);
   static Scene_nef_polyhedron_item* from_polygon_mesh(Scene_surface_mesh_item*);
 
-
-  Scene_polyhedron_item* convert_to_polyhedron() const;
   Scene_surface_mesh_item* convert_to_surface_mesh() const;
 
   // Nef boolean operations
@@ -71,7 +67,7 @@ public:
   sum(const Scene_nef_polyhedron_item&, 
       const Scene_nef_polyhedron_item&);
 
-  void convex_decomposition(std::list< Scene_polyhedron_item*>&);
+  void convex_decomposition(std::list< Scene_surface_mesh_item*>&);
 protected:
   friend struct Scene_nef_polyhedron_item_priv;
   Scene_nef_polyhedron_item_priv* d;
