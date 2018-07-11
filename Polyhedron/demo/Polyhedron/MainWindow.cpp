@@ -1321,7 +1321,14 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
         Q_FOREACH(QAction* action, scene->item(main_index)->contextMenu()->actions())
         {
           if(action->property("is_groupable").toBool())
+          {
             menu_actions[action->text()] = action;
+            if(action->text() == QString("Alpha value"))
+            {
+              menu_actions["alpha slider"] = action->menu()->actions().last();
+            }
+          }
+          
         }
         Q_FOREACH(Scene::Item_id index, scene->selectionIndices())
         {
@@ -1337,8 +1344,48 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
         QMenu menu;
         Q_FOREACH(QString name, menu_actions.keys())
         {
-          QAction* action = menu.addAction(name);
-          connect(action, &QAction::triggered, this, &MainWindow::propagate_action);
+          if(name == QString("alpha slider"))
+            continue;
+          if(name == QString("Alpha value"))
+          {
+            QWidgetAction* sliderAction = new QWidgetAction(&menu);
+            QSlider* slider = new QSlider(&menu);
+            slider->setMinimum(0);
+            slider->setMaximum(255);
+            slider->setValue(
+                  qobject_cast<QSlider*>(
+                    qobject_cast<QWidgetAction*>
+                    (menu_actions["alpha slider"])->defaultWidget()
+                  )->value());
+            slider->setOrientation(Qt::Horizontal);
+            sliderAction->setDefaultWidget(slider);
+            
+            connect(slider, &QSlider::valueChanged, [this, slider]()
+            {
+              Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+              {
+                Scene_item* item = scene->item(id);
+                Q_FOREACH(QAction* action, item->contextMenu()->actions())
+                {
+                  if(action->text() == "Alpha value")
+                  {
+                    QWidgetAction* sliderAction = qobject_cast<QWidgetAction*>(action->menu()->actions().last());
+                    QSlider* ac_slider = qobject_cast<QSlider*>(sliderAction->defaultWidget());
+                    ac_slider->setValue(slider->value());
+                    break;
+                  }
+                }
+              }
+            });
+            QMenu* new_menu = new QMenu("Alpha value", &menu);
+              new_menu->addAction(sliderAction);
+              menu.addMenu(new_menu);
+          }
+          else
+          {
+            QAction* action = menu.addAction(name);
+            connect(action, &QAction::triggered, this, &MainWindow::propagate_action);
+          }
         }
         if(has_stats)
         {

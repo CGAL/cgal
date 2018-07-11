@@ -270,6 +270,7 @@ public :
     if(!menuChanged) {
       menu->addSeparator();
       QMenu *container = new QMenu(tr("Alpha value"));
+      container->menuAction()->setProperty("is_groupable", true);
       QWidgetAction *sliderAction = new QWidgetAction(0);
       sliderAction->setDefaultWidget(alphaSlider);
       connect(alphaSlider, &QSlider::valueChanged,
@@ -1342,9 +1343,24 @@ QMenu* Scene_c3t3_item::contextMenu()
   bool menuChanged = menu->property(prop_name).toBool();
 
   if (!menuChanged) {
-
-    QMenu *container = new QMenu(tr("Tetrahedra's Shrink Factor"));
+    
+    QMenu *container = new QMenu(tr("Alpha value"));
+    container->menuAction()->setProperty("is_groupable", true);
     QWidgetAction *sliderAction = new QWidgetAction(0);
+    sliderAction->setDefaultWidget(d->alphaSlider);
+    connect(d->alphaSlider, &QSlider::valueChanged,
+            [this]()
+    {
+      if(d->intersection)
+        d->intersection->setAlpha(d->alphaSlider->value());
+      redraw();
+    }
+    );
+    container->addAction(sliderAction);
+    menu->addMenu(container);
+    
+    container = new QMenu(tr("Tetrahedra's Shrink Factor"));
+    sliderAction = new QWidgetAction(0);
     connect(d->tet_Slider, &QSlider::valueChanged, this, &Scene_c3t3_item::itemChanged);
     sliderAction->setDefaultWidget(d->tet_Slider);
     container->addAction(sliderAction);
@@ -1386,19 +1402,7 @@ QMenu* Scene_c3t3_item::contextMenu()
     connect(actionShowGrid, SIGNAL(toggled(bool)),
             this, SLOT(show_grid(bool)));
 
-    container = new QMenu(tr("Alpha value"));
-    sliderAction = new QWidgetAction(0);
-    sliderAction->setDefaultWidget(d->alphaSlider);
-    connect(d->alphaSlider, &QSlider::valueChanged,
-            [this]()
-    {
-      if(d->intersection)
-        d->intersection->setAlpha(d->alphaSlider->value());
-      redraw();
-    }
-    );
-    container->addAction(sliderAction);
-    menu->addMenu(container);
+    
     menu->setProperty(prop_name, true);
   }
   return menu;
