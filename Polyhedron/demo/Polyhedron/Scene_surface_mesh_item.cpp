@@ -880,9 +880,33 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
                                            Scene_item_rendering_helper::Gl_data_names name,
                                            bool index) const
 {
+  
   //Computes the normal of the facet
   EPICK::Vector_3 normal = get(*fnormals, fd);
-  
+  if(normal == CGAL::NULL_VECTOR)
+  {
+    boost::graph_traits<SMesh>::halfedge_descriptor start = prev(halfedge(fd, *smesh_), *smesh_);
+    boost::graph_traits<SMesh>::halfedge_descriptor next_;
+    do
+    {
+      boost::graph_traits<SMesh>::halfedge_descriptor hd = halfedge(fd, *smesh_);
+       next_ =next(hd, *smesh_);
+      const Point_3& pa = smesh_->point(target(hd, *smesh_));
+      const Point_3& pb = smesh_->point(target(next_, *smesh_));
+      const Point_3& pc = smesh_->point(target(prev(hd, *smesh_), *smesh_));
+      if (!CGAL::collinear (pa, pb, pc))
+      {
+        normal = CGAL::cross_product(pb-pa, pc -pa);
+        break;
+      }
+    }while(next_ != start);
+    
+    if (normal == CGAL::NULL_VECTOR) // No normal could be computed, return
+    {
+      qDebug()<<"Warning : normal is not valid. Facet not displayed";
+      return;
+    }
+  }
   //check if normal contains NaN values
   if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
   {
