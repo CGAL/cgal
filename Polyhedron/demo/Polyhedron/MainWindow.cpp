@@ -1295,6 +1295,7 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
 void MainWindow::showSceneContextMenu(const QPoint& p) {
   QWidget* sender = qobject_cast<QWidget*>(this->sender());
   if(!sender) return;
+  if(scene->selectionIndices().isEmpty())return;
   int main_index = scene->selectionIndices().first();
 
   if(sender == sceneView) {
@@ -1885,8 +1886,11 @@ void MainWindow::viewerShowObject()
   }
   if(item) {
     const Scene::Bbox bbox = item->bbox();
-    viewerShow((float)bbox.xmin()+viewer->offset().x, (float)bbox.ymin()+viewer->offset().y, (float)bbox.zmin()+viewer->offset().z,
-               (float)bbox.xmax()+viewer->offset().x, (float)bbox.ymax()+viewer->offset().y, (float)bbox.zmax()+viewer->offset().z);
+    CGAL::qglviewer::Vec min((float)bbox.xmin()+viewer->offset().x, (float)bbox.ymin()+viewer->offset().y, (float)bbox.zmin()+viewer->offset().z),
+        max((float)bbox.xmax()+viewer->offset().x, (float)bbox.ymax()+viewer->offset().y, (float)bbox.zmax()+viewer->offset().z);
+    viewer->setSceneBoundingBox(min, max);
+    viewerShow(min.x, min.y, min.z,
+               max.x, max.y, max.z);
   }
 }
 
