@@ -1871,9 +1871,9 @@ void MainWindow::on_actionLookAt_triggered()
   if( i == QDialog::Accepted &&
       dialog.has_correct_coordinates() )
   {
-    viewerShow((float)dialog.get_x(),
-               (float)dialog.get_y(),
-               (float)dialog.get_z());
+    viewerShow((float)dialog.get_x()+viewer->offset().x,
+               (float)dialog.get_y()+viewer->offset().y,
+               (float)dialog.get_z()+viewer->offset().z);
   }
 }
 
@@ -1896,23 +1896,47 @@ void MainWindow::viewerShowObject()
 
 QString MainWindow::cameraString() const
 {
-  return viewer->dumpCameraCoordinates();
+  const CGAL::qglviewer::Vec pos = viewer->camera()->position() - viewer->offset();
+  const CGAL::qglviewer::Quaternion q = viewer->camera()->orientation();
+
+  return QString("%1 %2 %3 %4 %5 %6 %7")
+    .arg(pos[0])
+    .arg(pos[1])
+    .arg(pos[2])
+    .arg(q[0])
+    .arg(q[1])
+    .arg(q[2])
+    .arg(q[3]);
 }
 
 void MainWindow::on_actionDumpCamera_triggered()
 {
+  //remove offset
   information(QString("Camera: %1")
               .arg(cameraString()));
 }
 
 void MainWindow::on_actionCopyCamera_triggered()
 {
+  //remove offset
   qApp->clipboard()->setText(this->cameraString());
 }
 
 void MainWindow::on_actionPasteCamera_triggered()
 {
+  //add offset
   QString s = qApp->clipboard()->text();
+  QStringList list = s.split(' ');
+  QString new_s[7];
+  
+  new_s[0] = QString("%1").arg(list.at(0).toFloat() + viewer->offset().x);
+  new_s[1] = QString("%1").arg(list.at(1).toFloat() + viewer->offset().y);
+  new_s[2] = QString("%1").arg(list.at(2).toFloat() + viewer->offset().z);
+  for(int i=3; i<7; ++i)
+    new_s[i] = list.at(i);
+  s = QString();
+  for(int i=0; i<7; ++i)
+    s.append(new_s[i]).append(" ");
   viewer->moveCameraToCoordinates(s, 0.5f);
 }
 
