@@ -49,7 +49,7 @@ int main()
     Timer timer;
     
     timer.start();
-    std::size_t clusters_num = CGAL::convex_decomposition<Concurrency_tag>(mesh, facet_property_map, 0.3, 1);
+    std::size_t clusters_num = CGAL::approximate_convex_decomposition<Concurrency_tag>(mesh, facet_property_map, 0.3, 1);
     timer.stop();
 
     std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
