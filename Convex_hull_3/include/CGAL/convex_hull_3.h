@@ -358,8 +358,8 @@ find_visible_set(TDS_2& tds,
    typedef typename Traits::Plane_3                   Plane_3;
    typedef typename TDS_2::Face_handle Face_handle;
    typedef typename TDS_2::Vertex_handle Vertex_handle;
-   typename Traits::Has_on_positive_side_3 has_on_positive_side =
-            traits.has_on_positive_side_3_object();
+   typename Traits::Has_on_negative_side_3 has_on_negative_side =
+      traits.has_on_negative_side_3_object();
 
    std::vector<Vertex_handle> vertices;
    vertices.reserve(10);
@@ -387,7 +387,7 @@ find_visible_set(TDS_2& tds,
           f->info() = VISITED;
           Plane_3 plane(f->vertex(0)->point(),f->vertex(1)->point(),f->vertex(2)->point());
           int ind = f->index(*vis_it);
-          if ( has_on_positive_side(plane, point) ){  // is visible
+          if ( !has_on_negative_side(plane, point) ){  // is visible
             visible.push_back(f);
             Vertex_handle vh = f->vertex(ind);
             if(vh->info() == 0){ vertices.push_back(vh); vh->info() = VISITED;}
@@ -717,6 +717,56 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
   
 }
 
+template <class P3_iterator, 
+          class Point_3_list>
+void init_iterators(P3_iterator& minx, 
+                    P3_iterator& maxx, 
+                    P3_iterator& miny,
+                    const P3_iterator& start,
+                    const Point_3_list& points)
+{
+  P3_iterator it = start;
+  for(; it != points.end(); ++it){
+    if(it->x() < minx->x())  minx = it;
+    else if(it->x() ==  minx->x())
+    {
+      if(it->y() < minx->y()) minx = it;
+      else if(it->y() == minx->y())
+      {
+        if(it->z() < minx->z()) minx = it;
+      }
+    }
+  }
+  it = start;
+  for(; it != points.end(); ++it){
+    if(it == minx )
+      continue;
+    if(it->x() > maxx->x()) maxx = it;
+    else if(it->x() == maxx->x())
+    {
+      if(it->y() > maxx->y()) maxx = it;
+      else if(it->y() == maxx->y())
+      {
+        if(it->z() > maxx->z()) maxx = it;
+      }
+    }
+  }
+  it = start;
+  for(; it != points.end(); ++it){
+    if(it == minx || it == maxx)
+      continue;
+    if(it->y() < miny->y()) miny = it;
+    else if(it->y() == miny->y())
+    {
+      if(it->x() > miny->x()) miny = it;
+      else if(it->x() == miny->x())
+      {
+        if(it->z() < miny->z()) miny = it;
+      }
+    }
+  }
+}
+
 } } //namespace internal::Convex_hull_3
 
 
@@ -810,13 +860,7 @@ convex_hull_3(InputIterator first, InputIterator beyond,
   Polyhedron P;
 
   P3_iterator minx, maxx, miny, it;
-  minx = maxx = miny = it = points.begin();
-  ++it;
-  for(; it != points.end(); ++it){
-    if(it->x() < minx->x()) minx = it;
-    if(it->x() > maxx->x()) maxx = it;
-    if(it->y() < miny->y()) miny = it;
-  }
+  internal::Convex_hull_3::init_iterators(minx, maxx, miny, it, points);
   if(! collinear(*minx, *maxx, *miny) ){  
     internal::Convex_hull_3::ch_quickhull_polyhedron_3(points, minx, maxx, miny, P, traits);
   } else {
@@ -893,8 +937,20 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
   
   clear(polyhedron);
   // result will be a polyhedron
-  internal::Convex_hull_3::ch_quickhull_polyhedron_3(points, point1_it, point2_it, point3_it,
-                                                     polyhedron, traits);
+  P3_iterator minx, maxx, miny, it;
+  minx = maxx = miny = it = points.begin();
+  ++it;
+  
+  
+  //take extreme points to begin with.
+  internal::Convex_hull_::init_iterators(minx, maxx, miny, it, points);
+  if(! collinear(*minx, *maxx, *miny) ){
+    internal::Convex_hull_3::ch_quickhull_polyhedron_3(points, minx, maxx, miny,
+                                                       polyhedron, traits);
+  } else {//to do : this case leads to bad init a risk of non minimal convex hull
+    internal::Convex_hull_3::ch_quickhull_polyhedron_3(points, point1_it, point2_it, point3_it,
+                                                       polyhedron, traits);
+  }
 
 }
 

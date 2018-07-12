@@ -95,6 +95,23 @@ public:
 
   typedef bool result_type;
 };
+
+template <class K>
+class Point_triple_has_on_negative_side_3 {
+
+public:
+    typedef typename K::Point_3 Point_3;
+    typedef Point_triple<K> Plane_3;
+  bool
+    operator()( const Plane_3& pl, const Point_3& p) const
+    {
+      typename K::Orientation_3 o; 
+      return ( o(pl.p(), pl.q(), pl.r(), p) == CGAL::NEGATIVE);
+    }
+
+  typedef bool result_type;
+};
+
 template <class K, class OldK>
 class Point_triple_construct_orthogonal_vector_3 
 {
@@ -167,6 +184,8 @@ struct GT3_for_CH3 {
 template <class R_, class Has_filtered_predicates_tag /* = Tag_false */>
 struct Convex_hull_traits_base_3 {
   typedef Point_triple_has_on_positive_side_3<R_>     Has_on_positive_side_3;
+  typedef Point_triple_has_on_negative_side_3<R_>     Has_on_negative_side_3;
+  
 
   typedef  Point_triple_less_signed_distance_to_plane_3<R_>
                                                   Less_signed_distance_to_plane_3;
@@ -180,6 +199,13 @@ struct Convex_hull_traits_base_3<R_, Tag_true>{
       Point_triple_converter<R_,typename R_::Exact_kernel_rt>,
       Point_triple_converter<R_,typename R_::Approximate_kernel>
   > Has_on_positive_side_3;
+  
+  typedef Filtered_predicate<
+      Point_triple_has_on_negative_side_3< typename R_::Exact_kernel_rt >,
+      Point_triple_has_on_negative_side_3< typename R_::Approximate_kernel >,
+      Point_triple_converter<R_,typename R_::Exact_kernel_rt>,
+      Point_triple_converter<R_,typename R_::Approximate_kernel>
+  > Has_on_negative_side_3;
 
   typedef Filtered_predicate<
       Point_triple_less_signed_distance_to_plane_3< typename R_::Exact_kernel_rt >,
@@ -230,6 +256,8 @@ class Convex_hull_traits_3 :
 
   typedef typename Convex_hull_traits_base_3<R_, Has_filtered_predicates_tag>
     ::Has_on_positive_side_3 Has_on_positive_side_3;
+  typedef typename Convex_hull_traits_base_3<R_, Has_filtered_predicates_tag>
+    ::Has_on_negative_side_3 Has_on_negative_side_3;
 
   typedef typename Convex_hull_traits_base_3<R_, Has_filtered_predicates_tag>
     ::Less_signed_distance_to_plane_3 Less_signed_distance_to_plane_3;
@@ -289,6 +317,10 @@ class Convex_hull_traits_3 :
   Has_on_positive_side_3
   has_on_positive_side_3_object() const
   { return Has_on_positive_side_3(); }
+  
+  Has_on_negative_side_3
+  has_on_negative_side_3_object() const
+  { return Has_on_negative_side_3(); }
 
   Oriented_side_3
   oriented_side_3_object() const

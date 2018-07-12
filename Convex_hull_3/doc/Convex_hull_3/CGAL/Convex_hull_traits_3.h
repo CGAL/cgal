@@ -99,6 +99,11 @@ unspecified_type Has_on_positive_side_3;
 /*!
 
 */ 
+unspecified_type Has_on_negative_side_3;
+
+/*!
+
+*/ 
 unspecified_type Less_signed_distance_to_plane_3;
 
 /*!
