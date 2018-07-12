@@ -121,7 +121,7 @@ namespace internal
         double compute()
         {
             boost::unordered_map<vertex_descriptor, double> distances;
-            return compute(distances);
+            return compute(boost::make_assoc_property_map(distances));
         }
 
         /**
@@ -129,7 +129,7 @@ namespace internal
          * Faces list is a subset of all faces in the mesh.
          */
         template <class DistancesMap>
-        double compute(const std::vector<face_descriptor>& faces, const Mesh& conv_hull, DistancesMap& distances)
+        double compute(const std::vector<face_descriptor>& faces, const Mesh& conv_hull, DistancesMap distances)
         {
             boost::unordered_set<vertex_descriptor> pts;
 
@@ -147,7 +147,7 @@ namespace internal
         double compute(const std::vector<face_descriptor>& faces, const Mesh& conv_hull)
         {
             boost::unordered_map<vertex_descriptor, double> distances;
-            return compute(faces, conv_hull, distances);
+            return compute(faces, conv_hull, boost::make_assoc_property_map(distances));
         }
 
         /**
@@ -155,7 +155,7 @@ namespace internal
          * Vertices list a subset of all vertices in the mesh.
          */
         template <class iterator, class DistancesMap>
-        double compute(const std::pair<iterator, iterator>& verts, const Mesh& conv_hull, DistancesMap& distances)
+        double compute(const std::pair<iterator, iterator>& verts, const Mesh& conv_hull, DistancesMap distances)
         {
             // compute normals if normals are not computed
             compute_normals();
@@ -190,14 +190,15 @@ namespace internal
 #ifdef CGAL_LINKED_WITH_TBB
                     m_mutex.lock();
 #endif
-                    m_distances[vert] = 0.;
+                    put(m_distances, vert, 0.);
                     if (intersection)
                     {
                         const Point_3* intersection_point =  boost::get<Point_3>(&(intersection->first));
                         if (intersection_point)
                         {
-                            m_distances[vert] = CGAL::squared_distance(origin, *intersection_point);
-                            m_result = std::max(m_result, m_distances[vert]);
+                            double d = CGAL::squared_distance(origin, *intersection_point);
+                            put(m_distances, vert, d);
+                            m_result = std::max(m_result, d);
                         }
                     }
 #ifdef CGAL_LINKED_WITH_TBB

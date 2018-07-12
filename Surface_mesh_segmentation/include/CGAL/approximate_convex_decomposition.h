@@ -168,11 +168,8 @@ template <class ConcurrencyTag, class TriangleMesh>
 double
 concavity_values(const TriangleMesh& mesh)
 {
-    typedef boost::unordered_map<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, double> Vertex_double_map;
-    Vertex_double_map distances_map;
-    boost::associative_property_map<Vertex_double_map> distances_pmap(distances_map);
-    
-    return concavity_value<ConcurrencyTag>(mesh, distances_pmap, Polygon_mesh_processing::parameters::all_default());
+    CGAL::Static_property_map<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, double > distance_map(0);
+    return concavity_values<ConcurrencyTag>(mesh, distance_map, Polygon_mesh_processing::parameters::all_default());
 }
 #endif
 
