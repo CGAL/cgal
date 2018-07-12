@@ -163,3 +163,10 @@ polyhedron_demo_plugin(degenerated_faces_sm_plugin Degenerated_faces_plugin)
 target_link_libraries(degenerated_faces_sm_plugin PUBLIC scene_surface_mesh_item scene_surface_mesh_selection_item)
 target_compile_definitions(degenerated_faces_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
 
+
+polyhedron_demo_plugin(extrude_poly_plugin Extrude_plugin)
+target_link_libraries(extrude_poly_plugin PUBLIC scene_polyhedron_item scene_polyhedron_selection_item)
+
+polyhedron_demo_plugin(extrude_sm_plugin Extrude_plugin)
+target_link_libraries(extrude_sm_plugin PUBLIC scene_surface_mesh_item scene_surface_mesh_selection_item)
+target_compile_definitions(extrude_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )

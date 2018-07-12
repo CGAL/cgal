@@ -419,22 +419,16 @@ corefine_and_compute_boolean_operations(
     if (output[Corefinement::UNION] != boost::none)
       if (&tm1 != *output[Corefinement::UNION])
         copy_face_graph(tm1,
-                        *(*output[Corefinement::UNION]),
-                        Emptyset_iterator(),
-                        Emptyset_iterator(),
-                        Emptyset_iterator(),
-                        vpm1,
-                        *cpp11::get<Corefinement::UNION>(vpm_out_tuple));
-
+            *(*output[Corefinement::UNION]),
+                        parameters::vertex_point_map(vpm1),
+                        parameters::vertex_point_map(*cpp11::get<Corefinement::UNION>(vpm_out_tuple)));
     if (output[Corefinement::INTERSECTION] != boost::none)
       if (&tm1 != *output[Corefinement::INTERSECTION])
         copy_face_graph(tm1,
                         *(*output[Corefinement::INTERSECTION]),
-                        Emptyset_iterator(),
-                        Emptyset_iterator(),
-                        Emptyset_iterator(),
-                        vpm1,
-                        *cpp11::get<Corefinement::INTERSECTION>(vpm_out_tuple));
+                        parameters::vertex_point_map(vpm1),
+                        parameters::vertex_point_map(*cpp11::get<Corefinement::INTERSECTION>(vpm_out_tuple)));
+                        
 
     if (output[Corefinement::TM1_MINUS_TM2] != boost::none)
       if (&tm1 == *output[Corefinement::TM1_MINUS_TM2])

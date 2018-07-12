@@ -148,12 +148,17 @@ public:
     std::vector<float> ft;
     
     for (std::size_t i = 0; i < ground_truth.size(); ++ i)
-      if (ground_truth[i] != -1)
+    {
+      int g = int(ground_truth[i]);
+      if (g != -1)
       {
         for (std::size_t f = 0; f < m_features.size(); ++ f)
           ft.push_back(m_features[f]->value(i));
-        gt.push_back(ground_truth[i]);
+        gt.push_back(g);
       }
+    }
+
+    std::cerr << "Using " << gt.size() << " inliers" << std::endl;
 
     CGAL::internal::liblearning::DataView2D<int> label_vector (&(gt[0]), gt.size(), 1);    
     CGAL::internal::liblearning::DataView2D<float> feature_vector(&(ft[0]), gt.size(), ft.size() / gt.size());
@@ -187,11 +192,7 @@ public:
     m_rfc->evaluate (ft.data(), prob.data());
     
     for (std::size_t i = 0; i < out.size(); ++ i)
-    {
-      out[i] = - std::log (prob[i]);
-      if (out[i] < 0.f)
-        out[i] = -out[i];
-    }
+      out[i] = (std::min) (1.f, (std::max) (0.f, prob[i]));
   }
   /// \endcond
   
