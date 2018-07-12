@@ -61,6 +61,23 @@ Release date: September 2018
     `CGAL::pca_estimate_normals()`, `CGAL::remove_outliers()` and
     `CGAL::wlop_simplify_and_regularize_point_set()`.
 
+
+### Classification 
+
+-   Added data structures to handle classification of Surface Meshes
+    and of Clusters.
+
+-   Added public API to compute features in parallel.
+
+-   **Breaking change**: features based on products/divisions of
+    eigenvalues are replaced by simple eigenvalue features. Features
+    based on statistics on the HSV color channels are replaced by
+    simple HSV color channel features.
+
+-   **Breaking change**: the API of
+    `CGAL::Classification::Point_set_feature_generator` has been simplified.
+
+
 ### Polygon Mesh Processing
 
 -   Added a new named parameter for stitching that allows to perform 
