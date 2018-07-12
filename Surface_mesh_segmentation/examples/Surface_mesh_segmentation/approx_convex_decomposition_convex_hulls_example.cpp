@@ -28,78 +28,78 @@ typedef CGAL::Parallel_tag Concurrency_tag;
 
 int main()
 {
-    // read mesh
-    Mesh mesh;
-    
-    std::ifstream input("data/sword.off");
-    
-    if (!input || !(input >> mesh))
+  // read mesh
+  Mesh mesh;
+  
+  std::ifstream input("data/sword.off");
+  
+  if (!input || !(input >> mesh))
+  {
+    std::cout << "Failed to read mesh" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  if (CGAL::is_empty(mesh) || !CGAL::is_triangle_mesh(mesh))
+  {
+    std::cout << "Input mesh is invalid" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  // create property map for cluster-ids
+  typedef Mesh::Property_map<face_descriptor, int> Clusters_pmap;
+  Clusters_pmap clusters_pmap = mesh.add_property_map<face_descriptor, int>("f:cluster").first;
+
+  // decompose mesh
+  Timer timer;
+  
+  timer.start();
+  std::size_t clusters_num = CGAL::approximate_convex_decomposition<Concurrency_tag>(mesh, clusters_pmap, 0.3, 1);
+  timer.stop();
+
+  std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
+
+  // write cluster-ids for each facet
+  std::cout << "Number of clusters: " << clusters_num << std::endl;
+  BOOST_FOREACH(face_descriptor fd, faces(mesh))
+  {
+    std::cout << clusters_pmap[fd] << " ";
+  }
+  std::cout << std::endl;
+
+  // write concavity values for all clusters
+  for (std::size_t i = 0; i < clusters_num; ++i)
+  {
+    std::cout << "Concavity value of #" << i << " cluster: " << CGAL::concavity_values<Concurrency_tag>(mesh, clusters_pmap, i) << std::endl;
+  }
+
+  // compute convex hulls
+  for (std::size_t i = 0; i < clusters_num; ++i)
+  {
+    Filtered_graph filtered_mesh(mesh, i, clusters_pmap);
+    Mesh cluster;
+    CGAL::copy_face_graph(filtered_mesh, cluster);
+ 
+    Mesh conv_hull;
+    std::vector<Point_3> pts;
+
+    if (CGAL::num_vertices(cluster) > 3)
     {
-        std::cout << "Failed to read mesh" << std::endl;
-        return EXIT_FAILURE;
+      BOOST_FOREACH(vertex_descriptor vert, CGAL::vertices(cluster))
+      {
+        pts.push_back(cluster.point(vert));
+      }
+
+      CGAL::convex_hull_3(pts.begin(), pts.end(), conv_hull);
     }
+    else             
+    {                
+      conv_hull = cluster;             
+    }            
+  
+    // use convex hull
+    // ...    
+  }
 
-    if (CGAL::is_empty(mesh) || !CGAL::is_triangle_mesh(mesh))
-    {
-        std::cout << "Input mesh is invalid" << std::endl;
-        return EXIT_FAILURE;
-    }
-
-    // create property map for cluster-ids
-    typedef Mesh::Property_map<face_descriptor, int> Clusters_pmap;
-    Clusters_pmap clusters_pmap = mesh.add_property_map<face_descriptor, int>("f:cluster").first;
-
-    // decompose mesh
-    Timer timer;
-    
-    timer.start();
-    std::size_t clusters_num = CGAL::approximate_convex_decomposition<Concurrency_tag>(mesh, clusters_pmap, 0.3, 1);
-    timer.stop();
-
-    std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
-
-    // write cluster-ids for each facet
-    std::cout << "Number of clusters: " << clusters_num << std::endl;
-    BOOST_FOREACH(face_descriptor fd, faces(mesh))
-    {
-        std::cout << clusters_pmap[fd] << " ";
-    }
-    std::cout << std::endl;
-
-    // write concavity values for all clusters
-    for (std::size_t i = 0; i < clusters_num; ++i)
-    {
-        std::cout << "Concavity value of #" << i << " cluster: " << CGAL::concavity_values<Concurrency_tag>(mesh, clusters_pmap, i) << std::endl;
-    }
-
-    // compute convex hulls
-    for (std::size_t i = 0; i < clusters_num; ++i)
-    {
-        Filtered_graph filtered_mesh(mesh, i, clusters_pmap);
-        Mesh cluster;
-        CGAL::copy_face_graph(filtered_mesh, cluster);
-   
-        Mesh conv_hull;
-        std::vector<Point_3> pts;
-
-        if (CGAL::num_vertices(cluster) > 3)
-        {
-            BOOST_FOREACH(vertex_descriptor vert, CGAL::vertices(cluster))
-            {
-                pts.push_back(cluster.point(vert));
-            }
-
-            CGAL::convex_hull_3(pts.begin(), pts.end(), conv_hull);
-        }
-        else             
-        {                
-            conv_hull = cluster;             
-        }            
-    
-        // use convex hull
-        // ...    
-    }
-
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
 

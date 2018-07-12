@@ -17,33 +17,33 @@ typedef CGAL::Parallel_tag Concurrency_tag;
 
 int main()
 {
-    Mesh mesh;
-    if (!read_to_polyhedron("data/sword.off", mesh)) return EXIT_FAILURE;
+  Mesh mesh;
+  if (!read_to_polyhedron("data/sword.off", mesh)) return EXIT_FAILURE;
 
-    typedef Mesh::Property_map<face_descriptor, int> Clusters_map;
-    Clusters_map cluster_ids = mesh.add_property_map<face_descriptor, int>("f:cluster").first;
+  typedef Mesh::Property_map<face_descriptor, int> Clusters_map;
+  Clusters_map cluster_ids = mesh.add_property_map<face_descriptor, int>("f:cluster").first;
 
-    std::size_t clusters_num = CGAL::approximate_convex_decomposition<Concurrency_tag>(mesh, cluster_ids, 0.3, 1);
+  std::size_t clusters_num = CGAL::approximate_convex_decomposition<Concurrency_tag>(mesh, cluster_ids, 0.3, 1);
 
-    std::cout << "Number of clusters: " << clusters_num << std::endl;
-    BOOST_FOREACH(face_descriptor fd, faces(mesh))
+  std::cout << "Number of clusters: " << clusters_num << std::endl;
+  BOOST_FOREACH(face_descriptor fd, faces(mesh))
+  {
+    std::cout << cluster_ids[fd] << " ";
+  }
+  std::cout << std::endl;
+
+  for (std::size_t i = 0; i < clusters_num; ++i)
+  {
+    double concavity = CGAL::concavity_values<Concurrency_tag>(mesh, cluster_ids, i);
+    std::cout << "Concavity value of #" << i << " cluster: " << concavity << std::endl;
+
+    if (concavity < 0 || concavity > 0.3)
     {
-        std::cout << cluster_ids[fd] << " ";
+      std::cerr << "Resulting concavity value doesn't meet constraints" << std::endl;
+      return EXIT_FAILURE;
     }
-    std::cout << std::endl;
+  }
 
-    for (std::size_t i = 0; i < clusters_num; ++i)
-    {
-        double concavity = CGAL::concavity_values<Concurrency_tag>(mesh, cluster_ids, i);
-        std::cout << "Concavity value of #" << i << " cluster: " << concavity << std::endl;
-
-        if (concavity < 0 || concavity > 0.3)
-        {
-            std::cerr << "Resulting concavity value doesn't meet constraints" << std::endl;
-            return EXIT_FAILURE;
-        }
-    }
-
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
 

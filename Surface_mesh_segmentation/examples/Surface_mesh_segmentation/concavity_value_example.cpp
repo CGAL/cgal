@@ -17,29 +17,29 @@ typedef CGAL::Parallel_tag Concurrency_tag;
 
 int main()
 {
-    // read mesh
-    Polyhedron mesh;
-    
-    std::ifstream input("data/sword.off");
-    
-    if (!input || !(input >> mesh))
-    {
-        std::cout << "Failed to read mesh" << std::endl;
-        return EXIT_FAILURE;
-    }
+  // read mesh
+  Polyhedron mesh;
+  
+  std::ifstream input("data/sword.off");
+  
+  if (!input || !(input >> mesh))
+  {
+    std::cout << "Failed to read mesh" << std::endl;
+    return EXIT_FAILURE;
+  }
 
-    if (CGAL::is_empty(mesh) || !CGAL::is_triangle_mesh(mesh))
-    {
-        std::cout << "Input mesh is invalid" << std::endl;
-        return EXIT_FAILURE;
-    }
+  if (CGAL::is_empty(mesh) || !CGAL::is_triangle_mesh(mesh))
+  {
+    std::cout << "Input mesh is invalid" << std::endl;
+    return EXIT_FAILURE;
+  }
 
-    // compute concavity value
-    double concavity = CGAL::concavity_values<Concurrency_tag>(mesh);
+  // compute concavity value
+  double concavity = CGAL::concavity_values<Concurrency_tag>(mesh);
 
-    // write result
-    std::cout << "Concavity value: " << concavity << std::endl;
+  // write result
+  std::cout << "Concavity value: " << concavity << std::endl;
 
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
 

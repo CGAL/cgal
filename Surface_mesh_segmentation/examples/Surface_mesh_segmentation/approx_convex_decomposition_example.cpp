@@ -22,53 +22,53 @@ typedef CGAL::Parallel_tag Concurrency_tag;
 
 int main()
 {
-    // read mesh
-    Polyhedron mesh;
+  // read mesh
+  Polyhedron mesh;
 
-    std::ifstream input("data/sword.off");
-    
-    if (!input || !(input >> mesh))
-    {
-        std::cout << "Failed to read mesh" << std::endl;
-        return EXIT_FAILURE;
-    }
-
-    if (CGAL::is_empty(mesh) || !CGAL::is_triangle_mesh(mesh))
-    {
-        std::cout << "Input mesh is invalid" << std::endl;
-        return EXIT_FAILURE;
-    }
+  std::ifstream input("data/sword.off");
   
-    // init the polyhedron indices
-    CGAL::set_halfedgeds_items_id(mesh);
+  if (!input || !(input >> mesh))
+  {
+    std::cout << "Failed to read mesh" << std::endl;
+    return EXIT_FAILURE;
+  }
 
-    // create property map for cluster-ids
-    typedef boost::property_map<Polyhedron, CGAL::dynamic_face_property_t<int> >::type Facet_property_map;
-    Facet_property_map facet_property_map = get(CGAL::dynamic_face_property_t<int>(), mesh);
+  if (CGAL::is_empty(mesh) || !CGAL::is_triangle_mesh(mesh))
+  {
+    std::cout << "Input mesh is invalid" << std::endl;
+    return EXIT_FAILURE;
+  }
+ 
+  // init the polyhedron indices
+  CGAL::set_halfedgeds_items_id(mesh);
 
-    // decompose mesh with default parameters
-    Timer timer;
+  // create property map for cluster-ids
+  typedef boost::property_map<Polyhedron, CGAL::dynamic_face_property_t<int> >::type Facet_property_map;
+  Facet_property_map facet_property_map = get(CGAL::dynamic_face_property_t<int>(), mesh);
 
-    timer.start(); 
-    std::size_t clusters_num = CGAL::approximate_convex_decomposition<Concurrency_tag>(mesh, facet_property_map, 0.3, 1);
-    timer.stop();
+  // decompose mesh with default parameters
+  Timer timer;
 
-    std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
+  timer.start(); 
+  std::size_t clusters_num = CGAL::approximate_convex_decomposition<Concurrency_tag>(mesh, facet_property_map, 0.3, 1);
+  timer.stop();
 
-    // write cluster-ids for each facet
-    std::cout << "Number of clusters: " << clusters_num << std::endl;
-    BOOST_FOREACH(face_descriptor face, faces(mesh))
-    {
-        std::cout << get(facet_property_map, face) << " ";
-    }
-    std::cout << std::endl;
+  std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
 
-    // write concavity values for all clusters
-    for (std::size_t i = 0; i < clusters_num; ++i)
-    {
-        std::cout << "Concavity value of #" << i << " cluster: " << CGAL::concavity_values<Concurrency_tag>(mesh, facet_property_map, i) << std::endl;
-    }
+  // write cluster-ids for each facet
+  std::cout << "Number of clusters: " << clusters_num << std::endl;
+  BOOST_FOREACH(face_descriptor face, faces(mesh))
+  {
+    std::cout << get(facet_property_map, face) << " ";
+  }
+  std::cout << std::endl;
 
-    return EXIT_SUCCESS;
+  // write concavity values for all clusters
+  for (std::size_t i = 0; i < clusters_num; ++i)
+  {
+    std::cout << "Concavity value of #" << i << " cluster: " << CGAL::concavity_values<Concurrency_tag>(mesh, facet_property_map, i) << std::endl;
+  }
+
+  return EXIT_SUCCESS;
 }
 

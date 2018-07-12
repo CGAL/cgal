@@ -18,45 +18,45 @@ typedef CGAL::Parallel_tag Concurrency_tag;
 
 int main()
 {
-    Mesh mesh;
-    if (!read_to_polyhedron("data/sword.off", mesh)) return EXIT_FAILURE;
+  Mesh mesh;
+  if (!read_to_polyhedron("data/sword.off", mesh)) return EXIT_FAILURE;
 
-    typedef Mesh::Property_map<face_descriptor, int> Clusters_map;
-    Clusters_map cluster_ids = mesh.add_property_map<face_descriptor, int>("f:cluster").first;
+  typedef Mesh::Property_map<face_descriptor, int> Clusters_map;
+  Clusters_map cluster_ids = mesh.add_property_map<face_descriptor, int>("f:cluster").first;
 
-    std::size_t clusters_num = CGAL::approximate_convex_decomposition<Concurrency_tag>(mesh, cluster_ids, 0.3, 1);
+  std::size_t clusters_num = CGAL::approximate_convex_decomposition<Concurrency_tag>(mesh, cluster_ids, 0.3, 1);
 
-    std::vector<int> precomputed;
-    std::ifstream file("sword_0.3_precomputed.txt");
-    int id;
-    while (file >> id)
+  std::vector<int> precomputed;
+  std::ifstream file("data/sword_0.3_precomputed.txt");
+  int id;
+  while (file >> id)
+  {
+    precomputed.push_back(id);
+  }
+  file.close();
+
+  if (precomputed.size() != num_faces(mesh))
+  {
+    std::cerr << "Invalid precomputed file" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  std::cout << "Number of clusters: " << clusters_num << std::endl;
+  
+  int i = 0;
+  BOOST_FOREACH(face_descriptor face, faces(mesh))
+  {
+    std::cout << cluster_ids[face] << " ";
+
+    if (cluster_ids[face] != precomputed[i])
     {
-        precomputed.push_back(id);
+      std::cerr << "The cluster-id of a face doesn't match with the precomputed value" << std::endl;
+      return EXIT_FAILURE;
     }
-    file.close();
+    ++i;
+  }
+  std::cout << std::endl;
 
-    if (precomputed.size() != num_faces(mesh))
-    {
-        std::cerr << "Invalid precomputed file" << std::endl;
-        return EXIT_FAILURE;
-    }
-
-    std::cout << "Number of clusters: " << clusters_num << std::endl;
-    
-    int i = 0;
-    BOOST_FOREACH(face_descriptor face, faces(mesh))
-    {
-        std::cout << cluster_ids[face] << " ";
-
-        if (cluster_ids[face] != precomputed[i])
-        {
-            std::cerr << "The cluster-id of a face doesn't match with the precomputed value" << std::endl;
-            return EXIT_FAILURE;
-        }
-        ++i;
-    }
-    std::cout << std::endl;
-
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
 

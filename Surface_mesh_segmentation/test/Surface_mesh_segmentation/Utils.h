@@ -5,24 +5,24 @@
 template<class Polyhedron>
 bool read_to_polyhedron(const char* file_name, Polyhedron& mesh)
 {
-    std::ifstream input(file_name);
+  std::ifstream input(file_name);
 
-    if (!input || !(input >> mesh))
-    {
-        std::cerr << "Failed to read mesh" << std::endl;
-        return false;
-    }
+  if (!input || !(input >> mesh))
+  {
+    std::cerr << "Failed to read mesh" << std::endl;
+    return false;
+  }
 
-    if (CGAL::is_empty(mesh) || !CGAL::is_triangle_mesh(mesh))
-    {
-        std::cerr << "Input mesh is invalid" << std::endl;
-        return false;
-    }
+  if (CGAL::is_empty(mesh) || !CGAL::is_triangle_mesh(mesh))
+  {
+    std::cerr << "Input mesh is invalid" << std::endl;
+    return false;
+  }
 
-    return true;
+  return true;
 }
 
 void expect_or_fail(bool value)
 {
-    if (!value) exit(EXIT_FAILURE);
+  if (!value) exit(EXIT_FAILURE);
 }
