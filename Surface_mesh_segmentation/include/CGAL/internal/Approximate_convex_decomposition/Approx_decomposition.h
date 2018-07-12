@@ -192,7 +192,8 @@ public:
         // post check if all faces are assigned to any cluster
         BOOST_FOREACH(face_descriptor face, faces(m_mesh))
         {
-            CGAL_assertion(get(face_ids, face) >= 0 && get(face_ids, face) < num_clusters);
+            CGAL_assertion(get(face_ids, face) >= 0 &&
+                           std::size_t(get(face_ids, face)) < num_clusters);
         }
 
         return num_clusters;
