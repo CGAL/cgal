@@ -207,7 +207,7 @@ void run_stitch_borders(PM& pmesh,
       vertices_to_delete.push_back(h1_tgt);
       update_target_vertex(h1, v_to_keep, pmesh);
     }
-    if (v_to_keep != h2_src)
+    if (v_to_keep != h2_src && h1_tgt!=h2_src)
     {
       vertices_to_delete.push_back( h2_src );
       update_target_vertex(opposite(h2, pmesh), v_to_keep, pmesh);
@@ -224,7 +224,7 @@ void run_stitch_borders(PM& pmesh,
       vertices_to_delete.push_back( h2_tgt );
       update_target_vertex(h2, v_to_keep, pmesh);
     }
-    if (v_to_keep!=h1_src)
+    if (v_to_keep!=h1_src && h1_src!=h2_tgt)
     {
       vertices_to_delete.push_back( h1_src );
       update_target_vertex(opposite(h1, pmesh), v_to_keep, pmesh);
