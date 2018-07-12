@@ -26,7 +26,7 @@ This package offers the computation of the SDF values and the mesh segmentation 
 This allows an alternative implementation of the SDF to be directly plugged into the segmentation algorithm,
 and also to reuse the SDF values several times with different parameters for the segmentation algorithm.
 
-Also this package provides an implementation of the algorithm proposed by Khaled Mamou and Faouzi Ghorbel \cgalCite{2010ApproxConvexDecomposition} that for any 3-dimentional mesh finds a set of nearly convex clusters.
+Also this package provides an implementation of the algorithm proposed by Khaled Mamou and Faouzi Ghorbel \cgalCite{mamou2009simple} that for any 3-dimentional mesh finds a set of nearly convex clusters.
 
 There are available separate functions for the computation of concavity values, so that users can estimate the concavity of produced clusters or any other meshes they have.
 The algorithm starts with the creation of dual graph, in which vertices describe the clusters of a mesh (initially, each triangle corresponds to a separate cluster) and edges descibe potential merges of two adjacent clusters.
@@ -269,7 +269,7 @@ When using a `Surface_mesh`, you can use the built-in property mechanism.
 
 \cgalExample{Surface_mesh_segmentation/extract_segmentation_into_mesh_example.cpp}
 
-\subsection Concavity_value_polyhedron Computation of concavity value
+\subsection Concavity_value_polyhedron Computation of Concavity Value
 \cgalExample{Surface_mesh_segmentation/concavity_value_example.cpp}
 
 \subsubsection Concavity_value_SM Using a Surface_mesh
