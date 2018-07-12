@@ -1,5 +1,3 @@
-#ifndef CGAL_CONCAVITY_H
-
 // Copyright (c) 2018  GeometryFactory Sarl (France).
 // All rights reserved.
 //
@@ -20,6 +18,7 @@
 //
 // Author(s)     : Liubomyr Piadyk
 
+#ifndef CGAL_CONCAVITY_H
 #define CGAL_CONCAVITY_H
 
 #include <CGAL/license/Surface_mesh_segmentation.h>
