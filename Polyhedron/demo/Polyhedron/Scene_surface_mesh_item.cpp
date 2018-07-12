@@ -1975,10 +1975,17 @@ bool Scene_surface_mesh_item::testDisplayId(double x, double y, double z, CGAL::
   EPICK::Point_3 src(x - offset.x,
                       y - offset.y,
                       z - offset.z);
-  EPICK::Point_3 dest(viewer->camera()->position().x - offset.x,
-                       viewer->camera()->position().y - offset.y,
-                       viewer->camera()->position().z - offset.z);
+  
+  CGAL::qglviewer::Camera* cam = viewer->camera();
+  EPICK::Point_3 dest( cam->position().x - offset.x,
+                       cam->position().y - offset.y,
+                       cam->position().z - offset.z);
   EPICK::Vector_3 v(src,dest);
+  EPICK::Vector_3 dir(cam->viewDirection().x,
+                      cam->viewDirection().y,
+                      cam->viewDirection().z);
+  if(-CGAL::scalar_product(v, dir) < cam->zNear()) //if src is behind the near plane, don't display.
+    return false;
   v = 0.01*v;
   EPICK::Point_3 point = src;
   point = point + v;
