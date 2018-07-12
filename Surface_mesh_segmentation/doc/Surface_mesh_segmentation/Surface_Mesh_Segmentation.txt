@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_3D_SurfaceSegmentation
 
 \cgalAutoToc
-\author Ilker %O. Yaz, Liubomyr Piadyk and Sébastien Loriot
+\author Ilker %O. Yaz, Liubomyr Piadyk, and Sébastien Loriot
 
 \cgalFigureBegin{Segmentation_Elephant_main,elephant_sdf_partition.png}
 The shape diameter function applied to the elephant and the corresponding segmentation (using 6 clusters).
@@ -15,24 +15,24 @@ Mesh segmentation is the process of decomposing a mesh into smaller and meaningf
 This process is used in applications such as modeling, rigging, texturing, shape-retrieval, deformation ...
 We refer to a comprehensive survey on mesh segmentation \cgalCite{Shamir2008SegmentationSurvey} for different segmentation techniques.
 
-This package provides an implementation of the algorithm relying on the <em>Shape Diameter Function</em> \cgalCite{Shapira2008Consistent} (SDF).
+This package provides implementations of two different algoritms:
+
+- The first one is an implementation of the algorithm relying on the <em>Shape Diameter Function</em> \cgalCite{Shapira2008Consistent} (SDF).
 Given a triangulated surface mesh (simply <em>mesh</em> in the following) bounding a 3D solid object,
 the SDF provides an estimate of the local object diameter for each facet of the mesh (the SDF values).
 The segmentation algorithm first applies a soft clustering on the facets using the associated SDF values.
 The final segmentation is then obtained via a graph-cut algorithm that considers surface-based features (dihedral-angle and concavity)
-together with the result of the soft clustering.
-
-This package offers the computation of the SDF values and the mesh segmentation result as independent functions.
+together with the result of the soft clustering. The computation of the SDF values and the mesh segmentation result are offered as independent functions.
 This allows an alternative implementation of the SDF to be directly plugged into the segmentation algorithm,
 and also to reuse the SDF values several times with different parameters for the segmentation algorithm.
 
-Also this package provides an implementation of the algorithm proposed by Khaled Mamou and Faouzi Ghorbel \cgalCite{mamou2009simple} that for any 3-dimentional mesh finds a set of nearly convex clusters.
+- The second one in an implementation of the approximate convex decomposition algorithm proposed by
+Khaled Mamou and Faouzi Ghorbel \cgalCite{mamou2009simple}. It is based an iterative edge collapsed of the
+dual graph of the input triangle mesh, so as to minimize the concavity value and aspect ratio of each segment
+for each edge collapse. The computation of the concavity value computation and the approximate convex decomposition
+computation are provided as separeted functions.
 
-There are available separate functions for the computation of concavity values, so that users can estimate the concavity of produced clusters or any other meshes they have.
-The algorithm starts with the creation of dual graph, in which vertices describe the clusters of a mesh (initially, each triangle corresponds to a separate cluster) and edges descibe potential merges of two adjacent clusters.
-After that a decimation operator is successively applied, while minimizing a cost function related to the concavity and the aspect ratio of the produced clusters.
-
-\section Surface_mesh_segmentationOverviewoftheSegmentation Overview of the Segmentation Process
+\section Surface_mesh_segmentationOverviewoftheSegmentation Overview of the Segmentation Process using SDF values
 
 \subsection Surface_mesh_segmentationShapeDiameterFunction Shape Diameter Function
 The Shape Diameter Function provides a connection between the surface mesh and the volume of the subtended 3D bounded object.
@@ -155,28 +155,38 @@ It assigns to each facet the id of its cluster when `output_cluster_ids` is set 
 Clusters and segments. The input number of clusters is set to 5. <b>(a)</b> Result of the hard-clustering. <b>(b)</b> Segments are extracted from the computed clusters.
 \cgalFigureEnd
 
-\subsection Surface_mesh_segmentationConcavity Concavity value
-The concavity value is used in the decimation cost computation, affects the order in which edges are decimated, the produced decomposition, and as a result is crucial in the approximate convex decomposition.
+
+\section Surface_mesh_segmentationApprCvxDmpOverview Overview of the Approximate Convex Decomposition
+
+\subsection Surface_mesh_segmentationConcavity Concavity Value
+The concavity value is used as cost in the dual edge collape process. It affects the order in which edges are collapsed and thus the produced decomposition.
 The implemented function computing the concavity value is just one of many approaches to estimate quality of a surface mesh being concave.
 
-The concavity of a triangle mesh \f$ S \f$ is defined as the maximal distance from the point of a vertex in the mesh to its projection on the convex hull of the mesh:
+In the context of this algorithm, the concavity of a triangle mesh \f$ S \f$ is defined as the maximal distance from the point of a vertex in the mesh to its projection on the convex hull of the mesh:
 
-\f$ C(S) = arg \max\limits_{M \in S} ||M - Proj(M)|| \f$, where \f$ Proj(M) \f$ is the projection of the point \f$ M \f$ on the convex hull.
+\f$ C(S) = \max\limits_{v \in vertices(S)} ||p(v) - proj(p(v))|| \f$, where \f$p(v)\f$ is the point of vertex \f$v\f$ and \f$ proj(M) \f$ is the projection of the point \f$ M \f$ on the convex hull of \f$S\f$.
 
 The projection is computed in the direction normal to the surface of the mesh at \f$ M \f$.
+
+Note that the formula given above is also valid for a subset of vertices of a triangle mesh, in which case the maximum is taken over the points of those vertices.
 
 \cgalFigureBegin{Concavity_value,concavity_value.png}
 Distance computation from the point \f$ M_0 \f$ to its projection \f$ Proj(M_0) \f$ on the convex hull \f$ CH(S) \f$ of \f$ S \f$ in the direction \f$ N_0 \f$.
 \cgalFigureEnd
 
 
-\subsection Surface_mesh_segmentationDecimation Decomposition procedure
+\subsection Surface_mesh_segmentationDecimation Decomposition Procedure
 
-The approximate convex decomposition is an iterative algorithm, at each step an edge \f$ (v, w) \f$ with the lowest decimation cost is selected and decimated.
-The decimation process consists of merging vertices \f$ v, w \f$ (clusters), updating decimation costs of all modified, new edges, and producing new segmentation.
-The algoririthm is provided with the maximal allowed concavity value constraint and if no edges that satisfy the constraint are left, it terminates returning the segmentation produced on the last iteration.
+The approximate convex decomposition is an iterative algorithm based on the collapsed of dual edges.
+At the beginning each dual vertex is considered to belong to its own segment.
+At each step, the dual edge (`v`, `w`) with the lowest collapse cost is selected and collapsed.
+The collapse process consists in merging dual vertices `v` and `w` as well as the segments they belong to.
+The collapse costs are updating collapse costs for all modified and new edges.
+The algorithm stops when the maximal concavity value for all remaining dual edges is below the input threshold,
+or if the number of segments is equal to the requested number.
+The current segmentation is then returned.
 
-The decimation cost of the edge between vertices \f$ v \f$ and \f$ w \f$ is computed as follows:
+The collapse cost of the edge between vertices `v` and `w` is computed as follows:
 <table border="0">
     <tr>
         <td>
@@ -184,30 +194,26 @@ The decimation cost of the edge between vertices \f$ v \f$ and \f$ w \f$ is comp
         </td>
         <td>
             where:
-            - \f$ S(v, w) \f$ denotes the merged cluster of the two smaller ones described by vertices \f$ v \f$ and \f$ w \f$,
-            - \f$ C(S(v, w)) \f$ denotes the concavity of \f$ S \f$,
-            - \f$ D \f$ denotes a normalization factor equal to the diagonal of the bounding box of \f$ S \f$,
+            - \f$S(v, w)\f$ denotes the set of faces that belongs to the segments of the dual vertices \f$ v \f$ and \f$ w \f$,
+            - \f$ C(S(v, w)) \f$ the concavity value of the vertices of \f$ S(v, w) \f$,
+            - \f$ D \f$ denotes a normalization factor equal to the length of the diagonal of the bounding box of \f$ S \f$,
+            - \f$ E_{shape}((S(v, w))) = \frac{\rho^2(S(v, w))}{4 \pi \times \sigma(S(v, w))} \f$ with \f$ \rho(S(v, w)) \f$ the perimeter of \f$S(v, w)\f$ (sum of the length of edges on the boundary of the patch) and \f$ \sigma(S(v, w)) \f$ the area of \f$ S(v, w) \f$.
             - \f$ \alpha \f$ denotes a parameter controlling the contribution of the aspect ratio \f$ E_{shape}(v, w) \f$ with respect to the concavity cost.
         </td>
     </tr>
 </table>
 
-The aspect ratio of a surface S is defined as follows:
-
-\f$ E_{shape}(S) = \frac{\rho^2(S)}{4 \pi \times \sigma(S)} \f$,
-where \f$ \rho(S) \f$ denotes perimeter, \f$ \sigma(S) \f$ denotes area of the \f$ S \f$.
-
 The cost \f$ E_{shape} \f$ was introduced in order to favor the generation of compact clusters.
 In the case of a disk this cost equals to one.
-The more irregular a surface is the highier its aspect ratio.
+The more irregular a surface is the higher its aspect ratio.
 
 Some results of the approximate convex decomposition algorithm:
 
 \cgalFigureBegin{DecomposedSword,approx_decomp_examples.png}
-Decomposed a sword into 5 clusters (concavity_threshold=7.0), a cactus into 7 clusters (concavity_threshold=0.03), and an elephant into 33 clusters (concavity_threshold=0.02). All images depict convex hulls of every cluster in the segmentations.
+Decomposed a sword into 5 segments (concavity_threshold=7.0), a cactus into 7 segments (`concavity_threshold=0.03`), and an elephant into 33 segments (concavity_threshold=0.02). All images depict the convex hulls of each segment.
 \cgalFigureEnd
 
-\subsection Surface_mesh_segmentationAPI Summary
+\section Surface_mesh_segmentationAPI Summary of the API
 6 functions are provided:
 	- `sdf_values()` : computes the SDF value of each facet of an input mesh in either raw or post-processed form.
            SDF values are associated to facets using a property map (see \ref Chapter_CGAL_and_Boost_Property_Maps
@@ -219,15 +225,15 @@ Decomposed a sword into 5 clusters (concavity_threshold=7.0), a cactus into 7 cl
             This function allows using the same SDF values with different parameters for the segmentation stage.
             The segment or cluster ids are associated to the facets using a property map.
 	- `segmentation_via_sdf_values()` : combines the three functions above.
-    - `concavity_value()` : computes the concavity value of a cluster described by an id in a triangle mesh or the concavity value of the triangle mesh itself.
-    - `convex_decomposition()` : computes approximate convex decomposition of a triangle mesh, which is the smallest set of clusters satisfying concavity constraint.
+    - `concavity_value()` : computes the concavity value of a segment described by an id in a triangle mesh or the concavity value of the triangle mesh itself.
+    - `approximate_convex_decomposition()` : computes approximate convex decomposition of a triangle mesh, which is the smallest set of segments satisfying concavity constraint.
 
 These functions expect as input a triangulated surface mesh bounding a 3D solid object, with
 the following properties:
 - Combinatorially 2-manifold;
 - Intersection-free;
-- The vertices of the facets are oriented counterclockwise when seen from outside of the object; (the first 4 only)
-- Boundary free. (the first 4 only)
+- The vertices of the facets are oriented counterclockwise when seen from outside of the object;
+- Boundary free (but for the convexity value and the approximate convex decomposition computations).
 
 \note The current implementations executes fine on meshes that do not match
 some of these properties but may produce unreliable or meaningless segmentations.
@@ -260,7 +266,7 @@ The main advantage is to decrease from log to constant the complexity for access
 
 
 \subsection Surface_mesh_segmentationUsingSM Using a Surface_mesh
-When using a `Surface_mesh`, you can use the built-in property mechanism. 
+When using a `Surface_mesh`, you can use the built-in property mechanism.
 
 \cgalExample{Surface_mesh_segmentation/segmentation_from_sdf_values_SM_example.cpp}
 
@@ -280,11 +286,11 @@ The same example as the previous one but uses a `Surface_mesh` datatype.
 \cgalExample{Surface_mesh_segmentation/approx_convex_decomposition_example.cpp}
 
 \subsubsection Approx_convex_decomposition_SM Using built-in properties of a Surface_mesh
-This example uses the `Surface_mesh` datatype instead of `Polyhedron_3` together with its built-in property mechanism. 
+This example uses the `Surface_mesh` datatype instead of `Polyhedron_3` together with its built-in property mechanism.
 \cgalExample{Surface_mesh_segmentation/approx_convex_decomposition_SM_example.cpp}
 
 \subsubsection Approx_convex_decomposition_convex_hulls Extracting convex hulls
-Extends the base example with the computation of convex hull per cluster.
+Extends the base example with the computation of convex hull per segment.
 \cgalExample{Surface_mesh_segmentation/approx_convex_decomposition_convex_hulls_example.cpp}
 
 <BR>
@@ -336,20 +342,20 @@ Used meshes: sword.off (1036 triangles), cactus.off (1236 triangles), elephant.o
 
 <center>
 Number of triangles  |  Runtime in milliseconds
----------------------| ----------------: 
- 1,036               |  3                      
- 1,236               |  3                     
- 5,558               |  23 
+---------------------| ----------------:
+ 1,036               |  3
+ 1,236               |  3
+ 5,558               |  23
 </center>
 
 Each cell of the next table contains runtime in seconds and the number of produced clusters in parentheses.
 
 <center>
 Number of triangles  | Concavity threshold = 0.05 | Concavity threshold = 0.3 | Concavity threshold = 7
----------------------| ------------------------:  | -----------------------:  | ---------------------: 
+---------------------| ------------------------:  | -----------------------:  | ---------------------:
  1,036               | 3.8 (12)                   | 3.8 (12)                  | 11 (5)
- 1,236               | 14 (6)                     | 14.8 (3)                  | 41 (1)              
- 5,558               | 72 (19)                    | 185 (12)                  | -              
+ 1,236               | 14 (6)                     | 14.8 (3)                  | 41 (1)
+ 5,558               | 72 (19)                    | 185 (12)                  | -
 </center>
 
 <!-- Internal for developers:
@@ -388,7 +394,8 @@ score of XXX. The code used in the benchmark is provided as an exemple XXX.
 \section Surface_mesh_segmentationImplementationhistory Design and Implementation History
 The initial implementation of this package is the result of the work of Ilker O. Yaz during the 2012 season
 of the Google Summer of Code. He has been mentored by Sébastien Loriot who also contributed to the documentation
-and the API definition.
+and the API definition. The addition of the approximate convex decomposition method has been done during the 2018 season
+of the Google Summer of Code by Liubomyr Piadyk, also mentored by Sébastien Loriot.
 
 */
 } /* namespace CGAL */

@@ -24,7 +24,7 @@
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.4}
-\cgalPkgDependsOn{\ref PkgAABBTree}
+\cgalPkgDependsOn{\ref PkgAABBTree and \ref PkgConvexHull3}
 \cgalPkgBib{cgal:y-smsimpl}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
@@ -39,7 +39,7 @@
 
 ## Main Functions ##
 - `#CGAL::concavity_value()`
-- `#CGAL::convex_decomposition()`
+- `#CGAL::approximate_convex_decomposition()`
 - `#CGAL::sdf_values()`
 - `#CGAL::sdf_values_postprocessing()`
 - `#CGAL::segmentation_from_sdf_values()`
