@@ -18,8 +18,8 @@
 //
 // Author(s)     : Liubomyr Piadyk
 
-#ifndef CGAL_SURFACE_MESH_SEGMENTATION_APPROX_DECOMPOSITION_H
-#define CGAL_SURFACE_MESH_SEGMENTATION_APPROX_DECOMPOSITION_H
+#ifndef CGAL_SURFACE_MESH_SEGMENTATION_APPROXIMATE_CONVEX_DECOMPOSITION_H
+#define CGAL_SURFACE_MESH_SEGMENTATION_APPROXIMATE_CONVEX_DECOMPOSITION_H
 
 #include <CGAL/license/Surface_mesh_segmentation.h>
 
@@ -104,9 +104,7 @@ concavity_values(const TriangleMesh& mesh,
                  FacePropertyMap face_ids,
                  std::size_t cluster_id)
 {
-    typedef boost::unordered_map<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, double> Vertex_double_map;
-    Vertex_double_map distances_map;
-    boost::associative_property_map<Vertex_double_map> distances_pmap(distances_map);
+    CGAL::Static_property_map<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, double > distance_map(0);
     
     return concavity_values<ConcurrencyTag>(mesh, face_ids, cluster_id, distances_pmap, Polygon_mesh_processing::parameters::all_default());
 }
@@ -169,6 +167,7 @@ double
 concavity_values(const TriangleMesh& mesh)
 {
     CGAL::Static_property_map<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, double > distance_map(0);
+    
     return concavity_values<ConcurrencyTag>(mesh, distance_map, Polygon_mesh_processing::parameters::all_default());
 }
 #endif
@@ -176,7 +175,7 @@ concavity_values(const TriangleMesh& mesh)
 
 /*!
  * \ingroup PkgSurfaceSegmentation
- * @brief computes an approximate convex decomposition of a triangle mesh.
+ * @brief Function computing an approximate convex decomposition of a triangle mesh.
  *
  * This function fills a property map associating a segment-id to each face (in the range [0, `N-1`]) to each face.
  * `N` is the number of segments computed by the functions (greater are equal to `min_number_of_segments`).
@@ -241,4 +240,4 @@ approximate_convex_decomposition(const TriangleMesh& mesh,
 
 } //namespace CGAL
 
-#endif //CGAL_SURFACE_MESH_SEGMENTATION_APPROX_DECOMPOSITION_H
+#endif //CGAL_SURFACE_MESH_SEGMENTATION_APPROXIMATE_CONVEX_DECOMPOSITION_H

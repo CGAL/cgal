@@ -177,12 +177,12 @@ Distance computation from the point \f$ M_0 \f$ to its projection \f$ Proj(M_0) 
 
 \subsection Surface_mesh_segmentationDecimation Decomposition Procedure
 
-The approximate convex decomposition is an iterative algorithm based on the collapsed of dual edges.
+The approximate convex decomposition is an iterative algorithm based on the collaption of dual edges.
 At the beginning each dual vertex is considered to belong to its own segment.
 At each step, the dual edge (`v`, `w`) with the lowest collapse cost is selected and collapsed.
 The collapse process consists in merging dual vertices `v` and `w` as well as the segments they belong to.
-The collapse costs are updating collapse costs for all modified and new edges.
-The algorithm stops when the maximal concavity value for all remaining dual edges is below the input threshold,
+The collapse costs are updated for all modified and new edges.
+The algorithm stops when the minimal concavity value for all remaining dual edges is above the input threshold,
 or if the number of segments is equal to the requested number.
 The current segmentation is then returned.
 
@@ -209,8 +209,8 @@ The more irregular a surface is the higher its aspect ratio.
 
 Some results of the approximate convex decomposition algorithm:
 
-\cgalFigureBegin{DecomposedSword,approx_decomp_examples.png}
-Decomposed a sword into 5 segments (concavity_threshold=7.0), a cactus into 7 segments (`concavity_threshold=0.03`), and an elephant into 33 segments (concavity_threshold=0.02). All images depict the convex hulls of each segment.
+\cgalFigureBegin{ApproxDecompExamples,approx_decomp_examples.png}
+Decomposed a sword into 5 segments, a cactus into 4 segments, and an elephant into 29 segments. The top images depict the segmentations, while the bottom images - the convex hulls of each segment.
 \cgalFigureEnd
 
 \section Surface_mesh_segmentationAPI Summary of the API
