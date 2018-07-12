@@ -1,4 +1,4 @@
-#include <CGAL/approx_decomposition.h>
+#include <CGAL/approximate_convex_decomposition.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>

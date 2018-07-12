@@ -7,7 +7,7 @@
 #include "Color_map.h"
 
 //#define CGAL_APPROX_DECOMPOSITION_VERBOSE
-#include <CGAL/approx_decomposition.h>
+#include <CGAL/approximate_convex_decomposition.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>

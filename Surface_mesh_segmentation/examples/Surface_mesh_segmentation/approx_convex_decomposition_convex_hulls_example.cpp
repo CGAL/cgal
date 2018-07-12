@@ -1,4 +1,4 @@
-#include <CGAL/approx_decomposition.h>
+#include <CGAL/approximate_convex_decomposition.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>

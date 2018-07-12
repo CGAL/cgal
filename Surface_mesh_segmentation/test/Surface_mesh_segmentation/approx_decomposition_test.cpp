@@ -3,7 +3,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/property_map.h>
 
-#include <CGAL/approx_decomposition.h>
+#include <CGAL/approximate_convex_decomposition.h>
 
 #include <string>
 #include "Utils.h" 
@@ -13,7 +13,7 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 
 template <typename Concurrency_tag, typename Mesh>
-bool test_on_mesh(const std::string& path, double concavity_threshold, int min_number_of_clusters, int expected_clusters_num)
+bool test_on_mesh(const std::string& path, double concavity_threshold, int min_number_of_clusters, std::size_t expected_clusters_num)
 {
     Mesh mesh;
     if (!read_to_polyhedron(path.c_str(), mesh)) return false;
@@ -24,7 +24,7 @@ bool test_on_mesh(const std::string& path, double concavity_threshold, int min_n
     Clusters_map cluster_ids;
     boost::associative_property_map<Clusters_map> clusters_pmap(cluster_ids);
 
-    std::size_t clusters_num = CGAL::convex_decomposition<Concurrency_tag>(mesh, clusters_pmap, concavity_threshold, min_number_of_clusters);
+    std::size_t clusters_num = CGAL::approximate_convex_decomposition<Concurrency_tag>(mesh, clusters_pmap, concavity_threshold, min_number_of_clusters);
 
     std::cout << "Number of clusters: " << clusters_num << std::endl;
 
@@ -39,7 +39,7 @@ bool test_on_mesh(const std::string& path, double concavity_threshold, int min_n
         int id = get(clusters_pmap, face);
         std::cout << id << " ";
 
-        if (id < 0 || id >= clusters_num)
+        if (id < 0 || std::size_t(id) >= clusters_num)
         {
             std::cerr << "A cluster's id should be in the range [0, clusters_num-1]" << std::endl;
             return false; 
@@ -50,7 +50,7 @@ bool test_on_mesh(const std::string& path, double concavity_threshold, int min_n
     return true;
 }
 
-void test_on_mesh(const std::string& path, double concavity_threshold, int min_number_of_clusters, int expected_clusters_num)
+void test_on_mesh(const std::string& path, double concavity_threshold, int min_number_of_clusters, std::size_t expected_clusters_num)
 {
     expect_or_fail(test_on_mesh<CGAL::Sequential_tag, Polyhedron>(path, concavity_threshold, min_number_of_clusters, expected_clusters_num)); 
     expect_or_fail(test_on_mesh<CGAL::Sequential_tag, Surface_mesh>(path, concavity_threshold, min_number_of_clusters, expected_clusters_num)); 
