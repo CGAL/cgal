@@ -72,6 +72,8 @@ if(OpenMesh_FOUND)
   target_link_libraries( segmentation_from_sdf_values_OpenMesh_example PRIVATE ${OPENMESH_LIBRARIES} )
 endif()
 
+create_single_source_cgal_program( "segmentation_from_sdf_values_concavity_example.cpp" )
+
 create_single_source_cgal_program( "concavity_value_example.cpp" )
 create_single_source_cgal_program( "concavity_value_SM_example.cpp" )
 

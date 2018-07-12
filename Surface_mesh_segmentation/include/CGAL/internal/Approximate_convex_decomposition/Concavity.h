@@ -33,7 +33,12 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
+#include <boost/unordered_map.hpp>
+
+#ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for_each.h>
+#include <tbb/mutex.h>
+#endif
 
 #include <fstream>
 #include <iostream>
@@ -80,19 +85,20 @@ namespace internal
         /**
          * Computes concavity value of a cluster of the mesh which id is specified.
          */
-        template <class FacetPropertyMap>
-        double compute(FacetPropertyMap facet_ids, std::size_t cluster_id)
+        template <class FacetPropertyMap, class DistancesMap>
+        double compute(FacetPropertyMap facet_ids, std::size_t cluster_id, DistancesMap& distances)
         {
             Filtered_graph filtered_mesh(m_mesh, cluster_id, facet_ids);
 
             Concavity<Filtered_graph, Vpm, GeomTraits, ConcurrencyTag, TriangleMesh> concavity(filtered_mesh, m_vpm, m_traits);
-            return concavity.compute();
+            return concavity.compute(distances);
         }
 
         /**
-         * Computes concavity value of the whole mesh.
+         * Computes concavity value of the whole mesh along with the distance for each vertex.
          */
-        double compute()
+        template <class DistancesMap>
+        double compute(DistancesMap& distances)
         {
             CGAL_assertion(!CGAL::is_empty(m_mesh));
 
@@ -110,14 +116,21 @@ namespace internal
             // compute convex hull
             CGAL::convex_hull_3(pts.begin(), pts.end(), conv_hull); 
             
-            return compute(vertices(m_mesh), conv_hull);
+            return compute(vertices(m_mesh), conv_hull, distances);
+        }
+        
+        double compute()
+        {
+            boost::unordered_map<vertex_descriptor, double> distances;
+            return compute(distances);
         }
 
         /**
          * Constructs list of vertices from the list of faces and computes concavity value with the convex hull provided.
          * Faces list is a subset of all faces in the mesh.
          */
-        double compute(const std::vector<face_descriptor>& faces, const Mesh& conv_hull)
+        template <class DistancesMap>
+        double compute(const std::vector<face_descriptor>& faces, const Mesh& conv_hull, DistancesMap& distances)
         {
             boost::unordered_set<vertex_descriptor> pts;
 
@@ -129,15 +142,21 @@ namespace internal
                 }
             }
 
-            return compute(std::make_pair(pts.begin(), pts.end()), conv_hull);
+            return compute(std::make_pair(pts.begin(), pts.end()), conv_hull, distances);
+        }
+        
+        double compute(const std::vector<face_descriptor>& faces, const Mesh& conv_hull)
+        {
+            boost::unordered_map<vertex_descriptor, double> distances;
+            return compute(faces, conv_hull, distances);
         }
 
         /**
          * Computes concavity value projecting vertices from a list onto a convex hull.
          * Vertices list a subset of all vertices in the mesh.
          */
-        template <class iterator>
-        double compute(const std::pair<iterator, iterator>& verts, const Mesh& conv_hull)
+        template <class iterator, class DistancesMap>
+        double compute(const std::pair<iterator, iterator>& verts, const Mesh& conv_hull, DistancesMap& distances)
         {
             // compute normals if normals are not computed
             compute_normals();
@@ -151,8 +170,16 @@ namespace internal
             // functor that computes intersection, its projection length from a vertex and maximizes the result variable
             struct Intersection_functor
             {
-                Intersection_functor(const TriangleMesh& mesh, const Vpm& vpm, const Normals_map& normals_map, const AABB_tree& tree, double& result)
-                : m_mesh(mesh), m_vpm(vpm), m_normals_map(normals_map), m_tree(tree), m_result(result) {}
+                Intersection_functor(const TriangleMesh& mesh, const Vpm& vpm, const Normals_map& normals_map, const AABB_tree& tree, DistancesMap& distances, double& result
+#ifdef CGAL_LINKED_WITH_TBB
+                , tbb::mutex& mutex
+#endif
+                )
+                : m_mesh(mesh), m_vpm(vpm), m_normals_map(normals_map), m_tree(tree), m_distances(distances), m_result(result)
+#ifdef CGAL_LINKED_WITH_TBB
+               , m_mutex(mutex)
+#endif
+               {}
 
                 void operator() (const vertex_descriptor& vert) const
                 {
@@ -160,14 +187,23 @@ namespace internal
                     Ray_3 ray(origin, m_normals_map.at(vert));
                     
                     Ray_intersection intersection = m_tree.first_intersection(ray);
+
+#ifdef CGAL_LINKED_WITH_TBB
+                    m_mutex.lock();
+#endif
+                    m_distances[vert] = 0.;
                     if (intersection)
                     {
                         const Point_3* intersection_point =  boost::get<Point_3>(&(intersection->first));
                         if (intersection_point)
                         {
-                            m_result = std::max(m_result, CGAL::squared_distance(origin, *intersection_point));
+                            m_distances[vert] = CGAL::squared_distance(origin, *intersection_point);
+                            m_result = std::max(m_result, m_distances[vert]);
                         }
                     }
+#ifdef CGAL_LINKED_WITH_TBB
+                    m_mutex.unlock();
+#endif
                 }
 
             private:
@@ -175,10 +211,21 @@ namespace internal
                 const Vpm& m_vpm;
                 const Normals_map& m_normals_map;
                 const AABB_tree& m_tree;
+                DistancesMap& m_distances;
                 double& m_result;
+#ifdef CGAL_LINKED_WITH_TBB
+                tbb::mutex& m_mutex;
+#endif
             };
 
-            Intersection_functor intersection_functor(m_mesh, m_vpm, m_normals_map, tree, result);
+#ifdef CGAL_LINKED_WITH_TBB
+            tbb::mutex mutex;
+#endif
+            Intersection_functor intersection_functor(m_mesh, m_vpm, m_normals_map, tree, distances, result
+#ifdef CGAL_LINKED_WITH_TBB
+            , mutex
+#endif
+            );
 
 #ifdef CGAL_LINKED_WITH_TBB
             if (boost::is_convertible<ConcurrencyTag, Parallel_tag>::value)

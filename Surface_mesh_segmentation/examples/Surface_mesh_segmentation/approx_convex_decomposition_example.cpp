@@ -1,6 +1,7 @@
 #include <CGAL/approx_decomposition.h>
 
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Real_timer.h>
 
@@ -8,7 +9,7 @@
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
 typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 
 typedef CGAL::Real_timer Timer;
@@ -23,7 +24,7 @@ int main()
 {
     // read mesh
     Polyhedron mesh;
-   
+
     std::ifstream input("data/sword.off");
     
     if (!input || !(input >> mesh))
@@ -37,6 +38,9 @@ int main()
         std::cout << "Input mesh is invalid" << std::endl;
         return EXIT_FAILURE;
     }
+  
+    // init the polyhedron indices
+    CGAL::set_halfedgeds_items_id(mesh);
 
     // create property map for cluster-ids
     typedef boost::property_map<Polyhedron, CGAL::dynamic_face_property_t<int> >::type Facet_property_map;
@@ -58,6 +62,12 @@ int main()
         std::cout << get(facet_property_map, face) << " ";
     }
     std::cout << std::endl;
+
+    // write concavity values for all clusters
+    for (std::size_t i = 0; i < clusters_num; ++i)
+    {
+        std::cout << "Concavity value of #" << i << " cluster: " << CGAL::concavity_value<Concurrency_tag>(mesh, facet_property_map, i) << std::endl;
+    }
 
     return EXIT_SUCCESS;
 }
