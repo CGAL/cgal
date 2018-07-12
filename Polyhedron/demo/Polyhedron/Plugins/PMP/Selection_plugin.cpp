@@ -3,12 +3,8 @@
 #include "opengl_tools.h"
 
 #include "Messages_interface.h"
-#ifdef USE_SURFACE_MESH
 #include "Kernel_type.h"
 #include "Scene_surface_mesh_item.h"
-#else
-#include "Scene_polyhedron_item.h"
-#endif
 #include "Scene_polyhedron_selection_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polylines_item.h"
@@ -28,12 +24,7 @@
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <Scene.h>
-
-#ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_face_graph_item;
-#else
-typedef Scene_polyhedron_item Scene_face_graph_item;
-#endif
 
 typedef Scene_face_graph_item::Face_graph Face_graph;
 typedef boost::property_map<Face_graph,CGAL::vertex_point_t>::type VPmap;
@@ -92,29 +83,17 @@ public:
     scene = scene_interface;
     messages = m;
     actionSelection = new QAction(
-#ifdef USE_SURFACE_MESH
           QString("Surface Mesh Selection")
-#else
-          tr("Polyhedron Selection")
-#endif
           , mw);
     connect(actionSelection, SIGNAL(triggered()), this, SLOT(selection_action()));
     last_mode = 0;
     dock_widget = new QDockWidget(
-      #ifdef USE_SURFACE_MESH
                 "Surface Mesh Selection"
-      #else
-                "Polyhedron Selection"
-      #endif
           , mw);
     dock_widget->setVisible(false);
     ui_widget.setupUi(dock_widget);
     dock_widget->setWindowTitle(tr(
-#ifdef USE_SURFACE_MESH
                                   "Surface Mesh Selection"
-#else
-                                  "Polyhedron Selection"
-#endif
                                   ));
 
     addDockWidget(dock_widget);
@@ -367,11 +346,7 @@ public Q_SLOTS:
     Scene_face_graph_item* poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()));
     if(!poly_item) {
       print_message("Error: there is no selected "
-              #ifdef USE_SURFACE_MESH
-                        "Surface_mesh "
-              #else
-                        "Polyhedron "
-              #endif
+                    "Surface_mesh "
                     "item!");
       return; 
     }

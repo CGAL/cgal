@@ -139,7 +139,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
                              tr("Selects a point. When the second point is selected,  "
                                 "displays the two points and the distance between them."));
   setMouseBindingDescription(Qt::Key_O, Qt::NoModifier, Qt::LeftButton,
-                             tr("Move the camera orthogonally to the picked facet of a Scene_polyhedron_item or "
+                             tr("Move the camera orthogonally to the picked facet of a Scene_surface_mesh_item or "
                                 "to the current selection of a Scene_points_with_normal_item."));
 
   prev_radius = sceneRadius();

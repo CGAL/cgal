@@ -8,7 +8,6 @@
 #include <QApplication>
 
 #include "Scene_surface_mesh_item.h"
-#include "Polyhedron_type.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 
@@ -107,7 +106,7 @@ void Create_bbox_mesh_plugin::bbox(bool extended)
   }
   
   Scene_item* item;
-  Kernel::Iso_cuboid_3 ic(bbox);
+  EPICK::Iso_cuboid_3 ic(bbox);
   SMesh* p = new SMesh;
   CGAL::make_hexahedron(ic[0], ic[1], ic[2], ic[3], ic[4], ic[5], ic[6], ic[7],*p);
   

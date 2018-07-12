@@ -101,7 +101,7 @@ void Edit_box_plugin::exportToPoly()
 {
   int id =0;
   const CGAL::qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
-  Kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
+  EPICK::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
   Scene_edit_box_item* item = NULL;
   for(int i = 0, end = scene->numberOfEntries();
       i < end; ++i)

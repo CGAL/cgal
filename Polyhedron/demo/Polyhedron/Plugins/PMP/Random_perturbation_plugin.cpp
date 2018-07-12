@@ -5,7 +5,6 @@
 
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polyhedron_selection_item.h"
-#include "Polyhedron_type.h"
 
 #include <CGAL/iterator.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>

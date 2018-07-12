@@ -220,7 +220,7 @@ public:
                                    std::map<FaceGraph*,Edge_set>& edges_to_protect,
                                    double target_length)
   {
-    typedef Polyhedron::Point_3 Point_3;
+    typedef EPICK::Point_3 Point_3;
     typedef std::pair<Point_3,Point_3> Segment_3;
 
     typedef std::map< Segment_3,
@@ -363,7 +363,7 @@ public Q_SLOTS:
               edges
               , target_length
               , *selection_item->polyhedron()
-              , PMP::parameters::geom_traits(Kernel())
+              , PMP::parameters::geom_traits(EPICK())
               .edge_is_constrained_map(selection_item->constrained_edges_pmap()));
           else
             std::cout << "No selected or boundary edges to be split" << std::endl;
@@ -505,7 +505,7 @@ public Q_SLOTS:
               border_edges
               , target_length
               , *poly_item->polyhedron()
-              , PMP::parameters::geom_traits(Kernel()));
+              , PMP::parameters::geom_traits(EPICK()));
           else
             std::cout << "No border to be split" << std::endl;
         }

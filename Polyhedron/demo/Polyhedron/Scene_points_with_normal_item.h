@@ -5,7 +5,6 @@
 #include <CGAL/Three/Scene_zoomable_item_interface.h>
 #include "Scene_points_with_normal_item_config.h"
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
-#include "Polyhedron_type_fwd.h"
 #include "Kernel_type.h"
 #include "Point_set_3.h"
 #include <iostream>
@@ -34,7 +33,6 @@ public:
   Scene_points_with_normal_item(const Scene_points_with_normal_item& toCopy);
 
   Scene_points_with_normal_item(const SMesh& input_mesh);
-  Scene_points_with_normal_item(const Polyhedron& input_mesh);
 
   ~Scene_points_with_normal_item();
   Scene_points_with_normal_item* clone() const Q_DECL_OVERRIDE;

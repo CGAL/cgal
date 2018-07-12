@@ -38,6 +38,7 @@
 
 #include <CGAL/Cartesian_converter_fwd.h>
 #include <CGAL/Kernel_traits_fwd.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 

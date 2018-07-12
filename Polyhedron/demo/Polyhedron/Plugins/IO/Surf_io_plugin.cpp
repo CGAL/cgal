@@ -1,4 +1,3 @@
-#include "Polyhedron_type.h"
 #include "Scene_surface_mesh_item.h"
 
 #include <QMainWindow>

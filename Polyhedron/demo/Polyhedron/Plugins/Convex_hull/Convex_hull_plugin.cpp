@@ -55,12 +55,6 @@ private:
   QMainWindow* mw;
 }; // end Polyhedron_demo_convex_hull_plugin
 
-// for transform iterator
-struct Get_point {
-  typedef const Polyhedron::Point_3& result_type;
-  result_type operator()(const Polyhedron::Vertex_handle v) const
-  { return v->point(); }
-};
 
 void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
 {

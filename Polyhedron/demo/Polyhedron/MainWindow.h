@@ -36,8 +36,6 @@ namespace Ui {
   class Statistics_on_item_dialog;
 }
 
-#include "Polyhedron_type_fwd.h"
-
 #include "Messages_interface.h"
 
 /*!

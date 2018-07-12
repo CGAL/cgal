@@ -27,7 +27,6 @@
 #include <boost/array.hpp>
 
 #include <CGAL/boost/graph/properties_Surface_mesh.h>
-#include "Polyhedron_type.h"
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
@@ -80,22 +79,6 @@ struct Scene_points_with_normal_item_priv
       m_points->insert(p,n);
     }
   }
-
-  Scene_points_with_normal_item_priv(const Polyhedron& input_mesh, Scene_points_with_normal_item* parent)
-     : m_points(new Point_set)
-   {
-    init_values(parent);
-     Polyhedron::Vertex_iterator v;
-     m_points->add_normal_map();
-     for (v = const_cast<Polyhedron&>(input_mesh).vertices_begin();
-          v != const_cast<Polyhedron&>(input_mesh).vertices_end(); v++)
-     {
-       const Kernel::Point_3& p = v->point();
-       Kernel::Vector_3 n =
-         CGAL::Polygon_mesh_processing::compute_vertex_normal(v, input_mesh);
-       m_points->insert(p,n);
-     }
-   }
 
   ~Scene_points_with_normal_item_priv()
   {
@@ -263,20 +246,6 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const SMesh& input_
   invalidateOpenGLBuffers();
 }
 
-Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& input_mesh)
-    : Scene_item(Scene_points_with_normal_item_priv::NbOfVbos,Scene_points_with_normal_item_priv::NbOfVaos)
-{
-  // Converts Polyhedron vertices to point set.
-  // Computes vertices normal from connectivity.
-  d = new Scene_points_with_normal_item_priv(input_mesh, this);
-  setRenderingMode(PointsPlusNormals);
-  is_selected = true;
-  if(d->m_points->number_of_points() < 30 )
-    d->point_Slider->setValue(5);
-  else
-    d->point_Slider->setValue(2);
-  invalidateOpenGLBuffers();
-}
 
 Scene_points_with_normal_item::~Scene_points_with_normal_item()
 {

@@ -57,8 +57,8 @@ struct Get_facet_patch_id_selector {
 };
 //specialization for surface_mesh
 template<>
-struct Get_facet_patch_id_selector<Polyhedral_mesh_domain_sm> {
-  typedef CGAL::Mesh_3::Get_facet_patch_id_sm<Polyhedral_mesh_domain_sm> type;
+struct Get_facet_patch_id_selector<Polyhedral_mesh_domain> {
+  typedef CGAL::Mesh_3::Get_facet_patch_id_sm<Polyhedral_mesh_domain> type;
 };
 }//end internal
 struct Mesh_parameters

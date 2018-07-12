@@ -6,7 +6,6 @@
 #include <CGAL/boost/parameter.h>
 #include <CGAL/Default.h>
 
-#include "Polyhedron_type.h"
 #include "SMesh_type.h"
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 #include "Image_type.h"
@@ -47,18 +46,16 @@ private:
 #endif
 
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<
-          Kernel, Polyhedron, CGAL::Default, CGAL::Tag_true> Polyhedral_mesh_domain;
-typedef CGAL::Polyhedral_mesh_domain_with_features_3<
-          Kernel, SMesh, CGAL::Default, int> Polyhedral_mesh_domain_sm;
+          EPICK, SMesh, CGAL::Default, int> Polyhedral_mesh_domain;
 // The last `Tag_true` says the Patch_id type will be int, and not pair<int, int>
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
-typedef CGAL::Labeled_mesh_domain_3<Kernel, int, int>            Image_domain;
+typedef CGAL::Labeled_mesh_domain_3<EPICK, int, int>            Image_domain;
 typedef CGAL::Mesh_domain_with_polyline_features_3<Image_domain> Image_mesh_domain;
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
-typedef Wrapper<Kernel>                                              Function_wrapper;
-typedef CGAL::Labeled_mesh_domain_3<Kernel, int, int>                Function_mesh_domain;
+typedef Wrapper<EPICK>                                              Function_wrapper;
+typedef CGAL::Labeled_mesh_domain_3<EPICK, int, int>                Function_mesh_domain;
 #endif
 
 //Robust_cc_geom_traits

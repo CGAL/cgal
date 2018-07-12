@@ -24,9 +24,9 @@ qt5_wrap_ui( mesh_simplificationUI_FILES  Mesh_simplification_dialog.ui)
 polyhedron_demo_plugin(mesh_simplification_plugin Mesh_simplification_plugin ${mesh_simplificationUI_FILES})
 target_link_libraries(mesh_simplification_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
 
-#qt5_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
-#polyhedron_demo_plugin(offset_meshing_plugin Offset_meshing_plugin ${remeshingUI_FILES})
-#target_link_libraries(offset_meshing_plugin PUBLIC scene_polyhedron_item scene_polygon_soup_item )
+qt5_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
+polyhedron_demo_plugin(offset_meshing_plugin Offset_meshing_plugin ${remeshingUI_FILES})
+target_link_libraries(offset_meshing_plugin PUBLIC scene_surface_mesh_item scene_polygon_soup_item )
 
 qt5_wrap_ui( shortestPathUI_FILES Shortest_path_widget.ui )
 polyhedron_demo_plugin(shortest_path_plugin Shortest_path_plugin ${shortestPathUI_FILES})

@@ -139,10 +139,10 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
     {
       return NULL;
     }
-    Polyhedral_mesh_domain_sm* sm_domain = new Polyhedral_mesh_domain_sm(*smesh);
+    Polyhedral_mesh_domain* sm_domain = new Polyhedral_mesh_domain(*smesh);
 
     // Create thread
-    typedef Optimization_function<Polyhedral_mesh_domain_sm,Parameters> Opt_function;
+    typedef Optimization_function<Polyhedral_mesh_domain,Parameters> Opt_function;
     Opt_function* p_opt_function = new Opt_function(p_result_item->c3t3(), sm_domain, param);
     return new Optimizer_thread(p_opt_function, p_result_item);
   }

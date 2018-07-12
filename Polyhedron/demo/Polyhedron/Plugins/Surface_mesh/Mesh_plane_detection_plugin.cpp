@@ -2,7 +2,6 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include "Scene_surface_mesh_item.h"
-#include "Polyhedron_type.h"
 #include "Scene.h"
 #include "Color_map.h"
 
@@ -95,12 +94,12 @@ private:
           continue;
         class_index++;
         label_region[static_cast<std::size_t>(*f)] = class_index;
-        double area = PMP::face_area (*f, mesh, PMP::parameters::geom_traits(Kernel()));
+        double area = PMP::face_area (*f, mesh, PMP::parameters::geom_traits(EPICK()));
             
         //characteristics of the seed
-        Kernel::Vector_3 normal_seed = PMP::compute_face_normal (*f, mesh, PMP::parameters::geom_traits(Kernel()));
-        Kernel::Point_3 pt_seed = mesh.point(target(halfedge(*f, mesh), mesh));
-        Kernel::Plane_3 optimal_plane(pt_seed, normal_seed);
+        EPICK::Vector_3 normal_seed = PMP::compute_face_normal (*f, mesh, PMP::parameters::geom_traits(EPICK()));
+        EPICK::Point_3 pt_seed = mesh.point(target(halfedge(*f, mesh), mesh));
+        EPICK::Plane_3 optimal_plane(pt_seed, normal_seed);
                    //        Kernel::Plane_3 optimal_plane = f->plane();
               
         //initialization containers
@@ -130,15 +129,15 @@ private:
                   std::size_t neighbor_index = static_cast<std::size_t>(neighbor);
                   if (label_region[neighbor_index] == 0)
                     {
-                      Kernel::Vector_3 normal
-                        = PMP::compute_face_normal (neighbor, mesh, PMP::parameters::geom_traits(Kernel()));
+                      EPICK::Vector_3 normal
+                        = PMP::compute_face_normal (neighbor, mesh, PMP::parameters::geom_traits(EPICK()));
 
                       if (std::fabs(normal * optimal_plane.orthogonal_vector()) > angle_max)
                         {
                           label_region[neighbor_index] = class_index;
                           propagation = true;
                           index_container_current_ring.push_back(neighbor_index);
-                          area += PMP::face_area (neighbor, mesh, PMP::parameters::geom_traits(Kernel()));
+                          area += PMP::face_area (neighbor, mesh, PMP::parameters::geom_traits(EPICK()));
                         }
                     }
                 }

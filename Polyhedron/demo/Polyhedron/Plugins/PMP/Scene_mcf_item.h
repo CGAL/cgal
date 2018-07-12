@@ -12,14 +12,8 @@
 
 #include <CGAL/Three/Scene_group_item.h>
 #include <CGAL/extract_mean_curvature_flow_skeleton.h>
-#ifdef USE_SURFACE_MESH
 #include "SMesh_type.h"
 typedef SMesh Face_graph;
-#else
-#include "Polyhedron_type.h"
-typedef Polyhedron Face_graph;
-#endif
-
 typedef CGAL::Mean_curvature_flow_skeletonization<Face_graph>      Mean_curvature_skeleton;
 typedef Mean_curvature_skeleton::Skeleton Skeleton;
 

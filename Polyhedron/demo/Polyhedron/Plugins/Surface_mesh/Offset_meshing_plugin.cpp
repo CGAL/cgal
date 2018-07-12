@@ -9,7 +9,6 @@
 #include <QMenu>
 #include <QApplication>
 #include <QtPlugin>
-#include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polygon_soup_item.h"
 #include <QInputDialog>
@@ -77,11 +76,6 @@ private:
 
 } //end of CGAL namespace
 
-
-Scene_polyhedron_item* make_item(Polyhedron* poly)
-{
-  return new Scene_polyhedron_item(poly);
-}
 
 Scene_surface_mesh_item* make_item(SMesh* sm)
 {
@@ -197,8 +191,7 @@ public:
 
   bool applicable(QAction*) const {
     Scene_item* item = scene->item(scene->mainSelectionIndex());
-    return qobject_cast<Scene_polyhedron_item*>(item) ||
-        qobject_cast<Scene_surface_mesh_item*>(item);
+    return qobject_cast<Scene_surface_mesh_item*>(item);
   }
 
   QList<QAction*> actions() const {
@@ -217,22 +210,11 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   Scene_item* item = scene->item(index);
-
-  Scene_polyhedron_item* poly_item =
-      qobject_cast<Scene_polyhedron_item*>(item);
   Scene_surface_mesh_item* sm_item =
       qobject_cast<Scene_surface_mesh_item*>(item);
 
-  Polyhedron* pMesh = NULL;
   SMesh* sMesh = NULL;
-  if(poly_item)
-  {
-    pMesh = poly_item->polyhedron();
-
-    if(!pMesh)
-      return;
-  }
-  else if(sm_item)
+if(sm_item)
   {
     sMesh = sm_item->face_graph();
     if(!sMesh)
@@ -289,23 +271,14 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
             << std::boolalpha
             << std::endl;
   CGAL::Three::Scene_item* new_item;
-  if(pMesh)
-    new_item = cgal_off_meshing(mw,
-                                pMesh,
-                                offset_value,
-                                angle,
-                                sizing,
-                                approx,
-                                tag_index);
-  else
-    new_item = cgal_off_meshing(mw,
-                                sMesh,
-                                offset_value,
-                                angle,
-                                sizing,
-                                approx,
-                                tag_index);
-
+  new_item = cgal_off_meshing(mw,
+                              sMesh,
+                              offset_value,
+                              angle,
+                              sizing,
+                              approx,
+                              tag_index);
+  
   if(new_item)
   {
     new_item->setName(tr("%1 offset %5 (%2 %3 %4)")
@@ -320,7 +293,7 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
     item->setVisible(false);
     scene->itemChanged(index);
   }
-
+  
   QApplication::restoreOverrideCursor();
 }
 

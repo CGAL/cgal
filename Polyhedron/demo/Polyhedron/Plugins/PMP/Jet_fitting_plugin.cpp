@@ -55,10 +55,10 @@ void compute(Poly* pMesh,
              Scene_polylines_item* max_curv)
 {
 
-  typedef CGAL::Monge_via_jet_fitting<Kernel> Fitting;
+  typedef CGAL::Monge_via_jet_fitting<EPICK> Fitting;
   typedef Fitting::Monge_form Monge_form;
 
-  typedef Kernel::Point_3 Point;
+  typedef EPICK::Point_3 Point;
 
   typename boost::property_map<Poly, CGAL::vertex_point_t>::type vpmap = get(CGAL::vertex_point, *pMesh);
 
@@ -73,7 +73,7 @@ void compute(Poly* pMesh,
     // compute min edge len around central vertex
     // to scale the ribbons used to display the directions
 
-    typedef Kernel::FT FT;
+    typedef EPICK::FT FT;
 
     FT min_edge_len = std::numeric_limits<FT>::infinity();
     BOOST_FOREACH(typename boost::graph_traits<Poly>::halfedge_descriptor he, halfedges_around_target(v, *pMesh))
@@ -94,7 +94,7 @@ void compute(Poly* pMesh,
 
       // make monge form comply with vertex normal (to get correct
       // orientation)
-      typedef Kernel::Vector_3 Vector;
+      typedef EPICK::Vector_3 Vector;
       Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal(v, *pMesh);
       monge_form.comply_wrt_given_normal(n);
 

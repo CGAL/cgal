@@ -59,7 +59,7 @@ struct Scene_polyhedron_selection_item_priv{
                             const Selection_set_vertex& p_sel_vertex, const Selection_set_facet &p_sel_facet, const Selection_set_edge &p_sel_edges) const;
   void compute_temp_elements() const;
   void compute_HL_elements() const;
-  void triangulate_facet(fg_face_descriptor, Kernel::Vector_3 normal,
+  void triangulate_facet(fg_face_descriptor, EPICK::Vector_3 normal,
                          std::vector<float> &p_facets,std::vector<float> &p_normals) const;
   void tempInstructions(QString s1, QString s2);
 
@@ -113,11 +113,11 @@ struct Scene_polyhedron_selection_item_priv{
   Active_handle::Type original_sel_mode;
   //Only needed for the triangulation
   Face_graph* poly;
-  CGAL::Unique_hash_map<fg_face_descriptor, Kernel::Vector_3>  face_normals_map;
-  CGAL::Unique_hash_map<fg_vertex_descriptor, Kernel::Vector_3>  vertex_normals_map;
-  boost::associative_property_map< CGAL::Unique_hash_map<fg_face_descriptor, Kernel::Vector_3> >
+  CGAL::Unique_hash_map<fg_face_descriptor, EPICK::Vector_3>  face_normals_map;
+  CGAL::Unique_hash_map<fg_vertex_descriptor, EPICK::Vector_3>  vertex_normals_map;
+  boost::associative_property_map< CGAL::Unique_hash_map<fg_face_descriptor, EPICK::Vector_3> >
     nf_pmap;
-  boost::associative_property_map< CGAL::Unique_hash_map<fg_vertex_descriptor, Kernel::Vector_3> >
+  boost::associative_property_map< CGAL::Unique_hash_map<fg_vertex_descriptor, EPICK::Vector_3> >
     nv_pmap;
   Scene_face_graph_item::ManipulatedFrame *manipulated_frame;
   bool ready_to_move;
@@ -406,7 +406,7 @@ void push_back_xyz(const TypeWithXYZ& t,
   vector.push_back(t.z());
 }
 
-typedef Kernel Traits;
+typedef EPICK Traits;
 
 //Make sure all the facets are triangles
 typedef Traits::Point_3	            Point_3;
@@ -418,9 +418,9 @@ Scene_polyhedron_selection_item_priv::triangulate_facet(fg_face_descriptor fit,c
                                                    std::vector<float> &p_facets,std::vector<float> &p_normals ) const
 {
   const CGAL::qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
-  Kernel::Vector_3 offset(off.x,off.y,off.z);
+  EPICK::Vector_3 offset(off.x,off.y,off.z);
   
-  typedef FacetTriangulator<Face_graph, Kernel, fg_vertex_descriptor> FT;
+  typedef FacetTriangulator<Face_graph, EPICK, fg_vertex_descriptor> FT;
   double diagonal;
   if(item->poly_item->diagonalBbox() != std::numeric_limits<double>::infinity())
     diagonal = item->poly_item->diagonalBbox();
@@ -496,7 +496,7 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
       }
       else if (is_quad(halfedge(f,*poly), *poly))
       {
-        Kernel::Vector_3 v_offset(offset.x, offset.y, offset.z);
+        EPICK::Vector_3 v_offset(offset.x, offset.y, offset.z);
         Vector nf = get(nf_pmap, f);
         {
           //1st half-quad
@@ -1945,8 +1945,8 @@ void Scene_polyhedron_selection_item::compute_normal_maps()
 
   d->face_normals_map.clear();
   d->vertex_normals_map.clear();
-  d->nf_pmap = boost::associative_property_map< CGAL::Unique_hash_map<fg_face_descriptor, Kernel::Vector_3> >(d->face_normals_map);
-  d->nv_pmap = boost::associative_property_map< CGAL::Unique_hash_map<fg_vertex_descriptor, Kernel::Vector_3> >(d->vertex_normals_map);
+  d->nf_pmap = boost::associative_property_map< CGAL::Unique_hash_map<fg_face_descriptor, EPICK::Vector_3> >(d->face_normals_map);
+  d->nv_pmap = boost::associative_property_map< CGAL::Unique_hash_map<fg_vertex_descriptor, EPICK::Vector_3> >(d->vertex_normals_map);
   PMP::compute_normals(*d->poly, d->nv_pmap, d->nf_pmap);
 }
 
@@ -2028,7 +2028,7 @@ bool Scene_polyhedron_selection_item_priv::canAddFace(fg_halfedge_descriptor hc,
       fg_halfedge_descriptor res =
           CGAL::Euler::add_face_to_border(t,hc, *item->polyhedron());
 
-      if(CGAL::is_degenerate_triangle_face(res, *item->polyhedron(), get(CGAL::vertex_point, *item->polyhedron()), Kernel()))
+      if(CGAL::is_degenerate_triangle_face(res, *item->polyhedron(), get(CGAL::vertex_point, *item->polyhedron()), EPICK()))
       {
         CGAL::Euler::remove_face(res, *item->polyhedron());
         tempInstructions("Edge not selected : resulting facet is degenerated.",
