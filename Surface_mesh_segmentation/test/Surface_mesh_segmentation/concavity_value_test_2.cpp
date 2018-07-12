@@ -34,7 +34,7 @@ int main()
 
     for (std::size_t i = 0; i < clusters_num; ++i)
     {
-        double concavity = CGAL::concavity_value<Concurrency_tag>(mesh, cluster_ids, i);
+        double concavity = CGAL::concavity_values<Concurrency_tag>(mesh, cluster_ids, i);
         std::cout << "Concavity value of #" << i << " cluster: " << concavity << std::endl;
 
         if (concavity < 0 || concavity > 0.3)

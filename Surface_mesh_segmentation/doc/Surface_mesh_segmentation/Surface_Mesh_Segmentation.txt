@@ -225,7 +225,7 @@ Decomposed a sword into 5 segments (concavity_threshold=7.0), a cactus into 7 se
             This function allows using the same SDF values with different parameters for the segmentation stage.
             The segment or cluster ids are associated to the facets using a property map.
 	- `segmentation_via_sdf_values()` : combines the three functions above.
-    - `concavity_value()` : computes the concavity value of a segment described by an id in a triangle mesh or the concavity value of the triangle mesh itself.
+    - `concavity_values()` : computes the concavity value of a segment described by an id in a triangle mesh or the concavity value of the triangle mesh itself.
     - `approximate_convex_decomposition()` : computes approximate convex decomposition of a triangle mesh, which is the smallest set of segments satisfying concavity constraint.
 
 These functions expect as input a triangulated surface mesh bounding a 3D solid object, with
@@ -333,9 +333,9 @@ Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of
 88,928               |   314                 | 1,260                 |  2,736                 |   4,239
 </center>
 
-<!-- \subsection ACDRuntime Runtime of the functions concavity_value() and convex_decomposition() -->
+<!-- \subsection ACDRuntime Runtime of the functions concavity_values() and convex_decomposition() -->
 
-The following tables describe the runtimes of `concavity_value()` and `convex_decomposition()` functions.
+The following tables describe the runtimes of `concavity_values()` and `convex_decomposition()` functions.
 All the runtimes were produced using the release build of \cgal 4.12 on an Intel i7 laptop, compiled by g++ 7.2.0 under VMware.
 In all the benchmarks `%Exact_predicates_inexact_constructions_kernel` (`EPICK`) was used as the kernel.
 Used meshes: sword.off (1036 triangles), cactus.off (1236 triangles), elephant.off (5558 triangles).

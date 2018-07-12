@@ -69,7 +69,7 @@ int main()
     // write concavity values for all clusters
     for (std::size_t i = 0; i < clusters_num; ++i)
     {
-        std::cout << "Concavity value of #" << i << " cluster: " << CGAL::concavity_value<Concurrency_tag>(mesh, clusters_pmap, i) << std::endl;
+        std::cout << "Concavity value of #" << i << " cluster: " << CGAL::concavity_values<Concurrency_tag>(mesh, clusters_pmap, i) << std::endl;
     }
 
     // compute convex hulls

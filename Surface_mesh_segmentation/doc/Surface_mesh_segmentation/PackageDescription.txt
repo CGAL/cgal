@@ -38,7 +38,7 @@
 - `#SegmentationGeomTraits`
 
 ## Main Functions ##
-- `#CGAL::concavity_value()`
+- `#CGAL::concavity_values()`
 - `#CGAL::approximate_convex_decomposition()`
 - `#CGAL::sdf_values()`
 - `#CGAL::sdf_values_postprocessing()`

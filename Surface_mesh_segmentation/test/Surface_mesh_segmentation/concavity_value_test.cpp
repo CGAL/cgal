@@ -17,7 +17,7 @@ bool test_on_convex_mesh(const std::string& path)
     Polyhedron mesh;
     if (!read_to_polyhedron(path.c_str(), mesh)) return false;    
 
-    double concavity = CGAL::concavity_value<Concurrency_tag>(mesh);
+    double concavity = CGAL::concavity_values<Concurrency_tag>(mesh);
 
     std::cout << "Concavity value: " << concavity << std::endl;
     if (concavity < 0 || concavity > EPS)

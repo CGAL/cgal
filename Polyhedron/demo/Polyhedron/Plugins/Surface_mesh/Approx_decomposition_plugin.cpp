@@ -241,7 +241,7 @@ private:
                 std::vector<QColor>& colors = decomposition_item->color_vector();
                 for (std::size_t i = 0; i < clusters_num; ++i)
                 {
-                    double concavity = CGAL::concavity_value<Concurrency_tag>(mesh, clusters_pmap, i);
+                    double concavity = CGAL::concavity_values<Concurrency_tag>(mesh, clusters_pmap, i);
                     int step = std::min(255, int(concavity / concavity_threshold * 255));
                     colors.push_back(m_gradient_colors[step]);
                 } 

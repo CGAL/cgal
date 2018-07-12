@@ -69,7 +69,7 @@ int main()
     Vertex_double_map distances_map;
     boost::associative_property_map<Vertex_double_map> distances_property_map(distances_map);
 
-	std::cout << CGAL::concavity_value<Concurrency_tag>(mesh, distances_property_map) << std::endl;
+	std::cout << CGAL::concavity_values<Concurrency_tag>(mesh, distances_property_map) << std::endl;
     
     // create a property-map for sdf values
     std::vector<double> sdf_values(num_faces(mesh));

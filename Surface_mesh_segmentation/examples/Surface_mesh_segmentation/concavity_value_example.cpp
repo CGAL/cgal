@@ -35,7 +35,7 @@ int main()
     }
 
     // compute concavity value
-    double concavity = CGAL::concavity_value<Concurrency_tag>(mesh);
+    double concavity = CGAL::concavity_values<Concurrency_tag>(mesh);
 
     // write result
     std::cout << "Concavity value: " << concavity << std::endl;
