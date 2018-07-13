@@ -39,7 +39,7 @@
 
 ## Main Functions ##
 - `#CGAL::concavity_values()`
-- `#CGAL::approximate_convex_decomposition()`
+- `#CGAL::approximate_convex_segmentation()`
 - `#CGAL::sdf_values()`
 - `#CGAL::sdf_values_postprocessing()`
 - `#CGAL::segmentation_from_sdf_values()`

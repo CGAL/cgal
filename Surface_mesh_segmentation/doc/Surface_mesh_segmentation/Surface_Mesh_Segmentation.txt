@@ -226,7 +226,7 @@ Decomposed a sword into 5 segments, a cactus into 4 segments, and an elephant in
             The segment or cluster ids are associated to the facets using a property map.
 	- `segmentation_via_sdf_values()` : combines the three functions above.
     - `concavity_values()` : computes the concavity value of a segment described by an id in a triangle mesh or the concavity value of the triangle mesh itself.
-    - `approximate_convex_decomposition()` : computes approximate convex decomposition of a triangle mesh, which is the smallest set of segments satisfying concavity constraint.
+    - `approximate_convex_segmentation()` : computes approximate convex decomposition of a triangle mesh, which is the smallest set of segments satisfying concavity constraint.
 
 These functions expect as input a triangulated surface mesh bounding a 3D solid object, with
 the following properties:

@@ -204,11 +204,11 @@ concavity_values(const TriangleMesh& mesh)
  */
 template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap, class NamedParameters>
 std::size_t
-approximate_convex_decomposition(const TriangleMesh& mesh,
-                                 FacePropertyMap face_ids,
-                                 double concavity_threshold,
-                                 std::size_t min_number_of_segments,
-                                 const NamedParameters& np)
+approximate_convex_segmentation(const TriangleMesh& mesh,
+                                FacePropertyMap face_ids,
+                                double concavity_threshold,
+                                std::size_t min_number_of_segments,
+                                const NamedParameters& np)
 {
   typedef typename Polygon_mesh_processing::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
   typedef typename Polygon_mesh_processing::GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
@@ -228,12 +228,12 @@ approximate_convex_decomposition(const TriangleMesh& mesh,
 #ifndef DOXYGEN_RUNNING
 template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap>
 std::size_t
-approximate_convex_decomposition(const TriangleMesh& mesh,
-                                 FacePropertyMap face_ids,
-                                 double concavity_threshold,
-                                 std::size_t min_number_of_segments = 1)
+approximate_convex_segmentation(const TriangleMesh& mesh,
+                                FacePropertyMap face_ids,
+                                double concavity_threshold,
+                                std::size_t min_number_of_segments = 1)
 {
-  return approximate_convex_decomposition<ConcurrencyTag>(mesh, face_ids, concavity_threshold, min_number_of_segments, Polygon_mesh_processing::parameters::all_default());
+  return approximate_convex_segmentation<ConcurrencyTag>(mesh, face_ids, concavity_threshold, min_number_of_segments, Polygon_mesh_processing::parameters::all_default());
 }
 #endif
 
