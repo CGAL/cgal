@@ -50,13 +50,13 @@ namespace CGAL
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam FacePropertyMap a `ReadWritePropertyMap` with the `boost::graph_traits<TriangleMesh>::%face_descriptor` key type and an integer value type
  * @tparam DistancesPropertyMap a `ReadWritePropertyMap` with the `boost::graph_traits<TriangleMesh>::%vertex_descriptor` key type and a floating-point value type
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param mesh clustered triangle mesh
  * @param face_ids property map with per face cluster ids
  * @param cluster_id id of the target cluster on which concavity value is computed
  * @param[out] distances optional property map with per vertex distances to the convex hull
- * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `mesh` \cgalParamEnd
@@ -120,11 +120,11 @@ concavity_values(const TriangleMesh& mesh,
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm (possible values are `Sequential_tag` and `Parallel_tag`)
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam DistancesPropertyMap a `ReadWritePropertyMap` with the `boost::graph_traits<TriangleMesh>::%vertex_descriptor` key type and a floating-point as value type
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param mesh triangle mesh on which concavity value is computed
  * @param distances optional property map with per vertex distances to the convex hull
- * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `mesh` \cgalParamEnd
@@ -187,17 +187,17 @@ concavity_values(const TriangleMesh& mesh)
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm (possible values are `Sequential_tag` and `Parallel_tag`)
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam FacePropertyMap a `ReadWritePropertyMap` with the `boost::graph_traits<TriangleMesh>::%face_descriptor` key type and an integer as value type
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param mesh triangle mesh on which approximate convex decomposition is computed
  * @param face_ids property map with per face segment ids
  * @param concavity_threshold maximal concavity value of the set of faces in a segment
- * @param min_number_of_segments minimal number of segments 
- * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `mesh` \cgalParamEnd
  *    \cgalParamBegin{geom_traits} a geometric traits class instance model of Kernel \cgalParamEnd
+ *    \cgalParamBegin{minimum_number_of_segments} minimal number of segments, default is 1 \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * @return number of segments computed
@@ -207,7 +207,6 @@ std::size_t
 approximate_convex_segmentation(const TriangleMesh& mesh,
                                 FacePropertyMap face_ids,
                                 double concavity_threshold,
-                                std::size_t min_number_of_segments,
                                 const NamedParameters& np)
 {
   typedef typename Polygon_mesh_processing::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
@@ -216,6 +215,7 @@ approximate_convex_segmentation(const TriangleMesh& mesh,
   Geom_traits geom_traits = boost::choose_param(boost::get_param(np, internal_np::geom_traits), Geom_traits());
   Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
                                 get_const_property_map(boost::vertex_point, mesh));
+  std::size_t min_number_of_segments = boost::choose_param(boost::get_param(np, internal_np::min_number_of_segments),1);
 
   CGAL_precondition(is_triangle_mesh(mesh));
   CGAL_precondition(num_faces(mesh) >= min_number_of_segments);
@@ -230,10 +230,9 @@ template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap>
 std::size_t
 approximate_convex_segmentation(const TriangleMesh& mesh,
                                 FacePropertyMap face_ids,
-                                double concavity_threshold,
-                                std::size_t min_number_of_segments = 1)
+                                double concavity_threshold)
 {
-  return approximate_convex_segmentation<ConcurrencyTag>(mesh, face_ids, concavity_threshold, min_number_of_segments, Polygon_mesh_processing::parameters::all_default());
+  return approximate_convex_segmentation<ConcurrencyTag>(mesh, face_ids, concavity_threshold, Polygon_mesh_processing::parameters::all_default());
 }
 #endif
 

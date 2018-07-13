@@ -93,6 +93,9 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::get_cost_policy).v == 34);
   assert(get_param(np, CGAL::internal_np::get_placement_policy).v == 35);
 
+    // Named parameters that we use in the package 'Surface Mesh Simplification'
+  assert(get_param(np, CGAL::internal_np::min_number_of_segments).v == 47);
+
     // To-be-documented named parameters
   assert(get_param(np, CGAL::internal_np::face_normal).v == 36);
   assert(get_param(np, CGAL::internal_np::random_seed).v == 37);
@@ -173,6 +176,9 @@ void test(const NamedParameters& np)
   check_same_type<34>(get_param(np, CGAL::internal_np::get_cost_policy));
   check_same_type<35>(get_param(np, CGAL::internal_np::get_placement_policy));
 
+    // Named parameters that we use in the package 'Surface Mesh Segmentation'
+  check_same_type<47>(get_param(np, CGAL::internal_np::min_number_of_segments));
+
     // To-be-documented named parameters
   check_same_type<36>(get_param(np, CGAL::internal_np::face_normal));
   check_same_type<37>(get_param(np, CGAL::internal_np::random_seed));
@@ -241,6 +247,7 @@ int main()
                          .weight_calculator(A<39>(39))
                          .preserve_genus(A<40>(40))
                          .verbosity_level(A<41>(41))
+                         .minimum_number_of_segments(A<47>(47))
                          .projection_functor(A<42>(42))
                          .throw_on_self_intersection(A<43>(43))
                          .clip_volume(A<44>(44))

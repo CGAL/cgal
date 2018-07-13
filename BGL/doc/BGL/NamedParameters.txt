@@ -114,6 +114,21 @@ as result of a partition algorithm; if it is not provided, this information is
 simply inaccessible.
 \cgalNPEnd
 
+\cgalNPBegin{minimum_number_of_segments} \anchor BGL_minimum_number_of_segments
+indicates the minimum number of segments a segmentation must produce.\n
+<b>Type:</b> a type convertible to `std::size_t` \n
+<b>Default:</b> 1
+\cgalNPEnd
+
+\cgalNPBegin{geom_traits} \anchor BGL_geom_traits
+is the geometric traits instance in which the operation should be performed.\n
+<b>Type:</b> a Geometric traits class.\n
+<b>Default</b>:
+\code typename CGAL::Kernel_traits<
+        typename boost::property_traits<
+          typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel \endcode
+\cgalNPEnd
+
 
 \cgalNPBegin{vertex_to_vertex_output_iterator} \anchor BGL_vertex_to_vertex_output_iterator
 is a model of `OutputIterator` accepting `std::pair<vertex_descriptor, vertex_descriptor>`

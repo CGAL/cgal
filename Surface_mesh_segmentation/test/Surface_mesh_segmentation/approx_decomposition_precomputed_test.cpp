@@ -24,7 +24,7 @@ int main()
   typedef Mesh::Property_map<face_descriptor, int> Clusters_map;
   Clusters_map cluster_ids = mesh.add_property_map<face_descriptor, int>("f:cluster").first;
 
-  std::size_t clusters_num = CGAL::approximate_convex_segmentation<Concurrency_tag>(mesh, cluster_ids, 0.3, 1);
+  std::size_t clusters_num = CGAL::approximate_convex_segmentation<Concurrency_tag>(mesh, cluster_ids, 0.3);
 
   std::vector<int> precomputed;
   std::ifstream file("data/sword_0.3_precomputed.txt");

@@ -53,7 +53,7 @@ int main()
   Timer timer;
   
   timer.start();
-  std::size_t clusters_num = CGAL::approximate_convex_segmentation<Concurrency_tag>(mesh, clusters_pmap, 0.3, 1);
+  std::size_t clusters_num = CGAL::approximate_convex_segmentation<Concurrency_tag>(mesh, clusters_pmap, 0.3);
   timer.stop();
 
   std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
