@@ -358,8 +358,8 @@ find_visible_set(TDS_2& tds,
    typedef typename Traits::Plane_3                   Plane_3;
    typedef typename TDS_2::Face_handle Face_handle;
    typedef typename TDS_2::Vertex_handle Vertex_handle;
-   typename Traits::Has_on_negative_side_3 has_on_negative_side =
-      traits.has_on_negative_side_3_object();
+   typename Traits::Has_on_positive_side_3 has_on_positive_side =
+            traits.has_on_positive_side_3_object();
 
    std::vector<Vertex_handle> vertices;
    vertices.reserve(10);
@@ -385,9 +385,9 @@ find_visible_set(TDS_2& tds,
         // if haven't already seen this facet
         if (f->info() == 0) {
           f->info() = VISITED;
-          Plane_3 plane(f->vertex(0)->point(),f->vertex(1)->point(),f->vertex(2)->point());
+          Plane_3 plane(f->vertex(0)->point(),f->vertex(2)->point(),f->vertex(1)->point());
           int ind = f->index(*vis_it);
-          if ( !has_on_negative_side(plane, point) ){  // is visible
+          if ( !has_on_positive_side(plane, point) ){  // is visible
             visible.push_back(f);
             Vertex_handle vh = f->vertex(ind);
             if(vh->info() == 0){ vertices.push_back(vh); vh->info() = VISITED;}

@@ -84,13 +84,6 @@ Predicate object type that provides
 `q` is on the positive side of the halfspace `h`. 
 */ 
 typedef unspecified_type Has_on_positive_side_3; 
-  
-  /*!
-  Predicate object type that provides 
-  `bool operator()(Plane_3 h, Point_3 q)`, which determines if the point 
-  `q` is on the negative side of the halfspace `h`. 
-  */ 
-  typedef unspecified_type Has_on_negative_side_3; 
 
 /*!
 Predicate object type that provides 
