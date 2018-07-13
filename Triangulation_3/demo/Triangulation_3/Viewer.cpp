@@ -1659,6 +1659,8 @@ void Viewer::drawFacet(const Triangle_3& t, std::vector<float> *vertices)
 
 void Viewer::drawWithNames()
 {
+  makeCurrent();
+  glEnable(GL_DEPTH_TEST);
   for(int i=0; i<m_pScene->m_vhArray.size(); ++i) {
     //clear depth
     glClearDepthf(1.0f);
@@ -1731,7 +1733,8 @@ void Viewer::drawWithNames()
         }
         rendering_program.bind();
         rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
-        rendering_program.setUniformValue("point_size", 8.0f);
+        rendering_program.setUniformValue("point_size", 16.0f);
+        rendering_program.setUniformValue("color", m_colorVertex);
         glDrawArrays(GL_POINTS,0,1);
         vao[3].release();
         rendering_program.release();
@@ -1752,8 +1755,9 @@ void Viewer::beginSelection(const QPoint &point)
   picking_pos = point;
   CGAL::QGLViewer::beginSelection(point);
 };
-void Viewer::endSelection(const QPoint&)
+void Viewer::endSelection(const QPoint& p)
 {
+  CGAL::QGLViewer::endSelection(p);
   // flush GL buffers
   glFlush();
   
