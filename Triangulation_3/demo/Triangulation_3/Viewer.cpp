@@ -1681,9 +1681,9 @@ void Viewer::drawWithNames()
     QMatrix4x4 mvpMatrix;
     double mat[16];
     camera()->getModelViewProjectionMatrix(mat);
-    for(int i=0; i < 16; i++)
+    for(int j=0; j < 16; j++)
     {
-      mvpMatrix.data()[i] = (float)mat[i];
+      mvpMatrix.data()[j] = (float)mat[j];
     }
     rendering_program.bind();
     vao[27].bind();
