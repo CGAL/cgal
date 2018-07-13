@@ -17,6 +17,7 @@
 #include <QMenuBar>
 #include <QChar>
 #include <QAction>
+#include <QWidgetAction>
 #include <QShortcut>
 #include <QKeySequence>
 #include <QLibrary>
