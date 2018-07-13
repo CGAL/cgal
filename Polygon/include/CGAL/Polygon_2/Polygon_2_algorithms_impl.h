@@ -67,9 +67,6 @@ OutputForwardIterator filter_collinear_points(InputForwardIterator first,
                                               const typename K::FT tolerance =
                                                 std::numeric_limits<typename K::FT>::epsilon())
 {
-  if(std::distance(first, beyond) < 4)
-    return out;
-
   typedef typename K::FT                              FT;
   typedef typename K::Point_2                         Point;
 
