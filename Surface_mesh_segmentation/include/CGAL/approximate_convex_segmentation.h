@@ -18,17 +18,17 @@
 //
 // Author(s)     : Liubomyr Piadyk
 
-#ifndef CGAL_SURFACE_MESH_SEGMENTATION_APPROXIMATE_CONVEX_DECOMPOSITION_H
-#define CGAL_SURFACE_MESH_SEGMENTATION_APPROXIMATE_CONVEX_DECOMPOSITION_H
+#ifndef CGAL_SURFACE_MESH_SEGMENTATION_APPROXIMATE_CONVEX_SEGMENTATION_H
+#define CGAL_SURFACE_MESH_SEGMENTATION_APPROXIMATE_CONVEX_SEGMENTATION_H
 
 #include <CGAL/license/Surface_mesh_segmentation.h>
 
 /**
- * @file approximate_convex_decomposition.h
- * @brief The API which contains template functions for concavity value computation and approximate convex decomposition
+ * @file approximate_convex_segmentation.h
+ * @brief The API which contains template functions for concavity value computation and approximate convex segmentation
  */
-#include <CGAL/internal/Approximate_convex_decomposition/Approx_decomposition.h>
-#include <CGAL/internal/Approximate_convex_decomposition/Concavity.h>
+#include <CGAL/internal/Approximate_convex_segmentation/Approx_segmentation.h>
+#include <CGAL/internal/Approximate_convex_segmentation/Concavity.h>
 #include <CGAL/boost/graph/named_function_params.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
@@ -38,7 +38,7 @@ namespace CGAL
 
 /*!
  * \ingroup PkgSurfaceSegmentation
- * @brief Function computing the concavity value of a cluster described by an id in a triangle mesh.
+ * @brief Function computing the concavity value of a segment described by an id in a triangle mesh.
  *
  * Cluster is a subset of connected faces in a triangle mesh.
  *
@@ -52,9 +52,9 @@ namespace CGAL
  * @tparam DistancesPropertyMap a `ReadWritePropertyMap` with the `boost::graph_traits<TriangleMesh>::%vertex_descriptor` key type and a floating-point value type
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- * @param mesh clustered triangle mesh
- * @param face_ids property map with per face cluster ids
- * @param cluster_id id of the target cluster on which concavity value is computed
+ * @param mesh segmented triangle mesh
+ * @param face_ids property map with per face segment ids
+ * @param segment_id id of the target segment on which concavity value is computed
  * @param[out] distances optional property map with per vertex distances to the convex hull
  * @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
@@ -63,13 +63,13 @@ namespace CGAL
  *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * @return concativity value, the largest distance from a vertex in a cluster to its projection on the convex hull of a triangle mesh
+ * @return concativity value, the largest distance from a vertex in a segment to its projection on the convex hull of a triangle mesh
  */
 template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap, class DistancesPropertyMap, class NamedParameters>
 double
 concavity_values(const TriangleMesh& mesh,
                  FacePropertyMap face_ids,
-                 std::size_t cluster_id,
+                 std::size_t segment_id,
                  DistancesPropertyMap distances,
                  const NamedParameters& np)
 {
@@ -83,7 +83,7 @@ concavity_values(const TriangleMesh& mesh,
     CGAL_precondition(is_triangle_mesh(mesh));
 
     internal::Concavity<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits);
-    return algorithm.compute(face_ids, cluster_id, distances);
+    return algorithm.compute(face_ids, segment_id, distances);
 }
 
 
@@ -92,21 +92,21 @@ template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap, class
 double
 concavity_values(const TriangleMesh& mesh,
                  FacePropertyMap face_ids,
-                 std::size_t cluster_id,
+                 std::size_t segment_id,
                  DistancesPropertyMap distances)
 {
-    return concavity_values<ConcurrencyTag>(mesh, face_ids, cluster_id, distances, Polygon_mesh_processing::parameters::all_default());
+    return concavity_values<ConcurrencyTag>(mesh, face_ids, segment_id, distances, Polygon_mesh_processing::parameters::all_default());
 }
 
 template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap>
 double
 concavity_values(const TriangleMesh& mesh,
                  FacePropertyMap face_ids,
-                 std::size_t cluster_id)
+                 std::size_t segment_id)
 {
     CGAL::Static_property_map<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, double > distances_pmap(0);
     
-    return concavity_values<ConcurrencyTag>(mesh, face_ids, cluster_id, distances_pmap, Polygon_mesh_processing::parameters::all_default());
+    return concavity_values<ConcurrencyTag>(mesh, face_ids, segment_id, distances_pmap, Polygon_mesh_processing::parameters::all_default());
 }
 #endif
 
@@ -131,7 +131,7 @@ concavity_values(const TriangleMesh& mesh,
  *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * @return concativity value, the largest distance from a vertex in a cluster to its projection onto the convex hull of a triangle mesh
+ * @return concativity value, the largest distance from a vertex in a segment to its projection onto the convex hull of a triangle mesh
  */
 template <class ConcurrencyTag, class TriangleMesh, class DistancesPropertyMap, class NamedParameters>
 double
@@ -175,7 +175,7 @@ concavity_values(const TriangleMesh& mesh)
 
 /*!
  * \ingroup PkgSurfaceSegmentation
- * @brief Function computing an approximate convex decomposition of a triangle mesh.
+ * @brief Function computing an approximate convex segmentation of a triangle mesh.
  *
  * This function fills a property map associating a segment-id to each face (in the range [0, `N-1`]) to each face.
  * `N` is the number of segments computed by the functions (greater are equal to `min_number_of_segments`).
@@ -189,7 +189,7 @@ concavity_values(const TriangleMesh& mesh)
  * @tparam FacePropertyMap a `ReadWritePropertyMap` with the `boost::graph_traits<TriangleMesh>::%face_descriptor` key type and an integer as value type
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- * @param mesh triangle mesh on which approximate convex decomposition is computed
+ * @param mesh triangle mesh on which approximate convex segmentation is computed
  * @param face_ids property map with per face segment ids
  * @param concavity_threshold maximal concavity value of the set of faces in a segment
  * @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -220,8 +220,8 @@ approximate_convex_segmentation(const TriangleMesh& mesh,
   CGAL_precondition(is_triangle_mesh(mesh));
   CGAL_precondition(num_faces(mesh) >= min_number_of_segments);
 
-  internal::Approx_decomposition<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits);
-  return algorithm.decompose(face_ids, concavity_threshold, min_number_of_segments);
+  internal::Approx_segmentation<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits);
+  return algorithm.segmentize(face_ids, concavity_threshold, min_number_of_segments);
 }
 
 

@@ -1,4 +1,4 @@
-#include "ui_Approx_decomposition_widget.h"
+#include "ui_Approximate_convex_segmentation_widget.h"
 
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polyhedron_item.h"
@@ -7,7 +7,7 @@
 #include "Color_map.h"
 
 //#define CGAL_APPROX_DECOMPOSITION_VERBOSE
-#include <CGAL/approximate_convex_decomposition.h>
+#include <CGAL/approximate_convex_segmentation.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
@@ -32,7 +32,7 @@ using namespace CGAL::Three;
 
 typedef CGAL::Real_timer Timer;
 
-class Polyhedron_demo_approx_decomposition_plugin : public QObject, public Polyhedron_demo_plugin_helper
+class Polyhedron_demo_approximate_convex_segmentation_plugin : public QObject, public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
@@ -41,13 +41,13 @@ class Polyhedron_demo_approx_decomposition_plugin : public QObject, public Polyh
 public:
   QList<QAction*> actions() const
   {
-    return QList<QAction*>() << m_decomposition_action;
+    return QList<QAction*>() << m_segmentation_action;
   }
 
   bool applicable(QAction*) const
   {
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
-       qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+           qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*)
@@ -56,9 +56,9 @@ public:
     this->mw = mainWindow;
 
     // actions
-    m_decomposition_action = new QAction("Approximate Convex Decomposition", mw);
-    m_decomposition_action->setProperty("subMenuName", "Triangulated Surface Mesh Segmentation");
-    m_decomposition_action->setObjectName("decomposition_action");
+    m_segmentation_action = new QAction("Approximate Convex Segmentation", mw);
+    m_segmentation_action->setProperty("subMenuName", "Triangulated Surface Mesh Segmentation");
+    m_segmentation_action->setObjectName("approximate_convex_segmentation_action");
 
     autoConnectActions();
 
@@ -66,56 +66,56 @@ public:
     init_gradient_colors();
 
     // ui
-    m_dock_widget = new QDockWidget("Approximate convex decomposition widget", mw);
-    m_dock_widget->setVisible(false); // do not show at the beginning
-    m_ui_widget.setupUi(m_dock_widget);
-    this->mw->addDockWidget(Qt::LeftDockWidgetArea, m_dock_widget);
+    m_segmentation_widget = new QDockWidget("Approximate convex segmentation widget", mw);
+    m_segmentation_widget->setVisible(false); // do not show at the beginning
+    m_segmentation_ui.setupUi(m_segmentation_widget);
+    this->mw->addDockWidget(Qt::LeftDockWidgetArea, m_segmentation_widget);
 
     // signal-slot bindings
-    connect(m_ui_widget.decompose_button, SIGNAL(clicked()), this, SLOT(on_decompose_button_clicked()));
+    connect(m_segmentation_ui.segmentize_button, SIGNAL(clicked()), this, SLOT(on_segmentize_button_clicked()));
   }
 
   virtual void closure()
   {
-    m_dock_widget->hide();
+    m_segmentation_widget->hide();
   }
 
 public Q_SLOTS:
-  void on_decomposition_action_triggered()
+  void on_approximate_convex_segmentation_action_triggered()
   {
-    m_dock_widget->show();
+    m_segmentation_widget->show();
   }
 
-  void on_decompose_button_clicked()
+  void on_segmentize_button_clicked()
   {
-    std::cout << "Decomposing..." << std::endl;
+    std::cout << "Segmentizing..." << std::endl;
     
     CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
     
     Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
     if (item)
     {
-      decompose(item);
+      segmentize(item);
       return;
     }
     
     Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
     if (sm_item)
     {
-      decompose(sm_item);
+      segmentize(sm_item);
       return;
     }
   }
 
 private:
-  QAction* m_decomposition_action;
-  QDockWidget* m_dock_widget;
-  Ui::decomposition_widget m_ui_widget;
+  QAction* m_segmentation_action;
+  QDockWidget* m_segmentation_widget;
+  Ui::approx_segmentation m_segmentation_ui;
 
   std::vector<QColor> m_gradient_colors;
 
   template <class FacegraphItem>
-  void decompose(FacegraphItem* item)
+  void segmentize(FacegraphItem* item)
   {
     typedef typename FacegraphItem::Face_graph Facegraph;
     typedef typename boost::graph_traits<Facegraph>::face_descriptor face_descriptor;
@@ -126,22 +126,22 @@ private:
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     // parameters
-    std::size_t min_number_of_clusters = m_ui_widget.min_clusters_spin_box->value();
-    double concavity_threshold = m_ui_widget.concavity_threshold_spin_box->value();
-    bool extract_segmentation = m_ui_widget.segmentation_check_box->isChecked();
-    bool use_concavity_colors = m_ui_widget.concavity_colors_check_box->isChecked();
+    std::size_t min_number_of_segments = m_segmentation_ui.min_segments_spin_box->value();
+    double concavity_threshold = m_segmentation_ui.concavity_threshold_spin_box->value();
+    bool extract_convex_hulls = m_segmentation_ui.convex_hulls_check_box->isChecked();
+    bool use_concavity_colors = m_segmentation_ui.concavity_colors_check_box->isChecked();
 
-    // create new item and use it for segmentation if the flag is set
+    // create a new item and use it for segmentation
     FacegraphItem* segmentation_item = new FacegraphItem(*item->face_graph());
     segmentation_item->setFlatPlusEdgesMode();
     
-    // decompose mesh
-    Facegraph& mesh = *segmentation_item->face_graph();
+    // segmenation mesh
+    Facegraph& segmentation_mesh = *segmentation_item->face_graph();
 
-    typedef std::map<face_descriptor, std::size_t> Clusters_id_map;
-    Clusters_id_map clusters_map;
-    typedef boost::associative_property_map<Clusters_id_map> Clusters_id_pmap;
-    Clusters_id_pmap clusters_pmap(clusters_map);
+    typedef std::map<face_descriptor, std::size_t> Segments_id_map;
+    Segments_id_map segments_map;
+    typedef boost::associative_property_map<Segments_id_map> Segments_id_pmap;
+    Segments_id_pmap segments_pmap(segments_map);
 
     Timer timer;
 
@@ -153,32 +153,31 @@ private:
 #endif
 
     timer.start();
-    std::size_t clusters_num =
-     CGAL::approximate_convex_segmentation<Concurrency_tag>(mesh, clusters_pmap, concavity_threshold,
-      CGAL::parameters::minimum_number_of_segments(min_number_of_clusters));
+    std::size_t segments_num =
+     CGAL::approximate_convex_segmentation<Concurrency_tag>(segmentation_mesh, segments_pmap, concavity_threshold,
+      CGAL::parameters::minimum_number_of_segments(min_number_of_segments));
     timer.stop();
     
     std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
-    std::cout << "Number of clusters: " << clusters_num << std::endl;
+    std::cout << "Number of segments: " << segments_num << std::endl;
   
     std::vector<QColor> colors;
-    generate_colors(colors, clusters_num);
+    generate_colors(colors, segments_num);
 
-    // extract segmentation if the flag is set
-    if (extract_segmentation)
+    // extract segmentation
     {
       // colorize segmentation
-      Patch_id_pmap patch_pmap = get(CGAL::face_patch_id_t<int>(), mesh);
+      Patch_id_pmap patch_pmap = get(CGAL::face_patch_id_t<int>(), segmentation_mesh);
 
-      BOOST_FOREACH(face_descriptor face, faces(mesh))
+      BOOST_FOREACH(face_descriptor face, faces(segmentation_mesh))
       {
-        put(patch_pmap, face, static_cast<int>(clusters_map[face]));
+        put(patch_pmap, face, static_cast<int>(segments_map[face]));
       }
 
       set_color_read_only(segmentation_item);
       segmentation_item->color_vector() = colors;
       segmentation_item->setItemIsMulticolor(true);
-      segmentation_item->setName(tr("%1-segmentation-[%2,%3]").arg(clusters_num).arg(concavity_threshold).arg(min_number_of_clusters));
+      segmentation_item->setName(tr("%1-segmentation-[%2,%3]").arg(segments_num).arg(concavity_threshold).arg(min_number_of_segments));
 
       // add to the scene
       scene->addItem(segmentation_item);
@@ -188,47 +187,49 @@ private:
       scene->itemChanged(scene->item_id(segmentation_item));
     }
 
-    // extract decomposition
-    FacegraphItem* decomposition_item = new FacegraphItem();
+    // extract convex hulls if the corresponding flag is set 
+    if (extract_convex_hulls)
     {
-      decomposition_item->setFlatPlusEdgesMode();
-      Facegraph& decomposition_mesh = *decomposition_item->face_graph();
+      FacegraphItem* convex_hulls_item = new FacegraphItem();
+      
+      convex_hulls_item->setFlatPlusEdgesMode();
+      Facegraph& convex_hulls_mesh = *convex_hulls_item->face_graph();
 
       typedef CGAL::Face_filtered_graph<Facegraph> Filtered_graph;
 
       // add convex hulls
-      for (std::size_t i = 0; i < clusters_num; ++i)
+      for (std::size_t i = 0; i < segments_num; ++i)
       {
-        // construct convex hull of the i-th cluster
-        Filtered_graph filtered_mesh(mesh, i, clusters_pmap);
-        Facegraph cluster;
-        CGAL::copy_face_graph(filtered_mesh, cluster);
+        // construct convex hull of the i-th segment
+        Filtered_graph filtered_mesh(segmentation_mesh, i, segments_pmap);
+        Facegraph segment;
+        CGAL::copy_face_graph(filtered_mesh, segment);
 
         Facegraph conv_hull;
         std::vector<Point_3> pts;
 
-        if (num_vertices(cluster) > 3)
+        if (num_vertices(segment) > 3)
         {
-          BOOST_FOREACH(vertex_descriptor vert, vertices(cluster))
+          BOOST_FOREACH(vertex_descriptor vert, vertices(segment))
           {
-            pts.push_back(get(CGAL::vertex_point, cluster)[vert]);
+            pts.push_back(get(CGAL::vertex_point, segment)[vert]);
           }
 
           CGAL::convex_hull_3(pts.begin(), pts.end(), conv_hull);
         }
         else
         {
-          conv_hull = cluster;
+          conv_hull = segment;
         }
 
         boost::unordered_map<face_descriptor, face_descriptor> f2f;
         typedef std::pair<face_descriptor, face_descriptor> Faces_pair;
 
         // add the convex hull
-        CGAL::copy_face_graph(conv_hull, decomposition_mesh, CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(), std::inserter(f2f, f2f.end()));
+        CGAL::copy_face_graph(conv_hull, convex_hulls_mesh, CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(), std::inserter(f2f, f2f.end()));
         
         // assign patch id to the convex hull
-        Patch_id_pmap patch_pmap = get(CGAL::face_patch_id_t<int>(), decomposition_mesh);
+        Patch_id_pmap patch_pmap = get(CGAL::face_patch_id_t<int>(), convex_hulls_mesh);
 
         BOOST_FOREACH(Faces_pair faces_pair, f2f)
         {
@@ -236,42 +237,36 @@ private:
         }
       }
      
-      set_color_read_only(decomposition_item);
+      set_color_read_only(convex_hulls_item);
       if (use_concavity_colors)
       {
-
-        std::vector<QColor>& colors = decomposition_item->color_vector();
-        for (std::size_t i = 0; i < clusters_num; ++i)
+        std::vector<QColor>& colors = convex_hulls_item->color_vector();
+        for (std::size_t i = 0; i < segments_num; ++i)
         {
-          double concavity = CGAL::concavity_values<Concurrency_tag>(mesh, clusters_pmap, i);
+          double concavity = CGAL::concavity_values<Concurrency_tag>(segmentation_mesh, segments_pmap, i);
           int step = std::min(255, int(concavity / concavity_threshold * 255));
           colors.push_back(m_gradient_colors[step]);
         } 
       }
       else
       {
-        decomposition_item->color_vector() = colors;
+        convex_hulls_item->color_vector() = colors;
       }
-      decomposition_item->setItemIsMulticolor(true);
-      decomposition_item->setName(tr("%1-decomposition-[%2,%3]").arg(clusters_num).arg(concavity_threshold).arg(min_number_of_clusters));
+      convex_hulls_item->setItemIsMulticolor(true);
+      convex_hulls_item->setName(tr("%1-convex-hulls-[%2,%3]").arg(segments_num).arg(concavity_threshold).arg(min_number_of_segments));
 
       // add to the scene
-      scene->addItem(decomposition_item);
+      scene->addItem(convex_hulls_item);
+      convex_hulls_item->setVisible(false);
         
       // refresh item
-      decomposition_item->invalidateOpenGLBuffers();
-      scene->itemChanged(scene->item_id(decomposition_item));
+      convex_hulls_item->invalidateOpenGLBuffers();
+      scene->itemChanged(scene->item_id(convex_hulls_item));
     }
 
-    // setup default view        
+    // setup default view
     item->setVisible(false);
-    segmentation_item->setVisible(false);
     scene->setSelectedItem(scene->item_id(item));
-
-    if (!extract_segmentation)
-    {
-      delete segmentation_item;
-    }
 
     QApplication::restoreOverrideCursor();
   }
@@ -331,4 +326,4 @@ private:
   {}
 };
 
-#include "Approx_decomposition_plugin.moc"
+#include "Approximate_convex_segmentation_plugin.moc"

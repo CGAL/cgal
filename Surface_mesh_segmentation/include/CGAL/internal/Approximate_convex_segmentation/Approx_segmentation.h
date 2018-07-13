@@ -18,8 +18,8 @@
 //
 // Author(s)     : Liubomyr Piadyk
 
-#ifndef CGAL_APPROX_DECOMPOSITION_H
-#define CGAL_APPROX_DECOMPOSITION_H
+#ifndef CGAL_APPROX_SEGMENTATION_H
+#define CGAL_APPROX_SEGMENTATION_H
 
 #include <CGAL/license/Surface_mesh_segmentation.h>
 
@@ -52,7 +52,7 @@
 #include <utility>
 #include <functional>
 
-#include <CGAL/internal/Approximate_convex_decomposition/Concavity.h>
+#include <CGAL/internal/Approximate_convex_segmentation/Concavity.h>
 
 namespace CGAL
 {
@@ -64,10 +64,10 @@ template < class TriangleMesh,
            class GeomTraits,
            class ConcurrencyTag
          >
-class Approx_decomposition
+class Approx_segmentation
 {
   // property tags
-  struct cluster_props_t
+  struct segment_props_t
   {
     typedef boost::vertex_property_tag kind;
   };
@@ -97,7 +97,7 @@ class Approx_decomposition
   typedef CGAL::Dual<TriangleMesh> Dual_graph;
   typedef boost::filtered_graph<Dual_graph, Noborder_predicate<TriangleMesh> > Filtered_dual_graph;
   
-  typedef boost::property<cluster_props_t, Cluster_properties> VertexProperty;
+  typedef boost::property<segment_props_t, Cluster_properties> VertexProperty;
   typedef boost::property<decimation_props_t, Decimation_properties> EdgeProperty;
 
   typedef boost::adjacency_list<boost::setS, boost::listS, boost::undirectedS, VertexProperty, EdgeProperty> Graph;
@@ -105,14 +105,14 @@ class Approx_decomposition
   typedef typename boost::graph_traits<Graph>::vertex_descriptor graph_vertex_descriptor;
   typedef typename boost::graph_traits<Graph>::edge_descriptor graph_edge_descriptor;
 
-  typedef typename boost::property_map<Graph, cluster_props_t>::type Graph_cluster_map;
+  typedef typename boost::property_map<Graph, segment_props_t>::type Graph_segment_map;
   typedef typename boost::property_map<Graph, decimation_props_t>::type Graph_decimation_map;
 
   // constants
   const double CONCAVITY_FACTOR = 0.1;
 
 public:
-  Approx_decomposition(const TriangleMesh& mesh, const Vpm& vpm, const GeomTraits& traits)
+  Approx_segmentation(const TriangleMesh& mesh, const Vpm& vpm, const GeomTraits& traits)
   : m_mesh(mesh)
   , m_vpm(vpm)
   , m_traits(traits)
@@ -121,13 +121,13 @@ public:
   {}
 
   /**
-  * Computes approximate convex decomposition of a triangle mesh and fills up face property map with cluster-ids.
-  * @param face_ids which associates each face of a triangle mesh to a cluster-id [0, 'number_of_clusters'-1]
-  * @param concavity_threshold concavity value each cluster must satisfy
-  * @param min_number_of_clusters minimal number of cluster that can be produced
+  * Computes approximate convex segmentation of a triangle mesh and fills up face property map with segment-ids.
+  * @param face_ids which associates each face of a triangle mesh to a segment-id [0, 'number_of_segments'-1]
+  * @param concavity_threshold concavity value each segment must satisfy
+  * @param min_number_of_segments minimal number of segment that can be produced
   */
   template <class FacePropertyMap>
-  std::size_t decompose(FacePropertyMap face_ids, double concavity_threshold, std::size_t min_number_of_clusters)
+  std::size_t segmentize(FacePropertyMap face_ids, double concavity_threshold, std::size_t min_number_of_segments)
   {
     // create filtered dual graph without border edges (null source or target vertex)
     Dual_graph dual(m_mesh);
@@ -147,8 +147,8 @@ public:
     remove_invalid_edges();
 
     // main loop that stops when all edges with concavities lower that `concavity_threshold` (valid edges)
-    // are decimated or the constraint of minimum number of cluster is met
-    while (num_vertices(m_graph) > min_number_of_clusters)
+    // are decimated or the constraint of minimum number of segment is met
+    while (num_vertices(m_graph) > min_number_of_segments)
     {
       CGAL_assertion(m_candidates.size() == num_edges(m_graph));
  
@@ -161,7 +161,7 @@ public:
       
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE            
       std::cout << "#" << num_vertices(m_graph) << " Optimal edge for decimation: " << optimal_edge << std::endl;
-      std::cout << "Decimation cost: " << m_decimation_map[optimal_edge].decimation_cost << ", Concavity value: " << m_decimation_map[optimal_edge].new_cluster_props.concavity << std::endl;
+      std::cout << "Decimation cost: " << m_decimation_map[optimal_edge].decimation_cost << ", Concavity value: " << m_decimation_map[optimal_edge].new_segment_props.concavity << std::endl;
       std::cout << "Total edges: " << num_edges(m_graph) << std::endl;
 #endif
 
@@ -169,33 +169,33 @@ public:
       decimate_edge(optimal_edge, concavity_threshold, CONCAVITY_FACTOR);
     }
 
-    // resulting number of produced clusters
-    std::size_t num_clusters = num_vertices(m_graph);    
+    // resulting number of produced segments
+    std::size_t num_segments = num_vertices(m_graph);    
 
-    // current cluster's id
-    int cluster_id = 0;
+    // current segment's id
+    int segment_id = 0;
 
     BOOST_FOREACH(graph_vertex_descriptor vert, vertices(m_graph))
     {
-      Cluster_properties& cluster_props = m_cluster_map[vert];
+      Cluster_properties& segment_props = m_segment_map[vert];
 
-      // assign id to all current cluster's faces
-      BOOST_FOREACH(face_descriptor face, cluster_props.faces)
+      // assign id to all current segment's faces
+      BOOST_FOREACH(face_descriptor face, segment_props.faces)
       {
-        put(face_ids, face, cluster_id);
+        put(face_ids, face, segment_id);
       }
 
-      ++cluster_id;
+      ++segment_id;
     }
 
-    // post check if all faces are assigned to any cluster
+    // post check if all faces are assigned to any segment
     BOOST_FOREACH(face_descriptor face, faces(m_mesh))
     {
       CGAL_assertion(get(face_ids, face) >= 0 &&
-             std::size_t(get(face_ids, face)) < num_clusters);
+             std::size_t(get(face_ids, face)) < num_segments);
     }
 
-    return num_clusters;
+    return num_segments;
   }
 
 private:
@@ -205,7 +205,7 @@ private:
   
   Graph m_graph; // adjacency list
 
-  Graph_cluster_map m_cluster_map; // vertex property map of the adjacency list
+  Graph_segment_map m_segment_map; // vertex property map of the adjacency list
   Graph_decimation_map m_decimation_map; // edge property map of the adjacency list
    
   std::vector<graph_edge_descriptor> m_invalid_edges; // list of edges to be removed
@@ -213,7 +213,7 @@ private:
   // comparator that orders candidate edges by their decimation costs
   struct CandidateComparator
   {
-    CandidateComparator(Approx_decomposition& alg) : m_alg(alg) {}
+    CandidateComparator(Approx_segmentation& alg) : m_alg(alg) {}
 
     bool operator() (const graph_edge_descriptor& a, const graph_edge_descriptor& b) const
     {
@@ -225,7 +225,7 @@ private:
     }
 
   private:
-    Approx_decomposition& m_alg;
+    Approx_segmentation& m_alg;
   };
   
   std::set<graph_edge_descriptor, CandidateComparator> m_candidates; // ordered by decimation cost list of edges
@@ -243,22 +243,22 @@ private:
     const Mesh& m_mesh;
   };
 
-  // all the necessary information to describe a cluster 
+  // all the necessary information to describe a segment 
   struct Cluster_properties
   {
     int id; // needed to prevent dupblications of edges
     double concavity;
     std::vector<face_descriptor> faces; // list of faces of the input mesh
-    std::vector<Point_3> conv_hull_pts; // list of points on the convex hull of the cluster
-    CGAL::Bbox_3 bbox; // bounding box of the cluster
+    std::vector<Point_3> conv_hull_pts; // list of points on the convex hull of the segment
+    CGAL::Bbox_3 bbox; // bounding box of the segment
   };
 
-  // all the necessary information to describe a decimation operation of two clusters
-  // while computing the decimation_cost, information about the merged cluster is computed and is stored in the new_cluster_props
+  // all the necessary information to describe a decimation operation of two segments
+  // while computing the decimation_cost, information about the merged segment is computed and is stored in the new_segment_props
   struct Decimation_properties
   {
     double decimation_cost;
-    Cluster_properties new_cluster_props; // properties of the cluster that is produced after decimation of the edge
+    Cluster_properties new_segment_props; // properties of the segment that is produced after decimation of the edge
   };
 
   /**
@@ -269,11 +269,11 @@ private:
     boost::unordered_map<face_descriptor, graph_vertex_descriptor> face_graph_map; // maps faces of the input mesh to vetices of the adjacency list 
     
     // extract property maps of the adjacency list
-    m_cluster_map = boost::get(cluster_props_t(), m_graph);
+    m_segment_map = boost::get(segment_props_t(), m_graph);
     m_decimation_map = boost::get(decimation_props_t(), m_graph);
 
     // add vertices
-    // fill up cluster properties (single face) for all vertices
+    // fill up segment properties (single face) for all vertices
     int id = 0;
     BOOST_FOREACH(face_descriptor face, vertices(dual))
     {
@@ -304,7 +304,7 @@ private:
   }
 
   /**
-  * Constructs cluster of two smaller clusters and computes decimation cost.
+  * Constructs segment of two smaller segments and computes decimation cost.
   */
   void update_edge(graph_edge_descriptor edge, double concavity_threshold, double alpha_factor)
   {
@@ -312,26 +312,26 @@ private:
 
     graph_vertex_descriptor vert_1 = source(edge, m_graph), vert_2 = target(edge, m_graph);
 
-    const Cluster_properties& cluster_1_props = m_cluster_map[vert_1];
-    const Cluster_properties& cluster_2_props = m_cluster_map[vert_2];
+    const Cluster_properties& segment_1_props = m_segment_map[vert_1];
+    const Cluster_properties& segment_2_props = m_segment_map[vert_2];
 
-    decimation_props.new_cluster_props.id = -1;
+    decimation_props.new_segment_props.id = -1;
 
     // faces 
-    decimation_props.new_cluster_props.faces.resize(cluster_1_props.faces.size() + cluster_2_props.faces.size());
+    decimation_props.new_segment_props.faces.resize(segment_1_props.faces.size() + segment_2_props.faces.size());
 
-    // add faces from the first cluster
-    std::copy(cluster_1_props.faces.begin(), cluster_1_props.faces.end(), decimation_props.new_cluster_props.faces.begin());
-    // add faces from the second cluster
-    std::copy(cluster_2_props.faces.begin(), cluster_2_props.faces.end(), decimation_props.new_cluster_props.faces.begin() + cluster_1_props.faces.size());
+    // add faces from the first segment
+    std::copy(segment_1_props.faces.begin(), segment_1_props.faces.end(), decimation_props.new_segment_props.faces.begin());
+    // add faces from the second segment
+    std::copy(segment_2_props.faces.begin(), segment_2_props.faces.end(), decimation_props.new_segment_props.faces.begin() + segment_1_props.faces.size());
 
     // convex hull points
-    std::vector<Point_3> common_hull_pts(cluster_1_props.conv_hull_pts.size() + cluster_2_props.conv_hull_pts.size()); // merged list of the lists of the convex hull points of two clusters
+    std::vector<Point_3> common_hull_pts(segment_1_props.conv_hull_pts.size() + segment_2_props.conv_hull_pts.size()); // merged list of the lists of the convex hull points of two segments
     
-    // add the convex hull points of the first cluster
-    std::copy(cluster_1_props.conv_hull_pts.begin(), cluster_1_props.conv_hull_pts.end(), common_hull_pts.begin());
-    // add the convex hull points of the second cluster
-    std::copy(cluster_2_props.conv_hull_pts.begin(), cluster_2_props.conv_hull_pts.end(), common_hull_pts.begin() + cluster_1_props.conv_hull_pts.size());
+    // add the convex hull points of the first segment
+    std::copy(segment_1_props.conv_hull_pts.begin(), segment_1_props.conv_hull_pts.end(), common_hull_pts.begin());
+    // add the convex hull points of the second segment
+    std::copy(segment_2_props.conv_hull_pts.begin(), segment_2_props.conv_hull_pts.end(), common_hull_pts.begin() + segment_1_props.conv_hull_pts.size());
 
     // if can construct convex hull
     if (common_hull_pts.size() > 3) //TODO: add collinearity check
@@ -340,32 +340,32 @@ private:
       TriangleMesh conv_hull;
       CGAL::convex_hull_3(common_hull_pts.begin(), common_hull_pts.end(), conv_hull);
 
-      // fill up the list of the convex hull points of produced cluster after decimation
-      decimation_props.new_cluster_props.conv_hull_pts.clear();
+      // fill up the list of the convex hull points of produced segment after decimation
+      decimation_props.new_segment_props.conv_hull_pts.clear();
       BOOST_FOREACH(vertex_descriptor vert, vertices(conv_hull))
       {
-        decimation_props.new_cluster_props.conv_hull_pts.push_back(get(CGAL::vertex_point, conv_hull, vert));
+        decimation_props.new_segment_props.conv_hull_pts.push_back(get(CGAL::vertex_point, conv_hull, vert));
       }
 
-      // compute concavity value of the produced cluster using concavity calculator of the input mesh, faces, and convex hull of the produced cluster
-      decimation_props.new_cluster_props.concavity = m_concavity_calc.compute(decimation_props.new_cluster_props.faces, conv_hull);
+      // compute concavity value of the produced segment using concavity calculator of the input mesh, faces, and convex hull of the produced segment
+      decimation_props.new_segment_props.concavity = m_concavity_calc.compute(decimation_props.new_segment_props.faces, conv_hull);
     }
     else
     {
-      decimation_props.new_cluster_props.conv_hull_pts = boost::move(common_hull_pts);
-      decimation_props.new_cluster_props.concavity = 0;
+      decimation_props.new_segment_props.conv_hull_pts = boost::move(common_hull_pts);
+      decimation_props.new_segment_props.concavity = 0;
     }
 
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
-//        std::cout << "Concavity: " << decimation_props.new_cluster_props.concavity << std::endl;
+//        std::cout << "Concavity: " << decimation_props.new_segment_props.concavity << std::endl;
 #endif
 
-    // compute bounding box of two clusters
-    decimation_props.new_cluster_props.bbox = cluster_1_props.bbox + cluster_2_props.bbox;
+    // compute bounding box of two segments
+    decimation_props.new_segment_props.bbox = segment_1_props.bbox + segment_2_props.bbox;
 
     // compute decimation cost
-    double aspect_ratio = compute_aspect_ratio(decimation_props.new_cluster_props.faces);
-    double d = compute_normalization_factor(decimation_props.new_cluster_props.bbox);
+    double aspect_ratio = compute_aspect_ratio(decimation_props.new_segment_props.faces);
+    double d = compute_normalization_factor(decimation_props.new_segment_props.bbox);
 
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
 //        std::cout << "Aspect ratio & normalization factor: " << aspect_ratio << " " << d << std::endl;
@@ -373,7 +373,7 @@ private:
 
     double alpha = alpha_factor * concavity_threshold / d;
 
-    decimation_props.decimation_cost = decimation_props.new_cluster_props.concavity / d + alpha * aspect_ratio;
+    decimation_props.decimation_cost = decimation_props.new_segment_props.concavity / d + alpha * aspect_ratio;
 
 #ifdef CGAL_APPROX_DECOMPOSITION_VERBOSE
 //        std::cout << "Decimation cost: " << decimation_props.decimation_cost << std::endl;
@@ -389,18 +389,18 @@ private:
 
     CGAL_assertion(vert_1 != vert_2);
 
-    // id of the produced cluster after decimation
-    int result_id = m_cluster_map[vert_1].id;
+    // id of the produced segment after decimation
+    int result_id = m_segment_map[vert_1].id;
 
-    // assign cluster properties of the produced cluster to the first vertex of the edge
-    m_cluster_map[vert_1] = m_decimation_map[edge].new_cluster_props;
-    m_cluster_map[vert_1].id = result_id;
+    // assign segment properties of the produced segment to the first vertex of the edge
+    m_segment_map[vert_1] = m_decimation_map[edge].new_segment_props;
+    m_segment_map[vert_1].id = result_id;
 
     // connect the first vertex to all adjacent vertices of the second one except self
     BOOST_FOREACH(graph_vertex_descriptor vert, boost::adjacent_vertices(vert_2, m_graph))
     {
       if (vert == vert_1) continue; // backward edge
-      if (m_cluster_map[vert].id == result_id) continue; // no need to add edge between the same cluster
+      if (m_segment_map[vert].id == result_id) continue; // no need to add edge between the same segment
 
       add_edge(vert_1, vert, m_graph);
     }
@@ -434,7 +434,7 @@ private:
     // functor that calls update_edge method
     struct Update_edge_functor
     {
-      Update_edge_functor(Approx_decomposition& alg, double& concavity_threshold, double& alpha_factor)
+      Update_edge_functor(Approx_segmentation& alg, double& concavity_threshold, double& alpha_factor)
       : m_alg(alg), m_concavity_threshold(concavity_threshold), m_alpha_factor(alpha_factor) {}
 
       void operator() (const graph_edge_descriptor& edge) const
@@ -443,7 +443,7 @@ private:
       }
 
     private:
-      Approx_decomposition& m_alg;
+      Approx_segmentation& m_alg;
       double& m_concavity_threshold;
       double& m_alpha_factor;
     };
@@ -478,7 +478,7 @@ private:
   }
 
   /**
-  * Compute aspect ratio of a cluster.
+  * Compute aspect ratio of a segment.
   */
   double compute_aspect_ratio(const std::vector<face_descriptor>& faces)
   {
@@ -534,8 +534,8 @@ private:
   */
   void add_candidate(graph_edge_descriptor edge, double concavity_threshold)
   {
-    // if concavity value of the produced cluster doesn't satisfy the threshold then mark the edge as invalid (for further removal)
-    if (m_decimation_map[edge].new_cluster_props.concavity > concavity_threshold)
+    // if concavity value of the produced segment doesn't satisfy the threshold then mark the edge as invalid (for further removal)
+    if (m_decimation_map[edge].new_segment_props.concavity > concavity_threshold)
     {
       m_invalid_edges.push_back(edge);
       return;
@@ -569,4 +569,4 @@ private:
 }
 }
 
-#endif // CGAL_APPROX_DECOMPOSITION_H
+#endif // CGAL_APPROX_SEGMENTATION_H

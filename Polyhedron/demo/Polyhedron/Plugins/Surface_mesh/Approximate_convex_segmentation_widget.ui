@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>decomposition_widget</class>
- <widget class="QDockWidget" name="decomposition_widget">
+ <class>approx_segmentation</class>
+ <widget class="QDockWidget" name="approx_segmentation">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -12,23 +12,23 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>649</width>
-    <height>437</height>
+    <width>791</width>
+    <height>518</height>
    </size>
   </property>
   <property name="windowTitle">
-   <string>Approximate Convex Decomposition</string>
+   <string>Approximate Convex Segmentation</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QGroupBox" name="groupBox">
       <property name="title">
-       <string>Decomposition Parameters</string>
+       <string>Segmentation Parameters</string>
       </property>
       <layout class="QGridLayout" name="gridLayout" columnstretch="0,0">
        <item row="1" column="1">
-        <widget class="QSpinBox" name="min_clusters_spin_box">
+        <widget class="QSpinBox" name="min_segments_spin_box">
          <property name="minimum">
           <number>1</number>
          </property>
@@ -70,9 +70,9 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="min_clusters_label">
+        <widget class="QLabel" name="min_segments_label">
          <property name="text">
-          <string>Min number of clusters:</string>
+          <string>Min number of segments:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -89,12 +89,12 @@
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
-        <widget class="QLabel" name="segmentation_label">
+        <widget class="QLabel" name="convex_hulls_label">
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
          </property>
          <property name="text">
-          <string>Extract segmentation:</string>
+          <string>Extract convex hulls:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -102,12 +102,12 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QCheckBox" name="segmentation_check_box">
+        <widget class="QCheckBox" name="convex_hulls_check_box">
          <property name="text">
           <string/>
          </property>
          <property name="checked">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -117,7 +117,7 @@
           <enum>Qt::LeftToRight</enum>
          </property>
          <property name="text">
-          <string>Use concavity values for decomposition colors:</string>
+          <string>Use concavity values for convex hulls' colors:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -159,9 +159,9 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="decompose_button">
+       <widget class="QPushButton" name="segmentize_button">
         <property name="text">
-         <string>Decompose</string>
+         <string>Segmentize</string>
         </property>
        </widget>
       </item>

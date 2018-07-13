@@ -1,5 +1,5 @@
 #include <CGAL/mesh_segmentation.h>
-#include <CGAL/approximate_convex_decomposition.h>
+#include <CGAL/approximate_convex_segmentation.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Simple_cartesian.h>
@@ -94,18 +94,18 @@ int main()
   Facet_with_id_pmap<std::size_t> segment_property_map(segment_ids);
   
   // segment the mesh using default parameters
-  std::size_t clusters_num = CGAL::segmentation_from_sdf_values(mesh, sdf_property_map, segment_property_map);
-  std::cout << "Number of segments: " << clusters_num << std::endl;
+  std::size_t segments_num = CGAL::segmentation_from_sdf_values(mesh, sdf_property_map, segment_property_map);
+  std::cout << "Number of segments: " << segments_num << std::endl;
 
-  // write clusters to disk
-  for (std::size_t i = 0; i < clusters_num; ++i)
+  // write segments to disk
+  for (std::size_t i = 0; i < segments_num; ++i)
   {
     Filtered_graph filtered_mesh(mesh, i, segment_property_map);
-    Polyhedron cluster;
-    CGAL::copy_face_graph(filtered_mesh, cluster);
+    Polyhedron segment;
+    CGAL::copy_face_graph(filtered_mesh, segment);
 
-    std::ofstream out("cluster_" + std::to_string(i) + ".off");
-    out << cluster;
+    std::ofstream out("segment_" + std::to_string(i) + ".off");
+    out << segment;
     out.close();
   }
 

@@ -26,10 +26,10 @@ together with the result of the soft clustering. The computation of the SDF valu
 This allows an alternative implementation of the SDF to be directly plugged into the segmentation algorithm,
 and also to reuse the SDF values several times with different parameters for the segmentation algorithm.
 
-- The second one in an implementation of the approximate convex decomposition algorithm proposed by
+- The second one in an implementation of the approximate convex segmentation algorithm proposed by
 Khaled Mamou and Faouzi Ghorbel \cgalCite{mamou2009simple}. It is based an iterative edge collapsed of the
 dual graph of the input triangle mesh, so as to minimize the concavity value and aspect ratio of each segment
-for each edge collapse. The computation of the concavity value computation and the approximate convex decomposition
+for each edge collapse. The computation of the concavity value computation and the approximate convex segmentation
 computation are provided as separeted functions.
 
 \section Surface_mesh_segmentationOverviewoftheSegmentation Overview of the Segmentation Process using SDF values
@@ -156,10 +156,10 @@ Clusters and segments. The input number of clusters is set to 5. <b>(a)</b> Resu
 \cgalFigureEnd
 
 
-\section Surface_mesh_segmentationApprCvxDmpOverview Overview of the Approximate Convex Decomposition
+\section Surface_mesh_segmentationApprCvxDmpOverview Overview of the Approximate Convex Segmentation 
 
 \subsection Surface_mesh_segmentationConcavity Concavity Value
-The concavity value is used as cost in the dual edge collape process. It affects the order in which edges are collapsed and thus the produced decomposition.
+The concavity value is used as cost in the dual edge collape process. It affects the order in which edges are collapsed and thus the produced segmentation.
 The implemented function computing the concavity value is just one of many approaches to estimate quality of a surface mesh being concave.
 
 In the context of this algorithm, the concavity of a triangle mesh \f$ S \f$ is defined as the maximal distance from the point of a vertex in the mesh to its projection on the convex hull of the mesh:
@@ -175,9 +175,9 @@ Distance computation from the point \f$ M_0 \f$ to its projection \f$ Proj(M_0) 
 \cgalFigureEnd
 
 
-\subsection Surface_mesh_segmentationDecimation Decomposition Procedure
+\subsection Surface_mesh_segmentationDecimation Segmentation Procedure
 
-The approximate convex decomposition is an iterative algorithm based on the collaption of dual edges.
+The approximate convex segmentation is an iterative algorithm based on the collaption of dual edges.
 At the beginning each dual vertex is considered to belong to its own segment.
 At each step, the dual edge (`v`, `w`) with the lowest collapse cost is selected and collapsed.
 The collapse process consists in merging dual vertices `v` and `w` as well as the segments they belong to.
@@ -207,9 +207,9 @@ The cost \f$ E_{shape} \f$ was introduced in order to favor the generation of co
 In the case of a disk this cost equals to one.
 The more irregular a surface is the higher its aspect ratio.
 
-Some results of the approximate convex decomposition algorithm:
+Some results of the approximate convex segmentation algorithm:
 
-\cgalFigureBegin{ApproxDecompExamples,approx_decomp_examples.png}
+\cgalFigureBegin{ApproxDecompExamples,approximate_convex_segmentation_examples.png}
 Decomposed a sword into 5 segments, a cactus into 4 segments, and an elephant into 29 segments. The top images depict the segmentations, while the bottom images - the convex hulls of each segment.
 \cgalFigureEnd
 
@@ -226,14 +226,14 @@ Decomposed a sword into 5 segments, a cactus into 4 segments, and an elephant in
             The segment or cluster ids are associated to the facets using a property map.
 	- `segmentation_via_sdf_values()` : combines the three functions above.
     - `concavity_values()` : computes the concavity value of a segment described by an id in a triangle mesh or the concavity value of the triangle mesh itself.
-    - `approximate_convex_segmentation()` : computes approximate convex decomposition of a triangle mesh, which is the smallest set of segments satisfying concavity constraint.
+    - `approximate_convex_segmentation()` : computes approximate convex segmentation of a triangle mesh, which is the smallest set of segments satisfying concavity constraint.
 
 These functions expect as input a triangulated surface mesh bounding a 3D solid object, with
 the following properties:
 - Combinatorially 2-manifold;
 - Intersection-free;
 - The vertices of the facets are oriented counterclockwise when seen from outside of the object;
-- Boundary free (but for the convexity value and the approximate convex decomposition computations).
+- Boundary free (but for the convexity value and the approximate convex segmentation computations).
 
 \note The current implementations executes fine on meshes that do not match
 some of these properties but may produce unreliable or meaningless segmentations.
@@ -282,16 +282,16 @@ When using a `Surface_mesh`, you can use the built-in property mechanism.
 The same example as the previous one but uses a `Surface_mesh` datatype.
 \cgalExample{Surface_mesh_segmentation/concavity_value_SM_example.cpp}
 
-\subsection Approx_convex_decomposition_polyhedron Approximate convex decomposition
-\cgalExample{Surface_mesh_segmentation/approx_convex_decomposition_example.cpp}
+\subsection Approx_convex_segmentation_polyhedron Approximate convex segmentation
+\cgalExample{Surface_mesh_segmentation/approximate_convex_segmentation_example.cpp}
 
-\subsubsection Approx_convex_decomposition_SM Using built-in properties of a Surface_mesh
+\subsubsection Approx_convex_segmentation_SM Using built-in properties of a Surface_mesh
 This example uses the `Surface_mesh` datatype instead of `Polyhedron_3` together with its built-in property mechanism.
-\cgalExample{Surface_mesh_segmentation/approx_convex_decomposition_SM_example.cpp}
+\cgalExample{Surface_mesh_segmentation/approximate_convex_segmentation_SM_example.cpp}
 
-\subsubsection Approx_convex_decomposition_convex_hulls Extracting convex hulls
+\subsubsection Approx_convex_segmentation_convex_hulls Extracting convex hulls
 Extends the base example with the computation of convex hull per segment.
-\cgalExample{Surface_mesh_segmentation/approx_convex_decomposition_convex_hulls_example.cpp}
+\cgalExample{Surface_mesh_segmentation/approximate_convex_segmentation_convex_hulls_example.cpp}
 
 <BR>
 \section Performances Performances
@@ -333,9 +333,9 @@ Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of
 88,928               |   314                 | 1,260                 |  2,736                 |   4,239
 </center>
 
-<!-- \subsection ACDRuntime Runtime of the functions concavity_values() and convex_decomposition() -->
+<!-- \subsection ACDRuntime Runtime of the functions concavity_values() and convex_segmentation() -->
 
-The following tables describe the runtimes of `concavity_values()` and `convex_decomposition()` functions.
+The following tables describe the runtimes of `concavity_values()` and `approximate_convex_segmentation()` functions.
 All the runtimes were produced using the release build of \cgal 4.12 on an Intel i7 laptop, compiled by g++ 7.2.0 under VMware.
 In all the benchmarks `%Exact_predicates_inexact_constructions_kernel` (`EPICK`) was used as the kernel.
 Used meshes: sword.off (1036 triangles), cactus.off (1236 triangles), elephant.off (5558 triangles).
@@ -394,7 +394,7 @@ score of XXX. The code used in the benchmark is provided as an exemple XXX.
 \section Surface_mesh_segmentationImplementationhistory Design and Implementation History
 The initial implementation of this package is the result of the work of Ilker O. Yaz during the 2012 season
 of the Google Summer of Code. He has been mentored by Sébastien Loriot who also contributed to the documentation
-and the API definition. The addition of the approximate convex decomposition method has been done during the 2018 season
+and the API definition. The addition of the approximate convex segmentation method has been done during the 2018 season
 of the Google Summer of Code by Liubomyr Piadyk, also mentored by Sébastien Loriot.
 
 */

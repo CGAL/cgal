@@ -77,7 +77,7 @@ create_single_source_cgal_program( "segmentation_from_sdf_values_concavity_examp
 create_single_source_cgal_program( "concavity_value_example.cpp" )
 create_single_source_cgal_program( "concavity_value_SM_example.cpp" )
 
-create_single_source_cgal_program( "approx_convex_decomposition_example.cpp" )
-create_single_source_cgal_program( "approx_convex_decomposition_SM_example.cpp" )
+create_single_source_cgal_program( "approximate_convex_segmentation_example.cpp" )
+create_single_source_cgal_program( "approximate_convex_segmentation_SM_example.cpp" )
 
-create_single_source_cgal_program( "approx_convex_decomposition_convex_hulls_example.cpp" )
+create_single_source_cgal_program( "approximate_convex_segmentation_convex_hulls_example.cpp" )

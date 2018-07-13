@@ -1,4 +1,4 @@
-#include <CGAL/approximate_convex_decomposition.h>
+#include <CGAL/approximate_convex_segmentation.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -21,21 +21,21 @@ int main()
   if (!read_to_polyhedron("data/sword.off", mesh)) return EXIT_FAILURE;
 
   typedef Mesh::Property_map<face_descriptor, int> Clusters_map;
-  Clusters_map cluster_ids = mesh.add_property_map<face_descriptor, int>("f:cluster").first;
+  Clusters_map segment_ids = mesh.add_property_map<face_descriptor, int>("f:segment").first;
 
-  std::size_t clusters_num = CGAL::approximate_convex_segmentation<Concurrency_tag>(mesh, cluster_ids, 0.3);
+  std::size_t segments_num = CGAL::approximate_convex_segmentation<Concurrency_tag>(mesh, segment_ids, 0.3);
 
-  std::cout << "Number of clusters: " << clusters_num << std::endl;
+  std::cout << "Number of segments: " << segments_num << std::endl;
   BOOST_FOREACH(face_descriptor fd, faces(mesh))
   {
-    std::cout << cluster_ids[fd] << " ";
+    std::cout << segment_ids[fd] << " ";
   }
   std::cout << std::endl;
 
-  for (std::size_t i = 0; i < clusters_num; ++i)
+  for (std::size_t i = 0; i < segments_num; ++i)
   {
-    double concavity = CGAL::concavity_values<Concurrency_tag>(mesh, cluster_ids, i);
-    std::cout << "Concavity value of #" << i << " cluster: " << concavity << std::endl;
+    double concavity = CGAL::concavity_values<Concurrency_tag>(mesh, segment_ids, i);
+    std::cout << "Concavity value of #" << i << " segment: " << concavity << std::endl;
 
     if (concavity < 0 || concavity > 0.3)
     {

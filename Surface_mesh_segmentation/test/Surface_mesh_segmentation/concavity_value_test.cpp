@@ -1,7 +1,7 @@
+#include <CGAL/approximate_convex_segmentation.h>
+
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-#include <CGAL/approximate_convex_decomposition.h>
 
 #include <string>
 #include "Utils.h" 

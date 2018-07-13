@@ -1,4 +1,4 @@
-#include <CGAL/approximate_convex_decomposition.h>
+#include <CGAL/approximate_convex_segmentation.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
@@ -42,7 +42,7 @@ int main()
   // init the polyhedron indices
   CGAL::set_halfedgeds_items_id(mesh);
 
-  // create property map for cluster-ids
+  // create property map for segment-ids
   typedef boost::property_map<Polyhedron, CGAL::dynamic_face_property_t<int> >::type Facet_property_map;
   Facet_property_map facet_property_map = get(CGAL::dynamic_face_property_t<int>(), mesh);
 
@@ -50,23 +50,23 @@ int main()
   Timer timer;
 
   timer.start(); 
-  std::size_t clusters_num = CGAL::approximate_convex_segmentation<Concurrency_tag>(mesh, facet_property_map, 0.3);
+  std::size_t segments_num = CGAL::approximate_convex_segmentation<Concurrency_tag>(mesh, facet_property_map, 0.3);
   timer.stop();
 
   std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
 
-  // write cluster-ids for each facet
-  std::cout << "Number of clusters: " << clusters_num << std::endl;
+  // write segment-ids for each facet
+  std::cout << "Number of segments: " << segments_num << std::endl;
   BOOST_FOREACH(face_descriptor face, faces(mesh))
   {
     std::cout << get(facet_property_map, face) << " ";
   }
   std::cout << std::endl;
 
-  // write concavity values for all clusters
-  for (std::size_t i = 0; i < clusters_num; ++i)
+  // write concavity values for all segments
+  for (std::size_t i = 0; i < segments_num; ++i)
   {
-    std::cout << "Concavity value of #" << i << " cluster: " << CGAL::concavity_values<Concurrency_tag>(mesh, facet_property_map, i) << std::endl;
+    std::cout << "Concavity value of #" << i << " segment: " << CGAL::concavity_values<Concurrency_tag>(mesh, facet_property_map, i) << std::endl;
   }
 
   return EXIT_SUCCESS;

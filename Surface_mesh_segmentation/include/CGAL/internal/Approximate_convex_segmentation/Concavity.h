@@ -82,12 +82,12 @@ namespace internal
     {}
 
     /**
-    * Computes concavity value of a cluster of the mesh which id is specified.
+    * Computes concavity value of a segment of the mesh which id is specified.
     */
     template <class FacetPropertyMap, class DistancesMap>
-    double compute(FacetPropertyMap facet_ids, std::size_t cluster_id, DistancesMap& distances)
+    double compute(FacetPropertyMap facet_ids, std::size_t segment_id, DistancesMap& distances)
     {
-      Filtered_graph filtered_mesh(m_mesh, cluster_id, facet_ids);
+      Filtered_graph filtered_mesh(m_mesh, segment_id, facet_ids);
 
       Concavity<Filtered_graph, Vpm, GeomTraits, ConcurrencyTag, TriangleMesh> concavity(filtered_mesh, m_vpm, m_traits);
       return concavity.compute(distances);
