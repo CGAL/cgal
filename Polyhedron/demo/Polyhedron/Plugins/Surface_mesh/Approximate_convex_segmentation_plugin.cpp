@@ -6,7 +6,7 @@
 #include "Scene.h"
 #include "Color_map.h"
 
-//#define CGAL_APPROX_DECOMPOSITION_VERBOSE
+//#define CGAL_APPROXIMATE_CONVEX_DECOMPOSITION_VERBOSE
 #include <CGAL/approximate_convex_segmentation.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
