@@ -268,7 +268,6 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
     if (normal == CGAL::NULL_VECTOR) // No normal could be computed, return
       return;
 
-    normal = normal / std::sqrt(normal * normal);
     typedef FacetTriangulator<Polyhedron, Kernel, std::size_t> FT;
 
     double diagonal;
