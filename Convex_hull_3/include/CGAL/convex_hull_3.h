@@ -355,11 +355,8 @@ find_visible_set(TDS_2& tds,
                  std::map<typename TDS_2::Vertex_handle, typename TDS_2::Edge>& outside,
                  const Traits& traits)
 {
-   typedef typename Traits::Plane_3                   Plane_3;
    typedef typename TDS_2::Face_handle Face_handle;
    typedef typename TDS_2::Vertex_handle Vertex_handle;
-   typename Traits::Has_on_positive_side_3 has_on_positive_side =
-            traits.has_on_positive_side_3_object();
 
    std::vector<Vertex_handle> vertices;
    vertices.reserve(10);
@@ -385,9 +382,10 @@ find_visible_set(TDS_2& tds,
         // if haven't already seen this facet
         if (f->info() == 0) {
           f->info() = VISITED;
-          Plane_3 plane(f->vertex(0)->point(),f->vertex(2)->point(),f->vertex(1)->point());
+          Is_on_positive_side_of_plane_3<Traits> is_on_positive_side(
+            traits,f->vertex(0)->point(),f->vertex(2)->point(),f->vertex(1)->point());
           int ind = f->index(*vis_it);
-          if ( !has_on_positive_side(plane, point) ){  // is visible
+          if ( !is_on_positive_side(point) ){  // is visible
             visible.push_back(f);
             Vertex_handle vh = f->vertex(ind);
             if(vh->info() == 0){ vertices.push_back(vh); vh->info() = VISITED;}
@@ -943,7 +941,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
   
   
   //take extreme points to begin with.
-  internal::Convex_hull_::init_iterators(minx, maxx, miny, it, points);
+  internal::Convex_hull_3::init_iterators(minx, maxx, miny, it, points);
   if(! collinear(*minx, *maxx, *miny) ){
     internal::Convex_hull_3::ch_quickhull_polyhedron_3(points, minx, maxx, miny,
                                                        polyhedron, traits);
