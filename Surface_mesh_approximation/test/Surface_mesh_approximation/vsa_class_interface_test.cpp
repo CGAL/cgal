@@ -52,7 +52,7 @@ int main()
 
   // random seeding and run
   std::cout << "random seeding and run" << std::endl;
-  approx.seeding(CGAL::VSA::Random, 10);
+  approx.initialize_seeds(CGAL::VSA::Random, 10);
   approx.run(10);
   if (approx.proxies_size() != 10)
     return EXIT_FAILURE;
@@ -123,7 +123,7 @@ int main()
   approx.rebuild();
   if (approx.proxies_size() != 0)
     return EXIT_FAILURE;
-  approx.seeding(CGAL::VSA::Hierarchical, boost::none, drop, iterations);
+  approx.initialize_seeds(CGAL::VSA::Hierarchical, boost::none, drop, iterations);
   approx.run(10);
   std::cout << "#proxies " << approx.proxies_size() << std::endl;
 
@@ -131,7 +131,7 @@ int main()
   approx.rebuild();
   if (approx.proxies_size() != 0)
     return EXIT_FAILURE;
-  approx.seeding(CGAL::VSA::Incremental, boost::none, drop, iterations);
+  approx.initialize_seeds(CGAL::VSA::Incremental, boost::none, drop, iterations);
   approx.run(10);
   std::cout << "#proxies " << approx.proxies_size() << std::endl;
 

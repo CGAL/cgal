@@ -50,7 +50,7 @@ int main()
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
   approx.set_metric(error_metric);
 
-  approx.seeding(CGAL::VSA::Random, 100);
+  approx.initialize_seeds(CGAL::VSA::Random, 100);
   std::vector<FT> error;
   for (std::size_t i = 0; i < 30; ++i) {
     approx.run();

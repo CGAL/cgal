@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
   Timer t;
   std::cerr << "start seeding" << std::endl;
   t.start();
-  approx.seeding(
+  approx.initialize_seeds(
     static_cast<CGAL::VSA::Seeding_method>(method), boost::none, error_drop, nb_relaxations);
   t.stop();
   std::cerr << "seeding time " << t.time() << " sec." << std::endl;
