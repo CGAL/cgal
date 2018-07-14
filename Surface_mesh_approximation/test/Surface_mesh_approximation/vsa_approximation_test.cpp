@@ -11,7 +11,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 /**
- * This file tests the free function CGAL::approximate_mesh.
+ * This file tests the free function CGAL::VSA::approximate_mesh.
  */
 int main()
 {
@@ -29,8 +29,8 @@ int main()
   std::vector<Kernel::Point_3> points;
   std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles;
 
-  CGAL::approximate_mesh(mesh,
-    CGAL::VSA::parameters::seeding_method(CGAL::Incremental).
+  CGAL::VSA::approximate_mesh(mesh,
+    CGAL::VSA::parameters::seeding_method(CGAL::VSA::Incremental).
       max_nb_proxies(6).
       nb_of_iterations(30).
       nb_of_relaxations(5).

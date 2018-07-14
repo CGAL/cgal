@@ -100,7 +100,7 @@ int main()
   approx.set_metric(metric);
 
   // approximates via 200 proxies and 30 iterations
-  approx.seeding(CGAL::Hierarchical, 200);
+  approx.seeding(CGAL::VSA::Hierarchical, 200);
   approx.run(30);
 
   return EXIT_SUCCESS;

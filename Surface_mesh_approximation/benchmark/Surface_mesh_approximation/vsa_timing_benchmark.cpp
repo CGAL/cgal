@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
   t0.reset();
   t0.start();
   approx.seeding(
-    static_cast<CGAL::Approximation_seeding_tag>(method), nb_proxies);
+    static_cast<CGAL::VSA::Seeding_method>(method), nb_proxies);
   t0.stop();
   std::cerr << "seeding time " << t0.time() << " sec." << std::endl;
 

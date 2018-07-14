@@ -46,9 +46,10 @@
 
 namespace CGAL {
 
+namespace VSA {
 /// \ingroup PkgTSMA
 /// @brief Seeding method enumeration for Variational Shape Approximation algorithm.
-enum Approximation_seeding_tag {
+enum Seeding_method {
   /// Random seeding
   Random,
   /// Incremental seeding
@@ -56,6 +57,7 @@ enum Approximation_seeding_tag {
   /// Hierarchical seeding
   Hierarchical
 };
+} // namespace VSA
 
 /// \ingroup PkgTSMA
 /// @brief Main class for Variational Shape Approximation algorithm described in \cgalCite{cgal:cad-vsa-04}.
@@ -393,7 +395,7 @@ public:
    * in incremental and hierarchical seeding
    * @return number of proxies initialized
    */
-  std::size_t seeding(const Approximation_seeding_tag method = Hierarchical,
+  std::size_t seeding(const VSA::Seeding_method method = Hierarchical,
     const boost::optional<std::size_t> max_nb_proxies = boost::optional<std::size_t>(),
     const boost::optional<FT> min_error_drop = boost::optional<FT>(),
     const std::size_t nb_relaxations = 5) {
@@ -411,11 +413,11 @@ public:
       if (max_nb_proxies && *max_nb_proxies < nb_px && *max_nb_proxies > 0)
         max_nb_px_adjusted = *max_nb_proxies;
       switch (method) {
-        case Random:
+        case VSA::Random:
           return init_random_error(max_nb_px_adjusted, *min_error_drop, nb_relaxations);
-        case Incremental:
+        case VSA::Incremental:
           return init_incremental_error(max_nb_px_adjusted, *min_error_drop, nb_relaxations);
-        case Hierarchical:
+        case VSA::Hierarchical:
           return init_hierarchical_error(max_nb_px_adjusted, *min_error_drop, nb_relaxations);
         default:
           return 0;
@@ -424,11 +426,11 @@ public:
     else if (max_nb_proxies && *max_nb_proxies < nb_px && *max_nb_proxies > 0) {
       // no valid min_error_drop provided, only max_nb_proxies
       switch (method) {
-        case Random:
+        case VSA::Random:
           return init_random(*max_nb_proxies, nb_relaxations);
-        case Incremental:
+        case VSA::Incremental:
           return init_incremental(*max_nb_proxies, nb_relaxations);
-        case Hierarchical:
+        case VSA::Hierarchical:
           return init_hierarchical(*max_nb_proxies, nb_relaxations);
         default:
           return 0;
@@ -438,11 +440,11 @@ public:
       // both parameters are unspecified or out of range
       const FT e(0.1);
       switch (method) {
-        case Random:
+        case VSA::Random:
           return init_random_error(nb_px, e, nb_relaxations);
-        case Incremental:
+        case VSA::Incremental:
           return init_incremental_error(nb_px, e, nb_relaxations);
-        case Hierarchical:
+        case VSA::Hierarchical:
           return init_hierarchical_error(nb_px, e, nb_relaxations);
         default:
           return 0;

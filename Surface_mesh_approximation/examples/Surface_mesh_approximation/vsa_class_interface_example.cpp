@@ -34,7 +34,7 @@ int main()
   approx.set_metric(metric);
 
   // seeds 100 random proxies
-  approx.seeding(CGAL::Random, 100);
+  approx.seeding(CGAL::VSA::Random, 100);
   
   // runs 30 iterations 
   approx.run(30);

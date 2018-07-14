@@ -32,7 +32,7 @@ int main()
   std::vector<Kernel::Vector_3> proxies;
 
   // free function interface with named parameters
-  CGAL::approximate_mesh(input,
+  CGAL::VSA::approximate_mesh(input,
     CGAL::VSA::parameters::min_error_drop(0.05). // seeding with minimum error drop
     nb_of_iterations(40). // set number of clustering iterations after seeding
     subdivision_ratio(0.3). // set chord subdivision ratio threshold when meshing

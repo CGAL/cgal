@@ -26,7 +26,7 @@ See below a sample call of a function that uses the optional BGL named parameter
 // anchors: output anchor points
 // triangles: output triplets of indexed triangles
 
-CGAL::approximate_mesh(tm,
+CGAL::VSA::approximate_mesh(tm,
     CGAL::VSA::parameters::seeding_method(method).
         max_nb_proxies(nb_proxies).
         nb_of_iterations(nb_iterations).
@@ -70,14 +70,14 @@ typename CGAL::Kernel_traits<
 
 \cgalNPBegin{verbose_level} \anchor VSA_verbose_level
 set the verbose level of the function.\n
-\b Type : \c CGAL::Approximation_verbose_level \n
-\b Default value is `CGAL::Silent`
+\b Type : \c CGAL::VSA::Verbose_level \n
+\b Default value is `CGAL::VSA::Silent`
 \cgalNPEnd
 
 \cgalNPBegin{seeding_method} \anchor VSA_seeding_method
 the selection of seeding method.\n
-\b Type : \c CGAL::Approximation_seeding_tag \n
-\b Default value is `CGAL::Approximation_seeding_tag::Hierarchical`
+\b Type : \c CGAL::VSA::Seeding_method \n
+\b Default value is `CGAL::VSA::Seeding_method::Hierarchical`
 \cgalNPEnd
 
 \cgalNPBegin{max_nb_proxies} \anchor VSA_max_nb_proxies

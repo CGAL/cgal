@@ -26,7 +26,7 @@ int main()
   Facet_proxy_pmap fpxmap(fidx_map);
 
   // free function interface with named parameters
-  CGAL::approximate_mesh(input,
+  CGAL::VSA::approximate_mesh(input,
   CGAL::VSA::parameters::max_nb_proxies(200). // first stop criterion
     min_error_drop(0.05). // second stop criterion
     nb_of_iterations(30). // number of relaxation iterations after seeding
