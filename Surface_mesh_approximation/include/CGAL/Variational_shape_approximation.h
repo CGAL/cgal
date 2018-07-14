@@ -1334,7 +1334,7 @@ private:
     CGAL_assertion(!px_patch.empty());
 
     // use Proxy_fitting functor to fit proxy parameters
-    const Proxy px = m_metric->fit_proxy(*m_ptm, px_patch);
+    const Proxy px = m_metric->fit_proxy(px_patch, *m_ptm);
 
     // find proxy seed and sum error
     face_descriptor seed = *px_patch.begin();
@@ -1374,7 +1374,7 @@ private:
   Proxy_wrapper fit_proxy_from_facet(const face_descriptor f, const std::size_t px_idx) {
     // fit proxy parameters
     std::vector<face_descriptor> fvec(1, f);
-    const Proxy px = m_metric->fit_proxy(*m_ptm, fvec);
+    const Proxy px = m_metric->fit_proxy(fvec, *m_ptm);
     const FT err = m_metric->compute_error(*m_ptm, f, px);
 
     // original proxy map should always be falid

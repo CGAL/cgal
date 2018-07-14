@@ -94,12 +94,12 @@ public:
   /*!
    * @brief Fits a proxy to a range of faces.
    * @tparam FaceRange range of face descriptors, model of Range.
-   * @param tm input triangle mesh
    * @param faces the range of faces to be fitted
+   * @param tm input triangle mesh
    * @return fitted proxy
    */
   template <typename FaceRange>
-  Proxy fit_proxy(const TriangleMesh &tm, const FaceRange &faces) const {
+  Proxy fit_proxy(const FaceRange &faces, const TriangleMesh &tm) const {
     (void)(tm);
     CGAL_assertion(!faces.empty());
 

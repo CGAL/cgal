@@ -29,11 +29,11 @@ public:
   FT compute_error(const TriangleMesh &tm, const face_descriptor &f, const Proxy &proxy) const;
 
   /// Computes and returns fitted proxy from a range of faces.
-  /// @tparam FaceRange range of
-  ///   `boost::graph_traits<TriangleMesh>::%face_descriptor`, model of `Range`.
-  ///   Its iterator type is `InputIterator`.
+  /// @tparam FaceRange a range of
+  ///   `boost::graph_traits<TriangleMesh>::%face_descriptor` model of `ConstRange`
+  ///   with iterator type being model of `InputIterator`.
   template <typename FaceRange>
-  Proxy fit_proxy(const TriangleMesh &tm, const FaceRange &faces) const;
+  Proxy fit_proxy(const FaceRange &faces, const TriangleMesh &tm) const;
 
   /// }
 

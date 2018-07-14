@@ -43,7 +43,7 @@ struct Compact_metric_point_proxy
   // template functor to compute a best-fit 
   // proxy from a range of faces
   template <typename FaceRange>
-  Proxy fit_proxy(const Polyhedron &tm, const FaceRange &faces) const {
+  Proxy fit_proxy(const FaceRange &faces, const Polyhedron &tm) const {
     (void)(tm);
     // fitting center
     Vector center = CGAL::NULL_VECTOR;
