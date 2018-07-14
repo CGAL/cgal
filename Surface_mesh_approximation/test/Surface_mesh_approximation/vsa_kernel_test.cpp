@@ -30,7 +30,7 @@ int test() {
   std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles;
 
   CGAL::VSA::approximate_mesh(tm,
-    CGAL::VSA::parameters::max_nb_proxies(6).
+    CGAL::VSA::parameters::max_nb_of_proxies(6).
       nb_of_iterations(30).
       nb_of_relaxations(5).
       subdivision_ratio(0.5).

@@ -66,7 +66,7 @@ unspecified_type all_default();
  *  \cgalParamEnd
  *  \cgalParamBegin{seeding_method} selection of seeding method.
  *  \cgalParamEnd
- *  \cgalParamBegin{max_nb_proxies} maximum number of proxies to approximate the input mesh.
+ *  \cgalParamBegin{max_nb_of_proxies} maximum number of proxies to approximate the input mesh.
  *  \cgalParamEnd
  *  \cgalParamBegin{min_error_drop} minimum error drop of the approximation, expressed in ratio between two iterations of proxy addition.
  *  \cgalParamEnd
@@ -76,14 +76,14 @@ unspecified_type all_default();
  *  \cgalParamEnd
  *  \cgalParamBegin{subdivision_ratio} chord subdivision ratio threshold to the chord length or average edge length.
  *  \cgalParamEnd
- *  \cgalParamBegin{relative_to_chord} set `true` if the subdivision_ratio is the ratio of the
- *    furthest vertex distance to the chord length, or to the average edge length otherwise.
+ *  \cgalParamBegin{relative_to_chord} if `true` the `subdivision_ratio` is the ratio of the
+ *    furthest vertex distance to the chord length, otherwise is the average edge length.
  *  \cgalParamEnd
- *  \cgalParamBegin{with_dihedral_angle}  set `true` if subdivision_ratio is weighted by dihedral angle, `false` otherwise.
+ *  \cgalParamBegin{with_dihedral_angle} if `true` the `subdivision_ratio` is weighted by dihedral angle, `false` otherwise.
  *  \cgalParamEnd
- *  \cgalParamBegin{optimize_anchor_location}  set `true` if optimize the anchor locations, `false` otherwise.
+ *  \cgalParamBegin{optimize_anchor_location} if `true` optimize the anchor locations, `false` otherwise.
  *  \cgalParamEnd
- *  \cgalParamBegin{pca_plane}  set `true` if use PCA plane fitting, otherwise use the default area averaged plane parameters.
+ *  \cgalParamBegin{pca_plane} set `true` if use PCA plane fitting, otherwise use the default area averaged plane parameters.
  *  \cgalParamEnd
  *  \cgalParamBegin{facet_proxy_map} a ReadWritePropertyMap with
  * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type.
@@ -131,8 +131,8 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
   // hierarchical seeding by default
   CGAL::VSA::Seeding_method method = choose_param(
     get_param(np, vsa_np::seeding_method), CGAL::VSA::Hierarchical);
-  boost::optional<std::size_t> max_nb_proxies = choose_param(
-    get_param(np, vsa_np::max_nb_proxies), boost::optional<std::size_t>());
+  boost::optional<std::size_t> max_nb_of_proxies = choose_param(
+    get_param(np, vsa_np::max_nb_of_proxies), boost::optional<std::size_t>());
   boost::optional<FT> min_error_drop = choose_param(
     get_param(np, vsa_np::min_error_drop), boost::optional<FT>());
   std::size_t nb_of_relaxations = choose_param(get_param(np, vsa_np::nb_of_relaxations), 5);
@@ -140,18 +140,18 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
   if (vl == CGAL::VSA::Verbose) {
     std::cout << (method == CGAL::VSA::Random ? "Random" :
       (method == CGAL::VSA::Incremental ? "Incremental" : "Hierarchical")) << " seeding.";
-    std::cout << "\n#max_nb_proxies = " << *max_nb_proxies
+    std::cout << "\n#max_nb_of_proxies = " << *max_nb_of_proxies
       << "\n#min_error_drop = " << *min_error_drop
       << "\nnb_of_relaxations " << nb_of_relaxations << std::endl;
   }
 
-  approx.seeding(method, max_nb_proxies, min_error_drop, nb_of_relaxations);
+  approx.seeding(method, max_nb_of_proxies, min_error_drop, nb_of_relaxations);
 
   if (vl == CGAL::VSA::Main_steps || vl == CGAL::VSA::Verbose)
     std::cout << "Seeding done." << std::endl;
 
   // default number of iterations
-  std::size_t nb_of_iterations_default = max_nb_proxies ? num_faces(tm) / *max_nb_proxies : 30;
+  std::size_t nb_of_iterations_default = max_nb_of_proxies ? num_faces(tm) / *max_nb_of_proxies : 30;
   nb_of_iterations_default = (std::min)((std::max)(
     nb_of_iterations_default, static_cast<std::size_t>(20)), static_cast<std::size_t>(60));
   const std::size_t nb_of_iterations = choose_param(
