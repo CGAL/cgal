@@ -71,7 +71,7 @@ typename CGAL::Kernel_traits<
 \cgalNPBegin{verbose_level} \anchor VSA_verbose_level
 set the verbose level of the function.\n
 \b Type : \c CGAL::Approximation_verbose_level \n
-\b Default value is `CGAL::Approximation_verbose_level::Main_steps`
+\b Default value is `CGAL::Silent`
 \cgalNPEnd
 
 \cgalNPBegin{seeding_method} \anchor VSA_seeding_method

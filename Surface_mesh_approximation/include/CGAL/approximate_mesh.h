@@ -65,6 +65,8 @@ unspecified_type all_default();
  *  \cgalParamBegin{vertex_point_map} the property map with the points associated
  *    to the vertices of `tm`. Instance of a class model of `ReadablePropertyMap`.
  *  \cgalParamEnd
+ *  \cgalParamBegin{verbose_level} set verbose level.
+ *  \cgalParamEnd
  *  \cgalParamBegin{seeding_method} selection of seeding method.
  *  \cgalParamEnd
  *  \cgalParamBegin{max_nb_proxies} maximum number of proxies to approximate the input mesh.
@@ -117,7 +119,7 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
   typedef typename L21_approx::Error_metric L21_metric;
 
   const Approximation_verbose_level vl = choose_param(
-    get_param(np, vsa_np::verbose_level), CGAL::Main_steps);
+    get_param(np, vsa_np::verbose_level), CGAL::Silent);
 
   if (vl == CGAL::Main_steps || vl == CGAL::Verbose) {
     std::cout << "Variational shape approximation:"

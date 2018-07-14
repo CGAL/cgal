@@ -21,7 +21,8 @@ int main()
 
   // free function interface with named parameters
   CGAL::approximate_mesh(input,
-    CGAL::VSA::parameters::max_nb_proxies(200).
+    CGAL::VSA::parameters::verbose_level(CGAL::Main_steps).
+    max_nb_proxies(200).
     anchors(std::back_inserter(anchors)). // anchor points
     triangles(std::back_inserter(triangles))); // indexed triangles
 

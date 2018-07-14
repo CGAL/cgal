@@ -34,8 +34,7 @@ int main()
   std::cout << "#anchor vertices: " << anchors.size() << std::endl;
   std::cout << "#triangles: " << triangles.size() << std::endl;
 
-  if (is_manifold)
-  {
+  if (is_manifold) {
     std::cout << "oriented, 2-manifold output." << std::endl;
 
     // convert from soup to polyhedron mesh
