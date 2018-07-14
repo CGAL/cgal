@@ -133,26 +133,26 @@ set the plane approximated with the PCA algorithm in the meshing step.\n
 \b Default value is `false`
 \cgalNPEnd
 
-\cgalNPBegin{facet_proxy_map} \anchor VSA_facet_proxy_map
+\cgalNPBegin{face_proxy_map} \anchor VSA_face_proxy_map
 the property map outputs the proxy index of each face of the input polygon mesh.\n
 \b Type: a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as key type and the value type `std::size_t`\n
 \b Default : if this parameter is omitted, no output operation is performed
 \cgalNPEnd
 
 \cgalNPBegin{proxies} \anchor VSA_proxies
-an `OutputIterator` to write proxies in.\n
+an `OutputIterator` to put proxies in.\n
 \b Type : a class model of `OutputIterator` with `CGAL::VSA::L21_metric_vector_proxy_no_area_weighting::Proxy` value type.\n
 \b Default : if this parameter is omitted, no output operation is performed
 \cgalNPEnd
 
 \cgalNPBegin{anchors} \anchor VSA_anchors
-an `OutputIterator` to write anchor points in.\n
+an `OutputIterator` to put anchor points in.\n
 \b Type : a class model of `OutputIterator` with `GeomTraits::%Point_3` value type.\n
 \b Default : if this parameter is omitted, no output operation is performed
 \cgalNPEnd
 
 \cgalNPBegin{triangles} \anchor VSA_triangles
-an `OutputIterator` to write indexed triangles in.\n
+an `OutputIterator` to put indexed triangles in.\n
 \b Type : a class model of `OutputIterator` with `CGAL::cpp11::array<std::size_t, 3>` value type.\n
 \b Default : if this parameter is omitted, no output operation is performed
 \cgalNPEnd

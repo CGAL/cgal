@@ -17,7 +17,7 @@ CGAL_add_named_parameter(optimize_anchor_location_t, optimize_anchor_location, o
 CGAL_add_named_parameter(pca_plane_t, pca_plane, pca_plane)
 
 // output parameters
-CGAL_add_named_parameter(facet_proxy_map_t, facet_proxy_map, facet_proxy_map)
+CGAL_add_named_parameter(face_proxy_map_t, face_proxy_map, face_proxy_map)
 CGAL_add_named_parameter(proxies_t, proxies, proxies)
 CGAL_add_named_parameter(anchors_t, anchors, anchors)
 CGAL_add_named_parameter(triangles_t, triangles, triangles)

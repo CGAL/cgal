@@ -36,7 +36,7 @@ int main()
     CGAL::VSA::parameters::min_error_drop(0.05). // seeding with minimum error drop
     nb_of_iterations(40). // set number of clustering iterations after seeding
     subdivision_ratio(0.3). // set chord subdivision ratio threshold when meshing
-    facet_proxy_map(fpxmap). // get facet partition map
+    face_proxy_map(fpxmap). // get facet partition map
     proxies(std::back_inserter(proxies)). // output proxies
     anchors(std::back_inserter(anchors)). // output anchor points
     triangles(std::back_inserter(triangles))); // output indexed triangles

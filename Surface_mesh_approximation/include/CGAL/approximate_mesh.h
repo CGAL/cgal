@@ -85,7 +85,7 @@ unspecified_type all_default();
  *  \cgalParamEnd
  *  \cgalParamBegin{pca_plane} set `true` if use PCA plane fitting, otherwise use the default area averaged plane parameters.
  *  \cgalParamEnd
- *  \cgalParamBegin{facet_proxy_map} a ReadWritePropertyMap with
+ *  \cgalParamBegin{face_proxy_map} a ReadWritePropertyMap with
  * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type.
  * A proxy is a set of connected facets which are placed under the same proxy patch (see \cgalFigureRef{iterations}).
  * The proxy-ids are contiguous in range [0, number_of_proxies - 1].
@@ -169,12 +169,12 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
 
   // get proxy map
   typedef typename boost::lookup_named_param_def<
-    vsa_np::facet_proxy_map_t,
+    vsa_np::face_proxy_map_t,
     NamedParameters,
     vsa_np::dummy_output_t>::type Face_proxy_map;
   Face_proxy_map fproxymap = choose_param(
-    get_param(np, vsa_np::facet_proxy_map), vsa_np::dummy_output);
-  vsa_np::facet_proxy_map_helper(approx, fproxymap);
+    get_param(np, vsa_np::face_proxy_map), vsa_np::dummy_output);
+  vsa_np::face_proxy_map_helper(approx, fproxymap);
 
   if (!boost::is_same<Face_proxy_map, vsa_np::dummy_output_t>::value
     && (vl == CGAL::VSA::Main_steps || vl == CGAL::VSA::Verbose))

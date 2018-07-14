@@ -37,7 +37,7 @@ int main()
     min_error_drop(0.05). // and minimum error drop stop criterion are specified
     nb_of_iterations(30). // number of clustering iterations after seeding
     nb_of_relaxations(5). // number of relaxations in seeding
-    facet_proxy_map(fpxmap). // output indexed face set
+    face_proxy_map(fpxmap). // output indexed face set
     proxies(std::back_inserter(proxies))); // number of iterations after seeding
 
   return EXIT_SUCCESS;

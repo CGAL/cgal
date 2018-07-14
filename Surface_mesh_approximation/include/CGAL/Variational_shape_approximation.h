@@ -938,12 +938,12 @@ public:
    * @brief Gets the facet-proxy index map.
    * @tparam FacetProxyMap `WritablePropertyMap` with
    * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type
-   * @param[out] facet_proxy_map facet proxy index map
+   * @param[out] face_proxy_map facet proxy index map
    */
   template <typename FacetProxyMap>
-  void proxy_map(FacetProxyMap &facet_proxy_map) const {
+  void proxy_map(FacetProxyMap &face_proxy_map) const {
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
-      facet_proxy_map[f] = get(m_fproxy_map, f);
+      face_proxy_map[f] = get(m_fproxy_map, f);
   }
 
   /*!

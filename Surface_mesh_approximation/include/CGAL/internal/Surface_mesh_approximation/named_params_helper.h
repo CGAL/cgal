@@ -76,12 +76,12 @@ public:
 
 // output helper functions
 template <typename Approximation, typename FacetProxyMap>
-void facet_proxy_map_helper(const Approximation &approx, FacetProxyMap fproxymap) {
+void face_proxy_map_helper(const Approximation &approx, FacetProxyMap fproxymap) {
   approx.proxy_map(fproxymap);
 }
 
 template <typename Approximation>
-void facet_proxy_map_helper(const Approximation &, internal_np::dummy_output_t) {}
+void face_proxy_map_helper(const Approximation &, internal_np::dummy_output_t) {}
 
 // proxies
 

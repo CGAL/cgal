@@ -35,7 +35,7 @@ int main()
       nb_of_iterations(30).
       nb_of_relaxations(5).
       subdivision_ratio(0.5).
-      facet_proxy_map(fpxmap).
+      face_proxy_map(fpxmap).
       proxies(std::back_inserter(proxies)).
       anchors(std::back_inserter(points)).
       triangles(std::back_inserter(triangles)));

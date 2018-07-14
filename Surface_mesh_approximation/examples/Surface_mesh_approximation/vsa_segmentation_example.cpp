@@ -30,7 +30,7 @@ int main()
   CGAL::VSA::parameters::max_nb_of_proxies(200). // first stop criterion
     min_error_drop(0.05). // second stop criterion
     nb_of_iterations(30). // number of relaxation iterations after seeding
-    facet_proxy_map(fpxmap)); // output facet-proxy map
+    face_proxy_map(fpxmap)); // output facet-proxy map
 
   // iterates over facets and outputs segment id to console
   BOOST_FOREACH(Face_descriptor f, faces(input))
