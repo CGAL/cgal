@@ -77,7 +77,7 @@ public:
    * @param px proxy
    * @return computed error
    */
-  FT compute_error(const TriangleMesh &tm, const face_descriptor &f, const Proxy &px) const {
+  FT compute_error(const TriangleMesh &tm, const face_descriptor f, const Proxy &px) const {
     (void)(tm);
     halfedge_descriptor he = halfedge(f, *m_tm);
     const Point_3 &p0 = m_vpmap[source(he, *m_tm)];
@@ -110,7 +110,7 @@ public:
     CGAL_assertion(!faces.empty());
 
     std::list<Triangle_3> tris;
-    BOOST_FOREACH(const face_descriptor &f, faces) {
+    BOOST_FOREACH(const face_descriptor f, faces) {
       const halfedge_descriptor he = halfedge(f, *m_tm);
       const Point_3 &p0 = m_vpmap[source(he, *m_tm)];
       const Point_3 &p1 = m_vpmap[target(he, *m_tm)];

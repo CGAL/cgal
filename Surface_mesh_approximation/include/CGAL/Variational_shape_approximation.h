@@ -134,7 +134,7 @@ public:
 #endif
   // The proxy wrapper for approximation.
   struct Proxy_wrapper {
-    Proxy_wrapper(const Proxy &p, const std::size_t &i, const face_descriptor &s, const FT &e)
+    Proxy_wrapper(const Proxy &p, const std::size_t &i, const face_descriptor s, const FT &e)
       : px(p), idx(i), seed(s), err(e) {}
 
     Proxy px; // parameterized proxy
@@ -158,7 +158,7 @@ private:
 
   // The facet candidate to be queued.
   struct Facet_to_integrate {
-    Facet_to_integrate(const face_descriptor &f_, const std::size_t &px_, const FT &err_)
+    Facet_to_integrate(const face_descriptor f_, const std::size_t &px_, const FT &err_)
       : f(f_), px(px_), err(err_) {}
 
     bool operator<(const Facet_to_integrate &rhs) const {

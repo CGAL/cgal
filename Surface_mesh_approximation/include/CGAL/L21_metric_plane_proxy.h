@@ -85,7 +85,7 @@ public:
    * @param px proxy
    * @return computed error
    */
-  FT compute_error(const TriangleMesh &tm, const face_descriptor &f, const Proxy &px) const {
+  FT compute_error(const TriangleMesh &tm, const face_descriptor f, const Proxy &px) const {
     (void)(tm);
     Vector_3 v = m_sum_functor(get(m_fnmap, f), m_scale_functor(px, FT(-1.0)));
     return get(m_famap, f) * m_scalar_product_functor(v, v);
@@ -105,7 +105,7 @@ public:
 
     // fitting normal
     Vector_3 norm = CGAL::NULL_VECTOR;
-    BOOST_FOREACH(const face_descriptor &f, faces) {
+    BOOST_FOREACH(const face_descriptor f, faces) {
       norm = m_sum_functor(norm,
         m_scale_functor(get(m_fnmap, f), get(m_famap, f)));
     }
