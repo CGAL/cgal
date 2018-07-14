@@ -62,7 +62,7 @@ enum Approximation_seeding_tag {
 /// @tparam TriangleMesh a model of `FaceListGraph`
 /// @tparam VertexPointMap a `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and `GeomTraits::Point_3` as value type
 /// @tparam ErrorMetricProxy a model of `ErrorMetricProxy`
-/// @tparam GeomTraits model of \cgal Kernel
+/// @tparam GeomTraits a model of Kernel
 /// @tparam Concurrency_tag concurrency tag.
 template <typename TriangleMesh,
   typename VertexPointMap,

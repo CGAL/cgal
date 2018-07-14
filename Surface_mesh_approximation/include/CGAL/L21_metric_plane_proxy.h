@@ -17,10 +17,10 @@ namespace VSA {
 ///
 /// \cgalModels `ErrorMetricProxy`
 ///
-/// @tparam TriangleMesh a triangle `FaceListGraph`
+/// @tparam TriangleMesh a triangle `FaceGraph`
 /// @tparam VertexPointMap a property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 ///    as key type, GeomTraits::Point_3 as value type
-/// @tparam GeomTraits model of \cgal Kernel
+/// @tparam GeomTraits a model of Kernel
 template <typename TriangleMesh,
   typename VertexPointMap
     = typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type,
@@ -77,7 +77,6 @@ public:
   }
   /// @}
 
-  /// \name Operations
   /*!
    * @brief Computes the L2,1 error from a facet to a proxy. 
    * @param tm input triangle mesh
@@ -114,7 +113,6 @@ public:
 
     return norm;
   }
-  /// @}
 
 private:
   Face_normal_map m_fnmap;
