@@ -158,16 +158,16 @@ private:
     FT area;
   };
 
-  // The facet candidate to be queued.
-  struct Facet_to_integrate {
-    Facet_to_integrate(const face_descriptor f_, const std::size_t &px_, const FT &err_)
+  // The face candidate to be queued.
+  struct Face_to_integrate {
+    Face_to_integrate(const face_descriptor f_, const std::size_t &px_, const FT &err_)
       : f(f_), px(px_), err(err_) {}
 
-    bool operator<(const Facet_to_integrate &rhs) const {
+    bool operator<(const Face_to_integrate &rhs) const {
       return err > rhs.err;
     }
 
-    face_descriptor f; // facet
+    face_descriptor f; // face
     std::size_t px; // proxy index
     FT err; // fitting error
   };
@@ -253,7 +253,7 @@ private:
   Compute_scalar_product_3 scalar_product_functor;
   Construct_translated_point_3 translate_point_functor;
 
-  // The facet proxy index map.
+  // The face proxy index map.
   Face_proxy_map m_fproxy_map;
   // The attached anchor index of a vertex.
   Vertex_anchor_map m_vanchor_map;
@@ -563,18 +563,18 @@ public:
     if (avg_error <= 0.0) {
       // rare case on extremely regular geometry like a cube
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
-      std::cerr << "zero error, diffuse w.r.t. number of facets" << std::endl;
+      std::cerr << "zero error, diffuse w.r.t. number of faces" << std::endl;
 #endif
-      const double avg_facet =
+      const double avg_face =
         static_cast<double>(num_faces(*m_ptm)) / static_cast<double>(num_proxies);
       std::vector<double> px_size(m_proxies.size(), 0.0);
       BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
         px_size[get(m_fproxy_map, f)] += 1.0;
       double residual = 0.0;
       for (std::size_t i = 0; i < m_proxies.size(); ++i) {
-        const double to_add = (residual + px_size[i]) / avg_facet;
+        const double to_add = (residual + px_size[i]) / avg_face;
         const double to_add_round_up = std::floor(to_add + 0.5);
-        residual = (to_add - to_add_round_up) * avg_facet;
+        residual = (to_add - to_add_round_up) * avg_face;
         num_to_add[i] = static_cast<std::size_t>(to_add_round_up);
       }
     }
@@ -671,7 +671,7 @@ public:
       if (px_worst == px_enlarged || px_worst == px_merged)
         return num_teleported;
 
-      // teleport to a facet of the worst region
+      // teleport to a face of the worst region
       // update merged proxies
       std::list<face_descriptor> merged_patch;
       BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
@@ -683,7 +683,7 @@ public:
       }
       m_proxies[px_enlarged] = fit_proxy_from_patch(merged_patch, px_enlarged);
       // replace the merged proxy position to the newly teleported proxy
-      m_proxies[px_merged] = fit_proxy_from_facet(tele_to, px_merged);
+      m_proxies[px_merged] = fit_proxy_from_face(tele_to, px_merged);
 
       num_teleported++;
       // coarse re-fitting
@@ -726,7 +726,7 @@ public:
     m_proxies.erase(m_proxies.begin() + px1);
     for (std::size_t i = 0; i < m_proxies.size(); ++i)
       m_proxies[i].idx = i;
-    // keep facet proxy map valid
+    // keep face proxy map valid
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
       if (get(m_fproxy_map, f) > px1)
         put(m_fproxy_map, f, get(m_fproxy_map, f) - 1);
@@ -755,9 +755,9 @@ public:
     typedef std::pair<std::size_t, std::size_t> ProxyPair;
     typedef std::set<ProxyPair> MergedPair;
 
-    std::vector<std::list<face_descriptor> > px_facets(m_proxies.size());
+    std::vector<std::list<face_descriptor> > px_faces(m_proxies.size());
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
-      px_facets[get(m_fproxy_map, f)].push_back(f);
+      px_faces[get(m_fproxy_map, f)].push_back(f);
 
     // find best merge
     MergedPair merged_set;
@@ -777,8 +777,8 @@ public:
 
       merged_set.insert(ProxyPair(pxi, pxj));
       // simulated merge
-      std::list<face_descriptor> merged_patch(px_facets[pxi]);
-      BOOST_FOREACH(face_descriptor f, px_facets[pxj])
+      std::list<face_descriptor> merged_patch(px_faces[pxi]);
+      BOOST_FOREACH(face_descriptor f, px_faces[pxj])
         merged_patch.push_back(f);
       Proxy_wrapper pxw_tmp = fit_proxy_from_patch(merged_patch, CGAL_VSA_INVALID_TAG);
 
@@ -826,7 +826,7 @@ public:
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
       if (get(m_fproxy_map, f) == px_idx)
         confined_area.push_back(f);
-    // not enough facets to split
+    // not enough faces to split
     if (n > confined_area.size())
       return false;
 
@@ -834,7 +834,7 @@ public:
     std::vector<Proxy_wrapper> confined_proxies;
     confined_proxies.push_back(m_proxies[px_idx]);
 
-    // select seed facets in the confined area
+    // select seed faces in the confined area
     std::size_t count = 1;
     BOOST_FOREACH(face_descriptor f, confined_area) {
       if (count >= n)
@@ -935,19 +935,19 @@ public:
   /// \name Output
   /// @{
   /*!
-   * @brief Gets the facet-proxy index map.
-   * @tparam FacetProxyMap `WritablePropertyMap` with
+   * @brief Gets the face-proxy index map.
+   * @tparam FaceProxyMap `WritablePropertyMap` with
    * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type
-   * @param[out] face_proxy_map facet proxy index map
+   * @param[out] face_proxy_map face proxy index map
    */
-  template <typename FacetProxyMap>
-  void proxy_map(FacetProxyMap &face_proxy_map) const {
+  template <typename FaceProxyMap>
+  void proxy_map(FaceProxyMap &face_proxy_map) const {
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
       face_proxy_map[f] = get(m_fproxy_map, f);
   }
 
   /*!
-   * @brief Gets the facet region of the specified proxy.
+   * @brief Gets the face region of the specified proxy.
    * @tparam OutputIterator output iterator with `boost::graph_traits<TriangleMesh>::%face_descriptor` as value type
    * @param px_idx proxy index
    * @param out output iterator
@@ -1057,9 +1057,9 @@ private:
    */
   std::size_t init_random(const std::size_t max_nb_of_proxies,
     const std::size_t num_iterations) {
-    // pick from current non seed facets randomly
+    // pick from current non seed faces randomly
     std::vector<face_descriptor> picked_seeds;
-    if (random_pick_non_seed_facets(max_nb_of_proxies - m_proxies.size(), picked_seeds)) {
+    if (random_pick_non_seed_faces(max_nb_of_proxies - m_proxies.size(), picked_seeds)) {
       BOOST_FOREACH(face_descriptor f, picked_seeds)
         add_one_proxy_at(f);
       run(num_iterations);
@@ -1131,9 +1131,9 @@ private:
       const std::size_t nb_to_add =
         (nb_px * 2 > max_nb_of_proxies) ? max_nb_of_proxies - nb_px : nb_px;
 
-      // pick from current non seed facets randomly
+      // pick from current non seed faces randomly
       std::vector<face_descriptor> picked_seeds;
-      if (!random_pick_non_seed_facets(nb_to_add, picked_seeds))
+      if (!random_pick_non_seed_faces(nb_to_add, picked_seeds))
         return m_proxies.size();
 
       BOOST_FOREACH(face_descriptor f, picked_seeds)
@@ -1198,15 +1198,15 @@ private:
   }
 
   /*!
-   * @brief Partitions the area tagged with CGAL_VSA_INVALID_TAG with proxies, global facet proxy map is updated.
-   * Propagates the proxy seed facets and floods the tagged area to minimize the fitting error.
+   * @brief Partitions the area tagged with CGAL_VSA_INVALID_TAG with proxies, global face proxy map is updated.
+   * Propagates the proxy seed faces and floods the tagged area to minimize the fitting error.
    * @tparam ProxyWrapperIterator forward iterator with Proxy_wrapper as value type
    * @param beg iterator point to the first element
    * @param end iterator point to the one past the last element
    */
   template<typename ProxyWrapperIterator>
   void partition(const ProxyWrapperIterator beg, const ProxyWrapperIterator end) {
-    std::priority_queue<Facet_to_integrate> facet_pqueue;
+    std::priority_queue<Face_to_integrate> face_pqueue;
     for (ProxyWrapperIterator pxw_itr = beg; pxw_itr != end; ++pxw_itr) {
       face_descriptor f = pxw_itr->seed;
       put(m_fproxy_map, f, pxw_itr->idx);
@@ -1214,21 +1214,21 @@ private:
       BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(f, *m_ptm), *m_ptm)) {
         if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && get(m_fproxy_map, fadj) == CGAL_VSA_INVALID_TAG) {
-          facet_pqueue.push(Facet_to_integrate(
+          face_pqueue.push(Face_to_integrate(
             fadj, pxw_itr->idx, m_metric->compute_error(*m_ptm, fadj, pxw_itr->px)));
         }
       }
     }
 
-    while (!facet_pqueue.empty()) {
-      const Facet_to_integrate c = facet_pqueue.top();
-      facet_pqueue.pop();
+    while (!face_pqueue.empty()) {
+      const Face_to_integrate c = face_pqueue.top();
+      face_pqueue.pop();
       if (get(m_fproxy_map, c.f) == CGAL_VSA_INVALID_TAG) {
         put(m_fproxy_map, c.f, c.px);
         BOOST_FOREACH(face_descriptor fadj, faces_around_face(halfedge(c.f, *m_ptm), *m_ptm)) {
           if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && get(m_fproxy_map, fadj) == CGAL_VSA_INVALID_TAG) {
-            facet_pqueue.push(Facet_to_integrate(
+            face_pqueue.push(Face_to_integrate(
               fadj, c.px, m_metric->compute_error(*m_ptm, fadj, m_proxies[c.px].px)));
           }
         }
@@ -1245,14 +1245,14 @@ private:
    */
   template<typename ProxyWrapperIterator>
   void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Sequential_tag &) {
-    std::vector<std::list<face_descriptor> > px_facets(m_proxies.size());
+    std::vector<std::list<face_descriptor> > px_faces(m_proxies.size());
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
-      px_facets[get(m_fproxy_map, f)].push_back(f);
+      px_faces[get(m_fproxy_map, f)].push_back(f);
 
     // update proxy parameters and seed
     for (ProxyWrapperIterator pxw_itr = beg; pxw_itr != end; ++pxw_itr) {
       const std::size_t px_idx = pxw_itr->idx;
-      *pxw_itr = fit_proxy_from_patch(px_facets[px_idx], px_idx);
+      *pxw_itr = fit_proxy_from_patch(px_faces[px_idx], px_idx);
     }
   }
 
@@ -1266,23 +1266,23 @@ private:
    */
   template<typename ProxyWrapperIterator>
   void fit(const ProxyWrapperIterator beg, const ProxyWrapperIterator end, const CGAL::Parallel_tag &) {
-    std::vector<std::list<face_descriptor> > px_facets(m_proxies.size());
+    std::vector<std::list<face_descriptor> > px_faces(m_proxies.size());
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
-      px_facets[get(m_fproxy_map, f)].push_back(f);
+      px_faces[get(m_fproxy_map, f)].push_back(f);
 
     // update proxy parameters and seed
     tbb::parallel_for(tbb::blocked_range<ProxyWrapperIterator>(beg, end),
       [&](tbb::blocked_range<ProxyWrapperIterator> &r) {
         for (ProxyWrapperIterator pxw_itr = r.begin(); pxw_itr != r.end(); ++pxw_itr) {
           const std::size_t px_idx = pxw_itr->idx;
-          *pxw_itr = fit_proxy_from_patch(px_facets[px_idx], px_idx);
+          *pxw_itr = fit_proxy_from_patch(px_faces[px_idx], px_idx);
         }
       });
   }
 #endif // CGAL_LINKED_WITH_TBB
 
   /*!
-   * @brief Adds a proxy seed at the facet with the maximum fitting error.
+   * @brief Adds a proxy seed at the face with the maximum fitting error.
    * @return `true` add successfully, `false` otherwise
    */
   bool add_to_furthest_proxy() {
@@ -1323,16 +1323,16 @@ private:
 
   /*!
    * @brief Fits a new (wrapped) proxy from a region patch.
-   * 1. Compute proxy parameters from a list of facets.
-   * 2. Find proxy seed facet.
+   * 1. Compute proxy parameters from a list of faces.
+   * 2. Find proxy seed face.
    * 3. Sum the proxy error.
-   * @tparam FacetPatch container with `face_descriptor` as data type
+   * @tparam FacePatch container with `face_descriptor` as data type
    * @param px_patch proxy patch container
    * @param px_idx proxy index
    * @return fitted wrapped proxy
    */
-  template<typename FacetPatch>
-  Proxy_wrapper fit_proxy_from_patch(const FacetPatch &px_patch, const std::size_t px_idx) {
+  template<typename FacePatch>
+  Proxy_wrapper fit_proxy_from_patch(const FacePatch &px_patch, const std::size_t px_idx) {
     CGAL_assertion(!px_patch.empty());
 
     // use Proxy_fitting functor to fit proxy parameters
@@ -1355,25 +1355,25 @@ private:
   }
 
   /*!
-   * @brief Adds a proxy at facet f.
+   * @brief Adds a proxy at face f.
    * @param f where to the proxy is initialized from
    */
   void add_one_proxy_at(const face_descriptor f) {
-    m_proxies.push_back(fit_proxy_from_facet(f, m_proxies.size()));
+    m_proxies.push_back(fit_proxy_from_face(f, m_proxies.size()));
   }
 
   /*!
-   * @brief Fits a new (wrapped) proxy from a facet.
-   * 1. Compute proxy parameters from the facet.
-   * 2. Set seed to this facet.
+   * @brief Fits a new (wrapped) proxy from a face.
+   * 1. Compute proxy parameters from the face.
+   * 2. Set seed to this face.
    * 3. Update the proxy error.
    * 4. Update proxy map.
-   * @pre current facet proxy map is valid
-   * @param face_descriptor facet
+   * @pre current face proxy map is valid
+   * @param face_descriptor face
    * @param px_idx proxy index
    * @return fitted wrapped proxy
    */
-  Proxy_wrapper fit_proxy_from_facet(const face_descriptor f, const std::size_t px_idx) {
+  Proxy_wrapper fit_proxy_from_face(const face_descriptor f, const std::size_t px_idx) {
     // fit proxy parameters
     std::vector<face_descriptor> fvec(1, f);
     const Proxy px = m_metric->fit_proxy(fvec, *m_ptm);
@@ -1390,47 +1390,47 @@ private:
   }
 
   /*!
-   * @brief Picks a number of non-seed facets into an empty vector randomly.
-   * @param nb_requested requested number of facets
-   * @param[out] facets shuffled facets vector
-   * @return `true` if requested number of facets are selected, `false` otherwise
+   * @brief Picks a number of non-seed faces into an empty vector randomly.
+   * @param nb_requested requested number of faces
+   * @param[out] picked_faces shuffled faces vector
+   * @return `true` if requested number of faces are selected, `false` otherwise
    */
-  bool random_pick_non_seed_facets(const std::size_t nb_requested,
-    std::vector<face_descriptor> &facets) {
+  bool random_pick_non_seed_faces(const std::size_t nb_requested,
+    std::vector<face_descriptor> &picked_faces) {
     if (nb_requested + m_proxies.size() >= num_faces(*m_ptm))
       return false;
 
-    std::set<face_descriptor> seed_facets_set;
+    std::set<face_descriptor> seed_faces_set;
     BOOST_FOREACH(const Proxy_wrapper &pxw, m_proxies)
-      seed_facets_set.insert(pxw.seed);
+      seed_faces_set.insert(pxw.seed);
 
     const std::size_t nb_nsf = num_faces(*m_ptm) - m_proxies.size();
-    std::vector<face_descriptor> non_seed_facets;
-    non_seed_facets.reserve(nb_nsf);
+    std::vector<face_descriptor> non_seed_faces;
+    non_seed_faces.reserve(nb_nsf);
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
-      if (seed_facets_set.find(f) != seed_facets_set.end())
+      if (seed_faces_set.find(f) != seed_faces_set.end())
         continue;
-      non_seed_facets.push_back(f);
+      non_seed_faces.push_back(f);
     }
 
-    // random shuffle first few facets
+    // random shuffle first few faces
     for (std::size_t i = 0; i < nb_requested; ++i) {
       // swap ith element with a random one
       std::size_t r = static_cast<std::size_t>(
         static_cast<double>(std::rand()) / static_cast<double>(RAND_MAX) * 
         static_cast<double>(nb_nsf - 1));
-      std::swap(non_seed_facets[i], non_seed_facets[r]);
+      std::swap(non_seed_faces[i], non_seed_faces[r]);
     }
 
     for (std::size_t i = 0; i < nb_requested; ++i)
-      facets.push_back(non_seed_facets[i]);
+      picked_faces.push_back(non_seed_faces[i]);
 
     return true;
   }
 
   /*!
    * @brief Initializes proxies from each connected component of the input mesh.
-   * @note This function clears proxy vector and sets facet proxy map to initial state,
+   * @note This function clears proxy vector and sets face proxy map to initial state,
    * intended only for bootstrapping initialization.
    * Coarse approximation iteration is not performed, because it is inaccurate anyway
    * and may yield degenerate cases (e.g. a standard cube model).
@@ -1444,19 +1444,19 @@ private:
     std::vector<std::list<face_descriptor> > cc_patches;
     bool if_all_visited = false;
     std::size_t cc_idx = 0;
-    face_descriptor seed_facet = *(faces(*m_ptm).first);
+    face_descriptor seed_face = *(faces(*m_ptm).first);
     while (!if_all_visited) {
-      // use current seed facet to traverse the conneceted componnets
+      // use current seed face to traverse the conneceted componnets
       std::list<face_descriptor> cc_patch;
-      cc_patch.push_back(seed_facet);
+      cc_patch.push_back(seed_face);
       std::stack<face_descriptor> fstack;
-      fstack.push(seed_facet);
-      put(m_fproxy_map, seed_facet, cc_idx);
+      fstack.push(seed_face);
+      put(m_fproxy_map, seed_face, cc_idx);
       while (!fstack.empty()) {
-        face_descriptor active_facet = fstack.top();
+        face_descriptor active_face = fstack.top();
         fstack.pop();
         BOOST_FOREACH(face_descriptor fadj,
-          faces_around_face(halfedge(active_facet, *m_ptm), *m_ptm)) {
+          faces_around_face(halfedge(active_face, *m_ptm), *m_ptm)) {
           if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && get(m_fproxy_map, fadj) == CGAL_VSA_INVALID_TAG) {
             cc_patch.push_back(fadj);
@@ -1472,7 +1472,7 @@ private:
         if (get(m_fproxy_map, f) == CGAL_VSA_INVALID_TAG) {
           if_all_visited = false;
           ++cc_idx;
-          seed_facet = f;
+          seed_face = f;
           break;
         }
       }
@@ -1494,11 +1494,11 @@ private:
    */
   void compute_proxy_planes(const bool if_pca_plane) {
     // fit proxy planes, areas, normals
-    std::vector<std::list<face_descriptor> > px_facets(m_proxies.size());
+    std::vector<std::list<face_descriptor> > px_faces(m_proxies.size());
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
-      px_facets[get(m_fproxy_map, f)].push_back(f);
+      px_faces[get(m_fproxy_map, f)].push_back(f);
 
-    BOOST_FOREACH(const std::list<face_descriptor> &px_patch, px_facets) {
+    BOOST_FOREACH(const std::list<face_descriptor> &px_patch, px_faces) {
       Plane_3 fit_plane = if_pca_plane ? 
         fit_plane_pca(px_patch.begin(), px_patch.end()) :
           fit_plane_area_averaged(px_patch.begin(), px_patch.end());
@@ -2045,20 +2045,20 @@ private:
   }
 
   /*!
-   * @brief Fits an area averaged plane from a range of facets.
-   * @tparam FacetIterator face_descriptor container iterator
+   * @brief Fits an area averaged plane from a range of faces.
+   * @tparam FaceIterator face_descriptor container iterator
    * @param beg container begin
    * @param end container end
    * @return fitted plane
    */
-  template <typename FacetIterator>
-  Plane_3 fit_plane_area_averaged(const FacetIterator &beg, const FacetIterator &end) {
+  template <typename FaceIterator>
+  Plane_3 fit_plane_area_averaged(const FaceIterator &beg, const FaceIterator &end) {
     CGAL_assertion(beg != end);
     // area average normal and centroid
     Vector_3 norm = CGAL::NULL_VECTOR;
     Vector_3 cent = CGAL::NULL_VECTOR;
     FT sum_area(0.0);
-    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
+    for (FaceIterator fitr = beg; fitr != end; ++fitr) {
       const halfedge_descriptor he = halfedge(*fitr, *m_ptm);
       const Point_3 &p0 = m_vpoint_map[source(he, *m_ptm)];
       const Point_3 &p1 = m_vpoint_map[target(he, *m_ptm)];
@@ -2080,19 +2080,19 @@ private:
   }
 
   /*!
-   * @brief Fits a plane from a range of facets with PCA algorithm.
-   * @tparam FacetIterator face_descriptor container iterator
+   * @brief Fits a plane from a range of faces with PCA algorithm.
+   * @tparam FaceIterator face_descriptor container iterator
    * @param beg container begin
    * @param end container end
    * @return fitted plane
    */
-  template <typename FacetIterator>
-  Plane_3 fit_plane_pca(const FacetIterator &beg, const FacetIterator &end) {
+  template <typename FaceIterator>
+  Plane_3 fit_plane_pca(const FaceIterator &beg, const FaceIterator &end) {
     CGAL_assertion(beg != end);
 
     typedef typename Geom_traits::Triangle_3 Triangle_3;
     std::list<Triangle_3> tri_list;
-    for (FacetIterator fitr = beg; fitr != end; ++fitr) {
+    for (FaceIterator fitr = beg; fitr != end; ++fitr) {
       halfedge_descriptor he = halfedge(*fitr, *m_ptm);
       const Point_3 &p0 = m_vpoint_map[source(he, *m_ptm)];
       const Point_3 &p1 = m_vpoint_map[target(he, *m_ptm)];
