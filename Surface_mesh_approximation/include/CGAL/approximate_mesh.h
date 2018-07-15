@@ -55,7 +55,7 @@ unspecified_type all_default();
  * @param np optional sequence of \ref vsa_namedparameters among the ones listed below
  * @return `true` if the indexed triangles represent a 2-manifold, oriented surface mesh, and `false` otherwise. 
  *
- * \cgalNamedParamsBegin
+ * \cgalNamedParamsBegin{Algorithm Named Parameters}
  *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of Kernel.
  *    Exact constructions kernels are not supported by this function.
  *  \cgalParamEnd
@@ -74,6 +74,8 @@ unspecified_type all_default();
  *  \cgalParamEnd
  *  \cgalParamBegin{nb_of_relaxations} number of relaxation iterations interleaved within seeding.
  *  \cgalParamEnd
+ * \cgalNamedParamsEnd
+ * \cgalNamedParamsBegin{Meshing Named Parameters}
  *  \cgalParamBegin{subdivision_ratio} chord subdivision ratio threshold to the chord length or average edge length.
  *  \cgalParamEnd
  *  \cgalParamBegin{relative_to_chord} if `true` the `subdivision_ratio` is the ratio of the
@@ -85,6 +87,8 @@ unspecified_type all_default();
  *  \cgalParamEnd
  *  \cgalParamBegin{pca_plane} set `true` if use PCA plane fitting, otherwise use the default area averaged plane parameters.
  *  \cgalParamEnd
+ * \cgalNamedParamsEnd
+ * \cgalNamedParamsBegin{Output Named Parameters}
  *  \cgalParamBegin{face_proxy_map} a ReadWritePropertyMap with
  * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type.
  * A proxy is a set of connected faces which are placed under the same proxy patch (see \cgalFigureRef{iterations}).

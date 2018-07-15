@@ -45,7 +45,11 @@ In the following, we assume that the following types are provided as template pa
 <li>`GeomTraits` a geometric traits class in which constructions are performed and predicates evaluated. Throughout this package, a \cgal `Kernel` fulfills the requirements.
 </ul>
 
-Here is the list of the named parameters available in this package:
+The named parameters available in this package are grouped into 3 modules listed below.
+
+\defgroup vsa_np_algorithm Algorithm Parameters
+\ingroup vsa_namedparameters
+\cgalHeading{Parameters for the Approximation Step}
 
 \cgalNPTableBegin
 
@@ -104,6 +108,14 @@ the number of relaxation iterations interleaved within seeding.\n
 \b Default value is `5`
 \cgalNPEnd
 
+\cgalNPTableEnd
+
+\defgroup vsa_np_meshing Meshing Parameters
+\ingroup vsa_namedparameters
+\cgalHeading{Parameters for the Meshing Step}
+
+\cgalNPTableBegin
+
 \cgalNPBegin{subdivision_ratio} \anchor VSA_subdivision_ratio
 the chord subdivision ratio threshold used by the meshing step.\n
 \b Type : `GeomTraits::FT` \n
@@ -132,6 +144,14 @@ set the plane approximated with the PCA algorithm in the meshing step.\n
 \b Type : `bool` \n
 \b Default value is `false`
 \cgalNPEnd
+
+\cgalNPTableEnd
+
+\defgroup vsa_np_output Output Parameters
+\ingroup vsa_namedparameters
+\cgalHeading{Parameters for Retrieving the Results}
+
+\cgalNPTableBegin
 
 \cgalNPBegin{face_proxy_map} \anchor VSA_face_proxy_map
 the property map outputs the proxy index of each face of the input polygon mesh.\n

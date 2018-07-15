@@ -874,7 +874,7 @@ public:
    * @param np optional sequence of \ref vsa_namedparameters among the ones listed below
    * @return `true` if the extracted surface mesh is manifold, `false` otherwise.
    *
-   * \cgalNamedParamsBegin
+   * \cgalNamedParamsBegin{Meshing Named Parameters}
    *   \cgalParamBegin{subdivision_ratio} chord subdivision ratio threshold to the chord length or average edge length.
    *   \cgalParamEnd
    *   \cgalParamBegin{relative_to_chord} set `true` if the subdivision_ratio is the ratio of the
