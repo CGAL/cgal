@@ -95,7 +95,7 @@ the minimum total error drop to approximate the input mesh.\n
 \cgalNPBegin{nb_of_iterations} \anchor VSA_nb_of_iterations
 the number of partitioning and fitting iterations after seeding.\n
 \b Type : `std::size_t` \n
-\b Default value is `std::min(std::max(nb_of_facets / max_nb_of_proxies, 20), 60)`
+\b Default value is `std::min(std::max(nb_of_faces / max_nb_of_proxies, 20), 60)`
 \cgalNPEnd
 
 \cgalNPBegin{nb_of_relaxations} \anchor VSA_nb_of_relaxations

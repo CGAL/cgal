@@ -15,7 +15,7 @@ typedef Kernel::Point_3 Point;
 
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef Polyhedron::Facet_handle Facet_handle;
-typedef boost::associative_property_map<std::map<Facet_handle, std::size_t> > Facet_proxy_map;
+typedef boost::associative_property_map<std::map<Facet_handle, std::size_t> > Face_proxy_map;
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
 
 typedef CGAL::VSA::L2_metric_plane_proxy<Polyhedron> L2_metric_plane_proxy;
@@ -35,12 +35,12 @@ int main()
     return EXIT_FAILURE;
   }
 
-  // facet area map
-  std::map<Facet_handle, std::size_t> facet_index;
+  // face area map
+  std::map<Facet_handle, std::size_t> face_index;
   for (Polyhedron::Facet_iterator fitr = mesh.facets_begin();
     fitr != mesh.facets_end(); ++fitr)
-    facet_index.insert(std::pair<Facet_handle, std::size_t>(fitr, 0));
-  Facet_proxy_map proxy_pmap(facet_index);
+    face_index.insert(std::pair<Facet_handle, std::size_t>(fitr, 0));
+  Face_proxy_map proxy_pmap(face_index);
 
   // create L2_approx L2 metric approximation algorithm instance
   std::cout << "setup algorithm instance" << std::endl;
@@ -79,7 +79,7 @@ int main()
     return EXIT_FAILURE;
 
   // split proxy 0 into 2 proxies
-  // precondition: proxy 0 should have more than 2 facets
+  // precondition: proxy 0 should have more than 2 faces
   std::cout << "spliting" << std::endl;
   if (!approx.split(0, 2, 10))
     return EXIT_FAILURE;

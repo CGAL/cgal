@@ -18,8 +18,8 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef Polyhedron::Facet_handle Facet_handle;
 typedef Polyhedron::Halfedge_handle Halfedge_handle;
 typedef Polyhedron::Facet_iterator Facet_iterator;
-typedef boost::associative_property_map<std::map<Facet_handle, FT> > Facet_area_map;
-typedef boost::associative_property_map<std::map<Facet_handle, Point> > Facet_center_map;
+typedef boost::associative_property_map<std::map<Facet_handle, FT> > Face_area_map;
+typedef boost::associative_property_map<std::map<Facet_handle, Point> > Face_center_map;
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
 
 // user defined point-wise compact metric
@@ -28,12 +28,12 @@ struct Compact_metric_point_proxy {
   typedef Point Proxy;
 
   // we keep a precomputed property map to speed up computations
-  Compact_metric_point_proxy(const Facet_center_map &_center_pmap, const Facet_area_map &_area_pmap)
+  Compact_metric_point_proxy(const Face_center_map &_center_pmap, const Face_area_map &_area_pmap)
     : center_pmap(_center_pmap), area_pmap(_area_pmap) {}
 
-  // compute and return error from a facet to a proxy,
+  // compute and return error from a face to a proxy,
   // defined as the Euclidean distance between
-  // the facet center of mass and proxy point.
+  // the face center of mass and proxy point.
   FT compute_error(const Polyhedron &tm, const Facet_handle &f, const Proxy &px) const {
     (void)(tm);
     return FT(std::sqrt(CGAL::to_double(
@@ -41,7 +41,7 @@ struct Compact_metric_point_proxy {
   }
 
   // template functor to compute a best-fit 
-  // proxy from a range of facets
+  // proxy from a range of faces
   template <typename FaceRange>
   Proxy fit_proxy(const FaceRange &faces, const Polyhedron &tm) const {
     (void)(tm);
@@ -56,8 +56,8 @@ struct Compact_metric_point_proxy {
     return CGAL::ORIGIN + center;
   }
 
-  const Facet_center_map center_pmap;
-  const Facet_area_map area_pmap;
+  const Face_center_map center_pmap;
+  const Face_area_map area_pmap;
 };
 
 typedef CGAL::Variational_shape_approximation<
@@ -75,20 +75,20 @@ int main()
     return EXIT_FAILURE;
   }
 
-  // construct facet normal & area map
-  std::map<Facet_handle, FT> facet_areas;
-  std::map<Facet_handle, Point> facet_centers;
+  // construct face normal & area map
+  std::map<Facet_handle, FT> face_areas;
+  std::map<Facet_handle, Point> face_centers;
   for(Facet_iterator fitr = mesh.facets_begin(); fitr != mesh.facets_end(); ++fitr) {
     const Halfedge_handle he = fitr->halfedge();
     const Point &p0 = he->opposite()->vertex()->point();
     const Point &p1 = he->vertex()->point();
     const Point &p2 = he->next()->vertex()->point();
     FT area(std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
-    facet_areas.insert(std::pair<Facet_handle, FT>(fitr, area));
-    facet_centers.insert(std::pair<Facet_handle, Point>(fitr, CGAL::centroid(p0, p1, p2)));
+    face_areas.insert(std::pair<Facet_handle, FT>(fitr, area));
+    face_centers.insert(std::pair<Facet_handle, Point>(fitr, CGAL::centroid(p0, p1, p2)));
   }
-  Facet_area_map area_pmap(facet_areas);
-  Facet_center_map center_pmap(facet_centers);
+  Face_area_map area_pmap(face_areas);
+  Face_center_map center_pmap(face_centers);
 
   // create compact metric approximation algorithm instance
   std::cout << "create compact vas instance" << std::endl;

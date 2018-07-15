@@ -8,8 +8,8 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
-typedef boost::unordered_map<face_descriptor, std::size_t> Facet_index_map;
-typedef boost::associative_property_map<Facet_index_map> Facet_proxy_pmap;
+typedef boost::unordered_map<face_descriptor, std::size_t> Face_index_map;
+typedef boost::associative_property_map<Face_index_map> Face_proxy_pmap;
 
 /**
  * This file tests the free function CGAL::VSA::approximate_mesh.
@@ -23,10 +23,10 @@ int main()
     return EXIT_FAILURE;
   }
 
-  Facet_index_map fidx_map;
+  Face_index_map fidx_map;
   BOOST_FOREACH(face_descriptor f, faces(input))
     fidx_map[f] = 0;
-  Facet_proxy_pmap fpxmap(fidx_map);
+  Face_proxy_pmap fpxmap(fidx_map);
 
   std::vector<Kernel::Vector_3> proxies;
 

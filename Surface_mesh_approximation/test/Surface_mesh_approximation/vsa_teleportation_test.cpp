@@ -21,7 +21,7 @@ typedef Polyhedron::Facet_iterator Facet_iterator;
 typedef Polyhedron::Halfedge_handle Halfedge_handle;
 
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
-typedef boost::associative_property_map<std::map<Facet_handle, std::size_t> > Facet_proxy_map;
+typedef boost::associative_property_map<std::map<Facet_handle, std::size_t> > Face_proxy_map;
 
 typedef CGAL::Variational_shape_approximation<Polyhedron, Vertex_point_map> L21_approx;
 typedef L21_approx::Error_metric L21_metric;
@@ -94,7 +94,7 @@ int main()
   std::map<Facet_handle, std::size_t> internal_fidxmap;
   for (Facet_iterator fitr = mesh.facets_begin(); fitr != mesh.facets_end(); ++fitr)
     internal_fidxmap[fitr] = 0;
-  Facet_proxy_map fproxymap(internal_fidxmap);
+  Face_proxy_map fproxymap(internal_fidxmap);
   approx.proxy_map(fproxymap);
   std::vector<Plane_proxies> proxies;
   approx.proxies(std::back_inserter(proxies));
@@ -103,9 +103,9 @@ int main()
   const FT ymin = bbox.ymin(), ymax = bbox.ymax(), yrange = ymax - ymin;
   std::cout << "Range along y axis: [" << ymin << ", " << ymax << "]" << std::endl;
 
-  // test if all facets on the planar part are in the same proxy
+  // test if all faces on the planar part are in the same proxy
   std::size_t planar_pxidx = static_cast<std::size_t>(-1);
-  std::size_t num_planar_facets = 0;
+  std::size_t num_planar_faces = 0;
   bool first = true;
   for (Facet_iterator fitr = mesh.facets_begin(); fitr != mesh.facets_end(); ++fitr) {
     Halfedge_handle he = fitr->halfedge();
@@ -116,11 +116,11 @@ int main()
     Vector fnormal = CGAL::normal(p0, p1, p2);
     fnormal = fnormal / FT(std::sqrt(CGAL::to_double(fnormal.squared_length())));
 
-    // check the facet center and normal to see if it is on the planar part of the geometry
+    // check the face center and normal to see if it is on the planar part of the geometry
     double dis_var = std::abs(CGAL::to_double((fcenter.y() - ymin) / yrange));
     double dir_var = std::abs(CGAL::to_double(fnormal.y()) - 1.0);
     if (dis_var < CGAL_VSA_TEST_TOLERANCE && dir_var < CGAL_VSA_TEST_TOLERANCE) {
-      ++num_planar_facets;
+      ++num_planar_faces;
       const std::size_t pxidx = fproxymap[fitr];
       if (first) {
         first = false;
@@ -134,9 +134,9 @@ int main()
       }
     }
   }
-  std::cout << "#facets on planar part " << num_planar_facets << std::endl;
-  if (num_planar_facets != 922) {
-    std::cout << "Failed: the plane-sphere model have 922 facets on the planar part." << std::endl;
+  std::cout << "#faces on planar part " << num_planar_faces << std::endl;
+  if (num_planar_faces != 922) {
+    std::cout << "Failed: the plane-sphere model have 922 faces on the planar part." << std::endl;
     return EXIT_FAILURE;
   }
 

@@ -75,8 +75,8 @@ public:
 };
 
 // output helper functions
-template <typename Approximation, typename FacetProxyMap>
-void face_proxy_map_helper(const Approximation &approx, FacetProxyMap fproxymap) {
+template <typename Approximation, typename FaceProxyMap>
+void face_proxy_map_helper(const Approximation &approx, FaceProxyMap fproxymap) {
   approx.proxy_map(fproxymap);
 }
 

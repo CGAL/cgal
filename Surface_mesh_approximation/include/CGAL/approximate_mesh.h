@@ -87,7 +87,7 @@ unspecified_type all_default();
  *  \cgalParamEnd
  *  \cgalParamBegin{face_proxy_map} a ReadWritePropertyMap with
  * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type.
- * A proxy is a set of connected facets which are placed under the same proxy patch (see \cgalFigureRef{iterations}).
+ * A proxy is a set of connected faces which are placed under the same proxy patch (see \cgalFigureRef{iterations}).
  * The proxy-ids are contiguous in range [0, number_of_proxies - 1].
  *  \cgalParamEnd
  *  \cgalParamBegin{proxies} output iterator over proxies.
@@ -178,7 +178,7 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
 
   if (!boost::is_same<Face_proxy_map, vsa_np::dummy_output_t>::value
     && (vl == CGAL::VSA::Main_steps || vl == CGAL::VSA::Verbose))
-    std::cout << "Filling facet proxy map done." << std::endl;
+    std::cout << "Filling face proxy map done." << std::endl;
 
   // get proxies
   typedef typename boost::lookup_named_param_def<
