@@ -6,7 +6,7 @@
 #include "Scene.h"
 #include "Color_map.h"
 
-//#define CGAL_APPROXIMATE_CONVEX_DECOMPOSITION_VERBOSE
+//#define CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
 #include <CGAL/approximate_convex_segmentation.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
@@ -27,10 +27,17 @@
 #include <QDebug>
 #include <QObject>
 #include <QDockWidget>
+#include <cmath>
 
 using namespace CGAL::Three;
 
 typedef CGAL::Real_timer Timer;
+
+#ifndef CGAL_LINKED_WITH_TBB
+    typedef CGAL::Sequential_tag Concurrency_tag;
+#else
+    typedef CGAL::Parallel_tag Concurrency_tag;
+#endif
 
 class Polyhedron_demo_approximate_convex_segmentation_plugin : public QObject, public Polyhedron_demo_plugin_helper
 {
@@ -73,6 +80,7 @@ public:
 
     // signal-slot bindings
     connect(m_segmentation_ui.segmentize_button, SIGNAL(clicked()), this, SLOT(on_segmentize_button_clicked()));
+    connect(m_segmentation_ui.concavity_values_button, SIGNAL(clicked()), this, SLOT(on_concavity_values_button_clicked()));
   }
 
   virtual void closure()
@@ -103,6 +111,27 @@ public Q_SLOTS:
     if (sm_item)
     {
       segmentize(sm_item);
+      return;
+    }
+  }
+
+  void on_concavity_values_button_clicked()
+  {
+    std::cout << "Computing concavity values..." << std::endl;
+
+    CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
+    
+    Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+    if (item)
+    {
+      compute_concavity_values(item);
+      return;
+    }
+    
+    Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+    if (sm_item)
+    {
+      compute_concavity_values(sm_item);
       return;
     }
   }
@@ -147,9 +176,6 @@ private:
 
 #ifndef CGAL_LINKED_WITH_TBB
     std::cout << "Running sequentially. For performance reasons it's recommended to run in parralel using TBB." << std::endl;
-    typedef CGAL::Sequential_tag Concurrency_tag;
-#else
-    typedef CGAL::Parallel_tag Concurrency_tag;
 #endif
 
     timer.start();
@@ -271,6 +297,77 @@ private:
     QApplication::restoreOverrideCursor();
   }
 
+  template <class FacegraphItem>
+  void compute_concavity_values(FacegraphItem* item)
+  {
+    typedef typename FacegraphItem::Face_graph Facegraph;
+    typedef typename boost::graph_traits<Facegraph>::face_descriptor face_descriptor;
+    typedef typename boost::graph_traits<Facegraph>::halfedge_descriptor halfedge_descriptor;
+    typedef typename boost::graph_traits<Facegraph>::vertex_descriptor vertex_descriptor;
+    typedef typename boost::property_map<Facegraph, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
+    
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+      
+    // create new item for concavity values
+    FacegraphItem* concavity_values_item = new FacegraphItem(*item->face_graph());
+      
+    concavity_values_item->setFlatPlusEdgesMode();
+    Facegraph& concavity_values_mesh = *concavity_values_item->face_graph();
+
+    //for each input vertex compute its distance to the convex hull
+    typedef std::map<vertex_descriptor, double> Vertex_double_map;
+    Vertex_double_map distances_map;
+    boost::associative_property_map<Vertex_double_map> distances_pmap(distances_map);
+
+    double concavity_value = CGAL::concavity_values<Concurrency_tag>(concavity_values_mesh, distances_pmap);
+    std::cout << "Concavity value of the mesh: " << concavity_value << std::endl;
+
+    // assign patch id to each face and colorize it
+    Patch_id_pmap patch_pmap = get(CGAL::face_patch_id_t<int>(), concavity_values_mesh);
+
+    int face_id = 0;
+    double max_distance = 0.;
+    std::vector<double> distances;
+    BOOST_FOREACH(face_descriptor face, faces(concavity_values_mesh))
+    {
+      put(patch_pmap, face, static_cast<int>(face_id++));
+
+      double dist = 0;
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(face, concavity_values_mesh), concavity_values_mesh))
+      {   
+        dist += distances_map[target(hd, concavity_values_mesh)];
+      }
+      dist /= 3.;
+
+      max_distance = std::max(max_distance, dist);
+      distances.push_back(dist);
+    }
+      
+    set_color_read_only(concavity_values_item);
+    std::vector<QColor>& colors = concavity_values_item->color_vector();
+    colors.clear();
+    
+    for (int i = 0; i < face_id; ++i)
+    {
+      int step = distances[i] > 0 ? std::min(255, int(std::pow(distances[i] / max_distance, 0.3) * 255)) : 0;
+      colors.push_back(m_gradient_colors[step]);
+    }
+   
+    concavity_values_item->setItemIsMulticolor(true);
+    concavity_values_item->setName(tr("concavity-values"));
+
+    // add to the scene
+    scene->addItem(concavity_values_item);
+    item->setVisible(false);
+    concavity_values_item->setVisible(true);
+      
+    // refresh item
+    concavity_values_item->invalidateOpenGLBuffers();
+    scene->itemChanged(scene->item_id(concavity_values_item));
+
+    QApplication::restoreOverrideCursor();
+  }
+
   void generate_colors(std::vector<QColor>& colors, std::size_t cnt)
   {
     colors.clear();
@@ -296,8 +393,8 @@ private:
     for (std::size_t i = custom_cnt; i < cnt; ++i)
     {
       QColor color(CGAL::get_default_random().get_int(41, 255),
-            CGAL::get_default_random().get_int(41, 255),
-            CGAL::get_default_random().get_int(41, 255));
+                   CGAL::get_default_random().get_int(41, 255),
+                   CGAL::get_default_random().get_int(41, 255));
       colors.push_back(color);
     }
     

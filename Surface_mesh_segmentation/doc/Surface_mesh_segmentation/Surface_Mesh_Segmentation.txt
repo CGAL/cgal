@@ -174,6 +174,9 @@ Note that the formula given above is also valid for a subset of vertices of a tr
 Distance computation from the point \f$ M_0 \f$ to its projection \f$ Proj(M_0) \f$ on the convex hull \f$ CH(S) \f$ of \f$ S \f$ in the direction \f$ N_0 \f$.
 \cgalFigureEnd
 
+\cgalFigureBegin{Concavity_values_elephant_demo,concavity_values-elephant.png}
+Visualized per face concavity values on an elephant in the `Polyhedron demo`.
+\cgalFigureEnd
 
 \subsection Surface_mesh_segmentationDecimation Segmentation Procedure
 

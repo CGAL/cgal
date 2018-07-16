@@ -159,6 +159,13 @@
        </spacer>
       </item>
       <item>
+       <widget class="QPushButton" name="concavity_values_button">
+        <property name="text">
+         <string>Concavity values</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="segmentize_button">
         <property name="text">
          <string>Segmentize</string>
