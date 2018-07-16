@@ -27,12 +27,11 @@ bool test_shape(const char *file_name, const std::size_t target_num_proxies)
 
   std::cout << "Testing \"" << file_name << '\"' << std::endl;
   // algorithm instance
-  L21_approx approx(mesh,
-    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
-
   L21_metric error_metric(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
-  approx.set_metric(error_metric);
+  L21_approx approx(mesh,
+    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)),
+    error_metric);
 
   // approximation, seeding from error, drop to the target error incrementally
   // should reach targeted number of proxies gradually

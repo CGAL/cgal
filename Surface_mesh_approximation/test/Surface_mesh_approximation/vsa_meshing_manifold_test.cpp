@@ -27,12 +27,11 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
 
   std::cout << "Testing \"" << file_name << '\"' << std::endl;
   // algorithm instance
-  L21_approx approx(mesh,
-    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
-
   L21_metric error_metric(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
-  approx.set_metric(error_metric);
+  L21_approx approx(mesh,
+    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)),
+    error_metric);
 
   // approximation, seeding from error, drop to the target error incrementally
   const std::size_t num_iterations = 20;

@@ -92,11 +92,11 @@ int main()
 
   // create compact metric approximation algorithm instance
   std::cout << "create compact vas instance" << std::endl;
-  Compact_approx approx(mesh,
-    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
-
   Compact_metric_point_proxy error_metric(center_pmap, area_pmap);
-  approx.set_metric(error_metric);
+
+  Compact_approx approx(mesh,
+    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)),
+    error_metric);
 
   std::cout << "random seeding and run" << std::endl;
   approx.initialize_seeds(CGAL::VSA::Random, 20);

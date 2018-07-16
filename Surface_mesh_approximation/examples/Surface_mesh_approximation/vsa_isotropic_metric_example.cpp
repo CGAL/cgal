@@ -91,13 +91,13 @@ int main()
   Face_area_map area_pmap(face_areas);
   Face_center_map center_pmap(face_centers);
 
+  // error metric and fitting function
+  Compact_metric_point_proxy error_metric(center_pmap, area_pmap);
+
   // creates compact metric approximation algorithm instance
   Approximation approx(input,
-    get(boost::vertex_point, const_cast<Polyhedron &>(input)));
-
-  // constructs and set metric
-  Compact_metric_point_proxy metric(center_pmap, area_pmap);
-  approx.set_metric(metric);
+    get(boost::vertex_point, const_cast<Polyhedron &>(input)),
+    error_metric);
 
   // approximates via 200 proxies and 30 iterations
   approx.initialize_seeds(CGAL::VSA::Hierarchical, 200);

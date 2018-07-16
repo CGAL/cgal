@@ -43,12 +43,11 @@ int main()
   }
 
   // algorithm instance
-  L21_approx approx(mesh,
-    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
-
   L21_metric error_metric(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
-  approx.set_metric(error_metric);
+  L21_approx approx(mesh,
+    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)),
+    error_metric);
 
   approx.initialize_seeds(CGAL::VSA::Random, 100);
   std::vector<FT> error;

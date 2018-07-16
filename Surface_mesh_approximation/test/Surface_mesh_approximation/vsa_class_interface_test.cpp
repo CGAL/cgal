@@ -44,11 +44,11 @@ int main()
 
   // create L2_approx L2 metric approximation algorithm instance
   std::cout << "setup algorithm instance" << std::endl;
-  L2_approx approx(mesh,
-    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
   L2_metric_plane_proxy error_metric(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
-  approx.set_metric(error_metric);
+  L2_approx approx(mesh,
+    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)),
+    error_metric);
 
   // random seeding and run
   std::cout << "random seeding and run" << std::endl;

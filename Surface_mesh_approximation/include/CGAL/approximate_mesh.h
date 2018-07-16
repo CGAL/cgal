@@ -128,9 +128,8 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
       << "\n#v " << num_vertices(tm) << std::endl;
   }
 
-  L21_approx approx(tm, point_pmap);
   L21_metric metric(tm, point_pmap);
-  approx.set_metric(metric);
+  L21_approx approx(tm, point_pmap, metric);
 
   // hierarchical seeding by default
   CGAL::VSA::Seeding_method method = choose_param(

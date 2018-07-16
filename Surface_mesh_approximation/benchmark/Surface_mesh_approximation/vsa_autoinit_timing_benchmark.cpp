@@ -38,14 +38,14 @@ int main(int argc, char *argv[])
   }
   std::cerr << "#triangles " << mesh.size_of_facets() << std::endl;
 
-  // algorithm instance
-  L21_approx approx(mesh,
-    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
-
-  // set metric error and fitting functors
+  // error metric and fitting functors
   L21_metric error_metric(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
-  approx.set_metric(error_metric);
+
+  // algorithm instance
+  L21_approx approx(mesh,
+    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)),
+    error_metric);
 
   int method = std::atoi(argv[2]);
   if (method < 0 || method > 2)

@@ -62,8 +62,8 @@ int main()
   L21_metric error_metric(mesh,
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
   L21_approx approx(mesh,
-    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)));
-  approx.set_metric(error_metric);
+    get(boost::vertex_point, const_cast<Polyhedron &>(mesh)),
+    error_metric);
 
   std::cout << "Random seeding by number." << std::endl;
   std::srand(static_cast<unsigned int>(std::time(0)));

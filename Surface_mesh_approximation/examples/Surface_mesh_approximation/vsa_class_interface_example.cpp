@@ -24,14 +24,14 @@ int main()
     return EXIT_FAILURE;
   }
 
-  // creates VSA algorithm instance
-  Mesh_approximation approx(input,
+  // error metric and fitting function
+  L21_metric error_metric(input,
     get(boost::vertex_point, const_cast<Polyhedron &>(input)));
 
-  // sets error and fitting functors
-  L21_metric metric(input,
-    get(boost::vertex_point, const_cast<Polyhedron &>(input)));
-  approx.set_metric(metric);
+  // creates VSA algorithm instance
+  Mesh_approximation approx(input,
+    get(boost::vertex_point, const_cast<Polyhedron &>(input)),
+    error_metric);
 
   // seeds 100 random proxies
   approx.initialize_seeds(CGAL::VSA::Random, 100);

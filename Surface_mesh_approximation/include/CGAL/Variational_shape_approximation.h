@@ -278,31 +278,17 @@ public:
   /// \name Construction
   /// @{
   /*!
-   * @brief %Default empty constructor.
-   */
-  Variational_shape_approximation() :
-    m_ptm(NULL),
-    m_metric(NULL),
-    m_average_edge_length(0.0) {
-
-    Geom_traits traits;
-    vector_functor = traits.construct_vector_3_object();
-    point_functor = traits.construct_point_3_object();
-    scale_functor = traits.construct_scaled_vector_3_object();
-    sum_functor = traits.construct_sum_of_vectors_3_object();
-    scalar_product_functor = traits.compute_scalar_product_3_object();
-    translate_point_functor = traits.construct_translated_point_3_object();
-  }
-
-  /*!
-   * @brief Initializes and prepares for the approximation.
-   * @param tm `CGAL TriangleMesh` on which approximation operates.
+   * @brief Initializes internal data for the approximation.
+   * @param tm `CGAL TriangleMesh` on which approximation operates
    * @param vpoint_map vertex point map of the mesh
+   * @param error_metric an `ErrorMetricProxy` object
    */
-  Variational_shape_approximation(const TriangleMesh &tm, const VertexPointMap &vpoint_map) :
+  Variational_shape_approximation(const TriangleMesh &tm,
+    const VertexPointMap &vpoint_map,
+    const Error_metric &error_metric) :
     m_ptm(&tm),
     m_vpoint_map(vpoint_map),
-    m_metric(NULL),
+    m_metric(&error_metric),
     m_average_edge_length(0.0) {
 
     Geom_traits traits;
