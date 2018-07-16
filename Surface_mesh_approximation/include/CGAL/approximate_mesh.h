@@ -96,7 +96,7 @@ unspecified_type all_default();
  *  \cgalParamEnd
  *  \cgalParamBegin{proxies} output iterator over proxies.
  *  \cgalParamEnd
- *  \cgalParamBegin{anchors} output iterator over anchor points. 
+ *  \cgalParamBegin{anchors} output iterator over anchor points.
  *  \cgalParamEnd
  *  \cgalParamBegin{triangles} output iterator over indexed triangles.
  *  \cgalParamEnd

@@ -866,9 +866,72 @@ public:
   }
   /// @}
 
-
   /// \name Output
   /// @{
+  /*!
+   * @brief Outputs approximation results.
+   * @tparam NamedParameters a sequence of \ref vsa_namedparameters
+
+   * @param np optional sequence of \ref vsa_namedparameters among the ones listed below
+
+   * \cgalNamedParamsBegin{Output Named Parameters}
+   *  \cgalParamBegin{face_proxy_map} a ReadWritePropertyMap with
+   * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type.
+   * A proxy is a set of connected faces which are placed under the same proxy patch (see \cgalFigureRef{iterations}).
+   * The proxy-ids are contiguous in range [0, number_of_proxies - 1].
+   *  \cgalParamEnd
+   *  \cgalParamBegin{proxies} output iterator over proxies.
+   *  \cgalParamEnd
+   *  \cgalParamBegin{anchors} output iterator over anchor points.
+   *  \cgalParamEnd
+   *  \cgalParamBegin{triangles} output iterator over indexed triangles.
+   *  \cgalParamEnd
+   * \cgalNamedParamsEnd
+   */
+  template <typename NamedParameters>
+  void output(const NamedParameters &np) const {
+    using boost::get_param;
+    using boost::choose_param;
+    namespace vsa_np = CGAL::VSA::internal_np;
+
+    // get proxy map
+    typedef typename boost::lookup_named_param_def<
+      vsa_np::face_proxy_map_t,
+      NamedParameters,
+      vsa_np::dummy_output_t>::type Output_face_proxy_map;
+    Output_face_proxy_map fproxymap = choose_param(
+      get_param(np, vsa_np::face_proxy_map), vsa_np::dummy_output);
+    vsa_np::face_proxy_map_helper(*this, fproxymap);
+
+    // get proxies
+    typedef typename boost::lookup_named_param_def<
+      vsa_np::proxies_t,
+      NamedParameters,
+      vsa_np::dummy_output_t>::type Proxies_output_iterator;
+    Proxies_output_iterator pxies_out_itr = choose_param(
+      get_param(np, vsa_np::proxies), vsa_np::dummy_output);
+    vsa_np::proxies_helper(*this, pxies_out_itr);
+
+    // get anchor points
+    typedef typename boost::lookup_named_param_def<
+      vsa_np::anchors_t,
+      NamedParameters,
+      vsa_np::dummy_output_t>::type Anchors_output_iterator;
+    Anchors_output_iterator apts_out_itr = choose_param(
+      get_param(np, vsa_np::anchors) , vsa_np::dummy_output);
+    vsa_np::anchors_helper(*this, apts_out_itr);
+
+    // get indexed triangles
+    typedef typename boost::lookup_named_param_def<
+      vsa_np::triangles_t,
+      NamedParameters,
+      vsa_np::dummy_output_t>::type Triangles_output_iterator;
+    Triangles_output_iterator tris_out_itr = choose_param(
+      get_param(np, vsa_np::triangles) , vsa_np::dummy_output);
+    vsa_np::triangles_helper(*this, tris_out_itr);
+  }
+
+  /// @cond CGAL_DOCUMENT_INTERNAL
   /*!
    * @brief Gets the face-proxy index map.
    * @tparam FaceProxyMap `WritablePropertyMap` with
@@ -898,6 +961,12 @@ public:
   }
 
   /*!
+   * @brief Gets the proxies size.
+   * @return number of proxies
+   */
+  std::size_t proxies_size() const { return m_proxies.size(); }
+
+  /*!
    * @brief Gets the proxies.
    * @tparam OutputIterator output iterator with Proxy as value type
    * @param out output iterator
@@ -920,12 +989,6 @@ public:
       *out++ = pxw;
   }
 #endif
-
-  /*!
-   * @brief Gets the proxies size.
-   * @return number of proxies
-   */
-  std::size_t proxies_size() const { return m_proxies.size(); }
 
   /*!
    * @brief Gets the anchor points, which have the area-averaged position of the projected anchor vertex points on the incident proxies.
@@ -964,6 +1027,7 @@ public:
   /*!
    * @brief Gets the indexed boundary polygon approximation.
    * @tparam OutputIterator output iterator with std::vector<std::size_t> as value type
+   * @param out output iterator
    */
   template <typename OutputIterator>
   void indexed_boundary_polygons(OutputIterator out) const {
@@ -978,6 +1042,7 @@ public:
       *out++ = plg;
     }
   }
+  /// @endcond
   /// @}
 
 // private member functions
