@@ -14,25 +14,22 @@
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
 typedef Kernel::Point_2                                      Point_2;
-typedef CGAL::Surface_mesh<Point>                            BaseMesh;
-typedef CGAL::dynamic_halfedge_property_t<Point_2> Halfedge_coordinate_tag;
-typedef boost::property_map<BaseMesh, Halfedge_coordinate_tag >::type Halfedge_coordinate_map;
-
-typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<BaseMesh,Kernel, Halfedge_coordinate_map> Mesh;
-
+typedef CGAL::Surface_mesh<Point>                            Surface_mesh;
 
 typedef CGAL::dynamic_vertex_property_t<double> Vertex_distance_tag;
-typedef boost::property_map<Mesh, Vertex_distance_tag >::type Vertex_distance_map;
+typedef boost::property_map<Surface_mesh, Vertex_distance_tag >::type Vertex_distance_map;
+
+typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<Surface_mesh,Kernel, Vertex_distance_map> Idt;
 
 
-typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+typedef boost::graph_traits<Idt>::vertex_descriptor vertex_descriptor;
 
-typedef CGAL::Heat_method_3::Heat_method_3<Mesh,Kernel,Vertex_distance_map> Heat_method;
+typedef CGAL::Heat_method_3::Heat_method_3<Idt,Kernel, Idt::Vertex_distance_map> Heat_method;
 typedef CGAL::Heat_method_3::Heat_method_Eigen_traits_3::SparseMatrix SparseMatrix;
 
 
 #if 0
-void source_set_tests(Heat_method hm, const Mesh& sm)
+void source_set_tests(Heat_method hm, const Idt& sm)
 {
   vertex_descriptor source = *(vertices(sm).first);
   hm.add_source(source);
@@ -98,7 +95,7 @@ void check_for_unit(const Eigen::MatrixXd& X, int dimension)
   }
 }
 
-void check_no_update(const Mesh& sm, const Vertex_distance_map& original, const Vertex_distance_map& updated)
+void check_no_update(const Idt& sm, const Vertex_distance_map& original, const Vertex_distance_map& updated)
 {
   BOOST_FOREACH(vertex_descriptor vd, vertices(sm))
   {
@@ -111,30 +108,36 @@ void check_no_update(const Mesh& sm, const Vertex_distance_map& original, const 
 
 int main()
 {
-  BaseMesh bm;
-  Halfedge_coordinate_map hcm;
-  Mesh sm(bm,hcm);
+  Surface_mesh sm;
+  Vertex_distance_map vdm = get(Vertex_distance_tag(),sm);
+  
+  Idt idt(sm, vdm);
 
-  Vertex_distance_map vertex_distance_map = get(Vertex_distance_tag(),sm);
+
   bool idf = false;
 
   std::ifstream in("data/pyramid0.off");
-  in >> bm;
-  if(!in || num_vertices(bm) == 0) {
+  in >> sm;
+  if(!in || num_vertices(sm) == 0) {
     std::cerr << "Problem loading the input data" << std::endl;
     return 1;
   }
 
-  put(vertex_distance_map, * vertices(sm).first, 1.0);
-  put(vertex_distance_map, * halfedges(sm).first, 1.0);
-  
+  //put(vdm, * vertices(sm).first, 1.0);
+  //put(vdm, * halfedges(sm).first, 1.0);
+
 
   //source set tests
-  Heat_method hm(sm, vertex_distance_map);
-  hm.add_source(* vertices(sm).first);
+  Heat_method hm(idt, idt.vertex_distance_map());
+  // hm.add_source(* vertices(idt).first);
+
+  hm.add_source(boost::graph_traits<Idt>::vertex_descriptor(boost::graph_traits<Surface_mesh>::vertex_descriptor(0),sm));
   hm.update();
-#if 0
-  source_set_tests(hm,sm);
+#if 0  
+
+
+
+  source_set_tests(hm,idt);
   //cotan matrix tests
   const SparseMatrix& M = hm.mass_matrix();
   //std::cout<<"and M is: "<< Eigen::MatrixXd(M) << "\n";
