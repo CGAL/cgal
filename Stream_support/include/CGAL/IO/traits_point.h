@@ -33,7 +33,7 @@ template< typename K > struct tag<CGAL::Point_2<K> >
 { typedef point_tag type; };
 
 template< typename K > struct coordinate_type<CGAL::Point_2<K> >
-{ typedef typename K::FT type; };
+{ typedef double type; };
 
 template< typename K > struct coordinate_system<CGAL::Point_2<K> >
 { typedef cs::cartesian type; };

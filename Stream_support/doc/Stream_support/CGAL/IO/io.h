@@ -295,6 +295,7 @@ istream& operator>>(istream& is, Class c);
 //! in the stream will be used. 
 //! 
 //! \tparam Point can be a `CGAL::Point_2` or `CGAL::Point_3`.
+//! \attention Only Cartesian Kernels are supported.
 //! 
 //! \see `CGAL::Point_2`
 //! \see `CGAL::Point_3`
@@ -308,6 +309,7 @@ read_point_WKT( std::istream& in,
 //! with the first line starting with MULTIPOINT in the stream.
 //! 
 //! \tparam MultiPoint must be a model of `RandomAccessRange` of `CGAL::Point_2` or `CGAL::Point_3`.
+//! \attention Only Cartesian Kernels are supported.
 //! 
 //! \see `CGAL::Point_2`
 //! \see `CGAL::Point_3`
@@ -322,6 +324,7 @@ read_multi_point_WKT( std::istream& in,
 //! The first line starting with LINESTRING in the stream will be used.
 //!
 //! \tparam Linestring must be a model of `RandomAccessRange` of `CGAL::Point_2`.
+//! \attention Only Cartesian Kernels are supported.
 //! \see `CGAL::Point_2`
 template<typename LineString>
 std::istream&
@@ -333,6 +336,7 @@ read_linestring_WKT( std::istream& in,
 //! with the first line starting with MULTILINESTRING in the stream.
 //!
 //! \tparam MultiLineString must be a model of `RandomAccessRange` of `Linestring`.
+//! \attention Only Cartesian Kernels are supported.
 //! 
 //! \see `CGAL::Point_2`
 template<typename MultiLineString>
@@ -345,6 +349,7 @@ read_multi_linestring_WKT( std::istream& in,
 //! The first line starting with POLYGON in the stream will be used.
 //! 
 //! \tparam Polygon is a `CGAL::General_polygon_with_holes_2`.
+//! \attention Only Cartesian Kernels are supported.
 //! 
 //! \see `CGAL::General_polygon_with_holes_2`
 template<typename Polygon>
@@ -357,6 +362,7 @@ read_polygon_WKT( std::istream& in,
 //! with the first line starting with MULTIPOLYGON in the stream.
 //!
 //! \tparam Multipolygon must be a model of `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`.
+//! \attention Only Cartesian Kernels are supported.
 //! \see `CGAL::General_polygon_with_holes_2`
 
 template<typename MultiPolygon>
@@ -367,6 +373,7 @@ read_multi_polygon_WKT( std::istream& in,
 //! \ingroup PkgIOstreams
 //! \brief `write_point_WKT()` writes `point` into a WKT stream.
 //! \tparam Point is a `CGAL::Point_2`
+//! \attention Only Cartesian Kernels are supported.
 //! \see `CGAL::Point_2`
 template<typename Point>
 std::ostream&
@@ -376,6 +383,7 @@ write_point_WKT( std::ostream& out,
 //! \ingroup PkgIOstreams
 //! \brief `write_polygon_WKT()` writes `poly` into a WKT stream.
 //! \tparam Polygon  must be a `CGAL::General_polygon_with_holes_2`
+//! \attention Only Cartesian Kernels are supported.
 //! \see `CGAL::General_polygon_with_holes_2`
 template<typename Polygon>
 std::ostream&
@@ -386,6 +394,7 @@ write_polygon_WKT( std::ostream& out,
 //! \brief `write_linestring_WKT()` writes the content of `ls` 
 //! into a WKT stream.
 //! \tparam LineString must be a `RandomAccessRange` of `CGAL::Point_2`. 
+//! \attention Only Cartesian Kernels are supported.
 //!\see `CGAL::Point_2`
 template<typename LineString>
 std::ostream&
@@ -396,6 +405,7 @@ write_linestring_WKT( std::ostream& out,
 //! \brief `write_multi_point_WKT()` writes the content of `mp` 
 //! into a WKT stream.
 //! \tparam MultiPoint must be a `RandomAccessRange` of `CGAL::Point_2`. 
+//! \attention Only Cartesian Kernels are supported.
 //!\see `CGAL::Point_2`
 template<typename MultiPoint>
 std::ostream&
@@ -406,6 +416,7 @@ write_multi_point_WKT( std::ostream& out,
 //! \brief `write_multi_polygon_WKT()` writes the content of `polygons` 
 //! into a WKT stream.
 //! \tparam MultiPolygon must be a `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`. 
+//! \attention Only Cartesian Kernels are supported.
 //!\see `CGAL::General_polygon_with_holes_2`
 template<typename MultiPolygon>
 std::ostream&
@@ -416,6 +427,7 @@ write_multi_polygon_WKT( std::ostream& out,
 //! \brief `write_multi_linestring_WKT()` writes the content of `mls` 
 //! into a WKT stream. 
 //! \tparam MultiLineString must be a `RandomAccessRange` of `LineString`. 
+//! \attention Only Cartesian Kernels are supported.
 //! \see `CGAL::write_linestring_WKT()`
 template<typename MultiLineString>
 std::ostream&
@@ -429,6 +441,7 @@ write_multi_linestring_WKT( std::ostream& out,
 //! \tparam MultiPoint must be a model of `RandomAccessRange` of `CGAL::Point_2` or `CGAL::Point_3`.
 //! \tparam MultiLineString must be a `RandomAccessRange` of `LineString`. 
 //! \tparam MultiPolygon must be a model of `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`.
+//! \attention Only Cartesian Kernels are supported.
 //! \see `CGAL::read_linestring_WKT()`
 template<typename MultiPoint,
          typename MultiLineString,

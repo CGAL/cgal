@@ -10,7 +10,6 @@
 
 #include <vector>
 
-//TODO : If FT is Gmpq, the output of writing will not be doubles.
 //typedef CGAL::Simple_cartesian<CGAL::Gmpq> Kernel;
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;

@@ -20,7 +20,8 @@
 
 #ifndef GEOMETRY_CONTAINER_H
 #define GEOMETRY_CONTAINER_H
-#include <boost/geometry.hpp>
+#include <boost/geometry/io/wkt/write.hpp>
+#include <boost/geometry/io/wkt/read.hpp>
 #include <boost/shared_ptr.hpp>
 
 struct Dummy_deleter{
