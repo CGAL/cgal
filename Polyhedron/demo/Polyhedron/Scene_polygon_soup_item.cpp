@@ -249,11 +249,25 @@ void
 Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int polygon_id) const
 {
     //Computes the normal of the facet
-    const Point_3& pa = soup->points[pit->at(0)];
-    const Point_3& pb = soup->points[pit->at(1)];
-    const Point_3& pc = soup->points[pit->at(2)];
-    Traits::Vector_3 normal = CGAL::cross_product(pb-pa, pc -pa);
-    normal = normal / std::sqrt(normal * normal);
+    Traits::Vector_3 normal = CGAL::NULL_VECTOR;
+
+    // The three first vertices may be aligned, we need to test other
+    // combinations
+    for (std::size_t i = 0; i < pit->size() - 2; ++ i)
+    {
+       const Point_3& pa = soup->points[pit->at(i)];
+       const Point_3& pb = soup->points[pit->at(i+1)];
+       const Point_3& pc = soup->points[pit->at(i+2)];
+       if (!CGAL::collinear (pa, pb, pc))
+       {
+          normal = CGAL::cross_product(pb-pa, pc -pa);
+          break;
+       }
+    }
+
+    if (normal == CGAL::NULL_VECTOR) // No normal could be computed, return
+      return;
+
     typedef FacetTriangulator<Polyhedron, Kernel, std::size_t> FT;
 
     double diagonal;
