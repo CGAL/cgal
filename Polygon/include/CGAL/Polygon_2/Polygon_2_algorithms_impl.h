@@ -60,6 +60,8 @@ namespace Polygon_2 {
 //                  by three consecutive points of the range (more specifically,
 //                  on the value of the determinant).
 //
+// \pre The range `(first, beyond)` is composed of at least three points.
+// \pre Not all points in the range `(first, beyond)` are (almost) collinear.
 template<typename K, typename InputForwardIterator, typename OutputForwardIterator>
 OutputForwardIterator filter_collinear_points(InputForwardIterator first,
                                               InputForwardIterator beyond,
@@ -67,8 +69,7 @@ OutputForwardIterator filter_collinear_points(InputForwardIterator first,
                                               const typename K::FT tolerance =
                                                 std::numeric_limits<typename K::FT>::epsilon())
 {
-  if(std::distance(first, beyond) < 4)
-    return out;
+  CGAL_precondition(std::distance(first, beyond) >= 3);
 
   typedef typename K::FT                              FT;
   typedef typename K::Point_2                         Point;
@@ -83,7 +84,9 @@ OutputForwardIterator filter_collinear_points(InputForwardIterator first,
 
   do
   {
-    CGAL_assertion(vit != vit_next && vit_next != vit_next_2 && vit != vit_next_2);
+    CGAL_assertion(vit != vit_next);
+    CGAL_assertion(vit_next != vit_next_2);
+    CGAL_assertion(vit != vit_next_2);
 
     const Point& o = *vit;
     const Point& p = *vit_next;
