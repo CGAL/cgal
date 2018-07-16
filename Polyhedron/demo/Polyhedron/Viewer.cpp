@@ -181,7 +181,6 @@ public:
       diffuseButton->setPalette(palette);
       palette.setColor(QPalette::Button, specular);
       specularButton->setPalette(palette);
-      
     });
   }
 private Q_SLOTS:
@@ -810,7 +809,6 @@ void Viewer::attribBuffers(int program_name) const {
                         d->position.y(),
                         d->position.z(),
                         1.0f);
-    light_pos = mv_mat * light_pos;
     if(program_name == PROGRAM_WITH_LIGHT
        || program_name == PROGRAM_SPHERES
        || program_name == PROGRAM_CUTPLANE_SPHERES)
@@ -1495,6 +1493,18 @@ void Viewer::setLighting()
                          dialog->specular.greenF(), 
                          dialog->specular.blueF() , 
                          1.0f);
+    update();
+    
+  });
+  
+  //reset default
+  connect(dialog->buttonBox->button(QDialogButtonBox::StandardButton::RestoreDefaults), &QPushButton::clicked,
+          [this, dialog](){
+    d->position = QVector4D(0,0,1,1);
+    d->ambient=QVector4D(77.0/255,77.0/255,77.0/255, 1.0);
+    d->diffuse=QVector4D(204.0/255,204.0/255,204.0/255,1.0);
+    d->specular=QVector4D(0,0,0,1.0);
+    d->spec_power = 51;    
     update();
     
   });
