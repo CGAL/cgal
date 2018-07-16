@@ -6,6 +6,7 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include <fstream>
 
 #include <CGAL/IO/File_scanner_OFF.h>
@@ -48,6 +49,15 @@ bool Polyhedron_demo_off_plugin::canLoad() const {
 
 CGAL::Three::Scene_item*
 Polyhedron_demo_off_plugin::load(QFileInfo fileinfo) {
+  
+  if(fileinfo.size() == 0)
+  {
+    CGAL::Three::Three::messages()->warning( tr("The file you are trying to load is empty."));
+    Scene_polyhedron_item* item =
+        new Scene_polyhedron_item(Polyhedron());
+    item->setName(fileinfo.completeBaseName());
+    return item;
+  }
   if(fileinfo.suffix().toLower() == "off"){
     return load_off(fileinfo);
   } else if(fileinfo.suffix().toLower() == "obj"){

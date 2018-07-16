@@ -34,6 +34,7 @@
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 
 #include <QApplication>
 #include <QMessageBox>
@@ -363,6 +364,15 @@ public:
 
     FaceGraph* poly = new FaceGraph();
     // Try to read .vtk in a facegraph
+    
+    if(fileinfo.size() == 0)
+    {
+      CGAL::Three::Three::messages()->warning( tr("The file you are trying to load is empty."));
+      Scene_facegraph_item* item =
+          new Scene_facegraph_item(poly);
+      item->setName(fileinfo.completeBaseName());
+      return item;
+    }
     vtkSmartPointer<vtkPointSet> data;
     vtkSmartPointer<CGAL::ErrorObserverVtk> obs =
       vtkSmartPointer<CGAL::ErrorObserverVtk>::New();

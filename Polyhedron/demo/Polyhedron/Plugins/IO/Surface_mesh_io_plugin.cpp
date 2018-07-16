@@ -1,5 +1,6 @@
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include <fstream>
 
 #include <QObject>
@@ -59,8 +60,16 @@ public:
      }
 
      SMesh *surface_mesh = new SMesh();
+     if(fileinfo.size() == 0)
+     {
+       CGAL::Three::Three::messages()->warning( tr("The file you are trying to load is empty."));
+       Scene_surface_mesh_item* item = new Scene_surface_mesh_item(surface_mesh);
+       item->setName(fileinfo.completeBaseName());
+       return item;
+     }
+     
      in >> *surface_mesh;
-     if(!in || surface_mesh->is_empty())
+     if(!in)
      {
        delete surface_mesh;
        in.close();

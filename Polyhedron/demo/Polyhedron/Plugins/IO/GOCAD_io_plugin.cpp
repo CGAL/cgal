@@ -9,6 +9,7 @@
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include <fstream>
 
 #include <QColor>
@@ -74,6 +75,11 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo) {
     // Try to read GOCAD file in a polyhedron
 
     Scene_polyhedron_item* item = new Scene_polyhedron_item(Polyhedron());
+    if(fileinfo.size() == 0)
+    {
+      CGAL::Three::Three::messages()->warning( tr("The file you are trying to load is empty."));
+      return item;
+    }
     Polyhedron& P = * const_cast<Polyhedron*>(item->polyhedron());
 
     std::string name, color;
@@ -103,6 +109,11 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo) {
 
     // Try to read GOCAD file in a surface_mesh
     Scene_surface_mesh_item* item = new Scene_surface_mesh_item(new SMesh());
+    if(fileinfo.size() == 0)
+    {
+      CGAL::Three::Three::messages()->warning( tr("The file you are trying to load is empty."));
+      return item;
+    }
     SMesh& P = * const_cast<SMesh*>(item->polyhedron());
 
     std::string name, color;

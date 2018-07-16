@@ -213,15 +213,15 @@ public Q_SLOTS:
   /*!
    * Displays a text preceded by the mention "INFO :".
    */
-  void information(QString);
+  void information(QString) Q_DECL_OVERRIDE;
   /*!
    * Displays a blue text preceded by the mention "WARNING :".
    */
-  void warning(QString);
+  void warning(QString) Q_DECL_OVERRIDE;
   /*!
    * Displays a red text preceded by the mention "ERROR :".
    */
-  void error(QString);
+  void error(QString) Q_DECL_OVERRIDE;
 
     //!Displays a text in the chosen html color with the chosen html font.
 

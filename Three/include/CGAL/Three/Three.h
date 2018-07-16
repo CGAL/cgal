@@ -48,6 +48,21 @@ public:
   static Scene_interface* scene();
   static QObject* connectableScene();
   static Three* messages();
+  
+  /*!
+   * Displays a text preceded by the mention "INFO :".
+   */
+  virtual void information(QString) = 0;
+  /*!
+   * Displays a blue text preceded by the mention "WARNING :".
+   */
+  virtual void warning(QString) = 0;
+  /*!
+   * Displays a red text preceded by the mention "ERROR :".
+   */
+  virtual void error(QString) = 0;
+
+  
   /*! \brief Adds a dock widget to the interface
    *
    * Adds a dock widget in the left section of the MainWindow. If the slot is already taken, the dock widgets will be tabified.
