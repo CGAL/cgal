@@ -24,39 +24,30 @@
 #define CGAL_INTRINSIC_DELAUNAY_TRIANGULATION_3_H
 
 #include <CGAL/license/Heat_method_3.h>
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/disable_warnings.h>
-#include <set>
 
+#include <CGAL/disable_warnings.h>
+
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/property_map.h>
 #include <CGAL/double.h>
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/Dynamic_property_map.h>
+#include <CGAL/squared_distance_3.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
+
 #include <Eigen/Cholesky>
 #include <Eigen/Sparse>
 
 #include <boost/foreach.hpp>
 #include <boost/iterator/transform_iterator.hpp>
-#include <CGAL/boost/graph/properties.h>
-#include <CGAL/Dynamic_property_map.h>
-#include <vector>
-#include <CGAL/squared_distance_3.h>
-#include <CGAL/number_utils.h>
-#include <CGAL/boost/graph/helpers.h>
+
+#include <set>
 #include <stack>
-#include <boost/graph/filtered_graph.hpp>
 #include <fstream>
 #include <array>
-#include <math.h>
-
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/Surface_mesh_parameterization/IO/File_off.h>
-#include <CGAL/Surface_mesh_parameterization/Circular_border_parameterizer_3.h>
-#include <CGAL/Surface_mesh_parameterization/Discrete_authalic_parameterizer_3.h>
-#include <CGAL/Surface_mesh_parameterization/Error_code.h>
-#include <CGAL/Surface_mesh_parameterization/parameterize.h>
-#include <CGAL/Polygon_mesh_processing/measure.h>
-
-
+#include <cmath>
 
 
 namespace CGAL {
@@ -744,8 +735,6 @@ target(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,
     {
       typename boost::graph_traits<TM>::vertex_descriptor tm_vd = target(vd.hd, idtpm.idt.triangle_mesh());
 
-      //      std::cout << "put "  << typeid(pm).name() << std::endl;
-
       put(idtpm.pm, tm_vd, v);
     }
   };
@@ -849,26 +838,26 @@ public:
 
   friend V get(const Self& idpm, const K& k)
   {
-    std::cout << "get" << std::endl;
+    //std::cout << "get" << std::endl;
     return get(idpm.pm, target(k.hd, idpm.idt.triangle_mesh()));
     }
   
   friend void put(const Self& idpm, const K& k, const V& v)
   {
-    std::cout << "put" << std::endl;
+    //std::cout << "put" << std::endl;
     put(idpm.pm, target(k.hd, idpm.idt.triangle_mesh()), v);
   }
 
   
   friend V get(const Self& idpm, const TM_vertex_descriptor& k)
   {
-    std::cout << "get k" << std::endl;
+    //std::cout << "get k" << std::endl;
     return get(idpm.pm, k);
     }
   
   friend void put(const Self& idpm, const TM_vertex_descriptor& k, const V& v)
   {
-    std::cout << "put k" << std::endl;
+    //std::cout << "put k" << std::endl;
     put(idpm.pm, k, v);
   }
 

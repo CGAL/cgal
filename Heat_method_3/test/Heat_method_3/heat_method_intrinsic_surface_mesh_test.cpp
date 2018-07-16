@@ -106,7 +106,7 @@ void check_no_update(const Idt& sm, const Vertex_distance_map& original, const V
 #endif
 
 
-int main()
+int main(int argc, char*argv[])
 {
   Surface_mesh sm;
   Vertex_distance_map vdm = get(Vertex_distance_tag(),sm);
@@ -116,16 +116,12 @@ int main()
 
   bool idf = false;
 
-  std::ifstream in("data/pyramid0.off");
+  std::ifstream in((argc>1)?argv[1]:"data/pyramid0.off");
   in >> sm;
   if(!in || num_vertices(sm) == 0) {
     std::cerr << "Problem loading the input data" << std::endl;
     return 1;
   }
-
-  //put(vdm, * vertices(sm).first, 1.0);
-  //put(vdm, * halfedges(sm).first, 1.0);
-
 
   //source set tests
   Heat_method hm(idt, idt.vertex_distance_map());

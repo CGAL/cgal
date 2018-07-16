@@ -25,23 +25,23 @@
 #include <CGAL/license/Heat_method_3.h>
 
 #include <CGAL/disable_warnings.h>
-#include <set>
 
 #include <CGAL/property_map.h>
 #include <CGAL/double.h>
-#include <Eigen/Cholesky>
-#include <Eigen/Sparse>
-
-#include <boost/foreach.hpp>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Dynamic_property_map.h>
-#include <vector>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
-#include <CGAL/Heat_method_3/Intrinsic_Delaunay_Triangulation_3.h>
 
+#include <Eigen/Cholesky>
+#include <Eigen/Sparse>
+
+#include <boost/foreach.hpp>
+
+#include <vector>
+#include <set>
 
 
 namespace CGAL {
@@ -106,12 +106,8 @@ namespace Heat_method_3 {
     Face_id_map face_id_map;
 
     //types for intrinsic delaunay triangulation
-    typedef CGAL::dynamic_halfedge_property_t<Point_2> Halfedge_coordinate_tag;
-    typedef typename boost::property_map<TriangleMesh, Halfedge_coordinate_tag >::type Halfedge_coordinate_map;
     typedef CGAL::dynamic_vertex_property_t<double> Vertex_distance_tag;
     typedef typename boost::property_map<TriangleMesh, Vertex_distance_tag >::type Vertex_distance_map;
-
-    // AF    typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TriangleMesh,Traits, Halfedge_coordinate_map> IDT;
 
   public:
 
@@ -448,7 +444,7 @@ namespace Heat_method_3 {
       BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
         Index i_d = get(vertex_id_map, vd);
         d = solved_phi(i_d,0);
-        std::cout<<d<<"\n";
+        // std::cout<<d<<"\n";
         put(vdm,vd,d);
       }
     }
@@ -458,16 +454,6 @@ namespace Heat_method_3 {
     void build()
     {
       source_change_flag = false;
-      /*
-      TriangleMesh idt_copy;
-      if(idf)
-      {
-        CGAL::copy_face_graph(tm, idt_copy);
-        std::cout<<"copied graph\n";
-        halfedge_coord_map = get(Halfedge_coordinate_tag(), idt_copy);
-        AF        IDT im(idt_copy, halfedge_coord_map);
-      }
-      */
 
       CGAL_precondition(is_triangle_mesh(tm));
       Index i = 0;
@@ -486,7 +472,6 @@ namespace Heat_method_3 {
       std::vector<triplet> c_matrix_entries;
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
       //Go through each face on the mesh
-      //if(!idf)
       {
         BOOST_FOREACH(face_descriptor f, faces(tm)) {
           boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
@@ -539,62 +524,7 @@ namespace Heat_method_3 {
           A_matrix_entries.push_back(triplet(k,k, (1./6.)*norm_cross));
         }
       }
-      /*
-      else
-      {
-        BOOST_FOREACH(face_descriptor f, faces(idt_copy)) {
-          boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
-          vertex_descriptor current = *(vbegin);
-          vertex_descriptor neighbor_one = *(++vbegin);
-          vertex_descriptor neighbor_two = *(++(vbegin));
-          Index i = get(vertex_id_map, current);
-          Index j = get(vertex_id_map, neighbor_one);
-          Index k = get(vertex_id_map, neighbor_two);
-          halfedge_descriptor first_h = next(halfedge(f, idt_copy), idt_copy);
-          halfedge_descriptor second_h = next(first_h, idt_copy);
-          halfedge_descriptor third_h = next(second_h, idt_copy);
-
-          //add a check to make sure halfedge->face is the face we are looking at
-          Point_2 p_i = get(halfedge_coord_map, first_h);
-          Point_2 p_j = get(halfedge_coord_map, second_h);
-          Point_2 p_k = get(halfedge_coord_map, third_h);
-          Point_3 pi(p_i.x(), p_i.y(),0);
-          Point_3 pj(p_j.x(), p_j.y(),0);
-          Point_3 pk(p_k.x(), p_k.y(),0);
-
-          Vector_3 cross = CGAL::cross_product((pj-pi), (pk-pi));
-          double dot = (pj-pi)*(pk-pi);
-          double norm_cross = (CGAL::sqrt(cross*cross));
-
-          double cotan_i = dot/norm_cross;
-          c_matrix_entries.push_back(triplet(j,k ,-(1./2)*cotan_i));
-          c_matrix_entries.push_back(triplet(k,j,-(1./2)* cotan_i));
-          c_matrix_entries.push_back(triplet(j,j,(1./2)*cotan_i));
-          c_matrix_entries.push_back(triplet(k,k,(1./2)* cotan_i));
-
-          cross = CGAL::cross_product((pi-pj), (pk-pj));
-          dot = to_double((pi-pj)*(pk-pj));
-          double cotan_j = dot/norm_cross;
-          c_matrix_entries.push_back(triplet(i,k ,-(1./2)*cotan_j));
-          c_matrix_entries.push_back(triplet(k,i,-(1./2)* cotan_j));
-          c_matrix_entries.push_back(triplet(i,i,(1./2)* cotan_j));
-          c_matrix_entries.push_back(triplet(k,k,(1./2)* cotan_j));
-
-          cross = CGAL::cross_product((pi-pk), (pj-pk));
-          dot = to_double((pi-pk)*(pj-pk));
-          double cotan_k = dot/norm_cross;
-          c_matrix_entries.push_back(triplet(i,j,-(1./2)*cotan_k));
-          c_matrix_entries.push_back(triplet(j,i,-(1./2)* cotan_k));
-          c_matrix_entries.push_back(triplet(i,i,(1./2)* cotan_k));
-          c_matrix_entries.push_back(triplet(j,j,(1./2)* cotan_k));
-          //double area_face = CGAL::Polygon_mesh_processing::face_area(f,tm);
-          //cross is 2*area
-          A_matrix_entries.push_back(triplet(i,i, (1./6.)*norm_cross));
-          A_matrix_entries.push_back(triplet(j,j, (1./6.)*norm_cross));
-          A_matrix_entries.push_back(triplet(k,k, (1./6.)*norm_cross));
-        
-   } 
-      */
+   
       m_mass_matrix.resize(m,m);
       m_mass_matrix.setFromTriplets(A_matrix_entries.begin(), A_matrix_entries.end());
       m_cotan_matrix.resize(m,m);
@@ -626,7 +556,6 @@ namespace Heat_method_3 {
     Eigen::VectorXd solved_phi;
     std::set<Index> source_index;
     bool source_change_flag;
-    // AF    Halfedge_coordinate_map halfedge_coord_map;
   };
 
 } // namespace Heat_method_3
