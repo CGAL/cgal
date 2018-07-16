@@ -191,12 +191,11 @@ void Scene::render_polyhedron(Viewer *viewer)
     // draw black edges
     if(m_pPolyhedron != NULL)
     {
-      typedef typename Polyhedron::Traits Kernel;
-      typedef typename Kernel::Point_3 Point;
+      typedef Kernel::Point_3 Point;
     
       std::vector<GLfloat> verts;
       
-      typename Polyhedron::Edge_iterator he;
+      Polyhedron::Edge_iterator he;
       for(he = m_pPolyhedron->edges_begin();
           he != m_pPolyhedron->edges_end();
           he++)
@@ -213,7 +212,7 @@ void Scene::render_polyhedron(Viewer *viewer)
       rendering_program.setAttributeBuffer("vertex", GL_FLOAT, 0,3);
       rendering_program.enableAttributeArray("vertex");
       buffers[3].release();
-      viewer->glDrawArrays(GL_LINES, 0, verts.size()/3);
+      viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(verts.size()/3));
       vao[3].release();
     }
 }

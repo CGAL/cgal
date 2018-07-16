@@ -378,15 +378,15 @@ void
 Scene_polylines_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   if(!visible())
     return;
-    if(!are_buffers_filled)
-    {
-        d->computeElements();
-        d->initializeBuffers(viewer);
-    }
-    if(d->draw_extremities)
-    {
-      Scene_group_item::draw(viewer);
-    }
+  if(!are_buffers_filled)
+  {
+    d->computeElements();
+    d->initializeBuffers(viewer);
+  }
+  if(d->draw_extremities)
+  {
+    Scene_group_item::draw(viewer);
+  }
 }
 
 // Wireframe OpenGL drawing
