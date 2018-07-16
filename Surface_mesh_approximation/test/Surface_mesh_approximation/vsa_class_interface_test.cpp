@@ -129,5 +129,22 @@ int main()
   approx.run(10);
   std::cout << "#proxies " << approx.proxies_size() << std::endl;
 
+  // extract the approximation polyhedron
+  std::cout << "meshing" << std::endl;
+  if (approx.extract_mesh(CGAL::VSA::parameters::subdivision_ratio(1.0)))
+    std::cout << "manifold." << std::endl;
+  else
+    std::cout << "non-manifold" << std::endl;
+
+  // get outputs
+  std::cout << "get outputs" << std::endl;
+  proxies.clear();
+  anchor_pos.clear();
+  tris.clear();
+  approx.output(CGAL::VSA::parameters::face_proxy_map(proxy_pmap).
+    proxies(std::back_inserter(proxies)).
+    anchors(std::back_inserter(anchor_pos)).
+    triangles(std::back_inserter(tris)));
+
   return EXIT_SUCCESS;
 }

@@ -53,8 +53,14 @@ int main()
   // runs 10 iterations
   approx.run(10);
 
-  // generates output mesh with default parameters
+  // extract approximated mesh with default parameters
   approx.extract_mesh(CGAL::VSA::parameters::all_default());
+
+  // get approximated triangle soup
+  std::vector<Kernel::Point_3> anchors;
+  std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles;
+  approx.output(CGAL::VSA::parameters::anchors(std::back_inserter(anchors)).
+    triangles(std::back_inserter(triangles)));
 
   return EXIT_SUCCESS;
 }
