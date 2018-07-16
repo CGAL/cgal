@@ -164,6 +164,7 @@ Section "!Main CGAL" MAIN_Idx
 
   SetOutPath "$INSTDIR"
   File "${CGAL_SRC}\AUTHORS"
+  File "${CGAL_SRC}\CGALConfig.cmake"
   File "${CGAL_SRC}\CHANGES.md"
   File "${CGAL_SRC}\CMakeLists.txt"
   File "${CGAL_SRC}\INSTALL.md"
