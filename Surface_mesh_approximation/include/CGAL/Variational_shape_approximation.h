@@ -313,59 +313,8 @@ public:
       CGAL::internal::remove_property(m_fproxy_map, *(const_cast<TriangleMesh *>(m_ptm)));
     }
   }
-  
-  /// \name Setup
-  /// @{
-  /*!
-   * @brief Sets the mesh for approximation and rebuilds the internal data structure.
-   * @pre @a tm.is_pure_triangle()
-   * @param tm `CGAL TriangleMesh` on which approximation operates.
-   * @param vpoint_map vertex point map of the mesh.
-   */
-  void set_mesh(const TriangleMesh &tm, const VertexPointMap &vpoint_map) {
-    m_ptm = &tm;
-    m_vpoint_map = vpoint_map;
-    rebuild();
-  }
 
-  /*!
-   * @brief Sets the approximation traits.
-   * @param error_metric an `ErrorMetricProxy` object.
-   */
-  void set_metric(const Error_metric &error_metric) {
-    m_metric = &error_metric;
-  }
-
-  /*!
-   * @brief Rebuilds the internal data structure.
-   */
-  void rebuild() {
-    // cleanup
-    m_proxies.clear();
-    m_px_planes.clear();
-    m_anchors.clear();
-    m_bcycles.clear();
-    m_tris.clear();
-
-    if (!m_ptm)
-      return;
-
-    // rebuild internal data structure
-    CGAL::internal::remove_property(m_fproxy_map, *m_ptm);
-    m_fproxy_map = CGAL::internal::add_property(
-      Face_proxy_tag("VSA-face_proxy"), *(const_cast<TriangleMesh *>(m_ptm)));
-    BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
-      put(m_fproxy_map, f, CGAL_VSA_INVALID_TAG);
-
-    CGAL::internal::remove_property(m_vanchor_map, *m_ptm);
-    m_vanchor_map = CGAL::internal::add_property(
-      Vertex_anchor_tag("VSA-vertex_anchor"), *(const_cast<TriangleMesh *>(m_ptm)));
-    BOOST_FOREACH(vertex_descriptor v, vertices(*m_ptm))
-      put(m_vanchor_map, v, CGAL_VSA_INVALID_TAG);
-  }
-  /// @}
-
-  /// \name Processing
+  /// \name Approximation
   /// @{
     /*!
    * @brief Initializes the seeds with both maximum number of proxies

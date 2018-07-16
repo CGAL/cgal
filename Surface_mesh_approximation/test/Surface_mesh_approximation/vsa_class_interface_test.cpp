@@ -119,18 +119,12 @@ int main()
 
   const FT drop(0.001);
   const std::size_t iterations = 5;
-  std::cout << "rebuild and hierarchical seeding" << std::endl;
-  approx.rebuild();
-  if (approx.proxies_size() != 0)
-    return EXIT_FAILURE;
+  std::cout << "re-initialize and hierarchical seeding" << std::endl;
   approx.initialize_seeds(CGAL::VSA::Hierarchical, boost::none, drop, iterations);
   approx.run(10);
   std::cout << "#proxies " << approx.proxies_size() << std::endl;
 
-  std::cout << "rebuild and incremental seeding" << std::endl;
-  approx.rebuild();
-  if (approx.proxies_size() != 0)
-    return EXIT_FAILURE;
+  std::cout << "re-initialize and incremental seeding" << std::endl;
   approx.initialize_seeds(CGAL::VSA::Incremental, boost::none, drop, iterations);
   approx.run(10);
   std::cout << "#proxies " << approx.proxies_size() << std::endl;
