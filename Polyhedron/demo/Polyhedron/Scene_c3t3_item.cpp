@@ -32,6 +32,9 @@
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
+#include "Scene_polygon_soup_item.h"
+#include "Scene_polyhedron_item.h"
+
 
 typedef CGAL::AABB_triangulation_3_triangle_primitive<EPICK,C3t3> Primitive;
 typedef CGAL::AABB_traits<EPICK, Primitive> Traits;
@@ -1309,7 +1312,6 @@ void Scene_c3t3_item::export_facets_in_complex()
   }
 
   namespace PMP = CGAL::Polygon_mesh_processing;
-  SMesh outmesh;
 
   if (PMP::is_polygon_soup_a_polygon_mesh(polygons))
   {
@@ -1317,8 +1319,10 @@ void Scene_c3t3_item::export_facets_in_complex()
     PMP::orient_polygon_soup(points, polygons);
     CGAL_assertion(orientable);
 
+    SMesh outmesh;
     PMP::polygon_soup_to_polygon_mesh(points, polygons, outmesh);
-    Scene_surface_mesh_item* item = new Scene_surface_mesh_item(outmesh);
+    
+    Scene_surface_mesh_item* item = new Scene_surface_mesh_item(std::move(outmesh));
     item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
     scene->addItem(item);
   }
