@@ -1815,6 +1815,14 @@ QMenu* Scene_surface_mesh_item::contextMenu()
   bool menuChanged = menu->property(prop_name).toBool();
 
   if(!menuChanged) {
+    QMenu *container = new QMenu(tr("Alpha value"));
+    container->menuAction()->setProperty("is_groupable", true);
+    QWidgetAction *sliderAction = new QWidgetAction(0);
+    sliderAction->setDefaultWidget(d->alphaSlider);
+    connect(d->alphaSlider, &QSlider::valueChanged,
+            [this](){redraw();});
+    container->addAction(sliderAction);
+    menu->addMenu(container);
     menu->addSeparator();
     QAction* actionPrintVertices=
         menu->addAction(tr("Display Vertices Ids"));
@@ -1844,13 +1852,7 @@ QMenu* Scene_surface_mesh_item::contextMenu()
     connect(actionZoomToId, &QAction::triggered,
             this, &Scene_surface_mesh_item::zoomToId);
     
-    QMenu *container = new QMenu(tr("Alpha value"));
-    QWidgetAction *sliderAction = new QWidgetAction(0);
-    sliderAction->setDefaultWidget(d->alphaSlider);
-    connect(d->alphaSlider, &QSlider::valueChanged,
-            [this](){redraw();});
-    container->addAction(sliderAction);
-    menu->addMenu(container);
+    
     setProperty("menu_changed", true);
     menu->setProperty(prop_name, true);
   }
@@ -1973,10 +1975,17 @@ bool Scene_surface_mesh_item::testDisplayId(double x, double y, double z, CGAL::
   EPICK::Point_3 src(x - offset.x,
                       y - offset.y,
                       z - offset.z);
-  EPICK::Point_3 dest(viewer->camera()->position().x - offset.x,
-                       viewer->camera()->position().y - offset.y,
-                       viewer->camera()->position().z - offset.z);
+  
+  CGAL::qglviewer::Camera* cam = viewer->camera();
+  EPICK::Point_3 dest( cam->position().x - offset.x,
+                       cam->position().y - offset.y,
+                       cam->position().z - offset.z);
   EPICK::Vector_3 v(src,dest);
+  EPICK::Vector_3 dir(cam->viewDirection().x,
+                      cam->viewDirection().y,
+                      cam->viewDirection().z);
+  if(-CGAL::scalar_product(v, dir) < cam->zNear()) //if src is behind the near plane, don't display.
+    return false;
   v = 0.01*v;
   EPICK::Point_3 point = src;
   point = point + v;

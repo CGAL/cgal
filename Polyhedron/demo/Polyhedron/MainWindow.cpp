@@ -17,6 +17,7 @@
 #include <QMenuBar>
 #include <QChar>
 #include <QAction>
+#include <QWidgetAction>
 #include <QShortcut>
 #include <QKeySequence>
 #include <QLibrary>
@@ -1306,6 +1307,7 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
 void MainWindow::showSceneContextMenu(const QPoint& p) {
   QWidget* sender = qobject_cast<QWidget*>(this->sender());
   if(!sender) return;
+  if(scene->selectionIndices().isEmpty())return;
   int main_index = scene->selectionIndices().first();
 
   if(sender == sceneView) {
@@ -1332,7 +1334,14 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
         Q_FOREACH(QAction* action, scene->item(main_index)->contextMenu()->actions())
         {
           if(action->property("is_groupable").toBool())
+          {
             menu_actions[action->text()] = action;
+            if(action->text() == QString("Alpha value"))
+            {
+              menu_actions["alpha slider"] = action->menu()->actions().last();
+            }
+          }
+          
         }
         Q_FOREACH(Scene::Item_id index, scene->selectionIndices())
         {
@@ -1348,8 +1357,48 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
         QMenu menu;
         Q_FOREACH(QString name, menu_actions.keys())
         {
-          QAction* action = menu.addAction(name);
-          connect(action, &QAction::triggered, this, &MainWindow::propagate_action);
+          if(name == QString("alpha slider"))
+            continue;
+          if(name == QString("Alpha value"))
+          {
+            QWidgetAction* sliderAction = new QWidgetAction(&menu);
+            QSlider* slider = new QSlider(&menu);
+            slider->setMinimum(0);
+            slider->setMaximum(255);
+            slider->setValue(
+                  qobject_cast<QSlider*>(
+                    qobject_cast<QWidgetAction*>
+                    (menu_actions["alpha slider"])->defaultWidget()
+                  )->value());
+            slider->setOrientation(Qt::Horizontal);
+            sliderAction->setDefaultWidget(slider);
+            
+            connect(slider, &QSlider::valueChanged, [this, slider]()
+            {
+              Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+              {
+                Scene_item* item = scene->item(id);
+                Q_FOREACH(QAction* action, item->contextMenu()->actions())
+                {
+                  if(action->text() == "Alpha value")
+                  {
+                    QWidgetAction* sliderAction = qobject_cast<QWidgetAction*>(action->menu()->actions().last());
+                    QSlider* ac_slider = qobject_cast<QSlider*>(sliderAction->defaultWidget());
+                    ac_slider->setValue(slider->value());
+                    break;
+                  }
+                }
+              }
+            });
+            QMenu* new_menu = new QMenu("Alpha value", &menu);
+              new_menu->addAction(sliderAction);
+              menu.addMenu(new_menu);
+          }
+          else
+          {
+            QAction* action = menu.addAction(name);
+            connect(action, &QAction::triggered, this, &MainWindow::propagate_action);
+          }
         }
         if(has_stats)
         {
@@ -1834,9 +1883,9 @@ void MainWindow::on_actionLookAt_triggered()
   if( i == QDialog::Accepted &&
       dialog.has_correct_coordinates() )
   {
-    viewerShow((float)dialog.get_x(),
-               (float)dialog.get_y(),
-               (float)dialog.get_z());
+    viewerShow((float)dialog.get_x()+viewer->offset().x,
+               (float)dialog.get_y()+viewer->offset().y,
+               (float)dialog.get_z()+viewer->offset().z);
   }
 }
 
@@ -1849,30 +1898,57 @@ void MainWindow::viewerShowObject()
   }
   if(item) {
     const Scene::Bbox bbox = item->bbox();
-    viewerShow((float)bbox.xmin()+viewer->offset().x, (float)bbox.ymin()+viewer->offset().y, (float)bbox.zmin()+viewer->offset().z,
-               (float)bbox.xmax()+viewer->offset().x, (float)bbox.ymax()+viewer->offset().y, (float)bbox.zmax()+viewer->offset().z);
+    CGAL::qglviewer::Vec min((float)bbox.xmin()+viewer->offset().x, (float)bbox.ymin()+viewer->offset().y, (float)bbox.zmin()+viewer->offset().z),
+        max((float)bbox.xmax()+viewer->offset().x, (float)bbox.ymax()+viewer->offset().y, (float)bbox.zmax()+viewer->offset().z);
+    viewer->setSceneBoundingBox(min, max);
+    viewerShow(min.x, min.y, min.z,
+               max.x, max.y, max.z);
   }
 }
 
 QString MainWindow::cameraString() const
 {
-  return viewer->dumpCameraCoordinates();
+  const CGAL::qglviewer::Vec pos = viewer->camera()->position() - viewer->offset();
+  const CGAL::qglviewer::Quaternion q = viewer->camera()->orientation();
+
+  return QString("%1 %2 %3 %4 %5 %6 %7")
+    .arg(pos[0])
+    .arg(pos[1])
+    .arg(pos[2])
+    .arg(q[0])
+    .arg(q[1])
+    .arg(q[2])
+    .arg(q[3]);
 }
 
 void MainWindow::on_actionDumpCamera_triggered()
 {
+  //remove offset
   information(QString("Camera: %1")
               .arg(cameraString()));
 }
 
 void MainWindow::on_actionCopyCamera_triggered()
 {
+  //remove offset
   qApp->clipboard()->setText(this->cameraString());
 }
 
 void MainWindow::on_actionPasteCamera_triggered()
 {
+  //add offset
   QString s = qApp->clipboard()->text();
+  QStringList list = s.split(' ');
+  QString new_s[7];
+  
+  new_s[0] = QString("%1").arg(list.at(0).toFloat() + viewer->offset().x);
+  new_s[1] = QString("%1").arg(list.at(1).toFloat() + viewer->offset().y);
+  new_s[2] = QString("%1").arg(list.at(2).toFloat() + viewer->offset().z);
+  for(int i=3; i<7; ++i)
+    new_s[i] = list.at(i);
+  s = QString();
+  for(int i=0; i<7; ++i)
+    s.append(new_s[i]).append(" ");
   viewer->moveCameraToCoordinates(s, 0.5f);
 }
 

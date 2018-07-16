@@ -1139,8 +1139,8 @@ QItemSelection Scene::createSelection(int i)
 
 QItemSelection Scene::createSelectionAll()
 {
-    return QItemSelection(index_map.keys(0).at(0),
-                          index_map.keys(m_entries.size() - 1).at(4));
+    return QItemSelection(index(0, 0,index_map.key(0).parent()),
+                          index(m_entries.size()-1, 4, index_map.key(0).parent()));
 }
 
 void Scene::itemChanged()
