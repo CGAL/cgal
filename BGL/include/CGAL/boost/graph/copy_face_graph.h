@@ -74,6 +74,10 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
     sm_halfedge_descriptor sm_h = halfedge(sm_e, sm), sm_h_opp = opposite(sm_h, sm);
     tm_halfedge_descriptor tm_h = halfedge(tm_e, tm), tm_h_opp = opposite(tm_h, tm);
 
+    // set next pointers to null_halfedge() (in case previous garbage is present)
+    set_next( tm_h, boost::graph_traits<TargetMesh>::null_halfedge(), tm );
+    set_next( tm_h_opp, boost::graph_traits<TargetMesh>::null_halfedge(), tm );
+
     put(hmap, sm_h, tm_h);
     put(hmap, sm_h_opp, tm_h_opp);
     *h2h++=std::make_pair(sm_h, tm_h);
