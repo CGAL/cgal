@@ -42,7 +42,9 @@
 /// \file AABB_transformed_traits.h
 
 namespace CGAL {
-
+// forward declaration
+template< typename AABBTraits>
+class AABB_tree;
 /// \addtogroup PkgAABB_tree
 /// @{
 
@@ -118,7 +120,27 @@ public:
     template<typename Query>
     bool operator()(const Query& q, const Primitive& pr) const
     {
-      return Kernel().do_intersect_3_object()(q, internal::Primitive_helper<BaseTraits>::get_datum(pr,m_traits).transform(m_traits.transformation()));
+      return Kernel().do_intersect_3_object()(q, internal::Primitive_helper<BaseTraits>::get_datum(pr,m_traits));
+    }
+    
+    // intersection with AABB-tree
+    template<typename AABBTraits>
+    bool operator()(const CGAL::AABB_tree<AABBTraits>& other_tree, const Primitive& pr) const
+    {
+      return other_tree.do_intersect( internal::Primitive_helper<BaseTraits>::get_datum(pr,m_traits));
+    }
+    
+    template<typename AABBTraits>
+    bool operator()(const CGAL::AABB_tree<AABBTraits>& other_tree, const Bounding_box& bbox) const
+    {
+      Point_3 min(bbox.xmin(), bbox.ymin(), bbox.zmin()),
+      max(bbox.xmax(), bbox.ymax(), bbox.zmax());
+      
+      min = m_traits.transformation().transform(min);
+      max = m_traits.transformation().transform(max);
+      Bounding_box transfo_box(to_double(min.x()), to_double(min.y()), to_double(min.z()),
+                               to_double(max.x()), to_double(max.y()), to_double(max.z()));
+      return other_tree.do_intersect(transfo_box);
     }
   };
   
