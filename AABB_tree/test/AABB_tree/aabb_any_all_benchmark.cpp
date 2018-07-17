@@ -13,7 +13,6 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_transformed_traits.h>
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Polyhedron_3.h>
@@ -71,8 +70,7 @@ boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name)
   typedef CGAL::Polyhedron_3<K> Polyhedron;
 
   typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
-  typedef CGAL::AABB_traits<K, Primitive> Base_Traits;
-  typedef CGAL::AABB_transformed_traits<Base_Traits> Traits;
+  typedef CGAL::AABB_traits<K, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> Tree;
 
   std::ifstream ifs(name);

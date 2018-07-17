@@ -35,6 +35,7 @@
 #include <CGAL/internal/AABB_tree/Is_ray_intersection_geomtraits.h>
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>
 
+#include <CGAL/Aff_transformation_3.h>
 #include <boost/optional.hpp>
 #include <boost/bind.hpp>
 
@@ -52,14 +53,17 @@ namespace CGAL {
 /// \sa `AABBPrimitive`
 /// \sa `AABBPrimitiveWithSharedData`
 
-  template<typename BaseTraits>
+  template<typename BaseTraits, 
+           typename Kernel>
 class AABB_transformed_traits:
   public BaseTraits
 {
-  typedef typename CGAL::Object Object;
 public:
-  typedef BaseTraits Geom_traits;
 
+  //Constructor
+  AABB_transformed_traits(const Aff_transformation_3<Kernel>& transf = Aff_transformation_3<Kernel>(IDENTITY))
+    :m_transfo(transf)
+  {}
   // AABBTraits concept types
   typedef typename BaseTraits::FT FT;
   typedef typename BaseTraits::Point_3 Point_3;
@@ -86,19 +90,45 @@ public:
   typedef typename BaseTraits::Construct_cartesian_const_iterator_3  Construct_cartesian_const_iterator_3;
   
   //Splitting
-    typedef typename BaseTraits::Split_primitives               Split_primitives;
-  typedef typename BaseTraits::Compute_bbox                  Compute_bbox;
+    typedef typename BaseTraits::Split_primitives            Split_primitives;
+  
+  typedef typename  BaseTraits::Compute_bbox                 Compute_bbox;
   
   //Intersections
-  typedef typename BaseTraits::Do_intersect                  Do_intersect;
-  //typedef typename BaseTraits::Intersect                     Intersect;
-  typedef typename BaseTraits::Intersection                     Intersection;
+  class Do_intersect {
+    const AABB_transformed_traits<BaseTraits, Kernel>& m_traits;
+  public:
+    Do_intersect(const AABB_transformed_traits<BaseTraits, Kernel>& traits)
+      :m_traits(traits) {}
+
+    template<typename Query>
+    bool operator()(const Query& q, const Bounding_box& bbox) const
+    {
+      Point_3 min(bbox.xmin(), bbox.ymin(), bbox.zmin()),
+      max(bbox.xmax(), bbox.ymax(), bbox.zmax());
+      
+      min = m_traits.transformation().transform(min);
+      max = m_traits.transformation().transform(max);
+      Bounding_box transfo_box(to_double(min.x()), to_double(min.y()), to_double(min.z()),
+                               to_double(max.x()), to_double(max.y()), to_double(max.z()));
+      bool res = CGAL::do_intersect(q, transfo_box);
+      return res;
+    }
+
+    template<typename Query>
+    bool operator()(const Query& q, const Primitive& pr) const
+    {
+      return Kernel().do_intersect_3_object()(q, internal::Primitive_helper<BaseTraits>::get_datum(pr,m_traits).transform(m_traits.transformation()));
+    }
+  };
+  
+  typedef typename BaseTraits::Intersection Intersection;
   
   //Distance Queries
-  typedef typename BaseTraits::Compare_distance Compare_distance;
-  typedef typename BaseTraits::Closest_point    Closest_point   ;
-  typedef typename BaseTraits::Squared_distance Squared_distance;
-  typedef typename BaseTraits::Equal_3          Equal_3         ;
+  typedef typename BaseTraits::Compare_distance              Compare_distance;
+  typedef typename BaseTraits::Closest_point                 Closest_point   ;
+  typedef typename BaseTraits::Squared_distance              Squared_distance;
+  typedef typename BaseTraits::Equal_3                       Equal_3         ;
   
   //Operations   
   Split_primitives split_primitives_object() const {
@@ -108,8 +138,8 @@ public:
   Compute_bbox compute_bbox_object() const{
     return BaseTraits::compute_bbox_object();
   }
-  Do_intersect do_intersect_3_object() const{
-    return BaseTraits::do_intersect_3_object();
+  Do_intersect do_intersect_object() const{
+    return Do_intersect(*this);
   }
   
   Intersection intersection_object() const{
@@ -128,6 +158,18 @@ public:
   Equal_3 equal_3_object() const{
     return BaseTraits::equal_3_object;
   }
+  
+  //Specific
+  void set_transformation(const Aff_transformation_3<Kernel>& trans) const 
+  {
+    m_transfo = trans;
+  }
+  
+  const Aff_transformation_3<Kernel>& transformation() const { return m_transfo; }
+  
+private:
+  mutable Aff_transformation_3<Kernel> m_transfo;
+
 };
   
 
