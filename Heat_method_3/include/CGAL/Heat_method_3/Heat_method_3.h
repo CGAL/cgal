@@ -33,7 +33,6 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/boost/graph/copy_face_graph.h>
 
 #include <Eigen/Cholesky>
 #include <Eigen/Sparse>
