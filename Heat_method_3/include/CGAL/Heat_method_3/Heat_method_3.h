@@ -33,7 +33,7 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/number_utils.h>
-
+#include <CGAL/Heat_method_3/Intrinsic_Delaunay_Triangulation_3.h>
 #include <Eigen/Cholesky>
 #include <Eigen/Sparse>
 
@@ -69,7 +69,6 @@ namespace Heat_method_3 {
             typename Traits,
             typename VertexDistanceMap,
             typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type,
-            typename FaceIndexMap = typename boost::property_map< TriangleMesh, face_index_t>::const_type,
             typename LA = Heat_method_Eigen_traits_3>
   class Heat_method_3
   {
@@ -111,13 +110,13 @@ namespace Heat_method_3 {
   public:
 
     Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm)
-      : vertex_id_map(get(Vertex_property_tag(),const_cast<TriangleMesh&>(tm))), face_id_map(get(Face_property_tag(),tm)), tm(tm), vdm(vdm), vpm(get(vertex_point,tm)), fpm(get(boost::face_index,tm))
+      : vertex_id_map(get(Vertex_property_tag(),const_cast<TriangleMesh&>(tm))), face_id_map(get(Face_property_tag(),tm)), v2v(tm),tm(tm), vdm(vdm), vpm(get(vertex_point,tm))
     {
       build();
     }
 
-    Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm, VertexPointMap vpm, FaceIndexMap fpm)
-      : tm(tm), vdm(vdm), vpm(vpm), fpm(fpm)
+    Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm, VertexPointMap vpm)
+      : v2v(tm), tm(tm), vdm(vdm), vpm(vpm)
     {
       build();
     }
@@ -151,10 +150,13 @@ namespace Heat_method_3 {
        return vertex_id_map;
      }
 
-    bool add_source(vertex_descriptor vd)
+    template <typename VD>
+    bool add_source(VD vd)
     {
       source_change_flag = true;
-      return sources.insert(vd).second;
+      v2v(vd);
+        return true;
+      //return sources.insert(v2v(vd)).second;
     }
 
     /**
@@ -163,7 +165,7 @@ namespace Heat_method_3 {
     bool remove_source(vertex_descriptor vd)
     {
       source_change_flag = true;
-      return (sources.erase(vd) == 1);
+      return (sources.erase(v2v(vd)) == 1);
     }
 
     /**
@@ -541,10 +543,10 @@ namespace Heat_method_3 {
     }
     
     int dimension;
+    V2V<TriangleMesh> v2v;
     const TriangleMesh& tm;
     VertexDistanceMap vdm;
     VertexPointMap vpm;
-    FaceIndexMap fpm;
     std::set<vertex_descriptor> sources;
     double m_time_step;
     Matrix kronecker;

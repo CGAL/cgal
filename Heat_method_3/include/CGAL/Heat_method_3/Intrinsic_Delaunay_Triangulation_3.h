@@ -27,7 +27,6 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/property_map.h>
 #include <CGAL/double.h>
 #include <CGAL/boost/graph/properties.h>
@@ -359,6 +358,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
            copy_face_graph(tmref,tm, std::back_inserter(pairs));
            for(int i=0; i < pairs.size(); i++){
              v2v[pairs[i].second] = pairs[i].first;
+             vtov[pairs[i].first] = pairs[i].second;
            }
            
            vertex_id_map = get(Vertex_property_tag(),const_cast<TriangleMesh&>(tm));
@@ -378,7 +378,6 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
            edge_id_map = get(Edge_property_tag(), const_cast<TriangleMesh&>(tm));
            Index edge_i = 0;
            BOOST_FOREACH(edge_descriptor ed, edges(tm)){
-             std::cout << ed << std::endl;
              mark_edges(edge_i,0)=1;
              edge_lengths(edge_i,0) = Polygon_mesh_processing::edge_length(halfedge(ed,tm),tm);
              put(edge_id_map, ed, edge_i++);
@@ -438,10 +437,52 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
          Eigen::VectorXd edge_lengths;
          Eigen::VectorXd mark_edges;
      public:
-         std::map<vertex_descriptor,vertex_descriptor> v2v;
+       std::map<vertex_descriptor,vertex_descriptor> v2v, vtov;
       };
 
 } // namespace Intrinsic_Delaunay_Triangulation_3
+
+namespace Heat_method_3 {
+
+  
+  template <typename TM>
+  struct V2V {
+
+    V2V(const TM&)
+    {}
+    
+    template <typename T>
+    const T& operator()(const T& t) const
+    {
+      return t;
+    }
+  };
+
+template <typename TM,
+          typename T,
+          typename VDM,
+          typename VPM,
+          typename FIM,
+          typename EIM,
+          typename LA>
+struct V2V<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,FIM,EIM,LA> >
+{
+  typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,FIM,EIM,LA> Idt;
+  const Idt& idt;
+  typedef typename boost::graph_traits<Idt>::vertex_descriptor Idt_vertex_descriptor;
+  typedef typename boost::graph_traits<TM>::vertex_descriptor TM_vertex_descriptor;
+  
+  V2V(const Idt& idt)
+    : idt(idt)
+  {}
+    
+  Idt_vertex_descriptor operator()(const TM_vertex_descriptor& vd) const
+  {
+    return Idt_vertex_descriptor(idt.vtov.at(vd),idt.triangle_mesh());
+  }
+};
+  } // namespace Heat_method_3
+  
 } // namespace CGAL
 
 namespace boost {

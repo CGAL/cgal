@@ -1,5 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Heat_method_3/Heat_method_3.h>
 #include <CGAL/Heat_method_3/Intrinsic_Delaunay_Triangulation_3.h>
@@ -14,7 +15,8 @@
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
 typedef Kernel::Point_2                                      Point_2;
-typedef CGAL::Surface_mesh<Point>                            Surface_mesh;
+//typedef CGAL::Surface_mesh<Point>                            Surface_mesh;
+typedef CGAL::Polyhedron_3<Kernel> Surface_mesh;
 
 typedef CGAL::dynamic_vertex_property_t<double> Vertex_distance_tag;
 typedef boost::property_map<Surface_mesh, Vertex_distance_tag >::type Vertex_distance_map;
@@ -123,9 +125,9 @@ int main(int argc, char*argv[])
  
   //source set tests
   Heat_method hm(idt, idt.vertex_distance_map());
-  // hm.add_source(* vertices(idt).first);
 
-  hm.add_source(boost::graph_traits<Idt>::vertex_descriptor(boost::graph_traits<Surface_mesh>::vertex_descriptor(0),sm));
+  hm.add_source(* vertices(sm).first);
+
   hm.update();
 
   BOOST_FOREACH(boost::graph_traits<Surface_mesh>::vertex_descriptor vd, vertices(sm)){
