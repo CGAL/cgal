@@ -138,7 +138,7 @@ AABB_node<Tr>::expand(ConstPrimitiveIterator first,
   m_bbox = traits.compute_bbox_object()(first, beyond);
 
   // sort primitives along longest axis aabb
-  traits.sort_primitives_object()(first, beyond, m_bbox);
+  traits.split_primitives_object()(first, beyond, m_bbox);
 
   switch(range)
   {

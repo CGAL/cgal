@@ -289,12 +289,12 @@ public:
    * Sorts the range defined by [first,beyond[. Sort is achieved on bbox longuest
    * axis, using the comparison function `<dim>_less_than` (dim in {x,y,z})
    */
-  class Sort_primitives
+  class Split_primitives
   {
     typedef AABB_traits<GeomTraits,AABBPrimitive,BboxMap> Traits;
     const Traits& m_traits;
   public:
-    Sort_primitives(const AABB_traits<GeomTraits,AABBPrimitive,BboxMap>& traits)
+    Split_primitives(const AABB_traits<GeomTraits,AABBPrimitive,BboxMap>& traits)
       : m_traits(traits) {}
 
     template<typename PrimitiveIterator>
@@ -320,7 +320,7 @@ public:
       }
   };
 
-  Sort_primitives sort_primitives_object() const {return Sort_primitives(*this);}
+  Split_primitives split_primitives_object() const {return Split_primitives(*this);}
 
 
   /*
