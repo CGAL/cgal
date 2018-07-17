@@ -176,6 +176,10 @@ struct AABB_traits_base_2<GeomTraits,true>{
 /// \addtogroup PkgAABB_tree
 /// @{
 
+// forward declaration
+template< typename AABBTraits>
+class AABB_tree;
+
 /// This traits class handles any type of 3D geometric
 /// primitives provided that the proper intersection tests and
 /// constructions are implemented. It handles points, rays, lines and
@@ -368,6 +372,19 @@ public:
     bool operator()(const Query& q, const Primitive& pr) const
     {
       return GeomTraits().do_intersect_3_object()(q, internal::Primitive_helper<AT>::get_datum(pr,m_traits));
+    }
+
+    // intersection with AABB-tree
+    template<typename AABBTraits>
+    bool operator()(const CGAL::AABB_tree<AABBTraits>& other_tree, const Primitive& pr) const
+    {
+      return other_tree.do_intersect( internal::Primitive_helper<AT>::get_datum(pr,m_traits) );
+    }
+
+    template<typename AABBTraits>
+    bool operator()(const CGAL::AABB_tree<AABBTraits>& other_tree, const Bounding_box& bbox) const
+    {
+      return other_tree.do_intersect(bbox);
     }
   };
 
