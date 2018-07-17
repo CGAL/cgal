@@ -260,7 +260,7 @@ namespace Heat_method_3 {
     {
       Eigen::VectorXd u;
       Matrix A = (M+ a_time_step*c);
-      Eigen::SimplicialLLT<Matrix> solver;
+      Eigen::SimplicialLDLT<Matrix> solver;
       solver.compute(A);
       if(solver.info()!=Eigen::Success) {
         // decomposition failed
@@ -400,7 +400,7 @@ namespace Heat_method_3 {
     }
 
 
-    Eigen::VectorXd solve_phi(Matrix c, Matrix divergence, int dimension) const
+    Eigen::VectorXd solve_phi(const Matrix& c, const Matrix& divergence, int dimension) const
     {
 
       Eigen::VectorXd phi;

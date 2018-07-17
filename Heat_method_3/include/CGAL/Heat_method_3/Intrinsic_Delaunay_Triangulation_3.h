@@ -367,6 +367,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
            edge_id_map = get(Edge_property_tag(), const_cast<TriangleMesh&>(tm));
            Index edge_i = 0;
            BOOST_FOREACH(edge_descriptor ed, edges(tm)){
+             std::cout << ed << std::endl;
              mark_edges(edge_i,0)=1;
              edge_lengths(edge_i,0) = Polygon_mesh_processing::edge_length(halfedge(ed,tm),tm);
              put(edge_id_map, ed, edge_i++);
@@ -408,7 +409,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
              double e2_len = edge_lengths(e2,0);
              double e3_len = edge_lengths(e3,0);
              double angle_a = -(e2_len*e2_len) + e3_len*e3_len + e1_len*e1_len;
-             angle_a = angle_a/(2*e3_len*e1_len);
+             angle_a = acos(angle_a/(2*e3_len*e1_len));
              Point_2 p31(e3_len*std::cos(angle_a), e3_len*std::sin(angle_a));
              put(hcm,hd,p31);
 

@@ -109,26 +109,28 @@ void check_no_update(const Idt& sm, const Vertex_distance_map& original, const V
 int main(int argc, char*argv[])
 {
   Surface_mesh sm;
-  Vertex_distance_map vdm = get(Vertex_distance_tag(),sm);
-  
-  Idt idt(sm, vdm);
 
-
-  bool idf = false;
-
-  std::ifstream in((argc>1)?argv[1]:"data/pyramid0.off");
+  std::ifstream in((argc>1)?argv[1]:"data/pyramid1.off");
   in >> sm;
   if(!in || num_vertices(sm) == 0) {
     std::cerr << "Problem loading the input data" << std::endl;
     return 1;
   }
 
+  Vertex_distance_map vdm = get(Vertex_distance_tag(),sm);  
+  Idt idt(sm, vdm);
+
+ 
   //source set tests
   Heat_method hm(idt, idt.vertex_distance_map());
   // hm.add_source(* vertices(idt).first);
 
   hm.add_source(boost::graph_traits<Idt>::vertex_descriptor(boost::graph_traits<Surface_mesh>::vertex_descriptor(0),sm));
   hm.update();
+
+  BOOST_FOREACH(boost::graph_traits<Surface_mesh>::vertex_descriptor vd, vertices(sm)){
+    std::cout << get(vdm,vd) << std::endl;
+  }
 #if 0  
 
 
