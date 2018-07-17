@@ -2481,10 +2481,12 @@ update_mesh_no_topo_change(const Vertex_handle& old_vertex,
                            OutputIterator modified_vertices,
                            const Cell_vector& conflict_cells )
 {
-  // std::cerr << "update_mesh_no_topo_change("
-  //           << (void*)(&*old_vertex) << " = " << tr_.point(old_vertex) << ",\n"
-  //           << "                            " << move << ",\n"
-  //           << "                            " << new_position << ")" << std::endl;
+#ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
+   std::cerr << "update_mesh_no_topo_change("
+             << (void*)(&*old_vertex) << " = " << tr_.point(old_vertex) << ",\n"
+             << "                            " << move << ",\n"
+             << "                            " << new_position << ")" << std::endl;
+#endif
 
   typename Gt::Construct_opposite_vector_3 cov = tr_.geom_traits().construct_opposite_vector_3_object();
 
@@ -2515,8 +2517,10 @@ update_mesh_no_topo_change(const Vertex_handle& old_vertex,
   }
   else // revert move
   {
-    // std::cerr << "update_mesh_no_topo_change: revert move to "
-    //           << old_position << "\n";
+#ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
+     std::cerr << "update_mesh_no_topo_change: revert move to "
+               << old_position << "\n";
+#endif
     reset_circumcenter_cache(conflict_cells);
 
     // Sliver caches have been updated by valid_move
@@ -2543,13 +2547,12 @@ update_mesh_topo_change(const Vertex_handle& old_vertex,
                         OutputIterator modified_vertices,
                         bool *could_lock_zone)
 {
-  // std::cerr << "update_mesh_topo_change(" << (void*)(&*old_vertex)
-  //                                         << "=" << tr_.point(old_vertex)
-  //           << "                        " << move << ",\n"
-  //           << "                        " << new_position << ",\n"
-  //           << ")" << std::endl;
-  //
-  // check_c3t3(c3t3_);
+#ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
+   std::cerr << "update_mesh_topo_change(" << (void*)(&*old_vertex)
+                                           << "=" << tr_.point(old_vertex)
+             << "                        " << new_position << ",\n"
+             << ")" << std::endl;
+#endif
 
   Cell_set insertion_conflict_cells;
   Cell_set removal_conflict_cells;
@@ -2604,13 +2607,13 @@ update_mesh_topo_change(const Vertex_handle& old_vertex,
   // If nothing changed, return
   if ( old_position == tr_.point(new_vertex) )
   {
-    // std::cerr << "update_mesh_topo_change: no move!\n";
-    // check_c3t3(c3t3_);
+#ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
+    std::cerr << "update_mesh_topo_change: no move!\n";
+#endif
     return std::make_pair(false,old_vertex);
   }
 
   restore_mesh(outdated_cells.begin(),outdated_cells.end());
-  // std::cerr << "new_sliver_value=" << new_sliver_value << std::endl;
 
   // Check that surface boundary does not change.
   // This check ensures that vertices which are inside c3t3 stay inside.
@@ -2622,7 +2625,6 @@ update_mesh_topo_change(const Vertex_handle& old_vertex,
   {
     fill_modified_vertices(outdated_cells.begin(), outdated_cells.end(),
                            new_vertex, modified_vertices);
-    // check_c3t3(c3t3_);
     return std::make_pair(true,new_vertex);
   }
   else
@@ -2630,8 +2632,11 @@ update_mesh_topo_change(const Vertex_handle& old_vertex,
     // Removing from c3t3 cells which will be destroyed by revert_move
     // is done by move_point_topo_change_conflict_zone_known, called by revert_move
 
-    // std::cerr << "update_mesh_topo_change: revert move to "
-    //           << old_position << "\n";
+#ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
+     std::cerr << "update_mesh_topo_change: revert move to "
+               << old_position << "\n";
+#endif
+
     //reset caches in case cells are re-used by the compact container
     reset_circumcenter_cache(outdated_cells);
     reset_sliver_cache(outdated_cells);
@@ -2646,7 +2651,6 @@ update_mesh_topo_change(const Vertex_handle& old_vertex,
     CGAL_assertion(outdated_cells.size() == cells_backup.size());
     restore_from_cells_backup(outdated_cells, cells_backup);
 
-    // check_c3t3(c3t3_);
     return std::make_pair(false,revert_vertex);
   }
 }
@@ -2660,9 +2664,11 @@ update_mesh(const Vertex_handle& old_vertex,
             OutputIterator modified_vertices,
             bool fill_vertices)
 {
-  // std::cerr << "\nupdate_mesh[v2]("  << (void*)(&*old_vertex)
-  //                                    << "=" << tr_.point(old_vertex) << ",\n"
-  //           << "                   " << new_position << ")\n";
+#ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
+   std::cerr << "\nupdate_mesh[v2](" << (void*)(&*old_vertex)
+                                     << "=" << tr_.point(old_vertex) << ",\n"
+             << "                " << move << ")\n";
+#endif
 
   Cell_vector outdated_cells;
   Vertex_handle new_vertex = move_point(old_vertex, move,
@@ -2941,9 +2947,11 @@ move_point(const Vertex_handle& old_vertex,
            OutdatedCellsOutputIterator outdated_cells,
            DeletedCellsOutputIterator deleted_cells) const
 {
-  // std::cerr << "C3T3_helpers::move_point[v2](" << (void*)(&*old_vertex)
-  //                                              << " = " << tr_.point(old_vertex)  << ",\n"
-  //           << "                             " << move << ")\n";
+#ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
+   std::cerr << "C3T3_helpers::move_point[v2](" << (void*)(&*old_vertex)
+                                                << " = " << tr_.point(old_vertex)  << ",\n"
+             << "                             " << move << ")\n";
+#endif
 
   typename Gt::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
   typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
@@ -2978,6 +2986,12 @@ move_point(const Vertex_handle& old_vertex,
            Outdated_cell_set& outdated_cells_set,
            Moving_vertices_set& moving_vertices) const
 {
+#ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
+  std::cerr << "C3T3_helpers::move_point(" << (void*)(&*old_vertex)
+                                           << " = " << tr_.point(old_vertex)  << ",\n"
+            << "                         " << move << ")\n";
+#endif
+
   typename Gt::Construct_translated_point_3 translate = tr_.geom_traits().construct_translated_point_3_object();
   typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
   typename Gt::Construct_weighted_point_3 cwp = tr_.geom_traits().construct_weighted_point_3_object();
@@ -3103,6 +3117,13 @@ move_point_topo_change(const Vertex_handle& old_vertex,
                        Outdated_cell_set& outdated_cells_set,
                        bool *could_lock_zone) const
 {
+#ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
+  std::cerr << "move_point_topo_change(" << (void*)(&*old_vertex)
+                                         << "=" << tr_.point(old_vertex)
+            << "                       " << new_position << ",\n"
+            << ")" << std::endl;
+#endif
+
   Cell_set insertion_conflict_cells;
   Cell_set removal_conflict_cells;
   Facet_vector insertion_conflict_boundary;
@@ -3162,6 +3183,13 @@ move_point_topo_change(const Vertex_handle& old_vertex,
                        OutdatedCellsOutputIterator outdated_cells,
                        DeletedCellsOutputIterator deleted_cells) const
 {
+#ifdef CGAL_MESH_3_C3T3_HELPERS_VERBOSE
+  std::cerr << "move_point_topo_change with delcells(" << (void*)(&*old_vertex)
+                                                       << "=" << tr_.point(old_vertex)
+            << "                                     " << new_position << ",\n"
+            << ")" << std::endl;
+#endif
+
   Cell_set insertion_conflict_cells;
   Cell_set removal_conflict_cells;
   Facet_vector insertion_conflict_boundary;
@@ -3972,14 +4000,6 @@ get_surface_boundary(const Vertex_handle& moving_vertex,
     incident_surface_vertices.erase(moving_vertex);
   }
 
-  // std::cerr.precision(17);
-  // std::cerr << "boundary { ";
-  // BOOST_FOREACH(const typename Facet_boundary::value_type& v,
-  //               boundary)
-  // {
-  //   std::cerr << "(" << v.first.first->point() << ", " << v.first.second->point() << ", " << v.second.first << ") ";
-  // }
-  // std::cerr << "}\n";
   return boundary;
 }
 
