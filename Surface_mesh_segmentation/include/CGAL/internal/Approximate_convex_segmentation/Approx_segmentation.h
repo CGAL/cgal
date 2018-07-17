@@ -43,7 +43,9 @@
 #include <boost/function_output_iterator.hpp>
 #include <boost/move/move.hpp>
 #include <boost/unordered_map.hpp>
+#ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for_each.h>
+#endif
 
 #include <iostream>
 #include <fstream>
@@ -159,7 +161,7 @@ public:
       graph_edge_descriptor optimal_edge = *m_candidates.begin();
       m_candidates.erase(m_candidates.begin());
       
-#ifdef CGAL_APPROXIMATE_CONVEX_DECOMPOSITION_VERBOSE            
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE            
       std::cout << "#" << num_vertices(m_graph) << " Optimal edge for decimation: " << optimal_edge << std::endl;
       std::cout << "Decimation cost: " << m_decimation_map[optimal_edge].decimation_cost << ", Concavity value: " << m_decimation_map[optimal_edge].new_segment_props.concavity << std::endl;
       std::cout << "Total edges: " << num_edges(m_graph) << std::endl;
@@ -356,7 +358,7 @@ private:
       decimation_props.new_segment_props.concavity = 0;
     }
 
-#ifdef CGAL_APPROXIMATE_CONVEX_DECOMPOSITION_VERBOSE
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
 //        std::cout << "Concavity: " << decimation_props.new_segment_props.concavity << std::endl;
 #endif
 
@@ -367,7 +369,7 @@ private:
     double aspect_ratio = compute_aspect_ratio(decimation_props.new_segment_props.faces);
     double d = compute_normalization_factor(decimation_props.new_segment_props.bbox);
 
-#ifdef CGAL_APPROXIMATE_CONVEX_DECOMPOSITION_VERBOSE
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
 //        std::cout << "Aspect ratio & normalization factor: " << aspect_ratio << " " << d << std::endl;
 #endif
 
@@ -375,7 +377,7 @@ private:
 
     decimation_props.decimation_cost = decimation_props.new_segment_props.concavity / d + alpha * aspect_ratio;
 
-#ifdef CGAL_APPROXIMATE_CONVEX_DECOMPOSITION_VERBOSE
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
 //        std::cout << "Decimation cost: " << decimation_props.decimation_cost << std::endl;
 #endif
   }
@@ -416,13 +418,13 @@ private:
     remove_vertex(vert_2, m_graph);
 
     // remove candidate edges with old value of decimation cost
-#ifdef CGAL_APPROXIMATE_CONVEX_DECOMPOSITION_VERBOSE
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
     int cnt = 0;
 #endif
     BOOST_FOREACH(graph_edge_descriptor edge, boost::out_edges(vert_1, m_graph))
     {
       remove_candidate(edge); 
-#ifdef CGAL_APPROXIMATE_CONVEX_DECOMPOSITION_VERBOSE
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
         ++cnt;
 #endif
     }
@@ -469,7 +471,7 @@ private:
       add_candidate(edge, concavity_threshold);
     }
     
-#ifdef CGAL_APPROXIMATE_CONVEX_DECOMPOSITION_VERBOSE
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
     std::cout << "Updated edges: " << cnt << std::endl;
 #endif
 
@@ -511,7 +513,7 @@ private:
 
     CGAL::Polygon_mesh_processing::border_halfedges(faces, m_mesh, boost::make_function_output_iterator(Perimeter_calculator(m_mesh, perimeter)));
 
-#ifdef CGAL_APPROXIMATE_CONVEX_DECOMPOSITION_VERBOSE
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
 //        std::cout << "Perimeter & area: " << perimeter << " " << area << std::endl;
 #endif
 

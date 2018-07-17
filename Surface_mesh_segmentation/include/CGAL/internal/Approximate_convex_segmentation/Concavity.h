@@ -115,7 +115,7 @@ namespace internal
       // compute convex hull
       CGAL::convex_hull_3(pts.begin(), pts.end(), conv_hull); 
       
-      return compute(vertices(m_mesh), conv_hull, distances);
+      return compute_shortest(vertices(m_mesh), conv_hull, distances);
     }
     
     double compute()
@@ -141,7 +141,7 @@ namespace internal
         }
       }
 
-      return compute(std::make_pair(pts.begin(), pts.end()), conv_hull, distances);
+      return compute_shortest(std::make_pair(pts.begin(), pts.end()), conv_hull, distances);
     }
     
     double compute(const std::vector<face_descriptor>& faces, const Mesh& conv_hull)
@@ -152,10 +152,9 @@ namespace internal
 
     /**
     * Computes concavity value projecting vertices from a list onto a convex hull.
-    * Vertices list a subset of all vertices in the mesh.
     */
     template <class iterator, class DistancesMap>
-    double compute(const std::pair<iterator, iterator>& verts, const Mesh& conv_hull, DistancesMap distances)
+    double compute_projected(const std::pair<iterator, iterator>& verts, const Mesh& conv_hull, DistancesMap distances)
     {
       // compute normals if normals are not computed
       compute_normals();
@@ -238,6 +237,83 @@ namespace internal
         BOOST_FOREACH(vertex_descriptor vert, verts)
         {
           intersection_functor(vert);
+        }
+      }
+
+      return CGAL::sqrt(result);
+    }
+    
+    /**
+    * Computes concavity values as the shortest distances from the point of a vertex on the convex hull.
+    */
+    template <class iterator, class DistancesMap>
+    double compute_shortest(const std::pair<iterator, iterator>& verts, const Mesh& conv_hull, DistancesMap distances)
+    {
+      // construct AABB for fast the shortest distance computations 
+      AABB_tree tree(faces(conv_hull).begin(), faces(conv_hull).end(), conv_hull);
+//      tree.accelerate_distance_queries();
+
+      // compute intersections and select the largest projection length
+      double result = 0;
+
+      // functor that computes the shortest distance and maximizes the result variable
+      struct Shortest_distance_functor
+      {
+        Shortest_distance_functor(const Vpm& vpm, const AABB_tree& tree, DistancesMap& distances, double& result
+#ifdef CGAL_LINKED_WITH_TBB
+        , tbb::mutex& mutex
+#endif
+        )
+        : m_vpm(vpm), m_tree(tree), m_distances(distances), m_result(result)
+#ifdef CGAL_LINKED_WITH_TBB
+       , m_mutex(mutex)
+#endif
+       {}
+
+        void operator() (const vertex_descriptor& vert) const
+        {
+          double distance = static_cast<double>(m_tree.squared_distance(get(m_vpm, vert)));
+
+#ifdef CGAL_LINKED_WITH_TBB
+          m_mutex.lock();
+#endif
+          put(m_distances, vert, distance);
+          m_result = std::max(m_result, distance);
+#ifdef CGAL_LINKED_WITH_TBB
+          m_mutex.unlock();
+#endif
+        }
+
+      private:
+        const Vpm& m_vpm;
+        const AABB_tree& m_tree;
+        DistancesMap& m_distances;
+        double& m_result;
+#ifdef CGAL_LINKED_WITH_TBB
+        tbb::mutex& m_mutex;
+#endif
+      };
+
+#ifdef CGAL_LINKED_WITH_TBB
+      tbb::mutex mutex;
+#endif
+      Shortest_distance_functor shortest_functor(m_vpm, tree, distances, result
+#ifdef CGAL_LINKED_WITH_TBB
+      , mutex
+#endif
+      );
+
+#ifdef CGAL_LINKED_WITH_TBB
+      if (boost::is_convertible<ConcurrencyTag, Parallel_tag>::value)
+      {
+        tbb::parallel_for_each(verts.first, verts.second, shortest_functor);
+      }
+      else
+#endif
+      {
+        BOOST_FOREACH(vertex_descriptor vert, verts)
+        {
+          shortest_functor(vert);
         }
       }
 
