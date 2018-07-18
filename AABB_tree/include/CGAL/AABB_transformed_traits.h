@@ -1,4 +1,3 @@
-
 // Copyright (c) 2018 GeometryFactory (France).
 // All rights reserved.
 //
@@ -24,179 +23,60 @@
 #ifndef CGAL_AABB_TRANSFORMED_TRAITS_H
 #define CGAL_AABB_TRANSFORMED_TRAITS_H
 
-#include <CGAL/license/AABB_tree.h>
+#include <CGAL/AABB_transformed_traits_base.h>
+#include <CGAL/Filtered_predicate.h>
 
-#include <CGAL/disable_warnings.h>
+namespace CGAL{
+template<typename BaseTraits, 
+         typename Kernel,
+         class HasFilteredPredicates = typename Kernel::Has_filtered_predicates_tag /* = Tag_false */>
+class AABB_transformed_traits
+    :public AABB_transformed_traits_base<BaseTraits, Kernel> 
+{};
 
-#include <CGAL/Bbox_3.h>
-#include <CGAL/Default.h>
-#include <CGAL/intersections.h>
-#include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
-#include <CGAL/internal/AABB_tree/Is_ray_intersection_geomtraits.h>
-#include <CGAL/internal/AABB_tree/Primitive_helper.h>
-
-#include <CGAL/Aff_transformation_3.h>
-#include <boost/optional.hpp>
-#include <boost/bind.hpp>
-
-/// \file AABB_transformed_traits.h
-
-namespace CGAL {
-// forward declaration
-template< typename AABBTraits>
-class AABB_tree;
-/// \addtogroup PkgAABB_tree
-/// @{
-
-/// \tparam BaseTraits a model of `CGAL::AABBTraits`
-/// 
-/// \sa `AABBTraits`
-/// \sa `AABB_tree`
-/// \sa `AABBPrimitive`
-/// \sa `AABBPrimitiveWithSharedData`
-
-  template<typename BaseTraits, 
-           typename Kernel>
-class AABB_transformed_traits:
-  public BaseTraits
+template<typename BaseTraits, 
+         typename Kernel>
+class AABB_transformed_traits<BaseTraits, Kernel, Tag_true>
+    :public AABB_transformed_traits_base<BaseTraits, Kernel> 
 {
-public:
-
-  //Constructor
-  AABB_transformed_traits(const Aff_transformation_3<Kernel>& transf = Aff_transformation_3<Kernel>(IDENTITY))
-    :m_transfo(transf)
-  {}
-  // AABBTraits concept types
-  typedef typename BaseTraits::FT FT;
-  typedef typename BaseTraits::Point_3 Point_3;
-  typedef typename BaseTraits::Primitive Primitive;
-  typedef typename BaseTraits::Bounding_box Bounding_box;
-  typedef typename BaseTraits::Point_and_primitive_id Point_and_primitive_id;
-  typedef typename BaseTraits::Object_and_primitive_id  Object_and_primitive_id;
-  template<typename Query>
-  struct Intersection_and_primitive_id {
-    typedef typename BaseTraits::template Intersection_and_primitive_id<Query>::Intersection_type Intersection_type;
-
-    typedef typename BaseTraits::template Intersection_and_primitive_id<Query>::Type Type;
-  };
+  typedef typename Kernel::Exact_kernel EK;
+  typedef typename Kernel::Approximate_kernel FK;
+  typedef typename Kernel::C2E C2E;
+  typedef typename Kernel::C2F C2F;
   
-  //SearchGeomTriats_3 concept types
-  typedef typename BaseTraits::Iso_cuboid_3  Iso_cuboid_3;
-  typedef typename BaseTraits::Sphere_3  Sphere_3;
-  typedef typename BaseTraits::Construct_iso_cuboid_3  Construct_iso_cuboid_3;
-  typedef typename BaseTraits::Construct_min_vertex_3  Construct_min_vertex_3;
-  typedef typename BaseTraits::Construct_max_vertex_3  Construct_max_vertex_3;
-  typedef typename BaseTraits::Construct_center_3  Construct_center_3;
-  typedef typename BaseTraits::Compute_squared_radius_3  Compute_squared_radius_3;
-  typedef typename BaseTraits::Cartesian_const_iterator_3 Cartesian_const_iterator_3;
-  typedef typename BaseTraits::Construct_cartesian_const_iterator_3  Construct_cartesian_const_iterator_3;
+  typedef Filtered_predicate<typename AABB_transformed_traits_base<BaseTraits,EK>::Split_primitives,
+  typename AABB_transformed_traits_base<BaseTraits,FK>::Split_primitives,
+  C2E,C2F>   Split_primitives;
   
-  //Splitting
-    typedef typename BaseTraits::Split_primitives            Split_primitives;
+  typedef Filtered_predicate<typename AABB_transformed_traits_base<BaseTraits,EK>::Compute_bbox,
+  typename AABB_transformed_traits_base<BaseTraits,FK>::Compute_bbox,
+  C2E,C2F>   Compute_bbox;
   
-  typedef typename  BaseTraits::Compute_bbox                 Compute_bbox;
+  typedef Filtered_predicate<typename AABB_transformed_traits_base<BaseTraits,EK>::Do_intersect,
+  typename AABB_transformed_traits_base<BaseTraits,FK>::Do_intersect,
+  C2E,C2F>   Do_intersect;
   
-  //Intersections
-  class Do_intersect {
-    const AABB_transformed_traits<BaseTraits, Kernel>& m_traits;
-  public:
-    Do_intersect(const AABB_transformed_traits<BaseTraits, Kernel>& traits)
-      :m_traits(traits) {}
-
-    template<typename Query>
-    bool operator()(const Query& q, const Bounding_box& bbox) const
-    {
-      Point_3 min(bbox.xmin(), bbox.ymin(), bbox.zmin()),
-      max(bbox.xmax(), bbox.ymax(), bbox.zmax());
-      
-      min = m_traits.transformation().transform(min);
-      max = m_traits.transformation().transform(max);
-      Bounding_box transfo_box(to_double(min.x()), to_double(min.y()), to_double(min.z()),
-                               to_double(max.x()), to_double(max.y()), to_double(max.z()));
-      bool res = CGAL::do_intersect(q, transfo_box);
-      return res;
-    }
-
-    template<typename Query>
-    bool operator()(const Query& q, const Primitive& pr) const
-    {
-      return Kernel().do_intersect_3_object()(q, internal::Primitive_helper<BaseTraits>::get_datum(pr,m_traits));
-    }
-    
-    // intersection with AABB-tree
-    template<typename AABBTraits>
-    bool operator()(const CGAL::AABB_tree<AABBTraits>& other_tree, const Primitive& pr) const
-    {
-      return other_tree.do_intersect( internal::Primitive_helper<BaseTraits>::get_datum(pr,m_traits));
-    }
-    
-    template<typename AABBTraits>
-    bool operator()(const CGAL::AABB_tree<AABBTraits>& other_tree, const Bounding_box& bbox) const
-    {
-      Point_3 min(bbox.xmin(), bbox.ymin(), bbox.zmin()),
-      max(bbox.xmax(), bbox.ymax(), bbox.zmax());
-      
-      min = m_traits.transformation().transform(min);
-      max = m_traits.transformation().transform(max);
-      Bounding_box transfo_box(to_double(min.x()), to_double(min.y()), to_double(min.z()),
-                               to_double(max.x()), to_double(max.y()), to_double(max.z()));
-      return other_tree.do_intersect(transfo_box);
-    }
-  };
+  typedef Filtered_predicate<typename AABB_transformed_traits_base<BaseTraits,EK>::Intersection,
+  typename AABB_transformed_traits_base<BaseTraits,FK>::Intersection,
+  C2E,C2F>   Intersection;
   
-  typedef typename BaseTraits::Intersection Intersection;
+  typedef Filtered_predicate<typename AABB_transformed_traits_base<BaseTraits,EK>::Compare_distance,
+  typename AABB_transformed_traits_base<BaseTraits,FK>::Compare_distance,
+  C2E,C2F>   Compare_distance;
   
-  //Distance Queries
-  typedef typename BaseTraits::Compare_distance              Compare_distance;
-  typedef typename BaseTraits::Closest_point                 Closest_point   ;
-  typedef typename BaseTraits::Squared_distance              Squared_distance;
-  typedef typename BaseTraits::Equal_3                       Equal_3         ;
+  typedef Filtered_predicate<typename AABB_transformed_traits_base<BaseTraits,EK>::Closest_point,
+  typename AABB_transformed_traits_base<BaseTraits,FK>::Closest_point,
+  C2E,C2F>   Closest_point;
   
-  //Operations   
-  Split_primitives split_primitives_object() const {
-    return BaseTraits::split_primitives_object();
-  }
+  typedef Filtered_predicate<typename AABB_transformed_traits_base<BaseTraits,EK>::Squared_distance,
+  typename AABB_transformed_traits_base<BaseTraits,FK>::Squared_distance,
+  C2E,C2F>   Squared_distance;
   
-  Compute_bbox compute_bbox_object() const{
-    return BaseTraits::compute_bbox_object();
-  }
-  Do_intersect do_intersect_object() const{
-    return Do_intersect(*this);
-  }
+  typedef Filtered_predicate<typename AABB_transformed_traits_base<BaseTraits,EK>::Equal_3,
+  typename AABB_transformed_traits_base<BaseTraits,FK>::Equal_3,
+  C2E,C2F>   Equal_3;
   
-  Intersection intersection_object() const{
-    return BaseTraits::intersection_object();
-  }
-  
-  Compare_distance compare_distance_object() const{
-    return BaseTraits::compare_distance_object();
-  }
-  Closest_point closest_point_object() const{
-    return BaseTraits::closest_point_object();
-  }
-  Squared_distance squared_distance_object() const{
-    return BaseTraits::squared_distance_object();
-  }
-  Equal_3 equal_3_object() const{
-    return BaseTraits::equal_3_object;
-  }
-  
-  //Specific
-  void set_transformation(const Aff_transformation_3<Kernel>& trans) const 
-  {
-    m_transfo = trans;
-  }
-  
-  const Aff_transformation_3<Kernel>& transformation() const { return m_transfo; }
-  
-private:
-  mutable Aff_transformation_3<Kernel> m_transfo;
-
 };
-  
 
-}  // end namespace CGAL
-
-#include <CGAL/enable_warnings.h>
-
+}//end CGAL
 #endif // CGAL_AABB_TRANSFORMED_TRAITS_H

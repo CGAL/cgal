@@ -86,7 +86,7 @@ void test_no_collision(int k, const char* fname,
 
 int main(int argc, const char** argv)
 {
-  int k = atoi(argv[1]);
+  int k = (argc>1) ? atoi(argv[1]) : 10;
   const char* path = (argc>2)?argv[2]:"data/handle"
                                       ".off";
   std::cout<< k<<" steps in "<<path<<std::endl;
