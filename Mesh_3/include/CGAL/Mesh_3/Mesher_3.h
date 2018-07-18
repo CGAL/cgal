@@ -44,6 +44,7 @@
 #include <CGAL/Mesh_3/Refine_tets_visitor.h>
 #include <CGAL/Mesher_level_visitors.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/atomic.h>
 
 #ifdef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
 #include <CGAL/Surface_mesher/Surface_mesher_visitor.h>
@@ -218,7 +219,11 @@ public:
            const MeshCriteria& criteria,
            int mesh_topology = 0,
            std::size_t maximal_number_of_vertices = 0,
-           Mesh_error_code* error_code = 0);
+           Mesh_error_code* error_code = 0
+#ifndef CGAL_NO_ATOMIC
+           , CGAL::cpp11::atomic<bool>* stop_ptr = 0
+#endif
+           );
 
   /// Destructor
   ~Mesher_3() 
@@ -284,7 +289,33 @@ private:
   std::size_t maximal_number_of_vertices_;
 
   /// Pointer to the error code
-  Mesh_error_code* error_code_;
+  Mesh_error_code* const error_code_;
+
+#ifndef CGAL_NO_ATOMIC
+  /// Pointer to the atomic Boolean that can stop the process
+  CGAL::cpp11::atomic<bool>* const stop_ptr;
+#endif
+
+  bool forced_stop() const {
+#ifndef CGAL_NO_ATOMIC
+    if(stop_ptr != 0 &&
+       stop_ptr->load(CGAL::cpp11::memory_order_acquire) == true)
+    {
+      if(error_code_ != 0) *error_code_ = CGAL_MESH_3_STOPPED;
+      return true;
+    }
+#endif // not defined CGAL_NO_ATOMIC
+    if(maximal_number_of_vertices_ != 0 &&
+       r_c3t3_.triangulation().number_of_vertices() >=
+       maximal_number_of_vertices_)
+    {
+      if(error_code_ != 0) {
+        *error_code_ = CGAL_MESH_3_MAXIMAL_NUMBER_OF_VERTICES_REACHED;
+      }
+      return true;
+    }
+    return false;
+  }
 
 private:
   // Disabled copy constructor
@@ -302,7 +333,11 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
                                const MC& criteria,
                                int mesh_topology,
                                std::size_t maximal_number_of_vertices,
-                               Mesh_error_code* error_code)
+                               Mesh_error_code* error_code
+#ifndef CGAL_NO_ATOMIC
+                               , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+                               )
 : Base(c3t3.bbox(),
        Concurrent_mesher_config::get().locking_grid_num_cells_per_axis)
 , r_oracle_(domain)
@@ -313,13 +348,21 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
                  null_mesher_,
                  c3t3,
                  mesh_topology,
-                 maximal_number_of_vertices)
+                 maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                 , stop_ptr
+#endif
+                 )
 , cells_mesher_(c3t3.triangulation(),
                 criteria.cell_criteria_object(),
                 domain,
                 facets_mesher_,
                 c3t3,
-                maximal_number_of_vertices)
+                maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                , stop_ptr
+#endif
+                )
 , null_visitor_()
 , facets_visitor_(&cells_mesher_, &null_visitor_)
 #ifndef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
@@ -330,6 +373,9 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
 , r_c3t3_(c3t3)
 , maximal_number_of_vertices_(maximal_number_of_vertices)
 , error_code_(error_code)
+#ifndef CGAL_NO_ATOMIC
+, stop_ptr(stop_ptr)
+#endif
 {
   facets_mesher_.set_lock_ds(this->get_lock_data_structure());
   facets_mesher_.set_worksharing_ds(this->get_worksharing_data_structure());
@@ -401,8 +447,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
 
   dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
 
-  if(maximal_number_of_vertices_ == 0 ||
-     r_tr.number_of_vertices() < maximal_number_of_vertices_)
+  if(!forced_stop())
   {
     // Then scan volume and refine it
     cells_mesher_.scan_triangulation();
@@ -451,8 +496,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
             << nbsteps << "," << cells_mesher_.debug_info() << ")";
 
   while ( ! facets_mesher_.is_algorithm_done() &&
-          ( maximal_number_of_vertices_ == 0 ||
-            maximal_number_of_vertices_ >= r_tr.number_of_vertices()) )
+          ! forced_stop() )
   {
     facets_mesher_.one_step(facets_visitor_);
     std::cerr
@@ -461,13 +505,15 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
     % r_tr.number_of_vertices()
     % nbsteps % cells_mesher_.debug_info()
     % (nbsteps / timer.time());
-    if(refinement_stage == REFINE_FACETS &&
+    if(! forced_stop() &&
+       refinement_stage == REFINE_FACETS &&
        facets_mesher_.is_algorithm_done())
     {
       facets_mesher_.scan_edges();
       refinement_stage = REFINE_FACETS_AND_EDGES;
     }
-    if(refinement_stage == REFINE_FACETS_AND_EDGES &&
+    if(! forced_stop() &&
+       refinement_stage == REFINE_FACETS_AND_EDGES &&
        facets_mesher_.is_algorithm_done())
     {
       facets_mesher_.scan_vertices();
@@ -501,8 +547,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
             << nbsteps << "," << cells_mesher_.debug_info() << ")";
 
   while ( ! cells_mesher_.is_algorithm_done()  &&
-          ( maximal_number_of_vertices_ == 0 ||
-            maximal_number_of_vertices_ >= r_tr.number_of_vertices()) )
+          ! forced_stop() )
   {
     cells_mesher_.one_step(cells_visitor_);
     std::cerr
@@ -520,12 +565,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << std::endl;
 #endif
 
-  if(maximal_number_of_vertices_ != 0 &&
-     r_tr.number_of_vertices() >= maximal_number_of_vertices_ &&
-     error_code_ != 0)
-  {
-    *error_code_ = CGAL_MESH_3_MAXIMAL_NUMBER_OF_VERTICES_REACHED;
-  }
+  (void)(forced_stop()); // sets *error_code
 
   timer.stop();
   elapsed_time += timer.time();

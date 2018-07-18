@@ -33,6 +33,7 @@
 #ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/tbb.h>
 #endif
+#include <CGAL/atomic.h>
 
 #include <CGAL/Meshes/Filtered_deque_container.h>
 #include <CGAL/Meshes/Filtered_multimap_container.h>
@@ -352,7 +353,11 @@ public:
                  const MeshDomain& oracle,
                  Previous_& previous,
                  C3T3& c3t3,
-                 std::size_t maximal_number_of_vertices);
+                 std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+                );
   // For parallel
   Refine_cells_3(Tr& triangulation,
                  const Criteria& criteria,
@@ -361,7 +366,11 @@ public:
                  C3T3& c3t3,
                  Lock_data_structure *lock_ds,
                  WorksharingDataStructureType *worksharing_ds,
-                 std::size_t maximal_number_of_vertices);
+                 std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+                );
 
   // Destructor
   virtual ~Refine_cells_3() { }
@@ -397,6 +406,13 @@ public:
   // Tells if the refinement process of cells is currently finished
   bool no_longer_element_to_refine_impl()
   {
+#ifndef CGAL_NO_ATOMIC
+    if(m_stop_ptr != 0 &&
+       m_stop_ptr->load(CGAL::cpp11::memory_order_acquire) == true)
+    {
+      return true;
+    }
+#endif
     if(m_maximal_number_of_vertices_ !=0 &&
        triangulation_ref_impl().number_of_vertices() >=
        m_maximal_number_of_vertices_)
@@ -590,6 +606,10 @@ private:
   /// Maximal allowed number of vertices
   std::size_t m_maximal_number_of_vertices_;
 
+#ifndef CGAL_NO_ATOMIC
+  /// Pointer to the atomic Boolean that can stop the process
+  CGAL::cpp11::atomic<bool>* const m_stop_ptr;
+#endif
 private:
   // Disabled copy constructor
   Refine_cells_3(const Self& src);
@@ -608,7 +628,11 @@ Refine_cells_3(Tr& triangulation,
                const MD& oracle,
                P_& previous,
                C3T3& c3t3,
-               std::size_t maximal_number_of_vertices)
+               std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+               , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+               )
   : Mesher_level<Tr, Self, Cell_handle, P_,
       Triangulation_mesher_level_traits_3<Tr>, Ct >(previous)
   , C_()
@@ -620,6 +644,9 @@ Refine_cells_3(Tr& triangulation,
   , r_oracle_(oracle)
   , r_c3t3_(c3t3)
   , m_maximal_number_of_vertices_(maximal_number_of_vertices)
+#ifndef CGAL_NO_ATOMIC
+  , m_stop_ptr(stop_ptr)
+#endif
 {
 }
 
@@ -634,7 +661,11 @@ Refine_cells_3(Tr& triangulation,
                C3T3& c3t3,
                Lock_data_structure *lock_ds,
                WorksharingDataStructureType *worksharing_ds,
-               std::size_t maximal_number_of_vertices)
+               std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+               , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+               )
   : Mesher_level<Tr, Self, Cell_handle, P_,
       Triangulation_mesher_level_traits_3<Tr>, Ct >(previous, lock_ds, worksharing_ds)
   , C_()
@@ -646,6 +677,9 @@ Refine_cells_3(Tr& triangulation,
   , r_oracle_(oracle)
   , r_c3t3_(c3t3)
   , m_maximal_number_of_vertices_(maximal_number_of_vertices)
+#ifndef CGAL_NO_ATOMIC
+  , m_stop_ptr(stop_ptr)
+#endif
 {
 }
 
