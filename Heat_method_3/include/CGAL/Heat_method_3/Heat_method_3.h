@@ -155,7 +155,8 @@ namespace Heat_method_3 {
     /**
      * remove 'vd' from the source set, returning 'true' if 'vd' was in the set
      */
-    bool remove_source(vertex_descriptor vd)
+    template <typename VD>
+    bool remove_source(VD vd)
     {
       source_change_flag = true;
       return (sources.erase(v2v(vd)) == 1);

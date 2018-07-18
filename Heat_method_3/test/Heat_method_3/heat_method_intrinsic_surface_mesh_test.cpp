@@ -18,7 +18,7 @@ typedef Kernel::Point_2                                      Point_2;
 typedef CGAL::Surface_mesh<Point>                            Surface_mesh;
 //typedef CGAL::Polyhedron_3<Kernel> Surface_mesh;
 
-#if 1
+#if 0
 typedef CGAL::dynamic_vertex_property_t<double> Vertex_distance_tag;
 typedef boost::property_map<Surface_mesh, Vertex_distance_tag >::type Vertex_distance_map;
 #else
@@ -122,7 +122,7 @@ int main(int argc, char*argv[])
     std::cerr << "Problem loading the input data" << std::endl;
     return 1;
   }
-#if 1  
+#if 0 
   Vertex_distance_map vdm = get(Vertex_distance_tag(),sm);
 #else  
   Vertex_distance_map vdm =  sm.add_property_map<boost::graph_traits<Surface_mesh>::vertex_descriptor, double>("v:heat_intensity", 0).first;
@@ -141,6 +141,8 @@ int main(int argc, char*argv[])
   BOOST_FOREACH(boost::graph_traits<Surface_mesh>::vertex_descriptor vd, vertices(sm)){
     std::cout << get(vdm,vd) << std::endl;
   }
+
+  hm.remove_source(* vertices(sm).first);
 #if 0  
 
 
