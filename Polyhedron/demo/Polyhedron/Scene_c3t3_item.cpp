@@ -28,8 +28,7 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangulation_3_triangle_primitive.h>
-#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/IO/facets_in_complex_3_to_triangle_mesh.h>
 
 #include "Scene_polygon_soup_item.h"
 #include "Scene_polyhedron_item.h"
@@ -1274,63 +1273,12 @@ double Scene_c3t3_item_priv::complex_diag() const {
 
 void Scene_c3t3_item::export_facets_in_complex()
 {
-  std::set<C3t3::Vertex_handle> vertex_set;
-  for (C3t3::Facets_in_complex_iterator fit = c3t3().facets_in_complex_begin();
-       fit != c3t3().facets_in_complex_end();
-       ++fit)
-  {
-    vertex_set.insert(fit->first->vertex((fit->second + 1) % 4));
-    vertex_set.insert(fit->first->vertex((fit->second + 2) % 4));
-    vertex_set.insert(fit->first->vertex((fit->second + 3) % 4));
-  }
+  Polyhedron outmesh;
+  CGAL::facets_in_complex_3_to_triangle_mesh(c3t3(), outmesh);
+  Scene_polyhedron_item* item = new Scene_polyhedron_item(std::move(outmesh));
+  item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
+  scene->addItem(item);
 
-  std::map<C3t3::Vertex_handle, std::size_t> indices;
-  std::vector<Tr::Bare_point> points(vertex_set.size());
-  std::vector<std::vector<std::size_t> > polygons(c3t3().number_of_facets_in_complex());
-
-  std::size_t index = 0;
-  Geom_traits::Construct_point_3 wp2p
-    = c3t3().triangulation().geom_traits().construct_point_3_object();
-
-  BOOST_FOREACH(C3t3::Vertex_handle v, vertex_set)
-  {
-    points[index] = wp2p(v->point());
-    indices.insert(std::make_pair(v, index));
-    index++;
-  }
-
-  index = 0;
-  for (C3t3::Facets_in_complex_iterator fit = c3t3().facets_in_complex_begin();
-       fit != c3t3().facets_in_complex_end();
-       ++fit, ++index)
-  {
-    std::vector<std::size_t> facet(3);
-    facet[0] = indices.at(fit->first->vertex((fit->second + 1) % 4));
-    facet[1] = indices.at(fit->first->vertex((fit->second + 2) % 4));
-    facet[2] = indices.at(fit->first->vertex((fit->second + 3) % 4));
-    polygons[index] = facet;
-  }
-
-  namespace PMP = CGAL::Polygon_mesh_processing;
-  if (PMP::is_polygon_soup_a_polygon_mesh(polygons))
-  {
-    CGAL_assertion_code(bool orientable = )
-    PMP::orient_polygon_soup(points, polygons);
-    CGAL_assertion(orientable);
-
-    Polyhedron outmesh;
-    PMP::polygon_soup_to_polygon_mesh(points, polygons, outmesh);
-    Scene_polyhedron_item* item = new Scene_polyhedron_item(std::move(outmesh));
-    item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
-    scene->addItem(item);
-  }
-  else
-  {
-    Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
-    soup_item->load(points, polygons);
-    soup_item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
-    scene->addItem(soup_item);
-  }
   this->setVisible(false);
 }
 
