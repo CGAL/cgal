@@ -23,7 +23,7 @@
 #define CGAL_HEAT_METHOD_3_HEAT_METHOD_3_H
 
 #include <CGAL/license/Heat_method_3.h>
-
+#include <CGAL/Heat_method_3/Intrinsic_Delaunay_Triangulation_3.h> // for V2V  todo: clean up
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/property_map.h>
@@ -33,7 +33,6 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/Heat_method_3/Intrinsic_Delaunay_Triangulation_3.h>
 #include <Eigen/Cholesky>
 #include <Eigen/Sparse>
 
@@ -103,14 +102,10 @@ namespace Heat_method_3 {
     typedef typename boost::property_map<TriangleMesh, Face_property_tag >::const_type Face_id_map;
     Face_id_map face_id_map;
 
-    //types for intrinsic delaunay triangulation
-    typedef CGAL::dynamic_vertex_property_t<double> Vertex_distance_tag;
-    typedef typename boost::property_map<TriangleMesh, Vertex_distance_tag >::type Vertex_distance_map;
-
   public:
 
     Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm)
-      : vertex_id_map(get(Vertex_property_tag(),tm)), face_id_map(get(Face_property_tag(),tm)), v2v(tm),tm(tm), vdm(vdm), vpm(get(vertex_point,tm))
+      : vertex_id_map(get(Vertex_property_tag(),tm)), face_id_map(get(Face_property_tag(),tm)), v2v(tm), tm(tm), vdm(vdm), vpm(get(vertex_point,tm))
     {
       build();
     }
@@ -154,9 +149,7 @@ namespace Heat_method_3 {
     bool add_source(VD vd)
     {
       source_change_flag = true;
-      v2v(vd);
-        return true;
-      //return sources.insert(v2v(vd)).second;
+      return sources.insert(v2v(vd)).second;
     }
 
     /**
@@ -388,10 +381,15 @@ namespace Heat_method_3 {
           {
             current_Index = get(vertex_id_map, *current);
             double new_d = fabs(-phi.coeff(current_Index,0)+phi.coeff(i,0));
+            if(phi.coeff(current_Index,0)==phi.coeff(i,0))
+            {
+              min_val = 0.0000;
+            }
             if(new_d < min_val)
             {
               min_val = new_d;
             }
+
             current = ++current;
           }
           source_set_val(i,0) = min_val;
@@ -407,6 +405,7 @@ namespace Heat_method_3 {
       Eigen::VectorXd phi;
       Eigen::SimplicialLDLT<Matrix> solver;
       solver.compute(c);
+
       if(solver.info()!=Eigen::Success) {
         // decomposition failed
         CGAL_error_msg("Eigen Decomposition in phi failed");
@@ -523,9 +522,13 @@ namespace Heat_method_3 {
           A_matrix_entries.push_back(triplet(i,i, (1./6.)*norm_cross));
           A_matrix_entries.push_back(triplet(j,j, (1./6.)*norm_cross));
           A_matrix_entries.push_back(triplet(k,k, (1./6.)*norm_cross));
+          c_matrix_entries.push_back(triplet(i,i, 1e-9));
+          c_matrix_entries.push_back(triplet(j,j, 1e-9));
+          c_matrix_entries.push_back(triplet(k,k, 1e-9));
+
         }
+
       }
-   
       m_mass_matrix.resize(m,m);
       m_mass_matrix.setFromTriplets(A_matrix_entries.begin(), A_matrix_entries.end());
       m_cotan_matrix.resize(m,m);
@@ -533,11 +536,14 @@ namespace Heat_method_3 {
 
       m_time_step = 1./(num_edges(tm));
       m_time_step = m_time_step*summation_of_edges();
+      m_time_step = m_time_step*m_time_step;
 
       sources = get_sources();
       kronecker = kronecker_delta(sources);
       solved_u = solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, m_time_step, m);
+      //edit unit_grad
       X = compute_unit_gradient(solved_u);
+      //edit compute_divergence
       index_divergence = compute_divergence(X, m);
       solved_phi = solve_phi(m_cotan_matrix, index_divergence, m);
     }

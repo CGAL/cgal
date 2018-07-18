@@ -344,13 +344,14 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
                //then go back to top of the stack
             }
           }
-          std::cout<<"this many edges were flipped: "<< a <<"\n";
+          std::cout<< a << " edges were flipped: " << std::endl;
        }
 
        private:
 
          void build()
          {
+           std::cout << "build"<< std::endl;
            CGAL_precondition(is_triangle_mesh(tm));
 
            std::vector<std::pair<vertex_descriptor,

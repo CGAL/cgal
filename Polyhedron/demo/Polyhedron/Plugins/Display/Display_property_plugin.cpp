@@ -52,6 +52,7 @@ class DisplayPropertyPlugin :
   
   typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<SMesh,EPICK, Vertex_distance_map> Idt;
   typedef CGAL::Heat_method_3::Heat_method_3<Idt,EPICK,Idt::Vertex_distance_map> Heat_method;
+  typedef std::pair<Idt*,Heat_method*> Idt_Heat_method_pair;
 
 public:
 
@@ -442,13 +443,14 @@ private Q_SLOTS:
     Heat_method * hm;
     SMesh::Property_map<vertex_descriptor, double> heat_intensity;
     if(mesh_heat_method_map.find(item) != mesh_heat_method_map.end()){
-      hm = mesh_heat_method_map[item];
+      hm = mesh_heat_method_map[item].second;
       heat_intensity = mesh.property_map<vertex_descriptor, double>("v:heat_intensity").first;
     }else {
       heat_intensity = mesh.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
+      std::cout << "new idt"<< std::endl;
       Idt* idt = new Idt(mesh, heat_intensity);
       hm = new Heat_method(*idt,idt->vertex_distance_map());
-      mesh_heat_method_map[item] = hm;
+      mesh_heat_method_map[item] = std::make_pair(idt,hm);
     }
     connect(item, &Scene_surface_mesh_item::aboutToBeDestroyed,
             [this,item](){
@@ -820,7 +822,7 @@ private:
   Scene_points_with_normal_item* source_points;
   boost::unordered_map<Scene_surface_mesh_item*, Scene_points_with_normal_item*> mesh_sources_map;
 
-  boost::unordered_map<Scene_surface_mesh_item*, Heat_method*> mesh_heat_method_map;
+  boost::unordered_map<Scene_surface_mesh_item*, Idt_Heat_method_pair> mesh_heat_method_map;
 };
 
   /// Code based on the verdict module of vtk
