@@ -18,12 +18,8 @@ typedef Kernel::Point_2                                      Point_2;
 typedef CGAL::Surface_mesh<Point>                            Surface_mesh;
 //typedef CGAL::Polyhedron_3<Kernel> Surface_mesh;
 
-#if 0
 typedef CGAL::dynamic_vertex_property_t<double> Vertex_distance_tag;
 typedef boost::property_map<Surface_mesh, Vertex_distance_tag >::type Vertex_distance_map;
-#else
-typedef Surface_mesh::Property_map<boost::graph_traits<Surface_mesh>::vertex_descriptor, double> Vertex_distance_map;
-#endif
 
 typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<Surface_mesh,Kernel, Vertex_distance_map> Idt;
 
@@ -36,7 +32,7 @@ typedef CGAL::Heat_method_3::Heat_method_Eigen_traits_3::SparseMatrix SparseMatr
 
 #if 0
 void source_set_tests(Heat_method hm, const Idt& sm)
-{
+{  
   vertex_descriptor source = *(vertices(sm).first);
   hm.add_source(source);
   const std::set<vertex_descriptor>& source_copy = hm.get_sources();
@@ -51,7 +47,12 @@ void source_set_tests(Heat_method hm, const Idt& sm)
   assert(*(hm.sources_begin()) == source);
   assert(!(hm.add_source(source)));
   assert(hm.remove_source(*(std::next(vertices(sm).first,3))));
+  
 }
+
+#endif
+
+#if 1
 
 void cotan_matrix_test(const SparseMatrix& c)
 {
@@ -100,7 +101,7 @@ void check_for_unit(const Eigen::MatrixXd& X, int dimension)
     assert((sum-1)<0.00001);
   }
 }
-
+#if 0
 void check_no_update(const Idt& sm, const Vertex_distance_map& original, const Vertex_distance_map& updated)
 {
   BOOST_FOREACH(vertex_descriptor vd, vertices(sm))
@@ -108,6 +109,7 @@ void check_no_update(const Idt& sm, const Vertex_distance_map& original, const V
     assert(get(original, vd) == get(updated,vd));
   }
 }
+#endif
 
 #endif
 
@@ -122,11 +124,7 @@ int main(int argc, char*argv[])
     std::cerr << "Problem loading the input data" << std::endl;
     return 1;
   }
-#if 0 
   Vertex_distance_map vdm = get(Vertex_distance_tag(),sm);
-#else  
-  Vertex_distance_map vdm =  sm.add_property_map<boost::graph_traits<Surface_mesh>::vertex_descriptor, double>("v:heat_intensity", 0).first;
-#endif
 
   Idt idt(sm, vdm);
 
@@ -142,12 +140,10 @@ int main(int argc, char*argv[])
     std::cout << get(vdm,vd) << std::endl;
   }
 
-  hm.remove_source(* vertices(sm).first);
-#if 0  
+  // source_set_tests(hm,idt);
+  
+#if 1 
 
-
-
-  source_set_tests(hm,idt);
   //cotan matrix tests
   const SparseMatrix& M = hm.mass_matrix();
   //std::cout<<"and M is: "<< Eigen::MatrixXd(M) << "\n";
