@@ -96,11 +96,11 @@ namespace Heat_method_3 {
     typedef typename boost::graph_traits<TriangleMesh>::vertices_size_type vertices_size_type;
 
     typedef CGAL::dynamic_vertex_property_t<Index> Vertex_property_tag;
-    typedef typename boost::property_map<TriangleMesh, Vertex_property_tag >::type Vertex_id_map;
+    typedef typename boost::property_map<TriangleMesh, Vertex_property_tag >::const_type Vertex_id_map;
     Vertex_id_map vertex_id_map;
 
     typedef CGAL::dynamic_face_property_t<Index> Face_property_tag;
-    typedef typename boost::property_map<TriangleMesh, Face_property_tag >::type Face_id_map;
+    typedef typename boost::property_map<TriangleMesh, Face_property_tag >::const_type Face_id_map;
     Face_id_map face_id_map;
 
     //types for intrinsic delaunay triangulation
@@ -110,7 +110,7 @@ namespace Heat_method_3 {
   public:
 
     Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm)
-      : vertex_id_map(get(Vertex_property_tag(),const_cast<TriangleMesh&>(tm))), face_id_map(get(Face_property_tag(),tm)), v2v(tm),tm(tm), vdm(vdm), vpm(get(vertex_point,tm))
+      : vertex_id_map(get(Vertex_property_tag(),tm)), face_id_map(get(Face_property_tag(),tm)), v2v(tm),tm(tm), vdm(vdm), vpm(get(vertex_point,tm))
     {
       build();
     }
