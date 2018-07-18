@@ -7,7 +7,7 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_transformed_traits.h>
+#include <CGAL/AABB_do_intersect_transform_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
@@ -19,7 +19,7 @@ typedef CGAL::Surface_mesh<K::Point_3>             Surface_mesh;
 
 typedef CGAL::AABB_face_graph_triangle_primitive<Surface_mesh> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> AABB_triangle_traits;
-typedef CGAL::AABB_transformed_traits<AABB_triangle_traits, K> Traits;
+typedef CGAL::AABB_do_intersect_transform_traits<AABB_triangle_traits, K> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
@@ -54,13 +54,11 @@ void test_no_collision(int k, const char* fname,
   K::Vector_3 unit_vec = (2.0/k * K::Vector_3((box.xmax()-box.xmin()),
                                               0,
                                               0));
-  CGAL::Aff_transformation_3<K> trans2(CGAL::TRANSLATION, unit_vec);
   CGAL::Side_of_triangle_mesh<Surface_mesh, K,
       VPM, Tree> sotm1(tmTree);
   for(int i=1; i<k+1; ++i)
   {
     CGAL::Aff_transformation_3<K> trans22(CGAL::TRANSLATION, i*unit_vec);
-    PMP::transform(trans2, tm2);
     box = PMP::bbox(tm2);
     tmTree2.traits().set_transformation(trans22);
     if(tmTree2.do_intersect(tmTree))
