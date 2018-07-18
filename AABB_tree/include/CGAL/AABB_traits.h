@@ -301,6 +301,7 @@ public:
     Split_primitives(const AABB_traits<GeomTraits,AABBPrimitive,BboxMap>& traits)
       : m_traits(traits) {}
 
+    typedef void result_type;
     template<typename PrimitiveIterator>
     void operator()(PrimitiveIterator first,
                     PrimitiveIterator beyond,
