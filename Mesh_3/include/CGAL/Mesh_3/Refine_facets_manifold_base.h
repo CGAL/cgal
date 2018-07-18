@@ -35,6 +35,7 @@
 #include <boost/foreach.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <CGAL/Mesh_facet_topology.h>
+#include <CGAL/atomic.h>
 
 namespace CGAL {
 
@@ -305,12 +306,20 @@ public:
                               const Mesh_domain& oracle,
                               const Criteria& criteria,
                               int mesh_topology,
-                              std::size_t maximal_number_of_vertices)
+                              std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                              , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+                              )
     : Base(triangulation,
            c3t3,
            oracle,
            criteria,
-           maximal_number_of_vertices)
+           maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+           , stop_ptr
+#endif
+           )
     , m_manifold_info_initialized(false)
     , m_bad_vertices_initialized(false)
     , m_with_manifold_criterion((mesh_topology & MANIFOLD_WITH_BOUNDARY) != 0)
@@ -434,6 +443,14 @@ public:
     if(Base::no_longer_element_to_refine_impl())
     {
       if(!m_with_manifold_criterion) return true;
+
+#ifndef CGAL_NO_ATOMIC
+      if(this->m_stop_ptr != 0 &&
+         this->m_stop_ptr->load(CGAL::cpp11::memory_order_acquire) == true)
+      {
+        return true;
+      }
+#endif // not defined CGAL_NO_ATOMIC
 
       if(this->m_maximal_number_of_vertices_ !=0 &&
          this->r_tr_.number_of_vertices() >=
