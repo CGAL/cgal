@@ -817,6 +817,9 @@ public:
     CGAL_triangulation_precondition(new_position.y() >= domain().ymin());
     CGAL_triangulation_precondition(new_position.z() >= domain().zmin());
 
+    if(new_position == v->point())
+      return;
+
     Offset offset_change_from_move;
 
     if(moved_p.x() < domain().xmin())
