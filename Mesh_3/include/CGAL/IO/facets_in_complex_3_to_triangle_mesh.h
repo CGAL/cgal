@@ -28,17 +28,117 @@
 #include <CGAL/array.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Hash_handles_with_or_without_timestamps.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <boost/unordered_map.hpp>
 #include <boost/tuple/tuple.hpp>
 
+#include <algorithm>
 #include <cstddef>
 #include <iterator>
 #include <vector>
 
 namespace CGAL {
+
+namespace Mesh_3 {
+
+namespace internal {
+
+template<class C3T3, class PointContainer, class FaceContainer>
+void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
+                                          const typename C3T3::Subdomain_index sd_index,
+                                          PointContainer& points,
+                                          FaceContainer& faces,
+                                          const bool normals_point_outside_of_the_subdomain = true)
+{
+  typedef typename PointContainer::value_type                            Point_3;
+  typedef typename FaceContainer::value_type                             Face;
+
+  typedef typename C3T3::Triangulation                                   Tr;
+
+  typedef typename Tr::Vertex_handle                                     Vertex_handle;
+  typedef typename Tr::Cell_handle                                       Cell_handle;
+  typedef typename Tr::Weighted_point                                    Weighted_point;
+
+  typedef typename C3T3::Facets_in_complex_iterator                      Ficit;
+
+  typedef CGAL::Hash_handles_with_or_without_timestamps                  Hash_fct;
+  typedef boost::unordered_map<Vertex_handle, std::size_t, Hash_fct>     VHmap;
+
+  typedef typename C3T3::size_type                                       size_type;
+
+  size_type nf = c3t3.number_of_facets_in_complex();
+  faces.reserve(faces.size() + nf);
+  points.reserve(points.size() + nf/2); // approximating Euler
+
+  VHmap vh_to_ids;
+  std::size_t inum = 0;
+
+  // Whether all the facets of the c3t3 are being exported, or only those of a particular subdomain
+  const bool export_all_facets = (sd_index == -1);
+
+  for(Ficit fit = c3t3.facets_in_complex_begin(),
+            end = c3t3.facets_in_complex_end(); fit != end; ++fit)
+  {
+    Cell_handle c = fit->first;
+    int s = fit->second;
+    Face f(3);
+
+    typename C3T3::Subdomain_index cell_sdi = c3t3.subdomain_index(c);
+    typename C3T3::Subdomain_index opp_sdi = c3t3.subdomain_index(c->neighbor(s));
+
+    if(!export_all_facets && cell_sdi != sd_index && opp_sdi != sd_index)
+      continue;
+
+    for(std::size_t i=1; i<4; ++i)
+    {
+      typename VHmap::iterator map_entry;
+      bool is_new;
+      Vertex_handle v = c->vertex((s+i)&3);
+      CGAL_assertion(v != Vertex_handle() && !c3t3.triangulation().is_infinite(v));
+
+      boost::tie(map_entry, is_new) = vh_to_ids.insert(std::make_pair(v, inum));
+      if(is_new)
+      {
+        const Weighted_point& p = c3t3.triangulation().point(c, (s+i)&3);
+        const Point_3 bp = Point_3(CGAL::to_double(p.x()),
+                                   CGAL::to_double(p.y()),
+                                   CGAL::to_double(p.z()));
+        points.push_back(bp);
+        ++inum;
+      }
+
+      f[i-1] = map_entry->second;
+    }
+
+    if(export_all_facets)
+    {
+      if((cell_sdi > opp_sdi) == (s%2 == 1))
+        std::swap(f[0], f[1]);
+    }
+    else
+    {
+      if(((cell_sdi == sd_index) == (s%2 == 1)) == normals_point_outside_of_the_subdomain)
+        std::swap(f[0], f[1]);
+    }
+
+    faces.push_back(f);
+  }
+}
+
+template<class C3T3, class PointContainer, class FaceContainer>
+void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
+                                          PointContainer& points,
+                                          FaceContainer& faces)
+{
+  facets_in_complex_3_to_triangle_soup(c3t3, -1, points, faces);
+}
+
+} // end namespace internal
+
+} // end namespace Mesh_3
 
 //! \ingroup PkgMesh_3Functions
 //!
@@ -57,73 +157,30 @@ namespace CGAL {
 template<class C3T3, class TriangleMesh>
 void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph)
 {
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type  VertexPointMap;
   typedef typename boost::property_traits<VertexPointMap>::value_type              Point_3;
 
-  typedef typename C3T3::Triangulation                                   Tr;
-
-  typedef typename Tr::Vertex_handle                                     Vertex_handle;
-  typedef typename Tr::Cell_handle                                       Cell_handle;
-  typedef typename Tr::Weighted_point                                    Weighted_point;
-
-  typedef typename C3T3::Facets_in_complex_iterator                      Ficit;
-
-  typedef CGAL::Hash_handles_with_or_without_timestamps                  Hash_fct;
-  typedef boost::unordered_map<Vertex_handle, std::size_t, Hash_fct>     VHmap;
-
-  typedef CGAL::cpp11::array<std::size_t, 3>                             Face;
-
-  typename std::iterator_traits<Ficit>::difference_type nf =
-    std::distance(c3t3.facets_in_complex_begin(), c3t3.facets_in_complex_end());
+  // 'vector' instead of 'array' so that this function can be used with the polygon_soup demo item, which
+  // handles polygon (variable number of vertices) soups and not just triangle soups.
+  typedef std::vector<std::size_t>                                        Face;
 
   std::vector<Face> faces;
-  faces.reserve(nf);
   std::vector<Point_3> points;
-  points.reserve(nf / 2); // approximating Euler
 
-  VHmap vh_to_ids;
-  std::size_t inum = 0;
+  Mesh_3::internal::facets_in_complex_3_to_triangle_soup(c3t3, points, faces);
 
-  for(Ficit fit = c3t3.facets_in_complex_begin(),
-            end = c3t3.facets_in_complex_end(); fit != end; ++fit)
-  {
-    Cell_handle c = fit->first;
-    int s = fit->second;
-    Face f;
+  if(!PMP::is_polygon_soup_a_polygon_mesh(faces))
+    PMP::orient_polygon_soup(points, faces);
+  CGAL_postcondition(PMP::is_polygon_soup_a_polygon_mesh(faces));
 
-    for(std::size_t i=1; i<4; ++i)
-    {
-      typename VHmap::iterator map_entry;
-      bool is_new;
-      std::size_t id(-1);
-      Vertex_handle v = c->vertex((s+i)&3);
-      CGAL_assertion(v != Vertex_handle() && !c3t3.triangulation().is_infinite(v));
+  PMP::polygon_soup_to_polygon_mesh(points, faces, graph);
 
-      boost::tie(map_entry, is_new) = vh_to_ids.insert(std::make_pair(v, inum));
-      if(is_new)
-      {
-        const Weighted_point& p = c3t3.triangulation().point(c, (s+i)&3);
-        points.push_back(Point_3(CGAL::to_double(p.x()),
-                                 CGAL::to_double(p.y()),
-                                 CGAL::to_double(p.z())));
-        id = inum++;
-      }
-      else
-      {
-        id = map_entry->second;
-      }
-
-      f[i-1] = id;
-    }
-
-    faces.push_back(f);
-  }
-
-  CGAL::Polygon_mesh_processing::orient_polygon_soup(points, faces);
-
-  CGAL_assertion(CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(faces));
-  CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, faces, graph);
+  if(CGAL::is_closed(graph) && !PMP::is_outward_oriented(graph))
+    PMP::orient_to_bound_a_volume(graph);
 }
 
 } // namespace CGAL
+
 #endif // CGAL_FACETS_IN_COMPLEX_3_TO_TRIANGLE_MESH_H
