@@ -80,6 +80,14 @@ namespace internal
     , m_vpm(vpm)
     , m_traits(traits)
     {}
+    
+    Concavity(const TriangleMesh& mesh, const Vpm& vpm, const GeomTraits& traits, const Normals_map& normals_map)
+    : m_mesh(mesh)
+    , m_vpm(vpm)
+    , m_traits(traits)
+    , m_normals_map(normals_map)
+    , m_normals_computed(true)
+    {}
 
     /**
     * Computes concavity value of a segment of the mesh which id is specified.
@@ -87,9 +95,11 @@ namespace internal
     template <class FacetPropertyMap, class DistancesMap>
     double compute(FacetPropertyMap facet_ids, std::size_t segment_id, DistancesMap& distances)
     {
+      compute_normals();
+      
       Filtered_graph filtered_mesh(m_mesh, segment_id, facet_ids);
 
-      Concavity<Filtered_graph, Vpm, GeomTraits, ConcurrencyTag, TriangleMesh> concavity(filtered_mesh, m_vpm, m_traits);
+      Concavity<Filtered_graph, Vpm, GeomTraits, ConcurrencyTag, TriangleMesh> concavity(filtered_mesh, m_vpm, m_traits, m_normals_map);
       return concavity.compute(distances);
     }
 
@@ -104,7 +114,7 @@ namespace internal
       Mesh conv_hull;
       std::vector<Point_3> pts;
 
-      if (num_vertices(m_mesh) <= 3) return 0;
+      if (num_vertices(m_mesh) <= 4) return 0;
 
       // extract the list points of the mesh
       BOOST_FOREACH(vertex_descriptor vert, vertices(m_mesh))
@@ -115,7 +125,7 @@ namespace internal
       // compute convex hull
       CGAL::convex_hull_3(pts.begin(), pts.end(), conv_hull); 
       
-      return compute_shortest(vertices(m_mesh), conv_hull, distances);
+      return compute_projected(vertices(m_mesh), conv_hull, distances);
     }
     
     double compute()
@@ -141,7 +151,9 @@ namespace internal
         }
       }
 
-      return compute_shortest(std::make_pair(pts.begin(), pts.end()), conv_hull, distances);
+      if (pts.size() <= 4) return 0;
+
+      return compute_projected(std::make_pair(pts.begin(), pts.end()), conv_hull, distances);
     }
     
     double compute(const std::vector<face_descriptor>& faces, const Mesh& conv_hull)
@@ -150,6 +162,14 @@ namespace internal
       return compute(faces, conv_hull, boost::make_assoc_property_map(distances));
     }
 
+  private:
+    const TriangleMesh& m_mesh;
+    Vpm m_vpm;
+    const GeomTraits& m_traits;
+
+    Normals_map m_normals_map;
+    bool m_normals_computed = false;
+    
     /**
     * Computes concavity value projecting vertices from a list onto a convex hull.
     */
@@ -251,7 +271,8 @@ namespace internal
     {
       // construct AABB for fast the shortest distance computations 
       AABB_tree tree(faces(conv_hull).begin(), faces(conv_hull).end(), conv_hull);
-//      tree.accelerate_distance_queries();
+      tree.build();
+      tree.accelerate_distance_queries();
 
       // compute intersections and select the largest projection length
       double result = 0;
@@ -319,14 +340,6 @@ namespace internal
 
       return CGAL::sqrt(result);
     }
-
-  private:
-    const TriangleMesh& m_mesh;
-    Vpm m_vpm;
-    const GeomTraits& m_traits;
-
-    Normals_map m_normals_map;
-    bool m_normals_computed = false;
 
     void compute_normals()
     {
