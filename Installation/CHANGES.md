@@ -49,6 +49,10 @@ Release date: September 2018
     to reflect the real needs of the code (some types and operators were used
     in the code but did not appear in the concepts).
 
+### Convex hull 3
+
+-   Fix a bug in the computation of the 3D convex hull that was leaving extra points
+    within subset of coplanar points that do not belong to the minimal convex hull.
 
 ### Point Set Processing
 
