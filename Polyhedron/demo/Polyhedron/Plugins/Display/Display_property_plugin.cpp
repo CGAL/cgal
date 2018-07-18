@@ -47,8 +47,11 @@ class DisplayPropertyPlugin :
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  
   typedef SMesh::Property_map<boost::graph_traits<SMesh>::vertex_descriptor, double> Vertex_distance_map;
-  typedef CGAL::Heat_method_3::Heat_method_3<SMesh,EPICK,Vertex_distance_map> Heat_method;
+  
+  typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<SMesh,EPICK, Vertex_distance_map> Idt;
+  typedef CGAL::Heat_method_3::Heat_method_3<Idt,EPICK,Idt::Vertex_distance_map> Heat_method;
 
 public:
 
@@ -436,7 +439,6 @@ private Q_SLOTS:
   void displayHeatIntensity(Scene_surface_mesh_item* item)
   {
     SMesh& mesh = *item->face_graph();
-
     Heat_method * hm;
     SMesh::Property_map<vertex_descriptor, double> heat_intensity;
     if(mesh_heat_method_map.find(item) != mesh_heat_method_map.end()){
@@ -444,7 +446,8 @@ private Q_SLOTS:
       heat_intensity = mesh.property_map<vertex_descriptor, double>("v:heat_intensity").first;
     }else {
       heat_intensity = mesh.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
-      hm = new Heat_method(mesh,heat_intensity);
+      Idt* idt = new Idt(mesh, heat_intensity);
+      hm = new Heat_method(*idt,idt->vertex_distance_map());
       mesh_heat_method_map[item] = hm;
     }
     connect(item, &Scene_surface_mesh_item::aboutToBeDestroyed,

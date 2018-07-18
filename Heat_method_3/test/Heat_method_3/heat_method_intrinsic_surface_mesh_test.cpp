@@ -15,11 +15,15 @@
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
 typedef Kernel::Point_2                                      Point_2;
-//typedef CGAL::Surface_mesh<Point>                            Surface_mesh;
-typedef CGAL::Polyhedron_3<Kernel> Surface_mesh;
+typedef CGAL::Surface_mesh<Point>                            Surface_mesh;
+//typedef CGAL::Polyhedron_3<Kernel> Surface_mesh;
 
+#if 1
 typedef CGAL::dynamic_vertex_property_t<double> Vertex_distance_tag;
 typedef boost::property_map<Surface_mesh, Vertex_distance_tag >::type Vertex_distance_map;
+#else
+typedef Surface_mesh::Property_map<boost::graph_traits<Surface_mesh>::vertex_descriptor, double> Vertex_distance_map;
+#endif
 
 typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<Surface_mesh,Kernel, Vertex_distance_map> Idt;
 
@@ -118,8 +122,12 @@ int main(int argc, char*argv[])
     std::cerr << "Problem loading the input data" << std::endl;
     return 1;
   }
+#if 1  
+  Vertex_distance_map vdm = get(Vertex_distance_tag(),sm);
+#else  
+  Vertex_distance_map vdm =  sm.add_property_map<boost::graph_traits<Surface_mesh>::vertex_descriptor, double>("v:heat_intensity", 0).first;
+#endif
 
-  Vertex_distance_map vdm = get(Vertex_distance_tag(),sm);  
   Idt idt(sm, vdm);
 
  
