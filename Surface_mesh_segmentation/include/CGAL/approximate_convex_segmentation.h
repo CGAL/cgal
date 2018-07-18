@@ -197,7 +197,7 @@ concavity_values(const TriangleMesh& mesh)
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `mesh` \cgalParamEnd
  *    \cgalParamBegin{geom_traits} a geometric traits class instance model of Kernel \cgalParamEnd
- *    \cgalParamBegin{minimum_number_of_segments} minimal number of segments, default is 1 \cgalParamEnd
+ *    \cgalParamBegin{min_number_of_segments} minimal number of segments, default is 1 \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * @return number of segments computed

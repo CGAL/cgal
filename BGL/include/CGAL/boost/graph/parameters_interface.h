@@ -87,7 +87,7 @@ CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
 CGAL_add_named_parameter(get_placement_policy_t, get_placement_policy, get_placement)
 
 // List of named parameters that we use in the package 'Surface Mesh Segmentation'
-CGAL_add_named_parameter(min_number_of_segments_t, min_number_of_segments, minimum_number_of_segments)
+CGAL_add_named_parameter(min_number_of_segments_t, min_number_of_segments, min_number_of_segments)
 
 //to be documented
 CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)

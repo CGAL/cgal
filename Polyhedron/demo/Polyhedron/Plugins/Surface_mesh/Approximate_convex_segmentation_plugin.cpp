@@ -181,7 +181,7 @@ private:
     timer.start();
     std::size_t segments_num =
      CGAL::approximate_convex_segmentation<Concurrency_tag>(segmentation_mesh, segments_pmap, concavity_threshold,
-      CGAL::parameters::minimum_number_of_segments(min_number_of_segments));
+      CGAL::parameters::min_number_of_segments(min_number_of_segments));
     timer.stop();
     
     std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;

@@ -114,7 +114,7 @@ as result of a partition algorithm; if it is not provided, this information is
 simply inaccessible.
 \cgalNPEnd
 
-\cgalNPBegin{minimum_number_of_segments} \anchor BGL_minimum_number_of_segments
+\cgalNPBegin{min_number_of_segments} \anchor BGL_min_number_of_segments
 indicates the minimum number of segments a segmentation must produce.\n
 <b>Type:</b> a type convertible to `std::size_t` \n
 <b>Default:</b> 1
