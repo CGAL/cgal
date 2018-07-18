@@ -761,32 +761,12 @@ public:
   /// @{
   template <class CellIt>
   Vertex_handle insert_in_hole(const Weighted_point& p,
-                               CellIt cell_begin, CellIt cell_end,
-                               Cell_handle begin, int i)
+                               CellIt /*cell_begin*/, CellIt /*cell_end*/,
+                               Cell_handle /*begin*/, int /*i*/)
   {
-    Vertex_handle v = tds().insert_in_hole(cell_begin, cell_end, begin, i);
-    v->set_point(canonicalize_point(p));
-
-    std::vector<Cell_handle> incident_cells_;
-    incident_cells_.reserve(64);
-    incident_cells(v, std::back_inserter(incident_cells_));
-
-    // For all cells incident to the newly added vertex v: fetch their offsets from
-    // the tester and reset them in the triangulation data structure.
-    typename std::vector<Cell_handle>::iterator cit = incident_cells_.begin(),
-                                                cend = incident_cells_.end();
-    for (; cit != cend; cit++)
-    {
-      Offset off[4];
-      for (int i=0 ; i<4 ; ++i)
-        off[i] = (*cit)->vertex(i)->offset();
-
-      set_offsets(*cit, off[0], off[1], off[2], off[3]);
-    }
-
-    clear_v_offsets();
-
-    return v;
+    // Could be optimized to use the conflict zone by extracting relevant
+    // code from periodic_insert() in P3T3.
+    return this->insert(p);
   }
 
   Vertex_handle insert(const Weighted_point& p,
