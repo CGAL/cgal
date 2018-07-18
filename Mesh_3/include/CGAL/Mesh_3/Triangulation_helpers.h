@@ -185,6 +185,9 @@ no_topological_change(Tr& tr,
                       const Point& p,
                       Cell_vector& cells_tos) const
 {
+  if(tr.point(v0) == p)
+    return true;
+
   // For periodic triangulations, calling this function actually takes longer than
   // just removing and re-inserting the point directly because the periodic mesh
   // triangulation's side_of_power_sphere() function is somewhat brute-forcy:
