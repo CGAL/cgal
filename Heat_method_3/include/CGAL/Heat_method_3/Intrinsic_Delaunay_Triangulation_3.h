@@ -361,12 +361,12 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
              vtov[pairs[i].first] = pairs[i].second;
            }
            
-           vertex_id_map = get(Vertex_property_tag(),const_cast<TriangleMesh&>(tm));
+           vertex_id_map = get(Vertex_property_tag(),tm);
            Index i = 0;
            BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
              put(vertex_id_map, vd, i++);
            }
-           face_id_map = get(Face_property_tag(), const_cast<TriangleMesh&>(tm));
+           face_id_map = get(Face_property_tag(),tm);
            Index face_i = 0;
            BOOST_FOREACH(face_descriptor fd, faces(tm)){
              put(face_id_map, fd, face_i++);
@@ -375,7 +375,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
            number_of_edges = num_edges(tm);
            edge_lengths.resize(number_of_edges, 1);
            mark_edges.resize(number_of_edges, 1);
-           edge_id_map = get(Edge_property_tag(), const_cast<TriangleMesh&>(tm));
+           edge_id_map = get(Edge_property_tag(), tm);
            Index edge_i = 0;
            BOOST_FOREACH(edge_descriptor ed, edges(tm)){
              mark_edges(edge_i,0)=1;
