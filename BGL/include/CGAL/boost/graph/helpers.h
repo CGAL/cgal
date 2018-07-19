@@ -1123,15 +1123,18 @@ clear_impl(FaceGraph& g)
   typedef typename boost::graph_traits<FaceGraph>::edge_descriptor     edge_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor   vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor     face_descriptor;
-  BOOST_FOREACH(edge_descriptor ed, edges(g)) {
+
+  std::vector<edge_descriptor> edges_to_rm(edges(g).first, edges(g).second);
+  BOOST_FOREACH(edge_descriptor ed, edges_to_rm)
     remove_edge(ed, g);
-  }
-  BOOST_FOREACH(vertex_descriptor vd, vertices(g)) {
+
+  std::vector<vertex_descriptor> vertices_to_rm(vertices(g).first, vertices(g).second);
+  BOOST_FOREACH(vertex_descriptor vd, vertices_to_rm)
     remove_vertex(vd, g);
-  }
-  BOOST_FOREACH(face_descriptor fd, faces(g)) {
+
+  std::vector<face_descriptor> faces_to_rm(faces(g).first, faces(g).second);
+  BOOST_FOREACH(face_descriptor fd, faces_to_rm)
     remove_face(fd, g);
-  }
 }
 
 } //end of internal namespace
@@ -1154,10 +1157,10 @@ clear_impl(FaceGraph& g)
 template<typename FaceGraph>
 void clear(FaceGraph& g)
 { 
-  internal::clear_impl(g); 
-  CGAL_postcondition(num_edges(g) == 0);
-  CGAL_postcondition(num_vertices(g) == 0);
-  CGAL_postcondition(num_faces(g) == 0);
+  internal::clear_impl(g);
+  CGAL_postcondition(std::distance(boost::begin(edges(g)),boost::end(edges(g))) == 0);
+  CGAL_postcondition(std::distance(boost::begin(vertices(g)),boost::end(vertices(g))) == 0);
+  CGAL_postcondition(std::distance(boost::begin(faces(g)),boost::end(faces(g))) == 0);
 }
 
 /**
