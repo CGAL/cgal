@@ -163,7 +163,7 @@ void test(const NamedParameters& np)
   check_same_type<41>(get_param(np, CGAL::internal_np::verbosity_level));
   check_same_type<42>(get_param(np, CGAL::internal_np::projection_functor));
   check_same_type<46>(get_param(np, CGAL::internal_np::apply_per_connected_component));
-  check_same_type472>(get_param(np, CGAL::internal_np::output_iterator));
+  check_same_type<47>(get_param(np, CGAL::internal_np::output_iterator));
 }
 
 int main()
