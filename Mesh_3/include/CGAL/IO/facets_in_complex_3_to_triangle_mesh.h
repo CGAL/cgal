@@ -28,7 +28,6 @@
 #include <CGAL/array.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Hash_handles_with_or_without_timestamps.h>
-#include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
@@ -176,9 +175,6 @@ void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph)
   CGAL_postcondition(PMP::is_polygon_soup_a_polygon_mesh(faces));
 
   PMP::polygon_soup_to_polygon_mesh(points, faces, graph);
-
-  if(CGAL::is_closed(graph) && !PMP::is_outward_oriented(graph))
-    PMP::orient_to_bound_a_volume(graph);
 }
 
 } // namespace CGAL
