@@ -59,6 +59,9 @@ Release date: September 2018
     This can be used to get the vertices of a mesh that are on it
     convex hull, or the indices of points in a range that are
     on it convex hull.
+-   Fix a bug in the computation of the 3D convex hull that was leaving extra points
+    within subset of coplanar points that do not belong to the minimal convex hull.
+
 
 ### Point Set Processing
 
@@ -70,6 +73,23 @@ Release date: September 2018
     `CGAL::jet_estimate_normals()`, `CGAL::jet_smooth_point_set()`,
     `CGAL::pca_estimate_normals()`, `CGAL::remove_outliers()` and
     `CGAL::wlop_simplify_and_regularize_point_set()`.
+
+
+### Classification 
+
+-   Added data structures to handle classification of Surface Meshes
+    and of Clusters.
+
+-   Added public API to compute features in parallel.
+
+-   **Breaking change**: features based on products/divisions of
+    eigenvalues are replaced by simple eigenvalue features. Features
+    based on statistics on the HSV color channels are replaced by
+    simple HSV color channel features.
+
+-   **Breaking change**: the API of
+    `CGAL::Classification::Point_set_feature_generator` has been simplified.
+
 
 ### Polygon Mesh Processing
 

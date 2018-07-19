@@ -20,7 +20,7 @@ void test_collinear_point_filtering(const R&, const char* FileName)
 
   std::ifstream from(FileName);
   if (!from) {
-    std::cerr << "could not open file " << FileName << "!" << endl;
+    std::cerr << "Could not open file " << FileName << "!" << endl;
     std::exit(1);
   }
   CGAL::set_ascii_mode(from);
@@ -35,20 +35,33 @@ void test_collinear_point_filtering(const R&, const char* FileName)
   std::cout << std::endl;
 
   std::vector<Point> simplified_polygon;
+  std::size_t final_size;
+
+  // check for 3 points
+  CGAL::internal::Polygon_2::filter_collinear_points<R>(polygon.begin(), polygon.begin() + 3,
+                                                        std::back_inserter(simplified_polygon),
+                                                        0 /*tolerance*/);
+  final_size = simplified_polygon.size();
+  std::cout << "final size: " << final_size << std::endl;
+  assert(final_size == 3);
+
+  // generic tests
+  simplified_polygon.clear();
   CGAL::internal::Polygon_2::filter_collinear_points<R>(polygon.begin(), polygon.end(),
                                                         std::back_inserter(simplified_polygon),
                                                         0 /*tolerance*/);
-  std::size_t final_size = simplified_polygon.size();
+  final_size = simplified_polygon.size();
   std::cout << "final size (tolerance 0): " << final_size << std::endl;
-  CGAL_assertion(final_size == 7);
+  assert(final_size == 7);
 
+    // --
   simplified_polygon.clear();
   CGAL::internal::Polygon_2::filter_collinear_points<R>(polygon.begin(), polygon.end(),
                                                         std::back_inserter(simplified_polygon),
                                                         1e-10);
   final_size = simplified_polygon.size();
   std::cout << "final size (tolerance 1e-10): " << final_size << std::endl;
-  CGAL_assertion(final_size == 5);
+  assert(final_size == 5);
 
   std::cout << "simplified polygon:" << std::endl;
   std::copy(simplified_polygon.begin(), simplified_polygon.end(), std::ostream_iterator<Point>(std::cout, "\n"));
