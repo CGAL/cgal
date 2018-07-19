@@ -82,8 +82,8 @@ protected:
 
   Mesher_3_base(const Bbox_3 &, int) {}
 
-  Lock_data_structure *get_lock_data_structure() { return 0; }
-  WorksharingDataStructureType *get_worksharing_data_structure() { return 0; }
+  Lock_data_structure *get_lock_data_structure() const { return 0; }
+  WorksharingDataStructureType *get_worksharing_data_structure() const { return 0; }
   void set_bbox(const Bbox_3 &) {}
 };
 
@@ -105,6 +105,10 @@ protected:
     return &m_lock_ds;
   }
   WorksharingDataStructureType *get_worksharing_data_structure()
+  {
+    return &m_worksharing_ds;
+  }
+  const WorksharingDataStructureType *get_worksharing_data_structure() const
   {
     return &m_worksharing_ds;
   }
@@ -780,9 +784,21 @@ typename Mesher_3<C3T3,MC,MD>::Mesher_status
 Mesher_3<C3T3,MC,MD>::
 status() const
 {
-  return Mesher_status(r_c3t3_.triangulation().number_of_vertices(),
-                       facets_mesher_.queue_size(),
-                       cells_mesher_.queue_size());
+#ifdef CGAL_LINKED_WITH_TBB
+  if(boost::is_convertible<Concurrency_tag, Parallel_tag>::value) {
+    const WorksharingDataStructureType* ws_ds =
+      this->get_worksharing_data_structure();
+    return Mesher_status(r_c3t3_.triangulation().number_of_vertices(),
+                         0,
+                         ws_ds->approximate_number_of_enqueued_element());
+  }
+  else
+#endif // with TBB
+  {
+    return Mesher_status(r_c3t3_.triangulation().number_of_vertices(),
+                         facets_mesher_.queue_size(),
+                         cells_mesher_.queue_size());
+  }
 }
 #endif
 
