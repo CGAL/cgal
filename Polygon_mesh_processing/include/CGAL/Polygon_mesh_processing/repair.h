@@ -24,12 +24,13 @@
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
-
 #include <set>
 #include <vector>
+
 #include <boost/algorithm/minmax_element.hpp>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Union_find.h>
+#include <CGAL/property_map.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/array.h>
 
@@ -1319,11 +1320,11 @@ std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm,
   typedef typename boost::lookup_named_param_def <
     internal_np::vertex_is_constrained_t,
     NamedParameters,
-    internal::No_constraint_pmap<vertex_descriptor>//default
+    Constant_property_map<vertex_descriptor, bool> // default (no constraint pmap)
   > ::type VerticesMap;
   VerticesMap cmap
     = choose_param(get_param(np, internal_np::vertex_is_constrained),
-                   internal::No_constraint_pmap<vertex_descriptor>());
+                   Constant_property_map<vertex_descriptor, bool>(false));
 
   typedef typename boost::lookup_named_param_def <
     internal_np::output_iterator_t,

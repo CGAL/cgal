@@ -25,27 +25,11 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
-
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
 namespace internal {
-
-template<typename Descriptor>
-struct No_constraint_pmap
-{
-public:
-  typedef Descriptor                          key_type;
-  typedef bool                                value_type;
-  typedef value_type&                         reference;
-  typedef boost::read_write_property_map_tag  category;
-
-  friend bool get(const No_constraint_pmap& , const key_type& ) {
-    return false;
-  }
-  friend void put(No_constraint_pmap& , const key_type& , const bool ) {}
-};
 
 template <typename G, typename OutputIterator>
 struct Vertex_collector

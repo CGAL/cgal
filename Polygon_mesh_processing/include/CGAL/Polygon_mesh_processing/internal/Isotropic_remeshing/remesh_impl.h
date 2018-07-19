@@ -91,21 +91,6 @@ namespace internal {
   };
 
   // A property map
-  template<typename Descriptor>
-  struct No_constraint_pmap
-  {
-  public:
-    typedef Descriptor                          key_type;
-    typedef bool                                value_type;
-    typedef value_type&                         reference;
-    typedef boost::read_write_property_map_tag  category;
-
-    friend bool get(const No_constraint_pmap& , const key_type& ) {
-      return false;
-    }
-    friend void put(No_constraint_pmap& , const key_type& , const bool ) {}
-  };
-
   template <typename PM, typename FaceIndexMap>
   struct Border_constraint_pmap
   {
@@ -1514,7 +1499,7 @@ private:
 
       // update status using constrained edge map
       if (!boost::is_same<EdgeIsConstrainedMap,
-                          No_constraint_pmap<edge_descriptor> >::value)
+                          Constant_property_map<edge_descriptor, bool> >::value)
       {
         BOOST_FOREACH(edge_descriptor e, edges(mesh_))
         {
