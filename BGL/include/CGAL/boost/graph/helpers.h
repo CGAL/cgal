@@ -1120,21 +1120,12 @@ inline
 typename boost::disable_if<Has_member_clear<FaceGraph>, void>::type
 clear_impl(FaceGraph& g)
 {
-  typedef typename boost::graph_traits<FaceGraph>::edge_descriptor     edge_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor   vertex_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor     face_descriptor;
-
-  std::vector<edge_descriptor> edges_to_rm(edges(g).first, edges(g).second);
-  BOOST_FOREACH(edge_descriptor ed, edges_to_rm)
-    remove_edge(ed, g);
-
-  std::vector<vertex_descriptor> vertices_to_rm(vertices(g).first, vertices(g).second);
-  BOOST_FOREACH(vertex_descriptor vd, vertices_to_rm)
-    remove_vertex(vd, g);
-
-  std::vector<face_descriptor> faces_to_rm(faces(g).first, faces(g).second);
-  BOOST_FOREACH(face_descriptor fd, faces_to_rm)
-    remove_face(fd, g);
+  while(boost::begin(edges(g))!=boost::end(edges(g)))
+    remove_edge(*boost::begin(edges(g)), g);
+  while(boost::begin(faces(g))!=boost::end(faces(g)))
+    remove_face(*boost::begin(faces(g)), g);
+  while(boost::begin(vertices(g))!=boost::end(vertices(g)))
+    remove_vertex(*boost::begin(vertices(g)), g);
 }
 
 } //end of internal namespace
