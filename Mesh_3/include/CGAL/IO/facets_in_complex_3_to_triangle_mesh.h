@@ -45,6 +45,18 @@ namespace Mesh_3 {
 
 namespace internal {
 
+template <class Polygon>
+void resize(Polygon& p, std::size_t size)
+{
+  p.resize(size);
+}
+
+template <std::size_t N, class INT>
+void resize(CGAL::cpp11::array<INT, N>&, std::size_t CGAL_assertion_code(size))
+{
+  CGAL_assertion(size >= N);
+}
+
 template<class C3T3, class PointContainer, class FaceContainer>
 void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
                                           const typename C3T3::Subdomain_index sd_index,
@@ -83,7 +95,8 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
   {
     Cell_handle c = fit->first;
     int s = fit->second;
-    Face f(3);
+    Face f;
+    resize(f, 3);
 
     typename C3T3::Subdomain_index cell_sdi = c3t3.subdomain_index(c);
     typename C3T3::Subdomain_index opp_sdi = c3t3.subdomain_index(c->neighbor(s));
