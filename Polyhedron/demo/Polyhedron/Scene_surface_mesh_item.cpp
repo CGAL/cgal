@@ -1222,6 +1222,7 @@ void Scene_surface_mesh_item::invalidate(Gl_data_names name)
     processData(name);
   else
     initGL();
+  d->killIds();
 }
 
 
