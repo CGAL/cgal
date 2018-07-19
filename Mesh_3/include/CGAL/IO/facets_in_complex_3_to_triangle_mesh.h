@@ -62,7 +62,8 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
                                           const typename C3T3::Subdomain_index sd_index,
                                           PointContainer& points,
                                           FaceContainer& faces,
-                                          const bool normals_point_outside_of_the_subdomain = true)
+                                          const bool normals_point_outside_of_the_subdomain = true,
+                                          const bool export_all_facets = false)
 {
   typedef typename PointContainer::value_type                            Point_3;
   typedef typename FaceContainer::value_type                             Face;
@@ -86,9 +87,6 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
 
   VHmap vh_to_ids;
   std::size_t inum = 0;
-
-  // Whether all the facets of the c3t3 are being exported, or only those of a particular subdomain
-  const bool export_all_facets = (sd_index == -1);
 
   for(Ficit fit = c3t3.facets_in_complex_begin(),
             end = c3t3.facets_in_complex_end(); fit != end; ++fit)
@@ -145,7 +143,9 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
                                           PointContainer& points,
                                           FaceContainer& faces)
 {
-  facets_in_complex_3_to_triangle_soup(c3t3, -1, points, faces);
+  typename C3T3::Subdomain_index useless;
+  facets_in_complex_3_to_triangle_soup(c3t3, useless, points, faces,
+                                       true/*point outward*/, true /*extract all facets*/);
 }
 
 } // end namespace internal
@@ -174,9 +174,7 @@ void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph)
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type  VertexPointMap;
   typedef typename boost::property_traits<VertexPointMap>::value_type              Point_3;
 
-  // 'vector' instead of 'array' so that this function can be used with the polygon_soup demo item, which
-  // handles polygon (variable number of vertices) soups and not just triangle soups.
-  typedef std::vector<std::size_t>                                        Face;
+  typedef CGAL::cpp11::array<std::size_t, 3>                                       Face;
 
   std::vector<Face> faces;
   std::vector<Point_3> points;
