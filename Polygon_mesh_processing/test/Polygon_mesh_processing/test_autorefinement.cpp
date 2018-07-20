@@ -62,6 +62,7 @@ void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_poin
     My_visitor<Mesh> visitor;
     PMP::experimental::autorefine(mesh,
       PMP::parameters::visitor(visitor));
+    mesh.collect_garbage();
     assert( nb_vertices_after_autorefine==num_vertices(mesh));
     assert( (nb_vertices_before_autorefine!=nb_vertices_after_autorefine)== (*(visitor.i) != 0) );
     assert( !triple_intersection );
@@ -78,6 +79,7 @@ void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_poin
     input >> mesh;
     bool res=PMP::experimental::autorefine_and_remove_self_intersections(mesh);
     assert(res==all_fixed);
+    mesh.collect_garbage();
     assert( nb_vertices_after_fix==num_vertices(mesh));
     assert( !triple_intersection );
   }
