@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QStringList>
 
-#include "opengl_tools.h"
+
 #include "Scene_polyhedron_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"

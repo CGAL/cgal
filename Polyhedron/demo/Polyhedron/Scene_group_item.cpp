@@ -156,7 +156,7 @@ void Scene_group_item::renderChildren(Viewer_interface *viewer,
 
   Q_FOREACH(Scene_interface::Item_id id, children){
     if(with_names) {
-      viewer->glClearDepth(1.0);
+      viewer->glClearDepthf(1.0f);
       viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
     if(id == scene->mainSelectionIndex()|| scene->selectionIndices().contains(id))

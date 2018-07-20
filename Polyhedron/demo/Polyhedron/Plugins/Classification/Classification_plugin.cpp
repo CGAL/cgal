@@ -5,7 +5,7 @@
 #include <CGAL/Qt/manipulatedFrame.h>
 
 #include <fstream>
-#include "opengl_tools.h"
+
 
 #include "Messages_interface.h"
 #include "Scene_points_with_normal_item.h"

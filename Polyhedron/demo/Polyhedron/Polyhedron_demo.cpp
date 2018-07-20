@@ -6,6 +6,9 @@
 
 #include <QCommandLineParser>
 #include <QCommandLineOption>
+#include <QSurfaceFormat>
+#include <QOpenGLContext>
+
 
 struct Polyhedron_demo_impl {
   bool catch_exceptions;
@@ -59,6 +62,9 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   QCommandLineOption verbose("verbose",
                                    tr("Print the paths explored byt the application searching for plugins."));
   parser.addOption(verbose);
+  QCommandLineOption old("old",
+    tr("Force OpenGL 2.1 context."));
+  parser.addOption(old);
   parser.addPositionalArgument("files", tr("Files to open"), "[files...]");
   parser.process(*this);
   d_ptr->mainWindow.reset(new MainWindow(parser.isSet(verbose)));

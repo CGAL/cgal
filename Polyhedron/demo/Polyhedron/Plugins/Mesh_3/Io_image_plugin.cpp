@@ -632,7 +632,6 @@ private:
       z_box->addWidget(z_cubeLabel);
       show_sliders &= seg_img->image()->zdim() > 1;
     }
-    std::cout<<"show_sliders is "<<show_sliders<<std::endl;
     x_control->setEnabled(show_sliders);
     y_control->setEnabled(show_sliders);
     z_control->setEnabled(show_sliders);
