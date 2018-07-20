@@ -159,17 +159,27 @@ struct Less_vertex_point{
   }
 };
 
+template <class TriangleMesh, class OutputIterator, class NamedParameters>
+OutputIterator
+degenerate_faces(const TriangleMesh& tm,
+                 OutputIterator out,
+                 const NamedParameters& np)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+
+  BOOST_FOREACH(face_descriptor fd, faces(tm))
+  {
+    if(is_degenerate_triangle_face(fd, tm, np))
+      *out++ = fd;
+  }
+  return out;
+}
+
 template <class TriangleMesh, class OutputIterator>
 OutputIterator
 degenerate_faces(const TriangleMesh& tm, OutputIterator out)
 {
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-  BOOST_FOREACH(face_descriptor fd, faces(tm))
-  {
-    if ( is_degenerate_triangle_face(fd, tm) )
-      *out++=fd;
-  }
-  return out;
+  return degenerate_faces(tm, out, CGAL::parameters::all_default());
 }
 
 // this function remove a border edge even if it does not satisfy the link condition.
@@ -717,9 +727,8 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 
 // Then, remove triangles made of 3 collinear points
   std::set<face_descriptor> degenerate_face_set;
-  BOOST_FOREACH(face_descriptor fd, faces(tmesh))
-    if ( is_degenerate_triangle_face(fd, tmesh, np))
-      degenerate_face_set.insert(fd);
+  degenerate_faces(tmesh, std::inserter(degenerate_face_set, degenerate_face_set.begin()), np);
+
   nb_deg_faces+=degenerate_face_set.size();
 
   // first remove degree 3 vertices that are part of a cap
@@ -1274,6 +1283,45 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh)
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
+namespace internal {
+
+template <typename G, typename OutputIterator>
+struct Vertex_collector
+{
+  typedef typename boost::graph_traits<G>::vertex_descriptor      vertex_descriptor;
+
+  void collect_vertices(vertex_descriptor v1, vertex_descriptor v2)
+  {
+    std::vector<vertex_descriptor>& verts = collections[v1];
+    if(verts.empty())
+      verts.push_back(v1);
+    verts.push_back(v2);
+  }
+
+  void dump(OutputIterator out)
+  {
+    typedef std::pair<const vertex_descriptor, std::vector<vertex_descriptor> > Pair_type;
+    BOOST_FOREACH(const Pair_type& p, collections) {
+      *out++ = p.second;
+    }
+  }
+
+  std::map<vertex_descriptor, std::vector<vertex_descriptor> > collections;
+};
+
+template <typename G>
+struct Vertex_collector<G, Emptyset_iterator>
+{
+  typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
+  void collect_vertices(vertex_descriptor, vertex_descriptor)
+  {}
+
+  void dump(Emptyset_iterator)
+  {}
+};
+
+} // end namespace internal
+
 /// \ingroup PMP_repairing_grp
 /// duplicates all non-manifold vertices of the input mesh.
 ///
@@ -1284,22 +1332,22 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh)
 /// @param np optional \ref pmp_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`.
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+///       The type of this map is model of `ReadWritePropertyMap`.
 ///       If this parameter is omitted, an internal property map for
-///       `CGAL::vertex_point_t` should be available in `PolygonMesh`
+///       `CGAL::vertex_point_t` should be available in `TriangleMesh`
 ///    \cgalParamEnd
 ///   \cgalParamBegin{vertex_is_constrained_map} a writable property map with `vertex_descriptor`
 ///     as key and `bool` as `value_type`. `put(pmap, v, true)` will be called for each duplicated
 ///     vertices and the input one.
 ///  \cgalParamEnd
-///   \cgalParamBegin{output_iterator} an output iterator where `std::vector<vertex_descriptor>` can be put.
-///    The first vertex of the vector is an input vertex that was non-manifold,
-///    the other vertices in the vertex are the new vertices created to fix
-///    the non-manifoldness.
+///   \cgalParamBegin{output_iterator} a model of `OutputIterator` with value type
+///      `std::vector<vertex_descriptor>`. The first vertex of the vector is a non-manifold vertex
+///       of the input mesh, followed by the new vertices that were created to fix the non-manifoldness.
 ///  \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
-/// \return the number of vertices created
+/// \return the number of vertices created.
 template <typename TriangleMesh, typename NamedParameters>
 std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm,
                                             const NamedParameters& np)
@@ -1315,7 +1363,7 @@ std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm,
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VertexPointMap;
   VertexPointMap vpm = choose_param(get_param(np, internal_np::vertex_point),
-                                        get_property_map(vertex_point, tm));
+                                    get_property_map(vertex_point, tm));
 
   typedef typename boost::lookup_named_param_def <
     internal_np::vertex_is_constrained_t,
@@ -1333,37 +1381,46 @@ std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm,
   > ::type Output_iterator;
   Output_iterator out
     = choose_param(get_param(np, internal_np::output_iterator),
-                       Emptyset_iterator());
+                   Emptyset_iterator());
 
   internal::Vertex_collector<TriangleMesh, Output_iterator> dmap;
   boost::unordered_set<vertex_descriptor> vertices_handled;
   boost::unordered_set<halfedge_descriptor> halfedges_handled;
 
-  std::size_t nb_new_vertices=0;
+  std::size_t nb_new_vertices = 0;
 
   std::vector<halfedge_descriptor> non_manifold_cones;
   BOOST_FOREACH(halfedge_descriptor h, halfedges(tm))
   {
-    if (halfedges_handled.insert(h).second)
+    // If 'h' is not visited yet, we walk around the target of 'h' and mark these
+    // halfedges as visited. Thus, if we are here and the target is already marked as visited,
+    // it means that the vertex is non manifold.
+    if(halfedges_handled.insert(h).second)
     {
       vertex_descriptor vd = target(h, tm);
-      if ( !vertices_handled.insert(vd).second )
+      if(!vertices_handled.insert(vd).second)
       {
         put(cmap, vd, true); // store the originals
         non_manifold_cones.push_back(h);
       }
       else
+      {
         set_halfedge(vd, h, tm);
-      halfedge_descriptor start=opposite(next(h, tm), tm);
-      h=start;
-      do{
+      }
+
+      halfedge_descriptor start = opposite(next(h, tm), tm);
+      h = start;
+      do
+      {
         halfedges_handled.insert(h);
-        h=opposite(next(h, tm), tm);
-      }while(h!=start);
+        h = opposite(next(h, tm), tm);
+      }
+      while(h != start);
     }
   }
 
-  if (!non_manifold_cones.empty())  {
+  if(!non_manifold_cones.empty())
+  {
     BOOST_FOREACH(halfedge_descriptor h, non_manifold_cones)
     {
       halfedge_descriptor start = h;
@@ -1373,13 +1430,16 @@ std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm,
       dmap.collect_vertices(target(h, tm), new_vd);
       put(vpm, new_vd, get(vpm, target(h, tm)));
       set_halfedge(new_vd, h, tm);
-      do{
+      do
+      {
         set_target(h, new_vd, tm);
-        h=opposite(next(h, tm), tm);
-      } while(h!=start);
+        h = opposite(next(h, tm), tm);
+      }
+      while(h != start);
     }
     dmap.dump(out);
   }
+
   return nb_new_vertices;
 }
 

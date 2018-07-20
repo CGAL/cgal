@@ -1502,7 +1502,7 @@ QString Scene_surface_mesh_item::computeStats(int type)
     if(is_triangle_mesh(*d->smesh_))
     {
       if (d->number_of_degenerated_faces == (unsigned int)(-1))
-        d->number_of_degenerated_faces = nb_degenerate_faces(d->smesh_, get(CGAL::vertex_point, *(d->smesh_)));
+        d->number_of_degenerated_faces = nb_degenerate_faces(d->smesh_);
       return QString::number(d->number_of_degenerated_faces);
     }
     else

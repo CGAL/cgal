@@ -2032,8 +2032,9 @@ bool Scene_polyhedron_selection_item_priv::canAddFace(fg_halfedge_descriptor hc,
       found = true;
       fg_halfedge_descriptor res =
           CGAL::Euler::add_face_to_border(t,hc, *item->polyhedron());
+      fg_face_descriptor resf = face(res, *item->polyhedron());
 
-      if(CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(res, *item->polyhedron()))
+      if(CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(resf, *item->polyhedron()))
       {
         CGAL::Euler::remove_face(res, *item->polyhedron());
         tempInstructions("Edge not selected : resulting facet is degenerated.",

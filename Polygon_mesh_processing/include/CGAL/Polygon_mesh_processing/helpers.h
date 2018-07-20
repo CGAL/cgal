@@ -1,4 +1,4 @@
-// Copyright (c) 2015 GeometryFactory (France).
+// Copyright (c) 2015, 2018 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -17,7 +17,8 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 //
-// Author(s)     :  Konstantinos Katrioplas
+// Author(s)     :  Konstantinos Katrioplas,
+//                  Mael Rouxel-Labbé
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_HELPERS_H
 #define CGAL_POLYGON_MESH_PROCESSING_HELPERS_H
@@ -25,86 +26,40 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
+#include <CGAL/array.h>
+#include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/helpers.h>
+
+#include <boost/foreach.hpp>
+#include <boost/graph/graph_traits.hpp>
+
+#include <limits>
+#include <map>
+#include <utility>
+#include <vector>
+
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
-namespace internal {
-
-template <typename G, typename OutputIterator>
-struct Vertex_collector
-{
-  typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
-  void collect_vertices(vertex_descriptor v1, vertex_descriptor v2)
-  {
-    std::vector<vertex_descriptor>& verts = collections[v1];
-    if (verts.empty())
-      verts.push_back(v1);
-    verts.push_back(v2);
-  }
-
-  void dump(OutputIterator out)
-  {
-    typedef std::pair<const vertex_descriptor, std::vector<vertex_descriptor> > Pair_type;
-    BOOST_FOREACH(const Pair_type& p, collections)
-    {
-      *out++=p.second;
-    }
-  }
-
-  std::map<vertex_descriptor, std::vector<vertex_descriptor> > collections;
-};
-
-template <typename G>
-struct Vertex_collector<G, Emptyset_iterator>
-{
-  typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
-  void collect_vertices(vertex_descriptor, vertex_descriptor)
-  {}
-
-  void dump(Emptyset_iterator)
-  {}
-};
-
-// used only for testing
-template <typename PolygonMesh>
-void merge_identical_points(PolygonMesh& mesh,
-                            typename boost::graph_traits<PolygonMesh>::vertex_descriptor v_keep,
-                            typename boost::graph_traits<PolygonMesh>::vertex_descriptor v_rm)
-{
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  halfedge_descriptor h = halfedge(v_rm, mesh);
-  halfedge_descriptor start = h;
-
-  do{
-    set_target(h, v_keep, mesh);
-    h = opposite(next(h, mesh), mesh);
-  } while( h != start );
-
-  remove_vertex(v_rm, mesh);
-}
-} // end internal
-
 /// \ingroup PMP_repairing_grp
-/// checks whether a vertex is non-manifold.
+/// checks whether a vertex of a triangle mesh is non-manifold.
 ///
-/// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+/// @tparam TriangleMesh a model of `HalfedgeListGraph`
 ///
-/// @param v the vertex
-/// @param tm triangle mesh containing v
+/// @param v a vertex of `tm`
+/// @param tm a triangle mesh containing `v`
 ///
-/// \return true if the vertrex is non-manifold
-template <typename PolygonMesh>
-bool is_non_manifold_vertex(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
-                            const PolygonMesh& tm)
+/// \return `true` if the vertrex is non-manifold, `false` otherwise.
+template <typename TriangleMesh>
+bool is_non_manifold_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v,
+                            const TriangleMesh& tm)
 {
   CGAL_assertion(CGAL::is_triangle_mesh(tm));
 
-  typedef boost::graph_traits<PolygonMesh> GT;
-  typedef typename GT::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
   boost::unordered_set<halfedge_descriptor> halfedges_handled;
-
   BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, tm))
     halfedges_handled.insert(h);
 
@@ -121,28 +76,28 @@ bool is_non_manifold_vertex(typename boost::graph_traits<PolygonMesh>::vertex_de
 
 /// \ingroup PMP_repairing_grp
 /// checks whether an edge is degenerate.
-/// An edge is considered degenerate if the points of its vertices are identical.
+/// An edge is considered degenerate if the geometric positions of its two extremities are identical.
 ///
 /// @tparam PolygonMesh a model of `HalfedgeGraph`
 /// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
-/// @param e the edge
-/// @param pm polygon mesh containing e
+/// @param e an edge of `pm`
+/// @param pm polygon mesh containing `e`
 /// @param np optional \ref pmp_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`.
-/// If this parameter is omitted, an internal property map for
-/// `CGAL::vertex_point_t` should be available in `PolygonMesh`
+///   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pm`.
+///                                     The type of this map is model of `ReadWritePropertyMap`.
+///                                     If this parameter is omitted, an internal property map for
+///                                     `CGAL::vertex_point_t` should be available in `PolygonMesh`
 /// \cgalParamEnd
-///    \cgalParamBegin{geom_traits} a geometric traits class instance.
-///       The traits class must provide the nested type `Point_3`,
-///       and the nested functor :
-///         - `Equal_3` to check whether 2 points are identical
+///   \cgalParamBegin{geom_traits} a geometric traits class instance.
+///                                The traits class must provide the nested type `Point_3`,
+///                                and the nested functor `Equal_3` to check whether two points are identical.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
-/// \return true if the edge is degenerate
+/// \return `true` if the edge `e` is degenerate, `false` otherwise.
 template <typename PolygonMesh, typename NamedParameters>
 bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
                         const PolygonMesh& pm,
@@ -154,12 +109,11 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                       get_const_property_map(vertex_point, pm));
+
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Traits;
   Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
 
-  if ( traits.equal_3_object()(get(vpmap, target(e, pm)), get(vpmap, source(e, pm))) )
-    return true;
-  return false;
+  return traits.equal_3_object()(get(vpmap, source(e, pm)), get(vpmap, target(e, pm)));
 }
 
 template <typename PolygonMesh>
@@ -171,34 +125,34 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
 
 /// \ingroup PMP_repairing_grp
 /// checks whether a triangle face is degenerate.
-/// A triangle face is degenerate if its points are collinear.
+/// A triangle face is considered degenerate if the geometric positions of its vertices are collinear.
 ///
 /// @tparam TriangleMesh a model of `FaceGraph`
 /// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
-/// @param f the triangle face
-/// @param tm triangle mesh containing f
+/// @param f a triangle face of `tm`
+/// @param tm a triangle mesh containing `f`
 /// @param np optional \ref pmp_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`.
-/// If this parameter is omitted, an internal property map for
-/// `CGAL::vertex_point_t` should be available in `TriangleMesh`
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
+///                                      The type of this map is model of `ReadWritePropertyMap`.
+///                                      If this parameter is omitted, an internal property map for
+///                                      `CGAL::vertex_point_t` should be available in `TriangleMesh`
 /// \cgalParamEnd
 ///    \cgalParamBegin{geom_traits} a geometric traits class instance.
-///       The traits class must provide the nested type `Point_3`,
-///       and the nested functor :
-///         - `Collinear_3` to check whether 3 points are collinear
+///                                 The traits class must provide the nested functor `Collinear_3`
+///                                 to check whether three points are collinear.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
-/// \return true if the triangle face is degenerate
+/// \return `true` if the face `f` is degenerate, `false` otherwise.
 template <typename TriangleMesh, typename NamedParameters>
 bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
                                  const TriangleMesh& tm,
                                  const NamedParameters& np)
 {
-  CGAL_assertion(CGAL::is_triangle_mesh(tm));
+  CGAL_precondition(CGAL::is_triangle_mesh(tm));
 
   using boost::get_param;
   using boost::choose_param;
@@ -206,15 +160,15 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                       get_const_property_map(vertex_point, tm));
+
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Traits;
   Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
 
-  typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd = halfedge(f,tm);
-  const typename Traits::Point_3& p1 = get(vpmap, target( hd, tm) );
-  const typename Traits::Point_3& p2 = get(vpmap, target(next(hd, tm), tm) );
-  const typename Traits::Point_3& p3 = get(vpmap, source( hd, tm) );
-  return traits.collinear_3_object()(p1, p2, p3);
+  typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f, tm);
 
+  return traits.collinear_3_object()(get(vpmap, source(h, tm)),
+                                     get(vpmap, target(h, tm)),
+                                     get(vpmap, target(next(h, tm), tm)));
 }
 
 template <typename TriangleMesh>
@@ -226,159 +180,185 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
 
 /// \ingroup PMP_repairing_grp
 /// checks whether a triangle face is needle.
-/// A triangle is needle if its longest edge is much longer than the shortest one.
+/// A triangle is said to be a <i>needle</i> if its longest edge is much longer than its shortest edge.
 ///
 /// @tparam TriangleMesh a model of `FaceGraph`
 /// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
-/// @param f the triangle face
-/// @param tm triangle mesh containing f
-/// @param threshold the cosine of an angle of f.
-///        The threshold is in range [0 1] and corresponds to
-///        angles between 0 and 90 degrees.
+/// @param f a triangle face of `tm`
+/// @param tm triangle mesh containing `f`
+/// @param threshold a bound on the ratio of the longest edge length and the shortest edge length
 /// @param np optional \ref pmp_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`.
-/// If this parameter is omitted, an internal property map for
-/// `CGAL::vertex_point_t` should be available in `TriangleMesh`
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
+///                                      The type of this map is model of `ReadWritePropertyMap`.
+///                                      If this parameter is omitted, an internal property map for
+///                                      `CGAL::vertex_point_t` should be available in `TriangleMesh`
 /// \cgalParamEnd
 ///    \cgalParamBegin{geom_traits} a geometric traits class instance.
-///       The traits class must provide the nested type `Point_3`.
+///                                 The traits class must provide the nested type `FT` and
+///                                 the nested functor `Compute_squared_distance_3`.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
-/// \return true if the triangle face is a needle
+/// \return the smallest halfedge if the triangle face is a needle, and a null halfedge otherwise.
 template <typename TriangleMesh, typename NamedParameters>
-bool is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
-                             const TriangleMesh& tm,
-                             const double threshold,
-                             const NamedParameters& np)
+typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
+is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
+                        const TriangleMesh& tm,
+                        const double threshold,
+                        const NamedParameters& np)
 {
-  CGAL_assertion(CGAL::is_triangle_mesh(tm));
-  CGAL_assertion(threshold >= 0);
-  CGAL_assertion(threshold <= 1);
+  CGAL_precondition(CGAL::is_triangle_mesh(tm));
+  CGAL_precondition(threshold >= 1.);
 
   using boost::get_param;
   using boost::choose_param;
 
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
+
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                       get_const_property_map(vertex_point, tm));
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Traits;
-  typedef typename Traits::FT FT;
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::halfedge_descriptor halfedge_descriptor;
-  typedef typename GT::vertex_descriptor vertex_descriptor;
-  typedef typename boost::property_traits<VertexPointMap>::value_type Point_type;
-  typedef typename Kernel_traits<Point_type>::Kernel::Vector_3 Vector;
 
-  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f, tm), tm))
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type       Traits;
+  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
+
+  typedef typename Traits::FT                                               FT;
+
+  const halfedge_descriptor h0 = halfedge(f, tm);
+  FT max_sq_length = - std::numeric_limits<FT>::max(),
+     min_sq_length = std::numeric_limits<FT>::max();
+  halfedge_descriptor min_h = boost::graph_traits<TriangleMesh>::null_halfedge();
+
+  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(h0, tm))
   {
-    vertex_descriptor v0 = source(h, tm);
-    vertex_descriptor v1 = target(h, tm);
-    vertex_descriptor v2 = target(next(h, tm), tm);
-    Vector a = get(vpmap, v0) - get (vpmap, v1);
-    Vector b = get(vpmap, v2) - get(vpmap, v1);
-    FT aa = a.squared_length();
-    FT bb = b.squared_length();
-    FT squared_dot_ab = ((a*b)*(a*b)) / (aa * bb);
+    const FT sq_length = traits.compute_squared_distance_3_object()(get(vpmap, source(h, tm)),
+                                                                    get(vpmap, target(h, tm)));
 
-    if(squared_dot_ab > threshold * threshold)
-      return true;
+    if(max_sq_length < sq_length)
+      max_sq_length = sq_length;
+
+    if(min_sq_length > sq_length)
+    {
+      min_h = h;
+      min_sq_length = sq_length;
+    }
   }
-  return false;
 
+  const FT sq_threshold = threshold * threshold;
+  if(max_sq_length / min_sq_length >= sq_threshold)
+  {
+    CGAL_assertion(min_h != boost::graph_traits<TriangleMesh>::null_halfedge());
+    return min_h;
+  }
+  else
+    return boost::graph_traits<TriangleMesh>::null_halfedge();
 }
 
 template <typename TriangleMesh>
-bool is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
-                             const TriangleMesh& tm,
-                             const double threshold)
+typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
+is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
+                        const TriangleMesh& tm,
+                        const double threshold)
 {
   return is_needle_triangle_face(f, tm, threshold, parameters::all_default());
 }
 
 /// \ingroup PMP_repairing_grp
 /// checks whether a triangle face is a cap.
-/// A triangle is a cap if it has an angle very close to 180 degrees.
+/// A triangle is said to be a <i>cap</i> if one of the its angles is close to `180` degrees.
 ///
 /// @tparam TriangleMesh a model of `FaceGraph`
 /// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
-/// @param f the triangle face
-/// @param tm triangle mesh containing f
-/// @param threshold the cosine of an angle of f.
-///        The threshold is in range [-1 0] and corresponds to
-///        angles between 90 and 180 degrees.
+/// @param f a triangle face of `tm`
+/// @param tm triangle mesh containing `f`
+/// @param threshold the cosine of a minimum angle such that if `f` has an angle greater than this bound,
+///                  it is a cap. The threshold is in range `[-1 0]` and corresponds to an angle
+///                  between `90` and `180` degrees.
 /// @param np optional \ref pmp_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`.
-/// If this parameter is omitted, an internal property map for
-/// `CGAL::vertex_point_t` should be available in `TriangleMesh`
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
+///                                      The type of this map is model of `ReadWritePropertyMap`.
+///                                      If this parameter is omitted, an internal property map for
+///                                      `CGAL::vertex_point_t` should be available in `TriangleMesh`
 /// \cgalParamEnd
 ///    \cgalParamBegin{geom_traits} a geometric traits class instance.
-///       The traits class must provide the nested type `Point_3`
+///                                 The traits class must provide the nested type `Point_3`
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
-/// \return true if the triangle face is a cap
+/// \return `true` if the triangle face is a cap
 template <typename TriangleMesh, typename NamedParameters>
-bool is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
-                             const TriangleMesh& tm,
-                             const double threshold,
-                             const NamedParameters& np)
+typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
+is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
+                     const TriangleMesh& tm,
+                     const double threshold,
+                     const NamedParameters& np)
 {
-  CGAL_assertion(CGAL::is_triangle_mesh(tm));
-  CGAL_assertion(threshold >= -1);
-  CGAL_assertion(threshold <= 0);
+  CGAL_precondition(CGAL::is_triangle_mesh(tm));
+  CGAL_precondition(threshold >= -1.);
+  CGAL_precondition(threshold <= 0.);
 
   using boost::get_param;
   using boost::choose_param;
 
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor     vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
+
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                       get_const_property_map(vertex_point, tm));
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Traits;
-  typedef typename Traits::FT FT;
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::halfedge_descriptor halfedge_descriptor;
-  typedef typename GT::vertex_descriptor vertex_descriptor;
-  typedef typename boost::property_traits<VertexPointMap>::value_type Point_type;
-  typedef typename Kernel_traits<Point_type>::Kernel::Vector_3 Vector;
 
-  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f, tm), tm))
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type       Traits;
+  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
+
+  typedef typename Traits::FT                                               FT;
+  typedef typename Traits::Vector_3                                         Vector_3;
+
+  const FT sq_threshold = threshold * threshold;
+  const halfedge_descriptor h0 = halfedge(f, tm);
+
+  cpp11::array<FT, 3> sq_lengths;
+  int pos = 0;
+  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(h0, tm))
   {
-    vertex_descriptor v0 = source(h, tm);
-    vertex_descriptor v1 = target(h, tm);
-    vertex_descriptor v2 = target(next(h, tm), tm);
-    Vector a = get(vpmap, v0) - get (vpmap, v1);
-    Vector b = get(vpmap, v2) - get(vpmap, v1);
-    FT aa = a.squared_length();
-    FT bb = b.squared_length();
-    FT squared_dot_ab = ((a*b)*(a*b)) / (aa * bb);
-
-    if(squared_dot_ab > threshold * threshold)
-      return true;
+    sq_lengths[pos++] = traits.compute_squared_distance_3_object()(get(vpmap, source(h, tm)),
+                                                                   get(vpmap, target(h, tm)));
   }
-  return false;
+
+  pos = 0;
+  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(h0, tm))
+  {
+    const vertex_descriptor v0 = source(h, tm);
+    const vertex_descriptor v1 = target(h, tm);
+    const vertex_descriptor v2 = target(next(h, tm), tm);
+    const Vector_3 a = traits.construct_vector_3_object()(get(vpmap, v1), get(vpmap, v2));
+    const Vector_3 b = traits.construct_vector_3_object()(get(vpmap, v1), get(vpmap, v0));
+    const FT dot_ab = traits.compute_scalar_product_3_object()(a, b);
+    const bool neg_sp = (dot_ab <= 0);
+    const FT sq_a = sq_lengths[(pos+1)%3];
+    const FT sq_b = sq_lengths[pos];
+    const FT sq_cos =  dot_ab * dot_ab / (sq_a * sq_b);
+
+    if(neg_sp && sq_cos >= sq_threshold)
+      return prev(h, tm);
+  }
+  return boost::graph_traits<TriangleMesh>::null_halfedge();
 }
 
 template <typename TriangleMesh>
-bool is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
-                             const TriangleMesh& tm,
-                             const double threshold)
+typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
+is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
+                     const TriangleMesh& tm,
+                     const double threshold)
 {
   return is_cap_triangle_face(f, tm, threshold, parameters::all_default());
 }
 
-
-
-
 } } // end namespaces CGAL and PMP
 
-
-
 #endif // CGAL_POLYGON_MESH_PROCESSING_HELPERS_H
-

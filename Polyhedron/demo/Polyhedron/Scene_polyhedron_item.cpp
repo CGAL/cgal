@@ -1682,7 +1682,7 @@ QString Scene_polyhedron_item::computeStats(int type)
     if (d->poly->is_pure_triangle())
     {
       if (d->number_of_degenerated_faces == (unsigned int)(-1))
-        d->number_of_degenerated_faces = nb_degenerate_faces(d->poly, get(CGAL::vertex_point, *(d->poly)));
+        d->number_of_degenerated_faces = nb_degenerate_faces(d->poly);
       return QString::number(d->number_of_degenerated_faces);
     }
     else

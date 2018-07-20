@@ -163,6 +163,7 @@ void isotropic_remeshing(const FaceRange& faces
     boost::is_default_param(get_param(np, internal_np::projection_functor));
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
+  GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
 
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
   VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
@@ -227,7 +228,7 @@ void isotropic_remeshing(const FaceRange& faces
 #endif
 
   typename internal::Incremental_remesher<PM, VPMap, GT, ECMap, VCMap, FPMap, FIMap>
-    remesher(pmesh, vpmap, protect, ecmap, vcmap, fpmap, fimap, need_aabb_tree);
+    remesher(pmesh, vpmap, gt, protect, ecmap, vcmap, fpmap, fimap, need_aabb_tree);
   remesher.init_remeshing(faces);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -340,6 +341,8 @@ void split_long_edges(const EdgeRange& edges
   using boost::get_param;
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
+  GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
+
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
   VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                              get_property_map(vertex_point, pmesh));
@@ -361,7 +364,7 @@ void split_long_edges(const EdgeRange& edges
     internal::Connected_components_pmap<PM, FIMap>,
     FIMap
   >
-    remesher(pmesh, vpmap, false/*protect constraints*/, ecmap,
+    remesher(pmesh, vpmap, gt, false/*protect constraints*/, ecmap,
              Constant_property_map<vertex_descriptor, bool>(false),
              internal::Connected_components_pmap<PM, FIMap>(faces(pmesh), pmesh, ecmap, fimap, false),
              fimap,
