@@ -113,9 +113,10 @@ struct Scene_surface_mesh_item_priv{
     item->getEdgeContainer(0)->setFrameMatrix(QMatrix4x4());
     has_feature_edges = false;
     invalidate_stats();
-    vertices_displayed = false;
+    vertices_displayed= false;
     edges_displayed = false;
     faces_displayed = false;
+    all_displayed = false;
     alphaSlider = NULL;
     has_vcolors = false;
     has_fcolors = false;
@@ -141,6 +142,7 @@ struct Scene_surface_mesh_item_priv{
     vertices_displayed = false;
     edges_displayed = false;
     faces_displayed = false;
+    all_displayed = false;
     alphaSlider = NULL;
     has_vcolors = false;
     has_fcolors = false;
@@ -198,6 +200,7 @@ struct Scene_surface_mesh_item_priv{
   mutable bool vertices_displayed;
   mutable bool edges_displayed;
   mutable bool faces_displayed;
+  mutable bool all_displayed;
   mutable QList<double> text_ids;
   mutable std::vector<TextItem*> targeted_id;
 
@@ -1222,7 +1225,30 @@ void Scene_surface_mesh_item::invalidate(Gl_data_names name)
     processData(name);
   else
     initGL();
-  d->killIds();
+  if(!d->all_displayed)
+    d->killIds();
+  else
+  {
+    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    {
+      CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+      if(viewer == NULL)
+        continue;
+      d->killIds();
+      if(d->vertices_displayed)
+      {
+        printVertexIds(viewer);
+      }
+      if(d->edges_displayed)
+      {
+        printEdgeIds(viewer);
+      }
+      if(d->faces_displayed)
+      {
+        printFaceIds(viewer);
+      }
+    }
+  }
 }
 
 
@@ -1911,6 +1937,7 @@ bool Scene_surface_mesh_item::printVertexIds(CGAL::Three::Viewer_interface *view
 {
   if(d->vertices_displayed)
   {
+    d->all_displayed = true;
     return ::printVertexIds(*d->smesh_,
                             d->textVItems,
                             viewer);
@@ -1922,6 +1949,7 @@ bool Scene_surface_mesh_item::printEdgeIds(CGAL::Three::Viewer_interface *viewer
 {
   if(d->edges_displayed)
   {
+    d->all_displayed = true;
     return ::printEdgeIds(*d->smesh_,
                             d->textEItems,
                             viewer);
@@ -1933,6 +1961,7 @@ bool Scene_surface_mesh_item::printFaceIds(CGAL::Three::Viewer_interface *viewer
 {
   if(d->faces_displayed)
   {
+    d->all_displayed = true;
     return ::printFaceIds(*d->smesh_,
                             d->textFItems,
                             viewer);
@@ -1949,6 +1978,7 @@ void Scene_surface_mesh_item_priv::killIds()
             textEItems,
             textFItems,
             &targeted_id);
+  all_displayed = false;
 }
 
 void Scene_surface_mesh_item::printAllIds(CGAL::Three::Viewer_interface *viewer)
