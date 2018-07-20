@@ -815,6 +815,9 @@ void Viewer::attribBuffers(int program_name) const {
     program->bind();
     program->setUniformValue("point_size", getGlPointSize());
     program->setUniformValue("mvp_matrix", mvp_mat);
+    QMatrix4x4 id_mat;
+    id_mat.setToIdentity();
+    program->setUniformValue("f_matrix", id_mat);
     program->setUniformValue("is_clipbox_on", d->clipping);
     if(d->clipping)
     {
@@ -1068,6 +1071,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     program->setProperty("hasLight", true);
     program->setProperty("hasNormals", true);
     program->setProperty("hasTransparency", true);
+    program->setProperty("hasFMatrix", true);
     return program;
   }
   case PROGRAM_WITHOUT_LIGHT:
