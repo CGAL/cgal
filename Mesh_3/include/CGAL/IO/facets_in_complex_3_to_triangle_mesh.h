@@ -143,7 +143,8 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
                                           PointContainer& points,
                                           FaceContainer& faces)
 {
-  typename C3T3::Subdomain_index useless;
+  typedef typename C3T3::Subdomain_index              Subdomain_index;
+  Subdomain_index useless = Subdomain_index();
   facets_in_complex_3_to_triangle_soup(c3t3, useless, points, faces,
                                        true/*point outward*/, true /*extract all facets*/);
 }
