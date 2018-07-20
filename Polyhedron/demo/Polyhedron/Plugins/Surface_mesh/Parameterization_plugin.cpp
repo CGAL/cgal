@@ -64,7 +64,6 @@
 #include <CGAL/Qt/GraphicsViewNavigation.h>
 
 #include "ui_Parameterization_widget.h"
-#include "ui_ARAP_dialog.h"
 #include "ui_OTE_dialog.h"
 
 #ifdef USE_SURFACE_MESH
@@ -905,23 +904,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     {
       new_item_name = tr("%1 (parameterized (ARAP))").arg(poly_item->name());
       std::cout << "Parameterize (ARAP)..." << std::endl;
-
-      QDialog dialog(mw);
-      Ui::ARAP_dialog ui;
-      ui.setupUi(&dialog);
-      connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
-      connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
-
-      // Get values
-      QApplication::restoreOverrideCursor();
-
-      int i = dialog.exec();
-      if (i == QDialog::Rejected)
-        return;
-
-      FT lambda = ui.lambdaSpinBox->value();
-      QApplication::setOverrideCursor(Qt::WaitCursor);
-
+      FT lambda = 10000; // a big value to ensure the parameterization is ARAP (and not ASAP)
       typedef SMP::ARAP_parameterizer_3<Seam_mesh> Parameterizer;
       status = SMP::parameterize(sMesh, Parameterizer(lambda), bhd, uv_pm);
       break;
