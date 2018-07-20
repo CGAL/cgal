@@ -802,7 +802,7 @@ public:
   }
 
   int approximate_number_of_enqueued_element() const {
-    return int(m_cache_number_of_tasks) * NUM_WORK_ITEMS_PER_BATCH;
+    return int(m_cache_number_of_tasks) * int(NUM_WORK_ITEMS_PER_BATCH);
   }
 
 protected:

@@ -406,6 +406,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   r_c3t3_.clear_cells_and_facets_from_c3t3();
 
   const Triangulation& r_tr = r_c3t3_.triangulation();
+  CGAL_USE(r_tr);
 
 #ifndef CGAL_MESH_3_VERBOSE
   // Scan surface and refine it
