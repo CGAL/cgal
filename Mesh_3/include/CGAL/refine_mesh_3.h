@@ -213,7 +213,9 @@ namespace parameters {
         , nonlinear_growth_of_balls(false)
         , maximal_number_of_vertices(0)
         , pointer_to_error_code(0)
+#ifndef CGAL_NO_ATOMIC
         , pointer_to_stop_atomic_boolean(0)
+#endif
       {}
 
       std::string dump_after_init_prefix;
@@ -226,7 +228,9 @@ namespace parameters {
       bool nonlinear_growth_of_balls;
       std::size_t maximal_number_of_vertices;
       Mesh_error_code* pointer_to_error_code;
+#ifndef CGAL_NO_ATOMIC
       CGAL::cpp11::atomic<bool>* pointer_to_stop_atomic_boolean;
+#endif
     }; // end struct Mesh_3_options
 
   } // end namespace internal
@@ -370,7 +374,9 @@ CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
                             (number_of_initial_points_, (int), -1)
                             (maximal_number_of_vertices_, (std::size_t), 0)
                             (pointer_to_error_code_, (Mesh_error_code*), ((Mesh_error_code*)0))
+#ifndef CGAL_NO_ATOMIC
                             (pointer_to_stop_atomic_boolean_, (CGAL::cpp11::atomic<bool>*), ((CGAL::cpp11::atomic<bool>*)0))
+#endif
                             )
                            )
   { 
@@ -385,7 +391,9 @@ CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
     options.number_of_initial_points=number_of_initial_points_;
     options.maximal_number_of_vertices=maximal_number_of_vertices_;
     options.pointer_to_error_code=pointer_to_error_code_;
+#ifndef CGAL_NO_ATOMIC
     options.pointer_to_stop_atomic_boolean=pointer_to_stop_atomic_boolean_;
+#endif
 
     return options;
   }
@@ -541,8 +549,11 @@ void refine_mesh_3_impl(C3T3& c3t3,
   // Build mesher and launch refinement process
   Mesher mesher (c3t3, domain, criteria, manifold_options.mesh_topology,
                  mesh_options.maximal_number_of_vertices,
-                 mesh_options.pointer_to_error_code,
-                 mesh_options.pointer_to_stop_atomic_boolean);
+                 mesh_options.pointer_to_error_code
+#ifndef CGAL_NO_ATOMIC
+                 , mesh_options.pointer_to_stop_atomic_boolean
+#endif
+		 );
   double refine_time = mesher.refine_mesh(mesh_options.dump_after_refine_surface_prefix);
   c3t3.clear_manifold_info();
 
