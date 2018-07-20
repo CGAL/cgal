@@ -43,6 +43,7 @@
 
 /// \file AABB_do_intersect_transform_traits.h
 
+//! \todo add protector
 namespace CGAL {
 // forward declaration
 template< typename AABBTraits>
@@ -121,7 +122,7 @@ public:
   //Intersections
   class Do_intersect
   {
-    typedef Simple_cartesian<Interval_nt_advanced>             Approximate_kernel;
+    typedef Simple_cartesian<Interval_nt<> >             Approximate_kernel;
     typedef Cartesian_converter<Kernel, Approximate_kernel>    C2F;
     
     
@@ -135,17 +136,32 @@ public:
     template<typename Query>
     bool operator()(const Query& q, const Bounding_box& bbox) const
     {
-      Point_3 min(bbox.xmin(), bbox.ymin(), bbox.zmin()),
-          max(bbox.xmax(), bbox.ymax(), bbox.zmax());
+      Point_3 ps[8];
+      ps[0] = Point_3(bbox.min(0), bbox.min(1), bbox.min(2));
+      ps[1] = Point_3(bbox.min(0), bbox.min(1), bbox.max(2));
+      ps[2] = Point_3(bbox.min(0), bbox.max(1), bbox.min(2));
+      ps[3] = Point_3(bbox.min(0), bbox.max(1), bbox.max(2));
+                                              
+      ps[4] = Point_3(bbox.max(0), bbox.min(1), bbox.min(2));
+      ps[5] = Point_3(bbox.max(0), bbox.min(1), bbox.max(2));
+      ps[6] = Point_3(bbox.max(0), bbox.max(1), bbox.min(2));
+      ps[7] = Point_3(bbox.max(0), bbox.max(1), bbox.max(2));
       
+      for(int i=0; i<8; ++i)
+      {
+        ps[i] = m_traits.transformation().transform(ps[i]);
+      }
+      
+      
+      Bounding_box temp_box;
+      for(int i=0; i<8; ++i)
+        temp_box += ps[i].bbox();
       typename Approximate_kernel::Point_3 app_min, 
           app_max;
-        Bounding_box temp_box =
-        min.bbox() + max.bbox();
-        Point_3 tmin(temp_box.xmin(), temp_box.ymin(), temp_box.zmin()),
-            tmax(temp_box.xmax(), temp_box.ymax(), temp_box.zmax());
-        app_min=c2f(tmin);
-        app_max = c2f(tmax);
+      Point_3 tmin(temp_box.xmin(), temp_box.ymin(), temp_box.zmin()),
+          tmax(temp_box.xmax(), temp_box.ymax(), temp_box.zmax());
+      app_min=c2f(tmin);
+      app_max = c2f(tmax);
       Bounding_box transfo_box(to_double(app_min.x().inf()), to_double(app_min.y().inf()), to_double(app_min.z().inf()),
                                to_double(app_max.x().sup()), to_double(app_max.y().sup()), to_double(app_max.z().sup()));
       
@@ -170,18 +186,29 @@ public:
     template<typename AABBTraits>
     bool operator()(const CGAL::AABB_tree<AABBTraits>& other_tree, const Bounding_box& bbox) const
     {
-      Point_3 min(bbox.xmin(), bbox.ymin(), bbox.zmin()),
-          max(bbox.xmax(), bbox.ymax(), bbox.zmax());
+      Point_3 ps[8];
+      ps[0] = Point_3(bbox.min(0), bbox.min(1), bbox.min(2));
+      ps[1] = Point_3(bbox.min(0), bbox.min(1), bbox.max(2));
+      ps[2] = Point_3(bbox.min(0), bbox.max(1), bbox.min(2));
+      ps[3] = Point_3(bbox.min(0), bbox.max(1), bbox.max(2));
       
-      min = m_traits.transformation().transform(min);
-      max = m_traits.transformation().transform(max);
+      ps[4] = Point_3(bbox.max(0), bbox.min(1), bbox.min(2));
+      ps[5] = Point_3(bbox.max(0), bbox.min(1), bbox.max(2));
+      ps[6] = Point_3(bbox.max(0), bbox.max(1), bbox.min(2));
+      ps[7] = Point_3(bbox.max(0), bbox.max(1), bbox.max(2));
       
-      Bounding_box temp_box =
-          min.bbox() + max.bbox();
-      min=Point_3(temp_box.xmin(), temp_box.ymin(), temp_box.zmin());
-      max=Point_3(temp_box.xmax(), temp_box.ymax(), temp_box.zmax());
-      Bounding_box transfo_box(to_double(min.x()), to_double(min.y()), to_double(min.z()),
-                               to_double(max.x()), to_double(max.y()), to_double(max.z()));
+      for(int i=0; i<8; ++i)
+      {
+        ps[i] = m_traits.transformation().transform(ps[i]);
+      }
+      
+      Bounding_box temp_box;
+      for(int i=0; i<8; ++i)
+        temp_box += ps[i].bbox();
+      Point_3 p_min(temp_box.xmin(), temp_box.ymin(), temp_box.zmin());
+      Point_3 p_max(temp_box.xmax(), temp_box.ymax(), temp_box.zmax());
+      Bounding_box transfo_box(to_double(p_min.x()), to_double(p_min.y()), to_double(p_min.z()),
+                               to_double(p_max.x()), to_double(p_max.y()), to_double(p_max.z()));
       return other_tree.do_intersect(transfo_box);
     }
   };
