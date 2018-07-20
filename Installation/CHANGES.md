@@ -51,8 +51,17 @@ Release date: September 2018
 
 ### Convex hull 3
 
+-   Added the function `extreme_points_3()` computing the
+    points on the convex hull without underlying connectivity.
+-   Added a traits adapter called `Extreme_points_traits_adapter_3`
+    that enables the use of the function `extreme_points_3()` on a range of keys,
+    each key being associated to 3D point using a property map.
+    This can be used to get the vertices of a mesh that are on it
+    convex hull, or the indices of points in a range that are
+    on it convex hull.
 -   Fix a bug in the computation of the 3D convex hull that was leaving extra points
     within subset of coplanar points that do not belong to the minimal convex hull.
+
 
 ### Point Set Processing
 
@@ -168,7 +177,6 @@ Release date: September 2018
 -   **Breaking change**: `CGAL::Diagonalize_traits` is now deprecated
     and shouldn't be used, `CGAL::Eigen_diagonalize_traits` (along
     with the _Eigen_ library) should be used instead.
-
 
 
 Release 4.12
