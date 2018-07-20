@@ -614,7 +614,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
   if(method == PARAM_OTE &&
      (sel_item == NULL || sel_item->selected_vertices.empty())) {
-    std::cerr << "No selection or no cones selected; Aborting." << std::endl;
+    std::cerr << "\nError: no cones/seam selected; Aborting parameterization." << std::endl;
     return;
   }
 
@@ -918,48 +918,55 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       // @todo (need to remove the assertions such as cones.size() == 4
       //        and check where and when cones are used (passed by ID, for ex.?))
       if(number_of_components != 1) {
-        std::cerr << "Orbifold Tutte Embedding can only handle one connected component at the moment" << std::endl;
-        return;
+        std::cerr << "Orbifold Tutte Embedding can only handle one connected component" << std::endl;
+        status = SMP::ERROR_NO_TOPOLOGICAL_BALL;
+        break;
       }
 
       typedef SMP::Orbifold_Tutte_parameterizer_3<Seam_mesh> Parameterizer;
 
+      // Get orbifold type
       QDialog dialog(mw);
       Ui::OTE_dialog ui;
       ui.setupUi(&dialog);
       connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
       connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
 
-      // Get values
       QApplication::restoreOverrideCursor();
 
       int i = dialog.exec();
       if (i == QDialog::Rejected)
+      {
+        std::cout << "Aborting parameterization" << std::endl;
         return;
+      }
 
       SMP::Orbifold_type orb = static_cast<SMP::Orbifold_type>(ui.OrbComboBox->currentIndex());
-      std::cout << "selected orbifold type: " << ui.OrbComboBox->currentText().toStdString() << std::endl;
+      std::cout << "Selected orbifold type: " << ui.OrbComboBox->currentText().toStdString() << std::endl;
 
       if((unordered_cones.size() != 3 && unordered_cones.size() != 4) ||
          (unordered_cones.size() == 3 && orb == SMP::Parallelogram ) ||
          (unordered_cones.size() == 4 && orb != SMP::Parallelogram)) {
-        std::cerr << "Incompatible orbifold type and number of cones" << std::endl;
+        std::cerr << "Error: incompatible orbifold type and number of cones" << std::endl;
         std::cerr << "Types I, II & III require 3 selected vertices" << std::endl;
         std::cerr << "Type IV requires 4 selected vertices" << std::endl;
         return;
       }
 
-      QApplication::setOverrideCursor(Qt::WaitCursor);
-
       // Now, parameterize
       Parameterizer parameterizer(orb);
 
-      // mark cones in the seam mesh
+      // Mark cones in the seam mesh
       boost::unordered_map<s_vertex_descriptor, SMP::Cone_type> cmap;
       if(!SMP::locate_unordered_cones(sMesh, unordered_cones.begin(), unordered_cones.end(), cmap))
+      {
+        std::cerr << "Error: invalid cone or seam selection" << std::endl;
         return;
+      }
 
-      // vimap and uvmap
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+
+      // Fill the index property map
       typedef boost::unordered_map<s_vertex_descriptor, int> Indices;
       Indices indices;
       CGAL::Polygon_mesh_processing::connected_component(
@@ -970,7 +977,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       boost::associative_property_map<Indices> vimap(indices);
 
       // Call to parameterizer
-      status =  parameterizer.parameterize(sMesh, bhd, cmap, uv_pm, vimap);
+      status = parameterizer.parameterize(sMesh, bhd, cmap, uv_pm, vimap);
       break;
     }
     case PARAM_BTP:
@@ -987,7 +994,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     if(status == SMP::OK) {
       std::cout << "success (in " << time.elapsed() << " ms)" << std::endl;
     } else {
-      std::cout << "failure: " << SMP::get_error_message(status) << std::endl;
+      std::cerr << "failure: " << SMP::get_error_message(status) << std::endl;
       return;
     }
 
