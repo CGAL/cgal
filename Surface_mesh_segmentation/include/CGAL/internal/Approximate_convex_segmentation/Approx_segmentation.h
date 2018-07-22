@@ -128,8 +128,11 @@ public:
   * @param concavity_threshold concavity value each segment must satisfy
   * @param min_number_of_segments minimal number of segment that can be produced
   */
-  template <class FacePropertyMap>
-  std::size_t segmentize(FacePropertyMap face_ids, double concavity_threshold, std::size_t min_number_of_segments)
+  template <class FacePropertyMap, class ConvexHullsPropertyMap>
+  std::size_t segmentize(FacePropertyMap face_ids,
+                         double concavity_threshold,
+                         std::size_t min_number_of_segments,
+                         ConvexHullsPropertyMap convex_hulls_pmap)
   {
     // create filtered dual graph without border edges (null source or target vertex)
     Dual_graph dual(m_mesh);
@@ -187,6 +190,11 @@ public:
         put(face_ids, face, segment_id);
       }
 
+      // fill up convex hulls property map
+      TriangleMesh conv_hull;
+      CGAL::convex_hull_3(segment_props.conv_hull_pts.begin(), segment_props.conv_hull_pts.end(), conv_hull);
+      convex_hulls_pmap[segment_id] = conv_hull;
+
       ++segment_id;
     }
 
@@ -194,7 +202,7 @@ public:
     BOOST_FOREACH(face_descriptor face, faces(m_mesh))
     {
       CGAL_assertion(get(face_ids, face) >= 0 &&
-             std::size_t(get(face_ids, face)) < num_segments);
+                     std::size_t(get(face_ids, face)) < num_segments);
     }
 
     return num_segments;

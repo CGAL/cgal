@@ -172,6 +172,8 @@ private:
     typedef boost::associative_property_map<Segments_id_map> Segments_id_pmap;
     Segments_id_pmap segments_pmap(segments_map);
 
+    boost::vector_property_map<Facegraph> convex_hulls_pmap;
+
     Timer timer;
 
 #ifndef CGAL_LINKED_WITH_TBB
@@ -180,8 +182,10 @@ private:
 
     timer.start();
     std::size_t segments_num =
-     CGAL::approximate_convex_segmentation<Concurrency_tag>(segmentation_mesh, segments_pmap, concavity_threshold,
-      CGAL::parameters::min_number_of_segments(min_number_of_segments));
+      CGAL::approximate_convex_segmentation<Concurrency_tag>(segmentation_mesh,
+                                                             segments_pmap,
+                                                             concavity_threshold,
+                                                             CGAL::parameters::min_number_of_segments(min_number_of_segments).segments_convex_hulls(convex_hulls_pmap));
     timer.stop();
     
     std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
@@ -207,6 +211,7 @@ private:
 
       // add to the scene
       scene->addItem(segmentation_item);
+      segmentation_item->setFlatPlusEdgesMode();
       
       // refresh item
       segmentation_item->invalidateOpenGLBuffers();
@@ -226,33 +231,13 @@ private:
       // add convex hulls
       for (std::size_t i = 0; i < segments_num; ++i)
       {
-        // construct convex hull of the i-th segment
-        Filtered_graph filtered_mesh(segmentation_mesh, i, segments_pmap);
-        Facegraph segment;
-        CGAL::copy_face_graph(filtered_mesh, segment);
-
-        Facegraph conv_hull;
-        std::vector<Point_3> pts;
-
-        if (num_vertices(segment) > 3)
-        {
-          BOOST_FOREACH(vertex_descriptor vert, vertices(segment))
-          {
-            pts.push_back(get(CGAL::vertex_point, segment)[vert]);
-          }
-
-          CGAL::convex_hull_3(pts.begin(), pts.end(), conv_hull);
-        }
-        else
-        {
-          conv_hull = segment;
-        }
+        Facegraph& convex_hull = convex_hulls_pmap[i];
 
         boost::unordered_map<face_descriptor, face_descriptor> f2f;
         typedef std::pair<face_descriptor, face_descriptor> Faces_pair;
 
         // add the convex hull
-        CGAL::copy_face_graph(conv_hull, convex_hulls_mesh, CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(), std::inserter(f2f, f2f.end()));
+        CGAL::copy_face_graph(convex_hull, convex_hulls_mesh, CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(), std::inserter(f2f, f2f.end()));
         
         // assign patch id to the convex hull
         Patch_id_pmap patch_pmap = get(CGAL::face_patch_id_t<int>(), convex_hulls_mesh);
@@ -284,6 +269,7 @@ private:
       // add to the scene
       scene->addItem(convex_hulls_item);
       convex_hulls_item->setVisible(false);
+      convex_hulls_item->setFlatPlusEdgesMode();
         
       // refresh item
       convex_hulls_item->invalidateOpenGLBuffers();
@@ -360,6 +346,7 @@ private:
     scene->addItem(concavity_values_item);
     item->setVisible(false);
     concavity_values_item->setVisible(true);
+    concavity_values_item->setFlatMode();
       
     // refresh item
     concavity_values_item->invalidateOpenGLBuffers();

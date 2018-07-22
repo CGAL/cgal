@@ -120,6 +120,13 @@ indicates the minimum number of segments a segmentation must produce.\n
 <b>Default:</b> 1
 \cgalNPEnd
 
+\cgalNPBegin{segments_convex_hulls} \anchor BGL_segments_convex_hulls
+is filled up with the convex hulls of produced segments in a segmentation.\n
+<b>Type:</b> an array of size equal to the number of produced segments with value type
+             the same as an input mesh has. \n
+<b>Default:</b> None: if it is not provided, this information is inaccessible.
+\cgalNPEnd
+
 \cgalNPBegin{geom_traits} \anchor BGL_geom_traits
 is the geometric traits instance in which the operation should be performed.\n
 <b>Type:</b> a Geometric traits class.\n

@@ -198,6 +198,7 @@ concavity_values(const TriangleMesh& mesh)
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `mesh` \cgalParamEnd
  *    \cgalParamBegin{geom_traits} a geometric traits class instance model of Kernel \cgalParamEnd
  *    \cgalParamBegin{min_number_of_segments} minimal number of segments, default is 1 \cgalParamEnd
+ *    \cgalParamBegin{segments_convex_hulls} an array filled up with the convex hulls of all segments \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * @return number of segments computed
@@ -215,13 +216,15 @@ approximate_convex_segmentation(const TriangleMesh& mesh,
   Geom_traits geom_traits = boost::choose_param(boost::get_param(np, internal_np::geom_traits), Geom_traits());
   Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
                                 get_const_property_map(boost::vertex_point, mesh));
-  std::size_t min_number_of_segments = boost::choose_param(boost::get_param(np, internal_np::min_number_of_segments),1);
+  std::size_t min_number_of_segments = boost::choose_param(boost::get_param(np, internal_np::min_number_of_segments), 1);
 
   CGAL_precondition(is_triangle_mesh(mesh));
   CGAL_precondition(num_faces(mesh) >= min_number_of_segments);
 
+  boost::vector_property_map<TriangleMesh> convex_hulls_pmap = boost::choose_param(boost::get_param(np, internal_np::segments_convex_hulls), boost::vector_property_map<TriangleMesh>());
+
   internal::Approx_segmentation<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits);
-  return algorithm.segmentize(face_ids, concavity_threshold, min_number_of_segments);
+  return algorithm.segmentize(face_ids, concavity_threshold, min_number_of_segments, convex_hulls_pmap);
 }
 
 
