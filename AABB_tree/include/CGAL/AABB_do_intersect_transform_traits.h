@@ -64,7 +64,7 @@ struct Transformed_datum_do_intersect_impl
                                             pr.transform(transfo));
   }
 };
-  
+
 template<class Kernel,
          class Has_filtered_predicates = typename Kernel::Has_filtered_predicates_tag /*Tag_false*/>
 struct Transformed_datum_do_intersect
@@ -93,9 +93,9 @@ struct Transformed_datum_do_intersect<Kernel, Tag_true>
 
     // filtered predicate
     CGAL::Filtered_predicate<
-        internal_AABB::Transformed_datum_do_intersect_impl<EK>, 
-         internal_AABB::Transformed_datum_do_intersect_impl<FK>, 
-        C2E, 
+        internal_AABB::Transformed_datum_do_intersect_impl<EK>,
+         internal_AABB::Transformed_datum_do_intersect_impl<FK>,
+        C2E,
         C2F > filtered_do_intersect;
 
     return filtered_do_intersect(q, transfo, pr);
@@ -103,14 +103,14 @@ struct Transformed_datum_do_intersect<Kernel, Tag_true>
 };
 
 }//end internal
-template<typename BaseTraits, 
+template<typename BaseTraits,
          typename Kernel>
 class AABB_do_intersect_transform_traits:
     public BaseTraits
 {
   mutable Aff_transformation_3<Kernel> m_transfo;
 public:
-  
+
   //Constructor
   AABB_do_intersect_transform_traits(const Aff_transformation_3<Kernel>& transf = Aff_transformation_3<Kernel>(IDENTITY))
     :m_transfo(transf)
@@ -125,8 +125,8 @@ public:
     // TODO: possible optimization using Protector
     typedef Simple_cartesian<Interval_nt<> >             Approximate_kernel;
     typedef Cartesian_converter<Kernel, Approximate_kernel>    C2F;
-    
-    
+
+
     const AABB_do_intersect_transform_traits<BaseTraits, Kernel>& m_traits;
     C2F m_c2f;
 
@@ -154,7 +154,7 @@ public:
     Do_intersect(const AABB_do_intersect_transform_traits<BaseTraits, Kernel>& traits)
     :m_traits(traits)
     {}
-    
+
     template<typename Query>
     bool operator()(const Query& q, const Bounding_box& bbox) const
     {
@@ -168,33 +168,33 @@ public:
       internal_AABB::Transformed_datum_do_intersect<Kernel> f;
       return f(q, m_traits.transformation(), internal::Primitive_helper<BaseTraits>::get_datum(pr,m_traits));
     }
-    
+
     // intersection with AABB-tree
     template<typename AABBTraits>
     bool operator()(const CGAL::AABB_tree<AABBTraits>& other_tree, const Primitive& pr) const
     {
       return other_tree.do_intersect( internal::Primitive_helper<BaseTraits>::get_datum(pr,m_traits).transform(m_traits.transformation()));
     }
-    
+
     template<typename AABBTraits>
     bool operator()(const CGAL::AABB_tree<AABBTraits>& other_tree, const Bounding_box& bbox) const
     {
       return other_tree.do_intersect(compute_transformed_bbox(bbox));
     }
   };
-  
+
   Do_intersect do_intersect_object() const{
     return Do_intersect(*this);
   }
-  
+
   //Specific
-  void set_transformation(const Aff_transformation_3<Kernel>& trans) const 
+  void set_transformation(const Aff_transformation_3<Kernel>& trans) const
   {
     m_transfo = trans;
   }
-  
+
   const Aff_transformation_3<Kernel>& transformation() const { return m_transfo; }
-  
+
 };
 }//end CGAL
 #endif //CGAL_AABB_AABB_do_intersect_transform_traits_H
