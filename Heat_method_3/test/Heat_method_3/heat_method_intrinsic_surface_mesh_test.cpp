@@ -134,6 +134,9 @@ int main(int argc, char*argv[])
 
   hm.add_source(* vertices(sm).first);
 
+  boost::graph_traits<Surface_mesh>::vertex_descriptor vd = *(hm.sources_begin());
+  assert(vd == * vertices(sm).first);
+  
   hm.update();
 
   BOOST_FOREACH(boost::graph_traits<Surface_mesh>::vertex_descriptor vd, vertices(sm)){
@@ -141,7 +144,7 @@ int main(int argc, char*argv[])
   }
 
   // source_set_tests(hm,idt);
-  
+
 #if 1 
 
   //cotan matrix tests
