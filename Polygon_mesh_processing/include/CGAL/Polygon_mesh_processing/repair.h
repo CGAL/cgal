@@ -365,10 +365,9 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
 }
 
 template <class EdgeRange, class TriangleMesh, class NamedParameters>
-std::size_t remove_null_edges(
-                       const EdgeRange& edge_range,
-                       TriangleMesh& tmesh,
-                       const NamedParameters& np)
+std::size_t remove_degenerate_edges(const EdgeRange& edge_range,
+                                    TriangleMesh& tmesh,
+                                    const NamedParameters& np)
 {
   CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
 
@@ -385,27 +384,27 @@ std::size_t remove_null_edges(
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
   VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
                                       get_property_map(vertex_point, tmesh));
+
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
-  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
 
   std::size_t nb_deg_faces = 0;
 
   // collect edges of length 0
-  std::set<edge_descriptor> null_edges_to_remove;
+  std::set<edge_descriptor> degenerate_edges_to_remove;
   BOOST_FOREACH(edge_descriptor ed, edge_range)
   {
-    if ( traits.equal_3_object()(get(vpmap, target(ed, tmesh)), get(vpmap, source(ed, tmesh))) )
-      null_edges_to_remove.insert(ed);
+    if(is_degenerate_edge(ed, tmesh, np))
+      degenerate_edges_to_remove.insert(ed);
   }
 
   #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
-  std::cout << "Found " << null_edges_to_remove.size() << " null edges.\n";
+  std::cout << "Found " << degenerate_edges_to_remove.size() << " null edges.\n";
   #endif
 
-  while (!null_edges_to_remove.empty())
+  while (!degenerate_edges_to_remove.empty())
   {
-    edge_descriptor ed = *null_edges_to_remove.begin();
-    null_edges_to_remove.erase(null_edges_to_remove.begin());
+    edge_descriptor ed = *degenerate_edges_to_remove.begin();
+    degenerate_edges_to_remove.erase(degenerate_edges_to_remove.begin());
 
     halfedge_descriptor h = halfedge(ed, tmesh);
 
@@ -415,12 +414,12 @@ std::size_t remove_null_edges(
       if ( face(h, tmesh)!=GT::null_face() )
       {
         ++nb_deg_faces;
-        null_edges_to_remove.erase(edge(prev(h, tmesh), tmesh));
+        degenerate_edges_to_remove.erase(edge(prev(h, tmesh), tmesh));
       }
       if (face(opposite(h, tmesh), tmesh)!=GT::null_face())
       {
         ++nb_deg_faces;
-        null_edges_to_remove.erase(edge(prev(opposite(h, tmesh), tmesh), tmesh));
+        degenerate_edges_to_remove.erase(edge(prev(opposite(h, tmesh), tmesh), tmesh));
       }
       //now remove the edge
       CGAL::Euler::collapse_edge(ed, tmesh);
@@ -435,7 +434,7 @@ std::size_t remove_null_edges(
         if (is_triangle(hd, tmesh))
         {
           Euler::fill_hole(hd, tmesh);
-          null_edges_to_remove.insert(ed);
+          degenerate_edges_to_remove.insert(ed);
           continue;
         }
       }
@@ -621,7 +620,7 @@ std::size_t remove_null_edges(
       // remove edges
       BOOST_FOREACH(edge_descriptor ed, edges_to_remove)
       {
-        null_edges_to_remove.erase(ed);
+        degenerate_edges_to_remove.erase(ed);
         remove_edge(ed, tmesh);
       }
 
@@ -641,8 +640,8 @@ std::size_t remove_null_edges(
       put(vpmap, target(new_hd, tmesh), pt);
 
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(new_hd, tmesh))
-        if ( traits.equal_3_object()(get(vpmap, target(hd, tmesh)), get(vpmap, source(hd, tmesh))) )
-          null_edges_to_remove.insert(edge(hd, tmesh));
+        if(is_degenerate_edge(edge(hd, tmesh), tmesh, np))
+          degenerate_edges_to_remove.insert(edge(hd, tmesh));
 
       CGAL_assertion( is_valid_polygon_mesh(tmesh) );
     }
@@ -652,12 +651,10 @@ std::size_t remove_null_edges(
 }
 
 template <class EdgeRange, class TriangleMesh>
-std::size_t remove_null_edges(
-                       const EdgeRange& edge_range,
-                       TriangleMesh& tmesh)
+std::size_t remove_degenerate_edges(const EdgeRange& edge_range,
+                                    TriangleMesh& tmesh)
 {
-  return remove_null_edges(edge_range, tmesh,
-                           parameters::all_default());
+  return remove_degenerate_edges(edge_range, tmesh, parameters::all_default());
 }
 
 /// \ingroup PMP_repairing_grp
@@ -717,8 +714,9 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
+
 // First remove edges of length 0
-  std::size_t nb_deg_faces = remove_null_edges(edges(tmesh), tmesh, np);
+  std::size_t nb_deg_faces = remove_degenerate_edges(edges(tmesh), tmesh, np);
 
   #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
   {
