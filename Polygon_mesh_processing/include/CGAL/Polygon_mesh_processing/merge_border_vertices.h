@@ -24,6 +24,7 @@
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
@@ -31,9 +32,9 @@
 #include <boost/unordered_set.hpp>
 #include <boost/bind.hpp>
 
-namespace CGAL{
+namespace CGAL {
 
-namespace Polygon_mesh_processing{
+namespace Polygon_mesh_processing {
 
 namespace internal {
 
@@ -136,37 +137,6 @@ void detect_identical_mergeable_vertices(
 }
 
 } // end of internal
-
-/// \ingroup PMP_repairing_grp
-/// extracts boundary cycles as a list of halfedges.
-/// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`.
-/// @tparam OutputIterator a model of `OutputIterator` holding objects of type
-///   `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
-///
-/// @param pm the polygon mesh.
-/// @param out an output iterator where the list of halfedges will be put.
-///
-/// @todo It should make sense to also return the length of each cycle.
-/// @todo It should probably go into BGL package.
-template <typename PolygonMesh, typename OutputIterator>
-OutputIterator
-extract_boundary_cycles(PolygonMesh& pm,
-                        OutputIterator out)
-{
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-
-  boost::unordered_set<halfedge_descriptor> hedge_handled;
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(pm))
-  {
-    if(is_border(h, pm) && hedge_handled.insert(h).second)
-    {
-      *out++=h;
-      BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_face(h, pm))
-        hedge_handled.insert(h2);
-    }
-  }
-  return out;
-}
 
 /// \ingroup PMP_repairing_grp
 /// merges target vertices of a list of halfedges.
