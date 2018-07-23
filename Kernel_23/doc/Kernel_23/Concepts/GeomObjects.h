@@ -721,6 +721,8 @@ public:
   \cgalHasModel `CGAL::Vector_2<Kernel>`
 
   \sa `Kernel::ComputeDeterminant_2` 
+  \sa `Kernel::ComputeScalarProduct_2`
+  \sa `Kernel::ComputeSquaredLength_2`
   \sa `Kernel::ComputeX_2` 
   \sa `Kernel::ComputeY_2` 
   \sa `Kernel::ComputeHx_2` 
@@ -753,7 +755,10 @@ A type representing vectors in three dimensions.
 
 \cgalHasModel `CGAL::Vector_3<Kernel>`
 
-\sa `Kernel::ComputeDeterminant_3` 
+\sa `Kernel::CompareDihedralAngle_3`
+\sa `Kernel::ComputeDeterminant_3`
+\sa `Kernel::ComputeScalarProduct_3`
+\sa `Kernel::ComputeSquaredLength_3`
 \sa `Kernel::ComputeX_3` 
 \sa `Kernel::ComputeY_3` 
 \sa `Kernel::ComputeZ_3` 
