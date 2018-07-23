@@ -25,3 +25,4 @@ data-autoref/cpln_01.off 18 42 48 1 30 0
 data-autoref/cpln_02.off 28 56 40 1 24 0
 data-autoref/cpln_03.off 15 35 42 1 27 0
 data-autoref/four_cubes.off 12 94 184 1 78 0
+data-autoref/spiral.off 7 14 26 0 26 0
