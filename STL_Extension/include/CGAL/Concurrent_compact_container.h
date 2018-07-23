@@ -709,6 +709,7 @@ private:
 template < class T, class Allocator >
 void Concurrent_compact_container<T, Allocator>::merge(Self &d)
 {
+  m_size += d.m_size;
   CGAL_precondition(&d != this);
 
   // Allocators must be "compatible" :
