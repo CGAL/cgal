@@ -786,15 +786,15 @@ std::size_t remove_degenerate_edges(const EdgeRange& edge_range,
 /// @param np optional \ref pmp_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`.
-/// If this parameter is omitted, an internal property map for
-/// `CGAL::vertex_point_t` must be available in `TriangleMesh`
-/// \cgalParamEnd
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+///                                      The type of this map is model of `ReadWritePropertyMap`.
+///                                      If this parameter is omitted, an internal property map for
+///                                      `CGAL::vertex_point_t` must be available in `TriangleMesh`
+///    \cgalParamEnd
 ///    \cgalParamBegin{geom_traits} a geometric traits class instance.
 ///       The traits class must provide the nested type `Point_3`,
 ///       and the nested functors :
 ///         - `Compare_distance_3` to compute the distance between 2 points
-///         - `Collinear_are_ordered_along_line_3` to check whether 3 collinear points are ordered
 ///         - `Collinear_3` to check whether 3 points are collinear
 ///         - `Less_xyz_3` to compare lexicographically two points
 ///         - `Equal_3` to check whether 2 points are identical
@@ -804,6 +804,7 @@ std::size_t remove_degenerate_edges(const EdgeRange& edge_range,
 ///
 /// \todo the function might not be able to remove all degenerate faces.
 ///       We should probably do something with the return type.
+///
 /// \return number of removed degenerate faces
 template <class TriangleMesh, class NamedParameters>
 std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
@@ -1472,7 +1473,7 @@ bool is_non_manifold_vertex(typename boost::graph_traits<TriangleMesh>::vertex_d
 }
 
 /// \ingroup PMP_repairing_grp
-/// duplicates all non-manifold vertices of the input mesh.
+/// duplicates all the non-manifold vertices of the input mesh.
 ///
 /// @tparam TriangleMesh a model of `HalfedgeListGraph` and `MutableHalfedgeGraph`
 /// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
