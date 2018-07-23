@@ -52,7 +52,7 @@ class AABB_tree;
 namespace internal_AABB
 {
 template<class Kernel>
-struct Actual_intersect
+struct Transformed_datum_do_intersect_impl
 {
   typedef bool result_type;
   template<class Query, class Datum_t>
@@ -65,42 +65,42 @@ struct Actual_intersect
   }
 };
   
-  template<class Kernel, 
-           class Has_filtered_predicates = typename Kernel::Has_filtered_predicates_tag /*Tag_false*/>
-  struct Filter_test
+template<class Kernel,
+         class Has_filtered_predicates = typename Kernel::Has_filtered_predicates_tag /*Tag_false*/>
+struct Transformed_datum_do_intersect
+{
+  template<class Query, class Datum_t>
+  bool operator()(const Query& q,
+                  const CGAL::Aff_transformation_3<Kernel>& transfo,
+                  const Datum_t& pr) const
   {
-    template<class Query, class Datum_t>
-    bool operator()(const Query& q,
-                    const CGAL::Aff_transformation_3<Kernel>& transfo,
-                    const Datum_t& pr) const
-    {
-      return Actual_intersect<Kernel>()(q,transfo,pr);
-    }
-  };
-  template<class Kernel>
-  struct Filter_test<Kernel, Tag_true>
+    return Transformed_datum_do_intersect_impl<Kernel>()(q,transfo,pr);
+  }
+};
+
+template<class Kernel>
+struct Transformed_datum_do_intersect<Kernel, Tag_true>
+{
+  template<class Query, class Datum_t>
+  bool operator()(const Query& q,
+                  const CGAL::Aff_transformation_3<Kernel>& transfo,
+                  const Datum_t& pr) const
   {
-    template<class Query, class Datum_t>
-    bool operator()(const Query& q,
-                    const CGAL::Aff_transformation_3<Kernel>& transfo,
-                    const Datum_t& pr) const
-    {
-      typedef typename Kernel::Approximate_kernel     FK;
-      typedef typename Kernel::Exact_kernel           EK;
-      typedef typename Kernel::C2F                    C2F;
-      typedef typename Kernel::C2E                    C2E;
-      
-      typedef internal_AABB::Actual_intersect<EK> Exactator;
-      typedef internal_AABB::Actual_intersect<FK> Approxator;
-      typedef CGAL::Filtered_predicate<
-          Exactator, 
-          Approxator, 
-          C2E, 
-          C2F> Filter;
-      Filter fi;
-      return fi(q, transfo,pr);
-    }
-  };
+    typedef typename Kernel::Approximate_kernel     FK;
+    typedef typename Kernel::Exact_kernel           EK;
+    typedef typename Kernel::C2F                    C2F;
+    typedef typename Kernel::C2E                    C2E;
+
+    // filtered predicate
+    CGAL::Filtered_predicate<
+        internal_AABB::Transformed_datum_do_intersect_impl<EK>, 
+         internal_AABB::Transformed_datum_do_intersect_impl<FK>, 
+        C2E, 
+        C2F > filtered_do_intersect;
+
+    return filtered_do_intersect(q, transfo, pr);
+  }
+};
 
 }//end internal
 template<typename BaseTraits, 
@@ -165,7 +165,7 @@ public:
     template<typename Query>
     bool operator()(const Query& q, const Primitive& pr) const
     {
-      internal_AABB::Filter_test<Kernel> f;
+      internal_AABB::Transformed_datum_do_intersect<Kernel> f;
       return f(q, m_traits.transformation(), internal::Primitive_helper<BaseTraits>::get_datum(pr,m_traits));
     }
     
