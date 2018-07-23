@@ -159,6 +159,7 @@ private:
     double concavity_threshold = m_segmentation_ui.concavity_threshold_spin_box->value();
     bool extract_convex_hulls = m_segmentation_ui.convex_hulls_check_box->isChecked();
     bool use_concavity_colors = m_segmentation_ui.concavity_colors_check_box->isChecked();
+    bool use_shortest_method = m_segmentation_ui.shortest_method_check_box->isChecked();
 
     // create a new item and use it for segmentation
     FacegraphItem* segmentation_item = new FacegraphItem(*item->face_graph());
@@ -185,7 +186,7 @@ private:
       CGAL::approximate_convex_segmentation<Concurrency_tag>(segmentation_mesh,
                                                              segments_pmap,
                                                              concavity_threshold,
-                                                             CGAL::parameters::min_number_of_segments(min_number_of_segments).segments_convex_hulls(convex_hulls_pmap));
+                                                             CGAL::parameters::min_number_of_segments(min_number_of_segments).segments_convex_hulls(convex_hulls_pmap).shortest_concavity_values(use_shortest_method));
     timer.stop();
     
     std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
@@ -293,7 +294,10 @@ private:
     typedef typename boost::property_map<Facegraph, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
-      
+
+    // parameters
+    bool use_shortest_method = m_segmentation_ui.shortest_method_check_box->isChecked();
+
     // create new item for concavity values
     FacegraphItem* concavity_values_item = new FacegraphItem(*item->face_graph());
       
@@ -305,7 +309,7 @@ private:
     Vertex_double_map distances_map;
     boost::associative_property_map<Vertex_double_map> distances_pmap(distances_map);
 
-    double concavity_value = CGAL::concavity_values<Concurrency_tag>(concavity_values_mesh, distances_pmap);
+    double concavity_value = CGAL::concavity_values<Concurrency_tag>(concavity_values_mesh, distances_pmap, CGAL::parameters::shortest_concavity_values(use_shortest_method));
     std::cout << "Concavity value of the mesh: " << concavity_value << std::endl;
 
     // assign patch id to each face and colorize it
