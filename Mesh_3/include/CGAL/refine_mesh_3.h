@@ -202,6 +202,11 @@ namespace parameters {
 
     // Various Mesh_3 option
     struct Mesh_3_options {
+#ifndef CGAL_NO_ATOMIC
+      typedef CGAL::cpp11::atomic<bool>* Pointer_to_stop_atomic_boolean_t;
+#else
+      typedef bool* Pointer_to_stop_atomic_boolean_t;
+#endif
       Mesh_3_options() 
         : dump_after_init_prefix()
         , dump_after_refine_surface_prefix()
@@ -229,7 +234,7 @@ namespace parameters {
       std::size_t maximal_number_of_vertices;
       Mesh_error_code* pointer_to_error_code;
 #ifndef CGAL_NO_ATOMIC
-      CGAL::cpp11::atomic<bool>* pointer_to_stop_atomic_boolean;
+      Pointer_to_stop_atomic_boolean_t pointer_to_stop_atomic_boolean;
 #endif
     }; // end struct Mesh_3_options
 
@@ -374,9 +379,7 @@ CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
                             (number_of_initial_points_, (int), -1)
                             (maximal_number_of_vertices_, (std::size_t), 0)
                             (pointer_to_error_code_, (Mesh_error_code*), ((Mesh_error_code*)0))
-#ifndef CGAL_NO_ATOMIC
-                            (pointer_to_stop_atomic_boolean_, (CGAL::cpp11::atomic<bool>*), ((CGAL::cpp11::atomic<bool>*)0))
-#endif
+                            (pointer_to_stop_atomic_boolean_, (internal::Mesh_3_options::Pointer_to_stop_atomic_boolean_t), ((internal::Mesh_3_options::Pointer_to_stop_atomic_boolean_t)0))
                             )
                            )
   { 
