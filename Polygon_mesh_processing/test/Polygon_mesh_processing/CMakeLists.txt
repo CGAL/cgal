@@ -102,7 +102,7 @@ endif()
   create_single_source_cgal_program("test_pmp_transform.cpp")
   create_single_source_cgal_program("remove_degeneracies_test.cpp")
   create_single_source_cgal_program("test_merging_border_vertices.cpp")
-  create_single_source_cgal_program("test_predicates.cpp")
+  create_single_source_cgal_program("test_shape_predicates.cpp")
 
   if( TBB_FOUND )
     CGAL_target_use_TBB(test_pmp_distance)

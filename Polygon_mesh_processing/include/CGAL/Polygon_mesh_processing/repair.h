@@ -41,7 +41,7 @@
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
-#include <CGAL/Polygon_mesh_processing/helpers.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -146,6 +146,8 @@ namespace debug{
   }
 } //end of namespace debug
 
+namespace internal {
+
 template <class HalfedgeGraph, class VertexPointMap, class Traits>
 struct Less_vertex_point{
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
@@ -158,6 +160,8 @@ struct Less_vertex_point{
     return m_traits.less_xyz_3_object()(get(m_vpmap, v1), get(m_vpmap, v2));
   }
 };
+
+} // end namespace internal
 
 template <class TriangleMesh, class OutputIterator, class NamedParameters>
 OutputIterator
@@ -959,7 +963,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
     // preliminary step to check if the operation is possible
       // sort the boundary points along the common supporting line
       //    we first need a reference point
-      typedef Less_vertex_point<TriangleMesh, VertexPointMap, Traits> Less_vertex;
+      typedef internal::Less_vertex_point<TriangleMesh, VertexPointMap, Traits> Less_vertex;
       std::pair<
         typename std::set<vertex_descriptor>::iterator,
         typename std::set<vertex_descriptor>::iterator > ref_vertices =
@@ -1323,6 +1327,38 @@ struct Vertex_collector<G, Emptyset_iterator>
 } // end namespace internal
 
 /// \ingroup PMP_repairing_grp
+/// checks whether a vertex of a triangle mesh is non-manifold.
+///
+/// @tparam TriangleMesh a model of `HalfedgeListGraph`
+///
+/// @param v a vertex of `tm`
+/// @param tm a triangle mesh containing `v`
+///
+/// \return `true` if the vertex is non-manifold, `false` otherwise.
+template <typename TriangleMesh>
+bool is_non_manifold_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v,
+                            const TriangleMesh& tm)
+{
+  CGAL_assertion(CGAL::is_triangle_mesh(tm));
+
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+
+  boost::unordered_set<halfedge_descriptor> halfedges_handled;
+  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, tm))
+    halfedges_handled.insert(h);
+
+  BOOST_FOREACH(halfedge_descriptor h, halfedges(tm))
+  {
+    if(v == target(h, tm))
+    {
+      if(halfedges_handled.count(h) == 0)
+        return true;
+    }
+  }
+  return false;
+}
+
+/// \ingroup PMP_repairing_grp
 /// duplicates all non-manifold vertices of the input mesh.
 ///
 /// @tparam TriangleMesh a model of `HalfedgeListGraph` and `MutableHalfedgeGraph`
@@ -1448,7 +1484,6 @@ std::size_t duplicate_non_manifold_vertices(TriangleMesh& tm)
 {
   return duplicate_non_manifold_vertices(tm, parameters::all_default());
 }
-
 
 /// \ingroup PMP_repairing_grp
 /// removes the isolated vertices from any polygon mesh.

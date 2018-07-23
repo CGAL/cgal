@@ -20,8 +20,8 @@
 // Author(s)     :  Konstantinos Katrioplas,
 //                  Mael Rouxel-Labbé
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_HELPERS_H
-#define CGAL_POLYGON_MESH_PROCESSING_HELPERS_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_SHAPE_PREDICATES_H
+#define CGAL_POLYGON_MESH_PROCESSING_SHAPE_PREDICATES_H
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -41,38 +41,6 @@
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
-
-/// \ingroup PMP_repairing_grp
-/// checks whether a vertex of a triangle mesh is non-manifold.
-///
-/// @tparam TriangleMesh a model of `HalfedgeListGraph`
-///
-/// @param v a vertex of `tm`
-/// @param tm a triangle mesh containing `v`
-///
-/// \return `true` if the vertrex is non-manifold, `false` otherwise.
-template <typename TriangleMesh>
-bool is_non_manifold_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v,
-                            const TriangleMesh& tm)
-{
-  CGAL_assertion(CGAL::is_triangle_mesh(tm));
-
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-
-  boost::unordered_set<halfedge_descriptor> halfedges_handled;
-  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, tm))
-    halfedges_handled.insert(h);
-
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(tm))
-  {
-    if(v == target(h, tm))
-    {
-      if(halfedges_handled.count(h) == 0)
-        return true;
-    }
-  }
-  return false;
-}
 
 /// \ingroup PMP_repairing_grp
 /// checks whether an edge is degenerate.
@@ -202,7 +170,7 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
-/// \return the smallest halfedge if the triangle face is a needle, and a null halfedge otherwise.
+/// \return the shortest halfedge if the triangle face is a needle, and a null halfedge otherwise.
 template <typename TriangleMesh, typename NamedParameters>
 typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
 is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
@@ -287,11 +255,13 @@ is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descrip
 ///                                      `CGAL::vertex_point_t` should be available in `TriangleMesh`
 /// \cgalParamEnd
 ///    \cgalParamBegin{geom_traits} a geometric traits class instance.
-///                                 The traits class must provide the nested type `Point_3`
+///                                 The traits class must provide the nested type `Point_3` and
+///                                 the nested functors `Compute_squared_distance_3`, `Construct_vector_3`,
+///                                 and `Compute_scalar_product_3`.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
-/// \return `true` if the triangle face is a cap
+/// \return the halfedge opposite of the largest angle if the face is a cap, and a null halfedge otherwise.
 template <typename TriangleMesh, typename NamedParameters>
 typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
 is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
@@ -361,4 +331,4 @@ is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor
 
 } } // end namespaces CGAL and PMP
 
-#endif // CGAL_POLYGON_MESH_PROCESSING_HELPERS_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_SHAPE_PREDICATES_H

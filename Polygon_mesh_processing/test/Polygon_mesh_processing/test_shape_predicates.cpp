@@ -2,8 +2,8 @@
 
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Polygon_mesh_processing/helpers.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 
 #include <boost/math/constants/constants.hpp>
 

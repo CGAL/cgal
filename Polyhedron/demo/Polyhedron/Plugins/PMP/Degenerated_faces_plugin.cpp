@@ -19,7 +19,9 @@
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Make_triangle_soup.h>
 #include <CGAL/Kernel_traits.h>
-#include <CGAL/Polygon_mesh_processing/helpers.h>
+
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
+
 #ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_facegraph_item;
 #else

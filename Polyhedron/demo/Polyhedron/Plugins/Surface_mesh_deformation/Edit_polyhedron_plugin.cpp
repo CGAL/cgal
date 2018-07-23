@@ -9,7 +9,7 @@
 #include "Scene_edit_polyhedron_item.h"
 #include "Scene_polyhedron_selection_item.h"
 #include <CGAL/Polygon_mesh_processing/repair.h>
-#include <CGAL/Polygon_mesh_processing/helpers.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <QAction>
 #include <QMainWindow>
 #include <QFileDialog>
