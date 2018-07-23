@@ -244,5 +244,5 @@ int main()
   test_vertices_merge_and_duplication("data/blobby.off");
   test_needles_and_caps("data_degeneracies/caps_and_needles.off");
 
-  return 0;
+  return EXIT_SUCCESS;
 }

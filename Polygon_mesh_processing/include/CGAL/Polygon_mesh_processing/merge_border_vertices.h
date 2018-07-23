@@ -345,35 +345,6 @@ void merge_duplicated_vertices_in_boundary_cycles(      PolygonMesh& pm,
     merge_duplicated_vertices_in_boundary_cycle(h, pm, np);
 }
 
-#if 0
-/// \ingroup PMP_repairing_grp
-/// \todo document me
-template <class PolygonMesh, class NamedParameter>
-void merge_duplicated_boundary_vertices(      PolygonMesh& pm,
-                                        const NamedParameter& np)
-{
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameter>::const_type Vpm;
-
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
-                         get_const_property_map(vertex_point, pm));
-
-  std::vector<vertex_descriptor> border_vertices;
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(pm))
-  {
-    if(is_border(h, pm))
-      border_vertices.push_back(target(h, pm));
-  }
-
-  std::vector< std::vector<vertex_descriptor> > identical_vertices;
-  internal::detect_identical_vertices(border_vertices, identical_vertices, vpm);
-
-  BOOST_FOREACH(const std::vector<vertex_descriptor>& vrtcs, identical_vertices)
-    merge_boundary_vertices(vrtcs, pm);
-}
-#endif
-
 template <class PolygonMesh>
 void merge_duplicated_vertices_in_boundary_cycles(PolygonMesh& pm)
 {
@@ -387,14 +358,6 @@ void merge_duplicated_vertices_in_boundary_cycle(
 {
   merge_duplicated_vertices_in_boundary_cycle(h, pm, parameters::all_default());
 }
-
-#if 0
-template <class PolygonMesh>
-void merge_duplicated_boundary_vertices(PolygonMesh& pm)
-{
-  merge_duplicated_boundary_vertices(pm, parameters::all_default());
-}
-#endif
 
 } } // end of CGAL::Polygon_mesh_processing
 
