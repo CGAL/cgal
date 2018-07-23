@@ -61,6 +61,7 @@ namespace CGAL
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `mesh` \cgalParamEnd
  *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+ *    \cgalParamBegin{shortest_concavity_values} a flag which enables shortest distances method (i.e. shortest distance from each point to the convex hull of a mesh) to compute concavity values instead of normal projection method (i.e. distance from each point to the projection of the point on the convex hull of a mesh in the normal direction), default is false \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * @return concativity value, the largest distance from a vertex in a segment to its projection on the convex hull of a triangle mesh
@@ -81,8 +82,10 @@ concavity_values(const TriangleMesh& mesh,
                                   get_const_property_map(boost::vertex_point, mesh));
 
     CGAL_precondition(is_triangle_mesh(mesh));
+  
+    bool shortest_concavity_values = boost::choose_param(boost::get_param(np, internal_np::shortest_concavity_values), false);
 
-    internal::Concavity<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits);
+    internal::Concavity<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits, shortest_concavity_values);
     return algorithm.compute(face_ids, segment_id, distances);
 }
 
@@ -129,6 +132,7 @@ concavity_values(const TriangleMesh& mesh,
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `mesh` \cgalParamEnd
  *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+ *    \cgalParamBegin{shortest_concavity_values} a flag which enables shortest distances method (i.e. shortest distance from each point to the convex hull of a mesh) to compute concavity values instead of normal projection method (i.e. distance from each point to the projection of the point on the convex hull of a mesh in the normal direction), default is false \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * @return concativity value, the largest distance from a vertex in a segment to its projection onto the convex hull of a triangle mesh
@@ -147,8 +151,10 @@ concavity_values(const TriangleMesh& mesh,
                                   get_const_property_map(boost::vertex_point, mesh));
 
     CGAL_precondition(is_triangle_mesh(mesh));
+  
+    bool shortest_concavity_values = boost::choose_param(boost::get_param(np, internal_np::shortest_concavity_values), false);
 
-    internal::Concavity<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits);
+    internal::Concavity<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits, shortest_concavity_values);
     return algorithm.compute(distances);
 }
 
@@ -199,6 +205,7 @@ concavity_values(const TriangleMesh& mesh)
  *    \cgalParamBegin{geom_traits} a geometric traits class instance model of Kernel \cgalParamEnd
  *    \cgalParamBegin{min_number_of_segments} minimal number of segments, default is 1 \cgalParamEnd
  *    \cgalParamBegin{segments_convex_hulls} an array filled up with the convex hulls of all segments \cgalParamEnd
+ *    \cgalParamBegin{shortest_concavity_values} a flag which enables shortest distances method (i.e. shortest distance from each point to the convex hull of a mesh) to compute concavity values instead of normal projection method (i.e. distance from each point to the projection of the point on the convex hull of a mesh in the normal direction), default is false \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * @return number of segments computed
@@ -222,8 +229,9 @@ approximate_convex_segmentation(const TriangleMesh& mesh,
   CGAL_precondition(num_faces(mesh) >= min_number_of_segments);
 
   boost::vector_property_map<TriangleMesh> convex_hulls_pmap = boost::choose_param(boost::get_param(np, internal_np::segments_convex_hulls), boost::vector_property_map<TriangleMesh>());
+  bool shortest_concavity_values = boost::choose_param(boost::get_param(np, internal_np::shortest_concavity_values), false);
 
-  internal::Approx_segmentation<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits);
+  internal::Approx_segmentation<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits, shortest_concavity_values);
   return algorithm.segmentize(face_ids, concavity_threshold, min_number_of_segments, convex_hulls_pmap);
 }
 

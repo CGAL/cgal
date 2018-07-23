@@ -127,6 +127,12 @@ is filled up with the convex hulls of produced segments in a segmentation.\n
 <b>Default:</b> None: if it is not provided, this information is inaccessible.
 \cgalNPEnd
 
+\cgalNPBegin{shortest_concavity_values} \anchor BGL_shortest_concavity_values
+indicates if shortest distances method should be used to compute concavity values (i.e. shortest distance for each point to the convex hull of a mesh).\n
+<b>Type:</b> a type convertible to `bool` \n
+<b>Default:</b> false
+\cgalNPEnd
+
 \cgalNPBegin{geom_traits} \anchor BGL_geom_traits
 is the geometric traits instance in which the operation should be performed.\n
 <b>Type:</b> a Geometric traits class.\n

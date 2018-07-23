@@ -75,16 +75,18 @@ namespace internal
     typedef boost::optional<typename AABB_tree::template Intersection_and_primitive_id<Ray_3>::Type> Ray_intersection;
   
   public:
-    Concavity(const TriangleMesh& mesh, const Vpm& vpm, const GeomTraits& traits)
+    Concavity(const TriangleMesh& mesh, const Vpm& vpm, const GeomTraits& traits, bool shortest_method = false)
     : m_mesh(mesh)
     , m_vpm(vpm)
     , m_traits(traits)
+    , m_shortest_method(shortest_method)
     {}
     
-    Concavity(const TriangleMesh& mesh, const Vpm& vpm, const GeomTraits& traits, const Normals_map& normals_map)
+    Concavity(const TriangleMesh& mesh, const Vpm& vpm, const GeomTraits& traits, bool shortest_method, const Normals_map& normals_map)
     : m_mesh(mesh)
     , m_vpm(vpm)
     , m_traits(traits)
+    , m_shortest_method(shortest_method)
     , m_normals_map(normals_map)
     , m_normals_computed(true)
     {}
@@ -99,7 +101,7 @@ namespace internal
       
       Filtered_graph filtered_mesh(m_mesh, segment_id, facet_ids);
 
-      Concavity<Filtered_graph, Vpm, GeomTraits, ConcurrencyTag, TriangleMesh> concavity(filtered_mesh, m_vpm, m_traits, m_normals_map);
+      Concavity<Filtered_graph, Vpm, GeomTraits, ConcurrencyTag, TriangleMesh> concavity(filtered_mesh, m_vpm, m_traits, m_shortest_method, m_normals_map);
       return concavity.compute(distances);
     }
 
@@ -125,6 +127,10 @@ namespace internal
       // compute convex hull
       CGAL::convex_hull_3(pts.begin(), pts.end(), conv_hull); 
       
+      if (m_shortest_method)
+      {
+        return compute_shortest(vertices(m_mesh), conv_hull, distances);
+      }
       return compute_projected(vertices(m_mesh), conv_hull, distances);
     }
     
@@ -153,6 +159,10 @@ namespace internal
 
       if (pts.size() <= 4) return 0;
 
+      if (m_shortest_method)
+      {
+        return compute_shortest(std::make_pair(pts.begin(), pts.end()), conv_hull, distances);
+      }
       return compute_projected(std::make_pair(pts.begin(), pts.end()), conv_hull, distances);
     }
     
@@ -166,6 +176,8 @@ namespace internal
     const TriangleMesh& m_mesh;
     Vpm m_vpm;
     const GeomTraits& m_traits;
+
+    bool m_shortest_method;
 
     Normals_map m_normals_map;
     bool m_normals_computed = false;

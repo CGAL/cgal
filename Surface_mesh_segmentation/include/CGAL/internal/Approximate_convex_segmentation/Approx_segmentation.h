@@ -114,12 +114,12 @@ class Approx_segmentation
   const double CONCAVITY_FACTOR = 0.1;
 
 public:
-  Approx_segmentation(const TriangleMesh& mesh, const Vpm& vpm, const GeomTraits& traits)
+  Approx_segmentation(const TriangleMesh& mesh, const Vpm& vpm, const GeomTraits& traits, bool shortest_concavity_values)
   : m_mesh(mesh)
   , m_vpm(vpm)
   , m_traits(traits)
   , m_candidates(CandidateComparator(*this))
-  , m_concavity_calc(mesh, vpm, traits)
+  , m_concavity_calc(mesh, vpm, traits, shortest_concavity_values)
   {}
 
   /**
