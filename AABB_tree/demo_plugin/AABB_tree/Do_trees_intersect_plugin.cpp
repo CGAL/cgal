@@ -1,4 +1,5 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <QApplication>
 #include <QObject>
 #include <QAction>
@@ -129,7 +130,7 @@ public Q_SLOTS:
         rota*translation;
     t2->traits().set_transformation(transfo);
     if(t2->do_intersect(*t1))
-      moving_item->setColor(QColor(Qt::green));
+      moving_item->setColor(QColor(Qt::red));
     else
     {
       typedef boost::property_map<SMesh, CGAL::vertex_point_t>::type VPM;
@@ -147,7 +148,7 @@ public Q_SLOTS:
         if(sotm2(fixed_item->face_graph()->point(*fixed_item->face_graph()->vertices().begin())) != CGAL::ON_UNBOUNDED_SIDE)
           moving_item->setColor(QColor(Qt::blue));
         else
-          moving_item->setColor(QColor(Qt::red));
+          moving_item->setColor(QColor(Qt::green));
       }
     }
     viewer->update();
