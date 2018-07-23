@@ -37,48 +37,6 @@ namespace Polygon_mesh_processing{
 
 namespace internal {
 
-#if 0
-// warning: vertices will be altered (sorted)
-template <class Vpm, class vertex_descriptor>
-void detect_identical_vertices(std::vector<vertex_descriptor>& vertices,
-                               std::vector< std::vector<vertex_descriptor> >& identical_vertices,
-                               Vpm vpm)
-{
-  typedef typename boost::property_traits<Vpm>::value_type Point_3;
-
-  // sort vertices using their point to ease the detection
-  // of vertices with identical points
-  CGAL::Property_map_to_unary_function<Vpm> Get_point(vpm);
-  std::sort( vertices.begin(), vertices.end(),
-             boost::bind(std::less<Point_3>(), boost::bind(Get_point,_1),
-                                               boost::bind(Get_point, _2)) );
-  std::size_t nbv=vertices.size();
-  std::size_t i=1;
-
-  while(i!=nbv)
-  {
-    if (get(vpm, vertices[i]) == get(vpm, vertices[i-1]))
-    {
-      identical_vertices.push_back( std::vector<vertex_descriptor>() );
-      identical_vertices.back().push_back(vertices[i-1]);
-      identical_vertices.back().push_back(vertices[i]);
-      while(++i!=nbv)
-      {
-        if (get(vpm, vertices[i]) == get(vpm, vertices[i-1]))
-          identical_vertices.back().push_back(vertices[i]);
-        else
-        {
-          ++i;
-          break;
-        }
-      }
-    }
-    else
-      ++i;
-  }
-}
-#endif
-
 template <typename PM, typename VertexPointMap>
 struct Less_on_point_of_target
 {
@@ -188,7 +146,6 @@ void detect_identical_mergeable_vertices(
 /// @param pm the polygon mesh.
 /// @param out an output iterator where the list of halfedges will be put.
 ///
-/// @todo Maybe move to BGL
 /// @todo It should make sense to also return the length of each cycle.
 /// @todo It should probably go into BGL package.
 template <typename PolygonMesh, typename OutputIterator>
@@ -221,17 +178,16 @@ extract_boundary_cycles(PolygonMesh& pm,
 /// @param sorted_hedges a sorted list of halfedges.
 /// @param pm the polygon mesh which contains the list of halfedges.
 ///
-/// @todo rename me to `merge_vertices_in_range` because I merge any king of vertices in the list.
 template <typename PolygonMesh, class HalfedgeRange>
-void merge_boundary_vertices_in_cycle(const HalfedgeRange& sorted_hedges,
-                                            PolygonMesh& pm)
+void merge_vertices_in_range(const HalfedgeRange& sorted_hedges,
+                             PolygonMesh& pm)
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
   halfedge_descriptor in_h_kept = *boost::begin(sorted_hedges);
   halfedge_descriptor out_h_kept = next(in_h_kept, pm);
-  vertex_descriptor v_kept=target(in_h_kept, pm);
+  vertex_descriptor v_kept = target(in_h_kept, pm);
 
   std::vector<vertex_descriptor> vertices_to_rm;
 
@@ -311,7 +267,7 @@ void merge_duplicated_vertices_in_boundary_cycle(
   {
     start=hedges.front();
     // hedges are sorted along the cycle
-    merge_boundary_vertices_in_cycle(hedges, pm);
+    merge_vertices_in_range(hedges, pm);
   }
 }
 
