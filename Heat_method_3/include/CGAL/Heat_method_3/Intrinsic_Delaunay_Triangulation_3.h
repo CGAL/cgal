@@ -159,6 +159,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
          }
        };
 
+       
      struct Vertex_iterator_functor
      {
        typedef vertex_descriptor argument_type;
@@ -792,7 +793,6 @@ target(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,
                     value_type v)
     {
       typename boost::graph_traits<TM>::vertex_descriptor tm_vd = target(vd.hd, idtpm.idt.triangle_mesh());
-
       put(idtpm.pm, idtpm.idt.v2v.at(tm_vd), v);
     }
   };

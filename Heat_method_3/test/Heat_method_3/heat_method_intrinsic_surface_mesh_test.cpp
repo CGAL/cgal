@@ -1,3 +1,6 @@
+
+
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
@@ -24,29 +27,40 @@ typedef boost::property_map<Surface_mesh, Vertex_distance_tag >::type Vertex_dis
 typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<Surface_mesh,Kernel, Vertex_distance_map> Idt;
 
 
+typedef boost::graph_traits<Surface_mesh>::vertex_descriptor sm_vertex_descriptor;
 typedef boost::graph_traits<Idt>::vertex_descriptor vertex_descriptor;
 
 typedef CGAL::Heat_method_3::Heat_method_3<Idt,Kernel, Idt::Vertex_distance_map> Heat_method;
 typedef CGAL::Heat_method_3::Heat_method_Eigen_traits_3::SparseMatrix SparseMatrix;
 
+template <typename T>
+T
+NEXT(T t, int n)
+{
+  for(int i = 0; i < n; i++){
+    ++t;
+  }
+  return t;
+}
 
-#if 0
+#if 1
 void source_set_tests(Heat_method hm, const Idt& sm)
 {  
-  vertex_descriptor source = *(vertices(sm).first);
+  sm_vertex_descriptor source = *(vertices(sm).first);
   hm.add_source(source);
-  const std::set<vertex_descriptor>& source_copy = hm.get_sources();
-  assert(*(source_copy.begin()) == source);;
-  assert(*(hm.sources_begin()) == source);
+  //  const std::set<vertex_descriptor>& source_copy = hm.get_sources();
+  //assert(*(source_copy.begin()) == source);;
+  // assert(*(hm.sources_begin()) == source);
+  assert(source == *(hm.sources_begin()));
   assert(hm.remove_source(source));
   assert((hm.get_sources()).empty());
   assert(hm.add_source(*(vertices(sm).first)));
-  assert(*(hm.sources_begin()) == source);
-  assert(hm.add_source(*(std::next(vertices(sm).first,3))));
-  assert(source != *(std::next(vertices(sm).first,3)));
-  assert(*(hm.sources_begin()) == source);
+  assert(source == *(hm.sources_begin()));
+  assert(hm.add_source(*(NEXT(vertices(sm).first,3))));
+  assert(source != *(NEXT(vertices(sm).first,3)));
+  assert(source == *(hm.sources_begin()));
   assert(!(hm.add_source(source)));
-  assert(hm.remove_source(*(std::next(vertices(sm).first,3))));
+  assert(hm.remove_source(*(NEXT(vertices(sm).first,3))));
   
 }
 
@@ -114,6 +128,7 @@ void check_no_update(const Idt& sm, const Vertex_distance_map& original, const V
 #endif
 
 
+
 int main(int argc, char*argv[])
 {
   Surface_mesh sm;
@@ -127,23 +142,19 @@ int main(int argc, char*argv[])
   Vertex_distance_map vdm = get(Vertex_distance_tag(),sm);
 
   Idt idt(sm, vdm);
-
  
   //source set tests
   Heat_method hm(idt, idt.vertex_distance_map());
 
   hm.add_source(* vertices(sm).first);
 
-  boost::graph_traits<Surface_mesh>::vertex_descriptor vd = *(hm.sources_begin());
-  assert(vd == * vertices(sm).first);
-  
   hm.update();
-
+  
   BOOST_FOREACH(boost::graph_traits<Surface_mesh>::vertex_descriptor vd, vertices(sm)){
     std::cout << get(vdm,vd) << std::endl;
   }
 
-  // source_set_tests(hm,idt);
+  source_set_tests(hm,idt);
 
 #if 1 
 
@@ -176,6 +187,7 @@ int main(int argc, char*argv[])
   Eigen::VectorXd solved_dist = hm.solve_phi(c, XD,4);
 
 #endif
-  
+
   return 0;
 }
+
