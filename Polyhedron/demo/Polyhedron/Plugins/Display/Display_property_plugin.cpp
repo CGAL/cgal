@@ -51,7 +51,16 @@ class DisplayPropertyPlugin :
   typedef SMesh::Property_map<boost::graph_traits<SMesh>::vertex_descriptor, double> Vertex_distance_map;
   
   typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<SMesh,EPICK, Vertex_distance_map> Idt;
+
+#define CGAL_USE_IDT
+  
+  
+#ifdef CGAL_USE_IDT
   typedef CGAL::Heat_method_3::Heat_method_3<Idt,EPICK,Idt::Vertex_distance_map> Heat_method;
+#else
+  typedef CGAL::Heat_method_3::Heat_method_3<SMesh,EPICK,Vertex_distance_map> Heat_method;  
+#endif
+  
   typedef std::pair<Idt*,Heat_method*> Idt_Heat_method_pair;
 
 public:
@@ -447,9 +456,13 @@ private Q_SLOTS:
       heat_intensity = mesh.property_map<vertex_descriptor, double>("v:heat_intensity").first;
     }else {
       heat_intensity = mesh.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
-      std::cout << "new idt"<< std::endl;
+#ifdef CGAL_USE_IDT
       Idt* idt = new Idt(mesh, heat_intensity);
       hm = new Heat_method(*idt,idt->vertex_distance_map());
+#else
+      Idt* idt;
+      hm = new Heat_method(mesh,heat_intensity);
+#endif      
       mesh_heat_method_map[item] = std::make_pair(idt,hm);
     }
     connect(item, &Scene_surface_mesh_item::aboutToBeDestroyed,
