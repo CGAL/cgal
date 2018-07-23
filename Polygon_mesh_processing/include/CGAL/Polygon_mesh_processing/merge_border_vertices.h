@@ -71,8 +71,8 @@ template <class PolygonMesh, class Vpm, class halfedge_descriptor>
 void detect_identical_mergeable_vertices(
         std::vector< std::pair<halfedge_descriptor, std::size_t> >& cycle_hedges,
         std::vector< std::vector<halfedge_descriptor> >& hedges_with_identical_point_target,
-  const PolygonMesh& pm,
-  Vpm vpm)
+        const PolygonMesh& pm,
+        Vpm vpm)
 {
   // sort vertices using their point to ease the detection
   // of vertices with identical points
@@ -211,7 +211,7 @@ template <class PolygonMesh, class NamedParameter>
 void merge_duplicated_vertices_in_boundary_cycle(
         typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
         PolygonMesh& pm,
-  const NamedParameter& np)
+        const NamedParameter& np)
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameter>::const_type Vpm;
