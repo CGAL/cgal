@@ -227,9 +227,11 @@ Scene::erase(QList<int> indices)
   }
 
   Q_FOREACH(Scene_item* item, to_be_removed) {
+    Item_id removed_item = item_id(item);
+    if(removed_item == -1) //case of the selection_item, for example.
+      continue;
     if(item->parentGroup())
       item->parentGroup()->removeChild(item);
-    Item_id removed_item = item_id(item);
         children.removeAll(removed_item);
         indexErased(removed_item);
         m_entries.removeAll(item);
