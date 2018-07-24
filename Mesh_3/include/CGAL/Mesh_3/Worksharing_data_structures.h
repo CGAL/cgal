@@ -723,9 +723,9 @@ public:
   Auto_worksharing_ds(const Bbox_3 &bbox)
     : NUM_WORK_ITEMS_PER_BATCH(
         Concurrent_mesher_config::get().num_work_items_per_batch)
-    , m_cache_number_of_tasks(0)
   {
     set_bbox(bbox);
+    m_cache_number_of_tasks = 0;
   }
 
   /// Destructor
