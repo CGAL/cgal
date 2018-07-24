@@ -154,33 +154,26 @@ public Q_SLOTS:
     EPICK::Aff_transformation_3 transfoA = 
         rotaA*translationA;
     trees[query_item->getFaceGraph()]->traits().set_transformation(transfoA);
-    
+
     if(trees[sel_item->getFaceGraph()]->do_intersect(*trees[other_item->getFaceGraph()]))
       sel_item->setColor(QColor(Qt::red));
     else
     {
-#if 0
-      typedef boost::property_map<SMesh, CGAL::vertex_point_t>::type VPM;
-      VPM vpm2 = get(CGAL::vertex_point, *query_item->getFaceGraph());
-      CGAL::Side_of_triangle_mesh<SMesh, EPICK,
-          VPM, Tree> sotm1(*t1);
-      if(sotm1((transfoA).transform(vpm2[*query_item->getFaceGraph()->vertices().begin()])) != CGAL::ON_UNBOUNDED_SIDE)
+      CGAL::Side_of_triangle_mesh<SMesh, EPICK,CGAL::Default, Tree> side_of_base(*trees[base_item->getFaceGraph()] );
+      EPICK::Point_3 query_pt = get(boost::vertex_point, *query_item->getFaceGraph(), *query_item->getFaceGraph()->vertices().begin());
+      if(side_of_base(transfoA.transform( query_pt )) != CGAL::ON_UNBOUNDED_SIDE)
       {        
-        query_item->setColor(QColor(Qt::blue));
+        sel_item->setColor(QColor(Qt::blue));
       }
       else
       {
-        CGAL::Side_of_triangle_mesh<SMesh, EPICK,
-            VPM, Tree> sotm2(*t2);
-        if(sotm2(base_item->face_graph()->point(*base_item->face_graph()->vertices().begin())) != CGAL::ON_UNBOUNDED_SIDE)
-          query_item->setColor(QColor(Qt::blue));
+        CGAL::Side_of_triangle_mesh<SMesh, EPICK, CGAL::Default, Tree> side_of_query(*trees[query_item->getFaceGraph()]);
+        query_pt = get(boost::vertex_point, *base_item->getFaceGraph(), *base_item->getFaceGraph()->vertices().begin());
+        if(side_of_query(transfoB.transform(query_pt)) != CGAL::ON_UNBOUNDED_SIDE)
+          sel_item->setColor(QColor(Qt::blue));
         else
-#endif
           sel_item->setColor(QColor(Qt::green));
-      #if 0
       }
-#endif
-        
     }
     sel_item->setRenderingMode(Flat);
     other_item->setRenderingMode(Wireframe);
