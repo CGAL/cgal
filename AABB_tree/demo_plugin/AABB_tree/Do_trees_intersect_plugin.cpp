@@ -21,8 +21,7 @@
 #include "Scene.h"
 
 typedef CGAL::AABB_face_graph_triangle_primitive<SMesh> Primitive;
-typedef CGAL::AABB_traits<EPICK, Primitive> AABB_triangle_traits;
-typedef CGAL::AABB_do_intersect_transform_traits<AABB_triangle_traits, EPICK> Traits;
+typedef CGAL::AABB_do_intersect_transform_traits<EPICK, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 
 class DoTreesIntersectplugin :

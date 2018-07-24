@@ -39,76 +39,15 @@
 
 /// \file AABB_do_intersect_transform_traits.h
 
-//! \todo add protector
 namespace CGAL {
-// forward declaration
-template< typename AABBTraits>
-class AABB_tree;
 
-template< typename AABBTraits>
-class AABB_node;
-
-namespace internal_AABB
-{
-template<class Kernel>
-struct Transformed_datum_do_intersect_impl
-{
-  typedef bool result_type;
-  template<class Query, class Datum_t>
-  bool operator()(const Query& q,
-                  const CGAL::Aff_transformation_3<Kernel>&, // transformation is not used thanks to specialization of Primitive_helper
-                  const Datum_t& pr) const
-  {
-    return Kernel().do_intersect_3_object()(q,pr);
-  }
-};
-
-template<class Kernel,
-         class Has_filtered_predicates = typename Kernel::Has_filtered_predicates_tag /*Tag_false*/>
-struct Transformed_datum_do_intersect
-{
-  template<class Query, class Datum_t>
-  bool operator()(const Query& q,
-                  const CGAL::Aff_transformation_3<Kernel>& transfo,
-                  const Datum_t& pr) const
-  {
-    return Transformed_datum_do_intersect_impl<Kernel>()(q,transfo,pr);
-  }
-};
-
-template<class Kernel>
-struct Transformed_datum_do_intersect<Kernel, Tag_true>
-{
-  template<class Query, class Datum_t>
-  bool operator()(const Query& q,
-                  const CGAL::Aff_transformation_3<Kernel>& transfo,
-                  const Datum_t& pr) const
-  {
-    typedef typename Kernel::Approximate_kernel     FK;
-    typedef typename Kernel::Exact_kernel           EK;
-    typedef typename Kernel::C2F                    C2F;
-    typedef typename Kernel::C2E                    C2E;
-
-    // filtered predicate
-    CGAL::Filtered_predicate<
-        internal_AABB::Transformed_datum_do_intersect_impl<EK>,
-         internal_AABB::Transformed_datum_do_intersect_impl<FK>,
-        C2E,
-        C2F > filtered_do_intersect;
-
-    return filtered_do_intersect(q, transfo, pr);
-  }
-};
-
-}//end internal
-template<typename BaseTraits,
-         typename Kernel,
-         typename Apply_transformation_to_primitive = Tag_true>
+template<typename Kernel, typename AABBPrimitive>
 class AABB_do_intersect_transform_traits:
-    public BaseTraits
+    public AABB_traits<Kernel, AABBPrimitive>
 {
   mutable Aff_transformation_3<Kernel> m_transfo;
-  typedef AABB_do_intersect_transform_traits<BaseTraits, Kernel, Apply_transformation_to_primitive> Self;
+  typedef AABB_traits<Kernel, AABBPrimitive> BaseTraits;
+  typedef AABB_do_intersect_transform_traits<Kernel, AABBPrimitive> Self;
 public:
 
   //Constructor
@@ -155,9 +94,11 @@ public:
 
   // Do_intersect predicate
   class Do_intersect
+    : BaseTraits::Do_intersect
   {
-    typedef AABB_do_intersect_transform_traits<BaseTraits, Kernel> AABBTraits;
+    typedef AABB_do_intersect_transform_traits<Kernel, AABBPrimitive> AABBTraits;
     const AABBTraits& m_traits;
+    typedef typename BaseTraits::Do_intersect Base;
 
     Bounding_box
     compute_transformed_bbox(const Bounding_box& bbox) const
@@ -167,33 +108,31 @@ public:
 
   public:
     Do_intersect(const AABBTraits& traits)
-    :m_traits(traits)
+    : Base(static_cast<const BaseTraits&>(traits)),
+      m_traits(traits)
     {}
 
     template<typename Query>
     bool operator()(const Query& q, const Bounding_box& bbox) const
     {
-      // TODO use base_traits
-      return CGAL::do_intersect(q, compute_transformed_bbox(bbox));
+      return
+        static_cast<const Base*>(this)->operator()(
+          q, compute_transformed_bbox(bbox));
     }
 
     template<typename Query>
     bool operator()(const Query& q, const Primitive& pr) const
     {
-      internal_AABB::Transformed_datum_do_intersect<Kernel,
-        typename boost::mpl::if_<Apply_transformation_to_primitive, Tag_false, typename Kernel::Has_filtered_predicates_tag>::type > f;
-      return f(q, m_traits.transformation(), internal::Primitive_helper<Self>::get_datum(pr,m_traits));
+      // transformation is done within Primitive_helper
+      return do_intersect(q, internal::Primitive_helper<Self>::get_datum(pr,m_traits));
     }
 
     // intersection with AABB-tree
     template<typename AABBTraits>
     bool operator()(const CGAL::AABB_tree<AABBTraits>& other_tree, const Primitive& pr) const
     {
-      if (Apply_transformation_to_primitive::value)
-        return other_tree.do_intersect( internal::Primitive_helper<Self>::get_datum(pr,m_traits));
-      else
-        // WARNING this is not robust
-        return other_tree.do_intersect( internal::Primitive_helper<Self>::get_datum(pr,m_traits).transform(m_traits.transformation()));
+      // transformation is done within Primitive_helper
+      return other_tree.do_intersect( internal::Primitive_helper<Self>::get_datum(pr,m_traits));
     }
 
     template<typename AABBTraits>
@@ -218,10 +157,10 @@ public:
 
 namespace internal {
 
-template<typename BT, typename K>
-struct Primitive_helper<AABB_do_intersect_transform_traits<BT,K,Tag_true> ,true>{
+template<typename K, typename P>
+struct Primitive_helper<AABB_do_intersect_transform_traits<K,P> ,true>{
 
-typedef AABB_do_intersect_transform_traits<BT,K,Tag_true> Traits;
+typedef AABB_do_intersect_transform_traits<K,P> Traits;
 
 
 static typename Traits::Primitive::Datum get_datum(const typename Traits::Primitive& p,
@@ -236,17 +175,17 @@ static typename Traits::Point_3 get_reference_point(const typename Traits::Primi
 
 };
 
-template<typename BT, typename K>
-typename CGAL::AABB_tree<AABB_do_intersect_transform_traits<BT,K,Tag_true> >::Bounding_box
-get_tree_bbox(const CGAL::AABB_tree<AABB_do_intersect_transform_traits<BT,K,Tag_true> >& tree)
+template<typename K, typename P>
+typename CGAL::AABB_tree<AABB_do_intersect_transform_traits<K,P> >::Bounding_box
+get_tree_bbox(const CGAL::AABB_tree<AABB_do_intersect_transform_traits<K,P> >& tree)
 {
   return tree.traits().compute_transformed_bbox(tree.bbox());
 }
 
-template<typename BT, typename K>
-typename CGAL::AABB_tree<AABB_do_intersect_transform_traits<BT,K,Tag_true> >::Bounding_box
-get_node_bbox(const CGAL::AABB_node<AABB_do_intersect_transform_traits<BT,K,Tag_true> >& node,
-              const AABB_do_intersect_transform_traits<BT,K,Tag_true>& traits)
+template<typename K, typename P>
+typename CGAL::AABB_tree<AABB_do_intersect_transform_traits<K,P> >::Bounding_box
+get_node_bbox(const CGAL::AABB_node<AABB_do_intersect_transform_traits<K,P> >& node,
+              const AABB_do_intersect_transform_traits<K,P>& traits)
 {
   return traits.compute_transformed_bbox(node.bbox());
 }
