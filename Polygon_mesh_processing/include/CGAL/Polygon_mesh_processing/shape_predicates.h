@@ -171,6 +171,7 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
 /// \cgalNamedParamsEnd
 ///
 /// \return the shortest halfedge if the triangle face is a needle, and a null halfedge otherwise.
+///         If the face contains degenerate edges, a halfedge corresponding to one of these edges is returned.
 template <typename TriangleMesh, typename NamedParameters>
 typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
 is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
@@ -214,6 +215,9 @@ is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descrip
       min_sq_length = sq_length;
     }
   }
+
+  if(min_sq_length == 0)
+    return min_h;
 
   const FT sq_threshold = threshold * threshold;
   if(max_sq_length / min_sq_length >= sq_threshold)
