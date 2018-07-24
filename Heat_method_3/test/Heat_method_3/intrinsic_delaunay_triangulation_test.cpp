@@ -38,7 +38,7 @@ void bglstyle(const IDT& idt)
   IDT_halfedge_descriptor hd = *(halfedges(idt).first);
   IDT_vertex_descriptor vd = vertex(hd,idt);
 
-  get(idt, CGAL::vertex_point);
+  //get(idt, CGAL::vertex_point);
 }
 
 

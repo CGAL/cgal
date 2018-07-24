@@ -138,68 +138,36 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
 
        struct Vertex_descriptor {
          halfedge_descriptor hd;
-         const Self& idt;
 
          bool operator<(const Vertex_descriptor& other) const
          {
            return hd < other.hd;
          }
-<<<<<<< HEAD
 
          Vertex_descriptor(const halfedge_descriptor& hd)
            : hd(hd)
-=======
-         
-         Vertex_descriptor(const halfedge_descriptor& hd, const Self& idt)
-           : hd(hd), idt(idt)
->>>>>>> 10a10c529282a79eeab8b12b12daa8ce67d0cf98
-         {}
-         
-         explicit Vertex_descriptor(const vertex_descriptor vd, const Self& idt)
-           : hd(halfedge(vd,idt.triangle_mesh())), idt(idt)
          {}
 
-         operator vertex_descriptor() const
-         {
-           return idt(target(hd,idt.triangle_mesh()));
-         }
+         explicit Vertex_descriptor(const vertex_descriptor vd, const TriangleMesh& tm)
+           : hd(halfedge(vd,tm))
+         {}
 
-
-         bool operator==(const Vertex_descriptor& other) const
-         {
-           return (hd == other.hd) && (idt == other.idt); 
-         }
-         
-         
-         bool operator==(const vertex_descriptor& vd) const
-         {
-           vertex_descriptor vdthis = *this;
-           return vdthis == vd;
-         }
        };
 
-       
      struct Vertex_iterator_functor
      {
        typedef vertex_descriptor argument_type;
        typedef Vertex_descriptor result_type;
-<<<<<<< HEAD
        const TriangleMesh& tm;
 
         Vertex_iterator_functor(const TriangleMesh& tm)
           :tm(tm)
-=======
-       const Self& idt;
-       
-        Vertex_iterator_functor(const Self& idt)
-          : idt(idt)
->>>>>>> 10a10c529282a79eeab8b12b12daa8ce67d0cf98
        {}
 
        result_type
        operator()(vertex_descriptor vd) const
        {
-         return Vertex_descriptor(halfedge(vd, idt.triangle_mesh()), idt);
+         return Vertex_descriptor(halfedge(vd, tm));
        }
      };
 
@@ -218,11 +186,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
          build();
        }
 
-       vertex_descriptor operator()(const vertex_descriptor& vd) const
-       {
-         return v2v.at(vd);
-       }
-       
+
        typedef TriangleMesh Triangle_mesh;
 
        const Triangle_mesh& triangle_mesh() const
@@ -476,22 +440,6 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
        std::map<vertex_descriptor,vertex_descriptor> v2v, vtov;
       };
 
-  /*
-template <typename TM,
-          typename T,
-          typename VDM,
-          typename VPM,
-          typename FIM,
-          typename EIM,
-          typename LA>
-bool operator==(const typename Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,FIM,EIM,LA>::Vertex_descriptor& vd,
-                const typename Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,FIM,EIM,LA>::vertex_descriptor& tmvd)
-{
-  typename Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,FIM,EIM,LA>::vertex_descriptor& tmvd2 = vd;
-  return tmvd == tmvd2;
-}
-  */
-     
 } // namespace Intrinsic_Delaunay_Triangulation_3
 
 namespace Heat_method_3 {
@@ -530,7 +478,7 @@ struct V2V<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangul
 
   Idt_vertex_descriptor operator()(const TM_vertex_descriptor& vd) const
   {
-    return Idt_vertex_descriptor(idt.vtov.at(vd),idt);
+    return Idt_vertex_descriptor(idt.vtov.at(vd),idt.triangle_mesh());
   }
 };
   } // namespace Heat_method_3
@@ -625,7 +573,7 @@ vertices(const Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,FIM,EIM,LA>& idt)
 
   typedef typename boost::graph_traits<TM>::vertex_iterator vertex_iterator;
   typedef typename Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,FIM,EIM,LA>::Vertex_iterator_functor Fct;
-  Fct fct(idt);
+  Fct fct(idt.triangle_mesh());
   return std::make_pair(boost::make_transform_iterator(p.first, fct),
                         boost::make_transform_iterator(p.second,fct));
  }
@@ -745,13 +693,8 @@ source(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,
        const Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,FIM,EIM,LA>& idt)
 {
   typedef typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,FIM,EIM,LA> >::vertex_descriptor vertex_descriptor;
-<<<<<<< HEAD
 
   return vertex_descriptor(opposite(hd, idt.triangle_mesh()));
-=======
-  
-  return vertex_descriptor(opposite(hd, idt.triangle_mesh()), idt);
->>>>>>> 10a10c529282a79eeab8b12b12daa8ce67d0cf98
 }
 
 template <typename TM,
@@ -766,13 +709,8 @@ target(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,
        const Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,FIM,EIM,LA>& idt)
 {
   typedef typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,FIM,EIM,LA> >::vertex_descriptor vertex_descriptor;
-<<<<<<< HEAD
 
   return vertex_descriptor(hd);
-=======
-  
-  return vertex_descriptor(hd, idt);
->>>>>>> 10a10c529282a79eeab8b12b12daa8ce67d0cf98
 }
 
 
@@ -845,6 +783,7 @@ target(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,
                     value_type v)
     {
       typename boost::graph_traits<TM>::vertex_descriptor tm_vd = target(vd.hd, idtpm.idt.triangle_mesh());
+
       put(idtpm.pm, idtpm.idt.v2v.at(tm_vd), v);
     }
   };
