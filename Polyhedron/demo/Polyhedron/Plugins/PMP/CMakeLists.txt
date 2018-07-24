@@ -170,3 +170,7 @@ target_link_libraries(extrude_poly_plugin PUBLIC scene_polyhedron_item scene_pol
 polyhedron_demo_plugin(extrude_sm_plugin Extrude_plugin)
 target_link_libraries(extrude_sm_plugin PUBLIC scene_surface_mesh_item scene_surface_mesh_selection_item)
 target_compile_definitions(extrude_sm_plugin PUBLIC "-DUSE_SURFACE_MESH" )
+
+qt5_wrap_ui( engravUI_FILES Engrave_dock_widget.ui )
+polyhedron_demo_plugin(engrave_text_plugin Engrave_text_plugin ${engravUI_FILES})
+target_link_libraries(engrave_text_plugin PUBLIC scene_surface_mesh_item scene_surface_mesh_selection_item scene_polylines_item)
