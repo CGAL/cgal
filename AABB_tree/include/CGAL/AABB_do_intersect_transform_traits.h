@@ -65,23 +65,26 @@ public:
   static compute_transformed_bbox(const Bbox_3& bbox, const Aff_transformation_3<Kernel>& transfo)
   {
     // TODO: possible optimization using Protector
-    typedef Simple_cartesian<Interval_nt<> >             Approximate_kernel;
-    typedef Cartesian_converter<Kernel, Approximate_kernel>    C2F;
+    typedef Simple_cartesian<Interval_nt<> > AK;
+    typedef Cartesian_converter<Kernel, AK>    C2F;
     C2F c2f;
 
-    Approximate_kernel::Aff_transformation_3 af = c2f(transfo);
+    AK::Aff_transformation_3 af = c2f(transfo);
 
-    //TODO reuse the conversions
-    typename Approximate_kernel::Point_3 ps[8];
-    ps[0] = af( c2f( Point_3(bbox.min(0), bbox.min(1), bbox.min(2)) ) );
-    ps[1] = af( c2f( Point_3(bbox.min(0), bbox.min(1), bbox.max(2)) ) );
-    ps[2] = af( c2f( Point_3(bbox.min(0), bbox.max(1), bbox.min(2)) ) );
-    ps[3] = af( c2f( Point_3(bbox.min(0), bbox.max(1), bbox.max(2)) ) );
+    AK::FT xtrm[6] = { c2f(bbox.min(0)), c2f(bbox.max(0)),
+                       c2f(bbox.min(1)), c2f(bbox.max(1)),
+                       c2f(bbox.min(2)), c2f(bbox.max(2)) };
 
-    ps[4] = af( c2f( Point_3(bbox.max(0), bbox.min(1), bbox.min(2)) ) );
-    ps[5] = af( c2f( Point_3(bbox.max(0), bbox.min(1), bbox.max(2)) ) );
-    ps[6] = af( c2f( Point_3(bbox.max(0), bbox.max(1), bbox.min(2)) ) );
-    ps[7] = af( c2f( Point_3(bbox.max(0), bbox.max(1), bbox.max(2)) ) );
+    typename AK::Point_3 ps[8];
+    ps[0] = af( AK::Point_3(xtrm[0], xtrm[2], xtrm[4]) );
+    ps[1] = af( AK::Point_3(xtrm[0], xtrm[2], xtrm[5]) );
+    ps[2] = af( AK::Point_3(xtrm[0], xtrm[3], xtrm[4]) );
+    ps[3] = af( AK::Point_3(xtrm[0], xtrm[3], xtrm[5]) );
+
+    ps[4] = af( AK::Point_3(xtrm[1], xtrm[2], xtrm[4]) );
+    ps[5] = af( AK::Point_3(xtrm[1], xtrm[2], xtrm[5]) );
+    ps[6] = af( AK::Point_3(xtrm[1], xtrm[3], xtrm[4]) );
+    ps[7] = af( AK::Point_3(xtrm[1], xtrm[3], xtrm[5]) );
 
     return bbox_3(ps, ps+8);
   }
