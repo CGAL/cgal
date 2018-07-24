@@ -18,6 +18,7 @@
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Edge_container.h>
 #include <CGAL/Three/Point_container.h>
+#include "Scene.h"
 
 typedef CGAL::AABB_face_graph_triangle_primitive<SMesh> Primitive;
 typedef CGAL::AABB_traits<EPICK, Primitive> AABB_triangle_traits;
@@ -60,8 +61,6 @@ public:
               this, SLOT(start()));
       _actions << actionCreateTrees;
     }
-    t1 = 0;
-    t2 = 0;
     query_item = 0;
     base_item = 0;
   }
@@ -74,32 +73,22 @@ private Q_SLOTS:
     Scene_surface_mesh_item* itemA = qobject_cast<Scene_surface_mesh_item*>(scene->item(indexA));
     Scene_surface_mesh_item* itemB = qobject_cast<Scene_surface_mesh_item*>(scene->item(indexB));
     connect(itemA, &Scene_surface_mesh_item::aboutToBeDestroyed,
-            [this](){
-      if(query_item)
-        scene->erase(scene->item_id(query_item));
-      cleanup();
-    });
+            this, &DoTreesIntersectplugin::cleanup);
     connect(itemB, &Scene_surface_mesh_item::aboutToBeDestroyed,
-            [this](){
-      if(query_item)
-        scene->erase(scene->item_id(query_item));
-      cleanup();
-    });
+            this, &DoTreesIntersectplugin::cleanup);
     
     
     SMesh* tm = itemA->face_graph();
     SMesh* tm2 = itemB->face_graph();
-    t1 = new Tree (tm->faces_begin(), tm->faces_end(), *tm);
-    t2 = new Tree (tm2->faces_begin(), tm2->faces_end(), *tm2);
+    trees[tm] = new Tree (tm->faces_begin(), tm->faces_end(), *tm);
+    trees[tm2] = new Tree (tm2->faces_begin(), tm2->faces_end(), *tm2);
     CGAL::qglviewer::Vec pos((itemB->bbox().min(0) + itemB->bbox().max(0))/2.0, 
                           (itemB->bbox().min(1) + itemB->bbox().max(1))/2.0, 
                           (itemB->bbox().min(2) + itemB->bbox().max(2))/2.0);
     
     query_item = new Scene_movable_sm_item(pos,tm2,"");
-    connect(query_item, &Scene_surface_mesh_item::aboutToBeDestroyed,
-            [this](){
-      cleanup();
-    });
+    connect(query_item, &Scene_movable_sm_item::aboutToBeDestroyed,
+               this, &DoTreesIntersectplugin::cleanup);
     connect(query_item->manipulatedFrame(), &CGAL::qglviewer::ManipulatedFrame::modified,
             this, &DoTreesIntersectplugin::update_trees);
     query_item->setRenderingMode(Flat);
@@ -107,11 +96,13 @@ private Q_SLOTS:
     itemB->setVisible(false);
     itemA->setVisible(false);
     scene->setSelectedItem(scene->addItem(query_item));
+    pos = CGAL::qglviewer::Vec((itemA->bbox().min(0) + itemA->bbox().max(0))/2.0, 
+                              (itemA->bbox().min(1) + itemA->bbox().max(1))/2.0, 
+                              (itemA->bbox().min(2) + itemA->bbox().max(2))/2.0);
+    
     base_item = new Scene_movable_sm_item(pos,tm,"");
-    connect(base_item, &Scene_surface_mesh_item::aboutToBeDestroyed,
-            [this](){
-      cleanup();
-    });
+    connect(base_item, &Scene_movable_sm_item::aboutToBeDestroyed,
+            this, &DoTreesIntersectplugin::cleanup);
     connect(base_item->manipulatedFrame(), &CGAL::qglviewer::ManipulatedFrame::modified,
             this, &DoTreesIntersectplugin::update_trees);
     base_item->setRenderingMode(Wireframe);
@@ -120,6 +111,9 @@ private Q_SLOTS:
     update_trees();
     query_item->redraw();
     base_item->redraw();
+    
+    connect(static_cast<Scene*>(scene), &Scene::itemIndexSelected,
+            this, &DoTreesIntersectplugin::update_trees);
     QApplication::restoreOverrideCursor();
   }
 public Q_SLOTS:
@@ -127,6 +121,13 @@ public Q_SLOTS:
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(
           CGAL::QGLViewer::QGLViewerPool().first());
+    
+    Scene_movable_sm_item* sel_item = qobject_cast<Scene_movable_sm_item*>(scene->item(scene->mainSelectionIndex()));
+    if(!sel_item)
+      return;
+    Scene_movable_sm_item* other_item = (base_item == sel_item) 
+        ? query_item
+        : base_item;
     
     const double* matrixB = base_item->manipulatedFrame()->matrix();
     base_item->setFMatrix(matrixB);
@@ -139,7 +140,7 @@ public Q_SLOTS:
         matrixB[2], matrixB[6], matrixB[10],matrixB[14]);
     EPICK::Aff_transformation_3 transfoB = 
         rotaB*translationB;
-    t1->traits().set_transformation(transfoB);
+    trees[base_item->getFaceGraph()]->traits().set_transformation(transfoB);
     
     const double* matrixA = query_item->manipulatedFrame()->matrix();
     query_item->setFMatrix(matrixA);
@@ -152,9 +153,10 @@ public Q_SLOTS:
         matrixA[2], matrixA[6], matrixA[10],matrixA[14]);
     EPICK::Aff_transformation_3 transfoA = 
         rotaA*translationA;
-    t2->traits().set_transformation(transfoA);
-    if(t2->do_intersect(*t1))
-      query_item->setColor(QColor(Qt::red));
+    trees[query_item->getFaceGraph()]->traits().set_transformation(transfoA);
+    
+    if(trees[sel_item->getFaceGraph()]->do_intersect(*trees[other_item->getFaceGraph()]))
+      sel_item->setColor(QColor(Qt::red));
     else
     {
 #if 0
@@ -174,26 +176,35 @@ public Q_SLOTS:
           query_item->setColor(QColor(Qt::blue));
         else
 #endif
-          query_item->setColor(QColor(Qt::green));
+          sel_item->setColor(QColor(Qt::green));
       #if 0
       }
 #endif
         
     }
-    
+    sel_item->setRenderingMode(Flat);
+    other_item->setRenderingMode(Wireframe);
+    sel_item->itemChanged();
+    other_item->itemChanged();
     viewer->update();
   }
   
   void cleanup()
   {
-    if(t1)
-      delete t1;
-    t1 = NULL;
-    if(t2)
-      delete t2;
-    t2 = NULL;
-    query_item = NULL;
-    base_item = NULL;
+    if(query_item)
+    {
+      delete trees[query_item->getFaceGraph()];
+      trees[query_item->getFaceGraph()] = NULL;
+      scene->erase(scene->item_id(query_item));
+      query_item = NULL;
+    }
+    if(base_item)
+    {
+      delete trees[base_item->getFaceGraph()];
+      trees[base_item->getFaceGraph()] = NULL;
+      scene->erase(scene->item_id(base_item));
+      base_item = NULL;
+    }
   }
   
 private:
@@ -201,7 +212,7 @@ private:
   Messages_interface* messageInterface;
   CGAL::Three::Scene_interface* scene;
   QMainWindow* mw;
-  Tree *t1, *t2;
+  std::map<SMesh*, Tree*> trees;
   Scene_movable_sm_item* query_item;
   Scene_movable_sm_item* base_item;
 };
