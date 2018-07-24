@@ -300,8 +300,14 @@ is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor
   int pos = 0;
   BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(h0, tm))
   {
-    sq_lengths[pos++] = traits.compute_squared_distance_3_object()(get(vpmap, source(h, tm)),
-                                                                   get(vpmap, target(h, tm)));
+    const FT sq_d = traits.compute_squared_distance_3_object()(get(vpmap, source(h, tm)),
+                                                               get(vpmap, target(h, tm)));
+
+    // If even one edge is degenerate, it cannot be a cap
+    if(sq_d == 0)
+      return boost::graph_traits<TriangleMesh>::null_halfedge();
+
+    sq_lengths[pos++] = sq_d;
   }
 
   pos = 0;
@@ -316,7 +322,7 @@ is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor
     const bool neg_sp = (dot_ab <= 0);
     const FT sq_a = sq_lengths[(pos+1)%3];
     const FT sq_b = sq_lengths[pos];
-    const FT sq_cos =  dot_ab * dot_ab / (sq_a * sq_b);
+    const FT sq_cos = dot_ab * dot_ab / (sq_a * sq_b);
 
     if(neg_sp && sq_cos >= sq_threshold)
       return prev(h, tm);
