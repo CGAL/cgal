@@ -65,6 +65,8 @@ namespace Polygon_mesh_processing {
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
+/// \sa `degenerate_edges()`
+///
 /// \return `true` if the edge `e` is degenerate, `false` otherwise.
 template <typename PolygonMesh, typename NamedParameters>
 bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
@@ -113,6 +115,9 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
 ///                                 to check whether three points are collinear.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
+///
+/// \sa `degenerate_faces()`
+/// \sa `remove_degenerate_faces()`
 ///
 /// \return `true` if the face `f` is degenerate, `false` otherwise.
 template <typename TriangleMesh, typename NamedParameters>

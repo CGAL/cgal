@@ -174,12 +174,13 @@ struct Less_vertex_point{
 /// \ingroup PMP_repairing_grp
 /// collects the degenerate edges within a given range of edges.
 ///
-/// @tparam EdgeRange a model of `Range` with value type `boost::graph_traits<TriangleMesh>::edge_descriptor`
+/// @tparam EdgeRange a model of `Range` with value type `boost::graph_traits<TriangleMesh>::%edge_descriptor`
 /// @tparam TriangleMesh a model of `EdgeListGraph`
 /// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// @param edges a subset of edges of `tm`
 /// @param tm a triangle mesh
+/// @param out an output iterator in which the degenerate edges are written
 /// @param np optional \ref pmp_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
@@ -220,13 +221,21 @@ OutputIterator degenerate_edges(const EdgeRange& edges,
   return degenerate_edges(edges, tm, out, CGAL::parameters::all_default());
 }
 
+/// \ingroup PMP_repairing_grp
+/// calls the function `degenerate_edges()` with the range: `edges(tm)`.
+///
+/// See above for the comprehensive description of the parameters.
+///
 template <class TriangleMesh, class OutputIterator, class NamedParameters>
 OutputIterator degenerate_edges(const TriangleMesh& tm,
                                 OutputIterator out,
-                                const NamedParameters& np,
-                                typename boost::enable_if_c<
+                                const NamedParameters& np
+#ifndef DOXYGEN_RUNNING
+                                , typename boost::enable_if_c<
                                            CGAL::is_iterator<OutputIterator>::value
-                                         >::type* = 0)
+                                         >::type* = 0
+#endif
+                                                     )
 {
   return degenerate_edges(edges(tm), tm, out, np);
 }
@@ -241,12 +250,13 @@ degenerate_edges(const TriangleMesh& tm, OutputIterator out)
 /// \ingroup PMP_repairing_grp
 /// collects the degenerate faces within a given range of faces.
 ///
-/// @tparam FaceRange a model of `Range` with value type `boost::graph_traits<TriangleMesh>::face_descriptor`
+/// @tparam FaceRange a model of `Range` with value type `boost::graph_traits<TriangleMesh>::%face_descriptor`
 /// @tparam TriangleMesh a model of `FaceGraph`
 /// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// @param faces a subset of faces of `tm`
 /// @param tm a triangle mesh
+/// @param out an output iterator in which the degenerate faces are put
 /// @param np optional \ref pmp_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
@@ -260,6 +270,8 @@ degenerate_edges(const TriangleMesh& tm, OutputIterator out)
 ///                                 to check whether three points are collinear.
 ///    \cgalParamEnd
 /// \cgalNamedParamsEnd
+///
+/// \sa remove_degenerate_faces()
 template <class FaceRange, class TriangleMesh, class OutputIterator, class NamedParameters>
 OutputIterator degenerate_faces(const FaceRange& faces,
                                 const TriangleMesh& tm,
@@ -287,13 +299,21 @@ OutputIterator degenerate_faces(const FaceRange& faces,
   return degenerate_faces(faces, tm, out, CGAL::parameters::all_default());
 }
 
+/// \ingroup PMP_repairing_grp
+/// calls the function `degenerate_faces()` with the range: `faces(tm)`.
+///
+/// See above for the comprehensive description of the parameters.
+///
 template <class TriangleMesh, class OutputIterator, class NamedParameters>
 OutputIterator degenerate_faces(const TriangleMesh& tm,
                                 OutputIterator out,
-                                const NamedParameters& np,
-                                typename boost::enable_if_c<
+                                const NamedParameters& np
+#ifndef DOXYGEN_RUNNING
+                                , typename boost::enable_if_c<
                                            CGAL::is_iterator<OutputIterator>::value
-                                         >::type* = 0)
+                                         >::type* = 0
+#endif
+                                                     )
 {
   return degenerate_faces(faces(tm), tm, out, np);
 }
@@ -798,7 +818,7 @@ std::size_t remove_degenerate_edges(const EdgeRange& edge_range,
 ///         - `Collinear_3` to check whether 3 points are collinear
 ///         - `Less_xyz_3` to compare lexicographically two points
 ///         - `Equal_3` to check whether 2 points are identical
-///         -  for each functor Foo, a function `Foo foo_object()`
+///       For each functor `Foo`, a function `Foo foo_object()`
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
@@ -1448,6 +1468,8 @@ struct Vertex_collector<G, Emptyset_iterator>
 /// @param v a vertex of `tm`
 /// @param tm a triangle mesh containing `v`
 ///
+/// \sa duplicate_non_manifold_vertices()
+///
 /// \return `true` if the vertex is non-manifold, `false` otherwise.
 template <typename TriangleMesh>
 bool is_non_manifold_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v,
@@ -1489,7 +1511,7 @@ bool is_non_manifold_vertex(typename boost::graph_traits<TriangleMesh>::vertex_d
 ///    \cgalParamEnd
 ///   \cgalParamBegin{vertex_is_constrained_map} a writable property map with `vertex_descriptor`
 ///     as key and `bool` as `value_type`. `put(pmap, v, true)` will be called for each duplicated
-///     vertices and the input one.
+///     vertices, as well as the original non-manifold vertex in the input mehs.
 ///  \cgalParamEnd
 ///   \cgalParamBegin{output_iterator} a model of `OutputIterator` with value type
 ///      `std::vector<vertex_descriptor>`. The first vertex of each vector is a non-manifold vertex

@@ -242,8 +242,7 @@ void merge_duplicated_vertices_in_boundary_cycle(
 }
 
 /// \ingroup PMP_repairing_grp
-/// extracts boundary cycles and merges the duplicated
-/// vertices of each cycle.
+/// extracts boundary cycles and merges the duplicated vertices of each cycle.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`.
 /// @tparam NamedParameter a sequence of \ref pmp_namedparameters "Named Parameters".
@@ -258,6 +257,8 @@ void merge_duplicated_vertices_in_boundary_cycle(
 ///  `CGAL::vertex_point_t` should be available in `PolygonMesh`
 /// \cgalParamEnd
 /// \cgalNamedParamsEnd
+///
+/// \sa `merge_duplicated_vertices_in_boundary_cycle()`
 template <class PolygonMesh, class NamedParameter>
 void merge_duplicated_vertices_in_boundary_cycles(      PolygonMesh& pm,
                                                   const NamedParameter& np)
