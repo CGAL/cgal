@@ -10,9 +10,6 @@
 #include <cassert>
 #include <Eigen/Sparse>
 #include <Eigen/Dense>
-#include <CGAL/boost/graph/properties.h>
-#include <CGAL/boost/graph/helpers.h>
-
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
@@ -41,7 +38,7 @@ void bglstyle(const IDT& idt)
   IDT_halfedge_descriptor hd = *(halfedges(idt).first);
   IDT_vertex_descriptor vd = vertex(hd,idt);
 
-//  get(idt, CGAL::vertex_point);
+  get(idt, CGAL::vertex_point);
 }
 
 
