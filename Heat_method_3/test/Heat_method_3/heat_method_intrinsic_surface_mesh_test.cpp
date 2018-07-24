@@ -32,7 +32,7 @@ typedef CGAL::Heat_method_3::Heat_method_Eigen_traits_3::SparseMatrix SparseMatr
 
 #if 0
 void source_set_tests(Heat_method hm, const Idt& sm)
-{  
+{
   vertex_descriptor source = *(vertices(sm).first);
   hm.add_source(source);
   const std::set<vertex_descriptor>& source_copy = hm.get_sources();
@@ -47,7 +47,7 @@ void source_set_tests(Heat_method hm, const Idt& sm)
   assert(*(hm.sources_begin()) == source);
   assert(!(hm.add_source(source)));
   assert(hm.remove_source(*(std::next(vertices(sm).first,3))));
-  
+
 }
 
 #endif
@@ -118,7 +118,7 @@ int main(int argc, char*argv[])
 {
   Surface_mesh sm;
 
-  std::ifstream in((argc>1)?argv[1]:"data/pyramid1.off");
+  std::ifstream in((argc>1)?argv[1]:"../data/pyramid1.off");
   in >> sm;
   if(!in || num_vertices(sm) == 0) {
     std::cerr << "Problem loading the input data" << std::endl;
@@ -128,7 +128,7 @@ int main(int argc, char*argv[])
 
   Idt idt(sm, vdm);
 
- 
+
   //source set tests
   Heat_method hm(idt, idt.vertex_distance_map());
 
@@ -141,8 +141,8 @@ int main(int argc, char*argv[])
   }
 
   // source_set_tests(hm,idt);
-  
-#if 1 
+
+#if 1
 
   //cotan matrix tests
   const SparseMatrix& M = hm.mass_matrix();
@@ -172,7 +172,28 @@ int main(int argc, char*argv[])
 
   Eigen::VectorXd solved_dist = hm.solve_phi(c, XD,4);
 
+
+  Surface_mesh sm2;
+
+  std::ifstream in2((argc>1)?argv[1]:"../data/kitten.off");
+  in2 >> sm2;
+  if(!in || num_vertices(sm) == 0) {
+    std::cerr << "Problem loading the input data" << std::endl;
+    return 1;
+  }
+  Vertex_distance_map vdm2 = get(Vertex_distance_tag(),sm2);
+
+  Idt idt2(sm2, vdm2);
+
+
+  //source set tests
+  Heat_method hm2(idt2, idt2.vertex_distance_map());
+
+
+
+
+
 #endif
-  
+
   return 0;
 }
