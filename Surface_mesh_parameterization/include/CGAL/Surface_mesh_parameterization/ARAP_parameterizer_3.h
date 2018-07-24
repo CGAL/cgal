@@ -1327,8 +1327,11 @@ public:
     NT energy_this = compute_current_energy(mesh, faces, ctmap, lp, lpmap,
                                             ltmap, uvmap);
     NT energy_last;
+
+#ifdef CGAL_PARAMETERIZATION_ARAP_VERBOSE
     std::cout << "Initial energy: " << energy_this << std::endl;
     std::cout << m_iterations << " max iterations" << std::endl;
+#endif
 
     // main loop
     for(unsigned int ite=1; ite<=m_iterations; ++ite)
@@ -1342,7 +1345,9 @@ public:
       energy_last = energy_this;
       energy_this = compute_current_energy(mesh, faces, ctmap, lp, lpmap,
                                                         ltmap, uvmap);
+#ifdef CGAL_PARAMETERIZATION_ARAP_VERBOSE
       std::cout << "Energy at iteration " << ite << " : " << energy_this << std::endl;
+#endif
       CGAL_warning(energy_this >= 0);
 
       if(status != OK)
@@ -1353,9 +1358,11 @@ public:
       {  // also no need compute energy if this iteration is the last iteration
         double energy_diff = std::abs((energy_last - energy_this) / energy_this);
         if(energy_diff < m_tolerance) {
+#ifdef CGAL_PARAMETERIZATION_ARAP_VERBOSE
           std::cout << "Minimization process ended after: "
                     << ite + 1 << " iterations. "
                     << "Energy diff: " << energy_diff << std::endl;
+#endif
           break;
         }
       }

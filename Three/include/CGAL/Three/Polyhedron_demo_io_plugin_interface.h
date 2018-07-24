@@ -27,6 +27,7 @@
 
 #include <QFileInfo>
 #include <QStringList>
+#include <QtPlugin>
 
 namespace CGAL{
 namespace Three {

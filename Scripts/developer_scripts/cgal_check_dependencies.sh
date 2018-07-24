@@ -10,6 +10,8 @@ do
         echo "0 otherwise."
         exit 0
             ;;
+        --check_headers) DO_CHECK_HEADERS="True"
+            ;;
         --*) echo "bad option $1"
             ;;
         *) DOX_PATH="$1"
@@ -29,6 +31,9 @@ do
 done
 
 cmake -DCGAL_HEADER_ONLY=FALSE -DCGAL_ENABLE_CHECK_HEADERS=TRUE -DDOXYGEN_EXECUTABLE="$DOX_PATH" -DCGAL_COPY_DEPENDENCIES=TRUE -DCMAKE_CXX_FLAGS="-std=c++11" ..
+if [ -n "$DO_CHECK_HEADERS" ]; then
+    make -j$(nproc --all) -k check_headers
+fi
 make -j$(nproc --all) -k packages_dependencies
 echo " Checks finished"
 for pkg_path in $CGAL_ROOT/*
@@ -52,7 +57,7 @@ echo " Checks finished"
 cd $CGAL_ROOT
 rm -r dep_check_build
 if [ -n "$TOTAL_RES" ]; then
-  echo "$TOTAL_RES"
+  printf "$TOTAL_RES"
   echo " You can run cmake with options CGAL_ENABLE_CHECK_HEADERS and CGAL_COPY_DEPENDENCIES ON, make the target packages_dependencies and commit the new dependencies files,"
   echo " or simply manually edit the problematic files."
   exit 1

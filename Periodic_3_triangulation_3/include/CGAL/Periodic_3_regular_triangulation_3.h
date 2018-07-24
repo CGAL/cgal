@@ -187,7 +187,7 @@ public:
 
 private:
   struct Cell_handle_hash
-    : public CGAL::unary_function<Cell_handle, std::size_t>
+    : public CGAL::cpp98::unary_function<Cell_handle, std::size_t>
   {
     std::size_t operator()(const Cell_handle& ch) const {
       return boost::hash<typename Cell_handle::pointer>()(&*ch);

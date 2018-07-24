@@ -55,6 +55,8 @@ create_single_source_cgal_program( "dynamic_property_map.cpp" )
 
 create_single_source_cgal_program( "dynamic_properties_test.cpp" )
 
+create_single_source_cgal_program( "kernel_converter_properties_test.cpp" )
+
 if(OpenMesh_FOUND)
         target_link_libraries( dynamic_properties_test PRIVATE ${OPENMESH_LIBRARIES} )
 endif()

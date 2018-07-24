@@ -81,7 +81,39 @@ public:
 */
 class Feature_handle { };
 #else
-typedef boost::shared_ptr<Feature_base> Feature_handle;
+//typedef boost::shared_ptr<Feature_base> Feature_handle;
+
+class Feature_set;
+  
+class Feature_handle
+{
+  friend Feature_set;
+  
+  boost::shared_ptr<boost::shared_ptr<Feature_base> > m_base;
+
+  template <typename Feature>
+  Feature_handle (Feature* f) : m_base (new boost::shared_ptr<Feature_base>(f)) { }
+
+  template <typename Feature>
+  void attach (Feature* f) const
+  {
+    *m_base = boost::shared_ptr<Feature_base>(f);
+  }
+public:
+
+  Feature_handle() : m_base (new boost::shared_ptr<Feature_base>()) { }
+
+  Feature_base& operator*() { return **m_base; }
+
+  Feature_base* operator->() { return m_base->get(); }
+
+  const Feature_base& operator*() const { return **m_base; }
+  const Feature_base* operator->() const { return m_base->get(); }
+
+  bool operator< (const Feature_handle& other) const { return *m_base < *(other.m_base); }
+  bool operator== (const Feature_handle& other) const { return *m_base == *(other.m_base); }
+};
+  
 #endif
 
 

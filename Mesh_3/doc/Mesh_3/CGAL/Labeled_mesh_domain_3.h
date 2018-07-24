@@ -183,8 +183,7 @@ be a `CGAL::Image_3` object.
 
 <li><b>`parameters::image_values_to_subdom_indices`</b> a function or
   a function object, compatible with the signature
-  `Subdomain_index(word_type)`, where the type `word_type` is the type
-  of words of the 3D image. This function returns the subdomain index
+  `Subdomain_index(double)`. This function returns the subdomain index
   corresponding to a pixel value. If this parameter is used, then the
   parameter `iso_value` is ignored.
 

@@ -73,6 +73,27 @@
         <file>resources/shader_flat.g</file>
         <file>resources/shader_flat.v</file>
         <file>resources/shader_old_flat.f</file>
+        <file>resources/solid_wireframe_shader.v</file>
+        <file>resources/solid_wireframe_shader.f</file>
+        <file>resources/solid_wireframe_shader.g</file>
+        <file>resources/compatibility_shaders/shader_c3t3_edges.f</file>
+        <file>resources/compatibility_shaders/shader_c3t3_edges.v</file>
+        <file>resources/compatibility_shaders/shader_c3t3_spheres.v</file>
+        <file>resources/compatibility_shaders/shader_c3t3.f</file>
+        <file>resources/compatibility_shaders/shader_c3t3.v</file>
+        <file>resources/compatibility_shaders/shader_instanced.v</file>
+        <file>resources/compatibility_shaders/shader_no_light_no_selection.f</file>
+        <file>resources/compatibility_shaders/shader_old_flat.f</file>
+        <file>resources/compatibility_shaders/shader_plane_two_faces.f</file>
+        <file>resources/compatibility_shaders/shader_spheres.v</file>
+        <file>resources/compatibility_shaders/shader_with_light.f</file>
+        <file>resources/compatibility_shaders/shader_with_light.v</file>
+        <file>resources/compatibility_shaders/shader_with_texture.f</file>
+        <file>resources/compatibility_shaders/shader_with_texture.v</file>
+        <file>resources/compatibility_shaders/shader_with_textured_edges.f</file>
+        <file>resources/compatibility_shaders/shader_with_textured_edges.v</file>
+        <file>resources/compatibility_shaders/shader_without_light.f</file>
+        <file>resources/compatibility_shaders/shader_without_light.v</file>
     </qresource>
     <qresource prefix="/cgal/cursors">
         <file>resources/rotate_around_cursor.png</file>

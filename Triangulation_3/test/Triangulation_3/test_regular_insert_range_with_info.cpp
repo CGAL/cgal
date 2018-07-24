@@ -6,8 +6,9 @@
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
+#include <CGAL/functional.h>
+
 #include <iostream>
-#include <functional>
 #include <utility>
 #include <vector>
 
@@ -139,9 +140,9 @@ struct Tester
   }
 
   struct Auto_count
-    : public std::unary_function<const Weighted_point&,
-                                 std::pair<Weighted_point,
-                                 unsigned> >
+    : public CGAL::cpp98::unary_function<const Weighted_point&,
+                                         std::pair<Weighted_point,
+                                         unsigned> >
   {
     mutable unsigned i;
     Auto_count() : i(0){}

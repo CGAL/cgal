@@ -29,8 +29,12 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/property_map.h>
 #include <boost/unordered_map.hpp>
+#include <boost/utility/enable_if.hpp>
+#include <boost/function_output_iterator.hpp>
 
 namespace CGAL {
 
@@ -208,7 +212,39 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                        sm_vpm, tm_vpm);
 }
 
+
+
 } // end of namespace internal
+namespace impl
+{
+template<typename PMAP>
+struct Output_iterator_functor
+{
+  typedef typename boost::property_traits<PMAP>::key_type input_t;
+  typedef typename boost::property_traits<PMAP>::value_type output_t;
+  PMAP map;
+  Output_iterator_functor(PMAP map)
+    :map(map)
+  {
+  }
+  void operator()(const typename std::pair<input_t, output_t>& pair)
+  {
+    put(map, pair.first, pair.second);
+  }
+  
+};
+    
+template<typename PMAP>
+boost::function_output_iterator<Output_iterator_functor<PMAP> > make_functor(PMAP map)
+{
+  return boost::make_function_output_iterator(Output_iterator_functor<PMAP>(map));
+}
+
+inline Emptyset_iterator make_functor(const boost::param_not_found&)
+{
+  return Emptyset_iterator();
+}
+}//end of impl
 
 /*!
   \ingroup PkgBGLHelperFct
@@ -223,50 +259,115 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
           and `boost::graph_traits<SourceMesh>::%face_descriptor` must be
           models of `Hashable`.
   \tparam TargetMesh a model of `FaceListGraph`
-  \tparam V2V a model of `OutputIterator` accepting `std::pair<sm_vertex_descriptor, tm_vertex_descriptor>`
-  \tparam H2H a model of `OutputIterator` accepting `std::pair<sm_halfedge_descriptor, tm_halfedge_descriptor>`
-  \tparam F2F a model of `OutputIterator` accepting `std::pair<sm_face_descriptor, tm_face_descriptor>`
-  \tparam Src_vpm a model of `ReadablePropertyMap` with `sm_vertex_descriptor` as key
-  \tparam Tgt_vpm a model of `WritablePropertyMap` with `tm_vertex_descriptor` as key
-  where the prefix `sm_` and `tm_` mean belonging to the source and
-  target mesh respectively.
-
+  \tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
+  \tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
+  
   The types `sm_vertex_descriptor` and `sm_face_descriptor` must be models of the concept `Hashable`.
 
   \param sm the source mesh
   \param tm the target mesh
-  \param v2v pairs of `vertex_descriptors` from `sm` and corresponding `vertex_descriptors` in `tm` are added to `v2v`
-  \param h2h pairs of `halfedge_descriptors` from `sm` and corresponding `halfedge_descriptors` in `tm` are added to `h2h`
-  \param f2f pairs of `face_descriptors` from `sm` and corresponding `face_descriptors` in `tm` are added to `f2f`
-  \param sm_vpm vertex point map for `sm`
-  \param tm_vpm vertex point map for `tm`
+  \param np1 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  
+  \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_point_map}
+      the property map with the points associated to the vertices of `sm` .
+      If this parameter is omitted, an internal property map for
+      `CGAL::vertex_point_t` should be available in `SourceMesh`
+    \cgalParamEnd
+    \cgalParamBegin{vertex_to_vertex_output_iterator} an `OutputIterator` containing the
+      pairs source-vertex, target-vertex. If this parameter is given, then 
+      `vertex_to_vertex_map` cannot be used.
+    \cgalParamEnd
+    \cgalParamBegin{halfedge_to_halfedge_output_iterator} an `OutputIterator` containing the
+      pairs source-halfedge, target-halfedge. If this parameter is given, then 
+      `halfedge_to_halfedge_map` cannot be used.
+    \cgalParamEnd
+    \cgalParamBegin{face_to_face_output_iterator} an `OutputIterator` containing the
+      pairs source-face, target-face. If this parameter is given, then 
+      `face_to_face_map` cannot be used.
+    \cgalParamEnd
+    \cgalParamBegin{vertex_to_vertex_map} a `ReadWritePropertyMap` containing the
+      pairs source-vertex, target-vertex. 
+    \cgalParamEnd
+    \cgalParamBegin{halfedge_to_halfedge_map} a `ReadWritePropertyMap` containing the
+      pairs source-halfedge, target-halfedge. 
+    \cgalParamEnd
+    \cgalParamBegin{face_to_face_map} a `ReadWritePropertyMap` containing the
+      pairs source-face, target-face. 
+    \cgalParamEnd
+  \cgalNamedParamsEnd
+  
+  \param np2 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  
+  \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_point_map}
+      the property map with the points associated to the vertices of `tm`.
+      If this parameter is omitted, an internal property map for
+      `CGAL::vertex_point_t` should be available in `TargetMesh`
+    \cgalParamEnd
+  \cgalNamedParamsEnd
 
   The points from `sm` to `tm` are converted using
   `CGAL::Cartesian_converter<SourceKernel, TargetKernel>`.
   `SourceKernel` and `TargetKernel` are deduced using `CGAL::Kernel_traits`
-  from the value types of `Src_vpm` and `Tgt_vpm`.
+  from the value types of the vertex_point_maps.
 
   Other properties are not copied.
 */
-#if defined(DOXYGEN_RUNNING) // Use template default arguments
 template <typename SourceMesh, typename TargetMesh,
-          typename V2V = Emptyset_iterator,
-          typename H2H = Emptyset_iterator,
-          typename F2F = Emptyset_iterator,
-          typename Src_vpm = typename boost::property_map<SourceMesh, vertex_point_t>::const_type,
-          typename Tgt_vpm = typename boost::property_map<TargetMesh, vertex_point_t>::type>
+          #ifndef DOXYGEN_RUNNING
+          typename T1, typename Tag1, typename Base1, 
+          typename T2, typename Tag2, typename Base2
+          #else
+          typename NamedParameters1, typename NamedParameters2
+          #endif
+          >
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
-                     V2V v2v = V2V(), H2H h2h = H2H(), F2F f2f = F2F(),
-                     Src_vpm sm_vpm = get(vertex_point, sm),
-                     Tgt_vpm tm_vpm = get(vertex_point, tm) )
-#else // use the overloads
+                     #ifndef DOXYGEN_RUNNING
+                     const CGAL::cgal_bgl_named_params<T1,Tag1,Base1>& np1,
+                     const CGAL::cgal_bgl_named_params<T2,Tag2,Base2>& np2
+                     #else
+                     const NamedParameters1& np1,
+                     const NamedParameters2& np2
+                     #endif
+                     )
+{
+  using boost::choose_param;
+  internal::copy_face_graph(sm, tm,
+                            CGAL::graph_has_property<SourceMesh,boost::halfedge_index_t>(),
+                            choose_param(get_param(np1, internal_np::vertex_to_vertex_output_iterator),
+                                         impl::make_functor(get_param(np1, internal_np::vertex_to_vertex_map))),
+                            choose_param(get_param(np1, internal_np::halfedge_to_halfedge_output_iterator),
+                                         impl::make_functor(get_param(np1, internal_np::halfedge_to_halfedge_map))),
+                            choose_param(get_param(np1, internal_np::face_to_face_output_iterator),
+                                         impl::make_functor(get_param(np1, internal_np::face_to_face_map))),
+                            choose_param(get_param(np1, internal_np::vertex_point),
+                                         get(vertex_point, sm)),
+                            choose_param(get_param(np2, internal_np::vertex_point),
+                                         get(vertex_point, tm)));
+}
+
+template <typename SourceMesh, typename TargetMesh>
+void copy_face_graph(const SourceMesh& sm, TargetMesh& tm)
+{
+  copy_face_graph(sm, tm, parameters::all_default(), parameters::all_default());
+}
+
+template <typename SourceMesh, typename TargetMesh, 
+          typename T, typename Tag, typename Base >
+void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, 
+                     const CGAL::cgal_bgl_named_params<T,Tag,Base>& np)
+{
+  copy_face_graph(sm, tm, np, parameters::all_default());
+}
+
+#if !defined(DOXYGEN_RUNNING)
 template <typename SourceMesh, typename TargetMesh,
           typename V2V, typename H2H, typename F2F,
           typename Src_vpm, typename Tgt_vpm>
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                      V2V v2v, H2H h2h, F2F f2f,
                      Src_vpm sm_vpm, Tgt_vpm tm_vpm )
-#endif
 {
   internal::copy_face_graph(sm, tm,
                             CGAL::graph_has_property<SourceMesh,boost::halfedge_index_t>(),
@@ -274,11 +375,6 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                             sm_vpm, tm_vpm);
 }
 
-#if !defined(DOXYGEN_RUNNING)
-template <typename SourceMesh, typename TargetMesh>
-void copy_face_graph(const SourceMesh& sm, TargetMesh& tm)
-{ copy_face_graph(sm, tm, Emptyset_iterator(), Emptyset_iterator(), Emptyset_iterator(),
-                  get(vertex_point, sm), get(vertex_point, tm)); }
 
 template <typename SourceMesh, typename TargetMesh, typename V2V>
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V v2v)

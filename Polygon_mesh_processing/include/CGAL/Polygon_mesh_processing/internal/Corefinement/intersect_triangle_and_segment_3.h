@@ -31,6 +31,7 @@
 #include <CGAL/property_map.h>
 
 namespace CGAL{
+namespace Polygon_mesh_processing {
 namespace Corefinement{
 
 
@@ -178,6 +179,6 @@ intersection_type(
   }
 }
 
-}} //namespace CGAL::internal_IOP
+} } } // CGAL::Polygon_mesh_processing::Corefinement
 
 #endif //CGAL_INTERNAL_PMP_INTERSECT_TRIANGLE_AND_SEGMENT_3_H

@@ -12,6 +12,19 @@ typedef CGAL::Surface_mesh<K::Point_3>             Mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
+template <class TriangleMesh>
+struct My_visitor :
+  public CGAL::Polygon_mesh_processing::Corefinement::Default_visitor<TriangleMesh>
+{
+  void after_subface_creations(TriangleMesh&){++(*i);}
+
+  My_visitor()
+    : i (new int(0) )
+  {}
+
+  boost::shared_ptr<int> i;
+};
+
 void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_points,
           std::size_t nb_vertices_after_autorefine, bool all_fixed, std::size_t nb_vertices_after_fix)
 {
@@ -25,6 +38,7 @@ void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_poin
     exit(EXIT_FAILURE);
   }
   input.close();
+  std::size_t nb_vertices_before_autorefine = num_vertices(mesh);
 
 // Testing surface_self_intersection()
   std::vector< std::vector<K::Point_3> >polylines;
@@ -36,8 +50,11 @@ void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_poin
   assert(total_nb_points == total_nb_pt);
 
 // Testing autorefine()
-  PMP::experimental::autorefine(mesh);
+  My_visitor<Mesh> visitor;
+  PMP::experimental::autorefine(mesh,
+    PMP::parameters::visitor(visitor));
   assert( nb_vertices_after_autorefine==num_vertices(mesh));
+  assert( (nb_vertices_before_autorefine!=nb_vertices_after_autorefine)== (*(visitor.i) != 0) );
 
 // Testing autorefine_and_remove_self_intersections()
   input.open(fname);

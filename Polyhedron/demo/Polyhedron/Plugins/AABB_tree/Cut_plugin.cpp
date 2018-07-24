@@ -562,7 +562,21 @@ public:
     //Vertex source code
     const char tex_vertex_source[] =
     {
-        "#version 120 \n"
+        "#version 150 \n"
+        "in vec4 vertex;\n"
+        "in vec2 tex_coord; \n"
+        "uniform mat4 mvp_matrix;\n"
+        "uniform mat4 f_matrix;\n"
+        "out vec2 texc;\n"
+        "void main(void)\n"
+        "{\n"
+        "   gl_Position = mvp_matrix * f_matrix * vertex;\n"
+        "   texc = tex_coord;\n"
+        "}"
+    };
+    
+    const char tex_vertex_source_comp[] =
+    {
         "attribute highp vec4 vertex;\n"
         "attribute highp vec2 tex_coord; \n"
         "uniform highp mat4 mvp_matrix;\n"
@@ -577,7 +591,17 @@ public:
     //Vertex source code
     const char tex_fragment_source[] =
     {
-        "#version 120 \n"
+        "#version 150 \n"
+        "uniform sampler2D s_texture;\n"
+        "in vec2 texc;\n"
+        "out vec4 out_color; \n"
+        "void main(void) { \n"
+        "out_color = texture(s_texture, texc.st);\n"
+        "} \n"
+        "\n"
+    };
+    const char tex_fragment_source_comp[] =
+    {
         "uniform sampler2D texture;\n"
         "varying highp vec2 texc;\n"
         "void main(void) { \n"
@@ -585,24 +609,38 @@ public:
         "} \n"
         "\n"
     };
-    QOpenGLShader *tex_vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
-    if(!tex_vertex_shader->compileSourceCode(tex_vertex_source))
+    QOpenGLShader tex_vertex_shader(QOpenGLShader::Vertex);
+    QOpenGLShader tex_fragment_shader(QOpenGLShader::Fragment);
+    if(QOpenGLContext::currentContext()->format().majorVersion() >= 3)
     {
+      if(!tex_vertex_shader.compileSourceCode(tex_vertex_source))
+      {
         std::cerr<<"Compiling vertex source FAILED"<<std::endl;
-    }
-
-    QOpenGLShader *tex_fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
-    if(!tex_fragment_shader->compileSourceCode(tex_fragment_source))
-    {
+      }
+      
+      if(!tex_fragment_shader.compileSourceCode(tex_fragment_source))
+      {
         std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+      }
     }
-
-    tex_rendering_program = new QOpenGLShaderProgram();
-    if(!tex_rendering_program->addShader(tex_vertex_shader))
+    else
+    {
+      if(!tex_vertex_shader.compileSourceCode(tex_vertex_source_comp))
+      {
+        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+      }
+      
+      if(!tex_fragment_shader.compileSourceCode(tex_fragment_source_comp))
+      {
+        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+      }
+    }
+    tex_rendering_program = new QOpenGLShaderProgram(CGAL::QGLViewer::QGLViewerPool().first());
+    if(!tex_rendering_program->addShader(&tex_vertex_shader))
     {
         std::cerr<<"adding vertex shader FAILED"<<std::endl;
     }
-    if(!tex_rendering_program->addShader(tex_fragment_shader))
+    if(!tex_rendering_program->addShader(&tex_fragment_shader))
     {
         std::cerr<<"adding fragment shader FAILED"<<std::endl;
     }
@@ -645,7 +683,7 @@ public:
   {
     this->edge_sm_trees = edge_trees;
   }
-  void draw(CGAL::Three::Viewer_interface* viewer) const
+  void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE
   {
     if(!are_buffers_filled)
       initializeBuffers(viewer);
@@ -688,7 +726,7 @@ public:
       break;
     }
   }
-  void drawEdges(CGAL::Three::Viewer_interface *viewer) const
+  void drawEdges(CGAL::Three::Viewer_interface *viewer) const Q_DECL_OVERRIDE
   {
     if(m_cut_plane != CUT_SEGMENTS)
       return;
@@ -707,7 +745,7 @@ public:
     vaos[Edges]->release();
   }
 
-  void invalidateOpenGLBuffers()
+  void invalidateOpenGLBuffers()Q_DECL_OVERRIDE
   {
     computeElements();
     are_buffers_filled = false;

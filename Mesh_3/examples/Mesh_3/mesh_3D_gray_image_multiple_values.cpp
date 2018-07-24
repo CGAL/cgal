@@ -34,8 +34,9 @@ struct Image_to_multiple_iso_level_sets {
   const Set& set;
   Image_to_multiple_iso_level_sets(const Set& set) : set(set) {}
 
-  int operator()(float v) const {
-       return int(std::distance(set.begin(), set.lower_bound(v)));
+  int operator()(double v) const {
+       return int(std::distance(set.begin(),
+                                set.lower_bound(float(v))));
   }
 };
 

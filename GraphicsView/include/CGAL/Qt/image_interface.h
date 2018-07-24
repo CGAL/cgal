@@ -3,16 +3,12 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of a fork of the CGAL::QGLViewer library version 2.7.0.
-
+ This file is part of a fork of the QGLViewer library version 2.7.0.
  http://www.libqglviewer.com - contact@libqglviewer.com
 
  This file may be used under the terms of the GNU General Public License 
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
-
- libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -56,14 +52,14 @@ private Q_SLOTS:
   {
     if(currentlyFocused == imgHeight
        && ratioCheckBox->isChecked())
-    {imgWidth->setValue(i*ratio);}
+    {imgWidth->setValue(int(i*ratio));}
   }
 
   void imgWidthValueChanged(int i)
   {
     if(currentlyFocused == imgWidth
        && ratioCheckBox->isChecked())
-    {imgHeight->setValue(i/ratio);}
+    {imgHeight->setValue(int(i/ratio));}
   }
 
   void onFocusChanged(QWidget*, QWidget* now)

@@ -1,7 +1,6 @@
 Release History
 ===============
 
-
 Release 4.13
 ------------
 
@@ -13,10 +12,21 @@ Release date: September 2018
     The corresponding code is in the package GraphicsView.
     The dependency for the external library libQGLViewer is therefore dropped for all demos.
 
+### General
+
+ -  A new function `CGAL::draw()` is added in the packages Polyhedral
+    Surface, Surface Mesh, Linear Cell Complex, 2D Triangulations, and 3D
+    Triangulations, enabling to draw the corresponding data structures.
+
 ### 2D and 3D Linear Geometry Kernel
 -   An operator() that takes a Ray_3 has been added to the concept
     ConstructProjectedPoint 3.
 
+
+### CGAL and Boost Property Maps
+
+-   Addition of a read-write property map to convert on-the-fly geometric 
+    object from Cartesian kernels
 
 ### 2D Triangulations
 
@@ -39,9 +49,72 @@ Release date: September 2018
     to reflect the real needs of the code (some types and operators were used
     in the code but did not appear in the concepts).
 
+### Convex hull 3
+
+-   Added the function `extreme_points_3()` computing the
+    points on the convex hull without underlying connectivity.
+-   Added a traits adapter called `Extreme_points_traits_adapter_3`
+    that enables the use of the function `extreme_points_3()` on a range of keys,
+    each key being associated to 3D point using a property map.
+    This can be used to get the vertices of a mesh that are on it
+    convex hull, or the indices of points in a range that are
+    on it convex hull.
+-   Fix a bug in the computation of the 3D convex hull that was leaving extra points
+    within subset of coplanar points that do not belong to the minimal convex hull.
+
+
+### Point Set Processing
+
+-   Added a callback mechanism for functions
+    `CGAL::bilateral_smooth_point_set()`,
+    `CGAL::compute_average_spacing()`,
+    `CGAL::grid_simplify_point_set()`,
+    `CGAL::hierarchy_simplify_point_set()`,
+    `CGAL::jet_estimate_normals()`, `CGAL::jet_smooth_point_set()`,
+    `CGAL::pca_estimate_normals()`, `CGAL::remove_outliers()` and
+    `CGAL::wlop_simplify_and_regularize_point_set()`.
+
+
+### Classification 
+
+-   Added data structures to handle classification of Surface Meshes
+    and of Clusters.
+
+-   Added public API to compute features in parallel.
+
+-   **Breaking change**: features based on products/divisions of
+    eigenvalues are replaced by simple eigenvalue features. Features
+    based on statistics on the HSV color channels are replaced by
+    simple HSV color channel features.
+
+-   **Breaking change**: the API of
+    `CGAL::Classification::Point_set_feature_generator` has been simplified.
+
+
 ### Polygon Mesh Processing
+
+-   Added a new named parameter for stitching that allows to perform 
+    this operation per connected component instead of globally
+
 -   Added a function to apply a transformation to a mesh:
     - `CGAL::Polygon_mesh_processing::transform()`
+-   Added in corefinement-related functions a new named parameter `visitor`
+    that makes it possible to pass a visitor to the function in order to track
+    the creation of new faces.
+-   Added in all corefinement-related functions a named parameter `throw_on_self_intersection`
+    (that replaces the `bool` parameter in `corefine()`) that enables to check for
+    self-intersecting faces involved in the intersection before trying to corefine the
+    input meshes.
+-   Added the function `corefine_and_compute_boolean_operations()` that can be used to
+    compute the result of several Boolean operations between 2 volumes at the same time.
+-   Added the function `clip()` that can be used to clip a triangulated surface mesh
+    by a plane or a clipping volume.
+
+-  Fix a bug in `isotropic_remeshing()` making constrained vertices missing in the output
+-  Guarantee that constrained vertices are kept in the mesh after calling `isotropic_remeshing()`
+   (and not only the points associated to constrained vertices as it was before).
+-  Added a function in Polygon Mesh Processing to perform an extrusion of an open polygon mesh: 
+   -   `CGAL::Polygon_mesh_processing::extrude_mesh()`
 
 ### 3D Mesh Generation
 
@@ -66,10 +139,45 @@ Release date: September 2018
     `<CGAL/Mesh_3/Labeled_mesh_domain_3.h>`, that were deprecated since
     CGAL 4.5, are now removed.
 
+
+-   **Breaking change**: `CGAL::lloyd_optimize_mesh_3` now depends on
+    the _Eigen_ library.
+
+### Estimation of Local Differential Properties of Point-Sampled Surfaces Reference
+
+-   **Breaking change**: `CGAL::Monge_via_jet_fitting` now depends on
+    the _Eigen_ library.
+
+### Bounding Volumes
+
+-   **Breaking change**: `CGAL::Approximate_min_ellipsoid_d` now
+    depends on the _Eigen_ library.
+
 ### CGAL and the Boost Graph Library (BGL)
 
 -   Add helper function `CGAL::is_valid_polygon_mesh` that checks the
     validity of a polygon mesh using BGL functions.
+
+-   Improve the function `CGAL::Euler::collapse_edge` so that the target
+    vertex of the collapsed edge is always kept after the collapse.
+
+-   The function `copy_face_graph()` now uses named parameters, some allowing it 
+    to use property maps instead of output iterators. 
+
+-   Addition of the following named parameters : 
+    -   vertex_to_vertex_output_iterator
+    -   halfedge_to_halfedge_output_iterator
+    -   face_to_face_output_iterator
+    -   vertex_to_vertex_map
+    -   halfedge_to_halfedge_map
+    -   face_to_face_map
+
+### CGAL and Solvers
+
+-   **Breaking change**: `CGAL::Diagonalize_traits` is now deprecated
+    and shouldn't be used, `CGAL::Eigen_diagonalize_traits` (along
+    with the _Eigen_ library) should be used instead.
+
 
 Release 4.12
 ------------

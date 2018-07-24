@@ -613,7 +613,6 @@ void Scene::draw(CGAL::QGLViewer* viewer)
     }
     if(m_view_points && pos_points.size()>0)
     {
-        gl->glPointSize(2.0f);
         vao[0].bind();
         attrib_buffers(viewer);
         rendering_program.bind();

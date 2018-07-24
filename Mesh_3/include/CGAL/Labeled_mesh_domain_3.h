@@ -379,6 +379,10 @@ public:
 
   /// Named constructors, for domains created from 3D images
   /// @{
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable: 4003)
+#endif  
   BOOST_PARAMETER_MEMBER_FUNCTION(
                                   (Labeled_mesh_domain_3),
                                   static create_gray_image_mesh_domain,
@@ -479,6 +483,10 @@ public:
        p::construct_surface_patch_index =
        create_construct_surface_patch_index(construct_surface_patch_index_));
   }
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
   /// @}
 
   /**
