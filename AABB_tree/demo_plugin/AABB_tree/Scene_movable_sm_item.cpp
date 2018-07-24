@@ -4,6 +4,7 @@
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Buffer_for_vao.h>
 #include <CGAL/Three/Triangle_container.h>
+#include <CGAL/Three/Edge_container.h>
 typedef CGAL::Three::Triangle_container Tri;
 typedef CGAL::Three::Viewer_interface VI;
 struct Scene_movable_sm_item_priv
@@ -20,6 +21,8 @@ struct Scene_movable_sm_item_priv
     frame->setPosition(pos+offset);
     item->setTriangleContainer(0, new Triangle_container(VI::PROGRAM_WITH_LIGHT,
                                                          false));
+    item->setEdgeContainer(0, new Edge_container(VI::PROGRAM_NO_SELECTION,
+                                                 false));
   }
   ~Scene_movable_sm_item_priv()
   {
@@ -46,6 +49,8 @@ struct Scene_movable_sm_item_priv
   mutable QOpenGLShaderProgram *program;
   mutable std::vector<float> flat_normals;
   mutable std::vector<float> flat_vertices;
+  mutable std::vector<float> edges_vertices;
+  
 };
 
 Scene_movable_sm_item::Scene_movable_sm_item(const CGAL::qglviewer::Vec& pos, SMesh* sm,
@@ -59,10 +64,14 @@ void Scene_movable_sm_item_priv::initialize_buffers(CGAL::Three::Viewer_interfac
 {
   item->getTriangleContainer(0)->initializeBuffers(viewer); 
   item->getTriangleContainer(0)->setFlatDataSize(flat_vertices.size());
+  item->getEdgeContainer(0)->initializeBuffers(viewer);
+  item->getEdgeContainer(0)->setFlatDataSize(edges_vertices.size());
   flat_vertices.resize(0);
   flat_normals .resize(0);
+  edges_vertices.resize(0);
   flat_vertices.shrink_to_fit();
   flat_normals.shrink_to_fit();
+  edges_vertices.shrink_to_fit();
   
   item->are_buffers_filled = true;
 }
@@ -82,9 +91,12 @@ void Scene_movable_sm_item_priv::compute_elements() const
       facegraph->points();
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
   typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef boost::graph_traits<SMesh>::edge_descriptor edge_descriptor;
   typedef CGAL::Buffer_for_vao<float, unsigned int> CPF;
   flat_vertices.clear();
   flat_normals.clear();
+  edges_vertices.clear();
+  //faces
   BOOST_FOREACH(face_descriptor fd, faces(*facegraph))
   {
     BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *facegraph),*facegraph))
@@ -98,12 +110,29 @@ void Scene_movable_sm_item_priv::compute_elements() const
       CPF::add_normal_in_buffer(n, flat_normals);
     }
   }  
+  //edges
+  BOOST_FOREACH(edge_descriptor ed, edges(*facegraph))
+  {
+      Point p = positions[source(ed, *facegraph)] + offset;
+      EPICK::Point_3 pc(p.x() - center_.x,
+                        p.y() - center_.y,
+                        p.z() - center_.z);
+      CPF::add_point_in_buffer(pc, edges_vertices);
+      p = positions[target(ed, *facegraph)] + offset;
+      pc=EPICK::Point_3(p.x() - center_.x,
+                        p.y() - center_.y,
+                        p.z() - center_.z);
+      CPF::add_point_in_buffer(pc, edges_vertices);
+  }  
+  
   
   
   item->getTriangleContainer(0)->allocate(Tri::Flat_vertices, flat_vertices.data(),
                                           static_cast<int>(flat_vertices.size()*sizeof(float)));
   item->getTriangleContainer(0)->allocate(Tri::Flat_normals, flat_normals.data(),
                                           static_cast<int>(flat_normals.size()*sizeof(float)));
+  item->getEdgeContainer(0)->allocate(Tri::Flat_vertices, edges_vertices.data(),
+                                          static_cast<int>(edges_vertices.size()*sizeof(float)));
   QApplication::restoreOverrideCursor();
 }
 
@@ -122,6 +151,18 @@ void Scene_movable_sm_item::draw(CGAL::Three::Viewer_interface* viewer) const
   getTriangleContainer(0)->setFrameMatrix(d->f_matrix);
   
   getTriangleContainer(0)->draw(viewer, true);
+}
+
+void Scene_movable_sm_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
+{
+  if(!isInit() && viewer->context()->isValid())
+    initGL();
+  if(!are_buffers_filled)
+    d->initialize_buffers(viewer);
+  getEdgeContainer(0)->setColor(Qt::black);
+  getEdgeContainer(0)->setFrameMatrix(d->f_matrix);
+  
+  getEdgeContainer(0)->draw(viewer, true);
 }
 
 QString Scene_movable_sm_item::toolTip() const {

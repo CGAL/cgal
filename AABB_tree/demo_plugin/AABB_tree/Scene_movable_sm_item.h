@@ -34,12 +34,14 @@ public:
   Scene_item* clone() const{return NULL;}
   QString toolTip() const;
   void draw(CGAL::Three::Viewer_interface *) const;
+  void drawEdges(CGAL::Three::Viewer_interface *) const;
   void compute_bbox() const;
   ~Scene_movable_sm_item();
   bool manipulatable() const { return true;}
   ManipulatedFrame* manipulatedFrame();
   const CGAL::qglviewer::Vec& center() const;
-  virtual bool supportsRenderingMode(RenderingMode m) const { return m==Flat ; }
+  virtual bool supportsRenderingMode(RenderingMode m) const { return m==Flat 
+        || m==Wireframe; }
   virtual void invalidateOpenGLBuffers();
   void setFMatrix(const GLdouble matrix[16]);
   void computeElements() const;

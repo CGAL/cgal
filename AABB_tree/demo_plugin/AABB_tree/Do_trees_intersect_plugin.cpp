@@ -39,8 +39,8 @@ public:
     const int indexB = scene->selectionBindex();
     return qobject_cast<Scene_surface_mesh_item*>(scene->item(indexA))
         && qobject_cast<Scene_surface_mesh_item*>(scene->item(indexB))
-        && fixed_item == NULL
-        && moving_item == NULL;
+        && base_item == NULL
+        && query_item == NULL;
   }
   
   QList<QAction*> actions() const Q_DECL_OVERRIDE
@@ -62,8 +62,8 @@ public:
     }
     t1 = 0;
     t2 = 0;
-    moving_item = 0;
-    fixed_item = 0;
+    query_item = 0;
+    base_item = 0;
   }
 private Q_SLOTS:
   void start()
@@ -75,14 +75,14 @@ private Q_SLOTS:
     Scene_surface_mesh_item* itemB = qobject_cast<Scene_surface_mesh_item*>(scene->item(indexB));
     connect(itemA, &Scene_surface_mesh_item::aboutToBeDestroyed,
             [this](){
-      if(moving_item)
-        scene->erase(scene->item_id(moving_item));
+      if(query_item)
+        scene->erase(scene->item_id(query_item));
       cleanup();
     });
     connect(itemB, &Scene_surface_mesh_item::aboutToBeDestroyed,
             [this](){
-      if(moving_item)
-        scene->erase(scene->item_id(moving_item));
+      if(query_item)
+        scene->erase(scene->item_id(query_item));
       cleanup();
     });
     
@@ -95,21 +95,31 @@ private Q_SLOTS:
                           (itemB->bbox().min(1) + itemB->bbox().max(1))/2.0, 
                           (itemB->bbox().min(2) + itemB->bbox().max(2))/2.0);
     
-    moving_item = new Scene_movable_sm_item(pos,tm2,"");
-    connect(moving_item, &Scene_surface_mesh_item::aboutToBeDestroyed,
+    query_item = new Scene_movable_sm_item(pos,tm2,"");
+    connect(query_item, &Scene_surface_mesh_item::aboutToBeDestroyed,
             [this](){
       cleanup();
     });
-    fixed_item = itemA;
-    connect(moving_item->manipulatedFrame(), &CGAL::qglviewer::ManipulatedFrame::modified,
+    connect(query_item->manipulatedFrame(), &CGAL::qglviewer::ManipulatedFrame::modified,
             this, &DoTreesIntersectplugin::update_trees);
-    moving_item->setRenderingMode(Flat);
-    moving_item->setName(itemB->name());
+    query_item->setRenderingMode(Flat);
+    query_item->setName(itemB->name());
     itemB->setVisible(false);
-    itemA->setRenderingMode(Wireframe);
-    scene->addItem(moving_item);
+    itemA->setVisible(false);
+    scene->setSelectedItem(scene->addItem(query_item));
+    base_item = new Scene_movable_sm_item(pos,tm,"");
+    connect(base_item, &Scene_surface_mesh_item::aboutToBeDestroyed,
+            [this](){
+      cleanup();
+    });
+    connect(base_item->manipulatedFrame(), &CGAL::qglviewer::ManipulatedFrame::modified,
+            this, &DoTreesIntersectplugin::update_trees);
+    base_item->setRenderingMode(Wireframe);
+    base_item->setName(itemA->name());
+    scene->addItem(base_item);
     update_trees();
-    moving_item->redraw();
+    query_item->redraw();
+    base_item->redraw();
     QApplication::restoreOverrideCursor();
   }
 public Q_SLOTS:
@@ -117,40 +127,60 @@ public Q_SLOTS:
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(
           CGAL::QGLViewer::QGLViewerPool().first());
-    const double* matrix = moving_item->manipulatedFrame()->matrix();
-    moving_item->setFMatrix(matrix);
-    EPICK::Aff_transformation_3 translation(CGAL::TRANSLATION, -EPICK::Vector_3(moving_item->center().x,
-                                                                               moving_item->center().y,
-                                                                               moving_item->center().z));
-    EPICK::Aff_transformation_3 rota(
-          matrix[0], matrix[4], matrix[8],matrix[12],
-        matrix[1], matrix[5], matrix[9],matrix[13],
-        matrix[2], matrix[6], matrix[10],matrix[14]);
-    EPICK::Aff_transformation_3 transfo = 
-        rota*translation;
-    t2->traits().set_transformation(transfo);
+    
+    const double* matrixB = base_item->manipulatedFrame()->matrix();
+    base_item->setFMatrix(matrixB);
+    EPICK::Aff_transformation_3 translationB(CGAL::TRANSLATION, -EPICK::Vector_3(base_item->center().x,
+                                                                                 base_item->center().y,
+                                                                                 base_item->center().z));
+    EPICK::Aff_transformation_3 rotaB(
+          matrixB[0], matrixB[4], matrixB[8],matrixB[12],
+        matrixB[1], matrixB[5], matrixB[9],matrixB[13],
+        matrixB[2], matrixB[6], matrixB[10],matrixB[14]);
+    EPICK::Aff_transformation_3 transfoB = 
+        rotaB*translationB;
+    t1->traits().set_transformation(transfoB);
+    
+    const double* matrixA = query_item->manipulatedFrame()->matrix();
+    query_item->setFMatrix(matrixA);
+    EPICK::Aff_transformation_3 translationA(CGAL::TRANSLATION, -EPICK::Vector_3(query_item->center().x,
+                                                                                 query_item->center().y,
+                                                                                 query_item->center().z));
+    EPICK::Aff_transformation_3 rotaA(
+          matrixA[0], matrixA[4], matrixA[8],matrixA[12],
+        matrixA[1], matrixA[5], matrixA[9],matrixA[13],
+        matrixA[2], matrixA[6], matrixA[10],matrixA[14]);
+    EPICK::Aff_transformation_3 transfoA = 
+        rotaA*translationA;
+    t2->traits().set_transformation(transfoA);
     if(t2->do_intersect(*t1))
-      moving_item->setColor(QColor(Qt::red));
+      query_item->setColor(QColor(Qt::red));
     else
     {
+#if 0
       typedef boost::property_map<SMesh, CGAL::vertex_point_t>::type VPM;
-      VPM vpm2 = get(CGAL::vertex_point, *moving_item->getFaceGraph());
+      VPM vpm2 = get(CGAL::vertex_point, *query_item->getFaceGraph());
       CGAL::Side_of_triangle_mesh<SMesh, EPICK,
           VPM, Tree> sotm1(*t1);
-      if(sotm1((transfo).transform(vpm2[*moving_item->getFaceGraph()->vertices().begin()])) != CGAL::ON_UNBOUNDED_SIDE)
+      if(sotm1((transfoA).transform(vpm2[*query_item->getFaceGraph()->vertices().begin()])) != CGAL::ON_UNBOUNDED_SIDE)
       {        
-        moving_item->setColor(QColor(Qt::blue));
+        query_item->setColor(QColor(Qt::blue));
       }
       else
       {
         CGAL::Side_of_triangle_mesh<SMesh, EPICK,
             VPM, Tree> sotm2(*t2);
-        if(sotm2(fixed_item->face_graph()->point(*fixed_item->face_graph()->vertices().begin())) != CGAL::ON_UNBOUNDED_SIDE)
-          moving_item->setColor(QColor(Qt::blue));
+        if(sotm2(base_item->face_graph()->point(*base_item->face_graph()->vertices().begin())) != CGAL::ON_UNBOUNDED_SIDE)
+          query_item->setColor(QColor(Qt::blue));
         else
-          moving_item->setColor(QColor(Qt::green));
+#endif
+          query_item->setColor(QColor(Qt::green));
+      #if 0
       }
+#endif
+        
     }
+    
     viewer->update();
   }
   
@@ -162,8 +192,8 @@ public Q_SLOTS:
     if(t2)
       delete t2;
     t2 = NULL;
-    moving_item = NULL;
-    fixed_item = NULL;
+    query_item = NULL;
+    base_item = NULL;
   }
   
 private:
@@ -172,7 +202,7 @@ private:
   CGAL::Three::Scene_interface* scene;
   QMainWindow* mw;
   Tree *t1, *t2;
-  Scene_movable_sm_item* moving_item;
-  Scene_surface_mesh_item* fixed_item;
+  Scene_movable_sm_item* query_item;
+  Scene_movable_sm_item* base_item;
 };
 #include "Do_trees_intersect_plugin.moc"
