@@ -55,7 +55,7 @@ void cotan_matrix_test(const SparseMatrix& c)
   }
   //Every row should sum up to 0, allow for slight error for large meshes
   std::cout<<"sum is: "<< sum << "\n";
-  assert(sum < 0.000000001);
+  assert(sum < 1e-8);
 }
 
 void mass_matrix_test(const SparseMatrix& M)
@@ -107,7 +107,7 @@ int main()
   Mesh sm;
   Vertex_distance_map vertex_distance_map = get(Vertex_distance_tag(),sm);
 
-  std::ifstream in("data/pyramid0.off");
+  std::ifstream in("../data/pyramid0.off");
   in >> sm;
   if(!in || num_vertices(sm) == 0) {
     std::cerr << "Problem loading the input data" << std::endl;
@@ -128,7 +128,7 @@ int main()
   double length_sum = hm.summation_of_edges();
   //there are 6 edges in pyramid
   double time_step_computed = (1./6)*length_sum;
-  assert(time_step_computed ==time_step);
+  assert(time_step_computed*time_step_computed ==time_step);
 
 
   const SparseMatrix& K = hm.kronecker_delta();
@@ -148,7 +148,7 @@ int main()
   Mesh sm2;
   Vertex_distance_map vertex_distance_map2 = get(Vertex_distance_tag(),sm2);
 
-  std::ifstream llets("data/sphere.off");
+  std::ifstream llets("../data/sphere.off");
   llets>>sm2;
   if(!llets|| num_vertices(sm2) == 0) {
     std::cerr << "Problem loading the input data" << std::endl;
@@ -179,7 +179,7 @@ int main()
   Vertex_distance_map vertex_distance_map3 = get(Vertex_distance_tag(),sm3);
 
 
-  std::ifstream in2("data/disk.off");
+  std::ifstream in2("../data/disk.off");
   in2>>sm3;
   if(!in2|| num_vertices(sm3) == 0) {
     std::cerr << "Problem loading the input data" << std::endl;
