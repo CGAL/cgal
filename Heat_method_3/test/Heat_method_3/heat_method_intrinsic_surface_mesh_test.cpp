@@ -33,6 +33,9 @@ typedef boost::graph_traits<Idt>::vertex_descriptor vertex_descriptor;
 typedef CGAL::Heat_method_3::Heat_method_3<Idt,Kernel, Idt::Vertex_distance_map> Heat_method;
 typedef CGAL::Heat_method_3::Heat_method_Eigen_traits_3::SparseMatrix SparseMatrix;
 
+
+// In the STL of VC2013 std::next requires a ForwardIterator
+// which  iDT::Vertex_iterator is not
 template <typename T>
 T
 NEXT(T t, int n)
@@ -43,14 +46,14 @@ NEXT(T t, int n)
   return t;
 }
 
-#if 1
+
 void source_set_tests(Heat_method hm, const Idt& sm)
 {  
   sm_vertex_descriptor source = *(vertices(sm).first);
   hm.add_source(source);
   //  const std::set<vertex_descriptor>& source_copy = hm.get_sources();
-  //assert(*(source_copy.begin()) == source);;
-  // assert(*(hm.sources_begin()) == source);
+  //assert(*(source_copy.begin()) == source);
+  assert(*(hm.sources_begin()) == source);
   assert(source == *(hm.sources_begin()));
   assert(hm.remove_source(source));
   assert((hm.get_sources()).empty());
@@ -64,9 +67,9 @@ void source_set_tests(Heat_method hm, const Idt& sm)
   
 }
 
-#endif
 
-#if 1
+
+
 
 void cotan_matrix_test(const SparseMatrix& c)
 {
@@ -125,7 +128,7 @@ void check_no_update(const Idt& sm, const Vertex_distance_map& original, const V
 }
 #endif
 
-#endif
+
 
 
 
@@ -156,8 +159,6 @@ int main(int argc, char*argv[])
 
   source_set_tests(hm,idt);
 
-#if 1 
-
   //cotan matrix tests
   const SparseMatrix& M = hm.mass_matrix();
   //std::cout<<"and M is: "<< Eigen::MatrixXd(M) << "\n";
@@ -185,8 +186,6 @@ int main(int argc, char*argv[])
   SparseMatrix XD = hm.compute_divergence(X,4);
 
   Eigen::VectorXd solved_dist = hm.solve_phi(c, XD,4);
-
-#endif
 
   return 0;
 }

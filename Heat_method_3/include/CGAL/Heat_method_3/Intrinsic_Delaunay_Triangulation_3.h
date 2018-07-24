@@ -157,6 +157,19 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
          {
            return idt(target(hd,idt.triangle_mesh()));
          }
+
+
+         bool operator==(const Vertex_descriptor& other) const
+         {
+           return (hd == other.hd) && (idt == other.idt); 
+         }
+         
+         
+         bool operator==(const vertex_descriptor& vd) const
+         {
+           vertex_descriptor vdthis = *this;
+           return vdthis == vd;
+         }
        };
 
        
@@ -450,6 +463,22 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
        std::map<vertex_descriptor,vertex_descriptor> v2v, vtov;
       };
 
+  /*
+template <typename TM,
+          typename T,
+          typename VDM,
+          typename VPM,
+          typename FIM,
+          typename EIM,
+          typename LA>
+bool operator==(const typename Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,FIM,EIM,LA>::Vertex_descriptor& vd,
+                const typename Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,FIM,EIM,LA>::vertex_descriptor& tmvd)
+{
+  typename Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,FIM,EIM,LA>::vertex_descriptor& tmvd2 = vd;
+  return tmvd == tmvd2;
+}
+  */
+     
 } // namespace Intrinsic_Delaunay_Triangulation_3
 
 namespace Heat_method_3 {
