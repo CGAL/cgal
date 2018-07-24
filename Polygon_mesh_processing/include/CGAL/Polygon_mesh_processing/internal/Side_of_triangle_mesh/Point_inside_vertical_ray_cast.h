@@ -36,6 +36,21 @@
 namespace CGAL {
 namespace internal {
 
+// added for AABB_do_intersect_transform_traits
+template<class AABBTree>
+typename AABBTree::Bounding_box
+get_tree_bbox(const AABBTree& tree)
+{
+  return tree.bbox();
+}
+
+template<class AABBNode, class AABBTraits>
+typename AABBNode::Bounding_box
+get_node_bbox(const AABBNode& node, const AABBTraits&)
+{
+  return node.bbox();
+}
+
 // internal class for point inside test, using existing AABB tree
 template<class Kernel, class AABBTree>
 class Point_inside_vertical_ray_cast 
@@ -53,7 +68,7 @@ public:
     typename Kernel::Construct_ray_3 ray_functor = Kernel().construct_ray_3_object(),
     typename Kernel::Construct_vector_3 vector_functor = Kernel().construct_vector_3_object() ) const
   {
-    const typename Traits::Bounding_box& bbox = tree.bbox();
+    typename Traits::Bounding_box bbox = get_tree_bbox(tree);
 
     if(   point.x() < bbox.xmin() || point.x() > bbox.xmax()
       || point.y() < bbox.ymin() || point.y() > bbox.ymax()
@@ -64,7 +79,7 @@ public:
 
     //the direction of the vertical ray depends on the position of the point in the bbox
     //in order to limit the expected number of nodes visited.
-    Ray query = ray_functor(point, vector_functor(0,0,(2*point.z() <  tree.bbox().zmax()+tree.bbox().zmin()?-1:1)));
+    Ray query = ray_functor(point, vector_functor(0,0,(2*point.z() <  bbox.zmax()+bbox.zmin()?-1:1)));
     boost::optional<Bounded_side> res = is_inside_ray_tree_traversal<true>(query, tree);
 
     if(res == boost::none)

@@ -122,7 +122,7 @@ public:
   template <class Query>
   bool do_intersect(const Query& query, const Node& node) const
   {
-    return do_intersect(query,node.bbox());
+    return do_intersect(query,get_node_bbox(node, this->m_aabb_traits));
   }
 
 private:
@@ -155,7 +155,6 @@ public:
     if (orient_2==COLLINEAR){
       //in that case the projection of the triangle along the z-axis is a segment.
       const typename Kernel::Point_2& other_point = p0!=p1?p1:p2;
-      //~ if ( orientation(p0,other_point,q) != COLLINEAR ) return;///no intersection
       if ( orientation(p0,other_point,q) != COLLINEAR ) return;///no intersection
       
       //check if the ray source is above or below the triangle and compare it 
