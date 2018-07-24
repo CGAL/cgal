@@ -1,0 +1,2 @@
+examples/Polygon_mesh_processing/remove_degeneracies_example.cpp
+examples/Polygon_mesh_processing/remove_degeneracies_example_OM.cpp
