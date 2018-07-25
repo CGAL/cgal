@@ -38,6 +38,7 @@ enum Error_code
   ERROR_EMPTY_MESH,               ///< Input mesh is empty
   ERROR_NON_TRIANGULAR_MESH,      ///< Input mesh is not triangular
   ERROR_NO_TOPOLOGICAL_DISC,      ///< Input mesh is not a topological disc
+  ERROR_NO_TOPOLOGICAL_BALL,      ///< Input mesh is not a topological ball
   ERROR_BORDER_TOO_SHORT,         ///< This border parameterization requires a longer border
   ERROR_NON_CONVEX_BORDER,        ///< This parameterization method requires a convex border
   ERROR_CANNOT_SOLVE_LINEAR_SYSTEM,///< Cannot solve linear system

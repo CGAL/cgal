@@ -175,7 +175,7 @@ bool check_cone_validity(const SeamMesh& mesh,
   // check cone numbers
   if((number_of_cones_in_tm == 3 && cones.size() != 4) ||
      (number_of_cones_in_tm == 4 && cones.size() != 6)) {
-    std::cerr << "Error: Problem in number of cones: " << std::endl;
+    std::cerr << "Invalid cone placement: " << std::endl;
     std::cerr << number_of_cones_in_tm << " cones in the base mesh" << std::endl;
     std::cerr << cones.size() << " cones in the seam mesh" << std::endl;
     return false;
