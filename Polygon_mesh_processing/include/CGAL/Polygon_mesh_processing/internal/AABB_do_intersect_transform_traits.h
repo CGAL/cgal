@@ -63,15 +63,16 @@ class AABB_do_intersect_transform_traits:
   void set_transformation(const Aff_transformation_3<Kernel>& trans, CGAL::Tag_false) const
   {}
   Bbox_3
-  compute_transformed_bbox_impl(const Bbox_3& bbox, const Aff_transformation_3<Kernel>& transfo, Tag_true)const
+  compute_transformed_bbox_impl(const Bbox_3& bbox, Tag_true) const
   {
-    if(has_rotation)
-      return compute_transformed_bbox_impl(bbox, m_transfo, Tag_false());
+    if(!has_rotation)
+      return compute_transformed_bbox_impl(bbox, Tag_false());
+
     typedef Simple_cartesian<Interval_nt_advanced> AK;
     typedef Cartesian_converter<Kernel, AK>    C2F;
     C2F c2f;
 
-    AK::Aff_transformation_3 af = c2f(transfo);
+    AK::Aff_transformation_3 af = c2f(m_transfo);
 
     AK::FT xtrm[6] = { c2f(bbox.min(0)), c2f(bbox.max(0)),
                        c2f(bbox.min(1)), c2f(bbox.max(1)),
@@ -92,13 +93,13 @@ class AABB_do_intersect_transform_traits:
   }
 
   Bbox_3
-  compute_transformed_bbox_impl(const Bbox_3& bbox, const Aff_transformation_3<Kernel>& transfo, Tag_false)const
+  compute_transformed_bbox_impl(const Bbox_3& bbox, Tag_false) const
   {
     typedef Simple_cartesian<Interval_nt_advanced > AK;
     typedef Cartesian_converter<Kernel, AK>    C2F;
     C2F c2f;
 
-    AK::Aff_transformation_3 af = c2f(transfo);
+    AK::Aff_transformation_3 af = c2f(m_transfo);
 
     AK::FT xtrm[6] = { c2f(bbox.min(0)), c2f(bbox.max(0)),
                        c2f(bbox.min(1)), c2f(bbox.max(1)),
@@ -130,7 +131,7 @@ public:
   Bbox_3
   compute_transformed_bbox(const Bbox_3& bbox) const
   {
-    return compute_transformed_bbox_impl(bbox, m_transfo, SUPPORTS_ROTATION());
+    return compute_transformed_bbox_impl(bbox, SUPPORTS_ROTATION());
   }
 
   // Do_intersect predicate
