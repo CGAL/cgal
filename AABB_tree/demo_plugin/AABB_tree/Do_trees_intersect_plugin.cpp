@@ -9,20 +9,12 @@
 #include <CGAL/Three/Three.h>
 #include "Scene_surface_mesh_item.h"
 #include "Scene_movable_sm_item.h"
-#include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_do_intersect_transform_traits.h>
-#include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Edge_container.h>
 #include <CGAL/Three/Point_container.h>
+#include <CGAL/Rigid_mesh_collision_detection.h>
 #include "Scene.h"
-
-typedef CGAL::AABB_face_graph_triangle_primitive<SMesh> Primitive;
-typedef CGAL::AABB_do_intersect_transform_traits<EPICK, Primitive> Traits;
-typedef CGAL::AABB_tree<Traits> Tree;
 
 class DoTreesIntersectplugin :
     public QObject,
@@ -35,12 +27,12 @@ public:
   
   bool applicable(QAction*) const Q_DECL_OVERRIDE
   {
-    const int indexA = scene->selectionAindex();
-    const int indexB = scene->selectionBindex();
-    return qobject_cast<Scene_surface_mesh_item*>(scene->item(indexA))
-        && qobject_cast<Scene_surface_mesh_item*>(scene->item(indexB))
-        && base_item == NULL
-        && query_item == NULL;
+    Q_FOREACH(Scene::Item_id i, scene->selectionIndices())
+    {
+      if(! qobject_cast<Scene_surface_mesh_item*>(scene->item(i)))
+        return false;
+    }
+    return items.empty();
   }
   
   QList<QAction*> actions() const Q_DECL_OVERRIDE
@@ -53,68 +45,54 @@ public:
     this->messageInterface = mi;
     this->scene = sc;
     this->mw = mw;
-    QAction *actionCreateTrees= new QAction(QString("Start Intersection Tests(A/B)"), mw);
+    QAction *actionCreateTrees= new QAction(QString("Start Intersection Tests"), mw);
     actionCreateTrees->setProperty("submenuName", "AABB_tree");
     if(actionCreateTrees) {
       connect(actionCreateTrees, SIGNAL(triggered()),
               this, SLOT(start()));
       _actions << actionCreateTrees;
     }
-    query_item = 0;
-    base_item = 0;
   }
 private Q_SLOTS:
   void start()
   {
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    const int indexA = scene->selectionAindex();
-    const int indexB = scene->selectionBindex();
-    Scene_surface_mesh_item* itemA = qobject_cast<Scene_surface_mesh_item*>(scene->item(indexA));
-    Scene_surface_mesh_item* itemB = qobject_cast<Scene_surface_mesh_item*>(scene->item(indexB));
-    connect(itemA, &Scene_surface_mesh_item::aboutToBeDestroyed,
-            this, &DoTreesIntersectplugin::cleanup);
-    connect(itemB, &Scene_surface_mesh_item::aboutToBeDestroyed,
-            this, &DoTreesIntersectplugin::cleanup);
-    
-    
-    SMesh* tm = itemA->face_graph();
-    SMesh* tm2 = itemB->face_graph();
-    trees[tm] = new Tree (tm->faces_begin(), tm->faces_end(), *tm);
-    trees[tm2] = new Tree (tm2->faces_begin(), tm2->faces_end(), *tm2);
-    CGAL::qglviewer::Vec pos((itemB->bbox().min(0) + itemB->bbox().max(0))/2.0, 
-                          (itemB->bbox().min(1) + itemB->bbox().max(1))/2.0, 
-                          (itemB->bbox().min(2) + itemB->bbox().max(2))/2.0);
-    
-    query_item = new Scene_movable_sm_item(pos,tm2,"");
-    connect(query_item, &Scene_movable_sm_item::aboutToBeDestroyed,
-               this, &DoTreesIntersectplugin::cleanup);
-    connect(query_item->manipulatedFrame(), &CGAL::qglviewer::ManipulatedFrame::modified,
-            this, &DoTreesIntersectplugin::update_trees);
-    query_item->setRenderingMode(Flat);
-    query_item->setName(itemB->name());
-    itemB->setVisible(false);
-    itemA->setVisible(false);
-    scene->setSelectedItem(scene->addItem(query_item));
-    pos = CGAL::qglviewer::Vec((itemA->bbox().min(0) + itemA->bbox().max(0))/2.0, 
-                              (itemA->bbox().min(1) + itemA->bbox().max(1))/2.0, 
-                              (itemA->bbox().min(2) + itemA->bbox().max(2))/2.0);
-    
-    base_item = new Scene_movable_sm_item(pos,tm,"");
-    connect(base_item, &Scene_movable_sm_item::aboutToBeDestroyed,
-            this, &DoTreesIntersectplugin::cleanup);
-    connect(base_item->manipulatedFrame(), &CGAL::qglviewer::ManipulatedFrame::modified,
-            this, &DoTreesIntersectplugin::update_trees);
-    base_item->setRenderingMode(Wireframe);
-    base_item->setName(itemA->name());
-    scene->addItem(base_item);
-    update_trees();
-    query_item->redraw();
-    base_item->redraw();
-    
+    Q_FOREACH(Scene::Item_id i, scene->selectionIndices())
+    {
+      Scene_surface_mesh_item* item=qobject_cast<Scene_surface_mesh_item*>(scene->item(i));
+      connect(item, &Scene_surface_mesh_item::aboutToBeDestroyed,
+              this, &DoTreesIntersectplugin::cleanup);     
+      
+      CGAL::qglviewer::Vec pos((item->bbox().min(0) + item->bbox().max(0))/2.0, 
+                               (item->bbox().min(1) + item->bbox().max(1))/2.0, 
+                               (item->bbox().min(2) + item->bbox().max(2))/2.0);
+      
+      Scene_movable_sm_item* mov_item = new Scene_movable_sm_item(pos,item->face_graph(),"");
+      connect(mov_item, &Scene_movable_sm_item::aboutToBeDestroyed,
+              this, &DoTreesIntersectplugin::cleanup);
+      connect(mov_item->manipulatedFrame(), &CGAL::qglviewer::ManipulatedFrame::modified,
+              this, &DoTreesIntersectplugin::update_trees);
+      mov_item->setName(item->name());
+      mov_item->setRenderingMode(Wireframe);
+      item->setVisible(false);
+      items.push_back(mov_item);
+      scene->setSelectedItem(scene->addItem(mov_item));
+      mov_item->redraw();
+    }
     connect(static_cast<Scene*>(scene), &Scene::itemIndexSelected,
             this, &DoTreesIntersectplugin::update_trees);
+    Q_FOREACH(Scene_movable_sm_item* item, items)
+    {
+      meshes.push_back(*item->getFaceGraph());
+    }
+    col_det = new CGAL::Rigid_mesh_collision_detection<SMesh, EPICK>(meshes);
+    update_trees();
+    items.back()->setRenderingMode(Wireframe);
+    
     QApplication::restoreOverrideCursor();
   }
+  
+  
 public Q_SLOTS:
   void update_trees()
   {
@@ -123,80 +101,85 @@ public Q_SLOTS:
     
     Scene_movable_sm_item* sel_item = qobject_cast<Scene_movable_sm_item*>(scene->item(scene->mainSelectionIndex()));
     if(!sel_item)
-      return;
-    Scene_movable_sm_item* other_item = (base_item == sel_item) 
-        ? query_item
-        : base_item;
-    
-    const double* matrixB = base_item->manipulatedFrame()->matrix();
-    base_item->setFMatrix(matrixB);
-    EPICK::Aff_transformation_3 translationB(CGAL::TRANSLATION, -EPICK::Vector_3(base_item->center().x,
-                                                                                 base_item->center().y,
-                                                                                 base_item->center().z));
-    EPICK::Aff_transformation_3 rotaB(
-          matrixB[0], matrixB[4], matrixB[8],matrixB[12],
-        matrixB[1], matrixB[5], matrixB[9],matrixB[13],
-        matrixB[2], matrixB[6], matrixB[10],matrixB[14]);
-    EPICK::Aff_transformation_3 transfoB = 
-        rotaB*translationB;
-    trees[base_item->getFaceGraph()]->traits().set_transformation(transfoB);
-    
-    const double* matrixA = query_item->manipulatedFrame()->matrix();
-    query_item->setFMatrix(matrixA);
-    EPICK::Aff_transformation_3 translationA(CGAL::TRANSLATION, -EPICK::Vector_3(query_item->center().x,
-                                                                                 query_item->center().y,
-                                                                                 query_item->center().z));
-    EPICK::Aff_transformation_3 rotaA(
-          matrixA[0], matrixA[4], matrixA[8],matrixA[12],
-        matrixA[1], matrixA[5], matrixA[9],matrixA[13],
-        matrixA[2], matrixA[6], matrixA[10],matrixA[14]);
-    EPICK::Aff_transformation_3 transfoA = 
-        rotaA*translationA;
-    trees[query_item->getFaceGraph()]->traits().set_transformation(transfoA);
-
-    if(trees[sel_item->getFaceGraph()]->do_intersect(*trees[other_item->getFaceGraph()]))
-      sel_item->setColor(QColor(Qt::red));
-    else
+      return;    
+   
+    std::size_t mesh_id = 0;
+    std::size_t sel_id = 0;
+    Q_FOREACH(Scene_movable_sm_item* item, items)
     {
-      CGAL::Side_of_triangle_mesh<SMesh, EPICK,CGAL::Default, Tree> side_of_base(*trees[base_item->getFaceGraph()] );
-      EPICK::Point_3 query_pt = get(boost::vertex_point, *query_item->getFaceGraph(), *query_item->getFaceGraph()->vertices().begin());
-      if(side_of_base(transfoA.transform( query_pt )) != CGAL::ON_UNBOUNDED_SIDE)
-      {        
-        sel_item->setColor(QColor(Qt::blue));
-      }
-      else
+      if(item == sel_item)
       {
-        CGAL::Side_of_triangle_mesh<SMesh, EPICK, CGAL::Default, Tree> side_of_query(*trees[query_item->getFaceGraph()]);
-        query_pt = get(boost::vertex_point, *base_item->getFaceGraph(), *base_item->getFaceGraph()->vertices().begin());
-        if(side_of_query(transfoB.transform(query_pt)) != CGAL::ON_UNBOUNDED_SIDE)
-          sel_item->setColor(QColor(Qt::blue));
-        else
-          sel_item->setColor(QColor(Qt::green));
+        sel_id = mesh_id;
+        break;
       }
+      ++mesh_id;
     }
-    sel_item->setRenderingMode(Flat);
-    other_item->setRenderingMode(Wireframe);
+    mesh_id = 0;
+    Q_FOREACH(Scene_movable_sm_item* item, items)
+    {
+      if(mesh_id == sel_id)
+      {
+        ++mesh_id;
+        item->setColor(QColor(255,184,61));
+        continue;
+      }
+      item->setColor(QColor(Qt::green));
+      const double* matrix = item->manipulatedFrame()->matrix();
+      item->setFMatrix(matrix);
+      EPICK::Aff_transformation_3 translation(CGAL::TRANSLATION, -EPICK::Vector_3(item->center().x,
+                                                                                  item->center().y,
+                                                                                  item->center().z));
+      EPICK::Aff_transformation_3 rota(
+            matrix[0], matrix[4], matrix[8],matrix[12],
+          matrix[1], matrix[5], matrix[9],matrix[13],
+          matrix[2], matrix[6], matrix[10],matrix[14]);
+      EPICK::Aff_transformation_3 transfo = 
+          rota*translation;
+      
+      col_det->set_transformation(mesh_id++, transfo);
+      
+      item->setRenderingMode(Wireframe);
+      item->itemChanged();
+    }
+    const double* matrix = sel_item->manipulatedFrame()->matrix();
+    sel_item->setFMatrix(matrix);
+    EPICK::Aff_transformation_3 translation(CGAL::TRANSLATION, -EPICK::Vector_3(sel_item->center().x,
+                                                                                sel_item->center().y,
+                                                                                sel_item->center().z));
+    EPICK::Aff_transformation_3 rota(
+          matrix[0], matrix[4], matrix[8],matrix[12],
+        matrix[1], matrix[5], matrix[9],matrix[13],
+        matrix[2], matrix[6], matrix[10],matrix[14]);
+    EPICK::Aff_transformation_3 transfo = 
+        rota*translation;
+    std::vector<std::pair<std::size_t, bool> > inter_and_incl
+        = col_det->
+        set_transformation_and_all_intersections_and_all_inclusions(sel_id, transfo);
+    for(std::size_t i=0; i<inter_and_incl.size(); ++i)
+    {
+      std::size_t id = inter_and_incl[i].first;
+      bool including = inter_and_incl[i].second;
+      if(including)
+        items[id]->setColor(QColor(Qt::blue));
+      else
+        items[id]->setColor(QColor(Qt::red));
+    }
+    sel_item->setRenderingMode(Wireframe);
     sel_item->itemChanged();
-    other_item->itemChanged();
     viewer->update();
   }
   
   void cleanup()
   {
-    if(query_item)
-    {
-      delete trees[query_item->getFaceGraph()];
-      trees[query_item->getFaceGraph()] = NULL;
-      scene->erase(scene->item_id(query_item));
-      query_item = NULL;
-    }
-    if(base_item)
-    {
-      delete trees[base_item->getFaceGraph()];
-      trees[base_item->getFaceGraph()] = NULL;
-      scene->erase(scene->item_id(base_item));
-      base_item = NULL;
-    }
+    Q_FOREACH(Scene_movable_sm_item* item, items)
+      if(item)
+      {
+        scene->erase(scene->item_id(item));
+        item = nullptr;
+      }
+    items.clear();
+    delete col_det;
+    col_det = nullptr;
   }
   
 private:
@@ -204,8 +187,8 @@ private:
   Messages_interface* messageInterface;
   CGAL::Three::Scene_interface* scene;
   QMainWindow* mw;
-  std::map<SMesh*, Tree*> trees;
-  Scene_movable_sm_item* query_item;
-  Scene_movable_sm_item* base_item;
+  CGAL::Rigid_mesh_collision_detection<SMesh, EPICK> *col_det;
+  std::vector<Scene_movable_sm_item*> items;
+  std::vector<SMesh> meshes;
 };
 #include "Do_trees_intersect_plugin.moc"

@@ -159,7 +159,7 @@ void Scene_movable_sm_item::drawEdges(CGAL::Three::Viewer_interface* viewer) con
     initGL();
   if(!are_buffers_filled)
     d->initialize_buffers(viewer);
-  getEdgeContainer(0)->setColor(Qt::black);
+  getEdgeContainer(0)->setColor(color());
   getEdgeContainer(0)->setFrameMatrix(d->f_matrix);
   
   getEdgeContainer(0)->draw(viewer, true);

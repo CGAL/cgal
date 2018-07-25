@@ -46,7 +46,7 @@ class Rigid_mesh_collision_detection
 
   std::vector<const TriangleMesh*> m_triangle_mesh_ptrs;
   // TODO: we probably want an option with external trees
-  std::vector<Tree> m_aabb_trees;
+  std::vector<Tree*> m_aabb_trees;
   std::vector<bool> m_is_closed;
 
 public:
@@ -55,33 +55,36 @@ public:
   {
     init(triangle_meshes);
   }
-
+  ~Rigid_mesh_collision_detection()
+  {
+    BOOST_FOREACH(Tree* tree, m_aabb_trees){
+      delete tree;
+    }
+  }
   template <class MeshRange>
   void init(const MeshRange& triangle_meshes)
   {
     m_triangle_mesh_ptrs.reserve( triangle_meshes.size() );
-    m_aabb_trees.reserve( m_triangle_mesh_ptrs.size() );
-    m_is_closed.resize(m_triangle_mesh_ptrs.size(), false);
+    m_aabb_trees.reserve( triangle_meshes.size() );
+    m_is_closed.resize(triangle_meshes.size(), false);
 
     BOOST_FOREACH(const TriangleMesh& tm, triangle_meshes)
     {
       if (is_closed(tm))
         m_is_closed[m_triangle_mesh_ptrs.size()]=true;
       m_triangle_mesh_ptrs.push_back( &tm );
-      m_aabb_trees.push_back( Tree(tm) );
-      m_aabb_trees.back.insert(faces(tm).begin(), faces(tm).end(), tm);
+      m_aabb_trees.push_back(new Tree(faces(tm).begin(), faces(tm).end(), tm));
     }
   }
 
   void set_transformation(std::size_t mesh_id, const Aff_transformation_3<Kernel>& aff_trans)
   {
-    m_aabb_trees[mesh_id].traits().set_transformation(aff_trans);
+    m_aabb_trees[mesh_id]->traits().set_transformation(aff_trans);
   }
 
   std::vector<std::size_t>
   set_transformation_and_all_intersections(std::size_t mesh_id,
-                                           const Aff_transformation_3<Kernel>& aff_trans,
-                                           bool report_volume_inclusion_as_intersection)
+                                           const Aff_transformation_3<Kernel>& aff_trans)
   {
     set_transformation(mesh_id, aff_trans);
     std::vector<std::size_t> res;
@@ -91,31 +94,47 @@ public:
     {
       if(k==mesh_id) continue;
       // TODO: think about an alternative that is using a traversal traits
-      if ( m_aabb_trees[k].do_intersect( m_aabb_trees[mesh_id] ) )
+      if ( m_aabb_trees[k]->do_intersect( *m_aabb_trees[mesh_id] ) )
         res.push_back(k);
-      else
-      {
-        if (report_volume_inclusion_as_intersection)
+    }
+
+    return res;
+  } 
+  
+  std::vector<std::pair<std::size_t, bool> >
+  set_transformation_and_all_intersections_and_all_inclusions(std::size_t mesh_id,
+                                           const Aff_transformation_3<Kernel>& aff_trans)
+  {
+    set_transformation(mesh_id, aff_trans);
+    std::vector<std::pair<std::size_t, bool> > res;
+
+    // TODO: use a non-naive version
+    for(std::size_t k=0; k<m_aabb_trees.size(); ++k)
+    {
+      if(k==mesh_id) continue;
+      // TODO: think about an alternative that is using a traversal traits
+      if ( m_aabb_trees[k]->do_intersect( *m_aabb_trees[mesh_id] ) )
+        res.push_back(std::make_pair(k, false));
+      else{
+        if (m_is_closed[mesh_id])
         {
-          if (m_is_closed[mesh_id])
+          Side_of_tm side_of_mid(*m_aabb_trees[mesh_id]);
+          typename Kernel::Point_3 q = get(boost::vertex_point, *m_triangle_mesh_ptrs[k], *boost::begin(vertices(*m_triangle_mesh_ptrs[k])));
+          if(side_of_mid(m_aabb_trees[k]->traits().transformation()( q )) == CGAL::ON_BOUNDED_SIDE)
           {
-            Side_of_tm side_of_mid(m_aabb_trees[mesh_id]);
-            typename Kernel::Point_3 q = get(boost::vertex_point, *m_triangle_mesh_ptrs[k], *boost::begin(vertices(*m_triangle_mesh_ptrs[k])));
-            if(side_of_mid(m_aabb_trees[k].traits.transformation()( q )) == CGAL::ON_BOUNDED_SIDE)
-              res.push_back(k);
+            res.push_back(std::make_pair(k, true));
             continue;
           }
-          if (m_is_closed[k])
-          {
-            Side_of_tm side_of_mk(m_aabb_trees[k]);
-            typename Kernel::Point_3 q = get(boost::vertex_point, *m_triangle_mesh_ptrs[mesh_id], *boost::begin(vertices(*m_triangle_mesh_ptrs[mesh_id])));
-            if(side_of_mk(m_aabb_trees.traits[mesh_id].transformation()( q )) == CGAL::ON_BOUNDED_SIDE)
-              res.push_back(k);
-          }
+        }
+        if (m_is_closed[k])
+        {
+          Side_of_tm side_of_mk(*m_aabb_trees[k]);
+          typename Kernel::Point_3 q = get(boost::vertex_point, *m_triangle_mesh_ptrs[mesh_id], *boost::begin(vertices(*m_triangle_mesh_ptrs[mesh_id])));
+          if(side_of_mk(m_aabb_trees[mesh_id]->traits().transformation()( q )) == CGAL::ON_BOUNDED_SIDE)
+            res.push_back(std::make_pair(k, true));
         }
       }
     }
-
     return res;
   }
 };
