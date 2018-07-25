@@ -118,15 +118,12 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
 
        typedef CGAL::dynamic_vertex_property_t<Index> Vertex_property_tag;
        typedef typename boost::property_map<TriangleMesh, Vertex_property_tag >::type Vertex_id_map;
-       Vertex_id_map vertex_id_map;
 
        typedef CGAL::dynamic_face_property_t<Index> Face_property_tag;
        typedef typename boost::property_map<TriangleMesh, Face_property_tag >::type Face_id_map;
-       Face_id_map face_id_map;
 
        typedef CGAL::dynamic_edge_property_t<Index> Edge_property_tag;
        typedef typename boost::property_map<TriangleMesh, Edge_property_tag >::type Edge_id_map;
-       Edge_id_map edge_id_map;
        typedef typename std::stack<edge_descriptor, std::list<edge_descriptor> > edge_stack;
 
        friend struct IDT_vertex_point_property_map<Self>;
@@ -192,7 +189,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
        
      public:
        Intrinsic_Delaunay_Triangulation_3(TriangleMesh& tm, VertexDistanceMap vdm)
-         : tm(), tmref(tm), vdm(*this,vdm), hcm(get(Halfedge_coordinate_tag(), tm))
+         : tm(), tmref(tm), vdm(*this,vdm), hcm(get(Halfedge_coordinate_tag(), this->tm))
         {
           build();
         }
@@ -200,7 +197,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
 
 
        Intrinsic_Delaunay_Triangulation_3(TriangleMesh& tm, VertexDistanceMap vdm, FaceIndexMap fpm, EdgeIndexMap epm)
-         : tm(), tmref(tm), vdm(*this,vdm), fpm(fpm), epm(epm), hcm(get(Halfedge_coordinate_tag(), tm))
+         : tm(), tmref(tm), vdm(*this,vdm), fpm(fpm), epm(epm), hcm(get(Halfedge_coordinate_tag(), this->tm))
        {
          build();
        }
@@ -379,6 +376,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
            std::vector<std::pair<vertex_descriptor,
                                  vertex_descriptor> > pairs;
            copy_face_graph(tmref,tm, std::back_inserter(pairs));
+
            for(int i=0; i < pairs.size(); i++){
              v2v[pairs[i].second] = pairs[i].first;
              vtov[pairs[i].first] = pairs[i].second;
@@ -456,6 +454,10 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
          FaceIndexMap fpm;
          EdgeIndexMap epm;
          HalfedgeCoordinateMap hcm;
+         Vertex_id_map vertex_id_map;
+         Face_id_map face_id_map;
+         Edge_id_map edge_id_map;
+
          int number_of_edges;
          Eigen::VectorXd edge_lengths;
          Eigen::VectorXd mark_edges;
