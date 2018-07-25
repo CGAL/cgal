@@ -175,7 +175,7 @@ struct Less_vertex_point{
 /// collects the degenerate edges within a given range of edges.
 ///
 /// @tparam EdgeRange a model of `Range` with value type `boost::graph_traits<TriangleMesh>::%edge_descriptor`
-/// @tparam TriangleMesh a model of `EdgeListGraph`
+/// @tparam TriangleMesh a model of `HalfedgeGraph`
 /// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// @param edges a subset of edges of `tm`
