@@ -84,6 +84,23 @@ public:
     m_aabb_trees.push_back(new Tree(faces(tm).begin(), faces(tm).end(), tm));
   }
   
+  void remove_mesh(std::size_t mesh_id)
+  {
+    if(mesh_id >= m_triangle_mesh_ptrs.size())
+      return;
+    std::size_t original_size=m_triangle_mesh_ptrs.size();
+    typename std::vector<const TriangleMesh*>::iterator mesh_it =
+        (m_triangle_mesh_ptrs.begin()+mesh_id);
+    typename std::vector<Tree*>::iterator tree_it =
+        (m_aabb_trees.begin()+mesh_id);
+    std::vector<bool>::iterator bool_it =
+        (m_is_closed.begin()+mesh_id);
+    m_triangle_mesh_ptrs.erase(mesh_it);
+    m_aabb_trees.erase(tree_it);
+    m_is_closed.erase(bool_it);
+    
+  }
+  
   void set_transformation(std::size_t mesh_id, const Aff_transformation_3<Kernel>& aff_trans)
   {
     m_aabb_trees[mesh_id]->traits().set_transformation(aff_trans);
