@@ -46,7 +46,7 @@ meshes, refinement, optimization by fairing, and isotropic remeshing of triangul
 - \ref PMPPredicates : predicates that can be evaluated on the processed polygon.
 mesh, which includes point location and self intersection tests.
 - \ref PMPOrientation : checking or fixing the orientation of a polygon soup.
-- \ref PMPRepairing :  reparation of polygon meshes and polygon soups.
+- \ref PMPRepairing :  repair of polygon meshes and polygon soups.
 - \ref PMPNormalComp : normal computation at vertices and on faces of a polygon mesh.
 - \ref PMPSlicer : functor able to compute the intersections of a polygon mesh with arbitrary planes (slicer).
 - \ref PMPConnectedComponents : methods to deal with connected
@@ -583,9 +583,16 @@ Note however that the mesh will still not be manifold from a geometric
 point of view, as the positions of the new vertices introduced at a non-manifold vertex are identical
 to the input non-manifold vertex.
 
+\subsubsection FixNMVerticeExample Manifoldness Repair Example
+
+In the following example, a non-manifold configuration is artifically created and
+fixed with the help of the functions described above.
+
+\cgalExample{Polygon_mesh_processing/manifoldness_repair_example.cpp}
+
 \subsection PMPDuplicateVertexBoundaryCycle Duplicated Vertices in Boundary Cycles
 
-Similarly to the problematic configuration of the previous section, another issue that can appear
+Similarly to the problematic configuration described in the previous section, another issue that can be present
 in a polygon mesh is the occurrence of a "pinched" hole, that is the configuration where, when
 starting from a border halfedge and walking the halfedges of this border, a geometric position appears
 more than once (although, with different vertices) before reaching the initial border halfedge again. The functions
