@@ -146,11 +146,13 @@ void test_vertices_merge_and_duplication(const char* fname)
   assert(vertices_after_merge == initial_vertices - 4);
 
   std::vector<std::vector<vertex_descriptor> > duplicated_vertices;
-  CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices(mesh,
-    CGAL::parameters::output_iterator(std::back_inserter(duplicated_vertices)));
+  std::size_t new_vertices_nb =
+    CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices(mesh,
+      CGAL::parameters::output_iterator(std::back_inserter(duplicated_vertices)));
 
   const std::size_t final_vertices_size = vertices(mesh).size();
   assert(final_vertices_size == initial_vertices);
+  assert(new_vertices_nb == 4);
   assert(duplicated_vertices.size() == 2); // two non-manifold vertex
   assert(duplicated_vertices.front().size() == 4);
   assert(duplicated_vertices.back().size() == 2);
