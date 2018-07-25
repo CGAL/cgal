@@ -85,18 +85,10 @@ public:
   
   void remove_mesh(std::size_t mesh_id)
   {
-    if(mesh_id >= m_triangle_mesh_ptrs.size())
-      return;
-    std::size_t original_size=m_triangle_mesh_ptrs.size();
-    typename std::vector<const TriangleMesh*>::iterator mesh_it =
-        (m_triangle_mesh_ptrs.begin()+mesh_id);
-    typename std::vector<Tree*>::iterator tree_it =
-        (m_aabb_trees.begin()+mesh_id);
-    std::vector<bool>::iterator bool_it =
-        (m_is_closed.begin()+mesh_id);
-    m_triangle_mesh_ptrs.erase(mesh_it);
-    m_aabb_trees.erase(tree_it);
-    m_is_closed.erase(bool_it);
+    if(mesh_id >= m_triangle_mesh_ptrs.size()) return;
+    m_triangle_mesh_ptrs.erase( m_triangle_mesh_ptrs.begin()+mesh_id );
+    m_aabb_trees.erase( m_aabb_trees.begin()+mesh_id);
+    m_is_closed.erase(m_is_closed.begin()+mesh_id);
     
   }
   
