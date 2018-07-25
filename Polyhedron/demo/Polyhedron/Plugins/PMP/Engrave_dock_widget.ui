@@ -15,7 +15,7 @@
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout" columnstretch="1,0">
-    <item row="1" column="1">
+    <item row="2" column="1">
      <spacer name="horizontalSpacer">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -28,17 +28,13 @@
       </property>
      </spacer>
     </item>
-    <item row="2" column="1">
-     <widget class="QPushButton" name="visualizeButton">
-      <property name="text">
-       <string>Visualize</string>
+    <item row="4" column="1">
+     <widget class="QPushButton" name="engraveButton">
+      <property name="enabled">
+       <bool>false</bool>
       </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLineEdit" name="lineEdit">
-      <property name="placeholderText">
-       <string>An Example Text</string>
+      <property name="text">
+       <string>Engrave</string>
       </property>
      </widget>
     </item>
@@ -56,14 +52,50 @@
      </spacer>
     </item>
     <item row="3" column="1">
-     <widget class="QPushButton" name="engraveButton">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
+     <widget class="QPushButton" name="visualizeButton">
       <property name="text">
-       <string>Engrave</string>
+       <string>Visualize</string>
       </property>
      </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLineEdit" name="lineEdit">
+      <property name="placeholderText">
+       <string>An Example Text</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="1">
+       <widget class="QPushButton" name="t_right_pushButton">
+        <property name="text">
+         <string>-&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QPushButton" name="t_left_pushButton">
+        <property name="text">
+         <string>&lt;-</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="r_left_pushButton">
+        <property name="text">
+         <string>&lt;-R</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="r_right_pushButton">
+        <property name="text">
+         <string>R-&gt;</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
