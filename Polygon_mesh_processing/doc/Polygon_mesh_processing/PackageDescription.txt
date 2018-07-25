@@ -134,7 +134,6 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::remove_isolated_vertices()`
 - `CGAL::Polygon_mesh_processing::is_non_manifold_vertex()`
 - `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()`
-- `CGAL::Polygon_mesh_processing::merge_vertices_in_range()`
 - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`
 - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycles()`
 

@@ -138,18 +138,16 @@ void detect_identical_mergeable_vertices(
     }
 }
 
-} // end of internal
-
-/// \ingroup PMP_repairing_grp
-/// merges target vertices of a list of halfedges.
-/// Halfedges must be sorted in the list.
-///
-/// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`.
-/// @tparam HalfedgeRange a range of halfedge descriptors of `PolygonMesh`, model of `Range`.
-///
-/// @param sorted_hedges a sorted list of halfedges.
-/// @param pm the polygon mesh which contains the list of halfedges.
-///
+// \ingroup PMP_repairing_grp
+// merges target vertices of a list of halfedges.
+// Halfedges must be sorted in the list.
+//
+// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`.
+// @tparam HalfedgeRange a range of halfedge descriptors of `PolygonMesh`, model of `Range`.
+//
+// @param sorted_hedges a sorted list of halfedges.
+// @param pm the polygon mesh which contains the list of halfedges.
+//
 template <typename PolygonMesh, class HalfedgeRange>
 void merge_vertices_in_range(const HalfedgeRange& sorted_hedges,
                              PolygonMesh& pm)
@@ -191,6 +189,8 @@ void merge_vertices_in_range(const HalfedgeRange& sorted_hedges,
   BOOST_FOREACH(vertex_descriptor vd, vertices_to_rm)
     remove_vertex(vd, pm);
 }
+
+} // end of internal
 
 /// \ingroup PMP_repairing_grp
 /// merges identical vertices around a cycle of connected edges.
@@ -239,7 +239,7 @@ void merge_duplicated_vertices_in_boundary_cycle(
   {
     start=hedges.front();
     // hedges are sorted along the cycle
-    merge_vertices_in_range(hedges, pm);
+    internal::merge_vertices_in_range(hedges, pm);
   }
 }
 
