@@ -7,7 +7,7 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_do_intersect_transform_traits.h>
+#include <CGAL/Polygon_mesh_processing/internal/AABB_do_intersect_transform_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
@@ -15,12 +15,10 @@
 #include <sstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-//typedef CGAL::Simple_cartesian<double>            K;
 typedef CGAL::Surface_mesh<K::Point_3>             Surface_mesh;
 
 typedef CGAL::AABB_face_graph_triangle_primitive<Surface_mesh> Primitive;
-typedef CGAL::AABB_traits<K, Primitive> AABB_triangle_traits;
-typedef CGAL::AABB_do_intersect_transform_traits<AABB_triangle_traits, K> Traits;
+typedef CGAL::AABB_do_intersect_transform_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
@@ -41,12 +39,6 @@ void naive_test(int k, const char* fname,
                                         (box.xmax()-box.xmin()),0,0));
   PMP::transform(init2, tm2);
   
-  std::ofstream out1("/home/gimeno/Data/tmp/m1.off"),
-      out2("/home/gimeno/Data/tmp/m2.off");
-  out1 << tm;
-  out1.close();
-  out2 << tm2;
-  out2.close();
   tmTree.build();  
   K::Vector_3 unit_vec = (2.0/k * K::Vector_3((box.xmax()-box.xmin()),
                                               0,
@@ -109,12 +101,6 @@ void test_no_collision(int k, const char* fname,
                                         (box.xmax()-box.xmin()),0,0));
   PMP::transform(init2, tm2);
   
-  std::ofstream out1("/home/gimeno/Data/tmp/m1.off"),
-      out2("/home/gimeno/Data/tmp/m2.off");
-  out1 << tm;
-  out1.close();
-  out2 << tm2;
-  out2.close();
   tmTree.build();
   tmTree2.build();
   typedef boost::property_map<Surface_mesh, CGAL::vertex_point_t>::type VPM;

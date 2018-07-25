@@ -27,8 +27,7 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-// TODO: move AABB_do_intersect_transform_traits.h in PMP/internal
-#include <CGAL/AABB_do_intersect_transform_traits.h>
+#include <CGAL/Polygon_mesh_processing/internal/AABB_do_intersect_transform_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
