@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
   const char* filename = (argc > 1) ? argv[1] : "data/degtri_sliding.off";
 
   Mesh mesh;
-  if (!OpenMesh::IO::read_mesh(mesh, filename) || mesh.is_empty()) {
+  if (!OpenMesh::IO::read_mesh(mesh, filename) || num_vertices(mesh)) {
     std::cerr << "Not a valid .off file." << std::endl;
     return EXIT_FAILURE;
   }
