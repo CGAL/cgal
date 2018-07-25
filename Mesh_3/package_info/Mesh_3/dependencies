@@ -2,7 +2,6 @@ AABB_tree
 Algebraic_foundations
 Arithmetic_kernel
 BGL
-Box_intersection_d
 CGAL_ImageIO
 Cartesian_kernel
 Circulator

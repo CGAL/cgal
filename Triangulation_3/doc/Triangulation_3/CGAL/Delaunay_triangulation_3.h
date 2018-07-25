@@ -234,7 +234,7 @@ insert(PointWithInfoInputIterator first, PointWithInfoInputIterator last);
 /// @{
 
 /*!
-if there is not already another vertex placed on `p`, 
+If there is not already another vertex placed on `p`,
 the triangulation is modified such that the new position of vertex `v` 
 is `p`, and `v` is returned. Otherwise, the triangulation is not 
 modified and the vertex at point `p` is returned. 
@@ -243,8 +243,9 @@ modified and the vertex at point `p` is returned.
 Vertex_handle move_if_no_collision(Vertex_handle v, const Point & p); 
 
 /*!
-same as above if there is no collision. Otherwise, `v` 
-is deleted and the vertex placed on `p` is returned. 
+If there is no collision during the move, this function is the same as
+`move_if_no_collision` . Otherwise, `v` is removed and the vertex at point `p`
+is returned.
 \pre Vertex `v` must be finite. 
 */ 
 Vertex_handle move(Vertex_handle v, const Point & p); 
