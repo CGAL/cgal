@@ -94,5 +94,5 @@ int main(int argc, const char** argv)
   // file nb_polylines total_nb_points nb_vertices_after_autorefine all_fixed nb_vertices_after_fix triple_intersection
   for (int i=0;i<(argc-1)/7; ++i)
     test(argv[1+7*i], atoi(argv[1+7*i+1]), atoi(argv[1+7*i+2]),
-         atoi(argv[1+7*i+3]), atoi(argv[1+7*i+4])==0?false:true, atoi(argv[1+7*i+5]), atoi(argv[1+7*i+6]));
+         atoi(argv[1+7*i+3]), atoi(argv[1+7*i+4])==0?false:true, atoi(argv[1+7*i+5]), atoi(argv[1+7*i+6])==0?false:true);
 }
