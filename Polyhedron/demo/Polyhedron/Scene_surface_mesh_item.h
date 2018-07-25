@@ -8,13 +8,21 @@
 #include "Scene_surface_mesh_item_config.h"
 #include <CGAL/Three/Scene_zoomable_item_interface.h>
 #include <CGAL/Three/Scene_print_item_interface.h>
+
+#ifndef Q_MOC_RUN
 #include "SMesh_type.h"
+#endif
+
+#include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Viewer_interface.h>
-#include <vector>
 
+#ifndef Q_MOC_RUN
+#include <vector>
 #include <boost/scoped_ptr.hpp>
 #include <boost/array.hpp>
+#endif
+
 #include <QColor>
 
 #include "properties.h"

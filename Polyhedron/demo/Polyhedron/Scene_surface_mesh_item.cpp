@@ -1,9 +1,12 @@
 #include "Scene_surface_mesh_item.h"
 
 #include "Color_map.h"
-#include <queue>
+
+#ifndef Q_MOC_RUN
 #include <boost/graph/properties.hpp>
 #include <boost/graph/graph_traits.hpp>
+#endif
+
 #include <QOpenGLShaderProgram>
 #include <QInputDialog>
 #include <QOpenGLBuffer>
@@ -15,7 +18,7 @@
 #include <QSlider>
 #include <QOpenGLFramebufferObject>
 
-//#include <CGAL/boost/graph/properties_Surface_mesh.h>
+#ifndef Q_MOC_RUN
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh/IO.h>
 #include <CGAL/intersections.h>
@@ -24,8 +27,7 @@
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Polygon_mesh_processing/repair.h>
-
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include "triangulate_primitive.h"
@@ -44,6 +46,7 @@
 #include <CGAL/Buffer_for_vao.h>
 #include <QMenu>
 #include "id_printing.h"
+#endif
 
 
 typedef CGAL::Three::Triangle_container Tri;
