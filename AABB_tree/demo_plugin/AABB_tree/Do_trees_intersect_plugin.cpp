@@ -211,7 +211,7 @@ public Q_SLOTS:
         rota*translation;
     std::vector<std::pair<std::size_t, bool> > inter_and_incl
         = col_det->
-        set_transformation_and_all_intersections_and_all_inclusions(sel_id, transfo);
+        set_transformation_and_get_all_intersections_and_inclusions(sel_id, transfo);
     for(std::size_t i=0; i<inter_and_incl.size(); ++i)
     {
       std::size_t id = inter_and_incl[i].first;

@@ -77,13 +77,20 @@ public:
     }
   }
 
+  void add_mesh(const TriangleMesh& tm)
+  {
+    m_is_closed.push_back(is_closed(tm));
+    m_triangle_mesh_ptrs.push_back( &tm );
+    m_aabb_trees.push_back(new Tree(faces(tm).begin(), faces(tm).end(), tm));
+  }
+  
   void set_transformation(std::size_t mesh_id, const Aff_transformation_3<Kernel>& aff_trans)
   {
     m_aabb_trees[mesh_id]->traits().set_transformation(aff_trans);
   }
 
   std::vector<std::size_t>
-  set_transformation_and_all_intersections(std::size_t mesh_id,
+  set_transformation_and_get_all_intersections(std::size_t mesh_id,
                                            const Aff_transformation_3<Kernel>& aff_trans)
   {
     set_transformation(mesh_id, aff_trans);
@@ -102,7 +109,7 @@ public:
   } 
   
   std::vector<std::pair<std::size_t, bool> >
-  set_transformation_and_all_intersections_and_all_inclusions(std::size_t mesh_id,
+  set_transformation_and_get_all_intersections_and_inclusions(std::size_t mesh_id,
                                            const Aff_transformation_3<Kernel>& aff_trans)
   {
     set_transformation(mesh_id, aff_trans);
