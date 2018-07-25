@@ -33,6 +33,7 @@ void naive_test(int k, const char* fname,
   CGAL::Aff_transformation_3<K> init1(CGAL::SCALING, 6.0);
   PMP::transform(init1, tm);
   CGAL::Bbox_3 box = PMP::bbox(tm);
+  typedef CGAL::AABB_tree<CGAL::AABB_traits<K, Primitive> > Tree;
   Tree tmTree(tm.faces_begin(), tm.faces_end(), tm);
   Tree tmTree2(tm2.faces_begin(), tm2.faces_end(), tm2);
   CGAL::Aff_transformation_3<K> init2(CGAL::TRANSLATION, - K::Vector_3(
