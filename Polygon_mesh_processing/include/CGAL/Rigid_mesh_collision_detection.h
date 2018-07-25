@@ -34,11 +34,11 @@
 
 namespace CGAL {
 
-template <class TriangleMesh, class Kernel>
+template <class TriangleMesh, class Kernel, class HAS_ROTATION = CGAL::Tag_true>
 class Rigid_mesh_collision_detection
 {
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh> Primitive;
-  typedef CGAL::AABB_do_intersect_transform_traits<Kernel, Primitive> Traits;
+  typedef CGAL::AABB_do_intersect_transform_traits<Kernel, Primitive, HAS_ROTATION> Traits;
   typedef CGAL::AABB_tree<Traits> Tree;
   typedef Side_of_triangle_mesh<TriangleMesh, Kernel, Default, Tree> Side_of_tm;
 

@@ -41,13 +41,14 @@
 
 namespace CGAL {
 
-template<typename Kernel, typename AABBPrimitive>
+template<typename Kernel, typename AABBPrimitive, 
+         typename HAS_ROTATION = CGAL::Tag_true>
 class AABB_do_intersect_transform_traits:
     public AABB_traits<Kernel, AABBPrimitive>
 {
   mutable Aff_transformation_3<Kernel> m_transfo;
   typedef AABB_traits<Kernel, AABBPrimitive> BaseTraits;
-  typedef AABB_do_intersect_transform_traits<Kernel, AABBPrimitive> Self;
+  typedef AABB_do_intersect_transform_traits<Kernel, AABBPrimitive, HAS_ROTATION> Self;
 public:
 
   //Constructor
@@ -62,7 +63,7 @@ public:
 
   // helper functions
   Bbox_3
-  static compute_transformed_bbox(const Bbox_3& bbox, const Aff_transformation_3<Kernel>& transfo)
+  static compute_transformed_bbox(const Bbox_3& bbox, const Aff_transformation_3<Kernel>& transfo, Tag_true)
   {
     typedef Simple_cartesian<Interval_nt_advanced> AK;
     typedef Cartesian_converter<Kernel, AK>    C2F;
@@ -89,16 +90,37 @@ public:
   }
 
   Bbox_3
+  static compute_transformed_bbox(const Bbox_3& bbox, const Aff_transformation_3<Kernel>& transfo, Tag_false)
+  {
+    // TODO: possible optimization using Protector
+    typedef Simple_cartesian<Interval_nt_advanced > AK;
+    typedef Cartesian_converter<Kernel, AK>    C2F;
+    C2F c2f;
+
+    AK::Aff_transformation_3 af = c2f(transfo);
+
+    AK::FT xtrm[6] = { c2f(bbox.min(0)), c2f(bbox.max(0)),
+                       c2f(bbox.min(1)), c2f(bbox.max(1)),
+                       c2f(bbox.min(2)), c2f(bbox.max(2)) };
+
+    typename AK::Point_3 ps[2];
+    ps[0] = af( AK::Point_3(xtrm[0], xtrm[2], xtrm[4]) );
+    ps[1] = af( AK::Point_3(xtrm[1], xtrm[3], xtrm[5]) );
+
+    return bbox_3(ps, ps+2);
+  }
+  
+  Bbox_3
   compute_transformed_bbox(const Bbox_3& bbox) const
   {
-    return compute_transformed_bbox(bbox, m_transfo);
+    return compute_transformed_bbox(bbox, m_transfo, HAS_ROTATION());
   }
 
   // Do_intersect predicate
   class Do_intersect
     : BaseTraits::Do_intersect
   {
-    typedef AABB_do_intersect_transform_traits<Kernel, AABBPrimitive> AABBTraits;
+    typedef AABB_do_intersect_transform_traits<Kernel, AABBPrimitive, HAS_ROTATION> AABBTraits;
     const AABBTraits& m_traits;
     typedef typename BaseTraits::Do_intersect Base;
 
@@ -159,10 +181,10 @@ public:
 
 namespace internal {
 
-template<typename K, typename P>
-struct Primitive_helper<AABB_do_intersect_transform_traits<K,P> ,true>{
+template<typename K, typename P, typename T>
+struct Primitive_helper<AABB_do_intersect_transform_traits<K,P,T> ,true>{
 
-typedef AABB_do_intersect_transform_traits<K,P> Traits;
+typedef AABB_do_intersect_transform_traits<K,P,T> Traits;
 
 
 static typename Traits::Primitive::Datum get_datum(const typename Traits::Primitive& p,
@@ -177,17 +199,17 @@ static typename Traits::Point_3 get_reference_point(const typename Traits::Primi
 
 };
 
-template<typename K, typename P>
-typename CGAL::AABB_tree<AABB_do_intersect_transform_traits<K,P> >::Bounding_box
-get_tree_bbox(const CGAL::AABB_tree<AABB_do_intersect_transform_traits<K,P> >& tree)
+template<typename K, typename P, typename T>
+typename CGAL::AABB_tree<AABB_do_intersect_transform_traits<K,P,T> >::Bounding_box
+get_tree_bbox(const CGAL::AABB_tree<AABB_do_intersect_transform_traits<K,P,T> >& tree)
 {
   return tree.traits().compute_transformed_bbox(tree.bbox());
 }
 
-template<typename K, typename P>
-typename CGAL::AABB_tree<AABB_do_intersect_transform_traits<K,P> >::Bounding_box
-get_node_bbox(const CGAL::AABB_node<AABB_do_intersect_transform_traits<K,P> >& node,
-              const AABB_do_intersect_transform_traits<K,P>& traits)
+template<typename K, typename P, typename T>
+typename CGAL::AABB_tree<AABB_do_intersect_transform_traits<K,P,T> >::Bounding_box
+get_node_bbox(const CGAL::AABB_node<AABB_do_intersect_transform_traits<K,P,T> >& node,
+              const AABB_do_intersect_transform_traits<K,P,T>& traits)
 {
   return traits.compute_transformed_bbox(node.bbox());
 }
