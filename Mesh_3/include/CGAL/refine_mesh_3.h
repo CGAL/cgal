@@ -37,6 +37,7 @@
 #include <CGAL/Mesh_3/Mesher_3.h>
 #include <CGAL/Mesh_error_code.h>
 #include <CGAL/optimize_mesh_3.h>
+#include <CGAL/atomic.h>
 
 #include <boost/parameter/preprocessor.hpp>
 
@@ -203,6 +204,11 @@ struct Manifold_options {
 
 // Various Mesh_3 option
 struct Mesh_3_options {
+#ifndef CGAL_NO_ATOMIC
+      typedef CGAL::cpp11::atomic<bool>* Pointer_to_stop_atomic_boolean_t;
+#else
+      typedef bool* Pointer_to_stop_atomic_boolean_t;
+#endif
   Mesh_3_options()
     : dump_after_init_prefix()
     , dump_after_refine_surface_prefix()
@@ -214,6 +220,9 @@ struct Mesh_3_options {
     , nonlinear_growth_of_balls(false)
     , maximal_number_of_vertices(0)
     , pointer_to_error_code(0)
+#ifndef CGAL_NO_ATOMIC
+    , pointer_to_stop_atomic_boolean(0)
+#endif
   {}
 
   std::string dump_after_init_prefix;
@@ -226,6 +235,9 @@ struct Mesh_3_options {
   bool nonlinear_growth_of_balls;
   std::size_t maximal_number_of_vertices;
   Mesh_error_code* pointer_to_error_code;
+#ifndef CGAL_NO_ATOMIC
+  Pointer_to_stop_atomic_boolean_t pointer_to_stop_atomic_boolean;
+#endif
 
 }; // end struct Mesh_3_options
 
@@ -368,8 +380,9 @@ BOOST_PARAMETER_FUNCTION((internal::Mesh_3_options), mesh_3_options, tag,
                           (dump_after_perturb_prefix_, (std::string), "" )
                           (dump_after_exude_prefix_, (std::string), "" )
                           (number_of_initial_points_, (int), -1)
-                            (maximal_number_of_vertices_, (std::size_t), 0)
-                            (pointer_to_error_code_, (Mesh_error_code*), ((Mesh_error_code*)0))
+			  (maximal_number_of_vertices_, (std::size_t), 0)
+			  (pointer_to_error_code_, (Mesh_error_code*), ((Mesh_error_code*)0))
+			  (pointer_to_stop_atomic_boolean_, (internal::Mesh_3_options::Pointer_to_stop_atomic_boolean_t), ((internal::Mesh_3_options::Pointer_to_stop_atomic_boolean_t)0))
                           )
                          )
 {
@@ -382,8 +395,11 @@ BOOST_PARAMETER_FUNCTION((internal::Mesh_3_options), mesh_3_options, tag,
   options.dump_after_perturb_prefix=dump_after_perturb_prefix_;
   options.dump_after_exude_prefix=dump_after_exude_prefix_;
   options.number_of_initial_points=number_of_initial_points_;
-    options.maximal_number_of_vertices=maximal_number_of_vertices_;
-    options.pointer_to_error_code=pointer_to_error_code_;
+  options.maximal_number_of_vertices=maximal_number_of_vertices_;
+  options.pointer_to_error_code=pointer_to_error_code_;
+#ifndef CGAL_NO_ATOMIC
+  options.pointer_to_stop_atomic_boolean=pointer_to_stop_atomic_boolean_;
+#endif
 
   return options;
 }
@@ -539,7 +555,11 @@ void refine_mesh_3_impl(C3T3& c3t3,
   // Build mesher and launch refinement process
   Mesher mesher (c3t3, domain, criteria, manifold_options.mesh_topology,
                  mesh_options.maximal_number_of_vertices,
-                 mesh_options.pointer_to_error_code);
+                 mesh_options.pointer_to_error_code
+#ifndef CGAL_NO_ATOMIC
+                 , mesh_options.pointer_to_stop_atomic_boolean
+#endif
+		 );
   double refine_time = mesher.refine_mesh(mesh_options.dump_after_refine_surface_prefix);
   c3t3.clear_manifold_info();
 
