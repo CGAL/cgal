@@ -54,7 +54,7 @@ public:
     actionAutorefine->setObjectName("actionAutorefine");
     actionAutorefineAndRMSelfIntersections->setObjectName("actionAutorefineAndRMSelfIntersections");
 
-    actionRemoveDegenerateFaces->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
+    actionRemoveDegenerateFaces->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionStitchCloseBorderHalfedges->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionRemoveSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionRemoveIsolatedVertices->setProperty("subMenuName", "Polygon Mesh Processing/Repair");

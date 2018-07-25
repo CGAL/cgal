@@ -463,8 +463,6 @@ This package offers a toolkit of functions to detect such undesirable elements.
 - `CGAL::Polygon_mesh_processing::is_cap_triangle_face()`
 - `CGAL::Polygon_mesh_processing::is_needle_triangle_face()`
 
-This package offers functions to remove such undesirable elements, see Section \ref PMPRepairing.
-
 ****************************************
 \section PMPOrientation Orientation
 
@@ -555,6 +553,8 @@ with duplicated border edges.
 
 \cgalExample{Polygon_mesh_processing/stitch_borders_example.cpp}
 
+\cond
+
 \subsection DegenerateFaces Removing Degenerate Faces
 
 Some degenerate faces may be part of a given triangle mesh.
@@ -572,6 +572,8 @@ are removed, the connectivity is fixed, and the number of removed faces
 is output.
 
 \cgalExample{Polygon_mesh_processing/remove_degeneracies_example.cpp}
+
+\endcond
 
 \subsection PMPManifoldness Polygon Mesh Manifoldness
 

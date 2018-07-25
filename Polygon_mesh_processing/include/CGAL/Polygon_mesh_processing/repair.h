@@ -271,7 +271,6 @@ degenerate_edges(const TriangleMesh& tm, OutputIterator out)
 ///    \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
-/// \sa remove_degenerate_faces()
 template <class FaceRange, class TriangleMesh, class OutputIterator, class NamedParameters>
 OutputIterator degenerate_faces(const FaceRange& faces,
                                 const TriangleMesh& tm,
@@ -792,40 +791,40 @@ std::size_t remove_degenerate_edges(const EdgeRange& edge_range,
   return remove_degenerate_edges(edge_range, tmesh, parameters::all_default());
 }
 
-/// \ingroup PMP_repairing_grp
-/// removes the degenerate faces from a triangulated surface mesh.
-/// A face is considered degenerate if two of its vertices share the same location,
-/// or more generally if all its vertices are collinear.
-///
-/// @pre `CGAL::is_triangle_mesh(tmesh)`
-///
-/// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
-/// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
-///
-/// @param tmesh the  triangulated surface mesh to be repaired
-/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
-///
-/// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-///                                      The type of this map is model of `ReadWritePropertyMap`.
-///                                      If this parameter is omitted, an internal property map for
-///                                      `CGAL::vertex_point_t` must be available in `TriangleMesh`
-///    \cgalParamEnd
-///    \cgalParamBegin{geom_traits} a geometric traits class instance.
-///       The traits class must provide the nested type `Point_3`,
-///       and the nested functors :
-///         - `Compare_distance_3` to compute the distance between 2 points
-///         - `Collinear_3` to check whether 3 points are collinear
-///         - `Less_xyz_3` to compare lexicographically two points
-///         - `Equal_3` to check whether 2 points are identical
-///       For each functor `Foo`, a function `Foo foo_object()`
-///   \cgalParamEnd
-/// \cgalNamedParamsEnd
-///
-/// \todo the function might not be able to remove all degenerate faces.
-///       We should probably do something with the return type.
-///
-/// \return number of removed degenerate faces
+// \ingroup PMP_repairing_grp
+// removes the degenerate faces from a triangulated surface mesh.
+// A face is considered degenerate if two of its vertices share the same location,
+// or more generally if all its vertices are collinear.
+//
+// @pre `CGAL::is_triangle_mesh(tmesh)`
+//
+// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
+// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+//
+// @param tmesh the  triangulated surface mesh to be repaired
+// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+//
+// \cgalNamedParamsBegin
+//    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+//                                      The type of this map is model of `ReadWritePropertyMap`.
+//                                      If this parameter is omitted, an internal property map for
+//                                      `CGAL::vertex_point_t` must be available in `TriangleMesh`
+//    \cgalParamEnd
+//    \cgalParamBegin{geom_traits} a geometric traits class instance.
+//       The traits class must provide the nested type `Point_3`,
+//       and the nested functors :
+//         - `Compare_distance_3` to compute the distance between 2 points
+//         - `Collinear_3` to check whether 3 points are collinear
+//         - `Less_xyz_3` to compare lexicographically two points
+//         - `Equal_3` to check whether 2 points are identical
+//       For each functor `Foo`, a function `Foo foo_object()`
+//   \cgalParamEnd
+// \cgalNamedParamsEnd
+//
+// \todo the function might not be able to remove all degenerate faces.
+//       We should probably do something with the return type.
+//
+// \return number of removed degenerate faces
 template <class TriangleMesh, class NamedParameters>
 std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
                                     const NamedParameters& np)

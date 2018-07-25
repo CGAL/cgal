@@ -117,7 +117,6 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
 /// \cgalNamedParamsEnd
 ///
 /// \sa `degenerate_faces()`
-/// \sa `remove_degenerate_faces()`
 ///
 /// \return `true` if the face `f` is degenerate, `false` otherwise.
 template <typename TriangleMesh, typename NamedParameters>
