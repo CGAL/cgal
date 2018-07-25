@@ -42,29 +42,31 @@
 namespace CGAL {
 
 template<typename Kernel, typename AABBPrimitive, 
-         typename HAS_ROTATION = CGAL::Tag_true>
+         typename SUPPORTS_ROTATION = CGAL::Tag_true>
 class AABB_do_intersect_transform_traits:
     public AABB_traits<Kernel, AABBPrimitive>
 {
   mutable Aff_transformation_3<Kernel> m_transfo;
+  mutable bool has_rotation;
   typedef AABB_traits<Kernel, AABBPrimitive> BaseTraits;
-  typedef AABB_do_intersect_transform_traits<Kernel, AABBPrimitive, HAS_ROTATION> Self;
-public:
-
-  //Constructor
-  AABB_do_intersect_transform_traits(const Aff_transformation_3<Kernel>& transf = Aff_transformation_3<Kernel>(IDENTITY))
-    :m_transfo(transf)
-  {}
-
-  // AABBTraits concept types
-  typedef typename BaseTraits::Point_3 Point_3;
-  typedef typename BaseTraits::Primitive Primitive;
-  typedef typename BaseTraits::Bounding_box Bounding_box;
-
-  // helper functions
-  Bbox_3
-  static compute_transformed_bbox(const Bbox_3& bbox, const Aff_transformation_3<Kernel>& transfo, Tag_true)
+  typedef AABB_do_intersect_transform_traits<Kernel, AABBPrimitive, SUPPORTS_ROTATION> Self;
+  
+  void set_transformation(const Aff_transformation_3<Kernel>& trans, CGAL::Tag_true) const
   {
+    has_rotation = (trans.m(0,1) != 0
+        || trans.m(0,2) != 0
+        || trans.m(1,0) != 0
+        || trans.m(1,2) != 0
+        || trans.m(2,0) != 0
+        || trans.m(2,1) !=0);
+  }
+  void set_transformation(const Aff_transformation_3<Kernel>& trans, CGAL::Tag_false) const
+  {}
+  Bbox_3
+  compute_transformed_bbox_impl(const Bbox_3& bbox, const Aff_transformation_3<Kernel>& transfo, Tag_true)const
+  {
+    if(has_rotation)
+      return compute_transformed_bbox_impl(bbox, m_transfo, Tag_false());
     typedef Simple_cartesian<Interval_nt_advanced> AK;
     typedef Cartesian_converter<Kernel, AK>    C2F;
     C2F c2f;
@@ -90,9 +92,8 @@ public:
   }
 
   Bbox_3
-  static compute_transformed_bbox(const Bbox_3& bbox, const Aff_transformation_3<Kernel>& transfo, Tag_false)
+  compute_transformed_bbox_impl(const Bbox_3& bbox, const Aff_transformation_3<Kernel>& transfo, Tag_false)const
   {
-    // TODO: possible optimization using Protector
     typedef Simple_cartesian<Interval_nt_advanced > AK;
     typedef Cartesian_converter<Kernel, AK>    C2F;
     C2F c2f;
@@ -109,18 +110,34 @@ public:
 
     return bbox_3(ps, ps+2);
   }
+public:
+
+  //Constructor
+  AABB_do_intersect_transform_traits(const Aff_transformation_3<Kernel>& transf = Aff_transformation_3<Kernel>(IDENTITY))
+  {
+    has_rotation = false;
+    set_transformation(transf, SUPPORTS_ROTATION());
+  }
+
+  // AABBTraits concept types
+  typedef typename BaseTraits::Point_3 Point_3;
+  typedef typename BaseTraits::Primitive Primitive;
+  typedef typename BaseTraits::Bounding_box Bounding_box;
+
+  // helper functions
+
   
   Bbox_3
   compute_transformed_bbox(const Bbox_3& bbox) const
   {
-    return compute_transformed_bbox(bbox, m_transfo, HAS_ROTATION());
+    return compute_transformed_bbox_impl(bbox, m_transfo, SUPPORTS_ROTATION());
   }
 
   // Do_intersect predicate
   class Do_intersect
     : BaseTraits::Do_intersect
   {
-    typedef AABB_do_intersect_transform_traits<Kernel, AABBPrimitive, HAS_ROTATION> AABBTraits;
+    typedef AABB_do_intersect_transform_traits<Kernel, AABBPrimitive, SUPPORTS_ROTATION> AABBTraits;
     const AABBTraits& m_traits;
     typedef typename BaseTraits::Do_intersect Base;
 
@@ -174,6 +191,7 @@ public:
   void set_transformation(const Aff_transformation_3<Kernel>& trans) const
   {
     m_transfo = trans;
+    set_transformation(trans, SUPPORTS_ROTATION());
   }
 
   const Aff_transformation_3<Kernel>& transformation() const { return m_transfo; }

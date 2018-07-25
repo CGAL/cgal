@@ -40,7 +40,7 @@ void naive_test(int k, const char* fname,
                                         (box.xmax()-box.xmin()),0,0));
   PMP::transform(init2, tm2);
   
-  tmTree.build();  
+  tmTree.build();
   K::Vector_3 unit_vec = (2.0/k * K::Vector_3((box.xmax()-box.xmin()),
                                               0,
                                               0));
@@ -72,13 +72,13 @@ void naive_test(int k, const char* fname,
     {
       if(sotm1(tm2.point(*tm2.vertices().begin())) != CGAL::ON_UNBOUNDED_SIDE)
       {        
-        ++nb_include; 
+        ++nb_include;
       }
       else
       {
         CGAL::Side_of_triangle_mesh<Surface_mesh, K> sotm2(tm2);
         if(sotm2(tm.point(*tm.vertices().begin())) != CGAL::ON_UNBOUNDED_SIDE)
-          ++nb_include; 
+          ++nb_include;
         else
           ++nb_no_inter;
       }
@@ -138,14 +138,14 @@ void test_no_collision(int k, const char* fname,
     {
       if(sotm1(transfo.transform(vpm2[*tm2.vertices().begin()])) != CGAL::ON_UNBOUNDED_SIDE)
       {        
-        ++nb_include; 
+        ++nb_include;
       }
       else
       {
         CGAL::Side_of_triangle_mesh<Surface_mesh, K,
             VPM, Tree> sotm2(tmTree2);
         if(sotm2(tm.point(*tm.vertices().begin())) != CGAL::ON_UNBOUNDED_SIDE)
-          ++nb_include; 
+          ++nb_include;
         else
           ++nb_no_inter;
       }
