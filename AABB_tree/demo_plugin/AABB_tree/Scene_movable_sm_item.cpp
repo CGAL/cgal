@@ -60,7 +60,7 @@ Scene_movable_sm_item::Scene_movable_sm_item(const CGAL::qglviewer::Vec& pos, SM
 }
 
 
-void Scene_movable_sm_item_priv::initialize_buffers(CGAL::Three::Viewer_interface *viewer =0) const
+void Scene_movable_sm_item_priv::initialize_buffers(CGAL::Three::Viewer_interface *viewer = nullptr) const
 {
   item->getTriangleContainer(0)->initializeBuffers(viewer); 
   item->getTriangleContainer(0)->setFlatDataSize(flat_vertices.size());
@@ -109,20 +109,20 @@ void Scene_movable_sm_item_priv::compute_elements() const
       EPICK::Vector_3 n = fnormals[fd];
       CPF::add_normal_in_buffer(n, flat_normals);
     }
-  }  
+  }
   //edges
   BOOST_FOREACH(edge_descriptor ed, edges(*facegraph))
   {
-      Point p = positions[source(ed, *facegraph)] + offset;
-      EPICK::Point_3 pc(p.x() - center_.x,
-                        p.y() - center_.y,
-                        p.z() - center_.z);
-      CPF::add_point_in_buffer(pc, edges_vertices);
-      p = positions[target(ed, *facegraph)] + offset;
-      pc=EPICK::Point_3(p.x() - center_.x,
-                        p.y() - center_.y,
-                        p.z() - center_.z);
-      CPF::add_point_in_buffer(pc, edges_vertices);
+    Point p = positions[source(ed, *facegraph)] + offset;
+    EPICK::Point_3 pc(p.x() - center_.x,
+                      p.y() - center_.y,
+                      p.z() - center_.z);
+    CPF::add_point_in_buffer(pc, edges_vertices);
+    p = positions[target(ed, *facegraph)] + offset;
+    pc=EPICK::Point_3(p.x() - center_.x,
+                      p.y() - center_.y,
+                      p.z() - center_.z);
+    CPF::add_point_in_buffer(pc, edges_vertices);
   }  
   
   
@@ -132,13 +132,14 @@ void Scene_movable_sm_item_priv::compute_elements() const
   item->getTriangleContainer(0)->allocate(Tri::Flat_normals, flat_normals.data(),
                                           static_cast<int>(flat_normals.size()*sizeof(float)));
   item->getEdgeContainer(0)->allocate(Tri::Flat_vertices, edges_vertices.data(),
-                                          static_cast<int>(edges_vertices.size()*sizeof(float)));
+                                      static_cast<int>(edges_vertices.size()*sizeof(float)));
   QApplication::restoreOverrideCursor();
 }
 
 void Scene_movable_sm_item::computeElements() const
 {
   d->compute_elements();
+  compute_bbox();
 }
 void Scene_movable_sm_item::draw(CGAL::Three::Viewer_interface* viewer) const
 {
@@ -147,7 +148,7 @@ void Scene_movable_sm_item::draw(CGAL::Three::Viewer_interface* viewer) const
   if(!are_buffers_filled)
     d->initialize_buffers(viewer);
   getTriangleContainer(0)->setColor(color());
-  getTriangleContainer(0)->setSelected(is_selected);
+  getTriangleContainer(0)->setAlpha(alpha());
   getTriangleContainer(0)->setFrameMatrix(d->f_matrix);
   
   getTriangleContainer(0)->draw(viewer, true);
@@ -174,7 +175,7 @@ QString Scene_movable_sm_item::toolTip() const {
 void
 Scene_movable_sm_item::compute_bbox() const {
   SMesh::Property_map<vertex_descriptor, Point_3> pprop = d->facegraph->points();
-  CGAL::Bbox_3 bbox;
+  CGAL::Bbox_3 bbox ;
   
   BOOST_FOREACH(vertex_descriptor vd,vertices(*d->facegraph))
   {
@@ -185,11 +186,18 @@ Scene_movable_sm_item::compute_bbox() const {
   is_bbox_computed = true;
 }
 
+Scene_item::Bbox Scene_movable_sm_item::bbox() const {
+  if(!is_bbox_computed)
+    compute_bbox();
+  is_bbox_computed = true;
+  return _bbox;
+}
+
 
 void Scene_movable_sm_item::invalidateOpenGLBuffers()
 {
   d->compute_elements();
-  compute_bbox();
+  is_bbox_computed = false;
   are_buffers_filled = false;
 }
 CGAL::Three::Scene_item::ManipulatedFrame* Scene_movable_sm_item::manipulatedFrame() { return d->frame; }

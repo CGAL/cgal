@@ -31,11 +31,12 @@ class SCENE_MOVABLE_SM_ITEM_EXPORT Scene_movable_sm_item
 public: 
   Scene_movable_sm_item(const CGAL::qglviewer::Vec& pos, SMesh *sm,
                         const QString name);
-  Scene_item* clone() const{return NULL;}
+  Scene_item* clone() const{return nullptr;}
   QString toolTip() const;
   void draw(CGAL::Three::Viewer_interface *) const;
   void drawEdges(CGAL::Three::Viewer_interface *) const;
   void compute_bbox() const;
+  Scene_item::Bbox bbox() const ;
   ~Scene_movable_sm_item();
   bool manipulatable() const { return true;}
   ManipulatedFrame* manipulatedFrame();
@@ -47,7 +48,6 @@ public:
   void computeElements() const;
   bool isEmpty() const {return false;}
   SMesh *getFaceGraph();
-  
 protected:
   friend struct Scene_movable_sm_item_priv;
   Scene_movable_sm_item_priv* d;
