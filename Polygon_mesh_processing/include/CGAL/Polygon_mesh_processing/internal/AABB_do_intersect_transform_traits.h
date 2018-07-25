@@ -64,8 +64,7 @@ public:
   Bbox_3
   static compute_transformed_bbox(const Bbox_3& bbox, const Aff_transformation_3<Kernel>& transfo)
   {
-    // TODO: possible optimization using Protector
-    typedef Simple_cartesian<Interval_nt<> > AK;
+    typedef Simple_cartesian<Interval_nt_advanced> AK;
     typedef Cartesian_converter<Kernel, AK>    C2F;
     C2F c2f;
 

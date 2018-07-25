@@ -109,6 +109,7 @@ public:
   set_transformation_and_get_all_intersections(std::size_t mesh_id,
                                            const Aff_transformation_3<Kernel>& aff_trans)
   {
+    CGAL::Interval_nt_advanced::Protector protector;
     set_transformation(mesh_id, aff_trans);
     std::vector<std::size_t> res;
 
@@ -128,6 +129,7 @@ public:
   set_transformation_and_get_all_intersections_and_inclusions(std::size_t mesh_id,
                                            const Aff_transformation_3<Kernel>& aff_trans)
   {
+    CGAL::Interval_nt_advanced::Protector protector;
     set_transformation(mesh_id, aff_trans);
     std::vector<std::pair<std::size_t, bool> > res;
 

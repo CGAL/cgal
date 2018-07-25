@@ -131,6 +131,7 @@ void test_no_collision(int k, const char* fname,
     CGAL::Aff_transformation_3<K> T1 = CGAL::Aff_transformation_3<K>(CGAL::TRANSLATION, i*unit_vec);
     CGAL::Aff_transformation_3<K> transfo = R*T1;
     tmTree2.traits().set_transformation(transfo);
+    CGAL::Interval_nt_advanced::Protector protector;
     if(tmTree2.do_intersect(tmTree))
       ++nb_inter;
     else 
