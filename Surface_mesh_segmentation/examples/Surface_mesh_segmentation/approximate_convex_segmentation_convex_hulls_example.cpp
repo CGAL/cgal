@@ -49,11 +49,14 @@ int main()
   typedef Mesh::Property_map<face_descriptor, int> Clusters_pmap;
   Clusters_pmap segments_pmap = mesh.add_property_map<face_descriptor, int>("f:segment").first;
 
+  // create property map for convex hulls
+  boost::vector_property_map<Mesh> convex_hulls_pmap;
+
   // decompose mesh
   Timer timer;
   
   timer.start();
-  std::size_t segments_num = CGAL::approximate_convex_segmentation<Concurrency_tag>(mesh, segments_pmap, 0.3);
+  std::size_t segments_num = CGAL::approximate_convex_segmentation<Concurrency_tag>(mesh, segments_pmap, 0.3, CGAL::parameters::segments_convex_hulls(convex_hulls_pmap));
   timer.stop();
 
   std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
@@ -72,32 +75,11 @@ int main()
     std::cout << "Concavity value of #" << i << " segment: " << CGAL::concavity_values<Concurrency_tag>(mesh, segments_pmap, i) << std::endl;
   }
 
-  // compute convex hulls
+  // use convex hulls
   for (std::size_t i = 0; i < segments_num; ++i)
   {
-    Filtered_graph filtered_mesh(mesh, i, segments_pmap);
-    Mesh segment;
-    CGAL::copy_face_graph(filtered_mesh, segment);
- 
-    Mesh conv_hull;
-    std::vector<Point_3> pts;
-
-    if (CGAL::num_vertices(segment) > 3)
-    {
-      BOOST_FOREACH(vertex_descriptor vert, CGAL::vertices(segment))
-      {
-        pts.push_back(segment.point(vert));
-      }
-
-      CGAL::convex_hull_3(pts.begin(), pts.end(), conv_hull);
-    }
-    else             
-    {                
-      conv_hull = segment;             
-    }            
-  
-    // use convex hull
-    // ...    
+    Mesh& convex_hull = convex_hulls_pmap[i];
+    // ...
   }
 
   return EXIT_SUCCESS;
