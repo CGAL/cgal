@@ -469,7 +469,7 @@ the connected components of a closed polygon mesh so that it bounds a volume
 ****************************************
 \section PMPRepairing Combinatorial Repairing 
 *******************
-\subsection Polygon Soup Repairing
+\subsection PSRepairing Polygon Soup Repairing
 To ensure that a polygon soup can be oriented (see Section \ref PolygonSoups) and transformed
 into a workable polygon mesh, it might be necessary to preprocess the data to remove combinatorial
 and geometrical errors. This package offers the functions `CGAL::Polygon_mesh_processing::repair_polygon_soup()`,

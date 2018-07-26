@@ -311,7 +311,7 @@ std::size_t remove_degenerate_polygons_in_polygon_soup(PointRange& points,
 /// \param polygons a vector of polygons. Each element in the vector describes a polygon
 ///        using the indices of the points in `points`.
 ///
-/// \returns the number of removed isolated points.
+/// \returns the number of removed isolated points
 ///
 template <typename PointRange, typename PolygonRange>
 std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
@@ -380,7 +380,8 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
 /// - splitting of "pinched" polygons, that is polygons where a position appears more than once,
 ///   in multiple non-pinched polygons.
 /// - removal of invalid polygons, that is polygons with fewer than 2 points;
-/// - removal of isolated points, that is points that do not appear in any polygon of the soup.
+/// - removal of isolated points, that is points that do not appear in any polygon of the soup,
+///   using `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`.
 ///
 /// \tparam PointRange a model of the concept `SequenceContainer`
 /// \tparam PolygonRange a model of the concept `SequenceContainer`
