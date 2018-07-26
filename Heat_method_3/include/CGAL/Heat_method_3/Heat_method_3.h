@@ -384,7 +384,7 @@ namespace CGAL {
       {
         for(int i = 0; i<dimension; i++)
         {
-          double min_val = INT_MAX;
+          double min_val = (std::numeric_limits<double>::max)();
           vertex_iterator current;
           Index current_Index;
           current = sources.begin();
@@ -392,10 +392,10 @@ namespace CGAL {
           for(int j = 0; j<sources.size(); j++)
           {
             current_Index = get(vertex_id_map, *current);
-            double new_d = fabs(-phi.coeff(current_Index,0)+phi.coeff(i,0));
+            double new_d = CGAL::abs(-phi.coeff(current_Index,0)+phi.coeff(i,0));
             if(phi.coeff(current_Index,0)==phi.coeff(i,0))
             {
-              min_val = 0.0000;
+              min_val = 0.;
             }
             if(new_d < min_val)
             {

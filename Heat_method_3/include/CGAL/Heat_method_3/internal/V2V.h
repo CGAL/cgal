@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Heat_method_3.h>
 
+namespace CGAL {
 namespace Heat_method_3 {
 
   template <typename TM>
@@ -40,5 +41,5 @@ namespace Heat_method_3 {
   };
 
 } // namespace Heat_method_3
-
+} // namespace CGAL
 #endif //CGAL_HEAT_METHOD_3_INTERNAL_V2V_H
