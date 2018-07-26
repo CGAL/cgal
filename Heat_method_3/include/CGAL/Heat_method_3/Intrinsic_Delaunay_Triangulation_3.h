@@ -113,9 +113,6 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
        typedef typename boost::graph_traits<TriangleMesh>::edges_size_type edges_size_type;
        typedef typename boost::graph_traits<TriangleMesh>::faces_size_type faces_size_type;
 
-       typedef CGAL::dynamic_vertex_property_t<Index> Vertex_property_tag;
-       typedef typename boost::property_map<TriangleMesh, Vertex_property_tag >::type Vertex_id_map;
-
        typedef CGAL::dynamic_face_property_t<Index> Face_property_tag;
        typedef typename boost::property_map<TriangleMesh, Face_property_tag >::type Face_id_map;
 
@@ -347,11 +344,6 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
              vtov[pairs[i].first] = pairs[i].second;
            }
 
-           vertex_id_map = get(Vertex_property_tag(),tm);
-           Index i = 0;
-           BOOST_FOREACH(vertex_descriptor vd, vertices(tm)){
-             put(vertex_id_map, vd, i++);
-           }
            face_id_map = get(Face_property_tag(),tm);
            Index face_i = 0;
            BOOST_FOREACH(face_descriptor fd, faces(tm)){
@@ -417,7 +409,6 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
          Vertex_distance_map vdm;
          VertexPointMap vpm;
          HalfedgeCoordinateMap hcm;
-         Vertex_id_map vertex_id_map;
          Face_id_map face_id_map;
          Edge_id_map edge_id_map;
 
