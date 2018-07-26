@@ -1,3 +1,5 @@
+#define CGAL_TESTSUITE
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
@@ -30,6 +32,8 @@ typedef CGAL::Heat_method_3::Heat_method_3<Idt,Kernel, Idt::Vertex_distance_map>
 typedef CGAL::Heat_method_3::Heat_method_Eigen_traits_3::SparseMatrix SparseMatrix;
 
 
+struct Heat_method_3_private_tests {
+  
 #if 0
 void source_set_tests(Heat_method hm, const Idt& sm)
 {
@@ -37,7 +41,6 @@ void source_set_tests(Heat_method hm, const Idt& sm)
   hm.add_source(source);
   assert(*(hm.sources_begin()) == source);
   assert(hm.remove_source(source));
-  assert((hm.get_sources()).empty());
   assert(hm.add_source(*(vertices(sm).first)));
   assert(*(hm.sources_begin()) == source);
   assert(hm.add_source(*(std::next(vertices(sm).first,3))));
@@ -170,4 +173,12 @@ int main(int argc, char*argv[])
 #endif
 
   return 0;
+}
+
+};
+
+int main(int argc, char*argv[])
+{
+  Heat_method_3_private_tests tests;
+  return tests.main(argc,argv);
 }

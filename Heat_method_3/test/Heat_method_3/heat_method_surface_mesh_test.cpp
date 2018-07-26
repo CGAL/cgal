@@ -203,9 +203,9 @@ int main()
 
 };
 
-  int main()
-  {
-    Heat_method_3_private_tests tests;
-    return tests.main();
-      
-  }
+
+int main()
+{
+  Heat_method_3_private_tests tests;
+  return tests.main();
+}
