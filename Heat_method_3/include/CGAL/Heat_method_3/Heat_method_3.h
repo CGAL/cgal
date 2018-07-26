@@ -23,7 +23,8 @@
 #define CGAL_HEAT_METHOD_3_HEAT_METHOD_3_H
 
 #include <CGAL/license/Heat_method_3.h>
-#include <CGAL/Heat_method_3/Intrinsic_Delaunay_Triangulation_3.h> // for V2V  todo: clean up
+#include <CGAL/Heat_method_3/Intrinsic_Delaunay_Triangulation_3.h>
+#include <CGAL/Heat_method_3/internal/V2V.h>
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/property_map.h>

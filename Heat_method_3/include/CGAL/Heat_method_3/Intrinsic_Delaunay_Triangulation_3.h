@@ -36,6 +36,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/Heat_method_3/internal/V2V.h>
 
 #include <Eigen/Cholesky>
 #include <Eigen/Sparse>
@@ -422,20 +423,6 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
 } // namespace Intrinsic_Delaunay_Triangulation_3
 
 namespace Heat_method_3 {
-
-
-  template <typename TM>
-  struct V2V {
-
-    V2V(const TM&)
-    {}
-
-    template <typename T>
-    const T& operator()(const T& t) const
-    {
-      return t;
-    }
-  };
 
 template <typename TM,
           typename T,
