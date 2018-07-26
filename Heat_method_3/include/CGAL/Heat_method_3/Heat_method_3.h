@@ -155,7 +155,7 @@ namespace CGAL {
   public:
     
     /**
-     * add `vd` to the source set, returning `false` if `vd` is already in the set.
+     * adds `vd` to the source set, returning `false` if `vd` is already in the set.
      */
 
     template <typename VD>
@@ -166,7 +166,7 @@ namespace CGAL {
     }
 
     /**
-     * remove 'vd' from the source set, returning 'true' if 'vd' was in the set
+     * removes 'vd' from the source set, returning 'true' if 'vd' was in the set.
      */
     template <typename VD>
     bool remove_source(VD vd)
@@ -174,8 +174,10 @@ namespace CGAL {
       source_change_flag = true;
       return (sources.erase(v2v(vd)) == 1);
     }
+
+    
     /**
-     * clear the current source set
+     * clears the current source sets
      */
     void clear_sources()
     {
@@ -184,15 +186,26 @@ namespace CGAL {
       return;
     }
 
+    
+     /**
+     * get distance from the current source set to a vertex `vd`.
+     */
+    
+    double distance(vertex_descriptor vd) const
+    {
+      return get(vdm,vd);
+    }
+
+    
     /**
-     * return vertex_descriptor to first vertex in the source set
+     * returns an iterator to the first vertex in the source set.
      */
     vertex_iterator sources_begin()
     {
       return sources.begin();
     }
     /**
-     * return vertex_descriptor to last vertex in the source set
+     * returns past-the-end iterator of the source set.
      */
     vertex_iterator sources_end()
     {
@@ -425,6 +438,9 @@ namespace CGAL {
 
   public:
 
+    /** 
+     *
+     **/
     void update()
     {
       double d=0;
