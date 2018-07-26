@@ -35,8 +35,6 @@ void source_set_tests(Heat_method hm, const Idt& sm)
 {
   vertex_descriptor source = *(vertices(sm).first);
   hm.add_source(source);
-  const std::set<vertex_descriptor>& source_copy = hm.get_sources();
-  assert(*(source_copy.begin()) == source);;
   assert(*(hm.sources_begin()) == source);
   assert(hm.remove_source(source));
   assert((hm.get_sources()).empty());

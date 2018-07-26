@@ -116,11 +116,7 @@ namespace Heat_method_3 {
       build();
     }
 
-    /**
-     * add `vd` to the source set, returning `false` if `vd` is already in the set.
-     */
-
-     const VertexDistanceMap& get_vertex_distance_map() const
+     const VertexDistanceMap& vertex_distance_map() const
      {
        return vdm;
      }
@@ -145,6 +141,11 @@ namespace Heat_method_3 {
        return vertex_id_map;
      }
 
+    
+    /**
+     * add `vd` to the source set, returning `false` if `vd` is already in the set.
+     */
+
     template <typename VD>
     bool add_source(VD vd)
     {
@@ -161,15 +162,6 @@ namespace Heat_method_3 {
       source_change_flag = true;
       return (sources.erase(v2v(vd)) == 1);
     }
-
-    /**
-     *return current source set
-    */
-    const std::set<vertex_descriptor>& get_sources() const
-    {
-      return sources;
-    }
-
     /**
      * clear the current source set
      */
@@ -195,14 +187,6 @@ namespace Heat_method_3 {
       return sources.end();
     }
 
-    /**
-     * get distance from the current source set to a vertex `vd`.
-     */
-    double distance(vertex_descriptor vd) const
-    {
-      return 0;
-    }
-
     double summation_of_edges() const
     {
       double edge_sum = 0;
@@ -218,7 +202,7 @@ namespace Heat_method_3 {
       return m_time_step;
     }
 
-    Matrix kronecker_delta(const std::set<vertex_descriptor>& sources)
+    void update_kronecker_delta()
     {
       //currently just working with a single vertex in source set, add the first one for now
       Index i;
@@ -242,7 +226,7 @@ namespace Heat_method_3 {
           vd = ++vd;
         }
       }
-      return K;
+      kronecker = K;
     }
 
 
@@ -433,8 +417,7 @@ namespace Heat_method_3 {
       if(source_change_flag)
       {
         //don't need to recompute Mass matrix, cotan matrix or timestep reflect that in this function
-        sources = get_sources();
-        kronecker = kronecker_delta(sources);
+        update_kronecker_delta();
         solved_u = solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, m_time_step, dimension);
         X = compute_unit_gradient(solved_u);
         index_divergence = compute_divergence(X, dimension);
@@ -539,8 +522,7 @@ namespace Heat_method_3 {
       m_time_step = m_time_step*summation_of_edges();
       m_time_step = m_time_step*m_time_step;
 
-      sources = get_sources();
-      kronecker = kronecker_delta(sources);
+      update_kronecker_delta();
       solved_u = solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, m_time_step, m);
       //edit unit_grad
       X = compute_unit_gradient(solved_u);

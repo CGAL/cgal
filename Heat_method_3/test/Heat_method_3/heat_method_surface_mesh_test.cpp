@@ -29,11 +29,9 @@ void source_set_tests(Heat_method hm, const Mesh& sm)
 {
   vertex_descriptor source = *(vertices(sm).first);
   hm.add_source(source);
-  const std::set<vertex_descriptor>& source_copy = hm.get_sources();
-  assert(*(source_copy.begin()) == source);;
   assert(*(hm.sources_begin()) == source);
   assert(hm.remove_source(source));
-  assert((hm.get_sources()).empty());
+  
   assert(hm.add_source(*(vertices(sm).first)));
   assert(*(hm.sources_begin()) == source);
   assert(hm.add_source(*(std::next(vertices(sm).first,3))));
@@ -91,13 +89,6 @@ void check_for_unit(const Eigen::MatrixXd& X, int dimension)
   }
 }
 
-void check_no_update(const Mesh& sm, const Vertex_distance_map& original, const Vertex_distance_map& updated)
-{
-  BOOST_FOREACH(vertex_descriptor vd, vertices(sm))
-  {
-    assert(get(original, vd) == get(updated,vd));
-  }
-}
 
 
 
@@ -195,12 +186,7 @@ int main()
 
   hm3.add_source(*(++(++(vertices(sm3).first))));
   hm3.add_source(*(vertices(sm3).first));
-  const Vertex_distance_map& old_vdm = hm3.get_vertex_distance_map();
   hm3.update();
-  const Vertex_distance_map& original_vdm = hm3.get_vertex_distance_map();
-  hm3.update();
-  const Vertex_distance_map& new_vdm = hm3.get_vertex_distance_map();
-  check_no_update(sm3, original_vdm, new_vdm);
   const SparseMatrix& K4 = hm3.kronecker_delta();
   assert(K4.nonZeros()==2);
 
