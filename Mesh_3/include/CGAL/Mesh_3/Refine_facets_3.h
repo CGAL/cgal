@@ -48,6 +48,7 @@
 #endif
 
 #include <CGAL/Object.h>
+#include <CGAL/atomic.h>
 
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
@@ -287,12 +288,19 @@ public:
   Refine_facets_3_base(Tr& tr, Complex3InTriangulation3& c3t3,
                        const MeshDomain& oracle,
                        const Criteria& criteria,
-                       std::size_t maximal_number_of_vertices)
+                       std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                       , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+                       )
     : r_tr_(tr)
     , r_criteria_(criteria)
     , r_oracle_(oracle)
     , r_c3t3_(c3t3)
     , m_maximal_number_of_vertices_(maximal_number_of_vertices)
+#ifndef CGAL_NO_ATOMIC
+    , m_stop_ptr(stop_ptr)
+#endif
   {}
 
   void scan_triangulation_impl_amendement() const {}
@@ -300,6 +308,13 @@ public:
   // Tells if the refinement process of cells is currently finished
   bool no_longer_element_to_refine_impl()
   {
+#ifndef CGAL_NO_ATOMIC
+    if(m_stop_ptr != 0 &&
+       m_stop_ptr->load(CGAL::cpp11::memory_order_acquire) == true)
+    {
+      return true;
+    }
+#endif // not defined CGAL_NO_ATOMIC
     if(m_maximal_number_of_vertices_ !=0 &&
        r_tr_.number_of_vertices() >=
        m_maximal_number_of_vertices_)
@@ -625,6 +640,10 @@ protected:
   Complex3InTriangulation3& r_c3t3_;
   /// Maximal allowed number of vertices
   std::size_t m_maximal_number_of_vertices_;
+#ifndef CGAL_NO_ATOMIC
+  /// Pointer to the atomic Boolean that can stop the process
+  CGAL::cpp11::atomic<bool>* const m_stop_ptr;
+#endif
 }; // end class template Refine_facets_3_base
 
 /************************************************
@@ -789,7 +808,11 @@ public:
                   Previous_level_& previous,
                   C3T3& c3t3,
                   int mesh_topology,
-                  std::size_t maximal_number_of_vertices);
+                  std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                  , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+                  );
   // For parallel
   Refine_facets_3(Tr& triangulation,
                   const Criteria& criteria,
@@ -798,7 +821,11 @@ public:
                   C3T3& c3t3,
                   Lock_data_structure *lock_ds,
                   WorksharingDataStructureType *worksharing_ds,
-                  std::size_t maximal_number_of_vertices);
+                  std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                  , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+                  );
 
   /// Destructor
   virtual ~Refine_facets_3() { }
@@ -910,9 +937,17 @@ Refine_facets_3(Tr& triangulation,
                 P_& previous,
                 C3T3& c3t3,
                 int mesh_topology,
-                std::size_t maximal_number_of_vertices)
+                std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+                )
   : Rf_base(triangulation, c3t3, oracle, criteria, mesh_topology,
-            maximal_number_of_vertices)
+            maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                , stop_ptr
+#endif
+            )
   , Mesher_level<Tr, Self, Facet, P_,
       Triangulation_mesher_level_traits_3<Tr>, Ct>(previous)
   , No_after_no_insertion()
@@ -931,8 +966,16 @@ Refine_facets_3(Tr& triangulation,
                 C3T3& c3t3,
                 Lock_data_structure *lock_ds,
                 WorksharingDataStructureType *worksharing_ds,
-                std::size_t maximal_number_of_vertices)
-  : Rf_base(triangulation, c3t3, oracle, criteria, maximal_number_of_vertices)
+                std::size_t maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+                , CGAL::cpp11::atomic<bool>* stop_ptr
+#endif
+                )
+  : Rf_base(triangulation, c3t3, oracle, criteria, maximal_number_of_vertices
+#ifndef CGAL_NO_ATOMIC
+            , stop_ptr
+#endif
+            )
   , Mesher_level<Tr, Self, Facet, P_,
       Triangulation_mesher_level_traits_3<Tr>, Ct>(previous)
   , No_after_no_insertion()
