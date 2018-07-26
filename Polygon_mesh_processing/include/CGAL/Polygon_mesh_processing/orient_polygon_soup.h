@@ -463,7 +463,7 @@ struct Polygon_soup_orienter
  * The algorithm is described in \cgalCite{gueziec2001cutting}.
  *
  * @tparam PointRange a model of the concepts `RandomAccessContainer`
- * and `BackInsertionSequence` whose value type is the point type
+ * and `BackInsertionSequence` whose value type is the point type.
  * @tparam PolygonRange a model of the concept `RandomAccessContainer`
  * whose value_type is a model of the concept `RandomAccessContainer`
  * whose value_type is `std::size_t`.

@@ -84,7 +84,7 @@ bool simplify_polygon(PointRange& points,
           traits.equal_3_object()(points[polygon[i]], points[polygon[next_i]])) // geometric equality
     {
       to_remove.push_back(next_i);
-#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_DEBUG
+#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
       std::cout << "removing point: polygon[" << next_i << "] = " << polygon[next_i] << std::endl;
 #endif
       next_i = (next_i == last) ? 0 : next_i+1;
@@ -115,7 +115,7 @@ bool simplify_polygon(PointRange& points,
 //
 // For each polygon of the soup, removes consecutive identical (in a geometric sense) points.
 //
-// \tparam PointRange a model of the concept `RandomAccessContainer`
+// \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
 // \tparam PolygonRange a model of the concept `SequenceContainer`
 //                      whose value_type is itself a model of the concept `SequenceContainer`
 //                      whose value_type is `std::size_t`.
@@ -158,13 +158,13 @@ std::size_t simplify_polygons_in_polygon_soup(PointRange& points,
 
 // \ingroup PMP_repairing_grp
 //
-// Splits "pinched" poygons, that is polygons for which a point appears more than once,
+// Splits "pinched" polygons, that is polygons for which a point appears more than once,
 // into multiple non-pinched polygons.
 //
-// \tparam PointRange a model of the concept `RandomAccessContainer`
+// \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
 // \tparam PolygonRange a model of the concept `SequenceContainer`
 //                      whose value_type is itself a model of the concept `SequenceContainer`
-//                      whose value_type is `std::size_t`.
+//                      and `Swappable` whose value_type is `std::size_t`.
 // \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 //
 // \param points points of the soup of polygons.
@@ -199,9 +199,9 @@ std::size_t split_pinched_polygons_in_polygon_soup(PointRange& points,
     Polygon_3& polygon = polygons[polygon_index];
     const std::size_t ini_polygon_size = polygon.size();
 
-#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_DEBUG
+#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
     std::cout << "Input polygon: ";
-    print_polygon(std::cout, polygon);
+    internal::print_polygon(std::cout, polygon);
 #endif
 
     if(ini_polygon_size <= 3)
@@ -216,13 +216,13 @@ std::size_t split_pinched_polygons_in_polygon_soup(PointRange& points,
     {
       const Point_3& p = points[polygon[i]];
 
-      std::pair<typename Unique_point_container::iterator, bool> is_insert_succesful =
+      std::pair<typename Unique_point_container::iterator, bool> is_insert_successful =
         unique_points.insert(std::make_pair(p, i));
 
-      if(!is_insert_succesful.second)
+      if(!is_insert_successful.second)
       {
         // We have already met that point, split the polygon into two smaller polygons
-        std::size_t prev_id = is_insert_succesful.first->second;
+        std::size_t prev_id = is_insert_successful.first->second;
 
         CGAL_assertion(prev_id < i-1);
 
@@ -232,13 +232,13 @@ std::size_t split_pinched_polygons_in_polygon_soup(PointRange& points,
         split_polygon_2.insert(split_polygon_2.end(), polygon.begin(), polygon.begin() + prev_id);
         split_polygon_2.insert(split_polygon_2.end(), polygon.begin() + i, polygon.end());
 
-#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_DEBUG
+#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
         std::cout << "New polygons:" << std::endl;
         std::cout << "P1:";
-        print_polygon(std::cout, split_polygon_1);
+        internal::print_polygon(std::cout, split_polygon_1);
 
         std::cout << "P2:";
-        print_polygon(std::cout, split_polygon_2);
+        internal::print_polygon(std::cout, split_polygon_2);
 #endif
 
         std::swap(polygon, split_polygon_1);
@@ -257,7 +257,7 @@ std::size_t split_pinched_polygons_in_polygon_soup(PointRange& points,
 //
 // Removes polygons with fewer than 2 points from the soup.
 //
-// \tparam PointRange a model of the concept `Container`
+// \tparam PointRange a model of the concept `Container` whose value type is the point type.
 // \tparam PolygonRange a model of the concept `SequenceContainer`
 //                      whose value_type is itself a model of the concept `Container`
 //                      whose value_type is `std::size_t`.
@@ -302,7 +302,7 @@ std::size_t remove_degenerate_polygons_in_polygon_soup(PointRange& points,
 /// Removes the isolated points from a polygon soup.
 /// A point is considered <i>isolated</i> if it does not appear in any polygon of the soup.
 ///
-/// \tparam PointRange a model of the concept `SequenceContainer`
+/// \tparam PointRange a model of the concept `SequenceContainer` whose value type is the point type.
 /// \tparam PolygonRange a model of the concept `RandomAccessContainer`
 ///                      whose value_type is itself a model of the concept `RandomAccessContainer`
 ///                      whose value_type is `std::size_t`.
@@ -344,7 +344,7 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
   {
     if(!visited[i])
     {
-#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_DEBUG
+#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
       std::cout << "points[" << i << "] = " << points[i] << " is isolated" << std::endl;
 #endif
       std::swap(points[swap_position], points[i]);
@@ -383,10 +383,10 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
 /// - removal of isolated points, that is points that do not appear in any polygon of the soup,
 ///   using `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`.
 ///
-/// \tparam PointRange a model of the concept `SequenceContainer`
-/// \tparam PolygonRange a model of the concept `SequenceContainer`
+/// \tparam PointRange a model of the concept `SequenceContainer` whose value type is the point type
+/// \tparam PolygonRange a model of the concept `SequenceContainer`.
 ///                      whose value_type is itself a model of the concept `SequenceContainer`
-///                      whose value_type is `std::size_t`.
+///                      and `Swappable` whose value_type is `std::size_t`.
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// \param points points of the soup of polygons.

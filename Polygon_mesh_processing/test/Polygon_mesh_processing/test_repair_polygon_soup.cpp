@@ -205,7 +205,7 @@ void test_remove_isolated_points(const bool verbose = false)
 
 void test_slit_pinched_polygons(const bool /*verbose*/ = false)
 {
-  std::cout << "test slit_pinched_polygons... " << std::endl;
+  std::cout << "test split_pinched_polygons... " << std::endl;
 
   std::vector<Point_3> points;
   std::vector<Polygon> polygons;

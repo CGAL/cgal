@@ -75,6 +75,11 @@ class BidirectionalIterator {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
+/// See https://en.cppreference.com/w/cpp/named_req/Swappable
+class Swappable {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
 /// See https://en.cppreference.com/w/cpp/named_req/Container
 class Container {};
 
