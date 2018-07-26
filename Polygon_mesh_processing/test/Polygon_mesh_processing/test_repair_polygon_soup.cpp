@@ -17,6 +17,54 @@ typedef K::Point_3                                              Point_3;
 typedef CGAL::Surface_mesh<Point_3>                             Mesh;
 typedef std::vector<std::size_t>                                Polygon;
 
+void test_merge_duplicate_points(const bool /*verbose*/ = false)
+{
+  std::cout << "test merge duplicate points... " << std::endl;
+
+  std::vector<Point_3> points;
+  std::vector<Polygon> polygons;
+
+  // empty
+  std::size_t res = PMP::merge_duplicate_points_in_polygon_soup(points, polygons);
+  assert(res == 0 && points.empty() && polygons.empty());
+
+  points.push_back(Point_3(0,0,0)); // #0
+  points.push_back(Point_3(1,2,0)); // #1
+  points.push_back(Point_3(1,1,0)); // #2
+  points.push_back(Point_3(1,1,0)); // #3 // identical to #2
+  points.push_back(Point_3(0,1,0)); // #4
+  points.push_back(Point_3(1,1,0)); // #5 // identical to #2
+  points.push_back(Point_3(0,0,0)); // #6 // idental to #0
+
+  // ------
+  Polygon polygon;
+  polygon.push_back(0); polygon.push_back(1); polygon.push_back(2);
+  polygons.push_back(polygon);
+
+  polygon.clear();
+  polygon.push_back(6); polygon.push_back(3); polygon.push_back(1); polygon.push_back(0);
+  polygons.push_back(polygon);
+
+  polygon.clear();
+  polygon.push_back(5);
+  polygons.push_back(polygon);
+
+  res = PMP::merge_duplicate_points_in_polygon_soup(points, polygons, params::geom_traits(K()));
+  assert(res == 3 && points.size() == 4 && polygons.size() == 3);
+
+  assert(polygons[0][0] == 0 && polygons[0][1] == 1 && polygons[0][2] == 2);
+  assert(polygons[1][0] == 0 && polygons[1][1] == 2 && polygons[1][2] == 1 && polygons[1][3] == 0);
+
+  for(std::size_t i=0, psn=polygons.size(); i<psn; ++i)
+  {
+    const Polygon& polygon = polygons[i];
+    for(std::size_t j=0, pn=polygon.size(); j<pn; ++j)
+    {
+      assert(polygon[j] >= 0 && polygon[j] < points.size());
+    }
+  }
+}
+
 void test_simplify_polygons(const bool /*verbose*/ = false)
 {
   std::cout << "test simplify_polygons... " << std::endl;
@@ -280,6 +328,7 @@ void test_slit_pinched_polygons(const bool /*verbose*/ = false)
 
 int main()
 {
+  test_merge_duplicate_points(false);
   test_simplify_polygons(false);
   test_remove_invalid_polygons(false);
   test_remove_isolated_points(false);

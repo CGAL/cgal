@@ -27,7 +27,8 @@ int main(int, char**)
   points.push_back(Point_3(0,1,0));
   points.push_back(Point_3(-1,0,0));
   points.push_back(Point_3(0,-1,0));
-  points.push_back(Point_3(0,-2,0)); // unused vertex
+  points.push_back(Point_3(0,1,0)); // duplicate point
+  points.push_back(Point_3(0,-2,0)); // unused point
 
   Polygon p;
   p.push_back(0); p.push_back(1); p.push_back(2);
@@ -43,7 +44,7 @@ int main(int, char**)
   polygons.push_back(p);
 
   p.clear();
-  p.push_back(0); p.push_back(3); p.push_back(2);
+  p.push_back(0); p.push_back(3); p.push_back(5);
   polygons.push_back(p);
 
   // degenerate face

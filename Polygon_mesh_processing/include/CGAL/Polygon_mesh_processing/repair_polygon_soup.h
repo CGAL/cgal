@@ -51,6 +51,18 @@ struct Polygon_types
   typedef typename std::vector<Polygon_3>::size_type                                P_ID;
 };
 
+template <typename PointRange, typename PolygonRange, typename NamedParameters>
+struct GetPolygonGeomTraits
+{
+  typedef typename boost::lookup_named_param_def <
+                     internal_np::geom_traits_t,
+                     NamedParameters,
+                     typename CGAL::Kernel_traits<
+                       typename internal::Polygon_types<
+                         PointRange, PolygonRange>::Point_3 >::type
+                   > ::type                                                         type;
+};
+
 template <typename Stream, typename Polygon>
 void print_polygon(Stream& out, const Polygon& polygon)
 {
@@ -374,14 +386,119 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
 
 /// \ingroup PMP_repairing_grp
 ///
+/// Merges the duplicate points in a polygon soup.
+/// The index of a point that is merged with another point will change in all the polygons
+/// the point appears in.
+///
+/// \tparam PointRange a model of the concept `SequenceContainer` and `Swappable`
+///                    whose value type is the point type.
+/// \tparam PolygonRange a model of the concept `RandomAccessContainer`
+///                      whose value_type is itself a model of the concept `RandomAccessContainer`
+///                      whose value_type is `std::size_t`.
+/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+///
+/// \param points points of the soup of polygons.
+/// \param polygons a vector of polygons. Each element in the vector describes a polygon
+///        using the indices of the points in `points`.
+/// \param np optional \ref pmp_namedparameters "Named Parameters" described below
+///
+/// \cgalNamedParamsBegin
+///    \cgalParamBegin{geom_traits} a geometric traits class instance.
+///       The traits class must provide the nested functor `Less_xyz_3`
+///       to compare lexicographically two points a function `Less_xyz_3 less_xyz_3_object()`.
+///   \cgalParamEnd
+/// \cgalNamedParamsEnd
+///
+/// \returns the number of removed points
+///
+template <typename PointRange, typename PolygonRange, typename NamedParameters>
+std::size_t merge_duplicate_points_in_polygon_soup(PointRange& points,
+                                                   PolygonRange& polygons,
+                                                   const NamedParameters& np)
+{
+  typedef typename internal::Polygon_types<PointRange, PolygonRange>::P_ID        P_ID;
+  typedef typename internal::Polygon_types<PointRange, PolygonRange>::Point_3     Point_3;
+  typedef typename internal::Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
+
+  using boost::get_param;
+  using boost::choose_param;
+
+  typedef typename internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
+  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
+
+  typedef typename Traits::Less_xyz_3                                             Less_xyz_3;
+
+  const std::size_t ini_points_n = points.size();
+  std::vector<std::size_t> point_index(ini_points_n, 0);
+
+  typedef std::map<Point_3, std::size_t, Less_xyz_3>                              Unique_point_container;
+  Unique_point_container point_to_id(traits.less_xyz_3_object());
+
+  std::vector<Point_3> unique_points;
+  unique_points.reserve(ini_points_n);
+
+  for(std::size_t i=0; i<ini_points_n; ++i)
+  {
+    std::pair<typename Unique_point_container::iterator, bool> is_insert_successful =
+      point_to_id.insert(std::make_pair(points[i], unique_points.size()));
+
+#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
+    if(!is_insert_successful.second)
+      std::cout << "points[" <<i << "] = " << points[i] << " was already encountered" << std::endl;
+#endif
+    std::size_t id = is_insert_successful.first->second;
+
+    if(id == unique_points.size())
+      unique_points.push_back(points[i]);
+    point_index[i] = id;
+  }
+
+  if(unique_points.size() != ini_points_n)
+  {
+    for(P_ID polygon_index=0, end=polygons.size(); polygon_index!=end; ++polygon_index)
+    {
+      Polygon_3& polygon = polygons[polygon_index];
+#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
+      std::cout << "Input polygon: ";
+      internal::print_polygon(std::cout, polygon);
+#endif
+
+      for(std::size_t i=0, polygon_size = polygon.size(); i<polygon_size; ++i)
+        polygon[i] = point_index[polygon[i]];
+
+#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
+      std::cout << "Output polygon: ";
+      internal::print_polygon(std::cout, polygon);
+#endif
+
+    }
+
+    std::swap(points, unique_points);
+    return ini_points_n - points.size();
+  }
+
+  return 0;
+}
+
+template <typename PointRange, typename PolygonRange>
+std::size_t merge_duplicate_points_in_polygon_soup(PointRange& points,
+                                                   PolygonRange& polygons)
+{
+  return merge_duplicate_points_in_polygon_soup(points, polygons, CGAL::parameters::all_default());
+}
+
+/// \ingroup PMP_repairing_grp
+///
 /// Cleans a given polygon soup by removing invalid elements. More precisely, this function
 /// carries out the following tasks, in the same order as they are listed:
+/// - merging of duplicating points, using the function
+///   `CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup()`.
 /// - simplification of the polygons to remove identical consecutive points;
 /// - splitting of "pinched" polygons, that is polygons where a position appears more than once,
 ///   in multiple non-pinched polygons.
 /// - removal of invalid polygons, that is polygons with fewer than 2 points;
 /// - removal of isolated points, that is points that do not appear in any polygon of the soup,
-///   using `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`.
+///   using the function `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`.
 ///
 /// \tparam PointRange a model of the concept `SequenceContainer` whose value type is the point type
 /// \tparam PolygonRange a model of the concept `SequenceContainer`.
@@ -411,14 +528,10 @@ void repair_polygon_soup(PointRange& points,
   using boost::get_param;
   using boost::choose_param;
 
-  typedef typename boost::lookup_named_param_def <
-    internal_np::geom_traits_t,
-    NamedParameters,
-    typename CGAL::Kernel_traits<typename internal::Polygon_types<PointRange, PolygonRange>::Point_3 >::type
-  > ::type Traits;
-
+  typedef typename internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
   Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
 
+  merge_duplicate_points_in_polygon_soup(points, polygons, np);
   internal::simplify_polygons_in_polygon_soup(points, polygons, traits);
   internal::split_pinched_polygons_in_polygon_soup(points, polygons, traits);
   internal::remove_invalid_polygons_in_polygon_soup(points, polygons);
