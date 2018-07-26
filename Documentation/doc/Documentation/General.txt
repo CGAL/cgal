@@ -1,33 +1,33 @@
 ///This concept refers to the one described at http://www.sgi.com/tech/stl/Assignable.html.
 ///
 ///Using the latest concepts of the \cpp standard, a type that is a model of this concept
-///is both <a href="http://en.cppreference.com/w/cpp/concept/CopyAssignable"><tt>CopyAssignable</tt></a>
-///and <a href="http://en.cppreference.com/w/cpp/concept/CopyConstructible"><tt>CopyConstructible</tt></a>.
+///is both <a href="https://en.cppreference.com/w/cpp/named_req/CopyAssignable"><tt>CopyAssignable</tt></a>
+///and <a href="https://en.cppreference.com/w/cpp/named_req/CopyConstructible"><tt>CopyConstructible</tt></a>.
 class Assignable {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/DefaultConstructible
+/// See https://en.cppreference.com/w/cpp/named_req/DefaultConstructible
 class DefaultConstructible {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/CopyConstructible
+/// See https://en.cppreference.com/w/cpp/named_req/CopyConstructible
 class CopyConstructible {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/Callable
+/// See https://en.cppreference.com/w/cpp/named_req/Callable
 class Callable {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/EqualityComparable
+/// See https://en.cppreference.com/w/cpp/named_req/EqualityComparable
 class EqualityComparable {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/LessThanComparable
+/// See https://en.cppreference.com/w/cpp/named_req/LessThanComparable
 class LessThanComparable {};
 
 /// \cgalConcept
@@ -38,52 +38,74 @@ class AdaptableFunctor {};
 /// \cgalConcept
 ///This concept refers to the one described at  http://www.sgi.com/tech/stl/AdaptableUnaryFunction.html.
 class AdaptableUnaryFunction {};
+
 /// \cgalConcept
 ///This concept refers to the one described at  http://www.sgi.com/tech/stl/AdaptableBinaryFunction.html.
 class AdaptableBinaryFunction {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/Iterator
+/// See https://en.cppreference.com/w/cpp/named_req/Iterator
 class Iterator {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/OutputIterator
+/// See https://en.cppreference.com/w/cpp/named_req/OutputIterator
 class OutputIterator {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/InputIterator
+/// See https://en.cppreference.com/w/cpp/named_req/InputIterator
 class InputIterator {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/ForwardIterator
+/// See https://en.cppreference.com/w/cpp/named_req/ForwardIterator
 class ForwardIterator {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/RandomAccessIterator
+/// See https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator
 class RandomAccessIterator {};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
-/// See http://en.cppreference.com/w/cpp/concept/BidirectionalIterator
+/// See https://en.cppreference.com/w/cpp/named_req/BidirectionalIterator
 class BidirectionalIterator {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See https://en.cppreference.com/w/cpp/named_req/Container
+class Container {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See https://en.cppreference.com/w/cpp/named_req/ReversibleContainer
+class ReversibleContainer {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See https://en.cppreference.com/w/cpp/named_req/AssociativeContainer
+class AssociativeContainer {};
+
+/// \cgalConcept
+/// Concept from the \cpp standard.
+/// See https://en.cppreference.com/w/cpp/named_req/SequenceContainer
+class SequenceContainer {};
 
 /// \cgalConcept
 /// This concept refers to the one described at http://www.sgi.com/tech/stl/RandomAccessContainer.html.
 ///
 /// It is a container that is a model of
-/// <a href="http://en.cppreference.com/w/cpp/concept/ReversibleContainer"><tt>ReversibleContainer</tt></a> and whose iterator type is a model of
-/// <a href="http://en.cppreference.com/w/cpp/concept/RandomAccessIterator"><tt>RandomAccessIterator</tt></a>.
+/// <a href="https://en.cppreference.com/w/cpp/named_req/ReversibleContainer"><tt>ReversibleContainer</tt></a> and whose iterator type is a model of
+/// <a href="https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator"><tt>RandomAccessIterator</tt></a>.
 class RandomAccessContainer {};
+
 /// \cgalConcept
 /// This concepts refers to the one described at http://www.sgi.com/tech/stl/BackInsertionSequence.html.
 ///
 /// It is a container that is a model of
-/// <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer"><tt>SequenceContainer</tt></a>
+/// <a href="https://en.cppreference.com/w/cpp/named_req/Container"><tt>Container</tt></a>
 /// that has the ability to append elements at the end of the sequence and to access the last element, both in amortized constant time.
 class BackInsertionSequence {};
 
