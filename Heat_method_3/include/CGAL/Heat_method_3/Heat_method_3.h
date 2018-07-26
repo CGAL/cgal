@@ -578,6 +578,52 @@ namespace CGAL {
     bool source_change_flag;
   };
 
+
+  /*! \addtogroup PkgHeatMethod
+   *
+   * @{
+   */
+
+    /// \relates Heat_method_3
+    /// computes ...
+    template <typename TriangleMesh, typename VertexDistanceMap>
+    void compute_distances_with_heat_method(const TriangleMesh& tm,
+                                            VertexDistanceMap vdm,
+                                            typename boost::graph_traits<TriangleMesh>::vertex_descriptor source)
+    {
+      typedef typename boost::property_map<TriangleMesh, vertex_point_t>::type PPM;
+      typedef typename boost::property_traits<PPM>::value_type Point_3;
+      typedef CGAL::Kernel_traits<Point_3>::Kernel Kernel;
+      typedef CGAL::Heat_method_3::Heat_method_3<TriangleMesh,Kernel,VertexDistanceMap> Heat_method;
+
+      Heat_method hm(tm,vdm);
+      hm.add_source(source);
+      hm.update();
+    }
+    
+
+    /// \relates Heat_method_3
+    /// computes ...
+    template <typename TriangleMesh, typename VertexDistanceMap>
+    void compute_distances_with_intrinsic_delaunay_heat_method(const TriangleMesh& tm,
+                                                               VertexDistanceMap vdm,
+                                                               typename boost::graph_traits<TriangleMesh>::vertex_descriptor source)
+    {
+      typedef typename boost::property_map<TriangleMesh, vertex_point_t>::type PPM;
+      typedef typename boost::property_traits<PPM>::value_type Point_3;
+      typedef CGAL::Kernel_traits<Point_3>::Kernel Kernel;
+      typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TriangleMesh,Kernel, VertexDistanceMap> Idt;
+      typedef CGAL::Heat_method_3::Heat_method_3<Idt,Kernel,typename Idt::Vertex_distance_map> Heat_method;
+
+      Idt idt(tm, vdm);
+      Heat_method hm(idt,idt.vertex_distance_map());
+      hm.add_source(source);
+      hm.update();
+    }
+    
+
+ /*! @} */
+    
 } // namespace Heat_method_3
 } // namespace CGAL
 #include <CGAL/enable_warnings.h>
