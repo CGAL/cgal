@@ -30,8 +30,9 @@
 #include <CGAL/Polygon_mesh_processing/internal/AABB_do_intersect_transform_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Side_of_triangle_mesh.h>
+#include <CGAL/box_intersection_d.h>
 
-
+#define CGAL_USE_BOX_INTERSECTION_D 1
 namespace CGAL {
 
 template <class TriangleMesh, class Kernel, class HAS_ROTATION = CGAL::Tag_true>
@@ -47,6 +48,9 @@ class Rigid_mesh_collision_detection
   // TODO: we probably want an option with external trees
   std::vector<Tree*> m_aabb_trees;
   std::vector<bool> m_is_closed;
+#ifdef CGAL_USE_BOX_INTERSECTION_D
+  std::vector<typename Tree::Bounding_box> m_tree_boxes;
+#endif
 
 public:
   template <class MeshRange>
@@ -66,13 +70,20 @@ public:
     m_triangle_mesh_ptrs.reserve( triangle_meshes.size() );
     m_aabb_trees.reserve( triangle_meshes.size() );
     m_is_closed.resize(triangle_meshes.size(), false);
+#ifdef CGAL_USE_BOX_INTERSECTION_D
+    m_tree_boxes.reserve( triangle_meshes.size() );
+#endif
 
     BOOST_FOREACH(const TriangleMesh& tm, triangle_meshes)
     {
       if (is_closed(tm))
         m_is_closed[m_triangle_mesh_ptrs.size()]=true;
       m_triangle_mesh_ptrs.push_back( &tm );
-      m_aabb_trees.push_back(new Tree(faces(tm).begin(), faces(tm).end(), tm));
+      Tree* t = new Tree(faces(tm).begin(), faces(tm).end(), tm);
+      m_aabb_trees.push_back(t);
+#ifdef CGAL_USE_BOX_INTERSECTION_D
+      m_tree_boxes.push_back(internal::get_tree_bbox(*t));
+#endif
     }
   }
 
@@ -95,8 +106,26 @@ public:
   void set_transformation(std::size_t mesh_id, const Aff_transformation_3<Kernel>& aff_trans)
   {
     m_aabb_trees[mesh_id]->traits().set_transformation(aff_trans);
+#ifdef CGAL_USE_BOX_INTERSECTION_D
+    m_tree_boxes[mesh_id] = internal::get_tree_bbox(*m_aabb_trees[mesh_id]);
+#endif
+    
   }
-
+ 
+  
+#ifdef CGAL_USE_BOX_INTERSECTION_D
+  struct Callback{
+    typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t> Bbox;
+    std::vector<std::size_t>& res;
+    Callback(std::vector<std::size_t>& res)
+      :res(res){}
+    void operator()(const Bbox& ,
+                    const Bbox& b)
+    {
+      res.push_back(b.info());
+    }
+  };
+#endif
   std::vector<std::size_t>
   set_transformation_and_get_all_intersections(std::size_t mesh_id,
                                            const Aff_transformation_3<Kernel>& aff_trans)
@@ -106,6 +135,24 @@ public:
     std::vector<std::size_t> res;
 
     // TODO: use a non-naive version
+#ifdef CGAL_USE_BOX_INTERSECTION_D
+    std::vector<typename Callback::Bbox> boxes;
+    std::vector<typename Callback::Bbox> query;
+    for(std::size_t k=0; k<m_tree_boxes.size(); ++k)
+    {
+      if(k != mesh_id)
+        boxes.push_back(Callback::Bbox(m_tree_boxes[k], k));
+    }
+    query.push_back(Callback::Bbox(m_tree_boxes[mesh_id], mesh_id));
+    
+    Callback callback(res);
+    CGAL::box_intersection_d(
+          boxes, boxes+m_aabb_trees.size()-1, 
+          query.begin(),
+          query.end(),
+          callback);
+    
+#else
     for(std::size_t k=0; k<m_aabb_trees.size(); ++k)
     {
       if(k==mesh_id) continue;
@@ -113,7 +160,7 @@ public:
       if ( m_aabb_trees[k]->do_intersect( *m_aabb_trees[mesh_id] ) )
         res.push_back(k);
     }
-
+#endif
     return res;
   } 
   
