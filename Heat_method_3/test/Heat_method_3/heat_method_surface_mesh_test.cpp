@@ -1,3 +1,5 @@
+#define CGAL_TESTSUITE
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
@@ -24,6 +26,7 @@ typedef CGAL::Heat_method_3::Heat_method_3<Mesh,Kernel,Vertex_distance_map> Heat
 typedef CGAL::Heat_method_3::Heat_method_Eigen_traits_3::SparseMatrix SparseMatrix;
 
 
+struct Heat_method_3_private_tests {
 
 void source_set_tests(Heat_method hm, const Mesh& sm)
 {
@@ -41,6 +44,9 @@ void source_set_tests(Heat_method hm, const Mesh& sm)
   assert(hm.remove_source(*(std::next(vertices(sm).first,3))));
 }
 
+
+
+    
 void cotan_matrix_test(const SparseMatrix& c)
 {
   double sum = 0;
@@ -55,6 +61,7 @@ void cotan_matrix_test(const SparseMatrix& c)
   std::cout<<"sum is: "<< sum << "\n";
   assert(sum < 1e-8);
 }
+
 
 void mass_matrix_test(const SparseMatrix& M)
 {
@@ -111,6 +118,7 @@ int main()
   const SparseMatrix& M = hm.mass_matrix();
   //std::cout<<"and M is: "<< Eigen::MatrixXd(M) << "\n";
   const SparseMatrix& c = hm.cotan_matrix();
+
   cotan_matrix_test(c);
   mass_matrix_test(M);
 
@@ -192,3 +200,12 @@ int main()
 
   return 0;
 }
+
+};
+
+  int main()
+  {
+    Heat_method_3_private_tests tests;
+    return tests.main();
+      
+  }

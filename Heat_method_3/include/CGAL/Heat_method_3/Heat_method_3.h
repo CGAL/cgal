@@ -41,9 +41,15 @@
 #include <vector>
 #include <set>
 
+#ifdef CGAL_TESTSUITE
+struct Heat_method_3_private_tests;
+#endif
 
 namespace CGAL {
-namespace Heat_method_3 {
+
+  
+  
+  namespace Heat_method_3 {
 
   // This class will later go into another file
   // It encapsulates what we use from Eigen so that one potentially can use another LA library
@@ -54,6 +60,7 @@ namespace Heat_method_3 {
   };
 
 
+  
   /**
    * Class `Heat_method_3` is a ...
    * \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
@@ -71,6 +78,9 @@ namespace Heat_method_3 {
             typename LA = Heat_method_Eigen_traits_3>
   class Heat_method_3
   {
+#ifdef CGAL_TESTSUITE    
+    friend Heat_method_3_private_tests;
+#endif    
     /// Polygon_mesh typedefs
     typedef typename boost::graph_traits<TriangleMesh>               graph_traits;
     typedef typename graph_traits::vertex_descriptor            vertex_descriptor;
@@ -116,6 +126,7 @@ namespace Heat_method_3 {
       build();
     }
 
+  private:
      const VertexDistanceMap& vertex_distance_map() const
      {
        return vdm;
@@ -141,6 +152,7 @@ namespace Heat_method_3 {
        return vertex_id_map;
      }
 
+  public:
     
     /**
      * add `vd` to the source set, returning `false` if `vd` is already in the set.
@@ -187,6 +199,7 @@ namespace Heat_method_3 {
       return sources.end();
     }
 
+  private:
     double summation_of_edges() const
     {
       double edge_sum = 0;
@@ -410,6 +423,7 @@ namespace Heat_method_3 {
       return solved_phi;
     }
 
+  public:
 
     void update()
     {
