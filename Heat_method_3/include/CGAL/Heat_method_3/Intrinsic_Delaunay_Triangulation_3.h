@@ -59,7 +59,6 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
       typedef int Index;
     };
 
-
   // forward declaration
   template <typename IDT>
   struct IDT_vertex_point_property_map;
@@ -84,7 +83,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
                typename VertexDistanceMap,
                typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type,
                typename LA = Intrinsic_Delaunay_Triangulation_Eigen_traits_3>
-     struct Intrinsic_Delaunay_Triangulation_3 // AF was class fix later
+     class Intrinsic_Delaunay_Triangulation_3
      {
        typedef Intrinsic_Delaunay_Triangulation_3<TriangleMesh,Traits,VertexDistanceMap,VertexPointMap,LA> Self;
 
@@ -427,7 +426,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
          Eigen::VectorXd mark_edges;
      public:
        std::map<vertex_descriptor,vertex_descriptor> v2v, vtov;
-      };
+     };
 
 } // namespace Intrinsic_Delaunay_Triangulation_3
 
@@ -679,6 +678,7 @@ target(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,
     typedef typename IDT::Triangle_mesh TM;
     typedef typename boost::graph_traits<IDT>::vertex_descriptor key_type;
     typedef typename IDT::Point_3 value_type;
+    typedef typename IDT::Point_2 Point_2;
     typedef value_type reference;
     typedef boost::readable_property_map_tag category;
 
@@ -689,10 +689,11 @@ target(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,
     friend value_type get(const IDT_vertex_point_property_map<IDT>& pm,
                           key_type vd)
     {
-      const typename IDT::Point_2& p = get(pm.idt.hcmap(), vd.hd);
+      const Point_2& p = get(pm.idt.hcmap(), vd.hd);
       return value_type(p.x(), p.y(), 0);
     }
   };
+
 
 
   template <typename IDT, typename PM>
