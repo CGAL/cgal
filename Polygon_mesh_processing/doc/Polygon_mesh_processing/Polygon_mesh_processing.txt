@@ -469,6 +469,12 @@ the connected components of a closed polygon mesh so that it bounds a volume
 ****************************************
 \section PMPRepairing Combinatorial Repairing 
 *******************
+\subsection Polygon Soup Repairing
+To ensure that a polygon soup can be oriented (see Section \ref PolygonSoups) and transformed
+into a workable polygon mesh, it might be necessary to preprocess the data to remove combinatorial
+and geometrical errors. This package offers the functions `CGAL::Polygon_mesh_processing::repair_polygon_soup()`,
+which bundles a handful of repairing techniques to obtain an as-clean-as-possible soup.
+
 \subsection Stitching
 
 It happens that a polygon mesh has several edges and vertices that are duplicated.
@@ -524,6 +530,8 @@ polygon soup, one should ensure that the polygons are consistently oriented.
 To do so, this package provides the function
 `CGAL::Polygon_mesh_processing::orient_polygon_soup()`,
 described in \cgalCite{gueziec2001cutting}.
+This package offers repairing methods to clean ill-formed polygon soups,
+see Section \ref PMPRepairing.
 
 To deal with polygon soups that cannot be converted to a
 combinatorial manifold surface, some points are duplicated.
