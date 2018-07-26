@@ -468,8 +468,8 @@ struct Polygon_soup_orienter
  * whose value_type is a model of the concept `RandomAccessContainer`
  * whose value_type is `std::size_t`.
  *
- * @param points points of the soup of polygons. Some points might be pushed back to resolve
- *               non-manifold or non-orientability issues.
+ * @param points points of the soup of polygons. Some additional points might be pushed back to resolve
+ *               non-manifoldness or non-orientability issues.
  * @param polygons each element in the vector describes a polygon using the index of the points in `points`.
  *                 If needed the order of the indices of a polygon might be reversed.
  * @return `true`  if the orientation operation succeded.
