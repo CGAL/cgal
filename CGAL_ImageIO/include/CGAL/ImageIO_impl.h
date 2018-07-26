@@ -194,6 +194,12 @@ size_t ImageIO_write(const _image *im, const void *buf, size_t len) {
       fprintf(stderr, "zlib error: %s\n", gzerror(im->fd, &errnum));
     }
     return ( len - to_be_written );
+  case OM_FILE :
+    while ( (to_be_written > 0) && ((l = gzfwrite( b, sizeof(char), ImageIO_limit_len(to_be_written), im->fd )) > 0) ) {
+      to_be_written -= l;
+      b += l;
+    }
+    return ( len - to_be_written );
 #else
   case OM_FILE :
     while ( (to_be_written > 0) && ((l = fwrite( b, 1, ImageIO_limit_len(to_be_written), im->fd )) > 0) ) {
@@ -243,6 +249,7 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
     return ( len - to_be_read );
 #ifdef CGAL_USE_ZLIB
   case OM_GZ :
+  case OM_FILE :
     while ( (to_be_read > 0) && ((l = gzread(im->fd, (void *) b, ImageIO_limit_len(to_be_read))) > 0) ) {
       to_be_read -= l;
       b += l;
@@ -291,8 +298,10 @@ char *ImageIO_gets( const _image *im, char *str, int size )
     break;
 #ifdef CGAL_USE_ZLIB
   case OM_GZ :
+  case OM_FILE :
     ret = (char *) gzgets(im->fd, str, size);
     break;
+    
 #else
   case OM_FILE :
     ret = fgets(str, size, im->fd);
@@ -312,10 +321,12 @@ long ImageIO_seek( const _image *im, long offset, int whence ) {
     return -1;
 #ifdef CGAL_USE_ZLIB
   case OM_GZ:
+  case OM_FILE:
     return gzseek(im->fd, offset, whence );
-#endif
+#else
   case OM_FILE:
     return fseek( (FILE*)im->fd, offset, whence );
+#endif
   }
 }
 
@@ -330,12 +341,14 @@ int ImageIO_error( const _image *im )
     return 0;
 #ifdef CGAL_USE_ZLIB
   case OM_GZ :
+  case OM_FILE :
     static int errnum;
     (void)gzerror(im->fd, &errnum);
     return( (errnum != Z_OK) || gzeof(im->fd) );
-#endif
+#else
   case OM_FILE :
     return( ferror( (FILE*)im->fd ) || feof( (FILE*)im->fd ) );
+#endif
   }
   //return 0;
 }
@@ -359,15 +372,17 @@ int ImageIO_close( _image* im )
 #ifdef CGAL_USE_ZLIB
   case OM_GZ :
   case OM_STD :
+  case OM_FILE :
     ret = gzclose( im->fd );
     break;
 #else 
   case OM_STD :
     break;
-#endif
   case OM_FILE :
     ret = fclose( (FILE*)im->fd );
+#endif
   }
+  
   im->fd = NULL;
   im->openMode = OM_CLOSE;
   
@@ -475,12 +490,18 @@ void _openWriteImage(_image* im, const char *name)
 	im->openMode = OM_GZ;
       }
     else 
-#endif
+    {
+      im->fd = (_ImageIO_file) gzopen(name, "wb");
+      im->openMode = OM_FILE;
+    }
+  }
+#else
     {
       im->fd = (_ImageIO_file) fopen(name, "wb");
       im->openMode = OM_FILE;
     }
   }
+#endif
 }
 
 
