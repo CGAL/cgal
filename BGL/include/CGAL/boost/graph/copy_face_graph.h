@@ -74,6 +74,10 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
     sm_halfedge_descriptor sm_h = halfedge(sm_e, sm), sm_h_opp = opposite(sm_h, sm);
     tm_halfedge_descriptor tm_h = halfedge(tm_e, tm), tm_h_opp = opposite(tm_h, tm);
 
+    // set next pointers to itself (in case previous garbage is present)
+    set_next( tm_h, tm_h, tm );
+    set_next( tm_h_opp, tm_h_opp, tm );
+
     put(hmap, sm_h, tm_h);
     put(hmap, sm_h_opp, tm_h_opp);
     *h2h++=std::make_pair(sm_h, tm_h);
@@ -83,14 +87,14 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
       tm_border_halfedges.push_back( tm_h );
       sm_border_halfedges.push_back( sm_h );
       set_face(tm_h, tm_null_face, tm);
-      CGAL_assertion(next(tm_h, tm) == boost::graph_traits<TargetMesh>::null_halfedge() );
+      CGAL_assertion(next(tm_h, tm) == tm_h );
     }
 
     if( is_border(sm_h_opp, sm) ){
       tm_border_halfedges.push_back( tm_h_opp );
       sm_border_halfedges.push_back( sm_h_opp );
       set_face(tm_h_opp, tm_null_face, tm);
-      CGAL_assertion(next(tm_h_opp, tm) == boost::graph_traits<TargetMesh>::null_halfedge() );
+      CGAL_assertion(next(tm_h_opp, tm) == tm_h_opp );
     }
 
     //create a copy of interior vertices only once
@@ -138,7 +142,7 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
   {
     tm_halfedge_descriptor tm_h = tm_border_halfedges[i];
 
-    if ( next(tm_h, tm) != boost::graph_traits<TargetMesh>::null_halfedge() )
+    if ( next(tm_h, tm) != tm_h )
       continue; //already set
 
     tm_halfedge_descriptor tm_h_prev = tm_h;
@@ -146,7 +150,7 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
     BOOST_FOREACH(sm_halfedge_descriptor sm_h,
                   halfedges_around_face(next(sm_border_halfedges[i], sm), sm))
     {
-      CGAL_assertion(next(tm_h_prev, tm) == boost::graph_traits<TargetMesh>::null_halfedge());
+      CGAL_assertion(next(tm_h_prev, tm) == tm_h_prev);
       tm_h = get(hmap, sm_h);
       set_next(tm_h_prev, tm_h, tm);
       tm_h_prev=tm_h;
