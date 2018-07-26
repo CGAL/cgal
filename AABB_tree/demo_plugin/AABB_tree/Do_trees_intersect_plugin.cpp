@@ -75,15 +75,27 @@ private Q_SLOTS:
   void start()
   {
     QApplication::setOverrideCursor(Qt::WaitCursor);
+    Q_FOREACH(Scene::Item_id i, scene->selectionIndices())
+    {
+      Scene_surface_mesh_item* item=qobject_cast<Scene_surface_mesh_item*>(scene->item(i));
+      if (!CGAL::is_triangle_mesh(*item->face_graph()))
+      {
+        QApplication::restoreOverrideCursor();
+        QMessageBox::warning(mw, "Error", QString("%1 is not pure triangle. Aborting.").arg(item->name()));
+        return;
+      }
+    }
     group_item = new Scene_group_item("Test Items");
     connect(group_item, &Scene_group_item::aboutToBeDestroyed,
             this, [this](){
       items.clear();
       meshes.clear();
-      delete col_det;
+      if(col_det)
+        delete col_det;
       col_det = nullptr;
       group_item = nullptr;});
     group_item->setScene(scene);
+    
     scene->addItem(group_item);
     Q_FOREACH(Scene::Item_id i, scene->selectionIndices())
     {
