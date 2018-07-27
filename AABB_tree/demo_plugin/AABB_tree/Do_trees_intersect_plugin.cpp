@@ -313,6 +313,7 @@ public Q_SLOTS:
     group_item = nullptr;
     items.clear();
     meshes.clear();
+    prev_ids.clear();
     delete col_det;
     col_det = nullptr;
   }
