@@ -175,6 +175,7 @@ public Q_SLOTS:
       {
         ++mesh_id;
         item->setColor(QColor(255,184,61));
+        prev_ids.push_back(sel_id);
         continue;
       }
       const double* matrix = item->manipulatedFrame()->matrix();
@@ -224,6 +225,7 @@ public Q_SLOTS:
         items[id]->setColor(QColor(Qt::blue));
       else
         items[id]->setColor(QColor(Qt::red));
+      prev_ids.push_back(id);
     }
     if(do_transparency)
     {
@@ -298,7 +300,6 @@ public Q_SLOTS:
         items[id]->setColor(QColor(Qt::red));
       prev_ids.push_back(id);
     }
-   /* */
     prev_ids.push_back(sel_id);
     sel_item->itemChanged();
     viewer->update();
