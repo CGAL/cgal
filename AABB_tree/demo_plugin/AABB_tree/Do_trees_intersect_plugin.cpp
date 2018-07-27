@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QAction>
 #include <QMainWindow>
+#include <QMessageBox>
 #include <QInputDialog>
 #include "Messages_interface.h"
 #include <CGAL/Three/Three.h>

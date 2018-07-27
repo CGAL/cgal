@@ -50,7 +50,7 @@ class Rigid_mesh_collision_detection
 #if CGAL_CASH_BOXES
     std::vector<typename Tree::Bounding_box> m_tree_boxes;
 #endif
-  
+
 
 public:
   template <class MeshRange>
@@ -72,6 +72,7 @@ public:
     m_is_closed.resize(triangle_meshes.size(), false);
 #if CGAL_CASH_BOXES
     m_tree_boxes.reserve( triangle_meshes.size() );
+    Interval_nt_advanced::Protector protector;
 #endif
     BOOST_FOREACH(const TriangleMesh& tm, triangle_meshes)
     {
@@ -93,10 +94,11 @@ public:
     Tree* t = new Tree(faces(tm).begin(), faces(tm).end(), tm);
     m_aabb_trees.push_back(t);
 #if CGAL_CASH_BOXES
-      m_tree_boxes.push_back(internal::get_tree_bbox(*t));
+    Interval_nt_advanced::Protector protector;
+    m_tree_boxes.push_back(internal::get_tree_bbox(*t));
 #endif
   }
-  
+
   void remove_mesh(std::size_t mesh_id)
   {
     if(mesh_id >= m_triangle_mesh_ptrs.size()) return;
@@ -104,21 +106,18 @@ public:
     m_aabb_trees.erase( m_aabb_trees.begin()+mesh_id);
     m_is_closed.erase(m_is_closed.begin()+mesh_id);
 #if CGAL_CASH_BOXES
-      m_tree_boxes.erase(m_tree_boxes.begin()+mesh_id);
+    m_tree_boxes.erase(m_tree_boxes.begin()+mesh_id);
 #endif
-    
+
   }
-  
+
   void set_transformation(std::size_t mesh_id, const Aff_transformation_3<Kernel>& aff_trans)
   {
     m_aabb_trees[mesh_id]->traits().set_transformation(aff_trans);
 #if CGAL_CASH_BOXES
     m_tree_boxes[mesh_id] = internal::get_tree_bbox(*m_aabb_trees[mesh_id]);
 #endif
-    
   }
- 
-  
 
   std::vector<std::size_t>
   set_transformation_and_get_all_intersections(std::size_t mesh_id,
@@ -127,9 +126,6 @@ public:
     CGAL::Interval_nt_advanced::Protector protector;
     set_transformation(mesh_id, aff_trans);
     std::vector<std::size_t> res;
-
-    
-    
 
     for(std::size_t k=0; k<m_aabb_trees.size(); ++k)
     {
@@ -142,8 +138,8 @@ public:
         res.push_back(k);
     }
     return res;
-  } 
-  
+  }
+
   std::vector<std::pair<std::size_t, bool> >
   set_transformation_and_get_all_intersections_and_inclusions(std::size_t mesh_id,
                                            const Aff_transformation_3<Kernel>& aff_trans)
@@ -157,7 +153,7 @@ public:
     for(std::size_t k=0; k<m_aabb_trees.size(); ++k)
     {
       if(k==mesh_id) continue;
-#if CGAL_CASH_BOXES     
+#if CGAL_CASH_BOXES
       if (!do_overlap(m_tree_boxes[k], m_tree_boxes[mesh_id])) continue;
 #endif
       // TODO: think about an alternative that is using a traversal traits
