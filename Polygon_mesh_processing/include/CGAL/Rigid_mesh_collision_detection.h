@@ -48,7 +48,18 @@ class Rigid_mesh_collision_detection
   // TODO: we probably want an option with external trees
   std::vector<Tree*> m_aabb_trees;
   std::vector<bool> m_is_closed;
-#ifdef CGAL_USE_BOX_INTERSECTION_D
+#if CGAL_USE_BOX_INTERSECTION_D
+  struct Callback{
+    typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t> Bbox;
+    std::vector<std::size_t>& res;
+    Callback(std::vector<std::size_t>& res)
+      :res(res){}
+    void operator()(const Bbox& ,
+                    const Bbox& b)
+    {
+      res.push_back(b.info());
+    }
+  };
   std::vector<typename Tree::Bounding_box> m_tree_boxes;
 #endif
 
@@ -70,10 +81,9 @@ public:
     m_triangle_mesh_ptrs.reserve( triangle_meshes.size() );
     m_aabb_trees.reserve( triangle_meshes.size() );
     m_is_closed.resize(triangle_meshes.size(), false);
-#ifdef CGAL_USE_BOX_INTERSECTION_D
+#if CGAL_USE_BOX_INTERSECTION_D
     m_tree_boxes.reserve( triangle_meshes.size() );
 #endif
-
     BOOST_FOREACH(const TriangleMesh& tm, triangle_meshes)
     {
       if (is_closed(tm))
@@ -81,7 +91,7 @@ public:
       m_triangle_mesh_ptrs.push_back( &tm );
       Tree* t = new Tree(faces(tm).begin(), faces(tm).end(), tm);
       m_aabb_trees.push_back(t);
-#ifdef CGAL_USE_BOX_INTERSECTION_D
+#if CGAL_USE_BOX_INTERSECTION_D
       m_tree_boxes.push_back(internal::get_tree_bbox(*t));
 #endif
     }
@@ -106,26 +116,14 @@ public:
   void set_transformation(std::size_t mesh_id, const Aff_transformation_3<Kernel>& aff_trans)
   {
     m_aabb_trees[mesh_id]->traits().set_transformation(aff_trans);
-#ifdef CGAL_USE_BOX_INTERSECTION_D
+#if CGAL_USE_BOX_INTERSECTION_D
     m_tree_boxes[mesh_id] = internal::get_tree_bbox(*m_aabb_trees[mesh_id]);
 #endif
     
   }
  
   
-#ifdef CGAL_USE_BOX_INTERSECTION_D
-  struct Callback{
-    typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t> Bbox;
-    std::vector<std::size_t>& res;
-    Callback(std::vector<std::size_t>& res)
-      :res(res){}
-    void operator()(const Bbox& ,
-                    const Bbox& b)
-    {
-      res.push_back(b.info());
-    }
-  };
-#endif
+
   std::vector<std::size_t>
   set_transformation_and_get_all_intersections(std::size_t mesh_id,
                                            const Aff_transformation_3<Kernel>& aff_trans)
@@ -134,23 +132,16 @@ public:
     set_transformation(mesh_id, aff_trans);
     std::vector<std::size_t> res;
 
-    // TODO: use a non-naive version
-#ifdef CGAL_USE_BOX_INTERSECTION_D
-    std::vector<typename Callback::Bbox> boxes;
-    std::vector<typename Callback::Bbox> query;
-    for(std::size_t k=0; k<m_tree_boxes.size(); ++k)
-    {
-      if(k != mesh_id)
-        boxes.push_back(Callback::Bbox(m_tree_boxes[k], k));
-    }
-    query.push_back(Callback::Bbox(m_tree_boxes[mesh_id], mesh_id));
+#if CGAL_USE_BOX_INTERSECTION_D
     
-    Callback callback(res);
-    CGAL::box_intersection_d(
-          boxes, boxes+m_aabb_trees.size()-1, 
-          query.begin(),
-          query.end(),
-          callback);
+//    Callback callback(res);
+//    m_tree_boxes.swap(m_tree_boxes.begin()+mesh_id, m_tree_boxes.end() -1);
+//    CGAL::box_intersection_d(
+//          m_tree_boxes, m_tree_boxes+m_aabb_trees.size()-1, 
+//          m_tree_boxes.end()-1,
+//          m_tree_boxes.end(),
+//          callback);
+//    m_tree_boxes.swap(m_tree_boxes.begin()+mesh_id, m_tree_boxes.end() -1);
     
 #else
     for(std::size_t k=0; k<m_aabb_trees.size(); ++k)
@@ -170,8 +161,19 @@ public:
   {
     CGAL::Interval_nt_advanced::Protector protector;
     set_transformation(mesh_id, aff_trans);
-    std::vector<std::pair<std::size_t, bool> > res;
+   std::vector<std::pair<std::size_t, bool> > res;
 
+#if CGAL_USE_BOX_INTERSECTION_D
+    for(std::size_t k=0; k<m_aabb_trees.size(); ++k)
+        {
+          if(k==mesh_id) continue;
+          if (!do_overlap(m_tree_boxes[k], m_tree_boxes[mesh_id])) continue;
+           //TODO: think about an alternative that is using a traversal traits
+          if ( m_aabb_trees[k]->do_intersect( *m_aabb_trees[mesh_id] ) )
+            res.push_back(std::make_pair(k, false));
+        }
+    
+#else
     // TODO: use a non-naive version
     for(std::size_t k=0; k<m_aabb_trees.size(); ++k)
     {
@@ -199,6 +201,7 @@ public:
         }
       }
     }
+#endif
     return res;
   }
 };

@@ -135,7 +135,7 @@ private Q_SLOTS:
       meshes.push_back(*item->getFaceGraph());
     }
     col_det = new CGAL::Rigid_mesh_collision_detection<SMesh, EPICK>(meshes);
-    update_trees();
+    init_trees();
     if(do_transparency)
     {
       items.back()->setRenderingMode(Flat);
@@ -152,7 +152,7 @@ private Q_SLOTS:
   }
   
 public Q_SLOTS:
-  void update_trees()
+  void init_trees()
   {
     if(items.empty())
       return;
@@ -246,6 +246,89 @@ public Q_SLOTS:
     viewer->update();
   }
   
+  void update_trees()
+  {
+    if(items.empty())
+      return;    
+    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(
+          CGAL::QGLViewer::QGLViewerPool().first());
+    Scene_movable_sm_item* sel_item = qobject_cast<Scene_movable_sm_item*>(scene->item(scene->mainSelectionIndex()));
+    if(!sel_item)
+      return;    
+    
+    std::size_t mesh_id = 0;
+    std::size_t sel_id = 0;
+    Q_FOREACH(Scene_movable_sm_item* item, items)
+    {
+      if(item == sel_item)
+      {
+        sel_id = mesh_id;
+        ++mesh_id;
+        item->setColor(QColor(255,184,61));        
+        break;
+      }
+      ++mesh_id;
+    }
+    for(std::size_t i = 0; i< prev_ids.size(); ++i)
+    {
+      std::size_t id = prev_ids[i];
+      if(id == sel_id)
+      {
+        continue;
+      }
+      Scene_movable_sm_item* item = items[id];
+      item->setColor(QColor(Qt::green));
+      /*if(do_transparency)
+      {
+        item->setRenderingMode(Flat);
+        item->setAlpha(120);
+      }
+      else
+      {
+        item->setRenderingMode(Wireframe);
+      }*/
+      item->itemChanged();
+    }
+    prev_ids.clear();
+    const double* matrix = sel_item->manipulatedFrame()->matrix();
+    sel_item->setFMatrix(matrix);
+    
+    EPICK::Aff_transformation_3 translation(CGAL::TRANSLATION, -EPICK::Vector_3(sel_item->center().x,
+                                                                                sel_item->center().y,
+                                                                                sel_item->center().z));
+    EPICK::Aff_transformation_3 rota(
+          matrix[0], matrix[4], matrix[8],matrix[12],
+        matrix[1], matrix[5], matrix[9],matrix[13],
+        matrix[2], matrix[6], matrix[10],matrix[14]);
+    EPICK::Aff_transformation_3 transfo = 
+        rota*translation;
+    std::vector<std::pair<std::size_t, bool> > inter_and_incl
+        = col_det->
+        set_transformation_and_get_all_intersections_and_inclusions(sel_id, transfo);
+    for(std::size_t i=0; i<inter_and_incl.size(); ++i)
+    {
+      std::size_t id = inter_and_incl[i].first;
+      bool including = inter_and_incl[i].second;
+      if(including)
+        items[id]->setColor(QColor(Qt::blue));
+      else
+        items[id]->setColor(QColor(Qt::red));
+      prev_ids.push_back(id);
+    }
+   /* if(do_transparency)
+    {
+      sel_item->setRenderingMode(Flat);
+      sel_item->setAlpha(120);
+    }
+    else
+    {
+      sel_item->setRenderingMode(Wireframe);
+    }*/
+    prev_ids.push_back(sel_id);
+    sel_item->itemChanged();
+    viewer->update();
+  }
+  
   void cleanup()
   {
     if(!group_item)
@@ -258,6 +341,11 @@ public Q_SLOTS:
     col_det = nullptr;
   }
   
+  //switch transparent/wireframe.
+  void change_display()
+  {
+  }
+  
 private:
   QList<QAction*> _actions;
   Messages_interface* messageInterface;
@@ -265,6 +353,7 @@ private:
   QMainWindow* mw;
   CGAL::Rigid_mesh_collision_detection<SMesh, EPICK> *col_det;
   std::vector<Scene_movable_sm_item*> items;
+  std::vector<std::size_t> prev_ids;
   Scene_group_item* group_item;
   std::vector<SMesh> meshes;
   bool do_transparency;
