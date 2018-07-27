@@ -28,8 +28,10 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangulation_3_triangle_primitive.h>
-#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/IO/facets_in_complex_3_to_triangle_mesh.h>
+
+#include "Scene_polygon_soup_item.h"
+#include "Scene_polyhedron_item.h"
 
 
 typedef CGAL::AABB_triangulation_3_triangle_primitive<Kernel,C3t3> Primitive;
@@ -270,6 +272,7 @@ public :
     if(!menuChanged) {
       menu->addSeparator();
       QMenu *container = new QMenu(tr("Alpha value"));
+      container->menuAction()->setProperty("is_groupable", true);
       QWidgetAction *sliderAction = new QWidgetAction(0);
       sliderAction->setDefaultWidget(alphaSlider);
       connect(alphaSlider, &QSlider::valueChanged,
@@ -519,13 +522,13 @@ struct Scene_c3t3_item_priv {
   std::set<Tr::Cell_handle> intersected_cells;
   QSlider* tet_Slider;
 
-  //!Allows OpenGL 2.1 context to get access to glDrawArraysInstanced.
+  //!Allows OpenGL 2.0 context to get access to glDrawArraysInstanced.
   typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
-  //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
+  //!Allows OpenGL 2.0 context to get access to glVertexAttribDivisor.
   typedef void (APIENTRYP PFNGLVERTEXATTRIBDIVISORARBPROC) (GLuint index, GLuint divisor);
-  //!Allows OpenGL 2.1 context to get access to gkFrameBufferTexture2D.
+  //!Allows OpenGL 2.0 context to get access to gkFrameBufferTexture2D.
   PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
-  //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
+  //!Allows OpenGL 2.0 context to get access to glVertexAttribDivisor.
   PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
 
   mutable std::size_t positions_poly_size;
@@ -1270,64 +1273,12 @@ double Scene_c3t3_item_priv::complex_diag() const {
 
 void Scene_c3t3_item::export_facets_in_complex()
 {
-  std::set<C3t3::Vertex_handle> vertex_set;
-  for (C3t3::Facets_in_complex_iterator fit = c3t3().facets_in_complex_begin();
-       fit != c3t3().facets_in_complex_end();
-       ++fit)
-  {
-    vertex_set.insert(fit->first->vertex((fit->second + 1) % 4));
-    vertex_set.insert(fit->first->vertex((fit->second + 2) % 4));
-    vertex_set.insert(fit->first->vertex((fit->second + 3) % 4));
-  }
-
-  std::map<C3t3::Vertex_handle, std::size_t> indices;
-  std::vector<Tr::Bare_point> points(vertex_set.size());
-  std::vector<std::vector<std::size_t> > polygons(c3t3().number_of_facets_in_complex());
-
-  std::size_t index = 0;
-  Geom_traits::Construct_point_3 wp2p
-    = c3t3().triangulation().geom_traits().construct_point_3_object();
-
-  BOOST_FOREACH(C3t3::Vertex_handle v, vertex_set)
-  {
-    points[index] = wp2p(v->point());
-    indices.insert(std::make_pair(v, index));
-    index++;
-  }
-
-  index = 0;
-  for (C3t3::Facets_in_complex_iterator fit = c3t3().facets_in_complex_begin();
-       fit != c3t3().facets_in_complex_end();
-       ++fit, ++index)
-  {
-    std::vector<std::size_t> facet(3);
-    facet[0] = indices.at(fit->first->vertex((fit->second + 1) % 4));
-    facet[1] = indices.at(fit->first->vertex((fit->second + 2) % 4));
-    facet[2] = indices.at(fit->first->vertex((fit->second + 3) % 4));
-    polygons[index] = facet;
-  }
-
-  namespace PMP = CGAL::Polygon_mesh_processing;
   Polyhedron outmesh;
+  CGAL::facets_in_complex_3_to_triangle_mesh(c3t3(), outmesh);
+  Scene_polyhedron_item* item = new Scene_polyhedron_item(std::move(outmesh));
+  item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
+  scene->addItem(item);
 
-  if (PMP::is_polygon_soup_a_polygon_mesh(polygons))
-  {
-    CGAL_assertion_code(bool orientable = )
-    PMP::orient_polygon_soup(points, polygons);
-    CGAL_assertion(orientable);
-
-    PMP::polygon_soup_to_polygon_mesh(points, polygons, outmesh);
-    Scene_polyhedron_item* item = new Scene_polyhedron_item(outmesh);
-    item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
-    scene->addItem(item);
-  }
-  else
-  {
-    Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
-    soup_item->load(points, polygons);
-    soup_item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
-    scene->addItem(soup_item);
-  }
   this->setVisible(false);
 }
 
@@ -1342,9 +1293,24 @@ QMenu* Scene_c3t3_item::contextMenu()
   bool menuChanged = menu->property(prop_name).toBool();
 
   if (!menuChanged) {
-
-    QMenu *container = new QMenu(tr("Tetrahedra's Shrink Factor"));
+    
+    QMenu *container = new QMenu(tr("Alpha value"));
+    container->menuAction()->setProperty("is_groupable", true);
     QWidgetAction *sliderAction = new QWidgetAction(0);
+    sliderAction->setDefaultWidget(d->alphaSlider);
+    connect(d->alphaSlider, &QSlider::valueChanged,
+            [this]()
+    {
+      if(d->intersection)
+        d->intersection->setAlpha(d->alphaSlider->value());
+      redraw();
+    }
+    );
+    container->addAction(sliderAction);
+    menu->addMenu(container);
+    
+    container = new QMenu(tr("Tetrahedra's Shrink Factor"));
+    sliderAction = new QWidgetAction(0);
     connect(d->tet_Slider, &QSlider::valueChanged, this, &Scene_c3t3_item::itemChanged);
     sliderAction->setDefaultWidget(d->tet_Slider);
     container->addAction(sliderAction);
@@ -1386,19 +1352,7 @@ QMenu* Scene_c3t3_item::contextMenu()
     connect(actionShowGrid, SIGNAL(toggled(bool)),
             this, SLOT(show_grid(bool)));
 
-    container = new QMenu(tr("Alpha value"));
-    sliderAction = new QWidgetAction(0);
-    sliderAction->setDefaultWidget(d->alphaSlider);
-    connect(d->alphaSlider, &QSlider::valueChanged,
-            [this]()
-    {
-      if(d->intersection)
-        d->intersection->setAlpha(d->alphaSlider->value());
-      redraw();
-    }
-    );
-    container->addAction(sliderAction);
-    menu->addMenu(container);
+    
     menu->setProperty(prop_name, true);
   }
   return menu;

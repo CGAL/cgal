@@ -784,7 +784,7 @@ void Scene_points_with_normal_item::drawEdges(CGAL::Three::Viewer_interface* vie
     d->program->bind();
     d->program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_LINES, 0,
-                         static_cast<GLsizei>(((std::size_t)(ratio_displayed * d->nb_lines)/3)));
+                         static_cast<GLsizei>(((std::size_t)(ratio_displayed * double(d->nb_lines))/3)));
     vaos[Scene_points_with_normal_item_priv::Edges]->release();
     d->program->release();
 }
@@ -794,7 +794,7 @@ void Scene_points_with_normal_item::drawPoints(CGAL::Three::Viewer_interface* vi
         d->initializeBuffers(viewer);
     GLfloat point_size;
     viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
-    viewer->glPointSize(d->point_Slider->value());
+    viewer->setGlPointSize(GLfloat(d->point_Slider->value()));
     double ratio_displayed = 1.0;
     if ((viewer->inFastDrawing () || d->isPointSliderMoving())
         &&((d->nb_points )/3 > limit_fast_drawing)) // arbitrary large value
@@ -817,7 +817,7 @@ void Scene_points_with_normal_item::drawPoints(CGAL::Three::Viewer_interface* vi
     if (!(d->m_points->has_colors()) || renderingMode() == ShadedPoints)
       d->program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_POINTS, 0,
-                         static_cast<GLsizei>(((std::size_t)(ratio_displayed * (d->nb_points - d->nb_selected_points))/3)));
+                         static_cast<GLsizei>(((std::size_t)(ratio_displayed * double(d->nb_points - d->nb_selected_points))/3)));
 
     if(has_normals() && renderingMode() == ShadedPoints)
       vaos[Scene_points_with_normal_item_priv::TheShadedPoints]->release();
@@ -848,7 +848,7 @@ void Scene_points_with_normal_item::drawPoints(CGAL::Three::Viewer_interface* vi
     else
       vaos[Scene_points_with_normal_item_priv::Selected_points]->release();
     d->program->release();
-    viewer->glPointSize(point_size);
+    viewer->setGlPointSize(point_size);
 }
 // Gets wrapped point set
 Point_set* Scene_points_with_normal_item::point_set()

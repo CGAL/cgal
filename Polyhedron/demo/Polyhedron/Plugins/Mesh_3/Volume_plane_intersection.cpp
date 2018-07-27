@@ -81,7 +81,10 @@ void Volume_plane_intersection_priv::computeElements()
 
 void Volume_plane_intersection_priv::initializeBuffers(Viewer_interface* viewer)const
 {
-  program = item->getShaderProgram(Volume_plane_intersection::PROGRAM_NO_SELECTION, viewer);
+  if(!viewer->isOpenGL_4_3())
+    program = item->getShaderProgram(Volume_plane_intersection::PROGRAM_NO_SELECTION, viewer);
+  else
+    program = item->getShaderProgram(Volume_plane_intersection::PROGRAM_SOLID_WIREFRAME, viewer);
   program->bind();
   item->vaos[AArray]->bind();
   item->buffers[AVertex].bind();
@@ -113,14 +116,22 @@ void Volume_plane_intersection_priv::initializeBuffers(Viewer_interface* viewer)
 }
 
 void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
-  viewer->glLineWidth(4.0f);
   if(!are_buffers_filled)
   {
     d->computeElements();
     d->initializeBuffers(viewer);
   }
-  attribBuffers(viewer, PROGRAM_NO_SELECTION);
-  viewer->glDepthRange(0.0,0.9999);
+  if(!viewer->isOpenGL_4_3())
+  {
+    attribBuffers(viewer, PROGRAM_NO_SELECTION);
+  }
+  else
+  {
+    attribBuffers(viewer, PROGRAM_SOLID_WIREFRAME);
+  }     
+  viewer->glDepthRangef(0.00001f, 0.99999f);
+  
+  QVector2D vp(viewer->width(), viewer->height());
   if(d->b && d->c) {
 
     vaos[Volume_plane_intersection_priv::AArray]->bind();
@@ -139,6 +150,13 @@ void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
     }
     d->program->setUniformValue("f_matrix", b_mat*c_mat);
     d->program->setAttributeValue("colors", this->color());
+    if(viewer->isOpenGL_4_3())
+    {
+      d->program->setUniformValue("viewport", vp);
+      d->program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
+      d->program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+      d->program->setUniformValue("width", 4.0f);
+    }
     viewer->glDrawArrays(GL_LINES, 0, 2);
     d->program->release();
     vaos[Volume_plane_intersection_priv::AArray]->release();
@@ -161,6 +179,13 @@ void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
       }
       d->program->setUniformValue("f_matrix", a_mat*c_mat);
       d->program->setAttributeValue("colors", this->color());
+      if(viewer->isOpenGL_4_3())
+      {
+        d->program->setUniformValue("viewport", vp);
+        d->program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
+        d->program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+        d->program->setUniformValue("width", 4.0f);
+      }
       viewer->glDrawArrays(GL_LINES, 0, 2);
       d->program->release();
       vaos[Volume_plane_intersection_priv::BArray]->release();
@@ -183,12 +208,19 @@ void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
       }
       d->program->setUniformValue("f_matrix", a_mat*b_mat);
       d->program->setAttributeValue("colors", this->color());
+      if(viewer->isOpenGL_4_3())
+      {
+        d->program->setUniformValue("viewport", vp);
+        d->program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
+        d->program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+        d->program->setUniformValue("width", 4.0f);
+      }
       viewer->glDrawArrays(GL_LINES, 0, 2);
       d->program->release();
       vaos[Volume_plane_intersection_priv::CArray]->release();
   }
-  viewer->glLineWidth(1.0f);
-  viewer->glDepthRange(0.00001,1.0);
+  if(!viewer->isOpenGL_4_3())
+  viewer->glDepthRangef(0.0f,1.0f);
 }
 
 Volume_plane_intersection::Volume_plane_intersection(float x, float y, float z,

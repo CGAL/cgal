@@ -32,7 +32,7 @@
 
 #include <CGAL/Qt/qglviewer.h>
 #include <QKeyEvent>
-#include <QOpenGLFunctions_2_1>
+#include <QOpenGLFunctions>
 #include <QOpenGLVertexArrayObject>
 #include <QGLBuffer>
 #include <QOpenGLShaderProgram>
@@ -61,11 +61,14 @@ const char vertex_source_color[] =
     "varying highp vec4 fP; \n"
     "varying highp vec3 fN; \n"
     "varying highp vec4 fColor; \n"
+    
+    "uniform highp float point_size; \n"
     "void main(void)\n"
     "{\n"
     "   fP = mv_matrix * vertex; \n"
     "   fN = mat3(mv_matrix)* normal; \n"
     "   fColor = vec4(color, 1.0); \n"
+    "   gl_PointSize = point_size;\n"
     "   gl_Position = mvp_matrix * vertex;\n"
     "}"
   };
@@ -107,8 +110,10 @@ const char vertex_source_p_l[] =
     "attribute highp vec3 color;\n"
     "uniform highp mat4 mvp_matrix;\n"
     "varying highp vec4 fColor; \n"
+    "uniform highp float point_size; \n"
     "void main(void)\n"
     "{\n"
+    "   gl_PointSize = point_size;\n"
     "   fColor = vec4(color, 1.0); \n"
     "   gl_Position = mvp_matrix * vertex;\n"
     "}"
@@ -627,7 +632,7 @@ protected:
                     (double)m_vertices_mono_color.green()/(double)255,
                     (double)m_vertices_mono_color.blue()/(double)255);
       rendering_program_p_l.setAttributeValue("color",color);
-      glPointSize(m_size_points);
+      rendering_program_p_l.setUniformValue("point_size", GLfloat(m_size_points));
       glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(arrays[POS_MONO_POINTS].size()/3));
       vao[VAO_MONO_POINTS].release();
       
@@ -644,7 +649,7 @@ protected:
       {
         rendering_program_p_l.enableAttributeArray("color");
       }
-      glPointSize(m_size_points);
+      rendering_program_p_l.setUniformValue("point_size", GLfloat(m_size_points));
       glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(arrays[POS_COLORED_POINTS].size()/3));
       vao[VAO_COLORED_POINTS].release();
 
@@ -747,14 +752,9 @@ protected:
 
     // Light default parameters
     glLineWidth(m_size_edges);
-    glPointSize(m_size_points);
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(1.f,1.f);
     glClearColor(1.0f,1.0f,1.0f,0.0f);
-    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-    glEnable(GL_LIGHTING);
-    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-    glShadeModel(GL_FLAT);
     glDisable(GL_BLEND);
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_POLYGON_SMOOTH_HINT);

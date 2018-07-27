@@ -110,6 +110,8 @@ is `Point_3`, and the 2D points considered in the algorithm are the projections
 of the 3D points in the `xy`-plane.
 If this type is not available, the function `CGAL::convex_hull_3()` will
 automatically use `CGAL::Projection_traits_xy< CGAL::Kernel_traits<Point_3>::%Kernel >.`
+Otherwise, a function must exist with the name `construct_traits_xy_3_object()` that creates an 
+instance of `Traits_xy_3`.
 */
 typedef unspecified_type Traits_xy_3;
 

@@ -51,7 +51,7 @@ FT sphere_function (const Point& p)
 {
   if(sphere_function1(p) < 0 || sphere_function2(p) < 0)
     return -1;
-  else 
+  else
     return 1;
 }
 
@@ -68,11 +68,11 @@ int main()
   Mesh_criteria criteria(edge_size = 0.15,
                          facet_angle = 25, facet_size = 0.15,
                          cell_radius_edge_ratio = 2, cell_size = 0.15);
-  
+
   // Create edge that we want to preserve
   Polylines polylines (1);
   Polyline_3& polyline = polylines.front();
-  
+
   for(int i = 0; i < 360; ++i)
   {
     Point p (1, std::cos(i*CGAL_PI/180), std::sin(i*CGAL_PI/180));
@@ -82,7 +82,7 @@ int main()
 
   // Insert edge in domain
   domain.add_features(polylines.begin(), polylines.end());
-  
+
   // Mesh generation without feature preservation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                       CGAL::parameters::no_features());
@@ -94,7 +94,7 @@ int main()
 
   // Mesh generation with feature preservation
   c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
-  
+
   // Output
   medit_file.open("out-with-protection.mesh");
   c3t3.output_to_medit(medit_file);

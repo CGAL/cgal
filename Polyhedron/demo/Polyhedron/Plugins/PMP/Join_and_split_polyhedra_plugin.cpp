@@ -103,7 +103,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_tri
     std::cerr<<"No selected polyhedron_item"<<std::endl;
     return;
   }
-  QList<int> indices_to_remove;
+  std::vector<int> indices_to_remove;
   Q_FOREACH(int index, scene->selectionIndices()) {
     if (index == mainSelectionIndex)
       continue;
@@ -112,7 +112,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_tri
       qobject_cast<Scene_facegraph_item*>(scene->item(index));
     if(item)
     {
-      indices_to_remove.push_front(index);
+      indices_to_remove.push_back(index);
       CGAL::copy_face_graph(*item->polyhedron(), *mainSelectionItem->polyhedron());
     }
     else
@@ -122,6 +122,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_tri
   scene->itemChanged(mainSelectionIndex);
 
   //remove the other items
+  std::sort(indices_to_remove.begin(), indices_to_remove.end(), std::greater<int>());
   Q_FOREACH(int index, indices_to_remove)
   {
     scene->erase(index);

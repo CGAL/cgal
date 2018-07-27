@@ -1,9 +1,12 @@
 #include "Scene_surface_mesh_item.h"
 
 #include "Color_map.h"
-#include <queue>
+
+#ifndef Q_MOC_RUN
 #include <boost/graph/properties.hpp>
 #include <boost/graph/graph_traits.hpp>
+#endif
+
 #include <QOpenGLShaderProgram>
 #include <QInputDialog>
 #include <QOpenGLBuffer>
@@ -15,7 +18,7 @@
 #include <QSlider>
 #include <QOpenGLFramebufferObject>
 
-//#include <CGAL/boost/graph/properties_Surface_mesh.h>
+#ifndef Q_MOC_RUN
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh/IO.h>
 #include <CGAL/intersections.h>
@@ -24,8 +27,7 @@
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Polygon_mesh_processing/repair.h>
-
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include "triangulate_primitive.h"
@@ -44,6 +46,7 @@
 #include <CGAL/Buffer_for_vao.h>
 #include <QMenu>
 #include "id_printing.h"
+#endif
 
 
 typedef CGAL::Three::Triangle_container Tri;
@@ -113,9 +116,10 @@ struct Scene_surface_mesh_item_priv{
     item->getEdgeContainer(0)->setFrameMatrix(QMatrix4x4());
     has_feature_edges = false;
     invalidate_stats();
-    vertices_displayed = false;
+    vertices_displayed= false;
     edges_displayed = false;
     faces_displayed = false;
+    all_displayed = false;
     alphaSlider = NULL;
     has_vcolors = false;
     has_fcolors = false;
@@ -141,6 +145,7 @@ struct Scene_surface_mesh_item_priv{
     vertices_displayed = false;
     edges_displayed = false;
     faces_displayed = false;
+    all_displayed = false;
     alphaSlider = NULL;
     has_vcolors = false;
     has_fcolors = false;
@@ -198,6 +203,7 @@ struct Scene_surface_mesh_item_priv{
   mutable bool vertices_displayed;
   mutable bool edges_displayed;
   mutable bool faces_displayed;
+  mutable bool all_displayed;
   mutable QList<double> text_ids;
   mutable std::vector<TextItem*> targeted_id;
 
@@ -832,7 +838,7 @@ void Scene_surface_mesh_item_priv::triangulate_convex_facet(face_descriptor fd,
   SMesh::Halfedge_around_face_circulator he(halfedge(fd, *smesh_), *smesh_);
   SMesh::Halfedge_around_face_circulator he_end = he;
   
-  while(next(*he, *smesh_) != prev(*he, *smesh_))
+  while(next(*he, *smesh_) != prev(*he_end, *smesh_))
   {
     ++he;
     vertex_descriptor v0(target(*he_end, *smesh_)),
@@ -1222,6 +1228,30 @@ void Scene_surface_mesh_item::invalidate(Gl_data_names name)
     processData(name);
   else
     initGL();
+  if(!d->all_displayed)
+    d->killIds();
+  else
+  {
+    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    {
+      CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
+      if(viewer == NULL)
+        continue;
+      d->killIds();
+      if(d->vertices_displayed)
+      {
+        printVertexIds(viewer);
+      }
+      if(d->edges_displayed)
+      {
+        printEdgeIds(viewer);
+      }
+      if(d->faces_displayed)
+      {
+        printFaceIds(viewer);
+      }
+    }
+  }
 }
 
 
@@ -1815,6 +1845,14 @@ QMenu* Scene_surface_mesh_item::contextMenu()
   bool menuChanged = menu->property(prop_name).toBool();
 
   if(!menuChanged) {
+    QMenu *container = new QMenu(tr("Alpha value"));
+    container->menuAction()->setProperty("is_groupable", true);
+    QWidgetAction *sliderAction = new QWidgetAction(0);
+    sliderAction->setDefaultWidget(d->alphaSlider);
+    connect(d->alphaSlider, &QSlider::valueChanged,
+            [this](){redraw();});
+    container->addAction(sliderAction);
+    menu->addMenu(container);
     menu->addSeparator();
     QAction* actionPrintVertices=
         menu->addAction(tr("Display Vertices Ids"));
@@ -1844,13 +1882,7 @@ QMenu* Scene_surface_mesh_item::contextMenu()
     connect(actionZoomToId, &QAction::triggered,
             this, &Scene_surface_mesh_item::zoomToId);
     
-    QMenu *container = new QMenu(tr("Alpha value"));
-    QWidgetAction *sliderAction = new QWidgetAction(0);
-    sliderAction->setDefaultWidget(d->alphaSlider);
-    connect(d->alphaSlider, &QSlider::valueChanged,
-            [this](){redraw();});
-    container->addAction(sliderAction);
-    menu->addMenu(container);
+    
     setProperty("menu_changed", true);
     menu->setProperty(prop_name, true);
   }
@@ -1908,6 +1940,7 @@ bool Scene_surface_mesh_item::printVertexIds(CGAL::Three::Viewer_interface *view
 {
   if(d->vertices_displayed)
   {
+    d->all_displayed = true;
     return ::printVertexIds(*d->smesh_,
                             d->textVItems,
                             viewer);
@@ -1919,6 +1952,7 @@ bool Scene_surface_mesh_item::printEdgeIds(CGAL::Three::Viewer_interface *viewer
 {
   if(d->edges_displayed)
   {
+    d->all_displayed = true;
     return ::printEdgeIds(*d->smesh_,
                             d->textEItems,
                             viewer);
@@ -1930,6 +1964,7 @@ bool Scene_surface_mesh_item::printFaceIds(CGAL::Three::Viewer_interface *viewer
 {
   if(d->faces_displayed)
   {
+    d->all_displayed = true;
     return ::printFaceIds(*d->smesh_,
                             d->textFItems,
                             viewer);
@@ -1946,6 +1981,7 @@ void Scene_surface_mesh_item_priv::killIds()
             textEItems,
             textFItems,
             &targeted_id);
+  all_displayed = false;
 }
 
 void Scene_surface_mesh_item::printAllIds(CGAL::Three::Viewer_interface *viewer)
@@ -1973,10 +2009,17 @@ bool Scene_surface_mesh_item::testDisplayId(double x, double y, double z, CGAL::
   EPICK::Point_3 src(x - offset.x,
                       y - offset.y,
                       z - offset.z);
-  EPICK::Point_3 dest(viewer->camera()->position().x - offset.x,
-                       viewer->camera()->position().y - offset.y,
-                       viewer->camera()->position().z - offset.z);
+  
+  CGAL::qglviewer::Camera* cam = viewer->camera();
+  EPICK::Point_3 dest( cam->position().x - offset.x,
+                       cam->position().y - offset.y,
+                       cam->position().z - offset.z);
   EPICK::Vector_3 v(src,dest);
+  EPICK::Vector_3 dir(cam->viewDirection().x,
+                      cam->viewDirection().y,
+                      cam->viewDirection().z);
+  if(-CGAL::scalar_product(v, dir) < cam->zNear()) //if src is behind the near plane, don't display.
+    return false;
   v = 0.01*v;
   EPICK::Point_3 point = src;
   point = point + v;

@@ -138,7 +138,10 @@ private:
   static const char* vertexShader_bordures_source;
 
   static const char* fragmentShader_bordures_source;
+  
+  static const char* vertexShader_source_comp;
 
+  static const char* fragmentShader_source_comp;
 
   CGAL::qglviewer::Vec translationVector(x_tag) const {
     return CGAL::qglviewer::Vec(xscale_, 0.0, 0.0);
@@ -184,7 +187,7 @@ private:
   mutable std::vector<float> v_spheres;
   mutable std::vector<float> n_spheres;
   mutable std::vector<float> c_spheres;
-  mutable QOpenGLShaderProgram program_bordures;
+  mutable QOpenGLShaderProgram* program_bordures;
   mutable QOpenGLShaderProgram program;
   mutable QOpenGLShaderProgram* spheres_program;
   mutable std::vector< std::pair<QOpenGLBuffer, unsigned int> > ebos;
@@ -207,29 +210,60 @@ private:
     return (std::max)((std::max)(max_a, max_b), max_c);
 
   }
-  void drawRectangle(x_tag) const {
+  void drawRectangle(x_tag, bool is_loop) const {
 
-
+    
       v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
       v_rec.push_back(0.0f); v_rec.push_back((adim_ - 1) * yscale_); v_rec.push_back(0.0f);
+      if(!is_loop){
+        v_rec.push_back(0.0f); v_rec.push_back((adim_ - 1) * yscale_); v_rec.push_back(0.0f);
+      }
       v_rec.push_back(0.0f); v_rec.push_back((adim_ - 1) * yscale_); v_rec.push_back((bdim_ - 1) * zscale_);
+      if(!is_loop){
+        v_rec.push_back(0.0f); v_rec.push_back((adim_ - 1) * yscale_); v_rec.push_back((bdim_ - 1) * zscale_);
+      }
       v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back((bdim_ - 1) * zscale_);
+      if(!is_loop)
+      {
+        v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back((bdim_ - 1) * zscale_);
+        v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
+      }
 
 
   }
 
-  void drawRectangle(y_tag) const {
+  void drawRectangle(y_tag, bool is_loop) const {
       v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
       v_rec.push_back((adim_ - 1) * xscale_);v_rec.push_back(0.0f); v_rec.push_back(0.0f);
+      if(!is_loop){
+        v_rec.push_back((adim_ - 1) * xscale_);v_rec.push_back(0.0f); v_rec.push_back(0.0f);
+      }
       v_rec.push_back((adim_ - 1) * xscale_);v_rec.push_back(0.0f);v_rec.push_back( (bdim_ - 1) * zscale_);
+      if(!is_loop){
+        v_rec.push_back((adim_ - 1) * xscale_);v_rec.push_back(0.0f);v_rec.push_back( (bdim_ - 1) * zscale_);
+      }
       v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back((bdim_ - 1) * zscale_);
+      if(!is_loop){
+        v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back((bdim_ - 1) * zscale_);
+        v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
+      }
   }
 
-  void drawRectangle(z_tag) const {
+  void drawRectangle(z_tag, bool is_loop) const {
       v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
       v_rec.push_back((adim_ - 1) * xscale_); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
+      if(!is_loop){
+        v_rec.push_back((adim_ - 1) * xscale_); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
+      }
       v_rec.push_back((adim_ - 1) * xscale_); v_rec.push_back((bdim_ - 1) * yscale_); v_rec.push_back(0.0f);
+      if(!is_loop){
+        v_rec.push_back((adim_ - 1) * xscale_); v_rec.push_back((bdim_ - 1) * yscale_); v_rec.push_back(0.0f);
+      }
       v_rec.push_back(0.0f); v_rec.push_back((bdim_ - 1) * yscale_); v_rec.push_back(0.0f);
+      if(!is_loop){
+        v_rec.push_back(0.0f); v_rec.push_back((bdim_ - 1) * yscale_); v_rec.push_back(0.0f);
+        v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
+      }
   }
 
   void drawSpheres(x_tag) const
@@ -345,7 +379,17 @@ private:
 
 template<typename T>
 const char* Volume_plane<T>::vertexShader_source =
-      "#version 120 \n"
+      "#version 150  \n"
+      "in vec4 vertex; \n"
+      "in float color; \n"
+      "uniform mat4 mvp_matrix; \n"
+      "uniform mat4 f_matrix; \n"
+      "out vec4 fullColor; \n"
+      "void main() \n"
+      "{ gl_Position = mvp_matrix * f_matrix * vertex; \n"
+      " fullColor = vec4(color, color, color, 1.0); } \n";
+template<typename T>
+const char* Volume_plane<T>::vertexShader_source_comp =
       "attribute highp vec4 vertex; \n"
       "attribute highp float color; \n"
       "uniform highp mat4 mvp_matrix; \n"
@@ -357,28 +401,31 @@ const char* Volume_plane<T>::vertexShader_source =
 
 template<typename T>
 const char* Volume_plane<T>::fragmentShader_source =
-      "#version 120\n"
+      "#version 150 \n"
+      "in vec4 fullColor; \n"
+      "out vec4 out_color; \n"
+      "void main() { out_color = fullColor; } \n";
+template<typename T>
+const char* Volume_plane<T>::fragmentShader_source_comp =
       "varying highp vec4 fullColor; \n"
       "void main() { gl_FragColor = fullColor; } \n";
 
 template<typename T>
 const char* Volume_plane<T>::vertexShader_bordures_source =
-      "#version 120 \n"
       "attribute highp vec4 vertex; \n"
-      "uniform highp vec4 color; \n"
+      "attribute highp vec4 colors; \n"
       "uniform highp mat4 mvp_matrix; \n"
       "uniform highp mat4 f_matrix; \n"
       "varying highp vec4 fullColor; \n"
       "void main() \n"
       "{ gl_Position = mvp_matrix * f_matrix * vertex; \n"
-      " fullColor = color; } \n";
+      " fullColor = colors; } \n";
+
 
 template<typename T>
 const char* Volume_plane<T>::fragmentShader_bordures_source =
-      "#version 120\n"
       "varying highp vec4 fullColor; \n"
       "void main() { gl_FragColor = fullColor; } \n";
-
 
 
 template<typename T>
@@ -392,6 +439,7 @@ Volume_plane<T>::Volume_plane(float tx, float ty, float tz)
     sphere_Slider->setValue(40);
     sphere_Slider->setMinimum(1);
     sphere_Slider->setMaximum(100);
+    program_bordures = NULL;
  }
 template<typename T>
 void Volume_plane<T>::setData(unsigned int adim, unsigned int bdim, unsigned int cdim, float xscale, float yscale, float zscale, std::vector<float> &colors)
@@ -425,7 +473,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   updateCurrentCube();
 
 
-
+  viewer->glDepthRangef(0.00001f,0.99999f);
   GLdouble mat[16];
   viewer->camera()->getModelViewProjectionMatrix(mat);
   QMatrix4x4 mvp;
@@ -437,33 +485,60 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   }
   mvp.translate(QVector3D(tx, ty, tz));
 
-
-  program_bordures.bind();
-  program_bordures.setUniformValue("mvp_matrix", mvp);
-  program_bordures.setUniformValue("f_matrix", f);
-  program_bordures.release();
+ if(!program_bordures)
+  {
+    if(viewer->isOpenGL_4_3())
+      program_bordures = viewer->getShaderProgram(PROGRAM_SOLID_WIREFRAME);
+    else
+    {
+      program_bordures = new QOpenGLShaderProgram(viewer);
+      program_bordures->addShaderFromSourceCode(QOpenGLShader::Vertex,vertexShader_bordures_source);
+      program_bordures->addShaderFromSourceCode(QOpenGLShader::Fragment,fragmentShader_bordures_source);
+      
+      program_bordures->link();
+    }
+  }
+  program_bordures->bind();
+  program_bordures->setUniformValue("mvp_matrix", mvp);
+  program_bordures->setUniformValue("f_matrix", f);
+  program_bordures->release();
   GLint renderMode;
   viewer->glGetIntegerv(GL_RENDER_MODE, &renderMode);
   printGlError(viewer, __LINE__);
 
-
-  viewer->glLineWidth(4.0f);
   v_rec.resize(0);
-  drawRectangle(*this);
+  drawRectangle(*this, !viewer->isOpenGL_4_3());
 
-  program_bordures.bind();
+  program_bordures->bind();
+  vaos[2]->bind();
   rectBuffer.create();
   rectBuffer.bind();
   rectBuffer.allocate(v_rec.data(), static_cast<int>(v_rec.size()*sizeof(float)));
-  program_bordures.setAttributeBuffer("vertex",GL_FLOAT,0,3);
-  program_bordures.enableAttributeArray("vertex");
-  program_bordures.setUniformValue("color",this->color());
-  viewer->glDrawArrays(GL_LINE_LOOP, 0, static_cast<GLsizei>(v_rec.size()/3));
+  program_bordures->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+  program_bordures->enableAttributeArray("vertex");
+  program_bordures->disableAttributeArray("colors");
+  program_bordures->setAttributeValue("colors",this->color());
+  if(!viewer->isOpenGL_4_3())
+  {
+    viewer->glDrawArrays(GL_LINE_LOOP, 0, static_cast<GLsizei>(v_rec.size()/3));
+  }
+  else
+  {
+    QVector2D vp(viewer->width(), viewer->height());
+    program_bordures->setUniformValue("viewport", vp);
+    program_bordures->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
+    program_bordures->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+    program_bordures->setUniformValue("width", 4.0f);
+    viewer->glDepthRangef(0.00005f, 0.99995f);
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_rec.size()/3));
+    viewer->glDepthRangef(0.0,1.0);
+  }
   rectBuffer.release();
-  program_bordures.release();
-  viewer->glLineWidth(1.0f);
+  vaos[1]->release();
+  program_bordures->release();
 
   program.bind();
+  vaos[1]->bind();
   int mvpLoc = program.uniformLocation("mvp_matrix");
   int fLoc = program.uniformLocation("f_matrix");
   program.setUniformValue(mvpLoc, mvp);
@@ -473,7 +548,6 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   program.enableAttributeArray(vloc);
   program.setAttributeBuffer(vloc, GL_FLOAT, 0, 3);
   vVBO.release();
-
   cbuffer.bind();
   int colorLoc = program.attributeLocation("color");
   program.enableAttributeArray(colorLoc);
@@ -493,6 +567,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
 
   cbuffer.release();
   printGlError(viewer, __LINE__);
+  vaos[1]->release();
   program.release();
 
   printGlError(viewer, __LINE__);
@@ -512,6 +587,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   double max_dim = compute_maxDim();
   sphere_radius = max_dim/20.0f * sphere_Slider->value()/100.0f;
   spheres_program->setAttributeValue("radius", sphere_radius);
+  spheres_program->disableAttributeArray("colors");
   spheres_program->setAttributeValue("colors", this->color());
   spheres_program->setUniformValue("mvp_matrix", mvp);
   viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
@@ -541,9 +617,11 @@ void Volume_plane<T>::init(Viewer_interface* viewer) {
   assert(vertices.size() == (3 * adim_ * bdim_));
 
   vVBO.create();
+  vaos[1]->bind();
   vVBO.bind();
   vVBO.allocate(vertices.data(),static_cast<int>(sizeof(float) * vertices.size()));
   vVBO.release();
+  vaos[1]->release();
   printGlError(viewer, __LINE__);
 
   // for each patch
@@ -604,24 +682,18 @@ void Volume_plane<T>::init(Viewer_interface* viewer) {
 
 template<typename T>
 void Volume_plane<T>::initShaders() {
-  QOpenGLShader *vertex = new QOpenGLShader(QOpenGLShader::Vertex);
-
-  vertex->compileSourceCode(vertexShader_source);
-  QOpenGLShader *fragment= new QOpenGLShader(QOpenGLShader::Fragment);
-  fragment->compileSourceCode(fragmentShader_source);
-  program.addShader(vertex);
-  program.addShader(fragment);
+  if(QOpenGLContext::currentContext()->format().majorVersion() >= 3)
+  {
+    program.addShaderFromSourceCode(QOpenGLShader::Vertex, vertexShader_source  );
+    program.addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentShader_source);
+  }
+  else
+  {
+    program.addShaderFromSourceCode(QOpenGLShader::Vertex, vertexShader_source_comp  );
+    program.addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentShader_source_comp);
+  }
   program.link();
 
-
-  QOpenGLShader *vertex_bordures = new QOpenGLShader(QOpenGLShader::Vertex);
-
-  vertex_bordures->compileSourceCode(vertexShader_bordures_source);
-  QOpenGLShader *fragment_bordures= new QOpenGLShader(QOpenGLShader::Fragment);
-  fragment_bordures->compileSourceCode(fragmentShader_bordures_source);
-  program_bordures.addShader(vertex_bordures);
-  program_bordures.addShader(fragment_bordures);
-  program_bordures.link();
 }
 
 

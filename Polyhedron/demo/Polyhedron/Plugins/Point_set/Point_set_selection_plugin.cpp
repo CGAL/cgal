@@ -9,7 +9,7 @@
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
-#include "opengl_tools.h"
+
 
 #include "Messages_interface.h"
 #include "Scene_points_with_normal_item.h"

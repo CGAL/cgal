@@ -1,9 +1,10 @@
-#version 120
-varying highp vec4 color;
+#version 150
+in vec4 color;
+out vec4 out_color;
 void main(void) 
 { 
   if(color.w<0)
-    gl_FragColor = vec4(0,0,0,1.0); 
+    out_color = vec4(0,0,0,1.0); 
   else
     discard;
 }  
