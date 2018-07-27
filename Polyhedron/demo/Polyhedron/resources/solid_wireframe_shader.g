@@ -6,6 +6,7 @@ layout (triangle_strip, max_vertices = 4) out;
 in VS_OUT
 {
   vec4 out_color;
+  float dist[6];
 } gs_in[2];
 
 uniform vec2 viewport;
@@ -16,11 +17,13 @@ uniform float far;
 out GS_OUT
 {
    vec4 color;
+   float dist[6];
 } gs_out;
 
 
 void main(void)
 {
+  ;
   //linearized arbitrary Z offset to keep the widelines in front of the edges as much as possible
   float z_offset = (2.0 * near) / (far + near - 0.01f * (far - near)) - (2.0 * near) / (far + near);
   vec3 ndc0 = gl_in[0].gl_Position.xyz / gl_in[0].gl_Position.w;
@@ -33,21 +36,25 @@ void main(void)
   vec4 cpos = gl_in[0].gl_Position;
   gl_Position = vec4(cpos.xy + offset*cpos.w, cpos.z-z_offset, cpos.w);
   gs_out.color = gs_in[0].out_color;
+  gs_out.dist = gs_in[0].dist;
   EmitVertex();
   
   cpos = gl_in[0].gl_Position;
   gl_Position = vec4(cpos.xy - offset*cpos.w, cpos.z-z_offset, cpos.w);
   gs_out.color = gs_in[0].out_color;
+  gs_out.dist = gs_in[0].dist;
   EmitVertex();
   
   cpos = gl_in[1].gl_Position;
   gl_Position = vec4(cpos.xy + offset*cpos.w, cpos.z-z_offset, cpos.w);
   gs_out.color = gs_in[1].out_color;
+  gs_out.dist = gs_in[1].dist;
   EmitVertex();
   
   cpos = gl_in[1].gl_Position;
   gl_Position = vec4(cpos.xy - offset*cpos.w, cpos.z-z_offset, cpos.w);
   gs_out.color = gs_in[1].out_color;
+  gs_out.dist = gs_in[1].dist;
   EmitVertex();
   EndPrimitive();
 
