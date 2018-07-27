@@ -30,9 +30,8 @@
 #include <CGAL/Polygon_mesh_processing/internal/AABB_do_intersect_transform_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Side_of_triangle_mesh.h>
-#include <CGAL/box_intersection_d.h>
 
-#define CGAL_USE_BOX_INTERSECTION_D 1
+#define CGAL_CASH_BOXES 0
 namespace CGAL {
 
 template <class TriangleMesh, class Kernel, class HAS_ROTATION = CGAL::Tag_true>
@@ -48,20 +47,10 @@ class Rigid_mesh_collision_detection
   // TODO: we probably want an option with external trees
   std::vector<Tree*> m_aabb_trees;
   std::vector<bool> m_is_closed;
-#if CGAL_USE_BOX_INTERSECTION_D
-  struct Callback{
-    typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t> Bbox;
-    std::vector<std::size_t>& res;
-    Callback(std::vector<std::size_t>& res)
-      :res(res){}
-    void operator()(const Bbox& ,
-                    const Bbox& b)
-    {
-      res.push_back(b.info());
-    }
-  };
-  std::vector<typename Tree::Bounding_box> m_tree_boxes;
+#if CGAL_CASH_BOXES
+    std::vector<typename Tree::Bounding_box> m_tree_boxes;
 #endif
+  
 
 public:
   template <class MeshRange>
@@ -81,7 +70,7 @@ public:
     m_triangle_mesh_ptrs.reserve( triangle_meshes.size() );
     m_aabb_trees.reserve( triangle_meshes.size() );
     m_is_closed.resize(triangle_meshes.size(), false);
-#if CGAL_USE_BOX_INTERSECTION_D
+#if CGAL_CASH_BOXES
     m_tree_boxes.reserve( triangle_meshes.size() );
 #endif
     BOOST_FOREACH(const TriangleMesh& tm, triangle_meshes)
@@ -91,7 +80,7 @@ public:
       m_triangle_mesh_ptrs.push_back( &tm );
       Tree* t = new Tree(faces(tm).begin(), faces(tm).end(), tm);
       m_aabb_trees.push_back(t);
-#if CGAL_USE_BOX_INTERSECTION_D
+#if CGAL_CASH_BOXES
       m_tree_boxes.push_back(internal::get_tree_bbox(*t));
 #endif
     }
@@ -101,7 +90,11 @@ public:
   {
     m_is_closed.push_back(is_closed(tm));
     m_triangle_mesh_ptrs.push_back( &tm );
-    m_aabb_trees.push_back(new Tree(faces(tm).begin(), faces(tm).end(), tm));
+    Tree* t = new Tree(faces(tm).begin(), faces(tm).end(), tm);
+    m_aabb_trees.push_back(t);
+#if CGAL_CASH_BOXES
+      m_tree_boxes.push_back(internal::get_tree_bbox(*t));
+#endif
   }
   
   void remove_mesh(std::size_t mesh_id)
@@ -110,13 +103,16 @@ public:
     m_triangle_mesh_ptrs.erase( m_triangle_mesh_ptrs.begin()+mesh_id );
     m_aabb_trees.erase( m_aabb_trees.begin()+mesh_id);
     m_is_closed.erase(m_is_closed.begin()+mesh_id);
+#if CGAL_CASH_BOXES
+      m_tree_boxes.erase(m_tree_boxes.begin()+mesh_id);
+#endif
     
   }
   
   void set_transformation(std::size_t mesh_id, const Aff_transformation_3<Kernel>& aff_trans)
   {
     m_aabb_trees[mesh_id]->traits().set_transformation(aff_trans);
-#if CGAL_USE_BOX_INTERSECTION_D
+#if CGAL_CASH_BOXES
     m_tree_boxes[mesh_id] = internal::get_tree_bbox(*m_aabb_trees[mesh_id]);
 #endif
     
@@ -132,26 +128,19 @@ public:
     set_transformation(mesh_id, aff_trans);
     std::vector<std::size_t> res;
 
-#if CGAL_USE_BOX_INTERSECTION_D
     
-//    Callback callback(res);
-//    m_tree_boxes.swap(m_tree_boxes.begin()+mesh_id, m_tree_boxes.end() -1);
-//    CGAL::box_intersection_d(
-//          m_tree_boxes, m_tree_boxes+m_aabb_trees.size()-1, 
-//          m_tree_boxes.end()-1,
-//          m_tree_boxes.end(),
-//          callback);
-//    m_tree_boxes.swap(m_tree_boxes.begin()+mesh_id, m_tree_boxes.end() -1);
     
-#else
+
     for(std::size_t k=0; k<m_aabb_trees.size(); ++k)
     {
       if(k==mesh_id) continue;
+#if CGAL_CASH_BOXES
+       if (!do_overlap(m_tree_boxes[k], m_tree_boxes[mesh_id])) continue;
+#endif
       // TODO: think about an alternative that is using a traversal traits
       if ( m_aabb_trees[k]->do_intersect( *m_aabb_trees[mesh_id] ) )
         res.push_back(k);
     }
-#endif
     return res;
   } 
   
@@ -163,40 +152,14 @@ public:
     set_transformation(mesh_id, aff_trans);
    std::vector<std::pair<std::size_t, bool> > res;
 
-#if CGAL_USE_BOX_INTERSECTION_D
-    for(std::size_t k=0; k<m_aabb_trees.size(); ++k)
-        {
-          if(k==mesh_id) continue;
-          if (!do_overlap(m_tree_boxes[k], m_tree_boxes[mesh_id])) continue;
-           //TODO: think about an alternative that is using a traversal traits
-          if ( m_aabb_trees[k]->do_intersect( *m_aabb_trees[mesh_id] ) )
-            res.push_back(std::make_pair(k, false));
-          else{
-            if (m_is_closed[mesh_id])
-            {
-              Side_of_tm side_of_mid(*m_aabb_trees[mesh_id]);
-              typename Kernel::Point_3 q = get(boost::vertex_point, *m_triangle_mesh_ptrs[k], *boost::begin(vertices(*m_triangle_mesh_ptrs[k])));
-              if(side_of_mid(m_aabb_trees[k]->traits().transformation()( q )) == CGAL::ON_BOUNDED_SIDE)
-              {
-                res.push_back(std::make_pair(k, true));
-                continue;
-              }
-            }
-            if (m_is_closed[k])
-            {
-              Side_of_tm side_of_mk(*m_aabb_trees[k]);
-              typename Kernel::Point_3 q = get(boost::vertex_point, *m_triangle_mesh_ptrs[mesh_id], *boost::begin(vertices(*m_triangle_mesh_ptrs[mesh_id])));
-              if(side_of_mk(m_aabb_trees[mesh_id]->traits().transformation()( q )) == CGAL::ON_BOUNDED_SIDE)
-                res.push_back(std::make_pair(k, true));
-            }
-          }
-        }
-    
-#else
+
     // TODO: use a non-naive version
     for(std::size_t k=0; k<m_aabb_trees.size(); ++k)
     {
       if(k==mesh_id) continue;
+#if CGAL_CASH_BOXES     
+      if (!do_overlap(m_tree_boxes[k], m_tree_boxes[mesh_id])) continue;
+#endif
       // TODO: think about an alternative that is using a traversal traits
       if ( m_aabb_trees[k]->do_intersect( *m_aabb_trees[mesh_id] ) )
         res.push_back(std::make_pair(k, false));
@@ -220,7 +183,6 @@ public:
         }
       }
     }
-#endif
     return res;
   }
 };
