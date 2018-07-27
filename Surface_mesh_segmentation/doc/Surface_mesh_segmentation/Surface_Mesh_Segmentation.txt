@@ -159,14 +159,12 @@ Clusters and segments. The input number of clusters is set to 5. <b>(a)</b> Resu
 \section Surface_mesh_segmentationApprCvxDmpOverview Overview of the Approximate Convex Segmentation 
 
 \subsection Surface_mesh_segmentationConcavity Concavity Value
-The concavity value is used as cost in the dual edge collapse process. It affects the order in which dual edges are collapsed and thus the produced segmentation.
-The implemented function computing the concavity value offers just a few of the many approaches to estimate quality of a surface mesh being concave.
 
-In the context of this algorithm, the concavity of a triangle mesh \f$ S \f$ is defined as the maximal distance of the points of the vertices of the mesh to the convex hull of the mesh. In the normal projection method it is computed in the following way:
+In this package, the concavity of a triangle mesh \f$ S \f$ is defined as the maximal distance of the points of the vertices of the triangle mesh to the convex hull of the mesh. More specifically, it is defined as:
 
-\f$ C(S) = \max\limits_{v \in vertices(S)} ||p(v) - proj(p(v))|| \f$, where \f$p(v)\f$ is the point of vertex \f$v\f$ and \f$ proj(M) \f$ is the projection of the point \f$ M \f$ on the convex hull of \f$S\f$.
+\f$ C(S) = \max\limits_{v \in vertices(S)} ||p(v) - proj(p(v))|| \f$, where \f$p(v)\f$ is the point of vertex \f$v\f$ and \f$ proj(M) \f$ is the projection of the point \f$ M \f$ on the convex hull of \f$S\f$. See Figure \cgalFigureRef{Concavity_value} for an illustration).
 
-The projection used is the one minimizing the distance to the convex hull.
+The projection used can be either the projection onto the convex hull along the normal of the vertex, or the projection to the convex hull that minimizes the distance to the convex hull. See Figure \cgalFigureRef{Concavity_values_elephant_demo} for a comparision of the result of the two different projections.
 
 Note that the formula given above is also valid for a subset of vertices of a triangle mesh, in which case the maximum is taken over the points of those vertices, and the convex hull computed only using those points.
 
@@ -174,15 +172,12 @@ Note that the formula given above is also valid for a subset of vertices of a tr
 Distance computation of the point \f$ M_0 \f$ to its projection \f$ Proj(M_0) \f$ on the convex hull \f$ CH(S) \f$ of \f$ S \f$.
 \cgalFigureEnd
 
-\cgalFigureBegin{Concavity_values_elephant_demo,concavity_values-elephant.png}
-Concavity per face for the elephant model using normal projection method.
+\cgalFigureBegin{Concavity_values_elephant_demo,concavity_values-elephant.png, concavity_values-elephant-shortest.png}
+\b Left: Concavity per face using the projection along the vertex normal; \b Right: Concavity per face using the projection to the closest point.
+\todo since the concavity is defined per vertex explain how it is estimated per face.
 \cgalFigureEnd
 
-In the shortest distance method concavity value is computed as the shortest distance from a point to the convex hull of a mesh in any direction.
-
-\cgalFigureBegin{Concavity_values_elephant_demo,concavity_values-elephant-shortest.png}
-Concavity per face for the elephant model using shortest distance method.
-\cgalFigureEnd
+The concavity value is used as cost in the dual edge collapse process. It affects the order in which dual edges are collapsed and thus the produced segmentation.
 
 \subsection Surface_mesh_segmentationDecimation Segmentation Procedure
 

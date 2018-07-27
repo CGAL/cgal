@@ -24,7 +24,7 @@ bool test_on_mesh(const std::string& path, double concavity_threshold, int min_n
   Clusters_map segment_ids;
   boost::associative_property_map<Clusters_map> segments_pmap(segment_ids);
 
-  std::size_t segments_num = CGAL::approximate_convex_segmentation<Concurrency_tag>(mesh, segments_pmap, concavity_threshold, CGAL::parameters::minimum_number_of_segments(min_number_of_segments));
+  std::size_t segments_num = CGAL::approximate_convex_segmentation<Concurrency_tag>(mesh, segments_pmap, concavity_threshold, CGAL::parameters::min_number_of_segments(min_number_of_segments));
 
   std::cout << "Number of segments: " << segments_num << std::endl;
 

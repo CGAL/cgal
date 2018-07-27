@@ -186,7 +186,7 @@ private:
       CGAL::approximate_convex_segmentation<Concurrency_tag>(segmentation_mesh,
                                                              segments_pmap,
                                                              concavity_threshold,
-                                                             CGAL::parameters::min_number_of_segments(min_number_of_segments).segments_convex_hulls(convex_hulls_pmap).shortest_concavity_values(use_shortest_method));
+                                                             CGAL::parameters::min_number_of_segments(min_number_of_segments).segments_convex_hulls(convex_hulls_pmap).use_closest_point(use_shortest_method));
     timer.stop();
     
     std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
@@ -309,7 +309,7 @@ private:
     Vertex_double_map distances_map;
     boost::associative_property_map<Vertex_double_map> distances_pmap(distances_map);
 
-    double concavity_value = CGAL::concavity_values<Concurrency_tag>(concavity_values_mesh, distances_pmap, CGAL::parameters::shortest_concavity_values(use_shortest_method));
+    double concavity_value = CGAL::concavity_values<Concurrency_tag>(concavity_values_mesh, distances_pmap, CGAL::parameters::use_closest_point(use_shortest_method));
     std::cout << "Concavity value of the mesh: " << concavity_value << std::endl;
 
     // assign patch id to each face and colorize it

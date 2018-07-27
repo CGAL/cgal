@@ -127,8 +127,8 @@ is filled up with the convex hulls of produced segments in a segmentation.\n
 <b>Default:</b> None: if it is not provided, this information is inaccessible.
 \cgalNPEnd
 
-\cgalNPBegin{shortest_concavity_values} \anchor BGL_shortest_concavity_values
-indicates if shortest distances method should be used to compute concavity values (i.e. shortest distance for each point to the convex hull of a mesh).\n
+\cgalNPBegin{use_closest_point} \anchor BGL_use_closest_point
+indicates if the closest point or the normal projection should be used to compute the concavity of a vertex.\n
 <b>Type:</b> a type convertible to `bool` \n
 <b>Default:</b> false
 \cgalNPEnd
