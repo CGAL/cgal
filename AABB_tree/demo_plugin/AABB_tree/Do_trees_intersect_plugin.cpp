@@ -32,7 +32,7 @@ public:
     QKeyEvent * e = static_cast<QKeyEvent*>(event);
     if (e->key()==Qt::Key_W){
       do_transparency = !do_transparency;
-      update_trees();
+      change_display();
       return true;
     }
     return false;
@@ -136,15 +136,6 @@ private Q_SLOTS:
     }
     col_det = new CGAL::Rigid_mesh_collision_detection<SMesh, EPICK>(meshes);
     init_trees();
-    if(do_transparency)
-    {
-      items.back()->setRenderingMode(Flat);
-      items.back()->setAlpha(120);
-    }
-    else
-    {
-      items.back()->setRenderingMode(Wireframe);
-    }
     static_cast<CGAL::Three::Viewer_interface*>(
           CGAL::QGLViewer::QGLViewerPool().first())->installEventFilter(this);
     QApplication::restoreOverrideCursor();
@@ -278,15 +269,6 @@ public Q_SLOTS:
       }
       Scene_movable_sm_item* item = items[id];
       item->setColor(QColor(Qt::green));
-      /*if(do_transparency)
-      {
-        item->setRenderingMode(Flat);
-        item->setAlpha(120);
-      }
-      else
-      {
-        item->setRenderingMode(Wireframe);
-      }*/
       item->itemChanged();
     }
     prev_ids.clear();
@@ -315,15 +297,7 @@ public Q_SLOTS:
         items[id]->setColor(QColor(Qt::red));
       prev_ids.push_back(id);
     }
-   /* if(do_transparency)
-    {
-      sel_item->setRenderingMode(Flat);
-      sel_item->setAlpha(120);
-    }
-    else
-    {
-      sel_item->setRenderingMode(Wireframe);
-    }*/
+   /* */
     prev_ids.push_back(sel_id);
     sel_item->itemChanged();
     viewer->update();
@@ -344,6 +318,18 @@ public Q_SLOTS:
   //switch transparent/wireframe.
   void change_display()
   {
+    for(Scene_movable_sm_item* item : items)
+    {
+      if(do_transparency)
+      {
+        item->setRenderingMode(Flat);
+        item->setAlpha(120);
+      }
+      else
+      {
+        item->setRenderingMode(Wireframe);
+      }
+    }
   }
   
 private:
