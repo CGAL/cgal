@@ -31,7 +31,14 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
-#define CGAL_CASH_BOXES 0
+#ifndef CGAL_CACHE_BOXES
+#define CGAL_CACHE_BOXES 0
+#endif
+
+#if CGAL_CACHE_BOXES
+#include <boost/dynamic_bitset.hpp>
+#endif
+
 namespace CGAL {
 
 template <class TriangleMesh, class Kernel, class HAS_ROTATION = CGAL::Tag_true>
@@ -47,10 +54,18 @@ class Rigid_mesh_collision_detection
   // TODO: we probably want an option with external trees
   std::vector<Tree*> m_aabb_trees;
   std::vector<bool> m_is_closed;
-#if CGAL_CASH_BOXES
-    std::vector<typename Tree::Bounding_box> m_tree_boxes;
+#if CGAL_CACHE_BOXES
+  boost::dynamic_bitset<> m_bboxes_is_invalid;
+  std::vector<Bbox_3> m_bboxes;
 #endif
 
+  void clear_trees()
+  {
+    BOOST_FOREACH(Tree* tree, m_aabb_trees){
+      delete tree;
+    }
+    m_aabb_trees.clear();
+  }
 
 public:
   template <class MeshRange>
@@ -58,21 +73,26 @@ public:
   {
     init(triangle_meshes);
   }
+
   ~Rigid_mesh_collision_detection()
   {
-    BOOST_FOREACH(Tree* tree, m_aabb_trees){
-      delete tree;
-    }
+    clear_trees();
   }
   template <class MeshRange>
   void init(const MeshRange& triangle_meshes)
   {
-    m_triangle_mesh_ptrs.reserve( triangle_meshes.size() );
-    m_aabb_trees.reserve( triangle_meshes.size() );
-    m_is_closed.resize(triangle_meshes.size(), false);
-#if CGAL_CASH_BOXES
-    m_tree_boxes.reserve( triangle_meshes.size() );
-    Interval_nt_advanced::Protector protector;
+    std::size_t nb_meshes = triangle_meshes.size();
+    m_triangle_mesh_ptrs.clear();
+    m_triangle_mesh_ptrs.reserve(nb_meshes);
+    clear_trees();
+    m_aabb_trees.reserve(nb_meshes);
+    m_is_closed.clear();
+    m_is_closed.resize(nb_meshes, false);
+#if CGAL_CACHE_BOXES
+    m_bboxes_is_invalid.clear();
+    m_bboxes_is_invalid.resize(nb_meshes, true);
+    m_bboxes.clear();
+    m_bboxes.resize(nb_meshes);
 #endif
     BOOST_FOREACH(const TriangleMesh& tm, triangle_meshes)
     {
@@ -81,9 +101,6 @@ public:
       m_triangle_mesh_ptrs.push_back( &tm );
       Tree* t = new Tree(faces(tm).begin(), faces(tm).end(), tm);
       m_aabb_trees.push_back(t);
-#if CGAL_CASH_BOXES
-      m_tree_boxes.push_back(internal::get_tree_bbox(*t));
-#endif
     }
   }
 
@@ -93,9 +110,9 @@ public:
     m_triangle_mesh_ptrs.push_back( &tm );
     Tree* t = new Tree(faces(tm).begin(), faces(tm).end(), tm);
     m_aabb_trees.push_back(t);
-#if CGAL_CASH_BOXES
-    Interval_nt_advanced::Protector protector;
-    m_tree_boxes.push_back(internal::get_tree_bbox(*t));
+#if CGAL_CACHE_BOXES
+    m_bboxes.push_back(Bbox_3());
+    m_bboxes_is_invalid.resize(m_bboxes_is_invalid.size()+1, true);
 #endif
   }
 
@@ -105,33 +122,50 @@ public:
     m_triangle_mesh_ptrs.erase( m_triangle_mesh_ptrs.begin()+mesh_id );
     m_aabb_trees.erase( m_aabb_trees.begin()+mesh_id);
     m_is_closed.erase(m_is_closed.begin()+mesh_id);
-#if CGAL_CASH_BOXES
-    m_tree_boxes.erase(m_tree_boxes.begin()+mesh_id);
+#if CGAL_CACHE_BOXES
+    // TODO this is a lazy approach that is not optimal
+    m_bboxes.pop_back();
+    m_bboxes_is_invalid.set();
+    m_bboxes_is_invalid.resize(m_triangle_mesh_ptrs.size());
 #endif
-
   }
 
   void set_transformation(std::size_t mesh_id, const Aff_transformation_3<Kernel>& aff_trans)
   {
     m_aabb_trees[mesh_id]->traits().set_transformation(aff_trans);
-#if CGAL_CASH_BOXES
-    m_tree_boxes[mesh_id] = internal::get_tree_bbox(*m_aabb_trees[mesh_id]);
+#if CGAL_CACHE_BOXES
+    m_bboxes_is_invalid.set(mesh_id);
 #endif
   }
 
+#if CGAL_CACHE_BOXES
+  void update_bboxes()
+  {
+    // protector is supposed to have been set
+    for (boost::dynamic_bitset<>::size_type i = m_bboxes.find_first();
+                                            i != m_bboxes_is_invalid.npos;
+                                            i = m_bboxes_is_invalid.find_next(i))
+    {
+      m_bboxes[i]=internal::get_tree_bbox(*m_aabb_trees[i]);
+    }
+    m_bboxes_is_invalid.reset();
+  }
+#endif
+
   std::vector<std::size_t>
-  set_transformation_and_get_all_intersections(std::size_t mesh_id,
-                                           const Aff_transformation_3<Kernel>& aff_trans)
+  get_all_intersections(std::size_t mesh_id)
   {
     CGAL::Interval_nt_advanced::Protector protector;
-    set_transformation(mesh_id, aff_trans);
+#if CGAL_CACHE_BOXES
+    update_bboxes();
+#endif
     std::vector<std::size_t> res;
 
     for(std::size_t k=0; k<m_aabb_trees.size(); ++k)
     {
       if(k==mesh_id) continue;
-#if CGAL_CASH_BOXES
-       if (!do_overlap(m_tree_boxes[k], m_tree_boxes[mesh_id])) continue;
+#if CGAL_CACHE_BOXES
+       if (!do_overlap(m_bboxes[k], m_bboxes[mesh_id])) continue;
 #endif
       // TODO: think about an alternative that is using a traversal traits
       if ( m_aabb_trees[k]->do_intersect( *m_aabb_trees[mesh_id] ) )
@@ -140,21 +174,30 @@ public:
     return res;
   }
 
-  std::vector<std::pair<std::size_t, bool> >
-  set_transformation_and_get_all_intersections_and_inclusions(std::size_t mesh_id,
-                                           const Aff_transformation_3<Kernel>& aff_trans)
+  std::vector<std::size_t>
+  set_transformation_and_get_all_intersections(std::size_t mesh_id,
+                                               const Aff_transformation_3<Kernel>& aff_trans)
   {
     CGAL::Interval_nt_advanced::Protector protector;
     set_transformation(mesh_id, aff_trans);
-   std::vector<std::pair<std::size_t, bool> > res;
+    return get_all_intersections(mesh_id);
+  }
 
+  std::vector<std::pair<std::size_t, bool> >
+  get_all_intersections_and_inclusions(std::size_t mesh_id)
+  {
+    CGAL::Interval_nt_advanced::Protector protector;
+#if CGAL_CACHE_BOXES
+    update_bboxes();
+#endif
+    std::vector<std::pair<std::size_t, bool> > res;
 
     // TODO: use a non-naive version
     for(std::size_t k=0; k<m_aabb_trees.size(); ++k)
     {
       if(k==mesh_id) continue;
-#if CGAL_CASH_BOXES
-      if (!do_overlap(m_tree_boxes[k], m_tree_boxes[mesh_id])) continue;
+#if CGAL_CACHE_BOXES
+      if (!do_overlap(m_bboxes[k], m_bboxes[mesh_id])) continue;
 #endif
       // TODO: think about an alternative that is using a traversal traits
       if ( m_aabb_trees[k]->do_intersect( *m_aabb_trees[mesh_id] ) )
@@ -180,6 +223,15 @@ public:
       }
     }
     return res;
+  }
+
+  std::vector<std::pair<std::size_t, bool> >
+  set_transformation_and_get_all_intersections_and_inclusions(std::size_t mesh_id,
+                                           const Aff_transformation_3<Kernel>& aff_trans)
+  {
+    CGAL::Interval_nt_advanced::Protector protector;
+    set_transformation(mesh_id, aff_trans);
+    return get_all_intersections_and_inclusions(mesh_id);
   }
 };
 
