@@ -18,8 +18,8 @@
 //
 // Author(s)     : Liubomyr Piadyk
 
-#ifndef CGAL_APPROX_SEGMENTATION_H
-#define CGAL_APPROX_SEGMENTATION_H
+#ifndef CGAL_INTERNAL_APPROX_SEGMENTATION_H
+#define CGAL_INTERNAL_APPROX_SEGMENTATION_H
 
 #include <CGAL/license/Surface_mesh_segmentation.h>
 
@@ -29,8 +29,6 @@
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
-#include <CGAL/boost/graph/Face_filtered_graph.h>
-#include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
@@ -192,7 +190,10 @@ public:
 
       // fill up convex hulls property map
       TriangleMesh conv_hull;
-      CGAL::convex_hull_3(segment_props.conv_hull_pts.begin(), segment_props.conv_hull_pts.end(), conv_hull);
+      if (valid_convex_hull_pts(segment_props.conv_hull_pts))
+      {
+        CGAL::convex_hull_3(segment_props.conv_hull_pts.begin(), segment_props.conv_hull_pts.end(), conv_hull);
+      }
       convex_hulls_pmap[segment_id] = conv_hull;
 
       ++segment_id;
@@ -344,7 +345,7 @@ private:
     std::copy(segment_2_props.conv_hull_pts.begin(), segment_2_props.conv_hull_pts.end(), common_hull_pts.begin() + segment_1_props.conv_hull_pts.size());
 
     // if can construct convex hull
-    if (common_hull_pts.size() > 3) //TODO: add collinearity check
+    if (valid_convex_hull_pts(common_hull_pts))
     {
       // compute convex hull on the merged list of points
       TriangleMesh conv_hull;
@@ -574,9 +575,18 @@ private:
     }
     m_invalid_edges.clear();
   }
+
+  /**
+   * Checks if there is need to construct the convex hull of a set of points 
+   */
+  bool valid_convex_hull_pts(const std::vector<Point_3>& pts)
+  {
+    if (pts.size() <= 3) return false;
+    return true;
+  }
 };    
 
 }
 }
 
-#endif // CGAL_APPROX_SEGMENTATION_H
+#endif // CGAL_INTERNAL_APPROX_SEGMENTATION_H

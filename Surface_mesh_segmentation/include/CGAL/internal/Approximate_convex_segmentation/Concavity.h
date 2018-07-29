@@ -18,8 +18,8 @@
 //
 // Author(s)     : Liubomyr Piadyk
 
-#ifndef CGAL_CONCAVITY_H
-#define CGAL_CONCAVITY_H
+#ifndef CGAL_INTERNAL_CONCAVITY_H
+#define CGAL_INTERNAL_CONCAVITY_H
 
 #include <CGAL/license/Surface_mesh_segmentation.h>
 
@@ -80,6 +80,7 @@ namespace internal
     , m_vpm(vpm)
     , m_traits(traits)
     , m_shortest_method(shortest_method)
+    , m_normals_computed(false)
     {}
     
     Concavity(const TriangleMesh& mesh, const Vpm& vpm, const GeomTraits& traits, bool shortest_method, const Normals_map& normals_map)
@@ -180,7 +181,7 @@ namespace internal
     bool m_shortest_method;
 
     Normals_map m_normals_map;
-    bool m_normals_computed = false;
+    bool m_normals_computed;
     
     /**
     * Computes concavity value projecting vertices from a list onto a convex hull.
@@ -364,4 +365,4 @@ namespace internal
 }
 }
 
-#endif // CGAL_CONCAVITY_H
+#endif // CGAL_INTERNAL_CONCAVITY_H
