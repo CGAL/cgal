@@ -43,8 +43,6 @@ namespace CGAL
  * The distance is either computed using the closest point or the projection along the normal at the vertex,
  * depending on the value of the named parameter `use_closest_point`.
  *
- * \todo add missing named parameters so that `Face_filtered_graph` could be instantiated
- *
  * @pre `is_triangle_mesh(mesh)`
  *
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm (possible values are `Sequential_tag` and `Parallel_tag`)
@@ -63,6 +61,9 @@ namespace CGAL
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `mesh` \cgalParamEnd
  *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
  *    \cgalParamBegin{use_closest_point} if true, the concavity at each vertex is evaluated by using the distance to the closest point on the convex hull of the set of faces. If false, the distance to the first intersected point following the normal at each vertex is used. Default is false \cgalParamEnd
+ *    \cgalParamBegin{face_index_map} a property map containing an index for each face initialized from 0 to `num_faces(graph)`
+ *    \cgalParamBegin{vertex_index_map} a property map containing an index for each vertex initialized from 0 to `num_vertices(graph)`
+ *    \cgalParamBegin{halfedge_index_map} a property map containing an index for each halfedge initialized from 0 to `num_halfedges(graph)`
  * \cgalNamedParamsEnd
  *
  * @return the concavity value of the set of faces

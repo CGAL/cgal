@@ -1,9 +1,6 @@
 #include <CGAL/approximate_convex_segmentation.h>
 
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/Face_filtered_graph.h>
-#include <CGAL/boost/graph/copy_face_graph.h>
-#include <CGAL/convex_hull_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Real_timer.h>
 
@@ -15,8 +12,6 @@ typedef Kernel::Point_3 Point_3;
 typedef CGAL::Surface_mesh<Point_3> Mesh;
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
-
-typedef CGAL::Face_filtered_graph<Mesh> Filtered_graph;
 
 typedef CGAL::Real_timer Timer;
 
