@@ -48,8 +48,8 @@ struct Heat_method_3_private_tests;
 
 namespace CGAL {
 
-  
-  
+
+
   namespace Heat_method_3 {
 
   // This class will later go into another file
@@ -61,7 +61,7 @@ namespace CGAL {
   };
 
 
-  
+
   /**
    * Class `Heat_method_3` is a ...
    * \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
@@ -79,9 +79,9 @@ namespace CGAL {
             typename LA = Heat_method_Eigen_traits_3>
   class Heat_method_3
   {
-#ifdef CGAL_TESTSUITE    
+#ifdef CGAL_TESTSUITE
     friend Heat_method_3_private_tests;
-#endif    
+#endif
     /// Polygon_mesh typedefs
     typedef typename boost::graph_traits<TriangleMesh>               graph_traits;
     typedef typename graph_traits::vertex_descriptor            vertex_descriptor;
@@ -154,7 +154,7 @@ namespace CGAL {
      }
 
   public:
-    
+
     /**
      * adds `vd` to the source set, returning `false` if `vd` is already in the set.
      */
@@ -176,7 +176,7 @@ namespace CGAL {
       return (sources.erase(v2v(vd)) == 1);
     }
 
-    
+
     /**
      * clears the current source sets
      */
@@ -187,17 +187,17 @@ namespace CGAL {
       return;
     }
 
-    
+
      /**
      * get distance from the current source set to a vertex `vd`.
      */
-    
+
     double distance(vertex_descriptor vd) const
     {
       return get(vdm,vd);
     }
 
-    
+
     /**
      * returns an iterator to the first vertex in the source set.
      */
@@ -216,12 +216,29 @@ namespace CGAL {
   private:
     double summation_of_edges() const
     {
-      double edge_sum = 0;
-      BOOST_FOREACH(edge_descriptor ed, edges(tm))
-      {
-        edge_sum += Polygon_mesh_processing::edge_length(halfedge(ed,tm), tm, CGAL::parameters::vertex_point_map(vpm));
-      }
-      return edge_sum;
+       double edge_sum = 0;
+       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
+       BOOST_FOREACH(face_descriptor f, faces(tm)) {
+         boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
+         vertex_descriptor current = *(vbegin);
+         vertex_descriptor neighbor_one = *(++vbegin);
+         vertex_descriptor neighbor_two = *(++vbegin);
+         Index i = get(vertex_id_map, current);
+         Index j = get(vertex_id_map, neighbor_one);
+         Index k = get(vertex_id_map, neighbor_two);
+         Point_3 pi, pj, pk;
+
+         VertexPointMap_reference p_i = get(vpm,current);
+         VertexPointMap_reference p_j = get(vpm, neighbor_one);
+         VertexPointMap_reference p_k = get(vpm, neighbor_two);
+         pi = p_i;
+         pj = p_j;
+         pk = p_k;
+         edge_sum += (0.5) * std::sqrt(std::abs(std::pow((pi.x()-pj.x()),2) + std::pow((pi.y()-pj.y()),2)+std::pow((pi.z()-pj.z()),2)));
+         edge_sum += (0.5) * std::sqrt(std::abs(std::pow((pj.x()-pk.x()),2) + std::pow((pj.y()-pk.y()),2)+std::pow((pj.z()-pk.z()),2))) ;
+         edge_sum += (0.5) * std::sqrt(std::abs(std::pow((pk.x()-pi.x()),2) + std::pow((pk.y()-pi.y()),2)+std::pow((pk.z()-pi.z()),2))) ;
+       }
+       return edge_sum;
     }
 
     double time_step() const
@@ -439,7 +456,7 @@ namespace CGAL {
 
   public:
 
-    /** 
+    /**
      *
      **/
     void update()
@@ -537,9 +554,9 @@ namespace CGAL {
           A_matrix_entries.push_back(triplet(i,i, (1./6.)*norm_cross));
           A_matrix_entries.push_back(triplet(j,j, (1./6.)*norm_cross));
           A_matrix_entries.push_back(triplet(k,k, (1./6.)*norm_cross));
-          c_matrix_entries.push_back(triplet(i,i, 1e-9));
-          c_matrix_entries.push_back(triplet(j,j, 1e-9));
-          c_matrix_entries.push_back(triplet(k,k, 1e-9));
+          c_matrix_entries.push_back(triplet(i,i, 1e-8));
+          c_matrix_entries.push_back(triplet(j,j, 1e-8));
+          c_matrix_entries.push_back(triplet(k,k, 1e-8));
 
         }
 
@@ -552,6 +569,7 @@ namespace CGAL {
       m_time_step = 1./(num_edges(tm));
       m_time_step = m_time_step*summation_of_edges();
       m_time_step = m_time_step*m_time_step;
+      std::cout<<"timestep: "<< m_time_step<<"\n";
 
       update_kronecker_delta();
       solved_u = solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, m_time_step, m);
@@ -561,7 +579,7 @@ namespace CGAL {
       index_divergence = compute_divergence(X, m);
       solved_phi = solve_phi(m_cotan_matrix, index_divergence, m);
     }
-    
+
     int dimension;
     V2V<TriangleMesh> v2v;
     const TriangleMesh& tm;
@@ -594,14 +612,14 @@ namespace CGAL {
     {
       typedef typename boost::property_map<TriangleMesh, vertex_point_t>::type PPM;
       typedef typename boost::property_traits<PPM>::value_type Point_3;
-      typedef CGAL::Kernel_traits<Point_3>::Kernel Kernel;
+      typedef typename CGAL::Kernel_traits<Point_3>::Kernel Kernel;
       typedef CGAL::Heat_method_3::Heat_method_3<TriangleMesh,Kernel,VertexDistanceMap> Heat_method;
 
       Heat_method hm(tm,vdm);
       hm.add_source(source);
       hm.update();
     }
-    
+
 
     /// \relates Heat_method_3
     /// computes ...
@@ -612,7 +630,7 @@ namespace CGAL {
     {
       typedef typename boost::property_map<TriangleMesh, vertex_point_t>::type PPM;
       typedef typename boost::property_traits<PPM>::value_type Point_3;
-      typedef CGAL::Kernel_traits<Point_3>::Kernel Kernel;
+      typedef typename CGAL::Kernel_traits<Point_3>::Kernel Kernel;
       typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TriangleMesh,Kernel, VertexDistanceMap> Idt;
       typedef CGAL::Heat_method_3::Heat_method_3<Idt,Kernel,typename Idt::Vertex_distance_map> Heat_method;
 
@@ -621,10 +639,10 @@ namespace CGAL {
       hm.add_source(source);
       hm.update();
     }
-    
+
 
  /*! @} */
-    
+
 } // namespace Heat_method_3
 } // namespace CGAL
 #include <CGAL/enable_warnings.h>
