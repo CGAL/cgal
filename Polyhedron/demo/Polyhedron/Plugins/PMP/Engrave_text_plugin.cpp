@@ -19,7 +19,7 @@
 
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/centroid.h>
-
+#include <QPainterPath>
 
 using namespace CGAL::Three;
 
@@ -107,8 +107,23 @@ public Q_SLOTS:
   }
   
   void visualize() {
-    
-    if(visu_item)
+    Viewer_interface* viewer = static_cast<Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
+    QPainterPath path;
+    QFont font;
+    font.setPointSize(15);
+    path.addText(QPointF(viewer->width()/2,viewer->height()/2), font, dock_widget->lineEdit->text());
+    viewer->getPainter()->begin(viewer);
+    viewer->getPainter()->drawPath(path);
+    viewer->getPainter()->end();
+    QPolygonF poly = path.toFillPolygon();
+    Scene_polylines_item* new_poly = new Scene_polylines_item();
+    new_poly->polylines.push_back(Scene_polylines_item::Polyline());
+    Q_FOREACH(QPointF pf, poly)
+    {
+      new_poly->polylines.front().push_back(Point_3(pf.x(), pf.y(), 0));
+    }
+    scene->addItem(new_poly);
+   /* if(visu_item)
       scene->erase(scene->item_id(visu_item));
     visu_item = NULL;
     typedef EPICK::Point_3 Point_3;
@@ -224,6 +239,7 @@ public Q_SLOTS:
     scene->addItem(visu_item);
     //dock_widget->engraveButton->setEnabled(true);
     //dock_widget->visualizeButton->setEnabled(false);
+    */
   }
   
   void engrave() {
