@@ -33,16 +33,22 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+
 #include <CGAL/array.h>
+#include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Union_find.h>
 #include <CGAL/utility.h>
 
-#include <map>
-#include <vector>
-#include <utility>
 #include <boost/range.hpp>
 #include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
+
+#include <fstream>
+
+#include <iterator>
+#include <map>
+#include <vector>
+#include <utility>
 
 #ifdef DOXYGEN_RUNNING
 #define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
@@ -562,9 +568,135 @@ void stitch_boundary_cycle_2(PM& pmesh)
   }
 }
 
+// @todo @tmp This is added by #3201 and should thus be removed
+template <typename PolygonMesh, typename OutputIterator>
+OutputIterator extract_boundary_cycles(PolygonMesh& pm,
+                                       OutputIterator out)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+
+  boost::unordered_set<halfedge_descriptor> hedge_handled;
+  BOOST_FOREACH(halfedge_descriptor h, halfedges(pm))
+  {
+    if(is_border(h, pm) && hedge_handled.insert(h).second)
+    {
+      *out++ = h;
+      BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_face(h, pm))
+        hedge_handled.insert(h2);
+    }
+  }
+  return out;
+}
+
+// \ingroup PMP_repairing_grp
+//
+// Stitches together, whenever possible, two halfedges of the same border.
+//
+// \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+//
+// \param pm the polygon mesh to be modified by stitching
+// \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+//
+// \cgalNamedParamsBegin
+//   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+//     If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `PolygonMesh`.
+//   \cgalParamEnd
+// \cgalNamedParamsEnd
+//
+template <typename PolygonMesh, typename NamedParameters>
+std::size_t stitch_boundary_cycles(PolygonMesh& pm,
+                                   const NamedParameters& np)
+{
+  using boost::choose_param;
+  using boost::get_param;
+
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor           halfedge_descriptor;
+
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type     VPMap;
+  VPMap vpm = choose_param(get_param(np, internal_np::vertex_point),
+                           get_const_property_map(vertex_point, pm));
+
+  std::vector<halfedge_descriptor> boundary_cycles;
+  extract_boundary_cycles(pm, std::back_inserter(boundary_cycles));
+
+  std::size_t stitched_boundary_cycles_n = 0;
+
+  // A boundary cycle might need to be stitched starting from different extremities
+  //
+  //                          v11 ----v10
+  //                         /          \
+  //   v0 === v1(v13) === v2(v12)       v5(v9) === v6(v8) === v7
+  //                         \          /
+  //                          v3------v4
+  // so we mark which edges have been stitched
+  typedef CGAL::internal::Dynamic_property_map<halfedge_descriptor, bool>    Halfedge_status_pmap;
+  Halfedge_status_pmap stitched_hedges(false);
+
+  std::cout << boundary_cycles.size() << " boundary cycles" << std::endl;
+
+  BOOST_FOREACH(halfedge_descriptor h, boundary_cycles)
+  {
+    std::vector<halfedge_descriptor> stitching_starting_points;
+    halfedge_descriptor hn = next(h, pm);
+    while(hn != h)
+    {
+      if(get(vpm, source(hn, pm)) == get(vpm, target(next(hn, pm), pm)))
+        stitching_starting_points.push_back(hn);
+
+      hn = next(hn, pm);
+    }
+
+    std::cout << stitching_starting_points.size() << " stitching starting points" << std::endl;
+
+    for(std::size_t i=0, end=stitching_starting_points.size(); i<end; ++i)
+    {
+      halfedge_descriptor h = stitching_starting_points[i];
+
+      if(get(stitched_hedges, h)) // already treated
+        continue;
+
+      std::vector<std::pair<halfedge_descriptor, halfedge_descriptor> > hedges_to_stitch;
+
+      halfedge_descriptor hn = next(h, pm);
+      bool do_stitching = true;
+      do
+      {
+        hedges_to_stitch.push_back(std::make_pair(h, hn));
+        put(stitched_hedges, h, true);
+        put(stitched_hedges, hn, true);
+
+        if(next(hn, pm) == h)
+          break;
+
+        h = prev(h, pm);
+        hn = next(hn, pm);
+
+        if(get(vpm, source(h, pm)) != get(vpm, target(hn, pm)))
+          do_stitching = false;
+      }
+      while(do_stitching);
+
+      // remove iostream & fstream
+      std::cout << "stitching a cycle\n";
+
+      internal::stitch_borders_impl(pm, hedges_to_stitch);
+      ++stitched_boundary_cycles_n;
+    }
+
+    std::ofstream("stitched_closed_boundary_cycles.off") << std::setprecision(17) << pm;
+  }
+
+  return stitched_boundary_cycles_n;
+}
+
+template <typename PolygonMesh>
+std::size_t stitch_boundary_cycles(PolygonMesh& pm)
+{
+  return stitch_boundary_cycles(pm, CGAL::parameters::all_default());
+}
+
 } //end of namespace internal
-
-
 
 /*!
 * \ingroup PMP_repairing_grp
