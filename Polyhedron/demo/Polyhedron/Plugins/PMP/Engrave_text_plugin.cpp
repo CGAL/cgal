@@ -11,7 +11,7 @@
 //Actual code reqs
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/surface_mesh_parameterization.h>
-
+#include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Surface_mesh_shortest_path.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -70,24 +70,24 @@ public :
       angle = 0.0;
       translation = EPICK::Vector_2(0,0);
       connect(dock_widget->t_left_pushButton, &QPushButton::clicked,
-          [this](){
-        translation -= EPICK::Vector_2(1,0);
+          this, [this](){
+        translation -= EPICK::Vector_2(0.1,0);
         visualize();
       });
       
       connect(dock_widget->t_right_pushButton, &QPushButton::clicked,
-          [this](){
-        translation += EPICK::Vector_2(1,0);
+          this, [this](){
+        translation += EPICK::Vector_2(0.1,0);
         visualize();
       });
     }
     connect(dock_widget->r_right_pushButton, &QPushButton::clicked,
-        [this](){
+        this, [this](){
       angle += 0.15;
       visualize();
     });
     connect(dock_widget->r_left_pushButton, &QPushButton::clicked,
-        [this](){
+        this, [this](){
       angle -= 0.15;
       visualize();
     });
@@ -107,43 +107,16 @@ public Q_SLOTS:
   }
   
   void visualize() {
-    Viewer_interface* viewer = static_cast<Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
-    QPainterPath path;
-    QFont font;
-    font.setPointSize(15);
-    path.addText(QPointF(viewer->width()/2,viewer->height()/2), font, dock_widget->lineEdit->text());
-    viewer->getPainter()->begin(viewer);
-    viewer->getPainter()->drawPath(path);
-    viewer->getPainter()->end();
-    QPolygonF poly = path.toFillPolygon();
-    Scene_polylines_item* new_poly = new Scene_polylines_item();
-    new_poly->polylines.push_back(Scene_polylines_item::Polyline());
-    Q_FOREACH(QPointF pf, poly)
-    {
-      new_poly->polylines.front().push_back(Point_3(pf.x(), pf.y(), 0));
-    }
-    scene->addItem(new_poly);
-   /* if(visu_item)
+    Scene_polyhedron_selection_item* sel_item  = 
+        qobject_cast<Scene_polyhedron_selection_item*>
+        (scene->item(scene->mainSelectionIndex()));
+    if(!sel_item)
+      return;
+    if(sel_item->selected_facets.empty())
+      return;
+    if(visu_item)
       scene->erase(scene->item_id(visu_item));
     visu_item = NULL;
-    typedef EPICK::Point_3 Point_3;
-    // read text file
-    std::ifstream text_in("/home/gimeno/Data/Polylines/text.polylines.txt");
-    Scene_polylines_item::Polylines_container polylines;
-    int nb_pts = 0;
-    while( text_in >> nb_pts)
-    {
-      polylines.push_back( std::vector<Point_3>() );
-      polylines.back().reserve(nb_pts);
-      double x, y, z;
-      for (int i=0; i<nb_pts; ++i)
-      {
-        text_in >> x >> y >> z;
-        if (z!=0)
-          std::cerr << "z-coordinate of a point is not 0: " << z << "\n";
-        polylines.back().push_back( Point_3(x,y,z) );
-      }
-    }
     
     namespace SMP = CGAL::Surface_mesh_parameterization;
     typedef CGAL::Surface_mesh_shortest_path_traits<EPICK, SMesh> SP_traits;
@@ -153,19 +126,6 @@ public Q_SLOTS:
     typedef CGAL::AABB_traits<Kernel, Primitive> Tree_traits;
     typedef CGAL::AABB_tree<Tree_traits> Tree;
     typedef EPICK::Point_3 Point_3;
-    Scene_polyhedron_selection_item* sel_item  = 
-        qobject_cast<Scene_polyhedron_selection_item*>
-        (scene->item(scene->mainSelectionIndex()));
-    Point_3 basis_3[3];
-    int i=0;
-    for(Scene_polyhedron_selection_item::Selection_set_vertex::iterator it 
-          = sel_item->selected_vertices.begin();
-        it != sel_item->selected_vertices.end();
-        ++it)
-    {
-      basis_3[(i++)%3] = sel_item->polyhedron()->point(
-            *it);
-    }
     SMesh sm;
     sel_item->export_selected_facets_as_polyhedron(&sm);
     SMesh::Halfedge_index hd =
@@ -187,37 +147,78 @@ public Q_SLOTS:
     }
     
     std::cout << "Parameterized with ARAP (SM)!" << std::endl;
-    
-    
     SMesh::Property_map<SMesh::Vertex_index, Point_3> uv_map_3 =
         sm.add_property_map<SMesh::Vertex_index, Point_3>("v:uv3").first;
+    float xmin(std::numeric_limits<double>::max()), xmax(std::numeric_limits<double>::min()), 
+          ymin(std::numeric_limits<double>::max()), ymax(std::numeric_limits<double>::min());
     for(SMesh::Vertex_index v : sm.vertices())
+    {
       uv_map_3[v] = Point_3(uv_map[v][0], uv_map[v]
           [1], 0);
+      if(uv_map[v][0] > xmax)
+        xmax = uv_map[v][0];
+      if(uv_map[v][0] < xmin)
+        xmin = uv_map[v][0];
+      
+      if(uv_map[v][1] > ymax)
+        ymax = uv_map[v][1];
+      if(uv_map[v][1] < ymin)
+        ymin = uv_map[v][1];
+    }
+    std::cout<<"xmax = "<<xmax<<", ymax = "<<ymax<<std::endl;
+    
+    std::ofstream out("param_out.off");
+      out << "OFF\n" << sm.number_of_vertices() << " " << sm.number_of_faces() << " 0\n";
+      for(SMesh::Vertex_index v : sm.vertices())
+        out << uv_map_3[v] << "\n";
+      for(SMesh::Face_index f : faces(sm))
+      {
+        SMesh::Halfedge_index h = sm.halfedge(f);
+        out << "3 " << (unsigned) sm.target(h) << " "
+                    << (unsigned) sm.target(sm.next(h)) << " "
+                    << (unsigned) sm.source(h) << "\n";
+      }
+    
+    
+    //create Text Polyline
+    typedef EPICK::Point_3 Point_3;
+    Viewer_interface* viewer = static_cast<Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
+    QPainterPath path;
+    QFont font;
+    font.setPointSize(15);
+    
+    path.addText(QPoint(xmin,-ymin), font, dock_widget->lineEdit->text());
+    viewer->getPainter()->begin(viewer);
+    viewer->getPainter()->drawPath(path);
+    viewer->getPainter()->end();
+    QTransform trans;
+    
+    QList<QPolygonF> polys = path.toFillPolygons();
+    //Scene_polylines_item* new_poly = new Scene_polylines_item();
+    Scene_polylines_item::Polylines_container polylines;
+    QFontMetrics fm(font);
+    int width=fm.width(dock_widget->lineEdit->text());
+    int height=fm.height();
+    std::cout<<"width = "<<width<<", height= "<<height<<std::endl;
+    Q_FOREACH(QPolygonF poly, polys){
+      polylines.push_back(Scene_polylines_item::Polyline());
+      Q_FOREACH(QPointF pf, poly)
+      {
+        EPICK::Point_2 v = EPICK::Point_2(pf.x(),-pf.y());
+        polylines.back().push_back(Point_3(v.x()/2*(xmax-xmin)/width + (xmin) ,
+                                           v.y()/2*(ymax-ymin)/height+ (ymin) ,
+                                           0));
+      }
+    }
+    
+    
+    
+    
+    
     // build AABB-tree for face location queries
     Tree aabb_tree(faces(sm).first, faces(sm).second, sm, uv_map_3);
     
-    //get 2D basis
-    EPICK::Vector_2 basis_2[3];
-    for(int i=0; i<3; ++i)
-    {
-      Surface_mesh_shortest_path::Face_location coord = Surface_mesh_shortest_path::locate(basis_3[i], aabb_tree, sm, uv_map_3);
-      EPICK::Point_2 face_points[3];
-      SMesh::Face_index f = SMesh::Face_index(coord.first);
-      face_points[0] = uv_map[source(halfedge(f,sm),sm)];
-      face_points[1] = uv_map[target(halfedge(f,sm),sm)];
-      face_points[2] = uv_map[target(next(halfedge(f,sm),sm),sm)];
-      
-      basis_2[i] = EPICK::Vector_2(
-            coord.second[0]*face_points[0].x()
-          +coord.second[1]*face_points[1].x()
-          +coord.second[2]*face_points[2].x(),
-          coord.second[0]*face_points[0].y()
-        +coord.second[1]*face_points[1].y()
-        +coord.second[2]*face_points[2].y());
-    }
-    
-    Scene_polylines_item* visu_item = new Scene_polylines_item;
+    visu_item = new Scene_polylines_item;
     // compute 3D coordinates
     EPICK::Aff_transformation_2 transfo = 
     EPICK::Aff_transformation_2(CGAL::ROTATION,sin(angle), cos(angle)) * EPICK::Aff_transformation_2(CGAL::TRANSLATION, translation);
@@ -226,12 +227,13 @@ public Q_SLOTS:
       visu_item->polylines.push_back(std::vector<Point_3>());
       BOOST_FOREACH(const Point_3& p, polyline)
       {
-        EPICK::Vector_2 p_2 = transfo.transform(basis_2[0]+basis_2[1]*p.x()+basis_2[2]*p.y());
+        EPICK::Point_2 p_2 = transfo.transform(EPICK::Point_2(p.x(), p.y()));
         
         Face_location loc = Surface_mesh_shortest_path::locate(
               Point_3(p_2.x(), p_2.y(), 0),
               aabb_tree, sm, uv_map_3);
-        visu_item->polylines.back().push_back(Surface_mesh_shortest_path::point(loc.first, loc.second,  sm, sm.points()));
+        visu_item->polylines.back().push_back(//Point_3(p_2.x(), p_2.y(), 0));
+              Surface_mesh_shortest_path::point(loc.first, loc.second,  sm, sm.points()));
       }
     }
     visu_item->setName("Text");
@@ -239,7 +241,6 @@ public Q_SLOTS:
     scene->addItem(visu_item);
     //dock_widget->engraveButton->setEnabled(true);
     //dock_widget->visualizeButton->setEnabled(false);
-    */
   }
   
   void engrave() {
