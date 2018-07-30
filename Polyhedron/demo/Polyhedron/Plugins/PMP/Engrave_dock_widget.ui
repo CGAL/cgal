@@ -67,13 +67,6 @@
     </item>
     <item row="1" column="0">
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="1">
-       <widget class="QPushButton" name="t_right_pushButton">
-        <property name="text">
-         <string>-&gt;</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
        <widget class="QPushButton" name="t_left_pushButton">
         <property name="text">
@@ -81,17 +74,38 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="1">
+       <widget class="QPushButton" name="r_right_pushButton">
+        <property name="text">
+         <string>R-&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="t_right_pushButton">
+        <property name="text">
+         <string>-&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
        <widget class="QPushButton" name="r_left_pushButton">
         <property name="text">
          <string>&lt;-R</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QPushButton" name="r_right_pushButton">
+      <item row="1" column="0">
+       <widget class="QPushButton" name="t_up_pushButton">
         <property name="text">
-         <string>R-&gt;</string>
+         <string>^</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="t_down_pushButton">
+        <property name="text">
+         <string>V</string>
         </property>
        </widget>
       </item>
