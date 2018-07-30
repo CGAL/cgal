@@ -1467,7 +1467,7 @@ struct Vertex_collector<G, Emptyset_iterator>
 /// @param v a vertex of `tm`
 /// @param tm a triangle mesh containing `v`
 ///
-/// \sa duplicate_non_manifold_vertices()
+/// \sa `duplicate_non_manifold_vertices()`
 ///
 /// \return `true` if the vertex is non-manifold, `false` otherwise.
 template <typename TriangleMesh>
