@@ -7,20 +7,24 @@
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polyhedron_selection_item.h"
 #include "Scene_polylines_item.h"
+#include "Nef_type.h"
 
 //Actual code reqs
+#include <CGAL/boost/graph/convert_nef_polyhedron_to_polygon_mesh.h>
+
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/surface_mesh_parameterization.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/Polygon_mesh_processing/extrude.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/Surface_mesh_shortest_path.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/Polygon_mesh_processing/extrude.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Delaunay_mesh_vertex_base_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
-#include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
 #include <CGAL/Delaunay_mesher_2.h>
 
@@ -133,6 +137,8 @@ public Q_SLOTS:
       return;
     if(sel_item->selected_facets.empty())
       return;
+    if(!CGAL::is_closed(*sel_item->polyhedron()))
+       return;
     if(visu_item)
       scene->erase(scene->item_id(visu_item));
     visu_item = NULL;
@@ -259,12 +265,22 @@ public Q_SLOTS:
     visu_item->setColor(QColor(Qt::red));
     scene->addItem(visu_item);
     dock_widget->engraveButton->setEnabled(true);
-    dock_widget->visualizeButton->setEnabled(false);
+   // dock_widget->visualizeButton->setEnabled(false);
   }
   
   void engrave() {
     if(!visu_item)
       return;
+    Scene_polyhedron_selection_item* sel_item  = 
+        qobject_cast<Scene_polyhedron_selection_item*>
+        (scene->item(scene->mainSelectionIndex()));
+    if(!sel_item)
+      return;
+    if(sel_item->selected_facets.empty())
+      return;
+    if(!CGAL::is_closed(*sel_item->polyhedron()))
+       return;
+    
     typedef CGAL::Projection_traits_xy_3<EPICK>                          Gt;
     typedef CGAL::Delaunay_mesh_vertex_base_2<Gt>                        Vb;
     typedef CGAL::Delaunay_mesh_face_base_2<Gt>                          Fm;
@@ -324,13 +340,21 @@ public Q_SLOTS:
     SMesh text_mesh_bottom, text_mesh_complete;
     cdt2_to_face_graph(cdt,
                        text_mesh_bottom,
-                       2,
                        zmin);
     PMP::extrude_mesh(text_mesh_bottom, text_mesh_complete,EPICK::Vector_3(0,0,zmax-zmin));
     
-    Scene_surface_mesh_item* text_item = new Scene_surface_mesh_item(text_mesh_complete);
-    text_item->setColor(QColor(Qt::green));
-    scene->addItem(text_item);
+    CGAL::Surface_mesh<Exact_Kernel::Point_3> exact_text,
+        exact_target;
+    CGAL::copy_face_graph(text_mesh_complete, exact_text);
+    CGAL::copy_face_graph(*sel_item->polyhedron(), exact_target);
+    Nef_polyhedron nef_text(exact_text);
+    Nef_polyhedron nef_target(exact_target);
+    Nef_polyhedron new_nef = nef_target - nef_text;
+    SMesh result;
+    CGAL::convert_nef_polyhedron_to_polygon_mesh(new_nef, result);
+    CGAL::Polygon_mesh_processing::triangulate_faces(result);
+    Scene_surface_mesh_item* result_item = new Scene_surface_mesh_item(result);
+    scene->addItem(result_item);
     dock_widget->engraveButton->setEnabled(false);
     dock_widget->visualizeButton->setEnabled(true);
   }
@@ -399,7 +423,7 @@ private:
   }
   
   template <class CDT, class TriangleMesh>
-  void cdt2_to_face_graph(const CDT& cdt, TriangleMesh& tm, int constant_coordinate_index, double constant_coordinate)
+  void cdt2_to_face_graph(const CDT& cdt, TriangleMesh& tm,  double constant_coordinate)
   {
     typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   
