@@ -15,6 +15,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/boost/graph/selection.h>
@@ -287,7 +288,7 @@ void* Scene_polyhedron_item_priv::get_aabb_tree()
       int index =0;
       BOOST_FOREACH( Polyhedron::Facet_iterator f, faces(*poly))
       {
-        if (CGAL::is_degenerate_triangle_face(f, *poly, get(CGAL::vertex_point, *poly), Kernel()))
+        if (CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, *poly))
           continue;
         if(!f->is_triangle())
         {
@@ -1677,7 +1678,7 @@ QString Scene_polyhedron_item::computeStats(int type)
     if (d->poly->is_pure_triangle())
     {
       if (d->number_of_degenerated_faces == (unsigned int)(-1))
-        d->number_of_degenerated_faces = nb_degenerate_faces(d->poly, get(CGAL::vertex_point, *(d->poly)));
+        d->number_of_degenerated_faces = nb_degenerate_faces(d->poly);
       return QString::number(d->number_of_degenerated_faces);
     }
     else

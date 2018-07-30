@@ -113,19 +113,29 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::self_intersections()`
 - \link PMP_predicates_grp `CGAL::Polygon_mesh_processing::do_intersect()` \endlink
 - `CGAL::Polygon_mesh_processing::intersecting_meshes()`
+- `CGAL::Polygon_mesh_processing::is_degenerate_edge()`
+- `CGAL::Polygon_mesh_processing::degenerate_edges()`
+- `CGAL::Polygon_mesh_processing::is_degenerate_triangle_face()`
+- `CGAL::Polygon_mesh_processing::degenerate_faces()`
+- `CGAL::Polygon_mesh_processing::is_needle_triangle_face()`
+- `CGAL::Polygon_mesh_processing::is_cap_triangle_face()`
 
 ## Orientation Functions ##
-- `CGAL::Polygon_mesh_processing::is_outward_oriented()`
-- `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::orient()`
 - `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()`
+- `CGAL::Polygon_mesh_processing::is_outward_oriented()`
+- `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
 
 ## Combinatorial Repairing Functions ##
 - \link PMP_repairing_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
 - `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`
 - `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 - `CGAL::Polygon_mesh_processing::remove_isolated_vertices()`
+- `CGAL::Polygon_mesh_processing::is_non_manifold_vertex()`
+- `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()`
+- `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`
+- `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycles()`
 
 ## Normal Computation Functions ##
 - `CGAL::Polygon_mesh_processing::compute_face_normal()`
@@ -179,6 +189,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::edge_bbox()`
 - `CGAL::Polygon_mesh_processing::face_bbox()`
 - `CGAL::Polygon_mesh_processing::border_halfedges()`
+- `CGAL::Polygon_mesh_processing::extract_boundary_cycles()`
 - `CGAL::Polygon_mesh_processing::transform()`
 
 */
