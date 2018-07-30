@@ -42,7 +42,7 @@ int validate(char* fname)
   std::ifstream src((base+".src").c_str());
   int index;
   while(src >> index){
-    std::cout << "source: " << index << std::endl; 
+    std::cout << "source: " << index << std::endl;
     sources.push_back(index);
   }
   std::cout << std::endl;
@@ -53,7 +53,15 @@ int validate(char* fname)
   while(dists >> d){
     groundtruth.push_back(d);
   }
-  
+
+  std::ifstream ref((base+".ref").c_str());
+  std::vector<double> reference;
+  double d2;
+  while(ref >> d2){
+    reference.push_back(d2);
+  }
+
+
   Vertex_distance_map vdm = sm.add_property_map<vertex_descriptor,double>("v:dist",0).first;
 
   Heat_method hm(sm,vdm);
@@ -61,11 +69,11 @@ int validate(char* fname)
     hm.add_source(vertex_descriptor(index));
   }
   hm.update();
-  
+
   Vertex_distance_map vdm_idt = sm.add_property_map<vertex_descriptor,double>("v:idt",0).first;
 
   Idt idt(sm, vdm_idt);
- 
+
   Heat_method_idt hm_idt(idt, idt.vertex_distance_map());
   for(int i=0; i < sources.size(); i++){
     hm_idt.add_source(vertex_descriptor(index));
@@ -75,10 +83,11 @@ int validate(char* fname)
   std::cout.precision(17);
   int i = 0;
   BOOST_FOREACH(vertex_descriptor vd, vertices(sm)){
-    std::cout << vd << "  " << get(vdm, vd) << "  "  << get(vdm_idt, vd) << "  " << groundtruth[i++] << std::endl;
+    std::cout << vd << " without idt: " << get(vdm, vd) << "  with idt: "  << get(vdm_idt, vd) << "  " << groundtruth[i] << " and exact polyhedral: " << reference[i] << std::endl;
+    i++;
   }
   std::cout << "done" << std::endl;
-  
+
   return 0;
 }
 
