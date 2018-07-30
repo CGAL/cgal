@@ -671,7 +671,7 @@ std::size_t remove_null_edges(
 /// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// @param tmesh the  triangulated surface mesh to be repaired
-/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+/// @param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
 ///
 /// \cgalNamedParamsBegin
 ///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`.
@@ -685,8 +685,8 @@ std::size_t remove_null_edges(
 ///         - `Collinear_are_ordered_along_line_3` to check whether 3 collinear points are ordered
 ///         - `Collinear_3` to check whether 3 points are collinear
 ///         - `Less_xyz_3` to compare lexicographically two points
-///         - `Equal_3` to check whether 2 points are identical
-///         -  for each functor Foo, a function `Foo foo_object()`
+///         - `Equal_3` to check whether 2 points are identical.
+///       For each functor Foo, a function `Foo foo_object()` must be provided.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
