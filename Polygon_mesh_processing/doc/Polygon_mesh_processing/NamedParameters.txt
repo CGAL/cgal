@@ -364,6 +364,22 @@ should be considered as part of the clipping volume or not.
 \b Default value is `true`
 \cgalNPEnd
 
+\cgalNPBegin{do_erase_all_duplicates} \anchor PMP_do_erase_all_duplicates
+Parameter used in the function `merge_duplicate_polygons_in_polygon_soup()` to indicate,
+when multiple faces are duplicates, whether all the duplicate faces should be removed
+or if one (arbitrarily chosen) face should be kept.
+\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `false`
+\cgalNPEnd
+
+\cgalNPBegin{do_require_same_orientation} \anchor PMP_do_require_same_orientation
+Parameter used in the function `merge_duplicate_polygons_in_polygon_soup()` to indicate
+if orientation should matter when determining whether two faces are duplicates.
+\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `false`
+\cgalNPEnd
 
 \cgalNPTableEnd
 

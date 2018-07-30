@@ -43,6 +43,11 @@ int main(int, char**)
   p.push_back(0); p.push_back(1); p.push_back(4);
   polygons.push_back(p);
 
+  // duplicate face with different orientation
+  p.clear();
+  p.push_back(0); p.push_back(4); p.push_back(1);
+  polygons.push_back(p);
+
   p.clear();
   p.push_back(0); p.push_back(3); p.push_back(5);
   polygons.push_back(p);
@@ -56,7 +61,7 @@ int main(int, char**)
   p.push_back(0); p.push_back(3); p.push_back(4);
   polygons.push_back(p);
 
-  // pinched face yielding only degenerate faces
+  // pinched and degenerate face
   p.clear();
   p.push_back(0); p.push_back(1); p.push_back(2); p.push_back(3);
   p.push_back(4); p.push_back(3); p.push_back(2); p.push_back(1);

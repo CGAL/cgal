@@ -472,8 +472,14 @@ the connected components of a closed polygon mesh so that it bounds a volume
 \subsection PSRepairing Polygon Soup Repairing
 To ensure that a polygon soup can be oriented (see Section \ref PolygonSoups) and transformed
 into a workable polygon mesh, it might be necessary to preprocess the data to remove combinatorial
-and geometrical errors. This package offers the functions `CGAL::Polygon_mesh_processing::repair_polygon_soup()`,
-which bundles a handful of repairing techniques to obtain an as-clean-as-possible soup.
+and geometrical errors. This package offers the following functions:
+- `CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup()`,
+- `CGAL::Polygon_mesh_processing::merge_duplicate_polygons_in_polygon_soup()`,
+- `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`,
+
+as well as the function `CGAL::Polygon_mesh_processing::repair_polygon_soup()`,
+which bundles the previous functions and an additional handful of repairing techniques
+to obtain an as-clean-as-possible pol soup.
 
 \subsection Stitching
 

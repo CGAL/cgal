@@ -1,9 +1,12 @@
+﻿#define CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 
 #include <CGAL/Surface_mesh.h>
 
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -16,6 +19,92 @@ typedef K::Point_3                                              Point_3;
 
 typedef CGAL::Surface_mesh<Point_3>                             Mesh;
 typedef std::vector<std::size_t>                                Polygon;
+
+void test_polygon_canonicalization(const bool verbose = false)
+{
+  std::cout << "test polygon canonicalization... " << std::endl;
+
+  std::vector<Point_3> points;
+  points.push_back(Point_3(0,0,0)); // #0
+  points.push_back(Point_3(1,0,0)); // #1
+  points.push_back(Point_3(0,1,0)); // #2
+  points.push_back(Point_3(1,1,0)); // #3
+  points.push_back(Point_3(1,1,2)); // #4
+  points.push_back(Point_3(1,1,-2)); // #5
+
+  // empty
+  Polygon polygon;
+  Polygon canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
+  assert(canonical_polygon.empty());
+
+  // 1 point
+  polygon.push_back(5);
+
+  canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
+  assert(canonical_polygon == polygon);
+
+  // 2 points
+  polygon.clear();
+  polygon.push_back(4); polygon.push_back(3);
+
+  canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
+  assert(canonical_polygon[0] == 3 && canonical_polygon[1] == 4);
+  std::swap(polygon[0], polygon[1]);
+  canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
+  assert(canonical_polygon[0] == 3 && canonical_polygon[1] == 4);
+
+  // 3 points
+  polygon.clear();
+  polygon.push_back(4); polygon.push_back(1); polygon.push_back(3);
+
+  canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
+  assert(canonical_polygon[0] == 1 && canonical_polygon[1] == 3 && canonical_polygon[2] == 4);
+  std::swap(polygon[0], polygon[2]);
+  canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
+  assert(canonical_polygon[0] == 1 && canonical_polygon[1] == 3 && canonical_polygon[2] == 4);
+
+  // Generic case
+  polygon.clear();
+  polygon.push_back(0); polygon.push_back(2); polygon.push_back(5); polygon.push_back(4); polygon.push_back(1);
+
+  // Whether reversed or with cyclic permutations, it should always yield the same canonical polygon
+  canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
+  assert(canonical_polygon.size() == 5);
+  assert(canonical_polygon[0] == 0);
+
+  // all cyclic permutations
+  for(std::size_t i=0, end=polygon.size(); i<end; ++i)
+  {
+    Polygon cpol = PMP::internal::construct_canonical_polygon(points, polygon, K());
+    if(verbose)
+    {
+      std::cout << "Input polygon:";
+      PMP::internal::print_polygon(std::cout, polygon);
+      std::cout << "Canonical polygon:";
+      PMP::internal::print_polygon(std::cout, canonical_polygon);
+    }
+    assert(cpol == canonical_polygon);
+
+    std::rotate(polygon.begin(), polygon.begin()+1, polygon.end());
+  }
+
+  // reverse and all cyclic permutations
+  std::reverse(polygon.begin(), polygon.end());
+  for(std::size_t i=0, end=polygon.size(); i<end; ++i)
+  {
+    Polygon cpol = PMP::internal::construct_canonical_polygon(points, polygon, K());
+    if(verbose)
+    {
+      std::cout << "Input polygon:";
+      PMP::internal::print_polygon(std::cout, polygon);
+      std::cout << "Canonical polygon:";
+      PMP::internal::print_polygon(std::cout, canonical_polygon);
+    }
+    assert(cpol == canonical_polygon);
+
+    std::rotate(polygon.begin(), polygon.begin()+1, polygon.end());
+  }
+}
 
 void test_merge_duplicate_points(const bool /*verbose*/ = false)
 {
@@ -36,7 +125,6 @@ void test_merge_duplicate_points(const bool /*verbose*/ = false)
   points.push_back(Point_3(1,1,0)); // #5 // identical to #2
   points.push_back(Point_3(0,0,0)); // #6 // idental to #0
 
-  // ------
   Polygon polygon;
   polygon.push_back(0); polygon.push_back(1); polygon.push_back(2);
   polygons.push_back(polygon);
@@ -63,6 +151,128 @@ void test_merge_duplicate_points(const bool /*verbose*/ = false)
       assert(polygon[j] >= 0 && polygon[j] < points.size());
     }
   }
+}
+
+void test_merge_duplicate_polygons(const bool /*verbose*/ = false)
+{
+  std::cout << "test duplicate polygons merging..." << std::endl;
+
+  std::vector<Point_3> points;
+  std::vector<Polygon> polygons;
+
+  points.push_back(Point_3(0,0,0)); // #0
+  points.push_back(Point_3(1,0,0)); // #1
+  points.push_back(Point_3(0,1,0)); // #2
+  points.push_back(Point_3(1,1,0)); // #3
+  points.push_back(Point_3(1,1,2)); // #4
+
+  // -------------------------------------------------------
+  // empty
+  std::vector<std::vector<std::size_t> > all_duplicate_polygons;
+  PMP::internal::collect_duplicate_polygons(points, polygons,
+                                            std::back_inserter(all_duplicate_polygons),
+                                            K(), true /*only equal if same orientation*/);
+  assert(polygons.empty() && all_duplicate_polygons.empty());
+
+  std::size_t res = PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons, params::geom_traits(K()));
+  assert(res == 0 && polygons.empty());
+
+  // -------------------------------------------------------
+  // 1 polygon
+  Polygon polygon;
+  polygon.push_back(0); polygon.push_back(1); polygon.push_back(2);
+  polygons.push_back(polygon);
+
+  PMP::internal::collect_duplicate_polygons(points, polygons,
+                                            std::back_inserter(all_duplicate_polygons),
+                                            K(), false /*equal regardless of orientation*/);
+  assert(all_duplicate_polygons.empty());
+
+  PMP::internal::collect_duplicate_polygons(points, polygons,
+                                            std::back_inserter(all_duplicate_polygons),
+                                            K(), true /*only equal if same orientation*/);
+  assert(all_duplicate_polygons.empty());
+
+  res = PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons, params::geom_traits(K()));
+  assert(res == 0 && polygons.size() == 1);
+
+  // -------------------------------------------------------
+  // 2 different polygons
+  polygon.clear();
+  polygon.push_back(0); polygon.push_back(1); polygon.push_back(3); polygon.push_back(4);
+  polygons.push_back(polygon);
+
+  PMP::internal::collect_duplicate_polygons(points, polygons,
+                                            std::back_inserter(all_duplicate_polygons),
+                                            K(), false /*equal regardless of orientation*/);
+  assert(all_duplicate_polygons.empty());
+
+  PMP::internal::collect_duplicate_polygons(points, polygons,
+                                            std::back_inserter(all_duplicate_polygons),
+                                            K(), true /*only equal if same orientation*/);
+  assert(all_duplicate_polygons.empty());
+
+  res = PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons);
+  assert(res == 0 && polygons.size() == 2);
+
+  // -------------------------------------------------------
+  // Multiple duplicates
+    // duplicate, same orientations
+  polygon.clear();
+  polygon.push_back(2); polygon.push_back(0); polygon.push_back(1);
+  polygons.push_back(polygon);
+
+    // duplicate, different orientations
+  polygon.clear();
+  polygon.push_back(2); polygon.push_back(1); polygon.push_back(0);
+  polygons.push_back(polygon);
+
+    // duplicate, different orientations
+  polygon.clear();
+  polygon.push_back(4); polygon.push_back(3); polygon.push_back(1); polygon.push_back(0);
+  polygons.push_back(polygon);
+
+    // same vertices, not a duplicate
+  polygon.clear();
+  polygon.push_back(3); polygon.push_back(4); polygon.push_back(1); polygon.push_back(0);
+  polygons.push_back(polygon);
+
+  PMP::internal::collect_duplicate_polygons(points, polygons,
+                                            std::back_inserter(all_duplicate_polygons),
+                                            K(), true /*only equal if same orientation*/);
+  assert(all_duplicate_polygons.size() == 1); // one duplication
+  assert(all_duplicate_polygons[0].size() == 2); // two polygons are equal
+  all_duplicate_polygons.clear();
+
+  PMP::internal::collect_duplicate_polygons(points, polygons,
+                                            std::back_inserter(all_duplicate_polygons),
+                                            K(), false /*equal regardless of orientation*/);
+  assert(all_duplicate_polygons.size() == 2);
+
+  // not sure which duplicate is output first
+  if(all_duplicate_polygons[0][0] == 0)
+    assert(all_duplicate_polygons[0].size() == 3 && all_duplicate_polygons[1].size() == 2);
+  else
+    assert(all_duplicate_polygons[0].size() == 2 && all_duplicate_polygons[1].size() == 3);
+
+  // Keep one for each duplicate
+  std::vector<Polygon> polygons_copy(polygons);
+  res = PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons_copy,
+                                                      params::all_default());
+  assert(res == 3 && polygons_copy.size() == 3);
+
+  // Remove all duplicates
+  polygons_copy = polygons;
+  res = PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons_copy,
+                                                      params::do_erase_all_duplicates(true)
+                                                             .do_require_same_orientation(false));
+  assert(res == 5 && polygons_copy.size() == 1);
+
+  // Remove all duplicates but different orientations are different polygons
+  res = PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons,
+                                                      params::do_erase_all_duplicates(true)
+                                                             .do_require_same_orientation(true));
+  assert(res == 2 && polygons.size() == 4);
 }
 
 void test_simplify_polygons(const bool /*verbose*/ = false)
@@ -328,7 +538,9 @@ void test_slit_pinched_polygons(const bool /*verbose*/ = false)
 
 int main()
 {
+  test_polygon_canonicalization(true);
   test_merge_duplicate_points(false);
+  test_merge_duplicate_polygons(false);
   test_simplify_polygons(false);
   test_remove_invalid_polygons(false);
   test_remove_isolated_points(false);

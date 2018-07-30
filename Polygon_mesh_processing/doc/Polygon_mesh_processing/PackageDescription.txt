@@ -123,6 +123,7 @@ and provides a list of the parameters that are used in this package.
 
 ## Combinatorial Repairing Functions ##
 - `CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup()`
+- `CGAL::Polygon_mesh_processing::merge_duplicate_polygons_in_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::repair_polygon_soup()`
 - \link PMP_repairing_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
