@@ -60,6 +60,33 @@ struct FaceInfo2
   }
 };
 
+template<typename MAP>
+struct Bot
+{
+  Bot(MAP map):map(map){}
+  template<typename VD, typename T>
+  void operator()(const T&,VD vd) const
+  {
+    put(map, vd, get(map, vd)+Kernel::Vector_3(0.0,0.0,-0.01));
+  }
+  MAP map;
+  
+};
+
+template<typename MAP>
+struct Top
+{
+  Top(MAP map):map(map){}
+  
+  template<typename VD, typename T>
+  void operator()(const T&, VD vd) const
+  {
+    put(map, vd, get(map, vd)+Kernel::Vector_3(0.0,0.0,0.01));
+  }
+  
+  MAP map;
+};
+
 typedef EPICK                                                        Gt;
 typedef CGAL::Delaunay_mesh_vertex_base_2<Gt>                        Vb;
 typedef CGAL::Delaunay_mesh_face_base_2<Gt>                          Fm;
@@ -127,7 +154,7 @@ public :
       points[2] = QPointF(get(uv, h).first, get(uv, h).second);
       painter->drawPolygon(points,3);
     }
-  
+    
     pen.setColor(Qt::red);
     pen.setWidth(0);
     painter->setPen(pen);
@@ -143,9 +170,13 @@ public :
       }
       painter->drawPolyline(points.data(), points.size());
     }
-        
-
-  
+    pen.setColor(Qt::green);
+    pen.setWidth(0);
+    painter->setPen(pen);
+    painter->drawPoint(QPointF(0,0));
+    
+    
+    
   }
   
 private:
@@ -270,54 +301,68 @@ public :
     
     //action
     QAction* actionFitText= new QAction("Fit Text", mw);
-    if(actionFitText) {
-      connect(actionFitText, SIGNAL(triggered()),
-              this, SLOT(showWidget()));
-      _actions << actionFitText;
-      //widget
-      dock_widget = new EngraveWidget("Engraving", mw);
-      dock_widget->setVisible(false); // do not show at the beginning
-      addDockWidget(dock_widget);
-      connect(dock_widget->visualizeButton, &QPushButton::clicked,
-              this, &Engrave_text_plugin::visualize);
-      connect(dock_widget->engraveButton, &QPushButton::clicked,
-              this, &Engrave_text_plugin::engrave);
-      
-      //items
-      visu_item = NULL;
-      sel_item = NULL;
-      
-      //transfo
-      angle = 0.0;
-      translation = EPICK::Vector_2(0,0);
-      connect(dock_widget->t_left_pushButton, &QPushButton::clicked,
-              this, [this](){
-        translation -= EPICK::Vector_2(0.05,0);
-        scene->setSelectedItem(scene->item_id(sel_item));
-        visualize();
-      });
-      
-      connect(dock_widget->t_up_pushButton, &QPushButton::clicked,
-              this, [this](){
-        translation -= EPICK::Vector_2(0,0.05);
-        scene->setSelectedItem(scene->item_id(sel_item));
-        visualize();
-      });
-      
-      connect(dock_widget->t_down_pushButton, &QPushButton::clicked,
-              this, [this](){
-        translation += EPICK::Vector_2(0,0.05);
-        scene->setSelectedItem(scene->item_id(sel_item));
-        visualize();
-      });
-      
-      connect(dock_widget->t_right_pushButton, &QPushButton::clicked,
-              this, [this](){
-        translation += EPICK::Vector_2(0.05,0);
-        scene->setSelectedItem(scene->item_id(sel_item));
-        visualize();
-      });
-    }
+    connect(actionFitText, SIGNAL(triggered()),
+            this, SLOT(showWidget()));
+    _actions << actionFitText;
+    //widget
+    dock_widget = new EngraveWidget("Engraving", mw);
+    dock_widget->setVisible(false); // do not show at the beginning
+    addDockWidget(dock_widget);
+    connect(dock_widget->visualizeButton, &QPushButton::clicked,
+            this, &Engrave_text_plugin::visualize);
+    connect(dock_widget->engraveButton, &QPushButton::clicked,
+            this, &Engrave_text_plugin::engrave);
+    
+    //items
+    visu_item = nullptr;
+    sel_item = nullptr;
+    sm = nullptr;
+    
+    //transfo
+    angle = 0.0;
+    scaling=1.0;
+    translation = EPICK::Vector_2(0,0);
+    connect(dock_widget->t_left_pushButton, &QPushButton::clicked,
+            this, [this](){
+      translation -= EPICK::Vector_2(0.05,0);
+      scene->setSelectedItem(scene->item_id(sel_item));
+      visualize();
+    });
+    
+    connect(dock_widget->s_large_pushButton, &QPushButton::clicked,
+            this, [this](){
+      scaling += 0.1;
+      scene->setSelectedItem(scene->item_id(sel_item));
+      visualize();
+    });
+    
+    connect(dock_widget->s_small_pushButton, &QPushButton::clicked,
+            this, [this](){
+      scaling -= 0.1;
+      scene->setSelectedItem(scene->item_id(sel_item));
+      visualize();
+    });
+    
+    connect(dock_widget->t_up_pushButton, &QPushButton::clicked,
+            this, [this](){
+      translation -= EPICK::Vector_2(0,0.05);
+      scene->setSelectedItem(scene->item_id(sel_item));
+      visualize();
+    });
+    
+    connect(dock_widget->t_down_pushButton, &QPushButton::clicked,
+            this, [this](){
+      translation += EPICK::Vector_2(0,0.05);
+      scene->setSelectedItem(scene->item_id(sel_item));
+      visualize();
+    });
+    
+    connect(dock_widget->t_right_pushButton, &QPushButton::clicked,
+            this, [this](){
+      translation += EPICK::Vector_2(0.05,0);
+      scene->setSelectedItem(scene->item_id(sel_item));
+      visualize();
+    });
     connect(dock_widget->r_right_pushButton, &QPushButton::clicked,
             this, [this](){
       angle += 0.15;
@@ -366,9 +411,11 @@ public Q_SLOTS:
       scene->erase(scene->item_id(visu_item));
     visu_item = NULL;
     
-    
-    SMesh *sm = new SMesh();
-    sel_item->export_selected_facets_as_polyhedron(sm);
+    if(!sm)
+    {
+      sm = new SMesh();
+      sel_item->export_selected_facets_as_polyhedron(sm);
+    }
     SMesh::Halfedge_index hd =
         CGAL::Polygon_mesh_processing::longest_border(*sm).first;
     SMesh::Property_map<SMesh::Vertex_index, EPICK::Point_2> uv_map =
@@ -438,7 +485,7 @@ public Q_SLOTS:
     QFontMetrics fm(font);
     int width=fm.width(dock_widget->lineEdit->text());
     int height=fm.height();
-    std::cout<<"width = "<<width<<", height= "<<height<<std::endl;
+    
     Q_FOREACH(QPolygonF poly, polys){
       polylines.push_back(std::vector<EPICK::Point_2>());
       Q_FOREACH(QPointF pf, poly)
@@ -457,10 +504,13 @@ public Q_SLOTS:
     
     visu_item = new Scene_polylines_item;
     // compute 3D coordinates
-    EPICK::Aff_transformation_2 transfo = 
-        EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2((-(width)/2), ((height)/2))) 
+    transfo = 
+        EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2((xmax-xmin)/2,
+                                                                       (ymax-ymin)/2)+ translation)
+        * EPICK::Aff_transformation_2(CGAL::SCALING,scaling) 
         * EPICK::Aff_transformation_2(CGAL::ROTATION,sin(angle), cos(angle)) 
-        * EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2(((width)/2), -((height)/2)) + translation);
+        * EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2(-(xmax-xmin)/2,
+                                                                         -(ymax-ymin)/2));
     BOOST_FOREACH(const std::vector<EPICK::Point_2>& polyline, polylines)
     {
       visu_item->polylines.push_back(std::vector<Point_3>());
@@ -533,11 +583,19 @@ public Q_SLOTS:
     if(!CGAL::is_closed(*sel_item->polyhedron()))
       return;
     
-    /*   CDT cdt;
+    CDT cdt;
     try{
-      Q_FOREACH(const std::vector<Kernel::Point_2>& points,
-                polylines)
+      for(std::size_t i = 0;
+          i < polylines.size(); ++i)
+      {
+        std::vector<Point_2>& points = polylines[i];
+        for(std::size_t j = 0; j< points.size(); ++j)
+        {
+          Point_2 &p = points[j];
+          p = transfo.transform(p);
+        }
         cdt.insert_constraint(points.begin(),points.end());
+      }
     }catch(std::runtime_error&)
     {
       QApplication::restoreOverrideCursor();
@@ -573,13 +631,15 @@ public Q_SLOTS:
     
     
     mesher.refine_mesh();
-    SMesh* text_mesh_bottom = new SMesh();
+    SMesh text_mesh_bottom, text_mesh_complete;
     cdt2_to_face_graph(cdt,
-                       sm,
-                       *text_mesh_bottom);*/
-    //    PMP::extrude_mesh(text_mesh_bottom, text_mesh_complete,EPICK::Vector_3(0,0,0.3));
+                       text_mesh_bottom);
+    typedef typename boost::property_map<SMesh, CGAL::vertex_point_t>::type VPMap;
+    Bot<VPMap> bot(get(CGAL::vertex_point, text_mesh_complete));
+    Top<VPMap> top(get(CGAL::vertex_point, text_mesh_complete));
+    PMP::extrude_mesh(text_mesh_bottom, text_mesh_complete, bot, top);
     
-    /*CGAL::Surface_mesh<Exact_Kernel::Point_3> exact_text,
+    CGAL::Surface_mesh<Exact_Kernel::Point_3> exact_text,
         exact_target;
     CGAL::copy_face_graph(text_mesh_complete, exact_text);
     CGAL::copy_face_graph(*sel_item->polyhedron(), exact_target);
@@ -588,10 +648,11 @@ public Q_SLOTS:
     Nef_polyhedron new_nef = nef_target - nef_text;
     SMesh result;
     CGAL::convert_nef_polyhedron_to_polygon_mesh(new_nef, result);
-    CGAL::Polygon_mesh_processing::triangulate_faces(result);*/
-    //Scene_surface_mesh_item* result_item = new Scene_surface_mesh_item(text_mesh_bottom);
-    //result);
-    //scene->addItem(result_item);
+    
+    CGAL::Polygon_mesh_processing::triangulate_faces(result);
+    Scene_surface_mesh_item* result_item = new Scene_surface_mesh_item(
+    result);
+    scene->addItem(result_item);
     dock_widget->engraveButton->setEnabled(false);
     dock_widget->visualizeButton->setEnabled(true);
   }
@@ -652,11 +713,10 @@ private:
   
   template <class CDT, class TriangleMesh>
   void cdt2_to_face_graph(const CDT& cdt, 
-                          SMesh sm,
                           TriangleMesh& tm)
   {
     
-    Tree aabb_tree(faces(sm).first, faces(sm).second, sm, uv_map_3);
+    Tree aabb_tree(faces(*sm).first, faces(*sm).second, *sm, uv_map_3);
     typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
     
     typedef std::map<typename CDT::Vertex_handle, vertex_descriptor> Map;
@@ -677,8 +737,8 @@ private:
           const Kernel::Point_2& pt=fit->vertex(i)->point();
           Face_location loc = Surface_mesh_shortest_path::locate(
                 Point_3(pt.x(), pt.y(), 0),
-                aabb_tree, sm, uv_map_3);
-          it->second = add_vertex(Surface_mesh_shortest_path::point(loc.first, loc.second,  sm, sm.points()), tm);
+                aabb_tree, *sm, uv_map_3);
+          it->second = add_vertex(Surface_mesh_shortest_path::point(loc.first, loc.second,  *sm, sm->points()), tm);
         }
         vds[i]=it->second;
       }
@@ -692,9 +752,13 @@ private:
   Scene_polylines_item* visu_item;
   Scene_polyhedron_selection_item* sel_item;
   double angle;
+  double scaling;
   EPICK::Vector_2 translation;
+  EPICK::Aff_transformation_2 transfo;
   std::vector<std::vector<EPICK::Point_2> > polylines;
   SMesh::Property_map<SMesh::Vertex_index, Point_3> uv_map_3;
+  SMesh* sm;
+  
   QGraphicsScene *graphics_scene;
   Navigation* navigation;
 }; 
