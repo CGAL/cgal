@@ -43,8 +43,6 @@
 #include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
 
-#include <fstream>
-
 #include <iterator>
 #include <map>
 #include <vector>
@@ -633,8 +631,6 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pm,
   typedef CGAL::internal::Dynamic_property_map<halfedge_descriptor, bool>    Halfedge_status_pmap;
   Halfedge_status_pmap stitched_hedges(false);
 
-  std::cout << boundary_cycles.size() << " boundary cycles" << std::endl;
-
   BOOST_FOREACH(halfedge_descriptor h, boundary_cycles)
   {
     std::vector<halfedge_descriptor> stitching_starting_points;
@@ -646,8 +642,6 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pm,
 
       hn = next(hn, pm);
     }
-
-    std::cout << stitching_starting_points.size() << " stitching starting points" << std::endl;
 
     for(std::size_t i=0, end=stitching_starting_points.size(); i<end; ++i)
     {
@@ -677,14 +671,9 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pm,
       }
       while(do_stitching);
 
-      // remove iostream & fstream
-      std::cout << "stitching a cycle\n";
-
       internal::stitch_borders_impl(pm, hedges_to_stitch);
       ++stitched_boundary_cycles_n;
     }
-
-    std::ofstream("stitched_closed_boundary_cycles.off") << std::setprecision(17) << pm;
   }
 
   return stitched_boundary_cycles_n;
