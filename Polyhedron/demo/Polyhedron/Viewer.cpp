@@ -1618,7 +1618,7 @@ void Viewer::setLighting()
   
   //reset default
   connect(dialog->buttonBox->button(QDialogButtonBox::StandardButton::RestoreDefaults), &QPushButton::clicked,
-          [this, dialog](){
+          [this](){
     d->position = QVector4D(0,0,1,1);
     d->ambient=QVector4D(77.0/255,77.0/255,77.0/255, 1.0);
     d->diffuse=QVector4D(204.0/255,204.0/255,204.0/255,1.0);
