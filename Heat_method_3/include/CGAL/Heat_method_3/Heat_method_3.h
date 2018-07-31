@@ -219,24 +219,21 @@ namespace CGAL {
        double edge_sum = 0;
        CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
        BOOST_FOREACH(face_descriptor f, faces(tm)) {
-         boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
-         vertex_descriptor current = *(vbegin);
-         vertex_descriptor neighbor_one = *(++vbegin);
-         vertex_descriptor neighbor_two = *(++vbegin);
-         Index i = get(vertex_id_map, current);
-         Index j = get(vertex_id_map, neighbor_one);
-         Index k = get(vertex_id_map, neighbor_two);
-         Point_3 pi, pj, pk;
+         halfedge_descriptor hd = halfedge(f,tm);
 
-         VertexPointMap_reference p_i = get(vpm,current);
-         VertexPointMap_reference p_j = get(vpm, neighbor_one);
-         VertexPointMap_reference p_k = get(vpm, neighbor_two);
-         pi = p_i;
-         pj = p_j;
-         pk = p_k;
-         edge_sum += (0.5) * std::sqrt(std::abs(std::pow((pi.x()-pj.x()),2) + std::pow((pi.y()-pj.y()),2)+std::pow((pi.z()-pj.z()),2)));
-         edge_sum += (0.5) * std::sqrt(std::abs(std::pow((pj.x()-pk.x()),2) + std::pow((pj.y()-pk.y()),2)+std::pow((pj.z()-pk.z()),2))) ;
-         edge_sum += (0.5) * std::sqrt(std::abs(std::pow((pk.x()-pi.x()),2) + std::pow((pk.y()-pi.y()),2)+std::pow((pk.z()-pi.z()),2))) ;
+         vertex_descriptor neighbor_one = target(hd,tm);
+         halfedge_descriptor hd2 = next(hd,tm);
+         vertex_descriptor neighbor_two = target(hd2,tm);
+         halfedge_descriptor hd3 = next(hd2,tm);
+         vertex_descriptor current = target(hd3,tm);
+         
+         VertexPointMap_reference pi = get(vpm,current);
+         VertexPointMap_reference pj = get(vpm, neighbor_one);
+         VertexPointMap_reference pk = get(vpm, neighbor_two);
+
+         edge_sum += (CGAL::is_border(opposite(hd,tm),tm)?1.0:0.5) * std::sqrt(CGAL::squared_distance(pi,pj));
+         edge_sum += (CGAL::is_border(opposite(hd2,tm),tm)?1.0:0.5) * std::sqrt(CGAL::squared_distance(pj,pk)) ;
+         edge_sum += (CGAL::is_border(opposite(hd3,tm),tm)?1.0:0.5) * std::sqrt(CGAL::squared_distance(pk,pi)) ;
        }
        return edge_sum;
     }
@@ -570,7 +567,6 @@ namespace CGAL {
       m_time_step = m_time_step*summation_of_edges();
       m_time_step = m_time_step*m_time_step;
       std::cout<<"timestep: "<< m_time_step<<"\n";
-
       update_kronecker_delta();
       solved_u = solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, m_time_step, m);
       //edit unit_grad
