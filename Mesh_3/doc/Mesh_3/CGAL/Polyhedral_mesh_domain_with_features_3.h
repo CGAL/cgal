@@ -90,7 +90,7 @@ For an edge of the polyhedron, if the angle between the two normal vectors of it
 incident facets is bigger than the given bound, then the edge is considered as
 a feature edge.
 */ 
-void detect_features(FT angle_bound=120); 
+void detect_features(FT angle_bound=60);
 
 
 /*!
