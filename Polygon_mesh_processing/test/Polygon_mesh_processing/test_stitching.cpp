@@ -30,7 +30,7 @@ void test_stitch_boundary_cycles(const char* fname)
   }
 
   std::size_t res = PMP::internal::stitch_boundary_cycles(mesh);
-  assert(res == 3);
+  assert(res > 0);
   assert(is_valid(mesh));
 }
 
@@ -121,6 +121,7 @@ void test_surface_mesh_cc(const char* fname)
 int main()
 {
   test_stitch_boundary_cycles("data_stitching/boundary_cycle.off");
+  test_stitch_boundary_cycles("data_stitching/boundary_cycle_2.off");
 
   test_polyhedron<EPECK>("data_stitching/full_border.off");
   test_polyhedron<EPICK>("data_stitching/full_border.off");
