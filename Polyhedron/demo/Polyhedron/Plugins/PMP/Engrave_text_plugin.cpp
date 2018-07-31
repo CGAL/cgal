@@ -17,7 +17,9 @@
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/extrude.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Surface_mesh_shortest_path.h>
+#include <CGAL/double.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
@@ -64,12 +66,18 @@ struct FaceInfo2
 template<typename MAP>
 struct Bot
 {
-  Bot(MAP map):map(map){}
+  Bot(const EPICK::Vector_3& n,
+      double d,
+      MAP map):d(d),
+    n(n),
+    map(map){}
   template<typename VD, typename T>
   void operator()(const T&,VD vd) const
   {
-    put(map, vd, get(map, vd)+Kernel::Vector_3(0.0,0.0,-0.01));
+    put(map, vd, get(map, vd)-d*n);
   }
+  double d;
+  const EPICK::Vector_3& n;
   MAP map;
   
 };
@@ -77,14 +85,15 @@ struct Bot
 template<typename MAP>
 struct Top
 {
-  Top(MAP map):map(map){}
+  Top(const EPICK::Vector_3& n,
+      MAP map):n(n),map(map){}
   
   template<typename VD, typename T>
   void operator()(const T&, VD vd) const
   {
-    put(map, vd, get(map, vd)+Kernel::Vector_3(0.0,0.0,0.01));
+    put(map, vd, get(map, vd)+0.01*n);
   }
-  
+  const EPICK::Vector_3& n;
   MAP map;
 };
 
@@ -322,16 +331,9 @@ public :
       visualize();
     });
     
-    connect(dock_widget->s_large_pushButton, &QPushButton::clicked,
+    connect(dock_widget->scal_slider, &QSlider::valueChanged,
             this, [this](){
-      scaling += 0.1;
-      scene->setSelectedItem(scene->item_id(sel_item));
-      visualize();
-    });
-    
-    connect(dock_widget->s_small_pushButton, &QPushButton::clicked,
-            this, [this](){
-      scaling -= 0.1;
+      scaling = dock_widget->scal_slider->value()/100.0;
       scene->setSelectedItem(scene->item_id(sel_item));
       visualize();
     });
@@ -356,15 +358,9 @@ public :
       scene->setSelectedItem(scene->item_id(sel_item));
       visualize();
     });
-    connect(dock_widget->r_right_pushButton, &QPushButton::clicked,
+    connect(dock_widget->rot_slider, &QSlider::valueChanged,
             this, [this](){
-      angle += 0.15;
-      scene->setSelectedItem(scene->item_id(sel_item));
-      visualize();
-    });
-    connect(dock_widget->r_left_pushButton, &QPushButton::clicked,
-            this, [this](){
-      angle -= 0.15;
+      angle = dock_widget->rot_slider->value() * CGAL_PI/180.0;
       scene->setSelectedItem(scene->item_id(sel_item));
       visualize();
     });
@@ -607,8 +603,15 @@ public Q_SLOTS:
     cdt2_to_face_graph(cdt,
                        text_mesh_bottom);
     typedef typename boost::property_map<SMesh, CGAL::vertex_point_t>::type VPMap;
-    Bot<VPMap> bot(get(CGAL::vertex_point, text_mesh_complete));
-    Top<VPMap> top(get(CGAL::vertex_point, text_mesh_complete));
+    EPICK::Vector_3 normal(0,0,0);
+    BOOST_FOREACH(face_descriptor f, sel_item->selected_facets)
+    {
+      normal += CGAL::Polygon_mesh_processing::compute_face_normal(f, *sel_item->polyhedron());
+    }
+    normal/=CGAL::sqrt(normal.squared_length());
+    
+    Bot<VPMap> bot(normal, dock_widget->depth_spinBox->value(),get(CGAL::vertex_point, text_mesh_complete));
+    Top<VPMap> top(normal, get(CGAL::vertex_point, text_mesh_complete));
     PMP::extrude_mesh(text_mesh_bottom, text_mesh_complete, bot, top);
     
     CGAL::Surface_mesh<Exact_Kernel::Point_3> exact_text,
