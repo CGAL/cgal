@@ -36,49 +36,6 @@ Release date: September 2018
 -   An `operator()` that takes a `Ray_3` has been added to the concept
     `ConstructProjectedPoint_3`.
 
-### CGAL and Boost Property Maps
-
--   Added a read-write property map to convert on-the-fly geometric
-    objects from Cartesian kernels.
-
-### 2D and 3D Triangulations
-
--   Added a new type of intersection to handle the insertion of
-    intersecting constraints in a `Constrained_triangulation_2`.
-
--   **Breaking change:** The long-deprecated class
-    `Triangulation_cell_base_with_circumcenter_3` and its associated
-    concept have been removed. Users should use the classes
-    `Delaunay_cell_base_with_circumcenter_3` or
-    `Regular_cell_base_with_circumcenter_3`, depending on which type
-    of triangulation they are using.
-
--   **Breaking change:** The deprecated functions `mirror_index` and
-    `mirror_vertex` of the class `Triangulation_face_base_2` have been
-    removed. Users should use the equivalent functions from the class
-    `Triangulation_2`.
-
-### Interpolation
-
--   The output of the natural and regular neighbor functions
-    (resp. the gradient fitting functions) is no longer restricted to
-    a Point/Coordinate pair (resp. Point/Vector pair). Instead, users
-    can provide their own functor to format the output as they desire.
-
--   The interpolation functions can now operate on any combination of
-    Type/Coordinate, provided that the values and gradients functors
-    can also be evaluated using 'Type'.
-
-    The combination of these two changes allow, for example, to
-    operate with Vertex/Coordinate pairs, which enables a more
-    efficient access to values and gradients by storing information
-    directly in the vertex.
-
--   The concepts `InterpolationTraits` and `GradientFittingTraits`
-    have been updated to reflect the real needs of the code (some
-    types and operators were used in the code but did not appear in
-    the concepts).
-
 ### Convex hull 3
 
 -   Added the function `extreme_points_3()` computing the points on
@@ -96,67 +53,22 @@ Release date: September 2018
     belong to the minimal convex hull.
 
 
-### Point Set Processing
+### 2D and 3D Triangulations
 
--   Added a callback mechanism to the following functions:
-    `CGAL::bilateral_smooth_point_set()`,
-    `CGAL::compute_average_spacing()`,
-    `CGAL::grid_simplify_point_set()`,
-    `CGAL::hierarchy_simplify_point_set()`,
-    `CGAL::jet_estimate_normals()`, `CGAL::jet_smooth_point_set()`,
-    `CGAL::pca_estimate_normals()`, `CGAL::remove_outliers()` and
-    `CGAL::wlop_simplify_and_regularize_point_set()`.
+-   Added a new type of intersection to handle the insertion of
+    intersecting constraints in a `Constrained_triangulation_2`.
 
+-   **Breaking change:** The long-deprecated class
+    `Triangulation_cell_base_with_circumcenter_3` and its associated
+    concept have been removed. Users should use the classes
+    `Delaunay_cell_base_with_circumcenter_3` or
+    `Regular_cell_base_with_circumcenter_3`, depending on which type
+    of triangulation they are using.
 
-### Classification 
-
--   Added data structures to handle classification of Surface Meshes
-    and of Clusters.
-
--   Added public API to compute features in parallel.
-
--   **Breaking change**: features based on products/divisions of
-    eigenvalues are replaced by simple eigenvalue features. Features
-    based on statistics on the HSV color channels are replaced by
-    simple HSV color channel features.
-
--   **Breaking change**: the API of
-    `CGAL::Classification::Point_set_feature_generator` has been
-    simplified.
-
-
-### Polygon Mesh Processing
-
--   Added a named parameter in stitching functions that allows to
-    choose whether the operation should be performed per connected
-    component or globally.
-
--   Added a function, `CGAL::Polygon_mesh_processing::transform()`, to
-    apply a transformation to a mesh.
-
--   Added a named parameter `visitor` in corefinement-related
-    functions that makes it possible to pass a visitor to the function
-    in order to track the creation of new faces.
-
--   Added a named parameter `throw_on_self_intersection` in all
-    corefinement-related functions, which enables to check for
-    self-intersecting faces involved in the intersection before trying
-    to corefine the input meshes. This new parameter replaces the
-    `bool` parameter in `corefine()`.
-
--   Added the function `corefine_and_compute_boolean_operations()`,
-    which can be used to compute the result of several Boolean
-    operations between two volumes at the same time.
-
--   Added the function `clip()`, which can be used to clip a
-    triangulated surface mesh by a plane or a clipping volume.
-
--   Constrained vertices are now guaranteed to be kept in the mesh
-    after calling `isotropic_remeshing()` (and not only the points
-    associated to constrained vertices, as it was before).
-
--   Added a function, `CGAL::Polygon_mesh_processing::extrude_mesh()`,
-    to perform an extrusion of an open polygon mesh.
+-   **Breaking change:** The deprecated functions `mirror_index` and
+    `mirror_vertex` of the class `Triangulation_face_base_2` have been
+    removed. Users should use the equivalent functions from the class
+    `Triangulation_2`.
 
 ### 3D Mesh Generation
 
@@ -216,15 +128,98 @@ g
 -   **Breaking change**: `CGAL::lloyd_optimize_mesh_3` now depends on
     the _Eigen_ library.
 
+### Polygon Mesh Processing
+
+-   Added a named parameter in stitching functions that allows to
+    choose whether the operation should be performed per connected
+    component or globally.
+
+-   Added a function, `CGAL::Polygon_mesh_processing::transform()`, to
+    apply a transformation to a mesh.
+
+-   Added a named parameter `visitor` in corefinement-related
+    functions that makes it possible to pass a visitor to the function
+    in order to track the creation of new faces.
+
+-   Added a named parameter `throw_on_self_intersection` in all
+    corefinement-related functions, which enables to check for
+    self-intersecting faces involved in the intersection before trying
+    to corefine the input meshes. This new parameter replaces the
+    `bool` parameter in `corefine()`.
+
+-   Added the function `corefine_and_compute_boolean_operations()`,
+    which can be used to compute the result of several Boolean
+    operations between two volumes at the same time.
+
+-   Added the function `clip()`, which can be used to clip a
+    triangulated surface mesh by a plane or a clipping volume.
+
+-   Constrained vertices are now guaranteed to be kept in the mesh
+    after calling `isotropic_remeshing()` (and not only the points
+    associated to constrained vertices, as it was before).
+
+-   Added a function, `CGAL::Polygon_mesh_processing::extrude_mesh()`,
+    to perform an extrusion of an open polygon mesh.
+
 ### Estimation of Local Differential Properties of Point-Sampled Surfaces Reference
 
 -   **Breaking change**: `CGAL::Monge_via_jet_fitting` now depends on
     the _Eigen_ library.
 
+### Point Set Processing
+
+-   Added a callback mechanism to the following functions:
+    `CGAL::bilateral_smooth_point_set()`,
+    `CGAL::compute_average_spacing()`,
+    `CGAL::grid_simplify_point_set()`,
+    `CGAL::hierarchy_simplify_point_set()`,
+    `CGAL::jet_estimate_normals()`, `CGAL::jet_smooth_point_set()`,
+    `CGAL::pca_estimate_normals()`, `CGAL::remove_outliers()` and
+    `CGAL::wlop_simplify_and_regularize_point_set()`.
+
+
+### Classification 
+
+-   Added data structures to handle classification of Surface Meshes
+    and of Clusters.
+
+-   Added public API to compute features in parallel.
+
+-   **Breaking change**: features based on products/divisions of
+    eigenvalues are replaced by simple eigenvalue features. Features
+    based on statistics on the HSV color channels are replaced by
+    simple HSV color channel features.
+
+-   **Breaking change**: the API of
+    `CGAL::Classification::Point_set_feature_generator` has been
+    simplified.
+
+
 ### Bounding Volumes
 
 -   **Breaking change**: `CGAL::Approximate_min_ellipsoid_d` now
     depends on the _Eigen_ library.
+
+### Interpolation
+
+-   The output of the natural and regular neighbor functions
+    (resp. the gradient fitting functions) is no longer restricted to
+    a Point/Coordinate pair (resp. Point/Vector pair). Instead, users
+    can provide their own functor to format the output as they desire.
+
+-   The interpolation functions can now operate on any combination of
+    Type/Coordinate, provided that the values and gradients functors
+    can also be evaluated using 'Type'.
+
+    The combination of these two changes allow, for example, to
+    operate with Vertex/Coordinate pairs, which enables a more
+    efficient access to values and gradients by storing information
+    directly in the vertex.
+
+-   The concepts `InterpolationTraits` and `GradientFittingTraits`
+    have been updated to reflect the real needs of the code (some
+    types and operators were used in the code but did not appear in
+    the concepts).
 
 ### CGAL and the Boost Graph Library (BGL)
 
@@ -251,6 +246,11 @@ g
 -   **Breaking change**: `CGAL::Diagonalize_traits` is now deprecated
     and should not be used. The class `CGAL::Eigen_diagonalize_traits`
     (along with the _Eigen_ library) should be used instead.
+
+### CGAL and Boost Property Maps
+
+-   Added a read-write property map to convert on-the-fly geometric
+    objects from Cartesian kernels.
 
 
 Release 4.12
