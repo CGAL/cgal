@@ -39,7 +39,8 @@
 
 using namespace CGAL::Three;
 namespace SMP = CGAL::Surface_mesh_parameterization;
-typedef EPICK::Point_2                                            Point_2;
+typedef EPICK::Point_2                                   Point_2;
+typedef EPICK::Point_3                                   Point_3;
 
 typedef boost::graph_traits<SMesh>::
 edge_descriptor          edge_descriptor;
@@ -49,7 +50,7 @@ typedef boost::graph_traits<SMesh>::
 vertex_descriptor        vertex_descriptor;
 
 typedef boost::unordered_set<boost::graph_traits<SMesh>::
-face_descriptor>                                                    Component;
+face_descriptor>                                         Component;
 
 struct FaceInfo2
 {
@@ -117,7 +118,6 @@ public :
   ~ParamItem()
   {
     delete component;
-    delete graph;
   }
   
   QRectF boundingRect() const
@@ -147,11 +147,11 @@ public :
       boost::graph_traits<SMesh>::face_descriptor f(*fi);
       QPointF points[3];
       boost::graph_traits<SMesh>::halfedge_descriptor h = halfedge(f, *graph);;
-      points[0] = QPointF(get(uv, h).first, get(uv, h).second);
+      points[0] = QPointF(get(uv, h).first, -get(uv, h).second);
       h = next(halfedge(f, *graph), *graph);
-      points[1] = QPointF(get(uv, h).first, get(uv, h).second);
+      points[1] = QPointF(get(uv, h).first, -get(uv, h).second);
       h = next(next(halfedge(f, *graph), *graph), *graph);
-      points[2] = QPointF(get(uv, h).first, get(uv, h).second);
+      points[2] = QPointF(get(uv, h).first, -get(uv, h).second);
       painter->drawPolygon(points,3);
     }
     
@@ -166,17 +166,10 @@ public :
       {
         Point_2 transfo_point = transfo.transform(polylines[i][j]);
         points.push_back(QPointF(transfo_point.x(), 
-                                 transfo_point.y()));
+                                 -transfo_point.y()));
       }
       painter->drawPolyline(points.data(), points.size());
     }
-    pen.setColor(Qt::green);
-    pen.setWidth(0);
-    painter->setPen(pen);
-    painter->drawPoint(QPointF(0,0));
-    
-    
-    
   }
   
 private:
@@ -345,14 +338,14 @@ public :
     
     connect(dock_widget->t_up_pushButton, &QPushButton::clicked,
             this, [this](){
-      translation -= EPICK::Vector_2(0,0.05);
+      translation += EPICK::Vector_2(0,0.05);
       scene->setSelectedItem(scene->item_id(sel_item));
       visualize();
     });
     
     connect(dock_widget->t_down_pushButton, &QPushButton::clicked,
             this, [this](){
-      translation += EPICK::Vector_2(0,0.05);
+      translation -= EPICK::Vector_2(0,0.05);
       scene->setSelectedItem(scene->item_id(sel_item));
       visualize();
     });
@@ -415,77 +408,59 @@ public Q_SLOTS:
     {
       sm = new SMesh();
       sel_item->export_selected_facets_as_polyhedron(sm);
-    }
-    SMesh::Halfedge_index hd =
-        CGAL::Polygon_mesh_processing::longest_border(*sm).first;
-    SMesh::Property_map<SMesh::Vertex_index, EPICK::Point_2> uv_map =
-        sm->add_property_map<SMesh::Vertex_index, EPICK::Point_2>("v:uv").first;
-    
-    // Parameterized bool pmap
-    boost::unordered_set<SMesh::Vertex_index> vs;
-    SMP::internal::Bool_property_map< boost::unordered_set<SMesh::Vertex_index> > vpm(vs);
-    
-    // Parameterizer
-    SMP::ARAP_parameterizer_3<SMesh> parameterizer;
-    
-    SMP::Error_code status = parameterizer.parameterize(*sm, hd, uv_map, get(boost::vertex_index, *sm), vpm);
-    if(status != SMP::OK) {
-      std::cout << "Encountered a problem: " << status << std::endl;
-      return ;
-    }
-    
-    std::cout << "Parameterized with ARAP (SM)!" << std::endl;
-    uv_map_3 =
-        sm->add_property_map<SMesh::Vertex_index, Point_3>("v:uv3").first;
-    float xmin(std::numeric_limits<double>::max()), xmax(std::numeric_limits<double>::min()), 
-        ymin(std::numeric_limits<double>::max()), ymax(std::numeric_limits<double>::min());
-    for(SMesh::Vertex_index v : sm->vertices())
-    {
-      uv_map_3[v] = Point_3(uv_map[v][0], uv_map[v]
-          [1], 0);
-      if(uv_map[v][0] > xmax)
-        xmax = uv_map[v][0];
-      if(uv_map[v][0] < xmin)
-        xmin = uv_map[v][0];
+      SMesh::Halfedge_index hd =
+          CGAL::Polygon_mesh_processing::longest_border(*sm).first;
+      SMesh::Property_map<SMesh::Vertex_index, EPICK::Point_2> uv_map =
+          sm->add_property_map<SMesh::Vertex_index, EPICK::Point_2>("v:uv").first;
       
-      if(uv_map[v][1] > ymax)
-        ymax = uv_map[v][1];
-      if(uv_map[v][1] < ymin)
-        ymin = uv_map[v][1];
-    }
-    std::cout<<"xmax = "<<xmax<<", ymax = "<<ymax<<std::endl;
-    
-    std::ofstream out("param_out.off");
-    out << "OFF\n" << sm->number_of_vertices() << " " << sm->number_of_faces() << " 0\n";
-    for(SMesh::Vertex_index v : sm->vertices())
-      out << uv_map_3[v] << "\n";
-    for(SMesh::Face_index f : faces(*sm))
-    {
-      SMesh::Halfedge_index h = sm->halfedge(f);
-      out << "3 " << (unsigned) sm->target(h) << " "
-          << (unsigned) sm->target(sm->next(h)) << " "
-          << (unsigned) sm->source(h) << "\n";
-    }
-    
-    
+      // Parameterized bool pmap
+      boost::unordered_set<SMesh::Vertex_index> vs;
+      SMP::internal::Bool_property_map< boost::unordered_set<SMesh::Vertex_index> > vpm(vs);
+      
+      // Parameterizer
+      SMP::ARAP_parameterizer_3<SMesh> parameterizer;
+      
+      SMP::Error_code status = parameterizer.parameterize(*sm, hd, uv_map, get(boost::vertex_index, *sm), vpm);
+      if(status != SMP::OK) {
+        std::cout << "Encountered a problem: " << status << std::endl;
+        return ;
+      }
+      
+      std::cout << "Parameterized with ARAP (SM)!" << std::endl;
+      xmin = std::numeric_limits<double>::max();
+      xmax = std::numeric_limits<double>::min();
+      ymin = std::numeric_limits<double>::max();
+      ymax = std::numeric_limits<double>::min();
+      uv_map_3 =
+          sm->add_property_map<SMesh::Vertex_index, Point_3>("v:uv3").first;
+      for(SMesh::Vertex_index v : sm->vertices())
+      {
+        uv_map_3[v] = Point_3(uv_map[v][0], uv_map[v]
+            [1], 0);
+        if(uv_map[v][0] > xmax)
+          xmax = uv_map[v][0];
+        if(uv_map[v][0] < xmin)
+          xmin = uv_map[v][0];
+        
+        if(uv_map[v][1] > ymax)
+          ymax = uv_map[v][1];
+        if(uv_map[v][1] < ymin)
+          ymin = uv_map[v][1];
+      }
+      
+      
+    }    
     //create Text Polyline
-    typedef EPICK::Point_3 Point_3;
-    Viewer_interface* viewer = static_cast<Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
     QPainterPath path;
     QFont font;
     font.setPointSize(15);
     
     path.addText(QPoint(xmin,-ymin), font, dock_widget->lineEdit->text());
-    viewer->getPainter()->begin(viewer);
-    viewer->getPainter()->drawPath(path);
-    viewer->getPainter()->end();
-    QTransform trans;
-    
     QList<QPolygonF> polys = path.toSubpathPolygons();
     QFontMetrics fm(font);
     int width=fm.width(dock_widget->lineEdit->text());
     int height=fm.height();
-    
+    polylines.clear();
     Q_FOREACH(QPolygonF poly, polys){
       polylines.push_back(std::vector<EPICK::Point_2>());
       Q_FOREACH(QPointF pf, poly)
@@ -496,8 +471,6 @@ public Q_SLOTS:
                                                   ));
       }
     }
-    
-    
     
     // build AABB-tree for face location queries
     Tree aabb_tree(faces(*sm).first, faces(*sm).second, *sm, uv_map_3);
@@ -521,8 +494,8 @@ public Q_SLOTS:
         Face_location loc = Surface_mesh_shortest_path::locate(
               Point_3(p_2.x(), p_2.y(), 0),
               aabb_tree, *sm, uv_map_3);
-        visu_item->polylines.back().push_back(//p);
-                                              Surface_mesh_shortest_path::point(loc.first, loc.second,  *sm, sm->points()));
+        visu_item->polylines.back().push_back(
+              Surface_mesh_shortest_path::point(loc.first, loc.second,  *sm, sm->points()));
       }
     }
     visu_item->setName("Text");
@@ -544,6 +517,8 @@ public Q_SLOTS:
       uv = sm->add_property_map<halfedge_descriptor,std::pair<float, float> >(
             "h:uv",std::make_pair(0.0f,0.0f)).first;
       SMesh::Halfedge_iterator it;
+      SMesh::Property_map<SMesh::Vertex_index, EPICK::Point_2> uv_map =
+          sm->property_map<SMesh::Vertex_index, EPICK::Point_2>("v:uv").first;
       for(it = sm->halfedges_begin();
           it != sm->halfedges_end();
           ++it)
@@ -554,9 +529,9 @@ public Q_SLOTS:
         put(uv, *it, std::make_pair(static_cast<float>(u),static_cast<float>(v)));
       }
       
-      //ParamItem takes ownership of text_mesh_bottom
+      //ParamItem does not take ownership of text_mesh_bottom
       ParamItem *param_item= new ParamItem(component, polylines, transfo, sm,
-                                           QRectF(QPointF(xmin, ymin), QPointF(xmax, ymax))); 
+                                           QRectF(QPointF(xmin, -ymax), QPointF(xmax, -ymin))); 
       graphics_scene->addItem(param_item);
       dock_widget->graphicsView->fitInView(param_item->boundingRect(), Qt::KeepAspectRatio);
     }
@@ -573,16 +548,13 @@ public Q_SLOTS:
   void engrave() {
     if(!visu_item)
       return;
-    Scene_polyhedron_selection_item* sel_item  = 
-        qobject_cast<Scene_polyhedron_selection_item*>
-        (scene->item(scene->mainSelectionIndex()));
     if(!sel_item)
       return;
     if(sel_item->selected_facets.empty())
       return;
     if(!CGAL::is_closed(*sel_item->polyhedron()))
       return;
-    
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     CDT cdt;
     try{
       for(std::size_t i = 0;
@@ -651,8 +623,16 @@ public Q_SLOTS:
     
     CGAL::Polygon_mesh_processing::triangulate_faces(result);
     Scene_surface_mesh_item* result_item = new Scene_surface_mesh_item(
-    result);
+          result);
     scene->addItem(result_item);
+    graphics_scene->clear();
+    scene->erase(scene->item_id(sel_item));
+    sel_item =nullptr;
+    delete sm;
+    sm = nullptr;
+    scene->erase(scene->item_id(visu_item));
+    visu_item = nullptr;
+    QApplication::restoreOverrideCursor();
     dock_widget->engraveButton->setEnabled(false);
     dock_widget->visualizeButton->setEnabled(true);
   }
@@ -758,6 +738,7 @@ private:
   std::vector<std::vector<EPICK::Point_2> > polylines;
   SMesh::Property_map<SMesh::Vertex_index, Point_3> uv_map_3;
   SMesh* sm;
+  float xmin, xmax, ymin, ymax;
   
   QGraphicsScene *graphics_scene;
   Navigation* navigation;
