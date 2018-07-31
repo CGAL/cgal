@@ -472,6 +472,8 @@ struct graph_traits<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay
   typedef typename boost::graph_traits<TM>::face_iterator face_iterator;
 
   typedef typename boost::graph_traits<TM>::vertices_size_type vertices_size_type;
+
+  static face_descriptor null_face() { return boost::graph_traits<TM>::null_face(); }
 };
 
 } // namespace boost
@@ -606,7 +608,18 @@ halfedge(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,VD
 {
   return halfedge(ed, idt.triangle_mesh());
 }
-
+  
+template <typename TM,
+          typename T,
+          typename VDM,
+          typename VPM,
+          typename LA>
+typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> >::halfedge_descriptor
+opposite(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> >::halfedge_descriptor hd,
+       const Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA>& idt)
+{
+  return opposite(hd, idt.triangle_mesh());
+}
 
 template <typename TM,
           typename T,
@@ -620,6 +633,17 @@ next(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VP
   return next(hd, idt.triangle_mesh());
 }
 
+template <typename TM,
+          typename T,
+          typename VDM,
+          typename VPM,
+          typename LA>
+typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> >::face_descriptor
+face(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> >::halfedge_descriptor hd,
+       const Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA>& idt)
+{
+  return face(hd, idt.triangle_mesh());
+}
 
 template <typename TM,
           typename T,
