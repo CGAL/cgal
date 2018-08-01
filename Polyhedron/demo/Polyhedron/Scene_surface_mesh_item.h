@@ -71,6 +71,7 @@ public:
   void update_halfedge_indices(){}
   void update_facet_indices(){}
   bool isItemMulticolor();
+  bool hasPatchIds();
   Vertex_selection_map vertex_selection_map();
   Face_selection_map face_selection_map();
 

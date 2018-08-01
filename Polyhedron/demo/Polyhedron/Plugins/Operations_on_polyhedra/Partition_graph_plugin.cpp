@@ -116,9 +116,12 @@ private:
 #ifdef CGAL_USE_SURFACE_MESH
     item->face_graph()->collect_garbage();
     item->color_vector().clear();
-#endif
+    if(!item->hasPatchIds())
+      item->setItemIsMulticolor(true);
+#else
     if(!item->isItemMulticolor())
       item->setItemIsMulticolor(true);
+#endif
     typedef boost::property_map<FaceGraph,CGAL::face_patch_id_t<int> >::type PatchIDMap;
     FaceGraph* fg =item->face_graph();
     boost::property_map<FaceGraph, boost::vertex_index_t>::type 

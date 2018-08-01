@@ -1401,6 +1401,12 @@ bool Scene_surface_mesh_item::isItemMulticolor()
   return d->has_fcolors;
 }
 
+bool Scene_surface_mesh_item::hasPatchIds()
+{
+  return d->has_fpatch_id;
+}
+
+
 bool
 Scene_surface_mesh_item::save(std::ostream& out) const
 {
