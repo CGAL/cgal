@@ -127,7 +127,7 @@ namespace CGAL {
       build();
     }
 
-  private:
+    //  private:
      const VertexDistanceMap& vertex_distance_map() const
      {
        return vdm;
@@ -213,7 +213,7 @@ namespace CGAL {
       return sources.end();
     }
 
-  private:
+    //  private:
     double summation_of_edges() const
     {
        double edge_sum = 0;
@@ -230,7 +230,7 @@ namespace CGAL {
          VertexPointMap_reference pi = get(vpm,current);
          VertexPointMap_reference pj = get(vpm, neighbor_one);
          VertexPointMap_reference pk = get(vpm, neighbor_two);
-
+         std::cout <<  pi << " |  "<< pj << " |  " << pk << std::endl;
          edge_sum += (CGAL::is_border(opposite(hd,tm),tm)?1.0:0.5) * std::sqrt(CGAL::squared_distance(pi,pj));
          edge_sum += (CGAL::is_border(opposite(hd2,tm),tm)?1.0:0.5) * std::sqrt(CGAL::squared_distance(pj,pk)) ;
          edge_sum += (CGAL::is_border(opposite(hd3,tm),tm)?1.0:0.5) * std::sqrt(CGAL::squared_distance(pk,pi)) ;
@@ -566,7 +566,9 @@ namespace CGAL {
       m_time_step = 1./(num_edges(tm));
       m_time_step = m_time_step*summation_of_edges();
       m_time_step = m_time_step*m_time_step;
-      std::cout<<"timestep: "<< m_time_step<<"\n";
+      std::cout << "num_edges = " << num_edges(tm) << std::endl;
+      std::cout << "summation = " << summation_of_edges()  << std::endl;
+      std::cout << "timestep: "<< m_time_step<<"\n";
       update_kronecker_delta();
       solved_u = solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, m_time_step, m);
       //edit unit_grad

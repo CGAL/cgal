@@ -70,6 +70,9 @@ int validate(char* fname)
   }
   hm.update();
 
+ std::cout << hm.kronecker_delta() << std::endl;
+ //  std::cout << hm.cotan_matrix() << std::endl;
+
   Vertex_distance_map vdm_idt = sm.add_property_map<vertex_descriptor,double>("v:idt",0).first;
 
   Idt idt(sm, vdm_idt);
@@ -80,6 +83,8 @@ int validate(char* fname)
   }
   hm_idt.update();
 
+   std::cout << hm_idt.kronecker_delta() << std::endl;
+   //std::cout << hm_idt.cotan_matrix() << std::endl;
   std::cout.precision(17);
   int i = 0;
   BOOST_FOREACH(vertex_descriptor vd, vertices(sm)){
