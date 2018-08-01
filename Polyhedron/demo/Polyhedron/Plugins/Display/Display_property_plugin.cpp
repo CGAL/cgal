@@ -20,10 +20,270 @@
 #include "ui_Display_property.h"
 #include "id_printing.h"
 #include "Scene.h"
+#include "triangulate_primitive.h"
+#include <CGAL/Buffer_for_vao.h>
+#include <CGAL/Three/Triangle_container.h>
 
 #define ARBITRARY_DBL_MIN 1.0E-30
 #define ARBITRARY_DBL_MAX 1.0E+30
 
+//Item for heat values
+typedef CGAL::Three::Triangle_container Tri;
+typedef CGAL::Three::Viewer_interface VI;
+class Scene_heat_item
+    : public CGAL::Three::Scene_item_rendering_helper
+{
+  Q_OBJECT
+  
+public: 
+  Scene_heat_item(Scene_surface_mesh_item* item)
+    :parent(item), sm(item->face_graph())
+  {
+    setTriangleContainer(0, new Triangle_container(VI::PROGRAM_HEAT_INTENSITY,
+                                                   true));
+    setRenderingMode(Gouraud);
+  }
+  Scene_item* clone() const{return nullptr;}
+  QString toolTip() const{return QString(); }\
+  void select(double orig_x,
+             double orig_y,
+             double orig_z,
+             double dir_x,
+             double dir_y,
+             double dir_z)
+  {
+    parent->select( orig_x, orig_y, orig_z, 
+                    dir_x, dir_y, dir_z);
+  }
+  void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const
+  {
+    getTriangleContainer(0)->initializeBuffers(viewer); 
+    getTriangleContainer(0)->setIdxSize(idx.size());
+    verts.resize(0);
+    normals .resize(0);
+    colors.resize(0);
+    idx.clear();
+    idx.shrink_to_fit();
+    colors.shrink_to_fit();
+    verts.shrink_to_fit();
+    normals.shrink_to_fit();
+    
+    are_buffers_filled = true;
+  }
+  
+  void draw(CGAL::Three::Viewer_interface *viewer) const
+  {
+    
+    if(!isInit() && viewer->context()->isValid())
+      initGL();
+    if(!are_buffers_filled)
+      initialize_buffers(viewer);
+    getTriangleContainer(0)->setAlpha(1.0f);
+    getTriangleContainer(0)->draw( viewer, false);
+  }
+  void compute_bbox() const
+  {
+    SMesh::Property_map<vertex_descriptor, Point_3> pprop = sm->points();
+    CGAL::Bbox_3 bbox ;
+    
+    BOOST_FOREACH(vertex_descriptor vd,vertices(*sm))
+    {
+      bbox = bbox + pprop[vd].bbox();
+    }
+    _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+                 bbox.xmax(),bbox.ymax(),bbox.zmax());
+    is_bbox_computed = true;
+  }
+  Scene_item::Bbox bbox() const {
+    if(!is_bbox_computed)
+      compute_bbox();
+    is_bbox_computed = true;
+    return _bbox;
+  }
+
+  ~Scene_heat_item(){}
+  virtual bool supportsRenderingMode(RenderingMode m) const { return m==Gouraud; }
+  virtual void invalidateOpenGLBuffers()
+  {
+    computeElements();
+    is_bbox_computed = false;
+    are_buffers_filled = false;
+  }
+  void triangulate_convex_facet(face_descriptor fd,
+                                boost::property_map< SMesh, boost::vertex_index_t >::type *im) const
+  {
+    const CGAL::qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+    EPICK::Vector_3 offset = EPICK::Vector_3(v_offset.x, v_offset.y, v_offset.z);
+    
+    EPICK::Point_3 p0,p1,p2;
+    SMesh::Halfedge_around_face_circulator he(halfedge(fd, *sm), *sm);
+    SMesh::Halfedge_around_face_circulator he_end = he;
+    
+    while(next(*he, *sm) != prev(*he_end, *sm))
+    {
+      ++he;
+      vertex_descriptor v0(target(*he_end, *sm)),
+          v1(target(*he, *sm)),
+          v2(target(next(*he, *sm), *sm));
+      p0 = sm->point(v0) + offset;
+      p1 = sm->point(v1) + offset;
+      p2 = sm->point(v2) + offset;
+      idx.push_back((*im)[v0]);
+      idx.push_back((*im)[v1]);
+      idx.push_back((*im)[v2]);
+    }
+  }
+  void triangulate_facet(face_descriptor fd,
+                         SMesh::Property_map<face_descriptor, EPICK::Vector_3> *fnormals,
+                         boost::property_map< SMesh, boost::vertex_index_t >::type *im) const
+  {
+    //Computes the normal of the facet
+    EPICK::Vector_3 normal = get(*fnormals, fd);
+    
+    //check if normal contains NaN values
+    if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
+    {
+      qDebug()<<"Warning : normal is not valid. Facet not displayed";
+      return;
+    }
+    
+    typedef FacetTriangulator<SMesh, EPICK, boost::graph_traits<SMesh>::vertex_descriptor> FT;
+    double diagonal;
+    if(diagonalBbox() != std::numeric_limits<double>::infinity())
+      diagonal = diagonalBbox();
+    else
+      diagonal = 0.0;
+    const CGAL::qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+    EPICK::Vector_3 offset(off.x,off.y,off.z);
+    FT triangulation(fd,normal,sm,diagonal, offset);
+    //iterates on the internal faces
+    for(FT::CDT::Finite_faces_iterator
+        ffit = triangulation.cdt->finite_faces_begin(),
+        end = triangulation.cdt->finite_faces_end();
+        ffit != end; ++ffit)
+    {
+      if(ffit->info().is_external)
+        continue;
+      //add the vertices to the positions
+      //adds the vertices, normals and colors to the appropriate vectors
+      //adds the indices to the appropriate vector
+      idx.push_back((*im)[triangulation.v2v[ffit->vertex(0)]]);
+      idx.push_back((*im)[triangulation.v2v[ffit->vertex(1)]]);
+      idx.push_back((*im)[triangulation.v2v[ffit->vertex(2)]]);
+    }
+  }
+  
+  void computeElements() const
+  {
+    typedef EPICK::Point_3 Point;
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    const CGAL::qglviewer::Vec o = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+    EPICK::Vector_3 offset(o.x, o.y, o.z);
+    SMesh::Property_map<vertex_descriptor, SMesh::Point> positions =
+        sm->points();
+    SMesh::Property_map<vertex_descriptor, EPICK::Vector_3 > vnormals =
+        sm->property_map<vertex_descriptor, EPICK::Vector_3 >("v:normal").first;
+    SMesh::Property_map<face_descriptor, EPICK::Vector_3 > fnormals =
+        sm->property_map<face_descriptor, EPICK::Vector_3 >("f:normal").first;
+    typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
+    typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
+    typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
+    SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
+        sm->property_map<vertex_descriptor, CGAL::Color >("v:color").first;
+    SMesh::Property_map<vertex_descriptor, float> vdist=
+        sm->property_map<vertex_descriptor, float >("v:dist").first;    
+    typedef CGAL::Buffer_for_vao<float, unsigned int> CPF;
+    verts.clear();
+    normals.clear();
+    idx.clear();
+    colors.clear();
+    boost::property_map< SMesh, boost::vertex_index_t >::type
+        im = get(boost::vertex_index, *sm);
+    
+    idx.reserve(num_faces(*sm) * 3);
+    BOOST_FOREACH(face_descriptor fd, faces(*sm))
+    {
+      if(is_triangle(halfedge(fd,*sm),*sm))
+      {
+        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *sm),*sm))
+        {
+          idx.push_back(source(hd, *sm));
+        }
+      }
+      else
+      {
+        std::vector<Point> facet_points;
+        BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *sm),*sm))
+        {
+          facet_points.push_back(positions[target(hd, *sm)]);
+        }
+        bool is_convex = CPF::is_facet_convex(facet_points, fnormals[fd]);
+        
+        if(is_convex && is_quad(halfedge(fd,*sm),*sm) )
+        {
+          halfedge_descriptor hd = halfedge(fd,*sm);
+          //1st half
+          idx.push_back(source(hd, *sm));
+          idx.push_back(source(next(hd, *sm), *sm));
+          idx.push_back(source(next(next(hd, *sm), *sm), *sm));
+          
+          //2nd half
+          idx.push_back(source(hd, *sm));
+          idx.push_back(source(next(next(hd, *sm), *sm), *sm));
+          idx.push_back(source(prev(hd, *sm), *sm));
+        }    
+        else if(is_convex)
+        {
+          triangulate_convex_facet(fd, &im);
+        }
+        else
+        {
+          triangulate_facet(fd, &fnormals, &im);
+        }
+      }
+    }
+    BOOST_FOREACH(vertex_descriptor vd, vertices(*sm))
+    {
+      CGAL::Color c = vcolors[vd];
+      colors.push_back((float)c.red()/255);
+      colors.push_back((float)c.green()/255);
+      colors.push_back((float)c.blue()/255);
+      
+      
+      Point p = positions[vd] + offset;
+      CPF::add_point_in_buffer(p, verts);
+      EPICK::Vector_3 n = vnormals[vd];
+      CPF::add_normal_in_buffer(n, normals);
+      heat_values.push_back(vdist[vd]);
+    }
+    
+    getTriangleContainer(0)->allocate(Tri::Vertex_indices, idx.data(),
+                                      static_cast<int>(idx.size()*sizeof(unsigned int)));
+    getTriangleContainer(0)->allocate(Tri::Smooth_vertices, verts.data(),
+                                      static_cast<int>(num_vertices(*sm)*3*sizeof(float)));
+    
+    getTriangleContainer(0)->allocate(Tri::Smooth_normals, normals.data(),
+                                      static_cast<int>(num_vertices(*sm)*3*sizeof(float)));
+    getTriangleContainer(0)->allocate(Tri::VColors, colors.data(),
+                                      static_cast<int>(colors.size()*sizeof(float)));
+    getTriangleContainer(0)->allocate(Tri::Distances, heat_values.data(),
+                                      static_cast<int>(heat_values.size()*sizeof(float)));
+    compute_bbox();
+     QApplication::restoreOverrideCursor();
+  }
+  
+  bool isEmpty() const {return false;}
+  SMesh *face_graph() { return sm;}
+
+private:
+  SMesh* sm;
+  Scene_surface_mesh_item* parent;
+  mutable std::vector<float> normals;
+  mutable std::vector<unsigned int> idx;
+  mutable std::vector<float> verts;
+  mutable std::vector<float> colors;
+  mutable std::vector<float> heat_values;
+}; // end class Scene_heat_item
 
 class DockWidget :
     public QDockWidget,
@@ -47,21 +307,8 @@ class DisplayPropertyPlugin :
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
-  
   typedef SMesh::Property_map<boost::graph_traits<SMesh>::vertex_descriptor, double> Vertex_distance_map;
-  
-  typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<SMesh,EPICK, Vertex_distance_map> Idt;
-
-#define CGAL_USE_IDT
-  
-  
-#ifdef CGAL_USE_IDT
-  typedef CGAL::Heat_method_3::Heat_method_3<Idt,EPICK,Idt::Vertex_distance_map> Heat_method;
-#else
-  typedef CGAL::Heat_method_3::Heat_method_3<SMesh,EPICK,Vertex_distance_map> Heat_method;  
-#endif
-  
-  typedef std::pair<Idt*,Heat_method*> Idt_Heat_method_pair;
+  typedef CGAL::Heat_method_3::Heat_method_3<SMesh,EPICK,Vertex_distance_map> Heat_method;
 
 public:
 
@@ -187,7 +434,6 @@ private Q_SLOTS:
       displayScaledJacobian(item);
       break;
     default:
-
       displayHeatIntensity(item);
       item->setRenderingMode(Gouraud);
       break;
@@ -447,31 +693,24 @@ private Q_SLOTS:
 
   // AF: This function gets called when we click on the button "Colorize"
   void displayHeatIntensity(Scene_surface_mesh_item* item)
-  {
+  {    
     SMesh& mesh = *item->face_graph();
+
     Heat_method * hm;
     SMesh::Property_map<vertex_descriptor, double> heat_intensity;
     if(mesh_heat_method_map.find(item) != mesh_heat_method_map.end()){
-      hm = mesh_heat_method_map[item].second;
+      hm = mesh_heat_method_map[item];
       heat_intensity = mesh.property_map<vertex_descriptor, double>("v:heat_intensity").first;
     }else {
       heat_intensity = mesh.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
-#ifdef CGAL_USE_IDT
-      Idt* idt = new Idt(mesh, heat_intensity);
-      hm = new Heat_method(*idt,idt->vertex_distance_map());
-#else
-      Idt* idt;
       hm = new Heat_method(mesh,heat_intensity);
-#endif      
-      mesh_heat_method_map[item] = std::make_pair(idt,hm);
+      mesh_heat_method_map[item] = hm;
     }
     connect(item, &Scene_surface_mesh_item::aboutToBeDestroyed,
             [this,item](){
               mesh_heat_method_map.erase(item);
             }
             );
-
-    int i = 0;
 
     bool found = false;
     SMesh::Property_map<vertex_descriptor, bool> is_source ;
@@ -510,19 +749,43 @@ private Q_SLOTS:
     //}
     SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
         mesh.add_property_map<vertex_descriptor, CGAL::Color >("v:color", CGAL::Color()).first;
+    SMesh::Property_map<vertex_descriptor, float> vdist=
+        mesh.add_property_map<vertex_descriptor, float >("v:dist", 0.0).first;
     for(boost::graph_traits<SMesh>::vertex_iterator vit = vertices(mesh).begin();
         vit != vertices(mesh).end();
         ++vit)
     {
       double h =(heat_intensity[*vit]-min)/(max-min);
-
       CGAL::Color color(
             255*color_ramp.r(h),
             255*color_ramp.g(h),
             255*color_ramp.b(h));
       vcolors[*vit] = color;
+      vdist[*vit]=h;
     }
+    Scene_group_item* group;
+    if(mesh_heat_item_map.find(item) != mesh_heat_item_map.end())
+    {
+      group = mesh_heat_item_map[item]->parentGroup();
+      group->unlockChild(mesh_heat_item_map[item]);
+      scene->erase(scene->item_id(mesh_heat_item_map[item]));
+    }
+    else
+    {
+      group = new Scene_group_item("Heat Visualization");
+      scene->addItem(group);
+      scene->changeGroup(item, group);
+      group->lockChild(item);
+    }
+    mesh_heat_item_map[item] = new Scene_heat_item(item);
+    mesh_heat_item_map[item]->setName(tr("%1 heat").arg(item->name()));
+    scene->addItem(mesh_heat_item_map[item]);
+    scene->changeGroup(mesh_heat_item_map[item], group);
+    group->lockChild(mesh_heat_item_map[item]);
+    item->setVisible(false);
     displayLegend();
+    if(dock_widget->sourcePointsButton->isChecked())
+      dock_widget->sourcePointsButton->toggle();
   }
 
   void replaceRamp()
@@ -834,8 +1097,9 @@ private:
   Scene_surface_mesh_item* current_item;
   Scene_points_with_normal_item* source_points;
   boost::unordered_map<Scene_surface_mesh_item*, Scene_points_with_normal_item*> mesh_sources_map;
+  boost::unordered_map<Scene_surface_mesh_item*, Scene_heat_item*> mesh_heat_item_map;
 
-  boost::unordered_map<Scene_surface_mesh_item*, Idt_Heat_method_pair> mesh_heat_method_map;
+  boost::unordered_map<Scene_surface_mesh_item*, Heat_method*> mesh_heat_method_map;
 };
 
   /// Code based on the verdict module of vtk
