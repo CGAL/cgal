@@ -379,12 +379,12 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
              hd = next(hd,tm);
              //each 'local' set of coordinates will have 0,0 at the first vertex/halfedge
              Point_2 p11(0,0);
-             put(hcm, hd,p11);
+             put(hcm, prev(hd,tm),p11);
              edge_descriptor ed1 = edge(hd, tm);
              hd = next(hd,tm);
              //the second local coordinate will be edge_length(first edge),0
              Point_2 p21(edge_lengths(get(edge_id_map,ed1),0),0);
-             put(hcm,hd,p21);
+             put(hcm,prev(hd,tm),p21);
 
 
              //use basic trigonometry to compute third coordinate
@@ -400,7 +400,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
              double angle_a = -(e2_len*e2_len) + e3_len*e3_len + e1_len*e1_len;
              angle_a = acos(angle_a/(2*e3_len*e1_len));
              Point_2 p31(e3_len*std::cos(angle_a), e3_len*std::sin(angle_a));
-             put(hcm,hd,p31);
+             put(hcm,prev(hd,tm),p31);
 
            }
          }
