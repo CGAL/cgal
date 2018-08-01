@@ -1826,7 +1826,7 @@ QMenu* Scene_surface_mesh_item::contextMenu()
   QAction* actionResetColor=
       menu->findChild<QAction*>(tr("actionResetColor"));
 
-  if(isItemMulticolor())
+  if(isItemMulticolor() || d->has_fpatch_id)
   {
     if(!actionResetColor)
     {
