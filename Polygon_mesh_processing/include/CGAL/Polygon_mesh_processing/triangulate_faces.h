@@ -49,7 +49,8 @@ namespace internal {
 
 template <class PM
           , typename VertexPointMap
-          , typename Kernel>
+          , typename Kernel
+          , typename Visitor>
 class Triangulate_modifier
 {
   typedef Kernel Traits;
@@ -80,7 +81,7 @@ public:
     return fh->info().is_external;
   }
 
-  bool triangulate_face(face_descriptor f, PM& pmesh, bool use_cdt)
+  bool triangulate_face(face_descriptor f, PM& pmesh, bool use_cdt, Visitor visitor)
   {
     typedef typename Traits::FT FT;
 
@@ -116,14 +117,19 @@ public:
        */
       FT p1p3 = CGAL::cross_product(p2-p1,p3-p2) * CGAL::cross_product(p0-p3,p1-p0);
       FT p0p2 = CGAL::cross_product(p1-p0,p1-p2) * CGAL::cross_product(p3-p2,p3-p0);
+      visitor.start(f);
+      halfedge_descriptor res;
       if(p0p2>p1p3)
       {
-        CGAL::Euler::split_face(v0, v2, pmesh);
+        res = CGAL::Euler::split_face(v0, v2, pmesh);
       }
       else
       {
-        CGAL::Euler::split_face(v1, v3, pmesh);
+        res = CGAL::Euler::split_face(v1, v3, pmesh);
       }
+      visitor(face(res,pmesh));
+      visitor(face(opposite(res,pmesh),pmesh));
+      visitor.done();
     }
     else
     {
@@ -143,19 +149,20 @@ public:
                                                            Itag>             CDT;
         P_traits cdt_traits(normal);
         CDT cdt(cdt_traits);
-        return triangulate_face_with_CDT(f, pmesh, cdt);
+        return triangulate_face_with_CDT(f, pmesh, cdt, visitor);
       }
 #else
       CGAL_USE(use_cdt);
 #endif
-      return triangulate_face_with_hole_filling(f, pmesh);
+      return triangulate_face_with_hole_filling(f, pmesh, visitor);
     }
     return true;
   }
 
   template<class CDT>
-  bool triangulate_face_with_CDT(face_descriptor f, PM& pmesh, CDT& cdt)
+  bool triangulate_face_with_CDT(face_descriptor f, PM& pmesh, CDT& cdt, Visitor visitor)
   {
+    std::cout << "triangulate_face_with_CDT"<< std::endl;
     std::size_t original_size = CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh).size();
 
     // Halfedge_around_facet_circulator
@@ -212,6 +219,7 @@ public:
 
 
     // then modify the polyhedron
+    visitor.start(f);
     // make_hole. (see comment in function body)
     this->make_hole(halfedge(f, pmesh), pmesh);
 
@@ -268,12 +276,14 @@ public:
         set_next(h2, h0, pmesh);
 
         Euler::fill_hole(h0, pmesh);
+        visitor(face(h0, pmesh));
       }
     }
+    visitor.done();
     return true;
   }
 
-  bool triangulate_face_with_hole_filling(face_descriptor f, PM& pmesh)
+  bool triangulate_face_with_hole_filling(face_descriptor f, PM& pmesh, Visitor visitor)
   {
     namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -307,6 +317,7 @@ public:
       ++i;
     }
 
+    visitor.start(f);
     bool first = true;
     std::vector<halfedge_descriptor> hedges;
     hedges.reserve(4);
@@ -316,7 +327,8 @@ public:
         first=false;
       else
         f=add_face(pmesh);
-
+      visitor(f);
+      
       std::array<int, 4> indices =
         make_array( triangle.first,
                     triangle.second,
@@ -346,11 +358,12 @@ public:
       set_halfedge(f, hedges[0], pmesh);
       hedges.clear();
     }
+    visitor.done();
     return true;
   }
 
   template<typename FaceRange>
-  bool operator()(FaceRange face_range, PM& pmesh, bool use_cdt)
+  bool operator()(FaceRange face_range, PM& pmesh, bool use_cdt, Visitor visitor)
   {
    bool result = true;
     // One need to store facet handles into a vector, because the list of
@@ -368,7 +381,7 @@ public:
     // Iterates on the vector of face descriptors
     for(face_descriptor f : facets)
     {
-     if(!this->triangulate_face(f, pmesh, use_cdt))
+      if(!this->triangulate_face(f, pmesh, use_cdt, visitor))
        result = false;
     }
     return result;
@@ -445,9 +458,14 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 
   //Option
   bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_delaunay_triangulation), true);
-
-  internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel> modifier(vpmap, traits);
-  return modifier.triangulate_face(f, pmesh, use_cdt);
+  
+  typedef typename GetSplitVisitor<NamedParameters>::type SplitVisitor;
+  typedef typename GetSplitVisitor<NamedParameters>::DummySplitVisitor DummySplitVisitor;
+  SplitVisitor visitor = choose_param(get_param(np, internal_np::split_visitor),
+                                      DummySplitVisitor());
+  
+  internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel, SplitVisitor> modifier(vpmap);
+  return modifier.triangulate_face(f, pmesh, use_cdt, visitor);
 }
 
 template<typename PolygonMesh>
@@ -513,8 +531,13 @@ bool triangulate_faces(FaceRange face_range,
   //Option
   bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_delaunay_triangulation), true);
 
-  internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel> modifier(vpmap, traits);
-  return modifier(face_range, pmesh, use_cdt);
+  typedef typename GetSplitVisitor<NamedParameters>::type SplitVisitor;
+  typedef typename GetSplitVisitor<NamedParameters>::DummySplitVisitor DummySplitVisitor;
+  SplitVisitor visitor = choose_param(get_param(np, internal_np::split_visitor),
+                                      DummySplitVisitor());
+
+  internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel, SplitVisitor> modifier(vpmap);
+  return modifier(face_range, pmesh, use_cdt, visitor);
 }
 
 template <typename FaceRange, typename PolygonMesh>

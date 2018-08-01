@@ -303,6 +303,33 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
       > ::type  type;
   };
 
+    
+    template<typename NamedParameters>
+    class GetSplitVisitor
+    {
+    public:
+      struct DummySplitVisitor
+      {
+        template <typename T>
+        void start(const T&) const
+        {}
+        
+        template <typename T>
+        void operator()(const T&) const 
+        {}
+        
+        void done() const
+        {}
+      };
+
+      typedef typename boost::lookup_named_param_def <
+        internal_np::split_visitor_t,
+        NamedParameters,
+        DummySplitVisitor//default
+        > ::type  type;
+    };
+
+  } // namespace Polygon_mesh_processing
 
   namespace internal {
     BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_iterator, iterator, false)
