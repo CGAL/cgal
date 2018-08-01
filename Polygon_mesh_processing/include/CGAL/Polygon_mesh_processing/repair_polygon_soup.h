@@ -1019,7 +1019,6 @@ void repair_polygon_soup(PointRange& points,
   internal::split_pinched_polygons_in_polygon_soup(points, polygons, traits);
   internal::remove_invalid_polygons_in_polygon_soup(points, polygons);
   merge_duplicate_polygons_in_polygon_soup(points, polygons, np);
-
   remove_isolated_points_in_polygon_soup(points, polygons);
 }
 
