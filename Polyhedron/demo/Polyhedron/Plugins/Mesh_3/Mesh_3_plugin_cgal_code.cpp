@@ -361,7 +361,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
        );
     if(protect_features && polylines.empty())
     {
-      using CGAL::internal::Mesh_3::Linear_interpolator;
+      using CGAL::Mesh_3::internal::Linear_interpolator;
       std::vector<std::vector<Bare_point> > polylines_on_bbox;
 
       CGAL_IMAGE_IO_CASE(pImage->image(),
@@ -379,7 +379,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
           Linear_interpolator<Kernel, Image_word_type>(),
           0,
           0,
-          iso_value,
+          Image_word_type(iso_value),
           (std::max)(10, int(10 * (std::min)((std::min)(pImage->vx(),
                                                         pImage->vy()),
                                              pImage->vz())

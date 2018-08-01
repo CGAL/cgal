@@ -632,7 +632,6 @@ private:
       z_box->addWidget(z_cubeLabel);
       show_sliders &= seg_img->image()->zdim() > 1;
     }
-    std::cout<<"show_sliders is "<<show_sliders<<std::endl;
     x_control->setEnabled(show_sliders);
     y_control->setEnabled(show_sliders);
     z_control->setEnabled(show_sliders);
@@ -642,9 +641,12 @@ private:
       CGAL_IMAGE_IO_CASE(img->image(), this->launchAdders<Word>(seg_img, seg_img->name()))
 
           Volume_plane_intersection* i
-          = new Volume_plane_intersection(double(img->xdim()) * img->vx()-1,
-                                          double(img->ydim()) * img->vy()-1,
-                                          double(img->zdim()) * img->vz()-1);
+          = new Volume_plane_intersection(img->xdim() * img->vx()-1,
+                                          img->ydim() * img->vy()-1,
+                                          img->zdim() * img->vz()-1,
+                                          img->image()->tx,
+                                          img->image()->ty,
+                                          img->image()->tz);
       this->intersection_id = scene->addItem(i);
       scene->changeGroup(i, group);
       group->lockChild(i);
@@ -667,9 +669,9 @@ private:
 
     switchReaderConverter< Word >(minmax);
 
-    Volume_plane<x_tag> *x_item = new Volume_plane<x_tag>();
-    Volume_plane<y_tag> *y_item = new Volume_plane<y_tag>();
-    Volume_plane<z_tag> *z_item = new Volume_plane<z_tag>();
+    Volume_plane<x_tag> *x_item = new Volume_plane<x_tag>(img->image()->tx,img->image()->ty, img->image()->tz);
+    Volume_plane<y_tag> *y_item = new Volume_plane<y_tag>(img->image()->tx,img->image()->ty, img->image()->tz);
+    Volume_plane<z_tag> *z_item = new Volume_plane<z_tag>(img->image()->tx,img->image()->ty, img->image()->tz);
 
     x_item->setProperty("img",qVariantFromValue((void*)seg_img));
     y_item->setProperty("img",qVariantFromValue((void*)seg_img));
@@ -807,8 +809,9 @@ private Q_SLOTS:
                            this, SLOT(erase_group()));
         group_map.remove(img_item);
         QList<int> deletion;
-        Q_FOREACH(Scene_item* child, group->getChildren())
+        Q_FOREACH(Scene_interface::Item_id id, group->getChildren())
         {
+          Scene_item* child = group->getChild(id);
           group->unlockChild(child);
           deletion.append(scene->item_id(child));
         }

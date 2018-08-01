@@ -33,6 +33,7 @@
 #include <CGAL/surface_reconstruction_points_assertions.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
 
 #include <CGAL/algorithm.h>
@@ -173,8 +174,12 @@ struct Reconstruction_triangulation_default_geom_traits_3 : public BaseGt
 
 template <class BaseGt,
           class Gt = Reconstruction_triangulation_default_geom_traits_3<BaseGt>,
-          class Tds_ = Triangulation_data_structure_3<Reconstruction_vertex_base_3<Gt>, Triangulation_cell_base_with_info_3<int,Gt> > >
-class Reconstruction_triangulation_3 : public Delaunay_triangulation_3<Gt,Tds_>
+          class Tds_ = Triangulation_data_structure_3<
+                         Reconstruction_vertex_base_3<Gt>,
+                         Delaunay_triangulation_cell_base_3<
+                           Gt, Triangulation_cell_base_with_info_3<int, Gt> > > >
+class Reconstruction_triangulation_3
+  : public Delaunay_triangulation_3<Gt, Tds_>
 {
 // Private types
 private:

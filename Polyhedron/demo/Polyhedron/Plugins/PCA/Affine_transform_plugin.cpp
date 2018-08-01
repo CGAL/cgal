@@ -101,7 +101,7 @@ public:
   {
     GLfloat point_size;
     viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
-    viewer->glPointSize(6.f);
+    viewer->setGlPointSize(6.f);
     double ratio_displayed = 1.0;
     if ((viewer->inFastDrawing () || frame->isManipulated()) &&
         (nb_points /3 > 300000)) // arbitrary large value

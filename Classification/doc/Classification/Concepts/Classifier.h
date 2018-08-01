@@ -23,7 +23,8 @@ public:
 
   /*!
     \brief Computes for each label indexed from 0 to `out.size()`, the
-    energy of this label applied to point at `item_index`.
+    probability (between 0 and 1) that the item at `item_index`
+    belongs to this label.
    */
   void operator() (std::size_t item_index, std::vector<float>& out) const;
 

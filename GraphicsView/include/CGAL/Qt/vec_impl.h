@@ -3,16 +3,12 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of a fork of the CGAL::QGLViewer library version 2.7.0.
-
+ This file is part of a fork of the QGLViewer library version 2.7.0.
  http://www.libqglviewer.com - contact@libqglviewer.com
 
  This file may be used under the terms of the GNU General Public License 
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
-
- libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -36,8 +32,9 @@
 
 // Most of the methods are declared inline in vec.h
 
-using namespace CGAL::qglviewer;
-using namespace std;
+namespace CGAL{
+namespace qglviewer{
+
 
 /*! Projects the Vec on the axis of direction \p direction that passes through
 the origin.
@@ -178,6 +175,7 @@ void Vec::initFromDOMElement(const QDomElement &element) {
 }
 
 CGAL_INLINE_FUNCTION
-ostream &operator<<(ostream &o, const Vec &v) {
+std::ostream &operator<<(std::ostream &o, const Vec &v) {
   return o << v.x << '\t' << v.y << '\t' << v.z;
 }
+}}

@@ -110,10 +110,12 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, VertexIndexMap 
   while(in >> cone_index)
     cones.push_back(cone_index);
 
+#ifdef CGAL_PARAMETERIZATION_ORBIFOLD_CONE_VERBOSE
   std::cout << "Input cones: ";
   for(std::size_t i=0; i<cones.size(); ++i)
     std::cout << cones[i] << " ";
   std::cout << std::endl;
+#endif
 
   if(cones.size() < 3 || cones.size() > 4) {
     std::cerr << "Error: Not enough or too many input cones" << std::endl;

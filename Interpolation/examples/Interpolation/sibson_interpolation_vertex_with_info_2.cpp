@@ -74,6 +74,7 @@ int main()
 {
   Delaunay_triangulation dt;
 
+  // Note that a supported alternative to creating the functors below is to use lambdas
   Value_function<Vertex_handle, Coord_type> value_function;
   Gradient_function<Vertex_handle, Vector> gradient_function;
 

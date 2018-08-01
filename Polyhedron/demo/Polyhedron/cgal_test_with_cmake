@@ -140,6 +140,8 @@ distance_plugin \
 distance_sm_plugin \
 edit_polyhedron_plugin \
 edit_sm_plugin \
+extrude_poly_plugin \
+extrude_sm_plugin \
 fairing_plugin \
 features_detection_plugin \
 gocad_plugin \

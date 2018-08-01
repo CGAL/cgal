@@ -10,6 +10,18 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Surface_mesh;
 typedef CGAL::Polyhedron_3<K> Polyhedron_3;
 
+template <class TriangleMesh>
+struct My_visitor :
+  public CGAL::Polygon_mesh_processing::Corefinement::Default_visitor<TriangleMesh>
+{
+  void after_subface_creations(TriangleMesh&){++(*i);}
+
+  My_visitor()
+    : i (new int(0) )
+  {}
+
+  boost::shared_ptr<int> i;
+};
 
 void test(const char* f1, const char* f2)
 {
@@ -26,11 +38,16 @@ void test(const char* f1, const char* f2)
   assert(input);
   input >> sm2;
   input.close();
+  My_visitor<Surface_mesh> sm_v;
 
-  CGAL::Polygon_mesh_processing::corefine(sm1, sm2);
+  std::size_t nb_v_before = num_vertices(sm1) + num_vertices(sm2);
+  CGAL::Polygon_mesh_processing::corefine(sm1, sm2,
+    CGAL::Polygon_mesh_processing::parameters::visitor(sm_v));
+  std::size_t nb_v_after = num_vertices(sm1) + num_vertices(sm2);
 
   assert(sm1.is_valid());
   assert(sm2.is_valid());
+  assert((*(sm_v.i) != 0) == (nb_v_before!=nb_v_after));
 
   std::cout << "  with Polyhedron_3\n";
   Polyhedron_3 P, Q;
@@ -41,9 +58,16 @@ void test(const char* f1, const char* f2)
   input.open(f2);
   assert(input);
   input >> Q;
+  My_visitor<Polyhedron_3> sm_p;
 
-  CGAL::Polygon_mesh_processing::corefine(P, Q);
+  nb_v_before = num_vertices(P) + num_vertices(Q);
+  CGAL::Polygon_mesh_processing::corefine(P, Q,
+    CGAL::Polygon_mesh_processing::parameters::visitor(sm_p));
+  nb_v_after = num_vertices(P) + num_vertices(Q);
 
+  assert((*(sm_p.i) != 0)  == (nb_v_before!=nb_v_after));
+
+  assert(*(sm_v.i) == *(sm_p.i));
   assert(P.is_valid());
   assert(Q.is_valid());
 }

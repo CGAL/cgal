@@ -521,10 +521,10 @@ void Scene_nef_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) cons
     d->program->release();
     GLfloat point_size;
     viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
-    viewer->glPointSize(10.f);
+    viewer->setGlPointSize(10.f);
 
     drawPoints(viewer);
-    viewer->glPointSize(point_size);
+    viewer->setGlPointSize(point_size);
 
 }
 void Scene_nef_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
@@ -547,10 +547,10 @@ void Scene_nef_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer)
     {
         GLfloat point_size;
         viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
-        viewer->glPointSize(10.f);
+        viewer->setGlPointSize(10.f);
 
         drawPoints(viewer);
-        viewer->glPointSize(point_size);
+        viewer->setGlPointSize(point_size);
     }
 }
 void Scene_nef_polyhedron_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const

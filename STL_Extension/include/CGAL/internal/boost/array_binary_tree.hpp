@@ -20,9 +20,11 @@
 #ifndef CGAL_INTERNAL_ARRAY_BINARY_TREE_HPP
 #define CGAL_INTERNAL_ARRAY_BINARY_TREE_HPP
 
-#include <iterator>
-#include <functional>
+#include <CGAL/iterator.h>
+
 #include <boost/config.hpp>
+
+#include <functional>
 
 namespace CGAL { namespace internal {
 namespace boost_ {
@@ -52,13 +54,10 @@ public:
 
   struct children_type {
     struct iterator
+      : public CGAL::cpp98::iterator<std::forward_iterator_tag,
+                                     ArrayBinaryTreeNode,
+                                     difference_type>
     { // replace with iterator_adaptor implementation -JGS
-      typedef std::forward_iterator_tag iterator_category;
-      typedef ArrayBinaryTreeNode value_type;
-      typedef size_type difference_type;
-      typedef ArrayBinaryTreeNode* pointer;
-      typedef ArrayBinaryTreeNode& reference;
-
       inline iterator() : i(0), n(0) { }
       inline iterator(const iterator& x) : r(x.r), i(x.i), n(x.n), id(x.id) { }
       inline iterator& operator=(const iterator& x) {

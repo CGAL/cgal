@@ -1785,7 +1785,7 @@ public:
   /*!
     returns an approximation of the signed dihedral angle in the tetrahedron `pqrs` of edge `pq`.
     The sign is negative if `orientation(p,q,r,s)` is `CGAL::NEGATIVE` and positive otherwise.
-    The angle is given in degree.
+    The angle is given in degrees.
     \pre `p,q,r` and `p,q,s` are not collinear.
   */
   Kernel::FT operator()(const Kernel::Point_3& p,
@@ -5986,7 +5986,7 @@ public:
   /*!
     returns the point of `t` that is the closest to `p`.
   */
-  Kernel::Point_3 operator()(const Kernel::Triangle_3& h,
+  Kernel::Point_3 operator()(const Kernel::Triangle_3& t,
                              const Kernel::Point_3& p);
 
   /// @}

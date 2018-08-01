@@ -39,12 +39,14 @@ const char vertex_source[] =
 
     "uniform highp mat4 mvp_matrix;\n"
     "uniform highp mat4 mv_matrix; \n"
+    "uniform highp float point_size; \n"
 
     "varying highp vec4 fP; \n"
     "varying highp vec3 fN; \n"
     "varying highp vec4 fColor; \n"
     "void main(void)\n"
     "{\n"
+    "   gl_PointSize = point_size; \n"
     "   fP = mv_matrix * vertex; \n"
     "   fN = mat3(mv_matrix)* normal; \n"
     "   fColor = vec4(color, 1.0); \n"
@@ -89,8 +91,10 @@ const char vertex_source_p_l[] =
     "#version 120 \n"
     "attribute highp vec4 vertex;\n"
     "uniform highp mat4 mvp_matrix;\n"
+    "uniform highp float point_size; \n"
     "void main(void)\n"
     "{\n"
+    "   gl_PointSize = point_size; \n"
     "   gl_Position = mvp_matrix * vertex;\n"
     "}"
   };
@@ -714,12 +718,12 @@ void Viewer::draw()
     }
     if(vertices)
     {
-      glPointSize(size_points);
       vao[3].bind();
       attrib_buffers(this);
       color.setRgbF(.2f,.2f,.6f);
       rendering_program_p_l.bind();
       rendering_program_p_l.setAttributeValue(colorLocation,color);
+      rendering_program_p_l.setUniformValue("point_size", GLfloat(size_points));
       glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
       rendering_program_p_l.release();
       vao[3].release();
@@ -749,17 +753,10 @@ void Viewer::init()
 
   // Light default parameters
   glLineWidth(size_edges);
-  glPointSize(size_points);
   glEnable(GL_POLYGON_OFFSET_FILL);
   glPolygonOffset(1.0f,1.0f);
   glClearColor(1.0f,1.0f,1.0f,0.0f);
-  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
-  glEnable(GL_LIGHTING);
-
-  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-
-  glShadeModel(GL_FLAT);
   glDisable(GL_BLEND);
   glDisable(GL_LINE_SMOOTH);
   glDisable(GL_POLYGON_SMOOTH_HINT);
@@ -777,12 +774,10 @@ void Viewer::keyPressEvent(QKeyEvent *e)
     wireframe = !wireframe;
     if (wireframe)
     {
-      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       displayMessage("Wireframe.");
     }
     else
     {
-      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       displayMessage("Filled faces.");
     }
     update();

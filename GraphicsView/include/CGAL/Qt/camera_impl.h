@@ -3,16 +3,12 @@
  Copyright (c) 2018  GeometryFactory Sarl (France).
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
- This file is part of the CGAL::QGLViewer library version 2.7.0.
-
+ This file is part of a fork of the QGLViewer library version 2.7.0.
  http://www.libqglviewer.com - contact@libqglviewer.com
 
  This file may be used under the terms of the GNU General Public License 
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
-
- libCGAL::QGLViewer uses dual licensing. Commercial/proprietary software must
- purchase a libCGAL::QGLViewer Commercial License.
 
  This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -36,8 +32,8 @@
 #include <CGAL/Qt/domUtils.h>
 #include <CGAL/Qt/keyFrameInterpolator.h>
 
-using namespace std;
-using namespace CGAL::qglviewer;
+namespace CGAL{
+namespace qglviewer{
 
 /*! Default constructor.
 
@@ -45,7 +41,7 @@ using namespace CGAL::qglviewer;
  Camera::PERSPECTIVE, with a \c M_PI/4 fieldOfView().
 
  See IODistance(), physicalDistanceToScreen(), physicalScreenWidth() and
- focusDistance() documentations for default stereo parameter values. */
+ focusDistance(). */
 CGAL_INLINE_FUNCTION
 Camera::Camera(QObject *parent)
     : frame_(NULL), fieldOfView_(CGAL_PI / 4.0), modelViewMatrixIsUpToDate_(false),
@@ -79,9 +75,7 @@ Camera::Camera(QObject *parent)
   // Dummy values
   setScreenWidthAndHeight(600, 400);
 
-  // Stereo parameters
-  setIODistance(0.062);
-  setPhysicalScreenWidth(0.5);
+  
   // focusDistance is set from setFieldOfView()
 
   // #CONNECTION# Camera copy constructor
@@ -145,11 +139,6 @@ Camera &Camera::operator=(const Camera &camera) {
   setZNearCoefficient(camera.zNearCoefficient());
   setZClippingCoefficient(camera.zClippingCoefficient());
   setType(camera.type());
-
-  // Stereo parameters
-  setIODistance(camera.IODistance());
-  setFocusDistance(camera.focusDistance());
-  setPhysicalScreenWidth(camera.physicalScreenWidth());
 
   orthoCoef_ = camera.orthoCoef_;
   projectionMatrixIsUpToDate_ = false;
@@ -265,7 +254,6 @@ method. */
 CGAL_INLINE_FUNCTION
 void Camera::setFieldOfView(qreal fov) {
   fieldOfView_ = fov;
-  setFocusDistance(sceneRadius() / tan(fov / 2.0));
   projectionMatrixIsUpToDate_ = false;
 }
 
@@ -496,16 +484,9 @@ void Camera::computeModelViewMatrix() const {
  loop, you should call QOpenGLWidget::makeCurrent() before this method in order
  to activate the right OpenGL context. */
 CGAL_INLINE_FUNCTION
-void Camera::loadProjectionMatrix(bool reset) const {
+void Camera::loadProjectionMatrix(bool ) const {
   // WARNING: makeCurrent must be called by every calling method
-  gl()->glMatrixMode(GL_PROJECTION);
-
-  if (reset)
-    gl()->glLoadIdentity();
-
   computeProjectionMatrix();
-
-  gl()->glMultMatrixd(projectionMatrix_);
 }
 
 /*! Loads the OpenGL \c GL_MODELVIEW matrix with the modelView matrix
@@ -538,115 +519,13 @@ void Camera::loadProjectionMatrix(bool reset) const {
  loop, you should call QOpenGLWidget::makeCurrent() before this method in order
  to activate the right OpenGL context. */
 CGAL_INLINE_FUNCTION
-void Camera::loadModelViewMatrix(bool reset) const {
+void Camera::loadModelViewMatrix(bool ) const {
   // WARNING: makeCurrent must be called by every calling method
-  gl()->glMatrixMode(GL_MODELVIEW);
   computeModelViewMatrix();
-  if (reset)
-    gl()->glLoadMatrixd(modelViewMatrix_);
-  else
-    gl()->glMultMatrixd(modelViewMatrix_);
 }
 
-/*! Same as loadProjectionMatrix() but for a stereo setup.
 
- Only the Camera::PERSPECTIVE type() is supported for stereo mode. See
- CGAL::QGLViewer::setStereoDisplay().
 
- Uses focusDistance(), IODistance(), and physicalScreenWidth() to compute
- cameras offset and asymmetric frustums.
-
- When \p leftBuffer is \c true, computes the projection matrix associated to the
- left eye (right eye otherwise). See also loadModelViewMatrixStereo().
-
- See the <a href="../examples/stereoViewer.html">stereoViewer</a> and the <a
- href="../examples/contribs.html#anaglyph">anaglyph</a> examples for an
- illustration.
-
- To retrieve this matrix, use a code like:
- \code
- glMatrixMode(GL_PROJECTION);
- glPushMatrix();
- loadProjectionMatrixStereo(left_or_right);
- glGetDoublev(GL_PROJECTION_MATRIX, m);
- glPopMatrix();
- \endcode
- Note that getProjectionMatrix() always returns the mono-vision matrix.
-
- \attention glMatrixMode is set to \c GL_PROJECTION. */
-CGAL_INLINE_FUNCTION
-void Camera::loadProjectionMatrixStereo(bool leftBuffer) const {
-  qreal left, right, bottom, top;
-  qreal screenHalfWidth, halfWidth, side, shift, delta;
-
-  gl()->glMatrixMode(GL_PROJECTION);
-  gl()->glLoadIdentity();
-
-  switch (type()) {
-  case Camera::PERSPECTIVE:
-    // compute half width of screen,
-    // corresponding to zero parallax plane to deduce decay of cameras
-    screenHalfWidth = focusDistance() * tan(horizontalFieldOfView() / 2.0);
-    shift = screenHalfWidth * IODistance() / physicalScreenWidth();
-    // should be * current y  / y total
-    // to take into account that the window doesn't cover the entire screen
-
-    // compute half width of "view" at znear and the delta corresponding to
-    // the shifted camera to deduce what to set for asymmetric frustums
-    halfWidth = zNear() * tan(horizontalFieldOfView() / 2.0);
-    delta = shift * zNear() / focusDistance();
-    side = leftBuffer ? -1.0 : 1.0;
-
-    left = -halfWidth + side * delta;
-    right = halfWidth + side * delta;
-    top = halfWidth / aspectRatio();
-    bottom = -top;
-    gl()->glFrustum(left, right, bottom, top, zNear(), zFar());
-    break;
-
-  case Camera::ORTHOGRAPHIC:
-    qWarning("Camera::setProjectionMatrixStereo: Stereo not available with "
-             "Ortho mode");
-    break;
-  }
-}
-
-/*! Same as loadModelViewMatrix() but for a stereo setup.
-
- Only the Camera::PERSPECTIVE type() is supported for stereo mode. See
- CGAL::QGLViewer::setStereoDisplay().
-
- The modelView matrix is almost identical to the mono-vision one. It is simply
- translated along its horizontal axis by a value that depends on stereo
- parameters (see focusDistance(), IODistance(), and physicalScreenWidth()).
-
- When \p leftBuffer is \c true, computes the modelView matrix associated to the
- left eye (right eye otherwise).
-
- loadProjectionMatrixStereo() explains how to retrieve to resulting matrix.
-
- See the <a href="../examples/stereoViewer.html">stereoViewer</a> and the <a
- href="../examples/contribs.html#anaglyph">anaglyph</a> examples for an
- illustration.
-
- \attention glMatrixMode is set to \c GL_MODELVIEW. */
-CGAL_INLINE_FUNCTION
-void Camera::loadModelViewMatrixStereo(bool leftBuffer) const {
-  // WARNING: makeCurrent must be called by every calling method
-  gl()->glMatrixMode(GL_MODELVIEW);
-
-  qreal halfWidth = focusDistance() * tan(horizontalFieldOfView() / 2.0);
-  qreal shift =
-      halfWidth * IODistance() /
-      physicalScreenWidth(); // * current window width / full screen width
-
-  computeModelViewMatrix();
-  if (leftBuffer)
-    modelViewMatrix_[12] -= shift;
-  else
-    modelViewMatrix_[12] += shift;
-  gl()->glLoadMatrixd(modelViewMatrix_);
-}
 
 /*! Fills \p m with the Camera projection matrix values.
 
@@ -699,7 +578,6 @@ void Camera::getProjectionMatrix(GLfloat m[16]) const {
 CGAL_INLINE_FUNCTION
 void Camera::getModelViewMatrix(GLdouble m[16]) const {
   // May not be needed, but easier like this.
-  // Prevents from retrieving matrix in stereo mode -> overwrites shifted value.
   computeModelViewMatrix();
   for (unsigned short i = 0; i < 16; ++i)
     m[i] = modelViewMatrix_[i];
@@ -759,8 +637,6 @@ void Camera::setSceneRadius(qreal radius) {
 
   sceneRadius_ = radius;
   projectionMatrixIsUpToDate_ = false;
-
-  setFocusDistance(sceneRadius() / tan(fieldOfView() / 2.0));
 
   frame()->setFlySpeed(0.01 * sceneRadius());
 }
@@ -1016,7 +892,7 @@ CGAL_INLINE_FUNCTION
 Vec Camera::pointUnderPixel(const QPoint &pixel, bool &found) const {
   float depth;
   // Qt uses upper corner for its origin while GL uses the lower corner.
-  dynamic_cast<QOpenGLFunctions_2_1*>(parent())->glReadPixels(pixel.x(), screenHeight() - 1 - pixel.y(), 1, 1,
+  dynamic_cast<QOpenGLFunctions*>(parent())->glReadPixels(pixel.x(), screenHeight() - 1 - pixel.y(), 1, 1,
                GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
   found = depth < 1.0;
   Vec point(pixel.x(), pixel.y(), depth);
@@ -1602,12 +1478,10 @@ int project(qreal objx, qreal objy, qreal objz, GLdouble *modelview,
       fTempo[1]=modelview[1]*objx+modelview[5]*objy+modelview[9]*objz+modelview[13];
       fTempo[2]=modelview[2]*objx+modelview[6]*objy+modelview[10]*objz+modelview[14];
       fTempo[3]=modelview[3]*objx+modelview[7]*objy+modelview[11]*objz+modelview[15];
-      //Projection transform, the final row of projection matrix is always [0 0 -1 0]
-      //so we optimize for that.
       fTempo[4]=projection[0]*fTempo[0]+projection[4]*fTempo[1]+projection[8]*fTempo[2]+projection[12]*fTempo[3];
       fTempo[5]=projection[1]*fTempo[0]+projection[5]*fTempo[1]+projection[9]*fTempo[2]+projection[13]*fTempo[3];
       fTempo[6]=projection[2]*fTempo[0]+projection[6]*fTempo[1]+projection[10]*fTempo[2]+projection[14]*fTempo[3];
-      fTempo[7]=-fTempo[2];
+      fTempo[7]=projection[3]*fTempo[0]+projection[7]*fTempo[1]+projection[11]*fTempo[2]+projection[15]*fTempo[3];
       //The result normalizes between -1 and 1
       if(fTempo[7]==0.0)	//The w value
          return 0;
@@ -1948,7 +1822,7 @@ int unProject(GLdouble winx, GLdouble winy, GLdouble winz, GLdouble *modelview, 
 CGAL_INLINE_FUNCTION
 Vec Camera::projectedCoordinatesOf(const Vec& src, const Frame* frame) const
 {
-        GLdouble x,y,z;
+    GLdouble x = 0.f, y = 0.f, z = 0.f;
     static GLint viewport[4];
     getViewport(viewport);
 
@@ -1990,7 +1864,7 @@ Vec Camera::projectedCoordinatesOf(const Vec& src, const Frame* frame) const
 CGAL_INLINE_FUNCTION
 Vec Camera::unprojectedCoordinatesOf(const Vec& src, const Frame* frame) const
 {
-    GLdouble x,y,z;
+    GLdouble x = 0.f, y = 0.f, z = 0.f;
     static GLint viewport[4];
     getViewport(viewport);
     unProject(src.x,src.y,src.z, modelViewMatrix_,  projectionMatrix_,  viewport,  &x,&y,&z);
@@ -2191,14 +2065,7 @@ QDomElement Camera::domElement(const QString &name,
   }
   de.appendChild(paramNode);
 
-  QDomElement stereoNode = document.createElement("Stereo");
-  stereoNode.setAttribute("IODist", QString::number(IODistance()));
-  stereoNode.setAttribute("focusDistance", QString::number(focusDistance()));
-  stereoNode.setAttribute("physScreenWidth",
-                          QString::number(physicalScreenWidth()));
-  de.appendChild(stereoNode);
-
-  de.appendChild(frame()->domElement("ManipulatedCameraFrame", document));
+    de.appendChild(frame()->domElement("ManipulatedCameraFrame", document));
 
   // KeyFrame paths
   for (QMap<unsigned int, KeyFrameInterpolator *>::ConstIterator
@@ -2282,13 +2149,6 @@ void Camera::initFromDOMElement(const QDomElement &element) {
     if (child.tagName() == "ManipulatedCameraFrame")
       frame()->initFromDOMElement(child);
 
-    if (child.tagName() == "Stereo") {
-      setIODistance(DomUtils::qrealFromDom(child, "IODist", 0.062));
-      setFocusDistance(
-          DomUtils::qrealFromDom(child, "focusDistance", focusDistance()));
-      setPhysicalScreenWidth(
-          DomUtils::qrealFromDom(child, "physScreenWidth", 0.5));
-    }
 
     if (child.tagName() == "KeyFrameInterpolator") {
       unsigned int index = DomUtils::uintFromDom(child, "index", 0);
@@ -2463,10 +2323,6 @@ qreal Camera::horizontalFieldOfView() const {
   return 2.0 * atan(tan(fieldOfView() / 2.0) * aspectRatio());
 }
 
-CGAL_INLINE_FUNCTION
-qreal Camera::physicalDistanceToScreen() const {
-  return physicalScreenWidth() / 2.0 / tan(horizontalFieldOfView() / 2.0);
-}
 
 
 CGAL_INLINE_FUNCTION
@@ -2480,8 +2336,8 @@ void Camera::setFrustum(double frustum[6])
     double B = (r+l)/(r-l);
     double C = 2*n/(t-b);
     double D = (t+b)/(t-b);
-    float E = -(f+n)/(f-n);
-    float F = -2*(f*n)/(f-n);
+    double E = -(f+n)/(f-n);
+    double F = -2*(f*n)/(f-n);
     projectionMatrix_[0] = A; projectionMatrix_[4] = 0; projectionMatrix_[8] = B ; projectionMatrix_[12] = 0;
     projectionMatrix_[1] = 0; projectionMatrix_[5] = C; projectionMatrix_[9] = D ; projectionMatrix_[13] = 0;
     projectionMatrix_[2] = 0; projectionMatrix_[6] = 0; projectionMatrix_[10] = E ; projectionMatrix_[14] = F;
@@ -2493,8 +2349,8 @@ void Camera::setFrustum(double frustum[6])
     double B = -(r+l)/(r-l);
     double C = 2/(t-b);
     double D = -(t+b)/(t-b);
-    float E = -(f+n)/(f-n);
-    float F = -2/(f-n);
+    double E = -(f+n)/(f-n);
+    double F = -2/(f-n);
     projectionMatrix_[0] = A; projectionMatrix_[1] = 0; projectionMatrix_[2] = 0 ; projectionMatrix_[3] = 0;
     projectionMatrix_[4] = 0; projectionMatrix_[5] = C; projectionMatrix_[6] = 0 ; projectionMatrix_[7] = 0;
     projectionMatrix_[8] = 0; projectionMatrix_[9] = 0; projectionMatrix_[10] = F ; projectionMatrix_[11] = 0;
@@ -2539,4 +2395,4 @@ void Camera::getFrustum(double frustum[6])
   frustum[4] = n;
   frustum[5] = f;
 }
-
+}}//end of namespace

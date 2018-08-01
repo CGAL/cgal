@@ -181,10 +181,8 @@ void Polyhedron_demo_kernel_plugin::on_actionKernel_triggered()
         vpm[fd] = CGAL::ORIGIN + normal / distance_to_origin  + translate;
       }
       CGAL::copy_face_graph(dual, *pKernel,
-                            CGAL::Emptyset_iterator(),
-                            CGAL::Emptyset_iterator(),
-                            CGAL::Emptyset_iterator(),
-                            boost::make_assoc_property_map(vpm));
+                            CGAL::parameters::vertex_point_map(
+                            boost::make_assoc_property_map(vpm)));
 
     
       // pKernel->inside_out();

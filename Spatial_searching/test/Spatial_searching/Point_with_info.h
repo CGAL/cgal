@@ -38,11 +38,11 @@ template <class Point>
 const Point& get_point(const My_point_with_info<Point>& p) {return get(Point_property_map<Point>(),p);}
 
 template <class Point>
-struct Create_point_with_info : public CGAL::unary_function<Point,Point>{
+struct Create_point_with_info : public CGAL::cpp98::unary_function<Point,Point>{
   const Point& operator() (const Point& p) const { return p; }
 };
 
 template <class Point>
-struct Create_point_with_info<My_point_with_info<Point> > : public CGAL::unary_function<Point,My_point_with_info<Point> >{
+struct Create_point_with_info<My_point_with_info<Point> > : public CGAL::cpp98::unary_function<Point,My_point_with_info<Point> >{
   My_point_with_info<Point> operator() (const Point& p) const { return My_point_with_info<Point>(p); }
 };

@@ -27,13 +27,15 @@
 #include <CGAL/Classification/Feature_base.h>
 #include <CGAL/Classification/Local_eigen_analysis.h>
 
+/// \cond SKIP_IN_MANUAL
+#ifndef CGAL_NO_DEPRECATED_CODE
+
 namespace CGAL {
 
 namespace Classification {
 
 namespace Feature {
 
-/// \cond SKIP_IN_MANUAL
 class Eigen_feature : public Feature_base
 {
 protected:
@@ -77,7 +79,6 @@ public:
   }
 
 };
-/// \endcond
   
   /*!
     \ingroup PkgClassificationFeatures
@@ -92,6 +93,7 @@ public:
 
     Its default name is "linearity".
   */
+CGAL_DEPRECATED_MSG("you are using the deprecated feature Linearity, please update your code with Eigenvalue instead")
 class Linearity
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
@@ -116,7 +118,6 @@ public:
     this->init(input.size(), eigen);
   }
 
-  /// \cond SKIP_IN_MANUAL
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
@@ -125,7 +126,6 @@ public:
     else
       return ((ev[2] - ev[1]) / ev[2]);
   }
-  /// \endcond
 };
 
   /*!
@@ -141,6 +141,7 @@ public:
 
     Its default name is "planarity".
   */
+CGAL_DEPRECATED_MSG("you are using the deprecated feature Planarity, please update your code with Eigenvalue instead")
 class Planarity
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
@@ -163,7 +164,7 @@ public:
     this->set_name("planarity");
     this->init(input.size(), eigen);
   }
-  /// \cond SKIP_IN_MANUAL
+
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
@@ -172,7 +173,6 @@ public:
     else
       return ((ev[1] - ev[0]) / ev[2]);
   }
-  /// \endcond
  
 };
 
@@ -189,6 +189,7 @@ public:
 
     Its default name is "sphericity".
   */
+CGAL_DEPRECATED_MSG("you are using the deprecated feature Sphericity, please update your code with Eigenvalue instead")
 class Sphericity
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
@@ -211,7 +212,7 @@ public:
     this->set_name("sphericity");
     this->init(input.size(), eigen);
   }
-  /// \cond SKIP_IN_MANUAL
+
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
@@ -220,7 +221,7 @@ public:
     else
       return (ev[0] / ev[2]);
   }
-  /// \endcond
+
 };
 
   /*!
@@ -236,6 +237,7 @@ public:
 
     Its default name is "omnivariance".
   */
+CGAL_DEPRECATED_MSG("you are using the deprecated feature Omnivariance, please update your code with Eigenvalue instead")
 class Omnivariance
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
@@ -258,13 +260,13 @@ public:
     this->set_name("omnivariance");
     this->init(input.size(), eigen);
   }
-  /// \cond SKIP_IN_MANUAL
+
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
     return (std::pow (CGAL::abs(ev[0] * ev[1] * ev[2]), 0.333333333f));
   }
-  /// \endcond
+
 };
 
   /*!
@@ -280,6 +282,7 @@ public:
     
     Its default name is "anisotropy".
   */
+CGAL_DEPRECATED_MSG("you are using the deprecated feature Anisotropy, please update your code with Eigenvalue instead")
 class Anisotropy
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
@@ -302,7 +305,7 @@ public:
     this->set_name("anisotropy");
     this->init(input.size(), eigen);
   }
-  /// \cond SKIP_IN_MANUAL
+
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
@@ -311,7 +314,7 @@ public:
     else
       return ((ev[2] - ev[0]) / ev[2]);
   }
-  /// \endcond
+
 };
 
   /*!
@@ -327,6 +330,7 @@ public:
     
     Its default name is "eigentropy".
   */
+CGAL_DEPRECATED_MSG("you are using the deprecated feature Eigentropy, please update your code with Eigenvalue instead")
 class Eigentropy
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
@@ -349,7 +353,7 @@ public:
     this->set_name("eigentropy");
     this->init(input.size(), eigen);
   }
-  /// \cond SKIP_IN_MANUAL
+
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
@@ -362,52 +366,9 @@ public:
               - ev[1] * std::log(ev[1])
               - ev[2] * std::log(ev[2]));
   }
-  /// \endcond
+
 };
 
-  /*!
-    \ingroup PkgClassificationFeatures
-
-    %Feature based on the eigenvalues of the covariance matrix of a
-    local neighborhood. The sum of the eigenvalues is defined, for the
-    3 eigenvalues \f$\lambda_1 \ge \lambda_2 \ge \lambda_3 \ge 0\f$,
-    as:
-
-    \f[
-    \lambda_1 + \lambda_2 + \lambda_3
-    \f]
-
-    Its default name is "sum_eigen".
-  */
-class Sum_eigenvalues
-#ifdef DOXYGEN_RUNNING
-  : public Feature_base
-#else
-  : public Eigen_feature
-#endif
-{
-public:
-  /*!
-    Constructs the feature.
-
-    \param input point range.
-    \param eigen class with precomputed eigenvectors and eigenvalues.
-  */
-  template <typename InputRange>
-  Sum_eigenvalues (const InputRange& input,
-                   const Local_eigen_analysis& eigen)
-    : Eigen_feature(input, eigen)
-  {
-    this->set_name("sum_eigen");
-    this->init(input.size(), eigen);
-  }
-  /// \cond SKIP_IN_MANUAL
-  virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
-  {
-    return eigen.sum_of_eigenvalues(i);
-  }
-  /// \endcond
-};
 
   /*!
     \ingroup PkgClassificationFeatures
@@ -423,6 +384,7 @@ public:
 
     Its default name is "surface_variation".
   */
+CGAL_DEPRECATED_MSG("you are using the deprecated feature Surface_variation, please update your code with Eigenvalue instead")
 class Surface_variation
 #ifdef DOXYGEN_RUNNING
   : public Feature_base
@@ -445,7 +407,7 @@ public:
     this->set_name("surface_variation");
     this->init(input.size(), eigen);
   }
-  /// \cond SKIP_IN_MANUAL
+
   virtual float get_value (const Local_eigen_analysis& eigen, std::size_t i)
   {
     const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
@@ -454,7 +416,7 @@ public:
     else
       return (ev[0] / (ev[0] + ev[1] + ev[2]));
   }
-  /// \endcond
+
 };
 
 } // namespace Feature
@@ -462,5 +424,8 @@ public:
 } // namespace Classification
 
 } // namespace CGAL
+
+#endif
+/// \endcond
 
 #endif // CGAL_CLASSIFICATION_FEATURES_EIGEN_H

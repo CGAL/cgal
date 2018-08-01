@@ -42,7 +42,7 @@ if ( CGAL_FOUND )
   endif()
 
   # Executables that do *not* require EIGEN or LAPACK
-  create_single_source_cgal_program( "average_spacing_example.cpp" )
+    create_single_source_cgal_program( "average_spacing_example.cpp" )
   create_single_source_cgal_program( "bilateral_smooth_point_set_example.cpp" )
   create_single_source_cgal_program( "grid_simplification_example.cpp" )
   create_single_source_cgal_program( "grid_simplify_indices.cpp" )
@@ -57,6 +57,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "wlop_simplify_and_regularize_point_set_example.cpp" )
   create_single_source_cgal_program( "edge_aware_upsample_point_set_example.cpp" )
   create_single_source_cgal_program( "structuring_example.cpp" )
+  create_single_source_cgal_program( "callback_example.cpp" )
 
   set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)    
   create_single_source_cgal_program( "read_ply_points_with_colors_example.cpp" CXX_FEATURES ${needed_cxx_features} )
@@ -103,7 +104,8 @@ if ( CGAL_FOUND )
       average_spacing_example
       normals_example
       jet_smoothing_example
-      normal_estimation)
+      normal_estimation
+      callback_example)
     if(TBB_FOUND AND TARGET ${target})
       CGAL_target_use_TBB(${target})
     endif()

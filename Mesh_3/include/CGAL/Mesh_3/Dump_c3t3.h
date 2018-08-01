@@ -26,16 +26,19 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <string>
 #include <CGAL/Mesh_3/io_signature.h>
 #include <CGAL/Mesh_3/Mesh_complex_3_in_triangulation_3_base.h>
+#include <CGAL/IO/File_medit.h>
+
 #include <CGAL/is_streamable.h>
+
 #include <fstream>
+#include <string>
 
 namespace CGAL {
 
-template <typename C3t3, 
-          bool is_streamable = 
+template <typename C3t3,
+          bool is_streamable =
             is_streamable<typename C3t3::Triangulation::Vertex>::value &&
             is_streamable<typename C3t3::Triangulation::Cell>::value
             &&
@@ -46,11 +49,12 @@ template <typename C3t3,
              Output_rep<typename C3t3::Subdomain_index>::is_specialized)
           >
 struct Dump_c3t3 {
-  void dump_c3t3(const C3t3& c3t3, std::string prefix) const {
+  void dump_c3t3(const C3t3& c3t3, std::string prefix) const
+  {
     std::clog<<"======dump c3t3===== to: " << prefix << std::endl;
     std::ofstream medit_file((prefix+".mesh").c_str());
     medit_file.precision(17);
-    CGAL::output_to_medit(medit_file, c3t3, false, true);
+    CGAL::output_to_medit(medit_file, c3t3, false /*rebind*/, true /*show_patches*/);
     medit_file.close();
 
     std::string bin_filename = prefix;
@@ -66,7 +70,8 @@ struct Dump_c3t3 {
 }; // end struct template Dump_c3t3<C3t3, bool>
 
 template <typename C3t3>
-struct Dump_c3t3<C3t3, false> {
+struct Dump_c3t3<C3t3, false>
+{
   void dump_c3t3(const C3t3&, std::string) {
     std::cerr << "Warning " << __FILE__ << ":" << __LINE__ << "\n"
               << "  the c3t3 object of following type:\n"
@@ -97,7 +102,7 @@ struct Dump_c3t3<C3t3, false> {
     if(!is_streamable<typename C3t3::Subdomain_index>::value &&
        !CGAL::Output_rep<typename C3t3::Subdomain_index>::is_specialized)
     {
-      std::cerr << "     - C3t3::Subdomain_index is not streamable\n";      
+      std::cerr << "     - C3t3::Subdomain_index is not streamable\n";
       std::cerr << "       "
                 << typeid(typename C3t3::Subdomain_index).name()
                 << "\n";
@@ -106,8 +111,9 @@ struct Dump_c3t3<C3t3, false> {
 }; // end struct template specialization Dump_c3t3<C3t3, false>
 
 template <typename C3t3>
-void dump_c3t3_edges(const C3t3& c3t3, std::string prefix) {
-  typename C3t3::Triangulation::Geom_traits::Construct_point_3 wp2p =
+void dump_c3t3_edges(const C3t3& c3t3, std::string prefix)
+{
+  typename C3t3::Triangulation::Geom_traits::Construct_point_3 cp =
     c3t3.triangulation().geom_traits().construct_point_3_object();
 
   std::ofstream file((prefix+".polylines.txt").c_str());
@@ -120,12 +126,14 @@ void dump_c3t3_edges(const C3t3& c3t3, std::string prefix) {
     const typename C3t3::Triangulation::Cell_handle c = edge_it->first;
     const int i = edge_it->second;
     const int j = edge_it->third;
-    file << "2 " << wp2p(c->vertex(i)->point())
-         << " "  << wp2p(c->vertex(j)->point()) << "\n";
+    const typename C3t3::Triangulation::Weighted_point& ei = c3t3.triangulation().point(c, i);
+    const typename C3t3::Triangulation::Weighted_point& ej = c3t3.triangulation().point(c, j);
+    file << "2 " << cp(ei) << " "  << cp(ej) << "\n";
   }
 }
 template <typename C3t3>
-void dump_c3t3(const C3t3& c3t3, std::string prefix) {
+void dump_c3t3(const C3t3& c3t3, std::string prefix)
+{
   if(!prefix.empty()) {
     Dump_c3t3<C3t3> dump;
     dump.dump_c3t3(c3t3, prefix);

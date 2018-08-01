@@ -9,7 +9,7 @@
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
-#include "opengl_tools.h"
+
 
 #include "Messages_interface.h"
 #include "Scene_points_with_normal_item.h"
@@ -246,10 +246,12 @@ public:
 
     const Kernel::Point_3& p = point_set->point (*it);
     CGAL::qglviewer::Vec vp (p.x (), p.y (), p.z ());
-    CGAL::qglviewer::Vec vsp = camera->projectedCoordinatesOf (vp + offset);
     bool now_selected = false;
     if(!ui_widget.box->isChecked())
+    {
+      CGAL::qglviewer::Vec vsp = camera->projectedCoordinatesOf (vp + offset);
       now_selected = visualizer->is_selected (vsp);
+    }
     else if(edit_box)
     {
       if(p.x() >= edit_box->point(0,0) - offset.x &&

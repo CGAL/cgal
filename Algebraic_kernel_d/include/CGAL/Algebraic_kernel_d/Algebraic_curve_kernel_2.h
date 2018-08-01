@@ -194,7 +194,7 @@ protected:
    
     //! polynomial canonicalizer, needed for the cache
     template <class Poly> 
-    struct Poly_canonicalizer : public CGAL::unary_function< Poly, Poly >
+    struct Poly_canonicalizer : public CGAL::cpp98::unary_function< Poly, Poly >
     {
     // use Polynomial_traits_d<>::Canonicalize ?
         Poly operator()(Poly p) 
@@ -356,7 +356,7 @@ public:
     // Composition of two unary functors
     template<typename InnerFunctor,typename OuterFunctor>
       class Unary_compose 
-      : public CGAL::unary_function<typename InnerFunctor::argument_type,
+      : public CGAL::cpp98::unary_function<typename InnerFunctor::argument_type,
                                    typename OuterFunctor::result_type> {
 				     
     public:
@@ -419,7 +419,7 @@ public:
      * when appropriate
      */
     class Construct_curve_2 :
-        public CGAL::unary_function< Polynomial_2, Curve_analysis_2 > {
+        public CGAL::cpp98::unary_function< Polynomial_2, Curve_analysis_2 > {
 
     public:
 
@@ -443,7 +443,7 @@ public:
      * caching is used when appropriate
      */
     class Construct_curve_pair_2 :
-            public CGAL::binary_function<Curve_analysis_2, Curve_analysis_2,
+            public CGAL::cpp98::binary_function<Curve_analysis_2, Curve_analysis_2,
                 Curve_pair_analysis_2> {
 
     public:
@@ -636,7 +636,7 @@ public:
 
     
     class Compute_polynomial_x_2 :
-      public CGAL::unary_function<Algebraic_real_2, Polynomial_1> {
+      public CGAL::cpp98::unary_function<Algebraic_real_2, Polynomial_1> {
 
     public:
 
@@ -656,7 +656,7 @@ public:
 			       compute_polynomial_x_2_object);
 
     class Compute_polynomial_y_2 :
-      public CGAL::unary_function<Algebraic_real_2, Polynomial_1> {
+      public CGAL::cpp98::unary_function<Algebraic_real_2, Polynomial_1> {
 
     public:
 
@@ -676,7 +676,7 @@ public:
 			       compute_polynomial_y_2_object);
 
 
-    class Isolate_x_2 : public CGAL::binary_function<Algebraic_real_2,
+    class Isolate_x_2 : public CGAL::cpp98::binary_function<Algebraic_real_2,
                                                     Polynomial_1,
                                                     std::pair<Bound,Bound> > {
       
@@ -699,7 +699,7 @@ public:
     CGAL_Algebraic_Kernel_cons(Isolate_x_2, 
 			       isolate_x_2_object);
 
-    class Isolate_y_2 : public CGAL::binary_function<Algebraic_real_2,
+    class Isolate_y_2 : public CGAL::cpp98::binary_function<Algebraic_real_2,
                                                     Polynomial_1,
                                                     std::pair<Bound,Bound> > {
       
@@ -887,7 +887,7 @@ public:
             
     //! returns the x-coordinate of an \c Algebraic_real_2 object
     class Compute_x_2 :
-        public CGAL::unary_function<Algebraic_real_2, Algebraic_real_1> {
+        public CGAL::cpp98::unary_function<Algebraic_real_2, Algebraic_real_1> {
 
     public:
 
@@ -922,7 +922,7 @@ public:
      * return approximation of the y-coordinate. 
      */
     class Compute_y_2 :
-        public CGAL::unary_function<Algebraic_real_2, Algebraic_real_1> {
+        public CGAL::cpp98::unary_function<Algebraic_real_2, Algebraic_real_1> {
         
     public:
         
@@ -945,7 +945,7 @@ public:
 #endif
 
     class Approximate_absolute_x_2 
-    : public CGAL::binary_function<Algebraic_real_2,int,std::pair<Bound,Bound> >{
+    : public CGAL::cpp98::binary_function<Algebraic_real_2,int,std::pair<Bound,Bound> >{
     
     public:
 
@@ -968,7 +968,7 @@ public:
                                approximate_absolute_x_2_object);
 
     class Approximate_relative_x_2 
-    : public CGAL::binary_function<Algebraic_real_2,int,std::pair<Bound,Bound> >{
+    : public CGAL::cpp98::binary_function<Algebraic_real_2,int,std::pair<Bound,Bound> >{
     
     public:
         
@@ -990,7 +990,7 @@ public:
                                approximate_relative_x_2_object);
 
     class Approximate_absolute_y_2 
-    : public CGAL::binary_function<Algebraic_real_2,int,std::pair<Bound,Bound> >{
+    : public CGAL::cpp98::binary_function<Algebraic_real_2,int,std::pair<Bound,Bound> >{
 
     public:
 
@@ -1020,7 +1020,7 @@ public:
                                approximate_absolute_y_2_object);
 
     class Approximate_relative_y_2 
-    : public CGAL::binary_function<Algebraic_real_2,int,std::pair<Bound,Bound> >{
+    : public CGAL::cpp98::binary_function<Algebraic_real_2,int,std::pair<Bound,Bound> >{
         
     public:
         
@@ -1171,7 +1171,7 @@ public:
     
     //! \brief comparison of x-coordinates 
     class Compare_x_2 :
-         public CGAL::binary_function<Algebraic_real_2, Algebraic_real_2,
+         public CGAL::cpp98::binary_function<Algebraic_real_2, Algebraic_real_2,
                                       Comparison_result > {
 
     public:
@@ -1264,7 +1264,7 @@ public:
      * If possible, it is recommended to avoid this functor for efficiency.}
      */
     class Compare_y_2 :
-        public CGAL::binary_function< Algebraic_real_2, Algebraic_real_2,
+        public CGAL::cpp98::binary_function< Algebraic_real_2, Algebraic_real_2,
                 Comparison_result > {
     
     public:
@@ -1376,7 +1376,7 @@ public:
      * to have equal x-coordinates, thus only the y-coordinates are compared.
      */
     class Compare_xy_2 :
-          public CGAL::binary_function<Algebraic_real_2, Algebraic_real_2,
+          public CGAL::cpp98::binary_function<Algebraic_real_2, Algebraic_real_2,
                 Comparison_result > {
 
     public:
@@ -1507,7 +1507,7 @@ public:
      * the polynomial \c p is square free.
      */
     class Has_finite_number_of_self_intersections_2 :
-            public CGAL::unary_function< Polynomial_2, bool > {
+            public CGAL::cpp98::unary_function< Polynomial_2, bool > {
         
     public:
 
@@ -1536,7 +1536,7 @@ public:
      * the two polynomials \c f and \c g are coprime.
      */ 
     class Has_finite_number_of_intersections_2 :
-        public CGAL::binary_function< Polynomial_2, Polynomial_2, bool > {
+        public CGAL::cpp98::binary_function< Polynomial_2, Polynomial_2, bool > {
          
     public:
 
@@ -1720,7 +1720,7 @@ public:
     //! Non-Algebraic name
     typedef Algebraic_real_2 Coordinate_2;
 
-    class Is_square_free_2 : public CGAL::unary_function<Polynomial_2,bool> {
+    class Is_square_free_2 : public CGAL::cpp98::unary_function<Polynomial_2,bool> {
 
     public:
 
@@ -1742,7 +1742,7 @@ public:
     typedef Has_finite_number_of_intersections_2 Is_coprime_2;
     CGAL_Algebraic_Kernel_cons(Is_coprime_2, is_coprime_2_object);
 
-    class Make_square_free_2 : public CGAL::unary_function<Polynomial_2,
+    class Make_square_free_2 : public CGAL::cpp98::unary_function<Polynomial_2,
                                                           Polynomial_2> {
 
     public:
@@ -1807,9 +1807,9 @@ public:
      * In pariticular, each singular point is x-critical.
      */
     class X_critical_points_2 : 
-        public CGAL::binary_function< Curve_analysis_2,
-            CGAL::iterator<std::output_iterator_tag, Algebraic_real_2>,
-            CGAL::iterator<std::output_iterator_tag, Algebraic_real_2> > {
+        public CGAL::cpp98::binary_function< Curve_analysis_2,
+            CGAL::cpp98::iterator<std::output_iterator_tag, Algebraic_real_2>,
+            CGAL::cpp98::iterator<std::output_iterator_tag, Algebraic_real_2> > {
        
     public:
         
@@ -1886,9 +1886,9 @@ public:
      * In pariticular, each singular point is y-critical.
      */
     class Y_critical_points_2 :
-        public CGAL::binary_function< Curve_analysis_2,
-            CGAL::iterator<std::output_iterator_tag, Algebraic_real_2>,
-            CGAL::iterator<std::output_iterator_tag, Algebraic_real_2> > {
+        public CGAL::cpp98::binary_function< Curve_analysis_2,
+            CGAL::cpp98::iterator<std::output_iterator_tag, Algebraic_real_2>,
+            CGAL::cpp98::iterator<std::output_iterator_tag, Algebraic_real_2> > {
         
 
     public:
@@ -1981,7 +1981,7 @@ public:
     // Overload the Sign_at_1 functor, to enable filter steps in the
     // Curve analysis in a coherent way
     class Sign_at_1 
-      : public::CGAL::binary_function<Polynomial_1,Algebraic_real_1,Sign> {
+      : public::CGAL::cpp98::binary_function<Polynomial_1,Algebraic_real_1,Sign> {
 
       
     public:
@@ -2058,7 +2058,7 @@ public:
      * curve. Returns a value convertible to \c CGAL::Sign
      */
     class Sign_at_2 :
-        public CGAL::binary_function<Polynomial_2, Algebraic_real_2, Sign > {
+        public CGAL::cpp98::binary_function<Polynomial_2, Algebraic_real_2, Sign > {
 
     public:
         
@@ -2154,7 +2154,7 @@ public:
     CGAL_Algebraic_Kernel_pred(Sign_at_2, sign_at_2_object);
 
     class Is_zero_at_2 
-      : public CGAL::binary_function<Polynomial_2,Algebraic_real_2,bool> {
+      : public CGAL::cpp98::binary_function<Polynomial_2,Algebraic_real_2,bool> {
     
     public:
       
@@ -2498,7 +2498,7 @@ public:
     CGAL_Algebraic_Kernel_cons(Solve_2, solve_2_object);
 
     class Number_of_solutions_2 
-      : public CGAL::binary_function<Polynomial_2,Polynomial_2,size_type> {
+      : public CGAL::cpp98::binary_function<Polynomial_2,Polynomial_2,size_type> {
     
     public:
       
@@ -2524,7 +2524,7 @@ public:
     // Functor used to evaluate a Polynomial_2 in a Bound, up to a
     // constant factor
     class Evaluate_utcf_2 
-      : public CGAL::binary_function<Polynomial_2,Bound,Polynomial_1> {
+      : public CGAL::cpp98::binary_function<Polynomial_2,Bound,Polynomial_1> {
     
     public:
       
@@ -2600,7 +2600,7 @@ public:
 
     //! Refines the x-coordinate of an Algebraic_real_2 object
     class Refine_x_2 :
-        public CGAL::unary_function<Algebraic_real_2, void> {
+        public CGAL::cpp98::unary_function<Algebraic_real_2, void> {
 
     public:
         
@@ -2624,7 +2624,7 @@ public:
     CGAL_Algebraic_Kernel_pred(Refine_x_2, refine_x_2_object);
     
     class Refine_y_2 :
-        public CGAL::unary_function<Algebraic_real_2, void> {
+        public CGAL::cpp98::unary_function<Algebraic_real_2, void> {
 
     public:
 

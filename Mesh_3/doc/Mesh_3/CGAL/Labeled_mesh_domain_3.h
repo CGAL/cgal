@@ -7,12 +7,12 @@ namespace CGAL {
 
 This class is a model of concept `MeshDomain_3`.
 
-Any boundary facet is labeled <a,b>, a<b, where a and b are the
-tags of its incident subdomain.
+Any boundary facet is labeled <a,b>, with a<b, where a and b are the
+tags of its incident subdomains.
 Thus, a boundary facet of the domain is labeled <0,b>, where b!=0.
 
-This class includes a <em>labeling function</em> that provides, the subdomain index of any
-query point. An intersection between a segment and bounding
+This class includes a <em>labeling function</em> that provides the index of the subdomain in which any
+query point lies. An intersection between a segment and bounding
 surfaces is detected when both segment endpoints are associated with different
 values of subdomain indices. The intersection is then constructed by bisection.
 The bisection stops when the query segment is shorter than an error bound
@@ -183,8 +183,7 @@ be a `CGAL::Image_3` object.
 
 <li><b>`parameters::image_values_to_subdom_indices`</b> a function or
   a function object, compatible with the signature
-  `Subdomain_index(word_type)`, where the type `word_type` is the type
-  of words of the 3D image. This function returns the subdomain index
+  `Subdomain_index(double)`. This function returns the subdomain index
   corresponding to a pixel value. If this parameter is used, then the
   parameter `iso_value` is ignored.
 
@@ -269,10 +268,10 @@ bisection is stopped when the length of the intersected segment is less than the
 `bounding_sphere`.
 \deprecated This constructor is deprecated since CGAL-4.13, and
 replaced by the constructor using the <em>Boost Parameter Library</em>.
-*/ 
+*/
 Labeled_mesh_domain_3(Labeling_function f,
-                       const Sphere_3& bounding_sphere,
-                       const FT& relative_error_bound = FT(1e-3));
+                      const Sphere_3& bounding_sphere,
+                      const FT& relative_error_bound = FT(1e-3));
 
 /*!
 \brief Construction from a labeling function, a bounding box and a relative error bound.
@@ -285,8 +284,8 @@ bisection is stopped when the length of the intersected segment is less than the
 replaced by the constructor using the <em>Boost Parameter Library</em>.
 */
 Labeled_mesh_domain_3(Labeling_function f,
-                       const Bbox_3& bbox,
-                       const FT& relative_error_bound = FT(1e-3));
+                      const Bbox_3& bbox,
+                      const FT& relative_error_bound = FT(1e-3));
 
 /*!
 \brief Construction from a function, a bounding Iso_cuboid_3 and a relative error bound.
@@ -299,8 +298,8 @@ bisection is stopped when the length of the intersected segment is less than the
 replaced by the constructor using the <em>Boost Parameter Library</em>.
 */
 Labeled_mesh_domain_3(Labeling_function f,
-                       const Iso_cuboid_3& bbox,
-                       const FT& relative_error_bound = FT(1e-3));
+                      const Iso_cuboid_3& bbox,
+                      const FT& relative_error_bound = FT(1e-3));
 
 /// @}
 

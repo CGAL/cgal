@@ -42,8 +42,8 @@
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
 
 namespace CGAL {
-
-namespace internal { namespace Mesh_3 {
+namespace Mesh_3 {
+namespace internal {
 
 template <typename K, typename NT>
 struct Returns_midpoint {
@@ -266,9 +266,8 @@ struct Enriched_pixel {
   Image_word_type word;
   bool on_edge_of_the_cube;
 }; // end struct template Enriched_pixel<Pix,P,D,C>
-}} // namespaces: end Mesh_3, end internal
 
-namespace Mesh_3{
+} // end namespace internal
 
 template<typename P, typename G>
 struct Polyline_visitor
@@ -464,12 +463,13 @@ polylines_to_protect
 
   Graph graph;
 
-  using namespace CGAL::internal::Mesh_3;
+  using namespace CGAL::Mesh_3::internal;
 
-  typedef internal::Mesh_3::Graph_manipulations<Graph,
-                                                Point_3,
-                                                Image_word_type,
-                                                InterpolationFunctor> G_manip;
+  typedef Graph_manipulations<Graph,
+                              Point_3,
+                              Image_word_type,
+                              InterpolationFunctor> G_manip;
+
   G_manip g_manip(graph, interpolate);
 
   const float& tx = cgal_image.image()->tx;
@@ -533,11 +533,11 @@ polylines_to_protect
 #endif // CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
             continue;
           }
-          typedef internal::Mesh_3::Enriched_pixel<Pixel,
-                                                   Point_3,
-                                                   Domain_type,
-                                                   Image_word_type
-                                                   > Enriched_pixel;
+
+          typedef Enriched_pixel<Pixel,
+                                 Point_3,
+                                 Domain_type,
+                                 Image_word_type> Enriched_pixel;
 
           array<array<Enriched_pixel, 2>, 2> square =
             {{ {{ { pix00, Point_3(), Domain_type(), 0, false },
@@ -545,7 +545,7 @@ polylines_to_protect
                {{ { pix10, Point_3(), Domain_type(), 0, false },
                   { pix11, Point_3(), Domain_type(), 0, false } }} }};
 
-          std::map<Image_word_type, int> pixel_values_set;
+          std::map<Domain_type, int> pixel_values_set;
           for(int ii = 0; ii < 2; ++ii) {
             for(int jj = 0; jj < 2; ++jj) {
               const Pixel& pixel = square[ii][jj].pixel;
@@ -902,7 +902,7 @@ case_1_2_1:
             }
             else {
               // case of two colors with one pixel green and three red
-              Image_word_type value_alone;
+              Domain_type value_alone;
               if(pixel_values_set.begin()->second == 1) {
                 value_alone = pixel_values_set.begin()->first;
               } else {
@@ -1018,8 +1018,8 @@ polylines_to_protect(std::vector<std::vector<P> >& polylines,
   typedef typename std::iterator_traits<PolylineInputIterator>::value_type Polyline;
 
   Graph graph;
-  typedef internal::Mesh_3::Returns_midpoint<K, int> Midpoint_fct;
-  internal::Mesh_3::Graph_manipulations<Graph,
+  typedef Mesh_3::internal::Returns_midpoint<K, int> Midpoint_fct;
+  Mesh_3::internal::Graph_manipulations<Graph,
                                         Point_3,
                                         int,
                                         Midpoint_fct> g_manip(graph);
@@ -1093,7 +1093,7 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
      word_type,
      null,
      CGAL::Identity<Image_word_type>(),
-     internal::Mesh_3::Returns_midpoint<K, Image_word_type>(),
+     Mesh_3::internal::Returns_midpoint<K, Image_word_type>(),
      existing_polylines_begin,
      existing_polylines_end);
 }

@@ -7,6 +7,7 @@
 #include "Color_ramp.h"
 
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
@@ -35,29 +36,10 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
     abort();
   }
 
-  for (Point_set::const_iterator it = m_points->point_set()->begin();
-       it != m_points->point_set()->first_selected(); ++ it)
-  {
-    int c = m_cluster_id[*it];
-    if (c == -1)
-      continue;
-    if (std::size_t(c) >= m_clusters.size())
-      m_clusters.resize (c + 1);
-    m_clusters[c].inliers.push_back (*it);
-  }
-
-  for (std::size_t i = 0; i < m_clusters.size(); ++ i)
-  {
-    m_clusters[i].bounding_box
-      = CGAL::bbox_3 (boost::make_transform_iterator
-                      (m_clusters[i].inliers.begin(),
-                       CGAL::Property_map_to_unary_function<Point_set::Point_map>
-                       (m_points->point_set()->point_map())),
-                      boost::make_transform_iterator
-                      (m_clusters[i].inliers.end(),
-                       CGAL::Property_map_to_unary_function<Point_set::Point_map>
-                       (m_points->point_set()->point_map())));
-  }
+  CGAL::Classification::create_clusters_from_indices (*(m_points->point_set()),
+                                                      m_points->point_set()->point_map(),
+                                                      m_cluster_id,
+                                                      m_clusters);
 
   std::cerr << m_clusters.size() << " cluster(s) found" << std::endl;
 
@@ -149,7 +131,7 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
         else if (m_training[*it] != -1)
           m_training[*it] = used_indices[std::size_t(m_training[*it])];
         if (c != -1)
-          m_clusters[c].training = m_training[*it];
+          m_clusters[c].training() = m_training[*it];
       }
       if (classif_found)
       {
@@ -158,7 +140,7 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
         else if (m_classif[*it] != -1)
           m_classif[*it] = used_indices[std::size_t(m_classif[*it])];
         if (c != -1)
-          m_clusters[c].label = m_classif[*it];
+          m_clusters[c].label() = m_classif[*it];
       }
     }
     
@@ -245,8 +227,9 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
 #endif
 
   // Compute neighborhood
-  typedef CGAL::Triangulation_vertex_base_with_info_3<int, Kernel> Vb;
-  typedef CGAL::Triangulation_data_structure_3<Vb>                    Tds;
+  typedef CGAL::Triangulation_vertex_base_with_info_3<int, Kernel>         Vb;
+  typedef CGAL::Delaunay_triangulation_cell_base_3<Kernel>                 Cb;
+  typedef CGAL::Triangulation_data_structure_3<Vb, Cb>                     Tds;
   typedef CGAL::Delaunay_triangulation_3<Kernel, Tds>                      Delaunay;
 
   Delaunay dt (boost::make_transform_iterator
@@ -295,8 +278,8 @@ Cluster_classification::~Cluster_classification()
     int c = m_cluster_id[*it];
     if (c != -1)
     {
-      m_training[*it] = m_clusters[c].training;
-      m_classif[*it] = m_clusters[c].label;
+      m_training[*it] = m_clusters[c].training();
+      m_classif[*it] = m_clusters[c].label();
     }
   }
   
@@ -424,7 +407,7 @@ void Cluster_classification::change_color (int index)
       int cid = m_cluster_id[*it];
       if (cid != -1)
       {
-        std::size_t c = m_clusters[cid].label;
+        std::size_t c = m_clusters[cid].label();
           
         if (c != std::size_t(-1))
           color = m_label_colors[c];
@@ -446,8 +429,8 @@ void Cluster_classification::change_color (int index)
       
       if (cid != -1)
       {
-        int c = m_clusters[cid].training;
-        int c2 = m_clusters[cid].label;
+        int c = m_clusters[cid].training();
+        int c2 = m_clusters[cid].label();
           
         if (c != -1)
           color = m_label_colors[std::size_t(c)];
@@ -553,8 +536,6 @@ void Cluster_classification::compute_features (std::size_t nb_scales)
 {
   CGAL_assertion (!(m_points->point_set()->empty()));
 
-  Generator* generator;
-  
   reset_indices();
   
   std::cerr << "Computing pointwise features with " << nb_scales << " scale(s)" << std::endl;
@@ -570,49 +551,68 @@ void Cluster_classification::compute_features (std::size_t nb_scales)
 
   Feature_set pointwise_features;
 
+  Generator generator (*(m_points->point_set()), m_points->point_set()->point_map(), nb_scales);
+  
+  CGAL::Real_timer t;
+  t.start();
+    
+#ifdef CGAL_LINKED_WITH_TBB
+  pointwise_features.begin_parallel_additions();
+#endif
+
+  generator.generate_point_based_features(pointwise_features);
+  if (normals)
+    generator.generate_normal_based_features (pointwise_features, m_points->point_set()->normal_map());
+  if (colors)
+    generator.generate_color_based_features (pointwise_features, m_color);
+  if (echo)
+    generator.generate_echo_based_features (pointwise_features, echo_map);
+  
   add_remaining_point_set_properties_as_features(pointwise_features);
-  if (!normals && !colors && !echo)
-    generator = new Generator (pointwise_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales);
-  else if (!normals && !colors && echo)
-    generator = new Generator (pointwise_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 CGAL::Default(), CGAL::Default(), echo_map);
-  else if (!normals && colors && !echo)
-    generator = new Generator (pointwise_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 CGAL::Default(), m_color);
-  else if (!normals && colors && echo)
-    generator = new Generator (pointwise_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 CGAL::Default(), m_color, echo_map);
-  else if (normals && !colors && !echo)
-    generator = new Generator (pointwise_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 m_points->point_set()->normal_map());
-  else if (normals && !colors && echo)
-    generator = new Generator (pointwise_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 m_points->point_set()->normal_map(), CGAL::Default(), echo_map);
-  else if (normals && colors && !echo)
-    generator = new Generator (pointwise_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 m_points->point_set()->normal_map(), m_color);
-  else
-    generator = new Generator (pointwise_features, *(m_points->point_set()), m_points->point_set()->point_map(), nb_scales,
-                                 m_points->point_set()->normal_map(), m_color, echo_map);
+
+#ifdef CGAL_LINKED_WITH_TBB
+  pointwise_features.end_parallel_additions();
+#endif
+  
+  t.stop();
+  std::cerr << pointwise_features.size() << " feature(s) computed in " << t.time() << " second(s)" << std::endl;
+  t.reset();
 
   std::cerr << "Computing cluster features" << std::endl;
+  t.start();
+
+#ifdef CGAL_LINKED_WITH_TBB
+  m_features.begin_parallel_additions();
+#endif
+
   for (std::size_t i = 0; i < pointwise_features.size(); ++ i)
   {
-    m_features.template add<Mean_feature> (*(m_points->point_set()),
-                                           m_clusters,
-                                           pointwise_features[i]);
+    m_features.template add<Mean_of_feature> (m_clusters,
+                                              pointwise_features[i]);
   }
+  
+#ifdef CGAL_LINKED_WITH_TBB
+  m_features.end_parallel_additions();
+  m_features.begin_parallel_additions();
+#endif
   
   for (std::size_t i = 0; i < pointwise_features.size(); ++ i)
   {
-    m_features.template add<Standard_deviation_feature> (*(m_points->point_set()),
-                                                         m_clusters,
-                                                         pointwise_features[i],
-                                                         m_features[i]);
+    m_features.template add<Variance_of_feature> (m_clusters,
+                                                  pointwise_features[i],
+                                                  m_features[i]);
   }  
   
   add_cluster_features();
 
+#ifdef CGAL_LINKED_WITH_TBB
+  m_features.end_parallel_additions();
+#endif
+  
+  t.stop();
+  std::cerr << m_features.size() << " feature(s) computed in " << t.time() << " second(s)" << std::endl;
+
+  
   delete m_sowf;
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
   delete m_ethz;
@@ -622,7 +622,6 @@ void Cluster_classification::compute_features (std::size_t nb_scales)
   m_random_forest = new Random_forest (m_labels, m_features);
 #endif
 
-  delete generator;
   std::cerr << "Features = " << m_features.size() << std::endl;
 }
 
@@ -631,7 +630,7 @@ void Cluster_classification::select_random_region()
   std::size_t c = rand() % m_clusters.size();
   std::set<Point_set::Index> in_cluster;
   for (std::size_t i = 0; i < m_clusters[c].size(); ++ i)
-    in_cluster.insert (m_clusters[c][i]);
+    in_cluster.insert (m_clusters[c].index(i));
 
   std::vector<std::size_t> selected;
   std::vector<std::size_t> unselected;
@@ -709,7 +708,7 @@ void Cluster_classification::train(int classifier, unsigned int nb_trials,
   training.reserve (m_clusters.size());
   for (std::size_t i = 0; i < m_clusters.size(); ++ i)
   {
-    training.push_back (m_clusters[i].training);
+    training.push_back (m_clusters[i].training());
     if (training.back() != -1)
     {
       nb_label[std::size_t(training.back())] ++;
@@ -754,7 +753,7 @@ void Cluster_classification::train(int classifier, unsigned int nb_trials,
   }
 
   for (std::size_t i = 0; i < m_clusters.size(); ++ i)
-    m_clusters[i].label = indices[i];
+    m_clusters[i].label() = indices[i];
   
   if (m_index_color == 1 || m_index_color == 2)
     change_color (m_index_color);

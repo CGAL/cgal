@@ -25,11 +25,11 @@
 #ifndef CGAL_VERSION_H
 #define CGAL_VERSION_H
 
-#define CGAL_VERSION 4.13-dev
+#define CGAL_VERSION 4.13-beta1
 #define CGAL_VERSION_NR 1041300000
 #define CGAL_SVN_REVISION 99999
 #define CGAL_GIT_HASH abcdef
-#define CGAL_RELEASE_DATE 20180425
+#define CGAL_RELEASE_DATE 20180801
 
 #include <CGAL/version_macros.h>
 

@@ -140,9 +140,9 @@ struct Tester
   }
 
   struct Auto_count
-    : public CGAL::unary_function<const Weighted_point&,
-                                  std::pair<Weighted_point,
-                                  unsigned> >
+    : public CGAL::cpp98::unary_function<const Weighted_point&,
+                                         std::pair<Weighted_point,
+                                         unsigned> >
   {
     mutable unsigned i;
     Auto_count() : i(0){}

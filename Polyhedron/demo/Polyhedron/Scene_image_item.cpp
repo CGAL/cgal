@@ -34,6 +34,10 @@ public:
   double vy() const { return im_.vy(); }
   double vz() const { return im_.vz(); }
   
+  double tx() const { return im_.image()->tx; }
+  double ty() const { return im_.image()->ty; }
+  double tz() const { return im_.image()->tz; }
+  
 private:
   unsigned char non_null_neighbor_data(std::size_t i,
                                        std::size_t j,
@@ -320,7 +324,6 @@ Vertex_buffer_helper::push_normal(std::size_t i, std::size_t j, std::size_t k)
 void
 Vertex_buffer_helper::push_vertex(std::size_t i, std::size_t j, std::size_t k)
 {
-  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   indices_.insert(std::make_pair(compute_position(i,j,k),
                                  vertices_.size()/3)); 
   //resize the "border vertices"
@@ -338,9 +341,9 @@ Vertex_buffer_helper::push_vertex(std::size_t i, std::size_t j, std::size_t k)
   if (dk == double(data_.zdim()))
     dk = double(data_.zdim())-0.5;
 
-  vertices_.push_back( (di - 0.5) * data_.vx()+offset.x);
-  vertices_.push_back( (dj - 0.5) * data_.vy()+offset.y);
-  vertices_.push_back( (dk - 0.5) * data_.vz()+offset.z);
+  vertices_.push_back( (di - 0.5) * data_.vx() + data_.tx());
+  vertices_.push_back( (dj - 0.5) * data_.vy() + data_.ty());
+  vertices_.push_back( (dk - 0.5) * data_.vz() + data_.tz());
 }
 
 void
@@ -502,7 +505,6 @@ void Scene_image_item_priv::compile_shaders()
     //Vertex source code
     const char vertex_source[] =
     {
-      "#version 120 \n"
       "attribute highp vec4 vertex;\n"
       "attribute highp vec3 normal;\n"
       "attribute highp vec4 inColor;\n"
@@ -516,14 +518,17 @@ void Scene_image_item_priv::compile_shaders()
       "{\n"
       "   color=inColor; \n"
       "   fP = mv_matrix * vertex; \n"
-      "   fN = mat3(mv_matrix)* normal; \n"
+      "   mat3 mv_matrix_3;                    "
+      "   mv_matrix_3[0] = mv_matrix[0].xyz;   "
+      "   mv_matrix_3[1] = mv_matrix[1].xyz;   "
+      "   mv_matrix_3[2] = mv_matrix[2].xyz;   "
+      "   fN = mv_matrix_3* normal;           "
       "   gl_Position = mvp_matrix * vertex; \n"
       "}"
     };
     //Fragment source code
     const char fragment_source[] =
     {
-      "#version 120 \n"
       "varying highp vec4 fP; \n"
       "varying highp vec3 fN; \n"
       "varying highp vec4 color; \n"
@@ -550,33 +555,33 @@ void Scene_image_item_priv::compile_shaders()
       "   vec3 R = reflect(-L, N); \n"
       "   vec4 diffuse; \n"
       "   if(!is_two_side) \n"
-      "       diffuse = max(dot(N,L),0) * light_diff*color; \n"
+      "       diffuse = max(dot(N,L),0.0) * light_diff*color; \n"
       "   else \n"
-      "       diffuse = max(abs(dot(N,L)),0) * light_diff*color; \n"
+      "       diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
       "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
 
       "gl_FragColor = color*light_amb + diffuse + specular; \n"
       "} \n"
       "\n"
     };
-    QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
-    if(!vertex_shader->compileSourceCode(vertex_source))
+    QOpenGLShader vertex_shader(QOpenGLShader::Vertex);
+    if(!vertex_shader.compileSourceCode(vertex_source))
     {
       std::cerr<<"Compiling vertex source FAILED"<<std::endl;
     }
 
-    QOpenGLShader *fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
-    if(!fragment_shader->compileSourceCode(fragment_source))
+    QOpenGLShader fragment_shader(QOpenGLShader::Fragment);
+    if(!fragment_shader.compileSourceCode(fragment_source))
     {
       std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
     }
 
-    if(!rendering_program.addShader(vertex_shader))
+    if(!rendering_program.addShader(&vertex_shader))
     {
       std::cerr<<"adding vertex shader FAILED"<<std::endl;
     }
 
-    if(!rendering_program.addShader(fragment_shader))
+    if(!rendering_program.addShader(&fragment_shader))
     {
       std::cerr<<"adding fragment shader FAILED"<<std::endl;
     }
@@ -675,12 +680,12 @@ Scene_image_item::compute_bbox() const
   if(!m_image)
     _bbox = Bbox();
   else
-   _bbox = Bbox(0,
-                0,
-                0,
-              (double(m_image->xdim()-1)) * m_image->vx(),
-              (double(m_image->ydim()-1)) * m_image->vy(),
-              (double(m_image->zdim()-1)) * m_image->vz());
+   _bbox = Bbox(m_image->image()->tx,
+                m_image->image()->ty,
+                m_image->image()->tz,
+                m_image->image()->tx+(m_image->xdim()-1) * m_image->vx(),
+                m_image->image()->ty+(m_image->ydim()-1) * m_image->vy(),
+                m_image->image()->tz+(m_image->zdim()-1) * m_image->vz());
 }
 
 void
@@ -815,13 +820,29 @@ Scene_image_item_priv::draw_gl(Viewer_interface* viewer) const
     vao[0].release();
   }
   rendering_program.release();
-  item->attribBuffers(viewer,Scene_item::PROGRAM_NO_SELECTION);
-  QOpenGLShaderProgram* line_program = item->getShaderProgram(Scene_item::PROGRAM_NO_SELECTION);
-  line_program->bind();
+  QOpenGLShaderProgram* line_program;
   vao[1].bind();
-  viewer->glLineWidth(3);
+  if(!viewer->isOpenGL_4_3())
+  {
+    item->attribBuffers(viewer,Scene_item::PROGRAM_NO_SELECTION);
+    line_program = item->getShaderProgram(Scene_item::PROGRAM_NO_SELECTION);
+    line_program->bind();
+  }
+  else
+  {
+    item->attribBuffers(viewer,Scene_item::PROGRAM_SOLID_WIREFRAME);
+    line_program = item->getShaderProgram(Scene_item::PROGRAM_SOLID_WIREFRAME);
+    line_program->bind();
+    QVector2D vp(viewer->width(), viewer->height());
+    line_program->setUniformValue("viewport", vp);
+    line_program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
+    line_program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+    line_program->setUniformValue("width", 3.0f);
+  }
   line_program->setAttributeValue("colors", QColor(Qt::black));
+  viewer->glDepthRangef(0.00001f, 0.99999f);
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_box->size()/3));
+  viewer->glDepthRangef(0.0f, 1.0f);
   vao[1].release();
   line_program->release();
 }
@@ -845,7 +866,7 @@ void Scene_image_item::changed()
 
 void Scene_image_item_priv::draw_Bbox(Scene_item::Bbox bbox, std::vector<float> *vertices)
 {
-  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     vertices->push_back(bbox.xmin()+offset.x);
     vertices->push_back(bbox.ymin()+offset.y);
     vertices->push_back(bbox.zmin()+offset.z);

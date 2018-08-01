@@ -145,12 +145,6 @@ size_type number_of_edges() const;
 
 /*!
 
-Returns the number of edges which belong to curve with index `index`.
-*/ 
-size_type number_of_edges(Curve_index index) const;
-
-/*!
-
 Returns the number of vertices which are corners of the complex. 
 */ 
 size_type number_of_corners() const; 

@@ -100,6 +100,7 @@ endif()
   create_single_source_cgal_program("surface_intersection_sm_poly.cpp" )
   create_single_source_cgal_program("test_orient_cc.cpp")
   create_single_source_cgal_program("test_pmp_transform.cpp")
+  create_single_source_cgal_program("extrude_test.cpp")
 
   if( TBB_FOUND )
     CGAL_target_use_TBB(test_pmp_distance)
