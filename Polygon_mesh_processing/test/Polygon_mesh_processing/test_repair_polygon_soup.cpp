@@ -1,4 +1,4 @@
-﻿#define CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
+﻿#define CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
