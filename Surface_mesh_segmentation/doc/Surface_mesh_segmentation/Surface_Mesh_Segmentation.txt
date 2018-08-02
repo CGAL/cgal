@@ -214,7 +214,7 @@ The more irregular a surface is the higher its aspect ratio.
 Some results of the approximate convex segmentation algorithm:
 
 \cgalFigureBegin{ApproxDecompExamples,approximate_convex_segmentation_examples.png}
-Segmented a sword into 5 segments, a cactus into 4 segments, and an elephant into 29 segments using normal projection method to compute concavity values. The top images depict the segmentations, while the bottom images - the convex hulls of each segment.
+Segmented a sword into 5 segments, a cactus into 4 segments, an elephant into 16 segments, and a dino into 10 segments using normal projection method to compute concavity values. The top images depict the segmentations, while the bottom images - the convex hulls of each segment.
 \cgalFigureEnd
 
 \section Surface_mesh_segmentationAPI Summary of the API
@@ -353,7 +353,7 @@ Number of triangles  |  Run-time (ms)
  7,828               |  9.9
 </center>
 
-Each cell of the next table contains run-time in seconds.
+Each cell of the next table contains run-time in seconds. It's clearly visible that the run-time not only depends on the number of triangles but also on the structure of a mesh (the more distinct segments it has the faster the algorithm executes).
 
 <center>
 Number of triangles  | Concavity threshold = 0.01 | Concavity threshold = 0.05 | Concavity threshold = 0.5
