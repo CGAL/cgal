@@ -323,38 +323,42 @@ public :
     //transfo
     angle = 0.0;
     scaling=1.0;
-    translation = EPICK::Vector_2(0,0);
-    connect(dock_widget->t_left_pushButton, &QPushButton::clicked,
-            this, [this](){
-      translation -= EPICK::Vector_2(0.05,0);
-      scene->setSelectedItem(scene->item_id(sel_item));
-      visualize();
-    });
-    
+    translation = EPICK::Vector_2(0,0);    
     connect(dock_widget->scal_slider, &QSlider::valueChanged,
             this, [this](){
       scaling = dock_widget->scal_slider->value()/100.0;
       scene->setSelectedItem(scene->item_id(sel_item));
       visualize();
     });
+    connect(dock_widget->reset_button, &QPushButton::clicked,
+            this, [this](){
+      cleanup();
+    });
     
     connect(dock_widget->t_up_pushButton, &QPushButton::clicked,
             this, [this](){
-      translation += EPICK::Vector_2(0,0.05);
+      translation += EPICK::Vector_2(0,0.005);
       scene->setSelectedItem(scene->item_id(sel_item));
       visualize();
     });
     
     connect(dock_widget->t_down_pushButton, &QPushButton::clicked,
             this, [this](){
-      translation -= EPICK::Vector_2(0,0.05);
+      translation -= EPICK::Vector_2(0,0.005);
       scene->setSelectedItem(scene->item_id(sel_item));
       visualize();
     });
     
     connect(dock_widget->t_right_pushButton, &QPushButton::clicked,
             this, [this](){
-      translation += EPICK::Vector_2(0.05,0);
+      translation += EPICK::Vector_2(0.005,0);
+      scene->setSelectedItem(scene->item_id(sel_item));
+      visualize();
+    });
+    
+    connect(dock_widget->t_left_pushButton, &QPushButton::clicked,
+            this, [this](){
+      translation -= EPICK::Vector_2(0.005,0);
       scene->setSelectedItem(scene->item_id(sel_item));
       visualize();
     });
@@ -393,12 +397,18 @@ public Q_SLOTS:
     if(!sel_item)
       return;
     if(sel_item->selected_facets.empty())
+    {
+      cleanup();
       return;
+    }
     if(!CGAL::is_closed(*sel_item->polyhedron()))
+    {
+      cleanup();
       return;
+    }
     if(visu_item)
       scene->erase(scene->item_id(visu_item));
-    visu_item = NULL;
+    visu_item = nullptr;
     
     if(!sm)
     {
@@ -419,6 +429,7 @@ public Q_SLOTS:
       SMP::Error_code status = parameterizer.parameterize(*sm, hd, uv_map, get(boost::vertex_index, *sm), vpm);
       if(status != SMP::OK) {
         std::cout << "Encountered a problem: " << status << std::endl;
+        cleanup();
         return ;
       }
       
@@ -445,41 +456,75 @@ public Q_SLOTS:
       }
       
       
-    }    
+    }
     //create Text Polyline
     QPainterPath path;
     QFont font;
     font.setPointSize(15);
-    
-    path.addText(QPoint(xmin,-ymin), font, dock_widget->lineEdit->text());
+      path.addText(QPoint(xmin,ymin), font, dock_widget->lineEdit->text());
     QList<QPolygonF> polys = path.toSubpathPolygons();
-    QFontMetrics fm(font);
-    int width=fm.width(dock_widget->lineEdit->text());
-    int height=fm.height();
     polylines.clear();
+    float pxmin(8000),pxmax(-8000),
+        pymin(8000), pymax(-8000);
+        
     Q_FOREACH(QPolygonF poly, polys){
-      polylines.push_back(std::vector<EPICK::Point_2>());
       Q_FOREACH(QPointF pf, poly)
       {
         EPICK::Point_2 v = EPICK::Point_2(pf.x(),-pf.y());
-        polylines.back().push_back(EPICK::Point_2(v.x()*(xmax-xmin)/width +xmin ,
-                                                  v.y()*(ymax-ymin)/height+ymin
-                                                  ));
+        if(v.x() < pxmin)
+          pxmin = v.x();
+        if(v.x() > pxmax)
+          pxmax = v.x();
+        if(v.y() < pymin)
+          pymin = v.y();
+        if(v.y() > pymax)
+          pymax = v.y();
       }
     }
-    
+    if(ymax-ymin > xmax - xmin)
+    {
+      Q_FOREACH(QPolygonF poly, polys){
+        polylines.push_back(std::vector<EPICK::Point_2>());
+        Q_FOREACH(QPointF pf, poly)
+        {
+          EPICK::Point_2 v = EPICK::Point_2(pf.x(),-pf.y());
+          polylines.back().push_back(EPICK::Point_2(v.x()*(xmax-xmin)/(pxmax-pxmin) +xmin ,
+                                                    v.y()*(ymax-ymin)/(pymax-pymin)+ymin 
+                                                    ));
+        }
+      }
+    }
+    else
+    {
+      EPICK::Aff_transformation_2 rota = EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2((pxmax+pxmin)/2,
+                                                                     (pymax+pymin)/2))
+      * EPICK::Aff_transformation_2(CGAL::ROTATION,1,0) 
+      * EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2(-(pxmax+pxmin)/2,
+                                                                       -(pymax+pymin)/2));
+      
+      Q_FOREACH(QPolygonF poly, polys){
+        polylines.push_back(std::vector<EPICK::Point_2>());
+        Q_FOREACH(QPointF pf, poly)
+        {
+          EPICK::Point_2 v = rota.transform(EPICK::Point_2(pf.x(),-pf.y()));
+          polylines.back().push_back(EPICK::Point_2(v.x()*(xmax-xmin)/(pxmax-pxmin) +xmin ,
+                                                    v.y()*(ymax-ymin)/(pymax-pymin)+ymin 
+                                                    ));
+        }
+      }
+    }
     // build AABB-tree for face location queries
     Tree aabb_tree(faces(*sm).first, faces(*sm).second, *sm, uv_map_3);
     
     visu_item = new Scene_polylines_item;
     // compute 3D coordinates
     transfo = 
-        EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2((xmax-xmin)/2,
-                                                                       (ymax-ymin)/2)+ translation)
+        EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2((xmax-xmin)/2+xmin,
+                                                                       (ymax-ymin)/2+ymin)+ translation)
         * EPICK::Aff_transformation_2(CGAL::SCALING,scaling) 
         * EPICK::Aff_transformation_2(CGAL::ROTATION,sin(angle), cos(angle)) 
-        * EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2(-(xmax-xmin)/2,
-                                                                         -(ymax-ymin)/2));
+        * EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2(-(xmax-xmin)/2-xmin,
+                                                                         -(ymax-ymin)/2-ymin));
     BOOST_FOREACH(const std::vector<EPICK::Point_2>& polyline, polylines)
     {
       visu_item->polylines.push_back(std::vector<Point_3>());
@@ -609,7 +654,20 @@ public Q_SLOTS:
       normal += CGAL::Polygon_mesh_processing::compute_face_normal(f, *sel_item->polyhedron());
     }
     normal/=CGAL::sqrt(normal.squared_length());
-    
+    while(normal == EPICK::Vector_3(0,0,0))
+    {
+      QDialog dialog; 
+      QLayout *layout = dialog.layout();
+      QDoubleSpinBox xbox, ybox, zbox;
+      layout->addWidget(&xbox);
+      layout->addWidget(&ybox);
+      layout->addWidget(&zbox);
+      dialog.setLayout(layout);
+      dialog.exec();
+      normal = EPICK::Vector_3(xbox.value(), 
+                               ybox.value(),
+                               zbox.value());
+    }
     Bot<VPMap> bot(normal, dock_widget->depth_spinBox->value(),get(CGAL::vertex_point, text_mesh_complete));
     Top<VPMap> top(normal, get(CGAL::vertex_point, text_mesh_complete));
     PMP::extrude_mesh(text_mesh_bottom, text_mesh_complete, bot, top);
@@ -629,12 +687,7 @@ public Q_SLOTS:
           result);
     scene->addItem(result_item);
     graphics_scene->clear();
-    scene->erase(scene->item_id(sel_item));
-    sel_item =nullptr;
-    delete sm;
-    sm = nullptr;
-    scene->erase(scene->item_id(visu_item));
-    visu_item = nullptr;
+    cleanup();
     QApplication::restoreOverrideCursor();
     dock_widget->engraveButton->setEnabled(false);
     dock_widget->visualizeButton->setEnabled(true);
@@ -730,6 +783,26 @@ private:
     }
   }
   
+  void cleanup()
+  {
+    graphics_scene->clear();
+    if(sel_item)
+    {
+      scene->erase(scene->item_id(sel_item));
+      sel_item =nullptr;
+    }
+    if(sm)
+    {
+      delete sm;
+      sm = nullptr;
+    }
+    if(visu_item)
+    {
+      scene->erase(scene->item_id(visu_item));
+      visu_item = nullptr;
+    }
+      
+  }
   QList<QAction*> _actions;
   EngraveWidget* dock_widget;
   Scene_polylines_item* visu_item;
