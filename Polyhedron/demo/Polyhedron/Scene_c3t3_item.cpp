@@ -388,10 +388,8 @@ struct Scene_c3t3_item_priv {
     intersection = NULL;
     spheres_are_shown = false;
     cnc_are_shown = false;
-    show_tetrahedra = true;
     is_aabb_tree_built = false;
     are_intersection_buffers_filled = false;
-    is_grid_shown = true;
     alphaSlider = NULL;
   }
   void computeIntersection(const Primitive& facet);
@@ -573,6 +571,7 @@ struct Scene_c3t3_item_priv {
   bool is_aabb_tree_built;
   bool cnc_are_shown;
   bool is_valid;
+  bool is_surface;
 };
 
 struct Set_show_tetrahedra {
@@ -584,7 +583,7 @@ struct Set_show_tetrahedra {
   }
 };
 
-Scene_c3t3_item::Scene_c3t3_item()
+Scene_c3t3_item::Scene_c3t3_item(bool is_surface)
   : Scene_group_item("unnamed", Scene_c3t3_item_priv::NumberOfBuffers, Scene_c3t3_item_priv::NumberOfVaos)
   , d(new Scene_c3t3_item_priv(this))
 
@@ -595,9 +594,12 @@ Scene_c3t3_item::Scene_c3t3_item()
   c3t3_changed();
   setRenderingMode(FlatPlusEdges);
   create_flat_and_wire_sphere(1.0f,d->s_vertex,d->s_normals, d->ws_vertex);
+  d->is_surface = is_surface;
+  d->is_grid_shown = !is_surface;
+  d->show_tetrahedra = !is_surface;
 }
 
-Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
+Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3, bool is_surface)
   : Scene_group_item("unnamed", Scene_c3t3_item_priv::NumberOfBuffers, Scene_c3t3_item_priv::NumberOfVaos)
   , d(new Scene_c3t3_item_priv(c3t3, this))
 {
@@ -605,6 +607,9 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
   compute_bbox();
   connect(d->frame, SIGNAL(modified()), this, SLOT(changed()));
   d->reset_cut_plane();
+  d->is_surface = is_surface;
+  d->is_grid_shown = !is_surface;
+  d->show_tetrahedra = !is_surface;
   c3t3_changed();
   setRenderingMode(FlatPlusEdges);
   create_flat_and_wire_sphere(1.0f,d->s_vertex,d->s_normals, d->ws_vertex);
@@ -995,6 +1000,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     d->program->setUniformValue("far", (float)viewer->camera()->zFar());       
     d->program->setUniformValue("writing", viewer->isDepthWriting());   
     d->program->setUniformValue("alpha", alpha());                     
+    d->program->setUniformValue("is_surface", d->is_surface);
     if( fbo)
       viewer->glBindTexture(GL_TEXTURE_2D, fbo->texture());
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->positions_poly_size / 3));
@@ -1080,6 +1086,7 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     d->program->bind();
     QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
     d->program->setUniformValue("cutplane", cp);
+    d->program->setUniformValue("is_surface", d->is_surface);
     d->program->setAttributeValue("colors", QColor(Qt::black));
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_lines_size / 3));
     d->program->release();
@@ -1133,6 +1140,7 @@ void Scene_c3t3_item::drawPoints(CGAL::Three::Viewer_interface * viewer) const
     d->program->bind();
     QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
     d->program->setUniformValue("cutplane", cp);
+    d->program->setUniformValue("is_surface", d->is_surface);
     d->program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->positions_lines.size() / 3));
     vaos[Scene_c3t3_item_priv::Edges]->release();

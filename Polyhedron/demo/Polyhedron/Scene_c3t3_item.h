@@ -33,8 +33,8 @@ using namespace CGAL::Three;
 public:
   typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
 
-  Scene_c3t3_item();
-  Scene_c3t3_item(const C3t3& c3t3);
+  Scene_c3t3_item(bool is_surface = false);
+  Scene_c3t3_item(const C3t3& c3t3, bool is_surface = false);
   ~Scene_c3t3_item();
 
   bool has_stats()const  Q_DECL_OVERRIDE {return true;}
