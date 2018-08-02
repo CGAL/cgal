@@ -174,7 +174,7 @@ Distance computation of the point \f$ M_0 \f$ to its projection \f$ Proj(M_0) \f
 
 \cgalFigureBegin{Concavity_values_elephant_demo,concavity_values-elephant.png, concavity_values-elephant-shortest.png}
 \b Left: Concavity per face using the projection along the vertex normal; \b Right: Concavity per face using the projection to the closest point.
-\todo since the concavity is defined per vertex explain how it is estimated per face.
+Concavity per face is estimated as the average value of concavities per vertices of its triangle in the Polyhedron demo.
 \cgalFigureEnd
 
 The concavity value is used as cost in the dual edge collapse process. It affects the order in which dual edges are collapsed and thus the produced segmentation.

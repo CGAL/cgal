@@ -211,6 +211,8 @@ concavity_values(const TriangleMesh& mesh)
  *    \cgalParamBegin{min_number_of_segments} minimal number of segments, default is 1 \cgalParamEnd
  *    \cgalParamBegin{segments_convex_hulls} an array filled up with the convex hulls of all segments \cgalParamEnd
  *    \cgalParamBegin{use_closest_point} if true, the concavity at each vertex is evaluated by using the distance to the closest point on the convex hull of the set of faces. If false, the distance to the first intersected point following the normal at each vertex is used. Default is false \cgalParamEnd
+ *    \cgalParamBegin{postprocess_segments} if true, any produced segment that is inside of another one or smaller than `small_segment_threshold` will be merged with a neighbour segment regardless the concavity threshold). Default is false \cgalParamEnd
+ *    \cgalParamBegin{small_segment_threshold} the minimal size of a segment postprocessing procedure must return in percentage with regard to the diameter of the input mesh. The value must be in the range [0, 100]. Default is 10% \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * @return number of segments computed
@@ -237,7 +239,17 @@ approximate_convex_segmentation(const TriangleMesh& mesh,
   bool use_closest_point = boost::choose_param(boost::get_param(np, internal_np::use_closest_point), false);
 
   internal::Approx_segmentation<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits, use_closest_point);
-  return algorithm.segmentize(face_ids, concavity_threshold, min_number_of_segments, convex_hulls_pmap);
+  algorithm.segmentize(concavity_threshold, min_number_of_segments);
+
+  bool postprocess_segments = boost::choose_param(boost::get_param(np, internal_np::postprocess_segments), false);
+  double small_segment_threshold = boost::choose_param(boost::get_param(np, internal_np::small_segment_threshold), 10.);
+
+  if (postprocess_segments)
+  {
+    algorithm.postprocess(min_number_of_segments, small_segment_threshold, concavity_threshold);
+  }
+
+  return algorithm.result(face_ids, convex_hulls_pmap);
 }
 
 

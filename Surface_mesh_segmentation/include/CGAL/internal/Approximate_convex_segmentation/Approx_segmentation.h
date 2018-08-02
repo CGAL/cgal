@@ -78,7 +78,7 @@ class Approx_segmentation
   };
 
   // predefined structs
-  struct CandidateComparator;
+  struct Candidate_comparator;
   
   template <class Graph>
   struct Noborder_predicate;
@@ -104,6 +104,7 @@ class Approx_segmentation
   
   typedef typename boost::graph_traits<Graph>::vertex_descriptor graph_vertex_descriptor;
   typedef typename boost::graph_traits<Graph>::edge_descriptor graph_edge_descriptor;
+  typedef std::pair<graph_vertex_descriptor, graph_vertex_descriptor> graph_edge_pair;
 
   typedef typename boost::property_map<Graph, segment_props_t>::type Graph_segment_map;
   typedef typename boost::property_map<Graph, decimation_props_t>::type Graph_decimation_map;
@@ -116,22 +117,26 @@ public:
   : m_mesh(mesh)
   , m_vpm(vpm)
   , m_traits(traits)
-  , m_candidates(CandidateComparator(*this))
+  , m_candidates(Candidate_comparator(*this))
   , m_concavity_calc(mesh, vpm, traits, use_closest_point)
-  {}
+  {
+    m_concavity_calc.compute_normals();
+  }
 
   /**
-  * Computes approximate convex segmentation of a triangle mesh and fills up face property map with segment-ids.
-  * @param face_ids which associates each face of a triangle mesh to a segment-id [0, 'number_of_segments'-1]
+  * Computes approximate convex segmentation of a triangle mesh.
   * @param concavity_threshold concavity value each segment must satisfy
   * @param min_number_of_segments minimal number of segment that can be produced
   */
-  template <class FacePropertyMap, class ConvexHullsPropertyMap>
-  std::size_t segmentize(FacePropertyMap face_ids,
-                         double concavity_threshold,
-                         std::size_t min_number_of_segments,
-                         ConvexHullsPropertyMap convex_hulls_pmap)
+  void segmentize(double concavity_threshold,
+                  std::size_t min_number_of_segments)
+                 
   {
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE            
+    std::cout << "Segmentizing..." << std::endl;
+    std::cout << "concavity_threshold=" << concavity_threshold << std::endl;
+    std::cout << "min_number_of_segments=" << min_number_of_segments << std::endl;
+#endif
     // create filtered dual graph without border edges (null source or target vertex)
     Dual_graph dual(m_mesh);
     Filtered_dual_graph filtered_dual(dual, Noborder_predicate<TriangleMesh>(m_mesh));
@@ -169,9 +174,104 @@ public:
 #endif
 
       // decimate optimal valid edge and update the decimation costs of modified edges
-      decimate_edge(optimal_edge, concavity_threshold, CONCAVITY_FACTOR);
+      decimate_edge(optimal_edge, concavity_threshold, CONCAVITY_FACTOR, true);
     }
+  }
 
+  /**
+  * Postprocesses produced segments: merges any produced segment that is smaller than `small_segment_threshold` with a neighbour segment regardless the concavity threshold
+  * @param small_segment_threshold the minimal size of a segment postprocessing procedure must return in percentage with regard to the diameter of the input mesh. The value must be in the range [0, 100]
+  */
+  void postprocess(std::size_t min_number_of_segments, double small_segment_threshold, double concavity_threshold) 
+  {
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE            
+    std::cout << "Postprocessing segments..." << std::endl;
+    std::cout << "small_segment_threshold=" << small_segment_threshold << std::endl;
+#endif
+  
+    // comparator that orders segments by the lengths of their diagonals
+    struct Size_segment_comparator
+    {
+      Size_segment_comparator(Approx_segmentation& alg) : m_alg(alg) {}
+
+      bool operator() (const graph_vertex_descriptor& a, const graph_vertex_descriptor& b) const
+      {
+        double diagonal_a = m_alg.compute_diagonal_length(m_alg.m_segment_map[a].bbox);
+        double diagonal_b = m_alg.compute_diagonal_length(m_alg.m_segment_map[b].bbox);
+        
+        if (diagonal_a != diagonal_b)
+        {
+          return diagonal_a < diagonal_b;
+        }
+
+        return a < b;
+      }
+
+    private:
+      Approx_segmentation& m_alg;
+    };
+  
+    // restore edges that were removed on segmentation stage
+    restore_invalid_edges(concavity_threshold);
+
+    // a queue which contains all segments ordered by their diagonal lengths
+    std::set<graph_vertex_descriptor, Size_segment_comparator> queue(vertices(m_graph).first, vertices(m_graph).second, Size_segment_comparator(*this));
+    
+    // diagonal length of the input mesh
+    double diagonal_length_threshold = small_segment_threshold / 100. * compute_diagonal_length(CGAL::Polygon_mesh_processing::bbox(m_mesh));
+
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE            
+    std::cout << "Diagonal length threshold (max allowed for merging): " << diagonal_length_threshold << std::endl;
+#endif
+
+    // merge segments until minimal number of segments constraint is met or the queue is empty empty
+    while (num_vertices(m_graph) > min_number_of_segments &&
+           !queue.empty())
+    {
+      graph_vertex_descriptor cur = *queue.begin();
+      queue.erase(queue.begin());
+
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE            
+      std::cout << "Diagonal length: " << compute_diagonal_length(m_segment_map[cur].bbox) << std::endl;
+#endif
+
+      // too large segment
+      if (compute_diagonal_length(m_segment_map[cur].bbox) > diagonal_length_threshold) continue;
+
+      // find an edge with the lowest decimation cost if any exists
+      bool found = false;
+      graph_edge_descriptor found_edge;
+      BOOST_FOREACH(graph_edge_descriptor edge, boost::out_edges(cur, m_graph))
+      {
+        if (!found || m_decimation_map[edge].decimation_cost < m_decimation_map[found_edge].decimation_cost)
+        {
+          found_edge = edge;
+          found = true;
+        }
+      }
+
+      if (!found) continue;
+
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE            
+      std::cout << "Merging..." << std::endl;
+#endif
+
+      // merge target segment into source segment, update queue
+      queue.erase(queue.find(target(found_edge, m_graph)));
+      decimate_edge(found_edge, concavity_threshold, CONCAVITY_FACTOR, false);
+      queue.insert(cur);
+    }
+  }
+
+  /**
+   * Fills up face property map with segment-ids and convex hulls property map with the convex hulls of all segments
+   * @param face_ids which associates each face of a triangle mesh to a segment-id [0, 'number_of_segments'-1]
+   * @param convex_hulls_pmap which stores an array of convex hulls for each segment
+   */
+  template <class FacePropertyMap, class ConvexHullsPropertyMap>
+  std::size_t result(FacePropertyMap face_ids,
+                     ConvexHullsPropertyMap convex_hulls_pmap)
+  {
     // resulting number of produced segments
     std::size_t num_segments = num_vertices(m_graph);    
 
@@ -208,23 +308,24 @@ public:
 
     return num_segments;
   }
-
+  
 private:
   const TriangleMesh& m_mesh;
-  Vpm m_vpm;
+  Vpm m_vpm; // vertex point property map
   const GeomTraits& m_traits;
   
-  Graph m_graph; // adjacency list
+  Graph m_graph; // dual graph adjacency list for the input mesh
 
   Graph_segment_map m_segment_map; // vertex property map of the adjacency list
   Graph_decimation_map m_decimation_map; // edge property map of the adjacency list
    
-  std::vector<graph_edge_descriptor> m_invalid_edges; // list of edges to be removed
+  std::vector<graph_edge_descriptor> m_invalid_edges; // list of invalid edges (the concavity value of produced segment after decimation is larger than the threshold)
+  std::vector<graph_edge_pair> m_removed_invalid_edges; // list of removed invalid edges that might be restored in postprocessing procedure
 
   // comparator that orders candidate edges by their decimation costs
-  struct CandidateComparator
+  struct Candidate_comparator
   {
-    CandidateComparator(Approx_segmentation& alg) : m_alg(alg) {}
+    Candidate_comparator(Approx_segmentation& alg) : m_alg(alg) {}
 
     bool operator() (const graph_edge_descriptor& a, const graph_edge_descriptor& b) const
     {
@@ -239,7 +340,7 @@ private:
     Approx_segmentation& m_alg;
   };
   
-  std::set<graph_edge_descriptor, CandidateComparator> m_candidates; // ordered by decimation cost list of edges
+  std::set<graph_edge_descriptor, Candidate_comparator> m_candidates; // ordered by decimation cost list of edges
 
   Concavity<TriangleMesh, Vpm, GeomTraits, ConcurrencyTag> m_concavity_calc; // concavity calculator that computes concavity values for any subset of faces of the input mesh
 
@@ -376,7 +477,7 @@ private:
 
     // compute decimation cost
     double aspect_ratio = compute_aspect_ratio(decimation_props.new_segment_props.faces);
-    double d = compute_normalization_factor(decimation_props.new_segment_props.bbox);
+    double d = compute_diagonal_length(decimation_props.new_segment_props.bbox);
 
 #ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
 //        std::cout << "Aspect ratio & normalization factor: " << aspect_ratio << " " << d << std::endl;
@@ -392,9 +493,10 @@ private:
   }
 
   /**
-  * Decimates an edge in adjacency list. The second vertex of an edge merges into the first edge.
+  * Decimates an edge in adjacency list. The second vertex of an edge merges into the first one 
+  * Returns the vertex of produced segment.
   */
-  void decimate_edge(graph_edge_descriptor edge, double concavity_threshold, double alpha_factor)
+  void decimate_edge(graph_edge_descriptor edge, double concavity_threshold, double alpha_factor, bool update_candidates)
   {
     graph_vertex_descriptor vert_1 = source(edge, m_graph), vert_2 = target(edge, m_graph);
 
@@ -417,9 +519,12 @@ private:
     }
 
     // remove edges from candidates that are going to be removed
-    BOOST_FOREACH(graph_edge_descriptor edge, boost::out_edges(vert_2, m_graph))
+    if (update_candidates)
     {
-      remove_candidate(edge);
+      BOOST_FOREACH(graph_edge_descriptor edge, boost::out_edges(vert_2, m_graph))
+      {
+        remove_candidate(edge);
+      }
     }
     
     // remove adjacent edges incident to the second vertex and remove the vertex
@@ -432,9 +537,12 @@ private:
 #endif
     BOOST_FOREACH(graph_edge_descriptor edge, boost::out_edges(vert_1, m_graph))
     {
-      remove_candidate(edge); 
+      if (update_candidates)
+      {
+        remove_candidate(edge);
+      } 
 #ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
-        ++cnt;
+      ++cnt;
 #endif
     }
 
@@ -475,9 +583,12 @@ private:
     }
 
     // add candidate edges with new value of decimation cost
-    BOOST_FOREACH(graph_edge_descriptor edge, boost::out_edges(vert_1, m_graph))
+    if (update_candidates)
     {
-      add_candidate(edge, concavity_threshold);
+      BOOST_FOREACH(graph_edge_descriptor edge, boost::out_edges(vert_1, m_graph))
+      {
+        add_candidate(edge, concavity_threshold);
+      }
     }
     
 #ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
@@ -485,7 +596,11 @@ private:
 #endif
 
     // remove edges that can not become candidates
-    remove_invalid_edges();
+    if (update_candidates)
+    {
+      remove_invalid_edges();
+      update_removed_invalid_edges(vert_2, vert_1);
+    }
   }
 
   /**
@@ -532,12 +647,21 @@ private:
   /**
   * Computes length of the diagonal of a bounding box (normalization factor).
   */
-  double compute_normalization_factor(const CGAL::Bbox_3& bbox)
+  double compute_diagonal_length(const CGAL::Bbox_3& bbox)
   {
     Point_3 min_p(bbox.xmin(), bbox.ymin(), bbox.zmin());
     Point_3 max_p(bbox.xmax(), bbox.ymax(), bbox.zmax());
 
     return CGAL::sqrt(CGAL::squared_distance(min_p, max_p));
+  }
+
+  /**
+   * Checks if there is need to construct the convex hull of a set of points 
+   */
+  bool valid_convex_hull_pts(const std::vector<Point_3>& pts)
+  {
+    if (pts.size() <= 3) return false;
+    return true;
   }
 
   /**
@@ -571,18 +695,46 @@ private:
   {
     BOOST_FOREACH(graph_edge_descriptor edge, m_invalid_edges)
     {
+      m_removed_invalid_edges.push_back(std::make_pair(source(edge, m_graph), target(edge, m_graph)));
       remove_edge(edge, m_graph);
     }
     m_invalid_edges.clear();
   }
 
   /**
-   * Checks if there is need to construct the convex hull of a set of points 
+   * Restores edges in the adjacency list that were marked as invalid and further removed
    */
-  bool valid_convex_hull_pts(const std::vector<Point_3>& pts)
+  void restore_invalid_edges(double concavity_threshold)
   {
-    if (pts.size() <= 3) return false;
-    return true;
+    BOOST_FOREACH(graph_edge_pair pair, m_removed_invalid_edges)
+    {
+      std::pair<graph_edge_descriptor, bool> edge = add_edge(pair.first, pair.second, m_graph);
+      if (edge.second)
+      {
+#ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
+        std::cout << "Restored edge: " << pair.first << " " << pair.second << std::endl;
+#endif
+        update_edge(edge.first, concavity_threshold, CONCAVITY_FACTOR);
+      }
+    }
+  }
+  
+  /**
+   * Updates vertex descriptors of removed invalid edges (vert_1 -> vert_2)
+   */
+  void update_removed_invalid_edges(graph_vertex_descriptor vert_1, graph_vertex_descriptor vert_2)
+  {
+    for (typename std::vector<graph_edge_pair>::iterator it = m_removed_invalid_edges.begin(); it != m_removed_invalid_edges.end(); ++it)
+    {
+      if (it->first == vert_1)
+      {
+        it->first = vert_2;
+      }
+      if (it->second == vert_1)
+      {
+        it->second = vert_2;
+      }
+    }
   }
 };    
 

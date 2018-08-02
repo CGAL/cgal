@@ -6,7 +6,7 @@
 #include "Scene.h"
 #include "Color_map.h"
 
-//#define CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
+#define CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
 #include <CGAL/approximate_convex_segmentation.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
@@ -160,6 +160,8 @@ private:
     bool extract_convex_hulls = m_segmentation_ui.convex_hulls_check_box->isChecked();
     bool use_concavity_colors = m_segmentation_ui.concavity_colors_check_box->isChecked();
     bool use_shortest_method = m_segmentation_ui.shortest_method_check_box->isChecked();
+    bool enable_postprocessing_segments = m_segmentation_ui.postprocess_segments_check_box->isChecked();
+    double small_segment_threshold = m_segmentation_ui.small_segment_threshold_spin_box->value();
 
     // create a new item and use it for segmentation
     FacegraphItem* segmentation_item = new FacegraphItem(*item->face_graph());
@@ -186,7 +188,11 @@ private:
       CGAL::approximate_convex_segmentation<Concurrency_tag>(segmentation_mesh,
                                                              segments_pmap,
                                                              concavity_threshold,
-                                                             CGAL::parameters::min_number_of_segments(min_number_of_segments).segments_convex_hulls(convex_hulls_pmap).use_closest_point(use_shortest_method));
+                                                             CGAL::parameters::min_number_of_segments(min_number_of_segments).
+                                                             segments_convex_hulls(convex_hulls_pmap).
+                                                             use_closest_point(use_shortest_method).
+                                                             postprocess_segments(enable_postprocessing_segments).
+                                                             small_segment_threshold(small_segment_threshold));
     timer.stop();
     
     std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;

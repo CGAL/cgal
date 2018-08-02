@@ -133,6 +133,18 @@ indicates if the closest point or the normal projection should be used to comput
 <b>Default:</b> false
 \cgalNPEnd
 
+\cgalNPBegin{postprocess_segments} \anchor BGL_postprocess_segments
+indicates if the produced segments should be postprocessed (merge a segment that is inside of another one, merge a segment smaller than `small_segment_threshold` with a neighbour segment regardless concavity threshold).\n 
+<b>Type:</b> a type convertible to `bool` \n
+<b>Default:</b> false
+\cgalNPEnd
+
+\cgalNPBegin{small_segment_threshold} \anchor BGL_small_segment_threshold
+indicates the minimal size of a segment postprocessing procedure must return in percentage with regard to the diameter of an input mesh. The value must be in the range [0, 100].\n
+<b>Type:</b> a type convertible to `double` \n
+<b>Default:</b> 10
+\cgalNPEnd
+
 \cgalNPBegin{geom_traits} \anchor BGL_geom_traits
 is the geometric traits instance in which the operation should be performed.\n
 <b>Type:</b> a Geometric traits class.\n

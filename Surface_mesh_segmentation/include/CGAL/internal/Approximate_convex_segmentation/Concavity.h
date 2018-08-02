@@ -173,6 +173,14 @@ namespace internal
       return compute(faces, conv_hull, boost::make_assoc_property_map(distances));
     }
 
+    void compute_normals()
+    {
+      if (m_normals_computed) return; // if the normals are already computed, then skip
+
+      CGAL::Polygon_mesh_processing::compute_vertex_normals(m_mesh, boost::associative_property_map<Normals_map>(m_normals_map));
+      m_normals_computed = true;
+    }
+
   private:
     const TriangleMesh& m_mesh;
     Vpm m_vpm;
@@ -352,14 +360,6 @@ namespace internal
       }
 
       return CGAL::sqrt(result);
-    }
-
-    void compute_normals()
-    {
-      if (m_normals_computed) return; // if the normals are already computed, then skip
-
-      CGAL::Polygon_mesh_processing::compute_vertex_normals(m_mesh, boost::associative_property_map<Normals_map>(m_normals_map));
-      m_normals_computed = true;
     }
   };
 }
