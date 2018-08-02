@@ -174,7 +174,7 @@ Distance computation of the point \f$ M_0 \f$ to its projection \f$ Proj(M_0) \f
 
 \cgalFigureBegin{Concavity_values_elephant_demo,concavity_values-elephant.png, concavity_values-elephant-shortest.png}
 \b Left: Concavity per face using the projection along the vertex normal; \b Right: Concavity per face using the projection to the closest point.
-Concavity per face is estimated as the average value of concavities per vertices of its triangle in the Polyhedron demo.
+Concavity per face is estimated as the average value of concavities per vertices of the face in the Polyhedron demo.
 \cgalFigureEnd
 
 The concavity value is used as cost in the dual edge collapse process. It affects the order in which dual edges are collapsed and thus the produced segmentation.
@@ -201,7 +201,7 @@ The collapse cost of the edge between vertices `v` and `w` is computed as follow
             - \f$S(v, w)\f$ denotes the set of faces that belongs to the segments of the dual vertices \f$ v \f$ and \f$ w \f$,
             - \f$ C(S(v, w)) \f$ the concavity value of the vertices of \f$ S(v, w) \f$,
             - \f$ D \f$ denotes a normalization factor equal to the length of the diagonal of the bounding box of \f$ S \f$,
-            - \f$ E_{shape}((S(v, w))) = \frac{\rho^2(S(v, w))}{4 \pi \times \sigma(S(v, w))} \f$ with \f$ \rho(S(v, w)) \f$ the perimeter of \f$S(v, w)\f$ (sum of the length of edges on the boundary of the patch) and \f$ \sigma(S(v, w)) \f$ the area of \f$ S(v, w) \f$.
+            - \f$ E_{shape}{(S(v, w))} = \frac{\rho^2(S(v, w))}{4 \pi \times \sigma(S(v, w))} \f$ with \f$ \rho(S(v, w)) \f$ the perimeter of \f$S(v, w)\f$ (sum of the length of edges on the boundary of the patch) and \f$ \sigma(S(v, w)) \f$ the area of \f$ S(v, w) \f$.
             - \f$ \alpha \f$ denotes a parameter controlling the contribution of the aspect ratio \f$ E_{shape}(v, w) \f$ with respect to the concavity cost.
         </td>
     </tr>
@@ -342,24 +342,26 @@ Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of
 The following tables describe the run-times of `concavity_values()` and `approximate_convex_segmentation()` functions.
 All the run-times were produced using the release build of \cgal 4.12 on an Intel i7 laptop, compiled by g++ 7.2.0 under VMware.
 In all the benchmarks `%Exact_predicates_inexact_constructions_kernel` (`EPICK`) was used as the kernel.
-Used meshes: sword.off (1036 triangles), cactus.off (1236 triangles), elephant.off (5558 triangles).
+Used meshes: sword.off (1036 triangles), cactus.off (1236 triangles), elephant.off (5558 triangles), dino.off (7828 triangles).
 
 <center>
-Number of triangles  |  Runtime in milliseconds
----------------------| ----------------:
- 1,036               |  3
- 1,236               |  3
- 5,558               |  23
+Number of triangles  |  Run-time (ms)
+---------------------| -------------:
+ 1,036               |  2.9
+ 1,236               |  1.7
+ 5,558               |  7.9
+ 7,828               |  9.9
 </center>
 
-Each cell of the next table contains run-time in seconds and the number of produced clusters in parentheses.
+Each cell of the next table contains run-time in seconds.
 
 <center>
-Number of triangles  | Concavity threshold = 0.05 | Concavity threshold = 0.3 | Concavity threshold = 7
----------------------| ------------------------:  | -----------------------:  | ---------------------:
- 1,036               | 3.8 (12)                   | 3.8 (12)                  | 11 (5)
- 1,236               | 14 (6)                     | 14.8 (3)                  | 41 (1)
- 5,558               | 72 (19)                    | 185 (12)                  | -
+Number of triangles  | Concavity threshold = 0.01 | Concavity threshold = 0.05 | Concavity threshold = 0.5
+---------------------| ------------------------:  | ------------------------:  | ---------------------:
+ 1,036               | 3.8                        | 3.9                        | 3.9
+ 1,236               | 10.8                       | 14.2                       | 20.4
+ 5,558               | 32.7                       | 59.3                       | 365.9
+ 7,828               | 20.9                       | 43.4                       | 148.7
 </center>
 
 <!-- Internal for developers:

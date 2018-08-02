@@ -211,8 +211,8 @@ concavity_values(const TriangleMesh& mesh)
  *    \cgalParamBegin{min_number_of_segments} minimal number of segments, default is 1 \cgalParamEnd
  *    \cgalParamBegin{segments_convex_hulls} an array filled up with the convex hulls of all segments \cgalParamEnd
  *    \cgalParamBegin{use_closest_point} if true, the concavity at each vertex is evaluated by using the distance to the closest point on the convex hull of the set of faces. If false, the distance to the first intersected point following the normal at each vertex is used. Default is false \cgalParamEnd
- *    \cgalParamBegin{postprocess_segments} if true, any produced segment that is inside of another one or smaller than `small_segment_threshold` will be merged with a neighbour segment regardless the concavity threshold). Default is false \cgalParamEnd
- *    \cgalParamBegin{small_segment_threshold} the minimal size of a segment postprocessing procedure must return in percentage with regard to the diameter of the input mesh. The value must be in the range [0, 100]. Default is 10% \cgalParamEnd
+ *    \cgalParamBegin{postprocess_segments} if true, any produced segment that is smaller than `small_segment_threshold` will be merged with a neighbour segment regardless the concavity constraint). Default is false \cgalParamEnd
+ *    \cgalParamBegin{small_segment_threshold} the minimal size of a segment postprocessing procedure is allowed to merge in percentage with regard to the length of diagonal of the input mesh. The value must be in the range [0, 100]. Default is 10.0% \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * @return number of segments computed
