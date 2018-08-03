@@ -37,6 +37,7 @@
 #include <CGAL/array.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Union_find.h>
+#include <CGAL/unordered.h>
 #include <CGAL/utility.h>
 
 #include <boost/range.hpp>
@@ -628,8 +629,7 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pm,
   //                         \          /
   //                          v3------v4
   // so we mark which edges have been stitched
-  typedef CGAL::internal::Dynamic_property_map<halfedge_descriptor, bool>    Halfedge_status_pmap;
-  Halfedge_status_pmap stitched_hedges(false);
+  cpp11::unordered_set<halfedge_descriptor> stitched_hedges;
 
   BOOST_FOREACH(halfedge_descriptor h, boundary_cycles)
   {
@@ -647,7 +647,7 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pm,
     {
       halfedge_descriptor h = stitching_starting_points[i];
 
-      if(get(stitched_hedges, h)) // already treated
+      if(stitched_hedges.count(h) > 0) // already treated
         continue;
 
       std::vector<std::pair<halfedge_descriptor, halfedge_descriptor> > hedges_to_stitch;
@@ -657,8 +657,8 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pm,
       do
       {
         hedges_to_stitch.push_back(std::make_pair(h, hn));
-        put(stitched_hedges, h, true);
-        put(stitched_hedges, hn, true);
+        stitched_hedges.insert(h);
+        stitched_hedges.insert(hn);
 
         if(next(hn, pm) == h)
           break;
