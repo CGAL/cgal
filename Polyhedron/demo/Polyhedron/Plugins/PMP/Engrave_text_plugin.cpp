@@ -326,7 +326,7 @@ public :
     translation = EPICK::Vector_2(0,0);    
     connect(dock_widget->scal_slider, &QSlider::valueChanged,
             this, [this](){
-      scaling = dock_widget->scal_slider->value()/100.0;
+      scaling = dock_widget->scal_slider->value()/1000.0;
       scene->setSelectedItem(scene->item_id(sel_item));
       visualize();
     });
@@ -481,7 +481,7 @@ public Q_SLOTS:
           pymax = v.y();
       }
     }
-    if(ymax-ymin > xmax - xmin)
+    if(ymax-ymin <= xmax - xmin)
     {
       Q_FOREACH(QPolygonF poly, polys){
         polylines.push_back(std::vector<EPICK::Point_2>());
@@ -785,6 +785,10 @@ private:
   
   void cleanup()
   {
+    dock_widget->scal_slider->setValue(1000);
+    dock_widget->rot_slider->setValue(0);
+    translation = EPICK::Vector_2(0,0);
+    uv_map_3.reset();
     graphics_scene->clear();
     if(sel_item)
     {
