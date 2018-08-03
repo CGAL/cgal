@@ -204,7 +204,8 @@ public:
   * @param polygons each element in the vector describes a polygon using the index of the points in `points`
   * @param out the polygon mesh to be built
   *
-  * @pre `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons)`
+  * @pre \link CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()
+  *            CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons) \endlink
   *
   * \sa `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
   * \sa `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`
