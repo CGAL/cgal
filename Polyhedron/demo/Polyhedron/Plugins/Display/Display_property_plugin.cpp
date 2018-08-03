@@ -11,6 +11,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Heat_method_3/Heat_method_3.h>
+#include <CGAL/Heat_method_3/Intrinsic_Delaunay_Triangulation_3.h>
 
 #include "Scene_points_with_normal_item.h"
 #include "Messages_interface.h"
@@ -310,6 +311,9 @@ class DisplayPropertyPlugin :
   typedef SMesh::Property_map<boost::graph_traits<SMesh>::vertex_descriptor, double> Vertex_distance_map;
   typedef CGAL::Heat_method_3::Heat_method_3<SMesh,EPICK,Vertex_distance_map> Heat_method;
 
+  typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<SMesh,EPICK,Vertex_distance_map> Idt;
+  typedef CGAL::Heat_method_3::Heat_method_3<Idt,EPICK,Idt::Vertex_distance_map> Heat_method_idt;
+  
 public:
 
   bool applicable(QAction*) const Q_DECL_OVERRIDE
@@ -433,8 +437,12 @@ private Q_SLOTS:
     case 1:
       displayScaledJacobian(item);
       break;
-    default:
+    case 2:
       displayHeatIntensity(item);
+      item->setRenderingMode(Gouraud);
+      break;
+    default:  // Heat Method (Intrinsic Delaunay)
+      displayHeatIntensity(item, true);  
       item->setRenderingMode(Gouraud);
       break;
     }
@@ -692,25 +700,50 @@ private Q_SLOTS:
   }
 
   // AF: This function gets called when we click on the button "Colorize"
-  void displayHeatIntensity(Scene_surface_mesh_item* item)
+  void displayHeatIntensity(Scene_surface_mesh_item* item, bool iDT = false)
   {    
     SMesh& mesh = *item->face_graph();
-
     Heat_method * hm;
+    Heat_method_idt * hm_idt;
     SMesh::Property_map<vertex_descriptor, double> heat_intensity;
-    if(mesh_heat_method_map.find(item) != mesh_heat_method_map.end()){
-      hm = mesh_heat_method_map[item];
-      heat_intensity = mesh.property_map<vertex_descriptor, double>("v:heat_intensity").first;
-    }else {
-      heat_intensity = mesh.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
-      hm = new Heat_method(mesh,heat_intensity);
-      mesh_heat_method_map[item] = hm;
+    if(! iDT){
+      if(mesh_heat_method_map.find(item) != mesh_heat_method_map.end()){
+        hm = mesh_heat_method_map[item];
+        heat_intensity = mesh.property_map<vertex_descriptor, double>("v:heat_intensity").first;
+      }else {
+        heat_intensity = mesh.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
+        hm = new Heat_method(mesh,heat_intensity);
+        mesh_heat_method_map[item] = hm;
+      }
+      connect(item, &Scene_surface_mesh_item::aboutToBeDestroyed,
+              [this,item](){
+                auto it =  mesh_heat_method_map.find(item);
+                delete it->second;
+                mesh_heat_method_map.erase(it);
+              }
+              );
+    } else {
+      Idt* idt;
+      if(mesh_heat_method_idt_map.find(item) != mesh_heat_method_idt_map.end()){
+        hm_idt = mesh_heat_method_idt_map[item];
+        heat_intensity = mesh.property_map<vertex_descriptor, double>("v:heat_intensity").first;
+      }else {
+        heat_intensity = mesh.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
+        idt = new Idt(mesh,heat_intensity);
+        hm_idt = new Heat_method_idt(*idt,idt->vertex_distance_map());
+        mesh_heat_method_idt_map[item] = hm_idt;
+      }
+      connect(item, &Scene_surface_mesh_item::aboutToBeDestroyed,
+              [this,item](){
+                auto it = mesh_heat_method_idt_map.find(item);
+                Heat_method_idt *hm_idt = it->second;
+                Idt* idt = &(const_cast<Idt&>(hm_idt->triangle_mesh()));
+                delete hm_idt;
+                delete idt;
+                mesh_heat_method_idt_map.erase(it);
+              }
+              );
     }
-    connect(item, &Scene_surface_mesh_item::aboutToBeDestroyed,
-            [this,item](){
-              mesh_heat_method_map.erase(item);
-            }
-            );
 
     bool found = false;
     SMesh::Property_map<vertex_descriptor, bool> is_source ;
@@ -726,11 +759,18 @@ private Q_SLOTS:
     // AF: So far we only deal with adding sources
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
       if(is_source[vd]){
-        hm->add_source(vd);
+        if(iDT){
+          hm_idt->add_source(vd);
+        } else
+          hm->add_source(vd);
       }
     }
 
-    hm->update();
+    if(iDT){
+      hm_idt->update();
+    }else{
+      hm->update();
+    }
 
     double max = 0;
     double min = (std::numeric_limits<double>::max)();
@@ -1100,6 +1140,7 @@ private:
   boost::unordered_map<Scene_surface_mesh_item*, Scene_heat_item*> mesh_heat_item_map;
 
   boost::unordered_map<Scene_surface_mesh_item*, Heat_method*> mesh_heat_method_map;
+  boost::unordered_map<Scene_surface_mesh_item*, Heat_method_idt*> mesh_heat_method_idt_map;
 };
 
   /// Code based on the verdict module of vtk

@@ -127,6 +127,11 @@ namespace CGAL {
       build();
     }
 
+    const TriangleMesh& triangle_mesh() const{
+      return tm;
+    }
+
+
     //  private:
      const VertexDistanceMap& vertex_distance_map() const
      {

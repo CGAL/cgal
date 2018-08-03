@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>292</width>
-    <height>461</height>
+    <height>489</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -163,6 +163,11 @@
         <item>
          <property name="text">
           <string>Heat Intensity</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Heat Intensity (Intrinsic Delaunay)</string>
          </property>
         </item>
        </widget>
