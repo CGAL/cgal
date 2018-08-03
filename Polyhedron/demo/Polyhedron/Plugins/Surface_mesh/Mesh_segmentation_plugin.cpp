@@ -17,6 +17,7 @@
 #include <QDebug>
 #include <QObject>
 #include <QDockWidget>
+#include <QMessageBox>
 //#include <QtConcurrentRun>
 #include <map>
 #include <algorithm>
@@ -286,6 +287,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
 template<class FacegraphItem>
 void Polyhedron_demo_mesh_segmentation_plugin::apply_Partition_button_clicked(FacegraphItem* item)
 {
+  
   typedef typename FacegraphItem::Face_graph Facegraph;
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -315,7 +317,13 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_Partition_button_clicked(Fa
         get_sdf_map(item).insert(std::make_pair(item, std::vector<double>()) );
       pair = res.first;
   }
-
+  bool isClosed = is_closed(*pair->first->face_graph());
+  if(!isClosed)
+  {
+    QApplication::restoreOverrideCursor();
+    QMessageBox::warning(mw, "Warning", "This mesh has boundaries, therefore the results may be unreliable or meaningless.");
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+  }
   check_and_set_ids(pair->first->face_graph());
   QTime time;
   time.start();
@@ -326,11 +334,33 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_Partition_button_clicked(Fa
     FaceGraph_with_id_to_vector_property_map<Facegraph, double> sdf_pmap(&pair->second, fidmap);
     sdf_values(*(pair->first->face_graph()), sdf_pmap, cone_angle, number_of_rays);
   }
-
+ 
+  
+  
   std::vector<std::size_t> internal_segment_map(num_faces(*pair->first->face_graph()));
   FaceGraph_with_id_to_vector_property_map<Facegraph, std::size_t> segment_pmap(&internal_segment_map, fidmap);
   FaceGraph_with_id_to_vector_property_map<Facegraph, double> sdf_pmap(&pair->second, fidmap);
 
+  if(!isClosed)
+  {
+    bool has_sdf_values = false;
+    BOOST_FOREACH(typename boost::graph_traits<Facegraph>::face_descriptor f, 
+                  faces(*pair->first->face_graph()))
+    {
+      if(sdf_pmap[f] != -1
+         && sdf_pmap[f] != std::numeric_limits<double>::max())
+      {
+        has_sdf_values = true;
+        break;
+      }
+    }
+    if(!has_sdf_values)
+    {
+      QApplication::restoreOverrideCursor();
+      QMessageBox::warning(mw, "Error", "No SDF value could be computed, aborting...");
+      return;
+    }
+  }
   std::size_t nb_segments = segmentation_from_sdf_values(*(pair->first->face_graph())
       ,sdf_pmap, segment_pmap, number_of_clusters, smoothness, extract_segments);
   std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
