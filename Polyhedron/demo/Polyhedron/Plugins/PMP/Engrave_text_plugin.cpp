@@ -322,11 +322,18 @@ public :
     
     //transfo
     angle = 0.0;
-    scaling=1.0;
+    scalX=1.0;
+    scalY=1.0;
     translation = EPICK::Vector_2(0,0);    
-    connect(dock_widget->scal_slider, &QSlider::valueChanged,
+    connect(dock_widget->scalX_slider, &QSlider::valueChanged,
             this, [this](){
-      scaling = dock_widget->scal_slider->value()/1000.0;
+      scalX = dock_widget->scalX_slider->value()/1000.0;
+      scene->setSelectedItem(scene->item_id(sel_item));
+      visualize();
+    });
+    connect(dock_widget->scalY_slider, &QSlider::valueChanged,
+            this, [this](){
+      scalY = dock_widget->scalY_slider->value()/1000.0;
       scene->setSelectedItem(scene->item_id(sel_item));
       visualize();
     });
@@ -517,12 +524,14 @@ public Q_SLOTS:
     Tree aabb_tree(faces(*sm).first, faces(*sm).second, *sm, uv_map_3);
     
     visu_item = new Scene_polylines_item;
+        
+       
     // compute 3D coordinates
     transfo = 
         EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2((xmax-xmin)/2+xmin,
                                                                        (ymax-ymin)/2+ymin)+ translation)
-        * EPICK::Aff_transformation_2(CGAL::SCALING,scaling) 
-        * EPICK::Aff_transformation_2(CGAL::ROTATION,sin(angle), cos(angle)) 
+        * EPICK::Aff_transformation_2(CGAL::ROTATION,sin(angle), cos(angle))
+        * EPICK::Aff_transformation_2(scalX, 0.0,0.0,scalY)
         * EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2(-(xmax-xmin)/2-xmin,
                                                                          -(ymax-ymin)/2-ymin));
     BOOST_FOREACH(const std::vector<EPICK::Point_2>& polyline, polylines)
@@ -785,7 +794,8 @@ private:
   
   void cleanup()
   {
-    dock_widget->scal_slider->setValue(1000);
+    dock_widget->scalX_slider->setValue(1000);
+    dock_widget->scalY_slider->setValue(1000);
     dock_widget->rot_slider->setValue(0);
     translation = EPICK::Vector_2(0,0);
     uv_map_3.reset();
@@ -805,14 +815,15 @@ private:
       scene->erase(scene->item_id(visu_item));
       visu_item = nullptr;
     }
-      
   }
+  
   QList<QAction*> _actions;
   EngraveWidget* dock_widget;
   Scene_polylines_item* visu_item;
   Scene_polyhedron_selection_item* sel_item;
   double angle;
-  double scaling;
+  double scalX;
+  double scalY;
   EPICK::Vector_2 translation;
   EPICK::Aff_transformation_2 transfo;
   std::vector<std::vector<EPICK::Point_2> > polylines;

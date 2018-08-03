@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>295</width>
+    <width>305</width>
     <height>421</height>
    </rect>
   </property>
@@ -69,37 +69,6 @@
     </item>
     <item row="1" column="0">
      <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0,0">
-      <item row="2" column="2">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Scaling factor:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3">
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="0">
-       <widget class="QPushButton" name="t_left_pushButton">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../../Polyhedron_3.qrc">
-          <normaloff>:/cgal/icons/resources/left_arrow.png</normaloff>:/cgal/icons/resources/left_arrow.png</iconset>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <widget class="QPushButton" name="t_up_pushButton">
         <property name="text">
@@ -111,19 +80,20 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="3">
-       <widget class="QSlider" name="scal_slider">
+      <item row="1" column="2">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Engraving depth:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="3">
+       <widget class="QSlider" name="rot_slider">
+        <property name="minimum">
+         <number>-179</number>
+        </property>
         <property name="maximum">
-         <number>2000</number>
-        </property>
-        <property name="singleStep">
-         <number>1</number>
-        </property>
-        <property name="value">
-         <number>1000</number>
-        </property>
-        <property name="sliderPosition">
-         <number>1000</number>
+         <number>179</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -141,30 +111,35 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="3">
-       <widget class="QSlider" name="rot_slider">
-        <property name="minimum">
-         <number>-179</number>
-        </property>
-        <property name="maximum">
-         <number>179</number>
-        </property>
+      <item row="0" column="3">
+       <spacer name="horizontalSpacer_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
-       </widget>
-      </item>
-      <item row="3" column="2">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Rotation degree:</string>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
         </property>
-       </widget>
+       </spacer>
       </item>
-      <item row="1" column="2">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Engraving depth:</string>
+      <item row="2" column="3">
+       <widget class="QSlider" name="scalX_slider">
+        <property name="maximum">
+         <number>2000</number>
+        </property>
+        <property name="singleStep">
+         <number>1</number>
+        </property>
+        <property name="value">
+         <number>1000</number>
+        </property>
+        <property name="sliderPosition">
+         <number>1000</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
@@ -176,6 +151,31 @@
         <property name="icon">
          <iconset resource="../../Polyhedron_3.qrc">
           <normaloff>:/cgal/icons/resources/down.png</normaloff>:/cgal/icons/resources/down.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Scaling factor in X:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QPushButton" name="t_left_pushButton">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/left_arrow.png</normaloff>:/cgal/icons/resources/left_arrow.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Rotation degree:</string>
         </property>
        </widget>
       </item>
@@ -192,6 +192,29 @@
         </property>
         <property name="value">
          <double>0.010000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="3">
+       <widget class="QSlider" name="scalY_slider">
+        <property name="maximum">
+         <number>2000</number>
+        </property>
+        <property name="pageStep">
+         <number>10</number>
+        </property>
+        <property name="value">
+         <number>1000</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Scaling factor in Y:</string>
         </property>
        </widget>
       </item>
