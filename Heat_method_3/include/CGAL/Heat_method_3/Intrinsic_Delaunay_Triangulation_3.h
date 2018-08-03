@@ -115,9 +115,6 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
        typedef typename boost::graph_traits<TriangleMesh>::edges_size_type edges_size_type;
        typedef typename boost::graph_traits<TriangleMesh>::faces_size_type faces_size_type;
 
-       typedef CGAL::dynamic_face_property_t<Index> Face_property_tag;
-       typedef typename boost::property_map<TriangleMesh, Face_property_tag >::type Face_id_map;
-
        typedef CGAL::dynamic_edge_property_t<Index> Edge_property_tag;
        typedef typename boost::property_map<TriangleMesh, Edge_property_tag >::type Edge_id_map;
        typedef typename std::stack<edge_descriptor, std::list<edge_descriptor> > edge_stack;
@@ -346,11 +343,6 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
              vtov[pairs[i].first] = pairs[i].second;
            }
 
-           face_id_map = get(Face_property_tag(),tm);
-           Index face_i = 0;
-           BOOST_FOREACH(face_descriptor fd, faces(tm)){
-             put(face_id_map, fd, face_i++);
-           }
            edge_stack stack;
            number_of_edges = num_edges(tm);
            edge_lengths.resize(number_of_edges, 1);
@@ -369,7 +361,6 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
            BOOST_FOREACH(face_descriptor f, faces(tm))
            {
              CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
-             Index face_i = get(face_id_map, f);
 
              boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
              halfedge_descriptor hd = halfedge(f,tm);
@@ -411,7 +402,6 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
          Vertex_distance_map vdm;
          VertexPointMap vpm;
          HalfedgeCoordinateMap hcm;
-         Face_id_map face_id_map;
          Edge_id_map edge_id_map;
 
          int number_of_edges;

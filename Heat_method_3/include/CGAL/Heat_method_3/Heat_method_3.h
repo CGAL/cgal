@@ -309,6 +309,11 @@ namespace CGAL {
         VertexPointMap_reference p_j = get(vpm, neighbor_one);
         VertexPointMap_reference p_k = get(vpm, neighbor_two);
         Index face_i = get(face_id_map, f);
+        
+        Index i = get(vertex_id_map, current);
+        Index j = get(vertex_id_map, neighbor_one);
+        Index k = get(vertex_id_map, neighbor_two);
+
         //get area of face_i
         //get outward unit normal
         //cross that with eij, ejk, eki
