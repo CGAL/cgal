@@ -54,7 +54,7 @@ void resize(Polygon& p, std::size_t size)
 template <std::size_t N, class INT>
 void resize(CGAL::cpp11::array<INT, N>&, std::size_t CGAL_assertion_code(size))
 {
-  CGAL_assertion(size >= N);
+  CGAL_assertion(size == N);
 }
 
 template<class C3T3, class PointContainer, class FaceContainer>
