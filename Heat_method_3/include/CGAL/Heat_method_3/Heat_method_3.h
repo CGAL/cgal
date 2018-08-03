@@ -305,9 +305,6 @@ namespace CGAL {
         vertex_descriptor current = *(vbegin);
         vertex_descriptor neighbor_one = *(++vbegin);
         vertex_descriptor neighbor_two = *(++vbegin);
-        Index i = get(vertex_id_map, current);
-        Index j = get(vertex_id_map, neighbor_one);
-        Index k = get(vertex_id_map, neighbor_two);
         VertexPointMap_reference p_i = get(vpm,current);
         VertexPointMap_reference p_j = get(vpm, neighbor_one);
         VertexPointMap_reference p_k = get(vpm, neighbor_two);

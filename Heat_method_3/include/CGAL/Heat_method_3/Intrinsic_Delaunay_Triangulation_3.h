@@ -1,3 +1,4 @@
+
 // Copyright (c) 2018  Carnegie Mellon University (USA), GeometryFactory (France)
 // All rights reserved.
 //
