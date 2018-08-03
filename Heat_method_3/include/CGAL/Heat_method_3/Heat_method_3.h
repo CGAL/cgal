@@ -132,7 +132,7 @@ namespace CGAL {
     }
 
 
-    //  private:
+    private:
      const VertexDistanceMap& vertex_distance_map() const
      {
        return vdm;
@@ -218,7 +218,7 @@ namespace CGAL {
       return sources.end();
     }
 
-    //  private:
+    private:
     double summation_of_edges() const
     {
        double edge_sum = 0;
@@ -280,9 +280,8 @@ namespace CGAL {
       return kronecker;
     }
 
-    Eigen::VectorXd solve_cotan_laplace(const Matrix& M, const Matrix& c, const Matrix& x, double a_time_step, int dimension) const
+    void solve_cotan_laplace(const Matrix& M, const Matrix& c, const Matrix& x, double a_time_step, int dimension)
     {
-      Eigen::VectorXd u;
       Matrix A = (M+ a_time_step*c);
       Eigen::SimplicialLDLT<Matrix> solver;
       solver.compute(A);
@@ -290,15 +289,14 @@ namespace CGAL {
         // decomposition failed
         CGAL_error_msg("Eigen Decomposition in cotan failed");
       }
-      u = solver.solve(x);
+      solved_u = solver.solve(x);
       if(solver.info()!=Eigen::Success) {
         // solving failed
         CGAL_error_msg("Eigen Solving in cotan failed");
       }
-      return u;
     }
 
-    Eigen::MatrixXd compute_unit_gradient(const Eigen::VectorXd& u) const
+    Eigen::MatrixXd compute_unit_gradient() const
     {
       Eigen::MatrixXd X(num_faces(tm), 3);
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
@@ -323,9 +321,9 @@ namespace CGAL {
         double N_cross = (CGAL::sqrt(cross*cross));
         Vector_3 unit_cross = cross/N_cross;
         double area_face = N_cross * (1./2);
-        Vector_3 edge_sums = u(k) * CGAL::cross_product(unit_cross,(p_j-p_i));
-        edge_sums = edge_sums + u(i) * (CGAL::cross_product(unit_cross, (p_k-p_j)));
-        edge_sums = edge_sums + u(j) * CGAL::cross_product(unit_cross, (p_i-p_k));
+        Vector_3 edge_sums = solved_u(k) * CGAL::cross_product(unit_cross,(p_j-p_i));
+        edge_sums = edge_sums + solved_u(i) * (CGAL::cross_product(unit_cross, (p_k-p_j)));
+        edge_sums = edge_sums + solved_u(j) * CGAL::cross_product(unit_cross, (p_i-p_k));
         edge_sums = edge_sums * (1./area_face);
         double e_magnitude = CGAL::sqrt(edge_sums*edge_sums);
         Vector_3 unit_grad = edge_sums*(1./e_magnitude);
@@ -467,8 +465,8 @@ namespace CGAL {
       {
         //don't need to recompute Mass matrix, cotan matrix or timestep reflect that in this function
         update_kronecker_delta();
-        solved_u = solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, m_time_step, dimension);
-        X = compute_unit_gradient(solved_u);
+        solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, m_time_step, dimension);
+        X = compute_unit_gradient();
         index_divergence = compute_divergence(X, dimension);
         solved_phi = solve_phi(m_cotan_matrix, index_divergence, dimension);
         source_change_flag = false;
@@ -571,9 +569,9 @@ namespace CGAL {
       m_time_step = m_time_step*summation_of_edges();
       m_time_step = m_time_step*m_time_step;
       update_kronecker_delta();
-      solved_u = solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, m_time_step, m);
+      solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, m_time_step, m);
       //edit unit_grad
-      X = compute_unit_gradient(solved_u);
+      X = compute_unit_gradient();
       //edit compute_divergence
       index_divergence = compute_divergence(X, m);
       solved_phi = solve_phi(m_cotan_matrix, index_divergence, m);
