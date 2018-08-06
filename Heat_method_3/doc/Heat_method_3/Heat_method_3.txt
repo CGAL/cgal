@@ -6,11 +6,26 @@ namespace CGAL {
 \cgalAutoToc
 \author Keenan Crane, Christina Vaz, Andreas Fabri
 
-This chapter describes the ...
+This chapter describes the algorithm behind the Heat Method \cgalCite{cgal:cww-ghnac-13} and the algorithm behind Intrinsic Delaunay Triangulation \cgalCite{cgal:fsbs-acidt-06}.
+
+The Heat Method is an algorithm that solves the multiple-source shortest path problem by returning the distance from the points in the domain to the closest point in the source set.
+This algorithm computes this by first determining the direction along which distance increases and finishes by recovering the actual distance.
+The Heat Method is more efficient and more robust than previous distance computations, as the algorithm boils down to two standard, numerical linear algebra problems.
+
+
+In Section \ref sec_HM_definitions we give some definitions. In Section \ref sec_HM_history we explain the design of the algorithm and traits.
+
+Note that this package requires the third party library <a href="https://doc.cgal.org/latest/Manual/installation.html#thirdpartyEigen">Eigen</a>.
+This implementation is based on \cgalCite{cgal:cww-ghnac-13} and \cgalCite{cgal:fsbs-acidt-06}
 
 \section sec_HM_definitions Definitions
+Section \ref Subsection_HM_Definitions_Intro gives an overview of the structures needed by the heat method and how to calculate them. The Section
+\ref Subsection_HM_IDT_Definitions gives the background needed for the Intrinsic Delaunay Triangulation. 
 
-Section on definitions here ...
+
+\subsection Subsection_HM_Definitions_Intro The Heat Method Algorithm
+
+\subsection Subsection_HM_IDT_Definitions
 
 \section sec_HM_examples Examples
 
