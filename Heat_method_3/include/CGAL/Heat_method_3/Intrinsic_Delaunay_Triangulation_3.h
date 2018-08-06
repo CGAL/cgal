@@ -44,6 +44,7 @@
 
 #include <boost/foreach.hpp>
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/unordered_map.hpp>
 
 #include <set>
 #include <stack>
@@ -408,7 +409,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
          Eigen::VectorXd edge_lengths;
          Eigen::VectorXd mark_edges;
      public:
-       std::map<vertex_descriptor,vertex_descriptor> v2v, vtov;
+       boost::unordered_map<vertex_descriptor,vertex_descriptor> v2v, vtov;
      };
 
 } // namespace Intrinsic_Delaunay_Triangulation_3

@@ -346,6 +346,7 @@ namespace CGAL {
     {
       Matrix indexD;
       std::vector<triplet> d_matrix_entries;
+      d_matrix_entries.reserve(3* num_faces(tm));
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
       BOOST_FOREACH(face_descriptor f, faces(tm)) {
         boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
@@ -501,8 +502,10 @@ namespace CGAL {
       dimension = m;
       //mass matrix entries
       std::vector<triplet> A_matrix_entries;
+      A_matrix_entries.reserve(2* num_faces(tm));
       //cotan matrix entries
       std::vector<triplet> c_matrix_entries;
+      c_matrix_entries.reserve(15* num_faces(tm));
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
       //Go through each face on the mesh
       {
