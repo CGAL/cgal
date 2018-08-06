@@ -12,20 +12,56 @@ The Heat Method is an algorithm that solves the multiple-source shortest path pr
 This algorithm computes this by first determining the direction along which distance increases and finishes by recovering the actual distance.
 The Heat Method is more efficient and more robust than previous distance computations, as the algorithm boils down to two standard, numerical linear algebra problems.
 
-
 In Section \ref sec_HM_definitions we give some definitions. In Section \ref sec_HM_history we explain the design of the algorithm and traits.
 
 Note that this package requires the third party library <a href="https://doc.cgal.org/latest/Manual/installation.html#thirdpartyEigen">Eigen</a>.
 This implementation is based on \cgalCite{cgal:cww-ghnac-13} and \cgalCite{cgal:fsbs-acidt-06}
 
 \section sec_HM_definitions Definitions
-Section \ref Subsection_HM_Definitions_Intro gives an overview of the structures needed by the heat method and how to calculate them. The Section
-\ref Subsection_HM_IDT_Definitions gives the background needed for the Intrinsic Delaunay Triangulation. 
-
+Section \ref Subsection_HM_Definitions_Intro gives an overview of the theory needed by the heat method. The Section
+\ref Subsection_HM_IDT_Definitions gives the background needed for the Intrinsic Delaunay Triangulation.
 
 \subsection Subsection_HM_Definitions_Intro The Heat Method Algorithm
+For a detailed overview of the heat method, the reader may consult \cgalCite{cgal:cww-ghnac-13} to read the original article. In the sequel, we introduce the basic notions so as to explain our algorithms. In general, the heat method is applicable to any setting if there exists a gradient operator \f$ \nabla\f$, a divergence operator \f$\nabla\f$ and a Laplace operator \f$\Delta = \nabla \cdot \nabla\f$
+which are standard derivatives from vector calculus.
 
-\subsection Subsection_HM_IDT_Definitions
+The Heat Method consists of three main steps:
+   Algorithm:
+           -# Integrate the heat flow \f$ \dot u = \Delta u\f$ for some fixed time \f$t\f$.
+           -# Evaluate the vector field   \f$ X = -\nabla u_t / |\nabla u_t| \f$.
+           -# Solve the Poisson Equation \f$ \Delta \phi = \nabla \cdot X \f$.
+
+
+The function \f$ \phi \f$ is an approximation of the distance to the given source set and approaches the true distance as t goes to zero.
+The algorithm must then be translated in to a discrete algorithm by replacing the derivatives in space and time with approximations.
+
+The heat equation can be discretized in time using a single backward Euler step. This means the following equation must be solved:
+
+      \f$(id-t\Delta)u_t = \delta(x) \f$ where \delta(x) is a Dirac delta encoding an 'infinite' spike of heat (1 if x is in the source set, 0 otherwise)
+
+over the entire domain M, where id is the identity operator.
+
+The heat equation is discretized in space depending on the structure. For this package, we use triangle meshes exclusively. Let \f$ u \in \R^{|V|}\f$ specify a piecewise linear function on a triangulated surface with vertices \f$V\f$, edges \f$E\f$ and faces \f$F\f$.
+A standard discretization of the Laplacian at vertex \f$i\f$ is:
+
+    \f$ {Lu}_i = \frac{1}{2A_i} \sum_{j}(cot \alpha_{ij} + cot \beta_{ij})(u_j-u_i)\f$ where \f$A_i\f$ is one third the area of all triangles incident on vertex \f$i\f$.
+
+The sum is taken over all of the neighboring vertices \f$j\f$. Further, \f$\alpha_{ij}\f$ and \f$\beta_{ij}\f$ are the angles opposing the corresponding edge \f$ij\f$. We express this operation via a matrix \f$L = M^{-1}L_c\f$ where \f$M \in R^{|V|x|V|}\f$ is a diagonal matrix containing the vertex areas and \f$L_c \in R^{|V|x|V|} \f$ is the cotan operator representing the remaining sum.
+
+From this, the symmetric positive-definite system \f$(M-tL_C)u = \delta_{\gamma}\f$ can be solved to find \f$u\f$ where \f$\delta_{\gamma}\f$ is the Kronecker delta over \f$\gamma\f$.
+
+Next, the gradent in a given triangle can be expressed as:
+
+\f$\nabla \cdot X = \frac{1}{2} \sum_j cot\theta_1 (e_1 \cdot X_j) + cot \theta_2 (e_2 \cdot X_j)\f$
+
+where the sum is taken over incident triangles \f$j\f$ each with a vector \f$X_j\f$, \f$e_1\f$ and \f$e_2\f$ are the two edge vectors of triangle \f$j\f$ containing \f$i\f$ and \f$\theta_1\f$, \f$\theta_2\f$ are the opposing angles.
+
+Finally, let \f$b \in R^{|V|}\f$ be the integrated divergences of the normalized vector field X. Thus, solving the symmetric Poisson problem \f$ L_c \phi = b\f$ computes the final distance function.
+
+\subsection Subsection_HM_IDT_Definitions Intrinsic Delaunay Triangulation
+  IDT definitions and algorithm
+
+
 
 \section sec_HM_examples Examples
 
