@@ -623,11 +623,11 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pm,
 
   // A boundary cycle might need to be stitched starting from different extremities
   //
-  //                          v11 ----v10
-  //                         /          \
-  //   v0 === v1(v13) === v2(v12)       v5(v9) === v6(v8) === v7
-  //                         \          /
-  //                          v3------v4
+  //                        v11 ------ v10
+  //                         |          |
+  //   v0 --- v1(v13) === v2(v12)     v5(v9) === v6(v8) --- v7
+  //                         |          |
+  //                        v3 ------- v4
   // so we mark which edges have been stitched
   cpp11::unordered_set<halfedge_descriptor> stitched_hedges;
 
