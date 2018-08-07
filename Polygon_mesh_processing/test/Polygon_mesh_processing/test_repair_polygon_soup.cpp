@@ -1,4 +1,4 @@
-﻿#define CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
+#define CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -7,6 +7,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <algorithm>
+#include <deque>
 #include <iostream>
 #include <fstream>
 #include <vector>
