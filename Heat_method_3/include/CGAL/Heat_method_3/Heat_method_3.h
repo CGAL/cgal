@@ -231,7 +231,7 @@ namespace CGAL {
          vertex_descriptor neighbor_two = target(hd2,tm);
          halfedge_descriptor hd3 = next(hd2,tm);
          vertex_descriptor current = target(hd3,tm);
-         
+
          VertexPointMap_reference pi = get(vpm,current);
          VertexPointMap_reference pj = get(vpm, neighbor_one);
          VertexPointMap_reference pk = get(vpm, neighbor_two);
@@ -309,7 +309,7 @@ namespace CGAL {
         VertexPointMap_reference p_j = get(vpm, neighbor_one);
         VertexPointMap_reference p_k = get(vpm, neighbor_two);
         Index face_i = get(face_id_map, f);
-        
+
         Index i = get(vertex_id_map, current);
         Index j = get(vertex_id_map, neighbor_one);
         Index k = get(vertex_id_map, neighbor_two);
@@ -323,9 +323,20 @@ namespace CGAL {
         double N_cross = (CGAL::sqrt(cross*cross));
         Vector_3 unit_cross = cross/N_cross;
         double area_face = N_cross * (1./2);
-        Vector_3 edge_sums = solved_u(k) * CGAL::cross_product(unit_cross,(p_j-p_i));
-        edge_sums = edge_sums + solved_u(i) * (CGAL::cross_product(unit_cross, (p_k-p_j)));
-        edge_sums = edge_sums + solved_u(j) * CGAL::cross_product(unit_cross, (p_i-p_k));
+        double u_i = std::abs(solved_u(i));
+        double u_j = std::abs(solved_u(j));
+        double u_k = std::abs(solved_u(k));
+        double r_Mag = 1./std::max(std::max(u_i, u_j),u_k);
+        /* normalize heat values so that they have roughly unit magnitude */
+        if(!std::isinf(r_Mag))
+        {
+          u_i = u_i * r_Mag;
+          u_j = u_j * r_Mag;
+          u_k = u_k * r_Mag;
+        }
+        Vector_3 edge_sums = u_k * CGAL::cross_product(unit_cross,(p_j-p_i));
+        edge_sums = edge_sums + u_i * (CGAL::cross_product(unit_cross, (p_k-p_j)));
+        edge_sums = edge_sums + u_j * CGAL::cross_product(unit_cross, (p_i-p_k));
         edge_sums = edge_sums * (1./area_face);
         double e_magnitude = CGAL::sqrt(edge_sums*edge_sums);
         Vector_3 unit_grad = edge_sums*(1./e_magnitude);
