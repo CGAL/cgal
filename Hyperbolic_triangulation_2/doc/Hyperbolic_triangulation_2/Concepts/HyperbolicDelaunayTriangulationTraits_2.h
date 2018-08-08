@@ -74,22 +74,16 @@ public:
 
 
 	/*!
+		\cgalModifBegin
 		A predicate object. Must provide the function operator
 
-		`Bounded_side operator()(Point_2 p, Point_2 q, Point_2 r, Point_2 t, int& li),`
+		`Oriented_side operator()(Point_2 p, Point_2 q, Point_2 query),`
 
-		which returns the position of point `t` relative to the hyperbolic triangle
-		with vertices `p, q`, and `r`. 
-		<ul>
-			<li> If the point `t` coincides with one of the points `p, q` or `r`, then the
-			variable `li` contains the index of that point, assuming that the indices
-			of `p, q, r` are 0, 1, 2 respectively. 
-			<li>If the point `t` lies on one of the edges of the hyperbolic triangle, then 
-			the variable `li` contains the index of the vertex opposite to that side,
-			assuming that the indices of `p, q, r` are 0, 1, 2 respectively.
-		</ul>
+		which returns the position of point `query` relative to the oriented hyperbolic 
+		segment with vertices `p` and `q`. 
+		\cgalModifEnd
 	*/
-	typedef unspecified_type 			Side_of_hyperbolic_triangle_2;
+	typedef unspecified_type 			Side_of_oriented_hyperbolic_segment_2;
 
 
 
@@ -149,9 +143,15 @@ public:
   /// \name Operations
   /// The following functions give access to the predicate objects.
   /// @{  
-	Orientation_2                        orientation_2_object();
-	Side_of_oriented_circle_2            side_of_oriented_circle_2_object();  
-	Side_of_hyperbolic_triangle_2        side_of_hyperbolic_triangle_2_object();  
+	Orientation_2                          orientation_2_object();
+	Side_of_oriented_circle_2              side_of_oriented_circle_2_object();  
+	/*!
+		\cgalModifBegin
+	*/
+	Side_of_oriented_hyperbolic_segment_2  side_of_oriented_hyperbolic_segment_2_object();
+	/*!
+		\cgalModifEnd
+	*/  
   /// @}
 
   /// \name
