@@ -85,8 +85,8 @@ public:
   };
 
 
-  typedef typename Geom_traits::Side_of_hyperbolic_triangle_2 Side_of_hyperbolic_triangle;
-  typedef typename Geom_traits::Is_Delaunay_hyperbolic        Is_Delaunay_hyperbolic;
+  typedef typename Geom_traits::Side_of_oriented_hyperbolic_segment_2 Side_of_oriented_hyperbolic_segment;
+  typedef typename Geom_traits::Is_Delaunay_hyperbolic                Is_Delaunay_hyperbolic;
 
   Hyperbolic_Delaunay_triangulation_2(const Geom_traits& gt = Geom_traits())
   : Delaunay_triangulation_2<Gt,Tds>(gt) {}
@@ -205,6 +205,68 @@ public:
 
 private:
   
+  Oriented_side side_of_hyperbolic_triangle(const Point p, const Point q, const Point r, 
+                                            const Point query, Locate_type &lt, int& li) const {
+
+      // The triangle (p,q,r) must be Delaunay hyperbolic
+      CGAL_triangulation_precondition(Is_Delaunay_hyperbolic()(p, q, r));
+
+      // Point p is assumed to be at index 0, q at index 1 and r at index 2 in the face.
+      li = -1;
+
+      if (query == p) {
+        lt = VERTEX;
+        li = 0;
+        return ON_ORIENTED_BOUNDARY;
+      }
+      if (query == q) {
+        lt == VERTEX;
+        li = 1;
+        return ON_ORIENTED_BOUNDARY;
+      }
+      if (query == r) {
+        lt == VERTEX;
+        li = 2;
+        return ON_ORIENTED_BOUNDARY;
+      }
+
+
+      Oriented_side cp1 = Side_of_oriented_hyperbolic_segment()(p, q, query);
+      if (cp1 == ON_ORIENTED_BOUNDARY) {
+        lt = EDGE;
+        li = 2;
+        return ON_ORIENTED_BOUNDARY;
+      }
+
+      Oriented_side cp2 = Side_of_oriented_hyperbolic_segment()(q, r, query);
+      if (cp2 == ON_ORIENTED_BOUNDARY) {
+        lt = EDGE;
+        li = 0;
+        return ON_ORIENTED_BOUNDARY;
+      }
+
+      Oriented_side cp3 = Side_of_oriented_hyperbolic_segment()(r, p, query);
+      if (cp3 == ON_ORIENTED_BOUNDARY) {
+        lt = EDGE;
+        li = 1;
+        return ON_ORIENTED_BOUNDARY;
+      }     
+
+
+      Oriented_side cs1 = Side_of_oriented_hyperbolic_segment()(p, q, r);
+      Oriented_side cs2 = Side_of_oriented_hyperbolic_segment()(q, r, p);
+      Oriented_side cs3 = Side_of_oriented_hyperbolic_segment()(r, p, q);
+
+      // Cannot be on the boundary here.
+      lt = FACE;
+      if (cs1 != cp1 || cs2 != cp2 || cs3 != cp3) {
+        return ON_NEGATIVE_SIDE;
+      } else {
+        return ON_POSITIVE_SIDE; 
+      }
+  }
+
+
   bool has_infinite_vertex(Face_handle f) const
   {
     return Base::is_infinite(f);
@@ -675,12 +737,12 @@ public:
       Point q = fh->vertex(1)->point();
       Point r = fh->vertex(2)->point();
       if (Is_Delaunay_hyperbolic()(p, q, r)) {
-        Bounded_side side = Side_of_hyperbolic_triangle()(p, q, r, query, li);
-        if (side == ON_BOUNDARY) {
+        Oriented_side side = side_of_hyperbolic_triangle(p, q, r, query, lt, li);
+        if (side == ON_ORIENTED_BOUNDARY) {
           lt = EDGE;
           return fh;
         } else {
-          if (side == ON_BOUNDED_SIDE) {
+          if (side == ON_POSITIVE_SIDE) {
             lt = FACE;
             return fh;
           } else {
@@ -693,12 +755,12 @@ public:
       q = fh->mirror_vertex(li)->point();
       r = fh->vertex(cw(li))->point();
       if (Is_Delaunay_hyperbolic()(p, q, r)) {
-        Bounded_side side = Side_of_hyperbolic_triangle()(p, q, r, query, li);
-        if (side == ON_BOUNDARY) {
+        Oriented_side side = side_of_hyperbolic_triangle(p, q, r, query, lt, li);
+        if (side == ON_ORIENTED_BOUNDARY) {
           lt = EDGE;
           return fh;
         } else {
-          if (side == ON_BOUNDED_SIDE) {
+          if (side == ON_POSITIVE_SIDE) {
             lt = FACE;
             return fh;
           } else {
@@ -719,12 +781,12 @@ public:
       return Face_handle();
     }
 
-    Bounded_side side = Side_of_hyperbolic_triangle()(p, q, r, query, li);
-    if (side == ON_BOUNDED_SIDE) {
+    Oriented_side side = side_of_hyperbolic_triangle(p, q, r, query, lt, li);
+    if (side == ON_POSITIVE_SIDE) {
       lt = FACE;
       return fh;
     } else {
-      if (side == ON_BOUNDARY) {
+      if (side == ON_ORIENTED_BOUNDARY) {
         lt = EDGE;
         return fh;
       } else {
@@ -732,11 +794,11 @@ public:
         for (int i = 0; i < 3; i++) {
           Face_handle nfh = fh->neighbor(i);
           if (Is_Delaunay_hyperbolic()(nfh->vertex(0)->point(),nfh->vertex(1)->point(),nfh->vertex(2)->point())) {
-            Bounded_side nside = Side_of_hyperbolic_triangle()(nfh->vertex(0)->point(),nfh->vertex(1)->point(),nfh->vertex(2)->point(), query, li);
-            if (nside == ON_BOUNDED_SIDE) {
+            Oriented_side nside = side_of_hyperbolic_triangle(nfh->vertex(0)->point(),nfh->vertex(1)->point(),nfh->vertex(2)->point(), query, lt, li);
+            if (nside == ON_POSITIVE_SIDE) {
               lt = FACE;
               return nfh;
-            } else if (nside == ON_BOUNDARY) {
+            } else if (nside == ON_ORIENTED_BOUNDARY) {
               lt = EDGE;
               return nfh;
             }

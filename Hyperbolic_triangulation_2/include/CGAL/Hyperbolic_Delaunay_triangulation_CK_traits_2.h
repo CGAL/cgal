@@ -368,95 +368,62 @@ public:
     
 
 
-  class Side_of_hyperbolic_triangle_2 {
-  public:
-    Side_of_hyperbolic_triangle_2() {}
-
-    typedef Bounded_side result_type;
-
-    // Returns the relative position of point t to the hyperbolic triangle (p,q,r)
-    Bounded_side operator()(Point_2 p, Point_2 q, Point_2 r, Point_2 t, int& li) const {
-      
-      // The triangle (p,q,r) cannot be hyperbolic! This case should be handled at triangulation level 
-      CGAL_triangulation_precondition(Is_Delaunay_hyperbolic()(p, q, r));
-
-      // Point p is assumed to be at index 0, q at index 1 and r at index 2 in the face.
-      li = -1;
-
-      Bounded_side cp1 = side_of_segment_2(t, p, q);
-      if (cp1 == ON_BOUNDARY) {
-        li = 2;
-        return ON_BOUNDARY;
-      }
-
-      Bounded_side cp2 = side_of_segment_2(t, q, r);
-      if (cp2 == ON_BOUNDARY) {
-        li = 0;
-        return ON_BOUNDARY;
-      }
-
-      Bounded_side cp3 = side_of_segment_2(t, r, p);
-      if (cp3 == ON_BOUNDARY) {
-        li = 1;
-        return ON_BOUNDARY;
-      }     
-
-
-      Bounded_side cs1 = side_of_segment_2(r, p, q);
-      Bounded_side cs2 = side_of_segment_2(p, q, r);
-      Bounded_side cs3 = side_of_segment_2(q, r, p);
-
-      // Cannot be on the boundary here.
-      if (cs1 != cp1 || cs2 != cp2 || cs3 != cp3) {
-        return ON_UNBOUNDED_SIDE;
-      } else {
-        return ON_BOUNDED_SIDE; 
-      }
-    }
-
-  private:
+  class Side_of_oriented_hyperbolic_segment_2 {
     typedef typename R::Construct_weighted_circumcenter_2  Construct_weighted_circumcenter_2;
     typedef typename R::Weighted_point_2                   Weighted_point_2;
     typedef typename R::Point_2                            Bare_point;
+  
+  public: 
+    Side_of_oriented_hyperbolic_segment_2() {}
 
-    Bounded_side side_of_segment_2(const Point_2 query, const Point_2 p, const Point_2 q) const {
+    typedef Oriented_side result_type;
+
+    result_type operator()(Point_2 p, Point_2 q, Point_2 query) const {
       
       // Check first if the points are collinear with the origin
       Circle_2 poincare(Point_2(FT(0),FT(0)), FT(1));
-      Orientation ori = orientation(poincare.center(), p, q);
+      Point_2 O(FT(0), FT(0));
+      Orientation ori = orientation(p, q, O);
       if (ori == COLLINEAR) {
         Euclidean_line_2 seg(p, q);
-        Orientation qori = orientation(query, p, q);
+        Orientation qori = orientation(p, q, query);
         if (qori == COLLINEAR) {
-          return ON_BOUNDARY;
+          return ON_ORIENTED_BOUNDARY;
         } else {
           // It is sufficient that these are consistent.
           if (qori == LEFT_TURN) {
-            return ON_BOUNDED_SIDE;
+            return ON_POSITIVE_SIDE;
           } else {
-            return ON_UNBOUNDED_SIDE;
+            return ON_NEGATIVE_SIDE;
           }
         }
       }
 
-      Origin o;
       Weighted_point_2 wp(p);
       Weighted_point_2 wq(q);
-      Weighted_point_2 wo(Point_2(o), FT(1)); // Poincaré circle 
+      Weighted_point_2 wo(O, FT(1)); // Poincaré circle 
 
       Bare_point center = Construct_weighted_circumcenter_2()(wp, wo, wq);
       FT sq_radius = Compute_squared_Euclidean_distance_2()(p, center);
 
       Circle_2 circle(center, sq_radius);
-      return circle.bounded_side(query);
+      Bounded_side bs = circle.bounded_side(query);
+      if (bs == ON_BOUNDARY) {
+        return ON_ORIENTED_BOUNDARY;
+      } else {
+        if (bs == ON_BOUNDED_SIDE) {
+          return ON_POSITIVE_SIDE;
+        } else {
+          return ON_NEGATIVE_SIDE;
+        }
+      }
     }
-
   };
 
 
-  Side_of_hyperbolic_triangle_2
-  side_of_hyperbolic_triangle_2_object() {
-    return Side_of_hyperbolic_triangle_2();
+  Side_of_oriented_hyperbolic_segment_2
+  side_of_oriented_hyperbolic_segment_2() {
+    return Side_of_oriented_hyperbolic_segment_2();
   }
 
 
