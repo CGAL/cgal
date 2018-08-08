@@ -5,6 +5,7 @@ project (Periodic_4_hyperbolic_triangulation_2_demo)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+include_directories( ${CMAKE_BINARY_DIR} )
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON) 
@@ -26,7 +27,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 include_directories (BEFORE ../../include include )
 
 # ui files, created with Qt Designer
-qt5_wrap_ui( uis Periodic_4_hyperbolic_Delaunay_triangulation_2.ui )
+qt5_wrap_ui( UIS Periodic_4_hyperbolic_Delaunay_triangulation_2.ui )
 
 # qrc files (resources files, that contain icons, at least)
 qt5_add_resources ( RESOURCE_FILES Main_resources.qrc )
@@ -34,7 +35,7 @@ qt5_add_resources ( RESOURCE_FILES Main_resources.qrc )
 # cpp files
 
 add_executable ( Periodic_4_hyperbolic_Delaunay_triangulation_2_demo
-Periodic_4_hyperbolic_Delaunay_triangulation_2_demo.cpp ${RESOURCE_FILES} )
+Periodic_4_hyperbolic_Delaunay_triangulation_2_demo.cpp ${RESOURCE_FILES} ${UIS})
 
 #add_executable ( Periodic_4_hyperbolic_billiards_demo
 #Periodic_4_hyperbolic_billiards_demo.cpp ${RESOURCE_FILES} )

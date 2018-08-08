@@ -26,14 +26,14 @@ include_directories(${Boost_INCLUDE_DIRS})
 include_directories (BEFORE ../../include include )
 
 # ui files, created with Qt Designer
-qt5_wrap_ui( uis Hyperbolic_triangulation_2_demo.ui )
+qt5_wrap_ui( UIS Hyperbolic_triangulation_2_demo.ui )
 
 # qrc files (resources files, that contain icons, at least)
 qt5_add_resources ( RESOURCE_FILES ../../../GraphicsView/demo/icons/File.qrc ../../../GraphicsView/demo/icons/Input.qrc ../../../GraphicsView/demo/icons/Triangulation_2.qrc ../../../GraphicsView/demo/Triangulation_2/Delaunay_triangulation_2.qrc )
 
 # cpp files
 
-add_executable ( Hyperbolic_Delaunay_triangulation_2_demo Hyperbolic_Delaunay_triangulation_2_demo.cpp ${RESOURCE_FILES} )
+add_executable ( Hyperbolic_Delaunay_triangulation_2_demo Hyperbolic_Delaunay_triangulation_2_demo.cpp ${RESOURCE_FILES} ${UIS})
 
 qt5_use_modules( Hyperbolic_Delaunay_triangulation_2_demo Widgets )
 
