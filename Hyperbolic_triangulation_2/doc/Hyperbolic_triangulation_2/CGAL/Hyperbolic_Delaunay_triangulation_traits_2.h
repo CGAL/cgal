@@ -41,7 +41,6 @@ public:
   	typedef typename K::Orientation_2               				Orientation_2;
   	typedef typename K::Side_of_oriented_circle_2   				Side_of_oriented_circle_2;
     typedef unspecified_type                                Side_of_hyperbolic_triangle_2;
-    typedef unspecified_type                                Is_hyperbolic;
   /// @}
 
   /// \name Construction Types

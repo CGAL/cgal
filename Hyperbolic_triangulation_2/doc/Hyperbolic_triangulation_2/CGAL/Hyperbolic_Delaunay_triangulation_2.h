@@ -277,26 +277,6 @@ public:
   ///@}
   
 
-  /// \name
-  /// The following functions allow to test if an edge or face of the triangulation is non-hyperbolic.
-  /// @{
-    /*!
-      Returns `true` if `f` is non-hyperbolic, i.e., if the circumdisk of `f` intersects the Poincaré disk.
-    */
-    bool is_non_hyperbolic(Face_handle f) const;
-    
-    /*!
-      Returns `true` if `f` is non-hyperbolic, and also the `i`-th edge of `f` is non-hyperbolic.
-    */
-    bool is_non_hyperbolic(Face_handle f, int i) const;
-    
-    /*!
-      Returns `true` if the edge `e` is non-hyperbolic.
-    */
-    bool is_non_hyperbolic(const Edge& e) const;
-  /// @}
-  
-
   /// \name Vertex, Face and Edge iterators and circulators
   /// @{
     

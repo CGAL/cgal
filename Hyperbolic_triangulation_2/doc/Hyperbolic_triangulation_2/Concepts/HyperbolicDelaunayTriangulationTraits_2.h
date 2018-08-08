@@ -92,32 +92,6 @@ public:
 	typedef unspecified_type 			Side_of_hyperbolic_triangle_2;
 
 
-	/*!
-		A predicate object. 
-
-		A segment in the Poincaré disk is <i>hyperbolic</i> if the hyperbolic circle to 
-		which it is a diameter is contained in the Poincaré disk. Similarly, a triangle 
-		in the Poincaré disk is hyperbolic if the circle passing through its three vertices 
-		is contained in the Poincaré disk. For Delaunay triangulations, if a triangle is
-		non-hyperbolic, then it has a unique non-hyperbolic side \cgalCite{cgal:bdt-hdcvd-14}.
-
-		The predicate `Is_hyperbolic` allows to test if a triangle is hyperbolic or not.
-		It must provide the function operator
-
-		`bool operator()(Point_2 p, Point_2 q, Point_2 r),`
-		
-		which returns `true` if the triangle defined by the points `p, q`, and `r`
-		is hyperbolic. It must also provide the function operator
-		
-		`bool operator()(Point_2 p, Point_2 q, Point_2 r, int& idx),`
-		
-		which has the same functionality as the previous overloaded version, but returns 
-		also the index of the non-hyperbolic side of the triangle. If the returned value 
-		is `false`, then the variable `idx` stores the index of the point opposite to the
-		non-hyperbolic side of the triangle, assuming that the indices of `p, q`, and `r`
-		are `0, 1`, and `2`, respectively.
-	*/
-	typedef unspecified_type 			Is_hyperbolic;
 
   /// @}
 
@@ -178,7 +152,6 @@ public:
 	Orientation_2                        orientation_2_object();
 	Side_of_oriented_circle_2            side_of_oriented_circle_2_object();  
 	Side_of_hyperbolic_triangle_2        side_of_hyperbolic_triangle_2_object();  
-  	Is_hyperbolic                        is_hyperbolic_object();
   /// @}
 
   /// \name
