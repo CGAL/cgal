@@ -323,10 +323,10 @@ namespace CGAL {
         double N_cross = (CGAL::sqrt(cross*cross));
         Vector_3 unit_cross = cross/N_cross;
         double area_face = N_cross * (1./2);
-        double u_i = std::abs(solved_u(i));
-        double u_j = std::abs(solved_u(j));
-        double u_k = std::abs(solved_u(k));
-        double r_Mag = 1./std::max(std::max(u_i, u_j),u_k);
+        double u_i = CGAL::abs(solved_u(i));
+        double u_j = CGAL::abs(solved_u(j));
+        double u_k = CGAL::abs(solved_u(k));
+        double r_Mag = 1./(std::max)((std::max)(u_i, u_j),u_k);
         /* normalize heat values so that they have roughly unit magnitude */
         if(!std::isinf(r_Mag))
         {
