@@ -169,39 +169,39 @@ public:
     return Base::is_infinite(v);
   }
 
-  bool is_non_hyperbolic(Face_handle f) const
+  bool is_Delaunay_hyperbolic(Face_handle f) const
   {
-    return has_infinite_vertex(f) || is_finite_non_hyperbolic(f);
+    return !has_infinite_vertex(f) && !is_finite_non_hyperbolic(f);
   }
   
-  bool is_non_hyperbolic(Face_handle f, int i) const 
+  bool is_Delaunay_hyperbolic(Face_handle f, int i) const 
   {
-    return has_infinite_vertex(f, i) || is_finite_non_hyperbolic(f, i);
+    return !has_infinite_vertex(f, i) && !is_finite_non_hyperbolic(f, i);
   }
   
-  bool is_non_hyperbolic(const Edge& e) const 
+  bool is_Delaunay_hyperbolic(const Edge& e) const 
   {
-    return is_non_hyperbolic(e.first, e.second);
+    return is_Delaunay_hyperbolic(e.first, e.second);
   }
   
-  bool is_non_hyperbolic(const Edge_circulator& ec) const 
+  bool is_Delaunay_hyperbolic(const Edge_circulator& ec) const 
   {
-    return is_non_hyperbolic(*ec);
+    return is_Delaunay_hyperbolic(*ec);
   }
   
-  bool is_non_hyperbolic(const All_edges_iterator& ei) const 
+  bool is_Delaunay_hyperbolic(const All_edges_iterator& ei) const 
   {
-    return is_non_hyperbolic(*ei);
+    return is_Delaunay_hyperbolic(*ei);
   }
   
   // is_infinite functions are kept in order to reuse Triangulation_2 demo :
   //              apply_to_range is called by Qt/TriangulationGraphicsItem.h  
   // TODO: document that is_infinite functions are not inherited from Triangulation_2
-  bool is_infinite(Face_handle f) const { return is_non_hyperbolic(f); }
-  bool is_infinite(Face_handle f, int i) const { return is_non_hyperbolic(f,i); }
-  bool is_infinite(const Edge e) const { return is_non_hyperbolic(e); }
-  bool is_infinite(const Edge_circulator& ec) const { return is_non_hyperbolic(ec); }
-  bool is_infinite(const All_edges_iterator& ei) const { return is_non_hyperbolic(ei); }
+  bool is_infinite(Face_handle f) const { return !is_Delaunay_hyperbolic(f); }
+  bool is_infinite(Face_handle f, int i) const { return !is_Delaunay_hyperbolic(f,i); }
+  bool is_infinite(const Edge e) const { return !is_Delaunay_hyperbolic(e); }
+  bool is_infinite(const Edge_circulator& ec) const { return !is_Delaunay_hyperbolic(ec); }
+  bool is_infinite(const All_edges_iterator& ei) const { return !is_Delaunay_hyperbolic(ei); }
 
 private:
   
@@ -301,7 +301,7 @@ private:
         mark_face(next, test);
         
         // go deeper if the neighbor is non_hyperbolic
-        if(is_non_hyperbolic(next)) {
+        if(!is_Delaunay_hyperbolic(next)) {
           backtrack.push(next);
           break;
         }
@@ -335,7 +335,7 @@ private:
       next = f->neighbor(ccw(i));  // turn ccw around v
       
       opposite_face = f->neighbor(i);
-      if(this->is_non_hyperbolic(opposite_face)) {
+      if(!this->is_Delaunay_hyperbolic(opposite_face)) {
         return false;
       }
       
@@ -432,10 +432,10 @@ public:
       return t->is_infinite(vit);
     }
     bool operator()(const All_faces_iterator & fit) const {
-      return t->is_non_hyperbolic(fit);
+      return !t->is_Delaunay_hyperbolic(fit);
     }
     bool operator()(const All_edges_iterator & eit ) const {
-      return t->is_non_hyperbolic(eit);
+      return !t->is_Delaunay_hyperbolic(eit);
     }
   };
   
@@ -556,7 +556,7 @@ public:
   Voronoi_point
   dual(Face_handle f) const
   {
-    CGAL_triangulation_precondition (!this->is_non_hyperbolic(f));
+    CGAL_triangulation_precondition (this->is_Delaunay_hyperbolic(f));
     
     return this->geom_traits().construct_hyperbolic_circumcenter_2_object()
          ( f->vertex(0)->point(), f->vertex(1)->point(), f->vertex(2)->point());
@@ -571,7 +571,7 @@ public:
   Hyperbolic_segment
   dual(Face_handle f, int i) const
   {
-    CGAL_triangulation_precondition (!this->is_non_hyperbolic(f,i));
+    CGAL_triangulation_precondition (this->is_Delaunay_hyperbolic(f,i));
     
     if(this->dimension() == 1) {
       Point p = f->vertex(cw(i))->point();
@@ -587,7 +587,7 @@ public:
     //TODO MT store values of bools to avoid recomputing is-hyperbolic several times
 
     // boths faces are non_hyperbolic, but the incident edge is hyperbolic
-    if( is_non_hyperbolic(f) && is_non_hyperbolic(n) ){
+    if( !is_Delaunay_hyperbolic(f) && !is_Delaunay_hyperbolic(n) ){
       const Point& p = f->vertex(ccw(i))->point();
       const Point& q = f->vertex(cw(i))->point();
       
@@ -598,7 +598,7 @@ public:
     }
     
     // both faces are hyperbolic
-    if( !is_non_hyperbolic(f) && !is_non_hyperbolic(n) ) {
+    if( is_Delaunay_hyperbolic(f) && is_Delaunay_hyperbolic(n) ) {
       const Point& p = f->vertex(ccw(i))->point();
       const Point& q = f->vertex(cw(i))->point();
    
@@ -612,7 +612,7 @@ public:
     // one of the incident faces is non_hyperbolic
     Face_handle hyp_face = f;
     
-    if(is_non_hyperbolic(f)) {
+    if(!is_Delaunay_hyperbolic(f)) {
       hyp_face = n;
       i = in;
     }
