@@ -378,7 +378,7 @@ public:
     Bounded_side operator()(Point_2 p, Point_2 q, Point_2 r, Point_2 t, int& li) const {
       
       // The triangle (p,q,r) cannot be hyperbolic! This case should be handled at triangulation level 
-      CGAL_triangulation_precondition(Is_hyperbolic()(p, q, r));
+      CGAL_triangulation_precondition(Is_Delaunay_hyperbolic()(p, q, r));
 
       // Point p is assumed to be at index 0, q at index 1 and r at index 2 in the face.
       li = -1;
@@ -461,7 +461,7 @@ public:
 
 
   // For details see the JoCG paper (5:56-85, 2014)
-  class Is_hyperbolic
+  class Is_Delaunay_hyperbolic
   {
   public:
     typedef typename R::Vector_3    Vector_3;
@@ -528,11 +528,11 @@ public:
       
       return 1;
     }
-  }; // end Is_hyperbolic
+  }; // end Is_Delaunay_hyperbolic
 
-  Is_hyperbolic 
-    is_hyperbolic_object() const
-  { return Is_hyperbolic(); }
+  Is_Delaunay_hyperbolic 
+    is_Delaunay_hyperbolic_object() const
+  { return Is_Delaunay_hyperbolic(); }
 
   // do not document
   // constructs the Euclidean circle or line supporting the hyperbolic

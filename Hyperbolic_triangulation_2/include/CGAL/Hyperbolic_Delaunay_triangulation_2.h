@@ -86,7 +86,7 @@ public:
 
 
   typedef typename Geom_traits::Side_of_hyperbolic_triangle_2 Side_of_hyperbolic_triangle;
-  typedef typename Geom_traits::Is_hyperbolic         Is_hyperbolic;
+  typedef typename Geom_traits::Is_Delaunay_hyperbolic        Is_Delaunay_hyperbolic;
 
   Hyperbolic_Delaunay_triangulation_2(const Geom_traits& gt = Geom_traits())
   : Delaunay_triangulation_2<Gt,Tds>(gt) {}
@@ -389,7 +389,7 @@ private:
     
     bool operator ()(const Face_handle& f) const
     {
-      typedef typename Gt::Is_hyperbolic Is_hyperbolic;
+      typedef typename Gt::Is_Delaunay_hyperbolic Is_Delaunay_hyperbolic;
       
       if(_tr.has_infinite_vertex(f)) {
 	return false; 
@@ -400,8 +400,8 @@ private:
       Point p2 = f->vertex(2)->point();
       int ind = 0;
       
-      Is_hyperbolic is_hyperbolic = _tr.geom_traits().is_hyperbolic_object();
-      if(is_hyperbolic(p0, p1, p2, ind) == false) {
+      Is_Delaunay_hyperbolic is_Delaunay_hyperbolic = _tr.geom_traits().is_Delaunay_hyperbolic_object();
+      if(is_Delaunay_hyperbolic(p0, p1, p2, ind) == false) {
 	f->set_finite_non_hyperbolic(true); // MT should not be necessary, return true should be enough (?)
 	f->set_non_hyperbolic_edge(ind);
 	return true; 
@@ -674,7 +674,7 @@ public:
       Point p = fh->vertex(0)->point();
       Point q = fh->vertex(1)->point();
       Point r = fh->vertex(2)->point();
-      if (Is_hyperbolic()(p, q, r)) {
+      if (Is_Delaunay_hyperbolic()(p, q, r)) {
         Bounded_side side = Side_of_hyperbolic_triangle()(p, q, r, query, li);
         if (side == ON_BOUNDARY) {
           lt = EDGE;
@@ -692,7 +692,7 @@ public:
       p = fh->vertex(ccw(li))->point();
       q = fh->mirror_vertex(li)->point();
       r = fh->vertex(cw(li))->point();
-      if (Is_hyperbolic()(p, q, r)) {
+      if (Is_Delaunay_hyperbolic()(p, q, r)) {
         Bounded_side side = Side_of_hyperbolic_triangle()(p, q, r, query, li);
         if (side == ON_BOUNDARY) {
           lt = EDGE;
@@ -714,7 +714,7 @@ public:
     Point p = fh->vertex(0)->point();
     Point q = fh->vertex(1)->point();
     Point r = fh->vertex(2)->point();
-    if (!Is_hyperbolic()(p, q, r)) {
+    if (!Is_Delaunay_hyperbolic()(p, q, r)) {
       lt = OUTSIDE_CONVEX_HULL;
       return Face_handle();
     }
@@ -731,7 +731,7 @@ public:
         // Here, the point lies in a face that is a neighbor to fh
         for (int i = 0; i < 3; i++) {
           Face_handle nfh = fh->neighbor(i);
-          if (Is_hyperbolic()(nfh->vertex(0)->point(),nfh->vertex(1)->point(),nfh->vertex(2)->point())) {
+          if (Is_Delaunay_hyperbolic()(nfh->vertex(0)->point(),nfh->vertex(1)->point(),nfh->vertex(2)->point())) {
             Bounded_side nside = Side_of_hyperbolic_triangle()(nfh->vertex(0)->point(),nfh->vertex(1)->point(),nfh->vertex(2)->point(), query, li);
             if (nside == ON_BOUNDED_SIDE) {
               lt = FACE;
