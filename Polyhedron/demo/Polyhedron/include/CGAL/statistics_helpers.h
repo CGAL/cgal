@@ -1,13 +1,15 @@
 #ifndef POLYHEDRON_DEMO_STATISTICS_HELPERS_H
 #define POLYHEDRON_DEMO_STATISTICS_HELPERS_H
 
+#include <CGAL/squared_distance_3_0.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
+
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
 #include <boost/accumulators/statistics/mean.hpp>
 #include <boost/accumulators/statistics/min.hpp>
 #include <boost/accumulators/statistics/max.hpp>
 #include <boost/accumulators/statistics/median.hpp>
-#include <CGAL/squared_distance_3_0.h>
 #include <boost/property_map/property_map.hpp>
 
 #include <cmath>
