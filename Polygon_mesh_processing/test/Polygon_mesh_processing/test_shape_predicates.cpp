@@ -19,7 +19,7 @@ void check_edge_degeneracy(const char* fname)
 {
   std::cout << "test edge degeneracy...";
 
-  typedef typename boost::graph_traits<Surface_mesh>::edge_descriptor edge_descriptor;
+  typedef boost::graph_traits<Surface_mesh>::edge_descriptor edge_descriptor;
 
   std::ifstream input(fname);
   Surface_mesh mesh;
@@ -39,7 +39,7 @@ void check_triangle_face_degeneracy(const char* fname)
 {
   std::cout << "test face degeneracy...";
 
-  typedef typename boost::graph_traits<Surface_mesh>::face_descriptor   face_descriptor;
+  typedef boost::graph_traits<Surface_mesh>::face_descriptor   face_descriptor;
 
   std::ifstream input(fname);
   Surface_mesh mesh;
@@ -82,8 +82,8 @@ void test_vertex_non_manifoldness(const char* fname)
 {
   std::cout << "test vertex non manifoldness...";
 
-  typedef typename boost::graph_traits<Surface_mesh>::vertex_descriptor   vertex_descriptor;
-  typedef typename boost::graph_traits<Surface_mesh>::vertices_size_type  size_type;
+  typedef boost::graph_traits<Surface_mesh>::vertex_descriptor   vertex_descriptor;
+  typedef boost::graph_traits<Surface_mesh>::vertices_size_type  size_type;
 
   std::ifstream input(fname);
   Surface_mesh mesh;
@@ -117,7 +117,7 @@ void test_vertices_merge_and_duplication(const char* fname)
 {
   std::cout << "test non manifold vertex duplication...";
 
-  typedef typename boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
+  typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
 
   std::ifstream input(fname);
   Surface_mesh mesh;
@@ -166,9 +166,9 @@ void test_needles_and_caps(const char* fname)
 
   namespace PMP = CGAL::Polygon_mesh_processing;
 
-  typedef typename boost::graph_traits<Surface_mesh>::halfedge_descriptor     halfedge_descriptor;
-  typedef typename boost::graph_traits<Surface_mesh>::face_iterator           face_iterator;
-  typedef typename boost::graph_traits<Surface_mesh>::face_descriptor         face_descriptor;
+  typedef boost::graph_traits<Surface_mesh>::halfedge_descriptor     halfedge_descriptor;
+  typedef boost::graph_traits<Surface_mesh>::face_iterator           face_iterator;
+  typedef boost::graph_traits<Surface_mesh>::face_descriptor         face_descriptor;
 
   std::ifstream input(fname);
   Surface_mesh mesh;
