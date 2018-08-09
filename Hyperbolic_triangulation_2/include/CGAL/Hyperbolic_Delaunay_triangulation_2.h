@@ -102,6 +102,9 @@ public:
                                       const Geom_traits& gt = Geom_traits()) :
                                       Delaunay_triangulation_2<Gt,Tds>(gt) {
     insert(first, last);
+    for (Finite_vertices_iterator vit = finite_vertices_begin(); vit != finite_vertices_end(); vit++) {
+      ensure_hyperbolic_face_handle(vit);
+    }
   }
 
   void clear() {
@@ -126,7 +129,8 @@ public:
   {
     Vertex_handle v = Base::insert(p, start);
     mark_star(v);
-    
+    ensure_hyperbolic_face_handle(v);
+
     return v;
   }
   
@@ -136,7 +140,8 @@ public:
   {
     Vertex_handle v = Base::insert(p, lt, loc, li);
     mark_star(v);    
-    
+    ensure_hyperbolic_face_handle(v);
+
     return v;
   }
     
@@ -160,7 +165,10 @@ public:
     size_type n = Base::insert(first, last);
     
     mark_finite_non_hyperbolic_faces();
-    
+    for (Finite_vertices_iterator vit = finite_vertices_begin(); vit != finite_vertices_end(); vit++) {
+      ensure_hyperbolic_face_handle(vit);
+    }
+
     return n;
   }
   
@@ -205,6 +213,26 @@ public:
 
 private:
   
+
+  /*
+    During the insertion of a new point in the triangulation, the added vertex points to a face.
+    This function ensures that the face to which the vertex points is hyperbolic. 
+  */
+  void ensure_hyperbolic_face_handle(Vertex_handle v) {
+    if (this->dimension() > 2) {
+      Face_circulator fc = this->incident_faces(v), done(fc);
+      if (fc != 0) {
+        do { 
+          if (is_Delaunay_hyperbolic(fc)) {
+            v->set_face(fc);
+            break;
+          }
+        } while(++fc != done);
+      }
+      CGAL_triangulation_postcondition(is_Delaunay_hyperbolic(v->face()));
+    }
+  }
+
   Oriented_side side_of_hyperbolic_triangle(const Point p, const Point q, const Point r, 
                                             const Point query, Locate_type &lt, int& li) const {
 
