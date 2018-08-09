@@ -210,6 +210,10 @@ public:
     connect(compute_features,  SIGNAL(triggered()), this,
             SLOT(on_compute_features_button_clicked()));
 
+    action_statistics = ui_widget.menu->menu()->addAction ("Show feature statistics");
+    connect(action_statistics,  SIGNAL(triggered()), this,
+            SLOT(on_statistics_clicked()));
+
     ui_widget.menu->menu()->addSection ("Training");
 
     action_train = ui_widget.menu->menu()->addAction ("Train classifier");
@@ -264,6 +268,11 @@ public:
     connect(ui_widget.display,  SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_display_button_clicked(int)));
 
+    connect(ui_widget.minDisplay,  SIGNAL(released()), this,
+            SLOT(on_min_display_button_clicked()));
+    connect(ui_widget.maxDisplay,  SIGNAL(released()), this,
+            SLOT(on_max_display_button_clicked()));
+
     connect(ui_widget_adv.selected_feature,  SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_selected_feature_changed(int)));
     connect(ui_widget_adv.feature_weight,  SIGNAL(valueChanged(int)), this,
@@ -278,6 +287,7 @@ public:
       connect(scene_obj, SIGNAL(itemIndexSelected(int)), this,
               SLOT(update_plugin(int)));
     }
+
   }
   virtual void closure()
   {
@@ -359,6 +369,7 @@ public Q_SLOTS:
   void enable_computation()
   {
     ui_widget.menu->setEnabled(true);
+    action_statistics->setEnabled(false);
     action_train->setEnabled(false);
     action_reset_local->setEnabled(false);
     action_reset->setEnabled(false);
@@ -375,6 +386,7 @@ public Q_SLOTS:
 
   void enable_classif()
   {
+    action_statistics->setEnabled(true);
     action_train->setEnabled(true);
     action_reset_local->setEnabled(true);
     action_reset->setEnabled(true);
@@ -428,9 +440,15 @@ public Q_SLOTS:
         ui_widget_adv.selected_feature->clear();
         classif->fill_display_combo_box(ui_widget.display, ui_widget_adv.selected_feature);
         if (index >= ui_widget.display->count())
+        {
           ui_widget.display->setCurrentIndex(1);
+          change_color (classif, 1);
+        }
         else
+        {
           ui_widget.display->setCurrentIndex(index);
+          change_color (classif, index);
+        }
         ui_widget_adv.selected_feature->setCurrentIndex(0);
       }
   }
@@ -556,17 +574,26 @@ public Q_SLOTS:
         return; 
       }
     
-    bool ok = false;
-    int nb_scales = QInputDialog::getInt((QWidget*)mw,
-                                         tr("Compute Features"), // dialog title
-                                         tr("Number of scales:"), // field label
-                                         5, 1, 99, 1, &ok);
-    if (!ok)
+    QMultipleInputDialog dialog ("Compute Features", mw);
+    QSpinBox* scales = dialog.add<QSpinBox> ("Number of scales:");
+    scales->setRange (1, 99);
+    scales->setValue (5);
+
+    QDoubleSpinBox* voxel_size = dialog.add<QDoubleSpinBox> ("Voxel size (0 for automatic):");
+    voxel_size->setRange (0.0, 10000.0);
+    voxel_size->setValue (0.0);
+    voxel_size->setSingleStep (0.01);
+
+    if (dialog.exec() != QDialog::Accepted)
       return;
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    classif->compute_features (std::size_t(nb_scales));
+    float vsize = float(voxel_size->value());
+    if (vsize == 0.f)
+      vsize = -1.f; // auto value
+    
+    classif->compute_features (std::size_t(scales->value()), vsize);
 
     update_plugin_from_item(classif);
     QApplication::restoreOverrideCursor();
@@ -683,7 +710,32 @@ public Q_SLOTS:
     item_changed(classif->item());
   }
 
+  void change_color (Item_classification_base* classif, int index)
+  {
+    float vmin = std::numeric_limits<float>::infinity();
+    float vmax = std::numeric_limits<float>::infinity();
+    
+    classif->change_color (index, &vmin, &vmax);
 
+    if (vmin == std::numeric_limits<float>::infinity() || vmax == std::numeric_limits<float>::infinity())
+    {
+      ui_widget.minDisplay->setEnabled(false);
+      ui_widget.minDisplay->setText("Min");
+      ui_widget.maxDisplay->setEnabled(false);
+      ui_widget.maxDisplay->setText("Max");
+    }
+    else
+    {
+      ui_widget.minDisplay->setEnabled(true);
+      ui_widget.minDisplay->setText(tr("Min (%1)").arg(vmin));
+      ui_widget.maxDisplay->setEnabled(true);
+      ui_widget.maxDisplay->setText(tr("Max (%1)").arg(vmax));
+    }
+    
+    item_changed(classif->item());
+  }
+
+  
   void on_display_button_clicked(int index)
   {
     Item_classification_base* classif
@@ -691,7 +743,87 @@ public Q_SLOTS:
     if(!classif)
       return; 
 
-    classif->change_color (index);
+    change_color (classif, index);
+  }
+
+  float display_button_value (QPushButton* button)
+  {
+    std::string text = button->text().toStdString();
+
+    std::size_t pos1 = text.find('(');
+    if (pos1 == std::string::npos)
+      return std::numeric_limits<float>::infinity();
+    std::size_t pos2 = text.find(')');
+    if (pos2 == std::string::npos)
+      return std::numeric_limits<float>::infinity();
+
+    std::string fstring (text.begin() + pos1 + 1,
+                         text.begin() + pos2);
+
+    return float (std::atof(fstring.c_str()));
+  }
+
+  void on_min_display_button_clicked()
+  {
+    Item_classification_base* classif
+      = get_classification();
+    if(!classif)
+      return;
+
+    float vmin = display_button_value (ui_widget.minDisplay);
+    float vmax = display_button_value (ui_widget.maxDisplay);
+
+    if (vmin == std::numeric_limits<float>::infinity()
+        || vmax ==  std::numeric_limits<float>::infinity())
+      return;
+    
+    bool ok = false;
+    vmin = float(QInputDialog::getDouble((QWidget*)mw,
+                                         tr("Set display ramp minimum value (saturate under):"),
+                                         tr("Minimum value (pale blue):"),
+                                         double(vmin),
+                                         -10000000.0,
+                                         double(vmax), 5, &ok));
+    if (!ok)
+      return;
+
+    int index = ui_widget.display->currentIndex();
+    
+    classif->change_color (index, &vmin, &vmax);
+    ui_widget.minDisplay->setText(tr("Min* (%1)").arg(vmin));
+    
+    item_changed(classif->item());
+  }
+  
+  void on_max_display_button_clicked()
+  {
+    Item_classification_base* classif
+      = get_classification();
+    if(!classif)
+      return;
+
+    float vmin = display_button_value (ui_widget.minDisplay);
+    float vmax = display_button_value (ui_widget.maxDisplay);
+
+    if (vmin == std::numeric_limits<float>::infinity()
+        || vmax ==  std::numeric_limits<float>::infinity())
+      return;
+    
+    bool ok = false;
+    vmax = float(QInputDialog::getDouble((QWidget*)mw,
+                                         tr("Set display ramp maximum value (saturate over):"),
+                                         tr("Maximum value (dark red):"),
+                                         double(vmax),
+                                         double(vmin),
+                                         10000000.0, 5, &ok));
+    if (!ok)
+      return;
+
+    int index = ui_widget.display->currentIndex();
+    
+    classif->change_color (index, &vmin, &vmax);
+    ui_widget.maxDisplay->setText(tr("Max* (%1)").arg(vmax));
+    
     item_changed(classif->item());
   }
 
@@ -1104,6 +1236,26 @@ public Q_SLOTS:
                                                      (bbox.zmin() + bbox.zmax()) / 2.) + offset);
   }
 
+  void on_statistics_clicked()
+  {
+    Item_classification_base* classif
+      = get_classification();
+    if(!classif)
+    {
+      print_message("Error: there is no point set classification item!");
+      return; 
+    }
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    std::string str = classif->feature_statistics();
+    QApplication::restoreOverrideCursor();
+
+    QMultipleInputDialog dialog ("Feature Statistics", mw);
+    QLabel* text = dialog.add<QLabel> ("");
+    text->setText(str.c_str());
+    dialog.exec_no_cancel();
+  }
+  
   void on_train_clicked()
   {
     Item_classification_base* classif
@@ -1457,6 +1609,7 @@ private:
 
   QDockWidget* dock_widget;
   QDockWidget* dock_widget_adv;
+  QAction* action_statistics;
   QAction* action_train;
   QAction* action_reset_local;
   QAction* action_reset;

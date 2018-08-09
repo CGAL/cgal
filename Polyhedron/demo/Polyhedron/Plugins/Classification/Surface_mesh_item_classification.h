@@ -50,7 +50,7 @@ public:
   CGAL::Three::Scene_item* item() { return m_mesh; }
   void erase_item() { m_mesh = NULL; }
 
-  void compute_features (std::size_t nb_scales);
+  void compute_features (std::size_t nb_scales, float voxel_size);
   
   void add_selection_to_training_set (std::size_t label)
   {
@@ -120,7 +120,7 @@ public:
   bool run (int method, int classifier, std::size_t subdivisions, double smoothing);
 
   void update_color() { change_color (m_index_color); }
-  void change_color (int index);
+  void change_color (int index, float* vmin = NULL, float* vmax = NULL);
   CGAL::Three::Scene_item* generate_one_item (const char* /* name */,
                                               int /* label */) const
   {

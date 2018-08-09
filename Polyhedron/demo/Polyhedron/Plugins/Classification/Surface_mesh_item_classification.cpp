@@ -87,7 +87,7 @@ bool Surface_mesh_item_classification::write_output(std::ostream& )
 }
 
 
-void Surface_mesh_item_classification::change_color (int index)
+void Surface_mesh_item_classification::change_color (int index, float* vmin, float* vmax)
 {
   m_index_color = index;
   int index_color = index;
@@ -198,9 +198,14 @@ void Surface_mesh_item_classification::change_color (int index)
   }
 }
 
-void Surface_mesh_item_classification::compute_features (std::size_t nb_scales)
+void Surface_mesh_item_classification::compute_features (std::size_t nb_scales, float voxel_size)
 {
-  std::cerr << "Computing features with " << nb_scales << " scale(s)" << std::endl;
+  std::cerr << "Computing features with " << nb_scales << " scale(s) and ";
+  if (voxel_size == -1)
+    std::cerr << "automatic voxel size" << std::endl;
+  else
+    std::cerr << "voxel size = " << voxel_size << std::endl;
+  
   m_features.clear();
 
   if (m_generator != NULL)
@@ -208,7 +213,7 @@ void Surface_mesh_item_classification::compute_features (std::size_t nb_scales)
 
   Face_center_map fc_map (m_mesh->polyhedron());
   
-  m_generator = new Generator (*(m_mesh->polyhedron()), fc_map, nb_scales);
+  m_generator = new Generator (*(m_mesh->polyhedron()), fc_map, nb_scales, voxel_size);
   
 #ifdef CGAL_LINKED_WITH_TBB
   m_features.begin_parallel_additions();

@@ -376,7 +376,7 @@ bool Cluster_classification::write_output(std::ostream& stream)
 }
 
 
-void Cluster_classification::change_color (int index)
+void Cluster_classification::change_color (int index, float* vmin, float* vmax)
 {
   m_index_color = index;
 
@@ -591,13 +591,18 @@ void Cluster_classification::reset_indices ()
     *(indices.begin() + i) = idx ++;
 }
 
-void Cluster_classification::compute_features (std::size_t nb_scales)
+void Cluster_classification::compute_features (std::size_t nb_scales, float voxel_size)
 {
   CGAL_assertion (!(m_points->point_set()->empty()));
 
   reset_indices();
   
-  std::cerr << "Computing pointwise features with " << nb_scales << " scale(s)" << std::endl;
+  std::cerr << "Computing pointwise features with " << nb_scales << " scale(s) and ";
+  if (voxel_size == -1)
+    std::cerr << "automatic voxel size" << std::endl;
+  else
+    std::cerr << "voxel size = " << voxel_size << std::endl;
+
   m_features.clear();
 
   Point_set::Vector_map normal_map;
@@ -615,7 +620,7 @@ void Cluster_classification::compute_features (std::size_t nb_scales)
 
   Feature_set pointwise_features;
 
-  Generator generator (*(m_points->point_set()), m_points->point_set()->point_map(), nb_scales);
+  Generator generator (*(m_points->point_set()), m_points->point_set()->point_map(), nb_scales, voxel_size);
   
   CGAL::Real_timer t;
   t.start();

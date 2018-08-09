@@ -63,6 +63,16 @@ public:
 
     return dialog->exec();
   }
+  
+  void exec_no_cancel()
+  {
+    QDialogButtonBox* ok = new QDialogButtonBox
+      (QDialogButtonBox::Ok, Qt::Horizontal, dialog);
+      
+    form->addRow (ok);
+    QObject::connect (ok, SIGNAL(accepted()), dialog, SLOT(accept()));
+    dialog->exec();
+  }
 };
 
 

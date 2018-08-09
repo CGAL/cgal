@@ -97,7 +97,7 @@ class Cluster_classification : public Item_classification_base
                          xcenter + dx, ycenter + dy, zcenter + dz);
   }
 
-  void compute_features (std::size_t nb_scales);
+  void compute_features (std::size_t nb_scales, float voxel_size);
   void add_remaining_point_set_properties_as_features(Feature_set& feature_set);
   
   void select_random_region();
@@ -206,7 +206,7 @@ class Cluster_classification : public Item_classification_base
   bool run (int method, int classifier, std::size_t subdivisions, double smoothing);
 
   void update_color () { change_color (m_index_color); }
-  void change_color (int index);
+  void change_color (int index, float* vmin = NULL, float* vmax = NULL);
   CGAL::Three::Scene_item* generate_one_item (const char* name,
                                               int label) const
   {

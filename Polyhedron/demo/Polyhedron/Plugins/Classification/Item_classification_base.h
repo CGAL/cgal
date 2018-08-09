@@ -45,8 +45,10 @@ public:
 
   virtual CGAL::Bbox_3 bbox() { return item()->bbox(); }
 
-  virtual void compute_features (std::size_t nb_scales) = 0;
+  virtual void compute_features (std::size_t nb_scales, float voxel_size) = 0;
 
+  virtual std::string feature_statistics () const { return std::string(); }
+  
   virtual void add_selection_to_training_set (std::size_t label) = 0;
   virtual void reset_training_set (std::size_t label) = 0;
   virtual void reset_training_set_of_selection() = 0;
@@ -58,7 +60,7 @@ public:
   virtual bool run (int method, int classifier, std::size_t subdivisions, double smoothing) = 0;
   
   virtual void update_color () = 0;
-  virtual void change_color (int index) = 0;
+  virtual void change_color (int index, float* vmin = NULL, float* vmax = NULL) = 0;
   virtual CGAL::Three::Scene_item* generate_one_item (const char* name,
                                                       int label) const = 0;
   virtual void generate_one_item_per_label(std::vector<CGAL::Three::Scene_item*>& items,

@@ -320,7 +320,7 @@ bool Point_set_item_classification::write_output(std::ostream& stream)
 }
 
 
-void Point_set_item_classification::change_color (int index)
+void Point_set_item_classification::change_color (int index, float* vmin, float* vmax)
 {
   m_index_color = index;
 
@@ -425,27 +425,43 @@ void Point_set_item_classification::change_color (int index)
           return;
         }
         Feature_handle feature = m_features[corrected_index];
-
+        
         float min = std::numeric_limits<float>::max();
         float max = -std::numeric_limits<float>::max();
-        
-        for (Point_set::const_iterator it = m_points->point_set()->begin();
-             it != m_points->point_set()->first_selected(); ++ it)
+
+        if (vmin != NULL && vmax != NULL
+            && *vmin != std::numeric_limits<float>::infinity()
+            && *vmax != std::numeric_limits<float>::infinity())
         {
-          if (feature->value(*it) > max)
-            max = feature->value(*it);
-          if (feature->value(*it) < min)
-            min = feature->value(*it);
+          min = *vmin;
+          max = *vmax;
         }
-        std::cerr << "[Feature " << feature->name() << "] between " << min << " and " << max << std::endl;
+        else
+        {
+          for (Point_set::const_iterator it = m_points->point_set()->begin();
+               it != m_points->point_set()->end(); ++ it)
+          {
+            float v = feature->value(*it);
+            min = (std::min) (min, v);
+            max = (std::max) (max, v);
+          }
+        }
 
         for (Point_set::const_iterator it = m_points->point_set()->begin();
              it != m_points->point_set()->first_selected(); ++ it)
         {
           float v = (feature->value(*it) - min) / (max - min);
+          if (v < 0.f) v = 0.f;
+          if (v > 1.f) v = 1.f;
           m_red[*it] = (unsigned char)(ramp.r(v) * 255);
           m_green[*it] = (unsigned char)(ramp.g(v) * 255);
           m_blue[*it] = (unsigned char)(ramp.b(v) * 255);
+        }
+
+        if (vmin != NULL && vmax != NULL)
+        {
+          *vmin = min;
+          *vmax = max;
         }
       }
     }
@@ -481,7 +497,7 @@ void Point_set_item_classification::reset_indices ()
     *(indices.begin() + i) = idx ++;
 }
 
-void Point_set_item_classification::compute_features (std::size_t nb_scales)
+void Point_set_item_classification::compute_features (std::size_t nb_scales, float voxel_size)
 {
   CGAL_assertion (!(m_points->point_set()->empty()));
 
@@ -490,7 +506,12 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales)
 
   reset_indices();
   
-  std::cerr << "Computing features with " << nb_scales << " scale(s)" << std::endl;
+  std::cerr << "Computing features with " << nb_scales << " scale(s) and ";
+  if (voxel_size == -1)
+    std::cerr << "automatic voxel size" << std::endl;
+  else
+    std::cerr << "voxel size = " << voxel_size << std::endl;
+
   m_features.clear();
 
   Point_set::Vector_map normal_map;
@@ -506,7 +527,7 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales)
   if (!echo)
     boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("number_of_returns");
 
-  m_generator = new Generator (*(m_points->point_set()), m_points->point_set()->point_map(), nb_scales);
+  m_generator = new Generator (*(m_points->point_set()), m_points->point_set()->point_map(), nb_scales, voxel_size);
 
   CGAL::Real_timer t;
   t.start();

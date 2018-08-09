@@ -117,7 +117,35 @@ class Point_set_item_classification : public Item_classification_base
                          xcenter + dx, ycenter + dy, zcenter + dz);
   }
 
-  void compute_features (std::size_t nb_scales);
+  void compute_features (std::size_t nb_scales, float voxel_size);
+
+  std::string feature_statistics() const
+  {
+    std::ostringstream oss;
+
+    for (std::size_t i = 0; i < m_features.size(); ++ i)
+    {
+      float vmin = std::numeric_limits<float>::max();
+      float vmax = -std::numeric_limits<float>::max();
+      float vmean = 0.f;
+      std::size_t nb = 0;
+      
+      for (Point_set::const_iterator it = m_points->point_set()->begin_or_selection_begin();
+           it != m_points->point_set()->end(); ++ it)
+      {
+        float v = m_features[i]->value(std::size_t(it - m_points->point_set()->begin()));
+        vmin = (std::min) (vmin, v);
+        vmax = (std::max) (vmax, v);
+        vmean += v;
+        ++ nb;
+      }
+
+      oss << m_features[i]->name() << " in [ " << vmin << " ; " << vmax << " ], mean = " << vmean / nb << std::endl;
+    }
+
+    return oss.str();
+  }
+  
   void add_remaining_point_set_properties_as_features();
   
   void select_random_region();
@@ -195,7 +223,7 @@ class Point_set_item_classification : public Item_classification_base
   bool run (int method, int classifier, std::size_t subdivisions, double smoothing);
 
   void update_color () { change_color (m_index_color); }
-  void change_color (int index);
+  void change_color (int index, float* vmin = NULL, float* vmax = NULL);
   CGAL::Three::Scene_item* generate_one_item (const char* name,
                                               int label) const
   {
