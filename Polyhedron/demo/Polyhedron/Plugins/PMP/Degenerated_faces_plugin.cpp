@@ -83,9 +83,7 @@ template<class Mesh>
 bool isDegen(Mesh* mesh, std::vector<typename boost::graph_traits<Mesh>::face_descriptor> &out_faces)
 {
   typedef typename boost::graph_traits<Mesh>::face_descriptor FaceDescriptor;
-  typedef typename boost::property_map<Mesh, CGAL::vertex_point_t>::type Vpm;
-  typedef typename boost::property_traits<Vpm>::value_type Point;
-  typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
+
   //filter non-triangle_faces
   BOOST_FOREACH(FaceDescriptor f, faces(*mesh))
   {
