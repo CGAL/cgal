@@ -49,7 +49,7 @@ The sum is taken over all of the neighboring vertices \f$j\f$. Further, \f$\alph
 
 From this, the symmetric positive-definite system \f$(M-tL_C)u = \delta_{\gamma}\f$ can be solved to find \f$u\f$ where \f$\delta_{\gamma}\f$ is the Kronecker delta over \f$\gamma\f$.
 
-Next, the gradent in a given triangle can be expressed as:
+Next, the gradient in a given triangle can be expressed as:
 
 \f$\nabla \cdot X = \frac{1}{2} \sum_j cot\theta_1 (e_1 \cdot X_j) + cot \theta_2 (e_2 \cdot X_j)\f$
 
@@ -67,46 +67,42 @@ Finally, let \f$b \in R^{|V|}\f$ be the integrated divergences of the normalized
 
   The intrinsic Delaunay triangulation thus relies on edge lengths and angles, as does the heat method. The intrinsic Delaunay triangulation does not actually flip the edge. Instead, the edge flips are intrinsic and so the shape of the original embedded mesh does not change. Instead, the IDT mesh is considered as an abstract surface with a locally Euclidean metric. Instead of actually flipping an edge, the algorithm performs a combinatorial flip on it and updates its length. Thus, there is no change to the intrinsic geometry of the input mesh.
 
-  Let \f$ K = (V,E,T) \f$ be a 2-manifold triangle mesh, where \f$V\f$ is the vertex set, \f$ E \f$ is the edge set and \f$ T \f$ is the face set (triangle set). Let \f$ L \f$ be the set of Euclidean distances, where \f$ L(e_{ij}) = l_{ij} = || p_i - p_j || \f$ , where \f$ p_i \f$ and \f$ p_j \f$ are the point positions \f$ \in R^3 \f$ of vertices \f$ i \f$ and \f$ j \f$ respectively. Then, let the pair \f$ (K,L) \f$ be the input to the iDT algorithm which returns the pair \f$(\dot K, \dot L)\f$, which are the intrinsic Delaunay mesh and the intrinsic lengths. The algorithm is as follows:
-
-             \f$ \forall e \in E : Mark(e) \f$
-
-             Stack \f$ s \leftarrow E \f$
-
-             while !Empty(\f$s\f$) do
-
-               \f$e_{ij} \leftarrow \f$ Pop(\f$s\f$) and Unmark(\f$e_ij\f$)
-
-                if !Delaunay(\f$e_{ij}\f$) then
-
-                  \f$e_{kl} \leftarrow\f$ Flip(\f$e_ij\f$) and compute the new length \f$l_{kl}\f$
-
-                   for all \f$e \in {e_{kj}, e_{jl}, e_{li}, e_{ik}}\f$ do
-
-                     if !Mark(\f$e\f$) then
-
-                       Mark(\f$e\f$) and Push(\f$s,e\f$)
-
+  Let \f$ K = (V,E,T) \f$ be a 2-manifold triangle mesh, where \f$V\f$ is the vertex set, \f$ E \f$ is the edge set and \f$ T \f$ is the face set (triangle set). Let \f$ L \f$ be the set of Euclidean distances, where \f$ L(e_{ij}) = l_{ij} = || p_i - p_j || \f$ , where \f$ p_i \f$ and \f$ p_j \f$ are the point positions \f$ \in R^3 \f$ of vertices \f$ i \f$ and \f$ j \f$ respectively. Then, let the pair \f$ (K,L) \f$ be the input to the iDT algorithm which returns the pair \f$(\tilde K, \tilde L)\f$, which are the intrinsic Delaunay mesh and the intrinsic lengths. The algorithm is as follows:
+            \code
+             for all edge e in E : Mark(e)
+             Stack s <-- E
+             while !Empty(s) do
+               edge(ij) = Pop(s) and Unmark(edge(ij))
+                if !Delaunay(edge(ij)) then
+                  edge(kl) = Flip(edge(ij)) and compute the new length length(kl) using the Cosine Theorem
+                   for all edge e in {edge(kj), edge(jl), edge(li), edge(ik)} do
+                     if !Mark(e) then
+                       Mark(e) and Push(s,e)
                      end if
-
                   end for
-
                 end if
-
               end while
+            return (~K,~L)
+            \endcode
 
-            return \f$(\dot K, \dot L)\f$ \f$\leftarrow (K,L)\f$
 
-  The new \f$(\dot K, \dot L)\f$ are used in the Heat Method distance computation.
+  The new \f$(\tilde K, \tilde L)\f$ are then used in the Heat Method distance computation.
 \section sec_HM_examples Examples
 
-\subsection HM_FirstExample First Example
+\subsection HM_FirstExample Heat Method
+The following example shows the heat method on a triangle mesh. The example adds the first vertex into the source set and then uses the heat_intensity property map to read the distance values.
+\cgalExample{Heat_method_3/heat_method_surface_mesh.cpp}
 
-The following example shows ...
 
-\section sec_HM_history Design and Implementation History
+\subsection HM_FirstExample Heat Method with Intrinsic Delaunay Triangulation
+The following example shows the heat method on a triangle mesh using the intrinsic delaunay remeshing algorithm first. The distance values are then printed using the vertex_distance property map.
+\cgalExample{Heat_method_3/heat_method_surface_mesh_intrinsic.cpp}
 
-This package ...
+
+\section sec_HM_history Implementation History
+A first version of this package was started by Christina Vaz, Keenan Crane and Andreas Fabri as part of the 2018 Google Summer of Code.
+
+
 
 */
 } /* namespace CGAL */
