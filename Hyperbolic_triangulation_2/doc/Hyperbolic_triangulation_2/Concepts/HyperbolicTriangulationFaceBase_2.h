@@ -59,33 +59,40 @@ public:
 
   /// \name Access functions
   /// @{
+    
+    /*!
+    \cgalModifBegin
+      Sets a boolean flag stored in the face.
+      This is a low-level function used internally by the hyperbolic triangulation.
+    \cgalModifEnd
+    */
+    void set_flag(bool flag);
 
     /*!
-      Returns `true` if the face is finite, but not hyperbolic, i.e., if its circumscribing circle intersects the circle at infinity
-     */
-    bool is_finite_non_hyperbolic() const;
-    
-    /*!
-      Sets a flag indicating whether the face is finite but not hyperbolic
+    \cgalModifBegin
+      Retrieves the value of a boolean flag stored in the face.
+      This is a low-level function used internally by the hyperbolic triangulation.
+    \cgalModifEnd
     */
-    void set_finite_non_hyperbolic(bool is_finite_non_hyperbolic);
+    bool get_flag() const;
     
+
     /*!
-      Returns `true` if the face has a non-hyperbolic edge, i.e., an edge whose circumscribing disk intersects the circle at infinity
+    \cgalModifBegin
+      Sets the value of an unsigned char stored in the face.
+      This is a low-level function used internally by the hyperbolic triangulation.
+    \cgalModifEnd
     */
-    bool has_non_hyperbolic_edge() const;
-    
+    void set_char(unsigned char uschar);
+
     /*! 
-      Returns the index of the vertex opposite to the non-nyperbolic edge of the face
-      \pre The face is non-hyperbolic
+    \cgalModifBegin
+      Retrieves the value of an unsigned char stored in the face.
+      This is a low-level function used internally by the hyperbolic triangulation.
+      \cgalModifEnd
     */
-    unsigned char get_non_hyperbolic_edge() const;
+    unsigned char get_char() const;
     
-    /*!
-      Sets the index of the non-hyperbolic edge of the face
-      \pre The face is non-hyperbolic
-    */
-    void set_non_hyperbolic_edge(unsigned char non_hyperbolic_edge);
   /// @}
 
 };
