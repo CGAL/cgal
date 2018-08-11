@@ -314,12 +314,12 @@ private:
   {
     assert(is_finite_non_hyperbolic(f));
     
-    return f->get_non_hyperbolic_edge(); 
+    return f->get_char(); 
   }
   
   bool is_finite_non_hyperbolic(Face_handle f) const
   {
-    return f->is_finite_non_hyperbolic();
+    return f->get_flag();
   }
   
   bool is_finite_non_hyperbolic(Face_handle f, int i) const
@@ -461,7 +461,7 @@ private:
   template<class Mark_face_test>
   void mark_face(const Face_handle& f, const Mark_face_test& test) const
   {
-    f->set_finite_non_hyperbolic(test(f));
+    f->set_flag(test(f));
   }
   
   void mark_face(const Face_handle& f) const
@@ -492,8 +492,8 @@ private:
       
       Is_Delaunay_hyperbolic is_Delaunay_hyperbolic = _tr.geom_traits().is_Delaunay_hyperbolic_object();
       if(is_Delaunay_hyperbolic(p0, p1, p2, ind) == false) {
-	f->set_finite_non_hyperbolic(true); // MT should not be necessary, return true should be enough (?)
-	f->set_non_hyperbolic_edge(ind);
+	f->set_flag(true); // MT should not be necessary, return true should be enough (?)
+	f->set_char(ind);
 	return true; 
       }
       

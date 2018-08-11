@@ -66,24 +66,26 @@ public:
   static int ccw(int i) {return Triangulation_cw_ccw_2::ccw(i);}
   static int  cw(int i) {return Triangulation_cw_ccw_2::cw(i);}
 
-  bool is_finite_non_hyperbolic() const
+  bool get_flag() const
   {
     return _is_finite_non_hyperbolic;
   }
   
-  void set_finite_non_hyperbolic(bool is_finite_non_hyperbolic)
+  void set_flag(bool flag)
   {
-    _is_finite_non_hyperbolic = is_finite_non_hyperbolic;
+    _is_finite_non_hyperbolic = flag;
   }
   
   // Supposed to be called before "get_non_hyperbolic_edge"
-  bool has_non_hyperbolic_edge() const
-  {
-    return _non_hyperbolic_edge <= 2;
-  }
+  // iiordanov: leaving here for documentation reasons
+  // bool has_non_hyperbolic_edge() const
+  // {
+  //   return _non_hyperbolic_edge <= 2;
+  // }
   
   // Higly recommended to call "has_non_hyperbolic_edge" before 
-  unsigned char get_non_hyperbolic_edge() const
+  // iiordanov: why? the result of "has_non_hyperbolic_edge" is in the second precondition
+  unsigned char get_char() const
   {
     CGAL_triangulation_precondition(_is_finite_non_hyperbolic);
     CGAL_triangulation_precondition(_non_hyperbolic_edge <= 2);
@@ -91,12 +93,12 @@ public:
     return _non_hyperbolic_edge;
   }
   
-  void set_non_hyperbolic_edge(unsigned char non_hyperbolic_edge)
+  void set_char(unsigned char uschar)
   {
     CGAL_triangulation_precondition(_is_finite_non_hyperbolic);
-    CGAL_triangulation_precondition(non_hyperbolic_edge <= 2); 
+    CGAL_triangulation_precondition(uschar <= 2); 
     
-    _non_hyperbolic_edge = non_hyperbolic_edge;
+    _non_hyperbolic_edge = uschar;
   }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
