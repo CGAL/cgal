@@ -25,36 +25,13 @@ public:
 
   /// \name Types
   /// @{
-    typedef typename K::FT                          FT;
-    typedef typename K::Point_2                     Point_2;
     typedef typename K::Circular_arc_point_2        Voronoi_point_2;
     typedef typename K::Circular_arc_2              Circular_arc_2;
     typedef typename K::Line_arc_2                  Line_arc_2; 
     typedef boost::variant<Circular_arc_2, 
                            Line_arc_2>              Hyperbolic_segment_2;
-    typedef typename K::Triangle_2                  Triangle_2;
   /// @}
 
-  /// \name Predicate Types
-  /// @{                   
-    typedef typename K::Orientation_2               Orientation_2;
-    typedef typename K::Side_of_oriented_circle_2   Side_of_oriented_circle_2;
-    /*!
-      \cgalModifBegin
-    */
-    typedef unspecified_type                        Side_of_oriented_hyperbolic_segment_2;
-    /*!
-      \cgalModifEnd
-    */
-  /// @}  
-
-  /// \name Construction Types
-  /// @{                   
-    typedef unspecified_type                        Construct_hyperbolic_segment_2;
-    typedef unspecified_type                        Construct_hyperbolic_circumcenter_2;
-    typedef unspecified_type                        Construct_hyperbolic_bisector_2;
-    typedef unspecified_type                        Construct_intersection_2;
-  /// @}
   
   /// \name Creation
   /// @{
