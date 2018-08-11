@@ -54,7 +54,7 @@ public:
   
   typedef typename Tds::Edge_circulator       Edge_circulator;
   typedef typename Tds::Face_circulator       Face_circulator;
-  typedef typename Tds::Vertex_circulator     Vertex_circulator;
+  //typedef typename Tds::Vertex_circulator     Vertex_circulator;
   
   typedef typename Base::All_vertices_iterator    All_vertices_iterator;
   typedef typename Base::All_edges_iterator       All_edges_iterator;
@@ -587,6 +587,97 @@ public:
   }
 
 
+  class Hyperbolic_adjacent_vector_circulator 
+  	: Base::Vertex_circulator {
+  	
+  		typedef typename Base::Vertex_circulator  		VBase;
+  		typedef Hyperbolic_adjacent_vector_circulator 	Self;
+  		typedef typename Tds::Vertex                    Vertex;
+  	private:
+		Vertex_handle _v;
+		Face_handle   pos;
+		int _ri;
+		int _iv;
+
+  	public:
+  		Hyperbolic_adjacent_vector_circulator() : VBase() {
+  			_v = Vertex_handle();
+  			pos = Face_handle();
+  			_ri = 0;
+  		}
+  		Hyperbolic_adjacent_vector_circulator(Vertex_handle v, Face_handle fh = Face_handle()): VBase(v, fh) {
+  			_v = v;
+  			if (fh = Face_handle()) 
+  				pos = _v->face();
+  			else
+  				pos = fh;
+  			
+  			_iv = pos->index(_v);
+  			_ri = ccw(_iv);
+
+  			while (!is_finite_non_hyperbolic(pos, cw(_iv))) {
+  				pos = pos->neighbor(_ri);
+  				_iv = pos->index(_v);
+  				_ri = ccw(_iv);
+  			}
+  		}
+
+  		Self& operator++() {
+  			do {
+  				pos = pos->neighbor(_ri);
+  				_iv = pos->index(_v);
+  				_ri = ccw(_iv);
+  			} while (!is_finite_non_hyperbolic(pos, cw(_iv)));
+  		}
+
+		//Self  operator++(int);
+
+		Self& operator--() {
+			do {
+  				pos = pos->neighbor(ccw(_ri));
+  				_iv = pos->index(_v);
+  				_ri = ccw(_iv);
+  			} while (!is_finite_non_hyperbolic(pos, cw(_iv)));
+		}
+
+		//Self  operator--(int);
+
+		bool operator==(const Self &vc) const 
+		{ return (this->_v == vc->_v && this->pos == vc->pos && this->_ri == vc->_ri && this->_iv == vc->_iv); }
+		bool operator!=(const Self &vc) const
+		{ return !this->operator==(vc); }
+
+		bool operator==(const Vertex_handle &vh) const
+		{ return (this->pos->vertex(_ri) == vh); }
+		bool operator!=(const Vertex_handle &vh) const
+		{ return !this->operator==(vh); }
+
+		bool is_empty() const { return (this->pos == Face_handle() && this->_v == Vertex_handle()); }
+		//bool operator==(Nullptr_t CGAL_triangulation_assertion_code(n)) const;
+		//bool operator!=(Nullptr_t CGAL_triangulation_assertion_code(n)) const;
+
+		Vertex&
+		operator*() const
+		{
+			CGAL_triangulation_precondition(pos != Face_handle() && _v != Vertex_handle());
+			return *(pos->vertex(_ri));
+		}
+
+		Vertex*
+		operator->() const
+		{
+			CGAL_triangulation_precondition(pos != Face_handle() && _v != Vertex_handle());
+			return &*(pos->vertex(_ri));
+		}
+
+		Vertex_handle base() const {return pos->vertex(_ri);}
+   		operator Vertex_handle() const {return pos->vertex(_ri);}
+  };
+
+
+  typedef Hyperbolic_adjacent_vector_circulator Vertex_circulator;
+
+
   Line_face_circulator line_walk(const Point& p, const Point& q, Face_handle f = Face_handle()) const {
     return Base::line_walk(p, q, f);
   }
@@ -613,8 +704,8 @@ public:
     return Base::number_of_vertices();
   }
 
-  Vertex_circulator incident_vertices(Vertex_handle v) const {
-    return Base::incident_vertices(v);
+  Vertex_circulator adjacent_vertices(Vertex_handle v) const {
+    return Vertex_circulator(v);
   }
 
   size_type number_of_hyperbolic_faces() const
