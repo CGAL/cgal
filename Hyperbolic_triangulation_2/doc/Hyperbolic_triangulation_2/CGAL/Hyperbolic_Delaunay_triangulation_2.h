@@ -175,14 +175,18 @@ public:
     Triangle triangle(Face_handle f) const;
 
     /*!
-      Returns the segment formed by the vertices of the edge `(f, i)`.
+      \cgalModifBegin
+      Returns the hyperbolic segment formed by the vertices of the edge `(f, i)`.
+      \cgalModifEnd
     */
-    Segment segment(Face_handle f, int i) const;
+    Hyperbolic_segment segment(Face_handle f, int i) const;
 
     /*!
-      Returns the segment formed by the vertices of edge `e`.
+      \cgalModifBegin
+      Returns the hyperbolic segment formed by the vertices of edge `e`.
+      \cgalModifEnd
     */
-    Segment segment (const Edge& e) const;
+    Hyperbolic_segment segment (const Edge& e) const;
   ///@}
 
 
