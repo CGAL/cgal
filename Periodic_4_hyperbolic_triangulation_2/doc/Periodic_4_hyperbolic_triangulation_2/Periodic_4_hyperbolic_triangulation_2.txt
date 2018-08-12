@@ -16,11 +16,14 @@ namespace CGAL {
 The 2D periodic hyperbolic triangulations class of \cgal is designed to represent 
 triangulations of sets of points on the two-dimensional Bolza surface. 
 
-The Bolza surface is a closed compact orientable surface of genus 2. Closed compact 
-surfaces of genus at least 2 all have constant negative curvature, so they are 
-hyperbolic. Among all surfaces of genus 2, the Bolza surface is the most symmetric one, 
-and its properties are well understood. It is a natural extension from genus 1 (the 
-Euclidean flat torus, see \ref Chapter_2D_Periodic_Triangulations ) to genus 2.
+\cgalModifBegin
+The Bolza surface is a closed compact orientable surface of genus 2. A closed compact 
+surface of genus at least 2 is conformally equivalent to some surface of constant negative 
+curvature, therefore it is <i>hyperbolic</i>. Among all surfaces of genus 2, the 
+Bolza surface is the most symmetric one, and its properties are well understood. It is a 
+natural extension from genus 1 (the Euclidean flat torus, see 
+\ref Chapter_2D_Periodic_Triangulations ) to genus 2.
+\cgalModifEnd
 
 Triangulations of the Bolza surface are periodic triangulations of the hyperbolic 
 plane, and they are also <i>simplicial complexes</i>, i.e. a triangulation:
@@ -33,6 +36,7 @@ The simplices of dimension 0, 1 and 2 are called <I>vertex</I>, <I>edge</I>, and
 
 \section P4HT2_thespace The Bolza surface
 
+
 Let \f$\mathbb{H}^2\f$ denote the hyperbolic plane, represented in the Poincaré disk model.
 Consider the regular hyperbolic octagon \f$ \mathcal D_O \f$ centered at the origin, with 
 all angles equal to \f$ \pi/4\f$. Note that \f$\mathcal D_O\f$ is unique up to rotation, 
@@ -40,7 +44,10 @@ and cannot be scaled, since this operation would change its angle sum. Now, cons
 four hyperbolic translations \f$ a,b,c,d\f$ with their respective inverses \f$\overline{a}, 
 \overline{b}, \overline{c}, \overline{d}\f$ that identify the opposite sides of 
 \f$ \mathcal D_O \f$. The axes of these translations are diameters of the Poincaré disk. 
-See Figure \cgalFigureRef{P4HTriangulationOctagonId} - Left. The four translations 
+\cgalModifBegin
+See \cgalFigureRef{P4HTriangulationOctagonId} - Left. 
+\cgalModifEnd
+The four translations 
 \f$a, b, c, d\f$ generate a discrete group of orientation-preserving isometries, with 
 finite presentation
 \f[ \mathcal{G} = \left< a,b,c,d \; \bigg| \; 
@@ -62,10 +69,14 @@ of \f$\mathbb H^2\f$ under the action of \f$\mathcal G\f$. So, each element of
 <i>representatives</i> of an element of \f$\mathcal{M}\f$. 
 
 The implementation does not work directly on elements of \f$\mathcal{M}\f$, 
-but on some representatives in \f$\mathbb H^2\f$ that we distinguish. The half-open octagon 
-shown in Figure \cgalFigureRef{P4HTriangulationOctagonId} - Right contains exactly one
+but on some representatives in \f$\mathbb H^2\f$ that we distinguish. 
+\cgalModifBegin
+The half-open octagon 
+shown in \cgalFigureRef{P4HTriangulationOctagonId} - Right contains exactly one
 representative of each point on \f$\mathcal{M}\f$, and we call that half-open octagon the
-<i>original domain</i> \f$\mathcal D\f$. From now on, whenever we talk about a <i>point</i>, 
+<i>original domain</i> \f$\mathcal D\f$. 
+\cgalModifEnd
+From now on, whenever we talk about a <i>point</i>, 
 we will generally mean the representative of an element of \f$\mathcal{M}\f$ that lies inside 
 \f$\mathcal D\f$. 
 
@@ -93,7 +104,10 @@ As in the underlying combinatorial triangulation (see Chapter \ref Chapter_2D_Tr
 the neighbors of a face are indexed with 0, 1, 2 in such a
 way that the \f$i\f$-th neighbor is opposite to the vertex with the same index. Edges are not
 explicitly represented: an edge is given by a face and the index of its opposite vertex 
-in that face. See Figure  \cgalFigureRef{P4HTriangulationOrientationDS} - Left.
+in that face. 
+\cgalModifBegin
+See \cgalFigureRef{P4HTriangulationOrientationDS} - Left.
+\cgalModifEnd
 
 \cgalFigureBegin{P4HTriangulationOrientationDS, P4T_ds_doc_300.png, periodic_face.png}
 	<b>Left:</b>  Representation of a face \f$f\f$ stored in the triangulation data structure. 
@@ -119,7 +133,10 @@ of \f$\mathcal D_O\f$ has at least one vertex in common with \f$\mathcal D_O\f$.
 of dummy points (see \ref P4HT2_Dummy_points),  faces with at least one vertex in 
 \f$\mathcal D\f$ are contained in \f$\mathcal D_{\mathcal N}\f$. We consider the images 
 of \f$\mathcal D_O\f$ to be ordered counter-clockwise around \f$\mathcal D_O\f$, 
-arbitrarily starting with the one labeled \f$abcd\f$. See Figure \cgalFigureRef{P4HTriangulationOrientationDS} - Right.
+arbitrarily starting with the one labeled \f$abcd\f$. 
+\cgalModifBegin
+See \cgalFigureRef{P4HTriangulationOrientationDS} - Right.
+\cgalModifEnd
 We then choose the canonical representative in \f$\mathbb H^2\f$ of a face on 
 \f$\mathcal M\f$ so that:
 <ul>
@@ -160,9 +177,11 @@ ensure the Delaunay property.
 
 This implementation is fully dynamic: it supports both insertions of points and vertex removal.
 Note, however, that the removal of a vertex is authorized only if the triangulation would remain 
-a simplicial complex after the removal of that vertex. If this condition is not satisfied, then 
-then the vertex if <b>not</b> removed from the triangulation.
-
+a simplicial complex after the removal of that vertex. 
+\cgalModifBegin
+If this condition is not satisfied, then 
+the vertex is <b>not</b> removed from the triangulation.
+\cgalModifEnd
 
 
 \section P4HT2_Dummy_points Dummy points
@@ -171,7 +190,9 @@ Some point sets do not admit a triangulation of \f$\mathcal M\f$. For this reaso
 a triangulation of \f$\mathcal M\f$ with a predetermined set of 14 points, called <i>dummy 
 points</i>, whose triangulation in \f$\mathcal M\f$ is a simplicial complex and has the empty
 circle property. The set of dummy points has been proposed in \cgalCite{cgal:btv-dtosl-16}. 
-See Figure \cgalFigureRef{P4HTriangulationDummyPoints}
+\cgalModifBegin
+See \cgalFigureRef{P4HTriangulationDummyPoints}
+\cgalModifEnd
 
 \cgalFigureBegin{P4HTriangulationDummyPoints, dummy-points-300.png}
   Delaunay triangulation of \f$\mathcal M\f$ with the 14 dummy points. The set of dummy points
@@ -188,7 +209,10 @@ are not well-distributed on the surface, then the final triangulation will conta
 dummy points to guarantee that the triangulation is a simplicial complex. Experiments have 
 shown that, on average, all dummy points are removed from the triangulation with the insertion 
 of less than 200 random points uniformly distributed (according to the Euclidean metric) in 
-the unit disk. See Figure \cgalFigureRef{P4HDummyPointsHistogram}.
+the unit disk. 
+\cgalModifBegin
+See \cgalFigureRef{P4HDummyPointsHistogram}.
+\cgalModifEnd
 
 \cgalFigureBegin{P4HDummyPointsHistogram, histogram-dummy-points.png}
   Histogram of the number of random input points needed to remove all dummy points in the
@@ -271,9 +295,9 @@ triangulation classes is
 `Triangulation_data_structure_2< Triangulation_face_base_2< Traits, Periodic_4_hyperbolic_triangulation_ds_face_base_2 >, Triangulation_vertex_base_2<Traits, Periodic_4_hyperbolic_triangulation_ds_vertex_base_2 > >` 
 
 
+\cgalModifBegin
 \section P4HT2_examples Examples 
-
-\subsection P4HT2_basicexample Basic example
+\cgalModifEnd
 
 This example shows the initialization of a periodic hyperbolic 2D Delaunay triangulation,  the
 insertion of random points uniformly distributed in the unit disk for the Euclidean metric, and the
