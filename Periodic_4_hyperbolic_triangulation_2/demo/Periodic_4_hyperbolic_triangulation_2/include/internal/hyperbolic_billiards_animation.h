@@ -35,10 +35,10 @@ MainWindow::initialize_animation_parameters() {
   }
 
 	time = updateTime();
-    std::cout << "time = " << time << std::endl;
+    //std::cout << "time = " << time << std::endl;
     Point img = get_image(source, target, time);
-    std::cout << "img = " << img << std::endl;
-    std::cout << "last_loc_translation = " << last_loc_translation << std::endl;
+    //std::cout << "img = " << img << std::endl;
+    //std::cout << "last_loc_translation = " << last_loc_translation << std::endl;
 	last_location = dt.hyperbolic_periodic_locate(img, last_loc_translation);
 }
 
@@ -108,7 +108,7 @@ void get_all_translations(std::vector< CGAL::Hyperbolic_octagon_translation<NT> 
 // calculates the point on the hyperbolic segment [src, tgt] for parameter `time`.
 Point
 MainWindow::get_image(Point src, Point tgt, double time) {
-  std::cout << "  ..getting image "; std::cout.flush();
+  //std::cout << "  ..getting image "; std::cout.flush();
   Segment_2 seg = Construct_hyperbolic_segment_2()(src, tgt);
   Circular_arc_2* carc = boost::get<Circular_arc_2>(&seg);
   Circle_2 crc = carc->supporting_circle();
@@ -130,7 +130,7 @@ MainWindow::get_image(Point src, Point tgt, double time) {
   y = to_double(y*sqrt(crc.squared_radius()) + crc.center().y());
 
   Point p(x, y);
-  std::cout << "  DONE!" << std::endl;
+  //std::cout << "  DONE!" << std::endl;
   return p;
 }
 
@@ -139,13 +139,13 @@ MainWindow::get_image(Point src, Point tgt, double time) {
 // lies inside the octagon.
 double 
 MainWindow::updateTime() {
-  std::cout << "  ..updating time "; std::cout.flush();
+  //std::cout << "  ..updating time "; std::cout.flush();
   double t = 0.1;
   Side_of_original_octagon check;
   while(check(get_image(source, target, t)) == CGAL::ON_UNBOUNDED_SIDE) {
     t += timestep;
   }
-  std::cout << "  DONE!" << std::endl;
+  //std::cout << "  DONE!" << std::endl;
   return t;
 }
 
@@ -160,9 +160,9 @@ MainWindow::animate() {
 
   // If the point is inside the octagon, just increment the time, compute the point 
   // corresponding to that time, update everything, and continue.
-  std::cout << "  ..updating time "; std::cout.flush();
+  //std::cout << "  ..updating time "; std::cout.flush();
   if (check(p) == CGAL::ON_BOUNDED_SIDE) {
-    std::cout << "  INSIDE!" << std::endl;
+    //std::cout << "  INSIDE!" << std::endl;
     Locate_type lt;
     int li;
     last_location = dt.hyperbolic_periodic_locate(p, lt, li, last_loc_translation, last_location);
@@ -176,7 +176,7 @@ MainWindow::animate() {
   // If the point is not inside the octagon, we must find the translation that puts 
   // it inside the octagon. We apply the same translation to the `source` and `target`.
   else { 
-    std::cout << "  OUTSIDE!" << std::endl;
+    //std::cout << "  OUTSIDE!" << std::endl;
 
     Hyperbolic_translation o; 
 
@@ -185,7 +185,7 @@ MainWindow::animate() {
     // Look for the translation that gets p inside the octagon among
     // the generators of the group. The correct translation will be
     // in this set with high probability.
-    std::cout << "  ..checking generators "; std::cout.flush();
+    //std::cout << "  ..checking generators "; std::cout.flush();
     std::vector<Hyperbolic_translation> gens;
     get_generators(gens);
     for (int i = 0; i < gens.size(); i++) {
@@ -195,13 +195,13 @@ MainWindow::animate() {
         break;
       }
     }
-    std::cout << "  DONE! " << (found ? "Fount it!" : "Didn't find it!") << std::endl;
+    //std::cout << "  DONE! " << (found ? "Fount it!" : "Didn't find it!") << std::endl;
 
 
     // If the correct translation is NOT one of the generators, it will
     // be among the translations corresponding to the neighboring regions
     // of the octagon. Check them all.
-    std::cout << "  ..checking all-trans "; std::cout.flush();
+    //std::cout << "  ..checking all-trans "; std::cout.flush();
     if (!found) {
       std::vector<Hyperbolic_translation> tr;
       get_all_translations(tr);
@@ -213,17 +213,17 @@ MainWindow::animate() {
         }
       }
     }
-    std::cout << "  DONE! " << (found ? "Fount it!" : "Didn't find it!") << std::endl;
+    //std::cout << "  DONE! " << (found ? "Found it!" : "Didn't find it!") << std::endl;
 
     // The correct translation MUST have been identified now.
  	  CGAL_assertion(found);
 
-    std::cout << "  ..making points..." << std::endl;
+    //std::cout << "  ..making points..." << std::endl;
     source = Make_point()(source,o);
     target = Make_point()(target,o);
     
     // Correct in case of wrong orientation.
-    std::cout << "  ..making line..." << std::endl;
+    //std::cout << "  ..making line..." << std::endl;
     Segment_2 seg = Construct_hyperbolic_segment_2()(source, target);
     Circular_arc_2* carc = boost::get<Circular_arc_2>(&seg);
     std::pair<Point,Point> inters = Construct_inexact_intersection_2()(carc->supporting_circle(), poincare);
@@ -235,7 +235,7 @@ MainWindow::animate() {
       target = inters.first;
     }
 
-    std::cout << "  ..updating time for next iteration..." << std::endl;
+    //std::cout << "  ..updating time for next iteration..." << std::endl;
     // Make sure the time is correct.
     time = updateTime();
   }
