@@ -237,7 +237,7 @@ public:
 	typedef Periodic_4_hyperbolic_construct_point_2<Self, 		
 			typename Base::Construct_point_2> 		      						Construct_point_2;
 	typedef Hyperbolic_traits_with_translations_2_adaptor<Self,
-			typename Base::Side_of_hyperbolic_triangle_2> 						Side_of_hyperbolic_triangle_2;
+			typename Base::Side_of_oriented_hyperbolic_segment_2> 				Side_of_oriented_hyperbolic_segment_2;
 
 
 public:
@@ -248,9 +248,9 @@ public:
 	}
 
 
-	Side_of_hyperbolic_triangle_2
-	side_of_hyperbolic_triangle_2_object() const {
-		return Side_of_hyperbolic_triangle_2();
+	Side_of_oriented_hyperbolic_segment_2
+	side_of_oriented_hyperbolic_segment_2_object() const {
+		return Side_of_oriented_hyperbolic_segment_2();
 	}
 
 	class Compute_approximate_hyperbolic_diameter {

@@ -73,13 +73,14 @@ private:
 
 public:
 
-	typedef GT 										        Geom_traits;
-	typedef TDS 									        Triangulation_data_structure;
-	typedef typename GT::Hyperbolic_translation 			Hyperbolic_translation;
-	typedef typename GT::Circle_2 							Circle;
-	typedef typename GT::Point_2 			    			Point;
-	typedef typename GT::Segment_2 							Segment;
-	typedef typename GT::Triangle_2 						Triangle;
+	typedef GT 										        	Geom_traits;
+	typedef TDS 									        	Triangulation_data_structure;
+	typedef typename GT::Hyperbolic_translation 				Hyperbolic_translation;
+	typedef typename GT::Circle_2 								Circle;
+	typedef typename GT::Point_2 			    				Point;
+	typedef typename GT::Segment_2 								Segment;
+	typedef typename GT::Triangle_2 							Triangle;
+	typedef typename GT::Side_of_oriented_hyperbolic_segment_2 	Side_of_oriented_hyperbolic_segment;
 
 	typedef std::pair<Point, Hyperbolic_translation> 				      	Periodic_point;
 	typedef array< std::pair<Point, Hyperbolic_translation>, 2 >			Periodic_segment;
@@ -397,6 +398,73 @@ protected:
 		int li;
 		return euclidean_locate(p, lt, li, lo, f);		
 	}
+
+	Oriented_side side_of_hyperbolic_triangle(const Point p, const Point q, const Point r, 
+                                            const Point query, Locate_type &lt, int& li) const {
+
+      // Point p is assumed to be at index 0, q at index 1 and r at index 2 in the face.
+      li = -1;
+
+      if (query == p) {
+        lt = VERTEX;
+        li = 0;
+        return ON_ORIENTED_BOUNDARY;
+      }
+      if (query == q) {
+        lt == VERTEX;
+        li = 1;
+        return ON_ORIENTED_BOUNDARY;
+      }
+      if (query == r) {
+        lt == VERTEX;
+        li = 2;
+        return ON_ORIENTED_BOUNDARY;
+      }
+
+
+      Oriented_side cp1 = Side_of_oriented_hyperbolic_segment()(p, q, query);
+      if (cp1 == ON_ORIENTED_BOUNDARY) {
+        lt = EDGE;
+        li = 2;
+        return ON_ORIENTED_BOUNDARY;
+      }
+
+      Oriented_side cp2 = Side_of_oriented_hyperbolic_segment()(q, r, query);
+      if (cp2 == ON_ORIENTED_BOUNDARY) {
+        lt = EDGE;
+        li = 0;
+        return ON_ORIENTED_BOUNDARY;
+      }
+
+      Oriented_side cp3 = Side_of_oriented_hyperbolic_segment()(r, p, query);
+      if (cp3 == ON_ORIENTED_BOUNDARY) {
+        lt = EDGE;
+        li = 1;
+        return ON_ORIENTED_BOUNDARY;
+      }     
+
+
+      Oriented_side cs1 = Side_of_oriented_hyperbolic_segment()(p, q, r);
+      Oriented_side cs2 = Side_of_oriented_hyperbolic_segment()(q, r, p);
+      Oriented_side cs3 = Side_of_oriented_hyperbolic_segment()(r, p, q);
+
+      // Cannot be on the boundary here.
+      lt = FACE;
+      if (cs1 != cp1) {
+        li = 2;
+        return ON_NEGATIVE_SIDE;
+      } 
+      if (cs2 != cp2){
+        li = 0;
+        return ON_NEGATIVE_SIDE;
+      } 
+      if (cs3 != cp3) {
+        li = 1;
+        return ON_NEGATIVE_SIDE;
+      } 
+      
+      return ON_POSITIVE_SIDE; 
+  }
 
 public:
 
@@ -956,61 +1024,29 @@ hyperbolic_periodic_locate(const Point& p, Locate_type& lt, int& li, Hyperbolic_
 		return lf;
 	}
 
-	typedef typename GT::Side_of_hyperbolic_triangle_2 Side_of_hyperbolic_triangle_2;
-	Side_of_hyperbolic_triangle_2 sf;
+	//typedef typename GT::Side_of_hyperbolic_triangle_2 Side_of_hyperbolic_triangle_2;
+	//Side_of_hyperbolic_triangle_2 sf;
 
 	Point p0 = construct_point( construct_point(lf->vertex(0)->point(), lf->translation(0)) , lo );
 	Point p1 = construct_point( construct_point(lf->vertex(1)->point(), lf->translation(1)) , lo );
 	Point p2 = construct_point( construct_point(lf->vertex(2)->point(), lf->translation(2)) , lo );
     
-	Bounded_side bs = sf(p0, p1, p2, p, li);
-	if (bs == ON_BOUNDED_SIDE) {
-		lt = FACE;
-	} else if (bs == ON_BOUNDARY) {
-		lt = EDGE;
-	} else {
-		// Here we have to find the face containing the point, it's one of the neighbors of lf.
-		Hyperbolic_translation tr = lo * neighbor_translation(lf, 0);
-		Face_handle nf = lf->neighbor(0);
+	Oriented_side os = side_of_hyperbolic_triangle(p0, p1, p2, p, lt, li);
+
+	if (os == ON_NEGATIVE_SIDE) {
+		Hyperbolic_translation tr = lo * neighbor_translation(lf, li);
+		Face_handle nf = lf->neighbor(li);
 		Point np0 = construct_point( construct_point(nf->vertex(0)->point(), nf->translation(0)) , tr );
 		Point np1 = construct_point( construct_point(nf->vertex(1)->point(), nf->translation(1)) , tr );
 		Point np2 = construct_point( construct_point(nf->vertex(2)->point(), nf->translation(2)) , tr );
-		Bounded_side bs1 = sf(np0, np1, np2, p, li);
-		if (bs1 == ON_BOUNDED_SIDE) {
-			lo = tr;
-			lf = nf;
-			lt = FACE;
-		} else {
-			tr = lo * neighbor_translation(lf, 1);
-			nf = lf->neighbor(1);
-			np0 = construct_point( construct_point(nf->vertex(0)->point(), nf->translation(0)) , tr );
-			np1 = construct_point( construct_point(nf->vertex(1)->point(), nf->translation(1)) , tr );
-			np2 = construct_point( construct_point(nf->vertex(2)->point(), nf->translation(2)) , tr );
-			Bounded_side bs2 = sf(np0, np1, np2, p, li);
-			if (bs2 == ON_BOUNDED_SIDE) {
-				lo = tr;
-				lf = nf;
-				lt = FACE;
-			} else {
-				tr = lo * neighbor_translation(lf, 2);
-				nf = lf->neighbor(2);
-				np0 = construct_point( construct_point(nf->vertex(0)->point(), nf->translation(0)) , tr );
-				np1 = construct_point( construct_point(nf->vertex(1)->point(), nf->translation(1)) , tr );
-				np2 = construct_point( construct_point(nf->vertex(2)->point(), nf->translation(2)) , tr );
-				Bounded_side bs3 = sf(np0, np1, np2, p, li);
-				CGAL_triangulation_assertion(bs3 == ON_BOUNDED_SIDE);
-				lo = tr;
-				lf = nf;
-				lt = FACE;
-			}
-		}
+		Oriented_side os1 = side_of_hyperbolic_triangle(np0, np1, np2, p, lt, li);
+		CGAL_triangulation_assertion(os1 == ON_POSITIVE_SIDE);
+		lo = tr;
+		return nf;	
 	}
 
 	return lf;
 }
-
-
-
 
 
 
