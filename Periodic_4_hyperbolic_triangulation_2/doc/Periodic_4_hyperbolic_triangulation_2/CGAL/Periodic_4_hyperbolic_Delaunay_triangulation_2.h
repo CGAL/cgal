@@ -69,14 +69,16 @@ The class expects two template parameters.
  
 
 		/*!
+			\cgalModifBegin
 			Same as above. 
 			This is the function called recursively by the overloaded version above.
 			The parameter `cf` is the face to examine if in conflict with `p`.
 			The hyperbolic translation `tr` is such that the periodic triangle
-			`(cf, tr)` is in the neighborhood in \f$\mathbb H^2\f$ of the triangle 
-			containing `p`. The set `visited` contains all faces that have already 
-			been examined so far, to avoid unnecessary controls. The faces in conflict 
-			with `p` are stored in the output iterator `it`.
+			`(cf, tr)` is adjacent to the triangle containing `p`. The set `visited` 
+			contains all faces that have already been examined so far, to avoid 
+			unnecessary controls. The faces in conflict with `p` are stored in the 
+			output iterator `it`.
+			\cgalModifEnd
 		*/
 	  	template<class OutputFaceIterator>
 		void
@@ -85,15 +87,6 @@ The class expects two template parameters.
 						Hyperbolic_translation tr,
 						std::set<Face_handle>& visited,
 						OutputFaceIterator it) const;
-
-	  	/*!
-			Returns the point stored in the `i`-th dummy vertex.
-			Note that the set of dummy points for the Bolza surface is described in detail
-			in \cgalCite{cgal:btv-dtosl-16} and \cgalCite{cgal:it-idtbs-17}. The indexing
-			of the dummy points is deterministic, but not explicitly described.
-			\todo Should we describe the ordering? Should we say anything about the order?
-	  	*/
-		Point_2 get_dummy_point(int i) const;
 
 		/*!
 			Checks if the vertex `vh` is part of the set of vertices storing dummy points.
@@ -112,18 +105,22 @@ The class expects two template parameters.
 	/// @{
 
 		/*!
+			\cgalModifBegin
 			Inserts the point `p` in the triangulation.
 			The face `start`, if given, is used as a starting place for the location of the point.
 			If `batch_insertion` is set to `false` (the default value), then after the insertion 
-			of `p` in the triangulation, all redundant dummy points in the triangulation (if any) 
+			of `p` in the triangulation, all unnecessary dummy points in the triangulation (if any) 
 			are removed. If `batch_insertion` is set to `false`, then this operation is omitted.
+			\cgalModifEnd
 		*/
 		Vertex_handle insert(const Point  &p, Face_handle start = Face_handle(), bool batch_insertion = false);
 
 		/*!
+			\cgalModifBegin
 			Inserts all points in the input iterator into the triangulation.
-			At the end of the insertion, all redundant dummy points in the triangulation (if any)
+			At the end of the insertion, all unnecessary dummy points in the triangulation (if any)
 			are removed.
+			\cgalModifEnd
 		*/
 		template < class InputIterator >
 		std::ptrdiff_t
