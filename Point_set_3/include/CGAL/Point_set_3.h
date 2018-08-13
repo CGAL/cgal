@@ -784,14 +784,15 @@ public:
     This method adds a property of type `Vector` and named
     `normal`.
 
-    \return `true` if the property was added, `false` if it already
-    existed.
+    \return Returns a pair containing the normal map and a Boolean
+    that is `true` if the property was added and `false` if it already
+    exists (and was therefore not added but only returned).
   */
-  bool add_normal_map (const Vector& default_value = Vector(0., 0., 0.))
+  std::pair<Vector_map, bool> add_normal_map (const Vector& default_value = Vector(0., 0., 0.))
   {
     bool out = false;
     boost::tie (m_normals, out) = this->add_property_map<Vector> ("normal", default_value);
-    return out;
+    return std::make_pair (m_normals, out);
   }
   /*!
     \brief Returns the property map of the normal property.
