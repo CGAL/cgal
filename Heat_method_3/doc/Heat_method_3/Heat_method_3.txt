@@ -6,7 +6,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Keenan Crane, Christina Vaz, Andreas Fabri
 
-This chapter describes the algorithm behind the Heat Method \cgalCite{cgal:cww-ghnac-13} and the algorithm behind Intrinsic Delaunay Triangulation \cgalCite{cgal:fsbs-acidt-06}.
+This package provides the algorithm behind the Heat Method \cgalCite{cgal:cww-ghnac-13} and the algorithm behind Intrinsic Delaunay Triangulation \cgalCite{cgal:fsbs-acidt-06}.
 
 The Heat Method is an algorithm that solves the multiple-source shortest path problem by returning the distance from the points in the domain to the closest point in the source set.
 This algorithm computes this by first determining the direction along which distance increases and finishes by recovering the actual distance.
@@ -87,6 +87,25 @@ Finally, let \f$b \in R^{|V|}\f$ be the integrated divergences of the normalized
 
 
   The new \f$(\tilde K, \tilde L)\f$ are then used in the Heat Method distance computation.
+
+
+  The following figures demonstrate the difference between the heat method with and without intrinsic delaunay remeshing.
+  \cgalFigureBegin{landscape_mesh, landscape2withoutidt.png}
+    Isolines placed on a mesh without iDT remeshing
+  \cgalFigureEnd
+  \cgalFigureBegin{landscape_mesh, landscape2withidt.png}
+    Isolines placed on a mesh with iDT remeshing
+  \cgalFigureEnd
+  \cgalFigureBegin{circle_box, red_circle_box_without_idt_bottom.png}
+    Isolines placed on a mesh without iDT remeshing
+  \cgalFigureEnd
+  \cgalFigureBegin{circle_box, red_circle_box_with_idt_bottom.png}
+    Isolines placed on a mesh with iDT remeshing
+  \cgalFigureEnd
+
+
+
+
 \section sec_HM_examples Examples
 
 \subsection HM_FirstExample Heat Method

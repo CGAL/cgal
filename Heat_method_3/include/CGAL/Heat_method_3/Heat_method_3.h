@@ -63,7 +63,7 @@ namespace CGAL {
 
 
   /**
-   * Class `Heat_method_3` is a ...
+   * Class `Heat_method_3` is an implementation of the Heat Method by Crane, et. al, an algorithm that computes geodesic distance.
    * \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
    * \tparam Traits a model of HeatMethodTraits_3
    * \tparam VertexPointMap a model of `ReadablePropertyMap` with
@@ -115,18 +115,27 @@ namespace CGAL {
 
   public:
 
+    /*!
+    \brief %Default constructor
+    */
     Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm)
       : vertex_id_map(get(Vertex_property_tag(),tm)), face_id_map(get(Face_property_tag(),tm)), v2v(tm), tm(tm), vdm(vdm), vpm(get(vertex_point,tm))
     {
       build();
     }
 
+    /*!
+    \brief IDT constructor
+    */
     Heat_method_3(const TriangleMesh& tm, VertexDistanceMap vdm, VertexPointMap vpm)
       : v2v(tm), tm(tm), vdm(vdm), vpm(vpm)
     {
       build();
     }
 
+    /**
+     * Returns the triangle mesh the algorithm is running on
+     */
     const TriangleMesh& triangle_mesh() const{
       return tm;
     }
@@ -470,7 +479,7 @@ namespace CGAL {
   public:
 
     /**
-     *
+     * Must call update after the source set is updated
      **/
     void update()
     {
