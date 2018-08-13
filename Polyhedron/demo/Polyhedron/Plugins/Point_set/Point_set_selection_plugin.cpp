@@ -90,10 +90,9 @@ public:
 
   void apply (std::size_t i) const
   {
-    Point_set::const_iterator it = point_set->begin() + i;
-    bool already_selected = point_set->is_selected (it);
+    Point_set::Index idx = *(point_set->begin() + i);
 
-    const Kernel::Point_3& p = point_set->point (*it);
+    const Kernel::Point_3& p = point_set->point (idx);
     CGAL::qglviewer::Vec vp (p.x (), p.y (), p.z ());
     bool now_selected = false;
     if(!ui_widget.box->isChecked())
@@ -116,13 +115,17 @@ public:
     }
 
     if (ui_widget.new_selection->isChecked())
-      selected[i] = now_selected;
-    else if (ui_widget.union_selection->isChecked())
-      selected[i] = (already_selected || now_selected);
-    else if (ui_widget.intersection->isChecked())
-      selected[i] = (already_selected && now_selected);
-    else if (ui_widget.diff->isChecked())
-      selected[i] = (already_selected && !now_selected);
+      selected[idx] = now_selected;
+    else
+    {
+      bool already_selected = point_set->is_selected (idx);
+      if (ui_widget.union_selection->isChecked())
+        selected[idx] = (already_selected || now_selected);
+      else if (ui_widget.intersection->isChecked())
+        selected[idx] = (already_selected && now_selected);
+      else if (ui_widget.diff->isChecked())
+        selected[idx] = (already_selected && !now_selected);
+    }
   }
 };
 
@@ -184,26 +187,13 @@ public:
         selected_bitmap[nit->first] = true;
     }
 
-    std::vector<Point_set::Index> unselected, selected;
-    
-    for(Point_set::iterator it = points_item->point_set()->begin ();
-	it != points_item->point_set()->end(); ++ it)
-      if (points_item->point_set()->is_selected(it) || selected_bitmap[*it])
-        selected.push_back (*it);
-      else
-        unselected.push_back (*it);
-
-    for (std::size_t i = 0; i < unselected.size(); ++ i)
-      *(points_item->point_set()->begin() + i) = unselected[i];
-    for (std::size_t i = 0; i < selected.size(); ++ i)
-      *(points_item->point_set()->begin() + (unselected.size() + i)) = selected[i];
-
-    if (selected.empty ())
-      points_item->point_set()->unselect_all();
-    else
+    Point_set::iterator it = points_item->point_set()->begin ();
+    while (it != points_item->point_set()->first_selected())
     {
-      points_item->point_set()->set_first_selected
-        (points_item->point_set()->begin() + unselected.size());
+      if (selected_bitmap[*it])
+        points_item->point_set()->select(*it);
+      else
+        ++ it;
     }
 
     points_item->invalidateOpenGLBuffers();
@@ -236,29 +226,14 @@ public:
         }
     }
 
-    std::vector<Point_set::Index> unselected, selected;
+    Point_set::iterator it = points_item->point_set()->first_selected ();
+    while (it != points_item->point_set()->end())
+    {
+      if (!selected_bitmap[*it])
+        points_item->point_set()->unselect(*it);
 
-    for(Point_set::iterator it = points_item->point_set()->begin ();
-	it != points_item->point_set()->end(); ++ it)
-      if (points_item->point_set()->is_selected(it) && selected_bitmap[*it])
-        selected.push_back (*it);
-      else
-        unselected.push_back (*it);
-
-    for (std::size_t i = 0; i < unselected.size(); ++ i)
-      *(points_item->point_set()->begin() + i) = unselected[i];
-    for (std::size_t i = 0; i < selected.size(); ++ i)
-      *(points_item->point_set()->begin() + (unselected.size() + i)) = selected[i];
-
-    if (selected.empty ())
-      {
-	points_item->point_set()->unselect_all();
-      }
-    else
-      {
-	points_item->point_set()->set_first_selected
-	  (points_item->point_set()->begin() + unselected.size());
-      }
+      ++ it;
+    }
 
     points_item->invalidateOpenGLBuffers();
     points_item->itemChanged();
@@ -653,32 +628,25 @@ protected Q_SLOTS:
       selection_test.apply(i);
 #endif
 
-    std::vector<Point_set::Index> unselected, selected;
-    for (std::size_t i = 0; i < points->size(); ++ i)
+    Point_set::iterator it = points->begin ();
+    Point_set::iterator first_selected = points->first_selected ();
+    while (it != points->first_selected())
     {
-      Point_set::Index idx = *(points->begin() + i);
-      if (selected_bitmap[i])
-        selected.push_back (idx);
+      if (selected_bitmap[*it])
+        points->select(*it);
       else
-        unselected.push_back (idx);
+        ++ it;
     }
-    delete[] selected_bitmap;
-    
-    for (std::size_t i = 0; i < unselected.size(); ++ i)
-      *(points->begin() + i) = unselected[i];
-    for (std::size_t i = 0; i < selected.size(); ++ i)
-      *(points->begin() + (unselected.size() + i)) = selected[i];
 
-    if (selected.empty ())
-      {
-	points->unselect_all();
-      }
-    else
-      {
-	points->set_first_selected
-	  (points->begin() + unselected.size());
-      }
-    
+    it = first_selected;
+    while (it != points->end())
+    {
+      if (!selected_bitmap[*it])
+        points->unselect(*it);
+
+      ++ it;
+    }
+
     point_set_item->invalidateOpenGLBuffers();
     point_set_item->itemChanged();
   }
