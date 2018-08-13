@@ -65,10 +65,9 @@ value type of `InputIterator` is defined. It can be omitted and deduced
 automatically from the value type.
 
 The class `DiagonalizeTraits_` is a model of `DiagonalizeTraits`. It
-can be omitted: if Eigen 3 (or greater) is available and
-`CGAL_EIGEN3_ENABLED` is defined then an overload using
-`Eigen_diagonalize_traits` is provided. Otherwise, the internal
-implementation `Diagonalize_traits` is used.
+can be omitted if Eigen 3 (or greater) is available and
+`CGAL_EIGEN3_ENABLED` is defined: in that case, an overload using
+`Eigen_diagonalize_traits` is provided.
 
 \note This function is significantly faster when using
 `Eigen_diagonalize_traits` and it is strongly advised to use this

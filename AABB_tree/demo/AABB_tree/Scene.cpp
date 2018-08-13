@@ -490,7 +490,7 @@ void Scene::compute_texture(int i, int j,Color_ramp pos_ramp ,Color_ramp neg_ram
 
 }
 
-void Scene::attrib_buffers(QGLViewer* viewer)
+void Scene::attrib_buffers(CGAL::QGLViewer* viewer)
 {
     QMatrix4x4 mvpMatrix;
     double mat[16];
@@ -589,7 +589,7 @@ void Scene::update_bbox()
               << " facets)" << std::endl;
 }
 
-void Scene::draw(QGLViewer* viewer)
+void Scene::draw(CGAL::QGLViewer* viewer)
 {       
     if(!gl_init)
         initGL();
@@ -613,7 +613,6 @@ void Scene::draw(QGLViewer* viewer)
     }
     if(m_view_points && pos_points.size()>0)
     {
-        gl->glPointSize(2.0f);
         vao[0].bind();
         attrib_buffers(viewer);
         rendering_program.bind();
@@ -766,8 +765,8 @@ Plane Scene::random_plane(const CGAL::Bbox_3& bbox)
 
 Plane Scene::frame_plane() const
 {
-    const qglviewer::Vec& pos = m_frame->position();
-    const qglviewer::Vec& n = m_frame->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
+    const CGAL::qglviewer::Vec& pos = m_frame->position();
+    const CGAL::qglviewer::Vec& n = m_frame->inverseTransformOf(CGAL::qglviewer::Vec(0.f, 0.f, 1.f));
 
     return Plane(n[0], n[1],  n[2], - n * pos);
 }

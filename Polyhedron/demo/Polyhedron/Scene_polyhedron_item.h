@@ -6,8 +6,12 @@
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/TextRenderer.h>
 #include "Polyhedron_type_fwd.h"
+
+#ifndef Q_MOC_RUN
 #include "Polyhedron_type.h"
 #include <iostream>
+#endif
+
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>

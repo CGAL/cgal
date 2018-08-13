@@ -38,8 +38,8 @@ typedef K::Triangle_3   Triangle_3;
 typedef K::Iso_cuboid_3 Iso_cuboid_3;
 
 typedef CGAL::Triangulation_vertex_base_with_info_3<unsigned int, K> Vb1;
-typedef CGAL::Alpha_shape_vertex_base_3<K, Vb1> Vb;
-typedef CGAL::Alpha_shape_cell_base_3<K>   Fb;
+typedef CGAL::Alpha_shape_vertex_base_3<K, Vb1>                      Vb;
+typedef CGAL::Alpha_shape_cell_base_3<K>                             Fb;
 
 typedef CGAL::Triangulation_data_structure_3<Vb,Fb> Tds;
 typedef CGAL::Delaunay_triangulation_3<K,Tds> Triangulation_3;
@@ -77,7 +77,7 @@ public :
   void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   void drawPoints(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   void invalidateOpenGLBuffers()Q_DECL_OVERRIDE;
-  void computeElements() const;
+  void computeElements() const ;
   Scene_item* clone() const Q_DECL_OVERRIDE{return 0;}
   QString toolTip() const Q_DECL_OVERRIDE{return QString();}
   bool isEmpty() const Q_DECL_OVERRIDE{ return false;}
@@ -278,7 +278,8 @@ Scene_alpha_shape_item::Scene_alpha_shape_item(Scene_points_with_normal_item *po
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   _bbox = point_set_item->bbox();
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first());
+  const CGAL::qglviewer::Vec offset = viewer->offset();
   vertices.reserve(point_set.size() * 3);
   CGAL::Timer timer;
   timer.start();
@@ -297,28 +298,51 @@ Scene_alpha_shape_item::Scene_alpha_shape_item(Scene_points_with_normal_item *po
     vertices.push_back(it->point().y()+offset.y);
     vertices.push_back(it->point().z()+offset.z);
   }
-
-  const char vertex_source[] =
+    const char vertex_source[] =
+    {
+      "#version 150 \n"
+      "in vec4 vertex;\n"
+      "in vec3 colors;\n"
+      "uniform  mat4 mvp_matrix;\n"
+      "uniform  mat4 mv_matrix; \n"
+      "uniform  float point_size; \n"
+      "out  vec4 fP; \n"
+      "out  vec4 color; \n"
+      "void main(void)\n"
+      "{\n"
+      "   gl_PointSize = point_size; \n"
+      "   color = vec4(colors, 1.0); \n"
+      "   fP = mv_matrix * vertex; \n"
+      "   gl_Position = mvp_matrix * vertex;\n"
+      "}"
+    };
+    const char vertex_source_comp[] =
+    {
+      "attribute highp vec4 vertex;\n"
+      "attribute highp vec3 colors;\n"
+      "uniform highp mat4 mvp_matrix;\n"
+      "uniform highp mat4 mv_matrix; \n"
+      "uniform highp float point_size; \n"
+      "varying highp vec4 fP; \n"
+      "varying highp vec4 color; \n"
+      "void main(void)\n"
+      "{\n"
+      "   gl_PointSize = point_size; \n"
+      "   color = vec4(colors, 1.0); \n"
+      "   fP = mv_matrix * vertex; \n"
+      "   gl_Position = mvp_matrix * vertex;\n"
+      "}"
+    };
+  if(QOpenGLContext::currentContext()->format().majorVersion() >= 3)
   {
-    "#version 120 \n"
-    "attribute highp vec4 vertex;\n"
-    "attribute highp vec3 colors;\n"
-    "uniform highp mat4 mvp_matrix;\n"
-    "uniform highp mat4 mv_matrix; \n"
-    "varying highp vec4 fP; \n"
-    "varying highp vec4 color;; \n"
-    "void main(void)\n"
-    "{\n"
-    "   color = vec4(colors, 1.0); \n"
-    "   fP = mv_matrix * vertex; \n"
-    "   gl_Position = mvp_matrix * vertex;\n"
-    "}"
-  };
-
-  facet_program.addShaderFromSourceCode(QOpenGLShader::Vertex, vertex_source);
-  facet_program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/cgal/Polyhedron_3/resources/shader_flat.f");
+    facet_program.addShaderFromSourceCode(QOpenGLShader::Vertex, vertex_source);
+  }
+  else
+  {
+    facet_program.addShaderFromSourceCode(QOpenGLShader::Vertex, vertex_source_comp);
+  }
+  facet_program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_old_flat.f");
   facet_program.link();
-  facet_program.bind();
   invalidateOpenGLBuffers();
   alpha_changed(alpha);
   QApplication::restoreOverrideCursor();
@@ -345,9 +369,6 @@ void Scene_alpha_shape_item::draw(CGAL::Three::Viewer_interface* viewer) const
   QVector4D diffuse(1.0f, 1.0f, 1.0f, 1.0f);
   // Specular
   QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
-  int is_both_sides;
-  viewer->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE,
-                        &is_both_sides);
   program = &facet_program;
   program->bind();
   program->setUniformValue("mvp_matrix", mvp_mat);
@@ -357,7 +378,7 @@ void Scene_alpha_shape_item::draw(CGAL::Three::Viewer_interface* viewer) const
   program->setUniformValue("light_spec", specular);
   program->setUniformValue("light_amb", ambient);
   program->setUniformValue("spec_power", 51.8f);
-  program->setUniformValue("is_two_side", is_both_sides);
+  program->setUniformValue("is_two_side", viewer->property("draw_two_sides").toBool());
   program->setUniformValue("is_selected", false);
 
   vaos[0]->bind();

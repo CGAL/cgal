@@ -6,11 +6,10 @@
 #include <CGAL/Three/Viewer_config.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <QOpenGLBuffer>
+#include <QOpenGLDebugMessage>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLShaderProgram>
 #include <CGAL/Three/Viewer_interface.h>
-
-#include <QGLViewer/qglviewer.h>
 #include <QPoint>
 #include <QFont>
 #include <QOpenGLFramebufferObject>
@@ -38,7 +37,7 @@ public:
   ~Viewer();
   bool testDisplayId(double, double, double)Q_DECL_OVERRIDE;
   void updateIds(CGAL::Three::Scene_item *)Q_DECL_OVERRIDE;
-  //! overload several QGLViewer virtual functions
+  //! overload several CGAL::QGLViewer virtual functions
   //! Draws the scene.
   void draw()Q_DECL_OVERRIDE;
   //!This step happens after draw(). It is here that all the useful information is displayed, like the axis system or the informative text.
@@ -47,7 +46,7 @@ public:
   void fastDraw()Q_DECL_OVERRIDE;
   bool isExtensionFound()Q_DECL_OVERRIDE;
   //! Initializes the OpenGL functions and sets the backGround color.
-  void initializeGL()Q_DECL_OVERRIDE;
+  void init()Q_DECL_OVERRIDE;
   //! Draws the scene "with names" to allow picking.
   void drawWithNames()Q_DECL_OVERRIDE;
   /*! Uses the parameter pixel's coordinates to get the corresponding point
@@ -76,10 +75,7 @@ public:
                                         const char* v_shader,
                                         const char* f_shader)const;
   QPainter* getPainter()Q_DECL_OVERRIDE;
-  void saveSnapshot(bool , bool overwrite = false);
-  void setOffset(qglviewer::Vec offset);
-  qglviewer::Vec offset()const Q_DECL_OVERRIDE;
-  void setSceneBoundingBox(const qglviewer::Vec &min, const qglviewer::Vec &max);
+  
 
   TextRenderer* textRenderer() Q_DECL_OVERRIDE;
   void enableClippingBox(QVector4D box[]) Q_DECL_OVERRIDE;
@@ -87,6 +83,8 @@ public:
   void set2DSelectionMode(bool) Q_DECL_OVERRIDE;
   void setStaticImage(QImage image) Q_DECL_OVERRIDE;
   const QImage& staticImage() const Q_DECL_OVERRIDE;
+  //!Set total number of depth peeling passes.
+   void setTotalPass(int);
 
 Q_SIGNALS:
   void sendMessage(QString);
@@ -114,24 +112,17 @@ public Q_SLOTS:
   void hideMessage();
   void setBindingSelect() Q_DECL_OVERRIDE
   {
-#if QGLVIEWER_VERSION >= 0x020501
-    setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, SELECT);
-#else
-    setMouseBinding(::Qt::SHIFT + ::Qt::LeftButton, SELECT);
-#endif
+    setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, CGAL::qglviewer::SELECT);
   }
-
+  //!Prompt a dialog to set the number of passes for the transparency.
+  void setTotalPass_clicked();
   virtual void setNoBinding() Q_DECL_OVERRIDE
   {
-#if QGLVIEWER_VERSION >= 0x020501
-    setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, NO_CLICK_ACTION);
-#else
-    setMouseBinding(::Qt::SHIFT + ::Qt::LeftButton, NO_CLICK_ACTION);
-#endif
+    setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, CGAL::qglviewer::NO_CLICK_ACTION);
   }
+  void messageLogged(QOpenGLDebugMessage);
 
 protected:
-  void postDraw()Q_DECL_OVERRIDE;
   void paintEvent(QPaintEvent *)Q_DECL_OVERRIDE;
   void paintGL()Q_DECL_OVERRIDE;
 
@@ -146,17 +137,22 @@ protected:
   //!Defines the behaviour for the key release events
   void keyReleaseEvent(QKeyEvent *)Q_DECL_OVERRIDE;
 
-  void resizeGL(int w, int h)Q_DECL_OVERRIDE;
-
 protected:
   friend class Viewer_impl;
   Viewer_impl* d;
   double prev_radius;
 
 public:
-  bool isOpenGL_4_3() const Q_DECL_OVERRIDE;
-  QOpenGLFunctions_4_3_Compatibility* openGL_4_3_functions() Q_DECL_OVERRIDE;
-
+  QOpenGLFunctions_4_3_Core* openGL_4_3_functions() Q_DECL_OVERRIDE;
+  void setCurrentPass(int pass) Q_DECL_OVERRIDE;
+   void setDepthWriting(bool writing_depth) Q_DECL_OVERRIDE;
+   void setDepthPeelingFbo(QOpenGLFramebufferObject *fbo) Q_DECL_OVERRIDE;
+   int currentPass()const Q_DECL_OVERRIDE;
+   bool isDepthWriting()const Q_DECL_OVERRIDE;
+   QOpenGLFramebufferObject* depthPeelingFbo()Q_DECL_OVERRIDE;
+   float total_pass()Q_DECL_OVERRIDE;
+   const GLfloat& getGlPointSize()const Q_DECL_OVERRIDE;
+   void setGlPointSize(const GLfloat& p) Q_DECL_OVERRIDE;
 }; // end class Viewer
 
 

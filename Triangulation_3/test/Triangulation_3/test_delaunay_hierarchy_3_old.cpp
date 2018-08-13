@@ -19,8 +19,6 @@
 //
 // Author(s)     : Mariette Yvinec, Sylvain Pion
 
-#define CGAL_NO_DEPRECATION_WARNINGS
-
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_hierarchy_3.h>
 
@@ -33,7 +31,8 @@ int main()
 {
   typedef CGAL::Triangulation_vertex_base_3<K>             Vbb;
   typedef CGAL::Triangulation_hierarchy_vertex_base_3<Vbb> Vb;
-  typedef CGAL::Triangulation_data_structure_3<Vb>         Tds;
+  typedef CGAL::Delaunay_triangulation_cell_base_3<K>      Cb;
+  typedef CGAL::Triangulation_data_structure_3<Vb, Cb>     Tds;
   typedef CGAL::Delaunay_triangulation_3<K,Tds>            Dt;
   typedef CGAL::Triangulation_hierarchy_3<Dt>              Dh;
 

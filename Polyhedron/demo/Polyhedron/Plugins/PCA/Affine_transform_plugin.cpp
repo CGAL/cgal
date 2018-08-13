@@ -36,13 +36,13 @@ class Scene_transform_point_set_item : public Scene_item
   Q_OBJECT
   typedef Point_set_3<Kernel> Point_set;
 public:
-  Scene_transform_point_set_item(Scene_points_with_normal_item *item, const qglviewer::Vec& pos)
+  Scene_transform_point_set_item(Scene_points_with_normal_item *item, const CGAL::qglviewer::Vec& pos)
     :Scene_item(1,1),
       base(item),
       center_(pos),
       frame(new CGAL::Three::Scene_item::ManipulatedFrame())
   {
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     frame->setPosition(pos+offset);
     Point_set ps= *item->point_set();
     const Kernel::Point_3& p = ps.point(*(ps.begin()));
@@ -61,7 +61,7 @@ public:
     _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
                  bbox.xmax(),bbox.ymax(),bbox.zmax());
     nb_points = points.size();
-    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin());
     program = getShaderProgram(Scene_facegraph_transform_item::PROGRAM_WITHOUT_LIGHT, viewer);
     program->bind();
 
@@ -101,7 +101,7 @@ public:
   {
     GLfloat point_size;
     viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
-    viewer->glPointSize(6.f);
+    viewer->setGlPointSize(6.f);
     double ratio_displayed = 1.0;
     if ((viewer->inFastDrawing () || frame->isManipulated()) &&
         (nb_points /3 > 300000)) // arbitrary large value
@@ -127,7 +127,7 @@ public:
     return false;
   }
   const Scene_points_with_normal_item* getBase()const{return base;}
-  const qglviewer::Vec& center() const { return center_; }
+  const CGAL::qglviewer::Vec& center() const { return center_; }
   CGAL::Three::Scene_item::ManipulatedFrame* manipulatedFrame() { return frame; }
   void compute_bbox() const
   {
@@ -139,8 +139,8 @@ public:
     {
       bbox = bbox + ps.point(*it).bbox();
     }
-    qglviewer::Vec min(bbox.xmin(),bbox.ymin(),bbox.zmin());
-    qglviewer::Vec max(bbox.xmax(),bbox.ymax(),bbox.zmax());
+    CGAL::qglviewer::Vec min(bbox.xmin(),bbox.ymin(),bbox.zmin());
+    CGAL::qglviewer::Vec max(bbox.xmax(),bbox.ymax(),bbox.zmax());
 
     _bbox = Bbox(min.x,min.y,min.z,
                  max.x,max.y,max.z);
@@ -151,7 +151,7 @@ Q_SIGNALS:
   void killed();
 private:
   const Scene_points_with_normal_item* base;
-  qglviewer::Vec center_;
+  CGAL::qglviewer::Vec center_;
   CGAL::Three::Scene_item::ManipulatedFrame* frame;
   mutable QOpenGLShaderProgram *program;
   std::size_t nb_points;
@@ -336,14 +336,14 @@ public Q_SLOTS:
 
     if(!is_point_set)
     {
-      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
       transform_item->manipulatedFrame()->setFromMatrix(matrix);
       transform_item->manipulatedFrame()->translate(offset);
       transform_item->itemChanged();
     }
     else
     {
-      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
       transform_points_item->manipulatedFrame()->setFromMatrix(matrix);
       transform_points_item->manipulatedFrame()->translate(offset);
       transform_points_item->itemChanged();
@@ -434,7 +434,7 @@ void Polyhedron_demo_affine_transform_plugin::start(FaceGraph *facegraph, const 
   lastMatrix.data()[12] = x;
   lastMatrix.data()[13] = y;
   lastMatrix.data()[14] = z;
-  transform_item = new Scene_facegraph_transform_item(qglviewer::Vec(x,y,z),facegraph, name);
+  transform_item = new Scene_facegraph_transform_item(CGAL::qglviewer::Vec(x,y,z),facegraph, name);
   transform_item->setManipulatable(true);
   transform_item->setColor(Qt::green);
   transform_item->setRenderingMode(Wireframe);
@@ -444,7 +444,7 @@ void Polyhedron_demo_affine_transform_plugin::start(FaceGraph *facegraph, const 
   scaling[2] = 1;
   connect(transform_item, SIGNAL(stop()),this, SLOT(go()));
   connect(transform_item, SIGNAL(killed()),this, SLOT(transformed_killed()));
-  connect(transform_item->manipulatedFrame(), &qglviewer::ManipulatedFrame::modified,
+  connect(transform_item->manipulatedFrame(), &CGAL::qglviewer::ManipulatedFrame::modified,
           this, &Polyhedron_demo_affine_transform_plugin::updateUiMatrix);
   connect(transform_item, &Scene_facegraph_transform_item::aboutToBeDestroyed,
           dock_widget, &QDockWidget::hide);
@@ -467,12 +467,12 @@ void Polyhedron_demo_affine_transform_plugin::start(Scene_points_with_normal_ite
   lastMatrix.data()[13] = y;
   lastMatrix.data()[14] = z;
 
-  transform_points_item = new Scene_transform_point_set_item(points_item,qglviewer::Vec(x,y,z));
+  transform_points_item = new Scene_transform_point_set_item(points_item,CGAL::qglviewer::Vec(x,y,z));
   transform_points_item->setRenderingMode(Points);
   transform_points_item->setName(tr("Affine Transformation"));
   connect(transform_points_item, SIGNAL(stop()),this, SLOT(go()));
   connect(transform_points_item, SIGNAL(killed()),this, SLOT(transformed_killed()));
-  connect(transform_points_item->manipulatedFrame(), &qglviewer::ManipulatedFrame::modified,
+  connect(transform_points_item->manipulatedFrame(), &CGAL::qglviewer::ManipulatedFrame::modified,
           this, &Polyhedron_demo_affine_transform_plugin::updateUiMatrix);
   connect(transform_points_item, &Scene_transform_point_set_item::aboutToBeDestroyed,
           dock_widget, &QDockWidget::hide);
@@ -488,7 +488,7 @@ void Polyhedron_demo_affine_transform_plugin::end(){
   QApplication::restoreOverrideCursor();
   double matrix[16];
   transformMatrix(&matrix[0]);
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   matrix[12]-=offset.x;
   matrix[13]-=offset.y;
   matrix[14]-=offset.z;
@@ -499,7 +499,7 @@ void Polyhedron_demo_affine_transform_plugin::end(){
 
   if(transform_item)
   {
-    qglviewer::Vec c = transform_item->center();
+    CGAL::qglviewer::Vec c = transform_item->center();
     FaceGraph* new_sm = new FaceGraph(*transform_item->getFaceGraph());
     typedef boost::property_map<FaceGraph,CGAL::vertex_point_t>::type VPmap;
     VPmap vpmap = get(CGAL::vertex_point, *new_sm);
@@ -525,7 +525,7 @@ void Polyhedron_demo_affine_transform_plugin::end(){
     const Point_set *base_ps = transform_points_item->getBase()->point_set();
     Point_set* new_ps = new Point_set();
     new_ps->reserve(base_ps->size());
-    qglviewer::Vec c = transform_points_item->center();
+    CGAL::qglviewer::Vec c = transform_points_item->center();
     for(Point_set::const_iterator it = base_ps->begin(); it != base_ps->end(); ++ it)
     {
       QVector3D vec = transform_matrix * QVector3D(base_ps->point(*it).x() - c.x,
@@ -580,7 +580,7 @@ void Polyhedron_demo_affine_transform_plugin::updateUiMatrix()
     matrix(1,3) -= transform_points_item->center().y;
     matrix(2,3) -= transform_points_item->center().z;
   }
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   matrix.data()[12]-=offset.x;
   matrix.data()[13]-=offset.y;
   matrix.data()[14]-=offset.z;
@@ -675,25 +675,25 @@ void Polyhedron_demo_affine_transform_plugin::applySingleTransformation()
   //rotation
   case 0:
   {
-    qglviewer::Vec axis(ui.lineEditX->text().toDouble(),
+    CGAL::qglviewer::Vec axis(ui.lineEditX->text().toDouble(),
                         ui.lineEditY->text().toDouble(),
                         ui.lineEditZ->text().toDouble());
 
     if(!is_point_set)
-      transform_item->manipulatedFrame()->rotate(qglviewer::Quaternion(axis, ui.lineEditA->text().toDouble()*M_PI/180.0));
+      transform_item->manipulatedFrame()->rotate(CGAL::qglviewer::Quaternion(axis, ui.lineEditA->text().toDouble()*CGAL_PI/180.0));
     else
-      transform_points_item->manipulatedFrame()->rotate(qglviewer::Quaternion(axis, ui.lineEditA->text().toDouble()*M_PI/180.0));
+      transform_points_item->manipulatedFrame()->rotate(CGAL::qglviewer::Quaternion(axis, ui.lineEditA->text().toDouble()*CGAL_PI/180.0));
     break;
   }
     //translation
   case 1:
   {
     if(!is_point_set)
-      transform_item->manipulatedFrame()->translate(qglviewer::Vec(ui.lineEditX->text().toDouble() ,
+      transform_item->manipulatedFrame()->translate(CGAL::qglviewer::Vec(ui.lineEditX->text().toDouble() ,
                                                                    ui.lineEditY->text().toDouble() ,
                                                                    ui.lineEditZ->text().toDouble() ));
     else
-      transform_points_item->manipulatedFrame()->translate(qglviewer::Vec(ui.lineEditX->text().toDouble() ,
+      transform_points_item->manipulatedFrame()->translate(CGAL::qglviewer::Vec(ui.lineEditX->text().toDouble() ,
                                                                           ui.lineEditY->text().toDouble() ,
                                                                           ui.lineEditZ->text().toDouble() ));
     break;

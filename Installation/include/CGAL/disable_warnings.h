@@ -34,6 +34,7 @@
 #  pragma warning(disable: 4714) // function marked as __forceinline not inlined
 #  pragma warning(disable: 4800) //  forcing value to bool 'true' or 'false' (performance warning)
 #  pragma warning(disable: 4913) // user defined binary operator ',' exists but no overload could convert all operands, default built-in binary operator ',' used
+#  pragma warning(disable: 4834) // discarding return value of function with 'nodiscard' attribute
 
 
 #endif

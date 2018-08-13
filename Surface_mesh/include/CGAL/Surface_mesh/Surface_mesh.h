@@ -55,6 +55,8 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/IO/File_scanner_OFF.h>
 #include <CGAL/Handle_hash_function.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/named_function_params.h>
 
 namespace CGAL {
 
@@ -121,9 +123,7 @@ namespace CGAL {
         /// decrement.
         SM_Index operator--(int) { SM_Index tmp(*this); --idx_; return tmp; }
 
-
-      
-     
+        SM_Index operator+=(std::ptrdiff_t n) { idx_ = size_type(std::ptrdiff_t(idx_) + n); return *this; }
       
     private:
         size_type idx_;
@@ -461,12 +461,12 @@ private: //------------------------------------------------------ iterator types
     class Index_iterator
       : public boost::iterator_facade< Index_iterator<Index_>,
                                        Index_,
-                                       std::bidirectional_iterator_tag
+                                       std::random_access_iterator_tag
                                        >
     {
         typedef boost::iterator_facade< Index_iterator<Index_>,
                                         Index_,
-                                        std::bidirectional_iterator_tag
+                                        std::random_access_iterator_tag
                                         > Facade;
     public:
         Index_iterator() : hnd_(), mesh_(NULL) {}
@@ -495,6 +495,51 @@ private: //------------------------------------------------------ iterator types
                while ( mesh_->has_valid_index(hnd_) && mesh_->is_removed(hnd_)) --hnd_;
         }
 
+        void advance(std::ptrdiff_t n)
+        {
+            CGAL_assertion(mesh_ != NULL);
+            
+            if (mesh_->has_garbage())
+            {
+              if (n > 0)
+                for (std::ptrdiff_t i = 0; i < n; ++ i)
+                  increment();
+              else
+                for (std::ptrdiff_t i = 0; i < -n; ++ i)
+                  decrement();
+            }
+            else
+              hnd_ += n;
+        }
+
+        std::ptrdiff_t distance_to(const Index_iterator& other) const
+        {
+            if (mesh_->has_garbage())
+            {
+              bool forward = (other.hnd_ > hnd_);
+              
+              std::ptrdiff_t out = 0;
+              Index_iterator it = *this;
+              while (!it.equal(other))
+              {
+                if (forward)
+                {
+                  ++ it;
+                  ++ out;
+                }
+                else
+                {
+                  -- it;
+                  -- out;
+                }
+              }
+              return out;
+            }
+
+            // else
+            return std::ptrdiff_t(other.hnd_) - std::ptrdiff_t(this->hnd_);
+        }
+      
         bool equal(const Index_iterator& other) const
         {
             return this->hnd_ == other.hnd_;
@@ -1977,9 +2022,11 @@ private: //------------------------------------------------------- private data
   /// \relates Surface_mesh
   /// Inserts the surface mesh in an output stream in Ascii OFF format. 
   /// Only the \em point property is inserted in the stream.
+  /// If an alternative vertex_point map is given through `np`, 
+  /// then it  will be used instead of the default one.
   /// \pre `operator<<(std::ostream&,const P&)` must be defined.
-  template <typename P>
-  bool write_off(std::ostream& os, const Surface_mesh<P>& sm) {
+  template <typename P, typename NamedParameters>
+  bool write_off(std::ostream& os, const Surface_mesh<P>& sm, const NamedParameters& np) {
     typedef Surface_mesh<P> Mesh;
     typedef typename Mesh::Vertex_index Vertex_index;
     typedef typename Mesh::Face_index Face_index;
@@ -1996,10 +2043,14 @@ private: //------------------------------------------------------- private data
     else
       os << "COFF\n" << sm.number_of_vertices() << " " << sm.number_of_faces() << " 0\n";
     std::vector<int> reindex;
+    typename Polygon_mesh_processing::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::const_type
+        vpm = choose_param(get_param(np, internal_np::vertex_point),
+                           get_const_property_map(CGAL::vertex_point, sm));
     reindex.resize(sm.num_vertices());
     int n = 0;
     BOOST_FOREACH(Vertex_index v, sm.vertices()){
-      os << sm.point(v);
+      
+      os << get(vpm, v);
       if(has_vcolors)
       {
         CGAL::Color color = vcolors[v];
@@ -2024,13 +2075,17 @@ private: //------------------------------------------------------- private data
     return os.good();
   }
 
+  template <typename P>
+  bool write_off(std::ostream& os, const Surface_mesh<P>& sm) {
+    return write_off(os, sm, CGAL::parameters::all_default());
+  }
   /// \relates Surface_mesh
   /// 
   /// This operator calls `write_off(std::ostream& os, const CGAL::Surface_mesh& sm)`.
    template <typename P>
   std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
   {
-    write_off(os, sm);
+    write_off(os, sm, CGAL::parameters::all_default());
     return os;
   }
 
@@ -2058,12 +2113,14 @@ private: //------------------------------------------------------- private data
   /// format and appends it to the surface mesh `sm`.
   /// The operator reads the point property as well as "v:normal", "v:color", and "f:color".
   /// Vertex texture coordinates are ignored.
+  /// If an alternative vertex_point map is given through `np`, 
+  /// then it  will be used instead of the default one.
   /// \pre `operator>>(std::istream&,const P&)` must be defined.
   /// \pre The data in the stream must represent a two-manifold. If this is not the case
   ///      the `failbit` of `is` is set and the mesh cleared.
 
-  template <typename P>
-  bool read_off(std::istream& is, Surface_mesh<P>& sm)
+  template <typename P, typename NamedParameters>
+  bool read_off(std::istream& is, Surface_mesh<P>& sm, NamedParameters np)
   {
    typedef Surface_mesh<P> Mesh;
    typedef typename Kernel_traits<P>::Kernel K;
@@ -2071,6 +2128,9 @@ private: //------------------------------------------------------- private data
    typedef typename Mesh::Face_index Face_index;
    typedef typename Mesh::Vertex_index Vertex_index;
    typedef typename Mesh::size_type size_type;
+    typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::type
+        vpm = choose_param(get_param(np, CGAL::internal_np::vertex_point),
+                           get_property_map(CGAL::vertex_point, sm));
     int n, f, e;
     std::string off;
     is >> sm_skip_comments;
@@ -2097,7 +2157,11 @@ private: //------------------------------------------------------- private data
     for(int i=0; i < n; i++){
       is >> sm_skip_comments;
       is >> p;
-      Vertex_index vi= sm.add_vertex(p);
+      
+      Vertex_index vi = sm.add_vertex();
+      put(vpm, vi, p);
+      
+      
       vertexmap[i] = vi;
       if(v_has_normals){
         is >> v;
@@ -2167,6 +2231,11 @@ private: //------------------------------------------------------- private data
   }
 
 
+  template <typename P>
+  bool read_off(std::istream& is, Surface_mesh<P>& sm)
+  {
+    return read_off(is, sm, parameters::all_default());
+  }
  
   /// \relates Surface_mesh
   /// This operator calls `read_off(std::istream& is, CGAL::Surface_mesh& sm)`.
@@ -2649,7 +2718,7 @@ namespace std {
 
   template <>
   struct hash<CGAL::SM_Halfedge_index >
-    : public CGAL::unary_function<CGAL::SM_Halfedge_index, std::size_t> {
+    : public CGAL::cpp98::unary_function<CGAL::SM_Halfedge_index, std::size_t> {
 
     std::size_t operator()(const CGAL::SM_Halfedge_index& i) const
     {
@@ -2659,7 +2728,7 @@ namespace std {
 
   template <>
   struct hash<CGAL::SM_Vertex_index >
-    : public CGAL::unary_function<CGAL::SM_Vertex_index, std::size_t>  {
+    : public CGAL::cpp98::unary_function<CGAL::SM_Vertex_index, std::size_t>  {
 
     std::size_t operator()(const CGAL::SM_Vertex_index& i) const
     {
@@ -2669,7 +2738,7 @@ namespace std {
 
   template <>
   struct hash<CGAL::SM_Face_index > 
-    : public CGAL::unary_function<CGAL::SM_Face_index, std::size_t> {
+    : public CGAL::cpp98::unary_function<CGAL::SM_Face_index, std::size_t> {
 
     std::size_t operator()(const CGAL::SM_Face_index& i) const
     {
@@ -2679,7 +2748,7 @@ namespace std {
 
   template <>
   struct hash<CGAL::SM_Edge_index >
-    : public CGAL::unary_function<CGAL::SM_Edge_index, std::size_t>  {
+    : public CGAL::cpp98::unary_function<CGAL::SM_Edge_index, std::size_t>  {
 
     std::size_t operator()(const CGAL::SM_Edge_index& i) const
     {

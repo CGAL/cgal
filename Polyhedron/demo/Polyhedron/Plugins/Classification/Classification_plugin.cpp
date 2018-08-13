@@ -1,17 +1,19 @@
 #include <QtCore/qglobal.h>
 #include <QFileDialog>
 #include <QColorDialog> 
-#include <QGLViewer/manipulatedCameraFrame.h>
-#include <QGLViewer/manipulatedFrame.h>
+#include <CGAL/Qt/manipulatedCameraFrame.h>
+#include <CGAL/Qt/manipulatedFrame.h>
 
 #include <fstream>
-#include "opengl_tools.h"
+
 
 #include "Messages_interface.h"
 #include "Scene_points_with_normal_item.h"
 #include "Item_classification_base.h"
 #include "Point_set_item_classification.h"
 #include "Cluster_classification.h"
+#include "Scene_surface_mesh_item.h"
+#include "Surface_mesh_item_classification.h"
 #include "Scene_polylines_item.h"
 #include "Scene_polygon_soup_item.h"
 
@@ -124,7 +126,8 @@ class Polyhedron_demo_classification_plugin :
 public:
   bool applicable(QAction*) const { 
       return
-        qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+        qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()))
+        || qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
   }
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionClassification; }
@@ -291,8 +294,12 @@ public Q_SLOTS:
   { 
     dock_widget->show();
     dock_widget->raise();
-    Scene_points_with_normal_item* points_item = getSelectedItem<Scene_points_with_normal_item>();
-    create_from_item(points_item);
+    if (Scene_points_with_normal_item* points_item
+             = qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex())))
+      create_from_item(points_item);
+    else if (Scene_surface_mesh_item* mesh_item
+             = qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())))
+      create_from_item(mesh_item);
   }
 
 
@@ -428,13 +435,25 @@ public Q_SLOTS:
     if (!item)
       return NULL;
 
+    Scene_polyhedron_selection_item* selection_item
+      = qobject_cast<Scene_polyhedron_selection_item*>(item);
+    if (selection_item)
+      item = selection_item->polyhedron_item();
+    
     Item_map::iterator it = item_map.find(item);
 
     if (it != item_map.end())
+    {
+      if (selection_item)
+        dynamic_cast<Surface_mesh_item_classification*>(it->second)->set_selection_item(selection_item);
       return it->second;
-    if (Scene_points_with_normal_item* points_item
-        = qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex())))
+    }
+    else if (Scene_points_with_normal_item* points_item
+             = qobject_cast<Scene_points_with_normal_item*>(item))
       return create_from_item(points_item);
+    else if (Scene_surface_mesh_item* mesh_item
+             = qobject_cast<Scene_surface_mesh_item*>(item))
+      return create_from_item(mesh_item);
 
     return NULL;
   }
@@ -472,6 +491,20 @@ public Q_SLOTS:
     return classif;
   }
 
+  Item_classification_base* create_from_item(Scene_surface_mesh_item* mesh_item)
+  {
+    if (item_map.find(mesh_item) != item_map.end())
+      return item_map[mesh_item];
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    Item_classification_base* classif
+      = new Surface_mesh_item_classification (mesh_item);
+    item_map.insert (std::make_pair (mesh_item, classif));
+    QApplication::restoreOverrideCursor();
+    update_plugin_from_item(classif);
+    return classif;
+  }
+  
   void run (Item_classification_base* classif, int method,
             std::size_t subdivisions = 1,
             double smoothing = 0.5)
@@ -1018,29 +1051,18 @@ public Q_SLOTS:
     classif->select_random_region();
     item_changed(classif->item());
 
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
     CGAL::Bbox_3 bbox = classif->bbox();
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
     
-    viewer->camera()->fitBoundingBox(qglviewer::Vec (bbox.xmin(), bbox.ymin(), bbox.zmin()) + offset,
-                                     qglviewer::Vec (bbox.xmax(), bbox.ymax(), bbox.zmax()) + offset);
+    viewer->camera()->fitBoundingBox(CGAL::qglviewer::Vec (bbox.xmin(), bbox.ymin(), bbox.zmin()) + offset,
+                                     CGAL::qglviewer::Vec (bbox.xmax(), bbox.ymax(), bbox.zmax()) + offset);
     
-    // viewer->camera()->showEntireScene();
-    
-    // bbox = scene->bbox();
-    // viewer->setSceneBoundingBox(qglviewer::Vec (bbox.xmin(), bbox.ymin(), bbox.zmin()),
-    //                             qglviewer::Vec (bbox.xmax(), bbox.ymax(), bbox.zmax()));
 
-#if QGLVIEWER_VERSION >= 0x020502
-    viewer->camera()->setPivotPoint (qglviewer::Vec ((bbox.xmin() + bbox.xmax()) / 2.,
+
+    viewer->camera()->setPivotPoint (CGAL::qglviewer::Vec ((bbox.xmin() + bbox.xmax()) / 2.,
                                                      (bbox.ymin() + bbox.ymax()) / 2.,
                                                      (bbox.zmin() + bbox.zmax()) / 2.) + offset);
-#else
-    viewer->camera()->setRevolveAroundPoint (qglviewer::Vec ((bbox.xmin() + bbox.xmax()) / 2.,
-                                                             (bbox.ymin() + bbox.ymax()) / 2.,
-                                                             (bbox.zmin() + bbox.zmax()) / 2.) + offset);
-#endif
-
   }
 
   void on_train_clicked()

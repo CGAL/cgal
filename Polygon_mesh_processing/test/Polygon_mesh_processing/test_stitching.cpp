@@ -1,11 +1,9 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Surface_mesh.h>
-
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
+
 
 #include <iostream>
 #include <fstream>
@@ -36,6 +34,29 @@ void test_polyhedron(const char* fname)
   std::cout << "OK\n";
 }
 
+template <typename K>
+void test_polyhedron_cc(const char* fname)
+{
+  typedef CGAL::Polyhedron_3<K> Polyhedron;
+
+  std::cout << "Testing Polyhedron_3 " << fname << "..." << std::flush;
+  std::ifstream input(fname);
+  Polyhedron poly;
+  if (!input || !(input >> poly)){
+    std::cerr << "Error: can not read file.";
+    return;
+  }
+
+  assert(poly.size_of_vertices() > 0);
+  
+  CGAL::Polygon_mesh_processing::
+      stitch_borders(poly,
+                     CGAL::Polygon_mesh_processing::parameters::apply_per_connected_component(true));
+  poly.normalize_border();
+
+  assert(poly.is_valid(false, 5));
+  std::cout << "OK\n";
+}
 
 void test_surface_mesh(const char* fname)
 {
@@ -52,6 +73,29 @@ void test_surface_mesh(const char* fname)
   }
   
   CGAL::Polygon_mesh_processing::stitch_borders(m);
+  //todo : add a validity test
+
+  assert(is_valid_polygon_mesh(m));
+
+  std::cout << "OK\n";
+}
+
+void test_surface_mesh_cc(const char* fname)
+{
+  typedef Epic K;
+  typedef K::Point_3 Point;
+  typedef CGAL::Surface_mesh<Point> Mesh;
+
+  std::cout << "Testing Surface_mesh " << fname << "..." << std::flush;
+  std::ifstream input(fname);
+  Mesh m;
+  if (!input || !(input >> m)){
+    std::cerr << "Error: can not read file.";
+    return;
+  }
+  
+  CGAL::Polygon_mesh_processing::stitch_borders(m,
+                                                CGAL::Polygon_mesh_processing::parameters::apply_per_connected_component(true));
   //todo : add a validity test
 
   assert(is_valid(m));
@@ -75,6 +119,7 @@ int main()
   test_polyhedron<Epic>("data_stitching/two_patches.off");
   test_polyhedron<Epic>("data_stitching/non_manifold.off");
   test_polyhedron<Epic>("data_stitching/non_manifold2.off");
+  test_polyhedron_cc<Epic>("data_stitching/nm_cubes.off");
 
   test_surface_mesh("data_stitching/full_border.off");
   test_surface_mesh("data_stitching/full_border_quads.off");
@@ -86,7 +131,7 @@ int main()
   test_surface_mesh("data_stitching/non_stitchable.off");
   test_surface_mesh("data_stitching/deg_border.off");
   test_surface_mesh("data_stitching/non_manifold.off");
-  test_surface_mesh("data_stitching/non_manifold2.off");
+  test_surface_mesh_cc("data_stitching/nm_cubes.off");
 
   return 0;
 }

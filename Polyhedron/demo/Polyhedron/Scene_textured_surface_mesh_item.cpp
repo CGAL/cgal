@@ -134,7 +134,6 @@ void Scene_textured_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewe
   viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  viewer->glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
   item->are_buffers_filled = true;
 }
@@ -148,7 +147,7 @@ Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void) const
 
   typedef boost::graph_traits<SMesh>::face_iterator face_iterator;
   typedef boost::graph_traits<SMesh>::face_iterator face_iterator;
-  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
   //Faces
   SMesh::Property_map<vertex_descriptor, Point> positions =
@@ -312,6 +311,7 @@ void Scene_textured_surface_mesh_item::draw(CGAL::Three::Viewer_interface* viewe
   attribBuffers(viewer, PROGRAM_WITH_TEXTURE);
   d->program=getShaderProgram(PROGRAM_WITH_TEXTURE);
   d->program->bind();
+  
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->faces_buffer.size()/8));
   //Clean-up
   d->program->release();
@@ -335,13 +335,26 @@ void Scene_textured_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface* 
   d->program->release();
 
   vaos[Scene_textured_surface_mesh_item_priv::Border_edges]->bind();
-  attribBuffers(viewer, PROGRAM_NO_SELECTION);
-  d->program=getShaderProgram(PROGRAM_NO_SELECTION);
-  d->program->bind();
-  viewer->glLineWidth(4.0);
+  
+  if(!viewer->isOpenGL_4_3())
+  {
+    attribBuffers(viewer, PROGRAM_NO_SELECTION);
+    d->program=getShaderProgram(PROGRAM_NO_SELECTION);
+    d->program->bind();
+  }
+  else
+  {
+    attribBuffers(viewer, PROGRAM_SOLID_WIREFRAME);
+    d->program=getShaderProgram(PROGRAM_SOLID_WIREFRAME);
+    d->program->bind();
+    QVector2D vp(viewer->width(), viewer->height());
+    d->program->setUniformValue("viewport", vp);
+    d->program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
+    d->program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+    d->program->setUniformValue("width", 4.0f);
+  }
   d->program->setAttributeValue("colors", QColor(Qt::blue));
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->border_edges_buffer.size()/3));
-  viewer->glLineWidth(1.0);
   //Clean-up
   d->program->release();
   vaos[Scene_textured_surface_mesh_item_priv::Border_edges]->release();
@@ -391,10 +404,13 @@ Scene_textured_surface_mesh_item::selection_changed(bool p_is_selected)
   else
     is_selected = p_is_selected;
 }
-void Scene_textured_surface_mesh_item::add_border_edges(std::vector<float> border_edges)
+void Scene_textured_surface_mesh_item::add_border_edges(std::vector<float> border_edges,
+                                                        bool is_opengl_4_3)
 {
   d->border_edges_buffer = border_edges;
-  d->program=getShaderProgram(PROGRAM_NO_SELECTION);
+  d->program=is_opengl_4_3 
+      ? getShaderProgram(PROGRAM_SOLID_WIREFRAME)
+      : getShaderProgram(PROGRAM_NO_SELECTION);
   d->program->bind();
   vaos[Scene_textured_surface_mesh_item_priv::Border_edges]->bind();
   buffers[Scene_textured_surface_mesh_item_priv::B_Border_Edges].bind();

@@ -17,7 +17,6 @@ using namespace std;
 
 void Viewer::init()
 {
-    initializeOpenGLFunctions();
     glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
     if(!glDrawArraysInstanced)
     {
@@ -44,7 +43,7 @@ void Viewer::init()
     /* Scene inits */
     setBackgroundColor(::Qt::white);
     // scene are defined by a sphere of 2.0, camera at the center, i.e. (0, 0, 0)
-    setSceneCenter( qglviewer::Vec(-0.,-0.,-0.) );
+    setSceneCenter( CGAL::qglviewer::Vec(-0.,-0.,-0.) );
     setSceneRadius( 2. );
     // show text message
     setTextIsEnabled(true);
@@ -52,16 +51,9 @@ void Viewer::init()
     setFont(QFont("Arial Black", 16, QFont::Bold));
 
     /* OpenGL inits */
-    // Increase the material shininess, so that the difference between
-    // the two versions of the spiral is more visible.
-    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 50.0);
-    GLfloat specular_color[4] = { 0.8f, 0.8f, 0.8f, 1.0 };
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR,  specular_color);
-    // Set Smooth Shading
-    glShadeModel(GL_SMOOTH);
 
     // depth buffer setup
-    glClearDepth(1.0f);
+    glClearDepthf(1.0f);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
@@ -89,7 +81,7 @@ void Viewer::init()
                        tr("Cancel insertion in <u>Input-Point</u> mode;<br>")
                        + tr("Cancel current selection in <u>Select</u> mode") );
     setKeyDescription( Qt::Key_Delete, tr("Delete selected vertices in <u>Select</u> mode") );
-#if QGLVIEWER_VERSION >= 0x020500
+
     setMouseBindingDescription(Qt::NoModifier, Qt::LeftButton,
                                tr("Hold to move new point in <u>Input-Point</u> mode;<br>")
                                + tr("Hold to move a vertex in <u>Move</u> mode") );
@@ -101,19 +93,7 @@ void Viewer::init()
                                + tr("Click to place a query point in <u>Show-Empty-Sphere</u> mode") );
     setMouseBindingDescription(Qt::ControlModifier, Qt::LeftButton,
                                tr("Drag to add vertices to current selection in <u>Select</u> mode") );
-#else
-    setMouseBindingDescription( Qt::LeftButton,
-                                tr("Hold to move new point in <u>Input-Point</u> mode;<br>")
-                                + tr("Hold to move a vertex in <u>Move</u> mode") );
-    setMouseBindingDescription( Qt::SHIFT + Qt::LeftButton,
-                                tr("Click to insert a vertex in <u>Input-Vertex</u> mode;<br>")
-                                + tr("Click to insert a point in <u>Input-Point</u> mode;<br>")
-                                + tr("Click or Drag to select multiple points in <u>Select</u> mode;<br>")
-                                + tr("Click to place a query point in <u>Find-Nearest-Neighbor</u> mode;<br>")
-                                + tr("Click to place a query point in <u>Show-Empty-Sphere</u> mode") );
-    setMouseBindingDescription( Qt::CTRL + Qt::LeftButton,
-                                tr("Drag to add vertices to current selection in <u>Select</u> mode") );
-#endif
+
     compile_shaders();
     are_buffers_initialized = false;
 }
@@ -186,8 +166,10 @@ void Viewer::compile_shaders()
         "#version 120 \n"
         "attribute highp vec4 vertex;\n"
         "uniform highp mat4 mvp_matrix;\n"
+        "uniform highp float point_size; \n"
         "void main(void)\n"
         "{\n"
+        "   gl_PointSize = point_size; \n"
         "   gl_Position = mvp_matrix * vertex; \n"
         "}"
     };
@@ -225,7 +207,6 @@ void Viewer::compile_shaders()
     {
         std::cerr<<"linking Program FAILED"<<std::endl;
     }
-    rendering_program.bind();
 
     // sphere program
     //Vertex source code
@@ -303,7 +284,6 @@ void Viewer::compile_shaders()
     {
         std::cerr<<"linking Program FAILED"<<std::endl;
     }
-    rendering_program_spheres.bind();
 
     // cylinder program
     //Vertex source code
@@ -349,7 +329,6 @@ void Viewer::compile_shaders()
     {
         std::cerr<<"linking Program FAILED"<<std::endl;
     }
-    rendering_program_cylinders.bind();
 
 }
 
@@ -397,7 +376,7 @@ void Viewer::compute_elements()
         // normalize
         v = v / length;
         // compute the angle: cos theta = v.z/1.0
-        GLfloat angle = acos( v.y() ) / M_PI * 180;
+        GLfloat angle = acos( v.y() ) / CGAL_PI * 180;
         QMatrix4x4 matrix;
         matrix.setToIdentity();
         // move to "from" point
@@ -428,7 +407,7 @@ void Viewer::compute_elements()
             // normalize
             v = v / length;
             // compute the angle: cos theta = v.z/1.0
-            GLfloat angle = acos( v.y() ) / M_PI * 180;
+            GLfloat angle = acos( v.y() ) / CGAL_PI * 180;
             QMatrix4x4 matrix;
             matrix.setToIdentity();
             // move to "from" point
@@ -455,7 +434,7 @@ void Viewer::compute_elements()
             // normalize
             v = v / length;
             // compute the angle: cos theta = v.z/1.0
-            GLfloat angle = acos( v.y() ) / M_PI * 180;
+            GLfloat angle = acos( v.y() ) / CGAL_PI * 180;
             QMatrix4x4 matrix;
             matrix.setToIdentity();
             // move to "from" point
@@ -1105,7 +1084,7 @@ void Viewer::initialize_buffers()
     are_buffers_initialized = true;
 }
 
-void Viewer::attrib_buffers(QGLViewer* viewer)
+void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
 {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -1206,9 +1185,9 @@ void Viewer::draw()
         if(m_showVertex)
         {
             rendering_program.bind();
-            glPointSize(8.0);
             vao[0].bind();
             rendering_program.setUniformValue(colorLocation[0], m_colorVertex);
+            rendering_program.setUniformValue("point_size", 8.0f);
             glDrawArrays(GL_POINTS, 0, pos_points->size()/3);
             vao[0].release();
             rendering_program.release();
@@ -1234,7 +1213,7 @@ void Viewer::draw()
         // Insert point mode
         if( m_curMode == INSERT_PT) {
             // Show prompt messages
-            glColor3d(0,0,0);
+            
             drawText( width()-200, 20, tr("Shift+Left: Insert a point"), fontPrompt );
             drawText( width()-200, 40, tr("Hold Left: Move the point"), fontPrompt );
             drawText( width()-200, 60, tr("Return: Insert to DT"), fontPrompt );
@@ -1258,7 +1237,7 @@ void Viewer::draw()
         }
         else if( m_curMode == SELECT) {
             // Show prompt messages
-            glColor3d(0,0,0);
+            
             drawText( width()-200, 20, tr("Shift+Left: Select"), fontPrompt );
             drawText( width()-200, 40, tr("Ctrl+Left: Add selection"),
                       QFont("Arial", 14) );
@@ -1274,7 +1253,7 @@ void Viewer::draw()
         }
         else if( m_curMode == MOVE ) {
             // Show prompt messages
-            glColor3d(0,0,0);
+            
             drawText( width()-200, 20, tr("Left Click: Select"), fontPrompt );
             if(m_isMoving)
                 drawText( width()-200, 40, tr("Shift+Wheel: Resize trackball"), fontPrompt );
@@ -1288,7 +1267,7 @@ void Viewer::draw()
         }
         else if( m_curMode == FINDNB ) {
             // Show prompt messages
-            glColor3d(0,0,0);
+            
             drawText( width()-200, 20, tr("Shift+Left: Place query point"), fontPrompt );
             drawText( width()-200, 40, tr("Shift+Wheel: Resize trackball"), fontPrompt );
             rendering_program.bind();
@@ -1307,7 +1286,7 @@ void Viewer::draw()
         }
         else if(m_curMode == EMPTYSPH){
             // Show prompt messages
-            glColor3d(0,0,0);
+            
             drawText( width()-200, 20, tr("Shift+Left: Place query point"), fontPrompt );
             drawText( width()-200, 40, tr("Press S: Show/Hide trackball"), fontPrompt );
             drawText( width()-200, 60, tr("Shift+Wheel: Resize trackball"), fontPrompt );
@@ -1327,39 +1306,39 @@ void Viewer::draw()
         if( !m_incrementalPts.isEmpty() ) {
             // draw the rest to-be-inserted vertices
             rendering_program.bind();
-            glPointSize(8.0);
             vao[24].bind();
             color.setRgbF(0.7,0.7,0.7);
             rendering_program.setUniformValue(colorLocation[0],color);
+            rendering_program.setUniformValue("point_size", 8.0f);
             glDrawArrays(GL_POINTS, 0, incremental_points->size()/3);
             vao[24].release();
             rendering_program.release();
             switch( m_curStep ) {
             case NEWPT:
                 // Show prompt messages
-                glColor3d(0,0,0);
+                
                 drawText( 10, 20, tr("Highlight the next-to-insert point"), fontPrompt );
                 // Highlight the next-to-insert point
                 rendering_program.bind();
-                glPointSize(8.0);
                 vao[21].bind();
                 color.setRgbF(1.0,0.0,0.0);
                 rendering_program.setUniformValue(colorLocation[0], color);
+                rendering_program.setUniformValue("point_size", 8.0f);
                 glDrawArrays(GL_POINTS, 0, incremental_next_point->size()/3);
                 vao[21].release();
                 rendering_program.release();
                 break;
             case CELL:  // show the tetrahedron that contains the point
                 // Show prompt messages
-                glColor3d(0,0,0);
+                
                 drawText( 10, 20, tr("Show the tetrahedron containing the point"), fontPrompt );
                 drawText( 10, 40, tr("(Only finite facets are drawn)"), fontPrompt );
                 // Highlight the next-to-insert vertex
                 rendering_program.bind();
-                glPointSize(8.0);
                 vao[21].bind();
                 color.setRgbF(1.0,0.0,0.0);
                 rendering_program.setUniformValue(colorLocation[0],  color);
+                rendering_program.setUniformValue("point_size", 8.0f);
                 glDrawArrays(GL_POINTS, 0, incremental_next_point->size()/3);
                 vao[21].release();
                 rendering_program.release();
@@ -1373,14 +1352,14 @@ void Viewer::draw()
                 break;
             case CONFLICT:  // show the conflict region
                 // Show prompt messages
-                glColor3d(0,0,0);
+                
                 drawText( 10, 20, tr("Show the conflict region"), fontPrompt );
                 // Highlight the next-to-insert vertex
                 rendering_program.bind();
-                glPointSize(8.0);
                 vao[21].bind();
                 color.setRgbF(1.0,0.0,0.0);
                 rendering_program.setUniformValue(colorLocation[0], color);
+                rendering_program.setUniformValue("point_size", 8.0f);
                 glDrawArrays(GL_POINTS, 0, incremental_next_point->size()/3);
                 vao[21].release();
                 rendering_program.release();
@@ -1432,7 +1411,7 @@ void Viewer::draw()
 
         if( m_curMode == INSERT_PT) {
             // Show prompt messages
-            glColor3d(0,0,0);
+            
             drawText( width()-200, 20, tr("Shift+Left: Insert a point"), fontPrompt );
             drawText( width()-200, 40, tr("Hold Left: Move the point"), fontPrompt );
             drawText( width()-200, 60, tr("Return: Insert to DT"), fontPrompt );
@@ -1457,7 +1436,7 @@ void Viewer::draw()
         }
         else if( m_curMode == SELECT) {
             // Show prompt messages
-            glColor3d(0,0,0);
+            
             drawText( width()-200, 20, tr("Shift+Left: Select"), fontPrompt );
             drawText( width()-200, 40, tr("Ctrl+Left: Add selection"),
                       QFont("Arial", 14) );
@@ -1473,7 +1452,7 @@ void Viewer::draw()
         }
         else if( m_curMode == MOVE ) {
             // Show prompt messages
-            glColor3d(0,0,0);
+            
             drawText( width()-200, 20, tr("Left Click: Select"), fontPrompt );
             if(m_isMoving)
                 drawText( width()-200, 40, tr("Shift+Wheel: Resize trackball"), fontPrompt );
@@ -1487,7 +1466,7 @@ void Viewer::draw()
         }
         else if( m_curMode == FINDNB ) {
             // Show prompt messages
-            glColor3d(0,0,0);
+            
             drawText( width()-200, 20, tr("Shift+Left: Place query point"), fontPrompt );
             drawText( width()-200, 40, tr("Shift+Wheel: Resize trackball"), fontPrompt );
             rendering_program_spheres.bind();
@@ -1507,7 +1486,7 @@ void Viewer::draw()
         }
         else if(m_curMode == EMPTYSPH){
             // Show prompt messages
-            glColor3d(0,0,0);
+            
             drawText( width()-200, 20, tr("Shift+Left: Place query point"), fontPrompt );
             drawText( width()-200, 40, tr("Press S: Show/Hide trackball"), fontPrompt );
             drawText( width()-200, 60, tr("Shift+Wheel: Resize trackball"), fontPrompt );
@@ -1539,7 +1518,7 @@ void Viewer::draw()
             switch( m_curStep ) {
             case NEWPT:
                 // Show prompt messages
-                glColor3d(0,0,0);
+                
                 drawText( 10, 20, tr("Highlight the next-to-insert point"), fontPrompt );
                 // Highlight the next-to-insert point
                 rendering_program_spheres.bind();
@@ -1552,7 +1531,7 @@ void Viewer::draw()
                 break;
             case CELL:  // show the tetrahedron that contains the point
                 // Show prompt messages
-                glColor3d(0,0,0);
+                
                 drawText( 10, 20, tr("Show the tetrahedron containing the point"), fontPrompt );
                 drawText( 10, 40, tr("(Only finite facets are drawn)"), fontPrompt );
                 // Highlight the next-to-insert vertex
@@ -1573,7 +1552,7 @@ void Viewer::draw()
                 break;
             case CONFLICT:  // show the conflict region
                 // Show prompt messages
-                glColor3d(0,0,0);
+                
                 drawText( 10, 20, tr("Show the conflict region"), fontPrompt );
                 // Highlight the next-to-insert vertex
                 rendering_program_spheres.bind();
@@ -1610,7 +1589,7 @@ void Viewer::draw()
     }
     if( m_curMode == INSERT_V  ) {
         // Show prompt messages
-        glColor3d(0,0,0);
+        
         drawText( width()-200, 20, tr("Shift+Left: Insert a vertex"), fontPrompt );
         drawText( width()-200, 40, tr("Shift+Wheel: Resize trackball"), fontPrompt );
 
@@ -1621,10 +1600,13 @@ void Viewer::draw()
         rendering_program_spheres.bind();
         vao[11].bind();
         rendering_program_spheres.setUniformValue(colorLocation[1], m_colorTrackball);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         if(extension_is_found)
             glDrawArraysInstanced(GL_TRIANGLES, 0, points_trackBall->size()/3, 1);
         else
             glDrawArrays(GL_TRIANGLES, 0, points_trackBall->size()/3);
+        glDisable(GL_BLEND);
         vao[11].release();
         rendering_program_spheres.release();
     }
@@ -1677,59 +1659,135 @@ void Viewer::drawFacet(const Triangle_3& t, std::vector<float> *vertices)
 
 void Viewer::drawWithNames()
 {
-    for(int i=0; i<m_pScene->m_vhArray.size(); ++i) {
-        // push a name for each point onto the name stack
-        // note: it can NOT be used between glBegin and glEnd
-        glPushName( i );
-
-        // draw the point
-        glBegin(GL_POINTS);
-        Point_3& p = m_pScene->m_vhArray.at(i)->point();
-        glVertex3f(p.x(), p.y(), p.z());
-        glEnd();
-
-        // pop one name off the top of the name stack
-        glPopName();
-    }//end-for-points
+  makeCurrent();
+  glEnable(GL_DEPTH_TEST);
+  for(int i=0; i<m_pScene->m_vhArray.size(); ++i) {
+    //clear depth
+    glClearDepthf(1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //draw point
+    Point_3& p = m_pScene->m_vhArray.at(i)->point();
+    GLfloat buf[3];
+    buf[0]=p.x();
+    buf[1]=p.y();
+    buf[2]=p.z();
+    rendering_program.bind();
+    vao[27].bind();
+    buffers[33].bind();
+    buffers[33].allocate(buf, 3*sizeof(GLfloat));
+    rendering_program.enableAttributeArray("vertex");
+    rendering_program.setAttributeArray("vertex",GL_FLOAT,0,3);
+    buffers[33].release();
+    vao[3].release();
+    
+    QMatrix4x4 mvpMatrix;
+    double mat[16];
+    camera()->getModelViewProjectionMatrix(mat);
+    for(int j=0; j < 16; j++)
+    {
+      mvpMatrix.data()[j] = (float)mat[j];
+    }
+    rendering_program.bind();
+    vao[27].bind();
+    rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
+    rendering_program.setUniformValue("point_size", 8.0f);
+    glDrawArrays(GL_POINTS,0,1);
+    vao[27].release();
+    rendering_program.release();
+    
+    //read depth and store in map
+    GLfloat depth = 1.0f;
+    glReadPixels(picking_pos.x(),camera()->screenHeight()-1-picking_pos.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+    if (depth != 1.0)
+    {
+      picked_IDs[depth] = i;
+    }
+    
+    
+  }//end-for-points
 
     // push a name for the newly inserted point
     if( m_curMode == INSERT_PT && m_hasNewPt ) {
-        glPushName( GLuint(-1) );
-        glBegin(GL_POINTS);
-        glVertex3f(m_newPt.x(), m_newPt.y(), m_newPt.z());
-        glEnd();
-        glPopName();
+        //clear depth
+        glClearDepthf(1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        //draw point
+        GLfloat buf[3];
+        buf[0]=m_newPt.x();
+        buf[1]=m_newPt.y(); 
+        buf[2]=m_newPt.z();
+        rendering_program.bind();
+        vao[27].bind();
+        buffers[33].bind();
+        buffers[33].allocate(buf, 3*sizeof(GLfloat));
+        rendering_program.enableAttributeArray("vertex");
+        rendering_program.setAttributeArray("vertex",GL_FLOAT,0,3);
+        buffers[33].release();
+        
+        QMatrix4x4 mvpMatrix;
+        double mat[16];
+        camera()->getModelViewProjectionMatrix(mat);
+        for(int i=0; i < 16; i++)
+        {
+          mvpMatrix.data()[i] = (float)mat[i];
+        }
+        rendering_program.bind();
+        rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
+        rendering_program.setUniformValue("point_size", 16.0f);
+        rendering_program.setUniformValue("color", m_colorVertex);
+        glDrawArrays(GL_POINTS,0,1);
+        vao[3].release();
+        rendering_program.release();
+        
+        //read depth and store in map
+        GLfloat depth = 1.0f;
+        glReadPixels(picking_pos.x(),camera()->screenHeight()-1-picking_pos.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+        if (depth != 1.0)
+        {
+          picked_IDs[depth] = -1;
+        }
     }//end-if-newPt
+    
+  
 }
-
-void Viewer::endSelection(const QPoint& /*point*/)
+void Viewer::beginSelection(const QPoint &point)
 {
-    // flush GL buffers
-    glFlush();
-
-    // reset GL_RENDER mode (was GL_SELECT) and get the number of selected points
-    size_t nSel = glRenderMode(GL_RENDER);
+  picking_pos = point;
+  CGAL::QGLViewer::beginSelection(point);
+};
+void Viewer::endSelection(const QPoint& p)
+{
+  CGAL::QGLViewer::endSelection(p);
+  // flush GL buffers
+  glFlush();
+  
+  bool picked = false;
+  int id = 0;
+  QList<float> depths = picked_IDs.keys();
+  if(!depths.isEmpty())
+  {
+      qSort(depths);
+      id = picked_IDs[depths.first()];
+      picked = true;
+  }
 
     /* No selection */
-    if( nSel <= 0 ) {
+    if( !picked) {
         if( m_curMode == SELECT )
             m_isPress = false;
     }//end-if-notselected
 
-    // each hit record has 4 data: # of names in name stack, min and max depth of old hits,
-    //  name stack contents [see glSelectBuffer man page for more details]
-    //  i.e. (selectBuffer())[4*i+3] is the id pushed on the stack
-
+    
     /* Check whether the new point is clicked on */
     else if( m_curMode == INSERT_PT ) {
-        if( m_hasNewPt && (selectBuffer())[3] == GLuint(-1) )
+        if( m_hasNewPt && (id == -1 ))
             m_isMoving = true;
     }//end-if-inspt
 
     /* Check whether vertex is clicked on */
     else if( m_curMode == MOVE ) {
         m_isMoving = true;
-        m_vidMoving = (selectBuffer())[3];
+        m_vidMoving = id;
         // compute the corresponding size of trackball, i.e. selectedV is on the ball
         Point_3 p = m_pScene->m_vhArray.at( m_vidMoving )->point();
         m_fRadius = sqrt( p.x()*p.x() + p.y()*p.y() + p.z()*p.z() );
@@ -1746,19 +1804,17 @@ void Viewer::endSelection(const QPoint& /*point*/)
             m_vidSeled.clear();
 
             // record the new selections
-            for(std::size_t i=0; i<nSel; ++i) {
-                m_vidSeled.push_back( (selectBuffer())[4*i+3] );
+            
+                m_vidSeled.push_back(id);
                 m_pScene->m_vhArray.at( m_vidSeled.back() )->setSeled();
-            }
         } else {
-            for(std::size_t i=0; i<nSel; ++i) {
-                if( !m_vidSeled.contains( (selectBuffer())[4*i+3] ) ) {
-                    m_vidSeled.push_back( (selectBuffer())[4*i+3] );
-                    m_pScene->m_vhArray.at( (selectBuffer())[4*i+3] )->setSeled();
+                if( !m_vidSeled.contains(id)) {
+                    m_vidSeled.push_back( id );
+                    m_pScene->m_vhArray.at( id )->setSeled();
                 }//end-if-contain
-            }//end-for
         }//end-if-add
     }//end-if-sel
+    changed();
 }
 
 /*************************************************************/
@@ -1800,16 +1856,11 @@ void Viewer::mousePressEvent(QMouseEvent *event)
                 // redraw window
             {  changed();
 
-#if QGLVIEWER_VERSION >= 0x020700
               update();
-#else
-              updateGL();
-
-#endif
             }
             else
                 // if no point is selected, then regular action (rotation) will be performed
-                QGLViewer::mousePressEvent(event);
+                CGAL::QGLViewer::mousePressEvent(event);
         }//end-if-shift
     }//end-if-inspt
 
@@ -1822,12 +1873,7 @@ void Viewer::mousePressEvent(QMouseEvent *event)
             // initialize multiple selection window
             m_rectSel = QRect( event->pos(), event->pos() );
             // redraw window
-#if QGLVIEWER_VERSION >= 0x020700
             update();
-#else
-            updateGL();
-
-#endif
             break;
         case Qt::CTRL : // add selection
             m_isPress = true;
@@ -1835,15 +1881,10 @@ void Viewer::mousePressEvent(QMouseEvent *event)
             // initialize multiple selection window
             m_rectSel = QRect( event->pos(), event->pos() );
             // redraw window
-#if QGLVIEWER_VERSION >= 0x020700
               update();
-#else
-              updateGL();
-
-#endif
             break;
         default: // rotate
-            QGLViewer::mousePressEvent(event);
+            CGAL::QGLViewer::mousePressEvent(event);
             break;
         }
     }//end-if-select
@@ -1857,15 +1898,10 @@ void Viewer::mousePressEvent(QMouseEvent *event)
         select( event->pos() );
         if( m_isMoving ) // redraw window
         {  changed();
-#if QGLVIEWER_VERSION >= 0x020700
               update();
-#else
-              updateGL();
-
-#endif
         }
         else // if no point is selected, then regular action (rotation) will be performed
-            QGLViewer::mousePressEvent(event);
+            CGAL::QGLViewer::mousePressEvent(event);
     }//end-if-move
 
     else if( m_curMode == FINDNB
@@ -1886,7 +1922,7 @@ void Viewer::mousePressEvent(QMouseEvent *event)
     }//end-if-emptyS
 
     else
-        QGLViewer::mousePressEvent(event);
+        CGAL::QGLViewer::mousePressEvent(event);
 
 }
 
@@ -1900,12 +1936,7 @@ void Viewer::mouseMoveEvent(QMouseEvent *event)
             computeConflict( m_newPt );
             // redraw
             changed();
-#if QGLVIEWER_VERSION >= 0x020700
               update();
-#else
-              updateGL();
-
-#endif
         }//end-if-compute
     }//end-if-inspt
 
@@ -1943,7 +1974,7 @@ void Viewer::mouseMoveEvent(QMouseEvent *event)
     }//end-if-move
 
     else
-        QGLViewer::mouseMoveEvent(event);
+        CGAL::QGLViewer::mouseMoveEvent(event);
 }
 
 void Viewer::mouseReleaseEvent(QMouseEvent *event)
@@ -1958,12 +1989,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
               update();
-#else
-              updateGL();
-
-#endif
     }//end-if-ins
 
     /* INS_PT mode - Shift+Left: compute and insert a point */
@@ -1979,12 +2005,8 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
+        update();
 
-#endif
     }//end-if-inspt
 
     /* INS_PT mode - Left: compute and insert a point */
@@ -1999,12 +2021,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-inspt
 
     /* SEL mode - Left: terminate multiple point selection */
@@ -2047,12 +2064,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 
         // update display to show
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-select
 
     /* MOVE mode - Left: terminate point moving */
@@ -2080,13 +2092,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
-
+        update();
     }//end-if-move
 
     /* FindNb mode - Shift+Left: find the nearest neighbor of the point */
@@ -2100,12 +2106,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-findnb
 
     /* EmptySphere mode - Shift+Left: show the empty sphere of the cell */
@@ -2131,16 +2132,11 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
         }//end-if-compute
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-emptysphere
 
     else
-        QGLViewer::mouseReleaseEvent(event);
+        CGAL::QGLViewer::mouseReleaseEvent(event);
 
 }
 
@@ -2161,12 +2157,7 @@ void Viewer::wheelEvent(QWheelEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-insv
 
     else if( m_curMode == INSERT_PT && modifiers == Qt::SHIFT ) {
@@ -2188,12 +2179,7 @@ void Viewer::wheelEvent(QWheelEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-inspt
 
     // resize the trackball when moving a point
@@ -2224,16 +2210,11 @@ void Viewer::wheelEvent(QWheelEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-move
 
     else
-        QGLViewer::wheelEvent(event);
+        CGAL::QGLViewer::wheelEvent(event);
 }
 
 void Viewer::keyPressEvent(QKeyEvent *event)
@@ -2266,12 +2247,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-insVertex
 
     /* Cancel the newly inserted point and its conflict region */
@@ -2284,12 +2260,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-escapeIns
 
     /* Delete selected points */
@@ -2307,12 +2278,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-del
 
     /* Cancel the selection */
@@ -2326,12 +2292,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-escapeSel
 
 
@@ -2341,26 +2302,16 @@ void Viewer::keyPressEvent(QKeyEvent *event)
         m_showTrackball = !m_showTrackball;
         // redraw
         changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+        update();
     }//end-if-showBall
 
     else
-        QGLViewer::keyPressEvent(event);
+        CGAL::QGLViewer::keyPressEvent(event);
 
 
     // redraw
     changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+    update();
 }
 
 /*************************************************************/
@@ -2442,12 +2393,7 @@ void Viewer::toggleIncremental(bool on) {
 
     // redraw
     changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+    update();
 }
 
 void Viewer::stopIncremental() {
@@ -2472,12 +2418,7 @@ void Viewer::stopIncremental() {
 
     // redraw
     changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+    update();
 }
 
 void Viewer::incremental_insert() {
@@ -2537,12 +2478,7 @@ void Viewer::incremental_insert() {
 
     // redraw
     changed();
-#if QGLVIEWER_VERSION >= 0x020700
-              update();
-#else
-              updateGL();
-
-#endif
+    update();
 }
 
 
@@ -2550,148 +2486,12 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
 {
     vertices->resize(0);
     normals->resize(0);
-    // int rings=360/prec, sectors=360/prec;
-    // float T, P;
-    // float x[4],y[4],z[4];
-    //Closing nicely the tubes will cause z-fighting and the spherical parts will get all messy
-    /*
-//top of the cylinder
-    for(int t=0; t<360; t+=sectors)
-    {
-
-        vertices->push_back(0);
-        vertices->push_back(R+1);
-        vertices->push_back(0);
-
-
-        normals->push_back(0);
-        normals->push_back(1);
-        normals->push_back(0);
-
-
-
-        P = rings*M_PI/180.0;
-        T = t*M_PI/180.0;
-        x[1] = sin(P) * cos(T) ;
-        z[1] = sin(P) * sin(T) ;
-        y[1] = cos(P);
-        vertices->push_back(R * x[1]);
-        vertices->push_back(R * y[1]+1);
-        vertices->push_back(R * z[1]);
-
-
-        normals->push_back(x[1]);
-        normals->push_back(y[1]);
-        normals->push_back(z[1]);
-
-        //
-        P = rings*M_PI/180.0;
-        T = (t+sectors)*M_PI/180.0;
-        x[2] = sin(P) * cos(T) ;
-        z[2] = sin(P) * sin(T) ;
-        y[2] = cos(P);
-        vertices->push_back(R * x[2]);
-        vertices->push_back(R * y[2]+1);
-        vertices->push_back(R * z[2]);
-
-        normals->push_back(x[2]);
-        normals->push_back(y[2]);
-        normals->push_back(z[2]);
-
-    }
-    //Body of the sphere
-    for (int p=rings; p<90; p+=rings)
-        for(int t=0; t<360; t+=sectors)
-        {
-            //A
-            P = p*M_PI/180.0;
-            T = t*M_PI/180.0;
-            x[0] = sin(P) * cos(T) ;
-            z[0] = sin(P) * sin(T) ;
-            y[0] = cos(P);
-
-            vertices->push_back(R * x[0]);
-            vertices->push_back(R * y[0]+1);
-            vertices->push_back(R * z[0]);
-
-
-            normals->push_back(x[0]);
-            normals->push_back(y[0]);
-            normals->push_back(z[0]);
-
-            //B
-            P = (p+rings)*M_PI/180.0;
-            T = t*M_PI/180.0;
-            x[1] = sin(P) * cos(T) ;
-            z[1] = sin(P) * sin(T) ;
-            y[1] = cos(P);
-            vertices->push_back(R * x[1]);
-            vertices->push_back(R * y[1]+1);
-            vertices->push_back(R * z[1]);
-
-
-            normals->push_back(x[1]);
-            normals->push_back(y[1]);
-            normals->push_back(z[1]);
-
-            //C
-            P = p*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
-            x[2] = sin(P) * cos(T) ;
-            z[2] = sin(P) * sin(T) ;
-            y[2] = cos(P);
-            vertices->push_back(R * x[2]);
-            vertices->push_back(R * y[2]+1);
-            vertices->push_back(R * z[2]);
-
-
-            normals->push_back(x[2]);
-            normals->push_back(y[2]);
-            normals->push_back(z[2]);
-            //D
-            P = (p+rings)*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
-            x[3] = sin(P) * cos(T) ;
-            z[3] = sin(P) * sin(T) ;
-            y[3] = cos(P);
-            vertices->push_back(R * x[3]);
-            vertices->push_back(R * y[3]+1);
-            vertices->push_back(R * z[3]);
-
-
-            normals->push_back(x[3]);
-            normals->push_back(y[3]);
-            normals->push_back(z[3]);
-
-
-
-            vertices->push_back(R * x[1]);
-            vertices->push_back(R * y[1]+1);
-            vertices->push_back(R * z[1]);
-
-
-            normals->push_back(x[1]);
-            normals->push_back(y[1]);
-            normals->push_back(z[1]);
-
-            vertices->push_back(R * x[2]);
-            vertices->push_back(R * y[2]+1);
-            vertices->push_back(R * z[2]);
-
-
-            normals->push_back(x[2]);
-            normals->push_back(y[2]);
-            normals->push_back(z[2]);
-
-        }
-
-*/
     //body of the cylinder
     for(int d = 0; d<360; d+= 360/prec)
     {
 
         //point A1
-        float D = d*M_PI/180.0;
+        float D = d*CGAL_PI/180.0;
         vertices->push_back(R * sin(D));
         vertices->push_back(0);
         vertices->push_back(R * cos(D));
@@ -2710,7 +2510,7 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
         normals->push_back(cos(D));
 
         //point C1
-        D = (d+360/prec)*M_PI/180.0;
+        D = (d+360/prec)*CGAL_PI/180.0;
         vertices->push_back(R * sin(D));
         vertices->push_back(1);
         vertices->push_back(R * cos(D));
@@ -2720,7 +2520,7 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
         normals->push_back(cos(D));
 
         //point A2
-        D = (d+360/prec)*M_PI/180.0;
+        D = (d+360/prec)*CGAL_PI/180.0;
         vertices->push_back(R * sin(D));
         vertices->push_back(1);
         vertices->push_back(R * cos(D));
@@ -2739,7 +2539,7 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
         normals->push_back(cos(D));
 
         //point C2
-        D = d*M_PI/180.0;
+        D = d*CGAL_PI/180.0;
         vertices->push_back(R * sin(D));
         vertices->push_back(0);
         vertices->push_back(R * cos(D));
@@ -2749,138 +2549,6 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
         normals->push_back(cos(D));
 
     }
-    /*
-   //bottom of the cylinder
-       for(int t=0; t<360; t+=sectors)
-       {
-
-           vertices->push_back(0);
-           vertices->push_back(-R);
-           vertices->push_back(0);
-
-
-           normals->push_back(0);
-           normals->push_back(-1);
-           normals->push_back(0);
-
-
-
-           P = rings*M_PI/180.0;
-           T = t*M_PI/180.0;
-           x[1] = sin(P) * cos(T) ;
-           z[1] = sin(P) * sin(T) ;
-           y[1] = cos(P);
-           vertices->push_back(R * x[1]);
-           vertices->push_back(R * y[1]);
-           vertices->push_back(R * z[1]);
-
-
-           normals->push_back(x[1]);
-           normals->push_back(y[1]);
-           normals->push_back(z[1]);
-
-           //
-           P = rings*M_PI/180.0;
-           T = (t+sectors)*M_PI/180.0;
-           x[2] = sin(P) * cos(T) ;
-           z[2] = sin(P) * sin(T) ;
-           y[2] = cos(P);
-           vertices->push_back(R * x[2]);
-           vertices->push_back(R * y[2]);
-           vertices->push_back(R * z[2]);
-
-           normals->push_back(x[2]);
-           normals->push_back(y[2]);
-           normals->push_back(z[2]);
-
-       }
-       //Body of the sphere
-       for (int p=90; p<180; p+=rings)
-           for(int t=0; t<360; t+=sectors)
-           {
-               //A
-               P = p*M_PI/180.0;
-               T = t*M_PI/180.0;
-               x[0] = sin(P) * cos(T) ;
-               z[0] = sin(P) * sin(T) ;
-               y[0] = cos(P);
-
-               vertices->push_back(R * x[0]);
-               vertices->push_back(R * y[0]);
-               vertices->push_back(R * z[0]);
-
-
-               normals->push_back(x[0]);
-               normals->push_back(y[0]);
-               normals->push_back(z[0]);
-
-               //B
-               P = (p+rings)*M_PI/180.0;
-               T = t*M_PI/180.0;
-               x[1] = sin(P) * cos(T) ;
-               z[1] = sin(P) * sin(T) ;
-               y[1] = cos(P);
-               vertices->push_back(R * x[1]);
-               vertices->push_back(R * y[1]);
-               vertices->push_back(R * z[1]);
-
-
-               normals->push_back(x[1]);
-               normals->push_back(y[1]);
-               normals->push_back(z[1]);
-
-               //C
-               P = p*M_PI/180.0;
-               T = (t+sectors)*M_PI/180.0;
-               x[2] = sin(P) * cos(T) ;
-               z[2] = sin(P) * sin(T) ;
-               y[2] = cos(P);
-               vertices->push_back(R * x[2]);
-               vertices->push_back(R * y[2]);
-               vertices->push_back(R * z[2]);
-
-
-               normals->push_back(x[2]);
-               normals->push_back(y[2]);
-               normals->push_back(z[2]);
-               //D
-               P = (p+rings)*M_PI/180.0;
-               T = (t+sectors)*M_PI/180.0;
-               x[3] = sin(P) * cos(T) ;
-               z[3] = sin(P) * sin(T) ;
-               y[3] = cos(P);
-               vertices->push_back(R * x[3]);
-               vertices->push_back(R * y[3]);
-               vertices->push_back(R * z[3]);
-
-
-               normals->push_back(x[3]);
-               normals->push_back(y[3]);
-               normals->push_back(z[3]);
-
-
-
-               vertices->push_back(R * x[1]);
-               vertices->push_back(R * y[1]);
-               vertices->push_back(R * z[1]);
-
-
-               normals->push_back(x[1]);
-               normals->push_back(y[1]);
-               normals->push_back(z[1]);
-
-               vertices->push_back(R * x[2]);
-               vertices->push_back(R * y[2]);
-               vertices->push_back(R * z[2]);
-
-
-               normals->push_back(x[2]);
-               normals->push_back(y[2]);
-               normals->push_back(z[2]);
-
-           }*/
-
-
 }
 
 void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::vector<float> *normals)
@@ -2907,8 +2575,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
 
 
 
-        P = rings*M_PI/180.0;
-        T = t*M_PI/180.0;
+        P = rings*CGAL_PI/180.0;
+        T = t*CGAL_PI/180.0;
         x[1] = sin(P) * cos(T) ;
         y[1] = sin(P) * sin(T) ;
         z[1] = cos(P);
@@ -2922,8 +2590,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
         normals->push_back(z[1]);
 
         //
-        P = rings*M_PI/180.0;
-        T = (t+sectors)*M_PI/180.0;
+        P = rings*CGAL_PI/180.0;
+        T = (t+sectors)*CGAL_PI/180.0;
         x[2] = sin(P) * cos(T) ;
         y[2] = sin(P) * sin(T) ;
         z[2] = cos(P);
@@ -2942,8 +2610,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
         for(int t=0; t<360; t+=sectors)
         {
             //A
-            P = p*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = p*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[0] = sin(P) * cos(T) ;
             y[0] = sin(P) * sin(T) ;
             z[0] = cos(P);
@@ -2958,8 +2626,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
             normals->push_back(z[0]);
 
             //B
-            P = (p+rings)*M_PI/180.0;
-            T = t*M_PI/180.0;
+            P = (p+rings)*CGAL_PI/180.0;
+            T = t*CGAL_PI/180.0;
             x[1] = sin(P) * cos(T) ;
             y[1] = sin(P) * sin(T) ;
             z[1] = cos(P);
@@ -2973,8 +2641,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
             normals->push_back(z[1]);
 
             //C
-            P = p*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = p*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[2] = sin(P) * cos(T) ;
             y[2] = sin(P) * sin(T) ;
             z[2] = cos(P);
@@ -2987,8 +2655,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
             normals->push_back(y[2]);
             normals->push_back(z[2]);
             //D
-            P = (p+rings)*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
+            P = (p+rings)*CGAL_PI/180.0;
+            T = (t+sectors)*CGAL_PI/180.0;
             x[3] = sin(P) * cos(T) ;
             y[3] = sin(P) * sin(T) ;
             z[3] = cos(P);
@@ -3037,8 +2705,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
         normals->push_back(-1);
 
 
-        P = (180-rings)*M_PI/180.0;
-        T = t*M_PI/180.0;
+        P = (180-rings)*CGAL_PI/180.0;
+        T = t*CGAL_PI/180.0;
         x[1] = sin(P) * cos(T) ;
         y[1] = sin(P) * sin(T) ;
         z[1] = cos(P);
@@ -3052,8 +2720,8 @@ void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::v
         normals->push_back(z[1]);
 
 
-        P = (180-rings)*M_PI/180.0;
-        T = (t+sectors)*M_PI/180.0;
+        P = (180-rings)*CGAL_PI/180.0;
+        T = (t+sectors)*CGAL_PI/180.0;
         x[2] = sin(P) * cos(T) ;
         y[2] = sin(P) * sin(T) ;
         z[2] = cos(P);

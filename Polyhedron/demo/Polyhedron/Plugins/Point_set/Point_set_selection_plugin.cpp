@@ -2,14 +2,14 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Polygon_2.h>
 #include <QtCore/qglobal.h>
-#include <QGLViewer/manipulatedCameraFrame.h>
+#include <CGAL/Qt/manipulatedCameraFrame.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
-#include "opengl_tools.h"
+
 
 #include "Messages_interface.h"
 #include "Scene_points_with_normal_item.h"
@@ -80,7 +80,7 @@ public:
 
   void render(QImage& image) const {
 
-    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin());
 
     QPen pen;
     pen.setColor(QColor(Qt::green));
@@ -146,7 +146,7 @@ public:
   
   void sample_mouse_path(QImage& image)
   {
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
     
     if (rectangle && contour_2d.size () == 2)
@@ -172,7 +172,7 @@ public:
       domain_freeform = Polygon_2 (contour_2d.begin (), contour_2d.end ());
   }
 
-  bool is_selected (qglviewer::Vec& p)
+  bool is_selected (CGAL::qglviewer::Vec& p)
   {
     if (domain_rectangle.xmin () < p.x &&
 	p.x < domain_rectangle.xmax () &&
@@ -205,8 +205,8 @@ class Selection_test {
 
   Point_set* point_set;
   bool* selected;
-  qglviewer::Camera* camera;
-  const qglviewer::Vec offset;
+  CGAL::qglviewer::Camera* camera;
+  const CGAL::qglviewer::Vec offset;
   Scene_edit_box_item* edit_box;
   Scene_point_set_selection_visualizer* visualizer;
   const Ui::PointSetSelection& ui_widget;
@@ -216,8 +216,8 @@ public:
   
   Selection_test(Point_set* point_set,
                  bool* selected,
-                 qglviewer::Camera* camera,
-                 const qglviewer::Vec offset,
+                 CGAL::qglviewer::Camera* camera,
+                 const CGAL::qglviewer::Vec offset,
                  Scene_edit_box_item* edit_box,
                  Scene_point_set_selection_visualizer* visualizer,
                  const Ui::PointSetSelection& ui_widget)
@@ -245,11 +245,13 @@ public:
     bool already_selected = point_set->is_selected (it);
 
     const Kernel::Point_3& p = point_set->point (*it);
-    qglviewer::Vec vp (p.x (), p.y (), p.z ());
-    qglviewer::Vec vsp = camera->projectedCoordinatesOf (vp + offset);
+    CGAL::qglviewer::Vec vp (p.x (), p.y (), p.z ());
     bool now_selected = false;
     if(!ui_widget.box->isChecked())
+    {
+      CGAL::qglviewer::Vec vsp = camera->projectedCoordinatesOf (vp + offset);
       now_selected = visualizer->is_selected (vsp);
+    }
     else if(edit_box)
     {
       if(p.x() >= edit_box->point(0,0) - offset.x &&
@@ -619,7 +621,7 @@ public:
     shift_pressing = false;
     ctrl_pressing = false;
     
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(this);
     mainWindow->installEventFilter(this);
 
@@ -650,12 +652,7 @@ protected:
 
       shift_pressing = modifiers.testFlag(Qt::ShiftModifier);
       ctrl_pressing = modifiers.testFlag(Qt::ControlModifier);
-#if QGLVIEWER_VERSION >= 0x020700
-      background = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin())->grabFramebuffer();
-#else
-      background = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin())->grabFrameBuffer();
-
-#endif
+      background = static_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin())->grabFramebuffer();
     }
 
     // mouse events
@@ -670,19 +667,19 @@ protected:
           {
             QApplication::setOverrideCursor(Qt::WaitCursor);
 
-            QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+            CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
             bool found = false;
             QPoint pixel(mouseEvent->pos().x(),
                          viewer->camera()->screenHeight() - 1 - mouseEvent->pos().y());
             
-            qglviewer::Vec point = viewer->camera()->pointUnderPixel(mouseEvent->pos(),
+            CGAL::qglviewer::Vec point = viewer->camera()->pointUnderPixel(mouseEvent->pos(),
                                                                      found);
             if(!found)
             {
               QApplication::restoreOverrideCursor();
               return false;
             }
-            const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
+            const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
             point = point - offset;
             
             neighborhood.point_set (point_set_item).grow_region
@@ -696,7 +693,7 @@ protected:
           else if (!visualizer)
           {
 	    QApplication::setOverrideCursor(Qt::CrossCursor);
-            QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+            CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
             if (viewer->camera()->frame()->isSpinning())
               viewer->camera()->frame()->stopSpinning();
 	
@@ -734,7 +731,7 @@ protected:
 	select_points();
 	visualizer = NULL;
 	QApplication::restoreOverrideCursor();
-        static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin())->set2DSelectionMode(false);
+        static_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin())->set2DSelectionMode(false);
 	return true;
       }
     // Update selection
@@ -751,11 +748,11 @@ protected:
           qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
       if(!item)
         return false;
-      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+      CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
       bool found = false;
       QPoint pixel(m_e->pos().x(),
              viewer->camera()->screenHeight()-1-m_e->pos().y());
-      qglviewer::Vec point = viewer->camera()->pointUnderPixel(m_e->pos(),
+      CGAL::qglviewer::Vec point = viewer->camera()->pointUnderPixel(m_e->pos(),
                                                                found);
       if(!found)
         return false;
@@ -765,7 +762,7 @@ protected:
       typedef Neighbor_search::Tree Tree;
       Tree tree(item->point_set()->points().begin(), item->point_set()->points().end());
 
-      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
+      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
       point = point - offset;
       
       Neighbor_search search(tree, Point(point.x, point.y, point.z), 1);
@@ -790,10 +787,10 @@ protected Q_SLOTS:
     if (ui_widget.new_selection->isChecked())
       points->unselect_all();
     
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
+    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
 
-    qglviewer::Camera* camera = viewer->camera();
+    CGAL::qglviewer::Camera* camera = viewer->camera();
 
     bool* selected_bitmap = new bool[points->size()]; // std::vector<bool> is not thread safe
 
@@ -1002,7 +999,7 @@ public Q_SLOTS:
   {
     if(toggle)
     {
-      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+      CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
       qobject_cast<Viewer_interface*>(viewer)->set2DSelectionMode(false);
       edit_box = new Scene_edit_box_item(scene);
       edit_box->setRenderingMode(Wireframe);

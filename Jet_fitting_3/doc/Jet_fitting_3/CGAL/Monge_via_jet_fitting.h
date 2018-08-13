@@ -29,6 +29,7 @@ algebra algorithm required by the fitting method.  The scalar type, `SvdTraits::
 \sa `Eigen_svd`
 \sa `Monge_form`
 
+\note This class requires the \ref thirdpartyEigen library.
 */
 template< typename DataKernel, typename LocalKernel, typename SvdTraits >
 class Monge_via_jet_fitting {

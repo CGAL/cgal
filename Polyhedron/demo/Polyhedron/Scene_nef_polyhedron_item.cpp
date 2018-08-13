@@ -266,7 +266,7 @@ void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
     positions_points.resize(0);
     normals.resize(0);
     positions_lines.resize(0);
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
     //The Facets
     {
@@ -521,10 +521,10 @@ void Scene_nef_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) cons
     d->program->release();
     GLfloat point_size;
     viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
-    viewer->glPointSize(10.f);
+    viewer->setGlPointSize(10.f);
 
     drawPoints(viewer);
-    viewer->glPointSize(point_size);
+    viewer->setGlPointSize(point_size);
 
 }
 void Scene_nef_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
@@ -547,10 +547,10 @@ void Scene_nef_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer)
     {
         GLfloat point_size;
         viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
-        viewer->glPointSize(10.f);
+        viewer->setGlPointSize(10.f);
 
         drawPoints(viewer);
-        viewer->glPointSize(point_size);
+        viewer->setGlPointSize(point_size);
     }
 }
 void Scene_nef_polyhedron_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const

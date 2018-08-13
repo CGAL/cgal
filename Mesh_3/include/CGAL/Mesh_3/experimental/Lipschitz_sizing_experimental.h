@@ -74,6 +74,7 @@ public:
   typedef typename CGAL::Default::Get<AABBTreeTemplate, AABB_tree>::type Tree;
 
   typedef typename MeshDomain::Index                    Index;
+  typedef typename MeshDomain::Corner_index             Corner_index;
   typedef typename MeshDomain::Subdomain_index          Subdomain_index;
   typedef typename MeshDomain::Surface_patch_index      Surface_patch_index;
 
@@ -207,7 +208,7 @@ public:
     {
 #ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
       const typename MeshDomain::Curve_index& curve_id =
-        m_domain.curve_segment_index(index);
+        m_domain.curve_index(index);
       const Patches_ids& ids = patches_ids_map[curve_id];
       
       if (m_domain_is_a_box && ids.size() == 2)
@@ -231,8 +232,8 @@ public:
     else if (dim == 0)
     {
 #ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
-      const Patches_ids& ids =
-        (m_domain.corners_incidences_map().find(p)->second);
+      const Corner_index cid = m_domain.corner_index(index);
+      const Patches_ids& ids = m_domain.corners_incidences_map().find(cid)->second;
 
       if (m_domain_is_a_box && ids.size() == 3)
       {

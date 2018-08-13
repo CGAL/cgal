@@ -103,7 +103,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_tri
     std::cerr<<"No selected polyhedron_item"<<std::endl;
     return;
   }
-  QList<int> indices_to_remove;
+  std::vector<int> indices_to_remove;
   Q_FOREACH(int index, scene->selectionIndices()) {
     if (index == mainSelectionIndex)
       continue;
@@ -112,7 +112,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_tri
       qobject_cast<Scene_facegraph_item*>(scene->item(index));
     if(item)
     {
-      indices_to_remove.push_front(index);
+      indices_to_remove.push_back(index);
       CGAL::copy_face_graph(*item->polyhedron(), *mainSelectionItem->polyhedron());
     }
     else
@@ -122,6 +122,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_tri
   scene->itemChanged(mainSelectionIndex);
 
   //remove the other items
+  std::sort(indices_to_remove.begin(), indices_to_remove.end(), std::greater<int>());
   Q_FOREACH(int index, indices_to_remove)
   {
     scene->erase(index);
@@ -156,9 +157,10 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
       std::list<FaceGraph*> new_polyhedra;
       typedef boost::property_map<FaceGraph,CGAL::face_patch_id_t<int> >::type PatchIDMap;
       PatchIDMap pidmap = get(CGAL::face_patch_id_t<int>(), *item->face_graph());
-      int nb_patches = CGAL::Polygon_mesh_processing::connected_components(*item->face_graph(),
-                                                          pidmap);
-
+      int nb_patches = item->property("NbPatchIds").toInt();
+       if(nb_patches == 0)
+         nb_patches = CGAL::Polygon_mesh_processing::connected_components(*item->face_graph(),
+                                                                          pidmap);
 
       for(int i=0; i<nb_patches; ++i)
       {
@@ -234,10 +236,11 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
       item->setItemIsMulticolor(true);
       typedef boost::property_map<FaceGraph,CGAL::face_patch_id_t<int> >::type PatchIDMap;
       PatchIDMap pidmap = get(CGAL::face_patch_id_t<int>(), *item->face_graph());
-      CGAL::Polygon_mesh_processing::connected_components(*item->face_graph(),
-                                                          pidmap);
+      int nb_patch_ids = CGAL::Polygon_mesh_processing::connected_components(*item->face_graph(),
+                                                                             pidmap);
 
       item->invalidateOpenGLBuffers();
+      item->setProperty("NbPatchIds", nb_patch_ids);
       scene->itemChanged(item);
     }
     else
@@ -266,10 +269,10 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
 
         std::cout << "color CC" << std::endl;
 
-        PMP::connected_components(pmesh
-          , fccmap
-          , PMP::parameters::edge_is_constrained_map(selection_item->constrained_edges_pmap())
-          .face_index_map(fim));
+        int nb_patch_ids = PMP::connected_components(pmesh
+                                                     , fccmap
+                                                     , PMP::parameters::edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                                                     .face_index_map(fim));
 
         BOOST_FOREACH(face_descriptor f, faces(pmesh))
         {
@@ -279,6 +282,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
         to_skip.insert(selection_item->polyhedron_item());
 
         selection_item->changed_with_poly_item();
+        selection_item->polyhedron_item()->setProperty("NbPatchIds", nb_patch_ids);
       }
     }
 

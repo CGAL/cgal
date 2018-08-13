@@ -2,11 +2,11 @@
 #define _VIEWER_H
 
 #include <QMap>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 
 class Surface;
 
-class Viewer : public QGLViewer
+class Viewer : public CGAL::QGLViewer
 {
   Q_OBJECT
 public:

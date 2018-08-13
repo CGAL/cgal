@@ -27,7 +27,7 @@
 
 #include "test_utilities.h"
 
-#include <CGAL/Implicit_mesh_domain_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 
 // IO
@@ -40,9 +40,7 @@
 template <typename K>
 struct Tester
 {
-  typedef typename K::FT (Function)(const typename K::Point_3&);
-  
-  typedef CGAL::Implicit_mesh_domain_3<Function, K>                   Base_domain;
+  typedef CGAL::Labeled_mesh_domain_3<K>                              Base_domain;
   typedef CGAL::Mesh_domain_with_polyline_features_3<Base_domain>     Md;
   typedef typename CGAL::Mesh_triangulation_3<Md>::type               Tr;
   typedef CGAL::Mesh_complex_3_in_triangulation_3<
@@ -223,8 +221,8 @@ struct Tester
     typename C3t3::Triangulation::Vertex& tv1 = *v;
     typename C3t3::Triangulation::Vertex& tv2 = *vit;
     
-    assert(   ( v == vp1 && vit->point() == p1 )
-           || ( v == vp4 && vit->point() == p4 ) );
+    assert(   ( v == vp1 && tr.point(vit) == p1 )
+           || ( v == vp4 && tr.point(vit) == p4 ) );
     
     assert ( tv1.in_dimension() == tv2.in_dimension() );
     //-------------------------------------------------------

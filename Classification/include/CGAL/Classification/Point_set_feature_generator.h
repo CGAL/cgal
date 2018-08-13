@@ -28,13 +28,13 @@
 #include <CGAL/Classification/Planimetric_grid.h>
 #include <CGAL/Classification/Local_eigen_analysis.h>
 #include <CGAL/Classification/Feature_base.h>
-#include <CGAL/Classification/Feature/Hsv.h>
 #include <CGAL/Classification/Feature/Distance_to_plane.h>
 #include <CGAL/Classification/Feature/Echo_scatter.h>
 #include <CGAL/Classification/Feature/Elevation.h>
 #include <CGAL/Classification/Feature/Vertical_dispersion.h>
 #include <CGAL/Classification/Feature/Verticality.h>
-#include <CGAL/Classification/Feature/Eigen.h>
+#include <CGAL/Classification/Feature/Eigenvalue.h>
+#include <CGAL/Classification/Feature/Color_channel.h>
 
 // Experimental feature, not used officially
 #ifdef CGAL_CLASSIFICATION_USE_GRADIENT_OF_FEATURE
@@ -56,17 +56,13 @@
 #include <CGAL/Real_timer.h>
 #include <CGAL/demangle.h>
 
-#ifdef CGAL_LINKED_WITH_TBB
-#include <tbb/task_group.h>
-#include <tbb/mutex.h>
-#endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
 
 namespace Classification {
 
 /*!
-  \ingroup PkgClassificationDataStructures
+  \ingroup PkgClassificationPointSet
 
   \brief Generates a set of generic features for point set
   classification.
@@ -83,14 +79,13 @@ namespace Classification {
   type is the value type of the iterator of `PointRange` and value type
   is `GeomTraits::Point_3`.
   \tparam ConcurrencyTag enables sequential versus parallel
-  algorithm. Possible values are `Parallel_tag` (default value is %CGAL
+  computation of `CGAL::Classification::Local_eigen_analysis`
+  objects. Possible values are `Parallel_tag` (default value is %CGAL
   is linked with TBB) or `Sequential_tag` (default value otherwise).
   \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
   matrix diagonalization. It can be omitted: if Eigen 3 (or greater)
-  is available and `CGAL_EIGEN3_ENABLED` is defined then an overload
-  using `Eigen_diagonalize_traits` is provided. Otherwise, the
-  internal implementation `Diagonalize_traits` is used.
-
+  is available and `CGAL_EIGEN3_ENABLED` is defined: in that case, an
+  overload using `Eigen_diagonalize_traits` is provided.
 */
 template <typename GeomTraits,
           typename PointRange,
@@ -128,23 +123,16 @@ public:
   typedef Classification::Feature_handle                 Feature_handle;
   typedef Classification::Label                          Label;
   typedef Classification::Label_handle                   Label_handle;
-  
-  typedef Classification::Feature::Anisotropy            Anisotropy;
+
   typedef Classification::Feature::Distance_to_plane
   <PointRange, PointMap>                                 Distance_to_plane;
-  typedef Classification::Feature::Eigentropy            Eigentropy;
   typedef Classification::Feature::Elevation
   <GeomTraits, PointRange, PointMap>                    Elevation;
-  typedef Classification::Feature::Linearity             Linearity;
-  typedef Classification::Feature::Omnivariance          Omnivariance;
-  typedef Classification::Feature::Planarity             Planarity;
-  typedef Classification::Feature::Sphericity            Sphericity;
-  typedef Classification::Feature::Sum_eigenvalues       Sum_eigen;
-  typedef Classification::Feature::Surface_variation     Surface_variation;
   typedef Classification::Feature::Vertical_dispersion
   <GeomTraits, PointRange, PointMap>                    Dispersion;
   typedef Classification::Feature::Verticality
   <GeomTraits>                                          Verticality;
+  typedef Classification::Feature::Eigenvalue           Eigenvalue;
   
   typedef typename Neighborhood::K_neighbor_query       Neighbor_query;
 
@@ -172,7 +160,7 @@ private:
     {
       CGAL::Real_timer t;
       t.start();
-      if (voxel_size < 0.)
+      if (lower_grid == NULL)
         neighborhood = new Neighborhood (input, point_map);
       else
         neighborhood = new Neighborhood (input, point_map, voxel_size);
@@ -187,7 +175,8 @@ private:
       t.start();
       
       eigen = new Local_eigen_analysis
-        (input, point_map, neighborhood->k_neighbor_query(6), ConcurrencyTag(), DiagonalizeTraits());
+        (Local_eigen_analysis::create_from_point_set
+         (input, point_map, neighborhood->k_neighbor_query(12), ConcurrencyTag(), DiagonalizeTraits()));
       
       float range = eigen->mean_range();
       if (this->voxel_size < 0)
@@ -235,119 +224,101 @@ private:
   Iso_cuboid_3 m_bbox;
   std::vector<Scale*> m_scales;
 
-#ifdef CGAL_LINKED_WITH_TBB
-  tbb::task_group* m_tasks;
-#endif
-  
-  struct Feature_adder
-  {
-    mutable Point_set_feature_generator* generator;
-    std::size_t scale;
-
-    Feature_adder (Point_set_feature_generator* generator, std::size_t scale)
-      : generator (generator), scale (scale) { }
-
-    virtual ~Feature_adder() { }
-
-    virtual void operator()() const = 0;
-  };
-  friend Feature_adder;
-
   const PointRange& m_input;
   PointMap m_point_map;
-  std::vector<Feature_adder*> m_adders;
-  Feature_set* m_features;
   
 public:
-
+  
+  /// \name Constructor
+  /// @{
   
   /*!
-    \brief Generates all possible features from an input range.
+    \brief Initializes a feature generator from an input range.
 
-    The size of the smallest scale is automatically estimated using a
-    method equivalent to `CGAL::compute_average_spacing()` using 6
-    neighbors. The data structures needed (`Neighborhood`,
-    `Planimetric_grid` and `Local_eigen_analysis`) are computed at
-    `nb_scales` recursively larger scales. At each scale, the
-    following features are generated:
+    If not provided by the user, The size of the smallest scale is
+    automatically estimated using a method equivalent to
+    `CGAL::compute_average_spacing()` using 6 neighbors. The data
+    structures needed (`Neighborhood`, `Planimetric_grid` and
+    `Local_eigen_analysis`) are computed at `nb_scales` recursively
+    larger scales. 
 
-    - `CGAL::Classification::Feature::Anisotropy`
-    - `CGAL::Classification::Feature::Distance_to_plane`
-    - `CGAL::Classification::Feature::Eigentropy`
-    - `CGAL::Classification::Feature::Elevation`
-    - `CGAL::Classification::Feature::Linearity`
-    - `CGAL::Classification::Feature::Omnivariance`
-    - `CGAL::Classification::Feature::Planarity`
-    - `CGAL::Classification::Feature::Sphericity`
-    - `CGAL::Classification::Feature::Sum_eigenvalues`
-    - `CGAL::Classification::Feature::Surface_variation`
-    - `CGAL::Classification::Feature::Vertical_dispersion`
-    - The version of `CGAL::Classification::Feature::Verticality` based on eigenvalues
-
-    If normal vectors are provided (if `VectorMap` is different from
-    `CGAL::Default`), the following feature is generated at each
-    scale:
-
-    - The version of `CGAL::Classification::Feature::Verticality` based on normal vectors
-
-    If colors are provided (if `ColorMap` is different from
-    `CGAL::Default`), the following features are generated at each
-    scale:
-
-    - 9 features `CGAL::Classification::Feature::Hsv` on
-    channel 0 (hue) with mean ranging from 0° to 360° and standard
-    deviation of 22.5.
-
-    - 5 features `CGAL::Classification::Feature::Hsv` on
-    channel 1 (saturation) with mean ranging from 0 to 100 and standard
-    deviation of 12.5.
-
-    - 5 features `CGAL::Classification::Feature::Hsv` on channel 2
-    (value) with mean ranging from 0 to 100 and standard deviation
-    of 12.5.
-
-    If echo numbers are provided (if `EchoMap` is different from
-    `CGAL::Default`), the following feature is computed at each
-    scale:
-
-    - `CGAL::Classification::Feature::Echo_scatter`
-
-    \tparam VectorMap model of `ReadablePropertyMap` whose key type is
-    the value type of the iterator of `PointRange` and value type is
-    `GeomTraits::Vector_3`.
-    \tparam ColorMap model of `ReadablePropertyMap`  whose key type is
-    the value type of the iterator of `PointRange` and value type is
-    `CGAL::Classification::RGB_Color`.
-    \tparam EchoMap model of `ReadablePropertyMap` whose key type is
-    the value type of the iterator of `PointRange` and value type is
-    `std::size_t`.
-    \param features the feature set where the features are instantiated.
     \param input point range.
     \param point_map property map to access the input points.
     \param nb_scales number of scales to compute.
-    \param normal_map property map to access the normal vectors of the input points (if any).
-    \param color_map property map to access the colors of the input points (if any).
-    \param echo_map property map to access the echo values of the input points (if any).
+    \param voxel_size smallest scale used as a voxel size for the
+    planimetric grid (if the default value -1 is used, its value is
+    automatically estimated).
   */
+  Point_set_feature_generator(const PointRange& input,
+                              PointMap point_map,
+                              std::size_t nb_scales,
+                              float voxel_size = -1.f)
+    : m_input (input), m_point_map (point_map)
+  {
+    m_bbox = CGAL::bounding_box
+      (boost::make_transform_iterator (m_input.begin(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)),
+       boost::make_transform_iterator (m_input.end(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)));
+
+    CGAL::Real_timer t; t.start();
+    
+    m_scales.reserve (nb_scales);
+    
+    m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size));
+
+    if (voxel_size == -1.f)
+      voxel_size = m_scales[0]->grid_resolution();
+    
+    for (std::size_t i = 1; i < nb_scales; ++ i)
+    {
+      voxel_size *= 2;
+      m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size, m_scales[i-1]->grid));
+    }
+    t.stop();
+    CGAL_CLASSIFICATION_CERR << "Scales computed in " << t.time() << " second(s)" << std::endl;
+    t.reset();
+  }
+
+  /// @}
+  
+  /// \cond SKIP_IN_MANUAL
+  
+#ifndef CGAL_NO_DEPRECATED_CODE
+  // deprecated
   template <typename VectorMap = Default,
             typename ColorMap = Default,
             typename EchoMap = Default>
+  CGAL_DEPRECATED_MSG("you are using a deprecated constructor of CGAL::Classification::Point_set_feature_generator, please update your code")
   Point_set_feature_generator(Feature_set& features,
                               const PointRange& input,
                               PointMap point_map,
                               std::size_t nb_scales,
                               VectorMap normal_map = VectorMap(),
                               ColorMap color_map = ColorMap(),
-                              EchoMap echo_map = EchoMap()
-#ifndef DOXYGEN_RUNNING
-                              , float voxel_size = -1.f // Undocumented way of changing base voxel size
-#endif
-                              )
-    : m_input (input), m_point_map (point_map), m_features (&features)
+                              EchoMap echo_map = EchoMap(),
+                              float voxel_size = -1.f)
+    : m_input (input), m_point_map (point_map)
   {
     m_bbox = CGAL::bounding_box
       (boost::make_transform_iterator (m_input.begin(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)),
        boost::make_transform_iterator (m_input.end(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)));
+
+    CGAL::Real_timer t; t.start();
+    
+    m_scales.reserve (nb_scales);
+    
+    m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size));
+
+    if (voxel_size == -1.f)
+      voxel_size = m_scales[0]->grid_resolution();
+    
+    for (std::size_t i = 1; i < nb_scales; ++ i)
+    {
+      voxel_size *= 2;
+      m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size, m_scales[i-1]->grid));
+    }
+    t.stop();
+    CGAL_CLASSIFICATION_CERR << "Scales computed in " << t.time() << " second(s)" << std::endl;
+    t.reset();
 
     typedef typename Default::Get<VectorMap, typename GeomTraits::Vector_3 >::type
       Vmap;
@@ -356,16 +327,18 @@ public:
     typedef typename Default::Get<EchoMap, std::size_t >::type
       Emap;
 
-    generate_features_impl (nb_scales, voxel_size,
-                            get_parameter<Vmap>(normal_map),
-                            get_parameter<Cmap>(color_map),
-                            get_parameter<Emap>(echo_map));
-
-    m_features->sort_features_by_name();
+    generate_point_based_features (features);
+    generate_normal_based_features (features, get_parameter<Vmap>(normal_map));
+    generate_color_based_features (features, get_parameter<Cmap>(color_map));
+    generate_echo_based_features (features, get_parameter<Emap>(echo_map));
   }
 
+  // Functions to remove when deprecated constructor is removed
+  void generate_normal_based_features(const CGAL::Constant_property_map<Iterator, typename GeomTraits::Vector_3>&) { }
+  void generate_color_based_features(const CGAL::Constant_property_map<Iterator, RGB_Color>&) { }
+  void generate_echo_based_features(const CGAL::Constant_property_map<Iterator, std::size_t>&) { }
+#endif
   
-  /// \cond SKIP_IN_MANUAL
   virtual ~Point_set_feature_generator()
   {
     clear();
@@ -380,6 +353,102 @@ public:
   }
   /// \endcond
 
+  /// \name Feature Generation
+  /// @{
+
+
+  /*!
+    \brief Generate geometric features based on point position information.
+
+    At each scale, the following features are generated:
+
+    - `CGAL::Classification::Feature::Eigenvalue` with indices 0, 1 and 2
+    - `CGAL::Classification::Feature::Distance_to_plane`
+    - `CGAL::Classification::Feature::Elevation`
+    - `CGAL::Classification::Feature::Vertical_dispersion`
+    - The version of `CGAL::Classification::Feature::Verticality` based on eigenvalues
+
+    \param features the feature set where the features are instantiated.
+   */
+  void generate_point_based_features (Feature_set& features)
+  {
+    for (int j = 0; j < 3; ++ j)
+      for (std::size_t i = 0; i < m_scales.size(); ++ i)
+        features.add_with_scale_id<Eigenvalue> (i, m_input, eigen(i), (unsigned int)(j));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      features.add_with_scale_id<Distance_to_plane> (i, m_input, m_point_map, eigen(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      features.add_with_scale_id<Dispersion> (i, m_input, m_point_map, grid(i), radius_neighbors(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      features.add_with_scale_id<Elevation> (i, m_input, m_point_map, grid(i), radius_dtm(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      features.add_with_scale_id<Verticality> (i, m_input, eigen(i));
+  }
+
+  /*!
+    \brief Generate geometric features based on normal vector information.
+
+    Generates the version of `CGAL::Classification::Feature::Verticality` based on normal vectors.
+
+    \tparam VectorMap model of `ReadablePropertyMap` whose key type is
+    the value type of the iterator of `PointRange` and value type is
+    `GeomTraits::Vector_3`.
+
+    \param features the feature set where the features are instantiated.
+    \param normal_map property map to access the normal vectors of the input points (if any).
+
+   */
+  template <typename VectorMap>
+  void generate_normal_based_features(Feature_set& features, const VectorMap& normal_map)
+  {
+    features.add<Verticality> (m_input, normal_map);
+  }
+
+  /*!
+    \brief Generate geometric features based on point color information.
+
+    Generates `CGAL::Classification::Feature::Color_channel` with
+    channels `HUE`, `SATURATION` and `VALUE`.
+
+    \tparam ColorMap model of `ReadablePropertyMap`  whose key type is
+    the value type of the iterator of `PointRange` and value type is
+    `CGAL::Classification::RGB_Color`.
+
+    \param features the feature set where the features are instantiated.
+    \param color_map property map to access the colors of the input points (if any).
+   */
+  template <typename ColorMap>
+  void generate_color_based_features(Feature_set& features, const ColorMap& color_map)
+  {
+    typedef Feature::Color_channel<GeomTraits, PointRange, ColorMap> Color_channel;
+    for (std::size_t i = 0; i < 3; ++ i)
+      features.add<Color_channel> (m_input, color_map, typename Color_channel::Channel(i));
+  }
+
+  /*!
+    \brief Generate geometric features based on echo information.
+
+    At each scale, generates `CGAL::Classification::Feature::Echo_scatter`.
+
+    \tparam EchoMap model of `ReadablePropertyMap` whose key type is
+    the value type of the iterator of `PointRange` and value type is
+    `std::size_t`.
+
+    \param features the feature set where the features are instantiated.
+    \param echo_map property map to access the echo values of the input points (if any).
+   */
+  template <typename EchoMap>
+  void generate_echo_based_features(Feature_set& features, const EchoMap& echo_map)
+  {
+    typedef Feature::Echo_scatter<GeomTraits, PointRange, PointMap, EchoMap> Echo_scatter;
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      features.add_with_scale_id<Echo_scatter> (i, m_input, echo_map, grid(i), radius_neighbors(i));
+  }
+
+  /// @}
+
+  /// \name Data Structures Access
+  /// @{
 
   /*!
     \brief Returns the bounding box of the input point set.
@@ -397,6 +466,12 @@ public:
     \brief Returns the local eigen analysis structure at scale `scale`.
   */
   const Local_eigen_analysis& eigen(std::size_t scale = 0) const { return *(m_scales[scale]->eigen); }
+
+  /// @}
+
+  /// \name Parameters
+  /// @{
+  
   /*!
     \brief Returns the number of scales that were computed.
   */
@@ -423,6 +498,7 @@ public:
   */
   float radius_dtm(std::size_t scale = 0) const { return m_scales[scale]->radius_dtm(); }
 
+  /// @}
 
     
 private:
@@ -434,161 +510,10 @@ private:
     m_scales.clear();
   }
 
-  void generate_point_based_features ()
-  {
-
-    generate_multiscale_feature_variant_0<Anisotropy> ();
-    generate_multiscale_feature_variant_0<Eigentropy> ();
-    generate_multiscale_feature_variant_0<Linearity> ();
-    generate_multiscale_feature_variant_0<Omnivariance> ();
-    generate_multiscale_feature_variant_0<Planarity> ();
-    generate_multiscale_feature_variant_0<Sphericity> ();
-    generate_multiscale_feature_variant_0<Sum_eigen> ();
-    generate_multiscale_feature_variant_0<Surface_variation> ();
-
-    generate_multiscale_feature_variant_1<Distance_to_plane> ();
-    generate_multiscale_feature_variant_2<Dispersion> ();
-    generate_multiscale_feature_variant_3<Elevation> ();
-  }
-
-  template <typename FeatureAdder>
-  void launch_feature_computation (FeatureAdder* adder)
-  {
-    m_adders.push_back (adder);
-    
-#ifndef CGAL_LINKED_WITH_TBB
-    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-                               "Parallel_tag is enabled but TBB is unavailable.");
-#else
-    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
-    {
-      m_tasks->run (*adder);
-    }
-    else
-#endif
-    {
-      (*adder)();
-    }
-  }
-
-  template <typename VectorMap>
-  struct Feature_adder_verticality : public Feature_adder
-  {
-    using Feature_adder::generator;
-    using Feature_adder::scale;
-    VectorMap normal_map;
-
-    Feature_adder_verticality (Point_set_feature_generator* generator, VectorMap normal_map, std::size_t scale)
-      : Feature_adder (generator, scale), normal_map (normal_map) { }
-    
-    void operator() () const
-    {
-      Feature_handle fh = generator->m_features->template add<Verticality> (generator->m_input, normal_map);
-      std::ostringstream oss;
-      oss << fh->name() << "_" << scale;
-      fh->set_name (oss.str());
-    }
-  };
-
-  template <typename VectorMap>
-  void generate_normal_based_features(VectorMap normal_map)
-  {
-    launch_feature_computation (new Feature_adder_verticality<VectorMap> (this, normal_map, 0));
-  }
-
-  void generate_normal_based_features(const CGAL::Default_property_map<Iterator, typename GeomTraits::Vector_3>&)
-  {
-    generate_multiscale_feature_variant_0<Verticality> ();
-  }
-
-  template <typename ColorMap>
-  struct Feature_adder_color : public Feature_adder
-  {
-    typedef Classification::Feature::Hsv<GeomTraits, PointRange, ColorMap> Hsv;
-    
-    using Feature_adder::generator;
-    using Feature_adder::scale;
-    ColorMap color_map;
-    std::size_t channel;
-    float mean;
-    float sd;
-
-    Feature_adder_color (Point_set_feature_generator* generator, ColorMap color_map, std::size_t scale,
-                         std::size_t channel, float mean, float sd)
-      : Feature_adder (generator, scale), color_map (color_map),
-        channel (channel), mean (mean), sd (sd) { }
-    
-    void operator() () const
-    {
-      Feature_handle fh = generator->m_features->template add<Hsv> (generator->m_input, color_map,
-                                                                    (typename Hsv::Channel)(channel), mean, sd);
-      std::ostringstream oss;
-      oss << fh->name() << "_" << scale;
-      fh->set_name (oss.str());
-    }
-  };
-
-  template <typename ColorMap>
-  void generate_color_based_features(ColorMap color_map)
-  {
-    for (std::size_t i = 0; i <= 8; ++ i)
-      launch_feature_computation (new Feature_adder_color<ColorMap> (this, color_map, 0,
-                                                                     0, 45.f * float(i), 22.5f));
-
-    for (std::size_t i = 0; i <= 4; ++ i)
-      launch_feature_computation (new Feature_adder_color<ColorMap> (this, color_map, 0,
-                                                                     1, 25.f * float(i), 12.5f));
-    
-    for (std::size_t i = 0; i <= 4; ++ i)
-      launch_feature_computation (new Feature_adder_color<ColorMap> (this, color_map, 0,
-                                                                     2, 25.f * float(i), 12.5f));
-  }
-
-  void generate_color_based_features(const CGAL::Default_property_map<Iterator, RGB_Color>&)
-  {
-  }
-
-
-  template <typename EchoMap>
-  struct Feature_adder_echo : public Feature_adder
-  {
-    typedef Classification::Feature::Echo_scatter<GeomTraits, PointRange, PointMap, EchoMap> Echo_scatter;
-    
-    using Feature_adder::generator;
-    using Feature_adder::scale;
-    EchoMap echo_map;
-
-    Feature_adder_echo (Point_set_feature_generator* generator, EchoMap echo_map, std::size_t scale)
-      : Feature_adder (generator, scale), echo_map (echo_map) { }
-    
-    void operator() () const
-    {
-      Feature_handle fh = generator->m_features->template add<Echo_scatter> (generator->m_input,
-                                                                             echo_map,
-                                                                             generator->grid(scale),
-                                                                             generator->radius_neighbors(scale));
-      std::ostringstream oss;
-      oss << fh->name() << "_" << scale;
-      fh->set_name (oss.str());
-    }
-  };
-
-
-  template <typename EchoMap>
-  void generate_echo_based_features(EchoMap echo_map)
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      launch_feature_computation (new Feature_adder_echo<EchoMap> (this, echo_map, i));
-  }
-
-  void generate_echo_based_features(const CGAL::Default_property_map<Iterator, std::size_t>&)
-  {
-  }
-
-  void generate_gradient_features()
-  {
 #ifdef CGAL_CLASSIFICATION_USE_GRADIENT_OF_FEATURE
-    std::size_t size = m_features->size();
+  void generate_gradient_features(Feature_set& features)
+  {
+    std::size_t size = features->size();
 
     for (std::size_t i = 0; i < size; ++ i)
     {
@@ -596,17 +521,16 @@ private:
       {
         std::ostringstream oss;
         oss << "_" << j;
-        if ((*m_features)[i]->name().find (oss.str()))
+        if ((*features)[i]->name().find (oss.str()))
         {
           const Neighbor_query& neighbor_query = neighborhood(std::size_t(j)).k_neighbor_query(6);
-          m_features->template add<Gradient_of_feature> (m_input, m_point_map, (*m_features)[i], neighbor_query);
+          features->template add<Gradient_of_feature> (m_input, m_point_map, (*features)[i], neighbor_query);
           break;
         }
       }
     }
-#endif
   }
-
+#endif
 
   template <typename T>
   const T& get_parameter (const T& t)
@@ -615,171 +539,12 @@ private:
   }
 
   template <typename T>
-  Default_property_map<Iterator, T>
+  Constant_property_map<Iterator, T>
   get_parameter (const Default&)
   {
-    return Default_property_map<Iterator, T>();
+    return Constant_property_map<Iterator, T>();
   }
 
-  template<typename VectorMap, typename ColorMap, typename EchoMap>
-  void generate_features_impl (std::size_t nb_scales, float voxel_size,
-                               VectorMap normal_map,
-                               ColorMap color_map,
-                               EchoMap echo_map)
-  {
-    CGAL::Real_timer t; t.start();
-    
-    m_scales.reserve (nb_scales);
-    
-    m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, -1.f));
-
-    if (voxel_size == -1.f)
-      voxel_size = m_scales[0]->grid_resolution();
-    
-    for (std::size_t i = 1; i < nb_scales; ++ i)
-    {
-      voxel_size *= 2;
-      m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size, m_scales[i-1]->grid));
-    }
-    t.stop();
-    CGAL_CLASSIFICATION_CERR << "Scales computed in " << t.time() << " second(s)" << std::endl;
-    t.reset();
-
-    t.start();
-    
-#ifdef CGAL_LINKED_WITH_TBB
-    m_tasks = new tbb::task_group;
-#endif
-    
-    generate_point_based_features ();
-    generate_normal_based_features (normal_map);
-    generate_color_based_features (color_map);
-    generate_echo_based_features (echo_map);
-
-#ifdef CGAL_LINKED_WITH_TBB
-    m_tasks->wait();
-    delete m_tasks;
-#endif
-
-    generate_gradient_features();
-    
-    t.stop();
-    CGAL_CLASSIFICATION_CERR << "Features computed in " << t.time() << " second(s)" << std::endl;
-    for (std::size_t i = 0; i < m_adders.size(); ++ i)
-      delete m_adders[i];
-  }
-
-  template <typename Feature_type>
-  struct Feature_adder_variant_0 : public Feature_adder
-  {
-    using Feature_adder::generator;
-    using Feature_adder::scale;
-
-    Feature_adder_variant_0 (Point_set_feature_generator* generator, std::size_t scale)
-      : Feature_adder (generator, scale) { }
-    
-    void operator() () const
-    {
-      Feature_handle fh = generator->m_features->template add<Feature_type> (generator->m_input, generator->eigen(scale));
-      std::ostringstream oss;
-      oss << fh->name() << "_" << scale;
-      fh->set_name (oss.str());
-    }
-  };
-  
-  template <typename Feature_type>
-  void generate_multiscale_feature_variant_0 ()
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      launch_feature_computation (new Feature_adder_variant_0<Feature_type> (this, i));
-  }
-
-  template <typename Feature_type>
-  struct Feature_adder_variant_1 : public Feature_adder
-  {
-    using Feature_adder::generator;
-    using Feature_adder::scale;
-    PointMap point_map;
-
-    Feature_adder_variant_1 (Point_set_feature_generator* generator, PointMap point_map, std::size_t scale)
-      : Feature_adder (generator, scale), point_map (point_map) { }
-    
-    void operator() () const
-    {
-      Feature_handle fh = generator->m_features->template add<Feature_type> (generator->m_input, point_map,
-                                                                             generator->eigen(scale));
-      std::ostringstream oss;
-      oss << fh->name() << "_" << scale;
-      fh->set_name (oss.str());
-    }
-  };
-  
-  template <typename Feature_type>
-  void generate_multiscale_feature_variant_1 ()
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      launch_feature_computation (new Feature_adder_variant_1<Feature_type> (this, m_point_map, i));
-  }
-
-  template <typename Feature_type>
-  struct Feature_adder_variant_2 : public Feature_adder
-  {
-    using Feature_adder::generator;
-    using Feature_adder::scale;
-    PointMap point_map;
-
-    Feature_adder_variant_2 (Point_set_feature_generator* generator, PointMap point_map, std::size_t scale)
-      : Feature_adder (generator, scale), point_map (point_map) { }
-    
-    void operator() () const
-    {
-      Feature_handle fh = generator->m_features->template add<Feature_type>
-        (generator->m_input, point_map,
-         generator->grid(scale),
-         generator->radius_neighbors(scale));
-      std::ostringstream oss;
-      oss << fh->name() << "_" << scale;
-      fh->set_name (oss.str());
-    }
-  };
-  
-  template <typename Feature_type>
-  void generate_multiscale_feature_variant_2 ()
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      launch_feature_computation (new Feature_adder_variant_2<Feature_type> (this, m_point_map, i));
-  }
-
-  template <typename Feature_type>
-  struct Feature_adder_variant_3 : public Feature_adder
-  {
-    using Feature_adder::generator;
-    using Feature_adder::scale;
-    PointMap point_map;
-
-    Feature_adder_variant_3 (Point_set_feature_generator* generator, PointMap point_map, std::size_t scale)
-      : Feature_adder (generator, scale), point_map (point_map) { }
-    
-    void operator() () const
-    {
-      Feature_handle fh = generator->m_features->template add<Feature_type> (generator->m_input,
-                                                                             point_map,
-                                                                             generator->grid(scale),
-                                                                             generator->radius_dtm(scale));
-      std::ostringstream oss;
-      oss << fh->name() << "_" << scale;
-      fh->set_name (oss.str());
-    }
-  };
-  
-  template <typename Feature_type>
-  void generate_multiscale_feature_variant_3 ()
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      launch_feature_computation (new Feature_adder_variant_3<Feature_type> (this, m_point_map, i));
-  }
-
-  
 };
 
 

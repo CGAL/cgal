@@ -7,7 +7,6 @@
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <iostream>
 #include <vector>
@@ -27,7 +26,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel              Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-namespace CFR = CGAL::Corefinement;
+namespace CFR = PMP::Corefinement;
 
 //includes typedefs for Operations on polyhedra
 typedef CGAL::Polyhedron_3<Kernel>                                   Polyhedron;
@@ -66,15 +65,15 @@ void run_boolean_operations(
   CGAL::Emptyset_iterator output_it;
   Facet_id_map P_facet_id_map, Q_facet_id_map;
 
-  CGAL::cpp11::array<boost::optional<Polyhedron*>, 4 > desired_output;
+  CGAL::cpp11::array<boost::optional<Polyhedron*>, 4 > output;
 
-  desired_output[Output_builder::P_UNION_Q]=boost::make_optional( &union_ );
-  desired_output[Output_builder::P_INTER_Q]=boost::make_optional( &inter );
-  desired_output[Output_builder::P_MINUS_Q]=boost::make_optional( &P_minus_Q );
-  desired_output[Output_builder::Q_MINUS_P]=boost::make_optional( &Q_minus_P );
+  output[Output_builder::P_UNION_Q]=boost::make_optional( &union_ );
+  output[Output_builder::P_INTER_Q]=boost::make_optional( &inter );
+  output[Output_builder::P_MINUS_Q]=boost::make_optional( &P_minus_Q );
+  output[Output_builder::Q_MINUS_P]=boost::make_optional( &Q_minus_P );
 
   Output_builder output_builder(P, Q,
-                                desired_output,
+                                output,
                                 Facet_id_pmap(P_facet_id_map),
                                 Facet_id_pmap(Q_facet_id_map) );
   Split_visitor visitor(output_builder);
@@ -170,17 +169,17 @@ void run_boolean_operations(
 
   typedef boost::optional<Surface_mesh*> OSM;
 
-  CGAL::cpp11::array<OSM,4> desired_output;
+  CGAL::cpp11::array<OSM,4> output;
   
-  desired_output[CFR::UNION]=OSM( &union_ );
-  desired_output[CFR::INTER]=OSM( &inter );
-  desired_output[CFR::TM1_MINUS_TM2]=OSM( &tm1_minus_tm2 );
-  desired_output[CFR::TM2_MINUS_TM1]=OSM( &tm2_minus_tm1 );
+  output[CFR::UNION]=OSM( &union_ );
+  output[CFR::INTERSECTION]=OSM( &inter );
+  output[CFR::TM1_MINUS_TM2]=OSM( &tm1_minus_tm2 );
+  output[CFR::TM2_MINUS_TM1]=OSM( &tm2_minus_tm1 );
 
   std::cout << "  Vertices before " <<  tm1.number_of_vertices()
             << " " << tm2.number_of_vertices() << std::endl;
 
-  CGAL::cpp11::array<bool,4> res = PMP::boolean_operation(tm1, tm2, desired_output);
+  CGAL::cpp11::array<bool,4> res = PMP::corefine_and_compute_boolean_operations(tm1, tm2, output);
 
   std::cout << "  Vertices after " <<  tm1.number_of_vertices()
             << " " << tm2.number_of_vertices() << std::endl;
@@ -198,7 +197,7 @@ void run_boolean_operations(
   else
     std::cout << "  Union is invalid\n";
 
-  if ( res[CFR::INTER] ){
+  if ( res[CFR::INTERSECTION] ){
    std::cout << "  Intersection is a valid operation\n";
    assert(inter.is_valid());
    #ifdef CGAL_COREFINEMENT_DEBUG
@@ -240,7 +239,7 @@ void run_boolean_operations(
   if ( rc.check )
   {
     if (res[CFR::UNION]!=rc.union_res ||
-        res[CFR::INTER]!=rc.inter_res ||
+        res[CFR::INTERSECTION]!=rc.inter_res ||
         res[CFR::TM1_MINUS_TM2]!=rc.P_minus_Q_res ||
         res[CFR::TM2_MINUS_TM1]!=rc.Q_minus_P_res)
     {

@@ -211,7 +211,7 @@ class Convex_hull_traits_3 :
 
   class Construct_plane_3 {
   public:
-    Plane_3 operator ()(const Point_3& p, const Point_3& q, const Point_3& r)
+    Plane_3 operator ()(const Point_3& p, const Point_3& q, const Point_3& r)const
     {
       return Plane_3(p,q,r);
     }
@@ -238,6 +238,13 @@ class Convex_hull_traits_3 :
   typedef CGAL::Projection_traits_xy_3<R>         Traits_xy_3;
   typedef CGAL::Projection_traits_yz_3<R>         Traits_yz_3;
   typedef CGAL::Projection_traits_xz_3<R>         Traits_xz_3;
+  Traits_xy_3 construct_traits_xy_3_object()const
+  {return Traits_xy_3();}
+  Traits_yz_3 construct_traits_yz_3_object()const
+  {return Traits_yz_3();}
+  Traits_xz_3 construct_traits_xz_3_object()const
+  {return Traits_xz_3();}
+  
   typedef typename R::Construct_vector_3          Construct_vector_3;
   // for postcondition checking 
   typedef typename R::Ray_3                      Ray_3; 

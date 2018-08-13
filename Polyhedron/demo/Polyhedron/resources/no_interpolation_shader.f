@@ -1,4 +1,4 @@
-#version 430 core
+#version 150
 
 in GS_OUT
 {

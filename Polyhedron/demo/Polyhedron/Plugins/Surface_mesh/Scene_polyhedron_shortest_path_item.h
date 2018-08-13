@@ -9,9 +9,9 @@
 //#include "Polyhedron_type.h"
 #include "Kernel_type.h"
 
-#include "opengl_tools.h"
 
-#include <QGLViewer/qglviewer.h>
+
+#include <CGAL/Qt/qglviewer.h>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QMainWindow>

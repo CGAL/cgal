@@ -41,7 +41,7 @@ namespace CGAL {
 //!!! This will eventually be integrated into function_objects.h
 template < class Array, class Index, class Element >
 struct Index_operator
-: public CGAL::binary_function< Array, Index, Element >
+: public CGAL::cpp98::binary_function< Array, Index, Element >
 {
   Element&
   operator()( Array& a, const Index& i) const

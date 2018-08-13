@@ -11,16 +11,14 @@
 #include <set>
 
 #include <QtCore/qglobal.h>
-#include <QGLViewer/manipulatedFrame.h>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/manipulatedFrame.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Scene_group_item.h>
-#include <Scene_polyhedron_item.h>
-#include <Scene_polygon_soup_item.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
 #include <CGAL/Three/Scene_item_with_properties.h>
 
@@ -33,7 +31,7 @@ using namespace CGAL::Three;
 {
   Q_OBJECT
 public:
-  typedef qglviewer::ManipulatedFrame ManipulatedFrame;
+  typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
 
   Scene_c3t3_item();
   Scene_c3t3_item(const C3t3& c3t3);
@@ -76,13 +74,16 @@ public:
   bool has_cnc() const;
   bool has_tets() const;
   bool is_valid() const;//true if the c3t3 is correct, false if it was made from a .mesh, for example
+  float alpha() const Q_DECL_OVERRIDE;
+  void setAlpha(int alpha) Q_DECL_OVERRIDE;
+  QSlider* alphaSlider();
   ManipulatedFrame* manipulatedFrame() Q_DECL_OVERRIDE;
 
   void setPosition(float x, float y, float z) ;
 
   void setNormal(float x, float y, float z) ;
 
-  Geom_traits::Plane_3 plane(qglviewer::Vec offset = qglviewer::Vec(0,0,0)) const;
+  Geom_traits::Plane_3 plane(CGAL::qglviewer::Vec offset = CGAL::qglviewer::Vec(0,0,0)) const;
 
   bool isFinite() const Q_DECL_OVERRIDE { return true; }
   bool isEmpty() const Q_DECL_OVERRIDE {
@@ -119,7 +120,7 @@ public:
   void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   void drawPoints(CGAL::Three::Viewer_interface * viewer) const Q_DECL_OVERRIDE;
    //When selecting a c3t3 item, we don't want to select its children, so we can still apply Operations to it
-  QList<Scene_item*> getChildrenForSelection() const Q_DECL_OVERRIDE { return QList<Scene_item*>(); }
+  QList<Scene_interface::Item_id> getChildrenForSelection() const Q_DECL_OVERRIDE { return QList<Scene_interface::Item_id>(); }
   public:
     QMenu* contextMenu() Q_DECL_OVERRIDE;
     void copyProperties(Scene_item *) Q_DECL_OVERRIDE;

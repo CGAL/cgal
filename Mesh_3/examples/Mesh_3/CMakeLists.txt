@@ -39,6 +39,15 @@ if ( CGAL_FOUND )
     endif( LINK_WITH_TBB )
   endif()
   
+  # Use Eigen
+  find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
+  if (NOT EIGEN3_FOUND)
+    message(STATUS "This project requires the Eigen library, and will not be compiled.")
+    return()
+  else()
+    include( ${EIGEN3_USE_FILE} )
+  endif()
+  
  set(VTK_LIBS "")
       find_package(VTK QUIET COMPONENTS vtkImagingGeneral  vtkIOImage NO_MODULE)
       if(VTK_FOUND)
@@ -81,6 +90,7 @@ if ( CGAL_FOUND )
       endif()
  
       create_single_source_cgal_program( "mesh_3D_gray_image.cpp" )
+      create_single_source_cgal_program( "mesh_3D_gray_image_multiple_values.cpp" )
       create_single_source_cgal_program( "mesh_3D_image_with_features.cpp" )
       if( CGAL_ImageIO_USE_ZLIB )
         create_single_source_cgal_program( "mesh_optimization_example.cpp" )

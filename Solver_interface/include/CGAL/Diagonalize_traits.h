@@ -26,6 +26,12 @@
 #include <CGAL/number_type_config.h>
 #include <CGAL/double.h>
 
+#define CGAL_WARNING_DIAGONALIZE_TRAITS \
+  CGAL_DEPRECATED_MSG("CGAL::Diagonalize_traits is a deprecated class that can \
+lead to precision issues, please use CGAL::Eigen_diagonalize_traits")
+
+/// \cond SKIP_IN_MANUAL
+
 namespace CGAL {
 
 /// \ingroup PkgSolver
@@ -33,6 +39,10 @@ namespace CGAL {
 /// The class `Diagonalize_traits` provides an internal
 /// implementation for the diagonalization of Variance-Covariance
 /// Matrices.
+///
+/// \warning This class is outdated: it can lead to precision issues
+/// and should only be used if \ref thirdpartyEigen "Eigen" is not
+/// available. Otherwise, `Eigen_diagonalize_traits` should be used.
 ///
 /// \tparam FT Number type
 /// \tparam dim Dimension of the matrices and vectors
@@ -49,6 +59,7 @@ public:
   /// Fill `eigenvalues` with the eigenvalues of the covariance matrix represented by `cov`.
   /// Eigenvalues are sorted by increasing order.
   /// \return `true` if the operation was successful and `false` otherwise.
+  CGAL_WARNING_DIAGONALIZE_TRAITS
   static bool diagonalize_selfadjoint_covariance_matrix(const Covariance_matrix& cov,
                                                         Vector& eigenvalues)
   {
@@ -59,6 +70,7 @@ public:
   /// Extract the eigenvector associated to the largest eigenvalue
   /// of the covariance matrix represented by `cov`.
   /// \return `true` if the operation was successful and `false` otherwise.
+  CGAL_WARNING_DIAGONALIZE_TRAITS
   static bool extract_largest_eigenvector_of_covariance_matrix(const Covariance_matrix& cov,
                                                                Vector& normal)
   {
@@ -77,6 +89,7 @@ public:
   /// the eigenvectors of the covariance matrix represented by `cov`.
   /// Eigenvalues are sorted by increasing order.
   /// \return `true` if the operation was successful and `false` otherwise.
+  CGAL_WARNING_DIAGONALIZE_TRAITS
   static bool diagonalize_selfadjoint_covariance_matrix(const Covariance_matrix& mat,
                                                         Vector& eigen_values,
                                                         Matrix& eigen_vectors)
@@ -287,5 +300,7 @@ public:
 };
 
 } // namespace CGAL
+
+/// \endcond
 
 #endif // CGAL_DIAGONALIZE_TRAITS_H

@@ -29,8 +29,8 @@ of all simplices are regular.
 \tparam Traits is the geometric traits class, and must be a model of `RegularTriangulationTraits_3`
 
 \tparam TDS is the triangulation data structure and must be a model of `TriangulationDataStructure_3`.
-TDS has default value `Triangulation_data_structure_3<Regular_triangulation_vertex_base_3<Traits>,
-                                                      Regular_triangulation_cell_base_3<Traits> >`.
+`Default` may be used with default value `Triangulation_data_structure_3<Regular_triangulation_vertex_base_3<Traits>,
+                                                                         Regular_triangulation_cell_base_3<Traits> >`.
 Any custom type can be used instead of `Regular_triangulation_vertex_base_3`
 and `Regular_triangulation_cell_base_3`, provided that they are models of the
 concepts `RegularTriangulationVertexBase_3` and `RegularTriangulationCellBase_3`,
@@ -64,13 +64,12 @@ public:
 /// @{
 
 /*!
-The type for points 
-`p` of weighted points \f$ {p}^{(w)}=(p,w_p)\f$ 
+The type for points `p` of weighted points \f$ {p}^{(w)}=(p,w_p)\f$
 */ 
 typedef Traits::Point_3 Bare_point;
 
 /*!
-
+The type for weighted points
 */ 
 typedef Traits::Weighted_point_3 Weighted_point;
 
@@ -126,7 +125,7 @@ The following methods, which already exist in `Triangulation_3`, are overloaded 
 /// @{
 
 /*!
-Inserts weighted point `p` in the triangulation. The optional 
+Inserts the weighted point `p` in the triangulation. The optional
 argument `start` is used as a starting place for the search. 
 
 If this insertion creates a vertex, this vertex is returned. 
@@ -160,7 +159,7 @@ Same as above but uses `hint` as a starting place for the search.
 Vertex_handle insert(const Weighted_point & p, Vertex_handle hint, bool *could_lock_zone = NULL); 
 
 /*!
-Inserts weighted point `p` in the triangulation and returns the corresponding 
+Inserts the weighted point `p` in the triangulation and returns the corresponding
 vertex. Similar to the above `insert()` function, but takes as additional 
 parameter the return values of a previous location query. See description of 
 `Triangulation_3::locate()`. 
@@ -229,16 +228,18 @@ of `p` and is stored in the new cell which contains it.
 \pre `rt`.`dimension()` \f$ \geq2\f$, the set of cells (resp. facets in dimension 2) is connected, not empty, its boundary is connected, and `p` lies inside the hole, which is star-shaped wrt `p`. 
 */ 
 template <class CellIt> 
-Vertex_handle insert_in_hole(Weighted_point p, CellIt cell_begin, CellIt cell_end, 
-Cell_handle begin, int i); 
+Vertex_handle insert_in_hole(const Weighted_point& p,
+                             CellIt cell_begin, CellIt cell_end,
+                             Cell_handle begin, int i);
 
 /*!
 Same as above, except that `newv` will be used as the new vertex, which 
 must have been allocated previously with, e.g.\ `create_vertex`. 
 */ 
 template <class CellIt> 
-Vertex_handle insert_in_hole(Weighted_point p, CellIt cell_begin, CellIt cell_end, 
-Cell_handle begin, int i, Vertex_handle newv); 
+Vertex_handle insert_in_hole(const Weighted_point& p,
+                             CellIt cell_begin, CellIt cell_end,
+                             Cell_handle begin, int i, Vertex_handle newv);
 
 /// @} 
 
@@ -406,7 +407,7 @@ with respect to the power distance. This means that the power
 of the query point `p` with respect to the weighted point in 
 the returned vertex is smaller than the power of `p` 
 with respect to the weighted point 
-in any other vertex. Ties are broken arbitrarily. 
+for any other vertex. Ties are broken arbitrarily.
 The default constructed 
 handle is returned if the triangulation is empty. 
 The optional argument `c` is a hint 
@@ -414,8 +415,8 @@ specifying where to start the search.
 \pre `c` is a cell of `rt`. 
 
 */ 
-Vertex_handle nearest_power_vertex(Weighted_point p, 
-Cell_handle c = Cell_handle()); 
+Vertex_handle nearest_power_vertex(const Bare_point& p,
+                                   Cell_handle c = Cell_handle());
 
 /*!
 Returns the vertex of the cell `c` 
@@ -423,8 +424,8 @@ that is nearest to \f$ p\f$
 with respect to the power distance. 
 
 */ 
-Vertex_handle nearest_power_vertex_in_cell(Weighted_point p, 
-Cell_handle c); 
+Vertex_handle nearest_power_vertex_in_cell(const Bare_point& p,
+                                           Cell_handle c);
 
 
 /// @}
@@ -485,8 +486,7 @@ bool *the_facet_is_in_its_cz = NULL);
 */ 
 template <class OutputIterator> 
 OutputIterator 
-vertices_in_conflict(Weighted_point p, Cell_handle c, 
-OutputIterator res); 
+vertices_in_conflict(const Weighted_point& p, Cell_handle c, OutputIterator res);
 
 /*!
 Similar to `find_conflicts()`, but reports the vertices which are on the 
@@ -497,8 +497,7 @@ Returns the resulting output iterator.
 */ 
 template <class OutputIterator> 
 OutputIterator 
-vertices_on_conflict_zone_boundary(Weighted_point p, Cell_handle c, 
-OutputIterator res); 
+vertices_on_conflict_zone_boundary(const Weighted_point& p, Cell_handle c, OutputIterator res);
 
 /*!
 Similar to `find_conflicts()`, but reports the vertices which are in 
@@ -511,7 +510,7 @@ Returns the resulting output iterator.
 */ 
 template <class OutputIterator> 
 OutputIterator 
-vertices_inside_conflict_zone(Weighted_point p, Cell_handle c, 
+vertices_inside_conflict_zone(const Weighted_point& p, Cell_handle c,
 OutputIterator res); 
 
 

@@ -59,6 +59,7 @@
 // For Voronoi diagram
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
 // For debugging macro
@@ -247,7 +248,8 @@ public:
   typedef CGAL::Exact_predicates_exact_constructions_kernel                    Exact_kernel;
   typedef CGAL::Triangulation_vertex_base_with_info_3
                                             <vertex_descriptor, Exact_kernel>  Vb;
-  typedef CGAL::Triangulation_data_structure_3<Vb>                             Tds;
+  typedef CGAL::Delaunay_triangulation_cell_base_3<Exact_kernel>               Cb;
+  typedef CGAL::Triangulation_data_structure_3<Vb, Cb>                         Tds;
   typedef CGAL::Delaunay_triangulation_3<Exact_kernel, Tds>                    Delaunay;
   typedef typename Delaunay::Point                                             Exact_point;
   typedef typename Delaunay::Cell_handle                                       Cell_handle;
@@ -845,7 +847,8 @@ private:
   {
     typedef std::pair<Input_vertex_descriptor, vertex_descriptor> Vertex_pair;
     std::vector<Vertex_pair> v2v;
-    copy_face_graph(tmesh, m_tmesh, std::back_inserter(v2v));
+    copy_face_graph(tmesh, m_tmesh, 
+                    CGAL::parameters::vertex_to_vertex_output_iterator(std::back_inserter(v2v)));
 
     // copy input vertices to keep correspondence
     BOOST_FOREACH(const Vertex_pair& vp, v2v)

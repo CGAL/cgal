@@ -6,9 +6,9 @@ In this package, all functions optional parameters are implemented as BGL option
 named parameters (see \ref BGLNamedParameters for more information on how to use them).
 Since the parameters of the various polygon mesh processing functions defined
 in this package are redundant, their long descriptions are centralized below.
-The sequence of named parameters should start with `CGAL::parameters::`.
+The sequence of named parameters starts with `CGAL::parameters::`.
 `CGAL::parameters::all_default()` can be used to indicate
-that default values of optional named parameters must be used.
+that default values of optional named parameters  shall be used.
 
 In the following, we assume that the following types are provided as template parameters
 of polygon mesh processing functions and classes. Note that, for some of these functions,
@@ -45,7 +45,7 @@ is the property map containing the index of each face of the input polygon mesh.
 `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and the value type:
 \code typename boost::property_traits<typename boost::property_map<PolygonMesh, CGAL::face_index_t>::type>::value_type \endcode
 <b>Default:</b> \code boost::get(CGAL::face_index, pmesh)\endcode
-If this internal property map exists, its values should be initialized.
+If this internal property map exists, its values must be initialized.
 \cgalNPEnd
 
 \cgalNPBegin{edge_is_constrained_map} \anchor PMP_edge_is_constrained_map
@@ -54,7 +54,7 @@ being marked or not. In `isotropic_remeshing()` and `connected_components()`,
 the marked edges are constrained.\n
 <b>Type:</b> a class model of `ReadWritePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
-`bool` as value type. It should be default constructible.\n
+`bool` as value type. It must be default constructible.\n
 <b>Default:</b> a default property map where no edge is constrained
 \cgalNPEnd
 \cgalNPTableEnd
@@ -63,7 +63,7 @@ In addition to these named parameters, this package offers the following named p
 
 \cgalNPTableBegin
 \cgalNPBegin{geom_traits} \anchor PMP_geom_traits
-is the geometric traits instance in which the mesh processing operation should be performed.\n
+is the geometric traits instance used for the mesh processing operation.\n
 <b>Type:</b> a Geometric traits class.\n
 <b>Default</b>:
 \code typename CGAL::Kernel_traits<
@@ -85,7 +85,7 @@ inserted several times.\n
 is the property map containing the number of feature edges being incident to the vertices of the polygon mesh `pmesh`.\n
 <b>Type:</b> a class model of `ReadWritePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
-`int` as value type. It should be default constructible.\n
+`int` as value type. It must be default constructible.\n
 <b>Default:</b> \code boost::get(CGAL::vertex_feature_degree_t(), pmesh) \endcode
 \cgalNPEnd
 
@@ -95,7 +95,7 @@ Constrained vertices may be replaced by new vertices, but the number and locatio
 of vertices remain unchanged.\n
 <b>Type:</b> a class model of `ReadWritePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
-`bool` as value type. It should be default constructible.\n
+`bool` as value type. It must be default constructible.\n
 <b>Default:</b> a default property map where no vertex is constrained is provided.
 \cgalNPEnd
 
@@ -159,6 +159,15 @@ during the remeshing process.\n
 <b>Default:</b> `false`
 \cgalNPEnd
 
+\cgalNPBegin{collapse_constraints} \anchor PMP_collapse_constraints
+enables the collapse of constraints listed by \ref PMP_edge_is_constrained_map
+"edge_is_constrained_map" and boundary edges
+in `isotropic_remeshing()`. If `false`, constraint edges cannot be collapsed
+during the remeshing process.\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
+\cgalNPEnd
+
 \cgalNPBegin{relax_constraints} \anchor PMP_relax_constraints
 enables the tangential relaxation step in `isotropic_remeshing()`
 to be performed on vertices that are endpoints of constraints listed
@@ -188,21 +197,21 @@ enables the use of the Delaunay triangulation facet search space for hole fillin
 \cgalNPEnd
 
 \cgalNPBegin{use_random_uniform_sampling} \anchor PMP_use_random_uniform_sampling
-is a parameter used in `sample_triangle_mesh()` to indicate if points should be picked
+is a parameter used in `sample_triangle_mesh()` to indicate that the points are picked
 in a random uniform way.\n
 <b>Type:</b> `bool` \n
 <b>Default:</b> `true`
 \cgalNPEnd
 
 \cgalNPBegin{use_grid_sampling} \anchor PMP_use_grid_sampling
-is a parameter used in `sample_triangle_mesh()` to indicate if points should be picked
-in on a grid in each face.\n
+is a parameter used in `sample_triangle_mesh()` to indicate that the points are picked
+on a grid in each face.\n
 <b>Type:</b> `bool` \n
 <b>Default:</b> `false`
 \cgalNPEnd
 
 \cgalNPBegin{use_monte_carlo_sampling} \anchor PMP_use_monte_carlo_sampling
-is a parameter used in `sample_triangle_mesh()` to indicate if points should be picked
+is a parameter used in `sample_triangle_mesh()` to indicate that the points are picked
 using a Monte-Carlo approach.\n
 <b>Type:</b> `bool` \n
 <b>Default:</b> `false`
@@ -210,21 +219,21 @@ using a Monte-Carlo approach.\n
 
 \cgalNPBegin{sample_edges} \anchor PMP_sample_edges
 is a parameter used in `sample_triangle_mesh()` to indicate if a dedicated sampling
-of edges should be done.\n
+of edges is done.\n
 <b>Type:</b> `bool` \n
 <b>Default:</b> `true`
 \cgalNPEnd
 
 \cgalNPBegin{sample_vertices} \anchor PMP_sample_vertices
-is a parameter used in `sample_triangle_mesh()` to indicate if triangle vertices should
-be copied in the output iterator.\n
+is a parameter used in `sample_triangle_mesh()` to indicate that triangle vertices are
+copied in the output iterator.\n
 <b>Type:</b> `bool` \n
 <b>Default:</b> `true`
 \cgalNPEnd
 
 \cgalNPBegin{sample_faces} \anchor PMP_sample_faces
 is a parameter used in `sample_triangle_mesh()` to indicate if the interior of faces
-should be considered for the sampling.\n
+is considered for the sampling.\n
 <b>Type:</b> `bool` \n
 <b>Default:</b> `true`
 \cgalNPEnd
@@ -281,7 +290,7 @@ Monte-Carlo methods.\n
 \cgalNPEnd
 
 \cgalNPBegin{do_project} \anchor PMP_do_project
-is a parameter used in `random_perturbation()` to set whether vertices should be re-projected
+is a parameter used in `random_perturbation()` to set whether vertices are re-projected
 to the input surface after their geometric perturbation.\n
 <b>Type:</b> `bool` \n
 <b>Default:</b> `true`
@@ -299,16 +308,62 @@ If this parameter is not provided, the perturbation is not deterministic
 \cgalNPBegin{outward_orientation} \anchor PMP_outward_orientation
 Parameter used in orientation functions to choose between an outward or inward orientation.
 \n
-\b Type : `bool` \n
-\b Default value is `true`
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
 
 \cgalNPBegin{do_overlap_test_of_bounded_sides} \anchor PMP_do_overlap_test_of_bounded_sides
 Parameter used in intersection test functions to indicate whether overlapping tests of bounded sides
-of close meshes should be done in addition to surface intersection tests.
+of close meshes are done in addition to surface intersection tests.
+\n
+<b>Type:</b> `bool` \n
+<b>Default:</b> `false`
+\cgalNPEnd
+
+\cgalNPBegin{projection_functor} \anchor PMP_projection_functor
+Parameter used in `isotropic_remeshing()` to specify an alternative vertex projection method.
+\n
+<b>Type:</b> Unary function object with vertex descriptor as argument type. \n
+<b>Default:</b> A function object projecting vertices on the input surface.
+\cgalNPEnd
+
+\cgalNPBegin{apply_per_connected_component} \anchor PMP_apply_per_connected_component
+Parameter used to indicate whether an algorithm should consider each connected component 
+of a mesh independently.\n
+\b Type : `bool` \n
+\b Default value is `false`
+\cgalNPEnd
+
+\cgalNPBegin{visitor} \anchor PMP_visitor
+Parameter used to pass a visitor class to a function. Its type and behavior depend on the visited function.
+\n
+\b Type : `A class` \n
+\b Default Specific to the function visited
+\cgalNPEnd
+
+\cgalNPBegin{throw_on_self_intersection} \anchor PMP_throw_on_self_intersection
+Parameter used in corefinement-related functions to make the functions throw an exception in
+case some faces involved in the intersection of the input are self-intersecting
+and make the operation impossible with the current version of the code.
 \n
 \b Type : `bool` \n
 \b Default value is `false`
 \cgalNPEnd
+
+\cgalNPBegin{clip_volume} \anchor PMP_clip_volume
+Parameter used in `clip()` functions to clip a volume rather than a surface.
+\n
+\b Type : `bool` \n
+\b Default value is `false`
+\cgalNPEnd
+
+\cgalNPBegin{use_compact_clipper} \anchor PMP_use_compact_clipper
+Parameter used in `clip()` functions to indicate whether the boundary of the clipper
+should be considered as part of the clipping volume or not.
+\n
+\b Type : `bool` \n
+\b Default value is `true`
+\cgalNPEnd
+
 
 \cgalNPTableEnd
 

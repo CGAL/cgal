@@ -44,15 +44,20 @@ namespace CGAL {
  * Implements mesh_traits for a domain defined as the negative values of
  * an implicit function.
  */
-template<class Function,
+template<class Function_,
   class BGT,
-  class Wrapper = Implicit_to_labeling_function_wrapper<Function,BGT> >
-class Implicit_mesh_domain_3
- : public Labeled_mesh_domain_3<Wrapper, BGT >
+  class Wrapper = Implicit_to_labeling_function_wrapper<Function_,BGT> >
+class
+CGAL_DEPRECATED_MSG
+( "The class template `CGAL::Implicit_mesh_domain_3` is now deprecated. "
+  "Use the static member function template "
+  "`Labeled_mesh_domain_3<K>::create_implicit_image_mesh_domain` instead.")
+Implicit_mesh_domain_3
+ : public Labeled_mesh_domain_3<BGT>
 {
 public:
   /// Base type
-  typedef Labeled_mesh_domain_3<Wrapper, BGT> Base;
+  typedef Labeled_mesh_domain_3<BGT> Base;
 
   /// Public types
   typedef typename Base::Sphere_3 Sphere_3;
@@ -65,7 +70,7 @@ public:
    * @param bounding_sphere a bounding sphere of the domain
    * @param error_bound the error bound relative to the sphere radius
    */
-  Implicit_mesh_domain_3(const Function& f,
+  Implicit_mesh_domain_3(Function_ f,
                          const Sphere_3& bounding_sphere,
                          const FT& error_bound = FT(1e-6),
                          CGAL::Random* p_rng = NULL)
@@ -78,7 +83,7 @@ public:
   using Base::bbox;
 private:
   // Disabled copy constructor & assignment operator
-  typedef Implicit_mesh_domain_3<Function,BGT> Self;
+  typedef Implicit_mesh_domain_3<Function_,BGT> Self;
   Implicit_mesh_domain_3(const Self& src);
   Self& operator=(const Self& src);
 

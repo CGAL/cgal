@@ -19,7 +19,7 @@ CGAL::Three::Scene_item::Scene_item(int buffers_size, int vaos_size)
     vaos(vaos_size)
 {
 
-  QGLViewer::QGLViewerPool().first()->makeCurrent();
+  CGAL::QGLViewer::QGLViewerPool().first()->makeCurrent();
   is_bbox_computed = false;
   is_diag_bbox_computed = false;
   for(int i=0; i<vaosSize; i++)
@@ -184,16 +184,18 @@ void CGAL::Three::Scene_item::attribBuffers(CGAL::Three::Viewer_interface* viewe
        if(is_selected) c = c.lighter(120);
        viewer->getShaderProgram(program_name)->setAttributeValue
          ("color_facets",
-          c.redF(),
-          c.greenF(),
-          c.blueF());
+          GLfloat(c.redF()),
+          GLfloat(c.greenF()),
+          GLfloat(c.blueF()));
     }
     else if(program_name == PROGRAM_WITH_TEXTURED_EDGES)
     {
         if(is_selected) c = c.lighter(50);
         viewer->getShaderProgram(program_name)->setUniformValue
           ("color_lines",
-           QVector3D(c.redF(), c.greenF(), c.blueF()));
+           QVector3D(float(c.redF()),
+                     float(c.greenF()),
+                     float(c.blueF())));
     }
     viewer->getShaderProgram(program_name)->release();
 }
@@ -202,7 +204,7 @@ void CGAL::Three::Scene_item::attribBuffers(CGAL::Three::Viewer_interface* viewe
 QOpenGLShaderProgram* CGAL::Three::Scene_item::getShaderProgram(int name, CGAL::Three::Viewer_interface * viewer) const
 {
     if(viewer == 0)
-        viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+        viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin());
     return viewer->getShaderProgram(name);
 }
 
@@ -228,4 +230,16 @@ void CGAL::Three::Scene_item::compute_diag_bbox()const
         + CGAL::square(b_box.zmax() - b_box.zmin())
         );
 
+}
+
+void Scene_item::setId(int id)         {cur_id = id; }
+int  Scene_item::getId() const         { return cur_id; }
+float Scene_item::alpha() const
+{
+  return 1.0f;
+}
+
+void Scene_item::setAlpha(int )
+{
+ 
 }

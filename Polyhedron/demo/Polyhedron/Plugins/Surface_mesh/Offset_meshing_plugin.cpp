@@ -15,8 +15,7 @@
 #include <QInputDialog>
 #include <QStringList>
 
-#include "C2t3_type.h"
-#include "Scene_c2t3_item.h"
+#include "C3t3_type.h"
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -25,12 +24,14 @@
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 
-#include <CGAL/make_surface_mesh.h>
-#include <CGAL/Surface_mesh_default_criteria_3.h>
+#include <CGAL/Timer.h>
+#include <CGAL/make_mesh_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
+#include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
-#include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
-#include <CGAL/Implicit_surface_3.h>
+#include <CGAL/IO/facets_in_complex_3_to_triangle_mesh.h>
+
+#include <memory> // std::shared_ptr
 
 namespace CGAL{
 
@@ -52,6 +53,7 @@ public:
     , m_offset_distance(offset_distance)
     , m_is_closed( is_closed(tm) )
   {
+    CGAL_assertion(!m_tree_ptr->empty());
     m_tree_ptr->accelerate_distance_queries();
   }
 
@@ -76,6 +78,127 @@ private:
 
 };
 
+class Polygon_soup_offset_function {
+  typedef Scene_polygon_soup_item::Points Points;
+  typedef Scene_polygon_soup_item::Polygons Polygons;
+
+  typedef Polygons::const_iterator Polygon_iterator;
+
+
+  class Polygon_soup_point_property_map {
+    const Points* points_vector_ptr;
+  public:
+    typedef Polygon_iterator key_type;
+    typedef Kernel::Point_3 value_type;
+    typedef value_type reference;
+    typedef boost::readable_property_map_tag category;
+
+    Polygon_soup_point_property_map() = default;
+    Polygon_soup_point_property_map(const Points* ptr)
+      : points_vector_ptr(ptr)
+    {}
+
+    friend reference get(Polygon_soup_point_property_map map,
+                         key_type polygon_it)
+    {
+      return (*map.points_vector_ptr)[*polygon_it->begin()];
+    }
+  };
+
+
+  class Polygon_soup_triangle_property_map {
+    const Points* points_vector_ptr;
+  public:
+    typedef Polygon_iterator key_type;
+    typedef Kernel::Triangle_3 value_type;
+    typedef value_type reference;
+    typedef boost::readable_property_map_tag category;
+
+    Polygon_soup_triangle_property_map() = default;
+    Polygon_soup_triangle_property_map(const Points* ptr)
+      : points_vector_ptr(ptr)
+    {}
+
+    friend reference get(Polygon_soup_triangle_property_map map,
+                         key_type polygon_it)
+    {
+      auto it = polygon_it->begin();
+      CGAL_assertion(it != polygon_it->end());
+      const auto id0 = *it++;
+      CGAL_assertion(it != polygon_it->end());
+      const auto id1 = *it++;
+      CGAL_assertion(it != polygon_it->end());
+      const auto id2 = *it++;
+      CGAL_assertion(it == polygon_it->end());
+
+      return value_type( (*map.points_vector_ptr)[id0],
+                         (*map.points_vector_ptr)[id1],
+                         (*map.points_vector_ptr)[id2] );
+    }
+  };
+
+  struct AABB_primitive :
+    public CGAL::AABB_primitive<Polygon_iterator,
+                                Polygon_soup_triangle_property_map,
+                                Polygon_soup_point_property_map,
+                                CGAL::Tag_true,
+                                CGAL::Tag_false>
+  {
+    typedef CGAL::AABB_primitive<Polygon_iterator,
+                                 Polygon_soup_triangle_property_map,
+                                 Polygon_soup_point_property_map,
+                                 CGAL::Tag_true,
+                                 CGAL::Tag_false> Base;
+
+    typedef Polygon_iterator Id;
+
+    template <typename ObjectPmap, typename PointPmap>
+    AABB_primitive(Id id, ObjectPmap&& opmap, PointPmap&& ppmap)
+      : Base(id, std::forward<ObjectPmap>(opmap), std::forward<PointPmap>(ppmap))
+    {}
+
+    template <typename Iterator, typename ObjectPmap, typename PointPmap>
+    AABB_primitive(Iterator it, ObjectPmap&& opmap, PointPmap&& ppmap)
+      : Base(*it, std::forward<ObjectPmap>(opmap), std::forward<PointPmap>(ppmap))
+    {}
+  }; // end struct template AABB_primitive
+
+
+  typedef CGAL::AABB_traits<Kernel, AABB_primitive> AABB_traits;
+  typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
+
+  std::shared_ptr<AABB_tree> m_tree_ptr;
+  double m_offset_distance;
+
+  typedef Polygon_soup_triangle_property_map ObjectPmap;
+  typedef Polygon_soup_point_property_map    PointPmap;
+public:
+  Polygon_soup_offset_function(const Scene_polygon_soup_item* soup,
+                               const double offset_distance)
+    : m_tree_ptr
+      (std::make_shared<AABB_tree>(begin(soup->polygons()),
+                                   end(soup->polygons()),
+                                   ObjectPmap(&soup->points()),
+                                   PointPmap(&soup->points()))
+       )
+    , m_offset_distance(offset_distance)
+  {
+    CGAL_assertion(! m_tree_ptr->empty() );
+    m_tree_ptr->accelerate_distance_queries();
+  }
+
+  double operator()(const Kernel::Point_3& p) const
+  {
+    using CGAL::sqrt;
+
+    Kernel::Point_3 closest_point = m_tree_ptr->closest_point(p);
+    double distance = sqrt(squared_distance(p, closest_point));
+
+    return m_offset_distance - distance;
+  }
+
+}; // end class Polygon_soup_offset_function 
+
 } //end of CGAL namespace
 
 
@@ -89,6 +212,40 @@ Scene_surface_mesh_item* make_item(SMesh* sm)
   return new Scene_surface_mesh_item(sm);
 }
 
+CGAL::Offset_function<SMesh, Kernel>
+offset_function(SMesh* surface_mesh_ptr, double offset_value) {
+  return { *surface_mesh_ptr, offset_value };
+}
+
+CGAL::Offset_function<Polyhedron, Kernel>
+offset_function(Polyhedron* polyhedron_ptr, double offset_value) {
+  return { *polyhedron_ptr, offset_value };
+}
+
+CGAL::Polygon_soup_offset_function
+offset_function(Scene_polygon_soup_item* item, double offset_value) {
+  return { item, offset_value };
+}
+
+template <typename T>
+struct Result_type {
+  typedef T type;
+};
+
+template <>
+struct Result_type<Scene_polygon_soup_item> {
+  typedef SMesh type;
+};
+
+template <typename Mesh>
+CGAL::Bbox_3 bbox(Mesh* mesh_ptr) {
+  return CGAL::Polygon_mesh_processing::bbox(*mesh_ptr);
+}
+
+CGAL::Bbox_3 bbox(Scene_polygon_soup_item* item) {
+  return item->bbox();
+}
+
 // declare the CGAL function
 template<class Mesh>
 CGAL::Three::Scene_item* cgal_off_meshing(QWidget*,
@@ -99,12 +256,13 @@ CGAL::Three::Scene_item* cgal_off_meshing(QWidget*,
                                           const double approx,
                                           int tag)
 {
-  typedef Tr::Geom_traits GT;
-  typedef CGAL::Offset_function<Mesh, GT> Offset_function;
-  typedef CGAL::Implicit_surface_3<GT, Offset_function> Surface_3;
+  typedef Kernel GT;
+  typedef CGAL::Labeled_mesh_domain_3<GT, int, int> Mesh_domain;
+  typedef C3t3::Triangulation Tr;
+  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
   typedef GT::Sphere_3 Sphere_3;
 
-  CGAL::Bbox_3 bbox = CGAL::Polygon_mesh_processing::bbox(*tm_ptr);
+  CGAL::Bbox_3 bbox = ::bbox(tm_ptr);
 
   GT::Point_3 center((bbox.xmax()+bbox.xmin())/2,
                      (bbox.ymax()+bbox.ymin())/2,
@@ -118,58 +276,39 @@ CGAL::Three::Scene_item* cgal_off_meshing(QWidget*,
   CGAL::Timer timer;
   timer.start();
 
-  Offset_function offset_function(*tm_ptr, offset_value);
+  namespace p = CGAL::parameters;
 
-  Tr tr;
-  C2t3 c2t3 (tr);
+  Mesh_domain domain =
+    Mesh_domain::create_implicit_mesh_domain
+    (offset_function(tm_ptr, offset_value),
+     Sphere_3(center, sqrad),
+     p::relative_error_bound = 1e-7,
+     p::construct_surface_patch_index = [](int i, int j) { return (i * 1000 + j); });
 
-  // defining the surface
-  Surface_3 surface(offset_function,
-                    Sphere_3(center, sqrad)); // bounding sphere
+  CGAL::Mesh_facet_topology topology = CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH;
+  if(tag == 1) topology = CGAL::Mesh_facet_topology(topology | CGAL::MANIFOLD_WITH_BOUNDARY);
+  if(tag == 2) topology = CGAL::Mesh_facet_topology(topology | CGAL::MANIFOLD);
+  Mesh_criteria criteria(p::facet_angle = angle,
+                         p::facet_size = sizing,
+                         p::facet_distance = approx,
+                         p::facet_topology = topology);
 
-  // defining meshing criteria
-  CGAL::Surface_mesh_default_criteria_3<Tr> criteria(angle, sizing, approx);
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
+                                      p::no_perturb(),
+                                      p::no_exude());
 
-  // meshing surface
-  switch(tag) {
-  case 0:
-    CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Non_manifold_tag());
-    break;
-  case 1:
-    CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Manifold_tag());
-    break;
-  default:
-    CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Manifold_with_boundary_tag());
-  }
+  const Tr& tr = c3t3.triangulation();
 
   timer.stop();
-  std::cerr << "done (" << timer.time() << " ms, " << c2t3.triangulation().number_of_vertices() << " vertices)" << std::endl;
+  std::cerr << "done (" << timer.time() << " ms, " << tr.number_of_vertices() << " vertices)" << std::endl;
 
-  if(c2t3.triangulation().number_of_vertices() > 0)
+  if(tr.number_of_vertices() > 0)
   {
+    typedef typename Result_type<Mesh>::type Result_mesh;
     // add remesh as new polyhedron
-    Mesh *pRemesh = new Mesh;
-    CGAL::facets_in_complex_2_to_triangle_mesh<C2t3, Mesh>(c2t3, *pRemesh);
-    if(c2t3.number_of_facets() != num_faces(*pRemesh))
-    {
-      delete pRemesh;
-      std::stringstream temp_file;
-      if(!CGAL::output_surface_facets_to_off(temp_file, c2t3))
-      {
-        std::cerr << "Cannot write the mesh to an off file!\n";
-        return 0;
-      }
-      Scene_polygon_soup_item* soup = new Scene_polygon_soup_item();
-      if(!soup->load(temp_file))
-      {
-        std::cerr << "Cannot reload the mesh from an off file!\n";
-        return 0;
-      }
-      else
-        return soup;
-    } else {
+    Result_mesh *pRemesh = new Result_mesh;
+    CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, *pRemesh);
       return make_item(pRemesh);
-    }
   }
   else
     return 0;
@@ -198,8 +337,10 @@ public:
 
   bool applicable(QAction*) const {
     Scene_item* item = scene->item(scene->mainSelectionIndex());
-    return qobject_cast<Scene_polyhedron_item*>(item) ||
-        qobject_cast<Scene_surface_mesh_item*>(item);
+    return
+      qobject_cast<Scene_polyhedron_item*>(item)   ||
+      qobject_cast<Scene_surface_mesh_item*>(item) ||
+      qobject_cast<Scene_polygon_soup_item*>(item);
   }
 
   QList<QAction*> actions() const {
@@ -223,6 +364,8 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
       qobject_cast<Scene_polyhedron_item*>(item);
   Scene_surface_mesh_item* sm_item =
       qobject_cast<Scene_surface_mesh_item*>(item);
+  Scene_polygon_soup_item* soup_item =
+      qobject_cast<Scene_polygon_soup_item*>(item);
 
   Polyhedron* pMesh = NULL;
   SMesh* sMesh = NULL;
@@ -239,7 +382,7 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
     if(!sMesh)
       return;
   }
-  else
+  else if(soup_item == 0)
     return;
 
   double diag = scene->len_diagonal();
@@ -290,7 +433,15 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
             << std::boolalpha
             << std::endl;
   CGAL::Three::Scene_item* new_item;
-  if(pMesh)
+  if(soup_item)
+    new_item = cgal_off_meshing(mw,
+                                soup_item,
+                                offset_value,
+                                angle,
+                                sizing,
+                                approx,
+                                tag_index);
+  else if(pMesh)
     new_item = cgal_off_meshing(mw,
                                 pMesh,
                                 offset_value,

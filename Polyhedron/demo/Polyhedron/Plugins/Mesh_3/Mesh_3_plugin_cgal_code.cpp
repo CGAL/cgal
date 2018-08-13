@@ -19,6 +19,19 @@ using namespace CGAL::Three;
 
 typedef Tr::Bare_point Bare_point;
 
+struct Compare_to_isovalue {
+  double iso_value;
+  bool less;
+  typedef bool result_type;
+
+  Compare_to_isovalue(double iso_value, bool less)
+    : iso_value(iso_value), less(less) {}
+
+  bool operator()(double x) const {
+    return (x < iso_value) == less;
+  }
+};
+
 template<typename Mesh>
 struct Polyhedral_mesh_domain_selector
 {
@@ -219,9 +232,12 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                            pfunction->bbox().xmax(),
                            pfunction->bbox().ymax(),
                            pfunction->bbox().zmax());
-
+  namespace p = CGAL::parameters;
   Function_mesh_domain* p_domain =
-    new Function_mesh_domain(Function_wrapper(*pfunction), domain_bbox, 1e-7);
+    new Function_mesh_domain(Function_wrapper(*pfunction), domain_bbox, 1e-7,
+                             p::construct_surface_patch_index =
+                               [](int i, int j) { return (i * 1000 + j); }
+                             );
 
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
   p_new_item->setScene(scene);
@@ -246,10 +262,9 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
 
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
-#include <CGAL/Gray_image_mesh_domain_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 
-typedef CGAL::Gray_image_mesh_domain_3<CGAL::Image_3, Kernel, float, CGAL::Compare_to_isovalue > Gray_image_domain1;
-typedef CGAL::Polyhedron_demo_labeled_mesh_domain_3<Gray_image_domain1> Gray_image_domain;
+typedef CGAL::Labeled_mesh_domain_3<Kernel, int, int> Gray_image_domain;
 typedef CGAL::Mesh_domain_with_polyline_features_3<Gray_image_domain> Gray_Image_mesh_domain;
 
 Meshing_thread* cgal_code_mesh_3(const Image* pImage,
@@ -271,21 +286,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
 {
   if (NULL == pImage) { return NULL; }
 
-  Image_mesh_domain* p_domain = new Image_mesh_domain(*pImage, 1e-6);
-
-  if(protect_features && polylines.empty())
-  {
-    std::vector<std::vector<Bare_point> > polylines_on_bbox;
-    if(pImage->image()->wordKind == WK_FLOAT)
-      CGAL::polylines_to_protect<Bare_point, float>(*pImage, polylines_on_bbox);
-    else //WK_FIXED
-      CGAL::polylines_to_protect<Bare_point, unsigned char>(*pImage, polylines_on_bbox);
-
-    p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
-  }
   if(! polylines.empty()){
-    // Insert edge in domain
-    p_domain->add_features(polylines.begin(), polylines.end());
     protect_features = true; // so that it will be passed in make_mesh_3
   }
   Mesh_parameters param;
@@ -303,14 +304,30 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   p_new_item->setScene(scene);
   if(!is_gray)
   {
-    Image_mesh_domain* p_domain = new Image_mesh_domain(*pImage, 1e-6);
+    namespace p = CGAL::parameters;
+
+    Image_mesh_domain* p_domain = new Image_mesh_domain
+      (Image_mesh_domain::create_labeled_image_mesh_domain
+       (p::image = *pImage,
+        p::relative_error_bound = 1e-6,
+        p::construct_surface_patch_index =
+          [](int i, int j) { return (i * 1000 + j); }
+        )
+       );
 
     if(protect_features && polylines.empty()){
       std::vector<std::vector<Bare_point> > polylines_on_bbox;
-      CGAL::polylines_to_protect<
-        Bare_point,
-        Image_mesh_domain::Image_word_type>(*pImage, polylines_on_bbox);
-      p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
+
+      CGAL_IMAGE_IO_CASE(pImage->image(),
+                         {
+                           typedef Word Image_word_type;
+                           (CGAL::polylines_to_protect<
+                              Bare_point,
+                              Image_word_type>(*pImage, polylines_on_bbox));
+                           p_domain->add_features(polylines_on_bbox.begin(),
+                                                  polylines_on_bbox.end());
+                         }
+                         );
     }
     if(! polylines.empty()){
       // Insert edge in domain
@@ -324,20 +341,53 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   }
   else
   {
-    if(CGAL::Compare_to_isovalue(iso_value, inside_is_less)(value_outside) !=0)
+    if(Compare_to_isovalue(iso_value, inside_is_less)(value_outside) !=0)
     {
       std::cerr << "Warning : \"Value inside is less than iso value\"'s value has been inverted to avoid crash.  "
                 << " " << std::endl;
       inside_is_less = !inside_is_less;
     }
-    Gray_Image_mesh_domain* p_domain = new Gray_Image_mesh_domain(*pImage, CGAL::Compare_to_isovalue(iso_value, inside_is_less), value_outside);
+    Compare_to_isovalue domain_functor(iso_value, inside_is_less);
+    namespace p = CGAL::parameters;
+    Gray_Image_mesh_domain* p_domain = new Gray_Image_mesh_domain
+      (Gray_Image_mesh_domain::create_gray_image_mesh_domain
+       (p::image = *pImage,
+        p::relative_error_bound = 1e-6,
+        p::image_values_to_subdomain_indices = domain_functor,
+        p::value_outside = value_outside,
+        p::construct_surface_patch_index =
+          [](int i, int j) { return (i * 1000 + j); }
+        )
+       );
     if(protect_features && polylines.empty())
     {
-      std::cerr << "Warning : Automatic detection of features"
-                << " in Gray images is not implemented yet" << std::endl;
-      //std::vector<std::vector<Bare_point> > polylines_on_bbox;
-      //CGAL::polylines_to_protect<Bare_point>(*pImage, polylines_on_bbox);
-      //p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
+      using CGAL::Mesh_3::internal::Linear_interpolator;
+      std::vector<std::vector<Bare_point> > polylines_on_bbox;
+
+      CGAL_IMAGE_IO_CASE(pImage->image(),
+
+      typedef Word Image_word_type;
+      (CGAL::polylines_to_protect<Bare_point, Image_word_type>
+        ( *pImage,
+          pImage->vx(),
+          pImage->vy(),
+          pImage->vz(),
+          polylines_on_bbox,
+          (Image_word_type*)0,
+          CGAL::Null_subdomain_index(),
+          domain_functor,
+          Linear_interpolator<Kernel, Image_word_type>(),
+          0,
+          0,
+          Image_word_type(iso_value),
+          (std::max)(10, int(10 * (std::min)((std::min)(pImage->vx(),
+                                                        pImage->vy()),
+                                             pImage->vz())
+                             / edge_size))));
+
+       );
+
+      p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
     }
     if(! polylines.empty()){
       // Insert edge in domain

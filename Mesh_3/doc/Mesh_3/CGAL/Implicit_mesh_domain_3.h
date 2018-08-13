@@ -3,6 +3,11 @@ namespace CGAL {
 /*!
 \ingroup PkgMesh_3Domains
 
+\deprecated The class template `Implicit_mesh_domain_3` is deprecated
+since CGAL-4.13, in favor of the class template `Labeled_mesh_domain_3` and
+its static function
+`Labeled_mesh_domain_3::create_implicit_mesh_domain()`.
+
 The class `Implicit_mesh_domain_3` implements a domain whose bounding surface is 
 described 
 implicitly as the zero level set of a function. 
@@ -43,7 +48,8 @@ is a relative error bound expressed as a ratio to the bounding sphere radius.
 
 */
 template< typename Function, typename BGT >
-class Implicit_mesh_domain_3 {
+class Implicit_mesh_domain_3
+{
 public:
 
 /// \name Creation 
@@ -64,9 +70,9 @@ bisection is stopped when the length of the intersected
 segment is less than the product of `error_bound` by the 
 radius of `bounding_sphere`. 
 */ 
-Implicit_mesh_domain_3(Function f, 
-BGT::Sphere_3 bounding_sphere, 
-BGT::FT error_bound = FT(1e-3)); 
+  Implicit_mesh_domain_3(Function f,
+                         const BGT::Sphere_3& bounding_sphere,
+                         const BGT::FT& error_bound = FT(1e-3));
 
 /// @}
 

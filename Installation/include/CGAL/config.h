@@ -107,6 +107,17 @@
 #  define BOOST_TT_HAS_POST_INCREMENT_HPP_INCLUDED
 #endif
 
+// Macro used by Boost Parameter. Mesh_3 needs at least 12, before the
+// Boost Parameter headers are included: <boost/parameter/config.hpp>
+// defines the value to 8, if it is not yet defined.
+// The CGAL BGL properties mechanism includes
+// <boost/graph/named_function_params.hpp>, that includes
+// <boost/parameter/name.hpp>, and maybe other Boost libraries may use
+// Boost Parameter as well.
+// That is why that is important to define that macro as early as possible,
+// in <CGAL/config.h>
+#define BOOST_PARAMETER_MAX_ARITY 12
+
 // The following header file defines among other things  BOOST_PREVENT_MACRO_SUBSTITUTION
 #include <boost/config.hpp>
 #include <boost/version.hpp>
@@ -184,8 +195,13 @@
 #if defined(BOOST_NO_0X_HDR_UNORDERED_SET) || \
     defined(BOOST_NO_0X_HDR_UNORDERED_MAP) || \
     defined(BOOST_NO_CXX11_HDR_UNORDERED_SET) || \
-    defined(BOOST_NO_CXX11_HDR_UNORDERED_MAP)
+    defined(BOOST_NO_CXX11_HDR_UNORDERED_MAP) || \
+   (defined(_MSC_VER) && (_MSC_VER == 1800)) // std::unordered_set is very bad in MSVC2013
 #define CGAL_CFG_NO_CPP0X_UNORDERED 1
+#endif
+#if defined( BOOST_NO_0X_HDR_THREAD) || \
+    defined( BOOST_NO_CXX11_HDR_THREAD)
+#define CGAL_CFG_NO_STD_THREAD 1
 #endif
 #if defined(BOOST_NO_DECLTYPE) || \
     defined(BOOST_NO_CXX11_DECLTYPE) || (BOOST_VERSION < 103600)

@@ -31,7 +31,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
-#include <CGAL/Mesh_3/global_parameters.h>
+#include <CGAL/boost/parameter.h>
 #include <CGAL/refine_mesh_3.h>
 #include <CGAL/tags.h>
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h>
@@ -39,9 +39,10 @@
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 
 #include <boost/mpl/has_xxx.hpp>
+#include <boost/parameter/preprocessor.hpp>
 
 namespace CGAL {
-  
+
 namespace parameters {
   namespace internal {
     // Features
@@ -52,45 +53,45 @@ namespace parameters {
     private:
       bool b_;
     };
-    
+
     // -----------------------------------
     // Features generator
     // -----------------------------------
     // struct Features_option_generator
     template <typename HasFeatures>
     struct Features_options_generator {};
-    
+
     template<>
     struct Features_options_generator<CGAL::Tag_true>
     {
       Features_options operator()() { return Features_options(true); }
     };
-    
+
     template<>
     struct Features_options_generator<CGAL::Tag_false>
     {
       Features_options operator()() { return Features_options(false); }
     };
-    
+
     // struct Domain_features_generator is designed to handle cases where
     // MeshDomain::Has_features is not a valid type
     template< typename MeshDomain, bool MeshDomainHasHasFeatures >
     struct Domain_features_generator {};
-    
+
     template< typename MeshDomain >
     struct Domain_features_generator< MeshDomain, false >
     {
       Features_options operator()()
-      { 
+      {
         return Features_options_generator<CGAL::Tag_false>()();
       }
     };
-    
+
     template< typename MeshDomain >
     struct Domain_features_generator< MeshDomain, true >
     {
       Features_options operator()()
-      { 
+      {
         return Features_options_generator<typename MeshDomain::Has_features>()();
       }
     };
@@ -105,40 +106,38 @@ namespace parameters {
 
   inline internal::Features_options
   no_features() { return internal::Features_options(false); }
-  
+
   template < typename MeshDomain >
   inline internal::Features_options
   features(const MeshDomain& /*domain*/)
   {
     typedef typename internal::Domain_features_generator<
       MeshDomain,
-      CGAL::internal::Mesh_3::has_Has_features<MeshDomain>::value > Generator;
-    
+      CGAL::Mesh_3::internal::has_Has_features<MeshDomain>::value > Generator;
+
     return Generator()();
   }
-  
+
   // -----------------------------------
   // Parameters
   // -----------------------------------
 
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/Mesh_3/config.h>
-CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+// see <CGAL/boost/parameter.h>
+CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 
   BOOST_PARAMETER_NAME( features_param )
 
 CGAL_PRAGMA_DIAG_POP
 
-  
 } // end namespace parameters::internal
-
 
 // -----------------------------------
 // Initialize c3t3 stuff
 // -----------------------------------
-namespace internal {
 namespace Mesh_3 {
+namespace internal {
 
 template < typename C3T3, typename MeshDomain, typename MeshCriteria >
 void
@@ -150,16 +149,16 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
   typedef std::vector<std::pair<Point_3, Index> > Initial_points_vector;
   typedef typename Initial_points_vector::iterator Ipv_iterator;
   typedef typename C3T3::Vertex_handle Vertex_handle;
-  
+
   // Mesh initialization : get some points and add them to the mesh
   Initial_points_vector initial_points;
-  if (nb_initial_points > 0)
+  if (nb_initial_points > -1)
     domain.construct_initial_points_object()(std::back_inserter(initial_points),
                                              nb_initial_points);
   else //use default number of points
     domain.construct_initial_points_object()(std::back_inserter(initial_points));
 
-  typename C3T3::Triangulation::Geom_traits::Construct_weighted_point_3 p2wp =
+  typename C3T3::Triangulation::Geom_traits::Construct_weighted_point_3 cwp =
       c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
 
   // Insert points and set their index and dimension
@@ -167,13 +166,13 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
        it != initial_points.end() ;
        ++it )
   {
-    Vertex_handle v = c3t3.triangulation().insert(p2wp(it->first));
-    
+    Vertex_handle v = c3t3.triangulation().insert(cwp(it->first));
+
     // v could be null if point is hidden
     if ( v != Vertex_handle() )
     {
       c3t3.set_dimension(v,2); // by construction, points are on surface
-      c3t3.set_index(v,it->second);      
+      c3t3.set_index(v,it->second);
     }
   }
 }
@@ -184,7 +183,7 @@ struct Edge_criteria_sizing_field_wrapper
   typedef typename EdgeCriteria::Index    Index;
   typedef typename EdgeCriteria::FT       FT;
   typedef typename EdgeCriteria::Point_3  Point_3;
-  
+
   Edge_criteria_sizing_field_wrapper(const EdgeCriteria& ec) : ec_(ec) {}
   FT operator()(const Point_3& p, const int dim, const Index& index) const
   { return ec_.sizing_field(p,dim,index); }
@@ -194,23 +193,43 @@ private:
   const EdgeCriteria& ec_;
 };
 
-template < typename C3T3, typename MeshDomain, typename MeshCriteria >
-void
-init_c3t3_with_features(C3T3& c3t3,
-                        const MeshDomain& domain,
-                        const MeshCriteria& criteria,
-                        bool nonlinear = false)
+template < typename C3T3, typename MeshDomain, typename MeshCriteria>
+void init_c3t3_with_features(C3T3& c3t3,
+                             const MeshDomain& domain,
+                             const MeshCriteria& criteria,
+                             bool nonlinear = false)
 {
   typedef typename MeshCriteria::Edge_criteria Edge_criteria;
   typedef Edge_criteria_sizing_field_wrapper<Edge_criteria> Sizing_field;
 
-  CGAL::Mesh_3::Protect_edges_sizing_field<C3T3,MeshDomain,Sizing_field>     
+  CGAL::Mesh_3::Protect_edges_sizing_field<C3T3,MeshDomain,Sizing_field>
     protect_edges(c3t3, domain, Sizing_field(criteria.edge_criteria_object()));
   protect_edges.set_nonlinear_growth_of_balls(nonlinear);
-  
+
   protect_edges(true);
 }
-  
+
+// This class is only used as base for specializations of C3t3_initializer
+// when MeshDomain::Has_features is a valid type and is defined to CGAL::Tag_true
+//
+// Its purpose is to make the protection process virtual because Periodic_3_mesh_3
+// handles sharp features differently and has its own 'init_c3t3_with_features()' function,
+// but everything else is identical.
+template < typename C3T3, typename MeshDomain, typename MeshCriteria>
+struct C3t3_initializer_base
+{
+  virtual ~C3t3_initializer_base() { }
+
+  // Not calling 'init_c3t3_with_features' directly to leave it as a free function
+  // outside of the C3T3_initializer class
+  virtual void initialize_features(C3T3& c3t3,
+                                   const MeshDomain& domain,
+                                   const MeshCriteria& criteria,
+                                   bool nonlinear = false)
+  {
+    return Mesh_3::internal::init_c3t3_with_features(c3t3, domain, criteria, nonlinear);
+  }
+};
 
 // C3t3_initializer: initialize c3t3
 template < typename C3T3,
@@ -218,8 +237,8 @@ template < typename C3T3,
            typename MeshCriteria,
            bool MeshDomainHasHasFeatures,
            typename HasFeatures = int>
-struct C3t3_initializer {};
-  
+struct C3t3_initializer { };
+
 // Partial specialization of C3t3_initializer
 // Handle cases where MeshDomain::Has_features is not a valid type
 template < typename C3T3, typename MD, typename MC, typename HasFeatures >
@@ -237,7 +256,7 @@ struct C3t3_initializer < C3T3, MD, MC, false, HasFeatures >
       std::cerr << "Warning: you requested a mesh with features from a domain"
                 << " without features !" << std::endl;
     }
-    
+
     init_c3t3(c3t3,domain,criteria,nb_initial_points);
   }
 };
@@ -256,7 +275,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, HasFeatures >
   {
     C3t3_initializer < C3T3, MD, MC, true, typename MD::Has_features >()
       (c3t3,domain,criteria,with_features,nonlinear,nb_initial_points);
-  }  
+  }
 };
 
 // Partial specialization of C3t3_initializer
@@ -264,7 +283,10 @@ struct C3t3_initializer < C3T3, MD, MC, true, HasFeatures >
 // to CGAL::Tag_true
 template < typename C3T3, typename MD, typename MC >
 struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true >
+  : public C3t3_initializer_base < C3T3, MD, MC >
 {
+  virtual ~C3t3_initializer() { }
+
   void operator()(C3T3& c3t3,
                   const MD& domain,
                   const MC& criteria,
@@ -273,7 +295,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true >
                   const int nb_initial_points = -1)
   {
     if ( with_features ) {
-      init_c3t3_with_features(c3t3,domain,criteria,nonlinear);
+      this->initialize_features(c3t3, domain, criteria, nonlinear);
 
       // If c3t3 initialization is not sufficient (may happen if there is only
       // a planar curve as feature for example), add some surface points
@@ -294,7 +316,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true >
     else { init_c3t3(c3t3,domain,criteria,nb_initial_points); }
   }
 };
-  
+
 // Partial specialization of C3t3_initializer
 // Handles cases where MeshDomain::Has_features is a valid type and is defined
 // to CGAL::Tag_false
@@ -313,13 +335,14 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
       std::cerr << "Warning: you requested a mesh with features from a domain"
                 << " without features !" << std::endl;
     }
-    
+
     init_c3t3(c3t3,domain,criteria,nb_initial_points);
   }
 };
 
-}} // end namespace internal::Mesh_3
-  
+} // end namespace internal
+} // end namespace Mesh_3
+
 
 // -----------------------------------
 // make_mesh_3 stuff
@@ -334,23 +357,23 @@ C3T3 make_mesh_3(const MD& md, const MC& mc, const T& ...t)
 {
   C3T3 c3t3;
   make_mesh_3_bp(c3t3,md,mc,t...);
-  return c3t3;  
+  return c3t3;
 }
 
 #else
 
 template <typename C3T3, typename MD, typename MC>
 C3T3 make_mesh_3(const MD& md, const MC& mc)
-{ 
+{
   C3T3 c3t3;
   make_mesh_3_bp(c3t3,md,mc);
   return c3t3;
 }
-  
+
 template <typename C3T3, typename MD, typename MC,
   typename Arg1>
 C3T3 make_mesh_3(const MD& md, const MC& mc, const Arg1& a1)
-{ 
+{
   C3T3 c3t3;
   make_mesh_3_bp(c3t3,md,mc,a1);
   return c3t3;
@@ -360,7 +383,7 @@ template <typename C3T3, typename MD, typename MC,
   typename Arg1, typename Arg2>
 C3T3 make_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2& a2)
 {
-  C3T3 c3t3; 
+  C3T3 c3t3;
   make_mesh_3_bp(c3t3,md,mc,a1,a2);
   return c3t3;
 }
@@ -369,7 +392,7 @@ template <typename C3T3, typename MD, typename MC,
   typename Arg1, typename Arg2, typename Arg3>
 C3T3 make_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2& a2,
                  const Arg3& a3)
-{ 
+{
   C3T3 c3t3;
   make_mesh_3_bp(c3t3,md,mc,a1,a2,a3);
   return c3t3;
@@ -379,7 +402,7 @@ template <typename C3T3, typename MD, typename MC,
   typename Arg1, typename Arg2, typename Arg3, typename Arg4>
 C3T3 make_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2& a2,
                  const Arg3& a3, const Arg4& a4)
-{ 
+{
   C3T3 c3t3;
   make_mesh_3_bp(c3t3,md,mc,a1,a2,a3,a4);
   return c3t3;
@@ -389,37 +412,37 @@ template <typename C3T3, typename MD, typename MC,
   typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5>
 C3T3 make_mesh_3(const MD& md, const MC& mc, const Arg1& a1, const Arg2& a2,
                  const Arg3& a3, const Arg4& a4, const Arg5& a5)
-{ 
+{
   C3T3 c3t3;
   make_mesh_3_bp(c3t3,md,mc,a1,a2,a3,a4,a5);
   return c3t3;
 }
 
-#endif  
- 
+#endif
+
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4003) // not enough actual parameters for macro
 #endif
-  
+
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
-// see <CGAL/Mesh_3/config.h>
-CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+// see <CGAL/boost/parameter.h>
+CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 
 BOOST_PARAMETER_FUNCTION(
   (void),
   make_mesh_3_bp,
   parameters::tag,
   (required (in_out(c3t3),*) (domain,*) (criteria,*) ) // nondeduced
-  (deduced 
+  (deduced
     (optional
       (features_param, (parameters::internal::Features_options), parameters::features(domain))
       (exude_param, (parameters::internal::Exude_options), parameters::exude())
       (perturb_param, (parameters::internal::Perturb_options), parameters::perturb())
       (odt_param, (parameters::internal::Odt_options), parameters::no_odt())
       (lloyd_param, (parameters::internal::Lloyd_options), parameters::no_lloyd())
-      (mesh_options_param, (parameters::internal::Mesh_3_options), 
+      (mesh_options_param, (parameters::internal::Mesh_3_options),
                            parameters::internal::Mesh_3_options())
       (manifold_options_param, (parameters::internal::Manifold_options),
                                parameters::internal::Manifold_options())
@@ -432,12 +455,12 @@ BOOST_PARAMETER_FUNCTION(
                    features_param.features(), mesh_options_param,
                    manifold_options_param);
 }
+
 CGAL_PRAGMA_DIAG_POP
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
-
 
 /**
  * @brief This function meshes the domain defined by mesh_traits
@@ -459,7 +482,7 @@ void make_mesh_3_impl(C3T3& c3t3,
                       const parameters::internal::Odt_options& odt,
                       const parameters::internal::Lloyd_options& lloyd,
                       const bool with_features,
-                      const parameters::internal::Mesh_3_options& 
+                      const parameters::internal::Mesh_3_options&
                         mesh_options = parameters::internal::Mesh_3_options(),
                       const parameters::internal::Manifold_options&
                         manifold_options = parameters::internal::Manifold_options())
@@ -469,11 +492,11 @@ void make_mesh_3_impl(C3T3& c3t3,
 #endif
 
   // Initialize c3t3
-  internal::Mesh_3::C3t3_initializer< 
+  Mesh_3::internal::C3t3_initializer<
     C3T3,
     MeshDomain,
     MeshCriteria,
-    internal::Mesh_3::has_Has_features<MeshDomain>::value > () (c3t3,
+    Mesh_3::internal::has_Has_features<MeshDomain>::value > () (c3t3,
             domain,
             criteria,
             with_features,
@@ -489,8 +512,7 @@ void make_mesh_3_impl(C3T3& c3t3,
                 manifold_options);
 }
 
-
-}  // end namespace CGAL
+} // end namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

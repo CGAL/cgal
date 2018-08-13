@@ -100,6 +100,7 @@ and provides a list of the parameters that are used in this package.
 - \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::isotropic_remeshing()` \endlink
 - \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::split_long_edges()` \endlink
 - `CGAL::Polygon_mesh_processing::random_perturbation()`
+- `CGAL::Polygon_mesh_processing::extrude_mesh()`
 
 ## Hole Filling Functions ##
 - `CGAL::Polygon_mesh_processing::triangulate_hole()`
@@ -145,8 +146,10 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::corefine_and_compute_union()`
 - `CGAL::Polygon_mesh_processing::corefine_and_compute_difference()`
 - `CGAL::Polygon_mesh_processing::corefine_and_compute_intersection()`
+- `CGAL::Polygon_mesh_processing::corefine_and_compute_boolean_operations()`
 - `CGAL::Polygon_mesh_processing::corefine()`
 - `CGAL::Polygon_mesh_processing::surface_intersection()`
+- `CGAL::Polygon_mesh_processing::clip()`
 - `CGAL::Polygon_mesh_processing::does_bound_a_volume()`
 
 ## Geometric Measure Functions ##
@@ -176,7 +179,6 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::edge_bbox()`
 - `CGAL::Polygon_mesh_processing::face_bbox()`
 - `CGAL::Polygon_mesh_processing::border_halfedges()`
+- `CGAL::Polygon_mesh_processing::transform()`
 
-\todo add `clip_triangle_mesh()` using the code of `Polyhedron_place_clipping.h` and `PMP::corefine()`
-\todo fix and restore remove_degenerate_faces in the user and the reference manual
 */

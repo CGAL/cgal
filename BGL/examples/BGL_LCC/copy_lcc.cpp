@@ -2,8 +2,6 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 
@@ -54,7 +52,8 @@ int main(int argc, char* argv[])
     boost::unordered_map<source_vertex_descriptor, tm_vertex_descriptor> v2v;
     boost::unordered_map<source_halfedge_descriptor, tm_halfedge_descriptor> h2h;
     
-    CGAL::copy_face_graph(T1, S, std::inserter(v2v, v2v.end()), std::inserter(h2h, h2h.end()));
+    CGAL::copy_face_graph(T1, S, CGAL::parameters::vertex_to_vertex_output_iterator(std::inserter(v2v, v2v.end()))
+                                                  .halfedge_to_halfedge_output_iterator(std::inserter(h2h, h2h.end())));
     std::ofstream out("reverse.off");
     out << S;
   }

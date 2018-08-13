@@ -1,13 +1,13 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
+#include <CGAL/_test_cls_periodic_3_alpha_shape_3.h>
+
 #include <CGAL/Alpha_shape_3.h>
 #include <CGAL/Alpha_shape_cell_base_3.h>
 #include <CGAL/Alpha_shape_vertex_base_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
-
-#include <CGAL/_test_cls_periodic_3_alpha_shape_3.h>
 
 #include <CGAL/Timer.h>
 

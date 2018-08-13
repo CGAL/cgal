@@ -7,7 +7,7 @@
 #include <cassert>
 
 #include <QDebug>
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 
 #include "Volume_plane_interface.h"
 #include "create_sphere.h"
@@ -16,6 +16,7 @@
 #include <QOpenGLShaderProgram>
 #include <QMouseEvent>
 #include <CGAL/Three/Viewer_interface.h>
+#include <CGAL/Qt/constraint.h>
 #include <CGAL/Qt/debug.h>
 
 using namespace CGAL::Three;
@@ -32,14 +33,14 @@ void printGlError(CGAL::Three::Viewer_interface*, unsigned int) {
 #endif
 
 template<int Dim>
-class Length_constraint : public qglviewer::WorldConstraint {
+class Length_constraint : public CGAL::qglviewer::WorldConstraint {
 public:
   Length_constraint(double max_) : max_(max_) { }
 
-  void constrainTranslation(qglviewer::Vec& t, qglviewer::Frame* const frame) {
+  void constrainTranslation(CGAL::qglviewer::Vec& t, CGAL::qglviewer::Frame* const frame) {
     WorldConstraint::constrainTranslation(t, frame);
-    qglviewer::Vec pos = frame->position();
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    CGAL::qglviewer::Vec pos = frame->position();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     double start = pos[Dim] - offset[Dim];
     double end = t[Dim];
     start += end;
@@ -58,12 +59,14 @@ struct z_tag {};
 
 template<typename Tag>
 class Volume_plane : public Volume_plane_interface, public Tag {
+private : 
+  float tx, ty, tz;
 public:
- Volume_plane();
+ Volume_plane(float tx, float ty, float tz);
 
  void invalidateOpenGLBuffers()
  {
-     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+     const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
      mFrame_->setPosition(offset.x, offset.y, offset.z);
  }
  bool eventFilter(QObject *, QEvent *);
@@ -74,20 +77,20 @@ public:
 
  void compute_bbox(x_tag)const
  {
-   _bbox = Bbox(0,0,0,
-               0, (adim_ - 1) * yscale_, (bdim_ - 1) * zscale_);
+   _bbox = Bbox(tx,ty,tz,
+               tx, ty+(adim_ - 1) * yscale_, tz+(bdim_ - 1) * zscale_);
  }
 
  void compute_bbox(y_tag)const
  {
-   _bbox = Bbox(0,0,0,
-               (adim_ - 1) * xscale_, 0, (bdim_ - 1) * zscale_);
+   _bbox = Bbox(tx,ty,tz,
+               tx+(adim_ - 1) * xscale_, ty, tz+(bdim_ - 1) * zscale_);
  }
 
  void compute_bbox(z_tag)const
  {
-   _bbox = Bbox(0,0,0,
-               (adim_ - 1) * xscale_, (bdim_ - 1) * yscale_, 0);
+   _bbox = Bbox(tx,ty,tz,
+               tx+(adim_ - 1) * xscale_,ty+ (bdim_ - 1) * yscale_, tz);
  }
 
  void setData(unsigned int adim, unsigned int bdim, unsigned int cdim,
@@ -115,7 +118,7 @@ public:
   unsigned int bDim() const { return bdim_; }
   unsigned int cDim() const { return cdim_; }
 
-  qglviewer::Vec translationVector() const { return translationVector(*this); }
+  CGAL::qglviewer::Vec translationVector() const { return translationVector(*this); }
 
   unsigned int getCurrentCube() const { return currentCube; }
 
@@ -135,16 +138,19 @@ private:
   static const char* vertexShader_bordures_source;
 
   static const char* fragmentShader_bordures_source;
+  
+  static const char* vertexShader_source_comp;
 
+  static const char* fragmentShader_source_comp;
 
-  qglviewer::Vec translationVector(x_tag) const {
-    return qglviewer::Vec(xscale_, 0.0, 0.0);
+  CGAL::qglviewer::Vec translationVector(x_tag) const {
+    return CGAL::qglviewer::Vec(xscale_, 0.0, 0.0);
   }
-  qglviewer::Vec translationVector(y_tag) const {
-    return qglviewer::Vec(0.0, yscale_, 0.0);
+  CGAL::qglviewer::Vec translationVector(y_tag) const {
+    return CGAL::qglviewer::Vec(0.0, yscale_, 0.0);
   }
-  qglviewer::Vec translationVector(z_tag) const {
-    return qglviewer::Vec(0.0, 0.0, zscale_);
+  CGAL::qglviewer::Vec translationVector(z_tag) const {
+    return CGAL::qglviewer::Vec(0.0, 0.0, zscale_);
   }
 
   void initShaders();
@@ -181,7 +187,7 @@ private:
   mutable std::vector<float> v_spheres;
   mutable std::vector<float> n_spheres;
   mutable std::vector<float> c_spheres;
-  mutable QOpenGLShaderProgram program_bordures;
+  mutable QOpenGLShaderProgram* program_bordures;
   mutable QOpenGLShaderProgram program;
   mutable QOpenGLShaderProgram* spheres_program;
   mutable std::vector< std::pair<QOpenGLBuffer, unsigned int> > ebos;
@@ -204,29 +210,60 @@ private:
     return (std::max)((std::max)(max_a, max_b), max_c);
 
   }
-  void drawRectangle(x_tag) const {
+  void drawRectangle(x_tag, bool is_loop) const {
 
-
+    
       v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
       v_rec.push_back(0.0f); v_rec.push_back((adim_ - 1) * yscale_); v_rec.push_back(0.0f);
+      if(!is_loop){
+        v_rec.push_back(0.0f); v_rec.push_back((adim_ - 1) * yscale_); v_rec.push_back(0.0f);
+      }
       v_rec.push_back(0.0f); v_rec.push_back((adim_ - 1) * yscale_); v_rec.push_back((bdim_ - 1) * zscale_);
+      if(!is_loop){
+        v_rec.push_back(0.0f); v_rec.push_back((adim_ - 1) * yscale_); v_rec.push_back((bdim_ - 1) * zscale_);
+      }
       v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back((bdim_ - 1) * zscale_);
+      if(!is_loop)
+      {
+        v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back((bdim_ - 1) * zscale_);
+        v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
+      }
 
 
   }
 
-  void drawRectangle(y_tag) const {
+  void drawRectangle(y_tag, bool is_loop) const {
       v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
       v_rec.push_back((adim_ - 1) * xscale_);v_rec.push_back(0.0f); v_rec.push_back(0.0f);
+      if(!is_loop){
+        v_rec.push_back((adim_ - 1) * xscale_);v_rec.push_back(0.0f); v_rec.push_back(0.0f);
+      }
       v_rec.push_back((adim_ - 1) * xscale_);v_rec.push_back(0.0f);v_rec.push_back( (bdim_ - 1) * zscale_);
+      if(!is_loop){
+        v_rec.push_back((adim_ - 1) * xscale_);v_rec.push_back(0.0f);v_rec.push_back( (bdim_ - 1) * zscale_);
+      }
       v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back((bdim_ - 1) * zscale_);
+      if(!is_loop){
+        v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back((bdim_ - 1) * zscale_);
+        v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
+      }
   }
 
-  void drawRectangle(z_tag) const {
+  void drawRectangle(z_tag, bool is_loop) const {
       v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
       v_rec.push_back((adim_ - 1) * xscale_); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
+      if(!is_loop){
+        v_rec.push_back((adim_ - 1) * xscale_); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
+      }
       v_rec.push_back((adim_ - 1) * xscale_); v_rec.push_back((bdim_ - 1) * yscale_); v_rec.push_back(0.0f);
+      if(!is_loop){
+        v_rec.push_back((adim_ - 1) * xscale_); v_rec.push_back((bdim_ - 1) * yscale_); v_rec.push_back(0.0f);
+      }
       v_rec.push_back(0.0f); v_rec.push_back((bdim_ - 1) * yscale_); v_rec.push_back(0.0f);
+      if(!is_loop){
+        v_rec.push_back(0.0f); v_rec.push_back((bdim_ - 1) * yscale_); v_rec.push_back(0.0f);
+        v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
+      }
   }
 
   void drawSpheres(x_tag) const
@@ -266,24 +303,24 @@ private:
       c_spheres.push_back((adim_ - 1) * xscale_/2.0f-max_dim/15.0f); c_spheres.push_back(0.0f); c_spheres.push_back(0.0f);
   }
 
-  qglviewer::Constraint* setConstraint(x_tag) {
-    qglviewer::AxisPlaneConstraint* c = new Length_constraint<0>(cdim_ * xscale_);
-    c->setRotationConstraintType(qglviewer::AxisPlaneConstraint::FORBIDDEN);
-    c->setTranslationConstraint(qglviewer::AxisPlaneConstraint::AXIS, qglviewer::Vec(1.0f, 0.0f, 0.0f));
+  CGAL::qglviewer::Constraint* setConstraint(x_tag) {
+    CGAL::qglviewer::AxisPlaneConstraint* c = new Length_constraint<0>(cdim_ * xscale_);
+    c->setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FORBIDDEN);
+    c->setTranslationConstraint(CGAL::qglviewer::AxisPlaneConstraint::AXIS, CGAL::qglviewer::Vec(1.0f, 0.0f, 0.0f));
     return c;
   }
   
-  qglviewer::Constraint* setConstraint(y_tag) {
-    qglviewer::AxisPlaneConstraint* c = new Length_constraint<1>(cdim_ * yscale_);
-    c->setRotationConstraintType(qglviewer::AxisPlaneConstraint::FORBIDDEN);
-    c->setTranslationConstraint(qglviewer::AxisPlaneConstraint::AXIS, qglviewer::Vec(0.0f, 1.0f, 0.0f));
+  CGAL::qglviewer::Constraint* setConstraint(y_tag) {
+    CGAL::qglviewer::AxisPlaneConstraint* c = new Length_constraint<1>(cdim_ * yscale_);
+    c->setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FORBIDDEN);
+    c->setTranslationConstraint(CGAL::qglviewer::AxisPlaneConstraint::AXIS, CGAL::qglviewer::Vec(0.0f, 1.0f, 0.0f));
     return c;
   }
 
-  qglviewer::Constraint* setConstraint(z_tag) {
-    qglviewer::AxisPlaneConstraint* c = new Length_constraint<2>(cdim_ * zscale_);
-    c->setRotationConstraintType(qglviewer::AxisPlaneConstraint::FORBIDDEN);
-    c->setTranslationConstraint(qglviewer::AxisPlaneConstraint::AXIS, qglviewer::Vec(0.0f, 0.0f, 1.0f));
+  CGAL::qglviewer::Constraint* setConstraint(z_tag) {
+    CGAL::qglviewer::AxisPlaneConstraint* c = new Length_constraint<2>(cdim_ * zscale_);
+    c->setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FORBIDDEN);
+    c->setTranslationConstraint(CGAL::qglviewer::AxisPlaneConstraint::AXIS, CGAL::qglviewer::Vec(0.0f, 0.0f, 1.0f));
     return c;
   }
 
@@ -294,15 +331,15 @@ private:
 
   GLdouble getTranslation() const { return getTranslation(*this); }
   GLdouble getTranslation(x_tag) const {
-      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
       return (mFrame_->matrix()[12]  - offset.x)/ xscale_;
   }
   GLdouble getTranslation(y_tag) const {
-      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
       return (mFrame_->matrix()[13]  - offset.y)/ yscale_;
   }
   GLdouble getTranslation(z_tag) const {
-      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
       return (mFrame_->matrix()[14] - offset.z)/ zscale_ ;
   }
 
@@ -342,7 +379,17 @@ private:
 
 template<typename T>
 const char* Volume_plane<T>::vertexShader_source =
-      "#version 120 \n"
+      "#version 150  \n"
+      "in vec4 vertex; \n"
+      "in float color; \n"
+      "uniform mat4 mvp_matrix; \n"
+      "uniform mat4 f_matrix; \n"
+      "out vec4 fullColor; \n"
+      "void main() \n"
+      "{ gl_Position = mvp_matrix * f_matrix * vertex; \n"
+      " fullColor = vec4(color, color, color, 1.0); } \n";
+template<typename T>
+const char* Volume_plane<T>::vertexShader_source_comp =
       "attribute highp vec4 vertex; \n"
       "attribute highp float color; \n"
       "uniform highp mat4 mvp_matrix; \n"
@@ -354,40 +401,45 @@ const char* Volume_plane<T>::vertexShader_source =
 
 template<typename T>
 const char* Volume_plane<T>::fragmentShader_source =
-      "#version 120\n"
+      "#version 150 \n"
+      "in vec4 fullColor; \n"
+      "out vec4 out_color; \n"
+      "void main() { out_color = fullColor; } \n";
+template<typename T>
+const char* Volume_plane<T>::fragmentShader_source_comp =
       "varying highp vec4 fullColor; \n"
       "void main() { gl_FragColor = fullColor; } \n";
 
 template<typename T>
 const char* Volume_plane<T>::vertexShader_bordures_source =
-      "#version 120 \n"
       "attribute highp vec4 vertex; \n"
-      "uniform highp vec4 color; \n"
+      "attribute highp vec4 colors; \n"
       "uniform highp mat4 mvp_matrix; \n"
       "uniform highp mat4 f_matrix; \n"
       "varying highp vec4 fullColor; \n"
       "void main() \n"
       "{ gl_Position = mvp_matrix * f_matrix * vertex; \n"
-      " fullColor = color; } \n";
+      " fullColor = colors; } \n";
+
 
 template<typename T>
 const char* Volume_plane<T>::fragmentShader_bordures_source =
-      "#version 120\n"
       "varying highp vec4 fullColor; \n"
       "void main() { gl_FragColor = fullColor; } \n";
 
 
-
 template<typename T>
-Volume_plane<T>::Volume_plane()
-  : Volume_plane_interface(new qglviewer::ManipulatedFrame)
+Volume_plane<T>::Volume_plane(float tx, float ty, float tz)
+  : Volume_plane_interface(new CGAL::qglviewer::ManipulatedFrame),
+    tx(tx), ty(ty), tz(tz)    
  {
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     mFrame_->setPosition(offset.x, offset.y, offset.z);
     sphere_Slider = new QSlider(Qt::Horizontal);
     sphere_Slider->setValue(40);
     sphere_Slider->setMinimum(1);
     sphere_Slider->setMaximum(100);
+    program_bordures = NULL;
  }
 template<typename T>
 void Volume_plane<T>::setData(unsigned int adim, unsigned int bdim, unsigned int cdim, float xscale, float yscale, float zscale, std::vector<float> &colors)
@@ -421,7 +473,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   updateCurrentCube();
 
 
-
+  viewer->glDepthRangef(0.00001f,0.99999f);
   GLdouble mat[16];
   viewer->camera()->getModelViewProjectionMatrix(mat);
   QMatrix4x4 mvp;
@@ -431,34 +483,62 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
       mvp.data()[i] = (float)mat[i];
       f.data()[i] = (float)mFrame_->matrix()[i];
   }
+  mvp.translate(QVector3D(tx, ty, tz));
 
-
-  program_bordures.bind();
-  program_bordures.setUniformValue("mvp_matrix", mvp);
-  program_bordures.setUniformValue("f_matrix", f);
-  program_bordures.release();
+ if(!program_bordures)
+  {
+    if(viewer->isOpenGL_4_3())
+      program_bordures = viewer->getShaderProgram(PROGRAM_SOLID_WIREFRAME);
+    else
+    {
+      program_bordures = new QOpenGLShaderProgram(viewer);
+      program_bordures->addShaderFromSourceCode(QOpenGLShader::Vertex,vertexShader_bordures_source);
+      program_bordures->addShaderFromSourceCode(QOpenGLShader::Fragment,fragmentShader_bordures_source);
+      
+      program_bordures->link();
+    }
+  }
+  program_bordures->bind();
+  program_bordures->setUniformValue("mvp_matrix", mvp);
+  program_bordures->setUniformValue("f_matrix", f);
+  program_bordures->release();
   GLint renderMode;
   viewer->glGetIntegerv(GL_RENDER_MODE, &renderMode);
   printGlError(viewer, __LINE__);
 
-
-  viewer->glLineWidth(4.0f);
   v_rec.resize(0);
-  drawRectangle(*this);
+  drawRectangle(*this, !viewer->isOpenGL_4_3());
 
-  program_bordures.bind();
+  program_bordures->bind();
+  vaos[2]->bind();
   rectBuffer.create();
   rectBuffer.bind();
   rectBuffer.allocate(v_rec.data(), static_cast<int>(v_rec.size()*sizeof(float)));
-  program_bordures.setAttributeBuffer("vertex",GL_FLOAT,0,3);
-  program_bordures.enableAttributeArray("vertex");
-  program_bordures.setUniformValue("color",this->color());
-  viewer->glDrawArrays(GL_LINE_LOOP, 0, static_cast<GLsizei>(v_rec.size()/3));
+  program_bordures->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+  program_bordures->enableAttributeArray("vertex");
+  program_bordures->disableAttributeArray("colors");
+  program_bordures->setAttributeValue("colors",this->color());
+  if(!viewer->isOpenGL_4_3())
+  {
+    viewer->glDrawArrays(GL_LINE_LOOP, 0, static_cast<GLsizei>(v_rec.size()/3));
+  }
+  else
+  {
+    QVector2D vp(viewer->width(), viewer->height());
+    program_bordures->setUniformValue("viewport", vp);
+    program_bordures->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
+    program_bordures->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+    program_bordures->setUniformValue("width", 4.0f);
+    viewer->glDepthRangef(0.00005f, 0.99995f);
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_rec.size()/3));
+    viewer->glDepthRangef(0.0,1.0);
+  }
   rectBuffer.release();
-  program_bordures.release();
-  viewer->glLineWidth(1.0f);
+  vaos[1]->release();
+  program_bordures->release();
 
   program.bind();
+  vaos[1]->bind();
   int mvpLoc = program.uniformLocation("mvp_matrix");
   int fLoc = program.uniformLocation("f_matrix");
   program.setUniformValue(mvpLoc, mvp);
@@ -468,11 +548,10 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   program.enableAttributeArray(vloc);
   program.setAttributeBuffer(vloc, GL_FLOAT, 0, 3);
   vVBO.release();
-
   cbuffer.bind();
   int colorLoc = program.attributeLocation("color");
   program.enableAttributeArray(colorLoc);
-  program.setAttributeBuffer(colorLoc, GL_FLOAT, (currentCube*sizeof(float)) * (bdim_) * (adim_), 1, 0 );
+  program.setAttributeBuffer(colorLoc, GL_FLOAT, (currentCube*int(sizeof(float))) * (bdim_) * (adim_), 1, 0 );
   cbuffer.release();
 
 
@@ -488,6 +567,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
 
   cbuffer.release();
   printGlError(viewer, __LINE__);
+  vaos[1]->release();
   program.release();
 
   printGlError(viewer, __LINE__);
@@ -507,6 +587,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   double max_dim = compute_maxDim();
   sphere_radius = max_dim/20.0f * sphere_Slider->value()/100.0f;
   spheres_program->setAttributeValue("radius", sphere_radius);
+  spheres_program->disableAttributeArray("colors");
   spheres_program->setAttributeValue("colors", this->color());
   spheres_program->setUniformValue("mvp_matrix", mvp);
   viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
@@ -536,9 +617,11 @@ void Volume_plane<T>::init(Viewer_interface* viewer) {
   assert(vertices.size() == (3 * adim_ * bdim_));
 
   vVBO.create();
+  vaos[1]->bind();
   vVBO.bind();
   vVBO.allocate(vertices.data(),static_cast<int>(sizeof(float) * vertices.size()));
   vVBO.release();
+  vaos[1]->release();
   printGlError(viewer, __LINE__);
 
   // for each patch
@@ -578,7 +661,10 @@ void Volume_plane<T>::init(Viewer_interface* viewer) {
   for(unsigned int i = 0; i < indices.size(); i+=slice)
   {
     QOpenGLBuffer ebo = QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
-    unsigned int left_over = (i + slice) > indices.size()  ? std::distance(indices.begin() + i, indices.end()) : slice;
+    unsigned int left_over =
+      (i + slice) > indices.size()  ?
+      (unsigned int)(std::distance(indices.begin() + i, indices.end())) :
+      slice;
     ebo.create();
     ebo.bind();
     ebo.allocate(&indices[i],static_cast<int>(sizeof(unsigned int) * left_over));
@@ -596,24 +682,18 @@ void Volume_plane<T>::init(Viewer_interface* viewer) {
 
 template<typename T>
 void Volume_plane<T>::initShaders() {
-  QOpenGLShader *vertex = new QOpenGLShader(QOpenGLShader::Vertex);
-
-  vertex->compileSourceCode(vertexShader_source);
-  QOpenGLShader *fragment= new QOpenGLShader(QOpenGLShader::Fragment);
-  fragment->compileSourceCode(fragmentShader_source);
-  program.addShader(vertex);
-  program.addShader(fragment);
+  if(QOpenGLContext::currentContext()->format().majorVersion() >= 3)
+  {
+    program.addShaderFromSourceCode(QOpenGLShader::Vertex, vertexShader_source  );
+    program.addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentShader_source);
+  }
+  else
+  {
+    program.addShaderFromSourceCode(QOpenGLShader::Vertex, vertexShader_source_comp  );
+    program.addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentShader_source_comp);
+  }
   program.link();
 
-
-  QOpenGLShader *vertex_bordures = new QOpenGLShader(QOpenGLShader::Vertex);
-
-  vertex_bordures->compileSourceCode(vertexShader_bordures_source);
-  QOpenGLShader *fragment_bordures= new QOpenGLShader(QOpenGLShader::Fragment);
-  fragment_bordures->compileSourceCode(fragmentShader_bordures_source);
-  program_bordures.addShader(vertex_bordures);
-  program_bordures.addShader(fragment_bordures);
-  program_bordures.link();
 }
 
 
@@ -621,7 +701,7 @@ void Volume_plane<T>::initShaders() {
 template<typename T>
 bool Volume_plane<T>::eventFilter(QObject *, QEvent *event)
 {
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
     if(event->type() == QEvent::MouseButtonPress)
     {
         QMouseEvent* e = static_cast<QMouseEvent*>(event);
@@ -630,18 +710,18 @@ bool Volume_plane<T>::eventFilter(QObject *, QEvent *event)
             //pick
             bool found = false;
             viewer->makeCurrent();
-            qglviewer::Vec pos = viewer->camera()->pointUnderPixel(e->pos(), found);
+            CGAL::qglviewer::Vec pos = viewer->camera()->pointUnderPixel(e->pos(), found);
             if(!found)
                 return false;
             found = false;
             //check the found point is on a sphere
             pos = manipulatedFrame()->inverse().inverseCoordinatesOf(pos);
             float sq_radius = sphere_radius * sphere_radius;
-            qglviewer::Vec center;
+            CGAL::qglviewer::Vec center;
             //is the picked point on the sphere ?
             for (int i=0; i<4; ++i)
             {
-                center = qglviewer::Vec(c_spheres[i*3], c_spheres[i*3+1], c_spheres[i*3+2]);
+                center = CGAL::qglviewer::Vec(c_spheres[i*3]+tx, c_spheres[i*3+1]+ty, c_spheres[i*3+2]+tz);
                 if(
                         (center.x - pos.x) * (center.x - pos.x) +
                         (center.y - pos.y) * (center.y - pos.y) +
@@ -660,8 +740,8 @@ bool Volume_plane<T>::eventFilter(QObject *, QEvent *event)
             viewer->setMouseBinding(
                         Qt::NoModifier,
                         Qt::LeftButton,
-                        QGLViewer::FRAME,
-                        QGLViewer::TRANSLATE);
+                        CGAL::qglviewer::FRAME,
+                        CGAL::qglviewer::TRANSLATE);
         }
     }
     else if(event->type() == QEvent::MouseButtonRelease && is_grabbing)
@@ -670,8 +750,8 @@ bool Volume_plane<T>::eventFilter(QObject *, QEvent *event)
         viewer->setMouseBinding(
                     Qt::NoModifier,
                     Qt::LeftButton,
-                    QGLViewer::CAMERA,
-                    QGLViewer::ROTATE);
+                    CGAL::qglviewer::CAMERA,
+                    CGAL::qglviewer::ROTATE);
     }
     return false;
 }

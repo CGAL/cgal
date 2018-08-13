@@ -63,9 +63,6 @@ CGAL packages, some are only needed for demos.
      - Qt5 (>= 5.3)
        http://qt-project.org/
 
-     - libQGLViewer
-       http://www.libqglviewer.com/
-
      - Geomview
        http://www.geomview.org/
        Not supported with Visual C++

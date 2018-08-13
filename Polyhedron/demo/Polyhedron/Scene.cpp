@@ -24,6 +24,7 @@
 #include <QList>
 #include <QAbstractProxyModel>
 #include <QMimeData>
+#include <QOpenGLFramebufferObject>
 
 
 Scene::Scene(QObject* parent)
@@ -37,6 +38,8 @@ Scene::Scene(QObject* parent)
                                       double, double, double)),
             this, SLOT(setSelectionRay(double, double, double,
                                        double, double, double)));
+    connect(this, SIGNAL(indexErased(Scene_interface::Item_id)),
+              this, SLOT(adjustIds(Scene_interface::Item_id)));
     picked = false;
     gl_init = false;
 
@@ -46,6 +49,7 @@ Scene::addItem(CGAL::Three::Scene_item* item)
 {
     Bbox bbox_before = bbox();
     m_entries.push_back(item);
+    Item_id id = m_entries.size() - 1;
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
     connect(item, SIGNAL(itemVisibilityChanged()),
@@ -70,7 +74,7 @@ Scene::addItem(CGAL::Three::Scene_item* item)
         index_map[list.at(i)->index()] = m_entries.size() -1;
     }
     Q_EMIT updated();
-    Item_id id = m_entries.size() - 1;
+    children.push_back(id);
     Q_EMIT newItem(id);
     CGAL::Three::Scene_group_item* group =
             qobject_cast<CGAL::Three::Scene_group_item*>(item);
@@ -95,13 +99,14 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
             qobject_cast<CGAL::Three::Scene_group_item*>(m_entries[index]);
     if(group)
     {
-      QList<int> children;
-      Q_FOREACH(CGAL::Three::Scene_item* child, group->getChildren())
+      QList<int> group_children;
+      Q_FOREACH(Item_id id, group->getChildren())
       {
+        CGAL::Three::Scene_item* child = group->getChild(id);
         group->unlockChild(child);
-        children << item_id(child);
+        group_children << item_id(child);
       }
-      erase(children);
+      erase(group_children);
     }
     CGAL::Three::Scene_group_item* parent = m_entries[index]->parentGroup();
     bool is_locked = false;
@@ -166,7 +171,10 @@ Scene::erase(Scene::Item_id index)
     item->parentGroup()->removeChild(item);
 
   //removes the item from all groups that contain it
-  m_entries.removeAll(item);
+  Item_id removed_item = item_id(item);
+  children.removeAll(removed_item);
+  indexErased(removed_item);
+    m_entries.removeAll(item);
   Q_EMIT itemAboutToBeDestroyed(item);
   item->aboutToBeDestroyed();
   item->deleteLater();
@@ -207,8 +215,9 @@ Scene::erase(QList<int> indices)
     Scene_group_item* group = qobject_cast<Scene_group_item*>(item);
     if(group)
     {
-      Q_FOREACH(Scene_item* child, group->getChildren())
+      Q_FOREACH(Item_id id, group->getChildren())
       {
+        CGAL::Three::Scene_item* child = group->getChild(id);
         if(!to_be_removed.contains(child))
           to_be_removed.push_back(child);
       }
@@ -218,9 +227,15 @@ Scene::erase(QList<int> indices)
   }
 
   Q_FOREACH(Scene_item* item, to_be_removed) {
+    Item_id removed_item = item_id(item);
+    if(removed_item == -1) //case of the selection_item, for example.
+      continue;
     if(item->parentGroup())
       item->parentGroup()->removeChild(item);
-    m_entries.removeAll(item);
+        children.removeAll(removed_item);
+        indexErased(removed_item);
+        m_entries.removeAll(item);
+    
     Q_EMIT itemAboutToBeDestroyed(item);
     item->aboutToBeDestroyed();
     item->deleteLater();
@@ -255,6 +270,7 @@ void Scene::remove_item_from_groups(Scene_item* item)
     if(group)
     {
         group->removeChild(item);
+        children.push_back(item_id(item));
     }
 }
 Scene::~Scene()
@@ -308,22 +324,135 @@ Scene::duplicate(Item_id index)
 
 void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
 {
-
-    //Setting the light options
-
-    // Create light components
-    GLfloat ambientLight[] = { 0.4f, 0.4f, 0.4f, 1.0f };
-    GLfloat diffuseLight[] = { 1.0f, 1.0f, 1.0, 1.0f };
-    GLfloat specularLight[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    GLfloat position[] = { 0.0f, 0.0f, 1.0f, 1.0f };
-
-    // Assign created components to GL_LIGHT0
-    viewer->glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-    viewer->glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-    viewer->glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-    viewer->glLightfv(GL_LIGHT0, GL_POSITION, position);
-
-    gl_init = true;
+  
+  //Vertex source code
+  const char vertex_source[] =
+  {
+    "#version 150                                 \n"
+    "in vec4 vertex;                \n"
+    "in vec2 v_texCoord;            \n"
+    "uniform mat4 projection_matrix;       \n"
+    "out vec2 f_texCoord;              \n"
+    "void main(void)                             \n"
+    "{                                           \n"
+    "  f_texCoord = v_texCoord;                  \n"
+    "  gl_Position = projection_matrix * vertex; \n"
+    "}                                           \n"
+    
+  };
+  
+  const char vertex_source_comp[] =
+  {
+    "attribute highp vec4 vertex;                \n"
+    "attribute highp vec2 v_texCoord;            \n"
+    "uniform highp mat4 projection_matrix;       \n"
+    "varying highp vec2 f_texCoord;              \n"
+    "void main(void)                             \n"
+    "{                                           \n"
+    "  f_texCoord = v_texCoord;                  \n"
+    "  gl_Position = projection_matrix * vertex; \n"
+    "}                                           \n"
+    
+  };
+  //Fragment source code
+  const char fragment_source[] =
+  {
+    "#version 150                                                            \n"
+    "in vec2 f_texCoord;                                         \n"
+    "out vec4 out_color ; \n"
+    "uniform sampler2D s_texture;                                             \n"
+    "void main(void)                                                        \n"
+    "{                                                                      \n"
+    "  out_color = texture(s_texture, f_texCoord); \n"
+    "}                                                                      \n"
+  };
+  const char fragment_source_comp[] =
+  {
+    "varying highp vec2 f_texCoord;                                         \n"
+    "uniform sampler2D texture;                                             \n"
+    "void main(void)                                                        \n"
+    "{                                                                      \n"
+    "  gl_FragColor = texture2D(texture, f_texCoord); \n"
+    "}                                                                      \n"
+  };
+  
+  
+  QOpenGLShader vertex_shader(QOpenGLShader::Vertex);
+  QOpenGLShader fragment_shader(QOpenGLShader::Fragment);
+  if(viewer->isOpenGL_4_3())
+  {
+    if(!vertex_shader.compileSourceCode(vertex_source))
+    {
+      std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+    }
+    
+    if(!fragment_shader.compileSourceCode(fragment_source))
+    {
+      std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+    }
+  }
+  else
+  {
+    if(!vertex_shader.compileSourceCode(vertex_source_comp))
+    {
+      std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+    }
+    
+    if(!fragment_shader.compileSourceCode(fragment_source_comp))
+    {
+      std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+    }
+  }
+  
+  if(!program.addShader(&vertex_shader))
+  {
+    std::cerr<<"adding vertex shader FAILED"<<std::endl;
+  }
+  if(!program.addShader(&fragment_shader))
+  {
+    std::cerr<<"adding fragment shader FAILED"<<std::endl;
+  }
+  if(!program.link())
+  {
+    //std::cerr<<"linking Program FAILED"<<std::endl;
+    qDebug() << program.log();
+  }
+  points[0] = -1.0f; points[1] = -1.0f; points[2] = 0.0f;
+  points[3] = 1.0f; points[4] = 1.0f; points[5] = 0.0f;
+  points[6] = 1.0f; points[7] = -1.0f; points[8] = 0.0f;
+  points[9] = -1.0f; points[10] = -1.0f; points[11] = 0.0f;
+  points[12] = -1.0f; points[13] = 1.0f; points[14] = 0.0f;
+  points[15] = 1.0f; points[16] = 1.0f; points[17] = 0.0f;
+  
+  uvs[0] = 0.0f; uvs[1] = 0.0f;
+  uvs[2] = 1.0f; uvs[3] = 1.0f;
+  uvs[4] = 1.0f; uvs[5] = 0.0f;
+  uvs[6] = 0.0f; uvs[7] = 0.0f;
+  uvs[8] = 0.0f; uvs[9] = 1.0f;
+  uvs[10] = 1.0f; uvs[11] = 1.0f;
+  
+  vbo[0].create();
+  vbo[1].create();
+  
+  viewer->makeCurrent();
+  vao = new QOpenGLVertexArrayObject();
+  vao->create();
+  program.bind();
+  vao->bind();
+  vbo[0].bind();
+  vbo[0].allocate(points, 18 * sizeof(float));
+  program.enableAttributeArray("vertex");
+  program.setAttributeArray("vertex", GL_FLOAT, 0, 3);
+  vbo[0].release();
+  
+  vbo[1].bind();
+  vbo[1].allocate(uvs, 12 * sizeof(float));
+  program.enableAttributeArray("v_texCoord");
+  program.setAttributeArray("v_texCoord", GL_FLOAT, 0, 2);
+  vbo[1].release();
+  vao->release();
+  program.release();
+  gl_init = true;
 }
 
 void Scene::s_itemAboutToBeDestroyed(CGAL::Three::Scene_item *rmv_itm)
@@ -367,215 +496,322 @@ bool item_should_be_skipped_in_draw(Scene_item* item) {
   }
   return true;
 }
+ 
 
+void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
+                        Viewer_interface *viewer,
+                        QMap<float, int>& picked_item_IDs,
+                        bool with_names,
+                        int pass,
+                        bool writing_depth,
+                        QOpenGLFramebufferObject *fbo)
+{
+
+  viewer->setCurrentPass(pass);
+  viewer->setDepthWriting(writing_depth);
+  viewer->setDepthPeelingFbo(fbo);
+  Q_FOREACH(Scene_interface::Item_id index, items)
+  {
+    CGAL::Three::Scene_item& item = *m_entries[index];
+    CGAL::Three::Scene_group_item* group =
+        qobject_cast<CGAL::Three::Scene_group_item*>(&item);
+    if(index == selected_item || selected_items_list.contains(index))
+    {
+      item.selection_changed(true);
+    }
+    else
+
+    {
+      item.selection_changed(false);
+    }
+
+    if(group ||item.visible())
+    {
+      if( group || item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
+      {
+        if(with_names) {
+          viewer->glClearDepthf(1.0);
+          viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        }
+        item.draw(viewer);
+      }
+
+      if(with_names) {
+
+        //    read depth buffer at pick location;
+        float depth = 1.0;
+        viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+        if (depth != 1.0)
+        {
+          //add object to list of picked objects;
+          picked_item_IDs[depth] = index;
+        }
+      }
+      if(group)
+        group->renderChildren(viewer, picked_item_IDs, picked_pixel, with_names);
+    }
+  }
+}
+
+void Scene::renderWireScene(const QList<Scene_interface::Item_id> &items,
+                            Viewer_interface *viewer,
+                            QMap<float, int>& picked_item_IDs,
+                            bool with_names)
+{
+  Q_FOREACH(Scene_interface::Item_id index, items)
+   {
+     CGAL::Three::Scene_item& item = *m_entries[index];
+     CGAL::Three::Scene_group_item* group =
+         qobject_cast<CGAL::Three::Scene_group_item*>(&item);
+     if(index == selected_item || selected_items_list.contains(index))
+     {
+         item.selection_changed(true);
+     }
+     else
+     {
+         item.selection_changed(false);
+     }
+
+     if(group ||item.visible())
+     {
+       if( group || (!with_names && item.renderingMode() == FlatPlusEdges )
+          || item.renderingMode() == Wireframe
+          || item.renderingMode() == PointsPlusNormals)
+       {
+         viewer->setGlPointSize(2.f);
+         item.drawEdges(viewer);
+       }
+       else{
+           if( item.renderingMode() == PointsPlusNormals ){
+               viewer->setGlPointSize(2.f);
+               if(index == selected_item || selected_items_list.contains(index))
+               {
+
+                 item.selection_changed(true);
+               }
+               else
+               {
+
+                 item.selection_changed(false);
+               }
+               item.drawEdges(viewer);
+           }
+       }
+
+       if((item.renderingMode() == Wireframe || item.renderingMode() == PointsPlusNormals )
+          && with_names)
+       {
+
+         //    read depth buffer at pick location;
+         float depth = 1.0;
+         viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+         if (depth != 1.0)
+         {
+           //add object to list of picked objects;
+           picked_item_IDs[depth] = index;
+         }
+       }
+     }
+   }
+}
+
+void Scene::renderPointScene(const QList<Scene_interface::Item_id> &items,
+                             Viewer_interface *viewer,
+                             QMap<float, int>& picked_item_IDs,
+                             bool with_names)
+{
+  Q_FOREACH(Scene_interface::Item_id index, items)
+  {
+    CGAL::Three::Scene_item& item = *m_entries[index];
+    CGAL::Three::Scene_group_item* group =
+        qobject_cast<CGAL::Three::Scene_group_item*>(&item);
+    if(group ||item.visible())
+    {
+      if(item.renderingMode() == Points && with_names) {
+          viewer->glClearDepthf(1.0);
+          viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      }
+
+      if(group || item.renderingMode() == Points  ||
+         (item.renderingMode() == PointsPlusNormals)  ||
+         (item.renderingMode() == ShadedPoints))
+      {
+        viewer->setGlPointSize(3.0f);
+        item.drawPoints(viewer);
+      }
+      if(item.renderingMode() == Points && with_names) {
+        //    read depth buffer at pick location;
+        float depth = 1.0;
+        viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+        if (depth != 1.0)
+        {
+          //add object to list of picked objects;
+          picked_item_IDs[depth] = index;
+        }
+      }
+    }
+  }
+}
+
+
+ bool Scene::has_alpha()
+ {
+   Q_FOREACH(Scene_item* item, m_entries)
+     if(item->alpha() != 1.0f)
+       return true;
+   return false;
+ }
 void 
 Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 {
     QMap<float, int> picked_item_IDs;
     if(with_names)
-    viewer->glEnable(GL_DEPTH_TEST);
+      viewer->glEnable(GL_DEPTH_TEST);
     if(!gl_init)
         initializeGL(viewer);
-    // Flat/Gouraud OpenGL drawing
-    for(int index = 0; index < m_entries.size(); ++index)
+    //treat opaque items first to ensure that when two items are the same, but only one is opaque,
+    //the item stays opaque
+    QList<Item_id> opaque_items;
+    QList<Item_id> transparent_items;
+    Q_FOREACH(Item_id id, children)
     {
-        CGAL::Three::Scene_item& item = *m_entries[index];
-        if(index == selected_item || selected_items_list.contains(index))
-        {
-            item.selection_changed(true);
-        }
-        else
-
-        {
-            item.selection_changed(false);
-        }
-        if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
-        if(item.visible())
-        {
-            if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
-            {
-                if(with_names) {
-                    viewer->glClearDepth(1.0);
-                    viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                }
-                viewer->glEnable(GL_LIGHTING);
-                viewer->glPointSize(2.f);
-                viewer->glLineWidth(1.0f);
-                if(item.renderingMode() == Gouraud)
-                    viewer->glShadeModel(GL_SMOOTH);
-                else
-                    viewer->glShadeModel(GL_FLAT);
-                if(viewer)
-                    item.draw(viewer);
-                else
-                    item.draw();
-
-                if(with_names) {
-
-                    //    read depth buffer at pick location;
-                    float depth = 1.0;
-                    viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-                    if (depth != 1.0)
-                    {
-                        //add object to list of picked objects;
-                        picked_item_IDs[depth] = index;
-                    }
-                }
-            }
-        }
+      Scene_item* item = m_entries[id];
+      if(item->alpha() == 1.0f)
+        opaque_items.push_back(id);
+      else
+        transparent_items.push_back(id);
     }
+    renderScene(children, viewer, picked_item_IDs, with_names, -1, false, NULL);
+    if(!with_names && has_alpha())
+    {
+      std::vector<QOpenGLFramebufferObject*> fbos;
+      std::vector<QOpenGLFramebufferObject*> depth_test;
+      QColor background = viewer->backgroundColor();
+   
+      fbos.resize((int)viewer->total_pass());
+      depth_test.resize((int)viewer->total_pass()-1);
+      
+      //first pass
+      fbos[0] = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth, GL_TEXTURE_2D, GL_RGBA32F);
+      fbos[0]->bind();
+      viewer->glDisable(GL_BLEND);
+      viewer->glEnable(GL_DEPTH_TEST);
+      viewer->glDepthFunc(GL_LESS);
+      viewer->glClearColor(0.0f,
+                           0.0f,
+                           0.0f,
+                           0.0f);
+      viewer->glClearDepthf(1);
+      viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      renderScene(opaque_items, viewer, picked_item_IDs, false, 0,false, NULL);
+      renderScene(transparent_items, viewer, picked_item_IDs, false, 0,false, NULL);
+      fbos[0]->release();
+      depth_test[0] = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth, GL_TEXTURE_2D, GL_RGBA32F);
+      depth_test[0]->bind();
+      viewer->glDisable(GL_BLEND);
+      viewer->glEnable(GL_DEPTH_TEST);
+      viewer->glDepthFunc(GL_LESS);
+      viewer->glClearColor(0.0f,
+                           0.0f,
+                           0.0f,
+                           0.0f);
+      viewer->glClearDepthf(1);
+      viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      renderScene(opaque_items, viewer, picked_item_IDs, false, 0,true, NULL);
+      renderScene(transparent_items, viewer, picked_item_IDs, false, 0,true, NULL);
+      depth_test[0]->release();
+   
+      //other passes
+      for(int i=1; i<viewer->total_pass()-1; ++i)
+      {
+        fbos[i] = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth, GL_TEXTURE_2D, GL_RGBA32F);
+        fbos[i]->bind();
+        viewer->glDisable(GL_BLEND);
+        viewer->glEnable(GL_DEPTH_TEST);
+        viewer->glDepthFunc(GL_LESS);
+        viewer->glClearColor(0.0f,
+                             0.0f,
+                             0.0f,
+                             0.0f);
+        viewer->glClearDepthf(1);
+        viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        renderWireScene(children, viewer, picked_item_IDs, false);
+        renderPointScene(children, viewer, picked_item_IDs, false);
+        renderScene(opaque_items     , viewer, picked_item_IDs, false, i, false, depth_test[i-1]);
+        renderScene(transparent_items, viewer, picked_item_IDs, false, i, false, depth_test[i-1]);
+        fbos[i]->release();
+   
+        depth_test[i] = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth, GL_TEXTURE_2D, GL_RGBA32F);
+        depth_test[i]->bind();
+        viewer->glDisable(GL_BLEND);
+        viewer->glEnable(GL_DEPTH_TEST);
+        viewer->glDepthFunc(GL_LESS);
+        viewer->glClearColor(0.0f,
+                             0.0f,
+                             0.0f,
+                             0.0f);
+        viewer->glClearDepthf(1);
+        viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        renderScene(opaque_items     , viewer, picked_item_IDs, false, i, true, depth_test[i-1]);
+        renderScene(transparent_items, viewer, picked_item_IDs, false, i, true, depth_test[i-1]);
+        depth_test[i]->release();
+      }
+   
+   
+      //last pass
+      fbos[(int)viewer->total_pass()-1] = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth, GL_TEXTURE_2D, GL_RGBA32F);
+      fbos[(int)viewer->total_pass()-1]->bind();
+      viewer->glDisable(GL_BLEND);
+      viewer->glEnable(GL_DEPTH_TEST);
+      viewer->glDepthFunc(GL_LESS);
+      viewer->glClearColor(0.0f,
+                           0.0f,
+                           0.0f,
+                           0.0f);
+      viewer->glClearDepthf(1);
+      viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      renderScene(opaque_items     , viewer, picked_item_IDs, false, (int)viewer->total_pass()-1, false, depth_test[(int)viewer->total_pass()-2]);
+      renderScene(transparent_items, viewer, picked_item_IDs, false, (int)viewer->total_pass()-1, false, depth_test[(int)viewer->total_pass()-2]);
+      fbos[(int)viewer->total_pass()-1]->release();
+      if(viewer->getStoredFrameBuffer() != NULL)
+        viewer->getStoredFrameBuffer()->bind();
+   
+      //blending
+      program.bind();
+      vao->bind();
+      viewer->glClearColor(background.redF(),
+                           background.greenF(),
+                           background.blueF(),
+                           0.0f);
+      viewer->glDisable(GL_DEPTH_TEST);
+      viewer->glClear(GL_COLOR_BUFFER_BIT);
+      viewer->glEnable(GL_BLEND);
+      viewer->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      
+      QMatrix4x4 proj_mat;
+      proj_mat.setToIdentity();
+      proj_mat.ortho(-1,1,-1,1,0,1);
+      program.setUniformValue("projection_matrix", proj_mat);
+      for(int i=0; i< (int)viewer->total_pass()-1; ++i)
+        delete depth_test[i];
+      for(int i = (int)viewer->total_pass()-1; i>=0; --i)
+      {
+        viewer->glBindTexture(GL_TEXTURE_2D, fbos[i]->texture());
+        viewer->glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(6));
+        delete fbos[i];
+      }
+      viewer->glDisable(GL_BLEND);
+      viewer->glEnable(GL_DEPTH_TEST);
+      vao->release();
+      program.release();
+    }
+   
     viewer->glDepthFunc(GL_LEQUAL);
     // Wireframe OpenGL drawing
-    for(int index = 0; index < m_entries.size(); ++index)
-    {
-        CGAL::Three::Scene_item& item = *m_entries[index];
-        if(index == selected_item || selected_items_list.contains(index))
-        {
-            item.selection_changed(true);
-        }
-        else
-        {
-            item.selection_changed(false);
-        }
-
-        if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
-        if(item.visible())
-        {
-            if((item.renderingMode() == Wireframe || item.renderingMode() == PointsPlusNormals )
-                    && with_names)
-            {
-                viewer->glClearDepth(1.0);
-                viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            }
-            if((!with_names && item.renderingMode() == FlatPlusEdges )
-                    || item.renderingMode() == Wireframe)
-            {
-                viewer->glDisable(GL_LIGHTING);
-                viewer->glPointSize(2.f);
-                viewer->glLineWidth(1.0f);
-
-                if(viewer)
-                    item.drawEdges(viewer);
-                else
-                    item.drawEdges();
-            }
-            else{
-                if( item.renderingMode() == PointsPlusNormals ){
-                    viewer->glDisable(GL_LIGHTING);
-                    viewer->glPointSize(2.f);
-                    viewer->glLineWidth(1.0f);
-                    if(index == selected_item || selected_items_list.contains(index))
-                    {
-
-                        item.selection_changed(true);
-                    }
-                    else
-                    {
-
-                        item.selection_changed(false);
-                    }
-                    if(viewer)
-                        item.drawEdges(viewer);
-                    else
-                        item.drawEdges();
-                }
-            }
-            if((item.renderingMode() == Wireframe || item.renderingMode() == PointsPlusNormals )
-                    && with_names)
-            {
-
-                //    read depth buffer at pick location;
-                float depth = 1.0;
-                viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-                if (depth != 1.0)
-                {
-                    //add object to list of picked objects;
-                    picked_item_IDs[depth] = index;
-                }
-            }
-        }
-    }
+    renderWireScene(children, viewer, picked_item_IDs, with_names);
     // Points OpenGL drawing
-    for(int index = 0; index < m_entries.size(); ++index)
-    {
-        CGAL::Three::Scene_item& item = *m_entries[index];
-        if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
-        if(item.visible())
-        {
-            if(item.renderingMode() == Points && with_names) {
-                viewer->glClearDepth(1.0);
-                viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            }
-            if(item.renderingMode() == Points  ||
-                    (!with_names && item.renderingMode() == PointsPlusNormals)  ||
-                 (!with_names && item.renderingMode() == ShadedPoints))
-            {
-                viewer->glDisable(GL_LIGHTING);
-                viewer->glPointSize(2.0f);
-                viewer->glLineWidth(1.0f);
-
-                if(viewer)
-                    item.drawPoints(viewer);
-                else
-                    item.drawPoints();
-            }
-            if(item.renderingMode() == Points && with_names) {
-                //    read depth buffer at pick location;
-                float depth = 1.0;
-                viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-                if (depth != 1.0)
-                {
-                    //add object to list of picked objects;
-                    picked_item_IDs[depth] = index;
-                }
-            }
-        }
-    }
-
-    // Transparent OpenGL drawing
-    for(int index = 0; index < m_entries.size(); ++index)
-    {
-      CGAL::Three::Scene_item& item = *m_entries[index];
-      CGAL::Three::Scene_transparent_interface* trans_item = qobject_cast<CGAL::Three::Scene_transparent_interface*>(&item);
-      if(!trans_item)
-        continue;
-
-      if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
-      if(item.visible() &&
-         (item.renderingMode() == Flat ||
-         item.renderingMode() ==FlatPlusEdges ||
-          item.renderingMode() == Gouraud)
-         )
-      {
-        if(with_names) {
-          viewer->glClearDepth(1.0);
-          viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        }
-        viewer->glEnable(GL_LIGHTING);
-        viewer->glPointSize(2.f);
-        viewer->glLineWidth(1.0f);
-
-        viewer->glShadeModel(GL_SMOOTH);
-
-        if(viewer)
-          trans_item->drawTransparent(viewer);
-        else
-          item.draw();
-
-        if(with_names) {
-
-          //    read depth buffer at pick location;
-          float depth = 1.0;
-          viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-          if (depth != 1.0)
-          {
-            //add object to list of picked objects;
-            picked_item_IDs[depth] = index;
-          }
-        }
-      }
-    }
-
+    renderPointScene(children, viewer, picked_item_IDs, with_names);
+    
     if(with_names)
     {
         QList<float> depths = picked_item_IDs.keys();
@@ -784,8 +1020,11 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
       CGAL::Three::Scene_group_item* group =
           qobject_cast<CGAL::Three::Scene_group_item*>(item(i));
       if(group)
-        Q_FOREACH(Scene_item* child, group->getChildren())
+        Q_FOREACH(Item_id id, group->getChildren())
+        {
+          CGAL::Three::Scene_item* child = item(id);
           groups_children << item_id(child);
+        }
     }
     // Insure that children of selected groups will not be added twice
     Q_FOREACH(int i, selected_items_list)
@@ -803,7 +1042,7 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
     if(group)
     {
       Q_FOREACH(int id, selected_items_list)
-        if(group->getChildren().contains(item(id)))
+        if(group->getChildren().contains(id))
         {
           one_contained = true;
           break;
@@ -821,6 +1060,7 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
           if(item->parentGroup())
           {
             item->parentGroup()->removeChild(item);
+            children.push_back(item_id(item));
           }
         }
         redraw_model();
@@ -836,53 +1076,62 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
 
 void Scene::moveRowUp()
 {
-    Scene_item* selected_item = item(mainSelectionIndex());
-    if(index_map.key(mainSelectionIndex()).row() > 0)
+  
+  int selected_id = selectionIndices().first();
+  Scene_item* selected_item = item(selected_id);
+  if(!selected_item)
+    return;
+  if(index_map.key(selected_id).row() > 0)
+  {
+    if(item(selected_id)->has_group >0)
     {
-        if(item(mainSelectionIndex())->has_group >0)
-        {
-            Scene_group_item* group = selected_item->parentGroup();
-            if(group)
-            {
-                int id = group->getChildren().indexOf(selected_item);
-                group->moveUp(id);
-            }
-        }
-        else
-        {
-            //if not in group
-            QModelIndex baseId = index_map.key(mainSelectionIndex());
-            int newId = index_map.value(index(baseId.row()-1, baseId.column(),baseId.parent())) ;
-            m_entries.move(mainSelectionIndex(), newId);
-        }
-        redraw_model();
-        setSelectedItem(m_entries.indexOf(selected_item));
+      Scene_group_item* group = selected_item->parentGroup();
+      if(group)
+      {
+        int id = group->getChildren().indexOf(item_id(selected_item));
+        group->moveUp(id);
+      }
     }
+    else
+    {
+      //if not in group
+      QModelIndex baseId = index_map.key(selected_id);
+      int newId = children.indexOf(
+            index_map.value(index(baseId.row()-1, baseId.column(),baseId.parent()))) ;
+      children.move(children.indexOf(selected_id), newId);
+    }
+    redraw_model();
+    setSelectedItem(m_entries.indexOf(selected_item));
+  }
 }
 void Scene::moveRowDown()
 {
-    Scene_item* selected_item = item(mainSelectionIndex());
-    if(index_map.key(mainSelectionIndex()).row() < rowCount(index_map.key(mainSelectionIndex()).parent())-1)
+  int selected_id = selectionIndices().first();
+  Scene_item* selected_item = item(selected_id);
+  if(!selected_item)
+    return;
+  if(index_map.key(selected_id).row() < rowCount(index_map.key(selected_id).parent())-1)
+  {
+    if(item(selected_id)->has_group >0)
     {
-        if(item(mainSelectionIndex())->has_group >0)
-        {
-            Scene_group_item* group = selected_item->parentGroup();
-            if(group)
-            {
-                int id = group->getChildren().indexOf(selected_item);
-                group->moveDown(id);
-            }
-        }
-        else
-        {
-            //if not in group
-            QModelIndex baseId = index_map.key(mainSelectionIndex());
-            int newId = index_map.value(index(baseId.row()+1, baseId.column(),baseId.parent())) ;
-            m_entries.move(mainSelectionIndex(), newId);
-        }
-        redraw_model();
-        setSelectedItem(m_entries.indexOf(selected_item));
+      Scene_group_item* group = selected_item->parentGroup();
+      if(group)
+      {
+        int id = group->getChildren().indexOf(item_id(selected_item));
+        group->moveDown(id);
+      }
     }
+    else
+    {
+      //if not in group
+      QModelIndex baseId = index_map.key(selected_id);
+      int newId = children.indexOf(
+            index_map.value(index(baseId.row()+1, baseId.column(),baseId.parent()))) ;
+      children.move(children.indexOf(selected_id), newId);
+    }
+    redraw_model();
+    setSelectedItem(m_entries.indexOf(selected_item));
+  }
 }
 Scene::Item_id Scene::mainSelectionIndex() const {
     return (selectionIndices().size() == 1) ? selected_item : -1;
@@ -909,8 +1158,8 @@ QItemSelection Scene::createSelection(int i)
 
 QItemSelection Scene::createSelectionAll()
 {
-    return QItemSelection(index_map.keys(0).at(0),
-                          index_map.keys(m_entries.size() - 1).at(4));
+    return QItemSelection(index(0, 0,index_map.key(0).parent()),
+                          index(m_entries.size()-1, 4, index_map.key(0).parent()));
 }
 
 void Scene::itemChanged()
@@ -1158,9 +1407,10 @@ void Scene::redraw_model()
     clear();
     index_map.clear();
     //fills the model
-    Q_FOREACH(Scene_item* item, m_entries)
+    Q_FOREACH(Item_id id, children)
+    
     {
-        organize_items(item, invisibleRootItem(), 0);
+        organize_items(m_entries[id], invisibleRootItem(), 0);
     }
     Q_EMIT restoreCollapsedState();
 }
@@ -1172,7 +1422,12 @@ void Scene::changeGroup(Scene_item *item, CGAL::Three::Scene_group_item *target_
       if(item->parentGroup()->isChildLocked(item))
         return;
       item->parentGroup()->removeChild(item);
+      children.push_back(item_id(item));
     }
+      else
+      {
+        children.removeAll(item_id(item));
+      }
     //add the item to the target group
     target_group->addChild(item);
     item->moveToGroup(target_group);
@@ -1292,8 +1547,9 @@ void Scene::organize_items(Scene_item* item, QStandardItem* root, int loop)
                 qobject_cast<CGAL::Three::Scene_group_item*>(item);
         if(group)
         {
-            Q_FOREACH(Scene_item*child, group->getChildren())
-            {
+          Q_FOREACH(Item_id id, group->getChildren())
+          {
+            CGAL::Three::Scene_item* child = group->getChild(id);
                 organize_items(child, list.first(), loop+1);
             }
         }
@@ -1332,6 +1588,8 @@ QList<QModelIndex> Scene::getModelIndexFromId(int id) const
 void Scene::addGroup(Scene_group_item* group)
 {
     connect(this, SIGNAL(drawFinished()), group, SLOT(resetDraw()));
+    connect(this, SIGNAL(indexErased(Scene_interface::Item_id)),
+                group, SLOT(adjustIds(Scene_interface::Item_id)));
     group->setScene(this);
 }
 
@@ -1385,5 +1643,18 @@ void Scene::zoomToPosition(QPoint point, Viewer_interface *viewer)
     {
       zoom_item->zoomToPosition(point, viewer);
     }
+  }
+}
+
+void Scene::adjustIds(Item_id removed_id)
+{
+  for(int i = 0; i < children.size(); ++i)
+  {
+    if(children[i] >= removed_id)
+      --children[i];
+  }
+  for(int i = removed_id; i < numberOfEntries(); ++i)
+  {
+    m_entries[i]->setId(i-1);//the signal is emitted before m_entries is amputed from the item, so new id is current id -1.
   }
 }

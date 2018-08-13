@@ -23,7 +23,7 @@
 #include <QApplication>
 #include <QKeyEvent>
 
-#include <QGLViewer/qglviewer.h>
+#include <CGAL/Qt/qglviewer.h>
 #include <QKeyEvent>
 #include <QOpenGLFunctions_2_1>
 #include <QOpenGLVertexArrayObject>
@@ -202,7 +202,7 @@ typename K::Vector_3 compute_normal_of_face(const std::vector<typename K::Point_
   return (typename K::Construct_scaled_vector_3()(normal, 1.0/nb));
 }
 
-class Basic_viewer : public QGLViewer, public QOpenGLFunctions_2_1
+class Basic_viewer : public CGAL::QGLViewer, public QOpenGLFunctions_2_1
 {
   struct Vertex_info
   {
@@ -231,7 +231,7 @@ class Basic_viewer : public QGLViewer, public QOpenGLFunctions_2_1
 public:
   // Constructor/Destructor
   Basic_viewer(const char* title="") :
-    QGLViewer(CGAL::Qt::createOpenGLContext()),
+    CGAL::QGLViewer(CGAL::Qt::createOpenGLContext()),
     m_draw_vertices(true),
     m_draw_edges(true),
     m_draw_faces(true),
@@ -776,7 +776,7 @@ protected:
     m_are_buffers_initialized = true;
   }
 
-  void attrib_buffers(QGLViewer* viewer)
+  void attrib_buffers(CGAL::QGLViewer* viewer)
   {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -861,36 +861,6 @@ protected:
 
     QColor color;
 
-    /*    if(m_draw_vertices)
-    {
-      ::glPointSize(m_size_points);
-      vao[3].bind();
-      attrib_buffers(this);
-      color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
-                    (double)m_vertices_mono_color.green()/(double)255,
-                    (double)m_vertices_mono_color.blue()/(double)255);
-      rendering_program_p_l.bind();
-      rendering_program_p_l.setAttributeValue(colorLocation,color);
-      //      glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
-      rendering_program_p_l.release();
-      vao[3].release();
-    }
-
-    if(m_draw_edges)
-    {
-      vao[2].bind();
-      attrib_buffers(this);
-      color.setRgbF((double)m_edges_mono_color.red()/(double)255,
-                    (double)m_edges_mono_color.green()/(double)255,
-                    (double)m_edges_mono_color.blue()/(double)255);
-      rendering_program_p_l.bind();
-      rendering_program_p_l.setAttributeValue(colorLocation,color);
-      ::glLineWidth(m_size_edges);
-      //      glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_segments.size()/3));
-      rendering_program_p_l.release();
-      vao[2].release();
-      }*/
-
     if (m_draw_faces)
     {
       vao[0].bind();
@@ -945,14 +915,9 @@ protected:
 
     // Light default parameters
     ::glLineWidth(m_size_edges);
-    ::glPointSize(m_size_points);
     ::glEnable(GL_POLYGON_OFFSET_FILL);
     ::glPolygonOffset(1.f,1.f);
     ::glClearColor(1.0f,1.0f,1.0f,0.0f);
-    ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-    ::glEnable(GL_LIGHTING);
-    ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-    ::glShadeModel(GL_FLAT);
     ::glDisable(GL_BLEND);
     ::glEnable(GL_LINE_SMOOTH);
     ::glDisable(GL_POLYGON_SMOOTH_HINT);
@@ -961,10 +926,10 @@ protected:
 
     compile_shaders();
 
-    this->camera()->setSceneBoundingBox(qglviewer::Vec(bb.xmin(),
+    this->camera()->setSceneBoundingBox(CGAL::qglviewer::Vec(bb.xmin(),
                                                        bb.ymin(),
                                                        bb.zmin()),
-                                        qglviewer::Vec(bb.xmax(),
+                                        CGAL::qglviewer::Vec(bb.xmax(),
                                                        bb.ymax(),
                                                        bb.zmax()));
 
@@ -1127,7 +1092,7 @@ protected:
       updateGL();
     }
     else
-      QGLViewer::keyPressEvent(e);
+      CGAL::QGLViewer::keyPressEvent(e);
   }
 
   virtual QString helpString() const
