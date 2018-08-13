@@ -69,26 +69,6 @@ The class expects two template parameters.
  
 
 		/*!
-			\cgalModifBegin
-			Same as above. 
-			This is the function called recursively by the overloaded version above.
-			The parameter `cf` is the face to examine if in conflict with `p`.
-			The hyperbolic translation `tr` is such that the periodic triangle
-			`(cf, tr)` is adjacent to the triangle containing `p`. The set `visited` 
-			contains all faces that have already been examined so far, to avoid 
-			unnecessary controls. The faces in conflict with `p` are stored in the 
-			output iterator `it`.
-			\cgalModifEnd
-		*/
-	  	template<class OutputFaceIterator>
-		void
-		get_conflicts(	const Point& p,
-						const Face_handle cf,
-						Hyperbolic_translation tr,
-						std::set<Face_handle>& visited,
-						OutputFaceIterator it) const;
-
-		/*!
 			Checks if the vertex `vh` is part of the set of vertices storing dummy points.
 		*/
 		bool is_dummy_vertex(Vertex_handle vh) const;
