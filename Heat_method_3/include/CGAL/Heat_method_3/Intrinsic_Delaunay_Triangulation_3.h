@@ -71,7 +71,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
   struct IDT_vertex_distance_property_map;
 
     /**
-     * Class `Intrinsic_Delaunay_Triangulation_3` is a ...
+     * Class `Intrinsic_Delaunay_Triangulation_3` is a remeshing algorithm implemented to make the Heat method's approximation better.
      * \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
      * \tparam Traits a model of IntrinsicDelaunayTriangulation_3
      * \tparam VertexPointMap a model of `ReadablePropertyMap` with
@@ -425,13 +425,26 @@ struct V2V<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangul
 {
   typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> Idt;
   const Idt& idt;
+  /**
+   * Vertex descriptor for iDT
+   */
   typedef typename boost::graph_traits<Idt>::vertex_descriptor Idt_vertex_descriptor;
+  /**
+   * Vertex descriptor for TriangleMesh 
+   */
   typedef typename boost::graph_traits<TM>::vertex_descriptor TM_vertex_descriptor;
 
+
+  /**
+   * Default constructor
+   */
   V2V(const Idt& idt)
     : idt(idt)
   {}
 
+    /**
+     * Create iDT vertex descriptor map for vertex bijection between original mesh and iDT mesh for Heat method
+     */
   Idt_vertex_descriptor operator()(const TM_vertex_descriptor& vd) const
   {
     return Idt_vertex_descriptor(idt.vtov.at(vd),idt.triangle_mesh());
@@ -600,7 +613,7 @@ halfedge(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,VD
 {
   return halfedge(ed, idt.triangle_mesh());
 }
-  
+
 template <typename TM,
           typename T,
           typename VDM,
@@ -675,11 +688,16 @@ target(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,
     typedef typename IDT::Point_2 Point_2;
     typedef value_type reference;
     typedef boost::readable_property_map_tag category;
-
+    /**
+     * Default constructor for vertex/point property map
+     */
     IDT_vertex_point_property_map(const IDT& idt)
       : idt(idt)
       {}
 
+        /**
+         * friend function for Heat method to get vertex descriptor's coordinates in iDT's local coordinate system
+         */
     friend value_type get(const IDT_vertex_point_property_map<IDT>& pm,
                           key_type vd)
     {

@@ -1,6 +1,7 @@
-// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
+// The Heat Method
 
 /// \defgroup PkgHeatMethod Heat Method Reference
+
 /// \defgroup PkgHeatMethodConcepts Concepts
 /// \ingroup PkgHeatMethod
 
@@ -21,13 +22,12 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Keenan Crane, Christina Vaz, Andreas Fabri}
-\cgalPkgDesc{The package provides ... }
+\cgalPkgDesc{The package provides the Heat Method, a geodesic distance algorithm, and an Intrinsic Delaunay remeshing algorithm to be run on Triangle Meshes. }
 \cgalPkgManuals{Chapter_HeatMethod,PkgHeatMethod}
 \cgalPkgSummaryEnd
-
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.14}
-\cgalPkgDependsOn{\ref PkgDEPENDENCY}
+\cgalPkgDependsOn{ \ref PkgSolverSummary; <a href="https://doc.cgal.org/latest/Manual/installation.html#thirdpartyEigen">Eigen</a>}
 \cgalPkgBib{cgal:x-x}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
@@ -38,15 +38,15 @@
 \cgalClassifedRefPages
 
 ## Concepts ##
-- `AA`
+- `HeatMethodTraits`
 
 ## Classes ##
 - `CGAL::Heat_method_3::Heat_method_3`
 
-## Function Templates ##
 
-- `CGAL::Heat_method_3::compute_distances_with_heat_method()`
-- `CGAL::Heat_method_3::compute_distances_with_intrinsic_delaunay_heat_method()`
 
 
 */
+\todo Add more detailed cache
+\todo Add Neumann and Dirichlet boundary conditions
+\todo Check if suitesparse is more efficient than eigen

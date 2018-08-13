@@ -93,13 +93,13 @@ Finally, let \f$b \in R^{|V|}\f$ be the integrated divergences of the normalized
   \cgalFigureBegin{landscape_mesh, landscape2withoutidt.png}
     Isolines placed on a mesh without iDT remeshing
   \cgalFigureEnd
-  \cgalFigureBegin{landscape_mesh, landscape2withidt.png}
+  \cgalFigureBegin{landscape_mesh_idt, landscape2withidt.png}
     Isolines placed on a mesh with iDT remeshing
   \cgalFigureEnd
   \cgalFigureBegin{circle_box, red_circle_box_without_idt_bottom.png}
     Isolines placed on a mesh without iDT remeshing
   \cgalFigureEnd
-  \cgalFigureBegin{circle_box, red_circle_box_with_idt_bottom.png}
+  \cgalFigureBegin{circle_box_idt, red_circle_box_with_idt_bottom.png}
     Isolines placed on a mesh with iDT remeshing
   \cgalFigureEnd
 
