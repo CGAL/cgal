@@ -418,7 +418,9 @@ public:
       {
         -- m_nb_removed;
         iterator out = m_indices.end() - m_nb_removed - 1;
+        Index idx = *out;
         m_base.reset(*out);
+        *out = idx;
         return out;
       }
   }
