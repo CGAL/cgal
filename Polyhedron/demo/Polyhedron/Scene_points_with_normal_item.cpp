@@ -135,6 +135,7 @@ struct Scene_points_with_normal_item_priv
 class Fill_buffers {
 
   Point_set* point_set;
+  std::vector<Point_set::Index>& indices;
   std::vector<CGAL_data_type>& positions_lines;
   std::vector<CGAL_data_type>& positions_normals;
   bool has_normals;
@@ -145,6 +146,7 @@ class Fill_buffers {
   
 public:
   Fill_buffers(Point_set* point_set,
+               std::vector<Point_set::Index>& indices,
                std::vector<CGAL_data_type>& positions_lines,
                std::vector<CGAL_data_type>& positions_normals,
                bool has_normals,
@@ -152,6 +154,7 @@ public:
                double length,
                std::size_t offset_normal_indices = 0)
     : point_set (point_set)
+    , indices (indices)
     , positions_lines (positions_lines)
     , positions_normals (positions_normals)
     , has_normals (has_normals)
@@ -175,8 +178,8 @@ public:
 
   void apply (std::size_t i) const
   {
-    Point_set::const_iterator it = point_set->begin() + i;
-    const Kernel::Point_3& p = point_set->point(*it);
+    const Point_set::Index& idx = indices[i];
+    const Kernel::Point_3& p = point_set->point(idx);
     
     positions_lines[i * size_p    ] = p.x() + offset.x;
     positions_lines[i * size_p + 1] = p.y() + offset.y;
@@ -184,7 +187,7 @@ public:
     
     if(has_normals)
     {
-      const Kernel::Vector_3& n = point_set->normal(*it);
+      const Kernel::Vector_3& n = point_set->normal(idx);
       Point_set_3<Kernel>::Point q = p + length * n;
       positions_lines[i * size_p + 3] = q.x() + offset.x;
       positions_lines[i * size_p + 4] = q.y() + offset.y;
@@ -413,9 +416,14 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
     colors_points.resize(0);
 
     //Shuffle container to allow quick display random points
-    CGAL::cpp98::random_shuffle (m_points->begin(), m_points->first_selected());
+    std::vector<Point_set::Index> indices;
+    indices.reserve (m_points->size());
+    std::copy (m_points->begin(), m_points->end(), std::back_inserter(indices));
+    
+    CGAL::cpp98::random_shuffle (indices.begin(), indices.end() - m_points->nb_selected_points());
     if (m_points->nb_selected_points() != 0)
-      CGAL::cpp98::random_shuffle (m_points->first_selected(), m_points->end());
+      CGAL::cpp98::random_shuffle (indices.end() - m_points->nb_selected_points(), indices.end());
+
     //if item has normals, points will be one point out of two in the lines data.
     //else points will be lines and lines discarded.
     double average_spacing = 0;
@@ -439,24 +447,24 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
       positions_lines.resize(m_points->size() * 3);
     }
 
-    Fill_buffers fill_buffers (m_points, positions_lines, positions_normals,
+    Fill_buffers fill_buffers (m_points, indices, positions_lines, positions_normals,
                                item->has_normals(), offset, normal_length * length_factor);
-    Fill_buffers fill_buffers_2 (m_points, positions_lines, positions_selected_normals,
+    Fill_buffers fill_buffers_2 (m_points, indices, positions_lines, positions_selected_normals,
                                  item->has_normals(), offset, normal_length * length_factor,
                                  m_points->first_selected() - m_points->begin());
      
 #ifdef CGAL_LINKED_WITH_TBB
     tbb::parallel_for(tbb::blocked_range<size_t>(0,
-                                                 m_points->first_selected() - m_points->begin()),
+                                                 m_points->size() - m_points->nb_selected_points()),
                       fill_buffers);
-    tbb::parallel_for(tbb::blocked_range<size_t>(m_points->first_selected() - m_points->begin(),
+    tbb::parallel_for(tbb::blocked_range<size_t>(m_points->size() - m_points->nb_selected_points(),
                                                  m_points->size()),
                       fill_buffers_2);
 #else
-    for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->first_selected(); ++it)
-      fill_buffers.apply (it - m_points->begin());
-    for (Point_set_3<Kernel>::const_iterator it = m_points->first_selected(); it != m_points->end(); ++it)
-      fill_buffers_2.apply (it - m_points->begin());
+    for (std::size_t i = 0; i < indices.size() - m_points->nb_selected_points(); ++ i)
+      fill_buffers.apply (i);
+    for (std::size_t i = indices.size() - m_points->nb_selected_points(); i < indices.size(); ++ i)
+      fill_buffers_2.apply (i);
 #endif
     
     //The colors
@@ -464,15 +472,15 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
     {
         colors_points.reserve((m_points->size() - m_points->nb_selected_points()) * 6);
 
-        for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); ++it)
-	  {
-            colors_points.push_back (m_points->red(*it));
-            colors_points.push_back (m_points->green(*it));
-            colors_points.push_back (m_points->blue(*it));
-            colors_points.push_back (m_points->red(*it));
-            colors_points.push_back (m_points->green(*it));
-            colors_points.push_back (m_points->blue(*it));
-	  }
+        for (std::size_t i = 0; i < indices.size() - m_points->nb_selected_points(); ++ i)
+        {
+          colors_points.push_back (m_points->red(indices[i]));
+          colors_points.push_back (m_points->green(indices[i]));
+          colors_points.push_back (m_points->blue(indices[i]));
+          colors_points.push_back (m_points->red(indices[i]));
+          colors_points.push_back (m_points->green(indices[i]));
+          colors_points.push_back (m_points->blue(indices[i]));
+        }
     }
         
     QApplication::restoreOverrideCursor();
