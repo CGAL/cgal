@@ -333,6 +333,12 @@ public:
   {
     return this->is_removed (it);
   }
+  
+  // Test if point is selected
+  bool is_selected(const Index& idx) const
+  {
+    return this->is_removed (idx);
+  }
 
   /// Gets the number of selected points.
   std::size_t nb_selected_points() const
@@ -341,21 +347,19 @@ public:
   }
 
   /// Mark a point as selected/not selected.
-  void select(iterator it, bool selected = true)
+  void select(const Index& index)
   {
-    bool currently = is_selected (it);
-    iterator first = this->first_selected();
-    --first;
-    if (currently && !selected)
-      {
-        std::swap (*it, *first);
-        -- this->m_nb_removed;
-      }
-    else if (!currently && selected)
-      {
-        std::swap (*it, *first);
-        ++ this->m_nb_removed;
-      }
+    this->remove(index);
+  }
+
+  /// Mark a point as selected/not selected.
+  void unselect(const Index& index)
+  {
+    iterator it = this->m_indices.begin() + index;
+    while (*it != index)
+      it = this->m_indices.begin() + *it;
+    std::iter_swap (it, first_selected());
+    this->m_nb_removed --;
   }
 
   void select_all()
