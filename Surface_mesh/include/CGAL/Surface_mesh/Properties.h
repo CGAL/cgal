@@ -267,7 +267,7 @@ public:
         return *this;
     }
 
-    bool transfer(const Property_container& _rhs)
+    void transfer(const Property_container& _rhs)
     {
       for(std::size_t i=0; i<parrays_.size(); ++i){
         for (std::size_t j=0; j<_rhs.parrays_.size(); ++j){
