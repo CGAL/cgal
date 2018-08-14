@@ -91,25 +91,44 @@ namespace CGAL {
     PLY_property (const char* name) : name (name) { }
   };
 
+  /// \cond SKIP_IN_MANUAL
+  template <typename PointOrVectorMap>
+  struct GetFTFromMap
+  {
+    typedef typename Kernel_traits<typename boost::property_traits<PointOrVectorMap>::value_type>::Kernel::FT type;
+  };
+  /// \endcond
+  
   /**
      \ingroup PkgPointSetProcessingIOPly
      
      Generates a %PLY property handler to read 3D points. Points are
-     constructed from the input using 3 %PLY properties of type
-     `double` and named `x`, `y` and `z`.
+     constructed from the input using 3 %PLY properties of type `FT`
+     and named `x`, `y` and `z`. `FT` is `float` if the points use
+     `CGAL::Simple_cartesian<float>` and `double` otherwise.
 
      \sa `read_ply_points_with_properties()`
 
      \tparam PointMap the property map used to store points.
   */
   template <typename PointMap>
+#ifdef DOXYGEN_RUNNING
   std::tuple<PointMap,
              typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3,
-             PLY_property<double>, PLY_property<double>, PLY_property<double> >
+             PLY_property<FT>, PLY_property<FT>, PLY_property<FT> >
+#else
+  std::tuple<PointMap,
+             typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3,
+             PLY_property<typename GetFTFromMap<PointMap>::type>,
+             PLY_property<typename GetFTFromMap<PointMap>::type>,
+             PLY_property<typename GetFTFromMap<PointMap>::type> >
+#endif
    make_ply_point_reader(PointMap point_map)
   {
     return std::make_tuple (point_map, typename Kernel_traits<typename PointMap::value_type>::Kernel::Construct_point_3(),
-                            PLY_property<double>("x"), PLY_property<double>("y"), PLY_property<double>("z"));
+                            PLY_property<typename GetFTFromMap<PointMap>::type>("x"),
+                            PLY_property<typename GetFTFromMap<PointMap>::type>("y"),
+                            PLY_property<typename GetFTFromMap<PointMap>::type>("z"));
   }
 
   /**
@@ -117,20 +136,32 @@ namespace CGAL {
      
      Generates a %PLY property handler to read 3D normal
      vectors. Vectors are constructed from the input using 3 PLY
-     properties of type `double` and named `nx`, `ny` and `nz`.
+     properties of type `FT` and named `nx`, `ny` and `nz`. `FT`
+     is `float` if the points use `CGAL::Simple_cartesian<float>` and
+     `double` otherwise.
 
      \sa `read_ply_points_with_properties()`
 
      \tparam VectorMap the property map used to store vectors.
   */
   template <typename VectorMap>
+#ifdef DOXYGEN_RUNNING
   std::tuple<VectorMap,
              typename Kernel_traits<typename VectorMap::value_type>::Kernel::Construct_vector_3,
-             PLY_property<double>, PLY_property<double>, PLY_property<double> >
+             PLY_property<FT>, PLY_property<FT>, PLY_property<FT> >
+#else
+  std::tuple<VectorMap,
+             typename Kernel_traits<typename VectorMap::value_type>::Kernel::Construct_vector_3,
+             PLY_property<typename GetFTFromMap<VectorMap>::type>,
+             PLY_property<typename GetFTFromMap<VectorMap>::type>,
+             PLY_property<typename GetFTFromMap<VectorMap>::type> >
+#endif
   make_ply_normal_reader(VectorMap normal_map)
   {
     return std::make_tuple (normal_map, typename Kernel_traits<typename VectorMap::value_type>::Kernel::Construct_vector_3(),
-                            PLY_property<double>("nx"), PLY_property<double>("ny"), PLY_property<double>("nz"));
+                            PLY_property<typename GetFTFromMap<VectorMap>::type>("nx"),
+                            PLY_property<typename GetFTFromMap<VectorMap>::type>("ny"),
+                            PLY_property<typename GetFTFromMap<VectorMap>::type>("nz"));
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -157,13 +188,19 @@ namespace internal {
     // The two following functions prevent the stream to only extract
     // ONE character (= what the types char imply) by requiring
     // explicitely an integer object when reading the stream
-    void read_ascii (std::istream& stream, boost::int8_t& c) const
+    void read_ascii (std::istream& stream, char& c) const
     {
       short s;
       stream >> s;
       c = static_cast<char>(s);
     }
-    void read_ascii (std::istream& stream, boost::uint8_t& c) const
+    void read_ascii (std::istream& stream, signed char& c) const
+    {
+      short s;
+      stream >> s;
+      c = static_cast<signed char>(s);
+    }
+    void read_ascii (std::istream& stream, unsigned char& c) const
     {
       unsigned short s;
       stream >> s;

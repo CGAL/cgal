@@ -49,36 +49,58 @@ namespace CGAL {
      \ingroup PkgPointSetProcessingIOPly
      
      Generates a %PLY property handler to write 3D points. Points are
-     written as 3 %PLY properties of type `double` and named `x`, `y`
-     and `z`.
+     written as 3 %PLY properties of type `FT` and named `x`, `y` and
+     `z`. `FT` is `float` if the points use
+     `CGAL::Simple_cartesian<float>` and `double` otherwise.
 
      \sa `write_ply_points_with_properties()`
 
      \tparam PointMap the property map used to store points.
   */
   template <typename PointMap>
-  std::tuple<PointMap, PLY_property<double>, PLY_property<double>, PLY_property<double> >
+#ifdef DOXYGEN_RUNNING
+  std::tuple<PointMap, PLY_property<FT>, PLY_property<FT>, PLY_property<FT> >
+#else
+  std::tuple<PointMap,
+             PLY_property<typename GetFTFromMap<PointMap>::type>,
+             PLY_property<typename GetFTFromMap<PointMap>::type>,
+             PLY_property<typename GetFTFromMap<PointMap>::type> >
+#endif
   make_ply_point_writer(PointMap point_map)
   {
-    return std::make_tuple (point_map, PLY_property<double>("x"), PLY_property<double>("y"), PLY_property<double>("z"));
+    return std::make_tuple (point_map,
+                            PLY_property<typename GetFTFromMap<PointMap>::type>("x"),
+                            PLY_property<typename GetFTFromMap<PointMap>::type>("y"),
+                            PLY_property<typename GetFTFromMap<PointMap>::type>("z"));
   }
 
   /**
      \ingroup PkgPointSetProcessingIOPly
      
      Generates a %PLY property handler to write 3D normal
-     vectors. Vectors are written as 3 %PLY properties of type `double`
-     and named `nx`, `ny` and `nz`.
+     vectors. Vectors are written as 3 %PLY properties of type `FT`
+     and named `nx`, `ny` and `nz`. `FT` is `float` if the vectors use
+     `CGAL::Simple_cartesian<float>` and `double` otherwise.
 
      \sa `write_ply_points_with_properties()`
 
      \tparam VectorMap the property map used to store vectors.
   */
   template <typename VectorMap>
-  std::tuple<VectorMap, PLY_property<double>, PLY_property<double>, PLY_property<double> >
+#ifdef DOXYGEN_RUNNING
+  std::tuple<VectorMap, PLY_property<FT>, PLY_property<FT>, PLY_property<FT> >
+#else
+  std::tuple<VectorMap,
+             PLY_property<typename GetFTFromMap<VectorMap>::type>,
+             PLY_property<typename GetFTFromMap<VectorMap>::type>,
+             PLY_property<typename GetFTFromMap<VectorMap>::type> >
+#endif
   make_ply_normal_writer(VectorMap normal_map)
   {
-    return std::make_tuple (normal_map, PLY_property<double>("nx"), PLY_property<double>("ny"), PLY_property<double>("nz"));
+    return std::make_tuple (normal_map,
+                            PLY_property<typename GetFTFromMap<VectorMap>::type>("nx"),
+                            PLY_property<typename GetFTFromMap<VectorMap>::type>("ny"),
+                            PLY_property<typename GetFTFromMap<VectorMap>::type>("nz"));
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -87,9 +109,14 @@ namespace internal {
 
   namespace PLY {
 
-  template <typename T> void property_header_type (std::ostream& stream) { stream << "undefined_type"; }
+  template <typename T> void property_header_type (std::ostream& stream)
+  {
+    CGAL_assertion_msg (false, "Unknown PLY type");
+    stream << "undefined_type";
+  }
 
   template <> void property_header_type<char> (std::ostream& stream) { stream << "char"; }
+  template <> void property_header_type<signed char> (std::ostream& stream) { stream << "char"; }
   template <> void property_header_type<unsigned char> (std::ostream& stream) { stream << "uchar"; }
   template <> void property_header_type<short> (std::ostream& stream) { stream << "short"; }
   template <> void property_header_type<unsigned short> (std::ostream& stream) { stream << "ushort"; }
@@ -187,14 +214,20 @@ namespace internal {
     stream << CGAL::oformat(get (map, *it));
   }
 
+  template <typename T>
+  T no_char_character (const T& t) { return t; }
+  int no_char_character (const char& t) { return int(t); }
+  int no_char_character (const signed char& t) { return int(t); }
+  int no_char_character (const unsigned char& t) { return int(t); }
+
   template <typename ForwardIterator,
             typename PropertyMap,
             typename T>
   void simple_property_write (std::ostream& stream, ForwardIterator it,
-                              std::pair<PropertyMap, PLY_property<T> >&& map)
+                              std::pair<PropertyMap, PLY_property<T> > map)
   {
     if (CGAL::get_mode(stream) == IO::ASCII)
-      stream << get (map.first, *it);
+      stream << no_char_character(get (map.first, *it));
     else
       {
         typename PropertyMap::value_type value = get(map.first, *it);
@@ -214,7 +247,7 @@ namespace internal {
     {
       stream << value.size();
       for (std::size_t i = 0; i < value.size(); ++ i)
-        stream << " " << value[i];
+        stream << " " << no_char_character(value[i]);
     }
     else
       {
@@ -262,7 +295,7 @@ namespace internal {
   void output_properties (std::ostream& stream,
                           ForwardIterator it,
                           std::pair<PropertyMap, PLY_property<T> >&& current,
-                          NextPropertyHandler& next,
+                          NextPropertyHandler&& next,
                           PropertyHandler&& ... properties)
   {
     simple_property_write (stream, it, current);
