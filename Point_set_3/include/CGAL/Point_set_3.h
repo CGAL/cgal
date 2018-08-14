@@ -562,7 +562,8 @@ public:
     memory needs to be disallocated. Elements can be recovered with
     `cancel_removal()`.
 
-    \note All iterators, pointers and references related to the container are invalidated.
+    \note All iterators, pointers and references related to the
+    container are invalidated.
   */
   void remove (iterator first, iterator last)
   {
@@ -600,7 +601,8 @@ public:
     needs to be freed. The element can be recovered with
     `cancel_removal()`.
 
-    \note All iterators, pointers and references related to the container are invalidated.
+    \note The `end()` iterator is invalidated, `it` dereferences to a
+    different element.
   */
   void remove (iterator it)
   {
@@ -616,7 +618,8 @@ public:
     needs to be freed. The element can be recovered with
     `cancel_removal()`.
 
-    \note All iterators, pointers and references related to the container are invalidated.
+    \note The `end()` iterator is invalidated, `it` dereferences to a
+    different element.
   */
   void remove (const Index& index)
   {
