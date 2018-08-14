@@ -138,10 +138,7 @@ public:
 
   void reset_indices()
   {
-    unselect_all();
-    
-    for (std::size_t i = 0; i < this->m_base.size(); ++ i)
-      this->m_indices[i] = i;
+    this->cancel_removal();
   }
   
   bool add_radius()
