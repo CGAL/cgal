@@ -238,15 +238,6 @@ public:
     return *this;
   }
 
-  /// \cond SKIP_IN_MANUAL
-  Point_set_3 (const Point_set_3& ps)
-  {
-    *this = ps;
-  }
-
-  /// \endcond
-
-
   /// @}
 
   /// \cond SKIP_IN_MANUAL
@@ -473,6 +464,15 @@ public:
     iterator out = insert (p);
     assert (has_normal_map());
     m_normals[size()-1] = n;
+    return out;
+  }
+
+  iterator insert (const Point_set_3& other, const Index& idx)
+  {
+    iterator out = insert();
+    Index new_idx = *out;
+    m_base.transfer(other.base(), idx, new_idx);
+    *out = new_idx; // Do not copy index from other point set
     return out;
   }
 
@@ -839,6 +839,16 @@ public:
   {
     return m_points;
   }
+
+  /// \cond SKIP_IN_MANUAL
+  void copy_properties (const Point_set_3& other)
+  {
+    m_base.copy_properties (other.base());
+    
+    m_normals = this->property_map<Vector> ("normal").first; // In case normal was added
+  }
+  /// \endcond
+
 
   /*!
     \brief Returns a vector with all strings that describe properties.
