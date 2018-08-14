@@ -73,13 +73,21 @@ void compute_tolerance_at_vertices(ToleranceMap& tol_vm,
   BOOST_FOREACH(halfedge_descriptor hd, border_vertices)
   {
     CGAL_assertion(CGAL::is_border(hd, smesh));
-
-    FT min_sq_dist = std::numeric_limits<FT>::max();
     vertex_descriptor vd = target(hd, smesh);
-    BOOST_FOREACH(halfedge_descriptor hd, CGAL::halfedges_around_target(vd, smesh))
+
+    CGAL::Halfedge_around_target_iterator<PolygonMesh> hit, hend;
+    boost::tie(hit, hend) = CGAL::halfedges_around_target(vd, smesh);
+    CGAL_assertion(hit != hend);
+
+    FT sq_length = gt.compute_squared_distance_3_object()(get(svpm, source(*hit, smesh)),
+                                                          get(svpm, target(*hit, smesh)));
+    FT min_sq_dist = sq_length;
+    ++hit;
+
+    for(; hit!=hend; ++hit)
     {
-      const FT sq_length = gt.compute_squared_distance_3_object()(get(svpm, source(hd, smesh)),
-                                                                  get(svpm, target(hd, smesh)));
+      sq_length = gt.compute_squared_distance_3_object()(get(svpm, source(*hit, smesh)),
+                                                         get(svpm, target(*hit, smesh)));
 
       if(sq_length < min_sq_dist)
         min_sq_dist = sq_length;
