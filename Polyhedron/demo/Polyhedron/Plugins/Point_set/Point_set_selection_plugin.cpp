@@ -754,57 +754,25 @@ public Q_SLOTS:
       return;
     }
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    Scene_points_with_normal_item* new_item = new Scene_points_with_normal_item();
+    Scene_points_with_normal_item* new_item = new Scene_points_with_normal_item;
+    new_item->point_set()->copy_properties (*(point_set_item->point_set()));
+    new_item->point_set()->check_colors();
+
     new_item->setName(QString("%1 (selected points)").arg(point_set_item->name()));
-    if (point_set_item->has_normals())
-      new_item->point_set()->add_normal_map();
-    Point_set::Byte_map red, green, blue;
-    Point_set::Double_map fred, fgreen, fblue;
-    if (point_set_item->point_set()->has_colors())
-      {
-        if (point_set_item->point_set()->has_byte_colors())
-          {
-            red = new_item->point_set()->add_property_map<unsigned char>("red", 0).first;
-            green = new_item->point_set()->add_property_map<unsigned char>("green", 0).first;
-            blue = new_item->point_set()->add_property_map<unsigned char>("blue", 0).first;
-          }
-        else
-          {
-            fred = new_item->point_set()->add_property_map<double>("red", 0).first;
-            fgreen = new_item->point_set()->add_property_map<double>("green", 0).first;
-            fblue = new_item->point_set()->add_property_map<double>("blue", 0).first;
-          }
-        new_item->point_set()->check_colors(); 
-      }
     
     new_item->setColor(point_set_item->color());
     new_item->setRenderingMode(point_set_item->renderingMode());
     new_item->setVisible(point_set_item->visible());
+    
+    std::cerr << point_set_item->point_set()->info() << std::endl;
+    std::cerr << new_item->point_set()->info() << std::endl;
 
     typedef Point_set_3<Kernel> Point_set;
     for(Point_set::iterator it = point_set_item->point_set()->first_selected ();
-	it != point_set_item->point_set()->end(); ++ it)
-      {
-        Point_set::iterator new_point =
-          new_item->point_set()->insert(point_set_item->point_set()->point(*it));
-        if (point_set_item->has_normals())
-          new_item->point_set()->normal(*new_point) = point_set_item->point_set()->normal(*it);
-        if (point_set_item->point_set()->has_colors())
-          {
-            if (point_set_item->point_set()->has_byte_colors())
-              {
-                red[*new_point] = (unsigned char)(255. * point_set_item->point_set()->red(*it));
-                green[*new_point] = (unsigned char)(255. * point_set_item->point_set()->green(*it));
-                blue[*new_point] = (unsigned char)(255. * point_set_item->point_set()->blue(*it));
-              }
-            else
-              {
-                fred[*new_point] = point_set_item->point_set()->red(*it);
-                fgreen[*new_point] = point_set_item->point_set()->green(*it);
-                fblue[*new_point] = point_set_item->point_set()->blue(*it);
-              }
-          }
-      }
+        it != point_set_item->point_set()->end(); ++ it)
+    {
+      new_item->point_set()->insert (*(point_set_item->point_set()), *it);
+    }
     new_item->resetSelection();
     new_item->invalidateOpenGLBuffers();
 
