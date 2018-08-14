@@ -55,10 +55,10 @@ namespace CGAL {
   The coordinates of a point can be access using the index of the
   point and the member function `point()`. This property is always
   present. The normal vector of a point can be accessed using the
-  index of the point and the `normal()` function. This property must
+  index of the point and the `normal()` method. This property must
   be explicitly created.
 
-  All properties can be accessed as a range using the functions
+  All properties can be accessed as a range using the methods
   `points()`, `normals()`, and `range()` for points coordinates,
   normal vectors, and other properties respectively.
  
@@ -67,9 +67,9 @@ namespace CGAL {
   removed elements. A garbage collection method must be called to
   really remove it from memory.
 
-  For convenience, all functions of the package \ref PkgPointSetProcessing3Ref
-  are provided with an overload that takes a Point_set_3
-  object as an argument.
+  For convenience, all functions of the package \ref
+  PkgPointSetProcessing automatically creates the right named
+  parameters if called with a `CGAL::Point_set_3` object as argument.
 
 
   \tparam Point Point type.
@@ -286,7 +286,11 @@ public:
     the point set and `other`.  Property maps which are only in
     `other` are ignored.
 
-    \note Garbage is collected in both point sets when calling this function.
+    \note If `copy_properties()` with `other` as argument is called
+    before calling this method, then all the content of `other` will
+    be copied and no property will be lost in the process.
+
+    \note Garbage is collected in both point sets when calling this method.
    */
   bool join (Point_set_3& other)
   {
@@ -305,7 +309,7 @@ public:
   /*!
     \brief Clears the point set properties and content.
 
-    After calling this function, the object is the same as a newly
+    After calling this method, the object is the same as a newly
     constructed object. The additional properties (such as normal
     vectors) are also removed and must thus be re-added if needed.
    */
@@ -320,8 +324,8 @@ public:
   /*!
     \brief Clears all properties created.
 
-    After calling this function, all properties are removed. The
-    points are left unchanged.
+    After calling this method, all properties are removed. The points
+    are left unchanged.
    */
   void clear_properties()
   {
@@ -440,7 +444,7 @@ public:
   }
 
   /*!
-    \brief Convenience function to add a point with a normal vector.
+    \brief Convenience method to add a point with a normal vector.
 
     \param p Point to insert
     \param n Associated normal vector
@@ -467,6 +471,29 @@ public:
     return out;
   }
 
+  /*! 
+    \brief Convenience method to copy a point with all its properties
+    from another point set.
+
+    In the case where two point sets have the same properties, this
+    method allows the user to easily copy one point (along with the
+    values of all its properties) from one point set to another.
+
+    \param other Point set to which the point to copy belongs
+    \param idx Index of the point to copy in `other`
+
+    \warning This point set and `other` must have the exact same
+    properties, with the exact same names and types in the exact same
+    order.
+
+    \note If a reallocation happens, all iterators, pointers and
+    references related to the container are invalidated.  Otherwise,
+    only the end iterator is invalidated, and all iterators, pointers
+    and references to elements are guaranteed to keep referring to the
+    same elements they were referring to before the call.
+
+    \return The iterator on the newly added element.
+   */
   iterator insert (const Point_set_3& other, const Index& idx)
   {
     iterator out = insert();
@@ -524,7 +551,7 @@ public:
 
   /// @}
 
-  /// \name Removal Functions
+  /// \name Removal Methods
   /// @{
 
   /*!
@@ -532,7 +559,8 @@ public:
 
     \note The elements are just marked as removed and are not erased
     from the memory. `collect_garbage()` should be called if the
-    memory needs to be disallocated.
+    memory needs to be disallocated. Elements can be recovered with
+    `cancel_removal()`.
 
     \note All iterators, pointers and references related to the container are invalidated.
   */
@@ -569,7 +597,8 @@ public:
 
     \note The element is just marked as removed and is not erased from
     the memory. `collect_garbage()` should be called if the memory
-    needs to be freed.
+    needs to be freed. The element can be recovered with
+    `cancel_removal()`.
 
     \note All iterators, pointers and references related to the container are invalidated.
   */
@@ -584,7 +613,8 @@ public:
 
     \note The element is just marked as removed and is not erased from
     the memory. `collect_garbage()` should be called if the memory
-    needs to be freed.
+    needs to be freed. The element can be recovered with
+    `cancel_removal()`.
 
     \note All iterators, pointers and references related to the container are invalidated.
   */
@@ -601,6 +631,7 @@ public:
 
   /// \name Garbage Management
   /// @{
+  
   /*!
     \brief Returns `true` if the element is marked as removed, `false`
     otherwise.
@@ -613,6 +644,13 @@ public:
     return (std::distance (it, garbage_begin()) <= 0);
   }
 
+  /*!
+    \brief Returns `true` if the element is marked as removed, `false`
+    otherwise.
+
+    \note When iterating between `begin()` and `end()`, no element
+    marked as removed can be found.
+  */
   bool is_removed (const Index& index) const
   {
     const_iterator it = m_indices.begin() + index;
@@ -632,11 +670,15 @@ public:
   const_iterator garbage_end () const { return m_indices.end(); }
   /*!
     \brief Number of removed points.
+
+    \note The method `garbage_size()` is also available and does the
+    same thing.
   */
   std::size_t number_of_removed_points () const { return m_nb_removed; }
   /// \cond SKIP_IN_MANUAL
   std::size_t garbage_size () const { return number_of_removed_points(); }
   /// \endcond
+  
   /*!  \brief Returns `true` if there are elements marked as removed,
     `false` otherwise.
   */
@@ -656,20 +698,33 @@ public:
     for (std::size_t i = 0; i < m_base.size(); ++ i)
       m_indices[i] = indices[i];
 
-    // for (std::size_t i = 0; i < 10; ++ i)
-    //   std::cerr << m_indices[i] << " ";
-    // std::cerr << std::endl;
-
     // Sorting based on the indices reorders the point set correctly
     quick_sort_on_indices ((std::ptrdiff_t)0, (std::ptrdiff_t)(m_base.size() - 1));
-
-    // for (std::size_t i = 0; i < 10; ++ i)
-    //   std::cerr << m_indices[i] << " ";
-    // std::cerr << std::endl;
 
     m_base.resize (size ());
     m_base.shrink_to_fit ();
     m_nb_removed = 0;
+  }
+
+  /*!
+    \brief Restores all removed points.
+    
+    After removing one or several points, calling this method restores
+    the point set to its initial state: points that were removed (and
+    their associated properties) are restored.
+
+    \note This method is only guaranteed to work if no point was
+    inserted after the removal: otherwise, some points might not be
+    restored.
+
+    \note If `collect_garbage()` was called after removal, the points
+    are irremediably lost and nothing will be restored.
+  */
+  void cancel_removal()
+  {
+    m_nb_removed = 0;
+    for (std::size_t i = 0; i < this->m_base.size(); ++ i)
+      this->m_indices[i] = i;
   }
 
   /// @}
@@ -840,14 +895,19 @@ public:
     return m_points;
   }
 
-  /// \cond SKIP_IN_MANUAL
+  /*!
+    \brief Copies the properties from another point set.
+
+    All properties from `other` that do not already exist in this
+    point set are added and filled to their default values. Properties
+    that exist in both point sets are left unchanged.
+  */
   void copy_properties (const Point_set_3& other)
   {
     m_base.copy_properties (other.base());
     
     m_normals = this->property_map<Vector> ("normal").first; // In case normal was added
   }
-  /// \endcond
 
 
   /*!
@@ -861,6 +921,9 @@ public:
     return out;
   }
 
+  /*!
+    \brief Returns a vector of pairs that describe properties and associated types.
+  */
   std::vector<std::pair<std::string, std::type_info> > properties_and_types() const
   {
     std::vector<std::string> prop = m_base.properties();
@@ -1201,7 +1264,7 @@ private:
    Copies entries of all property maps which have the same name in `ps` and `other`. 
    Property maps which are only in `other` are ignored.
 
-   \note Garbage is collected in both point sets when calling this function.
+   \note Garbage is collected in both point sets when calling this method.
 
 */
 template <typename Point, typename Vector>
