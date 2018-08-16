@@ -193,13 +193,13 @@ void merge_vertices_in_range(const HalfedgeRange& sorted_hedges,
 } // end of internal
 
 /// \ingroup PMP_repairing_grp
-/// merges identical vertices around a cycle of connected edges.
+/// merges identical vertices around a cycle of boundary edges.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`.
 /// @tparam NamedParameter a sequence of \ref pmp_namedparameters "Named Parameters".
 ///
-/// @param h a halfedge that belongs to the cycle.
-/// @param pm the polygon mesh which containts the cycle.
+/// @param h a halfedge that belongs to a boundary cycle.
+/// @param pm the polygon mesh which contains the boundary cycle.
 /// @param np optional parameter of \ref pmp_namedparameters "Named Parameters" listed below.
 ///
 /// \cgalNamedParamsBegin
@@ -249,7 +249,7 @@ void merge_duplicated_vertices_in_boundary_cycle(
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`.
 /// @tparam NamedParameter a sequence of \ref pmp_namedparameters "Named Parameters".
 ///
-/// @param pm the polygon mesh which containts the cycle.
+/// @param pm the polygon mesh which contains the cycles.
 /// @param np optional parameter of \ref pmp_namedparameters "Named Parameters" listed below.
 ///
 /// \cgalNamedParamsBegin
