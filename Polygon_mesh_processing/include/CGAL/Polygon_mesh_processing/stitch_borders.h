@@ -528,45 +528,6 @@ void stitch_borders_impl(PM& pmesh,
     run_stitch_borders(pmesh, to_stitch, uf_vertices, uf_handles);
 }
 
-template <class PM>
-void stitch_boundary_cycle_2(PM& pmesh)
-{
-  typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
-
-  std::vector<halfedge_descriptor> cycles;
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges(pmesh))
-  {
-    if ( is_border(hd, pmesh) )
-    {
-      if ( hd < next(hd, pmesh) && next(next(hd, pmesh), pmesh) == hd )
-      {
-        cycles.push_back(hd);
-      }
-    }
-  }
-
-  BOOST_FOREACH(halfedge_descriptor hd, cycles)
-  {
-    halfedge_descriptor nhd = next(hd, pmesh);
-
-    //nhd and its opposite will be removed
-    //update face pointer
-    set_face(hd, face(opposite(nhd, pmesh), pmesh), pmesh);
-    set_halfedge(face(hd, pmesh), hd, pmesh);
-    //update next/prev pointers
-    halfedge_descriptor tmp = prev(opposite(nhd, pmesh), pmesh);
-    set_next(tmp, hd, pmesh);
-    tmp = next(opposite(nhd, pmesh), pmesh);
-    set_next(hd, tmp, pmesh);
-    //update vertex pointers
-    set_halfedge(source(hd, pmesh), opposite(hd, pmesh), pmesh);
-    set_halfedge(target(hd, pmesh), hd, pmesh);
-
-    // remove the extra halfedges
-    remove_edge(edge(nhd, pmesh), pmesh);
-  }
-}
-
 // @todo @tmp This is added by #3201 and should thus be removed
 template <typename PolygonMesh, typename OutputIterator>
 OutputIterator extract_boundary_cycles(PolygonMesh& pm,
@@ -764,7 +725,7 @@ void stitch_borders(PolygonMesh& pmesh, const CGAL_PMP_NP_CLASS& np)
                                                          vpm, np);
   
   stitch_borders(pmesh, hedge_pairs_to_stitch);
-  internal::stitch_boundary_cycle_2(pmesh);
+  internal::stitch_boundary_cycles(pmesh, np);
 }
 
 
