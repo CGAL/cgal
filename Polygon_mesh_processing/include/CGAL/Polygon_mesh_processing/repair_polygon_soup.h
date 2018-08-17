@@ -992,7 +992,7 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(PointRange& points,
 ///     when multiple polygons are duplicates, whether all the duplicate polygons
 ///     should be removed or if one (arbitrarily chosen) face should be kept. %Default is `false`.
 ///   \cgalParamEnd
-///   \cgalParamBegin{require_same_orientatio
+///   \cgalParamBegin{require_same_orientation}
 ///     Parameter forwarded to the function `merge_duplicate_polygons_in_polygon_soup()`
 ///     to indicate if polygon orientation should be taken into account when determining whether
 ///     two polygons are duplicates, that is, whether e.g. the triangles `0,1,2` and `0,2,1` are duplicates.
