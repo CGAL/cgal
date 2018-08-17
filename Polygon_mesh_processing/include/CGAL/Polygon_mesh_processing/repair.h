@@ -1521,7 +1521,7 @@ bool is_non_manifold_vertex(typename boost::graph_traits<PolygonMesh>::vertex_de
 ///    \cgalParamEnd
 ///   \cgalParamBegin{vertex_is_constrained_map} a writable property map with `vertex_descriptor`
 ///     as key and `bool` as `value_type`. `put(pmap, v, true)` will be called for each duplicated
-///     vertices, as well as the original non-manifold vertex in the input mehs.
+///     vertices, as well as the original non-manifold vertex in the input mesh.
 ///  \cgalParamEnd
 ///   \cgalParamBegin{output_iterator} a model of `OutputIterator` with value type
 ///      `std::vector<vertex_descriptor>`. The first vertex of each vector is a non-manifold vertex
