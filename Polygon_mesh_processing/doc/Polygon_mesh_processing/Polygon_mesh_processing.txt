@@ -479,7 +479,7 @@ and geometrical errors. This package offers the following functions:
 
 as well as the function `CGAL::Polygon_mesh_processing::repair_polygon_soup()`,
 which bundles the previous functions and an additional handful of repairing techniques
-to obtain an as-clean-as-possible pol soup.
+to obtain an as-clean-as-possible polygon soup.
 
 \subsection Stitching
 
