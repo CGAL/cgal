@@ -1460,36 +1460,47 @@ struct Vertex_collector<G, Emptyset_iterator>
 } // end namespace internal
 
 /// \ingroup PMP_repairing_grp
-/// checks whether a vertex of a triangle mesh is non-manifold.
+/// checks whether a vertex of a polygon mesh is non-manifold.
 ///
-/// @tparam TriangleMesh a model of `HalfedgeListGraph`
+/// @tparam PolygonMesh a model of `HalfedgeListGraph`
 ///
-/// @param v a vertex of `tm`
-/// @param tm a triangle mesh containing `v`
+/// @param v a vertex of `pm`
+/// @param pm a triangle mesh containing `v`
 ///
 /// \sa `duplicate_non_manifold_vertices()`
 ///
 /// \return `true` if the vertex is non-manifold, `false` otherwise.
-template <typename TriangleMesh>
-bool is_non_manifold_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v,
-                            const TriangleMesh& tm)
+template <typename PolygonMesh>
+bool is_non_manifold_vertex(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
+                            const PolygonMesh& pm)
 {
-  CGAL_assertion(CGAL::is_triangle_mesh(tm));
-
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   boost::unordered_set<halfedge_descriptor> halfedges_handled;
-  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, tm))
-    halfedges_handled.insert(h);
 
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(tm))
+  std::size_t incident_null_faces_counter = 0;
+  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, pm))
   {
-    if(v == target(h, tm))
+    halfedges_handled.insert(h);
+    if(CGAL::is_border(h, pm))
+      ++incident_null_faces_counter;
+  }
+
+  if(incident_null_faces_counter > 1)
+  {
+    // The vertex is the sole connection between two connected components --> non-manifold
+    return true;
+  }
+
+  BOOST_FOREACH(halfedge_descriptor h, halfedges(pm))
+  {
+    if(v == target(h, pm))
     {
+      // More than one umbrella incident to 'v' --> non-manifold
       if(halfedges_handled.count(h) == 0)
         return true;
     }
   }
+
   return false;
 }
 
