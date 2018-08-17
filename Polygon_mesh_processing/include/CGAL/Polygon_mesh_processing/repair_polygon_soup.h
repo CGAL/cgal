@@ -865,11 +865,11 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
 ///     The traits class must provide the nested functor `Less_xyz_3`
 ///     to compare lexicographically two points a function `Less_xyz_3 less_xyz_3_object()`.
 ///   \cgalParamEnd
-///   \cgalParamBegin{do_erase_all_duplicates}
+///   \cgalParamBegin{erase_all_duplicates}
 ///     Parameter to indicate, when multiple polygons are duplicates, whether all the duplicate polygons
 ///     should be removed or if one (arbitrarily chosen) face should be kept. %Default is `false`.
 ///   \cgalParamEnd
-///   \cgalParamBegin{do_require_same_orientation}
+///   \cgalParamBegin{require_same_orientation}
 ///     Parameter to indicate if polygon orientation should be taken into account when determining
 ///     whether two polygons are duplicates, that is, whether e.g. the triangles `0,1,2` and `0,2,1`
 ///     are duplicates. %Default is `false`.
@@ -888,8 +888,8 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
 
   typedef typename internal::Polygon_types<PointRange, PolygonRange>::P_ID                         P_ID;
 
-  const bool erase_all_duplicates = choose_param(get_param(np, internal_np::do_erase_all_duplicates), false);
-  const bool same_orientation = choose_param(get_param(np, internal_np::do_require_same_orientation), false);
+  const bool erase_all_duplicates = choose_param(get_param(np, internal_np::erase_all_duplicates), false);
+  const bool same_orientation = choose_param(get_param(np, internal_np::require_same_orientation), false);
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
   std::cout << "Only polygons with the same orientation are duplicates: " << std::boolalpha << same_orientation << std::endl;
@@ -987,12 +987,12 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(PointRange& points,
 ///
 ///       and, for each functor `Foo`, a function `Foo foo_object()`.
 ///   \cgalParamEnd
-///   \cgalParamBegin{do_erase_all_duplicates}
+///   \cgalParamBegin{erase_all_duplicates}
 ///     Parameter forwarded to the function `merge_duplicate_polygons_in_polygon_soup()` to indicate,
 ///     when multiple polygons are duplicates, whether all the duplicate polygons
 ///     should be removed or if one (arbitrarily chosen) face should be kept. %Default is `false`.
 ///   \cgalParamEnd
-///   \cgalParamBegin{do_require_same_orientation}
+///   \cgalParamBegin{require_same_orientatio
 ///     Parameter forwarded to the function `merge_duplicate_polygons_in_polygon_soup()`
 ///     to indicate if polygon orientation should be taken into account when determining whether
 ///     two polygons are duplicates, that is, whether e.g. the triangles `0,1,2` and `0,2,1` are duplicates.

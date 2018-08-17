@@ -265,14 +265,14 @@ void test_merge_duplicate_polygons(const bool /*verbose*/ = false)
   // Remove all duplicates
   polygons_copy = polygons;
   res = PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons_copy,
-                                                      params::do_erase_all_duplicates(true)
-                                                             .do_require_same_orientation(false));
+                                                      params::erase_all_duplicates(true)
+                                                             .require_same_orientation(false));
   assert(res == 5 && polygons_copy.size() == 1);
 
   // Remove all duplicates but different orientations are different polygons
   res = PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons,
-                                                      params::do_erase_all_duplicates(true)
-                                                             .do_require_same_orientation(true));
+                                                      params::erase_all_duplicates(true)
+                                                             .require_same_orientation(true));
   assert(res == 2 && polygons.size() == 4);
 }
 
