@@ -411,12 +411,12 @@ protected:
         return ON_ORIENTED_BOUNDARY;
       }
       if (query == q) {
-        lt == VERTEX;
+        lt = VERTEX;
         li = 1;
         return ON_ORIENTED_BOUNDARY;
       }
       if (query == r) {
-        lt == VERTEX;
+        lt = VERTEX;
         li = 2;
         return ON_ORIENTED_BOUNDARY;
       }
