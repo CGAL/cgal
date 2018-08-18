@@ -35,6 +35,11 @@ typedef CGAL::Delaunay_triangulation_2<Kernel>                                  
 typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<Kernel>                Ptraits;
 typedef CGAL::Periodic_2_Delaunay_triangulation_2<Ptraits>                      PEuclidean_triangulation;
 
+typedef double                                                                  dNT;
+typedef CGAL::Cartesian<dNT>                                                    dKernel;
+typedef CGAL::Delaunay_triangulation_2<dKernel>                                 dTriangulation;
+
+
 using std::cout;
 using std::endl;
 
@@ -57,19 +62,23 @@ int main(int argc, char** argv) {
     cout << "---- for best results, make sure that you have compiled me in Release mode ----" << endl;
     
     double extime1 = 0.0;
+    double extime2 = 0.0;
     double extime3 = 0.0;
 
     for (int exec = 1; exec <= iters; exec++) {
 
         std::vector<Point> pts;
+        std::vector<Point_double> dpts;
         CGAL::Random_points_in_disc_2<Point_double, Creator> g(0.85);
 
         int cnt = 0;
+        cout << "================ iteration " << exec << " : generating points ================" << endl;
         do {    
             Point_double pd = *(++g);
             Point pt = Point(pd.x(), pd.y());
             if (pred(pt) != CGAL::ON_UNBOUNDED_SIDE) {
                 pts.push_back(pt);
+                dpts.push_back(pd);
                 cnt++;
             } 
         } while (cnt < N);
@@ -79,7 +88,7 @@ int main(int argc, char** argv) {
             return -1;
         }
 
-        cout << "iteration " << exec << ": inserting into hyperbolic periodic triangulation...    "; cout.flush();
+        cout << "inserting into hyperbolic periodic  CORE  triangulation...    "; cout.flush();
         Triangulation tr;
         CGAL::Timer t1;
         t1.start();
@@ -88,22 +97,33 @@ int main(int argc, char** argv) {
         extime1 += t1.time();
         cout << "DONE! (# of vertices = " << tr.number_of_vertices() << ", time = " << t1.time() << " secs)" << endl;
 
-        cout << "iteration " << exec << ": inserting into Euclidean non-periodic triangulation... "; cout.flush();
+        cout << "inserting into Euclidean non-periodic  CORE  triangulation... "; cout.flush();
         Euclidean_triangulation etr;   
+        CGAL::Timer t2;
+        t2.start();
+        etr.insert(pts.begin(), pts.end());
+        t2.stop();
+        extime2 += t2.time();
+        cout << "DONE! (# of vertices = " << etr.number_of_vertices() << ", time = " << t2.time() << " secs)" << endl;
+
+        cout << "inserting into Euclidean non-periodic DOUBLE triangulation... "; cout.flush();
+        dTriangulation dtr;   
         CGAL::Timer t3;
         t3.start();
-        etr.insert(pts.begin(), pts.end());
+        dtr.insert(dpts.begin(), dpts.end());
         t3.stop();
         extime3 += t3.time();
-        cout << "DONE! (# of vertices = " << etr.number_of_vertices() << ", time = " << t3.time() << " secs)" << endl;
+        cout << "DONE! (# of vertices = " << dtr.number_of_vertices() << ", time = " << t3.time() << " secs)" << endl;
 
     }
 
     extime1 /= (double)iters;
+    extime2 /= (double)iters;
     extime3 /= (double)iters;
 
-    cout << "Hyperbolic periodic     triangulation: average time = " << extime1 << endl;
-    cout << "Euclidean  non-periodic triangulation: average time = " << extime3 << endl;
+    cout << "Hyperbolic periodic      CORE  triangulation: average time = " << extime1 << endl;
+    cout << "Euclidean  non-periodic  CORE  triangulation: average time = " << extime2 << endl;
+    cout << "Euclidean  non-periodic DOUBLE triangulation: average time = " << extime3 << endl;
 
     return 0;
 }
