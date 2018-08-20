@@ -109,6 +109,11 @@ public:
             this, [this]()
     {
       QColor minColor = QColorDialog::getColor();
+      if (!minColor.isValid())
+      {
+        return;
+      }
+      
       rm = minColor.redF();
       gm = minColor.greenF();
       bm = minColor.blueF();
@@ -121,6 +126,8 @@ public:
             this, [this]()
     {
       QColor maxColor = QColorDialog::getColor();
+      if(!maxColor.isValid())
+        return;
       QPalette palette(maxColor);
       rM = maxColor.redF();
       gM = maxColor.greenF();
