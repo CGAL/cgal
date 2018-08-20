@@ -7,10 +7,7 @@
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polyhedron_selection_item.h"
 #include "Scene_polylines_item.h"
-#include "Nef_type.h"
-
-//Actual code reqs
-#include <CGAL/boost/graph/convert_nef_polyhedron_to_polygon_mesh.h>
+#include "Messages_interface.h"
 
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/surface_mesh_parameterization.h>
@@ -18,6 +15,8 @@
 #include <CGAL/Polygon_mesh_processing/extrude.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Surface_mesh_shortest_path.h>
 #include <CGAL/double.h>
 #include <CGAL/AABB_tree.h>
@@ -294,14 +293,16 @@ private:
   typedef CGAL::AABB_traits<Kernel, Primitive> Tree_traits;
   typedef CGAL::AABB_tree<Tree_traits> Tree;
   typedef EPICK::Point_3 Point_3;
+  Messages_interface* messages;
   
 public :
   
-  void init(QMainWindow* , CGAL::Three::Scene_interface* , Messages_interface*) Q_DECL_OVERRIDE{
+  void init(QMainWindow* , CGAL::Three::Scene_interface* , Messages_interface* m) Q_DECL_OVERRIDE{
     //get refs
     this->scene = Three::scene();
     this->mw = Three::mainWindow();
-    
+    messages = m;
+
     //action
     QAction* actionFitText= new QAction("Fit Text", mw);
     connect(actionFitText, SIGNAL(triggered()),
@@ -441,7 +442,7 @@ public Q_SLOTS:
         return ;
       }
       
-      std::cout << "Parameterized with ARAP (SM)!" << std::endl;
+      std::cout << "Parameterized with ARAP (SM) computed." << std::endl;
       xmin = std::numeric_limits<double>::max();
       xmax = std::numeric_limits<double>::min();
       ymin = std::numeric_limits<double>::max();
@@ -682,15 +683,23 @@ public Q_SLOTS:
     Top<VPMap> top(normal, get(CGAL::vertex_point, text_mesh_complete));
     PMP::extrude_mesh(text_mesh_bottom, text_mesh_complete, bot, top);
     
-    CGAL::Surface_mesh<Exact_Kernel::Point_3> exact_text,
-        exact_target;
-    CGAL::copy_face_graph(text_mesh_complete, exact_text);
-    CGAL::copy_face_graph(*sel_item->polyhedron(), exact_target);
-    Nef_polyhedron nef_text(exact_text);
-    Nef_polyhedron nef_target(exact_target);
-    Nef_polyhedron new_nef = nef_target - nef_text;
+    if (PMP::does_self_intersect(text_mesh_complete))
+    {
+      QApplication::restoreOverrideCursor();
+      messages->information("Error: text mesh self-intersects!");
+      return;
+    }
+
     SMesh result;
-    CGAL::convert_nef_polyhedron_to_polygon_mesh(new_nef, result);
+    CGAL::copy_face_graph(*sel_item->polyhedron(), result);
+    bool OK = PMP::corefine_and_compute_difference(result, text_mesh_complete, result);
+
+    if (!OK)
+    {
+      QApplication::restoreOverrideCursor();
+      messages->information("Error: the output mesh is not manifold!");
+      return;
+    }
     
     CGAL::Polygon_mesh_processing::triangulate_faces(result);
     Scene_surface_mesh_item* result_item = new Scene_surface_mesh_item(
