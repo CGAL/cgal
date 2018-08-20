@@ -673,7 +673,6 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
     d->computeElements();
     d->initializeBuffers(viewer);
   }
-  viewer->makeCurrent();
   vaos[Scene_polyhedron_selection_item_priv::Facets]->bind();
 
   attribBuffers(viewer,PROGRAM_WITH_LIGHT);
@@ -759,7 +758,6 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
     d->computeElements();
     d->initializeBuffers(viewer);
   }
-  viewer->makeCurrent();
   vaos[Scene_polyhedron_selection_item_priv::Edges]->bind();
   if(!viewer->isOpenGL_4_3())
   {
@@ -829,7 +827,6 @@ void Scene_polyhedron_selection_item::drawPoints(CGAL::Three::Viewer_interface* 
     d->computeElements();
     d->initializeBuffers(viewer);
   }
-  viewer->makeCurrent();
   vaos[Scene_polyhedron_selection_item_priv::Points]->bind();
   d->program = getShaderProgram(PROGRAM_NO_SELECTION);
   attribBuffers(viewer,PROGRAM_NO_SELECTION);
