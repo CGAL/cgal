@@ -1151,15 +1151,19 @@ int Scene::selectionBindex() const {
 
 QItemSelection Scene::createSelection(int i)
 {
-
     return QItemSelection(index_map.keys(i).at(0),
                           index_map.keys(i).at(4));
 }
 
 QItemSelection Scene::createSelectionAll()
 {
-    return QItemSelection(index(0, 0,index_map.key(0).parent()),
-                          index(m_entries.size()-1, 4, index_map.key(0).parent()));
+  //it is not possible to directly create a selection with items that have different parents, so 
+  //we do it iteratively.
+  QItemSelection sel;
+  for(int i=0; i< m_entries.size(); ++i)
+    sel.select(index_map.keys(i).at(0),
+               index_map.keys(i).at(4));
+  return sel;
 }
 
 void Scene::itemChanged()
