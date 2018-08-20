@@ -1651,9 +1651,8 @@ void MainWindow::on_actionSaveAs_triggered()
           sf = plugin->saveNameFilters().split(";;").first();
       }
     }
-    QString ext1, ext2;
     QRegExp extensions("\\(\\*\\..+\\)");
-    QStringList filter_ext;
+    QStringList filter_exts;
     if(filters.empty())
     {
       QMessageBox::warning(this,
@@ -1668,7 +1667,7 @@ void MainWindow::on_actionSaveAs_triggered()
       Q_FOREACH(QString s, sl){
         int pos = extensions.indexIn(s);
         if( pos >-1)
-          filter_ext.append(extensions.capturedTexts());
+          filter_exts.append(extensions.capturedTexts());
       }
     }
     filters << tr("All files (*)");
@@ -1694,22 +1693,23 @@ void MainWindow::on_actionSaveAs_triggered()
     
     last_saved_dir = QFileInfo(dir).absoluteDir().path();
     extensions.indexIn(sf.split(";;").first());
-    ext1 = extensions.cap().split(" ").first();// in case of syntax like (*.a *.b)
+    QString filter_ext, filename_ext;
+    filter_ext = extensions.cap().split(" ").first();// in case of syntax like (*.a *.b)
     
-    ext1.remove(")");
-    ext1.remove("(");
+    filter_ext.remove(")");
+    filter_ext.remove("(");
     //remove *
-    ext1=ext1.right(ext1.size()-1);
+    filter_ext=filter_ext.right(filter_ext.size()-1);
     if(filename.isEmpty())
       continue;
 
     QStringList filename_split = filename.split(".");
     filename_split.removeFirst();
-    ext2 = filename_split.join(".");
-    ext2.push_front(".");
+    filename_ext = filename_split.join(".");
+    filename_ext.push_front(".");
    
     QStringList final_extensions;
-    Q_FOREACH(QString string, filter_ext)
+    Q_FOREACH(QString string, filter_exts)
     {
       Q_FOREACH(QString s, string.split(" ")){// in case of syntax like (*.a *.b) 
           s.remove(")");
@@ -1719,9 +1719,29 @@ void MainWindow::on_actionSaveAs_triggered()
           final_extensions.append(s);
       }
     }
-    if(!final_extensions.contains(ext2))
+    bool ok = false;
+    while(!ok)
     {
-      filename = filename.append(ext1);
+      if(final_extensions.contains(filename_ext))
+      {
+        ok = true;
+      }
+      else{
+        QStringList shatterd_filename_ext = filename_ext.split(".");
+        if(!shatterd_filename_ext.last().isEmpty())
+        {
+          shatterd_filename_ext.removeFirst();//removes ""
+          shatterd_filename_ext.removeFirst();
+          filename_ext = shatterd_filename_ext.join(".");
+          filename_ext.push_front(".");
+        }
+        else
+          break;
+      }
+    }
+    if(!ok)
+    {
+      filename = filename.append(filter_ext);
     }
     viewer->update();
     save(filename, item);
