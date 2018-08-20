@@ -1680,7 +1680,12 @@ void MainWindow::on_actionSaveAs_triggered()
     }
     QString caption = tr("Save %1 to File...").arg(item->name());
     QString dir = item->property("source filename").toString();
-    if(dir.isEmpty())
+    if(dir.isEmpty() &&
+       !item->property("defaultSaveDir").toString().isEmpty())
+    {
+      dir = item->property("defaultSaveDir").toString();
+    }
+    else if(dir.isEmpty())
       dir = QString("%1/%2").arg(last_saved_dir).arg(item->name());
     if(dir.isEmpty())
       dir = item->name();

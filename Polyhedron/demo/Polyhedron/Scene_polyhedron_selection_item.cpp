@@ -49,6 +49,7 @@ struct Scene_polyhedron_selection_item_priv{
   Scene_polyhedron_selection_item_priv(Scene_polyhedron_selection_item* parent):
     item(parent)
   {
+    
   }
 
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
@@ -1901,7 +1902,9 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_grap
   d->nb_facets = 0;
   d->nb_points = 0;
   d->nb_lines = 0;
-
+  QString sf = poly_item->property("source filename").toString();
+  if(!sf.isEmpty())
+    setProperty("defaultSaveDir", poly_item->property("source filename").toString());
   for(int i=0; i<Scene_polyhedron_selection_item_priv::NumberOfVaos; i++)
   {
     addVaos(i);
