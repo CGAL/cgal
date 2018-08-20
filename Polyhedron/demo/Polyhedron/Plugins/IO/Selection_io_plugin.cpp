@@ -36,6 +36,7 @@ public:
             delete item;
             return NULL;
         }
+        item->setName(fileinfo.baseName());
         return item;
     }
 
