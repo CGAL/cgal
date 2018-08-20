@@ -96,9 +96,6 @@ public:
     connect(dock_widget->colorizeButton, SIGNAL(clicked(bool)),
             this, SLOT(colorize()));
 
-    connect(dock_widget->rampButton, SIGNAL(clicked(bool)),
-            this, SLOT(replaceRamp()));
-
     connect(dock_widget->propertyBox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(on_propertyBox_currentIndexChanged(int)));
     connect(dock_widget->zoomToMinButton, &QPushButton::pressed,
@@ -184,6 +181,7 @@ private Q_SLOTS:
     if(!item)
       return;
     QApplication::setOverrideCursor(Qt::WaitCursor);
+    replaceRamp();
     item->face_graph()->collect_garbage();
     switch(dock_widget->propertyBox->currentIndex())
     {
@@ -194,6 +192,19 @@ private Q_SLOTS:
       displayScaledJacobian(item);
       break;
     }
+    connect(item, &Scene_surface_mesh_item::itemChanged,
+            this, [item](){
+      bool does_exist;
+      SMesh::Property_map<face_descriptor, double> pmap;
+      boost::tie(pmap, does_exist) = 
+          item->face_graph()->property_map<face_descriptor,double>("f:jacobian");
+      if(does_exist)
+        item->face_graph()->remove_property_map(pmap);
+      boost::tie(pmap, does_exist) = 
+          item->face_graph()->property_map<face_descriptor,double>("f:angle");
+      if(does_exist)
+        item->face_graph()->remove_property_map(pmap);
+    });
     QApplication::restoreOverrideCursor();
     item->invalidateOpenGLBuffers();
     item->redraw();

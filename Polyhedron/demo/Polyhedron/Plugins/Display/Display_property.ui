@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>292</width>
-    <height>463</height>
+    <height>456</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -149,13 +149,6 @@
          </widget>
         </item>
         <item row="4" column="1">
-         <widget class="QPushButton" name="rampButton">
-          <property name="text">
-           <string>Replace Ramp</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="1">
          <widget class="QPushButton" name="colorizeButton">
           <property name="text">
            <string>Colorize</string>

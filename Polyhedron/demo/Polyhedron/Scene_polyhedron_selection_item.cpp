@@ -2023,6 +2023,7 @@ void Scene_polyhedron_selection_item::validateMoveVertex()
   k_ring_selector.setEditMode(true);
   viewer->setManipulatedFrame(NULL);
   invalidateOpenGLBuffers();
+  poly_item->itemChanged();
   Q_EMIT updateInstructions("Select a vertex. (1/2)");
 }
 
