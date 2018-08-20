@@ -206,14 +206,6 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
   EPICK::Vector_3 offset(off.x,off.y,off.z);
   
     //Computes the normal of the facet
-<<<<<<< HEAD
-    const Point_3& pa = soup->points[pit->at(0)];
-    const Point_3& pb = soup->points[pit->at(1)];
-    const Point_3& pc = soup->points[pit->at(2)];
-    Traits::Vector_3 normal = CGAL::cross_product(pb-pa, pc -pa);
-    normal = normal / std::sqrt(normal * normal);
-    typedef FacetTriangulator<SMesh, EPICK, std::size_t> FT;
-=======
     Traits::Vector_3 normal = CGAL::NULL_VECTOR;
 
     // The three first vertices may be aligned, we need to test other
@@ -233,8 +225,7 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
     if (normal == CGAL::NULL_VECTOR) // No normal could be computed, return
       return;
 
-    typedef FacetTriangulator<Polyhedron, Kernel, std::size_t> FT;
->>>>>>> cgal/master
+    typedef FacetTriangulator<SMesh, EPICK, std::size_t> FT;
 
     double diagonal;
     if(item->diagonalBbox() != std::numeric_limits<double>::infinity())

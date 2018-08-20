@@ -11,7 +11,7 @@ polyhedron_demo_plugin(nef_io_plugin Nef_io_plugin)
 target_link_libraries(nef_io_plugin PUBLIC scene_nef_polyhedron_item)
 
 polyhedron_demo_plugin(off_plugin OFF_io_plugin)
-target_link_libraries(off_plugin PUBLIC scene_polygon_soup_item scene_points_with_normal_item)
+target_link_libraries(off_plugin PUBLIC scene_polygon_soup_item scene_points_with_normal_item scene_surface_mesh_item)
 
 polyhedron_demo_plugin(off_to_nef_plugin OFF_to_nef_io_plugin)
 target_link_libraries(off_to_nef_plugin PUBLIC scene_nef_polyhedron_item)
@@ -25,8 +25,6 @@ target_link_libraries(selection_io_plugin PUBLIC scene_selection_item selection_
 polyhedron_demo_plugin(stl_plugin STL_io_plugin)
 target_link_libraries(stl_plugin PUBLIC scene_surface_mesh_item scene_polygon_soup_item)
 
-polyhedron_demo_plugin(surface_mesh_io_plugin Surface_mesh_io_plugin)
-target_link_libraries(surface_mesh_io_plugin PUBLIC scene_surface_mesh_item scene_polygon_soup_item)
 
 polyhedron_demo_plugin(surf_io_plugin Surf_io_plugin)
 target_link_libraries(surf_io_plugin PUBLIC scene_surface_mesh_item)

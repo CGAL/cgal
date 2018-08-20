@@ -32,7 +32,6 @@
 #include <CGAL/IO/facets_in_complex_3_to_triangle_mesh.h>
 
 #include "Scene_polygon_soup_item.h"
-#include "Scene_polyhedron_item.h"
 
 
 typedef CGAL::AABB_triangulation_3_triangle_primitive<EPICK,C3t3> Primitive;
@@ -1274,37 +1273,11 @@ double Scene_c3t3_item_priv::complex_diag() const {
 
 void Scene_c3t3_item::export_facets_in_complex()
 {
-  Polyhedron outmesh;
+  SMesh outmesh;
   CGAL::facets_in_complex_3_to_triangle_mesh(c3t3(), outmesh);
-  Scene_polyhedron_item* item = new Scene_polyhedron_item(std::move(outmesh));
+  Scene_surface_mesh_item* item = new Scene_surface_mesh_item(std::move(outmesh));
   item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
   scene->addItem(item);
-
-<<<<<<< HEAD
-  namespace PMP = CGAL::Polygon_mesh_processing;
-
-  if (PMP::is_polygon_soup_a_polygon_mesh(polygons))
-  {
-    CGAL_assertion_code(bool orientable = )
-    PMP::orient_polygon_soup(points, polygons);
-    CGAL_assertion(orientable);
-
-    SMesh outmesh;
-    PMP::polygon_soup_to_polygon_mesh(points, polygons, outmesh);
-    
-    Scene_surface_mesh_item* item = new Scene_surface_mesh_item(std::move(outmesh));
-    item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
-    scene->addItem(item);
-  }
-  else
-  {
-    Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
-    soup_item->load(points, polygons);
-    soup_item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
-    scene->addItem(soup_item);
-  }
-=======
->>>>>>> cgal/master
   this->setVisible(false);
 }
 

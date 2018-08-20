@@ -88,7 +88,7 @@ class Polygon_soup_offset_function {
     const Points* points_vector_ptr;
   public:
     typedef Polygon_iterator key_type;
-    typedef Kernel::Point_3 value_type;
+    typedef EPICK::Point_3 value_type;
     typedef value_type reference;
     typedef boost::readable_property_map_tag category;
 
@@ -109,7 +109,7 @@ class Polygon_soup_offset_function {
     const Points* points_vector_ptr;
   public:
     typedef Polygon_iterator key_type;
-    typedef Kernel::Triangle_3 value_type;
+    typedef EPICK::Triangle_3 value_type;
     typedef value_type reference;
     typedef boost::readable_property_map_tag category;
 
@@ -163,7 +163,7 @@ class Polygon_soup_offset_function {
   }; // end struct template AABB_primitive
 
 
-  typedef CGAL::AABB_traits<Kernel, AABB_primitive> AABB_traits;
+  typedef CGAL::AABB_traits<EPICK, AABB_primitive> AABB_traits;
   typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
 
   std::shared_ptr<AABB_tree> m_tree_ptr;
@@ -186,11 +186,11 @@ public:
     m_tree_ptr->accelerate_distance_queries();
   }
 
-  double operator()(const Kernel::Point_3& p) const
+  double operator()(const EPICK::Point_3& p) const
   {
     using CGAL::sqrt;
 
-    Kernel::Point_3 closest_point = m_tree_ptr->closest_point(p);
+    EPICK::Point_3 closest_point = m_tree_ptr->closest_point(p);
     double distance = sqrt(squared_distance(p, closest_point));
 
     return m_offset_distance - distance;
@@ -206,14 +206,9 @@ Scene_surface_mesh_item* make_item(SMesh* sm)
   return new Scene_surface_mesh_item(sm);
 }
 
-CGAL::Offset_function<SMesh, Kernel>
+CGAL::Offset_function<SMesh, EPICK>
 offset_function(SMesh* surface_mesh_ptr, double offset_value) {
   return { *surface_mesh_ptr, offset_value };
-}
-
-CGAL::Offset_function<Polyhedron, Kernel>
-offset_function(Polyhedron* polyhedron_ptr, double offset_value) {
-  return { *polyhedron_ptr, offset_value };
 }
 
 CGAL::Polygon_soup_offset_function
@@ -250,7 +245,7 @@ CGAL::Three::Scene_item* cgal_off_meshing(QWidget*,
                                           const double approx,
                                           int tag)
 {
-  typedef Kernel GT;
+  typedef EPICK GT;
   typedef CGAL::Labeled_mesh_domain_3<GT, int, int> Mesh_domain;
   typedef C3t3::Triangulation Tr;
   typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;

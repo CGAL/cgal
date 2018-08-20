@@ -39,7 +39,7 @@ if(EIGEN3_FOUND)
     endif()
     
     target_link_libraries(classification_plugin PUBLIC scene_points_with_normal_item
-      scene_polylines_item scene_polygon_soup_item scene_surface_mesh_item scene_surface_mesh_selection_item scene_color_ramp ${classification_linked_libraries})
+      scene_polylines_item scene_polygon_soup_item scene_surface_mesh_item scene_selection_item scene_color_ramp ${classification_linked_libraries})
     target_compile_definitions(classification_plugin PUBLIC ${classification_compile_definitions})
   else()
     message(STATUS "NOTICE: Boost Serialization or IO Streams or ZLIB not found. Classification plugin won't be available.")

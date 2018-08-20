@@ -233,6 +233,7 @@ struct Scene_surface_mesh_item_priv{
   Scene_surface_mesh_item *item;
 
   mutable SMesh::Property_map<face_descriptor,int> fpatch_id_map;
+  mutable int min_patch_id;
   mutable SMesh::Property_map<vertex_descriptor,int> v_selection_map;
   mutable SMesh::Property_map<face_descriptor,int> f_selection_map;
   mutable SMesh::Property_map<boost::graph_traits<SMesh>::edge_descriptor, bool> e_is_feature_map;
@@ -474,8 +475,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
   }
   
   if(name.testFlag(Scene_item_rendering_helper::COLORS) &&
-     has_fpatch_id &&
-     colors_.empty()){
+     has_fpatch_id){
     initialize_colors();
   }
   
@@ -506,8 +506,10 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
         {
           if(has_fpatch_id)
           {
-            QColor c = item->color_vector()[fpatch_id_map[fd]];
-            CGAL::Color color(c.red(), c.green(), c.blue());
+            //The sharp features detection produces patch ids >=1, this
+            //is meant to insure the wanted id is in the range [min,max]
+            QColor c = item->color_vector()[fpatch_id_map[fd] - min_patch_id]; 
+            CGAL::Color color(c.red(),c.green(),c.blue());
             CPF::add_color_in_buffer(color, f_colors);
           }
           else if(has_fcolors)
@@ -665,14 +667,14 @@ void Scene_surface_mesh_item_priv::initialize_colors() const
 {
   // Fill indices map and get max subdomain value
   int max = 0;
-  int min = (std::numeric_limits<int>::max)();
+  min_patch_id = (std::numeric_limits<int>::max)();
   BOOST_FOREACH(face_descriptor fd, faces(*smesh_)){
     max = (std::max)(max, fpatch_id_map[fd]);
-    min = (std::min)(min, fpatch_id_map[fd]);
+    min_patch_id = (std::min)(min_patch_id, fpatch_id_map[fd]);
   }
 
   colors_.clear();
-  compute_color_map(item->color(), (std::max)(0, max + 1 - min),
+  compute_color_map(item->color(), (std::max)(1, max + 1 - min_patch_id),
                     std::back_inserter(colors_));
 }
 
