@@ -416,7 +416,7 @@
                <string extracomment="Clear selection for Selection Type"/>
               </property>
               <property name="text">
-               <string>&amp;Clear</string>
+               <string>&amp;Clear Current Type</string>
               </property>
              </widget>
             </item>
