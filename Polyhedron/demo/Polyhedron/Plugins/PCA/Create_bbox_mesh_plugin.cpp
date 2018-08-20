@@ -5,6 +5,7 @@
 
 #include <QAction>
 #include <QMainWindow>
+#include <QMessageBox>
 #include <QApplication>
 
 #include "Scene_surface_mesh_item.h"
@@ -31,18 +32,28 @@ public:
   return false;}
 
 protected:
-  void bbox(bool extended = false);
+  bool bbox(bool extended = false);
 
 public Q_SLOTS:
   void createBbox() {
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    bbox();
-    QApplication::restoreOverrideCursor();
+    if(!bbox())
+    {
+      QApplication::restoreOverrideCursor();
+      QMessageBox::warning(mw, "Error", "Bbox couldn't be computed, so there is no mesh created.");
+    }
+    else
+      QApplication::restoreOverrideCursor();
   }
   void createExtendedBbox() {
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    bbox(true);
-    QApplication::restoreOverrideCursor();
+    if(!bbox(true))
+    {
+      QApplication::restoreOverrideCursor();
+      QMessageBox::warning(mw, "Error", "Bbox couldn't be computed, so there is no mesh created.");
+    }
+    else
+      QApplication::restoreOverrideCursor();
   }
 
 private:
@@ -71,7 +82,7 @@ QList<QAction*> Create_bbox_mesh_plugin::actions() const {
   return QList<QAction*>() << actionBbox << actionExtendedBbox;
 }
 
-void Create_bbox_mesh_plugin::bbox(bool extended)
+bool Create_bbox_mesh_plugin::bbox(bool extended)
 {
   Scene_interface::Bbox bbox;
   bool initialized = false;
@@ -105,6 +116,12 @@ void Create_bbox_mesh_plugin::bbox(bool extended)
           bbox.zmax() + delta_z);
   }
   
+  if(bbox.min(0) > bbox.max(0) ||
+     bbox.min(1) > bbox.max(1) ||
+     bbox.min(2) > bbox.max(2))
+  {
+    return false;
+  }
   Scene_item* item;
   EPICK::Iso_cuboid_3 ic(bbox);
   SMesh* p = new SMesh;
@@ -114,6 +131,7 @@ void Create_bbox_mesh_plugin::bbox(bool extended)
   item->setName("Scene bbox mesh");
   item->setRenderingMode(Wireframe);
   scene->addItem(item);
+  return true;
 }
 
 #include "Create_bbox_mesh_plugin.moc"
