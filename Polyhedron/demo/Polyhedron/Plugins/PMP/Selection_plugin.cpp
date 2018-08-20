@@ -286,8 +286,14 @@ public Q_SLOTS:
       print_message("Error: there is no selected polyhedron selection item!");
       return; 
     }
-
-    selection_item->clear();
+    if(ui_widget.tabWidget->currentIndex() == 0)
+      selection_item->clear();
+    else //case current tab is Components, then active simplices are edges. 
+    {
+      selection_item->selected_edges.clear();
+      selection_item->invalidateOpenGLBuffers();
+      selection_item->itemChanged();
+    }
     filter_operations();
   }
   void on_Clear_all_button_clicked(){
