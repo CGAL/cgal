@@ -36,6 +36,7 @@
 #include <QPainterPath>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
+#include <QDialog>
 
 #include <CGAL/Qt/GraphicsViewNavigation.h>
 
