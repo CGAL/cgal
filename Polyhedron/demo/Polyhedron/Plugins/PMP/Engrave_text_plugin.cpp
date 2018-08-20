@@ -24,10 +24,7 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Projection_traits_xy_3.h>
-#include <CGAL/Delaunay_mesh_vertex_base_2.h>
-#include <CGAL/Delaunay_mesh_face_base_2.h>
-#include <CGAL/Delaunay_mesh_size_criteria_2.h>
-#include <CGAL/Delaunay_mesher_2.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/centroid.h>
@@ -98,14 +95,12 @@ struct Top
 };
 
 typedef EPICK                                                        Gt;
-typedef CGAL::Delaunay_mesh_vertex_base_2<Gt>                        Vb;
-typedef CGAL::Delaunay_mesh_face_base_2<Gt>                          Fm;
-typedef CGAL::Triangulation_face_base_with_info_2<FaceInfo2,Gt,Fm>   Fb;
+typedef CGAL::Triangulation_vertex_base_2<Gt>                        Vb;
+typedef CGAL::Triangulation_face_base_with_info_2<FaceInfo2,Gt >    Fbb;
+typedef CGAL::Constrained_triangulation_face_base_2<Gt,Fbb>          Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb>                TDS;
 typedef CGAL::No_intersection_tag                                   Tag;
 typedef CGAL::Constrained_Delaunay_triangulation_2<Gt, TDS, Tag>    CDT;
-typedef CGAL::Delaunay_mesh_size_criteria_2<CDT>               Criteria;
-typedef CGAL::Delaunay_mesher_2<CDT, Criteria>                   Mesher;
 
 //Parameterization and text displaying
 class ParamItem : public QGraphicsItem
@@ -636,25 +631,8 @@ public Q_SLOTS:
     {
       bbox += CGAL::bbox_2(points.begin(), points.end(), EPICK());
     }
-    float diag = CGAL::sqrt(
-          (bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin())
-          +(bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin())
-          );
-    // start by marking the domain to mesh
-    Criteria criteria(0.125, 0.05 * diag);
-    Mesher mesher(cdt, criteria);
-    
     mark_nested_domains(cdt);
-    for(typename CDT::All_faces_iterator fit=cdt.all_faces_begin(),
-        fit_end=cdt.all_faces_end();
-        fit!=fit_end;++fit)
-    {
-      fit->set_in_domain(fit->info().in_domain());
-    }
-    mesher.init(true);
-    
-    
-    mesher.refine_mesh();
+
     SMesh text_mesh_bottom, text_mesh_complete;
     cdt2_to_face_graph(cdt,
                        text_mesh_bottom);
@@ -700,7 +678,7 @@ public Q_SLOTS:
       messages->information("Error: the output mesh is not manifold!");
       return;
     }
-    
+
     CGAL::Polygon_mesh_processing::triangulate_faces(result);
     Scene_surface_mesh_item* result_item = new Scene_surface_mesh_item(
           result);
@@ -780,7 +758,7 @@ private:
          fit_end=cdt.finite_faces_end();
          fit!=fit_end; ++fit)
     {
-      if (!fit->is_in_domain()) continue;
+      if (!fit->info().in_domain()) continue;
       CGAL::cpp11::array<vertex_descriptor,3> vds;
       for(int i=0; i<3; ++i)
       {
