@@ -694,25 +694,35 @@ namespace internal {
         vertex_descriptor va = source(he, mesh_);
         vertex_descriptor vb = target(he, mesh_);
 
-        bool is_va_constrained = is_constrained(va) || is_on_patch_border(va);
-        bool is_vb_constrained = is_constrained(vb) || is_on_patch_border(vb);
-
+        bool is_va_constrained = is_constrained(va) || is_corner(va);
+        bool is_vb_constrained = is_constrained(vb) || is_corner(vb);
 
         // do not collapse edge with two constrained vertices
         if (is_va_constrained && is_vb_constrained) continue;
 
         bool can_swap = !is_vb_constrained;
-        if (is_va_constrained)
+
+        //do not collapse an edge connecting two different constrained polylines
+        if (is_va_constrained && is_vb_constrained && !is_on_patch_border(he))
+          continue;
+
+        bool is_va_on_constrained_polyline = is_on_patch_border(va);
+        bool is_vb_on_constrained_polyline = is_on_patch_border(vb);
+
+        // swap if vb is not constrained and va is constrained or the only vertex on a constrained polyline
+        if (can_swap && (is_va_constrained || (is_va_on_constrained_polyline && !is_vb_on_constrained_polyline)))
         {
           he = opposite(he, mesh_);
           e=edge(he, mesh_);
           std::swap(va, vb);
+          // no need to swap is_vX_on_constrained_polyline and is_vX_constrained
           can_swap=false;
         }
 
         if(!collapse_does_not_invert_face(he))
         {
           if (can_swap//if swap allowed (no constrained vertices)
+              && (!is_vb_on_constrained_polyline || is_va_on_constrained_polyline)
               && collapse_does_not_invert_face(opposite(he, mesh_)))
           {
             he = opposite(he, mesh_);
@@ -786,7 +796,8 @@ namespace internal {
           ++nb_collapses;
 
           //fix constrained case
-          CGAL_assertion((is_constrained(vkept) || is_on_patch_border(vb)) == (is_va_constrained || is_vb_constrained));
+          CGAL_assertion((is_constrained(vkept) || is_corner(vkept) || is_on_patch_border(vkept)) ==
+                         (is_va_constrained || is_vb_constrained || is_va_on_constrained_polyline || is_vb_on_constrained_polyline));
           fix_degenerate_faces(vkept, short_edges, sq_low, collapse_constraints);
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
@@ -1859,7 +1870,6 @@ private:
         if (n == CGAL::NULL_VECTOR) //for degenerate faces
           continue;
         Patch_id pid = get_patch_id(face(hd, mesh_));
-
         normals_per_patch.insert(std::make_pair(pid, n));
       }
 
