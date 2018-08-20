@@ -137,6 +137,8 @@ public:
       dock_widget->maxColorButton->setPalette(palette);
       dock_widget->maxColorButton->update();
     });
+    connect(dock_widget->resetButton, &QPushButton::pressed,
+            this, &DisplayPropertyPlugin::resetRampExtremas);
     dock_widget->zoomToMaxButton->setEnabled(false);
     dock_widget->zoomToMinButton->setEnabled(false);
     Scene* scene_obj =static_cast<Scene*>(scene);
@@ -152,6 +154,29 @@ private Q_SLOTS:
     else                         { replaceRamp(); dock_widget->show(); }
   }
 
+  void resetRampExtremas()
+  {
+    Scene_surface_mesh_item* item =
+        qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+    if(!item)
+      return;
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    item->face_graph()->collect_garbage();
+    bool ok;
+    switch(dock_widget->propertyBox->currentIndex())
+    {
+    case 0:
+      ok = resetAngles(item);
+      break;
+    default:
+      ok = resetScaledJacobian(item);
+      break;
+    }
+    QApplication::restoreOverrideCursor();
+    if(!ok)
+      QMessageBox::warning(mw, "Error", "You must first run colorize once to initialize the values.");
+  }
+  
   void colorize()
   {
     Scene_surface_mesh_item* item =
@@ -282,10 +307,20 @@ private Q_SLOTS:
             255*color_ramp.b(f));
       fcolors[*fit] = color;
     }
-    dock_widget->minBox->setValue(jacobian_min[item].first-0.01);
-    dock_widget->maxBox->setValue(jacobian_max[item].first);
   }
 
+  bool resetScaledJacobian(Scene_surface_mesh_item* item)
+  {
+    SMesh& smesh = *item->face_graph();
+    if(!smesh.property_map<face_descriptor, double>("f:jacobian").second)
+    {
+      return false;
+    }
+    dock_widget->minBox->setValue(jacobian_min[item].first-0.01);
+    dock_widget->maxBox->setValue(jacobian_max[item].first);
+    return true;
+  }
+  
   void displayAngles(Scene_surface_mesh_item* item)
   {
     SMesh& smesh = *item->face_graph();
@@ -411,10 +446,19 @@ private Q_SLOTS:
             255*color_ramp.b(f));
       fcolors[*fit] = color;
     }
-    dock_widget->minBox->setValue(angles_min[item].first);
-    dock_widget->maxBox->setValue(angles_max[item].first);
   }
 
+  bool resetAngles(Scene_surface_mesh_item* item)
+  {
+    SMesh& smesh = *item->face_graph();
+    if(!smesh.property_map<face_descriptor, double>("f:angle").second)
+    {
+      return false;
+    }
+    dock_widget->minBox->setValue(angles_min[item].first);
+    dock_widget->maxBox->setValue(angles_max[item].first);
+    return true;
+  }
   void replaceRamp()
   {
     color_ramp = Color_ramp(rm, rM, gm, gM, bm, bM);
