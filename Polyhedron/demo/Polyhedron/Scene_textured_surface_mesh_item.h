@@ -51,7 +51,7 @@ public:
   void compute_bbox() const;
   virtual void invalidateOpenGLBuffers();
   virtual void selection_changed(bool);
-  void add_border_edges(std::vector<float> border_edges);
+  void add_border_edges(std::vector<float> border_edges, bool is_opengl_4_3);
 
 Q_SIGNALS:
   void selectionChanged();

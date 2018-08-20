@@ -1,6 +1,6 @@
 #include <QtCore/qglobal.h>
 #include <QMessageBox>
-#include "opengl_tools.h"
+
 
 #include "Messages_interface.h"
 #include "Kernel_type.h"

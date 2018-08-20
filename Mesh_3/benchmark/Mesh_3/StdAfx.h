@@ -258,7 +258,6 @@
 //#include <CGAL/Triangulation_3.h>
 //#include <CGAL/triangulation_assertions.h>
 //#include <CGAL/Triangulation_cell_base_3.h>
-//#include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>
 //#include <CGAL/Triangulation_data_structure_3.h>
 //#include <CGAL/Triangulation_ds_cell_base_3.h>
 //#include <CGAL/Triangulation_ds_vertex_base_3.h>

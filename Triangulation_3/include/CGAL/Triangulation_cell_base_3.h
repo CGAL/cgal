@@ -67,40 +67,7 @@ public:
                             Cell_handle   n2, Cell_handle   n3)
     : Cb(v0, v1, v2, v3, n0, n1, n2, n3) {}
 
-  // note the circumcenter() function is not part of the concept TriangulationCellBase_3
-  // it is requested only by DelaunayTriangulartionCellBase_3
-  // we keep it here for backward compatibility
-  typename Geom_traits::Point_3
-  circumcenter(const Geom_traits& gt = Geom_traits()) const
-  {
-      return gt.construct_circumcenter_3_object()(this->vertex(0)->point(),
-                                                  this->vertex(1)->point(),
-                                                  this->vertex(2)->point(),
-                                                  this->vertex(3)->point());
-  }
-
 };
-
-// The following should be useless.
-#if 0
-template < class GT, class Cb >
-inline
-std::istream&
-operator>>(std::istream &is, Triangulation_cell_base_3<GT, Cb> &c)
-  // non combinatorial information. Default = nothing
-{
-  return is >> static_cast<Cb&>(c);
-}
-
-template < class GT, class Cb >
-inline
-std::ostream&
-operator<<(std::ostream &os, const Triangulation_cell_base_3<GT, Cb> &c)
-  // non combinatorial information. Default = nothing
-{
-  return os << static_cast<const Cb&>(c);
-}
-#endif
 
 } //namespace CGAL
 

@@ -33,9 +33,8 @@
 #include <boost/type_traits.hpp>
 
 namespace CGAL {
-
-namespace internal {
 namespace Mesh_3 {
+namespace internal {
 
   // Those two classes are designed to handle dynamic initialization of 
   // Sizing_field type (using named parameters of make_mesh_3 for example)
@@ -92,9 +91,10 @@ namespace Mesh_3 {
   private:
     Sizing_field s_;
   };
-  
-}} // end namespace internal::Mesh_3
-  
+
+} // end namespace internal
+} // end namespace Mesh_3
+
 template < typename Tr >
 class Mesh_edge_criteria_3
 {
@@ -108,7 +108,7 @@ public:
   
   /// Constructors
   Mesh_edge_criteria_3(const FT& value)
-    : p_size_(new internal::Mesh_3::Sizing_field_container<
+    : p_size_(new Mesh_3::internal::Sizing_field_container<
                 Mesh_constant_domain_field_3<Gt,Index> >(value))
   {}
   
@@ -125,7 +125,7 @@ public:
     CGAL_static_assertion((boost::is_same<typename Sizing_field::Index,
                                           Index>::value));
                           
-    p_size_ = new internal::Mesh_3::Sizing_field_container<Sizing_field>(size);
+    p_size_ = new Mesh_3::internal::Sizing_field_container<Sizing_field>(size);
   }
 
   Mesh_edge_criteria_3(const Self& rhs)
@@ -142,7 +142,7 @@ public:
   { return (*p_size_)(p,dim,index); }
   
 private:
-  typedef internal::Mesh_3::Sizing_field_interface<FT,Point_3,Index>
+  typedef Mesh_3::internal::Sizing_field_interface<FT,Point_3,Index>
     Sizing_field_interface;
   
   // A pointer to Sizing_field_interface to handle dynamic wrapping of

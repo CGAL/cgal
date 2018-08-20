@@ -10,7 +10,7 @@
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Make_triangle_soup.h>
 
-#include "opengl_tools.h"
+
 #include "Kernel_type.h"
 #include "Scene_polyhedron_selection_item.h"
 

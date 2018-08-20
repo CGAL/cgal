@@ -2,7 +2,7 @@
 #include <QAction>
 #include <QMessageBox>
 #include <QMainWindow>
-#include "opengl_tools.h"
+
 #include "Kernel_type.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polyhedron_selection_item.h"

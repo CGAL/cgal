@@ -5,7 +5,7 @@ may be a monodomain, i.e. a single connected component,
 into different subdomains.
 The domain is input as an oracle able to answer
  queries, of a few different types, on the domain.
-In the current version, Mesh_3 generate meshes for domain described
+In the current version, Mesh_3 generate meshes for domains described
 through implicit functions,  3D images or polyhedral boundaries.
 The output is a 3D mesh of the domain volume
 and conformal surface meshes for all the boundary and subdividing

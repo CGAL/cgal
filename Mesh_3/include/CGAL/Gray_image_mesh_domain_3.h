@@ -43,7 +43,7 @@ namespace CGAL {
 template<class Image,
          class BGT,
          typename Image_word_type_ = float,
-         typename Transform = internal::Mesh_3::Greater_than<double>,
+         typename Transform = Mesh_3::internal::Greater_than<double>,
          typename Subdomain_index = int>
 class
 CGAL_DEPRECATED_MSG
@@ -76,7 +76,7 @@ public:
     : Base(Wrapper(image, 
                    Transform(iso_value),
                    Transform(iso_value)(value_outside)),
-           internal::Mesh_3::compute_bounding_box(image),
+           Mesh_3::internal::compute_bounding_box(image),
            error_bound,
            p_rng)
   {
@@ -89,7 +89,7 @@ public:
                            const FT& error_bound = FT(1e-3),
                            CGAL::Random* p_rng = NULL)
     : Base(Wrapper(image, transform, transform(value_outside)),
-           internal::Mesh_3::compute_bounding_box(image),
+           Mesh_3::internal::compute_bounding_box(image),
            error_bound,
            p_rng)
   {

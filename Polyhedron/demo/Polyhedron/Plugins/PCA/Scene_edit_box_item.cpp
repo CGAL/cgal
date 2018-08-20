@@ -201,8 +201,16 @@ struct Scene_edit_box_item_priv{
       for(int j=0; j<3; ++j)
         last_pool[i][j] = vertices[i][j];
 
-    pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_spheres.v");
-    pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_without_light.f");
+    if(QOpenGLContext::currentContext()->format().majorVersion() >= 3)
+    {
+      pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_spheres.v");
+      pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_without_light.f");
+    }
+    else
+    {
+      pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_spheres.v");
+      pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_without_light.f");
+    }
     pick_sphere_program.bindAttributeLocation("colors", 1);
     pick_sphere_program.link();
 
@@ -210,7 +218,31 @@ struct Scene_edit_box_item_priv{
     //Vertex source code
     const char vertex_source[] =
     {
-      "#version 120 \n                         "
+      "#version 150 \n"
+      "in vec4 vertex;            "
+      "in vec3 normals;           "
+      "in vec4 colors;            "
+      "uniform mat4 mvp_matrix;          "
+      "uniform mat4 mv_matrix;           "
+      "out vec4 fP;                  "
+      "out vec3 fN;                  "
+      "out vec4 color;               "
+      "void main(void)                         "
+      "{                                       "
+      "   color = colors;                      "
+      "   fP = mv_matrix * vertex;             "
+      "   mat3 mv_matrix_3;                    "
+      "   mv_matrix_3[0] = mv_matrix[0].xyz;   "
+      "   mv_matrix_3[1] = mv_matrix[1].xyz;   "
+      "   mv_matrix_3[2] = mv_matrix[2].xyz;   "
+      "   fN = mv_matrix_3* normals;           "
+      "   gl_Position = mvp_matrix * vertex;   "
+      "}\n                                     "
+      "\n                                      "
+    };
+    
+    const char vertex_source_comp[] =
+    {
       "attribute highp vec4 vertex;            "
       "attribute highp vec3 normals;           "
       "attribute highp vec4 colors;            "
@@ -221,9 +253,13 @@ struct Scene_edit_box_item_priv{
       "varying highp vec4 color;               "
       "void main(void)                         "
       "{                                       "
-      "   color = colors;                       "
+      "   color = colors;                      "
       "   fP = mv_matrix * vertex;             "
-      "   fN = mat3(mv_matrix)* normals;       "
+      "   mat3 mv_matrix_3;                    "
+      "   mv_matrix_3[0] = mv_matrix[0].xyz;   "
+      "   mv_matrix_3[1] = mv_matrix[1].xyz;   "
+      "   mv_matrix_3[2] = mv_matrix[2].xyz;   "
+      "   fN = mv_matrix_3* normals;           "
       "   gl_Position = mvp_matrix * vertex;   "
       "}\n                                     "
       "\n                                      "
@@ -232,7 +268,45 @@ struct Scene_edit_box_item_priv{
     //Fragment source code
     const char fragment_source[] =
     {
-      "#version 120 \n"
+      "#version 150 \n"
+      "in vec4 color;"
+      "in vec4 fP; "
+      "in vec3 fN; "
+      "uniform vec4 light_pos;  "
+      "uniform vec4 light_diff; "
+      "uniform vec4 light_spec; "
+      "uniform vec4 light_amb;  "
+      "uniform float spec_power ; "
+      "uniform int is_two_side; "
+      "uniform bool is_selected;"
+      "out vec4 out_color; \n"
+      "void main(void) {"
+      " vec3 L = light_pos.xyz - fP.xyz;"
+      " vec3 V = -fP.xyz;"
+      " vec3 N;"
+      "if(fN == vec3(0.0,0.0,0.0)) "
+      "N = vec3(0.0,0.0,0.0);"
+      "else "
+      "N = normalize(fN);"
+      "L = normalize(L);"
+      "V = normalize(V);"
+      "vec3 R = reflect(-L, N);"
+      "vec4 diffuse;"
+      "if(is_two_side == 1) "
+      "diffuse = abs(dot(N,L)) * light_diff * color;"
+      "else "
+      "diffuse = max(dot(N,L), 0.0) * light_diff * color;"
+      "vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec;"
+      "vec4 ret_color = vec4((color*light_amb).xyz + diffuse.xyz + specular.xyz,1);"
+      "if(is_selected) "
+      "  out_color = vec4(ret_color.r+70.0/255.0, ret_color.g+70.0/255.0, ret_color.b+70.0/255.0, color.a);"
+      "else "
+      "  out_color = vec4(ret_color.rgb, color.a); }\n"
+      "\n"
+    };
+    //Fragment source code
+    const char fragment_source_comp[] =
+    {
       "varying highp vec4 color;"
       "varying highp vec4 fP; "
       "varying highp vec3 fN; "
@@ -267,8 +341,17 @@ struct Scene_edit_box_item_priv{
       "gl_FragColor = vec4(ret_color.rgb, color.a); }\n"
       "\n"
     };
-    transparent_face_program.addShaderFromSourceCode(QOpenGLShader::Vertex,vertex_source);
-    transparent_face_program.addShaderFromSourceCode(QOpenGLShader::Fragment,fragment_source);
+    
+    if(QOpenGLContext::currentContext()->format().majorVersion() >= 3)
+    {
+      transparent_face_program.addShaderFromSourceCode(QOpenGLShader::Vertex,vertex_source);
+      transparent_face_program.addShaderFromSourceCode(QOpenGLShader::Fragment,fragment_source);
+    }
+    else
+    {
+      transparent_face_program.addShaderFromSourceCode(QOpenGLShader::Vertex,vertex_source_comp);
+      transparent_face_program.addShaderFromSourceCode(QOpenGLShader::Fragment,fragment_source_comp);
+    }
     transparent_face_program.bindAttributeLocation("colors", 1);
     transparent_face_program.link();
     reset_selection();
@@ -405,6 +488,7 @@ void Scene_edit_box_item::draw(Viewer_interface *viewer) const
   }
 
   drawSpheres(viewer, f_matrix);
+  
 }
 
 void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
@@ -419,15 +503,28 @@ void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
     f_matrix.data()[i] = (float)d->frame->matrix()[i];
   }
   vaos[Scene_edit_box_item_priv::Edges]->bind();
-  viewer->glLineWidth(6.0f);
-  d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-  attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
-  d->program->bind();
+  if(!viewer->isOpenGL_4_3())
+  {
+    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    d->program->bind();
+    d->program->setUniformValue("is_clipbox_on", false);
+  }
+  else
+  {
+    attribBuffers(viewer, PROGRAM_SOLID_WIREFRAME);
+    d->program = getShaderProgram(PROGRAM_SOLID_WIREFRAME);
+    d->program->bind();
+    QVector2D vp(viewer->width(), viewer->height());
+    d->program->setUniformValue("viewport", vp);
+    d->program->setUniformValue("is_clipbox_on", false);
+    d->program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
+    d->program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+    d->program->setUniformValue("width", 6.0f);
+  }
   d->program->setUniformValue("f_matrix", f_matrix);
-  d->program->setUniformValue("is_clipbox_on", false);
   d->program->setAttributeValue("colors", QColor(Qt::black));
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->vertex_edges.size()/3));
-  viewer->glLineWidth(1.0f);
   vaos[Scene_edit_box_item_priv::Edges]->release();
   d->program->release();
   if(renderingMode() == Wireframe)
@@ -435,6 +532,7 @@ void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
     drawSpheres(viewer, f_matrix);
   }
   drawHl(viewer);
+  drawTransparent(viewer);
 }
 
 void Scene_edit_box_item::compute_bbox() const
@@ -461,7 +559,10 @@ Scene_edit_box_item_priv::initializeBuffers(Viewer_interface *viewer)const
 
   //vao containing the data for the lines
   {
-    program = item->getShaderProgram(Scene_edit_box_item::PROGRAM_WITHOUT_LIGHT, viewer);
+    if(viewer->isOpenGL_4_3())
+      program = item->getShaderProgram(Scene_edit_box_item::PROGRAM_SOLID_WIREFRAME, viewer);
+    else
+      program = item->getShaderProgram(Scene_edit_box_item::PROGRAM_WITHOUT_LIGHT, viewer);
     program->bind();
 
     item->vaos[Edges]->bind();
@@ -841,7 +942,9 @@ void Scene_edit_box_item::highlight(Viewer_interface *viewer)
       d->hl_vertex.push_back(d->edges[d->last_picked_id].target->position().z()-d->center_.z);
 
       //fill buffers
-      d->program = getShaderProgram(Scene_edit_box_item::PROGRAM_WITHOUT_LIGHT, viewer);
+      d->program = viewer->isOpenGL_4_3() 
+          ? getShaderProgram(Scene_edit_box_item::PROGRAM_SOLID_WIREFRAME, viewer)
+          : getShaderProgram(Scene_edit_box_item::PROGRAM_WITHOUT_LIGHT, viewer);
       d->program->bind();
 
       vaos[Scene_edit_box_item_priv::S_Edges]->bind();
@@ -1159,7 +1262,7 @@ void Scene_edit_box_item_priv::draw_picking(Viewer_interface* viewer)
   item->vaos[P_Spheres]->bind();
   pick_sphere_program.bind();
   pick_sphere_program.setUniformValue("mvp_matrix", mvp_mat);
-  program->setUniformValue("is_clipbox_on", false);
+  pick_sphere_program.setUniformValue("is_clipbox_on", GLboolean(false));
   viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
                                 static_cast<GLsizei>(vertex_spheres.size()/3),
                                 static_cast<GLsizei>(8));
@@ -1167,14 +1270,26 @@ void Scene_edit_box_item_priv::draw_picking(Viewer_interface* viewer)
   item->vaos[P_Spheres]->release();
 
   item->vaos[P_Edges]->bind();
-  viewer->glLineWidth(6.0f);
-  program = item->getShaderProgram(Scene_item::PROGRAM_WITHOUT_LIGHT);
-  item->attribBuffers(viewer, Scene_item::PROGRAM_WITHOUT_LIGHT);
-  program->bind();
+  if(!viewer->isOpenGL_4_3())
+  {
+    item->attribBuffers(viewer, Scene_item::PROGRAM_WITHOUT_LIGHT);
+    program = item->getShaderProgram(Scene_item::PROGRAM_WITHOUT_LIGHT);
+    program->bind();
+    program->setUniformValue("is_clipbox_on", false);
+  }
+  else
+  {
+    item->attribBuffers(viewer, Scene_item::PROGRAM_SOLID_WIREFRAME);
+    program = item->getShaderProgram(Scene_item::PROGRAM_SOLID_WIREFRAME);
+    program->bind();
+    QVector2D vp(viewer->width(), viewer->height());
+    program->setUniformValue("viewport", vp);
+    program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
+    program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+    program->setUniformValue("width", 6.0f);
+  }
   program->setUniformValue("f_matrix", f_matrix);
-  program->setUniformValue("is_clipbox_on", false);
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(vertex_edges.size()/3));
-  viewer->glLineWidth(1.0f);
   item->vaos[P_Edges]->release();
   program->release();
 }
@@ -1384,15 +1499,27 @@ void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
   else if(d->hl_type == Scene_edit_box_item_priv::EDGE)
   {
     vaos[Scene_edit_box_item_priv::S_Edges]->bind();
-    viewer->glLineWidth(6.0f);
-    d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
-    d->program->bind();
+    if(!viewer->isOpenGL_4_3())
+    {
+      d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+      attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
+      d->program->bind();
+      d->program->setUniformValue("is_clipbox_on", false);
+    }
+    else
+    {
+      attribBuffers(viewer, PROGRAM_SOLID_WIREFRAME);
+      d->program = getShaderProgram(PROGRAM_SOLID_WIREFRAME);
+      d->program->bind();
+      QVector2D vp(viewer->width(), viewer->height());
+      d->program->setUniformValue("viewport", vp);
+      d->program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
+      d->program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+      d->program->setUniformValue("width", 6.0f);
+    }
     d->program->setUniformValue("f_matrix", f_matrix);
     d->program->setAttributeValue("colors", QColor(Qt::yellow));
-    d->program->setUniformValue("is_clipbox_on", false);
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->hl_vertex.size()/3));
-    viewer->glLineWidth(1.0f);
     vaos[Scene_edit_box_item_priv::S_Edges]->release();
     d->program->release();
   }

@@ -37,9 +37,8 @@
 #include <CGAL/IO/io.h>
 
 namespace CGAL {
-namespace internal {
 namespace Mesh_3 {
-
+namespace internal {
 
 // -----------------------------------
 // Index_generator
@@ -185,10 +184,8 @@ struct Write_mesh_domain_index<Mesh_domain, false> {
 }; // end template partial specialization
    // Write_mesh_domain_index<Mesh_domain, false>
 
-
-
-}
-}
-}
+} // end namespace internal
+} // end namespace Mesh_3
+} // end namespace CGAL
 
 #endif // CGAL_INTERNAL_MESH_3_INDICES_MANAGEMENT_H

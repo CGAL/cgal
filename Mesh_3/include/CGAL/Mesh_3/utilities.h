@@ -34,7 +34,6 @@
 #include <sstream>
 
 namespace CGAL {
-
 namespace Mesh_3 {
 namespace internal {
   
@@ -126,8 +125,6 @@ public:
 
 } // end namespace internal  
 } // end namespace Mesh_3
-
-
 } //namespace CGAL
 
 #endif // CGAL_MESH_3_UTILITIES_H

@@ -69,6 +69,7 @@ void Scene::compile_shaders()
         "uniform highp mat4 mvp_matrix;\n"
         "void main(void)\n"
         "{\n"
+        "   gl_PointSize = 5.0; \n"
         "   gl_Position = mvp_matrix * vertex; \n"
         "}"
     };
@@ -796,8 +797,6 @@ void Scene::init() {
     ui->viewer->setForegroundColor(Qt::red);
 
     // OpenGL inits
-    glPointSize(10.0);
-    glLineWidth(1.0);
     glEnable(GL_POINT_SMOOTH);
     glEnable(GL_LINE_SMOOTH);
 
@@ -828,8 +827,7 @@ void Scene::draw() {
         change_material(materials[VERTEX_COLOR]);
         attrib_buffers(ui->viewer);
         rendering_program.bind();
-
-        glPointSize(5);
+        
         glEnable(GL_POINT_SMOOTH);
 
         rendering_program.setUniformValue(colorLocation[0], color);
@@ -843,7 +841,6 @@ void Scene::draw() {
             attrib_buffers(ui->viewer);
             rendering_program.bind();
 
-            glPointSize(5);
             glEnable(GL_POINT_SMOOTH);
             rendering_program.setUniformValue(colorLocation[0], color);
             glDrawArrays(GL_POINTS, 0, 1);

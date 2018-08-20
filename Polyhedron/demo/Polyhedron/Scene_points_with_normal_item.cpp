@@ -763,7 +763,7 @@ void Scene_points_with_normal_item::drawPoints(CGAL::Three::Viewer_interface* vi
         d->initializeBuffers(viewer);
     GLfloat point_size;
     viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
-    viewer->glPointSize(GLfloat(d->point_Slider->value()));
+    viewer->setGlPointSize(GLfloat(d->point_Slider->value()));
     double ratio_displayed = 1.0;
     if ((viewer->inFastDrawing () || d->isPointSliderMoving())
         &&((d->nb_points )/3 > limit_fast_drawing)) // arbitrary large value
@@ -817,7 +817,7 @@ void Scene_points_with_normal_item::drawPoints(CGAL::Three::Viewer_interface* vi
     else
       vaos[Scene_points_with_normal_item_priv::Selected_points]->release();
     d->program->release();
-    viewer->glPointSize(point_size);
+    viewer->setGlPointSize(point_size);
 }
 // Gets wrapped point set
 Point_set* Scene_points_with_normal_item::point_set()
