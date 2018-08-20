@@ -623,10 +623,10 @@ int zoomToId(const Mesh& mesh,
   CGAL::qglviewer::Quaternion new_orientation(CGAL::qglviewer::Vec(0,0,-1),
                                         CGAL::qglviewer::Vec(-normal.x(), -normal.y(), -normal.z()));
   Point new_pos = p +
-      CGAL::qglviewer::Vec(
-        viewer->camera()->position().x - viewer->camera()->sceneCenter().x,
-        viewer->camera()->position().y - viewer->camera()->sceneCenter().y,
-        viewer->camera()->position().z - viewer->camera()->sceneCenter().z)
+      0.25*CGAL::qglviewer::Vec(
+        viewer->camera()->position().x - viewer->camera()->pivotPoint().x,
+        viewer->camera()->position().y - viewer->camera()->pivotPoint().y,
+        viewer->camera()->position().z - viewer->camera()->pivotPoint().z)
       .norm() * normal ;
 
   viewer->camera()->setPivotPoint(CGAL::qglviewer::Vec(p.x(),
