@@ -153,7 +153,6 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
   viewer->setScene(scene);
   CGAL::Three::Three::s_scene = scene;
   CGAL::Three::Three::s_connectable_scene = scene;
-  ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(viewer->textRenderer()->getMax_textItems()));
   {
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
     connect(shortcut, SIGNAL(activated()),
@@ -193,8 +192,6 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
   connect(viewer, &Viewer::needNewContext,
     [this](){create();});
   
-  connect(ui->actionSet_Transparency_Pass_Number, SIGNAL(triggered()),
-              viewer, SLOT(setTotalPass_clicked()));
 
   connect(scene, SIGNAL(updated()),
           this, SLOT(selectionChanged()));
@@ -261,16 +258,11 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
   //         this, SLOT(showSceneContextMenu(const QPoint &)));
   connect(ui->actionRecenterScene, SIGNAL(triggered()),
           viewer, SLOT(update()));
-  connect(ui->actionAntiAliasing, SIGNAL(toggled(bool)),
-          viewer, SLOT(setAntiAliasing(bool)));
-
   connect(ui->actionDrawTwoSides, SIGNAL(toggled(bool)),
           viewer, SLOT(setTwoSides(bool)));
-  connect(ui->actionQuickCameraMode, SIGNAL(toggled(bool)),
-          viewer, SLOT(setFastDrawing(bool)));
   connect(ui->actionSwitchProjection, SIGNAL(toggled(bool)),
           viewer, SLOT(SetOrthoProjection(bool)));
-
+  
   // add the "About CGAL..." and "About demo..." entries
   this->addAboutCGAL();
   this->addAboutDemo(":/cgal/Polyhedron_3/about.html");
@@ -1466,8 +1458,10 @@ void MainWindow::updateDisplayInfo() {
 void MainWindow::readSettings()
 {
     QSettings settings;
-    // enable anti-aliasing
-    ui->actionAntiAliasing->setChecked(settings.value("antialiasing", false).toBool());
+    viewer->setAntiAliasing(settings.value("antialiasing", false).toBool());
+    viewer->setFastDrawing(settings.value("quick_camera_mode", true).toBool());
+    viewer->textRenderer()->setMax(settings.value("max_text_items", 10000).toInt());
+    viewer->setTotalPass(settings.value("transparency_pass_number", 4).toInt());
     // read plugin blacklist
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
@@ -1478,8 +1472,6 @@ void MainWindow::writeSettings()
   this->writeState("MainWindow");
   {
     QSettings settings;
-    settings.setValue("antialiasing",
-                      ui->actionAntiAliasing->isChecked());
     //setting plugin blacklist
     QStringList blacklist;
     Q_FOREACH(QString name,plugin_blacklist){ blacklist << name; }
@@ -1824,11 +1816,28 @@ void MainWindow::on_actionSetPolyhedronB_triggered()
   int i = getSelectedSceneItemIndex();
   scene->setItemB(i);
 }
+
 void MainWindow::on_actionPreferences_triggered()
 {
   QDialog dialog(this);
   Ui::PreferencesDialog prefdiag;
+  QSettings settings;
   prefdiag.setupUi(&dialog);
+  
+  prefdiag.antialiasingCheckBox->setChecked(settings.value("antialiasing", false).toBool());
+  connect(prefdiag.antialiasingCheckBox, SIGNAL(toggled(bool)),
+          viewer, SLOT(setAntiAliasing(bool)));
+  
+  prefdiag.quick_cameraCheckBox->setChecked(settings.value("quick_camera_mode", true).toBool());
+  connect(prefdiag.quick_cameraCheckBox, SIGNAL(toggled(bool)),
+          viewer, SLOT(setFastDrawing(bool)));
+  prefdiag.max_text_itemsPushButton->setText(QString("Set Maximum Text Items Displayed : %1").arg(viewer->textRenderer()->getMax_textItems()));
+  connect(prefdiag.max_text_itemsPushButton, &QPushButton::clicked,
+          this, &MainWindow::setMaxTextItemsDisplayed);
+  connect(prefdiag.transparency_passPushButton, &QPushButton::clicked,
+              viewer, &Viewer::setTotalPass_clicked);
+  connect(prefdiag.background_colorPushButton, &QPushButton::clicked,
+          this, &MainWindow::setBackgroundColor);
   
   std::vector<QTreeWidgetItem*> items;
   QBrush successBrush(Qt::green),
@@ -1879,10 +1888,24 @@ void MainWindow::on_actionPreferences_triggered()
       if (item->checkState(0)==Qt::Checked)
         plugin_blacklist.insert(item->text(1));
     }
+    
+    //write settings
+    settings.setValue("antialiasing",
+                      prefdiag.antialiasingCheckBox->isChecked());
+    settings.setValue("quick_camera_mode",
+                      prefdiag.quick_cameraCheckBox->isChecked());
+    settings.setValue("transparency_pass_number",
+                      viewer->total_pass());
+    settings.setValue("max_text_items",
+                      viewer->textRenderer()->getMax_textItems());
+    settings.setValue("background_color",viewer->backgroundColor().name());
+                      
+    
+    
   }
 }
 
-void MainWindow::on_actionSetBackgroundColor_triggered()
+void MainWindow::setBackgroundColor()
 {
   QColor c =  QColorDialog::getColor();
   if(c.isValid()) {
@@ -2157,7 +2180,7 @@ void MainWindow::setExpanded(QModelIndex index)
 }
 
 
-void MainWindow::on_actionMaxTextItemsDisplayed_triggered()
+void MainWindow::setMaxTextItemsDisplayed()
 {
   bool ok;
   bool valid;
@@ -2167,7 +2190,6 @@ void MainWindow::on_actionMaxTextItemsDisplayed_triggered()
   text.toInt(&valid);
   if (ok && valid){
     viewer->textRenderer()->setMax(text.toInt());
-    ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(text.toInt()));
   }
 }
 

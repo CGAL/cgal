@@ -2,6 +2,7 @@
 #include <CGAL/Three/Scene_draw_interface.h>
 #include <QMouseEvent>
 #include <QKeyEvent>
+#include <QSettings>
 #include <QDebug>
 #include <QOpenGLShader>
 #include <QFileDialog>
@@ -245,9 +246,10 @@ void Viewer::init()
   }
   else
       d->extension_is_found = true;
-
-
-  setBackgroundColor(::Qt::white);
+  QSettings settings;
+  QString colorname = settings.value("background_color", "#ffffff").toString();
+  QColor bc(colorname);
+  setBackgroundColor(bc);
   d->vao.create();
   d->buffer.create();
   

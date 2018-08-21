@@ -307,7 +307,7 @@ protected Q_SLOTS:
   //!Swap the visibility of the selected item(s).
   void on_actionShowHide_triggered();
   //!Pops a dialog to change the max TextItems
-  void on_actionMaxTextItemsDisplayed_triggered();
+  void setMaxTextItemsDisplayed();
   // Select A/B
   //!Sets the selected item as item_A.
   void on_actionSetPolyhedronA_triggered();
@@ -325,7 +325,7 @@ protected Q_SLOTS:
   //!Calls the function saveSnapShot of the viewer.
   void on_actionSaveSnapshot_triggered();
   //!Opens a Dialog to choose a color and make it the background color.
-  void on_actionSetBackgroundColor_triggered();
+  void setBackgroundColor();
   /*! Opens a Dialog to enter coordinates of the new center point and sets it
    * with viewerShow.
    *@see viewerShow(float, float, float, float, float, float)
