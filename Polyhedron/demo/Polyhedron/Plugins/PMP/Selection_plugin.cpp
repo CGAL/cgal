@@ -420,7 +420,9 @@ public Q_SLOTS:
         Q_EMIT set_operation_mode(-1);
       }
     }
+    filter_operations();
   }
+  
   void on_Insertion_radio_button_toggled(bool toggle){
     for(Selection_item_map::iterator it = selection_item_map.begin(); it != selection_item_map.end(); ++it) {
       it->second->set_is_insert(toggle);
@@ -932,9 +934,14 @@ void filter_operations()
   QString current_op = ui_widget.operationsBox->currentText();
   ui_widget.operationsBox->clear();
   
-  bool has_v(!selection_item->selected_vertices.empty()), 
-      has_e(!selection_item->selected_edges.empty()), 
-      has_f(!selection_item->selected_facets.empty());
+  bool has_v(!selection_item->selected_vertices.empty() || 
+             ui_widget.Selection_type_combo_box->currentIndex() == 0), 
+      has_e(!selection_item->selected_edges.empty()|| 
+            ui_widget.Selection_type_combo_box->currentIndex() == 2|| 
+            ui_widget.Selection_type_combo_box->currentIndex() == 4), 
+      has_f(!selection_item->selected_facets.empty()|| 
+            ui_widget.Selection_type_combo_box->currentIndex() == 1|| 
+            ui_widget.Selection_type_combo_box->currentIndex() == 3);
   
   if(has_v)
   {
