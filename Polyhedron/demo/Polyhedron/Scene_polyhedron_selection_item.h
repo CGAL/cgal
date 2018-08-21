@@ -220,6 +220,12 @@ public:
   void printAllIds(CGAL::Three::Viewer_interface*);
   bool testDisplayId(double, double, double, CGAL::Three::Viewer_interface*)const;
   bool shouldDisplayIds(CGAL::Three::Scene_item *current_item) const;
+  QString defaultSaveName() const 
+  { 
+    QString res = name();
+    res.remove(" (selection)");
+    return res;      
+  }
 
 protected: 
   void init(Scene_face_graph_item* poly_item, QMainWindow* mw);

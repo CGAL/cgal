@@ -1903,8 +1903,11 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_grap
   d->nb_points = 0;
   d->nb_lines = 0;
   QString sf = poly_item->property("source filename").toString();
+  QRegExp rx("\\.(ts$|off$|obj$|ply$|stl$|surf$|vtk$|vtp$|vtu)");
+  sf.remove(rx);
   if(!sf.isEmpty())
-    setProperty("defaultSaveDir", poly_item->property("source filename").toString());
+    setProperty("defaultSaveDir", sf);
+  qDebug()<<property("defaultSaveDir").toString();
   for(int i=0; i<Scene_polyhedron_selection_item_priv::NumberOfVaos; i++)
   {
     addVaos(i);

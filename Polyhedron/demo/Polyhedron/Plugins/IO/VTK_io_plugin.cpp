@@ -279,7 +279,7 @@ public:
 
 
   QString nameFilters() const {
-    return "VTK PolyData files Surface_mesh (*.vtk);; VTK XML PolyData Surface_mesh (*.vtp);; VTK XML UnstructuredGrid Surface_mesh(*.vtu)"; }
+    return "VTK PolyData files (*.vtk);; VTK XML PolyData (*.vtp);; VTK XML UnstructuredGrid (*.vtu)"; }
   QString name() const { return "vtk_sm_plugin"; }
   bool canSave(const CGAL::Three::Scene_item* item)
   {
