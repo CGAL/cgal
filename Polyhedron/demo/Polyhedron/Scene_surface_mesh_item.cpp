@@ -42,6 +42,7 @@
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Edge_container.h>
 #include <CGAL/Three/Point_container.h>
+#include <CGAL/Three/Three.h>
 
 #include <CGAL/Buffer_for_vao.h>
 #include <QMenu>
@@ -252,7 +253,7 @@ Scene_surface_mesh_item::Scene_surface_mesh_item()
 {
   d = new Scene_surface_mesh_item_priv(new SMesh(), this);
   d->floated = false;
-
+  setRenderingMode(CGAL::Three::Three::defaultSurfaceMeshRenderingMode());
   d->checkFloat();
   d->textVItems = new TextListItem(this);
   d->textEItems = new TextListItem(this);
@@ -265,8 +266,8 @@ Scene_surface_mesh_item::Scene_surface_mesh_item()
 Scene_surface_mesh_item::Scene_surface_mesh_item(const Scene_surface_mesh_item& other)
 {
   d = new Scene_surface_mesh_item_priv(other, this);
+  setRenderingMode(CGAL::Three::Three::defaultSurfaceMeshRenderingMode());
   d->floated = false;
-
   d->checkFloat();
   d->textVItems = new TextListItem(this);
   d->textEItems = new TextListItem(this);
@@ -280,7 +281,7 @@ void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
 {
   d = new Scene_surface_mesh_item_priv(sm, this);
   d->floated = false;
-
+  setRenderingMode(CGAL::Three::Three::defaultSurfaceMeshRenderingMode());
   d->checkFloat();
   d->textVItems = new TextListItem(this);
   d->textEItems = new TextListItem(this);

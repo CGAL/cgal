@@ -3,6 +3,7 @@
 #include "Scene_points_with_normal_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 #include <QInputDialog>
 #include <QApplication>
 #include <fstream>
@@ -154,7 +155,8 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
       QApplication::restoreOverrideCursor();
       return NULL;
     }
-
+    if(item->has_normals())
+      item->setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
     item->setName(fileinfo.completeBaseName());
     QApplication::restoreOverrideCursor();
     return item;

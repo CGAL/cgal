@@ -6,18 +6,30 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>612</width>
-    <height>253</height>
+    <width>631</width>
+    <height>631</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Preferences</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
      <item>
       <widget class="QGroupBox" name="groupBox_2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="title">
         <string>Settings</string>
        </property>
@@ -25,10 +37,13 @@
         <item>
          <widget class="QScrollArea" name="scrollArea">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAsNeeded</enum>
           </property>
           <property name="horizontalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -44,8 +59,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>259</width>
-             <height>159</height>
+             <width>278</width>
+             <height>537</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -64,23 +79,116 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="max_text_itemsPushButton">
-              <property name="text">
-               <string>Set &amp;Maximum Text Items Displayed...</string>
+             <widget class="QSpinBox" name="max_itemsSpinBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
+              <property name="prefix">
+               <string>Max Text Items Displayed:</string>
+              </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>999999999</number>
+              </property>
+              <property name="value">
+               <number>100000</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="transpSpinBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="prefix">
+               <string>Transparency Pass Number: </string>
+              </property>
+              <property name="value">
+               <number>4</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_3">
+              <property name="title">
+               <string>Surface Mesh Default RenderingMode</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_5">
+               <item>
+                <widget class="QComboBox" name="surface_meshComboBox">
+                 <property name="currentIndex">
+                  <number>1</number>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>Gouraud</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>flat+edges</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>flat</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>wire</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>points</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_4">
+              <property name="title">
+               <string>Point Set Default RenderingMode</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_6">
+               <item>
+                <widget class="QComboBox" name="point_setComboBox">
+                 <item>
+                  <property name="text">
+                   <string>points</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>shaded points</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>pts+normals</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="background_colorPushButton">
               <property name="text">
                <string>Change &amp;Background Color...</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="transparency_passPushButton">
-              <property name="text">
-               <string>Set Transparency &amp;Pass Number...</string>
               </property>
              </widget>
             </item>

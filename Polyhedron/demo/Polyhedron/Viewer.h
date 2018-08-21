@@ -114,8 +114,6 @@ public Q_SLOTS:
   {
     setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, CGAL::qglviewer::SELECT);
   }
-  //!Prompt a dialog to set the number of passes for the transparency.
-  void setTotalPass_clicked();
   virtual void setNoBinding() Q_DECL_OVERRIDE
   {
     setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, CGAL::qglviewer::NO_CLICK_ACTION);

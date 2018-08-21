@@ -38,6 +38,7 @@
 #include <QTreeWidgetItem>
 #include <QTreeWidget>
 #include <QDockWidget>
+#include <QSpinBox>
 #include <stdexcept>
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
@@ -1462,6 +1463,10 @@ void MainWindow::readSettings()
     viewer->setFastDrawing(settings.value("quick_camera_mode", true).toBool());
     viewer->textRenderer()->setMax(settings.value("max_text_items", 10000).toInt());
     viewer->setTotalPass(settings.value("transparency_pass_number", 4).toInt());
+    CGAL::Three::Three::s_defaultSMRM = CGAL::Three::Three::modeFromName(
+          settings.value("default_sm_rm", "flat+edges").toString());
+    CGAL::Three::Three::s_defaultPSRM = CGAL::Three::Three::modeFromName(
+          settings.value("default_ps_rm", "points").toString());
     // read plugin blacklist
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
@@ -1828,17 +1833,38 @@ void MainWindow::on_actionPreferences_triggered()
   connect(prefdiag.antialiasingCheckBox, SIGNAL(toggled(bool)),
           viewer, SLOT(setAntiAliasing(bool)));
   
-  prefdiag.quick_cameraCheckBox->setChecked(settings.value("quick_camera_mode", true).toBool());
+  prefdiag.quick_cameraCheckBox->setChecked(
+        settings.value("quick_camera_mode", true).toBool());
   connect(prefdiag.quick_cameraCheckBox, SIGNAL(toggled(bool)),
           viewer, SLOT(setFastDrawing(bool)));
-  prefdiag.max_text_itemsPushButton->setText(QString("Set Maximum Text Items Displayed : %1").arg(viewer->textRenderer()->getMax_textItems()));
-  connect(prefdiag.max_text_itemsPushButton, &QPushButton::clicked,
-          this, &MainWindow::setMaxTextItemsDisplayed);
-  connect(prefdiag.transparency_passPushButton, &QPushButton::clicked,
-              viewer, &Viewer::setTotalPass_clicked);
+  prefdiag.max_itemsSpinBox->setValue(viewer->textRenderer()->getMax_textItems());
+  
+  connect(prefdiag.max_itemsSpinBox, QOverload<int>::of(&QSpinBox::valueChanged),
+          this, [this](int i){
+    setMaxTextItemsDisplayed(i);
+  });
+  prefdiag.transpSpinBox->setValue(viewer->total_pass());
+  connect(prefdiag.transpSpinBox, QOverload<int>::of(&QSpinBox::valueChanged),
+              this, [this](int i)
+  {
+    setTransparencyPasses(i);
+  });
   connect(prefdiag.background_colorPushButton, &QPushButton::clicked,
           this, &MainWindow::setBackgroundColor);
   
+  prefdiag.surface_meshComboBox->setCurrentText(CGAL::Three::Three::modeName(
+                                                  CGAL::Three::Three::s_defaultSMRM));
+  connect(prefdiag.surface_meshComboBox, &QComboBox::currentTextChanged,
+          this, [](const QString& text){
+    CGAL::Three::Three::s_defaultSMRM = CGAL::Three::Three::modeFromName(text);
+  });
+  
+  prefdiag.point_setComboBox->setCurrentText(CGAL::Three::Three::modeName(
+                                               CGAL::Three::Three::s_defaultPSRM));
+  connect(prefdiag.point_setComboBox, &QComboBox::currentTextChanged,
+          this, [](const QString& text){
+    CGAL::Three::Three::s_defaultPSRM = CGAL::Three::Three::modeFromName(text);
+  });
   std::vector<QTreeWidgetItem*> items;
   QBrush successBrush(Qt::green),
       errorBrush(Qt::red),
@@ -1899,7 +1925,10 @@ void MainWindow::on_actionPreferences_triggered()
     settings.setValue("max_text_items",
                       viewer->textRenderer()->getMax_textItems());
     settings.setValue("background_color",viewer->backgroundColor().name());
-                      
+    settings.setValue("default_sm_rm", CGAL::Three::Three::modeName(
+                        CGAL::Three::Three::defaultSurfaceMeshRenderingMode()));
+    settings.setValue("default_ps_rm", CGAL::Three::Three::modeName(
+                        CGAL::Three::Three::defaultPointSetRenderingMode()));
     
     
   }
@@ -2180,17 +2209,9 @@ void MainWindow::setExpanded(QModelIndex index)
 }
 
 
-void MainWindow::setMaxTextItemsDisplayed()
+void MainWindow::setMaxTextItemsDisplayed(int val)
 {
-  bool ok;
-  bool valid;
-  QString text = QInputDialog::getText(this, tr("Maximum Number of Text Items"),
-                                       tr("Maximum Text Items Diplayed:"), QLineEdit::Normal,
-                                       QString("%1").arg(viewer->textRenderer()->getMax_textItems()), &ok);
-  text.toInt(&valid);
-  if (ok && valid){
-    viewer->textRenderer()->setMax(text.toInt());
-  }
+    viewer->textRenderer()->setMax(val);
 }
 
 void MainWindow::resetHeader()
@@ -2320,4 +2341,9 @@ void MainWindow::propagate_action()
       }
     }
   }
+}
+void MainWindow::setTransparencyPasses(int val)
+{
+  viewer->setTotalPass(val);
+  viewer->update();
 }

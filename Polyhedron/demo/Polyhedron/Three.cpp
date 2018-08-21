@@ -9,6 +9,8 @@ QMainWindow* Three::s_mainwindow = NULL;
 Scene_interface* Three::s_scene = NULL;
 QObject* Three::s_connectable_scene = NULL;
 Three* Three::s_three = NULL;
+RenderingMode Three::s_defaultSMRM;
+RenderingMode Three::s_defaultPSRM;
 
 QMainWindow* Three::mainWindow()
 {
@@ -130,3 +132,55 @@ void Three::autoConnectActions(Polyhedron_demo_plugin_interface *plugin)
              action->objectName().toUtf8().data());
   } // end foreach action of actions()
 }
+
+RenderingMode Three::defaultSurfaceMeshRenderingMode()
+{
+  return s_defaultSMRM;
+}
+RenderingMode Three::defaultPointSetRenderingMode()
+{
+  return s_defaultPSRM;
+}
+
+QString Three::modeName(RenderingMode mode) {
+  switch(mode)
+  {
+  case Points:
+    return QObject::tr("points");
+  case ShadedPoints:
+    return QObject::tr("shaded points");
+  case Wireframe:
+    return QObject::tr("wire");
+  case Flat:
+    return QObject::tr("flat");
+  case FlatPlusEdges:
+    return QObject::tr("flat+edges");
+  case Gouraud:
+    return QObject::tr("Gouraud");
+  case PointsPlusNormals:
+    return QObject::tr("pts+normals");
+  default:
+    Q_ASSERT(false);
+    return QObject::tr("unknown");
+  }
+}
+
+RenderingMode Three::modeFromName(QString name) {
+  if(name == "points")
+    return Points;
+  if(name == "shaded points")
+    return ShadedPoints;
+  if(name == "wire")
+    return Wireframe;
+  if(name == "flat")
+    return Flat;
+  if(name == "flat+edges")
+    return FlatPlusEdges;
+  if(name == "Gouraud")
+    return Gouraud;
+  if(name == "pts+normals")
+    return PointsPlusNormals;
+  Q_ASSERT(false);
+  return Points;
+}
+

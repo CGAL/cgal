@@ -8,6 +8,7 @@
 #include <CGAL/Memory_sizer.h>
 
 #include <CGAL/Three/Viewer_interface.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
@@ -212,16 +213,15 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
 {
 
   d = new Scene_points_with_normal_item_priv(toCopy, this);
-  if (has_normals())
-    {
-        setRenderingMode(PointsPlusNormals);
-        is_selected = true;
-    }
-  else
-    {
-        setRenderingMode(Points);
-        is_selected = true;
-    }
+  if (!has_normals())
+  {
+    setRenderingMode(Points);
+    is_selected = true;
+  }
+  else{
+    setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
+    is_selected = true;
+  }
   if(d->m_points->number_of_points() < 30 )
     d->point_Slider->setValue(5);
   else
@@ -237,7 +237,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const SMesh& input_
   // Converts Polyhedron vertices to point set.
   // Computes vertices normal from connectivity.
   d = new Scene_points_with_normal_item_priv(input_mesh, this);
-  setRenderingMode(PointsPlusNormals);
+  setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
   is_selected = true;
   if(d->m_points->number_of_points() < 30 )
     d->point_Slider->setValue(5);
@@ -584,8 +584,13 @@ bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)
 
   std::cerr << d->m_points->info();
 
-  if (d->m_points->has_normal_map())
-    setRenderingMode(PointsPlusNormals);
+  if (!d->m_points->has_normal_map())
+  {
+    setRenderingMode(Points);
+  }
+  else{
+    setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
+  }
   if (d->m_points->check_colors())
     std::cerr << "-> Point set has colors" << std::endl;
   
@@ -622,8 +627,13 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
     d->point_Slider->setValue(2);
   std::cerr << d->m_points->info();
 
-  if (d->m_points->has_normal_map())
-    setRenderingMode(PointsPlusNormals);
+  if (!d->m_points->has_normal_map())
+  {
+    setRenderingMode(Points);
+  }
+  else{
+    setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
+  }
   if (d->m_points->check_colors())
     std::cerr << "-> Point set has colors" << std::endl;
 

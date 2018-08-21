@@ -106,7 +106,6 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->shader_programs.resize(NB_OF_PROGRAMS);
   d->textRenderer = new TextRenderer();
   d->is_2d_selection_mode = false;
-  d->total_pass = 4;
   
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
@@ -1291,15 +1290,6 @@ void Viewer::setTotalPass(int p)
 {
   d->total_pass = p;
   update();
-}
-
-void Viewer::setTotalPass_clicked()
-{
-  bool ok;
-  int passes = QInputDialog::getInt(0, QString("Set Number of Passes"), QString("Number of Depth Peeling Passes:  "), 4, 2,100, 1, &ok);
-  if(!ok)
-    return;
-  setTotalPass(passes);
 }
 
 void Viewer::messageLogged(QOpenGLDebugMessage msg)
