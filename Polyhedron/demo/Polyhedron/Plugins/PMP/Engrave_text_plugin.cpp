@@ -60,38 +60,44 @@ struct FaceInfo2
   }
 };
 
-template<typename MAP>
+template<typename PMAP,
+         typename NMAP>
 struct Bot
 {
-  Bot(const EPICK::Vector_3& n,
+  Bot(NMAP nmap,
       double d,
-      MAP map):d(d),
-    n(n),
-    map(map){}
+      PMAP pmap):d(d),
+    pmap(pmap),
+  nmap(nmap){}
   template<typename VD, typename T>
-  void operator()(const T&,VD vd) const
+  void operator()(const T& v1,VD v2) const
   {
-    put(map, vd, get(map, vd)-d*n);
+    put(pmap, v2, get(pmap, v2)-d*get(nmap, v1));
   }
   double d;
-  const EPICK::Vector_3& n;
-  MAP map;
+  PMAP pmap;
+  NMAP nmap;
 
 };
 
-template<typename MAP>
+template<typename PMAP,
+         typename NMAP>
 struct Top
 {
-  Top(const EPICK::Vector_3& n,
-      MAP map):n(n),map(map){}
+  Top(NMAP nmap,
+      PMAP pmap,
+      double d):d(d),
+    nmap(nmap),
+    pmap(pmap){}
 
   template<typename VD, typename T>
-  void operator()(const T&, VD vd) const
+  void operator()(const T& v1, VD v2) const
   {
-    put(map, vd, get(map, vd)+0.01*n);
+    put(pmap, v2, get(pmap, v2)+(std::min)(0.01, d)*get(nmap, v1));
   }
-  const EPICK::Vector_3& n;
-  MAP map;
+  double d;
+  NMAP nmap;
+  PMAP pmap;
 };
 
 typedef EPICK                                                        Gt;
@@ -636,31 +642,21 @@ public Q_SLOTS:
     SMesh text_mesh_bottom, text_mesh_complete;
     cdt2_to_face_graph(cdt,
                        text_mesh_bottom);
-    typedef typename boost::property_map<SMesh, CGAL::vertex_point_t>::type VPMap;
-    EPICK::Vector_3 normal(0,0,0);
-    BOOST_FOREACH(face_descriptor f, sel_item->selected_facets)
-    {
-      normal += CGAL::Polygon_mesh_processing::compute_face_normal(f, *sel_item->polyhedron());
-    }
-    normal/=CGAL::sqrt(normal.squared_length());
-    while(normal == EPICK::Vector_3(0,0,0))
-    {
-      QDialog dialog;
-      QLayout *layout = dialog.layout();
-      QDoubleSpinBox xbox, ybox, zbox;
-      layout->addWidget(&xbox);
-      layout->addWidget(&ybox);
-      layout->addWidget(&zbox);
-      dialog.setLayout(layout);
-      dialog.exec();
-      normal = EPICK::Vector_3(xbox.value(),
-                               ybox.value(),
-                               zbox.value());
-    }
-    Bot<VPMap> bot(normal, dock_widget->depth_spinBox->value(),get(CGAL::vertex_point, text_mesh_complete));
-    Top<VPMap> top(normal, get(CGAL::vertex_point, text_mesh_complete));
+    typedef boost::property_map<SMesh, CGAL::vertex_point_t>::type VPMap;
+    typedef SMesh::Property_map<vertex_descriptor, Kernel::Vector_3> NPMAP;
+    NPMAP vnormals =
+        text_mesh_bottom.add_property_map<vertex_descriptor,
+        Kernel::Vector_3 >("v:normal").first;
+    
+    
+    CGAL::Polygon_mesh_processing::compute_vertex_normals(text_mesh_bottom, vnormals);
+    
+    
+    Bot<VPMap, NPMAP> bot(vnormals, dock_widget->depth_spinBox->value(),
+                          get(CGAL::vertex_point, text_mesh_complete));
+    Top<VPMap, NPMAP> top(vnormals, get(CGAL::vertex_point, text_mesh_complete), 
+                          dock_widget->depth_spinBox->value());
     PMP::extrude_mesh(text_mesh_bottom, text_mesh_complete, bot, top);
-
     if (PMP::does_self_intersect(text_mesh_complete))
     {
       QApplication::restoreOverrideCursor();
