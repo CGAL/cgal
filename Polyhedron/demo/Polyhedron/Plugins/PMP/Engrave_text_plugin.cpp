@@ -30,6 +30,8 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/centroid.h>
 
+#include <CGAL/boost/graph/Face_filtered_graph.h>
+
 #include <QPainterPath>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
@@ -322,6 +324,8 @@ public :
     connect(dock_widget->engraveButton, &QPushButton::clicked,
             this, &Engrave_text_plugin::engrave);
     connect(dock_widget->text_meshButton, &QPushButton::clicked,
+            this, &Engrave_text_plugin::generateTextItem);
+    connect(dock_widget->letter_checkBox, &QCheckBox::toggled,
             this, &Engrave_text_plugin::generateTextItem);
     
     //items
@@ -680,10 +684,37 @@ public Q_SLOTS:
         text_mesh_bottom.add_property_map<vertex_descriptor,
         Kernel::Vector_3 >("v:normal").first;
     
-    
-    CGAL::Polygon_mesh_processing::compute_vertex_normals(text_mesh_bottom, vnormals);
-    
-    
+    if(!dock_widget->letter_checkBox->isChecked())
+    {
+      CGAL::Polygon_mesh_processing::compute_vertex_normals(text_mesh_bottom, vnormals);
+    }
+    else{
+      // \todo Computing normals before the final 
+      // mesh would be better.
+      
+      //foreach CC
+      SMesh::Property_map<face_descriptor, int> fcmap = 
+          text_mesh_bottom.add_property_map<face_descriptor, int>("f:cc", 0).first;
+      std::size_t nb_cc = PMP::connected_components(text_mesh_bottom,
+                                                    fcmap);
+      for(std::size_t cc = 0; cc<nb_cc; ++cc)
+      {
+        //compute the average normal for the cc give it to every vertex
+        Kernel::Vector_3 normal(0,0,0);
+        CGAL::Face_filtered_graph<SMesh> fmesh(text_mesh_bottom, 
+                                               cc,
+                                               fcmap);
+        BOOST_FOREACH(vertex_descriptor vd, vertices(fmesh))
+        {
+          normal += CGAL::Polygon_mesh_processing::compute_vertex_normal(vd, fmesh);
+        }
+        normal /= CGAL::sqrt(normal.squared_length());
+        BOOST_FOREACH(vertex_descriptor vd, vertices(fmesh))
+        {
+          put(vnormals, vd, normal);
+        }
+      }
+    }
     Bot<VPMap, NPMAP> bot(vnormals, dock_widget->bot_slider->value()/100000.0,
                           get(CGAL::vertex_point, text_mesh));
     Top<VPMap, NPMAP> top(vnormals, get(CGAL::vertex_point, text_mesh), 
