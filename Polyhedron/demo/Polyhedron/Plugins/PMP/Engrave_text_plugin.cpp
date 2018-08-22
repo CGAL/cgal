@@ -191,6 +191,7 @@ private:
   QRectF bounding_rect;
   Component* component;
   const std::vector<std::vector<EPICK::Point_2> >& polylines;
+  
   SMesh* graph;
   EPICK::Aff_transformation_2 transfo;
 };
@@ -406,9 +407,9 @@ public :
     });
     connect(dock_widget->rot_slider, &QSlider::valueChanged,
             this, [this](){
-      angle = dock_widget->rot_slider->value() * CGAL_PI/180.0;
       if(!locked)
       {
+        angle = dock_widget->rot_slider->value() * CGAL_PI/180.0;
         scene->setSelectedItem(scene->item_id(sel_item));
         visualize();
       }
@@ -509,11 +510,14 @@ public Q_SLOTS:
       
       Kernel::Vector_2 A(bf_line.to_vector()),
           B(Kernel::Point_2(0,0), 
-            Kernel::Point_2(0,1));      
-      double cosangle = CGAL::scalar_product(A,B)/CGAL::sqrt(A.squared_length());
+            Kernel::Point_2(1,0));      
+      if (A.x()<0) A=-A;
+          angle = std::acos(A.x()/CGAL::sqrt(A.squared_length()));
+          if ( A.y()<0 ) angle+=3*CGAL_PI/2.;
+          if (angle>2*CGAL_PI) angle-=CGAL_PI;
       
       locked = true;
-      dock_widget->rot_slider->setSliderPosition(acos(abs(cosangle))*180.0/CGAL_PI);
+      dock_widget->rot_slider->setSliderPosition(angle*180.0/CGAL_PI);
       locked = false;
     }
     //create Text Polyline
