@@ -528,7 +528,7 @@ public:
         const double to_add = (residual + CGAL::to_double(px_error[i].err)) / avg_error;
         const double to_add_round_up = std::floor(to_add + 0.5);
         residual = (to_add - to_add_round_up) * avg_error;
-        num_to_add[i] = static_cast<std::size_t>(to_add_round_up);
+        num_to_add[px_error[i].px] = static_cast<std::size_t>(to_add_round_up);
       }
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
