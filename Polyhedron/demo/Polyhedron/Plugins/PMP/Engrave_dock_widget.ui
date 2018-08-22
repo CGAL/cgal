@@ -57,6 +57,16 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="text_meshButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Generate Text Mesh</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="reset_button">
           <property name="text">
            <string>Reset</string>

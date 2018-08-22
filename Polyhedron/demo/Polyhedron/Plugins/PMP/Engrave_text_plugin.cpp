@@ -68,7 +68,7 @@ struct Bot
       double d,
       PMAP pmap):d(d),
     pmap(pmap),
-  nmap(nmap){}
+    nmap(nmap){}
   template<typename VD, typename T>
   void operator()(const T& v1,VD v2) const
   {
@@ -77,7 +77,7 @@ struct Bot
   double d;
   PMAP pmap;
   NMAP nmap;
-
+  
 };
 
 template<typename PMAP,
@@ -89,7 +89,7 @@ struct Top
       double d):d(d),
     nmap(nmap),
     pmap(pmap){}
-
+  
   template<typename VD, typename T>
   void operator()(const T& v1, VD v2) const
   {
@@ -124,19 +124,19 @@ public :
       polylines(polylines),
       graph(graph),
       transfo(transfo){}
-
+  
   ~ParamItem()
   {
     delete component;
   }
-
+  
   QRectF boundingRect() const
   {
     return bounding_rect;
   }
-
+  
   void set_transfo(EPICK::Aff_transformation_2 t){ transfo = t;}
-
+  
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
   {
     QPen pen;
@@ -148,7 +148,8 @@ public :
     painter->setPen(pen);
     painter->setBrush(brush);
     SMesh::Property_map<halfedge_descriptor,std::pair<float, float> > uv;
-    uv = graph->add_property_map<halfedge_descriptor,std::pair<float, float> >("h:uv",std::make_pair(0.0f,0.0f)).first;
+    uv = graph->add_property_map<halfedge_descriptor,std::pair<float, float> >
+        ("h:uv",std::make_pair(0.0f,0.0f)).first;
     for( Component::iterator
          fi = component->begin();
          fi != component->end();
@@ -164,7 +165,7 @@ public :
       points[2] = QPointF(get(uv, h).first, -get(uv, h).second);
       painter->drawPolygon(points,3);
     }
-
+    
     pen.setColor(Qt::red);
     pen.setWidth(0);
     painter->setPen(pen);
@@ -181,7 +182,7 @@ public :
       painter->drawPolyline(points.data(), points.size());
     }
   }
-
+  
 private:
   QString texMesh_name;
   QRectF bounding_rect;
@@ -198,7 +199,7 @@ public:
     :CGAL::Qt::GraphicsViewNavigation(),
       prev_pos(QPoint(0,0))
   { }
-
+  
 protected:
   bool eventFilter(QObject *obj, QEvent *ev)
   {
@@ -221,14 +222,14 @@ protected:
       {
         qreal dir[2] = {v->mapToScene(me->pos()).x() - prev_pos.x(),
                         v->mapToScene(me->pos()).y() - prev_pos.y()};
-
+        
         v->translate(dir[0],dir[1]);
         v->update();
       }
       prev_pos = v->mapToScene(me->pos());
       break;
     }
-
+      
     case QEvent::MouseButtonPress: {
       is_dragging = true;
       break;
@@ -250,7 +251,7 @@ protected:
       v->update();
       break;
     }
-
+      
     case QEvent::MouseButtonDblClick: {
       v->fitInView(v->scene()->itemsBoundingRect(), Qt::KeepAspectRatio);
       break;
@@ -285,7 +286,7 @@ class Q_DECL_EXPORT Engrave_text_plugin :
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
-
+  
 private:
   typedef CGAL::Surface_mesh_shortest_path_traits<EPICK, SMesh> SP_traits;
   typedef CGAL::Surface_mesh_shortest_path<SP_traits> Surface_mesh_shortest_path;
@@ -295,15 +296,17 @@ private:
   typedef CGAL::AABB_tree<Tree_traits> Tree;
   typedef EPICK::Point_3 Point_3;
   Messages_interface* messages;
-
+  
 public :
-
-  void init(QMainWindow* , CGAL::Three::Scene_interface* , Messages_interface* m) Q_DECL_OVERRIDE{
+  
+  void init(QMainWindow*,
+            CGAL::Three::Scene_interface*,
+            Messages_interface* m) Q_DECL_OVERRIDE{
     //get refs
     this->scene = Three::scene();
     this->mw = Three::mainWindow();
     messages = m;
-
+    
     //action
     QAction* actionFitText= new QAction("Fit Text", mw);
     connect(actionFitText, SIGNAL(triggered()),
@@ -317,12 +320,14 @@ public :
             this, &Engrave_text_plugin::visualize);
     connect(dock_widget->engraveButton, &QPushButton::clicked,
             this, &Engrave_text_plugin::engrave);
-
+    connect(dock_widget->text_meshButton, &QPushButton::clicked,
+            this, &Engrave_text_plugin::generateTextItem);
+    
     //items
     visu_item = nullptr;
     sel_item = nullptr;
     sm = nullptr;
-
+    
     //transfo
     angle = 0.0;
     scalX=1.0;
@@ -344,28 +349,28 @@ public :
             this, [this](){
       cleanup();
     });
-
+    
     connect(dock_widget->t_up_pushButton, &QPushButton::clicked,
             this, [this](){
       translation += EPICK::Vector_2(0,0.005);
       scene->setSelectedItem(scene->item_id(sel_item));
       visualize();
     });
-
+    
     connect(dock_widget->t_down_pushButton, &QPushButton::clicked,
             this, [this](){
       translation -= EPICK::Vector_2(0,0.005);
       scene->setSelectedItem(scene->item_id(sel_item));
       visualize();
     });
-
+    
     connect(dock_widget->t_right_pushButton, &QPushButton::clicked,
             this, [this](){
       translation += EPICK::Vector_2(0.005,0);
       scene->setSelectedItem(scene->item_id(sel_item));
       visualize();
     });
-
+    
     connect(dock_widget->t_left_pushButton, &QPushButton::clicked,
             this, [this](){
       translation -= EPICK::Vector_2(0.005,0);
@@ -398,7 +403,7 @@ public Q_SLOTS:
   {
     dock_widget->setVisible(!dock_widget->isVisible());
   }
-
+  
   void visualize() {
     if(!sel_item)
       sel_item =
@@ -419,7 +424,7 @@ public Q_SLOTS:
     if(visu_item)
       scene->erase(scene->item_id(visu_item));
     visu_item = nullptr;
-
+    
     if(!sm)
     {
       sm = new SMesh();
@@ -428,21 +433,22 @@ public Q_SLOTS:
           CGAL::Polygon_mesh_processing::longest_border(*sm).first;
       SMesh::Property_map<SMesh::Vertex_index, EPICK::Point_2> uv_map =
           sm->add_property_map<SMesh::Vertex_index, EPICK::Point_2>("v:uv").first;
-
+      
       // Parameterized bool pmap
       boost::unordered_set<SMesh::Vertex_index> vs;
       SMP::internal::Bool_property_map< boost::unordered_set<SMesh::Vertex_index> > vpm(vs);
-
+      
       // Parameterizer
       SMP::ARAP_parameterizer_3<SMesh> parameterizer;
-
-      SMP::Error_code status = parameterizer.parameterize(*sm, hd, uv_map, get(boost::vertex_index, *sm), vpm);
+      
+      SMP::Error_code status = parameterizer.parameterize(*sm, hd, uv_map, 
+                                                          get(boost::vertex_index, *sm), vpm);
       if(status != SMP::OK) {
         std::cout << "Encountered a problem: " << status << std::endl;
         cleanup();
         return ;
       }
-
+      
       std::cout << "Parameterized with ARAP (SM) computed." << std::endl;
       xmin = std::numeric_limits<double>::max();
       xmax = std::numeric_limits<double>::min();
@@ -458,25 +464,25 @@ public Q_SLOTS:
           xmax = uv_map[v][0];
         if(uv_map[v][0] < xmin)
           xmin = uv_map[v][0];
-
+        
         if(uv_map[v][1] > ymax)
           ymax = uv_map[v][1];
         if(uv_map[v][1] < ymin)
           ymin = uv_map[v][1];
       }
-
-
+      
+      
     }
     //create Text Polyline
     QPainterPath path;
     QFont font;
     font.setPointSize(15);
-      path.addText(QPoint(xmin,ymin), font, dock_widget->lineEdit->text());
+    path.addText(QPoint(xmin,ymin), font, dock_widget->lineEdit->text());
     QList<QPolygonF> polys = path.toSubpathPolygons();
     polylines.clear();
     float pxmin(8000),pxmax(-8000),
         pymin(8000), pymax(-8000);
-
+    
     Q_FOREACH(QPolygonF poly, polys){
       Q_FOREACH(QPointF pf, poly)
       {
@@ -498,7 +504,7 @@ public Q_SLOTS:
         Q_FOREACH(QPointF pf, poly)
         {
           EPICK::Point_2 v = EPICK::Point_2(pf.x(),-pf.y());
-          polylines.back().push_back(EPICK::Point_2(v.x()*(xmax-xmin)/(pxmax-pxmin) +xmin ,
+          polylines.back().push_back(EPICK::Point_2(v.x()*(xmax-xmin)/(pxmax-pxmin) +xmin,
                                                     v.y()*(ymax-ymin)/(pymax-pymin)+ymin
                                                     ));
         }
@@ -506,12 +512,13 @@ public Q_SLOTS:
     }
     else
     {
-      EPICK::Aff_transformation_2 rota = EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2((pxmax+pxmin)/2,
-                                                                     (pymax+pymin)/2))
-      * EPICK::Aff_transformation_2(CGAL::ROTATION,1,0)
-      * EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2(-(pxmax+pxmin)/2,
-                                                                       -(pymax+pymin)/2));
-
+      EPICK::Aff_transformation_2 rota = 
+          EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2((pxmax+pxmin)/2,
+                                                                         (pymax+pymin)/2))
+          * EPICK::Aff_transformation_2(CGAL::ROTATION,1,0)
+          * EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2(-(pxmax+pxmin)/2,
+                                                                           -(pymax+pymin)/2));
+      
       Q_FOREACH(QPolygonF poly, polys){
         polylines.push_back(std::vector<EPICK::Point_2>());
         Q_FOREACH(QPointF pf, poly)
@@ -525,25 +532,27 @@ public Q_SLOTS:
     }
     // build AABB-tree for face location queries
     Tree aabb_tree(faces(*sm).first, faces(*sm).second, *sm, uv_map_3);
-
+    
     visu_item = new Scene_polylines_item;
-
-
+    
+    
     // compute 3D coordinates
     transfo =
-        EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2((xmax-xmin)/2+xmin,
-                                                                       (ymax-ymin)/2+ymin)+ translation)
+        EPICK::Aff_transformation_2(CGAL::TRANSLATION, 
+                                    EPICK::Vector_2((xmax-xmin)/2+xmin,
+                                                    (ymax-ymin)/2+ymin)+ translation)
         * EPICK::Aff_transformation_2(CGAL::ROTATION,sin(angle), cos(angle))
         * EPICK::Aff_transformation_2(scalX, 0.0,0.0,scalY)
-        * EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2(-(xmax-xmin)/2-xmin,
-                                                                         -(ymax-ymin)/2-ymin));
+        * EPICK::Aff_transformation_2(CGAL::TRANSLATION,
+                                      EPICK::Vector_2(-(xmax-xmin)/2-xmin,
+                                                      -(ymax-ymin)/2-ymin));
     BOOST_FOREACH(const std::vector<EPICK::Point_2>& polyline, polylines)
     {
       visu_item->polylines.push_back(std::vector<Point_3>());
       BOOST_FOREACH(const EPICK::Point_2& p, polyline)
       {
         EPICK::Point_2 p_2 = transfo.transform(p);
-
+        
         Face_location loc = Surface_mesh_shortest_path::locate(
               Point_3(p_2.x(), p_2.y(), 0),
               aabb_tree, *sm, uv_map_3);
@@ -555,7 +564,8 @@ public Q_SLOTS:
     visu_item->setColor(QColor(Qt::red));
     scene->addItem(visu_item);
     dock_widget->engraveButton->setEnabled(true);
-
+    dock_widget->text_meshButton->setEnabled(true);
+    
     if(graphics_scene->items().empty())
     {
       Component* component = new Component();
@@ -581,7 +591,7 @@ public Q_SLOTS:
         EPICK::FT v = uv_map[target(hd, *sm)].y();
         put(uv, *it, std::make_pair(static_cast<float>(u),static_cast<float>(v)));
       }
-
+      
       //ParamItem does not take ownership of text_mesh_bottom
       ParamItem *param_item= new ParamItem(component, polylines, transfo, sm,
                                            QRectF(QPointF(xmin, -ymax), QPointF(xmax, -ymin)));
@@ -597,8 +607,9 @@ public Q_SLOTS:
     }
     // dock_widget->visualizeButton->setEnabled(false);
   }
-
-  void engrave() {
+  
+  void create_text_mesh(SMesh& text_mesh)
+  {
     if(!visu_item)
       return;
     if(!sel_item)
@@ -607,13 +618,15 @@ public Q_SLOTS:
       return;
     if(!CGAL::is_closed(*sel_item->polyhedron()))
       return;
-    QApplication::setOverrideCursor(Qt::WaitCursor);
     CDT cdt;
+    //polylines is duplicated so the transformation is only performed once
+    std::vector<std::vector<EPICK::Point_2> > local_polylines
+        = polylines;
     try{
       for(std::size_t i = 0;
-          i < polylines.size(); ++i)
+          i < local_polylines.size(); ++i)
       {
-        std::vector<Point_2>& points = polylines[i];
+        std::vector<Point_2>& points = local_polylines[i];
         for(std::size_t j = 0; j< points.size(); ++j)
         {
           Point_2 &p = points[j];
@@ -631,15 +644,17 @@ public Q_SLOTS:
       std::cout << "Triangulation is not of dimension 2" << std::endl;
       return;
     }
-    CGAL::Bbox_2 bbox= CGAL::bbox_2(polylines.front().begin(), polylines.front().end(), EPICK());
+    CGAL::Bbox_2 bbox= CGAL::bbox_2(local_polylines.front().begin(),
+                                    local_polylines.front().end(),
+                                    EPICK());
     Q_FOREACH(const std::vector<Kernel::Point_2>& points,
-              polylines)
+              local_polylines)
     {
       bbox += CGAL::bbox_2(points.begin(), points.end(), EPICK());
     }
     mark_nested_domains(cdt);
-
-    SMesh text_mesh_bottom, text_mesh_complete;
+    
+    SMesh text_mesh_bottom;
     cdt2_to_face_graph(cdt,
                        text_mesh_bottom);
     typedef boost::property_map<SMesh, CGAL::vertex_point_t>::type VPMap;
@@ -653,28 +668,35 @@ public Q_SLOTS:
     
     
     Bot<VPMap, NPMAP> bot(vnormals, dock_widget->depth_spinBox->value(),
-                          get(CGAL::vertex_point, text_mesh_complete));
-    Top<VPMap, NPMAP> top(vnormals, get(CGAL::vertex_point, text_mesh_complete), 
+                          get(CGAL::vertex_point, text_mesh));
+    Top<VPMap, NPMAP> top(vnormals, get(CGAL::vertex_point, text_mesh), 
                           dock_widget->depth_spinBox->value());
-    PMP::extrude_mesh(text_mesh_bottom, text_mesh_complete, bot, top);
+    PMP::extrude_mesh(text_mesh_bottom, text_mesh, bot, top);
+  }
+  
+  void engrave() {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    SMesh text_mesh_complete;
+    create_text_mesh(text_mesh_complete);
+    
     if (PMP::does_self_intersect(text_mesh_complete))
     {
       QApplication::restoreOverrideCursor();
       messages->information("Error: text mesh self-intersects!");
       return;
     }
-
+    
     SMesh result;
     CGAL::copy_face_graph(*sel_item->polyhedron(), result);
     bool OK = PMP::corefine_and_compute_difference(result, text_mesh_complete, result);
-
+    
     if (!OK)
     {
       QApplication::restoreOverrideCursor();
       messages->information("Error: the output mesh is not manifold!");
       return;
     }
-
+    
     CGAL::Polygon_mesh_processing::triangulate_faces(result);
     Scene_surface_mesh_item* result_item = new Scene_surface_mesh_item(
           result);
@@ -683,14 +705,27 @@ public Q_SLOTS:
     cleanup();
     QApplication::restoreOverrideCursor();
     dock_widget->engraveButton->setEnabled(false);
+    dock_widget->text_meshButton->setEnabled(false);
     dock_widget->visualizeButton->setEnabled(true);
   }
+  
+  void generateTextItem()
+  {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    SMesh text_mesh;
+    create_text_mesh(text_mesh);
+    Scene_surface_mesh_item* textMesh = new Scene_surface_mesh_item(text_mesh);
+    textMesh->setName("Extruded Text");
+    scene->addItem(textMesh);
+    QApplication::restoreOverrideCursor();
+  }
+  
   void closure()Q_DECL_OVERRIDE
   {
     dock_widget->hide();
   }
+  
 private:
-
   template <class CDT>
   void
   mark_domains(CDT& ct,
@@ -719,13 +754,14 @@ private:
       }
     }
   }
-
-
+  
+  
   template <class CDT>
   void
   mark_nested_domains(CDT& cdt)
   {
-    for(typename CDT::All_faces_iterator it = cdt.all_faces_begin(); it != cdt.all_faces_end(); ++it){
+    for(typename CDT::All_faces_iterator it = cdt.all_faces_begin(); it !=
+        cdt.all_faces_end(); ++it){
       it->info().nesting_level = -1;
     }
     std::list<typename CDT::Edge> border;
@@ -739,15 +775,15 @@ private:
       }
     }
   }
-
+  
   template <class CDT, class TriangleMesh>
   void cdt2_to_face_graph(const CDT& cdt,
                           TriangleMesh& tm)
   {
-
+    
     Tree aabb_tree(faces(*sm).first, faces(*sm).second, *sm, uv_map_3);
     typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
-
+    
     typedef std::map<typename CDT::Vertex_handle, vertex_descriptor> Map;
     Map descriptors;
     for (typename CDT::Finite_faces_iterator fit=cdt.finite_faces_begin(),
@@ -767,15 +803,16 @@ private:
           Face_location loc = Surface_mesh_shortest_path::locate(
                 Point_3(pt.x(), pt.y(), 0),
                 aabb_tree, *sm, uv_map_3);
-          it->second = add_vertex(Surface_mesh_shortest_path::point(loc.first, loc.second,  *sm, sm->points()), tm);
+          it->second = add_vertex(Surface_mesh_shortest_path::point(loc.first, loc.second,
+                                                                    *sm, sm->points()), tm);
         }
         vds[i]=it->second;
       }
-
+      
       CGAL::Euler::add_face(vds, tm);
     }
   }
-
+  
   void cleanup()
   {
     dock_widget->scalX_slider->setValue(1000);
@@ -800,7 +837,7 @@ private:
       visu_item = nullptr;
     }
   }
-
+  
   QList<QAction*> _actions;
   EngraveWidget* dock_widget;
   Scene_polylines_item* visu_item;
@@ -814,7 +851,7 @@ private:
   SMesh::Property_map<SMesh::Vertex_index, Point_3> uv_map_3;
   SMesh* sm;
   float xmin, xmax, ymin, ymax;
-
+  
   QGraphicsScene *graphics_scene;
   Navigation* navigation;
 };
