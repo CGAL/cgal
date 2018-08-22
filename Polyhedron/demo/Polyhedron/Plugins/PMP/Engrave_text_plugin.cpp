@@ -326,6 +326,7 @@ public :
     //items
     visu_item = nullptr;
     sel_item = nullptr;
+    textMesh = nullptr;
     sm = nullptr;
     
     //transfo
@@ -703,6 +704,10 @@ public Q_SLOTS:
     scene->addItem(result_item);
     graphics_scene->clear();
     cleanup();
+    if(textMesh)
+    {
+     textMesh->setVisible(false);
+    }
     QApplication::restoreOverrideCursor();
     dock_widget->engraveButton->setEnabled(false);
     dock_widget->text_meshButton->setEnabled(false);
@@ -712,11 +717,24 @@ public Q_SLOTS:
   void generateTextItem()
   {
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    SMesh text_mesh;
-    create_text_mesh(text_mesh);
-    Scene_surface_mesh_item* textMesh = new Scene_surface_mesh_item(text_mesh);
-    textMesh->setName("Extruded Text");
-    scene->addItem(textMesh);
+    
+    if(textMesh)
+    {
+      textMesh->face_graph()->clear();
+      create_text_mesh(*textMesh->face_graph());
+      textMesh->invalidateOpenGLBuffers();
+    }
+    else
+    {
+      SMesh text_mesh;
+      create_text_mesh(text_mesh);
+      textMesh = new Scene_surface_mesh_item(text_mesh);
+      connect(textMesh, &Scene_surface_mesh_item::aboutToBeDestroyed,
+              this, [this](){
+        textMesh = nullptr;});
+      textMesh->setName("Extruded Text");
+      scene->addItem(textMesh);
+    }
     QApplication::restoreOverrideCursor();
   }
   
@@ -842,6 +860,7 @@ private:
   EngraveWidget* dock_widget;
   Scene_polylines_item* visu_item;
   Scene_polyhedron_selection_item* sel_item;
+  Scene_surface_mesh_item* textMesh;
   double angle;
   double scalX;
   double scalY;
