@@ -26,6 +26,7 @@
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
+#include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/centroid.h>
 
@@ -93,7 +94,7 @@ struct Top
   template<typename VD, typename T>
   void operator()(const T& v1, VD v2) const
   {
-    put(pmap, v2, get(pmap, v2)+(std::min)(0.01, d)*get(nmap, v1));
+    put(pmap, v2, get(pmap, v2)+d*get(nmap, v1));
   }
   double d;
   NMAP nmap;
@@ -334,6 +335,14 @@ public :
     scalX=1.0;
     scalY=1.0;
     translation = EPICK::Vector_2(0,0);
+    pointsize = 15;
+    locked = false;
+    connect(dock_widget->text_prec_slider, &QSlider::valueChanged,
+            this, [this](){
+      pointsize = dock_widget->text_prec_slider->value();
+      scene->setSelectedItem(scene->item_id(sel_item));
+      visualize();
+    });
     connect(dock_widget->scalX_slider, &QSlider::valueChanged,
             this, [this](){
       scalX = dock_widget->scalX_slider->value()/1000.0;
@@ -346,6 +355,19 @@ public :
       scene->setSelectedItem(scene->item_id(sel_item));
       visualize();
     });
+    
+    connect(dock_widget->bot_slider, &QSlider::valueChanged,
+            this, [this](){
+      if(textMesh)
+        generateTextItem();
+    });
+    
+    connect(dock_widget->top_slider, &QSlider::valueChanged,
+            this, [this](){
+      if(textMesh)
+        generateTextItem();
+    });
+    
     connect(dock_widget->reset_button, &QPushButton::clicked,
             this, [this](){
       cleanup();
@@ -381,8 +403,11 @@ public :
     connect(dock_widget->rot_slider, &QSlider::valueChanged,
             this, [this](){
       angle = dock_widget->rot_slider->value() * CGAL_PI/180.0;
-      scene->setSelectedItem(scene->item_id(sel_item));
-      visualize();
+      if(!locked)
+      {
+        scene->setSelectedItem(scene->item_id(sel_item));
+        visualize();
+      }
     });
     graphics_scene = new QGraphicsScene(dock_widget);
     dock_widget->graphicsView->setScene(graphics_scene);
@@ -472,12 +497,25 @@ public Q_SLOTS:
           ymin = uv_map[v][1];
       }
       
+      CGAL::linear_least_squares_fitting_2(
+            uv_map.begin(),
+            uv_map.end(),
+            bf_line,
+            CGAL::Dimension_tag<0>());
       
+      Kernel::Vector_2 A(bf_line.to_vector()),
+          B(Kernel::Point_2(0,0), 
+            Kernel::Point_2(0,1));      
+      double cosangle = CGAL::scalar_product(A,B)/CGAL::sqrt(A.squared_length());
+      
+      locked = true;
+      dock_widget->rot_slider->setSliderPosition(acos(abs(cosangle))*180.0/CGAL_PI);
+      locked = false;
     }
     //create Text Polyline
     QPainterPath path;
     QFont font;
-    font.setPointSize(15);
+    font.setPointSize(pointsize);
     path.addText(QPoint(xmin,ymin), font, dock_widget->lineEdit->text());
     QList<QPolygonF> polys = path.toSubpathPolygons();
     polylines.clear();
@@ -498,39 +536,17 @@ public Q_SLOTS:
           pymax = v.y();
       }
     }
-    if(ymax-ymin <= xmax - xmin)
-    {
       Q_FOREACH(QPolygonF poly, polys){
         polylines.push_back(std::vector<EPICK::Point_2>());
         Q_FOREACH(QPointF pf, poly)
         {
           EPICK::Point_2 v = EPICK::Point_2(pf.x(),-pf.y());
-          polylines.back().push_back(EPICK::Point_2(v.x()*(xmax-xmin)/(pxmax-pxmin) +xmin,
-                                                    v.y()*(ymax-ymin)/(pymax-pymin)+ymin
-                                                    ));
-        }
-      }
-    }
-    else
-    {
-      EPICK::Aff_transformation_2 rota = 
-          EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2((pxmax+pxmin)/2,
-                                                                         (pymax+pymin)/2))
-          * EPICK::Aff_transformation_2(CGAL::ROTATION,1,0)
-          * EPICK::Aff_transformation_2(CGAL::TRANSLATION, EPICK::Vector_2(-(pxmax+pxmin)/2,
-                                                                           -(pymax+pymin)/2));
-      
-      Q_FOREACH(QPolygonF poly, polys){
-        polylines.push_back(std::vector<EPICK::Point_2>());
-        Q_FOREACH(QPointF pf, poly)
-        {
-          EPICK::Point_2 v = rota.transform(EPICK::Point_2(pf.x(),-pf.y()));
           polylines.back().push_back(EPICK::Point_2(v.x()*(xmax-xmin)/(pxmax-pxmin) +xmin ,
                                                     v.y()*(ymax-ymin)/(pymax-pymin)+ymin
                                                     ));
         }
       }
-    }
+    
     // build AABB-tree for face location queries
     Tree aabb_tree(faces(*sm).first, faces(*sm).second, *sm, uv_map_3);
     
@@ -668,10 +684,10 @@ public Q_SLOTS:
     CGAL::Polygon_mesh_processing::compute_vertex_normals(text_mesh_bottom, vnormals);
     
     
-    Bot<VPMap, NPMAP> bot(vnormals, dock_widget->depth_spinBox->value(),
+    Bot<VPMap, NPMAP> bot(vnormals, dock_widget->bot_slider->value()/100000.0,
                           get(CGAL::vertex_point, text_mesh));
     Top<VPMap, NPMAP> top(vnormals, get(CGAL::vertex_point, text_mesh), 
-                          dock_widget->depth_spinBox->value());
+                          dock_widget->top_slider->value()/100000.0);
     PMP::extrude_mesh(text_mesh_bottom, text_mesh, bot, top);
   }
   
@@ -870,7 +886,9 @@ private:
   SMesh::Property_map<SMesh::Vertex_index, Point_3> uv_map_3;
   SMesh* sm;
   float xmin, xmax, ymin, ymax;
-  
+  int pointsize;
+  bool locked;
+  Kernel::Line_2 bf_line;
   QGraphicsScene *graphics_scene;
   Navigation* navigation;
 };
