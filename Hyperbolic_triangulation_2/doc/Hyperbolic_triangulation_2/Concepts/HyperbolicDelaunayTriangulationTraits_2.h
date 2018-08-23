@@ -25,6 +25,11 @@ public:
   /// @{
 
 	/*!
+		Field number type.
+	*/
+	typedef unspecified_type  			FT;
+
+	/*!
 		Represents a point in the Poincaré disk or on the (unit) circle at infinity.
 	*/
 	typedef unspecified_type 			Point_2;
@@ -66,8 +71,9 @@ public:
 		A predicate object. Must provide the function operator
 
 		`Oriented_side operator()(Point_2 p, Point_2 q, Point_2 r, Point_2 t),`
-		
-		which returns the position of point `t` relative to the oriented circle
+		\cgalModifBegin
+		which returns the position of the point `t` relative to the oriented circle
+		\cgalModifEnd
 		defined by the points `p, q`, and `r`. 
 	*/
 	typedef unspecified_type			Side_of_oriented_circle_2;
@@ -78,14 +84,36 @@ public:
 		A predicate object. Must provide the function operator
 
 		`Oriented_side operator()(Point_2 p, Point_2 q, Point_2 query),`
-
-		which returns the position of point `query` relative to the oriented hyperbolic 
+		\cgalModifBegin
+		which returns the position of the point `query` relative to the oriented hyperbolic 
+		\cgalModifEnd
 		segment with vertices `p` and `q`. 
 		\cgalModifEnd
 	*/
 	typedef unspecified_type 			Side_of_oriented_hyperbolic_segment_2;
 
 
+	/*!
+		\cgalModifBegin
+		A predicate object. Must provide the function operator
+
+		`bool operator()(Point_2 p0, Point_2 p1, Point_2 p2),`
+
+		which returns a boolean indicating whether the triangle defined
+		by the points `p0, p1,` and `p2` is hyperbolic (i.e., if its 
+		circumscribing disk is contained in the unit disk). It must also
+		provide the function operator
+
+		`bool operator() (Point_2 p0, Point_2 p1, Point_2 p2, int& ind),`
+		
+		which returns the same result, but also stores in the integer
+		`ind` the index of the non-hyperbolic edge of the triangle, if
+		the returned value is `false`. The side of the triangle opposite 
+		to `pj` for `j = 0,1,2` is considered to have index `j`.
+
+		\cgalModifEnd
+	*/
+	typedef unspecified_type 			Is_Delaunay_hyperbolic;
 
   /// @}
 
@@ -147,11 +175,14 @@ public:
 	Side_of_oriented_circle_2              side_of_oriented_circle_2_object();  
 	/*!
 		\cgalModifBegin
-	*/
-	Side_of_oriented_hyperbolic_segment_2  side_of_oriented_hyperbolic_segment_2_object();
-	/*!
 		\cgalModifEnd
-	*/  
+	*/
+	Side_of_oriented_hyperbolic_segment_2  	side_of_oriented_hyperbolic_segment_2_object();
+	/*!
+		\cgalModifBegin
+		\cgalModifEnd
+	*/
+	Is_Delaunay_hyperbolic 		   		   	is_Delaunay_hyperbolic_object();  
   /// @}
 
   /// \name
