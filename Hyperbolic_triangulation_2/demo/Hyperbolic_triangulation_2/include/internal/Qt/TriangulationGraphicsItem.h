@@ -135,7 +135,7 @@ TriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
   if(visible_edges) {
     for (int i=0; i<3; i++) {
       if (fh < fh->neighbor(i) || t->is_infinite(fh->neighbor(i))){
-        painterostream << t->segment(fh,i);
+        painterostream << t->hyperbolic_segment(fh,i);
       }
     }
   }
@@ -160,7 +160,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
     for(typename T::All_edges_iterator eit = t->all_edges_begin();
         eit != t->all_edges_end();
         ++eit){
-      painterostream << t->segment(*eit);
+      painterostream << t->hyperbolic_segment(*eit);
     }
   }
   paintVertices(painter);

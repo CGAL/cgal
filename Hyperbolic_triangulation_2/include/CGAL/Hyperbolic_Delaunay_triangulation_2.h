@@ -57,10 +57,10 @@ public:
   typedef typename Geom_traits::Point_2               Point;
   typedef typename Geom_traits::Voronoi_point_2       Voronoi_point;
   typedef typename Geom_traits::Hyperbolic_segment_2  Hyperbolic_segment;
-  typedef typename Geom_traits::Triangle_2            Triangle;
+  typedef typename Geom_traits::Triangle_2            Hyperbolic_triangle;
 
   // Redeclaration of `Segment` that would have been inherited from DT2
-  typedef Hyperbolic_segment                          Segment;
+  //typedef Hyperbolic_segment                          Segment;
   
 
   enum Locate_type { 
@@ -273,16 +273,6 @@ public:
 
   // Algebraic_kernel_for_circles_2 needs this for some reason
   typedef typename Base::Line_face_circulator     Line_face_circulator;
-
-
-
-
-
-
-
-
-
-
 
 
   Hyperbolic_Delaunay_triangulation_2(const Geom_traits& gt = Geom_traits())
@@ -779,22 +769,42 @@ public:
     return Base::line_walk(p, q, f);
   }
 
-  Triangle triangle(Face_handle f) const {
+  Hyperbolic_triangle hyperbolic_triangle(const Face_handle f) const {
     return Base::triangle(f);
   }
 
-  Segment segment(Face_handle f, int i) const {
+  // needed by DT_2: do not document!
+  Hyperbolic_triangle triangle(const Face_handle f) const {
+    return hyperbolic_triangle(f);
+  }
+
+  Hyperbolic_segment hyperbolic_segment(const Face_handle f, const int i) const {
     return typename Geom_traits::Construct_hyperbolic_segment_2()(f->vertex(cw(i))->point(), f->vertex(ccw(i))->point());
   }
 
-  Segment segment (const Edge& e) const {
+  Hyperbolic_segment hyperbolic_segment (const Edge& e) const {
     Face_handle f = e.first;
     int i = e.second;
-    return segment(f, i);
+    return hyperbolic_segment(f, i);
   }
 
-  Segment segment(const Edge_circulator& e) const {
-    return segment(*e);
+  Hyperbolic_segment hyperbolic_segment(const Edge_circulator& e) const {
+    return hyperbolic_segment(*e);
+  }
+
+  // needed by DT_2: do not document!
+  Hyperbolic_segment segment(const Face_handle f, const int i) const {
+    return hyperbolic_segment(f,i);
+  }
+  
+  // needed by DT_2: do not document!
+  Hyperbolic_segment segment(const Edge& e) const {
+    return hyperbolic_segment(e);
+  }
+
+  // needed by DT_2: do not document!
+  Hyperbolic_segment segment(const Edge_circulator& e) const {
+    return hyperbolic_segment(e);
   }
 
   size_type number_of_vertices() const {
