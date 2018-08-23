@@ -120,6 +120,7 @@ public:
   {
     if(mesh_id >= m_triangle_mesh_ptrs.size()) return;
     m_triangle_mesh_ptrs.erase( m_triangle_mesh_ptrs.begin()+mesh_id );
+    delete m_aabb_trees[mesh_id];
     m_aabb_trees.erase( m_aabb_trees.begin()+mesh_id);
     m_is_closed.erase(m_is_closed.begin()+mesh_id);
 #if CGAL_CACHE_BOXES
