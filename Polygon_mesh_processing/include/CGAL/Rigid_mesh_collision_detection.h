@@ -28,8 +28,10 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Polygon_mesh_processing/internal/AABB_do_intersect_transform_traits.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Side_of_triangle_mesh.h>
+#include <CGAL/property_map.h>
 
 #include <boost/iterator/counting_iterator.hpp>
 
@@ -43,6 +45,7 @@
 
 namespace CGAL {
 
+//TODO handle vertex point point in the API
 template <class TriangleMesh, class Kernel, class HAS_ROTATION = CGAL::Tag_true>
 class Rigid_mesh_collision_detection
 {
@@ -56,6 +59,8 @@ class Rigid_mesh_collision_detection
   // TODO: we probably want an option with external trees
   std::vector<Tree*> m_aabb_trees;
   std::vector<bool> m_is_closed;
+  std::vector< std::vector<typename Kernel::Point_3> > m_points_per_cc;
+
 #if CGAL_CACHE_BOXES
   boost::dynamic_bitset<> m_bboxes_is_invalid;
   std::vector<Bbox_3> m_bboxes;
@@ -69,11 +74,45 @@ class Rigid_mesh_collision_detection
     m_aabb_trees.clear();
   }
 
+  void add_cc_points(const TriangleMesh& tm, bool assume_one_CC)
+  {
+    m_points_per_cc.resize(m_points_per_cc.size()+1);
+    if (!assume_one_CC)
+    {
+      std::vector<std::size_t> CC_ids(num_faces(tm));
+
+      // TODO use dynamic property if no defaut fid is available
+      typename boost::property_map<TriangleMesh, boost::face_index_t>::type fid_map
+        = get(boost::face_index, tm);
+
+      std::size_t nb_cc =
+        Polygon_mesh_processing::connected_components(
+          tm, bind_property_maps(fid_map, make_property_map(CC_ids)) );
+      if (nb_cc != 1)
+      {
+        typedef boost::graph_traits<TriangleMesh> GrT;
+        std::vector<typename GrT::vertex_descriptor> vertex_per_cc(nb_cc, GrT::null_vertex());
+
+        BOOST_FOREACH(typename GrT::face_descriptor f, faces(tm))
+        {
+          if  (vertex_per_cc[get(fid_map, f)]!=GrT::null_vertex())
+          {
+            m_points_per_cc.back().push_back(
+              get(boost::vertex_point, tm, target( halfedge(f, tm), tm)) );
+          }
+        }
+        return;
+      }
+    }
+    // only one CC
+    m_points_per_cc.back().push_back( get(boost::vertex_point, tm, *boost::begin(vertices(tm))) );
+  }
+
 public:
   template <class MeshRange>
-  Rigid_mesh_collision_detection(const MeshRange& triangle_meshes)
+  Rigid_mesh_collision_detection(const MeshRange& triangle_meshes, bool assume_one_CC_per_mesh = false)
   {
-    init(triangle_meshes);
+    init(triangle_meshes, assume_one_CC_per_mesh);
   }
 
   ~Rigid_mesh_collision_detection()
@@ -81,11 +120,13 @@ public:
     clear_trees();
   }
   template <class MeshRange>
-  void init(const MeshRange& triangle_meshes)
+  void init(const MeshRange& triangle_meshes, bool assume_one_CC)
   {
     std::size_t nb_meshes = triangle_meshes.size();
     m_triangle_mesh_ptrs.clear();
     m_triangle_mesh_ptrs.reserve(nb_meshes);
+    m_points_per_cc.clear();
+    m_points_per_cc.reserve(nb_meshes);
     clear_trees();
     m_aabb_trees.reserve(nb_meshes);
     m_is_closed.clear();
@@ -103,10 +144,11 @@ public:
       m_triangle_mesh_ptrs.push_back( &tm );
       Tree* t = new Tree(faces(tm).begin(), faces(tm).end(), tm);
       m_aabb_trees.push_back(t);
+      add_cc_points(tm, assume_one_CC);
     }
   }
 
-  void add_mesh(const TriangleMesh& tm)
+  void add_mesh(const TriangleMesh& tm, bool assume_one_CC_per_mesh = false)
   {
     m_is_closed.push_back(is_closed(tm));
     m_triangle_mesh_ptrs.push_back( &tm );
@@ -116,6 +158,7 @@ public:
     m_bboxes.push_back(Bbox_3());
     m_bboxes_is_invalid.resize(m_bboxes_is_invalid.size()+1, true);
 #endif
+    add_cc_points(tm, assume_one_CC_per_mesh);
   }
 
   void remove_mesh(std::size_t mesh_id)
@@ -125,6 +168,7 @@ public:
     delete m_aabb_trees[mesh_id];
     m_aabb_trees.erase( m_aabb_trees.begin()+mesh_id);
     m_is_closed.erase(m_is_closed.begin()+mesh_id);
+    m_points_per_cc.erase(m_points_per_cc.begin()+mesh_id);
 #if CGAL_CACHE_BOXES
     // TODO this is a lazy approach that is not optimal
     m_bboxes.pop_back();
@@ -196,6 +240,9 @@ public:
     return get_all_intersections(mesh_id);
   }
 
+  // TODO: document that is a model is composed of several CC on one of them is not closed,
+  // no inclusion test will be made
+  // TODO: document that the inclusion can be partial in case there are several CC
   template <class MeshRangeIds>
   std::vector<std::pair<std::size_t, bool> >
   get_all_intersections_and_inclusions(std::size_t mesh_id, const MeshRangeIds& ids)
@@ -230,9 +277,14 @@ public:
         if (m_is_closed[k])
         {
           Side_of_tm side_of_mk(*m_aabb_trees[k]);
-          typename Kernel::Point_3 q = get(boost::vertex_point, *m_triangle_mesh_ptrs[mesh_id], *boost::begin(vertices(*m_triangle_mesh_ptrs[mesh_id])));
-          if(side_of_mk(m_aabb_trees[mesh_id]->traits().transformation()( q )) == CGAL::ON_BOUNDED_SIDE)
-            res.push_back(std::make_pair(k, true));
+          BOOST_FOREACH(const typename Kernel::Point_3 q, m_points_per_cc[mesh_id])
+          {
+            if(side_of_mk(m_aabb_trees[mesh_id]->traits().transformation()( q )) == CGAL::ON_BOUNDED_SIDE)
+            {
+              res.push_back(std::make_pair(k, true));
+              break;
+            }
+          }
         }
       }
     }
