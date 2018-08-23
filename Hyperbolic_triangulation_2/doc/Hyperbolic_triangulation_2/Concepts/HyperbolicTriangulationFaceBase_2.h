@@ -57,42 +57,28 @@ public:
   /// @}
 
 
-  /// \name Access functions
+  /// \name Internal access functions
+  /// \cgalAdvancedBegin
+  /// These functions are used internally by the hyperbolic Delaunay triangulation.
+  /// The user is not encouraged to use them directly as they may change in the future.
+  /// \cgalAdvancedEnd
   /// @{
     
     /*!
     \cgalModifBegin
-      Sets a boolean flag stored in the face.
-      This is a low-level function used internally by the hyperbolic triangulation.
+      This function gives non-`const` access to a variable of type `CGAL::Object`.
+      \cgalAdvancedFunction
     \cgalModifEnd
     */
-    void set_flag(bool flag);
+    CGAL::Object& tds_data();
 
     /*!
     \cgalModifBegin
-      Retrieves the value of a boolean flag stored in the face.
-      This is a low-level function used internally by the hyperbolic triangulation.
+      This function gives `const` access to a variable of type `CGAL::Object`.
+      \cgalAdvancedFunction
     \cgalModifEnd
     */
-    bool get_flag() const;
-    
-
-    /*!
-    \cgalModifBegin
-      Sets the value of an unsigned char stored in the face.
-      This is a low-level function used internally by the hyperbolic triangulation.
-    \cgalModifEnd
-    */
-    void set_char(unsigned char uschar);
-
-    /*! 
-    \cgalModifBegin
-      Retrieves the value of an unsigned char stored in the face.
-      This is a low-level function used internally by the hyperbolic triangulation.
-      \cgalModifEnd
-    */
-    unsigned char get_char() const;
-    
+    const CGAL::Object& tds_data() const;
   /// @}
-
+  
 };
