@@ -1401,6 +1401,12 @@ bool Scene_surface_mesh_item::isItemMulticolor()
   return d->has_fcolors;
 }
 
+bool Scene_surface_mesh_item::hasPatchIds()
+{
+  return d->has_fpatch_id;
+}
+
+
 bool
 Scene_surface_mesh_item::save(std::ostream& out) const
 {
@@ -1826,7 +1832,7 @@ QMenu* Scene_surface_mesh_item::contextMenu()
   QAction* actionResetColor=
       menu->findChild<QAction*>(tr("actionResetColor"));
 
-  if(isItemMulticolor())
+  if(isItemMulticolor() || d->has_fpatch_id)
   {
     if(!actionResetColor)
     {

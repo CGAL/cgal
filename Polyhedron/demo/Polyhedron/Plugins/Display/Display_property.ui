@@ -7,14 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>292</width>
-    <height>456</height>
+    <height>432</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Property Displaying</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0">
+   <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0,0">
     <item>
      <spacer name="verticalSpacer">
       <property name="orientation">
