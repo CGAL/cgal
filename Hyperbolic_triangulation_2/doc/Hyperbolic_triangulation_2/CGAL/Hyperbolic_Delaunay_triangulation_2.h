@@ -68,10 +68,25 @@ public:
     typedef unspecified_type                            Hyperbolic_edges_iterator;
   /// @}
 
+  /// \name
+  /// \cgalModifBegin
+  /// The enumeration `Locate_type` is defined to specify which case occurs when locating a 
+  /// point in the triangulation.
+  /// \cgalModifEnd
+  /// @{
+    enum Locate_type { 
+      VERTEX = 0, 
+      EDGE, 
+      FACE, 
+      OUTSIDE_CONVEX_HULL, 
+      OUTSIDE_AFFINE_HULL 
+    };
+  /// @}  
+
   /// \name Creation
   /// @{    
     /*!
-      Default constructor
+      %Default constructor
     */
     Hyperbolic_Delaunay_triangulation_2(const Geom_traits& gt = Geom_traits());
     
@@ -206,7 +221,7 @@ public:
 
       \sa locate()
     */
-    Vertex_handle insert(const Point& p, typename Base::Locate_type lt, Face_handle loc, int li );
+    Vertex_handle insert(const Point& p, typename Locate_type lt, Face_handle loc, int li );
       
 
     /*!
