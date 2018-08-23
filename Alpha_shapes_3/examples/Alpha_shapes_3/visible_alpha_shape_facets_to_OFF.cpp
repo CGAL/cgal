@@ -109,7 +109,7 @@ int main()
   {
     output << 3;
 
-    for (std::size_t i=0;i<3; ++i)
+    for (int i=0;i<3; ++i)
     {
       Alpha_shape_3::Vertex_handle vh = f.first->vertex( as.vertex_triple_index(f.second, i) );
       output << " " << vids[vh];
