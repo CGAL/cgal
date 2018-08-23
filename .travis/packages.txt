@@ -68,8 +68,7 @@ Nef_3
 Nef_S2 
 NewKernel_d 
 Number_types 
-OpenNL 
-Operations_on_polyhedra 
+OpenNL  
 Optimal_transportation_reconstruction_2 
 Optimisation_basic 
 Partition_2 

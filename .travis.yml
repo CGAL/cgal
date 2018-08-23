@@ -29,7 +29,7 @@ env:
     - PACKAGE='Mesher_level Minkowski_sum_2 Minkowski_sum_3 ' 
     - PACKAGE='Modifier Modular_arithmetic Nef_2 ' 
     - PACKAGE='Nef_3 Nef_S2 NewKernel_d ' 
-    - PACKAGE='Number_types OpenNL Operations_on_polyhedra ' 
+    - PACKAGE='Number_types OpenNL ' 
     - PACKAGE='Optimal_transportation_reconstruction_2 Optimisation_basic Partition_2 ' 
     - PACKAGE='Periodic_2_triangulation_2 Periodic_3_mesh_3 Periodic_3_triangulation_3 ' 
     - PACKAGE='Point_set_2 Point_set_3 Point_set_processing_3 ' 
