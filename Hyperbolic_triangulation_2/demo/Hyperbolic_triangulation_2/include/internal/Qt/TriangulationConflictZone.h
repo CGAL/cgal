@@ -63,7 +63,7 @@ TriangulationConflictZone<T>::localize_and_insert_point(QPointF qt_point)
   }
   qfaces.clear();
   hint = dt->locate(p, hint);
-  dt->get_conflicts(p, std::back_inserter(faces), hint);
+  dt->find_conflicts(p, std::back_inserter(faces), hint);
   for(typename std::list<Face_handle>::iterator it = faces.begin();
       it != faces.end();
       ++it){

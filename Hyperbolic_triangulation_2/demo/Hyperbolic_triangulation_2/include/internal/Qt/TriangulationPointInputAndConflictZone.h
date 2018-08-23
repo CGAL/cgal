@@ -62,7 +62,7 @@ TriangulationPointInputAndConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEv
   }
   
 
-  dt->get_conflicts(p, std::back_inserter(faces));
+  dt->find_conflicts(p, std::back_inserter(faces));
   for(typename std::list<Face_handle>::iterator it = faces.begin();
       it != faces.end();
       ++it){

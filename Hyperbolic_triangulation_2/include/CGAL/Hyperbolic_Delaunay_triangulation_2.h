@@ -120,7 +120,7 @@ public:
 
   
   template<class OutputItFaces>
-  OutputItFaces get_conflicts(const Point& p, OutputItFaces fit, Face_handle start = Face_handle()) const {
+  OutputItFaces find_conflicts(const Point& p, OutputItFaces fit, Face_handle start = Face_handle()) const {
     return Base::get_conflicts(p, fit, start);
   }
 
