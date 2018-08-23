@@ -62,10 +62,14 @@ public:
 
     
   /// \name 
-  /// The following iterator types are defined to give access over hyperbolic faces and edges:
+  /// \cgalModifBegin
+  /// The following iterator and circulator types are defined to give access over hyperbolic faces and edges:
+  /// \cgalModifEnd
   /// @{
-    typedef unspecified_type                            Hyperbolic_faces_iterator;
-    typedef unspecified_type                            Hyperbolic_edges_iterator;
+    typedef unspecified_type                            All_faces_iterator;
+    typedef unspecified_type                            All_edges_iterator;
+    typedef unspecified_type                            All_vertices_iterator;
+    typedef unspecified_type                            Vertex_circulator;
   /// @}
 
   /// \name
@@ -299,16 +303,16 @@ public:
   /// \name Vertex, Face and Edge iterators and circulators
   /// @{
     
-    Finite_vertices_iterator  finite_vertices_begin()  const;
-    Finite_vertices_iterator  finite_vertices_end()    const;
+    All_vertices_iterator   all_vertices_begin()  const;
+    All_vertices_iterator   all_vertices_end()    const;
 
-    Hyperbolic_edges_iterator hyperbolic_edges_begin() const;
-    Hyperbolic_edges_iterator hyperbolic_edges_end()   const;
+    All_edges_iterator      all_edges_begin() const;
+    All_edges_iterator      all_edges_end()   const;
     
-    Hyperbolic_faces_iterator hyperbolic_faces_begin() const;
-    Hyperbolic_faces_iterator hyperbolic_faces_end()   const;  
+    All_faces_iterator      all_faces_begin() const;
+    All_faces_iterator      all_faces_end()   const;  
 
-    Vertex_circulator incident_vertices(Vertex_handle v) const;
+    Vertex_circulator       adjacent_vertices(Vertex_handle v) const;
   /// @}
 
 
