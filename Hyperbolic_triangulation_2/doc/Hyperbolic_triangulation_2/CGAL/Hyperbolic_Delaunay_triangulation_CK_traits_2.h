@@ -6,8 +6,9 @@ namespace CGAL {
 /*!
 \ingroup PkgHyperbolicTriangulation2TraitsClasses
 
-The class `Hyperbolic_Delaunay_triangulation_CK_traits_2` is designed as one of the default traits classes for the
-class `Hyperbolic_Delaunay_triangulation_2<HyperbolicDelaunayTriangulationTraits_2,TriangulationDataStructure_2>`.
+The class `Hyperbolic_Delaunay_triangulation_CK_traits_2` is designed as one of the 
+default models for the traits concept `HyperbolicDelaunayTriangulationTraits_2`
+offered by %CGAL. 
 
 \tparam K must be a model of `CircularKernel`.
 
