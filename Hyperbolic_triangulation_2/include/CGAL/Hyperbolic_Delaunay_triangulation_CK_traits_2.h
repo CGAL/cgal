@@ -422,7 +422,7 @@ public:
 
 
   Side_of_oriented_hyperbolic_segment_2
-  side_of_oriented_hyperbolic_segment_2() {
+  side_of_oriented_hyperbolic_segment_2_object() {
     return Side_of_oriented_hyperbolic_segment_2();
   }
 
