@@ -447,13 +447,19 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   Meshing_thread* thread = NULL;
-
   if ( NULL != sm_item )
   {
     SMesh* pMesh = sm_item->polyhedron();
     if (NULL == pMesh)
     {
+      QApplication::restoreOverrideCursor();
       QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
+      return;
+    }
+    if(sm_item->getNbIsolatedvertices() != 0)
+    {
+      QApplication::restoreOverrideCursor();
+      QMessageBox::critical(mw, tr(""), tr("ERROR: there are isolated vertices in this mesh."));
       return;
     }
     Scene_polylines_item::Polylines_container plc;

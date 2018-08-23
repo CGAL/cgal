@@ -1947,6 +1947,11 @@ void MainWindow::setBackgroundColor()
   }
 }
 
+void MainWindow::on_actionSetLighting_triggered()
+{
+  viewer->setLighting();
+}
+
 void MainWindow::on_actionLookAt_triggered()
 {
   Show_point_dialog dialog(this);

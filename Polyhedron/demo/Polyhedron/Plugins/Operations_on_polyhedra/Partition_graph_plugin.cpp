@@ -98,7 +98,7 @@ private:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     item->face_graph()->collect_garbage();
     item->color_vector().clear();
-    if(!item->isItemMulticolor())
+    if(!item->hasPatchIds())
       item->setItemIsMulticolor(true);
     typedef boost::property_map<FaceGraph,CGAL::face_patch_id_t<int> >::type PatchIDMap;
     FaceGraph* fg =item->face_graph();
