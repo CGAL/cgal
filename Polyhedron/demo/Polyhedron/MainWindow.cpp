@@ -190,6 +190,8 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
 
   connect(scene, SIGNAL(updated()),
           viewer, SLOT(update()));
+  connect(viewer, &Viewer::needNewContext,
+    [this](){create();});
   
   connect(ui->actionSet_Transparency_Pass_Number, SIGNAL(triggered()),
               viewer, SLOT(setTotalPass_clicked()));
@@ -1867,6 +1869,11 @@ void MainWindow::on_actionSetBackgroundColor_triggered()
     viewer->setBackgroundColor(c);
     viewer->update();
   }
+}
+
+void MainWindow::on_actionSetLighting_triggered()
+{
+  viewer->setLighting();
 }
 
 void MainWindow::on_actionLookAt_triggered()

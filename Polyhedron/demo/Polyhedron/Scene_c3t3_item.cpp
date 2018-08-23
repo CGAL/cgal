@@ -28,8 +28,7 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangulation_3_triangle_primitive.h>
-#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/IO/facets_in_complex_3_to_triangle_mesh.h>
 
 #include "Scene_polygon_soup_item.h"
 #include "Scene_polyhedron_item.h"
@@ -389,10 +388,8 @@ struct Scene_c3t3_item_priv {
     intersection = NULL;
     spheres_are_shown = false;
     cnc_are_shown = false;
-    show_tetrahedra = true;
     is_aabb_tree_built = false;
     are_intersection_buffers_filled = false;
-    is_grid_shown = true;
     alphaSlider = NULL;
   }
   void computeIntersection(const Primitive& facet);
@@ -523,13 +520,13 @@ struct Scene_c3t3_item_priv {
   std::set<Tr::Cell_handle> intersected_cells;
   QSlider* tet_Slider;
 
-  //!Allows OpenGL 2.1 context to get access to glDrawArraysInstanced.
+  //!Allows OpenGL 2.0 context to get access to glDrawArraysInstanced.
   typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
-  //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
+  //!Allows OpenGL 2.0 context to get access to glVertexAttribDivisor.
   typedef void (APIENTRYP PFNGLVERTEXATTRIBDIVISORARBPROC) (GLuint index, GLuint divisor);
-  //!Allows OpenGL 2.1 context to get access to gkFrameBufferTexture2D.
+  //!Allows OpenGL 2.0 context to get access to gkFrameBufferTexture2D.
   PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
-  //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
+  //!Allows OpenGL 2.0 context to get access to glVertexAttribDivisor.
   PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
 
   mutable std::size_t positions_poly_size;
@@ -574,6 +571,7 @@ struct Scene_c3t3_item_priv {
   bool is_aabb_tree_built;
   bool cnc_are_shown;
   bool is_valid;
+  bool is_surface;
 };
 
 struct Set_show_tetrahedra {
@@ -585,7 +583,7 @@ struct Set_show_tetrahedra {
   }
 };
 
-Scene_c3t3_item::Scene_c3t3_item()
+Scene_c3t3_item::Scene_c3t3_item(bool is_surface)
   : Scene_group_item("unnamed", Scene_c3t3_item_priv::NumberOfBuffers, Scene_c3t3_item_priv::NumberOfVaos)
   , d(new Scene_c3t3_item_priv(this))
 
@@ -596,9 +594,12 @@ Scene_c3t3_item::Scene_c3t3_item()
   c3t3_changed();
   setRenderingMode(FlatPlusEdges);
   create_flat_and_wire_sphere(1.0f,d->s_vertex,d->s_normals, d->ws_vertex);
+  d->is_surface = is_surface;
+  d->is_grid_shown = !is_surface;
+  d->show_tetrahedra = !is_surface;
 }
 
-Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
+Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3, bool is_surface)
   : Scene_group_item("unnamed", Scene_c3t3_item_priv::NumberOfBuffers, Scene_c3t3_item_priv::NumberOfVaos)
   , d(new Scene_c3t3_item_priv(c3t3, this))
 {
@@ -606,6 +607,9 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
   compute_bbox();
   connect(d->frame, SIGNAL(modified()), this, SLOT(changed()));
   d->reset_cut_plane();
+  d->is_surface = is_surface;
+  d->is_grid_shown = !is_surface;
+  d->show_tetrahedra = !is_surface;
   c3t3_changed();
   setRenderingMode(FlatPlusEdges);
   create_flat_and_wire_sphere(1.0f,d->s_vertex,d->s_normals, d->ws_vertex);
@@ -996,6 +1000,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     d->program->setUniformValue("far", (float)viewer->camera()->zFar());       
     d->program->setUniformValue("writing", viewer->isDepthWriting());   
     d->program->setUniformValue("alpha", alpha());                     
+    d->program->setUniformValue("is_surface", d->is_surface);
     if( fbo)
       viewer->glBindTexture(GL_TEXTURE_2D, fbo->texture());
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->positions_poly_size / 3));
@@ -1081,6 +1086,7 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     d->program->bind();
     QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
     d->program->setUniformValue("cutplane", cp);
+    d->program->setUniformValue("is_surface", d->is_surface);
     d->program->setAttributeValue("colors", QColor(Qt::black));
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_lines_size / 3));
     d->program->release();
@@ -1134,6 +1140,7 @@ void Scene_c3t3_item::drawPoints(CGAL::Three::Viewer_interface * viewer) const
     d->program->bind();
     QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
     d->program->setUniformValue("cutplane", cp);
+    d->program->setUniformValue("is_surface", d->is_surface);
     d->program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->positions_lines.size() / 3));
     vaos[Scene_c3t3_item_priv::Edges]->release();
@@ -1274,63 +1281,12 @@ double Scene_c3t3_item_priv::complex_diag() const {
 
 void Scene_c3t3_item::export_facets_in_complex()
 {
-  std::set<C3t3::Vertex_handle> vertex_set;
-  for (C3t3::Facets_in_complex_iterator fit = c3t3().facets_in_complex_begin();
-       fit != c3t3().facets_in_complex_end();
-       ++fit)
-  {
-    vertex_set.insert(fit->first->vertex((fit->second + 1) % 4));
-    vertex_set.insert(fit->first->vertex((fit->second + 2) % 4));
-    vertex_set.insert(fit->first->vertex((fit->second + 3) % 4));
-  }
+  Polyhedron outmesh;
+  CGAL::facets_in_complex_3_to_triangle_mesh(c3t3(), outmesh);
+  Scene_polyhedron_item* item = new Scene_polyhedron_item(std::move(outmesh));
+  item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
+  scene->addItem(item);
 
-  std::map<C3t3::Vertex_handle, std::size_t> indices;
-  std::vector<Tr::Bare_point> points(vertex_set.size());
-  std::vector<std::vector<std::size_t> > polygons(c3t3().number_of_facets_in_complex());
-
-  std::size_t index = 0;
-  Geom_traits::Construct_point_3 wp2p
-    = c3t3().triangulation().geom_traits().construct_point_3_object();
-
-  BOOST_FOREACH(C3t3::Vertex_handle v, vertex_set)
-  {
-    points[index] = wp2p(v->point());
-    indices.insert(std::make_pair(v, index));
-    index++;
-  }
-
-  index = 0;
-  for (C3t3::Facets_in_complex_iterator fit = c3t3().facets_in_complex_begin();
-       fit != c3t3().facets_in_complex_end();
-       ++fit, ++index)
-  {
-    std::vector<std::size_t> facet(3);
-    facet[0] = indices.at(fit->first->vertex((fit->second + 1) % 4));
-    facet[1] = indices.at(fit->first->vertex((fit->second + 2) % 4));
-    facet[2] = indices.at(fit->first->vertex((fit->second + 3) % 4));
-    polygons[index] = facet;
-  }
-
-  namespace PMP = CGAL::Polygon_mesh_processing;
-  if (PMP::is_polygon_soup_a_polygon_mesh(polygons))
-  {
-    CGAL_assertion_code(bool orientable = )
-    PMP::orient_polygon_soup(points, polygons);
-    CGAL_assertion(orientable);
-
-    Polyhedron outmesh;
-    PMP::polygon_soup_to_polygon_mesh(points, polygons, outmesh);
-    Scene_polyhedron_item* item = new Scene_polyhedron_item(std::move(outmesh));
-    item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
-    scene->addItem(item);
-  }
-  else
-  {
-    Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
-    soup_item->load(points, polygons);
-    soup_item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
-    scene->addItem(soup_item);
-  }
   this->setVisible(false);
 }
 

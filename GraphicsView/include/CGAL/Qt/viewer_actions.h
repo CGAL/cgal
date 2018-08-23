@@ -33,7 +33,6 @@ enum KeyboardAction {
   EXIT_VIEWER,
   CAMERA_MODE,
   FULL_SCREEN,
-  STEREO,
   ANIMATION,
   HELP,
   EDIT_CAMERA,

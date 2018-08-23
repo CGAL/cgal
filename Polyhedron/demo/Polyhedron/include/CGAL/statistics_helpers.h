@@ -13,8 +13,6 @@
 #include <map>
 #include <boost/property_map/property_map.hpp>
 
-#include <CGAL/Polygon_mesh_processing/repair.h>
-
 
 template<typename Mesh>
 void angles(Mesh* poly, double& mini, double& maxi, double& ave)

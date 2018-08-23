@@ -507,10 +507,16 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
     Polyhedron* pMesh = poly_item->polyhedron();
     if (NULL == pMesh)
     {
+      QApplication::restoreOverrideCursor();
       QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
       return;
     }
-
+    if(poly_item->getNbIsolatedvertices() != 0)
+    {
+      QApplication::restoreOverrideCursor();
+      QMessageBox::critical(mw, tr(""), tr("ERROR: there are isolated vertices in this mesh."));
+      return;
+    }
     Scene_polylines_item::Polylines_container plc;
 
     thread =    cgal_code_mesh_3(pMesh,
@@ -536,7 +542,14 @@ void Mesh_3_plugin::mesh_3(const bool surface_only, const bool use_defaults)
     SMesh* pMesh = sm_item->polyhedron();
     if (NULL == pMesh)
     {
+      QApplication::restoreOverrideCursor();
       QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
+      return;
+    }
+    if(sm_item->getNbIsolatedvertices() != 0)
+    {
+      QApplication::restoreOverrideCursor();
+      QMessageBox::critical(mw, tr(""), tr("ERROR: there are isolated vertices in this mesh."));
       return;
     }
     Scene_polylines_item::Polylines_container plc;

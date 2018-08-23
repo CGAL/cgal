@@ -1,6 +1,6 @@
-#include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Three.h>
+#include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <fstream>
 
 #include <QObject>
@@ -14,14 +14,16 @@
 #include "Messages_interface.h"
 
 
-//This plugin crates an action in Operations that displays "Hello World" in the 'console' dockwidet.
 class SurfaceMeshIoPlugin :
     public QObject,
-    public CGAL::Three::Polyhedron_demo_io_plugin_interface,
-    public CGAL::Three::Polyhedron_demo_plugin_interface
+    public CGAL::Three::Polyhedron_demo_plugin_interface,
+    public CGAL::Three::Polyhedron_demo_io_plugin_interface
 {
   Q_OBJECT
-  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface CGAL::Three::Polyhedron_demo_io_plugin_interface)
+  Q_INTERFACES(
+  CGAL::Three::Polyhedron_demo_plugin_interface
+  CGAL::Three::Polyhedron_demo_io_plugin_interface
+)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 public:

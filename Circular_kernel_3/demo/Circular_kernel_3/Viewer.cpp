@@ -116,6 +116,7 @@ void Viewer::compile_shaders()
                  "uniform highp mat4 mvp_matrix;\n"
                  "void main(void)\n"
                  "{\n"
+                 "   gl_PointSize = 4.0;\n"
                  "   gl_Position = mvp_matrix * vertex;\n"
                  "}"
              };
@@ -813,12 +814,10 @@ void Viewer::draw()
     }
     else
     {
-        glPointSize(4.0f);
         rendering_program_no_ext.bind();
         rendering_program_no_ext.setUniformValue(colorLocation, color);
         glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
         rendering_program_no_ext.release();
-        glPointSize(1.0f);
     }
 
     vao[2].release();

@@ -227,9 +227,11 @@ Scene::erase(QList<int> indices)
   }
 
   Q_FOREACH(Scene_item* item, to_be_removed) {
+    Item_id removed_item = item_id(item);
+    if(removed_item == -1) //case of the selection_item, for example.
+      continue;
     if(item->parentGroup())
       item->parentGroup()->removeChild(item);
-    Item_id removed_item = item_id(item);
         children.removeAll(removed_item);
         indexErased(removed_item);
         m_entries.removeAll(item);
@@ -326,7 +328,21 @@ void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
   //Vertex source code
   const char vertex_source[] =
   {
-    "#version 120                                \n"
+    "#version 150                                 \n"
+    "in vec4 vertex;                \n"
+    "in vec2 v_texCoord;            \n"
+    "uniform mat4 projection_matrix;       \n"
+    "out vec2 f_texCoord;              \n"
+    "void main(void)                             \n"
+    "{                                           \n"
+    "  f_texCoord = v_texCoord;                  \n"
+    "  gl_Position = projection_matrix * vertex; \n"
+    "}                                           \n"
+    
+  };
+  
+  const char vertex_source_comp[] =
+  {
     "attribute highp vec4 vertex;                \n"
     "attribute highp vec2 v_texCoord;            \n"
     "uniform highp mat4 projection_matrix;       \n"
@@ -341,7 +357,17 @@ void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
   //Fragment source code
   const char fragment_source[] =
   {
-    "#version 120                                                           \n"
+    "#version 150                                                            \n"
+    "in vec2 f_texCoord;                                         \n"
+    "out vec4 out_color ; \n"
+    "uniform sampler2D s_texture;                                             \n"
+    "void main(void)                                                        \n"
+    "{                                                                      \n"
+    "  out_color = texture(s_texture, f_texCoord); \n"
+    "}                                                                      \n"
+  };
+  const char fragment_source_comp[] =
+  {
     "varying highp vec2 f_texCoord;                                         \n"
     "uniform sampler2D texture;                                             \n"
     "void main(void)                                                        \n"
@@ -351,23 +377,38 @@ void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
   };
   
   
-  QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
-  if(!vertex_shader->compileSourceCode(vertex_source))
+  QOpenGLShader vertex_shader(QOpenGLShader::Vertex);
+  QOpenGLShader fragment_shader(QOpenGLShader::Fragment);
+  if(viewer->isOpenGL_4_3())
   {
-    std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+    if(!vertex_shader.compileSourceCode(vertex_source))
+    {
+      std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+    }
+    
+    if(!fragment_shader.compileSourceCode(fragment_source))
+    {
+      std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+    }
+  }
+  else
+  {
+    if(!vertex_shader.compileSourceCode(vertex_source_comp))
+    {
+      std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+    }
+    
+    if(!fragment_shader.compileSourceCode(fragment_source_comp))
+    {
+      std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+    }
   }
   
-  QOpenGLShader *fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
-  if(!fragment_shader->compileSourceCode(fragment_source))
-  {
-    std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
-  }
-  
-  if(!program.addShader(vertex_shader))
+  if(!program.addShader(&vertex_shader))
   {
     std::cerr<<"adding vertex shader FAILED"<<std::endl;
   }
-  if(!program.addShader(fragment_shader))
+  if(!program.addShader(&fragment_shader))
   {
     std::cerr<<"adding fragment shader FAILED"<<std::endl;
   }
@@ -465,8 +506,7 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
                         bool writing_depth,
                         QOpenGLFramebufferObject *fbo)
 {
-  if(pass == -1)
-    viewer->makeCurrent();
+
   viewer->setCurrentPass(pass);
   viewer->setDepthWriting(writing_depth);
   viewer->setDepthPeelingFbo(fbo);
@@ -490,25 +530,21 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
       if( group || item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
       {
         if(with_names) {
-          viewer->glClearDepth(1.0);
+          viewer->glClearDepthf(1.0);
           viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
-        if(item.renderingMode() == Gouraud)
-          viewer->glShadeModel(GL_SMOOTH);
-        else
-          viewer->glShadeModel(GL_FLAT);
         item.draw(viewer);
-      }
-
-      if(with_names) {
-
-        //    read depth buffer at pick location;
-        float depth = 1.0;
-        viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-        if (depth != 1.0)
-        {
-          //add object to list of picked objects;
-          picked_item_IDs[depth] = index;
+        
+        if(with_names) {
+          
+          //    read depth buffer at pick location;
+          float depth = 1.0;
+          viewer->glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+          if (depth != 1.0)
+          {
+            //add object to list of picked objects;
+            picked_item_IDs[depth] = index;
+          }
         }
       }
       if(group)
@@ -542,16 +578,12 @@ void Scene::renderWireScene(const QList<Scene_interface::Item_id> &items,
           || item.renderingMode() == Wireframe
           || item.renderingMode() == PointsPlusNormals)
        {
-         viewer->glDisable(GL_LIGHTING);
-         viewer->glPointSize(2.f);
-         viewer->glLineWidth(1.0f);
+         viewer->setGlPointSize(2.f);
          item.drawEdges(viewer);
        }
        else{
            if( item.renderingMode() == PointsPlusNormals ){
-               viewer->glDisable(GL_LIGHTING);
-               viewer->glPointSize(2.f);
-               viewer->glLineWidth(1.0f);
+               viewer->setGlPointSize(2.f);
                if(index == selected_item || selected_items_list.contains(index))
                {
 
@@ -596,7 +628,7 @@ void Scene::renderPointScene(const QList<Scene_interface::Item_id> &items,
     if(group ||item.visible())
     {
       if(item.renderingMode() == Points && with_names) {
-          viewer->glClearDepth(1.0);
+          viewer->glClearDepthf(1.0);
           viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       }
 
@@ -604,9 +636,7 @@ void Scene::renderPointScene(const QList<Scene_interface::Item_id> &items,
          (item.renderingMode() == PointsPlusNormals)  ||
          (item.renderingMode() == ShadedPoints))
       {
-        viewer->glDisable(GL_LIGHTING);
-        viewer->glPointSize(3.0f);
-        viewer->glLineWidth(1.0f);
+        viewer->setGlPointSize(3.0f);
         item.drawPoints(viewer);
       }
       if(item.renderingMode() == Points && with_names) {
@@ -634,10 +664,9 @@ void Scene::renderPointScene(const QList<Scene_interface::Item_id> &items,
 void 
 Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 {
-    viewer->makeCurrent();
     QMap<float, int> picked_item_IDs;
     if(with_names)
-    viewer->glEnable(GL_DEPTH_TEST);
+      viewer->glEnable(GL_DEPTH_TEST);
     if(!gl_init)
         initializeGL(viewer);
     //treat opaque items first to ensure that when two items are the same, but only one is opaque,
@@ -668,14 +697,12 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       viewer->glDisable(GL_BLEND);
       viewer->glEnable(GL_DEPTH_TEST);
       viewer->glDepthFunc(GL_LESS);
-      viewer->glEnable(GL_ALPHA_TEST);
       viewer->glClearColor(0.0f,
                            0.0f,
                            0.0f,
                            0.0f);
-      viewer->glClearDepth(1);
+      viewer->glClearDepthf(1);
       viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      //renderScene(children, viewer, picked_item_IDs, false, 0,false, NULL);
       renderScene(opaque_items, viewer, picked_item_IDs, false, 0,false, NULL);
       renderScene(transparent_items, viewer, picked_item_IDs, false, 0,false, NULL);
       fbos[0]->release();
@@ -684,14 +711,12 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       viewer->glDisable(GL_BLEND);
       viewer->glEnable(GL_DEPTH_TEST);
       viewer->glDepthFunc(GL_LESS);
-      viewer->glEnable(GL_ALPHA_TEST);
       viewer->glClearColor(0.0f,
                            0.0f,
                            0.0f,
                            0.0f);
-      viewer->glClearDepth(1);
+      viewer->glClearDepthf(1);
       viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//      renderScene(children, viewer, picked_item_IDs, false, 0,true, NULL);
       renderScene(opaque_items, viewer, picked_item_IDs, false, 0,true, NULL);
       renderScene(transparent_items, viewer, picked_item_IDs, false, 0,true, NULL);
       depth_test[0]->release();
@@ -704,16 +729,14 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
         viewer->glDisable(GL_BLEND);
         viewer->glEnable(GL_DEPTH_TEST);
         viewer->glDepthFunc(GL_LESS);
-        viewer->glEnable(GL_ALPHA_TEST);
         viewer->glClearColor(0.0f,
                              0.0f,
                              0.0f,
                              0.0f);
-        viewer->glClearDepth(1);
+        viewer->glClearDepthf(1);
         viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         renderWireScene(children, viewer, picked_item_IDs, false);
         renderPointScene(children, viewer, picked_item_IDs, false);
-        //renderScene(children, viewer, picked_item_IDs, false, i, false, depth_test[i-1]);
         renderScene(opaque_items     , viewer, picked_item_IDs, false, i, false, depth_test[i-1]);
         renderScene(transparent_items, viewer, picked_item_IDs, false, i, false, depth_test[i-1]);
         fbos[i]->release();
@@ -723,14 +746,12 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
         viewer->glDisable(GL_BLEND);
         viewer->glEnable(GL_DEPTH_TEST);
         viewer->glDepthFunc(GL_LESS);
-        viewer->glEnable(GL_ALPHA_TEST);
         viewer->glClearColor(0.0f,
                              0.0f,
                              0.0f,
                              0.0f);
-        viewer->glClearDepth(1);
+        viewer->glClearDepthf(1);
         viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        //renderScene(children, viewer, picked_item_IDs, false, i, true, depth_test[i-1]);
         renderScene(opaque_items     , viewer, picked_item_IDs, false, i, true, depth_test[i-1]);
         renderScene(transparent_items, viewer, picked_item_IDs, false, i, true, depth_test[i-1]);
         depth_test[i]->release();
@@ -743,14 +764,12 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       viewer->glDisable(GL_BLEND);
       viewer->glEnable(GL_DEPTH_TEST);
       viewer->glDepthFunc(GL_LESS);
-      viewer->glEnable(GL_ALPHA_TEST);
       viewer->glClearColor(0.0f,
                            0.0f,
                            0.0f,
                            0.0f);
-      viewer->glClearDepth(1);
+      viewer->glClearDepthf(1);
       viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//      renderScene(children, viewer, picked_item_IDs, false, (int)viewer->total_pass()-1, false, depth_test[(int)viewer->total_pass()-2]);
       renderScene(opaque_items     , viewer, picked_item_IDs, false, (int)viewer->total_pass()-1, false, depth_test[(int)viewer->total_pass()-2]);
       renderScene(transparent_items, viewer, picked_item_IDs, false, (int)viewer->total_pass()-1, false, depth_test[(int)viewer->total_pass()-2]);
       fbos[(int)viewer->total_pass()-1]->release();
@@ -763,7 +782,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       viewer->glClearColor(background.redF(),
                            background.greenF(),
                            background.blueF(),
-                           1.0f);
+                           0.0f);
       viewer->glDisable(GL_DEPTH_TEST);
       viewer->glClear(GL_COLOR_BUFFER_BIT);
       viewer->glEnable(GL_BLEND);

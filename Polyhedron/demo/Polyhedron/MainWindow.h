@@ -100,7 +100,7 @@ public Q_SLOTS:
   //! If `b` is true, recenters the scene.
   void updateViewerBBox(bool b);
   //! Opens a script or a file with the default loader if there is.
-  void open(QString);
+  void open(QString) Q_DECL_OVERRIDE;
   //! Is called when the up button is pressed.
   void on_upButton_pressed();
   //! Is called when the down button is pressed.
@@ -333,6 +333,9 @@ protected Q_SLOTS:
   void on_actionSaveSnapshot_triggered();
   //!Opens a Dialog to choose a color and make it the background color.
   void on_actionSetBackgroundColor_triggered();
+  //!Opens a Dialog to change the lighting settings
+  void on_actionSetLighting_triggered();
+  
   /*! Opens a Dialog to enter coordinates of the new center point and sets it
    * with viewerShow.
    *@see viewerShow(float, float, float, float, float, float)
@@ -379,7 +382,7 @@ protected:
    * Calls writeSettings() and set the flag accepted for the event.
    * @see writeSettings()
    */
-  void closeEvent(QCloseEvent *event);
+  void closeEvent(QCloseEvent *event)Q_DECL_OVERRIDE;
   /*! Returns the currently selected item in the Geometric Objects view. Returns -1
    * if none is selected.
    */

@@ -11,7 +11,7 @@ returns `CGAL::OBTUSE`, `CGAL::RIGHT` or `CGAL::ACUTE` depending
 on the angle formed by the two vectors `u` and `v`.
 */
 template <typename Kernel>
-Angle angle(const CGAL::Vector_2<Kernel>&u, 
+Angle angle(const CGAL::Vector_2<Kernel>&u,
 const CGAL::Vector_2<Kernel>&v);
 
 /*!
@@ -82,8 +82,8 @@ Angle angle(const CGAL::Point_3<Kernel>&p,
 
 /*!
 returns an approximation of the signed dihedral angle in the tetrahedron `pqrs` of edge `pq`.
-The sign is negative if `orientation(p,q,r,s)` is `CGAL::NEGATIVE` and positive otherwise. 
-The angle is given in degree.
+The sign is negative if `orientation(p,q,r,s)` is `CGAL::NEGATIVE` and positive otherwise.
+The angle is given in degrees.
 \pre `p,q,r` and `p,q,s` are not collinear.
 */
 template <typename Kernel>
@@ -103,7 +103,7 @@ Kernel::FT approximate_dihedral_angle(const CGAL::Point_3<Kernel>& p,
 
 /*!
 returns the signed area of the triangle defined by the points `p`,
-`q` and `r`. 
+`q` and `r`.
 */
 template <typename Kernel>
 Kernel::FT area(const CGAL::Point_2<Kernel>& p,
@@ -121,25 +121,25 @@ const CGAL::Point_2<Kernel>& r);
 
 /*!
 
-returns `true`, iff the three points are collinear and 
+returns `true`, iff the three points are collinear and
 `q` lies between `p` and `r`.
 Note that `true` is returned, if `q==p` or
 `q==r`.
 */
 template <typename Kernel>
-bool are_ordered_along_line(const CGAL::Point_2<Kernel> &p, 
-const CGAL::Point_2<Kernel> &q, 
+bool are_ordered_along_line(const CGAL::Point_2<Kernel> &p,
+const CGAL::Point_2<Kernel> &q,
 const CGAL::Point_2<Kernel> &r);
 
 /*!
-returns `true`, iff the three points are collinear and 
+returns `true`, iff the three points are collinear and
 `q` lies between `p` and `r`.
 Note that `true` is returned, if `q==p` or
 `q==r`.
 */
 template <typename Kernel>
-bool are_ordered_along_line(const CGAL::Point_3<Kernel> &p, 
-const CGAL::Point_3<Kernel> &q, 
+bool are_ordered_along_line(const CGAL::Point_3<Kernel> &p,
+const CGAL::Point_3<Kernel> &q,
 const CGAL::Point_3<Kernel> &r);
 
 
@@ -153,25 +153,25 @@ const CGAL::Point_3<Kernel> &r);
 /// @{
 
 /*!
-returns `true`, iff the three points are collinear and 
+returns `true`, iff the three points are collinear and
 `q` lies strictly between `p` and `r`.
 Note that `false` is returned, if `q==p` or
 `q==r`.
 */
 template <typename Kernel>
-bool are_strictly_ordered_along_line(const CGAL::Point_2<Kernel> &p, 
-const CGAL::Point_2<Kernel> &q, 
+bool are_strictly_ordered_along_line(const CGAL::Point_2<Kernel> &p,
+const CGAL::Point_2<Kernel> &q,
 const CGAL::Point_2<Kernel> &r);
 
 /*!
-returns `true`, iff the three points are collinear and 
+returns `true`, iff the three points are collinear and
 `q` lies strictly between `p` and `r`.
 Note that `false` is returned, if `q==p` or
 `q==r`.
 */
 template <typename Kernel>
-bool are_strictly_ordered_along_line(const CGAL::Point_3<Kernel> &p, 
-const CGAL::Point_3<Kernel> &q, 
+bool are_strictly_ordered_along_line(const CGAL::Point_3<Kernel> &p,
+const CGAL::Point_3<Kernel> &q,
 const CGAL::Point_3<Kernel> &r);
 
 /// @}
@@ -430,7 +430,7 @@ centroid( const CGAL::Tetrahedron_3<Kernel>& t);
 /*!
 compute the center of the smallest circle passing through the points `p` and
 `q`. Note: this is the same as `CGAL::midpoint(p, q)` but is provided
-for homogeneity. 
+for homogeneity.
 */
 template <typename Kernel>
 CGAL::Point_2<Kernel>
@@ -458,7 +458,7 @@ circumcenter( const CGAL::Triangle_2<Kernel>& t);
 /*!
 compute the center of the smallest sphere passing through the points `p` and
 `q`. Note: this is the same as `CGAL::midpoint(p, q)` but is provided
-for homogeneity. 
+for homogeneity.
 */
 template <typename Kernel>
 CGAL::Point_3<Kernel>
@@ -512,7 +512,7 @@ circumcenter( const CGAL::Tetrahedron_3<Kernel>& t);
 /// @{
 
 /*!
-returns `true`, iff `q` lies between `p` 
+returns `true`, iff `q` lies between `p`
 and `r`. \pre `p, q` and `r` are collinear.
 */
 template <typename Kernel>
@@ -521,7 +521,7 @@ const CGAL::Point_2<Kernel> &q,
 const CGAL::Point_2<Kernel> &r);
 
 /*!
-returns `true`, iff `q` lies between `p` 
+returns `true`, iff `q` lies between `p`
 and `r`. \pre `p, q` and `r` are collinear.
 */
 template <typename Kernel>
@@ -539,7 +539,7 @@ const CGAL::Point_3<Kernel> &r);
 /// @{
 
 /*!
-returns `true`, iff `q` lies strictly between 
+returns `true`, iff `q` lies strictly between
 `p` and `r`. \pre `p, q` and `r` are collinear.
 */
 template <typename Kernel>
@@ -548,7 +548,7 @@ const CGAL::Point_2<Kernel> &q,
 const CGAL::Point_2<Kernel> &r);
 
 /*!
-returns `true`, iff `q` lies strictly between `p` 
+returns `true`, iff `q` lies strictly between `p`
 and `r`. \pre `p, q` and `r` are collinear.
 */
 template <typename Kernel>
@@ -570,8 +570,8 @@ const CGAL::Point_3<Kernel> &r);
 returns `true`, iff `p`, `q`, and `r` are collinear.
 */
 template <typename Kernel>
-bool collinear(const CGAL::Point_2<Kernel> &p, 
-const CGAL::Point_2<Kernel> &q, 
+bool collinear(const CGAL::Point_2<Kernel> &p,
+const CGAL::Point_2<Kernel> &q,
 const CGAL::Point_2<Kernel> &r);
 
 /*!
@@ -600,9 +600,9 @@ The result is the same as `compare_dihedral_angle(b1-a1, c1-a1, d1-a1, cosine)`.
 */
 template <typename Kernel>
 Comparison_result compare_dihedral_angle(const CGAL::Point_3<Kernel>& a1,
-const CGAL::Point_3<Kernel>& b1, 
+const CGAL::Point_3<Kernel>& b1,
 const CGAL::Point_3<Kernel>& c1,
-const CGAL::Point_3<Kernel>& d1, 
+const CGAL::Point_3<Kernel>& d1,
 const Kernel::FT& cosine);
 
 /*!
@@ -615,11 +615,11 @@ The result is the same as `compare_dihedral_angle(b1-a1, c1-a1, d1-a1, b2-a2, c2
 */
 template <typename Kernel>
 Comparison_result compare_dihedral_angle(const CGAL::Point_3<Kernel>& a1,
-const CGAL::Point_3<Kernel>& b1, 
+const CGAL::Point_3<Kernel>& b1,
 const CGAL::Point_3<Kernel>& c1,
-const CGAL::Point_3<Kernel>& d1, 
-const CGAL::Point_3<Kernel>& a2, 
-const CGAL::Point_3<Kernel>& b2, 
+const CGAL::Point_3<Kernel>& d1,
+const CGAL::Point_3<Kernel>& a2,
+const CGAL::Point_3<Kernel>& b2,
 const CGAL::Point_3<Kernel>& c2,
 const CGAL::Point_3<Kernel>& d2);
 
@@ -634,7 +634,7 @@ cosine\f$.
 template <typename Kernel>
 Comparison_result
 compare_dihedral_angle(const CGAL::Vector_3<Kernel>& u1,
-const CGAL::Vector_3<Kernel>& v1, 
+const CGAL::Vector_3<Kernel>& v1,
 const CGAL::Vector_3<Kernel>& w1,
 const Kernel::FT& cosine);
 
@@ -648,10 +648,10 @@ computed in \f$ [0, \pi]\f$.
 template <typename Kernel>
 Comparison_result
 compare_dihedral_angle(const CGAL::Vector_3<Kernel>& u1,
-const CGAL::Vector_3<Kernel>& v1, 
+const CGAL::Vector_3<Kernel>& v1,
 const CGAL::Vector_3<Kernel>& w1,
-const CGAL::Vector_3<Kernel>& u2, 
-const CGAL::Vector_3<Kernel>& v2, 
+const CGAL::Vector_3<Kernel>& u2,
+const CGAL::Vector_3<Kernel>& v2,
 const CGAL::Vector_3<Kernel>& w2);
 
 /// @}
@@ -707,7 +707,7 @@ const CGAL::Point_3<Kernel>& r);
 
 /*!
 Compares the Cartesian coordinates of points `p` and
-`q` lexicographically in \f$ xy\f$ order: first 
+`q` lexicographically in \f$ xy\f$ order: first
 \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates
 are compared. This is the same function as `compare_xy` and exists for compatibility with `Point_d<Kernel>`.
 */
@@ -717,7 +717,7 @@ compare_lexicographically(const CGAL::Point_2<Kernel>& p, const CGAL::Point_2<Ke
 
 /*!
 Compares the Cartesian coordinates of points `p` and
-`q` lexicographically in \f$ xyz\f$ order: first 
+`q` lexicographically in \f$ xyz\f$ order: first
 \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates
 are compared, and if both \f$ x\f$- and \f$ y\f$- coordinate are equal,
 \f$ z\f$-coordinates are compared. This is the same function as `compare_xyz` and exists for compatibility with `Point_d<Kernel>`.
@@ -743,7 +743,7 @@ compare_lexicographically(const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Ke
 
 /*!
 returns `CGAL::LARGER`
-iff the signed distance of `p` and 
+iff the signed distance of `p` and
 `l` is larger than the signed distance of `q`
 and `l`, `CGAL::SMALLER`, iff it is smaller,
 and `CGAL::EQUAL` iff both are equal.
@@ -756,10 +756,10 @@ const CGAL::Point_2<Kernel>& q);
 
 /*!
 returns `CGAL::LARGER`
-iff the signed distance of `r` and 
+iff the signed distance of `r` and
 `l` is larger than the signed distance of `s`
 and `l`, `CGAL::SMALLER`, iff it is smaller,
-and `CGAL::EQUAL` iff both are equal, where 
+and `CGAL::EQUAL` iff both are equal, where
 `l` is the directed line through `p` and `q`.
 */
 template <typename Kernel>
@@ -785,7 +785,7 @@ const CGAL::Point_2<Kernel>& s);
 
 /*!
 returns `CGAL::LARGER`
-iff the signed distance of `p` and 
+iff the signed distance of `p` and
 `h` is larger than the signed distance of `q`
 and `h`, `CGAL::SMALLER`, iff it is smaller,
 and `CGAL::EQUAL` iff both are equal.
@@ -798,7 +798,7 @@ const CGAL::Point_3<Kernel>& q);
 
 /*!
 returns `CGAL::LARGER`
-iff the signed distance of `s` and 
+iff the signed distance of `s` and
 `h` is larger than the signed distance of `t`
 and `h`, `CGAL::SMALLER`, iff it is smaller,
 and `CGAL::EQUAL` iff both are equal, where
@@ -890,7 +890,7 @@ const typename Kernel::FT& d2);
 
 /*!
 compares the squared radius of the sphere of radius 0 centered at
-`p` to `sr`. 
+`p` to `sr`.
 This returns the opposite sign of `sr`.
 */
 template <typename Kernel>
@@ -954,8 +954,8 @@ described below.
 \defgroup compare_x_linear_grp CGAL::compare_x() (2D/3D Linear Kernel)
 \ingroup compare_x_grp
 \anchor figcompare_x
-\image html compare1.png 
-\image latex compare1.png 
+\image html compare1.png
+\image latex compare1.png
 */
 /// @{
 
@@ -971,7 +971,7 @@ compares the \f$ x\f$-coordinates of `p` and `q`.
 template <typename Kernel>
 Comparison_result compare_x(const CGAL::Point_3<Kernel> &p, const CGAL::Point_3<Kernel> &q);
 /*!
-compares the \f$ x\f$-coordinates of `p` and the intersection 
+compares the \f$ x\f$-coordinates of `p` and the intersection
 of lines `l1` and `l2`.
 See Figure \ref figcompare_x (a).
 */
@@ -1019,14 +1019,14 @@ Comparison_result compare_x(const CGAL::Line_2<Kernel> &l1,
 compares the \f$ x\f$-coordinates of `p` and `q`.
 */
 template <typename CircularKernel>
-Comparison_result 
+Comparison_result
   compare_x(const CGAL::Circular_arc_point_2<CircularKernel> &p,
             const CGAL::Circular_arc_point_2<CircularKernel> &q);
 /*!
 compares the \f$ x\f$-coordinates of `p` and `q`.
 */
 template <typename CircularKernel>
-Comparison_result 
+Comparison_result
   compare_x(const CGAL::Circular_arc_point_2<CircularKernel> &p,
             const CGAL::Point_2<CircularKernel> &q);
 
@@ -1047,7 +1047,7 @@ Comparison_result
 compares the \f$ x\f$-coordinates of `p` and `q`.
 */
 template <typename SphericalKernel>
-Comparison_result 
+Comparison_result
 compare_x(const CGAL::Circular_arc_point_3<SphericalKernel> &p,
           const CGAL::Circular_arc_point_3<SphericalKernel> &q);
 
@@ -1055,7 +1055,7 @@ compare_x(const CGAL::Circular_arc_point_3<SphericalKernel> &p,
 compares the \f$ x\f$-coordinates of `p` and `q`.
 */
 template <typename SphericalKernel>
-Comparison_result 
+Comparison_result
   compare_x(const CGAL::Circular_arc_point_3<SphericalKernel> &p,
             const CGAL::Point_3<SphericalKernel> &q);
 
@@ -1066,7 +1066,7 @@ Comparison_result
 \ingroup kernel_global_function
 
 \details Depending on which \cgal kernel is used, different versions of this
-global function are available. 
+global function are available.
 
 \sa `compare_xyz_grp`
 \sa `compare_x_grp`
@@ -1087,7 +1087,7 @@ global function are available.
 
 /*!
 Compares the Cartesian coordinates of points `p` and
-`q` lexicographically in \f$ xy\f$ order: first 
+`q` lexicographically in \f$ xy\f$ order: first
 \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates
 are compared.
 */
@@ -1123,7 +1123,7 @@ Compares the \f$ x\f$ and \f$ y\f$ Cartesian coordinates of points `p` and
 `q` lexicographically.
 */
 template <typename CircularKernel>
-Comparison_result 
+Comparison_result
   compare_xy(const CGAL::Circular_arc_point_2<CircularKernel> &p,
             const CGAL::Circular_arc_point_2<CircularKernel> &q);
 
@@ -1132,7 +1132,7 @@ Compares the \f$ x\f$ and \f$ y\f$ Cartesian coordinates of points `p` and
 `q` lexicographically.
 */
 template <typename CircularKernel>
-Comparison_result 
+Comparison_result
 compare_xy(const CGAL::Circular_arc_point_2<CircularKernel> &p,
             const CGAL::Point_2<CircularKernel> &q);
 
@@ -1155,7 +1155,7 @@ Compares the \f$ x\f$ and \f$ y\f$ Cartesian coordinates of points `p` and
 `q` lexicographically.
 */
 template <typename SphericalKernel>
-Comparison_result 
+Comparison_result
   compare_xy(const CGAL::Circular_arc_point_3<SphericalKernel> &p,
             const CGAL::Circular_arc_point_3<SphericalKernel> &q);
 /*!
@@ -1164,7 +1164,7 @@ Compares the \f$ x\f$ and \f$ y\f$ Cartesian coordinates of points `p` and
 `q` lexicographically.
 */
 template <typename SphericalKernel>
-Comparison_result 
+Comparison_result
   compare_xy(const CGAL::Circular_arc_point_3<SphericalKernel> &p,
             const CGAL::Point_3<SphericalKernel> &q);
 
@@ -1199,7 +1199,7 @@ Comparison_result compare_x_at_y(const CGAL::Point_2<Kernel> &p,
 const CGAL::Line_2<Kernel> &h);
 
 /*!
-This function compares the \f$ x\f$-coordinates of the horizontal projection 
+This function compares the \f$ x\f$-coordinates of the horizontal projection
 of `p` on `h1` and on `h2`.
 See Figure \ref figcomparexaty (b).
 \pre `h1` and `h2` are not horizontal.
@@ -1211,7 +1211,7 @@ const CGAL::Line_2<Kernel> &h2);
 
 /*!
 Let `p` be the intersection of lines `l1` and `l2`.
-This function compares the \f$ x\f$-coordinates of `p` and 
+This function compares the \f$ x\f$-coordinates of `p` and
 the horizontal projection of `p` on `h`.
 See Figure \ref figcomparexaty (c).
 \pre `l1` and `l2` intersect and are not horizontal; `h` is not horizontal.
@@ -1222,8 +1222,8 @@ const CGAL::Line_2<Kernel> &l2,
 const CGAL::Line_2<Kernel> &h);
 
 /*!
-Let `p` be the intersection of lines `l1` and `l2`. This 
-function compares the \f$ x\f$-coordinates of the horizontal projection of 
+Let `p` be the intersection of lines `l1` and `l2`. This
+function compares the \f$ x\f$-coordinates of the horizontal projection of
 `p` on `h1` and on `h2`
 See Figure \ref figcomparexaty (d).
 \pre `l1` and `l2` intersect and are not horizontal; `h1` and `h2` are not horizontal.
@@ -1266,7 +1266,7 @@ Comparison_result compare_y_at_x(const CGAL::Point_2<Kernel> &p,
                                  const CGAL::Line_2<Kernel> &h);
 
 /*!
-  compares the \f$ y\f$-coordinates of the vertical projection 
+  compares the \f$ y\f$-coordinates of the vertical projection
   of `p` on `h1` and on `h2`.
   See Figure \ref figcompareyatx (e).
 
@@ -1280,7 +1280,7 @@ Comparison_result compare_y_at_x(const CGAL::Point_2<Kernel> &p,
 
 /*!
   Let `p` be the `intersection` of lines `l1` and `l2`.
-  This function compares the \f$ y\f$-coordinates of `p` and 
+  This function compares the \f$ y\f$-coordinates of `p` and
   the vertical projection of `p` on `h`
   See Figure \ref figcompareyatx (f).
 
@@ -1292,8 +1292,8 @@ Comparison_result compare_y_at_x(const CGAL::Line_2<Kernel> &l1,
                                  const CGAL::Line_2<Kernel> &h);
 
 /*!
-  Let `p` be the `intersection` of lines `l1` and `l2`. This function 
-  compares the \f$ y\f$-coordinates of the vertical projection of `p` on 
+  Let `p` be the `intersection` of lines `l1` and `l2`. This function
+  compares the \f$ y\f$-coordinates of the vertical projection of `p` on
   `h1` and on `h2`.
   See Figure \ref figcompareyatx (g).
   \pre `l1` and `l2` intersect; `h1` and  `h2` are not vertical.
@@ -1316,7 +1316,7 @@ Comparison_result compare_y_at_x(const CGAL::Point_2<Kernel> &p,
                                  const CGAL::Segment_2<Kernel> &s);
 
 /*!
-  compares the \f$ y\f$-coordinates of the vertical projection 
+  compares the \f$ y\f$-coordinates of the vertical projection
   of `p` on `s1` and on `s2`.  If `s1` or `s2`
   is vertical, then return `CGAL::EQUAL` if they intersect, otherwise return
   `CGAL::SMALLER` if `s1` lies below `s2`, and return `CGAL::LARGER`
@@ -1332,7 +1332,7 @@ Comparison_result compare_y_at_x(const CGAL::Point_2<Kernel> &p,
   \name With the 2D Circular Kernel
   See \ref Chapter_2D_Circular_Geometry_Kernel "2D Circular Geometry Kernel".
 
-  \code 
+  \code
   #include <CGAL/global_functions_circular_kernel_2.h>
   \endcode
 */
@@ -1340,14 +1340,14 @@ Comparison_result compare_y_at_x(const CGAL::Point_2<Kernel> &p,
 
 /// Same as above, for a point and a circular arc.
 template <typename CircularKernel>
-Comparison_result 
-compare_y_at_x(const CGAL::Circular_arc_point_2<CircularKernel> &p, 
+Comparison_result
+compare_y_at_x(const CGAL::Circular_arc_point_2<CircularKernel> &p,
                const CGAL::Circular_arc_2<CircularKernel> &a);
 
 /// Same as above, for a point and a line segment.
 template <typename CircularKernel>
-Comparison_result 
-compare_y_at_x(const CGAL::Circular_arc_point_2<CircularKernel> &p, 
+Comparison_result
+compare_y_at_x(const CGAL::Circular_arc_point_2<CircularKernel> &p,
                const CGAL::Line_arc_2<CircularKernel> &a);
 
 
@@ -1442,14 +1442,14 @@ Comparison_result compare_y(const CGAL::Line_2<Kernel> &l1,
   compares the \f$ y\f$-coordinates of `p` and `q`.
 */
 template <typename CircularKernel>
-Comparison_result 
+Comparison_result
 compare_y(const CGAL::Circular_arc_point_2<CircularKernel> &p,
           const CGAL::Circular_arc_point_2<CircularKernel> &q);
 
 /*!
   compares the \f$ y\f$-coordinates of `p` and `q`.
 */template <typename CircularKernel>
-Comparison_result 
+Comparison_result
 compare_y(const CGAL::Circular_arc_point_2<CircularKernel> &p,
           const CGAL::Point_2<CircularKernel> &q);
 
@@ -1469,14 +1469,14 @@ compare_y(const CGAL::Circular_arc_point_2<CircularKernel> &p,
 compares the \f$ y\f$-coordinates of `p` and `q`.
 */
 template <typename SphericalKernel>
-Comparison_result 
+Comparison_result
   compare_y(const CGAL::Circular_arc_point_3<SphericalKernel> &p,
             const CGAL::Circular_arc_point_3<SphericalKernel> &q);
 /*!
 compares the \f$ y\f$-coordinates of `p` and `q`.
 */
 template <typename SphericalKernel>
-Comparison_result 
+Comparison_result
   compare_y(const CGAL::Circular_arc_point_3<SphericalKernel> &p,
             const CGAL::Point_3<SphericalKernel> &q);
 /// @}
@@ -1507,7 +1507,7 @@ global function are available.
 
 /*!
 Compares the Cartesian coordinates of points `p` and
-`q` lexicographically in \f$ xyz\f$ order: first 
+`q` lexicographically in \f$ xyz\f$ order: first
 \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates
 are compared, and if both \f$ x\f$- and \f$ y\f$- coordinate are equal,
 \f$ z\f$-coordinates are compared.
@@ -1532,7 +1532,7 @@ compare_xyz(const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Kernel>& q);
 /*! Compares the Cartesian coordinates of points `p` and `q` lexicographically.
 */
 template <typename SphericalKernel>
-Comparison_result 
+Comparison_result
 compare_xyz(const CGAL::Circular_arc_point_3<SphericalKernel> &p,
 const CGAL::Circular_arc_point_3<SphericalKernel> &q);
 
@@ -1540,7 +1540,7 @@ const CGAL::Circular_arc_point_3<SphericalKernel> &q);
 Compares the Cartesian coordinates of points `p` and `q` lexicographically.
 */
 template <typename SphericalKernel>
-Comparison_result 
+Comparison_result
 compare_xyz(const CGAL::Circular_arc_point_3<SphericalKernel> &p,
 const CGAL::Point_3<SphericalKernel> &q);
 
@@ -1551,9 +1551,9 @@ const CGAL::Point_3<SphericalKernel> &q);
 \defgroup compare_z_grp CGAL::compare_z()
 \ingroup kernel_global_function
 
-\details Depending on which \cgal kernel is used, 
-different versions of this global function are available. This is 
-described below. 
+\details Depending on which \cgal kernel is used,
+different versions of this global function are available. This is
+described below.
 
 \sa `compare_xy_grp`
 \sa `compare_xyz_grp`
@@ -1600,14 +1600,14 @@ Comparison_result compare_z(const CGAL::Point_3<Kernel> &p, const CGAL::Point_3<
 compares the \f$ z\f$-coordinates of `p` and `q`.
 */
 template <typename SphericalKernel>
-Comparison_result 
+Comparison_result
 compare_z(const CGAL::Circular_arc_point_3<SphericalKernel> &p, const CGAL::Circular_arc_point_3<SphericalKernel> &q);
 
 /*!
 compares the \f$ z\f$-coordinates of `p` and `q`.
 */
 template <typename SphericalKernel>
-Comparison_result 
+Comparison_result
 compare_z(const CGAL::Circular_arc_point_3<SphericalKernel> &p, const CGAL::Point_3<SphericalKernel> &q);
 
 /// @}
@@ -1625,7 +1625,7 @@ compare_z(const CGAL::Circular_arc_point_3<SphericalKernel> &p, const CGAL::Poin
 
 /*!
 Compares the Cartesian coordinates of points `p` and
-`q` lexicographically in \f$ yx\f$ order: first 
+`q` lexicographically in \f$ yx\f$ order: first
 \f$ y\f$-coordinates are compared, if they are equal, \f$ x\f$-coordinates
 are compared.
 */
@@ -1663,11 +1663,11 @@ const CGAL::Point_3<Kernel>&s);
 /*!
 Let `P` be the plane defined by the points `p`, `q`,
 and `r`. Note that the order defines the orientation of
-`P`. The function computes the orientation of points `p`, 
+`P`. The function computes the orientation of points `p`,
 `q`, and `s` in `P`: Iff `p`, `q`, `s` are
-collinear, `CGAL::COLLINEAR` is returned. Iff `P` and the plane 
-defined by `p`, `q`, and `s` have the same orientation, 
-`CGAL::POSITIVE` is returned; otherwise `CGAL::NEGATIVE` is returned. 
+collinear, `CGAL::COLLINEAR` is returned. Iff `P` and the plane
+defined by `p`, `q`, and `s` have the same orientation,
+`CGAL::POSITIVE` is returned; otherwise `CGAL::NEGATIVE` is returned.
 \pre `p`, `q`, `r`, and `s` are coplanar and `p`, `q`, and `r` are not collinear.
 */
 template <typename Kernel>
@@ -1720,7 +1720,7 @@ const CGAL::Point_3<Kernel>& s);
 returns the cross product of `u` and `v`.
 */
 template <typename Kernel>
-CGAL::Vector_3<Kernel> cross_product( const CGAL::Vector_3<Kernel>& u, 
+CGAL::Vector_3<Kernel> cross_product( const CGAL::Vector_3<Kernel>& u,
 const CGAL::Vector_3<Kernel>& v);
 
 /// @}
@@ -1830,7 +1830,7 @@ const CGAL::Point_3<Kernel>& r);
 
 /*!
 returns `true` iff the signed distance of `p`
-and `l` is larger than the signed distance of 
+and `l` is larger than the signed distance of
 `q` and `l`.
 */
 template <typename Kernel>
@@ -1841,7 +1841,7 @@ const CGAL::Point_2<Kernel>& q);
 
 /*!
 returns `true` iff the signed distance of `r`
-and `l` is larger than the signed distance of 
+and `l` is larger than the signed distance of
 `s` and `l`, where `l` is the directed line
 through points `p` and `q`.
 */
@@ -1869,7 +1869,7 @@ const CGAL::Point_2<Kernel>& s);
 
 /*!
 returns `true` iff the signed distance of `p`
-and `h` is larger than the signed distance of 
+and `h` is larger than the signed distance of
 `q` and `h`.
 */
 template <typename Kernel>
@@ -1880,7 +1880,7 @@ const CGAL::Point_3<Kernel>& q);
 
 /*!
 returns `true` iff the signed distance of `s`
-and `h` is larger than the signed distance of 
+and `h` is larger than the signed distance of
 `t` and `h`, where `h` is the oriented
 plane through `p`, `q` and `r`.
 */
@@ -1944,7 +1944,7 @@ const CGAL::Point_3<Kernel>& r);
 
 /*!
 returns `true` iff the signed distance of `p`
-and `l` is smaller than the signed distance of 
+and `l` is smaller than the signed distance of
 `q` and `l`.
 */
 template <typename Kernel>
@@ -1955,8 +1955,8 @@ const CGAL::Point_2<Kernel>& q);
 
 /*!
 returns `true` iff the signed distance of `r`
-and `l` is smaller than the signed distance of 
-`s` and `l`, where `l` is the 
+and `l` is smaller than the signed distance of
+`s` and `l`, where `l` is the
 oriented line through `p` and `q`.
 */
 template <typename Kernel>
@@ -1982,7 +1982,7 @@ const CGAL::Point_2<Kernel>& s);
 
 /*!
 returns `true` iff the signed distance of `p`
-and `h` is smaller than the signed distance of 
+and `h` is smaller than the signed distance of
 `q` and `h`.
 */
 template <typename Kernel>
@@ -1993,7 +1993,7 @@ const CGAL::Point_3<Kernel>& q);
 
 /*!
 returns `true` iff the signed distance of `p`
-and `h` is smaller than the signed distance of 
+and `h` is smaller than the signed distance of
 `q` and `h`, where `h` is the oriented
 plane through `p`, `q` and `r`.
 */
@@ -2136,7 +2136,7 @@ returns `true` iff `p` is lexicographically not larger
 than `q` with respect to \f$ xy\f$ order.
 */
 template <typename Kernel>
-bool 
+bool
 lexicographically_xy_smaller_or_equal(const CGAL::Point_2<Kernel>& p,
 const CGAL::Point_2<Kernel>& q);
 
@@ -2172,7 +2172,7 @@ returns `true` iff `p` is lexicographically not larger
 than `q` with respect to \f$ xyz\f$ order.
 */
 template <typename Kernel>
-bool 
+bool
 lexicographically_xyz_smaller_or_equal(const CGAL::Point_3<Kernel>& p,
 const CGAL::Point_3<Kernel>& q);
 
@@ -2255,8 +2255,8 @@ CGAL::Vector_3<Kernel> normal( const CGAL::Point_3<Kernel>& p, const CGAL::Point
 /// @{
 
 /*!
-returns `CGAL::LEFT_TURN`, if `r` lies to the left of the oriented 
-line `l` defined by `p` and `q`, returns `CGAL::RIGHT_TURN` if `r` 
+returns `CGAL::LEFT_TURN`, if `r` lies to the left of the oriented
+line `l` defined by `p` and `q`, returns `CGAL::RIGHT_TURN` if `r`
 lies to the right of `l`, and returns `CGAL::COLLINEAR` if `r` lies
 on `l`.
 */
@@ -2275,8 +2275,8 @@ Orientation orientation(const CGAL::Vector_2<Kernel>& u,
 const CGAL::Vector_2<Kernel>& v);
 
 /*!
-returns `CGAL::POSITIVE`, if `s` lies on the positive side of the oriented 
-plane `h` defined by `p`, `q`, and `r`, returns `CGAL::NEGATIVE` if `s` 
+returns `CGAL::POSITIVE`, if `s` lies on the positive side of the oriented
+plane `h` defined by `p`, `q`, and `r`, returns `CGAL::NEGATIVE` if `s`
 lies on the negative side of `h`, and returns `CGAL::COPLANAR` if `s` lies
 on `h`.
 */
@@ -2306,7 +2306,7 @@ const CGAL::Vector_3<Kernel> &w);
 /// @{
 
 /*!
-computes an orthogonal vector of the plane `p`, which is directed to 
+computes an orthogonal vector of the plane `p`, which is directed to
 the positive side of this plane.
 */
 template <typename Kernel>
@@ -2405,7 +2405,7 @@ CGAL::Plane_3<Kernel> radical_plane(const CGAL::Sphere_3<Kernel>& s1,
 /// @{
 
 /*!
-returns the radical line of the two circles. 
+returns the radical line of the two circles.
 \pre `c1` and `c2` are not cocentric.
 */
 template <typename Kernel>
@@ -2473,9 +2473,9 @@ of the points `p`, `q` and `r` does not matter.
 */
 template <typename Kernel>
 Bounded_side side_of_bounded_circle(
-const CGAL::Point_2<Kernel> &p, 
+const CGAL::Point_2<Kernel> &p,
 const CGAL::Point_2<Kernel> &q,
-const CGAL::Point_2<Kernel> &r, 
+const CGAL::Point_2<Kernel> &r,
 const CGAL::Point_2<Kernel> &t);
 
 /*!
@@ -2484,7 +2484,7 @@ that has `pq` as its diameter.
 */
 template <typename Kernel>
 Bounded_side side_of_bounded_circle(
-const CGAL::Point_2<Kernel> &p, 
+const CGAL::Point_2<Kernel> &p,
 const CGAL::Point_2<Kernel> &q,
 const CGAL::Point_2<Kernel> &t);
 
@@ -2506,10 +2506,10 @@ of the points `p`, `q`, `r`, and `s` does not matter.
 */
 template <typename Kernel>
 Bounded_side side_of_bounded_sphere(
-const CGAL::Point_3<Kernel> &p, 
+const CGAL::Point_3<Kernel> &p,
 const CGAL::Point_3<Kernel> &q,
-const CGAL::Point_3<Kernel> &r, 
-const CGAL::Point_3<Kernel> &s, 
+const CGAL::Point_3<Kernel> &r,
+const CGAL::Point_3<Kernel> &s,
 const CGAL::Point_3<Kernel> &t);
 
 /*!
@@ -2519,9 +2519,9 @@ by these three points.
 */
 template <typename Kernel>
 Bounded_side side_of_bounded_sphere(
-const CGAL::Point_3<Kernel> &p, 
+const CGAL::Point_3<Kernel> &p,
 const CGAL::Point_3<Kernel> &q,
-const CGAL::Point_3<Kernel> &r, 
+const CGAL::Point_3<Kernel> &r,
 const CGAL::Point_3<Kernel> &t);
 
 /*!
@@ -2530,7 +2530,7 @@ that has `pq` as its diameter.
 */
 template <typename Kernel>
 Bounded_side side_of_bounded_sphere(
-const CGAL::Point_3<Kernel> &p, 
+const CGAL::Point_3<Kernel> &p,
 const CGAL::Point_3<Kernel> &q,
 const CGAL::Point_3<Kernel> &t);
 
@@ -2551,15 +2551,15 @@ constructed circle.
 
 If `p`, `q` and `r` are collinear, the circle degenerates in a line.
 `CGAL::ON_ORIENTED_BOUNDARY` is returned if `test` is also collinear or if two
-points are identical, 
+points are identical,
 otherwise, `side_of_oriented_circle(r, q, test, p)` is returned.
 
 */
 template <typename Kernel>
 Oriented_side side_of_oriented_circle(
-const CGAL::Point_2<Kernel> &p, 
+const CGAL::Point_2<Kernel> &p,
 const CGAL::Point_2<Kernel> &q,
-const CGAL::Point_2<Kernel> &r, 
+const CGAL::Point_2<Kernel> &r,
 const CGAL::Point_2<Kernel> &test);
 
 /// @}
@@ -2583,14 +2583,14 @@ In case of degeneracies, `CGAL::ON_ORIENTED_BOUNDARY` is returned
 if all points are coplanar. Otherwise, there is a cyclic permutation of the five points
 that puts four non coplanar points first, it is used to answer the predicate:
 e.g. `CGAL::side_of_oriented_sphere(q, r, s, test, p)` is returned if `q`, `r`, `s`,
-and `test` are non coplanar. 
+and `test` are non coplanar.
 */
 template <typename Kernel>
 Oriented_side side_of_oriented_sphere(
-const CGAL::Point_3<Kernel> &p, 
+const CGAL::Point_3<Kernel> &p,
 const CGAL::Point_3<Kernel> &q,
-const CGAL::Point_3<Kernel> &r, 
-const CGAL::Point_3<Kernel> &s, 
+const CGAL::Point_3<Kernel> &r,
+const CGAL::Point_3<Kernel> &s,
 const CGAL::Point_3<Kernel> &test);
 
 /// @}
@@ -2602,7 +2602,7 @@ const CGAL::Point_3<Kernel> &test);
 
 /*!
 returns the squared area of the triangle defined by the points `p`,
-`q` and `r`. 
+`q` and `r`.
 */
 template <typename Kernel>
 Kernel::FT squared_area(const CGAL::Point_3<Kernel>& p,
@@ -2644,7 +2644,7 @@ squared_radius( const CGAL::Point_2<Kernel>& p,
 const CGAL::Point_2<Kernel>& q);
 
 /*!
-compute the squared radius of the smallest circle passing through `p`, 
+compute the squared radius of the smallest circle passing through `p`,
 i.e.\ \f$ 0\f$.
 */
 template <typename Kernel>
@@ -2682,7 +2682,7 @@ squared_radius( const CGAL::Point_3<Kernel>& p,
 const CGAL::Point_3<Kernel>& q);
 
 /*!
-compute the squared radius of the smallest circle passing through `p`, 
+compute the squared radius of the smallest circle passing through `p`,
 i.e.\ \f$ 0\f$.
 */
 template <typename Kernel>

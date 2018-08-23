@@ -26,7 +26,8 @@ struct My_visitor :
 };
 
 void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_points,
-          std::size_t nb_vertices_after_autorefine, bool all_fixed, std::size_t nb_vertices_after_fix)
+          std::size_t nb_vertices_after_autorefine, bool all_fixed, std::size_t nb_vertices_after_fix,
+          bool triple_intersection)
 {
   std::cout << "Running tests on " << fname << "\n";
   std::ifstream input(fname);
@@ -41,34 +42,57 @@ void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_poin
   std::size_t nb_vertices_before_autorefine = num_vertices(mesh);
 
 // Testing surface_self_intersection()
-  std::vector< std::vector<K::Point_3> >polylines;
-  PMP::experimental::surface_self_intersection(mesh, std::back_inserter(polylines));
-  assert(polylines.size() == nb_polylines);
-  std::size_t total_nb_pt=0;
-  BOOST_FOREACH(const std::vector<K::Point_3>& polyline, polylines)
-    total_nb_pt+=polyline.size();
-  assert(total_nb_points == total_nb_pt);
+  try{
+    std::vector< std::vector<K::Point_3> >polylines;
+    PMP::experimental::surface_self_intersection(mesh, std::back_inserter(polylines));
+    assert(polylines.size() == nb_polylines);
+    std::size_t total_nb_pt=0;
+    BOOST_FOREACH(const std::vector<K::Point_3>& polyline, polylines)
+      total_nb_pt+=polyline.size();
+    assert(total_nb_points == total_nb_pt);
+    assert( !triple_intersection );
+  }
+  catch(PMP::Corefinement::Triple_intersection_exception)
+  {
+    assert( triple_intersection );
+  }
 
 // Testing autorefine()
-  My_visitor<Mesh> visitor;
-  PMP::experimental::autorefine(mesh,
-    PMP::parameters::visitor(visitor));
-  assert( nb_vertices_after_autorefine==num_vertices(mesh));
-  assert( (nb_vertices_before_autorefine!=nb_vertices_after_autorefine)== (*(visitor.i) != 0) );
+  try{
+    My_visitor<Mesh> visitor;
+    PMP::experimental::autorefine(mesh,
+      PMP::parameters::visitor(visitor));
+    mesh.collect_garbage();
+    assert( nb_vertices_after_autorefine==num_vertices(mesh));
+    assert( (nb_vertices_before_autorefine!=nb_vertices_after_autorefine)== (*(visitor.i) != 0) );
+    assert( !triple_intersection );
+  }
+  catch(PMP::Corefinement::Triple_intersection_exception)
+  {
+    assert( triple_intersection );
+  }
 
 // Testing autorefine_and_remove_self_intersections()
-  input.open(fname);
-  mesh.clear();
-  input >> mesh;
-  bool res=PMP::experimental::autorefine_and_remove_self_intersections(mesh);
-  assert(res==all_fixed);
-  assert( nb_vertices_after_fix==num_vertices(mesh));
+  try{
+    input.open(fname);
+    mesh.clear();
+    input >> mesh;
+    bool res=PMP::experimental::autorefine_and_remove_self_intersections(mesh);
+    assert(res==all_fixed);
+    mesh.collect_garbage();
+    assert( nb_vertices_after_fix==num_vertices(mesh));
+    assert( !triple_intersection );
+  }
+  catch(PMP::Corefinement::Triple_intersection_exception)
+  {
+    assert( triple_intersection );
+  }
 }
 
 int main(int argc, const char** argv)
 {
-  // file 0 0 4 1 4
-  for (int i=0;i<(argc-1)/6; ++i)
-    test(argv[1+6*i], atoi(argv[1+6*i+1]), atoi(argv[1+6*i+2]),
-         atoi(argv[1+6*i+3]), atoi(argv[1+6*i+4])==0?false:true, atoi(argv[1+6*i+5]));
+  // file nb_polylines total_nb_points nb_vertices_after_autorefine all_fixed nb_vertices_after_fix triple_intersection
+  for (int i=0;i<(argc-1)/7; ++i)
+    test(argv[1+7*i], atoi(argv[1+7*i+1]), atoi(argv[1+7*i+2]),
+         atoi(argv[1+7*i+3]), atoi(argv[1+7*i+4])==0?false:true, atoi(argv[1+7*i+5]), atoi(argv[1+7*i+6])==0?false:true);
 }

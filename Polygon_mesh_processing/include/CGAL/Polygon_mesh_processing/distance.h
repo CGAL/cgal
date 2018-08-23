@@ -556,8 +556,8 @@ double approximate_Hausdorff_distance(
   typedef AABB_tree< AABB_traits<Kernel, Primitive> > Tree;
 
   Tree tree( faces(tm).first, faces(tm).second, tm);
-  tree.accelerate_distance_queries();
   tree.build();
+  tree.accelerate_distance_queries();
   Point_3 hint = get(vpm, *vertices(tm).first);
 
   return internal::approximate_Hausdorff_distance_impl<Concurrency_tag, Kernel>

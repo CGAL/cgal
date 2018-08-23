@@ -64,7 +64,6 @@
 #include <CGAL/Qt/GraphicsViewNavigation.h>
 
 #include "ui_Parameterization_widget.h"
-#include "ui_ARAP_dialog.h"
 #include "ui_OTE_dialog.h"
 
 #ifdef USE_SURFACE_MESH
@@ -455,8 +454,11 @@ public Q_SLOTS:
 
   void replacePolyline()
   {
+    bool is_ogl_4_3 = 
+        static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->isOpenGL_4_3();
     if(current_uv_item)
-      qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item))->add_border_edges(std::vector<float>(0));
+      qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item))->add_border_edges(std::vector<float>(0),
+                                                                                                       is_ogl_4_3);
 
     int id = scene->mainSelectionIndex();
 
@@ -482,7 +484,8 @@ public Q_SLOTS:
       ui_widget.graphicsView->fitInView(current_uv_item->boundingRect(), Qt::KeepAspectRatio);
       ui_widget.component_numberLabel->setText(QString("Component : %1/%2").arg(current_uv_item->current_component()+1).arg(current_uv_item->number_of_components()));
       dock_widget->setWindowTitle(tr("UVMapping for %1").arg(current_uv_item->item_name()));
-      qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item))->add_border_edges(current_uv_item->concatenated_borders());
+      qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item))->add_border_edges(current_uv_item->concatenated_borders(),
+                                                                                                       is_ogl_4_3);
     }
   }
 
@@ -611,7 +614,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
   if(method == PARAM_OTE &&
      (sel_item == NULL || sel_item->selected_vertices.empty())) {
-    std::cerr << "No selection or no cones selected; Aborting." << std::endl;
+    std::cerr << "\nError: no cones/seam selected; Aborting parameterization." << std::endl;
     return;
   }
 
@@ -901,23 +904,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     {
       new_item_name = tr("%1 (parameterized (ARAP))").arg(poly_item->name());
       std::cout << "Parameterize (ARAP)..." << std::endl;
-
-      QDialog dialog(mw);
-      Ui::ARAP_dialog ui;
-      ui.setupUi(&dialog);
-      connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
-      connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
-
-      // Get values
-      QApplication::restoreOverrideCursor();
-
-      int i = dialog.exec();
-      if (i == QDialog::Rejected)
-        return;
-
-      FT lambda = ui.lambdaSpinBox->value();
-      QApplication::setOverrideCursor(Qt::WaitCursor);
-
+      FT lambda = 10000; // a big value to ensure the parameterization is ARAP (and not ASAP)
       typedef SMP::ARAP_parameterizer_3<Seam_mesh> Parameterizer;
       status = SMP::parameterize(sMesh, Parameterizer(lambda), bhd, uv_pm);
       break;
@@ -931,48 +918,55 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       // @todo (need to remove the assertions such as cones.size() == 4
       //        and check where and when cones are used (passed by ID, for ex.?))
       if(number_of_components != 1) {
-        std::cerr << "Orbifold Tutte Embedding can only handle one connected component at the moment" << std::endl;
-        return;
+        std::cerr << "Orbifold Tutte Embedding can only handle one connected component" << std::endl;
+        status = SMP::ERROR_NO_TOPOLOGICAL_BALL;
+        break;
       }
 
       typedef SMP::Orbifold_Tutte_parameterizer_3<Seam_mesh> Parameterizer;
 
+      // Get orbifold type
       QDialog dialog(mw);
       Ui::OTE_dialog ui;
       ui.setupUi(&dialog);
       connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
       connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
 
-      // Get values
       QApplication::restoreOverrideCursor();
 
       int i = dialog.exec();
       if (i == QDialog::Rejected)
+      {
+        std::cout << "Aborting parameterization" << std::endl;
         return;
+      }
 
       SMP::Orbifold_type orb = static_cast<SMP::Orbifold_type>(ui.OrbComboBox->currentIndex());
-      std::cout << "selected orbifold type: " << ui.OrbComboBox->currentText().toStdString() << std::endl;
+      std::cout << "Selected orbifold type: " << ui.OrbComboBox->currentText().toStdString() << std::endl;
 
       if((unordered_cones.size() != 3 && unordered_cones.size() != 4) ||
          (unordered_cones.size() == 3 && orb == SMP::Parallelogram ) ||
          (unordered_cones.size() == 4 && orb != SMP::Parallelogram)) {
-        std::cerr << "Incompatible orbifold type and number of cones" << std::endl;
+        std::cerr << "Error: incompatible orbifold type and number of cones" << std::endl;
         std::cerr << "Types I, II & III require 3 selected vertices" << std::endl;
         std::cerr << "Type IV requires 4 selected vertices" << std::endl;
         return;
       }
 
-      QApplication::setOverrideCursor(Qt::WaitCursor);
-
       // Now, parameterize
       Parameterizer parameterizer(orb);
 
-      // mark cones in the seam mesh
+      // Mark cones in the seam mesh
       boost::unordered_map<s_vertex_descriptor, SMP::Cone_type> cmap;
       if(!SMP::locate_unordered_cones(sMesh, unordered_cones.begin(), unordered_cones.end(), cmap))
+      {
+        std::cerr << "Error: invalid cone or seam selection" << std::endl;
         return;
+      }
 
-      // vimap and uvmap
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+
+      // Fill the index property map
       typedef boost::unordered_map<s_vertex_descriptor, int> Indices;
       Indices indices;
       CGAL::Polygon_mesh_processing::connected_component(
@@ -983,7 +977,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       boost::associative_property_map<Indices> vimap(indices);
 
       // Call to parameterizer
-      status =  parameterizer.parameterize(sMesh, bhd, cmap, uv_pm, vimap);
+      status = parameterizer.parameterize(sMesh, bhd, cmap, uv_pm, vimap);
       break;
     }
     case PARAM_BTP:
@@ -1000,7 +994,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     if(status == SMP::OK) {
       std::cout << "success (in " << time.elapsed() << " ms)" << std::endl;
     } else {
-      std::cout << "failure: " << SMP::get_error_message(status) << std::endl;
+      std::cerr << "failure: " << SMP::get_error_message(status) << std::endl;
       return;
     }
 
@@ -1097,10 +1091,14 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     graphics_scene->removeItem(graphics_scene->items().first());
   graphics_scene->addItem(projection);
   projections[new_item] = projection;
+  bool is_ogl_4_3 = 
+      static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->isOpenGL_4_3();
   if(current_uv_item)
-    qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item))->add_border_edges(std::vector<float>(0));
+    qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item))->add_border_edges(std::vector<float>(0),
+                                                                                                     is_ogl_4_3);
   current_uv_item = projection;
-  qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item))->add_border_edges(current_uv_item->concatenated_borders());
+  qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item))->add_border_edges(current_uv_item->concatenated_borders(),
+                                                                                                   is_ogl_4_3);
   if(dock_widget->isHidden())
     dock_widget->setVisible(true);
   dock_widget->setWindowTitle(tr("UVMapping for %1").arg(new_item->name()));

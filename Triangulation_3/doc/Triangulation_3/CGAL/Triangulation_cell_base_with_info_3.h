@@ -26,7 +26,6 @@ It has the default value
 \cgalModels `TriangulationCellBaseWithInfo_3`
 
 \sa `CGAL::Triangulation_cell_base_3` 
-\sa `CGAL::Triangulation_cell_base_with_circumcenter_3` 
 \sa `CGAL::Triangulation_vertex_base_with_info_3` 
 
 */

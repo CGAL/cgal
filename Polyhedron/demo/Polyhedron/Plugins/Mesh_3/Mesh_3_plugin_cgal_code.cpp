@@ -104,7 +104,7 @@ Meshing_thread* cgal_code_mesh_3_templated(const Mesh* pMesh,
 
   std::cerr << " done (" << timer.time() * 1000 << " ms)" << std::endl;
 
-  Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
+  Scene_c3t3_item* p_new_item = new Scene_c3t3_item(surface_only);
   p_new_item->setScene(scene);
 
   QString tooltip = QString("<div>From \"") + filename +
@@ -361,7 +361,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
        );
     if(protect_features && polylines.empty())
     {
-      using CGAL::internal::Mesh_3::Linear_interpolator;
+      using CGAL::Mesh_3::internal::Linear_interpolator;
       std::vector<std::vector<Bare_point> > polylines_on_bbox;
 
       CGAL_IMAGE_IO_CASE(pImage->image(),
