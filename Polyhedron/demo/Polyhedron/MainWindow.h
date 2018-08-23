@@ -434,6 +434,8 @@ public Q_SLOTS:
   void toggleFullScreen();
 private:
   QList<QDockWidget *> visibleDockWidgets;
+  QLineEdit operationSearchBar;
+  QWidgetAction* searchAction;
 };
 
 #endif // ifndef MAINWINDOW_H

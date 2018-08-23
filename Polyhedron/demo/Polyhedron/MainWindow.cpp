@@ -126,6 +126,7 @@ QScriptValue myPrintFunction(QScriptContext *context, QScriptEngine *engine)
 
 MainWindow::~MainWindow()
 {
+  searchAction->deleteLater();
   delete ui;
   delete statistics_ui;
 }
@@ -135,6 +136,7 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
   ui = new Ui::MainWindow;
   ui->setupUi(this);
   menuBar()->setNativeMenuBar(false);
+  searchAction = new QWidgetAction(0);
   CGAL::Three::Three::s_mainwindow = this;
   menu_map[ui->menuOperations->title()] = ui->menuOperations;
   this->verbose = verbose;
@@ -347,6 +349,10 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
   readSettings(); // Among other things, the column widths are stored.
 
   // Load plugins, and re-enable actions that need it.
+  operationSearchBar.setPlaceholderText("Research...");
+  searchAction->setDefaultWidget(&operationSearchBar);  
+  connect(&operationSearchBar, &QLineEdit::textChanged,
+          this, &MainWindow::filterOperations);
   loadPlugins();
 
   // Setup the submenu of the View menu that can toggle the dockwidgets
@@ -404,9 +410,11 @@ void filterMenuOperations(QMenu* menu)
 
 void MainWindow::filterOperations()
 {
+  QString filter=operationSearchBar.text();
   Q_FOREACH(const PluginNamePair& p, plugins) {
     Q_FOREACH(QAction* action, p.first->actions()) {
-        action->setVisible( p.first->applicable(action) );
+        action->setVisible( p.first->applicable(action) 
+                            && action->text().contains(filter, Qt::CaseInsensitive));
     }
   }
   // do a pass over all menus in Operations and their sub-menus(etc.) and hide them when they are empty
@@ -675,6 +683,7 @@ void MainWindow::updateMenus()
   as = ui->menuOperations->actions();
   qSort(as.begin(), as.end(), actionsByName);
   ui->menuOperations->clear();
+  ui->menuOperations->addAction(searchAction);
   ui->menuOperations->addActions(as);
 }
 
