@@ -26,7 +26,7 @@ The resulting simplices of dimension 0, 1 and 2 are called <I>vertex</I>, <I>edg
 
 
 \cgalModifBegin
-\section HT_Triangulations Triangulations in the hyperbolic plane
+\section HT_Triangulations Triangulations in the Hyperbolic Plane
 In this package, we use the Poincar&eacute; disk model to represent the hyperbolic plane \f$\mathbb H^2\f$ as the open unit disk centered at the origin. Points on the unit circle are points at infinity. Hyperbolic lines in this model are represented as arcs of circles perpendicular to the boundary of the unit disk, or as its diameters (if they pass through the origin). Hyperbolic circles in \f$\mathbb H^2\f$ coincide with Euclidean circles contained in the unit disk; however, the hyperbolic centers and radii of these circles are not the same as their Euclidean centers and radii.
 
 The Delaunay triangulation of a set of points \f$\mathcal P\f$ in \f$\mathbb H^2\f$ is a subset of the Euclidean Delaunay triangulation of \f$\mathcal P\f$. The hyperbolic Delaunay triangulation of \f$\mathcal P\f$ contains only the simplices that are <i>Delaunay hyperbolic</i>:
