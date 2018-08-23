@@ -161,6 +161,9 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
     shortcut = new QShortcut(QKeySequence(Qt::Key_F5), this);
     connect(shortcut, SIGNAL(activated()),
             this, SLOT(reloadItem()));
+    shortcut = new QShortcut(QKeySequence(Qt::Key_F11), this);
+    connect(shortcut, SIGNAL(activated()),
+            this, SLOT(toggleFullScreen()));
   }
 
   proxyModel = new QSortFilterProxyModel(this);
@@ -2346,4 +2349,28 @@ void MainWindow::setTransparencyPasses(int val)
 {
   viewer->setTotalPass(val);
   viewer->update();
+}
+
+void MainWindow::toggleFullScreen()
+{
+  QList<QDockWidget *> dockWidgets = findChildren<QDockWidget *>();
+  if(visibleDockWidgets.isEmpty())
+  {
+    Q_FOREACH(QDockWidget * dock, dockWidgets)
+    {
+      if(dock->isVisible())
+      {
+        visibleDockWidgets.append(dock);
+        dock->hide();
+      }
+    }
+  }
+  else
+  {
+    Q_FOREACH(QDockWidget * dock, visibleDockWidgets){
+      dock->show();
+    }
+    visibleDockWidgets.clear();
+    
+  }
 }

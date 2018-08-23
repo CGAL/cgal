@@ -428,6 +428,10 @@ public:
   void evaluate_script_quiet(QString script, 
                              const QString & fileName = QString());
 #endif
+public Q_SLOTS:
+  void toggleFullScreen();
+private:
+  QList<QDockWidget *> visibleDockWidgets;
 };
 
 #endif // ifndef MAINWINDOW_H
