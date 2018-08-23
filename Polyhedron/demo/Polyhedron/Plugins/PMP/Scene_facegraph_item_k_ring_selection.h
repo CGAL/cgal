@@ -375,6 +375,7 @@ public Q_SLOTS:
       break;
     }
     contour_2d.clear();
+    Q_EMIT endSelection();
     qobject_cast<CGAL::Three::Viewer_interface*>(viewer)->set2DSelectionMode(false);
   }
 
