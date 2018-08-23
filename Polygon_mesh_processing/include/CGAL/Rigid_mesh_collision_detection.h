@@ -267,17 +267,22 @@ public:
         if (m_is_closed[mesh_id])
         {
           Side_of_tm side_of_mid(*m_aabb_trees[mesh_id]);
-          typename Kernel::Point_3 q = get(boost::vertex_point, *m_triangle_mesh_ptrs[k], *boost::begin(vertices(*m_triangle_mesh_ptrs[k])));
-          if(side_of_mid(m_aabb_trees[k]->traits().transformation()( q )) == CGAL::ON_BOUNDED_SIDE)
+          bool stop = false;
+          BOOST_FOREACH(const typename Kernel::Point_3& q, m_points_per_cc[k])
           {
-            res.push_back(std::make_pair(k, true));
-            continue;
+            if(side_of_mid(m_aabb_trees[k]->traits().transformation()( q )) == CGAL::ON_BOUNDED_SIDE)
+            {
+              res.push_back(std::make_pair(k, true));
+              stop=true;
+              break;
+            }
           }
+          if (stop) continue;
         }
         if (m_is_closed[k])
         {
           Side_of_tm side_of_mk(*m_aabb_trees[k]);
-          BOOST_FOREACH(const typename Kernel::Point_3 q, m_points_per_cc[mesh_id])
+          BOOST_FOREACH(const typename Kernel::Point_3& q, m_points_per_cc[mesh_id])
           {
             if(side_of_mk(m_aabb_trees[mesh_id]->traits().transformation()( q )) == CGAL::ON_BOUNDED_SIDE)
             {
