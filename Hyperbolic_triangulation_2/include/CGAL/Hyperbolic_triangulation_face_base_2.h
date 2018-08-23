@@ -25,6 +25,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_ds_face_base_2.h>
+#include <CGAL/Object.h>
 
 namespace CGAL { 
 
@@ -45,13 +46,13 @@ public:
 
 public:
   Hyperbolic_triangulation_face_base_2()
-    : Fb(), _is_finite_non_hyperbolic(false), _non_hyperbolic_edge(UCHAR_MAX)
+    : Fb()
   {}
 
   Hyperbolic_triangulation_face_base_2(Vertex_handle v0, 
 			               Vertex_handle v1, 
 			               Vertex_handle v2)
-    : Fb(v0,v1,v2), _is_finite_non_hyperbolic(false), _non_hyperbolic_edge(UCHAR_MAX)
+    : Fb(v0,v1,v2)
   {}
 
   Hyperbolic_triangulation_face_base_2(Vertex_handle v0, 
@@ -60,46 +61,19 @@ public:
 			               Face_handle n0, 
 			               Face_handle n1, 
 			               Face_handle n2)
-    : Fb(v0,v1,v2,n0,n1,n2), _is_finite_non_hyperbolic(false), _non_hyperbolic_edge(UCHAR_MAX)
+    : Fb(v0,v1,v2,n0,n1,n2)
   {}
 
   static int ccw(int i) {return Triangulation_cw_ccw_2::ccw(i);}
   static int  cw(int i) {return Triangulation_cw_ccw_2::cw(i);}
 
-  bool get_flag() const
-  {
-    return _is_finite_non_hyperbolic;
+  CGAL::Object& tds_data() {
+    return this->_tds_data; 
   }
-  
-  void set_flag(bool flag)
-  {
-    _is_finite_non_hyperbolic = flag;
-  }
-  
-  // Supposed to be called before "get_non_hyperbolic_edge"
-  // iiordanov: leaving here for documentation reasons
-  // bool has_non_hyperbolic_edge() const
-  // {
-  //   return _non_hyperbolic_edge <= 2;
-  // }
-  
-  // Higly recommended to call "has_non_hyperbolic_edge" before 
-  // iiordanov: why? the result of "has_non_hyperbolic_edge" is in the second precondition
-  unsigned char get_char() const
-  {
-    CGAL_triangulation_precondition(_is_finite_non_hyperbolic);
-    CGAL_triangulation_precondition(_non_hyperbolic_edge <= 2);
-    
-    return _non_hyperbolic_edge;
-  }
-  
-  void set_char(unsigned char uschar)
-  {
-    CGAL_triangulation_precondition(_is_finite_non_hyperbolic);
-    CGAL_triangulation_precondition(uschar <= 2); 
-    
-    _non_hyperbolic_edge = uschar;
-  }
+
+  const CGAL::Object& tds_data() const {
+    return this->_tds_data;
+  }  
 
 #ifndef CGAL_NO_DEPRECATED_CODE
   Vertex_handle mirror_vertex(int i) const;
@@ -107,11 +81,8 @@ public:
 #endif
 
 private:
-  // a finite face is non_hyperbolic if its circumscribing circle intersects the circle at infinity
-  bool _is_finite_non_hyperbolic;
-  
-  // defined only if the face is finite and non_hyperbolic
-  unsigned char _non_hyperbolic_edge;
+
+  CGAL::Object 	_tds_data;
 };
 
 #ifndef CGAL_NO_DEPRECATED_CODE
