@@ -383,9 +383,9 @@ MainWindow::on_actionSavePoints_triggered()
 						  ".");
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
-    for(Delaunay::Finite_vertices_iterator 
-          vit = dt.finite_vertices_begin(),
-          end = dt.finite_vertices_end();
+    for(Delaunay::All_vertices_iterator 
+          vit = dt.all_vertices_begin(),
+          end = dt.all_vertices_end();
         vit!= end; ++vit)
     {
       ofs << vit->point() << std::endl;

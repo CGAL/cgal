@@ -106,8 +106,8 @@ VoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem
   painter->setPen(temp);
   //
   
-  for(typename DT::Finite_edges_iterator eit = dt->finite_edges_begin();
-      eit != dt->finite_edges_end();
+  for(typename DT::All_edges_iterator eit = dt->all_edges_begin();
+      eit != dt->all_edges_end();
       eit++) 
     {
       typename DT::Hyperbolic_segment s = dt->dual(*eit);

@@ -157,8 +157,8 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   painterostream = PainterOstream<Geom_traits>(painter);
  
   if(visibleEdges()) {
-    for(typename T::Finite_edges_iterator eit = t->finite_edges_begin();
-        eit != t->finite_edges_end();
+    for(typename T::All_edges_iterator eit = t->all_edges_begin();
+        eit != t->all_edges_end();
         ++eit){
       painterostream << t->segment(*eit);
     }
@@ -176,8 +176,8 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
     painter->setPen(vertices_pen);
     QMatrix matrix = painter->matrix();
     painter->resetMatrix();
-    for(typename T::Finite_vertices_iterator it = t->finite_vertices_begin();
-        it != t->finite_vertices_end();
+    for(typename T::All_vertices_iterator it = t->all_vertices_begin();
+        it != t->all_vertices_end();
         it++){
       QPointF point = matrix.map(convert(it->point()));
       painter->drawPoint(point);

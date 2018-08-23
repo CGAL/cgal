@@ -51,19 +51,6 @@ public:
   using Base::ccw;
   using Base::geom_traits;
 #endif
-  
-  typedef typename Tds::Edge_circulator       Edge_circulator;
-  typedef typename Tds::Face_circulator       Face_circulator;
-  //typedef typename Tds::Vertex_circulator     Vertex_circulator;
-  
-  typedef typename Base::All_vertices_iterator    All_vertices_iterator;
-  typedef typename Base::All_edges_iterator       All_edges_iterator;
-  typedef typename Base::All_faces_iterator       All_faces_iterator;
-
-  typedef typename Base::Finite_vertices_iterator Finite_vertices_iterator;
-
-  // Algebraic_kernel_for_circles_2 needs this for some reason
-  typedef typename Base::Line_face_circulator     Line_face_circulator;
 
   typedef Gt Geom_traits;
   typedef typename Geom_traits::FT                    FT;
@@ -84,9 +71,219 @@ public:
     OUTSIDE_AFFINE_HULL 
   };
 
-
   typedef typename Geom_traits::Side_of_oriented_hyperbolic_segment_2 Side_of_oriented_hyperbolic_segment;
   typedef typename Geom_traits::Is_Delaunay_hyperbolic                Is_Delaunay_hyperbolic;
+
+
+
+  /*************************************
+      Circulators and iterators
+  *************************************/
+private:
+  // This class is used to generate the iterators.
+  class Non_hyperbolic_tester
+  {
+    const Self *t;
+  public:
+    Non_hyperbolic_tester() {}
+    Non_hyperbolic_tester(const Self *tr)   : t(tr) {}
+    
+    bool operator()(const typename Base::All_vertices_iterator & vit) const  {
+      return t->is_infinite(vit);
+    }
+    bool operator()(const typename Base::All_faces_iterator & fit) const {
+      return !t->is_Delaunay_hyperbolic(fit);
+    }
+    bool operator()(const typename Base::All_edges_iterator & eit ) const {
+      Edge e(eit->first, eit->second);
+      return !t->is_Delaunay_hyperbolic(e);
+    }
+  };
+  
+  Non_hyperbolic_tester
+  non_hyperbolic_tester() const
+  {
+    return Non_hyperbolic_tester(this);
+  }
+
+
+  class Hyperbolic_faces_iterator
+  : public Filter_iterator<typename Base::All_faces_iterator, Non_hyperbolic_tester> 
+  {
+    typedef Filter_iterator<typename Base::All_faces_iterator, Non_hyperbolic_tester> PBase;
+    typedef Hyperbolic_faces_iterator                           Self;
+  public:
+    Hyperbolic_faces_iterator() : PBase() {}
+    Hyperbolic_faces_iterator(const PBase &b) : PBase(b) {}
+    Self & operator++() { PBase::operator++(); return *this; }
+    Self & operator--() { PBase::operator--(); return *this; }
+    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+    operator const Face_handle() const { return PBase::base(); }
+  };
+
+  Hyperbolic_faces_iterator
+  hyperbolic_faces_begin() const
+  {
+    if ( this->dimension() < 2 )
+      return hyperbolic_faces_end();
+    return CGAL::filter_iterator(Base::all_faces_end(),
+                                 Non_hyperbolic_tester(this),
+                                 Base::all_faces_begin() );
+  } 
+
+  Hyperbolic_faces_iterator
+  hyperbolic_faces_end() const
+  {
+    return CGAL::filter_iterator(Base::all_faces_end(),
+                                 Non_hyperbolic_tester(this)   );
+  }
+
+  typedef Filter_iterator<typename Base::All_edges_iterator, Non_hyperbolic_tester> Hyperbolic_edges_iterator;
+  
+  Hyperbolic_edges_iterator
+  hyperbolic_edges_begin() const
+  {
+    if ( this->dimension() < 1 )
+      return hyperbolic_edges_end();
+    return CGAL::filter_iterator(Base::all_edges_end(),
+                                 Non_hyperbolic_tester(this),
+                                 Base::all_edges_begin());
+  }
+  
+  Hyperbolic_edges_iterator
+  hyperbolic_edges_end() const
+  {
+    return CGAL::filter_iterator(Base::all_edges_end(),
+                                 Non_hyperbolic_tester(this) );
+  }
+
+
+  class Hyperbolic_adjacent_vector_circulator 
+    : Base::Vertex_circulator {
+    
+      typedef typename Base::Vertex_circulator        VBase;
+      typedef Hyperbolic_adjacent_vector_circulator   Self;
+      typedef typename Tds::Vertex                    Vertex;
+    private:
+    Vertex_handle _v;
+    Face_handle   pos;
+    int _ri;
+    int _iv;
+
+    public:
+      Hyperbolic_adjacent_vector_circulator() : VBase() {
+        _v = Vertex_handle();
+        pos = Face_handle();
+        _ri = 0;
+      }
+      Hyperbolic_adjacent_vector_circulator(Vertex_handle v, Face_handle fh = Face_handle()): VBase(v, fh) {
+        _v = v;
+        if (fh = Face_handle()) 
+          pos = _v->face();
+        else
+          pos = fh;
+        
+        _iv = pos->index(_v);
+        _ri = ccw(_iv);
+
+        while (!is_finite_non_hyperbolic(pos, cw(_iv))) {
+          pos = pos->neighbor(_ri);
+          _iv = pos->index(_v);
+          _ri = ccw(_iv);
+        }
+      }
+
+      Self& operator++() {
+        do {
+          pos = pos->neighbor(_ri);
+          _iv = pos->index(_v);
+          _ri = ccw(_iv);
+        } while (!is_finite_non_hyperbolic(pos, cw(_iv)));
+      }
+
+    //Self  operator++(int);
+
+    Self& operator--() {
+      do {
+          pos = pos->neighbor(ccw(_ri));
+          _iv = pos->index(_v);
+          _ri = ccw(_iv);
+        } while (!is_finite_non_hyperbolic(pos, cw(_iv)));
+    }
+
+    //Self  operator--(int);
+
+    bool operator==(const Self &vc) const 
+    { return (this->_v == vc->_v && this->pos == vc->pos && this->_ri == vc->_ri && this->_iv == vc->_iv); }
+    bool operator!=(const Self &vc) const
+    { return !this->operator==(vc); }
+
+    bool operator==(const Vertex_handle &vh) const
+    { return (this->pos->vertex(_ri) == vh); }
+    bool operator!=(const Vertex_handle &vh) const
+    { return !this->operator==(vh); }
+
+    bool is_empty() const { return (this->pos == Face_handle() && this->_v == Vertex_handle()); }
+    //bool operator==(Nullptr_t CGAL_triangulation_assertion_code(n)) const;
+    //bool operator!=(Nullptr_t CGAL_triangulation_assertion_code(n)) const;
+
+    Vertex&
+    operator*() const
+    {
+      CGAL_triangulation_precondition(pos != Face_handle() && _v != Vertex_handle());
+      return *(pos->vertex(_ri));
+    }
+
+    Vertex*
+    operator->() const
+    {
+      CGAL_triangulation_precondition(pos != Face_handle() && _v != Vertex_handle());
+      return &*(pos->vertex(_ri));
+    }
+
+    Vertex_handle base() const {return pos->vertex(_ri);}
+      operator Vertex_handle() const {return pos->vertex(_ri);}
+  };
+
+public:
+  typedef Hyperbolic_adjacent_vector_circulator Vertex_circulator;
+  typedef typename Tds::Edge_circulator         Edge_circulator;
+  typedef typename Tds::Face_circulator         Face_circulator;
+
+  typedef Hyperbolic_faces_iterator             All_faces_iterator;
+  All_faces_iterator all_faces_begin()  const { return hyperbolic_faces_begin();  }
+  All_faces_iterator all_faces_end()    const { return hyperbolic_faces_end();    }
+
+  typedef Hyperbolic_edges_iterator             All_edges_iterator;
+  All_edges_iterator all_edges_begin()  const { return hyperbolic_edges_begin();  }
+  All_edges_iterator all_edges_end()    const { return hyperbolic_edges_end();    }
+  
+  typedef typename Base::Finite_vertices_iterator All_vertices_iterator;
+  All_vertices_iterator all_vertices_begin()      const { return Base::finite_vertices_begin(); }
+  All_vertices_iterator all_vertices_end()        const { return Base::finite_vertices_end();   }
+
+  // The declarations below are required by apply_to_range: do not document!
+  typedef All_vertices_iterator Finite_vertices_iterator;
+  Finite_vertices_iterator finite_vertices_begin()  const { return all_vertices_begin();  }
+  Finite_vertices_iterator finite_vertices_end()    const { return all_vertices_end();    }
+  typedef All_faces_iterator Finite_faces_iterator;
+  Finite_faces_iterator finite_faces_begin()        const { return all_faces_begin();     }
+  Finite_faces_iterator finite_faces_end()          const { return all_faces_end();       }
+
+  // Algebraic_kernel_for_circles_2 needs this for some reason
+  typedef typename Base::Line_face_circulator     Line_face_circulator;
+
+
+
+
+
+
+
+
+
+
+
 
   Hyperbolic_Delaunay_triangulation_2(const Geom_traits& gt = Geom_traits())
   : Delaunay_triangulation_2<Gt,Tds>(gt) {}
@@ -102,7 +299,7 @@ public:
                                       const Geom_traits& gt = Geom_traits()) :
                                       Delaunay_triangulation_2<Gt,Tds>(gt) {
     insert(first, last);
-    for (Finite_vertices_iterator vit = finite_vertices_begin(); vit != finite_vertices_end(); vit++) {
+    for (All_vertices_iterator vit = all_vertices_begin(); vit != all_vertices_end(); vit++) {
       ensure_hyperbolic_face_handle(vit);
     }
   }
@@ -165,7 +362,7 @@ public:
     size_type n = Base::insert(first, last);
     
     mark_finite_non_hyperbolic_faces();
-    for (Finite_vertices_iterator vit = finite_vertices_begin(); vit != finite_vertices_end(); vit++) {
+    for (All_vertices_iterator vit = all_vertices_begin(); vit != all_vertices_end(); vit++) {
       ensure_hyperbolic_face_handle(vit);
     }
 
@@ -577,173 +774,6 @@ private:
   }; 
   
 public:
-  // This class is used to generate the Finite_*_iterators.
-  class Non_hyperbolic_tester
-  {
-    const Self *t;
-  public:
-    Non_hyperbolic_tester() {}
-    Non_hyperbolic_tester(const Self *tr)	  : t(tr) {}
-    
-    bool operator()(const All_vertices_iterator & vit) const  {
-      return t->is_infinite(vit);
-    }
-    bool operator()(const All_faces_iterator & fit) const {
-      return !t->is_Delaunay_hyperbolic(fit);
-    }
-    bool operator()(const All_edges_iterator & eit ) const {
-      return !t->is_Delaunay_hyperbolic(eit);
-    }
-  };
-  
-  Non_hyperbolic_tester
-  non_hyperbolic_tester() const
-  {
-    return Non_hyperbolic_tester(this);
-  }
-  
-  class Hyperbolic_faces_iterator
-  : public Filter_iterator<All_faces_iterator, Non_hyperbolic_tester> 
-  {
-    typedef Filter_iterator<All_faces_iterator, Non_hyperbolic_tester> Base;
-    typedef Hyperbolic_faces_iterator                           Self;
-  public:
-    Hyperbolic_faces_iterator() : Base() {}
-    Hyperbolic_faces_iterator(const Base &b) : Base(b) {}
-    Self & operator++() { Base::operator++(); return *this; }
-    Self & operator--() { Base::operator--(); return *this; }
-    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
-    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator const Face_handle() const { return Base::base(); }
-  };
-
-  Hyperbolic_faces_iterator
-  hyperbolic_faces_begin() const
-  {
-    if ( this->dimension() < 2 )
-      return hyperbolic_faces_end();
-    return CGAL::filter_iterator(this->all_faces_end(),
-                                 Non_hyperbolic_tester(this),
-                                 this->all_faces_begin() );
-  } 
-
-  Hyperbolic_faces_iterator
-  hyperbolic_faces_end() const
-  {
-    return CGAL::filter_iterator(this->all_faces_end(),
-                                 Non_hyperbolic_tester(this)   );
-  }
-
-  typedef Filter_iterator<All_edges_iterator, Non_hyperbolic_tester> Hyperbolic_edges_iterator;
-  
-  Hyperbolic_edges_iterator
-  hyperbolic_edges_begin() const
-  {
-    if ( this->dimension() < 1 )
-      return hyperbolic_edges_end();
-    return CGAL::filter_iterator(this->all_edges_end(),
-                                 Non_hyperbolic_tester(this),
-                                 this->all_edges_begin());
-  }
-  
-  Hyperbolic_edges_iterator
-  hyperbolic_edges_end() const
-  {
-    return CGAL::filter_iterator(this->all_edges_end(),
-                                 Non_hyperbolic_tester(this) );
-  }
-
-
-  class Hyperbolic_adjacent_vector_circulator 
-  	: Base::Vertex_circulator {
-  	
-  		typedef typename Base::Vertex_circulator  		VBase;
-  		typedef Hyperbolic_adjacent_vector_circulator 	Self;
-  		typedef typename Tds::Vertex                    Vertex;
-  	private:
-		Vertex_handle _v;
-		Face_handle   pos;
-		int _ri;
-		int _iv;
-
-  	public:
-  		Hyperbolic_adjacent_vector_circulator() : VBase() {
-  			_v = Vertex_handle();
-  			pos = Face_handle();
-  			_ri = 0;
-  		}
-  		Hyperbolic_adjacent_vector_circulator(Vertex_handle v, Face_handle fh = Face_handle()): VBase(v, fh) {
-  			_v = v;
-  			if (fh = Face_handle()) 
-  				pos = _v->face();
-  			else
-  				pos = fh;
-  			
-  			_iv = pos->index(_v);
-  			_ri = ccw(_iv);
-
-  			while (!is_finite_non_hyperbolic(pos, cw(_iv))) {
-  				pos = pos->neighbor(_ri);
-  				_iv = pos->index(_v);
-  				_ri = ccw(_iv);
-  			}
-  		}
-
-  		Self& operator++() {
-  			do {
-  				pos = pos->neighbor(_ri);
-  				_iv = pos->index(_v);
-  				_ri = ccw(_iv);
-  			} while (!is_finite_non_hyperbolic(pos, cw(_iv)));
-  		}
-
-		//Self  operator++(int);
-
-		Self& operator--() {
-			do {
-  				pos = pos->neighbor(ccw(_ri));
-  				_iv = pos->index(_v);
-  				_ri = ccw(_iv);
-  			} while (!is_finite_non_hyperbolic(pos, cw(_iv)));
-		}
-
-		//Self  operator--(int);
-
-		bool operator==(const Self &vc) const 
-		{ return (this->_v == vc->_v && this->pos == vc->pos && this->_ri == vc->_ri && this->_iv == vc->_iv); }
-		bool operator!=(const Self &vc) const
-		{ return !this->operator==(vc); }
-
-		bool operator==(const Vertex_handle &vh) const
-		{ return (this->pos->vertex(_ri) == vh); }
-		bool operator!=(const Vertex_handle &vh) const
-		{ return !this->operator==(vh); }
-
-		bool is_empty() const { return (this->pos == Face_handle() && this->_v == Vertex_handle()); }
-		//bool operator==(Nullptr_t CGAL_triangulation_assertion_code(n)) const;
-		//bool operator!=(Nullptr_t CGAL_triangulation_assertion_code(n)) const;
-
-		Vertex&
-		operator*() const
-		{
-			CGAL_triangulation_precondition(pos != Face_handle() && _v != Vertex_handle());
-			return *(pos->vertex(_ri));
-		}
-
-		Vertex*
-		operator->() const
-		{
-			CGAL_triangulation_precondition(pos != Face_handle() && _v != Vertex_handle());
-			return &*(pos->vertex(_ri));
-		}
-
-		Vertex_handle base() const {return pos->vertex(_ri);}
-   		operator Vertex_handle() const {return pos->vertex(_ri);}
-  };
-
-
-  typedef Hyperbolic_adjacent_vector_circulator Vertex_circulator;
-
 
   Line_face_circulator line_walk(const Point& p, const Point& q, Face_handle f = Face_handle()) const {
     return Base::line_walk(p, q, f);
@@ -788,18 +818,6 @@ public:
   int dimension() const {
     return Base::dimension();
   }
-
-  // Finite faces/edges iterators kept for the demo in order to reuse Triangulation_2 demo (see above)
-  // TODO: document that they are not inherited from Triangulation_2
-  typedef Hyperbolic_faces_iterator Finite_faces_iterator;
-  Finite_faces_iterator finite_faces_begin() const { return hyperbolic_faces_begin(); }
-  Finite_faces_iterator finite_faces_end() const { return hyperbolic_faces_end(); }
-  typedef Hyperbolic_edges_iterator Finite_edges_iterator;
-  Finite_edges_iterator finite_edges_begin() const { return hyperbolic_edges_begin(); }
-  Finite_edges_iterator finite_edges_end() const { return hyperbolic_edges_end(); }
-  
-  Finite_vertices_iterator finite_vertices_begin() const { return Base::finite_vertices_begin(); }
-  Finite_vertices_iterator finite_vertices_end() const { return Base::finite_vertices_end(); }
 
   Voronoi_point
   dual(Face_handle f) const
