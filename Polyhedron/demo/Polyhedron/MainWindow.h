@@ -328,7 +328,7 @@ protected Q_SLOTS:
   //!Opens a Dialog to choose a color and make it the background color.
   void setBackgroundColor();
   //!Opens a Dialog to change the lighting settings
-  void on_actionSetLighting_triggered();
+  void setLighting_triggered();
   /*! Opens a Dialog to enter coordinates of the new center point and sets it
    * with viewerShow.
    *@see viewerShow(float, float, float, float, float, float)

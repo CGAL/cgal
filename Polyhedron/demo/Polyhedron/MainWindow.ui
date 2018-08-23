@@ -95,7 +95,6 @@
     <addaction name="actionLookAt"/>
     <addaction name="actionDrawTwoSides"/>
     <addaction name="actionSwitchProjection"/>
-    <addaction name="actionSetLighting"/>
     <addaction name="menuDockWindows"/>
     <addaction name="menuCamera"/>
     <addaction name="separator"/>
@@ -491,11 +490,6 @@
   <action name="actionColorItems">
    <property name="text">
     <string>Set Different Colors for Selected Items</string>
-   </property>
-  </action>
-  <action name="actionSetLighting">
-   <property name="text">
-    <string>Change Lighting &amp;Settings...</string>
    </property>
   </action>
  </widget>

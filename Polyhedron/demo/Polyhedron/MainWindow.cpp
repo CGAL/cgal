@@ -1856,6 +1856,9 @@ void MainWindow::on_actionPreferences_triggered()
   connect(prefdiag.background_colorPushButton, &QPushButton::clicked,
           this, &MainWindow::setBackgroundColor);
   
+  connect(prefdiag.lightingPushButton, &QPushButton::clicked,
+          this, &MainWindow::setLighting_triggered);
+  
   prefdiag.surface_meshComboBox->setCurrentText(CGAL::Three::Three::modeName(
                                                   CGAL::Three::Three::s_defaultSMRM));
   connect(prefdiag.surface_meshComboBox, &QComboBox::currentTextChanged,
@@ -1947,7 +1950,7 @@ void MainWindow::setBackgroundColor()
   }
 }
 
-void MainWindow::on_actionSetLighting_triggered()
+void MainWindow::setLighting_triggered()
 {
   viewer->setLighting();
 }
