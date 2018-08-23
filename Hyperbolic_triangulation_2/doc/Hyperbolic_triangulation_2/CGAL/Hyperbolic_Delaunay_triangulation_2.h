@@ -40,7 +40,11 @@ public:
     */
     typedef typename Triangulation_data_structure::size_type        size_type;
     typedef typename Geom_traits::Point_2                           Point;
-    typedef typename Geom_traits::Triangle_2                        Triangle;
+    /*!
+    \cgalModifBegin
+    \cgalModifEnd
+    */
+    typedef typename Geom_traits::Triangle_2                        Hyperbolic_triangle;
   /// @}
 
 
@@ -114,7 +118,7 @@ public:
       The triangulation `tr` is duplicated, and modifying the copy after the duplication does not modify the original.
       \todo implement! 
     */
-    Hyperbolic_Delaunay_triangulation_2& operator=(const Hyperbolic_Delaunay_triangulation_2& tr);
+    Hyperbolic_Delaunay_triangulation_2& operator=(Hyperbolic_Delaunay_triangulation_2& tr);
     
     /*!
       The triangulation is swapped with `tr`.
@@ -189,23 +193,25 @@ public:
   /// \name Geometric access functions
   /// @{
     /*
+      \cgalModifBegin
       Returns the triangle formed by the three vertices of face `f`.
+      \cgalModifEnd
     */
-    Triangle triangle(Face_handle f) const;
+    Hyperbolic_triangle hyperbolic_triangle(const Face_handle f) const;
 
     /*!
       \cgalModifBegin
       Returns the hyperbolic segment formed by the vertices of the edge `(f, i)`.
       \cgalModifEnd
     */
-    Hyperbolic_segment segment(Face_handle f, int i) const;
+    Hyperbolic_segment hyperbolic_segment(const Face_handle f, const int i) const;
 
     /*!
       \cgalModifBegin
       Returns the hyperbolic segment formed by the vertices of edge `e`.
       \cgalModifEnd
     */
-    Hyperbolic_segment segment (const Edge& e) const;
+    Hyperbolic_segment hyperbolic_segment (const Edge& e) const;
   ///@}
 
 
@@ -233,8 +239,11 @@ public:
       Returns the number of inserted points. Note that this function is not 
       guaranteed to insert the points following the order of `InputIterator`, 
       as `spatial_sort()` is used to improve efficiency.
-
-      \tparam InputIterator  must be an input iterator with the value type `Point_2`.
+      
+      \cgalModifBegin
+      \tparam InputIterator  must be an input iterator with the value type
+      \link Hyperbolic_Delaunay_triangulation_2::Point `Point`\endlink.
+      \cgalModifEnd
     */
     template < class InputIterator >
     std::ptrdiff_t insert(InputIterator first, InputIterator last);
@@ -274,11 +283,13 @@ public:
       Same as above. 
 
       The variable `lt` contains information about the element in which `query` has been located. See 
-      the enumeration `Triangulation::Locate_type` for details.
+      the enumeration \link Hyperbolic_Delaunay_triangulation_2::Locate_type `Locate_type`\endlink 
+      for details.
 
-      If `lt` is `Triangulation::Locate_type::VERTEX`, then the variable `li` contains the index of the 
-      vertex in the returned face. If `lt` is `Triangulation::Locate_type::EDGE`, then `li` is the index 
-      of the edge in the returned face. 
+      If `lt` is \link Hyperbolic_Delaunay_triangulation_2::VERTEX `Locate_type::VERTEX`\endlink, 
+      then the variable `li` contains the index of the vertex in the returned face. If `lt` is 
+      \link Hyperbolic_Delaunay_triangulation_2::EDGE `Locate_type::EDGE`\endlink, then `li` 
+      is the index of the edge in the returned face. 
     */
     Face_handle locate(const Point& query, Locate_type& lt, int &li, Face_handle hint = Face_handle()) const;
   /// @}
@@ -318,7 +329,9 @@ public:
 
   
   /// \name Voronoi Diagram 
-  /// Note that the user should use a kernel with exact constructions in order to guarantee 
+  /// \cgalModifBegin
+  /// Users should use a kernel with exact constructions in order to guarantee
+  /// \cgalModifEnd 
   /// the computation of the Voronoi diagram (as opposed to computing the triangulation only, 
   /// which requires only exact predicates).
   /// @{
