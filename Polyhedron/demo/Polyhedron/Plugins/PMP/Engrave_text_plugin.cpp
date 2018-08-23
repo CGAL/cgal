@@ -514,7 +514,7 @@ public Q_SLOTS:
       if (A.x()<0) A=-A;
           angle = std::acos(A.x()/CGAL::sqrt(A.squared_length()));
           if ( A.y()<0 ) angle+=3*CGAL_PI/2.;
-          if (angle>2*CGAL_PI) angle-=CGAL_PI;
+          if (angle>2*CGAL_PI) angle-=2*CGAL_PI;
       
       locked = true;
       dock_widget->rot_slider->setSliderPosition(angle*180.0/CGAL_PI);
