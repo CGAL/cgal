@@ -290,7 +290,7 @@ public:
       Returns an iterator on the faces of the triangulation in conflict with `p`.
     */
     template<class OutputItFaces>
-    OutputItFaces get_conflicts(const Point& p, 
+    OutputItFaces find_conflicts(const Point& p, 
                                 OutputItFaces fit, 
                                 Face_handle start = Face_handle()) const;
   ///@}
