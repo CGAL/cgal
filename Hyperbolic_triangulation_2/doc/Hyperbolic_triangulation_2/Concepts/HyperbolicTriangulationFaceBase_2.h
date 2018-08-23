@@ -5,12 +5,16 @@
 \ingroup PkgHyperbolicTriangulation2Concepts
 \cgalConcept
 
+\cgalRefines TriangulationFaceBase_2
+
 The concept HyperbolicTriangulationFaceBase_2 describes the requirements for the base 
 face class of a hyperbolic triangulation data structure. 
 
-This concept provides access to vertices incident to the face, as well as to its neighboring 
-faces. Compare with Section \ref Section_2D_Triangulations_Software_Design in the 2D 
-Triangulation User Manual.
+\cgalModifBegin
+This concept provides an interface for the functionality needed in faces to compute 
+Delaunay triangulations in the hyperbolic plane. The functions `tds_data()` are used
+internally by the triangulation class during the insertion of points in the triangulation.
+\cgalModifEnd
 
 \cgalHasModel CGAL::Hyperbolic_triangulation_face_base_2
 \cgalHasModel CGAL::Hyperbolic_triangulation_face_base_with_info_2
