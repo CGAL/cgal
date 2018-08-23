@@ -31,6 +31,8 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
+#include <boost/iterator/counting_iterator.hpp>
+
 #ifndef CGAL_CACHE_BOXES
 #define CGAL_CACHE_BOXES 0
 #endif
@@ -153,8 +155,9 @@ public:
   }
 #endif
 
+  template <class MeshRangeIds>
   std::vector<std::size_t>
-  get_all_intersections(std::size_t mesh_id)
+  get_all_intersections(std::size_t mesh_id, const MeshRangeIds& ids)
   {
     CGAL::Interval_nt_advanced::Protector protector;
 #if CGAL_CACHE_BOXES
@@ -162,7 +165,7 @@ public:
 #endif
     std::vector<std::size_t> res;
 
-    for(std::size_t k=0; k<m_aabb_trees.size(); ++k)
+    BOOST_FOREACH(std::size_t k, ids)
     {
       if(k==mesh_id) continue;
 #if CGAL_CACHE_BOXES
@@ -176,6 +179,15 @@ public:
   }
 
   std::vector<std::size_t>
+  get_all_intersections(std::size_t mesh_id)
+  {
+    return get_all_intersections(
+      mesh_id,
+      make_range(boost::make_counting_iterator<std::size_t>(0),
+                 boost::make_counting_iterator<std::size_t>(m_aabb_trees.size())));
+  }
+
+  std::vector<std::size_t>
   set_transformation_and_get_all_intersections(std::size_t mesh_id,
                                                const Aff_transformation_3<Kernel>& aff_trans)
   {
@@ -184,8 +196,9 @@ public:
     return get_all_intersections(mesh_id);
   }
 
+  template <class MeshRangeIds>
   std::vector<std::pair<std::size_t, bool> >
-  get_all_intersections_and_inclusions(std::size_t mesh_id)
+  get_all_intersections_and_inclusions(std::size_t mesh_id, const MeshRangeIds& ids)
   {
     CGAL::Interval_nt_advanced::Protector protector;
 #if CGAL_CACHE_BOXES
@@ -194,7 +207,7 @@ public:
     std::vector<std::pair<std::size_t, bool> > res;
 
     // TODO: use a non-naive version
-    for(std::size_t k=0; k<m_aabb_trees.size(); ++k)
+    BOOST_FOREACH(std::size_t k, ids)
     {
       if(k==mesh_id) continue;
 #if CGAL_CACHE_BOXES
@@ -224,6 +237,15 @@ public:
       }
     }
     return res;
+  }
+
+  std::vector<std::pair<std::size_t, bool> >
+  get_all_intersections_and_inclusions(std::size_t mesh_id)
+  {
+    return get_all_intersections_and_inclusions(
+      mesh_id,
+      make_range(boost::make_counting_iterator<std::size_t>(0),
+                 boost::make_counting_iterator<std::size_t>(m_aabb_trees.size())));
   }
 
   std::vector<std::pair<std::size_t, bool> >
