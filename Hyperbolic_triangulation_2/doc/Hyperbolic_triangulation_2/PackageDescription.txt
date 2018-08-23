@@ -30,7 +30,7 @@ dual Voronoi diagrams.}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.10}
+\cgalPkgSince{4.14}
 \cgalPkgDependsOn{\ref PkgTriangulation2Summary}
 \cgalPkgBib{cgal:bt-ht2-17}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
@@ -56,9 +56,6 @@ The three vertices incident to a face are indexed with 0, 1, and 2 in positive (
 
 - `HyperbolicDelaunayTriangulationTraits_2`
 - `HyperbolicTriangulationFaceBase_2`
-- `TriangulationVertexBase_2`
-- `TriangulationDataStructure_2`
-
 
 # Classes #
 
