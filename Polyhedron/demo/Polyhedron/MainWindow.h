@@ -333,6 +333,9 @@ protected Q_SLOTS:
   void on_actionSaveSnapshot_triggered();
   //!Opens a Dialog to choose a color and make it the background color.
   void on_actionSetBackgroundColor_triggered();
+  //!Opens a Dialog to change the lighting settings
+  void on_actionSetLighting_triggered();
+  
   /*! Opens a Dialog to enter coordinates of the new center point and sets it
    * with viewerShow.
    *@see viewerShow(float, float, float, float, float, float)
