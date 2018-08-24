@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # ----------------------------------------------------
 # ----------------------------------------------------
 # autotest_cgal: a script to automagically install and
@@ -525,7 +525,7 @@ export MAKE_CMD;
 export CGAL_BINARY_DIR;
 export CGAL_REFERENCE_CACHE_DIR;
 cd '${CGAL_BINARY_DIR}';
-cmake '${CMAKE_GENERATOR}' -DRUNNING_CGAL_AUTO_TEST=TRUE \\
+cmake -C"${CGAL_REFERENCE_CACHE_DIR}/init.cmake" '${CMAKE_GENERATOR}' -DRUNNING_CGAL_AUTO_TEST=TRUE \\
                            -DCGAL_REFERENCE_CACHE_DIR="\$CGAL_REFERENCE_CACHE_DIR" \\
                            VERBOSE=1 \\
                            ../../..;
