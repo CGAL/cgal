@@ -28,9 +28,9 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Polygon_mesh_processing/internal/AABB_do_intersect_transform_traits.h>
+#include <CGAL/Polygon_mesh_processing/internal/Side_of_triangle_mesh/Point_inside_vertical_ray_cast.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/property_map.h>
 
 #include <boost/iterator/counting_iterator.hpp>
@@ -50,17 +50,16 @@ template <class TriangleMesh, class Kernel, class HAS_ROTATION = CGAL::Tag_true>
 class Rigid_mesh_collision_detection
 {
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh> Primitive;
-  typedef CGAL::AABB_do_intersect_transform_traits<Kernel, Primitive, HAS_ROTATION> Traits;
+  typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> Tree;
-  typedef Side_of_triangle_mesh<TriangleMesh, Kernel, Default, Tree> Side_of_tm;
-
+  typedef Do_intersect_traversal_traits_with_transformation<Traits, Kernel, HAS_ROTATION> Traversal_traits;
 
   std::vector<const TriangleMesh*> m_triangle_mesh_ptrs;
   // TODO: we probably want an option with external trees
   std::vector<Tree*> m_aabb_trees;
   std::vector<bool> m_is_closed;
   std::vector< std::vector<typename Kernel::Point_3> > m_points_per_cc;
-
+  std::vector<Traversal_traits> m_traversal_traits;
 #if CGAL_CACHE_BOXES
   boost::dynamic_bitset<> m_bboxes_is_invalid;
   std::vector<Bbox_3> m_bboxes;
@@ -108,6 +107,25 @@ class Rigid_mesh_collision_detection
     m_points_per_cc.back().push_back( get(boost::vertex_point, tm, *boost::begin(vertices(tm))) );
   }
 
+  // precondition A and B does not intersect
+  bool does_A_contains_a_CC_of_B(std::size_t id_A, std::size_t id_B)
+  {
+    typename Kernel::Construct_ray_3     ray_functor;
+    typename Kernel::Construct_vector_3  vector_functor;
+    typedef typename Traversal_traits::Transformed_tree_helper Helper;
+
+    BOOST_FOREACH(const typename Kernel::Point_3& q, m_points_per_cc[id_B])
+    {
+      if( internal::Point_inside_vertical_ray_cast<Kernel, Tree, Helper>(m_traversal_traits[id_A].get_helper())(
+            m_traversal_traits[id_B].transformation()( q ), *m_aabb_trees[id_A],
+            ray_functor, vector_functor) == CGAL::ON_BOUNDED_SIDE)
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
 public:
   template <class MeshRange>
   Rigid_mesh_collision_detection(const MeshRange& triangle_meshes, bool assume_one_CC_per_mesh = false)
@@ -131,6 +149,7 @@ public:
     m_aabb_trees.reserve(nb_meshes);
     m_is_closed.clear();
     m_is_closed.resize(nb_meshes, false);
+    m_traversal_traits.reserve(m_aabb_trees.size());
 #if CGAL_CACHE_BOXES
     m_bboxes_is_invalid.clear();
     m_bboxes_is_invalid.resize(nb_meshes, true);
@@ -144,6 +163,7 @@ public:
       m_triangle_mesh_ptrs.push_back( &tm );
       Tree* t = new Tree(faces(tm).begin(), faces(tm).end(), tm);
       m_aabb_trees.push_back(t);
+      m_traversal_traits.push_back( Traversal_traits(m_aabb_trees.back()->traits()) );
       add_cc_points(tm, assume_one_CC);
     }
   }
@@ -154,6 +174,7 @@ public:
     m_triangle_mesh_ptrs.push_back( &tm );
     Tree* t = new Tree(faces(tm).begin(), faces(tm).end(), tm);
     m_aabb_trees.push_back(t);
+    m_traversal_traits.push_back( Traversal_traits(m_aabb_trees.back()->traits()) );
 #if CGAL_CACHE_BOXES
     m_bboxes.push_back(Bbox_3());
     m_bboxes_is_invalid.resize(m_bboxes_is_invalid.size()+1, true);
@@ -169,6 +190,7 @@ public:
     m_aabb_trees.erase( m_aabb_trees.begin()+mesh_id);
     m_is_closed.erase(m_is_closed.begin()+mesh_id);
     m_points_per_cc.erase(m_points_per_cc.begin()+mesh_id);
+    m_traversal_traits.erase(m_traversal_traits.begin()+mesh_id);
 #if CGAL_CACHE_BOXES
     // TODO this is a lazy approach that is not optimal
     m_bboxes.pop_back();
@@ -179,7 +201,7 @@ public:
 
   void set_transformation(std::size_t mesh_id, const Aff_transformation_3<Kernel>& aff_trans)
   {
-    m_aabb_trees[mesh_id]->traits().set_transformation(aff_trans);
+    m_traversal_traits[mesh_id].set_transformation(aff_trans);
 #if CGAL_CACHE_BOXES
     m_bboxes_is_invalid.set(mesh_id);
 #endif
@@ -189,11 +211,11 @@ public:
   void update_bboxes()
   {
     // protector is supposed to have been set
-    for (boost::dynamic_bitset<>::size_type i = m_bboxes.find_first();
+    for (boost::dynamic_bitset<>::size_type i = m_bboxes_is_invalid.find_first();
                                             i != m_bboxes_is_invalid.npos;
                                             i = m_bboxes_is_invalid.find_next(i))
     {
-      m_bboxes[i]=internal::get_tree_bbox(*m_aabb_trees[i]);
+      m_bboxes[i]=m_traversal_traits[i].get_helper().get_tree_bbox(*m_aabb_trees[i]);
     }
     m_bboxes_is_invalid.reset();
   }
@@ -261,34 +283,27 @@ public:
       if (!do_overlap(m_bboxes[k], m_bboxes[mesh_id])) continue;
 #endif
       // TODO: think about an alternative that is using a traversal traits
-      if ( m_aabb_trees[k]->do_intersect( *m_aabb_trees[mesh_id] ) )
+
+      Do_intersect_traversal_traits_for_two_trees<Traits, Kernel, HAS_ROTATION> traversal_traits(
+        m_aabb_trees[k]->traits(), m_traversal_traits[k].transformation(), m_traversal_traits[mesh_id]);
+      m_aabb_trees[k]->traversal(*m_aabb_trees[mesh_id], traversal_traits);
+      if (traversal_traits.is_intersection_found())
         res.push_back(std::make_pair(k, false));
       else{
         if (m_is_closed[mesh_id])
         {
-          Side_of_tm side_of_mid(*m_aabb_trees[mesh_id]);
-          bool stop = false;
-          BOOST_FOREACH(const typename Kernel::Point_3& q, m_points_per_cc[k])
+          if ( does_A_contains_a_CC_of_B(mesh_id, k) )
           {
-            if(side_of_mid(m_aabb_trees[k]->traits().transformation()( q )) == CGAL::ON_BOUNDED_SIDE)
-            {
-              res.push_back(std::make_pair(k, true));
-              stop=true;
-              break;
-            }
+            res.push_back(std::make_pair(k, true));
+            continue;
           }
-          if (stop) continue;
         }
         if (m_is_closed[k])
         {
-          Side_of_tm side_of_mk(*m_aabb_trees[k]);
-          BOOST_FOREACH(const typename Kernel::Point_3& q, m_points_per_cc[mesh_id])
+          if ( does_A_contains_a_CC_of_B(k, mesh_id) )
           {
-            if(side_of_mk(m_aabb_trees[mesh_id]->traits().transformation()( q )) == CGAL::ON_BOUNDED_SIDE)
-            {
-              res.push_back(std::make_pair(k, true));
-              break;
-            }
+            res.push_back(std::make_pair(k, true));
+            continue;
           }
         }
       }

@@ -1,4 +1,3 @@
-
 // Copyright (c) 2018 GeometryFactory (France).
 // All rights reserved.
 //
@@ -19,6 +18,7 @@
 //
 //
 // Author(s) : Maxime Gimeno
+//             Sebastien Loriot
 //
 
 #ifndef CGAL_AABB_DO_INTERSECT_TRANSFORM_TRAITS_H
@@ -38,203 +38,262 @@
 #include <CGAL/Aff_transformation_3.h>
 #include <boost/mpl/if.hpp>
 
-/// \file AABB_do_intersect_transform_traits.h
-
 namespace CGAL {
 
-template<typename Kernel, typename AABBPrimitive, 
-         typename SUPPORTS_ROTATION = CGAL::Tag_true>
-class AABB_do_intersect_transform_traits:
-    public AABB_traits<Kernel, AABBPrimitive>
+template<typename AABBTraits, typename Kernel, class SUPPORTS_ROTATION>
+class Traversal_traits_with_transformation_helper
 {
-  mutable Aff_transformation_3<Kernel> m_transfo;
-  mutable bool has_rotation;
-  typedef AABB_traits<Kernel, AABBPrimitive> BaseTraits;
-  typedef AABB_do_intersect_transform_traits<Kernel, AABBPrimitive, SUPPORTS_ROTATION> Self;
-  
-  void set_transformation(const Aff_transformation_3<Kernel>& trans, CGAL::Tag_true) const
-  {
-    has_rotation = (trans.m(0,1) != 0
-        || trans.m(0,2) != 0
-        || trans.m(1,0) != 0
-        || trans.m(1,2) != 0
-        || trans.m(2,0) != 0
-        || trans.m(2,1) !=0);
-  }
-  void set_transformation(const Aff_transformation_3<Kernel>& trans, CGAL::Tag_false) const
-  {}
   Bbox_3
-  compute_transformed_bbox_impl(const Bbox_3& bbox, Tag_true) const
+  compute_transformed_bbox_impl(const CGAL::Aff_transformation_3<Kernel>& at,
+                                const Bbox_3& bbox,
+                                bool has_rotation,
+                                /*SUPPORTS_ROTATION*/ Tag_true) const
   {
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_UPWARD);
+
     if(!has_rotation)
-      return compute_transformed_bbox_impl(bbox, Tag_false());
+      return compute_transformed_bbox_impl(at, bbox, has_rotation, Tag_false());
 
     typedef Simple_cartesian<Interval_nt_advanced> AK;
     typedef Cartesian_converter<Kernel, AK>    C2F;
     C2F c2f;
 
-    AK::Aff_transformation_3 af = c2f(m_transfo);
+    AK::Aff_transformation_3 a_at = c2f(at);
 
     AK::FT xtrm[6] = { c2f(bbox.min(0)), c2f(bbox.max(0)),
                        c2f(bbox.min(1)), c2f(bbox.max(1)),
                        c2f(bbox.min(2)), c2f(bbox.max(2)) };
 
     typename AK::Point_3 ps[8];
-    ps[0] = af( AK::Point_3(xtrm[0], xtrm[2], xtrm[4]) );
-    ps[1] = af( AK::Point_3(xtrm[0], xtrm[2], xtrm[5]) );
-    ps[2] = af( AK::Point_3(xtrm[0], xtrm[3], xtrm[4]) );
-    ps[3] = af( AK::Point_3(xtrm[0], xtrm[3], xtrm[5]) );
+    ps[0] = a_at( AK::Point_3(xtrm[0], xtrm[2], xtrm[4]) );
+    ps[1] = a_at( AK::Point_3(xtrm[0], xtrm[2], xtrm[5]) );
+    ps[2] = a_at( AK::Point_3(xtrm[0], xtrm[3], xtrm[4]) );
+    ps[3] = a_at( AK::Point_3(xtrm[0], xtrm[3], xtrm[5]) );
 
-    ps[4] = af( AK::Point_3(xtrm[1], xtrm[2], xtrm[4]) );
-    ps[5] = af( AK::Point_3(xtrm[1], xtrm[2], xtrm[5]) );
-    ps[6] = af( AK::Point_3(xtrm[1], xtrm[3], xtrm[4]) );
-    ps[7] = af( AK::Point_3(xtrm[1], xtrm[3], xtrm[5]) );
+    ps[4] = a_at( AK::Point_3(xtrm[1], xtrm[2], xtrm[4]) );
+    ps[5] = a_at( AK::Point_3(xtrm[1], xtrm[2], xtrm[5]) );
+    ps[6] = a_at( AK::Point_3(xtrm[1], xtrm[3], xtrm[4]) );
+    ps[7] = a_at( AK::Point_3(xtrm[1], xtrm[3], xtrm[5]) );
 
     return bbox_3(ps, ps+8);
   }
 
   Bbox_3
-  compute_transformed_bbox_impl(const Bbox_3& bbox, Tag_false) const
+  compute_transformed_bbox_impl(const CGAL::Aff_transformation_3<Kernel>& at,
+                                const Bbox_3& bbox,
+                                bool,
+                                /*SUPPORTS_ROTATION*/ Tag_false) const
   {
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_UPWARD);
+
     typedef Simple_cartesian<Interval_nt_advanced > AK;
     typedef Cartesian_converter<Kernel, AK>    C2F;
     C2F c2f;
 
-    AK::Aff_transformation_3 af = c2f(m_transfo);
+    AK::Aff_transformation_3 a_at = c2f(at);
 
     AK::FT xtrm[6] = { c2f(bbox.min(0)), c2f(bbox.max(0)),
                        c2f(bbox.min(1)), c2f(bbox.max(1)),
                        c2f(bbox.min(2)), c2f(bbox.max(2)) };
 
     typename AK::Point_3 ps[2];
-    ps[0] = af( AK::Point_3(xtrm[0], xtrm[2], xtrm[4]) );
-    ps[1] = af( AK::Point_3(xtrm[1], xtrm[3], xtrm[5]) );
+    ps[0] = a_at( AK::Point_3(xtrm[0], xtrm[2], xtrm[4]) );
+    ps[1] = a_at( AK::Point_3(xtrm[1], xtrm[3], xtrm[5]) );
 
     return bbox_3(ps, ps+2);
   }
+
 public:
 
-  //Constructor
-  AABB_do_intersect_transform_traits(const Aff_transformation_3<Kernel>& transf = Aff_transformation_3<Kernel>(IDENTITY))
+  bool has_rotation(const CGAL::Aff_transformation_3<Kernel>& at) const
   {
-    has_rotation = false;
-    set_transformation(transf, SUPPORTS_ROTATION());
+    return  ( at.m(0,1) != 0 || at.m(0,2) != 0 || at.m(1,0) != 0
+           || at.m(1,2) != 0 || at.m(2,0) != 0 || at.m(2,1) !=0);
   }
 
-  // AABBTraits concept types
-  typedef typename BaseTraits::Point_3 Point_3;
-  typedef typename BaseTraits::Primitive Primitive;
-  typedef typename BaseTraits::Bounding_box Bounding_box;
+  Bbox_3
+  compute_transformed_bbox(const CGAL::Aff_transformation_3<Kernel>& at,
+                           const Bbox_3& bbox,
+                           bool has_rotation) const
+  {
+    return compute_transformed_bbox_impl(at, bbox, has_rotation, SUPPORTS_ROTATION());
+  }
+};
 
-  // helper functions
+// traversal traits for a tree vs a primitive
+template<typename AABBTraits, typename Kernel,
+         typename SUPPORTS_ROTATION = CGAL::Tag_true>
+class Do_intersect_traversal_traits_with_transformation
+  : public Traversal_traits_with_transformation_helper<AABBTraits, Kernel, SUPPORTS_ROTATION>
+{
+  typedef typename AABBTraits::Primitive Primitive;
+  typedef ::CGAL::AABB_node<AABBTraits> Node;
+  typedef Traversal_traits_with_transformation_helper<AABBTraits, Kernel, SUPPORTS_ROTATION> Base;
 
-  
+  void register_transformation(CGAL::Tag_true)
+  {
+    m_has_rotation = this->has_rotation(m_transfo);
+  }
+
+  void register_transformation(CGAL::Tag_false)
+  {}
+
+public:
+
+  Do_intersect_traversal_traits_with_transformation(const AABBTraits& traits)
+    : m_is_found(false), m_traits(traits), m_has_rotation(false)
+  {
+  }
+
+  bool go_further() const { return !m_is_found; }
+
+  template <class Query>
+  void intersection(const Query& query, const Primitive& primitive)
+  {
+    if( CGAL::do_intersect(query,
+                     internal::Primitive_helper<AABBTraits>::get_datum(primitive, m_traits).transform(m_transfo)) )
+      m_is_found = true;
+  }
+
+  template <class Query>
+  bool do_intersect(const Query& query, const Node& node) const
+  {
+    return m_traits.do_intersect_object()(query, compute_transformed_bbox(node.bbox()));
+  }
+
+  bool is_intersection_found() const { return m_is_found; }
+
+  void reset()
+  {
+    m_is_found = false;
+  }
+
+  const Aff_transformation_3<Kernel>&
+  transformation() const
+  {
+    return m_transfo;
+  }
+
+  void set_transformation(const Aff_transformation_3<Kernel>& transfo)
+  {
+    m_transfo = transfo;
+    register_transformation(SUPPORTS_ROTATION());
+  }
+
   Bbox_3
   compute_transformed_bbox(const Bbox_3& bbox) const
   {
-    return compute_transformed_bbox_impl(bbox, SUPPORTS_ROTATION());
+    return Base::compute_transformed_bbox(m_transfo, bbox, m_has_rotation);
   }
 
-  // Do_intersect predicate
-  class Do_intersect
-    : BaseTraits::Do_intersect
+  // helper for Point_inside_vertical_ray_cast
+  class Transformed_tree_helper
   {
-    typedef AABB_do_intersect_transform_traits<Kernel, AABBPrimitive, SUPPORTS_ROTATION> AABBTraits;
-    const AABBTraits& m_traits;
-    typedef typename BaseTraits::Do_intersect Base;
+    typedef AABB_tree<AABBTraits> Tree;
+    typedef CGAL::AABB_node<AABBTraits> Node;
+    typedef Do_intersect_traversal_traits_with_transformation<AABBTraits, Kernel, SUPPORTS_ROTATION> Traversal_traits;
 
-    Bounding_box
-    compute_transformed_bbox(const Bounding_box& bbox) const
-    {
-      return m_traits.compute_transformed_bbox(bbox);
-    }
+    Traversal_traits m_tt;
 
   public:
-    Do_intersect(const AABBTraits& traits)
-    : Base(static_cast<const BaseTraits&>(traits)),
-      m_traits(traits)
+
+    Transformed_tree_helper(const Traversal_traits& tt)
+      : m_tt(tt)
     {}
 
-    template<typename Query>
-    bool operator()(const Query& q, const Bounding_box& bbox) const
+    Bbox_3 get_tree_bbox(const AABB_tree<AABBTraits>& tree) const
     {
-      return
-        static_cast<const Base*>(this)->operator()(
-          q, compute_transformed_bbox(bbox));
+      return m_tt.compute_transformed_bbox(tree.bbox());
     }
 
-    template<typename Query>
-    bool operator()(const Query& q, const Primitive& pr) const
+    typename AABBTraits::Primitive::Datum
+    get_primitive_datum(const typename AABBTraits::Primitive& primitive, const AABBTraits& traits) const
     {
-      // transformation is done within Primitive_helper
-      return do_intersect(q, internal::Primitive_helper<Self>::get_datum(pr,m_traits));
+      return internal::Primitive_helper<AABBTraits>::get_datum(primitive, traits).transform(m_tt.transformation());
     }
 
-    // intersection with AABB-tree
-    template<typename AABBTraits>
-    bool operator()(const CGAL::AABB_tree<AABBTraits>& other_tree, const Primitive& pr) const
+    Bbox_3 get_node_bbox(const Node& node) const
     {
-      // transformation is done within Primitive_helper
-      return other_tree.do_intersect( internal::Primitive_helper<Self>::get_datum(pr,m_traits));
-    }
-
-    template<typename AABBTraits>
-    bool operator()(const CGAL::AABB_tree<AABBTraits>& other_tree, const Bounding_box& bbox) const
-    {
-      return other_tree.do_intersect(compute_transformed_bbox(bbox));
+      return m_tt.compute_transformed_bbox(node.bbox());
     }
   };
 
-  Do_intersect do_intersect_object() const{
-    return Do_intersect(*this);
-  }
-
-  //Specific
-  void set_transformation(const Aff_transformation_3<Kernel>& trans) const
+  Transformed_tree_helper get_helper() const
   {
-    m_transfo = trans;
-    set_transformation(trans, SUPPORTS_ROTATION());
+    return Transformed_tree_helper(*this);
   }
 
-  const Aff_transformation_3<Kernel>& transformation() const { return m_transfo; }
+private:
+  bool m_is_found;
+  const AABBTraits& m_traits;
+  Aff_transformation_3<Kernel> m_transfo;
+  bool m_has_rotation;
 };
 
-namespace internal {
 
-template<typename K, typename P, typename T>
-struct Primitive_helper<AABB_do_intersect_transform_traits<K,P,T> ,true>{
-
-typedef AABB_do_intersect_transform_traits<K,P,T> Traits;
-
-
-static typename Traits::Primitive::Datum get_datum(const typename Traits::Primitive& p,
-                            const Traits & traits)
+// traversal traits for a tree
+template<typename AABBTraits, class Kernel, typename SUPPORTS_ROTATION = CGAL::Tag_true >
+class Do_intersect_traversal_traits_for_two_trees
+  : public Traversal_traits_with_transformation_helper<AABBTraits, Kernel, SUPPORTS_ROTATION>
 {
-  return p.datum(traits.shared_data()).transform(traits.transformation());
-}
+  typedef typename AABBTraits::Primitive Primitive;
+  typedef ::CGAL::AABB_node<AABBTraits> Node;
+  typedef Traversal_traits_with_transformation_helper<AABBTraits, Kernel, SUPPORTS_ROTATION> Base;
 
-static typename Traits::Point_3 get_reference_point(const typename Traits::Primitive& p,const Traits& traits) {
-  return p.reference_point(traits.shared_data()).transform(traits.transformation());
-}
+  void register_transformation(CGAL::Tag_true)
+  {
+    m_has_rotation = this->has_rotation(m_transfo);
+  }
 
+  void register_transformation(CGAL::Tag_false)
+  {}
+
+  Bbox_3
+  compute_transformed_bbox(const Bbox_3& bbox) const
+  {
+    return Base::compute_transformed_bbox(m_transfo, bbox, m_has_rotation);
+  }
+
+public:
+  Do_intersect_traversal_traits_for_two_trees(const AABBTraits& traits,
+                                    const Aff_transformation_3<Kernel>& transfo,
+                                    Do_intersect_traversal_traits_with_transformation<AABBTraits, Kernel, SUPPORTS_ROTATION>& query_traversal_traits)
+    : m_is_found(false)
+    , m_traits(traits)
+    , m_transfo(transfo)
+    , m_has_rotation(false)
+    , m_query_traversal_traits(query_traversal_traits)
+
+  {
+    register_transformation(SUPPORTS_ROTATION());
+  }
+
+  bool go_further() const { return !m_is_found; }
+
+  void intersection(const AABB_tree<AABBTraits>& query, const Primitive& primitive)
+  {
+    query.traversal( internal::Primitive_helper<AABBTraits>::get_datum(primitive,m_traits).transform(m_transfo), m_query_traversal_traits );
+    m_is_found = m_query_traversal_traits.is_intersection_found();
+    m_query_traversal_traits.reset();
+  }
+
+  bool do_intersect(const AABB_tree<AABBTraits>& query, const Node& node) const
+  {
+    query.traversal( compute_transformed_bbox(node.bbox()), m_query_traversal_traits );
+    bool res = m_query_traversal_traits.is_intersection_found();
+    m_query_traversal_traits.reset();
+    return res;
+  }
+
+  bool is_intersection_found() const { return m_is_found; }
+
+private:
+  bool m_is_found;
+  const AABBTraits& m_traits;
+  const Aff_transformation_3<Kernel>& m_transfo;
+  bool m_has_rotation;
+  Do_intersect_traversal_traits_with_transformation<AABBTraits, Kernel, SUPPORTS_ROTATION>& m_query_traversal_traits;
 };
-
-template<typename K, typename P, typename T>
-typename CGAL::AABB_tree<AABB_do_intersect_transform_traits<K,P,T> >::Bounding_box
-get_tree_bbox(const CGAL::AABB_tree<AABB_do_intersect_transform_traits<K,P,T> >& tree)
-{
-  return tree.traits().compute_transformed_bbox(tree.bbox());
-}
-
-template<typename K, typename P, typename T>
-typename CGAL::AABB_tree<AABB_do_intersect_transform_traits<K,P,T> >::Bounding_box
-get_node_bbox(const CGAL::AABB_node<AABB_do_intersect_transform_traits<K,P,T> >& node,
-              const AABB_do_intersect_transform_traits<K,P,T>& traits)
-{
-  return traits.compute_transformed_bbox(node.bbox());
-}
-
-} // end internal
 
 }//end CGAL
 
