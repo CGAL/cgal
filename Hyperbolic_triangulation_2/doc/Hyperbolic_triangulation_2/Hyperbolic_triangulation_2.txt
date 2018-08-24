@@ -11,7 +11,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Monique Teillaud, Mikhail Bogdanov, and Iordan Iordanov
 
-\image html htriangulation-350px.png 
+\image html ht-450px.png 
 
 2D hyperbolic triangulations of \cgal are designed to represent triangulations of 
 the hyperbolic plane. The vertices of the triangulation are defined by an input set of points.
@@ -35,6 +35,11 @@ The Delaunay triangulation of a set of points \f$\mathcal P\f$ in \f$\mathbb H^2
 	<li> A face is Delaunay hyperbolic if its circumscribing circle is contained in \f$\mathbb H^2\f$.
 </ul>
 \cgalModifEnd
+For an illustration, see \cgalFigureRef{figEmptyDisks}
+
+\cgalFigureBegin{figEmptyDisks, ht-empty-disks.png}
+A face is Delaunay hyperbolic if its circumscribing disk is empty and is also contained in \f$\mathbb H^2\f$ (shaded face). An edge is hyperbolic if there exists at least one disk that passes through its endpoints and is contained in \f$\mathbb H^2\f$. An example of non-hyperbolic edge is the dashed segment: the disks that pass through its endpoints and are contained in \f$\mathbb H^2\f$ are not empty; on the other hand, the disks that pass through its endpoint and are empty, are not contained in \f$\mathbb H^2\f$.
+\cgalFigureEnd
 
 
 \section HT2_Design Design and Implementation History

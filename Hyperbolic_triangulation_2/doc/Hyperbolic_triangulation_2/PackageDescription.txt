@@ -18,7 +18,7 @@
 \addtogroup PkgHyperbolicTriangulation2
  
 \cgalPkgDescriptionBegin{2D Hyperbolic Triangulations,PkgHyperbolicTriangulation2Summary}
-\cgalPkgPicture{Hyperbolic_triangulation_2/fig/htriangulation-120px.png}
+\cgalPkgPicture{Hyperbolic_triangulation_2/fig/ht-120px.png}
  
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Monique Teillaud, Mikhail Bogdanov, and Iordan Iordanov}
