@@ -27,7 +27,7 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/Polygon_mesh_processing/internal/AABB_do_intersect_transform_traits.h>
+#include <CGAL/Polygon_mesh_processing/internal/AABB_traversal_traits_with_transformation.h>
 #include <CGAL/Polygon_mesh_processing/internal/Side_of_triangle_mesh/Point_inside_vertical_ray_cast.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>

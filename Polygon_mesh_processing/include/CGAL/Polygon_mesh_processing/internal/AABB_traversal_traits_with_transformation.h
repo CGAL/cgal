@@ -21,10 +21,10 @@
 //             Sebastien Loriot
 //
 
-#ifndef CGAL_AABB_DO_INTERSECT_TRANSFORM_TRAITS_H
-#define CGAL_AABB_DO_INTERSECT_TRANSFORM_TRAITS_H
+#ifndef CGAL_PMP_INTERNAL_AABB_TRAVERSAL_TRAITS_WITH_TRANSFORMATION
+#define CGAL_PMP_INTERNAL_AABB_TRAVERSAL_TRAITS_WITH_TRANSFORMATION
 
-#include <CGAL/license/AABB_tree.h>
+#include <CGAL/license/Polygon_mesh_processing/collision_detection.h>
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/intersections.h>
