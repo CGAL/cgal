@@ -23,9 +23,9 @@
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Monique Teillaud, Mikhail Bogdanov, and Iordan Iordanov}
 \cgalPkgDesc{This package allows to build and handle Delaunay triangulations of point sets 
-in the hyperbolic plane. Triangulations are built incrementally and can be modified by insertion or
-removal of vertices; point location facilities are also offered, as well as primitives to build the 
-dual Voronoi diagrams.}
+in the hyperbolic plane. Triangulations are built incrementally and can be modified by insertion
+and removal of vertices; point location facilities are also offered, as well as primitives to 
+build the dual Voronoi diagrams.}
 \cgalPkgManuals{Chapter_2D_Hyperbolic_Triangulations,PkgHyperbolicTriangulation2}
 \cgalPkgSummaryEnd
 
@@ -39,36 +39,30 @@ dual Voronoi diagrams.}
 
 \cgalPkgDescriptionEnd
  
-The main class of the 2D Hyperbolic Triangulation package is `CGAL::Hyperbolic_Delaunay_triangulation_2`. This class allows the constructions of Delaunay triangulations in the hyperbolic plane. `CGAL::Hyperbolic_Delaunay_triangulation_2` offers all the functionalities provided by `CGAL::Delaunay_triangulation_2`, such as point location, insertion and removal. Construction of the dual Voronoi diagram is also provided. The class takes a geometric traits and a triangulation data structure as template parameters.
+The Delaunay triangulation of a set of points \f$P\f$ in the hyperbolic plane \f$\mathbb H^2\f$ is a two-dimensional connected simplicial complex with vertex set defined by the points \f$P\f$. In fact, the hyperbolic Delaunay triangulation of \f$P\f$ is a subset of the Euclidean Delaunay triangulation of \f$P\f$. This package offers the necessary functionality to obtain the hyperbolic Delaunay triangulation of \f$P\f$ from the Euclidean Delaunay triangulation of \f$P\f$.
 
-The geometric traits class must be a model of the concept
-`HyperbolicDelaunayTriangulationTraits_2`. It must contain all predicates and constructions
-that are needed by the functions in the triangulation class.
+\cgalClassifedRefPages
 
-The triangulation data structure must be a model of `TriangulationDataStructure_2`, templated by a base
-vertex and a base face class. The base face and base vertex classes must be models of the concepts `HyperbolicTriangulationFaceBase_2` and `TriangulationVertexBase_2`, respectively. 
-By default, the package uses `CGAL::Triangulation_data_structure_2< CGAL::Triangulation_vertex_base_2, CGAL::Hyperbolic_triangulation_face_base_2 >` to represent the triangulation data structure.
-
-The three vertices incident to a face are indexed with 0, 1, and 2 in positive (counter-clockwise) orientation. Each vertex stores a point, and gives access to one of its incident faces. Each face, on the other hand, stores its incident vertices and neighboring faces.
-
-
-# Concepts #
+## Concepts ##
+The main concept `HyperbolicDelaunayTriangulationTraits_2` provides an interface for geometric objects, constructions, and predicates in the hyperbolic plane. The concept `HyperbolicTriangulationFaceBase_2` provides an interface that allows faces of the hyperbolic Delaunay triangulation to be filtered from the faces of the Euclidean Delaunay triangulation.
 
 - `HyperbolicDelaunayTriangulationTraits_2`
 - `HyperbolicTriangulationFaceBase_2`
 
-# Classes #
+## Classes ##
 
-## Main Classes ##
+
+The main class of the 2D Hyperbolic Triangulation package, which allows the constructions of Delaunay triangulations in the hyperbolic plane, is `CGAL::Hyperbolic_Delaunay_triangulation_2`. It offers all the functionalities provided by `CGAL::Delaunay_triangulation_2`, such as point location, insertion and removal. Construction of the dual Voronoi diagram is also provided. 
 
 - `CGAL::Hyperbolic_Delaunay_triangulation_2`
 
-## Traits Classes ##
+
+Two models for the concept `HyperbolicDelaunayTriangulationTraits_2` are provided. The traits class `CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2` is based upon `CGAL::Circular_kernel_2` and guarantees exact computations when the input points have rational coordinates. The traits class `CGAL::Hyperbolic_Delaunay_triangulation_traits_2` is by default based upon `CGAL::Cartesian<CORE::Expr>` and guarantees exact computations with algebraic numbers. `CGAL::Hyperbolic_Delaunay_triangulation_traits_2` is used as base for the traits class in the package \ref PkgPeriodic4HyperbolicTriangulation2Summary.
 
 - `CGAL::Hyperbolic_Delaunay_triangulation_traits_2`
 - `CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2`
 
-## Face Classes ##
+Finally, two models for the concept `HyperbolicTriangulationFaceBase_2` are also provided.
 
 - `CGAL::Hyperbolic_triangulation_face_base_2`
 - `CGAL::Hyperbolic_triangulation_face_base_with_info_2`
