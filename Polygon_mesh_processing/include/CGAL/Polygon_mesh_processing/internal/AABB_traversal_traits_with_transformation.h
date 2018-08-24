@@ -141,9 +141,8 @@ class Do_intersect_traversal_traits_with_transformation
 public:
 
   Do_intersect_traversal_traits_with_transformation(const AABBTraits& traits)
-    : m_is_found(false), m_traits(traits), m_has_rotation(false)
-  {
-  }
+    : m_is_found(false), m_traits_ptr(&traits), m_has_rotation(false)
+  {}
 
   bool go_further() const { return !m_is_found; }
 
@@ -151,14 +150,14 @@ public:
   void intersection(const Query& query, const Primitive& primitive)
   {
     if( CGAL::do_intersect(query,
-                     internal::Primitive_helper<AABBTraits>::get_datum(primitive, m_traits).transform(m_transfo)) )
+                     internal::Primitive_helper<AABBTraits>::get_datum(primitive, *m_traits_ptr).transform(m_transfo)) )
       m_is_found = true;
   }
 
   template <class Query>
   bool do_intersect(const Query& query, const Node& node) const
   {
-    return m_traits.do_intersect_object()(query, compute_transformed_bbox(node.bbox()));
+    return m_traits_ptr->do_intersect_object()(query, compute_transformed_bbox(node.bbox()));
   }
 
   bool is_intersection_found() const { return m_is_found; }
@@ -225,7 +224,7 @@ public:
 
 private:
   bool m_is_found;
-  const AABBTraits& m_traits;
+  const AABBTraits* m_traits_ptr;
   Aff_transformation_3<Kernel> m_transfo;
   bool m_has_rotation;
 };

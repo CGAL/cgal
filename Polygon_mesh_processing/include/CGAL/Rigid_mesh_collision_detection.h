@@ -54,8 +54,7 @@ class Rigid_mesh_collision_detection
   typedef CGAL::AABB_tree<Traits> Tree;
   typedef Do_intersect_traversal_traits_with_transformation<Traits, Kernel, HAS_ROTATION> Traversal_traits;
 
-  std::vector<const TriangleMesh*> m_triangle_mesh_ptrs;
-  // TODO: we probably want an option with external trees
+  std::vector<bool> m_own_aabb_trees;
   std::vector<Tree*> m_aabb_trees;
   std::vector<bool> m_is_closed;
   std::vector< std::vector<typename Kernel::Point_3> > m_points_per_cc;
@@ -67,15 +66,18 @@ class Rigid_mesh_collision_detection
 
   void clear_trees()
   {
+    int i=0;
     BOOST_FOREACH(Tree* tree, m_aabb_trees){
-      delete tree;
+      if (m_own_aabb_trees[i]) delete tree;
+      ++i;
     }
     m_aabb_trees.clear();
   }
 
-  void add_cc_points(const TriangleMesh& tm, bool assume_one_CC)
+public:
+  static
+  void get_one_point_per_cc(const TriangleMesh& tm, std::vector<typename Kernel::Point_3>& points, bool assume_one_CC=false)
   {
-    m_points_per_cc.resize(m_points_per_cc.size()+1);
     if (!assume_one_CC)
     {
       std::vector<std::size_t> CC_ids(num_faces(tm));
@@ -96,7 +98,7 @@ class Rigid_mesh_collision_detection
         {
           if  (vertex_per_cc[get(fid_map, f)]!=GrT::null_vertex())
           {
-            m_points_per_cc.back().push_back(
+            points.push_back(
               get(boost::vertex_point, tm, target( halfedge(f, tm), tm)) );
           }
         }
@@ -104,7 +106,14 @@ class Rigid_mesh_collision_detection
       }
     }
     // only one CC
-    m_points_per_cc.back().push_back( get(boost::vertex_point, tm, *boost::begin(vertices(tm))) );
+    points.push_back( get(boost::vertex_point, tm, *boost::begin(vertices(tm))) );
+  }
+
+private:
+  void add_cc_points(const TriangleMesh& tm, bool assume_one_CC)
+  {
+    m_points_per_cc.resize(m_points_per_cc.size()+1);
+    get_one_point_per_cc(tm, m_points_per_cc.back(), assume_one_CC);
   }
 
   // precondition A and B does not intersect
@@ -127,6 +136,8 @@ class Rigid_mesh_collision_detection
   }
 
 public:
+  typedef Tree AABB_tree;
+
   template <class MeshRange>
   Rigid_mesh_collision_detection(const MeshRange& triangle_meshes, bool assume_one_CC_per_mesh = false)
   {
@@ -141,8 +152,8 @@ public:
   void init(const MeshRange& triangle_meshes, bool assume_one_CC)
   {
     std::size_t nb_meshes = triangle_meshes.size();
-    m_triangle_mesh_ptrs.clear();
-    m_triangle_mesh_ptrs.reserve(nb_meshes);
+    m_own_aabb_trees.clear();
+    m_own_aabb_trees.reserve(nb_meshes);
     m_points_per_cc.clear();
     m_points_per_cc.reserve(nb_meshes);
     clear_trees();
@@ -159,8 +170,8 @@ public:
     BOOST_FOREACH(const TriangleMesh& tm, triangle_meshes)
     {
       if (is_closed(tm))
-        m_is_closed[m_triangle_mesh_ptrs.size()]=true;
-      m_triangle_mesh_ptrs.push_back( &tm );
+        m_is_closed[m_aabb_trees.size()]=true;
+      m_own_aabb_trees.push_back( true );
       Tree* t = new Tree(faces(tm).begin(), faces(tm).end(), tm);
       m_aabb_trees.push_back(t);
       m_traversal_traits.push_back( Traversal_traits(m_aabb_trees.back()->traits()) );
@@ -168,25 +179,46 @@ public:
     }
   }
 
-  void add_mesh(const TriangleMesh& tm, bool assume_one_CC_per_mesh = false)
+  std::size_t add_mesh(const TriangleMesh& tm, bool assume_one_CC_per_mesh = false)
   {
+    std::size_t id = m_aabb_trees.size();
     m_is_closed.push_back(is_closed(tm));
-    m_triangle_mesh_ptrs.push_back( &tm );
+    m_own_aabb_trees.push_back( true );
     Tree* t = new Tree(faces(tm).begin(), faces(tm).end(), tm);
     m_aabb_trees.push_back(t);
     m_traversal_traits.push_back( Traversal_traits(m_aabb_trees.back()->traits()) );
 #if CGAL_CACHE_BOXES
     m_bboxes.push_back(Bbox_3());
-    m_bboxes_is_invalid.resize(m_bboxes_is_invalid.size()+1, true);
+    m_bboxes_is_invalid.resize(id+1, true);
 #endif
     add_cc_points(tm, assume_one_CC_per_mesh);
+
+    return id;
+  }
+
+  std::size_t add_mesh(const Tree& tree,
+                       bool is_closed,
+                       const std::vector<typename Kernel::Point_3>& points_per_cc)
+  {
+    std::size_t id = m_aabb_trees.size();
+    m_is_closed.push_back(is_closed);
+    m_own_aabb_trees.push_back( false );
+    m_aabb_trees.push_back( const_cast<Tree*>(&tree));
+    m_traversal_traits.push_back( Traversal_traits(m_aabb_trees.back()->traits()) );
+#if CGAL_CACHE_BOXES
+    m_bboxes.push_back(Bbox_3());
+    m_bboxes_is_invalid.resize(id+1, true);
+#endif
+    m_points_per_cc.push_back(points_per_cc);
+
+    return id;
   }
 
   void remove_mesh(std::size_t mesh_id)
   {
-    if(mesh_id >= m_triangle_mesh_ptrs.size()) return;
-    m_triangle_mesh_ptrs.erase( m_triangle_mesh_ptrs.begin()+mesh_id );
-    delete m_aabb_trees[mesh_id];
+    if(mesh_id >= m_aabb_trees.size()) return;
+    if (m_own_aabb_trees[mesh_id]) delete m_aabb_trees[mesh_id];
+    m_own_aabb_trees.erase( m_own_aabb_trees.begin()+mesh_id );
     m_aabb_trees.erase( m_aabb_trees.begin()+mesh_id);
     m_is_closed.erase(m_is_closed.begin()+mesh_id);
     m_points_per_cc.erase(m_points_per_cc.begin()+mesh_id);
@@ -195,7 +227,7 @@ public:
     // TODO this is a lazy approach that is not optimal
     m_bboxes.pop_back();
     m_bboxes_is_invalid.set();
-    m_bboxes_is_invalid.resize(m_triangle_mesh_ptrs.size());
+    m_bboxes_is_invalid.resize(m_aabb_trees.size());
 #endif
   }
 
