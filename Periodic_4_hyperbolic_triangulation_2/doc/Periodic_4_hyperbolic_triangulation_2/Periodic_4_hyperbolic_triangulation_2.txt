@@ -11,7 +11,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Iordan Iordanov & Monique Teillaud
 
-\image html triangulation-350px.png 
+\image html new-triangulation-350px.png 
 
 The 2D periodic hyperbolic triangulations class of \cgal is designed to represent 
 triangulations of sets of points on the two-dimensional Bolza surface. 
@@ -21,18 +21,21 @@ The Bolza surface is a closed compact orientable surface of genus 2. A closed co
 surface of genus at least 2 is conformally equivalent to some surface of constant negative 
 curvature, therefore it is <i>hyperbolic</i>. Among all surfaces of genus 2, the 
 Bolza surface is the most symmetric one, and its properties are well understood. It is a 
-natural extension from genus 1 (the Euclidean flat torus, see 
-\ref Chapter_2D_Periodic_Triangulations ) to genus 2.
+natural extension from genus 1 (the Euclidean flat torus, see the documentation for
+\ref PkgPeriodic2Triangulation2) to genus 2.
 \cgalModifEnd
 
-Triangulations of the Bolza surface are periodic triangulations of the hyperbolic 
-plane, and they are also <i>simplicial complexes</i>, i.e. a triangulation:
+\cgalModifBegin
+A triangulation is a <i>simplicial complex</i>, i.e.:
 <ul>
-  <li> contains all incident \f$ j\f$-simplices (\f$ j<k\f$) of any \f$ k\f$-simplex, and 
+  <li> it contains all incident \f$ j\f$-simplices (\f$ j<k\f$) of any \f$ k\f$-simplex, and 
   <li> two \f$ k\f$-simplices either do not intersect or share a common \f$ j\f$-face, \f$ j<k\f$. 
 </ul>
-The simplices of dimension 0, 1 and 2 are called <I>vertex</I>, <I>edge</I>, and <I>face</I>, respectively. For more details on simplices, see \ref Chapter_Triangulations.
-
+Triangulations of the Bolza surface can be seen as periodic triangulations of the hyperbolic plane.
+The simplices of dimension 0, 1, and 2 are called <I>vertex</I>, <I>edge</I>, and <I>face</I>, 
+respectively. More details on simplices can be found in the documentation of the package
+\ref PkgTriangulations.
+\cgalModifEnd
 
 \section P4HT2_thespace The Bolza surface
 
@@ -57,8 +60,17 @@ The Bolza surface \f$\mathcal{M}\f$ is defined as \f$\mathcal{M} = \mathbb H^2 /
 is a fundamental domain for \f$\mathcal G\f$.
 
 \cgalFigureBegin{P4HTriangulationOctagonId, octagon_identification.png, original_domain.png}
-	<b>Left:</b> The hyperbolic translations \f$a,b,c,d\f$ and their inverses identify opposite sides of \f$\mathcal D_o\f$.
-	<b>Right:</b> The half-open octagon is an original domain for \f$\mathcal{M}\f$. Note that only one of the vertices of the octagon is included in the original domain.
+	<b>Left:</b> The hyperbolic translations \f$a,b,c,d\f$ and their inverses identify opposite 
+  sides of \f$\mathcal D_O\f$.
+	<b>Right:</b> The half-open octagon is an original domain for \f$\mathcal{M}\f$. Note that 
+  only one of the vertices of the octagon is included in the original domain.
+\cgalFigureEnd
+
+\cgalFigureBegin{P4HTDoubleTorusConstruction, dt-construction.png}
+  Topological construction of a genus-2 surface from the original domain \f$\mathcal D_O\f$ 
+  of the Bolza surface. Note that each open side is paired with the opposite closed side.
+  Note also that all the vertices of the octagon correspond to only one point on the surface,
+  which is represented uniquely by the only vertex of \f$\mathcal D_O\f$.
 \cgalFigureEnd
 
 We say that two elements \f$p\f$ and \f$q\f$ in \f$\mathbb H^2\f$ are in the same orbit 
@@ -74,7 +86,8 @@ but on some representatives in \f$\mathbb H^2\f$ that we distinguish.
 The half-open octagon 
 shown in \cgalFigureRef{P4HTriangulationOctagonId} - Right contains exactly one
 representative of each point on \f$\mathcal{M}\f$, and we call that half-open octagon the
-<i>original domain</i> \f$\mathcal D\f$. 
+<i>original domain</i> \f$\mathcal D\f$. See \cgalFigureRef{P4HTDoubleTorusConstruction}
+for an illustration of the construction of a genus-2 surface from \f$\mathcal D_O\f$.
 \cgalModifEnd
 From now on, whenever we talk about a <i>point</i>, 
 we will generally mean the representative of an element of \f$\mathcal{M}\f$ that lies inside 
@@ -96,11 +109,11 @@ and adjacency relations. Each vertex stores a point, and gives access to one of 
 faces. Each face gives access to its three adjacent faces, to its three incident vertices, and 
 to the translation paired with the point in each vertex. 
 
-The three vertices of a face are indexed with 0, 1 and 2 in positive (counter-clockwise)
+The three vertices of a face are indexed with 0, 1, and 2 in positive (counter-clockwise)
 orientation. The orientation of a face in \f$\mathcal{M}\f$ is defined as the orientation of 
 its representative in \f$\mathbb H^2\f$ defined by the translations it stores.
 
-As in the underlying combinatorial triangulation (see Chapter \ref Chapter_2D_Triangulation_Data_Structure), 
+As in the underlying combinatorial triangulation (see the documentation for \ref PkgTDS2Summary), 
 the neighbors of a face are indexed with 0, 1, 2 in such a
 way that the \f$i\f$-th neighbor is opposite to the vertex with the same index. Edges are not
 explicitly represented: an edge is given by a face and the index of its opposite vertex 
@@ -116,8 +129,8 @@ See \cgalFigureRef{P4HTriangulationOrientationDS} - Left.
 	<b>Right:</b> Illustration of the canonical representative in \f$\mathbb H^2\f$ of a face on 
                 \f$\mathcal M\f$. Among the three candidate faces, the canonical representative 
                 is the green one, which is closest to the region labeled \f$abcd\f$
-                clockwise. In the 
-                face we store the translations that produce its canonical representative in
+                clockwise. We store in each face the translations to apply to obtain the 
+                face's canonical representative in
                 \f$\mathbb H^2\f$, in this case \f$\mathbb 1, a\f$, and \f$\overline{b}\f$,
                 corresponding to the points \f$p, q\f$, and \f$r\f$.
 \cgalFigureEnd
@@ -150,7 +163,7 @@ We then choose the canonical representative in \f$\mathbb H^2\f$ of a face on
 A periodic hyperbolic triangulation of \f$\mathcal{M}\f$ is said to be `valid` if and only if
 <ol>
   <li>  Its underlying combinatorial graph, the triangulation data structure, is `valid`
-        (see Chapter \ref Chapter_2D_Triangulation_Data_Structure).
+        (see \ref PkgTDS2Summary).
   <li>  The combinatorial graph of the triangulation does not contain cycles of length 1 or 2.
   <li>  Each face of the triangulation is positively oriented. See 
         \cgalFigureRef{P4HTriangulationOrientationDS}. 
@@ -165,7 +178,7 @@ A periodic hyperbolic triangulation of \f$\mathcal{M}\f$ is said to be `valid` i
 
 The class `Periodic_4_hyperbolic_Delaunay_triangulation_2` implements Delaunay triangulations of 
 \f$\mathcal M\f$. The prefix "Periodic_4" emphasizes that the triangulation is periodic in the four
-directions defined by the hyperbolic translations \f$ a,b,c\f$ and \f$d\f$.
+directions defined by the hyperbolic translations \f$ a,b,c\f$, and \f$d\f$.
 
 Delaunay triangulations have the <I>empty circle property</I>, that is, the circumscribing
 hyperbolic circle of each face does not contain any other vertex of the triangulation in its
@@ -176,20 +189,25 @@ Euclidean circles in the Poincaré disk model, the implementation uses Euclidean
 ensure the Delaunay property. 
 
 This implementation is fully dynamic: it supports both insertions of points and vertex removal.
-Note, however, that the removal of a vertex is authorized only if the triangulation would remain 
-a simplicial complex after the removal of that vertex. 
 \cgalModifBegin
-If this condition is not satisfied, then 
-the vertex is <b>not</b> removed from the triangulation.
+Note, however, that the removal of a vertex is authorized only if the triangulation remains 
+valid (as defined above). If this condition is not satisfied, then the vertex is <b>not</b> 
+removed from the triangulation.
 \cgalModifEnd
 
 
 \section P4HT2_Dummy_points Dummy points
 
-Some point sets do not admit a triangulation of \f$\mathcal M\f$. For this reason, we initialize 
-a triangulation of \f$\mathcal M\f$ with a predetermined set of 14 points, called <i>dummy 
-points</i>, whose triangulation in \f$\mathcal M\f$ is a simplicial complex and has the empty
-circle property. The set of dummy points has been proposed in \cgalCite{cgal:btv-dtosl-16}. 
+Some point sets do not admit a triangulation of \f$\mathcal M\f$. 
+\cgalModifBegin
+For instance, a single point does not define a triangulation of \f$\mathcal M\f$, as the result
+would not be a simplicial complex.
+\cgalModifEnd
+For this reason, we initialize a triangulation of \f$\mathcal M\f$ with a predetermined set of 
+14 points, called <i>dummy points</i>, whose triangulation in \f$\mathcal M\f$ is a simplicial 
+complex and has the empty circle property. The set of dummy points has been proposed in 
+\cgalCite{cgal:btv-dtosl-16}. 
+
 \cgalModifBegin
 See \cgalFigureRef{P4HTriangulationDummyPoints}
 \cgalModifEnd
@@ -201,34 +219,50 @@ See \cgalFigureRef{P4HTriangulationDummyPoints}
   of the octagon. 
 \cgalFigureEnd
 
-After the triangulation has been initialized with the dummy points, new
-input points can be inserted. If sufficiently many well-distributed points are inserted, the 
-dummy points become redundant, i.e., the triangulation remains a simplicial complex even if 
-we remove them. If the set of input points is not sufficiently large, or if the points 
-are not well-distributed on the surface, then the final triangulation will contain the necessary
-dummy points to guarantee that the triangulation is a simplicial complex. Experiments have 
+\cgalModifBegin
+After the triangulation has been initialized with the dummy points, new input points can be 
+inserted without ever losing the simplicial complex property. If sufficiently many well-distributed 
+points are inserted, the dummy points become unnecessary, i.e., the triangulation remains a 
+simplicial complex even if we remove them. 
+If the set of input points is not sufficiently large, or if the points 
+are not well-distributed on the surface, then the final triangulation will contain the
+dummy points necessary to guarantee that the triangulation is a simplicial complex. 
+\cgalModifEnd
+Experiments have 
 shown that, on average, all dummy points are removed from the triangulation with the insertion 
 of less than 200 random points uniformly distributed (according to the Euclidean metric) in 
 the unit disk. 
+
 \cgalModifBegin
 See \cgalFigureRef{P4HDummyPointsHistogram}.
 \cgalModifEnd
 
 \cgalFigureBegin{P4HDummyPointsHistogram, histogram-dummy-points.png}
   Histogram of the number of random input points needed to remove all dummy points in the
-  triangulation. The data has been acquired over 500 executions.
+  triangulation. The experiment we conduct is the following: We start with an empty 
+  triangulation of the Bolza surface (i.e., initialized with only the dummy points), and 
+  we start inserting random points one by one. After each insertion, the unnecessary dummy 
+  points (if any) are removed from the triangulation. As soon as the last dummy point has 
+  been removed, we stop the process and record the number of random points inserted. The 
+  histogram shows results acquired from 1000 executions of this experiment. In these 1000
+  executions, the minimum number of random points needed to remove all dummy points was 23,
+  the maximum 188, and on average 64 random points were needed.
 \cgalFigureEnd
 
 
 
 \section P4HT2_design Software Design 
 
+\cgalModifBegin
 The two main classes `Periodic_4_hyperbolic_Delaunay_triangulation_2` and
 `Periodic_4_hyperbolic_triangulation_2` provide high-level geometric functionality and are
-responsible for the geometric validity. `Periodic_4_hyperbolic_Delaunay_triangulation_2` contains
-all the functionality that is special to Delaunay triangulations, such as point insertion and
+responsible for the geometric validity of the triangulation.
+`Periodic_4_hyperbolic_Delaunay_triangulation_2` contains
+all the functionality that is specific to Delaunay triangulations, such as point insertion and
 vertex removal, the side-of-circle test, finding the conflicting region of a given point, and dual
-functions. `Periodic_4_hyperbolic_triangulation_2` contains all the functionality that is common 
+functions. 
+\cgalModifEnd
+`Periodic_4_hyperbolic_triangulation_2` contains all the functionality that is common 
 to triangulations in general, such as location of a point in the triangulation 
 \cgalCite{cgal:dpt-wt-02}, and access functions. Note that `Periodic_4_hyperbolic_triangulation_2`
 does <b>not</b> support point insertion or vertex removal.
@@ -237,12 +271,15 @@ The two classes are built as layers on top of a triangulation data structure, wh
 combinatorial structure. This separation between the geometry and the combinatorics is reflected
 in the software design by the fact that the triangulation classes take two template parameters:
 
-- the <B>geometric traits</B> class, which provides all objects, predicates and constructions 
+- the <B>geometric traits</B> class, which provides all objects, predicates, and constructions 
 necessary for the computation of Delaunay triangulations of the Bolza surface.
 It also provides the hyperbolic translations generating the group \f$\mathcal G\f$, as well as
-to the translations in the set \f$\mathcal N\f$. This parameter follows the concept
-`Periodic_4HyperbolicDelaunayTriangulationTraits_2`, and is described in more detail 
-in Section \ref P4HT2_traits. 
+to the translations in the set \f$\mathcal N\f$. 
+\cgalModifBegin
+This parameter must meet the requirements described in the concept
+`Periodic_4HyperbolicDelaunayTriangulationTraits_2`. For more details, see 
+Section \ref P4HT2_traits. 
+\cgalModifEnd
 
 - the <B>triangulation data structure</B> class, which encodes the combinatorial structure of 
 the triangulation. This parameter follows the concept `TriangulationDataStructure_2`, and for
@@ -251,14 +288,19 @@ the purposes of this package is described in Section \ref P4HT2_datastructure.
 \subsection P4HT2_traits The Geometric Traits Parameter 
 
 The geometric traits class is the first template parameter of the periodic hyperbolic
-triangulation classes. It is described by the concept 
+triangulation classes. 
+\cgalModifBegin
+The requirements it must fulfill are described in the concept
 `Periodic_4HyperbolicDelaunayTriangulationTraits_2`, which extends the concept
-`HyperbolicDelaunayTriangulationTraits_2`, providing all necessary objects, predicates 
+`HyperbolicDelaunayTriangulationTraits_2`, providing all necessary objects, predicates, 
 and constructions, as well as the hyperbolic translations of the group \f$\mathcal G\f$.
+\cgalModifEnd
 
-The default model for the concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2` 
-is the class `Periodic_4_hyperbolic_Delaunay_triangulation_traits_2`, which expects two 
-template parameters:
+\cgalModifBegin
+This package offers a model for the concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2`,
+which is the class `Periodic_4_hyperbolic_Delaunay_triangulation_traits_2`. The class requires 
+two template parameters:
+\cgalModifEnd
 <ul>
 	<li> A `Kernel` with a `number type` that guarantees exact computations on algebraic numbers with nested square roots, for example `CGAL::Cartesian<CORE::Expr>`. This parameter has
   no default value. </li>
@@ -308,15 +350,34 @@ properties of the triangulation after the insertion. It uses the default paramet
 
 \section P4HT2_Performance Performance
 
-We perform tests with a hyperbolic periodic triangulation using `CORE::Expr` as `number type`.
-We insert 1 million random points, uniformly distributed in the fundamental octagon according
-to the Euclidean metric. Averaged over 10 executions, the insertion takes around 54 seconds.
-For exactly the same sets of points, a Euclidean non-periodic \cgal Delaunay triangulation 
-with `CORE::Expr` as `number type` takes around 22 seconds. For comparison, a \cgal Delaunay
-triangulation with `double` number type takes around 1 second.
+\cgalModifBegin
+We perform tests to measure the insertion execution time of our implementation against existing
+\cgal code. We generate random points, uniformly distributed in the unit disk with respect to
+the Euclidean metric. From the generated points, we select 1 million points that lie in the original 
+octagon \f$\mathcal D_O\f$. We insert the same set of points in three triangulations:
+<ul>
+  <li> a periodic hyperbolic Delaunay triangulation with `CORE::Expr` as `number type`;
+  <li> a non-periodic Euclidean Delaunay triangulation with `CORE::Expr` as `number type`;
+  <li> a non-periodic Euclidean Delaunay triangulation with `double` as `number_type`. 
+</ul>
+We report results averaged over 10 executions of this experiment in \ref Table_1 "Table 1" below. The experiments
+have been executed on two machines:
+<ul>
+  <li> <b>Machine 1:</b> MacBook Pro (2015), CPU: Intel Core i5 @ 2.9 GHz, RAM: 16 GB @ 1867 MHz, OS: Mac OS X (10.10.5), Compiler: clang-700.1.81;
+  <li> <b>Machine 2:</b> Dell Vostro 5471 (2018), CPU: Intel Core i5 @ 1.6 GHZ (up to 3.4 GHz in TurboMode), RAM: 8GB @ 2400 MHz, OS: Linux Mint 19 (kernel 4.15.0), Compiler: gcc version 7.3.0. 
+</ul>
 
-The experiments were run on an Intel i5 @ 2.9GHz with 16GB RAM @ 1867MHz. The executables 
-were built in Release mode using the GCC compiler version 7.3.0.
+<center>
+\anchor Table_1
+<table>
+<caption>Table 1: Comparison of insertion times of 1 million random points</caption>
+<tr><th>  %Triangulation type                   <th>  Machine 1     <th>  Machine 2
+<tr><td>  Periodic hyperbolic (`CORE::Expr`)    <td>  55 sec.       <td>  40 sec.
+<tr><td>  Non-periodic Euclidean (`CORE::Expr`) <td>  24 sec.       <td>  20 sec.
+<tr><td>  Non-periodic Euclidean (`double`)     <td>  1 sec.        <td>  1 sec.
+</table>
+</center>
+\cgalModifEnd
 
 \section P4HT2_Design Design and Implementation History
 
