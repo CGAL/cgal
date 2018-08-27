@@ -26,6 +26,14 @@ public:
 
 	/// \name Types
 	/// @{
+
+		/*!
+			\cgalModifBegin
+			Represents a hyperbolic circle, i.e., a circle contained in the unit disk.
+			\cgalModifEnd
+		*/
+		typedef unspecified_type 				Circle_2;
+
 		/*!
 			Represents a hyperbolic translation. 
 			Must be a model of the concept `HyperbolicOctagonTranslation`. 
