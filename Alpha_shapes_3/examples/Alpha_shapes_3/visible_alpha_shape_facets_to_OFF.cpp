@@ -87,7 +87,7 @@ int main()
 
 // dump into OFF format
   // assign an id per vertex
-  boost::unordered_map< Alpha_shape_3::Vertex_handle, int> vids;
+  boost::unordered_map< Alpha_shape_3::Vertex_handle, std::size_t> vids;
   points.clear();
 
   BOOST_FOREACH(Alpha_shape_3::Facet f, filtered_regular_facets)
