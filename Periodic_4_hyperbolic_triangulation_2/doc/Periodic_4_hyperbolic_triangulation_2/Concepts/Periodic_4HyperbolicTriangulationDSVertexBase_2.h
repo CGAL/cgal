@@ -5,14 +5,20 @@
 \ingroup PkgPeriodic4HyperbolicTriangulation2Concepts
 \cgalConcept
 
-A refinement of the concept TriangulationVertexBase_2 that adds an interface for hyperbolic translations.
+\cgalModifBegin
+\cgalRefines TriangulationDSVertexBase_2
 
-At the base level, a vertex stores an input point and a handle to one of its incident faces.
+A refinement of the concept `TriangulationDSVertexBase_2` that adds an interface for hyperbolic translations.
+\cgalModifEnd
 
 For periodic hyperbolic triangulations, the vertex base class needs to temporarily store a hyperbolic 
-translation during the insertion process.
+translation during the insertion process. 
+\cgalModifBegin
+A boolean flag indicates whether the face stores a translation or not. The value of the flag is automatically
+set when storing or removing a translation.
+\cgalModifEnd
 
-\cgalHasModel CGAL::Periodic_4_hyperbolic_triangulation_ds_vertex_base_2
+\cgalHasModel `CGAL::Periodic_4_hyperbolic_triangulation_ds_vertex_base_2`
 
 \sa `TriangulationDataStructure_2`
 \sa `Periodic_4HyperbolicTriangulationDSFaceBase_2`
@@ -20,22 +26,35 @@ translation during the insertion process.
 */
 
 
-class Periodic_4HyperbolicTriangulationDSVertexBase_2 : public TriangulationDSVertexBase_2 {
+class Periodic_4HyperbolicTriangulationDSVertexBase_2 {
 public:
 
   /// \name Types
   /// @{
-	typedef typename Vb::Triangulation_data_structure   Triangulation_data_structure;
-	typedef typename Triangulation_data_structure::Face_handle 		             
-                                                      Face_handle;
-	typedef typename GT::Point_2			                  Point;
-	typedef typename GT::Hyperbolic_translation 			  Hyperbolic_translation;
-
-  /*!
-    Type used internally to break cyclical dependencies.
-    \sa TriangulationDSFaceBase_2::Rebind_TDS
+	
+	/*!
+  \cgalModifBegin
+    (note: was inheriting from `Vb`, which is not defined here)
+  \cgalModifEnd
   */
-	typedef unspecified_type                            Rebind_TDS;
+  typedef typename TriangulationDSVertexBase_2::Face_handle 		    
+                                                      Face_handle;
+  
+  /*!
+  \cgalModifBegin
+    Must be the same as the point type `Periodic_4HyperbolicDelaunayTriangulationTraits_2::Point_2`
+    defined by the geometric traits of the triangulation.
+  \cgalModifEnd
+  */
+	typedef unspecified_type	    		                  Point;
+	
+  /*!
+  \cgalModifBegin
+    Must be the same as the translation type `Periodic_4HyperbolicDelaunayTriangulationTraits_2::Hyperbolic_translation`
+    defined by the geometric traits of the triangulation.
+  \cgalModifEnd
+  */
+  typedef unspecified_type                    			  Hyperbolic_translation;
   /// @}
 
   /// \name Creation
@@ -67,7 +86,7 @@ public:
   /*!
     Stores the translation `tr` in the vertex, and sets a flag indicating that the vertex stores a translation.
   */
-	void set_translation(Hyperbolic_translation tr);
+	void set_translation(const Hyperbolic_translation& tr);
 
   /*!
     Returns the translation stored in the vertex.
