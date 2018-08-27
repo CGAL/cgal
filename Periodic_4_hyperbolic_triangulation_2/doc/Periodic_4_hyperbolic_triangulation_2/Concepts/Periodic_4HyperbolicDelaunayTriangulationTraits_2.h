@@ -33,11 +33,20 @@ public:
 
 			which returns a floating-point approximation of the hyperbolic diameter
 			of the circle `c`.
-			
-			\todo Move to the triangulation class instead?
 		*/
 		typedef unspecified_type 				Compute_approximate_hyperbolic_diameter;
 	/// @}
+
+
+	/// \name Operations
+	/// \cgalModifBegin
+	/// The following function gives access to the computation object:
+	/// \cgalModifEnd
+	/// @{
+
+		Compute_approximate_hyperbolic_diameter	
+		compute_approximate_hyperbolic_diameter_object() const;
+	///	@}
 
 }; 
 
