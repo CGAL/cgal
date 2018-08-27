@@ -22,6 +22,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Timer.h>
+#include <CGAL/IO/vtk_io.h>
 
 // Qt headers
 #include <QtGui>
@@ -658,9 +659,10 @@ MainWindow::on_actionSaveConstraints_triggered()
 						  tr("Save Constraints"),
 						  ".",
 						  tr("Poly files (*.poly)\n"
-						     "Edge files (*.edg)"));
+						     "Edge files (*.edg)\n"
+                                                     "VTU files (*.vtu)"));
   if(! fileName.isEmpty()){
-    saveConstraints(fileName);
+      saveConstraints(fileName);
   }
 }
 
@@ -669,7 +671,13 @@ void
 MainWindow::saveConstraints(QString fileName)
 {
   std::ofstream output(qPrintable(fileName));
-  if (output) output << cdt;
+  
+  if(!fileName.endsWith("vtu") && output)
+    output << cdt;
+  else if (output)
+  {
+    CGAL::write_unstructured_grid_2(output, cdt);
+  }
 }
 
 

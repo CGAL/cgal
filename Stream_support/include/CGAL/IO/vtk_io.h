@@ -30,7 +30,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 
-
+//todo try to factorize with functors
 namespace CGAL{
 // writes the appended data into the .vtu file
 template <class FT> 
@@ -46,6 +46,105 @@ write_vector(std::ostream& os,
 }
 
 // writes the cells tags before binary data is appended
+
+template <class CDT>
+void 
+write_cells_tag_2(std::ostream& os,
+                  const CDT & tr,
+                  std::size_t number_of_triangles,
+                  std::map<typename CDT::Vertex_handle, std::size_t> & V,
+                  bool binary,
+                  std::size_t& offset)
+{
+  std::string formatattribute =
+    binary ? " format=\"appended\"" : " format=\"ascii\"";
+
+  std::string typeattribute;
+  switch(sizeof(std::size_t)) {
+  case 8: typeattribute = " type=\"UInt64\""; break;
+  case 4: typeattribute = " type=\"UInt32\""; break;
+  default: CGAL_error_msg("Unknown size of std::size_t");
+  }
+
+  // Write connectivity table
+  os << "    <Cells>\n"
+     << "      <DataArray Name=\"connectivity\""
+     << formatattribute << typeattribute;
+  
+  if (binary) { // if binary output, just write the xml tag
+    os << " offset=\"" << offset << "\"/>\n";
+    offset += (3 * number_of_triangles + 1) * sizeof(std::size_t); 
+    // 3 indices (size_t) per cell + length of the encoded data (size_t)
+  }
+  else {
+    os << "\">\n";   
+    for(typename CDT::Finite_faces_iterator 
+            fit = tr.finite_faces_begin(),
+            end = tr.finite_faces_end();
+          fit != end; ++fit)
+      {
+      if(fit->is_in_domain())
+      {
+        os << V[fit->vertex(0)] << " ";
+        os << V[fit->vertex(2)] << " ";
+        os << V[fit->vertex(1)] << " ";
+      }
+    }
+    os << "      </DataArray>\n";
+  }
+  
+  // Write offsets
+  os   << "      <DataArray Name=\"offsets\""
+       << formatattribute << typeattribute;
+  
+  if (binary) {  // if binary output, just write the xml tag
+    os << " offset=\"" << offset << "\"/>\n";
+    offset += (number_of_triangles + 1) * sizeof(std::size_t);
+    // 1 offset (size_t) per cell + length of the encoded data (size_t)
+  }
+  else {
+    os << "\">\n";  
+    std::size_t cells_offset = 0;
+    for(typename CDT::Finite_faces_iterator fit = 
+        tr.finite_faces_begin() ;
+        fit != tr.finite_faces_end() ;
+        ++fit )
+    {
+      if(fit->is_in_domain())
+      {
+        cells_offset += 3;
+        os << cells_offset << " ";
+      }
+    }  
+    os << "      </DataArray>\n";
+  }
+
+  // Write cell type (triangles == 5)
+  os   << "      <DataArray Name=\"types\""
+       << formatattribute << " type=\"UInt8\"";
+
+  if (binary) {
+    os << " offset=\"" << offset << "\"/>\n";
+    offset += number_of_triangles + sizeof(std::size_t);
+    // 1 unsigned char per cell + length of the encoded data (size_t)
+  }
+  else {
+    os << "\">\n";  
+    for(typename CDT::Finite_faces_iterator fit = 
+        tr.finite_faces_begin() ;
+        fit != tr.finite_faces_end() ;
+        ++fit )
+    {
+      if(fit->is_in_domain())
+      {
+        os << "5 ";
+      }
+    }
+    os << "      </DataArray>\n";
+  }
+  os << "    </Cells>\n";
+}
+
 template <class C3T3>
 void 
 write_cells_tag(std::ostream& os,
@@ -130,6 +229,38 @@ write_cells_tag(std::ostream& os,
 }
 
 // writes the cells appended data at the end of the .vtu file 
+template <class CDT>
+void
+write_cells_2(std::ostream& os,
+              const CDT & tr,
+              std::size_t number_of_triangles,
+              std::map<typename CDT::Vertex_handle, std::size_t> & V)
+{
+  std::vector<std::size_t> connectivity_table;
+  std::vector<std::size_t> offsets;
+  std::vector<unsigned char> cell_type(number_of_triangles,5);  // triangles == 5
+  
+  std::size_t off = 0;
+  for(typename CDT::Finite_faces_iterator 
+      fit = tr.finite_faces_begin(),
+      end = tr.finite_faces_end();
+      fit != end; ++fit)
+  {
+    if(fit->is_in_domain())
+    {
+      off += 3;
+      offsets.push_back(off);
+      connectivity_table.push_back(V[fit->vertex(0)]);
+      connectivity_table.push_back(V[fit->vertex(2)]);
+      connectivity_table.push_back(V[fit->vertex(1)]);
+    }
+  }
+  write_vector<std::size_t>(os,connectivity_table);
+  write_vector<std::size_t>(os,offsets);
+  write_vector<unsigned char>(os,cell_type);
+}
+
+
 template <class C3T3>
 void
 write_cells(std::ostream& os,
@@ -166,6 +297,7 @@ write_polys(std::ostream& os,
             const Mesh & mesh,
             const NamedParameters& np)
 {
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<Mesh>::face_iterator face_iterator;
   typedef typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Mesh, NamedParameters>::const_type Vpmap;
   typedef typename CGAL::Polygon_mesh_processing::GetVertexIndexMap<Mesh, NamedParameters>::type Vimap;
@@ -174,7 +306,6 @@ write_polys(std::ostream& os,
   
   typedef typename boost::property_traits<Vpmap>::value_type Point_t;
   typedef typename CGAL::Kernel_traits<Point_t>::Kernel Gt;
-  typedef typename Gt::FT FT;
   std::vector<std::size_t> connectivity_table;
   std::vector<std::size_t> offsets;
   std::vector<unsigned char> cell_type(num_faces(mesh),5);  // triangle == 5
@@ -194,14 +325,6 @@ write_polys(std::ostream& os,
   write_vector<std::size_t>(os,offsets);
   write_vector<unsigned char>(os,cell_type);
 }
-//overload
-template <class Mesh>
-void
-write_polys(std::ostream& os,
-            const Mesh & mesh)
-{
-  write_polys(os, mesh, CGAL::parameters::all_default());
-}
 //todo use named params for maps
 template <class Mesh,
           typename NamedParameters>
@@ -212,6 +335,7 @@ write_polys_tag(std::ostream& os,
                 std::size_t& offset,
                 const NamedParameters& np)
 {
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<Mesh>::face_iterator face_iterator;
   typedef typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Mesh, NamedParameters>::const_type Vpmap;
   typedef typename CGAL::Polygon_mesh_processing::GetVertexIndexMap<Mesh, NamedParameters>::type Vimap;
@@ -221,7 +345,6 @@ write_polys_tag(std::ostream& os,
   
   typedef typename boost::property_traits<Vpmap>::value_type Point_t;
   typedef typename CGAL::Kernel_traits<Point_t>::Kernel Gt;
-  typedef typename Gt::FT FT;
   
   std::string formatattribute =
     binary ? " format=\"appended\"" : " format=\"ascii\"";
@@ -295,20 +418,6 @@ write_polys_tag(std::ostream& os,
   }
   os << "    </Polys>\n";
 }
-//overload
-template <class Mesh>
-void 
-write_polys_tag(std::ostream& os,
-                const Mesh & mesh,
-                bool binary,
-                std::size_t& offset)
-{
-  write_polys_tag(os,
-                  mesh,
-                  binary,
-                  offset,
-                  CGAL::parameters::all_default());
-}
 // writes the points tags before binary data is appended
 template <class Tr>
 void 
@@ -317,7 +426,7 @@ write_points_tag(std::ostream& os,
                  std::map<typename Tr::Vertex_handle, std::size_t> & V,
                  bool binary,
                  std::size_t& offset,
-                 std::size_t dim) 
+                 std::size_t dim = 3) 
 {
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Geom_traits Gt;
@@ -328,25 +437,27 @@ write_points_tag(std::ostream& os,
   std::string type = (sizeof(FT) == 8) ? "Float64" : "Float32";
 
   os << "    <Points>\n"
-     << "      <DataArray type =\"" << type << "\" NumberOfComponents=\""
-     <<dim
-    <<"\" format=\"" << format;
+     << "      <DataArray type =\"" << type << "\" NumberOfComponents=\"3\" format=\""
+     << format;
 
   if (binary) {
     os << "\" offset=\"" << offset << "\"/>\n";    
-    offset += dim * tr.number_of_vertices() * sizeof(FT) + sizeof(std::size_t);
+    offset += 3 * tr.number_of_vertices() * sizeof(FT) + sizeof(std::size_t);
     // dim coords per points + length of the encoded data (size_t)
   }
   else {
     os << "\">\n";  
     for( Finite_vertices_iterator vit = tr.finite_vertices_begin();
-	 vit != tr.finite_vertices_end();
-	 ++vit)
-      {
-	V[vit] = inum++;
-	os << vit->point().x() << " " << vit->point().y()<< " " ;
-        if(dim == 3)
-          os << vit->point().z() << " ";
+         vit != tr.finite_vertices_end();
+         ++vit)
+    {
+      V[vit] = inum++;
+        os << vit->point()[0] << " ";
+        os << vit->point()[1] << " ";
+        if(dim == 3) 
+          os << vit->point()[2] << " ";
+        else
+          os << 0.0 << " ";
       }
     os << "      </DataArray>\n";
   }
@@ -397,23 +508,15 @@ write_points_tag(std::ostream& os,
   }
   os << "    </Points>\n";
 }
-//overload
-template <class Mesh>
-void 
-write_points_tag(std::ostream& os,
-                 const Mesh & mesh,
-                 bool binary,
-                 std::size_t& offset)
-{
-  write_points_tag(os, mesh, binary, offset, CGAL::parameters::all_default());
-}
+
 // writes the points appended data at the end of the .vtu file 
 template <class Tr>
 void
 write_points(std::ostream& os,
 	     const Tr & tr,
-	     std::map<typename Tr::Vertex_handle, std::size_t> & V,
-             std::size_t dim)
+	     std::map<typename Tr::Vertex_handle, 
+             std::size_t> & V,
+             std::size_t dim = 3)
 {
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Geom_traits Gt;
@@ -426,10 +529,9 @@ write_points(std::ostream& os,
        ++vit)
     {
       V[vit] = inum++;  // binary output => the map has not been filled yet
-      coordinates.push_back(vit->point().x());
-      coordinates.push_back(vit->point().y());
-      if(dim == 3)
-        coordinates.push_back(vit->point().z());
+      coordinates.push_back(vit->point()[0]);
+      coordinates.push_back(vit->point()[1]);
+      coordinates.push_back(dim == 3 ? vit->point()[2] : 0.0);
     }
   write_vector<FT>(os,coordinates);
 }
@@ -459,14 +561,6 @@ write_polys_points(std::ostream& os,
       coordinates.push_back(get(vpm, *vit).z());
     }
   write_vector<FT>(os,coordinates);
-}
-//overload
-template <class Mesh>
-void
-write_polys_points(std::ostream& os,
-                   const Mesh & mesh)
-{
-  write_polys_points(os, mesh, CGAL::parameters::all_default());
 }
 // writes the attribute tags before binary data is appended
 template <class T>
@@ -503,58 +597,6 @@ write_attributes(std::ostream& os,
 		 const std::vector<FT>& att)
 {
   write_vector(os,att);
-}
-
-template <class C3t3>
-void write_unstructured_grid(std::ostream& os,
-                             const C3t3& c3t3, 
-                             std::size_t dim)
-{
-  typedef typename C3t3::Triangulation Tr;
-  typedef typename Tr::Vertex_handle Vertex_handle;
-  const Tr& tr = c3t3.triangulation();
-  std::map<Vertex_handle, std::size_t> V;
-  //write header
-  os << "<?xml version=\"1.0\"?>\n"
-     << "<VTKFile type=\"UnstructuredGrid\" version=\"0.1\"";
-#ifdef CGAL_LITTLE_ENDIAN
-  os << " byte_order=\"LittleEndian\"";
-#else // CGAL_BIG_ENDIAN
-  os << " byte_order=\"BigEndian\"";
-#endif
-  
-  switch(sizeof(std::size_t)) {
-  case 4: os << " header_type=\"UInt32\""; break;
-  case 8: os << " header_type=\"UInt64\""; break;
-  default: CGAL_error_msg("Unknown size of std::size_t");
-  }
-  os << ">\n"
-     << "  <UnstructuredGrid>" << "\n";
-  
-  os << "  <Piece NumberOfPoints=\"" << tr.number_of_vertices() 
-     << "\" NumberOfCells=\"" << c3t3.number_of_cells() << "\">\n";
-  bool binary = true;
-  std::size_t offset = 0;
-  write_points_tag(os,tr,V,binary,offset, dim);
-  write_cells_tag(os,c3t3,V,binary,offset);
-  if(dim==3)
-  {
-    os << "   <CellData Domain=\"MeshDomain";
-    os << "\">\n";
-    std::vector<float> mids;      
-    write_attribute_tag(os,"MeshDomain",mids,binary,offset);
-    os << "    </CellData>\n";
-  }
-  os << "   </Piece>\n"
-     << "  </UnstructuredGrid>\n";
-  if (binary) {
-    os << "<AppendedData encoding=\"raw\">\n_"; 
-    write_points(os,tr,V, dim);  // write points before cells to fill the std::map V
-    write_cells(os,c3t3,V, mids);//todo mids should be filled by write_attribute_tag
-    if(dim==3)
-      write_attributes(os,mids);
-  }
-  os << "</VTKFile>\n";
 }
 
 //public API
@@ -643,26 +685,95 @@ template <class C3T3>
 void write_unstructured_grid_3(std::ostream& os,
                              const C3T3& c3t3)
 {
-  write_unstructured_grid(os, c3t3, 3);
+  typedef typename C3T3::Triangulation Tr;
+  typedef typename Tr::Vertex_handle Vertex_handle;
+  const Tr& tr = c3t3.triangulation();
+  std::map<Vertex_handle, std::size_t> V;
+  //write header
+  os << "<?xml version=\"1.0\"?>\n"
+     << "<VTKFile type=\"UnstructuredGrid\" version=\"0.1\"";
+#ifdef CGAL_LITTLE_ENDIAN
+  os << " byte_order=\"LittleEndian\"";
+#else // CGAL_BIG_ENDIAN
+  os << " byte_order=\"BigEndian\"";
+#endif
+  
+  switch(sizeof(std::size_t)) {
+  case 4: os << " header_type=\"UInt32\""; break;
+  case 8: os << " header_type=\"UInt64\""; break;
+  default: CGAL_error_msg("Unknown size of std::size_t");
+  }
+  os << ">\n"
+     << "  <UnstructuredGrid>" << "\n";
+  
+  os << "  <Piece NumberOfPoints=\"" << tr.number_of_vertices() 
+     << "\" NumberOfCells=\"" << c3t3.number_of_cells() << "\">\n";
+  bool binary = true;
+  std::size_t offset = 0;
+  write_points_tag(os,tr,V,binary,offset);
+  write_cells_tag(os,c3t3,V,binary,offset);
+  std::vector<float> mids;      
+    os << "   <CellData Domain=\"MeshDomain";
+    os << "\">\n";
+    write_attribute_tag(os,"MeshDomain",mids,binary,offset);
+    os << "    </CellData>\n";
+  os << "   </Piece>\n"
+     << "  </UnstructuredGrid>\n";
+  if (binary) {
+    os << "<AppendedData encoding=\"raw\">\n_"; 
+    write_points(os,tr,V);  // write points before cells to fill the std::map V
+    write_cells(os,c3t3,V, mids);//todo mids should be filled by write_attribute_tag
+    write_attributes(os,mids);
+  }
+  os << "</VTKFile>\n";
 }
 
-//!
-//! \brief write_unstructured_grid_2 writes the content of a `CDT` in the .vtu
-//! XML format.
-//! 
-//! \tparam CDT  must be 2D constrained Delaunay triangulation
-//! 
-//! \param os a `std::ostream`.
-//! \param tr ?????????
-//! \param binary decides if the data should be written in binary(`true`)
-//!   or in ASCII(`false`).
-//!
-//!
 template <class CDT>
 void write_unstructured_grid_2(std::ostream& os,
-                             const CDT& tr)
+                               const CDT& tr,
+                               bool binary = true)
 {
-  write_unstructured_grid(os, tr, 2);
+  typedef typename CDT::Vertex_handle Vertex_handle;
+  std::map<Vertex_handle, std::size_t> V;
+  //write header
+  os << "<?xml version=\"1.0\"?>\n"
+     << "<VTKFile type=\"UnstructuredGrid\" version=\"0.1\"";
+#ifdef CGAL_LITTLE_ENDIAN
+  os << " byte_order=\"LittleEndian\"";
+#else // CGAL_BIG_ENDIAN
+  os << " byte_order=\"BigEndian\"";
+#endif
+  
+  switch(sizeof(std::size_t)) {
+  case 4: os << " header_type=\"UInt32\""; break;
+  case 8: os << " header_type=\"UInt64\""; break;
+  default: CGAL_error_msg("Unknown size of std::size_t");
+  }
+  os << ">\n"
+     << "  <UnstructuredGrid>" << "\n";
+  
+  int number_of_triangles = 0;
+  for(typename CDT::Finite_faces_iterator 
+      fit = tr.finite_faces_begin(),
+      end = tr.finite_faces_end();
+      fit != end; ++fit)
+  {
+    if(fit->is_in_domain()) ++number_of_triangles;
+  }
+  os << "  <Piece NumberOfPoints=\"" << tr.number_of_vertices() 
+     << "\" NumberOfCells=\"" << number_of_triangles << "\">\n";
+  std::size_t offset = 0;
+  write_points_tag(os,tr,V,binary,offset, 2);
+  write_cells_tag_2(os,tr,number_of_triangles, V,binary,offset);
+  os << "   </Piece>\n"
+     << "  </UnstructuredGrid>\n";
+  if (binary) {
+    os << "<AppendedData encoding=\"raw\">\n_"; 
+    write_points(os,tr,V, 2);  // write points before cells to fill the std::map V
+    write_cells_2(os,tr, number_of_triangles, V);
+  }
+  os << "</VTKFile>\n";
 }
+
 } //end CGAL
 #endif // CGAL_VTK_IO_H
