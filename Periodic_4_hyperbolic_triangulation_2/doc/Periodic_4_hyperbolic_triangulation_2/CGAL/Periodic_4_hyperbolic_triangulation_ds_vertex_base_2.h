@@ -12,7 +12,7 @@ concept `Periodic_4HyperbolicTriangulationDSVertexBase_2`. It accepts two templa
 
 \tparam GT 	Geometric Traits type. This should be a model of the concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2`.
 			This template parameter has no default value.
-\tparam Vb 	Vertex Base type. Should be a model of the concept TriangulationDSVertexBase_2. 
+\tparam Vb 	Vertex Base type. Should be a model of the concept `TriangulationDSVertexBase_2`. 
 		   	The default value for this template parameter is `CGAL::Triangulation_ds_vertex_base_2<>`
 
 \cgalModels Periodic_4HyperbolicTriangulationDSVertexBase_2
