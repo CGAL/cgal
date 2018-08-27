@@ -22,14 +22,6 @@ class Hyperbolic_octagon_translation {
 
 public:
 
-	/// \name Types
-	/// @{
-		/*!
-			Represents a single letter of the word corresponding to the translation. 
-		*/
-		typedef unsigned short int 	Word_letter;
-	/// @}
-
 	/// \name Functions
 	/// @{
 
