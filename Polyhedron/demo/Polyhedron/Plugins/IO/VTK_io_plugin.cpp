@@ -76,6 +76,9 @@
 #include <vtkCommand.h>
 #include <vtkXMLUnstructuredGridWriter.h>
 
+#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+
 #ifdef USE_SURFACE_MESH
 typedef Scene_surface_mesh_item Scene_facegraph_item;
 #else
@@ -90,7 +93,7 @@ typedef boost::property_traits<boost::property_map<FaceGraph, CGAL::vertex_point
 template <class FT> 
 void
 write_vector(std::ostream& os, 
-	     const std::vector<FT>& vect) 
+             const std::vector<FT>& vect) 
 {
   const char* buffer = reinterpret_cast<const char*>(&(vect[0]));
   std::size_t size = vect.size()*sizeof(FT);
@@ -103,10 +106,10 @@ write_vector(std::ostream& os,
 template <class C3T3>
 void 
 write_cells_tag(std::ostream& os,
-		const C3T3 & c3t3,
-		std::map<typename C3T3::Triangulation::Vertex_handle, std::size_t> & V,
-		bool binary,
-		std::size_t& offset)
+                const C3T3 & c3t3,
+                std::map<typename C3T3::Triangulation::Vertex_handle, std::size_t> & V,
+                bool binary,
+                std::size_t& offset)
 {
   typedef typename C3T3::Cells_in_complex_iterator Cell_iterator;
   std::string formatattribute =
@@ -187,8 +190,8 @@ write_cells_tag(std::ostream& os,
 template <class C3T3>
 void
 write_cells(std::ostream& os,
-	    const C3T3 & c3t3,
-	    std::map<typename C3T3::Triangulation::Vertex_handle, std::size_t> & V,
+            const C3T3 & c3t3,
+            std::map<typename C3T3::Triangulation::Vertex_handle, std::size_t> & V,
             std::vector<float>& mids)
 {
   typedef typename C3T3::Cells_in_complex_iterator Cell_iterator;
@@ -212,15 +215,165 @@ write_cells(std::ostream& os,
   write_vector<unsigned char>(os,cell_type);
 }
 
+// writes the polys appended data at the end of the .vtp file 
+template <class Mesh,
+          typename NamedParameters>
+void
+write_polys(std::ostream& os,
+            const Mesh & mesh,
+            const NamedParameters& np)
+{
+  typedef typename boost::graph_traits<Mesh>::face_iterator face_iterator;
+  typedef typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Mesh, NamedParameters>::const_type Vpmap;
+  typedef typename CGAL::Polygon_mesh_processing::GetVertexIndexMap<Mesh, NamedParameters>::type Vimap;
+  Vimap V = choose_param(get_param(np, CGAL::internal_np::vertex_index),
+                           get_const_property_map(CGAL::internal_np::vertex_index, mesh));
+  
+  typedef typename boost::property_traits<Vpmap>::value_type Point_t;
+  typedef typename CGAL::Kernel_traits<Point_t>::Kernel Gt;
+  typedef typename Gt::FT FT;
+  std::vector<std::size_t> connectivity_table;
+  std::vector<std::size_t> offsets;
+  std::vector<unsigned char> cell_type(num_faces(mesh),5);  // triangle == 5
+  
+  std::size_t off = 0;
+  for( face_iterator fit = faces(mesh).begin() ;
+       fit != faces(mesh).end() ;
+       ++fit )
+    {
+      off += 3;
+      offsets.push_back(off);
+      BOOST_FOREACH(vertex_descriptor v,
+                    vertices_around_face(halfedge(*fit, mesh), mesh))
+	connectivity_table.push_back(V[v]);
+    }
+  write_vector<std::size_t>(os,connectivity_table);
+  write_vector<std::size_t>(os,offsets);
+  write_vector<unsigned char>(os,cell_type);
+}
+//overload
+template <class Mesh>
+void
+write_polys(std::ostream& os,
+            const Mesh & mesh)
+{
+  write_polys(os, mesh, CGAL::parameters::all_default());
+}
+//todo use named params for maps
+template <class Mesh,
+          typename NamedParameters>
+void 
+write_polys_tag(std::ostream& os,
+                const Mesh & mesh,
+                bool binary,
+                std::size_t& offset,
+                const NamedParameters& np)
+{
+  typedef typename boost::graph_traits<Mesh>::face_iterator face_iterator;
+  typedef typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Mesh, NamedParameters>::const_type Vpmap;
+  typedef typename CGAL::Polygon_mesh_processing::GetVertexIndexMap<Mesh, NamedParameters>::type Vimap;
+  Vimap V = choose_param(get_param(np, CGAL::internal_np::vertex_index),
+                           get_const_property_map(CGAL::internal_np::vertex_index, mesh));
+  
+  
+  typedef typename boost::property_traits<Vpmap>::value_type Point_t;
+  typedef typename CGAL::Kernel_traits<Point_t>::Kernel Gt;
+  typedef typename Gt::FT FT;
+  
+  std::string formatattribute =
+    binary ? " format=\"appended\"" : " format=\"ascii\"";
 
+  std::string typeattribute;
+  switch(sizeof(std::size_t)) {
+  case 8: typeattribute = " type=\"UInt64\""; break;
+  case 4: typeattribute = " type=\"UInt32\""; break;
+  default: CGAL_error_msg("Unknown size of std::size_t");
+  }
+
+  // Write connectivity table
+  os << "    <Polys>\n"
+     << "      <DataArray Name=\"connectivity\""
+     << formatattribute << typeattribute;
+  
+  if (binary) { // if binary output, just write the xml tag
+    os << " offset=\"" << offset << "\"/>\n";
+    offset += (3 * num_faces(mesh)+ 1) * sizeof(std::size_t);
+    // 3 indices (size_t) per triangle + length of the encoded data (size_t)
+  }
+  else {
+    os << "\">\n";   
+    for( face_iterator fit = faces(mesh).begin() ;
+	 fit != faces(mesh).end() ;
+	 ++fit )
+      {
+	BOOST_FOREACH(vertex_descriptor v,
+                      vertices_around_face(halfedge(*fit, mesh), mesh))
+	  os << V[v] << " ";
+      }
+    os << "      </DataArray>\n";
+  }
+  
+  // Write offsets
+  os   << "      <DataArray Name=\"offsets\""
+       << formatattribute << typeattribute;
+  
+  if (binary) {  // if binary output, just write the xml tag
+    os << " offset=\"" << offset << "\"/>\n";
+    offset += (num_faces(mesh) + 1) * sizeof(std::size_t);
+    // 1 offset (size_t) per triangle + length of the encoded data (size_t)
+  }
+  else {
+    os << "\">\n";  
+    std::size_t polys_offset = 0;
+    for( face_iterator fit = faces(mesh).begin() ;
+	 fit != faces(mesh).end() ;
+	 ++fit )
+      {
+	polys_offset += 3;
+	os << polys_offset << " ";
+      }  
+    os << "      </DataArray>\n";
+  }
+
+  // Write cell type (triangle == 5)
+  os   << "      <DataArray Name=\"types\""
+       << formatattribute << " type=\"UInt8\"";
+
+  if (binary) {
+    os << " offset=\"" << offset << "\"/>\n";
+    offset += num_faces(mesh) + sizeof(std::size_t);
+    // 1 unsigned char per cell + length of the encoded data (size_t)
+  }
+  else {
+    os << "\">\n";  
+    for(std::size_t i = 0; i< num_faces(mesh); ++i)
+      os << "5 ";
+    os << "      </DataArray>\n";
+  }
+  os << "    </Polys>\n";
+}
+//overload
+template <class Mesh>
+void 
+write_polys_tag(std::ostream& os,
+                const Mesh & mesh,
+                bool binary,
+                std::size_t& offset)
+{
+  write_polys_tag(os,
+                  mesh,
+                  binary,
+                  offset,
+                  CGAL::parameters::all_default());
+}
 // writes the points tags before binary data is appended
 template <class Tr>
 void 
 write_points_tag(std::ostream& os,
-		 const Tr & tr,
-		 std::map<typename Tr::Vertex_handle, std::size_t> & V,
-		 bool binary,
-		 std::size_t& offset) 
+                 const Tr & tr,
+                 std::map<typename Tr::Vertex_handle, std::size_t> & V,
+                 bool binary,
+                 std::size_t& offset) 
 {
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Geom_traits Gt;
@@ -252,6 +405,58 @@ write_points_tag(std::ostream& os,
   os << "    </Points>\n";
 }
 
+//todo : use namedparams for points and ids
+//overload for facegraph
+template <class Mesh,
+          typename NamedParameters>
+void 
+write_points_tag(std::ostream& os,
+		 const Mesh & mesh,
+		 bool binary,
+		 std::size_t& offset,
+                 const NamedParameters& np) 
+{
+  typedef typename boost::graph_traits<Mesh>::vertex_iterator vertex_iterator;
+  typedef typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Mesh, NamedParameters>::const_type Vpmap;
+  Vpmap vpm = choose_param(get_param(np, CGAL::vertex_point),
+                           get_const_property_map(CGAL::vertex_point, mesh));
+  typedef typename boost::property_traits<Vpmap>::value_type Point_t;
+  typedef typename CGAL::Kernel_traits<Point_t>::Kernel Gt;
+  typedef typename Gt::FT FT;
+
+  std::string format = binary ? "appended" : "ascii";
+  std::string type = (sizeof(FT) == 8) ? "Float64" : "Float32";
+
+  os << "    <Points>\n"
+     << "      <DataArray type =\"" << type << "\" NumberOfComponents=\"3\" format=\"" << format; //todo: 3 for 3D, 2 for 2D
+
+  if (binary) {
+    os << "\" offset=\"" << offset << "\"/>\n";    
+    offset += 3 * num_vertices(mesh) * sizeof(FT) + sizeof(std::size_t);
+    // 3 coords per points + length of the encoded data (size_t)
+  }
+  else {
+    os << "\">\n";  
+    for( vertex_iterator vit = vertices(mesh).begin();
+         vit != vertices(mesh).end();
+         ++vit)
+      {
+      os << get(vpm, *vit).x() << " " << get(vpm, *vit).y() << " " << get(vpm, *vit).z() << " ";
+      }
+    os << "      </DataArray>\n";
+  }
+  os << "    </Points>\n";
+}
+//overload
+template <class Mesh>
+void 
+write_points_tag(std::ostream& os,
+                 const Mesh & mesh,
+                 bool binary,
+                 std::size_t& offset)
+{
+  write_points_tag(os, mesh, binary, offset, CGAL::parameters::all_default());
+}
 // writes the points appended data at the end of the .vtu file 
 template <class Tr>
 void
@@ -277,6 +482,40 @@ write_points(std::ostream& os,
   write_vector<FT>(os,coordinates);
 }
 
+// writes the points appended data at the end of the .vtp file 
+template <class Mesh,
+          class NamedParameters>
+void
+write_polys_points(std::ostream& os,
+	     const Mesh & mesh,
+                   const NamedParameters& np)
+{
+  typedef typename boost::graph_traits<Mesh>::vertex_iterator vertex_iterator;
+  typedef typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Mesh, NamedParameters>::const_type Vpmap;
+  Vpmap vpm = choose_param(get_param(np, CGAL::vertex_point),
+                           get_const_property_map(CGAL::vertex_point, mesh));
+  typedef typename boost::property_traits<Vpmap>::value_type Point_t;
+  typedef typename CGAL::Kernel_traits<Point_t>::Kernel Gt;
+  typedef typename Gt::FT FT;
+  std::vector<FT> coordinates;
+  for( vertex_iterator vit = vertices(mesh).begin();
+       vit != vertices(mesh).end();
+       ++vit)
+    {
+      coordinates.push_back(get(vpm, *vit).x());
+      coordinates.push_back(get(vpm, *vit).y());
+      coordinates.push_back(get(vpm, *vit).z());
+    }
+  write_vector<FT>(os,coordinates);
+}
+//overload
+template <class Mesh>
+void
+write_polys_points(std::ostream& os,
+                   const Mesh & mesh)
+{
+  write_polys_points(os, mesh, CGAL::parameters::all_default());
+}
 // writes the attribute tags before binary data is appended
 template <class T>
 void 
@@ -550,9 +789,44 @@ public:
           *poly_item->polyhedron(),
           output_filename.data());
       else
-        CGAL::polygon_mesh_to_vtkUnstructured<vtkXMLPolyDataWriter>(
-        *poly_item->polyhedron(),
-        output_filename.data());
+      {
+        const FaceGraph* mesh = poly_item->face_graph();
+        std::ofstream os(output_filename.data());
+        os << std::setprecision(16);
+        //write header
+        os << "<?xml version=\"1.0\"?>\n"
+           << "<VTKFile type=\"PolyData\" version=\"0.1\"";
+#ifdef CGAL_LITTLE_ENDIAN
+        os << " byte_order=\"LittleEndian\"";
+#else // CGAL_BIG_ENDIAN
+        os << " byte_order=\"BigEndian\"";
+#endif
+        switch(sizeof(std::size_t)) {
+        case 4: os << " header_type=\"UInt32\""; break;
+        case 8: os << " header_type=\"UInt64\""; break;
+        default: CGAL_error_msg("Unknown size of std::size_t");
+        }
+        os << ">\n"
+           << "  <PolyData>" << "\n";
+        
+        os << "  <Piece NumberOfPoints=\"" << num_vertices(*mesh) 
+           << "\" NumberOfPolys=\"" << num_faces(*mesh) << "\">\n";
+        bool binary = true;
+        std::size_t offset = 0;
+        write_points_tag(os,*mesh,binary,offset);
+        write_polys_tag(os,*mesh,binary,offset);
+        os << "   </Piece>\n"
+           << "  </PolyData>\n";
+        if (binary) {
+          os << "<AppendedData encoding=\"raw\">\n_"; 
+          write_polys_points(os,*mesh);  // write points before cells to fill the std::map V
+          write_polys(os,*mesh);
+        }
+        os << "</VTKFile>\n";        
+      }
+       // CGAL::polygon_mesh_to_vtkUnstructured<vtkXMLPolyDataWriter>(
+       // *poly_item->polyhedron(),
+       // output_filename.data());
     }
     else
     {
