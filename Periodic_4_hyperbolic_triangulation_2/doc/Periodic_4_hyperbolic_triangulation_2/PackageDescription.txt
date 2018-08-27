@@ -66,8 +66,12 @@ the hyperbolic plane.
 
 The concepts in this package provide an interface for working with objects in the hyperbolic plane, including
 hyperbolic translations, which allow us to represent a triangulation of the Bolza surface. The concept
-`Periodic_4HyperbolicDelaunayTriangulationTraits_2` refines the concept `HyperbolicDelaunayTriangulationTraits_2`
+`Periodic_4HyperbolicTriangulationTraits_2` refines the concept `HyperbolicDelaunayTriangulationTraits_2`
 and adds the functionality needed to apply hyperbolic translations to geometric objects in the hyperbolic plane.
+- `Periodic_4HyperbolicTriangulationTraits_2`
+
+The concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2` refines `Periodic_4HyperbolicTriangulationTraits_2`
+and adds functionality needed for the removal of vertices from a Delaunay triangulation of the Bolza surface.
 - `Periodic_4HyperbolicDelaunayTriangulationTraits_2`
 
 The concepts `Periodic_4HyperbolicTriangulationDSFaceBase_2` and `Periodic_4HyperbolicTriangulationDSFaceBase_2`
