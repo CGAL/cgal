@@ -89,7 +89,7 @@ public:
 	}
 
 
-	void set_translation(int k, Hyperbolic_translation new_o) {
+	void set_translation(const int& k, const Hyperbolic_translation& new_o) {
 		CGAL_triangulation_precondition( k >= 0 && k <= 2 );
 		o[k] = new_o;
 	}
