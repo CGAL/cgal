@@ -66,7 +66,7 @@ public:
 	Base(), _stored_translation(false) 
 	{}
 
-	void set_translation(Hyperbolic_translation tr) {
+	void set_translation(const Hyperbolic_translation& tr) {
 		if (!_stored_translation) {
 			_tr = tr;
 			_stored_translation = true;
