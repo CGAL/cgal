@@ -77,7 +77,7 @@ public:
 	typedef TDS 									        	Triangulation_data_structure;
 	typedef typename GT::Hyperbolic_translation 				Hyperbolic_translation;
 	typedef typename GT::Circle_2 								Circle;
-	typedef typename GT::Point_2 			    				Point;
+	typedef typename TDS::Vertex::Point 	    				Point;
 	typedef typename GT::Segment_2 								Segment;
 	typedef typename GT::Triangle_2 							Triangle;
 	typedef typename GT::Side_of_oriented_hyperbolic_segment_2 	Side_of_oriented_hyperbolic_segment;
@@ -335,7 +335,7 @@ public:
 	}
 
 
-	bool has_vertex(const Face& f, Vertex_handle v, int& i) const {
+	bool has_vertex(const Face_handle f, const Vertex_handle v, const int i) const {
 		if (f->vertex(0) == v) {
 			i = 0;
 			return true;
@@ -523,11 +523,11 @@ public:
   // Circulators
 
 
-	Vertex_circulator incident_vertices(Vertex_handle v) const {
+	Vertex_circulator adjacent_vertices(Vertex_handle v) const {
 		return _tds.incident_vertices(v, v->face());
 	}
 
-	Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f) const {
+	Vertex_circulator adjacent_vertices(Vertex_handle v, Face_handle f) const {
 		return _tds.incident_vertices(v, f);
 	}
 
@@ -712,7 +712,7 @@ has_self_edges(typename TDS::Face_handle c) const {
 template < class GT, class TDS >
 inline bool Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
 has_cycles_length_2(typename TDS::Vertex_handle v) const {
-  typename TDS::Vertex_circulator vc = incident_vertices(v), done(vc);
+  typename TDS::Vertex_circulator vc = adjacent_vertices(v), done(vc);
   std::set<Vertex_handle> check;
   do {
 	std::pair<typename std::set<Vertex_handle>::iterator, bool> res = check.insert(vc);
