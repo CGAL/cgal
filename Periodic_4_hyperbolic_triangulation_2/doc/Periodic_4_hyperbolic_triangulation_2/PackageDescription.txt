@@ -40,7 +40,49 @@ triangulations and offers primitives to build the dual Voronoi diagrams.}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
- 
+
+\cgalModifBegin
+
+\cgal traditionally represents a triangulation via its faces and vertices. We represent a triangulation of the 
+Bolza surface via the canonical representatives of its faces in the hyperbolic plane. This package provides the
+necessary objects and functions to work with Delaunay triangulations of the Bolza surface.
+
+Each vertex gives access to one of its incident faces, and stores an input point. We additionally allow each 
+vertex to store (temporarily) a hyperbolic translation to facilitate the insertion of new points and the removal 
+of existing vertices.
+
+Each face gives access to its three incident vertices and to its three adjacent faces. We enable a face 
+to store additionally three hyperbolic translations. When applied to the three points stored in the vertices of 
+the face, these translations produce the canonical representative of the face in the hyperbolic plane.
+
+The three vertices of a face are indexed with 0, 1, and 2 in positive (counter-clockwise) orientation. The 
+orientation of faces on the Bolza surface is defined as the orientation of their canonical representatives in 
+the hyperbolic plane.
+
+
+\cgalClassifedRefPages
+
+## Concepts ##
+
+The concepts in this package provide an interface for working with objects in the hyperbolic plane, including
+hyperbolic translations, which allow us to represent a triangulation of the Bolza surface. The concept
+`Periodic_4HyperbolicDelaunayTriangulationTraits_2` refines the concept `HyperbolicDelaunayTriangulationTraits_2`
+and adds the functionality needed to apply hyperbolic translations to geometric objects in the hyperbolic plane.
+- `Periodic_4HyperbolicDelaunayTriangulationTraits_2`
+
+The concepts `Periodic_4HyperbolicTriangulationDSFaceBase_2` and `Periodic_4HyperbolicTriangulationDSFaceBase_2`
+describe the requirements for the faces and the vertices of a triangulation of the Bolza surface. A face needs
+to be able to store hyperbolic translations as a canonical representative. A vertex needs to be able to store
+temporarily hyperbolic translations to facilitate insertion and removal procedures.
+- `Periodic_4HyperbolicTriangulationDSFaceBase_2`
+- `Periodic_4HyperbolicTriangulationDSVertexBase_2`
+
+Finally, the concept `HyperbolicOctagonTranslation` describes the requirements for an object that represents
+a hyperbolic translation.
+- `HyperbolicOctagonTranslation`
+
+## Classes ##
+
 The main class of the 2D Periodic Triangulation package is `CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2`. 
 This class allows to construct and modify Delaunay triangulations of the Bolza surface. A secondary 
 class made available is `CGAL::Periodic_4_hyperbolic_triangulation_2`, which gives access 
@@ -48,55 +90,20 @@ to the elements of the triangulation (vertices, edges, and faces), and functiona
 triangulations in general, such as point location. The class `CGAL::Periodic_4_hyperbolic_triangulation_2` 
 does <i>not</i> support insertion or removal of points. `CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2`
 inherits `CGAL::Periodic_4_hyperbolic_triangulation_2`.
-
-Both triangulation classes take a geometric traits and a triangulation data structure as template parameters. 
-The geometric traits class must be a model of the concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2` 
-to provide all predicates and constructions needed by the triangulation classes. The default triangulation data 
-structure used is `CGAL::Triangulation_data_structure_2`. 
-
-A triangulation is stored as a collection of vertices and faces that are linked together through incidence 
-and adjacency relations. Each face gives access to its three incident vertices and to its three adjacent faces. 
-Each vertex gives access to one of its incident faces. The three vertices of a face are indexed with 0, 1, and 
-2 in positive (counter-clockwise) orientation. The orientation of faces on the Bolza surface is defined as 
-the orientation of their canonical representatives in the underlying space, which is the hyperbolic plane 
-\f$ \mathbb H^2\f$. 
-
-To specify canonical representatives, which may contain vertices both inside and outside the original domain, 
-we store additionally three hyperbolic translations, corresponding to each vertex. The hyperbolic translations 
-are models of the concept `HyperbolicOctagonTranslation`.
-
-
-# Concepts #
-
-- `Periodic_4HyperbolicDelaunayTriangulationTraits_2`
-- `HyperbolicOctagonTranslation`
-- `Periodic_4HyperbolicTriangulationDSFaceBase_2`
-- `Periodic_4HyperbolicTriangulationDSVertexBase_2`
-- `HyperbolicOctagonTranslation`
-
-# Classes #
-
-## Main Classes ##
-
 - `CGAL::Periodic_4_hyperbolic_triangulation_2`
 - `CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2`
 
-## Traits Classes ##
-
+The package provides a model for the concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2`, which
+is the class `CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2`. 
 - `CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2`
 
-## Vertex and Face Base Classes ##
-
+Models for the face and vertex concepts are provided as well.
 - `CGAL::Periodic_4_hyperbolic_triangulation_ds_face_base_2`
 - `CGAL::Periodic_4_hyperbolic_triangulation_ds_vertex_base_2`
 
-## Hyperbolic Translations Classes ##
-
+Finally, the class provides a model for the concept `HyperbolicOctagonTranslation`.
 - `CGAL::Hyperbolic_octagon_translation`
-
-## Enums ##
-
-- `CGAL::Periodic_4_hyperbolic_triangulation_2::Locate_type`
+\cgalModifEnd
 
 */
 
