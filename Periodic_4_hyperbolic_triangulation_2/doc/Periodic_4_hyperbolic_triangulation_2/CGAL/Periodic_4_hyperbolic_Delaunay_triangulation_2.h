@@ -41,6 +41,15 @@ The class expects two template parameters.
 			Copy constructor.
 		*/
 		Periodic_4_hyperbolic_Delaunay_triangulation_2(const Periodic_4_hyperbolic_Delaunay_triangulation_2& tr);
+
+		/*!
+		\cgalModifBegin
+			Point range constructor.
+			Initializes a triangulation and then inserts all points in the `InputIterator`.
+		\cgalModifEnd
+		*/
+		template < class InputIterator >
+		Periodic_4_hyperbolic_Delaunay_triangulation_2( InputIterator first, InputIterator last, const Geom_traits& gt = Geom_traits() );
 	/// @}
 
 
@@ -64,7 +73,7 @@ The class expects two template parameters.
 	 	*/
 	 	template<class OutputFaceIterator>
 		void
-		get_conflicts(	const Point& p,
+		find_conflicts(	const Point& p,
 						OutputFaceIterator it) const;
  
 
@@ -78,6 +87,12 @@ The class expects two template parameters.
 		*/
 		int number_of_dummy_points() const;
 
+		/*!
+		\cgalModifBegin
+			Checks the combinatorial validity of the triangulation, and also the validity of its geometric embedding. 
+		\cgalModifEnd
+		*/
+		bool is_valid(bool verbose = false) const;
 	/// @}
 
 
@@ -90,7 +105,7 @@ The class expects two template parameters.
 			The face `start`, if given, is used as a starting place for the location of the point.
 			If `batch_insertion` is set to `false` (the default value), then after the insertion 
 			of `p` in the triangulation, all unnecessary dummy points in the triangulation (if any) 
-			are removed. If `batch_insertion` is set to `false`, then this operation is omitted.
+			are removed. If `batch_insertion` is set to `true`, then this operation is omitted.
 			\cgalModifEnd
 		*/
 		Vertex_handle insert(const Point  &p, Face_handle start = Face_handle(), bool batch_insertion = false);
@@ -112,12 +127,14 @@ The class expects two template parameters.
 	/// @{
 
 		/*!
+			\cgalModifBegin
 			Removes the vertex `v` from the triangulation.
 			The triangulation is fixed locally by triangulating the resulting hole. 
 			Note that `v` is removed from the triangulation only if the resulting
-			triangulation would be a simplicial complex. The function returns `true`
+			triangulation remains a simplicial complex. The function returns `true`
 			if the vertex `v` is removed from the triangulation, otherwise it returns 
 			`false`.
+			\cgalModifEnd
 		*/
 		bool remove(Vertex_handle v);
 	/// @}
