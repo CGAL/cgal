@@ -78,7 +78,7 @@ public:
 			Sets the `i`-th translation to `new_tr`.
 			\pre \f$ 0 \leq i \leq 2\f$.
 		*/
-		void set_translation(int i, Hyperbolic_translation new_tr);
+		void set_translation(const int& i, const Hyperbolic_translation& new_tr);
 
 
 		/*!
