@@ -418,6 +418,17 @@ public:
   {}
 };
 
+template <class Geom_traits_, class  Topo_traits_ >
+class Dual<Arrangement_on_surface_with_history_2<Geom_traits_, Topo_traits_> > :
+   public Dual_argt_impl< Arrangement_on_surface_with_history_2<Geom_traits_, Topo_traits_> >
+{
+public:
+  Dual(){}
+  Dual(const Arrangement_on_surface_with_history_2<Geom_traits_, Topo_traits_>& arr)
+    : Dual_argt_impl< Arrangement_on_surface_with_history_2<Geom_traits_, Topo_traits_> >( arr )
+  {}
+};
+
 
 /*! \class
  * Specilaization of the Dual<> template for Arrangement_2.
