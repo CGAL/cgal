@@ -294,6 +294,11 @@ public:
 		}
 	};
 
+	Compute_approximate_hyperbolic_diameter
+	compute_approximate_hyperbolic_diameter_object() const {
+		return Compute_approximate_hyperbolic_diameter();
+	}
+
 
 	Construct_point_2 
 	construct_point_2_object() const {
