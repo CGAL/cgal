@@ -37,24 +37,21 @@
 
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arrangement_2.h>
+#include <CGAL/Arrangement_with_history_2.h>
 
 namespace CGAL {
-
-// Forward declaration.
-template <class Type> class Dual;
 
 /*! \class
  * Specilaization of the Dual<> template for Arrangement_on_surface_2.
  */
-template <class GeomTraits_, class TopTraits_>
-class Dual<Arrangement_on_surface_2<GeomTraits_,TopTraits_> >
+template <class Argt_class>
+class Dual_argt_impl
 {
 public:
   
-  typedef GeomTraits_                          Geometry_traits_2;
-  typedef TopTraits_                           Topology_traits;
-  typedef CGAL::Arrangement_on_surface_2<Geometry_traits_2, Topology_traits>
-                                               Arrangement_on_surface_2;
+  typedef typename Argt_class::Geometry_traits_2 Geometry_traits_2;
+  typedef typename Argt_class::Topology_traits Topology_traits;
+  typedef Argt_class Arrangement_on_surface_2;
 
   typedef typename Arrangement_on_surface_2::Size              Size;
   typedef typename Arrangement_on_surface_2::Face_handle       Vertex_handle;
@@ -300,12 +297,12 @@ public:
   typedef Face_neighbor_iterator            Incident_edge_iterator;
 
   /*! Default constructor. */
-  Dual () :
+  Dual_argt_impl () :
     p_arr (NULL)
   {}
 
   /*! Constructor from an arrangement. */
-  Dual (const Arrangement_on_surface_2& arr) :
+  Dual_argt_impl (const Arrangement_on_surface_2& arr) :
     p_arr (const_cast<Arrangement_on_surface_2 *> (&arr))
   {}
 
@@ -396,6 +393,32 @@ public:
   }
 };
 
+// Forward declaration.
+template <class Type> class Dual;
+
+template <class Geom_traits_, class Topo_traits_>
+class Dual<Arrangement_on_surface_2<Geom_traits_, Topo_traits_> > :
+   public Dual_argt_impl< Arrangement_on_surface_2<Geom_traits_, Topo_traits_> >
+{
+public:
+  Dual(){}
+  Dual(const Arrangement_on_surface_2<Geom_traits_, Topo_traits_>& arr)
+    : Dual_argt_impl< Arrangement_on_surface_2<Geom_traits_, Topo_traits_> >( arr )
+  {}
+};
+
+template <class Geom_traits_, class  Topo_traits_ > 
+class Dual<Arrangement_with_history_2<Geom_traits_, Topo_traits_> > :
+   public Dual_argt_impl< Arrangement_with_history_2<Geom_traits_, Topo_traits_> >
+{
+public:
+  Dual(){}
+  Dual(const Arrangement_with_history_2<Geom_traits_, Topo_traits_>& arr)
+    : Dual_argt_impl< Arrangement_with_history_2<Geom_traits_, Topo_traits_> >( arr )
+  {}
+};
+
+
 /*! \class
  * Specilaization of the Dual<> template for Arrangement_2.
  */
@@ -439,15 +462,14 @@ namespace boost {
  * We consider the graph as directed. We also allow parallel edges, as two
  * faces may have more than one common edges.
  */
-template <class GeomTraits_, class TopTraits_>
-class graph_traits<CGAL::Dual<CGAL::Arrangement_on_surface_2<GeomTraits_,
-                                                             TopTraits_> > >
+template <class Argt_class>
+class graph_traits<CGAL::Dual<Argt_class> >
 {
 public:
   
-  typedef GeomTraits_                           Geometry_traits_2;
-  typedef TopTraits_                            Topology_traits;
-  typedef CGAL::Arrangement_on_surface_2<Geometry_traits_2, Topology_traits>
+  typedef typename Argt_class::Geometry_traits_2 Geometry_traits_2;
+  typedef typename Argt_class::Topology_traits Topology_traits;
+  typedef Argt_class
                                                 Arrangement_on_surface_2;
   typedef CGAL::Dual<Arrangement_on_surface_2>  Dual_arr_2;
 
@@ -523,16 +545,13 @@ namespace CGAL {
  * \param darr The dual arrangement.
  * \param Number of halfedges around the boundary of the primal face.
  */
-template <class GeomTraits_, class TopTraits_>
+template <class Argt_class>
 typename 
-boost::graph_traits<CGAL::Dual<CGAL::
-  Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::degree_size_type
+boost::graph_traits<CGAL::Dual<Argt_class> >::degree_size_type
 out_degree(typename 
-           boost::graph_traits<CGAL::Dual<CGAL::
-           Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::
+           boost::graph_traits<CGAL::Dual<Argt_class> >::
                                                            vertex_descriptor v,
-           const CGAL::Dual<CGAL::
-             Arrangement_on_surface_2<GeomTraits_, TopTraits_> >& darr)
+           const CGAL::Dual<Argt_class>& darr)
 {
   return darr.degree (v);
 }
@@ -544,21 +563,17 @@ out_degree(typename
  * \param darr The dual arrangement.
  * \return A pair of out-edges iterators.
  */
-template <class GeomTraits_, class TopTraits_>
+template <class Argt_class>
 std::pair<typename
-          boost::graph_traits<CGAL::Dual<CGAL::
-            Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::
+          boost::graph_traits<CGAL::Dual<Argt_class> >::
                                                              out_edge_iterator,
           typename
-          boost::graph_traits<CGAL::Dual<CGAL::
-            Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::
+          boost::graph_traits<CGAL::Dual<Argt_class> >::
                                                              out_edge_iterator>
 out_edges(typename
-          boost::graph_traits<CGAL::Dual<CGAL::
-          Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::
+          boost::graph_traits<CGAL::Dual<Argt_class> >::
                                                            vertex_descriptor v,
-          const CGAL::Dual<CGAL::
-            Arrangement_on_surface_2<GeomTraits_, TopTraits_> >& darr)
+          const CGAL::Dual<Argt_class >& darr)
 {
   return std::make_pair (darr.out_edges_begin (v), darr.out_edges_end (v));
 }
@@ -569,16 +584,13 @@ out_edges(typename
  * \param darr The dual arrangement.
  * \return The incident face of e in the primal arrangement.
  */
-template <class GeomTraits_, class TopTraits_>
+template <class Argt_class>
 typename
-boost::graph_traits<CGAL::Dual<CGAL::
-  Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::vertex_descriptor
+boost::graph_traits<CGAL::Dual<Argt_class> >::vertex_descriptor
 source(typename
-       boost::graph_traits<CGAL::Dual<CGAL::
-         Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::
+       boost::graph_traits<CGAL::Dual<Argt_class> >::
                                                            edge_descriptor e,
-       const CGAL::Dual<CGAL::
-         Arrangement_on_surface_2<GeomTraits_, TopTraits_> >& /* darr */)
+       const CGAL::Dual<Argt_class>& /* darr */)
 {
   return e->face();
 }
@@ -589,16 +601,13 @@ source(typename
  * \param darr The dual arrangement.
  * \return The incident face of e's twin in the primal arrangement.
  */
-template <class GeomTraits_, class TopTraits_>
+template <class Argt_class>
 typename
-boost::graph_traits<CGAL::Dual<CGAL::
-  Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::vertex_descriptor
+boost::graph_traits<CGAL::Dual<Argt_class> >::vertex_descriptor
 target(typename
-       boost::graph_traits<CGAL::Dual<CGAL::
-         Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::
+       boost::graph_traits<CGAL::Dual<Argt_class> >::
                                                            edge_descriptor e,
-       const CGAL::Dual<CGAL::
-         Arrangement_on_surface_2<GeomTraits_, TopTraits_> >& /* darr */)
+       const CGAL::Dual<Argt_class>& /* darr */)
 {
   return e->twin()->face();
 }
@@ -612,16 +621,13 @@ target(typename
  * \param darr The dual arrangement.
  * \param Number of halfedges around the boundary of the primal face.
  */
-template <class GeomTraits_, class TopTraits_>
+template <class Argt_class>
 typename
-boost::graph_traits<CGAL::Dual<CGAL::
-  Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::degree_size_type
+boost::graph_traits<CGAL::Dual<Argt_class> >::degree_size_type
 in_degree(typename
-          boost::graph_traits<CGAL::Dual<CGAL::
-            Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::
+          boost::graph_traits<CGAL::Dual<Argt_class> >::
                                                            vertex_descriptor v,
-          const CGAL::Dual<CGAL::
-            Arrangement_on_surface_2<GeomTraits_, TopTraits_> >& darr)
+          const CGAL::Dual<Argt_class>& darr)
 {
   return darr.degree (v);
 }
@@ -633,21 +639,17 @@ in_degree(typename
  * \param darr The dual arrangement.
  * \return A pair of in-edges iterators.
  */
-template <class GeomTraits_, class TopTraits_>
+template <class Argt_class>
 std::pair<typename
-          boost::graph_traits<CGAL::Dual<CGAL::
-            Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::
+          boost::graph_traits<CGAL::Dual<Argt_class> >::
                                                              in_edge_iterator,
           typename
-          boost::graph_traits<CGAL::Dual<CGAL::
-            Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::
+          boost::graph_traits<CGAL::Dual<Argt_class> >::
                                                              in_edge_iterator>
 in_edges(typename
-         boost::graph_traits<CGAL::Dual<CGAL::
-           Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::
+         boost::graph_traits<CGAL::Dual<Argt_class> >::
                                                            vertex_descriptor v,
-         const CGAL::Dual<CGAL::
-           Arrangement_on_surface_2<GeomTraits_, TopTraits_> >& darr)
+         const CGAL::Dual<Argt_class>& darr)
 {
   return std::make_pair (darr.in_edges_begin (v), darr.in_edges_end (v));
 }
@@ -658,16 +660,13 @@ in_edges(typename
  * \param darr The dual arrangement.
  * \param Number of ingoing and outgoing halfedges incident to v.
  */
-template <class GeomTraits_, class TopTraits_>
+template <class Argt_class>
 typename
-boost::graph_traits<CGAL::Dual<CGAL::
-  Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::degree_size_type
+boost::graph_traits<CGAL::Dual<Argt_class> >::degree_size_type
 degree(typename
-       boost::graph_traits<CGAL::Dual<CGAL::
-         Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::
+       boost::graph_traits<CGAL::Dual<Argt_class> >::
                                                            vertex_descriptor v,
-       const CGAL::Dual<CGAL::
-         Arrangement_on_surface_2<GeomTraits_, TopTraits_> >& darr)
+       const CGAL::Dual<Argt_class>& darr)
 {
   return (2 * darr.degree (v));
 }
@@ -680,12 +679,10 @@ degree(typename
  * \param darr The dual arrangement.
  * \return Number of faces in the primal arrangement.
  */
-template <class GeomTraits_, class TopTraits_>
+template <class Argt_class>
 typename
-boost::graph_traits<CGAL::Dual<CGAL::
-  Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::vertices_size_type
-num_vertices(const CGAL::Dual<CGAL::
-               Arrangement_on_surface_2<GeomTraits_, TopTraits_> >& darr)
+boost::graph_traits<CGAL::Dual<Argt_class> >::vertices_size_type
+num_vertices(const CGAL::Dual<Argt_class>& darr)
 {
   return darr.number_of_vertices();
 }
@@ -695,17 +692,14 @@ num_vertices(const CGAL::Dual<CGAL::
  * \param darr The dual arrangement.
  * \return A pair of vertex iterators.
  */
-template <class GeomTraits_, class TopTraits_>
+template <class Argt_class>
 std::pair<typename
-          boost::graph_traits<CGAL::Dual<CGAL::
-            Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::
+          boost::graph_traits<CGAL::Dual<Argt_class> >::
                                                                vertex_iterator,
           typename
-          boost::graph_traits<CGAL::Dual<CGAL::
-            Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::
+          boost::graph_traits<CGAL::Dual<Argt_class> >::
                                                                vertex_iterator>
-vertices (const CGAL::Dual<CGAL::
-            Arrangement_on_surface_2<GeomTraits_, TopTraits_> >& darr)
+vertices (const CGAL::Dual<Argt_class>& darr)
 {
   return std::make_pair (darr.vertices_begin(), darr.vertices_end());
 }
@@ -718,12 +712,10 @@ vertices (const CGAL::Dual<CGAL::
  * \param darr The dual arrangement.
  * \return Number of halfedges in the primal arrangement.
  */
-template <class GeomTraits_, class TopTraits_>
+template <class Argt_class>
 typename
-boost::graph_traits<CGAL::Dual<CGAL::
-  Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::edges_size_type
-num_edges(const CGAL::Dual<CGAL::
-            Arrangement_on_surface_2<GeomTraits_, TopTraits_> >& darr)
+boost::graph_traits<CGAL::Dual<Argt_class> >::edges_size_type
+num_edges(const CGAL::Dual<Argt_class>& darr)
 {
   return darr.number_of_edges(); 
 }
@@ -733,17 +725,14 @@ num_edges(const CGAL::Dual<CGAL::
  * \param darr The dual arrangement.
  * \return A pair of edge iterators.
  */
-template <class GeomTraits_, class TopTraits_>
+template <class Argt_class>
 std::pair<typename
-          boost::graph_traits<CGAL::Dual<CGAL::
-            Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::
+          boost::graph_traits<CGAL::Dual<Argt_class> >::
                                                                edge_iterator,
           typename
-          boost::graph_traits<CGAL::Dual<CGAL::
-            Arrangement_on_surface_2<GeomTraits_, TopTraits_> > >::
+          boost::graph_traits<CGAL::Dual<Argt_class> >::
                                                                edge_iterator>
-edges (const CGAL::Dual<CGAL::
-         Arrangement_on_surface_2<GeomTraits_, TopTraits_> >& darr)
+edges (const CGAL::Dual<Argt_class>& darr)
 {
   return std::make_pair (darr.edges_begin(), darr.edges_end());
 }
