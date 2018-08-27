@@ -95,8 +95,7 @@ int main()
     for (int i=1;i<4; ++i)
     {
       Alpha_shape_3::Vertex_handle vh = f.first->vertex((f.second+i)%4);
-      auto p = vids.insert( std::make_pair(vh, points.size()) );
-      if (p.second)
+      if (vids.insert( std::make_pair(vh, points.size()) ).second)
         points.push_back( vh->point() );
     }
   }
