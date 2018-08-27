@@ -36,16 +36,17 @@
 #include <CGAL/boost/graph/named_function_params.h>
 
 #include <CGAL/Arrangement_on_surface_2.h>
+#include <CGAL/Arrangement_on_surface_with_history_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arrangement_with_history_2.h>
 
 namespace CGAL {
 
 /*! \class
- * Specilaization of the Dual<> template for Arrangement_on_surface_2.
+ * Generic implementation used by Dual for all the arrangement classes
  */
 template <class Argt_class>
-class Dual_argt_impl
+class Dual_arrangement_on_surface_2
 {
 public:
   
@@ -297,12 +298,12 @@ public:
   typedef Face_neighbor_iterator            Incident_edge_iterator;
 
   /*! Default constructor. */
-  Dual_argt_impl () :
+  Dual_arrangement_on_surface_2 () :
     p_arr (NULL)
   {}
 
   /*! Constructor from an arrangement. */
-  Dual_argt_impl (const Arrangement_on_surface_2& arr) :
+  Dual_arrangement_on_surface_2 (const Arrangement_on_surface_2& arr) :
     p_arr (const_cast<Arrangement_on_surface_2 *> (&arr))
   {}
 
@@ -396,65 +397,51 @@ public:
 // Forward declaration.
 template <class Type> class Dual;
 
+// Specialization for Arrangement_on_surface_2
 template <class Geom_traits_, class Topo_traits_>
 class Dual<Arrangement_on_surface_2<Geom_traits_, Topo_traits_> > :
-   public Dual_argt_impl< Arrangement_on_surface_2<Geom_traits_, Topo_traits_> >
+   public Dual_arrangement_on_surface_2< Arrangement_on_surface_2<Geom_traits_, Topo_traits_> >
 {
 public:
   Dual(){}
   Dual(const Arrangement_on_surface_2<Geom_traits_, Topo_traits_>& arr)
-    : Dual_argt_impl< Arrangement_on_surface_2<Geom_traits_, Topo_traits_> >( arr )
+    : Dual_arrangement_on_surface_2< Arrangement_on_surface_2<Geom_traits_, Topo_traits_> >( arr )
   {}
 };
 
-template <class Geom_traits_, class  Topo_traits_ > 
-class Dual<Arrangement_with_history_2<Geom_traits_, Topo_traits_> > :
-   public Dual_argt_impl< Arrangement_with_history_2<Geom_traits_, Topo_traits_> >
-{
-public:
-  Dual(){}
-  Dual(const Arrangement_with_history_2<Geom_traits_, Topo_traits_>& arr)
-    : Dual_argt_impl< Arrangement_with_history_2<Geom_traits_, Topo_traits_> >( arr )
-  {}
-};
-
+// Specialization for Arrangement_on_surface_with_history_2
 template <class Geom_traits_, class  Topo_traits_ >
 class Dual<Arrangement_on_surface_with_history_2<Geom_traits_, Topo_traits_> > :
-   public Dual_argt_impl< Arrangement_on_surface_with_history_2<Geom_traits_, Topo_traits_> >
+   public Dual_arrangement_on_surface_2< Arrangement_on_surface_with_history_2<Geom_traits_, Topo_traits_> >
 {
 public:
   Dual(){}
   Dual(const Arrangement_on_surface_with_history_2<Geom_traits_, Topo_traits_>& arr)
-    : Dual_argt_impl< Arrangement_on_surface_with_history_2<Geom_traits_, Topo_traits_> >( arr )
+    : Dual_arrangement_on_surface_2< Arrangement_on_surface_with_history_2<Geom_traits_, Topo_traits_> >( arr )
   {}
 };
 
-
-/*! \class
- * Specilaization of the Dual<> template for Arrangement_2.
- */
-template <class Traits_, class Dcel_>
-class Dual<Arrangement_2<Traits_, Dcel_> > :
-  public Dual<Arrangement_on_surface_2<
-    typename CGAL::Arrangement_2<Traits_, Dcel_>::Geometry_traits_2,
-    typename CGAL::Arrangement_2<Traits_, Dcel_>::Topology_traits> >
+// Specialization for Arrangement_with_history_2
+template <class GeometryTraits, class Dcel >
+class Dual<Arrangement_with_history_2<GeometryTraits, Dcel> > :
+   public Dual_arrangement_on_surface_2< Arrangement_with_history_2<GeometryTraits, Dcel> >
 {
-  typedef Traits_                                                     Traits_2;
-  typedef Dcel_                                                       Dcel;
-  typedef Dual<CGAL::Arrangement_on_surface_2<
-    typename CGAL::Arrangement_2<Traits_2, Dcel>::Geometry_traits_2,
-    typename CGAL::Arrangement_2<Traits_2, Dcel>::Topology_traits> >  Base;
-
 public:
-
-  /*! Default constructor. */
-  Dual () :
-    Base()
+  Dual(){}
+  Dual(const Arrangement_with_history_2<GeometryTraits, Dcel>& arr)
+    : Dual_arrangement_on_surface_2< Arrangement_with_history_2<GeometryTraits, Dcel> >( arr )
   {}
+};
 
-  /*! Constructor from an arrangement. */
-  Dual (const CGAL::Arrangement_2<Traits_2, Dcel>& arr) :
-    Base (arr)
+// Specialization for Arrangement_2
+template <class GeometryTraits, class Dcel >
+class Dual<Arrangement_2<GeometryTraits, Dcel> > :
+   public Dual_arrangement_on_surface_2< Arrangement_2<GeometryTraits, Dcel> >
+{
+public:
+  Dual(){}
+  Dual(const Arrangement_2<GeometryTraits, Dcel>& arr)
+    : Dual_arrangement_on_surface_2< Arrangement_2<GeometryTraits, Dcel> >( arr )
   {}
 };
 
@@ -531,17 +518,6 @@ public:
   typedef void                                          adjacency_iterator;
 
 };
-
-/*! \class
- * Specialization of the BGL graph-traits template, which serve as a dual
- * adapter for Arrangment_2.
- */
-template <class Traits_, class Dcel_>
-class graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > > :
-    public graph_traits<CGAL::Dual<CGAL::Arrangement_on_surface_2<
-      typename CGAL::Arrangement_2<Traits_, Dcel_>::Geometry_traits_2,
-      typename CGAL::Arrangement_2<Traits_, Dcel_>::Topology_traits> > >
-{};
 
 } // namespace boost
 
