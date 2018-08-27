@@ -141,7 +141,7 @@ public:
   void setMovingPoint(typename T::Point mp) {
     this->moving_point = mp;
     cfaces.clear();
-    t->get_conflicts(moving_point, std::back_inserter(cfaces));
+    t->find_conflicts(moving_point, std::back_inserter(cfaces));
   }
 
   void initializeTranslations() {

@@ -154,6 +154,15 @@ namespace CGAL {
 		n_dpt = 14; 
 	}
 
+	template < class InputIterator >
+	Periodic_4_hyperbolic_Delaunay_triangulation_2( InputIterator first, InputIterator last, const Geom_traits &gt = Geom_traits() ) :
+	Periodic_4_hyperbolic_triangulation_2<GT, TDS>(gt) { 
+		insert_dummy_points();
+		n_dpt = 14; 
+		insert(first, last);
+	}
+
+
 	Periodic_4_hyperbolic_Delaunay_triangulation_2(const Periodic_4_hyperbolic_Delaunay_triangulation_2& tr) :
 	Periodic_4_hyperbolic_triangulation_2<GT, TDS>(tr) { 
 		insert_dummy_points();
@@ -227,7 +236,7 @@ namespace CGAL {
 	*/
 	template<class OutputFaceIterator>
 	void
-	get_conflicts(	const Point& p,
+	find_conflicts(	const Point& p,
 					OutputFaceIterator it,
 					bool store_translations = false) const {
 
@@ -235,7 +244,7 @@ namespace CGAL {
 		Face_handle first = this->euclidean_locate(p, ltr);
 		if (first != Face_handle()) {
 			std::set<Face_handle> visited;
-			get_conflicts(p, first, ltr, visited, it);
+			find_conflicts(p, first, ltr, visited, it);
 		}
 
 	}
@@ -251,7 +260,7 @@ namespace CGAL {
 	*/
 	template<class OutputFaceIterator>
 	void
-	get_conflicts(	const Point& p,
+	find_conflicts(	const Point& p,
 					const Face_handle cf,
 					Hyperbolic_translation tr,
 					std::set<Face_handle>& visited,
@@ -274,7 +283,7 @@ namespace CGAL {
 
 				// Recursive call for the neighbors of `cf`
 				for (int jj = 0; jj < 3; jj++) {
-					get_conflicts(p, cf->neighbor(jj), tr * neighbor_translation(cf, jj), visited, it, store_translations);
+					find_conflicts(p, cf->neighbor(jj), tr * neighbor_translation(cf, jj), visited, it, store_translations);
 				}
 			}
 		}
@@ -368,6 +377,10 @@ public:
 	void clear() {
 		Base::clear();
 		insert_dummy_points();
+	}
+
+	bool is_valid(bool verbose = false) const {
+		return Base::is_valid(verbose);
 	}
 
 };  // class Periodic_4_hyperbolic_Delaunay_triangulation_2
@@ -470,7 +483,7 @@ insert(const Point  &p,  Face_handle hint, bool batch_insertion) {
 		std::set<Face_handle> visited;
 
 
-		get_conflicts(p, start, loff, visited, std::back_inserter(faces), true);
+		find_conflicts(p, start, loff, visited, std::back_inserter(faces), true);
 
 
 		Vertex_handle v = this->_tds.insert_in_hole(faces.begin(), faces.end());
