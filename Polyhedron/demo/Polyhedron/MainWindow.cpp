@@ -685,6 +685,7 @@ void MainWindow::updateMenus()
   ui->menuOperations->clear();
   ui->menuOperations->addAction(searchAction);
   ui->menuOperations->addActions(as);
+  operationSearchBar.setFocus();
 }
 
 bool MainWindow::hasPlugin(const QString& pluginName) const

@@ -1891,6 +1891,7 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item()
   d->are_temp_buffers_filled = false;
   d->poly = NULL;
   d->ready_to_move = false;
+  setProperty("no_picking", true);
 }
 
 Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_graph_item* poly_item, QMainWindow* mw)
@@ -1927,6 +1928,7 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_grap
   d->is_treated = false;
   d->poly_need_update = false;
   d->ready_to_move = false;
+  setProperty("no_picking", true);
 
 }
 

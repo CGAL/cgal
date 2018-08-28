@@ -170,9 +170,9 @@ public Q_SLOTS:
     connect(new_item, SIGNAL(updateInstructions(QString)), this, SLOT(setInstructions(QString)));
     connect(this, SIGNAL(set_operation_mode(int)),new_item, SLOT(set_operation_mode(int)));
     int item_id = scene->addItem(new_item);
-    QObject* scene_ptr = dynamic_cast<QObject*>(scene);
-    if (scene_ptr)
-      connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
+   // QObject* scene_ptr = dynamic_cast<QObject*>(scene);
+   // if (scene_ptr)
+   //   connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
     connect(new_item,SIGNAL(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)));
     connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), this, SLOT(filter_operations()));
     scene->setSelectedItem(item_id);
@@ -891,9 +891,9 @@ public Q_SLOTS:
     connect(selection_item, SIGNAL(updateInstructions(QString)), this, SLOT(setInstructions(QString)));
     connect(selection_item, SIGNAL(printMessage(QString)), this, SLOT(printMessage(QString)));
     connect(this, SIGNAL(set_operation_mode(int)),selection_item, SLOT(set_operation_mode(int)));
-    QObject* scene_ptr = dynamic_cast<QObject*>(scene);
-    if (scene_ptr)
-      connect(selection_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
+    //QObject* scene_ptr = dynamic_cast<QObject*>(scene);
+    //if (scene_ptr)
+    //  connect(selection_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
     connect(selection_item,SIGNAL(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)));
     on_LassoCheckBox_changed(ui_widget.lassoCheckBox->isChecked());
     on_SelectionOrEuler_changed(ui_widget.selectionOrEuler->currentIndex());
@@ -928,7 +928,9 @@ public Q_SLOTS:
   }
 void filter_operations()
 {
-  Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+  Scene_polyhedron_selection_item* selection_item = 
+      qobject_cast<Scene_polyhedron_selection_item*>(scene->item(
+                                                       scene->mainSelectionIndex()));
   if (!selection_item) 
     return;
   QString current_op = ui_widget.operationsBox->currentText();
