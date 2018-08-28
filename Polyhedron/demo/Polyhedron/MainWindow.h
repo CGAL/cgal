@@ -432,10 +432,12 @@ public:
 #endif
 public Q_SLOTS:
   void toggleFullScreen();
+  void setDefaultSaveDir();
 private:
   QList<QDockWidget *> visibleDockWidgets;
   QLineEdit operationSearchBar;
   QWidgetAction* searchAction;
+  QString def_save_dir;
 };
 
 #endif // ifndef MAINWINDOW_H

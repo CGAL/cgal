@@ -1482,6 +1482,7 @@ void MainWindow::readSettings()
     // read plugin blacklist
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
+    def_save_dir = settings.value("default_saveas_dir", QDir::homePath()).toString();
 }
 
 void MainWindow::writeSettings()
@@ -1695,10 +1696,10 @@ void MainWindow::on_actionSaveAs_triggered()
     {
       dir = item->property("defaultSaveDir").toString();
     }
-    else if(dir.isEmpty())
+    else if(!last_saved_dir.isEmpty() && dir.isEmpty())
       dir = QString("%1/%2").arg(last_saved_dir).arg(item->defaultSaveName());
-    if(dir.isEmpty())
-      dir = item->name();
+    else if(dir.isEmpty())
+      dir = QString("%1/%2").arg(def_save_dir).arg(item->name());
     QString filename =
         QFileDialog::getSaveFileName(this,
                                      caption,
@@ -1706,6 +1707,8 @@ void MainWindow::on_actionSaveAs_triggered()
                                      filters.join(";;"),
                                      &sf);
     
+    if(filename.isEmpty())
+      continue;
     last_saved_dir = QFileInfo(filename).absoluteDir().path();
     extensions.indexIn(sf.split(";;").first());
     QString filter_ext, filename_ext;
@@ -1715,8 +1718,6 @@ void MainWindow::on_actionSaveAs_triggered()
     filter_ext.remove("(");
     //remove *
     filter_ext=filter_ext.right(filter_ext.size()-1);
-    if(filename.isEmpty())
-      continue;
 
     QStringList filename_split = filename.split(".");
     filename_split.removeFirst();
@@ -1864,6 +1865,9 @@ void MainWindow::on_actionPreferences_triggered()
   });
   connect(prefdiag.background_colorPushButton, &QPushButton::clicked,
           this, &MainWindow::setBackgroundColor);
+  
+  connect(prefdiag.default_save_asPushButton, &QPushButton::clicked,
+          this, &MainWindow::setDefaultSaveDir);
   
   connect(prefdiag.lightingPushButton, &QPushButton::clicked,
           this, &MainWindow::setLighting_triggered);
@@ -2391,4 +2395,13 @@ void MainWindow::toggleFullScreen()
     visibleDockWidgets.clear();
     
   }
+}
+
+void MainWindow::setDefaultSaveDir()
+{
+  QString dirpath = QFileDialog::getExistingDirectory(this, "Set Default Save as Directory", def_save_dir);
+  if(!dirpath.isEmpty())
+    def_save_dir = dirpath;
+  QSettings settings;
+  settings.setValue("default_saveas_dir", def_save_dir);
 }
