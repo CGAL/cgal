@@ -115,7 +115,6 @@ public:
       gm = minColor.greenF();
       bm = minColor.blueF();
       QPalette palette(minColor);
-      dock_widget->minColorButton->setAutoFillBackground(true);
       dock_widget->minColorButton->setPalette(palette);
       dock_widget->minColorButton->update();
     });
@@ -130,7 +129,6 @@ public:
       gM = maxColor.greenF();
       bM = maxColor.blueF();
 
-      dock_widget->maxColorButton->setAutoFillBackground(true);
       dock_widget->maxColorButton->setPalette(palette);
       dock_widget->maxColorButton->update();
     });
