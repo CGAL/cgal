@@ -185,7 +185,6 @@ is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descrip
                         const double threshold,
                         const NamedParameters& np)
 {
-  CGAL_precondition(CGAL::is_triangle_mesh(tm));
   CGAL_precondition(threshold >= 1.);
 
   using boost::get_param;
@@ -202,15 +201,22 @@ is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descrip
 
   typedef typename Traits::FT                                               FT;
 
-  const halfedge_descriptor h0 = halfedge(f, tm);
-  FT max_sq_length = - std::numeric_limits<FT>::max(),
-     min_sq_length = std::numeric_limits<FT>::max();
-  halfedge_descriptor min_h = boost::graph_traits<TriangleMesh>::null_halfedge();
+  CGAL::Halfedge_around_face_iterator<TriangleMesh> hit, hend;
+  boost::tie(hit, hend) = CGAL::halfedges_around_face(halfedge(f, tm), tm);
+  CGAL_precondition(std::distance(hit, hend) == 3);
 
-  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(h0, tm))
+  const halfedge_descriptor h0 = *hit++;
+  FT sq_length = traits.compute_squared_distance_3_object()(get(vpmap, source(h0, tm)),
+                                                            get(vpmap, target(h0, tm)));
+
+  FT min_sq_length = sq_length, max_sq_length = sq_length;
+  halfedge_descriptor min_h = h0;
+
+  for(; hit!=hend; ++hit)
   {
-    const FT sq_length = traits.compute_squared_distance_3_object()(get(vpmap, source(h, tm)),
-                                                                    get(vpmap, target(h, tm)));
+    const halfedge_descriptor h = *hit;
+    sq_length = traits.compute_squared_distance_3_object()(get(vpmap, source(h, tm)),
+                                                           get(vpmap, target(h, tm)));
 
     if(max_sq_length < sq_length)
       max_sq_length = sq_length;
