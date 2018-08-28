@@ -38,7 +38,7 @@ class Scene_heat_item
   
 public: 
   Scene_heat_item(Scene_surface_mesh_item* item)
-    :parent(item), sm(item->face_graph())
+    :sm(item->face_graph()), parent(item)
   {
     setTriangleContainer(0, new Triangle_container(VI::PROGRAM_HEAT_INTENSITY,
                                                    true));
@@ -275,6 +275,7 @@ public:
   
   bool isEmpty() const {return false;}
   SMesh *face_graph() { return sm;}
+  Scene_surface_mesh_item* getParent() { return parent; }
 
 private:
   SMesh* sm;
@@ -423,28 +424,37 @@ private Q_SLOTS:
 
   void colorize()
   {
+    Scene_heat_item* h_item = nullptr;
     Scene_surface_mesh_item* item =
         qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
     if(!item)
-      return;
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    item->face_graph()->collect_garbage();
-    switch(dock_widget->propertyBox->currentIndex())
     {
-    case 0:
-      displayAngles(item);
-      break;
-    case 1:
-      displayScaledJacobian(item);
-      break;
-    case 2:
-      displayHeatIntensity(item);
-      item->setRenderingMode(Gouraud);
-      break;
-    default:  // Heat Method (Intrinsic Delaunay)
-      displayHeatIntensity(item, true);  
-      item->setRenderingMode(Gouraud);
-      break;
+      h_item = qobject_cast<Scene_heat_item*>(scene->item(scene->mainSelectionIndex()));
+      if(!h_item)
+        return;
+      item = h_item->getParent();
+    }
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    if(item)
+    {
+      item->face_graph()->collect_garbage();
+      switch(dock_widget->propertyBox->currentIndex())
+      {
+      case 0:
+        displayAngles(item);
+        break;
+      case 1:
+        displayScaledJacobian(item);
+        break;
+      case 2:
+        displayHeatIntensity(item);
+        item->setRenderingMode(Gouraud);
+        break;
+      default:  // Heat Method (Intrinsic Delaunay)
+        displayHeatIntensity(item, true);  
+        item->setRenderingMode(Gouraud);
+        break;
+      }
     }
     QApplication::restoreOverrideCursor();
     item->invalidateOpenGLBuffers();
@@ -736,6 +746,8 @@ private Q_SLOTS:
       connect(item, &Scene_surface_mesh_item::aboutToBeDestroyed,
               [this,item](){
                 auto it = mesh_heat_method_idt_map.find(item);
+                if(it == mesh_heat_method_idt_map.end())
+                  return;
                 Heat_method_idt *hm_idt = it->second;
                 Idt* idt = &(const_cast<Idt&>(hm_idt->triangle_mesh()));
                 delete hm_idt;
@@ -965,8 +977,15 @@ private Q_SLOTS:
   {
     if(b)
     {
+      Scene_heat_item* h_item = nullptr;
       Scene_surface_mesh_item* item =
           qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+      if(!item)
+      {
+        h_item = qobject_cast<Scene_heat_item*>(scene->item(scene->mainSelectionIndex()));
+        if(h_item)
+          item = h_item->getParent();
+      }
       if(!item)
       {
         QMessageBox::warning(mw, "Warning", "You must select a Surface_mesh_item to make this work. Aborting.");
