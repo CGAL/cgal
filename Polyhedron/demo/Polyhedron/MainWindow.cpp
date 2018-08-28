@@ -1706,7 +1706,7 @@ void MainWindow::on_actionSaveAs_triggered()
                                      filters.join(";;"),
                                      &sf);
     
-    last_saved_dir = QFileInfo(dir).absoluteDir().path();
+    last_saved_dir = QFileInfo(filename).absoluteDir().path();
     extensions.indexIn(sf.split(";;").first());
     QString filter_ext, filename_ext;
     filter_ext = extensions.cap().split(" ").first();// in case of syntax like (*.a *.b)
