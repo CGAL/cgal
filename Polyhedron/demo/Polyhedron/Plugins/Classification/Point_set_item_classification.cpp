@@ -467,11 +467,11 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales)
   if (echo)
     m_generator->generate_echo_based_features (m_features, echo_map);
   
-  add_remaining_point_set_properties_as_features();
-
 #ifdef CGAL_LINKED_WITH_TBB
   m_features.end_parallel_additions();
 #endif
+
+  add_remaining_point_set_properties_as_features();
 
   delete m_sowf;
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
