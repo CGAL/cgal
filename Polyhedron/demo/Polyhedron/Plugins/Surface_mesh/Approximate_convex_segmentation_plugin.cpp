@@ -96,7 +96,7 @@ public Q_SLOTS:
 
   void on_segmentize_button_clicked()
   {
-    std::cout << "Segmentizing..." << std::endl;
+    std::cout << "Segmenting..." << std::endl;
     
     CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
     
@@ -161,7 +161,8 @@ private:
     bool use_concavity_colors = m_segmentation_ui.concavity_colors_check_box->isChecked();
     bool use_shortest_method = m_segmentation_ui.shortest_method_check_box->isChecked();
     bool enable_postprocessing_segments = m_segmentation_ui.postprocess_segments_check_box->isChecked();
-    double small_segment_threshold = m_segmentation_ui.small_segment_threshold_spin_box->value();
+    double segment_size_threshold = m_segmentation_ui.segment_size_threshold_spin_box->value();
+    if (!enable_postprocessing_segments) segment_size_threshold=0;
 
     // create a new item and use it for segmentation
     FacegraphItem* segmentation_item = new FacegraphItem(*item->face_graph());
@@ -192,7 +193,7 @@ private:
                                                              segments_convex_hulls(convex_hulls_pmap).
                                                              use_closest_point(use_shortest_method).
                                                              postprocess_segments(enable_postprocessing_segments).
-                                                             small_segment_threshold(small_segment_threshold));
+                                                             segment_size_threshold(segment_size_threshold));
     timer.stop();
     
     std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;

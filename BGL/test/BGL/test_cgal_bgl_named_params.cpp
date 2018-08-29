@@ -97,8 +97,7 @@ void test(const NamedParameters& np)
   assert(get_param(np, CGAL::internal_np::min_number_of_segments).v == 47);
   assert(get_param(np, CGAL::internal_np::segments_convex_hulls).v == 48);
   assert(get_param(np, CGAL::internal_np::use_closest_point).v == 49);
-  assert(get_param(np, CGAL::internal_np::postprocess_segments).v == 50);
-  assert(get_param(np, CGAL::internal_np::small_segment_threshold).v == 51);
+  assert(get_param(np, CGAL::internal_np::segment_size_threshold).v == 50);
 
     // To-be-documented named parameters
   assert(get_param(np, CGAL::internal_np::face_normal).v == 36);
@@ -184,8 +183,7 @@ void test(const NamedParameters& np)
   check_same_type<47>(get_param(np, CGAL::internal_np::min_number_of_segments));
   check_same_type<48>(get_param(np, CGAL::internal_np::segments_convex_hulls));
   check_same_type<49>(get_param(np, CGAL::internal_np::use_closest_point));
-  check_same_type<50>(get_param(np, CGAL::internal_np::postprocess_segments));
-  check_same_type<51>(get_param(np, CGAL::internal_np::small_segment_threshold));
+  check_same_type<50>(get_param(np, CGAL::internal_np::segment_size_threshold));
 
     // To-be-documented named parameters
   check_same_type<36>(get_param(np, CGAL::internal_np::face_normal));
@@ -259,7 +257,7 @@ int main()
                          .segments_convex_hulls(A<48>(48))
                          .use_closest_point(A<49>(49))
                          .postprocess_segments(A<50>(50))
-                         .small_segment_threshold(A<51>(51))
+                         .segment_size_threshold(A<51>(51))
                          .projection_functor(A<42>(42))
                          .throw_on_self_intersection(A<43>(43))
                          .clip_volume(A<44>(44))

@@ -133,16 +133,10 @@ indicates if the closest point or the normal projection should be used to comput
 <b>Default:</b> false
 \cgalNPEnd
 
-\cgalNPBegin{postprocess_segments} \anchor BGL_postprocess_segments
-indicates if the produced segments should be postprocessed (merge a segment that is maller than `small_segment_threshold` with a neighbour segment regardless concavity constraint).\n 
-<b>Type:</b> a type convertible to `bool` \n
-<b>Default:</b> false
-\cgalNPEnd
-
-\cgalNPBegin{small_segment_threshold} \anchor BGL_small_segment_threshold
-indicates the minimal size of a segment postprocessing procedure is allowed to merge in percentage with regard to the length of the diagonal of an input mesh. The value must be in the range [0, 100].\n
+\cgalNPBegin{segment_size_threshold} \anchor BGL_segment_size_threshold
+a bound on the length of the diagonal of the bounding box of the segments. It is a percentage of the length of the diagonal of the input mesh (valid values are within `[0,100`]).\n
 <b>Type:</b> a type convertible to `double` \n
-<b>Default:</b> 10.0
+<b>Default:</b> 0
 \cgalNPEnd
 
 \cgalNPBegin{geom_traits} \anchor BGL_geom_traits

@@ -179,14 +179,14 @@ public:
   }
 
   /**
-  * Postprocesses produced segments: merges any produced segment that is smaller than `small_segment_threshold` with a neighbour segment regardless the concavity threshold
-  * @param small_segment_threshold the minimal size of a segment postprocessing procedure must return in percentage with regard to the diameter of the input mesh. The value must be in the range [0, 100]
+  * Postprocesses produced segments: merges any produced segment that is smaller than `segment_size_threshold` with a neighbour segment regardless the concavity threshold
+  * @param segment_size_threshold the minimal size of a segment postprocessing procedure must return in percentage with regard to the diameter of the input mesh. The value must be in the range [0, 100]
   */
-  void postprocess(std::size_t min_number_of_segments, double small_segment_threshold, double concavity_threshold) 
+  void postprocess(std::size_t min_number_of_segments, double segment_size_threshold, double concavity_threshold)
   {
 #ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE            
     std::cout << "Postprocessing segments..." << std::endl;
-    std::cout << "small_segment_threshold=" << small_segment_threshold << std::endl;
+    std::cout << "segment_size_threshold=" << segment_size_threshold << std::endl;
 #endif
   
     // comparator that orders segments by the lengths of their diagonals
@@ -218,7 +218,7 @@ public:
     std::set<graph_vertex_descriptor, Size_segment_comparator> queue(vertices(m_graph).first, vertices(m_graph).second, Size_segment_comparator(*this));
     
     // diagonal length of the input mesh
-    double diagonal_length_threshold = small_segment_threshold / 100. * compute_diagonal_length(CGAL::Polygon_mesh_processing::bbox(m_mesh));
+    double diagonal_length_threshold = segment_size_threshold / 100. * compute_diagonal_length(CGAL::Polygon_mesh_processing::bbox(m_mesh));
 
 #ifdef CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE            
     std::cout << "Diagonal length threshold (max allowed for merging): " << diagonal_length_threshold << std::endl;

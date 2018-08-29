@@ -211,8 +211,11 @@ concavity_values(const TriangleMesh& mesh)
  *    \cgalParamBegin{min_number_of_segments} minimal number of segments, default is 1 \cgalParamEnd
  *    \cgalParamBegin{segments_convex_hulls} an array filled up with the convex hulls of all segments \cgalParamEnd
  *    \cgalParamBegin{use_closest_point} if true, the concavity at each vertex is evaluated by using the distance to the closest point on the convex hull of the set of faces. If false, the distance to the first intersected point following the normal at each vertex is used. Default is false \cgalParamEnd
- *    \cgalParamBegin{postprocess_segments} if true, any produced segment that is smaller than `small_segment_threshold` will be merged with a neighbour segment regardless the concavity constraint). Default is false \cgalParamEnd
- *    \cgalParamBegin{small_segment_threshold} the minimal size of a segment postprocessing procedure is allowed to merge in percentage with regard to the length of diagonal of the input mesh. The value must be in the range [0, 100]. Default is 10.0% \cgalParamEnd
+ *    \cgalParamBegin{segment_size_threshold} a bound on the length of the diagonal of the bounding box of the segments. It is a percentage of the length of the diagonal
+ *                                            of the input mesh (valid values are within `[0,100`]). If different from `0`, any produced segment that has a bounding box
+ *                                            with a diagonal shortest than the specified ratio will be merged with a neighbour segment regardless of the concavity constraint
+ *                                            (but still minimizing the concavity while choosing). Default is 0%
+ *    \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * @return number of segments computed
@@ -241,12 +244,13 @@ approximate_convex_segmentation(const TriangleMesh& mesh,
   internal::Approx_segmentation<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits, use_closest_point);
   algorithm.segmentize(concavity_threshold, min_number_of_segments);
 
-  bool postprocess_segments = boost::choose_param(boost::get_param(np, internal_np::postprocess_segments), false);
-  double small_segment_threshold = boost::choose_param(boost::get_param(np, internal_np::small_segment_threshold), 10.);
+  double segment_size_threshold = boost::choose_param(boost::get_param(np, internal_np::segment_size_threshold), 0.);
+  if (segment_size_threshold<0) segment_size_threshold=0;
+  if (segment_size_threshold>100) segment_size_threshold=100;
 
-  if (postprocess_segments)
+  if (segment_size_threshold!=0)
   {
-    algorithm.postprocess(min_number_of_segments, small_segment_threshold, concavity_threshold);
+    algorithm.postprocess(min_number_of_segments, segment_size_threshold, concavity_threshold);
   }
 
   return algorithm.result(face_ids, convex_hulls_pmap);
