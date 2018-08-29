@@ -209,7 +209,9 @@ concavity_values(const TriangleMesh& mesh)
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `mesh` \cgalParamEnd
  *    \cgalParamBegin{geom_traits} a geometric traits class instance model of Kernel \cgalParamEnd
  *    \cgalParamBegin{min_number_of_segments} minimal number of segments, default is 1 \cgalParamEnd
- *    \cgalParamBegin{segments_convex_hulls} an array filled up with the convex hulls of all segments \cgalParamEnd
+ *    \cgalParamBegin{convex_hulls_of_segments} a property map model of mutable `LvaluePropertyMap` with a key convertible to `std::size_t`
+ *                                              and a model of `MutableFaceGraph` as value type. A good candidate is `boost::vector_property_map<TriangleMesh>`.
+ *    \cgalParamEnd
  *    \cgalParamBegin{use_closest_point} if true, the concavity at each vertex is evaluated by using the distance to the closest point on the convex hull of the set of faces. If false, the distance to the first intersected point following the normal at each vertex is used. Default is false \cgalParamEnd
  *    \cgalParamBegin{segment_size_threshold} a bound on the length of the diagonal of the bounding box of the segments. It is a percentage of the length of the diagonal
  *                                            of the input mesh (valid values are within `[0,100`]). If different from `0`, any produced segment that has a bounding box
@@ -238,7 +240,6 @@ approximate_convex_segmentation(const TriangleMesh& mesh,
   CGAL_precondition(is_triangle_mesh(mesh));
   CGAL_precondition(num_faces(mesh) >= min_number_of_segments);
 
-  boost::vector_property_map<TriangleMesh> convex_hulls_pmap = boost::choose_param(boost::get_param(np, internal_np::segments_convex_hulls), boost::vector_property_map<TriangleMesh>());
   bool use_closest_point = boost::choose_param(boost::get_param(np, internal_np::use_closest_point), false);
 
   internal::Approx_segmentation<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits, use_closest_point);
@@ -253,7 +254,7 @@ approximate_convex_segmentation(const TriangleMesh& mesh,
     algorithm.postprocess(min_number_of_segments, segment_size_threshold, concavity_threshold);
   }
 
-  return algorithm.result(face_ids, convex_hulls_pmap);
+  return algorithm.result(face_ids, boost::get_param(np, internal_np::convex_hulls_of_segments));
 }
 
 

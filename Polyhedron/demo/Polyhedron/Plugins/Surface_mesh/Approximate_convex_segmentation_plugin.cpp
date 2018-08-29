@@ -190,7 +190,7 @@ private:
                                                              segments_pmap,
                                                              concavity_threshold,
                                                              CGAL::parameters::min_number_of_segments(min_number_of_segments).
-                                                             segments_convex_hulls(convex_hulls_pmap).
+                                                             convex_hulls_of_segments(convex_hulls_pmap).
                                                              use_closest_point(use_shortest_method).
                                                              postprocess_segments(enable_postprocessing_segments).
                                                              segment_size_threshold(segment_size_threshold));

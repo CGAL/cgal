@@ -95,7 +95,7 @@ void test(const NamedParameters& np)
 
     // Named parameters that we use in the package 'Surface Mesh Segmentation'
   assert(get_param(np, CGAL::internal_np::min_number_of_segments).v == 47);
-  assert(get_param(np, CGAL::internal_np::segments_convex_hulls).v == 48);
+  assert(get_param(np, CGAL::internal_np::convex_hulls_of_segments).v == 48);
   assert(get_param(np, CGAL::internal_np::use_closest_point).v == 49);
   assert(get_param(np, CGAL::internal_np::segment_size_threshold).v == 50);
 
@@ -181,7 +181,7 @@ void test(const NamedParameters& np)
 
     // Named parameters that we use in the package 'Surface Mesh Segmentation'
   check_same_type<47>(get_param(np, CGAL::internal_np::min_number_of_segments));
-  check_same_type<48>(get_param(np, CGAL::internal_np::segments_convex_hulls));
+  check_same_type<48>(get_param(np, CGAL::internal_np::convex_hulls_of_segments));
   check_same_type<49>(get_param(np, CGAL::internal_np::use_closest_point));
   check_same_type<50>(get_param(np, CGAL::internal_np::segment_size_threshold));
 
@@ -254,7 +254,7 @@ int main()
                          .preserve_genus(A<40>(40))
                          .verbosity_level(A<41>(41))
                          .min_number_of_segments(A<47>(47))
-                         .segments_convex_hulls(A<48>(48))
+                         .convex_hulls_of_segments(A<48>(48))
                          .use_closest_point(A<49>(49))
                          .postprocess_segments(A<50>(50))
                          .segment_size_threshold(A<51>(51))

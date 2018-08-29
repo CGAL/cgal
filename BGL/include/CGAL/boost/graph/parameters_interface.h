@@ -88,7 +88,7 @@ CGAL_add_named_parameter(get_placement_policy_t, get_placement_policy, get_place
 
 // List of named parameters that we use in the package 'Surface Mesh Segmentation'
 CGAL_add_named_parameter(min_number_of_segments_t, min_number_of_segments, min_number_of_segments)
-CGAL_add_named_parameter(segments_convex_hulls_t, segments_convex_hulls, segments_convex_hulls)
+CGAL_add_named_parameter(convex_hulls_of_segments_t, convex_hulls_of_segments, convex_hulls_of_segments)
 CGAL_add_named_parameter(use_closest_point_t, use_closest_point, use_closest_point)
 CGAL_add_named_parameter(segment_size_threshold_t, segment_size_threshold, segment_size_threshold)
 

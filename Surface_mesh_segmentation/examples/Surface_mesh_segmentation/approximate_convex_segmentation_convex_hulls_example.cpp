@@ -45,13 +45,13 @@ int main()
   Clusters_pmap segments_pmap = mesh.add_property_map<face_descriptor, int>("f:segment").first;
 
   // create property map for convex hulls
-  boost::vector_property_map<Mesh> convex_hulls_pmap;
+  boost::vector_property_map<Mesh> convex_hulls_map;
 
   // decompose mesh
   Timer timer;
   
   timer.start();
-  std::size_t segments_num = CGAL::approximate_convex_segmentation<Concurrency_tag>(mesh, segments_pmap, 0.3, CGAL::parameters::segments_convex_hulls(convex_hulls_pmap));
+  std::size_t segments_num = CGAL::approximate_convex_segmentation<Concurrency_tag>(mesh, segments_pmap, 0.3, CGAL::parameters::convex_hulls_of_segments(convex_hulls_map));
   timer.stop();
 
   std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
@@ -73,8 +73,8 @@ int main()
   // use convex hulls
   for (std::size_t i = 0; i < segments_num; ++i)
   {
-    Mesh& convex_hull = convex_hulls_pmap[i];
-    // ...
+    Mesh& convex_hull = convex_hulls_map[i];
+    std::cout << "num_vertices of convex hull of segment " << i << " = " << num_vertices(convex_hull) << "\n";
   }
 
   return EXIT_SUCCESS;

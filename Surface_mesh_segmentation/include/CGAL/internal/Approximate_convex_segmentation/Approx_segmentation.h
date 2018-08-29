@@ -264,16 +264,39 @@ public:
   }
 
   /**
-   * Fills up face property map with segment-ids and convex hulls property map with the convex hulls of all segments
-   * @param face_ids which associates each face of a triangle mesh to a segment-id [0, 'number_of_segments'-1]
-   * @param convex_hulls_pmap which stores an array of convex hulls for each segment
+   * Fill the lvalue property map `convex_hull_map` with the convex hull mesh of each segment
    */
-  template <class FacePropertyMap, class ConvexHullsPropertyMap>
-  std::size_t result(FacePropertyMap face_ids,
-                     ConvexHullsPropertyMap convex_hulls_pmap)
+  template <class ConvexHullMap>
+  void fill_convex_hull_map(ConvexHullMap convex_hull_map)
   {
     // resulting number of produced segments
-    std::size_t num_segments = num_vertices(m_graph);    
+    std::size_t num_segments = num_vertices(m_graph);
+    convex_hull_map[num_segments-1]; // optimization for vector based property maps to avoid resize
+
+    // current segment's id
+    int segment_id = 0;
+
+    BOOST_FOREACH(graph_vertex_descriptor vert, vertices(m_graph))
+    {
+      Cluster_properties& segment_props = m_segment_map[vert];
+
+      TriangleMesh& conv_hull = convex_hull_map[segment_id];
+      CGAL::convex_hull_3(segment_props.conv_hull_pts.begin(), segment_props.conv_hull_pts.end(), conv_hull);
+
+      ++segment_id;
+    }
+  }
+
+  /**
+   * Fills up face property map with segment-ids
+   * @param face_ids which associates each face of a triangle mesh to a segment-id [0, 'number_of_segments'-1]
+   */
+  template <class FacePropertyMap>
+  std::size_t result(FacePropertyMap face_ids,
+                     boost::param_not_found)
+  {
+    // resulting number of produced segments
+    std::size_t num_segments = num_vertices(m_graph);
 
     // current segment's id
     int segment_id = 0;
@@ -287,15 +310,6 @@ public:
       {
         put(face_ids, face, segment_id);
       }
-
-      // fill up convex hulls property map
-      TriangleMesh conv_hull;
-      if (valid_convex_hull_pts(segment_props.conv_hull_pts))
-      {
-        CGAL::convex_hull_3(segment_props.conv_hull_pts.begin(), segment_props.conv_hull_pts.end(), conv_hull);
-      }
-      convex_hulls_pmap[segment_id] = conv_hull;
-
       ++segment_id;
     }
 
@@ -308,7 +322,21 @@ public:
 
     return num_segments;
   }
-  
+
+  /**
+   * Fills up face property map with segment-ids and convex hulls property map with the convex hulls of all segments
+   * @param face_ids which associates each face of a triangle mesh to a segment-id [0, 'number_of_segments'-1]
+   * @param convex_hull_map which stores an array of convex hulls for each segment
+   */
+  template <class FacePropertyMap, class ConvexHullMap>
+  std::size_t result(FacePropertyMap face_ids,
+                     ConvexHullMap convex_hull_map)
+  {
+    std::size_t res = result(face_ids, boost::param_not_found());
+    fill_convex_hull_map(convex_hull_map);
+    return res;
+  }
+
 private:
   const TriangleMesh& m_mesh;
   Vpm m_vpm; // vertex point property map

@@ -120,11 +120,11 @@ indicates the minimum number of segments a segmentation must produce.\n
 <b>Default:</b> 1
 \cgalNPEnd
 
-\cgalNPBegin{segments_convex_hulls} \anchor BGL_segments_convex_hulls
-is filled up with the convex hulls of produced segments in a segmentation.\n
-<b>Type:</b> an array of size equal to the number of produced segments with value type
-             the same as an input mesh has. \n
-<b>Default:</b> None: if it is not provided, this information is inaccessible.
+\cgalNPBegin{convex_hulls_of_segments} \anchor BGL_convex_hulls_of_segments
+a property map filled up with the convex hulls of the segments computed by `CGAL::approximate_convex_segmentation()`.\n
+<b>Type:</b> a property map model of mutable `LvaluePropertyMap` with a key convertible to `std::size_t`
+ *           and a model of `MutableFaceGraph` as value type. A good candidate is `boost::vector_property_map<TriangleMesh>` \n
+<b>Default:</b> None.
 \cgalNPEnd
 
 \cgalNPBegin{use_closest_point} \anchor BGL_use_closest_point
