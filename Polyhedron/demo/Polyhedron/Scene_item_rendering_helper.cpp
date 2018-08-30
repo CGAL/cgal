@@ -242,3 +242,19 @@ void Scene_item_rendering_helper::setBuffersInit(Viewer_interface* viewer, bool 
 {
   priv->buffers_init[viewer] = val;
 }
+
+void Scene_item_rendering_helper::removeViewer(Viewer_interface *viewer)
+{
+  Q_FOREACH(Triangle_container* tc, priv->triangle_containers)
+  {
+    tc->removeViewer(viewer);
+  }
+  Q_FOREACH(Edge_container* ec, priv->edge_containers)
+  {
+    ec->removeViewer(viewer);
+  }
+  Q_FOREACH(Point_container* pc, priv->point_containers)
+  {
+    pc->removeViewer(viewer);
+  }
+}

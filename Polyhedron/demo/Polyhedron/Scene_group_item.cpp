@@ -15,8 +15,7 @@ Scene_group_item::Scene_group_item(QString name, int nb_vbos, int nb_vaos )
 bool Scene_group_item::isFinite() const
 {
   Q_FOREACH(Scene_interface::Item_id id, children)
-    if(!getChild(id)->isFinite()){
-      return false;
+    if(!getChild(id)->isFinite()){      return false;
     }
   return true;
 }
@@ -246,3 +245,5 @@ void Scene_group_item::setAlpha(int )
   }
 }
 
+void Scene_group_item::removeViewer(CGAL::Three::Viewer_interface*)
+{}

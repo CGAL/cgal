@@ -51,6 +51,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Scene_item_with_properties.h>
+#include "ui_SubViewer.h"
 #include "ui_MainWindow.h"
 #include "ui_Preferences.h"
 #include "ui_Statistics_on_item_dialog.h"
@@ -147,6 +148,7 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
   // Save some pointers from ui, for latter use.
   sceneView = ui->sceneView;
   viewer = ui->viewer;
+  viewer->setObjectName("viewer");
   // do not save the state of the viewer (anoying)
   viewer->setStateFileName(QString::null);
 
@@ -167,6 +169,12 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
     connect(shortcut, SIGNAL(activated()),
             this, SLOT(toggleFullScreen()));
   }
+  setupViewer(viewer, 0);
+  
+  viewer->setKeyDescription(Qt::Key_R + Qt::CTRL,
+                      tr("Recenters the viewer under the cursor. "
+                         "If the cursor is not over any viewer, "
+                         "then all viewers are recentered."));
 
   proxyModel = new QSortFilterProxyModel(this);
   proxyModel->setSourceModel(scene);
@@ -206,7 +214,7 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
           this, SLOT(removeManipulatedFrame(CGAL::Three::Scene_item*)));
 
   connect(scene, SIGNAL(updated_bbox(bool)),
-          this, SLOT(updateViewerBBox(bool)));
+          this, SLOT(updateViewersBboxes(bool)));
 
   connect(scene, SIGNAL(selectionChanged(int)),
           this, SLOT(selectSceneItem(int)));
@@ -806,7 +814,7 @@ void MainWindow::viewerShow(float xmin,
     min_(xmin, ymin, zmin),
     max_(xmax, ymax, zmax);
 
-  if(min_ == max_) return viewerShow(xmin, ymin, zmin);
+  if(min_ == max_) return viewerShow(viewer, xmin, ymin, zmin);
 
   viewer->camera()->setPivotPoint((min_+max_)*0.5);
 
@@ -818,18 +826,17 @@ void MainWindow::viewerShow(float xmin,
   viewer->setVisualHintsMask(1);
 }
 
-void MainWindow::viewerShow(float x, float y, float z) {
-  // viewer->camera()->lookAt(CGAL::qglviewer::Vec(x, y, z));
+void MainWindow::viewerShow(Viewer_interface* vi, float x, float y, float z) {
+  
+  CGAL::qglviewer::ManipulatedCameraFrame backup_frame(*vi->camera()->frame());
+  vi->camera()->fitSphere(CGAL::qglviewer::Vec(x, y, z),
+                              vi->camera()->sceneRadius()/100);
+  CGAL::qglviewer::ManipulatedCameraFrame new_frame(*vi->camera()->frame());
+  *vi->camera()->frame() = backup_frame;
+  vi->camera()->interpolateTo(new_frame, 1.f);
+  vi->setVisualHintsMask(1);
 
-  CGAL::qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
-  viewer->camera()->fitSphere(CGAL::qglviewer::Vec(x, y, z),
-                              viewer->camera()->sceneRadius()/100);
-  CGAL::qglviewer::ManipulatedCameraFrame new_frame(*viewer->camera()->frame());
-  *viewer->camera()->frame() = backup_frame;
-  viewer->camera()->interpolateTo(new_frame, 1.f);
-  viewer->setVisualHintsMask(1);
-
-  viewer->camera()->setPivotPoint(CGAL::qglviewer::Vec(x, y, z));
+  vi->camera()->setPivotPoint(CGAL::qglviewer::Vec(x, y, z));
 }
 
 void MainWindow::message(QString message, QString colorName, QString font) {
@@ -860,10 +867,24 @@ void MainWindow::error(QString text) {
   this->message("ERROR: " + text, "red");
 }
 
-void MainWindow::updateViewerBBox(bool recenter = true)
+void MainWindow::updateViewersBboxes(bool recenter)
 {
-  const Scene::Bbox bbox = scene->bbox();
-    CGAL::qglviewer::Vec center = viewer->camera()->pivotPoint();
+  CGAL::qglviewer::Vec min, max;
+  computeViewerBBox(min, max);
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  {
+    if(v == NULL)
+      continue;
+    Viewer* vi = static_cast<Viewer*>(v);
+    updateViewerBbox(vi, recenter, min, max);
+  }
+
+}
+
+void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& min, CGAL::qglviewer::Vec& max)
+{
+  const Scene::Bbox bbox = scene->visibleBbox();
+  const Scene::Bbox all_bbox = scene->bbox();
   const double xmin = bbox.xmin();
   const double ymin = bbox.ymin();
   const double zmin = bbox.zmin();
@@ -871,15 +892,26 @@ void MainWindow::updateViewerBBox(bool recenter = true)
   const double ymax = bbox.ymax();
   const double zmax = bbox.zmax();
 
+  const double axmin = all_bbox.xmin();
+  const double aymin = all_bbox.ymin();
+  const double azmin = all_bbox.zmin();
+  const double axmax = all_bbox.xmax();
+  const double aymax = all_bbox.ymax();
+  const double azmax = all_bbox.zmax();
 
-  CGAL::qglviewer::Vec
-    vec_min(xmin, ymin, zmin),
-    vec_max(xmax, ymax, zmax),
-    bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
+
+
+  min = CGAL::qglviewer::Vec(xmin, ymin, zmin);
+  max= CGAL::qglviewer::Vec(xmax, ymax, zmax);
+
+  CGAL::qglviewer::Vec abbox_center((axmin+axmax)/2, (aymin+aymax)/2, (azmin+azmax)/2),
+      bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
+
   CGAL::qglviewer::Vec offset(0,0,0);
+
   double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
-                      (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
-                          (std::abs)(bbox_center.z - viewer->offset().z)));
+                             (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
+                                        (std::abs)(bbox_center.z - viewer->offset().z)));
   if((std::log2)(l_dist) > 13.0 )
     for(int i=0; i<3; ++i)
     {
@@ -888,24 +920,19 @@ void MainWindow::updateViewerBBox(bool recenter = true)
     }
   if(offset != viewer->offset())
   {
-    viewer->setOffset(offset);
+    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    {
+      if(v == NULL)
+        continue;
+      Viewer* vi = qobject_cast<Viewer*>(v);
+      vi->setOffset(offset);
+    }
     for(int i=0; i<scene->numberOfEntries(); ++i)
     {
+//      scene->item(i)->invalidate(Scene_item::GEOMETRY);
       scene->item(i)->invalidateOpenGLBuffers();
       scene->item(i)->itemChanged();
     }
-  }
-
-
-  viewer->setSceneBoundingBox(vec_min,
-                              vec_max);
-  if(recenter)
-  {
-    viewer->camera()->showEntireScene();
-  }
-  else
-  {
-    viewer->camera()->setPivotPoint(center);
   }
 }
 
@@ -1238,31 +1265,36 @@ void MainWindow::selectionChanged()
   scene->setSelectedItemIndex(getSelectedSceneItemIndex());
   scene->setSelectedItemsList(getSelectedSceneItemIndices());
   CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
-  if(item != NULL && item->manipulatable()) {
-    viewer->setManipulatedFrame(item->manipulatedFrame());
-  } else {
-    viewer->setManipulatedFrame(0);
-  }
-  if(viewer->manipulatedFrame() == 0) {
-    Q_FOREACH(CGAL::Three::Scene_item* item, scene->entries()) {
-      if(item->manipulatable() && item->manipulatedFrame() != 0) {
-        if(viewer->manipulatedFrame() != 0) {
-          // there are at least two possible frames
-          viewer->setManipulatedFrame(0);
-          break;
-        } else {
-          viewer->setManipulatedFrame(item->manipulatedFrame());
+  Q_FOREACH(CGAL::QGLViewer* vi, CGAL::QGLViewer::QGLViewerPool())
+  {
+    if(vi == NULL)
+      continue;
+    
+    if(item != NULL && item->manipulatable()) {
+      vi->setManipulatedFrame(item->manipulatedFrame());
+    } else {
+      vi->setManipulatedFrame(0);
+    }
+    if(vi->manipulatedFrame() == 0) {
+      Q_FOREACH(CGAL::Three::Scene_item* item, scene->entries()) {
+        if(item->manipulatable() && item->manipulatedFrame() != 0) {
+          if(vi->manipulatedFrame() != 0) {
+            // there are at least two possible frames
+            vi->setManipulatedFrame(0);
+            break;
+          } else {
+            vi->setManipulatedFrame(item->manipulatedFrame());
+          }
         }
       }
     }
+    if(vi->manipulatedFrame() != 0) {
+      connect(vi->manipulatedFrame(), SIGNAL(modified()),
+              this, SLOT(updateInfo()));
+    }
+    vi->update();
   }
-  if(viewer->manipulatedFrame() != 0) {
-    connect(viewer->manipulatedFrame(), SIGNAL(modified()),
-            this, SLOT(updateInfo()));
-  }
-  viewer->update();
 }
-
 void MainWindow::contextMenuRequested(const QPoint& global_pos) {
   int index = scene->mainSelectionIndex();
   showSceneContextMenu(index, global_pos);
@@ -1958,10 +1990,16 @@ void MainWindow::on_actionPreferences_triggered()
 void MainWindow::setBackgroundColor()
 {
   QColor c =  QColorDialog::getColor();
-  if(c.isValid()) {
-    viewer->setBackgroundColor(c);
-    viewer->update();
-  }
+   if(c.isValid()) {
+     Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+     {
+       if(v == NULL)
+         continue;
+       v->setBackgroundColor(c);
+       v->update();
+     }
+   }
+  
 }
 
 void MainWindow::setLighting_triggered()
@@ -1977,7 +2015,8 @@ void MainWindow::on_actionLookAt_triggered()
   if( i == QDialog::Accepted &&
       dialog.has_correct_coordinates() )
   {
-    viewerShow((float)dialog.get_x()+viewer->offset().x,
+    viewerShow(viewer, 
+               (float)dialog.get_x()+viewer->offset().x,
                (float)dialog.get_y()+viewer->offset().y,
                (float)dialog.get_z()+viewer->offset().z);
   }
@@ -1999,7 +2038,7 @@ void MainWindow::viewerShowObject()
                max.x, max.y, max.z);
   }
 }
-
+/* to check
 QString MainWindow::cameraString() const
 {
   const CGAL::qglviewer::Vec pos = viewer->camera()->position() - viewer->offset();
@@ -2013,21 +2052,26 @@ QString MainWindow::cameraString() const
     .arg(q[1])
     .arg(q[2])
     .arg(q[3]);
+}*/
+QString MainWindow::cameraString(CGAL::Three::Viewer_interface* v) const
+{
+  return v->dumpCameraCoordinates();
 }
 
 void MainWindow::on_actionDumpCamera_triggered()
 {
   //remove offset
   information(QString("Camera: %1")
-              .arg(cameraString()));
+              .arg(cameraString(viewer)));
 }
 
 void MainWindow::on_actionCopyCamera_triggered()
 {
   //remove offset
-  qApp->clipboard()->setText(this->cameraString());
+  qApp->clipboard()->setText(this->cameraString(viewer));
 }
 
+/* to check
 void MainWindow::on_actionPasteCamera_triggered()
 {
   //add offset
@@ -2044,6 +2088,11 @@ void MainWindow::on_actionPasteCamera_triggered()
   for(int i=0; i<7; ++i)
     s.append(new_s[i]).append(" ");
   viewer->moveCameraToCoordinates(s, 0.5f);
+}*/
+void MainWindow::on_actionPasteCamera_triggered()
+{
+  QString s = qApp->clipboard()->text();
+  viewer->moveCameraToCoordinates(s, 0.5f);
 }
 
 void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
@@ -2053,8 +2102,17 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 
 void MainWindow::on_actionRecenterScene_triggered()
 {
-  updateViewerBBox();
-  viewer->camera()->interpolateToFitScene();
+  scene->computeBbox();
+  scene->computeVisibleBbox();
+  CGAL::qglviewer::Vec min, max;
+  computeViewerBBox(min, max);
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  {
+    if(v == NULL)
+      continue;
+    updateViewerBbox(static_cast<Viewer*>(v), true, min, max);
+    v->camera()->interpolateToFitScene();
+  }
 }
 
 void MainWindow::on_actionLoadPlugin_triggered()
@@ -2368,6 +2426,7 @@ void MainWindow::propagate_action()
     }
   }
 }
+
 void MainWindow::setTransparencyPasses(int val)
 {
   viewer->setTotalPass(val);
@@ -2405,4 +2464,272 @@ void MainWindow::setDefaultSaveDir()
     def_save_dir = dirpath;
   QSettings settings;
   settings.setValue("default_saveas_dir", def_save_dir);
+}
+void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer=NULL)
+{
+  // do not save the state of the viewer (anoying)
+  viewer->setStateFileName(QString::null);
+  viewer->textRenderer()->setScene(scene);
+  viewer->setScene(scene);
+  connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
+          viewer, SLOT(update()));
+  connect(scene, SIGNAL(updated()),
+          viewer, SLOT(update()));
+
+  if(subviewer == NULL)
+  {
+    connect(ui->actionRecenterScene, SIGNAL(triggered()),
+            viewer, SLOT(update()));
+
+    connect(ui->actionRecenterScene, SIGNAL(triggered()),
+            this, SLOT(on_actionRecenterScene_triggered()));
+    connect(ui->actionLookAt, SIGNAL(triggered()),
+            this, SLOT(on_actionLookAt_triggered()));
+    connect(ui->actionSetBackgroundColor, SIGNAL(triggered()),
+            this, SLOT(on_actionSetBackgroundColor_triggered()));
+    connect(ui->actionDumpCamera, SIGNAL(triggered()),
+            this, SLOT(on_actionDumpCamera_triggered()));
+    connect(ui->actionCopyCamera, SIGNAL(triggered()),
+            this, SLOT(on_actionCopyCamera_triggered()));
+    connect(ui->actionPasteCamera, SIGNAL(triggered()),
+            this, SLOT(on_actionPasteCamera_triggered()));
+    connect(ui->actionAntiAliasing, SIGNAL(toggled(bool)),
+            viewer, SLOT(setAntiAliasing(bool)));
+    connect(ui->actionDrawTwoSides, SIGNAL(toggled(bool)),
+            viewer, SLOT(setTwoSides(bool)));
+    connect(ui->actionQuickCameraMode, SIGNAL(toggled(bool)),
+            viewer, SLOT(setFastDrawing(bool)));
+    connect(ui->actionSwitchProjection, SIGNAL(toggled(bool)),
+            viewer, SLOT(SetOrthoProjection(bool)));
+    connect(ui->actionSet_Transparency_Pass_Number, SIGNAL(triggered()),
+            viewer, SLOT(setTotalPass_clicked()));
+  }
+  else
+  {
+    QAction* action = subviewer->findChild<QAction*>("actionRecenter");
+    connect(action, SIGNAL(triggered()),
+            viewer, SLOT(update()));
+    connect(action, &QAction::triggered,
+            subviewer, &SubViewer::recenter);
+    action= subviewer->findChild<QAction*>("actionLookat");
+    connect(action, SIGNAL(triggered()),
+            subviewer, SLOT(lookat()));
+    action= subviewer->findChild<QAction*>("actionColor");
+    connect(action, &QAction::triggered,
+            subviewer, &SubViewer::color);
+    action= subviewer->findChild<QAction*>("actionDumpCamera");
+    connect(action, &QAction::triggered,
+            [this, viewer](){
+      information(QString("Camera: %1")
+                  .arg(cameraString(viewer)));
+    });
+    action= subviewer->findChild<QAction*>("actionCopyCamera");
+    connect(action, &QAction::triggered,
+            [this, viewer](){
+      qApp->clipboard()->setText(cameraString(viewer));
+    });
+    action= subviewer->findChild<QAction*>("actionPasteCamera");
+    connect(action, &QAction::triggered,
+            this, [viewer](){
+      QString s = qApp->clipboard()->text();
+      viewer->moveCameraToCoordinates(s, 0.5f);
+    });
+    action= subviewer->findChild<QAction*>("actionAntiAliasing");
+    connect(action, SIGNAL(toggled(bool)),
+            viewer, SLOT(setAntiAliasing(bool)));
+    action= subviewer->findChild<QAction*>("actionDrawTwoSide");
+    connect(action, SIGNAL(toggled(bool)),
+            viewer, SLOT(setTwoSides(bool)));
+    action= subviewer->findChild<QAction*>("actionQuick");
+    connect(action, SIGNAL(toggled(bool)),
+            viewer, SLOT(setFastDrawing(bool)));
+    action= subviewer->findChild<QAction*>("actionOrtho");
+    connect(action, SIGNAL(toggled(bool)),
+            viewer, SLOT(SetOrthoProjection(bool)));
+    action= subviewer->findChild<QAction*>("actionTotalPass");
+    connect(action, &QAction::triggered,
+            viewer, &Viewer::setTotalPass_clicked);
+
+  }
+
+
+  connect(viewer, SIGNAL(requestContextMenu(QPoint)),
+          this, SLOT(contextMenuRequested(QPoint)));
+  connect(viewer, SIGNAL(selected(int)),
+          this, SLOT(selectSceneItem(int)));
+  connect(viewer, SIGNAL(selectedPoint(double, double, double)),
+          this, SLOT(showSelectedPoint(double, double, double)));
+
+  connect(viewer, SIGNAL(selectionRay(double, double, double,
+                                      double, double, double)),
+          scene, SIGNAL(selectionRay(double, double, double,
+                                     double, double, double)));
+
+  connect(viewer, SIGNAL(sendMessage(QString)),
+          this, SLOT(information(QString)));
+
+}
+
+void MainWindow::on_actionAdd_Viewer_triggered()
+{
+  Viewer *viewer2 = new Viewer(ui->centralwidget, viewer);
+  viewer2->setManipulatedFrame(viewer->manipulatedFrame());
+  CGAL::qglviewer::Vec min, max;
+  computeViewerBBox(min, max);
+  updateViewerBbox(viewer2, true, min, max);
+  viewer2->camera()->interpolateToFitScene();
+  viewer2->setObjectName("viewer2");
+  connect(viewer2, SIGNAL(doneInitGL(CGAL::Three::Viewer_interface*)),
+          scene, SLOT(newViewer(CGAL::Three::Viewer_interface*)));
+  SubViewer* sub_viewer = new SubViewer(this, viewer2);
+  ui->viewerLayout->addWidget(sub_viewer);
+  setupViewer(viewer2, sub_viewer);
+  connect(sub_viewer->ui->exitButton, &QPushButton::clicked,
+          [this, sub_viewer](){
+    scene->removeViewer(sub_viewer->viewer);
+    sub_viewer->deleteLater();});
+
+}
+
+void MainWindow::recenterViewer()
+{
+  scene->computeBbox();
+  scene->computeVisibleBbox();
+  CGAL::qglviewer::Vec min, max;
+  computeViewerBBox(min, max);
+  Viewer* target = qobject_cast<Viewer*>(childAt(cursor().pos()));
+  if(target)
+  {
+    scene->computeBbox();
+    updateViewerBbox(target, true, min, max);
+    target->camera()->interpolateToFitScene();
+  }
+}
+
+void MainWindow::updateViewerBbox(Viewer *vi, bool recenter,
+                                  CGAL::qglviewer::Vec min, 
+                                  CGAL::qglviewer::Vec max){
+
+  CGAL::qglviewer::Vec center = viewer->camera()->pivotPoint();
+  vi->setSceneBoundingBox(min,
+                          max);
+  if(recenter)
+  {
+    vi->resetFov();
+    vi->camera()->showEntireScene();
+  }
+  else
+  {
+    vi->camera()->setPivotPoint(center);
+  }
+}
+
+QObject* MainWindow::getDirectChild(QObject* widget)
+{
+
+    if(!widget->property("helpText").toString().isEmpty())
+      return widget;
+  return getDirectChild(widget->parent());
+}
+
+SubViewer::SubViewer(MainWindow* mw, Viewer* viewer)
+  :QWidget(mw),
+    mw(mw),
+    viewer(viewer),
+    viewMenu(new QMenu(this))
+{
+  ui = new Ui::SubViewer;
+  ui->setupUi(this);
+  ui->mainLayout->addWidget(viewer, 1);
+  ui->menuButton->setMenu(viewMenu);
+  ui->menuButton->setProperty("helpText", QString("This is the view menu for this Viewer. \n"
+                                                  "It holds independant display options."));
+  ui->exitButton->setProperty("helpText", QString("Click here to close this Viewer."));
+
+
+  QAction* actionRecenter = new QAction("Re&center Scene",this);
+  actionRecenter->setObjectName("actionRecenter");
+  viewMenu->addAction(actionRecenter);
+  QAction* actionLookat = new QAction("&Look at...",this);
+  actionLookat->setObjectName("actionLookat");
+  viewMenu->addAction(actionLookat);
+  QAction* actionColor = new QAction("Change &Background Color...",this);
+  actionColor->setObjectName("actionColor");
+  viewMenu->addAction(actionColor);
+  QAction* actionDumpCamera = new QAction("&Dump Camera Coordinates",this);
+  actionDumpCamera->setObjectName("actionDumpCamera");
+  QAction* actionCopyCamera = new QAction("&Copy Camera",this);
+  actionCopyCamera->setObjectName("actionCopyCamera");
+  QAction* actionPasteCamera = new QAction("&Paste Camera",this);
+  actionPasteCamera->setObjectName("actionPasteCamera");
+  QMenu* cameraMenu = new QMenu("Camera", mw);
+  cameraMenu->addAction(actionDumpCamera);
+  cameraMenu->addAction(actionCopyCamera);
+  cameraMenu->addAction(actionPasteCamera);
+  viewMenu->addMenu(cameraMenu);
+
+  QAction* actionAntiAliasing = new QAction("&Antialiasing",this);
+  actionAntiAliasing->setObjectName("actionAntiAliasing");
+  actionAntiAliasing->setCheckable(true);
+  actionAntiAliasing->setChecked(false);
+  viewMenu->addAction(actionAntiAliasing);
+  QAction* actionDrawTwoSide = new QAction("Draw &Two Sides",this);
+  actionDrawTwoSide->setObjectName("actionDrawTwoSide");
+  actionDrawTwoSide->setCheckable(true);
+  actionDrawTwoSide->setChecked(false);
+  viewMenu->addAction(actionDrawTwoSide);
+  QAction* actionQuick = new QAction("Quick Camera Mode",this);
+  actionQuick->setObjectName("actionQuick");
+  actionQuick->setCheckable(true);
+  actionQuick->setChecked(true);
+  viewMenu->addAction(actionQuick);
+  QAction* actionOrtho = new QAction("Orthographic Projection",this);
+  actionOrtho->setObjectName("actionOrtho");
+  actionOrtho->setCheckable(true);
+  actionOrtho->setChecked(false);
+  viewMenu->addAction(actionOrtho);
+  QAction* actionLight = new QAction("L&ighting...",this);
+  actionLight->setObjectName("actionLight");
+  viewMenu->addAction(actionLight);
+  QAction* actionTotalPass = new QAction("Set Transparency Pass &Number...",this);
+  actionTotalPass->setObjectName("actionTotalPass");
+  viewMenu->addAction(actionTotalPass);
+}
+
+SubViewer::~SubViewer()
+{
+  delete ui;
+  viewer->deleteLater();
+}
+
+void SubViewer::recenter()
+{
+  CGAL::qglviewer::Vec min, max;
+  mw->computeViewerBBox(min, max);
+  mw->updateViewerBbox(viewer, true, min, max);
+  viewer->camera()->interpolateToFitScene();
+}
+
+void SubViewer::lookat()
+{
+  Show_point_dialog dialog(mw);
+  dialog.setWindowTitle(tr("Look at..."));
+  int i = dialog.exec();
+  if( i == QDialog::Accepted &&
+      dialog.has_correct_coordinates() )
+  {
+      mw->viewerShow(viewer,
+                 (float)dialog.get_x(),
+                 (float)dialog.get_y(),
+                 (float)dialog.get_z());
+  }
+}
+
+void SubViewer::color()
+{
+  QColor c =  QColorDialog::getColor();
+  if(c.isValid()) {
+    viewer->setBackgroundColor(c);
+    viewer->update();
+  }
 }

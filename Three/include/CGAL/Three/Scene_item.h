@@ -301,6 +301,12 @@ public:
 
   //!Contains the number of group and subgroups containing this item.
   int has_group;
+  //!
+  //! \brief removeViewer removes the Vaos fo `viewer`.
+  //!
+  //! Must be overriden;
+  //!
+  virtual void removeViewer(CGAL::Three::Viewer_interface* viewer) = 0;
 
 public Q_SLOTS:
 

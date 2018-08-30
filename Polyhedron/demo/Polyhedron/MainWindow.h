@@ -19,6 +19,7 @@
 #include <QModelIndex>
 class Scene;
 class Viewer;
+struct SubViewer;
 class QTreeView;
 class QMenu;
 namespace CGAL {
@@ -26,6 +27,10 @@ namespace Three{
 class Polyhedron_demo_io_plugin_interface;
 class Polyhedron_demo_plugin_interface;
 class Scene_item;
+class Viewer_interface;
+}
+namespace qglviewer{
+class Vec;
 }
 }
 
@@ -33,6 +38,7 @@ class QSortFilterProxyModel;
 
 namespace Ui {
   class MainWindow;
+  class SubViewer;
   class Statistics_on_item_dialog;
 }
 
@@ -81,7 +87,7 @@ public:
    * throws `std::logic_error` if loading does not succeed or
    * `std::invalid_argument` if `fileinfo` specifies an invalid file*/
   CGAL::Three::Scene_item* loadItem(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface*);
-
+  
 Q_SIGNALS:
   //! Is emitted when the Application is closed.
   void on_closure();
@@ -96,7 +102,7 @@ public Q_SLOTS:
   void makeNewGroup();
   //! Re-computes the viewer's Bbox
   //! If `b` is true, recenters the scene.
-  void updateViewerBBox(bool b);
+  void updateViewersBboxes(bool recenter);
   //! Opens a script or a file with the default loader if there is.
   void open(QString);
   //! Is called when the up button is pressed.
@@ -193,21 +199,21 @@ public Q_SLOTS:
   void addAction(QString actionName,
                  QString actionText,
                  QString menuName);
-  /*!
-   * Sets the scene center to the target position and makes the
-   * scene slide to this new center. Also sets the pivotPoint of
-   * the camera to this position.
-   */
-  void viewerShow(float, float, float);
-  /*!
-   * Sets the scene center to be the center of the target BBox.
-   * Also sets the pivotPoint of the camera to this position.
-   */
-  void viewerShow(float, float, float, float, float, float);
-  /*!
-   * Centers the scene on the target object.
-   */
-  void viewerShowObject();
+  
+  /*! Sets the scene center to the target position and makes the
+  * scene slide to this new center. Also sets the pivotPoint of
+  * the camera to this position.
+  */
+ void viewerShow(CGAL::Three::Viewer_interface *viewer, float, float, float);
+ /*!
+  * Sets the scene center to be the center of the target BBox.
+  * Also sets the pivotPoint of the camera to this position.
+  */
+ void viewerShow(float, float, float, float, float, float);
+ /*!
+  * Centers the scene on the target object.
+  */
+ void viewerShowObject();
   /*!
    * Displays a text preceded by the mention "INFO :".
    */
@@ -335,7 +341,7 @@ protected Q_SLOTS:
    */
   void on_actionLookAt_triggered();
   //!Returns the position and orientation of the current camera frame.
-  QString cameraString() const;
+    QString cameraString(CGAL::Three::Viewer_interface *v) const;
   /*! Prints the position and orientation of the current camera frame.
    * @see cameraString()
    */
@@ -383,7 +389,9 @@ protected:
   //! Returns a list of the selected items in the Geometric Objects view.
   QList<int> getSelectedSceneItemIndices() const;
 private:
+  QObject* getDirectChild(QObject* widget);
   void updateMenus();
+  void setupViewer(Viewer* viewer, SubViewer *subviewer);
   bool load_plugin(QString names, bool blacklisted);
   void recurseExpand(QModelIndex index);
   QMap<QString, QMenu*> menu_map;
@@ -438,6 +446,29 @@ private:
   QLineEdit operationSearchBar;
   QWidgetAction* searchAction;
   QString def_save_dir;
+  void computeViewerBBox(CGAL::qglviewer::Vec &min, CGAL::qglviewer::Vec &max);
+  void updateViewerBbox(Viewer* vi, bool recenter, CGAL::qglviewer::Vec min, 
+                        CGAL::qglviewer::Vec max);
+  
+private Q_SLOTS:
+  void on_actionAdd_Viewer_triggered();
+  void recenterViewer();
 };
+  
+struct SubViewer : public QWidget
+{
+  Q_OBJECT
+public:
+  MainWindow* mw;
+  Viewer* viewer;
+  Ui::SubViewer* ui;
+  QMenu* viewMenu;
 
+  SubViewer(MainWindow* mw, Viewer* viewer);
+  ~SubViewer();
+public Q_SLOTS:
+  void recenter();
+  void lookat();
+  void color();
+};
 #endif // ifndef MAINWINDOW_H

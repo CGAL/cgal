@@ -435,10 +435,10 @@ void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
   vbo[1].create();
   
   viewer->makeCurrent();
-  vao = new QOpenGLVertexArrayObject();
-  vao->create();
+  vaos[viewer] = new QOpenGLVertexArrayObject();
+  vaos[viewer]->create();
   program.bind();
-  vao->bind();
+  vaos[viewer]->bind();
   vbo[0].bind();
   vbo[0].allocate(points, 18 * sizeof(float));
   program.enableAttributeArray("vertex");
@@ -450,7 +450,7 @@ void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
   program.enableAttributeArray("v_texCoord");
   program.setAttributeArray("v_texCoord", GL_FLOAT, 0, 2);
   vbo[1].release();
-  vao->release();
+  vaos[viewer]->release();
   program.release();
   gl_init = true;
 }
@@ -778,7 +778,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
    
       //blending
       program.bind();
-      vao->bind();
+      vaos[viewer]->bind();
       viewer->glClearColor(background.redF(),
                            background.greenF(),
                            background.blueF(),
@@ -802,7 +802,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       }
       viewer->glDisable(GL_BLEND);
       viewer->glEnable(GL_DEPTH_TEST);
-      vao->release();
+      vaos[viewer]->release();
       program.release();
     }
    
@@ -1201,6 +1201,7 @@ void Scene::itemVisibilityChanged(CGAL::Three::Scene_item* item)
      && !item->isEmpty())
   {
     //does not recenter
+    computeVisibleBbox();
     Q_EMIT updated_bbox(false);
   }
 }
@@ -1661,4 +1662,76 @@ void Scene::adjustIds(Item_id removed_id)
   {
     m_entries[i]->setId(i-1);//the signal is emitted before m_entries is amputed from the item, so new id is current id -1.
   }
+}
+
+void Scene::computeVisibleBbox()
+{
+  if(m_entries.empty())
+  {
+    last_visible_bbox = Bbox(0,0,0,0,0,0);
+    return;
+  }
+
+  bool bbox_initialized = false;
+  Bbox bbox = Bbox(0,0,0,0,0,0);
+  Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
+  {
+    if(item->isFinite() && !item->isEmpty() && item->visible()) {
+      if(bbox_initialized) {
+
+        bbox = bbox + item->bbox();
+      }
+      else {
+        bbox = item->bbox();
+        bbox_initialized = true;
+
+      }
+    }
+
+  }
+  last_visible_bbox = bbox;
+}
+
+void Scene::computeBbox()
+{
+  if(m_entries.empty())
+  {
+    last_bbox = Bbox(0,0,0,0,0,0);
+    return;
+  }
+
+  bool bbox_initialized = false;
+  Bbox bbox = Bbox(0,0,0,0,0,0);
+  Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
+  {
+    if(item->isFinite() && !item->isEmpty() ) {
+      if(bbox_initialized) {
+
+        bbox = bbox + item->bbox();
+      }
+      else {
+        bbox = item->bbox();
+        bbox_initialized = true;
+
+      }
+    }
+
+  }
+  last_bbox = bbox;
+}
+
+void Scene::removeViewer(Viewer_interface *viewer)
+{
+  vaos[viewer]->destroy();
+  vaos[viewer]->deleteLater();
+  vaos.remove(viewer);
+  Q_FOREACH(Scene_item* item, m_entries)
+  {
+    item->removeViewer(viewer);
+  }
+}
+
+Scene::Bbox Scene::visibleBbox() const
+{
+    return last_visible_bbox;
 }

@@ -16,6 +16,10 @@
 #include <CGAL/Three/TextRenderer.h>
 // forward declarations
 class QWidget;
+class QMouseEvent;
+class QKeyEvent;
+class QContextMenuEvent;
+class Viewer_impl;
 namespace CGAL{
 namespace Three{
 class Scene_draw_interface;
@@ -34,6 +38,7 @@ class VIEWER_EXPORT Viewer : public CGAL::Three::Viewer_interface {
 
 public:
   Viewer(QWidget * parent, bool antialiasing = false);
+  Viewer(QWidget * parent, Viewer *sharedWidget, bool antialiasing = false);
   ~Viewer();
   bool testDisplayId(double, double, double)Q_DECL_OVERRIDE;
   void updateIds(CGAL::Three::Scene_item *)Q_DECL_OVERRIDE;
@@ -85,9 +90,10 @@ public:
   const QImage& staticImage() const Q_DECL_OVERRIDE;
   //!Set total number of depth peeling passes.
    void setTotalPass(int);
-
+   void resetFov();
 Q_SIGNALS:
   void sendMessage(QString);
+  void doneInitGL(CGAL::Three::Viewer_interface*);
 public Q_SLOTS:
   //! Sets the antialiasing to true or false.
   void setAntiAliasing(bool b) Q_DECL_OVERRIDE;
@@ -122,6 +128,7 @@ public Q_SLOTS:
   void setLighting();
 
   void messageLogged(QOpenGLDebugMessage);
+  void initializeGL()Q_DECL_OVERRIDE;
 
 protected:
   void paintEvent(QPaintEvent *)Q_DECL_OVERRIDE;
@@ -142,6 +149,7 @@ protected:
   friend class Viewer_impl;
   Viewer_impl* d;
   double prev_radius;
+  void doBindings();
 
 public:
   QOpenGLFunctions_4_3_Core* openGL_4_3_functions() Q_DECL_OVERRIDE;

@@ -129,6 +129,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
   find_package(Boost COMPONENTS thread system filesystem)
 
   qt5_wrap_ui( MainWindowUI_files MainWindow.ui)
+  qt5_wrap_ui( SubViewerUI_files SubViewer.ui)
   qt5_wrap_ui( statisticsUI_FILES Statistics_on_item_dialog.ui)
   qt5_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
   qt5_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
@@ -309,7 +310,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
     Polyhedron_demo.cpp
     File_loader_dialog_moc.cpp
     ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES}
-    ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${statisticsUI_FILES})
+    ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} 
+    ${statisticsUI_FILES} ${SubViewerUI_files})
   target_link_libraries(polyhedron_demo PUBLIC
     demo_framework point_dialog Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Script)
   add_executable  ( Polyhedron_3 Polyhedron_3.cpp )

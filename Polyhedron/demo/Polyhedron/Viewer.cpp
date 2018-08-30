@@ -23,12 +23,13 @@
 #include <QByteArray>
 #include <QBuffer>
 #endif
-
+#define ORIGINAL_FOV 0.94853805396568136
 
 class Viewer_impl {
 public:
   CGAL::Three::Scene_draw_interface* scene;
   Viewer *viewer;
+  Viewer *shareViewer;
   bool antialiasing;
   bool twosides;
   bool macro_mode;
@@ -97,9 +98,13 @@ public:
   void clearDistancedisplay();
   void draw_aux(bool with_names, Viewer*);
   //! Contains all the programs for the item rendering.
-  mutable std::vector<QOpenGLShaderProgram*> shader_programs;
+  static std::vector<QOpenGLShaderProgram*> shader_programs;
   QMatrix4x4 projectionMatrix;
   void sendSnapshotToClipboard(Viewer*);
+  std::vector<QOpenGLShaderProgram*>& shaderPrograms()
+  {
+    return shader_programs;
+  }
 };
 
 class LightingDialog :
@@ -211,10 +216,10 @@ private:
   QColorDialog spec_dial;
 };
 
-Viewer::Viewer(QWidget* parent, bool antialiasing)
-  : CGAL::Three::Viewer_interface(parent)
+std::vector<QOpenGLShaderProgram*> Viewer_impl::shader_programs = 
+    std::vector<QOpenGLShaderProgram*>(Viewer::NB_OF_PROGRAMS);
+void Viewer::doBindings()
 {
-  d = new Viewer_impl;
   QSettings viewer_settings;
   // enable anti-aliasing
   QString cam_pos = viewer_settings.value("cam_pos", QString("0.0,0.0,1.0")).toString();
@@ -245,7 +250,6 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->scene = 0;
   d->projection_is_ortho = false;
   d->initialized = false;
-  d->antialiasing = antialiasing;
   d->twosides = false;
   this->setProperty("draw_two_sides", false);
   d->macro_mode = false;
@@ -304,6 +308,32 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->is_d_pressed = false;
   d->viewer = this;
   setTextIsEnabled(true);
+}
+
+Viewer::Viewer(QWidget* parent, bool antialiasing)
+  : CGAL::Three::Viewer_interface(parent)
+{
+  d = new Viewer_impl;
+  d->antialiasing = antialiasing;
+  doBindings();
+}
+
+Viewer::Viewer(QWidget* parent,
+               Viewer* sharedWidget,
+               bool antialiasing)
+  : CGAL::Three::Viewer_interface(parent, sharedWidget)
+{
+  d = new Viewer_impl;
+  d->viewer = this;
+  d->shareViewer = sharedWidget;
+  is_sharing = true;
+  d->antialiasing = antialiasing;
+  this->setProperty("draw_two_sides", false);
+  this->setProperty("helpText", QString("This is a sub-viewer. It displays the scene "
+                                        "from another point of view. \n "));
+  is_ogl_4_3 = sharedWidget->is_ogl_4_3;
+  d->_recentFunctions = sharedWidget->d->_recentFunctions;
+  doBindings();
 }
 
 Viewer::~Viewer()
@@ -1638,6 +1668,11 @@ void Viewer::setLighting()
 void Viewer::setGlPointSize(const GLfloat &p) { d->gl_point_size = p; }
 
 const GLfloat& Viewer::getGlPointSize() const { return d->gl_point_size; }
+
+void Viewer::resetFov()
+{
+  camera()->setHorizontalFieldOfView(ORIGINAL_FOV);
+}
 
 #include "Viewer.moc"
 

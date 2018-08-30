@@ -190,6 +190,9 @@ public:
   //! @returns the item's bounding box's diagonal length.
   //! @todo must replace the one from Scene_item eventually
   virtual double diagonalBbox() const Q_DECL_OVERRIDE;
+  //! \brief removeViewer removes the Vaos for `viewer`.
+  //! \param viewer the viewer to be removed.
+  void removeViewer(Viewer_interface *viewer) Q_DECL_OVERRIDE;
 protected:
 
 

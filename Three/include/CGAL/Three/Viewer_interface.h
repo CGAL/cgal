@@ -107,6 +107,14 @@ public:
   //! Creates a valid context for OpenGL ES 2.0.
   //! \param parent the parent widget. It usually is the MainWindow.
   Viewer_interface(QWidget* parent) : CGAL::QGLViewer(parent) {}
+  //!
+  //! \brief Constructor for the secondary viewers.
+  //!
+  //! \param parent the parent widget. It usually is the MainWindow.
+  //! \param sharedWidget the main viewer of the Application. This will share the
+  //!  context and allow synchronized rendering of multiple views.
+  //!
+  Viewer_interface(QWidget* parent, QWidget*) : QGLViewer(parent){}
   virtual ~Viewer_interface() {}
 
   //! \brief Sets the scene for the viewer.

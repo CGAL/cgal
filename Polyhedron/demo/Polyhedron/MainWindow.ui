@@ -20,14 +20,18 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <widget class="Viewer" name="viewer" native="true">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>1</verstretch>
-       </sizepolicy>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="viewerLayout">
+      <item>
+       <widget class="Viewer" name="viewer" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -95,6 +99,7 @@
     <addaction name="actionLookAt"/>
     <addaction name="actionDrawTwoSides"/>
     <addaction name="actionSwitchProjection"/>
+    <addaction name="actionAdd_Viewer"/>
     <addaction name="menuDockWindows"/>
     <addaction name="menuCamera"/>
     <addaction name="separator"/>
@@ -492,12 +497,18 @@
     <string>Set Different Colors for Selected Items</string>
    </property>
   </action>
+  <action name="actionAdd_Viewer">
+   <property name="text">
+    <string>Add &amp;Viewer</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>Viewer</class>
    <extends>QWidget</extends>
    <header>Viewer.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
