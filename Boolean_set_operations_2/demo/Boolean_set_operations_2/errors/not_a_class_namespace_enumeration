@@ -1,0 +1,40 @@
+This error was generataed on 
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_region_graphics_item.h:24:0,
+
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:24,
+                 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Circular_polygons.h:26,
+                 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:72:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_boundary_graphics_item.h:48:69: error: expected identifier before ‘,’ token
+   Piecewise_boundary_graphics_item( Helper* aBoundary,              ,
+                                                                     ^
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_boundary_graphics_item.h: In constructor ‘CGAL::Qt::Piecewise_boundary_graphics_item<Helper, Draw_piece_, Piece_bbox_>::Piecewise_boundary_graphics_item(Helper*, int, const Draw_piece&, const Piece_bbox&)’:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_boundary_graphics_item.h:54:15: error: ‘aBoundary’ is not a class, namespace, or enumeration
+     mBoundary=aBoundary::Polygon_2;
+               ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:24:0,
+                 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Circular_polygons.h:26,
+                 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:72:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_region_graphics_item.h: In constructor ‘CGAL::Qt::Piecewise_region_graphics_item<Helper, Draw_piece_, Piece_bbox_>::Piecewise_region_graphics_item(Helper*, const Draw_piece&, const Piece_bbox&)’:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_region_graphics_item.h:58:16: error: ‘aRegion’ is not a class, namespace, or enumeration
+        mRegion=aRegion::Polygon_with_holes_2;     
+                ^
+
+CMakeFiles/Boolean_set_operations_2.dir/build.make:154: recipe for target 'CMakeFiles/Boolean_set_operations_2.dir/Boolean_set_operations_2.cpp.o' failed
+make[2]: *** [CMakeFiles/Boolean_set_operations_2.dir/Boolean_set_operations_2.cpp.o] Error 1
+CMakeFiles/Makefile2:515: recipe for target 'CMakeFiles/Boolean_set_operations_2.dir/all' failed
+make[1]: *** [CMakeFiles/Boolean_set_operations_2.dir/all] Error 2
+Makefile:94: recipe for target 'all' failed
+make: *** [all] Error 2
+

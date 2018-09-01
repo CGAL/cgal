@@ -1,0 +1,94 @@
+In file included 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:77:0:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Linear_polygons.h: In instantiation of ‘CGAL::Qt::Linear_set_graphics_item<Linear_set>::Linear_set_graphics_item(CGAL::Qt::Linear_set_graphics_item<Linear_set>::Linear_set_*) [with Linear_set = Iterator_and_polygons; CGAL::Qt::Linear_set_graphics_item<Linear_set>::Linear_set_ = CGAL::General_polygon_set_2<CGAL::Gps_segment_traits_2<CGAL::Epeck> >]’:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:178:15:   required from ‘Rep<GI_, Set_>::Rep() [with GI_ = CGAL::Qt::Linear_set_graphics_item<Iterator_and_polygons>; Set_ = Iterator_and_polygons]’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:300:24:   required from here
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Linear_polygons.h:160:58: error: no matching function for call to ‘CGAL::Qt::Piecewise_set_graphics_item<Iterator_and_polygons, CGAL::Qt::Draw_linear_X_monotone_curve, CGAL::Qt::Linear_X_monotone_bbox>::Piecewise_set_graphics_item(CGAL::Qt::Linear_set_graphics_item<Iterator_and_polygons>::Linear_set_*&)’
+   Linear_set_graphics_item(Linear_set_* aSet) : Base(aSet) {}
+                                                          ^
+
+In file included 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Linear_polygons.h:26:0,
+                 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:77:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:57:7: note: candidate: CGAL::Qt::Piecewise_set_graphics_item<Iterator_and_polygons, CGAL::Qt::Draw_linear_X_monotone_curve, CGAL::Qt::Linear_X_monotone_bbox>::Piecewise_set_graphics_item()
+ class Piecewise_set_graphics_item : public Piecewise_region_graphics_item< typename internal::Piecewise_set_traits<Piecewise_set_>, Draw_piece
+       ^
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:57:7: note:   candidate expects 0 arguments, 1 provided
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp: In instantiation of ‘class Rep<CGAL::Qt::Linear_set_graphics_item<Iterator_and_polygons>, CGAL::General_polygon_set_2<CGAL::Gps_segment_traits_2<CGAL::Epeck> > >’:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:219:12:   required from ‘void Rep<GI_, Set_>::assign(const Rep_base&) [with GI_ = CGAL::Qt::Linear_set_graphics_item<Iterator_and_polygons>; Set_ = Iterator_and_polygons]’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:810:1:   required from here
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:174:35: error: no type named ‘Polygons’ in ‘class CGAL::General_polygon_set_2<CGAL::Gps_segment_traits_2<CGAL::Epeck> >’
+   typedef typename Set_::Polygons Set ;
+                                   ^
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:176:23: error: no type named ‘Polygons’ in ‘class CGAL::General_polygon_set_2<CGAL::Gps_segment_traits_2<CGAL::Epeck> >’
+   typedef Rep<GI,Set> Self ;
+                       ^
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp: In instantiation of ‘void Rep<GI_, Set_>::assign(const Rep_base&) [with GI_ = CGAL::Qt::Linear_set_graphics_item<Iterator_and_polygons>; Set_ = Iterator_and_polygons]’:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:810:1:   required from here
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:219:12: error: ‘const Self {aka const class Rep<CGAL::Qt::Linear_set_graphics_item<Iterator_and_polygons>, CGAL::General_polygon_set_2<CGAL::Gps_segment_traits_2<CGAL::Epeck> > >}’ has no member named ‘mSet’
+       mSet = cast(aOther).mSet; 
+            ^
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp: In instantiation of ‘void Rep<GI_, Set_>::intersect(const Rep_base&) [with GI_ = CGAL::Qt::Linear_set_graphics_item<Iterator_and_polygons>; Set_ = Iterator_and_polygons]’:
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:810:1:   required from here
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:231:7: error: ‘const Self {aka const class Rep<CGAL::Qt::Linear_set_graphics_item<Iterator_and_polygons>, CGAL::General_polygon_set_2<CGAL::Gps_segment_traits_2<CGAL::Epeck> > >}’ has no member named ‘mSet’
+       mSet.intersection( cast(aOther).mSet); 
+       ^
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp: In instantiation of ‘void Rep<GI_, Set_>::join(const Rep_base&) [with GI_ = CGAL::Qt::Linear_set_graphics_item<Iterator_and_polygons>; Set_ = Iterator_and_polygons]’:
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:810:1:   required from here
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:243:7: error: ‘const Self {aka const class Rep<CGAL::Qt::Linear_set_graphics_item<Iterator_and_polygons>, CGAL::General_polygon_set_2<CGAL::Gps_segment_traits_2<CGAL::Epeck> > >}’ has no member named ‘mSet’
+       mSet.join( cast(aOther).mSet); 
+       ^
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp: In instantiation of ‘void Rep<GI_, Set_>::difference(const Rep_base&) [with GI_ = CGAL::Qt::Linear_set_graphics_item<Iterator_and_polygons>; Set_ = Iterator_and_polygons]’:
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:810:1:   required from here
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:255:7: error: ‘const Self {aka const class Rep<CGAL::Qt::Linear_set_graphics_item<Iterator_and_polygons>, CGAL::General_polygon_set_2<CGAL::Gps_segment_traits_2<CGAL::Epeck> > >}’ has no member named ‘mSet’
+       mSet.difference( cast(aOther).mSet); 
+       ^
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp: In instantiation of ‘void Rep<GI_, Set_>::symmetric_difference(const Rep_base&) [with GI_ = CGAL::Qt::Linear_set_graphics_item<Iterator_and_polygons>; Set_ = Iterator_and_polygons]’:
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:810:1:   required from here
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:267:7: error: ‘const Self {aka const class Rep<CGAL::Qt::Linear_set_graphics_item<Iterator_and_polygons>, CGAL::General_polygon_set_2<CGAL::Gps_segment_traits_2<CGAL::Epeck> > >}’ has no member named ‘mSet’
+       mSet.symmetric_difference( cast(aOther).mSet); 
+       ^
+In file included from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_region_graphics_item.h:24:0,
+                 from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:24,
+                 from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Linear_polygons.h:26,
+                 from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:77:
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_boundary_graphics_item.h: In instantiation of ‘void CGAL::Qt::Piecewise_boundary_graphics_item<Piecewise_boundary_, Draw_piece_, Piece_bbox_>::draw_boundary(const Piecewise_boundary&, QPainterPath&) [with Piecewise_boundary_ = CGAL::Qt::internal::Pass_on<CGAL::Qt::internal::Piecewise_set_traits<Iterator_and_polygons> >; Draw_piece_ = CGAL::Qt::Draw_linear_X_monotone_curve; Piece_bbox_ = CGAL::Qt::Linear_X_monotone_bbox; CGAL::Qt::Piecewise_boundary_graphics_item<Piecewise_boundary_, Draw_piece_, Piece_bbox_>::Piecewise_boundary = CGAL::Polygon_2<CGAL::Epeck, std::vector<CGAL::Point_2<CGAL::Epeck>, std::allocator<CGAL::Point_2<CGAL::Epeck> > > >]’:
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_boundary_graphics_item.h:71:20:   required from ‘void CGAL::Qt::Piecewise_boundary_graphics_item<Piecewise_boundary_, Draw_piece_, Piece_bbox_>::draw_model(QPainterPath&) [with Piecewise_boundary_ = CGAL::Qt::internal::Pass_on<CGAL::Qt::internal::Piecewise_set_traits<Iterator_and_polygons> >; Draw_piece_ = CGAL::Qt::Draw_linear_X_monotone_curve; Piece_bbox_ = CGAL::Qt::Linear_X_monotone_bbox]’
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:810:1:   required from here
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_boundary_graphics_item.h:93:64: error: ‘const Piecewise_boundary {aka const class CGAL::Polygon_2<CGAL::Epeck, std::vector<CGAL::Point_2<CGAL::Epeck>, std::allocator<CGAL::Point_2<CGAL::Epeck> > > >}’ has no member named ‘curves_begin’
+   for( Curve_piece_const_iterator pit = aBoundary.curves_begin(); pit != aBoundary.curves_end(); ++ pit, ++c )
+                                                                ^
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_boundary_graphics_item.h:93:71: error: ‘const Piecewise_boundary {aka const class CGAL::Polygon_2<CGAL::Epeck, std::vector<CGAL::Point_2<CGAL::Epeck>, std::allocator<CGAL::Point_2<CGAL::Epeck> > > >}’ has no member named ‘curves_end’
+   for( Curve_piece_const_iterator pit = aBoundary.curves_begin(); pit != aBoundary.curves_end(); ++ pit, ++c )
+                                                                       ^
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_boundary_graphics_item.h: In instantiation of ‘void CGAL::Qt::Piecewise_boundary_graphics_item<Piecewise_boundary_, Draw_piece_, Piece_bbox_>::update_boundary_bbox(const Piecewise_boundary&, CGAL::Qt::Piecewise_graphics_item_base::Bbox_builder&) [with Piecewise_boundary_ = CGAL::Qt::internal::Pass_on<CGAL::Qt::internal::Piecewise_set_traits<Iterator_and_polygons> >; Draw_piece_ = CGAL::Qt::Draw_linear_X_monotone_curve; Piece_bbox_ = CGAL::Qt::Linear_X_monotone_bbox; CGAL::Qt::Piecewise_boundary_graphics_item<Piecewise_boundary_, Draw_piece_, Piece_bbox_>::Piecewise_boundary = CGAL::Polygon_2<CGAL::Epeck, std::vector<CGAL::Point_2<CGAL::Epeck>, std::allocator<CGAL::Point_2<CGAL::Epeck> > > >]’:
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_boundary_graphics_item.h:65:27:   required from ‘void CGAL::Qt::Piecewise_boundary_graphics_item<Piecewise_boundary_, Draw_piece_, Piece_bbox_>::update_bbox(CGAL::Qt::Piecewise_graphics_item_base::Bbox_builder&) [with Piecewise_boundary_ = CGAL::Qt::internal::Pass_on<CGAL::Qt::internal::Piecewise_set_traits<Iterator_and_polygons> >; Draw_piece_ = CGAL::Qt::Draw_linear_X_monotone_curve; Piece_bbox_ = CGAL::Qt::Linear_X_monotone_bbox]’
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:810:1:   required from here
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_boundary_graphics_item.h:76:66: error: ‘const Piecewise_boundary {aka const class CGAL::Polygon_2<CGAL::Epeck, std::vector<CGAL::Point_2<CGAL::Epeck>, std::allocator<CGAL::Point_2<CGAL::Epeck> > > >}’ has no member named ‘curves_begin’
+     for( Curve_piece_const_iterator pit = aBoundary.curves_begin(); pit != aBoundary.curves_end(); ++ pit )
+                                                                  ^
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_boundary_graphics_item.h:76:73: error: ‘const Piecewise_boundary {aka const class CGAL::Polygon_2<CGAL::Epeck, std::vector<CGAL::Point_2<CGAL::Epeck>, std::allocator<CGAL::Point_2<CGAL::Epeck> > > >}’ has no member named ‘curves_end’
+     for( Curve_piece_const_iterator pit = aBoundary.curves_begin(); pit != aBoundary.curves_end(); ++ pit )
+                                                                         ^
+CMakeFiles/Boolean_set_operations_2.dir/build.make:154: recipe for target 'CMakeFiles/Boolean_set_operations_2.dir/Boolean_set_operations_2.cpp.o' failed
+make[2]: *** [CMakeFiles/Boolean_set_operations_2.dir/Boolean_set_operations_2.cpp.o] Error 1
+CMakeFiles/Makefile2:515: recipe for target 'CMakeFiles/Boolean_set_operations_2.dir/all' failed
+make[1]: *** [CMakeFiles/Boolean_set_operations_2.dir/all] Error 2
+Makefile:94: recipe for target 'all' failed
+make: *** [all] Error 2
+

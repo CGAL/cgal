@@ -1,0 +1,79 @@
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/../../include/CGAL/Gps_segment_traits_2.h:29:0,from 
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/../../include/CGAL/Polygon_set_2.h:32,from 
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:37:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/HeaderFiles/QT5/GraphicsViewLinearPolygonInput.h: In instantiation of ‘class CGAL::Qt::GraphicsViewLinearPolygonInput<CGAL::Epeck>’:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:562:95:   required from here
+/usr/local/include/CGAL/Arr_segment_traits_2.h:1081:68: error: ‘typedef CGAL::Type_equality_wrapper<CGAL::Lazy_kernel_base<CGAL::Simple_cartesian<__gmp_expr<__mpq_struct [1], __mpq_struct [1]> >, CGAL::Simple_cartesian<CGAL::Interval_nt<false> >, CGAL::Cartesian_converter<CGAL::Simple_cartesian<__gmp_expr<__mpq_struct [1], __mpq_struct [1]> >, CGAL::Simple_cartesian<CGAL::Interval_nt<false> > >, CGAL::Epeck>, CGAL::Epeck>::Point_2 CGAL::Arr_segment_2<CGAL::Epeck>::Point_2’ is private
+   typedef typename Kernel::Point_2                                 Point_2;
+                                                                    ^
+In file included from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:61:0:
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/HeaderFiles/QT5/GraphicsViewLinearPolygonInput.h:322:11: error: within this context
+     Point cvt ( typename Linear_curve::Point_2 const& aP ) { return Point( to_d
+           ^
+In file included from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/../../include/CGAL/Gps_segment_traits_2.h:29:0,
+                 from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/../../include/CGAL/Polygon_set_2.h:32,
+                 from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:37:
+/usr/local/include/CGAL/Arr_segment_traits_2.h:1081:68: error: ‘typedef CGAL::Type_equality_wrapper<CGAL::Lazy_kernel_base<CGAL::Simple_cartesian<__gmp_expr<__mpq_struct [1], __mpq_struct [1]> >, CGAL::Simple_cartesian<CGAL::Interval_nt<false> >, CGAL::Cartesian_converter<CGAL::Simple_cartesian<__gmp_expr<__mpq_struct [1], __mpq_struct [1]> >, CGAL::Simple_cartesian<CGAL::Interval_nt<false> > >, CGAL::Epeck>, CGAL::Epeck>::Point_2 CGAL::Arr_segment_2<CGAL::Epeck>::Point_2’ is private
+   typedef typename Kernel::Point_2                                 Point_2;
+                                                                    ^
+In file included from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:61:0:
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/HeaderFiles/QT5/GraphicsViewLinearPolygonInput.h:322:55: error: within this context
+     Point cvt ( typename Linear_curve::Point_2 const& aP ) { return Point( to_d
+                                                       ^
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/HeaderFiles/QT5/GraphicsViewLinearPolygonInput.h: In instantiation of ‘CGAL::Qt::GraphicsViewLinearPolygonInput<K>::Linear_curve CGAL::Qt::GraphicsViewLinearPolygonInput<K>::CreatePiece() [with K = CGAL::Epeck; CGAL::Qt::GraphicsViewLinearPolygonInput<K>::Linear_curve = CGAL::Arr_segment_2<CGAL::Epeck>]’:
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/HeaderFiles/QT5/GraphicsViewLinearPolygonInput.h:288:45:   required from ‘void CGAL::Qt::GraphicsViewLinearPolygonInput<K>::UpdateOngoingPiece() [with K = CGAL::Epeck]’
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/HeaderFiles/QT5/GraphicsViewLinearPolygonInput.h:148:29:   required from ‘bool CGAL::Qt::GraphicsViewLinearPolygonInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent*) [with K = CGAL::Epeck]’
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/HeaderFiles/QT5/GraphicsViewLinearPolygonInput.h:91:34:   required from ‘bool CGAL::Qt::GraphicsViewLinearPolygonInput<K>::eventFilter(QObject*, QEvent*) [with K = CGAL::Epeck]’
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:775:1:   required from here
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/HeaderFiles/QT5/GraphicsViewLinearPolygonInput.h:261:39: error: no matching function for call to ‘CGAL::Arr_segment_2<CGAL::Epeck>::Arr_segment_2(CGAL::Qt::GraphicsViewLinearPolygonInput<CGAL::Epeck>::Point&, CGAL::Qt::GraphicsViewLinearPolygonInput<CGAL::Epeck>::Point&, CGAL::Qt::GraphicsViewLinearPolygonInput<CGAL::Epeck>::Point&)’
+         return Linear_curve(mP0,lH,mP1); 
+                                       ^
+In file included from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/../../include/CGAL/Gps_segment_traits_2.h:29:0,
+                 from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/../../include/CGAL/Polygon_set_2.h:32,
+                 from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:37:
+/usr/local/include/CGAL/Arr_segment_traits_2.h:1110:3: note: candidate: CGAL::Arr_segment_2<Kernel_>::Arr_segment_2(const Line_2&, const Point_2&, const Point_2&) [with Kernel_ = CGAL::Epeck; CGAL::Arr_segment_2<Kernel_>::Line_2 = CGAL::Line_2<CGAL::Epeck>; CGAL::Arr_segment_2<Kernel_>::Point_2 = CGAL::Point_2<CGAL::Epeck>]
+   Arr_segment_2(const Line_2& line,
+   ^
+/usr/local/include/CGAL/Arr_segment_traits_2.h:1110:3: note:   no known conversion for argument 1 from ‘CGAL::Qt::GraphicsViewLinearPolygonInput<CGAL::Epeck>::Point {aka CGAL::Point_2<CGAL::Epeck>}’ to ‘const Line_2& {aka const CGAL::Line_2<CGAL::Epeck>&}’
+/usr/local/include/CGAL/Arr_segment_traits_2.h:1099:3: note: candidate: CGAL::Arr_segment_2<Kernel_>::Arr_segment_2(const Point_2&, const Point_2&) [with Kernel_ = CGAL::Epeck; CGAL::Arr_segment_2<Kernel_>::Point_2 = CGAL::Point_2<CGAL::Epeck>]
+   Arr_segment_2(const Point_2& source, const Point_2& target) :
+   ^
+/usr/local/include/CGAL/Arr_segment_traits_2.h:1099:3: note:   candidate expects 2 arguments, 3 provided
+/usr/local/include/CGAL/Arr_segment_traits_2.h:1092:3: note: candidate: CGAL::Arr_segment_2<Kernel_>::Arr_segment_2(const Segment_2&) [with Kernel_ = CGAL::Epeck; CGAL::Arr_segment_2<Kernel_>::Segment_2 = CGAL::Segment_2<CGAL::Epeck>]
+   Arr_segment_2(const Segment_2& seg) : Base(seg) {}
+   ^
+/usr/local/include/CGAL/Arr_segment_traits_2.h:1092:3: note:   candidate expects 1 argument, 3 provided
+/usr/local/include/CGAL/Arr_segment_traits_2.h:1086:3: note: candidate: CGAL::Arr_segment_2<Kernel_>::Arr_segment_2() [with Kernel_ = CGAL::Epeck]
+   Arr_segment_2() : Base() {}
+   ^
+/usr/local/include/CGAL/Arr_segment_traits_2.h:1086:3: note:   candidate expects 0 arguments, 3 provided
+/usr/local/include/CGAL/Arr_segment_traits_2.h:1075:7: note: candidate: CGAL::Arr_segment_2<CGAL::Epeck>::Arr_segment_2(const CGAL::Arr_segment_2<CGAL::Epeck>&)
+ class Arr_segment_2 :
+       ^
+/usr/local/include/CGAL/Arr_segment_traits_2.h:1075:7: note:   candidate expects 1 argument, 3 provided
+/usr/local/include/CGAL/Arr_segment_traits_2.h:1075:7: note: candidate: CGAL::Arr_segment_2<CGAL::Epeck>::Arr_segment_2(CGAL::Arr_segment_2<CGAL::Epeck>&&)
+/usr/local/include/CGAL/Arr_segment_traits_2.h:1075:7: note:   candidate expects 1 argument, 3 provided
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/HeaderFiles/QT5/GraphicsViewLinearPolygonInput.h: In instantiation of ‘CGAL::Qt::GraphicsViewLinearPolygonInput<K>::Point CGAL::Qt::GraphicsViewLinearPolygonInput<K>::cvt(const typename CGAL::Qt::GraphicsViewLinearPolygonInput<K>::Gps_traits::Curve_2::Point_2&) [with K = CGAL::Epeck; CGAL::Qt::GraphicsViewLinearPolygonInput<K>::Point = CGAL::Point_2<CGAL::Epeck>; typename CGAL::Qt::GraphicsViewLinearPolygonInput<K>::Gps_traits::Curve_2::Point_2 = CGAL::Point_2<CGAL::Epeck>]’:
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/HeaderFiles/QT5/GraphicsViewLinearPolygonInput.h:278:18:   required from ‘void CGAL::Qt::GraphicsViewLinearPolygonInput<K>::RemoveLastPiece() [with K = CGAL::Epeck]’
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/HeaderFiles/QT5/GraphicsViewLinearPolygonInput.h:214:24:   required from ‘bool CGAL::Qt::GraphicsViewLinearPolygonInput<K>::keyPressEvent(QKeyEvent*) [with K = CGAL::Epeck]’
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/HeaderFiles/QT5/GraphicsViewLinearPolygonInput.h:95:33:   required from ‘bool CGAL::Qt::GraphicsViewLinearPolygonInput<K>::eventFilter(QObject*, QEvent*) [with K = CGAL::Epeck]’
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:775:1:   required from here
+/usr/local/include/CGAL/Arr_segment_traits_2.h:1081:68: error: ‘typedef CGAL::Type_equality_wrapper<CGAL::Lazy_kernel_base<CGAL::Simple_cartesian<__gmp_expr<__mpq_struct [1], __mpq_struct [1]> >, CGAL::Simple_cartesian<CGAL::Interval_nt<false> >, CGAL::Cartesian_converter<CGAL::Simple_cartesian<__gmp_expr<__mpq_struct [1], __mpq_struct [1]> >, CGAL::Simple_cartesian<CGAL::Interval_nt<false> > >, CGAL::Epeck>, CGAL::Epeck>::Point_2 CGAL::Arr_segment_2<CGAL::Epeck>::Point_2’ is private
+   typedef typename Kernel::Point_2                                 Point_2;
+                                                                    ^
+In file included from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:61:0:
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/HeaderFiles/QT5/GraphicsViewLinearPolygonInput.h:322:11: error: within this context
+     Point cvt ( typename Linear_curve::Point_2 const& aP ) { return Point( to_d
+           ^
+CMakeFiles/Boolean_set_operations_2.dir/build.make:154: recipe for target 'CMakeFiles/Boolean_set_operations_2.dir/Boolean_set_operations_2.cpp.o' failed
+make[2]: *** [CMakeFiles/Boolean_set_operations_2.dir/Boolean_set_operations_2.cpp.o] Error 1
+CMakeFiles/Makefile2:515: recipe for target 'CMakeFiles/Boolean_set_operations_2.dir/all' failed
+make[1]: *** [CMakeFiles/Boolean_set_operations_2.dir/all] Error 2
+Makefile:94: recipe for target 'all' failed
+make: *** [all] Error 2
+

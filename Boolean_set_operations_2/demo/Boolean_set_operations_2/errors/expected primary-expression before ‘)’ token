@@ -1,0 +1,241 @@
+This error was generated on 3/7/18 at 17:30 IST
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:72:0:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Circular_polygons.h: In constructor ‘CGAL::Qt::Circular_set_graphics_item<Circular_set>::Circular_set_graphics_item(Circular_set*)’:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Circular_polygons.h:302:77: error: expected primary-expression before ‘)’ token
+  Circular_set_graphics_item(Circular_set* aSet) : Base(aSet,Circular_traits) {}
+                                                                            ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:73:0:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Linear_polygons.h: In constructor ‘CGAL::Qt::Linear_set_graphics_item<Linear_set>::Linear_set_graphics_item(Linear_set*)’:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Linear_polygons.h:159:71: error: expected primary-expression before ‘)’ token
+   Linear_set_graphics_item(Linear_set* aSet) : Base(aSet,Linear_traits) {}
+                                                                       ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_region_graphics_item.h:24:0,
+                 
+from/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:24,
+                 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Circular_polygons.h:26,
+                 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:72:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_boundary_graphics_item.h: In instantiation of ‘class CGAL::Qt::Piecewise_boundary_graphics_item<CGAL::Qt::Draw_circular_X_monotone_curve, CGAL::Qt::Circular_X_monotone_bbox, CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> >’:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_region_graphics_item.h:33:7:   required from ‘class CGAL::Qt::Piecewise_region_graphics_item<CGAL::Qt::Draw_circular_X_monotone_curve, CGAL::Qt::Circular_X_monotone_bbox, CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> >’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:32:7:   required from ‘class CGAL::Qt::Piecewise_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> >, CGAL::Qt::Draw_circular_X_monotone_curve, CGAL::Qt::Circular_X_monotone_bbox, CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> >’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Circular_polygons.h:294:7:   required from ‘class CGAL::Qt::Circular_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> > >’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:180:15:   required from ‘Rep<GI_, Set_>::Rep() [with GI_ = CGAL::Qt::Circular_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> > >; Set_ = CGAL::General_polygon_set_2<CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> >]’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:294:26:   required from here
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_boundary_graphics_item.h:37:38: error: no type named ‘Polygon_2’ in ‘struct CGAL::Qt::Draw_circular_X_monotone_curve’
+   typedef typename Helper::Polygon_2 Piecewise_boundary ;
+                                      ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:24:0,
+                 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Circular_polygons.h:26,
+                 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:72:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_region_graphics_item.h: In instantiation of ‘class CGAL::Qt::Piecewise_region_graphics_item<CGAL::Qt::Draw_circular_X_monotone_curve, CGAL::Qt::Circular_X_monotone_bbox, CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> >’:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:32:7:   required from ‘class CGAL::Qt::Piecewise_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> >, CGAL::Qt::Draw_circular_X_monotone_curve, CGAL::Qt::Circular_X_monotone_bbox, CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> >’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Circular_polygons.h:294:7:   required from ‘class CGAL::Qt::Circular_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> > >’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:180:15:   required from ‘Rep<GI_, Set_>::Rep() [with GI_ = CGAL::Qt::Circular_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> > >; Set_ = CGAL::General_polygon_set_2<CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> >]’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:294:26:   required from here
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_region_graphics_item.h:35:49: error: no type named ‘Polygon_with_holes_2’ in ‘struct CGAL::Qt::Draw_circular_X_monotone_curve’
+   typedef typename Helper::Polygon_with_holes_2 Piecewise_region;
+                                                 ^
+
+In file included 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Circular_polygons.h:26:0,
+                 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:72:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h: In instantiation of ‘class CGAL::Qt::Piecewise_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> >, CGAL::Qt::Draw_circular_X_monotone_curve, CGAL::Qt::Circular_X_monotone_bbox, CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> >’:
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Circular_polygons.h:294:7:   required from ‘class CGAL::Qt::Circular_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> > >’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:180:15:   required from ‘Rep<GI_, Set_>::Rep() [with GI_ = CGAL::Qt::Circular_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> > >; Set_ = CGAL::General_polygon_set_2<CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> >]’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:294:26:   required from here
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:43:53: error: no type named ‘Polygon_with_holes_2’ in ‘struct CGAL::Qt::Draw_circular_X_monotone_curve’
+   typedef typename Gps_traits::Polygon_with_holes_2 Region ;
+                                                     ^
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:49:31: error: no type named ‘Polygon_with_holes_2’ in ‘struct CGAL::Qt::Draw_circular_X_monotone_curve’
+   typedef std::vector<Region> Region_vector ;
+                               ^
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:52:50: error: no type named ‘Polygon_with_holes_2’ in ‘struct CGAL::Qt::Draw_circular_X_monotone_curve’
+   typedef typename Region_vector::const_iterator Region_const_iterator ;
+                                                  ^
+
+In file included 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_region_graphics_item.h:24:0,
+                 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:24,
+                 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Circular_polygons.h:26,
+                 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:72:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_boundary_graphics_item.h: In instantiation of ‘class CGAL::Qt::Piecewise_boundary_graphics_item<CGAL::Qt::Draw_linear_X_monotone_curve, CGAL::Qt::Linear_X_monotone_bbox, CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > >’:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_region_graphics_item.h:33:7:   required from ‘class CGAL::Qt::Piecewise_region_graphics_item<CGAL::Qt::Draw_linear_X_monotone_curve, CGAL::Qt::Linear_X_monotone_bbox, CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > >’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:32:7:   required from ‘class CGAL::Qt::Piecewise_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > >, CGAL::Qt::Draw_linear_X_monotone_curve, CGAL::Qt::Linear_X_monotone_bbox, CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > >’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Linear_polygons.h:152:7:   required from ‘class CGAL::Qt::Linear_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > > >’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:180:15:   required from ‘Rep<GI_, Set_>::Rep() [with GI_ = CGAL::Qt::Linear_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > > >; Set_ = CGAL::General_polygon_set_2<CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > >]’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:307:24:   required from here
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_boundary_graphics_item.h:37:38: error: no type named ‘Polygon_2’ in ‘struct CGAL::Qt::Draw_linear_X_monotone_curve’
+   typedef typename Helper::Polygon_2 Piecewise_boundary ;
+                                      ^
+
+In file included 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:24:0,
+                 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Circular_polygons.h:26,
+                 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:72:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_region_graphics_item.h: In instantiation of ‘class CGAL::Qt::Piecewise_region_graphics_item<CGAL::Qt::Draw_linear_X_monotone_curve, CGAL::Qt::Linear_X_monotone_bbox, CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > >’:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:32:7:   required from ‘class CGAL::Qt::Piecewise_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > >, CGAL::Qt::Draw_linear_X_monotone_curve, CGAL::Qt::Linear_X_monotone_bbox, CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > >’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Linear_polygons.h:152:7:   required from ‘class CGAL::Qt::Linear_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > > >’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:180:15:   required from ‘Rep<GI_, Set_>::Rep() [with GI_ = CGAL::Qt::Linear_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > > >; Set_ = CGAL::General_polygon_set_2<CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > >]’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:307:24:   required from here
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_region_graphics_item.h:35:49: error: no type named ‘Polygon_with_holes_2’ in ‘struct CGAL::Qt::Draw_linear_X_monotone_curve’
+   typedef typename Helper::Polygon_with_holes_2 Piecewise_region;
+                                                 ^
+
+In file included 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Circular_polygons.h:26:0,
+                 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:72:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h: In instantiation of ‘class CGAL::Qt::Piecewise_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > >, CGAL::Qt::Draw_linear_X_monotone_curve, CGAL::Qt::Linear_X_monotone_bbox, CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > >’:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Linear_polygons.h:152:7:   required from ‘class CGAL::Qt::Linear_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > > >’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:180:15:   required from ‘Rep<GI_, Set_>::Rep() [with GI_ = CGAL::Qt::Linear_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > > >; Set_ = CGAL::General_polygon_set_2<CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > >]’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:307:24:   required from here
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:43:53: error: no type named ‘Polygon_with_holes_2’ in ‘struct CGAL::Qt::Draw_linear_X_monotone_curve’
+   typedef typename Gps_traits::Polygon_with_holes_2 Region ;
+                                                     ^
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:49:31: error: no type named ‘Polygon_with_holes_2’ in ‘struct CGAL::Qt::Draw_linear_X_monotone_curve’
+   typedef std::vector<Region> Region_vector ;
+                               ^
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:52:50: error: no type named ‘Polygon_with_holes_2’ in ‘struct CGAL::Qt::Draw_linear_X_monotone_curve’
+   typedef typename Region_vector::const_iterator Region_const_iterator ;
+                                                  ^
+CMakeFiles/Boolean_set_operations_2.dir/build.make:154: recipe for target 'CMakeFiles/Boolean_set_operations_2.dir/Boolean_set_operations_2.cpp.o' failed
+make[2]: *** [CMakeFiles/Boolean_set_operations_2.dir/Boolean_set_operations_2.cpp.o] Error 1
+CMakeFiles/Makefile2:515: recipe for target 'CMakeFiles/Boolean_set_operations_2.dir/all' failed
+make[1]: *** [CMakeFiles/Boolean_set_operations_2.dir/all] Error 2
+Makefile:94: recipe for target 'all' failed
+make: *** [all] Error 2
+
+
+
+
+
+
+
+
+
+try1: send traits as a parameter of piecewise_set_graphics_item and initialize the class.
+result:
+
+In file included 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:72:0:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Circular_polygons.h: In instantiation of ‘CGAL::Qt::Circular_set_graphics_item<Circular_set>::Circular_set_graphics_item(Circular_set*) [with Circular_set = CGAL::General_polygon_set_2<CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> >]’:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:180:15:   required from ‘Rep<GI_, Set_>::Rep() [with GI_ = CGAL::Qt::Circular_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> > >; Set_ = CGAL::General_polygon_set_2<CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> >]’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:294:26:   required from here
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Circular_polygons.h:302:61: error: no matching function for call to ‘CGAL::Qt::Piecewise_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> >, CGAL::Gps_circle_segment_traits_2<CGAL::Epeck>, CGAL::Qt::Draw_circular_X_monotone_curve, CGAL::Qt::Circular_X_monotone_bbox>::Piecewise_set_graphics_item(CGAL::General_polygon_set_2<CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> >*&)’
+   Circular_set_graphics_item(Circular_set* aSet) : Base(aSet) {}
+                                                             ^
+
+In file included 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Circular_polygons.h:26:0,
+                 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:72:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:57:3: 
+note: candidate: CGAL::Qt::Piecewise_set_graphics_item<Piecewise_set_, Gps_traits, Draw_piece_, Piece_bbox_>::Piecewise_set_graphics_item(CGAL::Qt::Piecewise_set_graphics_item<Piecewise_set_, Gps_traits, Draw_piece_, Piece_bbox_>::Piecewise_set*, Gps_traits, const Draw_piece&, const Piece_bbox&) 
+[with Piecewise_set_ = CGAL::General_polygon_set_2<CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> >; 
+	Gps_traits = CGAL::Gps_circle_segment_traits_2<CGAL::Epeck>; 
+	Draw_piece_ = CGAL::Qt::Draw_circular_X_monotone_curve; 
+	Piece_bbox_ = CGAL::Qt::Circular_X_monotone_bbox; 
+
+CGAL::Qt::Piecewise_set_graphics_item<Piecewise_set_, Gps_traits, Draw_piece_, Piece_bbox_>::Piecewise_set = CGAL::General_polygon_set_2<CGAL::Gps_circle_segment_traits_2<CGAL::Epeck> >; 
+CGAL::Qt::Piecewise_set_graphics_item<Piecewise_set_, Gps_traits, Draw_piece_, Piece_bbox_>::Draw_piece = CGAL::Qt::Draw_circular_X_monotone_curve; CGAL::Qt::Piecewise_set_graphics_item<Piecewise_set_, Gps_traits, Draw_piece_, Piece_bbox_>::Piece_bbox = CGAL::Qt::Circular_X_monotone_bbox]
+   Piecewise_set_graphics_item( Piecewise_set* aSet,Gps_traits Traits, Draw_piece const& aPieceDrawer = Draw_piece(), Piece_bbox const& aPieceB
+   ^
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:57:3: note:   candidate expects 4 arguments, 1 provided
+
+In file included from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:73:0:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Linear_polygons.h: In instantiation of ‘CGAL::Qt::Linear_set_graphics_item<Linear_set>::Linear_set_graphics_item(Linear_set*) [with Linear_set = CGAL::General_polygon_set_2<CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > >]’:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:180:15:   required from ‘Rep<GI_, Set_>::Rep() [with GI_ = CGAL::Qt::Linear_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > > >; Set_ = CGAL::General_polygon_set_2<CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > >]’
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:307:24:   required from here
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Linear_polygons.h:159:57: error: no matching function for call to ‘CGAL::Qt::Piecewise_set_graphics_item<CGAL::General_polygon_set_2<CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > >, CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> >, CGAL::Qt::Draw_linear_X_monotone_curve, CGAL::Qt::Linear_X_monotone_bbox>::Piecewise_set_graphics_item(CGAL::General_polygon_set_2<CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > >*&)’
+   Linear_set_graphics_item(Linear_set* aSet) : Base(aSet) {}
+                                                         ^
+
+In file included 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Circular_polygons.h:26:0,
+                 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:72:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:57:3: note: candidate: CGAL::Qt::Piecewise_set_graphics_item<Piecewise_set_, Gps_traits, Draw_piece_, Piece_bbox_>::Piecewise_set_graphics_item(CGAL::Qt::Piecewise_set_graphics_item<Piecewise_set_, Gps_traits, Draw_piece_, Piece_bbox_>::Piecewise_set*, Gps_traits, const Draw_piece&, const Piece_bbox&) [with Piecewise_set_ = CGAL::General_polygon_set_2<CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > >; Gps_traits = CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> >; Draw_piece_ = CGAL::Qt::Draw_linear_X_monotone_curve; Piece_bbox_ = CGAL::Qt::Linear_X_monotone_bbox; CGAL::Qt::Piecewise_set_graphics_item<Piecewise_set_, Gps_traits, Draw_piece_, Piece_bbox_>::Piecewise_set = CGAL::General_polygon_set_2<CGAL::Gps_traits_2<CGAL::Arr_segment_traits_2<CGAL::Epeck> > >; CGAL::Qt::Piecewise_set_graphics_item<Piecewise_set_, Gps_traits, Draw_piece_, Piece_bbox_>::Draw_piece = CGAL::Qt::Draw_linear_X_monotone_curve; CGAL::Qt::Piecewise_set_graphics_item<Piecewise_set_, Gps_traits, Draw_piece_, Piece_bbox_>::Piece_bbox = CGAL::Qt::Linear_X_monotone_bbox]
+   Piecewise_set_graphics_item( Piecewise_set* aSet,Gps_traits Traits, Draw_piece const& aPieceDrawer = Draw_piece(), Piece_bbox const& aPieceB
+   ^
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/include/QT5/Piecewise_set_graphics_item.h:57:3: note:   candidate expects 4 arguments, 1 provided
+CMakeFiles/Boolean_set_operations_2.dir/build.make:154: recipe for target 'CMakeFiles/Boolean_set_operations_2.dir/Boolean_set_operations_2.cpp.o' failed
+make[2]: *** [CMakeFiles/Boolean_set_operations_2.dir/Boolean_set_operations_2.cpp.o] Error 1
+CMakeFiles/Makefile2:515: recipe for target 'CMakeFiles/Boolean_set_operations_2.dir/all' failed
+make[1]: *** [CMakeFiles/Boolean_set_operations_2.dir/all] Error 2
+Makefile:94: recipe for target 'all' failed
+make: *** [all] Error 2
+
+solution made changes in the boolean_set_operations_2 rep class and passed gps_traits as parameter
+solved at 4/7/18  00:03 IST
+
+

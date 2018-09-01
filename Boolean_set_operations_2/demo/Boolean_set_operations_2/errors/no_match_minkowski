@@ -1,0 +1,298 @@
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp: 
+In member function ‘void Curve_set::self_minkowski_sum()’:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: 
+error: no matching function for call to ‘minkowski_sum_2(__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type&, __gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type&)’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+
+In file included from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+
+/usr/local/include/CGAL/minkowski_sum_2.h:213:1: 
+note: candidate: template<class Kernel_, class Container_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_2<Traits_P, Container1_P>&, const CGAL::Polygon_2<Traits_P, Container1_P>&)
+ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
+ ^
+
+/usr/local/include/CGAL/minkowski_sum_2.h:213:1: note:   template argument deduction/substitution failed:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: 
+note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_2<Traits_P, Container1_P>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+
+In file included 
+from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+
+/usr/local/include/CGAL/minkowski_sum_2.h:232:1: 
+note: candidate: template<class Kernel_, class Container_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_with_holes_2<Kernel_, Container_>&, const CGAL::Polygon_with_holes_2<Kernel_, Container_>&)
+ minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
+ ^
+
+/usr/local/include/CGAL/minkowski_sum_2.h:232:1: note:   template argument deduction/substitution failed:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: 
+note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_with_holes_2<Kernel_, Container_>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+/usr/local/include/CGAL/minkowski_sum_2.h:251:1: note: candidate: template<class Kernel_, class Container_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_2<Traits_P, Container1_P>&, const CGAL::Polygon_with_holes_2<Kernel_, Container_>&)
+ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
+ ^
+
+/usr/local/include/CGAL/minkowski_sum_2.h:251:1: note:   template argument deduction/substitution failed:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: 
+note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_2<Traits_P, Container1_P>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+
+/usr/local/include/CGAL/minkowski_sum_2.h:270:1: 
+note: candidate: template<class Kernel_, class Container_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_with_holes_2<Kernel_, Container_>&, const CGAL::Polygon_2<Traits_P, Container1_P>&)
+ minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
+ ^
+
+/usr/local/include/CGAL/minkowski_sum_2.h:270:1: note:   template argument deduction/substitution failed:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: 
+note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_with_holes_2<Kernel_, Container_>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+
+/usr/local/include/CGAL/minkowski_sum_2.h:293:1: 
+note: candidate: template<class Kernel_, class Container_, class DecompositionStrategy1_, class DecompositionStrategy2_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_2<Traits_P, Container1_P>&, const CGAL::Polygon_2<Traits_P, Container1_P>&, const DecompositionStrategy1_&, const DecompositionStrategy2_&)
+ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
+ ^
+
+/usr/local/include/CGAL/minkowski_sum_2.h:293:1: note:   template argument deduction/substitution failed:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: 
+note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_2<Traits_P, Container1_P>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+
+/usr/local/include/CGAL/minkowski_sum_2.h:332:1: 
+note: candidate: template<class Kernel_, class Container_, class DecompositionStrategy1_, class DecompositionStrategy2_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_2<Traits_P, Container1_P>&, const CGAL::Polygon_2<Traits_P, Container1_P>&, const DecompositionStrategy1_&, const DecompositionStrategy2_&, const CGAL::Gps_segment_traits_2<Kernel, Container, CGAL::Arr_segment_traits_2<Kernel_> >&)
+ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
+ ^
+
+/usr/local/include/CGAL/minkowski_sum_2.h:332:1: note:   template argument deduction/substitution failed:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: 
+note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_2<Traits_P, Container1_P>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+
+In file included from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+/usr/local/include/CGAL/minkowski_sum_2.h:361:1: note: candidate: template<class Kernel_, class Container_, class DecompositionStrategy1_, class DecompositionStrategy2_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_with_holes_2<Kernel_, Container_>&, const CGAL::Polygon_with_holes_2<Kernel_, Container_>&, const DecompositionStrategy1_&, const DecompositionStrategy2_&)
+ minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
+ ^
+
+/usr/local/include/CGAL/minkowski_sum_2.h:361:1: note:   template argument deduction/substitution failed:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: 
+note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_with_holes_2<Kernel_, Container_>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+
+/usr/local/include/CGAL/minkowski_sum_2.h:387:1: 
+note: candidate: template<class Kernel_, class Container_, class DecompositionStrategy1_, class DecompositionStrategy2_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_with_holes_2<Kernel_, Container_>&, const CGAL::Polygon_with_holes_2<Kernel_, Container_>&, const DecompositionStrategy1_&, const DecompositionStrategy2_&, const CGAL::Gps_segment_traits_2<Kernel, Container, CGAL::Arr_segment_traits_2<Kernel_> >&)
+ minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
+ ^
+
+/usr/local/include/CGAL/minkowski_sum_2.h:387:1: 
+note:   template argument deduction/substitution failed:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: 
+note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_with_holes_2<Kernel_, Container_>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+
+/usr/local/include/CGAL/minkowski_sum_2.h:421:1: 
+note: candidate: template<class Kernel_, class Container_, class DecompositionStrategy1_, class DecompositionStrategy2_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_2<Traits_P, Container1_P>&, const CGAL::Polygon_with_holes_2<Kernel_, Container_>&, const DecompositionStrategy1_&, const DecompositionStrategy2_&)
+ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
+ ^
+
+/usr/local/include/CGAL/minkowski_sum_2.h:421:1: note:   template argument deduction/substitution failed:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: 
+note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_2<Traits_P, Container1_P>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+
+/usr/local/include/CGAL/minkowski_sum_2.h:447:1: 
+note: candidate: template<class Kernel_, class Container_, class DecompositionStrategy1_, class DecompositionStrategy2_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_2<Traits_P, Container1_P>&, const CGAL::Polygon_with_holes_2<Kernel_, Container_>&, const DecompositionStrategy1_&, const DecompositionStrategy2_&, const CGAL::Gps_segment_traits_2<Kernel, Container, CGAL::Arr_segment_traits_2<Kernel_> >&)
+ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
+ ^
+
+/usr/local/include/CGAL/minkowski_sum_2.h:447:1: note:   template argument deduction/substitution failed:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: 
+note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_2<Traits_P, Container1_P>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+
+/usr/local/include/CGAL/minkowski_sum_2.h:479:1: 
+note: candidate: template<class Kernel_, class Container_, class DecompositionStrategy1_, class DecompositionStrategy2_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_with_holes_2<Kernel_, Container_>&, const CGAL::Polygon_2<Traits_P, Container1_P>&, const DecompositionStrategy1_&, const DecompositionStrategy2_&)
+ minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
+ ^
+
+/usr/local/include/CGAL/minkowski_sum_2.h:479:1: note:   template argument deduction/substitution failed:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: 
+note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_with_holes_2<Kernel_, Container_>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+
+/usr/local/include/CGAL/minkowski_sum_2.h:505:1: 
+note: candidate: template<class Kernel_, class Container_, class DecompositionStrategy1_, class DecompositionStrategy2_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_with_holes_2<Kernel_, Container_>&, const CGAL::Polygon_2<Traits_P, Container1_P>&, const DecompositionStrategy1_&, const DecompositionStrategy2_&, const CGAL::Gps_segment_traits_2<Kernel, Container, CGAL::Arr_segment_traits_2<Kernel_> >&)
+ minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
+ ^
+
+/usr/local/include/CGAL/minkowski_sum_2.h:505:1: note:   template argument deduction/substitution failed:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: 
+note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_with_holes_2<Kernel_, Container_>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+
+/usr/local/include/CGAL/minkowski_sum_2.h:530:1: 
+note: candidate: template<class Kernel_, class Container_, class DecompositionStrategy1_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_2<Traits_P, Container1_P>&, const CGAL::Polygon_2<Traits_P, Container1_P>&, const DecompositionStrategy1_&)
+ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
+ ^
+
+/usr/local/include/CGAL/minkowski_sum_2.h:530:1: 
+note:   template argument deduction/substitution failed:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: 
+note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_2<Traits_P, Container1_P>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+
+/usr/local/include/CGAL/minkowski_sum_2.h:557:1: 
+note: candidate: template<class Kernel_, class Container_, class DecompositionStrategy1_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_2<Traits_P, Container1_P>&, const CGAL::Polygon_2<Traits_P, Container1_P>&, const DecompositionStrategy1_&, const CGAL::Gps_segment_traits_2<Kernel, Container, CGAL::Arr_segment_traits_2<Kernel_> >&)
+ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
+ ^
+
+/usr/local/include/CGAL/minkowski_sum_2.h:557:1: note:   template argument deduction/substitution failed:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: 
+note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_2<Traits_P, Container1_P>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+
+/usr/local/include/CGAL/minkowski_sum_2.h:584:1: 
+note: candidate: template<class Kernel_, class Container_, class DecompositionStrategy1_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_with_holes_2<Kernel_, Container_>&, const CGAL::Polygon_with_holes_2<Kernel_, Container_>&, const DecompositionStrategy1_&)
+ minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
+ ^
+
+/usr/local/include/CGAL/minkowski_sum_2.h:584:1: note:   template argument deduction/substitution failed:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: 
+note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_with_holes_2<Kernel_, Container_>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+In file included from /home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+/usr/local/include/CGAL/minkowski_sum_2.h:609:1: note: candidate: template<class Kernel_, class Container_, class DecompositionStrategy1_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_with_holes_2<Kernel_, Container_>&, const CGAL::Polygon_with_holes_2<Kernel_, Container_>&, const DecompositionStrategy1_&, const CGAL::Gps_segment_traits_2<Kernel, Container, CGAL::Arr_segment_traits_2<Kernel_> >&)
+ minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
+ ^
+/usr/local/include/CGAL/minkowski_sum_2.h:609:1: note:   template argument deduction/substitution failed:
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_with_holes_2<Kernel_, Container_>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+
+/usr/local/include/CGAL/minkowski_sum_2.h:641:1: 
+note: candidate: template<class Kernel_, class Container_, class DecompositionStrategy1_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_2<Traits_P, Container1_P>&, const CGAL::Polygon_with_holes_2<Kernel_, Container_>&, const DecompositionStrategy1_&)
+ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
+ ^
+
+/usr/local/include/CGAL/minkowski_sum_2.h:641:1: note:   template argument deduction/substitution failed:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: 
+note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_2<Traits_P, Container1_P>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+
+/usr/local/include/CGAL/minkowski_sum_2.h:666:1: note: candidate: template<class Kernel_, class Container_, class DecompositionStrategy1_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_2<Traits_P, Container1_P>&, const CGAL::Polygon_with_holes_2<Kernel_, Container_>&, const DecompositionStrategy1_&, const CGAL::Gps_segment_traits_2<Kernel, Container, CGAL::Arr_segment_traits_2<Kernel_> >&)
+ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
+ ^
+
+/usr/local/include/CGAL/minkowski_sum_2.h:666:1: note:   template argument deduction/substitution failed:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: 
+note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_2<Traits_P, Container1_P>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+
+/usr/local/include/CGAL/minkowski_sum_2.h:696:1: note: candidate: template<class Kernel_, class Container_, class DecompositionStrategy1_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_with_holes_2<Kernel_, Container_>&, const CGAL::Polygon_2<Traits_P, Container1_P>&, const DecompositionStrategy1_&)
+ minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
+ ^
+
+/usr/local/include/CGAL/minkowski_sum_2.h:696:1: note:   template argument deduction/substitution failed:
+
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_with_holes_2<Kernel_, Container_>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+                                                                                       ^
+
+In file included from 
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:59:0:
+
+/usr/local/include/CGAL/minkowski_sum_2.h:721:1: note: candidate: template<class Kernel_, class Container_, class DecompositionStrategy1_> CGAL::Polygon_with_holes_2<Kernel_, Container_> CGAL::minkowski_sum_2(const CGAL::Polygon_with_holes_2<Kernel_, Container_>&, const CGAL::Polygon_2<Traits_P, Container1_P>&, const DecompositionStrategy1_&, const CGAL::Gps_segment_traits_2<Kernel, Container, CGAL::Arr_segment_traits_2<Kernel_> >&)
+ minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
+ ^
+
+/usr/local/include/CGAL/minkowski_sum_2.h:721:1: note:   template argument deduction/substitution failed:
+/home/apurva/Desktop/cgal-public-dev-gsoc2018-bso_demo-apurva/Boolean_set_operations_2/demo/Boolean_set_operations_2/Boolean_set_operations_2.cpp:370:87: note:   ‘__gnu_cxx::__alloc_traits<std::allocator<CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > > > >::value_type {aka CGAL::General_polygon_with_holes_2<CGAL::General_polygon_2<CGAL::Arr_circle_segment_traits_2<CGAL::Epeck, true> > >}’ is not derived from ‘const CGAL::Polygon_with_holes_2<Kernel_, Container_>’
+       circular_holes=CGAL::minkowski_sum_2(circular_vector.at(0),circular_vector.at(0));
+
+                                                                                       ^
+CMakeFiles/Boolean_set_operations_2.dir/build.make:154: recipe for target 'CMakeFiles/Boolean_set_operations_2.dir/Boolean_set_operations_2.cpp.o' failed
+make[2]: *** [CMakeFiles/Boolean_set_operations_2.dir/Boolean_set_operations_2.cpp.o] Error 1
+CMakeFiles/Makefile2:515: recipe for target 'CMakeFiles/Boolean_set_operations_2.dir/all' failed
+make[1]: *** [CMakeFiles/Boolean_set_operations_2.dir/all] Error 2
+Makefile:94: recipe for target 'all' failed
+make: *** [all] Error 2
+
