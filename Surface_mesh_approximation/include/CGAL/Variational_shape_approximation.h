@@ -330,7 +330,7 @@ public:
    * in incremental and hierarchical seeding
    * @return number of proxies initialized
    */
-  std::size_t initialize_seeds(const VSA::Seeding_method method = Hierarchical,
+  std::size_t initialize_seeds(const VSA::Seeding_method method = VSA::Hierarchical,
     const boost::optional<std::size_t> max_nb_of_proxies = boost::optional<std::size_t>(),
     const boost::optional<FT> min_error_drop = boost::optional<FT>(),
     const std::size_t nb_relaxations = 5) {
