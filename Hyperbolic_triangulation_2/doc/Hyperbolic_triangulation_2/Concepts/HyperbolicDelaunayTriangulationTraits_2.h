@@ -5,11 +5,19 @@
 \ingroup PkgHyperbolicTriangulation2Concepts
 \cgalConcept
 
+\cgalRefines DelaunayTriangulationTraits_2
+
 The concept `HyperbolicDelaunayTriangulationTraits_2` describes the set of requirements 
 to be fulfilled by any class used to instantiate the first template parameter of the class
 `CGAL::Hyperbolic_Delaunay_triangulation_2<Traits, Tds>`. It defines the geometric objects 
 (points, segments...) forming the triangulation together with geometric predicates and 
 constructions on these objects.
+
+\cgalModifBegin
+Note that this concept refines the concept `DelaunayTriangulationTraits_2` since
+a hyperbolic Delaunay triangulation is computed internally with the use of a Euclidean 
+`Delaunay_triangulation_2`.
+\cgalModifEnd
 
 \cgalHasModel CGAL::Hyperbolic_Delaunay_triangulation_traits_2
 \cgalHasModel CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2
@@ -32,13 +40,13 @@ public:
 	/*!
 		Represents a point in the Poincaré disk or on the (unit) circle at infinity.
 	*/
-	typedef unspecified_type 			Point_2;
+	typedef unspecified_type 			Hyperbolic_point_2;
 
 	/*!
 		Represents the dual object of a triangle in the hyperbolic Delaunay triangulation. 
 		The dual of a Delaunay triangle is the <i>hyperbolic</i> center of the circle circumscribing it.
 	*/
-	typedef unspecified_type 		    Voronoi_point_2;
+	typedef unspecified_type 		    Hyperbolic_Voronoi_point_2;
 
 	/*!
 		Represents a hyperbolic segment defined by two points. 
@@ -51,26 +59,20 @@ public:
 	typedef unspecified_type	        Hyperbolic_segment_2;
 
 	/*!
+		\cgalModifBegin
 		Represents a triangle in the hyperbolic plane defined by three points. 
+		\cgalModifEnd
 	*/
-	typedef unspecified_type 			Triangle_2;
+	typedef unspecified_type 			Hyperbolic_triangle_2;
   /// @}
 
   /// \name Predicate Types
   /// @{
-	/*!
-		A predicate object. Must provide the function operator
-
-		`Orientation operator()(Point_2 p, Point_2 q, Point_2 r),`
-		
-		which returns the orientation of the points `p, q`, and `r`.
-	*/
-	typedef unspecified_type			Orientation_2;
 
 	/*!
 		A predicate object. Must provide the function operator
 
-		`Oriented_side operator()(Point_2 p, Point_2 q, Point_2 r, Point_2 t),`
+		`Oriented_side operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 r, Hyperbolic_point_2 t),`
 		\cgalModifBegin
 		which returns the position of the point `t` relative to the oriented circle
 		\cgalModifEnd
@@ -83,7 +85,7 @@ public:
 		\cgalModifBegin
 		A predicate object. Must provide the function operator
 
-		`Oriented_side operator()(Point_2 p, Point_2 q, Point_2 query),`
+		`Oriented_side operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 query),`
 		\cgalModifBegin
 		which returns the position of the point `query` relative to the oriented hyperbolic 
 		\cgalModifEnd
@@ -97,14 +99,14 @@ public:
 		\cgalModifBegin
 		A predicate object. Must provide the function operator
 
-		`bool operator()(Point_2 p0, Point_2 p1, Point_2 p2),`
+		`bool operator()(Hyperbolic_point_2 p0, Hyperbolic_point_2 p1, Hyperbolic_point_2 p2),`
 
 		which returns a boolean indicating whether the triangle defined
 		by the points `p0, p1,` and `p2` is hyperbolic (i.e., if its 
 		circumscribing disk is contained in the unit disk). It must also
 		provide the function operator
 
-		`bool operator() (Point_2 p0, Point_2 p1, Point_2 p2, int& ind),`
+		`bool operator() (Hyperbolic_point_2 p0, Hyperbolic_point_2 p1, Hyperbolic_point_2 p2, int& ind),`
 		
 		which returns the same result, but also stores in the integer
 		`ind` the index of the non-hyperbolic edge of the triangle, if
@@ -124,7 +126,7 @@ public:
 
 		Must provide the function operator
 		
-		`Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q),`
+		`Hyperbolic_segment_2 operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q),`
 		
 		which constructs a hyperbolic segment from two points `p` and `q`.
 		Note that `p` and `q` may also lie on the circle at infinity.
@@ -134,7 +136,7 @@ public:
 	/*!
 		A constructor object. Must provide the function operator
 
-		`Voronoi_point_2 operator()(Point_2 p, Point_2 q, Point_2 r),`
+		`Hyperbolic_Voronoi_point_2 operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 r),`
 		
 		which constructs the hyperbolic circumcenter of the triangle with 
 		vertices `p, q`, and `r`.
@@ -144,20 +146,20 @@ public:
 	/*!
 		A constructor object. Must provide the function operator
 
-		`Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q),`
+		`Hyperbolic_segment_2 operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q),`
 		
 		which constructs the hyperbolic bisector of two points `p` and `q` lying 
 		in the Poincaré disk. The endpoints of the resulting hyperbolic segment 
 		lie on the circle at infinity. It must also provide the function operator
 
-		`Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q, Point_2 r),`
+		`Hyperbolic_segment_2 operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 r),`
 
 		where the points `p, q`, and `r` lie in the Poincaré disk. This overloaded 
 		version constructs the hyperbolic bisector of the segment [p,q] limited by 
 		the hyperbolic circumcenter of `p, q, r` on one side and the circle at 
 		infinity on the other. Moreover, it must provide the function operator
 
-		`Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q, Point_2 r, Point_2 s),`
+		`Hyperbolic_segment_2 operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 r, Hyperbolic_point_2 s),`
 
 		where the points `p, q, r`, and `s` lie in the Poincaré disk. This overloaded
 		version constructs the hyperbolic bisector of the segment [p,q] limited by 
