@@ -50,6 +50,7 @@ public:
   //! Deprecated. Does the same as draw().
   void fastDraw()Q_DECL_OVERRIDE;
   bool isExtensionFound()Q_DECL_OVERRIDE;
+  void initializeGL() Q_DECL_OVERRIDE;
   //! Initializes the OpenGL functions and sets the backGround color.
   void init()Q_DECL_OVERRIDE;
   //! Draws the scene "with names" to allow picking.
@@ -128,7 +129,6 @@ public Q_SLOTS:
   void setLighting();
 
   void messageLogged(QOpenGLDebugMessage);
-  void initializeGL()Q_DECL_OVERRIDE;
 
 protected:
   void paintEvent(QPaintEvent *)Q_DECL_OVERRIDE;

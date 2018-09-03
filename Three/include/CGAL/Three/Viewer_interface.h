@@ -114,7 +114,8 @@ public:
   //! \param sharedWidget the main viewer of the Application. This will share the
   //!  context and allow synchronized rendering of multiple views.
   //!
-  Viewer_interface(QWidget* parent, QWidget*) : QGLViewer(parent){}
+  Viewer_interface(QWidget* parent, QOpenGLWidget* shared_widget) 
+    : QGLViewer(shared_widget->context(),parent){}
   virtual ~Viewer_interface() {}
 
   //! \brief Sets the scene for the viewer.

@@ -79,6 +79,7 @@ public:
   int selectionAindex() const Q_DECL_OVERRIDE;
   int selectionBindex() const Q_DECL_OVERRIDE;
   void initializeGL(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
+  void initGL(CGAL::Three::Viewer_interface* viewer);
   void setPickedPixel(const QPoint &p) Q_DECL_OVERRIDE {picked_pixel = p;}
   void draw(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
   void drawWithNames(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
@@ -211,7 +212,8 @@ public Q_SLOTS:
   void setItemA(int i);
   //!Sets the item_B as the item at index i .
   void setItemB(int i);
-
+  void newViewer(CGAL::Three::Viewer_interface*);
+  void removeViewer(CGAL::Three::Viewer_interface*);
 Q_SIGNALS:
   //generated automatically by moc
   //!Is emitted when the ids of the items are changed.
@@ -285,8 +287,6 @@ private:
   mutable QOpenGLBuffer vbo[2];
   Bbox last_bbox;
   Bbox last_visible_bbox;
-public:
-  void removeViewer(CGAL::Three::Viewer_interface*);
 }; // end class Scene
 
 class QAbstractProxyModel;

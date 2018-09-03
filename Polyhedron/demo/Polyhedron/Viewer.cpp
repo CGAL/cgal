@@ -414,7 +414,6 @@ void Viewer::fastDraw()
 
 void Viewer::init()
 {
- 
   if(!isOpenGL_4_3())
   {
     std::cerr<<"The openGL context initialization failed "
@@ -1674,5 +1673,10 @@ void Viewer::resetFov()
   camera()->setHorizontalFieldOfView(ORIGINAL_FOV);
 }
 
+void Viewer::initializeGL()
+{
+  QGLViewer::initializeGL();
+  doneInitGL(this);
+}
 #include "Viewer.moc"
 

@@ -87,7 +87,9 @@ public:
    * throws `std::logic_error` if loading does not succeed or
    * `std::invalid_argument` if `fileinfo` specifies an invalid file*/
   CGAL::Three::Scene_item* loadItem(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface*);
-  
+  void computeViewerBBox(CGAL::qglviewer::Vec &min, CGAL::qglviewer::Vec &max);
+  void updateViewerBbox(Viewer* vi, bool recenter, CGAL::qglviewer::Vec min, 
+                        CGAL::qglviewer::Vec max);
 Q_SIGNALS:
   //! Is emitted when the Application is closed.
   void on_closure();
@@ -446,9 +448,6 @@ private:
   QLineEdit operationSearchBar;
   QWidgetAction* searchAction;
   QString def_save_dir;
-  void computeViewerBBox(CGAL::qglviewer::Vec &min, CGAL::qglviewer::Vec &max);
-  void updateViewerBbox(Viewer* vi, bool recenter, CGAL::qglviewer::Vec min, 
-                        CGAL::qglviewer::Vec max);
   
 private Q_SLOTS:
   void on_actionAdd_Viewer_triggered();

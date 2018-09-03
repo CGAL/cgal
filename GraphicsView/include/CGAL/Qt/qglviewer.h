@@ -79,7 +79,10 @@ class CGAL_QT_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions {
   Q_OBJECT
 
 public:  
+  //todo check if this is used. If not remove it
   explicit QGLViewer(QGLContext* context, QWidget *parent = 0,
+                     ::Qt::WindowFlags flags = 0);
+  explicit QGLViewer(QOpenGLContext* context, QWidget *parent = 0,
                      ::Qt::WindowFlags flags = 0);
   explicit QGLViewer(QWidget *parent = 0,
                      ::Qt::WindowFlags flags = 0);
@@ -1206,6 +1209,7 @@ protected:
   //C o n t e x t
   bool is_ogl_4_3;
   bool is_sharing;
+  QOpenGLContext* shared_context;
 public:
   //! Is used to know if the openGL context is 4.3 or ES 2.0.
   //! @returns `true` if the context is 4.3.

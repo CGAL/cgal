@@ -1720,6 +1720,15 @@ void Scene::computeBbox()
   last_bbox = bbox;
 }
 
+void Scene::newViewer(Viewer_interface *viewer)
+{
+  initGL(viewer);
+  Q_FOREACH(Scene_item* item, m_entries)
+  {
+    item->newViewer(viewer);
+  }
+}
+
 void Scene::removeViewer(Viewer_interface *viewer)
 {
   vaos[viewer]->destroy();
@@ -1734,4 +1743,26 @@ void Scene::removeViewer(Viewer_interface *viewer)
 Scene::Bbox Scene::visibleBbox() const
 {
     return last_visible_bbox;
+}
+
+void Scene::initGL(Viewer_interface *viewer)
+{
+  viewer->makeCurrent();
+  vaos[viewer] = new QOpenGLVertexArrayObject();
+  vaos[viewer]->create();
+  program.bind();
+  vaos[viewer]->bind();
+  vbo[0].bind();
+  vbo[0].allocate(points, 18 * sizeof(float));
+  program.enableAttributeArray("vertex");
+  program.setAttributeArray("vertex", GL_FLOAT, 0, 3);
+  vbo[0].release();
+
+  vbo[1].bind();
+  vbo[1].allocate(uvs, 12 * sizeof(float));
+  program.enableAttributeArray("v_texCoord");
+  program.setAttributeArray("v_texCoord", GL_FLOAT, 0, 2);
+  vbo[1].release();
+  vaos[viewer]->release();
+  program.release();
 }

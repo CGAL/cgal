@@ -258,3 +258,23 @@ void Scene_item_rendering_helper::removeViewer(Viewer_interface *viewer)
     pc->removeViewer(viewer);
   }
 }
+
+void Scene_item_rendering_helper::newViewer(Viewer_interface *viewer)
+{
+  processData(ALL); //newViewer shouldn't be called when item is locked;
+  Q_FOREACH(Triangle_container* tc, priv->triangle_containers)
+  {
+    if(!tc->isGLInit(viewer))
+      tc->initGL(viewer);
+  }
+  Q_FOREACH(Edge_container* ec, priv->edge_containers)
+  {
+    if(!ec->isGLInit(viewer))
+      ec->initGL(viewer);
+  }
+  Q_FOREACH(Point_container* pc, priv->point_containers)
+  {
+    if(!pc->isGLInit(viewer))
+      pc->initGL(viewer);
+  }
+}

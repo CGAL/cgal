@@ -115,6 +115,8 @@ protected:
 
 public:
  void zoomToPosition(const QPoint &, CGAL::Three::Viewer_interface *)const Q_DECL_OVERRIDE;
+ void newViewer(CGAL::Three::Viewer_interface* )Q_DECL_OVERRIDE {};
+ void removeViewer(CGAL::Three::Viewer_interface *)Q_DECL_OVERRIDE {};
 }; // end class Scene_points_with_normal_item
 
 

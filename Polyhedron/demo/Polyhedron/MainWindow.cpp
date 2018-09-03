@@ -2485,24 +2485,16 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer=NULL)
             this, SLOT(on_actionRecenterScene_triggered()));
     connect(ui->actionLookAt, SIGNAL(triggered()),
             this, SLOT(on_actionLookAt_triggered()));
-    connect(ui->actionSetBackgroundColor, SIGNAL(triggered()),
-            this, SLOT(on_actionSetBackgroundColor_triggered()));
     connect(ui->actionDumpCamera, SIGNAL(triggered()),
             this, SLOT(on_actionDumpCamera_triggered()));
     connect(ui->actionCopyCamera, SIGNAL(triggered()),
             this, SLOT(on_actionCopyCamera_triggered()));
     connect(ui->actionPasteCamera, SIGNAL(triggered()),
             this, SLOT(on_actionPasteCamera_triggered()));
-    connect(ui->actionAntiAliasing, SIGNAL(toggled(bool)),
-            viewer, SLOT(setAntiAliasing(bool)));
     connect(ui->actionDrawTwoSides, SIGNAL(toggled(bool)),
             viewer, SLOT(setTwoSides(bool)));
-    connect(ui->actionQuickCameraMode, SIGNAL(toggled(bool)),
-            viewer, SLOT(setFastDrawing(bool)));
     connect(ui->actionSwitchProjection, SIGNAL(toggled(bool)),
             viewer, SLOT(SetOrthoProjection(bool)));
-    connect(ui->actionSet_Transparency_Pass_Number, SIGNAL(triggered()),
-            viewer, SLOT(setTotalPass_clicked()));
   }
   else
   {
@@ -2547,9 +2539,6 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer=NULL)
     connect(action, SIGNAL(toggled(bool)),
             viewer, SLOT(SetOrthoProjection(bool)));
     action= subviewer->findChild<QAction*>("actionTotalPass");
-    connect(action, &QAction::triggered,
-            viewer, &Viewer::setTotalPass_clicked);
-
   }
 
 

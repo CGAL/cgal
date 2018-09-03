@@ -151,7 +151,7 @@ public:
     const Points& points() const;
     const Polygons& polygons() const;
     const Edges& non_manifold_edges() const;
-
+    void newViewer(CGAL::Three::Viewer_interface*)Q_DECL_OVERRIDE{}
     void removeViewer(CGAL::Three::Viewer_interface*)Q_DECL_OVERRIDE{}
 public Q_SLOTS:
     void shuffle_orientations();

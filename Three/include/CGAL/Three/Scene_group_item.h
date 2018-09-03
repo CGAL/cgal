@@ -238,6 +238,7 @@ public :
     //!Moves a child down in the list.
     void moveDown(int);
     void removeViewer(CGAL::Three::Viewer_interface* )Q_DECL_OVERRIDE;
+    void newViewer(CGAL::Three::Viewer_interface* )Q_DECL_OVERRIDE{};
 public Q_SLOTS:
     //!\brief Redraws children.
     //!

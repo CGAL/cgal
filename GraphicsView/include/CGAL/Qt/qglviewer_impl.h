@@ -164,6 +164,8 @@ void CGAL::QGLViewer::defaultConstructor() {
 
   _offset = CGAL::qglviewer::Vec(0,0,0);
   stored_fbo = NULL;
+  is_sharing = false;
+  shared_context = nullptr;
 }
 
 CGAL_INLINE_FUNCTION
@@ -171,6 +173,14 @@ CGAL::QGLViewer::QGLViewer(QWidget *parent,
                      ::Qt::WindowFlags flags)
     : QOpenGLWidget(parent, flags) {
   defaultConstructor();
+}
+CGAL_INLINE_FUNCTION
+CGAL::QGLViewer::QGLViewer(QOpenGLContext* context, QWidget *parent,
+                   ::Qt::WindowFlags flags)
+  : QOpenGLWidget(parent, flags) {
+  defaultConstructor();
+  shared_context = context;
+  is_sharing = true;
 }
 
 /*! Virtual destructor.
@@ -209,35 +219,44 @@ If a 4.3 context could not be set, a ES 2.0 context will be used instead.
 */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::initializeGL() {
-  QSurfaceFormat format = context()->format();
-  context()->format().setOption(QSurfaceFormat::DebugContext);
-  if ( !context()->isValid()
-    || format.majorVersion() != 4
-    || QCoreApplication::arguments().contains(QStringLiteral("--old")))
-
+  if(!is_sharing)
   {
-    format.setDepthBufferSize(24);
-    format.setStencilBufferSize(8);
-    format.setVersion(2,0);
-    format.setRenderableType(QSurfaceFormat::OpenGLES);
-    format.setSamples(0);
-    format.setOption(QSurfaceFormat::DebugContext);
-    QSurfaceFormat::setDefaultFormat(format);
-              
-    needNewContext();
-    qDebug()<<"GL 4.3 context initialization failed. ";
-    is_ogl_4_3 = false;
+    QSurfaceFormat format = context()->format();
+    context()->format().setOption(QSurfaceFormat::DebugContext);
+    if ( !context()->isValid()
+         || format.majorVersion() != 4
+         || QCoreApplication::arguments().contains(QStringLiteral("--old")))
+      
+    {
+      format.setDepthBufferSize(24);
+      format.setStencilBufferSize(8);
+      format.setVersion(2,0);
+      format.setRenderableType(QSurfaceFormat::OpenGLES);
+      format.setSamples(0);
+      format.setOption(QSurfaceFormat::DebugContext);
+      QSurfaceFormat::setDefaultFormat(format);
+      
+      needNewContext();
+      qDebug()<<"GL 4.3 context initialization failed. ";
+      is_ogl_4_3 = false;
+    }
+    else
+    {
+      is_ogl_4_3 = true;
+    }
+    
+    QSurfaceFormat cur_f = QOpenGLContext::currentContext()->format();
+    const char* rt =(cur_f.renderableType() == QSurfaceFormat::OpenGLES) ? "GLES" : "GL";
+    qDebug()<<"Using context "
+           <<cur_f.majorVersion()<<"."<<cur_f.minorVersion()
+          << rt;
   }
   else
   {
-    is_ogl_4_3 = true;
+    context()->setFormat(shared_context->format());
+    context()->create();
+    makeCurrent();
   }
-
-  QSurfaceFormat cur_f = QOpenGLContext::currentContext()->format();
-  const char* rt =(cur_f.renderableType() == QSurfaceFormat::OpenGLES) ? "GLES" : "GL";
-  qDebug()<<"Using context "
-         <<cur_f.majorVersion()<<"."<<cur_f.minorVersion()
-        << rt;
   QOpenGLFunctions::initializeOpenGLFunctions();
   glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
   // Default colors
