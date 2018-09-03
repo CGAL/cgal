@@ -45,12 +45,9 @@ In the following, we assume that the following types are provided as template pa
 <li>`GeomTraits` a geometric traits class in which constructions are performed and predicates evaluated. Throughout this package, a \cgal `Kernel` fulfills the requirements.
 </ul>
 
-The named parameters available in this package are grouped into 3 modules listed below.
+The named parameters available in this package are categorized into 3 groups below.
 
-\defgroup vsa_np_algorithm Algorithm Parameters
-\ingroup vsa_namedparameters
-\cgalHeading{Parameters for the Approximation Step}
-
+\cgalHeading{1. Parameters for the Approximation Step}
 \cgalNPTableBegin
 
 \cgalNPBegin{geom_traits} \anchor VSA_geom_traits
@@ -110,10 +107,7 @@ the number of relaxation iterations interleaved within seeding.\n
 
 \cgalNPTableEnd
 
-\defgroup vsa_np_meshing Meshing Parameters
-\ingroup vsa_namedparameters
-\cgalHeading{Parameters for the Meshing Step}
-
+\cgalHeading{2. Parameters for the Meshing Step}
 \cgalNPTableBegin
 
 \cgalNPBegin{subdivision_ratio} \anchor VSA_subdivision_ratio
@@ -147,10 +141,7 @@ set the plane approximated with the PCA algorithm in the meshing step.\n
 
 \cgalNPTableEnd
 
-\defgroup vsa_np_output Output Parameters
-\ingroup vsa_namedparameters
-\cgalHeading{Parameters for Retrieving the Results}
-
+\cgalHeading{3. Parameters for Retrieving the Results}
 \cgalNPTableBegin
 
 \cgalNPBegin{face_proxy_map} \anchor VSA_face_proxy_map
