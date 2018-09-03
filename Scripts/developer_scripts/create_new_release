@@ -169,7 +169,7 @@ set -e
 cd ${TMPDIR} || return
 
 # Update the working copy
-if [ -d "${SOURCES_DIR}/.git" ]; then
+if [ -e "${SOURCES_DIR}/.git" ]; then
     pushd "${SOURCES_DIR}"
     [ -z "$NO_SCM" ] && git pull
     CGAL_GIT_HASH=`git rev-parse HEAD`
