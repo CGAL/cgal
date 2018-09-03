@@ -57,15 +57,14 @@ The main class of the 2D Hyperbolic Triangulation package, which allows the cons
 - `CGAL::Hyperbolic_Delaunay_triangulation_2`
 
 
-Two models for the concept `HyperbolicDelaunayTriangulationTraits_2` are provided. The traits class `CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2` is based upon `CGAL::Circular_kernel_2` and guarantees exact computations when the input points have rational coordinates. The traits class `CGAL::Hyperbolic_Delaunay_triangulation_traits_2` is by default based upon `CGAL::Cartesian<CORE::Expr>` and guarantees exact computations with algebraic numbers. `CGAL::Hyperbolic_Delaunay_triangulation_traits_2` is used as base for the traits class in the package \ref PkgPeriodic4HyperbolicTriangulation2Summary.
+Two models for the concept `HyperbolicDelaunayTriangulationTraits_2` are provided. The traits class `CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2` is based upon `CGAL::Circular_kernel_2` and guarantees exact computations when the input points have rational coordinates. The traits class `CGAL::Hyperbolic_Delaunay_triangulation_traits_2` is by default based upon `CGAL::Cartesian<CORE::Expr>` and guarantees exact computations for input points with rational coordinates. `CGAL::Hyperbolic_Delaunay_triangulation_traits_2` is used as base for the traits class in the package \ref PkgPeriodic4HyperbolicTriangulation2Summary.
 
 - `CGAL::Hyperbolic_Delaunay_triangulation_traits_2`
 - `CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2`
 
-Finally, two models for the concept `HyperbolicTriangulationFaceBase_2` are also provided.
+Finally, a model for the concept `HyperbolicTriangulationFaceBase_2` is also provided.
 
 - `CGAL::Hyperbolic_triangulation_face_base_2`
-- `CGAL::Hyperbolic_triangulation_face_base_with_info_2`
 
 */
 
