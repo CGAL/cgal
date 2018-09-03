@@ -75,43 +75,11 @@ public:
     return this->_tds_data;
   }  
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-  Vertex_handle mirror_vertex(int i) const;
-  int mirror_index(int i) const;
-#endif
 
 private:
 
   CGAL::Object 	_tds_data;
 };
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-template < class Gt, class Fb >
-inline
-typename Hyperbolic_triangulation_face_base_2<Gt,Fb>::Vertex_handle
-Hyperbolic_triangulation_face_base_2<Gt,Fb>::
-mirror_vertex(int i) const
-{
-  CGAL_triangulation_precondition ( this->neighbor(i) != Face_handle()
-				    && this->dimension() >= 1);
-  //return neighbor(i)->vertex(neighbor(i)->index(this->handle()));
-  return this->neighbor(i)->vertex(mirror_index(i));
-}
-
-template < class Gt, class Fb >
-inline int
-Hyperbolic_triangulation_face_base_2<Gt,Fb>::
-mirror_index(int i) const
-{
-  // return the index of opposite vertex in neighbor(i);
-  CGAL_triangulation_precondition (this->neighbor(i) != Face_handle() &&
-	                           this->dimension() >= 1);
-  if (this->dimension() == 1) {
-    return 1 - (this->neighbor(i)->index(this->vertex(1-i)));
-  }
-  return this->ccw( this->neighbor(i)->index(this->vertex(this->ccw(i))));
-}
-#endif
 
 } //namespace CGAL 
 
