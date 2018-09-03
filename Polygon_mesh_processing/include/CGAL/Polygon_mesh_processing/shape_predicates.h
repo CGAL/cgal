@@ -338,6 +338,8 @@ is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor
 
     if(neg_sp && sq_cos >= sq_threshold)
       return prev(h, tm);
+
+    ++pos;
   }
   return boost::graph_traits<TriangleMesh>::null_halfedge();
 }
