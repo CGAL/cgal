@@ -27,12 +27,20 @@ public:
 
   /// \name Types
   /// @{
-  	
-  	typedef typename K::Point_2								Voronoi_point_2;
-  	typedef unspecified_type								Circular_arc_2; 
-    typedef typename K::Segment_2                           Euclidean_segment_2;
+  	/*!
+    \cgalModifBegin
+    \cgalModifEnd
+    */
+    typedef typename K::Point_2                      Hyperbolic_point_2;
+    /*!
+    \cgalModifBegin
+    \cgalModifEnd
+    */
+  	typedef Hyperbolic_point_2								       Hyperbolic_Voronoi_point_2;
+    typedef unspecified_type								         Circular_arc_2; 
+    typedef typename K::Segment_2                    Euclidean_segment_2;
   	typedef boost::variant< Circular_arc_2, 
-                            Euclidean_segment_2 >	        Hyperbolic_segment_2;
+                            Euclidean_segment_2 >	   Hyperbolic_segment_2;
   /// @}
   
 
