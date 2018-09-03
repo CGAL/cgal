@@ -53,11 +53,11 @@ public:
 #endif
 
   typedef Gt Geom_traits;
-  typedef typename Geom_traits::FT                    FT;
-  typedef typename Geom_traits::Point_2               Point;
-  typedef typename Geom_traits::Voronoi_point_2       Voronoi_point;
-  typedef typename Geom_traits::Hyperbolic_segment_2  Hyperbolic_segment;
-  typedef typename Geom_traits::Triangle_2            Hyperbolic_triangle;
+  typedef typename Geom_traits::FT                               FT;
+  typedef typename Geom_traits::Hyperbolic_point_2               Point;
+  typedef typename Geom_traits::Hyperbolic_Voronoi_point_2       Hyperbolic_Voronoi_point;
+  typedef typename Geom_traits::Hyperbolic_segment_2             Hyperbolic_segment;
+  typedef typename Geom_traits::Hyperbolic_triangle_2            Hyperbolic_triangle;
 
   // Redeclaration of `Segment` that would have been inherited from DT2
   //typedef Hyperbolic_segment                          Segment;
@@ -89,7 +89,7 @@ private:
     Non_hyperbolic_tester(const Self *tr)   : t(tr) {}
     
     bool operator()(const typename Base::All_vertices_iterator & vit) const  {
-      return t->is_infinite(vit);
+      return Base::is_infinite(vit);
     }
     bool operator()(const typename Base::All_faces_iterator & fit) const {
       return !t->is_Delaunay_hyperbolic(fit);
@@ -359,19 +359,23 @@ public:
     return n;
   }
   
-  bool is_infinite(Vertex_handle v) const
+  /*
+    Needed by DT_2: do not document!
+  */
+  template <typename T>
+  bool is_infinite(T v) const
   {
     return Base::is_infinite(v);
   }
 
   bool is_Delaunay_hyperbolic(Face_handle f) const
   {
-    return !has_infinite_vertex(f) && !is_finite_non_hyperbolic(f);
+    return !Base::is_infinite(f) && !is_finite_non_hyperbolic(f);
   }
   
   bool is_Delaunay_hyperbolic(Face_handle f, int i) const 
   {
-    return !has_infinite_vertex(f, i) && !is_finite_non_hyperbolic(f, i);
+    return !Base::is_infinite(f, i) && !is_finite_non_hyperbolic(f, i);
   }
   
   bool is_Delaunay_hyperbolic(const Edge& e) const 
@@ -389,15 +393,6 @@ public:
     return is_Delaunay_hyperbolic(*ei);
   }
   
-  // is_infinite functions are kept in order to reuse Triangulation_2 demo :
-  //              apply_to_range is called by Qt/TriangulationGraphicsItem.h  
-  // TODO: document that is_infinite functions are not inherited from Triangulation_2
-  bool is_infinite(Face_handle f) const { return !is_Delaunay_hyperbolic(f); }
-  bool is_infinite(Face_handle f, int i) const { return !is_Delaunay_hyperbolic(f,i); }
-  bool is_infinite(const Edge e) const { return !is_Delaunay_hyperbolic(e); }
-  bool is_infinite(const Edge_circulator& ec) const { return !is_Delaunay_hyperbolic(ec); }
-  bool is_infinite(const All_edges_iterator& ei) const { return !is_Delaunay_hyperbolic(ei); }
-
 private:
   
   class Face_data {
@@ -524,21 +519,6 @@ private:
   }
 
 
-  bool has_infinite_vertex(Face_handle f) const
-  {
-    return Base::is_infinite(f);
-  }
-  
-  bool has_infinite_vertex(Face_handle f, int i) const
-  {
-    return Base::is_infinite(f, i);
-  }
-  
-  bool has_infinite_vertex(const Edge& e) const
-  {
-    return Base::is_infinite(e);
-  }
-  
   int get_finite_non_hyperbolic_edge(Face_handle f) const
   {
     CGAL_triangulation_precondition(is_finite_non_hyperbolic(f));
@@ -731,7 +711,7 @@ private:
     {
       typedef typename Gt::Is_Delaunay_hyperbolic Is_Delaunay_hyperbolic;
       
-      if(_tr.has_infinite_vertex(f)) {
+      if(Base::is_infinite(f)) {
 	     return false; 
       }
       
@@ -829,7 +809,7 @@ public:
     return Base::dimension();
   }
 
-  Voronoi_point
+  Hyperbolic_Voronoi_point
   dual(Face_handle f) const
   {
     CGAL_triangulation_precondition (this->is_Delaunay_hyperbolic(f));
@@ -966,7 +946,7 @@ public:
       }
 
       p = fh->vertex(ccw(li))->point();
-      q = fh->mirror_vertex(li)->point();
+      q = Base::mirror_vertex(fh, li)->point();  //fh->mirror_vertex(li)->point();
       r = fh->vertex(cw(li))->point();
       if (Is_Delaunay_hyperbolic()(p, q, r)) {
         Oriented_side side = side_of_hyperbolic_triangle(p, q, r, query, lt, li);
