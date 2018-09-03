@@ -39,17 +39,17 @@ class Hyperbolic_Delaunay_triangulation_CK_traits_2
 public:
   typedef typename R::FT          FT;
 
-  typedef typename R::Point_2     Point_2;
+  typedef typename R::Point_2     Hyperbolic_point_2;
   typedef typename R::Circle_2    Circle_2;
   typedef typename R::Line_2      Euclidean_line_2;
   typedef boost::variant<Circle_2,Euclidean_line_2>    Euclidean_circle_or_line_2; 
 
-  typedef typename R::Triangle_2             Triangle_2;
+  typedef typename R::Triangle_2             Hyperbolic_triangle_2;
 
   typedef typename R::Circular_arc_2         Circular_arc_2;
   typedef typename R::Line_arc_2             Line_arc_2; 
   typedef typename R::Circular_arc_point_2   Circular_arc_point_2;
-  typedef Circular_arc_point_2               Voronoi_point_2;
+  typedef Circular_arc_point_2               Hyperbolic_Voronoi_point_2;
   typedef typename R::Segment_2                       Euclidean_segment_2; //only used internally here
   typedef boost::variant<Circular_arc_2, Line_arc_2>  Hyperbolic_segment_2;
 
@@ -87,16 +87,16 @@ public:
     Construct_hyperbolic_segment_2() 
       {}
     
-    Hyperbolic_segment_2 operator()(const Point_2& p, const Point_2& q) const
+    Hyperbolic_segment_2 operator()(const Hyperbolic_point_2& p, const Hyperbolic_point_2& q) const
     {
       Origin o;
-      if(Euclidean_collinear_2()(p, q, Point_2(o))){
+      if(Euclidean_collinear_2()(p, q, Hyperbolic_point_2(o))){
         return Euclidean_segment_2(p, q);
       }
       
       Weighted_point_2 wp(p);
       Weighted_point_2 wq(q);
-      Weighted_point_2 wo(Point_2(o), FT(1)); // Poincaré circle 
+      Weighted_point_2 wo(Hyperbolic_point_2(o), FT(1)); // Poincaré circle 
       
       Bare_point center = Construct_weighted_circumcenter_2()(wp, wo, wq);
       FT sq_radius = Compute_squared_Euclidean_distance_2()(p, center);
@@ -127,9 +127,9 @@ public:
   {
   public:
     
-    Voronoi_point_2 operator()(Point_2 p, Point_2 q, Point_2 r) { 
+    Hyperbolic_Voronoi_point_2 operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 r) { 
       Origin o; 
-      Point_2 po = Point_2(o);
+      Hyperbolic_point_2 po = Hyperbolic_point_2(o);
       Circle_2 l_inf(po, FT(1));
      
       if ( Compare_distance_2()(po,p,q) == EQUAL && Compare_distance_2()(po,p,r) == EQUAL ) 
@@ -226,10 +226,10 @@ public:
       {}
     
     // constructs a hyperbolic line 
-    Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q) const
+    Hyperbolic_segment_2 operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q) const
     {
       Origin o; 
-      Point_2 po = Point_2(o);
+      Hyperbolic_point_2 po = Hyperbolic_point_2(o);
       Circle_2 l_inf = Circle_2(po,FT(1));
       
       if ( Compare_distance_2()(po,p,q) == EQUAL ){      
@@ -258,7 +258,7 @@ public:
     // circumcenter(p,q,r) on one side
     // and circumcenter(p,s,q) on the other side
     Hyperbolic_segment_2 
-      operator()(Point_2 p, Point_2 q, Point_2 r, Point_2 s)
+      operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 r, Hyperbolic_point_2 s)
     {
       CGAL_triangulation_precondition
 	( (Orientation_2()(p,q,r) == ON_POSITIVE_SIDE) 
@@ -268,7 +268,7 @@ public:
 	  && (Side_of_oriented_circle_2()(p,s,q,r) == ON_NEGATIVE_SIDE) );
 
       Origin o; 
-      Point_2 po = Point_2(o);
+      Hyperbolic_point_2 po = Hyperbolic_point_2(o);
 
       // TODO MT this is non-optimal... 
       // the bisector is already computed here
@@ -294,13 +294,13 @@ public:
     // constructs the hyperbolic bisector of segment [p,q] 
     // limited by hyperbolic circumcenter(p,q,r) on one side
     // and going to the infinite line on the other side
-    Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q, Point_2 r)
+    Hyperbolic_segment_2 operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 r)
     {
       CGAL_triangulation_precondition
 	( Orientation_2()(p,q,r) == POSITIVE );
 
       Origin o; 
-      Point_2 po = Point_2(o);
+      Hyperbolic_point_2 po = Hyperbolic_point_2(o);
       Circle_2 l_inf(po, FT(1)); 
     
       // TODO MT this is non-optimal... 
@@ -330,7 +330,7 @@ public:
 	bis_pq = Construct_circle_or_line_supporting_bisector()(p, q);
       Circle_2* c_pq = boost::get<Circle_2>(&bis_pq);
       
-      Point_2 approx_a(to_double(a.x()),to_double(a.y()));
+      Hyperbolic_point_2 approx_a(to_double(a.x()),to_double(a.y()));
 
       typedef typename 
 	CK2_Intersection_traits<R, Circle_2, Circle_2>::type 
@@ -342,8 +342,8 @@ public:
       CGAL_triangulation_assertion(assign(pair,inters[0]));
       CGAL_triangulation_assertion(pair.second == 1);
       
-      Point_2 approx_pinf(to_double(pair.first.x()), to_double(pair.first.y()));
-      Point_2 approx_c(to_double(c_pq->center().x()),
+      Hyperbolic_point_2 approx_pinf(to_double(pair.first.x()), to_double(pair.first.y()));
+      Hyperbolic_point_2 approx_c(to_double(c_pq->center().x()),
 		       to_double(c_pq->center().y()));
        if ( Orientation_2()(p,q,approx_pinf) == NEGATIVE ) {
 	if ( Orientation_2()(approx_c,approx_a,approx_pinf) == POSITIVE )
@@ -378,11 +378,11 @@ public:
 
     typedef Oriented_side result_type;
 
-    result_type operator()(Point_2 p, Point_2 q, Point_2 query) const {
+    result_type operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 query) const {
       
       // Check first if the points are collinear with the origin
-      Circle_2 poincare(Point_2(FT(0),FT(0)), FT(1));
-      Point_2 O(FT(0), FT(0));
+      Circle_2 poincare(Hyperbolic_point_2(FT(0),FT(0)), FT(1));
+      Hyperbolic_point_2 O(FT(0), FT(0));
       Orientation ori = orientation(p, q, O);
       if (ori == COLLINEAR) {
         Euclidean_line_2 seg(p, q);
@@ -434,7 +434,7 @@ public:
     typedef typename R::Vector_3    Vector_3;
     typedef typename R::Point_3     Point_3;
 
-    bool operator() (const Point_2& p0, const Point_2& p1, const Point_2& p2) const
+    bool operator() (const Hyperbolic_point_2& p0, const Hyperbolic_point_2& p1, const Hyperbolic_point_2& p2) const
     {
       Vector_3 v0 = Vector_3(p0.x()*p0.x() + p0.y()*p0.y(), 
                              p1.x()*p1.x() + p1.y()*p1.y(), 
@@ -451,7 +451,7 @@ public:
       return dt0*dt0 + dt1*dt1 - dt2*dt2 < 0;
     }
     
-    bool operator() (const Point_2& p0, const Point_2& p1, const Point_2& p2, int& ind) const
+    bool operator() (const Hyperbolic_point_2& p0, const Hyperbolic_point_2& p1, const Hyperbolic_point_2& p2, int& ind) const
     {
       if (this->operator()(p0, p1, p2) == false) {
         ind = find_non_hyperbolic_edge(p0, p1, p2);
@@ -463,7 +463,7 @@ public:
   private:
     
     // assume the face (p0, p1, p2) is non-hyperbolic
-    int find_non_hyperbolic_edge(const Point_2& p0, const Point_2& p1, const Point_2& p2) const
+    int find_non_hyperbolic_edge(const Hyperbolic_point_2& p0, const Hyperbolic_point_2& p1, const Hyperbolic_point_2& p2) const
     {
       typedef typename R::Direction_2 Direction_2;
       
@@ -511,10 +511,10 @@ public:
       {}
 
     Euclidean_circle_or_line_2 
-      operator()(Point_2 p, Point_2 q) const
+      operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q) const
     {
       Origin o; 
-      Point_2 po = Point_2(o);
+      Hyperbolic_point_2 po = Hyperbolic_point_2(o);
       typedef typename R::Point_3     Point_3;
     
       if ( Compare_distance_2()(po,p,q) == EQUAL )
@@ -548,12 +548,12 @@ public:
       // considered in CCW order in any case
 
       Euclidean_line_2 l = Construct_Euclidean_bisector_2()(p, q);
-      Point_2 middle = Construct_Euclidean_midpoint_2()(p, q);
-      Point_2 temp = middle + l.to_vector();
+      Hyperbolic_point_2 middle = Construct_Euclidean_midpoint_2()(p, q);
+      Hyperbolic_point_2 temp = middle + l.to_vector();
 
-      if (Orientation_2()(middle, temp, Point_2(x, y)) == ON_POSITIVE_SIDE)
-	{ return Circle_2(Point_2(x, y), sq_radius, CLOCKWISE); }
-      return Circle_2(Point_2(x, y), sq_radius, COUNTERCLOCKWISE);
+      if (Orientation_2()(middle, temp, Hyperbolic_point_2(x, y)) == ON_POSITIVE_SIDE)
+	{ return Circle_2(Hyperbolic_point_2(x, y), sq_radius, CLOCKWISE); }
+      return Circle_2(Hyperbolic_point_2(x, y), sq_radius, COUNTERCLOCKWISE);
     }
   }; // end Construct_supporting_circle_of_bisector
 

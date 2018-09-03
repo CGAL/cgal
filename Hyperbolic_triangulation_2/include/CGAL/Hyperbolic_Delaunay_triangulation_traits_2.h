@@ -126,8 +126,8 @@ public:
 	typedef typename Kernel::FT          								        FT;
 	typedef typename Kernel::RT 										            RT;
 	typedef typename Kernel::Kernel_base 								        Kernel_base;
-	typedef typename Kernel::Point_2     								        Point_2;
-	typedef Point_2 													                  Voronoi_point_2;
+	typedef typename Kernel::Point_2     								        Hyperbolic_point_2;
+	typedef Hyperbolic_point_2 													        Hyperbolic_Voronoi_point_2;
 	typedef typename Kernel::Circle_2    								        Circle_2;
 	typedef typename Kernel::Line_2      								        Euclidean_line_2;
 	typedef boost::variant<Circle_2,Euclidean_line_2>    			  Euclidean_circle_or_line_2; 
@@ -135,7 +135,7 @@ public:
 	typedef typename Kernel::Segment_2                       	  Euclidean_segment_2; //only used internally here
 	typedef boost::variant<Circular_arc_2, Euclidean_segment_2>	Hyperbolic_segment_2;
 
-	typedef typename Kernel::Triangle_2 								        Triangle_2;	
+	typedef typename Kernel::Triangle_2 								        Hyperbolic_triangle_2;	
 	typedef typename Kernel::Orientation_2               				Orientation_2;
 	typedef typename Kernel::Side_of_oriented_circle_2   				Side_of_oriented_circle_2;
 
@@ -184,16 +184,16 @@ public:
     Construct_hyperbolic_segment_2() 
       {}
     
-    Hyperbolic_segment_2 operator()(const Point_2& p, const Point_2& q) const
+    Hyperbolic_segment_2 operator()(const Hyperbolic_point_2& p, const Hyperbolic_point_2& q) const
     {
       Origin o;
-      if(Euclidean_collinear_2()(p, q, Point_2(o))){
+      if(Euclidean_collinear_2()(p, q, Hyperbolic_point_2(o))){
         return Euclidean_segment_2(p, q);
       }
       
       Weighted_point_2 wp(p);
       Weighted_point_2 wq(q);
-      Weighted_point_2 wo(Point_2(o), FT(1)); // Poincaré circle 
+      Weighted_point_2 wo(Hyperbolic_point_2(o), FT(1)); // Poincaré circle 
       
       Bare_point center = Construct_weighted_circumcenter_2()(wp, wo, wq);
       FT sq_radius = Compute_squared_Euclidean_distance_2()(p, center);
@@ -223,12 +223,12 @@ public:
   class Construct_hyperbolic_circumcenter_2 {
   public:
     
-  	typedef Voronoi_point_2 	result_type;
+  	typedef Hyperbolic_Voronoi_point_2 	result_type;
 
-    Voronoi_point_2 operator()(Point_2 p, Point_2 q, Point_2 r)
+    Hyperbolic_Voronoi_point_2 operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 r)
     { 
-      Origin o; 
-      Point_2 po = Point_2(o);
+      Origin o;   
+      Hyperbolic_point_2 po = Hyperbolic_point_2(o);
       Circle_2 l_inf(po, FT(1));
      
       Euclidean_circle_or_line_2 bis_pq = Construct_circle_or_line_supporting_bisector()(p,q);
@@ -245,7 +245,7 @@ public:
 		if ( Circle_2* c_pq = boost::get<Circle_2>(&bis_pq) ) {
 			if ( Circle_2* c_qr = boost::get<Circle_2>(&bis_qr) ) {
 
-	    		std::pair<Point_2, Point_2> inters = Construct_intersection_2()(*c_pq, *c_qr);
+	    		std::pair<Hyperbolic_point_2, Hyperbolic_point_2> inters = Construct_intersection_2()(*c_pq, *c_qr);
       	
 	  			if ( Has_on_bounded_side_2()( l_inf, inters.first ) )
 	    			return inters.first;
@@ -259,7 +259,7 @@ public:
       c = boost::get<Circle_2>(&bis_qr);
     }
 
-    std::pair<Point_2, Point_2> inters = Construct_intersection_2()(*c, *l);
+    std::pair<Hyperbolic_point_2, Hyperbolic_point_2> inters = Construct_intersection_2()(*c, *l);
     
     if ( Has_on_bounded_side_2()( l_inf, inters.first ) )
       return inters.first;
@@ -296,19 +296,19 @@ public:
       {}
     
     // constructs a hyperbolic line 
-    Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q) const {
+    Hyperbolic_segment_2 operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q) const {
 		Origin o; 
-		Point_2 po = Point_2(o);
+		Hyperbolic_point_2 po = Hyperbolic_point_2(o);
 		Circle_2 l_inf = Circle_2(po,FT(1));
 
 		if ( Compare_distance_2()(po,p,q) == EQUAL ) {      
 			Euclidean_line_2 l = Construct_Euclidean_bisector_2()(p,q);
-			std::pair<Point_2, Point_2> inters = Construct_intersection_2()(l, l_inf);
+			std::pair<Hyperbolic_point_2, Hyperbolic_point_2> inters = Construct_intersection_2()(l, l_inf);
 			return Euclidean_segment_2(inters.first, inters.second);
 		}
     	Euclidean_circle_or_line_2 bis_pq = Construct_circle_or_line_supporting_bisector()(p, q);
       	Circle_2* c = boost::get<Circle_2>(&bis_pq);
-      	std::pair<Point_2, Point_2> inters = Construct_intersection_2()(*c, l_inf);
+      	std::pair<Hyperbolic_point_2, Hyperbolic_point_2> inters = Construct_intersection_2()(*c, l_inf);
 
       	if (Orientation_2()(c->center(), inters.first, inters.second) == POSITIVE) {
       		return Circular_arc_2(*c, inters.first, inters.second);
@@ -322,7 +322,7 @@ public:
     // circumcenter(p,q,r) on one side
     // and circumcenter(p,s,q) on the other side
     Hyperbolic_segment_2 
-      operator()(Point_2 p, Point_2 q, Point_2 r, Point_2 s)
+      operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 r, Hyperbolic_point_2 s)
     {
       CGAL_triangulation_precondition
 	( (Orientation_2()(p,q,r) == ON_POSITIVE_SIDE) 
@@ -332,13 +332,13 @@ public:
 	  && (Side_of_oriented_circle_2()(p,s,q,r) == ON_NEGATIVE_SIDE) );
 
       Origin o; 
-      Point_2 po = Point_2(o);
+      Hyperbolic_point_2 po = Hyperbolic_point_2(o);
 
       // TODO MT this is non-optimal... 
       // the bisector is already computed here
       // and it will be recomputed below
-      Point_2 a =  Construct_hyperbolic_circumcenter_2()(p,q,r);
-      Point_2 b =  Construct_hyperbolic_circumcenter_2()(p,s,q);
+      Hyperbolic_point_2 a =  Construct_hyperbolic_circumcenter_2()(p,q,r);
+      Hyperbolic_point_2 b =  Construct_hyperbolic_circumcenter_2()(p,s,q);
 
       if ( Compare_distance_2()(po, p, q) == EQUAL ){      
         Euclidean_line_2 l = Construct_Euclidean_bisector_2()(p,q);
@@ -358,23 +358,23 @@ public:
     // constructs the hyperbolic bisector of segment [p,q] 
     // limited by hyperbolic circumcenter(p,q,r) on one side
     // and going to the infinite line on the other side
-    Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q, Point_2 r)
+    Hyperbolic_segment_2 operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 r)
     {
       CGAL_triangulation_precondition
 	( Orientation_2()(p,q,r) == POSITIVE );
 
       Origin o; 
-      Point_2 po = Point_2(o);
+      Hyperbolic_point_2 po = Hyperbolic_point_2(o);
       Circle_2 l_inf(po, FT(1)); 
     
       // TODO MT this is non-optimal... 
       // the bisector is computed (at least) twice
-      Point_2 a =  Construct_hyperbolic_circumcenter_2()(p,q,r);
+      Hyperbolic_point_2 a =  Construct_hyperbolic_circumcenter_2()(p,q,r);
 
       if ( Compare_distance_2()(po, p, q) == EQUAL ){      
         Euclidean_line_2 bis_pq = Construct_Euclidean_bisector_2()(p,q);
 
-        std::pair<Point_2,Point_2> inters = Construct_intersection_2()(bis_pq, l_inf);
+        std::pair<Hyperbolic_point_2,Hyperbolic_point_2> inters = Construct_intersection_2()(bis_pq, l_inf);
 		if ( Less_y_2()(p,q) )
 		  return Euclidean_segment_2(a,inters.first);
 		
@@ -385,8 +385,8 @@ public:
 		bis_pq = Construct_circle_or_line_supporting_bisector()(p, q);
       	Circle_2* c_pq = boost::get<Circle_2>(&bis_pq);
       
-		std::pair<Point_2,Point_2> inters = Construct_intersection_2()(*c_pq, l_inf);
-		Point_2 approx_pinf = inters.first;
+		std::pair<Hyperbolic_point_2,Hyperbolic_point_2> inters = Construct_intersection_2()(*c_pq, l_inf);
+		Hyperbolic_point_2 approx_pinf = inters.first;
 		if ( Orientation_2()(p,q,inters.first) == NEGATIVE ) {
 			if ( Orientation_2()(c_pq->center(),a,inters.first) == POSITIVE )
 	  			return Circular_arc_2( *c_pq, a, inters.first );
@@ -414,7 +414,7 @@ public:
     typedef typename Kernel::Vector_3    Vector_3;
     typedef typename Kernel::Point_3     Point_3;
 
-    bool operator() (const Point_2& p0, const Point_2& p1, const Point_2& p2) const
+    bool operator() (const Hyperbolic_point_2& p0, const Hyperbolic_point_2& p1, const Hyperbolic_point_2& p2) const
     {
       Vector_3 v0 = Vector_3(p0.x()*p0.x() + p0.y()*p0.y(), 
                              p1.x()*p1.x() + p1.y()*p1.y(), 
@@ -431,7 +431,7 @@ public:
       return dt0*dt0 + dt1*dt1 - dt2*dt2 < 0;
     }
     
-    bool operator() (const Point_2& p0, const Point_2& p1, const Point_2& p2, int& ind) const
+    bool operator() (const Hyperbolic_point_2& p0, const Hyperbolic_point_2& p1, const Hyperbolic_point_2& p2, int& ind) const
     {
       if (this->operator()(p0, p1, p2) == false) {
         ind = find_non_hyperbolic_edge(p0, p1, p2);
@@ -443,7 +443,7 @@ public:
   private:
     
     // assume the face (p0, p1, p2) is non-hyperbolic
-    int find_non_hyperbolic_edge(const Point_2& p0, const Point_2& p1, const Point_2& p2) const
+    int find_non_hyperbolic_edge(const Hyperbolic_point_2& p0, const Hyperbolic_point_2& p1, const Hyperbolic_point_2& p2) const
     {
       typedef typename Kernel::Direction_2 Direction_2;
       
@@ -491,10 +491,10 @@ public:
       {}
 
     Euclidean_circle_or_line_2 
-      operator()(Point_2 p, Point_2 q) const
+      operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q) const
     {
       Origin o; 
-      Point_2 po = Point_2(o);
+      Hyperbolic_point_2 po = Hyperbolic_point_2(o);
       typedef typename Kernel::Point_3     Point_3;
     
       if ( Compare_distance_2()(po,p,q) == EQUAL )
@@ -528,12 +528,12 @@ public:
       // considered in CCW order in any case
 
       Euclidean_line_2 l = Construct_Euclidean_bisector_2()(p, q);
-      Point_2 middle = Construct_Euclidean_midpoint_2()(p, q);
-      Point_2 temp = middle + l.to_vector();
+      Hyperbolic_point_2 middle = Construct_Euclidean_midpoint_2()(p, q);
+      Hyperbolic_point_2 temp = middle + l.to_vector();
 
-      if (Orientation_2()(middle, temp, Point_2(x, y)) == ON_POSITIVE_SIDE)
-	{ return Circle_2(Point_2(x, y), sq_radius, CLOCKWISE); }
-      return Circle_2(Point_2(x, y), sq_radius, COUNTERCLOCKWISE);
+      if (Orientation_2()(middle, temp, Hyperbolic_point_2(x, y)) == ON_POSITIVE_SIDE)
+	{ return Circle_2(Hyperbolic_point_2(x, y), sq_radius, CLOCKWISE); }
+      return Circle_2(Hyperbolic_point_2(x, y), sq_radius, COUNTERCLOCKWISE);
     }
   }; // end Construct_supporting_circle_of_bisector
 
@@ -544,19 +544,19 @@ public:
 	public:
 		Construct_intersection_2() {}
 
-		Point_2 operator()(Euclidean_line_2 ell1, Euclidean_line_2 ell2) {
+		Hyperbolic_point_2 operator()(Euclidean_line_2 ell1, Euclidean_line_2 ell2) {
 			// The only point where two Euclidean lines can intersect in the Poincaré disk is the origin.
-			return Point_2(0,0);
+			return Hyperbolic_point_2(0,0);
 		}
 
-		std::pair<Point_2, Point_2> operator()(Euclidean_line_2 ell, Circle_2 c) {
+		std::pair<Hyperbolic_point_2, Hyperbolic_point_2> operator()(Euclidean_line_2 ell, Circle_2 c) {
 			if (ell.b() == FT(0)) {
 				FT p 	= c.center().x();
 				FT q 	= c.center().y(); 
 				FT y1  	= q + CGAL::sqrt(c.squared_radius() - p*p);
 				FT y2  	= q - CGAL::sqrt(c.squared_radius() - p*p);
-				Point_2 p1(FT(0), y1);
-				Point_2 p2(FT(0), y2);
+				Hyperbolic_point_2 p1(FT(0), y1);
+				Hyperbolic_point_2 p2(FT(0), y2);
 				return make_pair(p1, p2);
 			}
 
@@ -572,16 +572,16 @@ public:
 			FT x2 = (-B - CGAL::sqrt(Delta))/(FT(2)*A);
 			FT y1 = lambda*x1 + mu;
 			FT y2 = lambda*x2 + mu;
-			Point_2 sol1(x1, y1);
-			Point_2 sol2(x2, y2);
+			Hyperbolic_point_2 sol1(x1, y1);
+			Hyperbolic_point_2 sol2(x2, y2);
 			return make_pair(sol1, sol2);
 		}
 
-		std::pair<Point_2, Point_2> operator()(Circle_2 c, Euclidean_line_2 ell) {
+		std::pair<Hyperbolic_point_2, Hyperbolic_point_2> operator()(Circle_2 c, Euclidean_line_2 ell) {
 			return operator()(ell, c);
 		}
 
-		std::pair<Point_2, Point_2> operator()(Circle_2 c1, Circle_2 c2) {
+		std::pair<Hyperbolic_point_2, Hyperbolic_point_2> operator()(Circle_2 c1, Circle_2 c2) {
 			
 			FT xa = c1.center().x(), ya = c1.center().y();
 			FT xb = c2.center().x(), yb = c2.center().y();
@@ -600,49 +600,49 @@ public:
 			FT y1 = ybase + ydiff;
 			FT y2 = ybase - ydiff;
 
-			Point_2 res1(x1, y1);
-			Point_2 res2(x2, y2);
+			Hyperbolic_point_2 res1(x1, y1);
+			Hyperbolic_point_2 res2(x2, y2);
 			return make_pair(res1, res2);
 
 		}
 
 
-		Point_2 operator()(Hyperbolic_segment_2 s1, Hyperbolic_segment_2 s2) {
+		Hyperbolic_point_2 operator()(Hyperbolic_segment_2 s1, Hyperbolic_segment_2 s2) {
 			if (Circular_arc_2* c1 = boost::get<Circular_arc_2>(&s1)) {
 				if (Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2)) {
-					pair<Point_2, Point_2> res = operator()(c1->circle(), c2->circle());
-					Point_2 p1 = res.first;
+					pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(c1->circle(), c2->circle());
+					Hyperbolic_point_2 p1 = res.first;
 					if (p1.x()*p1.x() + p1.y()*p1.y() < FT(1)) {
 						return p1;
 					}
-					Point_2 p2 = res.second;
+					Hyperbolic_point_2 p2 = res.second;
 					CGAL_assertion(p2.x()*p2.x() + p2.y()*p2.y() < FT(1));
 					return p2;
 				} else {
 					Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
-					pair<Point_2, Point_2> res = operator()(c1->circle(), ell2->supporting_line());
-					Point_2 p1 = res.first;
+					pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(c1->circle(), ell2->supporting_line());
+					Hyperbolic_point_2 p1 = res.first;
 					if (p1.x()*p1.x() + p1.y()*p1.y() < FT(1)) {
 						return p1;
 					}
-					Point_2 p2 = res.second;
+					Hyperbolic_point_2 p2 = res.second;
 					CGAL_assertion(p2.x()*p2.x() + p2.y()*p2.y() < FT(1));
 					return p2;
 				}
 			} else {
 				Euclidean_segment_2* ell1 = boost::get<Euclidean_segment_2>(&s1);
 				if (Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2)) {
-					pair<Point_2, Point_2> res = operator()(ell1->supporting_line(), c2->circle());
-					Point_2 p1 = res.first;
+					pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(ell1->supporting_line(), c2->circle());
+					Hyperbolic_point_2 p1 = res.first;
 					if (p1.x()*p1.x() + p1.y()*p1.y() < FT(1)) {
 						return p1;
 					}
-					Point_2 p2 = res.second;
+					Hyperbolic_point_2 p2 = res.second;
 					CGAL_assertion(p2.x()*p2.x() + p2.y()*p2.y() < FT(1));
 					return p2;	
 				} else {
 					Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
-					Point_2 p1 = operator()(ell1->supporting_line(), ell2->supporting_line());
+					Hyperbolic_point_2 p1 = operator()(ell1->supporting_line(), ell2->supporting_line());
 					CGAL_assertion(p1.x()*p1.x() + p1.y()*p1.y() < FT(1));
 					return p1;
 				}
@@ -668,11 +668,11 @@ public:
 
     typedef Oriented_side result_type;
 
-    result_type operator()(Point_2 p, Point_2 q, Point_2 query) const {
+    result_type operator()(Hyperbolic_point_2 p, Hyperbolic_point_2 q, Hyperbolic_point_2 query) const {
       
       // Check first if the points are collinear with the origin
-      Circle_2 poincare(Point_2(FT(0),FT(0)), FT(1));
-      Point_2 O(FT(0), FT(0));
+      Circle_2 poincare(Hyperbolic_point_2(FT(0),FT(0)), FT(1));
+      Hyperbolic_point_2 O(FT(0), FT(0));
       Orientation ori = orientation(p, q, O);
       if (ori == COLLINEAR) {
         Euclidean_line_2 seg(p, q);
