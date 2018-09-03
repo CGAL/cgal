@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(Boolean_set_operations_2)
+project(Boolean_set_operations_2_Demo)
 
 
 cmake_minimum_required(VERSION 2.8.11)
