@@ -134,7 +134,7 @@ TriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
 {
   if(visible_edges) {
     for (int i=0; i<3; i++) {
-      if (fh < fh->neighbor(i) || t->is_infinite(fh->neighbor(i))){
+      if (fh < fh->neighbor(i) || !t->is_Delaunay_hyperbolic(fh->neighbor(i))){
         painterostream << t->hyperbolic_segment(fh,i);
       }
     }

@@ -94,7 +94,7 @@ TriangulationCircumcircle<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
   typedef typename T::Face_handle Face_handle;
   fh = dt->locate(p);
   if (fh != Face_handle()) {  
-    if(!dt->is_infinite(fh)){
+    if(dt->is_Delaunay_hyperbolic(fh)){
       typename T::Geom_traits::Circle_2 c(fh->vertex(0)->point(), 
                                           fh->vertex(1)->point(), 
                                           fh->vertex(2)->point());

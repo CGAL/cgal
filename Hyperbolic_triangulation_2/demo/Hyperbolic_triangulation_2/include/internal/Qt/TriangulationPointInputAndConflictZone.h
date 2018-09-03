@@ -66,7 +66,7 @@ TriangulationPointInputAndConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEv
   for(typename std::list<Face_handle>::iterator it = faces.begin();
       it != faces.end();
       ++it){
-    if(! dt->is_infinite(*it)){
+    if(dt->is_Delaunay_hyperbolic(*it)){
       QGraphicsPolygonItem *item = new QGraphicsPolygonItem(convert(dt->hyperbolic_triangle(*it)));
       QColor color(::Qt::blue);
       color.setAlpha(150);
