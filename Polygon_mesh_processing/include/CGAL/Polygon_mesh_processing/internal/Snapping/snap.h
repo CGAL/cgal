@@ -27,6 +27,7 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/box_intersection_d.h>
@@ -42,6 +43,7 @@
 #include <boost/type_traits/is_same.hpp>
 
 #include <iostream>
+#include <iterator>
 #include <fstream>
 #include <limits>
 #include <utility>
@@ -55,20 +57,29 @@ namespace internal {
 
 // Assigns at each vertex the length of its shortest incident edge as 'epsilon' value
 template <typename ToleranceMap,
-          typename BorderVerticesContainer,
-          typename VertexPointMap,
           typename PolygonMesh,
-          typename GeomTraits>
+          typename SourceNamedParameters>
 void compute_tolerance_at_vertices(ToleranceMap& tol_vm,
-                                   const BorderVerticesContainer& border_vertices,
-                                   const VertexPointMap& svpm,
-                                   const GeomTraits& gt,
-                                   const PolygonMesh& smesh)
+                                   PolygonMesh& smesh,
+                                   const SourceNamedParameters& snp)
 {
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor       vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor     halfedge_descriptor;
+  using boost::get_param;
+  using boost::choose_param;
 
-  typedef typename GeomTraits::FT                                            FT;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor                vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor              halfedge_descriptor;
+
+  typedef typename GetVertexPointMap<PolygonMesh, SourceNamedParameters>::type        SVPM;
+  typedef typename GetGeomTraits<PolygonMesh, SourceNamedParameters>::type            GT;
+  typedef typename GT::FT                                                             FT;
+
+  GT gt = choose_param(get_param(snp, internal_np::geom_traits), GT());
+
+  SVPM svpm = choose_param(get_param(snp, internal_np::vertex_point),
+                           get_property_map(vertex_point, smesh));
+
+  std::vector<halfedge_descriptor> border_vertices;
+  border_halfedges(smesh, std::back_inserter(border_vertices));
 
   BOOST_FOREACH(halfedge_descriptor hd, border_vertices)
   {
@@ -214,12 +225,6 @@ private:
 //                                      If this parameter is omitted, an internal property map for
 //                                      `CGAL::vertex_point_t` must be available in `PolygonMesh`
 //    \cgalParamEnd
-//    BELOW MUST BE DOCUMENTED AS A NAMED PARAMETER
-//    \cgalParamBegin{tolerance_map} A property map associating to each vertex of the source mesh
-//                                   a bound on the allowed snapping distance.
-//                                   If omitted, the bound is set to half of the length
-//                                   of the shortest incident border edge.
-//    \cgalParamEnd
 //    \cgalParamBegin{geom_traits} a geometric traits class instance.
 //       The traits class must provide the nested types `Point_3` and `Vector_3`,
 //       and the nested functors :
@@ -245,10 +250,11 @@ private:
 //
 // \return the number of snapped vertices
 //
-template <typename PolygonMesh,
+template <typename PolygonMesh, typename ToleranceMap,
           typename SourceNamedParameters, typename TargetNamedParameters>
 std::size_t snap_border(PolygonMesh& smesh,
                         const PolygonMesh& tmesh,
+                        const ToleranceMap& tol_vm,
                         const SourceNamedParameters& snp,
                         const TargetNamedParameters& tnp)
 {
@@ -257,7 +263,6 @@ std::size_t snap_border(PolygonMesh& smesh,
 
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor    halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor        edge_descriptor;
 
   typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, vertex_descriptor>     Box;
 
@@ -265,45 +270,22 @@ std::size_t snap_border(PolygonMesh& smesh,
   typedef typename GetVertexPointMap<PolygonMesh, TargetNamedParameters>::const_type  TVPM;
   typedef typename boost::property_traits<TVPM>::value_type                           Point;
 
+  typedef typename GetGeomTraits<PolygonMesh, SourceNamedParameters>::type            GT;
+  typedef typename GT::FT                                                             FT;
+
+  CGAL_static_assertion((boost::is_same<Point, typename GT::Point_3>::value));
+
+  GT gt = choose_param(get_param(snp, internal_np::geom_traits), GT());
+
   SVPM svpm = choose_param(get_param(snp, internal_np::vertex_point),
                            get_property_map(vertex_point, smesh));
 
   TVPM tvpm = choose_param(get_param(tnp, internal_np::vertex_point),
                            get_const_property_map(vertex_point, tmesh));
 
-  typedef typename GetGeomTraits<PolygonMesh, SourceNamedParameters>::type            GT;
-  GT gt = choose_param(get_param(snp, internal_np::geom_traits), GT());
-
-  CGAL_static_assertion((boost::is_same<Point, typename GT::Point_3>::value));
-
-  typedef typename GT::FT                                                             FT;
-  typedef CGAL::internal::Dynamic_property_map<vertex_descriptor, FT>       Default_tolerance_map;
-
-  typedef typename boost::lookup_named_param_def <
-    internal_np::tolerance_map_t,
-    SourceNamedParameters,
-    Default_tolerance_map // default
-  > ::type                                                                  Tolerance_map;
-
-  Tolerance_map tol_vm = choose_param(get_param(snp, internal_np::tolerance_map),
-                                      Default_tolerance_map());
-
   // Extract border vertices
   std::vector<halfedge_descriptor> border_vertices;
-  BOOST_FOREACH(edge_descriptor ed, edges(smesh))
-  {
-    if(is_border(ed, smesh))
-    {
-      halfedge_descriptor hd = halfedge(ed, smesh);
-      if(!is_border(hd, smesh))
-        hd = opposite(hd, smesh);
-      border_vertices.push_back(hd);
-    }
-  }
-
-  // If no tolerance is provided, compute a unique bound at each vertex
-  if(boost::is_same<Tolerance_map, Default_tolerance_map>::value)
-    compute_tolerance_at_vertices(tol_vm, border_vertices, svpm, gt, smesh);
+  border_halfedges(smesh, std::back_inserter(border_vertices));
 
   // Try to snap vertices
   std::vector<Box> boxes;
@@ -332,7 +314,7 @@ std::size_t snap_border(PolygonMesh& smesh,
   boost::unordered_map<vertex_descriptor/*source*/, vertex_descriptor/*target*/> vertex_map;
 
   // Shenanigans to pass a reference as callback (which is copied by value by 'box_intersection_d')
-  typedef Vertex_proximity_report<PolygonMesh, GT, SVPM, TVPM, Tolerance_map, Box>     Reporter;
+  typedef Vertex_proximity_report<PolygonMesh, GT, SVPM, TVPM, ToleranceMap, Box>     Reporter;
   Reporter vpr(vertex_map, svpm, tvpm, tol_vm, gt);
   boost::function<void(const Box&, const Box&)> callback(boost::ref(vpr));
 
@@ -355,29 +337,20 @@ std::size_t snap_border(PolygonMesh& smesh,
   return vertex_map.size();
 }
 
-
 template <typename PolygonMesh,
           typename SourceNamedParameters, typename TargetNamedParameters>
 std::size_t snap_border(PolygonMesh& smesh,
                         const PolygonMesh& tmesh,
+                        const double epsilon,
                         const SourceNamedParameters& snp,
-                        const TargetNamedParameters& tnp,
-                        const double epsilon)
+                        const TargetNamedParameters& tnp)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename GetGeomTraits<PolygonMesh>::type::FT                   FT;
 
-  // Can't pass both a tolerance pmap AND an epsilon value
-  typedef typename boost::lookup_named_param_def <
-    internal_np::tolerance_map_t,
-    SourceNamedParameters,
-    boost::param_not_found // default
-  > ::type                                                                  Tolerance_map;
-  CGAL_static_assertion((boost::is_same<Tolerance_map, boost::param_not_found>::value));
-
   Constant_property_map<vertex_descriptor, FT> constant_tolerance_map(epsilon);
 
-  return snap_border(smesh, tmesh, snp.tolerance_map(constant_tolerance_map), tnp);
+  return snap_border(smesh, tmesh, constant_tolerance_map, snp, tnp);
 }
 
 template <typename PolygonMesh>
@@ -385,9 +358,26 @@ std::size_t snap_border(PolygonMesh& smesh,
                         const PolygonMesh& tmesh,
                         const double epsilon)
 {
-  return snap_border(smesh, tmesh,
-                     CGAL::parameters::all_default(), CGAL::parameters::all_default(),
-                     epsilon);
+  return snap_border(smesh, tmesh, epsilon,
+                     CGAL::parameters::all_default(), CGAL::parameters::all_default());
+}
+
+template <typename PolygonMesh,
+          typename SourceNamedParameters, typename TargetNamedParameters>
+std::size_t snap_border(PolygonMesh& smesh,
+                        const PolygonMesh& tmesh,
+                        const SourceNamedParameters& snp,
+                        const TargetNamedParameters& tnp)
+{
+  typedef typename GetGeomTraits<PolygonMesh, SourceNamedParameters>::type            GT;
+  typedef typename GT::FT                                                             FT;
+  typedef CGAL::dynamic_vertex_property_t<FT>                                         Vertex_property_tag;
+  typedef typename boost::property_map<PolygonMesh, Vertex_property_tag>::type        Tolerance_map;
+
+  Tolerance_map tol_vm = get(Vertex_property_tag(), smesh);
+  compute_tolerance_at_vertices(tol_vm, smesh, snp);
+
+  return snap_border(smesh, tmesh, tol_vm, snp, tnp);
 }
 
 template <typename PolygonMesh>
@@ -399,7 +389,7 @@ std::size_t snap_border(PolygonMesh& smesh,
 
 } // end namespace internal
 
-} // end namespace PMP
+} // end namespace Polygon_mesh_processing
 
 } // end namespace CGAL
 

@@ -65,8 +65,8 @@ void test()
   // this epsilon value is too big, and the snapping is rejected
   std::cout << "*********************** EPS = 0.1 *************** " << std::endl;
   fg_source_cpy = fg_source;
-  res = PMP::internal::snap_border(fg_source_cpy, fg_target,
-                                   params::geom_traits(Kernel()), params::all_default(), 0.1);
+  res = PMP::internal::snap_border(fg_source_cpy, fg_target, 0.1,
+                                   params::geom_traits(Kernel()), params::all_default());
   std::cout << "Moved: " << res << " vertices" << std::endl;
   assert(res == 0);
 
@@ -75,8 +75,8 @@ void test()
   std::cout << "*********************** EPS = 0.001 *************** " << std::endl;
   fg_source_cpy = fg_source;
   CGAL::Constant_property_map<vertex_descriptor, FT> tol_map(0.001);
-  res = PMP::internal::snap_border(fg_source_cpy, fg_target,
-                                   params::tolerance_map(tol_map), params::all_default());
+  res = PMP::internal::snap_border(fg_source_cpy, fg_target, tol_map,
+                                   params::all_default(), params::all_default());
   std::cout << "Moved: " << res << " vertices" << std::endl;
   assert(res == 76);
 
