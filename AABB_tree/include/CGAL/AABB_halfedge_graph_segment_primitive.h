@@ -42,7 +42,7 @@ namespace CGAL {
 
 
 /*!
- * \ingroup PkgAABB_treeRef
+ * \ingroup PkgAABBTreeRef
  * Primitive type for a edge of a polyhedral surface.
  * It wraps an `edge_descriptor` into a 3D segment.
  * The class model of `HalfedgeGraph` from which the primitive is built should not be deleted

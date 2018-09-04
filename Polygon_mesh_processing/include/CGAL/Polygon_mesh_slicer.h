@@ -63,7 +63,7 @@ namespace CGAL {
 ///         orthogonal to a frame axis, the non-null coefficient being 1 or -1.
 ///         The default is `true`.
 ///
-/// The implemenation of this class depends on the package \ref PkgAABB_tree.
+/// The implemenation of this class depends on the package \ref PkgAABBTree.
 /// \todo Shall we document more in details what is required?
 ///       `Traits` must provide:
 ///        - `Plane_3`

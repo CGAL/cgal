@@ -14,7 +14,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
-\cgalPkgDependsOn{\ref PkgArrangement2, \ref PkgAABB_tree, \ref PkgTriangulation2}
+\cgalPkgDependsOn{\ref PkgArrangement2, \ref PkgAABBTree, \ref PkgTriangulation2}
 \cgalPkgBib{cgal:w-rms2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd

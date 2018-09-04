@@ -517,7 +517,7 @@ struct Display_incidences_to_curves_aux<MDwPF, false> {
 /// @endcond
 
 /*!
-\ingroup PkgMesh_3Domains
+\ingroup PkgMesh3Domains
 
 The class `Mesh_domain_with_polyline_features_3` is designed to allow the user
 to add some 0- and 1-dimensional

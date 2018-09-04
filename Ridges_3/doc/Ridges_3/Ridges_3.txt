@@ -26,7 +26,7 @@ analysis. Based on the results of the article
 different parts of this singular ridge curve as well as umbilics on a
 surface given as a triangulated surface mesh. Differential quantities
 associated to the mesh vertices are assumed to be given for these
-algorithms; such quantities may be computed by the package \ref PkgJet_fitting_3.
+algorithms; such quantities may be computed by the package \ref PkgJetFitting3.
 
 
 Note that this package needs the third party library \ref thirdpartyEigen for linear algebra operations.
@@ -404,7 +404,7 @@ neighborhood.
 \subsection Ridges_3Exampleprogram Example Program
 
 The following program computes ridges and umbilics from an off
-file.\cgalFootnote{Model data may be downloaded via ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/Ridges_3_datafiles.tgz . The mechanical part model has been provided courtesy of Dassault System to produce \cgalFigureRef{figmechanical_crest_filteredintro}, due to copyright issues the available model is not the same, it is provided by the AIM\@SHAPE Shape Repository.} It uses the package \ref PkgJet_fitting_3 to estimate the differential
+file.\cgalFootnote{Model data may be downloaded via ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/Ridges_3_datafiles.tgz . The mechanical part model has been provided courtesy of Dassault System to produce \cgalFigureRef{figmechanical_crest_filteredintro}, due to copyright issues the available model is not the same, it is provided by the AIM\@SHAPE Shape Repository.} It uses the package \ref PkgJetFitting3 to estimate the differential
 quantities. 
 The default output file gives rough data for visualization purpose, a
 verbose output file may also be asked for. Parameters are

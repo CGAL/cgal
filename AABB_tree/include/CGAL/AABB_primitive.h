@@ -57,7 +57,7 @@ public:
 
 #ifdef DOXYGEN_RUNNING
 /*!
- * \ingroup PkgAABB_treeRef
+ * \ingroup PkgAABBTreeRef
  * Generic primitive type.
  * The two property maps which are template parameters of the class enable to get the datum and the reference point of
  * the primitive from the identifier. The last template parameter controls whether the primitive class holds a copy of the datum.

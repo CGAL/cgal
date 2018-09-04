@@ -127,7 +127,7 @@ The data itself may be stored in the vertex or the edge, or it may
 be stored in an external data structure, or it may be computed on
 the fly. This is an implementation detail of a particular property map.
 
-See also Chapter \ref PkgProperty_map.
+See also Chapter \ref PkgPropertyMap.
 
 \subsection BGLVisitors Visitors
 

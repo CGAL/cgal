@@ -22,7 +22,7 @@
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.4}
-\cgalPkgDependsOn{\ref PkgAABB_tree}
+\cgalPkgDependsOn{\ref PkgAABBTree}
 \cgalPkgBib{cgal:y-smsimpl}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}

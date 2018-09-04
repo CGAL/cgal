@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAABB_treeConcepts
+\ingroup PkgAABBTreeConcepts
 \cgalConcept
 
 The concept `AABBTraits` provides the geometric primitive types and methods for the class `CGAL::AABB_tree<AABBTraits>`.

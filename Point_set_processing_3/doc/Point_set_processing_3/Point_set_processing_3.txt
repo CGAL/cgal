@@ -80,7 +80,7 @@ as, e.g., a class derived from the \cgal 3D point, or as a
 `std::pair<Point_3<K>, Vector_3<K>>`, or as a
 `boost::tuple<..,Point_3<K>, ..., Vector_3<K> >`.
 
-The following classes described in Chapter \ref PkgProperty_map
+The following classes described in Chapter \ref PkgPropertyMap
 provide property maps for the implementations of points with normals
 listed above:
 

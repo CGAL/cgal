@@ -58,7 +58,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMesh_3Domains
+\ingroup PkgMesh3Domains
 
 The class `Polyhedral_complex_mesh_domain_3` implements a domain
 defined by a collection of polyhedral surfaces, forming a complex.

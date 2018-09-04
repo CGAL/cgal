@@ -60,7 +60,7 @@ by a mesh optimization phase to remove slivers and provide a good quality mesh.
 
 \subsection Periodic_3_mesh_3Mesh_3 Relation to the 3D Mesh Generation and 3D Periodic Triangulations Packages
 
-This package is fundamentally linked to the package \ref PkgMesh_3,
+This package is fundamentally linked to the package \ref PkgMesh3,
 which is devoted to the generation of isotropic simplicial
 meshes discretizing (non-periodic) 3D domains and to the \ref PkgPeriodic3Triangulation3 of %CGAL,
 which are used as underlying triangulation structures of the mesh.
@@ -68,16 +68,16 @@ which are used as underlying triangulation structures of the mesh.
 A periodic mesh extends, by definition, infinitely in space. We consider the flat torus \f$ \mathbb T_c^3\f$,
 whose <I>canonical cube</I> has side length `c` (this canonical cube is named <I>original domain</I>
 in Chapter \ref PkgPeriodic3Triangulation3; we rename it here to avoid the confusion
-with the domain defined in Chapter \ref PkgMesh_3). Well-chosen "dummy" points
+with the domain defined in Chapter \ref PkgMesh3). Well-chosen "dummy" points
 are inserted at the beginning of the meshing process, ensuring that the projection
 of the periodic triangulation into the flat torus \f$ \mathbb T_c^3\f$ forms at all times a simplicial complex
 (see Sections \ref P3Triangulation3secspace and \ref P3Triangulation3secintro
 of the manual of 3D periodic triangulations).
 Thanks to this construction, the meshing process can be exclusively conducted
 within the canonical cube.
-The mesh can then be created using the \ref PkgMesh_3 package of %CGAL.
+The mesh can then be created using the \ref PkgMesh3 package of %CGAL.
 As this package originally aims to mesh non-periodic domains of \f$ \mathbb R^3\f$, an interface
-is necessary between the packages \ref PkgMesh_3 and \ref PkgPeriodic3Triangulation3.
+is necessary between the packages \ref PkgMesh3 and \ref PkgPeriodic3Triangulation3.
 This package provides this interface.
 
 \subsection Periodic_3_mesh_3InputDomain Input Domain
@@ -227,7 +227,7 @@ and to guarantee that the refinement process terminates
 whatever may be the dihedral angles formed by input surface patches incident to a
 given 1-feature or the angles formed by two 1-features incident to a 0-feature.
 See Section \ref Mesh_3Protectionof0and1dimensionalExposed in the documentation
-of the package \ref PkgMesh_3 for further information.
+of the package \ref PkgMesh3 for further information.
 
 Section \ref Periodic_3_mesh_3MeshingDomainswithSharpFeatures details how
 to prescribe sharp features and examples of periodic meshes with features.
@@ -236,7 +236,7 @@ to prescribe sharp features and examples of periodic meshes with features.
 
 The optimization phase is a succession of optimization processes which aim to
 improve the quality of the mesh in terms of shape of its elements.
-All the optimizers offered by the package \ref PkgMesh_3 are also available
+All the optimizers offered by the package \ref PkgMesh3 are also available
 for periodic mesh generation:
 
 - The Lloyd and ODT-smoother are global optimizers, moving the mesh vertices
@@ -245,7 +245,7 @@ to minimize a mesh energy.
 the worst mesh elements.
 
 See Sections \ref Mesh_3OptimizationPhase, \ref Mesh_3TheOptimizationParameters,
-and \ref Mesh_3TuningMeshOptimization in the documentation of the package \ref PkgMesh_3
+and \ref Mesh_3TuningMeshOptimization in the documentation of the package \ref PkgMesh3
 for further information.
 
 \section Periodic_3_mesh_3_section_interface Interface
@@ -416,7 +416,7 @@ This section presents various use cases of the periodic mesh generator.
 \subsection Periodic_3_mesh_3SubMultipleCopies Visualizing Multiple Copies of a Periodic Mesh
 
 Generated meshes can be output to the `.mesh` file format, which can be visualized with the demo
-of the package \ref PkgPolyhedron. The function \link PkgPeriodic_3_mesh_3IOFunctions `CGAL::output_periodic_mesh_to_medit()` \endlink
+of the package \ref PkgPolyhedron. The function \link PkgPeriodic3Mesh3IOFunctions `CGAL::output_periodic_mesh_to_medit()` \endlink
 takes a stream, a mesh complex, and - optionally - the number of periodic copies that should be drawn,
 making it easier to observe the periodicity of the result.
 \cgalFigureRef{Periodic_3_mesh_3Periodic_copies} illustrates the different output
@@ -674,7 +674,7 @@ A periodic mesh without (left) and with (right) sharp features protection.
 
 Advanced use cases of the 3D mesh generator with implicit domains, its optimizers,
 and protection mechanisms can be found in Section \ref Mesh_3_section_examples
-of the package \ref PkgMesh_3.
+of the package \ref PkgMesh3.
 
 \section Periodic_3_mesh_3DesignAndImpl Design and Implementation History
 
@@ -683,7 +683,7 @@ of the package \ref PkgMesh_3.
 Theoretical foundations of periodic meshes are explained in detail in the package
 \ref PkgPeriodic3Triangulation3.
 For the theoretical foundations of the mesh generation process, see Section
-\ref Mesh_3TheoreticalFoundations of the package \ref PkgMesh_3.
+\ref Mesh_3TheoreticalFoundations of the package \ref PkgMesh3.
 
 \subsection Periodic_3_mesh_3ImplementationHistory Implementation History
 

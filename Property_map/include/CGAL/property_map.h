@@ -169,7 +169,7 @@ struct Input_iterator_property_map{
   get(Input_iterator_property_map<InputIterator>,InputIterator it){ return *it; }
 };
 
-/// \ingroup PkgProperty_mapRef
+/// \ingroup PkgPropertyMapRef
 /// Property map that converts a `T*` pointer (or in general an iterator
 /// over `T` elements) to the `T` object.
 ///
@@ -201,7 +201,7 @@ make_dereference_property_map(Iter)
   return Dereference_property_map<typename CGAL::value_type_traits<Iter>::type>();
 }
 
-/// \ingroup PkgProperty_mapRef
+/// \ingroup PkgPropertyMapRef
 /// A `LvaluePropertyMap` property map mapping a key to itself (by reference).
 ///
 /// \cgalModels `LvaluePropertyMap`
@@ -235,7 +235,7 @@ Identity_property_map<T>
 }
 
 
-/// \ingroup PkgProperty_mapRef
+/// \ingroup PkgPropertyMapRef
 /// Property map that accesses the first item of a `std::pair`. 
 /// \tparam Pair Instance of `std::pair`. 
 /// \cgalModels `LvaluePropertyMap`
@@ -271,7 +271,7 @@ First_of_pair_property_map<Pair>
   return First_of_pair_property_map<Pair>();
 }
 
-/// \ingroup PkgProperty_mapRef
+/// \ingroup PkgPropertyMapRef
 /// 
 /// Property map that accesses the second item of a `std::pair`. 
 /// 
@@ -310,7 +310,7 @@ Second_of_pair_property_map<Pair>
   return Second_of_pair_property_map<Pair>();
 }
 
-/// \ingroup PkgProperty_mapRef
+/// \ingroup PkgPropertyMapRef
 /// 
 /// Property map that accesses the Nth item of a `boost::tuple` or a `std::tuple`.
 /// 
@@ -370,7 +370,7 @@ Nth_of_tuple_property_map<N, Tuple>
   return Nth_of_tuple_property_map<N, Tuple>();
 }
 
-/// \ingroup PkgProperty_mapRef
+/// \ingroup PkgPropertyMapRef
 /// Struct that turns a property map into a unary functor with
 /// `operator()(key k)` calling the get function with `k`
 template <class PropertyMap>
@@ -391,7 +391,7 @@ struct Property_map_to_unary_function{
   }
 };
 
-/// \ingroup PkgProperty_mapRef
+/// \ingroup PkgPropertyMapRef
 /// Utility class providing shortcuts to property maps based on raw pointers
 template <class T>
 struct Pointer_property_map{
@@ -405,7 +405,7 @@ struct Pointer_property_map{
                               const T&> const_type; ///< non-mutable `LvaluePropertyMap`
 };
 
-/// \ingroup PkgProperty_mapRef
+/// \ingroup PkgPropertyMapRef
 /// Starting from boost 1.55, the use of raw pointers as property maps has been deprecated.
 /// This function is a shortcut to the recommanded replacement:
 /// `boost::make_iterator_property_map(<pointer>, boost::typed_identity_property_map<std::size_t>())`
@@ -418,7 +418,7 @@ make_property_map(T* pointer)
   return typename Pointer_property_map<T>::type(pointer);
 }
 
-/// \ingroup PkgProperty_mapRef
+/// \ingroup PkgPropertyMapRef
 /// equivalent to `make_property_map(&v[0])`
 /// Note that `v` must not be modified while using the property map created
 template <class T>
@@ -432,7 +432,7 @@ make_property_map(std::vector<T>& v)
   return make_property_map(&v[0]);
 }
 
-/// \ingroup PkgProperty_mapRef
+/// \ingroup PkgPropertyMapRef
 /// Non-mutable version
 template <class T>
 inline
@@ -442,7 +442,7 @@ make_property_map(const T* pointer)
   return typename Pointer_property_map<T>::const_type(pointer);
 }
 
-/// \ingroup PkgProperty_mapRef
+/// \ingroup PkgPropertyMapRef
 /// equivalent to `make_property_map(&v[0])`
 /// Note that `v` must not be modified while using the property map created
 template <class T>
@@ -453,7 +453,7 @@ make_property_map(const std::vector<T>& v)
   return make_property_map(&v[0]);
 }
 
-/// \ingroup PkgProperty_mapRef
+/// \ingroup PkgPropertyMapRef
 /// Property map that returns a fixed value.
 /// Note that this value is chosen when the map is constructed and cannot
 /// be changed afterwards. Specifically, the free function `put()` does nothing.
@@ -479,7 +479,7 @@ struct Constant_property_map
   put (const Constant_property_map&, const key_type&, const value_type&) { }
 };
 
-/// \ingroup PkgProperty_mapRef
+/// \ingroup PkgPropertyMapRef
 /// Read-write property map turning a set (such a `std::set`,
 /// `boost::unordered_set`, `std::unordered_set`) into a property map
 /// associating a Boolean to the value type of the set. The function `get` will
@@ -517,7 +517,7 @@ struct Boolean_property_map
   }
 };
 
-/// \ingroup PkgProperty_mapRef
+/// \ingroup PkgPropertyMapRef
 /// returns `Boolean_property_map<Set>(set_)`
 template <class Set>
 Boolean_property_map<Set>
@@ -526,7 +526,7 @@ make_boolean_property_map(Set& set_)
   return Boolean_property_map<Set>(set_);
 }
 
-/// \ingroup PkgProperty_mapRef
+/// \ingroup PkgPropertyMapRef
 /// Read-write property map doing on-the-fly conversions between two default constructible \cgal %Cartesian kernels.
 /// Its value type is `GeomObject` and its key type is the same as `Vpm`.
 /// `GeomObject` must be a geometric object from a \cgal kernel.
@@ -561,7 +561,7 @@ struct Cartesian_converter_property_map
   }
 };
 
-/// \ingroup PkgProperty_mapRef
+/// \ingroup PkgPropertyMapRef
 /// returns `Cartesian_converter_property_map<GeomObject, Vpm>(vpm)`
 template<class GeomObject, class Vpm>
 Cartesian_converter_property_map<GeomObject, Vpm>

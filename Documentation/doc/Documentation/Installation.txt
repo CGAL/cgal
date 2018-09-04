@@ -546,8 +546,8 @@ matrix sizes, various matrix decomposition methods and sparse linear solvers.
 In \cgal, \sc{Eigen} provides sparse linear solvers in the \ref PkgPoissonSurfaceReconstructionRef
 and the \ref PkgSurfaceParameterizationRef packages. 
 
-In addition, \sc{Eigen} also provides singular value decomposition for the \ref PkgJet_fitting_3Ref
-and the \ref PkgRidges_3Ref packages.
+In addition, \sc{Eigen} also provides singular value decomposition for the \ref PkgJetFitting3Ref
+and the \ref PkgRidges3Ref packages.
 
 The \sc{Eigen} web site is <A HREF="http://eigen.tuxfamily.org">`http://eigen.tuxfamily.org`</A>.
 

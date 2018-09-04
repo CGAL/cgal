@@ -40,7 +40,7 @@
 
 namespace CGAL {
 
-/// \addtogroup PkgAABB_treeRef
+/// \addtogroup PkgAABBTreeRef
 /// @{
     /// \deprecated This class is deprecated since \cgal 4.3, the class
     /// `AABB_halfedge_graph_segment_primitive` should be used instead.
