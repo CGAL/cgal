@@ -70,9 +70,9 @@ unspecified_type all_default();
  *  \cgalParamEnd
  *  \cgalParamBegin{min_error_drop} minimum error drop of the approximation, expressed in ratio between two iterations of proxy addition.
  *  \cgalParamEnd
- *  \cgalParamBegin{nb_of_iterations} number of partitioning and fitting iterations after seeding.
- *  \cgalParamEnd
  *  \cgalParamBegin{nb_of_relaxations} number of relaxation iterations interleaved within seeding.
+ *  \cgalParamEnd
+ *  \cgalParamBegin{nb_of_iterations} number of partitioning and fitting iterations after seeding.
  *  \cgalParamEnd
  * \cgalNamedParamsEnd
  * \cgalNamedParamsBegin{Meshing Named Parameters}

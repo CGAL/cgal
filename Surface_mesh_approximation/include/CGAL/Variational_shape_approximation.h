@@ -579,7 +579,7 @@ public:
 
   /// \name Refinement Operations
   /// @{
-    /*!
+  /*!
    * @brief Teleports the local minimum to the worst region by combining the merging and adding processes.
    * The re-fitting is performed after each teleportation.
    * Here if we specify more than one proxy this means we teleport in a naive iterative fashion.
