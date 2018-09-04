@@ -256,6 +256,7 @@ MainWindow::processInput(CGAL::Object o)
     }
 
     Vertex_handle v = dt.insert(p);
+    dt.clean_dummy_points();
   }
   emit(changed());
   qApp->processEvents();
