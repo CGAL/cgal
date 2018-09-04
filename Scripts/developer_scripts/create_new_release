@@ -22,7 +22,7 @@ SOURCES_DIR="$PWD"       # Directory containing the sources, default is "$PWD"
 VERBOSE=""               # Verbose mode (displays log to standard err)
 BETA=""                  #If set, will change the release number and version number accordingly.
 DESTINATION="/tmp"
-IS_MASTER=""
+IS_MASTER="y"
 
 SOURCES_DIR_HAS_BEEN_SET=
 
@@ -116,9 +116,9 @@ while [ $1 ]; do
                 SOURCES_DIR="$1"
                 SOURCES_DIR_HAS_BEEN_SET=y
                 shift; continue
-            elif [ -z "$CANDIDATES_DIR_HAS_BEEN_SET" ]; then
-                CANDIDATES_DIR="$1"
-                CANDIDATES_DIR_HAS_BEEN_SET=y
+            elif [ -n "$IS_MASTER" ]; then
+                # Compatibility with the old syntax with candidates
+                IS_MASTER=""
                 shift; continue
             else
                 printerr "Unrecognized option : $1"
