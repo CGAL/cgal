@@ -184,10 +184,6 @@ private:
   Vertex_correspondence_map& m_vertex_map;
   CGAL::cpp11::unordered_map<vertex_descriptor/*source*/, FT> m_sq_distance_to_snapped_point;
 
-  // vertices of the target mesh on which more than two vertices of the source mesh
-  // would be projected
-  CGAL::cpp11::unordered_set<vertex_descriptor> invalid_targets;
-
   const SVPM& svpm;
   const TVPM& tvpm;
   const ToleranceMap& tol_vm;
