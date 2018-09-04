@@ -27,8 +27,10 @@
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 /*! \file
- * Definition of the specialized Dual<Arrangement_2> class template,
- * and the specialized boost::graph_traits<Dual<Arrangement_2> >class template.
+ * Definition of:
+ * 1. the specialized Dual<Arrangement_2> class,
+ * 2. the specialized boost::graph_traits<Dual<Arrangement_2> >class,
+ * 3. The free functions required by the various graph concepts.
  */
 
 // include this to avoid a VC15 warning

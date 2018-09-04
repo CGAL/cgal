@@ -29,7 +29,7 @@
 /*! \file
  * Definition of:
  * 1. the specialized Dual<Arrangement_on_surface_2> class,
- * 2. the specialized boost::graph_traits<Dual<Arrangement_on_surface_2> >class,
+ * 2. the specialized boost::graph_traits<Dual<Arrangement_on_surface_2> > class,
  * 3. The free functions required by the various graph concepts.
  */
 
