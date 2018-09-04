@@ -265,8 +265,8 @@ namespace CGAL
    * @return the degree of the cell.
    */
   template < class Map, unsigned int i >
-  typename Map::size_type degree( const Map & amap, 
-                                  typename Map::Dart_const_handle adart )
+  typename Map::size_type degree(const Map & amap, 
+                                 typename Map::Dart_const_handle adart)
   {
     CGAL_assertion(adart != NULL);
   
@@ -280,20 +280,20 @@ namespace CGAL
       Dart_of_cell_basic_range<i>::const_iterator it(amap, adart, mark);
     for ( ;it.cont(); ++it )
     {
-      if (!amap.is_marked(*it, treated))
+      if (!amap.is_marked(it, treated))
       {
         ++nbIncident;
-        CGAL::mark_cell<Map,i+1>(amap, *it, treated);
+        CGAL::mark_cell<Map,i+1>(amap, it, treated);
       }
-      amap.mark(*it,mark);
+      amap.mark(it,mark);
     }
   
     amap.negate_mark(mark);
     for (it.rewind(); it.cont(); ++it)
     {
-      if (amap.is_marked(*it, treated))
-        CGAL::unmark_cell<Map,i+1>(amap, *it, treated);
-      amap.mark(*it,mark);
+      if (amap.is_marked(it, treated))
+      { CGAL::unmark_cell<Map,i+1>(amap, it, treated); }
+      amap.mark(it,mark);
     }
   
     amap.negate_mark(mark);
@@ -329,20 +329,20 @@ namespace CGAL
       Dart_of_cell_basic_range<i>::const_iterator it(amap, adart, mark);
     for ( ; it.cont(); ++it)
     {
-      if (!amap.is_marked(*it, treated))
+      if (!amap.is_marked(it, treated))
       {
         ++nbIncident;
-        CGAL::mark_cell<Map,i-1>(amap, *it, treated);
+        CGAL::mark_cell<Map,i-1>(amap, it, treated);
       }
-      amap.mark(*it,mark);
+      amap.mark(it,mark);
     }
   
     amap.negate_mark(mark);
     for (it.rewind(); it.cont(); ++it)
     {
-      if (amap.is_marked(*it, treated))      
-        CGAL::unmark_cell<Map,i-1>(amap, *it, treated);
-      amap.mark(*it,mark);
+      if (amap.is_marked(it, treated))      
+      { CGAL::unmark_cell<Map,i-1>(amap, it, treated); }
+      amap.mark(it,mark);
     }
 
     amap.negate_mark(mark);
