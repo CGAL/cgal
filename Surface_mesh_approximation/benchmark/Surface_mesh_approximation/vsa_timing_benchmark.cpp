@@ -34,10 +34,10 @@ int main(int argc, char *argv[])
   Polyhedron mesh;
   std::ifstream input(argv[1]);
   if (!input || !(input >> mesh) || mesh.empty()) {
-    std::cerr << "Invalid off file." << std::endl;
+    std::cout << "Invalid off file." << std::endl;
     return EXIT_FAILURE;
   }
-  std::cerr << "#triangles " << mesh.size_of_facets() << std::endl;
+  std::cout << "#triangles " << mesh.size_of_facets() << std::endl;
 
   // error metric and fitting functors
   L21_metric error_metric(mesh,
@@ -53,36 +53,36 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   const std::size_t nb_proxies = std::atoi(argv[3]);
   const std::size_t nb_iterations = std::atoi(argv[4]);
-  std::cerr << "#method " << method << std::endl;
-  std::cerr << "#nb_proxies " << nb_proxies << std::endl;
-  std::cerr << "#nb_iterations " << nb_iterations << std::endl;
+  std::cout << "#method " << method << std::endl;
+  std::cout << "#nb_proxies " << nb_proxies << std::endl;
+  std::cout << "#nb_iterations " << nb_iterations << std::endl;
 
   Timer t0, t1;
   t1.start();
 
-  std::cerr << "start seeding" << std::endl;
+  std::cout << "start seeding" << std::endl;
   t0.reset();
   t0.start();
   approx.initialize_seeds(
     CGAL::parameters::seeding_method(static_cast<CGAL::VSA::Seeding_method>(method))
-      .max_nb_of_proxies(nb_proxies));
+      .max_number_of_proxies(nb_proxies));
   t0.stop();
-  std::cerr << "seeding time " << t0.time() << " sec." << std::endl;
+  std::cout << "seeding time " << t0.time() << " sec." << std::endl;
 
-  std::cerr << "start iterations" << std::endl;
+  std::cout << "start iterations" << std::endl;
   t0.reset();
   t0.start();
   approx.run(nb_iterations);
   t0.stop();
-  std::cerr << "iterations time " << t0.time() << " sec." << std::endl;
+  std::cout << "iterations time " << t0.time() << " sec." << std::endl;
 
   t0.reset();
   t0.start();
   approx.extract_mesh(CGAL::parameters::all_default());
   t0.stop();
-  std::cerr << "meshing time " << t0.time() << " sec." << std::endl;
+  std::cout << "meshing time " << t0.time() << " sec." << std::endl;
 
-  std::cerr << "total time " << t1.time() << " sec." << std::endl;
+  std::cout << "total time " << t1.time() << " sec." << std::endl;
 
   return EXIT_SUCCESS;
 }

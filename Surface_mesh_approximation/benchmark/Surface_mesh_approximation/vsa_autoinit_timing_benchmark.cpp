@@ -33,10 +33,10 @@ int main(int argc, char *argv[])
   Polyhedron mesh;
   std::ifstream input(argv[1]);
   if (!input || !(input >> mesh) || mesh.empty()) {
-    std::cerr << "Invalid off file." << std::endl;
+    std::cout << "Invalid off file." << std::endl;
     return EXIT_FAILURE;
   }
-  std::cerr << "#triangles " << mesh.size_of_facets() << std::endl;
+  std::cout << "#triangles " << mesh.size_of_facets() << std::endl;
 
   // error metric and fitting functors
   L21_metric error_metric(mesh,
@@ -51,21 +51,21 @@ int main(int argc, char *argv[])
   if (method < 0 || method > 2)
     return EXIT_FAILURE;
   const FT error_drop(std::atof(argv[3]));
-  int nb_relaxations = std::atoi(argv[4]);
-  std::cerr << "#method " << method << std::endl;
-  std::cerr << "#error_drop " << error_drop << std::endl;
-  std::cerr << "#nb_relaxations " << nb_relaxations << std::endl;
+  int number_of_relaxations = std::atoi(argv[4]);
+  std::cout << "#method " << method << std::endl;
+  std::cout << "#error_drop " << error_drop << std::endl;
+  std::cout << "#number_of_relaxations " << number_of_relaxations << std::endl;
 
   Timer t;
-  std::cerr << "start seeding" << std::endl;
+  std::cout << "start seeding" << std::endl;
   t.start();
   approx.initialize_seeds(
     CGAL::parameters::seeding_method(static_cast<CGAL::VSA::Seeding_method>(method))
       .min_error_drop(error_drop)
-      .nb_of_relaxations(nb_relaxations));
+      .number_of_relaxations(number_of_relaxations));
   t.stop();
-  std::cerr << "seeding time " << t.time() << " sec." << std::endl;
-  std::cerr << "#proxies " << approx.proxies_size() << std::endl;
+  std::cout << "seeding time " << t.time() << " sec." << std::endl;
+  std::cout << "#proxies " << approx.proxies_size() << std::endl;
 
   return EXIT_SUCCESS;
 }
