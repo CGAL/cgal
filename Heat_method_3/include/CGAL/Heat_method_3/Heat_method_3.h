@@ -35,7 +35,7 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/number_utils.h>
 #include <Eigen/Cholesky>
-#include <Eigen/Sparse>
+#include <CGAL/Eigen_matrix.h>
 
 #include <boost/foreach.hpp>
 
@@ -52,15 +52,14 @@ namespace Heat_method_3 {
   // This class will later go into another file
   // It encapsulates what we use from Eigen so that one potentially can use another LA library
   struct Heat_method_Eigen_traits_3 {
-    typedef Eigen::SparseMatrix<double> SparseMatrix;
-    typedef Eigen::Triplet<double> T;
+    typedef CGAL::Eigen_sparse_matrix<double> SparseMatrix;
     typedef int Index;
   };
 
 
 
   /**
-   * Class `Heat_method_3` is an implementation of the Heat Method by Crane, et. al, an algorithm that computes geodesic distance.
+   * Class `Heat_method_3` is an implementation of the Heat Method by Crane, et al, an algorithm that computes geodesic distance.
    * \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
    * \tparam Traits a model of HeatMethodTraits_3
    * \tparam VertexPointMap a model of `ReadablePropertyMap` with
@@ -97,7 +96,6 @@ namespace Heat_method_3 {
 
     typedef typename LA::SparseMatrix Matrix;
     typedef typename LA::Index Index;
-    typedef typename LA::T triplet;
 
     // The Vertex_id_map is a property map where you can associate an index to a vertex_descriptor
     typedef typename boost::graph_traits<TriangleMesh>::vertices_size_type vertices_size_type;
@@ -261,7 +259,7 @@ namespace Heat_method_3 {
       if(sources.empty())
       {
         i = 0;
-        K.insert(i,0) = 1;
+        K.set_coef(i,0, 1, true);
         source_index.insert(0);
       }
       else
@@ -273,11 +271,11 @@ namespace Heat_method_3 {
         {
 
           i = get(vertex_id_map, *(vd));
-          K.insert(i,0) = 1;
+          K.set_coef(i,0, 1, true);
           vd = ++vd;
         }
       }
-      kronecker = K;
+      kronecker.swap(K);
     }
 
 
@@ -288,14 +286,16 @@ namespace Heat_method_3 {
 
     void solve_cotan_laplace(const Matrix& M, const Matrix& c, const Matrix& x, double a_time_step, int dimension)
     {
-      Matrix A = (M+ a_time_step*c);
-      Eigen::SimplicialLDLT<Matrix> solver;
-      solver.compute(A);
+      Matrix A, A0;
+      scale(A0, a_time_step, c);
+      add(A,M,A0);
+      Eigen::SimplicialLDLT<typename Matrix::EigenType> solver;
+      solver.compute(A.eigen_object());
       if(solver.info()!=Eigen::Success) {
         // decomposition failed
         CGAL_error_msg("Eigen Decomposition in cotan failed");
       }
-      solved_u = solver.solve(x);
+      solved_u = solver.solve(x.eigen_object());
       if(solver.info()!=Eigen::Success) {
         // solving failed
         CGAL_error_msg("Eigen Solving in cotan failed");
@@ -359,11 +359,9 @@ namespace Heat_method_3 {
     }
 
 
-    Matrix compute_divergence(const Eigen::MatrixXd& X, int rows) const
+    void compute_divergence( Matrix& result, const Eigen::MatrixXd& X, int rows) const
     {
-      Matrix indexD;
-      std::vector<triplet> d_matrix_entries;
-      d_matrix_entries.reserve(3* num_faces(tm));
+      Matrix indexD(rows,1);
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
       BOOST_FOREACH(face_descriptor f, faces(tm)) {
         boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
@@ -396,15 +394,14 @@ namespace Heat_method_3 {
         double j_entry = cotan_i*(dot_eigen_vector(a,(p_k-p_j))) + cotan_k*(dot_eigen_vector(a,(p_i-p_j)));
         double k_entry = cotan_j*(dot_eigen_vector(a,(p_i-p_k))) + cotan_i*(dot_eigen_vector(a,(p_j-p_k)));
 
-        d_matrix_entries.push_back(triplet(i,0, (1./2)*i_entry));
-        d_matrix_entries.push_back(triplet(j,0, (1./2)*j_entry));
-        d_matrix_entries.push_back(triplet(k,0, (1./2)*k_entry));
+        indexD.add_coef(i, 0, (1./2)*i_entry);
+        indexD.add_coef(j, 0, (1./2)*j_entry);
+        indexD.add_coef(k, 0, (1./2)*k_entry);
       }
-      indexD.resize(rows,1);
-      indexD.setFromTriplets(d_matrix_entries.begin(), d_matrix_entries.end());
-      return indexD;
+      indexD.swap(result);
     }
 
+    
     Eigen::VectorXd value_at_source_set(const Eigen::VectorXd& phi, int dimension) const
     {
       Eigen::VectorXd source_set_val(dimension,1);
@@ -451,14 +448,14 @@ namespace Heat_method_3 {
     {
 
       Eigen::VectorXd phi;
-      Eigen::SimplicialLDLT<Matrix> solver;
-      solver.compute(c);
+      Eigen::SimplicialLDLT<typename Matrix::EigenType> solver;
+      solver.compute(c.eigen_object());
 
       if(solver.info()!=Eigen::Success) {
         // decomposition failed
         CGAL_error_msg("Eigen Decomposition in phi failed");
       }
-      phi = solver.solve(divergence);
+      phi = solver.solve(divergence.eigen_object());
       if(solver.info()!=Eigen::Success) {
         // solving failed
         CGAL_error_msg("Eigen Solving in phi failed");
@@ -487,7 +484,7 @@ namespace Heat_method_3 {
         update_kronecker_delta();
         solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, m_time_step, dimension);
         X = compute_unit_gradient();
-        index_divergence = compute_divergence(X, dimension);
+        compute_divergence(index_divergence, X, dimension);
         solved_phi = solve_phi(m_cotan_matrix, index_divergence, dimension);
         source_change_flag = false;
         std::cout<<"sources changed, recompute\n";
@@ -517,12 +514,6 @@ namespace Heat_method_3 {
       }
       int m = static_cast<int>(num_vertices(tm));
       dimension = m;
-      //mass matrix entries
-      std::vector<triplet> A_matrix_entries;
-      A_matrix_entries.reserve(2* num_faces(tm));
-      //cotan matrix entries
-      std::vector<triplet> c_matrix_entries;
-      c_matrix_entries.reserve(15* num_faces(tm));
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
       //Go through each face on the mesh
       {
@@ -549,44 +540,39 @@ namespace Heat_method_3 {
           double norm_cross = (CGAL::sqrt(cross*cross));
 
           double cotan_i = dot/norm_cross;
-          c_matrix_entries.push_back(triplet(j,k ,-(1./2)*cotan_i));
-          c_matrix_entries.push_back(triplet(k,j,-(1./2)* cotan_i));
-          c_matrix_entries.push_back(triplet(j,j,(1./2)*cotan_i));
-          c_matrix_entries.push_back(triplet(k,k,(1./2)* cotan_i));
+          m_cotan_matrix.add_coef(j,k ,-(1./2)*cotan_i);
+          m_cotan_matrix.add_coef(k,j,-(1./2)* cotan_i);
+          m_cotan_matrix.add_coef(j,j,(1./2)*cotan_i);
+          m_cotan_matrix.add_coef(k,k,(1./2)* cotan_i);
 
           cross = CGAL::cross_product((pi-pj), (pk-pj));
           dot = to_double((pi-pj)*(pk-pj));
           double cotan_j = dot/norm_cross;
-          c_matrix_entries.push_back(triplet(i,k ,-(1./2)*cotan_j));
-          c_matrix_entries.push_back(triplet(k,i,-(1./2)* cotan_j));
-          c_matrix_entries.push_back(triplet(i,i,(1./2)* cotan_j));
-          c_matrix_entries.push_back(triplet(k,k,(1./2)* cotan_j));
+          m_cotan_matrix.add_coef(i,k ,-(1./2)*cotan_j);
+          m_cotan_matrix.add_coef(k,i,-(1./2)* cotan_j);
+          m_cotan_matrix.add_coef(i,i,(1./2)* cotan_j);
+          m_cotan_matrix.add_coef(k,k,(1./2)* cotan_j);
 
           cross = CGAL::cross_product((pi-pk), (pj-pk));
           dot = to_double((pi-pk)*(pj-pk));
           double cotan_k = dot/norm_cross;
-          c_matrix_entries.push_back(triplet(i,j,-(1./2)*cotan_k));
-          c_matrix_entries.push_back(triplet(j,i,-(1./2)* cotan_k));
-          c_matrix_entries.push_back(triplet(i,i,(1./2)* cotan_k));
-          c_matrix_entries.push_back(triplet(j,j,(1./2)* cotan_k));
+          m_cotan_matrix.add_coef(i,j,-(1./2)*cotan_k);
+          m_cotan_matrix.add_coef(j,i,-(1./2)* cotan_k);
+          m_cotan_matrix.add_coef(i,i,(1./2)* cotan_k);
+          m_cotan_matrix.add_coef(j,j,(1./2)* cotan_k);
 
           //double area_face = CGAL::Polygon_mesh_processing::face_area(f,tm);
           //cross is 2*area
-          A_matrix_entries.push_back(triplet(i,i, (1./6.)*norm_cross));
-          A_matrix_entries.push_back(triplet(j,j, (1./6.)*norm_cross));
-          A_matrix_entries.push_back(triplet(k,k, (1./6.)*norm_cross));
-          c_matrix_entries.push_back(triplet(i,i, 1e-8));
-          c_matrix_entries.push_back(triplet(j,j, 1e-8));
-          c_matrix_entries.push_back(triplet(k,k, 1e-8));
+          m_mass_matrix.add_coef(i,i, (1./6.)*norm_cross);
+          m_mass_matrix.add_coef(j,j, (1./6.)*norm_cross);
+          m_mass_matrix.add_coef(k,k, (1./6.)*norm_cross);
+          m_cotan_matrix.add_coef(i,i, 1e-8);
+          m_cotan_matrix.add_coef(j,j, 1e-8);
+          m_cotan_matrix.add_coef(k,k, 1e-8);
 
         }
 
       }
-      m_mass_matrix.resize(m,m);
-      m_mass_matrix.setFromTriplets(A_matrix_entries.begin(), A_matrix_entries.end());
-      m_cotan_matrix.resize(m,m);
-      m_cotan_matrix.setFromTriplets(c_matrix_entries.begin(), c_matrix_entries.end());
-
       m_time_step = 1./(num_edges(tm));
       m_time_step = m_time_step*summation_of_edges();
       m_time_step = m_time_step*m_time_step;
@@ -595,7 +581,7 @@ namespace Heat_method_3 {
       //edit unit_grad
       X = compute_unit_gradient();
       //edit compute_divergence
-      index_divergence = compute_divergence(X, m);
+      compute_divergence(index_divergence, X, m);
       solved_phi = solve_phi(m_cotan_matrix, index_divergence, m);
     }
 

@@ -57,6 +57,15 @@ public:
 
   // Public operations
 public:
+  Eigen_sparse_matrix()  :
+      m_is_already_built(false)
+  {}
+
+  Eigen_sparse_matrix(const EigenType& et)
+    : m_matrix(et), m_is_symmetric(false), m_is_already_built(true)
+  {}
+
+  
   /// Create a square matrix initialized with zeros.
   Eigen_sparse_matrix(std::size_t  dim,           ///< Matrix dimension.
                       bool is_symmetric = false)  ///< Symmetric/hermitian?
@@ -104,6 +113,15 @@ public:
     m_triplets.reserve(rows);
   }
 
+  void swap(Eigen_sparse_matrix& other)
+  {
+    std::swap(m_is_already_built, other.m_is_already_built);
+    std::swap(m_is_symmetric, other.m_is_symmetric);
+    m_matrix.swap(other.m_matrix);
+    m_triplets.swap(other.m_triplets);
+  }
+
+  
   /// Delete this object and the wrapped matrix.
   ~Eigen_sparse_matrix() { }
 
@@ -264,6 +282,24 @@ private:
   bool m_is_symmetric;
 }; // Eigen_sparse_matrix
 
+  
+  template <typename T>
+  void
+  scale(Eigen_sparse_matrix<T>& result, T c, const Eigen_sparse_matrix<T>& M)
+  {
+    Eigen_sparse_matrix<T> Res(c* M.eigen_object());
+    result.swap(Res);
+  }
+
+  
+  template <typename T>
+  void
+  add(Eigen_sparse_matrix<T>& result, const Eigen_sparse_matrix<T>& M0, const Eigen_sparse_matrix<T>& M1)
+  {
+    Eigen_sparse_matrix<T> Res(M0.eigen_object()+ M1.eigen_object());
+    result.swap(Res);
+  }
+  
 /*!
 \ingroup PkgSolver
 
