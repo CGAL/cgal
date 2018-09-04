@@ -47,7 +47,7 @@ namespace Surface_mesh_parameterization {
 // Class Square_border_parameterizer_3
 //
 
-/// \ingroup PkgSurfaceParameterizationBorderParameterizationMethods
+/// \ingroup PkgSurfaceMeshParameterizationBorderParameterizationMethods
 ///
 /// This is the base class of strategies that parameterize the border
 /// of a 3D surface onto a square.
@@ -383,7 +383,7 @@ public:
 // Class Square_border_uniform_parameterizer_3
 //
 
-/// \ingroup PkgSurfaceParameterizationBorderParameterizationMethods
+/// \ingroup PkgSurfaceMeshParameterizationBorderParameterizationMethods
 ///
 /// This class parameterizes the border of a 3D surface onto a square
 /// in a uniform manner: points are equally spaced.
@@ -449,7 +449,7 @@ protected:
 // Class Square_border_arc_length_parameterizer_3
 //
 
-/// \ingroup PkgSurfaceParameterizationBorderParameterizationMethods
+/// \ingroup PkgSurfaceMeshParameterizationBorderParameterizationMethods
 ///
 /// This class parameterizes the border of a 3D surface onto a square,
 /// with an arc-length parameterization: `(u,v)` values are

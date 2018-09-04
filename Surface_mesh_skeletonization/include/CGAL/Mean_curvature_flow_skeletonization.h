@@ -112,7 +112,7 @@ struct Skel_polyhedron_items_3: CGAL::Polyhedron_items_with_id_3 {
 } //end of namespace internal
 
 
-/// \ingroup PkgMeanCurvatureSkeleton3Ref
+/// \ingroup PkgSurfaceMeshSkeletonizationRef
 /// Function object that enables to extract the mean curvature
 /// flow skeleton of a triangulated surface mesh.
 ///

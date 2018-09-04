@@ -1,12 +1,12 @@
-/// \defgroup PkgSDGLinfRef L Infinity Segment Delaunay Graphs Reference
-/// \defgroup PkgSDGLinfConcepts Concepts
-/// \ingroup PkgSDGLinfRef
+/// \defgroup PkgSegmentDelaunayGraphLinf2Ref L Infinity Segment Delaunay Graphs Reference
+/// \defgroup PkgSegmentDelaunayGraphLinf2Concepts Concepts
+/// \ingroup PkgSegmentDelaunayGraphLinf2Ref
 
 /*!
-\addtogroup PkgSDGLinfRef
+\addtogroup PkgSegmentDelaunayGraphLinf2Ref
 \todo check generated documentation
 
-\cgalPkgDescriptionBegin{L Infinity Segment Delaunay Graphs,PkgSDGLinf}
+\cgalPkgDescriptionBegin{L Infinity Segment Delaunay Graphs,PkgSegmentDelaunayGraphLinf2}
 \cgalPkgPicture{sdglinf-small.png}
 
 \cgalPkgSummaryBegin
@@ -14,7 +14,7 @@
 \cgalPkgDesc{Algorithms and geometric traits for computing the dual of
 the Voronoi diagram of a set of points and segments under the
 \f$L_{\infty}\f$ metric.}
-\cgalPkgManuals{Chapter_L_Infinity_Segment_Delaunay_Graphs,PkgSDGLinfRef}
+\cgalPkgManuals{Chapter_L_Infinity_Segment_Delaunay_Graphs,PkgSegmentDelaunayGraphLinf2Ref}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin

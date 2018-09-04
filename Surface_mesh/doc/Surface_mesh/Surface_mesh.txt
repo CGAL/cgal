@@ -13,7 +13,7 @@ namespace CGAL {
 
 The class `Surface_mesh` is an implementation of a halfedge data structure 
 and can be used to represent a polyhedral surface. 
-It is an alternative to the \cgal packages \ref PkgHDS
+It is an alternative to the \cgal packages \ref PkgHalfedgeDS
 and \ref PkgPolyhedron.
 The main difference is that it is indexed based and not pointer based.
 Additionally, the mechanism for adding information to vertices, halfedges,
@@ -33,7 +33,7 @@ as well as through the BGL API as described in the package \ref PkgBGL,
 as it is a model of the concepts `MutableFaceGraph` and `FaceListGraph`.
 Therefore it is possible to apply the algorithms of the packages 
 \ref  PkgSurfaceMeshSimplification,
-\ref PkgSurfaceSegmentation, and \ref PkgSurfaceMeshDeformation  on a surface mesh.
+\ref PkgSurfaceMeshSegmentation, and \ref PkgSurfaceMeshDeformation  on a surface mesh.
 
 
 \section sectionSurfaceMeshUsage Usage

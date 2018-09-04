@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgIOstreamsRef
+\ingroup PkgStreamSupportRef
 
 The class `Verbose_ostream` can be used as an output stream. The stream 
 output operator `<<` is defined for any type. The class 

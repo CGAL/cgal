@@ -69,7 +69,7 @@ structure: the points and attributes are then accessed through ranges
 and property maps. The `CGAL::Point_set_3` class is a range that
 provides property maps: applying \cgal algorithms is straightforward.
 
-As the \ref PkgPointSetProcessingRef "Point Set Processing" algorithms
+As the \ref PkgPointSetProcessing3Ref "Point Set Processing" algorithms
 use \ref BGLNamedParameters to handle property maps, a method
 `CGAL::Point_set_3::parameters()` is provided: it returns a named
 parameter object with the right point and normal maps to read and

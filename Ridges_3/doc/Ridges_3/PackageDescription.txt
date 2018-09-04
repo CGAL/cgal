@@ -15,7 +15,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
-\cgalPkgDependsOn{\ref PkgSolver} 
+\cgalPkgDependsOn{\ref PkgSolverInterface} 
 \cgalPkgBib{cgal:cp-arutsm}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd

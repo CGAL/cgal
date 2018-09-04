@@ -18,7 +18,7 @@ the visibility area of a point within polygonal regions in two dimensions.}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}
-\cgalPkgDependsOn{\ref PkgArrangement2}
+\cgalPkgDependsOn{\ref PkgArrangementOnSurface2}
 \cgalPkgDependsOn{\ref PkgTriangulation2}
 \cgalPkgBib{hhb-visibility-2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}

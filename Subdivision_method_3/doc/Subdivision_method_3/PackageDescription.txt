@@ -1,20 +1,20 @@
-/// \defgroup PkgSurfaceSubdivisionMethods3Ref 3D Surface Subdivision Methods
+/// \defgroup PkgSurfaceSubdivisionMethod3Ref 3D Surface Subdivision Methods
 
-/// \defgroup PkgSurfaceSubdivisionMethods3Concepts Concepts
-/// \ingroup PkgSurfaceSubdivisionMethods3Ref
+/// \defgroup PkgSurfaceSubdivisionMethod3Concepts Concepts
+/// \ingroup PkgSurfaceSubdivisionMethod3Ref
 
-/// \defgroup PkgSurfaceSubdivisionMethods3Functions Subdivision Methods
-/// \ingroup PkgSurfaceSubdivisionMethods3Ref
+/// \defgroup PkgSurfaceSubdivisionMethod3Functions Subdivision Methods
+/// \ingroup PkgSurfaceSubdivisionMethod3Ref
 
 /*!
-\addtogroup PkgSurfaceSubdivisionMethods3Ref
+\addtogroup PkgSurfaceSubdivisionMethod3Ref
 
-\cgalPkgDescriptionBegin{3D Surface Subdivision Methods,PkgSurfaceSubdivisionMethods3}
+\cgalPkgDescriptionBegin{3D Surface Subdivision Methods,PkgSurfaceSubdivisionMethod3}
 \cgalPkgPicture{twoheads-detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Le-Jeng Andy Shiue}
 \cgalPkgDesc{Subdivision methods recursively refine a control mesh and generate points approximating the limit surface. This package consists of four popular subdivision methods and their refinement hosts. Supported subdivision methods include Catmull-Clark, Loop, Doo-Sabin and \f$ \sqrt{3}\f$ subdivisions. Their respective refinement hosts are <span class="textsc">Pqq</span>, <span class="textsc">Ptq</span>, <span class="textsc">Dqq</span> and \f$ \sqrt{3}\f$ refinements. Variations of those methods can be easily extended by substituting the geometry computation of the refinement host.}
-\cgalPkgManuals{Chapter_3D_Surface_Subdivision_Methods,PkgSurfaceSubdivisionMethods3Ref}
+\cgalPkgManuals{Chapter_3D_Surface_Subdivision_Methods,PkgSurfaceSubdivisionMethod3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.11}

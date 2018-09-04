@@ -710,7 +710,7 @@ In the following example, a mesh is isotropically remeshed and the approximate d
 \subsection PoissonDistanceExample Max Distance Between Point Set and Surface Example
 In \ref Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp,
 a triangulated surface mesh is constructed from a point set using the
-\link PkgPoissonSurfaceReconstruction Poisson reconstruction algorithm \endlink,
+\link PkgPoissonSurfaceReconstruction3 Poisson reconstruction algorithm \endlink,
 and the distance between the point set and the reconstructed surface is computed
 with the following code:
 

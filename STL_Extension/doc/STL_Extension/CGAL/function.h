@@ -2,7 +2,7 @@ namespace CGAL {
 namespace cpp11 {
 
 /*!
-\ingroup PkgStlExtensionRef
+\ingroup PkgSTLExtensionRef
 
 An object of the class `cpp11::function` is a general-purpose polymorphic function wrapper.
 

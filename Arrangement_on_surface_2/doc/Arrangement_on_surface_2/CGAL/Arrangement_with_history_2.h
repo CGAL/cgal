@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2Ref
+\ingroup PkgArrangementOnSurface2Ref
 
 \anchor arr_refarr_with_hist 
 
@@ -274,7 +274,7 @@ bool remove_target = true);
 }; /* end Arrangement_with_history_2 */
 
 /*!
-\ingroup PkgArrangement2Insert
+\ingroup PkgArrangementOnSurface2Insert
 
 Inserts the given curve `c` into the arrangement with history `arr`,
 and returns a handle to the inserted curve. `c` is subdivided into
@@ -297,7 +297,7 @@ insert (Arrangement_with_history_2<Traits,Dcel>& arr,
         const PointLocation& pl = walk_pl);
 
 /*!
-\ingroup PkgArrangement2Insert
+\ingroup PkgArrangementOnSurface2Insert
 Aggregately inserts the curves in the range `[first,last)` into the
 arrangement with history `arr` using the sweep-line framework.
 
@@ -308,7 +308,7 @@ void insert(Arrangement_with_history_2<Traits,Dcel>& arr,
 
 
 /*!
-\ingroup PkgArrangement2Funcs
+\ingroup PkgArrangementOnSurface2Funcs
 
 Removes a given curve from a given arrangement. 
 
@@ -323,7 +323,7 @@ Size remove_curve (Arrangement_with_history_2<Traits,Dcel>& arr,
 
 
 /*!
-\addtogroup PkgArrangement2Overlay
+\addtogroup PkgArrangementOnSurface2Overlay
 
 Computes the overlay of two arrangements with history `arr1` and
 `arr2`, and sets the output arrangement with history `res` to
@@ -340,7 +340,7 @@ void overlay (const Arrangement_with_history_2<Traits,Dcel1>& arr1,
 
 
 /*!
-\addtogroup PkgArrangement2Overlay
+\addtogroup PkgArrangementOnSurface2Overlay
 
 Computes the (simple) overlay of two arrangements with history `arr1`
 and `arr2`, and sets the output arrangement with history `res` to

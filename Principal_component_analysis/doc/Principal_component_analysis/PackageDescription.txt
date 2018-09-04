@@ -27,7 +27,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
-\cgalPkgDependsOn{\ref PkgSolver} 
+\cgalPkgDependsOn{\ref PkgSolverInterface} 
 \cgalPkgBib{cgal:ap-pcad}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Principal Component Analysis,pca.zip,Operations on Polygons,polygon.zip,Polyhedron demo,polyhedron_3.zip}

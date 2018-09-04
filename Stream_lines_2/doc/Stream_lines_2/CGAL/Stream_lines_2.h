@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPlacementOfStreamlines2Ref
+\ingroup PkgStreamLines2Ref
 
 The class `Stream_lines_2` generates a placement of streamlines 
 in a 2D domain according to a bidimensional vector field. 

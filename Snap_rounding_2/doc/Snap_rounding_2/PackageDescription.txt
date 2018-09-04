@@ -13,7 +13,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.1}
-\cgalPkgDependsOn{\ref PkgArrangement2}
+\cgalPkgDependsOn{\ref PkgArrangementOnSurface2}
 \cgalPkgBib{cgal:p-sr2}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{2D Snap Rounding,snap_rounding_2.zip}

@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgSurfaceParameterizationConcepts
+\ingroup PkgSurfaceMeshParameterizationConcepts
 \cgalConcept
 
 `Parameterizer_3` is a concept of parameterization object for a given type

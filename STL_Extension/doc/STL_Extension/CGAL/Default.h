@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtensionRef
+\ingroup PkgSTLExtensionRef
 
 
 

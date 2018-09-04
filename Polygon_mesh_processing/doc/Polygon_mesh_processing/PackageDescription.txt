@@ -74,7 +74,7 @@ ranging from basic operations on simplices, to complex geometry processing algor
  
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}
-\cgalPkgDependsOn{documented for each function; \ref PkgSolver}
+\cgalPkgDependsOn{documented for each function; \ref PkgSolverInterface}
 \cgalPkgBib{cgal:lty-pmp}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}

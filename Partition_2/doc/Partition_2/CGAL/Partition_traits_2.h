@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPolygonPartitioning2Ref
+\ingroup PkgPartition2Ref
 
 Traits class that can be used with all the 
 2-dimensional polygon partitioning algorithms. It is parameterized by 

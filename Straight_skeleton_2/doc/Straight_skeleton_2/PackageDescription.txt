@@ -22,7 +22,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
-\cgalPkgDependsOn{\ref PkgHDS}
+\cgalPkgDependsOn{\ref PkgHalfedgeDS}
 \cgalPkgBib{cgal:c-sspo2}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{2D Straight Skeleton,straight_skeleton_2.zip,Operations on Polygons,polygon.zip}

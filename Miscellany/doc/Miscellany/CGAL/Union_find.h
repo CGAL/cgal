@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgProfilingToolsRef
+\ingroup MiscellanyRef
 
 An instance `P` of the data type `Union_find<T,A>` is a 
 partition of values of type `T` into disjoint sets. The template 

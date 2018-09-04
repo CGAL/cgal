@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgOptimalDistancesRef
+\ingroup PkgPolytopeDistanceDRef
 
 Given a set of points \f$ \mathcal{S}=\left\{p_1,\ldots , p_n\right\}\f$ in 
 \f$ \mathbb{R}^3\f$. The width of \f$ \mathcal{S}\f$, denoted as \f$ \mathcal{W(S)}\f$, is defined 

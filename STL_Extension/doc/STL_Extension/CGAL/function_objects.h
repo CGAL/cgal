@@ -1,5 +1,5 @@
 /// \defgroup projectionobjects Projection Function Objects
-/// \ingroup PkgStlExtensionRef
+/// \ingroup PkgSTLExtensionRef
 
 namespace CGAL {
 
@@ -138,7 +138,7 @@ compare_to_less(const F& f);
 
 
 /// \defgroup STLCreators Creator Function Objects
-/// \ingroup PkgStlExtensionRef
+/// \ingroup PkgSTLExtensionRef
 
 namespace CGAL {
 

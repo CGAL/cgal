@@ -97,7 +97,7 @@ In this example, we show how to use the API of the class
 As a proof of concept, we show how to use the skeleton and the
 association of input vertices to skeleton to compute a segmentation
 of the input triangulated surface mesh using the package
-\ref PkgSurfaceSegmentation.
+\ref PkgSurfaceMeshSegmentation.
 The segmentation algorithm consists in computing a <i>shape diameter function</i>
 for each face of the input mesh, followed by solving a graph cut problem.
 Here we use the skeleton to define a new shape diameter function.

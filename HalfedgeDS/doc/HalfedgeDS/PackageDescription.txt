@@ -1,31 +1,31 @@
-/// \defgroup PkgHDSRef Halfedge Data Structures Reference
-/// \defgroup PkgHDSConcepts Concepts
-/// \ingroup PkgHDSRef
+/// \defgroup PkgHalfedgeDSRef Halfedge Data Structures Reference
+/// \defgroup PkgHalfedgeDSConcepts Concepts
+/// \ingroup PkgHalfedgeDSRef
 
-/// \defgroup  PkgHDS_HDS Halfedge Data Structures
-/// \ingroup PkgHDSRef
+/// \defgroup  PkgHalfedgeDS_HDS Halfedge Data Structures
+/// \ingroup PkgHalfedgeDSRef
 
-/// \defgroup  PkgHDS_Items Item Classes
-/// \ingroup PkgHDSRef
+/// \defgroup  PkgHalfedgeDS_Items Item Classes
+/// \ingroup PkgHalfedgeDSRef
 
-/// \defgroup  PkgHDS_VHF Vertices, Halfedges, Faces
-/// \ingroup PkgHDSRef
+/// \defgroup  PkgHalfedgeDS_VHF Vertices, Halfedges, Faces
+/// \ingroup PkgHalfedgeDSRef
 
-/// \defgroup  PkgHDS_Decorators Decorators
-/// \ingroup PkgHDSRef
+/// \defgroup  PkgHalfedgeDS_Decorators Decorators
+/// \ingroup PkgHalfedgeDSRef
 /// Classes that provide additional functions 
 /// to examine and to modify a halfedge data structure.
 
 
 /*!
-\addtogroup PkgHDSRef
+\addtogroup PkgHalfedgeDSRef
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Halfedge Data Structures,PkgHDS}
+\cgalPkgDescriptionBegin{Halfedge Data Structures,PkgHalfedgeDS}
 \cgalPkgPicture{HalfedgeDS/fig/HalfedgeDS-teaser-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Lutz Kettner}
 \cgalPkgDesc{A halfedge data structure is an edge-centered data structure capable of maintaining incidence information of vertices, edges and faces, for example for planar maps, polyhedra, or other orientable, two-dimensional surfaces embedded in arbitrary dimension. Each edge is decomposed into two halfedges with opposite orientations. One incident face and one incident vertex are stored in each halfedge. For each face and each vertex, one incident halfedge is stored. Reduced variants of the halfedge data structure can omit some of these information, for example the halfedge pointers in faces or the storage of faces at all.}
-\cgalPkgManuals{Chapter_Halfedge_Data_Structures,PkgHDSRef}
+\cgalPkgManuals{Chapter_Halfedge_Data_Structures,PkgHalfedgeDSRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{1.0}

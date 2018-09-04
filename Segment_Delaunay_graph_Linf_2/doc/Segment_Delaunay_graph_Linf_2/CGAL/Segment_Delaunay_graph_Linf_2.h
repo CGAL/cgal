@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSDGLinfRef
+\ingroup PkgSegmentDelaunayGraphLinf2Ref
 
 The class `Segment_Delaunay_graph_Linf_2`
 represents the segment Delaunay graph under the \f$ L_{\infty} \f$ metric (which is

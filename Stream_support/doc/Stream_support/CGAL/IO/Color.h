@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgIOstreamsRef
+\ingroup PkgStreamSupportRef
 
 An object of the class `Color` is a color available 
 for drawing operations in many \cgal output streams. 

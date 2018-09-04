@@ -356,7 +356,7 @@ header-only.
 
 \subsubsection subsection_headeronly_pbonwindows Possible Problem on Windows
 
-There is one possible problem when using \cgal in header-only mode on a Windows operating system when compiling a program using several modules (executable programs or dynamic-link libraries DLL). If two different modules use the same static variable, this variable is defined independently in each of these modules. If one module modifies the value of this variable, it will not be modified in the other module, which could induce an unexpected behavior. In \cgal, this concerns only a few specific variables: the <A HREF="https://doc.cgal.org/latest/Generator/classCGAL_1_1Random.html">default random</A>, the <A HREF="https://doc.cgal.org/latest/STL_Extension/group__PkgStlExtensionAssertions.html">failure behavior</A>, <A HREF="https://doc.cgal.org/latest/Stream_support/group__PkgIOstreams.html">IO mode</A>. One example is the following: if you change the default random in one DLL, then if you use the default random in another DLL, you will not obtain the modified default random but the original one.
+There is one possible problem when using \cgal in header-only mode on a Windows operating system when compiling a program using several modules (executable programs or dynamic-link libraries DLL). If two different modules use the same static variable, this variable is defined independently in each of these modules. If one module modifies the value of this variable, it will not be modified in the other module, which could induce an unexpected behavior. In \cgal, this concerns only a few specific variables: the <A HREF="https://doc.cgal.org/latest/Generator/classCGAL_1_1Random.html">default random</A>, the <A HREF="https://doc.cgal.org/latest/STL_Extension/group__PkgSTLExtensionAssertions.html">failure behavior</A>, <A HREF="https://doc.cgal.org/latest/Stream_support/group__PkgStreamSupport.html">IO mode</A>. One example is the following: if you change the default random in one DLL, then if you use the default random in another DLL, you will not obtain the modified default random but the original one.
 
 \section secessential3rdpartysoftware Essential Third Party Libraries 
 
@@ -511,7 +511,7 @@ represented using \sc{Mpfr} reliable floating-point numbers.
 It is based on the libraries \sc{Gmp} and \sc{Mpfr}.
 In the setting of \cgal, this library is
 optional: it is used by some models of the
-\ref PkgAlgebraicKerneldRef "Algebraic Kernel".
+\ref PkgAlgebraicKernelDRef "Algebraic Kernel".
 
 \sc{Mpfi} can be downloaded from <A HREF="http://mpfi.gforge.inria.fr/">`http://mpfi.gforge.inria.fr/`</A>. Version 1.4 or higher is recommended.
 
@@ -520,7 +520,7 @@ optional: it is used by some models of the
 \sc{Rs} (Real Solutions) is devoted to the study of the real roots of
 polynomial systems with a finite number of complex roots (including
 univariate polynomials). In \cgal, \sc{Rs} is used by one model of the
-\ref PkgAlgebraicKerneldRef "Algebraic Kernel".
+\ref PkgAlgebraicKernelDRef "Algebraic Kernel".
 
 \sc{Rs} is freely distributable for non-commercial use. You can download it
 from <a href="http://vegas.loria.fr/rs/">`http://vegas.loria.fr/rs/`</a>. Actually, the \sc{Rs} package also includes \sc{Rs3}, the
@@ -543,8 +543,8 @@ to speed up operations of the Polynomial package, such as GCDs. It is recommende
 \sc{Eigen} is a `C++` template library for linear algebra. \sc{Eigen} supports all
 matrix sizes, various matrix decomposition methods and sparse linear solvers.
 
-In \cgal, \sc{Eigen} provides sparse linear solvers in the \ref PkgPoissonSurfaceReconstructionRef
-and the \ref PkgSurfaceParameterizationRef packages. 
+In \cgal, \sc{Eigen} provides sparse linear solvers in the \ref PkgPoissonSurfaceReconstruction3Ref
+and the \ref PkgSurfaceMeshParameterizationRef packages. 
 
 In addition, \sc{Eigen} also provides singular value decomposition for the \ref PkgJetFitting3Ref
 and the \ref PkgRidges3Ref packages.
@@ -576,7 +576,7 @@ The \sc{Tbb} web site is <A HREF="http://www.threadingbuildingblocks.org">`http:
 the LAS format (or the compressed LAZ format).
 
 In \cgal, \sc{LASlib} is used to provide input and output functions in
-the \ref PkgPointSetProcessingRef package.
+the \ref PkgPointSetProcessing3Ref package.
 
 The \sc{LASlib} web site is <a
 href="https://rapidlasso.com/lastools/">`https://rapidlasso.com/lastools/`</a>. \sc{LASlib}

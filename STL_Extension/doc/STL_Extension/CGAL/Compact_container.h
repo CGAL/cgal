@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /// \defgroup CompactContainer Compact Container
-/// \ingroup PkgStlExtensionRef
+/// \ingroup PkgSTLExtensionRef
 
 /*!
 \ingroup CompactContainer

@@ -13,7 +13,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
-\cgalPkgDependsOn{\ref PkgArrangement2}
+\cgalPkgDependsOn{\ref PkgArrangementOnSurface2}
 \cgalPkgBib{cgal:w-e2}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgShortInfoEnd

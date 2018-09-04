@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2Ref
+\ingroup PkgArrangementOnSurface2Ref
 
 \anchor arr_refarr_access 
 

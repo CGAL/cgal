@@ -52,7 +52,7 @@ disk-or-sphere topology requirement.
 Since parameterizing meshes requires an efficient representation of sparse
 matrices and efficient iterative or direct linear solvers, we provide
 a unified interface to linear solvers  as described in Chapter
-\ref PkgSolver.
+\ref PkgSolverInterface.
 
 Note that linear solvers commonly use double precision floating point
 numbers. Therefore, this package is intended to be used with a \cgal %Cartesian kernel with doubles.

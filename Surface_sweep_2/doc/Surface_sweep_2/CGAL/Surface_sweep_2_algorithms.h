@@ -2,7 +2,7 @@ namespace CGAL {
 
 
 /*!
-\ingroup PkgIntersectionOfCurves2Ref
+\ingroup PkgSurfaceSweep2Ref
 
 Given a range of curves, compute all intersection points between two (or more)
 input curves. When the flag `report_endpoints` is `true`, 
@@ -20,7 +20,7 @@ OutputIterator compute_intersection_points (InputIterator curves_begin,
                                             bool report_endpoints = false);
 
 /*!
-\ingroup PkgIntersectionOfCurves2Ref
+\ingroup PkgSurfaceSweep2Ref
 
 Given a range of curves, compute all intersection points between two (or more)
 input curves. When the flag `report_endpoints` is `true`, 
@@ -40,7 +40,7 @@ OutputIterator compute_intersection_points (InputIterator curves_begin,
                                             Traits traits);
 
 /*!
-\ingroup PkgIntersectionOfCurves2Ref
+\ingroup PkgSurfaceSweep2Ref
 
 Given a range of curves, compute all \f$ x\f$-monotone subcurves that are pairwise
 disjoint in their interior, as induced by the input curves.
@@ -57,7 +57,7 @@ OutputIterator compute_subcurves (InputIterator curves_begin,
                                   bool multiple_overlaps = false);
 
 /*!
-\ingroup PkgIntersectionOfCurves2Ref
+\ingroup PkgSurfaceSweep2Ref
 
 Given a range of curves, compute all \f$ x\f$-monotone subcurves that are pairwise
 disjoint in their interior, as induced by the input curves.
@@ -76,7 +76,7 @@ OutputIterator compute_subcurves (InputIterator curves_begin,
                                   Traits traits = Default_traits());
 
 /*!
-\ingroup PkgIntersectionOfCurves2Ref
+\ingroup PkgSurfaceSweep2Ref
 
 Given a range of curves, check whether there is at least one pair of curves
 that intersect in their interior. The function returns `true` if such
@@ -88,7 +88,7 @@ bool do_curves_intersect (InputIterator curves_begin,
                           InputIterator curves_end);
 
 /*!
-\ingroup PkgIntersectionOfCurves2Ref
+\ingroup PkgSurfaceSweep2Ref
 
 Given a range of curves, check whether there is at least one pair of curves
 that intersect in their interior. The function returns `true` if such

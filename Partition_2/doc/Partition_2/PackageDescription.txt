@@ -1,19 +1,19 @@
-/// \defgroup PkgPolygonPartitioning2Ref 2D Polygon Partitioning Reference
-/// \defgroup PkgPolygonPartitioning2Concepts Concepts
-/// \ingroup PkgPolygonPartitioning2Ref
-/// \defgroup PkgPolygonPartitioning2FunctionObjectConcepts Function Object Concepts
-/// \ingroup PkgPolygonPartitioning2Ref
-/// \defgroup PkgPolygonPartitioning2FunctionObjectClasses Function Object Classes
-/// \ingroup PkgPolygonPartitioning2Ref
+/// \defgroup PkgPartition2Ref 2D Polygon Partitioning Reference
+/// \defgroup PkgPartition2Concepts Concepts
+/// \ingroup PkgPartition2Ref
+/// \defgroup PkgPartition2FunctionObjectConcepts Function Object Concepts
+/// \ingroup PkgPartition2Ref
+/// \defgroup PkgPartition2FunctionObjectClasses Function Object Classes
+/// \ingroup PkgPartition2Ref
 /*!
-\addtogroup PkgPolygonPartitioning2Ref
+\addtogroup PkgPartition2Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{2D Polygon Partitioning,PkgPolygonPartitioning2}
+\cgalPkgDescriptionBegin{2D Polygon Partitioning,PkgPartition2}
 \cgalPkgPicture{Partition_2/fig/Partition_2-teaser-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Susan Hert}
 \cgalPkgDesc{This package provides functions for partitioning polygons in monotone or convex polygons. The algorithms can produce results with the minimal number of polygons, as well as approximations which have no more than four  times the optimal number of convex pieces but they differ in  their runtime complexities.}
-\cgalPkgManuals{Chapter_2D_Polygon_Partitioning,PkgPolygonPartitioning2Ref}
+\cgalPkgManuals{Chapter_2D_Polygon_Partitioning,PkgPartition2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{2.3}
