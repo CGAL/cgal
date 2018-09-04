@@ -41,6 +41,11 @@ int main(int argc, char** argv) {
     size_type N_inserted = tr.insert(pts.begin(), pts.end());
     cout << "DONE! " << endl;
 
+    // Insert the new points in the triangulation.
+    cout << "Cleaning dummy points from the triangulation... "; cout.flush();
+    int DP_remaining = tr.clean_dummy_points();
+    cout << "DONE! " << endl;
+
     // Make sure that the triangulation is valid.
     CGAL_assertion(tr.is_valid());
 
@@ -51,6 +56,9 @@ int main(int argc, char** argv) {
     // This function `tr.number_of_dummy_points()` returns the number of dummy points that 
     // are currently in the triangulation. 
     int NDP = tr.number_of_dummy_points();
+
+    // The result must be identical.
+    CGAL_assertion(NDP == DP_remaining);
 
     cout << endl;
     cout << "-------------- STATS --------------" << endl;
