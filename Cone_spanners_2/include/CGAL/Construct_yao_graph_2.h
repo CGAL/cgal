@@ -42,7 +42,7 @@
 
 namespace CGAL {
 
-/*! \ingroup PkgConeBasedSpanners
+/*! \ingroup PkgConeBasedSpannersRef
 
  \brief A template functor for constructing Yao graphs with a given set of 2D points and
          a given initial direction for the cone boundaries.

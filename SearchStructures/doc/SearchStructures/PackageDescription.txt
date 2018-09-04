@@ -1,22 +1,22 @@
-/// \defgroup PkgRangeSegmentTreesD dD Range and Segment Trees Reference
+/// \defgroup PkgRangeSegmentTreesDRef dD Range and Segment Trees Reference
 /// \defgroup PkgRangeSegmentTreesDConcepts Concepts
-/// \ingroup PkgRangeSegmentTreesD
+/// \ingroup PkgRangeSegmentTreesDRef
 
 /// \defgroup PkgRangeSegmentTreesDTraitsClasses Traits Classes
-/// \ingroup PkgRangeSegmentTreesD
+/// \ingroup PkgRangeSegmentTreesDRef
 
 /// \defgroup PkgRangeSegmentTreesDSearchStructure Search Structures
-/// \ingroup PkgRangeSegmentTreesD
+/// \ingroup PkgRangeSegmentTreesDRef
 
 /*!
-\addtogroup PkgRangeSegmentTreesD
+\addtogroup PkgRangeSegmentTreesDRef
 \todo check generated documentation
 \cgalPkgDescriptionBegin{dD Range and Segment Trees,PkgRangeSegmentTreesDSummary}
 \cgalPkgPicture{segment_tree.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Gabriele Neyer}
 \cgalPkgDesc{%Range and segment trees allow to perform window queries on point sets, and to enumerate all ranges enclosing a query point. The provided data structures  are static and they are optimized for fast queries.}
-\cgalPkgManuals{Chapter_dD_Range_and_Segment_Trees,PkgRangeSegmentTreesD}
+\cgalPkgManuals{Chapter_dD_Range_and_Segment_Trees,PkgRangeSegmentTreesDRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{0.9}

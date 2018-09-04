@@ -1,6 +1,6 @@
 /*!
 \defgroup sms_namedparameters Named Parameters for Surface Mesh Simplification
-\ingroup PkgSurfaceMeshSimplification
+\ingroup PkgSurfaceMeshSimplificationRef
 
 In this package, some optional parameters are implemented as BGL optional
 named parameters (see \ref BGLNamedParameters for more information on how to use them).

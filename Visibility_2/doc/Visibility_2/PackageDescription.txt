@@ -1,20 +1,20 @@
-/// \defgroup PkgVisibility_2 Visibility_2 Reference
+/// \defgroup PkgVisibility_2Ref Visibility_2 Reference
 
 /// \defgroup PkgVisibility_2Concepts Concepts
-/// \ingroup PkgVisibility_2
+/// \ingroup PkgVisibility_2Ref
 
 /// \defgroup PkgVisibility_2Classes Classes
-/// \ingroup PkgVisibility_2
+/// \ingroup PkgVisibility_2Ref
 
 /*!
-\addtogroup PkgVisibility_2
+\addtogroup PkgVisibility_2Ref
 \cgalPkgDescriptionBegin{2D Visibility Computation,PkgVisibility_2Summary}
 \cgalPkgPicture{visibility-teaser-thumbnail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Michael Hemmer, Kan Huang, Francisc Bungiu, Ning Xu}
 \cgalPkgDesc{This package provides several variants to compute 
 the visibility area of a point within polygonal regions in two dimensions.}
-\cgalPkgManuals{Chapter_2D_Visibility_Computation,PkgVisibility_2}
+\cgalPkgManuals{Chapter_2D_Visibility_Computation,PkgVisibility_2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}

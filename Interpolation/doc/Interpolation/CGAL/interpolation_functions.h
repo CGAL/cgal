@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgInterpolation2
+\ingroup PkgInterpolation2Ref
 
 The struct `Data_access` implements a functor that allows to retrieve
 data from an associative container. The functor keeps a reference to

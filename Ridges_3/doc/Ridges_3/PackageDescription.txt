@@ -1,17 +1,17 @@
-/// \defgroup PkgRidges_3 Approximation of Ridges and Umbilics on Triangulated Surface Meshes Reference
+/// \defgroup PkgRidges_3Ref Approximation of Ridges and Umbilics on Triangulated Surface Meshes Reference
 
 /// \defgroup PkgRidges_3Enums Enums
-/// \ingroup PkgRidges_3
+/// \ingroup PkgRidges_3Ref
 
 /*!
-\addtogroup PkgRidges_3
+\addtogroup PkgRidges_3Ref
 \todo check generated documentation
 \cgalPkgDescriptionBegin{Approximation of Ridges and Umbilics on Triangulated Surface Meshes,PkgRidges_3Summary}
 \cgalPkgPicture{RidgesMechPartDetail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Marc Pouget and Frédéric Cazals}
 \cgalPkgDesc{Global features related to curvature extrema encode important informations used in segmentation, registration, matching and surface analysis. Given pointwise estimations of local differential quantities, this package allows the approximation of differential features on a triangulated surface mesh. Such curvature related features are curves: ridges or crests, and points: umbilics.}
-\cgalPkgManuals{Chapter_Approximation_of_Ridges_and_Umbilics_on_Triangulated_Surface_Meshes,PkgRidges_3}
+\cgalPkgManuals{Chapter_Approximation_of_Ridges_and_Umbilics_on_Triangulated_Surface_Meshes,PkgRidges_3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}

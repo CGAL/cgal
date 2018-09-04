@@ -1,9 +1,9 @@
-/// \defgroup PkgMeanCurvatureSkeleton3 Triangulated Surface Mesh Skeletonization Reference
+/// \defgroup PkgMeanCurvatureSkeleton3Ref Triangulated Surface Mesh Skeletonization Reference
 /// \defgroup PkgMeanCurvatureSkeleton3Concepts Concepts
-/// \ingroup PkgMeanCurvatureSkeleton3
+/// \ingroup PkgMeanCurvatureSkeleton3Ref
 
 /*!
-\addtogroup PkgMeanCurvatureSkeleton3
+\addtogroup PkgMeanCurvatureSkeleton3Ref
 \cgalPkgDescriptionBegin{Triangulated Surface Mesh Skeletonization,PkgMeanCurvatureSkeleton3Summary}
 \cgalPkgPicture{mcfskel-small.png}
 \cgalPkgSummaryBegin
@@ -14,7 +14,7 @@
         The code is generic and works with any model of the `FaceListGraph`
         concept.
 }
-\cgalPkgManuals{Chapter_3D_Surface_mesh_skeletonization,PkgMeanCurvatureSkeleton3}
+\cgalPkgManuals{Chapter_3D_Surface_mesh_skeletonization,PkgMeanCurvatureSkeleton3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}

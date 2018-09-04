@@ -26,7 +26,7 @@ Segment and triangle coordinates can be computed by using either a global functi
 
 Any point in the plane may be taken as a query point. However, we do not recommend to use Wachspress and discrete harmonic coordinates with query points outside the closure of a polygon because at some of those points these coordinates are not well-defined, as explained in the Section \ref gbc_degeneracies. 
 
-Once instantiated for some polygon, the coordinates can be computed multiple times for different query points with respect to all the vertices of the provided polygon. Use the \ref PkgBarycentric_coordinates_2 "Reference Manual" for the detailed interface.
+Once instantiated for some polygon, the coordinates can be computed multiple times for different query points with respect to all the vertices of the provided polygon. Use the \ref PkgBarycentric_coordinates_2Ref "Reference Manual" for the detailed interface.
 
 The output of the computation is a set of coordinate values at the current query point with respect to all the vertices of the polygon. This output can be stored in an arbitrary container providing an appropriate output iterator. In addition, all the classes return a pointer to the last stored element and a status of the computation (Boolean true or false).
 

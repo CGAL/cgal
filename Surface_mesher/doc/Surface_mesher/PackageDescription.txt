@@ -1,18 +1,18 @@
-/// \defgroup PkgSurfaceMesher3 3D Surface Mesh Generation Reference
+/// \defgroup PkgSurfaceMesher3Ref 3D Surface Mesh Generation Reference
 
 /// \defgroup PkgSurfaceMesher3Concepts Concepts
-/// \ingroup PkgSurfaceMesher3
+/// \ingroup PkgSurfaceMesher3Ref
 
 
 /// \defgroup PkgSurfaceMesher3Classes Mesh and Domain Classes
-/// \ingroup PkgSurfaceMesher3
+/// \ingroup PkgSurfaceMesher3Ref
 
 /// \defgroup PkgSurfaceMesher3TagClasses Tag Classes
-/// \ingroup PkgSurfaceMesher3
+/// \ingroup PkgSurfaceMesher3Ref
 
 
 /// \defgroup PkgSurfaceMesher3Functions Functions
-/// \ingroup PkgSurfaceMesher3
+/// \ingroup PkgSurfaceMesher3Ref
 
 
 /// \defgroup PkgSurfaceMesher3FunctionsMakeMesh Mesh Generation
@@ -24,14 +24,14 @@
 
 
 /*!
-\addtogroup PkgSurfaceMesher3
+\addtogroup PkgSurfaceMesher3Ref
 \todo check generated documentation
 \cgalPkgDescriptionBegin{3D Surface Mesh Generation,PkgSurfaceMesher3Summary}
 \cgalPkgPicture{segmented_head-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Laurent Rineau and Mariette Yvinec}
 \cgalPkgDesc{This package provides functions to generate surface  meshes that interpolate smooth surfaces. The meshing algorithm is based on Delaunay refinement and provides some guarantees on the resulting mesh: the user is able to control the size and shape of the mesh elements and  the accuracy of the surface approximation. There is no restriction on the topology and number of components of input surfaces. The surface mesh generator may also be used for non smooth surfaces but without guarantee.  Currently, implementations are provided for implicit surfaces described as the zero level set of some function and surfaces described as a gray level set in a three-dimensional image.}
-\cgalPkgManuals{Chapter_3D_Surface_Mesh_Generation,PkgSurfaceMesher3}
+\cgalPkgManuals{Chapter_3D_Surface_Mesh_Generation,PkgSurfaceMesher3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}

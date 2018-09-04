@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgProfilingTools
+\ingroup PkgProfilingToolsRef
 
 The class `Timer` is a timer class for measuring user process time.
 

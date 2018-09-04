@@ -1,22 +1,22 @@
-/// \defgroup PkgPointSet2 2D Range and Neighbor Search Reference
+/// \defgroup PkgPointSet2Ref 2D Range and Neighbor Search Reference
 /// \defgroup PkgPointSet2Concepts Concepts
-/// \ingroup PkgPointSet2
+/// \ingroup PkgPointSet2Ref
 
 /// \defgroup PkgPointSet2RangeSearch Range Search
-/// \ingroup PkgPointSet2
+/// \ingroup PkgPointSet2Ref
 
 /// \defgroup PkgPointSet2NeighborSearch Nearest Neighbor Search
-/// \ingroup PkgPointSet2
+/// \ingroup PkgPointSet2Ref
 
 /*!
-\addtogroup PkgPointSet2
+\addtogroup PkgPointSet2Ref
 \todo check generated documentation
 \cgalPkgDescriptionBegin{2D Range and Neighbor Search,PkgPointSet2Summary}
 \cgalPkgPicture{Point_set_2/fig/point_set.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Matthias Bäsken}
 \cgalPkgDesc{This package supports circular, triangular, and isorectangular range search queries as well as (k) nearest neighbor search queries on 2D point sets. In contrast to the spatial searching package, this package uses a  Delaunay triangulation as underlying data structure.}
-\cgalPkgManuals{Chapter_2D_Range_and_Neighbor_Search,PkgPointSet2}
+\cgalPkgManuals{Chapter_2D_Range_and_Neighbor_Search,PkgPointSet2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{2.1}

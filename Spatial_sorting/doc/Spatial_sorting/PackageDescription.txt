@@ -1,29 +1,29 @@
-/// \defgroup PkgSpatialSorting Spatial Sorting Reference
+/// \defgroup PkgSpatialSortingRef Spatial Sorting Reference
 
 /// \defgroup PkgSpatialSortingConcepts Concepts
-/// \ingroup PkgSpatialSorting
+/// \ingroup PkgSpatialSortingRef
 
 /// \defgroup PkgSpatialSortingTraits Traits Classes
-/// \ingroup PkgSpatialSorting
+/// \ingroup PkgSpatialSortingRef
 
 /// \defgroup PkgSpatialSortingUtils Utilities
-/// \ingroup PkgSpatialSorting
+/// \ingroup PkgSpatialSortingRef
 
 /// \defgroup PkgSpatialSortingFunctions Functions
-/// \ingroup PkgSpatialSorting
+/// \ingroup PkgSpatialSortingRef
 
 /// \defgroup PkgSpatialSortingFunctionObjects Function Objects
-/// \ingroup PkgSpatialSorting
+/// \ingroup PkgSpatialSortingRef
 
 
 /*!
-\addtogroup PkgSpatialSorting
+\addtogroup PkgSpatialSortingRef
 \cgalPkgDescriptionBegin{Spatial Sorting,PkgSpatialSortingSummary}
 \cgalPkgPicture{hilbert.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Christophe Delage and Olivier Devillers}
 \cgalPkgDesc{This package provides functions for sorting geometric objects in two, three and higher dimensions, including on a sphere, in order to improve efficiency of incremental geometric algorithms.}
-\cgalPkgManuals{Chapter_Spatial_Sorting,PkgSpatialSorting}
+\cgalPkgManuals{Chapter_Spatial_Sorting,PkgSpatialSortingRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}

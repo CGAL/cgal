@@ -149,7 +149,7 @@ struct Special_wrapper_of_two_functions_keep_pointers {
 
 
 /*!
-\ingroup PkgPoissonSurfaceReconstruction
+\ingroup PkgPoissonSurfaceReconstructionRef
 
 \brief Implementation of the Poisson Surface Reconstruction method.
   

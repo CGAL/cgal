@@ -1,9 +1,9 @@
-/// \defgroup PkgPolyhedron 3D Polyhedral Surface  Reference
+/// \defgroup PkgPolyhedronRef 3D Polyhedral Surface  Reference
 /// \defgroup PkgPolyhedronConcepts Concepts
-/// \ingroup PkgPolyhedron
+/// \ingroup PkgPolyhedronRef
 
 /// \defgroup PkgPolyhedronIOFunc I/O Functions
-/// \ingroup PkgPolyhedron
+/// \ingroup PkgPolyhedronRef
 
 /*! Draw.
   \code
@@ -11,17 +11,17 @@
   \endcode
 */
 /// \defgroup PkgDrawPolyhedron Draw a Polyhedron 3
-/// \ingroup PkgPolyhedron
+/// \ingroup PkgPolyhedronRef
 
 /*!
-\addtogroup PkgPolyhedron
+\addtogroup PkgPolyhedronRef
 \todo check generated documentation
 \cgalPkgDescriptionBegin{3D Polyhedral Surface,PkgPolyhedronSummary}
 \cgalPkgPicture{Polyhedron-teaser-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Lutz Kettner}
 \cgalPkgDesc{Polyhedral surfaces in three dimensions are composed of vertices, edges, facets and an incidence relationship on them. The organization beneath is a halfedge data structure, which restricts the class of representable surfaces to orientable 2-manifolds - with and without boundary. If the surface is closed we call it a polyhedron.}
-\cgalPkgManuals{Chapter_3D_Polyhedral_Surfaces,PkgPolyhedron}
+\cgalPkgManuals{Chapter_3D_Polyhedral_Surfaces,PkgPolyhedronRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{1.0}

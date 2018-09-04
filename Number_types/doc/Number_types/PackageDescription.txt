@@ -1,45 +1,45 @@
-/// \defgroup PkgNumberTypes Number Types Reference
+/// \defgroup PkgNumberTypesRef Number Types Reference
 
 /// \defgroup PkgNumberTypesConcepts Concepts
-/// \ingroup PkgNumberTypes
+/// \ingroup PkgNumberTypesRef
 
 /// \defgroup nt_builtin Built-in types
-/// \ingroup PkgNumberTypes
+/// \ingroup PkgNumberTypesRef
 
 /// \defgroup nt_core CORE
-/// \ingroup PkgNumberTypes
+/// \ingroup PkgNumberTypesRef
 
 /// \defgroup nt_leda LEDA
-/// \ingroup PkgNumberTypes
+/// \ingroup PkgNumberTypesRef
 
 /// \defgroup nt_gmp GMP
-/// \ingroup PkgNumberTypes
+/// \ingroup PkgNumberTypesRef
 
 /// \defgroup nt_cgal CGAL Number Types
-/// \ingroup PkgNumberTypes
+/// \ingroup PkgNumberTypesRef
 
 /// \defgroup nt_cgal CGAL Number Types
-/// \ingroup PkgNumberTypes
+/// \ingroup PkgNumberTypesRef
 
 /// \defgroup nt_rrational Relates Rational
-/// \ingroup PkgNumberTypes
+/// \ingroup PkgNumberTypesRef
 
 /// \defgroup nt_ralgebraic Relates Algebraic Extensions
-/// \ingroup PkgNumberTypes
+/// \ingroup PkgNumberTypesRef
 
 /// \defgroup nt_util Utilities
-/// \ingroup PkgNumberTypes
+/// \ingroup PkgNumberTypesRef
 
 
 /*!
-\addtogroup PkgNumberTypes
+\addtogroup PkgNumberTypesRef
 \todo check generated documentation
 \cgalPkgDescriptionBegin{Number Types,PkgNumberTypesSummary}
 \cgalPkgPicture{illustration.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Michael Hemmer, Susan Hert, Sylvain Pion, and Stefan Schirra}
 \cgalPkgDesc{This package provides number type concepts as well as number type classes and wrapper classes for third party number type libraries. }
-\cgalPkgManuals{Chapter_Number_Types,PkgNumberTypes}
+\cgalPkgManuals{Chapter_Number_Types,PkgNumberTypesRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{1.0}

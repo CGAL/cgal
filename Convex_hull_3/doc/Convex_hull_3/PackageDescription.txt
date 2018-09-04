@@ -1,13 +1,13 @@
-/// \defgroup PkgConvexHull3 3D Convex Hulls Reference
+/// \defgroup PkgConvexHull3Ref 3D Convex Hulls Reference
 
 /// \defgroup PkgConvexHull3Concepts Concepts
-/// \ingroup PkgConvexHull3
+/// \ingroup PkgConvexHull3Ref
 
 /// \defgroup PkgConvexHull3Traits Traits Classes
-/// \ingroup PkgConvexHull3
+/// \ingroup PkgConvexHull3Ref
 
 /*! \defgroup PkgConvexHull3Functions Convex Hull Functions 
-   \ingroup PkgConvexHull3
+   \ingroup PkgConvexHull3Ref
 The function `convex_hull_3()` computes the convex hull of a given set of 
 three-dimensional points.
  
@@ -17,10 +17,10 @@ degenerate hull may also be possible.
 */
 
 /// \defgroup PkgConvexityChecking Convexity Checking
-/// \ingroup PkgConvexHull3
+/// \ingroup PkgConvexHull3Ref
 
 /*!
-\addtogroup PkgConvexHull3
+\addtogroup PkgConvexHull3Ref
 \todo fix or keep the `Default_traits`
 
 \cgalPkgDescriptionBegin{3D Convex Hulls,PkgConvexHull3Summary}
@@ -28,7 +28,7 @@ degenerate hull may also be possible.
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Susan Hert and Stefan Schirra}
 \cgalPkgDesc{This package provides functions  for computing convex hulls in three dimensions as well as functions for checking if sets of points are strongly convex or not. One can compute the convex hull of a set of points in three dimensions in two ways: using a static algorithm or using a triangulation to get a fully dynamic computation.}
-\cgalPkgManuals{Chapter_3D_Convex_Hulls,PkgConvexHull3}
+\cgalPkgManuals{Chapter_3D_Convex_Hulls,PkgConvexHull3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{1.1}

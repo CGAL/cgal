@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgOptimalDistances
+\ingroup PkgOptimalDistancesRef
 
 An object of the class `Polytope_distance_d` represents the (squared) distance 
 between two convex polytopes, given as the convex hulls of two finite point 

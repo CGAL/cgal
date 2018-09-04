@@ -1,6 +1,6 @@
 /*!
 \defgroup bgl_namedparameters BGL Named Parameters
-\ingroup PkgBGL
+\ingroup PkgBGLRef
 
 The algorithms of the \sc{Bgl} often have many parameters with default
 values that are appropriate for most cases. In general, when no

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgConvexHullD
+\ingroup PkgConvexHullDRef
 
 \deprecated This package is deprecated since the version 4.6 of \cgal. The package \ref PkgTriangulationsSummary should be used instead.
 

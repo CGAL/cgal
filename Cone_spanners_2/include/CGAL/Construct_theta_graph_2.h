@@ -45,7 +45,7 @@
 
 namespace CGAL {
 
-/*! \ingroup PkgConeBasedSpanners
+/*! \ingroup PkgConeBasedSpannersRef
 
  \brief A template functor for constructing Theta graphs with a given set of 2D points and
          a given initial direction for the cone boundaries.

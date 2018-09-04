@@ -34,7 +34,7 @@
 namespace CGAL {
 
 /*!
- * \ingroup PkgAABB_tree
+ * \ingroup PkgAABB_treeRef
  * Primitive type for a facet of a polyhedral surface.
  * It wraps a handle to a facet of a polyhedron to a 3D triangle.
  * The polyhedron from which the primitive is built should not be deleted

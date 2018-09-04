@@ -1,20 +1,20 @@
-/// \defgroup PkgBooleanSetOperations2 2D Regularized Boolean Set-Operations Reference
+/// \defgroup PkgBooleanSetOperations2Ref 2D Regularized Boolean Set-Operations Reference
 /// \defgroup PkgBooleanSetOperations2Concepts Concepts
-/// \ingroup PkgBooleanSetOperations2
+/// \ingroup PkgBooleanSetOperations2Ref
 
 /// \cgalConceptNamespace
 /// The namespace containing concepts specific to 2D Boolean Set Operations.
 namespace ArrDirectionalTraits {}
 
 /*!
-\addtogroup PkgBooleanSetOperations2
+\addtogroup PkgBooleanSetOperations2Ref
 \todo check generated documentation
 \cgalPkgDescriptionBegin{2D Regularized Boolean Set-Operations,PkgBooleanSetOperations2Summary}
 \cgalPkgPicture{Boolean_set_operations_2.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Efi Fogel, Ophir Setter, Ron Wein, Guy Zucker, Baruch Zukerman, and Dan Halperin}
 \cgalPkgDesc{This package consists of the implementation of Boolean set-operations on point sets bounded by weakly x-monotone curves in 2-dimensional Euclidean space. In particular, it contains the implementation of regularized Boolean set-operations, intersection predicates, and point containment predicates.}
-\cgalPkgManuals{Chapter_2D_Regularized_Boolean_Set-Operations,PkgBooleanSetOperations2}
+\cgalPkgManuals{Chapter_2D_Regularized_Boolean_Set-Operations,PkgBooleanSetOperations2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}

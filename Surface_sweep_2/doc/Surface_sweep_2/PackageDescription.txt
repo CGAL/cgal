@@ -1,13 +1,13 @@
-/// \defgroup PkgIntersectionOfCurves2 2D Intersection of Curves Reference
+/// \defgroup PkgIntersectionOfCurves2Ref 2D Intersection of Curves Reference
 /*!
-\addtogroup PkgIntersectionOfCurves2
+\addtogroup PkgIntersectionOfCurves2Ref
 \todo check generated documentation
 \cgalPkgDescriptionBegin{2D Intersection of Curves,PkgIntersectionOfCurves2Summary}
 \cgalPkgPicture{Curve_intersections_2.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Baruch Zukerman, Ron Wein, and Efi Fogel}
 \cgalPkgDesc{This package provides three free functions implemented based on the sweep-line paradigm: given a collection of input curves, compute all intersection points, compute the set of subcurves that are pairwise interior-disjoint induced by them, and check whether there is at least one pair of curves among them that intersect in their interior.}
-\cgalPkgManuals{Chapter_2D_Intersection_of_Curves,PkgIntersectionOfCurves2}
+\cgalPkgManuals{Chapter_2D_Intersection_of_Curves,PkgIntersectionOfCurves2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{2.4}

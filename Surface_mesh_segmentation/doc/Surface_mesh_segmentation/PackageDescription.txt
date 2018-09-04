@@ -1,11 +1,11 @@
-/// \defgroup PkgSurfaceSegmentation Triangulated Surface Mesh Segmentation Reference
+/// \defgroup PkgSurfaceSegmentationRef Triangulated Surface Mesh Segmentation Reference
 
 /// \defgroup PkgSurfaceSegmentationConcepts Concepts
-/// \ingroup PkgSurfaceSegmentation
+/// \ingroup PkgSurfaceSegmentationRef
 
 
 /*!
-\addtogroup PkgSurfaceSegmentation
+\addtogroup PkgSurfaceSegmentationRef
 
 \cgalPkgDescriptionBegin{Triangulated Surface Mesh Segmentation,PkgSurfaceSegmentationSummary}
 \cgalPkgPicture{segmentation_ico.png}
@@ -17,7 +17,7 @@
               <em>Shape Diameter Function</em> (SDF) for all facets and applies a
               graph-cut based algorithm over these values. Low level functions are
               provided to replace any intermediate step by a custom one. }
-\cgalPkgManuals{Chapter_3D_SurfaceSegmentation,PkgSurfaceSegmentation}
+\cgalPkgManuals{Chapter_3D_SurfaceSegmentation,PkgSurfaceSegmentationRef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin

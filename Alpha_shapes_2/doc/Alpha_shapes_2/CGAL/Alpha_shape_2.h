@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlphaShape2
+\ingroup PkgAlphaShape2Ref
 
 The class `Alpha_shape_2` represents the family of 
 \f$ \alpha\f$-shapes of points in a plane for <I>all</I> positive 

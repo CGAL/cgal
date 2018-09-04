@@ -1,38 +1,38 @@
 /*!
 
-\defgroup PkgPointSetProcessing Point Set Processing Reference
+\defgroup PkgPointSetProcessingRef Point Set Processing Reference
 
 \defgroup PkgPointSetProcessingAlgorithms Algorithms
-\ingroup PkgPointSetProcessing
+\ingroup PkgPointSetProcessingRef
 
 Collection of algorithms of point set processing (smoothing,
 simplification, etc.).
 
 \defgroup PkgPointSetProcessingIO IO (XYZ/OFF Formats)
-\ingroup PkgPointSetProcessing
+\ingroup PkgPointSetProcessingRef
 
 Read and write points (with or without normal vectors) in XYZ and OFF
 formats.
 
 \defgroup PkgPointSetProcessingIOPly IO (PLY Format)
-\ingroup PkgPointSetProcessing
+\ingroup PkgPointSetProcessingRef
 
 Read and write points (with or without additional properties) in PLY
 format.
 
 \defgroup PkgPointSetProcessingIOLas IO (LAS Format)
-\ingroup PkgPointSetProcessing
+\ingroup PkgPointSetProcessingRef
 
 Read and write points (with or without additional properties) in LAS
 format.
 
-\addtogroup PkgPointSetProcessing
+\addtogroup PkgPointSetProcessingRef
 \cgalPkgDescriptionBegin{Point Set Processing,PkgPointSetProcessingSummary}
 \cgalPkgPicture{point_set_processing_detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pierre Alliez, Simon Giraudot, Clément Jamin, Florent Lafarge, Quentin Mérigot, Jocelyn Meyron, Laurent Saboret, Nader Salman, Shihao Wu}
 \cgalPkgDesc{This \cgal component implements methods to analyze and process unorganized point sets. The input is an unorganized point set, possibly with normal attributes (unoriented or oriented). The point set can be analyzed to measure its average spacing, and processed through functions devoted to the simplification, outlier removal, smoothing, normal estimation, normal orientation and feature edges estimation.}
-\cgalPkgManuals{Chapter_Point_Set_Processing,PkgPointSetProcessing}
+\cgalPkgManuals{Chapter_Point_Set_Processing,PkgPointSetProcessingRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}

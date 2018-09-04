@@ -1,8 +1,8 @@
-/// \defgroup PkgSurfaceParameterization Triangulated Surface Mesh Parameterization Reference
+/// \defgroup PkgSurfaceParameterizationRef Triangulated Surface Mesh Parameterization Reference
 
 
 /*!
-\addtogroup PkgSurfaceParameterization
+\addtogroup PkgSurfaceParameterizationRef
 \cgalPkgDescriptionBegin{Triangulated Surface Mesh Parameterization,PkgSurfaceParameterizationSummary}
 \cgalPkgPicture{bimbaDetail.png}
 \cgalPkgSummaryBegin
@@ -15,7 +15,7 @@ As Rigid As Possible Parameterization, Discrete Authalic Parameterization,
 Discrete Conformal Map, Floater Mean Value Coordinates, Least Squares Conformal Maps,
 Orbifold Tutte Embedding, or Tutte Barycentric Mapping.
 The code is generic and works with any model of the `FaceGraph` concept.}
-\cgalPkgManuals{Chapter_Planar_Parameterization_of_Triangulated_Surface_Meshes, PkgSurfaceParameterization}
+\cgalPkgManuals{Chapter_Planar_Parameterization_of_Triangulated_Surface_Meshes, PkgSurfaceParameterizationRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
@@ -114,28 +114,28 @@ The package performs the next checks:
 
 /*!
  \defgroup PkgSurfaceParameterizationMainFunction Main Functions
- \ingroup PkgSurfaceParameterization
+ \ingroup PkgSurfaceParameterizationRef
 
  The central functions, main entry point of the package.
 */
 
 /*!
  \defgroup PkgSurfaceParameterizationEnums Enums
- \ingroup PkgSurfaceParameterization
+ \ingroup PkgSurfaceParameterizationRef
 
  The enum classes defined and used in this package.
 */
 
 /*!
  \defgroup PkgSurfaceParameterizationConcepts Concepts
- \ingroup PkgSurfaceParameterization
+ \ingroup PkgSurfaceParameterizationRef
 
  The concepts of this package.
 */
 
 /*!
  \defgroup PkgSurfaceParameterizationMethods Surface Parameterization Methods
- \ingroup PkgSurfaceParameterization
+ \ingroup PkgSurfaceParameterizationRef
 
  This \cgal package implements several parameterization methods:
 
@@ -157,7 +157,7 @@ The package performs the next checks:
 
 /*!
  \defgroup PkgSurfaceParameterizationBorderParameterizationMethods Border Parameterization Methods
- \ingroup PkgSurfaceParameterization
+ \ingroup PkgSurfaceParameterizationRef
 
 Border parameterization methods define a
 set of constraints (a constraint specifies two (u,v) coordinates for

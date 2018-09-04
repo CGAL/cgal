@@ -23,7 +23,7 @@
 // ======================================================================
 
 /**
-* \ingroup PkgSurfaceSubdivisionMethods3
+* \ingroup PkgSurfaceSubdivisionMethods3Ref
 * \file CGAL/subdivision_method_3.h
 * Convenience header file including the headers for all
 * the free functions of this package.

@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgPlacementOfStreamlines2
+\ingroup PkgPlacementOfStreamlines2Ref
 
 This class implements the second order Runge-Kutta integrator. 
 

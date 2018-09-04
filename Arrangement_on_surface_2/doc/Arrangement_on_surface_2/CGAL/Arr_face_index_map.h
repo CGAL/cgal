@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgArrangement2
+\ingroup PkgArrangement2Ref
 
 `Arr_face_index_map` maintains a mapping of face handles of an
 attached arrangement object to indices (of type `unsigned int`).

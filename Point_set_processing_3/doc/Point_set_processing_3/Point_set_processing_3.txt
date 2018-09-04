@@ -143,7 +143,7 @@ CGAL::jet_estimate_normals<Concurrency_tag>
    normal_map (CGAL::Second_of_pair_property_map<PointVectorPair>()));
 \endcode
 
-Please refer to the [Reference Manual](@ref PkgPointSetProcessing) for
+Please refer to the [Reference Manual](@ref PkgPointSetProcessingRef) for
 the detailed API of the Point Set Processing functions.
 
 
@@ -636,7 +636,7 @@ point set:
 
 Several functions of this package provide a callback mechanism that enables the user to track the progress of the algorithms and to interrupt them if needed. A callback, in this package, is an instance of `CGAL::cpp11::function<bool(double)>` that takes the advancement as a parameter (between 0. when the algorithm begins to 1. when the algorithm is completed) and that returns `true` if the algorithm should carry on, `false` otherwise. It is passed as a named parameter with an empty function as default.
 
-Algorithms that support this mechanism are detailed in the [Reference Manual](@ref PkgPointSetProcessing), along with the effect that an early interruption has on the output.
+Algorithms that support this mechanism are detailed in the [Reference Manual](@ref PkgPointSetProcessingRef), along with the effect that an early interruption has on the output.
 
 \subsection Point_set_processing_3Example_callbacks Example
 

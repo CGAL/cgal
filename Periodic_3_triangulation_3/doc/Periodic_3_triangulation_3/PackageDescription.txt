@@ -1,16 +1,16 @@
-/// \defgroup PkgPeriodic3Triangulation3 3D Periodic Triangulations Reference
+/// \defgroup PkgPeriodic3Triangulation3Ref 3D Periodic Triangulations Reference
 
 /// \defgroup PkgPeriodic3Triangulation3Concepts Concepts
-/// \ingroup PkgPeriodic3Triangulation3
+/// \ingroup PkgPeriodic3Triangulation3Ref
 
 /// \defgroup PkgPeriodic3Triangulation3MainClasses Main Classes
-/// \ingroup PkgPeriodic3Triangulation3
+/// \ingroup PkgPeriodic3Triangulation3Ref
 
 /// \defgroup PkgPeriodic3Triangulation3TraitsClasses Traits Classes
-/// \ingroup PkgPeriodic3Triangulation3
+/// \ingroup PkgPeriodic3Triangulation3Ref
 
 /*!
-\addtogroup PkgPeriodic3Triangulation3
+\addtogroup PkgPeriodic3Triangulation3Ref
 
 \cgalPkgDescriptionBegin{3D Periodic Triangulations,PkgPeriodic3Triangulation3Summary}
 \cgalPkgPicture{p3Delaunay3_small.jpg}
@@ -21,7 +21,7 @@ in the three dimensional flat torus. Triangulations are built incrementally and
 can be modified by insertion or removal of vertices. They offer point location
 facilities. The package provides Delaunay and regular triangulations and offers
 nearest neighbor queries and primitives to build the dual Voronoi diagrams.}
-\cgalPkgManuals{Chapter_3D_Periodic_Triangulations,PkgPeriodic3Triangulation3}
+\cgalPkgManuals{Chapter_3D_Periodic_Triangulations,PkgPeriodic3Triangulation3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}

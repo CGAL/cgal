@@ -46,7 +46,7 @@ namespace CGAL {
 /*  ------ Declarations go first, then implementations follow.   ------ */
 
 /*!
-*  \ingroup PkgConeBasedSpanners
+*  \ingroup PkgConeBasedSpannersRef
 *  \brief Output a set of files used by Gnuplot to plot `g`.
 *
 *  The files that are generated for Gnuplot are:

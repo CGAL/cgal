@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgProfilingTools
+\ingroup PkgProfilingToolsRef
 
 `Modifier_base` is an abstract base class providing the 
 interface for any modifier. A modifier is a function object derived 

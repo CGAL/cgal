@@ -1,19 +1,19 @@
-/// \defgroup PkgGeneralizedMaps Generalized Maps Reference
+/// \defgroup PkgGeneralizedMapsRef Generalized Maps Reference
 
 /// \defgroup PkgGeneralizedMapsConcepts Concepts
-/// \ingroup PkgGeneralizedMaps
+/// \ingroup PkgGeneralizedMapsRef
 
 /// \defgroup PkgGeneralizedMapsClasses Classes
-/// \ingroup PkgGeneralizedMaps
+/// \ingroup PkgGeneralizedMapsRef
 
 /*!
-\addtogroup PkgGeneralizedMaps
+\addtogroup PkgGeneralizedMapsRef
 \cgalPkgDescriptionBegin{Generalized Maps,PkgGeneralizedMapsSummary}
 \cgalPkgPicture{gmap_logo.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Guillaume Damiand}
 \cgalPkgDesc{This package implements Generalized Maps in <I>d</I> dimensions. A generalized map is a data structure enabling to represent an orientable or non orientable subdivided object by describing all the cells of the subdivision (for example in 3D vertices, edges, faces, volumes) and all the incidence and adjacency relationships between these cells. Information can be associated to cells thanks to attributes. The package provides basic creation, modification operations, and several iterators enabling to run through some specific part of the object.}
-\cgalPkgManuals{Chapter_Generalized_Maps,PkgGeneralizedMaps}
+\cgalPkgManuals{Chapter_Generalized_Maps,PkgGeneralizedMapsRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.9}

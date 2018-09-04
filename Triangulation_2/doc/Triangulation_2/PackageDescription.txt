@@ -1,20 +1,20 @@
-/// \defgroup PkgTriangulation2 2D Triangulation Reference
+/// \defgroup PkgTriangulation2Ref 2D Triangulation Reference
 /// \defgroup PkgTriangulation2Concepts Concepts
-/// \ingroup PkgTriangulation2
+/// \ingroup PkgTriangulation2Ref
 
 /// \defgroup PkgTriangulation2TriangulationClasses Triangulation Classes
-/// \ingroup PkgTriangulation2
+/// \ingroup PkgTriangulation2Ref
 
 
 /// \defgroup PkgTriangulation2TraitsClasses Traits Classes
-/// \ingroup PkgTriangulation2
+/// \ingroup PkgTriangulation2Ref
 
 /// \defgroup PkgTriangulation2VertexFaceClasses Vertex and Face Classes
-/// \ingroup PkgTriangulation2
+/// \ingroup PkgTriangulation2Ref
 
 
 /// \defgroup PkgTriangulation2Miscellaneous Miscellaneous
-/// \ingroup PkgTriangulation2
+/// \ingroup PkgTriangulation2Ref
 
 /*! Draw.
   \code
@@ -22,17 +22,17 @@
   \endcode
 */
 /// \defgroup PkgDrawTriangulation2 Draw a Triangulation 2
-/// \ingroup PkgTriangulation2
+/// \ingroup PkgTriangulation2Ref
 
 /*!
-\addtogroup PkgTriangulation2
+\addtogroup PkgTriangulation2Ref
 \todo check generated documentation
 \cgalPkgDescriptionBegin{2D Triangulation,PkgTriangulation2Summary}
 \cgalPkgPicture{cdt2d-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Mariette Yvinec}
 \cgalPkgDesc{This package  allows to build and handle various triangulations for point sets two dimensions. Any \cgal triangulation covers the convex hull of its vertices. Triangulations are built incrementally  and can be modified by insertion  or removal  of vertices.  They offer point location facilities.  The package provides plain triangulation (whose faces depend on the insertion order of the vertices) and Delaunay triangulations. Regular triangulations are also provided for sets of weighted points. Delaunay and regular triangulations offer nearest neighbor queries and primitives to build the dual Voronoi and power diagrams.   Finally, constrained and Delaunay constrained triangulations allows to force some constrained segments to appear as edges of the triangulation.  Several versions of constrained and Delaunay constrained triangulations are provided: some of them handle intersections between input constraints segment while others do not. }
-\cgalPkgManuals{Chapter_2D_Triangulations,PkgTriangulation2}
+\cgalPkgManuals{Chapter_2D_Triangulations,PkgTriangulation2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{0.9}
@@ -66,7 +66,7 @@ of  triangulation data
 structure acting as a container for faces and vertices
 while  taking care of the combinatorial aspects of the triangulation. 
 The concepts and models relative to the triangulation data structure
-are described in Chapter \ref PkgTDS2 "2D Triangulation Data Structure".
+are described in Chapter \ref PkgTDS2Ref "2D Triangulation Data Structure".
 
 \cgalClassifedRefPages
 

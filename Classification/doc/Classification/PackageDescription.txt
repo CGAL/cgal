@@ -1,55 +1,55 @@
 /*!
-\defgroup PkgClassification Classification Reference
+\defgroup PkgClassificationRef Classification Reference
 
 \defgroup PkgClassificationConcepts Concepts
-\ingroup PkgClassification
+\ingroup PkgClassificationRef
 
 \defgroup PkgClassificationMain Main Functions
-\ingroup PkgClassification
+\ingroup PkgClassificationRef
 
 Functions that perform classification based on a set of labels and a classifier, with or without regularization.
 
 \defgroup PkgClassificationClassifiers Classifiers
-\ingroup PkgClassification
+\ingroup PkgClassificationRef
 
 Classifiers are functors that, given a label set and an input item, associate this input item with an energy for each label. This energy measures the likelihood of the item to belong to this label.
 
 \defgroup PkgClassificationDataStructures Common Data Structures
-\ingroup PkgClassification
+\ingroup PkgClassificationRef
 
 Useful data structures that are used to compute features (computation of eigenvalues, for example).
 
 \defgroup PkgClassificationLabel Label
-\ingroup PkgClassification
+\ingroup PkgClassificationRef
 
 A label represents how an item should be classified, for example: _vegetation_, _building_, _road_, etc.
 
 \defgroup PkgClassificationFeature Feature
-\ingroup PkgClassification
+\ingroup PkgClassificationRef
 
 Features are defined as scalar fields that associates each input item with a specific value.
 
 \defgroup PkgClassificationFeatures Predefined Features
-\ingroup PkgClassification
+\ingroup PkgClassificationRef
 
 \cgal provides some predefined features that are relevant for classification of point sets.
 
 \defgroup PkgClassificationPointSet Point Set Classification
-\ingroup PkgClassification
+\ingroup PkgClassificationRef
 
 Data structures specialized to classify point sets.
 
 \defgroup PkgClassificationMesh Mesh Classification
-\ingroup PkgClassification
+\ingroup PkgClassificationRef
 
 Data structures specialized to classify surface meshes.
 
 \defgroup PkgClassificationCluster Cluster Classification
-\ingroup PkgClassification
+\ingroup PkgClassificationRef
 
 Data structures specialized to classify clusters.
 
-\addtogroup PkgClassification
+\addtogroup PkgClassificationRef
 
 \cgalPkgDescriptionBegin{Classification, PkgClassificationSummary}
 \cgalPkgPicture{data_classif.png}
@@ -57,7 +57,7 @@ Data structures specialized to classify clusters.
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Simon Giraudot, Florent Lafarge}
 \cgalPkgDesc{This component implements an algorithm that classifies a data set into a user-defined set of labels (such as ground, vegetation, buildings, etc.). A flexible API is provided so that users can classify any type of data, compute their own local features on the input data set, and define their own labels.}
-\cgalPkgManuals{Chapter_Classification, PkgClassification}
+\cgalPkgManuals{Chapter_Classification, PkgClassificationRef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin

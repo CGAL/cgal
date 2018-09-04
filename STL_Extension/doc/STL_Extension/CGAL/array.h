@@ -2,7 +2,7 @@ namespace CGAL {
 namespace cpp11 {
 
 /*!
-\ingroup PkgStlExtension
+\ingroup PkgStlExtensionRef
 
 An object of the class `cpp11::array` represents an array of elements 
 of type `T`, the number of which is specified by the second template argument. 

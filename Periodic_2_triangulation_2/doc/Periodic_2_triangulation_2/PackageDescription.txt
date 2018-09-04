@@ -1,22 +1,22 @@
-/// \defgroup PkgPeriodic2Triangulation2 2D Periodic Triangulations Reference
+/// \defgroup PkgPeriodic2Triangulation2Ref 2D Periodic Triangulations Reference
 
 /// \defgroup PkgPeriodic2Triangulation2Concepts Concepts
-/// \ingroup PkgPeriodic2Triangulation2
+/// \ingroup PkgPeriodic2Triangulation2Ref
 
 /// \defgroup PkgPeriodic2Triangulation2MainClasses Main Classes
-/// \ingroup PkgPeriodic2Triangulation2
+/// \ingroup PkgPeriodic2Triangulation2Ref
 
 /// \defgroup PkgPeriodic2Triangulation2TraitsClasses Traits Classes
-/// \ingroup PkgPeriodic2Triangulation2
+/// \ingroup PkgPeriodic2Triangulation2Ref
 
 /// \defgroup PkgPeriodic2Triangulation2VertexFaceClasses Vertex and Face Classes
-/// \ingroup PkgPeriodic2Triangulation2
+/// \ingroup PkgPeriodic2Triangulation2Ref
 
 /// \defgroup PkgPeriodic2Triangulation2Enums Enums
-/// \ingroup PkgPeriodic2Triangulation2
+/// \ingroup PkgPeriodic2Triangulation2Ref
 
 /*!
-\addtogroup PkgPeriodic2Triangulation2
+\addtogroup PkgPeriodic2Triangulation2Ref
  
 \cgalPkgDescriptionBegin{2D Periodic Triangulations,PkgPeriodic2Triangulation2Summary}
 \cgalPkgPicture{Periodic_2_triangulation_2/fig/p2Delaunay2_thumb.png}
@@ -24,7 +24,7 @@
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Nico Kruithof}
 \cgalPkgDesc{This package allows to build and handle triangulations of point sets in the two dimensional flat torus. Triangulations are built incrementally and can be modified by insertion or removal of vertices. They offer point location facilities.  The package provides Delaunay triangulations and offers nearest neighbor queries and primitives to build the dual Voronoi diagrams.}
-\cgalPkgManuals{Chapter_2D_Periodic_Triangulations,PkgPeriodic2Triangulation2}
+\cgalPkgManuals{Chapter_2D_Periodic_Triangulations,PkgPeriodic2Triangulation2Ref}
 \cgalPkgSummaryEnd
  
 \cgalPkgShortInfoBegin

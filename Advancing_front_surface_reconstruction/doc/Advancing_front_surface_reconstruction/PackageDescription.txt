@@ -1,7 +1,7 @@
-/// \defgroup PkgAdvancingFrontSurfaceReconstruction Advancing Front Surface Reconstruction Reference
+/// \defgroup PkgAdvancingFrontSurfaceReconstructionRef Advancing Front Surface Reconstruction Reference
 
 /*!
-\addtogroup PkgAdvancingFrontSurfaceReconstruction
+\addtogroup PkgAdvancingFrontSurfaceReconstructionRef
 
 \cgalPkgDescriptionBegin{Advancing Front Surface Reconstruction,PkgAdvancingFrontSurfaceReconstructionSummary}
 \cgalPkgPicture{afsr-detail.png}
@@ -12,7 +12,7 @@ unorganized point set. Starting from a seed facet, a piecewise linear
 surface is grown by adding Delaunay triangles one by one. The most
 plausible triangles are added first, in a way that avoids the appearance
 of topological singularities. }
-\cgalPkgManuals{Chapter_Advancing_Front_Surface_Reconstruction,PkgAdvancingFrontSurfaceReconstruction}
+\cgalPkgManuals{Chapter_Advancing_Front_Surface_Reconstruction,PkgAdvancingFrontSurfaceReconstructionRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}

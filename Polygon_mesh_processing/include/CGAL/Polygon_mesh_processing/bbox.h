@@ -39,7 +39,7 @@ namespace CGAL {
   namespace Polygon_mesh_processing {
 
     /*!
-    * \ingroup PkgPolygonMeshProcessing
+    * \ingroup PkgPolygonMeshProcessingRef
     *  computes a bounding box of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeListGraph`
@@ -88,7 +88,7 @@ namespace CGAL {
     }
 
     /*!
-    * \ingroup PkgPolygonMeshProcessing
+    * \ingroup PkgPolygonMeshProcessingRef
     *  computes a bounding box of a vertex of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeGraph`
@@ -131,7 +131,7 @@ namespace CGAL {
     }
 
     /*!
-    * \ingroup PkgPolygonMeshProcessing
+    * \ingroup PkgPolygonMeshProcessingRef
     *  computes a bounding box of an edge of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeGraph`
@@ -175,7 +175,7 @@ namespace CGAL {
     }
 
     /*!
-    * \ingroup PkgPolygonMeshProcessing
+    * \ingroup PkgPolygonMeshProcessingRef
     *  computes a bounding box of a face of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeGraph`
@@ -257,7 +257,7 @@ namespace CGAL {
     // deprecated function
     #ifndef CGAL_NO_DEPRECATED_CODE
     /*!
-    * \ingroup PkgPolygonMeshProcessing
+    * \ingroup PkgPolygonMeshProcessingRef
     * \deprecated This function is deprecated since \cgal 4.10, `CGAL::Polygon_mesh_processing::bbox()` should be used instead.
     */
     template<typename PolygonMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>

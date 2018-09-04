@@ -35,7 +35,7 @@
 #include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
-    /// \ingroup PkgAABB_tree
+    /// \ingroup PkgAABB_treeRef
     /// \deprecated This class is deprecated since \cgal 4.3, the class
     /// `AABB_face_graph_triangle_primitive` should be used instead.
     ///

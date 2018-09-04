@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgAlphaShape2
+\ingroup PkgAlphaShape2Ref
 
 \deprecated The class is deprecated since \cgal 4.10, as the weighted point and the function
 objects for weighted points are part of the concept `Kernel`. The class is kept for backward

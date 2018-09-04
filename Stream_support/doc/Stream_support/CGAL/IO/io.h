@@ -3,7 +3,7 @@ namespace CGAL {
 
 namespace IO{
 /*!
-  \ingroup PkgIOstreams
+  \ingroup PkgIOstreamsRef
 
 All classes in the \cgal `Kernel` provide input and output operators for
 IOStreams.  The basic task of such an operator is to produce a
@@ -38,7 +38,7 @@ enum Mode { ASCII = 0, BINARY, PRETTY };
 }
 
 /*!
-\ingroup PkgIOstreams
+\ingroup PkgIOstreamsRef
 
 returns the printing mode of the %IO stream `s`.
 
@@ -56,7 +56,7 @@ returns the printing mode of the %IO stream `s`.
 IO::Mode get_mode(std::ios& s);
 
 /*!
-\ingroup PkgIOstreams
+\ingroup PkgIOstreamsRef
 
 sets the mode of the %IO stream `s` to be the `IO::ASCII` mode.
 Returns the previous mode of `s`.
@@ -74,7 +74,7 @@ Returns the previous mode of `s`.
 IO::Mode set_ascii_mode(std::ios& s);
 
 /*!
-\ingroup PkgIOstreams
+\ingroup PkgIOstreamsRef
 
 \sa `CGAL::IO::Mode`
 \sa `CGAL::set_mode()`
@@ -91,7 +91,7 @@ Returns the previous mode of `s`.
 IO::Mode set_binary_mode(std::ios& s);
 
 /*!
-\ingroup PkgIOstreams
+\ingroup PkgIOstreamsRef
 
 sets the printing mode of the %IO stream `s`.
 
@@ -107,7 +107,7 @@ sets the printing mode of the %IO stream `s`.
 IO::Mode set_mode(std::ios& s, IO::Mode m);
 
 /*!
-\ingroup PkgIOstreams
+\ingroup PkgIOstreamsRef
 
 sets the mode of the %IO stream `s` to be the `IO::PRETTY` mode.
 Returns the previous mode of `s`.
@@ -126,7 +126,7 @@ IO::Mode set_pretty_mode(std::ios& s);
 
 
 /*!
-\ingroup PkgIOstreams
+\ingroup PkgIOstreamsRef
 
 The definition of `Input_rep` is completely symmetric to `Output_rep`. 
 
@@ -137,7 +137,7 @@ class Input_rep {
 }; /* end Input_rep */
 
 /*!
-\ingroup PkgIOstreams
+\ingroup PkgIOstreamsRef
 
 The purpose of `Output_rep` is to provide a way to control output formatting that works independently of the object's stream output operator. 
 
@@ -171,7 +171,7 @@ class Output_rep {
 
 
 /*!
-\ingroup PkgIOstreams
+\ingroup PkgIOstreamsRef
 
 checks if the %IO stream `s` is in `IO::ASCII` mode.
 
@@ -188,7 +188,7 @@ bool is_ascii(std::ios& s);
 
 
 /*!
-\ingroup PkgIOstreams
+\ingroup PkgIOstreamsRef
 
 checks if the %IO stream `s` is in `IO::BINARY` mode.
 
@@ -204,7 +204,7 @@ checks if the %IO stream `s` is in `IO::BINARY` mode.
 bool is_binary(std::ios& s);
 
 /*!
-\ingroup PkgIOstreams
+\ingroup PkgIOstreamsRef
 
 checks if the %IO stream `s` is in `IO::PRETTY` mode.
 
@@ -221,7 +221,7 @@ checks if the %IO stream `s` is in `IO::PRETTY` mode.
 bool is_pretty(std::ios& s);
 
 /*!
-\ingroup PkgIOstreams
+\ingroup PkgIOstreamsRef
 
 Convenience function to construct an output representation (`Output_rep`) for type `T`. 
 
@@ -230,7 +230,7 @@ Generic IO for type `T`.
 template <class T> Output_rep<T> oformat( const T& t);
 
 /*!
-\ingroup PkgIOstreams
+\ingroup PkgIOstreamsRef
 
 The definition of this function is completely symmetric to `oformat()`.
 */
@@ -238,7 +238,7 @@ template <class T> Input_rep<T> iformat( const T& t);
 
 
 /*!
-\ingroup PkgIOstreams
+\ingroup PkgIOstreamsRef
 
 Convenience function to construct an output representation (`Output_rep`) for type `T`. 
 

@@ -173,7 +173,7 @@ struct AABB_traits_base_2<GeomTraits,true>{
 
 } } //end of namespace internal::AABB_tree
 
-/// \addtogroup PkgAABB_tree
+/// \addtogroup PkgAABB_treeRef
 /// @{
 
 /// This traits class handles any type of 3D geometric

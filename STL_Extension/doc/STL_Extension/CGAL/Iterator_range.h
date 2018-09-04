@@ -27,7 +27,7 @@
 namespace CGAL {
 
   /*!
-    \ingroup PkgStlExtension
+    \ingroup PkgStlExtensionRef
     `CGAL::Iterator_range` encapsulates two iterators so they fulfill the `ForwardRange` concept. 
     The class is essentially a clone of <A href="https://www.boost.org/doc/libs/1_55_0/libs/range/doc/html/range/reference/utilities/iterator_range.html">`boost::iterator_range`</A>,
     and it additionally is derived from `std::pair`, so that one can apply `boost::tie`.

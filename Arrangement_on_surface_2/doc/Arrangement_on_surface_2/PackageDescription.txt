@@ -1,7 +1,7 @@
-/// \defgroup PkgArrangement2 2D Arrangement Reference
+/// \defgroup PkgArrangement2Ref 2D Arrangement Reference
 
 /// \defgroup PkgArrangement2Concepts Concepts
-/// \ingroup PkgArrangement2
+/// \ingroup PkgArrangement2Ref
 
 /// \cgalConceptNamespace
 /// The namespace containing concepts specific to Arrangements.
@@ -20,13 +20,13 @@ namespace ArrTraits {}
 /// \ingroup PkgArrangement2Concepts
 
 /// \defgroup PkgArrangement2TraitsClasses Traits Classes
-/// \ingroup PkgArrangement2
+/// \ingroup PkgArrangement2Ref
 
 /// \defgroup PkgArrangement2DCEL DCEL
-/// \ingroup PkgArrangement2
+/// \ingroup PkgArrangement2Ref
 
 /// \defgroup PkgArrangement2IO I/O
-/// \ingroup PkgArrangement2
+/// \ingroup PkgArrangement2Ref
 
 /// \defgroup PkgArrangement2op_left_shift operator<<
 /// \ingroup PkgArrangement2IO
@@ -35,35 +35,35 @@ namespace ArrTraits {}
 /// \ingroup PkgArrangement2IO
 
 /// \defgroup PkgArrangement2PointLocation Point Location
-/// \ingroup PkgArrangement2
+/// \ingroup PkgArrangement2Ref
 
 /// \defgroup PkgArrangement2Overlay Overlay
-/// \ingroup PkgArrangement2
+/// \ingroup PkgArrangement2Ref
 
 /// \defgroup PkgArrangement2Funcs Free Functions
-/// \ingroup PkgArrangement2
+/// \ingroup PkgArrangement2Ref
 
 /// \defgroup PkgArrangement2Insert CGAL::insert()
 /// \ingroup PkgArrangement2Funcs
 
 /// \defgroup PkgArrangement2Tags Tags
-/// \ingroup PkgArrangement2
+/// \ingroup PkgArrangement2Ref
 
 /// \defgroup PkgArrangement2Macros Macros
-/// \ingroup PkgArrangement2
+/// \ingroup PkgArrangement2Ref
 
 /// \defgroup PkgArrangement2Enums Enumerations
-/// \ingroup PkgArrangement2
+/// \ingroup PkgArrangement2Ref
 
 /*!
-\addtogroup PkgArrangement2
+\addtogroup PkgArrangement2Ref
 \todo check generated documentation
 \cgalPkgDescriptionBegin{2D Arrangements,PkgArrangement2Summary}
 \cgalPkgPicture{Arrangement_2.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Ron Wein, Eric Berberich, Efi Fogel, Dan Halperin, Michael Hemmer, Oren Salzman, and Baruch Zukerman}
 \cgalPkgDesc{This package can be used to construct, maintain, alter, and display arrangements in the plane. Once an arrangement is constructed, the package can be used to obtain results of various queries on the arrangement, such as point location. The package also includes generic implementations of two algorithmic frameworks, that are, computing the zone of an arrangement, and line-sweeping the plane, the arrangements is embedded on. These frameworks are used in turn in the implementations of other operations on arrangements. Computing the overlay of two arrangements, for example, is based on the sweep-line framework.   Arrangements and arrangement components can also be extended to store additional data. An important extension stores the construction history of the arrangement, such that it is possible to obtain the originating curve of an arrangement subcurve.}
-\cgalPkgManuals{Chapter_2D_Arrangements,PkgArrangement2}
+\cgalPkgManuals{Chapter_2D_Arrangements,PkgArrangement2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{2.1}

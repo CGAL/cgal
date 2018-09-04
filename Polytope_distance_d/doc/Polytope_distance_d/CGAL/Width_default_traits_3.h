@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgOptimalDistances
+\ingroup PkgOptimalDistancesRef
 
 The class `Width_default_traits_3` is a traits class for `Width_3<Traits>` 
 using the three-dimensional \cgal kernel. 

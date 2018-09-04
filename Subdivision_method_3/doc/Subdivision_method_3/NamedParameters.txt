@@ -1,6 +1,6 @@
 /*!
 \defgroup sm_namedparameters Named Parameters for Subdivision Methods
-\ingroup PkgSurfaceSubdivisionMethods3
+\ingroup PkgSurfaceSubdivisionMethods3Ref
 
 In this package, all functions optional parameters are implemented as BGL optional
 named parameters (see \ref BGLNamedParameters for more information on how to use them).

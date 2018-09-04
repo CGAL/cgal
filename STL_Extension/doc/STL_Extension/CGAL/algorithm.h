@@ -1,5 +1,5 @@
 /// \defgroup STLAlgos Generic Algorithms
-/// \ingroup PkgStlExtension
+/// \ingroup PkgStlExtensionRef
 
 
 namespace CGAL {

@@ -1,15 +1,15 @@
-/// \defgroup PkgSnapRounding2 2D Snap Rounding Reference
+/// \defgroup PkgSnapRounding2Ref 2D Snap Rounding Reference
 /// \defgroup PkgSnapRounding2Concepts Concepts
-/// \ingroup PkgSnapRounding2
+/// \ingroup PkgSnapRounding2Ref
 /*!
-\addtogroup PkgSnapRounding2
+\addtogroup PkgSnapRounding2Ref
 \todo check generated documentation
 \cgalPkgDescriptionBegin{2D Snap Rounding,PkgSnapRounding2Summary}
 \cgalPkgPicture{snap-detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Eli Packer}
 \cgalPkgDesc{Snap Rounding is a well known method for converting arbitrary-precision arrangements of segments into a fixed-precision representation. In the study of robust geometric computing, it can be classified as a finite precision approximation technique. Iterated Snap Rounding is a modification of Snap Rounding in which each vertex is at least half-the-width-of-a-pixel away from any non-incident edge. This package supports both methods.}
-\cgalPkgManuals{Chapter_2D_Snap_Rounding,PkgSnapRounding2}
+\cgalPkgManuals{Chapter_2D_Snap_Rounding,PkgSnapRounding2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.1}

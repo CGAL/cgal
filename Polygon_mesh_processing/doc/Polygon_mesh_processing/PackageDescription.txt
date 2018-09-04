@@ -1,6 +1,6 @@
-/// \defgroup PkgPolygonMeshProcessing Polygon Mesh Processing Reference
+/// \defgroup PkgPolygonMeshProcessingRef Polygon Mesh Processing Reference
 /// \defgroup PkgPolygonMeshProcessingConcepts Concepts
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup keep_connected_components_grp Connected Components
 ///
@@ -8,58 +8,58 @@
 /// of adjacent faces such that all edges between two consecutive faces of the 
 /// path are not marked as constrained.
 ///
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 
 /// \defgroup hole_filling_grp Hole Filling
 /// Functions to fill holes given as a range of halfedges or as range of points.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_meshing_grp Meshing
 /// Functions to triangulate faces, and to refine and fair regions of a polygon mesh.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_normal_grp Normal Computation
 /// Functions to compute unit normals for individual/all vertices or faces.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup measure_grp Geometric Measure Functions
 /// Functions to compute lengths of edges and borders, areas of faces and patches, as well as volumes of closed meshes.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_orientation_grp Orientation Functions
 ///  Functions to compute or change the orientation of faces and surfaces.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_intersection_grp Intersection Functions
 /// Functions to test if there are self intersections, and to report faces that do intersect.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_repairing_grp Combinatorial Repairing
 /// Functions to orient polygon soups  and to stitch geometrically identical boundaries.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_distance_grp Distance Functions
 /// Functions to compute the distance between meshes, between a mesh and a point set and between a point set and a mesh.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_corefinement_grp Corefinement and Boolean Operations
 /// Functions to corefine triangulated surface meshes and compute triangulated
 /// surface meshes of the union, difference and intersection
 /// of the bounded volumes.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_detect_features_grp Feature Detection Functions
 /// Functions to detect sharp edges and surface patches of polygon meshes.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_predicates_grp Intersection Detection Functions
 /// Functions to detect intersections.
 /// Note that those functions will be exact as long as the underlying do-intersect predicates used are exact.
 /// In practice, it means that the 3D point type used must come from a \cgal kernel with exact predicates.
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 /*!
-\addtogroup PkgPolygonMeshProcessing
+\addtogroup PkgPolygonMeshProcessingRef
  
 \cgalPkgDescriptionBegin{Polygon Mesh Processing, PkgPolygonMeshProcessingSummary}
 \cgalPkgPicture{hole_filling_ico.png}
@@ -69,7 +69,7 @@
 \cgalPkgDesc{This package provides
 a collection of methods and classes for polygon mesh processing,
 ranging from basic operations on simplices, to complex geometry processing algorithms.}
-\cgalPkgManuals{Chapter_PolygonMeshProcessing,PkgPolygonMeshProcessing}
+\cgalPkgManuals{Chapter_PolygonMeshProcessing,PkgPolygonMeshProcessingRef}
 \cgalPkgSummaryEnd
  
 \cgalPkgShortInfoBegin

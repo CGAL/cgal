@@ -1,17 +1,17 @@
-/// \defgroup PkgSolver CGAL and Solvers Reference
+/// \defgroup PkgSolverRef CGAL and Solvers Reference
 
 /// \defgroup PkgSolverConcepts Concepts
-/// \ingroup PkgSolver
+/// \ingroup PkgSolverRef
 ///
 
 /*!
-\addtogroup PkgSolver
+\addtogroup PkgSolverRef
 \cgalPkgDescriptionBegin{CGAL and Solvers,PkgSolverSummary}
 \cgalPkgPicture{solver.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Simon Giraudot, Pierre Alliez, Frédéric Cazals, Gaël Guennebaud, Bruno Lévy, Marc Pouget, and Laurent Saboret}
 \cgalPkgDesc{This package provides concepts and models for solving linear systems with dense or sparse matrices.}
-\cgalPkgManuals{Chapter_CGAL_and_Solvers,PkgSolver}
+\cgalPkgManuals{Chapter_CGAL_and_Solvers,PkgSolverRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.8}

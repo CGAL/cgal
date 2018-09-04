@@ -1,14 +1,14 @@
-/// \defgroup PkgMinkowskiSum3 3D Minkowski Sum of Polyhedra Reference
+/// \defgroup PkgMinkowskiSum3Ref 3D Minkowski Sum of Polyhedra Reference
 
 /*!
-\addtogroup PkgMinkowskiSum3
+\addtogroup PkgMinkowskiSum3Ref
 \todo check generated documentation
 \cgalPkgDescriptionBegin{3D Minkowski Sum of Polyhedra,PkgMinkowskiSum3Summary}
 \cgalPkgPicture{Minkowski_sum_3/fig/Minkowski_sum_3_teaser.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Peter Hachenberger}
 \cgalPkgDesc{This package provides a function, which computes the Minkowski sum of two point sets in \f$ \mathbb{R}^3\f$. These point sets may consist of isolated vertices, isolated edges, surfaces with convex facets without holes, and open and closed solids. Thus, it is possible to compute the configuration space of translational robots (even in tight passage scenarios) as well as several graphics operations, like for instance the glide operation, which computes the point set swept by a polyhedron that moves along a polygonal line.}
-\cgalPkgManuals{Chapter_3D_Minkowski_Sum_of_Polyhedra,PkgMinkowskiSum3}
+\cgalPkgManuals{Chapter_3D_Minkowski_Sum_of_Polyhedra,PkgMinkowskiSum3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}

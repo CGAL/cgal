@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgStlExtension
+\ingroup PkgStlExtensionRef
 
 The class `Spatial_lock_grid_3` allows to lock 
 points with coordinates (x, y, z) in a 3D grid.

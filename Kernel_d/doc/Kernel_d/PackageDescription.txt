@@ -1,33 +1,33 @@
-/// \defgroup PkgKernelD dD Geometry Kernel Reference
+/// \defgroup PkgKernelDRef dD Geometry Kernel Reference
 
 /// \defgroup PkgKernelDLinAlgConcepts Linear Algebra Concepts
-/// \ingroup PkgKernelD
+/// \ingroup PkgKernelDRef
 
 /// \defgroup PkgKernelDLinAlgClasses Linear Algebra Classes
-/// \ingroup PkgKernelD
+/// \ingroup PkgKernelDRef
 
 /// \defgroup PkgKernelDKernels Kernels
-/// \ingroup PkgKernelD
+/// \ingroup PkgKernelDRef
 
 /// \defgroup PkgKernelDKernelObjs Kernel Objects
-/// \ingroup PkgKernelD
+/// \ingroup PkgKernelDRef
 
 /// \defgroup PkgKernelDFunctions Global Kernel Functions
-/// \ingroup PkgKernelD
+/// \ingroup PkgKernelDRef
 
 /// \defgroup PkgKernelDKernelConcept Kernel Concept
-/// \ingroup PkgKernelD
+/// \ingroup PkgKernelDRef
 
 
 /*!
-\addtogroup PkgKernelD
+\addtogroup PkgKernelDRef
 \todo check generated documentation
 \cgalPkgDescriptionBegin{dD Geometry Kernel,PkgKernelDSummary}
 \cgalPkgPicture{hypercube.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Michael Seel}
 \cgalPkgDesc{The dD %Kernel contains objects of constant size, such as point, vector, direction, line, ray, segment, circle in d dimensional Euclidean space, as well as predicates and constructions for these objects.}
-\cgalPkgManuals{Chapter_dD_Geometry_Kernel,PkgKernelD}
+\cgalPkgManuals{Chapter_dD_Geometry_Kernel,PkgKernelDRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{1.1}

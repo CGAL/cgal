@@ -1,29 +1,29 @@
-/// \defgroup PkgPeriodic_3_mesh_3 3D Periodic Mesh Generation Reference
+/// \defgroup PkgPeriodic_3_mesh_3Ref 3D Periodic Mesh Generation Reference
 
 /// \defgroup PkgPeriodic_3_mesh_3Concepts Concepts
-/// \ingroup PkgPeriodic_3_mesh_3
+/// \ingroup PkgPeriodic_3_mesh_3Ref
 /// The concepts of this package.
 
 /// \defgroup PkgPeriodic_3_mesh_3MeshClasses Mesh Classes
-/// \ingroup PkgPeriodic_3_mesh_3
+/// \ingroup PkgPeriodic_3_mesh_3Ref
 /// The classes in this group are the main classes involved in the mesh generation process.
 
 /// \defgroup PkgPeriodic_3_mesh_3Domains Domain Classes
-/// \ingroup PkgPeriodic_3_mesh_3
+/// \ingroup PkgPeriodic_3_mesh_3Ref
 /// The classes in this group are models of domain concepts and their associated classes.
 
 /// \defgroup PkgPeriodic_3_mesh_3Functions Mesh Generation Functions
-/// \ingroup PkgPeriodic_3_mesh_3
+/// \ingroup PkgPeriodic_3_mesh_3Ref
 /// The two main functions to generate a periodic mesh are `make_periodic_3_mesh_3()`
 /// and `refine_periodic_3_mesh_3()`. Other functions are provided to optimize
 /// an existing periodic mesh.
 
 /// \defgroup PkgPeriodic_3_mesh_3IOFunctions Input/Output Functions
-/// \ingroup PkgPeriodic_3_mesh_3
+/// \ingroup PkgPeriodic_3_mesh_3Ref
 /// The free functions that can be used to read and write periodic meshes.
 
 /*!
-\addtogroup PkgPeriodic_3_mesh_3
+\addtogroup PkgPeriodic_3_mesh_3Ref
 \cgalPkgDescriptionBegin{3D Periodic Mesh Generation,PkgPeriodic_3_mesh_3Summary}
 \cgalPkgPicture{periodic_mesher_small.png}
 \cgalPkgSummaryBegin
@@ -32,7 +32,7 @@
 discretizing periodic 3D domains. The domain to be meshed is a region of
 the three-dimensional flat torus. The periodic mesh generator provides users with the same
 flexibility that is offered in the \ref PkgMesh_3Summary package.}
-\cgalPkgManuals{Chapter_3D_Periodic_Mesh_Generation,PkgPeriodic_3_mesh_3}
+\cgalPkgManuals{Chapter_3D_Periodic_Mesh_Generation,PkgPeriodic_3_mesh_3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.13}

@@ -34,7 +34,7 @@ namespace CGAL {
 
   
   /*!
-    \ingroup PkgPoissonSurfaceReconstruction
+    \ingroup PkgPoissonSurfaceReconstructionRef
 
     Performs surface reconstruction as follows:
 

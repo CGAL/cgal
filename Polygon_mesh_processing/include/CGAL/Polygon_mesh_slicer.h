@@ -44,7 +44,7 @@
 
 namespace CGAL {
 
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PkgPolygonMeshProcessingRef
 /// Function object that computes the intersection of a plane with
 /// a triangulated surface mesh.
 ///

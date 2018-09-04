@@ -1,20 +1,20 @@
-/// \defgroup PkgScaleSpaceReconstruction3 Scale-Space Surface Reconstruction Reference
+/// \defgroup PkgScaleSpaceReconstruction3Ref Scale-Space Surface Reconstruction Reference
 
 /// \defgroup PkgScaleSpaceReconstruction3Concepts Concepts
-/// \ingroup PkgScaleSpaceReconstruction3
+/// \ingroup PkgScaleSpaceReconstruction3Ref
 
 /// \defgroup PkgScaleSpaceReconstruction3Classes Classes
-/// \ingroup PkgScaleSpaceReconstruction3
+/// \ingroup PkgScaleSpaceReconstruction3Ref
 
 
 /*!
-\addtogroup PkgScaleSpaceReconstruction3
+\addtogroup PkgScaleSpaceReconstruction3Ref
 \cgalPkgDescriptionBegin{Scale-Space Surface Reconstruction,PkgScaleSpaceReconstruction3Summary}
 \cgalPkgPicture{knot_thumb.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Thijs van Lankveld}
 \cgalPkgDesc{This method allows to reconstruct a surface that interpolates a set of 3D points using either and alpha shape or the advancing front surface reconstruction method. The output interpolates the point set (as opposed to approximating the point set). How the surface connects the points depends on a scale variable, which can be estimated semi-automatically.}
-\cgalPkgManuals{Chapter_Scale_space_reconstruction,PkgScaleSpaceReconstruction3}
+\cgalPkgManuals{Chapter_Scale_space_reconstruction,PkgScaleSpaceReconstruction3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.6}

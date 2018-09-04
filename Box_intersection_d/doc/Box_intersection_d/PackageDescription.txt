@@ -1,24 +1,24 @@
-/// \defgroup PkgBoxIntersectionD Intersecting Sequences of dD Iso-oriented Boxes Reference
+/// \defgroup PkgBoxIntersectionDRef Intersecting Sequences of dD Iso-oriented Boxes Reference
 /// \defgroup PkgBoxIntersectionDConcepts Concepts
-/// \ingroup PkgBoxIntersectionD
+/// \ingroup PkgBoxIntersectionDRef
 
 /// \defgroup PkgBoxIntersectionDClasses Classes
-/// \ingroup PkgBoxIntersectionD
+/// \ingroup PkgBoxIntersectionDRef
 
 /// \defgroup PkgBoxIntersectionD_box_intersection_d CGAL::box_intersection_d()
-/// \ingroup PkgBoxIntersectionD
+/// \ingroup PkgBoxIntersectionDRef
 
 
 /// \defgroup PkgBoxIntersectionD_box_intersection_all_pairs_d CGAL::box_intersection_all_pairs_d()
-/// \ingroup PkgBoxIntersectionD
+/// \ingroup PkgBoxIntersectionDRef
 
 /// \defgroup PkgBoxIntersectionD_box_self_intersection_d CGAL::box_self_intersection_d()
-/// \ingroup PkgBoxIntersectionD
+/// \ingroup PkgBoxIntersectionDRef
 
 /// \defgroup PkgBoxIntersectionD_box_self_intersection_all_pairs_d CGAL::box_self_intersection_all_pairs_d()
-/// \ingroup PkgBoxIntersectionD
+/// \ingroup PkgBoxIntersectionDRef
 /*!
-\addtogroup PkgBoxIntersectionD
+\addtogroup PkgBoxIntersectionDRef
 
 \todo de-math and change D to d for the dimension
 
@@ -27,7 +27,7 @@
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Lutz Kettner, Andreas Meyer, and Afra Zomorodian}
 \cgalPkgDesc{An efficient algorithm for finding all intersecting pairs for large numbers of iso-oriented boxes, in order to apply a user defined callback on them.  Typically these boxes will be bounding boxes of more complicated geometries. The algorithm is useful for (self-) intersection tests of surfaces etc. }
-\cgalPkgManuals{Chapter_Intersecting_Sequences_of_dD_Iso-oriented_Boxes,PkgBoxIntersectionD}
+\cgalPkgManuals{Chapter_Intersecting_Sequences_of_dD_Iso-oriented_Boxes,PkgBoxIntersectionDRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.1}

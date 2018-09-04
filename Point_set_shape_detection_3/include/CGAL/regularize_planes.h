@@ -21,7 +21,7 @@
 //
 
 /**
- * \ingroup PkgPointSetShapeDetection3
+ * \ingroup PkgPointSetShapeDetection3Ref
  * \file CGAL/regularize_planes.h
  *
  */
@@ -540,7 +540,7 @@ void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster<Traits> >&
 // Public section
 // ----------------------------------------------------------------------------
 
-/// \ingroup PkgPointSetShapeDetection3
+/// \ingroup PkgPointSetShapeDetection3Ref
   
   /*! 
 

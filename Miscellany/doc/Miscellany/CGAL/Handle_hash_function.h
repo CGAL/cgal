@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgProfilingTools
+\ingroup PkgProfilingToolsRef
 
 The class `Handle_hash_function` is a model for the `UniqueHashFunction` 
 concept. It is applicable for all key types with pointer-like 

@@ -439,7 +439,7 @@ of \sc{Gmp} and \sc{Mpfr}, which can be downloaded with the installer
 
 \sc{zlib} is a data compression library, and is essential for the component libCGAL_ImageIO.
 
-In \cgal this library is used in the examples of the \ref PkgSurfaceMesher3 package.
+In \cgal this library is used in the examples of the \ref PkgSurfaceMesher3Ref package.
 
 If it is not already on your system,
 for instance, on Windows, you can download it from <A HREF="http://www.zlib.net/">`http://www.zlib.net/`</A>.
@@ -511,7 +511,7 @@ represented using \sc{Mpfr} reliable floating-point numbers.
 It is based on the libraries \sc{Gmp} and \sc{Mpfr}.
 In the setting of \cgal, this library is
 optional: it is used by some models of the
-\ref PkgAlgebraicKerneld "Algebraic Kernel".
+\ref PkgAlgebraicKerneldRef "Algebraic Kernel".
 
 \sc{Mpfi} can be downloaded from <A HREF="http://mpfi.gforge.inria.fr/">`http://mpfi.gforge.inria.fr/`</A>. Version 1.4 or higher is recommended.
 
@@ -520,7 +520,7 @@ optional: it is used by some models of the
 \sc{Rs} (Real Solutions) is devoted to the study of the real roots of
 polynomial systems with a finite number of complex roots (including
 univariate polynomials). In \cgal, \sc{Rs} is used by one model of the
-\ref PkgAlgebraicKerneld "Algebraic Kernel".
+\ref PkgAlgebraicKerneldRef "Algebraic Kernel".
 
 \sc{Rs} is freely distributable for non-commercial use. You can download it
 from <a href="http://vegas.loria.fr/rs/">`http://vegas.loria.fr/rs/`</a>. Actually, the \sc{Rs} package also includes \sc{Rs3}, the
@@ -543,11 +543,11 @@ to speed up operations of the Polynomial package, such as GCDs. It is recommende
 \sc{Eigen} is a `C++` template library for linear algebra. \sc{Eigen} supports all
 matrix sizes, various matrix decomposition methods and sparse linear solvers.
 
-In \cgal, \sc{Eigen} provides sparse linear solvers in the \ref PkgPoissonSurfaceReconstruction
-and the \ref PkgSurfaceParameterization packages. 
+In \cgal, \sc{Eigen} provides sparse linear solvers in the \ref PkgPoissonSurfaceReconstructionRef
+and the \ref PkgSurfaceParameterizationRef packages. 
 
-In addition, \sc{Eigen} also provides singular value decomposition for the \ref PkgJet_fitting_3
-and the \ref PkgRidges_3 packages.
+In addition, \sc{Eigen} also provides singular value decomposition for the \ref PkgJet_fitting_3Ref
+and the \ref PkgRidges_3Ref packages.
 
 The \sc{Eigen} web site is <A HREF="http://eigen.tuxfamily.org">`http://eigen.tuxfamily.org`</A>.
 
@@ -557,7 +557,7 @@ The \sc{Esbtl} (Easy Structural Biology Template Library) is a library that allo
 the handling of \sc{Pdb} data.
 
 In \cgal the \sc{Esbtl} is used in an example of the
-\ref PkgSkinSurface3 package.
+\ref PkgSkinSurface3Ref package.
 
 It can be downloaded from <A HREF="http://esbtl.sourceforge.net/">`http://esbtl.sourceforge.net/`</A>.
 
@@ -576,7 +576,7 @@ The \sc{Tbb} web site is <A HREF="http://www.threadingbuildingblocks.org">`http:
 the LAS format (or the compressed LAZ format).
 
 In \cgal, \sc{LASlib} is used to provide input and output functions in
-the \ref PkgPointSetProcessing package.
+the \ref PkgPointSetProcessingRef package.
 
 The \sc{LASlib} web site is <a
 href="https://rapidlasso.com/lastools/">`https://rapidlasso.com/lastools/`</a>. \sc{LASlib}
@@ -589,7 +589,7 @@ CMake based install procedure</a>.
 \sc{OpenCV} (Open Computer Vision) is a library designed for computer
 vision, computer graphics and machine learning.
 
-In \cgal, \sc{OpenCV} is used by the \ref PkgClassification package.
+In \cgal, \sc{OpenCV} is used by the \ref PkgClassificationRef package.
 
 The \sc{OpenCV} web site is <A HREF="http://opencv.org/">`http://opencv.org/`</A>.
 

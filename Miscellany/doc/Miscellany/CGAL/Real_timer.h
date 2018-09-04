@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgProfilingTools
+\ingroup PkgProfilingToolsRef
 
 The class `Real_timer` is a timer class for measuring real time. 
 A timer `t` of type `Real_timer` is an object with a state. It is 
