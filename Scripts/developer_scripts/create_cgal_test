@@ -74,20 +74,20 @@ cat << EOF
 
 EOF
   header "configure"
-cat << EOF
+cat << 'EOF'
 
 configure()
 {
   echo "Configuring... "
 
-  if eval 'cmake -C"\$INIT_FILE" "\$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \\
-                                     -DCGAL_DIR="\$CGAL_DIR" \\
+  if eval 'cmake ${INIT_FILE:+"-C${INIT_FILE}"} "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \\
+                                     -DCGAL_DIR="$CGAL_DIR" \\
                                      --no-warn-unused-cli \\
                                      .' ; then
 
-    echo "   successful configuration" >> \$ERRORFILE
+    echo "   successful configuration" >> $ERRORFILE
   else
-    echo "   ERROR:    configuration" >> \$ERRORFILE
+    echo "   ERROR:    configuration" >> $ERRORFILE
   fi
 }
 
