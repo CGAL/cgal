@@ -218,7 +218,7 @@ public:
   /// `Vmap` is a struct with a member `point` of type `Traits::Point_3`
   /// and a member `vertices` of type
   /// `std::vector<boost::graph_traits<TriangleMesh>::%vertex_descriptor>`.
-  /// See  <a href="http://www.boost.org/doc/libs/release/libs/graph/doc/adjacency_list.html"><tt>the boost documentation</tt></a> page for more details
+  /// See  <a href="https://www.boost.org/doc/libs/release/libs/graph/doc/adjacency_list.html"><tt>the boost documentation</tt></a> page for more details
   typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, Vmap> Skeleton;
 
 
@@ -789,7 +789,7 @@ public:
   /**
    * Converts the contracted surface mesh to a skeleton curve.
    * @tparam Skeleton
-   *         an instantiation of <A href="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</a>
+   *         an instantiation of <A href="https://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</a>
    *         as a data structure for the skeleton curve.
    * @param skeleton
    *        graph that will contain the skeleton of `tmesh`. It should be empty before passed to the function.

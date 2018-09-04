@@ -15,7 +15,7 @@ digraph example {
   node [shape=record, fontname=Helvetica, fontsize=10];
   rankdir=BT
 
-  "boost Graph" [ URL="http://www.boost.org/libs/graph/doc/Graph.html" ];
+  "boost Graph" [ URL="https://www.boost.org/libs/graph/doc/Graph.html" ];
   HalfedgeGraph [ URL="\ref HalfedgeGraph"];
   HalfedgeListGraph [ URL="\ref HalfedgeListGraph"];
   MutableHalfedgeGraph [ URL="\ref MutableHalfedgeGraph"];
@@ -45,7 +45,7 @@ digraph example {
 \cgalHeading{%VertexListGraph}
 
 The concept `VertexListGraph` refines the concept
-<a href="http://www.boost.org/libs/graph/doc/Graph.html">`Graph`</a>
+<a href="https://www.boost.org/libs/graph/doc/Graph.html">`Graph`</a>
 and adds the requirement for traversal of all vertices in a graph.
 
 <center>
@@ -86,7 +86,7 @@ and adds the requirement for traversal of all vertices in a graph.
 \cgalHeading{%EdgeListGraph}
 
 The concept `EdgeListGraph` refines the concept
-<a href="http://www.boost.org/libs/graph/doc/Graph.html">`Graph`</a>
+<a href="https://www.boost.org/libs/graph/doc/Graph.html">`Graph`</a>
 and adds the requirement for traversal of all edges in a graph.
 
 <center>
@@ -137,7 +137,7 @@ and adds the requirement for traversal of all edges in a graph.
 \cgalHeading{%HalfedgeGraph}
 
 The concept `HalfedgeGraph` refines the concept
-<a href="http://www.boost.org/libs/graph/doc/Graph.html">`Graph`</a>
+<a href="https://www.boost.org/libs/graph/doc/Graph.html">`Graph`</a>
 and adds the notion of halfedges, where each edge corresponds to two opposite halfedges.
 
 <center>
@@ -435,8 +435,8 @@ the requirement for traversal of all faces in a graph.
 
 */
 
-/// The property tags model of the boost concept <a href="http://www.boost.org/libs/graph/doc/PropertyTag.html"><code>PropertyTag</code></a>.
-/// These tags are used to retrieve default property maps using the traits class <a href="http://www.boost.org/libs/graph/doc/property_map.html">boost::property_map</a>.
+/// The property tags model of the boost concept <a href="https://www.boost.org/libs/graph/doc/PropertyTag.html"><code>PropertyTag</code></a>.
+/// These tags are used to retrieve default property maps using the traits class <a href="https://www.boost.org/libs/graph/doc/property_map.html">boost::property_map</a>.
 /// \defgroup PkgBGLProperties Properties
 /// \ingroup PkgBGL
 

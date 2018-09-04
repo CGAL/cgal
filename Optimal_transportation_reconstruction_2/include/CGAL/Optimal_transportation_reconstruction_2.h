@@ -79,11 +79,11 @@ Furthermore, we can relocate the vertices by calling `relocate_all_points()`.
 \tparam Traits a model of the concept `OptimalTransportationReconstructionTraits_2`.
 
 \tparam PointPMap a model of `ReadablePropertyMap` with value type `Traits::Point_2`.
-        Defaults to <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/identity_property_map.html">`boost::typed_identity_property_map<Traits::Point_2>`</a> 
+        Defaults to <a href="https://www.boost.org/doc/libs/release/libs/property_map/doc/identity_property_map.html">`boost::typed_identity_property_map<Traits::Point_2>`</a> 
         (for the case the input is points without mass).
 
 \tparam MassPMap a model of `ReadablePropertyMap` with value type `Traits::FT`
-        Defaults to <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/static_property_map.html">`boost::static_property_map<Traits::FT>`</a> 
+        Defaults to <a href="https://www.boost.org/doc/libs/release/libs/property_map/doc/static_property_map.html">`boost::static_property_map<Traits::FT>`</a> 
         (for the case the input is points without mass).
 
  */
