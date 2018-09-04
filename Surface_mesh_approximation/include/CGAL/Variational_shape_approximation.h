@@ -405,11 +405,11 @@ public:
 
   /*!
    * @brief Runs the partitioning and fitting processes on the whole surface.
-   * @param nb_iterations number of iterations.
+   * @param nb_of_iterations number of iterations.
    * @return total fitting error
    */
-  FT run(std::size_t nb_iterations = 1) {
-    for (std::size_t i = 0; i < nb_iterations; ++i) {
+  FT run(std::size_t nb_of_iterations = 1) {
+    for (std::size_t i = 0; i < nb_of_iterations; ++i) {
       // tag the whole surface
       BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
         put(m_fproxy_map, f, CGAL_VSA_INVALID_TAG);
@@ -480,17 +480,17 @@ public:
    * @brief Adds proxies to the worst regions one by one.
    * The re-fitting is performed after each proxy is inserted.
    * @param num_proxies number of proxies to be added
-   * @param nb_iterations number of re-fitting iterations
+   * @param nb_of_iterations number of re-fitting iterations
    * @return number of proxies added
    */
   std::size_t add_to_furthest_proxies(const std::size_t num_proxies,
-    const std::size_t nb_iterations = 5) {
+    const std::size_t nb_of_iterations = 5) {
     std::size_t num_added = 0;
     while (num_added < num_proxies) {
       if (!add_to_furthest_proxy())
         break;
       ++num_added;
-      run(nb_iterations);
+      run(nb_of_iterations);
     }
     return num_added;
   }
@@ -584,12 +584,12 @@ public:
    * The re-fitting is performed after each teleportation.
    * Here if we specify more than one proxy this means we teleport in a naive iterative fashion.
    * @param num_proxies number of proxies requested to teleport.
-   * @param num_iterations number of re-fitting iterations.
+   * @param nb_of_iterations number of re-fitting iterations.
    * @param if_force set `true` to force the teleportation (no merge test).
    * @return number of proxies teleported.
    */
   std::size_t teleport_proxies(const std::size_t num_proxies,
-    const std::size_t num_iterations = 5,
+    const std::size_t nb_of_iterations = 5,
     const bool if_force = false) {
     std::size_t num_teleported = 0;
     while (num_teleported < num_proxies) {
@@ -638,7 +638,7 @@ public:
 
       num_teleported++;
       // coarse re-fitting
-      run(num_iterations);
+      run(nb_of_iterations);
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
       std::cerr << "teleported" << std::endl;
@@ -1068,17 +1068,17 @@ private:
    * @note To ensure the randomness, call `std::srand()` beforehand.
    * @param max_nb_of_proxies maximum number of proxies, 
    * should be in range (nb_connected_components, num_faces(*m_ptm))
-   * @param num_iterations number of re-fitting iterations 
+   * @param nb_of_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
   std::size_t init_random(const std::size_t max_nb_of_proxies,
-    const std::size_t num_iterations) {
+    const std::size_t nb_of_iterations) {
     // pick from current non seed faces randomly
     std::vector<face_descriptor> picked_seeds;
     if (random_pick_non_seed_faces(max_nb_of_proxies - m_proxies.size(), picked_seeds)) {
       BOOST_FOREACH(face_descriptor f, picked_seeds)
         add_one_proxy_at(f);
-      run(num_iterations);
+      run(nb_of_iterations);
     }
 
     return m_proxies.size();
@@ -1088,14 +1088,14 @@ private:
    * @brief Incrementally initializes proxies to target number of proxies.
    * @param max_nb_of_proxies maximum number of proxies, 
    * should be in range (nb_connected_components, num_faces(*m_ptm))
-   * @param num_iterations number of re-fitting iterations 
+   * @param nb_of_iterations number of re-fitting iterations 
    * before each incremental proxy insertion
    * @return number of proxies initialized
    */
   std::size_t init_incremental(const std::size_t max_nb_of_proxies,
-    const std::size_t num_iterations) {
+    const std::size_t nb_of_iterations) {
     if (m_proxies.size() < max_nb_of_proxies)
-      add_to_furthest_proxies(max_nb_of_proxies - m_proxies.size(), num_iterations);
+      add_to_furthest_proxies(max_nb_of_proxies - m_proxies.size(), nb_of_iterations);
 
     return m_proxies.size();
   }
@@ -1104,12 +1104,12 @@ private:
    * @brief Hierarchically initializes proxies to target number of proxies.
    * @param max_nb_of_proxies maximum number of proxies, 
    * should be in range (nb_connected_components, num_faces(*m_ptm))
-   * @param num_iterations number of re-fitting iterations
+   * @param nb_of_iterations number of re-fitting iterations
    * before each hierarchical proxy insertion
    * @return number of proxies initialized
    */
   std::size_t init_hierarchical(const std::size_t max_nb_of_proxies,
-    const std::size_t num_iterations) {
+    const std::size_t nb_of_iterations) {
     while (m_proxies.size() < max_nb_of_proxies) {
       // try to double current number of proxies each time
       std::size_t target_px = m_proxies.size();
@@ -1119,7 +1119,7 @@ private:
         target_px *= 2;
       // add proxies by error diffusion
       add_proxies_error_diffusion(target_px - m_proxies.size());
-      run(num_iterations);
+      run(nb_of_iterations);
     }
 
     return m_proxies.size();
@@ -1132,12 +1132,12 @@ private:
    * @note To ensure the randomness, call `std::srand()` beforehand.
    * @param max_nb_of_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
    * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
-   * @param num_iterations number of re-fitting iterations 
+   * @param nb_of_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
   std::size_t init_random_error(const std::size_t max_nb_of_proxies,
     const FT min_error_drop,
-    const std::size_t num_iterations) {
+    const std::size_t nb_of_iterations) {
 
     const FT initial_err = compute_total_error();
     FT error_drop = min_error_drop * FT(2.0);
@@ -1154,7 +1154,7 @@ private:
 
       BOOST_FOREACH(face_descriptor f, picked_seeds)
         add_one_proxy_at(f);
-      const FT err = run(num_iterations);
+      const FT err = run(nb_of_iterations);
       error_drop = err / initial_err;
     }
 
@@ -1167,17 +1167,17 @@ private:
    * The first criterion met stops the seeding.
    * @param max_nb_of_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
    * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
-   * @param num_iterations number of re-fitting iterations 
+   * @param nb_of_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
   std::size_t init_incremental_error(const std::size_t max_nb_of_proxies,
     const FT min_error_drop,
-    const std::size_t num_iterations) {
+    const std::size_t nb_of_iterations) {
     const FT initial_err = compute_total_error();
     FT error_drop = min_error_drop * FT(2.0);
     while (m_proxies.size() < max_nb_of_proxies && error_drop > min_error_drop) {
       add_to_furthest_proxy();
-      const FT err = run(num_iterations);
+      const FT err = run(nb_of_iterations);
       error_drop = err / initial_err;
     }
 
@@ -1190,12 +1190,12 @@ private:
    * where the first criterion met stops the seeding.
    * @param max_nb_of_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
    * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
-   * @param num_iterations number of re-fitting iterations 
+   * @param nb_of_iterations number of re-fitting iterations 
    * @return number of proxies initialized
    */
   std::size_t init_hierarchical_error(const std::size_t max_nb_of_proxies,
     const FT min_error_drop,
-    const std::size_t num_iterations) {
+    const std::size_t nb_of_iterations) {
     const FT initial_err = compute_total_error();
     FT error_drop = min_error_drop * FT(2.0);
     while (m_proxies.size() < max_nb_of_proxies && error_drop > min_error_drop) {
@@ -1206,7 +1206,7 @@ private:
       else
         target_px *= 2;
       add_proxies_error_diffusion(target_px - m_proxies.size());
-      const FT err = run(num_iterations);
+      const FT err = run(nb_of_iterations);
       error_drop = err / initial_err;
     }
 

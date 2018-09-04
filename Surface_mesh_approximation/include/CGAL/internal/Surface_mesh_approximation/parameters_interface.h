@@ -4,7 +4,7 @@ CGAL_add_named_parameter(geom_traits_t, geom_traits, geom_traits)
 // approximation parameters
 CGAL_add_named_parameter(verbose_level_t, verbose_level, verbose_level)
 CGAL_add_named_parameter(seeding_method_t, seeding_method, seeding_method)
-CGAL_add_named_parameter(max_nb_proxies_t, max_nb_of_proxies, max_nb_of_proxies)
+CGAL_add_named_parameter(max_nb_of_proxies_t, max_nb_of_proxies, max_nb_of_proxies)
 CGAL_add_named_parameter(min_error_drop_t, min_error_drop, min_error_drop)
 CGAL_add_named_parameter(nb_of_iterations_t, nb_of_iterations, nb_of_iterations)
 CGAL_add_named_parameter(nb_of_relaxations_t, nb_of_relaxations, nb_of_relaxations)
