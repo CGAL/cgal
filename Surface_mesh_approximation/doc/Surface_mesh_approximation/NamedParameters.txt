@@ -72,13 +72,13 @@ typename CGAL::Kernel_traits<
 \cgalNPBegin{verbose_level} \anchor VSA_verbose_level
 set the verbose level of the function.\n
 \b Type : \c CGAL::VSA::Verbose_level \n
-\b Default value is `CGAL::VSA::Silent`
+\b Default value is `CGAL::VSA::SILENT`
 \cgalNPEnd
 
 \cgalNPBegin{seeding_method} \anchor VSA_seeding_method
 the selection of seeding method.\n
 \b Type : \c CGAL::VSA::Seeding_method \n
-\b Default value is `CGAL::VSA::Seeding_method::Hierarchical`
+\b Default value is `CGAL::VSA::Seeding_method::HIERARCHICAL`
 \cgalNPEnd
 
 \cgalNPBegin{max_nb_of_proxies} \anchor VSA_max_nb_of_proxies
@@ -111,7 +111,7 @@ the number of partitioning and fitting iterations after seeding.\n
 \cgalNPTableBegin
 
 \cgalNPBegin{subdivision_ratio} \anchor VSA_subdivision_ratio
-the chord subdivision ratio threshold used by the meshing step.\n
+the chord subdivision ratio threshold used in the meshing step.\n
 \b Type : `GeomTraits::FT` \n
 \b Default value is `5.0`
 \cgalNPEnd

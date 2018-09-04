@@ -23,11 +23,11 @@ namespace VSA {
 /// @brief Verbose level enumeration.
 enum Verbose_level {
   /// Silent
-  Silent,
+  SILENT,
   /// Main steps
-  Main_steps,
+  MAIN_STEPS,
   /// Verbose
-  Verbose
+  VERBOSE
 };
 
 // the named parameter header being not documented the doc is put here for now
@@ -81,9 +81,9 @@ unspecified_type all_default();
  *  \cgalParamBegin{relative_to_chord} if `true` the `subdivision_ratio` is the ratio of the
  *    furthest vertex distance to the chord length, otherwise is the average edge length.
  *  \cgalParamEnd
- *  \cgalParamBegin{with_dihedral_angle} if `true` the `subdivision_ratio` is weighted by dihedral angle, `false` otherwise.
+ *  \cgalParamBegin{with_dihedral_angle} if set to `true` the `subdivision_ratio` is weighted by dihedral angle.
  *  \cgalParamEnd
- *  \cgalParamBegin{optimize_anchor_location} if `true` optimize the anchor locations, `false` otherwise.
+ *  \cgalParamBegin{optimize_anchor_location} if set to `true`, optimize the anchor locations.
  *  \cgalParamEnd
  *  \cgalParamBegin{pca_plane} set `true` if use PCA plane fitting, otherwise use the default area averaged plane parameters.
  *  \cgalParamEnd
@@ -120,9 +120,9 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
   typedef typename L21_approx::Error_metric L21_metric;
 
   const Verbose_level vl = choose_param(
-    get_param(np, vsa_np::verbose_level), CGAL::VSA::Silent);
+    get_param(np, vsa_np::verbose_level), CGAL::VSA::SILENT);
 
-  if (vl == CGAL::VSA::Main_steps || vl == CGAL::VSA::Verbose) {
+  if (vl == CGAL::VSA::MAIN_STEPS || vl == CGAL::VSA::VERBOSE) {
     std::cout << "Variational shape approximation:"
       << "\n#f " << num_faces(tm)
       << "\n#v " << num_vertices(tm) << std::endl;
@@ -133,16 +133,16 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
 
   // hierarchical seeding by default
   CGAL::VSA::Seeding_method method = choose_param(
-    get_param(np, vsa_np::seeding_method), CGAL::VSA::Hierarchical);
+    get_param(np, vsa_np::seeding_method), CGAL::VSA::HIERARCHICAL);
   boost::optional<std::size_t> max_nb_of_proxies = choose_param(
     get_param(np, vsa_np::max_nb_of_proxies), boost::optional<std::size_t>());
   boost::optional<FT> min_error_drop = choose_param(
     get_param(np, vsa_np::min_error_drop), boost::optional<FT>());
   std::size_t nb_of_relaxations = choose_param(get_param(np, vsa_np::nb_of_relaxations), 5);
 
-  if (vl == CGAL::VSA::Verbose) {
-    std::cout << (method == CGAL::VSA::Random ? "Random" :
-      (method == CGAL::VSA::Incremental ? "Incremental" : "Hierarchical")) << " seeding.";
+  if (vl == CGAL::VSA::VERBOSE) {
+    std::cout << (method == CGAL::VSA::RANDOM ? "Random" :
+      (method == CGAL::VSA::INCREMENTAL ? "Incremental" : "Hierarchical")) << " seeding.";
     std::cout << "\n#max_nb_of_proxies = " << *max_nb_of_proxies
       << "\n#min_error_drop = " << *min_error_drop
       << "\nnb_of_relaxations " << nb_of_relaxations << std::endl;
@@ -150,7 +150,7 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
 
   approx.initialize_seeds(np);
 
-  if (vl == CGAL::VSA::Main_steps || vl == CGAL::VSA::Verbose)
+  if (vl == CGAL::VSA::MAIN_STEPS || vl == CGAL::VSA::VERBOSE)
     std::cout << "Seeding done." << std::endl;
 
   // default number of iterations
@@ -160,12 +160,12 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
   const std::size_t nb_of_iterations = choose_param(
     get_param(np, vsa_np::nb_of_iterations), nb_of_iterations_default);
 
-  if (vl == CGAL::VSA::Verbose)
+  if (vl == CGAL::VSA::VERBOSE)
     std::cout << "\n#nb_of_iterations = " << nb_of_iterations << std::endl;
 
   approx.run(nb_of_iterations);
 
-  if (vl == CGAL::VSA::Main_steps || vl == CGAL::VSA::Verbose) {
+  if (vl == CGAL::VSA::MAIN_STEPS || vl == CGAL::VSA::VERBOSE) {
     std::cout << "Approximation done."
       << "\n#proxies = " << approx.proxies_size() << std::endl;
   }
@@ -180,7 +180,7 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
   vsa_np::face_proxy_map_helper(approx, fproxymap);
 
   if (!boost::is_same<Face_proxy_map, vsa_np::dummy_output_t>::value
-    && (vl == CGAL::VSA::Main_steps || vl == CGAL::VSA::Verbose))
+    && (vl == CGAL::VSA::MAIN_STEPS || vl == CGAL::VSA::VERBOSE))
     std::cout << "Filling face proxy map done." << std::endl;
 
   // get proxies
@@ -193,7 +193,7 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
   vsa_np::proxies_helper(approx, pxies_out_itr);
 
   if (!boost::is_same<Proxies_output_iterator, vsa_np::dummy_output_t>::value
-    && (vl == CGAL::VSA::Main_steps || vl == CGAL::VSA::Verbose))
+    && (vl == CGAL::VSA::MAIN_STEPS || vl == CGAL::VSA::VERBOSE))
     std::cout << "Get proxies done." << std::endl;
 
   // meshing
@@ -209,7 +209,7 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
   bool is_manifold = false;
   if (!boost::is_same<Anchors_output_iterator, vsa_np::dummy_output_t>::value
     || !boost::is_same<Triangles_output_iterator, vsa_np::dummy_output_t>::value) {
-    if (vl == CGAL::VSA::Verbose) {
+    if (vl == CGAL::VSA::VERBOSE) {
       const FT subdivision_ratio = choose_param(get_param(np, vsa_np::subdivision_ratio), FT(5.0));
       const bool relative_to_chord = choose_param(get_param(np, vsa_np::relative_to_chord), false);
       const bool with_dihedral_angle = choose_param(get_param(np, vsa_np::with_dihedral_angle), false);
@@ -225,7 +225,7 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
 
     is_manifold = approx.extract_mesh(np);
 
-    if (vl == CGAL::VSA::Main_steps || vl == CGAL::VSA::Verbose)
+    if (vl == CGAL::VSA::MAIN_STEPS || vl == CGAL::VSA::VERBOSE)
       std::cout << "Meshing done.\n"
         << (is_manifold ? "Can" : "Cannot") << " be built into 2-manifold surface." << std::endl;
   }
@@ -236,7 +236,7 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
   vsa_np::anchors_helper(approx, apts_out_itr);
 
   if (!boost::is_same<Anchors_output_iterator, vsa_np::dummy_output_t>::value
-    && (vl == CGAL::VSA::Main_steps || vl == CGAL::VSA::Verbose))
+    && (vl == CGAL::VSA::MAIN_STEPS || vl == CGAL::VSA::VERBOSE))
     std::cout << "Get anchors done." << std::endl;
 
   // get indexed triangles
@@ -245,7 +245,7 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
   vsa_np::triangles_helper(approx, tris_out_itr);
 
   if (!boost::is_same<Triangles_output_iterator, vsa_np::dummy_output_t>::value
-    && (vl == CGAL::VSA::Main_steps || vl == CGAL::VSA::Verbose))
+    && (vl == CGAL::VSA::MAIN_STEPS || vl == CGAL::VSA::VERBOSE))
     std::cout << "Get indexed triangles done." << std::endl;
 
   return is_manifold;

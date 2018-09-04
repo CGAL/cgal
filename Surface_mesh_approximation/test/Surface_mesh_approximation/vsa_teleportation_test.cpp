@@ -67,7 +67,7 @@ int main()
 
   std::cout << "Random seeding by number." << std::endl;
   std::srand(static_cast<unsigned int>(std::time(0)));
-  approx.initialize_seeds(CGAL::VSA::parameters::seeding_method(CGAL::VSA::Random)
+  approx.initialize_seeds(CGAL::VSA::parameters::seeding_method(CGAL::VSA::RANDOM)
     .max_nb_of_proxies(50));
   if (approx.proxies_size() != 50)
     return EXIT_FAILURE;

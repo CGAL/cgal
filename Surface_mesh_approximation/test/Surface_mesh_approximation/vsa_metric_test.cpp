@@ -99,7 +99,7 @@ int main()
     error_metric);
 
   std::cout << "random seeding and run" << std::endl;
-  approx.initialize_seeds(CGAL::VSA::parameters::seeding_method(CGAL::VSA::Random)
+  approx.initialize_seeds(CGAL::VSA::parameters::seeding_method(CGAL::VSA::RANDOM)
     .max_nb_of_proxies(20));
   approx.run(20);
   if (approx.proxies_size() != 20)

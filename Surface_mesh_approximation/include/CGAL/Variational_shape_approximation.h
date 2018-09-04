@@ -51,16 +51,17 @@ namespace VSA {
 /// @brief Seeding method enumeration for Variational Shape Approximation algorithm.
 enum Seeding_method {
   /// Random seeding
-  Random,
+  RANDOM,
   /// Incremental seeding
-  Incremental,
+  INCREMENTAL,
   /// Hierarchical seeding
-  Hierarchical
+  HIERARCHICAL
 };
 } // namespace VSA
 
 /// \ingroup PkgTSMA
-/// @brief Main class for Variational Shape Approximation algorithm described in \cgalCite{cgal:cad-vsa-04}.
+/// @brief Main class for Variational Shape Approximation algorithm.
+/// It is based on \cgalCite{cgal:cad-vsa-04}. For simple use cases, the function `CGAL::VSA::approximate_mesh()` might be sufficient.
 /// @tparam TriangleMesh a model of `FaceListGraph`
 /// @tparam VertexPointMap a `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and `GeomTraits::Point_3` as value type
 /// @tparam ErrorMetricProxy a model of `ErrorMetricProxy`
@@ -343,7 +344,7 @@ public:
     namespace vsa_np = CGAL::VSA::internal_np;
 
     const CGAL::VSA::Seeding_method method = choose_param(
-      get_param(np, vsa_np::seeding_method), CGAL::VSA::Hierarchical);
+      get_param(np, vsa_np::seeding_method), CGAL::VSA::HIERARCHICAL);
     const boost::optional<std::size_t> max_nb_of_proxies = choose_param(
       get_param(np, vsa_np::max_nb_of_proxies), boost::optional<std::size_t>());
     const boost::optional<FT> min_error_drop = choose_param(
@@ -364,11 +365,11 @@ public:
       if (max_nb_of_proxies && *max_nb_of_proxies < nb_px && *max_nb_of_proxies > 0)
         max_nb_px_adjusted = *max_nb_of_proxies;
       switch (method) {
-        case VSA::Random:
+        case VSA::RANDOM:
           return init_random_error(max_nb_px_adjusted, *min_error_drop, nb_of_relaxations);
-        case VSA::Incremental:
+        case VSA::INCREMENTAL:
           return init_incremental_error(max_nb_px_adjusted, *min_error_drop, nb_of_relaxations);
-        case VSA::Hierarchical:
+        case VSA::HIERARCHICAL:
           return init_hierarchical_error(max_nb_px_adjusted, *min_error_drop, nb_of_relaxations);
         default:
           return 0;
@@ -377,11 +378,11 @@ public:
     else if (max_nb_of_proxies && *max_nb_of_proxies < nb_px && *max_nb_of_proxies > 0) {
       // no valid min_error_drop provided, only max_nb_of_proxies
       switch (method) {
-        case VSA::Random:
+        case VSA::RANDOM:
           return init_random(*max_nb_of_proxies, nb_of_relaxations);
-        case VSA::Incremental:
+        case VSA::INCREMENTAL:
           return init_incremental(*max_nb_of_proxies, nb_of_relaxations);
-        case VSA::Hierarchical:
+        case VSA::HIERARCHICAL:
           return init_hierarchical(*max_nb_of_proxies, nb_of_relaxations);
         default:
           return 0;
@@ -391,11 +392,11 @@ public:
       // both parameters are unspecified or out of range
       const FT e(0.1);
       switch (method) {
-        case VSA::Random:
+        case VSA::RANDOM:
           return init_random_error(nb_px, e, nb_of_relaxations);
-        case VSA::Incremental:
+        case VSA::INCREMENTAL:
           return init_incremental_error(nb_px, e, nb_of_relaxations);
-        case VSA::Hierarchical:
+        case VSA::HIERARCHICAL:
           return init_hierarchical_error(nb_px, e, nb_of_relaxations);
         default:
           return 0;
@@ -422,13 +423,13 @@ public:
   }
 
   /*!
-   * @brief Calls `run` while error decrease is greater than the threshold.
+   * @brief Calls `run` while error decrease is greater than `cvg_threshold`.
    * @param cvg_threshold the percentage of error change between two successive runs,
    * should be in range (0, 1).
    * @param max_iterations maximum number of iterations allowed
    * @param avg_interval size of error average interval to have smoother convergence curve,
    * if 0 is assigned, 1 is used instead.
-   * @return `true` if converged before hitting the maximum iterations, `false` otherwise
+   * @return `true` if converged before hitting the maximum iterations.
    */
   bool run_to_convergence(const FT cvg_threshold,
     const std::size_t max_iterations = 100,
@@ -697,7 +698,7 @@ public:
    * @param if_test set `true` to activate the merge test.
    * The merge test is considered successful if the merged error change
    * is lower than half of the maximum proxy error.
-   * @return `true` if best merge pair found, `false` otherwise.
+   * @return `true` if best merge pair found, and `false` otherwise.
    */
   bool find_best_merge(std::size_t &px_tobe_enlarged,
     std::size_t &px_tobe_merged,
@@ -764,7 +765,7 @@ public:
    * @param px_idx proxy index.
    * @param n number of split sections.
    * @param nb_of_relaxations number of relaxation on the confined proxy area. (DEFINE CONFINED)
-   * @return `true` if split succeeds, `false` otherwise.
+   * @return `true` if split succeeds, and `false` otherwise.
    */
   bool split(const std::size_t px_idx,
     const std::size_t n = 2,
@@ -823,7 +824,7 @@ public:
    * @tparam NamedParameters a sequence of \ref vsa_namedparameters
    *
    * @param np optional sequence of \ref vsa_namedparameters among the ones listed below
-   * @return `true` if the extracted surface mesh is manifold, `false` otherwise.
+   * @return `true` if the extracted surface mesh is manifold, and `false` otherwise.
    *
    * \cgalNamedParamsBegin{Meshing Named Parameters}
    *   \cgalParamBegin{subdivision_ratio} chord subdivision ratio threshold to the chord length or average edge length.
@@ -831,9 +832,9 @@ public:
    *   \cgalParamBegin{relative_to_chord} set `true` if the subdivision_ratio is the ratio of the
    *     furthest vertex distance to the chord length, or to the average edge length otherwise.
    *   \cgalParamEnd
-   *   \cgalParamBegin{with_dihedral_angle}  set `true` if subdivision_ratio is weighted by dihedral angle, `false` otherwise.
+   *   \cgalParamBegin{with_dihedral_angle}  set `true` if subdivision_ratio is weighted by dihedral angle.
    *   \cgalParamEnd
-   *   \cgalParamBegin{optimize_anchor_location}  set `true` if optimize the anchor locations, `false` otherwise.
+   *   \cgalParamBegin{optimize_anchor_location}  if set to `true`, optimize the anchor locations.
    *   \cgalParamEnd
    *   \cgalParamBegin{pca_plane}  set `true` if use PCA plane fitting, otherwise use the default area averaged plane parameters.
    *   \cgalParamEnd
@@ -1299,7 +1300,7 @@ private:
 
   /*!
    * @brief Adds a proxy seed at the face with the maximum fitting error.
-   * @return `true` add successfully, `false` otherwise
+   * @return `true` if add is successfully, and `false` otherwise
    */
   bool add_to_furthest_proxy() {
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
@@ -1409,7 +1410,7 @@ private:
    * @brief Picks a number of non-seed faces into an empty vector randomly.
    * @param nb_requested requested number of faces
    * @param[out] picked_faces shuffled faces vector
-   * @return `true` if requested number of faces are selected, `false` otherwise
+   * @return `true` if the requested number of faces are selected, and `false` otherwise
    */
   bool random_pick_non_seed_faces(const std::size_t nb_requested,
     std::vector<face_descriptor> &picked_faces) {
@@ -1561,7 +1562,7 @@ private:
    * @param subdivision_ratio boundary chord approximation recursive split creterion
    * @param relative_to_chord set `true` if the subdivision_ratio is relative to the chord length (relative sense),
    * otherwise it's relative to the average edge length (absolute sense).
-   * @param with_dihedral_angle set `true` if add dihedral angle weight to the distance, `false` otherwise
+   * @param with_dihedral_angle if set to `true`, add dihedral angle weight to the distance.
    */
   void find_edges(const FT subdivision_ratio,
     const bool relative_to_chord,
@@ -1855,7 +1856,7 @@ private:
    * @param subdivision_ratio the chord recursive split error threshold
    * @param relative_to_chord set `true` if the subdivision_ratio is relative to the the chord length (relative sense),
    * otherwise it's relative to the average edge length (absolute sense).
-   * @param with_dihedral_angle set `true` if add dihedral angle weight to the distance, `false` otherwise
+   * @param with_dihedral_angle if set to `true` add dihedral angle weight to the distance.
    * @return the number of anchors of the chord apart from the first one
    */
   std::size_t subdivide_chord(
@@ -2045,7 +2046,7 @@ private:
    * if the indexed triangle surface is manifold.
    * @tparam PolyhedronSurface should be `CGAL::Polyhedron_3`
    * @param[out] poly input polyhedorn mesh
-   * @return `true` if build manifold surface successfully, `false` otherwise
+   * @return `true` if build manifold surface successfully, and `false` otherwise
    */
   template <typename PolyhedronSurface>
   bool build_polyhedron_surface(PolyhedronSurface &poly) {

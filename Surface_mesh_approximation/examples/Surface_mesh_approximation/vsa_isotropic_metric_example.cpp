@@ -100,7 +100,7 @@ int main()
     error_metric);
 
   // approximates via 200 proxies and 30 iterations
-  approx.initialize_seeds(CGAL::VSA::parameters::seeding_method(CGAL::VSA::Hierarchical)
+  approx.initialize_seeds(CGAL::VSA::parameters::seeding_method(CGAL::VSA::HIERARCHICAL)
     .max_nb_of_proxies(200));
   approx.run(30);
 
