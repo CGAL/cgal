@@ -264,6 +264,19 @@ public:
     return m_matrix;
   }
 
+  /// Return the internal matrix, with type `EigenType`.
+  EigenType& eigen_object()
+  {
+    if(!m_is_already_built)
+      assemble_matrix();
+
+    // turns the matrix into compressed mode:
+    //  -> release some memory
+    //  -> required for some external solvers
+    m_matrix.makeCompressed();
+    return m_matrix;
+  }
+  
 private:
   /// Eigen_sparse_matrix cannot be copied (yet)
   Eigen_sparse_matrix(const Eigen_sparse_matrix& rhs);

@@ -514,6 +514,9 @@ namespace Heat_method_3 {
       }
       int m = static_cast<int>(num_vertices(tm));
       dimension = m;
+
+      m_mass_matrix.eigen_object().resize(m,m);
+      m_cotan_matrix.eigen_object().resize(m,m);
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
       //Go through each face on the mesh
       {
