@@ -7,7 +7,7 @@
 The notion of named parameters was introduced in the BGL.
 Details can be found from: http://www.boost.org/libs/graph/doc/bgl_named_params.html.
 Named parameters enable the user to specify only those parameters which are really needed, by name, making the parameter ordering not required.
-See also \ref namedparameters introduced in the polygon mesh processing package.
+See also \ref bgl_namedparameters.
 
 The sequence of named parameters should start with `CGAL::parameters::`.
 The function `#all_default()` can be used to indicate
@@ -21,17 +21,17 @@ See below a sample call of a function that uses the optional BGL named parameter
 \code
 // tm: input triangle mesh to be approximated
 // method: seeding initialization method
-// nb_proxies: number of proxies used to approximate the input mesh
-// nb_iterations: number of relaxation iterations after initialization
+// number_of_proxies: number of proxies used to approximate the input mesh
+// number_of_iterations: number of relaxation iterations after initialization
 // anchors: output anchor points
 // triangles: output triplets of indexed triangles
 
 CGAL::VSA::approximate_mesh(tm,
-    CGAL::parameters::seeding_method(method).
-        max_nb_of_proxies(nb_proxies).
-        nb_of_iterations(nb_iterations).
-        anchors(std::back_inserter(anchors)).
-        triangles(std::back_inserter(triangles)));
+  CGAL::parameters::seeding_method(method).
+    max_number_of_proxies(number_of_proxies).
+    number_of_iterations(number_of_iterations).
+    anchors(std::back_inserter(anchors)).
+    triangles(std::back_inserter(triangles)));
 \endcode
 
 \cgalHeading{List of Available Named Parameters}
@@ -81,7 +81,7 @@ the selection of seeding method.\n
 \b Default value is `CGAL::VSA::Seeding_method::HIERARCHICAL`
 \cgalNPEnd
 
-\cgalNPBegin{max_nb_of_proxies} \anchor VSA_max_nb_of_proxies
+\cgalNPBegin{max_number_of_proxies} \anchor VSA_max_number_of_proxies
 the maximum number of proxies used to approximate the input mesh.\n
 \b Type : `boost::optional<std::size_t>` \n
 \b Default value is `boost::none`
@@ -93,16 +93,16 @@ the minimum total error drop to approximate the input mesh.\n
 \b Default value is `0.1`
 \cgalNPEnd
 
-\cgalNPBegin{nb_of_relaxations} \anchor VSA_nb_of_relaxations
+\cgalNPBegin{number_of_relaxations} \anchor VSA_number_of_relaxations
 the number of relaxation iterations interleaved within seeding.\n
 \b Type : `std::size_t` \n
 \b Default value is `5`
 \cgalNPEnd
 
-\cgalNPBegin{nb_of_iterations} \anchor VSA_nb_of_iterations
+\cgalNPBegin{number_of_iterations} \anchor VSA_number_of_iterations
 the number of partitioning and fitting iterations after seeding.\n
 \b Type : `std::size_t` \n
-\b Default value is `std::min(std::max(nb_of_faces / max_nb_of_proxies, 20), 60)`
+\b Default value is `std::min(std::max(number_of_faces / max_number_of_proxies, 20), 60)`
 \cgalNPEnd
 
 \cgalNPTableEnd
