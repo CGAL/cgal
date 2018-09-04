@@ -651,10 +651,11 @@ public:
 
   /*!
    * @brief Merges two specified adjacent regions.
-   * The overall re-fitting is not performed and the proxy map is maintained.
-   * @pre two proxies must be adjacent, and px0 < px1 < proxies.size()
-   * @param px0 the enlarged proxy
-   * @param px1 the merged proxy
+   * The overall re-fitting is not performed and the proxy index map is maintained.
+   * @pre two proxies must be adjacent, and 0 <= px0 < px1 < proxies.size()
+   * @param px0 the kept proxy index
+   * @param px1 the merged and erased proxy index,
+   * proxies with greater indeies are decreased by 1 to fill the gap
    * @return change of error
    */
   FT merge(const std::size_t px0, const std::size_t px1) {
@@ -692,27 +693,23 @@ public:
    * and finds the best pair to merge.
    * @note The <b>best</b> is defined as the minimum merged sum error
    * <b>change</b> (increase or decrease) among all pairs.
-   * @param[out] px_tobe_enlarged proxy index to be enlarged (FIX TERM ENLARGED, NOT DEFINED)
-   * @param[out] px_tobe_merged proxy index to be merged,
-   * guaranteed to be greater than <em>px_tobe_enlarged</em>.
+   * @param[out] px0 smaller proxy index of the found merge pair
+   * @param[out] px1 greater proxy index of the found merge pair
    * @param if_test set `true` to activate the merge test.
-   * The merge test is considered successful if the merged error change
+   * The merge test is considered successful or worthwile if the merged error change
    * is lower than half of the maximum proxy error.
    * @return `true` if best merge pair found, and `false` otherwise.
    */
-  bool find_best_merge(std::size_t &px_tobe_enlarged,
-    std::size_t &px_tobe_merged,
-    const bool if_test) {
-    typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
-    typedef std::pair<std::size_t, std::size_t> ProxyPair;
-    typedef std::set<ProxyPair> MergedPair;
+  bool find_best_merge(std::size_t &px0, std::size_t &px1, const bool if_test) {
+    typedef std::pair<std::size_t, std::size_t> Proxy_pair;
+    typedef std::set<Proxy_pair> Pair_set;
 
     std::vector<std::list<face_descriptor> > px_faces(m_proxies.size());
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
       px_faces[get(m_fproxy_map, f)].push_back(f);
 
     // find best merge
-    MergedPair merged_set;
+    Pair_set merged_set;
     FT min_error_change = FT(0.0);
     bool first_merge = true;
     BOOST_FOREACH(edge_descriptor e, edges(*m_ptm)) {
@@ -724,22 +721,22 @@ public:
         continue;
       if (pxi > pxj)
         std::swap(pxi, pxj);
-      if (merged_set.find(ProxyPair(pxi, pxj)) != merged_set.end())
+      if (merged_set.find(Proxy_pair(pxi, pxj)) != merged_set.end())
         continue;
 
-      merged_set.insert(ProxyPair(pxi, pxj));
+      merged_set.insert(Proxy_pair(pxi, pxj));
       // simulated merge
       std::list<face_descriptor> merged_patch(px_faces[pxi]);
       BOOST_FOREACH(face_descriptor f, px_faces[pxj])
         merged_patch.push_back(f);
-      Proxy_wrapper pxw_tmp = fit_proxy_from_patch(merged_patch, CGAL_VSA_INVALID_TAG);
+      const Proxy_wrapper pxw_tmp = fit_proxy_from_patch(merged_patch, CGAL_VSA_INVALID_TAG);
 
       const FT error_change = pxw_tmp.err - (m_proxies[pxi].err + m_proxies[pxj].err);
       if (first_merge || error_change < min_error_change) {
         first_merge = false;
         min_error_change = error_change;
-        px_tobe_enlarged = pxi;
-        px_tobe_merged = pxj;
+        px0 = pxi;
+        px1 = pxj;
       }
     }
 
@@ -761,10 +758,11 @@ public:
   }
 
   /*!
-   * @brief Splits one proxy area via N-section (by default bisection).
+   * @brief Splits within a specified proxy area via N-section (by default bisection),
+   * other regions are not affected.
    * @param px_idx proxy index.
    * @param n number of split sections.
-   * @param nb_of_relaxations number of relaxation on the confined proxy area. (DEFINE CONFINED)
+   * @param nb_of_relaxations number of relaxations within the proxy area <em>px_idx</em> after the split
    * @return `true` if split succeeds, and `false` otherwise.
    */
   bool split(const std::size_t px_idx,
@@ -1345,7 +1343,7 @@ private:
    * 3. Sum the proxy error.
    * @tparam FacePatch container with `face_descriptor` as data type
    * @param px_patch proxy patch container
-   * @param px_idx proxy index
+   * @param px_idx the assigned proxy index
    * @return fitted wrapped proxy
    */
   template<typename FacePatch>

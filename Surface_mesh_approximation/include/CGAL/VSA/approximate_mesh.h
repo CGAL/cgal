@@ -55,7 +55,7 @@ unspecified_type all_default();
  * @param np optional sequence of \ref vsa_namedparameters among the ones listed below
  * @return `true` if the indexed triangles represent a 2-manifold, oriented surface mesh, and `false` otherwise. 
  *
- * \cgalNamedParamsBegin{Algorithm Named Parameters}
+ * \cgalNamedParamsBegin{Approximation Named Parameters}
  *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of Kernel.
  *    Exact constructions kernels are not supported by this function.
  *  \cgalParamEnd
