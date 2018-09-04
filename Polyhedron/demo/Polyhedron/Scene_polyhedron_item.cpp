@@ -1797,8 +1797,8 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
 
   data.categories.append(std::pair<QString,int>(QString("Properties"),9));
   data.categories.append(std::pair<QString,int>(QString("Faces"),10));
-  data.categories.append(std::pair<QString,int>(QString("Edges"),6));
-  data.categories.append(std::pair<QString,int>(QString("Angles"),3));
+  data.categories.append(std::pair<QString,int>(QString("Edges"),7));
+  data.categories.append(std::pair<QString,int>(QString("Angles"),2));
 
 
   //titles
