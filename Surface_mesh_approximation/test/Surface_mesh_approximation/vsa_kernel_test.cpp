@@ -10,7 +10,7 @@
 
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/approximate_mesh.h>
+#include <CGAL/VSA/approximate_mesh.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
 typedef CGAL::Simple_cartesian<double> Sckernel;
