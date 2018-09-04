@@ -448,6 +448,8 @@ private:
   QLineEdit operationSearchBar;
   QWidgetAction* searchAction;
   QString def_save_dir;
+  int last_r, last_c;
+  std::pair<int,int> getSubViewerCoords();
   
 private Q_SLOTS:
   void on_actionAdd_Viewer_triggered();

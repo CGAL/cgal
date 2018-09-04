@@ -20,7 +20,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <layout class="QHBoxLayout" name="viewerLayout">
+     <layout class="QHBoxLayout" name="hl" stretch="1,0">
       <item>
        <widget class="Viewer" name="viewer" native="true">
         <property name="sizePolicy">
@@ -30,6 +30,23 @@
          </sizepolicy>
         </property>
        </widget>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="viewerLayout">
+        <item row="0" column="0">
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
@@ -41,7 +58,7 @@
      <x>0</x>
      <y>0</y>
      <width>978</width>
-     <height>20</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -297,8 +314,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>541</width>
-            <height>176</height>
+            <width>536</width>
+            <height>174</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -512,8 +529,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="Polyhedron_3.qrc"/>
-  <include location="Polyhedron_3.qrc"/>
   <include location="Polyhedron_3.qrc"/>
   <include location="Polyhedron_3.qrc"/>
  </resources>
