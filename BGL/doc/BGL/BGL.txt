@@ -640,7 +640,7 @@ Seam meshes are for example used in Chapter \ref PkgSurfaceParameterizationSumma
 to parameterize a topological sphere by first virtually cutting it into a topological
 disk.
 
-\section PMPPartitioning Graph Partitioning
+\section BGLPartitioning Graph Partitioning
 
 For algorithms that operate locally, partitioning is often an easy way to parallelize
 the algorithm at little cost.
