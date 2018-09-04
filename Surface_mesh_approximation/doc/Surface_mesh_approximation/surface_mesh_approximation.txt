@@ -169,7 +169,11 @@ Free function with \ref vsa_namedparameters options.
 - `CGAL::VSA::approximate_mesh()`: given a triangle mesh, approximate the geometry with default \f$ \mathcal{L}^{2,1} \f$ metric.
 
 Class interface:
-- `CGAL::Variational_shape_approximation`: allowing more customization of the proxy, metric and approximation process.
+- `CGAL::Variational_shape_approximation`: allowing more customization of the proxy, metric and approximation process. As shown in Figure \cgalFigureRef{workflow}, typical calling order of the approximation and meshing process is:
+  - \link CGAL::Variational_shape_approximation::initialize_seeds initialize seeds \endlink
+  - \link CGAL::Variational_shape_approximation::run run clustering iterations \endlink
+  - \link CGAL::Variational_shape_approximation::extract_mesh extract mesh \endlink
+  - \link CGAL::Variational_shape_approximation::output take outputs \endlink
 
 One thing to note is that some parameters depend heavily on the input, like the number of proxies. Although we can approximate a geometry with any number of proxies regardless of the quality, it is not recommended to use all the defaults without any consideration of the input.
 
