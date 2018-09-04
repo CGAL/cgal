@@ -335,7 +335,7 @@ public:
 	}
 
 
-	bool has_vertex(const Face_handle f, const Vertex_handle v, const int i) const {
+	bool has_vertex(const Face_handle f, const Vertex_handle v, int& i) const {
 		if (f->vertex(0) == v) {
 			i = 0;
 			return true;
