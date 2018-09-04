@@ -463,6 +463,14 @@ insert(const Point  &p,  Face_handle hint) {
 		}
 
 		if (lt == Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::VERTEX) {
+			for (int i = 0; i < dummy_points.size(); i++) {
+				if (dummy_points[i].is_inserted()) {
+					if (dummy_points[i]() == p) {
+						dummy_points[i].set_inserted(false);
+						return dummy_points[i].vertex();
+					}
+				}
+			}
 			return Vertex_handle();
 		}
 
