@@ -237,6 +237,19 @@ Some point sets do not admit a triangulation of \f$\mathcal M\f$.
 For instance, a single point does not define a triangulation of \f$\mathcal M\f$, as the result
 would not be a simplicial complex.
 \cgalModifEnd
+
+\cgalFigureAnchor{P4HNonSimplicialExample}
+<center>
+  <img src="non-triangulation.svg" style="max-width:45%; width=45%; display: inline-block;"/>
+</center>
+\cgalFigureCaptionBegin{P4HNonSimplicialExample}
+  Example of a non-simplicial decomposition of the Bolza surface. Note that with the three 
+  points in the central octagon, we obtain a decomposition that is <b>not</b> a triangulation,
+  since it is non-simplicial. On the figure a few cycles of length 2 are shown in color. Such
+  cycles are double edges in the triangulation. Note also the pink edge between the two blue 
+  vertices: it corresponds to a loop on the surface.
+\cgalFigureCaptionEnd
+
 For this reason, we initialize a triangulation of \f$\mathcal M\f$ with a predetermined set of 
 14 points, called <i>dummy points</i>, whose triangulation in \f$\mathcal M\f$ is a simplicial 
 complex and has the empty circle property. The set of dummy points has been proposed in 
