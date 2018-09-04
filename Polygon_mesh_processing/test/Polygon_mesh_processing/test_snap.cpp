@@ -10,6 +10,7 @@
 #include <iostream>
 #include <fstream>
 #include <set>
+#include <vector>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 namespace params = CGAL::parameters;
@@ -26,6 +27,7 @@ void test()
 {
   typedef typename Kernel::FT                                         FT;
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor       vertex_descriptor;
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor     halfedge_descriptor;
 
   Mesh fg_source, fg_target;
 
@@ -39,6 +41,10 @@ void test()
     std::cerr << "Error: cannot open source mesh\n";
     return;
   }
+
+  std::vector<halfedge_descriptor> border_vertices;
+  PMP::border_halfedges(fg_source, std::back_inserter(border_vertices));
+  std::cout << border_vertices.size() << " border vertices" << std::endl;
 
   // one empty mesh
   res = PMP::internal::snap_border(fg_source, fg_target);
@@ -62,13 +68,13 @@ void test()
   std::cout << "Moved: " << res << " vertices" << std::endl;
   assert(res == 0);
 
-  // this epsilon value is too big, and the snapping is rejected
+  // this epsilon value is too big to get a 1-to-1 snapping
   std::cout << "*********************** EPS = 0.1 *************** " << std::endl;
   fg_source_cpy = fg_source;
   res = PMP::internal::snap_border(fg_source_cpy, fg_target, 0.1,
                                    params::geom_traits(Kernel()), params::all_default());
   std::cout << "Moved: " << res << " vertices" << std::endl;
-  assert(res == 0);
+  assert(res == 2);
 
   // this is a good value of 'epsilon', but not all expected vertices are projected
   // because the sampling of the border of the source mesh is not uniform

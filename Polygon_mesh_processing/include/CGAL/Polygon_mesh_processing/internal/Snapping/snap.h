@@ -36,7 +36,11 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/unordered.h>
 
+#include <boost/bimap.hpp>
+#include <boost/bimap/multiset_of.hpp>
+#include <boost/bimap/set_of.hpp>
 #include <boost/foreach.hpp>
 #include <boost/function.hpp>
 #include <boost/functional.hpp>
@@ -109,6 +113,7 @@ void compute_tolerance_at_vertices(ToleranceMap& tol_vm,
 }
 
 template <typename PolygonMesh, typename GeomTraits,
+          typename VertexCorrespondenceMap,
           typename SVPM, typename TVPM,
           typename ToleranceMap,
           typename Box>
@@ -119,10 +124,11 @@ struct Vertex_proximity_report
   typedef typename GeomTraits::FT                                            FT;
   typedef typename boost::property_traits<SVPM>::value_type                  Point;
 
-  typedef boost::unordered_map<vertex_descriptor, vertex_descriptor>         Vertex_correspondence_map;
+  typedef VertexCorrespondenceMap                                            Vertex_correspondence_map;
+  typedef typename Vertex_correspondence_map::left_iterator                  VCM_left_iterator;
+  typedef typename Vertex_correspondence_map::value_type                     VCM_value_type;
 
-  Vertex_proximity_report(boost::unordered_map<vertex_descriptor/*target*/,
-                                               vertex_descriptor/*source*/>& vertex_map,
+  Vertex_proximity_report(Vertex_correspondence_map& vertex_map,
                           const SVPM& svpm, const TVPM& tvpm,
                           const ToleranceMap& tol_vm,
                           const GeomTraits& gt)
@@ -132,26 +138,6 @@ struct Vertex_proximity_report
       tol_vm(tol_vm),
       gt(gt)
   { }
-
-  // Checks if the current snapping mapping is surjective
-  bool is_valid_snapping() const
-  {
-    boost::unordered_set<vertex_descriptor/*target*/> destinations;
-    typename Vertex_correspondence_map::const_iterator it = m_vertex_map.begin(),
-                                                       end = m_vertex_map.end();
-    for(; it!=end; ++it)
-      destinations.insert(it->second);
-
-    if(m_vertex_map.size() != destinations.size())
-    {
-      std::cerr << "Warning: moving " << m_vertex_map.size() << " vertices onto "
-                << destinations.size() << " targets (non-surjective mapping)" << std::endl;
-
-      return false;
-    }
-
-    return true;
-  }
 
   void operator()(const Box& a, const Box& b)
   {
@@ -167,21 +153,23 @@ struct Vertex_proximity_report
 
     if(res != CGAL::LARGER)
     {
-      typename Vertex_correspondence_map::iterator it =
-        m_vertex_map.insert(std::make_pair(va, vb)).first;
-      const vertex_descriptor vb2 = it->second;
+      std::pair<VCM_left_iterator, bool> it = m_vertex_map.left.insert(std::make_pair(va, vb));
+      const vertex_descriptor vb2 = it.first->second;
 
       // If there are multiple candidates for a source vertex, keep the closest target vertex
       if(vb2 != vb)
       {
-        typename boost::unordered_map<vertex_descriptor, FT>::iterator dist_it =
+        typename CGAL::cpp11::unordered_map<vertex_descriptor, FT>::iterator dist_it =
           m_sq_distance_to_snapped_point.find(va);
         CGAL_assertion(dist_it != m_sq_distance_to_snapped_point.end());
 
         const FT sq_dist_to_prev_best = dist_it->second;
         if(CGAL::compare(sq_dist, sq_dist_to_prev_best) == CGAL::SMALLER)
         {
-          it->second = vb;
+          VCM_left_iterator hint = it.first;
+          ++hint;
+          m_vertex_map.left.erase(it.first);
+          m_vertex_map.left.insert(hint, std::make_pair(va, vb));
           dist_it->second = sq_dist;
         }
       }
@@ -193,8 +181,13 @@ struct Vertex_proximity_report
   }
 
 private:
-  boost::unordered_map<vertex_descriptor/*source*/, vertex_descriptor/*target*/>& m_vertex_map;
-  boost::unordered_map<vertex_descriptor/*source*/, FT> m_sq_distance_to_snapped_point;
+  Vertex_correspondence_map& m_vertex_map;
+  CGAL::cpp11::unordered_map<vertex_descriptor/*source*/, FT> m_sq_distance_to_snapped_point;
+
+  // vertices of the target mesh on which more than two vertices of the source mesh
+  // would be projected
+  CGAL::cpp11::unordered_set<vertex_descriptor> invalid_targets;
+
   const SVPM& svpm;
   const TVPM& tvpm;
   const ToleranceMap& tol_vm;
@@ -310,11 +303,16 @@ std::size_t snap_border(PolygonMesh& smesh,
     target_boxes.push_back(Box(gt.construct_bbox_3_object()(p), vd));
   }
 
-  // the correspondence map
-  boost::unordered_map<vertex_descriptor/*source*/, vertex_descriptor/*target*/> vertex_map;
+  // the correspondence map, multiset of targets because the mapping is not necessarily surjective
+  typedef boost::bimap<boost::bimaps::set_of<vertex_descriptor /*source*/>,
+                       boost::bimaps::multiset_of<vertex_descriptor /*target*/> >  Vertex_correspondence_map;
+
+  typedef typename Vertex_correspondence_map::right_iterator                       VCM_right_it;
+
+  Vertex_correspondence_map vertex_map;
 
   // Shenanigans to pass a reference as callback (which is copied by value by 'box_intersection_d')
-  typedef Vertex_proximity_report<PolygonMesh, GT, SVPM, TVPM, ToleranceMap, Box>     Reporter;
+  typedef Vertex_proximity_report<PolygonMesh, GT, Vertex_correspondence_map, SVPM, TVPM, ToleranceMap, Box>     Reporter;
   Reporter vpr(vertex_map, svpm, tvpm, tol_vm, gt);
   boost::function<void(const Box&, const Box&)> callback(boost::ref(vpr));
 
@@ -322,19 +320,59 @@ std::size_t snap_border(PolygonMesh& smesh,
                            target_boxes.begin(), target_boxes.end(),
                            callback);
 
-  if(!vpr.is_valid_snapping())
-  {
-    std::cerr << "Aborting snapping operation. Choose a better value for epsilon!" << std::endl;
+  if(vertex_map.empty())
     return 0;
-  }
 
-  typedef std::pair<vertex_descriptor/*source*/, vertex_descriptor/*target*/> TSVertex_pair;
-  BOOST_FOREACH(const TSVertex_pair& p, vertex_map)
+  std::size_t counter = 0;
+
+  // Now, move the source vertices when the mapping is surjective
+  VCM_right_it vmc_it = vertex_map.right.begin();
+  VCM_right_it last = --(vertex_map.right.end());
+  VCM_right_it end = vertex_map.right.end();
+  for(; vmc_it!=end;)
   {
-    put(svpm, p.first, get(tvpm, p.second));
+    const vertex_descriptor vs = vmc_it->second;
+    const vertex_descriptor vt = vmc_it->first;
+
+    // Check that the next iterator is not also the same target vertex, otherwise that means that
+    // we have multiple source vertices projecting to the same target vertex
+    // In this case, ignore all those mappings.
+
+    if(vmc_it == last)
+    {
+      ++counter;
+      put(svpm, vs, get(tvpm, vt));
+      return counter;
+    }
+
+    bool skipped = false;
+    VCM_right_it next_it = vmc_it;
+    ++next_it;
+
+    // As long as we are on the same target, ignore sources
+    while(vt == next_it->first)
+    {
+      skipped = true;
+
+      if(next_it == last)
+        return counter;
+
+      ++next_it;
+    }
+
+    if(skipped)
+    {
+      vmc_it = next_it;
+    }
+    else // a single target, thus move the source to the target
+    {
+      ++counter;
+      ++vmc_it;
+      put(svpm, vs, get(tvpm, vt));
+    }
   }
 
-  return vertex_map.size();
+  return counter;
 }
 
 template <typename PolygonMesh,
