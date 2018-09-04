@@ -103,25 +103,29 @@ The class expects two template parameters.
 			\cgalModifBegin
 			Inserts the point `p` in the triangulation.
 			The face `start`, if given, is used as a starting place for the location of the point.
-			If `batch_insertion` is set to `false` (the default value), then after the insertion 
-			of `p` in the triangulation, all unnecessary dummy points in the triangulation (if any) 
-			are removed. If `batch_insertion` is set to `true`, then this operation is omitted.
+			Note that this function does not remove unnecessary dummy points. 
+			The removal, if desired, should be done by manually calling the function 
+			`clean_dummy_points()`.
+
+			\sa `clean_dummy_points()`
 			\cgalModifEnd
 		*/
-		Vertex_handle insert(const Point  &p, Face_handle start = Face_handle(), bool batch_insertion = false);
+		Vertex_handle insert(const Point  &p, Face_handle start = Face_handle());
 
 		/*!
 			\cgalModifBegin
 			Inserts all points in the input iterator into the triangulation.
-			At the end of the insertion, all unnecessary dummy points in the triangulation (if any)
-			are removed.
+			Note that this function does not remove unnecessary dummy points 
+			at the end of the insertion process. The removal, if desired, 
+			should be done by manually calling the function `clean_dummy_points()`.
+
+			\sa `clean_dummy_points()`
 			\cgalModifEnd
 		*/
 		template < class InputIterator >
 		std::ptrdiff_t
 		insert(InputIterator first, InputIterator last);
 	/// @}
-
 
 	/// \name Vertex removal
 	/// @{
@@ -137,6 +141,19 @@ The class expects two template parameters.
 			\cgalModifEnd
 		*/
 		bool remove(Vertex_handle v);
+	/// @}
+
+	/// \name Removal of dummy points
+	/// @{
+
+		/*!
+			\cgalModifBegin
+			Tries to remove the dummy points from the triangulation one by one.
+			Returns the number of dummy points that could not be removed and are 
+			still present in the triangulation.
+			\cgalModifEnd
+		*/
+		int clean_dummy_points();
 	/// @}
 	
 
