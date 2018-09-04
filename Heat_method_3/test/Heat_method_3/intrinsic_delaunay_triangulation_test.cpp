@@ -2,7 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Dynamic_property_map.h>
-#include <CGAL/Heat_method_3/Intrinsic_Delaunay_Triangulation_3.h>
+#include <CGAL/Heat_method_3/Intrinsic_Delaunay_triangulation_3.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -25,7 +25,7 @@ typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef CGAL::dynamic_halfedge_property_t<Point_2> Halfedge_coordinate_tag;
 typedef boost::property_map<Mesh, Halfedge_coordinate_tag >::type Halfedge_coordinate_map;
 
-typedef CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<Mesh,Kernel, Halfedge_coordinate_map> IDT;
+typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<Mesh,Kernel, Halfedge_coordinate_map> IDT;
 
 
 void bglstyle(const IDT& idt)

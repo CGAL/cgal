@@ -11,7 +11,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Heat_method_3/Heat_method_3.h>
-#include <CGAL/Heat_method_3/Intrinsic_Delaunay_Triangulation_3.h>
+#include <CGAL/Heat_method_3/Intrinsic_Delaunay_triangulation_3.h>
 
 #include "Scene_points_with_normal_item.h"
 #include "Messages_interface.h"
@@ -312,7 +312,7 @@ class DisplayPropertyPlugin :
   typedef SMesh::Property_map<boost::graph_traits<SMesh>::vertex_descriptor, double> Vertex_distance_map;
   typedef CGAL::Heat_method_3::Heat_method_3<SMesh,EPICK,Vertex_distance_map> Heat_method;
 
-  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<SMesh,EPICK,Vertex_distance_map> Idt;
+  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<SMesh,EPICK,Vertex_distance_map> Idt;
   typedef CGAL::Heat_method_3::Heat_method_3<Idt,EPICK,Idt::Vertex_distance_map> Heat_method_idt;
   
 public:

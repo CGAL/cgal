@@ -23,7 +23,7 @@
 #define CGAL_HEAT_METHOD_3_HEAT_METHOD_3_H
 
 #include <CGAL/license/Heat_method_3.h>
-#include <CGAL/Heat_method_3/Intrinsic_Delaunay_Triangulation_3.h>
+#include <CGAL/Heat_method_3/Intrinsic_Delaunay_triangulation_3.h>
 #include <CGAL/Heat_method_3/internal/V2V.h>
 #include <CGAL/disable_warnings.h>
 
@@ -47,10 +47,7 @@ struct Heat_method_3_private_tests;
 #endif
 
 namespace CGAL {
-
-
-
-  namespace Heat_method_3 {
+namespace Heat_method_3 {
 
   // This class will later go into another file
   // It encapsulates what we use from Eigen so that one potentially can use another LA library
@@ -653,7 +650,7 @@ namespace CGAL {
       typedef typename boost::property_map<TriangleMesh, vertex_point_t>::type PPM;
       typedef typename boost::property_traits<PPM>::value_type Point_3;
       typedef typename CGAL::Kernel_traits<Point_3>::Kernel Kernel;
-      typedef CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<TriangleMesh,Kernel, VertexDistanceMap> Idt;
+      typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TriangleMesh,Kernel, VertexDistanceMap> Idt;
       typedef CGAL::Heat_method_3::Heat_method_3<Idt,Kernel,typename Idt::Vertex_distance_map> Heat_method;
 
       Idt idt(tm, vdm);
