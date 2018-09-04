@@ -59,19 +59,34 @@ The Bolza surface \f$\mathcal{M}\f$ is defined as \f$\mathcal{M} = \mathbb H^2 /
 \f$\mathcal G\f$ is the fundamental group of \f$\mathcal M\f$. The octagon \f$\mathcal D_O\f$
 is a fundamental domain for \f$\mathcal G\f$.
 
-\cgalFigureBegin{P4HTriangulationOctagonId, octagon_identification.png, original_domain.png}
-	<b>Left:</b> The hyperbolic translations \f$a,b,c,d\f$ and their inverses identify opposite 
-  sides of \f$\mathcal D_O\f$.
-	<b>Right:</b> The half-open octagon is an original domain for \f$\mathcal{M}\f$. Note that 
-  only one of the vertices of the octagon is included in the original domain.
-\cgalFigureEnd
 
-\cgalFigureBegin{P4HTDoubleTorusConstruction, dt-construction.png}
+\cgalFigureAnchor{P4HTriangulationOctagonId}
+<center>
+  <img src="octagon_identification.svg" style="max-width:25%; width=25%; display: inline-block;"/>
+  <img src="original_domain.svg" style="max-width:25%; width=25%; display: inline-block;"/>
+  <img src="periodicity.png" style="max-width:25%; width=25%; display: inline-block;"/>
+</center>
+\cgalFigureCaptionBegin{P4HTriangulationOctagonId}
+  <b>Left:</b> The hyperbolic translations \f$a,b,c,d\f$ and their inverses identify opposite 
+  sides of \f$\mathcal D_O\f$.
+  <b>Center:</b> The half-open octagon is an original domain for \f$\mathcal{M}\f$. Note that 
+  only one of the vertices of the octagon is included in the original domain.
+  <b>Right:</b> Illustration of periodicity in the hyperbolic plane. The figure shows the
+  periodic copies of the points in the central octagon.
+\cgalFigureCaptionEnd
+
+
+\cgalFigureAnchor{P4HTDoubleTorusConstruction}
+<center>
+  <img src="dt-construction.svg" style="max-width:60%; width=60%; display: inline-block;"/>
+</center>
+\cgalFigureCaptionBegin{P4HTDoubleTorusConstruction}
   Topological construction of a genus-2 surface from the original domain \f$\mathcal D_O\f$ 
   of the Bolza surface. Note that each open side is paired with the opposite closed side.
   Note also that all the vertices of the octagon correspond to only one point on the surface,
   which is represented uniquely by the only vertex of \f$\mathcal D_O\f$.
-\cgalFigureEnd
+\cgalFigureCaptionEnd
+
 
 We say that two elements \f$p\f$ and \f$q\f$ in \f$\mathbb H^2\f$ are in the same orbit 
 under the action of \f$\mathcal G\f$ if there exists an element \f$g \in \mathcal G\f$ such 
@@ -100,6 +115,10 @@ of points inside \f$\mathcal D\f$ under the action of some translation in the gr
 \f$\mathcal{G}\f$. So, to specify an edge or a face, we use two or three pairs of points 
 and translations in \f$\mathcal{G}\f$; points in the original domain are paired with the 
 identity translation \f$\mathbb 1\f$. 
+\cgalModifBegin
+  Note that equivalent translations of the group \f$\mathcal G\f$ can be reduced to a
+  unique minimal representative, so a point-translation pair is uniquely defined.
+\cgalModifEnd
 
 
 \section P4HT2_representation Representation 
@@ -119,21 +138,18 @@ way that the \f$i\f$-th neighbor is opposite to the vertex with the same index. 
 explicitly represented: an edge is given by a face and the index of its opposite vertex 
 in that face. 
 \cgalModifBegin
-See \cgalFigureRef{P4HTriangulationOrientationDS} - Left.
+See \cgalFigureRef{P4HTriangulationOrientationDS}.
 \cgalModifEnd
 
-\cgalFigureBegin{P4HTriangulationOrientationDS, P4T_ds_doc_300.png, periodic_face.png}
-	<b>Left:</b>  Representation of a face \f$f\f$ stored in the triangulation data structure. 
-                Each vertex \f$v_i\f$ stores a point \f$p_i\f$ that is paired with a translation
-                \f$\tau_i\f$. Opposite to vertex \f$i\f$ is the \f$i\f$-th neighbor of \f$f\f$.
-	<b>Right:</b> Illustration of the canonical representative in \f$\mathbb H^2\f$ of a face on 
-                \f$\mathcal M\f$. Among the three candidate faces, the canonical representative 
-                is the green one, which is closest to the region labeled \f$abcd\f$
-                clockwise. We store in each face the translations to apply to obtain the 
-                face's canonical representative in
-                \f$\mathbb H^2\f$, in this case \f$\mathbb 1, a\f$, and \f$\overline{b}\f$,
-                corresponding to the points \f$p, q\f$, and \f$r\f$.
-\cgalFigureEnd
+\cgalFigureAnchor{P4HTriangulationOrientationDS}
+<center>
+  <img src="ds_cgal.svg" style="max-width:75%; width=75%;"/>
+</center>
+\cgalFigureCaptionBegin{P4HTriangulationOrientationDS}
+  Representation of a face \f$f\f$ stored in the triangulation data structure. 
+  Each vertex \f$v_i\f$ stores a point \f$p_i\f$ that is paired with a translation
+  \f$\tau_i\f$. Opposite to vertex \f$i\f$ is the \f$i\f$-th neighbor of \f$f\f$.
+\cgalFigureCaptionEnd
 
 In the data structure each vertex stores the input point in \f$\mathcal D\f$ to which it
 corresponds. For every face on \f$\mathcal{M}\f$, the data structure stores the <i>canonical
@@ -148,7 +164,7 @@ of dummy points (see \ref P4HT2_Dummy_points),  faces with at least one vertex i
 of \f$\mathcal D_O\f$ to be ordered counter-clockwise around \f$\mathcal D_O\f$, 
 arbitrarily starting with the one labeled \f$abcd\f$. 
 \cgalModifBegin
-See \cgalFigureRef{P4HTriangulationOrientationDS} - Right.
+See \cgalFigureRef{P4HTriangulationCanonicalRepExample}.
 \cgalModifEnd
 We then choose the canonical representative in \f$\mathbb H^2\f$ of a face on 
 \f$\mathcal M\f$ so that:
@@ -159,19 +175,37 @@ We then choose the canonical representative in \f$\mathbb H^2\f$ of a face on
 </ul>
 
 
+\cgalFigureAnchor{P4HTriangulationCanonicalRepExample}
+<center>
+  <img src="periodic_face.svg" style="max-width:35%; width=35%; display: inline-block;"/>
+</center>
+\cgalFigureCaptionBegin{P4HTriangulationCanonicalRepExample}
+  Illustration of the canonical representative in \f$\mathbb H^2\f$ of a face on 
+  \f$\mathcal M\f$. Among the three candidate faces, the canonical representative 
+  is the green one, which is closest to the region labeled \f$abcd\f$
+  clockwise. We store in each face the translations to apply to obtain the 
+  face's canonical representative in
+  \f$\mathbb H^2\f$, in this case \f$\mathbb 1, a\f$, and \f$\overline{b}\f$,
+  corresponding to the points \f$p, q\f$, and \f$r\f$.
+\cgalFigureCaptionEnd
+
+
 <b>Validity</b> <br>
 A periodic hyperbolic triangulation of \f$\mathcal{M}\f$ is said to be `valid` if and only if
+\cgalModifBegin
 <ol>
   <li>  Its underlying combinatorial graph, the triangulation data structure, is `valid`
         (see \ref PkgTDS2Summary).
-  <li>  The combinatorial graph of the triangulation does not contain cycles of length 1 or 2.
+  <li>  The combinatorial graph of the triangulation does not contain cycles of length 1 
+        or 2; this condition is equivalent to requiring that the triangulation is a simplicial 
+        complex.
   <li>  Each face of the triangulation is positively oriented. See 
         \cgalFigureRef{P4HTriangulationOrientationDS}. 
   <li>  All triangles are topological disks; this condition is satisfied when the Euler 
         relation \f$V-E+F = -2\f$ is verified, where \f$V, E, F\f$ are the number 
         of vertices, edges and faces of the triangulation, respectively.
 </ol>
-
+\cgalModifEnd
 
 
 \section P4HT2_Delaunay Hyperbolic Delaunay triangulation
@@ -212,12 +246,16 @@ complex and has the empty circle property. The set of dummy points has been prop
 See \cgalFigureRef{P4HTriangulationDummyPoints}
 \cgalModifEnd
 
-\cgalFigureBegin{P4HTriangulationDummyPoints, dummy-points-300.png}
+\cgalFigureAnchor{P4HTriangulationDummyPoints}
+<center>
+  <img src="dummy-points.png" style="max-width:35%; width=35%; display: inline-block;"/>
+</center>
+\cgalFigureCaptionBegin{P4HTriangulationDummyPoints}
   Delaunay triangulation of \f$\mathcal M\f$ with the 14 dummy points. The set of dummy points
   contains the origin, the vertex of \f$\mathcal D\f$, the midpoints of the closed sides of 
   \f$D\f$, and the hyperbolic midpoints of the segments between the origin and the vertices 
   of the octagon. 
-\cgalFigureEnd
+\cgalFigureCaptionEnd
 
 \cgalModifBegin
 After the triangulation has been initialized with the dummy points, new input points can be 
@@ -282,8 +320,12 @@ Section \ref P4HT2_traits.
 \cgalModifEnd
 
 - the <B>triangulation data structure</B> class, which encodes the combinatorial structure of 
-the triangulation. This parameter follows the concept `TriangulationDataStructure_2`, and for
-the purposes of this package is described in Section \ref P4HT2_datastructure.
+the triangulation. 
+\cgalModifBegin
+This parameter must meet the requirements described in the concept 
+`TriangulationDataStructure_2`, and for the purposes of this package is described in 
+Section \ref P4HT2_datastructure.
+\cgalModifEnd
 
 \subsection P4HT2_traits The Geometric Traits Parameter 
 
@@ -302,7 +344,8 @@ which is the class `Periodic_4_hyperbolic_Delaunay_triangulation_traits_2`. The 
 two template parameters:
 \cgalModifEnd
 <ul>
-	<li> A `Kernel` with a `number type` that guarantees exact computations on algebraic numbers with nested square roots, for example `CGAL::Cartesian<CORE::Expr>`. This parameter has
+	<li> A `Kernel` with a `number type` that guarantees exact computations on algebraic numbers 
+  with nested square roots, for example `CGAL::Cartesian<CORE::Expr>`. This parameter has
   no default value. </li>
 	<li> A model of the concept `HyperbolicOctagonTranslation`. This model must accept a `number
   type` as template parameter. The traits class feeds internally the `number type` of the `Kernel`
@@ -323,19 +366,23 @@ The triangulation data structure class is the second template parameter of the p
 triangulation classes. It is a container for the faces and vertices and maintains
 incidence and adjacency relations. For details, see Chapter 
 \ref Chapter_2D_Triangulation_Data_Structure. 
-This parameter follows the concept `TriangulationDataStructure_2`, for which \cgal offers 
-the model `Triangulation_data_structure_2`. This model is itself parameterized by a vertex 
+\cgalModifBegin
+This parameter must meet the requirements described in the concept `TriangulationDataStructure_2`, 
+for which \cgal offers the model `Triangulation_data_structure_2`. 
+\cgalModifEnd
+This model is itself parameterized by a vertex 
 base class and a face base class, which gives the possibility to customize the vertices and 
 faces used by the triangulation data structure. To represent periodic hyperbolic triangulations,
 the face base and vertex base classes must be models of the concepts
-`TriangulationFaceBase_2<Traits, Periodic_4HyperbolicTriangulationDSFaceBase_2>` and
-`TriangulationVertexBase_2<Traits, Periodic_4HyperbolicTriangulationDSVertexBase_2>`, 
-respectively.
+`Periodic_4HyperbolicTriangulationDSFaceBase_2` and
+`Periodic_4HyperbolicTriangulationDSVertexBase_2`, respectively.
 
+\cgalModifBegin
 The default value for the triangulation data structure parameter in the hyperbolic periodic 
 triangulation classes is 
-`Triangulation_data_structure_2< Triangulation_face_base_2< Traits, Periodic_4_hyperbolic_triangulation_ds_face_base_2 >, Triangulation_vertex_base_2<Traits, Periodic_4_hyperbolic_triangulation_ds_vertex_base_2 > >` 
-
+`Triangulation_data_structure_2< Periodic_4_hyperbolic_triangulation_face_base_2<Traits>, Periodic_4_hyperbolic_triangulation_vertex_base_2<Traits> >`, 
+where `Traits` is a model of `Periodic_4HyperbolicDelaunayTriangulationTraits_2`.
+\cgalModifEnd
 
 \cgalModifBegin
 \section P4HT2_examples Examples 
