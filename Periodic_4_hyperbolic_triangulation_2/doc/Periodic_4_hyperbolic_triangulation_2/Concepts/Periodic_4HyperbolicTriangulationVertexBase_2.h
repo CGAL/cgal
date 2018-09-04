@@ -6,9 +6,9 @@
 \cgalConcept
 
 \cgalModifBegin
-\cgalRefines TriangulationDSVertexBase_2
+\cgalRefines TriangulationVertexBase_2
 
-A refinement of the concept `TriangulationDSVertexBase_2` that adds an interface for hyperbolic translations.
+A refinement of the concept `TriangulationVertexBase_2` that adds an interface for hyperbolic translations.
 \cgalModifEnd
 
 For periodic hyperbolic triangulations, the vertex base class needs to temporarily store a hyperbolic 
@@ -18,15 +18,15 @@ A boolean flag indicates whether the face stores a translation or not. The value
 set when storing or removing a translation.
 \cgalModifEnd
 
-\cgalHasModel `CGAL::Periodic_4_hyperbolic_triangulation_ds_vertex_base_2`
+\cgalHasModel `CGAL::Periodic_4_hyperbolic_triangulation_vertex_base_2`
 
 \sa `TriangulationDataStructure_2`
-\sa `Periodic_4HyperbolicTriangulationDSFaceBase_2`
+\sa `Periodic_4HyperbolicTriangulationFaceBase_2`
 
 */
 
 
-class Periodic_4HyperbolicTriangulationDSVertexBase_2 {
+class Periodic_4HyperbolicTriangulationVertexBase_2 {
 public:
 
   /// \name Types
@@ -37,7 +37,7 @@ public:
     (note: was inheriting from `Vb`, which is not defined here)
   \cgalModifEnd
   */
-  typedef typename TriangulationDSVertexBase_2::Face_handle 		    
+  typedef typename TriangulationVertexBase_2::Face_handle 		    
                                                       Face_handle;
   
   /*!
@@ -62,22 +62,22 @@ public:
   /*!
     Default constructor.
   */
-	Periodic_4HyperbolicTriangulationDSVertexBase_2();
+	Periodic_4HyperbolicTriangulationVertexBase_2();
 
   /*!
     Construct a vertex that stores the point `p`.
   */
-	Periodic_4HyperbolicTriangulationDSVertexBase_2(const Point & p);
+	Periodic_4HyperbolicTriangulationVertexBase_2(const Point & p);
 
   /*!
     Constructs a vertex that stores the point `p` and is incident to the face `fh`.
   */
-  Periodic_4HyperbolicTriangulationDSVertexBase_2(const Point & p, Face_handle fh);
+  Periodic_4HyperbolicTriangulationVertexBase_2(const Point & p, Face_handle fh);
 
   /*!
     Constructs a vertex that is incident to the face `fh`.
   */
-	Periodic_4HyperbolicTriangulationDSVertexBase_2(const Face_handle& fh);
+	Periodic_4HyperbolicTriangulationVertexBase_2(const Face_handle& fh);
   /// @}
 
 

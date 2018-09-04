@@ -6,9 +6,9 @@
 \cgalConcept
 
 \cgalModifBegin
-\cgalRefines TriangulationDSFaceBase_2
+\cgalRefines TriangulationFaceBase_2
 
-A refinement of the concept `TriangulationDSFaceBase_2` that adds an interface for hyperbolic translations.
+A refinement of the concept `TriangulationFaceBase_2` that adds an interface for hyperbolic translations.
 \cgalModifEnd
 
 At the base level, a face stores handles to its incident vertices and to its neighboring faces. 
@@ -20,14 +20,14 @@ For periodic hyperbolic triangulations, the face base class needs to store three
 one for each vertex. Applying each translation to the point stored in the corresponding vertex produces 
 the canonical representative of the face in the hyperbolic plane.
 
-\cgalHasModel CGAL::Periodic_4_hyperbolic_triangulation_ds_face_base_2
+\cgalHasModel CGAL::Periodic_4_hyperbolic_triangulation_face_base_2
 
 \sa `TriangulationDataStructure_2`
-\sa `Periodic_4HyperbolicTriangulationDSVertexBase_2`
+\sa `Periodic_4HyperbolicTriangulationVertexBase_2`
 
 */
 
-class Periodic_4HyperbolicTriangulationDSFaceBase_2 
+class Periodic_4HyperbolicTriangulationFaceBase_2 
 {
 public:
 
@@ -47,12 +47,12 @@ public:
 		/*!
 		Default constructor.
 		*/
-		Periodic_4HyperbolicTriangulationDSFaceBase_2();
+		Periodic_4HyperbolicTriangulationFaceBase_2();
 
 		/*!
 		Creates a face with vertices `v0, v1` and `v1`.
 		*/
-		Periodic_4HyperbolicTriangulationDSFaceBase_2(
+		Periodic_4HyperbolicTriangulationFaceBase_2(
 			const Vertex_handle& v0, const Vertex_handle& v1,
 			const Vertex_handle& v2); 
 
@@ -60,7 +60,7 @@ public:
 		Creates a face with vertices `v0, v1` and `v1`, setting 
 		also neighborhood relations with `n0, n1` and `n2`.
 		*/
-		Periodic_4HyperbolicTriangulationDSFaceBase_2(
+		Periodic_4HyperbolicTriangulationFaceBase_2(
 			const Vertex_handle& v0, const Vertex_handle& v1,
 			const Vertex_handle& v2, const Face_handle&   n0,
 			const Face_handle&   n1, const Face_handle&   n2); 
@@ -88,7 +88,7 @@ public:
 			Changes the orientation of the face by exchanging `vertex(0)` with `vertex(1)`, 
 			`neighbor(0)` with `neighbor(1)`, and `translation(0)` with `translation(1)`.
 
-			\sa TriangulationDSFaceBase_2::reorient() 
+			\sa TriangulationFaceBase_2::reorient() 
 		*/
 		void reorient();
 
