@@ -312,7 +312,7 @@ class DisplayPropertyPlugin :
   typedef SMesh::Property_map<boost::graph_traits<SMesh>::vertex_descriptor, double> Vertex_distance_map;
   typedef CGAL::Heat_method_3::Heat_method_3<SMesh,EPICK,Vertex_distance_map> Heat_method;
 
-  typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<SMesh,EPICK,Vertex_distance_map> Idt;
+  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<SMesh,EPICK,Vertex_distance_map> Idt;
   typedef CGAL::Heat_method_3::Heat_method_3<Idt,EPICK,Idt::Vertex_distance_map> Heat_method_idt;
   
 public:

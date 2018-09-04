@@ -54,7 +54,7 @@
 
 
 namespace CGAL {
-namespace Intrinsic_Delaunay_Triangulation_3 {
+namespace Heat_method_3 {
 
     struct Intrinsic_Delaunay_Triangulation_Eigen_traits_3 {
       typedef Eigen::SparseMatrix<double> SparseMatrix;
@@ -62,6 +62,8 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
       typedef int Index;
     };
 
+#ifndef DOXYGEN_RUNNING
+  
   // forward declaration
   template <typename IDT>
   struct IDT_vertex_point_property_map;
@@ -70,6 +72,8 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
   template <typename IDT, typename PM>
   struct IDT_vertex_distance_property_map;
 
+#endif
+  
     /**
      * Class `Intrinsic_Delaunay_Triangulation_3` is a remeshing algorithm implemented to make the Heat method's approximation better.
      * \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
@@ -412,7 +416,7 @@ namespace Intrinsic_Delaunay_Triangulation_3 {
        boost::unordered_map<vertex_descriptor,vertex_descriptor> v2v, vtov;
      };
 
-} // namespace Intrinsic_Delaunay_Triangulation_3
+} // namespace Heat_method_3
 
 namespace Heat_method_3 {
 
@@ -421,9 +425,9 @@ template <typename TM,
           typename VDM,
           typename VPM,
           typename LA>
-struct V2V<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> >
+struct V2V<CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> >
 {
-  typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> Idt;
+  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> Idt;
   const Idt& idt;
   /**
    * Vertex descriptor for iDT
@@ -461,9 +465,9 @@ template <typename TM,
           typename VDM,
           typename VPM,
           typename LA>
-struct graph_traits<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> > {
+struct graph_traits<CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> > {
 
-  typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> Mesh;
+  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> Mesh;
   typedef typename Mesh::Vertex_descriptor vertex_descriptor;
   typedef boost::transform_iterator<
     typename Mesh::Vertex_iterator_functor,
@@ -679,6 +683,8 @@ target(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,
 }
 
 
+#ifndef DOXYGEN_RUNNING
+
   template <typename IDT>
   struct IDT_vertex_point_property_map {
     const IDT& idt;
@@ -760,6 +766,7 @@ target(typename boost::graph_traits<Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,
     }
   };
 
+#endif // DOXYGEN_RUNNING
 
 } // namespace Intrinsic_Delaunay_Triangulation_3
 } // namespace CGAL
@@ -771,10 +778,10 @@ template <typename TM,
           typename VDM,
           typename VPM,
           typename LA>
- struct property_map<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA>,
+ struct property_map<CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA>,
                      CGAL::vertex_point_t > {
-   typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> IDT;
-   typedef CGAL::Intrinsic_Delaunay_Triangulation_3::IDT_vertex_point_property_map<IDT> type;
+   typedef CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> IDT;
+   typedef CGAL::Heat_method_3::IDT_vertex_point_property_map<IDT> type;
    typedef type const_type;
  };
 
@@ -783,11 +790,11 @@ template <typename TM,
           typename VDM,
           typename VPM,
           typename LA>
-CGAL::Intrinsic_Delaunay_Triangulation_3::IDT_vertex_point_property_map<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> >
+CGAL::Heat_method_3::IDT_vertex_point_property_map<CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> >
 get(CGAL::vertex_point_t,
-    const CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA>& idt)
+    const CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA>& idt)
 {
-  return CGAL::Intrinsic_Delaunay_Triangulation_3::IDT_vertex_point_property_map<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> >(idt);
+  return CGAL::Heat_method_3::IDT_vertex_point_property_map<CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> >(idt);
 }
 
 
@@ -796,9 +803,9 @@ template <typename TM,
           typename VDM,
           typename VPM,
           typename LA>
- struct property_map<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA>,
+ struct property_map<CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA>,
                      CGAL::face_index_t > {
-   typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> IDT;
+   typedef CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> IDT;
   typedef typename property_map<TM, CGAL::face_index_t>::type type;
    typedef typename property_map<TM, CGAL::face_index_t>::const_type const_type;
  };
@@ -810,7 +817,7 @@ template <typename TM,
           typename LA>
 typename property_map<TM,CGAL::face_index_t>::type
 get(CGAL::face_index_t fi,
-    const CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA>& idt)
+    const CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA>& idt)
 {
   return get(fi, idt.triangle_mesh());
 }
@@ -825,15 +832,17 @@ template <typename TM,
           typename LA>
 typename property_map<TM,boost::vertex_index_t>::type
 get(boost::vertex_index_t vi,
-    const CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA>& idt)
+    const CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA>& idt)
 {
-  return CGAL::Intrinsic_Delaunay_Triangulation_3::IDT_vertex_index_property_map<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA>, VPM >(idt, get(vi, idt.triangle_mesh()));
+  return CGAL::Heat_method_3::IDT_vertex_index_property_map<CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA>, VPM >(idt, get(vi, idt.triangle_mesh()));
 }
 
 } // boost
 
 namespace CGAL { namespace Intrinsic_Delaunay_Triangulation_3 {
 
+    
+#ifndef DOXYGEN_RUNNING
 template <typename IDT, typename PM, typename K, typename V>
 class IDT_dynamic_vertex_property_map {
   const IDT& idt;
@@ -869,6 +878,8 @@ public:
   }
 
 };
+
+#endif // DOXYGEN_RUNNING
   }
 }
 
@@ -880,9 +891,9 @@ template <typename TM,
           typename VPM,
           typename LA,
           typename dT>
- struct property_map<CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA>,
+ struct property_map<CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA>,
                      CGAL::dynamic_vertex_property_t<dT> > {
-  typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> IDT;
+  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<TM,T,VDM,VPM,LA> IDT;
   typedef CGAL::Intrinsic_Delaunay_Triangulation_3::IDT_dynamic_vertex_property_map<IDT,
                                                                                     typename property_map<TM, CGAL::dynamic_vertex_property_t<dT> >::type,
                                           typename graph_traits<IDT>::vertex_descriptor,
@@ -897,7 +908,7 @@ template <typename TM,
 
 
 namespace CGAL {
-  namespace Intrinsic_Delaunay_Triangulation_3 {
+  namespace Heat_method_3 {
 
 template <typename TM,
           typename T,
@@ -940,4 +951,4 @@ get(CGAL::dynamic_vertex_property_t<dT> dvp,
 } // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
-#endif // CGAL_HEAT_METHOD_3_HEAT_METHOD_3_H
+#endif // CGAL_INTRINSIC_DELAUNAY_TRIANGULATION_3_H

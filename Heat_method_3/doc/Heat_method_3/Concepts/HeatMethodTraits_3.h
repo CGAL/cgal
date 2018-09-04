@@ -3,14 +3,14 @@
 
 \cgalConcept
 
-The concept `HeatMethodTraits` describes the types,
+The concept `HeatMethodTraits_3` describes the types,
 predicates, and constructions required by the traits class parameter of
 `CGAL::Heat_method_3`.
 
 
 */
 
-class HeatMethodTraits
+class HeatMethodTraits_3
 {
 public:
 

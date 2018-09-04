@@ -22,7 +22,7 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Keenan Crane, Christina Vaz, Andreas Fabri}
-\cgalPkgDesc{The package provides the Heat Method, a geodesic distance algorithm, and an Intrinsic Delaunay remeshing algorithm to be run on Triangle Meshes. }
+\cgalPkgDesc{The package provides the Heat Method, a geodesic distance algorithm, and an Intrinsic Delaunay remeshing algorithm to be run on triangle meshes. }
 \cgalPkgManuals{Chapter_HeatMethod,PkgHeatMethod}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -38,13 +38,16 @@
 \cgalClassifedRefPages
 
 ## Concepts ##
-- `HeatMethodTraits`
+- `HeatMethodTraits_3`
 
 ## Classes ##
 - `CGAL::Heat_method_3::Heat_method_3`
+- `CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3`
 
+## Functions ##
 
-
+- `CGAL::Heat_method_3::compute_distances_with_heat_method()`
+- `CGAL::Heat_method_3::compute_distances_with_intrinsic_delaunay_heat_method()`
 
 */
 \todo Add more detailed cache

@@ -69,7 +69,7 @@ namespace CGAL {
    * \tparam VertexPointMap a model of `ReadablePropertyMap` with
    *        `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
    *        `Traits::Point_3` as value type.
-   *        The default is `typename boost::property_map< TriangleMesh, vertex_point_t>::%type`.
+   *        The default is `typename boost::property_map<TriangleMesh, vertex_point_t>::%type`.
    *
    */
   template <typename TriangleMesh,
@@ -134,7 +134,7 @@ namespace CGAL {
     }
 
     /**
-     * Returns the triangle mesh the algorithm is running on
+     * returns the triangle mesh the algorithm is running on
      */
     const TriangleMesh& triangle_mesh() const{
       return tm;
@@ -181,7 +181,7 @@ namespace CGAL {
     }
 
     /**
-     * removes 'vd' from the source set, returning 'true' if 'vd' was in the set.
+     * removes vd` from the source set, returning 'true' if `vd` was in the set.
      */
     template <typename VD>
     bool remove_source(VD vd)
@@ -192,7 +192,7 @@ namespace CGAL {
 
 
     /**
-     * clears the current source sets
+     * clears the current source set
      */
     void clear_sources()
     {
@@ -625,7 +625,7 @@ namespace CGAL {
    * @{
    */
 
-    /// \relates Heat_method_3
+    /// \relates CGAL::Heat_method_3::Heat_method_3
     /// computes ...
     template <typename TriangleMesh, typename VertexDistanceMap>
     void compute_distances_with_heat_method(const TriangleMesh& tm,
@@ -643,7 +643,7 @@ namespace CGAL {
     }
 
 
-    /// \relates Heat_method_3
+    /// \relates CGAL::Heat_method_3::Heat_method_3
     /// computes ...
     template <typename TriangleMesh, typename VertexDistanceMap>
     void compute_distances_with_intrinsic_delaunay_heat_method(const TriangleMesh& tm,
@@ -653,7 +653,7 @@ namespace CGAL {
       typedef typename boost::property_map<TriangleMesh, vertex_point_t>::type PPM;
       typedef typename boost::property_traits<PPM>::value_type Point_3;
       typedef typename CGAL::Kernel_traits<Point_3>::Kernel Kernel;
-      typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<TriangleMesh,Kernel, VertexDistanceMap> Idt;
+      typedef CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<TriangleMesh,Kernel, VertexDistanceMap> Idt;
       typedef CGAL::Heat_method_3::Heat_method_3<Idt,Kernel,typename Idt::Vertex_distance_map> Heat_method;
 
       Idt idt(tm, vdm);
@@ -667,5 +667,6 @@ namespace CGAL {
 
 } // namespace Heat_method_3
 } // namespace CGAL
+
 #include <CGAL/enable_warnings.h>
 #endif // CGAL_HEAT_METHOD_3_HEAT_METHOD_3_H

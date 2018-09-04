@@ -16,7 +16,7 @@ typedef CGAL::Surface_mesh<Point>                            Surface_mesh;
 
 typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
 typedef Surface_mesh::Property_map<vertex_descriptor,double> Vertex_distance_map;
-typedef CGAL::Intrinsic_Delaunay_Triangulation_3::Intrinsic_Delaunay_Triangulation_3<Surface_mesh,Kernel, Vertex_distance_map> Idt;
+typedef CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3<Surface_mesh,Kernel, Vertex_distance_map> Idt;
 
 typedef CGAL::Heat_method_3::Heat_method_3<Idt,Kernel, Idt::Vertex_distance_map> Heat_method_idt;
 
