@@ -20,20 +20,20 @@
 //                 
 
 
-#ifndef CGAL_PERIODIC_4_HYPERBOLIC_TIANGULATION_DS_FACE_BASE_2
-#define CGAL_PERIODIC_4_HYPERBOLIC_TIANGULATION_DS_FACE_BASE_2
+#ifndef CGAL_PERIODIC_4_HYPERBOLIC_TIANGULATION_FACE_BASE_2
+#define CGAL_PERIODIC_4_HYPERBOLIC_TIANGULATION_FACE_BASE_2
 
 #include <CGAL/basic.h>
 #include <CGAL/Dummy_tds_2.h>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_ds_face_base_2.h>
+#include <CGAL/Triangulation_face_base_2.h>
 
 
 namespace CGAL {
 
 
-template< typename GT, typename FB = Triangulation_ds_face_base_2<> >
-class Periodic_4_hyperbolic_triangulation_ds_face_base_2 : public FB {
+template< typename GT, typename FB = Triangulation_face_base_2<GT> >
+class Periodic_4_hyperbolic_triangulation_face_base_2 : public FB {
 	
 public:
 	typedef typename FB::Vertex_handle				Vertex_handle;
@@ -43,7 +43,7 @@ public:
 	template< typename TDS2 >
 	struct Rebind_TDS {
 		typedef typename FB::template Rebind_TDS<TDS2>::Other 				FB2;
-		typedef Periodic_4_hyperbolic_triangulation_ds_face_base_2<GT, FB2> 	Other;
+		typedef Periodic_4_hyperbolic_triangulation_face_base_2<GT, FB2> 	Other;
 	};
 
 private:
@@ -51,7 +51,7 @@ private:
 
 public:
 
-	Periodic_4_hyperbolic_triangulation_ds_face_base_2() 
+	Periodic_4_hyperbolic_triangulation_face_base_2() 
 	: FB()
 	{	
 		o[0] = Hyperbolic_translation();
@@ -59,7 +59,7 @@ public:
 		o[2] = Hyperbolic_translation();
 	}
 
-	Periodic_4_hyperbolic_triangulation_ds_face_base_2(
+	Periodic_4_hyperbolic_triangulation_face_base_2(
 		const Vertex_handle& v0, const Vertex_handle& v1,
 		const Vertex_handle& v2) 
 	: FB(v0, v1, v2)
@@ -71,7 +71,7 @@ public:
 
 
 
-	Periodic_4_hyperbolic_triangulation_ds_face_base_2(
+	Periodic_4_hyperbolic_triangulation_face_base_2(
 		const Vertex_handle& v0, const Vertex_handle& v1,
 		const Vertex_handle& v2, const Face_handle&   n0,
 		const Face_handle&   n1, const Face_handle&   n2) 
@@ -114,7 +114,7 @@ public:
 template < class TDS >
 inline
 std::istream&
-operator>>(std::istream &is, Periodic_4_hyperbolic_triangulation_ds_face_base_2<TDS> &)
+operator>>(std::istream &is, Periodic_4_hyperbolic_triangulation_face_base_2<TDS> &)
   // non combinatorial information. Default = nothing
 {
   return is;
@@ -124,7 +124,7 @@ template < class TDS >
 inline
 std::ostream&
 operator<<(std::ostream &os,
-    const Periodic_4_hyperbolic_triangulation_ds_face_base_2<TDS> &)
+    const Periodic_4_hyperbolic_triangulation_face_base_2<TDS> &)
   // non combinatorial information. Default = nothing
 {
   return os;
@@ -134,4 +134,4 @@ operator<<(std::ostream &os,
 }  // namespace CGAL
 
 
-#endif  // CGAL_PERIODIC_4_HYPERBOLIC_TIANGULATION_DS_FACE_BASE_2
+#endif  // CGAL_PERIODIC_4_HYPERBOLIC_TIANGULATION_FACE_BASE_2
