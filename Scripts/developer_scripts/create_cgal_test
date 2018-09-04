@@ -82,7 +82,6 @@ configure()
 
   if eval 'cmake -C"\$INIT_FILE" "\$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \\
                                      -DCGAL_DIR="\$CGAL_DIR" \\
-                                     -DINIT_FILE="\$INIT_FILE" \\
                                      --no-warn-unused-cli \\
                                      .' ; then
 

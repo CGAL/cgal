@@ -32,9 +32,8 @@ configure()
 
     rm CMakeCache.txt
 
-    if eval 'cmake --no-warn-unused-cli -C"$INIT_FILE" "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+    if eval 'cmake --no-warn-unused-cli ${INIT_FILE:+"-C${INIT_FILE}"} "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
                                      -DCGAL_DIR="$CGAL_DIR" \
-                                     -DINIT_FILE="$INIT_FILE" \
                                      -DCGAL_CXX_FLAGS:STRING="$TESTSUITE_CXXFLAGS" \
                                      -DCGAL_EXE_LINKER_FLAGS="$TESTSUITE_LDFLAGS" \
                                      -DCMAKE_BUILD_TYPE=NOTFOUND \
