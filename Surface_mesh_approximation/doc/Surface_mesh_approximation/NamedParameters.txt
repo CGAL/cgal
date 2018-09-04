@@ -10,7 +10,7 @@ Named parameters enable the user to specify only those parameters which are real
 See also \ref namedparameters introduced in the polygon mesh processing package.
 
 The sequence of named parameters should start with `CGAL::VSA::parameters::`.
-`#CGAL::VSA::parameters::all_default()` can be used to indicate
+The function `#all_default()` can be used to indicate
 that default values of optional named parameters are used.
 <!-- clashing tag with PMP named space -->
 
