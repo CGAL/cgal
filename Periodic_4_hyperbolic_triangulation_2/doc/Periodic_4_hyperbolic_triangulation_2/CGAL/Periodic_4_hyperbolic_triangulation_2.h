@@ -18,10 +18,10 @@ The class expects two template parameters.
 			default value.
 \tparam	TDS %Triangulation Data Structure parameter. Must be a model of the concept
 		`TriangulationDataStructure_2` with some additional functionality in the vertices 
-		and faces, following the models `Periodic_4HyperbolicTriangulationDSVertexBase_2` and
-		`Periodic_4HyperbolicTriangulationDSFaceBase_2`, respectively. The default value for 
+		and faces, following the concepts `Periodic_4HyperbolicTriangulationVertexBase_2` and
+		`Periodic_4HyperbolicTriangulationFaceBase_2`, respectively. The default value for 
 		this parameter is
-		`Triangulation_data_structure_2< Triangulation_vertex_base_2<GT, Periodic_4_hyperbolic_triangulation_ds_vertex_base_2<GT> >, Triangulation_face_base_2<GT, Periodic_4_hyperbolic_triangulation_ds_face_base_2<GT> > >`
+		`Triangulation_data_structure_2< Periodic_4_hyperbolic_triangulation_vertex_base_2<GT>, Periodic_4_hyperbolic_triangulation_face_base_2<GT> >`
 
 */
 
