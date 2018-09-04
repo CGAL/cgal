@@ -49,6 +49,7 @@
 #include <vector>
 #include <deque>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/unordered_map.hpp>
 #include <CGAL/config.h>
 
 #if defined( __INTEL_COMPILER )
@@ -216,7 +217,8 @@ namespace CGAL {
               typename PointConverter>
     void copy(const CMap2& amap, const Converters& converters,
               const DartInfoConverter& dartinfoconverter,
-              const PointConverter& pointconverter)
+              const PointConverter& pointconverter,
+              boost::unordered_map<typename CMap2::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
     {
       this->clear();
 
@@ -237,27 +239,28 @@ namespace CGAL {
       init_dart(null_dart_handle, amap.get_marks(amap.null_dart_handle));
 
       // Create an mapping between darts of the two maps (originals->copies).
-      // TODO: replace the std::map by a boost::unordered_map
       // (here we cannot use CGAL::Unique_hash_map because it does not provide
       // iterators...
-      std::map<typename CMap2::Dart_const_handle, Dart_handle> dartmap;
-
+      boost::unordered_map<typename CMap2::Dart_const_handle, Dart_handle> local_dartmap;
+      if (dart_mapping==NULL)
+      { dart_mapping=&local_dartmap; }
+      
       for (typename CMap2::Dart_const_range::const_iterator
              it=amap.darts().begin(), itend=amap.darts().end();
            it!=itend; ++it)
       {
-        dartmap[it]=mdarts.emplace();
-        init_dart(dartmap[it], amap.get_marks(it));
+        (*dart_mapping)[it]=mdarts.emplace();
+        init_dart((*dart_mapping)[it], amap.get_marks(it));
         internal::Copy_dart_info_functor<CMap2, Refs, DartInfoConverter>::run
-            (amap, static_cast<Refs&>(*this), it, dartmap[it],
+            (amap, static_cast<Refs&>(*this), it, (*dart_mapping)[it],
              dartinfoconverter);
       }
 
       unsigned int min_dim=(dimension<amap.dimension?dimension:amap.dimension);
 
-      typename std::map<typename CMap2::Dart_const_handle,Dart_handle>
-        ::iterator dartmap_iter, dartmap_iter_end=dartmap.end();
-      for (dartmap_iter=dartmap.begin(); dartmap_iter!=dartmap_iter_end;
+      typename boost::unordered_map<typename CMap2::Dart_const_handle,Dart_handle>
+        ::iterator dartmap_iter, dartmap_iter_end=dart_mapping->end();
+      for (dartmap_iter=dart_mapping->begin(); dartmap_iter!=dartmap_iter_end;
            ++dartmap_iter)
       {
         for (unsigned int i=0; i<=min_dim; i++)
@@ -266,13 +269,13 @@ namespace CGAL {
               (dartmap_iter->first)<(amap.beta(dartmap_iter->first,i)))
           {
             basic_link_beta(dartmap_iter->second,
-                            dartmap[amap.beta(dartmap_iter->first,i)], i);
+                            (*dart_mapping)[amap.beta(dartmap_iter->first,i)], i);
           }
         }
       }
 
       /** Copy attributes */
-      for (dartmap_iter=dartmap.begin(); dartmap_iter!=dartmap_iter_end;
+      for (dartmap_iter=dart_mapping->begin(); dartmap_iter!=dartmap_iter_end;
            ++dartmap_iter)
       {
         Helper::template Foreach_enabled_attributes
@@ -287,28 +290,32 @@ namespace CGAL {
     }
 
     template <typename CMap2>
-    void copy(const CMap2& amap)
+    void copy(const CMap2& amap,
+              boost::unordered_map<typename CMap2::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
+
     {
       CGAL::cpp11::tuple<> converters;
       Default_converter_dart_info<CMap2, Refs> dartinfoconverter;
       Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
-      copy(amap, converters, dartinfoconverter, pointconverter);
+      copy(amap, converters, dartinfoconverter, pointconverter, dart_mapping);
     }
 
     template <typename CMap2, typename Converters>
-    void copy(const CMap2& amap, const Converters& converters)
+    void copy(const CMap2& amap, const Converters& converters,
+              boost::unordered_map<typename CMap2::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
     {
       Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
       Default_converter_dart_info<CMap2, Refs> dartinfoconverter;
-      copy(amap, converters, dartinfoconverter, pointconverter);
+      copy(amap, converters, dartinfoconverter, pointconverter, dart_mapping);
     }
 
     template <typename CMap2, typename Converters, typename DartInfoConverter>
     void copy(const CMap2& amap, const Converters& converters,
-              const DartInfoConverter& dartinfoconverter)
+              const DartInfoConverter& dartinfoconverter,
+              boost::unordered_map<typename CMap2::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
     {
       Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
-      copy(amap, converters, dartinfoconverter, pointconverter);
+      copy(amap, converters, dartinfoconverter, pointconverter, dart_mapping);
     }
 
     // Copy constructor from a map having exactly the same type.
