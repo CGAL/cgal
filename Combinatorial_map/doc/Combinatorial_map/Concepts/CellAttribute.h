@@ -39,12 +39,12 @@ Equals to \link CGAL::Tag_true `Tag_true`\endlink to enable the storage of a `Da
 typedef unspecified_type Supports_cell_dart;
 
 /*!
-Functor called before merging two attributes. Must be a model of the  [Binary Function](http://www.sgi.com/tech/stl/BinaryFunction.html) concept having two references to a model of `CellAttribute` as type of both arguments and `void` as return type.
+Functor called before merging two attributes. It must be a binary functor taking as argument two references to a model of `CellAttribute`.
 */
 typedef unspecified_type On_merge;
 
 /*!
-Functor called after an attribute was split in two. Must be a model of the [Binary Function](http://www.sgi.com/tech/stl/BinaryFunction.html) concept having two references to a model of `CellAttribute` as type of both arguments and `void` as return type.
+Functor called after an attribute was split in two. It must be a binary functor taking as argument two references to a model of `CellAttribute`.
 */
 typedef unspecified_type On_split;
 

@@ -1,8 +1,6 @@
-///This concept refers to the one described at http://www.sgi.com/tech/stl/Assignable.html.
-///
-///Using the latest concepts of the \cpp standard, a type that is a model of this concept
-///is both <a href="http://en.cppreference.com/w/cpp/concept/CopyAssignable"><tt>CopyAssignable</tt></a>
-///and <a href="http://en.cppreference.com/w/cpp/concept/CopyConstructible"><tt>CopyConstructible</tt></a>.
+///This concept refines both
+/// <a href="https://en.cppreference.com/w/cpp/named_req/CopyAssignable"><tt>CopyAssignable</tt></a>
+///and <a href="https://en.cppreference.com/w/cpp/named_req/CopyConstructible"><tt>CopyConstructible</tt></a>.
 class Assignable {};
 
 /// \cgalConcept
@@ -31,16 +29,40 @@ class EqualityComparable {};
 class LessThanComparable {};
 
 /// \cgalConcept
-/// The concept AdaptableFunctor defines an adaptable functor, that is, a functor that can be
+/// The concept `AdaptableFunctor` defines an adaptable functor, that is, a functor that can be
 /// used with function object adaptors such as binders and composers.
 ///
 class AdaptableFunctor {};
+
 /// \cgalConcept
-///This concept refers to the one described at  http://www.sgi.com/tech/stl/AdaptableUnaryFunction.html.
-class AdaptableUnaryFunction {};
+/// Adaptable functor with one argument
+/// \cgalRefines AdaptableFunctor
+class AdaptableUnaryFunction
+{
+public:
+  /// result_type
+  typedef unspecified_type result_type;
+  /// argument_type
+  typedef unspecified_type argument_type;
+  /// operator type
+  result_type operator()(argument_type);
+};
+
 /// \cgalConcept
-///This concept refers to the one described at  http://www.sgi.com/tech/stl/AdaptableBinaryFunction.html.
-class AdaptableBinaryFunction {};
+/// Adaptable functor with two arguments
+/// \cgalRefines AdaptableFunctor
+class AdaptableBinaryFunction
+{
+public:
+  /// result_type
+  typedef unspecified_type result_type;
+  /// first argument_type
+  typedef unspecified_type first_argument_type;
+  /// second argument_type
+  typedef unspecified_type second_argument_type;
+  /// operator type
+  result_type operator()(first_argument_type, second_argument_type);
+};
 
 /// \cgalConcept
 /// Concept from the \cpp standard.
@@ -73,19 +95,24 @@ class RandomAccessIterator {};
 class BidirectionalIterator {};
 
 /// \cgalConcept
-/// This concept refers to the one described at http://www.sgi.com/tech/stl/RandomAccessContainer.html.
-///
-/// It is a container that is a model of
-/// <a href="http://en.cppreference.com/w/cpp/concept/ReversibleContainer"><tt>ReversibleContainer</tt></a> and whose iterator type is a model of
-/// <a href="http://en.cppreference.com/w/cpp/concept/RandomAccessIterator"><tt>RandomAccessIterator</tt></a>.
+/// This container concept refines
+/// <a href="https://en.cppreference.com/w/cpp/named_req/ReversibleContainer"><tt>ReversibleContainer</tt></a> and its iterator type is a model of
+/// <a href="https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator"><tt>RandomAccessIterator</tt></a>.
 class RandomAccessContainer {};
 /// \cgalConcept
-/// This concepts refers to the one described at http://www.sgi.com/tech/stl/BackInsertionSequence.html.
-///
-/// It is a container that is a model of
-/// <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer"><tt>SequenceContainer</tt></a>
-/// that has the ability to append elements at the end of the sequence and to access the last element, both in amortized constant time.
-class BackInsertionSequence {};
+/// This container concepts refines
+/// <a href="https://en.cppreference.com/w/cpp/named_req/SequenceContainer"><tt>SequenceContainer</tt></a> and
+/// has the ability to append elements at the end of the sequence and to access the last element, both in amortized constant time.
+class BackInsertionSequence
+{
+public:
+  /// returns the last inserted element.
+  const value_type& back() const;
+  /// removes the last inserted element if not empty.
+  void pop_back()
+  /// inserts an element
+  void push_back(const value_type&)
+};
 
 /*!
 See http://www.boost.org/libs/property_map/doc/LvaluePropertyMap.html
