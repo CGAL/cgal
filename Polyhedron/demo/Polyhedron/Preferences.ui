@@ -59,8 +59,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>278</width>
-             <height>537</height>
+             <width>262</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -110,6 +110,9 @@
               </property>
               <property name="prefix">
                <string>Transparency Pass Number: </string>
+              </property>
+              <property name="minimum">
+               <number>4</number>
               </property>
               <property name="value">
                <number>4</number>

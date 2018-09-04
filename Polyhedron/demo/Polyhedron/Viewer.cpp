@@ -334,6 +334,8 @@ Viewer::Viewer(QWidget* parent,
   is_ogl_4_3 = sharedWidget->is_ogl_4_3;
   d->_recentFunctions = sharedWidget->d->_recentFunctions;
   doBindings();
+  d->total_pass = sharedWidget->total_pass();
+
 }
 
 Viewer::~Viewer()

@@ -57,6 +57,7 @@
 #include "ui_Statistics_on_item_dialog.h"
 #include "Show_point_dialog.h"
 #include "File_loader_dialog.h"
+#include "Viewer.h"
 
 #include <CGAL/Qt/manipulatedCameraFrame.h>
 #include <CGAL/Qt/manipulatedFrame.h>
@@ -147,8 +148,11 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
 #endif
   // Save some pointers from ui, for latter use.
   sceneView = ui->sceneView;
-  viewer = ui->viewer;
-
+  viewer = new Viewer(ui->mdiArea);
+  viewer_window = ui->mdiArea->addSubWindow(viewer);
+  viewer_window->setWindowFlags( Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowMaximizeButtonHint);
+  viewer_window->showMaximized();
+  viewer_window->setWindowTitle("Main Viewer");
   // setup scene
   scene = new Scene(this);
   CGAL::Three::Three::s_scene = scene;
@@ -2426,7 +2430,7 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer=NULL)
   connect(scene, SIGNAL(updated()),
           viewer, SLOT(update()));
 
-  if(subviewer == NULL)
+  if(subviewer == nullptr)
   {
     connect(ui->actionRecenterScene, SIGNAL(triggered()),
             viewer, SLOT(update()));
@@ -2489,6 +2493,17 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer=NULL)
     connect(action, SIGNAL(toggled(bool)),
             viewer, SLOT(SetOrthoProjection(bool)));
     action= subviewer->findChild<QAction*>("actionTotalPass");
+    connect(action, &QAction::triggered,
+            this, [this, viewer]() {
+      bool ok;
+      int nb = QInputDialog::getInt(this, "Set Maximum Number of Passes",
+                                    "Enter number of transparency passes:",
+                                    4, 4, 99, 1, &ok);
+      if (!ok){
+        return;
+      }
+      viewer->setTotalPass(nb);
+    });
   }
 
 
@@ -2508,56 +2523,28 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer=NULL)
           this, SLOT(information(QString)));
 
 }
-std::pair<int,int> MainWindow::getSubViewerCoords()
-{
-  int v(floor(sqrt(CGAL::QGLViewer::QGLViewerPool().size()))),
-      r,c;
-  if(CGAL::QGLViewer::QGLViewerPool().size()==1)
-  {
-    last_c = 0;
-    last_r = 0;
-    return std::make_pair(0,0);
-  }
-  if(last_r == last_c)
-  {
-    c=0; r= last_r+1;
-  }
-  else if(last_r > last_c){
-    if(last_r == last_c + 1){
-      r = 0; c = last_c+1;
-    }
-    else{
-      c = last_c+1; r = last_r;
-    }
-  }
-  else{
-    r = last_r+1; c = last_c;
-  }
-  last_r = r;
-  last_c = c;
-  return std::make_pair(r,c);
-}
 
 void MainWindow::on_actionAdd_Viewer_triggered()
 {
-  std::pair<int,int> coords = getSubViewerCoords();
   Viewer *viewer2 = new Viewer(ui->centralwidget, viewer);
   viewer2->setManipulatedFrame(viewer->manipulatedFrame());
   CGAL::qglviewer::Vec min, max;
   computeViewerBBox(min, max);
   updateViewerBbox(viewer2, true, min, max);
-  viewer2->camera()->interpolateToFitScene();
   viewer2->setObjectName("viewer2");
   connect(viewer2, SIGNAL(doneInitGL(CGAL::Three::Viewer_interface*)),
           scene, SLOT(newViewer(CGAL::Three::Viewer_interface*)));
-  SubViewer* sub_viewer = new SubViewer(this, viewer2);
-  ui->viewerLayout->addWidget(sub_viewer,coords.first, coords.second);
-  setupViewer(viewer2, sub_viewer);
-  connect(sub_viewer->ui->exitButton, &QPushButton::clicked,
-          [this, sub_viewer](){
-    scene->removeViewer(sub_viewer->viewer);
-    sub_viewer->deleteLater();});
-
+  SubViewer* subviewer = new SubViewer(this, viewer2);
+  setupViewer(viewer2, subviewer);
+  viewer2->camera()->interpolateToFitScene();
+  ui->mdiArea->addSubWindow(subviewer)->show();
+  ui->mdiArea->tileSubWindows();
+  QPoint pos = viewer_window->pos();
+  QSize size = viewer_window->size();
+  viewer_window->move(subviewer->pos());
+  viewer_window->resize(subviewer->size());
+  subviewer->move(pos);
+  subviewer->resize(size);
 }
 
 void MainWindow::recenterViewer()
@@ -2600,21 +2587,35 @@ QObject* MainWindow::getDirectChild(QObject* widget)
   return getDirectChild(widget->parent());
 }
 
+void MainWindow::on_action_Organize_Viewers_triggered()
+{
+  if(ui->mdiArea->subWindowList().size() == 1)
+    ui->mdiArea->subWindowList().first()->showMaximized();
+  else
+  {
+    ui->mdiArea->tileSubWindows();
+    QMdiSubWindow* subviewer = qobject_cast<QMdiSubWindow*>(
+          ui->mdiArea->childAt(ui->mdiArea->pos()));
+    if(!subviewer)//should not happen but better safe than sorry
+    {
+      return;
+    }
+    QPoint pos = viewer_window->pos();
+    QSize size = viewer_window->size();
+    viewer_window->move(subviewer->pos());
+    viewer_window->resize(subviewer->size());
+    subviewer->move(pos);
+    subviewer->resize(size);
+  }
+}
+
 SubViewer::SubViewer(MainWindow* mw, Viewer* viewer)
-  :QWidget(mw),
+  :QMdiSubWindow (mw),
     mw(mw),
     viewer(viewer),
     viewMenu(new QMenu(this))
 {
-  ui = new Ui::SubViewer;
-  ui->setupUi(this);
-  ui->mainLayout->addWidget(viewer, 1);
-  ui->menuButton->setMenu(viewMenu);
-  ui->menuButton->setProperty("helpText", QString("This is the view menu for this Viewer. \n"
-                                                  "It holds independant display options."));
-  ui->exitButton->setProperty("helpText", QString("Click here to close this Viewer."));
-
-
+  setWidget(viewer);
   QAction* actionRecenter = new QAction("Re&center Scene",this);
   actionRecenter->setObjectName("actionRecenter");
   viewMenu->addAction(actionRecenter);
@@ -2662,11 +2663,13 @@ SubViewer::SubViewer(MainWindow* mw, Viewer* viewer)
   QAction* actionTotalPass = new QAction("Set Transparency Pass &Number...",this);
   actionTotalPass->setObjectName("actionTotalPass");
   viewMenu->addAction(actionTotalPass);
+  setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMaximizeButtonHint | Qt::WindowMinimizeButtonHint );
+  setAttribute(Qt::WA_DeleteOnClose);
+  setSystemMenu(viewMenu);
 }
 
 SubViewer::~SubViewer()
 {
-  delete ui;
   viewer->deleteLater();
 }
 
@@ -2701,3 +2704,4 @@ void SubViewer::color()
     viewer->update();
   }
 }
+

@@ -17,6 +17,7 @@
 #include <QStringList>
 #include <QSet>
 #include <QModelIndex>
+#include <QMdiSubWindow>
 class Scene;
 class Viewer;
 struct SubViewer;
@@ -444,25 +445,24 @@ public Q_SLOTS:
   void toggleFullScreen();
   void setDefaultSaveDir();
 private:
+  QMdiSubWindow* viewer_window;
   QList<QDockWidget *> visibleDockWidgets;
   QLineEdit operationSearchBar;
   QWidgetAction* searchAction;
   QString def_save_dir;
-  int last_r, last_c;
-  std::pair<int,int> getSubViewerCoords();
   
 private Q_SLOTS:
   void on_actionAdd_Viewer_triggered();
+  void on_action_Organize_Viewers_triggered();
   void recenterViewer();
 };
   
-struct SubViewer : public QWidget
+struct SubViewer : public QMdiSubWindow
 {
   Q_OBJECT
 public:
   MainWindow* mw;
   Viewer* viewer;
-  Ui::SubViewer* ui;
   QMenu* viewMenu;
 
   SubViewer(MainWindow* mw, Viewer* viewer);

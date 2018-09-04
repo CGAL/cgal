@@ -687,7 +687,6 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       std::vector<QOpenGLFramebufferObject*> fbos;
       std::vector<QOpenGLFramebufferObject*> depth_test;
       QColor background = viewer->backgroundColor();
-   
       fbos.resize((int)viewer->total_pass());
       depth_test.resize((int)viewer->total_pass()-1);
       
