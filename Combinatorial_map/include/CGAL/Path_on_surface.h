@@ -755,29 +755,29 @@ public:
     if (!is_closed())
     { return; }
 
-    /* std::cout<<"##########################################"<<std::endl;
+    std::cout<<"##########################################"<<std::endl;
     std::cout<<"Init "; display();
     std::cout<<std::endl;
-    display_pos_and_neg_turns(); */
+    display_pos_and_neg_turns();
     
     bool modified=false;
-    // std::cout<<"RS ";
+    std::cout<<"RS ";
     remove_spurs_one_step();
 
-    /* display();
-    std::cout<<std::endl; */
+    display();
+    std::cout<<std::endl;
 
     do
     {
       modified=bracket_flattening_one_step();
 
-      /* std::cout<<"BF "; display();
-      std::cout<<std::endl; */
+      std::cout<<"BF "; display();
+      std::cout<<std::endl;
 
       modified=modified || remove_spurs_one_step();
 
-      /* std::cout<<"RS "; display();
-      std::cout<<std::endl; */
+      std::cout<<"RS "; display();
+      std::cout<<std::endl;
     }
     while(modified);
 

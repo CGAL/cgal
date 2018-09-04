@@ -27,6 +27,8 @@ enum Transformation // enum for the type of transformations
   FULL_SIMPLIFICATION
 };
 
+unsigned int starting_seed;
+
 ///////////////////////////////////////////////////////////////////////////////
 void transform_path(CGAL::Path_on_surface<LCC_3_cmap>& path, Transformation t,
                     bool draw=false,
@@ -383,24 +385,27 @@ bool test_some_random_paths_on_cube(bool draw, int testtorun)
   }
 
   CGAL::Path_on_surface<LCC_3_cmap> path(lcc);
-  CGAL::Random random(1); // fix seed
   bool res=true;
 
+  CGAL::Random random(starting_seed+nbtests); // fix seed
   generate_random_bracket(path, 2, 6, 3, random); // Test 17
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^1 1 2^6 1 2^3 ... )",
                  "2 2", draw, testtorun))
   { res=false; }
 
+  random=CGAL::Random(starting_seed+nbtests);
   generate_random_bracket(path, 3, 8, 4, random); // Test 18
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^2 1 2^8 1 2^4 ... )",
                    "", draw, testtorun))
   { res=false; }
 
+  random=CGAL::Random(starting_seed+nbtests);
   generate_random_bracket(path, 5, 12, 8, random); // Test 19
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^4 1 2^12 1 2^8 ...)",
                  "1", draw, testtorun))
   { res=false; }
 
+  random=CGAL::Random(starting_seed+nbtests);
   generate_random_bracket(path, 5, 12, 8, random); // Test 20
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^4 1 2^12 1 2^8 ...)",
                    "2", draw, testtorun))
@@ -507,9 +512,9 @@ bool test_double_torus_quad(bool draw, int testtorun)
 
   // Test 22 (one random path, deformed randomly)
   LCC_3_cmap lcc2;
-  if (!CGAL::load_off(lcc2, "./data/double-torus-smooth.off"))
+  if (!CGAL::load_off(lcc2, "./data/double-torus.off")) // "./data/double-torus-smooth.off"))
   {
-    std::cout<<"PROBLEM reading file ./data/double-torus-smooth.off"<<std::endl;
+    std::cout<<"PROBLEM reading file ./data/double-torus.off"<<std::endl; // ./data/double-torus-smooth.off"<<std::endl;
     exit(EXIT_FAILURE);
   }
 
@@ -519,7 +524,7 @@ bool test_double_torus_quad(bool draw, int testtorun)
   transformed_paths.clear();
   if (testtorun==-1 || nbtests==testtorun)
   {
-    CGAL::Random random(1); // fix seed
+    CGAL::Random random(starting_seed+nbtests);
     CGAL::Path_on_surface<LCC_3_cmap> p(lcc2);
     generate_random_closed_path(p, random.get_int(5, 20), random); // random path, length between 30 and 500
     // p.close();
@@ -527,18 +532,16 @@ bool test_double_torus_quad(bool draw, int testtorun)
     /*update_path_randomly(p, random);
     paths.push_back(p);
     update_path_randomly(p, random);
-    paths.push_back(p);
-    for (int i=0; i<3; ++i)
+    paths.push_back(p);*/
+    for (int i=0; i<paths.size(); ++i)
     {
       transformed_paths.push_back
           (cmt2.transform_original_path_into_quad_surface(paths[i]));
-    }*/
 
-    v.push_back(&paths[0]);
-    /* v.push_back(&paths[1]);
-    v.push_back(&paths[2]); */
+      v.push_back(&paths[i]);
+    }
+
     display(paths[0].get_map(), v);
-
   }
 
   if (!unit_test_canonize(paths, transformed_paths,
@@ -562,18 +565,20 @@ bool test_elephant(bool draw, int testtorun) // TODO LATER
   lcc.display_characteristics(std::cout) << ", valid="
                                          << lcc.is_valid() << std::endl; */
 
-  CGAL::Random random(1); // fix seed
-
   CGAL::Path_on_surface<LCC_3_cmap> p1(lcc);
+  CGAL::Random random(starting_seed+nbtests);
   CGAL::generate_random_path(p1, 10, random);
 
   CGAL::Path_on_surface<LCC_3_cmap> p2(lcc);
+  random=CGAL::Random(starting_seed+nbtests);
   CGAL::generate_random_path(p2, 15, random);
 
   CGAL::Path_on_surface<LCC_3_cmap> p3(lcc);
+  random=CGAL::Random(starting_seed+nbtests);
   CGAL::generate_random_path(p3, 10, random);
 
   CGAL::Path_on_surface<LCC_3_cmap> p4(lcc);
+  random=CGAL::Random(starting_seed+nbtests);
   CGAL::generate_random_path(p4, 15, random);
 
   CGAL::Combinatorial_map_tools<LCC_3_cmap> cmt(lcc);
@@ -607,14 +612,15 @@ bool test_elephant(bool draw, int testtorun) // TODO LATER
 ///////////////////////////////////////////////////////////////////////////////
 void usage(int /*argc*/, char** argv)
 {
-  std::cout<<"usage: "<<argv[0]<<" [-draw] [-test N]"<<std::endl
+  std::cout<<"usage: "<<argv[0]<<" [-draw] [-test N] [-seed S]"<<std::endl
            <<"   Test several path transformations "
            <<"(bracket flattening, spurs removal and right shift of l-shape)."
            <<std::endl
            <<"   -draw: draw mesh and paths before and after the transformation"
            <<std::endl
-           <<std::endl
            <<"   -test N: only run test number N (0<=N<"<<NB_TESTS<<")."
+           <<std::endl
+           <<"   -seed S: uses S as seed of random generator. Otherwise use a different seed at each run (based on time)."
            <<std::endl
            <<std::endl;
   exit(EXIT_FAILURE);
@@ -632,6 +638,9 @@ int main(int argc, char** argv)
   std::string arg;
   int testN=-1;
 
+  CGAL::Random r; // Used when user do not provide its own seed.
+  starting_seed=r.get_int(0,INT_MAX);
+
   for (int i=1; i<argc; ++i)
   {
     arg=argv[i];
@@ -645,13 +654,19 @@ int main(int argc, char** argv)
       if (testN<0 || testN>=NB_TESTS)
       { error_command_line(argc, argv, "Error: invalid value for -test option."); }
     }
+    else if (arg=="-seed")
+    {
+      if (i==argc-1)
+      { error_command_line(argc, argv, "Error: no number after -seed option."); }
+      starting_seed=std::stoi(std::string(argv[++i]));
+    }
     else if (arg=="-h" || arg=="--help" || arg=="-?")
     { usage(argc, argv); }
     else if (arg[0]=='-')
     { std::cout<<"Unknown option "<<arg<<", ignored."<<std::endl; }
   }
 
-  std::cout<<"Start tests: "<<std::flush;
+  std::cout<<"Start tests (seed="<<starting_seed<<"):"<<std::flush;
 
 #ifdef CGAL_TRACE_PATH_TESTS
   std::cout<<std::endl;
@@ -681,7 +696,7 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  /* if (!test_torus_quad(draw, testN))
+  /* if (!test_torus_quad(draw, testN)) // Doesn't work because the method is valid only for surfaces with genus >=2
   {
     std::cout<<"TEST TORUS FAILED."<<std::endl;
     return EXIT_FAILURE;
