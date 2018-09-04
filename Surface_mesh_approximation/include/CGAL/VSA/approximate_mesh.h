@@ -148,7 +148,7 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
       << "\nnb_of_relaxations " << nb_of_relaxations << std::endl;
   }
 
-  approx.initialize_seeds(method, max_nb_of_proxies, min_error_drop, nb_of_relaxations);
+  approx.initialize_seeds(np);
 
   if (vl == CGAL::VSA::Main_steps || vl == CGAL::VSA::Verbose)
     std::cout << "Seeding done." << std::endl;

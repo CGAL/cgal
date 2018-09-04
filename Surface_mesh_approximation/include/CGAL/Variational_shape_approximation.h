@@ -316,24 +316,40 @@ public:
 
   /// \name Approximation
   /// @{
-    /*!
-   * @brief Initializes the seeds with both maximum number of proxies
-   * and minimum error drop stop criteria.
+  /*!
+   * @brief Initializes the seeds with both maximum number of proxies and minimum error drop stop criteria.
    * The first criterion met stops the seeding.
    * Parameters out of range are ignored.
-   * @param method seeding method
-   * @param max_nb_of_proxies maximum target number of proxies,
-   * should be in range (nb_connected_components, num_faces(tm) / 3)
-   * @param min_error_drop minimum error drop,
-   * should be in range (0.0, 1.0)
-   * @param nb_relaxations number of interleaved refitting relaxations
-   * in incremental and hierarchical seeding
+   * @tparam NamedParameters a sequence of \ref vsa_namedparameters
+
+   * @param np optional sequence of \ref vsa_namedparameters among the ones listed below
    * @return number of proxies initialized
+
+   * \cgalNamedParamsBegin{Seeding Named Parameters}
+   *  \cgalParamBegin{seeding_method} selection of seeding method.
+   *  \cgalParamEnd
+   *  \cgalParamBegin{max_nb_of_proxies} maximum number of proxies to approximate the input mesh.
+   *  \cgalParamEnd
+   *  \cgalParamBegin{min_error_drop} minimum error drop of the approximation, expressed in ratio between two iterations of proxy addition.
+   *  \cgalParamEnd
+   *  \cgalParamBegin{nb_of_relaxations} number of relaxation iterations interleaved within seeding.
+   *  \cgalParamEnd
+   * \cgalNamedParamsEnd
    */
-  std::size_t initialize_seeds(const VSA::Seeding_method method = VSA::Hierarchical,
-    const boost::optional<std::size_t> max_nb_of_proxies = boost::optional<std::size_t>(),
-    const boost::optional<FT> min_error_drop = boost::optional<FT>(),
-    const std::size_t nb_relaxations = 5) {
+  template <typename NamedParameters>
+  std::size_t initialize_seeds(const NamedParameters &np) {
+    using boost::get_param;
+    using boost::choose_param;
+    namespace vsa_np = CGAL::VSA::internal_np;
+
+    const CGAL::VSA::Seeding_method method = choose_param(
+      get_param(np, vsa_np::seeding_method), CGAL::VSA::Hierarchical);
+    const boost::optional<std::size_t> max_nb_of_proxies = choose_param(
+      get_param(np, vsa_np::max_nb_of_proxies), boost::optional<std::size_t>());
+    const boost::optional<FT> min_error_drop = choose_param(
+      get_param(np, vsa_np::min_error_drop), boost::optional<FT>());
+    const std::size_t nb_of_relaxations = choose_param(get_param(np, vsa_np::nb_of_relaxations), 5);
+
     // maximum number of proxies internally, maybe better choice?
     const std::size_t nb_px = num_faces(*m_ptm) / 3;
 
@@ -349,11 +365,11 @@ public:
         max_nb_px_adjusted = *max_nb_of_proxies;
       switch (method) {
         case VSA::Random:
-          return init_random_error(max_nb_px_adjusted, *min_error_drop, nb_relaxations);
+          return init_random_error(max_nb_px_adjusted, *min_error_drop, nb_of_relaxations);
         case VSA::Incremental:
-          return init_incremental_error(max_nb_px_adjusted, *min_error_drop, nb_relaxations);
+          return init_incremental_error(max_nb_px_adjusted, *min_error_drop, nb_of_relaxations);
         case VSA::Hierarchical:
-          return init_hierarchical_error(max_nb_px_adjusted, *min_error_drop, nb_relaxations);
+          return init_hierarchical_error(max_nb_px_adjusted, *min_error_drop, nb_of_relaxations);
         default:
           return 0;
       }
@@ -362,11 +378,11 @@ public:
       // no valid min_error_drop provided, only max_nb_of_proxies
       switch (method) {
         case VSA::Random:
-          return init_random(*max_nb_of_proxies, nb_relaxations);
+          return init_random(*max_nb_of_proxies, nb_of_relaxations);
         case VSA::Incremental:
-          return init_incremental(*max_nb_of_proxies, nb_relaxations);
+          return init_incremental(*max_nb_of_proxies, nb_of_relaxations);
         case VSA::Hierarchical:
-          return init_hierarchical(*max_nb_of_proxies, nb_relaxations);
+          return init_hierarchical(*max_nb_of_proxies, nb_of_relaxations);
         default:
           return 0;
       }
@@ -376,11 +392,11 @@ public:
       const FT e(0.1);
       switch (method) {
         case VSA::Random:
-          return init_random_error(nb_px, e, nb_relaxations);
+          return init_random_error(nb_px, e, nb_of_relaxations);
         case VSA::Incremental:
-          return init_incremental_error(nb_px, e, nb_relaxations);
+          return init_incremental_error(nb_px, e, nb_of_relaxations);
         case VSA::Hierarchical:
-          return init_hierarchical_error(nb_px, e, nb_relaxations);
+          return init_hierarchical_error(nb_px, e, nb_of_relaxations);
         default:
           return 0;
       }
@@ -747,12 +763,12 @@ public:
    * @brief Splits one proxy area via N-section (by default bisection).
    * @param px_idx proxy index.
    * @param n number of split sections.
-   * @param nb_relaxations number of relaxation on the confined proxy area. (DEFINE CONFINED)
+   * @param nb_of_relaxations number of relaxation on the confined proxy area. (DEFINE CONFINED)
    * @return `true` if split succeeds, `false` otherwise.
    */
   bool split(const std::size_t px_idx,
     const std::size_t n = 2,
-    const std::size_t nb_relaxations = 10) {
+    const std::size_t nb_of_relaxations = 10) {
     if (px_idx >= m_proxies.size())
       return false;
 
@@ -784,7 +800,7 @@ public:
     }
 
     // relaxation on confined area and proxies
-    for (std::size_t i = 0; i < nb_relaxations; ++i) {
+    for (std::size_t i = 0; i < nb_of_relaxations; ++i) {
       BOOST_FOREACH(face_descriptor f, confined_area)
         put(m_fproxy_map, f, CGAL_VSA_INVALID_TAG);
 

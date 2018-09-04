@@ -52,7 +52,8 @@ int main()
 
   // random seeding and run
   std::cout << "random seeding and run" << std::endl;
-  approx.initialize_seeds(CGAL::VSA::Random, 10);
+  approx.initialize_seeds(CGAL::VSA::parameters::seeding_method(CGAL::VSA::Random)
+    .max_nb_of_proxies(10));
   approx.run(10);
   if (approx.proxies_size() != 10)
     return EXIT_FAILURE;
@@ -120,12 +121,16 @@ int main()
   const FT drop(0.001);
   const std::size_t iterations = 5;
   std::cout << "re-initialize and hierarchical seeding" << std::endl;
-  approx.initialize_seeds(CGAL::VSA::Hierarchical, boost::none, drop, iterations);
+  approx.initialize_seeds(CGAL::VSA::parameters::seeding_method(CGAL::VSA::Hierarchical)
+    .min_error_drop(drop)
+    .nb_of_relaxations(iterations));
   approx.run(10);
   std::cout << "#proxies " << approx.proxies_size() << std::endl;
 
   std::cout << "re-initialize and incremental seeding" << std::endl;
-  approx.initialize_seeds(CGAL::VSA::Incremental, boost::none, drop, iterations);
+  approx.initialize_seeds(CGAL::VSA::parameters::seeding_method(CGAL::VSA::Incremental)
+    .min_error_drop(drop)
+    .nb_of_relaxations(iterations));
   approx.run(10);
   std::cout << "#proxies " << approx.proxies_size() << std::endl;
 

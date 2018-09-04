@@ -60,7 +60,9 @@ int main(int argc, char *argv[])
   std::cerr << "start seeding" << std::endl;
   t.start();
   approx.initialize_seeds(
-    static_cast<CGAL::VSA::Seeding_method>(method), boost::none, error_drop, nb_relaxations);
+    CGAL::VSA::parameters::seeding_method(static_cast<CGAL::VSA::Seeding_method>(method))
+      .min_error_drop(error_drop)
+      .nb_of_relaxations(nb_relaxations));
   t.stop();
   std::cerr << "seeding time " << t.time() << " sec." << std::endl;
   std::cerr << "#proxies " << approx.proxies_size() << std::endl;
