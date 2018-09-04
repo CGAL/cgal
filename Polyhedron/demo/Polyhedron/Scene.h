@@ -94,9 +94,7 @@ public:
   void updatePrimitiveIds(Viewer_interface *, Scene_item *item) Q_DECL_OVERRIDE;
   bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer) Q_DECL_OVERRIDE;
   Bbox bbox() const Q_DECL_OVERRIDE;
-  Bbox visibleBbox() const ;
   void computeBbox();
-  void computeVisibleBbox();
   double len_diagonal() const Q_DECL_OVERRIDE
   {
     Bbox box = bbox();
@@ -286,7 +284,6 @@ private:
   QMap<CGAL::Three::Viewer_interface*, QOpenGLVertexArrayObject*> vaos;
   mutable QOpenGLBuffer vbo[2];
   Bbox last_bbox;
-  Bbox last_visible_bbox;
 }; // end class Scene
 
 class QAbstractProxyModel;

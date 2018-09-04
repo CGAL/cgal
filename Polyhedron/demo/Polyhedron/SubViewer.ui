@@ -37,8 +37,8 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="Polyhedron_3.qrc">
-           <normaloff>:/cgal/icons/menu</normaloff>:/cgal/icons/menu</iconset>
+          <iconset>
+           <normaloff>resources/menu.png</normaloff>resources/menu.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -61,7 +61,7 @@
          </property>
          <property name="icon">
           <iconset resource="Polyhedron_3.qrc">
-           <normaloff>:/cgal/icons/exit</normaloff>:/cgal/icons/exit</iconset>
+           <normaloff>:/cgal/icons/resources/exit.png</normaloff>:/cgal/icons/resources/exit.png</iconset>
          </property>
          <property name="iconSize">
           <size>

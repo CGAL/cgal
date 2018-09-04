@@ -1201,7 +1201,6 @@ void Scene::itemVisibilityChanged(CGAL::Three::Scene_item* item)
      && !item->isEmpty())
   {
     //does not recenter
-    computeVisibleBbox();
     Q_EMIT updated_bbox(false);
   }
 }
@@ -1664,34 +1663,6 @@ void Scene::adjustIds(Item_id removed_id)
   }
 }
 
-void Scene::computeVisibleBbox()
-{
-  if(m_entries.empty())
-  {
-    last_visible_bbox = Bbox(0,0,0,0,0,0);
-    return;
-  }
-
-  bool bbox_initialized = false;
-  Bbox bbox = Bbox(0,0,0,0,0,0);
-  Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
-  {
-    if(item->isFinite() && !item->isEmpty() && item->visible()) {
-      if(bbox_initialized) {
-
-        bbox = bbox + item->bbox();
-      }
-      else {
-        bbox = item->bbox();
-        bbox_initialized = true;
-
-      }
-    }
-
-  }
-  last_visible_bbox = bbox;
-}
-
 void Scene::computeBbox()
 {
   if(m_entries.empty())
@@ -1738,11 +1709,6 @@ void Scene::removeViewer(Viewer_interface *viewer)
   {
     item->removeViewer(viewer);
   }
-}
-
-Scene::Bbox Scene::visibleBbox() const
-{
-    return last_visible_bbox;
 }
 
 void Scene::initGL(Viewer_interface *viewer)

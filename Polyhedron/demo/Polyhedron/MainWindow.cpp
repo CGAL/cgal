@@ -135,272 +135,232 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
   : CGAL::Qt::DemosMainWindow(parent)
 {
   ui = new Ui::MainWindow;
-  ui->setupUi(this);
-  menuBar()->setNativeMenuBar(false);
-  searchAction = new QWidgetAction(0);
-  CGAL::Three::Three::s_mainwindow = this;
-  menu_map[ui->menuOperations->title()] = ui->menuOperations;
-  this->verbose = verbose;
-  // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
-#if !defined(QT_SCRIPT_LIB)
-  ui->menuBar->removeAction(ui->actionLoadScript);
-#endif
-  // Save some pointers from ui, for latter use.
-  sceneView = ui->sceneView;
-  viewer = ui->viewer;
-  viewer->setObjectName("viewer");
-  // do not save the state of the viewer (anoying)
-  viewer->setStateFileName(QString::null);
+    ui->setupUi(this);
+    menuBar()->setNativeMenuBar(false);
+    searchAction = new QWidgetAction(0);
+    CGAL::Three::Three::s_mainwindow = this;
+    menu_map[ui->menuOperations->title()] = ui->menuOperations;
+    this->verbose = verbose;
+    // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
+  #if !defined(QT_SCRIPT_LIB)
+    ui->menuBar->removeAction(ui->actionLoadScript);
+  #endif
+    // Save some pointers from ui, for latter use.
+    sceneView = ui->sceneView;
+    viewer = ui->viewer;
 
-  // setup scene
-  scene = new Scene(this);
-  viewer->textRenderer()->setScene(scene);
-  viewer->setScene(scene);
-  CGAL::Three::Three::s_scene = scene;
-  CGAL::Three::Three::s_connectable_scene = scene;
-  {
-    QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
-    connect(shortcut, SIGNAL(activated()),
-            this, SLOT(setFocusToQuickSearch()));
-    shortcut = new QShortcut(QKeySequence(Qt::Key_F5), this);
-    connect(shortcut, SIGNAL(activated()),
-            this, SLOT(reloadItem()));
-    shortcut = new QShortcut(QKeySequence(Qt::Key_F11), this);
-    connect(shortcut, SIGNAL(activated()),
-            this, SLOT(toggleFullScreen()));
-  }
-  setupViewer(viewer, 0);
-  
-  viewer->setKeyDescription(Qt::Key_R + Qt::CTRL,
-                      tr("Recenters the viewer under the cursor. "
-                         "If the cursor is not over any viewer, "
-                         "then all viewers are recentered."));
-
-  proxyModel = new QSortFilterProxyModel(this);
-  proxyModel->setSourceModel(scene);
-  SceneDelegate *delegate = new SceneDelegate(this);
-  delegate->setProxy(proxyModel);
-  delegate->setScene(scene);
-
-
-  connect(ui->searchEdit, SIGNAL(textChanged(QString)),
-          proxyModel, SLOT(setFilterFixedString(QString)));
-  sceneView->setModel(proxyModel);
-
-  // setup the sceneview: delegation and columns sizing...
-  sceneView->setItemDelegate(delegate);
-  resetHeader();
-
-  // setup connections
-  connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
-          this, SLOT(updateInfo()));
-
-  connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
-          this, SLOT(updateDisplayInfo()));
-
-  connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
-          viewer, SLOT(update()));
-
-  connect(scene, SIGNAL(updated()),
-          viewer, SLOT(update()));
-  connect(viewer, &Viewer::needNewContext,
-    [this](){create();});
-  
-
-  connect(scene, SIGNAL(updated()),
-          this, SLOT(selectionChanged()));
-
-  connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
-          this, SLOT(removeManipulatedFrame(CGAL::Three::Scene_item*)));
-
-  connect(scene, SIGNAL(updated_bbox(bool)),
-          this, SLOT(updateViewersBboxes(bool)));
-
-  connect(scene, SIGNAL(selectionChanged(int)),
-          this, SLOT(selectSceneItem(int)));
-
-  connect(scene, SIGNAL(itemPicked(const QModelIndex &)),
-          this, SLOT(recenterSceneView(const QModelIndex &)));
-
-  connect(sceneView->selectionModel(),
-          SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
-          this, SLOT(updateInfo()));
-
-  connect(sceneView->selectionModel(),
-          SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
-          this, SLOT(updateDisplayInfo()));
-
-  connect(sceneView->selectionModel(),
-          SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
-          this, SLOT(selectionChanged()));
-
-  sceneView->setContextMenuPolicy(Qt::CustomContextMenu);
-  connect(sceneView, SIGNAL(customContextMenuRequested(const QPoint & )),
-          this, SLOT(showSceneContextMenu(const QPoint &)));
-
-  connect(sceneView, SIGNAL(expanded(QModelIndex)),
-          this, SLOT(setExpanded(QModelIndex)));
-
-  connect(sceneView, SIGNAL(collapsed(QModelIndex)),
-          this, SLOT(setCollapsed(QModelIndex)));
-  connect(this, SIGNAL(collapsed(QModelIndex)),
-          scene, SLOT(setCollapsed(QModelIndex)));
-  connect(this, SIGNAL(expanded(QModelIndex)),
-          scene, SLOT(setExpanded(QModelIndex)));
-
-  connect(scene, SIGNAL(restoreCollapsedState()),
-          this, SLOT(restoreCollapseState()));
-
-  connect(viewer, SIGNAL(selected(int)),
-          this, SLOT(selectSceneItem(int)));
-  connect(viewer, SIGNAL(selectedPoint(double, double, double)),
-          this, SLOT(showSelectedPoint(double, double, double)));
-
-  connect(viewer, SIGNAL(selectionRay(double, double, double,
-                                      double, double, double)),
-          scene, SIGNAL(selectionRay(double, double, double,
-                                     double, double, double)));
-
-  connect(viewer, SIGNAL(requestContextMenu(QPoint)),
-          this, SLOT(contextMenuRequested(QPoint)));
-  connect(viewer, SIGNAL(sendMessage(QString)),
-          this, SLOT(information(QString)));
-
-  // The contextMenuPolicy of infoLabel is now the default one, so that one
-  // can easily copy-paste its text.
-  // connect(ui->infoLabel, SIGNAL(customContextMenuRequested(const QPoint & )),
-  //         this, SLOT(showSceneContextMenu(const QPoint &)));
-  connect(ui->actionRecenterScene, SIGNAL(triggered()),
-          viewer, SLOT(update()));
-  connect(ui->actionDrawTwoSides, SIGNAL(toggled(bool)),
-          viewer, SLOT(setTwoSides(bool)));
-  connect(ui->actionSwitchProjection, SIGNAL(toggled(bool)),
-          viewer, SLOT(SetOrthoProjection(bool)));
-  
-  // add the "About CGAL..." and "About demo..." entries
-  this->addAboutCGAL();
-  this->addAboutDemo(":/cgal/Polyhedron_3/about.html");
-
-  // Connect the button "addButton" with actionLoad
-  ui->addButton->setDefaultAction(ui->actionLoad);
-  // Same with "removeButton" and "duplicateButton"
-  ui->removeButton->setDefaultAction(ui->actionErase);
-  ui->duplicateButton->setDefaultAction(ui->actionDuplicate);
-
-  // Connect actionQuit (Ctrl+Q) and qApp->quit()
-  connect(ui->actionQuit, SIGNAL(triggered()),
-          this, SLOT(quit()));
-  // Connect "Select all items"
-  connect(ui->actionSelectAllItems, SIGNAL(triggered()),
-          this, SLOT(selectAll()));
-
-  connect(ui->actionColorItems, SIGNAL(triggered()),
-          this, SLOT(colorItems()));
-
-  // Recent files menu
-  this->addRecentFiles(ui->menuFile, ui->actionQuit);
-  connect(this, SIGNAL(openRecentFile(QString)),
-          this, SLOT(open(QString)));
-
-  // Reset the "Operation menu"
-  clearMenu(ui->menuOperations);
-
-#ifdef QT_SCRIPT_LIB
-  std::cerr << "Enable scripts.\n";
-  script_engine = new QScriptEngine(this);
-  qScriptRegisterMetaType<CGAL::Three::Scene_item*>(script_engine,
-                                       myScene_itemToScriptValue,
-                                       myScene_itemFromScriptValue);
-#  ifdef QT_SCRIPTTOOLS_LIB
-  QScriptEngineDebugger* debugger = new QScriptEngineDebugger(this);
-  debugger->setObjectName("qt script debugger");
-  QAction* debuggerMenuAction =
-    menuBar()->addMenu(debugger->createStandardMenu());
-  debuggerMenuAction->setText(tr("Qt Script &Debug"));
-  for(unsigned int i = 0; i < 9; ++i)
-  {
-    QDockWidget* dock = new QDockWidget(debug_widgets_names[i], this);
-    dock->setObjectName(debug_widgets_names[i]);
-    dock->setWidget(debugger->widget(debug_widgets[i]));
-    this->QMainWindow::addDockWidget(Qt::BottomDockWidgetArea, dock);
-    dock->hide();
-  }
-  debugger->setAutoShowStandardWindow(false);
-  debugger->attachTo(script_engine);
-#  endif // QT_SCRIPTTOOLS_LIB
-  QScriptValue fun = script_engine->newFunction(myPrintFunction);
-  script_engine->globalObject().setProperty("print", fun);
-
-  //  evaluate_script("print('hello', 'world', 'from QtScript!')");
-  QScriptValue mainWindowObjectValue = script_engine->newQObject(this);
-  script_engine->globalObject().setProperty("main_window", mainWindowObjectValue);
-
-  QScriptValue sceneObjectValue = script_engine->newQObject(scene);
-  mainWindowObjectValue.setProperty("scene", sceneObjectValue);
-  script_engine->globalObject().setProperty("scene", sceneObjectValue);
-
-  QScriptValue viewerObjectValue = script_engine->newQObject(viewer);
-  mainWindowObjectValue.setProperty("viewer", viewerObjectValue);
-  script_engine->globalObject().setProperty("viewer", viewerObjectValue);
-
-  QScriptValue cameraObjectValue = script_engine->newQObject(viewer->camera());
-  viewerObjectValue.setProperty("camera", cameraObjectValue);
-  script_engine->globalObject().setProperty("camera", cameraObjectValue);
-
-  evaluate_script("var plugins = new Array();");
-#  ifdef QT_SCRIPTTOOLS_LIB
-  QScriptValue debuggerObjectValue = script_engine->newQObject(debugger);
-  script_engine->globalObject().setProperty("debugger", debuggerObjectValue);
-#  endif
-#endif
-
-  readSettings(); // Among other things, the column widths are stored.
-
-  // Load plugins, and re-enable actions that need it.
-  operationSearchBar.setPlaceholderText("Research...");
-  searchAction->setDefaultWidget(&operationSearchBar);  
-  connect(&operationSearchBar, &QLineEdit::textChanged,
-          this, &MainWindow::filterOperations);
-  loadPlugins();
-
-  // Setup the submenu of the View menu that can toggle the dockwidgets
-  Q_FOREACH(QDockWidget* widget, findChildren<QDockWidget*>()) {
-    ui->menuDockWindows->addAction(widget->toggleViewAction());
-  }
-  ui->menuDockWindows->removeAction(ui->dummyAction);
-
-
-  this->readState("MainWindow", Size|State);
-
-  //Manages the group_item creation
-  actionAddToGroup= new QAction("Add New Group", this);
-
-  if(actionAddToGroup) {
-    connect(actionAddToGroup, SIGNAL(triggered()),
-            this, SLOT(makeNewGroup()));
-  }
-
-  QMenu* menuFile = findChild<QMenu*>("menuFile");
-  insertActionBeforeLoadPlugin(menuFile, actionAddToGroup);
-  statistics_dlg = NULL;
-  statistics_ui = new Ui::Statistics_on_item_dialog();
-
-  actionResetDefaultLoaders = new QAction("Reset Default Loaders",this);
-
-#ifdef QT_SCRIPT_LIB
-  // evaluate_script("print(plugins);");
-  Q_FOREACH(QAction* action, findChildren<QAction*>()) {
-    if(action->objectName() != "") {
-      QScriptValue objectValue = script_engine->newQObject(action);
-      script_engine->globalObject().setProperty(action->objectName(),
-                                                objectValue);
+    // setup scene
+    scene = new Scene(this);
+    CGAL::Three::Three::s_scene = scene;
+    CGAL::Three::Three::s_connectable_scene = scene;
+    {
+      QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
+      connect(shortcut, SIGNAL(activated()),
+              this, SLOT(setFocusToQuickSearch()));
+      shortcut = new QShortcut(QKeySequence(Qt::Key_F5), this);
+      connect(shortcut, SIGNAL(activated()),
+              this, SLOT(reloadItem()));
+      shortcut = new QShortcut(QKeySequence(Qt::Key_F11), this);
+      connect(shortcut, SIGNAL(activated()),
+              this, SLOT(toggleFullScreen()));
     }
-  }
-  // debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
-#endif
 
-  // setup menu filtering
-  connect(ui->menuOperations, SIGNAL(aboutToShow()), this, SLOT(filterOperations()));
+    proxyModel = new QSortFilterProxyModel(this);
+    proxyModel->setSourceModel(scene);
+    SceneDelegate *delegate = new SceneDelegate(this);
+    delegate->setProxy(proxyModel);
+    delegate->setScene(scene);
+
+
+    connect(ui->searchEdit, SIGNAL(textChanged(QString)),
+            proxyModel, SLOT(setFilterFixedString(QString)));
+    sceneView->setModel(proxyModel);
+
+    // setup the sceneview: delegation and columns sizing...
+    sceneView->setItemDelegate(delegate);
+    resetHeader();
+
+    // setup connections
+    connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
+            this, SLOT(updateInfo()));
+
+    connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
+            this, SLOT(updateDisplayInfo()));
+
+    connect(viewer, &Viewer::needNewContext,
+      [this](){create();});
+
+
+    connect(scene, SIGNAL(updated()),
+            this, SLOT(selectionChanged()));
+
+    connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
+            this, SLOT(removeManipulatedFrame(CGAL::Three::Scene_item*)));
+
+    connect(scene, SIGNAL(updated_bbox(bool)),
+             this, SLOT(updateViewersBboxes(bool)));
+
+    connect(scene, SIGNAL(selectionChanged(int)),
+            this, SLOT(selectSceneItem(int)));
+
+    connect(scene, SIGNAL(itemPicked(const QModelIndex &)),
+            this, SLOT(recenterSceneView(const QModelIndex &)));
+
+    connect(sceneView->selectionModel(),
+            SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
+            this, SLOT(updateInfo()));
+
+    connect(sceneView->selectionModel(),
+            SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
+            this, SLOT(updateDisplayInfo()));
+
+    connect(sceneView->selectionModel(),
+            SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
+            this, SLOT(selectionChanged()));
+
+    sceneView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(sceneView, SIGNAL(customContextMenuRequested(const QPoint & )),
+            this, SLOT(showSceneContextMenu(const QPoint &)));
+
+    connect(sceneView, SIGNAL(expanded(QModelIndex)),
+            this, SLOT(setExpanded(QModelIndex)));
+
+    connect(sceneView, SIGNAL(collapsed(QModelIndex)),
+            this, SLOT(setCollapsed(QModelIndex)));
+    connect(this, SIGNAL(collapsed(QModelIndex)),
+            scene, SLOT(setCollapsed(QModelIndex)));
+    connect(this, SIGNAL(expanded(QModelIndex)),
+            scene, SLOT(setExpanded(QModelIndex)));
+
+    connect(scene, SIGNAL(restoreCollapsedState()),
+            this, SLOT(restoreCollapseState()));
+
+    setupViewer(viewer, nullptr);
+
+    // add the "About CGAL..." and "About demo..." entries
+    this->addAboutCGAL();
+    this->addAboutDemo(":/cgal/Polyhedron_3/about.html");
+
+    // Connect the button "addButton" with actionLoad
+    ui->addButton->setDefaultAction(ui->actionLoad);
+    // Same with "removeButton" and "duplicateButton"
+    ui->removeButton->setDefaultAction(ui->actionErase);
+    ui->duplicateButton->setDefaultAction(ui->actionDuplicate);
+
+    // Connect actionQuit (Ctrl+Q) and qApp->quit()
+    connect(ui->actionQuit, SIGNAL(triggered()),
+            this, SLOT(quit()));
+    // Connect "Select all items"
+    connect(ui->actionSelectAllItems, SIGNAL(triggered()),
+            this, SLOT(selectAll()));
+
+    connect(ui->actionColorItems, SIGNAL(triggered()),
+            this, SLOT(colorItems()));
+
+    // Recent files menu
+    this->addRecentFiles(ui->menuFile, ui->actionQuit);
+    connect(this, SIGNAL(openRecentFile(QString)),
+            this, SLOT(open(QString)));
+
+    // Reset the "Operation menu"
+    clearMenu(ui->menuOperations);
+
+  #ifdef QT_SCRIPT_LIB
+    std::cerr << "Enable scripts.\n";
+    script_engine = new QScriptEngine(this);
+    qScriptRegisterMetaType<CGAL::Three::Scene_item*>(script_engine,
+                                         myScene_itemToScriptValue,
+                                         myScene_itemFromScriptValue);
+  #  ifdef QT_SCRIPTTOOLS_LIB
+    QScriptEngineDebugger* debugger = new QScriptEngineDebugger(this);
+    debugger->setObjectName("qt script debugger");
+    QAction* debuggerMenuAction =
+      menuBar()->addMenu(debugger->createStandardMenu());
+    debuggerMenuAction->setText(tr("Qt Script &Debug"));
+    for(unsigned int i = 0; i < 9; ++i)
+    {
+      QDockWidget* dock = new QDockWidget(debug_widgets_names[i], this);
+      dock->setObjectName(debug_widgets_names[i]);
+      dock->setWidget(debugger->widget(debug_widgets[i]));
+      this->QMainWindow::addDockWidget(Qt::BottomDockWidgetArea, dock);
+      dock->hide();
+    }
+    debugger->setAutoShowStandardWindow(false);
+    debugger->attachTo(script_engine);
+  #  endif // QT_SCRIPTTOOLS_LIB
+    QScriptValue fun = script_engine->newFunction(myPrintFunction);
+    script_engine->globalObject().setProperty("print", fun);
+
+    //  evaluate_script("print('hello', 'world', 'from QtScript!')");
+    QScriptValue mainWindowObjectValue = script_engine->newQObject(this);
+    script_engine->globalObject().setProperty("main_window", mainWindowObjectValue);
+
+    QScriptValue sceneObjectValue = script_engine->newQObject(scene);
+    mainWindowObjectValue.setProperty("scene", sceneObjectValue);
+    script_engine->globalObject().setProperty("scene", sceneObjectValue);
+
+    QScriptValue viewerObjectValue = script_engine->newQObject(viewer);
+    mainWindowObjectValue.setProperty("viewer", viewerObjectValue);
+    script_engine->globalObject().setProperty("viewer", viewerObjectValue);
+
+    QScriptValue cameraObjectValue = script_engine->newQObject(viewer->camera());
+    viewerObjectValue.setProperty("camera", cameraObjectValue);
+    script_engine->globalObject().setProperty("camera", cameraObjectValue);
+
+    evaluate_script("var plugins = new Array();");
+  #  ifdef QT_SCRIPTTOOLS_LIB
+    QScriptValue debuggerObjectValue = script_engine->newQObject(debugger);
+    script_engine->globalObject().setProperty("debugger", debuggerObjectValue);
+  #  endif
+  #endif
+
+    readSettings(); // Among other things, the column widths are stored.
+
+    // Load plugins, and re-enable actions that need it.
+    operationSearchBar.setPlaceholderText("Research...");
+    searchAction->setDefaultWidget(&operationSearchBar);
+    connect(&operationSearchBar, &QLineEdit::textChanged,
+            this, &MainWindow::filterOperations);
+    loadPlugins();
+
+    // Setup the submenu of the View menu that can toggle the dockwidgets
+    Q_FOREACH(QDockWidget* widget, findChildren<QDockWidget*>()) {
+      ui->menuDockWindows->addAction(widget->toggleViewAction());
+    }
+    ui->menuDockWindows->removeAction(ui->dummyAction);
+
+
+    this->readState("MainWindow", Size|State);
+
+    //Manages the group_item creation
+    actionAddToGroup= new QAction("Add New Group", this);
+
+    if(actionAddToGroup) {
+      connect(actionAddToGroup, SIGNAL(triggered()),
+              this, SLOT(makeNewGroup()));
+    }
+
+    QMenu* menuFile = findChild<QMenu*>("menuFile");
+    insertActionBeforeLoadPlugin(menuFile, actionAddToGroup);
+    statistics_dlg = NULL;
+    statistics_ui = new Ui::Statistics_on_item_dialog();
+
+    actionResetDefaultLoaders = new QAction("Reset Default Loaders",this);
+
+  #ifdef QT_SCRIPT_LIB
+    // evaluate_script("print(plugins);");
+    Q_FOREACH(QAction* action, findChildren<QAction*>()) {
+      if(action->objectName() != "") {
+        QScriptValue objectValue = script_engine->newQObject(action);
+        script_engine->globalObject().setProperty(action->objectName(),
+                                                  objectValue);
+      }
+    }
+    // debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
+  #endif
+
+    // setup menu filtering
+    connect(ui->menuOperations, SIGNAL(aboutToShow()), this, SLOT(filterOperations()));
 }
 
 //Recursive function that do a pass over a menu and its sub-menus(etc.) and hide them when they are empty
@@ -883,8 +843,7 @@ void MainWindow::updateViewersBboxes(bool recenter)
 
 void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& min, CGAL::qglviewer::Vec& max)
 {
-  const Scene::Bbox bbox = scene->visibleBbox();
-  const Scene::Bbox all_bbox = scene->bbox();
+  const Scene::Bbox bbox = scene->bbox();
   const double xmin = bbox.xmin();
   const double ymin = bbox.ymin();
   const double zmin = bbox.zmin();
@@ -892,20 +851,12 @@ void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& min, CGAL::qglviewer::V
   const double ymax = bbox.ymax();
   const double zmax = bbox.zmax();
 
-  const double axmin = all_bbox.xmin();
-  const double aymin = all_bbox.ymin();
-  const double azmin = all_bbox.zmin();
-  const double axmax = all_bbox.xmax();
-  const double aymax = all_bbox.ymax();
-  const double azmax = all_bbox.zmax();
-
 
 
   min = CGAL::qglviewer::Vec(xmin, ymin, zmin);
   max= CGAL::qglviewer::Vec(xmax, ymax, zmax);
 
-  CGAL::qglviewer::Vec abbox_center((axmin+axmax)/2, (aymin+aymax)/2, (azmin+azmax)/2),
-      bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
+  CGAL::qglviewer::Vec bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
 
   CGAL::qglviewer::Vec offset(0,0,0);
 
@@ -2103,7 +2054,6 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 void MainWindow::on_actionRecenterScene_triggered()
 {
   scene->computeBbox();
-  scene->computeVisibleBbox();
   CGAL::qglviewer::Vec min, max;
   computeViewerBBox(min, max);
   Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
@@ -2583,7 +2533,6 @@ void MainWindow::on_actionAdd_Viewer_triggered()
 void MainWindow::recenterViewer()
 {
   scene->computeBbox();
-  scene->computeVisibleBbox();
   CGAL::qglviewer::Vec min, max;
   computeViewerBBox(min, max);
   Viewer* target = qobject_cast<Viewer*>(childAt(cursor().pos()));
