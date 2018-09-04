@@ -506,6 +506,13 @@ bool EdgeCollapse<M,SP,VIM,VPM,EIM,ECTM,CF,PF,V>::Is_collapse_topologically_vali
           rR = false ;
           CGAL_SMS_TRACE(3,"  p-q belongs to a tetrahedron. NON-COLLAPSABLE edge." ) ;
         }
+
+        if ( next(aProfile.v0_v1(), mSurface) == opposite(prev(aProfile.v1_v0(), mSurface), mSurface) &&
+             prev(aProfile.v0_v1(), mSurface) == opposite(next(aProfile.v1_v0(), mSurface), mSurface) )
+        {
+          CGAL_SMS_TRACE(3,"  degenerate volume." ) ;
+          return false ;
+        }
       }
     }
   }
