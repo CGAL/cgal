@@ -5,7 +5,7 @@
 
 /*!
 \addtogroup PkgMinkowskiSum2Ref
-\cgalPkgDescriptionBegin{2D Minkowski Sums,PkgMinkowskiSum2Summary}
+\cgalPkgDescriptionBegin{2D Minkowski Sums,PkgMinkowskiSum2}
 \cgalPkgPicture{Minkowski_sum_2/fig/Minkowski_sum_2.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Ron Wein, Alon Baram, Eyal Flato, Efi Fogel, Michael Hemmer, Sebastian Morr}
@@ -14,7 +14,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
-\cgalPkgDependsOn{\ref PkgArrangement2Summary, \ref PkgAABB_treeSummary, \ref PkgTriangulation2Summary}
+\cgalPkgDependsOn{\ref PkgArrangement2, \ref PkgAABB_tree, \ref PkgTriangulation2}
 \cgalPkgBib{cgal:w-rms2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd

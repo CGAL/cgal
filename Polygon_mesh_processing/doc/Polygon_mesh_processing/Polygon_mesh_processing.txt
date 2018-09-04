@@ -27,7 +27,7 @@ A polygon mesh can have any number of connected components, and also some self-i
 In this package, a polygon mesh is considered to have the topology of a 2-manifold.
 
 \subsection PMPAPI API
-This package follows the BGL API described in \ref PkgBGLSummary.
+This package follows the BGL API described in \ref PkgBGL.
 It can thus be used either with `Polyhedron_3`, `Surface_mesh`, or
 any class model of the concept `FaceGraph`. Each function or class of this package
 details the requirements on the input polygon mesh.
@@ -229,7 +229,7 @@ centered in the output volume is a topological ball. At the surface level this m
 that no non-manifold vertex or edge is allowed in the output. For example, it
 is not possible to compute the union of two cubes that are disjoint but sharing an edge.
 In case you have to deal with such scenarios, you should consider using the
-package \ref PkgNef3Summary.
+package \ref PkgNef3.
 
 It is possible to update the input so that it contains the result (in-place operation).
 In that case the whole mesh will not be copied and only the region around the
@@ -710,7 +710,7 @@ In the following example, a mesh is isotropically remeshed and the approximate d
 \subsection PoissonDistanceExample Max Distance Between Point Set and Surface Example
 In \ref Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp,
 a triangulated surface mesh is constructed from a point set using the
-\link PkgPoissonSurfaceReconstructionSummary Poisson reconstruction algorithm \endlink,
+\link PkgPoissonSurfaceReconstruction Poisson reconstruction algorithm \endlink,
 and the distance between the point set and the reconstructed surface is computed
 with the following code:
 

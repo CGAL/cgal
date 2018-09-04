@@ -4,7 +4,7 @@
 /*!
 \addtogroup PkgEnvelope3Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{3D Envelopes,PkgEnvelope3Summary}
+\cgalPkgDescriptionBegin{3D Envelopes,PkgEnvelope3}
 \cgalPkgPicture{Envelope_3/fig/Envelope_3.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Dan Halperin, Michal Meyerovitch, Ron Wein, and Baruch Zukerman}
@@ -13,7 +13,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
-\cgalPkgDependsOn{\ref PkgArrangement2Summary}
+\cgalPkgDependsOn{\ref PkgArrangement2}
 \cgalPkgBib{cgal:mwz-e3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{3D Envelopes,envelope_3.zip,L1 Voronoi Diagram,l1_voronoi_diagram_2.zip}

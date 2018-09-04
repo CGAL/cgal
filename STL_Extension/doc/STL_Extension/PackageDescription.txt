@@ -12,7 +12,7 @@
 
 /*!
 \addtogroup PkgStlExtensionRef
-\cgalPkgDescriptionBegin{STL Extensions for CGAL,PkgStlExtensionSummary}
+\cgalPkgDescriptionBegin{STL Extensions for CGAL,PkgStlExtension}
 \cgalPkgPicture{plusplus.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein}

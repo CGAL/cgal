@@ -34,7 +34,7 @@
 /*!
 \addtogroup PkgMesh_3Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{3D Mesh Generation,PkgMesh_3Summary}
+\cgalPkgDescriptionBegin{3D Mesh Generation,PkgMesh_3}
 \cgalPkgPicture{Mesh_3/fig/multilabel_mesher_small.jpg}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec}
@@ -43,7 +43,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}
-\cgalPkgDependsOn{\ref PkgTriangulation3Summary and \ref thirdpartyEigen}
+\cgalPkgDependsOn{\ref PkgTriangulation3 and \ref thirdpartyEigen}
 \cgalPkgBib{cgal:rty-m3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}

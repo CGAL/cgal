@@ -27,7 +27,7 @@
 /*!
 \addtogroup PkgTriangulation2Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{2D Triangulation,PkgTriangulation2Summary}
+\cgalPkgDescriptionBegin{2D Triangulation,PkgTriangulation2}
 \cgalPkgPicture{cdt2d-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Mariette Yvinec}
@@ -36,7 +36,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{0.9}
-\cgalPkgDependsOn{\ref PkgTDS2Summary}
+\cgalPkgDependsOn{\ref PkgTDS2}
 \cgalPkgBib{cgal:y-t2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Delaunay Triangulation,delaunay_triangulation_2.zip,Regular Triangulation,regular_triangulation_2.zip,Constrained Delaunay Triangulation,constrained_delaunay_triangulation_2.zip}

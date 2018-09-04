@@ -5,7 +5,7 @@
 /*!
 \addtogroup PkgSkinSurface3Ref
 
-\cgalPkgDescriptionBegin{3D Skin Surface Meshing,PkgSkinSurface3Summary}
+\cgalPkgDescriptionBegin{3D Skin Surface Meshing,PkgSkinSurface3}
 \cgalPkgPicture{small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Nico Kruithof}
@@ -14,7 +14,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
-\cgalPkgDependsOn{\ref PkgTriangulation3Summary and \ref PkgPolyhedronSummary}
+\cgalPkgDependsOn{\ref PkgTriangulation3 and \ref PkgPolyhedron}
 \cgalPkgBib{cgal:k-ssm3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgShortInfoEnd

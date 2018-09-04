@@ -5,7 +5,7 @@
 /*!
 \addtogroup PkgConeBasedSpannersRef
 
-\cgalPkgDescriptionBegin{Cone-Based Spanners,PkgConeBasedSpannersSummary}
+\cgalPkgDescriptionBegin{Cone-Based Spanners,PkgConeBasedSpanners}
 \cgalPkgPicture{Logo-ConeSpanners.png}
 
 \cgalPkgSummaryBegin

@@ -8,7 +8,7 @@
 
 /*!
 \addtogroup PkgGeneralizedMapsRef
-\cgalPkgDescriptionBegin{Generalized Maps,PkgGeneralizedMapsSummary}
+\cgalPkgDescriptionBegin{Generalized Maps,PkgGeneralizedMaps}
 \cgalPkgPicture{gmap_logo.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Guillaume Damiand}

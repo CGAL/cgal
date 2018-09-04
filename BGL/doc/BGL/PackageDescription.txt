@@ -542,7 +542,7 @@ Methods to read and write graphs.
 
 /*!
 \addtogroup PkgBGLRef
-\cgalPkgDescriptionBegin{CGAL and the Boost Graph Library,PkgBGLSummary}
+\cgalPkgDescriptionBegin{CGAL and the Boost Graph Library,PkgBGL}
 \cgalPkgPicture{emst-detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Andreas Fabri, Fernando Cacciola, Philipp Moeller, and Ron Wein}

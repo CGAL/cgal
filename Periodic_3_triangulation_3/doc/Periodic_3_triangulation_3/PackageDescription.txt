@@ -12,7 +12,7 @@
 /*!
 \addtogroup PkgPeriodic3Triangulation3Ref
 
-\cgalPkgDescriptionBegin{3D Periodic Triangulations,PkgPeriodic3Triangulation3Summary}
+\cgalPkgDescriptionBegin{3D Periodic Triangulations,PkgPeriodic3Triangulation3}
 \cgalPkgPicture{p3Delaunay3_small.jpg}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Manuel Caroli, Aymeric Pellé, Mael Rouxel-Labbé, and Monique Teillaud}
@@ -25,7 +25,7 @@ nearest neighbor queries and primitives to build the dual Voronoi diagrams.}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}
-\cgalPkgDependsOn{\ref PkgTDS3Summary}
+\cgalPkgDependsOn{\ref PkgTDS3}
 \cgalPkgBib{cgal:ct-pt3}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{3D Periodic Delaunay Triangulation,periodic_3_triangulation_3.zip,3D Periodic Lloyd,periodic_3_lloyd.zip}

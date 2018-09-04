@@ -20,7 +20,7 @@
 
 /*!
 \addtogroup PkgSphericalKernel3Ref
-\cgalPkgDescriptionBegin{3D Spherical Geometry Kernel,PkgSphericalKernel3Summary}
+\cgalPkgDescriptionBegin{3D Spherical Geometry Kernel,PkgSphericalKernel3}
 \cgalPkgPicture{segment_sphere_intersection_detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pedro Machado Manhães de Castro, Frédéric Cazals, Sébastien Loriot, and Monique Teillaud}

@@ -20,7 +20,7 @@
 /*!
 \addtogroup PkgHDSRef
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Halfedge Data Structures,PkgHDSSummary}
+\cgalPkgDescriptionBegin{Halfedge Data Structures,PkgHDS}
 \cgalPkgPicture{HalfedgeDS/fig/HalfedgeDS-teaser-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Lutz Kettner}

@@ -26,7 +26,7 @@
 /*!
 \addtogroup PkgSpatialSearchingDRef
 
-\cgalPkgDescriptionBegin{dD Spatial Searching,PkgSpatialSearchingDSummary}
+\cgalPkgDescriptionBegin{dD Spatial Searching,PkgSpatialSearchingD}
 \cgalPkgPicture{windowQuery.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Hans Tangelder and Andreas Fabri}

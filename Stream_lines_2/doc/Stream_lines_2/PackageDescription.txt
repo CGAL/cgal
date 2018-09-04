@@ -4,7 +4,7 @@
 /*!
 \addtogroup PkgPlacementOfStreamlines2Ref
 
-\cgalPkgDescriptionBegin{2D Placement of Streamlines,PkgPlacementOfStreamlines2Summary}
+\cgalPkgDescriptionBegin{2D Placement of Streamlines,PkgPlacementOfStreamlines2}
 \cgalPkgPicture{streamlines-small.jpg}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Abdelkrim Mebarki}
@@ -13,7 +13,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
-\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
+\cgalPkgDependsOn{\ref PkgTriangulation2}
 \cgalPkgBib{cgal:m-ps}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{2D Stream Lines,streamlines.zip}

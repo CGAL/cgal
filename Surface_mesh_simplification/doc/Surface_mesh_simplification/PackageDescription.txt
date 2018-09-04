@@ -4,7 +4,7 @@
 /*!
 \addtogroup PkgSurfaceMeshSimplificationRef
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Triangulated Surface Mesh Simplification,PkgSurfaceMeshSimplificationSummary}
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Simplification,PkgSurfaceMeshSimplification}
 \cgalPkgPicture{SMS-detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Fernando Cacciola}

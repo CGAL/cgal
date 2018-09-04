@@ -3,7 +3,7 @@
 /*!
 \addtogroup PkgProperty_mapRef
 
-\cgalPkgDescriptionBegin{CGAL and Boost Property Maps,PkgProperty_mapSummary}
+\cgalPkgDescriptionBegin{CGAL and Boost Property Maps,PkgProperty_map}
 \cgalPkgPicture{property_map.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Andreas Fabri and Laurent Saboret}

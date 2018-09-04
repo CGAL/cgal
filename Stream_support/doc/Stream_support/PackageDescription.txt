@@ -3,7 +3,7 @@
 /// \ingroup PkgIOstreamsRef
 /*!
 \addtogroup PkgIOstreamsRef
-\cgalPkgDescriptionBegin{IO Streams,PkgIOstreamsSummary}
+\cgalPkgDescriptionBegin{IO Streams,PkgIOstreams}
 \cgalPkgPicture{io.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Andreas Fabri, Geert-Jan Giezeman, and Lutz Kettner}

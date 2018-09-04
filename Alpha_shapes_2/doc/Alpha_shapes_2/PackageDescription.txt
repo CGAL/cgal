@@ -5,7 +5,7 @@
 /*!
 \addtogroup PkgAlphaShape2Ref
 
-\cgalPkgDescriptionBegin{2D Alpha Shapes,PkgAlphaShape2Summary}
+\cgalPkgDescriptionBegin{2D Alpha Shapes,PkgAlphaShape2}
 \cgalPkgPicture{alpha-detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Tran Kai Frank Da}
@@ -14,7 +14,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{2.1}
-\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
+\cgalPkgDependsOn{\ref PkgTriangulation2}
 \cgalPkgBib{cgal:d-as2}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{2D Alpha Shapes,alpha_shapes_2.zip}

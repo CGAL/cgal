@@ -22,7 +22,7 @@
 
 /*!
 \addtogroup PkgHandlesAndCirculatorsRef
-\cgalPkgDescriptionBegin{Handles and Circulators,PkgHandlesAndCirculatorsSummary}
+\cgalPkgDescriptionBegin{Handles and Circulators,PkgHandlesAndCirculators}
 \cgalPkgPicture{circulator.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Olivier Devillers, Lutz Kettner, Sylvain Pion, Michael Seel, and Mariette Yvinec}

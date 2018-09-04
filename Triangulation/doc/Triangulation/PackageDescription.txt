@@ -13,7 +13,7 @@
 
 /*!
 \addtogroup PkgTriangulationsRef
-\cgalPkgDescriptionBegin{dD Triangulations,PkgTriangulationsSummary}
+\cgalPkgDescriptionBegin{dD Triangulations,PkgTriangulations}
 \cgalPkgPicture{Hypertriangle.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Olivier Devillers, Samuel Hornus, and Clément Jamin}

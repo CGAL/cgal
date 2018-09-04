@@ -9,7 +9,7 @@ namespace ArrDirectionalTraits {}
 /*!
 \addtogroup PkgBooleanSetOperations2Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{2D Regularized Boolean Set-Operations,PkgBooleanSetOperations2Summary}
+\cgalPkgDescriptionBegin{2D Regularized Boolean Set-Operations,PkgBooleanSetOperations2}
 \cgalPkgPicture{Boolean_set_operations_2.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Efi Fogel, Ophir Setter, Ron Wein, Guy Zucker, Baruch Zukerman, and Dan Halperin}
@@ -18,7 +18,7 @@ namespace ArrDirectionalTraits {}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
-\cgalPkgDependsOn{\ref PkgArrangement2Summary}
+\cgalPkgDependsOn{\ref PkgArrangement2}
 \cgalPkgBib{cgal:fwzh-rbso2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Boolean operations,boolean_operations_2.zip}

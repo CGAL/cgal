@@ -4,7 +4,7 @@
 /*!
 \addtogroup PkgBoundingVolumesRef
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Bounding Volumes,PkgBoundingVolumesSummary}
+\cgalPkgDescriptionBegin{Bounding Volumes,PkgBoundingVolumes}
 \cgalPkgPicture{minCircle.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Kaspar Fischer, Bernd Gärtner, Thomas Herrmann, Michael Hoffmann, and Sven Schönherr}

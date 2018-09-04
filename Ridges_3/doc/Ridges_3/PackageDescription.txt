@@ -6,7 +6,7 @@
 /*!
 \addtogroup PkgRidges_3Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Approximation of Ridges and Umbilics on Triangulated Surface Meshes,PkgRidges_3Summary}
+\cgalPkgDescriptionBegin{Approximation of Ridges and Umbilics on Triangulated Surface Meshes,PkgRidges_3}
 \cgalPkgPicture{RidgesMechPartDetail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Marc Pouget and Frédéric Cazals}
@@ -15,7 +15,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
-\cgalPkgDependsOn{\ref PkgSolverSummary} 
+\cgalPkgDependsOn{\ref PkgSolver} 
 \cgalPkgBib{cgal:cp-arutsm}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd

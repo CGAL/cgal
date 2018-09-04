@@ -5,7 +5,7 @@
 /*!
 \addtogroup PkgOptimalDistancesRef
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Optimal Distances,PkgOptimalDistancesSummary}
+\cgalPkgDescriptionBegin{Optimal Distances,PkgOptimalDistances}
 \cgalPkgPicture{dist.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Kaspar Fischer, Bernd Gärtner, Thomas Herrmann, Michael Hoffmann, and Sven Schönherr}

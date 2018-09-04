@@ -3,7 +3,7 @@
 /// \ingroup PkgProfilingToolsRef
 /*!
 \addtogroup PkgProfilingToolsRef
-\cgalPkgDescriptionBegin{Profiling tools\, Hash Map\, Union-find\, Modifiers,PkgProfilingToolsSummary}
+\cgalPkgDescriptionBegin{Profiling tools\, Hash Map\, Union-find\, Modifiers,PkgProfilingTools}
 \cgalPkgPicture{stopwatch.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Lutz Kettner, Sylvain Pion, and Michael Seel}

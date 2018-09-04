@@ -3,7 +3,7 @@
 /*!
 \addtogroup PkgThreeRef
 
-\cgalPkgDescriptionBegin{Three,PkgThreeSummary}
+\cgalPkgDescriptionBegin{Three,PkgThree}
 \cgalPkgPicture{pkg-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Laurent Rineau, Sebastien Loriot, Andreas Fabri, Maxime Gimeno}

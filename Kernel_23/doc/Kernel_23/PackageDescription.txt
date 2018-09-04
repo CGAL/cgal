@@ -35,7 +35,7 @@
 
 /*!
 \addtogroup PkgKernel23Ref
-\cgalPkgDescriptionBegin{2D and 3D Linear Geometry Kernel,PkgKernel23Summary}
+\cgalPkgDescriptionBegin{2D and 3D Linear Geometry Kernel,PkgKernel23}
 \cgalPkgPicture{pointSegmentTriangle.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Hervé Brönnimann, Andreas Fabri, Geert-Jan Giezeman, Susan Hert, Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Stefan Schirra}

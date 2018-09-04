@@ -3,7 +3,7 @@
 
 /*!
 \addtogroup PkgSurfaceParameterizationRef
-\cgalPkgDescriptionBegin{Triangulated Surface Mesh Parameterization,PkgSurfaceParameterizationSummary}
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Parameterization,PkgSurfaceParameterization}
 \cgalPkgPicture{bimbaDetail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Laurent Saboret, Pierre Alliez, Bruno Lévy, Mael Rouxel-Labbé, and Andreas Fabri}
@@ -19,7 +19,7 @@ The code is generic and works with any model of the `FaceGraph` concept.}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
-\cgalPkgDependsOn{\ref PkgSolverSummary}
+\cgalPkgDependsOn{\ref PkgSolver}
 \cgalPkgBib{cgal:salf-pptsm2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}

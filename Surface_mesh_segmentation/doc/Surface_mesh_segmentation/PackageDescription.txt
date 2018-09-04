@@ -7,7 +7,7 @@
 /*!
 \addtogroup PkgSurfaceSegmentationRef
 
-\cgalPkgDescriptionBegin{Triangulated Surface Mesh Segmentation,PkgSurfaceSegmentationSummary}
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Segmentation,PkgSurfaceSegmentation}
 \cgalPkgPicture{segmentation_ico.png}
 
 \cgalPkgSummaryBegin
@@ -22,7 +22,7 @@
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.4}
-\cgalPkgDependsOn{\ref PkgAABB_treeSummary}
+\cgalPkgDependsOn{\ref PkgAABB_tree}
 \cgalPkgBib{cgal:y-smsimpl}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}

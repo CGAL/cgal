@@ -13,7 +13,7 @@ that default values of optional named parameters must be used.
 In the following, we assume that the type `PolygonMesh` is passed as template
 parameters of the functions, and is a model of the concept `MutableFaceGraph`.
 
-The following named parameter, offered by the package \ref PkgBGLSummary
+The following named parameter, offered by the package \ref PkgBGL
 (see \ref bgl_namedparameters), is used in this package:
 
 \cgalNPTableBegin

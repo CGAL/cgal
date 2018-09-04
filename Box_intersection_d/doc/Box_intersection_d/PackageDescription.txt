@@ -22,7 +22,7 @@
 
 \todo de-math and change D to d for the dimension
 
-\cgalPkgDescriptionBegin{Intersecting Sequences of dD Iso-oriented Boxes,PkgBoxIntersectionDSummary}
+\cgalPkgDescriptionBegin{Intersecting Sequences of dD Iso-oriented Boxes,PkgBoxIntersectionD}
 \cgalPkgPicture{box_inters-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Lutz Kettner, Andreas Meyer, and Afra Zomorodian}

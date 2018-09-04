@@ -11,7 +11,7 @@
 /*!
 \addtogroup PkgRangeSegmentTreesDRef
 \todo check generated documentation
-\cgalPkgDescriptionBegin{dD Range and Segment Trees,PkgRangeSegmentTreesDSummary}
+\cgalPkgDescriptionBegin{dD Range and Segment Trees,PkgRangeSegmentTreesD}
 \cgalPkgPicture{segment_tree.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Gabriele Neyer}

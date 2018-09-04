@@ -8,7 +8,7 @@
 
 /*!
 \addtogroup PkgVisibility_2Ref
-\cgalPkgDescriptionBegin{2D Visibility Computation,PkgVisibility_2Summary}
+\cgalPkgDescriptionBegin{2D Visibility Computation,PkgVisibility_2}
 \cgalPkgPicture{visibility-teaser-thumbnail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Michael Hemmer, Kan Huang, Francisc Bungiu, Ning Xu}
@@ -18,8 +18,8 @@ the visibility area of a point within polygonal regions in two dimensions.}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}
-\cgalPkgDependsOn{\ref PkgArrangement2Summary}
-\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
+\cgalPkgDependsOn{\ref PkgArrangement2}
+\cgalPkgDependsOn{\ref PkgTriangulation2}
 \cgalPkgBib{hhb-visibility-2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd

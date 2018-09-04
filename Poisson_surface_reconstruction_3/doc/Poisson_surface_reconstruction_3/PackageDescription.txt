@@ -1,7 +1,7 @@
 /// \defgroup PkgPoissonSurfaceReconstructionRef Poisson Surface Reconstruction Reference
 /*!
 \addtogroup PkgPoissonSurfaceReconstructionRef
-\cgalPkgDescriptionBegin{Poisson Surface Reconstruction,PkgPoissonSurfaceReconstructionSummary}
+\cgalPkgDescriptionBegin{Poisson Surface Reconstruction,PkgPoissonSurfaceReconstruction}
 \cgalPkgPicture{surface_reconstruction_points_detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pierre Alliez, Laurent Saboret, Gaël Guennebaud}
@@ -10,7 +10,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}
-\cgalPkgDependsOn{\ref PkgSolverSummary} 
+\cgalPkgDependsOn{\ref PkgSolver} 
 \cgalPkgBib{cgal:asg-srps}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}

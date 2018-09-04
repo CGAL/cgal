@@ -2,7 +2,7 @@
 /*!
 \addtogroup PkgGeomviewRef
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Geomview,PkgGeomviewSummary}
+\cgalPkgDescriptionBegin{Geomview,PkgGeomview}
 \cgalPkgPicture{geomview.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Andreas Fabri and Sylvain Pion}

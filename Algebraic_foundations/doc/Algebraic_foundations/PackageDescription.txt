@@ -7,7 +7,7 @@
 \addtogroup PkgAlgebraicFoundationsRef
 \todo check generated documentation
 
-\cgalPkgDescriptionBegin{Algebraic Foundations,PkgAlgebraicFoundationsSummary}
+\cgalPkgDescriptionBegin{Algebraic Foundations,PkgAlgebraicFoundations}
 \cgalPkgPicture{Algebraic_foundations2.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Michael Hemmer}

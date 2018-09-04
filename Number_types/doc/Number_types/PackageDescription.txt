@@ -34,7 +34,7 @@
 /*!
 \addtogroup PkgNumberTypesRef
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Number Types,PkgNumberTypesSummary}
+\cgalPkgDescriptionBegin{Number Types,PkgNumberTypes}
 \cgalPkgPicture{illustration.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Michael Hemmer, Susan Hert, Sylvain Pion, and Stefan Schirra}

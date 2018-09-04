@@ -15,7 +15,7 @@
 /*!
 \addtogroup PkgVoronoiDiagramAdaptor2Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{2D Voronoi Diagram Adaptor,PkgVoronoiDiagramAdaptor2Summary}
+\cgalPkgDescriptionBegin{2D Voronoi Diagram Adaptor,PkgVoronoiDiagramAdaptor2}
 \cgalPkgPicture{voronoi.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Menelaos Karavelas}

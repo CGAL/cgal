@@ -3,7 +3,7 @@
 /*!
 \addtogroup PkgMinkowskiSum3Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{3D Minkowski Sum of Polyhedra,PkgMinkowskiSum3Summary}
+\cgalPkgDescriptionBegin{3D Minkowski Sum of Polyhedra,PkgMinkowskiSum3}
 \cgalPkgPicture{Minkowski_sum_3/fig/Minkowski_sum_3_teaser.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Peter Hachenberger}
@@ -12,7 +12,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}
-\cgalPkgDependsOn{\ref PkgNef3Summary\, \ref PkgConvexDecomposition3Summary}
+\cgalPkgDependsOn{\ref PkgNef3\, \ref PkgConvexDecomposition3}
 \cgalPkgBib{cgal:h-msp3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}

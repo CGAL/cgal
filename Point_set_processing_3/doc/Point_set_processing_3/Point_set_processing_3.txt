@@ -80,7 +80,7 @@ as, e.g., a class derived from the \cgal 3D point, or as a
 `std::pair<Point_3<K>, Vector_3<K>>`, or as a
 `boost::tuple<..,Point_3<K>, ..., Vector_3<K> >`.
 
-The following classes described in Chapter \ref PkgProperty_mapSummary
+The following classes described in Chapter \ref PkgProperty_map
 provide property maps for the implementations of points with normals
 listed above:
 
@@ -584,7 +584,7 @@ points that are on sharp edges:
 The function `structure_point_set()` generates a structured version of
 the input point set assigned to a set of planes. Such an input can be
 produced by a shape detection algorithm (see \ref
-PkgPointSetShapeDetection3Summary). Point set structuring is based on
+PkgPointSetShapeDetection3). Point set structuring is based on
 the article \cgalCite{cgal:la-srpss-13}.
 
 - __Planes__: inliers of each detected plane are replaced by sets of

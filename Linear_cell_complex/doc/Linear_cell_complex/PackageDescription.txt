@@ -30,7 +30,7 @@
 
 /*!
 \addtogroup PkgLinearCellComplexRef
-\cgalPkgDescriptionBegin{Linear Cell Complex,PkgLinearCellComplexSummary}
+\cgalPkgDescriptionBegin{Linear Cell Complex,PkgLinearCellComplex}
 \cgalPkgPicture{lcc_logo.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Guillaume Damiand}
@@ -39,8 +39,8 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.0}
-\cgalPkgDependsOn{\ref PkgCombinatorialMapsSummary}
-\cgalPkgDependsOn{\ref PkgGeneralizedMapsSummary}
+\cgalPkgDependsOn{\ref PkgCombinatorialMaps}
+\cgalPkgDependsOn{\ref PkgGeneralizedMaps}
 \cgalPkgBib{cgal:d-lcc-12}
 \cgalPkgLicense{\ref licensesLGPL "LGPL"}
 \cgalPkgDemo{3D Linear Cell Complex,linear_cell_complex_3.zip}

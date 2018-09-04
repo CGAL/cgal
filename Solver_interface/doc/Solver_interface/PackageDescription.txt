@@ -6,7 +6,7 @@
 
 /*!
 \addtogroup PkgSolverRef
-\cgalPkgDescriptionBegin{CGAL and Solvers,PkgSolverSummary}
+\cgalPkgDescriptionBegin{CGAL and Solvers,PkgSolver}
 \cgalPkgPicture{solver.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Simon Giraudot, Pierre Alliez, Frédéric Cazals, Gaël Guennebaud, Bruno Lévy, Marc Pouget, and Laurent Saboret}

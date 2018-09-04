@@ -27,7 +27,7 @@ Read and write points (with or without additional properties) in LAS
 format.
 
 \addtogroup PkgPointSetProcessingRef
-\cgalPkgDescriptionBegin{Point Set Processing,PkgPointSetProcessingSummary}
+\cgalPkgDescriptionBegin{Point Set Processing,PkgPointSetProcessing}
 \cgalPkgPicture{point_set_processing_detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pierre Alliez, Simon Giraudot, Clément Jamin, Florent Lafarge, Quentin Mérigot, Jocelyn Meyron, Laurent Saboret, Nader Salman, Shihao Wu}
@@ -36,7 +36,7 @@ format.
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}
-\cgalPkgDependsOn{\ref PkgSolverSummary} 
+\cgalPkgDependsOn{\ref PkgSolver} 
 \cgalPkgBib{cgal:ass-psp}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}

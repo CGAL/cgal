@@ -13,7 +13,7 @@
 
 /*!
 \addtogroup PkgMesh2Ref
-\cgalPkgDescriptionBegin{2D Conforming Triangulations and Meshes,PkgMesh2Summary}
+\cgalPkgDescriptionBegin{2D Conforming Triangulations and Meshes,PkgMesh2}
 \cgalPkgPicture{Mesh_2/fig/delaunaymesh-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Laurent Rineau}
@@ -27,7 +27,7 @@ The package can handle intersecting input constraints  and set no restriction on
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.1}
-\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
+\cgalPkgDependsOn{\ref PkgTriangulation2}
 \cgalPkgBib{cgal:r-ctm2}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{2D Mesh Generator,constrained_delaunay_triangulation_2.zip}

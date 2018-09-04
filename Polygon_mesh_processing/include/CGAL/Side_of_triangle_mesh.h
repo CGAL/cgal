@@ -55,7 +55,7 @@ namespace CGAL {
  * will return in turns `CGAL::ON_BOUNDED_SIDE` and `CGAL::ON_UNBOUNDED_SIDE`,
  * following the aforementioned parity criterion.
  *
- * This class depends on the package \ref PkgAABB_treeSummary.
+ * This class depends on the package \ref PkgAABB_tree.
  *
  * @tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph`
  * @tparam GeomTraits a geometric traits class, model of `Kernel`

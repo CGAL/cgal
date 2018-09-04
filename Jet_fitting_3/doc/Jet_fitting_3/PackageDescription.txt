@@ -4,7 +4,7 @@
 /*!
 \addtogroup PkgJet_fitting_3Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Estimation of Local Differential Properties of Point-Sampled Surfaces,PkgJet_fitting_3Summary}
+\cgalPkgDescriptionBegin{Estimation of Local Differential Properties of Point-Sampled Surfaces,PkgJet_fitting_3}
 \cgalPkgPicture{DavidDetail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Marc Pouget  and Frédéric Cazals}
@@ -13,7 +13,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
-\cgalPkgDependsOn{\ref PkgSolverSummary and \ref thirdpartyEigen}
+\cgalPkgDependsOn{\ref PkgSolver and \ref thirdpartyEigen}
 \cgalPkgBib{cgal:pc-eldp}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}

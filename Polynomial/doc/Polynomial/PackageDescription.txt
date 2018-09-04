@@ -10,7 +10,7 @@
 /*!
 \addtogroup PkgPolynomialRef
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Polynomial,PkgPolynomialSummary}
+\cgalPkgDescriptionBegin{Polynomial,PkgPolynomial}
 \cgalPkgPicture{Polynomial.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Michael Hemmer}

@@ -174,7 +174,7 @@ the following properties:
 \note The current implementation executes fine on meshes that do not match
 some of these properties but may produce unreliable or meaningless segmentations.
 
-The current implementation of the computation of the SDF values relies on the \ref PkgAABB_treeSummary package.
+The current implementation of the computation of the SDF values relies on the \ref PkgAABB_tree package.
 This operation is reliable when the `AABBTraits` model provided has exact predicates.
 `::CGAL::Exact_predicates_inexact_constructions_kernel` is recommended as geometric traits for this algorithm.
 

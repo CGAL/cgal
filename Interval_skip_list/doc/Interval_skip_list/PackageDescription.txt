@@ -4,7 +4,7 @@
 /*!
 \addtogroup PkgIntervalSkipListRef
 
-\cgalPkgDescriptionBegin{Interval Skip List,PkgIntervalSkipListSummary}
+\cgalPkgDescriptionBegin{Interval Skip List,PkgIntervalSkipList}
 \cgalPkgPicture{Interval_skip_list/fig/query.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Andreas Fabri}

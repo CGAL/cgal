@@ -3,7 +3,7 @@
 /// \ingroup PkgAlphaShapes3Ref
 /*!
 \addtogroup PkgAlphaShapes3Ref
-\cgalPkgDescriptionBegin{3D Alpha Shapes,PkgAlphaShapes3Summary}
+\cgalPkgDescriptionBegin{3D Alpha Shapes,PkgAlphaShapes3}
 \cgalPkgPicture{alpha_shapes_3_small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Tran Kai Frank Da, Sébastien Loriot, and Mariette Yvinec}
@@ -12,7 +12,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{2.3}
-\cgalPkgDependsOn{\ref PkgTriangulation3Summary}
+\cgalPkgDependsOn{\ref PkgTriangulation3}
 \cgalPkgBib{cgal:dy-as3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{3D Alpha Shapes,alpha_shape_3.zip}

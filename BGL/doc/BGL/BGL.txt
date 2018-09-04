@@ -22,7 +22,7 @@ Furthermore, this package extends the \sc{Bgl}
 by introducing concepts such as `HalfedgeGraph` and `FaceGraph`
 allowing to handle *halfedges* and *faces*.
 These concepts reflect the design of the halfedge data structure described
-in Chapter \ref PkgHDSSummary, with opposite halfedges and circular
+in Chapter \ref PkgHDS, with opposite halfedges and circular
 sequences of halfedges around vertices and around faces.
 
 This chapter is organized as follows:
@@ -31,10 +31,10 @@ This chapter is organized as follows:
 different libraries.
 - The four following sections give examples on how to use CGAL graph and mesh data structures
 such as
-\link PkgSurfaceMeshSummary Surface_mesh \endlink,
-\link PkgPolyhedronSummary Polyhedron \endlink,
-\link PkgArrangement2Summary Arrangement_2 \endlink, and the
-\link PkgTriangulation2Summary 2D triangulation \endlink classes as models of the \sc{Bgl} concepts.
+\link PkgSurfaceMesh Surface_mesh \endlink,
+\link PkgPolyhedron Polyhedron \endlink,
+\link PkgArrangement2 Arrangement_2 \endlink, and the
+\link PkgTriangulation2 2D triangulation \endlink classes as models of the \sc{Bgl} concepts.
 - Starting with Section \ref BGLExtensions, we introduce new graph concepts, classes,
 and functions that extend the functionalities of the \sc{Bgl}.
 
@@ -127,7 +127,7 @@ The data itself may be stored in the vertex or the edge, or it may
 be stored in an external data structure, or it may be computed on
 the fly. This is an implementation detail of a particular property map.
 
-See also Chapter \ref PkgProperty_mapSummary.
+See also Chapter \ref PkgProperty_map.
 
 \subsection BGLVisitors Visitors
 
@@ -218,7 +218,7 @@ the concepts provided by \cgal to implement a simple algorithm.
 
 The following example program computes the minimum spanning tree on a surface mesh.
 More examples can be found in Chapters
-\ref PkgSurfaceMeshSimplificationSummary, \ref PkgSurfaceSegmentationSummary, and \ref PkgSurfaceMeshDeformationSummary.
+\ref PkgSurfaceMeshSimplification, \ref PkgSurfaceSegmentation, and \ref PkgSurfaceMeshDeformation.
 
 The surface mesh class uses integer indices to address vertices and edges,
 and it comes with a built-in property mechanism that maps nicely on the \sc{Bgl}.
@@ -237,7 +237,7 @@ the concepts provided by \cgal to implement a simple algorithm.
 
 The following example program computes the minimum spanning tree on a polyhedral surface.
 More examples can be found in the Chapter
-\ref PkgSurfaceMeshSimplificationSummary.
+\ref PkgSurfaceMeshSimplification.
 
 \cgalExample{BGL_polyhedron_3/kruskal.cpp}
 
@@ -423,7 +423,7 @@ by the functionalities of the \sc{Bgl}.
 
 \subsection BGLExtensionsGraphConcepts Graph concepts
 
-In order to match \ref PkgHDSSummary more closely and to enable writing generic algorithms
+In order to match \ref PkgHDS more closely and to enable writing generic algorithms
 which operate on data structures that have faces and halfedges, we define
 a set of new concepts to extend the <a href="https://www.boost.org/libs/graph/doc/graph_concepts.html">graph concepts of the BGL</a>:
 
@@ -636,7 +636,7 @@ Vertices of the seam mesh that are linked by a green dashed segment correspond
 to the same vertex in the underlying mesh.
 \cgalFigureEnd
 
-Seam meshes are for example used in Chapter \ref PkgSurfaceParameterizationSummary
+Seam meshes are for example used in Chapter \ref PkgSurfaceParameterization
 to parameterize a topological sphere by first virtually cutting it into a topological
 disk.
 

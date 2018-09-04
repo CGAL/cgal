@@ -18,7 +18,7 @@
 
 /*!
 \addtogroup PkgSpatialSortingRef
-\cgalPkgDescriptionBegin{Spatial Sorting,PkgSpatialSortingSummary}
+\cgalPkgDescriptionBegin{Spatial Sorting,PkgSpatialSorting}
 \cgalPkgPicture{hilbert.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Christophe Delage and Olivier Devillers}

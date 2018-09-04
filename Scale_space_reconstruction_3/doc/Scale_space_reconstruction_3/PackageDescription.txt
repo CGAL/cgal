@@ -9,7 +9,7 @@
 
 /*!
 \addtogroup PkgScaleSpaceReconstruction3Ref
-\cgalPkgDescriptionBegin{Scale-Space Surface Reconstruction,PkgScaleSpaceReconstruction3Summary}
+\cgalPkgDescriptionBegin{Scale-Space Surface Reconstruction,PkgScaleSpaceReconstruction3}
 \cgalPkgPicture{knot_thumb.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Thijs van Lankveld}
@@ -20,7 +20,7 @@
 \cgalPkgSince{4.6}
 \cgalPkgBib{cgal:ssr3}
 \cgalPkgLicense{\ref licensesGPL "GPL" }
-\cgalPkgDependsOn{\ref PkgAlphaShapes3Summary, \ref PkgSpatialSearchingDSummary, \ref PkgSolverSummary}
+\cgalPkgDependsOn{\ref PkgAlphaShapes3, \ref PkgSpatialSearchingD, \ref PkgSolver}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

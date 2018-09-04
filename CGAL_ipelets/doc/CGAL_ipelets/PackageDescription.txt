@@ -1,7 +1,7 @@
 /// \defgroup PkgCGALIpeletsRef CGAL Ipelets Reference
 /*!
 \addtogroup PkgCGALIpeletsRef
-\cgalPkgDescriptionBegin{CGAL Ipelets,PkgCGALIpeletsSummary}
+\cgalPkgDescriptionBegin{CGAL Ipelets,PkgCGALIpelets}
 \cgalPkgPicture{ipeico.jpg}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Olivier Devillers, Sébastien Loriot, and Sylvain Pion}

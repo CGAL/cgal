@@ -17,7 +17,7 @@
 /*!
 \addtogroup PkgAlgebraicKerneldRef
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Algebraic Kernel,PkgAlgebraicKerneldSummary}
+\cgalPkgDescriptionBegin{Algebraic Kernel,PkgAlgebraicKerneld}
 \cgalPkgPicture{Algebraic_kernel_d.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Eric Berberich, Michael Hemmer, Michael Kerber, Sylvain Lazard, Luis Peñaranda, and Monique Teillaud}

@@ -18,7 +18,7 @@
 /*!
 \addtogroup PkgPrincipalComponentAnalysisDRef
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Principal Component Analysis,PkgPrincipalComponentAnalysisDSummary}
+\cgalPkgDescriptionBegin{Principal Component Analysis,PkgPrincipalComponentAnalysisD}
 \cgalPkgPicture{teaserLeastSquaresFitting.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pierre Alliez, Sylvain Pion and Ankit Gupta}
@@ -27,7 +27,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
-\cgalPkgDependsOn{\ref PkgSolverSummary} 
+\cgalPkgDependsOn{\ref PkgSolver} 
 \cgalPkgBib{cgal:ap-pcad}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Principal Component Analysis,pca.zip,Operations on Polygons,polygon.zip,Polyhedron demo,polyhedron_3.zip}

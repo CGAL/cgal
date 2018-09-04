@@ -3,7 +3,7 @@
 /// \ingroup PkgGeneratorsRef
 /*!
 \addtogroup PkgGeneratorsRef
-\cgalPkgDescriptionBegin{Geometric Object Generators,PkgGeneratorsSummary}
+\cgalPkgDescriptionBegin{Geometric Object Generators,PkgGenerators}
 \cgalPkgPicture{dice.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pedro M. M. de Castro, Olivier Devillers, Susan Hert, Michael Hoffmann, Lutz Kettner, Sven Schönherr, Alexandru Tifrea, and Maxime Gimeno}

@@ -51,7 +51,7 @@ Data structures specialized to classify clusters.
 
 \addtogroup PkgClassificationRef
 
-\cgalPkgDescriptionBegin{Classification, PkgClassificationSummary}
+\cgalPkgDescriptionBegin{Classification, PkgClassification}
 \cgalPkgPicture{data_classif.png}
 
 \cgalPkgSummaryBegin
@@ -62,7 +62,7 @@ Data structures specialized to classify clusters.
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.12}
-\cgalPkgDependsOn{\ref PkgSolverSummary, \ref PkgSpatialSearchingDSummary, [Boost Serialization](http://www.boost.org/libs/serialization) and
+\cgalPkgDependsOn{\ref PkgSolver, \ref PkgSpatialSearchingD, [Boost Serialization](http://www.boost.org/libs/serialization) and
 [Boost IO Streams](http://www.boost.org/libs/iostreams)}
 \cgalPkgBib{cgal:lm-clscm-12}
 \cgalPkgLicense{\ref licensesGPL "GPL"}

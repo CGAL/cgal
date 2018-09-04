@@ -26,7 +26,7 @@
 /*!
 \addtogroup PkgSurfaceMesher3Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{3D Surface Mesh Generation,PkgSurfaceMesher3Summary}
+\cgalPkgDescriptionBegin{3D Surface Mesh Generation,PkgSurfaceMesher3}
 \cgalPkgPicture{segmented_head-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Laurent Rineau and Mariette Yvinec}
@@ -35,7 +35,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
-\cgalPkgDependsOn{\ref PkgTriangulation3Summary}
+\cgalPkgDependsOn{\ref PkgTriangulation3}
 \cgalPkgBib{cgal:ry-smg}
 \cgalPkgLicense{\ref licensesGPL}
 \cgalPkgDemo{Surface Mesh Generator,surface_mesher.zip}

@@ -23,7 +23,7 @@ degenerate hull may also be possible.
 \addtogroup PkgConvexHull3Ref
 \todo fix or keep the `Default_traits`
 
-\cgalPkgDescriptionBegin{3D Convex Hulls,PkgConvexHull3Summary}
+\cgalPkgDescriptionBegin{3D Convex Hulls,PkgConvexHull3}
 \cgalPkgPicture{Convex_hull_3/fig/bunny.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Susan Hert and Stefan Schirra}
@@ -32,7 +32,7 @@ degenerate hull may also be possible.
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{1.1}
-\cgalPkgDependsOn{The dynamic algorithms depend on \ref PkgTriangulation3Summary "3D Triangulations".}
+\cgalPkgDependsOn{The dynamic algorithms depend on \ref PkgTriangulation3 "3D Triangulations".}
 \cgalPkgBib{cgal:hs-ch3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}

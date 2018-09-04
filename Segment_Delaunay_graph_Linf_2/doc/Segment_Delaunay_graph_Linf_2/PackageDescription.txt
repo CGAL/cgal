@@ -6,7 +6,7 @@
 \addtogroup PkgSDGLinfRef
 \todo check generated documentation
 
-\cgalPkgDescriptionBegin{L Infinity Segment Delaunay Graphs,PkgSDGLinfSummary}
+\cgalPkgDescriptionBegin{L Infinity Segment Delaunay Graphs,PkgSDGLinf}
 \cgalPkgPicture{sdglinf-small.png}
 
 \cgalPkgSummaryBegin
@@ -19,7 +19,7 @@ the Voronoi diagram of a set of points and segments under the
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}
-\cgalPkgDependsOn{\ref PkgSegmentDelaunayGraph2Summary}
+\cgalPkgDependsOn{\ref PkgSegmentDelaunayGraph2}
 \cgalPkgBib{cgal:cdp-sdglinf2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd

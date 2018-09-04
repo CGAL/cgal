@@ -25,7 +25,7 @@
 
 /*!
 \addtogroup PkgCombinatorialMapsRef
-\cgalPkgDescriptionBegin{Combinatorial Maps,PkgCombinatorialMapsSummary}
+\cgalPkgDescriptionBegin{Combinatorial Maps,PkgCombinatorialMaps}
 \cgalPkgPicture{cmap_logo.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Guillaume Damiand}

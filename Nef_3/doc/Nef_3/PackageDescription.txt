@@ -7,7 +7,7 @@
 /*!
 \addtogroup PkgNef3Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{3D Boolean Operations on Nef Polyhedra,PkgNef3Summary}
+\cgalPkgDescriptionBegin{3D Boolean Operations on Nef Polyhedra,PkgNef3}
 \cgalPkgPicture{Nef_3-teaser.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Peter Hachenberger and Lutz Kettner}
@@ -16,7 +16,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.1}
-\cgalPkgDependsOn{\ref PkgNef2Summary\, \ref PkgNefS2Summary}
+\cgalPkgDependsOn{\ref PkgNef2\, \ref PkgNefS2}
 \cgalPkgBib{cgal:hk-bonp3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}

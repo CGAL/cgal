@@ -9,7 +9,7 @@
 
 /*!
 \addtogroup PkgOptimalTransportationReconstruction2Ref
-\cgalPkgDescriptionBegin{Optimal Transportation Curve Reconstruction, PkgOptimalTransportationReconstruction2Summary}
+\cgalPkgDescriptionBegin{Optimal Transportation Curve Reconstruction, PkgOptimalTransportationReconstruction2}
 \cgalPkgPicture{RS_2_small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Pierre Alliez, David Cohen-Steiner, Fernando de Goes, Clément Jamin, Ivo Vigan}
@@ -18,7 +18,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.8}
-\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
+\cgalPkgDependsOn{\ref PkgTriangulation2}
 \cgalPkgBib{cgal:gavj-rs}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{2D Optimal Transportation Curve Reconstruction,otr2.zip}

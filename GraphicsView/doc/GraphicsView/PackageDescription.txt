@@ -9,7 +9,7 @@
 /*!
 \addtogroup PkgGraphicsViewRef
 
-\cgalPkgDescriptionBegin{CGAL and the Qt Graphics View Framework,PkgGraphicsViewSummary}
+\cgalPkgDescriptionBegin{CGAL and the Qt Graphics View Framework,PkgGraphicsView}
 \cgalPkgPicture{detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Andreas Fabri and Laurent Rineau}

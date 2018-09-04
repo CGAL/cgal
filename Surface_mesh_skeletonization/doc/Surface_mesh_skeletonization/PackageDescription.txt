@@ -4,7 +4,7 @@
 
 /*!
 \addtogroup PkgMeanCurvatureSkeleton3Ref
-\cgalPkgDescriptionBegin{Triangulated Surface Mesh Skeletonization,PkgMeanCurvatureSkeleton3Summary}
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Skeletonization,PkgMeanCurvatureSkeleton3}
 \cgalPkgPicture{mcfskel-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Xiang Gao, Sébastien Loriot and Andrea Tagliasacchi}
@@ -18,7 +18,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}
-\cgalPkgDependsOn{ \ref PkgSolverSummary}
+\cgalPkgDependsOn{ \ref PkgSolver}
 \cgalPkgBib{cgal:glt-tsms}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}

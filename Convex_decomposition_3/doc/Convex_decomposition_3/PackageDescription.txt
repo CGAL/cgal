@@ -2,7 +2,7 @@
 
 /*!
 \addtogroup PkgConvexDecomposition3Ref
-\cgalPkgDescriptionBegin{Convex Decomposition of Polyhedra,PkgConvexDecomposition3Summary}
+\cgalPkgDescriptionBegin{Convex Decomposition of Polyhedra,PkgConvexDecomposition3}
 \cgalPkgPicture{Convex_decomposition_3/fig/Convex_decomposition_3-teaser.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Peter Hachenberger}

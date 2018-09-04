@@ -15,7 +15,7 @@
 \todo Add methods for computing the ridge tree using the output of the algorithm
 \todo Add methods for computing shortest paths from geodesic sources as well
 
-\cgalPkgDescriptionBegin{Triangulated Surface Mesh Shortest Paths,PkgSurfaceMeshShortestPathSummary}
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Shortest Paths,PkgSurfaceMeshShortestPath}
 \cgalPkgPicture{shortestpathspackage-ico.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Stephen Kiazyk, Sébastien Loriot, Éric Colin de Verdière}

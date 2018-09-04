@@ -5,7 +5,7 @@
 
 /*!
 \addtogroup PkgAABB_treeRef
-\cgalPkgDescriptionBegin{3D Fast Intersection and Distance Computation,PkgAABB_treeSummary}
+\cgalPkgDescriptionBegin{3D Fast Intersection and Distance Computation,PkgAABB_tree}
 \cgalPkgPicture{aabb-teaser-thumb.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pierre Alliez, Stéphane Tayeb, Camille Wormser}

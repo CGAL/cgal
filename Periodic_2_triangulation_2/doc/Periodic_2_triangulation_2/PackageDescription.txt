@@ -18,7 +18,7 @@
 /*!
 \addtogroup PkgPeriodic2Triangulation2Ref
  
-\cgalPkgDescriptionBegin{2D Periodic Triangulations,PkgPeriodic2Triangulation2Summary}
+\cgalPkgDescriptionBegin{2D Periodic Triangulations,PkgPeriodic2Triangulation2}
 \cgalPkgPicture{Periodic_2_triangulation_2/fig/p2Delaunay2_thumb.png}
  
 \cgalPkgSummaryBegin
@@ -29,7 +29,7 @@
  
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.3}
-\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
+\cgalPkgDependsOn{\ref PkgTriangulation2}
 \cgalPkgBib{cgal:k-pt2-13}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Periodic Delaunay Triangulation,Periodic_2_Delaunay_triangulation_2.zip}

@@ -3,7 +3,7 @@
 /// \ingroup PkgModularArithmeticRef
 /*!
 \addtogroup PkgModularArithmeticRef
-\cgalPkgDescriptionBegin{Modular Arithmetic,PkgModularArithmeticSummary}
+\cgalPkgDescriptionBegin{Modular Arithmetic,PkgModularArithmetic}
 \cgalPkgPicture{Modular_arithmetic.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Michael Hemmer and Sylvain Pion}

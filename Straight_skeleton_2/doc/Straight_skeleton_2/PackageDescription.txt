@@ -13,7 +13,7 @@
 
 /*!
 \addtogroup PkgStraightSkeleton2Ref
-\cgalPkgDescriptionBegin{2D Straight Skeleton and Polygon Offsetting,PkgStraightSkeleton2Summary}
+\cgalPkgDescriptionBegin{2D Straight Skeleton and Polygon Offsetting,PkgStraightSkeleton2}
 \cgalPkgPicture{Straight_skeleton_2/fig/StraightSkeletonTeaser.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Fernando Cacciola}
@@ -22,7 +22,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
-\cgalPkgDependsOn{\ref PkgHDSSummary}
+\cgalPkgDependsOn{\ref PkgHDS}
 \cgalPkgBib{cgal:c-sspo2}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{2D Straight Skeleton,straight_skeleton_2.zip,Operations on Polygons,polygon.zip}

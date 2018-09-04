@@ -4,7 +4,7 @@
 /*!
 \addtogroup PkgNef2Ref
 
-\cgalPkgDescriptionBegin{2D Boolean Operations on Nef Polygons,PkgNef2Summary}
+\cgalPkgDescriptionBegin{2D Boolean Operations on Nef Polygons,PkgNef2}
 \cgalPkgPicture{complex-teaser.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Michael Seel}

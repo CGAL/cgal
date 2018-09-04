@@ -4,7 +4,7 @@
 /*!
 \addtogroup PkgSegmentDelaunayGraph2Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{2D Segment Delaunay Graphs,PkgSegmentDelaunayGraph2Summary}
+\cgalPkgDescriptionBegin{2D Segment Delaunay Graphs,PkgSegmentDelaunayGraph2}
 \cgalPkgPicture{svd.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Menelaos Karavelas}
@@ -13,7 +13,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.1}
-\cgalPkgDependsOn{\ref PkgTDS2Summary}
+\cgalPkgDependsOn{\ref PkgTDS2}
 \cgalPkgBib{cgal:k-sdg2}
 \cgalPkgLicense{\ref licensesGPL}
 \cgalPkgDemo{2D Segment Voronoi Diagram,segment_voronoi_diagram_2.zip}

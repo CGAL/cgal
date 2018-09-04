@@ -19,7 +19,7 @@ the type is more specific:
      predicates evaluated. Everywhere in this package, a \cgal `Kernel` fulfills the requirements.</li>
 </ul>
 
-The following named parameters, offered by the package \ref PkgBGLSummary
+The following named parameters, offered by the package \ref PkgBGL
 (see \ref bgl_namedparameters), are used in this package:
 
 \cgalNPTableBegin

@@ -12,7 +12,7 @@ namespace CGAL {
 \section visibility_2_introduction Introduction
 
 This package provides functionality to compute the visibility region within polygons in two dimensions. 
-The package is based on the package \ref PkgArrangement2Summary and uses CGAL::Arrangement_2 
+The package is based on the package \ref PkgArrangement2 and uses CGAL::Arrangement_2 
 as the fundamental class to specify the input as well as the output. 
 Hence, a polygon \f$ P \f$ is represented by a bounded arrangement face \f$ f \f$
 that does not have any isolated vertices and any edge that is adjacent to \f$ f \f$ separates \f$ f \f$ from another face.
@@ -45,12 +45,12 @@ Therefore, this package offers also
 functionality to compute the regularized visibility area  
 \f$ \overline{V_q} = closure(interior(V_q)) = (V_q\setminus\partial V_q) \cup  \partial (V_q\setminus\partial V_q)\f$,
 as shown in \cgalFigureRef{definition-fig} (2).  
-For more information about regularization, refer to Chapter \ref PkgBooleanSetOperations2Summary.
+For more information about regularization, refer to Chapter \ref PkgBooleanSetOperations2.
 
 \section visibility_2_classes Classes and Algorithms
 
 Answering visibility queries is, in many ways, similar to answering point-location queries. 
-Thus, we use the same design used to implement \ref PkgArrangement2Summary point location. 
+Thus, we use the same design used to implement \ref PkgArrangement2 point location. 
 Each of the various visibility class templates employs a different 
 algorithm or \em strategy for answering 
 queries\cgalFootnote{The term \em strategy is borrowed from the 

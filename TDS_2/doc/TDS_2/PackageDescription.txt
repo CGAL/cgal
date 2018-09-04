@@ -4,7 +4,7 @@
 /*!
 \addtogroup PkgTDS2Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{2D Triangulation Data Structure,PkgTDS2Summary}
+\cgalPkgDescriptionBegin{2D Triangulation Data Structure,PkgTDS2}
 \cgalPkgPicture{tds_small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Sylvain Pion and Mariette Yvinec}

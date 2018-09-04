@@ -73,7 +73,7 @@ Programs can be written to an output stream in MPSFormat, using one of the follo
 /*!
 \addtogroup PkgQPSolverRef
 \todo check generated documentation
-\cgalPkgDescriptionBegin{Linear and Quadratic Programming Solver,PkgQPSolverSummary}
+\cgalPkgDescriptionBegin{Linear and Quadratic Programming Solver,PkgQPSolver}
 \cgalPkgPicture{qp.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Kaspar Fischer, Bernd Gärtner, Sven Schönherr, and Frans Wessendorp}

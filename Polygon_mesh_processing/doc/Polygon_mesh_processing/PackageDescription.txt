@@ -61,7 +61,7 @@
 /*!
 \addtogroup PkgPolygonMeshProcessingRef
  
-\cgalPkgDescriptionBegin{Polygon Mesh Processing, PkgPolygonMeshProcessingSummary}
+\cgalPkgDescriptionBegin{Polygon Mesh Processing, PkgPolygonMeshProcessing}
 \cgalPkgPicture{hole_filling_ico.png}
  
 \cgalPkgSummaryBegin
@@ -74,7 +74,7 @@ ranging from basic operations on simplices, to complex geometry processing algor
  
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}
-\cgalPkgDependsOn{documented for each function; \ref PkgSolverSummary}
+\cgalPkgDependsOn{documented for each function; \ref PkgSolver}
 \cgalPkgBib{cgal:lty-pmp}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
