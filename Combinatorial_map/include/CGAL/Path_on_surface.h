@@ -743,8 +743,8 @@ public:
     while(right_push_one_step())
     { res=true;
       
-      /*std::cout<<"RP "; display();  display_pos_and_neg_turns();
-      std::cout<<std::endl;*/
+      std::cout<<"RP "; display();  display_pos_and_neg_turns();
+      std::cout<<std::endl;
     }
     return res;
   }
@@ -759,29 +759,35 @@ public:
     std::cout<<"Init "; display();
     std::cout<<std::endl;
     display_pos_and_neg_turns();
-    
+    std::cout<<std::endl;
+
     bool modified=false;
     std::cout<<"RS ";
     remove_spurs_one_step();
 
-    display();
+    display(); display_pos_and_neg_turns();
     std::cout<<std::endl;
 
     do
     {
-      modified=bracket_flattening_one_step();
+      do
+      {
+        modified=bracket_flattening_one_step();
 
-      std::cout<<"BF "; display();
-      std::cout<<std::endl;
+        std::cout<<"BF "; display(); display_pos_and_neg_turns();
+        std::cout<<std::endl;
 
-      modified=modified || remove_spurs_one_step();
+        modified=modified || remove_spurs_one_step();
 
-      std::cout<<"RS "; display();
-      std::cout<<std::endl;
+        std::cout<<"RS "; display(); display_pos_and_neg_turns();
+        std::cout<<std::endl;
+      }
+      while(modified);
+
+      modified=right_push();
     }
-    while(modified);
+    while(modified); // Maybe we do not need to iterate, a unique last righ_push should be enough (? To verify)
 
-    right_push();
   }
 
   std::vector<std::size_t> compute_positive_turns() const

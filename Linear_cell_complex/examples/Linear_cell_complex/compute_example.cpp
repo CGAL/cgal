@@ -17,7 +17,7 @@
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
 typedef CGAL::Linear_cell_complex_for_generalized_map<2,3> LCC_3_gmap;
 
-#define NB_TESTS 24 // 0 ... 23
+#define NB_TESTS 25 // 0 ... 24
 int nbtests=0;
 
 enum Transformation // enum for the type of transformations
@@ -418,7 +418,7 @@ bool test_torus_quad(bool draw, int testtorun)
 {
   bool res=true;
 
-  LCC_3_cmap lcc;
+/*  LCC_3_cmap lcc;
   if (!CGAL::load_off(lcc, "./data/torus_quad.off"))
   {
     std::cout<<"PROBLEM reading file ./data/torus_quad.off"<<std::endl;
@@ -473,6 +473,36 @@ bool test_torus_quad(bool draw, int testtorun)
                           "canonize paths on torus gen2",
                           draw, testtorun))
   { res=false; }
+*/
+  return res;
+}
+///////////////////////////////////////////////////////////////////////////////
+bool test_right_push(bool draw, int testtorun)
+{
+  bool res=true;
+
+  LCC_3_cmap lcc;
+  if (!CGAL::load_off(lcc, "./data/cube-mesh-5-5.off"))
+  {
+    std::cout<<"PROBLEM reading file ./data/cube-mesh-5-5.off"<<std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  CGAL::Path_on_surface<LCC_3_cmap> path(lcc);
+
+  if (testtorun==-1 || nbtests==testtorun)
+  {
+    generate_one_l_shape(path); // Test 21
+    transform_path(path, PUSH, draw, testtorun); // TODO COMPARE RESULT WITH GOLD STANDARD
+  }
+  ++nbtests;
+
+  if (testtorun==-1 || nbtests==testtorun)
+  {
+    generate_l_shape_case2(path); // Test 22
+    transform_path(path, PUSH, draw, testtorun); // TODO COMPARE RESULT WITH GOLD STANDARD
+  }
+  ++nbtests;
 
   return res;
 }
@@ -493,7 +523,7 @@ bool test_double_torus_quad(bool draw, int testtorun)
   std::vector<CGAL::Path_on_surface<LCC_3_cmap> > paths;
   std::vector<CGAL::Path_on_surface<LCC_3_cmap> > transformed_paths;
 
-  // Test 21 (3 g1 cycles)
+  // Test 23 (3 g1 cycles)
   for (int i=0; i<3; ++i)
   {
     paths.push_back(CGAL::Path_on_surface<LCC_3_cmap>(lcc));
@@ -510,7 +540,7 @@ bool test_double_torus_quad(bool draw, int testtorun)
 
   std::vector<const CGAL::Path_on_surface<LCC_3_cmap>*> v; // TEMPO POUR DEBUG
 
-  // Test 22 (one random path, deformed randomly)
+  // Test 24 (one random path, deformed randomly)
   LCC_3_cmap lcc2;
   if (!CGAL::load_off(lcc2, "./data/double-torus.off")) // "./data/double-torus-smooth.off"))
   {
@@ -529,10 +559,10 @@ bool test_double_torus_quad(bool draw, int testtorun)
     generate_random_closed_path(p, random.get_int(5, 20), random); // random path, length between 30 and 500
     // p.close();
     paths.push_back(p);
-    /*update_path_randomly(p, random);
+    /* update_path_randomly(p, random);
     paths.push_back(p);
     update_path_randomly(p, random);
-    paths.push_back(p);*/
+    paths.push_back(p);  */
     for (int i=0; i<paths.size(); ++i)
     {
       transformed_paths.push_back
@@ -554,16 +584,18 @@ bool test_double_torus_quad(bool draw, int testtorun)
 ///////////////////////////////////////////////////////////////////////////////
 bool test_elephant(bool draw, int testtorun) // TODO LATER
 {
-  LCC_3_cmap lcc;
+  bool res=true;
+
+/*   LCC_3_cmap lcc;
   if (!CGAL::load_off(lcc, "./data/elephant.off"))
   {
     std::cout<<"PROBLEM reading file ./data/elephant.off"<<std::endl;
     exit(EXIT_FAILURE);
   }
 
- /* std::cout<<"Initial map: ";
-  lcc.display_characteristics(std::cout) << ", valid="
-                                         << lcc.is_valid() << std::endl; */
+ // std::cout<<"Initial map: ";
+ // lcc.display_characteristics(std::cout) << ", valid="
+ //                                        << lcc.is_valid() << std::endl;
 
   CGAL::Path_on_surface<LCC_3_cmap> p1(lcc);
   CGAL::Random random(starting_seed+nbtests);
@@ -589,7 +621,6 @@ bool test_elephant(bool draw, int testtorun) // TODO LATER
       pp3=cmt.transform_original_path_into_quad_surface(p3),
       pp4=cmt.transform_original_path_into_quad_surface(p4);
 
-  bool res=true;
 
   if (!unit_test(pp1, FULL_SIMPLIFICATION, 0, "1st random path on off file",
                  "", draw, testtorun)) // Test XX
@@ -606,7 +637,7 @@ bool test_elephant(bool draw, int testtorun) // TODO LATER
   if (!unit_test(pp4, FULL_SIMPLIFICATION, 0, "4th random path on off file",
                  "", draw, testtorun)) // Test XX
   { res=false; }
-
+ */
   return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -687,6 +718,12 @@ int main(int argc, char** argv)
   if (!test_some_random_paths_on_cube(draw, testN))
   {
     std::cout<<"TEST RANDOM PATHS ON CUBE FAILED."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
+  if (!test_right_push(draw, testN))
+  {
+    std::cout<<"TEST RIGHT PUSH FAILED."<<std::endl;
     return EXIT_FAILURE;
   }
 
