@@ -52,8 +52,8 @@ int main()
 
   // random seeding and run
   std::cout << "random seeding and run" << std::endl;
-  approx.initialize_seeds(CGAL::VSA::parameters::seeding_method(CGAL::VSA::RANDOM)
-    .max_nb_of_proxies(10));
+  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::VSA::RANDOM)
+    .max_number_of_proxies(10));
   approx.run(10);
   if (approx.proxies_size() != 10)
     return EXIT_FAILURE;
@@ -89,7 +89,7 @@ int main()
 
   // extract the approximation polyhedron
   std::cout << "meshing" << std::endl;
-  if (approx.extract_mesh(CGAL::VSA::parameters::subdivision_ratio(1.0)))
+  if (approx.extract_mesh(CGAL::parameters::subdivision_ratio(1.0)))
     std::cout << "manifold." << std::endl;
   else
     std::cout << "non-manifold" << std::endl;
@@ -121,22 +121,22 @@ int main()
   const FT drop(0.001);
   const std::size_t iterations = 5;
   std::cout << "re-initialize and hierarchical seeding" << std::endl;
-  approx.initialize_seeds(CGAL::VSA::parameters::seeding_method(CGAL::VSA::HIERARCHICAL)
+  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::VSA::HIERARCHICAL)
     .min_error_drop(drop)
-    .nb_of_relaxations(iterations));
+    .number_of_relaxations(iterations));
   approx.run(10);
   std::cout << "#proxies " << approx.proxies_size() << std::endl;
 
   std::cout << "re-initialize and incremental seeding" << std::endl;
-  approx.initialize_seeds(CGAL::VSA::parameters::seeding_method(CGAL::VSA::INCREMENTAL)
+  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::VSA::INCREMENTAL)
     .min_error_drop(drop)
-    .nb_of_relaxations(iterations));
+    .number_of_relaxations(iterations));
   approx.run(10);
   std::cout << "#proxies " << approx.proxies_size() << std::endl;
 
   // extract the approximation polyhedron
   std::cout << "meshing" << std::endl;
-  if (approx.extract_mesh(CGAL::VSA::parameters::subdivision_ratio(1.0)))
+  if (approx.extract_mesh(CGAL::parameters::subdivision_ratio(1.0)))
     std::cout << "manifold." << std::endl;
   else
     std::cout << "non-manifold" << std::endl;
@@ -146,7 +146,7 @@ int main()
   proxies.clear();
   anchor_pos.clear();
   tris.clear();
-  approx.output(CGAL::VSA::parameters::face_proxy_map(proxy_pmap).
+  approx.output(CGAL::parameters::face_proxy_map(proxy_pmap).
     proxies(std::back_inserter(proxies)).
     anchors(std::back_inserter(anchor_pos)).
     triangles(std::back_inserter(tris)));

@@ -23,8 +23,8 @@
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 
-#include <CGAL/internal/Surface_mesh_approximation/named_function_params.h>
-#include <CGAL/internal/Surface_mesh_approximation/named_params_helper.h>
+#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <vector>
 #include <stack>
@@ -57,6 +57,7 @@ enum Seeding_method {
   /// Hierarchical seeding
   HIERARCHICAL
 };
+
 } // namespace VSA
 
 /// \ingroup PkgTSMA
@@ -123,11 +124,11 @@ private:
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
   // internal typedefs
-  typedef CGAL::internal::vertex_property_t<std::size_t> Vertex_anchor_tag;
-  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Vertex_anchor_tag >::type Vertex_anchor_map;
+  typedef CGAL::dynamic_vertex_property_t<std::size_t> Vertex_anchor_tag;
+  typedef typename boost::property_map<TriangleMesh, Vertex_anchor_tag>::type Vertex_anchor_map;
 
-  typedef CGAL::internal::face_property_t<std::size_t> Face_proxy_tag;
-  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_proxy_tag >::type Face_proxy_map;
+  typedef CGAL::dynamic_face_property_t<std::size_t> Face_proxy_tag;
+  typedef typename boost::property_map<TriangleMesh, Face_proxy_tag>::type Face_proxy_map;
 
   typedef std::vector<halfedge_descriptor> Boundary_chord;
   typedef typename Boundary_chord::iterator Boundary_chord_iterator;
@@ -254,11 +255,6 @@ private:
   Compute_scalar_product_3 scalar_product_functor;
   Construct_translated_point_3 translate_point_functor;
 
-  // The face proxy index map.
-  Face_proxy_map m_fproxy_map;
-  // The attached anchor index of a vertex.
-  Vertex_anchor_map m_vanchor_map;
-
   // Proxies.
   std::vector<Proxy_wrapper> m_proxies;
   // Proxy planes
@@ -273,6 +269,11 @@ private:
 
   // meshing parameters
   FT m_average_edge_length;
+
+  // The face proxy index map.
+  Face_proxy_map m_fproxy_map;
+  // The attached anchor index of a vertex.
+  Vertex_anchor_map m_vanchor_map;
 
 //member functions
 public:
@@ -290,7 +291,10 @@ public:
     m_ptm(&tm),
     m_vpoint_map(vpoint_map),
     m_metric(&error_metric),
-    m_average_edge_length(0.0) {
+    m_average_edge_length(0.0),
+    m_fproxy_map( get(Face_proxy_tag(), *(const_cast<TriangleMesh *>(m_ptm))) ),
+    m_vanchor_map( get( Vertex_anchor_tag(), *(const_cast<TriangleMesh *>(m_ptm))) )
+  {
 
     Geom_traits traits;
     vector_functor = traits.construct_vector_3_object();
@@ -299,21 +303,8 @@ public:
     sum_functor = traits.construct_sum_of_vectors_3_object();
     scalar_product_functor = traits.compute_scalar_product_3_object();
     translate_point_functor = traits.construct_translated_point_3_object();
-
-    m_vanchor_map = CGAL::internal::add_property(
-      Vertex_anchor_tag("VSA-vertex_anchor"), *(const_cast<TriangleMesh *>(m_ptm)));
-
-    m_fproxy_map = CGAL::internal::add_property(
-      Face_proxy_tag("VSA-face_proxy"), *(const_cast<TriangleMesh *>(m_ptm)));
   }
   /// @}
-  
-  ~Variational_shape_approximation() {
-    if (m_ptm) {
-      CGAL::internal::remove_property(m_vanchor_map, *(const_cast<TriangleMesh *>(m_ptm)));
-      CGAL::internal::remove_property(m_fproxy_map, *(const_cast<TriangleMesh *>(m_ptm)));
-    }
-  }
 
   /// \name Approximation
   /// @{
@@ -329,11 +320,11 @@ public:
    * \cgalNamedParamsBegin{Seeding Named Parameters}
    *  \cgalParamBegin{seeding_method} selection of seeding method.
    *  \cgalParamEnd
-   *  \cgalParamBegin{max_nb_of_proxies} maximum number of proxies to approximate the input mesh.
+   *  \cgalParamBegin{max_number_of_proxies} maximum number of proxies to approximate the input mesh.
    *  \cgalParamEnd
    *  \cgalParamBegin{min_error_drop} minimum error drop of the approximation, expressed in ratio between two iterations of proxy addition.
    *  \cgalParamEnd
-   *  \cgalParamBegin{nb_of_relaxations} number of relaxation iterations interleaved within seeding.
+   *  \cgalParamBegin{number_of_relaxations} number of relaxation iterations interleaved within seeding.
    *  \cgalParamEnd
    * \cgalNamedParamsEnd
    */
@@ -341,15 +332,14 @@ public:
   std::size_t initialize_seeds(const NamedParameters &np) {
     using boost::get_param;
     using boost::choose_param;
-    namespace vsa_np = CGAL::VSA::internal_np;
 
     const CGAL::VSA::Seeding_method method = choose_param(
-      get_param(np, vsa_np::seeding_method), CGAL::VSA::HIERARCHICAL);
+      get_param(np, internal_np::seeding_method), CGAL::VSA::HIERARCHICAL);
     const boost::optional<std::size_t> max_nb_of_proxies = choose_param(
-      get_param(np, vsa_np::max_nb_of_proxies), boost::optional<std::size_t>());
+      get_param(np, internal_np::max_number_of_proxies), boost::optional<std::size_t>());
     const boost::optional<FT> min_error_drop = choose_param(
-      get_param(np, vsa_np::min_error_drop), boost::optional<FT>());
-    const std::size_t nb_of_relaxations = choose_param(get_param(np, vsa_np::nb_of_relaxations), 5);
+      get_param(np, internal_np::min_error_drop), boost::optional<FT>());
+    const std::size_t nb_of_relaxations = choose_param(get_param(np, internal_np::number_of_relaxations), 5);
 
     // maximum number of proxies internally, maybe better choice?
     const std::size_t nb_px = num_faces(*m_ptm) / 3;
@@ -842,13 +832,12 @@ public:
   bool extract_mesh(const NamedParameters &np) {
     using boost::get_param;
     using boost::choose_param;
-    namespace vsa_np = CGAL::VSA::internal_np;
 
-    const FT subdivision_ratio = choose_param(get_param(np, vsa_np::subdivision_ratio), FT(5.0));
-    const bool relative_to_chord = choose_param(get_param(np, vsa_np::relative_to_chord), false);
-    const bool with_dihedral_angle = choose_param(get_param(np, vsa_np::with_dihedral_angle), false);
-    const bool optimize_anchor_location = choose_param(get_param(np, vsa_np::optimize_anchor_location), true);
-    const bool pca_plane = choose_param(get_param(np, vsa_np::pca_plane), false);
+    const FT subdivision_ratio = choose_param(get_param(np, internal_np::subdivision_ratio), FT(5.0));
+    const bool relative_to_chord = choose_param(get_param(np, internal_np::relative_to_chord), false);
+    const bool with_dihedral_angle = choose_param(get_param(np, internal_np::with_dihedral_angle), false);
+    const bool optimize_anchor_location = choose_param(get_param(np, internal_np::optimize_anchor_location), true);
+    const bool pca_plane = choose_param(get_param(np, internal_np::pca_plane), false);
 
     // compute averaged edge length, used in chord subdivision
     m_average_edge_length = compute_averaged_edge_length(*m_ptm, m_vpoint_map);
@@ -907,43 +896,17 @@ public:
   void output(const NamedParameters &np) const {
     using boost::get_param;
     using boost::choose_param;
-    namespace vsa_np = CGAL::VSA::internal_np;
 
     // get proxy map
-    typedef typename boost::lookup_named_param_def<
-      vsa_np::face_proxy_map_t,
-      NamedParameters,
-      vsa_np::dummy_output_t>::type Output_face_proxy_map;
-    Output_face_proxy_map fproxymap = choose_param(
-      get_param(np, vsa_np::face_proxy_map), vsa_np::dummy_output);
-    vsa_np::face_proxy_map_helper(*this, fproxymap);
-
+    proxy_map( get_param(np, internal_np::face_proxy_map) );
     // get proxies
-    typedef typename boost::lookup_named_param_def<
-      vsa_np::proxies_t,
-      NamedParameters,
-      vsa_np::dummy_output_t>::type Proxies_output_iterator;
-    Proxies_output_iterator pxies_out_itr = choose_param(
-      get_param(np, vsa_np::proxies), vsa_np::dummy_output);
-    vsa_np::proxies_helper(*this, pxies_out_itr);
+    proxies( get_param(np, internal_np::proxies) );
 
     // get anchor points
-    typedef typename boost::lookup_named_param_def<
-      vsa_np::anchors_t,
-      NamedParameters,
-      vsa_np::dummy_output_t>::type Anchors_output_iterator;
-    Anchors_output_iterator apts_out_itr = choose_param(
-      get_param(np, vsa_np::anchors) , vsa_np::dummy_output);
-    vsa_np::anchors_helper(*this, apts_out_itr);
+    anchor_points( get_param(np, internal_np::anchors) );
 
     // get indexed triangles
-    typedef typename boost::lookup_named_param_def<
-      vsa_np::triangles_t,
-      NamedParameters,
-      vsa_np::dummy_output_t>::type Triangles_output_iterator;
-    Triangles_output_iterator tris_out_itr = choose_param(
-      get_param(np, vsa_np::triangles) , vsa_np::dummy_output);
-    vsa_np::triangles_helper(*this, tris_out_itr);
+    indexed_triangles( get_param(np, internal_np::triangles) );
   }
 
   /// @cond CGAL_DOCUMENT_INTERNAL
@@ -958,6 +921,8 @@ public:
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
       face_proxy_map[f] = get(m_fproxy_map, f);
   }
+
+  void proxy_map(boost::param_not_found) const {}
 
   /*!
    * @brief Gets the face region of the specified proxy.
@@ -992,6 +957,8 @@ public:
       *out++ = pxw.px;
   }
 
+  void proxies(boost::param_not_found) const {}
+
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
   /*!
    * @brief Gets the wrapped proxies.
@@ -1016,6 +983,8 @@ public:
       *out++ = a.pos;
   }
 
+  void anchor_points(boost::param_not_found) const {}
+
   /*!
    * @brief Gets the anchor vertices.
    * @tparam OutputIterator output iterator with vertex_descriptor as value type
@@ -1038,6 +1007,8 @@ public:
     BOOST_FOREACH(const Indexed_triangle &t, m_tris)
       *out++ = t;
   }
+
+  void indexed_triangles(boost::param_not_found) const {}
 
   /*!
    * @brief Gets the indexed boundary polygon approximation.
@@ -1065,9 +1036,9 @@ private:
   /*!
    * @brief Randomly initializes proxies to target number of proxies.
    * @note To ensure the randomness, call `std::srand()` beforehand.
-   * @param max_nb_of_proxies maximum number of proxies, 
+   * @param max_nb_of_proxies maximum number of proxies,
    * should be in range (nb_connected_components, num_faces(*m_ptm))
-   * @param nb_of_iterations number of re-fitting iterations 
+   * @param nb_of_iterations number of re-fitting iterations
    * @return number of proxies initialized
    */
   std::size_t init_random(const std::size_t max_nb_of_proxies,
@@ -1085,9 +1056,9 @@ private:
 
   /*!
    * @brief Incrementally initializes proxies to target number of proxies.
-   * @param max_nb_of_proxies maximum number of proxies, 
+   * @param max_nb_of_proxies maximum number of proxies,
    * should be in range (nb_connected_components, num_faces(*m_ptm))
-   * @param nb_of_iterations number of re-fitting iterations 
+   * @param nb_of_iterations number of re-fitting iterations
    * before each incremental proxy insertion
    * @return number of proxies initialized
    */
@@ -1101,7 +1072,7 @@ private:
 
   /*!
    * @brief Hierarchically initializes proxies to target number of proxies.
-   * @param max_nb_of_proxies maximum number of proxies, 
+   * @param max_nb_of_proxies maximum number of proxies,
    * should be in range (nb_connected_components, num_faces(*m_ptm))
    * @param nb_of_iterations number of re-fitting iterations
    * before each hierarchical proxy insertion
@@ -1131,7 +1102,7 @@ private:
    * @note To ensure the randomness, call `std::srand()` beforehand.
    * @param max_nb_of_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
    * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
-   * @param nb_of_iterations number of re-fitting iterations 
+   * @param nb_of_iterations number of re-fitting iterations
    * @return number of proxies initialized
    */
   std::size_t init_random_error(const std::size_t max_nb_of_proxies,
@@ -1166,7 +1137,7 @@ private:
    * The first criterion met stops the seeding.
    * @param max_nb_of_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
    * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
-   * @param nb_of_iterations number of re-fitting iterations 
+   * @param nb_of_iterations number of re-fitting iterations
    * @return number of proxies initialized
    */
   std::size_t init_incremental_error(const std::size_t max_nb_of_proxies,
@@ -1189,7 +1160,7 @@ private:
    * where the first criterion met stops the seeding.
    * @param max_nb_of_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
    * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
-   * @param nb_of_iterations number of re-fitting iterations 
+   * @param nb_of_iterations number of re-fitting iterations
    * @return number of proxies initialized
    */
   std::size_t init_hierarchical_error(const std::size_t max_nb_of_proxies,
@@ -1432,7 +1403,7 @@ private:
     for (std::size_t i = 0; i < nb_requested; ++i) {
       // swap ith element with a random one
       std::size_t r = static_cast<std::size_t>(
-        static_cast<double>(std::rand()) / static_cast<double>(RAND_MAX) * 
+        static_cast<double>(std::rand()) / static_cast<double>(RAND_MAX) *
         static_cast<double>(nb_nsf - 1));
       std::swap(non_seed_faces[i], non_seed_faces[r]);
     }
@@ -1514,7 +1485,7 @@ private:
       px_faces[get(m_fproxy_map, f)].push_back(f);
 
     BOOST_FOREACH(const std::list<face_descriptor> &px_patch, px_faces) {
-      Plane_3 fit_plane = if_pca_plane ? 
+      Plane_3 fit_plane = if_pca_plane ?
         fit_plane_pca(px_patch.begin(), px_patch.end()) :
           fit_plane_area_averaged(px_patch.begin(), px_patch.end());
 
@@ -2122,7 +2093,7 @@ private:
       tri_list.end(),
       fit_plane,
       CGAL::Dimension_tag<2>());
-    
+
     return fit_plane;
   }
 };

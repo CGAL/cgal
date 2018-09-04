@@ -33,8 +33,8 @@ int main()
 
   // free function interface with named parameters
   CGAL::VSA::approximate_mesh(input,
-    CGAL::VSA::parameters::min_error_drop(0.05). // seeding with minimum error drop
-    nb_of_iterations(40). // set number of clustering iterations after seeding
+    CGAL::parameters::min_error_drop(0.05). // seeding with minimum error drop
+    number_of_iterations(40). // set number of clustering iterations after seeding
     subdivision_ratio(0.3). // set chord subdivision ratio threshold when meshing
     face_proxy_map(fpxmap). // get face partition map
     proxies(std::back_inserter(proxies)). // output proxies

@@ -36,14 +36,14 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
   // approximation, seeding from error, drop to the target error incrementally
   const std::size_t num_iterations = 20;
   const std::size_t inner_iterations = 5;
-  approx.initialize_seeds(CGAL::VSA::parameters::seeding_method(CGAL::VSA::INCREMENTAL)
+  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::VSA::INCREMENTAL)
     .min_error_drop(drop)
-    .nb_of_relaxations(inner_iterations));
+    .number_of_relaxations(inner_iterations));
   approx.run(num_iterations);
   std::cout << "#proxies " << approx.proxies_size() << std::endl;
 
   // meshing
-  if (approx.extract_mesh(CGAL::VSA::parameters::subdivision_ratio(5.0))) {
+  if (approx.extract_mesh(CGAL::parameters::subdivision_ratio(5.0))) {
     std::cout << "Succeeded." << std::endl;
     return true;
   }

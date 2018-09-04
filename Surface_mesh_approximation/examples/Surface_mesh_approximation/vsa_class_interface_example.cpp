@@ -34,8 +34,8 @@ int main()
     error_metric);
 
   // seeds 100 random proxies
-  approx.initialize_seeds(CGAL::VSA::parameters::seeding_method(CGAL::VSA::RANDOM)
-      .max_nb_of_proxies(100));
+  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::VSA::RANDOM)
+      .max_number_of_proxies(100));
   
   // runs 30 iterations 
   approx.run(30);
@@ -55,12 +55,12 @@ int main()
   approx.run(10);
 
   // extract approximated mesh with default parameters
-  approx.extract_mesh(CGAL::VSA::parameters::all_default());
+  approx.extract_mesh(CGAL::parameters::all_default());
 
   // get approximated triangle soup
   std::vector<Kernel::Point_3> anchors;
   std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles;
-  approx.output(CGAL::VSA::parameters::anchors(std::back_inserter(anchors)).
+  approx.output(CGAL::parameters::anchors(std::back_inserter(anchors)).
     triangles(std::back_inserter(triangles)));
 
   return EXIT_SUCCESS;

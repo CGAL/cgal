@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
   t0.reset();
   t0.start();
   approx.initialize_seeds(
-    CGAL::VSA::parameters::seeding_method(static_cast<CGAL::VSA::Seeding_method>(method))
+    CGAL::parameters::seeding_method(static_cast<CGAL::VSA::Seeding_method>(method))
       .max_nb_of_proxies(nb_proxies));
   t0.stop();
   std::cerr << "seeding time " << t0.time() << " sec." << std::endl;
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 
   t0.reset();
   t0.start();
-  approx.extract_mesh(CGAL::VSA::parameters::all_default());
+  approx.extract_mesh(CGAL::parameters::all_default());
   t0.stop();
   std::cerr << "meshing time " << t0.time() << " sec." << std::endl;
 

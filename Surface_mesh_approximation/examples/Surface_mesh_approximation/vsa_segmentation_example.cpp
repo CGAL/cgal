@@ -27,9 +27,9 @@ int main()
 
   // free function interface with named parameters
   CGAL::VSA::approximate_mesh(input,
-  CGAL::VSA::parameters::max_nb_of_proxies(200). // first stop criterion
+  CGAL::parameters::max_number_of_proxies(200). // first stop criterion
     min_error_drop(0.05). // second stop criterion
-    nb_of_iterations(30). // number of relaxation iterations after seeding
+    number_of_iterations(30). // number of relaxation iterations after seeding
     face_proxy_map(fpxmap)); // output face-proxy map
 
   // iterates over faces and outputs segment id to console

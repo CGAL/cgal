@@ -49,8 +49,8 @@ int main()
     get(boost::vertex_point, const_cast<Polyhedron &>(mesh)),
     error_metric);
 
-  approx.initialize_seeds(CGAL::VSA::parameters::seeding_method(CGAL::VSA::RANDOM)
-    .max_nb_of_proxies(100));
+  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::VSA::RANDOM)
+    .max_number_of_proxies(100));
   std::vector<FT> error;
   for (std::size_t i = 0; i < 30; ++i) {
     approx.run();

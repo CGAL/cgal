@@ -5,6 +5,7 @@
 
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/squared_distance_3.h>
+#include <CGAL/Dynamic_property_map.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/unordered_map.hpp>
@@ -37,10 +38,10 @@ class L21_metric_plane_proxy {
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  typedef CGAL::internal::face_property_t<Vector_3> Face_normal_tag;
-  typedef CGAL::internal::face_property_t<FT> Face_area_tag;
-  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_normal_tag >::type Face_normal_map;
-  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type Face_area_map;
+  typedef CGAL::dynamic_face_property_t<Vector_3> Face_normal_tag;
+  typedef CGAL::dynamic_face_property_t<FT> Face_area_tag;
+  typedef typename boost::property_map<TriangleMesh, Face_normal_tag>::type Face_normal_map;
+  typedef typename boost::property_map<TriangleMesh, Face_area_tag>::type Face_area_map;
 
 public:
   /// \name Types
@@ -55,16 +56,15 @@ public:
    * @param tm triangle mesh
    * @param vpmap vertex point map
    */
-  L21_metric_plane_proxy(const TriangleMesh &tm, const VertexPointMap &vpmap) {
+  L21_metric_plane_proxy(const TriangleMesh &tm, const VertexPointMap &vpmap) 
+    : m_fnmap( get(Face_normal_tag(), const_cast<TriangleMesh &>(tm)) )
+    , m_famap( get(Face_area_tag(), const_cast<TriangleMesh &>(tm)) )
+  {
     GeomTraits traits;
     m_scalar_product_functor = traits.compute_scalar_product_3_object();
     m_sum_functor = traits.construct_sum_of_vectors_3_object();
     m_scale_functor = traits.construct_scaled_vector_3_object();
     
-    m_fnmap = CGAL::internal::add_property(
-      Face_normal_tag("VSA-face_normal"), const_cast<TriangleMesh &>(tm));
-    m_famap = CGAL::internal::add_property(
-      Face_area_tag("VSA-face_area"), const_cast<TriangleMesh &>(tm));
     // construct internal facet normal & area map
     BOOST_FOREACH(face_descriptor f, faces(tm)) {
       const halfedge_descriptor he = halfedge(f, tm);

@@ -6,6 +6,7 @@
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
+#include <CGAL/Dynamic_property_map.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/unordered_map.hpp>
@@ -37,8 +38,8 @@ class L2_metric_plane_proxy {
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  typedef CGAL::internal::face_property_t<FT> Face_area_tag;
-  typedef typename CGAL::internal::dynamic_property_map<TriangleMesh, Face_area_tag >::type Face_area_map;
+  typedef CGAL::dynamic_face_property_t<FT> Face_area_tag;
+  typedef typename boost::property_map<TriangleMesh, Face_area_tag>::type Face_area_map;
 
 public:
   /// \name Types
@@ -54,10 +55,8 @@ public:
    * @param vpmap vertex point map
    */
   L2_metric_plane_proxy(const TriangleMesh &tm, const VertexPointMap &vpmap)
-    : m_tm(&tm), m_vpmap(vpmap){
-    m_famap = CGAL::internal::add_property(
-      Face_area_tag("VSA-face_area"), const_cast<TriangleMesh &>(*m_tm));
-
+    : m_tm(&tm), m_vpmap(vpmap), m_famap( get(Face_area_tag(), const_cast<TriangleMesh &>(*m_tm)) )
+  {
     BOOST_FOREACH(face_descriptor f, faces(*m_tm)) {
       const halfedge_descriptor he = halfedge(f, *m_tm);
       const Point_3 &p0 = m_vpmap[source(he, *m_tm)];

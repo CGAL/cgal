@@ -9,7 +9,7 @@ Details can be found from: http://www.boost.org/libs/graph/doc/bgl_named_params.
 Named parameters enable the user to specify only those parameters which are really needed, by name, making the parameter ordering not required.
 See also \ref namedparameters introduced in the polygon mesh processing package.
 
-The sequence of named parameters should start with `CGAL::VSA::parameters::`.
+The sequence of named parameters should start with `CGAL::parameters::`.
 The function `#all_default()` can be used to indicate
 that default values of optional named parameters are used.
 <!-- clashing tag with PMP named space -->
@@ -27,7 +27,7 @@ See below a sample call of a function that uses the optional BGL named parameter
 // triangles: output triplets of indexed triangles
 
 CGAL::VSA::approximate_mesh(tm,
-    CGAL::VSA::parameters::seeding_method(method).
+    CGAL::parameters::seeding_method(method).
         max_nb_of_proxies(nb_proxies).
         nb_of_iterations(nb_iterations).
         anchors(std::back_inserter(anchors)).

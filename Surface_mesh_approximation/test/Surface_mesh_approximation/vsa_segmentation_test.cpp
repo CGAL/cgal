@@ -32,11 +32,11 @@ int main()
 
   // free function interface with named parameters
   CGAL::VSA::approximate_mesh(input,
-    CGAL::VSA::parameters::seeding_method(CGAL::VSA::HIERARCHICAL). // hierarchical seeding
-    max_nb_of_proxies(200). // both maximum number of proxies stop criterion,
+    CGAL::parameters::seeding_method(CGAL::VSA::HIERARCHICAL). // hierarchical seeding
+    max_number_of_proxies(200). // both maximum number of proxies stop criterion,
     min_error_drop(0.05). // and minimum error drop stop criterion are specified
-    nb_of_iterations(30). // number of clustering iterations after seeding
-    nb_of_relaxations(5). // number of relaxations in seeding
+    number_of_iterations(30). // number of clustering iterations after seeding
+    number_of_relaxations(5). // number of relaxations in seeding
     face_proxy_map(fpxmap). // output indexed face set
     proxies(std::back_inserter(proxies))); // number of iterations after seeding
 

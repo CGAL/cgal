@@ -99,15 +99,15 @@ int main()
     error_metric);
 
   std::cout << "random seeding and run" << std::endl;
-  approx.initialize_seeds(CGAL::VSA::parameters::seeding_method(CGAL::VSA::RANDOM)
-    .max_nb_of_proxies(20));
+  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::VSA::RANDOM)
+    .max_number_of_proxies(20));
   approx.run(20);
   if (approx.proxies_size() != 20)
     return EXIT_FAILURE;
 
   // extract the approximation
   std::cout << "meshing" << std::endl;
-  if (approx.extract_mesh(CGAL::VSA::parameters::subdivision_ratio(5.0)))
+  if (approx.extract_mesh(CGAL::parameters::subdivision_ratio(5.0)))
     std::cout << "manifold." << std::endl;
   else
     std::cout << "non-manifold" << std::endl;

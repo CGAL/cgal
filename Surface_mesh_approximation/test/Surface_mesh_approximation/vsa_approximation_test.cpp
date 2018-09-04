@@ -30,10 +30,10 @@ int main()
   std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles;
 
   CGAL::VSA::approximate_mesh(mesh,
-    CGAL::VSA::parameters::seeding_method(CGAL::VSA::INCREMENTAL).
-      max_nb_of_proxies(6).
-      nb_of_iterations(30).
-      nb_of_relaxations(5).
+    CGAL::parameters::seeding_method(CGAL::VSA::INCREMENTAL).
+      max_number_of_proxies(6).
+      number_of_iterations(30).
+      number_of_relaxations(5).
       subdivision_ratio(0.5).
       face_proxy_map(fpxmap).
       proxies(std::back_inserter(proxies)).
