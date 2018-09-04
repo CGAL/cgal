@@ -140,7 +140,6 @@ namespace CGAL {
 	typedef Tag_false                                        Weighted_tag;
 
   private:
-	int n_dpt;
 
 	std::vector<Vertex_handle> insert_dummy_points(bool rational = true);
 	
@@ -151,14 +150,12 @@ namespace CGAL {
 	Periodic_4_hyperbolic_Delaunay_triangulation_2( const Geom_traits &gt = Geom_traits() ) :
 	Periodic_4_hyperbolic_triangulation_2<GT, TDS>(gt) { 
 		insert_dummy_points();
-		n_dpt = 14; 
 	}
 
 	template < class InputIterator >
 	Periodic_4_hyperbolic_Delaunay_triangulation_2( InputIterator first, InputIterator last, const Geom_traits &gt = Geom_traits() ) :
 	Periodic_4_hyperbolic_triangulation_2<GT, TDS>(gt) { 
 		insert_dummy_points();
-		n_dpt = 14; 
 		insert(first, last);
 	}
 
@@ -166,10 +163,9 @@ namespace CGAL {
 	Periodic_4_hyperbolic_Delaunay_triangulation_2(const Periodic_4_hyperbolic_Delaunay_triangulation_2& tr) :
 	Periodic_4_hyperbolic_triangulation_2<GT, TDS>(tr) { 
 		insert_dummy_points();
-		n_dpt = 14;
 	}
 
-	Vertex_handle insert(const Point  &p, Face_handle start = Face_handle(), bool batch_insertion = false);
+	Vertex_handle insert(const Point  &p, Face_handle start = Face_handle());
 
 	template < class InputIterator >
 	std::ptrdiff_t
@@ -182,7 +178,7 @@ namespace CGAL {
 	  int cnt_good = 0;
 	  for (typename std::vector<Point>::const_iterator p = points.begin(), end = points.end(); p != end; ++p){
 		  cnt++;
-		  Vertex_handle v = insert(*p, f, true);
+		  Vertex_handle v = insert(*p, f);
 	  	  if (v != Vertex_handle()) {
 	  	  	cnt_good++;
 	  	  	f = v->face();
@@ -190,37 +186,6 @@ namespace CGAL {
 	  }
 
 	  std::ptrdiff_t ret = this->number_of_vertices() - n_initial;
-
-	  #if defined PROFILING_MODE
-	  	CGAL::Timer tmr;
-	  	tmr.start();
-	  #endif
-
-	  for (int i = 0; i < dummy_points.size(); i++) {
-			if (dummy_points[i].is_inserted()) {
-				typedef Delaunay_triangulation_2<GT, TDS>           Delaunay;
-				Delaunay dt;
-				std::map<Vertex_handle, Vertex_handle> vmap;
-
-				if (is_removable(dummy_points[i].vertex(), dt, vmap)) {
-					size_type tmp_n = this->number_of_vertices();
-					remove(dummy_points[i].vertex());
-					CGAL_assertion(this->number_of_vertices() == tmp_n - 1);
-					dummy_points[i].set_inserted(false);
-				}
-			}
-		}
-
-		#if defined PROFILING_MODE
-			tmr.stop();
-			time_remove_dp = tmr.time();
-		#endif
-
-		n_dpt = 0;
-		for (int i = 0; i < dummy_points.size(); i++) {
-			if (dummy_points[i].is_inserted())
-				n_dpt++;
-		}
 
 	  return ret;
 	}
@@ -291,6 +256,20 @@ namespace CGAL {
 	}
 
 
+	int clean_dummy_points() {
+		// count of dummy points in the triangulation
+		int cnt = 0;
+		for (int i = 0; i < dummy_points.size(); i++) {
+			if (dummy_points[i].is_inserted()) {
+				if (remove(dummy_points[i].vertex())) {
+					dummy_points[i].set_inserted(false);
+				} else {
+					cnt++;
+				}
+			}
+		}
+		return cnt;
+	}
 	
 
 	Point get_dummy_point(int i) const {
@@ -308,7 +287,15 @@ namespace CGAL {
 		return false;
 	}
 
-	int number_of_dummy_points() const { return n_dpt; }
+	int number_of_dummy_points() const { 
+		int cnt = 0;
+		for (int i = 0; i < dummy_points.size(); i++) {
+			if (dummy_points[i].is_inserted()) {
+				cnt++;
+			}
+		}
+		return cnt;
+	}
 
 protected:
 
@@ -463,7 +450,7 @@ template < class Gt, class Tds >
 inline
 typename Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::Vertex_handle
 Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::
-insert(const Point  &p,  Face_handle hint, bool batch_insertion) {
+insert(const Point  &p,  Face_handle hint) {
 
 		Hyperbolic_translation loff;
 		Locate_type lt;
@@ -501,24 +488,6 @@ insert(const Point  &p,  Face_handle hint, bool batch_insertion) {
 		do {
 			ivc->clear_translation();
 		} while (++ivc != done_v);
-		
-		if (!batch_insertion) {
-			CGAL_triangulation_assertion(this->is_valid(true));
-
-			for (int i = 0; i < dummy_points.size(); i++) {
-				if (dummy_points[i].is_inserted()) {
-					typedef Delaunay_triangulation_2<Gt, Tds>           Delaunay;
-					Delaunay dt;
-					std::map<Vertex_handle, Vertex_handle> vmap;
-
-					if (is_removable(dummy_points[i].vertex(), dt, vmap)) {
-						remove(dummy_points[i].vertex());
-						dummy_points[i].set_inserted(false);
-                        n_dpt--;
-					}
-				}
-			}
-		}
 
 		return v;
 	//}
