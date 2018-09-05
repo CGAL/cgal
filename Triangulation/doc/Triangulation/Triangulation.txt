@@ -181,7 +181,7 @@ corresponding to a face \f$ f \f$ stores a reference to a full cell `c`
 containing \f$ f \f$, and the indices of the vertices of `c` that belong
 to \f$ f \f$.
 
-\cond
+\if READY_TO_PUBLISH
 \cgalAdvanced The index of a full cell \f$ c\f$ in the \f$ i\f$-th
 neighbor of \f$ c\f$ is called the <I>\f$ i\f$-th mirror-index</I> of
 \f$ c\f$ (Figure \cgalFigureRef{triangulationfigfullcell}).  Mirror indices are
@@ -197,7 +197,7 @@ triangulation. Its second template parameter is used to specify wether
 or not the mirror indices should be kept in memory or computed
 on-the-fly, which is the default case.  Please refer to the
 documentation of that class template for specific details.
-\endcond
+\endif
 
 ###Template Parameters###
 
