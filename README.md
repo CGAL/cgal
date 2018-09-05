@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.org/CGAL/cgal.svg?branch=master)](https://travis-ci.org/CGAL/cgal)
+[![Code Quality: Cpp](https://img.shields.io/lgtm/grade/cpp/g/CGAL/cgal.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/CGAL/cgal/context:cpp)
+[![Total Alerts](https://img.shields.io/lgtm/alerts/g/CGAL/cgal.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/CGAL/cgal/alerts)
 
 ![CGAL](Installation/doc_html/images/cgal_2013_grey.png)
 
