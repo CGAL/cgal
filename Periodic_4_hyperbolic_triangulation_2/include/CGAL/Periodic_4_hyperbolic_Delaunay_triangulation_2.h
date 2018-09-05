@@ -169,7 +169,7 @@ namespace CGAL {
 
 	template < class InputIterator >
 	std::ptrdiff_t
-	insert(InputIterator first, InputIterator last) {
+	insert(InputIterator first, InputIterator last, const bool flag_clean_dummy_points = true) {
 	  size_type n_initial = this->number_of_vertices();
 	  std::vector<Point> points(first, last);
 	  spatial_sort(points.begin(), points.end(), geom_traits());
@@ -186,6 +186,10 @@ namespace CGAL {
 	  }
 
 	  std::ptrdiff_t ret = this->number_of_vertices() - n_initial;
+
+	  if (flag_clean_dummy_points) {
+	  	clean_dummy_points();
+	  }
 
 	  return ret;
 	}
