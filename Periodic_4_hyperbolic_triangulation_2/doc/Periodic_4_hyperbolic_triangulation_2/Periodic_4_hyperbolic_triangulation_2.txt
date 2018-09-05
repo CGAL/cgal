@@ -55,7 +55,7 @@ the action of \f$\mathcal G\f$ if there exists an element
 \f$\mathcal{M}\f$ is defined as the quotient of \f$\mathbb H^2\f$
 under the action of \f$\mathcal G\f$, named the fundamental group of
 \f$\mathcal M\f$: \f[ \mathcal{M} = \mathbb H^2 / \mathcal{G} \f]
-\f$pi\f$ denotes the natural projection map from \f$\mathbb H^2\f$
+\f$\pi\f$ denotes the natural projection map from \f$\mathbb H^2\f$
 onto \f$\mathcal M\f$.
 
 \cgalFigureAnchor{P4HTriangulationOctagonId}
@@ -70,7 +70,7 @@ onto \f$\mathcal M\f$.
   <b>Center:</b> Illustration of periodicity in the hyperbolic
   plane. The figure shows a few periodic copies of the points in the central octagon.
   <b>Right:</b> The half-open octagon \f$\mathcal D\f$ is an original domain for \f$\mathcal{M}\f$. Note that 
-  only vertex of the octagon is included in the original domain.
+  only one vertex of the octagon is included in the original domain.
 \cgalFigureCaptionEnd
 
 By definition, all points of \f$\mathbb H^2\f$ that belong to the same
@@ -102,45 +102,43 @@ D\f$ under the action of \f$\mathcal G\f$.
 \cgalFigureCaptionEnd
 
 
-
 \section P4HT2_representation Representation 
 
 TODO TODO TODO TODO TODO TODO 
 TODO TODO TODO TODO TODO TODO 
 
-The construction of triangulations of \f$\mathcal{M}\f$ works in the hyperbolic plane \f$\mathbb H^2\f$. 
-We require that all input points lie inside \f$\mathcal D\f$. 
+\cgalModifBegin begin: ? \cgalModifEnd
+When there is no risk
+of confusion, the same notation will be used for a point on the
+surface \f$\mathcal M\f$ and its representative in \f$\mathcal
+D\f$. Similarly, \f$\mathcal{P}\f$ denotes both a set of points on the
+surface and the set of their representatives in \f$\mathcal
+D\f$. 
+\cgalModifBegin end: ? \cgalModifEnd
 
-Edges and faces, however, may 
-cross the boundary of \f$\mathcal D\f$, i.e., they may be defined in terms of points 
-both inside and outside \f$\mathcal D\f$. The points outside \f$\mathcal D\f$ are images 
-of points inside \f$\mathcal D\f$ under the action of some translation in the group
-\f$\mathcal{G}\f$. So, to specify an edge or a face, we use two or three pairs of points 
-and translations in \f$\mathcal{G}\f$; points in the original domain are paired with the 
-identity translation \f$\mathbb 1\f$. 
-\cgalModifBegin
-  Note that equivalent translations of the group \f$\mathcal G\f$ can be reduced to a
-  unique minimal representative, so a point-translation pair is uniquely defined.
-\cgalModifEnd
+The Delaunay triangulation of \f$\mathcal{M}\f$ defined by a point set
+\f$\mathcal{P}\f$ is defined as the projection by \f$\pi\f$ of the
+Delaunay triangulation in the plane \f$\mathbb H^2\f$ of the
+(infinite) set of points \f$\mathcal{G P}\f$ onto \f$\mathcal{M}\f$,
+under some validity conditions that will be detailed in ... . 
+\cgalModifBegin TODO add ref to sec validity \cgalModifEnd
 
+We require that all input points lie inside \f$\mathcal D\f$. As for
+orbits of points, all faces of the Delaunay triangulation of
+\f$\mathcal{G P}\f$ that are in the same orbit under the action of
+\f$\mathcal{G}\f$ project by \f$\pi\f$ onto the same face on the
+surface \f$\mathcal{M}\f$; the data structure stores a unique
+<i>canonical</i> representative of each orbit, which has at least one
+vertex in \f$\mathcal D\f$. Some faces have vertices both inside and
+outside \f$\mathcal D\f$. Such faces can be uniquely specified by
+three pairs of points in \f$\mathcal D\f$ and (reduced) translations
+of \f$\mathcal{G}\f$; points in the original domain are paired with
+the identity translation \f$\mathbb 1\f$. The underlying combinatorial
+triangulation is a \ref PkgTDS2Summary, enriched in each face by the
+three translations that are paired with the point in each vertex. See
+\cgalFigureRef{P4HTriangulationOrientationDS}. 
 
-A triangulation is a collection of vertices and faces that are linked together through incidence
-and adjacency relations. Each vertex stores a point, and gives access to one of its incident
-faces. Each face gives access to its three adjacent faces, to its three incident vertices, and 
-to the translation paired with the point in each vertex. 
-
-The three vertices of a face are indexed with 0, 1, and 2 in positive (counter-clockwise)
-orientation. The orientation of a face in \f$\mathcal{M}\f$ is defined as the orientation of 
-its representative in \f$\mathbb H^2\f$ defined by the translations it stores.
-
-As in the underlying combinatorial triangulation (see the documentation for \ref PkgTDS2Summary), 
-the neighbors of a face are indexed with 0, 1, 2 in such a
-way that the \f$i\f$-th neighbor is opposite to the vertex with the same index. Edges are not
-explicitly represented: an edge is given by a face and the index of its opposite vertex 
-in that face. 
-\cgalModifBegin
-See \cgalFigureRef{P4HTriangulationOrientationDS}.
-\cgalModifEnd
+\cgalModifBegin TODO make the translation more visible than the rest on the fig \cgalModifEnd
 
 \cgalFigureAnchor{P4HTriangulationOrientationDS}
 <center>
@@ -148,146 +146,112 @@ See \cgalFigureRef{P4HTriangulationOrientationDS}.
 </center>
 \cgalFigureCaptionBegin{P4HTriangulationOrientationDS}
   Representation of a face \f$f\f$ stored in the triangulation data structure. 
-  Each vertex \f$v_i\f$ stores a point \f$p_i\f$ that is paired with a translation
+  Each vertex \f$v_i\f$ stores a point \f$p_i\f$ paired with a translation
   \f$\tau_i\f$. Opposite to vertex \f$i\f$ is the \f$i\f$-th neighbor of \f$f\f$.
 \cgalFigureCaptionEnd
 
-In the data structure each vertex stores the input point in \f$\mathcal D\f$ to which it
-corresponds. For every face on \f$\mathcal{M}\f$, the data structure stores the <i>canonical
-representative</i> of that face in \f$\mathbb H^2\f$. 
-
-We introduce some notation necessary for the definition of canonical representative.
-Let \f$\mathcal N\f$ denote the translations of \f$\mathcal G\f$ for which the image
-of \f$\mathcal D_O\f$ has at least one vertex in common with \f$\mathcal D_O\f$. Let 
-\f$\mathcal D_{\mathcal N}\f$ be the union of \f$\mathcal D_O\f$ and these images. With the use 
-of dummy points (see \ref P4HT2_Dummy_points),  faces with at least one vertex in 
-\f$\mathcal D\f$ are contained in \f$\mathcal D_{\mathcal N}\f$. We consider the images 
-of \f$\mathcal D_O\f$ to be ordered counter-clockwise around \f$\mathcal D_O\f$, 
-arbitrarily starting with the one labeled \f$abcd\f$. 
-\cgalModifBegin
-See \cgalFigureRef{P4HTriangulationCanonicalRepExample}.
-\cgalModifEnd
-We then choose the canonical representative in \f$\mathbb H^2\f$ of a face on 
-\f$\mathcal M\f$ so that:
-<ul>
+More precisely, the translations are elements of the subset
+\f$\mathcal N\f$ of \f$\mathcal G\f$ for which the image of
+\f$\mathcal D_O\f$ has at least one vertex in common with
+\f$\mathcal D_O\f$. 
+See \cgalFigureRef{P4HTriangulationCanonicalRepExample}.  
+We consider the images of \f$\mathcal D_O\f$ under translations of
+\f$\mathcal N\f$ to be ordered counterclockwise around
+\f$\mathcal D_O\f$, arbitrarily starting with the one corresponding to
+translation \f$abcd\f$.  The canonical representative in
+\f$\mathbb H^2\f$ of a face on \f$\mathcal M\f$ is such that 
+<ul> 
   <li> either all vertices of the representative lie in \f$\mathcal D\f$, or
-  <li> the representative has at least one vertex in \f$\mathcal D\f$ and is as close as 
-       possible to \f$abcd\f$ in the ordering defined above. 
-</ul>
-
+  <li> the representative has at least one vertex in \f$\mathcal D\f$
+  and is as close as possible to \f$abcd\f$ in the ordering defined above.  
+</ul> 
+\cgalModifBegin todo show p,q,r on the fig, otherwise
+the caption makes no sense... \cgalModifEnd
 
 \cgalFigureAnchor{P4HTriangulationCanonicalRepExample}
 <center>
   <img src="periodic_face.svg" style="max-width:35%; width=35%; display: inline-block;"/>
 </center>
 \cgalFigureCaptionBegin{P4HTriangulationCanonicalRepExample}
-  Illustration of the canonical representative in \f$\mathbb H^2\f$ of a face on 
-  \f$\mathcal M\f$. Among the three candidate faces, the canonical representative 
-  is the green one, which is closest to the region labeled \f$abcd\f$
-  clockwise. We store in each face the translations to apply to obtain the 
-  face's canonical representative in
-  \f$\mathbb H^2\f$, in this case \f$\mathbb 1, a\f$, and \f$\overline{b}\f$,
-  corresponding to the points \f$p, q\f$, and \f$r\f$.
+Among the three faces in the orbit that have at least one vertex in
+\f$\mathcal D\f$, the canonical representative is the green one: it is
+closest, in the counterclockwise order, to the region labeled
+\f$abcd\f$.  The translations \f$\mathbb 1, a\f$, and
+\f$\overline{b}\f$, corresponding to the points \f$p, q\f$, and
+\f$r\f$ are stored in the face in the data structure. 
 \cgalFigureCaptionEnd
 
 
-<b>Validity</b> <br>
-A periodic hyperbolic triangulation of \f$\mathcal{M}\f$ is said to be `valid` if and only if
-\cgalModifBegin
+\section P4HT2_validity Validity
+
+Let us now give details on the validity condition mentioned above. 
+A periodic hyperbolic triangulation is said to be `valid` if and only if
 <ol>
-  <li>  Its underlying combinatorial graph, the triangulation data structure, is `valid`
-        (see \ref PkgTDS2Summary).
+  <li> Its underlying combinatorial graph, the triangulation data structure, is `valid`
+        (see \ref PkgTDS2Summary) \cgalModifBegin todo give more
+        precise link \cgalModifEnd and each face of the triangulation is positively oriented. See 
+        \cgalFigureRef{P4HTriangulationOrientationDS}. 
+  <li>  All triangles are topological disks; \cgalModifBegin question
+  bete : what else could it be? \cgalModifEnd
+  this condition is satisfied when the Euler 
+        relation \f$V-E+F = -2\f$ is verified, where \f$V, E, F\f$ are the number 
+        of vertices, edges and faces of the triangulation, respectively.
   <li>  The combinatorial graph of the triangulation does not contain cycles of length 1 
         or 2; this condition is equivalent to requiring that the triangulation is a simplicial 
         complex.
-  <li>  Each face of the triangulation is positively oriented. See 
-        \cgalFigureRef{P4HTriangulationOrientationDS}. 
-  <li>  All triangles are topological disks; this condition is satisfied when the Euler 
-        relation \f$V-E+F = -2\f$ is verified, where \f$V, E, F\f$ are the number 
-        of vertices, edges and faces of the triangulation, respectively.
 </ol>
-\cgalModifEnd
 
-
-\section P4HT2_Delaunay Hyperbolic Delaunay triangulation
-
-The class `Periodic_4_hyperbolic_Delaunay_triangulation_2` implements Delaunay triangulations of 
-\f$\mathcal M\f$. The prefix "Periodic_4" emphasizes that the triangulation is periodic in the four
-directions defined by the hyperbolic translations \f$ a,b,c\f$, and \f$d\f$.
-
-Delaunay triangulations have the <I>empty circle property</I>, that is, the circumscribing
-hyperbolic circle of each face does not contain any other vertex of the triangulation in its
-interior. These triangulations are uniquely defined if no more than three points are co-circular.
-Note however that the \cgal implementation computes a unique triangulation even in
-these cases \cgalCite{cgal:dt-pvr3d-03}. Note also that since hyperbolic circles coincide with 
-Euclidean circles in the Poincaré disk model, the implementation uses Euclidean predicates to
-ensure the Delaunay property. 
-
-This implementation is fully dynamic: it supports both insertions of points and vertex removal.
-\cgalModifBegin
-Note, however, that the removal of a vertex is authorized only if the triangulation remains 
-valid (as defined above). If this condition is not satisfied, then the vertex is <b>not</b> 
-removed from the triangulation.
-\cgalModifEnd
-
-
-\section P4HT2_Dummy_points Dummy points
-
-Some point sets do not admit a triangulation of \f$\mathcal M\f$. 
-\cgalModifBegin
-For instance, a single point does not define a triangulation of \f$\mathcal M\f$, as the result
-would not be a simplicial complex.
-\cgalModifEnd
+Some point sets do not admit a triangulation of \f$\mathcal M\f$. For
+instance, a single point does not define a valid triangulation of
+\f$\mathcal M\f$, as the induced subdivision would not be a simplicial
+complex. Another example is shown in
+\cgalFigureRef{P4HNonSimplicialExample}. 
 
 \cgalFigureAnchor{P4HNonSimplicialExample}
 <center>
   <img src="non-triangulation.svg" style="max-width:45%; width=45%; display: inline-block;"/>
 </center>
 \cgalFigureCaptionBegin{P4HNonSimplicialExample}
-  Example of a non-simplicial decomposition of the Bolza surface. Note that with the three 
-  points in the central octagon, we obtain a decomposition that is <b>not</b> a triangulation,
-  since it is non-simplicial. On the figure a few cycles of length 2 are shown in color. Such
-  cycles are double edges in the triangulation. Note also the pink edge between the two blue 
-  vertices: it corresponds to a loop on the surface.
+  The three 
+  points in the central octagon define a subdivision of the Bolza surface that is <b>not</b> a triangulation,
+  since it is non-simplicial. A few cycles of length 2 are shown in
+  color, leading to double edges on the surface. The pink edge between the two blue 
+  vertices corresponds to a loop (cycle of length 1) on the surface. 
 \cgalFigureCaptionEnd
 
-For this reason, we initialize a triangulation of \f$\mathcal M\f$ with a predetermined set of 
-14 points, called <i>dummy points</i>, whose triangulation in \f$\mathcal M\f$ is a simplicial 
-complex and has the empty circle property. The set of dummy points has been proposed in 
+We initialize a triangulation of \f$\mathcal M\f$ with a predetermined set of 
+14 points, called <i>dummy points</i>, which ensures that the
+projection by $\f\pi\f$ of the Delaunay triangulation of \f$\mathcal{G P}\f$ onto 
+\f$\mathcal M\f$ is a simplicial 
+complex for any set of input points \f$\mathcal{P}\f$
 \cgalCite{cgal:btv-dtosl-16}. 
-
-\cgalModifBegin
 See \cgalFigureRef{P4HTriangulationDummyPoints}
-\cgalModifEnd
 
 \cgalFigureAnchor{P4HTriangulationDummyPoints}
 <center>
   <img src="dummy-points.png" style="max-width:35%; width=35%; display: inline-block;"/>
 </center>
 \cgalFigureCaptionBegin{P4HTriangulationDummyPoints}
-  Delaunay triangulation of \f$\mathcal M\f$ with the 14 dummy points. The set of dummy points
+  Delaunay triangulation of \f$\mathcal M\f$ defined by the 14 dummy points. The set of dummy points
   contains the origin, the vertex of \f$\mathcal D\f$, the midpoints of the closed sides of 
   \f$D\f$, and the hyperbolic midpoints of the segments between the origin and the vertices 
   of the octagon. 
 \cgalFigureCaptionEnd
 
-\cgalModifBegin
-After the triangulation has been initialized with the dummy points, new input points can be 
-inserted without ever losing the simplicial complex property. If sufficiently many well-distributed 
+If sufficiently many well-distributed 
 points are inserted, the dummy points become unnecessary, i.e., the triangulation remains a 
 simplicial complex even if we remove them. 
 If the set of input points is not sufficiently large, or if the points 
 are not well-distributed on the surface, then the final triangulation will contain the
 dummy points necessary to guarantee that the triangulation is a simplicial complex. 
-\cgalModifEnd
+
+\cgalModifBegin tout ce qui concerne les experiences pourrait eventuellement
+descendre dans la sec Performance \cgalModifEnd
 Experiments have 
 shown that, on average, all dummy points are removed from the triangulation with the insertion 
 of less than 200 random points uniformly distributed (according to the Euclidean metric) in 
-the unit disk. 
-
-\cgalModifBegin
-See \cgalFigureRef{P4HDummyPointsHistogram}.
-\cgalModifEnd
+the unit disk. See \cgalFigureRef{P4HDummyPointsHistogram}.
+\cgalModifBegin TODO cite socg IT \f$\mathcal{G P}\f$ \cgalModifEnd
 
 \cgalFigureBegin{P4HDummyPointsHistogram, histogram-dummy-points.png}
   Histogram of the number of random input points needed to remove all dummy points in the
@@ -305,15 +269,39 @@ See \cgalFigureRef{P4HDummyPointsHistogram}.
 
 \section P4HT2_design Software Design 
 
-\cgalModifBegin
-The two main classes `Periodic_4_hyperbolic_Delaunay_triangulation_2` and
+ 
+The class `Periodic_4_hyperbolic_Delaunay_triangulation_2` implements
+Delaunay triangulations of the Bolza surface 
+\f$\mathcal M\f$. The prefix "Periodic_4" emphasizes that the
+triangulation in the universal covering \f$\mathbb H^2\f$ is periodic in the four
+directions defined by the hyperbolic translations \f$ a,b,c\f$, and \f$d\f$.
+
+Delaunay triangulations have the <I>empty circle property</I>, that is, the circumscribing
+hyperbolic circle of each face does not contain any other vertex of the triangulation in its
+interior. These triangulations are uniquely defined if no more than
+three points are co-circular; however that the \cgal implementation computes a unique triangulation even in
+these cases \cgalCite{cgal:dt-pvr3d-03}. Note also that since hyperbolic circles coincide with 
+Euclidean circles in the Poincaré disk model, the implementation uses Euclidean predicates to
+ensure the Delaunay property. 
+
+This implementation is fully dynamic: it supports both insertions of points and vertex removal.
+Note, however, that the removal of a vertex is authorized only if the triangulation remains 
+valid (as defined above). If this condition is not satisfied, then the vertex is <b>not</b> 
+removed from the triangulation.
+
+\cgalModifBegin (MT) J'arrete ici \cgalModifEnd
+
+ The two main classes `Periodic_4_hyperbolic_Delaunay_triangulation_2` and
 `Periodic_4_hyperbolic_triangulation_2` provide high-level geometric functionality and are
 responsible for the geometric validity of the triangulation.
 `Periodic_4_hyperbolic_Delaunay_triangulation_2` contains
 all the functionality that is specific to Delaunay triangulations, such as point insertion and
 vertex removal, the side-of-circle test, finding the conflicting region of a given point, and dual
 functions. 
-\cgalModifEnd
+\cgalModifBegin mais c'est quoi ce truc ??? il n'y a PAS de classe
+`Periodic_4_hyperbolic_triangulation_2` !!!!!! a revoir completement (en prime c'est completement
+redondant pour Delaunay, ne pas repeter) \cgalModifEnd 
+
 `Periodic_4_hyperbolic_triangulation_2` contains all the functionality that is common 
 to triangulations in general, such as location of a point in the triangulation 
 \cgalCite{cgal:dpt-wt-02}, and access functions. Note that `Periodic_4_hyperbolic_triangulation_2`
@@ -327,36 +315,28 @@ in the software design by the fact that the triangulation classes take two templ
 necessary for the computation of Delaunay triangulations of the Bolza surface.
 It also provides the hyperbolic translations generating the group \f$\mathcal G\f$, as well as
 to the translations in the set \f$\mathcal N\f$. 
-\cgalModifBegin
 This parameter must meet the requirements described in the concept
 `Periodic_4HyperbolicDelaunayTriangulationTraits_2`. For more details, see 
 Section \ref P4HT2_traits. 
-\cgalModifEnd
 
 - the <B>triangulation data structure</B> class, which encodes the combinatorial structure of 
 the triangulation. 
-\cgalModifBegin
 This parameter must meet the requirements described in the concept 
 `TriangulationDataStructure_2`, and for the purposes of this package is described in 
 Section \ref P4HT2_datastructure.
-\cgalModifEnd
 
 \subsection P4HT2_traits The Geometric Traits Parameter 
 
 The geometric traits class is the first template parameter of the periodic hyperbolic
 triangulation classes. 
-\cgalModifBegin
 The requirements it must fulfill are described in the concept
 `Periodic_4HyperbolicDelaunayTriangulationTraits_2`, which extends the concept
 `HyperbolicDelaunayTriangulationTraits_2`, providing all necessary objects, predicates, 
 and constructions, as well as the hyperbolic translations of the group \f$\mathcal G\f$.
-\cgalModifEnd
 
-\cgalModifBegin
 This package offers a model for the concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2`,
 which is the class `Periodic_4_hyperbolic_Delaunay_triangulation_traits_2`. The class requires 
 two template parameters:
-\cgalModifEnd
 <ul>
 	<li> A `Kernel` with a `number type` that guarantees exact computations on algebraic numbers 
   with nested square roots, for example `CGAL::Cartesian<CORE::Expr>`. This parameter has
@@ -380,10 +360,8 @@ The triangulation data structure class is the second template parameter of the p
 triangulation classes. It is a container for the faces and vertices and maintains
 incidence and adjacency relations. For details, see Chapter 
 \ref Chapter_2D_Triangulation_Data_Structure. 
-\cgalModifBegin
 This parameter must meet the requirements described in the concept `TriangulationDataStructure_2`, 
 for which \cgal offers the model `Triangulation_data_structure_2`. 
-\cgalModifEnd
 This model is itself parameterized by a vertex 
 base class and a face base class, which gives the possibility to customize the vertices and 
 faces used by the triangulation data structure. To represent periodic hyperbolic triangulations,
@@ -391,16 +369,12 @@ the face base and vertex base classes must be models of the concepts
 `Periodic_4HyperbolicTriangulationDSFaceBase_2` and
 `Periodic_4HyperbolicTriangulationDSVertexBase_2`, respectively.
 
-\cgalModifBegin
 The default value for the triangulation data structure parameter in the hyperbolic periodic 
 triangulation classes is 
 `Triangulation_data_structure_2< Periodic_4_hyperbolic_triangulation_face_base_2<Traits>, Periodic_4_hyperbolic_triangulation_vertex_base_2<Traits> >`, 
 where `Traits` is a model of `Periodic_4HyperbolicDelaunayTriangulationTraits_2`.
-\cgalModifEnd
 
-\cgalModifBegin
-\section P4HT2_examples Examples 
-\cgalModifEnd
+\section P4HT2_examples Example
 
 This example shows the initialization of a periodic hyperbolic 2D Delaunay triangulation,  the
 insertion of random points uniformly distributed in the unit disk for the Euclidean metric, and the
@@ -409,9 +383,11 @@ properties of the triangulation after the insertion. It uses the default paramet
 
 \cgalExample{Periodic_4_hyperbolic_triangulation_2/p4ht2_example_insertion.cpp}
 
+\cgalModifBegin TODO lien vers exemples T2 pour fonctionnalites, dire
+que c'est similaire \cgalModifEnd 
+
 \section P4HT2_Performance Performance
 
-\cgalModifBegin
 We perform tests to measure the insertion execution time of our implementation against existing
 \cgal code. We generate random points, uniformly distributed in the unit disk with respect to
 the Euclidean metric. From the generated points, we select 1 million points that lie in the original 
@@ -438,7 +414,7 @@ have been executed on two machines:
 <tr><td>  Non-periodic Euclidean (`double`)     <td>  1 sec.        <td>  1 sec.
 </table>
 </center>
-\cgalModifEnd
+
 
 \section P4HT2_Design Design and Implementation History
 
