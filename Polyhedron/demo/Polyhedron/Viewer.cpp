@@ -335,7 +335,7 @@ Viewer::Viewer(QWidget* parent,
   d->_recentFunctions = sharedWidget->d->_recentFunctions;
   doBindings();
   d->total_pass = sharedWidget->total_pass();
-
+  setOffset(sharedWidget->offset());
 }
 
 Viewer::~Viewer()
