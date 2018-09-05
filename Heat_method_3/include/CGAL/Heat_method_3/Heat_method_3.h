@@ -36,6 +36,7 @@
 #include <CGAL/number_utils.h>
 #include <Eigen/Cholesky>
 #include <CGAL/Eigen_matrix.h>
+#include <CGAL/Eigen_vector.h>
 
 #include <boost/foreach.hpp>
 
@@ -53,7 +54,24 @@ namespace Heat_method_3 {
   // It encapsulates what we use from Eigen so that one potentially can use another LA library
   struct Heat_method_Eigen_traits_3 {
     typedef CGAL::Eigen_sparse_matrix<double> SparseMatrix;
+    typedef CGAL::Eigen_vector<double> VectorXd;
     typedef int Index;
+
+    typedef Eigen::SimplicialLDLT<SparseMatrix::EigenType> Solver;
+
+    
+    static void compute(Solver& solver, const SparseMatrix& sm)
+    {
+      solver.compute(sm.eigen_object());
+    }
+
+    
+    static void solve(Solver& solver,
+                      const SparseMatrix& sm,
+                      VectorXd& b)
+    {
+      b = solver.solve(sm.eigen_object());
+    }
   };
 
 
@@ -95,6 +113,7 @@ namespace Heat_method_3 {
     typedef typename boost::property_traits<VertexPointMap>::reference VertexPointMap_reference;
 
     typedef typename LA::SparseMatrix Matrix;
+    typedef typename LA:: VectorXd VectorXd;
     typedef typename LA::Index Index;
 
     // The Vertex_id_map is a property map where you can associate an index to a vertex_descriptor
@@ -289,22 +308,28 @@ namespace Heat_method_3 {
       Matrix A, A0;
       scale(A0, a_time_step, c);
       add(A,M,A0);
-      Eigen::SimplicialLDLT<typename Matrix::EigenType> solver;
-      solver.compute(A.eigen_object());
+
+      LA::Solver solver;
+      LA::compute(solver, A);
+      
       if(solver.info()!=Eigen::Success) {
         // decomposition failed
         CGAL_error_msg("Eigen Decomposition in cotan failed");
-      }
-      solved_u = solver.solve(x.eigen_object());
+        }
+      LA::solve(solver, x.eigen_object(), solved_u);
+      
       if(solver.info()!=Eigen::Success) {
         // solving failed
         CGAL_error_msg("Eigen Solving in cotan failed");
       }
+      
     }
 
-    Eigen::MatrixXd compute_unit_gradient() const
+    void compute_unit_gradient()
     {
-      Eigen::MatrixXd X(num_faces(tm), 3);
+      if(X.empty()){
+        X.resize(num_faces(tm));
+      }
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
       BOOST_FOREACH(face_descriptor f, faces(tm)) {
         boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
@@ -345,21 +370,17 @@ namespace Heat_method_3 {
         edge_sums = edge_sums + u_j * CGAL::cross_product(unit_cross, (p_i-p_k));
         edge_sums = edge_sums * (1./area_face);
         double e_magnitude = CGAL::sqrt(edge_sums*edge_sums);
-        Vector_3 unit_grad = edge_sums*(1./e_magnitude);
-        X(face_i, 0) = unit_grad.x();
-        X(face_i, 1) = unit_grad.y();
-        X(face_i, 2) = unit_grad.z();
+        X[face_i] = edge_sums*(1./e_magnitude);
       }
-      return X;
     }
 
-    double dot_eigen_vector(const Eigen::Vector3d& a, const Vector_3& b) const
+    double dot_eigen_vector(const Vector_3& a, const Vector_3& b) const
     {
-      return (a(0)*b.x() + a(1)*b.y() + a(2)*b.z());
+      return (a.x()*b.x() + a.y()*b.y() + a.z()*b.z());
     }
 
 
-    void compute_divergence( Matrix& result, const Eigen::MatrixXd& X, int rows) const
+    void compute_divergence( Matrix& result, const std::vector<Vector_3>& X, int rows) const
     {
       Matrix indexD(rows,1);
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
@@ -389,7 +410,7 @@ namespace Heat_method_3 {
         dot = to_double((p_i-p_k)*(p_j-p_k));
         double cotan_k = dot/norm_cross;
 
-        Eigen::VectorXd a = X.row(face_i);
+        const Vector_3& a  = X[face_i];
         double i_entry = cotan_k*(dot_eigen_vector(a,(p_j-p_i))) + cotan_j*(dot_eigen_vector(a,(p_k-p_i)));
         double j_entry = cotan_i*(dot_eigen_vector(a,(p_k-p_j))) + cotan_k*(dot_eigen_vector(a,(p_i-p_j)));
         double k_entry = cotan_j*(dot_eigen_vector(a,(p_i-p_k))) + cotan_i*(dot_eigen_vector(a,(p_j-p_k)));
@@ -402,9 +423,9 @@ namespace Heat_method_3 {
     }
 
     
-    Eigen::VectorXd value_at_source_set(const Eigen::VectorXd& phi, int dimension) const
+    VectorXd value_at_source_set(const VectorXd& phi, int dimension) const
     {
-      Eigen::VectorXd source_set_val(dimension,1);
+      VectorXd source_set_val(dimension);
       if(sources.empty())
       {
         for(int k = 0; k<dimension; k++)
@@ -444,22 +465,27 @@ namespace Heat_method_3 {
     }
 
 
-    Eigen::VectorXd solve_phi(const Matrix& c, const Matrix& divergence, int dimension) const
+    VectorXd solve_phi(const Matrix& c, const Matrix& divergence, int dimension) const
     {
 
-      Eigen::VectorXd phi;
-      Eigen::SimplicialLDLT<typename Matrix::EigenType> solver;
-      solver.compute(c.eigen_object());
-
+      VectorXd phi;
+      LA::Solver solver;
+      
+      LA::compute(solver, c);
+      
       if(solver.info()!=Eigen::Success) {
         // decomposition failed
         CGAL_error_msg("Eigen Decomposition in phi failed");
       }
-      phi = solver.solve(divergence.eigen_object());
+      
+      
+      LA::solve(solver, divergence, phi);
+      
       if(solver.info()!=Eigen::Success) {
         // solving failed
         CGAL_error_msg("Eigen Solving in phi failed");
       }
+      
       return value_at_source_set(phi, dimension);
     }
 
@@ -483,7 +509,7 @@ namespace Heat_method_3 {
         //don't need to recompute Mass matrix, cotan matrix or timestep reflect that in this function
         update_kronecker_delta();
         solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, m_time_step, dimension);
-        X = compute_unit_gradient();
+        compute_unit_gradient();
         compute_divergence(index_divergence, X, dimension);
         solved_phi = solve_phi(m_cotan_matrix, index_divergence, dimension);
         source_change_flag = false;
@@ -582,7 +608,7 @@ namespace Heat_method_3 {
       update_kronecker_delta();
       solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, m_time_step, m);
       //edit unit_grad
-      X = compute_unit_gradient();
+      compute_unit_gradient();
       //edit compute_divergence
       compute_divergence(index_divergence, X, m);
       solved_phi = solve_phi(m_cotan_matrix, index_divergence, m);
@@ -597,8 +623,8 @@ namespace Heat_method_3 {
     double m_time_step;
     Matrix kronecker;
     Matrix m_mass_matrix, m_cotan_matrix;
-    Eigen::VectorXd solved_u;
-    Eigen::MatrixXd X;
+    VectorXd solved_u;
+    std::vector<Vector_3> X;
     Matrix index_divergence;
     Eigen::VectorXd solved_phi;
     std::set<Index> source_index;

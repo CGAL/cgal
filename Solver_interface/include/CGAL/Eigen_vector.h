@@ -67,7 +67,10 @@ public:
   {
     return static_cast<Eigen_vector<T>&>(static_cast<EigenType&>(*this) = other);
   }
-
+  Eigen_vector()
+    : EigenType()
+  {}
+  
   /// Create a vector initialized with zeros.
   Eigen_vector(std::size_t dimension)
     : EigenType(static_cast<int>(dimension))
