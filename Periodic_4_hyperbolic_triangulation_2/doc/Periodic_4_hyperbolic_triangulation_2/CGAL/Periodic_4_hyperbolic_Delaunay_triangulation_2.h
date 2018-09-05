@@ -115,16 +115,17 @@ The class expects two template parameters.
 		/*!
 			\cgalModifBegin
 			Inserts all points in the input iterator into the triangulation.
-			Note that this function does not remove unnecessary dummy points 
-			at the end of the insertion process. The removal, if desired, 
-			should be done by manually calling the function `clean_dummy_points()`.
+			Note that this function by default tries to remove unnecessary dummy points 
+			at the end of the insertion process. This behavior is controlled by the 
+			optional boolean parameter `flag_clean_dummy_points`; if automatic removal
+			of the dummy points is not desired, set the flag to `false`.
 
 			\sa `clean_dummy_points()`
 			\cgalModifEnd
 		*/
 		template < class InputIterator >
 		std::ptrdiff_t
-		insert(InputIterator first, InputIterator last);
+		insert(InputIterator first, InputIterator last, const bool flag_clean_dummy_points = true);
 	/// @}
 
 	/// \name Vertex removal
