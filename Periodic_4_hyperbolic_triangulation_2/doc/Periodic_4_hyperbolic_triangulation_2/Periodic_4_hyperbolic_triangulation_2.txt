@@ -144,12 +144,12 @@ three translations that are paired with the point in each vertex. See
 \cgalFigureRef{P4HTriangulationOrientationDS}. 
 
 \cgalModifBegin 
-  TODO make the translation more visible than the rest on the fig 
+  TODO make the translation more visible than the rest on the fig [modified]
 \cgalModifEnd
 
 \cgalFigureAnchor{P4HTriangulationOrientationDS}
 <center>
-  <img src="ds_cgal.svg" style="max-width:75%; width=75%;"/>
+  <img src="ds_cgal.svg" style="max-width:40%; width: 1000px;"/>
 </center>
 \cgalFigureCaptionBegin{P4HTriangulationOrientationDS}
   Representation of a face \f$f\f$ stored in the triangulation data structure. 
@@ -174,12 +174,12 @@ translation \f$abcd\f$.  The canonical representative in
 </ul> 
 \cgalModifBegin 
 todo show p,q,r on the fig, otherwise
-the caption makes no sense... 
+the caption makes no sense... [modified]
 \cgalModifEnd
 
 \cgalFigureAnchor{P4HTriangulationCanonicalRepExample}
 <center>
-  <img src="periodic_face.svg" style="max-width:35%; width=35%; display: inline-block;"/>
+  <img src="periodic_face.svg" style="max-width:45%; width=45%; display: inline-block;"/>
 </center>
 \cgalFigureCaptionBegin{P4HTriangulationCanonicalRepExample}
 Among the three faces in the orbit that have at least one vertex in
