@@ -120,13 +120,7 @@ The Delaunay triangulation of \f$\mathcal{M}\f$ defined by a point set
 \f$\mathcal{P}\f$ is defined as the projection by \f$\pi\f$ of the
 Delaunay triangulation in the plane \f$\mathbb H^2\f$ of the
 (infinite) set of points \f$\mathcal{G P}\f$ onto \f$\mathcal{M}\f$,
-under some validity conditions that will be detailed in 
-\cgalModifBegin
-  Section \ref P4HT2_validity. 
-\cgalModifEnd
-
-\cgalModifBegin TODO add ref to sec validity [done] \cgalModifEnd
-
+under some validity conditions that will be detailed in Section \ref P4HT2_validity. 
 
 We require that all input points lie inside \f$\mathcal D\f$. As for
 orbits of points, all faces of the Delaunay triangulation of
@@ -143,10 +137,6 @@ triangulation is a \ref PkgTDS2Summary, enriched in each face by the
 three translations that are paired with the point in each vertex. See
 \cgalFigureRef{P4HTriangulationOrientationDS}. 
 
-\cgalModifBegin 
-  TODO make the translation more visible than the rest on the fig [modified]
-\cgalModifEnd
-
 \cgalFigureAnchor{P4HTriangulationOrientationDS}
 <center>
   <img src="ds_cgal.svg" style="max-width:40%; width: 1000px;"/>
@@ -154,7 +144,7 @@ three translations that are paired with the point in each vertex. See
 \cgalFigureCaptionBegin{P4HTriangulationOrientationDS}
   Representation of a face \f$f\f$ stored in the triangulation data structure. 
   Each vertex \f$v_i\f$ stores a point \f$p_i\f$ paired with a translation
-  \f$\tau_i\f$. Opposite to vertex \f$i\f$ is the \f$i\f$-th neighbor of \f$f\f$.
+  \f$\tau_i\f$. 
 \cgalFigureCaptionEnd
 
 More precisely, the translations are elements of the subset
@@ -172,10 +162,6 @@ translation \f$abcd\f$.  The canonical representative in
   <li> the representative has at least one vertex in \f$\mathcal D\f$
   and is as close as possible to \f$abcd\f$ in the ordering defined above.  
 </ul> 
-\cgalModifBegin 
-todo show p,q,r on the fig, otherwise
-the caption makes no sense... [modified]
-\cgalModifEnd
 
 \cgalFigureAnchor{P4HTriangulationCanonicalRepExample}
 <center>
@@ -195,12 +181,6 @@ closest, in the counterclockwise order, to the region labeled
 
 Let us now give details on the validity condition mentioned above. 
 A periodic hyperbolic triangulation is said to be `valid` if and only if
-\cgalModifBegin 
-  todo give more precise link (first item) [modified]
-
-  question bete : what else could it be? (second item) [modified]
-\cgalModifEnd
-
 <ol>
   <li> Its underlying combinatorial graph, the triangulation data structure, is `valid`
         (see the function \link TriangulationDataStructure_2::is_valid() is_valid\endlink() in the concept \ref TriangulationDataStructure_2) and each face of the triangulation is positively oriented. See 
@@ -231,9 +211,10 @@ complex. Another example is shown in
   vertices corresponds to a loop (cycle of length 1) on the surface. 
 \cgalFigureCaptionEnd
 
-We initialize a triangulation of \f$\mathcal M\f$ with a predetermined set of 
+We initialize a triangulation of \f$\mathcal M\f$ with a predetermined set \f$\mathcal Q\f$ of 
 14 points, called <i>dummy points</i>, which ensures that the
-projection by \f$\pi\f$ of the Delaunay triangulation of \f$\mathcal{G P}\f$ onto 
+projection by \f$\pi\f$ of the Delaunay triangulation of \f$\mathcal{G}
+(\mathcal{P}\cup\mathcal{Q})\f$ onto 
 \f$\mathcal M\f$ is a simplicial 
 complex for any set of input points \f$\mathcal{P}\f$
 \cgalCite{cgal:btv-dtosl-16}. 
@@ -244,7 +225,8 @@ See \cgalFigureRef{P4HTriangulationDummyPoints}
   <img src="dummy-points.png" style="max-width:35%; width=35%; display: inline-block;"/>
 </center>
 \cgalFigureCaptionBegin{P4HTriangulationDummyPoints}
-  Delaunay triangulation of \f$\mathcal M\f$ defined by the 14 dummy points. The set of dummy points
+  Delaunay triangulation of \f$\mathcal M\f$ defined by the 14 dummy
+  points. The set \f$\mathcal Q\f$ of dummy points
   contains the origin, the vertex of \f$\mathcal D\f$, the midpoints of the closed sides of 
   \f$\mathcal D\f$, and the hyperbolic midpoints of the segments between the origin and the vertices 
   of the octagon. 
@@ -261,14 +243,11 @@ dummy points necessary to guarantee that the triangulation is a simplicial compl
   tout ce qui concerne les experiences pourrait eventuellement
   descendre dans la sec Performance 
 \cgalModifEnd
+
 Experiments have 
 shown that, on average, all dummy points are removed from the triangulation with the insertion 
 of less than 200 random points uniformly distributed (according to the Euclidean metric) in 
 the unit disk \cgalCite{cgal:it-idtbs-17}. See \cgalFigureRef{P4HDummyPointsHistogram}.
-
-\cgalModifBegin   
-  TODO cite socg IT \f$\mathcal{G P}\f$ [citation added]
-\cgalModifEnd
 
 \cgalFigureAnchor{P4HDummyPointsHistogram}
 <center>
@@ -290,7 +269,10 @@ the unit disk \cgalCite{cgal:it-idtbs-17}. See \cgalFigureRef{P4HDummyPointsHist
 
 \section P4HT2_design Software Design 
 
- 
+\cgalModifBegin 
+  TODO enlever les redondances dans cette section et améliorer la structure
+\cgalModifEnd 
+
 The class `Periodic_4_hyperbolic_Delaunay_triangulation_2` implements
 Delaunay triangulations of the Bolza surface 
 \f$\mathcal M\f$. The prefix "Periodic_4" emphasizes that the
@@ -310,10 +292,6 @@ Note, however, that the removal of a vertex is authorized only if the triangulat
 valid (as defined above). If this condition is not satisfied, then the vertex is <b>not</b> 
 removed from the triangulation.
 
-\cgalModifBegin 
-  (MT) J'arrete ici 
-\cgalModifEnd
-
  The two main classes `Periodic_4_hyperbolic_Delaunay_triangulation_2` and
 `Periodic_4_hyperbolic_triangulation_2` provide high-level geometric functionality and are
 responsible for the geometric validity of the triangulation.
@@ -321,11 +299,6 @@ responsible for the geometric validity of the triangulation.
 all the functionality that is specific to Delaunay triangulations, such as point insertion and
 vertex removal, the side-of-circle test, finding the conflicting region of a given point, and dual
 functions. 
-\cgalModifBegin 
-  mais c'est quoi ce truc ??? il n'y a PAS de classe
-  `Periodic_4_hyperbolic_triangulation_2` !!!!!! a revoir completement (en prime c'est completement
-  redondant pour Delaunay, ne pas repeter) 
-\cgalModifEnd 
 
 `Periodic_4_hyperbolic_triangulation_2` contains all the functionality that is common 
 to triangulations in general, such as location of a point in the triangulation 
@@ -362,6 +335,11 @@ and constructions, as well as the hyperbolic translations of the group \f$\mathc
 This package offers a model for the concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2`,
 which is the class `Periodic_4_hyperbolic_Delaunay_triangulation_traits_2`. The class requires 
 two template parameters:
+\cgalModifBegin 
+  1- BUG dans le ref manual : les paramètres templates ne sont pas
+  documentes. TODO fix
+  2- il y a une raison pour ne pas mettre Core-expr comme default ? 
+\cgalModifEnd 
 <ul>
 	<li> A `Kernel` with a `number type` that guarantees exact computations on algebraic numbers 
   with nested square roots, for example `CGAL::Cartesian<CORE::Expr>`. This parameter has
@@ -371,13 +349,30 @@ two template parameters:
   into this model for consistency. The default value for this parameter is the class
   `Hyperbolic_octagon_translation`. </li>
 </ul>
-
-Refer to Section \ref P4HT2_examples for a complete example on instantiating a triangulation of
-the Bolza surface.
+\cgalModifBegin 
+  D'habitude on n'impose pas un parametre template dans un
+  concept. Dans le concept on dit seulement que le NT doit être fourni
+  comme nested type. En pratique dans le modele il y a un template
+  parameter. Dans ton ref manual c'est en fait ce que tu fais, tu ne
+  demandes pas le template. TOD rendre tout ca coherent. 
+\cgalModifEnd 
 
 If the field type used in `Kernel` provides exact operations with algebraic numbers involving
-nested square roots, then the traits class provides exact predicates and exact constructions.  
-In addition, inexact constructions using `double` number type are also provided.
+nested square roots, then the traits class provides exact predicates
+and exact constructions.
+\cgalModifBegin 
+  sinon, tout le code plante, c'est-ce pas ? ce n'est pas vraiment ce qu'on veut... de
+  plus c'est contradictoire avec ce qui est  écrit plus haut : A
+  `Kernel` with a `number type` that guarantees 
+  exact computations on algebraic numbers with nested square
+  roots. TODO rendre le texte coherent. 
+\cgalModifEnd 
+In addition, inexact constructions using `double` number type are also
+provided.
+\cgalModifBegin 
+  pour quoi faire ? 
+\cgalModifEnd 
+
 
 \subsection P4HT2_datastructure The Triangulation Data Structure Parameter 
 
@@ -406,17 +401,16 @@ insertion of random points uniformly distributed in the unit disk for the Euclid
 properties of the triangulation after the insertion. It uses the default parameter of the
 `Periodic_4_hyperbolic_Delaunay_triangulation_2` class for the triangulation data structure.
 
-\cgalModifBegin
-Note that more examples can be found in the documentation of other triangulation packages
-in \cgal. For instance, all the examples shown in the User manual for the 
+Most functionalities of periodic hyperbolic triangulations are similar
+to those of Euclidean 2D triangulations. We refer the reader to
+examples in section ???
 \ref Chapter_2D_Triangulations "2D Triangulation" package
-can be used with `Periodic_4_hyperbolic_Delaunay_triangulation_2'.
+\cgalModifBegin
+TODO mettre le lien précis, envoyer directement sur la sec examples de T2
 \cgalModifEnd
 
 \cgalExample{Periodic_4_hyperbolic_triangulation_2/p4ht2_example_insertion.cpp}
 
-\cgalModifBegin TODO lien vers exemples T2 pour fonctionnalites, dire
-que c'est similaire [modified] \cgalModifEnd 
 
 \section P4HT2_Performance Performance
 
