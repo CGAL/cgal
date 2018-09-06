@@ -42,7 +42,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
-#include <CGAL/is_iterator.h>
+#include <boost/range/has_range_iterator.hpp>
 
 #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
@@ -214,8 +214,8 @@ template <class EdgeRange, class TriangleMesh, class OutputIterator>
 OutputIterator degenerate_edges(const EdgeRange& edges,
                                 const TriangleMesh& tm,
                                 OutputIterator out,
-                                typename boost::disable_if_c<
-                                           CGAL::is_iterator<TriangleMesh>::value
+                                typename boost::enable_if<
+                                  typename boost::has_range_iterator<EdgeRange>
                                          >::type* = 0)
 {
   return degenerate_edges(edges, tm, out, CGAL::parameters::all_default());
@@ -231,9 +231,9 @@ OutputIterator degenerate_edges(const TriangleMesh& tm,
                                 OutputIterator out,
                                 const NamedParameters& np
 #ifndef DOXYGEN_RUNNING
-                                , typename boost::enable_if_c<
-                                           CGAL::is_iterator<OutputIterator>::value
-                                         >::type* = 0
+                                , typename boost::disable_if<
+                                    boost::has_range_iterator<TriangleMesh>
+                                      >::type* = 0
 #endif
                                                      )
 {
@@ -291,9 +291,9 @@ template <class FaceRange, class TriangleMesh, class OutputIterator>
 OutputIterator degenerate_faces(const FaceRange& faces,
                                 const TriangleMesh& tm,
                                 OutputIterator out,
-                                typename boost::disable_if_c<
-                                           CGAL::is_iterator<TriangleMesh>::value
-                                         >::type* = 0)
+                                typename boost::enable_if<
+                                  boost::has_range_iterator<FaceRange>
+                                    >::type* = 0)
 {
   return degenerate_faces(faces, tm, out, CGAL::parameters::all_default());
 }
@@ -308,9 +308,9 @@ OutputIterator degenerate_faces(const TriangleMesh& tm,
                                 OutputIterator out,
                                 const NamedParameters& np
 #ifndef DOXYGEN_RUNNING
-                                , typename boost::enable_if_c<
-                                           CGAL::is_iterator<OutputIterator>::value
-                                         >::type* = 0
+                                , typename boost::disable_if<
+                                    boost::has_range_iterator<TriangleMesh>
+                                      >::type* = 0
 #endif
                                                      )
 {
