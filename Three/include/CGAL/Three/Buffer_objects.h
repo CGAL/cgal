@@ -88,11 +88,11 @@ struct Vao{
 //! A Vbo can be shared between Vaos of the same context.
 struct Vbo
 {
-enum Flag{
-  GEOMETRY=0,
-  COLORS,
-  NORMALS
-};
+  enum Flag{
+    GEOMETRY=0,
+    COLORS,
+    NORMALS
+  };
   QOpenGLBuffer vbo;
   const char* attribute;
   Flag flag;

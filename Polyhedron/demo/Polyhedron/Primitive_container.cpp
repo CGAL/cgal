@@ -72,7 +72,8 @@ void Primitive_container::initializeBuffers(CGAL::Three::Viewer_interface* viewe
       if(vbo->vbo_type == QOpenGLBuffer::VertexBuffer)
       {
         d->VAOs[viewer]->program->enableAttributeArray(vbo->attribute);
-        d->VAOs[viewer]->program->setAttributeBuffer(vbo->attribute, vbo->data_type, vbo->offset, vbo->tupleSize, vbo->stride);
+        d->VAOs[viewer]->program->setAttributeBuffer(
+              vbo->attribute, vbo->data_type, vbo->offset, vbo->tupleSize, vbo->stride);
       }
     }
     else if(vbo->vbo_type == QOpenGLBuffer::VertexBuffer)
@@ -156,7 +157,10 @@ void Primitive_container::setColor(QColor c)
   d->color = c;
 }
 
-Vao* Primitive_container::getVao(Viewer_interface* viewer) const  { return d->VAOs[viewer]; }
+Vao* Primitive_container::getVao(Viewer_interface* viewer) const  {
+
+  return d->VAOs[viewer];
+}
 
 Vbo* Primitive_container::getVbo(std::size_t id) const
 {
@@ -166,13 +170,25 @@ Vbo* Primitive_container::getVbo(std::size_t id) const
 
 void Primitive_container::setVbo(std::size_t vbo_id, Vbo* vbo) { d->VBOs[vbo_id] = vbo; }
 
+void Primitive_container::setStride(std::size_t id, int stride) {
+  d->VBOs[id]->stride = stride;
+}
+
+void Primitive_container::setOffset(std::size_t id, int offset) {
+  d->VBOs[id]->offset = offset;
+}
+
 int Primitive_container::getProgram() const  { return d->program_id; }
 
 bool Primitive_container::isDataIndexed()  { return d->indexed; }
 
-bool Primitive_container::isInit(Viewer_interface* viewer)const  { return d->is_init[viewer]; }
+bool Primitive_container::isInit(Viewer_interface* viewer)const  {
+  return d->is_init[viewer];
+}
 
-bool Primitive_container::isGLInit(Viewer_interface* viewer)const  { return d->is_gl_init[viewer]; }
+bool Primitive_container::isGLInit(Viewer_interface* viewer)const  {
+  return d->is_gl_init[viewer];
+}
 
 bool Primitive_container::isSelected() const  { return d->is_selected; }
 
@@ -183,3 +199,4 @@ std::size_t Primitive_container::getCenterSize() const  { return d->center_size;
 std::size_t Primitive_container::getIdxSize() const  { return d->idx_size; }
 
 QColor Primitive_container::getColor()const  { return d->color; }
+

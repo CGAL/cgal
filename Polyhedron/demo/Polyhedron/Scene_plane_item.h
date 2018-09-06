@@ -71,6 +71,8 @@ public:
 
   QString toolTip() const;
 
+  void removeViewer(CGAL::Three::Viewer_interface *viewer){}
+  void newViewer(CGAL::Three::Viewer_interface *viewer){}
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
     return (m == Wireframe || m == Flat || m == FlatPlusEdges);

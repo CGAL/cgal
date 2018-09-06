@@ -53,6 +53,7 @@ struct DEMO_FRAMEWORK_EXPORT Point_container :public Primitive_container
     Vertices = 0, //!< Designates the buffer that contains the vertex coordinates.
     Indices,      //!< Designates the buffer that contains the vertex indices.
     Colors,       //!< Designates the buffer that contains the color components.
+    Normals,      //!<  Designates the buffer that contains the normals components (for shaded points).
     NbOfVbos      //!< Designates the size of the VBOs vector for `Point_container`s
   };
 

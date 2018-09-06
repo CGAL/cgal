@@ -146,8 +146,12 @@ public:
   void setSelected(bool);
   //! Setter for the "color" parameter.
   void setColor(QColor);
+  //!Setter for the "stride" parameter.
+  void setStride(std::size_t id, int stride);
+  //!Setter for the "offset" parameter.
+  void setOffset(std::size_t id, int offset);
   //!@}
-protected:
+
   //!
   //! \brief setVao sets the `Vao` corresponding to `viewer` of this container.
   //!

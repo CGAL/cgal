@@ -46,6 +46,8 @@ public:
   void setPlane(Kernel::Plane_3 p_plane);
   void setToolTip(QString s);
   void setColor(QColor c) Q_DECL_OVERRIDE;
+  void newViewer(Viewer_interface *viewer) Q_DECL_OVERRIDE{}
+  void removeViewer(Viewer_interface *viewer) Q_DECL_OVERRIDE{}
 Q_SIGNALS:
   void on_color_changed();
 protected:

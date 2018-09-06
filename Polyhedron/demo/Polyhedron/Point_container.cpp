@@ -57,6 +57,14 @@ void Point_container::initGL(Viewer_interface *viewer)
              new Vbo("colors",
                      Vbo::COLORS));
     setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
+    if(viewer->getShaderProgram(getProgram())->property("hasNormals").toBool())
+    {
+      if(!getVbo(Normals))
+        setVbo(Normals,
+               new Vbo("normals",
+                       Vbo::NORMALS));
+      getVao(viewer)->addVbo(getVbo(Normals));
+    }
     getVao(viewer)->addVbo(getVbo(Vertices));
     getVao(viewer)->addVbo(getVbo(Colors));
 

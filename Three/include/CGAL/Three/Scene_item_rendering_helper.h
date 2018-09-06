@@ -225,7 +225,7 @@ protected:
   //! \brief setBbox allows to set the Bbox in compute_bbox();
   //! \param b
   //!
-  void setBbox(Bbox b);
+  void setBbox(Bbox b)const ;
   
   virtual void computeElements()const{}
 private:

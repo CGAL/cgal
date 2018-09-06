@@ -174,7 +174,7 @@ bool Scene_item_rendering_helper::isInit()const { return priv->isinit; }
 
 QSlider* Scene_item_rendering_helper::alphaSlider() { return priv->alphaSlider; }
 
-void Scene_item_rendering_helper::setBbox(Bbox b) { priv->_bbox = b; }
+void Scene_item_rendering_helper::setBbox(Bbox b)const { priv->_bbox = b; }
 
 Triangle_container* Scene_item_rendering_helper::getTriangleContainer(std::size_t id)const
 {
