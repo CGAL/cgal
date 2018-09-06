@@ -149,8 +149,8 @@ int main()
   }
 
   // force teleportation test
-  std::size_t pxi = 0, pxj = 0;
-  if (approx.find_best_merge(pxi, pxj, true)) {
+  if ( approx.find_best_merge(true) != boost::none )
+  {
     std::cout << "Failed: should be no possible merge with test." << std::endl;
     return EXIT_FAILURE;
   }

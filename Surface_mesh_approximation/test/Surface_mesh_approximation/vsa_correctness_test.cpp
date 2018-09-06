@@ -44,9 +44,10 @@ bool test_shape(const char *file_name, const std::size_t target_num_proxies)
   approx.run(num_iterations);
 
   // eliminate redundant area (local minima) by merging
-  std::size_t px0 = 0, px1 = 0;
-  while (approx.find_best_merge(px0, px1, true)) {
-    approx.merge(px0, px1);
+  boost::optional<std::pair<std::size_t, std::size_t> > best_pair = boost::none;
+  while ( ( best_pair = approx.find_best_merge(true) ) != boost::none )
+  {
+    approx.merge(best_pair->first, best_pair->second);
     approx.run(num_iterations);
   }
 

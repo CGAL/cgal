@@ -576,12 +576,12 @@ public:
    * Here if we specify more than one proxy this means we teleport in a naive iterative fashion.
    * @param nb_proxies number of proxies requested to teleport.
    * @param nb_iterations number of re-fitting iterations.
-   * @param if_force set `true` to force the teleportation (no merge test).
+   * @param no_threshold_test if `true`, no check on the approximation error before merging a pair of proxies is done. In other words, `find_best_merge(!no_threshold_test)` is called.
    * @return number of proxies teleported.
    */
   std::size_t teleport_proxies(const std::size_t nb_proxies,
     const std::size_t nb_iterations = 5,
-    const bool if_force = false) {
+    const bool no_threshold_test = false) {
     std::size_t num_teleported = 0;
     while (num_teleported < nb_proxies) {
       // find worst proxy
@@ -607,10 +607,11 @@ public:
         return num_teleported;
 
       // find the best merge pair
-      std::size_t px_enlarged = 0, px_merged = 0;
-      if (!find_best_merge(px_enlarged, px_merged, !if_force))
+      boost::optional< std::pair<std::size_t, std::size_t> > best_proxies =
+        find_best_merge(!no_threshold_test);
+      if (best_proxies==boost::none)
         return num_teleported;
-      if (px_worst == px_enlarged || px_worst == px_merged)
+      if (px_worst == best_proxies->first || px_worst == best_proxies->second)
         return num_teleported;
 
       // teleport to a face of the worst region
@@ -618,14 +619,14 @@ public:
       std::list<face_descriptor> merged_patch;
       BOOST_FOREACH(face_descriptor f, faces(*m_ptm)) {
         std::size_t px_idx = get(m_fproxy_map, f);
-        if (px_idx == px_enlarged || px_idx == px_merged) {
-          put(m_fproxy_map, f, px_enlarged);
+        if (px_idx == best_proxies->first || px_idx == best_proxies->second) {
+          put(m_fproxy_map, f, best_proxies->first);
           merged_patch.push_back(f);
         }
       }
-      m_proxies[px_enlarged] = fit_proxy_from_patch(merged_patch, px_enlarged);
+      m_proxies[best_proxies->first] = fit_proxy_from_patch(merged_patch, best_proxies->first);
       // replace the merged proxy position to the newly teleported proxy
-      m_proxies[px_merged] = fit_proxy_from_face(tele_to, px_merged);
+      m_proxies[best_proxies->second] = fit_proxy_from_face(tele_to, best_proxies->second);
 
       num_teleported++;
       // coarse re-fitting
@@ -683,17 +684,16 @@ public:
    * and finds the best pair to merge.
    * @note The <b>best</b> is defined as the minimum merged sum error
    * <b>change</b> (increase or decrease) among all pairs.
-   * @param[out] px0 smaller proxy index of the found merge pair
-   * @param[out] px1 greater proxy index of the found merge pair
-   * @param if_test set `true` to activate the merge test.
-   * The merge test is considered successful or worthwile if the merged error change
-   * is lower than half of the maximum proxy error.
-   * @return `true` if best merge pair found, and `false` otherwise.
+   * @param use_threshold_test if `true` and a best pair of proxies is found,
+   * it is returned only if the error change after the merge is lower than the half of the maximum proxy error.
+   * @return if the best merge pair is found the optional returned contains the proxy indices, and is empty otherwise.
    */
-  bool find_best_merge(std::size_t &px0, std::size_t &px1, const bool if_test) {
+  boost::optional< std::pair<std::size_t, std::size_t> >
+  find_best_merge(const bool use_threshold_test) {
     typedef std::pair<std::size_t, std::size_t> Proxy_pair;
     typedef std::set<Proxy_pair> Pair_set;
 
+    std::size_t px0 = 0, px1 = 0;
     std::vector<std::list<face_descriptor> > px_faces(m_proxies.size());
     BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
       px_faces[get(m_fproxy_map, f)].push_back(f);
@@ -731,20 +731,20 @@ public:
     }
 
     if (merged_set.empty())
-      return false;
+      return boost::none;
 
     // test if merge worth it
-    if (if_test) {
+    if (use_threshold_test) {
       FT max_error = m_proxies.front().err;
       for (std::size_t i = 0; i < m_proxies.size(); ++i) {
         if (max_error < m_proxies[i].err)
           max_error = m_proxies[i].err;
       }
       if (min_error_change > max_error / FT(2.0))
-        return false;
+        return boost::none;
     }
 
-    return true;
+    return std::make_pair(px0, px1);
   }
 
   /*!
