@@ -102,7 +102,7 @@ int main()
   approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::VSA::RANDOM)
     .max_number_of_proxies(20));
   approx.run(20);
-  if (approx.proxies_size() != 20)
+  if (approx.number_of_proxies() != 20)
     return EXIT_FAILURE;
 
   // extract the approximation

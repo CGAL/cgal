@@ -167,7 +167,7 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
 
   if (vl == CGAL::VSA::MAIN_STEPS || vl == CGAL::VSA::VERBOSE) {
     std::cout << "Approximation done."
-      << "\n#proxies = " << approx.proxies_size() << std::endl;
+      << "\n#proxies = " << approx.number_of_proxies() << std::endl;
   }
 
   // get proxy map

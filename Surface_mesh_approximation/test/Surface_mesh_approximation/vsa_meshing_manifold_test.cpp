@@ -40,7 +40,7 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
     .min_error_drop(drop)
     .number_of_relaxations(inner_iterations));
   approx.run(num_iterations);
-  std::cout << "#proxies " << approx.proxies_size() << std::endl;
+  std::cout << "#proxies " << approx.number_of_proxies() << std::endl;
 
   // meshing
   if (approx.extract_mesh(CGAL::parameters::subdivision_ratio(5.0))) {

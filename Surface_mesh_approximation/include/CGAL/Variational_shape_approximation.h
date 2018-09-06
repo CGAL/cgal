@@ -335,11 +335,11 @@ public:
 
     const CGAL::VSA::Seeding_method method = choose_param(
       get_param(np, internal_np::seeding_method), CGAL::VSA::HIERARCHICAL);
-    const boost::optional<std::size_t> max_nb_of_proxies = choose_param(
+    const boost::optional<std::size_t> max_nb_proxies = choose_param(
       get_param(np, internal_np::max_number_of_proxies), boost::optional<std::size_t>());
     const boost::optional<FT> min_error_drop = choose_param(
       get_param(np, internal_np::min_error_drop), boost::optional<FT>());
-    const std::size_t nb_of_relaxations = choose_param(get_param(np, internal_np::number_of_relaxations), 5);
+    const std::size_t nb_relaxations = choose_param(get_param(np, internal_np::number_of_relaxations), 5);
 
     // maximum number of proxies internally, maybe better choice?
     const std::size_t nb_px = num_faces(*m_ptm) / 3;
@@ -350,30 +350,30 @@ public:
     if (min_error_drop && *min_error_drop > FT(0.0) && *min_error_drop < FT(1.0)) {
       // as long as minimum error is specified and valid
       // maximum number of proxies always exists, no matter specified or not or out of range
-      // there is always a maximum number of proxies explicitly (max_nb_of_proxies) or implicitly (nb_px)
+      // there is always a maximum number of proxies explicitly (max_nb_proxies) or implicitly (nb_px)
       std::size_t max_nb_px_adjusted = nb_px;
-      if (max_nb_of_proxies && *max_nb_of_proxies < nb_px && *max_nb_of_proxies > 0)
-        max_nb_px_adjusted = *max_nb_of_proxies;
+      if (max_nb_proxies && *max_nb_proxies < nb_px && *max_nb_proxies > 0)
+        max_nb_px_adjusted = *max_nb_proxies;
       switch (method) {
         case VSA::RANDOM:
-          return init_random_error(max_nb_px_adjusted, *min_error_drop, nb_of_relaxations);
+          return init_random_error(max_nb_px_adjusted, *min_error_drop, nb_relaxations);
         case VSA::INCREMENTAL:
-          return init_incremental_error(max_nb_px_adjusted, *min_error_drop, nb_of_relaxations);
+          return init_incremental_error(max_nb_px_adjusted, *min_error_drop, nb_relaxations);
         case VSA::HIERARCHICAL:
-          return init_hierarchical_error(max_nb_px_adjusted, *min_error_drop, nb_of_relaxations);
+          return init_hierarchical_error(max_nb_px_adjusted, *min_error_drop, nb_relaxations);
         default:
           return 0;
       }
     }
-    else if (max_nb_of_proxies && *max_nb_of_proxies < nb_px && *max_nb_of_proxies > 0) {
-      // no valid min_error_drop provided, only max_nb_of_proxies
+    else if (max_nb_proxies && *max_nb_proxies < nb_px && *max_nb_proxies > 0) {
+      // no valid min_error_drop provided, only max_nb_proxies
       switch (method) {
         case VSA::RANDOM:
-          return init_random(*max_nb_of_proxies, nb_of_relaxations);
+          return init_random(*max_nb_proxies, nb_relaxations);
         case VSA::INCREMENTAL:
-          return init_incremental(*max_nb_of_proxies, nb_of_relaxations);
+          return init_incremental(*max_nb_proxies, nb_relaxations);
         case VSA::HIERARCHICAL:
-          return init_hierarchical(*max_nb_of_proxies, nb_of_relaxations);
+          return init_hierarchical(*max_nb_proxies, nb_relaxations);
         default:
           return 0;
       }
@@ -383,11 +383,11 @@ public:
       const FT e(0.1);
       switch (method) {
         case VSA::RANDOM:
-          return init_random_error(nb_px, e, nb_of_relaxations);
+          return init_random_error(nb_px, e, nb_relaxations);
         case VSA::INCREMENTAL:
-          return init_incremental_error(nb_px, e, nb_of_relaxations);
+          return init_incremental_error(nb_px, e, nb_relaxations);
         case VSA::HIERARCHICAL:
-          return init_hierarchical_error(nb_px, e, nb_of_relaxations);
+          return init_hierarchical_error(nb_px, e, nb_relaxations);
         default:
           return 0;
       }
@@ -396,11 +396,11 @@ public:
 
   /*!
    * @brief Runs the partitioning and fitting processes on the whole surface.
-   * @param nb_of_iterations number of iterations.
+   * @param nb_iterations number of iterations.
    * @return total fitting error
    */
-  FT run(std::size_t nb_of_iterations = 1) {
-    for (std::size_t i = 0; i < nb_of_iterations; ++i) {
+  FT run(std::size_t nb_iterations = 1) {
+    for (std::size_t i = 0; i < nb_iterations; ++i) {
       // tag the whole surface
       BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
         put(m_fproxy_map, f, CGAL_VSA_INVALID_TAG);
@@ -470,18 +470,18 @@ public:
   /*!
    * @brief Adds proxies to the worst regions one by one.
    * The re-fitting is performed after each proxy is inserted.
-   * @param num_proxies number of proxies to be added
-   * @param nb_of_iterations number of re-fitting iterations
+   * @param nb_proxies number of proxies to be added
+   * @param nb_iterations number of re-fitting iterations
    * @return number of proxies added
    */
-  std::size_t add_to_furthest_proxies(const std::size_t num_proxies,
-    const std::size_t nb_of_iterations = 5) {
+  std::size_t add_to_furthest_proxies(const std::size_t nb_proxies,
+    const std::size_t nb_iterations = 5) {
     std::size_t num_added = 0;
-    while (num_added < num_proxies) {
+    while (num_added < nb_proxies) {
       if (!add_to_furthest_proxy())
         break;
       ++num_added;
-      run(nb_of_iterations);
+      run(nb_iterations);
     }
     return num_added;
   }
@@ -489,16 +489,16 @@ public:
   /*!
    * @brief Adds proxies by diffusing fitting error into current partition.
    * Each partition is added with the number of proxies in proportion to its fitting error.
-   * @param num_proxies number of proxies to be added
+   * @param nb_proxies number of proxies to be added
    * @return number of proxies successfully added
    */
-  std::size_t add_proxies_error_diffusion(const std::size_t num_proxies) {
+  std::size_t add_proxies_error_diffusion(const std::size_t nb_proxies) {
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
     std::cerr << "#px " << m_proxies.size() << std::endl;
 #endif
 
     const double sum_error = CGAL::to_double(compute_total_error());
-    const double avg_error = sum_error / static_cast<double>(num_proxies);
+    const double avg_error = sum_error / static_cast<double>(nb_proxies);
 
     // number of proxies to be added to each region
     std::vector<std::size_t> num_to_add(m_proxies.size(), 0);
@@ -508,7 +508,7 @@ public:
       std::cerr << "zero error, diffuse w.r.t. number of faces" << std::endl;
 #endif
       const double avg_face =
-        static_cast<double>(num_faces(*m_ptm)) / static_cast<double>(num_proxies);
+        static_cast<double>(num_faces(*m_ptm)) / static_cast<double>(nb_proxies);
       std::vector<double> px_size(m_proxies.size(), 0.0);
       BOOST_FOREACH(face_descriptor f, faces(*m_ptm))
         px_size[get(m_fproxy_map, f)] += 1.0;
@@ -561,7 +561,7 @@ public:
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
     std::cerr << "#requested/added "
-      << num_proxies << '/' << num_added << std::endl;
+      << nb_proxies << '/' << num_added << std::endl;
 #endif
 
     return num_added;
@@ -574,16 +574,16 @@ public:
    * @brief Teleports the local minimum to the worst region by combining the merging and adding processes.
    * The re-fitting is performed after each teleportation.
    * Here if we specify more than one proxy this means we teleport in a naive iterative fashion.
-   * @param num_proxies number of proxies requested to teleport.
-   * @param nb_of_iterations number of re-fitting iterations.
+   * @param nb_proxies number of proxies requested to teleport.
+   * @param nb_iterations number of re-fitting iterations.
    * @param if_force set `true` to force the teleportation (no merge test).
    * @return number of proxies teleported.
    */
-  std::size_t teleport_proxies(const std::size_t num_proxies,
-    const std::size_t nb_of_iterations = 5,
+  std::size_t teleport_proxies(const std::size_t nb_proxies,
+    const std::size_t nb_iterations = 5,
     const bool if_force = false) {
     std::size_t num_teleported = 0;
-    while (num_teleported < num_proxies) {
+    while (num_teleported < nb_proxies) {
       // find worst proxy
       std::size_t px_worst = 0;
       FT max_error = m_proxies.front().err;
@@ -629,7 +629,7 @@ public:
 
       num_teleported++;
       // coarse re-fitting
-      run(nb_of_iterations);
+      run(nb_iterations);
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
       std::cerr << "teleported" << std::endl;
@@ -752,12 +752,12 @@ public:
    * other regions are not affected.
    * @param px_idx proxy index.
    * @param n number of split sections.
-   * @param nb_of_relaxations number of relaxations within the proxy area <em>px_idx</em> after the split
+   * @param nb_relaxations number of relaxations within the proxy area <em>px_idx</em> after the split
    * @return `true` if split succeeds, and `false` otherwise.
    */
   bool split(const std::size_t px_idx,
     const std::size_t n = 2,
-    const std::size_t nb_of_relaxations = 10) {
+    const std::size_t nb_relaxations = 10) {
     if (px_idx >= m_proxies.size())
       return false;
 
@@ -789,7 +789,7 @@ public:
     }
 
     // relaxation on confined area and proxies
-    for (std::size_t i = 0; i < nb_of_relaxations; ++i) {
+    for (std::size_t i = 0; i < nb_relaxations; ++i) {
       BOOST_FOREACH(face_descriptor f, confined_area)
         put(m_fproxy_map, f, CGAL_VSA_INVALID_TAG);
 
@@ -882,7 +882,7 @@ public:
    *  \cgalParamBegin{face_proxy_map} a ReadWritePropertyMap with
    * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type.
    * A proxy is a set of connected faces which are placed under the same proxy patch (see \cgalFigureRef{iterations}).
-   * The proxy-ids are contiguous in range [0, number_of_proxies - 1].
+   * The proxy-ids are contiguous in range [0, number_of_proxies() - 1].
    *  \cgalParamEnd
    *  \cgalParamBegin{proxies} output iterator over proxies.
    *  \cgalParamEnd
@@ -908,6 +908,11 @@ public:
     // get indexed triangles
     indexed_triangles( get_param(np, internal_np::triangles) );
   }
+
+  /*!
+   * @brief returns the number of proxies.
+   */
+  std::size_t number_of_proxies() const { return m_proxies.size(); }
 
   /// @cond CGAL_DOCUMENT_INTERNAL
   /*!
@@ -939,12 +944,6 @@ public:
       if (get(m_fproxy_map, f) == px_idx)
         *out++ = f;
   }
-
-  /*!
-   * @brief Gets the proxies size.
-   * @return number of proxies
-   */
-  std::size_t proxies_size() const { return m_proxies.size(); }
 
   /*!
    * @brief Gets the proxies.
@@ -1036,19 +1035,19 @@ private:
   /*!
    * @brief Randomly initializes proxies to target number of proxies.
    * @note To ensure the randomness, call `std::srand()` beforehand.
-   * @param max_nb_of_proxies maximum number of proxies,
+   * @param max_nb_proxies maximum number of proxies,
    * should be in range (nb_connected_components, num_faces(*m_ptm))
-   * @param nb_of_iterations number of re-fitting iterations
+   * @param nb_iterations number of re-fitting iterations
    * @return number of proxies initialized
    */
-  std::size_t init_random(const std::size_t max_nb_of_proxies,
-    const std::size_t nb_of_iterations) {
+  std::size_t init_random(const std::size_t max_nb_proxies,
+    const std::size_t nb_iterations) {
     // pick from current non seed faces randomly
     std::vector<face_descriptor> picked_seeds;
-    if (random_pick_non_seed_faces(max_nb_of_proxies - m_proxies.size(), picked_seeds)) {
+    if (random_pick_non_seed_faces(max_nb_proxies - m_proxies.size(), picked_seeds)) {
       BOOST_FOREACH(face_descriptor f, picked_seeds)
         add_one_proxy_at(f);
-      run(nb_of_iterations);
+      run(nb_iterations);
     }
 
     return m_proxies.size();
@@ -1056,40 +1055,40 @@ private:
 
   /*!
    * @brief Incrementally initializes proxies to target number of proxies.
-   * @param max_nb_of_proxies maximum number of proxies,
+   * @param max_nb_proxies maximum number of proxies,
    * should be in range (nb_connected_components, num_faces(*m_ptm))
-   * @param nb_of_iterations number of re-fitting iterations
+   * @param nb_iterations number of re-fitting iterations
    * before each incremental proxy insertion
    * @return number of proxies initialized
    */
-  std::size_t init_incremental(const std::size_t max_nb_of_proxies,
-    const std::size_t nb_of_iterations) {
-    if (m_proxies.size() < max_nb_of_proxies)
-      add_to_furthest_proxies(max_nb_of_proxies - m_proxies.size(), nb_of_iterations);
+  std::size_t init_incremental(const std::size_t max_nb_proxies,
+    const std::size_t nb_iterations) {
+    if (m_proxies.size() < max_nb_proxies)
+      add_to_furthest_proxies(max_nb_proxies - m_proxies.size(), nb_iterations);
 
     return m_proxies.size();
   }
 
   /*!
    * @brief Hierarchically initializes proxies to target number of proxies.
-   * @param max_nb_of_proxies maximum number of proxies,
+   * @param max_nb_proxies maximum number of proxies,
    * should be in range (nb_connected_components, num_faces(*m_ptm))
-   * @param nb_of_iterations number of re-fitting iterations
+   * @param nb_iterations number of re-fitting iterations
    * before each hierarchical proxy insertion
    * @return number of proxies initialized
    */
-  std::size_t init_hierarchical(const std::size_t max_nb_of_proxies,
-    const std::size_t nb_of_iterations) {
-    while (m_proxies.size() < max_nb_of_proxies) {
+  std::size_t init_hierarchical(const std::size_t max_nb_proxies,
+    const std::size_t nb_iterations) {
+    while (m_proxies.size() < max_nb_proxies) {
       // try to double current number of proxies each time
       std::size_t target_px = m_proxies.size();
-      if (target_px * 2 > max_nb_of_proxies)
-        target_px = max_nb_of_proxies;
+      if (target_px * 2 > max_nb_proxies)
+        target_px = max_nb_proxies;
       else
         target_px *= 2;
       // add proxies by error diffusion
       add_proxies_error_diffusion(target_px - m_proxies.size());
-      run(nb_of_iterations);
+      run(nb_iterations);
     }
 
     return m_proxies.size();
@@ -1100,22 +1099,22 @@ private:
    * with both maximum number of proxies and minimum error drop stop criteria,
    * where the first criterion met stops the seeding.
    * @note To ensure the randomness, call `std::srand()` beforehand.
-   * @param max_nb_of_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
+   * @param max_nb_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
    * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
-   * @param nb_of_iterations number of re-fitting iterations
+   * @param nb_iterations number of re-fitting iterations
    * @return number of proxies initialized
    */
-  std::size_t init_random_error(const std::size_t max_nb_of_proxies,
+  std::size_t init_random_error(const std::size_t max_nb_proxies,
     const FT min_error_drop,
-    const std::size_t nb_of_iterations) {
+    const std::size_t nb_iterations) {
 
     const FT initial_err = compute_total_error();
     FT error_drop = min_error_drop * FT(2.0);
-    while (m_proxies.size() < max_nb_of_proxies && error_drop > min_error_drop) {
+    while (m_proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
       // try to double current number of proxies each time
       const std::size_t nb_px = m_proxies.size();
       const std::size_t nb_to_add =
-        (nb_px * 2 > max_nb_of_proxies) ? max_nb_of_proxies - nb_px : nb_px;
+        (nb_px * 2 > max_nb_proxies) ? max_nb_proxies - nb_px : nb_px;
 
       // pick from current non seed faces randomly
       std::vector<face_descriptor> picked_seeds;
@@ -1124,7 +1123,7 @@ private:
 
       BOOST_FOREACH(face_descriptor f, picked_seeds)
         add_one_proxy_at(f);
-      const FT err = run(nb_of_iterations);
+      const FT err = run(nb_iterations);
       error_drop = err / initial_err;
     }
 
@@ -1135,19 +1134,19 @@ private:
    * @brief Incrementally initializes proxies
    * with both maximum number of proxies and minimum error drop stop criteria,
    * The first criterion met stops the seeding.
-   * @param max_nb_of_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
+   * @param max_nb_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
    * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
-   * @param nb_of_iterations number of re-fitting iterations
+   * @param nb_iterations number of re-fitting iterations
    * @return number of proxies initialized
    */
-  std::size_t init_incremental_error(const std::size_t max_nb_of_proxies,
+  std::size_t init_incremental_error(const std::size_t max_nb_proxies,
     const FT min_error_drop,
-    const std::size_t nb_of_iterations) {
+    const std::size_t nb_iterations) {
     const FT initial_err = compute_total_error();
     FT error_drop = min_error_drop * FT(2.0);
-    while (m_proxies.size() < max_nb_of_proxies && error_drop > min_error_drop) {
+    while (m_proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
       add_to_furthest_proxy();
-      const FT err = run(nb_of_iterations);
+      const FT err = run(nb_iterations);
       error_drop = err / initial_err;
     }
 
@@ -1158,25 +1157,25 @@ private:
    * @brief Hierarchically initializes proxies
    * with both maximum number of proxies and minimum error drop stop criteria,
    * where the first criterion met stops the seeding.
-   * @param max_nb_of_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
+   * @param max_nb_proxies maximum number of proxies, should be in range (nb_connected_components, num_faces(tm) / 3)
    * @param min_error_drop minimum error drop, should be in range (0.0, 1.0)
-   * @param nb_of_iterations number of re-fitting iterations
+   * @param nb_iterations number of re-fitting iterations
    * @return number of proxies initialized
    */
-  std::size_t init_hierarchical_error(const std::size_t max_nb_of_proxies,
+  std::size_t init_hierarchical_error(const std::size_t max_nb_proxies,
     const FT min_error_drop,
-    const std::size_t nb_of_iterations) {
+    const std::size_t nb_iterations) {
     const FT initial_err = compute_total_error();
     FT error_drop = min_error_drop * FT(2.0);
-    while (m_proxies.size() < max_nb_of_proxies && error_drop > min_error_drop) {
+    while (m_proxies.size() < max_nb_proxies && error_drop > min_error_drop) {
       // try to double current number of proxies each time
       std::size_t target_px = m_proxies.size();
-      if (target_px * 2 > max_nb_of_proxies)
-        target_px = max_nb_of_proxies;
+      if (target_px * 2 > max_nb_proxies)
+        target_px = max_nb_proxies;
       else
         target_px *= 2;
       add_proxies_error_diffusion(target_px - m_proxies.size());
-      const FT err = run(nb_of_iterations);
+      const FT err = run(nb_iterations);
       error_drop = err / initial_err;
     }
 

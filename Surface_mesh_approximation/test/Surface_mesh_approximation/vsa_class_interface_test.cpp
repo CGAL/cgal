@@ -55,7 +55,7 @@ int main()
   approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::VSA::RANDOM)
     .max_number_of_proxies(10));
   approx.run(10);
-  if (approx.proxies_size() != 10)
+  if (approx.number_of_proxies() != 10)
     return EXIT_FAILURE;
 
   // incremental add and run to convergence
@@ -63,20 +63,20 @@ int main()
   approx.add_to_furthest_proxies(3, 5);
   if (approx.run_to_convergence(0.1))
     std::cout << "Converged." << std::endl;
-  if (approx.proxies_size() != 13)
+  if (approx.number_of_proxies() != 13)
     return EXIT_FAILURE;
 
   std::cout << "hierarchical add and run" << std::endl;
   approx.add_proxies_error_diffusion(3);
   approx.run(10);
-  if (approx.proxies_size() != 16)
+  if (approx.number_of_proxies() != 16)
     return EXIT_FAILURE;
 
   // merge and teleport the proxies from local minimal
   std::cout << "teleport" << std::endl;
   approx.teleport_proxies(3);
   approx.run(10);
-  if (approx.proxies_size() != 16)
+  if (approx.number_of_proxies() != 16)
     return EXIT_FAILURE;
 
   // split proxy 0 into 2 proxies
@@ -84,7 +84,7 @@ int main()
   std::cout << "spliting" << std::endl;
   if (!approx.split(0, 2, 10))
     return EXIT_FAILURE;
-  if (approx.proxies_size() != 17)
+  if (approx.number_of_proxies() != 17)
     return EXIT_FAILURE;
 
   // extract the approximation polyhedron
@@ -98,7 +98,7 @@ int main()
   std::cout << "get outputs" << std::endl;
   approx.proxy_map(proxy_pmap);
 
-  for (std::size_t i = 0; i < approx.proxies_size(); ++i) {
+  for (std::size_t i = 0; i < approx.number_of_proxies(); ++i) {
     std::list<Facet_handle> patch;
     approx.proxy_region(i, std::back_inserter(patch));
   }
@@ -125,14 +125,14 @@ int main()
     .min_error_drop(drop)
     .number_of_relaxations(iterations));
   approx.run(10);
-  std::cout << "#proxies " << approx.proxies_size() << std::endl;
+  std::cout << "#proxies " << approx.number_of_proxies() << std::endl;
 
   std::cout << "re-initialize and incremental seeding" << std::endl;
   approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::VSA::INCREMENTAL)
     .min_error_drop(drop)
     .number_of_relaxations(iterations));
   approx.run(10);
-  std::cout << "#proxies " << approx.proxies_size() << std::endl;
+  std::cout << "#proxies " << approx.number_of_proxies() << std::endl;
 
   // extract the approximation polyhedron
   std::cout << "meshing" << std::endl;
