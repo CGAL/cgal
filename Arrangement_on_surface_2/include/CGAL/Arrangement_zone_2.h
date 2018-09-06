@@ -106,6 +106,9 @@ protected:
   typedef typename Arrangement_2::Halfedge_const_handle  Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle      Face_const_handle;
 
+  typedef typename Arrangement_2::Ccb_halfedge_circulator
+    Ccb_halfedge_circulator;
+
   // Types used for caching intersection points:
   typedef std::pair<Point_2, Multiplicity>               Intersect_point_2;
   typedef std::list<CGAL::Object>                        Intersect_list;
@@ -258,6 +261,82 @@ public:
   void compute_zone();
 
 private:
+  /*! Check whether two curves with a common endpoint overlap.
+   * \pre p == min_point(cv1)
+   * \pre p == min_point(cv2)
+   * \todo move this function to a more accessible place so that it can be reused
+   */
+  bool do_overlap(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2,
+                  const Point_2& p) const
+  { return do_overlap_impl(cv1, cv2, p, Are_all_sides_oblivious_category()); }
+
+  /*! Check whether two curves with a common min endpoint overlap.
+   */
+  bool do_overlap_impl(const X_monotone_curve_2& cv1,
+                       const X_monotone_curve_2& cv2,
+                       const Point_2& p, Arr_all_sides_oblivious_tag) const
+  {
+    return m_geom_traits->compare_y_at_x_right_2_object()(cv1, cv2, p) == EQUAL;
+  }
+
+  /*! Check whether two curves with a common min endpoint overlap.
+   */
+  bool do_overlap_impl(const X_monotone_curve_2& cv1,
+                       const X_monotone_curve_2& cv2,
+                       const Point_2& p, Arr_not_all_sides_oblivious_tag) const;
+
+  /* Check whether the given query curve is encountered when rotating the
+   * first curve in a clockwise direction around a given point until reaching
+   * the second curve.
+   * \pre p == min_point(xcv)
+   * \pre p == min_point(xcv1)
+   * \pre p == min_point(cxv2)
+   * \pre xcv_to_right == TRUE
+   * \todo move this function to a more accessible place so that it can be reused
+   */
+  bool is_between_cw(const X_monotone_curve_2& xcv, bool xcv_to_right,
+                     const X_monotone_curve_2& xcv1, bool xcv1_to_right,
+                     const X_monotone_curve_2& xcv2, bool xcv2_to_right,
+                     const Point_2& p,
+                     bool& xcv_equal_xcv1, bool& xcv_equal_xcv2) const
+  {
+    return is_between_cw_impl(xcv, xcv_to_right,
+                              xcv1, xcv1_to_right,
+                              xcv2, xcv2_to_right,
+                              p, xcv_equal_xcv1, xcv_equal_xcv2,
+                              Are_all_sides_oblivious_category());
+  }
+
+  /* Check whether the given query curve is encountered when rotating the
+   * first curve in a clockwise direction around a given point until reaching
+   * the second curve.
+   */
+  bool is_between_cw_impl(const X_monotone_curve_2& xcv, bool xcv_to_right,
+                          const X_monotone_curve_2& xcv1, bool xcv1_to_right,
+                          const X_monotone_curve_2& xcv2, bool xcv2_to_right,
+                          const Point_2& p,
+                          bool& xcv_equal_xcv1, bool& xcv_equal_xcv2,
+                          Arr_all_sides_oblivious_tag) const
+  {
+    return m_geom_traits->is_between_cw_2_object()(xcv, xcv_to_right,
+                                                   xcv1, xcv1_to_right,
+                                                   xcv2, xcv2_to_right,
+                                                   p,
+                                                   xcv_equal_xcv1,
+                                                   xcv_equal_xcv2);
+  }
+
+  /* Check whether the given query curve is encountered when rotating the
+   * first curve in a clockwise direction around a given point until reaching
+   * the second curve.
+   */
+  bool is_between_cw_impl(const X_monotone_curve_2& xcv, bool xcv_to_right,
+                          const X_monotone_curve_2& xcv1, bool xcv1_to_right,
+                          const X_monotone_curve_2& xcv2, bool xcv2_to_right,
+                          const Point_2& p,
+                          bool& xcv_equal_xcv1, bool& xcv_equal_xcv2,
+                          Arr_not_all_sides_oblivious_tag) const;
+
   /*! Find a face containing the query curve m_cv around the given vertex.
    * In case an overlap occurs, sets m_intersect_he to be the overlapping edge.
    * \param v The query vertex.
@@ -375,6 +454,13 @@ private:
 
   bool _is_to_right_impl(const Point_2& p, Halfedge_handle he,
                          Arr_not_all_sides_oblivious_tag) const;
+
+  /*! Compute the (lexicographically) leftmost intersection of the query
+   * curve with a given halfedge on the boundary of a face in the arrangement.
+   */
+  void
+  _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
+                         bool& leftmost_on_right_boundary);
 
   /*! Compute the (lexicographically) leftmost intersection of the query
    * curve with the boundary of a given face in the arrangement.
