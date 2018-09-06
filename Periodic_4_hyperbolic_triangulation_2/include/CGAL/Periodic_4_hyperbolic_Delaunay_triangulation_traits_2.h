@@ -35,6 +35,8 @@
 #include "boost/variant.hpp"
 #include <CGAL/Hyperbolic_octagon_translation.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/CORE_Expr.h>
 
 namespace CGAL {
 
@@ -182,7 +184,8 @@ public:
 
 
 
-template< class Kernel, template<typename> class Translation_type = Hyperbolic_octagon_translation>
+template< class Kernel = CGAL::Cartesian<CORE::Expr>, 
+		  template<typename> class Translation_type = Hyperbolic_octagon_translation>
 class Periodic_4_hyperbolic_Delaunay_triangulation_traits_2 : public Hyperbolic_Delaunay_triangulation_traits_2<Kernel> {
 
 typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>  								Base;

@@ -42,15 +42,15 @@
 #include <CGAL/Timer.h>
 
 
-typedef CORE::Expr                                                              NT;
-typedef CGAL::Cartesian<NT>                                                     Kernel;
+//typedef CORE::Expr                                                              NT;
+//typedef CGAL::Cartesian<NT>                                                     Kernel;
 
-typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel>     Traits; 
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<>           Traits; 
 typedef Traits::Segment_2                                                       Segment_2;
 typedef Traits::Circle_2                                                        Circle_2;
 typedef Traits::Circular_arc_2                                                  Circular_arc_2;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>            Triangulation;
-typedef Kernel::Point_2                                                         Point;
+typedef Triangulation::Point                                                    Point;
 typedef Triangulation::Vertex_handle                                            Vertex_handle;
 typedef Traits::Side_of_original_octagon                                        Side_of_original_octagon;
 typedef Traits::Construct_hyperbolic_segment_2                                  Construct_hyperbolic_segment_2;
