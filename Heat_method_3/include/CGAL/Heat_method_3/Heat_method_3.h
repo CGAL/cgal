@@ -303,10 +303,10 @@ namespace Heat_method_3 {
       return kronecker;
     }
 
-    void solve_cotan_laplace(const Matrix& M, const Matrix& c, const Matrix& x, double a_time_step, int dimension)
+    void solve_cotan_laplace(const Matrix& M, const Matrix& c, const Matrix& x, int dimension)
     {
       Matrix A, A0;
-      scale(A0, a_time_step, c);
+      scale(A0, m_time_step, c);
       add(A,M,A0);
 
       LA::Solver solver;
@@ -508,7 +508,7 @@ namespace Heat_method_3 {
       {
         //don't need to recompute Mass matrix, cotan matrix or timestep reflect that in this function
         update_kronecker_delta();
-        solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, m_time_step, dimension);
+        solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, dimension);
         compute_unit_gradient();
         compute_divergence(index_divergence, X, dimension);
         solved_phi = solve_phi(m_cotan_matrix, index_divergence, dimension);
@@ -606,7 +606,7 @@ namespace Heat_method_3 {
       m_time_step = m_time_step*summation_of_edges();
       m_time_step = m_time_step*m_time_step;
       update_kronecker_delta();
-      solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, m_time_step, m);
+      solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, m);
       //edit unit_grad
       compute_unit_gradient();
       //edit compute_divergence
