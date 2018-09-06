@@ -126,7 +126,7 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
                                  const TriangleMesh& tm,
                                  const NamedParameters& np)
 {
-  CGAL_precondition(CGAL::is_triangle_mesh(tm));
+  CGAL_precondition(CGAL::is_triangle(halfedge(f, tm), tm));
 
   using boost::get_param;
   using boost::choose_param;
