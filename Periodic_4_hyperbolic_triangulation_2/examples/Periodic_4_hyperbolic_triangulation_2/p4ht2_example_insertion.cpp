@@ -10,9 +10,11 @@ typedef CORE::Expr                                                              
 typedef CGAL::Cartesian<NT>                                                     Kernel;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel>     Traits;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>            Triangulation;
-typedef Kernel::Point_2                                                         Point;
-typedef CGAL::Creator_uniform_2<NT,Point>                                       Creator;
+typedef Triangulation::Vertex_handle                                            Vertex_handle;
+typedef Triangulation::Point                                                    Point;
 typedef Triangulation::size_type                                                size_type;
+typedef CGAL::Creator_uniform_2<NT,Point>                                       Creator;
+
 
 using std::cout;
 using std::endl;
@@ -25,23 +27,40 @@ int main(int argc, char** argv) {
     }
 
     int N = atoi(argv[1]);   
+
+    int N1 = N/2;
+    int N2 = N - N1;
     
     // Generate N random points uniformly distributed with respect to the Euclidean 
     // metric in the disk with radius 0.85, which contains the fundamental domain. 
     // Some of the points will be outside the octagon, so they will not be inserted.
     std::vector<Point> pts;
     CGAL::Random_points_in_disc_2<Point,Creator> g( 0.85 );
-    CGAL::cpp11::copy_n( g, N, std::back_inserter(pts) );
+    CGAL::cpp11::copy_n( g, N1, std::back_inserter(pts) );
 
     // The triangulation is automatically initialized with the dummy points.
     Triangulation tr;
 
-    // Insert the new points in the triangulation.
-    cout << "Inserting " << N << " random points in the triangulation... "; cout.flush();
-    size_type N_inserted = tr.insert(pts.begin(), pts.end());
+    // Batch-insert new points in the triangulation.
+    cout << "Batch-inserting " << N1 << " random points in the triangulation... "; cout.flush();
+    size_type N_batch_inserted = tr.insert(pts.begin(), pts.end(), false);
     cout << "DONE! " << endl;
 
-    // Insert the new points in the triangulation.
+    // Insert new points in the triangulation one by one.
+    cout << "Single-inserting " << N2 << " random points in the triangulation... "; cout.flush();
+    int N_single_inserted = 0;
+    for (int i = 0; i < N2; i++) {
+        Vertex_handle vh = tr.insert(*(++g));
+        if (vh != Vertex_handle()) {
+            N_single_inserted++;
+        }
+    }
+    cout << "DONE! " << endl;
+
+    // Total number of inserted points.
+    int N_inserted = N_batch_inserted + N_single_inserted;
+
+    // Remove dummy points from the triangulation.
     cout << "Cleaning dummy points from the triangulation... "; cout.flush();
     int DP_remaining = tr.clean_dummy_points();
     cout << "DONE! " << endl;
