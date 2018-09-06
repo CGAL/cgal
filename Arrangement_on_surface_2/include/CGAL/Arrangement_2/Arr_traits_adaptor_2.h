@@ -2390,6 +2390,80 @@ public:
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_adaptor_2<Base_traits_2>;
 
+    /// Point-curve
+    //@{
+    /*! Compare a point and a curve end.
+     * Dispatch calls to traits that handle open and close boundaries, resp.
+     * The only reason for this dispatcher is the poor choice of different
+     * names for the Traits functors that handle close and open boundaries:
+     * Open boundary traits use: Compare_x_at_limit_2
+     * Close boundary traits use: Compare_x_on_boundary_2
+     */
+    Comparison_result cmp_x_on_bnd(const Point_2& p,
+                                   const X_monotone_curve_2& c,
+                                   Arr_curve_end ce) const
+    {
+      // The complete code would need to check whether ce is bottom or top and
+      // use the corresponding dispatching criterion, but
+      //  (i) in all out traits if bottom is open, so is top, and
+      // (ii) this is going to change soon....
+      return cmp_x_on_bnd(p, c, ce, Bottom_side_category());
+    }
+
+    // Open
+    Comparison_result cmp_x_on_bnd(const Point_2& p,
+                                   const X_monotone_curve_2& c,
+                                   Arr_curve_end ce,
+                                   Arr_open_side_tag) const
+    { return m_self.compare_x_at_limit_2_object()(p, c, ce); }
+
+    // Close
+    Comparison_result cmp_x_on_bnd(const Point_2& p,
+                                   const X_monotone_curve_2& c,
+                                   Arr_curve_end ce,
+                                   Arr_oblivious_side_tag)  const
+    { return m_self.compare_x_on_boundary_2_object()(p, c, ce); }
+    //@}
+
+    /// curve-curve
+    //@{
+    /*! Compare a curve end and a curve end.
+     * Dispatch calls to traits that handle open and close boundaries, resp.
+     * The only reason for this dispatcher is the poor choice of different
+     * names for the Traits functors that handle close and open boundaries:
+     * Open boundary traits use: Compare_x_at_limit_2
+     * Close boundary traits use: Compare_x_on_boundary_2
+     */
+    Comparison_result cmp_x_on_bnd(const X_monotone_curve_2& c1,
+                                   Arr_curve_end ce1,
+                                   const X_monotone_curve_2& c2,
+                                   Arr_curve_end ce2) const
+    {
+      // The complete code would need to check the combination of ce1 and ce2,
+      // whther they are (booton,bottom), (bottom,top), (top,bottom) or
+      // (top,top) and use the corresponding dispatching criteria, but we don't
+      // even have the interface to handle mixed (e.g., open bottom and
+      // closed top. Anyway, this is going to change soon....
+      return cmp_x_on_bnd(c1, ce1, c2, ce2, Bottom_side_category());
+    }
+
+    // Open
+    Comparison_result cmp_x_on_bnd(const X_monotone_curve_2& c1,
+                                   Arr_curve_end ce1,
+                                   const X_monotone_curve_2& c2,
+                                   Arr_curve_end ce2,
+                                   Arr_open_side_tag) const
+    { return m_self.compare_x_at_limit_2_object()(c1, ce1, c2, ce2); }
+
+    // Close
+    Comparison_result cmp_x_on_bnd(const X_monotone_curve_2& c1,
+                                   Arr_curve_end ce1,
+                                   const X_monotone_curve_2& c2,
+                                   Arr_curve_end ce2,
+                                   Arr_oblivious_side_tag)  const
+    { return m_self.compare_x_on_boundary_2_object()(c1, ce1, c2, ce2); }
+    //@}
+
     /*! Compare the max end of two x-monotone curves lexigoraphically.
      */
     Comparison_result compare_max_end(const X_monotone_curve_2& c1,
@@ -2446,9 +2520,11 @@ public:
         // px1, px2, py1 are interior
         if (py1 == ARR_INTERIOR) {
           CGAL_assertion(py2 != ARR_INTERIOR);
+#if 0
           typedef typename Self::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
           Compare_x_on_boundary_2 cmp_x_on_bnd =
             m_self.compare_x_on_boundary_2_object();
+#endif
           const Point_2& c1_max = m_self.construct_max_vertex_2_object()(c1);
           Comparison_result res = cmp_x_on_bnd(c1_max, c2, ARR_MAX_END);
           if (res != EQUAL) return res;
@@ -2459,9 +2535,11 @@ public:
         // px1, px2, py2 are interior
         if (py2 == ARR_INTERIOR) {
           CGAL_assertion(py1 != ARR_INTERIOR);
+#if 0
           typedef typename Self::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
           Compare_x_on_boundary_2 cmp_x_on_bnd =
             m_self.compare_x_on_boundary_2_object();
+#endif
           const Point_2& c2_max = m_self.construct_max_vertex_2_object()(c2);
           Comparison_result res = cmp_x_on_bnd(c2_max, c1, ARR_MAX_END);
           if (res != EQUAL) return CGAL::opposite(res);
@@ -2470,9 +2548,11 @@ public:
         }
 
         // Both py1 and py2 not interior
+#if 0
         typedef typename Self::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
         Compare_x_on_boundary_2 cmp_x_on_bnd =
             m_self.compare_x_on_boundary_2_object();
+#endif
         Comparison_result res = cmp_x_on_bnd(c1, ARR_MAX_END, c2, ARR_MAX_END);
         if (res != EQUAL) return res;
 
@@ -2597,9 +2677,11 @@ public:
         //
         if (min_py1 == ARR_INTERIOR) {
           CGAL_assertion(min_py2 != ARR_INTERIOR);
+#if 0
           typedef typename Self::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
           Compare_x_on_boundary_2 cmp_x_on_bnd =
             m_self.compare_x_on_boundary_2_object();
+#endif
           const Point_2& c1_min = m_self.construct_min_vertex_2_object()(c1);
           Comparison_result res = cmp_x_on_bnd(c1_min, c2, ARR_MIN_END);
           if (res != EQUAL) return res;
@@ -2609,10 +2691,13 @@ public:
 
         if (min_py2 == ARR_INTERIOR) {
           CGAL_assertion(min_py1 != ARR_INTERIOR);
+#if 0
           typedef typename Self::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
           Compare_x_on_boundary_2 cmp_x_on_bnd =
             m_self.compare_x_on_boundary_2_object();
+#endif
           const Point_2& c2_min = m_self.construct_min_vertex_2_object()(c2);
+
           Comparison_result res = cmp_x_on_bnd(c2_min, c1, ARR_MIN_END);
           if (res != EQUAL) return CGAL::opposite(res);
 
@@ -2620,9 +2705,11 @@ public:
         }
 
         // Both min_py1 and min_py2 not interior
+#if 0
         typedef typename Self::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
         Compare_x_on_boundary_2 cmp_x_on_bnd =
             m_self.compare_x_on_boundary_2_object();
+#endif
         Comparison_result res = cmp_x_on_bnd(c1, ARR_MIN_END, c2, ARR_MIN_END);
         if (res != EQUAL) return res;
 
