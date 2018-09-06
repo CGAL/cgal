@@ -502,7 +502,7 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
 }
 
 template <class EdgeRange, class TriangleMesh, class NamedParameters>
-std::size_t remove_degenerate_edges(const EdgeRange& edge_range,
+bool remove_degenerate_edges(const EdgeRange& edge_range,
                                     TriangleMesh& tmesh,
                                     const NamedParameters& np)
 {
@@ -525,6 +525,7 @@ std::size_t remove_degenerate_edges(const EdgeRange& edge_range,
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
 
   std::size_t nb_deg_faces = 0;
+  bool all_removed=true;
 
   // collect edges of length 0
   std::set<edge_descriptor> degenerate_edges_to_remove;
@@ -570,6 +571,36 @@ std::size_t remove_degenerate_edges(const EdgeRange& edge_range,
           Euler::fill_hole(hd, tmesh);
           degenerate_edges_to_remove.insert(ed);
           continue;
+        }
+      }
+      else
+      {
+        halfedge_descriptor hd = halfedge(ed,tmesh);
+        // if both vertices are boundary vertices we can't do anything
+        bool impossible = false;
+        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(hd, tmesh))
+        {
+          if (is_border(h, tmesh))
+          {
+            impossible = true;
+            break;
+          }
+        }
+        if (impossible)
+        {
+          BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(hd, tmesh))
+          {
+            if (is_border(h, tmesh))
+            {
+              impossible = true;
+              break;
+            }
+          }
+          if (impossible)
+          {
+            all_removed=false;
+            continue;
+          }
         }
       }
 
@@ -781,11 +812,11 @@ std::size_t remove_degenerate_edges(const EdgeRange& edge_range,
     }
   }
 
-  return nb_deg_faces;
+  return all_removed;
 }
 
 template <class EdgeRange, class TriangleMesh>
-std::size_t remove_degenerate_edges(const EdgeRange& edge_range,
+bool remove_degenerate_edges(const EdgeRange& edge_range,
                                     TriangleMesh& tmesh)
 {
   return remove_degenerate_edges(edge_range, tmesh, parameters::all_default());
@@ -824,10 +855,10 @@ std::size_t remove_degenerate_edges(const EdgeRange& edge_range,
 // \todo the function might not be able to remove all degenerate faces.
 //       We should probably do something with the return type.
 //
-// \return number of removed degenerate faces
+/// \return `true` if all degenerate faces were successfully removed, and `false` otherwise.
 template <class TriangleMesh, class NamedParameters>
-std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
-                                    const NamedParameters& np)
+bool remove_degenerate_faces(      TriangleMesh& tmesh,
+                             const NamedParameters& np)
 {
   CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
 
@@ -851,7 +882,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
   typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
 
 // First remove edges of length 0
-  std::size_t nb_deg_faces = remove_degenerate_edges(edges(tmesh), tmesh, np);
+  bool all_removed = remove_degenerate_edges(edges(tmesh), tmesh, np);
 
   #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
   {
@@ -865,8 +896,20 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 // Then, remove triangles made of 3 collinear points
   std::set<face_descriptor> degenerate_face_set;
   degenerate_faces(tmesh, std::inserter(degenerate_face_set, degenerate_face_set.begin()), np);
-
-  nb_deg_faces+=degenerate_face_set.size();
+// Ignore faces with null edges
+  if (!all_removed)
+  {
+    BOOST_FOREACH(edge_descriptor ed, edges(tmesh))
+    {
+      if ( traits.equal_3_object()(get(vpmap, target(ed, tmesh)), get(vpmap, source(ed, tmesh))) )
+      {
+        halfedge_descriptor h = halfedge(ed, tmesh);
+        if (!is_border(h, tmesh)) degenerate_face_set.erase(face(h, tmesh));
+        h=opposite(h, tmesh);
+        if (!is_border(h, tmesh)) degenerate_face_set.erase(face(h, tmesh));
+      }
+    }
+  }
 
   // first remove degree 3 vertices that are part of a cap
   // (only the vertex in the middle of the opposite edge)
@@ -879,7 +922,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, tmesh), tmesh))
       {
         vertex_descriptor vd = target(hd, tmesh);
-        if (degree(vd, tmesh) == 3)
+        if (degree(vd, tmesh) == 3 && is_border(vd, tmesh)==GT::null_halfedge())
         {
           vertices_to_remove.insert(vd);
           break;
@@ -987,15 +1030,17 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
         {
           Euler::flip_edge(edge_to_flip, tmesh);
         }
+        else
+        {
+          all_removed=false;
         #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
-        else{
           std::cout << "  WARNING: flip is not possible\n";
           // \todo Let p and q be the vertices opposite to `edge_to_flip`, and let
           //       r be the vertex of `edge_to_flip` that is the furthest away from
           //       the edge `pq`. In that case I think we should remove all the triangles
           //       so that the triangle pqr is in the mesh.
-        }
         #endif
+        }
       }
     }
     else
@@ -1410,7 +1455,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
     }
   }
 
-  return nb_deg_faces;
+  return all_removed;
 }
 
 template<class TriangleMesh>
