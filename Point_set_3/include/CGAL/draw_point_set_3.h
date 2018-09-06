@@ -26,6 +26,7 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Point_set_3.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
@@ -76,33 +77,31 @@ protected:
 protected:
   const PointSet& pointset;
 };
-  
-template<class PointSet>
-void draw(const PointSet& apointset, const char* title)
+
+// Specialization of draw function.  
+template<class P, class V>
+void draw(const Point_set_3<P, V>& apointset,
+          const char* title="Point_set_3 Basic Viewer")
 {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
   bool cgal_test_suite=false;
 #endif
-
+  
   if (!cgal_test_suite)
   {
     int argc=1;
     const char* argv[2]={"point_set_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
-    SimplePointSetViewerQt<PointSet> mainwindow(app.activeWindow(), 
-                                                apointset,
-                                                title);
+    SimplePointSetViewerQt<Point_set_3<P, V> > mainwindow(app.activeWindow(), 
+                                                          apointset,
+                                                          title);
     mainwindow.show();
     app.exec();
   }
 }
   
-template<class PointSet>
-void draw(const PointSet& apointset)
-{ draw(apointset, "Basic Point_set Viewer"); }
-
 } // End namespace CGAL
 
 #endif // CGAL_USE_BASIC_VIEWER

@@ -1039,43 +1039,16 @@ private:
   QOpenGLShaderProgram rendering_program_p_l;
 };
 
-} // End namespace CGAL
-
 #else // CGAL_USE_BASIC_VIEWER
 
-namespace CGAL 
-{
-
-template<class T, class ColorFunctor>
-void draw(const T&, const char*, bool, const ColorFunctor&)
-{
-  std::cerr<<"Impossible to draw because CGAL_USE_BASIC_VIEWER is not defined."
-           <<std::endl;
-}
-  
-template<class T>
-void draw(const T&, const char*, bool)
-{
-  std::cerr<<"Impossible to draw because CGAL_USE_BASIC_VIEWER is not defined."
-           <<std::endl;
-}
-  
-template<class T>
-void draw(const T&, const char*)
-{
-  std::cerr<<"Impossible to draw because CGAL_USE_BASIC_VIEWER is not defined."
-           <<std::endl;
-}
-  
-template<class T>
-void draw(const T&)
-{
-  std::cerr<<"Impossible to draw because CGAL_USE_BASIC_VIEWER is not defined."
-           <<std::endl;
-}
-
-} // End namespace CGAL
+  template<class T>
+  void draw(const T& t, const char* ="", bool=false)
+  { 
+    std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
+  }
 
 #endif // CGAL_USE_BASIC_VIEWER
+
+} // End namespace CGAL
 
 #endif // CGAL_BASIC_VIEWER_QT_H
