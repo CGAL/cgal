@@ -303,11 +303,11 @@ namespace Heat_method_3 {
       return kronecker;
     }
 
-    void solve_cotan_laplace(const Matrix& M, const Matrix& c, const Matrix& x, int dimension)
+    void solve_cotan_laplace()
     {
       Matrix A, A0;
-      scale(A0, m_time_step, c);
-      add(A,M,A0);
+      scale(A0, m_time_step, m_cotan_matrix);
+      add(A,m_mass_matrix ,A0);
 
       LA::Solver solver;
       LA::compute(solver, A);
@@ -316,7 +316,7 @@ namespace Heat_method_3 {
         // decomposition failed
         CGAL_error_msg("Eigen Decomposition in cotan failed");
         }
-      LA::solve(solver, x.eigen_object(), solved_u);
+      LA::solve(solver, kronecker, solved_u);
       
       if(solver.info()!=Eigen::Success) {
         // solving failed
@@ -380,9 +380,9 @@ namespace Heat_method_3 {
     }
 
 
-    void compute_divergence( Matrix& result, const std::vector<Vector_3>& X, int rows) const
+    void compute_divergence()
     {
-      Matrix indexD(rows,1);
+      Matrix indexD(dimension,1);
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
       BOOST_FOREACH(face_descriptor f, faces(tm)) {
         boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
@@ -419,11 +419,11 @@ namespace Heat_method_3 {
         indexD.add_coef(j, 0, (1./2)*j_entry);
         indexD.add_coef(k, 0, (1./2)*k_entry);
       }
-      indexD.swap(result);
+      indexD.swap(m_index_divergence);
     }
 
     
-    VectorXd value_at_source_set(const VectorXd& phi, int dimension) const
+    void value_at_source_set(const VectorXd& phi)
     {
       VectorXd source_set_val(dimension);
       if(sources.empty())
@@ -461,17 +461,16 @@ namespace Heat_method_3 {
           source_set_val(i,0) = min_val;
         }
       }
-      return source_set_val;
+      solved_phi.swap(source_set_val);
     }
 
 
-    VectorXd solve_phi(const Matrix& c, const Matrix& divergence, int dimension) const
+    void solve_phi()
     {
-
       VectorXd phi;
       LA::Solver solver;
       
-      LA::compute(solver, c);
+      LA::compute(solver, m_cotan_matrix);
       
       if(solver.info()!=Eigen::Success) {
         // decomposition failed
@@ -479,14 +478,14 @@ namespace Heat_method_3 {
       }
       
       
-      LA::solve(solver, divergence, phi);
+      LA::solve(solver, m_index_divergence, phi);
       
       if(solver.info()!=Eigen::Success) {
         // solving failed
         CGAL_error_msg("Eigen Solving in phi failed");
       }
       
-      return value_at_source_set(phi, dimension);
+      value_at_source_set(phi);
     }
 
     //currently, this function will return a (number of vertices)x1 vector where
@@ -508,10 +507,10 @@ namespace Heat_method_3 {
       {
         //don't need to recompute Mass matrix, cotan matrix or timestep reflect that in this function
         update_kronecker_delta();
-        solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, dimension);
+        solve_cotan_laplace();
         compute_unit_gradient();
-        compute_divergence(index_divergence, X, dimension);
-        solved_phi = solve_phi(m_cotan_matrix, index_divergence, dimension);
+        compute_divergence();
+        solve_phi();
         source_change_flag = false;
         std::cout<<"sources changed, recompute\n";
       }
@@ -606,12 +605,12 @@ namespace Heat_method_3 {
       m_time_step = m_time_step*summation_of_edges();
       m_time_step = m_time_step*m_time_step;
       update_kronecker_delta();
-      solve_cotan_laplace(m_mass_matrix, m_cotan_matrix, kronecker, m);
+      solve_cotan_laplace();
       //edit unit_grad
       compute_unit_gradient();
       //edit compute_divergence
-      compute_divergence(index_divergence, X, m);
-      solved_phi = solve_phi(m_cotan_matrix, index_divergence, m);
+      compute_divergence();
+      solve_phi();
     }
 
     int dimension;
@@ -625,7 +624,7 @@ namespace Heat_method_3 {
     Matrix m_mass_matrix, m_cotan_matrix;
     VectorXd solved_u;
     std::vector<Vector_3> X;
-    Matrix index_divergence;
+    Matrix m_index_divergence;
     Eigen::VectorXd solved_phi;
     std::set<Index> source_index;
     bool source_change_flag;
