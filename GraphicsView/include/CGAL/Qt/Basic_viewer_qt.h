@@ -42,6 +42,8 @@
 
 #include <CGAL/Buffer_for_vao.h>
 #include <CGAL/Qt/CreateOpenGLContext.h>
+#include <CGAL/Qt/constraint.h>
+#include <CGAL/Qt/manipulatedFrame.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
@@ -217,6 +219,8 @@ public:
 
     for (int i=0; i<NB_VAO_BUFFERS; ++i)
       vao[i].destroy();
+
+    delete frame;
   }
 
   void clear()
@@ -240,6 +244,39 @@ public:
   const CGAL::Bbox_3& bounding_box() const
   { return m_bounding_box; }
 
+  bool has_zero_x() const
+  {
+    return
+      m_buffer_for_mono_points.has_zero_x() && 
+      m_buffer_for_colored_points.has_zero_x() &&
+      m_buffer_for_mono_segments.has_zero_x() &&
+      m_buffer_for_colored_segments.has_zero_x() &&
+      m_buffer_for_mono_faces.has_zero_x() &&
+      m_buffer_for_colored_faces.has_zero_x();
+  }  
+
+  bool has_zero_y() const
+  {
+    return
+      m_buffer_for_mono_points.has_zero_y() && 
+      m_buffer_for_colored_points.has_zero_y() &&
+      m_buffer_for_mono_segments.has_zero_y() &&
+      m_buffer_for_colored_segments.has_zero_y() &&
+      m_buffer_for_mono_faces.has_zero_y() &&
+      m_buffer_for_colored_faces.has_zero_y();
+  }
+  
+  bool has_zero_z() const
+  {
+    return
+      m_buffer_for_mono_points.has_zero_z() && 
+      m_buffer_for_colored_points.has_zero_z() &&
+      m_buffer_for_mono_segments.has_zero_z() &&
+      m_buffer_for_colored_segments.has_zero_z() &&
+      m_buffer_for_mono_faces.has_zero_z() &&
+      m_buffer_for_colored_faces.has_zero_z();
+  }
+  
   template<typename KPoint>
   void add_point(const KPoint& p)
   { m_buffer_for_mono_points.add_point(p); }
@@ -719,6 +756,19 @@ protected:
 
       rendering_program_face.release();
     }
+
+    if (!is_empty() && (has_zero_x() || has_zero_y() || has_zero_z()))
+    {
+      camera()->setType(CGAL::qglviewer::Camera::ORTHOGRAPHIC);
+      //      Camera Constraint:
+      constraint.setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FORBIDDEN);
+      constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
+      constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec((has_zero_x()?1:0),
+                                                                     (has_zero_y()?1:0),
+                                                                     (has_zero_z()?1:0)));
+
+      frame->setConstraint(&constraint);
+    }
   }
 
   virtual void redraw()
@@ -763,6 +813,9 @@ protected:
 
     compile_shaders();
 
+    frame = new qglviewer::ManipulatedFrame;
+    setManipulatedFrame(frame);
+      
     CGAL::Bbox_3 bb;
     if (bb==bounding_box()) // Case of "empty" bounding box
     {    
@@ -984,6 +1037,9 @@ private:
 
   bool m_are_buffers_initialized;
   CGAL::Bbox_3 m_bounding_box;
+
+  qglviewer::ManipulatedFrame *frame;
+  CGAL::qglviewer::LocalConstraint constraint;
   
   // The following enum gives the indices of different elements of arrays vectors.
   enum
