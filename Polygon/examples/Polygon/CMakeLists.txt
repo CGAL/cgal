@@ -28,6 +28,7 @@ if ( CGAL_FOUND )
 
   if(CGAL_Qt5_FOUND)
     target_link_libraries(draw_polygon PUBLIC CGAL::CGAL_Qt5)
+    target_link_libraries(draw_polygon_with_holes PUBLIC CGAL::CGAL_Qt5)
   endif()
 
 else()
