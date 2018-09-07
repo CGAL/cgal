@@ -42,12 +42,12 @@
 
 ## Classes ##
 - `CGAL::Heat_method_3::Heat_method_3`
-- `CGAL::Heat_method_3::Intrinsic_Delaunay_Triangulation_3`
+- `CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3`
 
 ## Functions ##
 
-- `CGAL::Heat_method_3::compute_distances_with_heat_method()`
-- `CGAL::Heat_method_3::compute_distances_with_intrinsic_delaunay_heat_method()`
+- `CGAL::Heat_method_3::geodesic_distances_3()`
+- `CGAL::Heat_method_3::geodesic_distances_with_intrinsic_Delaunay_triangulation_3()`
 
 */
 \todo Add more detailed cache

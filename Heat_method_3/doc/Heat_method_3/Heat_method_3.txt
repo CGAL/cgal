@@ -6,24 +6,40 @@ namespace CGAL {
 \cgalAutoToc
 \author Keenan Crane, Christina Vaz, Andreas Fabri
 
-This package provides the algorithm behind the Heat Method \cgalCite{cgal:cww-ghnac-13} and the algorithm behind Intrinsic Delaunay Triangulation \cgalCite{cgal:fsbs-acidt-06}.
+This package provides the algorithm behind the Heat Method
+\cgalCite{cgal:cww-ghnac-13} and the algorithm behind Intrinsic
+Delaunay Triangulation \cgalCite{cgal:fsbs-acidt-06}.
 
-The Heat Method is an algorithm that solves the multiple-source shortest path problem by returning the distance from the points in the domain to the closest point in the source set.
-This algorithm computes this by first determining the direction along which distance increases and finishes by recovering the actual distance.
-The Heat Method is more efficient and more robust than previous distance computations, as the algorithm boils down to two standard, numerical linear algebra problems.
+The Heat Method is an algorithm that solves the multiple-source
+shortest path problem by returning the distance from the points in the
+domain to the closest point in the source set.  This algorithm
+computes this by first determining the direction along which distance
+increases and finishes by recovering the actual distance.  The Heat
+Method is more efficient and more robust than previous distance
+computations, as the algorithm boils down to two standard, numerical
+linear algebra problems.
 
-In Section \ref sec_HM_definitions we give some definitions. In Section \ref sec_HM_history we explain the design of the algorithm and traits.
+In Section \ref sec_HM_definitions we give some definitions. In
+Section \ref sec_HM_history we explain the design of the algorithm and
+traits.
 
-Note that this package requires the third party library <a href="https://doc.cgal.org/latest/Manual/installation.html#thirdpartyEigen">Eigen</a>.
+Note that this package requires the third party \ref thirdpartyEigen library.
 This implementation is based on \cgalCite{cgal:cww-ghnac-13} and \cgalCite{cgal:fsbs-acidt-06}
 
 \section sec_HM_definitions Definitions
+
 Section \ref Subsection_HM_Definitions_Intro gives an overview of the theory needed by the heat method. The Section
 \ref Subsection_HM_IDT_Definitions gives the background needed for the Intrinsic Delaunay Triangulation.
 
 \subsection Subsection_HM_Definitions_Intro The Heat Method Algorithm
-For a detailed overview of the heat method, the reader may consult \cgalCite{cgal:cww-ghnac-13} to read the original article. In the sequel, we introduce the basic notions so as to explain our algorithms. In general, the heat method is applicable to any setting if there exists a gradient operator \f$ \nabla\f$, a divergence operator \f$\nabla\f$ and a Laplace operator \f$\Delta = \nabla \cdot \nabla\f$
-which are standard derivatives from vector calculus.
+
+For a detailed overview of the heat method, the reader may consult
+\cgalCite{cgal:cww-ghnac-13} to read the original article. In the
+sequel, we introduce the basic notions so as to explain our
+algorithms. In general, the heat method is applicable to any setting
+if there exists a gradient operator \f$ \nabla\f$, a divergence
+operator \f$\nabla\f$ and a Laplace operator \f$\Delta = \nabla \cdot
+\nabla\f$ which are standard derivatives from vector calculus.
 
 The Heat Method consists of three main steps:
    Algorithm:
@@ -37,37 +53,71 @@ The algorithm must then be translated in to a discrete algorithm by replacing th
 
 The heat equation can be discretized in time using a single backward Euler step. This means the following equation must be solved:
 
-      -\f$(id-t\Delta)u_t = \delta(x) \f$ where \delta(x) is a Dirac delta encoding an 'infinite' spike of heat (1 if x is in the source set, 0 otherwise)
+\f$(id-t\Delta)u_t = \delta(x) \f$ where \f$\delta(x)\f$ is a Dirac delta encoding an 'infinite' spike of heat (1 if x is in the source set, 0 otherwise)
         over the entire domain M, where id is the identity operator.
 
-The heat equation is discretized in space depending on the structure. For this package, we use triangle meshes exclusively. Let \f$ u \in \R^{|V|}\f$ specify a piecewise linear function on a triangulated surface with vertices \f$V\f$, edges \f$E\f$ and faces \f$F\f$.
-A standard discretization of the Laplacian at vertex \f$i\f$ is:
+The heat equation is discretized in space depending on the
+structure. For this package, we use triangle meshes exclusively.
+Let \f$ u \in \R^{|V|}\f$ specify a piecewise linear function on a
+triangulated surface with vertices \f$V\f$, edges \f$E\f$ and faces
+\f$F\f$.  A standard discretization of the Laplacian at vertex \f$i\f$
+is:
 
-    -\f$ {Lu}_i = \frac{1}{2A_i} \sum_{j}(cot \alpha_{ij} + cot \beta_{ij})(u_j-u_i)\f$ where \f$A_i\f$ is one third the area of all triangles incident on vertex \f$i\f$.
+\f$ {Lu}_i = \frac{1}{2A_i} \sum_{j}(cot \alpha_{ij} + cot \beta_{ij})(u_j-u_i)\f$ where \f$A_i\f$ is one third the area of all triangles incident on vertex \f$i\f$.
 
-The sum is taken over all of the neighboring vertices \f$j\f$. Further, \f$\alpha_{ij}\f$ and \f$\beta_{ij}\f$ are the angles opposing the corresponding edge \f$ij\f$. We express this operation via a matrix \f$L = M^{-1}L_c\f$ where \f$M \in R^{|V|x|V|}\f$ is a diagonal matrix containing the vertex areas and \f$L_c \in R^{|V|x|V|} \f$ is the cotan operator representing the remaining sum.
+The sum is taken over all of the neighboring vertices
+\f$j\f$. Further, \f$\alpha_{ij}\f$ and \f$\beta_{ij}\f$ are the
+angles opposing the corresponding edge \f$ij\f$. We express this
+operation via a matrix \f$L = M^{-1}L_c\f$ where \f$M \in
+R^{|V|x|V|}\f$ is a diagonal matrix containing the vertex areas and
+\f$L_c \in R^{|V|x|V|} \f$ is the cotan operator representing the
+remaining sum.
 
-From this, the symmetric positive-definite system \f$(M-tL_C)u = \delta_{\gamma}\f$ can be solved to find \f$u\f$ where \f$\delta_{\gamma}\f$ is the Kronecker delta over \f$\gamma\f$.
+From this, the symmetric positive-definite system
+\f$(M-tL_C)u = \delta_{\gamma}\f$ can be solved to find
+\f$u\f$ where \f$\delta_{\gamma}\f$ is the Kronecker delta over \f$\gamma\f$.
 
 Next, the gradient in a given triangle can be expressed as:
 
 \f$\nabla \cdot X = \frac{1}{2} \sum_j cot\theta_1 (e_1 \cdot X_j) + cot \theta_2 (e_2 \cdot X_j)\f$
 
-where the sum is taken over incident triangles \f$j\f$ each with a vector \f$X_j\f$, \f$e_1\f$ and \f$e_2\f$ are the two edge vectors of triangle \f$j\f$ containing \f$i\f$ and \f$\theta_1\f$, \f$\theta_2\f$ are the opposing angles.
+where the sum is taken over incident triangles \f$j\f$ each with a vector \f$X_j\f$,
+\f$e_1\f$ and \f$e_2\f$ are the two edge vectors of triangle \f$j\f$
+containing \f$i\f$ and \f$\theta_1\f$, \f$\theta_2\f$ are the opposing angles.
 
-Finally, let \f$b \in R^{|V|}\f$ be the integrated divergences of the normalized vector field X. Thus, solving the symmetric Poisson problem \f$ L_c \phi = b\f$ computes the final distance function.
+Finally, let \f$b \in R^{|V|}\f$ be the integrated divergences of the normalized vector field X.
+Thus, solving the symmetric Poisson problem \f$ L_c \phi = b\f$ computes the final distance function.
 
 \subsection Subsection_HM_IDT_Definitions Intrinsic Delaunay Triangulation
-  The standard discretization of the cotan laplace operator uses the cotangents of the angles in the triangle mesh. The intrinsic Delaunay triangulation is used to address extreme angles in the mesh.
+
+The standard discretization of the cotan laplace operator uses the cotangents of the angles in the triangle mesh.
+The intrinsic Delaunay triangulation is used to address extreme angles in the mesh.
     - An edge of a mesh is locally Delaunay if the sum of the cotangents of the opposing angles is greater than or equal to 0. A mesh is Delaunay if all of its edges are locally Delaunay.
 
-  A standard algorithm to convert a given planar triangulation into a Delaunay triangulation is to flip non-Delaunay edges in a mesh until the mesh is Delaunay. Similarly, the intrinsic Delaunay triangulation of a simplicial \f$R^3\f$ surface is constructed by performing intrinsic edge flips.
+A standard algorithm to convert a given planar triangulation into a Delaunay triangulation is
+to flip non-Delaunay edges in a mesh until the mesh is Delaunay.
+Similarly, the intrinsic Delaunay triangulation of a simplicial \f$R^3\f$ surface
+is constructed by performing intrinsic edge flips.
 
-  - An intrinsic property is a byproduct of only the topology of the mesh. That is, the property does not change if the way the mesh is represented changes. For example, edge lengths and angles are intrinsic whereas vertex coordinates and orientation are extrinsic.
+  - An intrinsic property is a byproduct of only the topology of the mesh.
+  That is, the property does not change if the way the mesh is represented changes.
+  For example, edge lengths and angles are intrinsic whereas vertex coordinates and orientation are extrinsic.
 
-  The intrinsic Delaunay triangulation thus relies on edge lengths and angles, as does the heat method. The intrinsic Delaunay triangulation does not actually flip the edge. Instead, the edge flips are intrinsic and so the shape of the original embedded mesh does not change. Instead, the IDT mesh is considered as an abstract surface with a locally Euclidean metric. Instead of actually flipping an edge, the algorithm performs a combinatorial flip on it and updates its length. Thus, there is no change to the intrinsic geometry of the input mesh.
+The intrinsic Delaunay triangulation thus relies on edge lengths and angles,
+as does the Heat method. The intrinsic Delaunay triangulation does not actually flip the edge.
+Instead, the edge flips are intrinsic and so the shape of the original embedded mesh does not change.
+Instead, the IDT mesh is considered as an abstract surface with a locally Euclidean metric.
+Instead of actually flipping an edge, the algorithm performs a combinatorial flip on it and updates its length.
+Thus, there is no change to the intrinsic geometry of the input mesh.
+  
+Let \f$ K = (V,E,T) \f$ be a 2-manifold triangle mesh, where \f$V\f$ is the vertex set,
+\f$ E \f$ is the edge set and \f$ T \f$ is the face set (triangle set).
+Let \f$ L \f$ be the set of Euclidean distances, where \f$ L(e_{ij}) = l_{ij} = || p_i - p_j || \f$ ,
+where \f$ p_i \f$ and \f$ p_j \f$ are the point positions \f$ \in R^3 \f$ of vertices \f$ i \f$ and \f$ j \f$ respectively.
+Then, let the pair \f$ (K,L) \f$ be the input to the iDT algorithm which returns the pair \f$(\tilde K, \tilde L)\f$,
+which are the intrinsic Delaunay mesh and the intrinsic lengths.
+The algorithm is as follows:
 
-  Let \f$ K = (V,E,T) \f$ be a 2-manifold triangle mesh, where \f$V\f$ is the vertex set, \f$ E \f$ is the edge set and \f$ T \f$ is the face set (triangle set). Let \f$ L \f$ be the set of Euclidean distances, where \f$ L(e_{ij}) = l_{ij} = || p_i - p_j || \f$ , where \f$ p_i \f$ and \f$ p_j \f$ are the point positions \f$ \in R^3 \f$ of vertices \f$ i \f$ and \f$ j \f$ respectively. Then, let the pair \f$ (K,L) \f$ be the input to the iDT algorithm which returns the pair \f$(\tilde K, \tilde L)\f$, which are the intrinsic Delaunay mesh and the intrinsic lengths. The algorithm is as follows:
             \code
              for all edge e in E : Mark(e)
              Stack s <-- E
@@ -89,7 +139,7 @@ Finally, let \f$b \in R^{|V|}\f$ be the integrated divergences of the normalized
   The new \f$(\tilde K, \tilde L)\f$ are then used in the Heat Method distance computation.
 
 
-  The following figures demonstrate the difference between the heat method with and without intrinsic delaunay remeshing.
+  The following figures demonstrate the difference between the heat method with and without intrinsic Delaunay remeshing.
   \cgalFigureBegin{landscape_mesh, landscape2withoutidt.png}
     Isolines placed on a mesh without iDT remeshing
   \cgalFigureEnd
@@ -109,17 +159,27 @@ Finally, let \f$b \in R^{|V|}\f$ be the integrated divergences of the normalized
 \section sec_HM_examples Examples
 
 \subsection HM_FirstExample Heat Method
-The following example shows the heat method on a triangle mesh. The example adds the first vertex into the source set and then uses the heat_intensity property map to read the distance values.
+
+The following example shows the heat method on a triangle mesh. The
+example adds the first vertex into the source set and then uses the
+heat_intensity property map to read the distance values.
+
 \cgalExample{Heat_method_3/heat_method_surface_mesh.cpp}
 
 
 \subsection HM_FirstExample Heat Method with Intrinsic Delaunay Triangulation
-The following example shows the heat method on a triangle mesh using the intrinsic delaunay remeshing algorithm first. The distance values are then printed using the vertex_distance property map.
+
+The following example shows the heat method on a triangle mesh using
+the intrinsic Delaunay remeshing algorithm first. The distance values
+are then printed using the vertex distance property map.
+
 \cgalExample{Heat_method_3/heat_method_surface_mesh_intrinsic.cpp}
 
 
 \section sec_HM_history Implementation History
-A first version of this package was started by Christina Vaz, Keenan Crane and Andreas Fabri as part of the 2018 Google Summer of Code.
+
+This package was developed by Christina Vaz, Keenan Crane and Andreas
+Fabri as a project of the Google Summer of Code 2018. 
 
 
 

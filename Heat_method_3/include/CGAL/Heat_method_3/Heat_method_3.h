@@ -651,9 +651,9 @@ private:
 /// computes for each vertex  of the triangle mesh `tm` the geodesic distance to a given source vertex. 
 template <typename TriangleMesh, typename VertexDistanceMap>
 void
-compute_distances_with_heat_method(const TriangleMesh& tm,
-                                   VertexDistanceMap vdm,
-                                   typename boost::graph_traits<TriangleMesh>::vertex_descriptor source)
+geodesic_distances_3(const TriangleMesh& tm,
+                     VertexDistanceMap vdm,
+                     typename boost::graph_traits<TriangleMesh>::vertex_descriptor source)
 {
   typedef typename boost::property_map<TriangleMesh, vertex_point_t>::type PPM;
   typedef typename boost::property_traits<PPM>::value_type Point_3;
@@ -670,9 +670,9 @@ compute_distances_with_heat_method(const TriangleMesh& tm,
 /// computes for each vertex of the triangle mesh `tm` the geodesic distance to a given source vertex. This version computes better results when `tm` has triangles with small angles. 
 template <typename TriangleMesh, typename VertexDistanceMap>
 void
-compute_distances_with_intrinsic_delaunay_heat_method(const TriangleMesh& tm,
-                                                      VertexDistanceMap vdm,
-                                                      typename boost::graph_traits<TriangleMesh>::vertex_descriptor source)
+geodesic_distances_with_intrinsic_Delaunay_triangulation_3(const TriangleMesh& tm,
+                                                           VertexDistanceMap vdm,
+                                                           typename boost::graph_traits<TriangleMesh>::vertex_descriptor source)
 {
   typedef typename boost::property_map<TriangleMesh, vertex_point_t>::type PPM;
   typedef typename boost::property_traits<PPM>::value_type Point_3;
