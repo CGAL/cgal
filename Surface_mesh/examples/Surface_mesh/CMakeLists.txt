@@ -41,6 +41,8 @@ if ( CGAL_FOUND )
     target_link_libraries(draw_surface_mesh PUBLIC CGAL::CGAL_Qt5)
   endif()
 
+  create_single_source_cgal_program("sm_draw_small_faces.cpp")
+  
 else()
   
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
