@@ -477,7 +477,6 @@ namespace Heat_method_3 {
         CGAL_error_msg("Eigen Decomposition in phi failed");
       }
       
-      
       LA::solve(solver, m_index_divergence, phi);
       
       if(solver.info()!=Eigen::Success) {
@@ -488,7 +487,7 @@ namespace Heat_method_3 {
       value_at_source_set(phi);
     }
 
-    //currently, this function will return a (number of vertices)x1 vector where
+    //currently, this function returns a (number of vertices)x1 vector where
     //the ith index has the distance from the first vertex to the ith vertex
     const Eigen::VectorXd& distances() const
     {
@@ -537,11 +536,10 @@ namespace Heat_method_3 {
       BOOST_FOREACH(face_descriptor fd, faces(tm)){
         put(face_id_map, fd, face_i++);
       }
-      int m = static_cast<int>(num_vertices(tm));
-      dimension = m;
+      dimension = static_cast<int>(num_vertices(tm));
 
-      m_mass_matrix.eigen_object().resize(m,m);
-      m_cotan_matrix.eigen_object().resize(m,m);
+      m_mass_matrix.eigen_object().resize(dimension, dimension);
+      m_cotan_matrix.eigen_object().resize(dimension, dimension);
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
       //Go through each face on the mesh
       {
@@ -637,7 +635,7 @@ namespace Heat_method_3 {
    */
 
     /// \relates CGAL::Heat_method_3::Heat_method_3
-    /// computes ...
+    /// computes for each vertex  of the triangle mesh `tm` the geodesic distance to a given source vertex. 
     template <typename TriangleMesh, typename VertexDistanceMap>
     void compute_distances_with_heat_method(const TriangleMesh& tm,
                                             VertexDistanceMap vdm,
@@ -655,7 +653,7 @@ namespace Heat_method_3 {
 
 
     /// \relates CGAL::Heat_method_3::Heat_method_3
-    /// computes ...
+    /// computes for each vertex of the triangle mesh `tm` the geodesic distance to a given source vertex. This version computes better results when `tm` has triangles with small angles. 
     template <typename TriangleMesh, typename VertexDistanceMap>
     void compute_distances_with_intrinsic_delaunay_heat_method(const TriangleMesh& tm,
                                                                VertexDistanceMap vdm,
