@@ -253,19 +253,15 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
   
     //Computes the normal of the facet
     Traits::Vector_3 normal = CGAL::NULL_VECTOR;
-
-    // The three first vertices may be aligned, we need to test other
-    // combinations
-    for (std::size_t i = 0; i < pit->size() - 2; ++ i)
+    //Newell's method
+    for (std::size_t i = 0; i < pit->size() ; ++ i)
     {
        const Point_3& pa = soup->points[pit->at(i)];
-       const Point_3& pb = soup->points[pit->at(i+1)];
-       const Point_3& pc = soup->points[pit->at(i+2)];
-       if (!CGAL::collinear (pa, pb, pc))
-       {
-          normal = CGAL::cross_product(pb-pa, pc -pa);
-          break;
-       }
+       const Point_3& pb = soup->points[pit->at(i+1)%pit->size()];
+       double x = normal.x() + (pa.y()-pb.y())*(pa.z()+pb.z());
+       double y = normal.y() + (pa.z()-pb.z())*(pa.x()+pb.x());
+       double z = normal.z() + (pa.x()-pb.x())*(pa.y()+pb.y());
+       normal = Traits::Vector_3(x,y,z);
     }
 
     if (normal == CGAL::NULL_VECTOR) // No normal could be computed, return
