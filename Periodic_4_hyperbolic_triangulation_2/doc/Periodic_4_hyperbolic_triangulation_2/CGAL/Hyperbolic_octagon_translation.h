@@ -11,8 +11,8 @@ The class `Hyperbolic_octagon_translation` is the default model for the
 concept `HyperbolicOctagonTranslation`. It accepts one template parameter:
 
 \tparam NT 	Number Type. Must provide exact computations with algebraic numbers, 
-			notably with nested square roots. If the default traits are used in 
-			the periodic hyperbolic triangulation, this parameter defaults to `CORE::Expr`.
+			notably with nested square roots. The default value for this parameter 
+			is `CORE::Expr`.
 
 \cgalModels HyperbolicOctagonTranslation
 */
