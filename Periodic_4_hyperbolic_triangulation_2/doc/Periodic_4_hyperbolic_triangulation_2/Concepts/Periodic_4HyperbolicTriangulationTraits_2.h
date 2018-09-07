@@ -15,6 +15,16 @@ types and the operations defined on them in `HyperbolicDelaunayTriangulationTrai
 it defines the hyperbolic translations that allow to encode the periodicity of the 
 triangulation.
 
+\cgalModifBegin
+	The concept requires that two nested types are provided:
+	<ul>
+		<li> A field number type `FT` that must support exact computations with algebraic 
+			 numbers, in particular with nested square roots;
+		<li> A `Hyperbolic_translation` type, which satisfies the requirements described 
+			 in the concept `HyperbolicOctagonTranslation`.
+	</ul>
+\cgalModifEnd
+
 */
 
 

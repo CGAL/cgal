@@ -14,6 +14,16 @@ to be fulfilled by any class used to instantiate the first template parameter of
 essential for the removal of existing vertices in a Delaunay triangulation of the
 Bolza surface.
 
+\cgalModifBegin
+	The concept requires that two nested types are provided:
+	<ul>
+		<li> A field number type `FT` that must support exact computations with algebraic 
+			 numbers, in particular with nested square roots;
+		<li> A `Hyperbolic_translation` type, which satisfies the requirements described 
+			 in the concept `HyperbolicOctagonTranslation`.
+	</ul>
+\cgalModifEnd
+
 \cgalHasModel CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2
 */
 
