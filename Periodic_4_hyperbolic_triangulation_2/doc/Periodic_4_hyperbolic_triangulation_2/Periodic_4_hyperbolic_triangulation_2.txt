@@ -241,113 +241,80 @@ dummy points necessary to guarantee that the triangulation is a simplicial compl
 
 \cgalModifBegin 
   tout ce qui concerne les experiences pourrait eventuellement
-  descendre dans la sec Performance 
+  descendre dans la sec Performance [modified, texte proposé ci-dessous]
+
+See \ref P4HT2_Performance for experiments showing the average number of random points
+needed in order to remove all dummy points from the triangulation.  
 \cgalModifEnd
-
-Experiments have 
-shown that, on average, all dummy points are removed from the triangulation with the insertion 
-of less than 200 random points uniformly distributed (according to the Euclidean metric) in 
-the unit disk \cgalCite{cgal:it-idtbs-17}. See \cgalFigureRef{P4HDummyPointsHistogram}.
-
-\cgalFigureAnchor{P4HDummyPointsHistogram}
-<center>
-  <img src="histogram-dummy-points.png" style="max-width:85%; width=85%; display: inline-block;"/>
-</center>
-\cgalFigureCaptionBegin{P4HDummyPointsHistogram}
-  Histogram of the number of random input points needed to remove all dummy points in the
-  triangulation. The experiment we conduct is the following: We start with an empty 
-  triangulation of the Bolza surface (i.e., initialized with only the dummy points), and 
-  we start inserting random points one by one. After each insertion, the unnecessary dummy 
-  points (if any) are removed from the triangulation. As soon as the last dummy point has 
-  been removed, we stop the process and record the number of random points inserted. The 
-  histogram shows results acquired from 1000 executions of this experiment. In these 1000
-  executions, the minimum number of random points needed to remove all dummy points was 23,
-  the maximum 188, and on average 64 random points were needed.
-\cgalFigureCaptionEnd
-
 
 
 \section P4HT2_design Software Design 
 
 \cgalModifBegin 
-  TODO enlever les redondances dans cette section et améliorer la structure
+  TODO enlever les redondances dans cette section et améliorer la structure [modified]
 \cgalModifEnd 
 
-The class `Periodic_4_hyperbolic_Delaunay_triangulation_2` implements
-Delaunay triangulations of the Bolza surface 
-\f$\mathcal M\f$. The prefix "Periodic_4" emphasizes that the
-triangulation in the universal covering \f$\mathbb H^2\f$ is periodic in the four
-directions defined by the hyperbolic translations \f$ a,b,c\f$, and \f$d\f$.
+The main class of this package is `Periodic_4_hyperbolic_Delaunay_triangulation_2`, and
+it implements Delaunay triangulations of the Bolza surface \f$\mathcal M\f$. The prefix 
+"Periodic_4" emphasizes that the triangulation in the universal covering \f$\mathbb H^2\f$ 
+is periodic in the four directions defined by the hyperbolic translations \f$ a,b,c\f$, 
+and \f$d\f$.
 
 Delaunay triangulations have the <I>empty circle property</I>, that is, the circumscribing
 hyperbolic circle of each face does not contain any other vertex of the triangulation in its
-interior. These triangulations are uniquely defined if no more than
-three points are co-circular; however that the \cgal implementation computes a unique triangulation even in
-these cases \cgalCite{cgal:dt-pvr3d-03}. Note also that since hyperbolic circles coincide with 
-Euclidean circles in the Poincaré disk model, the implementation uses Euclidean predicates to
-ensure the Delaunay property. 
+interior. Since hyperbolic circles coincide with Euclidean circles in the Poincaré disk model, 
+the implementation uses Euclidean predicates to ensure the Delaunay property. Degenerate 
+point sets (i.e., more than three co-circular points) are handled with symbolic perturbations
+\cgalCite{cgal:dt-pvr3d-03}.
 
-This implementation is fully dynamic: it supports both insertions of points and vertex removal.
-Note, however, that the removal of a vertex is authorized only if the triangulation remains 
-valid (as defined above). If this condition is not satisfied, then the vertex is <b>not</b> 
-removed from the triangulation.
+The implementation is fully dynamic, supporting both point insertion and vertex removal.
+However, a vertex can be removed only if the triangulation remains valid (as defined above).
 
- The two main classes `Periodic_4_hyperbolic_Delaunay_triangulation_2` and
-`Periodic_4_hyperbolic_triangulation_2` provide high-level geometric functionality and are
-responsible for the geometric validity of the triangulation.
-`Periodic_4_hyperbolic_Delaunay_triangulation_2` contains
-all the functionality that is specific to Delaunay triangulations, such as point insertion and
-vertex removal, the side-of-circle test, finding the conflicting region of a given point, and dual
-functions. 
+The main class `Periodic_4_hyperbolic_Delaunay_triangulation_2` provides high-level geometric 
+functionality specific to Delaunay triangulations, such as point insertion and vertex removal, 
+the side-of-circle test, finding the conflicting region of a given point, and dual functions. 
+It inherits from a base class called `Periodic_4_hyperbolic_triangulation_2` that provides 
+functionality common to triangulations in general, such as point location \cgalCite{cgal:dpt-wt-02}, 
+and access functions, but supports neither point insertion nor vertex removal.
 
-`Periodic_4_hyperbolic_triangulation_2` contains all the functionality that is common 
-to triangulations in general, such as location of a point in the triangulation 
-\cgalCite{cgal:dpt-wt-02}, and access functions. Note that `Periodic_4_hyperbolic_triangulation_2`
-does <b>not</b> support point insertion or vertex removal.
+Both classes `Periodic_4_hyperbolic_triangulation_2` and `Periodic_4_hyperbolic_Delaunay_triangulation_2`
+require two template parameters that reflect the separation between the geometric and combinatorial
+structure of the triangulation:
 
-The two classes are built as layers on top of a triangulation data structure, which stores their
-combinatorial structure. This separation between the geometry and the combinatorics is reflected
-in the software design by the fact that the triangulation classes take two template parameters:
-
-- the <B>geometric traits</B> class, which provides all objects, predicates, and constructions 
-necessary for the computation of Delaunay triangulations of the Bolza surface.
-It also provides the hyperbolic translations generating the group \f$\mathcal G\f$, as well as
-to the translations in the set \f$\mathcal N\f$. 
-This parameter must meet the requirements described in the concept
+- a <B>geometric traits</B> class, which provides all objects, predicates, and constructions 
+necessary for the computation of Delaunay triangulations of the Bolza surface. It also provides 
+the hyperbolic translations generating the group \f$\mathcal G\f$ and  the translations in the 
+set \f$\mathcal N\f$. This parameter must meet the requirements described in the concept
 `Periodic_4HyperbolicDelaunayTriangulationTraits_2`. For more details, see 
 Section \ref P4HT2_traits. 
 
-- the <B>triangulation data structure</B> class, which encodes the combinatorial structure of 
-the triangulation. 
-This parameter must meet the requirements described in the concept 
+- a <B>triangulation data structure</B> class, which encodes the combinatorial structure of 
+the triangulation. This parameter must meet the requirements described in the concept 
 `TriangulationDataStructure_2`, and for the purposes of this package is described in 
 Section \ref P4HT2_datastructure.
 
 \subsection P4HT2_traits The Geometric Traits Parameter 
 
-The geometric traits class is the first template parameter of the periodic hyperbolic
-triangulation classes. 
-The requirements it must fulfill are described in the concept
-`Periodic_4HyperbolicDelaunayTriangulationTraits_2`, which extends the concept
-`HyperbolicDelaunayTriangulationTraits_2`, providing all necessary objects, predicates, 
-and constructions, as well as the hyperbolic translations of the group \f$\mathcal G\f$.
+The geometric traits class must fulfill the requirements described in the concept
+`Periodic_4HyperbolicDelaunayTriangulationTraits_2`. It must provide all necessary objects, 
+predicates, and constructions, as well as the hyperbolic translations of the group 
+\f$\mathcal G\f$.
 
-This package offers a model for the concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2`,
-which is the class `Periodic_4_hyperbolic_Delaunay_triangulation_traits_2`. The class requires 
+A model for the concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2` offered by this
+package is the class `Periodic_4_hyperbolic_Delaunay_triangulation_traits_2`. The class requires 
 two template parameters:
 \cgalModifBegin 
   1- BUG dans le ref manual : les paramètres templates ne sont pas
-  documentes. TODO fix
-  2- il y a une raison pour ne pas mettre Core-expr comme default ? 
+  documentes. TODO fix [modified]
+
+  2- il y a une raison pour ne pas mettre Core-expr comme default ? [non; c'est ajouté]
 \cgalModifEnd 
 <ul>
 	<li> A `Kernel` with a `number type` that guarantees exact computations on algebraic numbers 
-  with nested square roots, for example `CGAL::Cartesian<CORE::Expr>`. This parameter has
-  no default value. </li>
-	<li> A model of the concept `HyperbolicOctagonTranslation`. This model must accept a `number
-  type` as template parameter. The traits class feeds internally the `number type` of the `Kernel`
-  into this model for consistency. The default value for this parameter is the class
-  `Hyperbolic_octagon_translation`. </li>
+  with nested square roots. The default value for this parameter is `CGAL::Cartesian<CORE::Expr>`.</li>
+	<li> A model of the concept `HyperbolicOctagonTranslation`. The `number type` of this model must 
+  be the same as the `number type` of the `Kernel`. This template parameter defaults to the class
+  `Hyperbolic_octagon_translation<Kernel::NT>`. </li>
 </ul>
 \cgalModifBegin 
   D'habitude on n'impose pas un parametre template dans un
@@ -355,22 +322,30 @@ two template parameters:
   comme nested type. En pratique dans le modele il y a un template
   parameter. Dans ton ref manual c'est en fait ce que tu fais, tu ne
   demandes pas le template. TOD rendre tout ca coherent. 
+
+  [modified]
 \cgalModifEnd 
 
-If the field type used in `Kernel` provides exact operations with algebraic numbers involving
-nested square roots, then the traits class provides exact predicates
-and exact constructions.
+
 \cgalModifBegin 
+  If the field type used in `Kernel` provides exact operations with algebraic numbers involving
+  nested square roots, then the traits class provides exact predicates
+  and exact constructions.
+
   sinon, tout le code plante, c'est-ce pas ? ce n'est pas vraiment ce qu'on veut... de
   plus c'est contradictoire avec ce qui est  écrit plus haut : A
   `Kernel` with a `number type` that guarantees 
   exact computations on algebraic numbers with nested square
   roots. TODO rendre le texte coherent. 
+
+  [d'après discussion, à enlever]
 \cgalModifEnd 
-In addition, inexact constructions using `double` number type are also
-provided.
+
 \cgalModifBegin 
+  In addition, inexact constructions using `double` number type are also provided.
+
   pour quoi faire ? 
+  [En fait, ce n'est pas documenté. Je propose d'enlever cette phrase.]
 \cgalModifEnd 
 
 
@@ -402,11 +377,20 @@ properties of the triangulation after the insertion. It uses the default paramet
 `Periodic_4_hyperbolic_Delaunay_triangulation_2` class for the triangulation data structure.
 
 Most functionalities of periodic hyperbolic triangulations are similar
-to those of Euclidean 2D triangulations. We refer the reader to
-examples in section ???
-\ref Chapter_2D_Triangulations "2D Triangulation" package
+to those of Euclidean 2D triangulations. 
+
 \cgalModifBegin
-TODO mettre le lien précis, envoyer directement sur la sec examples de T2
+We refer the reader to selected examples of the \ref Chapter_2D_Triangulations "2D Triangulation" package:
+<ul>
+  <li> \ref Subsection_2D_Triangulations_Voronoi
+  <li> \ref Triangulation_2AddingColors
+</ul>
+\cgalModifEnd
+
+\cgalModifBegin
+TODO mettre le lien précis, envoyer directement sur la sec examples de T2 
+
+[modified: added two links; implement here instead?]
 \cgalModifEnd
 
 \cgalExample{Periodic_4_hyperbolic_triangulation_2/p4ht2_example_insertion.cpp}
@@ -440,6 +424,31 @@ have been executed on two machines:
 <tr><td>  Non-periodic Euclidean (`double`)     <td>  1 sec.        <td>  1 sec.
 </table>
 </center>
+
+
+\cgalModifBegin
+Another experiment we have conducted shows that, on average, all dummy points are removed 
+from the triangulation with the insertion of less than 200 random points uniformly distributed 
+in the unit disk with respect to the Euclidean metric \cgalCite{cgal:it-idtbs-17}. 
+
+The experiment we conduct is the following: We start with an empty triangulation of the Bolza 
+surface (i.e., initialized with only the dummy points), and we start inserting random points 
+one by one. After each insertion, the unnecessary dummy points (if any) are removed from the 
+triangulation. As soon as the last dummy point has been removed, we stop the process and record 
+the number of random points inserted. Results are shown in \cgalFigureRef{P4HDummyPointsHistogram}.
+
+\cgalFigureAnchor{P4HDummyPointsHistogram}
+<center>
+  <img src="histogram-dummy-points.png" style="max-width:85%; width=85%; display: inline-block;"/>
+</center>
+\cgalFigureCaptionBegin{P4HDummyPointsHistogram}
+  Histogram of the number of random input points needed to remove all dummy points in a
+  triangulation of the Bolza surface. The histogram shows results acquired from 1000 executions 
+  of the experiment described above. In these 1000 executions, the minimum number of random 
+  points needed to remove all dummy points was 23, the maximum 188, and on average 64 random 
+  points were needed.
+\cgalFigureCaptionEnd
+\cgalModifEnd
 
 
 \section P4HT2_Design Design and Implementation History
