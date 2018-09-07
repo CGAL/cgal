@@ -91,6 +91,8 @@ function(cgal_add_compilation_test exe_name)
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
 endfunction(cgal_add_compilation_test)
 
+option(CGAL_TEST_DRAW_FUNCTIONS "If set, the ctest command will not skip the tests of the draw functions.")
+
 function(cgal_setup_test_properties test_name)
   if(ARGC GREATER 1)
     set(exe_name ${ARGV1})
@@ -100,6 +102,11 @@ function(cgal_setup_test_properties test_name)
   #      message(STATUS "  working dir: ${CGAL_CURRENT_SOURCE_DIR}")
   set_property(TEST "${test_name}"
     PROPERTY WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  if(NOT CGAL_TEST_DRAW_FUNCTIONS)
+    set_property(TEST "${test_name}"
+      APPEND PROPERTY ENVIRONMENT CGAL_TEST_SUITE=1)
+  endif()
+
   if(exe_name)
     set_property(TEST "${test_name}"
       APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")

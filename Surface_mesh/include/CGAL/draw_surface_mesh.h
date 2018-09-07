@@ -211,8 +211,10 @@ void draw(const Surface_mesh<K>& amesh,
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
-  bool cgal_test_suite=false;
+  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
+
+  std::cout<<"cgal_test_suite="<<cgal_test_suite<<std::endl;
   
   if (!cgal_test_suite)
   {
