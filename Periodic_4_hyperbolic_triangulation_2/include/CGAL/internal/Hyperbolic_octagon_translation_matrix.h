@@ -104,34 +104,6 @@ std::ostream& operator<<(std::ostream& os, const Hyperbolic_octagon_translation_
 }
 
 
-template < class ECplx >
-void get_generators(std::vector< Hyperbolic_octagon_translation_matrix<ECplx> >& gens) {
-	typedef Hyperbolic_octagon_translation_matrix<ECplx>        Matrix;
-	typedef typename Matrix::NT 								NT;
-	typedef typename Matrix::Matrix_element                     Matrix_element;
-
-	NT sq2 = CGAL::sqrt(NT(2));
-	NT xi  = NT(1) + sq2;
-	NT rxi = CGAL::sqrt(xi);
-
-	Matrix_element A = Matrix_element(xi, 0);	// all matrices have the same _alpha
-
-	// This vector holds the different _betas
-	std::vector<Matrix_element> B(8, Matrix_element());
-
-	B[0]	= Matrix_element(sq2 * rxi, 	0 			);
-	B[1]	= Matrix_element(rxi, 			rxi 	 	);
-	B[2]	= Matrix_element(0, 			sq2 * rxi 	);
-	B[3]	= Matrix_element(-rxi, 			rxi 		);
-	B[4]	= Matrix_element(-sq2 * rxi, 	0 			);
-	B[5]	= Matrix_element(-rxi, 		   -rxi 		);
-	B[6]	= Matrix_element(0,			   -sq2 * rxi 	);
-	B[7]	= Matrix_element(rxi,  		   -rxi 		);
-
-	for (int i = 0; i < 8; i++) {
-		gens.push_back(Matrix(A, B[i]));
-	}
-}
 
 
 } // namespace CGAL

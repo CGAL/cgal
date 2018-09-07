@@ -35,6 +35,17 @@ class Hyperbolic_octagon_translation {
 public:
 	typedef unsigned short int 	Word_letter;
 
+	enum Generator {
+		A = 0,
+		B_BAR,
+		C,
+		D_BAR,
+		A_BAR,
+		B,
+		C_BAR,
+		D
+	};
+
 private:
 	typedef Exact_complex<NT>									ECplx;
 	typedef Hyperbolic_octagon_translation<NT> 					Self;
@@ -46,67 +57,81 @@ private:
 	static std::map<std::string, Matrix> 	gmap;
 
 	static std::map<std::string, Matrix> 	init_gmap() {
+		typedef typename std::pair<NT,NT> 						Complex;
+		typedef typename std::pair<Complex,Complex> 			Coefficient;
+		std::vector<Coefficient> mcf;
+
+		get_generator_coefficients(mcf);
+
+
 		std::map<std::string, Matrix> m;
 		vector<Matrix> g;
-  		get_generators(g);
+		for (int i = 0; i < mcf.size(); i++) {
+			Complex a = mcf[i].first;
+			Complex b = mcf[i].second;
+			ECplx alpha(a.first, a.second);
+			ECplx beta(b.first, b.second);
+			g.push_back( Matrix(alpha, beta) );
+		}
+  		
 
   		m["_"] 		= Matrix();
 
-		m["0527"] 	=  g[0]*g[5]*g[2]*g[7];
-		m["052"] 	=  g[0]*g[5]*g[2];
-		m["05"] 	=  g[0]*g[5];
-		m["0"] 		=  g[0];
-		m["03"] 	=  g[0]*g[3];
-		m["036"]	=  g[0]*g[3]*g[6];
+		m["0527"] 	=  g[A]*g[B]*g[C]*g[D];
+		m["052"] 	=  g[A]*g[B]*g[C];
+		m["05"] 	=  g[A]*g[B];
+		m["0"] 		=  g[A];
+		m["03"] 	=  g[A]*g[D_BAR];
+		m["036"]	=  g[A]*g[D_BAR]*g[C_BAR];
 
-		m["1630"] 	=  g[1]*g[6]*g[3]*g[0];
-		m["163"] 	=  g[1]*g[6]*g[3];
-		m["16"] 	=  g[1]*g[6];
-		m["1"] 		=  g[1];
-		m["14"] 	=  g[1]*g[4];
-		m["147"]	=  g[1]*g[4]*g[7];
+		m["1630"] 	=  g[B_BAR]*g[C_BAR]*g[D_BAR]*g[A];
+		m["163"] 	=  g[B_BAR]*g[C_BAR]*g[D_BAR];
+		m["16"] 	=  g[B_BAR]*g[C_BAR];
+		m["1"] 		=  g[B_BAR];
+		m["14"] 	=  g[B_BAR]*g[A_BAR];
+		m["147"]	=  g[B_BAR]*g[A_BAR]*g[D];
 
-		m["2741"] 	= g[2]*g[7]*g[4]*g[1];
-		m["274"] 	= g[2]*g[7]*g[4];
-		m["27"] 	= g[2]*g[7];
-		m["2"] 		= g[2];
-		m["25"] 	= g[2]*g[5];
-		m["250"]	= g[2]*g[5]*g[0];
+		m["2741"] 	= g[C]*g[D]*g[A_BAR]*g[B_BAR];
+		m["274"] 	= g[C]*g[D]*g[A_BAR];
+		m["27"] 	= g[C]*g[D];
+		m["2"] 		= g[C];
+		m["25"] 	= g[C]*g[B];
+		m["250"]	= g[C]*g[B]*g[A];
 
-		m["3052"] 	= g[3]*g[0]*g[5]*g[2];
-		m["305"] 	= g[3]*g[0]*g[5];
-		m["30"] 	= g[3]*g[0];
-		m["3"] 		= g[3];
-		m["36"] 	= g[3]*g[6];
-		m["361"]	= g[3]*g[6]*g[1];
+		m["3052"] 	= g[D_BAR]*g[A]*g[B]*g[C];
+		m["305"] 	= g[D_BAR]*g[A]*g[B];
+		m["30"] 	= g[D_BAR]*g[A];
+		m["3"] 		= g[D_BAR];
+		m["36"] 	= g[D_BAR]*g[C_BAR];
+		m["361"]	= g[D_BAR]*g[C_BAR]*g[B_BAR];
 
-		m["4163"] 	= g[4]*g[1]*g[6]*g[3];
-		m["416"] 	= g[4]*g[1]*g[6];
-		m["41"] 	= g[4]*g[1];
-		m["4"] 		= g[4];
-		m["47"] 	= g[4]*g[7];
-		m["472"]	= g[4]*g[7]*g[2];
+		m["4163"] 	= g[A_BAR]*g[B_BAR]*g[C_BAR]*g[D_BAR];
+		m["416"] 	= g[A_BAR]*g[B_BAR]*g[C_BAR];
+		m["41"] 	= g[A_BAR]*g[B_BAR];
+		m["4"] 		= g[A_BAR];
+		m["47"] 	= g[A_BAR]*g[D];
+		m["472"]	= g[A_BAR]*g[D]*g[C];
 
-		m["5274"]	= g[5]*g[2]*g[7]*g[4];
-		m["527"] 	= g[5]*g[2]*g[7];
-		m["52"] 	= g[5]*g[2];
-		m["5"] 		= g[5];
-		m["50"] 	= g[5]*g[0];
-		m["503"]	= g[5]*g[0]*g[3];
+		m["5274"]	= g[B]*g[C]*g[D]*g[A_BAR];
+		m["527"] 	= g[B]*g[C]*g[D];
+		m["52"] 	= g[B]*g[C];
+		m["5"] 		= g[B];
+		m["50"] 	= g[B]*g[A];
+		m["503"]	= g[B]*g[A]*g[D_BAR];
 
-		m["6305"] 	= g[6]*g[3]*g[0]*g[5];
-		m["630"] 	= g[6]*g[3]*g[0];
-		m["63"] 	= g[6]*g[3];
-		m["6"] 		= g[6];
-		m["61"] 	= g[6]*g[1];
-		m["614"]	= g[6]*g[1]*g[4];
+		m["6305"] 	= g[C_BAR]*g[D_BAR]*g[A]*g[B];
+		m["630"] 	= g[C_BAR]*g[D_BAR]*g[A];
+		m["63"] 	= g[C_BAR]*g[D_BAR];
+		m["6"] 		= g[C_BAR];
+		m["61"] 	= g[C_BAR]*g[B_BAR];
+		m["614"]	= g[C_BAR]*g[B_BAR]*g[A_BAR];
 
-		m["7416"] 	= g[7]*g[4]*g[1]*g[6];
-		m["741"] 	= g[7]*g[4]*g[1];
-		m["74"] 	= g[7]*g[4];
-		m["7"] 		= g[7];
-		m["72"] 	= g[7]*g[2];
-		m["725"]	= g[7]*g[2]*g[5];
+		m["7416"] 	= g[D]*g[A_BAR]*g[B_BAR]*g[C_BAR];
+		m["741"] 	= g[D]*g[A_BAR]*g[B_BAR];
+		m["74"] 	= g[D]*g[A_BAR];
+		m["7"] 		= g[D];
+		m["72"] 	= g[D]*g[C];
+		m["725"]	= g[D]*g[C]*g[B];
 
 		return m;
 	}
@@ -188,6 +213,47 @@ public:
 	std::string to_string() const {
 		return _wrd.to_string();
 	}
+
+	
+	static void get_generators(std::vector<Self>& gens) {
+		gens.push_back(Self(A));
+		gens.push_back(Self(B_BAR));
+		gens.push_back(Self(C));
+		gens.push_back(Self(D_BAR));
+		gens.push_back(Self(A_BAR));
+		gens.push_back(Self(B));
+		gens.push_back(Self(C_BAR));
+		gens.push_back(Self(D));
+	}
+
+	static void get_generator_coefficients(std::vector< 	std::pair< 	std::pair<NT,NT>, 
+																		std::pair<NT,NT> > >& gens) {
+		typedef typename std::pair<NT,NT> 						Complex;
+		typedef typename std::pair<Complex,Complex> 			Matrix;
+
+		NT sq2 = CGAL::sqrt(NT(2));
+		NT xi  = NT(1) + sq2;
+		NT rxi = CGAL::sqrt(xi);
+
+		Complex alpha(xi,NT(0));			// all matrices have the same _alpha
+
+		// This vector holds the different _betas
+		std::vector< Complex > beta;
+
+		beta.push_back( Complex( sq2 * rxi, 	 0 			) );
+		beta.push_back( Complex( rxi, 			 rxi 		) );
+		beta.push_back( Complex( 0, 			 sq2 * rxi 	) );
+		beta.push_back( Complex( -rxi, 		 	 rxi 		) );
+		beta.push_back( Complex( -sq2 * rxi, 	 0 			) );
+		beta.push_back( Complex( -rxi, 			-rxi 		) );
+		beta.push_back( Complex( 0, 			-sq2 * rxi 	) );
+		beta.push_back( Complex( rxi, 			-rxi 		) );
+
+		for (int i = 0; i < 8; i++) {
+			gens.push_back(Matrix(alpha, beta[i]));
+		}
+	}
+
 };
 
 
@@ -202,18 +268,7 @@ std::ostream& operator<<(std::ostream& s, const Hyperbolic_octagon_translation<N
 } 
 
 
-template < typename NT >
-void get_generators(std::vector< Hyperbolic_octagon_translation<NT> >& gens) {
-	typedef Hyperbolic_octagon_translation<NT> Translation;
-	gens.push_back(Translation(0));
-	gens.push_back(Translation(1));
-	gens.push_back(Translation(2));
-	gens.push_back(Translation(3));
-	gens.push_back(Translation(4));
-	gens.push_back(Translation(5));
-	gens.push_back(Translation(6));
-	gens.push_back(Translation(7));
-}
+
 
 
 } // namespace CGAL

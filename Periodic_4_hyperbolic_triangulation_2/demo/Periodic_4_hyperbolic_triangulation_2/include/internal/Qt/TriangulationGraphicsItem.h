@@ -146,7 +146,7 @@ public:
 
   void initializeTranslations() {
     std::vector<Matrix> gens;
-    get_generators(gens);
+    T::Hyperbolic_translation::get_generators(gens);
     std::vector<Matrix> tmp;
     for (int j = 0; j < gens.size(); j++) {
       tmp.push_back(gens[j]);

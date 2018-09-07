@@ -187,7 +187,7 @@ MainWindow::animate() {
     // in this set with high probability.
     //std::cout << "  ..checking generators "; std::cout.flush();
     std::vector<Hyperbolic_translation> gens;
-    get_generators(gens);
+    Hyperbolic_translation::get_generators(gens);
     for (int i = 0; i < gens.size(); i++) {
       o = gens[i];
       if (check(Make_point()(p,o)) == CGAL::ON_BOUNDED_SIDE) {
