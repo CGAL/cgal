@@ -39,9 +39,6 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Heat_method_3/internal/V2V.h>
 
-//#include <Eigen/Cholesky>
-//#include <Eigen/Sparse>
-
 #include <boost/foreach.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/unordered_map.hpp>
@@ -58,354 +55,358 @@ namespace Heat_method_3 {
 
 #ifndef DOXYGEN_RUNNING
   
-  // forward declaration
-  template <typename IDT>
-  struct IDT_vertex_point_property_map;
+// forward declaration
+template <typename IDT>
+struct IDT_vertex_point_property_map;
 
-  // forward declaration
-  template <typename IDT, typename PM>
-  struct IDT_vertex_distance_property_map;
+// forward declaration
+template <typename IDT, typename PM>
+struct IDT_vertex_distance_property_map;
 
 #endif
   
-    /**
-     * Class `Intrinsic_Delaunay_triangulation_3` is a remeshing algorithm implemented to make the Heat method's approximation better.
-     * \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
-     * \tparam Traits a model of IntrinsicDelaunayTriangulation_3
-     * \tparam VertexPointMap a model of `ReadablePropertyMap` with
-     *        `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
-     *        `Traits::Point_3` as value type.
-     *        The default is `typename boost::property_map< TriangleMesh, vertex_point_t>::%type`.
-     *
-     */
+/**
+ * Class `Intrinsic_Delaunay_triangulation_3` is a remeshing algorithm implemented to make the Heat method's approximation better.
+ * \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
+ * \tparam Traits a model of IntrinsicDelaunayTriangulation_3
+ * \tparam VertexPointMap a model of `ReadablePropertyMap` with
+ *        `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
+ *        `Traits::Point_3` as value type.
+ *        The default is `typename boost::property_map< TriangleMesh, vertex_point_t>::%type`.
+ *
+ */
+  
+template <typename TriangleMesh,
+          typename Traits,
+          typename VertexDistanceMap,
+          typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type>
+class Intrinsic_Delaunay_triangulation_3
+{
+  typedef Intrinsic_Delaunay_triangulation_3<TriangleMesh,Traits,VertexDistanceMap,VertexPointMap> Self;
 
-     template <typename TriangleMesh,
-               typename Traits,
-               typename VertexDistanceMap,
-               typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type>
-     class Intrinsic_Delaunay_triangulation_3
-     {
-       typedef Intrinsic_Delaunay_triangulation_3<TriangleMesh,Traits,VertexDistanceMap,VertexPointMap> Self;
+  typedef typename boost::graph_traits<TriangleMesh>               graph_traits;
+  typedef typename graph_traits::vertex_descriptor            vertex_descriptor;
+  typedef typename graph_traits::edge_descriptor                edge_descriptor;
+  typedef typename graph_traits::halfedge_descriptor        halfedge_descriptor;
+  typedef typename graph_traits::face_descriptor                face_descriptor;
+  typedef typename std::set<vertex_descriptor>::iterator        vertex_iterator;
+  typedef typename std::set<edge_descriptor>::iterator            edge_iterator;
+  /// Geometric typedefs
+  typedef typename Traits::Point_3                                      Point_3;
+  typedef typename Traits::FT                                                FT;
+  typedef typename Traits::Vector_3                                    Vector_3;
 
-       typedef typename boost::graph_traits<TriangleMesh>               graph_traits;
-       typedef typename graph_traits::vertex_descriptor            vertex_descriptor;
-       typedef typename graph_traits::edge_descriptor                edge_descriptor;
-       typedef typename graph_traits::halfedge_descriptor        halfedge_descriptor;
-       typedef typename graph_traits::face_descriptor                face_descriptor;
-       typedef typename std::set<vertex_descriptor>::iterator        vertex_iterator;
-       typedef typename std::set<edge_descriptor>::iterator            edge_iterator;
-       /// Geometric typedefs
-       typedef typename Traits::Point_3                                      Point_3;
-       typedef typename Traits::FT                                                FT;
-       typedef typename Traits::Vector_3                                    Vector_3;
+  typedef typename Traits::Point_2                                     Point_2;
 
-       typedef typename Traits::Point_2                                     Point_2;
+  typedef int Index;
 
-       typedef int Index;
+  typedef typename boost::property_traits<VertexPointMap>::reference VertexPointMap_reference;
 
-       typedef typename boost::property_traits<VertexPointMap>::reference VertexPointMap_reference;
+  typedef CGAL::dynamic_halfedge_property_t<Point_2> Halfedge_coordinate_tag;
+  typedef typename boost::property_map<TriangleMesh, Halfedge_coordinate_tag >::type HalfedgeCoordinateMap;
 
-       typedef CGAL::dynamic_halfedge_property_t<Point_2> Halfedge_coordinate_tag;
-       typedef typename boost::property_map<TriangleMesh, Halfedge_coordinate_tag >::type HalfedgeCoordinateMap;
+  typedef typename boost::graph_traits<TriangleMesh>::vertices_size_type vertices_size_type;
+  typedef typename boost::graph_traits<TriangleMesh>::edges_size_type edges_size_type;
+  typedef typename boost::graph_traits<TriangleMesh>::faces_size_type faces_size_type;
 
-       typedef typename boost::graph_traits<TriangleMesh>::vertices_size_type vertices_size_type;
-       typedef typename boost::graph_traits<TriangleMesh>::edges_size_type edges_size_type;
-       typedef typename boost::graph_traits<TriangleMesh>::faces_size_type faces_size_type;
+  typedef CGAL::dynamic_edge_property_t<Index> Edge_property_tag;
+  typedef typename boost::property_map<TriangleMesh, Edge_property_tag >::type Edge_id_map;
+  typedef typename std::stack<edge_descriptor, std::list<edge_descriptor> > edge_stack;
 
-       typedef CGAL::dynamic_edge_property_t<Index> Edge_property_tag;
-       typedef typename boost::property_map<TriangleMesh, Edge_property_tag >::type Edge_id_map;
-       typedef typename std::stack<edge_descriptor, std::list<edge_descriptor> > edge_stack;
+  friend struct IDT_vertex_point_property_map<Self>;
+  friend struct IDT_vertex_distance_property_map<Self,VertexDistanceMap>;
 
-       friend struct IDT_vertex_point_property_map<Self>;
-       friend struct IDT_vertex_distance_property_map<Self,VertexDistanceMap>;
+public: // for the BGL functions below. They should maybe become friend?
 
-     public: // for the BGL functions below. They should maybe become friend?
+  typedef IDT_vertex_distance_property_map<Self,VertexDistanceMap> Vertex_distance_map;
 
-       typedef IDT_vertex_distance_property_map<Self,VertexDistanceMap> Vertex_distance_map;
+  
+  struct Vertex_descriptor {
+    halfedge_descriptor hd;
 
-       struct Vertex_descriptor {
-         halfedge_descriptor hd;
+    bool operator<(const Vertex_descriptor& other) const
+    {
+      return hd < other.hd;
+    }
 
-         bool operator<(const Vertex_descriptor& other) const
-         {
-           return hd < other.hd;
-         }
+    Vertex_descriptor(const halfedge_descriptor& hd)
+      : hd(hd)
+    {}
 
-         Vertex_descriptor(const halfedge_descriptor& hd)
-           : hd(hd)
-         {}
+    explicit Vertex_descriptor(const vertex_descriptor vd, const TriangleMesh& tm)
+      : hd(halfedge(vd,tm))
+    {}
 
-         explicit Vertex_descriptor(const vertex_descriptor vd, const TriangleMesh& tm)
-           : hd(halfedge(vd,tm))
-         {}
+  };
 
-       };
+  
+  struct Vertex_iterator_functor
+  {
+    typedef vertex_descriptor argument_type;
+    typedef Vertex_descriptor result_type;
+    const TriangleMesh& tm;
 
-     struct Vertex_iterator_functor
-     {
-       typedef vertex_descriptor argument_type;
-       typedef Vertex_descriptor result_type;
-       const TriangleMesh& tm;
+    Vertex_iterator_functor(const TriangleMesh& tm)
+      :tm(tm)
+    {}
 
-        Vertex_iterator_functor(const TriangleMesh& tm)
-          :tm(tm)
-       {}
+    result_type
+    operator()(vertex_descriptor vd) const
+    {
+      return Vertex_descriptor(halfedge(vd, tm));
+    }
+  };
 
-       result_type
-       operator()(vertex_descriptor vd) const
-       {
-         return Vertex_descriptor(halfedge(vd, tm));
-       }
-     };
+public:
+  
+  Intrinsic_Delaunay_triangulation_3(TriangleMesh& tm, VertexDistanceMap vdm)
+    : tm(), tmref(tm), vdm(*this,vdm), hcm(get(Halfedge_coordinate_tag(), this->tm))
+  {
+    build();
+  }
 
-     public:
-       Intrinsic_Delaunay_triangulation_3(TriangleMesh& tm, VertexDistanceMap vdm)
-         : tm(), tmref(tm), vdm(*this,vdm), hcm(get(Halfedge_coordinate_tag(), this->tm))
-        {
-          build();
-        }
+  
+  typedef TriangleMesh Triangle_mesh;
 
-       typedef TriangleMesh Triangle_mesh;
+  
+  const Triangle_mesh&
+  triangle_mesh() const
+  {
+    return tm;
+  }
 
-       const Triangle_mesh& triangle_mesh() const
-       {
-         return tm;
-       }
-
-       Triangle_mesh& triangle_mesh()
-       {
-         return tm;
-       }
-
-
-       const HalfedgeCoordinateMap& hcmap() const
-       {
-         return hcm;
-       }
-
-       const Vertex_distance_map vertex_distance_map() const
-       {
-         return vdm;
-       }
+  
+  Triangle_mesh&
+  triangle_mesh()
+  {
+    return tm;
+  }
 
 
+  const HalfedgeCoordinateMap&
+  hcmap() const
+  {
+    return hcm;
+  }
 
-       double get_cotan_weight(edge_descriptor ed)
-       {
-          double cotan_weight = 0;
-          halfedge_descriptor hd = halfedge(ed, tm);
-          halfedge_descriptor hd2 = next(hd,tm);
-          halfedge_descriptor hd3 = next(hd2,tm);
-          Index a_i = get(edge_id_map, ed);
-          Index b_i = get(edge_id_map, edge(hd2,tm));
-          Index c_i = get(edge_id_map, edge(hd3,tm));
-          double a = edge_lengths[a_i] + 0.0;
-          double b = edge_lengths[b_i] + 0.0;
-          double c = edge_lengths[c_i] + 0.0;
+  
+  const Vertex_distance_map
+  vertex_distance_map() const
+  {
+    return vdm;
+  }
 
-          double tan2 = CGAL::sqrt(CGAL::abs(((a-b+c)*(a+b-c))/((a+b+c)*(-a+b+c))));
-          cotan_weight+=(1-(tan2*tan2))/(2*tan2);
 
-          hd = opposite(hd,tm);
-          hd2 =next(hd,tm);
-          hd3 = next(hd2,tm);
-          b_i = get(edge_id_map, edge(hd2,tm));
-          c_i = get(edge_id_map, edge(hd3,tm));
-          b = edge_lengths[b_i] + 0.0;
-          c = edge_lengths[c_i] + 0.0;
-          tan2 = CGAL::sqrt(CGAL::abs(((a-b+c)*(a+b-c))/((a+b+c)*(-a+b+c))));
-          cotan_weight+=(1-(tan2*tan2))/(2*tan2);
-          return cotan_weight;
-        }
+  double
+  get_cotan_weight(edge_descriptor ed)
+  {
+    double cotan_weight = 0;
+    halfedge_descriptor hd = halfedge(ed, tm);
+    halfedge_descriptor hd2 = next(hd,tm);
+    halfedge_descriptor hd3 = next(hd2,tm);
+    Index a_i = get(edge_id_map, ed);
+    Index b_i = get(edge_id_map, edge(hd2,tm));
+    Index c_i = get(edge_id_map, edge(hd3,tm));
+    double a = edge_lengths[a_i] + 0.0;
+    double b = edge_lengths[b_i] + 0.0;
+    double c = edge_lengths[c_i] + 0.0;
 
-         //return true if edge is locally delaunay (opposing angles are less than pi)
-        bool is_edge_locally_delaunay(edge_descriptor ed)
-        {
-           //two ways of doing this: taking angles directly (not good with virtual edges)
-           //OR: taking edge length and using law of cosines
-           //the second way checks cotan weights
-           if(get_cotan_weight(ed)>=0)
-           {
-             return true;
-           }
-          else
-          {
-            return false;
+    double tan2 = CGAL::sqrt(CGAL::abs(((a-b+c)*(a+b-c))/((a+b+c)*(-a+b+c))));
+    cotan_weight+=(1-(tan2*tan2))/(2*tan2);
+
+    hd = opposite(hd,tm);
+    hd2 =next(hd,tm);
+    hd3 = next(hd2,tm);
+    b_i = get(edge_id_map, edge(hd2,tm));
+    c_i = get(edge_id_map, edge(hd3,tm));
+    b = edge_lengths[b_i] + 0.0;
+    c = edge_lengths[c_i] + 0.0;
+    tan2 = CGAL::sqrt(CGAL::abs(((a-b+c)*(a+b-c))/((a+b+c)*(-a+b+c))));
+    cotan_weight+=(1-(tan2*tan2))/(2*tan2);
+    return cotan_weight;
+  }
+
+  
+  //returns true if edge is locally Delaunay (opposing angles are less than pi):
+  //Two ways of doing this: taking angles directly (not good with virtual edges)
+  //OR: taking edge length and using law of cosines,
+  //The second way checks cotan weights
+  bool
+  is_edge_locally_delaunay(edge_descriptor ed)
+  {
+    return (get_cotan_weight(ed)>=0);
+  }
+
+  
+  void
+  change_edge_length(Index i, edge_descriptor ed)
+  {
+    halfedge_descriptor hd = halfedge(ed,tm);
+    halfedge_descriptor hd2 = next(hd,tm);
+    halfedge_descriptor hd3 = next(hd2,tm);
+    Index b_i = get(edge_id_map, edge(hd2,tm));
+    Index c_i = get(edge_id_map, edge(hd3,tm));
+    double a = edge_lengths[i];
+    double b1 = edge_lengths[b_i];
+    double c1 = edge_lengths[c_i];
+    double tan2a = CGAL::sqrt(CGAL::abs(((c1-a+b1)*(-b1+a+c1))/((a+b1+c1)*(b1+a-c1))));
+    hd = opposite(hd,tm);
+    hd2 =next(hd,tm);
+    hd3 = next(hd2,tm);
+    b_i = get(edge_id_map, edge(hd2,tm));
+    c_i = get(edge_id_map, edge(hd3,tm));
+    double b2 = edge_lengths[b_i];
+    double c2 = edge_lengths[c_i];
+    double tan2d = CGAL::sqrt(CGAL::abs(((-a+b2+c2)*(a+b2-c2))/((a+b2+c2)*(a-b2+c2))));
+    double tan2ad = (tan2a + tan2d)/(1-tan2a*tan2d);
+    double cosad = (1-tan2ad*tan2ad)/(1+tan2ad*tan2ad);
+    double new_length = CGAL::sqrt( CGAL::abs(b1*b1 + c2*c2 - 2*b1*c2*cosad));
+    edge_lengths[i] = new_length;
+  }
+
+
+  //Heron's formula
+  double
+  face_area(double a, double b, double c)
+  {
+    double S = (a+b+c)/2;
+    return CGAL::sqrt(S*(S-a)*(S-b)*(S-c));
+  }
+
+  
+  void
+  loop_over_edges(edge_stack stack, std::vector<int>& marked_edges)
+  {
+    int a = 0;
+    while(!stack.empty()) {
+      edge_descriptor ed = stack.top();
+      stack.pop();
+      
+      Index edge_i = get(edge_id_map,ed);
+      
+      marked_edges[edge_i]=0;
+      //if the edge itself is not locally delaunay, go back
+      if(!(is_edge_locally_delaunay(ed))) {
+        if(!(is_border(ed,tm))) {
+          a++;
+          change_edge_length(edge_i,ed);
+          halfedge_descriptor hd = (halfedge(ed, tm));
+          CGAL::Euler::flip_edge(hd, tm);
+          edge_descriptor next_edge= edge(next(hd,tm),tm);
+          Index next_edge_i =  get(edge_id_map, next_edge);
+          
+          //if edge was already checked, go back and check again
+          //for the 4 surrounding edges, since local 'geometry' changed,
+          if(!(marked_edges[next_edge_i])) {
+            stack.push(next_edge);
+            marked_edges[next_edge_i] = 1;
+          }
+          next_edge = edge(prev(hd,tm),tm);
+          next_edge_i = get(edge_id_map,next_edge);
+          if(!(marked_edges[next_edge_i])) {
+            stack.push(next_edge);
+            marked_edges[next_edge_i] = 1;
+          }
+          next_edge = edge(next(opposite(hd,tm),tm),tm);
+          next_edge_i = get(edge_id_map,next_edge);
+          if(!(marked_edges[next_edge_i])) {
+            stack.push(next_edge);
+            marked_edges[next_edge_i] = 1;
+          }
+          next_edge = edge(prev(opposite(hd,tm),tm),tm);
+          next_edge_i = get(edge_id_map,next_edge);
+          if(!(marked_edges[next_edge_i])) {
+            stack.push(next_edge);
+            marked_edges[next_edge_i] = 1;
           }
         }
+        //then go back to top of the stack
+      }
+    }
+    std::cout<< a << " edges were flipped: " << std::endl;
+  }
+  
+private:
 
-        void change_edge_length(Index i, edge_descriptor ed)
-        {
-          halfedge_descriptor hd = halfedge(ed,tm);
-          halfedge_descriptor hd2 = next(hd,tm);
-          halfedge_descriptor hd3 = next(hd2,tm);
-          Index b_i = get(edge_id_map, edge(hd2,tm));
-          Index c_i = get(edge_id_map, edge(hd3,tm));
-          double a = edge_lengths[i];
-          double b1 = edge_lengths[b_i];
-          double c1 = edge_lengths[c_i];
-          double tan2a = CGAL::sqrt(CGAL::abs(((c1-a+b1)*(-b1+a+c1))/((a+b1+c1)*(b1+a-c1))));
-          hd = opposite(hd,tm);
-          hd2 =next(hd,tm);
-          hd3 = next(hd2,tm);
-          b_i = get(edge_id_map, edge(hd2,tm));
-          c_i = get(edge_id_map, edge(hd3,tm));
-          double b2 = edge_lengths[b_i];
-          double c2 = edge_lengths[c_i];
-          double tan2d = CGAL::sqrt(CGAL::abs(((-a+b2+c2)*(a+b2-c2))/((a+b2+c2)*(a-b2+c2))));
-          double tan2ad = (tan2a + tan2d)/(1-tan2a*tan2d);
-          double cosad = (1-tan2ad*tan2ad)/(1+tan2ad*tan2ad);
-          double new_length = CGAL::sqrt( CGAL::abs(b1*b1 + c2*c2 - 2*b1*c2*cosad));
-          edge_lengths[i] = new_length;
-        }
+  void
+  build()
+  {
+    CGAL_precondition(is_triangle_mesh(tm));
 
+    std::vector<std::pair<vertex_descriptor,
+                          vertex_descriptor> > pairs;
+    copy_face_graph(tmref,tm, std::back_inserter(pairs));
 
-         //Heron's formula
-        double face_area(double a, double b, double c)
-        {
-          double S = (a+b+c)/2;
-          return CGAL::sqrt(S*(S-a)*(S-b)*(S-c));
-        }
+    for(int i=0; i < pairs.size(); i++) {
+      v2v[pairs[i].second] = pairs[i].first;
+      vtov[pairs[i].first] = pairs[i].second;
+    }
 
-       void loop_over_edges(edge_stack stack, std::vector<int>& marked_edges)
-        {
-          int a = 0;
-          while(!stack.empty())
-          {
-            edge_descriptor ed = stack.top();
-            stack.pop();
+    edge_stack stack;
+    number_of_edges = num_edges(tm);
+    edge_lengths.resize(number_of_edges);
+    mark_edges.resize(number_of_edges, 1);
+    edge_id_map = get(Edge_property_tag(), tm);
+    Index edge_i = 0;
+    BOOST_FOREACH(edge_descriptor ed, edges(tm)) {
+      edge_lengths[edge_i] = Polygon_mesh_processing::edge_length(halfedge(ed,tm),tm);
+      put(edge_id_map, ed, edge_i++);
+      stack.push(ed);
+    }
+    loop_over_edges(stack, mark_edges);
+    //now that edges are calculated, go through and for each face, calculate the vertex positions around it
 
-            Index edge_i = get(edge_id_map,ed);
+    BOOST_FOREACH(face_descriptor f, faces(tm)) {
+      CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
+      
+      boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
+      halfedge_descriptor hd = halfedge(f,tm);
+      if(face(hd,tm) != f) {
+        hd = opposite(hd,tm);
+      }
+      hd = next(hd,tm);
+      //each 'local' set of coordinates will have 0,0 at the first vertex/halfedge
+      Point_2 p11(0,0);
+      put(hcm, prev(hd,tm),p11);
+      edge_descriptor ed1 = edge(hd, tm);
+      hd = next(hd,tm);
+      //the second local coordinate will be edge_length(first edge),0
+      Point_2 p21(edge_lengths[get(edge_id_map,ed1)], 0);
+      put(hcm,prev(hd,tm),p21);
 
-            marked_edges[edge_i]=0;
-            //if the edge itself is not locally delaunay, go back
-            if(!(is_edge_locally_delaunay(ed)))
-            {
-              if(!(is_border(ed,tm)))
-              {
-               a++;
-               change_edge_length(edge_i,ed);
-               halfedge_descriptor hd = (halfedge(ed, tm));
-               CGAL::Euler::flip_edge(hd, tm);
-               edge_descriptor next_edge= edge(next(hd,tm),tm);
-               Index next_edge_i =  get(edge_id_map, next_edge);
+      //use basic trigonometry to compute third coordinate
+      edge_descriptor ed2 = edge(hd, tm);
+      hd = next(hd,tm);
+      edge_descriptor ed3 = edge(hd, tm);
+      Index e1 = get(edge_id_map, ed1);
+      Index e2 = get(edge_id_map, ed2);
+      Index e3 = get(edge_id_map, ed3);
+      double e1_len = edge_lengths[e1];
+      double e2_len = edge_lengths[e2];
+      double e3_len = edge_lengths[e3];
+      double angle_a = -(e2_len*e2_len) + e3_len*e3_len + e1_len*e1_len;
+      angle_a = acos(angle_a/(2*e3_len*e1_len));
+      Point_2 p31(e3_len*std::cos(angle_a), e3_len*std::sin(angle_a));
+      put(hcm,prev(hd,tm),p31);
+      
+    }
+  }
 
-               //if edge was already checked, go back and check again
-               //for the 4 surrounding edges, since local 'geometry' changed,
-               if(!(marked_edges[next_edge_i]))
-               {
-                 stack.push(next_edge);
-                 marked_edges[next_edge_i] = 1;
-               }
-               next_edge = edge(prev(hd,tm),tm);
-               next_edge_i = get(edge_id_map,next_edge);
-               if(!(marked_edges[next_edge_i]))
-               {
-                 stack.push(next_edge);
-                 marked_edges[next_edge_i] = 1;
-               }
-               next_edge = edge(next(opposite(hd,tm),tm),tm);
-               next_edge_i = get(edge_id_map,next_edge);
-               if(!(marked_edges[next_edge_i]))
-               {
-                 stack.push(next_edge);
-                 marked_edges[next_edge_i] = 1;
-               }
-               next_edge = edge(prev(opposite(hd,tm),tm),tm);
-               next_edge_i = get(edge_id_map,next_edge);
-               if(!(marked_edges[next_edge_i]))
-               {
-                 stack.push(next_edge);
-                 marked_edges[next_edge_i] = 1;
-               }
-             }
-               //then go back to top of the stack
-            }
-          }
-          std::cout<< a << " edges were flipped: " << std::endl;
-       }
+  
+  //todo:: determine which can be const
+  TriangleMesh tm; // this is the copy where edges get flipped
+  const TriangleMesh& tmref; // this is the reference to the original
+  Vertex_distance_map vdm;
+  VertexPointMap vpm;
+  HalfedgeCoordinateMap hcm;
+  Edge_id_map edge_id_map;
 
-       private:
-
-         void build()
-         {
-           CGAL_precondition(is_triangle_mesh(tm));
-
-           std::vector<std::pair<vertex_descriptor,
-                                 vertex_descriptor> > pairs;
-           copy_face_graph(tmref,tm, std::back_inserter(pairs));
-
-           for(int i=0; i < pairs.size(); i++){
-             v2v[pairs[i].second] = pairs[i].first;
-             vtov[pairs[i].first] = pairs[i].second;
-           }
-
-           edge_stack stack;
-           number_of_edges = num_edges(tm);
-           edge_lengths.resize(number_of_edges);
-           mark_edges.resize(number_of_edges, 1);
-           edge_id_map = get(Edge_property_tag(), tm);
-           Index edge_i = 0;
-           BOOST_FOREACH(edge_descriptor ed, edges(tm)){
-             edge_lengths[edge_i] = Polygon_mesh_processing::edge_length(halfedge(ed,tm),tm);
-             put(edge_id_map, ed, edge_i++);
-             stack.push(ed);
-           }
-           loop_over_edges(stack, mark_edges);
-           //now that edges are calculated, go through and for each face, calculate the vertex positions around it
-
-           BOOST_FOREACH(face_descriptor f, faces(tm))
-           {
-             CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
-
-             boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
-             halfedge_descriptor hd = halfedge(f,tm);
-             if(face(hd,tm) != f)
-             {
-               hd = opposite(hd,tm);
-             }
-             hd = next(hd,tm);
-             //each 'local' set of coordinates will have 0,0 at the first vertex/halfedge
-             Point_2 p11(0,0);
-             put(hcm, prev(hd,tm),p11);
-             edge_descriptor ed1 = edge(hd, tm);
-             hd = next(hd,tm);
-             //the second local coordinate will be edge_length(first edge),0
-             Point_2 p21(edge_lengths[get(edge_id_map,ed1)], 0);
-             put(hcm,prev(hd,tm),p21);
-
-
-             //use basic trigonometry to compute third coordinate
-             edge_descriptor ed2 = edge(hd, tm);
-             hd = next(hd,tm);
-             edge_descriptor ed3 = edge(hd, tm);
-             Index e1 = get(edge_id_map, ed1);
-             Index e2 = get(edge_id_map, ed2);
-             Index e3 = get(edge_id_map, ed3);
-             double e1_len = edge_lengths[e1];
-             double e2_len = edge_lengths[e2];
-             double e3_len = edge_lengths[e3];
-             double angle_a = -(e2_len*e2_len) + e3_len*e3_len + e1_len*e1_len;
-             angle_a = acos(angle_a/(2*e3_len*e1_len));
-             Point_2 p31(e3_len*std::cos(angle_a), e3_len*std::sin(angle_a));
-             put(hcm,prev(hd,tm),p31);
-
-           }
-         }
-         //todo:: determine which can be const
-         TriangleMesh tm; // this is the copy where edges get flipped
-         const TriangleMesh& tmref; // this is the reference to the original
-         Vertex_distance_map vdm;
-         VertexPointMap vpm;
-         HalfedgeCoordinateMap hcm;
-         Edge_id_map edge_id_map;
-
-         int number_of_edges;
-       std::vector<double> edge_lengths;
-       std::vector<int> mark_edges;
-     public:
-       boost::unordered_map<vertex_descriptor,vertex_descriptor> v2v, vtov;
-     };
+  int number_of_edges;
+  std::vector<double> edge_lengths;
+  std::vector<int> mark_edges;
+public:
+  boost::unordered_map<vertex_descriptor,vertex_descriptor> v2v, vtov;
+};
 
 } // namespace Heat_method_3
 
@@ -444,9 +445,10 @@ struct V2V<CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>
     return Idt_vertex_descriptor(idt.vtov.at(vd),idt.triangle_mesh());
   }
 };
-  } // namespace Heat_method_3
 
+} // namespace Heat_method_3
 } // namespace CGAL
+
 
 namespace boost {
 
@@ -490,6 +492,7 @@ num_vertices(const Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>& idt)
   return num_vertices(idt.triangle_mesh());
 }
 
+  
 template <typename TM,
           typename T,
           typename VDM,
@@ -500,6 +503,7 @@ num_edges(const Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>& idt)
   return num_edges(idt.triangle_mesh());
 }
 
+  
 template <typename TM,
           typename T,
           typename VDM,
@@ -510,6 +514,7 @@ num_faces(const Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>& idt)
   return num_faces(idt.triangle_mesh());
 }
 
+  
 template <typename TM,
           typename T,
           typename VDM,
@@ -528,6 +533,7 @@ vertices(const Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>& idt)
                         boost::make_transform_iterator(p.second,fct));
  }
 
+  
 template <typename TM,
           typename T,
           typename VDM,
@@ -581,11 +587,12 @@ template <typename TM,
           typename VPM>
 typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM> >::halfedge_descriptor
 halfedge(typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM> >::face_descriptor fd,
-       const Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>& idt)
+         const Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>& idt)
 {
   return halfedge(fd, idt.triangle_mesh());
 }
 
+  
 template <typename TM,
           typename T,
           typename VDM,
@@ -597,39 +604,43 @@ halfedge(typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T,VD
   return halfedge(ed, idt.triangle_mesh());
 }
 
+  
 template <typename TM,
           typename T,
           typename VDM,
           typename VPM>
 typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM> >::halfedge_descriptor
 opposite(typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM> >::halfedge_descriptor hd,
-       const Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>& idt)
+         const Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>& idt)
 {
   return opposite(hd, idt.triangle_mesh());
 }
 
+  
 template <typename TM,
           typename T,
           typename VDM,
           typename VPM>
 typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM> >::halfedge_descriptor
 next(typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM> >::halfedge_descriptor hd,
-       const Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>& idt)
+     const Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>& idt)
 {
   return next(hd, idt.triangle_mesh());
 }
 
+  
 template <typename TM,
           typename T,
           typename VDM,
           typename VPM>
 typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM> >::face_descriptor
 face(typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM> >::halfedge_descriptor hd,
-       const Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>& idt)
+     const Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>& idt)
 {
   return face(hd, idt.triangle_mesh());
 }
 
+  
 template <typename TM,
           typename T,
           typename VDM,
@@ -643,6 +654,7 @@ source(typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T,VDM,
   return vertex_descriptor(opposite(hd, idt.triangle_mesh()));
 }
 
+  
 template <typename TM,
           typename T,
           typename VDM,
@@ -675,9 +687,10 @@ target(typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T,VDM,
       : idt(idt)
       {}
 
-        /**
-         * friend function for Heat method to get vertex descriptor's coordinates in iDT's local coordinate system
-         */
+    
+    /**
+     * friend function for Heat method to get vertex descriptor's coordinates in iDT's local coordinate system
+     */
     friend value_type get(const IDT_vertex_point_property_map<IDT>& pm,
                           key_type vd)
     {
@@ -685,7 +698,6 @@ target(typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T,VDM,
       return value_type(p.x(), p.y(), 0);
     }
   };
-
 
 
   template <typename IDT, typename PM>
@@ -698,6 +710,7 @@ target(typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T,VDM,
     typedef typename boost::graph_traits<IDT>::vertices_size_type value_type;
     typedef value_type reference;
 
+    
     IDT_vertex_index_property_map(const IDT& idt,
                                   PM pm)
       : idt(idt), pm(pm)
@@ -728,6 +741,7 @@ target(typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T,VDM,
       : idt(idt), pm(pm)
       {}
 
+    
     // no need for a get()
 
     friend void put(IDT_vertex_distance_property_map<IDT,PM> idtpm,
@@ -745,19 +759,21 @@ target(typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T,VDM,
 } // namespace Heat_method_3
 } // namespace CGAL
 
+
 namespace boost {
 
 template <typename TM,
           typename T,
           typename VDM,
           typename VPM>
- struct property_map<CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>,
-                     CGAL::vertex_point_t > {
-   typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM> IDT;
-   typedef CGAL::Heat_method_3::IDT_vertex_point_property_map<IDT> type;
-   typedef type const_type;
- };
+struct property_map<CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>,
+                    CGAL::vertex_point_t > {
+  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM> IDT;
+  typedef CGAL::Heat_method_3::IDT_vertex_point_property_map<IDT> type;
+  typedef type const_type;
+};
 
+  
 template <typename TM,
           typename T,
           typename VDM,
@@ -774,13 +790,14 @@ template <typename TM,
           typename T,
           typename VDM,
           typename VPM>
- struct property_map<CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>,
-                     CGAL::face_index_t > {
-   typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM> IDT;
+struct property_map<CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>,
+                    CGAL::face_index_t > {
+  typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM> IDT;
   typedef typename property_map<TM, CGAL::face_index_t>::type type;
-   typedef typename property_map<TM, CGAL::face_index_t>::const_type const_type;
- };
+  typedef typename property_map<TM, CGAL::face_index_t>::const_type const_type;
+};
 
+  
 template <typename TM,
           typename T,
           typename VDM,
@@ -791,7 +808,6 @@ get(CGAL::face_index_t fi,
 {
   return get(fi, idt.triangle_mesh());
 }
-
 
 
 
@@ -808,6 +824,7 @@ get(boost::vertex_index_t vi,
 
 } // boost
 
+
 namespace CGAL {
 namespace Heat_method_3 {
 
@@ -817,20 +834,24 @@ template <typename IDT, typename PM, typename K, typename V>
 class IDT_dynamic_vertex_property_map {
   const IDT& idt;
   PM pm;
+  
 public:
   typedef IDT_dynamic_vertex_property_map<IDT,PM,K,V> Self;
   typedef typename IDT::Triangle_mesh TM;
   typedef typename boost::graph_traits<TM>::vertex_descriptor TM_vertex_descriptor;
 
+  
   IDT_dynamic_vertex_property_map(const IDT& idt, PM pm)
     : idt(idt), pm(pm)
   {}
 
+  
   friend V get(const Self& idpm, const K& k)
   {
     return get(idpm.pm, target(k.hd, idpm.idt.triangle_mesh()));
-    }
+  }
 
+  
   friend void put(const Self& idpm, const K& k, const V& v)
   {
     put(idpm.pm, target(k.hd, idpm.idt.triangle_mesh()), v);
@@ -842,6 +863,7 @@ public:
     return get(idpm.pm, k);
   }
 
+  
   friend void put(const Self& idpm, const TM_vertex_descriptor& k, const V& v)
   {
     put(idpm.pm, k, v);
@@ -860,18 +882,18 @@ template <typename TM,
           typename VDM,
           typename VPM,
           typename dT>
- struct property_map<CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>,
-                     CGAL::dynamic_vertex_property_t<dT> > {
+struct property_map<CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM>,
+                    CGAL::dynamic_vertex_property_t<dT> > {
   typedef CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3<TM,T,VDM,VPM> IDT;
   typedef CGAL::Heat_method_3::IDT_dynamic_vertex_property_map<IDT,
-                                                                                    typename property_map<TM, CGAL::dynamic_vertex_property_t<dT> >::type,
-                                          typename graph_traits<IDT>::vertex_descriptor,
-                                          dT> type;
+                                                               typename property_map<TM, CGAL::dynamic_vertex_property_t<dT> >::type,
+                                                               typename graph_traits<IDT>::vertex_descriptor,
+                                                               dT> type;
   typedef CGAL::Heat_method_3::IDT_dynamic_vertex_property_map<IDT,
-                                                                                    typename property_map<TM, CGAL::dynamic_vertex_property_t<dT> >::const_type,
-                                          typename graph_traits<IDT>::vertex_descriptor,
-                                          dT> const_type;
- };
+                                                               typename property_map<TM, CGAL::dynamic_vertex_property_t<dT> >::const_type,
+                                                               typename graph_traits<IDT>::vertex_descriptor,
+                                                               dT> const_type;
+};
 
 } // namespace boost
 
@@ -896,6 +918,7 @@ get(CGAL::dynamic_vertex_property_t<dT> dvp,
   return PM(idt,get(dvp,idt.triangle_mesh()));
 }
 
+  
 template <typename TM,
           typename T,
           typename VDM,
