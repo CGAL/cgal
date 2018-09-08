@@ -84,7 +84,7 @@ TriangulationCircumcircle<T>::hide()
 
 template <typename T>
 typename T::Point apply(typename T::Point p, typename T::Hyperbolic_translation tr) {
-  typename T::Construct_point_2 CP2;
+  typename T::Construct_hyperbolic_point_2 CP2;
   return CP2(p, tr);
 }
 

@@ -320,7 +320,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
     painter->setPen(temp);
     painterostream = PainterOstream<Geom_traits>(painter);
 
-    typedef typename Geom_traits::Construct_point_2 CP2;
+    typedef typename Geom_traits::Construct_hyperbolic_point_2 CP2;
 
     for (typename T::Face_iterator fit = t->faces_begin(); fit != t->faces_end(); fit++) {      
       typename Geom_traits::Point_2 pts[] = { CP2()(fit->vertex(0)->point(), fit->translation(0)),
@@ -401,7 +401,7 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
       
       if (visible_copies) {
         for (int k = 0; k < trans.size(); k++) {
-          typedef typename Geom_traits::Construct_point_2 CP2;
+          typedef typename Geom_traits::Construct_hyperbolic_point_2 CP2;
           typename Geom_traits::Point_2 img = CP2()(it->point(), trans[k]);
 
           px = to_double(img.x());

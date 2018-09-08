@@ -190,7 +190,7 @@ MainWindow::animate() {
     Hyperbolic_translation::get_generators(gens);
     for (int i = 0; i < gens.size(); i++) {
       o = gens[i];
-      if (check(Make_point()(p,o)) == CGAL::ON_BOUNDED_SIDE) {
+      if (check(dt.construct_point(p,o)) == CGAL::ON_BOUNDED_SIDE) {
         found = true;
         break;
       }
@@ -207,7 +207,7 @@ MainWindow::animate() {
       get_all_translations(tr);
       for (int i = 0; i < tr.size(); i++) {
         o = tr[i];
-        if (check(Make_point()(p,o)) == CGAL::ON_BOUNDED_SIDE) {
+        if (check(dt.construct_point(p,o)) == CGAL::ON_BOUNDED_SIDE) {
           found = true;
           break;
         }
@@ -219,8 +219,8 @@ MainWindow::animate() {
  	  CGAL_assertion(found);
 
     //std::cout << "  ..making points..." << std::endl;
-    source = Make_point()(source,o);
-    target = Make_point()(target,o);
+    source = dt.construct_point(source,o);
+    target = dt.construct_point(target,o);
     
     // Correct in case of wrong orientation.
     //std::cout << "  ..making line..." << std::endl;

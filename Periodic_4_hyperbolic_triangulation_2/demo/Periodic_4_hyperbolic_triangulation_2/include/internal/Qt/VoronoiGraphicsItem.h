@@ -80,7 +80,7 @@ private:
   typedef typename DT::Geom_traits::Construct_inexact_hyperbolic_circumcenter_2   Circumcenter;
   typedef typename DT::Geom_traits::Construct_hyperbolic_segment_2                Segment;
   typedef typename DT::Face_handle                                                Face_handle;
-  typedef typename DT::Geom_traits::Construct_point_2                             CP2;
+  typedef typename DT::Geom_traits::Construct_hyperbolic_point_2                  CP2;
 
   DT * dt;
   QPen edges_pen;
