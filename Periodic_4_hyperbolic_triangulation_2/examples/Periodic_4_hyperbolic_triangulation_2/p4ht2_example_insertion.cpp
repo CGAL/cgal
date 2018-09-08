@@ -41,12 +41,16 @@ int main(int argc, char** argv) {
     // The triangulation is automatically initialized with the dummy points.
     Triangulation tr;
 
-    // Batch-insert new points in the triangulation.
+    // Batch-insert new points in the triangulation. Note that by default, after
+    // the insertion of a set of points, an attempt is made to remove all dummy points
+    // from the triangulation. Note the third boolean parameter in the call of the 
+    // `insert()` function which suppresses the automatic removal of dummy points.
     cout << "Batch-inserting " << N1 << " random points in the triangulation... "; cout.flush();
     size_type N_batch_inserted = tr.insert(pts.begin(), pts.end(), false);
     cout << "DONE! " << endl;
 
-    // Insert new points in the triangulation one by one.
+    // Insert new points in the triangulation one by one. When points are inserted 
+    // one by one, dummy points are not automatically removed.
     cout << "Single-inserting " << N2 << " random points in the triangulation... "; cout.flush();
     int N_single_inserted = 0;
     for (int i = 0; i < N2; i++) {
@@ -60,7 +64,7 @@ int main(int argc, char** argv) {
     // Total number of inserted points.
     int N_inserted = N_batch_inserted + N_single_inserted;
 
-    // Remove dummy points from the triangulation.
+    // Finally, we try to manually remove all dummy points from the triangulation.
     cout << "Cleaning dummy points from the triangulation... "; cout.flush();
     int DP_remaining = tr.clean_dummy_points();
     cout << "DONE! " << endl;
