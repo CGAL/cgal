@@ -121,6 +121,14 @@ public:
 
   /// \name Construction Types
   /// @{
+
+	/*!
+	\cgalModifBegin
+	A constructor object, must be model of the concept `Kernel::ConstructPoint_2`.
+	\cgalModifEnd
+	*/
+	typedef unspecified_type 			Construct_hyperbolic_point_2;
+
 	/*!
 		A constructor object. 
 
@@ -191,6 +199,7 @@ public:
   /// The following functions must be provided only if the methods of `Hyperbolic_Delaunay_triangulation_2`
   /// that return elements of the Voronoi diagram are instantiated:
   /// @{
+  	Construct_hyperbolic_point_2 		 construct_hyperbolic_point_2_object();
 	Construct_hyperbolic_segment_2       construct_hyperbolic_segment_2_object();
 	Construct_hyperbolic_circumcenter_2  construct_hyperbolic_circumcenter_2_object();
 	Construct_hyperbolic_bisector_2      construct_hyperbolic_bisector_2_object();

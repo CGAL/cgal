@@ -68,6 +68,7 @@ public:
   typedef typename R::Collinear_2                Euclidean_collinear_2;
   typedef typename R::Construct_bisector_2       Construct_Euclidean_bisector_2;
   typedef typename R::Construct_midpoint_2       Construct_Euclidean_midpoint_2;
+  typedef typename Kernel::Construct_point_2     Construct_hyperbolic_point_2;
   typedef typename R::Compute_squared_distance_2 Compute_squared_Euclidean_distance_2;
   typedef typename R::Has_on_bounded_side_2      Has_on_bounded_side_2;
 
@@ -75,6 +76,11 @@ public:
   typedef typename R::Less_y_2                   Less_y_2;
       
 public:
+
+  Construct_hyperbolic_point_2
+  construct_hyperbolic_point_2_object() const {
+    return Construct_hyperbolic_point_2();
+  }
 
   class Construct_hyperbolic_segment_2
   {

@@ -162,6 +162,7 @@ public:
 	typedef typename Kernel::Construct_bisector_2       				Construct_Euclidean_bisector_2;
 	typedef typename Kernel::Construct_midpoint_2  						  Construct_Euclidean_midpoint_2;
 	typedef typename Kernel::Construct_triangle_2       				Construct_triangle_2;
+  typedef typename Kernel::Construct_point_2                  Construct_hyperbolic_point_2;
 	typedef typename Kernel::Compare_distance_2        					Compare_distance_2;
 	typedef typename Kernel::Has_on_bounded_side_2 						  Has_on_bounded_side_2;
 	typedef typename Kernel::Compute_squared_distance_2 				Compute_squared_Euclidean_distance_2;
@@ -169,6 +170,11 @@ public:
 
 // Can/should we keep those objects public?
 public:
+
+  Construct_hyperbolic_point_2
+  construct_hyperbolic_point_2_object() const {
+    return Construct_hyperbolic_point_2();
+  }
 
   class Construct_hyperbolic_segment_2
   {
