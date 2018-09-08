@@ -26,10 +26,11 @@
 #include <CGAL/internal/Hyperbolic_octagon_translation_matrix.h>
 #include <CGAL/internal/Hyperbolic_octagon_translation_word.h>
 #include <CGAL/internal/Exact_complex.h>
+#include <CGAL/CORE_Expr.h>
 
 namespace CGAL {
 
-template <typename NT>
+template <typename FT = CORE::Expr>
 class Hyperbolic_octagon_translation {
 
 public:
@@ -47,8 +48,8 @@ public:
 	};
 
 private:
-	typedef Exact_complex<NT>									ECplx;
-	typedef Hyperbolic_octagon_translation<NT> 					Self;
+	typedef Exact_complex<FT>									ECplx;
+	typedef Hyperbolic_octagon_translation<FT> 					Self;
 	typedef Hyperbolic_octagon_translation_word<Word_letter> 	Word;
 	typedef Hyperbolic_octagon_translation_matrix<ECplx> 		Matrix;
 
@@ -57,7 +58,7 @@ private:
 	static std::map<std::string, Matrix> 	gmap;
 
 	static std::map<std::string, Matrix> 	init_gmap() {
-		typedef typename std::pair<NT,NT> 						Complex;
+		typedef typename std::pair<FT,FT> 						Complex;
 		typedef typename std::pair<Complex,Complex> 			Coefficient;
 		std::vector<Coefficient> mcf;
 
@@ -160,20 +161,20 @@ public:
 		_wrd(w1,w2,w3,w4) {}
 
 
-	std::pair<NT,NT> alpha() const {
+	std::pair<FT,FT> alpha() const {
 		Matrix _m = gmap[_wrd.to_string()];
 		ECplx _a = _m.alpha();
-		NT ax = _a.real();
-		NT ay = _a.imag();
-		return std::pair<NT,NT>(ax,ay);
+		FT ax = _a.real();
+		FT ay = _a.imag();
+		return std::pair<FT,FT>(ax,ay);
 	}
 
-	std::pair<NT,NT> beta() const {
+	std::pair<FT,FT> beta() const {
 		Matrix _m = gmap[_wrd.to_string()];
 		ECplx _b = _m.beta();
-		NT bx = _b.real();
-		NT by = _b.imag();
-		return std::pair<NT,NT>(bx,by);
+		FT bx = _b.real();
+		FT by = _b.imag();
+		return std::pair<FT,FT>(bx,by);
 	}
 
 	
@@ -198,15 +199,15 @@ public:
 		return *this;
 	}
 
-	bool operator==(const Hyperbolic_octagon_translation<NT>& other) const {
+	bool operator==(const Hyperbolic_octagon_translation<FT>& other) const {
 		return this->_wrd == other._wrd;
 	}
 
-	bool operator!=(const Hyperbolic_octagon_translation<NT>& other) const {
+	bool operator!=(const Hyperbolic_octagon_translation<FT>& other) const {
 		return this->_wrd != other._wrd;
 	}
 
-	bool operator<(const Hyperbolic_octagon_translation<NT>& other) const {
+	bool operator<(const Hyperbolic_octagon_translation<FT>& other) const {
 		return this->_wrd < other._wrd;
 	}
 
@@ -226,16 +227,16 @@ public:
 		gens.push_back(Self(D));
 	}
 
-	static void get_generator_coefficients(std::vector< 	std::pair< 	std::pair<NT,NT>, 
-																		std::pair<NT,NT> > >& gens) {
-		typedef typename std::pair<NT,NT> 						Complex;
+	static void get_generator_coefficients(std::vector< 	std::pair< 	std::pair<FT,FT>, 
+																		std::pair<FT,FT> > >& gens) {
+		typedef typename std::pair<FT,FT> 						Complex;
 		typedef typename std::pair<Complex,Complex> 			Matrix;
 
-		NT sq2 = CGAL::sqrt(NT(2));
-		NT xi  = NT(1) + sq2;
-		NT rxi = CGAL::sqrt(xi);
+		FT sq2 = CGAL::sqrt(FT(2));
+		FT xi  = FT(1) + sq2;
+		FT rxi = CGAL::sqrt(xi);
 
-		Complex alpha(xi,NT(0));			// all matrices have the same _alpha
+		Complex alpha(xi,FT(0));			// all matrices have the same _alpha
 
 		// This vector holds the different _betas
 		std::vector< Complex > beta;
@@ -257,12 +258,12 @@ public:
 };
 
 
-template <typename NT>
-std::map<std::string, Hyperbolic_octagon_translation_matrix<Exact_complex<NT> > > 
-Hyperbolic_octagon_translation<NT>::gmap = init_gmap();
+template <typename FT>
+std::map<std::string, Hyperbolic_octagon_translation_matrix<Exact_complex<FT> > > 
+Hyperbolic_octagon_translation<FT>::gmap = init_gmap();
 
-template <typename NT>
-std::ostream& operator<<(std::ostream& s, const Hyperbolic_octagon_translation<NT>& tr) {
+template <typename FT>
+std::ostream& operator<<(std::ostream& s, const Hyperbolic_octagon_translation<FT>& tr) {
 	s << tr.to_string();
 	return s;
 } 
