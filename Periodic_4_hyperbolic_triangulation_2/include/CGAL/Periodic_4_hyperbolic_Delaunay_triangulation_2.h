@@ -79,7 +79,6 @@ namespace CGAL {
 	typedef typename Base::Geom_traits                    		Geom_traits;
 	typedef typename Base::Triangulation_data_structure        	Triangulation_data_structure;
 	typedef typename Base::Hyperbolic_translation              	Hyperbolic_translation;
-	typedef typename Base::Circle                            	Circle;
 	typedef typename Base::Point                             	Point;
 	typedef typename Geom_traits::Voronoi_point 		   		Voronoi_point;
 	typedef typename Base::Segment                           	Segment;
@@ -384,7 +383,6 @@ Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt,Tds>::
 is_removable(Vertex_handle v, Delaunay_triangulation_2<Gt,Tds>& dt, std::map<Vertex_handle, Vertex_handle>& vmap) {
   
   typedef typename Gt::FT                             FT;
-  typedef typename Gt::Circle_2                       Circle;
   typedef Delaunay_triangulation_2<Gt, Tds>           Delaunay;
   typedef typename Delaunay::Finite_faces_iterator    Finite_Delaunay_faces_iterator;
 
@@ -427,11 +425,8 @@ is_removable(Vertex_handle v, Delaunay_triangulation_2<Gt,Tds>& dt, std::map<Ver
 	  }
 	}
 	if (is_good) {
-	  Circle c(fit->vertex(0)->point(), 
-			   fit->vertex(1)->point(), 
-			   fit->vertex(2)->point());
 	  typename Gt::Compute_approximate_hyperbolic_diameter cdiam;
-	  double diam = cdiam(c);
+	  double diam = cdiam(fit->vertex(0)->point(), fit->vertex(1)->point(), fit->vertex(2)->point());
 	  if (max_diam < diam) {
 		max_diam = diam;
 	  }

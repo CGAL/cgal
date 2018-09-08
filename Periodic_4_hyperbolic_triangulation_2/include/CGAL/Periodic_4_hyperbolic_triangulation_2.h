@@ -76,7 +76,6 @@ public:
 	typedef GT 										        	Geom_traits;
 	typedef TDS 									        	Triangulation_data_structure;
 	typedef typename GT::Hyperbolic_translation 				Hyperbolic_translation;
-	typedef typename GT::Circle_2 								Circle;
 	typedef typename TDS::Vertex::Point 	    				Point;
 	typedef typename GT::Segment_2 								Segment;
 	typedef typename GT::Triangle_2 							Triangle;
@@ -86,7 +85,7 @@ public:
 	typedef array< std::pair<Point, Hyperbolic_translation>, 2 >			Periodic_segment;
 	typedef array< std::pair<Point, Hyperbolic_translation>, 3 > 			Periodic_triangle;	
 
-	typedef typename GT::Construct_point_2 					Construct_point_2;
+	typedef typename GT::Construct_hyperbolic_point_2 					Construct_hyperbolic_point_2;
 
 	typedef typename TDS::Vertex 					        Vertex;
 	typedef typename TDS::Edge 						        Edge;
@@ -276,7 +275,7 @@ public:
 	}
 
 	Point construct_point(const Point& p, const Hyperbolic_translation& tr) const {
-		return geom_traits().construct_point_2_object()(p, tr);
+		return geom_traits().construct_hyperbolic_point_2_object()(p, tr);
 	}
 
 	Point construct_point(const Periodic_point & pp) const {
