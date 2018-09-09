@@ -636,6 +636,7 @@ execute_commands_traits_adaptor()
 
     commands_indicator[PARAMETER_SPACE_X]=0
     commands_indicator[PARAMETER_SPACE_Y]=0
+    commands_indicator[COMPARE_XY]=0
     commands_indicator[COMPARE_X_AT_LIMIT]=0
     commands_indicator[COMPARE_X_NEAR_LIMIT]=0
     commands_indicator[COMPARE_X_ON_BOUNDARY]=0
@@ -764,7 +765,7 @@ test_segment_traits_adaptor()
   compile_test_with_flags test_traits_adaptor segments "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_traits_adaptor segments segments_traits_adaptor \
-      COMPARE_Y_POSITION COMPARE_CW_AROUND_POINT COMPARE_Y_AT_X_LEFT \
+      COMAPRE_XY COMPARE_Y_POSITION COMPARE_CW_AROUND_POINT COMPARE_Y_AT_X_LEFT \
       ARE_MERGEABLE MERGE IS_IN_X_RANGE IS_BETWEEN_CW
   else
     echo "   ERROR:    not executed test_traits_adaptor segment_traits" >> $ERRORFILE
@@ -785,7 +786,7 @@ test_linear_traits_adaptor()
   compile_test_with_flags test_traits_adaptor linear "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_traits_adaptor linear linear_traits_adaptor \
-      COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE \
+      COMAPRE_XY COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE \
       COMPARE_Y_POSITION IS_BETWEEN_CW COMPARE_CW_AROUND_POINT
   else
     echo "   ERROR:    not executed test_traits_adaptor linear_traits" >> $ERRORFILE
@@ -807,7 +808,7 @@ test_spherical_arcs_traits_adaptor()
   compile_test_with_flags test_traits_adaptor geodesic_arcs_on_sphere "$flags"
   if [ -n "${SUCCESS}" ] ; then
     execute_commands_traits_adaptor spherical_arcs spherical_arcs_traits_adaptor \
-      COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE \
+      COMAPRE_XY COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE \
       COMPARE_Y_POSITION IS_BETWEEN_CW COMPARE_CW_AROUND_POINT
   else
     echo "   ERROR:    not executed test_traits_adaptor spherical_arcs_traits" >> $ERRORFILE
