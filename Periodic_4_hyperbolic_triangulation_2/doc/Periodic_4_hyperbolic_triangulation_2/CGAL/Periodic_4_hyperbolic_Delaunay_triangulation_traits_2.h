@@ -12,18 +12,18 @@ a model of the concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2`.
 
 It is the default traits class for the class `Periodic_4_hyperbolic_Delaunay_triangulation_2`.
 
-\sa `Periodic_4HyperbolicDelaunayTriangulationTraits_2`
+\cgalModels `Periodic_4HyperbolicDelaunayTriangulationTraits_2`
+
 \sa `Periodic_4_hyperbolic_Delaunay_triangulation_2`
 */
-template< class Kernel = CGAL::Cartesian<CORE::Expr>, 
-		  template<typename> class Translation_type = Hyperbolic_octagon_translation>
+template< class Kernel = CGAL::Cartesian<CORE::Expr>>
 class Periodic_4_hyperbolic_Delaunay_triangulation_traits_2 
 {
 public:
 	/// \name Types
 	/// @{
-		typedef typename Kernel::NT     	NT;
-		typedef Translation_type<NT> 		Hyperbolic_translation;
+		typedef typename Kernel::FT     				FT;
+		typedef Hyperbolic_octagon_translation<FT> 		Hyperbolic_translation;
 	/// @}
 }; /* end Periodic_4_hyperbolic_Delaunay_triangulation_traits_2 */
 } /* end namespace CGAL */
