@@ -81,9 +81,6 @@ temporarily hyperbolic translations to facilitate insertion and removal procedur
 - `Periodic_4HyperbolicTriangulationDSFaceBase_2`
 - `Periodic_4HyperbolicTriangulationDSVertexBase_2`
 
-Finally, the concept `HyperbolicOctagonTranslation` describes the requirements for an object that represents
-a hyperbolic translation.
-- `HyperbolicOctagonTranslation`
 
 ## Classes ##
 
@@ -105,7 +102,8 @@ Models for the face and vertex concepts are provided as well.
 - `CGAL::Periodic_4_hyperbolic_triangulation_ds_face_base_2`
 - `CGAL::Periodic_4_hyperbolic_triangulation_ds_vertex_base_2`
 
-Finally, the class provides a model for the concept `HyperbolicOctagonTranslation`.
+Finally, the package provides a class to represent hyperbolic translations of the fundamental group \f$\mathcal G\f$ 
+of the Bolza surface.
 - `CGAL::Hyperbolic_octagon_translation`
 \cgalModifEnd
 
