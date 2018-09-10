@@ -34,10 +34,8 @@ Consider the regular hyperbolic octagon \f$ \mathcal D_O \f$ centered at the ori
 all angles equal to \f$ \pi/4\f$ that is shown in
 \cgalFigureRef{P4HTriangulationOctagonId} - Left.
 Note that \f$\mathcal D_O\f$ is unique up to rotation, and cannot
-be scaled, since this operation would change its angle sum.
-\cgalModifBegin 
-shouldn't it be more simply: its angles ?
-\cgalModifEnd
+be scaled, since this operation would change its angles.
+
 Now, consider the 
 four hyperbolic translations \f$ a,b,c,d\f$ with their respective inverses \f$\overline{a}, 
 \overline{b}, \overline{c}, \overline{d}\f$ that identify the opposite sides of 
@@ -242,7 +240,7 @@ dummy points necessary to guarantee that the triangulation is a simplicial compl
 \section P4HT2_design Software Design 
 
 \cgalModifBegin 
-  TODO enlever les redondances dans cette section et améliorer la structure [modified]
+  TODO enlever les redondances dans cette section et améliorer la structure [modified, à discuter]
 \cgalModifEnd 
 
 The main class of this package is `Periodic_4_hyperbolic_Delaunay_triangulation_2`, which
@@ -281,35 +279,24 @@ the triangulation. See Section \ref P4HT2_datastructure.
 
 \subsection P4HT2_traits The Geometric Traits Parameter 
 
+\cgalModifBegin
 The geometric traits class must fulfill the requirements described in the concept
 `Periodic_4HyperbolicDelaunayTriangulationTraits_2`. It must provide all necessary objects, 
-predicates, and constructions,
-
-\cgalModifBegin
-TODO corriger la fin de la phrase suite aux discussions 
-"as well as the hyperbolic translations of the group 
-\f$\mathcal G\f$."
+predicates, and constructions for the computation of Delaunay triangulations of the Bolza surface.
+Moreover, the traits class must represent hyperbolic translations of the group \f$\mathcal G\f$
+via the class `Hyperbolic_octagon_translation`.
 \cgalModifEnd
+
 
 A model for the concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2` offered by this
 package is the class `Periodic_4_hyperbolic_Delaunay_triangulation_traits_2`. The class requires 
-two template parameters:
-\cgalModifBegin 
-TODO un seul template est documente - enlever le concept
-translations
-\cgalModifEnd
-
+one template parameter:
 <ul>
-	<li> A `Kernel` with a `number type` that guarantees exact computations on algebraic numbers 
+	<li> A `Kernel` with a field number type `FT` that guarantees exact computations on algebraic numbers 
   with nested square roots. The default value for this parameter is `CGAL::Cartesian<CORE::Expr>`.</li>
-	<li> A model of the concept `HyperbolicOctagonTranslation`. The `number type` of this model must 
-  be the same as the `number type` of the `Kernel`. This template parameter defaults to the class
-  `Hyperbolic_octagon_translation<Kernel::NT>`. </li>
 </ul>
 
-\cgalModifBegin 
-TODO reflechir NT vs FT et assurer la coherence 
-\cgalModifEnd
+
 
 \subsection P4HT2_datastructure The Triangulation Data Structure Parameter 
 
@@ -325,15 +312,12 @@ the face base and vertex base classes must be models of the concepts
 `Periodic_4HyperbolicTriangulationDSFaceBase_2` and
 `Periodic_4HyperbolicTriangulationDSVertexBase_2`, respectively.
 
-The default value for the triangulation data structure parameter in the hyperbolic periodic 
-triangulation classes is 
+The default value for the triangulation data structure parameter in the class 
+`Periodic_4_hyperbolic_Delaunay_triangulation_2` is
 `Triangulation_data_structure_2< Periodic_4_hyperbolic_triangulation_face_base_2<Traits>, Periodic_4_hyperbolic_triangulation_vertex_base_2<Traits> >`, 
 where `Traits` is a model of `Periodic_4HyperbolicDelaunayTriangulationTraits_2`.
-\cgalModifBegin 
-est-ce que c'est vraiment le meme concept de traits pour les deux hyperbolic periodic 
-triangulation classes ? a priori non... ne parler que de la classe
-Delaunay corrigerait le probleme. 
-\cgalModifEnd
+
+
 
 \section P4HT2_examples Example
 
@@ -341,13 +325,10 @@ Most functionalities of periodic hyperbolic triangulations are similar
 to those of Euclidean 2D triangulations. 
 We refer the reader to selected examples of the \ref Chapter_2D_Triangulations "2D Triangulation" package:
 <ul>
-  <li> \ref Subsection_2D_Triangulations_Voronoi
+  <li> \ref Subsection_2D_Triangulations_Voronoi "Voronoi Diagram"
   <li> \ref Triangulation_2AddingColors
 </ul>
-\cgalModifBegin 
-TODO corriger le premier ref pour enlever le mot Example: pour assurer
-la coherence avec le deuxieme ref
-\cgalModifEnd
+
 
 The example below shows the initialization of a periodic hyperbolic 2D Delaunay triangulation,  the
 insertion of random points uniformly distributed in the unit disk for the Euclidean metric, and the
@@ -356,13 +337,7 @@ properties of the triangulation after the insertion. It uses the default paramet
 
 \cgalExample{Periodic_4_hyperbolic_triangulation_2/p4ht2_example_insertion.cpp}
 
-\cgalModifBegin 
-TODO ajouter dans le code 1 ou 2 commentaires bien places qui
-rappellent que les dummy points sont enleves automatiquement (si
-possible) quand on insere un "range" de points mais qu'ils ne le sont
-pas par defaut quand n insere les points un par un.
-Illustrer aussi le booleen qui permet de choisir de les enlever ?
-\cgalModifEnd
+
 
 
 \section P4HT2_Performance Performance
