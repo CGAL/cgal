@@ -178,7 +178,7 @@ g
     `CGAL::wlop_simplify_and_regularize_point_set()`.
 
 
-### Classification 
+### Classification
 
 -   Added data structures to handle classification of Surface Meshes
     and of Clusters.
@@ -233,7 +233,7 @@ g
 -   The function `copy_face_graph()` now uses named parameters, some
     allowing it to use property maps instead of output iterators.
 
--   Addition of the following named parameters : 
+-   Addition of the following named parameters :
     -   vertex_to_vertex_output_iterator
     -   halfedge_to_halfedge_output_iterator
     -   face_to_face_output_iterator
@@ -252,6 +252,23 @@ g
 -   Added a read-write property map to convert on-the-fly geometric
     objects from Cartesian kernels.
 
+### 2D Arrangements
+
+-   Refracted and fixed the `graph_traits` for the dual of an arrangement of the
+    following types:
+    `Arrangement_on_surface_2`,
+    `Arrangement_2`,
+    `Arrangement_on_surface_with_history_2`, and
+    `Arrangement_with_history_2`.
+
+-   **Breaking change**: The old `<CGAL/graph_traits_Dual_Arrangement_2.h>`
+    header file has been replaced by the four header files below; each defines
+    the `graph_traits` for dual of the corresponding arrangement type.
+    `<CGAL/graph_traits_dual_arrangement_on_surface_2.h>`,
+    `<CGAL/graph_traits_dual_arrangement_2.h>`,
+    `<CGAL/graph_traits_dual_arrangement_on_surface_with_history_2.h>`, and
+    `<CGAL/graph_traits_dual_arrangement_with_history_2.h`.
+
 
 Release 4.12
 ------------
@@ -265,7 +282,7 @@ Release date: April 2018
     introduced by CMake 2.8.12 and CMake 3.0: instead of setting CMake
     variables, the script now defines imported targets and uses link
     interfaces.
-    
+
     That is mostly backward-compatible with existing usages of CGAL CMake
     scripts. The only non-compatible effect is that the `CMAKE_BUILD_TYPE`
     and compilation flags are no longer copied from the `CGAL_DIR` to the
