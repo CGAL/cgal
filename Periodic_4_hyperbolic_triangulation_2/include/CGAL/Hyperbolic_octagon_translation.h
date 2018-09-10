@@ -36,15 +36,15 @@ class Hyperbolic_octagon_translation {
 public:
 	typedef unsigned short int 	Word_letter;
 
-	enum Generator {
-		A = 0,
-		B_BAR,
-		C,
-		D_BAR,
-		A_BAR,
-		B,
-		C_BAR,
-		D
+	enum Generator: Word_letter {
+		A 		= 0,
+		B_BAR 	= 1,
+		C 		= 2,
+		D_BAR 	= 3,
+		A_BAR 	= 4,
+		B  		= 5,
+		C_BAR 	= 6,
+		D 		= 7
 	};
 
 private:
@@ -58,24 +58,33 @@ private:
 	static std::map<std::string, Matrix> 	gmap;
 
 	static std::map<std::string, Matrix> 	init_gmap() {
-		typedef typename std::pair<FT,FT> 						Complex;
-		typedef typename std::pair<Complex,Complex> 			Coefficient;
-		std::vector<Coefficient> mcf;
 
-		get_generator_coefficients(mcf);
+		// Create matrix coefficients
+		FT sq2 = CGAL::sqrt(FT(2));
+		FT xi  = FT(1) + sq2;
+		FT rxi = CGAL::sqrt(xi);
 
+		// All matrices have the same _alpha
+		ECplx alpha(xi,FT(0));			
 
-		std::map<std::string, Matrix> m;
-		vector<Matrix> g;
-		for (int i = 0; i < mcf.size(); i++) {
-			Complex a = mcf[i].first;
-			Complex b = mcf[i].second;
-			ECplx alpha(a.first, a.second);
-			ECplx beta(b.first, b.second);
-			g.push_back( Matrix(alpha, beta) );
+		// This vector holds the different _betas
+		std::vector< ECplx > beta;
+
+		beta.push_back( ECplx( sq2 * rxi, 	 0 			) );
+		beta.push_back( ECplx( rxi, 		 rxi 		) );
+		beta.push_back( ECplx( 0, 			 sq2 * rxi 	) );
+		beta.push_back( ECplx( -rxi, 		 rxi 		) );
+		beta.push_back( ECplx( -sq2 * rxi, 	 0 			) );
+		beta.push_back( ECplx( -rxi, 		-rxi 		) );
+		beta.push_back( ECplx( 0, 			-sq2 * rxi 	) );
+		beta.push_back( ECplx( rxi, 		-rxi 		) );
+
+		std::vector<Matrix> g;
+		for (int i = 0; i < 8; i++) {
+			g.push_back(Matrix(alpha, beta[i]));
 		}
-  		
-
+		
+		std::map<std::string, Matrix> m;
   		m["_"] 		= Matrix();
 
 		m["0527"] 	=  g[A]*g[B]*g[C]*g[D];
@@ -215,8 +224,11 @@ public:
 		return _wrd.to_string();
 	}
 
+	static Self generator(const Word_letter wl) {
+		return Self(wl);
+	}
 	
-	static void get_generators(std::vector<Self>& gens) {
+	static void generators(std::vector<Self>& gens) {
 		gens.push_back(Self(A));
 		gens.push_back(Self(B_BAR));
 		gens.push_back(Self(C));
@@ -225,34 +237,6 @@ public:
 		gens.push_back(Self(B));
 		gens.push_back(Self(C_BAR));
 		gens.push_back(Self(D));
-	}
-
-	static void get_generator_coefficients(std::vector< 	std::pair< 	std::pair<FT,FT>, 
-																		std::pair<FT,FT> > >& gens) {
-		typedef typename std::pair<FT,FT> 						Complex;
-		typedef typename std::pair<Complex,Complex> 			Matrix;
-
-		FT sq2 = CGAL::sqrt(FT(2));
-		FT xi  = FT(1) + sq2;
-		FT rxi = CGAL::sqrt(xi);
-
-		Complex alpha(xi,FT(0));			// all matrices have the same _alpha
-
-		// This vector holds the different _betas
-		std::vector< Complex > beta;
-
-		beta.push_back( Complex( sq2 * rxi, 	 0 			) );
-		beta.push_back( Complex( rxi, 			 rxi 		) );
-		beta.push_back( Complex( 0, 			 sq2 * rxi 	) );
-		beta.push_back( Complex( -rxi, 		 	 rxi 		) );
-		beta.push_back( Complex( -sq2 * rxi, 	 0 			) );
-		beta.push_back( Complex( -rxi, 			-rxi 		) );
-		beta.push_back( Complex( 0, 			-sq2 * rxi 	) );
-		beta.push_back( Complex( rxi, 			-rxi 		) );
-
-		for (int i = 0; i < 8; i++) {
-			gens.push_back(Matrix(alpha, beta[i]));
-		}
 	}
 
 };
