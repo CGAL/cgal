@@ -183,11 +183,11 @@ public:
   bool is_empty() const
   {
     return
-      (m_pos_buffer!=NULL && m_pos_buffer->empty()) &&
-      (m_color_buffer!=NULL || m_color_buffer->empty()) &&
-      (m_flat_normal_buffer!=NULL || m_flat_normal_buffer->empty()) &&
-      (m_gouraud_normal_buffer!=NULL || m_gouraud_normal_buffer->empty()) &&
-      (m_index_buffer!=NULL || m_index_buffer->empty());
+      (m_pos_buffer==NULL || m_pos_buffer->empty()) &&
+      (m_color_buffer==NULL || m_color_buffer->empty()) &&
+      (m_flat_normal_buffer==NULL || m_flat_normal_buffer->empty()) &&
+      (m_gouraud_normal_buffer==NULL || m_gouraud_normal_buffer->empty()) &&
+      (m_index_buffer==NULL || m_index_buffer->empty());
   }
 
   bool has_position() const

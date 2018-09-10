@@ -43,7 +43,6 @@
 #include <CGAL/Buffer_for_vao.h>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 #include <CGAL/Qt/constraint.h>
-#include <CGAL/Qt/manipulatedFrame.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
@@ -219,8 +218,6 @@ public:
 
     for (int i=0; i<NB_VAO_BUFFERS; ++i)
       vao[i].destroy();
-
-    delete frame;
   }
 
   void clear()
@@ -761,13 +758,12 @@ protected:
     {
       camera()->setType(CGAL::qglviewer::Camera::ORTHOGRAPHIC);
       //      Camera Constraint:
-      constraint.setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FORBIDDEN);
+      constraint.setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::AXIS);
       constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
-      constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec((has_zero_x()?1:0),
-                                                                     (has_zero_y()?1:0),
-                                                                     (has_zero_z()?1:0)));
-
-      frame->setConstraint(&constraint);
+      constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec((has_zero_x()?1.:0.),
+                                                                     (has_zero_y()?1.:0.),
+                                                                     (has_zero_z()?1.:0.)));
+      camera()->frame()->setConstraint(&constraint);
     }
   }
 
@@ -812,9 +808,6 @@ protected:
     glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
 
     compile_shaders();
-
-    frame = new qglviewer::ManipulatedFrame;
-    setManipulatedFrame(frame);
       
     CGAL::Bbox_3 bb;
     if (bb==bounding_box()) // Case of "empty" bounding box
@@ -1038,9 +1031,9 @@ private:
   bool m_are_buffers_initialized;
   CGAL::Bbox_3 m_bounding_box;
 
-  qglviewer::ManipulatedFrame *frame;
-  CGAL::qglviewer::LocalConstraint constraint;
-  
+  // CGAL::qglviewer::LocalConstraint constraint;
+  CGAL::qglviewer::WorldConstraint constraint;
+
   // The following enum gives the indices of different elements of arrays vectors.
   enum
   {
