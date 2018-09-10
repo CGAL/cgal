@@ -7,22 +7,12 @@
 
 \cgalRefines Periodic_4HyperbolicTriangulationTraits_2
 
-The concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2` refines the concept 
-`Periodic_4HyperbolicDelaunayTriangulationTraits_2`. It adds a requirement that needs
-to be fulfilled by any class used to instantiate the first template parameter of the class 
+The concept `Periodic_4HyperbolicDelaunayTriangulationTraits_2` adds a requirement 
+to `Periodic_4HyperbolicDelaunayTriangulationTraits_2` that needs to be fulfilled 
+by any class used to instantiate the first template parameter of the class 
 `CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2`. The added requirement is 
 essential for the removal of existing vertices in a Delaunay triangulation of the
 Bolza surface.
-
-\cgalModifBegin
-	The concept requires that two nested types are provided:
-	<ul>
-		<li> A field number type `FT` that must support exact computations with algebraic 
-			 numbers, in particular with nested square roots;
-		<li> A `Hyperbolic_translation` type, which satisfies the requirements described 
-			 in the concept `HyperbolicOctagonTranslation`.
-	</ul>
-\cgalModifEnd
 
 \cgalHasModel CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2
 */
@@ -36,13 +26,15 @@ public:
 	/// \name Computation Types
 	/// @{
 		/*!
+			\cgalModifBegin
 			Type that permits to compute the hyperbolic diameter of a circle.
 			Must provide the function operator
 
-			`double operator()(Circle_2 c),`
+			`double operator()(Hyperbolic_point_2 p1, Hyperbolic_point_2 p2, Hyperbolic_point_2 p3),`
 
 			which returns a floating-point approximation of the hyperbolic diameter
-			of the circle `c`.
+			of the circle defined by the points `p1, p2,` and `p3`.
+			\cgalModifEnd
 		*/
 		typedef unspecified_type 				Compute_approximate_hyperbolic_diameter;
 	/// @}

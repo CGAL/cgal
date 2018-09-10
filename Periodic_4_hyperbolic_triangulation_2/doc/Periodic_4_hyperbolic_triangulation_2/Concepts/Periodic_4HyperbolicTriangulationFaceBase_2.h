@@ -16,9 +16,11 @@ Compare with Section \ref Section_2D_Triangulations_Software_Design of the 2D Tr
 package. The vertices and neighbors are indexed counter-clockwise 0, 1, and 2. Neighbor `i` lies
 opposite to vertex `i`. 
 
-For periodic hyperbolic triangulations, the face base class needs to store three hyperbolic translations, 
-one for each vertex. Applying each translation to the point stored in the corresponding vertex produces 
-the canonical representative of the face in the hyperbolic plane.
+For periodic hyperbolic triangulations, the face base class needs to store three hyperbolic 
+translations, one for each vertex. Applying each translation to the point stored in the 
+corresponding vertex produces the canonical representative of the face in the hyperbolic plane. 
+Hyperbolic translations are represented by a nested type which is provided by the concept 
+`Periodic_4HyperbolicDelaunayTriangulationTraits_2`.
 
 \cgalHasModel CGAL::Periodic_4_hyperbolic_triangulation_face_base_2
 
@@ -32,12 +34,9 @@ class Periodic_4HyperbolicTriangulationFaceBase_2
 public:
 
 	/// \name Types
-	/// @{
-
-		/*!
-			This must be a model of the concept HyperbolicOctagonTranslation.
-		*/
-		typedef undefined_type 						Hyperbolic_translation;
+	/// @{		
+		typedef Periodic_4HyperbolicDelaunayTriangulationTraits_2 		Geometric_traits;
+		typedef Geometric_traits::Hyperbolic_translation 				Hyperbolic_translation;
 	///@}
 
 

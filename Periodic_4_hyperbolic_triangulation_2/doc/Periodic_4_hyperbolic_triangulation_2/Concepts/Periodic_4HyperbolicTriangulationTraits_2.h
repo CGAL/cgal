@@ -7,22 +7,16 @@
 
 \cgalRefines HyperbolicDelaunayTriangulationTraits_2
 
-The concept `Periodic_4HyperbolicTriangulationTraits_2` refines the concept 
-`HyperbolicDelaunayTriangulationTraits_2`. It describes the set of requirements to be 
-fulfilled by any class used to instantiate the first template parameter of the class 
-`CGAL::Periodic_4_hyperbolic_triangulation_2`. In addition to the geometric 
-types and the operations defined on them in `HyperbolicDelaunayTriangulationTraits_2`, 
-it defines the hyperbolic translations that allow to encode the periodicity of the 
-triangulation.
+The concept `Periodic_4HyperbolicTriangulationTraits_2` describes the set of requirements 
+to be fulfilled by any class used to instantiate the first template parameter of the class 
+`CGAL::Periodic_4_hyperbolic_triangulation_2`. In addition to the geometric types and the 
+operations defined on them in `HyperbolicDelaunayTriangulationTraits_2`, it defines the 
+hyperbolic translations that allow to encode the periodicity of the triangulation.
 
 \cgalModifBegin
-	The concept requires that two nested types are provided:
-	<ul>
-		<li> A field number type `FT` that must support exact computations with algebraic 
-			 numbers, in particular with nested square roots;
-		<li> A `Hyperbolic_translation` type, which satisfies the requirements described 
-			 in the concept `HyperbolicOctagonTranslation`.
-	</ul>
+The concept requires that a nested field number type `FT` is provided. The type `FT`  
+must support exact computations with algebraic numbers, in particular with nested 
+square roots.
 \cgalModifEnd
 
 */
@@ -38,17 +32,9 @@ public:
 	/// @{
 
 		/*!
-			\cgalModifBegin
-			Represents a hyperbolic circle, i.e., a circle contained in the unit disk.
-			\cgalModifEnd
-		*/
-		typedef unspecified_type 				Circle_2;
-
-		/*!
 			Represents a hyperbolic translation. 
-			Must be a model of the concept `HyperbolicOctagonTranslation`. 
 		*/
-		typedef unspecified_type 				Hyperbolic_translation;
+		typedef CGAL::Hyperbolic_octagon_translation<FT> 		Hyperbolic_translation;
 	/// @}
 
 
@@ -57,7 +43,7 @@ public:
 		/*!
 			Predicate type. Must provide the function operator
 
-			`Bounded_side operator()(Point_2 p),`
+			`Bounded_side operator()(Hyperbolic_point_2 p),`
 
 			which returns the position of point `p` relative to the half-open
 			regular hyperbolic octagon.
@@ -71,12 +57,12 @@ public:
 		/*!
 			Construction type. Must provide the function operator
 
-			`Point_2 operator() ( const Point_2& pt, const HyperbolicOctagonTranslation& tr ) const,`
+			`Hyperbolic_point_2 operator() ( const Hyperbolic_point_2& pt, const Hyperbolic_translation& tr ) const,`
 
 			which returns the image of the point `pt` under the action of the 
 			hyperbolic translation `tr`.
 		*/
-		typedef unspecified_type		      	Construct_point_2;
+		typedef unspecified_type		      	Construct_hyperbolic_point_2;
 	/// @}
 	
 
@@ -92,8 +78,8 @@ public:
 	/// \name
 	/// The following functions give access to the construction objects:
 	/// @{
-		Construct_point_2 
-		construct_point_2_object() const;
+		Construct_hyperbolic_point_2 
+		construct_hyperbolic_point_2_object() const;
 	/// @}
 
 }; 
