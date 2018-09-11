@@ -34,6 +34,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/circulator.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/unordered.h>
@@ -59,11 +60,25 @@ namespace Polygon_mesh_processing {
 
 namespace internal {
 
+template<typename PolygonMesh, typename VertexOutputIterator>
+VertexOutputIterator border_vertices(const PolygonMesh& pmesh, VertexOutputIterator out)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor     vertex_descriptor;
+
+  BOOST_FOREACH(vertex_descriptor vd, vertices(pmesh))
+    if(is_border(vd, pmesh))
+      *out++ = vd;
+
+  return out;
+}
+
 // Assigns at each vertex the length of its shortest incident edge as 'epsilon' value
-template <typename ToleranceMap,
+template <typename VertexRange,
+          typename ToleranceMap,
           typename PolygonMesh,
           typename SourceNamedParameters>
-void compute_tolerance_at_vertices(ToleranceMap& tol_vm,
+void compute_tolerance_at_vertices(const VertexRange& vrange,
+                                   ToleranceMap& tol_vm,
                                    PolygonMesh& smesh,
                                    const SourceNamedParameters& snp)
 {
@@ -71,7 +86,6 @@ void compute_tolerance_at_vertices(ToleranceMap& tol_vm,
   using boost::choose_param;
 
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor                vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor              halfedge_descriptor;
 
   typedef typename GetVertexPointMap<PolygonMesh, SourceNamedParameters>::type        SVPM;
   typedef typename GetGeomTraits<PolygonMesh, SourceNamedParameters>::type            GT;
@@ -82,14 +96,8 @@ void compute_tolerance_at_vertices(ToleranceMap& tol_vm,
   SVPM svpm = choose_param(get_param(snp, internal_np::vertex_point),
                            get_property_map(vertex_point, smesh));
 
-  std::vector<halfedge_descriptor> border_vertices;
-  border_halfedges(smesh, std::back_inserter(border_vertices));
-
-  BOOST_FOREACH(halfedge_descriptor hd, border_vertices)
+  BOOST_FOREACH(vertex_descriptor vd, vrange)
   {
-    CGAL_assertion(CGAL::is_border(hd, smesh));
-    vertex_descriptor vd = target(hd, smesh);
-
     CGAL::Halfedge_around_target_iterator<PolygonMesh> hit, hend;
     boost::tie(hit, hend) = CGAL::halfedges_around_target(vd, smesh);
     CGAL_assertion(hit != hend);
@@ -160,7 +168,7 @@ struct Vertex_proximity_report
       if(vb2 != vb)
       {
         typename CGAL::cpp11::unordered_map<vertex_descriptor, FT>::iterator dist_it =
-          m_sq_distance_to_snapped_point.find(va);
+            m_sq_distance_to_snapped_point.find(va);
         CGAL_assertion(dist_it != m_sq_distance_to_snapped_point.end());
 
         const FT sq_dist_to_prev_best = dist_it->second;
@@ -192,19 +200,30 @@ private:
 
 // \ingroup PMP_repairing_grp
 //
-// Attempts to snap the border vertices of the source mesh onto the target mesh.
-// A border vertex of the source mesh is snapped to a vertex of the target mesh
+// Attempts to snap the vertices in `source_vrange` onto the vertices in `target_vrange`.
+// A vertex of the source range is only snapped to a vertex of the target mesh
 // if its distance to the target mesh vertex is smaller than a user-chosen bound.
-// If any source target vertex can be projected onto multiple vertices of the target
-// mesh, the snapping process is aborted and no vertex is snapped.
+// If any source vertex can be snapped onto multiple vertices of the target
+// range, the closest one is chosen.
+// If multiple vertices within the source range are to be snapped to the same target vertex,
+// then the snapping is not performed for these vertices.
 //
 // @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+// @tparam VertexRange a model of `Range` with value type `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+// @tparam ToleranceMap a model of `ReadablePropertyMap` with key type `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+//                      and value type `GetGeomTraits<PolygonMesh, SourceNamedParameters>::type::FT`
 // @tparam SourceNamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 // @tparam TargetNamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 //
-// @param smesh the source mesh whose border vertices might be moved.
-// @param tmesh the target mesh whose vertices are taken as potential new position for the border
-//              vertices of the source mesh.
+// @param source_vrange a range of vertices of the source mesh whose positions can be changed.
+//                      the vertices must be border vertices of `smesh`.
+// @param smesh the source mesh whose border vertices might be moved
+// @param target_vrange a range of vertices of the target mesh which are potential new positions
+//                      for the vertices in the source range
+// @param tmesh the target mesh to which the vertices in `target_vrange` belong
+// @param tol_vm a tolerance map associating to each vertex of the source range a tolerance radius:
+//               potential projection targets are sought in a box centered on that vertex, and whose
+//               side has length twice the tolerance
 // @param snp optional \ref pmp_namedparameters "Named Parameters" related to the source mesh,
 //            amongst those described below:
 //
@@ -237,21 +256,30 @@ private:
 //    \cgalParamEnd
 // \cgalNamedParamsEnd
 //
-// \return the number of snapped vertices
+// @pre if `smesh` and `tmesh` are the same mesh, the ranges must be disjoint
 //
-template <typename PolygonMesh, typename ToleranceMap,
+// @return the number of snapped vertices
+//
+template <typename PolygonMesh,
+          typename SourceVertexRange, typename TargetVertexRange,
+          typename ToleranceMap,
           typename SourceNamedParameters, typename TargetNamedParameters>
-std::size_t snap_border(PolygonMesh& smesh,
-                        const PolygonMesh& tmesh,
-                        const ToleranceMap& tol_vm,
-                        const SourceNamedParameters& snp,
-                        const TargetNamedParameters& tnp)
+std::size_t snap_vertex_range_onto_vertex_range(const SourceVertexRange& source_vrange,
+                                                PolygonMesh& smesh,
+                                                const TargetVertexRange& target_vrange,
+                                                const PolygonMesh& tmesh,
+                                                const ToleranceMap& tol_vm,
+                                                const SourceNamedParameters& snp,
+                                                const TargetNamedParameters& tnp)
 {
   using boost::get_param;
   using boost::choose_param;
 
+  if(is_empty_range(source_vrange.begin(), source_vrange.end()) ||
+     is_empty_range(target_vrange.begin(), target_vrange.end()))
+    return 0;
+
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor    halfedge_descriptor;
 
   typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, vertex_descriptor>     Box;
 
@@ -272,15 +300,10 @@ std::size_t snap_border(PolygonMesh& smesh,
   TVPM tvpm = choose_param(get_param(tnp, internal_np::vertex_point),
                            get_const_property_map(vertex_point, tmesh));
 
-  // Extract border vertices
-  std::vector<halfedge_descriptor> border_vertices;
-  border_halfedges(smesh, std::back_inserter(border_vertices));
-
   // Try to snap vertices
   std::vector<Box> boxes;
-  BOOST_FOREACH(halfedge_descriptor hd, border_vertices)
+  BOOST_FOREACH(vertex_descriptor vd, source_vrange)
   {
-    vertex_descriptor vd = target(hd, smesh);
     const FT eps = get(tol_vm, vd);
 
     const typename GT::Vector_3 eps_v = gt.construct_vector_3_object()(eps, eps, eps);
@@ -293,7 +316,7 @@ std::size_t snap_border(PolygonMesh& smesh,
   }
 
   std::vector<Box> target_boxes;
-  BOOST_FOREACH(vertex_descriptor vd, vertices(tmesh))
+  BOOST_FOREACH(vertex_descriptor vd, target_vrange)
   {
     const Point& p = get(tvpm, vd);
     target_boxes.push_back(Box(gt.construct_bbox_3_object()(p), vd));
@@ -301,7 +324,7 @@ std::size_t snap_border(PolygonMesh& smesh,
 
   // the correspondence map, multiset of targets because the mapping is not necessarily surjective
   typedef boost::bimap<boost::bimaps::set_of<vertex_descriptor /*source*/>,
-                       boost::bimaps::multiset_of<vertex_descriptor /*target*/> >  Vertex_correspondence_map;
+      boost::bimaps::multiset_of<vertex_descriptor /*target*/> >  Vertex_correspondence_map;
 
   typedef typename Vertex_correspondence_map::right_iterator                       VCM_right_it;
 
@@ -331,7 +354,7 @@ std::size_t snap_border(PolygonMesh& smesh,
     const vertex_descriptor vt = vmc_it->first;
 
     // Check that the next iterator is not also the same target vertex, otherwise that means that
-    // we have multiple source vertices projecting to the same target vertex
+    // we have multiple source vertices snapping to the same target vertex
     // In this case, ignore all those mappings.
 
     if(vmc_it == last)
@@ -371,37 +394,14 @@ std::size_t snap_border(PolygonMesh& smesh,
   return counter;
 }
 
-template <typename PolygonMesh,
+template <typename PolygonMesh, typename SourceVertexRange, typename TargetVertexRange,
           typename SourceNamedParameters, typename TargetNamedParameters>
-std::size_t snap_border(PolygonMesh& smesh,
-                        const PolygonMesh& tmesh,
-                        const double epsilon,
-                        const SourceNamedParameters& snp,
-                        const TargetNamedParameters& tnp)
-{
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
-  typedef typename GetGeomTraits<PolygonMesh>::type::FT                   FT;
-
-  Constant_property_map<vertex_descriptor, FT> constant_tolerance_map(epsilon);
-
-  return snap_border(smesh, tmesh, constant_tolerance_map, snp, tnp);
-}
-
-template <typename PolygonMesh>
-std::size_t snap_border(PolygonMesh& smesh,
-                        const PolygonMesh& tmesh,
-                        const double epsilon)
-{
-  return snap_border(smesh, tmesh, epsilon,
-                     CGAL::parameters::all_default(), CGAL::parameters::all_default());
-}
-
-template <typename PolygonMesh,
-          typename SourceNamedParameters, typename TargetNamedParameters>
-std::size_t snap_border(PolygonMesh& smesh,
-                        const PolygonMesh& tmesh,
-                        const SourceNamedParameters& snp,
-                        const TargetNamedParameters& tnp)
+std::size_t snap_vertex_range_onto_vertex_range(const SourceVertexRange& source_vrange,
+                                                PolygonMesh& smesh,
+                                                const TargetVertexRange& target_vrange,
+                                                const PolygonMesh& tmesh,
+                                                const SourceNamedParameters& snp,
+                                                const TargetNamedParameters& tnp)
 {
   typedef typename GetGeomTraits<PolygonMesh, SourceNamedParameters>::type            GT;
   typedef typename GT::FT                                                             FT;
@@ -409,16 +409,104 @@ std::size_t snap_border(PolygonMesh& smesh,
   typedef typename boost::property_map<PolygonMesh, Vertex_property_tag>::type        Tolerance_map;
 
   Tolerance_map tol_vm = get(Vertex_property_tag(), smesh);
-  compute_tolerance_at_vertices(tol_vm, smesh, snp);
+  compute_tolerance_at_vertices(source_vrange, tol_vm, smesh, snp);
 
-  return snap_border(smesh, tmesh, tol_vm, snp, tnp);
+  return snap_vertex_range_onto_vertex_range(source_vrange, smesh, target_vrange, tmesh, tol_vm, snp, tnp);
+}
+
+template <typename PolygonMesh, typename SourceVertexRange, typename TargetVertexRange, typename ToleranceMap>
+std::size_t snap_vertex_range_onto_vertex_range(const SourceVertexRange& source_vrange,
+                                                PolygonMesh& smesh,
+                                                const TargetVertexRange& target_vrange,
+                                                const PolygonMesh& tmesh,
+                                                const ToleranceMap& tol_vm)
+{
+  return snap_vertex_range_onto_vertex_range(source_vrange, smesh, target_vrange, tmesh, tol_vm,
+                                             CGAL::parameters::all_default(),
+                                             CGAL::parameters::all_default());
+}
+
+template <typename PolygonMesh, typename SourceVertexRange, typename TargetVertexRange>
+std::size_t snap_vertex_range_onto_vertex_range(const SourceVertexRange& source_vrange,
+                                                PolygonMesh& smesh,
+                                                const TargetVertexRange& target_vrange,
+                                                const PolygonMesh& tmesh)
+{
+  return snap_vertex_range_onto_vertex_range(source_vrange, smesh, target_vrange, tmesh,
+                                             CGAL::parameters::all_default(),
+                                             CGAL::parameters::all_default());
 }
 
 template <typename PolygonMesh>
-std::size_t snap_border(PolygonMesh& smesh,
-                        const PolygonMesh& tmesh)
+std::size_t snap_vertex_range_onto_vertex_range(PolygonMesh& smesh, const PolygonMesh& tmesh)
 {
-  return snap_border(smesh, tmesh, CGAL::parameters::all_default(), CGAL::parameters::all_default());
+  return snap_vertex_range_onto_vertex_range(vertices(smesh), smesh, vertices(tmesh), tmesh);
+}
+
+template <typename PolygonMesh, typename VertexRange, typename ToleranceMap>
+std::size_t snap_border_vertices_onto_vertex_range(PolygonMesh& smesh,
+                                                   const VertexRange& target_vrange,
+                                                   const PolygonMesh& tmesh,
+                                                   const ToleranceMap& tol_vm)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
+
+  std::vector<vertex_descriptor> border_vertices_range;
+  border_vertices(smesh, std::back_inserter(border_vertices_range));
+
+  return snap_vertex_range_onto_vertex_range(border_vertices_range, smesh, target_vrange, tmesh, tol_vm);
+}
+
+template <typename PolygonMesh, typename VertexRange>
+std::size_t snap_border_vertices_onto_vertex_range(PolygonMesh& smesh,
+                                                   const VertexRange& target_vrange,
+                                                   const PolygonMesh& tmesh)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
+
+  std::vector<vertex_descriptor> border_vertices_range;
+  border_vertices(smesh, std::back_inserter(border_vertices_range));
+
+  return snap_vertex_range_onto_vertex_range(border_vertices_range, smesh, target_vrange, tmesh);
+}
+
+// \ingroup PMP_repairing_grp
+//
+// Attempts to snap the border vertices of the source mesh onto the vertices of the target mesh.
+//
+// A vertex of the source range is only snapped to a vertex of the target mesh
+// if its distance to the target mesh vertex is smaller than a user-chosen bound.
+// If any source vertex can be snapped onto multiple vertices of the target
+// range, the closest one is chosen.
+// If multiple vertices within the source range are to be snapped to the same target vertex,
+// then the snapping is not performed for these vertices.
+//
+// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+// @tparam ToleranceMap a model of `ReadablePropertyMap` with key type `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+//                      and value type the number type associated with the traits of the mesh.
+//
+// @param smesh the source mesh whose border vertices might be moved
+// @param tmesh the target mesh whose vertices are potential projection targets
+// @param tol_vm a tolerance map associating to each vertex of the source range a tolerance radius:
+//               potential projection targets are sought in a box centered on that vertex, and whose
+//               side has length twice the tolerance
+//
+// @pre `smesh` and `tmesh` are different meshes
+//
+// \return the number of snapped vertices
+//
+template <typename PolygonMesh, typename ToleranceMap>
+std::size_t snap_border_vertices_onto_vertex_range(PolygonMesh& smesh,
+                                                   const PolygonMesh& tmesh,
+                                                   const ToleranceMap& tol_vm)
+{
+  return snap_border_vertices_onto_vertex_range(smesh, vertices(tmesh), tmesh, tol_vm);
+}
+
+template <typename PolygonMesh>
+std::size_t snap_border_vertices_onto_vertex_range(PolygonMesh& smesh, const PolygonMesh& tmesh)
+{
+  return snap_border_vertices_onto_vertex_range(smesh, vertices(tmesh), tmesh);
 }
 
 } // end namespace internal
