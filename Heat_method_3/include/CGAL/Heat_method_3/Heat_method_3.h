@@ -37,6 +37,7 @@
 #include <Eigen/Cholesky>
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>
+#include <CGAL/Eigen_solver_traits.h>
 
 #include <boost/foreach.hpp>
 
@@ -50,36 +51,13 @@ struct Heat_method_3_private_tests;
 namespace CGAL {
 namespace Heat_method_3 {
 
-// This class will later go into another file
-// It encapsulates what we use from Eigen so that one potentially can use another LA library
-struct Heat_method_Eigen_traits_3 {
-  typedef CGAL::Eigen_sparse_matrix<double> SparseMatrix;
-  typedef CGAL::Eigen_vector<double> VectorXd;
-  typedef int Index;
-  
-  typedef Eigen::SimplicialLDLT<SparseMatrix::EigenType> Solver;
-  
-  
-  static void compute(Solver& solver, const SparseMatrix& sm)
-  {
-    solver.compute(sm.eigen_object());
-  }
-  
-  
-  static void solve(Solver& solver,
-                    const SparseMatrix& sm,
-                    VectorXd& b)
-  {
-    b = solver.solve(sm.eigen_object());
-  }
-};
-
-
 
 /**
  * Class `Heat_method_3` is an implementation of the Heat Method by Crane, et al, an algorithm that computes geodesic distance.
  * \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
  * \tparam Traits a model of HeatMethodTraits_3
+ * \tparam LA a model of `SparseLinearAlgebraWithFactorTraits_d`.
+
  * \tparam VertexPointMap a model of `ReadablePropertyMap` with
  *        `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
  *        `Traits::Point_3` as value type.
@@ -89,8 +67,12 @@ struct Heat_method_Eigen_traits_3 {
 template <typename TriangleMesh,
           typename Traits,
           typename VertexDistanceMap,
-          typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type,
-          typename LA = Heat_method_Eigen_traits_3>
+#ifdef CGAL_EIGEN3_ENABLED
+          typename LA = Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::EigenType > >,
+#else
+          typename LA,
+#endif
+          typename VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::const_type>
 class Heat_method_3
 {
 #ifdef CGAL_TESTSUITE
@@ -112,8 +94,8 @@ class Heat_method_3
   // Property map typedefs
   typedef typename boost::property_traits<VertexPointMap>::reference VertexPointMap_reference;
 
-  typedef typename LA::SparseMatrix Matrix;
-  typedef typename LA:: VectorXd VectorXd;
+  typedef typename LA::Matrix Matrix;
+  typedef typename LA::Vector Vector;
   typedef typename LA::Index Index;
 
   // The Vertex_id_map is a property map where you can associate an index to a vertex_descriptor
@@ -328,19 +310,17 @@ private:
   void solve_cotan_laplace()
   {
     Matrix A, A0;
-    scale(A0, m_time_step, m_cotan_matrix);
-    add(A,m_mass_matrix ,A0);
+    A0 = m_time_step * m_cotan_matrix;
+    A = m_mass_matrix + A0;
 
-    LA::Solver solver;
-    LA::compute(solver, A);
-      
-    if(solver.info()!=Eigen::Success) {
+    double d=0;
+    
+    if(! la.factor(A,d)) {
       // decomposition failed
       CGAL_error_msg("Eigen Decomposition in cotan failed");
     }
-    LA::solve(solver, kronecker, solved_u);
-      
-    if(solver.info()!=Eigen::Success) {
+         
+    if(! la.linear_solver(kronecker, solved_u)) {
       // solving failed
       CGAL_error_msg("Eigen Solving in cotan failed");
     }
@@ -449,9 +429,9 @@ private:
 
     
   void
-  value_at_source_set(const VectorXd& phi)
+  value_at_source_set(const Vector& phi)
   {
-    VectorXd source_set_val(dimension);
+    Vector source_set_val(dimension);
     if(sources.empty()) {
       for(int k = 0; k<dimension; k++) {
         source_set_val(k,0) = phi.coeff(0,0);
@@ -485,19 +465,14 @@ private:
   void
   solve_phi()
   {
-    VectorXd phi;
-    LA::Solver solver;
-      
-    LA::compute(solver, m_cotan_matrix);
-      
-    if(solver.info()!=Eigen::Success) {
+    Vector phi;
+    double d = 1;
+    if(! la.factor(m_cotan_matrix, d)) {
       // decomposition failed
       CGAL_error_msg("Eigen Decomposition in phi failed");
     }
       
-    LA::solve(solver, m_index_divergence, phi);
-      
-    if(solver.info()!=Eigen::Success) {
+    if(! la.linear_solver(m_index_divergence, phi)) {
       // solving failed
       CGAL_error_msg("Eigen Solving in phi failed");
     }  
@@ -507,7 +482,7 @@ private:
   
   // this function returns a (number of vertices)x1 vector where
   // the ith index has the distance from the first vertex to the ith vertex
-  const Eigen::VectorXd&
+  const Vector&
   distances() const
   {
     return solved_phi;
@@ -624,6 +599,7 @@ private:
     solve_phi();
   }
 
+  LA la;
   int dimension;
   V2V<TriangleMesh> v2v;
   const TriangleMesh& tm;
@@ -633,10 +609,10 @@ private:
   double m_time_step;
   Matrix kronecker;
   Matrix m_mass_matrix, m_cotan_matrix;
-  VectorXd solved_u;
+  Vector solved_u;
   std::vector<Vector_3> X;
   Matrix m_index_divergence;
-  Eigen::VectorXd solved_phi;
+  Vector solved_phi;
   std::set<Index> source_index;
   bool source_change_flag;
 };

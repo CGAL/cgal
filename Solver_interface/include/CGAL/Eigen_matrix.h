@@ -277,11 +277,25 @@ public:
     return m_matrix;
   }
   
-private:
-  /// Eigen_sparse_matrix cannot be copied (yet)
-  Eigen_sparse_matrix(const Eigen_sparse_matrix& rhs);
-  Eigen_sparse_matrix& operator=(const Eigen_sparse_matrix& rhs);
 
+public:
+
+  /// \cond SKIP_IN_MANUAL
+  friend Eigen_sparse_matrix
+  operator*(const T& c, const Eigen_sparse_matrix& M)
+  {
+    return Eigen_sparse_matrix(c* M.eigen_object());
+  }
+  
+  
+  friend Eigen_sparse_matrix
+  operator+(const Eigen_sparse_matrix& M0, const Eigen_sparse_matrix& M1)
+  {
+    return Eigen_sparse_matrix(M0.eigen_object()+ M1.eigen_object());
+  }
+  /// \endcond
+
+  
   // Fields
 private:
   mutable bool m_is_already_built;
@@ -295,23 +309,6 @@ private:
   bool m_is_symmetric;
 }; // Eigen_sparse_matrix
 
-  
-  template <typename T>
-  void
-  scale(Eigen_sparse_matrix<T>& result, T c, const Eigen_sparse_matrix<T>& M)
-  {
-    Eigen_sparse_matrix<T> Res(c* M.eigen_object());
-    result.swap(Res);
-  }
-
-  
-  template <typename T>
-  void
-  add(Eigen_sparse_matrix<T>& result, const Eigen_sparse_matrix<T>& M0, const Eigen_sparse_matrix<T>& M1)
-  {
-    Eigen_sparse_matrix<T> Res(M0.eigen_object()+ M1.eigen_object());
-    result.swap(Res);
-  }
   
 /*!
 \ingroup PkgSolver

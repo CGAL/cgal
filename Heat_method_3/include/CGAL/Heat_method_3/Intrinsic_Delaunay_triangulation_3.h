@@ -183,11 +183,14 @@ public:
   }
 
 
+public:
+  
   const HalfedgeCoordinateMap&
   hcmap() const
   {
     return hcm;
   }
+
 
   
   const Vertex_distance_map
@@ -196,6 +199,7 @@ public:
     return vdm;
   }
 
+private:
 
   double
   get_cotan_weight(edge_descriptor ed)
@@ -326,7 +330,6 @@ public:
     std::cout<< a << " edges were flipped: " << std::endl;
   }
   
-private:
 
   void
   build()

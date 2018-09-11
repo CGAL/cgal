@@ -6,30 +6,63 @@ namespace CGAL {
 \cgalAutoToc
 \author Keenan Crane, Christina Vaz, Andreas Fabri
 
-This package provides the algorithm behind the Heat Method
-\cgalCite{cgal:cww-ghnac-13} and the algorithm behind Intrinsic
-Delaunay Triangulation \cgalCite{cgal:fsbs-acidt-06}.
-
-The Heat Method is an algorithm that solves the multiple-source
-shortest path problem by returning the distance from the points in the
-domain to the closest point in the source set.  This algorithm
-computes this by first determining the direction along which distance
-increases and finishes by recovering the actual distance.  The Heat
+The <em>Heat Method</em> is an algorithm that solves the multiple-source
+shortest path problem by returning the geodesic distance from the points in the
+domain to the closest point in the source set.  The Heat
 Method is more efficient and more robust than previous distance
 computations, as the algorithm boils down to two standard, numerical
 linear algebra problems.
 
-In Section \ref sec_HM_definitions we give some definitions. In
+
+
+In Section \ref sec_HM_definitions we present the mathematical background. In
 Section \ref sec_HM_history we explain the design of the algorithm and
 traits.
 
 Note that this package requires the third party \ref thirdpartyEigen library.
 This implementation is based on \cgalCite{cgal:cww-ghnac-13} and \cgalCite{cgal:fsbs-acidt-06}
 
-\section sec_HM_definitions Definitions
 
-Section \ref Subsection_HM_Definitions_Intro gives an overview of the theory needed by the heat method. The Section
-\ref Subsection_HM_IDT_Definitions gives the background needed for the Intrinsic Delaunay Triangulation.
+The Heat Method nees
+
+
+
+\section sec_HM_examples Examples
+
+We give examples for the free function, for the `Heat_method_3` class and
+for the  `Intrinsic_Delaunay_triangulation_3`class. 
+
+\subsection HM_example_Free_function Using a Free Function
+
+The first example calls a free function that computes the distance to a single source vertex.
+The distances are written into a `std::map`.
+
+\cgalExample{Heat_method_3/heat_method.cpp}
+
+\subsection HM_example_Class Using the Heat Method Class
+
+The following example shows the heat method class. It can be used
+when one adds and removes source vertices. It precomputes matrices
+which depend only on the mesh and not the set of source vertices
+only once.
+
+\cgalExample{Heat_method_3/heat_method_surface_mesh.cpp}
+
+
+\subsection HM_example_Intrinsic Using the Intrinsic Delaunay Triangulation
+
+The following example shows the heat method on a triangle mesh using
+the intrinsic Delaunay triangulation algorithm. This should be done when the
+triangles are very .....................
+
+\cgalExample{Heat_method_3/heat_method_surface_mesh_intrinsic.cpp}
+
+
+
+\section sec_HM_definitions Theoretical Background
+
+Section \ref Subsection_HM_Definitions_Intro gives an overview of the theory needed by the heat method.
+Section \ref Subsection_HM_IDT_Definitions gives the background needed for the Intrinsic Delaunay Triangulation.
 
 \subsection Subsection_HM_Definitions_Intro The Heat Method Algorithm
 
@@ -90,7 +123,7 @@ Thus, solving the symmetric Poisson problem \f$ L_c \phi = b\f$ computes the fin
 
 \subsection Subsection_HM_IDT_Definitions Intrinsic Delaunay Triangulation
 
-The standard discretization of the cotan laplace operator uses the cotangents of the angles in the triangle mesh.
+The standard discretization of the cotan Laplace operator uses the cotangents of the angles in the triangle mesh.
 The intrinsic Delaunay triangulation is used to address extreme angles in the mesh.
     - An edge of a mesh is locally Delaunay if the sum of the cotangents of the opposing angles is greater than or equal to 0. A mesh is Delaunay if all of its edges are locally Delaunay.
 
@@ -154,26 +187,6 @@ The algorithm is as follows:
   \cgalFigureEnd
 
 
-
-
-\section sec_HM_examples Examples
-
-\subsection HM_FirstExample Heat Method
-
-The following example shows the heat method on a triangle mesh. The
-example adds the first vertex into the source set and then uses the
-heat_intensity property map to read the distance values.
-
-\cgalExample{Heat_method_3/heat_method_surface_mesh.cpp}
-
-
-\subsection HM_FirstExample Heat Method with Intrinsic Delaunay Triangulation
-
-The following example shows the heat method on a triangle mesh using
-the intrinsic Delaunay remeshing algorithm first. The distance values
-are then printed using the vertex distance property map.
-
-\cgalExample{Heat_method_3/heat_method_surface_mesh_intrinsic.cpp}
 
 
 \section sec_HM_history Implementation History

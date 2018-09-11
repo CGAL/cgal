@@ -198,6 +198,16 @@ in the matrix by setting `new_coef` to `true`.
 */
 void set_coef(int row, int column, NT value, bool new_coef = false);
 
+
+  /// Multiplication with a scalar.
+  friend Matrix
+  operator*(const NT& c, const Matrix& M);  
+
+  /// Sum of two matrices.
+  friend Matrix
+  operator+(const Matrix& M0, const Matrix& M1);
+
+  
 /// @}
 
 }; /* end Matrix */

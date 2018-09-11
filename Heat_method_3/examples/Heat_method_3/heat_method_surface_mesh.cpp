@@ -6,12 +6,10 @@
 #include <fstream>
 #include <vector>
 #include <iostream>
-#include <string>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
-typedef Kernel::Point_3                                      Point;
-typedef Kernel::Point_2                                      Point_2;
-typedef CGAL::Surface_mesh<Point>                            Surface_mesh;
+typedef Kernel::Point_3                                      Point_3;
+typedef CGAL::Surface_mesh<Point_3>                          Surface_mesh;
 
 typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
 typedef Surface_mesh::Property_map<vertex_descriptor,double> Vertex_distance_map;
@@ -35,9 +33,25 @@ int main(int argc, char* argv[])
   hm.add_source(source);
   hm.update();
 
+  Point_3 sp = sm.point(source);
+  
+  vertex_descriptor far;
+  double sdistance = 0;
+  
   BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
     std::cout << vd << "  is at distance " << get(heat_intensity, vd) << " from " << source << std::endl;
+    if(squared_distance(sp,sm.point(vd)) > sdistance){
+      far = vd;
+      sdistance = squared_distance(sp,sm.point(vd));
+    }
   }
+  hm.add_source(far);
+  hm.update();
+  
 
+  BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
+    std::cout << vd << "  is at distance " << get(heat_intensity, vd) << std::endl;
+  }
+  
   return 0;
 }

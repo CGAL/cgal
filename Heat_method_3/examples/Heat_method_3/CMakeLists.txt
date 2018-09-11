@@ -53,6 +53,6 @@ include_directories( BEFORE include )
 
 include( CGAL_CreateSingleSourceCGALProgram )
 
+create_single_source_cgal_program( "heat_method.cpp" )
 create_single_source_cgal_program( "heat_method_surface_mesh.cpp" )
-create_single_source_cgal_program( "flip.cpp" )
 create_single_source_cgal_program( "heat_method_surface_mesh_intrinsic.cpp" )
