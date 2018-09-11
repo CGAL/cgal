@@ -174,8 +174,9 @@ void Vec::initFromDOMElement(const QDomElement &element) {
   *this = v;
 }
 
+}} // namespace CGAL::qglviewer
+
 CGAL_INLINE_FUNCTION
-std::ostream &operator<<(std::ostream &o, const Vec &v) {
+std::ostream &operator<<(std::ostream &o, const CGAL::qglviewer::Vec &v) {
   return o << v.x << '\t' << v.y << '\t' << v.z;
 }
-}}
