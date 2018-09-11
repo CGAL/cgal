@@ -236,8 +236,6 @@ private:
 //    \cgalParamBegin{geom_traits} a geometric traits class instance.
 //       The traits class must provide the nested types `Point_3` and `Vector_3`,
 //       and the nested functors :
-//         - `Construct_vector_3` to construct a vector from three coordinates,
-//         - `Construct_translated_point_3` to translate a point with a vector
 //         - `Construct_bbox_3` to construct a bounding box of a point,
 //         - `Compute_squared_distance_3` to compute the distance between two points,
 //
@@ -288,7 +286,6 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceVertexRange& source_
   typedef typename boost::property_traits<TVPM>::value_type                           Point;
 
   typedef typename GetGeomTraits<PolygonMesh, SourceNamedParameters>::type            GT;
-  typedef typename GT::FT                                                             FT;
 
   CGAL_static_assertion((boost::is_same<Point, typename GT::Point_3>::value));
 
@@ -304,15 +301,10 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceVertexRange& source_
   std::vector<Box> boxes;
   BOOST_FOREACH(vertex_descriptor vd, source_vrange)
   {
-    const FT eps = get(tol_vm, vd);
-
-    const typename GT::Vector_3 eps_v = gt.construct_vector_3_object()(eps, eps, eps);
-    const typename GT::Vector_3 opp_eps_v = gt.construct_vector_3_object()(-eps, -eps, -eps);
-    const Point& pm = gt.construct_translated_point_3_object()(get(svpm, vd), opp_eps_v);
-    const Point& pM = gt.construct_translated_point_3_object()(get(svpm, vd), eps_v);
-
-    Bbox_3 bbox = gt.construct_bbox_3_object()(pm) + gt.construct_bbox_3_object()(pM);
-    boxes.push_back(Box(bbox, vd));
+    const double eps = CGAL::to_double(get(tol_vm, vd));
+    const Bbox_3 pb = gt.construct_bbox_3_object()(get(svpm, vd));
+    const Bbox_3 b(pb.xmin() - eps, pb.ymin() - eps, pb.zmin() - eps, pb.xmax() + eps, pb.ymax() + eps, pb.zmax() + eps);
+    boxes.push_back(Box(b, vd));
   }
 
   std::vector<Box> target_boxes;
