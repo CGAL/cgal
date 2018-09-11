@@ -139,6 +139,7 @@ public:
   void setAlpha(int alpha) Q_DECL_OVERRIDE;
   QSlider* alphaSlider();
   void computeElements() const Q_DECL_OVERRIDE;
+  void initializeBuffers(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
   void item_is_about_to_be_changed();

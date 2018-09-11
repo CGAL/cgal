@@ -149,6 +149,7 @@ MainWindow::MainWindow(bool verbose, QWidget* parent)
   // Save some pointers from ui, for latter use.
   sceneView = ui->sceneView;
   viewer = new Viewer(ui->mdiArea);
+  CGAL::Three::Three::s_mainviewer = viewer;
   viewer_window = ui->mdiArea->addSubWindow(viewer);
   viewer_window->setWindowFlags( Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowMaximizeButtonHint);
   viewer_window->showMaximized();

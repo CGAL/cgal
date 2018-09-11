@@ -1,4 +1,5 @@
 #include <CGAL/Three/Edge_container.h>
+#include <CGAL/Three/Three.h>
 
 
 typedef Viewer_interface VI;
@@ -29,63 +30,71 @@ Edge_container::Edge_container(int program, bool indexed)
 void Edge_container::initGL(Viewer_interface *viewer)
 {
   viewer->makeCurrent();
-  if(getVao(viewer))
-    delete getVao(viewer);
-  setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
-  if(isDataIndexed())
+  if(viewer->isSharing())
   {
-    if(!getVbo(Vertices))
-      setVbo(Vertices,
-             new Vbo("vertex",
-                     Vbo::GEOMETRY));
-    if(!getVbo(Indices))
-      setVbo(Indices,
-             new Vbo("indices",
-                     Vbo::GEOMETRY,
-                     QOpenGLBuffer::IndexBuffer));
-    getVao(viewer)->addVbo(getVbo(Vertices));
-    getVao(viewer)->addVbo(getVbo(Indices));
+    if(!getVao(viewer))
+      setVao(viewer, new Vao(getVao(Three::mainViewer()), 
+                             viewer->getShaderProgram(getProgram())));
   }
   else
   {
-    if(!getVbo(Vertices))
-      setVbo(Vertices,
-             new Vbo("vertex",
-                     Vbo::GEOMETRY));
-    if(!getVbo(Colors))
-      setVbo(Colors,
-             new Vbo("colors",
-                     Vbo::COLORS));
-    setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
-    getVao(viewer)->addVbo(getVbo(Vertices));
-    getVao(viewer)->addVbo(getVbo(Colors));
-
-    if(viewer->getShaderProgram(getProgram())->property("hasNormals").toBool())
+    if(!getVao(viewer))
+      setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
+    if(isDataIndexed())
     {
-      if(!getVbo(Normals))
-        setVbo(Normals,
-               new Vbo("normals",
-                       Vbo::NORMALS));
-      getVao(viewer)->addVbo(getVbo(Normals));
-    }
-    if(viewer->getShaderProgram(getProgram())->property("hasRadius").toBool())
-    {
-      if(!getVbo(Radius))
-        setVbo(Radius,
-               new Vbo("radius",
-                       Vbo::GEOMETRY,
-                       QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
-      getVao(viewer)->addVbo(getVbo(Radius));
-    }
-    if(viewer->getShaderProgram(getProgram())->property("hasBarycenter").toBool())
-    {
-      if(!getVbo(Barycenters))
-        setVbo(Barycenters,
-               new Vbo("barycenter",
+      if(!getVbo(Vertices))
+        setVbo(Vertices,
+               new Vbo("vertex",
                        Vbo::GEOMETRY));
-      getVao(viewer)->addVbo(getVbo(Barycenters));
+      if(!getVbo(Indices))
+        setVbo(Indices,
+               new Vbo("indices",
+                       Vbo::GEOMETRY,
+                       QOpenGLBuffer::IndexBuffer));
+      getVao(viewer)->addVbo(getVbo(Vertices));
+      getVao(viewer)->addVbo(getVbo(Indices));
     }
-
+    else
+    {
+      if(!getVbo(Vertices))
+        setVbo(Vertices,
+               new Vbo("vertex",
+                       Vbo::GEOMETRY));
+      if(!getVbo(Colors))
+        setVbo(Colors,
+               new Vbo("colors",
+                       Vbo::COLORS));
+      setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
+      getVao(viewer)->addVbo(getVbo(Vertices));
+      getVao(viewer)->addVbo(getVbo(Colors));
+      
+      if(viewer->getShaderProgram(getProgram())->property("hasNormals").toBool())
+      {
+        if(!getVbo(Normals))
+          setVbo(Normals,
+                 new Vbo("normals",
+                         Vbo::NORMALS));
+        getVao(viewer)->addVbo(getVbo(Normals));
+      }
+      if(viewer->getShaderProgram(getProgram())->property("hasRadius").toBool())
+      {
+        if(!getVbo(Radius))
+          setVbo(Radius,
+                 new Vbo("radius",
+                         Vbo::GEOMETRY,
+                         QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
+        getVao(viewer)->addVbo(getVbo(Radius));
+      }
+      if(viewer->getShaderProgram(getProgram())->property("hasBarycenter").toBool())
+      {
+        if(!getVbo(Barycenters))
+          setVbo(Barycenters,
+                 new Vbo("barycenter",
+                         Vbo::GEOMETRY));
+        getVao(viewer)->addVbo(getVbo(Barycenters));
+      }
+      
+    }
   }
   setGLInit(viewer, true);
 }

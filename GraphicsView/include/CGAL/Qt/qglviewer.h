@@ -126,6 +126,11 @@ public:
   implemented in the future. */
   bool cameraIsEdited() const { return cameraIsEdited_; }
   
+  /*!
+   * \brief isSharing returns true if the viewer was created from an existing one, 
+   * and therefore is sharing its context with it.
+   */
+  bool isSharing() const;
 public Q_SLOTS:
   /*! Sets the state of axisIsDrawn(). Emits the axisIsDrawnChanged() signal.
    * See also toggleAxisIsDrawn(). */

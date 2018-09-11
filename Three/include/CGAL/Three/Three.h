@@ -28,6 +28,7 @@
 #include <QObject>
 #include <QDockWidget>
 #include <CGAL/Three/Scene_interface.h>
+#include <CGAL/Three/Viewer_interface.h>
 #include <QMainWindow>
 
 #ifdef three_EXPORTS
@@ -45,6 +46,7 @@ public:
   Three();
   virtual ~Three(){}
   static QMainWindow* mainWindow();
+  static Viewer_interface* mainViewer();
   static Scene_interface* scene();
   static QObject* connectableScene();
   static Three* messages();
@@ -76,6 +78,7 @@ public:
   static void autoConnectActions(CGAL::Three::Polyhedron_demo_plugin_interface* plugin);
 protected:
   static QMainWindow* s_mainwindow;
+  static Viewer_interface* s_mainviewer;
   static Scene_interface* s_scene;
   static QObject* s_connectable_scene;
   static Three* s_three;

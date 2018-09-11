@@ -55,6 +55,26 @@ struct Vao{
   {
     vao->create();
   }
+  
+  //!
+  //! \brief Creates a `Vao` from another one.
+  //! \param program the `QOpenGLShaderProgram` corresponding to the one of `vao` but from 
+  //! the right viewer.
+  //! \param vao the Vao to copy. 
+  //! 
+  //! All `vao`'s vbos will be shared. Use it for shared viewers. 
+  //! `initializeBuffers()` will have to be called again.
+  //! 
+  //! \attention This must be called within a valid OpenGLContext.
+  //! Most of the time, initGL() functions are safe places to do so.
+  //!
+  Vao( Vao* vao, QOpenGLShaderProgram* program)
+    :vao(new QOpenGLVertexArrayObject()),
+      program(program)
+  {
+    this->vao->create();
+    vbos = vao->vbos;
+  }
 
   ~Vao()
   {

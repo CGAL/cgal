@@ -1,5 +1,6 @@
 #include <CGAL/Three/Triangle_container.h>
 #include <QOpenGLFramebufferObject>
+#include <CGAL/Three/Three.h>
 
 typedef Viewer_interface VI;
 using namespace CGAL::Three;
@@ -29,78 +30,87 @@ Triangle_container::Triangle_container(int program, bool indexed)
 void Triangle_container::initGL( Viewer_interface* viewer)
 {
   viewer->makeCurrent();
-  if(!getVao(viewer))
-    setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
-  if(isDataIndexed())
+  if(viewer->isSharing())
   {
-    if(!getVbo(Smooth_vertices))
-      setVbo(Smooth_vertices,
-             new Vbo("vertex", Vbo::GEOMETRY));
-    if(!getVbo(Vertex_indices))
-      setVbo(Vertex_indices,
-             new Vbo("indices",
-                     Vbo::GEOMETRY,
-                     QOpenGLBuffer::IndexBuffer));
-    getVao(viewer)->addVbo(getVbo(Smooth_vertices));
-    getVao(viewer)->addVbo(getVbo(Vertex_indices));
-
-    if(viewer->getShaderProgram(getProgram())->property("hasNormals").toBool())
-    {
-      if(!getVbo(Smooth_normals))
-        setVbo(Smooth_normals,
-               new Vbo("normals",
-                       Vbo::NORMALS));
-      getVao(viewer)->addVbo(getVbo(Smooth_normals));
-    }
-    if(!getVbo(VColors))
-      setVbo(VColors,
-             new Vbo("colors",
-                     Vbo::COLORS,
-                     QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 4));
-    getVao(viewer)->addVbo(getVbo(VColors));
+    if(!getVao(viewer))
+      setVao(viewer, new Vao(getVao(Three::mainViewer()), 
+                             viewer->getShaderProgram(getProgram())));
   }
   else
   {
-    if(!getVbo(Flat_vertices))
+    if(!getVao(viewer))
+      setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
+    if(isDataIndexed())
     {
-      setVbo(Flat_vertices,
-             new Vbo("vertex",
-                     Vbo::GEOMETRY));
+      if(!getVbo(Smooth_vertices))
+        setVbo(Smooth_vertices,
+               new Vbo("vertex", Vbo::GEOMETRY));
+      if(!getVbo(Vertex_indices))
+        setVbo(Vertex_indices,
+               new Vbo("indices",
+                       Vbo::GEOMETRY,
+                       QOpenGLBuffer::IndexBuffer));
+      getVao(viewer)->addVbo(getVbo(Smooth_vertices));
+      getVao(viewer)->addVbo(getVbo(Vertex_indices));
+      
+      if(viewer->getShaderProgram(getProgram())->property("hasNormals").toBool())
+      {
+        if(!getVbo(Smooth_normals))
+          setVbo(Smooth_normals,
+                 new Vbo("normals",
+                         Vbo::NORMALS));
+        getVao(viewer)->addVbo(getVbo(Smooth_normals));
+      }
+      if(!getVbo(VColors))
+        setVbo(VColors,
+               new Vbo("colors",
+                       Vbo::COLORS,
+                       QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 4));
+      getVao(viewer)->addVbo(getVbo(VColors));
     }
-    getVao(viewer)->addVbo(getVbo(Flat_vertices));
-    if(viewer->getShaderProgram(getProgram())->property("hasNormals").toBool())
+    else
     {
-    if(!getVbo(Flat_normals))
-      setVbo(Flat_normals,
-             new Vbo("normals",
-                     Vbo::NORMALS));
-    getVao(viewer)->addVbo(getVbo(Flat_normals));
-    }
-    if(!getVbo(FColors))
-      setVbo(FColors,
-             new Vbo("colors",
-                     Vbo::COLORS,
-                     QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 3));
-    getVao(viewer)->addVbo(getVbo(FColors));
-
-    if(viewer->getShaderProgram(getProgram())->property("hasBarycenter").toBool())
-    {
-      if(!getVbo(Facet_barycenters))
-        setVbo(Facet_barycenters,
-               new Vbo("barycenter",
+      if(!getVbo(Flat_vertices))
+      {
+        setVbo(Flat_vertices,
+               new Vbo("vertex",
                        Vbo::GEOMETRY));
-      getVao(viewer)->addVbo(getVbo(Facet_barycenters));
-    }
-
-    if(viewer->getShaderProgram(getProgram())->property("hasRadius").toBool())
-    {
-      if(!getVbo(Radius))
-        setVbo(Radius,
-            new Vbo("radius",
-                    Vbo::GEOMETRY,
-                    QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
-      getVao(viewer)->addVbo(getVbo(Radius));
-
+      }
+      getVao(viewer)->addVbo(getVbo(Flat_vertices));
+      if(viewer->getShaderProgram(getProgram())->property("hasNormals").toBool())
+      {
+        if(!getVbo(Flat_normals))
+          setVbo(Flat_normals,
+                 new Vbo("normals",
+                         Vbo::NORMALS));
+        getVao(viewer)->addVbo(getVbo(Flat_normals));
+      }
+      if(!getVbo(FColors))
+        setVbo(FColors,
+               new Vbo("colors",
+                       Vbo::COLORS,
+                       QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 3));
+      getVao(viewer)->addVbo(getVbo(FColors));
+      
+      if(viewer->getShaderProgram(getProgram())->property("hasBarycenter").toBool())
+      {
+        if(!getVbo(Facet_barycenters))
+          setVbo(Facet_barycenters,
+                 new Vbo("barycenter",
+                         Vbo::GEOMETRY));
+        getVao(viewer)->addVbo(getVbo(Facet_barycenters));
+      }
+      
+      if(viewer->getShaderProgram(getProgram())->property("hasRadius").toBool())
+      {
+        if(!getVbo(Radius))
+          setVbo(Radius,
+                 new Vbo("radius",
+                         Vbo::GEOMETRY,
+                         QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
+        getVao(viewer)->addVbo(getVbo(Radius));
+        
+      }
     }
   }
   setGLInit(viewer, true);
@@ -109,7 +119,7 @@ void Triangle_container::initGL( Viewer_interface* viewer)
 void Triangle_container::draw(Viewer_interface* viewer,
                               bool is_color_uniform)
 {
-QOpenGLFramebufferObject* fbo = viewer->depthPeelingFbo();
+  QOpenGLFramebufferObject* fbo = viewer->depthPeelingFbo();
   bindUniformValues(viewer);
 
   if(isDataIndexed())

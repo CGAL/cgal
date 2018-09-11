@@ -6,6 +6,7 @@
 using namespace CGAL::Three;
 
 QMainWindow* Three::s_mainwindow = NULL;
+Viewer_interface* Three::s_mainviewer = NULL;
 Scene_interface* Three::s_scene = NULL;
 QObject* Three::s_connectable_scene = NULL;
 Three* Three::s_three = NULL;
@@ -15,6 +16,11 @@ RenderingMode Three::s_defaultPSRM;
 QMainWindow* Three::mainWindow()
 {
   return s_mainwindow;
+}
+
+Viewer_interface* Three::mainViewer()
+{
+  return s_mainviewer;
 }
 
 Scene_interface* Three::scene()

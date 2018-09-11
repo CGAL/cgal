@@ -261,7 +261,7 @@ void Scene_item_rendering_helper::removeViewer(Viewer_interface *viewer)
 
 void Scene_item_rendering_helper::newViewer(Viewer_interface *viewer)
 {
-  processData(ALL); //newViewer shouldn't be called when item is locked;
+  viewer->makeCurrent();
   Q_FOREACH(Triangle_container* tc, priv->triangle_containers)
   {
     if(!tc->isGLInit(viewer))
@@ -277,4 +277,6 @@ void Scene_item_rendering_helper::newViewer(Viewer_interface *viewer)
     if(!pc->isGLInit(viewer))
       pc->initGL(viewer);
   }
+  //call function that recomputes vao binding
+  initializeBuffers(viewer);
 }

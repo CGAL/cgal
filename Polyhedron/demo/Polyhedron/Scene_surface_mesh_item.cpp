@@ -717,6 +717,8 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
 
 void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
 {
+  if(viewer->isSharing())
+    int ii=0;
   if(!isInit() && viewer->context()->isValid())
     initGL();
   if (getBuffersFilled() )
@@ -2202,4 +2204,11 @@ void Scene_surface_mesh_item::computeElements()const
 {
   d->compute_elements(ALL);
   setBuffersFilled(true);
+}
+
+void 
+Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
+{
+  const_cast<Scene_surface_mesh_item*>(this)->//temporary, until the drawing pipeline is not const anymore.
+      d->initializeBuffers(viewer);
 }

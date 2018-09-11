@@ -254,6 +254,7 @@ void CGAL::QGLViewer::initializeGL() {
   else
   {
     context()->setFormat(shared_context->format());
+    context()->setShareContext(shared_context);
     context()->create();
     makeCurrent();
   }
@@ -4138,4 +4139,10 @@ void CGAL::QGLViewer::saveSnapshot()
   }
 }
 
+}
+
+CGAL_INLINE_FUNCTION
+bool CGAL::QGLViewer::isSharing() const
+{
+  return is_sharing;
 }
