@@ -324,7 +324,7 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceVertexRange& source_
 
   // the correspondence map, multiset of targets because the mapping is not necessarily surjective
   typedef boost::bimap<boost::bimaps::set_of<vertex_descriptor /*source*/>,
-      boost::bimaps::multiset_of<vertex_descriptor /*target*/> >  Vertex_correspondence_map;
+                       boost::bimaps::multiset_of<vertex_descriptor /*target*/> >  Vertex_correspondence_map;
 
   typedef typename Vertex_correspondence_map::right_iterator                       VCM_right_it;
 
