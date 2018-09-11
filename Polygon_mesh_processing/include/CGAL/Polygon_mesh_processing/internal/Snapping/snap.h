@@ -221,9 +221,9 @@ private:
 // @param target_vrange a range of vertices of the target mesh which are potential new positions
 //                      for the vertices in the source range
 // @param tmesh the target mesh to which the vertices in `target_vrange` belong
-// @param tol_vm a tolerance map associating to each vertex of the source range a tolerance radius:
-//               potential projection targets are sought in a box centered on that vertex, and whose
-//               side has length twice the tolerance
+// @param tol_vm a tolerance map associating to each vertex of the source range a tolerance value:
+//               potential projection targets are sought in a sphere centered at the vertex and
+//               whose radius is the tolerance value.
 // @param snp optional \ref pmp_namedparameters "Named Parameters" related to the source mesh,
 //            amongst those described below:
 //
@@ -487,9 +487,9 @@ std::size_t snap_border_vertices_onto_vertex_range(PolygonMesh& smesh,
 //
 // @param smesh the source mesh whose border vertices might be moved
 // @param tmesh the target mesh whose vertices are potential projection targets
-// @param tol_vm a tolerance map associating to each vertex of the source range a tolerance radius:
-//               potential projection targets are sought in a box centered on that vertex, and whose
-//               side has length twice the tolerance
+// @param tol_vm a tolerance map associating to each vertex of the source range a tolerance value:
+//               potential projection targets are sought in a sphere centered at the vertex and
+//               whose radius is the tolerance value.
 //
 // @pre `smesh` and `tmesh` are different meshes
 //
