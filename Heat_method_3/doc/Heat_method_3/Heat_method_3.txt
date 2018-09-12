@@ -15,7 +15,11 @@ linear algebra problems.
 
 The method works well on triangle meshes with....     For triangle meshes
 that do not fulfill these requirements, applying edge flips to obtain an
-<em>Intrinsic Delaunay Triangulation</em> also gives goos results.
+<em>Intrinsic Delaunay Triangulation</em> also gives good results.
+
+\cgalFigureBegin{landscape_meshes, landscape_meshes.png}
+  Isolines placed on a mesh with and without iDT remeshing.
+\cgalFigureEnd
 
 In the next section we give examples. Section \ref sec_HM_definitions presents
 the mathematical background. The last section is about the \ref sec_HM_history.
@@ -28,13 +32,14 @@ This implementation is based on \cgalCite{cgal:cww-ghnac-13} and \cgalCite{cgal:
 
 \section sec_HM_examples Examples
 
-We give examples for the free function, for the `Heat_method_3::Heat_method_3` class and
-for the  `Heat_method_3::Intrinsic_Delaunay_triangulation_3` class. 
+We give examples for the free function, for the `Heat_method_3::Heat_method_3` class, and
+for the `Heat_method_3::Intrinsic_Delaunay_triangulation_3` class. 
 
 \subsection HM_example_Free_function Using a Free Function
 
-The first example calls a free function that computes the distance to a single source vertex.
-The distances are written into a `std::map`.
+The first example calls a free function that computes the distances to a single source vertex.
+The distances are written into an internal property map of the surface mesh.
+For a `Polyhedron_3` you can use a `std::map` passed to the function `make_assoc_property_map()`, instead.
 
 \cgalExample{Heat_method_3/heat_method.cpp}
 
@@ -43,7 +48,9 @@ The distances are written into a `std::map`.
 The following example shows the heat method class. It can be used
 when one adds and removes source vertices. It precomputes matrices
 which depend only on the mesh and not the set of source vertices
-only once.
+only once.  In the example we compute the distances to one source,
+and then add the farthest vertex as a second source vertex, to compute
+the distances to these two sources. 
 
 \cgalExample{Heat_method_3/heat_method_surface_mesh.cpp}
 

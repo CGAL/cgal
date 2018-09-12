@@ -57,7 +57,10 @@ namespace Heat_method_3 {
 /**
  * \ingroup PkgHeatMethod
  * 
- * Class `Heat_method_3` is an implementation of the Heat Method by Crane, et al, an algorithm that computes geodesic distance.
+ * Class `Heat_method_3` computes geodesic distances for a set of source vertices where sources can be added and removed.
+ * The class performs a preprocessing step that does only depend on the mesh, so that the distance computation takes less
+ * time after changes of the set of sources.
+ *
  * \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
  * \tparam Traits a model of HeatMethodTraits_3
  * \tparam LA a model of `SparseLinearAlgebraWithFactorTraits_d`.

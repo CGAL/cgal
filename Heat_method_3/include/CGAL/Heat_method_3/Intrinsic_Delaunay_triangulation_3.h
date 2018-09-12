@@ -69,7 +69,7 @@ struct IDT_vertex_distance_property_map;
  * \ingroup PkgHeatMethod
  *
  * Class `Intrinsic_Delaunay_triangulation_3` is a remeshing algorithm to improve the approximation of the `Heat_method_3`.
- * It internally makes a copy of a triangle mesh, performs edge flips, and computes 2D vertex coordinates per face
+ * It internally makes a copy of the triangle mesh, performs edge flips, and computes 2D vertex coordinates per face
  * which are stored in the halfedge with the vertex as target. 
  *
  * The BGL API of this class .....
