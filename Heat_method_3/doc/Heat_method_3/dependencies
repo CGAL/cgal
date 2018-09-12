@@ -5,3 +5,5 @@ Algebraic_foundations
 Circulator
 Stream_support
 Surface_mesh
+Solver_interface
+BGL

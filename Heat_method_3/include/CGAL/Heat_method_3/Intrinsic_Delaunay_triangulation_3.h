@@ -66,14 +66,23 @@ struct IDT_vertex_distance_property_map;
 #endif
   
 /**
- * Class `Intrinsic_Delaunay_triangulation_3` is a remeshing algorithm implemented to make the Heat method's approximation better.
- * \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
- * \tparam Traits a model of IntrinsicDelaunayTriangulation_3
+ * \ingroup PkgHeatMethod
+ *
+ * Class `Intrinsic_Delaunay_triangulation_3` is a remeshing algorithm to improve the approximation of the `Heat_method_3`.
+ * It internally makes a copy of a triangle mesh, performs edge flips, and computes 2D vertex coordinates per face
+ * which are stored in the halfedge with the vertex as target. 
+ *
+ * The BGL API of this class .....
+ * 
+ *
+ * \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`
+ * \tparam Traits a model of `HeatMethodTraits_3`
  * \tparam VertexPointMap a model of `ReadablePropertyMap` with
  *        `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
  *        `Traits::Point_3` as value type.
  *        The default is `typename boost::property_map< TriangleMesh, vertex_point_t>::%type`.
  *
+ * \cgalModels `FaceListGraph`
  */
   
 template <typename TriangleMesh,
@@ -113,14 +122,23 @@ class Intrinsic_Delaunay_triangulation_3
   typedef typename boost::property_map<TriangleMesh, Edge_property_tag >::type Edge_id_map;
   typedef typename std::stack<edge_descriptor, std::list<edge_descriptor> > edge_stack;
 
+  
+#ifdef DOXYGEN_RUNNING
+public:
+  /// The property map where the `Heat_method_3` puts distances.
+  /// \warning not the same type as `VertexDistanceMap` 
+  typedef unspecified_type Vertex_distance_map;
+#else
+private:  
   friend struct IDT_vertex_point_property_map<Self>;
   friend struct IDT_vertex_distance_property_map<Self,VertexDistanceMap>;
 
+  
 public: // for the BGL functions below. They should maybe become friend?
 
   typedef IDT_vertex_distance_property_map<Self,VertexDistanceMap> Vertex_distance_map;
 
-  
+
   struct Vertex_descriptor {
     halfedge_descriptor hd;
 
@@ -156,19 +174,21 @@ public: // for the BGL functions below. They should maybe become friend?
       return Vertex_descriptor(halfedge(vd, tm));
     }
   };
-
-public:
+#endif // DOXYGEN_RUNNING
   
+public:
+  /// Constructor
+  /// \param tm the triangle mesh
+  /// \param vdm the vertex distance map where one later can retrieve the vertex distances.
   Intrinsic_Delaunay_triangulation_3(TriangleMesh& tm, VertexDistanceMap vdm)
     : tm(), tmref(tm), vdm(*this,vdm), hcm(get(Halfedge_coordinate_tag(), this->tm))
   {
     build();
   }
 
-  
+#ifndef DOXYGEN_RUNNING  
   typedef TriangleMesh Triangle_mesh;
 
-  
   const Triangle_mesh&
   triangle_mesh() const
   {
@@ -182,16 +202,13 @@ public:
     return tm;
   }
 
-
-public:
-  
   const HalfedgeCoordinateMap&
   hcmap() const
   {
     return hcm;
   }
 
-
+#endif // DOXYGEN_RUNNING
   
   const Vertex_distance_map
   vertex_distance_map() const
@@ -199,6 +216,7 @@ public:
     return vdm;
   }
 
+  
 private:
 
   double
@@ -408,7 +426,11 @@ private:
   std::vector<double> edge_lengths;
   std::vector<int> mark_edges;
 public:
+
+#ifndef DOXYGEN_RUNNING
   boost::unordered_map<vertex_descriptor,vertex_descriptor> v2v, vtov;
+#endif // DOXYGEN_RUNNING
+  
 };
 
 } // namespace Heat_method_3

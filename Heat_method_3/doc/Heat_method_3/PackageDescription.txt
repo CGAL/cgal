@@ -5,14 +5,6 @@
 /// \defgroup PkgHeatMethodConcepts Concepts
 /// \ingroup PkgHeatMethod
 
-/// \defgroup PkgHeatMethodAlgorithmClasses Algorithm Classes
-/// \ingroup PkgHeatMethod
-
-/// \defgroup PkgHeatMethodTraitsClasses Traits Classes
-/// \ingroup PkgHeatMethod
-
-/// \defgroup PkgHeatMethodMiscellaneous Miscellaneous
-/// \ingroup PkgHeatMethod
 
 /*!
 \addtogroup PkgHeatMethod

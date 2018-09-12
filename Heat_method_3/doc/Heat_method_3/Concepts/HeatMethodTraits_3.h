@@ -7,7 +7,7 @@ The concept `HeatMethodTraits_3` describes the types,
 predicates, and constructions required by the traits class parameter of
 `CGAL::Heat_method_3::Heat_method_3`.
 
-\cgalHasModel `CGAL::Heat_method::Heat_method_Eigen_traits_3`.
+\cgalHasModel All the \cgal Kernels
 
 
 */
@@ -19,14 +19,16 @@ public:
 /// \name Types
 /// @{
 
-  /// Mesh type, is required for Heat_method_3
-  typedef unspecified_type Triangle_mesh;
+  /// The 3D point type.
+  typedef unspecified_type Point_3;
+  
+  /// The 3D vector type.
+  typedef unspecified_type Vector_3;
+  
+  /// The 2D point type.
+  typedef unspecified_type Point_2;
 
-  // compute...
-  compute();
 
-  // solve ....
-  solve();
 
 /// @}
 
