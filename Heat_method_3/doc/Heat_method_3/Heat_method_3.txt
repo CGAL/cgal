@@ -6,6 +6,10 @@ namespace CGAL {
 \cgalAutoToc
 \author Keenan Crane, Christina Vaz, Andreas Fabri
 
+\image html octopus.png
+
+\section sec_HM_introduction Introduction
+
 The <em>Heat Method</em> is an algorithm that solves the multiple-source
 shortest path problem by returning the geodesic distance for all vertices
 of a triangle mesh to the closest vertex in a given set of source vertices.
@@ -17,12 +21,12 @@ The method works well on triangle meshes with....     For triangle meshes
 that do not fulfill these requirements, applying edge flips to obtain an
 <em>Intrinsic Delaunay Triangulation</em> also gives good results.
 
-\cgalFigureBegin{landscape_meshes, landscape_meshes.png}
+\cgalFigureBegin{landscape_meshes, landscape.jpg}
   Isolines placed on a mesh with and without iDT remeshing.
 \cgalFigureEnd
 
-In the next section we give examples. Section \ref sec_HM_definitions presents
-the mathematical background. The last section is about the \ref sec_HM_history.
+In the next section we give some examples. Section \ref sec_HM_definitions presents
+the mathematical theory of the Heat method. The last section is about the \ref sec_HM_history.
 
 Note that this package requires the third party \ref thirdpartyEigen library.
 This implementation is based on \cgalCite{cgal:cww-ghnac-13} and \cgalCite{cgal:fsbs-acidt-06}
@@ -37,11 +41,19 @@ for the `Heat_method_3::Intrinsic_Delaunay_triangulation_3` class.
 
 \subsection HM_example_Free_function Using a Free Function
 
-The first example calls a free function that computes the distances to a single source vertex.
+The first example calls the free function `Heat_method_3::geodesic_distances_3()`
+which computes for all vertices of a triangle mesh the distances to a single source vertex.
+
 The distances are written into an internal property map of the surface mesh.
-For a `Polyhedron_3` you can use a `std::map` passed to the function `make_assoc_property_map()`, instead.
 
 \cgalExample{Heat_method_3/heat_method.cpp}
+
+For a `Polyhedron_3` you can either add a data field to the vertex type, or, as shown
+in the following exampole create a `boost::unordered_map` and pass it to the function
+`boost::make_assoc_property_map()` which generates a vertex distance property map.
+
+\cgalExample{Heat_method_3/heat_method_polyhedron.cpp}
+
 
 \subsection HM_example_Class Using the Heat Method Class
 
@@ -55,11 +67,11 @@ the distances to these two sources.
 \cgalExample{Heat_method_3/heat_method_surface_mesh.cpp}
 
 
-\subsection HM_example_Intrinsic Using the Intrinsic Delaunay Triangulation
+\subsection HM_example_Intrinsic Using the Intrinsic Delaunay Triangulation Class
 
 The following example shows the heat method on a triangle mesh using
 the intrinsic Delaunay triangulation algorithm. This should be done when the
-triangles are very .....................
+triangles have small angles or  .....................
 
 \cgalExample{Heat_method_3/heat_method_surface_mesh_intrinsic.cpp}
 
@@ -67,8 +79,8 @@ triangles are very .....................
 
 \section sec_HM_definitions Theoretical Background
 
-Section \ref Subsection_HM_Definitions_Intro gives an overview of the theory needed by the heat method.
-Section \ref Subsection_HM_IDT_Definitions gives the background needed for the Intrinsic Delaunay Triangulation.
+Section \ref Subsection_HM_Definitions_Intro gives an overview of the theory needed by the Heat method.
+Section \ref Subsection_HM_IDT_Definitions gives the background needed for the Intrinsic Delaunay triangulation.
 
 \subsection Subsection_HM_Definitions_Intro The Heat Method Algorithm
 
@@ -177,14 +189,11 @@ The algorithm is as follows:
 
   The new \f$(\tilde K, \tilde L)\f$ are then used in the Heat Method distance computation.
 
+  We already in the beginning gave an example where the intrinsic Delaunay triangulation improves the results.
+  The mesh was obtained by giving elevation to a 2D triangulation, which lead to elongated triangles.
 
-  The following figures demonstrate the difference between the heat method with and without intrinsic Delaunay remeshing.
-  \cgalFigureBegin{landscape_mesh, landscape2withoutidt.png}
-    Isolines placed on a mesh without iDT remeshing
-  \cgalFigureEnd
-  \cgalFigureBegin{landscape_mesh_idt, landscape2withidt.png}
-    Isolines placed on a mesh with iDT remeshing
-  \cgalFigureEnd
+  The situation is similar for any triangle mesh that has faces with very small angles as can be seen in the figures  below.
+
   \cgalFigureBegin{circle_box, red_circle_box_without_idt_bottom.png}
     Isolines placed on a mesh without iDT remeshing
   \cgalFigureEnd

@@ -1,20 +1,19 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Heat_method_3/Heat_method_3.h>
 
 #include <iostream>
 #include <fstream>
-#include <vector>
 #include <iostream>
 
+#include <boost/unordered_map.hpp>
 #include <boost/foreach.hpp>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point_3;
-typedef CGAL::Surface_mesh<Point_3>                          Surface_mesh;
+typedef CGAL::Polyhedron_3<Kernel>                           Surface_mesh;
 
 typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
-typedef Surface_mesh::Property_map<vertex_descriptor,double> Vertex_distance_map;
 
 int main(int argc, char* argv[])
 {
@@ -23,17 +22,18 @@ int main(int argc, char* argv[])
   const char* filename = (argc > 1) ? argv[1] : "./data/bunny.off";
   std::ifstream in(filename);
   in >> sm;
-  //the heat intensity will hold the distance values from the source set
-  Vertex_distance_map heat_intensity = sm.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
+
+  boost::unordered_map<vertex_descriptor, double> heat_intensity;
 
   vertex_descriptor source = *(vertices(sm).first);
   
-  CGAL::Heat_method_3::geodesic_distances_3(sm, heat_intensity,source) ;
+  CGAL::Heat_method_3::geodesic_distances_3(sm,
+                                            boost::make_assoc_property_map(heat_intensity),
+                                            source) ;
 
-  std::cout << "Source vertex " << source << " at: " << sm.point(source) << std::endl;
+  std::cout << "Source vertex at: " << source->point() << std::endl;
   BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
-    std::cout << vd << " ("<< sm.point(vd) << ")"
-              <<  " is at distance " << get(heat_intensity, vd) << std::endl;
+    std::cout << vd->point() << "  is at distance " << heat_intensity[vd] << std::endl;
   }
 
   return 0;

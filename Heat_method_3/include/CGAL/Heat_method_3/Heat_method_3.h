@@ -288,7 +288,7 @@ private:
   {
     //currently just working with a single vertex in source set, add the first one for now
     Index i;
-    Matrix K(num_vertices(tm), 1);
+    Matrix K(static_cast<int>(num_vertices(tm)), 1);
     if(sources.empty()) {
       i = 0;
       K.set_coef(i,0, 1, true);

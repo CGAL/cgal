@@ -4,8 +4,9 @@
 
 #include <iostream>
 #include <fstream>
-#include <vector>
 #include <iostream>
+
+#include <boost/foreach.hpp>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point_3;
@@ -47,7 +48,6 @@ int main(int argc, char* argv[])
   }
   hm.add_source(far);
   hm.update();
-  
 
   BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
     std::cout << vd << "  is at distance " << get(heat_intensity, vd) << std::endl;

@@ -5,9 +5,9 @@
 
 #include <iostream>
 #include <fstream>
-#include <vector>
 #include <iostream>
-#include <string>
+
+#include <boost/foreach.hpp>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point_3;
