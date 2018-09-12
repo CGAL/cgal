@@ -1,4 +1,2 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - The Heat Method"
-INPUT        = ${CMAKE_SOURCE_DIR}/Heat_method_3/doc/Heat_method_3/ \
-               ${CMAKE_SOURCE_DIR}/Heat_method_3/include
