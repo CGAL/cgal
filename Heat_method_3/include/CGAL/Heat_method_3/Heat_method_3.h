@@ -627,7 +627,7 @@ private:
    * @{
    */
 
-/// \relates CGAL::Heat_method_3::Heat_method_3
+/// \sa CGAL::Heat_method_3::Heat_method_3
 /// computes for each vertex  of the triangle mesh `tm` the geodesic distance to a given source vertex. 
 template <typename TriangleMesh, typename VertexDistanceMap>
 void
@@ -646,7 +646,7 @@ geodesic_distances_3(const TriangleMesh& tm,
 }
 
 
-/// \relates CGAL::Heat_method_3::Heat_method_3
+/// \sa CGAL::Heat_method_3::Heat_method_3
 /// computes for each vertex of the triangle mesh `tm` the geodesic distance to a given source vertex. This version computes better results when `tm` has triangles with small angles. 
 template <typename TriangleMesh, typename VertexDistanceMap>
 void
