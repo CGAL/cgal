@@ -130,7 +130,7 @@ void draw(const CGAL::Polygon_with_holes_2<T, C>& ap2,
 #else
   bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
-  
+
   if (!cgal_test_suite)
   {
     int argc=1;
