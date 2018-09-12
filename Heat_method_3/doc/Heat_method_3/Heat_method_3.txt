@@ -36,8 +36,9 @@ This implementation is based on \cgalCite{cgal:cww-ghnac-13} and \cgalCite{cgal:
 
 \section sec_HM_examples Examples
 
-We give examples for the free function, for the `Heat_method_3::Heat_method_3` class, and
-for the `Heat_method_3::Intrinsic_Delaunay_triangulation_3` class. 
+We give examples for the free function `CGAL::Heat_method_3::geodesic_distances_3()`,
+for the class template `CGAL::Heat_method_3::Heat_method_3`, and
+for the class template `CGAL::Heat_method_3::Intrinsic_Delaunay_triangulation_3`. 
 
 \subsection HM_example_Free_function Using a Free Function
 
