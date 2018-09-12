@@ -34,10 +34,12 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/number_utils.h>
+#ifdef CGAL_EIGEN3_ENABLED
 #include <Eigen/Cholesky>
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>
 #include <CGAL/Eigen_solver_traits.h>
+#endif
 
 #include <boost/foreach.hpp>
 
