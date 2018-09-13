@@ -26,7 +26,8 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
-#include <CGAL/Arrangement_on_surface_2.h>
+//#include <CGAL/Arrangement_on_surface_2.h>
+#include <CGAL/Arrangement_2.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
@@ -37,21 +38,22 @@ template <class Arr>
 class SimpleArrangementViewerQt : public Basic_viewer_qt
 {
   typedef Basic_viewer_qt Base;
-  typedef typename Arr::Dart_const_handle Dart_const_handle;
-  typedef typename Arr::Traits Kernel;
-  typedef typename Kernel::Point Point;
-  typedef typename Kernel::Vector Vector;
+  typedef typename Arr::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Arr::Face_const_handle Face_const_handle;
+  typedef typename Arr::Geometry_traits_2 Kernel;
+  typedef typename Kernel::Point_2 Point;
+  typedef typename Kernel::Vector_2 Vector;
   
 public:
   /// Construct the viewer.
-  /// @param alcc the lcc to view
+  /// @param a_a the arrangement to view
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
   ///        usefull for very big object where this time could be long)
-  SimpleLCCViewerQt(QWidget* parent,
-                    const Arr& a_arr,
-                    const char* title="Basic Arrangement Viewer",
-                    bool anofaces=false) :
+  SimpleArrangementViewerQt(QWidget* parent,
+                            const Arr& a_arr,
+                            const char* title="Basic Arrangement Viewer",
+                            bool anofaces=false) :
     // First draw: vertices; edges, faces; multi-color; inverse normal
     Base(parent, title, true, true, true, true, true), 
     arr(a_arr),
@@ -61,78 +63,77 @@ public:
   }
 
 protected:
-  void compute_face(Dart_const_handle dh)
+  void print_ccb (typename Arr::Ccb_halfedge_const_circulator circ)
   {
-    // We fill only closed faces.
-    Dart_const_handle cur=dh;
-    Dart_const_handle min=dh;
+    typename Arr::Ccb_halfedge_const_circulator curr = circ;
+    std::cout << "(" << curr->source()->point() << ")";
     do
     {
-      if (!lcc.is_next_exist(cur)) return; // open face=>not filled
-      if (cur<min) min=cur;
-      cur=lcc.next(cur);
+      Halfedge_const_handle he = curr;
+      /*    std::cout << " [" << he->curve() << "] "
+            << "(" << he->target()->point() << ")";*/
     }
-    while(cur!=dh);
+    while (++curr != circ);
+  }
+  void compute_face(Face_const_handle fh)
+  {
+    if (fh->is_unbounded())
+    { return; }
+
+    // // Print the isolated vertices.
+    // typename Arr_2::Isolated_vertex_const_iterator iv;
+    // for (iv = fh->isolated_vertices_begin();
+    //      iv != fh->isolated_vertices_end(); ++iv)
+    // {
+    //   iv->point();
+    // }
     
-    CGAL::Color c=m_fcolor.run(lcc, dh);
+    CGAL::Random random((unsigned long)(&*fh));
+    CGAL::Color c=get_random_color(random);
+    
     face_begin(c);
 
-    cur=dh;
+    print_ccb (fh->outer_ccb());
+    typename Arr::Hole_const_iterator hi;
+    for (hi=fh->holes_begin(); hi!=fh->holes_end(); ++hi)
+    { print_ccb (*hi); }
+
+    /*    cur=dh;
     do
     {
-      add_point_in_face(lcc.point(cur),
-                        Geom_utils<LCC>::get_vertex_normal(lcc, cur));
+      add_point_in_face(lcc.point(cur));
       cur=lcc.next(cur);
     }
-    while(cur!=dh);
+    while(cur!=dh);*/
 
     face_end();
   }
 
-  void compute_edge(Dart_const_handle dh)
+  /*  void compute_edge(Dart_const_handle dh)
   {
-    Point p1 = lcc.point(dh);
-    Dart_const_handle d2 = lcc.other_extremity(dh);
-    if (d2!=NULL)
-    { add_segment(p1, lcc.point(d2)); }
-  }
-
-  void compute_vertex(Dart_const_handle dh)
-  { add_point(lcc.point(dh)); }
+    add_segment(p1, p2);
+    } */
 
   void compute_elements()
   {
     clear();
-
-    typename LCC::size_type markfaces    = lcc.get_new_mark();
-    typename LCC::size_type markedges    = lcc.get_new_mark();
-    typename LCC::size_type markvertices = lcc.get_new_mark();
-
-    for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
-         itend=lcc.darts().end(); it!=itend; ++it )
+    
+    // Draw the arrangement vertices.
+    typename Arr::Vertex_const_iterator vit;    
+    for (vit=arr.vertices_begin(); vit!=arr.vertices_end(); ++vit)
     {
-      if ( !m_nofaces && !lcc.is_marked(it, markfaces) )
-      {
-        compute_face(it);
-        CGAL::mark_cell<LCC, 2>(lcc, it, markfaces);
-      }
-
-      if ( !lcc.is_marked(it, markedges) )
-      {
-        compute_edge(it);
-        CGAL::mark_cell<LCC, 1>(lcc, it, markedges);
-      }
-
-      if ( !lcc.is_marked(it, markvertices) )
-      {
-        compute_vertex(it);
-        CGAL::mark_cell<LCC, 0>(lcc, it, markvertices);
-      }
+      add_point(vit->point());
     }
 
-    lcc.free_mark(markfaces);
-    lcc.free_mark(markedges);
-    lcc.free_mark(markvertices);
+    // Draw the arrangement edges.
+    typename Arr::Edge_const_iterator eit;
+    for (eit=arr.edges_begin(); eit!=arr.edges_end(); ++eit)
+    { std::cout << "[" << eit->curve() << "]" << std::endl; }
+
+    // Draw the arrangement faces.
+    typename Arr::Face_const_iterator fit;
+    for (fit=arr.faces_begin(); fit!=arr.faces_end(); ++fit)
+    { compute_face(fit); }
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
@@ -157,9 +158,9 @@ protected:
 };
   
 template<class GeomTraits_, class TopTraits_>
-void draw(const Arrangement_on_surface_2<GeomTraits_, TopTraits_>& a_arr,
-          const char* title,
-          bool nofill)
+void draw(const Arrangement_2<GeomTraits_, TopTraits_>& a_arr,
+          const char* title="Basic Arrangement Viewer",
+          bool nofill=false)
 {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
@@ -172,7 +173,7 @@ void draw(const Arrangement_on_surface_2<GeomTraits_, TopTraits_>& a_arr,
     int argc=1;
     const char* argv[2]={"arr_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
-    SimpleArrangementViewerQt<Arrangement_on_surface_2<GeomTraits_, TopTraits_> >
+    SimpleArrangementViewerQt<Arrangement_2<GeomTraits_, TopTraits_> >
       mainwindow(app.activeWindow(), a_arr, title);
     mainwindow.show();
     app.exec();
