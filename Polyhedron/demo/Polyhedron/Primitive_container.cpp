@@ -89,6 +89,7 @@ void Primitive_container::initializeBuffers(CGAL::Three::Viewer_interface* viewe
 
 void Primitive_container::removeViewer(CGAL::Three::Viewer_interface* viewer)
 {
+  setGLInit(viewer, false);
   delete d->VAOs[viewer];
   d->VAOs.remove(viewer);
 }

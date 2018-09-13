@@ -2535,6 +2535,10 @@ void MainWindow::on_actionAdd_Viewer_triggered()
   viewer2->setObjectName("viewer2");
   connect(viewer2, SIGNAL(doneInitGL(CGAL::Three::Viewer_interface*)),
           scene, SLOT(newViewer(CGAL::Three::Viewer_interface*)));
+  connect(viewer2, &Viewer::destroyed,
+          this, [this, viewer2](){
+    scene->removeViewer(viewer2);
+  });
   SubViewer* subviewer = new SubViewer(this, viewer2);
   setupViewer(viewer2, subviewer);
   viewer2->camera()->interpolateToFitScene();
