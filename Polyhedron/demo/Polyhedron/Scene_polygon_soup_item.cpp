@@ -347,10 +347,6 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
         positions_poly.push_back(1.0);
 
 
-        const Point_3& pa = soup->points[pit->at(0)];
-        const Point_3& pb = soup->points[pit->at(1)];
-        const Point_3& pc = soup->points[pit->at(2)];
-
         CGAL::Color color;
         if(!soup->fcolors.empty())
           color = soup->fcolors[polygon_id];
