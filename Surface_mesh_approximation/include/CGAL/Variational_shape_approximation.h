@@ -29,14 +29,14 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/squared_distance_3.h>
-#include <CGAL/Polyhedron_incremental_builder_3.h>
-#include <CGAL/Polyhedron_3.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/array.h>
 
 #include <CGAL/Surface_mesh_approximation/L21_metric_plane_proxy.h>
 #include <CGAL/Default.h>
 #include <CGAL/tags.h>
+
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -84,7 +84,7 @@ enum Seeding_method {
 
 /// \ingroup PkgTSMA
 /// @brief Main class for Variational Shape Approximation algorithm.
-/// It is based on \cgalCite{cgal:cad-vsa-04}. For simple use cases, the function `CGAL::Surface_mesh_approximation::approximate_triangle_mesh()` might be sufficient.
+/// It is based on \cgalCite{cgal:cad-vsa-04}. For simple use cases, the function `CGAL::Surface_mesh_approximation::approximate_mesh()` might be sufficient.
 /// @tparam TriangleMesh a model of `FaceListGraph`
 /// @tparam VertexPointMap a `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and `GeomTraits::Point_3` as value type
 /// @tparam ErrorMetricProxy a model of `ErrorMetricProxy`
@@ -227,39 +227,6 @@ private:
 
     halfedge_descriptor he_head; // Heading halfedge of the boundary cycle.
     std::size_t num_anchors; // Number of anchors on the boundary cycle.
-  };
-
-  // Triangle polyhedron builder.
-  template <typename HDS>
-  class Triangle_polyhedron_builder : public CGAL::Modifier_base<HDS> {
-    const std::vector<Point_3> &vtxs;
-    const std::vector<Indexed_triangle> &tris;
-  public:
-    bool is_manifold;
-    Triangle_polyhedron_builder(const std::vector<Point_3> &vtxs_,
-      const std::vector<Indexed_triangle> &tris_)
-      : vtxs(vtxs_), tris(tris_), is_manifold(true) {}
-
-    void operator()(HDS &hds) {
-      CGAL::Polyhedron_incremental_builder_3<HDS> builder(hds, true);
-      typedef typename HDS::Vertex Vertex;
-      typedef typename Vertex::Point Point;
-      builder.begin_surface(vtxs.size(), tris.size());
-      BOOST_FOREACH(const Point_3 &v, vtxs)
-        builder.add_vertex(Point(v));
-      BOOST_FOREACH(const Indexed_triangle &t, tris) {
-        if (builder.test_facet(t.begin(), t.end())) {
-          builder.begin_facet();
-          builder.add_vertex_to_facet(t[0]);
-          builder.add_vertex_to_facet(t[1]);
-          builder.add_vertex_to_facet(t[2]);
-          builder.end_facet();
-        }
-        else
-          is_manifold = false;
-      }
-      builder.end_surface();
-    }
   };
 
   // member variables
@@ -887,8 +854,7 @@ public:
       this->optimize_anchor_location();
 
     // check manifold-oriented
-    CGAL::Polyhedron_3<Geom_traits> tm_test;
-    return build_polyhedron_surface(tm_test);
+    return Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(m_tris);
   }
   /// @}
 
@@ -2029,26 +1995,6 @@ private:
         CGAL::squared_distance(vpoint_map[vs], vpoint_map[vt]))));
     }
     return sum / num_edges(tm);
-  }
-
-  /*!
-   * @brief uses an incremental builder to build and tests
-   * if the indexed triangle surface is manifold.
-   * @tparam PolyhedronSurface should be `CGAL::Polyhedron_3`
-   * @param[out] poly input polyhedorn mesh
-   * @return `true` if build manifold surface successfully, and `false` otherwise
-   */
-  template <typename PolyhedronSurface>
-  bool build_polyhedron_surface(PolyhedronSurface &poly) {
-    std::vector<Point_3> vtx;
-    BOOST_FOREACH(const Anchor &a, m_anchors)
-      vtx.push_back(a.pos);
-
-    typedef typename PolyhedronSurface::HalfedgeDS HDS;
-    Triangle_polyhedron_builder<HDS> tpbuilder(vtx, m_tris);
-    poly.delegate(tpbuilder);
-
-    return tpbuilder.is_manifold;
   }
 
   /*!
