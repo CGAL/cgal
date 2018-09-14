@@ -239,7 +239,7 @@ the following properties:
 - The vertices of the facets are oriented counterclockwise when seen from outside of the object;
 - Boundary free (but for the convexity value and the approximate convex segmentation computations).
 
-\note The current implementations executes fine on meshes that do not match
+\note The current implementations execute fine on meshes that do not match
 some of these properties but may produce unreliable or meaningless segmentations.
 
 The current implementation of the computation of the SDF and concavity values relies on the \ref PkgAABBTree package.
@@ -280,20 +280,22 @@ When using a `Surface_mesh`, you can use the built-in property mechanism.
 \cgalExample{Surface_mesh_segmentation/extract_segmentation_into_mesh_example.cpp}
 
 \subsection Concavity_value_polyhedron Computation of Concavity Value
+The following example shows how to compute the concavity of a triangle mesh.
+
 \cgalExample{Surface_mesh_segmentation/concavity_value_example.cpp}
 
 \subsubsection Concavity_value_SM Using a Surface_mesh
 The same example as the previous one but uses a `Surface_mesh` datatype.
 \cgalExample{Surface_mesh_segmentation/concavity_value_SM_example.cpp}
 
-\subsection Approx_convex_segmentation_polyhedron Approximate convex segmentation
+\subsection Approx_convex_segmentation_polyhedron Approximate Convex Segmentation
 \cgalExample{Surface_mesh_segmentation/approximate_convex_segmentation_example.cpp}
 
-\subsubsection Approx_convex_segmentation_SM Using built-in properties of a Surface_mesh
+\subsubsection Approx_convex_segmentation_SM Using Built-in Properties of a Surface_mesh
 This example uses the `Surface_mesh` datatype instead of `Polyhedron_3` together with its built-in property mechanism.
 \cgalExample{Surface_mesh_segmentation/approximate_convex_segmentation_SM_example.cpp}
 
-\subsubsection Approx_convex_segmentation_convex_hulls Extracting convex hulls
+\subsubsection Approx_convex_segmentation_convex_hulls Extracting Convex Hulls
 Extends the base example with the computation of convex hull per segment.
 \cgalExample{Surface_mesh_segmentation/approximate_convex_segmentation_convex_hulls_example.cpp}
 

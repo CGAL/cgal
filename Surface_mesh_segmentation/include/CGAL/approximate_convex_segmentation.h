@@ -188,9 +188,9 @@ concavity_values(const TriangleMesh& mesh)
  * \ingroup PkgSurfaceSegmentation
  * @brief computes an approximate convex segmentation of a triangle mesh.
  *
- * This function fills a property map associating a segment-id to each face (in the range [0, `N-1`]).
+ * This function fills a property map associating a segment-id to each face (in the range `[0, N-1])`.
  * `N` is the number of segments computed by the functions (greater are equal to `min_number_of_segments`).
- * The set of faces in the same segment defines an edge-connected patch with concavity value less are equal to 'concavity_threshold'.
+ * The set of faces in the same segment defines an edge-connected patch with concavity value less are equal to `concavity_threshold`.
  *
  * @pre `is_triangle_mesh(mesh)`
  * @pre `faces(mesh).size() >= min_number_of_segments`
