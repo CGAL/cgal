@@ -46,6 +46,6 @@ and provides the list of parameters used in this package.
 \todo add option to smooth frontiers of the partition
 \todo add option to smooth and mutual tessellate frontiers of the partition
 \todo add function in the class interface to optimize, after meshing, the anchor point locations to minimize a user-defined metric (two-sided L1, two-sided L2, Wasserstein distance, etc).
-\todo add simulated annealing and combined operations to reach better minima.  
+\todo add simulated annealing and combined operations to reach better minima.
 
 */

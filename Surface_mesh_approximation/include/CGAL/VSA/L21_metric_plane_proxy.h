@@ -56,7 +56,7 @@ public:
    * @param tm triangle mesh
    * @param vpmap vertex point map
    */
-  L21_metric_plane_proxy(const TriangleMesh &tm, const VertexPointMap &vpmap) 
+  L21_metric_plane_proxy(const TriangleMesh &tm, const VertexPointMap &vpmap)
     : m_fnmap( get(Face_normal_tag(), const_cast<TriangleMesh &>(tm)) )
     , m_famap( get(Face_area_tag(), const_cast<TriangleMesh &>(tm)) )
   {
@@ -64,7 +64,7 @@ public:
     m_scalar_product_functor = traits.compute_scalar_product_3_object();
     m_sum_functor = traits.construct_sum_of_vectors_3_object();
     m_scale_functor = traits.construct_scaled_vector_3_object();
-    
+
     // construct internal facet normal & area map
     BOOST_FOREACH(face_descriptor f, faces(tm)) {
       const halfedge_descriptor he = halfedge(f, tm);
@@ -78,7 +78,7 @@ public:
   /// @}
 
   /*!
-   * @brief computes the L2,1 error from a facet to a proxy. 
+   * @brief computes the L2,1 error from a facet to a proxy.
    * @param tm input triangle mesh
    * @param f face_descriptor of a face
    * @param px proxy

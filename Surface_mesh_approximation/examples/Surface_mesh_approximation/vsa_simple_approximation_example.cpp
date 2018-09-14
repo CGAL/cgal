@@ -10,7 +10,7 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 int main()
 {
-  // read input surface triangle mesh 
+  // read input surface triangle mesh
   Polyhedron input;
   std::ifstream file("data/mask.off");
   file >> input;

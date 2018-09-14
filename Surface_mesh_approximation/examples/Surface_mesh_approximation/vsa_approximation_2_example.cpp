@@ -13,7 +13,7 @@ typedef boost::associative_property_map<Face_index_map> Face_proxy_pmap;
 
 int main()
 {
-  // read input surface triangle mesh 
+  // read input surface triangle mesh
   Polyhedron input;
   std::ifstream file("data/mask.off");
   file >> input;

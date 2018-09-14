@@ -40,7 +40,7 @@ struct Compact_metric_point_proxy
       CGAL::squared_distance(center_pmap[f], px))));
   }
 
-  // template functor to compute a best-fit 
+  // template functor to compute a best-fit
   // proxy from a range of faces
   template <typename FaceRange>
   Proxy fit_proxy(const FaceRange &faces, const Polyhedron &tm) const {

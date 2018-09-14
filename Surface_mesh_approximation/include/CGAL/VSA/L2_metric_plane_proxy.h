@@ -68,7 +68,7 @@ public:
   /// @}
 
   /*!
-   * @brief computes the L21 error from a face to a proxy, 
+   * @brief computes the L21 error from a face to a proxy,
    * using integral (closed-form) computation.
    * @param tm input triangle mesh
    * @param f face_descriptor of a face
@@ -88,12 +88,12 @@ public:
     const FT d1(std::sqrt(CGAL::to_double(sq_d1)));
     const FT d2(std::sqrt(CGAL::to_double(sq_d2)));
 
-    return (sq_d0 + sq_d1 + sq_d2 + 
+    return (sq_d0 + sq_d1 + sq_d2 +
             d0 * d1 + d1 * d2 + d2 * d0) * get(m_famap, f) / FT(6.0);
   }
 
   /*!
-   * @brief fits a proxy from a range of faces, in the L2 sense, with an 
+   * @brief fits a proxy from a range of faces, in the L2 sense, with an
    * integral (closed-form) formulation. The best-fit plane passes
    * through the center of mass and is defined by the two principal
    * components of the integral covariance matrix.
