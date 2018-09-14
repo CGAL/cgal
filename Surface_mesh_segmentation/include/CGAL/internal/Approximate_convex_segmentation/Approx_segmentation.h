@@ -313,12 +313,14 @@ public:
       ++segment_id;
     }
 
+    #ifndef CGAL_NO_ASSERTIONS
     // post check if all faces are assigned to any segment
     BOOST_FOREACH(face_descriptor face, faces(m_mesh))
     {
       CGAL_assertion(get(face_ids, face) >= 0 &&
                      std::size_t(get(face_ids, face)) < num_segments);
     }
+    #endif
 
     return num_segments;
   }
