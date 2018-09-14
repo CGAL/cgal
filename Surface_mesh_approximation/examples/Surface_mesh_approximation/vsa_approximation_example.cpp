@@ -3,7 +3,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Surface_mesh_approximation/approximate_mesh.h>
+#include <CGAL/Surface_mesh_approximation/approximate_triangle_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
@@ -11,6 +11,8 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+
+namespace VSA = CGAL::Surface_mesh_approximation;
 
 int main()
 {
@@ -24,8 +26,8 @@ int main()
   std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles; // triplets of indices
 
   // free function interface with named parameters
-  bool is_manifold = CGAL::Surface_mesh_approximation::approximate_mesh(input,
-    CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::HIERARCHICAL). // hierarchical seeding
+  bool is_manifold = VSA::approximate_triangle_mesh(input,
+    CGAL::parameters::seeding_method(VSA::HIERARCHICAL). // hierarchical seeding
     max_number_of_proxies(200). // seeding with maximum number of proxies
     number_of_iterations(30). // number of clustering iterations after seeding
     anchors(std::back_inserter(anchors)). // anchor vertices

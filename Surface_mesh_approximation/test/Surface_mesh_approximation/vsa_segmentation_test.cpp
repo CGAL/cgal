@@ -3,7 +3,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Surface_mesh_approximation/approximate_mesh.h>
+#include <CGAL/Surface_mesh_approximation/approximate_triangle_mesh.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
@@ -12,7 +12,7 @@ typedef boost::unordered_map<face_descriptor, std::size_t> Face_index_map;
 typedef boost::associative_property_map<Face_index_map> Face_proxy_pmap;
 
 /**
- * This file tests the free function CGAL::Surface_mesh_approximation::approximate_mesh.
+ * This file tests the free function CGAL::Surface_mesh_approximation::approximate_triangle_mesh.
  */
 int main()
 {
@@ -31,7 +31,7 @@ int main()
   std::vector<Kernel::Vector_3> proxies;
 
   // free function interface with named parameters
-  CGAL::Surface_mesh_approximation::approximate_mesh(input,
+  CGAL::Surface_mesh_approximation::approximate_triangle_mesh(input,
     CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::HIERARCHICAL). // hierarchical seeding
     max_number_of_proxies(200). // both maximum number of proxies stop criterion,
     min_error_drop(0.05). // and minimum error drop stop criterion are specified

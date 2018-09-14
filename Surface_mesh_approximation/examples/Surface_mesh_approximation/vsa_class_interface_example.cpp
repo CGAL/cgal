@@ -5,6 +5,8 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Variational_shape_approximation.h>
 
+namespace VSA = CGAL::Surface_mesh_approximation;
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
@@ -34,7 +36,7 @@ int main()
     error_metric);
 
   // seeds 100 random proxies
-  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::RANDOM)
+  approx.initialize_seeds(CGAL::parameters::seeding_method(VSA::RANDOM)
       .max_number_of_proxies(100));
 
   // runs 30 iterations

@@ -3,13 +3,15 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Surface_mesh_approximation/approximate_mesh.h>
+#include <CGAL/Surface_mesh_approximation/approximate_triangle_mesh.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef boost::graph_traits<Polyhedron>::face_descriptor Face_descriptor;
 typedef boost::unordered_map<Face_descriptor, std::size_t> Face_index_map;
 typedef boost::associative_property_map<Face_index_map> Face_proxy_pmap;
+
+namespace VSA = CGAL::Surface_mesh_approximation;
 
 int main()
 {
@@ -26,7 +28,7 @@ int main()
   Face_proxy_pmap fpxmap(fidx_map);
 
   // free function interface with named parameters
-  CGAL::Surface_mesh_approximation::approximate_mesh(input,
+  VSA::approximate_triangle_mesh(input,
   CGAL::parameters::max_number_of_proxies(200). // first stop criterion
     min_error_drop(0.05). // second stop criterion
     number_of_iterations(30). // number of relaxation iterations after seeding

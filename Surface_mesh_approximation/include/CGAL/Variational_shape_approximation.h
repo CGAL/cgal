@@ -84,7 +84,7 @@ enum Seeding_method {
 
 /// \ingroup PkgTSMA
 /// @brief Main class for Variational Shape Approximation algorithm.
-/// It is based on \cgalCite{cgal:cad-vsa-04}. For simple use cases, the function `CGAL::Surface_mesh_approximation::approximate_mesh()` might be sufficient.
+/// It is based on \cgalCite{cgal:cad-vsa-04}. For simple use cases, the function `CGAL::Surface_mesh_approximation::approximate_triangle_mesh()` might be sufficient.
 /// @tparam TriangleMesh a model of `FaceListGraph`
 /// @tparam VertexPointMap a `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and `GeomTraits::Point_3` as value type
 /// @tparam ErrorMetricProxy a model of `ErrorMetricProxy`

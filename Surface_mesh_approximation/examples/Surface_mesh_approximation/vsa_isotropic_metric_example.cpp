@@ -21,6 +21,8 @@ typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_poin
 typedef boost::associative_property_map<std::map<Facet_handle, FT> > Face_area_map;
 typedef boost::associative_property_map<std::map<Facet_handle, Point> > Face_center_map;
 
+namespace VSA = CGAL::Surface_mesh_approximation;
+
 // user-defined "compact" error metric using type Point_3 as proxy
 struct Compact_metric_point_proxy
 {
@@ -100,7 +102,7 @@ int main()
     error_metric);
 
   // approximates via 200 proxies and 30 iterations
-  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::HIERARCHICAL)
+  approx.initialize_seeds(CGAL::parameters::seeding_method(VSA::HIERARCHICAL)
     .max_number_of_proxies(200));
   approx.run(30);
 

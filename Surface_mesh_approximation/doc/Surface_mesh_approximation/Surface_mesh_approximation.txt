@@ -22,7 +22,7 @@ The approximation error is one-sided, defined between the clusters and their ass
 Variational shape approximation on two models with the \f$ \mathcal{L}^{2,1} \f$ error metric and planar proxies. From left to right: partition of the input surface triangle mesh, anchor vertices and edges, and output triangle mesh. The partition is optimized via discrete clustering of the input triangles, so as to minimize the approximation error from the clusters to the planar proxies (not shown).
 \cgalFigureEnd
 
-This package offers both the approximation and mesh construction functionalities, through the free function `CGAL::Surface_mesh_approximation::approximate_mesh()` which runs a fully automated version of the algorithm:
+This package offers both the approximation and mesh construction functionalities, through the free function `CGAL::Surface_mesh_approximation::approximate_triangle_mesh()` which runs a fully automated version of the algorithm:
 \cgalExample{Surface_mesh_approximation/vsa_simple_approximation_example.cpp}
 
 A class interface is also provided for advanced users, in which a series of pliant operators offer interactive capabilities during clustering and customization in terms of error and proxies.
@@ -166,7 +166,7 @@ As there is no guarantee that the output mesh is 2-manifold and oriented, the ma
 This package can be used with any class model of the concept `FaceListGraph` described in \ref PkgBGL "CGAL and the Boost Graph Library".
 
 Free function with \ref vsa_namedparameters options.
-- `CGAL::Surface_mesh_approximation::approximate_mesh()`: given a triangle mesh, approximate the geometry with default \f$ \mathcal{L}^{2,1} \f$ metric.
+- `CGAL::Surface_mesh_approximation::approximate_triangle_mesh()`: given a triangle mesh, approximate the geometry with default \f$ \mathcal{L}^{2,1} \f$ metric.
 
 Class interface:
 - `CGAL::Variational_shape_approximation`: allowing more customization of the proxy, metric and approximation process. As shown in Figure \cgalFigureRef{workflow}, typical calling order of the approximation and meshing process is:
@@ -181,7 +181,7 @@ One thing to note is that some parameters depend heavily on the input, like the 
 
 \subsection sma_example1 Free Function Approximation
 
-The following example calls the free function `CGAL::Surface_mesh_approximation::approximate_mesh()` on the input triangle mesh with default `CGAL::Surface_mesh_approximation::L21_metric_plane_proxy`.
+The following example calls the free function `CGAL::Surface_mesh_approximation::approximate_triangle_mesh()` on the input triangle mesh with default `CGAL::Surface_mesh_approximation::L21_metric_plane_proxy`.
 
 \cgalExample{Surface_mesh_approximation/vsa_approximation_example.cpp}
 
@@ -215,7 +215,7 @@ The following example defines a point-wise proxy to yield an isotropic approxima
 
 \section sma_perf Performances
 
-We provide some performance comparisons with the free function API `CGAL::Surface_mesh_approximation::approximate_mesh`.
+We provide some performance comparisons with the free function API `CGAL::Surface_mesh_approximation::approximate_triangle_mesh`.
 Timings are recorded on a PC running Windows10 X64 with an Intel Xeon E5-1620 clocked at 3.70 GHz with 32GB of RAM.
 The program has been optimized with the O2 option with Visual Studio 2015. By default the kernel used is `Exact_predicates_inexact_constructions_kernel` (`EPICK`).
 

@@ -35,7 +35,7 @@ and provides the list of parameters used in this package.
 - `ErrorMetricProxy`
 
 ## Main Functions ##
-- `CGAL::Surface_mesh_approximation::approximate_mesh()`
+- `CGAL::Surface_mesh_approximation::approximate_triangle_mesh()`
 
 ## Classes ##
 - `CGAL::Surface_mesh_approximation::L21_metric_plane_proxy`

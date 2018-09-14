@@ -3,13 +3,15 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Surface_mesh_approximation/approximate_mesh.h>
+#include <CGAL/Surface_mesh_approximation/approximate_triangle_mesh.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 typedef std::map<face_descriptor, std::size_t> Face_index_map;
 typedef boost::associative_property_map<Face_index_map> Face_proxy_pmap;
+
+namespace VSA = CGAL::Surface_mesh_approximation;
 
 int main()
 {
@@ -32,7 +34,7 @@ int main()
   std::vector<Kernel::Vector_3> proxies;
 
   // free function interface with named parameters
-  CGAL::Surface_mesh_approximation::approximate_mesh(input,
+  VSA::approximate_triangle_mesh(input,
     CGAL::parameters::min_error_drop(0.05). // seeding with minimum error drop
     number_of_iterations(40). // set number of clustering iterations after seeding
     subdivision_ratio(0.3). // set chord subdivision ratio threshold when meshing
