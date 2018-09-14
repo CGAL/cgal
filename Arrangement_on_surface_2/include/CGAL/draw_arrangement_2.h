@@ -22,6 +22,7 @@
 #ifndef CGAL_DRAW_ARRANGEMENT_2_H
 #define CGAL_DRAW_ARRANGEMENT_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -54,8 +55,8 @@ public:
                             const Arr& a_arr,
                             const char* title="Basic Arrangement Viewer",
                             bool anofaces=false) :
-    // First draw: vertices; edges, faces; multi-color; inverse normal
-    Base(parent, title, true, true, true, true, true), 
+    // First draw: vertices; edges, faces; multi-color; no inverse normal
+    Base(parent, title, true, true, true, false, false), 
     arr(a_arr),
     m_nofaces(anofaces)
   {
@@ -91,13 +92,13 @@ protected:
     CGAL::Random random((unsigned long)(&*fh));
     CGAL::Color c=get_random_color(random);
     
-    face_begin(c);
+    /*    face_begin(c);
 
     print_ccb (fh->outer_ccb());
     typename Arr::Hole_const_iterator hi;
     for (hi=fh->holes_begin(); hi!=fh->holes_end(); ++hi)
     { print_ccb (*hi); }
-
+    */
     /*    cur=dh;
     do
     {
@@ -106,7 +107,7 @@ protected:
     }
     while(cur!=dh);*/
 
-    face_end();
+    //face_end();
   }
 
   /*  void compute_edge(Dart_const_handle dh)
@@ -117,12 +118,22 @@ protected:
   void compute_elements()
   {
     clear();
+
+    Exact_predicates_inexact_constructions_kernel::Point_3 p1(1, 0, 1);
+    Exact_predicates_inexact_constructions_kernel::Point_3 p2(2, 0, 2);
+    Exact_predicates_inexact_constructions_kernel::Point_3 p3(3, 0, 3);
+    add_point(p1);
+    add_point(p2);
+    add_point(p3);
+    
+    return;
     
     // Draw the arrangement vertices.
     typename Arr::Vertex_const_iterator vit;    
     for (vit=arr.vertices_begin(); vit!=arr.vertices_end(); ++vit)
     {
       add_point(vit->point());
+      // std::cout<<"Point "<<vit->point()<<std::endl;
     }
 
     // Draw the arrangement edges.
@@ -174,7 +185,7 @@ void draw(const Arrangement_2<GeomTraits_, TopTraits_>& a_arr,
     const char* argv[2]={"arr_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
     SimpleArrangementViewerQt<Arrangement_2<GeomTraits_, TopTraits_> >
-      mainwindow(app.activeWindow(), a_arr, title);
+      mainwindow(app.activeWindow(), a_arr, title, nofill);
     mainwindow.show();
     app.exec();
   }
@@ -182,6 +193,6 @@ void draw(const Arrangement_2<GeomTraits_, TopTraits_>& a_arr,
 
 } // End namespace CGAL
 
-#endif // CGAL_DRAW_ARRANGEMENT_2_H
+#endif // CGAL_USE_BASIC_VIEWER
 
-#endif // CGAL_DRAW_LCC_H
+#endif // CGAL_DRAW_ARRANGEMENT_2_H
