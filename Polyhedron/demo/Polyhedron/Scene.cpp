@@ -1593,7 +1593,6 @@ void Scene::addGroup(Scene_group_item* group)
     connect(this, SIGNAL(drawFinished()), group, SLOT(resetDraw()));
     connect(this, SIGNAL(indexErased(Scene_interface::Item_id)),
                 group, SLOT(adjustIds(Scene_interface::Item_id)));
-    group->setScene(this);
 }
 
 namespace scene { namespace details {

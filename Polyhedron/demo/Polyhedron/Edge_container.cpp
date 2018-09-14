@@ -16,6 +16,9 @@ struct Edge_d{
 
   QVector4D plane;
   QMatrix4x4 f_matrix;
+  GLfloat width;
+  QVector2D viewport;
+  bool is_surface;
 };
 
 Edge_container::Edge_container(int program, bool indexed)
@@ -85,13 +88,13 @@ void Edge_container::initGL(Viewer_interface *viewer)
                          QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
         getVao(viewer)->addVbo(getVbo(Radius));
       }
-      if(viewer->getShaderProgram(getProgram())->property("hasBarycenter").toBool())
+      if(viewer->getShaderProgram(getProgram())->property("hasCenter").toBool())
       {
-        if(!getVbo(Barycenters))
-          setVbo(Barycenters,
-                 new Vbo("barycenter",
+        if(!getVbo(Centers))
+          setVbo(Centers,
+                 new Vbo("Center",
                          Vbo::GEOMETRY));
-        getVao(viewer)->addVbo(getVbo(Barycenters));
+        getVao(viewer)->addVbo(getVbo(Centers));
       }
       
     }
@@ -105,8 +108,8 @@ void Edge_container::initializeBuffers(Viewer_interface *viewer)
   if(viewer->getShaderProgram(getProgram())->property("isInstanced").toBool())
   {
     getVao(viewer)->bind();
-    if(viewer->getShaderProgram(getProgram())->property("hasBarycenter").toBool())
-      viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("barycenter"), 1);
+    if(viewer->getShaderProgram(getProgram())->property("hasCenter").toBool())
+      viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("center"), 1);
     if(viewer->getShaderProgram(getProgram())->property("hasRadius").toBool())
       viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("radius"), 1);
     viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("colors"), 1);
@@ -141,15 +144,25 @@ void Edge_container::draw(Viewer_interface *viewer,
       getVao(viewer)->program->setUniformValue("cutplane", d->plane);
     if(getVao(viewer)->program->property("hasFMatrix").toBool())
       getVao(viewer)->program->setUniformValue("f_matrix", getFrameMatrix());
+    
+    if(getVao(viewer)->program->property("hasViewport").toBool())
+    {
+      getVao(viewer)->program->setUniformValue("viewport", getViewport());
+      getVao(viewer)->program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
+      getVao(viewer)->program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+    }
+    if(getVao(viewer)->program->property("hasWidth").toBool())
+      getVao(viewer)->program->setUniformValue("width", getWidth());
+    
     if(viewer->getShaderProgram(getProgram())->property("isInstanced").toBool())
     {
       viewer->glDrawArraysInstanced(GL_LINES, 0,
-                                    static_cast<GLsizei>(getFlatDataSize()/3),
+                                    static_cast<GLsizei>(getFlatDataSize()/getTupleSize()),
                                     static_cast<GLsizei>(getCenterSize()/3));
     }
     else
     {
-      viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(getFlatDataSize()/3));
+      viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(getFlatDataSize()/getTupleSize()));
     }
     getVao(viewer)->release();
 
@@ -158,6 +171,11 @@ void Edge_container::draw(Viewer_interface *viewer,
 
 QVector4D Edge_container::getPlane() const { return d->plane; }
 QMatrix4x4 Edge_container::getFrameMatrix() const { return d->f_matrix; }
+GLfloat Edge_container::getWidth() const { return d->width; }
+QVector2D Edge_container::getViewport() const { return d->viewport; }
 
 void Edge_container::setPlane(const QVector4D& p) { d->plane = p; }
 void Edge_container::setFrameMatrix(const QMatrix4x4& m) { d->f_matrix = m; }
+void Edge_container::setWidth(const GLfloat & w) { d->width = w; }
+void Edge_container::setViewport(const QVector2D & v) { d-> viewport = v; }
+void Edge_container::setIsSurface  (const bool b) { d->is_surface = b; }

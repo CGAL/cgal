@@ -1084,6 +1084,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     program->setProperty("hasNormals", true);
     program->setProperty("hasCutPlane", true);
     program->setProperty("hasTransparency", true);
+    program->setProperty("hasCenter", true);
     return program;
   }
   case PROGRAM_C3T3_EDGES:
@@ -1176,7 +1177,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_without_light.f");
     program->setProperty("hasLight", true);
     program->setProperty("hasNormals", true);
-    program->setProperty("hasBarycenter", true);
+    program->setProperty("hasCenter", true);
     program->setProperty("isInstanced", true);
     return program;
   }
@@ -1188,7 +1189,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_c3t3.f");
     program->setProperty("hasLight", true);
     program->setProperty("hasNormals", true);
-    program->setProperty("hasBarycenter", true);
+    program->setProperty("hasCenter", true);
     program->setProperty("hasRadius", true);
     program->setProperty("isInstanced", true);
     return program;
@@ -1201,7 +1202,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
                          ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_with_light.f");
     program->setProperty("hasLight", true);
     program->setProperty("hasNormals", true);
-    program->setProperty("hasBarycenter", true);
+    program->setProperty("hasCenter", true);
     program->setProperty("hasRadius", true);
     program->setProperty("hasTransparency", true);
     program->setProperty("isInstanced", true);
@@ -1231,15 +1232,19 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     return program;
   }
   case PROGRAM_SOLID_WIREFRAME:
+  {
     if(!isOpenGL_4_3())
     {
       std::cerr<<"An OpenGL context of version 4.3 is required for the program ("<<name<<")."<<std::endl;
       return 0;
     }
-    return declare_program(name,
-                           ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.v", 
-                           ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.f");
-    break; 
+    QOpenGLShaderProgram* program = declare_program(name,
+                                                    ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.v", 
+                                                    ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.f");
+    program->setProperty("hasViewport", true);
+    program->setProperty("hasWidth", true);
+    return program;
+  }
   default:
     std::cerr<<"ERROR : Program not found."<<std::endl;
     return 0;

@@ -15,6 +15,7 @@ struct Point_d{
 
   QVector4D plane;
   QMatrix4x4 f_matrix;
+  bool is_surface;
 };
 
 Point_container::Point_container(int program, bool indexed)
@@ -105,7 +106,7 @@ void Point_container::draw(Viewer_interface *viewer,
       getVao(viewer)->program->setAttributeValue("colors", getColor());
     if(getVao(viewer)->program->property("hasFMatrix").toBool())
       getVao(viewer)->program->setUniformValue("f_matrix", getFrameMatrix());
-    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(getFlatDataSize()/3));
+    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(getFlatDataSize()/getTupleSize()));
     getVao(viewer)->release();
 
   }
@@ -115,3 +116,5 @@ QVector4D Point_container::getPlane() const { return d->plane; }
 QMatrix4x4 Point_container::getFrameMatrix() const { return d->f_matrix; }
 
 void Point_container::setFrameMatrix(const QMatrix4x4& m) { d->f_matrix = m; }
+void Point_container::setPlane(const QVector4D& p) { d->plane = p; }
+void Point_container::setIsSurface  (const bool b) { d->is_surface = b; }

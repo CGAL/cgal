@@ -102,6 +102,7 @@ void Scene_plane_item::computeElements() const
                                           static_cast<int>(positions_lines.size() 
                                                            * sizeof(float)));
     }
+    setBuffersFilled(true);
     QApplication::restoreOverrideCursor();
 }
 

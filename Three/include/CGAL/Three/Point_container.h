@@ -95,6 +95,10 @@ struct DEMO_FRAMEWORK_EXPORT Point_container :public Primitive_container
   QMatrix4x4 getFrameMatrix()const;
 //! setter for the "f_matrix" parameter
   void setFrameMatrix(const QMatrix4x4&);
+  //! setter for the "plane" parameter
+  void setPlane(const QVector4D&);
+  //! setter for the "is_surface" attribute. Used in PROGRAM_C3T3_EDGES
+  void setIsSurface  (const bool);
   ///@}
 
 private:

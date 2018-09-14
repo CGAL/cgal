@@ -9,6 +9,7 @@ struct D
       is_selected(false),
       flat_size(0),
       idx_size(0),
+      tuple_size(3),
       color(QColor())
   {}
   QMap<CGAL::Three::Viewer_interface*, Vao*> VAOs;
@@ -21,6 +22,7 @@ struct D
   std::size_t flat_size;
   std::size_t center_size;
   std::size_t idx_size;
+  int tuple_size;
   QColor color;
 };
 
@@ -179,6 +181,7 @@ void Primitive_container::setOffset(std::size_t id, int offset) {
   d->VBOs[id]->offset = offset;
 }
 
+void Primitive_container::setTupleSize(int ts) { d->tuple_size = ts; }
 int Primitive_container::getProgram() const  { return d->program_id; }
 
 bool Primitive_container::isDataIndexed()  { return d->indexed; }
@@ -201,3 +204,4 @@ std::size_t Primitive_container::getIdxSize() const  { return d->idx_size; }
 
 QColor Primitive_container::getColor()const  { return d->color; }
 
+int Primitive_container::getTupleSize() const { return d->tuple_size; }

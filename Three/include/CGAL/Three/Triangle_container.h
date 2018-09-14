@@ -52,7 +52,7 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
     Vertex_indices,     //!< Designates the buffer that contains the indices for the smooth vertices.
     Flat_normals,       //!< Designates the buffer that contains the normals for the flat vertices.
     Smooth_normals,     //!< Designates the buffer that contains the normals for the smooth vertices.
-    Facet_barycenters,  //!< Designates the buffer that contains the barycenters of the c3t3 facets or the center of the spheres.
+    Facet_centers,  //!< Designates the buffer that contains the barycenters of the c3t3 facets or the center of the spheres.
     Radius,             //!< Designates the buffer that contains the radius of the spheres.
     VColors,            //!< Designates the buffer that contains the colors of the smooth vertices.
     FColors,            //!< Designates the buffer that contains the colors of the flat vertices.
@@ -105,6 +105,8 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
   void setAlpha       (const float&);
   //! setter for the "f_matrix" parameter
   void setFrameMatrix(const QMatrix4x4&);
+  //! setter for the "is_surface" attribute. Used in PROGRAM_C3T3
+  void setIsSurface  (const bool);
   ///@}
 
   //drawing variables

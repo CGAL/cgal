@@ -150,6 +150,8 @@ public:
   void setStride(std::size_t id, int stride);
   //!Setter for the "offset" parameter.
   void setOffset(std::size_t id, int offset);
+  //!setter for the tuple size: the number of coordinates of one vertex.
+  void setTupleSize(int ts);
   //!@}
 
   //!
@@ -202,9 +204,13 @@ public:
   //! \brief getIdxSize returns the number of indexed
   //! vertices.
   std::size_t getIdxSize()const;
+  //! \brief getTupleSize returns the number of coordinates in one vertex.
+  //! Default is 3.
+  int getTupleSize()const;
   //! \brief getCenterSize returns the number of instances of
   //! the item in this container.
   std::size_t getCenterSize()const;
+  
   //! \name Getters for the shaders parameters.
   //!@{
   

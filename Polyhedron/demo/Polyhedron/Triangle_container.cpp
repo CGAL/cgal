@@ -16,6 +16,7 @@ struct Tri_d{
   Triangle_container* container;
   float shrink_factor;
   QVector4D plane;
+  bool is_surface;
   float alpha;
   QMatrix4x4 f_matrix;
 };
@@ -93,13 +94,13 @@ void Triangle_container::initGL( Viewer_interface* viewer)
                        QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 3));
       getVao(viewer)->addVbo(getVbo(FColors));
       
-      if(viewer->getShaderProgram(getProgram())->property("hasBarycenter").toBool())
+      if(viewer->getShaderProgram(getProgram())->property("hasCenter").toBool())
       {
-        if(!getVbo(Facet_barycenters))
-          setVbo(Facet_barycenters,
-                 new Vbo("barycenter",
+        if(!getVbo(Facet_centers))
+          setVbo(Facet_centers,
+                 new Vbo("center",
                          Vbo::GEOMETRY));
-        getVao(viewer)->addVbo(getVbo(Facet_barycenters));
+        getVao(viewer)->addVbo(getVbo(Facet_centers));
       }
       
       if(viewer->getShaderProgram(getProgram())->property("hasRadius").toBool())
@@ -153,6 +154,8 @@ void Triangle_container::draw(Viewer_interface* viewer,
     getVao(viewer)->bind();
     if(getVao(viewer)->program->property("hasCutPlane").toBool())
       getVao(viewer)->program->setUniformValue("cutplane", d->plane);
+    if(getVao(viewer)->program->property("hasSurfaceMode").toBool())
+      getVao(viewer)->program->setUniformValue("is_surface", d->is_surface);
     if(is_color_uniform)
       getVao(viewer)->program->setAttributeValue("colors", getColor());
     if(getVao(viewer)->program->property("hasFMatrix").toBool())
@@ -172,13 +175,13 @@ void Triangle_container::draw(Viewer_interface* viewer,
     if(getVao(viewer)->program->property("isInstanced").toBool())
     {
       viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
-                                    static_cast<GLsizei>(getFlatDataSize()/3),
+                                    static_cast<GLsizei>(getFlatDataSize()/getTupleSize()),
                                     static_cast<GLsizei>(getCenterSize()/3));
     }
     else
     {
 
-      viewer->glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(getFlatDataSize()/3));
+      viewer->glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(getFlatDataSize()/getTupleSize()));
     }
 
     getVao(viewer)->release();
@@ -192,8 +195,9 @@ void Triangle_container::initializeBuffers(Viewer_interface *viewer)
   if(getVao(viewer)->program->property("isInstanced").toBool())
   {
     getVao(viewer)->bind();
-    if(getVao(viewer)->program->property("hasBarycenter").toBool())
-      viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("barycenter"), 1);
+    if(getVao(viewer)->program->property("isInstanced").toBool() &&
+       getVao(viewer)->program->property("hasCenter").toBool())
+      viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("center"), 1);
     if(getVao(viewer)->program->property("hasRadius").toBool())
       viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("radius"), 1);
     viewer->glVertexAttribDivisor(getVao(viewer)->program->attributeLocation("colors"), 1);
@@ -209,3 +213,5 @@ QMatrix4x4 Triangle_container::getFrameMatrix() const { return d->f_matrix; }
 void Triangle_container::setShrinkFactor(const float& f) { d->shrink_factor = f; }
 void Triangle_container::setAlpha       (const float& f)        { d->alpha = f ; }
 void Triangle_container::setFrameMatrix(const QMatrix4x4& m) { d->f_matrix = m; }
+void Triangle_container::setPlane(const QVector4D& p) { d->plane = p; }
+void Triangle_container::setIsSurface  (const bool b) { d->is_surface = b; }
