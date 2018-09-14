@@ -26,7 +26,7 @@ public:
   /// @{
 
   /// Computes and returns fitting error from face f to proxy.
-  FT compute_error(const TriangleMesh &tm, const face_descriptor f, const Proxy &proxy) const;
+  FT compute_error(const face_descriptor f, const TriangleMesh &tm, const Proxy &proxy) const;
 
   /// Computes and returns fitted proxy from a range of faces.
   /// @tparam FaceRange a range of

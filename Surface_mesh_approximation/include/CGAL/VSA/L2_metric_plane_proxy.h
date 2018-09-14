@@ -75,7 +75,7 @@ public:
    * @param px proxy
    * @return computed error
    */
-  FT compute_error(const TriangleMesh &tm, const face_descriptor f, const Proxy &px) const {
+  FT compute_error(const face_descriptor f, const TriangleMesh &tm, const Proxy &px) const {
     (void)(tm);
     halfedge_descriptor he = halfedge(f, *m_tm);
     const Point_3 &p0 = m_vpmap[source(he, *m_tm)];

@@ -34,7 +34,7 @@ struct Compact_metric_point_proxy {
   // compute and return error from a face to a proxy,
   // defined as the Euclidean distance between
   // the face center of mass and proxy point.
-  FT compute_error(const Polyhedron &tm, const Facet_handle &f, const Proxy &px) const {
+  FT compute_error(const Facet_handle &f, const Polyhedron &tm, const Proxy &px) const {
     (void)(tm);
     return FT(std::sqrt(CGAL::to_double(
       CGAL::squared_distance(center_pmap[f], px))));

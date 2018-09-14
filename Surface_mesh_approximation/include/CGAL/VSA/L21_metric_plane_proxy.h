@@ -65,7 +65,7 @@ public:
     m_sum_functor = traits.construct_sum_of_vectors_3_object();
     m_scale_functor = traits.construct_scaled_vector_3_object();
 
-    // construct internal facet normal & area map
+    // construct internal face normal & area map
     BOOST_FOREACH(face_descriptor f, faces(tm)) {
       const halfedge_descriptor he = halfedge(f, tm);
       const Point_3 &p0 = vpmap[source(he, tm)];
@@ -78,13 +78,13 @@ public:
   /// @}
 
   /*!
-   * @brief computes the L2,1 error from a facet to a proxy.
+   * @brief computes the L2,1 error from a face to a proxy.
    * @param tm input triangle mesh
    * @param f face_descriptor of a face
    * @param px proxy
    * @return computed error
    */
-  FT compute_error(const TriangleMesh &tm, const face_descriptor f, const Proxy &px) const {
+  FT compute_error(const face_descriptor f, const TriangleMesh &tm, const Proxy &px) const {
     (void)(tm);
     Vector_3 v = m_sum_functor(get(m_fnmap, f), m_scale_functor(px, FT(-1.0)));
     return get(m_famap, f) * m_scalar_product_functor(v, v);

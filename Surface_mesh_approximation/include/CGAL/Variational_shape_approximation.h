@@ -1200,7 +1200,7 @@ private:
         if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && get(m_fproxy_map, fadj) == CGAL_VSA_INVALID_TAG) {
           face_pqueue.push(Face_to_integrate(
-            fadj, pxw_itr->idx, m_metric->compute_error(*m_ptm, fadj, pxw_itr->px)));
+            fadj, pxw_itr->idx, m_metric->compute_error(fadj, *m_ptm, pxw_itr->px)));
         }
       }
     }
@@ -1214,7 +1214,7 @@ private:
           if (fadj != boost::graph_traits<TriangleMesh>::null_face()
             && get(m_fproxy_map, fadj) == CGAL_VSA_INVALID_TAG) {
             face_pqueue.push(Face_to_integrate(
-              fadj, c.px, m_metric->compute_error(*m_ptm, fadj, m_proxies[c.px].px)));
+              fadj, c.px, m_metric->compute_error(fadj, *m_ptm, m_proxies[c.px].px)));
           }
         }
       }
@@ -1290,7 +1290,7 @@ private:
       if (px_idx != px_worst || f == m_proxies[px_idx].seed)
         continue;
 
-      FT err = m_metric->compute_error(*m_ptm, f, m_proxies[px_idx].px);
+      FT err = m_metric->compute_error(f, *m_ptm, m_proxies[px_idx].px);
       if (first || max_error < err) {
         first = false;
         max_error = err;
@@ -1325,10 +1325,10 @@ private:
 
     // find proxy seed and sum error
     face_descriptor seed = *px_patch.begin();
-    FT err_min = m_metric->compute_error(*m_ptm, seed, px);
+    FT err_min = m_metric->compute_error(seed, *m_ptm, px);
     FT sum_error(0.0);
     BOOST_FOREACH(face_descriptor f, px_patch) {
-      const FT err = m_metric->compute_error(*m_ptm, f, px);
+      const FT err = m_metric->compute_error(f, *m_ptm, px);
       sum_error += err;
       if (err < err_min) {
         err_min = err;
@@ -1362,13 +1362,13 @@ private:
     // fit proxy parameters
     std::vector<face_descriptor> fvec(1, f);
     const Proxy px = m_metric->fit_proxy(fvec, *m_ptm);
-    const FT err = m_metric->compute_error(*m_ptm, f, px);
+    const FT err = m_metric->compute_error(f, *m_ptm, px);
 
     // original proxy map should always be falid
     const std::size_t prev_px_idx = get(m_fproxy_map, f);
     CGAL_assertion(prev_px_idx != CGAL_VSA_INVALID_TAG);
     // update the proxy error and proxy map
-    m_proxies[prev_px_idx].err -= m_metric->compute_error(*m_ptm, f, m_proxies[prev_px_idx].px);
+    m_proxies[prev_px_idx].err -= m_metric->compute_error(f, *m_ptm, m_proxies[prev_px_idx].px);
     put(m_fproxy_map, f, px_idx);
 
     return Proxy_wrapper(px, px_idx, f, err);
