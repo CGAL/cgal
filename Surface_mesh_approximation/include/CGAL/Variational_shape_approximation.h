@@ -34,7 +34,7 @@
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/array.h>
 
-#include <CGAL/VSA/L21_metric_plane_proxy.h>
+#include <CGAL/Surface_mesh_approximation/L21_metric_plane_proxy.h>
 #include <CGAL/Default.h>
 #include <CGAL/tags.h>
 
