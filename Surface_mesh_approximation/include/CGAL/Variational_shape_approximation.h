@@ -68,7 +68,7 @@
 
 namespace CGAL {
 
-namespace VSA {
+namespace Surface_mesh_approximation {
 /// \ingroup PkgTSMA
 /// @brief Seeding method enumeration for Variational Shape Approximation algorithm.
 enum Seeding_method {
@@ -80,11 +80,11 @@ enum Seeding_method {
   HIERARCHICAL
 };
 
-} // namespace VSA
+} // namespace Surface_mesh_approximation
 
 /// \ingroup PkgTSMA
 /// @brief Main class for Variational Shape Approximation algorithm.
-/// It is based on \cgalCite{cgal:cad-vsa-04}. For simple use cases, the function `CGAL::VSA::approximate_mesh()` might be sufficient.
+/// It is based on \cgalCite{cgal:cad-vsa-04}. For simple use cases, the function `CGAL::Surface_mesh_approximation::approximate_mesh()` might be sufficient.
 /// @tparam TriangleMesh a model of `FaceListGraph`
 /// @tparam VertexPointMap a `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and `GeomTraits::Point_3` as value type
 /// @tparam ErrorMetricProxy a model of `ErrorMetricProxy`
@@ -114,7 +114,7 @@ public:
   // ErrorMetricProxy type
 #ifndef DOXYGEN_RUNNING
   typedef typename CGAL::Default::Get<ErrorMetricProxy,
-    CGAL::VSA::L21_metric_plane_proxy<TriangleMesh, VertexPointMap, Geom_traits> >::type Error_metric;
+    Surface_mesh_approximation::L21_metric_plane_proxy<TriangleMesh, VertexPointMap, Geom_traits> >::type Error_metric;
 #else
   typedef ErrorMetricProxy Error_metric;
 #endif
@@ -355,8 +355,8 @@ public:
     using boost::get_param;
     using boost::choose_param;
 
-    const CGAL::VSA::Seeding_method method = choose_param(
-      get_param(np, internal_np::seeding_method), CGAL::VSA::HIERARCHICAL);
+    const Surface_mesh_approximation::Seeding_method method = choose_param(
+      get_param(np, internal_np::seeding_method), Surface_mesh_approximation::HIERARCHICAL);
     const boost::optional<std::size_t> max_nb_proxies = choose_param(
       get_param(np, internal_np::max_number_of_proxies), boost::optional<std::size_t>());
     const boost::optional<FT> min_error_drop = choose_param(
@@ -377,11 +377,11 @@ public:
       if (max_nb_proxies && *max_nb_proxies < nb_px && *max_nb_proxies > 0)
         max_nb_px_adjusted = *max_nb_proxies;
       switch (method) {
-        case VSA::RANDOM:
+        case Surface_mesh_approximation::RANDOM:
           return init_random_error(max_nb_px_adjusted, *min_error_drop, nb_relaxations);
-        case VSA::INCREMENTAL:
+        case Surface_mesh_approximation::INCREMENTAL:
           return init_incremental_error(max_nb_px_adjusted, *min_error_drop, nb_relaxations);
-        case VSA::HIERARCHICAL:
+        case Surface_mesh_approximation::HIERARCHICAL:
           return init_hierarchical_error(max_nb_px_adjusted, *min_error_drop, nb_relaxations);
         default:
           return 0;
@@ -390,11 +390,11 @@ public:
     else if (max_nb_proxies && *max_nb_proxies < nb_px && *max_nb_proxies > 0) {
       // no valid min_error_drop provided, only max_nb_proxies
       switch (method) {
-        case VSA::RANDOM:
+        case Surface_mesh_approximation::RANDOM:
           return init_random(*max_nb_proxies, nb_relaxations);
-        case VSA::INCREMENTAL:
+        case Surface_mesh_approximation::INCREMENTAL:
           return init_incremental(*max_nb_proxies, nb_relaxations);
-        case VSA::HIERARCHICAL:
+        case Surface_mesh_approximation::HIERARCHICAL:
           return init_hierarchical(*max_nb_proxies, nb_relaxations);
         default:
           return 0;
@@ -404,11 +404,11 @@ public:
       // both parameters are unspecified or out of range
       const FT e(0.1);
       switch (method) {
-        case VSA::RANDOM:
+        case Surface_mesh_approximation::RANDOM:
           return init_random_error(nb_px, e, nb_relaxations);
-        case VSA::INCREMENTAL:
+        case Surface_mesh_approximation::INCREMENTAL:
           return init_incremental_error(nb_px, e, nb_relaxations);
-        case VSA::HIERARCHICAL:
+        case Surface_mesh_approximation::HIERARCHICAL:
           return init_hierarchical_error(nb_px, e, nb_relaxations);
         default:
           return 0;

@@ -20,8 +20,8 @@ int main()
   std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles;
 
   // free function interface with named parameters
-  CGAL::VSA::approximate_mesh(input,
-    CGAL::parameters::verbose_level(CGAL::VSA::MAIN_STEPS).
+  CGAL::Surface_mesh_approximation::approximate_mesh(input,
+    CGAL::parameters::verbose_level(CGAL::Surface_mesh_approximation::MAIN_STEPS).
     max_number_of_proxies(200).
     anchors(std::back_inserter(anchors)). // anchor points
     triangles(std::back_inserter(triangles))); // indexed triangles

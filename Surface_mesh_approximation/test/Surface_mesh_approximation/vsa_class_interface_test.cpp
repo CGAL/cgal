@@ -18,7 +18,7 @@ typedef Polyhedron::Facet_handle Facet_handle;
 typedef boost::associative_property_map<std::map<Facet_handle, std::size_t> > Face_proxy_map;
 typedef boost::property_map<Polyhedron, boost::vertex_point_t>::type Vertex_point_map;
 
-typedef CGAL::VSA::L2_metric_plane_proxy<Polyhedron> L2_metric_plane_proxy;
+typedef CGAL::Surface_mesh_approximation::L2_metric_plane_proxy<Polyhedron> L2_metric_plane_proxy;
 typedef CGAL::Variational_shape_approximation<Polyhedron, Vertex_point_map, L2_metric_plane_proxy> L2_approx;
 typedef L2_approx::Proxy Plane_proxy;
 
@@ -52,7 +52,7 @@ int main()
 
   // random seeding and run
   std::cout << "random seeding and run" << std::endl;
-  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::VSA::RANDOM)
+  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::RANDOM)
     .max_number_of_proxies(10));
   approx.run(10);
   if (approx.number_of_proxies() != 10)
@@ -121,14 +121,14 @@ int main()
   const FT drop(0.001);
   const std::size_t iterations = 5;
   std::cout << "re-initialize and hierarchical seeding" << std::endl;
-  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::VSA::HIERARCHICAL)
+  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::HIERARCHICAL)
     .min_error_drop(drop)
     .number_of_relaxations(iterations));
   approx.run(10);
   std::cout << "#proxies " << approx.number_of_proxies() << std::endl;
 
   std::cout << "re-initialize and incremental seeding" << std::endl;
-  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::VSA::INCREMENTAL)
+  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::INCREMENTAL)
     .min_error_drop(drop)
     .number_of_relaxations(iterations));
   approx.run(10);

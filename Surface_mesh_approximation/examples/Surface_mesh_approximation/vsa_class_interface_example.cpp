@@ -34,7 +34,7 @@ int main()
     error_metric);
 
   // seeds 100 random proxies
-  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::VSA::RANDOM)
+  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::RANDOM)
       .max_number_of_proxies(100));
 
   // runs 30 iterations

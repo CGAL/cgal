@@ -33,7 +33,7 @@
 #include <boost/unordered_map.hpp>
 
 namespace CGAL {
-namespace VSA {
+namespace Surface_mesh_approximation {
 
 /// \ingroup PkgTSMA
 /// @brief Approximation L21 metric of vector proxy.
@@ -144,7 +144,7 @@ private:
   Construct_sum_of_vectors_3 m_sum_functor;
 };
 
-} // namespace VSA
+} // namespace Surface_mesh_approximation
 } // namespace CGAL
 
 #endif // CGAL_L21_METRIC_PLANE_PROXY_H

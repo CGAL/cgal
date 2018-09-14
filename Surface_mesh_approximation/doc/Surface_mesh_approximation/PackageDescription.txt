@@ -35,11 +35,11 @@ and provides the list of parameters used in this package.
 - `ErrorMetricProxy`
 
 ## Main Functions ##
-- `CGAL::VSA::approximate_mesh()`
+- `CGAL::Surface_mesh_approximation::approximate_mesh()`
 
 ## Classes ##
-- `CGAL::VSA::L21_metric_plane_proxy`
-- `CGAL::VSA::L2_metric_plane_proxy`
+- `CGAL::Surface_mesh_approximation::L21_metric_plane_proxy`
+- `CGAL::Surface_mesh_approximation::L2_metric_plane_proxy`
 - `CGAL::Variational_shape_approximation`
 
 \todo add option to enforce guarantee of 2-manifold and oriented output mesh

@@ -36,7 +36,7 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-8))
   // approximation, seeding from error, drop to the target error incrementally
   const std::size_t num_iterations = 20;
   const std::size_t inner_iterations = 5;
-  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::VSA::INCREMENTAL)
+  approx.initialize_seeds(CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::INCREMENTAL)
     .min_error_drop(drop)
     .number_of_relaxations(inner_iterations));
   approx.run(num_iterations);

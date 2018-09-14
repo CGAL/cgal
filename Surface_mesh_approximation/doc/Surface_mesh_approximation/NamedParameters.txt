@@ -26,7 +26,7 @@ See below a sample call of a function that uses the optional BGL named parameter
 // anchors: output anchor points
 // triangles: output triplets of indexed triangles
 
-CGAL::VSA::approximate_mesh(tm,
+CGAL::Surface_mesh_approximation::approximate_mesh(tm,
   CGAL::parameters::seeding_method(method).
     max_number_of_proxies(number_of_proxies).
     number_of_iterations(number_of_iterations).
@@ -71,14 +71,14 @@ typename CGAL::Kernel_traits<
 
 \cgalNPBegin{verbose_level} \anchor VSA_verbose_level
 set the verbose level of the function.\n
-\b Type : \c CGAL::VSA::Verbose_level \n
-\b Default value is `CGAL::VSA::SILENT`
+\b Type : \c CGAL::Surface_mesh_approximation::Verbose_level \n
+\b Default value is `CGAL::Surface_mesh_approximation::SILENT`
 \cgalNPEnd
 
 \cgalNPBegin{seeding_method} \anchor VSA_seeding_method
 the selection of seeding method.\n
-\b Type : \c CGAL::VSA::Seeding_method \n
-\b Default value is `CGAL::VSA::Seeding_method::HIERARCHICAL`
+\b Type : \c CGAL::Surface_mesh_approximation::Seeding_method \n
+\b Default value is `CGAL::Surface_mesh_approximation::Seeding_method::HIERARCHICAL`
 \cgalNPEnd
 
 \cgalNPBegin{max_number_of_proxies} \anchor VSA_max_number_of_proxies
@@ -152,7 +152,7 @@ the property map outputs the proxy index of each face of the input polygon mesh.
 
 \cgalNPBegin{proxies} \anchor VSA_proxies
 an `OutputIterator` to put proxies in.\n
-\b Type : a class model of `OutputIterator` with `CGAL::VSA::L21_metric_vector_proxy_no_area_weighting::Proxy` value type.\n
+\b Type : a class model of `OutputIterator` with `CGAL::Surface_mesh_approximation::L21_metric_vector_proxy_no_area_weighting::Proxy` value type.\n
 \b Default : if this parameter is omitted, no output operation is performed
 \cgalNPEnd
 

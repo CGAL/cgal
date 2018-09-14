@@ -39,7 +39,7 @@
 #include <iostream>
 
 namespace CGAL {
-namespace VSA {
+namespace Surface_mesh_approximation {
 
 /// \ingroup PkgTSMA
 /// @brief Verbose level enumeration.
@@ -142,9 +142,9 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
   typedef typename L21_approx::Error_metric L21_metric;
 
   const Verbose_level vl = choose_param(
-    get_param(np, internal_np::verbose_level), CGAL::VSA::SILENT);
+    get_param(np, internal_np::verbose_level), SILENT);
 
-  if (vl == CGAL::VSA::MAIN_STEPS || vl == CGAL::VSA::VERBOSE) {
+  if (vl == MAIN_STEPS || vl == VERBOSE) {
     std::cout << "Variational shape approximation:"
       << "\n#f " << num_faces(tm)
       << "\n#v " << num_vertices(tm) << std::endl;
@@ -154,17 +154,17 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
   L21_approx approx(tm, point_pmap, metric);
 
   // hierarchical seeding by default
-  CGAL::VSA::Seeding_method method = choose_param(
-    get_param(np, internal_np::seeding_method), CGAL::VSA::HIERARCHICAL);
+  Seeding_method method = choose_param(
+    get_param(np, internal_np::seeding_method), HIERARCHICAL);
   boost::optional<std::size_t> max_nb_of_proxies = choose_param(
     get_param(np, internal_np::max_number_of_proxies), boost::optional<std::size_t>());
   boost::optional<FT> min_error_drop = choose_param(
     get_param(np, internal_np::min_error_drop), boost::optional<FT>());
   std::size_t nb_of_relaxations = choose_param(get_param(np, internal_np::number_of_relaxations), 5);
 
-  if (vl == CGAL::VSA::VERBOSE) {
-    std::cout << (method == CGAL::VSA::RANDOM ? "Random" :
-      (method == CGAL::VSA::INCREMENTAL ? "Incremental" : "Hierarchical")) << " seeding.";
+  if (vl == VERBOSE) {
+    std::cout << (method == RANDOM ? "Random" :
+      (method == INCREMENTAL ? "Incremental" : "Hierarchical")) << " seeding.";
     std::cout << "\n#max_nb_of_proxies = " << *max_nb_of_proxies
       << "\n#min_error_drop = " << *min_error_drop
       << "\nnb_of_relaxations " << nb_of_relaxations << std::endl;
@@ -172,7 +172,7 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
 
   approx.initialize_seeds(np);
 
-  if (vl == CGAL::VSA::MAIN_STEPS || vl == CGAL::VSA::VERBOSE)
+  if (vl == MAIN_STEPS || vl == VERBOSE)
     std::cout << "Seeding done." << std::endl;
 
   // default number of iterations
@@ -182,12 +182,12 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
   const std::size_t nb_of_iterations = choose_param(
     get_param(np, internal_np::number_of_iterations), nb_of_iterations_default);
 
-  if (vl == CGAL::VSA::VERBOSE)
+  if (vl == VERBOSE)
     std::cout << "\n#nb_of_iterations = " << nb_of_iterations << std::endl;
 
   approx.run(nb_of_iterations);
 
-  if (vl == CGAL::VSA::MAIN_STEPS || vl == CGAL::VSA::VERBOSE) {
+  if (vl == MAIN_STEPS || vl == VERBOSE) {
     std::cout << "Approximation done."
       << "\n#proxies = " << approx.number_of_proxies() << std::endl;
   }
@@ -196,14 +196,14 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
   approx.proxy_map( get_param(np, internal_np::face_proxy_map) );
 
   if (!boost::is_default_param(get_param(np, internal_np::face_proxy_map))
-    && (vl == CGAL::VSA::MAIN_STEPS || vl == CGAL::VSA::VERBOSE))
+    && (vl == MAIN_STEPS || vl == VERBOSE))
     std::cout << "Filling face proxy map done." << std::endl;
 
   // get proxies
   approx.proxies( get_param(np, internal_np::proxies) );
 
   if (!is_default_param( get_param(np, internal_np::proxies) )
-    && (vl == CGAL::VSA::MAIN_STEPS || vl == CGAL::VSA::VERBOSE))
+    && (vl == MAIN_STEPS || vl == VERBOSE))
     std::cout << "Get proxies done." << std::endl;
 
   // meshing
@@ -211,7 +211,7 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
   if (!is_default_param( get_param(np, internal_np::anchors))
     || !is_default_param( get_param(np, internal_np::triangles) ))
   {
-    if (vl == CGAL::VSA::VERBOSE) {
+    if (vl == VERBOSE) {
       const FT subdivision_ratio = choose_param(get_param(np, internal_np::subdivision_ratio), FT(5.0));
       const bool relative_to_chord = choose_param(get_param(np, internal_np::relative_to_chord), false);
       const bool with_dihedral_angle = choose_param(get_param(np, internal_np::with_dihedral_angle), false);
@@ -227,7 +227,7 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
 
     is_manifold = approx.extract_mesh(np);
 
-    if (vl == CGAL::VSA::MAIN_STEPS || vl == CGAL::VSA::VERBOSE)
+    if (vl == MAIN_STEPS || vl == VERBOSE)
       std::cout << "Meshing done.\n"
         << (is_manifold ? "Can" : "Cannot") << " be built into 2-manifold surface." << std::endl;
   }
@@ -236,14 +236,14 @@ bool approximate_mesh(const TriangleMesh &tm, const NamedParameters &np)
   approx.anchor_points( get_param(np, internal_np::anchors) );
 
   if (!is_default_param( get_param(np, internal_np::anchors) )
-    && (vl == CGAL::VSA::MAIN_STEPS || vl == CGAL::VSA::VERBOSE))
+    && (vl == MAIN_STEPS || vl == VERBOSE))
     std::cout << "Get anchors done." << std::endl;
 
   // get indexed triangles
   approx.indexed_triangles( get_param(np, internal_np::triangles) );
 
   if (!is_default_param( get_param(np, internal_np::triangles) )
-    && (vl == CGAL::VSA::MAIN_STEPS || vl == CGAL::VSA::VERBOSE))
+    && (vl == MAIN_STEPS || vl == VERBOSE))
     std::cout << "Get indexed triangles done." << std::endl;
 
   return is_manifold;

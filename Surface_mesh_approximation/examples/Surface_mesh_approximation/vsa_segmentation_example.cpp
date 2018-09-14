@@ -26,7 +26,7 @@ int main()
   Face_proxy_pmap fpxmap(fidx_map);
 
   // free function interface with named parameters
-  CGAL::VSA::approximate_mesh(input,
+  CGAL::Surface_mesh_approximation::approximate_mesh(input,
   CGAL::parameters::max_number_of_proxies(200). // first stop criterion
     min_error_drop(0.05). // second stop criterion
     number_of_iterations(30). // number of relaxation iterations after seeding

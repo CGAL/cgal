@@ -36,7 +36,7 @@
 #include <list>
 
 namespace CGAL {
-namespace VSA {
+namespace Surface_mesh_approximation {
 
 /// \ingroup PkgTSMA
 /// @brief Approximation L2 metric of plane proxy.
@@ -157,7 +157,7 @@ private:
   Face_area_map m_famap;
 };
 
-} // namespace VSA
+} // namespace Surface_mesh_approximation
 } // namespace CGAL
 
 #endif // CGAL_L2_METRIC_PLANE_PROXY_H

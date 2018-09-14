@@ -12,7 +12,7 @@ typedef boost::unordered_map<face_descriptor, std::size_t> Face_index_map;
 typedef boost::associative_property_map<Face_index_map> Face_proxy_pmap;
 
 /**
- * This file tests the free function CGAL::VSA::approximate_mesh.
+ * This file tests the free function CGAL::Surface_mesh_approximation::approximate_mesh.
  */
 int main()
 {
@@ -31,8 +31,8 @@ int main()
   std::vector<Kernel::Vector_3> proxies;
 
   // free function interface with named parameters
-  CGAL::VSA::approximate_mesh(input,
-    CGAL::parameters::seeding_method(CGAL::VSA::HIERARCHICAL). // hierarchical seeding
+  CGAL::Surface_mesh_approximation::approximate_mesh(input,
+    CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::HIERARCHICAL). // hierarchical seeding
     max_number_of_proxies(200). // both maximum number of proxies stop criterion,
     min_error_drop(0.05). // and minimum error drop stop criterion are specified
     number_of_iterations(30). // number of clustering iterations after seeding
